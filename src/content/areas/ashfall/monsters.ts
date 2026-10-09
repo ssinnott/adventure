@@ -36,9 +36,11 @@ export const MONSTERS: readonly MonsterDef[] = [
   // #514), an elite on the line at 26 as #549 made it again: the long arm's clamp holds, paralysed at 0.15 as the
   // elite's line has it
   { id: 'sentry', name: 'Sentry', plural: 'Sentries', sprite: 'sentry', kind: 'machine', look: 'It is looking for whoever touched the Stones.', level: 26, hp: 597, ac: 25, attack: 16, dice: 5, sides: 8, bonus: 4, speed: 15, xp: 2067, gold: [0, 0], inflict: { cond: 'paralysed', chance: 0.15 }, tint: '#5e656d', size: 1.45 },
-  // the Ember Stone, the moment it lights (#516), its boss at 26 on MONSTERS §4.4's boss line, for #516's gate to tune;
-  // size 2 and drawn inside TALL_REACH
-  { id: 'sentinel', name: 'The Sentinel', plural: 'Sentinels', sprite: 'sentinel', kind: 'machine', look: 'The first thing up through the doors.', level: 26, hp: 1442, ac: 26, attack: 17, dice: 24, sides: 8, bonus: 29, speed: 13, xp: 16533, gold: [0, 0], tint: '#4f5359', size: 2 },
+  // the Ember Stone, the moment it lights (#516), its boss at 26, off the line (tools/tests/harness.ts): its hit points
+  // are set for the Stone's gate, the line's 1,498 to 1,400 (won 58% at 25 and 94% at 27 on the line), two times in
+  // three at the level's floor, 25, which keeps the floor with its one other fight; its blow is the line's 25d7+42. It
+  // carries its visor up (MONSTERS §2). Size 2 and drawn inside TALL_REACH
+  { id: 'sentinel', name: 'The Sentinel', plural: 'Sentinels', sprite: 'sentinel', kind: 'machine', look: 'The first thing up through the doors.', level: 26, hp: 1400, ac: 26, attack: 17, dice: 25, sides: 7, bonus: 42, speed: 13, xp: 16533, gold: [0, 0], drops: [{ item: 'sentinel_visor', chance: 1 }], tint: '#4f5359', size: 2 },
   // Meridian Camp's (MONSTERS §8.4; #22), drawn ahead of its three levels and kept here, the camp being Ashfall's.
   // The nest off the iron corridors (meridian_camp2), fodder on MONSTERS §4.4's line at 26 as #549 made it again, six to a
   // group: it flies, so it reaches the back row (`ranged`), and fire does not touch it, as it does not its kin; too young yet
@@ -51,9 +53,10 @@ export const MONSTERS: readonly MonsterDef[] = [
   // the iron corridors (meridian_camp2), their elite on the line at 27 as #549 made it again: a machine (§2), and fire does not
   // touch it; its hooks hold, paralysed at 0.15 as the elite's line has it
   { id: 'flue_walker', name: 'Flue Walker', plural: 'Flue Walkers', sprite: 'flue_walker', kind: 'machine', look: 'It walks the corridor to its end, and back.', level: 27, hp: 670, ac: 25, attack: 16, dice: 7, sides: 8, bonus: 7, speed: 15, xp: 2147, gold: [0, 0], immune: ['fire'], inflict: { cond: 'paralysed', chance: 0.15 }, tint: '#7d7a74', size: 1.5 },
-  // the gallery below the camp (meridian_camp3), armoured on the line at 28: first met here, and back in the Underdeep (§9.2)
-  { id: 'deep_knocker', name: 'Deep Knocker', plural: 'Deep Knockers', sprite: 'deep_knocker', kind: 'machine', look: 'Still knocking, on a wall that has never cracked.', level: 28, hp: 517, ac: 27, attack: 16, dice: 5, sides: 7, bonus: 11, speed: 8, xp: 1484, gold: [0, 0], tint: '#b4b8b6', size: 0.75 },
-  // the gallery below the camp (meridian_camp3), a caller on a soldier's numbers at 28, as the tallyman is at 20: it calls three
-  // deep knockers at a half a turn, as #537's test caller does
-  { id: 'inspector', name: 'Inspector', plural: 'Inspectors', sprite: 'inspector', kind: 'machine', look: 'It holds its light to the wall, and then to you.', level: 28, hp: 408, ac: 25, attack: 16, dice: 5, sides: 8, bonus: 3, speed: 11, xp: 1113, gold: [0, 0], calls: { monsters: ['deep_knocker', 'deep_knocker', 'deep_knocker'], chance: 0.5 }, tint: '#6a6458', size: 0.8 },
+  // the gallery below the camp (meridian_camp3), armoured on the line at 28 as #549 made it again: first met here, and back in
+  // the Underdeep (§9.2)
+  { id: 'deep_knocker', name: 'Deep Knocker', plural: 'Deep Knockers', sprite: 'deep_knocker', kind: 'machine', look: 'Still knocking, on a wall that has never cracked.', level: 28, hp: 523, ac: 27, attack: 16, dice: 6, sides: 8, bonus: 5, speed: 8, xp: 1484, gold: [0, 0], tint: '#b4b8b6', size: 0.75 },
+  // the gallery below the camp (meridian_camp3), a caller on a soldier's numbers at 28 as #549 made them again, as the tallyman
+  // is at 20: it calls three deep knockers at a half a turn, as #537's test caller does
+  { id: 'inspector', name: 'Inspector', plural: 'Inspectors', sprite: 'inspector', kind: 'machine', look: 'It holds its light to the wall, and then to you.', level: 28, hp: 408, ac: 25, attack: 16, dice: 5, sides: 7, bonus: 8, speed: 11, xp: 1113, gold: [0, 0], calls: { monsters: ['deep_knocker', 'deep_knocker', 'deep_knocker'], chance: 0.5 }, tint: '#6a6458', size: 0.8 },
 ];

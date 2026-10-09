@@ -2,6 +2,7 @@
 // (DESIGN §9), the third area of Act IV, the far side of the Cinder Hills. docs/areas/glasswold.md is its brief.
 import type { Area } from '../../area.ts';
 import { WOLD_D9 } from './maps/wold_d9.ts';
+import { WOLD_D10 } from './maps/wold_d10.ts';
 import { WOLD_D8 } from './maps/wold_d8.ts';
 import { WOLD_C8 } from './maps/wold_c8.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
@@ -11,9 +12,10 @@ import { INTERIORS } from './interiors.ts';
 
 export const AREA = {
   id: 'glasswold' as const,
-  // In road order: the steppe (#525), the area's first, Akordu, the Riders' camp (#526), and the Scarp's
-  // edge west of it, where the stair from the Saltings comes up (#528).
-  maps: [WOLD_D9, WOLD_D8, WOLD_C8],
+  // In road order: the mesas (#527), the way in from E10, then the steppe (#525), the area's first built,
+  // Akordu, the Riders' camp (#526), and the Scarp's edge west of it, where the stair from the Saltings
+  // comes up (#528).
+  maps: [WOLD_D10, WOLD_D9, WOLD_D8, WOLD_C8],
   monsters: MONSTERS,
   sprites: SPRITES,
   // The boxes' finds, the Riders' leather their trader sells at Akordu (#526) and the Compact's letter in
@@ -29,8 +31,9 @@ export const AREA = {
   // The Riders' trader's tent at Akordu (#526).
   interiors: INTERIORS,
   // The glass walkers, a new family, placed first here (#533), and the dunes underfoot (#543). Steppe
-  // was laid first by Ashfall's E10 (#517), and the lions are the cats', on the road before. Akordu (#526):
-  // the basilisk's stone (#546); its camp is a landmark on the road before it.
+  // was laid first by Ashfall's E10 (#517), and the lions are the cats', on the road before. Stone,
+  // first inflicted by the mesas' basilisks (#546, #527); Akordu's camp (#526) is a landmark on the road
+  // before it.
   novel: { families: ['glasswalkers'], terrain: ['dunes'], mechanics: ['inflict:stoned'], landmarks: [] },
   atlas: { zones: ZONES, places: PLACES, sites: SITES },
 } satisfies Area;

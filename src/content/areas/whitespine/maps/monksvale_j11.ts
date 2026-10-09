@@ -30,6 +30,13 @@ export const CLIMB: Exit = { x: 20, y: 0, to: 'coldmere_k10', tx: 1, ty: 19, tf:
 export const GATE: Exit = { x: 26, y: 24, to: 'monastery', tx: 7, ty: 1, tf: SOUTH,
   label: 'The gate stands open, and a brother stands in it. It bows, and the bow is a shape someone described to it.' };
 
+/**
+ * The Monk's third (#448), The Vigil: Oswin asks a company with a Windwalker of 27 to sit the night
+ * with him on the summit (`VIGIL_ASKED`); by night brothers come up the path, and once they are down
+ * his words at dawn set `VIGIL_KEPT`, which his teaching reads.
+ */
+export const VIGIL_ASKED = 'q_vigil', VIGIL_KEPT = 'q_vigil_kept';
+
 export const MONKSVALE_J11: MapDef = {
   id: 'monksvale_j11',
   name: 'Monks\' Vale',
@@ -84,11 +91,21 @@ export const MONKSVALE_J11: MapDef = {
     { kind: 'event', x: 13, y: 12, id: 'j11_path', once: true, text: 'A path goes up west into the snow on the crest, cut in steps where the rock is steep.' },
     { kind: 'event', x: 15, y: 17, id: 'j11_crest', once: true, text: 'Snow lies along the foot of the crest in long drifts, combed into ridges by the wind.' },
     { kind: 'camp', x: 4, y: 10, name: 'Spine Summit', text: 'Spine Summit: a hollow in the snow out of the wind, and the whole range below.' },
-    { kind: 'npc', x: 3, y: 10, name: 'A hermit', lines: [
+    // Oswin teaches the Monk's third (#448) for The Vigil: asked by a company with a Windwalker of 27,
+    // he sits the night with it while the brothers come up the path, and at dawn his words set it done.
+    { kind: 'npc', x: 3, y: 10, name: 'Oswin, the summit\'s hermit', lines: [
       'A hermit sits in the snow at the top, wrapped in a blanket gone grey, his eyes shut.',
       '"Eleven, a gap, eleven. Every hour, day and night, and never a stroke late."',
       '"I came up here for the quiet. The bells are all that breaks it."',
-    ] },
+    ], says: [
+      { after: { flag: VIGIL_KEPT }, lines: ['Oswin sits wrapped in his blanket, his eyes shut.', '"Eleven, a gap, eleven. And between them now, nothing at all."'] },
+      { after: { slain: 'monksvale_j11:j11_vigil' }, sets: VIGIL_KEPT, lines: ['Dawn on the summit. Oswin opens his eyes and looks a while at what lies on the path.', '"You sat it out. Few do."'] },
+      { after: { flag: VIGIL_ASKED }, lines: ['"Sit, and be still. They come up the path at night."'] },
+      { after: { member: { cls: 'monk', level: 27, prestige: 2 } }, lines: ['The hermit opens one eye, and looks at your monk.', '"Every night something comes up the path to see if I still sit here. Sit with me till dawn."'], choice: { ask: '"Will you keep the vigil?"', answers: [
+        { label: 'Keep it.', sets: VIGIL_ASKED, says: ['"Then sit. Do not go down to them. Let them come up."'] },
+        { label: 'Not tonight.', says: ['"I will be here."'] },
+      ] } },
+    ], teaches: { cls: 'monk', prestige: 3, asks: 'vigil', done: { flag: VIGIL_KEPT }, seek: 'Oswin, the hermit at the top of the path above Monks\' Vale, can make an Ascendant of a Windwalker.' } },
     // The herder's fold at the vale's edge, and the herder, who loses his lambs to the eagles: he gives
     // The Eagles' Nest (#56's 46, #506), and once the nest above the Peak Stone is opened, he remembers
     // who went up the summit's path in the summer.
@@ -127,5 +144,10 @@ export const MONKSVALE_J11: MapDef = {
     { id: 'j11_eagles_east', x: 25, y: 8, monsters: ['spine_eagle', 'spine_eagle', 'spine_eagle', 'spine_eagle'], aware: 5, respawn: 1440 },
     { id: 'j11_brothers_road', x: 23, y: 19, monsters: ['brother', 'brother', 'brother', 'brother'], aware: 3, respawn: 1440 },
     { id: 'j11_trolls', x: 6, y: 10, monsters: ['snow_troll', 'snow_troll'], aware: 2, respawn: 2880, roams: false },
+    // The Vigil (#448): once Oswin is answered, by night five brothers come up the path to the summit's
+    // camp, and never again once they are down. The Monk's third's fight, set at 26 with the vale's own
+    // brothers (§9, #448's 2).
+    { id: 'j11_vigil', x: 5, y: 10, monsters: ['brother', 'brother', 'brother', 'brother', 'brother'], aware: 2, roams: false, after: { flag: VIGIL_ASKED }, when: { hours: 'night' },
+      slainText: 'The last brother falls on the path. Its hood has come away, and the face under it is grey plate.' },
   ],
 };

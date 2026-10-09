@@ -1,8 +1,17 @@
 // The Glasswold's walkthrough. Its chapter, The Warning, is #531's, which plays it here; until then, the
-// boxes in road order. The steppe (D9, #525): the area listed by its first map, out of AHEAD and PLANNED;
-// put down at the road's end on the south edge, where the atlas's road crosses from D10's corner, the
-// box's way in until the mesas (#527) join it to E10; the road square to square from the south edge at
-// columns 22 and 23 north-west over the dunes' edge to the west edge at row 21, past which, for now, the
+// boxes in road order. The mesas (D10, #527), the Wold's way in: over E10's west edge at 0,6 onto the road,
+// the Wold's own words said by level and nothing straight back; the road square to square along the great
+// mesa's foot and up its west side to the north edge, where D9's road carries it on; the glassed round the
+// great mesa in a line, all facing the scree under its north face, the last a Rider with his bow drawn, and
+// round the small mesa all facing it; the Riders' cairn, the Rider on the hill who goes no nearer and her
+// word of the garden, the Glass's glare past the dunes, the kill and the lions' lie, the camp in the hills
+// and the sky-stone, the bones and the glass hare in the grass; the box's groups won at 26, the mesa fight
+// among them; and the way up, the notch over the scree, found from the Rider's arrow: on top the nest, the
+// hoard with Cinderport's shield and the stone's cure, the Eyrie's cold fire-ring and the Glass whole with
+// the crown in it; the draught lifts a member's stone, and a temple asks 80 gold a level. Then the steppe
+// (D9, #525), the area listed by its first map, out of AHEAD and PLANNED: walked onto up the road from the
+// mesas and put down at its end on the south edge, the box's way in; the road square to square from the
+// south edge at columns 22 and 23 north-west over the dunes' edge to the west edge at row 21, past which, for now, the
 // world ends; the glass in the grass; the Riders' well where their track leaves the road, and their camp
 // beside it; the track north past the tents seen from the middle and the cairn on the watch-mound to the
 // north edge, toward Akordu; the herd and its herder, the old Rider and the first words of the day the
@@ -22,7 +31,8 @@
 // east edge into Akordu's box, one land.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen } from '../../../../tools/walk.ts';
-import { NORTH, SOUTH, EAST, WEST } from '../../../game/types.ts';
+import { NORTH, EAST, SOUTH, WEST } from '../../../game/types.ts';
+import { addCondition, hasCondition, lift, templePrice } from '../../../game/party.ts';
 import { AREAS, AHEAD, ATLAS, MAP_DEFS, MONSTERS } from '../../index.ts';
 import { PLANNED, CURVE } from '../../progression.ts';
 import { buildMaps } from '../../maps.ts';
@@ -61,24 +71,142 @@ export const walkthrough: Walkthrough = (ok) => {
   const person = (name: string): Person => D9.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
 
   // The Wold listed by its first map, as Ashfall was by G10 (#511): an area of its own, out of AHEAD and
-  // PLANNED, D9 on its zone's row at 104,254, core, at 26-27 under the Wold's own sky.
+  // PLANNED, D9 on its zone's row at 104,254, core, at 26-27 under the Wold's own sky; the mesas, D10,
+  // under it at 104,286, the zone's way in and first on its row (#527).
+  const D10 = MAP_DEFS.find((d) => d.id === 'wold_d10')!, d10 = out.zones.find((z) => z.id === 'wold_d10')!;
   ok(AREAS.some((a) => a.id === 'glasswold') && !AHEAD.length && !(PLANNED as readonly string[]).includes('glasswold')
-    && WOLD.maps?.[0].map === 'wold_d9' && WOLD.maps[0].at.join() === '104,254' && d9.x === 104 && d9.y === 254
-    && D9.density === 'core' && D9.band?.join('-') === '26-27' && D9.region === 'glasswold',
-    'the Glasswold listed by its first map, the steppe, D9, laid at 104,254 on the Wold: core, band 26-27, under its own sky');
-  ok(!!WOLD.crossing?.harder && !!WOLD.crossing?.warning,
-    'the Wold\'s crossing words on its row, said where a company first comes onto its grass (walked once the mesas join it, #527)');
+    && WOLD.maps?.slice(0, 2).map((m) => `${m.map} ${m.at.join(',')}`).join() === 'wold_d10 104,286,wold_d9 104,254' && d9.x === 104 && d9.y === 254 && d10.x === 104 && d10.y === 286
+    && [D9, D10].every((d) => d.density === 'core' && d.band?.join('-') === '26-27' && d.region === 'glasswold'),
+    'the Glasswold listed by its first map, the steppe, D9, laid at 104,254 on the Wold, and the mesas, D10, under it at 104,286, the zone\'s way in: core, band 26-27, under its own sky');
 
-  // Put down at the way in: the road on the south edge, where the atlas's road crosses from D10's corner.
-  // The road runs square to square from there north-west over the dunes' edge to the west edge at 0,21,
-  // toward the Riders' gap; past D10 and C9, for now, the world ends.
+  // The mesas (D10, #527): over E10's west edge from its road at 0,6 onto D10's at 31,6, the box's way in,
+  // where a company first comes onto the Wold's grass. At the floor its name and nothing more, one or two
+  // under the Wold's harder words, three or more under its warning; straight back, nothing.
+  const at10 = (x: number, y: number): number => key(d10.x + x, d10.y + y);
+  const in10 = (x: number, y: number): boolean => x >= d10.x && x < d10.x + d10.w && y >= d10.y && y < d10.y + d10.h;
+  const ch10 = (x: number, y: number): string => out.at(d10.x + x, d10.y + y).ch;
+  const feature10 = (id: string) => D10.features!.find((f) => 'id' in f && f.id === id)!;
+  const cross = (level: number, from: string, x: number, y: number, facing: 0 | 1 | 2 | 3): string[] => {
+    for (const m of w.party.members) m.level = level;
+    w.world.travel(from, x, y, facing);
+    const r = w.world.move('forward');
+    return r.kind === 'moved' ? r.messages : [r.kind];
+  };
+  const low = cross(23, 'emberwaste_e10', 0, 6, WEST), two = cross(24, 'emberwaste_e10', 0, 6, WEST), one = cross(25, 'emberwaste_e10', 0, 6, WEST), due = cross(26, 'emberwaste_e10', 0, 6, WEST);
+  ok(w.world.zone?.id === 'wold_d10' && w.world.state.x === d10.x + 31 && w.world.state.y === d10.y + 6 && D10.start.x === 31 && D10.start.y === 6 && D10.start.facing === WEST,
+    'over E10\'s west edge from its road at 0,6 onto D10\'s at 31,6, walked, the box\'s way in and the Wold\'s');
+  ok(due.join(' / ') === 'The Wold.', `at 26, the Wold named, no more (${due.join(' / ')})`);
+  ok(one.join(' / ') === `The Wold. ${WOLD.crossing?.harder}` && two.join(' / ') === one.join(' / '), `at 25 and 24, the Wold's harder words (${one.join(' / ')})`);
+  ok(low.join(' / ') === `The Wold. ${WOLD.crossing?.warning}`, `at 23, its warning, and the way back open (${low.join(' / ')})`);
+  const back = cross(26, 'wold_d10', 31, 6, EAST);
+  ok(!back.length && w.world.zone?.id === 'emberwaste_e10', `straight back onto E10, nothing more (${back.join(' / ') || 'nothing'})`);
+  for (const m of w.party.members) m.level = 26;
+
+  // The road square to square from the east edge along the great mesa's foot and north up its west side to
+  // the north edge at 22 and 23, where D9's road carries it on; past the west and south edges, C10 and D11,
+  // the Glass's, the world ends.
+  const road10 = spread(d10.x + 31, d10.y + 6, (x, y) => in10(x, y) && out.at(x, y).ch === '=');
+  const laid10 = D10.rows.join('').split('').filter((c) => c === '=').length;
+  ok(road10.size === laid10 && road10.has(at10(22, 0)) && road10.has(at10(23, 0)) && ch(22, 31) === '=' && ch(23, 31) === '='
+    && [...Array(32).keys()].every((i) => out.passable(d10.x - 1, d10.y + i) !== 'ok' && out.passable(d10.x + i, d10.y + 32) !== 'ok'),
+    `the road runs square to square, all ${laid10} of its squares, from the east edge at 31,6 to the north edge at 22 and 23, where D9's road goes on; past C10 and D11 the world ends`);
+  see(w, 'wold_d10:d10_mesa_seen');
+
+  // The glassed round the great mesa: four in a line out from the scree under its north face, each facing
+  // it, north-east, the last and nearest a Rider with his bow still drawn; round the small mesa on the west
+  // edge three more, all facing it, west.
+  const greatIds = ['d10_glassed', 'd10_glassed_woman', 'd10_glassed_horse', 'd10_glassed_rider'], smallIds = ['d10_glassed_boy', 'd10_glassed_dogs', 'd10_glassed_crone'];
+  const great = greatIds.map(feature10), small = smallIds.map(feature10);
+  const scree = [24, 25, 26].every((x) => ch10(x, 0) === '^' && out.at(d10.x + x, d10.y - 1).ch === 'r') && ch10(26, 1) === 'S';
+  ok(scree && great.every((f, i) => f.kind === 'event' && f.x + f.y === 25 && f.x === 15 + 2 * i) && great.slice(0, 3).every((f) => f.kind === 'event' && f.text.includes('north-east'))
+    && great[3].kind === 'event' && great[3].text.includes('bow still drawn') && great[3].text.includes('scree'),
+    'round the great mesa the glassed stand in a line out from the scree under its north face, all facing north-east, the last a Rider with his bow still drawn');
+  ok(small.every((f) => f.kind === 'event' && f.x === 6 && D10.rows[f.y].slice(0, f.x).includes('r') && f.text.includes('west')), 'round the small mesa on the west edge three more, all facing it, west');
+  for (const id of [...greatIds, ...smallIds]) see(w, `wold_d10:${id}`);
+
+  // The Riders' cairn, its skull's eyes on the ground; the Rider on the hill who watches the mesas and goes
+  // no nearer, with her word of the garden at Akordu (#56's 55, #526); the Glass's glare past the dunes.
+  const cairn10 = feature10('d10_cairn');
+  ok(cairn10.kind === 'cairn' && cairn10.gold > 0 && cairn10.items.includes('elixir'), 'a Riders\' cairn in the north, gold and an elixir in it');
+  const watcher = D10.features!.find((f) => f.kind === 'npc' && f.name === 'A Rider on the hill') as Person;
+  ok(ch10(watcher.x, watcher.y) === '^' && !watcher.flag && !watcher.quest, 'a Rider on a hill over the mesas, words only');
+  w.world.travel('wold_d10', watcher.x, watcher.y);
+  const word = meet(watcher, w.party, heard(w.world, watcher)).text;
+  ok(word.includes('no nearer') && word.includes('garden at Akordu'), 'she goes no nearer, and the ones they carried home stand in the garden at Akordu');
+  const glare = feature10('d10_glare');
+  ok(glare.x === 1 && ch10(glare.x, glare.y) === 'u' && out.passable(d10.x - 1, d10.y + glare.y) !== 'ok', 'at the dunes\' edge on the west seam the Glass\'s glare beyond, and past it nothing built');
+  for (const id of ['d10_glare', 'd10_kill', 'd10_lie', 'd10_bones', 'd10_hare']) see(w, `wold_d10:${id}`);
+
+  // The hills in the south: the Riders' camp out of sight of the mesas, and their sky-stone on the rise.
+  const camp10 = D10.features!.filter((f) => f.kind === 'camp');
+  ok(camp10.length === 1 && ch10(camp10[0].x, camp10[0].y) === '^', 'a Riders\' camp in the hills');
+  w.world.travel('wold_d10', camp10[0].x, camp10[0].y);
+  ok(restRefused(w.world) === '', 'and a company may rest at it');
+  const stone10 = feature10('d10_shrine');
+  w.world.travel('wold_d10', stone10.x, stone10.y);
+  const kneelAt = w.world.featureHere();
+  ok(kneelAt?.kind === 'shrine' && stone10.kind === 'shrine' && ch10(stone10.x, stone10.y) === '^' && useShrine(w.world, w.party, kneelAt)[0] === stone10.text, 'the company kneels at the Riders\' sky-stone on the rise');
+
+  // The groups, each won at 26: the near pride at its kill with the vultures down on it and the south pride
+  // in the grass, nearest the way in; the mesa fight in the scree under the great mesa's north face, three
+  // lions and the basilisk on the lip behind them; the glass scorpions at the dunes' edge; and a basilisk
+  // alone in the small mesa's shade, at 27.
+  const group10 = (id: string) => D10.encounters!.find((g) => g.id === id)!;
+  const [pride10, south10, mesa10, scorp10, lone10] = ['d10_pride', 'd10_pride_south', 'd10_mesa', 'd10_scorpions', 'd10_basilisk'].map(group10);
+  const lions = (g: typeof mesa10): number => g.monsters.filter((m) => m === 'wold_lion').length;
+  ok(D10.encounters!.length === 5 && lions(pride10) === 4 && pride10.monsters.includes('vulture') && lions(south10) === 4 && south10.monsters.length === 4
+    && lions(mesa10) === 3 && mesa10.monsters.filter((m) => m === 'basilisk').length === 1 && mesa10.monsters.length === 4 && ch10(mesa10.x, mesa10.y) === '^' && mesa10.y === 0
+    && scorp10.monsters.every((m) => m === 'glass_scorpion') && ch10(scorp10.x - 1, scorp10.y) === 'u'
+    && lone10.monsters.join() === 'basilisk' && ch10(lone10.x - 1, lone10.y) === 'r' && MONSTERS.basilisk.level === 27 && MONSTERS.basilisk.inflict?.cond === 'stoned'
+    && D10.encounters!.every((g) => !!g.respawn),
+    'two prides in the grass by the way in, the mesa fight in the scree, three lions with a basilisk behind them, glass scorpions at the dunes\' edge and a basilisk alone under the small mesa, at 27');
+  for (const g of D10.encounters!) fight(w, `wold_d10:${g.id}`);
+
+  // The secret: the way up the great mesa, a notch in its north face over the scree, where every glassed
+  // figure round it looks and the Rider's arrow points. Walked, waded, climbed or floated, the top is never
+  // reached but through the notch.
+  const [notch] = D10.secrets!;
+  ok(notch.hint === 'd10_glassed_rider' && notch.x === 26 && notch.y === 1, 'the Rider\'s arrow is the notch\'s hint');
+  const top = spread(d10.x + notch.x, d10.y, (x, y) => !(x === d10.x + notch.x && y === d10.y + notch.y) && in10(x, y) && out.passable(x, y, { swim: true, climb: true, float: true }) === 'ok');
+  ok(top.size > 900 && !top.has(at10(notch.x, notch.y + 1)) && !top.has(at10(28, 3)),
+    `the great mesa's top is shut but for the notch: none of D10's ${top.size} squares walked, waded, climbed or floated reaches it`);
+  w.world.travel('wold_d10', notch.x, 0, SOUTH);
+  let up = false;
+  for (let i = 0; i < 20 && !up; i++) up = w.world.search();
+  const onto = up ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(up && onto.every((r) => r.kind === 'moved') && w.world.used('d10_nest'), 'searched in the scree where the arrow points, a notch, and up it the nest among the glassed bones');
+  listen(w);
+  const hoard = feature10('d10_hoard');
+  ok(hoard.kind === 'chest' && hoard.gold > 0 && hoard.items.join() === 'basalt_shield+2,quickening' && item('basalt_shield+2').slot === 'shield' && item('basalt_shield+2').plus === 2
+    && item('basalt_shield+2').price < 6000 && item('quickening').use?.cure?.includes('stoned') === true,
+    'beside it the hoard the glassed carried: gold, Cinderport\'s Basalt Shield with a plus of 2, and a Quickening Draught');
+  const ring = feature10('d10_ring'), view = feature10('d10_view');
+  ok(ring.kind === 'event' && d10.x + ring.x === 132 && d10.y + ring.y === 289 && top.size > 0 && view.kind === 'event' && view.text.includes('Glass') && view.text.includes('crown')
+    && !/hull|ship|orbit|voyage/i.test(view.text),
+    'on the top the Eyrie\'s cold fire-ring at 132,289, and the Glass whole with a dark crown standing up in it');
+  see(w, 'wold_d10:d10_ring');
+  see(w, 'wold_d10:d10_view');
+
+  // Stone, first spent here (#546): the draught from the hoard lifts it where a member stands glassed, and
+  // any temple, Cinderport's the nearest, lifts it for 80 gold a level.
+  const glassed = structuredClone(w.party.members[0]);
+  addCondition(glassed, 'stoned');
+  const price = templePrice(glassed);
+  ok(lift(glassed, item('quickening').use!.cure!) && !hasCondition(glassed, 'stoned') && price === 80 * 26,
+    `the draught lifts a member's stone, and a temple asks ${price} gold for one of 26`);
+
+  // The steppe (D9, #525), walked onto up the road from the mesas: the way in on its south edge, where D10's
+  // road comes on. The road runs square to square from there north-west over the dunes' edge to the west
+  // edge at 0,21, toward the Riders' gap; past C9, for now, the world ends.
+  const onward = cross(26, 'wold_d10', 22, 0, NORTH);
+  ok(w.world.zone?.id === 'wold_d9' && w.world.state.x === d9.x + 22 && w.world.state.y === d9.y + 31 && !onward.length, 'up the road from D10\'s 22,0 onto D9\'s 22,31, one land, nothing said');
   w.world.travel('wold_d9', D9.start.x, D9.start.y, NORTH);
   ok(w.world.zone?.id === 'wold_d9' && D9.start.x === 22 && D9.start.y === 31 && ch(22, 31) === '=' && ch(23, 31) === '=',
     'put down on the road at the south edge, 22,31, the box\'s way in');
   const road = spread(d9.x + 22, d9.y + 31, (x, y) => inBox(x, y) && out.at(x, y).ch === '=');
   const laid = D9.rows.join('').split('').filter((c) => c === '=').length;
-  ok(road.size === laid && road.has(key(d9.x, d9.y + 21)) && out.passable(d9.x - 1, d9.y + 21) !== 'ok' && out.passable(d9.x + 22, d9.y + 32) !== 'ok',
-    `the road runs square to square, all ${laid} of its squares, from the south edge at 22 and 23 to the west edge at 0,21, and past both, for now, the world ends`);
+  ok(road.size === laid && road.has(key(d9.x, d9.y + 21)) && out.passable(d9.x - 1, d9.y + 21) !== 'ok' && out.at(d9.x + 22, d9.y + 32).ch === '=',
+    `the road runs square to square, all ${laid} of its squares, from the south edge at 22 and 23, where D10's road comes on, to the west edge at 0,21, past which, for now, the world ends`);
   const glass = feature('d9_glass');
   ok(road.has(key(d9.x + glass.x, d9.y + glass.y)), 'on the road in, the glass in the grass');
   see(w, 'wold_d9:d9_glass');
@@ -170,8 +298,8 @@ export const walkthrough: Walkthrough = (ok) => {
   // Up the Riders' track from D9's 16,0 over the seam onto D8's 16,31, the box's way in, and on into the
   // ring of tents under the mesa.
   w.world.travel('wold_d9', 16, 0, NORTH);
-  const up = w.world.move('forward');
-  ok(up.kind === 'moved' && w.world.zone?.id === 'wold_d8' && w.world.state.x === d8.x + 16 && w.world.state.y === d8.y + 31 && ch8(16, 31) === ':' && D8.start.x === 16 && D8.start.y === 31,
+  const up8 = w.world.move('forward');
+  ok(up8.kind === 'moved' && w.world.zone?.id === 'wold_d8' && w.world.state.x === d8.x + 16 && w.world.state.y === d8.y + 31 && ch8(16, 31) === ':' && D8.start.x === 16 && D8.start.y === 31,
     'up the Riders\' track from D9\'s 16,0 over the seam onto D8\'s 16,31, the box\'s way in, the track going on into the camp');
   listen(w);
   see(w, 'wold_d8:d8_akordu');
@@ -226,9 +354,9 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(!!west && west.to === 'wold_d8' && west.x === lines.landing?.x && west.y === lines.landing.y && west.fare === RIDERS_RIDE.fare, 'the Rider by Cinderport\'s gate sells it back to Akordu\'s horse-lines');
   r.world.travel('cinderport', port.x, port.y);
   r.party.gold = RIDERS_RIDE.fare;
-  const back = ride(west, r.world, r.party);
-  ok(back.taken && r.party.gold === 0 && r.world.zone?.id === 'wold_d8' && r.world.state.x === d8.x + lines.landing!.x && r.world.state.y === d8.y + lines.landing!.y && back.lines.join() === lines.label,
-    `and back, down among the white tents at the horse-lines (${back.lines.join(' ')})`);
+  const back8 = ride(west, r.world, r.party);
+  ok(back8.taken && r.party.gold === 0 && r.world.zone?.id === 'wold_d8' && r.world.state.x === d8.x + lines.landing!.x && r.world.state.y === d8.y + lines.landing!.y && back8.lines.join() === lines.label,
+    `and back, down among the white tents at the horse-lines (${back8.lines.join(' ')})`);
 
   // Under the mesa its watch-fire seen, a well and the Riders' shrine; the horse-lines and their well; the
   // horse that came back tethered apart, seen and no more (#56's 51, #532's), and the Rider who would break
@@ -273,10 +401,10 @@ export const walkthrough: Walkthrough = (ok) => {
   const down = dug ? [w.world.move('forward'), w.world.move('forward')] : [];
   ok(dug && down.every((m) => m.kind === 'moved') && w.world.used('d8_hollow'), 'searched where the windlass stands bare, the dry well goes down to a walled shaft, and behind the wall a hollow in the rock, its things laid in rows');
   listen(w);
-  const hoard = feature8('d8_hoard');
-  ok(hoard.kind === 'chest' && hoard.gold > 0 && hoard.items.join() === 'leather_coat+2' && hoard.x === dry.x - 1 && hoard.y === dry.y - 1
+  const hoard8 = feature8('d8_hoard');
+  ok(hoard8.kind === 'chest' && hoard8.gold > 0 && hoard8.items.join() === 'leather_coat+2' && hoard8.x === dry.x - 1 && hoard8.y === dry.y - 1
     && item('leather_coat+2').ac === (item('leather_coat').ac ?? 0) + 2 && item('leather_coat+2').price <= CURVE.glasswold.price - 400,
-    `in the hoard ${hoard.kind === 'chest' ? hoard.gold : 0} gold and a Leather Coat +2, the Riders' own make, inside the band's window`);
+    `in the hoard ${hoard8.kind === 'chest' ? hoard8.gold : 0} gold and a Leather Coat +2, the Riders' own make, inside the band's window`);
 
   // The Scarp's edge (C8, #528): on the Wold's row at 72,222, west of Akordu's box, country, at 26-27.
   const C8 = MAP_DEFS.find((d) => d.id === 'wold_c8')!, c8 = out.zones.find((z) => z.id === 'wold_c8')!;
