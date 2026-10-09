@@ -320,7 +320,7 @@ nor do the corridors (§8, the corridors' 16) or the camp (§8, the camp's 16).
   the Brood Drake alone paying 2,862 (§4.2; §8, the corridors' 3). The camp pays 3,003, 1.00 of its
   3,000 and under its cap of 3,750, outside any area's budget: Ashfall lists it `outside`, so the
   curve prints its pay as a figure and no clear counts it (§4.3; §8, the camp's 3 and 4). With
-  Ashfall's other maps a clear is 28,586 of the area's 19,467 (ashfall §8).
+  Ashfall's other maps a clear is 29,386 of the area's 19,467 (ashfall §8).
 - **The gate.** Each level is held at its own floor (EXPANSION §5.2). The Brood Drake is won about
   half the time at 26, the corridors' floor, and nearly always at 28. As built, a company at the
   vents' floor, 25, wins every fight and manages 10.98 fights to a rest (§4.1); at the corridors'
@@ -556,7 +556,7 @@ Decided by delegate for #22 (the camp), each the owner's to overturn:
    budget). The curve holds it to its band, its monsters' levels (the sentry 26, every other group
    28) and the window of the Glasswold's row, 6,000, the last on the road whose floor, 26, is at or
    under its own; no clear counts its 3,003 xp or 1,200 gold, which the curve prints as a figure;
-   the gate judges it at 27 and 25, out of Ashfall's pools. Ashfall's clear is 28,586 xp a member
+   the gate judges it at 27 and 25, out of Ashfall's pools. Ashfall's clear is 29,386 xp a member
    of 19,467 and 9,900 gold of 11,760, none of it the camp's. The first build banded it 26–26 to sit
    in Ashfall's row, and its pay then counted in the clear, 3,003 xp and 1,200 gold more. Rise: the
    sentry (26) is nearest the way in and every other group 28 (rank correlation 0.65, the hardest

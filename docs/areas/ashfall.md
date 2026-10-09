@@ -2174,7 +2174,7 @@ docs/areas/meridian_camp.md §8:
 
 5. **The camp pays outside the area's budget,** 3,003 xp a member and 1,200 gold, and Ashfall lists
    it `outside` (PR #679's rule: the camp's floor, 27, is past the band 24–26). Ashfall's clear is
-   unchanged by it, 28,586 xp a member of the 19,467 asked and 9,900 gold, and the camp's finds sit
+   unchanged by it, 29,386 xp a member of the 19,467 asked and 9,900 gold, and the camp's finds sit
    in the Glasswold's window of 6,000, not Ashfall's 5,500 (the dungeon's §8, the camp's 3, 4 and
    13).
 
