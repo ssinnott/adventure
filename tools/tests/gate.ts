@@ -11,16 +11,19 @@ import { ATLAS, ITEMS, MAP_DEFS, MONSTERS } from '../../src/content/index.ts';
 import type { ItemDef } from '../../src/game/items.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import { CURVE } from '../../src/content/progression.ts';
-import type { EncounterDef, Feature, MapDef } from '../../src/game/map.ts';
+import type { EncounterDef, Feature, MapDef, Choice } from '../../src/game/map.ts';
+import { GameMap } from '../../src/game/map.ts';
+import { World } from '../../src/game/world.ts';
+import { EAST } from '../../src/game/types.ts';
 import { rest, hasCondition, className } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { startCombat, currentTurn, monsterAct, asGroup, aliveMonsters } from '../../src/game/combat.ts';
 import type { CombatState, Fighters } from '../../src/game/combat.ts';
 import { spell } from '../../src/game/spells.ts';
-import { gateCompany, gateFight, gateOpts, gateTurn, fightSeed, winRate } from '../gate.ts';
-import { days, fightsPerRest, mendBetween, mustRest, companyAt, markOf, ROUND_CAP } from '../harness.ts';
-import { testMonster, trollEncounter, wightEncounter, callerEncounter, lightEncounter } from '../testmonster.ts';
+import { gateCompany, gateFight, gateOpts, gateTurn, fightSeed, winRate, gateAnswer, gatePass } from '../gate.ts';
+import { days, fightsPerRest, mendBetween, mustRest, companyAt, markOf, ROUND_CAP, ANSWER } from '../harness.ts';
+import { testMonster, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, giantEncounter, drakeEncounter } from '../testmonster.ts';
 import { stepsFrom } from './curve.ts';
 import { ok, owed } from './lib.ts';
 
@@ -365,6 +368,18 @@ export function gate(): void {
     const atLights = lit.filter(({ s }) => s.log.map((l) => blade.exec(l)?.[1]).find((x) => x) === 'Test Light').length;
     ok(mark !== undefined && first.monsters[mark].def.drain === 'sp' && won(lit) >= 0.9 && atLights >= seeds * 0.9,
       `it keeps its casters' spell points from the lights: it marks a light before the hound, so its first blade falls on a light in ${atLights} of ${seeds} fights at 19, and it wins ${pc(won(lit))}`);
+    // It plays the sweep (#545): two giants at 23 and two drakes at 25, and wins; and it mends the row
+    // a sweep would take before one sweep could fell anyone in it, so against giants of twice the blow
+    // fewer of its front row fall to a sweep than with no answer.
+    const giants = fought(23, giantEncounter(23)), drakes = fought(25, drakeEncounter(25)), heavy = [testGiant(23, 2), testGiant(23, 2)];
+    const felled = (fs: { s: CombatState }[]): number => fs.filter(({ s }) => s.log.some((l) => / (sweeps|breathes) /.test(l) && /falls?!$/.test(l))).length;
+    const answered = felled(fought(23, heavy));
+    ANSWER.sweep = false;
+    const bare = felled(fought(23, heavy));
+    ANSWER.sweep = true;
+    const swept = giants.filter(({ s }) => s.log.some((l) => l.startsWith('Test Giant sweeps the front row'))).length;
+    ok(won(giants) >= 0.9 && won(drakes) >= 0.9 && swept >= seeds / 2 && answered < bare,
+      `it plays the sweep: it wins ${pc(won(giants))} of two giants' fights at 23, swept in ${swept} of ${seeds}, and ${pc(won(drakes))} of two drakes' at 25; and against giants of twice the blow one of a row falls to a sweep in ${answered} of ${seeds} fights, where with no answer in ${bare}`);
   }
   // The gate's company is harness's (#541): it takes its prestiges at 11, 19 and 27, with their perks
   // and ranks, as play gives them, and wears what harness's wears.
@@ -391,6 +406,34 @@ export function gate(): void {
   // A fight nobody finishes in fifteen rounds is broken off, and counted as not won.
   const slow = [testMonster('soldier', 1, 400, 0.01)];
   ok(gateFight(gateCompany(3, 36), slow, 36) && !gateFight(gateCompany(3, 36), slow, 36, ROUND_CAP), `a fight won only past ${ROUND_CAP} rounds is broken off at ${ROUND_CAP}, and not won`);
+  // A group that asks before it fights (#544), on a fixture: the bot refuses, so the gate measures the
+  // fight, the group's own; the walk past pays the price once, and in the world the group then stands
+  // aside for that company, through a save and a load, where one short of the price is fought.
+  {
+    const toll: Choice = { ask: '"Toll."', answers: [
+      { label: 'Pay', price: 300, sets: 'fx_toll_paid', says: ['He steps aside.'] },
+      { label: 'Refuse', fight: true, says: ['He stands.'] },
+    ] };
+    const band: EncounterDef = { id: 'fx_toll', x: 2, y: 1, monsters: ['bandit', 'bandit', 'bandit'], aware: 3, roams: false, choice: toll };
+    const won = rate(band, 2);
+    ok(gateAnswer(band)?.label === 'Refuse' && !gateAnswer({ choice: undefined }) && won === rate({ monsters: band.monsters }, 2),
+      `the gate's bot refuses a toll and fights the group, its figure the group's own (${pc(won)} won at 2)`);
+    const stair: MapDef = { id: 'fx_stair', name: 'Fixture Stair', kind: 'outdoor', density: 'country', start: { x: 0, y: 1, facing: EAST }, rows: [',,,,', ',,,,', ',,,,'], encounters: [band] };
+    const walk = (gold: number): { p: Party; w: World; at: ReturnType<World['move']> } => {
+      const p = gateCompany(2, 1); p.gold = gold;
+      const w = new World({ fx_stair: new GameMap(stair) }, p, makeRng(1));
+      return { p, w, at: w.move('forward') };
+    };
+    const short = walk(299), rich = walk(300);
+    ok(short.at.kind === 'moved' && short.at.asks === 'fx_toll' && !short.at.encounter && !gatePass(short.p, band) && short.p.gold === 299 && !!short.w.question('fx_toll'),
+      'beside the group its question comes before the fight, and a company short of the price cannot pay it and is fought');
+    ok(gatePass(rich.p, band) && rich.p.gold === 0 && !rich.w.question('fx_toll') && rich.w.standsAside(band) && !rich.w.adjacentGroups().length,
+      'one with the price pays it, once, and the group stands aside: no question and no fight');
+    const past = [rich.w.move('forward'), rich.w.move('forward')];
+    const data = JSON.parse(JSON.stringify({ party: rich.p, world: rich.w.state })), loaded = new World({ fx_stair: new GameMap(stair) }, data.party, makeRng(1), data.world);
+    ok(past.every((r) => r.kind === 'moved' && !r.asks && !r.encounter) && rich.w.state.x === 3 && loaded.standsAside(band) && !loaded.question('fx_toll'),
+      'the company walks past it, through its square, and the toll is remembered through a save and a load');
+  }
   // A group's time to walk: fog brings the bows' toll to its fights, and nothing else does; an
   // `until` changes no fight; a group that waits on an `after` is no warning at the way in.
   {

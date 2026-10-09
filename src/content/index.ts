@@ -23,6 +23,8 @@ import { AREA as kilns } from './areas/kilns/index.ts';
 import { AREA as cairnmoor } from './areas/cairnmoor/index.ts';
 import { AREA as rimewater } from './areas/rimewater/index.ts';
 import * as whitespine from './areas/whitespine/monsters.ts';
+import * as ashfall from './areas/ashfall/monsters.ts';
+import { ITEMS as ASHFALL_ITEMS } from './areas/ashfall/items.ts';
 import { ITEMS as CORE_ITEMS } from './items.ts';
 import { SPELLS as ALL_SPELLS } from './spells.ts';
 import { PLAN } from './atlas.ts';
@@ -37,6 +39,7 @@ export const AREAS = [shelf, thornmark, saltreach, wrackholm, sunderwood, kilns,
  */
 export const AHEAD = [
   { id: 'whitespine' as const, sprites: whitespine.SPRITES, monsters: whitespine.MONSTERS },
+  { id: 'ashfall' as const, sprites: ashfall.SPRITES, monsters: ashfall.MONSTERS },
 ] as const;
 
 /**
@@ -54,7 +57,9 @@ export const ROOMS_AHEAD = [] as const;
  * can hold one until a listed area sells or places it (tools/shipped.ts records a listed area's);
  * once the area is listed, its Area takes the table as `items` and its line here goes.
  */
-export const ITEMS_AHEAD = [] as const;
+export const ITEMS_AHEAD = [
+  { id: 'ashfall' as const, items: ASHFALL_ITEMS },
+] as const;
 
 type AnyArea = (typeof AREAS)[number];
 /** The regions, one to an area; each map names its region and shares its sky. */

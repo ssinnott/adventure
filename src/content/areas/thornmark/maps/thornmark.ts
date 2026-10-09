@@ -2,13 +2,25 @@
 // Thornhold in the north-east, a ruined Warden watchtower in the north-west, a barrow on the
 // eastern hills, a river with one bridge, and the Grove in the deep woods to the south-west.
 // Difficulty band 5-10.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef, Choice } from '../../../../game/map.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../../game/types.ts';
 import type { When } from '../../../../game/quests.ts';
 import { TEAR_CLOSED } from './grove2.ts';
 
 /** Thornhold takes Thora's people in (#219): past it the road's brigands stop coming. */
 const TERMS_TAKEN: When = { flag: 'q_terms_taken' };
+
+/**
+ * The Ogre's Boy (#56's 13, #544): the tower's ogre puts its bargain before the fight. Refused, it is
+ * the Wardens' errand (#144), as it was; kept, it keeps the tower and Kerra's brother goes home.
+ */
+const BARGAIN: Choice = {
+  ask: 'A boy with a bucket stands between you and an old ogre, its eyes milk-white. "It\'s blind, and it pays me in Warden iron. Leave it be."',
+  answers: [
+    { label: 'Kill it.', fight: true, says: ['The boy drops the bucket, and runs.'] },
+    { label: 'Let it keep the tower.', sets: 'q_ogre_kept', says: ['The ogre grunts, and lies down across the door. The boy goes home, and says he will bring it bread.'] },
+  ],
+};
 
 export const THORNMARK: MapDef = {
   id: 'thornmark',
@@ -169,7 +181,7 @@ export const THORNMARK: MapDef = {
   ],
   encounters: [
     { id: 'tm_wolves1', x: 5, y: 9, monsters: ['dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf'], aware: 5, respawn: 1440 },
-    { id: 'tm_ogre', x: 5, y: 7, monsters: ['ogre', 'brigand_archer', 'brigand', 'brigand', 'brigand'], aware: 3, roams: false },
+    { id: 'tm_ogre', x: 5, y: 7, monsters: ['ogre', 'brigand_archer', 'brigand', 'brigand', 'brigand'], aware: 3, roams: false, choice: BARGAIN },
     { id: 'tm_brigands1', x: 23, y: 7, monsters: ['brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand_archer'], aware: 5, respawn: 2880, until: TERMS_TAKEN },
     { id: 'tm_barrow', x: 26, y: 8, monsters: ['bone_knight', 'bone_knight', 'skeleton', 'skeleton', 'skeleton', 'skeleton', 'skeleton', 'skeleton', 'skeleton', 'skeleton', 'skeleton', 'skeleton'], aware: 3, roams: false },
     { id: 'tm_wraiths', x: 30, y: 7, monsters: ['wraith', 'wraith', 'wraith', 'wraith', 'wraith', 'wraith'], aware: 3, roams: false },

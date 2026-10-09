@@ -5,7 +5,7 @@
 // the place. Pure with respect to rendering and input; the Game drives it and reads the results.
 import type { RngInstance } from '../lib/engine/rng.ts';
 import { GameMap, DRAG } from './map.ts';
-import type { Feature, Exit, EncounterDef, Door, MapZone, Cell, Hours, Presence } from './map.ts';
+import type { Feature, Exit, EncounterDef, Door, MapZone, Cell, Hours, Presence, Choice } from './map.ts';
 import type { Facing } from './types.ts';
 import { FACING_DX, FACING_DY, turnLeft, turnRight, turnBack, manhattan } from './types.ts';
 import { partyCan, takeItem, isDown, hasTrait, companyLevel } from './party.ts';
@@ -17,6 +17,7 @@ import { weatherAt, classify, isSnowy, skyNews, weatherSight, snowDrag, rangedPe
 import type { Climate, RegionId, Weather, SkyState } from './weather.ts';
 import { CLIMATES } from '../content/index.ts';
 import { holds } from './quests.ts';
+import { open, given } from './people.ts';
 import { pace, denLooks, densOf } from './dens.ts';
 import { stonesRestored, steadier } from './stones.ts';
 import { signLine, signSays } from './inscriptions.ts';
@@ -71,7 +72,8 @@ const see = (bits: number[], i: number): void => { bits[i >> 5] = (bits[i >> 5] 
 const bitsFor = (cells: number): number[] => new Array(Math.ceil(cells / 32)).fill(0);
 
 export type MoveResult =
-  | { kind: 'moved'; messages: string[]; encounter?: string[]; arrived?: Exit }
+  /** `asks`: the group whose question comes before the fight (#544); then no `encounter`. */
+  | { kind: 'moved'; messages: string[]; encounter?: string[]; asks?: string; arrived?: Exit }
   | { kind: 'blocked'; reason: string }
   | { kind: 'turned' };
 
@@ -412,8 +414,9 @@ export class World {
     this.moveMonsters();
     // What comes into sight is said before the fight it may start.
     messages.push(...this.sightings());
-    const encounter = this.adjacentGroups();
-    return { kind: 'moved', messages, encounter: encounter.length ? encounter : undefined };
+    // A group that talks puts its question first (#544).
+    const encounter = this.adjacentGroups(), asks = encounter.find((id) => this.question(id));
+    return asks ? { kind: 'moved', messages, asks } : { kind: 'moved', messages, encounter: encounter.length ? encounter : undefined };
   }
 
   /**
@@ -603,7 +606,7 @@ export class World {
     if (this.state.truce > 0) return;
     const { x: px, y: py } = this.state;
     for (const g of this.liveGroups()) {
-      if (g.def.roams === false) continue;
+      if (g.def.roams === false || this.standsAside(g.def)) continue;
       const aware = g.def.aware ?? 5;
       const d = manhattan(g.state.x, g.state.y, px, py);
       if (d > aware || d <= 1) continue;
@@ -620,20 +623,33 @@ export class World {
 
   /**
    * Group ids within one cell of the party, up to 3 groups and 12 monsters; a group under the ice
-   * only where the party stands on the ice.
+   * only where the party stands on the ice, and none that stands aside (#544).
    */
   adjacentGroups(): string[] {
     const ids: string[] = [];
     let n = 0;
     const onIce = this.map.at(this.state.x, this.state.y).terrain === 'ice';
     for (const g of this.liveGroups()) {
-      if (this.state.truceGroups.includes(g.def.id)) continue;
+      if (this.state.truceGroups.includes(g.def.id) || this.standsAside(g.def)) continue;
       if (manhattan(g.state.x, g.state.y, this.state.x, this.state.y) > 1) continue;
       if (g.def.under === 'ice' && !onIce) continue;
       if (ids.length >= 3 || n + g.def.monsters.length > 12) break;
       ids.push(g.def.id); n += g.def.monsters.length;
     }
     return ids;
+  }
+
+  /** A group's question while it is still put: none of its answers given (#544). */
+  question(id: string): Choice | undefined {
+    return open(this.map.encounters.find((e) => e.id === id)?.choice, this.party);
+  }
+
+  /**
+   * Whether a group has been answered without a fight: one of its question's answers that does not
+   * fight is given, so for this company it neither asks nor fights, nor follows (#544).
+   */
+  standsAside(def: EncounterDef): boolean {
+    return !!def.choice?.answers.some((a) => !a.fight && given(a, this.party));
   }
 
   groupDefs(ids: string[]): { id: string; monsters: string[]; back?: number; leader?: string; under?: 'ice' }[] {

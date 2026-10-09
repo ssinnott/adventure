@@ -93,7 +93,7 @@ off the springs; the vines' shore humid.
 
 ## 3. What is built
 
-Nothing. Its atlas rows (`src/content/areas/ashfall/atlas.ts`) are charted and spread into the plan
+Its atlas rows (`src/content/areas/ashfall/atlas.ts`) are charted and spread into the plan
 (`src/content/atlas.ts` imports them where its rows were, as Saltreach's were before #170): the
 zones with their bands (Cindercoast 24–25, Fire Mountain 25–26, the Ember Waste 25–26), Cinderport
 at 24–26, Old Cinder at 25–26, the Ember Stone at 26 and Meridian Camp at 25–28 as planned plates,
@@ -103,11 +103,25 @@ Sheer, the ship from Kilnhaven, the town's and the three dungeons' ways in, the 
 and the last crossing. The area cannot be listed in AREAS until #510 gives it a map, which points
 the area's `atlas` at the folder and takes the import out.
 
-The systems it waits on are #442's: the curve's rows and the act's gear step (#542), the volcano,
-lava fields and vines underfoot (#543), sweep with fire (#545), the ship to Cinderport, the Riders'
-ride and the last crossing (#547), the Ember Stone for the Hearth and the sentries after (#548) and
-the bot grown to the band (#549); the giants' toll (#544) and stone (#546) are its neighbours'. Its
-monsters are drawn in #520 and its rooms in #521. Meridian Camp is #22, parked until #443 unparks it.
+Its row on the curve and its step on the gear ladder are in (#542): the row in
+`src/content/progression.ts`, planned until #510 lists the area (band 24–26, next 26, window 5,500),
+and the step in `src/content/areas/ashfall/items.ts`, made ahead of the area (`ITEMS_AHEAD`,
+`src/content/index.ts`) so that the harness and the gate dress by it: Cinderport's armourer's eight
+wares (`ARMOURER`, §4.4), each owed to the armourer (#512) until it is sold. The first box takes the
+table into its Area.
+
+Four of its nine monsters are drawn ahead of the area (#520): the Strangler Vine, the Cinder Beetle,
+the Ember Salamander and the Ash Husk, on the old wood's, the spider's, the salamanders' and the
+skeleton's frames (§7), in `src/content/areas/ashfall/monsters.ts` and listed in `AHEAD`
+(`src/content/index.ts`) until #510 lists the area. Each is owed to the box that first places it
+(`UNPLACED`, `tools/tests/maps.ts`): the vine and the beetle to #510, the salamander to #511 and the
+husk to #514. Nothing else is built.
+
+The systems it waits on are the rest of #442's: the volcano, lava fields and vines underfoot (#543),
+sweep with fire (#545), the ship to Cinderport, the Riders' ride and the last crossing (#547), the
+Ember Stone for the Hearth and the sentries after (#548) and the bot grown to the band (#549); the
+giants' toll (#544) and stone (#546) are its neighbours'. The rest of its monsters, the drakes and
+the heavy machines, are #520's to draw, and its rooms #521's. Meridian Camp is #22, parked until #443 unparks it.
 
 ## 4. What is still to build
 
@@ -542,6 +556,12 @@ the answer; after the Stone, sentries on the road back to Cinderport. Their draw
 nine. §4.2 to §4.9 place every group, box by box, the gentlest at the Stair's foot and the Sentinel
 at the top of the band.
 
+Four of the nine are drawn (#520): the Strangler Vine, a grey tree it has killed, its ropes hanging
+nearly to the ground; the Cinder Beetle, low and black with one forked horn; the Ember Salamander,
+lither than its kin, coal-red, its fire in bands; and the Ash Husk, the cast of a man holding his cup
+up. Each stands on MONSTERS §4.4's line at its level; the vine holds as the bramble does, and the
+groups that place it are set not to roam (§9). The drakes and the heavy machines are still to draw.
+
 Proposed, against the roster's Where column: the Cinder Drake over Cindercoast's shore (H10, G10)
 and on the Hills (E10), where MONSTERS §8.2 has it on Fire Mountain's slopes only, and the Ember
 Salamander at G10's far end and F10's flow, where it has them at the vents. They stand in the
@@ -578,14 +598,19 @@ spider frame as the cinder beetle, the skeleton frame as the ash husk.
   issues (#510 to #519) carry the first figures until their briefs are settled.
 - **Gold.** Training six members from 24 to 26 costs 11,760 with today's `trainPrice`, and to 27,
   the third prestige's level, 6,240 more; the thirds ask a quest, not gold (DESIGN §5). A clear
-  should pay for the training at least, in chests, drops, the halls' pay and the sentries' parts,
-  and the ladder's step at Cinderport's armourer is priced within the band's window, 5,500 (#542).
+  should pay for the training at least, in chests, drops, the halls' pay and the sentries' parts.
+  The ladder's step at Cinderport's armourer is priced within the band's window, 5,500, and no ware
+  comes within 400 of it (#542, as #399 held Act II's): the dearest ware the Drakeskin Coat at
+  3,100, the rest 1,400 to 2,400. The armourer's full set for the premade six comes to about
+  26,900, its weapons 13,900.
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
   (docs/areas/thornmark.md §9, 17): a company at 24 wins nine in ten of H10's fights and walks the
   shore resting at its camp; one at 22 wins no more than one in four, which is how the Stair's foot
   turns a Whitespine company back. The Old Drake and the Sentinel are won about half the time at
   26 and nearly always at 28. The bot grows to the band first (#549): at 24 it must drink, bless
-  and pick lightning for the machines, or the vents will read harder than they are.
+  and pick lightning for the machines, or the vents will read harder than they are. #542's ladder
+  dresses a company at 26 in Cinderport's step, and one at 24, the floor, in Rimewater's rung, as
+  the Whitespine's at 22 is; whether that holds the figures is each box's to measure.
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3); the
   Stone's chamber holds the door's squares empty until it opens, as the Sunder's floor holds the
   wall's.
@@ -640,6 +665,71 @@ Proposed, for the owner, each in the issue that would build it:
   Riders sell, so the Wold's core can be played before F10 and E10 are built (EXPANSION §2.1).
 - **The sentries carry parts,** not gold (MONSTERS §2); **the drakes over the shore and the
   salamanders off the vents** (§7).
+
+Decided by delegate for #542, each the owner's to overturn:
+
+1. **Act IV's ladder is the one step the issue asks:** Cinderport's armourer's, by 25, a point of
+   blow past Rimewater's finds for every class and a point of armour past the furrier's. The briefs'
+   "the same with a plus by 26" (§4.1) is not on it: the issue names one step, so the ladder's top
+   is 25 and the boxes' pluses are theirs to choose, off the ladder (6).
+2. **The armourer sells eight, the coast's trade:** a Slag Mace, a Marlinspike, an Ashwood Bow, a
+   Flamberge, a Battle Staff, a Drakeskin Coat (13), a Cinder Robe (12) and a Basalt Shield (7),
+   `ARMOURER` (§4.4): the staff and the robe 2,000 gold, the other weapons 2,300 to 2,400, the coat
+   3,100 and the shield 1,400. The Flamberge and the Battle Staff are the briefs' own words; their
+   Warhammer, Scale Mail and Horn Bow are older items.
+3. **Armour steps on alternate rungs, as Act III's** (docs/areas/kilns.md §9, #535's 3): the medium
+   wearers take the Drakeskin Coat over the furrier's Bearskin Coat (12), the casters the Cinder
+   Robe over the Fur Robe (11) and plate's wearers the Basalt Shield over the Forge Shield (6), their
+   plate staying the Sleepers' Bay's Plate Mail +4 (13).
+4. **The weapons rise a point of blow over Rimewater's finds, a two-hander a point over a
+   one-hander** (#535's 1): the Slag Mace 18 over the Ice Axe +1's 17, the Flamberge 19 over the
+   Bear Spear +1's 18 and the Ashwood Bow 18.5 over the Hunter's Bow +1's 17.5. The Marlinspike and
+   the Battle Staff, 17.5, better the Skinning Knife +1's and the Guide's Staff +1's 16.5.
+5. **A ware rises about a quarter a town, its dearest a little over half its window** (#535's 7):
+   the Drakeskin Coat 3,100 of 5,500 over the Bearskin Coat's 2,500, the weapons 2,000 to 2,400 over
+   the furrier's 1,600 to 1,900. No ware is within 400 of the window.
+6. **A plus on the step is a box's to place, off the ladder:** the briefs' Warhammer +1, Flamberge
+   +1, Battle Staff +1, Scale Mail +1, Horn Bow and Shield with a plus (§4, docs/areas/glasswold.md
+   §4) are drafts in older words. A box that wants a Flamberge +1 or a Battle Staff +1 makes it of
+   `src/content/areas/ashfall/items.ts` (`P(flamberge, 1)`, 150 gold a plus), inside the window; the
+   harness does not dress by it.
+7. **The step is made ahead of the area** (`ITEMS_AHEAD`, `src/content/index.ts`), as Act III's were
+   (docs/areas/kilns.md §9, #535's 10): no save can hold it until a listed area sells or places it,
+   the first box (#510) takes the table into its Area and each ware is owed to the armourer (#512).
+8. **The rows are owed to the areas' epics with nothing given** (#445, #446 and #447: 0 xp and 0
+   gold), as Act III's were, and the windows stay at 5,000, 5,500 and 6,000, 500 a band as the issue
+   has them.
+9. **The harness's line past 22 is owed to #549:** in the step a company of 28 fights 11.4 standard
+   encounters to a rest where it fought 11.0 without it (11 asked), and one of 26 fights 8.6 where it
+   fought 7.8 (10.5 asked, the line there interpolated between 24 and 28). #549 makes the line again
+   with the step, as #541 did after Act III's.
+
+Decided by delegate for #520 (the four on frames), each the owner's to overturn:
+
+1. **Each stands on the line at its level** (MONSTERS §4.4), `testMonster`'s numbers with the
+   roster's notes on top: the vine a controller at 24 (284, 3d8+6), the beetle armoured at 24 (397,
+   4d8+5), the salamander a skirmisher at 24 (330, 3d8+4) and the husk a soldier at 25 (340, 4d8+3).
+   The boxes' gates tune them.
+2. **The vine holds as the bramble does,** `inflict: paralysed` at 0.3 (the roster's, over the test
+   controller's 0.15), at the bramble's speed of 6. Never roaming is a group's, not a def's: each box
+   that places it sets `roams: false` on the group, as a Rift's warden is set (`src/game/rifts.ts`).
+   Nothing new is owed to the systems.
+3. **Fire does not touch the cinder beetle,** as it does not the fire beetle (MONSTERS §2): `immune:
+   ['fire']`, though the roster's row does not say so. It is the line to drop if the owner wants the
+   coast's beetles to burn.
+4. **The ember salamander keeps its kin's fire and cold** (immune to fire, weak to cold) and is
+   quicker and smaller: speed 16 over the salamander's 15, size 0.62 over 0.68.
+5. **The husk is the dead and carries nothing,** as the bog body: Holy Strike lands on it and sleep
+   and the swarm do nothing; it drops no gold. Speed 10, a stiff soldier's.
+6. **Each is a drawing of its own on its frame:** the vine a dead tree wound with vine, not a tree
+   that walks, its leaves green where the Deepthorn's are dead oak; the beetle low and horned where
+   the fire beetle is high and lit, with no fire on it; the salamander lither, coal-red and banded
+   where its kin is charcoal and spotted; the husk no skeleton but the cast of a man, his cup held up
+   at his shoulder. The salamander's embers are its declared parts (`tools/smoke.ts`); the husk's
+   sifting ash is too faint to be ink.
+7. **Each is owed to the first box that places it:** the vine and the beetle to H10 (#510), the
+   salamander to G10 (#511, the proposal in §7; to G11, #513, if the owner does not take it) and the
+   husk to F11 (#514), whose crater sends them out by night before Old Cinder (#515).
 
 ## 10. Names
 
