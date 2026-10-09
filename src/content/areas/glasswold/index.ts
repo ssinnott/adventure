@@ -5,6 +5,7 @@ import { WOLD_D9 } from './maps/wold_d9.ts';
 import { WOLD_D10 } from './maps/wold_d10.ts';
 import { WOLD_D8 } from './maps/wold_d8.ts';
 import { WOLD_C8 } from './maps/wold_c8.ts';
+import { WOLD_B8 } from './maps/wold_b8.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
@@ -13,9 +14,9 @@ import { INTERIORS } from './interiors.ts';
 export const AREA = {
   id: 'glasswold' as const,
   // In road order: the mesas (#527), the way in from E10, then the steppe (#525), the area's first built,
-  // Akordu, the Riders' camp (#526), and the Scarp's edge west of it, where the stair from the Saltings
-  // comes up (#528).
-  maps: [WOLD_D10, WOLD_D9, WOLD_D8, WOLD_C8],
+  // Akordu, the Riders' camp (#526), the Scarp's edge west of it, where the stair from the Saltings
+  // comes up (#528), and the Wold's heart west again under the rim, the Grey Lion's and Kushtash (#529).
+  maps: [WOLD_D10, WOLD_D9, WOLD_D8, WOLD_C8, WOLD_B8],
   monsters: MONSTERS,
   sprites: SPRITES,
   // The boxes' finds, the Riders' leather their trader sells at Akordu (#526) and the Compact's letter in

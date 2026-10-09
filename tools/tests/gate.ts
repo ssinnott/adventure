@@ -94,6 +94,8 @@ export const BOSSES: Record<string, readonly string[]> = {
   // The Old Drake asleep on Old Cinder's square, down off F11's crater (#515); the Sentinel up through
   // the Ember Stone's door the moment it lights, down inside the Stone on F11 (#516).
   emberwaste: ['old_cinder:oc1_drake', 'ember_stone:es_sentinel'],
+  // The Grey Lion alone on his ground between the mesas, under the rim (#529).
+  wold: ['wold_b8:b8_grey_lion'],
 };
 
 /** Each zone's road: the groups met on it, in order, from its way in. Every zone with groups names one. */
