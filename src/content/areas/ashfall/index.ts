@@ -4,6 +4,7 @@ import type { Area } from '../../area.ts';
 import { CINDERCOAST_G10 } from './maps/cindercoast_g10.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
+import { INTERIORS } from './interiors.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
@@ -20,8 +21,8 @@ export const AREA = {
   // mountain for thunder.
   climate: { summer: 24, winter: 10, daily: 6, damp: [0.04, 0.11], wettest: 200, fog: 0.3, lag: 16,
     fogText: 'Smoke comes down off the mountain and lies along the shore.', thunderText: 'Thunder over the mountain, or the mountain itself.' },
-  // Cinderport's rooms are #521's.
-  interiors: [] as const,
+  // Cinderport's rooms are #521's, drawn ahead of the town (#512).
+  interiors: INTERIORS,
   // Vines underfoot (#543) and the drakes, a family of their own (#520), with G10 (#511).
   novel: { families: ['drakes'], terrain: ['vines'], mechanics: [], landmarks: [] },
   atlas: { zones: ZONES, places: PLACES, sites: SITES },

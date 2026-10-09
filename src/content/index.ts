@@ -24,7 +24,6 @@ import { AREA as cairnmoor } from './areas/cairnmoor/index.ts';
 import { AREA as rimewater } from './areas/rimewater/index.ts';
 import { AREA as whitespine } from './areas/whitespine/index.ts';
 import { AREA as ashfall } from './areas/ashfall/index.ts';
-import * as ashfallRooms from './areas/ashfall/interiors.ts';
 import { ITEMS as CORE_ITEMS } from './items.ts';
 import { SPELLS as ALL_SPELLS } from './spells.ts';
 import { PLAN } from './atlas.ts';
@@ -45,9 +44,7 @@ export const AHEAD = [] as const;
  * area's is (src/ui/interior.ts paints every one); once the area is listed, its Area takes the
  * list as `interiors` and its line here goes.
  */
-export const ROOMS_AHEAD = [
-  { id: 'ashfall' as const, interiors: ashfallRooms.INTERIORS },
-] as const;
+export const ROOMS_AHEAD = [] as const;
 
 /**
  * Items made ahead of their area, as AHEAD's monsters are: the gear ladder's steps are priced, and
