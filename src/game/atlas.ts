@@ -192,6 +192,7 @@ export const MAP_TERRAIN: Record<string, WorldTerrain> = {
   ',': 'grass', '^': 'hills', 'f': 'farm', 't': 'woods', 'd': 'deadwood', 'c': 'crystal', 'v': 'chasm', '-': 'salt', 'h': 'heather', ';': 'tidal', 'a': 'ash', 'p': 'pine', 'i': 'ice', ':': 'dirt', '=': 'road', '_': 'sand', '~': 'shallow', 'W': 'sea', 'w': 'marsh', '!': 'lava',
   '*': 'snow', 'T': 'forest', 'r': 'rock', 'M': 'mountain', '"': 'rock', 'B': 'building', 'D': 'building',
   'A': 'peak', '|': 'cliff',
+  's': 'steppe', 'u': 'dunes', '&': 'vines', 'V': 'volcano', '@': 'volcano',
   'L': 'building', 'S': 'building', '#': 'building', 'o': 'building', '.': 'dirt',
 };
 
