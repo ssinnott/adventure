@@ -25,13 +25,14 @@ which lands the Rider's ride to Cinderport; C8, the Scarp's edge (#528, §4.6), 
 from the Saltings' C7 comes up onto the lip, nine squares of C7 opened for it; B8, the Wold's heart
 (#529, §4.7), which places the Grey Lion, set off the line, and the way up Kushtash; B9, the Glass's
 edge (#530, §4.8), the dunes and the Riders' watch at the gap, whose last square looks onto the
-Glass; and the Ranger's third prestige (#448, §6), Aysu the scout on Kushtash and Oriel Fane's Map,
-the area's first quest. With B9 the Wold is complete overland but for E9 and E8, the country behind
-(#534, parked). `AHEAD` and `PLANNED` are empty; the Wold's step of the quest, which keys on B9's
-flag `gap_watch` or its event `wold_b9:b9_glass`, and the area's chapter are owed to #531. Its
-content is `src/content/areas/glasswold/` (maps, interiors, monsters, items, climate, its part of
-the world map in `atlas.ts` and its walkthrough; its chapter of the one quest, The Warning, in
-`chapter.ts`, to come, and its quests in `quests.ts`, the Ranger's third's first); it has no town
+Glass; the Ranger's third prestige (#448, §6), Aysu the scout on Kushtash and Oriel Fane's Map, the
+area's first quest; and its chapter of the one quest, The Warning (#531, §5), from the glass in the
+grass to the gap and back to Akordu's horse-lines, done on `q_road_east`. With B9 the Wold is
+complete overland but for E9 and E8, the country behind (#534, parked). `AHEAD` and `PLANNED` are
+empty, and the Wold holds the quest's step. Its content is `src/content/areas/glasswold/` (maps,
+interiors, monsters, items, climate, its part of the world map in `atlas.ts` and its walkthrough;
+its chapter, The Warning, in `chapter.ts`, and its quests in `quests.ts`, the Ranger's third's
+first); it has no town
 and one business, the Riders' trader at Akordu, whose tent has a room. Its ids: the area
 `glasswold`, its zones `wold` and `theglass`, the plan's; the Buried Tower `buried_tower`, the
 plan's, left to the reach. Akordu's (the Wold Riders' camp) is the site's name and its map `wold_d8`
@@ -220,7 +221,8 @@ over E10's west edge (§9, #527's 14) and at C8, on the step up the Scarp stair 
 cross into the Glass while it is void (§4.8, §9, #530's 9). The ride's crossing has its Akordu end
 in D8 (§4.4). E10's Wold half is built on the Waste's map (§4.2). C8 is cut through the Saltings'
 C7, nine squares of its column 8 and its notch's words, with the owner's leave (#412, #528; §4.6).
-Nothing else: no quest. Every brief below is a draft.
+Its chapter of the one quest, The Warning, is `chapter.ts`, walked three ways in (§5, #531); its
+one quest so far, Oriel Fane's Map, is `quests.ts` (§6, #448). Every brief below is a draft.
 
 ## 4. What is still to build
 
@@ -922,40 +924,46 @@ settled in its issue, and what Ashfall teaches changes them.
 
 ## 5. The one quest here
 
-The Glasswold's chapter is The Warning (`chapter.ts`, #531), joined after Ashfall's The Window, and
-the Wold, the one zone on the road here, holds its steps (EXPANSION §5.8); the Glass is declared
-the reach and is exempt. Its entries and goals, in the journal's voice, keyed to flags, events and
-maps the save holds:
+The Glasswold's chapter is The Warning (`chapter.ts`, #531, a working title), joined after Ashfall's
+The Window; the Wold, the one zone on the road here, holds its steps (EXPANSION §5.8), and the Glass
+is declared the reach and is exempt. It begins on The Window's done flag, `q_road_west`, set on E10's
+road or where the Rider's ride sets a company down at Akordu (ashfall.md §5), or, the Ember Stone lit
+(`q_ember_lit`), at the Scarp stair's head, C8's `c8_line`, for a company come up from the Saltings
+instead, which ends The Window too with no road west written. It is done on `q_road_east`,
+`ROAD_EAST` in D8's map: the flag Phase 1.5's chapter starts on. As built, its entries and goals, in
+the journal's voice, keyed to flags, events and maps the save holds:
 
-- **The way in.** From the Waste the road climbs the Cinder Hills and comes down onto grass; the
-  goal points west over the steppe to the horse people's white tents. Ashfall's chapter is done on
-  `q_road_west`, set on E10's road or, for a company that rides, at D8's horse-lines (`d8_east`),
-  each once the Ember Stone is lit (ashfall.md §5, #518): the flag this chapter can start on.
-- **The grass.** There is glass in it, and it glitters to the south-west for miles: this land
-  burned once. The goal goes on to Akordu. D9 lays the event this keys on, `d9_glass` at 18,29 on
-  the road in; the step is #531's (§9, #525's 13 and 18).
-- **Akordu.** The eldest tells the oldest story on that side of the sea: long ago a door opened in
-  the sky, something rose toward it on a pillar of fire and fell, and the land where it fell burned
-  to glass. *What lies in the glass tried to leave. The sky opened for it. Remember what that cost,
-  if anyone ever offers to open it for you.* The goal turns west, to the way into the Glass. D8 lays
-  the flag this keys on, `akordu_story`, set by her telling and exported as `STORY` from the map;
-  the step is #531's (§9, #526's 11).
-- **The gap.** The Riders keep the only way in, three of them at a fire on the last grass, and they
-  are right to: something walks out of it now and then, and has walked a long way. The Glass is
-  seen, and the Tower's crown in it. The goal turns back east, to Cinderport and the last crossing,
-  Ashfall's (#512). B9 lays the keys this step can use: the flag `gap_watch`, set by the first of
-  the three Riders met and exported as `WATCH` from the map, and the once event `wold_b9:b9_glass`
-  at the gap's last square, 31,27, where the Glass and the crown are seen; the step is #531's (§9,
-  #530's 8).
+- **The way in.** The goal points west up the Riders' road through the mesas onto the open steppe
+  (D9). A company come up the stair is warned at the cairn that what hunts on the Wold kills Riders
+  (`stair`, on `c8_line`), and its goal goes over the grass to Akordu.
+- **The grass.** There is glass in it, glittering south-west for miles: this land burned once
+  (`grass`, on `d9_glass` at D9's 18,29, on the road in). The goal goes over the grass to Akordu.
+- **Akordu.** The Riders' white tents in a ring under a mesa, from which they ride down to the port
+  to trade (`akordu`, on D8 visited: by the track, the ride or the Scarp's edge). The goal is the
+  eldest's fire.
+- **The eldest's story.** At her own fire she tells it whole: where the fire fell the land burned
+  three days and cooled to glass (`eldest`, on `akordu_story`, her `flag`). The goal turns west under
+  the rim and south over the dunes, to the Riders who keep the way into the Glass.
+- **The gap.** Three Riders keep the only way in, at a fire on the last grass: something is always
+  walking out (`watch`, on `gap_watch`). From the gap's last square the Glass runs white to the sky,
+  a dark crown far out in it, and the Riders are right to keep it (`glass`, on `b9_glass`). With the
+  eldest and the watch heard as well, the goal turns back over the Wold to Akordu's horse-lines, and
+  east to Cinderport and the last crossing (#512).
+- **The road east.** At the lines the once event `d8_turned` (8,27), `after` the eldest, the watch
+  and the Glass, has a Rider turn a saddled horse's head east and sets `q_road_east` (`east`).
 
 The Wold holds the step; the Glass is the reach, and no step of the quest lies in it (EXPANSION
-§5.8). Nothing in the chapter is a lock (EXPANSION §2.3): the Riders' watch keeps the gap with
-words and its band, not a wall, the ride to Cinderport is a fare and the stair is open both ways.
-The walkthrough plays it at 26, 27 and 28, in order, and once with the Wold entered by the Scarp
-stair from the Saltings, the journal still true.
+§5.8). Nothing in the chapter is a lock (EXPANSION §2.3): the watch keeps the gap with words and its
+walkers with their band, not a wall; the ride is a fare, the stair is open both ways and the parts
+come in any order, the goal naming the first still to do. The chapter pays no xp of its own (§8).
+The walkthrough plays it at 26, 27 and 28 three ways in: by the road, in the goals' order; set down
+at Akordu by the Rider's ride, the watch and the gap before the eldest, and back to the port on the
+ride; and up the Scarp stair, the gap first. The journal reads the same in each, but for the grass,
+seen only on the road, and the stair's warning, only up the stair.
 
-STORY has the eldest tell her story at the port, where the Riders come down to trade; the chapter
-puts her at Akordu, her own fire, with the Rider's ride between (§9).
+STORY has the eldest tell her story at the port, where the Riders come down to trade; she tells part
+of it at Cinderport's gate in The Window and the whole at Akordu, her own fire, with the Rider's ride
+between (§9).
 
 ## 6. Side quests
 
@@ -1794,6 +1802,28 @@ Decided by delegate for #530, each the owner's to overturn:
     against the rim" (not in the box: the flow ends at 130,376) and its hint "by the Riders' store"
     (the doc's is the dune that does not shift: 11).
 
+Decided by delegate for #531, each the owner's to overturn:
+
+1. **Three ways in, one chapter:** it begins on `q_road_west` (the road or the ride) or on the stair's
+   head with the Stone lit; the Stone is asked so a company that climbs at 12 is not sent on.
+2. **The stair's head ends The Window too** (its `done` widened, one line in Ashfall's chapter), so a
+   company that never walks the road west is not left with The Window open and its road unwritten.
+3. **`d8_east` is gone once the stair's head is seen** (`until`), so the ride's landing never writes
+   the road over the Hills for a company that came up the stair; E10's `e10_west` is Ashfall's (§11).
+4. **The done flag is `q_road_east`, set at Akordu's horse-lines:** Cinderport is Ashfall's map and
+   its band ends at 26, so the chapter ends on the Wold, where the ride east is sold.
+5. **The done waits on the eldest and the watch as well as the Glass,** so nothing a person says is
+   written into the chapter after it is done; the goals name what is missing first.
+6. **Akordu keys on D8 visited,** not `d8_akordu`, so the ride and the Scarp's edge write it too; its
+   goals say "the Wold", the atlas's Akordu being lettered on the world, not on D8's map.
+7. **No step at the heart:** the way to the gap goes through B8 under the rim, and Kushtash is the
+   Ranger's (§6); the walk wins the gap's two walkers at 28, the Glass kept by them in fact.
+8. **The eldest's entry is the land burned to glass,** the part she did not tell at the port; what it
+   cost is The Window's `eldest`, not said twice.
+9. **The stair's warning is an entry,** `stair`, written for any company at the cairn; it stands
+   before Akordu in the journal, where the stair puts it.
+10. **No xp of its own,** §8 giving the chapter no share.
+
 ## 10. Names
 
 The Glasswold's naming pass, by the rules of `docs/NAMES.md`: the Wold Riders' tongue was left to
@@ -1852,7 +1882,7 @@ Owed, from D9 (#525):
 - **D9's edges end in the void:** the west edge against C9, the Glass's and left to the reach, and
   the east against E9 (#534); its north edge meets D8's, the track at 16,0 (#526, §4.4), and its
   south edge meets D10 and `CUT_OFF` is empty (#527; §1, §9, #525's 3 to 6).
-- **The step and the chapter** on `d9_glass` are #531's (§5); **quest 51** and the Etched Glass's
+- **The step and the chapter** on `d9_glass` are built (#531, §5); **quest 51** and the Etched Glass's
   buyer are #532's, #526's and #512's (§6, §9, #525's 11 and 12).
 - **The Wold's crossing words** are walked at D10 (#527) and at the Scarp stair's head (#528)
   (§9, #525's 14, #528's 2).
@@ -1866,7 +1896,7 @@ Owed, from D10 (#527):
   pride (§4.5, §9, #527's 8). The pay stays under the share, 3,199 xp a member of 3,250 (§8).
 - **The garden at Akordu** is built (#526, §4.4) and **the mothers who sit in it** are #532's (55);
   the Rider on the hill says only that the ones carried home stand there (§4.5).
-- **The chapter's steps** on the Wold are #531's (§5); **the draught at Akordu's trader** is built
+- **The chapter's steps** on the Wold are built (#531, §5); **the draught at Akordu's trader** is built
   (§4.4, §9, #526's 6).
 - **The figures two under the floor** are owed to #18 and **the area's pay and gold** to #447: 6,139
   xp of 21,067 and 2,850 gold of 12,720 (§8).
@@ -1878,7 +1908,7 @@ Owed, from D8 (#526):
   the horse's saddle being the walker seen. The brief's four groups gave 16.3 fights to a rest at
   26, past the limit of 14, and a flock heavy enough to count takes the pay past the cap (§4.4, §7,
   §9, #526's 8 and 21).
-- **The step and the chapter's Akordu** are #531's, keyed on `akordu_story` (§5, §9, #526's 11);
+- **The step and the chapter's Akordu** are built (#531), keyed on `akordu_story` (§5, §9, #526's 11);
   **quests 51, 53, 54 and 55** have their Akordu ends in #532's, with the rest of the eldest's story
   for 53 ("the rest is for those who have earned it"): the young Rider, the Rider with a hammer, the
   woman among the figures and the horse that came back stand there with words only (§6, §9, #526's
@@ -1899,8 +1929,8 @@ Owed, from C8 (#528):
   the Scarp Stair (#56's 54), with its Akordu end, is #532's (§6, §4.6, §9, #528's 7).
 - **The Scarp's mass stays closed:** 292 of C7's 301 Glasswold squares are mountain still, the
   stair's nine being the only ones opened (§4.6, §9, #528's 3).
-- **The chapter's play** with the Wold entered by the stair is #531's (§5): the walkthrough here
-  climbs the stair at 12, 25 and 26 and plays no step.
+- **The chapter's play** with the Wold entered by the stair is built (#531, §5): the box's walk
+  climbs the stair at 12, 25 and 26, and the chapter's climbs it with the Stone lit.
 - **C8's south edge ends in the void** against C9, the Glass's and left to the reach; its west edge
   meets B8's (#529, §4.7) (§4.6, §9, #528's 16).
 - **The figures two under the floor** are owed to #18 and **the area's pay and gold** to #447:
@@ -1917,7 +1947,7 @@ Owed, from B8 (#529):
   him gated (§6, §9, #529's 11).
 - **B9 meets B8's south edge** (#530, built): columns 1 to 31 are open both sides, and B9's builder
   re-pinned the edge (§4.7, §4.8, §9, #529's 18, #530's 19).
-- **The chapter's step at the heart,** if it has one, is #531's (§5).
+- **The chapter has no step at the heart** (§5, §9, #531's 7).
 - **The rim is laid as the world's end:** column 0 and the corner are void in play, and the open
   land is columns 1 to 31 (§4.7, §9, #529's 13).
 - **The figures two under the floor** are n/a for B8, its floor being above the area's, and the
@@ -1926,8 +1956,7 @@ Owed, from B8 (#529):
 
 Owed, from B9 (#530):
 
-- **The chapter's step at the gap** is #531's, with the chapter itself: it starts on Ashfall's done
-  flag, `q_road_west`, and its last step on the Wold keys on the flag `gap_watch` or the event
+- **The chapter's step at the gap** is built (#531): it keys on both, `gap_watch` and
   `wold_b9:b9_glass` (§5, §9, #530's 8).
 - **The reach meets the gap at 31,27 (71,281):** C9 joins B9's east edge, rows 0 to 13 of steppe and
   dunes and the gap's last square, and B10 meets the rim's foot along the south, in Phase 1.6. The
@@ -1944,3 +1973,10 @@ Owed, from B9 (#530):
   builder will meet it (§9, #530's 3).
 - **The figures two under the floor** are owed to #18 and **the area's pay and gold** to #447:
   17,613 xp of 21,067 and 9,650 gold of 12,720 (§8).
+
+Owed, from the chapter (#531):
+
+- **E10's `e10_west`** still writes The Window's road over the Hills for a company come up the stair
+  that later walks east over the last shoulder: an `until` on it is Ashfall's (#518; §9, #531's 3).
+- **The last crossing** is Phase 1.5's: The Warning is done at Akordu's horse-lines on `q_road_east`,
+  and the next chapter starts on it (§5).
