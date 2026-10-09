@@ -647,7 +647,9 @@ the reach and is exempt. Its entries and goals, in the journal's voice, keyed to
 maps the save holds:
 
 - **The way in.** From the Waste the road climbs the Cinder Hills and comes down onto grass; the
-  goal points west over the steppe to the horse people's white tents.
+  goal points west over the steppe to the horse people's white tents. Ashfall's chapter is done on
+  `q_road_west`, set on E10's road or, for a company that rides, at D8's horse-lines (`d8_east`),
+  each once the Ember Stone is lit (ashfall.md §5, #518): the flag this chapter can start on.
 - **The grass.** There is glass in it, and it glitters to the south-west for miles: this land
   burned once. The goal goes on to Akordu. D9 lays the event this keys on, `d9_glass` at 18,29 on
   the road in; the step is #531's (§9, #525's 13 and 18).

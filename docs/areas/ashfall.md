@@ -285,10 +285,11 @@ to Old Cinder's undercroft and The Shovel That Does Not Blunt from Cinderport's 
 scavenger by Grimsforge (G11), as §6 has them, each walked every way at its level.
 
 Its chapter of the one quest is written (#518): The Window, in `src/content/areas/ashfall/chapter.ts`,
-joined after the Whitespine's The Bells and walked three ways at 24, 25 and 26 (§5). It begins on
+joined after the Whitespine's The Bells and walked four ways at 24, 25 and 26 (§5). It begins on
 The Bells' end, `q_stair_top`, or at Cinderport for a company come by sea from Kilnhaven, and is done
-on `q_road_west`, which E10's `e10_west` sets on the road's last shoulder once the Stone is lit: the
-flag the Wold's chapter (#531) starts on. G10's eldest sets `q_eldest_heard` at her first meeting.
+on `q_road_west`, which E10's `e10_west` sets on the road's last shoulder once the Stone is lit, and
+the Wold's D8 (`d8_east`, at the horse-lines) for a company that rides west instead: the flag the
+Wold's chapter (#531) starts on. G10's eldest sets `q_eldest_heard` at her first meeting.
 
 Its ground (#543): vines (`&`), walked through as the woods are, the shore's trees hung with
 creepers; the volcano (`V`) and a vent in it (`@`), the mountain's rock to walk into, see and climb,
@@ -1144,7 +1145,9 @@ entries and goals, in the journal's voice, keyed to flags, events and maps the s
 - **The road on.** The goal turns west along the Riders' road over the Ember Waste and the Cinder
   Hills, onto the steppe. On the road's last shoulder, E10's 1,6, the once event `e10_west`, `after`
   `q_ember_lit`, says the grass below and the Stone white behind and sets `q_road_west` (`west`): the
-  chapter's done flag, `ROAD_WEST` in the map, on which the Wold's chapter (#531) starts.
+  chapter's done flag, `ROAD_WEST` in the map, on which the Wold's chapter (#531) starts. A company
+  that rides west from Cinderport's gate instead is set down at Akordu's horse-lines (D8's 9,27),
+  where `d8_east`, `after` `q_ember_lit`, sets the same flag.
 
 While the parts are fetched, a part carried sends the company up to the Stone to set it; with none
 carried, what is set picks the next place: Old Cinder once the vents' and the corridors' parts are in,
@@ -1155,10 +1158,11 @@ Nothing in the chapter is a lock (EXPANSION §2.3; #443, call 2; #450): the ship
 with the fare, the three dungeons are open at any hour, a part may be fetched in any order and the
 Stone takes them as they come. A company that reaches Cinderport by Kilnhaven's ship, or finds Old
 Cinder's part first, reads the journal true in that order. The walkthrough plays it at 24, 25 and 26
-three ways, each part carried up as found: by the Stair, the parts in the goals' order and the window
+four ways, each part carried up as found: by the Stair, the parts in the goals' order and the window
 looked through; by Kilnhaven's ship, Old Cinder's part first and the window passed; by the Stair
 again, the eldest before the town, Old Cinder's part fetched while the goal names the corridors and
-the camp never reached. The chapter pays nothing of its own (§8).
+the camp never reached; by the ship again, west at the end on the Rider's ride, the road never
+walked. The chapter pays nothing of its own (§8).
 
 ## 6. Side quests
 
@@ -2394,7 +2398,9 @@ Decided by delegate for #518, each the owner's to overturn:
 2. **Both ways in begin it:** `q_stair_top`, The Bells' done flag, or Cinderport visited, for a
    company come by Kilnhaven's ship; the Stair's foot is written only for one that stands there.
 3. **The done flag is `q_road_west`,** set by a new once event, `e10_west`, on E10's road at 1,6,
-   `after` `q_ember_lit`, as #505 set `q_stair_top` on the Stair. The Wold's chapter starts on it.
+   `after` `q_ember_lit`, as #505 set `q_stair_top` on the Stair, and by a second, `d8_east`, where
+   the Rider's ride sets a company down at Akordu: either way west ends the chapter, and the Wold's
+   starts on it.
 4. **The eldest's step keys on a new flag,** `q_eldest_heard`, her `flag`, set at her first meeting
    at G10; her three lines are untouched. A once event beside her would not say she was heard.
 5. **The Stone seen keys on `es_heart`,** the three sockets inside the Stone: F11's `f11_stone` is
@@ -2415,8 +2421,9 @@ Decided by delegate for #518, each the owner's to overturn:
 12. **The crossing is the road west onto the grass:** the last crossing waits at Cinderport's quay,
     the Wold's chapter's end (docs/areas/glasswold.md §5).
 13. **The chapter pays nothing,** as no chapter does: §8 budgets nothing for it.
-14. **The walkthrough plays it three ways** at 24, 25 and 26, each part carried up as found, the
-    parts' order shuffled and the window looked through once and passed once (§5).
+14. **The walkthrough plays it four ways** at 24, 25 and 26, each part carried up as found, the
+    parts' order shuffled, the window looked through once and passed once and west once by the ride
+    (§5).
 
 ## 10. Names
 
@@ -2628,9 +2635,6 @@ Owed, from #448's Ashfall three:
   the engine does not keep; a system's pull request, if the owner wants it (§9, #448's 10).
 
 Owed, from the chapter (#518):
-- **A company that rides to Akordu** on the Rider's horse passes E10's road, so `q_road_west` stays
-  unset and the chapter open until it walks the road; the Wold's chapter (#531) may start on its own
-  maps as well as on the flag.
 - **The explorers' line,** *The heart opens for whoever makes it whole*, is written by The Bells and
   not again here; its first writing in the Meridian journal stays Thornmark's (docs/areas/whitespine.md
   §11).
