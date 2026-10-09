@@ -833,7 +833,9 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(w.world.zone?.id === 'saltings_c7', 'south from Saltmouth\'s box the salt runs on into the pans, C7');
   listen(w);
   const foot = C7.features!.find((f) => f.kind === 'event' && f.id === 'c7_stair');
-  ok(foot?.kind === 'event' && C7.rows[foot.y + 1][foot.x] === 'M' && new GameMap(C7).passable(foot.x, foot.y) === 'ok', 'the Scarp stair\'s foot is a notch in the cliff, its lowest flight fallen, walked to and no further');
+  // Since the Wold's C8 (#528) its flights climb on up column 8 through the Scarp, past the fall by a rope ladder.
+  ok(foot?.kind === 'event' && C7.rows.slice(foot.y + 1).every((row) => row[foot.x] === '"' && row[foot.x - 1] === 'M' && row[foot.x + 1] === 'M') && new GameMap(C7).passable(foot.x, foot.y) === 'ok' && foot.text.includes('rope ladder'),
+    'the Scarp stair\'s foot is a notch in the cliff, its lowest flight fallen, and a rope ladder past the fall to the flights cut up through the Scarp');
 
   // The secret: the one wall trodden, then the search, the crabs' hole and the sealed pan's hoard.
   const hoard = C7.features!.find((f) => f.kind === 'chest' && f.id === 'c7_hoard');
