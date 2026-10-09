@@ -16,7 +16,7 @@
 // of the posts. Then the high pass (K10, #491): on from L9's pass, taken, not walked, the cold loch's
 // crossing line said after the pass's own at each level, and back; in from the cold loch (K9) over its
 // south edge, walked, the land not named again; the road square to square to the pass's mouth and out by
-// the west edge for J11, where the world ends; the milestone at the pass's foot, counted along the
+// the west edge, taken on over the pass onto J11; the milestone at the pass's foot, counted along the
 // roads; the step at the mouth, the pilgrims camped below it and the first peak from the shoulder; the
 // box's groups, the pike under the lake's shore ice and the bears the hardest; and the Lanterns' cache
 // under the dark lamp's jar-shelf, its jar full. Then Loch Fuar (K9, #489): in from L9 over the pines,
@@ -55,7 +55,7 @@ import type { Person } from '../../../game/people.ts';
 import { NOTCH } from '../cairnmoor/maps/cairnfield_n8.ts';
 import { UP, GATE, LAKE_DOOR } from './maps/longmere_m9.ts';
 import { PASS } from './maps/longmere_l9.ts';
-import { RIDGE } from './maps/coldmere_k10.ts';
+import { RIDGE, SADDLE } from './maps/coldmere_k10.ts';
 import { DOOR } from './maps/coldmere_k9.ts';
 import type { Walk, Step } from '../../../../tools/walk.ts';
 import { GUILD_QUESTS } from '../../index.ts';
@@ -376,8 +376,8 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(passIn.join(' / ') === `${PASS.label} / Loch Fuar.`, `at 20, the pass's line and then the cold loch named, no more (${passIn.join(' / ')})`);
   ok(passTwo.join(' / ') === `${PASS.label} / Loch Fuar. ${FUAR.crossing?.harder}`, `at 18, the rest in the cold loch's own words (${passTwo.join(' / ')})`);
   ok(passLow.join(' / ') === `${PASS.label} / Loch Fuar. ${FUAR.crossing?.warning}`, `at 17, the harsher words, and the way back east open (${passLow.join(' / ')})`);
-  ok(K10.start.x === PASS.tx && K10.start.y === PASS.ty && (K10.exits ?? []).length === 1 && K10.exits![0] === RIDGE && RIDGE.x === PASS.tx + 1 && RIDGE.y === PASS.ty,
-    'the landing is the box\'s way in and no way out, and the way back is the road\'s last square beside it, its only way out but its edges');
+  ok(K10.start.x === PASS.tx && K10.start.y === PASS.ty && (K10.exits ?? []).length === 2 && K10.exits!.includes(RIDGE) && K10.exits!.includes(SADDLE) && RIDGE.x === PASS.tx + 1 && RIDGE.y === PASS.ty,
+    'the landing is the box\'s way in and no way out, and the way back is the road\'s last square beside it, its only way out but its edges and the pass on over to J11 (SADDLE, #499)');
   // Back from the road's last square: straight back within the hour, the way's own line alone; come to
   // it from elsewhere, over K9's south edge, walked, and the land not named again, the long loch named.
   w.world.travel('coldmere_k10', PASS.tx, PASS.ty, EAST);
@@ -392,12 +392,13 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(seam.kind === 'moved' && crossed && kn.y + kn.h === k10.y && !seam.messages.some((m) => m.includes('Loch Fuar.')) && round.kind === 'moved' && round.messages.join(' / ') === `${RIDGE.label} / Loch Fada.`,
     `south from K9's 20,31 onto K10's 20,0, walked, and the land not named again (${seam.kind === 'moved' ? seam.messages.join(' / ') || 'nothing said' : seam.kind}); back by the road, the long loch named (${round.kind === 'moved' ? round.messages.join(' / ') : round.kind})`);
 
-  // The road square to square from the bridge to the pass's mouth and out by the west edge at 0,19 for
-  // J11 (#499), where for now the world ends; the milestone at the pass's foot, to the lodge's gate and
+  // The road square to square from the bridge to the pass's mouth and out by the west edge at 0,19,
+  // taken on over the pass onto J11 across parked J10's corner (#499, SADDLE: the Whitespine's
+  // walkthrough crosses it); the milestone at the pass's foot, to the lodge's gate and
   // over the pass to the road's end at the monks' gate in Monks' Vale.
   const onK10 = on(k10), k10Road = reach(k10.x + PASS.tx, k10.y + PASS.ty, (x, y) => road(x, y) && onK10(x, y));
-  ok(k10Road.has((k10.y + RIDGE.y) * out.width + k10.x + RIDGE.x) && k10Road.has((k10.y + 15) * out.width + k10.x + 5) && k10Road.has((k10.y + 19) * out.width + k10.x) && out.passable(k10.x - 1, k10.y + 19) !== 'ok',
-    'the road runs square to square over K10 from the bridge at 30,3 to the pass\'s mouth at 5,15 and out by the west edge at 0,19, and past it, for now, the world ends');
+  ok(k10Road.has((k10.y + RIDGE.y) * out.width + k10.x + RIDGE.x) && k10Road.has((k10.y + 15) * out.width + k10.x + 5) && k10Road.has((k10.y + 19) * out.width + k10.x) && out.passable(k10.x - 1, k10.y + 19) !== 'ok' && SADDLE.x === 0 && SADDLE.y === 19,
+    'the road runs square to square over K10 from the bridge at 30,3 to the pass\'s mouth at 5,15 and out by the west edge at 0,19, taken on over the pass, parked J10 between');
   const vale = ATLAS.links.find((l) => l.from === 'monksvale' && l.to === 'monastery')!.a!;
   const k10Stone = counted(k10, K10, 'k10_milestone', { name: 'MONKS\' VALE', at: vale });
   ok(k10Stone.says, `at the pass's foot the milestone says RIME LODGE ${units(k10Stone.toLodge)} and MONKS' VALE ${units(k10Stone.toPass)}: ${k10Stone.toLodge} squares along the road to the lodge's gate and ${k10Stone.toPass} over the pass to the monks' gate`);
