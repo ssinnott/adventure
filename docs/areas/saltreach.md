@@ -802,8 +802,9 @@ Two halls open here (DESIGN §8), on the rules and the hall menu built in #132:
   | 1 | The West Arm | over the west arm's ford to the eel-catcher's hut (`saltings_c6:c6_hut`) | 200 gold, 360 xp |
 
   The quests of ranks 2 and 3, offered to a Surveyor and a Mapmaker, ride Act IV's dungeons (#635,
-  DESIGN §8): the Surveyor's with the Ember Stone (#516) and the Mapmaker's with Meridian Camp
-  (#22). Geographer, the fourth rank, is the top and has none.
+  DESIGN §8): the Surveyor's, *The Fourth Journal*, is the Ember Stone's, built
+  (docs/areas/ashfall.md §6, §9, #516's 16), and the Mapmaker's rides Meridian Camp (#22).
+  Geographer, the fourth rank, is the top and has none.
 - **The Salt Compact** (#182, built), the harbour tavern (#253): the first task, a run of brandy past
   the customs house; a first rank of two quests, the crews' crate on C6's quay and the watcher's
   place on Wrackholm's west cliff; the boat's fare halved for a member (§4.9). Its line begins

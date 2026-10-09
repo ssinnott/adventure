@@ -13,6 +13,8 @@ import { EMBERWASTE_E10 } from './maps/emberwaste_e10.ts';
 import { EMBERWASTE_F11 } from './maps/emberwaste_f11.ts';
 import { OLD_CINDER } from './maps/old_cinder.ts';
 import { OLD_CINDER2 } from './maps/old_cinder2.ts';
+import { EMBER_STONE } from './maps/ember_stone.ts';
+import { GUILDS } from './guilds.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { INTERIORS } from './interiors.ts';
@@ -22,9 +24,9 @@ export const AREA = {
   id: 'ashfall' as const,
   // In road order: the Stair's foot (#510), Cinderport's box (#511), the town (#512), Fire Mountain's
   // flank (#513), the vents beneath it, the iron corridors under them and the camp at the bottom (#22),
-  // the Waste's road west of the box (#517), Old Cinder's and the Ember Stone's box south of it (#514) and
-  // Old Cinder's two levels under its crater (#515).
-  maps: [CINDERCOAST_H10, CINDERCOAST_G10, CINDERPORT, FIREMOUNT_G11, MERIDIAN_CAMP, MERIDIAN_CAMP2, MERIDIAN_CAMP3, EMBERWASTE_F10, EMBERWASTE_E10, EMBERWASTE_F11, OLD_CINDER, OLD_CINDER2],
+  // the Waste's road west of the box (#517), Old Cinder's and the Ember Stone's box south of it (#514),
+  // Old Cinder's two levels under its crater (#515) and the Ember Stone under its field of cinders (#516).
+  maps: [CINDERCOAST_H10, CINDERCOAST_G10, CINDERPORT, FIREMOUNT_G11, MERIDIAN_CAMP, MERIDIAN_CAMP2, MERIDIAN_CAMP3, EMBERWASTE_F10, EMBERWASTE_E10, EMBERWASTE_F11, OLD_CINDER, OLD_CINDER2, EMBER_STONE],
   // The camp pays outside any area's budget: its floor, 27, is past Ashfall's band (EXPANSION §5.2, #679).
   outside: ['meridian_camp3'],
   monsters: MONSTERS,
@@ -35,6 +37,8 @@ export const AREA = {
   // staff and Fane's map in the camp (#22).
   items: ITEMS,
   quests: [],
+  // The Cartographers' Surveyor's rung, the fourth Meridian journal found under the Ember Stone (#635).
+  guilds: GUILDS,
   // The Window, the act's second chapter, is #518's.
   chapter: undefined,
   // The coast under the mountain: warm and wet, the vines green the year round, smoke for fog and the

@@ -32,12 +32,16 @@
 // G11's west: the crater, its roofs standing out of the pit, the way down at its lip, the old
 // Lightbearer by it and the cairn on its rim; the hermit and the camp in the rock; the causeway over the
 // flow and its milestone; the Stone half-built on its field of cinders in its iron scaffold, the way in
-// barred until the Ember Stone is built, and the shrine at the field's edge; the groups won at the
-// floor, the husks only by night and the sentries only after the Stone; and the builders' hollow, found
-// from the rock's scored face. Then Old Cinder (#515), down off the crater's lip: the buried town's
-// street and its people in their doorways, the well, the kilns, the husks and the Old Drake asleep on
-// the square; down the hall's stair to the cellars, the founding stone, the lamp at the bottom and the
-// Ember Stone's second part beside it; and the lamp-keeper's cellar behind the fallen stair.
+// down inside it, and the shrine at the field's edge; the groups won at the floor, the husks only by
+// night and the sentries only after the Stone; and the builders' hollow, found from the rock's scored
+// face. Then Old Cinder (#515), down off the crater's lip: the buried town's street and its people in
+// their doorways, the well, the kilns, the husks and the Old Drake asleep on the square; down the hall's
+// stair to the cellars, the founding stone, the lamp at the bottom and the Ember Stone's second part
+// beside it; and the lamp-keeper's cellar behind the fallen stair. Then the Ember Stone (#516), down
+// inside the Stone: the gallery, the benches, the lookout and the seedling's bed; the three parts set in
+// their sockets in any order, the Stone lit, the Sentinel won in its door and the sentries after it;
+// the lower gallery behind the housing's foot and the fourth journal in it; and the Cartographers'
+// Surveyor's rung paid for it at a hall of the Guild, the Chart House's shelf full (#635).
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen, walkThrough } from '../../../../tools/walk.ts';
 import type { Walk } from '../../../../tools/walk.ts';
@@ -49,14 +53,15 @@ import { OUTDOORS } from '../../../game/outdoors.ts';
 import { GameMap } from '../../../game/map.ts';
 import type { Feature, MapDef } from '../../../game/map.ts';
 import { restRefused } from '../../../game/wilds.ts';
-import { meet, heard, answer } from '../../../game/people.ts';
+import { meet, heard, answer, barred } from '../../../game/people.ts';
 import { questLog } from '../../../game/quests.ts';
 import type { Person } from '../../../game/people.ts';
 import { buy, item } from '../../../game/items.ts';
 import { canTrainAt, xpForLevel, rest, trainPrice, levelUp, templePrice, addCondition } from '../../../game/party.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
 import { offered, take, inHand, report, rankOf } from '../../../game/guilds.ts';
-import { rankFlag } from '../../guilds.ts';
+import { rankFlag, takenFlag, doneFlag } from '../../guilds.ts';
+import type { Party } from '../../../game/party.ts';
 import { take as sail, fareOf } from '../../../game/passage.ts';
 import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
 import { serialize, deserialize } from '../../../game/save.ts';
@@ -71,6 +76,8 @@ import { STAIR } from './maps/meridian_camp.ts';
 import { STAIR2 } from './maps/meridian_camp2.ts';
 import { ROPE } from './maps/meridian_camp3.ts';
 import { CRATER, STONE } from './maps/emberwaste_f11.ts';
+import { LIT, LIGHTS, SOCKETS } from './maps/ember_stone.ts';
+import { SLEEPERS_SEEN } from '../rimewater/chapter.ts';
 
 const G10 = MAP_DEFS.find((d) => d.id === 'cindercoast_g10')!, G11 = MAP_DEFS.find((d) => d.id === 'firemount_g11')!;
 const person = (name: string, d = G10): Person => d.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
@@ -626,8 +633,8 @@ export const walkthrough: Walkthrough = (ok) => {
   const on11f = (x: number, y: number): boolean => inBox(f11, x, y);
   const at11f = (x: number, y: number): number => key(f11.x + x, f11.y + y);
   const inLow = cross(22, 'emberwaste_f10', F11.start.x, 31, SOUTH), inTwo = cross(24, 'emberwaste_f10', F11.start.x, 31, SOUTH), inDue = cross(25, 'emberwaste_f10', F11.start.x, 31, SOUTH);
-  ok(w.world.zone?.id === 'emberwaste_f11' && w.world.state.x === f11.x + F11.start.x && w.world.state.y === f11.y && f11.x === f10.x && f11.y === f10.y + 32 && F11.start.y === 0 && F11.start.facing === SOUTH && (F11.exits ?? []).length === 1 && F11.exits![0] === CRATER,
-    'over F10\'s south edge from its 16,31 onto F11\'s 16,0, walked, the box\'s way in, and it has no way out but its edges and the crater\'s, down into Old Cinder');
+  ok(w.world.zone?.id === 'emberwaste_f11' && w.world.state.x === f11.x + F11.start.x && w.world.state.y === f11.y && f11.x === f10.x && f11.y === f10.y + 32 && F11.start.y === 0 && F11.start.facing === SOUTH && (F11.exits ?? []).length === 2 && F11.exits![0] === CRATER && F11.exits![1] === STONE,
+    'over F10\'s south edge from its 16,31 onto F11\'s 16,0, walked, the box\'s way in, and it has no way out but its edges, the crater\'s, down into Old Cinder, and the Stone\'s, down into the Ember Stone');
   ok(!inDue.length && inTwo.join(' / ') === WASTE.crossing?.harder && inLow.join(' / ') === WASTE.crossing?.warning,
     `the same land, so not named: at 25 nothing, at 24 the Waste's harder words, at 22 its warning (${inDue.join(' / ') || 'nothing'}; ${inTwo.join(' / ')}; ${inLow.join(' / ')})`);
   const westLow = cross(22, 'firemount_g11', 0, 16, WEST), westTwo = cross(23, 'firemount_g11', 0, 16, WEST), westDue = cross(25, 'firemount_g11', 0, 16, WEST);
@@ -684,16 +691,17 @@ export const walkthrough: Walkthrough = (ok) => {
   for (const id of ['f11_road', 'f11_rim', 'f11_roofs', 'f11_foot', 'f11_causeway', 'f11_milestone', 'f11_seal', 'f11_ruts', 'f11_floor', 'f11_tyre', 'f11_flow', 'f11_dusk', 'f11_crust', 'f11_hooves']) see(w, `emberwaste_f11:${id}`);
 
   // The Ember Stone half-built at the atlas's mark on its field of cinders, in its iron scaffold: the way
-  // in barred until the Ember Stone is built (STONE), and the step's line at its front each time; the
+  // in down inside it (STONE, #516), and the step's line at its front each time until it is lit; the
   // shrine of the first Cinderport folk at the field's edge.
   const stoneMark = ATLAS.sites.find((q) => q.name === 'Ember Stone')!;
   const field = [...Array(81).keys()].map((i) => [STONE.x - 4 + (i % 9), STONE.y - 4 + Math.floor(i / 9)]).filter(([x, y]) => Math.abs(x - STONE.x) + Math.abs(y - STONE.y) <= 4 && F11.rows[y]?.[x] === ':');
-  ok(Math.floor(stoneMark.at[0]) === f11.x + STONE.x && Math.floor(stoneMark.at[1]) === f11.y + STONE.y && STONE.to === 'ember_stone' && out.at(f11.x + STONE.x, f11.y + STONE.y).solid === 'pillar'
+  ok(Math.floor(stoneMark.at[0]) === f11.x + STONE.x && Math.floor(stoneMark.at[1]) === f11.y + STONE.y && STONE.to === 'ember_stone' && F11.exits!.includes(STONE) && out.passable(f11.x + STONE.x, f11.y + STONE.y) === 'ok'
     && [[-1, -1], [1, -1], [-1, 1], [1, 1]].every(([dx, dy]) => out.at(f11.x + STONE.x + dx, f11.y + STONE.y + dy).solid === 'pillar') && field.length >= 35,
-    `the Stone stands at the Ember Stone's mark on the atlas, F11's 8,24, in an iron scaffold of four uprights, on a field of cinders (${field.length} squares and the Stone's five)`);
-  const step = F11.features!.find((f) => f.kind === 'event' && f.id === 'f11_stone');
-  ok(step?.kind === 'event' && !step.once && step.x === STONE.x && step.y === STONE.y - 1 && step.text === 'On a field of cinders, a Stone half-built. The scaffold round it is iron and has not rusted.' && ash.has(at11f(step.x, step.y)),
-    'the way into the Ember Stone is the Stone itself, barred until it is built (STONE), and the step\'s line is said at its front each time');
+    `the Stone stands at the Ember Stone's mark on the atlas, F11's 8,24, in an iron scaffold of four uprights, on a field of cinders (${field.length} squares with the Stone's own), the way down inside it`);
+  const step = F11.features!.find((f) => f.kind === 'event' && f.id === 'f11_stone'), lit = F11.features!.find((f) => f.kind === 'event' && f.id === 'f11_lit');
+  ok(step?.kind === 'event' && !step.once && step.x === STONE.x && step.y === STONE.y - 1 && step.text === 'On a field of cinders, a Stone half-built. The scaffold round it is iron and has not rusted.' && ash.has(at11f(step.x, step.y))
+    && JSON.stringify(step.until) === JSON.stringify({ flag: 'q_ember_lit' }) && lit?.kind === 'event' && lit.x === step.x && lit.y === step.y && JSON.stringify(lit.after) === JSON.stringify(step.until),
+    'the way into the Ember Stone is the Stone itself (STONE), and the step\'s line is said at its front each time until it is lit, the Stone lit after');
   see(w, 'emberwaste_f11:f11_stone');
   const firstFolk = F11.features!.find((f) => f.kind === 'shrine' && f.id === 'f11_shrine');
   ok(firstFolk?.kind === 'shrine' && ash.has(at11f(firstFolk.x, firstFolk.y)) && Math.abs(firstFolk.x - STONE.x) + Math.abs(firstFolk.y - STONE.y) === 5 && firstFolk.text.includes('first Cinderport folk'),
@@ -726,6 +734,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(mail?.kind === 'chest' && mail.items.includes('chain+2') && mail.gold > 0 && mail.x === face.x - 2 && mail.y === face.y, 'with the tools, a Chain Mail +2');
 
   oldCinder(w, ok);
+  emberStone(w, ok);
 };
 
 /**
@@ -853,6 +862,180 @@ function oldCinder(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   walkThrough(w, 'old_cinder2', L2.start.x, L2.start.y + 1, NORTH, 'old_cinder', 1);
   ok(w.world.state.x === hall!.x && w.world.state.y === hall!.y && w.world.state.facing === NORTH, `the stair climbs back out at the hall's door, onto the square (${at()})`);
   listen(w);
+}
+
+/**
+ * The Ember Stone (#516): down inside the Stone on F11 by the builders' stair, its line said, and back up
+ * onto the Stone's front facing away from it; the gallery round the housing, its iron unrusted; the
+ * builders' benches, the ladder's Battle Staff +1 and Drakeskin Coat +1 on them; the lookout over the
+ * Waste and under it the seedling's bed, bare (#448's); the heart, its line the brief's, and the door in
+ * its floor shut each time; the three parts carried up out of their chests and set in any order, each
+ * socket barred to a company without its part, the Stone dark and the door empty until the last is in,
+ * whichever it is, and then lit, the Sentinel in the door; the Sentinel won at the level's floor, never
+ * back, its visor left, and the sentries up through the door after it, won; the door open on its shaft
+ * and the Stone lit on F11; the lower gallery, found where the chain pin is driven into the housing's
+ * foot and reached only through it, and the fourth journal in it; and the Cartographers' Surveyor's rung
+ * for the journal found (#635), offered once Act III is done at any hall of the Guild, paid at the Chart
+ * House, whose shelf then holds four.
+ */
+function emberStone(w: Walk, ok: (cond: boolean, msg: string) => void): void {
+  const ES = MAP_DEFS.find((d) => d.id === 'ember_stone')!;
+  const at = (): string => `${w.world.state.mapId} ${w.world.state.x},${w.world.state.y}`;
+  const feature = (id: string): Feature | undefined => ES.features!.find((f) => 'id' in f && f.id === id);
+  /** Whether a square is reached from the way in without passing a secret door, or swimming, climbing or floating. */
+  const reached = (x: number, y: number): boolean => {
+    const m = new GameMap(ES), seen = new Set<number>(), todo = [[ES.start.x, ES.start.y]];
+    while (todo.length) {
+      const [cx, cy] = todo.pop()!, k = cy * m.width + cx;
+      if (seen.has(k) || !m.inBounds(cx, cy) || m.at(cx, cy).door === 'secret' || m.passable(cx, cy, { swim: true, climb: true, float: true }) !== 'ok') continue;
+      seen.add(k);
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([cx + dx, cy + dy]);
+    }
+    return seen.has(y * m.width + x);
+  };
+  /** Open a chest as the game does: its gold and its items to the company, and spent. */
+  const open = (v: Walk, map: string, id: string): void => {
+    const c = MAP_DEFS.find((d) => d.id === map)!.features!.find((f) => f.kind === 'chest' && f.id === id);
+    if (c?.kind !== 'chest') { ok(false, `there is a chest ${map}:${id}`); return; }
+    v.world.travel(map, c.x, c.y);
+    if (v.world.used(id)) return;
+    v.world.markUsed(id);
+    v.party.gold += c.gold;
+    v.party.bag.push(...c.items);
+  };
+  w.level = 25;
+
+  // Down inside the Stone on F11 by the builders' stair into the gallery, facing in, the way's line said,
+  // and the gallery's at the first step; stepped back onto, the stair lets the company out on the Stone's
+  // front, facing away from it.
+  w.world.travel('emberwaste_f11', STONE.x, STONE.y - 1, SOUTH);
+  const down = w.world.move('forward');
+  ok(down.kind === 'moved' && w.world.state.mapId === ES.id && w.world.state.x === ES.start.x && w.world.state.y === ES.start.y && w.world.state.facing === SOUTH && down.messages.includes(STONE.label!),
+    `down inside the Stone on F11, the company goes by the builders' stair into its housing, facing in (${at()}: ${down.kind === 'moved' ? down.messages.join(' / ') : down.kind})`);
+  const gallery = feature('es_gallery'), first = w.world.move('forward');
+  ok(gallery?.kind === 'event' && first.kind === 'moved' && first.messages.includes(gallery.text) && gallery.text.includes('has not rusted'),
+    `and its first step says the gallery round the housing, the iron unrusted (${first.kind === 'moved' ? first.messages.join(' / ') : first.kind})`);
+  const up = w.world.move('back'), waste = w.world.zone;
+  ok(up.kind === 'moved' && waste?.id === 'emberwaste_f11' && w.world.state.x - waste.x === STONE.x && w.world.state.y - waste.y === STONE.y - 1 && w.world.state.facing === NORTH,
+    `and back up the stair onto the Stone's front on F11, facing away from it (${at()})`);
+  ok((ES.exits ?? []).length === 1 && (ES.exits ?? []).every((e) => !e.shut && !e.needFlag) && !ES.features!.some((f) => ['inn', 'temple', 'shop', 'guild', 'trainer'].includes(f.kind)),
+    'the builders\' stair is the one way in and out of the Stone, nothing shuts it, and nothing in it sells or teaches');
+
+  // The benches off the gallery's west arm, the ladder's staff and coat on them with a plus; the lookout
+  // over the Waste off its east arm, and under it the seedling's bed, bare.
+  see(w, 'ember_stone:es_benches');
+  const bench = feature('es_bench');
+  ok(bench?.kind === 'chest' && bench.items.join() === 'battle_staff+1,drakeskin+1' && bench.gold > 0 && reached(bench.x, bench.y) && w.world.used('es_benches'),
+    'on the builders\' benches, their tools in rows, coin, a Battle Staff +1 and a Drakeskin Coat +1');
+  open(w, ES.id, 'es_bench');
+  see(w, 'ember_stone:es_lookout');
+  see(w, 'ember_stone:es_bed');
+  const bed = feature('es_bed');
+  ok(bed?.kind === 'event' && bed.text.includes('Nothing grows') && w.world.used('es_lookout') && w.world.used('es_bed'), 'the lookout over the Waste, and under it a bed of earth where nothing grows yet');
+
+  // The heart: the brief's line, the three sockets round the core and the door in the floor below it,
+  // shut, and said so each time.
+  see(w, 'ember_stone:es_heart');
+  const event = (id: string): Extract<Feature, { kind: 'event' }> => ES.features!.find((f): f is Extract<Feature, { kind: 'event' }> => f.kind === 'event' && f.id === id)!;
+  const heart = feature('es_heart'), door = event('es_door'), opened = event('es_open');
+  ok(heart?.kind === 'event' && heart.text === 'Three sockets in the Stone\'s heart, each the shape of something, each empty. The builders stopped as if called away.' && w.world.used('es_heart'),
+    'in the housing\'s heart, three sockets, each the shape of something and each empty');
+  w.world.travel(ES.id, door.x, door.y);
+  const shut = [w.world.eventsHere(), w.world.eventsHere()];
+  ok(door.kind === 'event' && opened.kind === 'event' && !door.once && shut.every((said) => said.includes(door.text) && !said.includes(opened.text)) && ES.rows[door.y - 1][door.x] === 'o',
+    'below the core, the door in the floor, shut, and so each time');
+
+  // The three parts carried up out of their chests, the vents', Old Cinder's and the corridors', and set
+  // in any order: here Old Cinder's first, the corridors' next and the vents' last. Each socket takes its
+  // own part alone, barred to a company without it, and is gone once it is in; the Stone stays dark and
+  // nothing stands in the door until the last is in, whichever it is, and the last lights it.
+  for (const [map, id] of [['meridian_camp', 'mc1_part'], ['old_cinder2', 'oc2_part'], ['meridian_camp2', 'mc2_part']]) open(w, map, id);
+  const sockets = ES.features!.filter((f): f is Person => f.kind === 'npc'), [loaf, wedge, long] = sockets;
+  const sentinel = ES.encounters!.find((g) => g.id === 'es_sentinel')!, sentries = ES.encounters!.find((g) => g.id === 'es_sentries')!;
+  const there = (g: typeof sentinel): boolean => w.world.walks(g, g.x, g.y) && !w.world.ended(g);
+  const put = (p: Person): string => {
+    w.world.travel(ES.id, p.x, p.y);
+    const [a] = meet(p, w.party, heard(w.world, p)).choice?.answers ?? [];
+    return a ? answer(a, w.party) : '';
+  };
+  const without = structuredClone(w.party);
+  without.bag = without.bag.filter((i) => !i.startsWith('ember_part'));
+  ok(sockets.length === 3 && sockets.every((p, i) => p.choice?.answers.length === 1 && p.choice.answers[0].takes === `ember_part${i + 1}` && barred(p.choice.answers[0], without) && w.world.present(p))
+    && ['ember_part1', 'ember_part2', 'ember_part3'].every((i) => w.party.bag.includes(i)),
+    'three sockets round the core, each taking its own part alone and barred to a company without it; the company carries all three');
+  const second = put(wedge), third = put(long);
+  ok(!!w.party.flags[SOCKETS[1]] && !!w.party.flags[SOCKETS[2]] && !w.party.flags[SOCKETS[0]] && !w.party.flags[LIT] && !w.world.present(wedge) && !w.world.present(long) && w.world.present(loaf)
+    && !there(sentinel) && !there(sentries) && !w.party.bag.includes('ember_part2') && !w.party.bag.includes('ember_part3') && w.party.bag.includes('ember_part1'),
+    `Old Cinder's part and the corridors' set first, each in its socket, and the Stone still dark and the door empty (${second.replace(/\n+/g, ' ')} / ${third.replace(/\n+/g, ' ')})`);
+  const lit = put(loaf);
+  ok(!!w.party.flags[LIT] && SOCKETS.every((f) => w.party.flags[f]) && lit.startsWith(LIGHTS.join('\n\n')) && !w.party.bag.some((i) => i.startsWith('ember_part')) && sockets.every((p) => !w.world.present(p))
+    && there(sentinel) && !there(sentries),
+    `the vents' part last, and the Stone lights: the door opens and the Sentinel stands in it, the first thing up (${lit.replace(/\n+/g, ' ')})`);
+
+  // The Sentinel, won at the level's floor: at 26, it never comes back, goes down over the door and leaves
+  // its visor; then two sentries come up through the door after it, won, and the door stands open.
+  ok(sentinel.monsters.join() === 'sentinel' && !sentinel.respawn && MONSTERS.sentinel.level === 26 && !!sentinel.slainText && sentinel.x === door.x && sentinel.y === door.y && JSON.stringify(sentinel.after) === JSON.stringify({ flag: LIT }),
+    'the Sentinel stands in the door the moment the Stone lights, a boss at 26 that never comes back');
+  fight(w, 'ember_stone:es_sentinel');
+  ok(w.party.bag.includes('sentinel_visor') && there(sentries) && sentries.monsters.join() === 'sentry,sentry' && !!sentries.respawn, 'won, it leaves its visor, and two sentries come up through the door after it');
+  fight(w, 'ember_stone:es_sentries');
+  w.world.travel(ES.id, door.x, door.y);
+  const gone = w.world.eventsHere();
+  ok(opened.kind === 'event' && gone.includes(opened.text) && !gone.includes(door.text), 'the door in the floor stands open on its shaft');
+  w.world.travel('emberwaste_f11', STONE.x, STONE.y - 1);
+  const front = w.world.eventsHere();
+  ok(front.some((t) => t.includes('burns white')) && !front.some((t) => t.includes('half-built')), `and on F11 the Stone burns at its front (${front.join(' / ')})`);
+
+  // The secret: a chain pin with the Guild's mark driven into the housing's foot; searched there, the foot
+  // gives on steps down to the lower gallery where the Meridian Company camped, the fourth journal in it.
+  const [foot] = ES.secrets!, journal = feature('es_journal')!;
+  ok(foot.hint === 'es_pin' && !reached(foot.x, foot.y - 1) && !reached(journal.x, journal.y) && reached(foot.x, foot.y + 1), 'the lower gallery is reached only through the housing\'s foot');
+  see(w, 'ember_stone:es_pin');
+  w.world.travel(ES.id, foot.x, foot.y + 1, NORTH);
+  let found = false;
+  for (let i = 0; i < 20 && !found; i++) found = w.world.search();
+  const into = found ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(found && into.every((r) => r.kind === 'moved') && w.world.used('es_lower'), 'searched where the chain pin is driven in, the foot gives on steps down to the lower gallery and the Company\'s bedrolls');
+  open(w, ES.id, 'es_journal');
+  ok(journal.kind === 'chest' && journal.items.join() === 'meridian_journal4' && w.party.bag.includes('meridian_journal4') && item('meridian_journal4').slot === 'none' && !item('meridian_journal4').price && w.world.used('es_journal'),
+    'and in it the fourth Meridian journal, in Fane\'s hand');
+  listen(w);
+
+  // The Cartographers' Surveyor's rung (#635), on fresh companies made Surveyors: not offered before Act
+  // III is done, then offered alone at any hall of the Guild and taking nothing; taken with the journal
+  // unfound, the hall pays nothing; found, the Chart House pays 500 gold and 3,600 xp, the book stays in
+  // the pack and the company are Mapmakers, and the shelf holds four. A company that had found the journal
+  // first is paid at the taking, with the words for one that came early.
+  const q = GUILD_QUESTS.find((g) => g.id === 'carto_journal')!;
+  const CP = MAP_DEFS.find((d) => d.id === 'cinderport')!, chart = CP.features!.find((f): f is Person => f.kind === 'npc' && f.interior === 'cinderport_cartographers')!;
+  const surveyors = (): Walk => {
+    const v = newWalk(ok);
+    for (const g of GUILD_QUESTS) if (g.guild === 'cartographers' && g.rank < 2) v.party.flags[takenFlag(g.id)] = v.party.flags[doneFlag(g.id)] = 1;
+    v.party.flags[rankFlag('cartographers')] = 2;
+    return v;
+  };
+  const shelf = (v: Walk): string => { v.world.travel('cinderport', chart.x, chart.y); return meet(chart, v.party, heard(v.world, chart)).text; };
+  const xpOf = (p: Party): number => p.members.reduce((t, m) => t + m.xp, 0);
+  const j = surveyors();
+  ok(!offered('cartographers', j.party).some((o) => o.id === q.id), `${q.title} waits for Act IV: a Surveyor is not offered it before the Sleepers are seen`);
+  j.party.flags[SLEEPERS_SEEN] = 1;
+  ok(offered('cartographers', j.party).map((o) => o.id).join() === q.id && !q.item && ['Map Room', 'Chart House'].every((h) => q.goals[0].text.includes(h)),
+    'then it is offered alone at any hall of the Guild, Saltmouth\'s Map Room or the Chart House, and takes nothing');
+  const purse = j.party.gold, xp = xpOf(j.party), before = shelf(j);
+  ok(!take(q, j.world.state, j.party).length && !report('cartographers', j.world.state, j.party).length && rankOf('cartographers', j.party) === 2, 'taken with the journal unfound, the hall pays nothing');
+  open(j, ES.id, 'es_journal');
+  j.world.travel('cinderport', chart.x, chart.y);
+  const paid = report('cartographers', j.world.state, j.party), after = shelf(j);
+  ok(paid.length === 2 && paid[0].startsWith(q.paid[0]) && j.party.gold === purse + 500 && xpOf(j.party) >= xp + 3600 - j.party.members.length && rankOf('cartographers', j.party) === 3
+    && !!j.party.flags[doneFlag(q.id)] && j.party.bag.includes('meridian_journal4'),
+    `the journal found, the Chart House pays 500 gold and 3,600 xp, the book stays in the pack and the company are Mapmakers (${paid.join(' ').replace(/\n+/g, ' ')})`);
+  ok(before.includes('shelf of three journals') && after.includes('shelf of four journals'), 'and the Chart House\'s shelf, three journals and a gap before, holds four after');
+  const late = surveyors();
+  late.party.flags[SLEEPERS_SEEN] = 1;
+  open(late, ES.id, 'es_journal');
+  const lateGold = late.party.gold, early = take(q, late.world.state, late.party);
+  ok(early.length === 2 && early[0].startsWith(q.early![0]) && late.party.gold === lateGold + 500 && rankOf('cartographers', late.party) === 3,
+    `a company that had found the journal is paid at the taking, with the early words (${early.join(' ').replace(/\n+/g, ' ')})`);
 }
 
 /**
