@@ -1153,7 +1153,9 @@ entries and goals, in the journal's voice, keyed to flags, events and maps the s
   `q_ember_lit`, says the grass below and the Stone white behind and sets `q_road_west` (`west`): the
   chapter's done flag, `ROAD_WEST` in the map, on which the Wold's chapter (#531) starts. A company
   that rides west from Cinderport's gate instead is set down at Akordu's horse-lines (D8's 9,27),
-  where `d8_east`, `after` `q_ember_lit`, sets the same flag.
+  where `d8_east`, `after` `q_ember_lit`, sets the same flag. One that comes up the Scarp stair from
+  the Saltings with the Stone lit is done at the stair's head, C8's `c8_line`, with no road west
+  written, and `d8_east` is gone for it (glasswold.md §5, #531).
 
 While the parts are fetched, a part carried sends the company up to the Stone to set it; with none
 carried, what is set picks the next place: Old Cinder once the vents' and the corridors' parts are in,
