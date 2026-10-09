@@ -114,7 +114,10 @@ asks for (call 5). Its row on the curve is in (#542), in `src/content/progressio
 #524 lists the area (band 26–28, next 28, window 6,000); the Wold takes no step on the gear ladder,
 no town to sell one (§9). Its ground is laid (#543): steppe (`s`), walked as grass and tawny at
 Harvest, and dunes (`u`), sand in ridges walked as slowly as hills, so the scaffold drafts D9 with its
-807 squares of steppe and 171 of dunes (docs/SLICE.md). Nothing else: no map, no monster, no quest.
+807 squares of steppe and 171 of dunes (docs/SLICE.md). Five of its monsters are drawn ahead of the
+boxes, on frames that exist (#533, MONSTERS §8.3): the vulture, the Wold lion, the Grey Lion, the
+glass scorpion and the basilisk, their defs in `src/content/areas/glasswold/monsters.ts`, listed in
+`AHEAD` until #524 lists the area. Nothing else: no map, no quest, and the glass walker not yet drawn.
 Every brief below is a draft.
 
 ## 4. What is still to build
@@ -124,7 +127,7 @@ boxes, which hold 5,557 of those squares, 5,379 walkable, the table the epic #44
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
 |---|---|---|---|---|---|---|---|---|
-| E10 | The road onto the steppe | the Wold | country | 26 | 620 (hills 302, steppe 215, ash 64, grass 39) | the road over the Cinder Hills from the Waste at 156,312 → 144,300; the first vultures; the crossing line | none | #524 |
+| E10 | The road onto the steppe | the Wold | country | 26 | 620 (hills 302, steppe 215, ash 64, grass 39) | the road over the Cinder Hills from the Waste at 156,312 → 144,300, laid whole by #517 (ashfall.md §4.9) at 24–26, bare of the Wold's monsters and quests; the first vultures and the Wold's line are left (§4.2) | none | #524 |
 | D9 | The steppe | the Wold | core | 26–27 | 1,024 (steppe 827, dunes 180, rock 11) | the grass with glass in it; the lions' prides; the dunes' first edge at the south-west corner | the glass in the grass | #525 |
 | D8 | The Riders' camp | the Wold | core | 27 | 810 (steppe 657, rock 85, hills 68) | Akordu at 120,250 under its mesa: the eldest, the trader, the Rider who rides to Cinderport; the garden of glass | the eldest's story | #526 |
 | D10 | The mesas | the Wold | core | 27 | 1,024 (steppe 772, hills 141, rock 88, dunes 23) | the basilisks' mesas; the mesa fight; the Eyrie's old mesa at 132,289, empty | none | #527 |
@@ -218,6 +221,21 @@ settled in its issue, and what Ashfall teaches changes them.
   first monster that flies on the road since the gulls.
 - **Finds.** A Horn Bow with a plus, Cinderport's step (#542), in the grave, and gold.
 - **Pay.** About 1,500 xp a member.
+- **Laid by #517** (docs/areas/ashfall.md §4.9; 9 October): the box whole, steppe and grass
+  included, as the Ember Waste's at band 24–26, with its road, the Hills' notch and waymark, the
+  cairns, the Riders' sky-stone on the crest, a hermit, two cinder drakes at 25 and the secret, the
+  Rider's grave with the Horn Bow +2 (a cairn that looks back at the Stone, with a woman on her
+  saddle and 700 gold in it). It pays 662 xp a member. Left to #524: the vultures (two groups, the
+  nearest), the pride of lions, the glass scorpion where the flow has burned the grass, the beetles
+  come over from the Waste (on E10's east ash, empty now), the outriders who watch and do not fight,
+  the Rider met on the road with a rumour, a camp in the hills' lee, the Glass's glare from the
+  crest, a Riders' cairn where the grass begins and the pay of 1,500 xp a member on top of the 662.
+  A second hint of the grave, the vultures circling where nothing is dying, fits as an event, not a
+  second grave. The Wold's line is said where D10 is crossed (#527, over E10's west edge at 0,6) or
+  by a crest event here; E10 is the Waste's for the line and the band, so #524's gate (a company of
+  24 turned back) asks its floor raised, a band of 25–26 passing the curve with a group at 26
+  placed. "Steppe underfoot" cannot be claimed, E10 laying steppe first (ashfall.md §11): the
+  owner's.
 
 ### 4.3 D9, the steppe (#525): core, band 26–27
 
@@ -482,8 +500,8 @@ MONSTERS §8.3 has the roster and the fight: the Vulture (fodder, 26, the birds)
 frame; poison 0.35), the Basilisk (controller, 27, the salamanders; stone 0.15), the Glass Walker
 (elite, 27, the glass walkers, new; a machine older than the rest) and the Grey Lion (boss, 28, the
 cats); the mesa, a basilisk behind a pride, the lions holding the front row while the basilisk
-glasses whoever looks up. Their drawings are #533's, six: four on frames that exist, the walker and
-the Grey Lion their own. §4.2 to §4.8 place every group, box by box, the vultures at the hills'
+glasses whoever looks up. Their drawings are #533's, six: five on frames that exist, the Grey Lion
+the cats' with a mane, all drawn (§3), and the walker's new family. §4.2 to §4.8 place every group, box by box, the vultures at the hills'
 foot and the walkers in their pair at the gap. The Wold spends MONSTERS §3.3's stone (#546); the
 sweep (#545) and the toll (#544) are the Whitespine's and Ashfall's, spent before it.
 
@@ -559,8 +577,11 @@ Proposed, for the owner, each in the issue that would build it:
   are country (§4).
 - **The seeds move** so the steppe is the Wold's and the Glass is the fused desert and its dunes:
   the Wold's at about 100,232, 132,262, 50,230, 150,300 and 120,296, the Glass's at about 80,282 and
-  100,320 (`src/content/areas/glasswold/atlas.ts`, #523). Today's seeds give the Glass 993 of D10's
-  1,024 squares and 440 of E10's 620, the road in among them.
+  100,320 (`src/content/areas/glasswold/atlas.ts`, #523); the fourth, built at 140,296, moved to
+  134,296 for #517, just west of E10, since the atlas check holds each zone's seed inside the zone
+  and E10, laid for the Waste, now holds that square, and 134,296 keeps the Wold's border where it
+  was. Today's seeds give the Glass 993 of D10's 1,024 squares and 440 of E10's 620, the road in
+  among them.
 - **The lava flow's line** as decision 1 has it; the owner's word moves a point.
 - **The names** (§10): Akordu, Kushtash and Tashkum, the last left for the reach's doc to decide.
 - **The eldest at Akordu,** her own fire, where STORY has her tell the story at the port (#531):
@@ -592,6 +613,29 @@ Decided by delegate for #547, each the owner's to overturn (docs/areas/ashfall.m
    9 the next day, by the Wold's floor of 26, the dearer end's. Nobody halves it.
 3. **The camp is a way in once the ride runs:** the gate counts the landing as a way into the Wold
    (#164's `landings`), so the groups nearest it are held to the zone's gentlest.
+
+Decided by delegate for #533 (the Wold's five on frames), each the owner's to overturn:
+
+1. **Each is the test monster of its roster role and level, on the line #661 made again:** the
+   vulture fodder at 26 (191 hit points, 3d8+4), the Wold lion a skirmisher at 26 (332, 3d8+6), the
+   glass scorpion a controller at 26 (290, 4d8+4), the basilisk the test basilisk at 27 (376, 5d7+7)
+   and the Grey Lion the boss at 28 (1,552, 26d8+29). None is owed a restating; B8's gate may set
+   the Grey Lion off the line, as the Act III bosses were set.
+2. **The vulture flies, so it reaches the back row** (`ranged`), as the raven and the spine eagle do.
+3. **The Wold lion does not leap at the back row,** where the snow lynx does: the mesa's lions keep
+   the front row busy, and the test skirmishers behind which #546 tried the basilisk are not ranged.
+4. **The glass scorpion's hold is the roster's poison at 0.35,** in place of the controller's
+   paralysis; the basilisk's is stone at 0.15 with its gaze reaching the back row, as #546 has it.
+5. **None resists anything:** the roster gives none, and nothing of the Wold is fire's.
+6. **Sizes:** the vulture 0.65, the Wold lion 1, the glass scorpion 0.7, the basilisk 0.85 and the
+   Grey Lion 1.4, under a tall boss's 1.5, so it stands in its group's rank and no crown is held.
+7. **Each is owed to the first box whose brief places it** (`UNPLACED`): the vulture, the lions and
+   the glass scorpion to E10 (#524), whose brief has all three; the basilisk to D8 (#526), in its
+   mesa's shade; the Grey Lion to B8 (#529).
+8. **The Wold's glass is green:** the scorpion's shell and the basilisk's crown and crest, where the
+   Sunder's is black (the glass spider). A tint and a Build to change.
+9. **The defs wait in the area's folder,** listed in `AHEAD` until #524 lists the area, as Ashfall's
+   did; the glass walkers' family joins the same file in the second pull request.
 
 ## 10. Names
 

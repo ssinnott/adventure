@@ -4,6 +4,8 @@ import type { Area } from '../../area.ts';
 import { CINDERCOAST_H10 } from './maps/cindercoast_h10.ts';
 import { CINDERCOAST_G10 } from './maps/cindercoast_g10.ts';
 import { CINDERPORT } from './maps/cinderport.ts';
+import { EMBERWASTE_F10 } from './maps/emberwaste_f10.ts';
+import { EMBERWASTE_E10 } from './maps/emberwaste_e10.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { INTERIORS } from './interiors.ts';
@@ -11,8 +13,9 @@ import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
   id: 'ashfall' as const,
-  // In road order: the Stair's foot (#510), Cinderport's box (#511) and the town (#512).
-  maps: [CINDERCOAST_H10, CINDERCOAST_G10, CINDERPORT],
+  // In road order: the Stair's foot (#510), Cinderport's box (#511), the town (#512) and the Waste's road
+  // west of the box (#517).
+  maps: [CINDERCOAST_H10, CINDERCOAST_G10, CINDERPORT, EMBERWASTE_F10, EMBERWASTE_E10],
   monsters: MONSTERS,
   sprites: SPRITES,
   // Cinderport's armourer's step (#542) and the chandler's stone cure (#546), sold in the town (#512).

@@ -131,6 +131,9 @@ export const ROADS: Record<string, readonly string[]> = {
   // over the ash past the beetles below the ground to the salamanders where it warms toward the mountain
   // (#511).
   cindercoast: ['cindercoast_h10:h10_beetles_foot', 'cindercoast_g10:g10_beetles', 'cindercoast_g10:g10_salamanders'],
+  // West out of G10 onto the Waste's ash past the beetles below the vines and the drake on the rocks
+  // where the road turns west, and over the Cinder Hills past the drakes at their far end (#517).
+  emberwaste: ['emberwaste_f10:f10_beetles', 'emberwaste_f10:f10_drake', 'emberwaste_e10:e10_drakes'],
   // Over the crest from the vale and up the path to the Peak Stone, past the brothers walking it (#501);
   // then up the ridge trail and west along the road to the Stair, past the giant and the troll in the
   // snow short of the head (#502).
@@ -207,6 +210,9 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'cindercoast_g10: under': { whose: '#18', at: 1 },
   // And the Stair's foot (#510): the box that turns a Whitespine company back, at 22, wins every fight.
   'cindercoast_h10: under': { whose: '#18', at: 1 },
+  // And the Ember Waste's road (#517), its two country boxes.
+  'emberwaste_f10: under': { whose: '#18', at: 1 },
+  'emberwaste_e10: under': { whose: '#18', at: 1 },
   'Ashfall: under': { whose: '#18', at: 1 },
   'highspine_i11: under': { whose: '#18', at: 1 },
   // Act II's bosses were set by their gates against a company without its first prestige, which the
