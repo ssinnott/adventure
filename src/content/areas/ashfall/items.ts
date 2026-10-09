@@ -1,7 +1,8 @@
 // Ashfall's items: Cinderport's armourer's step on the ladder (#542), the act's one, by 25, the stone
 // cure (#546) and the boxes' new finds: the Great Axe +2 in the scavenger's hole (G11, #513) and the
 // Horn Bow +2 in the grave in the Cinder Hills (E10, #517); and Old Cinder's finds, the Ember Stone's
-// second part and the founding stone among them (#515). The step and the cure were made ahead of
+// second part and the founding stone among them (#515); and the Ember Stone's, the fourth Meridian
+// journal among them (#516). The step and the cure were made ahead of
 // the area, as the Kilns' were: the first box (G10, #511) took the table into its Area, the armourer
 // (#512) sells the step and the chandler the cure.
 // docs/areas/ashfall.md §8 and §9 have the sums.
@@ -99,4 +100,21 @@ export const hearthSymbol: ItemDef = { id: 'hearth_symbol', name: 'Holy Symbol o
   'It is warm to hold, even down here.',
 ] };
 
-export const ITEMS: readonly ItemDef[] = [...WARES, quickening, scavengersAxe, graveBow, emberPart1, emberPart3, meridianMail, ...PARTS, squareFlamberge, foundingStone, emberPart2, hearthSymbol];
+/**
+ * The Ember Stone's finds (#516): on the builders' benches the ladder's Battle Staff +1 and, for the
+ * brief's Scale Mail +1 in older words (docs/areas/ashfall.md §9, #542's 6), its Drakeskin Coat +1; the
+ * Sentinel's visor, a part no shop buys and no hand-in takes (MONSTERS §2); and in the lower gallery
+ * under the housing the Meridian Company's fourth journal, the one Cinderport's shelf lacks: a quest
+ * item kept in the pack, since the Cartographers' Surveyor's rung asks it found, never handed in (#635).
+ */
+export const benchStaff = P(battleStaff, 1);
+export const benchCoat = P(drakeskin, 1);
+export const sentinelVisor: ItemDef = { id: 'sentinel_visor', name: 'The Sentinel\'s Visor', slot: 'none', price: 0, text: [
+  'A plate of iron the width of two hands with a slit across it, black round the slit where the fire looked out.',
+] };
+export const meridianJournal4: ItemDef = { id: 'meridian_journal4', name: 'Meridian Journal, vol. IV', slot: 'none', price: 0, text: [
+  'Green boards with the Guild\'s mark, the last pages in Fane\'s hand.',
+  '"Camped under the Stone. Its builders left their tools on the benches, as if called away. The vents tomorrow."',
+] };
+
+export const ITEMS: readonly ItemDef[] = [...WARES, quickening, scavengersAxe, graveBow, emberPart1, emberPart3, meridianMail, ...PARTS, squareFlamberge, foundingStone, emberPart2, hearthSymbol, benchStaff, benchCoat, sentinelVisor, meridianJournal4];
