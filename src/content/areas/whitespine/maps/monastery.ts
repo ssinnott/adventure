@@ -8,12 +8,30 @@
 // area's floor as Carn Dubh's cairn is; docs/areas/whitespine.md §4.3 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH, WEST } from '../../../../game/types.ts';
+import type { QuestCond } from '../../../../game/quests.ts';
 import { NEST_CELL } from './highspine_i11.ts';
 
 /** The Novice told, back from his mother: he walks out at the gate, home to Anvilhall (#56's 45, #506). */
 export const NOVICE_TOLD = 'q_novice_told';
 /** The Novice told only that his mother is well: he keeps the fasts in his cell. */
 export const NOVICE_KEPT = 'q_novice_kept';
+
+/**
+ * The Bard's third (#448), The Eleven: Brother Lark asks a company with a Skald of 27 for the verses
+ * of the eleven (`ELEVEN_ASKED`), and once it holds all three (`VERSES`) and sings them to him under
+ * the bells, his words set `ELEVEN_SUNG`, which his teaching reads.
+ */
+export const ELEVEN_ASKED = 'q_eleven', ELEVEN_SUNG = 'q_eleven_sung';
+/**
+ * The three verses, as the save holds them: the Tide Bell back on its frame in the drowned temples'
+ * door (#56's 23), the miners' hymn heard whole at Anvilhall (#56's 36) and the keeper's log taken
+ * from Crowness Light's table (#67). The flags are spelled out, not imported: Anvilhall's map reads
+ * this one's, and the import would go round.
+ */
+const VERSE_FLAGS = ['q_tide_bell_done', 'q_hymn_sung'], LOG_TAKEN = 'downs_e3:e3_log';
+export const VERSES: QuestCond = { flag: VERSE_FLAGS, seen: LOG_TAKEN };
+/** Asked, and the three held: they are sung to him the next time he is met. */
+export const SING: QuestCond = { flag: [ELEVEN_ASKED, ...VERSE_FLAGS], seen: LOG_TAKEN };
 
 export const MONASTERY: MapDef = {
   id: 'monastery',
@@ -96,11 +114,21 @@ export const MONASTERY: MapDef = {
     { kind: 'event', x: 3, y: 11, id: 'hc1_tower', once: true, text: 'The foot of the bell tower. A stair winds up into the dark beside the ropes.' },
     { kind: 'event', x: 1, y: 13, id: 'hc1_stair', once: true, text: 'Up and round the stair goes, the ropes going up beside it, taut.' },
     { kind: 'event', x: 4, y: 13, id: 'hc1_bells', text: 'Under the bells the ringers stand at their ropes. On the hour they ring: eleven, a gap, eleven.' },
-    { kind: 'npc', x: 6, y: 14, name: 'A ringer', lines: [
+    // Brother Lark teaches the Bard's third (#448) for The Eleven: asked by a company with a Skald of
+    // 27, he wants the eleven's three verses, and once they are sung to him under the bells it is done.
+    { kind: 'npc', x: 6, y: 14, name: 'Brother Lark', lines: [
       'One of the ringers pulls a beat behind the rest, and breathes. A man, thin, in a robe that is not his.',
       '"Keep still and they take you for one of them. Three winters I have kept still."',
       '"Eleven, a gap, eleven. I came to set it to words. There are no words for it."',
-    ] },
+    ], says: [
+      { after: { flag: ELEVEN_SUNG }, lines: ['Brother Lark pulls his rope a beat behind the rest. Under his breath he is singing.'] },
+      { after: SING, sets: ELEVEN_SUNG, lines: ['Under the bells you sing him the count, the doors and the light. On the hour they ring, and every word falls on a stroke.', '"There. Words for it, at last."'] },
+      { after: { flag: ELEVEN_ASKED }, lines: ['"A drowned bell\'s count, a miners\' hymn, a lighthouse log. Bring me all three."'] },
+      { after: { member: { cls: 'bard', level: 27, prestige: 2 } }, lines: ['The ringer a beat behind looks at your bard, and keeps pulling.', '"Somebody sang the eleven before me, in other places. Find me their verses, and we will sing them here."'], choice: { ask: '"Will you find them?"', answers: [
+        { label: 'Find them.', sets: ELEVEN_ASKED, says: ['"A drowned bell\'s count, a miners\' hymn, a lighthouse log. Go quietly."'] },
+        { label: 'Not now.', says: ['"I am not going anywhere."'] },
+      ] } },
+    ], teaches: { cls: 'bard', prestige: 3, asks: 'eleven', done: { flag: ELEVEN_SUNG }, seek: 'Brother Lark, at the ropes in Highcell\'s bell tower a beat behind the rest, can make a Laureate of a Skald.' } },
     // The night stair down.
     { kind: 'event', x: 12, y: 12, id: 'hc1_down', once: true, text: 'A stair goes down out of the cloister, each step worn hollow in the middle.' },
   ],
