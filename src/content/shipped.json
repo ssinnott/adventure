@@ -1766,6 +1766,35 @@
         "2,11"
       ]
     },
+    "meridian_camp": {
+      "size": "32x32",
+      "used": [
+        "mc1_arrow",
+        "mc1_arrow2",
+        "mc1_arrow3",
+        "mc1_boots",
+        "mc1_drift",
+        "mc1_furnace",
+        "mc1_glow",
+        "mc1_grates",
+        "mc1_heap",
+        "mc1_hole",
+        "mc1_in",
+        "mc1_part",
+        "mc1_path",
+        "mc1_pin",
+        "mc1_scrape",
+        "mc1_slag",
+        "mc1_tracks"
+      ],
+      "groups": [
+        "mc1_flue",
+        "mc1_round",
+        "mc1_sentry",
+        "mc1_stokers"
+      ],
+      "doors": []
+    },
     "mill": {
       "size": "16x16",
       "used": [
@@ -2672,6 +2701,7 @@
     "elfbow+1",
     "elfbow+2",
     "elixir",
+    "ember_part1",
     "faceless_coin",
     "flail",
     "flail+1",
@@ -2803,6 +2833,8 @@
     "steel_bow+1",
     "stiletto",
     "stiletto+1",
+    "stoker_blade",
+    "stoker_firebar",
     "stone_rubbing",
     "sunder_heart",
     "sunder_shard",
