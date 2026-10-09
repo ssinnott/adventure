@@ -737,6 +737,7 @@ export const walkthrough: Walkthrough = (ok) => {
 
   oldCinder(w, ok);
   emberStone(w, ok);
+  roadBehind(w, ok);
   sideQuests(ok);
 };
 
@@ -1039,6 +1040,30 @@ function emberStone(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   const lateGold = late.party.gold, early = take(q, late.world.state, late.party);
   ok(early.length === 2 && early[0].startsWith(q.early![0]) && late.party.gold === lateGold + 500 && rankOf('cartographers', late.party) === 3,
     `a company that had found the journal is paid at the taking, with the early words (${early.join(' ').replace(/\n+/g, ' ')})`);
+}
+
+/**
+ * The road behind (#449): once the Ember Stone is lit, two sentries walk the Waste's road on F10, back
+ * toward Cinderport, and two on E10, on to the Wold, each pair at the band's top, where nothing stood
+ * the day before; and the Rider at Cinderport's gate says so. A company that has not lit it meets
+ * neither, and the Rider says only the ride.
+ */
+function roadBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void {
+  const group = (map: string, id: string) => MAP_DEFS.find((d) => d.id === map)!.encounters!.find((g) => g.id === id)!;
+  const f10 = group('emberwaste_f10', 'f10_sentries'), e10 = group('emberwaste_e10', 'e10_sentries');
+  const there = (v: Walk, map: string, g: typeof f10): boolean => { v.world.travel(map, g.x, g.y); return v.world.walks(g, g.x, g.y) && !v.world.ended(g); };
+  const rider = MAP_DEFS.find((d) => d.id === 'cinderport')!.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'A Rider by the gate')!;
+  const says = (v: Walk): string => { v.world.travel('cinderport', rider.x, rider.y); const t = meet(rider, v.party, heard(v.world, rider)).text; listen(v); return t; };
+  const before = newWalk(ok);
+  ok(!before.party.flags[LIT] && !there(before, 'emberwaste_f10', f10) && !there(before, 'emberwaste_e10', e10) && says(before) === rider.lines.join('\n\n'),
+    'before the Stone is lit no sentry walks F10\'s road or E10\'s, and the Rider at the gate says only the ride');
+  ok([f10, e10].every((g) => g.monsters.join() === 'sentry,sentry' && JSON.stringify(g.after) === JSON.stringify({ flag: LIT }) && !!g.respawn)
+    && !!w.party.flags[LIT] && there(w, 'emberwaste_f10', f10) && there(w, 'emberwaste_e10', e10),
+    'once it is lit, two sentries by F10\'s road back toward Cinderport and two by E10\'s on to the Wold');
+  fight(w, 'emberwaste_f10:f10_sentries');
+  fight(w, 'emberwaste_e10:e10_sentries');
+  const now = says(w);
+  ok(now.includes('iron walking the road') && now.includes('yesterday there was none'), `and the Rider at the gate says the road is not what it was (${now.replace(/\n+/g, ' ')})`);
 }
 
 /**
