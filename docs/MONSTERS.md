@@ -1444,7 +1444,7 @@ click. The Hold Keeper is the bay's keeper kept in the hold, bare, shorter and a
 yoke across its shoulders and a pail at each end. The Tallymaster is the keepers' largest and
 strangest, size 1.6: it stands behind a clerk's desk among piled ledgers on a neck grown long,
 writing with a pen in each hand in two ledgers at once, six lights counting across its brow. The
-deep knocker is Meridian Camp's to draw (§8.4), not yet merged; the vaults place that one
+deep knocker is Meridian Camp's, drawn with the inspector (§8.4, #657); the vaults place that one
 (docs/areas/dead_drop.md §8).
 
 **Asks:** calls and the sleeping touch, both Rimewater's.

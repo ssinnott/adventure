@@ -40,8 +40,8 @@ docs/areas/whitespine.md). The road never needs it.
 
 The stair's foot (#190), and four of its five monsters, drawn ahead of the levels that place them
 (#22, §8): the loader, the tally clerk, the hold keeper and the Tallymaster, in Wrackholm's table.
-The deep knocker is Meridian Camp's to draw, and not yet merged. The rest waits on what §7 lists;
-it is the last thing of Act IV to build.
+The deep knocker is Meridian Camp's, drawn by #657. The rest waits on what §7 lists; it is the last
+thing of Act IV to build.
 
 ## 4. The levels
 
@@ -187,8 +187,8 @@ Decided by delegate for #22 (the drop's monsters), each the owner's to overturn:
    as part of it, so the fight shows it there. Its pens write in two ledgers at once.
 7. **The no-machine rule needs nothing:** `paceFaults` judges a map's groups, not a table's defs,
    and a level floored at 26 stands at the Glasswold's place, past the Mines (§6).
-8. **The deep knocker is not drawn here:** Meridian Camp's pull request draws it on the knockers'
-   frame and has not merged; the vaults place that one when it has.
+8. **The deep knocker is not drawn here:** Meridian Camp's pull request drew it on the knockers'
+   frame (#657); the vaults place that one.
 
 ## 9. Names
 
