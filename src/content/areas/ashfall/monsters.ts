@@ -38,16 +38,17 @@ export const MONSTERS: readonly MonsterDef[] = [
   // size 2 and drawn inside TALL_REACH
   { id: 'sentinel', name: 'The Sentinel', plural: 'Sentinels', sprite: 'sentinel', kind: 'machine', look: 'The first thing up through the doors.', level: 26, hp: 1442, ac: 26, attack: 17, dice: 24, sides: 8, bonus: 29, speed: 13, xp: 16533, gold: [0, 0], tint: '#4f5359', size: 2 },
   // Meridian Camp's (MONSTERS §8.4; #22), drawn ahead of its three levels and kept here, the camp being Ashfall's.
-  // The nest off the iron corridors (meridian_camp2), fodder on MONSTERS §4.4's line at 26, six to a group: it flies, so it
-  // reaches the back row (`ranged`), and fire does not touch it, as it does not its kin; too young yet to breathe
-  { id: 'drakeling', name: 'Drakeling', plural: 'Drakelings', sprite: 'drakeling', kind: 'beast', look: 'The mountain\'s youngest. Its crust has not set.', level: 26, hp: 241, ac: 23, attack: 14, dice: 2, sides: 8, bonus: 5, speed: 12, xp: 517, gold: [0, 0], ranged: true, immune: ['fire'], tint: '#b4735a', size: 0.6 },
+  // The nest off the iron corridors (meridian_camp2), fodder on MONSTERS §4.4's line at 26 as #549 made it again, six to a
+  // group: it flies, so it reaches the back row (`ranged`), and fire does not touch it, as it does not its kin; too young yet
+  // to breathe
+  { id: 'drakeling', name: 'Drakeling', plural: 'Drakelings', sprite: 'drakeling', kind: 'beast', look: 'The mountain\'s youngest. Its crust has not set.', level: 26, hp: 191, ac: 23, attack: 14, dice: 3, sides: 8, bonus: 4, speed: 12, xp: 517, gold: [0, 0], ranged: true, immune: ['fire'], tint: '#b4735a', size: 0.6 },
   // the nest (meridian_camp2), its boss at 27 and the Barbarian's quarry (#448): the boss line come down whole to a sweeper's share
-  // with the drakes' breath, as the Old Drake is, for the corridors' gate to set (tools/tests/harness.ts); it flies, and fire does
-  // not touch it; size 1.8 and drawn inside TALL_REACH
-  { id: 'brood_drake', name: 'The Brood Drake', plural: 'Brood Drakes', sprite: 'brood_drake', kind: 'beast', look: 'It will not leave the eggs.', level: 27, hp: 1250, ac: 26, attack: 17, dice: 21, sides: 7, bonus: 34, speed: 13, xp: 17173, gold: [0, 0], ranged: true, immune: ['fire'], sweep: { chance: 0.25, element: 'fire' }, tint: '#764636', size: 1.8 },
-  // the iron corridors (meridian_camp2), their elite on the line at 27: a machine (§2), and fire does not touch it; its hooks
-  // hold, paralysed at 0.15 as the elite's line has it
-  { id: 'flue_walker', name: 'Flue Walker', plural: 'Flue Walkers', sprite: 'flue_walker', kind: 'machine', look: 'It walks the corridor to its end, and back.', level: 27, hp: 624, ac: 25, attack: 16, dice: 6, sides: 8, bonus: 7, speed: 15, xp: 2147, gold: [0, 0], immune: ['fire'], inflict: { cond: 'paralysed', chance: 0.15 }, tint: '#7d7a74', size: 1.5 },
+  // with the drakes' breath, as the Old Drake is, its hit points kept and its blow set by the corridors' gate (#22: 61% at 26,
+  // 100% at 28, from 21d7+34); it flies, and fire does not touch it; size 1.8 and drawn inside TALL_REACH
+  { id: 'brood_drake', name: 'The Brood Drake', plural: 'Brood Drakes', sprite: 'brood_drake', kind: 'beast', look: 'It will not leave the eggs.', level: 27, hp: 1250, ac: 26, attack: 17, dice: 19, sides: 7, bonus: 28, speed: 13, xp: 17173, gold: [0, 0], ranged: true, immune: ['fire'], sweep: { chance: 0.25, element: 'fire' }, tint: '#764636', size: 1.8 },
+  // the iron corridors (meridian_camp2), their elite on the line at 27 as #549 made it again: a machine (§2), and fire does not
+  // touch it; its hooks hold, paralysed at 0.15 as the elite's line has it
+  { id: 'flue_walker', name: 'Flue Walker', plural: 'Flue Walkers', sprite: 'flue_walker', kind: 'machine', look: 'It walks the corridor to its end, and back.', level: 27, hp: 670, ac: 25, attack: 16, dice: 7, sides: 8, bonus: 7, speed: 15, xp: 2147, gold: [0, 0], immune: ['fire'], inflict: { cond: 'paralysed', chance: 0.15 }, tint: '#7d7a74', size: 1.5 },
   // the gallery below the camp (meridian_camp3), armoured on the line at 28: first met here, and back in the Underdeep (§9.2)
   { id: 'deep_knocker', name: 'Deep Knocker', plural: 'Deep Knockers', sprite: 'deep_knocker', kind: 'machine', look: 'Still knocking, on a wall that has never cracked.', level: 28, hp: 517, ac: 27, attack: 16, dice: 5, sides: 7, bonus: 11, speed: 8, xp: 1484, gold: [0, 0], tint: '#b4b8b6', size: 0.75 },
   // the gallery below the camp (meridian_camp3), a caller on a soldier's numbers at 28, as the tallyman is at 20: it calls three
