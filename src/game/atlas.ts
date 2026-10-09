@@ -191,6 +191,7 @@ export const TI = Object.fromEntries(TERRAINS.map((t, i) => [t, i])) as Record<W
 export const MAP_TERRAIN: Record<string, WorldTerrain> = {
   ',': 'grass', '^': 'hills', 'f': 'farm', 't': 'woods', 'd': 'deadwood', 'c': 'crystal', 'v': 'chasm', '-': 'salt', 'h': 'heather', ';': 'tidal', 'a': 'ash', 'p': 'pine', 'i': 'ice', ':': 'dirt', '=': 'road', '_': 'sand', '~': 'shallow', 'W': 'sea', 'w': 'marsh', '!': 'lava',
   '*': 'snow', 'T': 'forest', 'r': 'rock', 'M': 'mountain', '"': 'rock', 'B': 'building', 'D': 'building',
+  'A': 'peak', '|': 'cliff',
   'L': 'building', 'S': 'building', '#': 'building', 'o': 'building', '.': 'dirt',
 };
 

@@ -10,12 +10,15 @@
 // box until it is sold or placed. Past that, Act III (#535) the same way: Anvilhall's forge at 17,
 // the Kilns' and Cairnmoor's plus finds by 19, Rime Lodge's furrier at 21 and Rimewater's by 22,
 // each owed to its shop or box while its area is planned; and Kilnhaven's smith's quarter more on
-// the forge's wares sits inside the Kilns' window too.
+// the forge's wares sits inside the Kilns' window too. Then Act IV (#542), one step: Cinderport's
+// armourer at 25, bettering the furrier's and Rimewater's finds for every class, owed to the town's
+// box while Ashfall is planned.
 import { AREAS, MAP_DEFS, MONSTERS, ITEMS } from '../../src/content/index.ts';
 import type { Area } from '../../src/content/area.ts';
 import { CURVE } from '../../src/content/progression.ts';
 import { FORGE, SMITH_PRICES, quarterMore } from '../../src/content/areas/kilns/items.ts';
 import { FURRIER } from '../../src/content/areas/rimewater/items.ts';
+import { ARMOURER } from '../../src/content/areas/ashfall/items.ts';
 import { CLASSES, robeLike } from '../../src/game/party.ts';
 import type { ClassId } from '../../src/game/party.ts';
 import type { ItemDef } from '../../src/game/items.ts';
@@ -199,6 +202,24 @@ export const ACT_III: readonly Rung<'kilns' | 'cairnmoor' | 'rimewater'>[] = [
 /** Who owes Kilnhaven's smith, selling the forge's step at a quarter more (#434's call 1); '' once sold. */
 export const SMITH = '';
 
+/**
+ * Act IV's rung (#542, docs/areas/ashfall.md §9), as Act III's and with one step: Cinderport's
+ * armourer's, at 25. The Whitespine has no town and the Wold none, whose Riders buy here by the ride
+ * (#547). Ashfall is planned, so every ware is owed to the town's box until the area is listed and
+ * the armourer built; a plus on it is the boxes' to choose, off the ladder.
+ */
+export const ACT_IV: readonly Rung<'ashfall'>[] = [
+  {
+    level: 25, name: "Cinderport's armourer",
+    from: Object.fromEntries(ARMOURER.map((id) => [id, ['ashfall', '#512']])),
+    classes: {
+      knight: ['slag_mace', 'basalt_shield'], paladin: ['slag_mace', 'basalt_shield'], ranger: ['ashwood_bow', 'drakeskin'], barbarian: ['flamberge', 'drakeskin'],
+      cleric: ['slag_mace', 'cinder_robe'], sorcerer: ['marlinspike', 'cinder_robe'], thief: ['marlinspike', 'drakeskin'], bard: ['marlinspike', 'drakeskin'],
+      monk: ['battle_staff'], druid: ['battle_staff', 'drakeskin'],
+    },
+  },
+];
+
 /** An item's kind: a hand weapon, a bow, armour or a shield. Only the same kind is bettered. */
 const kind = (d: ItemDef): string => (d.slot === 'weapon' ? (d.ranged ? 'bow' : 'hand') : d.slot);
 /** How good an item is of its kind: a weapon's mean blow with its plus, armour's and a shield's AC. */
@@ -249,10 +270,10 @@ export function ladder(): void {
   const unlisted = by(10).filter((id) => !by(9).includes(id) && !(id in DEEP_FINDS));
   ok(!unlisted.length, `every rung at 10 is a Deepthorn find with its box${unlisted.length ? ` (not: ${unlisted.join(', ')})` : ''}`);
 
-  // Acts II and III, rung by rung, as the Deepthorn's: each item is in the ladder at its rung and
+  // Acts II to IV, rung by rung, as the Deepthorn's: each item is in the ladder at its rung and
   // no sooner, the class can use it, and it betters the best of its kind the class had on the rung
   // before.
-  const rungs: readonly Rung<keyof typeof CURVE>[] = [...ACT_II, ...ACT_III];
+  const rungs: readonly Rung<keyof typeof CURVE>[] = [...ACT_II, ...ACT_III, ...ACT_IV];
   rungs.forEach((rung, k) => {
     const before = k ? rungs[k - 1].level : 10;
     for (const [cls, ids] of Object.entries(rung.classes) as [ClassId, readonly string[]][]) {
@@ -298,7 +319,7 @@ export function ladder(): void {
     if (whose) owed(found.has(id), msg, whose); else ok(found.has(id), msg);
   }
 
-  // Acts II's and III's wares are sold in their area and their finds placed there, each inside the
+  // Acts II's to IV's wares are sold in their area and their finds placed there, each inside the
   // area's window; each owed to its shop or box until it is, as all is in an area not yet listed.
   const areaOf = (id: string): Area | undefined => (AREAS as readonly Area[]).find((a) => a.id === id);
   for (const rung of rungs) for (const [id, [area, whose]] of Object.entries(rung.from)) {

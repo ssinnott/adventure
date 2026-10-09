@@ -457,10 +457,11 @@ calibration:
   point (200 for the levels past 10, made again with #20 and #541), with the levels between
   interpolated. Past 10 the company runs on play's rules: its spells stop growing at 10 (#159), it
   takes its prestiges at 11, 19 and 27 with their hit points, spell points and perks (#19), and with
-  them its spell ranks, and it learns tiers 6 and 7 at 15 and 23 (#20). It wears the ladder's gear to
-  its top at 22: Act II's steps were in when the levels past 10 were made again (#399, #18), and Act
-  III's when the levels past 16 were (#535, #541), each of 17 to 22 on its own, since the company
-  steps at 17, 19, 21 and 22.
+  them its spell ranks, and it learns tiers 6 and 7 at 15 and 23 (#20). It wore the ladder's gear to
+  22: Act II's steps were in when the levels past 10 were made again (#399, #18), and Act III's when
+  the levels past 16 were (#535, #541), each of 17 to 22 on its own, since the company steps at 17,
+  19, 21 and 22. Act IV's step takes the ladder's top to 25 (#542), and the levels past 22 wait to
+  be made again with it (#549).
 
 Hit points / average damage a hit, by role and level:
 
@@ -1152,7 +1153,7 @@ eagles from the birds; the Hand as its masons.
 | Stair Giant | giants, new | brute, 23 | the Giants' Stair | *A man as tall as a house, holding out his hand.* Size 2; sweeps the front row; asks a toll before it fights |
 | Ashen Mason | cultist | soldier, 23 | Sheer Point, on the causeway | *A hammer from below, and a shard to set.* |
 | The Abbot | keepers | boss, 24 | the monastery's chapter house | *The abbot keeps the hours, and it is time.* Its robe falls open as it falls |
-| The Stair-king | giants, new | boss, 24 | the top of the Stair | *He has taken the toll here since before Helmstow.* |
+| The Stair-king | giants, new | boss, 24 | the top of the Stair | *He has taken the toll here since before Helmstow.* Size 2; the giants break when he falls |
 
 - **The chapter house**: brothers in front of two bell-ringers, the bells holding the front row
   while the brothers close, and the cleric's light doing nothing.
@@ -1173,6 +1174,23 @@ a bronze handbell held out and swung eleven strokes at a time; the Abbot is the 
 pale, its hood drawn up to a point and a crook in its hand, and its robe has fallen open on the
 plate and the chisel's mark. The bell is `ranged`, so it holds from the back rank
 (docs/areas/whitespine.md §9). The boxes place them (#499, #500).
+
+Three on frames that exist are drawn (#507): the Spine Eagle, the birds' frame at its biggest,
+coming down with its wings raised high and its yellow feet thrust forward, the nape gold and the
+bill hooked; the Snow Troll, the tor troll's frame made of snow, rimed, a cornice over its brow
+with icicles at the lip, standing in the drift it rose from; and the Ashen Mason, the overseer's
+hitched robe under a mason's apron white with dust, a glass shard on its shoulder and a hammer low
+in its fist. The troll mends as #537 made trolls, and the boxes place them (#499, #501 to #504;
+docs/areas/whitespine.md §9).
+
+Drawn (#507), on the giants' frame (`src/ui/monsters/giants.ts`): a man as tall as a house, upright
+in the coat of felted wool he has worn four hundred years, belted and patched, his leggings bound to
+the knee and a worn badge on his shoulder; his near arm is held out from the elbow, the hand open and
+cupped for the toll, and the far hand hangs, bigger than a man's head. The Stair-king is the frame an
+eighth broader, his head sunk under a mantle of dark fur, white-haired and bearded to the belt, and
+crowned in the toll: coin set on edge round his brow, the oldest at the front with no face. Both are
+size 2, drawn inside the tall boss's crown, and with them #507's eight are drawn
+(docs/areas/whitespine.md §9). I10 places them (#502), and gives them sweep (#545).
 
 **Asks:** sweep.
 

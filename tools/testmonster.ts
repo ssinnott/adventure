@@ -47,8 +47,9 @@ export function line(level: number): { hp: number; ac: number; hit: number; dmg:
  * each of Act III's, 16 to 22, where the company steps at 17, 19, 21 and 22 (#541). Past 10 the
  * company runs on play's rules: its spells stopped growing, its prestiges taken at 11, 19 and 27
  * with their spell ranks (#19, #20) and tiers 6 and 7 at 15 and 23 (#20), dressed by the ladder to
- * its top at 22: Act II's steps were in when the levels past 10 were made again (#399, #18), and
- * Act III's when the levels past 16 were (#535, #541). Levels between are interpolated.
+ * 22: Act II's steps were in when the levels past 10 were made again (#399, #18), and Act III's
+ * when the levels past 16 were (#535, #541). Act IV's step takes the ladder's top to 25 (#542), and
+ * the levels past 22 wait to be made again with it (#549). Levels between are interpolated.
  */
 export const LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 16, 17, 18, 19, 20, 21, 22, 24, 28, 32] as const;
 

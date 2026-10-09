@@ -274,16 +274,18 @@ worth 19,957 xp a member, level 12; paid by level in road order (#159), 15,292, 
 quarters of the way to 11, and a sweep of the Grove at 10 pays about 1,000, so seven tenths of one
 more reaches Thornhold's 11. Act II's three rows came before their maps, each owed to the issue that
 builds its area (#159), and Act III's three the same way (#535): the Kilns 16–18, Cairnmoor 18–20
-and Rimewater 20–22, their windows rising 500 a band to 3,500, 4,000 and 4,500.
+and Rimewater 20–22, their windows rising 500 a band to 3,500, 4,000 and 4,500. Act IV's three are
+in the same way (#542): the Whitespine 22–24, Ashfall 24–26 and the Glasswold 26–28, their windows
+to 5,000, 5,500 and 6,000.
 
 The gear ladder (`GEAR`, `tools/harness.ts`) is what a company has in hand by a level, and the
 harness and the gate dress their companies by it. Act I's: Mottram's by 3, the Downs' finds by 5,
 Thornmark's Armoury by 8, its chests' plus by 9 and the Deepthorn's +2s by 10. Act II's (#399):
 Saltmouth's armourer by 11, Saltreach's and Wrackholm's boxes' plus by 13, Lantern Watch's stores
 by 14 and the Sunder's plus by 16. Act III's (#535): Anvilhall's forge by 17, the Kilns' and
-Cairnmoor's boxes' plus by 19, Rime Lodge's furrier by 21 and Rimewater's plus by 22. Each rung
-betters the last for every class, each find and ware inside its area's window; past the top, gear
-grows only in the harness's what-if.
+Cairnmoor's boxes' plus by 19, Rime Lodge's furrier by 21 and Rimewater's plus by 22. Act IV's, one
+step (#542): Cinderport's armourer by 25. Each rung betters the last for every class, each find and
+ware inside its area's window; past the top, gear grows only in the harness's what-if.
 
 The gate, checked with the bot of `tools/gate.ts`. Each figure below is its **aim**, and each has a
 **limit** beyond it (#273): inside its aim a figure passes; between its aim and its limit it passes,
@@ -473,7 +475,7 @@ docs/areas/<area>.md                    the area's brief, and what was built
 | Sunderwood | 14–16 | chasm, crystal and dead wood as terrain; the Rift generator |
 | The Kilns | 16–18 | ash and pine, built (#536); Kiln-script and Linguist; Kilnhaven's ferry and ship (#432) |
 | Cairnmoor, Rimewater | 18–22 | ice and lying snow as terrain (heather came with Act II; ice came with #536 and lets a group stand on it; lying snow is the maps' snow); regeneration, curse and calls; the drove road's coach; the one story lock the act spends (#432, #440) |
-| The Whitespine | 22–24 | cliffs and peaks, with the road through them; a group that talks before it fights; sweep (#442) |
+| The Whitespine | 22–24 | cliffs and peaks, with the road through them, built (#543); a group that talks before it fights; sweep (#442) |
 | Ashfall | 24–26 | the crossing by ship, open from the start; volcano and lava fields; sweep with fire; the sentries after the Stone (#442) |
 | The Glasswold | 26–28 | steppe and dunes; stone and its cure; the Rider's ride to Cinderport; a lava flow sealing the Glass, drawn by the Wold's doc (#442, #523) |
 | Hearth Isle, the Underdeep | 28–32 | the Underdeep's look; the endings |

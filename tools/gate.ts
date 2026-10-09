@@ -4,7 +4,7 @@
 //   node tools/gate.ts --maps thornmark,grove2 --levels 2,3,4,5 --seeds 200
 //   node tools/gate.ts --road thornmark:tm_wolves1,tm_brigands2,tm_hounds,tm_zealots
 // The premade company is trained to each level, dressed by the ladder (GEAR, tools/harness.ts: to
-// 22, Rime Lodge's furrier's with a plus, and past it in that top step) and takes the prestiges its
+// 25, Cinderport's armourer's, and past it in that top step) and takes the prestiges its
 // level brings, at 11, 19 and 27, as harness's company does (it is that company, `companyAt`),
 // and fights every group of a map alone from full health, once per seed. --road instead fights the
 // groups named, in order, with no rest between, and counts the companies still standing after each;

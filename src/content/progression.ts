@@ -9,8 +9,8 @@
 // (2,759 a sweep once the Warden of the Cut is dead and the Rift's groups stop).
 // Training six members from 5 to 10 costs 8,400 gold. Since #159 a kill pays by level: a clear of
 // Act I in road order is worth 15,292 a member, level 10, where the rows' ×1 sum gives 19,957. Act
-// II's areas had rows before their maps (#159), and Act III's have them now (#535), owed to the
-// issues that build them.
+// II's areas had rows before their maps (#159), Act III's had them too (#535) and Act IV's have them
+// now (#542), owed to the issues that build them.
 import type { RegionId } from './index.ts';
 import { xpForLevel, trainPrice } from '../game/party.ts';
 
@@ -37,7 +37,7 @@ export const MEMBERS = 6;
  * The areas next on the road that have a row before they have a map, in road order. An area leaves
  * this list when its first map lists it in AREAS; the curve check fails while it is in both.
  */
-export const PLANNED = [] as const;
+export const PLANNED = ['whitespine', 'ashfall', 'glasswold'] as const;
 
 /** Every area's row, and every planned area's: an area without one is a type error. */
 export const CURVE: Record<RegionId | (typeof PLANNED)[number], AreaCurve> = {
@@ -75,6 +75,21 @@ export const CURVE: Record<RegionId | (typeof PLANNED)[number], AreaCurve> = {
     // Built but for the country behind (docs/areas/rimewater.md §4.8, §8): its gold
     // meets the curve.
     owed: { whose: '#497', why: 'L10, L11, M10, M11, N9, J9 and K11, the country behind, are parked', gold: 7220 },
+  },
+  // Act IV (#542). The windows rise 500 a band, as Act III's did; the one step on the ladder, at
+  // Cinderport's armourer, fits inside Ashfall's, its dearest ware 3,100. The Whitespine and the
+  // Glasswold sell nothing: the pass has no town and the Wold buys at Cinderport.
+  whitespine: {
+    band: [22, 24], next: 24, price: 5000,
+    owed: { whose: '#445', why: 'the Whitespine is not built yet', xp: 0, gold: 0 },
+  },
+  ashfall: {
+    band: [24, 26], next: 26, price: 5500,
+    owed: { whose: '#446', why: 'Ashfall is not built yet', xp: 0, gold: 0 },
+  },
+  glasswold: {
+    band: [26, 28], next: 28, price: 6000,
+    owed: { whose: '#447', why: 'the Glasswold is not built yet', xp: 0, gold: 0 },
   },
 };
 

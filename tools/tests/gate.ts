@@ -415,6 +415,10 @@ export function gate(): void {
     ok(iced > dry, `six smuggler bowmen under the ice are fought from under it (${pc(iced)} won at 1, against ${pc(dry)} on dry ground)`);
     const strip: MapDef = { id: 'fx_strip', name: 'Strip', kind: 'outdoor', start: { x: 1, y: 1, facing: 0 }, rows: ['MMMMMMM', 'M,apiaM', 'MMMMMMM'] };
     ok(stepsFrom(strip)(5, 1) === 4, `the walk from a way in crosses ash, pine and ice (${stepsFrom(strip)(5, 1)} steps over four squares)`);
+    // A peak and a cliff (#543) are the mountain's rock to the walk, which goes as a company with every
+    // skill: climbed as the mountain is, the road through them walked.
+    const cut: MapDef = { id: 'fx_cut', name: 'Cut', kind: 'outdoor', start: { x: 1, y: 1, facing: 0 }, rows: ['MMMMMMM', 'M=A=|=M', 'MMMMMMM'] };
+    ok(stepsFrom(cut)(5, 1) === 4, `the walk from a way in climbs a peak and a cliff as it does the mountain (${stepsFrom(cut)(5, 1)} steps over four squares)`);
     const at = (x: number): EncounterDef => ({ id: `g${x}`, x, y: 0, monsters: ['rat'] }), line = [at(1), { ...at(2), after: { flag: 'f' } }, at(3), at(4)];
     ok(nearestWayIn(line, (x) => x).map((g) => g.id).join() === 'g1,g3', 'the groups nearest the way in skip one that comes only after a step');
     // A den's keepers are its camp's hardest fight: won no more often than any of its brood.
