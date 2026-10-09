@@ -1859,6 +1859,7 @@
         "mc1_pin",
         "mc1_scrape",
         "mc1_slag",
+        "mc1_stair",
         "mc1_tracks"
       ],
       "groups": [
@@ -1866,6 +1867,35 @@
         "mc1_round",
         "mc1_sentry",
         "mc1_stokers"
+      ],
+      "doors": []
+    },
+    "meridian_camp2": {
+      "size": "32x32",
+      "used": [
+        "mc2_arrow",
+        "mc2_arrow2",
+        "mc2_crust",
+        "mc2_end",
+        "mc2_glove",
+        "mc2_grate",
+        "mc2_grave",
+        "mc2_heap",
+        "mc2_heat",
+        "mc2_hoard",
+        "mc2_in",
+        "mc2_kit",
+        "mc2_part",
+        "mc2_skin",
+        "mc2_tracks",
+        "mc2_true",
+        "mc2_walk"
+      ],
+      "groups": [
+        "mc2_brood",
+        "mc2_drakelings",
+        "mc2_sentry",
+        "mc2_walker"
       ],
       "doors": []
     },
@@ -2788,6 +2818,7 @@
     "elfbow+2",
     "elixir",
     "ember_part1",
+    "ember_part3",
     "faceless_coin",
     "flail",
     "flail+1",
@@ -2864,6 +2895,7 @@
     "mender_spool",
     "mending_kit",
     "meridian_journal",
+    "meridian_mail",
     "morning_star",
     "morning_star+1",
     "name_boards",
@@ -2936,6 +2968,8 @@
     "torch",
     "tower_shield",
     "tower_shield+1",
+    "walker_damper",
+    "walker_iron",
     "wardens_dirk",
     "wardens_dirk+1",
     "wardens_dirk+2",
