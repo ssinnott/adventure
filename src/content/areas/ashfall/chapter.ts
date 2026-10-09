@@ -24,8 +24,9 @@ export const CHAPTER: Chapter = {
   title: 'The Window',
   // Down the Stair from the Whitespine's end, or ashore at Cinderport with the Compact from Kilnhaven.
   start: [{ flag: STAIR_TOP }, { visited: 'cinderport' }],
-  // The road west taken once the Stone is lit: `e10_west` sets it. Nothing is a lock: the parts are
-  // found in any order and set as they come, and the journal reads true in whatever order they are.
+  // The road west taken once the Stone is lit: `e10_west` sets it on the road over the Cinder Hills,
+  // and `d8_east` at Akordu's horse-lines for a company that rides west instead. Nothing is a lock: the
+  // parts are found in any order and set as they come, and the journal reads true either way west.
   done: { flag: ROAD_WEST },
   entries: [
     { id: 'sand', when: { seen: 'cindercoast_h10:h10_foot' },
@@ -50,7 +51,7 @@ export const CHAPTER: Chapter = {
     { id: 'hearth', when: { flag: LIT },
       text: 'That night the Hearth burned steadier than it had in all our lives.' },
     { id: 'west', when: { flag: ROAD_WEST },
-      text: 'From the Cinder Hills the road goes down west onto the grass. Behind us the Stone burns white on its field.' },
+      text: 'With the Stone lit we went west over the Cinder Hills, down onto the grass of the steppe.' },
   ],
   goals: [
     { when: { flag: LIT }, at: 'emberwaste_e10', text: 'West along the Riders\' road over the Ember Waste and the Cinder Hills, onto the steppe.' },

@@ -57,7 +57,7 @@ import { GameMap } from '../../../game/map.ts';
 import type { Feature, MapDef } from '../../../game/map.ts';
 import { restRefused } from '../../../game/wilds.ts';
 import { meet, heard, answer, barred } from '../../../game/people.ts';
-import { questLog } from '../../../game/quests.ts';
+import { questLog, holds } from '../../../game/quests.ts';
 import type { Person } from '../../../game/people.ts';
 import { buy, item } from '../../../game/items.ts';
 import { canTrainAt, xpForLevel, rest, trainPrice, levelUp, templePrice, addCondition, createCharacter, takePrestige, className, PRESTIGES } from '../../../game/party.ts';
@@ -1727,21 +1727,41 @@ const WEST_ROAD: Step = { name: 'the road west', play: (w) => {
 } };
 
 /**
+ * West from Cinderport's gate on the Rider's ride, the Stone lit and the road over the Hills never
+ * walked: set down at Akordu's horse-lines, the landing's line said as the game says it on arrival.
+ */
+const RIDE: Step = { name: 'the Rider\'s ride west', play: (w) => {
+  const rider = mapOf('cinderport').features!.find((f): f is Person => f.kind === 'npc' && f.name === 'A Rider by the gate')!;
+  w.world.travel('cinderport', rider.x, rider.y);
+  w.world.state.minutes = Math.floor(w.world.state.minutes / MINUTES_PER_DAY) * MINUTES_PER_DAY + 9 * 60;
+  w.party.gold = RIDERS_RIDE.fare;
+  const rode = sail(rider.passage![0], w.world, w.party), said = rode.taken ? w.world.eventsHere() : [];
+  listen(w);
+  w.ok(rode.taken && w.world.zone?.id === 'wold_d8' && said.some((t) => t.startsWith('The Riders at the lines')) && !!w.party.flags[ROAD_WEST]
+    && !holds({ seen: 'emberwaste_e10:e10_west' }, w.world.state, w.party),
+    `west on the Rider's ride, the road never walked, set down at Akordu's horse-lines, and ${ROAD_WEST} is set (${said.join(' / ')})`);
+} };
+
+/**
  * The Window (#518), begun where the Whitespine's chapter ends or at Cinderport off the Compact's
  * crossing from Kilnhaven, and played at 24, 25 and 26: by the Stair, the parts in the goals' order and
- * the window looked through; by sea, Old Cinder's part first and the window passed; and by the Stair
- * again, the eldest before the town, Old Cinder's part while the goal names the corridors and the camp
- * never reached. Each part found is carried up and set, and the journal reads true in every order.
+ * the window looked through; by sea, Old Cinder's part first and the window passed; by the Stair again,
+ * the eldest before the town, Old Cinder's part while the goal names the corridors and the camp never
+ * reached; and by sea again, west at the end on the Rider's ride to Akordu, the road never walked.
+ * Each part found is carried up and set, and the journal reads true in every order and either way west.
  */
 function theWindow(ok: (cond: boolean, msg: string) => void): void {
   const early = newWalk(ok);
   early.world.travel('emberwaste_e10', 1, 6, WEST);
-  ok(!early.world.eventsHere().length && !early.party.flags[ROAD_WEST], 'on the road\'s last shoulder before the Stone is lit, nothing is said or set');
+  const shoulder = early.world.eventsHere();
+  early.world.travel('wold_d8', 9, 27, EAST);
+  ok(!shoulder.length && !early.world.eventsHere().length && !early.party.flags[ROAD_WEST],
+    'on the road\'s last shoulder and at Akordu\'s horse-lines before the Stone is lit, nothing is said or set');
   const texts = [...CHAPTER.entries.map((e) => e.text), ...CHAPTER.goals.map((g) => g.text)];
   ok(texts.every((t) => !/hull|ship|orbit|voyage|custodian/i.test(t)), 'nothing in the chapter names a hull, a ship, an orbit, a voyage or a Custodian');
   const jago = MAP_DEFS.find((d) => d.id === 'kilnhaven')!.features!.find((x): x is Person => x.kind === 'npc' && x.name.startsWith('Jago'))!;
   const read: string[] = [];
-  for (const how of ['by the Stair, the window looked through', 'by sea, Old Cinder\'s part first and the window passed', 'by the Stair, the parts as they come']) {
+  for (const how of ['by the Stair, the window looked through', 'by sea, Old Cinder\'s part first and the window passed', 'by the Stair, the parts as they come', 'by sea, and west on the Rider\'s ride']) {
     const w = newWalk(ok);
     for (const m of w.party.members) { m.level = 24; m.xp = xpForLevel(24); }
     w.level = 24;
@@ -1755,10 +1775,15 @@ function theWindow(ok: (cond: boolean, msg: string) => void): void {
       listen(w);
       ok(sailed.taken && w.world.state.mapId === 'cinderport' && !w.party.flags[STAIR_TOP] && quest(w)?.goal === goalOf('Out of Cinderport') && !written(w).length,
         `${how}, ashore at Cinderport the chapter begins, its goal out of the gate to the eldest (${quest(w)?.goal})`);
-      playChapter(w, CHAPTER, [atLevel(24, ELDEST), atLevel(25, HEART), atLevel(25, CINDER), atLevel(25, SET)], how);
-      ok(written(w).join(', ') === 'eldest, stone, cinder' && quest(w)?.goal === goalOf('Down Fire Mountain\'s vents into'),
-        `${how}, Old Cinder's part set first, the journal holds nothing of the vents and the goal is the vents for what the Stone still lacks (${written(w).join(', ')}: ${quest(w)?.goal})`);
-      playChapter(w, CHAPTER, [atLevel(25, FURNACE), atLevel(25, SET), atLevel(26, corridors('passed')), atLevel(26, SET), atLevel(26, WEST_ROAD)], how);
+      if (how.endsWith('passed')) {
+        playChapter(w, CHAPTER, [atLevel(24, ELDEST), atLevel(25, HEART), atLevel(25, CINDER), atLevel(25, SET)], how);
+        ok(written(w).join(', ') === 'eldest, stone, cinder' && quest(w)?.goal === goalOf('Down Fire Mountain\'s vents into'),
+          `${how}, Old Cinder's part set first, the journal holds nothing of the vents and the goal is the vents for what the Stone still lacks (${written(w).join(', ')}: ${quest(w)?.goal})`);
+        playChapter(w, CHAPTER, [atLevel(25, FURNACE), atLevel(25, SET), atLevel(26, corridors('passed')), atLevel(26, SET), atLevel(26, WEST_ROAD)], how);
+      } else {
+        playChapter(w, CHAPTER, [atLevel(24, ELDEST), atLevel(25, HEART), atLevel(25, FURNACE), atLevel(25, SET), atLevel(26, corridors('none')), atLevel(26, SET),
+          atLevel(26, CINDER), atLevel(26, SET), atLevel(26, RIDE)], how);
+      }
     } else {
       // Where The Bells ends: on the Stair below the king's step, looking down into the ash (#505).
       w.party.flags[STAIR_TOP] = 1;
@@ -1777,11 +1802,12 @@ function theWindow(ok: (cond: boolean, msg: string) => void): void {
     goalFromBegun(w, how);
     const ends = w.news.filter((n) => n === `Chapter complete: ${CHAPTER.title}.`).length;
     ok(!!quest(w)?.pages.find((p) => p.def === CHAPTER)?.done && ends === 1 && w.level === 26 && !!w.party.flags[ROAD_WEST],
-      `${how}, over the Hills onto the grass, the chapter is done at 26, and said so once (${ends})`);
+      `${how}, west onto the grass, the chapter is done at 26, and said so once (${ends})`);
     read.push(written(w).join(', '));
   }
   const whole = 'sand, eldest, stone, vents, cinder, corridors, camp, window, lit, hearth, west';
-  ok(read[0] === whole && read[1] === whole.replace('sand, ', '').replace('window, ', '') && read[2] === whole.replace('camp, window, ', ''),
-    `the journal reads the same in every order, but for the Stair's foot never reached by sea, the window only for a company that looks and the camp only for one that goes down (${read.join(' / ')})`);
+  ok(read[0] === whole && read[1] === whole.replace('sand, ', '').replace('window, ', '') && read[2] === whole.replace('camp, window, ', '')
+    && read[3] === whole.replace('sand, ', '').replace('camp, window, ', ''),
+    `the journal reads the same in every order and either way west, but for the Stair's foot never reached by sea, the window only for a company that looks and the camp only for one that goes down (${read.join(' / ')})`);
   everyGoalWalked(ok, [CHAPTER]);
 }
