@@ -9,20 +9,25 @@ under Phase 1.4 (#441). Every call below is a decision the owner may overturn; �
 
 Built: the stair's foot, `dead_drop_stair`, one room at 26–28 with no group and no chest, the
 way back up and, at its far end, the way on (docs/areas/wrackholm.md §4.5, §9, 6); the first
-level, the drop (#22, §4.1); and the second, the vaults (#22, §4.2). The writer's room is to build.
-Its maps are Wrackholm's, in `src/content/areas/wrackholm/maps/`, the area that opens on them. Its
-ids: `dead_drop` (the drop), `dead_drop2` (the vaults) and `dead_drop3` (the writer's room); the
-first keeps the plan's id and place, its atlas row now the built plate (§8, the drop's 8); the
-second has a plate of its own (§8, the vaults' 14).
+level, the drop (#22, §4.1); the second, the vaults (#22, §4.2); and the third and last, the
+counting house (#22, §4.3), which the plan called the writer's room. The Dead-Drop is built. Owed,
+in pull requests of their own: the Factor's rung with Ruan's choice and the Thief's third
+prestige (§5, §10). Its maps are Wrackholm's, in `src/content/areas/wrackholm/maps/`, the area
+that opens on them. Its ids: `dead_drop` (the drop), `dead_drop2` (the vaults) and `dead_drop3`
+(the counting house); the first keeps the plan's id and place, its atlas row now the built plate
+(§8, the drop's 8); the others have plates of their own (§8, the vaults' 14 and the counting
+house's 13).
 
 ---
 
 ## 1. Where it is
 
 The atlas has the Dead-Drop as a dungeon plate at 208,204, band 26–28 (the three levels' union),
-below the Tide Ship off Wrackholm's F6, with the stair's foot at 214,204 beside it and the vaults'
-plate at 208,210 below it (`src/content/areas/wrackholm/atlas.ts`). It was the plan's row until the
-drop was built; the writer's room takes a plate when it is (§8, the drop's 8 and the vaults' 14).
+below the Tide Ship off Wrackholm's F6, with the stair's foot at 214,204 beside it, the vaults'
+plate at 208,210 below it and the counting house's at 208,216 below that
+(`src/content/areas/wrackholm/atlas.ts`). It was the plan's row until the drop was built; the
+vaults and the counting house have plates of their own (§8, the drop's 8, the vaults' 14 and the
+counting house's 13).
 
 - **In and out:** the Tide Ship's hatch and the stair, and nothing else. The stair's foot leads on
   into `dead_drop` by the way at its far end (§4.1).
@@ -42,19 +47,21 @@ docs/areas/whitespine.md). The road never needs it.
 
 ## 3. What is built
 
-The stair's foot (#190), the drop, the first level (#22, §4.1) and the vaults, the second (#22,
-§4.2). Four of the five monsters were drawn ahead of the levels that place them (#22, §8), in
-Wrackholm's table: the drop places three, the loader, the tally clerk and the hold keeper,
-restated on the line (§8, the drop's 5); the Tallymaster waits for the writer's room. The deep
+The stair's foot (#190), the drop, the first level (#22, §4.1), the vaults, the second (#22, §4.2)
+and the counting house, the third and last (#22, §4.3). Four of the five monsters were drawn ahead
+of the levels that place them (#22, §8), in Wrackholm's table: the drop places three, the loader,
+the tally clerk and the hold keeper, restated on the line (§8, the drop's 5); the counting house
+places the Tallymaster, set off the line for its gate (§8, the counting house's 4). The deep
 knocker is Meridian Camp's, drawn by #657. The vaults place it at the sealed door, with the loader
-and the keeper again; they restate nothing (§8, the vaults' 5). The writer's room waits on what §7
-lists; it is the last thing of Act IV to build.
+and the keeper again; they restate nothing (§8, the vaults' 5). The counting house places the
+tally clerk with a loader again. The Dead-Drop is built; its quests are owed (§5, §10).
 
 ## 4. The levels
 
 Each level is a 32×32 dungeon at the dungeon floor of density (EXPANSION §5.3): about twelve
 features and ten groups, about one rest's fights at the band (MONSTERS §4.4); the vaults hold five
-(§8, the vaults' 2). "None gentler" (#443, call 4) means no level floors under 26; the band rises
+(§8, the vaults' 2) and the counting house two (§8, the counting house's 2). "None gentler"
+(#443, call 4) means no level floors under 26; the band rises
 inside it as EXPANSION §5.2 asks.
 
 ### 4.1 The drop (`dead_drop`): band 26 rising to 27
@@ -153,11 +160,11 @@ inside it as EXPANSION §5.2 asks.
     25,29 facing north, the slope's head. The hoist (`HOIST`, exported): the chains at 15,28 (the
     hint, said each time), a secret door found by a search at 14,28 in the aisle's west wall and the
     cage behind it at 13,28, one way up onto the drop's new square 1,10 facing east; nothing on the
-    drop leads down it (§8, the vaults' 10). The way on down, 16,30 (`WRITER_STAIR`, exported): a
-    wall drawn as a door, barred until the writer's room is built, with `dd2_down` at its head
-    (16,29), said each time (§8, the vaults' 11). The rails' door, 3,8, a wall drawn as a door with
-    `dd2_door` at its foot (4,8), leads nowhere (the vaults' 7). The atlas plate `dead_drop2` at
-    208,210 (the vaults' 14).
+    drop leads down it (§8, the vaults' 10). The way on down, 16,30 (`WRITER_STAIR`, exported):
+    floor now, in the vaults' exits and labelled, onto the counting house's start at 16,1, with
+    `dd2_down` at its head (16,29), said once (§8, the vaults' 11 and the counting house's 1). The
+    rails' door, 3,8, a wall drawn as a door with `dd2_door` at its foot (4,8), leads nowhere (the
+    vaults' 7). The atlas plate `dead_drop2` at 208,210 (the vaults' 14).
   - **Measured.** At its floor, 27, a company wins every fight and manages 11.09 fights to a rest,
     inside the aim of 9.75 to 11.75 and the limit of 8.25 to 14.25 that the gate asks at 27, with
     65.7% of its days ending in a fight broken off; two under, at 25, it wins every fight too, owed
@@ -170,10 +177,10 @@ inside it as EXPANSION §5.2 asks.
     at 10 steps, level 26.0, and the knockers the hardest at 27 steps, level 28.0, at least 28 (§8,
     the vaults' 4). The walkthrough goes down the drop's rails and back up, reads the door, the seal
     and the count, wins every group at 27, finds the rest in an empty pen and takes the coin, the
-    parts and the spike. It searches out the hoist, rides it up to the drop and meets the steps down
-    barred, their line said.
+    parts and the spike. It searches out the hoist, rides it up to the drop and goes on down
+    the steps into the counting house (§4.3).
 
-### 4.3 The writer's room (`dead_drop3`): band 27–28
+### 4.3 The counting house (`dead_drop3`): band 27–28
 
 - **Purpose.** The Tallymaster at its desk, and the orders (DESIGN §10.2).
 - **Landmarks.** The counting house: the desk, the in-tray and the out-tray. The in-tray holds
@@ -185,6 +192,52 @@ inside it as EXPANSION §5.2 asks.
   and never runs; the company may break it, or leave it writing to nobody.
 - **The door's inscription,** read by a reader of Kiln-script (#538), gives the vessel's own word
   for the room: found and not given. The word is the building session's, for the owner's review.
+- **As built** (#22, 9 October): the brief's places laid in 180 open squares, as the steps' foot, a
+  hall of desks and the master's floor behind a rail, with two groups (§8, the counting house's 1
+  and 2). Band 27–28, outside Wrackholm's budget (the counting house's 3), the map named The
+  Counting House (the counting house's 12). The vaults' steps, open now, let a company in at 16,1
+  facing south, and **the steps' foot** (16,1 and 16,2) has the door ahead (16,3, a plain door),
+  with **the marks** over it (`dd3_marks`, read at 16,2): to anyone marks like the Kilns', to a
+  reader **MANIFEST. COUNT EVERY ONE.**, the room's word and the order it keeps (the counting
+  house's 10). Past the door **the hall** (x 10–22, rows 4–15), twelve high desks in it as single
+  pillars (x 12, 14, 18 and 20 on rows 6, 9 and 12), the ledgers, the shelves and the stools read
+  in it; across row 16 **the rail**, with one gate (16,16) where the Tallymaster is first seen
+  writing (`dd3_writes`, once, which sets `q_writer_seen`). Behind the rail **the master's floor**
+  (x 12–20, rows 17–19) and five niches in row 20: the strongbox (12,20), **the in-tray**
+  (`dd3_intray`, 14,20), **the desk** (16,20), **the out-tray** (`dd3_outtray`, 18,19; the chest
+  `dd3_orders` in its niche, 18,20) and the bin of spent nibs (20,20). Rows 21–31 are rock.
+  - **Groups.** Two: a tally clerk with a loader by the rail (`dd3_clerk`, 12,14), the day's one
+    group, and the Tallymaster alone at its desk (`dd3_tallymaster`, 16,20, in its niche with
+    walls on three sides). Neither roams. The Tallymaster calls two clerks, who may call their
+    loaders; it does not respawn, has a text for its breaking and is aware 1 (§8, the counting
+    house's 6).
+  - **Seams.** Down from the vaults' `WRITER_STAIR` (16,30, floor now and in their exits,
+    labelled) onto the counting house's 16,1 facing south, the start; back up from 16,1 onto the
+    vaults' 16,29 facing north, the steps' head, where `dd2_down` is said once. The door is 16,3
+    and its marks stand on 16,2. Nothing leads on down: the steps are the level's one exit (§8, the
+    counting house's 15). The atlas plate `dead_drop3` at 208,216 (the counting house's 13).
+  - **The orders and the writing.** The orders are `compact_orders`, in the chest `dd3_orders`
+    in the out-tray's niche, taken without a fight (§8, the counting house's 8); the letters in the
+    in-tray are in the hand that countersigned the pages under the Helmstow seal, never named (the
+    counting house's 9). Seeing the Tallymaster write is `dd3_writes`, which sets `q_writer_seen`
+    (the counting house's 7). The Thief's third prestige is to key on that event and flag, the
+    Factor's rung on the orders (§5).
+  - **Measured.** At its floor, 27, a company wins 85% of the level's fights, off the aim of 90%
+    and inside the limit of 80%, and manages 10.30 fights to a rest, inside the aim of 9.75 to
+    11.75 and the limit of 8.25 to 14.25, with 61.3% of its days ending in a fight broken off; two
+    under, at 25, it wins 64%, off the aim of at most 25% and inside the limit of 90%, so nothing
+    is owed to #18 (§8, the counting house's 5). The clerk with its loader is won every time at 27
+    and at 25. The Tallymaster is won 70% at 27 (aim 30% to 70%, limit 20% to 80%), 83% at 29 (aim
+    90%, limit 75%) and 28% at 25: its blow is set off the line (the counting house's 4).
+    The level pays 3,485 xp a member for the brief's 3,000, under the cap of 3,750, and holds
+    2,000 gold and two parts (unpriced), with no priced find and no named piece (the counting
+    house's 3 and 11). Density 100.0% within 7 steps (180 of 180, 162 needed) and the furthest 6 of
+    10, with one sign among its 16 points. The curve's rank correlation is 1.00: the clerk nearest
+    at 17 steps, level 26.0, and the Tallymaster the hardest at 19 steps, level 28.0, at least 28.
+    The walkthrough goes down the vaults' steps and back up, reads the marks and the room, sees the
+    Tallymaster writing from the gate and the flag set, reaches both trays with no group beside,
+    takes the orders, the coin and the parts, wins the clerk every time and the Tallymaster 70% of
+    ten at 27 and finds no way on.
 
 ### 4.4 The cargo
 
@@ -205,8 +258,11 @@ knot, which no text calls anything (§8, the vaults' 8).
   #182 left the founder's seal (docs/areas/saltreach.md §9; docs/areas/wrackholm.md §4.4). The
   choice is put by Ruan in the Keel at Saltmouth, not below: the Compact is people, and a person
   puts a choice. Hand it to the Wardens or take it over; either way it stops taking the
-  Tallymaster's orders.
-- **The Thief's third prestige** (#448): steal the orders and learn who writes them.
+  Tallymaster's orders. The orders are the counting house's `compact_orders` (§4.3), and the
+  Factor's rung asks for `{ item: 'compact_orders' }`; the rung and Ruan's choice are owed (§10).
+- **The Thief's third prestige** (#448): steal the orders and learn who writes them. Seeing the
+  Tallymaster write is `dd3_writes`, which sets `q_writer_seen`: the quest is to key on `seen:
+  'dead_drop3:dd3_writes'` and that flag. It is owed (§10).
 - **The Scarp Stair's runner** (#56's 54, docs/areas/glasswold.md §6) carries orders from here; the
   cleft under the Scarp's lip holds the last three drops. Neither changes.
 
@@ -243,8 +299,8 @@ need first:
   `roadPlace` puts it, as `paceFaults` does (with its area, or, where its floor is over the area's
   band, with the last area whose floor is at or under its own), so the Dead-Drop's knockers,
   keepers, heavy machines and calls stand with the Glasswold, after the Kilns', Rimewater's and
-  Ashfall's claims. The drop and the vaults stand there and claim nothing new (§8, the drop's 12
-  and the vaults' 15).
+  Ashfall's claims. The drop, the vaults and the counting house stand there and claim nothing new
+  (§8, the drop's 12, the vaults' 15 and the counting house's 14).
 
 ## 8. Decisions
 
@@ -267,9 +323,9 @@ comment on #22; each may be overturned:
 9. **#158's rule stands as written;** the stair's foot holds no group by its brief.
 10. **It pays outside any area's budget,** about 9,000 xp a member, as Wrackholm's §9 already counts
     it; its gold is the Compact's drop coin, heavy; its finds sit in the band-28 window. Wrackholm
-    declares it so by listing the three ids in its `outside` (EXPANSION §5.2). Built so for the drop
-    and the vaults (the drop's 3 and 4, the vaults' 3): Wrackholm lists `dead_drop` and
-    `dead_drop2`, and the third as it is built.
+    declares it so by listing the three ids in its `outside` (EXPANSION §5.2). Built so for the
+    three levels (the drop's 3 and 4, the vaults' 3, the counting house's 3): Wrackholm lists
+    `dead_drop`, `dead_drop2` and `dead_drop3`.
 11. **It is built last in Act IV,** after the novelty check learns to place a map by its band (done in #682).
 
 Decided by delegate for #22 (the drop's monsters), each the owner's to overturn:
@@ -480,6 +536,77 @@ Decided by delegate for #22 (the vaults), each the owner's to overturn:
 16. **The gate owes `dead_drop2: under` to #18, at 1,** as every box: every group is won at 25,
     two under its own floor.
 
+Decided by delegate for #22 (the counting house), each the owner's to overturn:
+
+1. **Laid as a hall and the master's floor, 180 open squares** (§4.3, as built): the steps' foot
+   and a plain door with the marks over it, the hall of twelve high desks, the rail with its one
+   gate, the master's floor and five niches in row 20. The vaults' steps are opened for it, as the
+   vaults' 11 asked: `WRITER_STAIR` is listed in their exits and labelled; 16,30 is floor (the
+   `Z` legend stays, for the rails' door); `dd2_down` is rewritten and made once; their walk goes
+   on down.
+2. **Two groups, not the doc's about ten: a tally clerk with a loader (`dd3_clerk`, 12,14) and the
+   Tallymaster.** The day leaves the boss out, so the level needs one more. At 27, 300 days, the
+   deal on (C a clerk, L a loader, K a keeper, D a deep knocker; the pay a member with the
+   Tallymaster): C,CL 13.63 and CC,L 8.84 are off the aim at 3,658; C,L 27.49; CD 9.90 (3,389);
+   **CL 10.30 is taken** (3,485), the brief's clerks and loaders before the desk and the only mix of
+   them inside the aim. No two-group mix under the cap is inside it.
+3. **Pay 3,485 xp a member** (20,913 between six: the Tallymaster 17,813, the loader 2,067, the
+   clerk 1,033), 1.16 of the brief's 3,000 and under its cap of 3,750; the Tallymaster alone is
+   2,969 of it. **The three levels pay 9,694 xp a member** (2,934, 3,275 and 3,485; 1.08 of the
+   first block's about 9,000, in 10) and 6,000 gold, counted in no clear. The calls (the clerk's two
+   loaders, the Tallymaster's two clerks and theirs) pay nothing the curve counts, as on the drop.
+4. **The Tallymaster is set off the line for its blow, its level and hit points kept** (`OFF_LINE`;
+   it leaves `RESTATE`, now empty). Restated on the boss line as #549 made it (1,552 hit points,
+   26d8+29) it was won 89% at 27, past the gate's limit of 80%; as drawn (1,497 and 25d8+28), 91%.
+   Hit points move 27 and 29 together (1,800: 81% and 85%; 2,000: 71% and 73%), so they stay the
+   line's and its blow is set: **28d8+50, won 70% at 27 (aim 30% to 70%) and 83% at 29 (aim 90%,
+   limit 75%).** The gap from 27 to 29 never passed 16 points, so both aims cannot hold and the
+   floor's is kept. Tried: 26d8+45 84% and 91%, 26d8+60 77% and 85%, 30d8+45 71% and 87%, 29d8+50
+   72% and 78%, 28d8+55 70% and 80%. Armour, attack, speed, xp, calls, look and sprite are kept.
+5. **The level's floor figure is 85%, off its 90% aim and inside its limit of 80%:** the boss
+   counts as one of the level's two groups (100% and 70%). A third group to lift it puts the day
+   off its aim (C,CL 13.63) and the pay at 3,658. Two under, at 25, it wins 64% (aim at most 25%,
+   limit 90%; the Tallymaster 28% there), inside its limit, so **no `dead_drop3: under` is owed to
+   #18,** unlike every other box.
+6. **"Only at its desk" is the map's:** `dd3_tallymaster` stands at 16,20 in its niche, walls on
+   three sides, `roams: false`, so the one open square beside it is 16,19, before the desk (a group
+   fights only a company within one square). No respawn, a `slainText` (a guardian), aware 1. The
+   walk checks the one square, `roams: false` and the fight won at 27.
+7. **Seeing it write is `dd3_writes`** (16,16, once, sets `q_writer_seen`), on the gate in the
+   rail, the only way onto the master's floor, four squares from the desk. The walk checks the
+   Tallymaster in sight from it by a light, no group beside it and the flag set after. The Thief's
+   third prestige (#448, part 3) is to key on `seen: 'dead_drop3:dd3_writes'` and that flag, the
+   Factor's rung on `{ item: 'compact_orders' }`.
+8. **The orders are `compact_orders`, "The Compact's Orders",** a quest item (slot none, price 0)
+   with three lines, read from the pack, in a chest in the out-tray (`dd3_orders`, 18,20;
+   `dd3_outtray`, 18,19). Taken without a fight: the walk finds a way from the start to both trays
+   over squares more than one from every group.
+9. **The in-tray is `dd3_intray`** (14,20): letters in the hand that countersigned the pages under
+   the Helmstow seal (Lantern Watch's papers), never named. The walk checks that no text on the
+   level says Regent.
+10. **The door's inscription is `dd3_marks`,** a sign with a reading (#538) at 16,2, over the door
+    at 16,3: marks like the Kilns' to anyone and, to a reader, **MANIFEST. COUNT EVERY ONE.**, the
+    vessel's word for the room (its cargo list) and the standing order the room keeps. The word
+    is the building session's, for the owner's review. No text says hull, ship, orbit, voyage,
+    Custodian or Core (the walk checks).
+11. **The finds:** the Compact's drop coin, 2,000 gold in one strongbox (`dd3_strongbox`, 12,20;
+    `dd3_coin`, 12,19), the drop's and the vaults' figure again; the parts `clerk_frame` ("Tally
+    Clerk's Frame") and `tally_nib` ("Tallymaster's Nib"), slot none, price 0, in the bin
+    (`dd3_heap`, 20,20; `dd3_nibs`, 20,19). No priced find and no named piece: the brief asks none
+    here.
+12. **The map is named The Counting House** (§9): band 27–28, region Wrackholm, `bare`, the
+    vaults' palette and `stone` walls, no legend.
+13. **The atlas plate is `dead_drop3` at 208,216,** six below the vaults' 208,210 down the column
+    the Tide Ship's decks and the drop stand in; no band or name, as `dead_drop2`.
+14. **No secret, and novelty claims nothing:** a sign with a reading, events (one setting a flag),
+    chests, a door and calling groups are all on the road before the Glasswold's place, where the
+    novelty check puts the level, so Wrackholm's claims stand (devilfish, heather, wreck).
+15. **No way on down:** the level's one exit is back up the steps; the rails' door stays shut and
+    the vaults' sealed door stays the glimpse.
+16. **`BOSSES`** (`tools/tests/gate.ts`) gains `'dead_drop3:dd3_tallymaster'` under `wrackholm`,
+    the zone the Dead-Drop opens from, as the corridors' Brood Drake stands under `firemount`:
+    judged at 27 and 29, left out of the day.
+
 ## 9. Names
 
 - **The Dead-Drop** stands: the smugglers' English (docs/areas/wrackholm.md §10), and now literal.
@@ -494,7 +621,16 @@ Decided by delegate for #22 (the vaults), each the owner's to overturn:
   door is the one lock the road spends.
 - **Living cargo below,** which would ask a rescue the band forbids an Act II company.
 - **About ten groups at the vaults:** five (the vaults' 2).
-- **The writer's room** is owed, and with it the Tallymaster (owed to `dead_drop3`) and the way on
-  down (`WRITER_STAIR`, exported and barred, the vaults' 11).
+- **About ten groups at the counting house:** two (the counting house's 2). Nor does it owe
+  `dead_drop3: under` to #18, as every other box does (the counting house's 5).
+- **A way on down from the counting house:** none; the vaults' steps are its one way out (the
+  counting house's 15).
+- **The Factor's rung** (`In the Founder's Hand`, which asks for `compact_orders`) with **Ruan's
+  choice at the Keel,** in a pull request of their own (PR D of #635): owed (§5).
+- **The Thief's third prestige** (#448, part 3), which keys on `dd3_writes` and `q_writer_seen`:
+  owed (§5).
+- **MONSTERS §4.4's 6 and 8** still owe the Dead-Drop's monsters a restating and report the
+  Tallymaster at 57% at 28; the counting house sets it off the line and its gate wins it 70% at 27
+  (the counting house's 4). Left as they stand, a shared doc.
 - **MONSTERS §8.5's Where for the hold keeper** still names the people's vault alone; the drop's far
   end is a second place (the drop's 4). Left as it stands, a shared doc.
