@@ -85,7 +85,7 @@ export const CURVE: Record<RegionId | (typeof PLANNED)[number], AreaCurve> = {
   },
   ashfall: {
     band: [24, 26], next: 26, price: 5500,
-    owed: { whose: '#446', why: 'Ashfall is built box by box', xp: 12036, gold: 5100 },
+    owed: { whose: '#446', why: 'Ashfall is built box by box', xp: 14182, gold: 6000 },
   },
   glasswold: {
     band: [26, 28], next: 28, price: 6000,
