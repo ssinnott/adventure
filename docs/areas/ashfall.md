@@ -116,17 +116,18 @@ a vent's fire in its lip and its smoke going up; lava is the `!` there was. The 
 with its 207 squares of vines and G11 with its 102 of lava; the atlas lays the cone as mountain, so
 #513 letters it `V` and its mouth `@` over the draft (docs/SLICE.md).
 
-Four of its nine monsters are drawn ahead of the area (#520): the Strangler Vine, the Cinder Beetle,
+Six of its nine monsters are drawn ahead of the area (#520): the Strangler Vine, the Cinder Beetle,
 the Ember Salamander and the Ash Husk, on the old wood's, the spider's, the salamanders' and the
-skeleton's frames (§7), in `src/content/areas/ashfall/monsters.ts` and listed in `AHEAD`
-(`src/content/index.ts`) until #510 lists the area. Each is owed to the box that first places it
-(`UNPLACED`, `tools/tests/maps.ts`): the vine and the beetle to #510, the salamander to #511 and the
-husk to #514. Nothing else is built.
+skeleton's frames, and the Cinder Drake and the Old Drake on the drakes', new (§7), in
+`src/content/areas/ashfall/monsters.ts` and listed in `AHEAD` (`src/content/index.ts`) until #510
+lists the area. Each is owed to the box that first places it (`UNPLACED`, `tools/tests/maps.ts`): the
+vine and the beetle to #510, the salamander and the drake to #511, the husk to #514 and the Old
+Drake to #515. Nothing else is built.
 
 The systems it waits on are the rest of #442's: sweep with fire (#545), the ship to Cinderport, the Riders' ride and the last crossing (#547), the
 Ember Stone for the Hearth and the sentries after (#548) and the bot grown to the band (#549); the
-giants' toll (#544) and stone (#546) are its neighbours'. The rest of its monsters, the drakes and
-the heavy machines, are #520's to draw, and its rooms #521's. Meridian Camp is #22, parked until #443 unparks it.
+giants' toll (#544) and stone (#546) are its neighbours'. The rest of its monsters, the heavy
+machines, are #520's to draw, and its rooms #521's. Meridian Camp is #22, parked until #443 unparks it.
 
 ## 4. What is still to build
 
@@ -565,7 +566,11 @@ Four of the nine are drawn (#520): the Strangler Vine, a grey tree it has killed
 nearly to the ground; the Cinder Beetle, low and black with one forked horn; the Ember Salamander,
 lither than its kin, coal-red, its fire in bands; and the Ash Husk, the cast of a man holding his cup
 up. Each stands on MONSTERS §4.4's line at its level; the vine holds as the bramble does, and the
-groups that place it are set not to roam (§9). The drakes and the heavy machines are still to draw.
+groups that place it are set not to roam (§9). The drakes are drawn on a frame of their own: the
+Cinder Drake, hunched and crusted ash-grey, small-winged and heavy-headed, hanging on its wings with
+its jaw open on the glow and the fire in the seams of its belly; and the Old Drake, the frame larger
+and settled, its wings half folded, scarred and crusted with its crater's sulphur. Both breathe fire
+on a row and fire does nothing to them (§9). The heavy machines are still to draw.
 
 Proposed, against the roster's Where column: the Cinder Drake over Cindercoast's shore (H10, G10)
 and on the Hills (E10), where MONSTERS §8.2 has it on Fire Mountain's slopes only, and the Ember
@@ -735,6 +740,33 @@ Decided by delegate for #520 (the four on frames), each the owner's to overturn:
 7. **Each is owed to the first box that places it:** the vine and the beetle to H10 (#510), the
    salamander to G10 (#511, the proposal in §7; to G11, #513, if the owner does not take it) and the
    husk to F11 (#514), whose crater sends them out by night before Old Cinder (#515).
+
+Decided by delegate for #520 (the drakes), each the owner's to overturn:
+
+1. **The Cinder Drake stands on the test drake's line at 25** (MONSTERS §3.3): 584 hit points, 5d8+3
+   and its breath, `sweep: { chance: 0.25, element: 'fire' }`, as `testDrake` has them
+   (`tools/testmonster.ts`), so `tools/tests/harness.ts` holds it there. Its speed is the line's 8,
+   though it flies.
+2. **It flies as the Spine Eagle does,** `ranged`, so its blows reach the back row as well as its
+   breath. The Old Drake does not: the roster gives it the breath and not the wings, and it lies on
+   its town with them folded; its breath still takes either row.
+3. **The Old Drake is the boss line at 26 come down whole to a sweeper's 0.85,** 1,226 hit points and
+   21d7+32, as the test drake is the brute's, with the drakes' breath; no shape of the harness is a
+   boss that sweeps, so it is set off the line (`OFF_LINE`) for Old Cinder's gate to set (#515), as
+   the bosses with turns of their own are.
+4. **Fire does nothing to either,** `immune: ['fire']`, though the roster's rows do not say so: they
+   are grown in the vents, as the cinder beetle and the ember salamander are. Neither is weak to
+   cold, which the roster does not give them either.
+5. **Sizes 1.3 and 1.8:** the Cinder Drake a brute's, the Old Drake the Brood Drake's (MONSTERS §8.4),
+   drawn with its wings folded inside the tall boss's crown, at 0.80 of its height. Settled and
+   broader, it stands over its young though they hang in the air.
+6. **The family is a frame and a Build** (`src/ui/monsters/drakes.ts`): height, breadth, head, how
+   high it hangs, how far its wings open and beat, its colours, sulphur and scars, so the drakeling
+   and the Brood Drake (MONSTERS §11) are a Build each. Nothing of the picture book's dragon: no long
+   neck, no great wings, no spines, but a hunched thing with a head of basalt turned to the company.
+   The breath's embers are its declared parts (`tools/smoke.ts`), four at most.
+7. **Each is owed to the box that first places it:** the Cinder Drake to G10 (#511, the proposal in
+   §7; to G11, #513, if the owner does not take it) and the Old Drake to Old Cinder (#515).
 
 ## 10. Names
 
