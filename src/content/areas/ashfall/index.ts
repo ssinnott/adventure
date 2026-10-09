@@ -2,6 +2,8 @@
 // second area of Act IV, begun by sea (#443, call 6). docs/areas/ashfall.md is its brief.
 import type { Area } from '../../area.ts';
 import { CINDERCOAST_G10 } from './maps/cindercoast_g10.ts';
+import { EMBERWASTE_F10 } from './maps/emberwaste_f10.ts';
+import { EMBERWASTE_E10 } from './maps/emberwaste_e10.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { INTERIORS } from './interiors.ts';
@@ -9,7 +11,7 @@ import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
   id: 'ashfall' as const,
-  maps: [CINDERCOAST_G10],
+  maps: [CINDERCOAST_G10, EMBERWASTE_F10, EMBERWASTE_E10],
   monsters: MONSTERS,
   sprites: SPRITES,
   // Cinderport's armourer's step (#542), sold when the town is built (#512).
