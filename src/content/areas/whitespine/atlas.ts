@@ -3,11 +3,16 @@
 import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
-  { id: 'sheerpoint', name: 'Sheer Point', area: 'whitespine', band: [23, 24], seeds: [[282, 244], [276, 262]] },
+  {
+    id: 'sheerpoint', name: 'Sheer Point', area: 'whitespine', band: [23, 24], maps: [{ map: 'sheerpoint_i9', at: [264, 254] }], seeds: [[282, 244], [276, 262]],
+    // The crossing line said north along the ridge from the High Spine, at the same floor (#166, #503).
+    crossing: { harder: 'Out here the land runs thin toward the sea, and nothing on it is any kinder than the range.', warning: 'Nothing on the Point would spare you. The way you came is still open.' },
+  },
   {
     id: 'highspine', name: 'The High Spine', area: 'whitespine', band: [23, 24], maps: [{ map: 'highspine_i11', at: [264, 318] }, { map: 'highspine_i10', at: [264, 286] }], seeds: [[292, 310], [290, 350]],
-    // The crossing line said over the crest from the vale (#166, #501).
-    crossing: { harder: 'Over the crest the wind is at you, and the range is harder still.', warning: 'Nothing on this crest would spare you. The way back down to the vale is still open.' },
+    // The crossing line said over the crest from the vale (#166, #501), and south along the ridge from
+    // the Point (#503), so it says nothing of the way it was come by.
+    crossing: { harder: 'On the crest the wind is at you, and nothing up here is any kinder.', warning: 'Nothing on this crest would spare you. The way back is still open.' },
   },
   {
     id: 'monksvale', name: 'Monks\' Vale', area: 'whitespine', band: [22, 23], maps: [{ map: 'monksvale_j11', at: [296, 318] }], seeds: [[322, 344], [318, 318]], label: [318, 326],
