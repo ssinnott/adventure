@@ -181,10 +181,10 @@ Six boxes of its own, the first of which lists the area (#525):
   foot and a glass walker alone at their middle. In the south-east the mesa stands at the dunes' end
   and the gap lies between it and the rim's foot, where the sand gives way to glass: the Riders'
   watch keeps its fire on the last grass at its mouth, three Riders and a yurt of white felt, and
-  from the gap's last square the Glass is seen with the Tower's crown standing out of it, and no way
-  on. In the one dune that does not shift a walker lies half-buried, its chest open and a cache in
-  it. Five groups: two of four glass scorpions, six vultures, a glass walker alone and two walkers
-  standing at the gap (§4.8).
+  from the gap's last square the Glass is seen with the Tower's crown standing out of it, with no
+  way on. In the one dune that does not shift a walker lies half-buried, its chest open and a cache
+  in it. Five groups: two of four glass scorpions, six vultures, a glass walker alone and two
+  walkers standing at the gap (§4.8).
 
 Its atlas rows are charted in `src/content/areas/glasswold/atlas.ts`, the area's own `atlas` since
 D9 lists the area; until then `src/content/atlas.ts` spread them into the plan where its rows were,
@@ -825,8 +825,8 @@ settled in its issue, and what Ashfall teaches changes them.
 - **Pay.** About 1,600 xp a member.
 - **Built** (#530, 9 October): the brief's places, with twenty features and the five groups, laid
   whole in the Wold at 40,254, band 26–28 and not 28: the curve's rise rule holds the hardest group
-  at least max(floor + 1, top − 2), so at 27–28 the hardest must be 28, which only the Grey Lion is,
-  the walkers' pair averaging 27, and at 26–28 it must be 27, which the walkers are; the gate's
+  at least max(floor + 1, top − 2), so at 27–28 the hardest must be 28, which only the Grey Lion is
+  (the walkers' pair averages 27), and at 26–28 it must be 27, which the walkers are; the gate's
   company is tuned at 26, where the day is 10.41 fights to a rest, the same five groups making 19.7
   at 27 (§9, #530's 1). It is the sixth map on the Wold's zone row, after D10, D9, D8, C8 and B8,
   and last in the Area's `maps`. Its start is the way in, 16,0 facing south (56,254), where B8's
@@ -864,11 +864,11 @@ settled in its issue, and what Ashfall teaches changes them.
   26) and the rim's foot (rows 28 to 31). At the stones (`b9_line`, 27,27) a Rider calls from the
   fire that it is the Glass and what walks there would not spare you: the Riders' word on crossing
   into it, the same to every company (§9, #530's 9). The walker's tracks come up off the glass onto
-  the sand, one set, going out, and on the glass there is no mark (`b9_tracks`, 29,27; §9, #530's
-  16). The last square, 31,27 (71,281), is where the sand ends and underfoot is glass, the Glass
-  running white to the sky with a dark crown standing out of it far off (`b9_glass`): open, no exit,
-  the world's end past it. It is the box's one open square on the Glass's side, the east edge from
-  row 14 down and the whole south edge being rock or the rim's foot laid as the world's end, and the
+  the sand, one set, going out; on the glass there is no mark (`b9_tracks`, 29,27; §9, #530's 16).
+  The last square, 31,27 (71,281), is where the sand ends and underfoot is glass, the Glass running
+  white to the sky with a dark crown standing out of it far off (`b9_glass`): open, no exit, the
+  world's end past it. It is the box's one open square on the Glass's side, the east edge from row
+  14 down and the whole south edge being rock or the rim's foot laid as the world's end, and the
   walkthrough checks it (§9, #530's 4 and 5). The Tower's crown at 84,280 is 13 squares east of it
   and one north. The two walkers stand under the mesa's west face at 25,23, `roams: false` and aware
   2; the way from the fire to the last square never comes within 2 of them, so the Glass is seen
@@ -894,10 +894,10 @@ settled in its issue, and what Ashfall teaches changes them.
   both sides and laid void, hills at 1 to 7, steppe at 8, hills at 9 and steppe at 10 to 31, all
   open both sides, B8's 16,31 walked south onto B9's 16,0; west, column 0 against A9 (cut), mountain
   on all rows, laid void, the rim; south, row 31 against B10 (the Glass's, not built), mountain on
-  all columns, the rim's foot, laid void, with no exit; east, column 31 against C9 (parked, void),
-  steppe at row 0 and dunes at 1 to 13, open, the mesa's rock at 14 to 26, the gap's last square at
-  row 27, open (C9's 0,27, 72,281, is the Glass in the atlas), and the rim's foot, laid void, at 28
-  to 31. All are pinned in `tools/tests/outdoors.ts`, B8's pin there no longer wanting the void
+  all columns, the rim's foot, laid void, with no exit; east, column 31 against C9 (parked, void):
+  steppe at row 0, dunes at 1 to 13 (open both), the mesa's rock at 14 to 26, the gap's last square
+  at row 27 (open; C9's 0,27, 72,281, is the Glass in the atlas) and the rim's foot, laid void, at
+  28 to 31. All are pinned in `tools/tests/outdoors.ts`, B8's pin there no longer wanting the void
   south of it. It has no exit: it is reached over B8's south edge, and `CUT_OFF` stays empty.
   It pays 2,968 xp a member, 1.14 times the scaled share of 2,600 (the cap is about 3,250), and
   2,000 gold, the cache's 1,600 and the cairn's 400 and an Elixir (§8, §9, #530's 13 and 20). It
@@ -1692,12 +1692,12 @@ Decided by delegate for #529, each the owner's to overturn:
 Decided by delegate for #530, each the owner's to overturn:
 
 1. **The band is 26–28, not the brief's 28 nor B8's 27–28.** The curve's rise rule wants the hardest
-   group to average max(floor + 1, top − 2): 28 at 27–28, which only the Grey Lion is, the walkers'
-   pair averaging 27, and 27 at 26–28, which the walkers are. The gate's company is tuned at 26 (no
-   third prestige): 10.41 fights to a rest, where at 27 the same five groups make a day of 19.7 and
-   the larger groups that would bring it in would lift the pay past the cap. `wold_b9`, "The Wold",
-   country, region `glasswold`, at 40,254, sixth on the zone row `wold` and last in the Area's
-   `maps`.
+   group to average max(floor + 1, top − 2): at 27–28 that is 28, which only the Grey Lion is (the
+   walkers' pair averages 27), and at 26–28 it is 27, which the walkers are. The gate's company is
+   tuned at 26 (no third prestige): 10.41 fights to a rest, where at 27 the same five groups make a
+   day of 19.7 and the larger groups that would bring it in would lift the pay past the cap.
+   `wold_b9`, "The Wold", country, region `glasswold`, at 40,254, sixth on the zone row `wold` and
+   last in the Area's `maps`.
 2. **The brief's five groups, each passing:** two of four glass scorpions, six vultures, a glass
    walker alone and two walkers at the gap. All respawn in 2,880 minutes and none is a guardian.
 3. **Cut by hand:** `tools/scaffold.ts` refuses the box (its glass and void have no map character),
@@ -1723,7 +1723,7 @@ Decided by delegate for #530, each the owner's to overturn:
    Glass's zone row (`theglass`) is left as it is, with no band and no `crossing`: nothing can cross
    into the Glass while it is void, so a zone line there could not be said. Were the Glass built at
    the cap's band (30 to 32), its row would give a company under 28 its `warning` and one at 28 or
-   29 its `harder`, and the event the same words.
+   29 its `harder`, with the event the same words.
 10. **The two walkers need not be fought to see the Glass:** `roams: false`, aware 2, under the
     mesa's west face; the way from the fire to the gap's last square never comes within 2 of them
     (checked). The walkthrough sees the gap first and fights them after.
@@ -1743,7 +1743,7 @@ Decided by delegate for #530, each the owner's to overturn:
 15. **The horse that came back** (#56's 51): `b9_horse` at 26,4, one horse's prints, deep, going
     north: seen, no quest.
 16. **The walker's tracks:** `b9_tracks` at 29,27 in the gap, where the sand gives way to glass: one
-    set, going out, and no mark on the glass.
+    set going out and no mark on the glass.
 17. **Novelty claims nothing:** the dunes and the walkers are D9's claims; "the reach seen from the
     road" and "a machine in a pair" have no token.
 18. **No road:** `ROADS.wold` is unchanged; the Riders' road does not run through the dunes.
