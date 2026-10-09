@@ -25,8 +25,8 @@ export function personFlags(p: Person): string[] {
   return [...list(p.flag), ...handIns(p).map((q) => q.setFlag), ...(p.says ?? []).flatMap((w) => list(w.sets)), ...choices(p).flatMap((c) => c.answers.flatMap((a) => list(a.sets)))];
 }
 
-/** Every flag a group's question can set (#544). */
-export const groupFlags = (e: Pick<EncounterDef, 'choice'>): string[] => (e.choice?.answers ?? []).flatMap((a) => [...list(a.sets)]);
+/** Every flag a group can set: its fall's (#636) and its question's (#544). */
+export const groupFlags = (e: Pick<EncounterDef, 'sets' | 'choice'>): string[] => [...list(e.sets), ...(e.choice?.answers ?? []).flatMap((a) => [...list(a.sets)])];
 
 /** Every item a person hands the company, by an answer. */
 export const personGives = (p: Person): string[] => choices(p).flatMap((c) => c.answers.flatMap((a) => (a.gives ? [a.gives] : [])));
