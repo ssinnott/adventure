@@ -4,10 +4,17 @@
 // alone to one at it, and back; the road square to square from the pass's foot to the gate's front, the
 // bells heard at its foot; the gate barred until Highcell is built; Spine Summit's camp at the atlas's
 // site, and the hermit at it; the herder at his fold; the monks' shrine by the road; the box's groups won
-// at its floor; and the store behind the wall, found from the trodden line to the rock.
+// at its floor; and the store behind the wall, found from the trodden line to the rock. Then the Peak
+// Stone's box (I11, #501) walked: over the crest from the summit, the High Spine named in its own words
+// to a company under its floor; the crest path to the Stone at the atlas's site, whole, which counts
+// toward the Hearth once stood at; the ridge trail leaving north beside it; the shrine, the keeper, the
+// cairn and the nest; the lookout over Ashfall and the ground under the Sheer, reached by a climb; the
+// camp under the snow line; the box's groups won at its floor; and under the one unfrosted slab of the
+// ring, the Lantern's survey marker and her instruments.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen } from '../../../../tools/walk.ts';
-import { NORTH, SOUTH, WEST } from '../../../game/types.ts';
+import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
+import { stonesRestored } from '../../../game/stones.ts';
 import { ATLAS, MAP_DEFS } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
@@ -129,4 +136,97 @@ export const walkthrough: Walkthrough = (ok) => {
   listen(w);
   const cache = J11.features!.find((f) => f.kind === 'chest' && f.id === 'j11_store');
   ok(cache?.kind === 'chest' && cache.items.includes('guides_staff+1') && cache.gold === 400 && cache.x === door.x - 2 && cache.y === door.y, 'in the store, 400 gold and a second Guide\'s Staff +1');
+
+  // I11, the Peak Stone's box (#501). Over the crest from J11's summit path at 0,10 onto I11's 31,10,
+  // walked: three under the High Spine's floor the harsher words, two under its own, at the floor its
+  // name and nothing more; straight back, nothing.
+  const I11 = MAP_DEFS.find((d) => d.id === 'highspine_i11')!, i11 = out.zones.find((z) => z.id === 'highspine_i11')!;
+  const SPINE = ATLAS.zones.find((z) => z.id === 'highspine')!;
+  const crest = (level: number): string[] => {
+    for (const m of w.party.members) m.level = level;
+    w.world.travel('monksvale_j11', 0, 10, WEST);
+    const r = w.world.move('forward');
+    return r.kind === 'moved' ? r.messages : [r.kind];
+  };
+  const crestLow = crest(19), crestTwo = crest(20), crestDue = crest(22);
+  ok(w.world.zone?.id === 'highspine_i11' && w.world.state.x === i11.x + 31 && w.world.state.y === i11.y + 10 && i11.x + i11.w === j11.x && i11.y === j11.y && I11.start.x === 30 && I11.start.y === 10,
+    'over the crest from J11\'s 0,10 onto I11\'s 31,10, walked, the box\'s way in');
+  ok(crestDue.join(' / ') === 'The High Spine.', `at 22, the High Spine named, no more (${crestDue.join(' / ')})`);
+  ok(crestTwo.join(' / ') === `The High Spine. ${SPINE.crossing?.harder}`, `at 20, the rest in the crest's own words (${crestTwo.join(' / ')})`);
+  ok(crestLow.join(' / ') === `The High Spine. ${SPINE.crossing?.warning}`, `at 19, the harsher words, and the way back down open (${crestLow.join(' / ')})`);
+  w.world.travel('highspine_i11', 31, 10, EAST);
+  const crestBack = w.world.move('forward');
+  ok(crestBack.kind === 'moved' && w.world.zone?.id === 'monksvale_j11' && crestBack.messages.length === 0, `straight back over the crest onto J11, nothing said (${crestBack.kind === 'moved' ? crestBack.messages.join(' / ') : crestBack.kind})`);
+  listen(w);
+  for (const m of w.party.members) m.level = 22;
+
+  // The crest path to the ring and the Stone at the atlas's site, built; the ridge trail leaves north
+  // beside it at 27,0, where the atlas's trail crosses, and past the edge, for now, the world ends.
+  const onI11 = (x: number, y: number): boolean => x >= i11.x && x < i11.x + i11.w && y >= i11.y && y < i11.y + i11.h;
+  const at = (f: { x: number; y: number }): number => (i11.y + f.y) * out.width + i11.x + f.x;
+  const walked = reach(i11.x + 31, i11.y + 10, (x, y) => onI11(x, y) && out.passable(x, y) === 'ok');
+  const peak = ATLAS.sites.find((s) => s.name === 'Peak Stone')!;
+  const stone = I11.features!.find((f) => f.kind === 'event' && f.id === 'i11_stone')!;
+  ok(i11.x + stone.x === Math.floor(peak.at[0]) && i11.y + stone.y === Math.floor(peak.at[1]) && !peak.planned && walked.has(at(stone)),
+    'the Peak Stone stands at the atlas\'s site, 28,0, built, and the crest path reaches it from the crossing');
+  ok(road(i11.x + 27, i11.y) && walked.has(at({ x: 27, y: 0 })) && out.passable(i11.x + 27, i11.y - 1) !== 'ok',
+    'the ridge trail leaves north beside the Stone at 27,0, and past the edge, for now, the world ends');
+  // The Stone, whole: stood at, it counts toward the Hearth, though nothing was wrong with it.
+  const lit = stonesRestored(w.world.state, w.party);
+  see(w, 'highspine_i11:i11_stone');
+  ok(stone.kind === 'event' && stone.text.includes('Whole, and steady') && stonesRestored(w.world.state, w.party) === lit + 1, 'the Peak Stone is whole and steady, and stood at it counts toward the Hearth');
+  // The brother who keeps it, the monks' shrine at its foot, and the cairn where the trail leaves.
+  see(w, 'highspine_i11:i11_keeper');
+  const foot = I11.features!.find((f) => f.kind === 'shrine' && f.id === 'i11_shrine');
+  const cairn = I11.features!.find((f) => f.kind === 'cairn' && f.id === 'i11_cairn');
+  ok(!!foot && Math.abs(foot.x - stone.x) + Math.abs(foot.y - stone.y) <= 2 && walked.has(at(foot)) && !!cairn && cairn.x === 27 && cairn.y === 1 && walked.has(at(cairn)),
+    'the monks\' shrine at the Stone\'s foot, and the cairn under the trail\'s leaving');
+
+  // The eagles' nest in the peaks above the Stone, up the spur off the crest path, the eagles at it, and
+  // in it a Lantern's badge and a smooth grey part (#56's 46, #506's to hand in).
+  see(w, 'highspine_i11:i11_shadow');
+  see(w, 'highspine_i11:i11_nest');
+  const nest = I11.features!.find((f) => f.kind === 'chest' && f.id === 'i11_nest_bones');
+  const nesting = I11.encounters!.find((g) => g.id === 'i11_eagles_nest')!;
+  ok(nest?.kind === 'chest' && nest.items.includes('lantern_badge') && nest.items.includes('grey_part') && walked.has(at(nest)) && Math.abs(nesting.x - nest.x) + Math.abs(nesting.y - nest.y) <= 2 && nesting.monsters.every((m) => m === 'spine_eagle'),
+    'in the nest above the Stone, with the eagles at it, a Lantern\'s badge and a smooth grey part');
+
+  // The lookout over Ashfall at the Sheer's top, Fire Mountain seen; Ashfall's ground at its foot is
+  // reached by a climb down it and no other way.
+  const lookout = I11.features!.find((f) => f.kind === 'event' && f.id === 'i11_lookout')!;
+  ok(lookout.kind === 'event' && lookout.text.includes('Fire Mountain') && walked.has(at(lookout)) && out.at(i11.x + lookout.x - 1, i11.y + lookout.y).ch === '|', 'the lookout at the Sheer\'s top, Fire Mountain seen over Ashfall');
+  see(w, 'highspine_i11:i11_lookout');
+  const under = I11.features!.find((f) => f.kind === 'event' && f.id === 'i11_ash')!;
+  ok(!walked.has(at(under)) && reach(i11.x + 31, i11.y + 10, (x, y) => onI11(x, y) && out.passable(x, y, { climb: true }) === 'ok').has(at(under)),
+    'under the Sheer, Ashfall\'s grey pines are reached by a climb down it, and no other way');
+
+  // The camp under the snow line, the pines below it and the snow above.
+  const camp = I11.features!.find((f) => f.kind === 'camp' && f.name === 'The last pines');
+  ok(!!camp && walked.has(at(camp)) && out.at(i11.x + camp.x, i11.y + camp.y).ch === 'p' && out.at(i11.x + camp.x + 2, i11.y + camp.y).ch === '*', 'the camp under the last pines, the snow above it');
+
+  // The box's groups, each won at its floor: the eagles at the nest and over the snow line, the brothers
+  // on the crest path and the snow trolls in the snow at the crest's foot, the box's group at 23.
+  for (const g of I11.encounters!) fight(w, `highspine_i11:${g.id}`);
+
+  // The secret: every stone of the ring frosted at its edge but one; searched, the slab lifts, and in
+  // the hollow under it the Lanterns' survey marker, lit, and her instruments. Walked, waded, climbed or
+  // floated, the hollow is never reached but through the slab.
+  const [slab] = I11.secrets!;
+  const sealed = new Set<number>(), todo = [[i11.x + slab.x, i11.y + slab.y - 1]];
+  while (todo.length) {
+    const [x, y] = todo.pop()!, k = y * out.width + x;
+    if (sealed.has(k) || (x === i11.x + slab.x && y === i11.y + slab.y) || !onI11(x, y) || out.passable(x, y, { swim: true, climb: true, float: true }) !== 'ok') continue;
+    sealed.add(k);
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+  }
+  const survey = I11.features!.find((f) => f.kind === 'chest' && f.id === 'i11_survey');
+  ok(sealed.size > 300 && !!survey && !sealed.has(at(survey)), `the hollow is shut but for the slab: none of I11's ${sealed.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, 'highspine_i11:i11_frost');
+  w.world.travel('highspine_i11', slab.x, slab.y - 1, SOUTH);
+  let lifts = false;
+  for (let i = 0; i < 20 && !lifts; i++) lifts = w.world.search();
+  const down = lifts ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(lifts && down.every((r) => r.kind === 'moved') && w.world.used('i11_marker'), 'searched at the one slab with no frost, it lifts, and the hollow under it can be walked into');
+  listen(w);
+  ok(survey?.kind === 'chest' && survey.items.includes('lantern_instruments') && survey.gold === 300 && survey.x === slab.x && survey.y === slab.y + 2, 'in the hollow, the Lantern\'s instruments and 300 gold');
 };
