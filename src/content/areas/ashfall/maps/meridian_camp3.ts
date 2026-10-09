@@ -120,16 +120,15 @@ export const MERIDIAN_CAMP3: MapDef = {
     { kind: 'event', x: 28, y: 27, id: 'mc3_door', once: true, text: 'A door at the gallery\'s end, flush in the iron, with no handle and no hinge. A chain pin is jammed in its seam, bent double.' },
   ],
   encounters: [
-    // The deep knockers in their gallery, in ones and twos along it, and the inspector before the door, which
-    // calls them; by night two come up the steps to the camp and leave Fane be (MONSTERS §2), never reaching
-    // the fire; and, once the Ember Stone is lit, a sentry at the stair's foot, going up.
+    // The deep knockers in their gallery, a three, a lone one and a four along it, and the inspector before the door,
+    // which calls them; by night two come up the steps to the camp and leave Fane be (MONSTERS §2), never reaching
+    // the fire; and, once the Ember Stone is lit, a sentry at the stair's foot, going up. Six groups: at the floor
+    // 27 the eight small ones of floor 26 gave 19.56 fights to a rest, and these, the same ten knockers, 10.64.
     { id: 'mc3_sentry', x: 4, y: 5, monsters: ['sentry'], aware: 4, respawn: 2880, after: { flag: 'q_ember_lit' } },
     { id: 'mc3_night', x: 15, y: 17, monsters: ['deep_knocker', 'deep_knocker'], aware: 2, respawn: 1440, roams: false, when: { hours: 'night' } },
-    { id: 'mc3_west', x: 6, y: 27, monsters: ['deep_knocker', 'deep_knocker'], aware: 2, respawn: 2880 },
+    { id: 'mc3_west', x: 6, y: 27, monsters: ['deep_knocker', 'deep_knocker', 'deep_knocker'], aware: 2, respawn: 2880 },
     { id: 'mc3_knocker', x: 10, y: 26, monsters: ['deep_knocker'], aware: 2, respawn: 2880 },
-    { id: 'mc3_pair', x: 19, y: 28, monsters: ['deep_knocker', 'deep_knocker'], aware: 2, respawn: 2880 },
-    { id: 'mc3_lone', x: 22, y: 26, monsters: ['deep_knocker'], aware: 2, respawn: 2880 },
-    { id: 'mc3_east', x: 25, y: 28, monsters: ['deep_knocker', 'deep_knocker'], aware: 2, respawn: 2880 },
+    { id: 'mc3_four', x: 19, y: 28, monsters: ['deep_knocker', 'deep_knocker', 'deep_knocker', 'deep_knocker'], aware: 2, respawn: 2880 },
     { id: 'mc3_inspector', x: 27, y: 27, monsters: ['inspector'], aware: 3, respawn: 2880 },
   ],
 };

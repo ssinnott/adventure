@@ -392,9 +392,10 @@ export const walkthrough: Walkthrough = (ok) => {
   see(w, 'meridian_camp2:mc2_stair');
   listen(w);
 
-  // Meridian Camp's third level, the camp (#22), at 26, a level under its floor. Down the corridors' stair onto the camp's
+  // Meridian Camp's third level, the camp (#22), at 27, its floor. Down the corridors' stair onto the camp's
   // first square, facing in; stepped back into, the stair's foot lets the company up onto its head, facing
   // away from it.
+  w.level = 27;
   const MC3 = MAP_DEFS.find((d) => d.id === 'meridian_camp3')!;
   w.world.travel('meridian_camp2', STAIR2.x, STAIR2.y - 1, SOUTH);
   const downStair2 = w.world.move('forward');
@@ -457,11 +458,11 @@ export const walkthrough: Walkthrough = (ok) => {
   listen(w);
   ok(!!questLog(w.world.state, { ...w.party, bag: [...w.party.bag, 'meridian_journal'] }).find((v) => v.def.id === 'meridian')?.done, 'and the Lost Expedition, begun with the first journal, is done');
 
-  // The groups, each won at 26: the deep knockers along their gallery in ones and twos, and the inspector
-  // before the door, which calls them; by night two on the steps up to the camp, never at the fire; and the
-  // sentry at the stair's foot only once the Ember Stone is lit.
+  // The groups, each won at 27: the deep knockers along their gallery in a three, a lone one and a four, and the
+  // inspector before the door, which calls them; by night two on the steps up to the camp, never at the fire; and
+  // the sentry at the stair's foot only once the Ember Stone is lit.
   const night = MC3.encounters!.find((g) => g.id === 'mc3_night')!, sentry3 = MC3.encounters!.find((g) => g.id === 'mc3_sentry')!, insp = MC3.encounters!.find((g) => g.id === 'mc3_inspector')!;
-  ok(MC3.encounters!.length === 8 && MC3.encounters!.every((g) => !!g.respawn && g.monsters.every((m) => ['deep_knocker', 'inspector', 'sentry'].includes(m)))
+  ok(MC3.encounters!.length === 6 && MC3.encounters!.every((g) => !!g.respawn && g.monsters.every((m) => ['deep_knocker', 'inspector', 'sentry'].includes(m)))
     && JSON.stringify(night.when) === JSON.stringify({ hours: 'night' }) && night.roams === false && JSON.stringify(sentry3.after) === JSON.stringify({ flag: 'q_ember_lit' })
     && insp.monsters.join() === 'inspector' && (MONSTERS.inspector.calls?.monsters ?? []).every((m) => m === 'deep_knocker'),
     'deep knockers in their gallery, the inspector that calls them before the door, two by night on the steps, and a sentry only once the Ember Stone is lit');
