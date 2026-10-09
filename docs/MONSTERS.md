@@ -1120,6 +1120,15 @@ person` and break when the king falls: they came in the ship awake, the crew tha
 and were never cargo, posted to keep the Stair, which is the hull's service ramp, and the toll is
 the order they were given (#443, call 1; DESIGN.md §9). The king's words hint it and never say it.
 
+Drawn (#507), the monks robed on the keepers' frame (`src/ui/monsters/keepers.ts`): the bay's walk
+and six lit fingers in the dead monks' habits, girt with a cord, the plate showing at the shins and
+the feet. The Brother is brown, its hood up and the lights in its shadow, and lifts each foot stiff
+and high and sets it down where it was; the Bell-ringer is oatmeal, its hood down and the egg bare,
+a bronze handbell held out and swung eleven strokes at a time; the Abbot is the tallest, black lined
+pale, its hood drawn up to a point and a crook in its hand, and its robe has fallen open on the
+plate and the chisel's mark. The bell is `ranged`, so it holds from the back rank
+(docs/areas/whitespine.md §9). The boxes place them (#499, #500).
+
 Three on frames that exist are drawn (#507): the Spine Eagle, the birds' frame at its biggest,
 coming down with its wings raised high and its yellow feet thrust forward, the nape gold and the
 bill hooked; the Snow Troll, the tor troll's frame made of snow, rimed, a cornice over its brow
