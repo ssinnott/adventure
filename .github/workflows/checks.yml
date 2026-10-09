@@ -44,7 +44,9 @@ jobs:
 
   smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # A change to what lays out or paints every map sweeps all of them for cracks (tools/changed.ts), and
+    # that sweep has outgrown fifteen minutes.
+    timeout-minutes: 40
     steps:
       # A pull request is checked out as its merge into the base: the commit before is the base, and
       # what changed since is what the crack sweep looks at (tools/changed.ts).
