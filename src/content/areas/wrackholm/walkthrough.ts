@@ -52,6 +52,9 @@ import { TIDE_SHIP } from './maps/tide_ship.ts';
 import { TIDE_SHIP2 } from './maps/tide_ship2.ts';
 import { TIDE_SHIP3, TIDE_RIFT } from './maps/tide_ship3.ts';
 import { DEAD_DROP_STAIR } from './maps/dead_drop_stair.ts';
+import { DEAD_DROP, VAULT_STAIR } from './maps/dead_drop.ts';
+import { GameMap } from '../../../game/map.ts';
+import { item } from '../../../game/items.ts';
 
 /** The clock on to the next hour given. */
 const clock = (w: Walk, hour: number): void => { const m = w.world.state.minutes; w.world.state.minutes = m - (m % 1440) + 1440 + hour * 60; };
@@ -387,6 +390,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(w.world.map.def.band?.[0] === 26, 'the stair\'s foot is the Dead-Drop\'s country, 26 and over, as its sign says');
   fence(w);
   see(w, `${foot.id}:dd_door`);
+  drop(w);
   walkThrough(w, foot.id, 4, 6, SOUTH, hold.id, 1);
 };
 
@@ -419,6 +423,60 @@ function fence(w: Walk): void {
   const late = fenced(), early = takeWork(q, w.world.state, late);
   w.ok(early.length === 2 && early[0].startsWith(q.early![0]) && /not yet/i.test(early[0]) && late.gold === gold + 200 && rankOf('compact', late) === 3,
     `a company that had seen the foot is paid at the taking, with the early words (${early.join(' ').replace(/\n+/g, ' ')})`);
+}
+
+/**
+ * The Dead-Drop's drop (#22), at 26, its floor, as Meridian Camp's levels are walked at theirs: down the stair's
+ * foot's far end onto its first square, facing in, and back up in front of it; no machine in sight of the way
+ * in or the drop, even by a light, the first group round the corner; the cargo left at the drop, the rails, a
+ * post, the shards stacked by size and the counting floor; every group won at 26, the hold keeper at 27 the
+ * farthest; a loader's parts and the Compact's coin; and the rails' way down to the vaults, barred until they
+ * are built (VAULT_STAIR), its line said at its head each time.
+ */
+function drop(w: Walk): void {
+  const D = DEAD_DROP, foot = DEAD_DROP_STAIR, level = w.level, way = foot.exits!.find((e) => e.to === D.id)!;
+  const here = (): string => `${w.world.state.mapId} ${w.world.state.x},${w.world.state.y}`;
+  w.world.travel(foot.id, way.x, way.y + 1, NORTH);
+  const down = w.world.move('forward');
+  w.ok(down.kind === 'moved' && w.world.state.mapId === D.id && w.world.state.x === D.start.x && w.world.state.y === D.start.y && w.world.state.facing === D.start.facing
+    && way.tx === D.start.x && way.ty === D.start.y && down.messages.includes(way.label!),
+    `the stair's foot's far end goes on down into the drop, facing in (${here()}: ${down.kind === 'moved' ? down.messages.join(' / ') : down.kind})`);
+  const up = [w.world.move('forward'), w.world.move('back')];
+  w.ok(up.every((r) => r.kind === 'moved') && w.world.state.mapId === foot.id && w.world.state.x === way.x && w.world.state.y === way.y + 1 && w.world.state.facing === SOUTH,
+    `and back up onto the stair's foot in front of it, facing away from it (${here()})`);
+
+  // Whichever way a company looks from the way in or the drop, by a light, no machine is in sight: the
+  // first stands round the corner, so the band's sign is met before any of them.
+  const map = new GameMap(D), seen: string[] = [];
+  for (let y = 1; y <= 11; y++) for (let x = 2; x <= 6; x++) {
+    if (map.passable(x, y) !== 'ok') continue;
+    for (const f of [NORTH, EAST, SOUTH, WEST]) {
+      w.world.travel(D.id, x, y, f);
+      w.world.state.light = 9;
+      if (w.world.groupsInSight().length) seen.push(`${x},${y}`);
+    }
+  }
+  w.world.state.light = 0;
+  w.ok(!seen.length, `no machine is in sight of the way in or the drop, the first round the corner${seen.length ? ` (seen from ${[...new Set(seen)].join(' ')})` : ''}`);
+
+  w.level = 26;
+  for (const id of ['dd_in', 'dd_drop', 'dd_rails', 'dd_buffer', 'dd_post', 'dd_small', 'dd_middling', 'dd_large', 'dd_floor', 'dd_coin', 'dd_water']) see(w, `${D.id}:${id}`);
+  const groups = D.encounters!, keeper = groups.find((g) => g.id === 'dd_keeper');
+  w.ok(groups.every((g) => g.monsters.every((m) => m === 'loader' || m === 'tally_clerk') || g === keeper) && keeper?.monsters.join() === 'hold_keeper'
+    && groups.every((g) => !!g.respawn && !g.after),
+    `loaders and tally clerks, ${groups.length - 1} groups, and at the far end a hold keeper come up from the vaults`);
+  for (const g of groups) fight(w, `${D.id}:${g.id}`);
+  w.ok(open(w, D.id, 'dd_heap').every((i) => item(i).slot === 'none' && !item(i).price), 'where the rails end, a loader\'s parts, which no shop buys');
+  const gold = w.party.gold;
+  open(w, D.id, 'dd_strongbox');
+  w.ok(w.party.gold - gold >= 1000, `under the counting floor's posts, the Compact's drop coin, heavy (${w.party.gold - gold} gold)`);
+
+  const bars = D.features!.find((f) => f.kind === 'event' && f.id === 'dd_down');
+  w.ok(VAULT_STAIR.to === 'dead_drop2' && !(D.exits ?? []).some((e) => e.to === VAULT_STAIR.to) && map.passable(VAULT_STAIR.x, VAULT_STAIR.y) !== 'ok'
+    && bars?.kind === 'event' && !bars.once && bars.x === VAULT_STAIR.x && bars.y === VAULT_STAIR.y - 1,
+    'the rails go on down to the vaults, barred until they are built (VAULT_STAIR), and its line is said at its head each time');
+  see(w, `${D.id}:dd_down`);
+  w.level = level;
 }
 
 // ---- the side quests (#192) ----

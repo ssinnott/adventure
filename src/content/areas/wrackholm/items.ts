@@ -30,6 +30,10 @@ export const ITEMS: readonly ItemDef[] = [
   ] },
   P(core('shortsword'), 2, { id: 'tide_cutlass', name: 'Slack Water, Cutlass +2' }),
   { id: 'tide_stone', name: 'The Tide Stone', slot: 'none', price: 0 },
+  // The Dead-Drop's (#22): the parts a loader shed against the rails' end in the drop, which no shop buys and
+  // no hand-in takes (MONSTERS §2), as the stokers' and the flue walker's.
+  { id: 'loader_port', name: 'Loader\'s Fire Port', slot: 'none', price: 0 },
+  { id: 'loader_iron', name: 'Loader\'s Crate Iron', slot: 'none', price: 0 },
   // The side quests' letters (#192): Colan's to his brother, sealed (The Captain's Brother); the
   // founder's last, which Merryn carried ten years (The Hermit of the Point); and the clerk's
   // book from the Tide Ship's cabin, every name the hold carried (Every Name in the Column).
