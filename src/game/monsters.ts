@@ -66,8 +66,11 @@ export interface MonsterDef {
   ranged?: boolean;
   /** Shoots bows rather than casting, so bad weather spoils the aim. */
   missile?: boolean;
-  /** Chance per hit to inflict the condition: a curse the wights' (#537), which outlasts the fight. */
-  inflict?: { cond: 'poisoned' | 'diseased' | 'asleep' | 'paralysed' | 'cursed'; chance: number };
+  /**
+   * Chance per hit to inflict the condition: a curse the wights' (#537), which outlasts the fight;
+   * stone the basilisk's (#546), which takes the member out of the fight and the walk till a cure.
+   */
+  inflict?: { cond: 'poisoned' | 'diseased' | 'asleep' | 'paralysed' | 'cursed' | 'stoned'; chance: number };
   /** Gold dropped per monster, as a range. */
   gold: [number, number];
   drops?: readonly { item: string; chance: number }[];

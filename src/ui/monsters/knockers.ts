@@ -1,6 +1,6 @@
 // The knockers: the Knocker first, on one frame the Mender and the Foreman carry their trades, as
-// Rimewater's tallyman, Meridian Camp's deep knocker and inspector and the Dead-Drop's tally clerk
-// are to carry theirs (MONSTERS §11). A machine side on to the company with its head to the right,
+// Rimewater's tallyman and Meridian Camp's deep knocker and inspector carry theirs and the Dead-Drop's
+// tally clerk is to (MONSTERS §11). A machine side on to the company with its head to the right,
 // in hundredths of the sprite's height up from the ground line: a body of smooth plates laid one
 // over the next along a spine, rounded over the back and flat under the belly, every plate the
 // same width and every seam ruled; legs under it in pairs, thin rods on ball joints, all alike,
@@ -22,6 +22,17 @@
 // back and icicles off the lip of its shell. Idle: it stands, and a light comes on with each click,
 // six, the lamp dipping at each; then they all go out together and the count begins again.
 //
+// Meridian Camp's two (MONSTERS §8.4). The Deep Knocker: the knocker grown for the deep, still
+// knocking on a wall that has never cracked. Longer, higher on its legs and pale as a thing that has
+// never seen the sun, its plates' edges standing up along its back in a row of ridges, and its
+// feelers' knobs heavy as hammers. Its lamp is hard: a cold white in a ring of plate, and it never
+// blinks. Idle: it walks in place and knocks.
+//
+// The Inspector: it holds its light to the wall, and then to you. A knocker on long legs, umber-dark,
+// no feelers, and off its back a mast on ball joints that carries a second lamp in a hood, hard and
+// white as the deep knockers' own. Idle: the mast lamp turns up to the wall and down to the company,
+// and flares when it finds you: that is its call.
+//
 // The Tally Clerk: it counts the crates, then turns and counts you. A knocker of the Dead-Drop's
 // floor, low and long and the colour of the hold's dust, with no feelers, for it does not knock, and
 // stood up on its back the clerk's counting frame: two posts and a rail, three rods between the posts
@@ -35,7 +46,7 @@ import type { Part } from './gloss.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['knocker', 'mender', 'foreman', 'tallyman', 'tally_clerk'];
+export const KINDS: readonly MonsterSprite[] = ['knocker', 'mender', 'foreman', 'tallyman', 'deep_knocker', 'inspector', 'tally_clerk'];
 
 /**
  * The frame's parts, as proportions of the knocker's where they are numbers (1 = the knocker, 0 =
@@ -85,10 +96,16 @@ interface Build {
   glowHex: string;
   /** The light at the needle's point. */
   arcHex: string;
+  /** The plates' edges standing up along the back, 0 none: the deep knocker's armour. */
+  ridge: number;
+  /** The lamp's hardness, 0 the knockers' own: a ring of plate round the lens, and no blink. */
+  hard: number;
+  /** The second lamp on a mast off the back that turns from the wall to the company, 0 none: the inspector's. */
+  mast: number;
 }
 const KNOCKER: Build = {
   length: 1, dome: 1, taper: 0, rear: 0, plates: 6, legs: 6, stance: 1, step: 1, cowl: 1, feelers: 1, spool: 0, needle: 0, slate: 0, count: 0, tally: 0, rime: 0, beads: 0, mark: 1, markAt: 0.42,
-  lampHex: '#fff3c4', glowHex: '#ffc860', arcHex: '#d8f0ff',
+  lampHex: '#fff3c4', glowHex: '#ffc860', arcHex: '#d8f0ff', ridge: 0, hard: 0, mast: 0,
 };
 /**
  * The Mender: it stops to mend the others, and they let it. Domed higher, a spool of wire on its
@@ -98,7 +115,7 @@ const KNOCKER: Build = {
  */
 const MENDER: Build = {
   length: 0.9, dome: 1.22, taper: 0, rear: 0, plates: 5, legs: 5, stance: 1.05, step: 1, cowl: 1, feelers: 0.5, spool: 1, needle: 1, slate: 0, count: 0, tally: 0, rime: 0, beads: 0, mark: 1, markAt: 0.6,
-  lampHex: '#fff3c4', glowHex: '#ffc860', arcHex: '#d8f0ff',
+  lampHex: '#fff3c4', glowHex: '#ffc860', arcHex: '#d8f0ff', ridge: 0, hard: 0, mast: 0,
 };
 /**
  * The Foreman: it checks you the way a clerk checks a list, and finds nobody on it. A knocker grown
@@ -109,20 +126,29 @@ const MENDER: Build = {
  */
 const FOREMAN: Build = {
   length: 1.25, dome: 0.86, taper: 0.38, rear: 1, plates: 10, legs: 6, stance: 1.2, step: 0.35, cowl: 1.1, feelers: 0, spool: 0, needle: 0, slate: 1, count: 0, tally: 0, rime: 0, beads: 0, mark: 1.35, markAt: 0.25,
-  lampHex: '#fff3c4', glowHex: '#ffc860', arcHex: '#d8f0ff',
+  lampHex: '#fff3c4', glowHex: '#ffc860', arcHex: '#d8f0ff', ridge: 0, hard: 0, mast: 0,
 };
 const TALLYMAN: Build = {
   length: 1.08, dome: 1.06, taper: 0.12, rear: 0.46, plates: 7, legs: 6, stance: 1.12, step: 0.3, cowl: 1.14, feelers: 0, spool: 0, needle: 0, slate: 0, count: 1, tally: 1, rime: 1, beads: 0, mark: 1.1, markAt: 0.3,
-  lampHex: '#fff3c4', glowHex: '#ffc860', arcHex: '#d8f0ff',
+  lampHex: '#fff3c4', glowHex: '#ffc860', arcHex: '#d8f0ff', ridge: 0, hard: 0, mast: 0,
 };
 /** The Tally Clerk: low and long, no feelers, and its counting frame stood up on its back. */
 const TALLY_CLERK: Build = {
   length: 0.96, dome: 0.84, taper: 0.06, rear: 0, plates: 6, legs: 5, stance: 1.05, step: 0.55, cowl: 1.04, feelers: 0, spool: 0, needle: 0, slate: 0, count: 0, tally: 0, rime: 0, beads: 1, mark: 1, markAt: 0.08,
-  lampHex: '#fff3c4', glowHex: '#ffc860', arcHex: '#d8f0ff',
+  lampHex: '#fff3c4', glowHex: '#ffc860', arcHex: '#d8f0ff', ridge: 0, hard: 0, mast: 0,
 };
+const DEEP: Build = {
+  length: 1.2, dome: 1.08, taper: 0, rear: 0, plates: 7, legs: 7, stance: 1.22, step: 0.7, cowl: 1.12, feelers: 1.22, spool: 0, needle: 0, slate: 0, count: 0, tally: 0, rime: 0, beads: 0, mark: 1.2, markAt: 0.42,
+  lampHex: '#f4fbff', glowHex: '#a4d4ff', arcHex: '#d8f0ff', ridge: 1.5, hard: 1, mast: 0,
+};
+const INSPECTOR: Build = {
+  length: 1, dome: 0.96, taper: 0.1, rear: 0, plates: 6, legs: 5, stance: 1.4, step: 0.45, cowl: 1.04, feelers: 0, spool: 0, needle: 0, slate: 0, count: 0, tally: 0, rime: 0, beads: 0, mark: 1, markAt: 0.3,
+  lampHex: '#f4fbff', glowHex: '#a4d4ff', arcHex: '#d8f0ff', ridge: 0, hard: 1, mast: 1,
+};
+const BUILDS: Partial<Record<MonsterSprite, Build>> = { knocker: KNOCKER, mender: MENDER, foreman: FOREMAN, tallyman: TALLYMAN, deep_knocker: DEEP, inspector: INSPECTOR, tally_clerk: TALLY_CLERK };
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
-  knocker(ctx, x, y, h, p, kind === 'mender' ? MENDER : kind === 'foreman' ? FOREMAN : kind === 'tallyman' ? TALLYMAN : kind === 'tally_clerk' ? TALLY_CLERK : KNOCKER);
+  knocker(ctx, x, y, h, p, BUILDS[kind] ?? KNOCKER);
 };
 
 interface Pt { x: number; y: number }
@@ -239,7 +265,7 @@ function knocker(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
   const ink = shade('#14161a', Math.max(0.6, p.tone));
   // The tally clerk's lamp dips as each bead goes across.
   const bead = b.beads > 0 && t % 13 < 4 ? 1 - (t % 13) / 4 : 0;
-  const lampOn = b.count > 0 ? 1 - 0.5 * click : b.beads > 0 ? 1 - 0.45 * bead : (t % 160) < 150 ? 1 : 0.35;   // a blink, now and then; the tallyman's dips at each click
+  const lampOn = b.count > 0 ? 1 - 0.5 * click : b.beads > 0 ? 1 - 0.45 * bead : b.hard > 0 || (t % 160) < 150 ? 1 : 0.35;   // a blink, now and then, but not a hard lamp's; the tallyman's dips at each click
   const g0 = body.at(0), g1 = body.at(body.ground);
   groundShadow(ctx, f.X((g0.x + g1.x) / 2 + 3), y + 1, (g1.x - g0.x + 30) * u);
   // Where the lamp sits, in the cowl's face, and the light it throws on the rock ahead of a body on the ground.
@@ -279,6 +305,7 @@ function knocker(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
   if (!B.override && h >= 40) for (const k of legs.knees) { ctx.fillStyle = rgba(joint, 0.7); ctx.beginPath(); ctx.arc(f.X(k.x - 0.6 * w), f.Y(k.y + 0.7 * w), Math.max(0.7, 0.8 * w * u), 0, Math.PI * 2); ctx.fill(); }
 
   // --- the shell: one smooth mass, the plates ruled across it -------------------------------------
+  if (b.ridge > 0) ridges(ctx, f, body, b, h, shell);
   blob(ctx, B, shell, slices(f, body, 0, 1, b.cowl), { h, form: false, spread: 0.72, gloss: 0.45 });
   if (!B.override) {
     // The belly's rolled lip, in shadow, and a lit line along the back where the light runs.
@@ -321,6 +348,8 @@ function knocker(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
     const sc = add(lampC, n1, lr * 0.5);
     ctx.fillStyle = rgba(ink, 0.32); ctx.beginPath(); ctx.ellipse(f.X(sc.x), f.Y(sc.y), lr * 0.72 * u, lr * 0.26 * u, -Math.atan2(d1.y, d1.x), 0, Math.PI * 2); ctx.fill();
     if (b.count > 0) countLights(ctx, f, body, b, counted, click, ink);
+    // A hard lamp's ring of plate round the lens.
+    if (b.hard > 0) { ctx.strokeStyle = rgba(mix(cowl, '#ffffff', 0.35), 0.85); ctx.lineWidth = Math.max(1, 1.3 * b.hard * u); ctx.beginPath(); ctx.arc(f.X(lampC.x), f.Y(lampC.y), lr * 0.86 * u, 0, Math.PI * 2); ctx.stroke(); }
   }
 
   // --- the feelers, and the knobs on them that knock --------------------------------------------------
@@ -347,7 +376,52 @@ function knocker(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
   if (b.spool > 0) spool(ctx, f, body, b, h, t, shell, under, p.tone);
   if (b.needle > 0) needle(ctx, f, body, b, h, t, under, lampC, p.tone);
   if (b.slate > 0) slate(ctx, f, body, b, h, t, shell, under, look, p.tone);
+  if (b.mast > 0) mast(ctx, f, body, b, h, t, shell, under, p.tone);
   if (b.beads > 0) countingFrame(ctx, f, body, b, h, t, under, p.tone);
+}
+
+/**
+ * The deep knocker's armour: each plate's edge standing up off the back in a low ridge leaning back,
+ * drawn under the shell so the shell takes in their roots and they are one mass with it.
+ */
+function ridges(ctx: CanvasRenderingContext2D, f: F, body: Body, b: Build, h: number, shell: string): void {
+  const parts: Part[] = [];
+  for (let k = 1; k < b.plates; k++) {
+    const s = (k / b.plates) * COWL, q = body.back(s), n = body.up(s), d = body.dir(s), r = b.ridge * (2.4 + 1.6 * Math.sin((Math.PI * k) / b.plates));
+    parts.push({ k: 'poly', pts: flat(f, [add(q, d, -3.4), add(add(q, n, r), d, -2.2), add(add(q, n, r * 0.86), d, 0.4), add(q, d, 2.4), add(q, n, -2.5)]) });
+  }
+  blob(ctx, B, shade(shell, 0.94), parts, { h, form: false, spread: 0.7, gloss: 0.4 });
+}
+
+/**
+ * The inspector's mast: a rod up off its back on a ball joint, a second joint, and a rod forward to a
+ * lamp in a hood. It turns the lamp up to the wall over it and down to the company, holding a while
+ * at each, and the lamp flares as it comes to the company: its call.
+ */
+function mast(ctx: CanvasRenderingContext2D, f: F, body: Body, b: Build, h: number, t: number, shell: string, under: string, tone: number): void {
+  const u = f.u, k = b.mast, root = add(body.back(0.6), body.up(0.6), -1.2);
+  const sweep = smooth(0.12, 0.88, 0.5 + 0.5 * Math.sin(t / 30)), a = 0.62 - 0.86 * sweep, d: Pt = { x: Math.cos(a), y: Math.sin(a) };
+  const elbow: Pt = { x: root.x - 3 * k, y: root.y + 25 * k }, base: Pt = { x: elbow.x + 9 * k, y: elbow.y + 2.5 * k };
+  const back = add(base, d, -3.6 * k), front = add(base, d, 4.4 * k);
+  blob(ctx, B, under, [
+    { k: 'cap', x0: f.X(root.x), y0: f.Y(root.y), x1: f.X(elbow.x), y1: f.Y(elbow.y), r0: 2.7 * k * u, r1: 2.3 * k * u },
+    { k: 'cap', x0: f.X(elbow.x), y0: f.Y(elbow.y), x1: f.X(base.x), y1: f.Y(base.y), r0: 2.3 * k * u, r1: 2.1 * k * u },
+    { k: 'ball', x: f.X(root.x), y: f.Y(root.y), r: 3.4 * k * u },
+    { k: 'ball', x: f.X(elbow.x), y: f.Y(elbow.y), r: 3.1 * k * u },
+  ], { h, formK: 0.4, spread: 0.7 });
+  // The hood: a drum of the cowl's plate along the lamp's line, broad at the lens.
+  const hood = shade(shell, 1.07);
+  blob(ctx, B, hood, [{ k: 'cap', x0: f.X(back.x), y0: f.Y(back.y), x1: f.X(front.x), y1: f.Y(front.y), r0: 3.9 * k * u, r1: 5 * k * u }], { h, formK: 0.45, spread: 0.7, gloss: 0.5 });
+  const lens = add(front, d, 1.2 * k), lr = 3.7 * k;
+  blob(ctx, B, shade('#2a2c32', Math.max(0.6, tone)), [{ k: 'ball', x: f.X(lens.x), y: f.Y(lens.y), r: lr * u }], { h, form: false });
+  if (B.override) return;
+  const flare = smooth(0.82, 1, sweep), on = 0.8 + 0.2 * flare;
+  glow(ctx, B, f.X(lens.x), f.Y(lens.y), lr * (2.6 + 1.8 * flare) * u, b.glowHex, 0.35 + 0.35 * flare, b.lampHex);
+  ctx.fillStyle = mix(shade(b.glowHex, 0.5), b.lampHex, on);
+  ctx.beginPath(); ctx.arc(f.X(lens.x), f.Y(lens.y), lr * 0.7 * u, 0, Math.PI * 2); ctx.fill();
+  glow(ctx, B, f.X(lens.x), f.Y(lens.y), lr * 0.8 * u, b.lampHex, 0.9 * on, '#ffffff');
+  ctx.strokeStyle = rgba(mix(hood, '#ffffff', 0.35), 0.85); ctx.lineWidth = Math.max(1, 1.2 * u);
+  ctx.beginPath(); ctx.arc(f.X(lens.x), f.Y(lens.y), lr * 0.86 * u, 0, Math.PI * 2); ctx.stroke();
 }
 
 /**
