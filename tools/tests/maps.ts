@@ -21,6 +21,7 @@ import { ok, owed, stopsWalk } from './lib.ts';
  */
 const UNPLACED: Record<string, string> = {
   brother: '#499', bell_ringer: '#500', abbot: '#500',
+  strangler_vine: '#510', cinder_beetle: '#510', ember_salamander: '#511', ash_husk: '#514',
 };
 
 /** The monsters a company can meet on `defs`: those their groups place, and those a placed one calls (`calls`), and so on down. */

@@ -25,6 +25,12 @@
 // big again against its body, horned with rock at the back of the skull and knobbed over the brows
 // and the cheeks; it is thrown back on a jaw hanging open on a mouth full of fire. Idle: the fire in
 // the seams swells and sinks as it breathes, the jaw works and the embers rise; now and then it heaves.
+//
+// The Ember Salamander: grown in the mountain's own fire. A smaller, hotter cousin: lither, longer in
+// the tail, the head carried high on a long neck, the skin the dull red of a coal and the fire not in
+// blotches but in bands right across it, from flank to flank down the back and round the tail, white
+// at their hearts. Idle: the bands breathe each on its own beat, it bobs its head quicker and more
+// often, and more embers come off it.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B } from './common.ts';
@@ -33,7 +39,7 @@ import type { Part } from './gloss.ts';
 import { rgba, shade } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['salamander', 'great_salamander'];
+export const KINDS: readonly MonsterSprite[] = ['salamander', 'great_salamander', 'ember_salamander'];
 
 /**
  * The frame's parts, as proportions of the salamander's (1 = the salamander, 0 = none), each named
@@ -59,6 +65,8 @@ interface Build {
   tail: number;
   /** The blotches the fire shows through, 0 none: the salamander's, as a fire salamander's yellow. */
   blotches: number;
+  /** Bands of the fire right across the back and round the tail, 0 none: the ember salamander's. */
+  bands: number;
   /** A crust of rock over the fire, split in seams it shows through, 0 a skin: the great salamander's. */
   crust: number;
   /** A ridge down the spine, 0 none: the great salamander's rock; the basilisk's crest. */
@@ -79,7 +87,7 @@ interface Build {
   eyeHex: string;
 }
 const SALAMANDER: Build = {
-  length: 1, bulk: 1, head: 1, snout: 1, gape: 0, rear: 1, bob: 1, tail: 1, blotches: 1, crust: 0, ridge: 0, horns: 0, eye: 1, fire: 1, embers: 1, claws: 0,
+  length: 1, bulk: 1, head: 1, snout: 1, gape: 0, rear: 1, bob: 1, tail: 1, blotches: 1, bands: 0, crust: 0, ridge: 0, horns: 0, eye: 1, fire: 1, embers: 1, claws: 0,
   deep: '#b8300c', glow: '#ff7a1a', hot: '#ffc23c', core: '#fff2c0', eyeHex: '#ffc23c',
 };
 /**
@@ -88,12 +96,21 @@ const SALAMANDER: Build = {
  * again on the body, the jaw open on the fire.
  */
 const GREAT: Build = {
-  length: 1.05, bulk: 1.4, head: 1.5, snout: 0.95, gape: 1, rear: 0.8, bob: 0.35, tail: 0.9, blotches: 0, crust: 1, ridge: 1, horns: 1, eye: 0.82, fire: 1.2, embers: 1.4, claws: 1,
+  length: 1.05, bulk: 1.4, head: 1.5, snout: 0.95, gape: 1, rear: 0.8, bob: 0.35, tail: 0.9, blotches: 0, bands: 0, crust: 1, ridge: 1, horns: 1, eye: 0.82, fire: 1.2, embers: 1.4, claws: 1,
   deep: '#c0300a', glow: '#ff6a12', hot: '#ffb22c', core: '#fff0b0', eyeHex: '#ffe680',
 };
 
+/**
+ * The Ember Salamander: lither and longer in the tail than its kin, slighter, the head held high and
+ * quick to bob, and the fire in bands across it where theirs is in blotches, whiter and hotter.
+ */
+const EMBER: Build = {
+  length: 1.2, bulk: 0.8, head: 0.92, snout: 1.12, gape: 0, rear: 1.7, bob: 1.6, tail: 1.45, blotches: 0, bands: 1, crust: 0, ridge: 0, horns: 0, eye: 1.08, fire: 1.3, embers: 1.6, claws: 0,
+  deep: '#d0360a', glow: '#ff8a1c', hot: '#ffe066', core: '#ffffff', eyeHex: '#fff2b0',
+};
+
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
-  salamander(ctx, x, y, h, p, kind === 'great_salamander' ? GREAT : SALAMANDER);
+  salamander(ctx, x, y, h, p, kind === 'great_salamander' ? GREAT : kind === 'ember_salamander' ? EMBER : SALAMANDER);
 };
 
 /** A point of the model: x across to the salamander's right, y up, z back from its head. */
@@ -305,6 +322,7 @@ function salamander(ctx: CanvasRenderingContext2D, x0: number, y: number, h: num
       blotch(ctx, at[0], at[1] - at[2] * 0.6, 2.8 * at[2], 2 * at[2], 0.8, i, fire * b.blotches, b, h);
     }
     if (b.crust > 0) seams(ctx, S, h, SPINE, TAIL, [nearFore, nearHind], fire, b, t);
+    if (b.bands > 0) bands(ctx, S, SPINE, TAIL, fire * b.bands, b, t);
   }
 
   // --- the head, nearest of all ---------------------------------------------------------------------
@@ -417,6 +435,23 @@ function seam(ctx: CanvasRenderingContext2D, pts: readonly number[], w: number, 
   line(b.deep, 0.35 * kk, w * 3.2);
   line(b.glow, 0.85 * kk, w * 1.6);
   line(b.hot, 0.95 * kk, Math.max(1, w * 0.8));
+}
+
+/**
+ * The ember salamander's bands: the fire right across the back from flank to flank, from the neck to
+ * the hips, and round the tail to its tip, narrowing with the girth, each breathing on its own beat.
+ * Laid inside the outline, so it adds no ink apart; skipped in the hit flash.
+ */
+function bands(ctx: CanvasRenderingContext2D, S: (q: V3) => V2, SPINE: Run, TAIL: Run, fire: number, b: Build, t: number): void {
+  if (B.override) return;
+  const across = (run: Run, i: number, n: number): void => {
+    const pts: number[] = [], r = run[Math.min(run.length - 1, Math.round(i))][3];
+    let px = 1;
+    for (let j = 0; j <= 8; j++) { const [ax, ay, s] = S(onBody(run, i, -1.15 + (j / 8) * 2.3, 0.86)); pts.push(ax, ay); px = s; }
+    seam(ctx, pts, Math.max(0.8, px * Math.min(1.25, 0.2 + r * 0.11)), fire * (0.72 + 0.28 * Math.sin(t / 5 + n * 1.9)), b);
+  };
+  [0.4, 1.0, 1.6, 2.2, 2.8, 3.4].forEach((i, n) => across(SPINE, i, n));
+  [0.55, 1.35, 2.15, 2.95, 3.75, 4.6].forEach((i, n) => across(TAIL, i, n + 6));
 }
 
 /**

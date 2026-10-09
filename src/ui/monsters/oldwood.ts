@@ -7,6 +7,10 @@
 // is a set of placements rather than a new drawing. The far roots and limbs go down first a step
 // darker, the trunk over them, then the near ones, the crown and the face.
 //
+// The strangler vine is the old wood come to the green shore: a vine that has killed its tree, the
+// kit's bark for the dead tree and the kit's tubes for the vine, its leaves green and glossy where
+// the Deepthorn's are dead oak, and the face the tree's.
+//
 // Measured against the combat view, which nothing clips: a heartwood drawn inside 0.9 of its
 // height sits under the frame alone and over three brambles, and roots stop at the ground line so
 // nothing runs under the silhouette canvas.
@@ -18,12 +22,13 @@ import type { Part } from './gloss.ts';
 import { mix, shade } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['bramble', 'rootwalker', 'heartwood', 'eldest'];
+export const KINDS: readonly MonsterSprite[] = ['bramble', 'rootwalker', 'heartwood', 'eldest', 'strangler_vine'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'bramble') bramble(ctx, x, y, h, p);
   else if (kind === 'rootwalker') rootwalker(ctx, x, y, h, p);
   else if (kind === 'heartwood') heartwood(ctx, x, y, h * 0.9, p);
+  else if (kind === 'strangler_vine') strangler(ctx, x, y, h * 0.92, p);
   else eldest(ctx, x, y, h * 0.84, p);
 };
 
@@ -178,6 +183,83 @@ function bramble(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
   const leaves: Part[] = [];
   for (const [lx, ly, r] of [[-20, 44, 2.8], [14, 36, 2.6], [28, 24, 2.4], [-30, 26, 2.4], [-6, 50, 2.6], [22, 40, 2.2], [-34, 12, 2.2]] as const) leaves.push({ k: 'ell', x: f.X(lx), y: f.Y(ly + s * 0.6), rx: r * f.u, ry: r * 0.55 * f.u, rot: nz(lx, ly) - 0.5 });
   blob(ctx, B, shade(mix(w.moss, w.leafD, 0.5), 0.8), leaves, { h, formK: 0.3, outline: false });
+}
+
+// ------------------------------------------------------------ the strangler vine ----
+/**
+ * The Strangler Vine: the vines hang lower than they did. A tree the vine has killed, grey and
+ * barkless, its top broken off, wound round with green cables from its roots to its two limbs; from
+ * the limbs the vine hangs in long ropes nearly to the ground, leaved in glossy green, and the two
+ * outermost end in curls held out toward the company, which tighten on whatever comes near. Its
+ * runners are rooted all round its foot: it never roams. The face is in the tangle at a man's
+ * height, the dead tree's two knotholes lit with the sap-light. Idle: the ropes sway, the curls
+ * tighten and open.
+ */
+function strangler(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const f = frame(x, y, h), w = wood(p), t = p.frame, s = p.breathe;
+  const sway = Math.sin(t / 37) * 2.2, grip = 0.5 + 0.5 * Math.sin(t / 19);
+  const snag = shade('#8c877c', p.tone), vine = w.bark, vineD = shade(p.dark, 0.82);
+  const leaf = shade('#3e7a34', p.tone), leafD = shade('#244a26', p.tone);
+  groundShadow(ctx, x, y + 1, h * 0.5);
+
+  /** A rope from a limb's tip down toward the ground, swaying more the lower it hangs, ending in a curl to side c. */
+  const rope = (x0: number, y0: number, drop: number, out: number, c: number, curl: boolean): number[] => {
+    const pts: number[] = [];
+    for (let i = 0; i <= 5; i++) { const k = i / 5; pts.push(x0 + out * k * k + Math.sin(k * 2.6 + x0) * 1.6 + sway * k, y0 - drop * k); }
+    if (curl) {
+      // Round under the end and up its outer side, tightening as it goes.
+      const ex = pts[pts.length - 2], ey = pts[pts.length - 1], r = 4.4 - grip * 1.4, a0 = c > 0 ? Math.PI : 0;
+      for (let i = 1; i <= 7; i++) { const a = a0 + c * (i / 7) * Math.PI * 1.7, rr = r * (1 - i * 0.06); pts.push(ex + c * r + Math.cos(a) * rr, ey + Math.sin(a) * rr); }
+    }
+    return pts;
+  };
+  const tube = (pts: readonly number[], r0: number, r1: number, seed: number): Part => ({ k: 'tube', pts: at(f, pts), r0: r0 * f.u, r1: r1 * f.u, wobble: 0.08, seed });
+  /** Leaves along a rope, alternate sides, each touching it. */
+  const leaves = (pts: readonly number[], from: number, r: number, seed: number): Part[] => {
+    const o: Part[] = [];
+    for (let i = from; i < pts.length / 2 - 1; i++) {
+      const side = i % 2 ? 1 : -1, lx = pts[i * 2] + side * r * 0.9, ly = pts[i * 2 + 1] - r * 0.3;
+      o.push({ k: 'ell', x: f.X(lx), y: f.Y(ly + s * 0.4), rx: r * f.u, ry: r * 0.62 * f.u, rot: side * (0.5 + nz(seed, i) * 0.4) });
+    }
+    return o;
+  };
+
+  // The far ropes, a step darker, behind the tree.
+  const farL = rope(-19, 73, 40, -2, -1, false), farR = rope(17, 77, 44, 3, 1, false);
+  blob(ctx, B, vineD, [tube(farL, 1.8, 1.1, 301), tube(farR, 1.8, 1.1, 302)], { h, formK: 0.3 });
+  blob(ctx, B, leafD, [...leaves(farL, 1, 3.2, 303), ...leaves(farR, 1, 3.2, 304)], { h, formK: 0.35, spread: 0.8 });
+
+  // The dead tree: the trunk, its broken top, the two limbs the vine hangs from, and its roots.
+  bark(ctx, f, snag, [
+    [[1, 0, 0, 22, -1, 44, 1, 62, -2, 80], 8.5, 5.2],
+    [[-2, 79, -1, 86, 1, 91], 3.4, 1.2],
+    [[-1, 64, -12, 72, -24, 75, -33, 74], 4.4, 2],
+    [[0, 70, 10, 78, 21, 81, 31, 79], 4.2, 2],
+    [[-2, 8, -10, 3, -17, 0], 4.6, 1.4], [[3, 8, 11, 3, 17, 0], 4.6, 1.4],
+  ], 305, 0.6);
+
+  // The vine: cables wound up the trunk and out along the limbs, the near ropes hanging from their
+  // tips with the curls, and runners rooted round the foot.
+  const nearL = rope(-33, 74, 54, -7, -1, true), nearR = rope(31, 79, 58, 9, 1, true);
+  blob(ctx, B, vine, [
+    tube([-9, 2, 7, 13, -7, 27, 7, 41, -7, 55, 6, 66, -10, 72, -22, 76, -33, 74], 2.7, 1.9, 306),
+    tube([8, 3, -8, 18, 8, 33, -6, 48, 7, 61, 4, 71, 13, 79, 22, 82, 31, 79], 2.5, 1.8, 307),
+    tube(nearL, 2.2, 1.2, 308), tube(nearR, 2.2, 1.2, 309),
+    tube([-6, 4, -18, 2, -30, 1, -38, 0], 2.4, 1, 310), tube([6, 4, 20, 2, 32, 1, 40, 0], 2.4, 1, 311),
+  ], { h, formK: 0.45, spread: 0.8, gloss: 0.15 });
+
+  // The face in the tangle, the dead tree's knotholes lit from inside.
+  face(ctx, f, w, -0.5, 48, 4.4, 2.1, p, 3.2);
+
+  // Leaves: glossy and green along the near ropes and the limbs, and a few on the cables.
+  blob(ctx, B, leaf, [
+    ...leaves(nearL, 1, 3.6, 312), ...leaves(nearR, 1, 3.6, 313),
+    ...leaves([-9, 72, -18, 76, -27, 76, -34, 74], 0, 3.4, 314), ...leaves([8, 77, 16, 81, 24, 82, 31, 79], 0, 3.4, 315),
+    ...leaves([-7, 27, 7, 41, -7, 55, 6, 66], 0, 2.8, 316),
+  ], { h, formK: 0.4, spread: 0.8, gloss: 0.35 });
+  if (!B.override) for (const [lx, ly] of [[-24, 70], [20, 74], [-36, 40], [38, 36], [-3, 33]] as const) {
+    softLine(ctx, B, at(f, [lx - 1.5, ly - 0.5, lx + 1.5, ly + 0.5]), mix(leaf, '#e0f0c0', 0.5), Math.max(1, f.u * 0.8), 0.35);
+  }
 }
 
 // ---------------------------------------------------------------- the rootwalker ----
