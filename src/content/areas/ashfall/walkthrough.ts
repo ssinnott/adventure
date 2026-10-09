@@ -510,7 +510,7 @@ export const walkthrough: Walkthrough = (ok) => {
   // The road square to square from G10's edge at rows 7 and 8, out of the vines and south-west over
   // F10's ash, west along its south rows past F11's corner at columns 5 to 11, where F11's north row
   // carries it too (#514), over onto E10 at rows 29 and 30, through the Hills' notch and down to the west
-  // edge at 0,6; past D10, for now, the world ends.
+  // edge at 0,6, where the Wold's road carries it on over D10 (#527).
   const key = (x: number, y: number): number => y * out.width + x;
   const inBox = (z: typeof f10, x: number, y: number): boolean => x >= z.x && x < z.x + z.w && y >= z.y && y < z.y + z.h;
   const spread = (x0: number, y0: number, along: (x: number, y: number) => boolean): Set<number> => {
@@ -525,8 +525,8 @@ export const walkthrough: Walkthrough = (ok) => {
   const wasteRoad = spread(f10.x + 31, f10.y + 7, (x, y) => (inBox(f10, x, y) || inBox(e10, x, y)) && out.at(x, y).ch === '=');
   ok([7, 8].every((y) => wasteRoad.has(key(f10.x + 31, f10.y + y))) && [5, 6, 7, 8, 9, 10, 11].every((x) => wasteRoad.has(key(f10.x + x, f10.y + 31)))
     && [29, 30].every((y) => wasteRoad.has(key(f10.x, f10.y + y)) && wasteRoad.has(key(e10.x + 31, e10.y + y))) && wasteRoad.has(key(e10.x, e10.y + 6))
-    && [5, 6, 7, 8, 9, 10, 11].every((x) => out.at(f10.x + x, f10.y + 32).ch === '=') && out.passable(e10.x - 1, e10.y + 6) !== 'ok',
-    'the road runs square to square from G10\'s edge over F10, along its south rows past F11\'s corner, where F11\'s north row carries it too, and over E10 to its west edge at 0,6, and past D10, for now, the world ends');
+    && [5, 6, 7, 8, 9, 10, 11].every((x) => out.at(f10.x + x, f10.y + 32).ch === '=') && out.at(e10.x - 1, e10.y + 6).ch === '=' && out.passable(e10.x - 1, e10.y + 6) === 'ok',
+    'the road runs square to square from G10\'s edge over F10, along its south rows past F11\'s corner, where F11\'s north row carries it too, and over E10 to its west edge at 0,6, where D10\'s road carries it on');
   const mile = F10.features!.find((f) => f.kind === 'event' && f.id === 'f10_milestone');
   ok(mile?.kind === 'event' && mile.text.includes('THE WOLD 2, CINDERPORT 4') && beside(f10, mile.x, mile.y, wasteRoad),
     'the milestone stands by the road where it turns west along the rocks: THE WOLD 2, CINDERPORT 4, as G10\'s THE WOLD 6 has it');

@@ -2,14 +2,15 @@
 // (DESIGN §9), the third area of Act IV, the far side of the Cinder Hills. docs/areas/glasswold.md is its brief.
 import type { Area } from '../../area.ts';
 import { WOLD_D9 } from './maps/wold_d9.ts';
+import { WOLD_D10 } from './maps/wold_d10.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
   id: 'glasswold' as const,
-  // In road order: the steppe (#525), the area's first.
-  maps: [WOLD_D9],
+  // In road order: the mesas (#527), the way in from E10, then the steppe (#525), the area's first built.
+  maps: [WOLD_D10, WOLD_D9],
   monsters: MONSTERS,
   sprites: SPRITES,
   // The boxes' finds: the Wold sells nothing (#542).
@@ -23,7 +24,8 @@ export const AREA = {
     fogText: 'Dust comes up off the grass and hangs in the air.', thunderText: 'Thunder rolls over the grass from far off.' },
   interiors: [],
   // The glass walkers, a new family, placed first here (#533), and the dunes underfoot (#543). Steppe
-  // was laid first by Ashfall's E10 (#517), and the lions are the cats', on the road before.
-  novel: { families: ['glasswalkers'], terrain: ['dunes'], mechanics: [], landmarks: [] },
+  // was laid first by Ashfall's E10 (#517), and the lions are the cats', on the road before. Stone,
+  // first inflicted by the mesas' basilisks (#546, #527).
+  novel: { families: ['glasswalkers'], terrain: ['dunes'], mechanics: ['inflict:stoned'], landmarks: [] },
   atlas: { zones: ZONES, places: PLACES, sites: SITES },
 } satisfies Area;
