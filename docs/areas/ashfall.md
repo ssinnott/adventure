@@ -13,8 +13,9 @@ it, the plan for building it, box by box, and the briefs. Its work is filed unde
 country behind (#522, parked); this doc is #509. Figures are measured on main at `6032251` (2
 October 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Four maps are built: G10, Cinderport's box (#511, §4.3), which lists the area; Cinderport behind its
-gate (#512, §4.4); and F10 and E10, the Ember Waste's road (#517, §4.9). Its nine monsters and the
+Five maps are built: G10, Cinderport's box (#511, §4.3), which lists the area; Cinderport behind its
+gate (#512, §4.4); G11, Fire Mountain's flank (#513, §4.5); and F10 and E10, the Ember Waste's road
+(#517, §4.9). Its nine monsters and the
 armourer's step are drawn (§3), and the rest is to build. Its content is
 `src/content/areas/ashfall/` (maps, monsters, items, climate, its part of the world map and its
 walkthrough; its chapter of the one quest, The Window, in `chapter.ts`, and its side quests in
@@ -32,9 +33,9 @@ three zones:
 | Zone | Band | Squares | Built |
 |---|---|---|---|
 | Cindercoast | 24–25 | 3,657 | G10 |
-| Fire Mountain | 25–26 | 3,795 | none |
+| Fire Mountain | 25–26 | 3,795 | G11 |
 | The Ember Waste | 25–26 | 3,284 | F10, E10 |
-| The area | 24–26 | 10,736 | G10, F10, E10 |
+| The area | 24–26 | 10,736 | G10, G11, F10, E10 |
 
 Squares are land without shallows or rivers, about 10.5 zone maps (EXPANSION §1 has 10.5), and
 9,228 of them a company could walk: the rest is Fire Mountain's cone, the Sheer's foot and the rim.
@@ -44,9 +45,9 @@ rock 382, hills 203 and vines 71. It runs from the Cinder Hills at about x 146 e
 x 266, and from the Sound's shore at about y 275 down to the rim at y 370. The zones' bands are the
 folder's: the atlas gives the area 24–26 and the boxes rise through it (§4).
 
-The squares are the plan's, before any box. G10 (#511) is laid whole in Cindercoast and F10 and E10
-(#517) in the Ember Waste, whose band stays the plan's 25–26 on its row where the boxes are built at
-24–26 (§4, §9, #517's 2).
+The squares are the plan's, before any box. G10 (#511) is laid whole in Cindercoast, G11 (#513) in
+Fire Mountain and F10 and E10 (#517) in the Ember Waste, whose band stays the plan's 25–26 on its row
+where the boxes are built at 24–26 (§4, §9, #517's 2).
 
 **The grid** (EXPANSION §8.2; docs/areas/shelf.md §1). Ashfall is the E to H columns from row 9 to
 row 12, with a sliver in I. The land worth a map is six boxes: H10 and G10 along the Sound, the
@@ -101,8 +102,8 @@ off the springs; the vines' shore humid.
 
 ## 3. What is built
 
-Four maps: the area's first box, which lists the area (#511), the town behind its gate (#512) and
-the Waste's road, F10 and E10 (#517):
+Five maps: the area's first box, which lists the area (#511), the town behind its gate (#512), the
+second box (#513) and the Waste's road, F10 and E10 (#517):
 
 - **Cinderport's box** (G10, `cindercoast_g10`, core, band 24–25; #511): the town's wall along the
   north edge, a block of building squares with its gate in its face, which opens into Cinderport
@@ -122,6 +123,17 @@ the Waste's road, F10 and E10 (#517):
   and the potter's. The ship and the last crossing land on the Compact's steps under the factor's
   house and the ride just inside the gate; Jago sells the ship at both quays, and the other two are
   sold by nobody yet. Four people speak with words only, and the town holds no secret (§4.4).
+- **Fire Mountain's flank** (G11, `firemount_g11`, core, band 25; #513): the cone in the box's
+  north-west, lettered volcano over the atlas's mountain with its mouth a vent, and three lava flows
+  off it, two leaving west and one south-east, their crust bearing a company. The track comes down
+  from G10's south edge between the mountain and the east edge, a shrine at its head, to Grimsforge,
+  a block of black stone with its fire lit and the old warlord's heir at the anvil, and a camp in
+  its lee where the scavenger sits. South of it the vents are three mouths in the ash, the middle
+  one the way down to Meridian Camp, barred until it is built (#22); beside them, in a ring of rock
+  against the east edge, lies the scavenger's hole, his second way down, barred at its far end the
+  same way. Five groups: ember salamanders on the track and on the cone's shoulder, two stokers with
+  ember salamanders at the vents, a cinder drake alone on the south-east flow and, after the Stone,
+  a sentry walking in from the Waste (§4.5).
 - **The Ember Waste's road** (F10 and E10, `emberwaste_f10` and `emberwaste_e10`, country, band
   24–26; #517): the road west from Cinderport's box, out of the vines and over the Waste's bare ash,
   past the Riders' ring and along the rocks of F10's south rows, then up the Cinder Hills of E10 by
@@ -134,31 +146,33 @@ the Waste's road, F10 and E10 (#517):
 Its atlas rows are charted in `src/content/areas/ashfall/atlas.ts`, the area's own `atlas` since G10
 lists the area; until then `src/content/atlas.ts` spread them into the plan where its rows were, as
 Saltreach's were before #170: the zones with their bands (Cindercoast 24–25, with G10 laid on it and
-its crossing words on its row, §9, #511's 13; Fire Mountain 25–26; the Ember Waste 25–26, with F10
-and E10 laid on it at 24–26 and its crossing words on its row, §9, #517's 2 and 6), Cinderport at
-24–26, built since #512 with its plate at the gate, 206,288; Old Cinder at 25–26, the Ember Stone at
-26 and Meridian Camp at 25–28 as planned plates; the sites (Cinderport, its port site at 206,277 on
-G9's shore no longer planned; Fire Mountain, Old Cinder, the Ember Stone, Scaldwell, Meridian Camp,
-Grimsforge; the Sheer and the Cinder Hills, the plan's, §10) and its links: the Stair down the
-Sheer, the ship from Kilnhaven, the town's way in (moved from the site to the gate, §9, #512's 13),
-the three dungeons' ways in, the road to the Wold and the last crossing.
+its crossing words on its row, §9, #511's 13, reworded by G11, #513's 15; Fire Mountain 25–26, with
+G11 laid on it; the Ember Waste 25–26, with F10 and E10 laid on it at 24–26 and its crossing words on
+its row, §9, #517's 2 and 6), Cinderport at 24–26, built since #512 with its plate at the gate,
+206,288; Old Cinder at 25–26, the Ember Stone at 26 and Meridian Camp at 25–28 as planned plates; the
+sites (Cinderport, its port site at 206,277 on G9's shore no longer planned; Fire Mountain and
+Grimsforge, built on G11 and no longer planned; Old Cinder, the Ember Stone, Scaldwell and Meridian
+Camp still planned; the Sheer and the Cinder Hills, the plan's, §10) and its links: the Stair down the
+Sheer, the ship from Kilnhaven, the town's way in (moved from the site to the gate, §9, #512's 13), the
+three dungeons' ways in, the road to the Wold and the last crossing.
 
 Its row on the curve and its step on the gear ladder are in (#542): the row in
 `src/content/progression.ts` (band 24–26, next 26, window 5,500), owed to #446 while the area is
-built box by box, with the three boxes' 4,290 xp a member and 2,100 gold the clear's floor, which
+built box by box, with the four boxes' 7,057 xp a member and 3,100 gold the clear's floor, which
 Cinderport leaves as it is, a town paying nothing (§8); and the step in
 `src/content/areas/ashfall/items.ts`, the Area's own since G10 lists it (`ITEMS_AHEAD`,
 `src/content/index.ts`, held it until then), so that the harness and the gate dress by it:
 Cinderport's armourer's eight wares (`ARMOURER`, §4.4), each owed to the armourer until #512 sold it
 there. The stone cure is in the table too (#546): the Quickening Draught (`CURES`), which the company
 carries from 25, sold at Cinderport's chandler's since #512 and owed to the Riders' trader at Akordu
-(#526).
+(#526). The boxes' new finds are there as they come: G11's Great Axe +2 (`scavengersAxe`, §9, #513's
+12) and E10's Horn Bow +2 (`graveBow`, §9, #517's 11).
 
 Its ground (#543): vines (`&`), walked through as the woods are, the shore's trees hung with
 creepers; the volcano (`V`) and a vent in it (`@`), the mountain's rock to walk into, see and climb,
 a vent's fire in its lip and its smoke going up; lava is the `!` there was. The scaffold drafts H10
 with its 207 squares of vines and G11 with its 102 of lava; the atlas lays the cone as mountain, so
-#513 letters it `V` and its mouth `@` over the draft (docs/SLICE.md).
+#513 lettered it `V` and its mouth `@` over the draft (docs/SLICE.md).
 
 The Ember Stone counts for the Hearth (#548): its row in `src/content/stones.ts` restores it on
 `q_ember_lit`, the flag the Stone's dungeon sets the moment its third part is in and it lights
@@ -166,8 +180,9 @@ The Ember Stone counts for the Hearth (#548): its row in `src/content/stones.ts`
 (`tools/tests/quests.ts`) and the first map that sets it drops the entry there. The sentries stand
 `after` that flag on every box (#449): the Hearth's check (`tools/tests/stones.ts`) holds a fixture
 box with a group of the test elite at the Sentry's level `after` it, not there before the Stone is
-lit and standing, in the way and fought, after. No box places one yet, and the words on the roads
-and in Cinderport that say they are not what they were are the boxes' and #449's.
+lit and standing, in the way and fought, after. G11 places the first, one sentry (#513, §9's 10),
+and the words on the roads and in Cinderport that say they are not what they were are the boxes' and
+#449's.
 
 Its crossings are written (#547), in `src/content/crossings.ts`, each on its link of the atlas with
 its fare, its days and its hours, the same either way (§4.4, §9): the Compact's ship from
@@ -185,9 +200,10 @@ Sentry and the Sentinel on the heavy machines', new (`src/ui/monsters/machines.t
 `src/content/areas/ashfall/monsters.ts`, the area's own since G10 lists it (`AHEAD`,
 `src/content/index.ts`, listed them until then), and each was owed in `UNPLACED`
 (`tools/tests/maps.ts`) to the box that first places it: G10 places the vine, the beetle, the
-salamander and the drake (#511); the stoker is owed to #513, the husk and the sentry to #514, the
-Old Drake to #515 and the Sentinel to #516, though listing the area records all nine in
-`src/content/shipped.json`.
+salamander and the drake (#511) and G11 the stoker and the sentry (#513, §9's 10); the husk is owed
+to #514, the Old Drake to #515 and the Sentinel to #516, though listing the area records all nine in
+`src/content/shipped.json`. G11 restates the stoker and the sentry on the line as it was made again
+(§9, #513's 17).
 
 The rooms are drawn (#521), one to each business of Cinderport, ahead of the town as Rime Lodge's
 were. `src/content/areas/ashfall/interiors.ts` lists them, the Area's own `interiors` since G10
@@ -221,8 +237,8 @@ Riders' ride and the last crossing (#547) and the bot grown to the band (#549); 
 
 ## 4. What is still to build
 
-All of it but G10, the town, F10 and E10, built (#511, §4.3; #512, §4.4; #517, §4.9): 10,736 squares
-of land, 9,228 of them walkable, the plan's figures (§1). On the grid the plan is six boxes, two
+All of it but G10, the town, G11, F10 and E10, built (§4.3 to §4.5 and §4.9): 10,736 squares of
+land, 9,228 of them walkable, the plan's figures (§1). On the grid the plan is six boxes, two
 dungeons and a town, and the boxes hold 5,462 of those squares, 5,120 walkable; the seven parked
 behind them hold 4,454 (§4.10), the cuts and the sliver about 700 (§11):
 
@@ -231,7 +247,7 @@ behind them hold 4,454 (§4.10), the cuts and the sliver about 700 (§11):
 | H10 | The Stair's foot | Cindercoast | core | 24 | 1,009 (ash 644, vines 207, grass 82, pine 56), 15 shallow | the Stair down the Sheer at 258,306; Scaldwell at 240,300; the vines; the gentlest groups | the far side reached | #510 |
 | G10 | Cinderport's box | Cindercoast | core | 24–25 | 977 (ash 618, vines 236, grass 74), 47 shallow | the town's gate at 206,288 on the north edge; the trading ground; the road south-west | the eldest's story | #511, built |
 | | Cinderport | | town, 16×16 | 24–26 | | eight businesses; the two halls; the ship; the trainer to 27 | the port; the last crossing | #512, built |
-| G11 | Fire Mountain's flank | Fire Mountain | core | 25 | 1,024 (ash 641, mountain 281, lava 102) | the cone at 215,326; the vents at 226,334; Grimsforge at 230,330; the drakes | the vents | #513 |
+| G11 | Fire Mountain's flank | Fire Mountain | core | 25 | 1,024 (ash 641, mountain 281, lava 102) | the cone at 215,326; the vents at 226,334; Grimsforge at 230,330; the drakes | the vents | #513, built |
 | F11 | Old Cinder's and the Ember Stone's box | the Ember Waste, Fire Mountain, Cindercoast | core | 25–26 | 1,024 (ash 664, rock 301, lava 46) | Old Cinder at 190,318; the Ember Stone at 176,342; the west lava flow between | the Stone seen; the Stone lit | #514 |
 | | Old Cinder | | dungeon, two levels of 16×16 | 25–26 | | the buried town and the Old Drake; the undercroft and the lamp | a part | #515 |
 | | The Ember Stone | | dungeon, one level of 16×16 | 26 | | the half-built Stone; the hand-in; the Sentinel | the Stone lit | #516 |
@@ -259,8 +275,8 @@ zone, and the zone a square belongs to decides only its crossing line (#166) and
 Cinderport; G11 and the vents; F11 with Old Cinder and the Stone; then F10 and E10. Road order holds
 (#443, call 6), but Cinderport's box may begin by sea, the second area in flight, once the
 Whitespine's first box is in. G10 begins it (#511), with no neighbour built, so its way in is the
-gate's front (§9, #511's 4). Building waits on #442's systems (§3); the briefs and the drawings do
-not.
+gate's front (§9, #511's 4); G11 follows it over G10's south edge (#513, §9's 4). Building waits on
+#442's systems (§3); the briefs and the drawings do not.
 
 The places, as the atlas and the docs have them:
 
@@ -362,14 +378,16 @@ half, with the wilderness features (#45); no more than one point in four is a si
   knoll's say masts (§9, #511's 2). The gate was barred, `GATE` exported and not in `exits`, its
   square a building and `g10_gate` at its front, 6,3, until #512 listed it, opened the square and
   dropped the event (§9, #512's 12); its way back lands on 6,3 facing south (§9, #511's 3). No box
-  beside G10 is built and the ship lands in the town (#547), so the way in is the gate's front: the
+  beside G10 was built; the ship lands in the town (#547), so the way in is the gate's front: the
   map starts at 6,3 facing south (§9, #511's 4).
   The roads are the atlas's, made to meet it at the edges: from the
   gate's front west under the wall, up the wall's west side to the north edge at 3,0 (the atlas's
   road into G9 at 203,285), and out south-west through the vines to the west edge at 0,7 and 0,8
   (F10's road at 31,7 and 31,8); the milestone, OLD CINDER 4, THE WOLD 6, stands at the fork, 3,4
-  (§9, #511's 5). The four edges end the world against G9, F10, H10 and G11, pinned in
-  `tools/tests/outdoors.ts` with void past them. The stream is crossed on stones at 18 to 19,3 by
+  (§9, #511's 5). Two of its edges end the world against G9 and H10, pinned in
+  `tools/tests/outdoors.ts` with void past them; the west meets F10 (#517, §4.9), road to road at
+  rows 7 and 8, and the south meets G11 (#513), the ash either side of the mountain's foot (§9,
+  #513's 4). The stream is crossed on stones at 18 to 19,3 by
   the ground and at 26,14 on the ash (§9, #511's 6). On the ground, the step's event at 8,4
   (`g10_ground`) and the eldest at 11,5, who tells the story in three lines (§9, #511's 11); the
   Riders' shrine at 10,3 (speed), their fires a camp at 13,4 by the horse-lines (`g10_horses`,
@@ -389,8 +407,8 @@ half, with the wilderness features (#45); no more than one point in four is a si
   and the hide hold 900 gold between them. It departs from the brief in the groups, four for its
   seven, for the pay and the gate (§9, #511's 7); in the gate, barred until #512; and in the step's
   line, which reads "on the grass", the ground being the atlas's grass (§9, #511's 11). The step's
-  quest and goal are #518's, and Cindercoast's crossing words, on its zone row, are not walked, no
-  box beside G10 being built (§9, #511's 13).
+  quest and goal are #518's, and Cindercoast's crossing words, on its zone row, are walked by G11
+  and reworded there (§9, #511's 13, #513's 15 and 16).
   - **Measured.** A company at 24 wins every fight and manages 10.88 fights to a rest, inside the
     aim of 9 to 11, with 15% of its days ending in a fight broken off; it walks Cindercoast's
     road, past the beetles and then the salamanders, every time. G10 pays 2,449 xp a member and 900
@@ -509,6 +527,60 @@ half, with the wilderness features (#45); no more than one point in four is a si
   families (#520); the sweep with fire (#545).
 - **Finds.** The Great Axe +2 in the hole; a Warhammer +1 at the forge, the ladder's (#542).
 - **Pay.** About 2,000 xp a member.
+- **As built** (#513, 9 October): the brief's places, with five groups for its nine, laid whole in
+  Fire Mountain at 200,318, band 25 (§9, #513's 2). Its id is `firemount_g11`, the zone's and the
+  box's, not the issue's `cindercoast_g11`: the scaffold counts 708 of its squares Fire Mountain's
+  and 316 Cindercoast's (§9, #513's 1). The cone is lettered by hand, the volcano over the atlas's
+  mountain at rows 4 to 10 and columns 10 to 20, its mouth a vent at 15,8 (215,326, the atlas's
+  site), and the rest of the ridge stays mountain. The three flows are the atlas's lava as cut: the
+  north-west leaving west at rows 10 and 11, the south-west at rows 20 to 23 and the south-east
+  leaving east at rows 27 to 30. Lava is open ground, as the Kilns' is, so they cut nothing, and
+  the crust bears a company (`g11_crust`, 10,9; §9, #513's 3). The way in is G10's south edge, each
+  row as the atlas cuts it, ash either side of the mountain's foot with no road: walked across at
+  columns 23 to 31, the track down, and 0 to 4, the cairn's corner, and the map starts at 28,0
+  facing south (§9, #513's 4). The north edge meets G10's, which `tools/tests/outdoors.ts` pins anew
+  with the mountain between and no void under it; the other three end the world against F11, H11
+  and G12, pinned with void past them: the west carries the cone's flank, rows 4 to 9, and the two
+  flows, rows 10 and 11 and 21 to 23, on into F11 (#514), and the east holds Grimsforge's wall at
+  rows 12 and 13 and the hole at 15 to 18. A shrine at the track's head, 27,2, blesses
+  endurance (§9, #513's 19). Grimsforge is a block of building squares, 29 to 31 by 12 to 13, with
+  the site, 230,330, in it; `g11_forge` stands at its front, 28,12, and the warlord's heir at the
+  anvil, 28,13, words only (§9, #513's 7). In its lee, the rack at 29,14 (`g11_rack`, a War Hammer
+  +1), the camp at 30,14 and, by its fire at 31,14, the scavenger, words only, who sells to a smith
+  in Cinderport and says nothing of where he goes. The furnace-draught is a vent in the mountain's
+  foot at 22,11, `g11_draught` at its front, 22,12: no wider than an arm, so no way in (§9, #513's
+  8). The vents are three mouths at 26,15 to 26,17, and the middle one, 26,16 (Meridian Camp's site,
+  226,334), is barred: `VENTS` is exported and not in `exits`, its square solid, and `g11_vents`
+  (not `once`) stands at its front, 27,16, with the step's line each time (§9, #513's 5). The secret
+  is the scavenger's hole, in a ring of rock against the east edge that no climber passes: its mouth
+  a secret door at 29,16, the ledge behind it (`g11_finds`, 30,16, grey parts in heaps and a cold
+  draught from below) and the chest (`g11_hole`, 31,16): the Great Axe +2 and 700 gold. Its far
+  end, 31,17, is rock and barred as the vents are (`HOLE`), with rock at 31,18 so that it opens only
+  from the hole. The hint is the rope (`g11_rope`, 28,16): a vine rope knotted round a rock where no
+  vine grows, and the heir's word that a man went down beside the forge with a rope (§9, #513's 6).
+  For density besides, the lookout over the Waste on the cone's shoulder (`g11_lookout`, 14,10), the
+  cairn at the ash foot with 300 gold and a Sapphire Vial (1,2), the Hills' line from the west
+  (2,15), the flows' beds (`g11_bed`, 5,8; §9, #513's 18) and, on the ash, the stokers' heaps
+  (13,20) and tracks (22,20), the mountain's bombs (13,28), a bullock's bones (22,28), black glass
+  where the west flow set (4,28) and the south-east flow going on (28,28). Five groups: ember
+  salamanders, 4, on the track, 30,6, the nearest, at 24; ember salamanders, 3, on the cone's
+  shoulder, 16,11; the vents' fight, two stokers with two ember salamanders, 28,19, where fire is
+  useless and lightning the answer (MONSTERS §8.2); one cinder drake alone on the south-east flow,
+  28,22; and one sentry, `after` `q_ember_lit`, walking in from the Waste, 4,24, the box's top at 26
+  (§9, #513's 9 and 10). It departs from the brief in the id, the groups (five for its nine) and
+  the sentry (taken from F11 for the box's top): §9, #513's 1, 9 and 10. The Great Axe +2 is a new
+  item (§9, #513's 12). The step's quest and goal are #518's, and the crossing from G10 is walked
+  both ways, Cindercoast's harder words reworded to read true from the mountain (§9, #513's 15
+  and 16).
+  - **Measured.** A company at 25 wins every fight and manages 10.23 fights to a rest, inside the
+    aim of 9.25 to 11.25, with 94.7% of its days ending in a fight broken off: the stokers' fight
+    runs past 15 rounds once spell points run low, which the gate shows and never judges (G10's
+    is 15%). It walks Fire Mountain's road, past the salamanders and then the stokers, every
+    time. G11 pays 2,768 xp a member and 1,000 gold. Its under-check is n/a, its floor being over
+    the area's; Ashfall's nine groups at 22 are won every time, owed to #18 as before. Density
+    100.0% within 8 steps and the furthest 8, with no sign among its 27 points; the art check
+    dresses 41.7% of its 12 wall faces. It claims the heavy machines, the volcano and the vent
+    underfoot and the volcano on the map as new (§7).
 
 ### 4.6 F11, Old Cinder's and the Ember Stone's box (#514): core, band 25–26
 
@@ -809,11 +881,13 @@ and on the Hills (E10), where MONSTERS §8.2 has it on Fire Mountain's slopes on
 Salamander at G10's far end and F10's flow, where it has them at the vents. They stand in the briefs
 as proposals; if the owner takes them, MONSTERS' Where column says so, in a pull request of its own.
 G10 takes its two (#511, §9's 8); F10 and E10 take the Cinder Drake, on F10's rocks and on the
-Hills, and place no salamander (#517, §9's 7 and 8). One gap for the owner: before the Stone is lit
-the roster has no roaming monster at 26, so a box of 25–26 holds its top either in the sentries
-after or in two drakes together; whether the curve forgives it or #520 wants a 26 is the owner's.
-F10 and E10 hold their top at 25 over a floor of 24, F10 with one drake and E10 with two together
-(§9, #517's 2 and 8).
+Hills, and place no salamander (#517, §9's 7 and 8). One gap for the owner, real since G11: before
+the Stone is lit the roster has no roaming monster at 26, so a box of 25–26 holds its top either in
+the sentries after or in two drakes together, and the curve asks 26 of every Ashfall box laid at 25.
+G11 (#513) holds its top in a sentry after the Stone, the sentry's first placing taken from F11 (§9,
+#513's 10); F11 (#514) meets the rule too, and the roster answers it only with a sentry after or
+#22's drakeling. Whether the curve forgives it or #520 wants a 26 is the owner's. F10 and E10 hold
+their top at 25 over a floor of 24, F10 with one drake and E10 with two together (§9, #517's 2 and 8).
 
 New in Ashfall, for the novelty check (EXPANSION §5.4): the drakes and the heavy machines, two new
 families (#520); sweep with fire, the drakes' breath (#545); the volcano, lava fields and vines
@@ -822,9 +896,10 @@ that comes when it is done. Its landmarks: a volcano, hot springs, a buried town
 half-built, a window below (#22). Back: the old wood as the strangler vine, the salamanders, the
 spider frame as the cinder beetle, the skeleton frame as the ash husk.
 The area's `novel` claims each as a box places it, since the check asks that what is claimed be
-used: the drakes and the vines underfoot with G10 (#511); the rest waits for the box that places it,
-and sweep with fire has no token to claim (§9, #511's 14). F10 and E10 claim nothing more: lava is
-on the road before Ashfall, and steppe, first laid in E10, is the Wold's ground (#543), left
+used: the drakes and the vines underfoot with G10 (#511), the heavy machines, the volcano and the
+vent underfoot and the volcano on the map with G11 (#513, §9's 13); the rest waits for the box that
+places it, and sweep with fire has no token to claim (§9, #511's 14). F10 and E10 claim nothing more:
+lava is on the road before Ashfall, and steppe, first laid in E10, is the Wold's ground (#543), left
 unclaimed (§9, #517's 15; §11).
 
 ## 8. The numbers
@@ -846,10 +921,11 @@ unclaimed (§9, #517's 15; §11).
   above, the shares are H10 2,250, G10 2,000, Cinderport 800, G11 2,650, F11 2,400, Old Cinder
   3,450, the Ember Stone 2,950, F10 and E10 1,850 and the side quests about 1,100: about 19,450. The
   issues (#510 to #519) carry the first figures until their briefs are settled. As built: G10 2,449
-  (#511), 1.22 times its scaled share, and F10 and E10 1,841 between them (#517), 0.99 times theirs,
-  so the shares stand at about 19,890, 1.02 times the ask (§9, #511's 9, #517's 9). Cinderport pays
-  nothing, as a town pays none, and its two halls add no quest (§9, #512's 6): its 600, 800 scaled,
-  is unpaid (§11).
+  (#511), 1.22 times its scaled share (§9, #511's 9), F10 and E10 1,841 between them (#517), 0.99
+  times theirs, and G11 2,768 (#513), 1.04 times its own (§9, #517's 9, #513's 11): 7,057 of the
+  19,467 asked, so with the other scaled shares, 12,950, the shares stand at about 20,000, 1.03 times
+  the ask. Cinderport pays nothing, as a town pays none, and its two halls add no quest (§9, #512's
+  6): its 600, 800 scaled, is unpaid (§11).
 - **Gold.** Training six members from 24 to 26 costs 11,760 with today's `trainPrice`, and to 27,
   the third prestige's level, 6,240 more; the thirds ask a quest, not gold (DESIGN §5). A clear
   should pay for the training at least, in chests, drops, the halls' pay and the sentries' parts.
@@ -857,9 +933,12 @@ unclaimed (§9, #517's 15; §11).
   comes within 400 of it (#542, as #399 held Act II's): the dearest ware the Drakeskin Coat at
   3,100, the rest 1,400 to 2,400. The armourer's full set for the premade six comes to about
   26,900, its weapons 13,900. As built: G10 holds 900 (#511), 300 in the cairn where the ash begins
-  and 600 in the hide, its dearest find the Long Sword +2 at 420, inside the window; F10 and E10
-  hold 1,200 (#517), 250 and a Sapphire Vial in the cairn of each and 700 in the grave, their
-  dearest find the Horn Bow +2 at 1,050, inside the window. Cinderport holds no gold, a town paying
+  and 600 in the hide, its dearest find the Long Sword +2 at 420, inside the window; G11 holds 1,000
+  (#513), 300 and a Sapphire Vial in its cairn and 700 in the hole, with the War Hammer +1 in the
+  forge's rack, its dearest find, the area's, the Great Axe +2 at 1,500, inside the window; F10 and
+  E10 hold 1,200 (#517), 250 and a Sapphire Vial in the cairn of each and 700 in the grave, their
+  dearest find the Horn Bow +2 at 1,050, inside the window; the four hold 3,100 of the 11,760 the
+  training costs. Cinderport holds no gold, a town paying
   nothing; the dearest ware at its armourer's is the Drakeskin Coat at 3,100 and the Quickening
   Draught at its chandler's, the company's kit from 25, is 2,000, both inside the window (#512).
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
@@ -873,15 +952,17 @@ unclaimed (§9, #517's 15; §11).
   company at 24 wins every fight on G10 and walks Cindercoast's road every time, 10.88 fights to a
   rest; one at 22 wins every fight too, owed to #18 as the Whitespine's boxes' is (§4.3). The town
   adds a way in, the boat's landing at 6,3; the groups nearest it are won at 22 as often as the
-  median group or more (§4.4). On F10 and E10 a company at 24 wins every fight and walks the Waste's
-  road every time, 10.66 fights to a rest on F10 and 10.51 on E10; one at 22 wins every fight too,
-  owed to #18 (§4.9).
-- - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3); the
+  median group or more (§4.4). A company at 25 wins every G11 fight and walks Fire Mountain's road
+  every time, 10.23 fights to a rest, 94.7% of its days ending in a fight broken off (§4.5). On F10
+  and E10 a company at 24 wins every fight and walks the Waste's road every time, 10.66 fights to a
+  rest on F10 and 10.51 on E10; one at 22 wins every fight too, owed to #18 (§4.9).
+- **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3); the
   Stone's chamber holds the door's squares empty until it opens, as the Sunder's floor holds the
   wall's. As built: G10 97.3% within 8 steps and the furthest 12, with no sign among its 26 points
   (#511); Cinderport, a town, 100.0% within 7 steps (86 of 86) and the furthest 4, with no sign
-  among its 25 (#512); F10 and E10 100.0% within 12 steps, the furthest 12 of 20, with no sign among
-  their 12 and 15 points (#517).
+  among its 25 (#512); G11 100.0% within 8 steps and the furthest 8, with no sign among its 27
+  points (#513); F10 and E10 100.0% within 12 steps, the furthest 12 of 20, with no sign among their
+  12 and 15 points (#517).
 
 ## 9. Decisions
 
@@ -1030,8 +1111,9 @@ Decided by delegate for #520 (the heavy machines), each the owner's to overturn:
 
 1. **Each stands on the line at its level** (MONSTERS §4.4): the Stoker a brute at 25 (687, 5d8+8),
    the Sentry an elite at 26 (584, 6d8+5) and the Sentinel on the boss's line at 26 (1,442,
-   24d8+29), for #516's gate to tune. They carry no gold (MONSTERS §2); the parts they carry, the
-   first sentry's and the Sentinel's, named, are the boxes' to give with their items (#514, #516).
+   24d8+29), for #516's gate to tune; G11 restates the Stoker and the Sentry on the line made again
+   (#513's 17). They carry no gold (MONSTERS §2); the parts they carry, the first sentry's and the
+   Sentinel's, named, are the boxes' to give with their items (#514, #516).
 2. **Fire does not touch the Stoker,** `immune: ['fire']` on top of the machine's own (lightning
    bites; sleep, holy and nature do nothing). The Sentry and the Sentinel are the machine and no
    more: they come up through the doors, not out of the vents' fire, and the roster gives them
@@ -1055,8 +1137,9 @@ Decided by delegate for #520 (the heavy machines), each the owner's to overturn:
    (MONSTERS §11).
 9. **Each is owed to the box that first places it:** the stoker to G11 (#513), the vents' fight (the
    stoker at H10's springs, §6's 49, strikes the line if it is built first); the sentry to F11
-   (#514), whose road has the first sentries after the Stone (§4.6), before #516's door; and the
-   Sentinel to the Ember Stone (#516). Nothing is declared apart: each is one silhouette.
+   (#514), whose road has the first sentries after the Stone (§4.6), before #516's door, though G11
+   places the first (#513's 10); and the Sentinel to the Ember Stone (#516). Nothing is declared
+   apart: each is one silhouette.
 
 Decided by delegate for #547, each the owner's to overturn:
 
@@ -1275,6 +1358,74 @@ Decided by delegate for #512, each the owner's to overturn:
     by night the renderer draws the column of light in the sky to the north on its own.
 17. **Banners either side of the gate,** on the wall (7,15 and 9,15), an ember red.
 
+Decided by delegate for #513, each the owner's to overturn:
+
+1. **The map's id is `firemount_g11`, not the issue's `cindercoast_g11`:** the box is laid in Fire
+   Mountain, the §4 table's zone (the scaffold counts 708 of its squares Fire Mountain's and 316
+   Cindercoast's), and a map's id is its zone's and its box's (`cindercoast_g10`, `highspine_i11`).
+   Overturn before it merges if wanted: an id is a save key after.
+2. **G11 is laid whole in Fire Mountain at 200,318** (the zone row's `maps`), core, band 25–25 as
+   the brief has it, region `ashfall`.
+3. **The cone is lettered by hand,** the volcano over the atlas's mountain with its mouth at the
+   atlas's site and the rest of the ridge mountain; the three flows are the atlas's lava as cut.
+   Lava is open ground in the engine, as the Kilns' is, so the flows cut nothing, and `g11_crust`
+   says the crust bears a company.
+4. **The way in is G10's south edge,** each row as the atlas cuts it, with no road on either side:
+   open ash, as G10's 5. The box is reached over G10 alone, and the outdoors reach walk, which seeds
+   Cinderport's ways out since #512, reaches it: it takes no `CUT_OFF` entry.
+5. **The vents are three mouths and the middle one is barred,** `VENTS` exported and not in `exits`,
+   its square solid, as G10's gate is; `g11_vents` (not `once`) says the brief's line each time at
+   its front. #22 opens it (§11).
+6. **The secret is the scavenger's hole in a ring of rock** (`r`, which no climber passes), its far
+   end barred as the vents are (`HOLE`), with rock behind it so that it opens only from the hole.
+   The hint is the brief's: the rope, and the heir's word of a man who went down beside the forge.
+7. **Grimsforge is a block of building squares three wide:** two wide dressed 60% of its 10 wall
+   faces and the art check's cap is 50% under 100; three wide dresses 41.7% of 12. The heir and the
+   scavenger have words only: the Barbarian's trainer entry and quest are #448's, and #56's 52 is
+   #519's.
+8. **The furnace-draught is a vent in the mountain's foot,** no wider than an arm: no way in.
+9. **Five groups for the brief's nine,** for the gate. The second drake group, a pair, is cut: with
+   it, in place of the cone's three salamanders, the box read 8.88 fights to a rest (2,953 xp a
+   member), under the aim. The harness's trial of these five, at 25 and 400 seeds, gave 10.18
+   (2,768); the gate reads 10.23.
+10. **The box's top is a sentry after the Stone:** the curve wants the hardest group at
+    max(floor + 1, top - 2), 26 however narrow the band, and the roster's only 26 that is no boss is
+    the sentry, "all of Ashfall, once the Ember Stone is lit" (MONSTERS §8.2), which §7's gap has a
+    box hold its top in. A set without it read 9.93 (2,450) with no group at 26. It takes the
+    sentry's first placing from F11 (#514): `UNPLACED` drops it. MONSTERS' Where column already
+    covers G11. Its 2,067 xp count in G11's clear.
+11. **G11 pays 2,768 xp a member,** 16,605 over six (the salamanders' groups 3,812 and 2,859, the
+    stokers' fight 5,880, the drake 1,987, the sentry 2,067): 1.04 times the doc's scaled share of
+    2,650 (the doc wins over the issue's 2,000). The area: G10 2,449, F10 and E10 1,841 and G11
+    2,768, 7,057 of the 19,467 asked; with the other scaled shares (12,950) about 20,000, 1.03 times
+    the ask (§8). Gold 1,000: the cairn 300 and a Sapphire Vial, the hole 700; the War Hammer +1 at
+    the forge.
+12. **The Great Axe +2 is new:** `scavengersAxe`, a +2 of Sunderwood's `great_axe` made with `P` in
+    `ashfall/items.ts`, as the Kilns' pluses are made on other areas' bases; 1,500 gold, inside the
+    window (5,500).
+13. **Novelty adds the heavy machines' family** (`machines`), the volcano and the vent underfoot and
+    the volcano on the map (the Fire Mountain site built). Lava was the Kilns' first, so it is not
+    claimed; the sweep has no token.
+14. **The Fire Mountain and Grimsforge sites lose `planned`,** built on G11, as Highcell's site was
+    with J11; Meridian Camp's site and place stay planned (#22).
+15. **Cindercoast's harder words now read true from the mountain as from the Stair:** *The far side,
+    and it is harder than the range over the Sheer.* for *The far side begins here, and it is harder
+    than the range behind.* (#511's 13). The world says a land's words on any crossing into it (a
+    new land counts as rising), so a company under 24 off G11 onto G10 heard "begins here" and
+    "the range behind", both false there. The warning words are kept. Fire Mountain takes the
+    world's own words, true from G10 ("harder than the road behind").
+16. **The crossing line is walked both ways:** G10's 28,31 onto G11's 28,0 at 22 (the warning), 23
+    (the harder words) and 25 (the name alone); straight back, nothing; then G11 onto G10 at 22 and
+    21, Cindercoast's words. G10's 13 is met.
+17. **Restated on the line as #549 made it again (#661):** the stoker, a brute at 25, 687 hit points
+    to 665, its blow 5d8+8 and xp 1,987 the same; the sentry, an elite at 26, 584 to 597 and 6d8+5
+    to 5d8+4, its hold (paralysed, 0.15) and xp 2,067 the same. Both leave `RESTATE`. The Cinder
+    Drake is untouched (G10's, `OFF_LINE`).
+18. **Points for density go up the flows' beds:** the lava runs into the mountain in beds 20 steps
+    from anything, so `g11_bed` and `g11_crust` stand on them. G11's 15 events are all at two lines.
+19. **The shrine at the track's head blesses endurance** (`g11_shrine`), where the ash is trodden
+    flat.
+
 Decided by delegate for #517, each the owner's to overturn:
 
 1. **Both boxes are laid whole in the Ember Waste,** country, region `ashfall`: F10 at 168,286 and
@@ -1318,8 +1469,8 @@ Decided by delegate for #517, each the owner's to overturn:
 9. **Pay 1,841 xp a member,** 0.99 times the doc's scaled share of 1,850 (the doc wins over the
    issue's 1,400): F10 1,178 (4 × 1,271 + 1,987 over six), E10 662 (2 × 1,987 over six). Ashfall
    stands at 4,290 of 19,467 and, with the other scaled shares (15,600), at about 19,890, 1.02 times
-   the ask (§8). Gold 1,200: F10's cairn 250 and a Sapphire Vial, E10's cairn 250 and a vial, the
-   grave 700.
+   the ask (§8; 7,057 and about 20,000, 1.03 times, with G11, #513's 11). Gold 1,200: F10's cairn 250
+   and a Sapphire Vial, E10's cairn 250 and a vial, the grave 700.
 10. **The secret is the grave in the Hills, as the doc has it** (the issue's Meridian cache is
     superseded): a cairn of rock at 15 to 18 by 26 to 28, its mouth a secret door drawn as rock at
     18,27 (154,313), facing east to the Stone. The hint is the doc's line (`e10_back`, 19,27);
@@ -1393,8 +1544,8 @@ Owed, from G10 (#511):
   fights to a rest, past the limit, and two groups of beetles of four would pay 1.43 times the
   share; its mixed group of salamanders and a drake failed the curve's top, so the drake stands
   alone at 25.
-- **Cindercoast's crossing words** are not walked until a box beside G10 is built; the first that is
-  (#510, #513 or #517) walks them (§9, #511's 13).
+- **Cindercoast's crossing words** were walked by G11, the first box beside G10, which reworded the
+  harder ones (§9, #511's 13, #513's 15 and 16).
 - **The hide's Long Sword +2** is the brief's, and Act II's find (420 gold, as K2's and L3's): the
   ladder and the window pass. The owner may want the act's step with a plus there instead (§4.1).
 
@@ -1409,6 +1560,25 @@ Owed, from Cinderport (#512):
 - **No quest and no pay:** the halls offer and pay their Guilds' ladders and add none, and the four
   who speak have words only, so #519, #635 and #448 add theirs (§9, #512's 6 and 8); a town pays
   nothing, so the 600 the plan gave the halls' quests is unpaid (§8).
+
+Owed, from G11 (#513):
+
+- **The vents stay barred** until #22 builds Meridian Camp: it lists `VENTS` in G11's exits,
+  re-letters 26,16 to ground an exit can stand on, drops or rewrites `g11_vents` (27,16) and sets
+  the landing it is asked for, 16,1 facing south; its way back up lands on 27,16 facing east (§9,
+  #513's 5). Meanwhile a vent is climbable mountain, so a Climber can stand on the barred mouth;
+  nothing leads on from it.
+- **The scavenger's hole stays barred at its far end** until #22 lists `HOLE`, opens 31,17 and sets
+  the landing it is asked for, 29,30 facing north, out behind the stokers' furnace room; its way
+  back up lands in the hole on 31,16 facing west (§9, #513's 6). The walkthrough asserts both
+  mouths shut and the three vents `vent` underfoot: #22 changes those lines when it opens them.
+- **Five groups stand for the brief's nine** (§4.5, §9, #513's 9): the second drake group, a pair,
+  is cut, for with it the box read 8.88 fights to a rest, under the aim.
+- **The sentry's first placing is taken from F11** for G11's top (§7, §9, #513's 10): F11 (#514)
+  meets the curve's top rule too, and the roster answers it only with a sentry after the Stone or
+  #22's drakeling.
+- **The warlord's heir and the scavenger have words only:** the Barbarian's trainer entry and quest
+  are #448's, and #56's 52 is #519's (§9, #513's 7).
 
 Owed, from F10 and E10 (#517):
 

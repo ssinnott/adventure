@@ -5,10 +5,11 @@ import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
 export const ZONES: readonly AtlasZone[] = [
   {
     id: 'cindercoast', name: 'Cindercoast', area: 'ashfall', band: [24, 25], maps: [{ map: 'cindercoast_g10', at: [200, 286] }], seeds: [[200, 284], [236, 286]], label: [238, 292],
-    // The crossing line said coming onto the shore (#166, #511): how the far side feels to a company under its floor.
-    crossing: { harder: 'The far side begins here, and it is harder than the range behind.', warning: 'The far side, and nothing on it would spare you. The way back is still open.' },
+    // The crossing line said coming onto the shore (#166, #511): how the far side feels to a company under its floor,
+    // in words as true coming down off the mountain (G11, #513) as down the Stair.
+    crossing: { harder: 'The far side, and it is harder than the range over the Sheer.', warning: 'The far side, and nothing on it would spare you. The way back is still open.' },
   },
-  { id: 'firemount', name: 'Fire Mountain', area: 'ashfall', band: [25, 26], seeds: [[214, 330], [240, 340]] },
+  { id: 'firemount', name: 'Fire Mountain', area: 'ashfall', band: [25, 26], maps: [{ map: 'firemount_g11', at: [200, 318] }], seeds: [[214, 330], [240, 340]] },
   {
     id: 'emberwaste', name: 'The Ember Waste', area: 'ashfall', band: [25, 26], maps: [{ map: 'emberwaste_f10', at: [168, 286] }, { map: 'emberwaste_e10', at: [136, 286] }], seeds: [[172, 336], [180, 300]],
     // The crossing line said coming off the coast onto the ash (#166, #517).
@@ -26,10 +27,10 @@ export const PLACES: readonly AtlasPlace[] = [
 export const SITES: readonly AtlasSite[] = [
   // X. Ashfall (docs/areas/ashfall.md §10: the coast's English, kept, and two new names).
   { name: 'Cinderport', icon: 'port', at: [206, 277], label: 'right' }, // on G9's shore over G10's gate at 6,2 (#511, #512)
-  { name: 'Fire Mountain', icon: 'volcano', at: [215, 326], label: 'none', planned: true },
+  { name: 'Fire Mountain', icon: 'volcano', at: [215, 326], label: 'none' }, // the cone's mouth on G11, 15,8 (#513)
   { name: 'Old Cinder', icon: 'ruin', at: [190, 318], label: 'below', planned: true },
   { name: 'Ember Stone', icon: 'stone', at: [176, 342], label: 'below', planned: true },
   { name: 'Scaldwell', icon: 'springs', at: [240, 300], label: 'below', planned: true }, // the Hot Springs
   { name: 'Meridian Camp', icon: 'cave', at: [226, 334], label: 'below', planned: true }, // the vents' mouth: the Lost Expedition's last camp lies below
-  { name: 'Grimsforge', icon: 'forge', at: [230, 330], label: 'right', planned: true }, // Warlord's Forge, by the vents' mouth: the Barbarian's third prestige
+  { name: 'Grimsforge', icon: 'forge', at: [230, 330], label: 'right' }, // Warlord's Forge, by the vents' mouth on G11, 30,12 (#513): the Barbarian's third prestige
 ];

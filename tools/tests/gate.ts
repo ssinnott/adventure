@@ -130,6 +130,9 @@ export const ROADS: Record<string, readonly string[]> = {
   // Out of Cinderport's gate and south over the ash past the beetles below the ground to the salamanders
   // where it warms toward the mountain (#511).
   cindercoast: ['cindercoast_g10:g10_beetles', 'cindercoast_g10:g10_salamanders'],
+  // Down the track off the coast past the salamanders on the slope to the stokers at the vents' mouths,
+  // the way down to Meridian Camp (#513).
+  firemount: ['firemount_g11:g11_salamanders', 'firemount_g11:g11_stokers'],
   // West out of G10 onto the Waste's ash past the beetles below the vines and the drake on the rocks
   // where the road turns west, and over the Cinder Hills past the drakes at their far end (#517).
   emberwaste: ['emberwaste_f10:f10_beetles', 'emberwaste_f10:f10_drake', 'emberwaste_e10:e10_drakes'],
