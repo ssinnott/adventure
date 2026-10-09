@@ -56,4 +56,38 @@ export const GROUND_SAMPLES: readonly MapDef[] = [
     ],
     encounters: [{ id: 'ground_pike', x: 5, y: 6, monsters: ['fen_eel', 'fen_eel'], roams: false, under: 'ice' }],
   },
+  {
+    // An escarpment across the way, the road cut up through its face to the hills above it; a ruin
+    // and a rock under the face.
+    id: 'ground_cliff', name: 'Cliff', kind: 'outdoor', start: { x: 6, y: 7, facing: NORTH },
+    rows: [
+      'MMMMMMMMMMMM',
+      'M^^^^^=^^^^M',
+      'M^^^^^=^^^^M',
+      'M|||||=||||M',
+      'M|||||=||||M',
+      'M,,,,,=,,r,M',
+      'M,##,,=,,,,M',
+      'M,#,,,=,,,,M',
+      'M,,,,,=,,,,M',
+      'MMMMMMMMMMMM',
+    ],
+  },
+  {
+    // The road up to a pass cut between two peaks, the mountain about them and lower, snow lying by
+    // the road under them; a herder's hut by the road.
+    id: 'ground_peak', name: 'Peak', kind: 'outdoor', start: { x: 6, y: 8, facing: NORTH },
+    rows: [
+      'MMMMMMMMMMMM',
+      'MAAAAA=AAAAM',
+      'MAAAAA=AAAAM',
+      'MAAAAA=AAAAM',
+      'MAAMMA=AMMAM',
+      'MAAM**=**MAM',
+      'MM,##,=,,r,M',
+      'M,,#,,=,,,,M',
+      'M,,,,,=,,,,M',
+      'MMMMMMMMMMMM',
+    ],
+  },
 ];
