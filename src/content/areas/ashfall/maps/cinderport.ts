@@ -13,6 +13,8 @@ import { GATE, FOUNDING_RAISED } from './cindercoast_g10.ts';
 import { SHOVEL_STORY } from './firemount_g11.ts';
 import { COMPACT_SHIP, RIDERS_RIDE, LAST_CROSSING, sells } from '../../../crossings.ts';
 import { MASON_PASSAGE } from '../../whitespine/maps/sheerpoint_i8.ts';
+import { HORSE_ASKED, HORSE_BROKEN, HORSE_WHOLE, GARDEN_BROUGHT, GARDEN_LIFTED, GARDEN_DRAUGHT } from '../../glasswold/maps/wold_d8.ts';
+import { ORDERS_ASKED, ORDERS_SEALED, ORDERS_TOLD, ORDERS_BURNED } from '../../glasswold/maps/wold_c8.ts';
 
 /**
  * The Founding Stone (#56's 50, #519): the stone carried up from Old Cinder's undercroft and handed to
@@ -135,9 +137,10 @@ export const CINDERPORT: MapDef = {
     ] },
 
     // The Cartographers' second hall (#443, call 7): its map of the far side and the Meridian journals'
-    // shelf, three and a gap for the fourth. Its guildsman's own quest (#56's 51) and the Guild's last
-    // rungs (#635: the Surveyor's with #516, the Mapmaker's with #22) are others'; the hall offers and
-    // pays the Guild's one ladder, as every hall of it does.
+    // shelf, three and a gap for the fourth. Its guildsman gives the Wold's The Horse That Came Back and
+    // takes what sat the horse, whole, at any meeting (#56's 51, #532); the Guild's last rungs (#635: the
+    // Surveyor's with #516, the Mapmaker's with #22) are others'; the hall offers and pays the Guild's
+    // one ladder, as every hall of it does.
     { kind: 'npc', x: 3, y: 8, name: 'The Chart House', interior: 'cinderport_cartographers', hall: 'cartographers', lines: [
       'Limewash above the sills, and north light. On the wall the far side as the Guild has it: the coast inked, the land behind it blank where the ink stops.',
       'A shelf of three journals in one green binding against a stone, and before the stone a gap a book wide.',
@@ -147,15 +150,23 @@ export const CINDERPORT: MapDef = {
       'Limewash above the sills, and north light. On the wall the far side as the Guild has it: the coast inked, the land behind it blank where the ink stops.',
       'A shelf of four journals in one green binding against a stone, the fourth a fair copy in a clerk\'s hand.',
     ] }] },
-    { kind: 'npc', x: 3, y: 8, name: 'Cador Lusk, of the Cartographers\' Guild', lines: [
+    { kind: 'npc', x: 3, y: 8, name: 'Cador Lusk, of the Cartographers\' Guild', flag: HORSE_ASKED, lines: [
       'A thin man at the plotting table, a rule in one hand and a pin in the other, ash in the creases of his coat.',
       '"Cador Lusk. The Guild\'s man on this side of the Sound, and this is its hall, such as it is."',
       '"Three of Fane\'s on the shelf, and a space. Fane wrote wherever they stopped, and they stopped at the Stone."',
-    ],
+      '"And a Rider\'s horse came home out of the Glass with a thing of glass in its saddle. The Riders will break it. I want it whole."',
+    ], quest: { item: 'saddle_walker', reward: 0, setFlag: HORSE_WHOLE, done: [
+      'He has it set on the plotting table, and walks round it twice without touching it with his pin.',
+      '"The first thing out of the Glass anyone has held. The Guild inks the Glass\'s edge tonight."',
+    ], early: [
+      'He looks up from the plotting table at what you carry, and puts down his rule.',
+      '"That came out of the Glass. Set it there. The Guild inks the Glass\'s edge tonight."',
+    ], after: ['"The Glass\'s edge on the Guild\'s map, and the first thing out of it on the Guild\'s table."'] },
     // The Mapmaker's rung paid (`q_carto_fane_done`) puts a pin past the vents; it is first, for the first that holds is said (#635).
     says: [
       { after: { flag: 'q_carto_fane_done' }, lines: ['"Four of Fane\'s on the shelf, and a pin in the map past the vents. The Guild has the Company to its end."'] },
       { after: { flag: 'q_carto_journal_done' }, lines: ['"Four of Fane\'s on the shelf now. The Guild has the Company as far as the vents, and no further."'] },
+      { after: { flag: [HORSE_ASKED, HORSE_BROKEN] }, lines: ['"Broken, the Riders say. The Guild has a story out of the Glass, and no glass."'] },
     ] },
 
     // The cross street: the vines over the west wall, and a cup in the old shape on a doorstep.
@@ -166,6 +177,21 @@ export const CINDERPORT: MapDef = {
     // at 80 a level), and the inn across the street, where the crews and the Riders sleep between crossings.
     { kind: 'well', x: 6, y: 5, text: 'A cistern under the square, its grating swept. The water tastes of ash.' },
     { kind: 'temple', x: 4, y: 5, name: 'The Harbour Temple', interior: 'cinderport_temple' },
+    // The Garden of Glass (#56's 55, #532): a priest at the door for a company carrying the boy of glass
+    // from Akordu, who takes him in and lifts the stone at the temple's price, 80 a level at the quest's
+    // 28 (`templePrice`), or lets a draught of the company's do it.
+    { kind: 'npc', x: 4, y: 5, name: 'A priest of the Harbour Temple', after: [{ item: 'glass_boy' }, { flag: GARDEN_BROUGHT }], lines: [
+      'A priest in grey sweeps the temple step.',
+      '"Stone we lift, at eighty a level. The Riders bring us none. They keep theirs."',
+    ], quest: { item: 'glass_boy', reward: 0, setFlag: GARDEN_BROUGHT, done: [
+      'The priest sees what you carry, and has the boy laid on the stone by the altar.',
+      '"A Rider\'s boy, glassed a long while. Stone we lift, at eighty a level, or a draught of yours will do it."',
+    ], after: ['The priest sweeps the temple step.', '"The Rider\'s boy went home on the Riders\' ride, his eyes on the ground."'] }, says: [
+      { after: { flag: GARDEN_BROUGHT }, until: [{ flag: GARDEN_LIFTED }, { flag: GARDEN_DRAUGHT }], lines:['The boy of glass lies on the stone by the altar, his hand up to his eyes.'], choice: { ask: '"At the temple\'s price, or with a draught of yours?"', answers: [
+        { label: 'Lift him.', price: 2240, sets: GARDEN_LIFTED, pay: { xp: 1800 }, says: ['The priest says the words over him, and the stone runs off him like water. He is a boy, shaking.', '"From the mesa I saw a crown standing up in the Glass. Something moved on it. Then the basilisk looked at me."'] },
+        { label: 'Give him a draught.', takes: 'quickening', sets: GARDEN_DRAUGHT, pay: { xp: 1800 }, says: ['The draught goes between his lips, and the stone runs off him like water. He is a boy, shaking.', '"From the mesa I saw a crown standing up in the Glass. Something moved on it. Then the basilisk looked at me."'] },
+      ] } },
+    ] },
     { kind: 'inn', x: 9, y: 5, name: 'The Ship and Horse', price: 55, interior: 'cinderport_inn' },
     // The Mason's Tally (the Whitespine's #56's 48, #506): the deserter off Sheer Point, once a company
     // has bought his passage over the water (MASON_PASSAGE), by the inn's fire, a person who moves.
@@ -176,15 +202,19 @@ export const CINDERPORT: MapDef = {
 
     // The Compact's house, the factor's, over its steps on the quay: the Compact's second hall
     // (#443, call 7), which offers and pays its one ladder, the Fence's rung among it (#635). The
-    // factor's runner (#56's 54) and the crate in the corner are others' and never said.
+    // factor gives the Wold's Orders on the Scarp Stair, her runner's orders carried to the Riders
+    // (#56's 54, #532); the crate in the corner is others' and never said.
     { kind: 'npc', x: 13, y: 4, name: 'The Factor\'s House', interior: 'cinderport_factor', hall: 'compact', lines: [
       'Ledgers in a row on the high shelf, all one binding, and one open by the ink. Scales, a strongbox, manifests on their spike.',
       'In the corner, apart, a crate under the Helmstow customs seal, corded and waxed.',
     ] },
-    { kind: 'npc', x: 13, y: 4, name: 'Hendra, the Compact\'s factor', lines: [
+    { kind: 'npc', x: 13, y: 4, name: 'Hendra, the Compact\'s factor', flag: ORDERS_ASKED, lines: [
       'A grey-haired woman at the counting table, her pen moving while she looks at you.',
       '"Hendra. I keep the Compact\'s house on this side. The ship comes in and I write it down. She goes out and I write that down."',
       '"Ruan reads it, in time. Ruan reads everything, in time."',
+      '"My runner is on the Scarp stair with orders for the Riders, and slow. Carry them the rest of the way."',
+    ], says: [
+      { after: [{ flag: ORDERS_SEALED }, { flag: ORDERS_TOLD }, { flag: ORDERS_BURNED }], lines: ['Hendra writes, and does not look up.', '"My runner is down the stair again. What the Riders did with my orders, Ruan will read, in time."'] },
     ] },
 
     // The quay along the harbour, west to east: the boats under the harbour wall, the doc's line where the

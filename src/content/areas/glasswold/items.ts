@@ -28,4 +28,14 @@ export const ITEMS: readonly ItemDef[] = [
     'A piece of glass the size of a fist, smooth on every side, and in it a light, cold green-white, that does not flicker.',
     'It is no warmer for the light, nor for your hand. Turned, shaken or covered, it is the same.',
   ] },
+  // The side quests' things carried (#532), none sold or bought: what sat the horse that came back,
+  // lifted down whole for the Chart House at Cinderport (#56's 51); the Compact's orders the runner on
+  // the Scarp stair gives up, read from the pack (#56's 54); and the mother's son out of the garden of
+  // glass at Akordu, carried to the Harbour Temple (#56's 55).
+  { id: 'saddle_walker', name: 'Walker from the Saddle', slot: 'none', price: 0 },
+  { id: 'riders_orders', name: 'Orders for the Riders', slot: 'none', price: 0, text: [
+    'Orders folded in four under black wax and the Compact\'s knot, a purse of silver sewn to them. The wax lifts, and goes back.',
+    '"To the eldest at Akordu. The silver, as before, and the Riders tell nobody what walks out of the Glass."',
+  ] },
+  { id: 'glass_boy', name: 'Boy of Glass', slot: 'none', price: 0 },
 ];
