@@ -225,7 +225,7 @@ export const ACT_IV: readonly Rung<'ashfall'>[] = [
  * Who sells the stone cure (#546): Cinderport's chandler (#512) and the Riders' trader at Akordu
  * (#526), the Wold having no temple nearer; each owed it while its area is planned, '' once sold.
  */
-export const CURE_SOLD: readonly (readonly ['ashfall' | 'glasswold', string])[] = [['ashfall', ''], ['glasswold', '#526']];
+export const CURE_SOLD: readonly (readonly ['ashfall' | 'glasswold', string])[] = [['ashfall', ''], ['glasswold', '']];
 
 /** An item's kind: a hand weapon, a bow, armour or a shield. Only the same kind is bettered. */
 const kind = (d: ItemDef): string => (d.slot === 'weapon' ? (d.ranged ? 'bow' : 'hand') : d.slot);

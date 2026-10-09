@@ -21,10 +21,10 @@ import { logLines } from '../../src/ui/frame.ts';
  * entry is dropped here. Henlys, I4, is reached through I3 (#215), as H4 between it and H3 is cut.
  * Wrackholm's isle is reached by the smugglers' boat from Saltmouth (#177), a crossing's landing, and
  * Ashfall, begun by sea (#443, call 6), by the Compact's ship to Cinderport and out at its gate (#512).
- * The Wold's steppe, D9, meets E10 only corner to corner: the mesas, D10 (#527), join the two, as Akordu's
- * box, D8 (#526), will over its north edge and the Riders' ride to its landing there.
+ * The Wold's steppe, D9, meets E10 only corner to corner, and is reached from Akordu's box, D8, over its
+ * north edge (#526), D8 by the Riders' ride from Cinderport to its landing there (#547).
  */
-const CUT_OFF: Record<string, string> = { wold_d9: '#527' };
+const CUT_OFF: Record<string, string> = {};
 
 export function outdoors(): void {
   // The outdoors is played as one map the size of the world, every zone map the atlas places laid into it.
@@ -387,16 +387,26 @@ export function outdoors(): void {
   ok(westOf(f11) === 'r'.repeat(19) + 'aa' + 'r'.repeat(5) + 'aaa' + '%%%' && southOf(f11) === '%'.repeat(4) + 'a'.repeat(23) + '!!' + 'aaa'
     && [...Array(32).keys()].every((i) => [out.at(f11.x - 1, f11.y + i), out.at(f11.x + i, f11.y + 32)].every((c) => c.ch === '%')),
     `F11's west edge is the rock and the ash against E11, and its south edge the ash and the second flow against F12, past which the world ends (${westOf(f11)}; ${southOf(f11)})`);
-  // The steppe (D9, #525), the Wold's first box, laid where no built box meets it: E10 lies south-east of
-  // it, corner to corner, past D10. Its north edge is the steppe and the Riders' track at column 16
-  // against D8 (#526); its south the dunes, the steppe, the road at columns 22 and 23, where the atlas
-  // crosses, and the rocks against D10 (#527); its west the steppe, the dunes and the road at row 21
-  // against C9, the Glass's; its east the steppe against E9, parked. None is built, so the world ends past them.
-  const d9 = out.zones.find((z) => z.id === 'wold_d9')!;
-  ok(northOf(d9) === 's'.repeat(16) + ':' + 's'.repeat(15) && southOf(d9) === 'u'.repeat(6) + 's'.repeat(16) + '==' + 'r'.repeat(6) + 'ss'
+  // The steppe (D9, #525), the Wold's first box: E10 lies south-east of it, corner to corner, past D10.
+  // Its north edge is the steppe and the Riders' track at column 16, square for square with the south
+  // edge of Akordu's box, D8 (#526); its south the dunes, the steppe, the road at columns 22 and 23,
+  // where the atlas crosses, and the rocks against D10 (#527); its west the steppe, the dunes and the
+  // road at row 21 against C9, the Glass's; its east the steppe against E9, parked. None of those three
+  // is built, so the world ends past them.
+  const d9 = out.zones.find((z) => z.id === 'wold_d9')!, d8 = out.zones.find((z) => z.id === 'wold_d8')!;
+  ok(northOf(d9) === 's'.repeat(16) + ':' + 's'.repeat(15) && southOf(d8) === northOf(d9) && d8.x === d9.x && d8.y + 32 === d9.y
+    && southOf(d9) === 'u'.repeat(6) + 's'.repeat(16) + '==' + 'r'.repeat(6) + 'ss'
     && westOf(d9) === 's'.repeat(4) + 'u'.repeat(17) + '=' + 'u'.repeat(10) && eastOf(d9) === 's'.repeat(32)
-    && [...Array(32).keys()].every((i) => [out.at(d9.x + i, d9.y - 1), out.at(d9.x + i, d9.y + 32), out.at(d9.x - 1, d9.y + i), out.at(d9.x + 32, d9.y + i)].every((c) => c.ch === '%')),
-    `D9's north edge is the steppe and the Riders' track at column 16 against D8, its south the dunes, the steppe, the road at columns 22 and 23 and the rocks against D10, its west the steppe, the dunes and the road at row 21 against C9 and its east the steppe against E9, past all of which the world ends (${northOf(d9)}; ${southOf(d9)}; ${westOf(d9)}; ${eastOf(d9)})`);
+    && [...Array(32).keys()].every((i) => [out.at(d9.x + i, d9.y + 32), out.at(d9.x - 1, d9.y + i), out.at(d9.x + 32, d9.y + i)].every((c) => c.ch === '%')),
+    `D9's north edge is the steppe and the Riders' track at column 16, square for square with D8's south edge; its south the dunes, the steppe, the road at columns 22 and 23 and the rocks against D10, its west the steppe, the dunes and the road at row 21 against C9 and its east the steppe against E9, past which the world ends (${northOf(d9)}; ${southOf(d9)}; ${westOf(d9)}; ${eastOf(d9)})`);
+  // Akordu's box (D8, #526): its south edge meets D9's north edge, the Riders' track at column 16 coming
+  // up into the camp; its north edge the steppe and a knoll at columns 7 and 8 against D7, its west the
+  // steppe and the hills under the Scarp against C8 (#528) and its east the steppe against E8, parked
+  // (#534). None of those three is built, so the world ends past them.
+  ok(southOf(d8) === 's'.repeat(16) + ':' + 's'.repeat(15) && northOf(d8) === 's'.repeat(7) + '^^' + 's'.repeat(23)
+    && westOf(d8) === 's'.repeat(18) + '^^' + 's'.repeat(5) + '^'.repeat(6) + 's' && eastOf(d8) === 's'.repeat(32)
+    && [...Array(32).keys()].every((i) => [out.at(d8.x + i, d8.y - 1), out.at(d8.x - 1, d8.y + i), out.at(d8.x + 32, d8.y + i)].every((c) => c.ch === '%')),
+    `D8's south edge is the steppe and the Riders' track at column 16 against D9; its north the steppe and a knoll against D7, its west the steppe and the hills against C8 and its east the steppe against E8, past which the world ends (${northOf(d8)}; ${westOf(d8)}; ${eastOf(d8)})`);
   // Fionnlios's box (O7, #477): its west edge meets N7's east edge square for square, the peat-cutter's
   // track crossing at row 22 and the tarn's stream at the corner, out into N7's corner and O8's; its
   // north edge the hills and the Kilns' grass under O6, square for square with O6's south edge but its
