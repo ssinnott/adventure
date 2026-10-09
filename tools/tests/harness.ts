@@ -143,6 +143,7 @@ export const OFF_LINE: Record<string, string> = {
   cairn_king: "Carn Dubh's boss, its hit points and its blow set by its gate (#480)",
   matron: "the Sleepers' Bay's boss, its hit points and its blow set by its gate (#490)",
   abbot: "Highcell's boss, its hit points and its blow set by its gate (#500)",
+  stair_king: "the Stair's head's boss, its hit points and its blow set by its gate (#502)",
   old_drake: "Old Cinder's boss, the boss line come down whole to a sweeper's share with the drakes' breath, for its gate to set (#515)",
   brood_drake: "the corridors' boss, the boss line come down whole to a sweeper's share with the drakes' breath, as the Old Drake, for the corridors' gate to set (#22)",
 };
