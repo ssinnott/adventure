@@ -10,7 +10,8 @@
 //   node tools/harness.ts --map thornmark --level 5    a map's own groups, against a company of 5
 //   node tools/harness.ts --stats                      the test monsters' stat lines, as markdown
 //   node tools/harness.ts --abilities [--levels 19,20] Act III's trolls, wights, caller and lights on the test monsters (#537, #541),
-//                                                      and Act IV's giants and drakes at 23 and 25 (#545) and the mesa at 27 (#546)
+//                                                      and Act IV's giants and drakes at 23 and 25 (#545), the mesa at 27 (#546),
+//                                                      the vines at 24 and its bosses as they stand (#549)
 //   node tools/harness.ts --calibrate [--write]        re-derive HP and DAMAGE in tools/testmonster.ts
 //   node tools/harness.ts --spell-cap 32 [...]         any of the above as if spells stopped growing elsewhere than 10
 //   node tools/harness.ts --gear-grows [...]           ... or as if the company's gear kept growing past 25
@@ -23,8 +24,9 @@
 // and counts a spell's element for what it has seen it do to each foe, and fire for the mending it
 // stops in what it has seen mend. It aims at a leader, else a caller while its call has room, else
 // a light that takes spell points, and reads the fight as it stands each turn, called groups and all.
-// It wakes a sleeper of the front row, or a caster, where it can, and never blesses, sleeps, cures
-// anything else, drinks or flees. Between fights it mends as a player would. The
+// It wakes a sleeper or frees one held of the front row, or a caster, where it can (#549), raises
+// the front row's fallen first while a foe breathes, and never blesses, sleeps, cures anything else,
+// drinks or flees. Between fights it lifts stone and mends as a player would. The
 // report and the calibration run on every core.
 import { pathToFileURL } from 'node:url';
 import fs from 'node:fs';
@@ -42,8 +44,8 @@ import { item } from '../src/game/items.ts';
 import { ITEMS } from '../src/content/index.ts';
 import type { ItemDef } from '../src/game/items.ts';
 import type { MonsterDef } from '../src/game/monsters.ts';
-import { MAP_DEFS } from '../src/content/index.ts';
-import { ROLES, ROLE_IDS, LEVELS, HP, DAMAGE, line, standardEncounter, testMonster, TROLL, WIGHT_CURSE, CALL, LIGHT, SWEEP, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, giantEncounter, drakeEncounter, BASILISK_STONE, basiliskEncounter } from './testmonster.ts';
+import { MAP_DEFS, MONSTERS } from '../src/content/index.ts';
+import { ROLES, ROLE_IDS, LEVELS, HP, DAMAGE, xpFor, line, standardEncounter, testMonster, TROLL, WIGHT_CURSE, CALL, LIGHT, SWEEP, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, giantEncounter, drakeEncounter, BASILISK_STONE, basiliskEncounter } from './testmonster.ts';
 import { quickening } from '../src/content/areas/ashfall/items.ts';
 import type { Role } from './testmonster.ts';
 
@@ -248,16 +250,17 @@ function incoming(s: CombatState, p: Party): number {
 export type Bot = (s: CombatState, p: Party, rng: RngInstance, i: number) => void;
 
 /**
- * The bots' answer to sleep: the sleeper to wake, a member of the front row first and then a caster,
- * and the cheapest spell the member can afford that wakes them; none if no one need be woken. A
- * sleeper of the back row with no spells is left to wake of itself. Paralysis is left (#18).
+ * The bots' answer to sleep and to a hold (#549: the bells, the vines and the machines' clamps): the
+ * sleeper to wake or the held to free, a member of the front row first and then a caster, and the
+ * cheapest spell the member can afford that lifts it; none if no one need be freed. One of the back
+ * row with no spells is left to wake or break free of itself.
  */
 export function wakeWith(p: Party, c: Character): { spellId: string; target: number } | undefined {
-  const cure = c.spells.map(spell).filter((x) => x.context !== 'explore' && x.target === 'ally' && x.cure?.includes('asleep') && x.sp <= c.sp).sort((a, b) => a.sp - b.sp)[0];
-  if (!cure) return undefined;
-  const asleep = p.members.map((m, j) => ({ m, j })).filter(({ m }) => hasCondition(m, 'asleep') && !isDown(m));
-  const who = asleep.find(({ j }) => j < FRONT_ROW) ?? asleep.find(({ m }) => m.maxSp > 0);
-  return who && { spellId: cure.id, target: who.j };
+  const cures = c.spells.map(spell).filter((x) => x.context !== 'explore' && x.target === 'ally' && x.sp <= c.sp).sort((a, b) => a.sp - b.sp);
+  const lifts = (m: Character): SpellDef | undefined => cures.find((x) => x.cure?.some((k) => (k === 'asleep' || (k === 'paralysed' && ANSWER.hold)) && hasCondition(m, k)));
+  const bound = p.members.map((m, j) => ({ m, j, x: lifts(m) })).filter(({ m, x }) => x && !isDown(m));
+  const who = bound.find(({ j }) => j < FRONT_ROW) ?? bound.find(({ m }) => m.maxSp > 0);
+  return who && { spellId: who.x!.id, target: who.j };
 }
 
 /**
@@ -270,8 +273,25 @@ export function markOf(s: CombatState, foes: readonly number[]): number | undefi
   return foes.find((f) => isLeader(s, s.monsters[f])) ?? foes.find((f) => canCall(s, s.monsters[f])) ?? foes.find((f) => s.monsters[f].def.drain === 'sp');
 }
 
-/** The bots' answers a tool may switch off to see a fight without one: the sweep's (`mendLines`, #545). */
-export const ANSWER = { sweep: true };
+/**
+ * The bots' answers a tool may switch off to see a fight without one: the sweep's (`mendLines`,
+ * #545), the hold's (`wakeWith`, #549) and the breath's (`breathGuard`, #549).
+ */
+export const ANSWER = { sweep: true, hold: true, breath: true };
+
+/**
+ * The fallen member of the front row the bots raise first while a foe that breathes stands (#549): a
+ * breath falls on the row with more standing in it, so one of the front row down turns it on the
+ * casters, and raised it takes the front again. None where the front row has as many standing as the
+ * back, or none of it is only fallen.
+ */
+export function breathGuard(s: CombatState, p: Party): number | undefined {
+  if (!ANSWER.breath || !aliveMonsters(s).some((f) => s.monsters[f].def.sweep?.element && !s.monsters[f].under)) return undefined;
+  const up = (back: boolean): number => p.members.filter((m, j) => (j >= FRONT_ROW) === back && !isDown(m)).length;
+  if (up(true) <= up(false)) return undefined;
+  const j = p.members.findIndex((m, k) => k < FRONT_ROW && hasCondition(m, 'unconscious') && !hasCondition(m, 'dead') && !hasCondition(m, 'stoned'));
+  return j < 0 ? undefined : j;
+}
 
 /**
  * The hit points under which the bots mend each member, by their slot: 40% of their own, or, in the
@@ -312,7 +332,9 @@ export const thrifty: Bot = (s, p, rng, i) => {
   const living = p.members.map((m, j) => ({ m, j })).filter(({ m }) => !hasCondition(m, 'dead') && !hasCondition(m, 'stoned'));
   const everyone = known.filter((x) => x.heal && x.target === 'party').sort((a, b) => (b.heal ?? 0) - (a.heal ?? 0))[0];
   if (everyone && living.filter(({ m }) => m.hp < m.maxHp / 2).length >= 2 && partyAct(s, p, rng, { type: 'cast', spellId: everyone.id, target: i })) return;
-  const lines = mendLines(s, p), worst = living.filter(({ m, j }) => m.hp < lines[j]).sort((a, b) => a.m.hp / a.m.maxHp - b.m.hp / b.m.maxHp)[0];
+  // The front row's fallen first while a foe breathes (`breathGuard`), so the breath keeps off the casters.
+  const lines = mendLines(s, p), guard = breathGuard(s, p);
+  const worst = guard !== undefined ? { m: p.members[guard], j: guard } : living.filter(({ m, j }) => m.hp < lines[j]).sort((a, b) => a.m.hp / a.m.maxHp - b.m.hp / b.m.maxHp)[0];
   const mends = known.filter((x) => x.heal && x.target === 'ally' && !x.raise);
   if (worst && mends.length) {
     // The cheapest mend that closes half the wound, else the biggest there is.
@@ -737,6 +759,22 @@ async function main(): Promise<void> {
       const enc = basiliskEncounter(l), held = enc.map((m): MonsterDef => (m.inflict?.cond === 'stoned' ? { ...m, inflict: { cond: 'paralysed', chance: BASILISK_STONE } } : m));
       const fs = fights(l, enc), cureless = Array.from({ length: seeds }, (_, n) => day(l, [enc], n + 1, 30, uncured)).reduce((t, d) => t + d.fights, 0) / seeds;
       console.log(`  ${l}: ${one(fs)}, ${glassed(fs)} of ${seeds} leaving someone glassed; ${rest(l, enc, ['its hold a paralysis', held])}, and ${cureless.toFixed(1)} with neither Absolve nor a draught`);
+    }
+    // Act IV's holds (#549): the bells, the vines and the machines' clamps, which the bots free.
+    console.log(`Four vines: the test controller, its hold at 0.3 a hit as the Strangler Vine's, the held freed by the bots' cure (#549).`);
+    for (const l of opt('levels') ? levels : [24]) {
+      const vines = Array.from({ length: 4 }, (): MonsterDef => ({ ...testMonster('controller', l), inflict: { cond: 'paralysed', chance: 0.3 } }));
+      const freed = one(fights(l, vines)), plain = days(l, [standardEncounter('controller', l)], seeds).fights;
+      ANSWER.hold = false;
+      const left = one(fights(l, vines)), plainLeft = days(l, [standardEncounter('controller', l)], seeds).fights;
+      ANSWER.hold = true;
+      console.log(`  ${l}: freed ${freed}, ${rest(l, vines)}; left ${left}; four test controllers ${plain.toFixed(1)} to a rest freed, ${plainLeft.toFixed(1)} left`);
+    }
+    // Act IV's bosses as they stand, the large dungeons' among them (#549): each from two under, beside the test boss of its level.
+    console.log(`Act IV's bosses, alone, won from two under (the test boss of its level beside it):`);
+    for (const m of Object.values(MONSTERS).filter((x) => x.level >= 23 && x.level <= 28 && x.xp >= xpFor('boss', x.level) * 0.9)) {
+      const at2 = bossFloor(m.level);
+      console.log(`  ${m.name} at ${m.level}: ${pct(measure(at2, [m], seeds).won)}% (the test boss ${pct(measure(at2, standardEncounter('boss', m.level), seeds).won)}%), ${pct(measure(m.level, [m], seeds).won)}% at its own level`);
     }
     return;
   }
