@@ -94,8 +94,8 @@ Its edges:
 - **South: the Whitespine** (22–24, Act IV), over the rim's long southern lobe. The high pass climbs
   out of K10 at its mouth, 333,301, and leaves it by the west edge at 328,305 for Monks' Vale at
   318,318 (the atlas's link runs 334,302 to 318,318), the Whitespine's J11 and Act IV's first box
-  (#499): a road through the range (EXPANSION §2.2), open from the start, the world's end beyond
-  K10's edge until J11 is laid.
+  (#499): a road through the range (EXPANSION §2.2), open from the start; the pass lands in J11, on
+  its 20,1.
 - **West: mountain,** I9 and the Whitespine's J column, with no way through.
 
 The lochs run the length of the area: Loch Fada, the long loch, from M9's head west under L9 and on
@@ -191,8 +191,8 @@ dungeon under the third (#490) and a fourth south of it, the pass (#491):
   walked. The cold loch's ice runs a tongue into the box's north and the lake lies in its east, its
   shore iced; the road runs west and south through the pines under them, with three new graves by
   it, to the pass's foot: the milestone, then the mouth, where the snow is trodden and the road
-  climbs between two walls of mountain and out by the west edge for J11 (#499), the world's end
-  until it is laid. In the snow below the mouth the pilgrims from Anvilhall are camped, one of them
+  climbs between two walls of mountain and out by the west edge for J11 (#499), where it lands on
+  J11's 20,1. In the snow below the mouth the pilgrims from Anvilhall are camped, one of them
   dying; from the pass's first shoulder the first peak of the range is seen. By the road stands a
   Lantern's wayside lamp, dark and its jar full; under its jar-shelf is the Lanterns' cache with the
   lamp's silver and a Guide's Staff +1. Eight groups: snow lynx in the pines three times, ice pike
@@ -831,7 +831,7 @@ what is new, with points of interest and a first share of the pay.
   stands at 9,13, RIME LODGE 9, MONKS' VALE 6 (`k10_milestone`; §9, #491's 9), and the mouth is at
   5,15 (333,301), the brief's line (`k10_mouth`; §5, §9, #491's 10). Beyond it the road climbs
   south-west between two walls of mountain, with hills and snow beside it, and goes out by the west
-  edge at 0,19 (328,305), its one way on, with the world's end past it until J11 is laid (#499).
+  edge at 0,19 (328,305), its one way on: the saddle, which lands in J11 at 20,1 (#499).
   **The loch and the lake.** The cold loch's shore goes on from K9's south row, a clearing the deer
   have left (`k10_clearing`, 16,1) and the ice in a tongue three rows into the box's north
   (`k10_foot`, 24,1), with the river from the lake going in under it at 29,0. The atlas's lake lies
@@ -871,9 +871,9 @@ what is new, with points of interest and a first share of the pay.
     parked L10's corner between them, as it lets the notch's. West, J10 (parked): K10's 0,0 to 0,31
     is pines, hills and the road in the outdoors, the walls' mountain at the edge being the map's
     ring and so void, with the road out at 0,19 (328,305) against the atlas's at 327,305, which goes
-    on over J10's corner to the link's 318,318 in J11 (#499); the world ends past it until J11 is
-    laid. South, K11 (parked): K10's 0,31 to 31,31 is 27 pines and `iiWWW`, and the world ends past
-    it.
+    on over J10's corner to the link's 318,318 in J11 (#499); the pass is taken, the saddle onto
+    J11's 20,1. South, K11 (parked): K10's 0,31 to 31,31 is 27 pines and `iiWWW`, and the world ends
+    past it.
   - **Measured.** A company at 20 wins every fight and manages 9.45 fights to a rest, inside the
     aim, with 0.7% of its days ending in a fight broken off; two under, at 18, it wins every fight
     too, owed to #18 as K9's is. The zone's road stays K9's (§9, #491's 15). Density 99.9% within 8
@@ -965,14 +965,14 @@ open from the start: a fixture exit from a Loch Fuar map into a Monks' Vale map 
 `q_wenna_up` fails "a lock between rimewater and whitespine", signed in or not, and the atlas's
 `coldmere`-`monksvale` link given `opens` fails "no way on the atlas opens on the story" (that
 check is now the function `storyWays`, so that a fixture can be held to it). The pass itself is
-K10's road, built open (§4.7), and its way on into Monks' Vale is #499's when J11 is laid (§9,
+K10's road, built open (§4.7), and its way on into Monks' Vale lands in J11 (#499; §9,
 #490's 4; #491's 2).
 
 As built (#491, 8 October): the chapter's last step is `k10_mouth`, an event on K10 at 5,15
 (333,301), the pass's mouth, `once`, in the brief's line: *The road climbs into the range between
 two walls of rock, and the snow on it is trodden. South.* The chapter's last entry reads it by
 `seen`, as `coldmere_k10:k10_mouth`, and its goal points over the pass, which is open from the
-start; the road ends at K10's west edge, 0,19, with the world's end beyond it until J11 is laid
+start; the road ends at K10's west edge, 0,19, the saddle, which lands in J11
 (#499; §4.7; §9, #491's 10).
 
 As built (#492, 8 October): `chapter.ts`, begun on M9 (`visited`), down the notch where The Ring
@@ -2068,4 +2068,4 @@ Owed by the side quests as built (§6):
   K11, pinned in `tools/tests/outdoors.ts` with void past them. The road leaves by the west edge at
   0,19 (328,305) against the atlas's at 327,305, which goes on over J10's corner to the link's
   318,318 in J11: #499 lays J11, joins them and moves the pin; #497 does the same for L10 and K11 if
-  it is unparked.
+  it is unparked. Built for J11: the saddle lands on J11's 20,1, the pin moved (#499).

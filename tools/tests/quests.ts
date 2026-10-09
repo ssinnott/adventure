@@ -125,7 +125,7 @@ export function quests(): void {
     // yet is owed by whoever builds its step.
     const zoneOf = (map: string): string | undefined => (zoneOfMap(ATLAS, map) ?? zoneOfMap(ATLAS, homeMap(MAP_DEFS, map)?.id ?? ''))?.id;
     const held = new Set(THE_QUEST.chapters.flatMap((c) => c.goals.map((g) => zoneOf(g.at))));
-    const PLANNED: Record<string, string> = {};
+    const PLANNED: Record<string, string> = { monksvale: '#505', highspine: '#505', sheerpoint: '#505' };
     const built = new Set(AREAS.map((a) => a.id as string));
     // The reach is off the road by design (DESIGN §9), and holds no step: Rimewater's Glacier Foot (#486).
     for (const z of ATLAS.zones.filter((x) => built.has(x.area) && !REACH_ZONES.includes(x.id))) {
@@ -134,7 +134,7 @@ export function quests(): void {
       else ok(held.has(z.id), `${msg}${z.maps?.length ? '' : ' (not built, and owed by no one)'}`);
     }
     // An area listed by its first map before its chapter is written: the chapter is owed by its issue.
-    const CHAPTER_OWED: Record<string, string> = {};
+    const CHAPTER_OWED: Record<string, string> = { whitespine: '#505' };
     const walks = AREAS.filter((a) => !existsSync(new URL(`../../src/content/areas/${a.id}/walkthrough.ts`, import.meta.url)));
     ok(AREAS.every((a) => a.chapter || CHAPTER_OWED[a.id]) && !walks.length, `every area has a chapter of the one quest, or owes it, and a walkthrough${walks.length ? ' -> none in ' + walks.map((a) => a.id).join(', ') : ''}`);
     for (const a of AREAS.filter((x) => CHAPTER_OWED[x.id])) owed(!!a.chapter, `${a.id} has a chapter of the one quest`, CHAPTER_OWED[a.id]);
