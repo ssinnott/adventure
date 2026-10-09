@@ -1749,8 +1749,9 @@ Decided by delegate for #530, each the owner's to overturn:
 18. **No road:** `ROADS.wold` is unchanged; the Riders' road does not run through the dunes.
 19. **Test entries:** the gate's OWED `wold_b9: under` (#18), as D9, D10, D8 and C8 (two under, at
     24, it wins every fight); outdoors pins B9's four edges, and B8's pin no longer wants the void
-    south of it; `CUT_OFF` stays empty. No B9 monster is on `RESTATE` or needs `OFF_LINE`, and
-    `UNPLACED` had nothing of B9's.
+    south of it; `CUT_OFF` stays empty; and the scaffold test's example of ground no map character
+    is moves from the Wold's glass at 70,262, which B9 now covers, to the Glass's at 72,262. No B9
+    monster is on `RESTATE` or needs `OFF_LINE`, and `UNPLACED` had nothing of B9's.
 20. **Pay 2,968 xp a member,** 1.14 times the scaled share of 2,600, under the cap (about 3,250):
     the scorpions 689 and 689, the vultures 517, the walker 358, the two walkers 716. The Wold's row
     stands at 17,613 of 21,067 xp and 9,650 of 12,720 gold (2,000 here: 13); with the side quests'
