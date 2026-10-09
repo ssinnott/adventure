@@ -805,7 +805,8 @@ function ironhide(ok: (cond: boolean, msg: string) => void): void {
 /**
  * Anvilhall (#459): the gate's line; a night at the inn, the forge's step bought, training to 19; the
  * verse read the old way by the Lantern reader, or by the company's own reader first; Linguist taught
- * to a Lantern; and the thane's choice both ways.
+ * to a Lantern; Ilse's reading of The Older Mark's kept rubbing (#637), with it and without; and the
+ * thane's choice both ways.
  */
 function anvilhall(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   // In at N3's gate, by the door in the hill, and out by it again onto the forecourt before it,
@@ -876,6 +877,23 @@ function anvilhall(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   ok(CRANE.skill === 'linguist' && !mayLearn('linguist', own.party) && !learn('linguist', own.party, maren).taught, 'the reader teaches Linguist, and to a stranger to the Lanterns, nothing');
   own.party.flags[rankFlag('lanterns')] = 1;
   ok(learn('linguist', own.party, maren).taught && hasSkill(own.party.members[maren], 'linguist') && own.party.gold === 0, 'to a Taper of the Lanterns, Linguist, for 1,000 gold');
+
+  // The Older Mark's kept rubbing (Thornmark's, #56's 16 and its promise in 34; #637). A company with
+  // none hears Ilse's own words and sets nothing; one carrying it, kept at Henlys, hears her read it by
+  // its strokes, and Thornmark's journal first points here and then adds what she found.
+  const ILSE = person('Ilse'), rub = newWalk(ok);
+  const markPage = (p: Walk) => questLog(p.world.state, p.party).find((v) => v.def.id === 'mark')?.pages[0];
+  const entry = (p: Walk, id: string): string => markPage(p)?.entries.find((e) => e.id === id)?.text ?? '';
+  rub.world.travel('anvilhall', ILSE.x, ILSE.y);
+  ok(says(rub, ILSE) === ILSE.lines.join('\n\n') && !rub.party.flags.q_mark_read, 'with no rubbing, Ilse says her own words and sets nothing');
+  for (const f of ['q_mark', 'q_mark_shown', 'q_mark_kept']) rub.party.flags[f] = 1;
+  rub.party.bag.push('stone_rubbing');
+  ok(entry(rub, 'kept').includes('Anvilhall, in the Iron Fells') && !entry(rub, 'read'), 'a company that kept the rubbing is told in its journal where the dwarves are, and nothing is read yet');
+  const found = says(rub, ILSE), told = found.split('\n\n');
+  ok(told.length === 2 && told[0].startsWith('The old dwarf comes down her ladder') && told[1].includes('Every stroke is one I cut') && told[1].endsWith('"Whoever cut this was not copying."') && !!rub.party.flags.q_mark_read,
+    `with the rubbing in the bag, Ilse reads it in two lines, by its strokes, and sets the journal's flag (${told[1]})`);
+  ok(!/\b(hull|ship|orbit|voyage|Custodian|Core|sky|crew)\b/i.test(found) && says(rub, ILSE) === found, 'she says what a cutter finds and no more, and says it again to a company that asks again');
+  ok(entry(rub, 'read').startsWith('Ilse, who cuts the old script at Anvilhall') && markPage(rub)?.entries.map((e) => e.id).join() === 'senara,shown,kept,read', `and the journal adds her finding last (${markPage(rub)?.entries.map((e) => e.id).join()})`);
 
   // The thane's choice, both ways, each on a company of 17 of its own. Short of the price the Stone is
   // barred and nothing changes; bought, the forge stays open; taken, it is shut for good, its smiths
