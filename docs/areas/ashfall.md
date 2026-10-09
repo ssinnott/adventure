@@ -13,17 +13,19 @@ it, the plan for building it, box by box, and the briefs. Its work is filed unde
 country behind (#522, parked); this doc is #509. Figures are measured on main at `6032251` (2
 October 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Eight maps are built: H10, the Stair's foot (#510, §4.2), which joins the area to the Whitespine
+Ten maps are built: H10, the Stair's foot (#510, §4.2), which joins the area to the Whitespine
 overland; G10, Cinderport's box (#511, §4.3), which lists the area; Cinderport behind its gate
 (#512, §4.4); G11, Fire Mountain's flank (#513, §4.5); the vents, Meridian Camp's first level (#22,
-docs/areas/meridian_camp.md §4.1); F11, Old Cinder's and the Ember Stone's box (#514, §4.6); and F10
+docs/areas/meridian_camp.md §4.1); F11, Old Cinder's and the Ember Stone's box (#514, §4.6); Old
+Cinder's two levels, the buried town and the undercroft, through F11's crater (#515, §4.7); and F10
 and E10, the Ember Waste's road (#517, §4.9). Its nine monsters and the armourer's step are drawn
 (§3), and the rest is to build. Its content is
 `src/content/areas/ashfall/` (maps, monsters, items, climate, its part of the world map and its
 walkthrough; its chapter of the one quest, The Window, in `chapter.ts`, and its side quests in
 `quests.ts`, to come) and its businesses' rooms `src/ui/interiors/ashfall/`. Its ids, the plan's:
 the area `ashfall`, its zones `cindercoast`, `firemount` and `emberwaste`, the town `cinderport`,
-the dungeons `old_cinder`, `ember_stone` and `meridian_camp`.
+the dungeons `old_cinder` and `old_cinder2` (its undercroft, #515), `ember_stone` and
+`meridian_camp`.
 
 ---
 
@@ -50,6 +52,8 @@ folder's: the atlas gives the area 24–26 and the boxes rise through it (§4).
 The squares are the plan's, before any box. H10 (#510) and G10 (#511) are laid whole in Cindercoast,
 G11 (#513) in Fire Mountain and F11 (#514), F10 and E10 (#517) in the Ember Waste, whose band stays
 the plan's 25–26 on its row where F10 and E10 are built at 24–26 (§4, §9, #514's 1, #517's 2).
+Laying Old Cinder (#515) moves no square: its two plates, at 190,324 and 190,330, are places on the
+atlas, which the grid does not read.
 
 **The grid** (EXPANSION §8.2; docs/areas/shelf.md §1). Ashfall is the E to H columns from row 9 to
 row 12, with a sliver in I. The land worth a map is six boxes: H10 and G10 along the Sound, the
@@ -106,9 +110,9 @@ off the springs; the vines' shore humid.
 
 ## 3. What is built
 
-Eight maps: the Stair's foot (#510), Cinderport's box, which lists the area (#511), the town behind
+Ten maps: the Stair's foot (#510), Cinderport's box, which lists the area (#511), the town behind
 its gate (#512), Fire Mountain's flank (#513), the vents (#22), Old Cinder's and the Ember Stone's box
-(#514) and the Waste's road, F10 and E10 (#517):
+(#514), Old Cinder's two levels (#515) and the Waste's road, F10 and E10 (#517):
 
 - **The Stair's foot** (H10, `cindercoast_h10`, core, band 24; #510): the Giants' Stair's last
   flights, cut along the Sheer's foot from I10's 0,20 to a landing on the black sand, where the step
@@ -156,15 +160,26 @@ its gate (#512), Fire Mountain's flank (#513), the vents (#22), Old Cinder's and
   Stone's first part lies (`ember_part1`). Four groups, a sentry among them once the Stone is lit
   (docs/areas/meridian_camp.md §4.1).
 - **Old Cinder's and the Ember Stone's box** (F11, `emberwaste_f11`, core, band 25–26; #514): the
-  buried town's crater at the north edge, a pit seen across and never walked with seven roof-ridges
-  standing out of it, and on its west lip an old Lightbearer beside the way down, barred until Old
-  Cinder is built (#515). The west lava flow runs through the ash into the rock, crossed on a
+  buried town's crater at the north edge, a pit seen across and never walked with six roof-ridges
+  standing out of it, and on its west lip an old Lightbearer beside the way down, open since #515
+  built Old Cinder. The west lava flow runs through the ash into the rock, crossed on a
   causeway of slag with a milestone at its end; south of it, on a field of cinders, the Stone stands
   half-built in its iron scaffold, its way down barred the same way (#516). In the rock a hermit and
   a camp, each in a cleft; on the crater's rim a cairn; at the field's edge a shrine; and in a spur
   of rock on the west edge the hollow where the Stone's builders left their tools. Four groups:
   cinder beetles below the crater, ash husks on its rim by night, a cinder drake on the flow and,
   after the Stone, two sentries on the ash between the causeway and the Stone (§4.6).
+- **Old Cinder** (`old_cinder` and `old_cinder2`, dungeon, two levels of 16×16, band 25–26 above and
+  24–25 below; #515): in from F11's crater lip onto a street of brick, the buried town's people in
+  their doorways as the ash took them, a cup in every hand. A well at the crossing with a cup on its
+  lip, a lane west to the potters' kilns, one of them broken open and dry, and east to a man in his
+  doorway; at the street's end the square, with the Old Drake asleep on it beside a stall, and the
+  hall's door with its stair down. Below, the hall's cellars, the founding stone in a niche to the
+  west and a dry cellar to the east, the lamp-keeper's walk with a channel of dried oil along its
+  floor and, at its bottom, the lamp, cold, with the Ember Stone's second part (`ember_part2`) set
+  in the floor beside it; behind a stair fallen against the wall on the way, the lamp-keeper's own
+  cellar. Two groups of four ash husks, one in the street and one in the cellars, and the Old Drake
+  alone, a boss that sleeps and does not come back (§4.7).
 - **The Ember Waste's road** (F10 and E10, `emberwaste_f10` and `emberwaste_e10`, country, band
   24–26; #517): the road west from Cinderport's box, out of the vines and over the Waste's bare ash,
   past the Riders' ring and along the rocks of F10's south rows, then up the Cinder Hills of E10 by
@@ -180,20 +195,23 @@ Saltreach's were before #170: the zones with their bands (Cindercoast 24–25, w
 on it and its crossing words on its row, §9, #511's 13, reworded by G11, #513's 15; Fire Mountain
 25–26, with G11 laid on it; the Ember Waste 25–26, with F11 laid on it at 25–26, F10 and E10 at
 24–26 and its crossing words on its row, §9, #517's 2 and 6), Cinderport at 24–26, built since #512
-with its plate at the gate, 206,288; Old Cinder at 25–26 and the Ember Stone at 26 as planned plates
-and Meridian Camp at 25–28, built since the vents (#22; the band is the union of its three levels');
+with its plate at the gate, 206,288; Old Cinder's two plates, `old_cinder` at 190,324 and
+`old_cinder2` at 190,330, built since #515 at the maps' bands, 25–26 and 24–25; the Ember Stone at
+26 as a planned plate and Meridian Camp at 25–28, built since the vents (#22; the band is the union
+of its three levels');
 the sites (Cinderport, its port site at 206,277 on G9's shore no longer planned; Fire Mountain,
 Grimsforge and Meridian Camp, built on G11, and Scaldwell, built on H10, no longer planned; Old
-Cinder and the Ember Stone still planned, marked on F11 over their barred ways down, §9, #514's 16;
-the Sheer and the Cinder Hills, the plan's, §10) and its links: the Stair down the Sheer, the ship
-from Kilnhaven, the town's way in (moved from the site to the gate, §9, #512's 13), the three
-dungeons' ways in, the road to the Wold and the last crossing. H10 is first on Cindercoast's row
-(§9, #510's 2).
+Cinder, the rim's mark on F11 at 190,318, built now, and the Ember Stone still planned, marked on
+F11 over its barred way down, §9, #514's 16, #515's 15; the Sheer and the Cinder Hills, the plan's,
+§10) and its links: the Stair down the Sheer, the ship from Kilnhaven, the town's way in (moved from
+the site to the gate, §9, #512's 13), the three dungeons' ways in (Old Cinder's moved from Fire
+Mountain to the Ember Waste and the crater's lip, 187,322, §9, #515's 15), the road to the Wold and
+the last crossing. H10 is first on Cindercoast's row (§9, #510's 2).
 
 Its row on the curve and its step on the gear ladder are in (#542): the row in
 `src/content/progression.ts` (band 24–26, next 26, window 5,500), owed to #446 while the area is
-built box by box, with the six boxes' and the vents' 14,182 xp a member and 6,000 gold the clear's
-floor, which Cinderport leaves as it is, a town paying nothing (§8); and the step in
+built box by box, with the six boxes', the vents' and Old Cinder's 18,261 xp a member and 7,300
+gold the clear's floor, which Cinderport leaves as it is, a town paying nothing (§8); and the step in
 `src/content/areas/ashfall/items.ts`, the Area's own since G10 lists it (`ITEMS_AHEAD`,
 `src/content/index.ts`, held it until then), so that the harness and the gate dress by it:
 Cinderport's armourer's eight wares (`ARMOURER`, §4.4), each owed to the armourer until #512 sold it
@@ -202,8 +220,11 @@ carries from 25, sold at Cinderport's chandler's since #512 and owed to the Ride
 (#526). The boxes' new finds are there as they come: G11's Great Axe +2 (`scavengersAxe`, §9, #513's
 12), E10's Horn Bow +2 (`graveBow`, §9, #517's 11) and the vents' Ember Stone's first part,
 `ember_part1` (§9, #22's 1), and stokers' parts, `stoker_firebar` and `stoker_blade`
-(docs/areas/meridian_camp.md §8, the vents' 5), which no shop buys; F11's Chain Mail +2 is the
-game's own (`chain+2`, Sunderwood's), no new item (§9, #514's 12).
+(docs/areas/meridian_camp.md §8, the vents' 5), which no shop buys; Old Cinder's Flamberge +1
+(`squareFlamberge`, the ladder's weapon with a plus), founding stone (`founding_stone`), Ember
+Stone's second part (`ember_part2`) and Holy Symbol of the Hearth (`hearth_symbol`, §9, #515's 7
+and 12); F11's Chain Mail +2 and Old Cinder's Plate Mail +2 are the game's own (`chain+2`,
+Sunderwood's; `plate+2`), no new item (§9, #514's 12; #515's 11).
 
 Its ground (#543): vines (`&`), walked through as the woods are, the shore's trees hung with
 creepers; the volcano (`V`) and a vent in it (`@`), the mountain's rock to walk into, see and climb,
@@ -238,10 +259,11 @@ Sentry and the Sentinel on the heavy machines', new (`src/ui/monsters/machines.t
 `src/content/index.ts`, listed them until then), and each was owed in `UNPLACED`
 (`tools/tests/maps.ts`) to the box that first places it: G10 places the vine, the beetle, the
 salamander and the drake (#511), G11 the stoker and the sentry (#513, §9's 10) and F11 the husk
-(#514, §9's 13); the Old Drake is owed to #515 and the Sentinel to #516, though listing the area
-records all nine in `src/content/shipped.json`. G11 restates the stoker and the sentry on the line
-as it was made again (§9, #513's 17), and F11 the husk (§9, #514's 13); H10 places the stoker too,
-as restated (#510, §9's 10).
+(#514, §9's 13) and Old Cinder the Old Drake (#515, §9's 5); the Sentinel is owed to #516, though
+listing the area records all nine in `src/content/shipped.json`. G11 restates the stoker and the
+sentry on the line as it was made again (§9, #513's 17), and F11 the husk (§9, #514's 13); Old
+Cinder restates nothing, the Old Drake being off the line; H10 places the stoker too, as restated
+(#510, §9's 10).
 
 The rooms are drawn (#521), one to each business of Cinderport, ahead of the town as Rime Lodge's
 were. `src/content/areas/ashfall/interiors.ts` lists them, the Area's own `interiors` since G10
@@ -275,8 +297,9 @@ Riders' ride and the last crossing (#547) and the bot grown to the band (#549); 
 
 ## 4. What is still to build
 
-All of it but H10, G10, the town, G11, F11, F10 and E10, built (#510, §4.2; #511, §4.3; #512, §4.4;
-#513, §4.5; #514, §4.6; #517, §4.9): 10,736 squares of land, 9,228 of them walkable, the plan's
+All of it but H10, G10, the town, G11, F11, Old Cinder, F10 and E10, built (#510, §4.2; #511, §4.3;
+#512, §4.4; #513, §4.5; #514, §4.6; #515, §4.7; #517, §4.9): 10,736 squares of land, 9,228 of them
+walkable, the plan's
 figures (§1). On the grid the plan is six boxes, two dungeons and a town, and the boxes hold 5,462
 of those squares, 5,120 walkable; the seven parked behind them hold 4,454 (§4.10), the cuts and the
 sliver about 700 (§11):
@@ -288,7 +311,7 @@ sliver about 700 (§11):
 | | Cinderport | | town, 16×16 | 24–26 | | eight businesses; the two halls; the ship; the trainer to 27 | the port; the last crossing | #512, built |
 | G11 | Fire Mountain's flank | Fire Mountain | core | 25 | 1,024 (ash 641, mountain 281, lava 102) | the cone at 215,326; the vents at 226,334; Grimsforge at 230,330; the drakes | the vents | #513, built |
 | F11 | Old Cinder's and the Ember Stone's box | the Ember Waste, Fire Mountain, Cindercoast | core | 25–26 | 1,024 (ash 664, rock 301, lava 46) | Old Cinder at 190,318; the Ember Stone at 176,342; the west lava flow between | the Stone seen; the Stone lit | #514, built |
-| | Old Cinder | | dungeon, two levels of 16×16 | 25–26 | | the buried town and the Old Drake; the undercroft and the lamp | a part | #515 |
+| | Old Cinder | | dungeon, two levels of 16×16 | 24–26 | | the buried town and the Old Drake; the undercroft and the lamp | a part | #515, built |
 | | The Ember Stone | | dungeon, one level of 16×16 | 26 | | the half-built Stone; the hand-in; the Sentinel | the Stone lit | #516 |
 | F10, E10 | The Ember Waste's road | the Ember Waste, Cindercoast, the Wold | country | 24–26 | 1,024 (ash 730, vines 209, road 44, rock 41) and 1,024 (ash 443, hills 280, steppe 211, road 49, grass 39, lava 2) | the road west to the Wold at 156,312; the Cinder Hills; the Druid's trainer | none | #517, built |
 | | The chapter | | | | | The Window | | #518 |
@@ -330,7 +353,7 @@ The places, as the atlas and the docs have them:
 | Fire Mountain | G11 | the volcano; its vents are the Underdeep's exhaust and the way down (DESIGN §9) | a volcano at 215,326; a ridge at 204–226,326 with three lava flows |
 | Meridian Camp | G11, and below | the Meridian Company's last camp, Oriel Fane and the window (DESIGN §9, §10.3, STORY); three levels of 32×32 (#443, call 4) | a dungeon at 226,340, its way in at 226,334; its first level, the vents, built (#22) |
 | Grimsforge (Warlord's Forge) | G11 | the Barbarian's third prestige, by the vents' mouth (DESIGN §5, #448) | a forge at 230,330 |
-| Old Cinder | F11, and below | the town the mountain buried, its people cast in ash (MONSTERS §8.2); the Paladin's third (DESIGN §5); the founding stone (#56's 50); the Old Drake | a planned dungeon at 190,324, its way in at 190,318 |
+| Old Cinder | F11, and below | the town the mountain buried, its people cast in ash (MONSTERS §8.2); the Paladin's third (DESIGN §5); the founding stone (#56's 50); the Old Drake | a site on the crater's rim, 190,318, and two plates, 190,324 and 190,330; its way in at the lip, 187,322 |
 | The Ember Stone | F11, and below | never finished; the company completes it with parts from below and the Underdeep notices (DESIGN §9); the Druid's third (DESIGN §5); the Sentinel (MONSTERS §8.2) | a planned dungeon at 176,348, its way in at 176,342 |
 | The Cinder Hills | E10 | the ridge between Ashfall and the Glasswold, the Wold's road over it | hills, x about 146 to 152 |
 
@@ -718,7 +741,7 @@ half, with the wilderness features (#45); no more than one point in four is a si
 - **As built** (#514, 9 October): the brief's places, with four groups for its six, laid whole in
   the Ember Waste at 168,318, band 25–26 as the brief has it (§9, #514's 1 and 10). The scaffold
   counts 678 of its squares the Waste's and 346 Fire Mountain's, not the plan's 951, 40 and 33; as
-  laid it is ash 559, rock 304, lava 60, dirt 35, chasm 30, mountain 14, building 7, road 7, pillars
+  laid it is ash 560, rock 304, lava 60, dirt 35, chasm 30, mountain 14, building 6, road 7, pillars
   5, stone 2 and a secret door. The way in is F10's south edge at F10's corner, the ash open at
   columns 15 to 31 and the road's strip at 5 to 11 running along the rocks with rock under it, and
   the map starts at 16,0 facing south; G11's west edge is a second way in, walked (§9, #514's 2).
@@ -726,11 +749,12 @@ half, with the wilderness features (#45); no more than one point in four is a si
   G11's west edge square for square, so that both flows meet G11's at rows 10 and 11 and 21 to 23;
   `tools/tests/outdoors.ts` pins both anew, with the west and south ending the world against E11 and
   F12 (§9, #514's 3). The crater is a pit of chasm, 30 squares round 22,4, seen across and never
-  walked, under Old Cinder's mark (22,0) on its north rim, with seven roof-ridges standing out of it
-  as building squares and the rim ash (§9, #514's 4). Its way down is barred as G11's vents are:
-  `CRATER`, a roof-ridge at the west lip, 19,4 (187,322), exported and not in `exits`, with
-  `f11_lip` (not `once`) at its front, 18,4, and beside it, at 18,5, the Paladin's trainer, an old
-  Lightbearer, words only (§9, #514's 5 and 6). The Stone is a pillar at its mark, 8,24 (176,342),
+  walked, under Old Cinder's mark (22,0) on its north rim, with six roof-ridges standing out of it
+  as building squares (seven until #515 opened the lip) and the rim ash (§9, #514's 4). Its way down
+  is the crater's lip, 19,4 (187,322): `CRATER` is in `exits` and its square ash, re-lettered from a
+  roof-ridge by #515, with `f11_lip` gone, its line the exit's label, and beside it, at 18,5, the
+  Paladin's trainer, an old Lightbearer, words only (§9, #514's 5 and 6; #515's 13). The Stone is a
+  pillar at its mark, 8,24 (176,342),
   inside four pillar uprights, on a field of cinders drawn as dirt, 35 squares in a diamond within
   four of it; its way down is barred the same way, `STONE` being the Stone's own square, with
   `f11_stone` (not `once`) at its front, 8,23, between the uprights (§9, #514's 7). The west flow
@@ -765,10 +789,10 @@ half, with the wilderness features (#45); no more than one point in four is a si
     four with the 16 before them, are won every time. The curve's rise reads 0.95 by rank, the
     nearest group the beetles, 13 steps from the way in, and the hardest the sentries, 24 steps; the
     walkthrough wins every group at 25. Density 100.0% within 8 steps and the furthest 8 of 15, with
-    no sign among its 28 points; the art check dresses 10.7% of its wall faces. It claims nothing
-    new (§7).
+    no sign among its 28 points; the art check dresses 12.5% of its wall faces (10.7% when #514
+    built it, with one roof-ridge more). It claims nothing new (§7).
 
-### 4.7 Old Cinder (#515): dungeon, two levels of 16×16, band 25–26
+### 4.7 Old Cinder (#515): dungeon, two levels of 16×16, band 24–26
 
 - **Purpose.** The area's first dungeon: the town the mountain buried, its people cast in the ash
   where they stood, the mountain's eldest asleep on what is left of it, and under it the undercroft,
@@ -794,6 +818,50 @@ half, with the wilderness features (#45); no more than one point in four is a si
 - **Finds.** The part; the founding stone, a quest item (§6); the Holy Symbol of the Hearth, named;
   the Plate Mail +2; a Flamberge +1 at the square, the ladder's (#542).
 - **Pay.** About 2,600 xp a member.
+- **As built** (#515, 9 October): two levels of 16 by 16, hand-built, the town at band 25–26 and the
+  undercroft at 24–25 (§9, #515's 1 and 2). **The town** (`old_cinder`): F11's crater lip, 19,4,
+  open now (§4.6), lets a company down onto 8,1 facing south, and the way back up lands on the lip's
+  front, 18,4, facing west (§9, #515's 13 and 14). The street runs south down x 8 to the square, in
+  brick and bare, its line said at the first step in (`oc1_street`, 8,2). Four houses stand on it,
+  two either side, each with its people in it as they were and a cup in every hand: a family at a
+  table (5,3), a room the ash filled to the sill with a row of cups along it (11,3), a potter at his
+  wheel (5,7) and two men over a board (11,7). At the crossing the well (8,5), a cup on its lip, full
+  of ash. The lane runs west to the potters' kilns (`oc1_kilns`, 2,5, pillars at 1,3 and 1,7), their
+  mouths bricked up for a firing, with the town's rest beside them, a broken kiln, dry and still warm
+  (2,7), and east to a man in his doorway (13,5). Husks, 4, stand in the street between the well and
+  the square (8,8), the nearest. The square (x 4 to 12, y 10 to 12) is `oc1_square` (8,10), where
+  the ash rises and falls like a sleeper's back; the Old Drake lies on its east side (11,11), level
+  26, 1,000 hit points, 21d7+32, off the way across to the hall's door (8,13), and beside it the
+  stall (12,11) with 500 gold and a Flamberge +1. The stair down is at 8,14. **The undercroft**
+  (`old_cinder2`): the stair comes down to 8,1 facing south, and the way up lands on the square at
+  8,12 facing north, before the door. The cellars are vaulted on two columns (`oc2_cellars`, 8,2):
+  to the west the founding stone in a niche (2,3), a quest item in a chest (1,3), and to the east a
+  dry cellar with its door still hung, the level's rest (14,3). Husks, 4, stand in the cellars
+  before the walk (9,4). The lamp-keeper's walk goes south down x 8 (`oc2_walk`, 8,6), a channel cut
+  along its floor with black oil dried in it, to the lamp, a pillar at the bottom (8,14) with its
+  event before it (8,13), cold, not used up and inert, for #448 to relight. Beside it the Ember
+  Stone's second part, `ember_part2`, in a chest (9,14) with a line before it (9,13), reached with
+  nothing searched for. The hint is `oc2_fallen` on the walk (8,10): a stair fallen against the
+  wall, the oil channel running on under it. The secret, searched for there, is the wall at 7,10,
+  which gives on the lamp-keeper's own cellar (x 3 to 6, y 9 to 11): a cot, a coat on its peg and
+  jars of oil (6,10); in a chest (3,10), 800 gold, the Holy Symbol of the Hearth and a Plate Mail +2.
+  - **Seams.** F11's lip, 19,4 (187,322), to `old_cinder` 8,1 facing south, and back from 8,1 to
+    F11's 18,4 (186,322) facing west; the hall's stair, 8,14, to `old_cinder2` 8,1 facing south, and
+    back from 8,1 to 8,12 facing north. The secret door is `old_cinder2`'s 7,10. There is no other
+    way in or out.
+  - **Measured.** In the town a company at 25 wins 82.5% of the fights, the Old Drake counted, off
+    the aim of 90% and inside the limit of 80%, and manages 11.76 fights to a rest, over the aim
+    (9.25 to 11.25) and inside the limit (7.75 to 13.75), with 4.3% of its days ending in a fight
+    broken off; its under-check is n/a, its floor being over the area's. The Old Drake is won 65% at
+    25 and 99% at 27, set off the boss line (§9, #515's 5). In the undercroft a company at 24 wins
+    every fight and manages 10.10 fights to a rest, inside the aim (9 to 11), with 4.7% of its days
+    broken off; two under, at 22, it wins every fight too, owed to #18. Old Cinder pays 4,079 xp a
+    member for the brief's 2,600, the Old Drake's share 2,755 and each group of husks' 662, and
+    holds 1,300 gold. Density 100.0% within 7 steps on both levels (92 of 92 and 67 of 67), the
+    furthest 5 and 4 of 10, with no sign among their 16 and 13 points. The curve's rank correlation
+    is 1.00 in the town: the husks nearest at 7 steps, level 25, and the Old Drake the hardest at 13,
+    level 26; in the undercroft the husks are the nearest and the hardest, at 4 steps, level 25. The
+    walkthrough wins the husks every time and the Old Drake nine times in ten at 25.
 
 ### 4.8 The Ember Stone (#516): dungeon, one level of 16×16, band 26
 
@@ -937,7 +1005,7 @@ in the journal's voice, keyed to flags, events and maps the save holds:
   machines shovel nothing into nothing, and the first part, `ember_part1`, in the furnace's mouth.
   Finding it sets no flag (§9, #22's 1).
 - **Old Cinder.** Down through the buried town to the undercroft's bottom, and the second part
-  beside the dark lamp (§4.7), to be `ember_part2` (§9, #22's 1).
+  beside the dark lamp (§4.7), `ember_part2`. Finding it sets no flag (§9, #22's 1; #515's 12).
 - **The corridors.** Iron corridors hot enough to blister, and at their end the third part (#22's
   second level), to be `ember_part3`. Below them a camp, and an old man who says *You took your
   time*: the window's entry is written if the company goes on down to it, and never asked for; what
@@ -980,7 +1048,9 @@ Pay is xp a member, whichever way the choice goes, shared by level: about 800 be
   cold are #519's (§4.2, §9, #510's 6 and 7).
 - **50.** A Cinderport potter wants the town's founding stone brought out from under the ash; it
   says the town was founded by the first who came down from the mountain. Bring it out and
-  Cinderport raises a shrine on the trading ground and the Riders object; or leave it.
+  Cinderport raises a shrine on the trading ground and the Riders object; or leave it. As built
+  (#515): the stone lies in a niche off the undercroft's west cellar, in a chest, a quest item
+  (`founding_stone`); the potter, the choice and the shrine are #519's (§4.7, §9, #515's 12).
 - **52.** A Cinderport smith bought a smooth grey shovel-head from a vent-scavenger, and it does not
   blunt, like the Underdeep chisel. The thane's agent and the Wardens want it. Sell, or keep it
   hafted as a weapon that never dulls, and find the scavenger who found the way down beside
@@ -1067,7 +1137,9 @@ places it, and sweep with fire has no token to claim (§9, #511's 14). F10 and E
 lava is on the road before Ashfall, and steppe, first laid in E10, is the Wold's ground (#543), left
 unclaimed (§9, #517's 15; §11). H10 claims the springs, with Scaldwell; its stoker is a heavy
 machine already claimed with G11 (#510, §9's 11). F11 claims nothing: the chasm is the Sunder's, and
-dirt, pillars and groups `after` and `when` are on the road before (§9, #514's 17).
+dirt, pillars and groups `after` and `when` are on the road before (§9, #514's 17). Old Cinder
+claims nothing either: the dead cast in ash is the skeleton frame already, a sleeper is a still
+group and the ruin's icon is the Shelf's Berth's (§9, #515's 16).
 
 ## 8. The numbers
 
@@ -1091,10 +1163,12 @@ dirt, pillars and groups `after` and `when` are on the road before (§9, #514's 
   (#511), 1.22 times its scaled share (§9, #511's 9); F10 and E10 1,841 between them (#517), 0.99
   times theirs; G11 2,768 (#513), 1.04 times its own; H10 2,449 (#510), 1.09 times its own; and F11
   2,530 (#514), 1.05 times its own (§9, #517's 9, #513's 11, #510's 9, #514's 11): 12,036 of the
-  19,467 asked, so with the other scaled shares, 8,300, the shares stand at about 20,340, 1.04 times
-  the ask. The vents (#22) add 2,146, 0.98 of the brief's 2,200 and in none of the scaled shares,
-  which leave the camp's levels out: 14,182 of the 19,467 asked. Cinderport pays nothing, as a town
-  pays none, and its two halls add no quest (§9, #512's 6): its 600, 800 scaled, is unpaid (§11).
+  19,467 asked. Old Cinder (#515) adds 4,079, 1.18 times its scaled 3,450 and under 4,300 (§9,
+  #515's 4): 16,115. The vents (#22) add 2,146, 0.98 of the brief's 2,200 and in none of the scaled
+  shares, which leave the camp's levels out: 18,261 of the 19,467 asked, so with the Ember Stone's
+  share (2,950) and the side quests (about 1,100) the shares stand at about 22,300, 1.15 times the
+  ask, under 1.3. Cinderport pays nothing, as a town pays none, and its two halls add no quest (§9,
+  #512's 6): its 600, 800 scaled, is unpaid (§11).
 - **Gold.** Training six members from 24 to 26 costs 11,760 with today's `trainPrice`, and to 27,
   the third prestige's level, 6,240 more; the thirds ask a quest, not gold (DESIGN §5). A clear
   should pay for the training at least, in chests, drops, the halls' pay and the sentries' parts.
@@ -1111,10 +1185,13 @@ dirt, pillars and groups `after` and `when` are on the road before (§9, #514's 
   Horn Bow +2 at 1,050, inside the window; H10 holds 1,000 (#510), 250 and a Sapphire Vial in the
   cairn at the Stair's foot and 750 in the vent, its dearest find the Plate Mail +2 at 1,500, level
   with the Great Axe +2, inside the window; the vents hold 900 (#22), in the drift under the west
-  mouth with a Sapphire Vial, but no gear; the six boxes and the vents hold 6,000 of the 11,760 the
-  training costs. Cinderport holds no gold, a town paying
-  nothing; the dearest ware at its armourer's is the Drakeskin Coat at 3,100 and the Quickening
-  Draught at its chandler's, the company's kit from 25, is 2,000, both inside the window (#512).
+  mouth with a Sapphire Vial, but no gear; Old Cinder holds 1,300 (#515): 500 and a Flamberge +1 at
+  the stall the Old Drake lies beside, its dearest find, now the area's, at 2,550, inside the
+  window; and 800 in the lamp-keeper's cellar with the Holy Symbol of the Hearth and a Plate Mail
+  +2. The six boxes, the vents and Old Cinder hold 7,300 of the 11,760 the training costs.
+  Cinderport holds no gold, a town paying nothing; the dearest ware at its armourer's is the
+  Drakeskin Coat at 3,100 and the Quickening Draught at its chandler's, the company's kit from 25, is
+  2,000, both inside the window (#512).
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
   (docs/areas/thornmark.md §9, 17): a company at 24 wins nine in ten of H10's fights and walks the
   shore resting at its camp; one at 22 wins no more than one in four, which is how the Stair's foot
@@ -1130,7 +1207,14 @@ dirt, pillars and groups `after` and `when` are on the road before (§9, #514's 
   every time, 10.23 fights to a rest, 94.7% of its days ending in a fight broken off (§4.5). On the
   vents a company at 25 wins every fight and manages 10.98 fights to a rest, 87.7% of its days
   ending in a fight broken off (docs/areas/meridian_camp.md §4.1). A company at 25 wins every F11
-  fight, 10.82 fights to a rest, 16.3% of its days ending in a fight broken off (§4.6). On F10
+  fight, 10.82 fights to a rest, 16.3% of its days ending in a fight broken off (§4.6). In Old
+  Cinder's town a company at 25 wins 82.5% of the fights, the Old Drake counted, off the aim of 90%
+  and inside the limit of 80%, and manages 11.76 fights to a rest, over the aim and inside the
+  limit, with 4.3% of its days broken off; the Old Drake is won 65% at 25 and 99% at 27, set off
+  the boss line (§4.7; §9, #515's 5). In the undercroft a company at 24 wins every fight and
+  manages 10.10 fights to a rest, with 4.7% of its days broken off; one at 22 wins every fight too,
+  owed to #18. Ashfall's 27 groups are won 98.7% of the fights at their maps' floors and 96.3% two
+  under, owed to #18. On F10
   and E10 a company at 24 wins every fight and walks the Waste's road every time, 10.66 fights to a
   rest on F10 and 10.51 on E10; one at 22 wins every fight too, owed to #18 (§4.9). On H10 a company
   at 24 wins every fight and walks Cindercoast's road from the Stair every time, 10.21 fights to a
@@ -1143,7 +1227,9 @@ dirt, pillars and groups `after` and `when` are on the road before (§9, #514's 
   among its 25 (#512); G11 100.0% within 8 steps and the furthest 8, with no sign among its 27
   points (#513); the vents 100.0% within 7 steps (279 of 279) and the furthest 6, with no sign among
   their 25 points (#22); F11 100.0% within 8 steps and the furthest 8 of 15, with no sign among its
-  28 points (#514); F10 and E10 100.0% within 12 steps, the furthest 12 of 20, with no sign among
+  28 points (#514); Old Cinder's two levels 100.0% within 7 steps (92 of 92 and 67 of 67), the
+  furthest 5 and 4 of 10, with no sign among their 16 and 13 points (#515); F10 and E10 100.0%
+  within 12 steps, the furthest 12 of 20, with no sign among
   their 12 and 15 points (#517); H10 100.0% within 8 steps and the furthest 8, with no sign among its
   30 points (#510).
 
@@ -1276,7 +1362,7 @@ Decided by delegate for #520 (the drakes), each the owner's to overturn:
 3. **The Old Drake is the boss line at 26 come down whole to a sweeper's 0.85,** 1,226 hit points and
    21d7+32, as the test drake is the brute's, with the drakes' breath; no shape of the harness is a
    boss that sweeps, so it is set off the line (`OFF_LINE`) for Old Cinder's gate to set (#515), as
-   the bosses with turns of their own are.
+   the bosses with turns of their own are. #515 set it to 1,000 hit points (§9, #515's 5).
 4. **Fire does nothing to either,** `immune: ['fire']`, though the roster's rows do not say so: they
    are grown in the vents, as the cinder beetle and the ember salamander are. Neither is weak to
    cold, which the roster does not give them either.
@@ -1762,8 +1848,8 @@ Decided by delegate for #514, each the owner's to overturn:
    as building squares. Levitate floats over it and nothing is there to find. A chasm is no wall, so
    it costs nothing at the art check.
 5. **The way down into Old Cinder is barred as G11's `VENTS` is:** `CRATER` exported and not in
-   `exits`, its square a building; `f11_lip` (not `once`) says its line each time. #515 opens it
-   (§11).
+   `exits`, its square a building; `f11_lip` (not `once`) says its line each time. #515 opened it
+   (§9, #515's 13; §11).
 6. **The Paladin's trainer is an old Lightbearer on the lip,** beside the way down, words only (his
    trainer entry and the Paladin's quest are #448's); his word is of the lamp at the bottom of the
    town, gone out.
@@ -1808,7 +1894,7 @@ Decided by delegate for #514, each the owner's to overturn:
     Ashfall's others bless speed, accuracy and endurance (twice).
 16. **Old Cinder's and the Ember Stone's marks stay `planned`,** as Meridian Camp's did on G11
     (#513's 14): each marks a way down to a dungeon not built. #515 and #516 take `planned` off
-    their sites and places.
+    their sites and places; #515 took it off Old Cinder's (§9, #515's 1 and 15).
 17. **Novelty claims nothing new:** the chasm is the Sunder's, and dirt, pillars and groups `after`
     and `when` are on the road before; `after` on a whole area (#548) has no token. The area claims
     enough already.
@@ -1836,6 +1922,71 @@ docs/areas/meridian_camp.md §8:
 2. **G11's middle mouth and the scavenger's hole are open:** `VENTS` and `HOLE` are in its `exits`;
    26,16 and 31,17 are ash; the landings are the ones #513 asked for, 16,1 facing south and 29,30
    facing north, back up onto 27,16 facing east and 31,16 facing west (§4.5; §9, #513's 5 and 6).
+
+Decided by delegate for #515, each the owner's to overturn:
+
+1. **Ids follow Highcell's:** `old_cinder` is the town, the plan's id, its plate at 190,324 losing
+   `planned`, `name` and `band`, and `old_cinder2` the undercroft, a second plate at 190,330; both
+   are named Old Cinder. Group, event and chest ids are `oc1_*` and `oc2_*`.
+2. **The town is banded 25–26 and the undercroft 24–25.** The town's hardest group must be 26 (the
+   curve's rule for it), which only the Old Drake is, and its floor, 25, judges the boss at 25 and
+   27. The undercroft holds only husks, 25, so it is banded from the area's floor, as Highcell's
+   upper house is: at 25–26 the rise check would want a 26 there. Its figure two under is owed to
+   #18 (`'old_cinder2: under'`, husks won every time at 22), as `'monastery: under'` is.
+3. **Two groups for the brief's five,** for the pay: four husks in the street, four in the cellars.
+   The Old Drake alone pays 16,533 (2,755 a member), so the cap of 4,300 leaves nine husks, and they
+   come only in fours: three read 18.6 fights to a rest at 25, past the limit of 13.75, and five
+   read 6.45, under the limit of 7.75. No beetles are placed: the density passes without them.
+4. **Old Cinder pays 4,079 xp a member** (24,477 shared by six: the Old Drake 16,533 and eight husks
+   at 993), 1.18 times the doc's scaled share of 3,450 (the doc wins over the issue's 2,600) and
+   under 4,300. It holds 1,300 gold. The area stands at 18,261 xp with the vents (§8).
+5. **The Old Drake is 1,000 hit points, its blow the line's 21d7+32** (1,226 on the line), level
+   kept: won 65% at 25 and 99% at 27. On the line it is won 51% at 25, the issue's "about half", but
+   the town's floor counts the boss with its one other fight, (100% + the boss) / 2, and 51% makes
+   75.5%, past the limit of 80%; 65% makes 82.5%. The other way out, both husk groups in the street
+   and none in the cellars, leaves the boss untouched at 51%; taken this way so that the cellars keep
+   theirs. In `BOSSES` under `emberwaste`, and `OFF_LINE` says its hit points are set by its gate.
+6. **The Old Drake sleeps as Carn Dubh's king and Highcell's Abbot do:** a group of one, `roams:
+   false`, no `respawn`, `aware: 1`, at 11,11 on the square's east side, off the way across, so a
+   fight starts only when a company comes beside it and a company may leave it asleep. Its death
+   closes and opens nothing; its slain line is *The Old Drake lays its head down in the ash and is
+   still. Nothing else in the town has moved.*
+7. **The stall the Old Drake lies beside** (12,11) holds 500 gold and the ladder's Flamberge +1
+   (`flamberge+1`, 2,550), the area's dearest find now, inside the window of 5,500. Taking it wakes
+   the drake.
+8. **One rest a level, a camp,** where Highcell has none: F11's camp is the cleft at 10,18, 23 steps
+   from the lip, not five. The town's is a broken kiln among the potters' (2,7), the undercroft's a
+   dry cellar with its door still hung (14,3).
+9. **The town is a street, a lane and a square,** brick and bare, the potters' town: four houses with
+   their people in them as they were, every one with a cup, and the brief's street line said at the
+   first step in, `oc1_street` (8,2). The well at the crossing gives no `heal`: a cup, full of ash.
+10. **The undercroft is the cellars, the walk and the lamp:** the lamp is a pillar with an event, not
+    `once` and inert, for #448 to relight; the part is in a chest beside it, reached with nothing
+    searched for (§4.7).
+11. **The secret is the lamp-keeper's cellar** behind a secret door at 7,10, the fallen stair; the
+    hint is `oc2_fallen` on the walk (8,10), the oil channel running on under the rubble. In the
+    cellar a chest holds 800 gold, the Holy Symbol of the Hearth and a Plate Mail +2 (the game's,
+    1,500).
+12. **The items, for the Stone's hand-in (#516) and the chapter (#518):** `ember_part2`, "Ember
+    Stone's Second Part" (no slot, price 0), made in the form of #22's `ember_part1`, with no flag
+    set on finding it; `founding_stone`, "The Founding Stone" (no slot, price 0), for #519's quest;
+    `hearth_symbol`, "Holy Symbol of the Hearth" (no slot, price 400, resists fire, carried in the
+    pack as the Holy Symbol of the Tide resists cold); and `flamberge+1` (`P(flamberge, 1)`, 2,550).
+    #516's hand-in takes `ember_part2` with the other two parts.
+13. **F11's `CRATER` is opened as #514 asked:** in its `exits`, 19,4 re-lettered from a roof-ridge to
+    ash, `f11_lip` dropped (not `once`, so not in `shipped.json`) and its line the exit's label: *You
+    climb down off the lip between the roofs, into a street the ash has left.* In onto 8,1 facing
+    south.
+14. **The way back up faces west, away from the pit,** onto the lip's front, 18,4, where #514 asked
+    for east: as Highcell's gate lets out facing the road, so that a company stepping on does not go
+    straight back down.
+15. **The atlas's planned link from `firemount` to `old_cinder` at 190,318 is now from `emberwaste`
+    at 187,322** (`src/content/atlas.ts`), the crater's lip on F11, as Highcell's sits on its gate.
+    The site Old Cinder stays the rim's mark (190,318, F11's 22,0) and loses `planned`.
+16. **Novelty claims nothing:** the dead cast in ash is the skeleton frame, a sleeper is a still
+    group (`aware`, `roams`) and the ruin's icon is the Shelf's Berth's. The area claims enough
+    already.
+17. **Every text is two lines of the log or fewer:** the exits, events, camps and the slain line.
 
 ## 10. Names
 
@@ -1921,19 +2072,17 @@ Owed, from G11 (#513):
 
 Owed, from F11 (#514):
 
-- **Old Cinder's way down stays barred** until #515 builds the dungeon: `CRATER` (19,4, world
-  187,322; to `old_cinder` at 8,1 facing south) is exported from `emberwaste_f11.ts` and not in
-  `exits`. #515 lists it, re-letters 19,4 to ground an exit can stand on, drops or rewrites
-  `f11_lip` (18,4) and sets the landing it is asked for; its way back up lands on 18,4 facing east.
-  The atlas's planned link `{ from: 'firemount', to: 'old_cinder', a: [190, 318] }` names Fire
-  Mountain, though F11 is laid in the Waste: #515 may move it to `emberwaste` and the lip (§9,
-  #514's 5 and 16).
+- **Old Cinder's way down stood barred** until #515 built the dungeon, which listed `CRATER` in
+  F11's exits, re-lettered 19,4 ash, dropped `f11_lip` for the exit's label and set the landing it
+  was asked for, 8,1 facing south; its way back up lands on 18,4 facing west, not east (§9, #514's
+  5; #515's 13 and 14). The atlas's planned link named Fire Mountain, though F11 is laid in the
+  Waste: #515 moved it to `emberwaste` and the lip (§9, #514's 16; #515's 15).
 - **The Ember Stone's way down stays barred** until #516 builds the dungeon: `STONE` (8,24, world
   176,342; to `ember_stone` at 8,1 facing south) is exported and not in `exits`. #516 lists it,
   opens the square, drops or rewrites `f11_stone` (8,23, the step's line) and sets the landing it is
-  asked for; its way back up lands on 8,23 facing north (§9, #514's 7). The walkthrough asserts both
-  mouths shut (`passable` is not `ok`), the crater's square a building and the Stone's a pillar:
-  #515 and #516 change those lines when they open them.
+  asked for; its way back up lands on 8,23 facing north (§9, #514's 7). The walkthrough asserts the
+  mouth shut (`passable` is not `ok`), the Stone's square a pillar: #516 changes that line when it
+  opens it, as #515 changed the crater's.
 - **Four groups stand for the brief's six** (§4.6, §9, #514's 10): the second beetle group and the
   second sentry group are cut, for at the brief's sizes the box read 18.3 fights to a rest, past the
   limit of 13.75.
@@ -1985,3 +2134,24 @@ Owed, from H10 (#510):
   asks no more than one in four (§9, #510's 15).
 - **The Stair's link** keeps `from: 'firemount'`, though its `a` end, 258,306, lies in Cindercoast's
   H10: untouched, and no check reads it (§9).
+
+Cut and owed, from Old Cinder (#515):
+
+- **Two husk groups stand for the brief's five,** and no cinder beetles nest in the roofs (§4.7, §9,
+  #515's 3): the street's three groups are one and the cellars' two are one, for the pay. The husks
+  come only in fours.
+- **The Old Drake is won 65% at 25,** not the issue's about half (§9, #515's 5): at half the town's
+  floor figure falls to 75.5%, past the limit of 80%. The other way out, both husk groups in the
+  street and none in the cellars, is the owner's to take instead.
+- **The undercroft's figure two under is owed to #18:** at 22 a company wins every fight there, where
+  §8 asks no more than one in four (§9, #515's 2).
+- **The issue's own secret is not built:** a house whose door the ash did not fill, a cup set outside
+  it, and the Old Drake's way down from the crater into the undercroft. The doc's secret is, and the
+  Old Drake stays on the square (§4.7).
+- **The lamp is not relit:** `oc2_lamp` is inert for #448, with the Paladin's third. The Paladin's
+  trainer entry and quest are #448's (§9, #515's 10).
+- **The hand-in and the potter:** #516's hand-in of three takes `ember_part2`, and #519's potter takes
+  `founding_stone` (§9, #515's 12).
+- **MONSTERS' Where column for the Old Drake** and the figure in its §4 (35% at 26) predate this: the
+  Old Drake is set off the line for Old Cinder's gate (§9, #515's 5). A pull request of its own, if
+  the owner wants it.

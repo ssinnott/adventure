@@ -7,20 +7,19 @@
 // by a causeway of slag with a milestone at its end; and south-west the Ember Stone half-built on its
 // field of cinders, its iron scaffold round it, a shrine at the field's edge and the builders' hollow in
 // the rock west of it. A second flow comes in off the mountain at the east edge and runs out south.
-// The crater's way and the Stone's are barred until Old Cinder and the Ember Stone are built (CRATER,
-// STONE). Joined to F10 on the north edge and G11 on the east; the west and south edges end the world
-// against E11 and F12.
+// The crater's way is open (CRATER, #515); the Stone's is barred until the Ember Stone is built (STONE).
+// Joined to F10 on the north edge and G11 on the east; the west and south edges end the world against
+// E11 and F12.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/ashfall.md §4.6 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 
 /**
- * The way down into Old Cinder (#515): a roof-ridge at the crater's west lip, 19,4, onto the buried
- * town's first level at 8,1, facing south, which this asks #515 to give it. An exit leads only to a
- * built map, so Old Cinder lists it in this map's exits, opens the square and drops `f11_lip`; its way
- * back up lands on 18,4, facing east, the lip's front.
+ * The way down into Old Cinder (#515): the crater's west lip, 19,4, where a roof-ridge stood until the
+ * town was built, onto the buried town's first level at 8,1, facing south. Its way back up lands on
+ * the lip's front, 18,4, facing west, away from the pit.
  */
-export const CRATER: Exit = { x: 19, y: 4, to: 'old_cinder', tx: 8, ty: 1, tf: SOUTH };
+export const CRATER: Exit = { x: 19, y: 4, to: 'old_cinder', tx: 8, ty: 1, tf: SOUTH, label: 'You climb down off the lip between the roofs, into a street the ash has left.' };
 
 /**
  * The way into the Ember Stone (#516): the Stone itself, 8,24, inside its iron scaffold, onto the
@@ -43,7 +42,7 @@ export const EMBERWASTE_F11: MapDef = {
     'rrrrrrrrrrrrrrrraaaaavvvaaaaaaaa',
     'rrrrrrrrrrrrrrrraaaavvvvvaaaaaaa',
     'rrrrrrrrrrrrrrrraaavvBBvvvaaaaaa',
-    'rrrrrrrrrrrrrrrrraaBvvvvBvaaaaaM',
+    'rrrrrrrrrrrrrrrrraaavvvvBvaaaaaM',
     'rrrrrrrrrrrrrrrrraavBBvvvvaaaaaM',
     'rrrrrrrrrrrrrrrrraaavvvBvaaaaaaM',
     'rrrrrrrrrrrrrrrraaaaavvvaaaaaaaM',
@@ -72,13 +71,14 @@ export const EMBERWASTE_F11: MapDef = {
     'MMMaaaaaaaaaaaaaaaaaaaaaaaa!!aaa',
     'MMMMaaaaaaaaaaaaaaaaaaaaaaa!!aaa',
   ],
+  // Down off the crater's lip into Old Cinder (#515).
+  exits: [CRATER],
   features: [
     // The Waste's road along the north edge, F10's, kept to the rocks.
     { kind: 'event', x: 8, y: 0, id: 'f11_road', once: true, text: 'The road keeps to the rocks here, out of the ash. South-east over them, smoke goes up out of a crater.' },
-    // Old Cinder's crater: the way down at its west lip, barred until Old Cinder is built (CRATER), its
-    // line at its front each time; the old Lightbearer by it (the Paladin's third is #448's); the cairn
-    // on the rim, the roof-ridges seen from the east, and the rim at the atlas's mark.
-    { kind: 'event', x: 18, y: 4, id: 'f11_lip', text: 'The crater\'s lip. A street goes down from it between the roofs, and the ash has closed over it.' },
+    // Old Cinder's crater: the way down at its west lip (CRATER, #515); the old Lightbearer by it (the
+    // Paladin's third is #448's); the cairn on the rim, the roof-ridges seen from the east, and the rim
+    // at the atlas's mark.
     { kind: 'npc', x: 18, y: 5, name: 'An old Lightbearer', lines: [
       'An old man in a Lightbearer\'s white gone grey, sitting on the lip with his staff across his knees.',
       '"There is a lamp at the bottom of that town. It went out, and nobody went down to light it."',
