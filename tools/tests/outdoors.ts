@@ -24,7 +24,7 @@ import { logLines } from '../../src/ui/frame.ts';
  * The Wold's steppe, D9, met E10 only corner to corner until the mesas, D10 (#527), joined the two; it
  * is reached from Akordu's box, D8, over its north edge too (#526), D8 by the Riders' ride from
  * Cinderport to its landing there (#547). The Scarp's edge, C8, is reached over D8's west edge and up the
- * Scarp stair from the Saltings' C7 (#528).
+ * Scarp stair from the Saltings' C7 (#528); the Wold's heart, B8, over C8's west edge (#529).
  */
 const CUT_OFF: Record<string, string> = {};
 
@@ -437,8 +437,18 @@ export function outdoors(): void {
     && northOf(c8) === '|'.repeat(8) + '"' + '|'.repeat(12) + 'rrrr' + '|||' + 'ssss' && southOf(c7) === '%' + 'M'.repeat(7) + '"' + 'M'.repeat(22) + '%'
     && out.passable(c8.x + 8, c8.y - 1) === 'ok' && out.passable(c8.x + 8, c8.y) === 'ok'
     && westOf(c8) === '|' + 's'.repeat(31) && southOf(c8) === 's'.repeat(27) + '^^sss'
-    && [...Array(32).keys()].every((i) => [out.at(c8.x - 1, c8.y + i), out.at(c8.x + i, c8.y + 32)].every((c) => c.ch === '%')),
-    `C8's east edge meets D8's west edge square for square; its north edge is the Scarp's lip over C7's mountain, open only where the stair's last flight meets C7's flights at column 8; its west the steppe against B8 and its south the steppe and the hills against C9, past which the world ends (${northOf(c8)}; ${southOf(c7)}; ${westOf(c8)}; ${southOf(c8)})`);
+    && [...Array(32).keys()].every((i) => out.at(c8.x + i, c8.y + 32).ch === '%'),
+    `C8's east edge meets D8's west edge square for square; its north edge is the Scarp's lip over C7's mountain, open only where the stair's last flight meets C7's flights at column 8; its west the lip's end and the steppe against B8 and its south the steppe and the hills against C9, past which the world ends (${northOf(c8)}; ${southOf(c7)}; ${westOf(c8)}; ${southOf(c8)})`);
+  // The Wold's heart (B8, #529): its east edge meets C8's west edge square for square, the lip's end at row
+  // 0 and the steppe under it open both sides from row 1 to 31; its north edge is the Scarp's lip, cliff,
+  // against B7; its west edge is the rim, the map's mountain laid as the world's end, as a zone map's ring
+  // is where it faces nothing built, the corners with it; its south edge the hills under the rim and the
+  // steppe against B9 (#530). B7 and A8 are cut and B9 is not built, so the world ends past them.
+  const b8 = out.zones.find((z) => z.id === 'wold_b8')!;
+  ok(b8.x + b8.w === c8.x && b8.y === c8.y && eastOf(b8) === westOf(c8) && [...Array(31).keys()].every((i) => open(b8.x + 31, b8.y + 1 + i) && open(c8.x, c8.y + 1 + i))
+    && northOf(b8) === '%%' + '|'.repeat(30) && westOf(b8) === '%'.repeat(32) && southOf(b8) === '%' + '^'.repeat(7) + 's^' + 's'.repeat(22)
+    && [...Array(32).keys()].every((i) => [out.at(b8.x + i, b8.y - 1), out.at(b8.x - 1, b8.y + i), out.at(b8.x + i, b8.y + 32)].every((c) => c.ch === '%')),
+    `B8's east edge meets C8's west edge square for square, open both sides under the lip; its north edge is the Scarp's lip against B7, its west the rim, the world's end, against A8 and its south the hills under the rim and the steppe against B9, past which the world ends (${eastOf(b8)}; ${northOf(b8)}; ${westOf(b8)}; ${southOf(b8)})`);
   // Fionnlios's box (O7, #477): its west edge meets N7's east edge square for square, the peat-cutter's
   // track crossing at row 22 and the tarn's stream at the corner, out into N7's corner and O8's; its
   // north edge the hills and the Kilns' grass under O6, square for square with O6's south edge but its
