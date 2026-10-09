@@ -625,6 +625,11 @@ people and events that come and go with a flag or the hours, several items to on
 letters read from the pack. Every line they put on screen is written in the issue that builds
 them, measured against the game's box and log, as the Foreland's are (#47, #77).
 
+The Druid's third prestige, Ashfall's (#448; docs/areas/ashfall.md §6), is lifted in the Grove: once
+the Archdruid in the Ember Waste has asked (`q_seedling`), a seedling oak stands under the hollow's
+oldest oaks on the Thornmark map (3,27), a person with no face as the Ember Stone's sockets are, whose
+one answer gives the Grove Seedling and sets `q_seedling_taken`; lifted, it is gone.
+
 ## 7. Encounters, and what is new
 
 MONSTERS §5.4 has the Deepthorn's roster and fights: the Bramble, the Great Owl, the Rootwalker,

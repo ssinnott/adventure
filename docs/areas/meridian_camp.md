@@ -239,8 +239,9 @@ last Fane's.
   journal: the fourth stays in the Ember Stone's lower gallery (ashfall §4.8), and filling
   Cinderport's shelf is #512's.
 - **The Cartographers' line** ends here (DESIGN §8; #443, call 7).
-- **Third prestiges** (#448): the Barbarian's, kill the drake that nests in the corridors (the Brood
-  Drake, ashfall §6); the Ranger's, bring Fane's map back to the Wold's scout.
+- **Third prestiges** (#448): the Barbarian's, What Nests There, built: kill the Brood Drake on its
+  eggs in the nest off the corridors' last run (`slain` `meridian_camp2:mc2_brood`, ashfall §6), for
+  the warlord's heir at Grimsforge; the Ranger's, bring Fane's map back to the Wold's scout.
 
 ## 6. Encounters, and what is new
 

@@ -20,11 +20,12 @@ Camp's first two levels (#22, docs/areas/meridian_camp.md §4.1 and §4.2); F11,
 Ember Stone's box (#514, §4.6); Old Cinder's two levels, the buried town and the undercroft, through
 F11's crater (#515, §4.7); the Ember Stone, one level under F11's field of cinders (#516, §4.8),
 with the Cartographers' Surveyor's rung (#635, §6); and F10 and E10, the Ember Waste's road (#517,
-§4.9). Its nine monsters and the armourer's step are drawn (§3), and the rest is to build. Its
-content is
+§4.9). The third prestiges' quests of the three classes taught here are built on them: the
+Paladin's lamp, the Barbarian's nest and the Druid's seedling (#448, §6). Its nine monsters and the
+armourer's step are drawn (§3), and the rest is to build. Its content is
 `src/content/areas/ashfall/` (maps, monsters, items, climate, its part of the world map and its
-walkthrough; its chapter of the one quest, The Window, in `chapter.ts`, and its side quests in
-`quests.ts`, to come) and its businesses' rooms `src/ui/interiors/ashfall/`. Its ids, the plan's:
+walkthrough; its quests in `quests.ts`, the third prestiges' three now and its side quests to come;
+its chapter of the one quest, The Window, in `chapter.ts`, to come) and its businesses' rooms `src/ui/interiors/ashfall/`. Its ids, the plan's:
 the area `ashfall`, its zones `cindercoast`, `firemount` and `emberwaste`, the town `cinderport`,
 the dungeons `old_cinder` and `old_cinder2` (its undercroft, #515), `ember_stone` and
 `meridian_camp`.
@@ -150,8 +151,9 @@ Waste's road, F10 and E10 (#517):
   north-west, lettered volcano over the atlas's mountain with its mouth a vent, and three lava flows
   off it, two leaving west and one south-east, their crust bearing a company. The track comes down
   from G10's south edge between the mountain and the east edge, a shrine at its head, to Grimsforge,
-  a block of black stone with its fire lit and the old warlord's heir at the anvil, and a camp in
-  its lee where the scavenger sits. South of it the vents are three mouths in the ash, the middle
+  a block of black stone with its fire lit and the old warlord's heir at the anvil, who teaches the
+  Barbarian's third for what nests in the iron corridors (§6), and a camp in its lee where the
+  scavenger sits. South of it the vents are three mouths in the ash, the middle
   one the way down to Meridian Camp, open since #22 built its first level; beside them, in a ring of
   rock against the east edge, lies the scavenger's hole, his second way down, open at its far end
   the same way. Five groups: ember salamanders on the track and on the cone's shoulder, two stokers
@@ -172,8 +174,8 @@ Waste's road, F10 and E10 (#517):
   (docs/areas/meridian_camp.md §4.2).
 - **Old Cinder's and the Ember Stone's box** (F11, `emberwaste_f11`, core, band 25–26; #514): the
   buried town's crater at the north edge, a pit seen across and never walked with six roof-ridges
-  standing out of it, and on its west lip an old Lightbearer beside the way down, open since #515
-  built Old Cinder. The west lava flow runs through the ash into the rock, crossed on a
+  standing out of it, and on its west lip an old Lightbearer, who teaches the Paladin's third for
+  the lamp under the town (§6), beside the way down, open since #515 built Old Cinder. The west lava flow runs through the ash into the rock, crossed on a
   causeway of slag with a milestone at its end; south of it, on a field of cinders, the Stone stands
   half-built in its iron scaffold, its way down open since #516 built the Stone. In the rock a
   hermit and
@@ -188,14 +190,15 @@ Waste's road, F10 and E10 (#517):
   doorway; at the street's end the square, with the Old Drake asleep on it beside a stall, and the
   hall's door with its stair down. Below, the hall's cellars, the founding stone in a niche to the
   west and a dry cellar to the east, the lamp-keeper's walk with a channel of dried oil along its
-  floor and, at its bottom, the lamp, cold, with the Ember Stone's second part (`ember_part2`) set
-  in the floor beside it; behind a stair fallen against the wall on the way, the lamp-keeper's own
-  cellar. Two groups of four ash husks, one in the street and one in the cellars, and the Old Drake
+  floor and, at its bottom, the lamp, cold until the Paladin's third lights it (§6), with the Ember
+  Stone's second part (`ember_part2`) set in the floor beside it; behind a stair fallen against the
+  wall on the way, the lamp-keeper's own cellar. Two groups of four ash husks, one in the street and one in the cellars, and the Old Drake
   alone, a boss that sleeps and does not come back (§4.7).
 - **The Ember Stone** (`ember_stone`, dungeon, one level of 16×16, band 25–26; #516): down the
   builders' stair between the Stone's uprights into a housing of smooth grey iron that has not
   rusted, with a gallery round it, the builders' benches in an alcove to the west and, in one to the
-  east, a lookout slit over the Waste with a bed of earth under it, nothing growing. At its heart
+  east, a lookout slit over the Waste with a bed of earth under it, nothing growing until the
+  Druid's third plants the Grove's seedling in it (§6). At its heart
   the core stands with three sockets round it, each empty and the shape of something. Set the three
   parts in, in any order, and the last lights the Stone: light runs out through the iron and the
   door in the floor below the core swings open. The Sentinel stands on it, and when it falls two
@@ -205,7 +208,8 @@ Waste's road, F10 and E10 (#517):
   24–26; #517): the road west from Cinderport's box, out of the vines and over the Waste's bare ash,
   past the Riders' ring and along the rocks of F10's south rows, then up the Cinder Hills of E10 by
   the notch where a Rider's waymark stands and down onto the steppe, the Wold's, where the world
-  ends for now. In F10's north-west a rock outcrop with the Archdruid in its lee, words only; on the
+  ends for now. In F10's north-west a rock outcrop with the Archdruid in its lee, who teaches the
+  Druid's third (§6); on the
   ash a cairn, a shrine and the drifts; on the Hills the cairns, all facing the steppe but one that
   looks back at the Stone, a grave. Three groups: cinder beetles and a cinder drake in F10 and two
   cinder drakes on the Hills' crest (§4.9).
@@ -669,8 +673,8 @@ half, with the wilderness features (#45); no more than one point in four is a si
 - **Encounters.** Ember salamanders on the slopes (two groups); cinder drakes on the flows (two,
   one alone); the vents' fight at the mouth, two stokers with ember salamanders, where fire is
   useless and lightning the answer (MONSTERS §8.2), the hardest, at 25–26.
-- **Quests.** The step. The Shovel That Does Not Blunt's scavenger (§6). The Barbarian's quest
-  goes down from here (#448).
+- **Quests.** The step. The Shovel That Does Not Blunt's scavenger (§6). The Barbarian's third,
+  What Nests There, is asked and taught at the anvil and goes down from here (§6, #448).
 - **The secret and its hint.** The scavenger's hole, a second way into the vents' first level that
   comes out behind the stokers' furnace room (#22), with his finds in it: grey parts, and a Great
   Axe +2. The hint: a vine rope knotted to a rock where no vine grows, and the smith's word that the
@@ -762,8 +766,8 @@ half, with the wilderness features (#45); no more than one point in four is a si
   (`when`), the dead walking where the Stone was never finished (MONSTERS §2); a cinder drake on the
   flow, the hardest before the Stone, at 25; after the Stone is lit, sentries on the road (`after`,
   two groups) at 26, the box's top.
-- **Quests.** The step. The Founding Stone's way in (§6). The Paladin's quest goes down from here
-  (#448).
+- **Quests.** The step. The Founding Stone's way in (§6). The Paladin's third, The Cold Lamp, is
+  asked and taught on the lip and goes down from here (§6, #448).
 - **The secret and its hint.** A hollow in the rock west of the field where the Stone's builders
   left their tools four hundred years ago, one of them the mate of the Cut Stone's chisel, and a
   Chain Mail +2 with them. The hint: the rock's face is scored in straight lines, the way the Grove
@@ -843,8 +847,8 @@ half, with the wilderness features (#45); no more than one point in four is a si
 - **Encounters.** Ash husks in the street (three groups) and in the cellars (two); cinder beetles
   nesting in the roofs; the Old Drake, boss, level 26, asleep on the square until the company is
   near, its breath burning a row (#545); its death closes nothing.
-- **Quests.** A part, the chapter's (§5). The Founding Stone (§6). The Paladin's third: the lamp
-  relit at the bottom (#448).
+- **Quests.** A part, the chapter's (§5). The Founding Stone (§6). The Paladin's third, The Cold
+  Lamp: the lamp relit at the bottom (§6, #448).
 - **The secret and its hint.** A side cellar behind a fallen stair in the undercroft, the
   lamp-keeper's own: his Holy Symbol of the Hearth and a Plate Mail +2. The hint: the lamp's oil
   channel runs under the wall where no room is.
@@ -875,7 +879,10 @@ half, with the wilderness features (#45); no more than one point in four is a si
   dry cellar with its door still hung, the level's rest (14,3). Husks, 4, stand in the cellars
   before the walk (9,4). The lamp-keeper's walk goes south down x 8 (`oc2_walk`, 8,6), a channel cut
   along its floor with black oil dried in it, to the lamp, a pillar at the bottom (8,14) with its
-  event before it (8,13), cold, not used up and inert, for #448 to relight. Beside it the Ember
+  event before it (8,13), cold and said each time until it is lit (`until` `q_old_lamp_lit`). The
+  Paladin's third lights it (#448, §6): `oc2_relit` on the same square (`once`, `after`
+  `q_old_lamp`) lights it with the old Lightbearer's oil and flint and sets `q_old_lamp_lit`, and
+  `oc2_burning` says it burning each time after. Beside it the Ember
   Stone's second part, `ember_part2`, in a chest (9,14) with a line before it (9,13), reached with
   nothing searched for. The hint is `oc2_fallen` on the walk (8,10): a stair fallen against the
   wall, the oil channel running on under it. The secret, searched for there, is the wall at 7,10,
@@ -907,15 +914,15 @@ half, with the wilderness features (#45); no more than one point in four is a si
   #450); the moment it lights, the Sentinel comes up through the door, the first thing up (MONSTERS
   §8.2), and the Hearth steadies (#548, on `q_ember_lit`, §9).
 - **Landmarks.** The housing, iron that has not rusted; the gallery round it; the three sockets at
-  its heart; the door in the floor, shut; the builders' benches; the seedling's bed at the field's
-  edge, where the Druid's quest ends (#448, §4.9).
+  its heart; the door in the floor, shut; the builders' benches; the seedling's bed under the
+  lookout, where the Druid's third plants the Grove's seedling (§6, #448).
 - **Points of interest,** about seven features and six groups: the sockets, the door, the benches,
   the gallery's lookout over the Waste, the chain pin, the lower gallery.
 - **Encounters.** Cinder beetles nesting in the works (two groups); a cinder drake on the housing's
   top; after the hand-in, the Sentinel, boss, level 26, in the chamber as the door opens, and
   sentries up through it after (`after`), two groups.
-- **Quests.** The Stone lit, on `q_ember_lit` (§9): the chapter's last step (§5). The Druid's third: the seedling kept
-  alive until it is (#448).
+- **Quests.** The Stone lit, on `q_ember_lit` (§9): the chapter's last step (§5). The Druid's third, The Seedling: the
+  Grove's seedling planted in its bed, green once the Stone is lit (§6, #448).
 - **The secret and its hint.** A lower gallery under the housing where the Meridian Company stopped
   on their way to the vents, and the fourth journal in it, the one the shelf at Cinderport lacks
   (DESIGN §10.3). The hint: a chain pin driven in the housing's foot with the Guild's mark on it,
@@ -944,8 +951,10 @@ half, with the wilderness features (#45); no more than one point in four is a si
   1 to 3, y 6 to 9), with a chest at 1,7 (`es_bench`): 600 gold, a Battle Staff +1 and a Drakeskin
   Coat +1 (§9, #516's 11). Off the east arm another alcove (x 12 to 14, y 6 to 9) has the lookout
   slit (`es_lookout`, 14,7), onto the Waste and the causeway, and under it the seedling's bed
-  (`es_bed`, 14,8), a bed of earth ringed with stones, nothing growing, words only for #448 (§9,
-  #516's 12). **The secret** is the lower gallery under the housing (x 5 to 10, y 10 to 12), behind
+  (`es_bed`, 14,8), a bed of earth ringed with stones, nothing growing (§9, #516's 12). For the
+  Druid's third (#448, §6) a person with no face stands on it, `after` `q_seedling_taken` and
+  `until` `q_seedling_planted`, whose one answer takes the Grove's seedling and sets the flag; then
+  `es_seedling` says it grey each time until the Stone is lit, and `es_green` green after. **The secret** is the lower gallery under the housing (x 5 to 10, y 10 to 12), behind
   a secret door in its foot at 8,13; the hint is `es_pin` (8,14), a surveyor's chain pin with the
   Guild's mark stamped in its head. Searched for there, the foot gives on steps down (`es_lower`,
   8,12) to a dozen bedrolls in a row and a cold lamp; a chest (`es_journal`, 5,11) holds the fourth
@@ -981,14 +990,15 @@ half, with the wilderness features (#45); no more than one point in four is a si
   beyond, the world's end there until D10 (#527).
 - **Points of interest,** about five features and five groups each:
   - F10: a milestone (THE WOLD 2, CINDERPORT 7), a camp (#45), a shrine (#45), a cairn (#45); the
-    Druid's trainer at the outcrop, an Archdruid who came from the Grove and stayed (#448);
+    Druid's trainer at the outcrop, an Archdruid who came from the Grove and stayed, and who
+    teaches the third for a seedling from it (§6, #448);
   - E10: a Rider's waymark at the notch, a cairn on the hills' crest (#45), a shrine (#45); a
     hermit in the hills who saw the Stone's field from above every day of his life and has never
     seen it lit.
 - **Encounters.** Cinder beetles on the ash (two groups a box); ember salamanders at the flow's end
   in F10's south; a cinder drake on the Hills' crest, the far end, at 25; sentries after the Stone
   (`after`), one group on each box's road, the band's top.
-- **Quests.** None. The Druid's quest is kept here (#448).
+- **Quests.** The Druid's third, The Seedling, is asked and taught at the outcrop (§6, #448).
 - **The secret and its hint.** E10: a cairn in the Hills that is a grave, the first Rider who came
   down to trade, with her saddle's silver and a Horn Bow +2. The hint: the Hills' cairns all face
   the steppe but one. F10 has none of its own: the country's floor asks for one secret between the
@@ -1159,15 +1169,19 @@ Two halls open here (DESIGN §8; #443, call 7), on the rules and the hall menu b
 
 ### The third prestiges' quests
 
-Built with #448 (DESIGN §5): each trainer waits on the surface and each quest goes down; where a
-third sits in country under 27 the quest's own fights are set at 26.
+Built with #448 (DESIGN §5) in `quests.ts`, three of the eight: each trainer waits on the surface
+and each quest goes down. His own words come first; to a member of his class at 27 with the second,
+the next meeting asks the quest, once, which begins it and ends that member's seeking
+(`teaches.asks`). The deed done, his last words and the third, for the deed and no gold
+(`teaches.done`); the quest ends with the third taught, its last goal the way back to him. None pays
+and none adds a fight: the prestige is the pay, and the fights are the places' own (§9, #448's).
 
-| Class | Trainer, where | The quest |
-|---|---|---|
-| Paladin | Old Cinder's crater lip (F11) | down into the undercroft, and relight the lamp at its bottom |
-| Barbarian | Grimsforge, by the vents' mouth (G11) | down the vents to Meridian Camp, and kill the cinder drake that nests in the corridors (#22) |
-| Druid | the Ember Waste, the rock outcrop in F10's north-west (§4.9) | carry a seedling from the Grove into the Waste, and keep it alive at the Stone's field until the Stone is finished |
-| Ranger | the Eyrie, the Wold's (#524) | down the vents to Meridian Camp, and bring Oriel Fane's map back to the scout (DESIGN §10.3) |
+| Class | Trainer, where | The quest | Flags: asked; the deed |
+|---|---|---|---|
+| Paladin | an old Lightbearer, on Old Cinder's crater lip (F11, 18,5) | The Cold Lamp (`old_lamp`): down into the undercroft, and light the lamp at the bottom of the walk with his oil and flint (`oc2_relit`, 8,13) | `q_old_lamp`; `q_old_lamp_lit` |
+| Barbarian | the warlord's heir, at the anvil in Grimsforge, by the vents' mouth (G11, 28,13) | What Nests There (`brood`): down the vents to Meridian Camp, and kill the Brood Drake on its eggs in the nest off the corridors' last run (#22) | `q_brood`; `slain` `meridian_camp2:mc2_brood` |
+| Druid | the Archdruid, in the lee of the rock outcrop in F10's north-west (6,3, §4.9) | The Seedling (`seedling`): lift a seedling under the Grove's oaks (Thornmark's hollow, 3,27), plant it in the bed under the Stone's lookout (14,8), and keep it there till the Stone is lit | `q_seedling`; `q_seedling_taken`, then `q_seedling_planted` and `q_ember_lit` |
+| Ranger | the Eyrie, the Wold's (#524) | down the vents to Meridian Camp, and bring Oriel Fane's map back to the scout (DESIGN §10.3) | |
 
 The Ranger's is the Wold's to place and #22's to end; it is here because its road is Ashfall's.
 
@@ -2217,6 +2231,33 @@ Decided by delegate for #516, each the owner's to overturn:
     further."* The room's picture (`src/ui/interiors`) is not touched.
 18. **Every event is two lines of the log or one,** the lighting two.
 
+Decided by delegate for #448 (Ashfall's three), each the owner's to overturn:
+
+1. **The ask is the trainer's words, once,** after his own (`after` his met flag and a member of his
+   class at 27 with the second, `until` the ask's flag, which they set), as Hartmut's lesson is.
+2. **The quest ends with the third taught** (`done`, a member of the class with the third), its last
+   goal the way back; `teaches.done` is the deed, so the trainer teaches once it is done.
+3. **No pay and no fight of the quests' own:** the prestige is the pay, and the fights are the
+   places', so the gate, density and curve figures do not move.
+4. **The Paladin's fights are the husks' at 25,** the street's and the cellars', not 26: a fight of
+   the dead at 26 needs a monster at 26, which is new, and the brief places none (§11).
+5. **The lamp is lit by a once event** (`oc2_relit`, `after` the ask) with the old man's oil and flint,
+   given in his words, not as items; the cold line goes `until` it is lit, the burning `after`.
+6. **The Barbarian's kill is the Brood Drake** (`mc2_brood`): it nests there, on its eggs, and never
+   comes back, so its death stays held; the drakelings round it come back, and a `slain` would not.
+7. **Killed before the ask, the drake still counts:** the quest is done at the asking, and the heir's
+   last words follow at the next meeting.
+8. **The seedling is planted in the Stone's bed,** which #516 left for it, not at the outcrop: a
+   person with no face there takes it, as the sockets take the parts, only once it is carried.
+9. **The seedling is given by a person with no face in the Grove's hollow** (Thornmark's 3,27), only
+   once asked and once: a chest would give it unasked, and an event cannot give an item.
+10. **Nothing withers the seedling:** the engine keeps no clock on an item or a flag and a quest no
+    time, so 'alive until' is the planting and `q_ember_lit` read after it, in either order (§11).
+11. **The trainers keep their names and first words;** the seeking goal reads "Find An old
+    Lightbearer in The Ember Waste.", in the system's words, as High Moor's piper's does.
+12. **The walkthrough plays the three on a company of 27** with its seconds taken, a barbarian and a
+    druid in for its ranger and thief; the Ember Stone's walk now finds its sockets by their parts.
+
 ## 10. Names
 
 Ashfall's naming pass, by the rules of `docs/NAMES.md`, chosen for #444. Cindercoast's folk came
@@ -2296,8 +2337,8 @@ Owed, from G11 (#513):
 - **The sentry's first placing is taken from F11** for G11's top (§7, §9, #513's 10): F11 (#514)
   met the curve's top rule too and holds its top in two sentries together after the Stone (§9,
   #514's 10); the roster answers it only with a sentry after the Stone or #22's drakeling.
-- **The warlord's heir and the scavenger have words only:** the Barbarian's trainer entry and quest
-  are #448's, and #56's 52 is #519's (§9, #513's 7).
+- **The scavenger has words only:** #56's 52 is #519's (§9, #513's 7). The warlord's heir teaches
+  the Barbarian's third since #448 (§6).
 
 Owed, from F11 (#514):
 
@@ -2318,15 +2359,15 @@ Owed, from F11 (#514):
 - **The first sentry's part is not given** (§5, §9, #514's 18): a def's drop would give every sentry
   it, G11's too, and the part is unnamed. #516 names none and gives only the Sentinel's; the
   chapter's builder (#518) decides whether and how.
-- **The old Lightbearer and the hermit have words only:** the Paladin's trainer entry and quest on
-  the Lightbearer, at 18,5, are #448's (§9, #514's 6 and 14).
+- **The hermit has words only** (§9, #514's 14). The old Lightbearer at 18,5 teaches the Paladin's
+  third since #448 (§6).
 - **MONSTERS' Where column** for the husk (F11's rim, by night) is a pull request of its own, if the
   owner wants it (§7).
 
 Owed, from F10 and E10 (#517):
 
-- **The Archdruid's trainer entry and the Druid's quest** on him are #448's: he stands in the
-  outcrop's lee at F10's 6,3, words only (§9, #517's 4).
+- **The Archdruid's trainer entry and the Druid's quest** are built (#448, §6): he stands in the
+  outcrop's lee at F10's 6,3 (§9, #517's 4).
 - **The sentries** `after` the Stone, one group on each box's road at the band's top, 26, are
   #449's: neither box places one (§9, #517's 2).
 - **The Wold's line is said where D10 is crossed** (#527): E10, the Waste's land, says the Waste's
@@ -2375,8 +2416,8 @@ Cut and owed, from Old Cinder (#515):
 - **The issue's own secret is not built:** a house whose door the ash did not fill, a cup set outside
   it, and the Old Drake's way down from the crater into the undercroft. The doc's secret is, and the
   Old Drake stays on the square (§4.7).
-- **The lamp is not relit:** `oc2_lamp` is inert for #448, with the Paladin's third. The Paladin's
-  trainer entry and quest are #448's (§9, #515's 10).
+- **The lamp is relit only by the Paladin's third** (#448, §6): `oc2_lamp` is cold until then (§9,
+  #515's 10).
 - **The hand-in and the potter:** #516's sockets take `ember_part2` with the other two (§9, #516's
   6), and #519's potter takes `founding_stone` (§9, #515's 12).
 - **MONSTERS' Where column for the Old Drake** and the figure in its §4 (35% at 26) predate this: the
@@ -2408,7 +2449,7 @@ Cut and owed, from the Ember Stone (#516):
   Lusk's already, and the town's words are not touched for it. The issue's own secret, the chamber's
   maker's mark, the same as the Deep Mines' door's, hinted by a reader, is its first draft; the
   doc's, the lower gallery, is built (§9, #516's 10).
-- **The seedling's bed is words only:** the Druid's seedling at `es_bed` (14,8) is #448's (§9,
+- **The seedling's bed takes the Druid's seedling** since #448 (§6); before it, words only (§9,
   #516's 12).
 - **The chapter reads `q_ember_lit`:** its Stone lit step and the road on are #518's, and so are the
   sentries' parts (F11's, §9, #514's 18).
@@ -2419,3 +2460,9 @@ Cut and owed, from the Ember Stone (#516):
 - **MONSTERS §8.2's Where column for the Sentinel** and its figure there (54% at 26) predate this,
   and DESIGN §8's table of Act IV's guild quests still reads *the Ember Stone (#516)* for the
   Surveyor's rung, not built. A pull request of its own, if the owner wants either.
+
+Owed, from #448's Ashfall three:
+- **The Paladin's fights are at 25,** not the 26 DESIGN §5 asks of a third's quest in country under
+  27: a monster of the dead at 26 is a new monster, #18's or the roster's to draw (§9, #448's 4).
+- **Nothing withers the Druid's seedling:** one that dies by the days wants a clock on a flag, which
+  the engine does not keep; a system's pull request, if the owner wants it (§9, #448's 10).
