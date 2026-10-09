@@ -645,7 +645,8 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   teaches Linguist to a Lantern (#538). Thane Wolfram puts the Stone at 6,000 gold or taken, the
   price barred to a company with less, and sets `anvil_bought` or `anvil_taken`; his last word is the
   brief's either way. Gerda at the forge and Konrad, the gate's warder, change their words with the
-  choice; Ilse cuts the old script fresh over the mine-surgeon's door. Four doors and the gate carry
+  choice; Ilse cuts the old script fresh over the mine-surgeon's door and, to a company carrying The
+  Older Mark's rubbing (#56's 16), reads it by its strokes (#637, §9). Four doors and the gate carry
   an inscription: SECTION 7. over the gate, BERTHS. over the inn, SICKBAY. over the mine-surgeon's,
   MUSTER STATION. ALL HANDS. over the old working and the verse over the hall. The side quests'
   people are #471's (§6), on the court's free squares: the oldest miner on the bench by the inn's
@@ -1393,8 +1394,8 @@ choice goes (§9, #471's 1).
 - **The Primer.** The Regent's scholar buys children's primers of Kiln-script at Anvilhall and
   copies the wall at Erzkamm that says KEEP CLEAR OF THE DOORS. Handed to the thane, he is kept;
   his copybook taken, the company carries an item that reads inscriptions as a Linguist does while
-  carried (#538), and reads #56's 16's rubbing. He does not say who he copies for: the primers are
-  wrapped in Helmstow paper, seen.
+  carried (#538). It reads no rubbing: #56's 16's is read by Ilse at Anvilhall (#637). The scholar
+  does not say who he copies for: the primers are wrapped in Helmstow paper, seen.
 - **A Crown to Order.** The smiths at Gluthutte are making a crown under THE FIRE IS KEPT BELOW,
   paid in shards, for Jory Tallis, whose man waits at Kilnhaven for it. Told, the thane stops it and
   keeps the shards; let go, the crown sails and Tallis owes the company, a flag the Empty Throne
@@ -1785,7 +1786,7 @@ Decided by delegate for #538, each the owner's to overturn:
 12. **The copybook is any item with `skill: 'linguist'`,** tested with a fixture until #471 builds
     the Primer's (built since: #471). A carried thing's own Kiln-script (34's rubbing) is not built:
     an item would want a reading of its own, a few lines in the systems lane, for #471 to ask for
-    (it did not: §11).
+    (it did not: §11). A dwarf's line reads it instead, in the area lane alone (built since: #637).
 13. **The line check hears an inscription as a reader with a ten-letter name does the first time:**
     its words, reading and mark said together, which Feuerstollen's brief (§4.11) fills exactly.
 14. **The novelty check names the new mechanics** `sign:read` and `sign:marks`, for §7's claim.
@@ -2673,7 +2674,8 @@ Decided by delegate for #471, each the owner's to overturn:
 5. **The scholar is at the wall from a new game,** as #460 built him, and in Anvilhall only kept,
    so one man never stands in two places; the thane's own words are not touched (the chapter's).
 6. **The copybook reads every inscription as a Linguist does while carried** (#538). #56's 16's
-   rubbing is no inscription and is taken at Henlys, so it reads nothing there: Thornmark's lane.
+   rubbing is no inscription and is taken at Henlys, so it reads nothing there: Thornmark's lane
+   (built since as Ilse's line at Anvilhall: #637).
 7. **A Crown to Order's question is the smith's,** the crown done a week and no carter come, which
    is why Wiebe's parcel is late. Told, the thane's men take it off-stage, as the words after say.
 8. **The flag the Council reads is `q_crown_sailed`** (`TALLIS_OWES`), set by Wiebe's hand-in:
@@ -2686,6 +2688,22 @@ Decided by delegate for #471, each the owner's to overturn:
     had him (#461's 6 left him here). The son, the miner and the scholar keep the brief's names.
 12. **Nothing in `tools/tests/quests.ts` was owed to #471:** what it owed was #470's (`PLANNED`,
     `CHAPTER_OWED`), so no entry of #471's is dropped. The ids: `crust`, `primer`, `crown`, `hymn`.
+
+Decided by delegate for #637, each the owner's to overturn:
+
+1. **The dwarf is Ilse,** who cuts the old script over the mine-surgeon's door: old, a stonecutter and
+   a keeper of strokes ("stroke for stroke as they were"). No new person; the Lantern reader reads words.
+2. **The mark's words are what a cutter finds,** not what it means: every stroke is one she cuts; hers
+   waver and these do not; whoever cut it was not copying. The Older Mark is older than Kiln-script, and
+   she is a reader of cut marks and no more (#56's "reads it as Kiln-script", kept to its strokes).
+3. **Her line is held `after: { item: 'stone_rubbing' }`** and said at every meeting while the rubbing
+   is carried; it sets `q_mark_read`, which only the journal reads (added to `shipped.json`). A company
+   without the rubbing hears her own words, and the copybook still reads no rubbing (#471's 6).
+4. **The journal edit is two entries in Thornmark's `mark`:** the kept one names Anvilhall, in the Iron
+   Fells (a company has not met Ilse), and a last one, on `q_mark_kept` and `q_mark_read`, gives her
+   finding. The quest still ends at the answer, so a done quest shows no goal and none is added.
+5. **Nothing else moves:** no map square, group, monster or pay, so no gate, density or curve figure
+   (§8) changes; the walkthrough plays Ilse with the rubbing and without it.
 
 ## 10. Names
 
@@ -2748,7 +2766,7 @@ are built, and what waits is owed to another, the first level's two-under figure
 
 From the side quests' briefs (§6, #471): the crust-bearer left below, sending a note up, since he
 comes up and the scraps at the well are his notes (#471's 2); and the copybook's reading of #56's
-16's rubbing, which is no inscription, owed to Thornmark if the owner wants it (#471's 6).
+16's rubbing, which is no inscription (#471's 6), built since as Ilse's line at Anvilhall (#637).
 
 Owed by the Kilns as built, every box, town and dungeon of the road being in (#456):
 
