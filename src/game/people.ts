@@ -1,7 +1,7 @@
 // The people the party talks to: what a person says, what a hand-in takes and pays and the
 // questions they put. It depends on the person, the party and which of their words hold (`heard`),
 // so the tests meet anyone as the game does, without a Game.
-import type { Feature, NpcQuest, Words, Choice, Answer } from './map.ts';
+import type { Feature, NpcQuest, Words, Choice, Answer, EncounterDef } from './map.ts';
 import type { Party } from './party.ts';
 import type { World } from './world.ts';
 import { countItem, takeItem, payXp } from './party.ts';
@@ -25,6 +25,9 @@ export function personFlags(p: Person): string[] {
   return [...list(p.flag), ...handIns(p).map((q) => q.setFlag), ...(p.says ?? []).flatMap((w) => list(w.sets)), ...choices(p).flatMap((c) => c.answers.flatMap((a) => list(a.sets)))];
 }
 
+/** Every flag a group's question can set (#544). */
+export const groupFlags = (e: Pick<EncounterDef, 'choice'>): string[] => (e.choice?.answers ?? []).flatMap((a) => [...list(a.sets)]);
+
 /** Every item a person hands the company, by an answer. */
 export const personGives = (p: Person): string[] => choices(p).flatMap((c) => c.answers.flatMap((a) => (a.gives ? [a.gives] : [])));
 
@@ -38,9 +41,10 @@ export const heard = (world: Pick<World, 'walks' | 'ended'>, p: Person) => (w: W
 export const readText = (id: string): readonly string[] | undefined => item(id).text;
 
 const set = (party: Party, flags: string | readonly string[] | undefined): void => { for (const f of list(flags)) party.flags[f] = 1; };
-/** A question is put until one of its answers has set its flags. */
-const open = (c: Choice | undefined, party: Party): Choice | undefined =>
-  c && !c.answers.some((a) => list(a.sets).length > 0 && list(a.sets).every((f) => party.flags[f])) ? c : undefined;
+/** Whether an answer has been given: it sets flags, and the company holds them all. */
+export const given = (a: Answer, party: Pick<Party, 'flags'>): boolean => list(a.sets).length > 0 && list(a.sets).every((f) => party.flags[f]);
+/** A question is put until one of its answers has set its flags: a person's, and a group's (#544). */
+export const open = (c: Choice | undefined, party: Pick<Party, 'flags'>): Choice | undefined => (c && !c.answers.some((a) => given(a, party)) ? c : undefined);
 
 /**
  * Meet a person: change the party as the meeting does and return the words. In order: a hand-in
@@ -73,29 +77,33 @@ export function meet(p: Person, party: Party, holds: (w: Words) => boolean): Mee
  * 660 experience, A Sealed Letter.)"; none if nothing.
  */
 export function answerNote(a: Answer): string[] {
-  const what = [a.price ? `${a.price} gold paid` : '', a.pay?.gold ? `${a.pay.gold} gold` : '', a.pay?.xp ? `${a.pay.xp} experience` : '', a.gives ? item(a.gives).name : ''].filter(Boolean);
+  const what = [a.price ? `${a.price} gold paid` : '', a.takes ? `${item(a.takes).name} given` : '', a.pay?.gold ? `${a.pay.gold} gold` : '', a.pay?.xp ? `${a.pay.xp} experience` : '', a.gives ? item(a.gives).name : ''].filter(Boolean);
   return what.length ? [`(${what.join(', ')}.)`] : [];
 }
 
 /** An answer as the choice screen lists it: its label, and its price where it has one, as a ware's. */
 export const answerLabel = (a: Answer): string => (a.price ? `${a.label}\t${a.price}g` : a.label);
 
-/** Whether an answer's price is more than the company has: the choice screen bars it. */
-export const barred = (a: Answer, party: Party): boolean => (a.price ?? 0) > party.gold;
+/** Whether an answer's price is more than the company has, or it takes an item nobody carries: the choice screen bars it. */
+export const barred = (a: Answer, party: Party): boolean => (a.price ?? 0) > party.gold || (!!a.takes && countItem(party, a.takes) === 0);
 
 /** A question as the choice screen puts it: with the purse after it where an answer has a price, as a shop's is. */
 export const asked = (c: Choice, party: Pick<Party, 'gold'>): string => (c.answers.some((a) => a.price) ? `${c.ask} (${party.gold} gold.)` : c.ask);
 
 /** Said for an answer the company cannot pay for, which changes nothing. */
 export const SHORT = 'You cannot afford it.';
+/** Said for an answer that takes an item nobody carries, which changes nothing. */
+export const NONE = 'You have none to give.';
 
 /**
- * Answer a person's question: pay its price, set its flags, hand over its item, pay and return what
- * the person says. Short of the price, nothing changes, and it says so.
+ * Answer a person's question, or a group's: pay its price, take its item, set its flags, hand over
+ * its item, pay and return what is said. Short of the price or the item, nothing changes, and it
+ * says so.
  */
 export function answer(a: Answer, party: Party): string {
-  if (barred(a, party)) return SHORT;
+  if (barred(a, party)) return (a.price ?? 0) > party.gold ? SHORT : NONE;
   party.gold -= a.price ?? 0;
+  if (a.takes) takeItem(party, a.takes);
   set(party, a.sets);
   if (a.gives) party.bag.push(a.gives);
   party.gold += a.pay?.gold ?? 0;

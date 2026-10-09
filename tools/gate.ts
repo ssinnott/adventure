@@ -18,7 +18,7 @@
 // anything else. It reads the fight as it stands each turn, the groups called into it too. It wakes a
 // sleeper of the front row, or a caster, before it strikes. It never sleeps, blesses, drinks or flees,
 // nor cures anything but sleep, so it is weaker than a player; single fights at full health are
-// kinder than play.
+// kinder than play. A group that asks before it fights (#544) it refuses, and fights.
 // Read the numbers as where the fights bite, not as a promise. tools/tests/gate.ts holds every map
 // and area to them (the gate check); it imports this file, whose table runs only from the command
 // line.
@@ -34,7 +34,8 @@ import { spell } from '../src/game/spells.ts';
 import type { SpellDef, SpellTarget } from '../src/game/spells.ts';
 import { MAP_DEFS } from '../src/content/index.ts';
 import { companyAt, wakeWith, markOf } from './harness.ts';
-import type { EncounterDef } from '../src/game/map.ts';
+import type { EncounterDef, Answer } from '../src/game/map.ts';
+import { answer, barred } from '../src/game/people.ts';
 
 /**
  * The premade company, every member trained to `level`, dressed by the ladder and with the prestiges
@@ -71,6 +72,23 @@ export function gateFight(p: Party, monsters: Fighters, seed: number, cap = Infi
     if (t.side === 'monster') monsterAct(s, p, rng); else gateTurn(s, p, rng, t.i);
   }
   return s.outcome === 'victory';
+}
+
+/**
+ * A group's question as the bot answers it (#544; the full bot is #549's): it refuses, so the gate
+ * measures the fight. None for a group that asks nothing.
+ */
+export const gateAnswer = (g: Pick<EncounterDef, 'choice'>): Answer | undefined => g.choice?.answers.find((a) => a.fight);
+
+/**
+ * The walk past a group that asks: the first answer that does not fight and the company can give,
+ * given (its price paid, its item handed over, its flags set), and true. False, and nothing changes,
+ * when it can give none: then the group is fought.
+ */
+export function gatePass(p: Party, g: Pick<EncounterDef, 'choice'>): boolean {
+  const a = g.choice?.answers.find((x) => !x.fight && !barred(x, p));
+  if (a) answer(a, p);
+  return !!a;
 }
 
 /** The damage spell the bot would cast at the fight's first foe, or its mark: none if it can afford none worth casting. */
