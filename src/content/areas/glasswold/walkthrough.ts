@@ -17,19 +17,36 @@
 // north edge, toward Akordu; the herd and its herder, the old Rider and the first words of the day the
 // sky opened; the kills, the lions' lie, the dunes' cairn, the Glass seen from the dunes and the walker's
 // tracks across their edge; the box's groups won at 26; and the fallen walker in the long mound, found
-// from the grass the herd will not graze.
+// from the grass the herd will not graze. Akordu, the Riders' camp (D8, #526): up the Riders' track over
+// the seam into the ring of tents under the mesa; a rest at the camp's fires; the eldest's story, told
+// once; the trader's tent, its consumables, the stone's cure and the Riders' leather bought at list; the
+// ride from the horse-lines to Cinderport's gate and back; the shrine, the wells, the horse that came
+// back, the garden of glass and the camp's people, words only; the box's groups won at 26; and the
+// Riders' hoard behind the dry well with no rope. The Scarp's edge (C8, #528): up the Scarp stair from
+// the Saltings' notch, past the fall by the rope ladder and up the flights onto the lip, at 12, 25 and 26,
+// the Wold's line said at the stair's head as each would hear it, and down again; the Rider's warning at
+// the head, the runner on the last flight and the two Riders at the watch, words only; the watch's cairn,
+// yurt and fire; the view down over the Saltings and the rest of the box seen; its groups won at 26;
+// the Compact's last three drops in the cleft under the lip, found from a horse's prints; and over the
+// east edge into Akordu's box, one land.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen } from '../../../../tools/walk.ts';
 import { NORTH, EAST, SOUTH, WEST } from '../../../game/types.ts';
 import { addCondition, hasCondition, lift, templePrice } from '../../../game/party.ts';
 import { AREAS, AHEAD, ATLAS, MAP_DEFS, MONSTERS } from '../../index.ts';
-import { PLANNED } from '../../progression.ts';
+import { PLANNED, CURVE } from '../../progression.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { restRefused, useShrine } from '../../../game/wilds.ts';
 import { meet, heard } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
-import { item } from '../../../game/items.ts';
+import { buy, item } from '../../../game/items.ts';
+import type { Feature } from '../../../game/map.ts';
+import { take as ride } from '../../../game/passage.ts';
+import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
+import { RIDERS_RIDE } from '../../crossings.ts';
+import { CURES } from '../ashfall/items.ts';
+import { STORY } from './maps/wold_d8.ts';
 
 export const walkthrough: Walkthrough = (ok) => {
   const w = newWalk(ok);
@@ -58,7 +75,7 @@ export const walkthrough: Walkthrough = (ok) => {
   // under it at 104,286, the zone's way in and first on its row (#527).
   const D10 = MAP_DEFS.find((d) => d.id === 'wold_d10')!, d10 = out.zones.find((z) => z.id === 'wold_d10')!;
   ok(AREAS.some((a) => a.id === 'glasswold') && !AHEAD.length && !(PLANNED as readonly string[]).includes('glasswold')
-    && WOLD.maps?.map((m) => `${m.map} ${m.at.join(',')}`).join() === 'wold_d10 104,286,wold_d9 104,254' && d9.x === 104 && d9.y === 254 && d10.x === 104 && d10.y === 286
+    && WOLD.maps?.slice(0, 2).map((m) => `${m.map} ${m.at.join(',')}`).join() === 'wold_d10 104,286,wold_d9 104,254' && d9.x === 104 && d9.y === 254 && d10.x === 104 && d10.y === 286
     && [D9, D10].every((d) => d.density === 'core' && d.band?.join('-') === '26-27' && d.region === 'glasswold'),
     'the Glasswold listed by its first map, the steppe, D9, laid at 104,254 on the Wold, and the mesas, D10, under it at 104,286, the zone\'s way in: core, band 26-27, under its own sky');
 
@@ -266,4 +283,228 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(hollow.kind === 'chest' && hollow.gold > 0 && hollow.items.includes('elixir') && hollow.items.includes('etched_glass') && hollow.x === mound.x - 2 && hollow.y === mound.y
     && item('etched_glass').slot === 'none' && !item('etched_glass').price,
     'in the hollow of his chest gold, an elixir and a piece of etched glass, which no shop buys');
+
+  // Akordu, the Riders' camp (D8, #526): on the Wold's row at 104,222, north of the steppe, core, at
+  // 26-27, the camp on the world map no longer planned.
+  const D8 = MAP_DEFS.find((d) => d.id === 'wold_d8')!, d8 = out.zones.find((z) => z.id === 'wold_d8')!;
+  const ch8 = (x: number, y: number): string => out.at(d8.x + x, d8.y + y).ch;
+  const feature8 = (id: string) => D8.features!.find((f) => 'id' in f && f.id === id)!;
+  const person8 = (name: string): Person => D8.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
+  const says8 = (name: string): string => { const p = person8(name); w.world.travel('wold_d8', p.x, p.y); return meet(p, w.party, heard(w.world, p)).text; };
+  ok(!!WOLD.maps?.some((m) => `${m.map} ${m.at.join(',')}` === 'wold_d8 104,222') && d8.x === 104 && d8.y === 222
+    && D8.density === 'core' && D8.band?.join('-') === '26-27' && D8.region === 'glasswold' && ATLAS.sites.some((x) => x.name === 'Akordu' && !x.planned && x.at.join() === '120,250'),
+    'Akordu\'s box, D8, laid at 104,222 north of the steppe on the Wold: core, band 26-27, and the camp on the world map built');
+
+  // Up the Riders' track from D9's 16,0 over the seam onto D8's 16,31, the box's way in, and on into the
+  // ring of tents under the mesa.
+  w.world.travel('wold_d9', 16, 0, NORTH);
+  const up8 = w.world.move('forward');
+  ok(up8.kind === 'moved' && w.world.zone?.id === 'wold_d8' && w.world.state.x === d8.x + 16 && w.world.state.y === d8.y + 31 && ch8(16, 31) === ':' && D8.start.x === 16 && D8.start.y === 31,
+    'up the Riders\' track from D9\'s 16,0 over the seam onto D8\'s 16,31, the box\'s way in, the track going on into the camp');
+  listen(w);
+  see(w, 'wold_d8:d8_akordu');
+  const camp = D8.features!.find((f) => f.kind === 'camp')!;
+  const felt = D8.rows.join('').split('').filter((c) => c === 'B' || c === 'D').length;
+  ok(w.world.used('d8_akordu') && camp.name === 'Akordu' && Math.abs(camp.x - 16) + Math.abs(camp.y - 28) <= 2 && felt >= 8 && ch8(camp.x, camp.y) === ':',
+    `the white tents of Akordu in their ring under the mesa, ${felt} squares of felt, the camp's fires in the middle on trodden ground`);
+  w.world.travel('wold_d8', camp.x, camp.y);
+  ok(restRefused(w.world) === '', 'and a company may rest at the fires, the Wold\'s rest');
+
+  // The eldest at her fire tells the oldest story on that side of the sea, once (the chapter's step,
+  // #531); after it she says there is more, for those who have earned it (#56's 53, #532's).
+  const eldest = person8('The eldest');
+  w.world.travel('wold_d8', eldest.x, eldest.y);
+  const story = meet(eldest, w.party, heard(w.world, eldest)).text, after = meet(eldest, w.party, heard(w.world, eldest)).text;
+  ok(story.includes('the sky opened') && story.includes('pillar of fire') && story.includes('Remember what that cost') && !!w.party.flags[STORY],
+    'at her fire the eldest tells the oldest story: the day the sky opened, the pillar of fire, the fall and the glass, and what it cost');
+  ok(!after.includes('pillar of fire') && after.includes('earned') && !/hull|ship|orbit|voyage|custodian/i.test(story + after), 'she tells it once, names nothing of what it was, and says the rest is for those who have earned it');
+
+  // The trader's tent, the camp's one business, a door into its room: the band's consumables, the stone's
+  // cure (#546) and the Riders' own leather, at list price, nothing of steel; and nothing else is sold or
+  // taught at Akordu (#443, call 7).
+  const trader = D8.features!.find((f): f is Extract<Feature, { kind: 'shop' }> => f.kind === 'shop')!;
+  const wares = trader.stock.map(item);
+  ok(D8.features!.filter((f) => 'interior' in f && f.interior).length === 1 && trader.interior === 'akordu_trader' && ch8(trader.x, trader.y) === 'D' && !trader.prices
+    && CURES.every((id) => trader.stock.includes(id)) && wares.every((d) => d.slot === 'none' || d.id === 'leather_coat') && trader.stock.includes('leather_coat'),
+    `the trader's tent sells the band's consumables, the stone's cure and the Riders' leather at list price, and nothing of steel (${wares.map((d) => d.name).join(', ')})`);
+  ok(!D8.features!.some((f) => ['inn', 'temple', 'guild', 'trainer'].includes(f.kind) || (f.kind === 'npc' && (f.teaches || f.skill || f.hall || f.quest || f.choice || f.interior))),
+    'the camp sells and teaches nothing else, and nobody at it asks anything yet (#532)');
+  w.party.gold += 5000;
+  const purse = w.party.gold;
+  ok(!!buy(w.party, trader, 'quickening') && !!buy(w.party, trader, 'leather_coat') && purse - w.party.gold === item('quickening').price + item('leather_coat').price,
+    `the Quickening Draught bought for ${item('quickening').price} gold and a Leather Coat for ${item('leather_coat').price}`);
+
+  // The Rider at the horse-lines sells the ride to Cinderport's gate, a fare and a day, open from the
+  // start; the Rider by Cinderport's gate sells it back, and it sets a company down beside him here.
+  const rider = person8('A Rider at the lines'), [east, ...more] = rider.passage ?? [];
+  const lines = RIDERS_RIDE.ends.find((e) => e.at === 'wold')!, gate = RIDERS_RIDE.ends.find((e) => e.at === 'cinderport')!.landing!;
+  ok(!!east && !more.length && east.to === 'cinderport' && east.x === gate.x && east.y === gate.y && east.fare === RIDERS_RIDE.fare && east.days === RIDERS_RIDE.days && east.by === 'horse'
+    && lines.landing?.map === 'wold_d8' && Math.abs(lines.landing.x - rider.x) + Math.abs(lines.landing.y - rider.y) === 1 && !lines.owed,
+    `at the horse-lines a Rider sells the ride to Cinderport's gate, ${east?.fare} gold and ${east?.days} day, and the ride from there sets a company down beside him`);
+  const r = newWalk(ok);
+  for (const m of r.party.members) m.level = 26;
+  r.world.travel('wold_d8', rider.x, rider.y);
+  r.world.state.minutes = Math.floor(r.world.state.minutes / MINUTES_PER_DAY) * MINUTES_PER_DAY + 9 * 60;
+  r.party.gold = RIDERS_RIDE.fare;
+  const day = r.world.day, gone = ride(east, r.world, r.party);
+  ok(gone.taken && r.party.gold === 0 && r.world.state.mapId === 'cinderport' && r.world.state.x === gate.x && r.world.state.y === gate.y && r.world.day === day + 1 && r.world.hour === RIDERS_RIDE.arrives,
+    `the ride leaves at 14:00 and sets the company down inside Cinderport's gate the next morning (${gone.lines.join(' ')})`);
+  const port = MAP_DEFS.find((d) => d.id === 'cinderport')!.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'A Rider by the gate')!;
+  const [west] = port.passage ?? [];
+  ok(!!west && west.to === 'wold_d8' && west.x === lines.landing?.x && west.y === lines.landing.y && west.fare === RIDERS_RIDE.fare, 'the Rider by Cinderport\'s gate sells it back to Akordu\'s horse-lines');
+  r.world.travel('cinderport', port.x, port.y);
+  r.party.gold = RIDERS_RIDE.fare;
+  const back8 = ride(west, r.world, r.party);
+  ok(back8.taken && r.party.gold === 0 && r.world.zone?.id === 'wold_d8' && r.world.state.x === d8.x + lines.landing!.x && r.world.state.y === d8.y + lines.landing!.y && back8.lines.join() === lines.label,
+    `and back, down among the white tents at the horse-lines (${back8.lines.join(' ')})`);
+
+  // Under the mesa its watch-fire seen, a well and the Riders' shrine; the horse-lines and their well; the
+  // horse that came back tethered apart, seen and no more (#56's 51, #532's), and the Rider who would break
+  // what sits it; the young Rider who wants the last blow (#56's 53); the garden of glass at the camp's
+  // east edge, its figures facing south-west, the vultures over it and the mother among them (#56's 55).
+  const shrine = feature8('d8_shrine');
+  w.world.travel('wold_d8', shrine.x, shrine.y);
+  const knelt = w.world.featureHere();
+  ok(knelt?.kind === 'shrine' && shrine.kind === 'shrine' && useShrine(w.world, w.party, knelt)[0] === shrine.text && ch8(shrine.x - 1, shrine.y) === 'r', 'the company kneels at the Riders\' post of tails under the mesa');
+  for (const id of ['d8_watch', 'd8_lines', 'd8_horse', 'd8_garden', 'd8_vultures', 'd8_figure', 'd8_spoor', 'd8_graves', 'd8_shade', 'd8_broken', 'd8_herd', 'd8_poles', 'd8_hill', 'd8_foal', 'd8_skyline']) see(w, `wold_d8:${id}`);
+  const wells = D8.features!.filter((f) => f.kind === 'well'), tethered = feature8('d8_horse'), figures = D8.rows.join('').split('').filter((c) => c === 'c').length;
+  ok(wells.length === 2 && tethered.kind === 'event' && !tethered.sets && figures >= 5 && D8.rows.every((row) => [...row].every((c, x) => c !== 'c' || x > camp.x + 6)),
+    `the wells, the horse that came back tethered apart, and ${figures} figures of glass at the camp's east edge`);
+  const boy = says8('A young Rider'), hammer = says8('A Rider with a hammer'), mother = says8('A woman among the figures');
+  ok(boy.includes('Grey Lion') && boy.includes('last blow') && hammer.includes('break') && mother.includes('basilisk') && D8.features!.every((f) => f.kind !== 'npc' || !f.flag || f.flag === STORY),
+    'the young Rider wants the last blow at the Grey Lion, a Rider waits to break what sits the horse, and the mother\'s son went to look at the basilisk: words only');
+
+  // The groups, none inside the camp, each won at 26: the pride that comes at the horses by night, the
+  // glass scorpions in the broken ground under the mesa's east face, and the basilisk alone in its shade
+  // on the north side, the box's hardest at 27.
+  const g8 = (id: string) => D8.encounters!.find((g) => g.id === id)!;
+  const [lions8, scorpions8, basilisk8] = ['d8_pride', 'd8_scorpions', 'd8_basilisk'].map(g8);
+  ok(D8.encounters!.length === 3 && lions8.monsters.every((m) => m === 'wold_lion') && lions8.monsters.length <= 4 && JSON.stringify(lions8.when) === '{"hours":"night"}'
+    && scorpions8.monsters.every((m) => m === 'glass_scorpion') && basilisk8.monsters.join() === 'basilisk' && MONSTERS.basilisk.level === 27 && ch8(basilisk8.x, basilisk8.y + 1) === 'r'
+    && D8.encounters!.every((g) => !!g.respawn && Math.abs(g.x - camp.x) + Math.abs(g.y - camp.y) >= 12),
+    'none inside the camp: the lions by night, the scorpions under the mesa and the basilisk alone in its shade, at 27');
+  for (const g of D8.encounters!) fight(w, `wold_d8:${g.id}`);
+
+  // The secret: the dry well with no rope against the mesa's foot, searched where its windlass stands
+  // bare; down it the shaft is walled across, and behind the wall the Riders' hoard in a hollow of the
+  // rock. Walked, waded, climbed or floated, the hollow is never reached but down the well.
+  const [dry] = D8.secrets!;
+  ok(dry.hint === 'd8_ropeless' && feature8('d8_ropeless').x === dry.x && feature8('d8_ropeless').y === dry.y + 1, 'the well with no rope stands at the dry well\'s mouth');
+  const inBox8 = (x: number, y: number): boolean => x >= d8.x && x < d8.x + d8.w && y >= d8.y && y < d8.y + d8.h;
+  const walled = spread(d8.x + dry.x, d8.y + dry.y + 1, (x, y) => !(x === d8.x + dry.x && y === d8.y + dry.y) && inBox8(x, y) && out.passable(x, y, { swim: true, climb: true, float: true }) === 'ok');
+  ok(walled.size > 800 && !walled.has(key(d8.x + dry.x, d8.y + dry.y - 1)) && !walled.has(key(d8.x + dry.x - 1, d8.y + dry.y - 1)),
+    `the hollow is shut but for the dry well: none of D8's ${walled.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, 'wold_d8:d8_ropeless');
+  w.world.travel('wold_d8', dry.x, dry.y + 1, NORTH);
+  let dug = false;
+  for (let i = 0; i < 20 && !dug; i++) dug = w.world.search();
+  const down = dug ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(dug && down.every((m) => m.kind === 'moved') && w.world.used('d8_hollow'), 'searched where the windlass stands bare, the dry well goes down to a walled shaft, and behind the wall a hollow in the rock, its things laid in rows');
+  listen(w);
+  const hoard8 = feature8('d8_hoard');
+  ok(hoard8.kind === 'chest' && hoard8.gold > 0 && hoard8.items.join() === 'leather_coat+2' && hoard8.x === dry.x - 1 && hoard8.y === dry.y - 1
+    && item('leather_coat+2').ac === (item('leather_coat').ac ?? 0) + 2 && item('leather_coat+2').price <= CURVE.glasswold.price - 400,
+    `in the hoard ${hoard8.kind === 'chest' ? hoard8.gold : 0} gold and a Leather Coat +2, the Riders' own make, inside the band's window`);
+
+  // The Scarp's edge (C8, #528): on the Wold's row at 72,222, west of Akordu's box, country, at 26-27.
+  const C8 = MAP_DEFS.find((d) => d.id === 'wold_c8')!, c8 = out.zones.find((z) => z.id === 'wold_c8')!;
+  const C7 = MAP_DEFS.find((d) => d.id === 'saltings_c7')!, c7 = out.zones.find((z) => z.id === 'saltings_c7')!;
+  const chC8 = (x: number, y: number): string => out.at(c8.x + x, c8.y + y).ch;
+  const featureC8 = (id: string) => C8.features!.find((f) => 'id' in f && f.id === id)!;
+  const personC8 = (name: string): Person => C8.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
+  ok(!!WOLD.maps?.some((m) => `${m.map} ${m.at.join(',')}` === 'wold_c8 72,222') && c8.x === 72 && c8.y === 222 && c8.x + c8.w === d8.x && c7.x === c8.x && c7.y + c7.h === c8.y
+    && C8.density === 'country' && C8.band?.join('-') === '26-27' && C8.region === 'glasswold',
+    'the Scarp\'s edge, C8, laid at 72,222 on the Wold, west of Akordu\'s box and under the Saltings\' C7: country, band 26-27');
+
+  // Up the Scarp stair as a company from the Saltings climbs it: from the notch at C7's 8,22, past the
+  // fall by the rope ladder and up the flights at column 8, onto C8's lip at 8,0, the stair's last flight,
+  // where the Wold's line is said as the company's level has it (#166), never a wall; on to the head at
+  // 8,1, the box's way in, where a Rider says what hunts here; and down again the same way.
+  const climb = (level: number) => {
+    const c = newWalk(ok);
+    for (const m of c.party.members) m.level = level;
+    c.world.travel('saltings_c7', 8, 22, SOUTH);
+    const flights = Array.from({ length: 9 }, () => c.world.move('forward')), top = c.world.move('forward');
+    return { c, flights, said: top.kind === 'moved' ? top.messages : [] };
+  };
+  const twelve = climb(12), lip = twelve.said.find((m) => m.startsWith('The Wold'));
+  ok(twelve.flights.every((m) => m.kind === 'moved') && twelve.c.world.zone?.id === 'wold_c8' && twelve.c.world.state.x === c8.x + 8 && twelve.c.world.state.y === c8.y
+    && chC8(8, 0) === '"' && C7.rows.slice(23).every((row) => row[8] === '"') && (C7.features!.find((f) => 'id' in f && f.id === 'c7_stair') as { text: string }).text.includes('rope ladder'),
+    'from the notch at C7\'s 8,22 the company climbs past the fall by the rope ladder and up the flights at column 8, onto C8\'s lip at 8,0, the stair\'s last flight');
+  const [lineAt25, lineAt26] = [25, 26].map((l) => climb(l).said.find((m) => m.startsWith('The Wold')));
+  ok(lip === `The Wold. ${WOLD.crossing!.warning}` && lineAt25 === `The Wold. ${WOLD.crossing!.harder}` && lineAt26 === 'The Wold.',
+    `the Wold's line at the stair's head: at 12, two acts early, "${lip}"; at 25, "${lineAt25}"; at 26, "${lineAt26}"`);
+  const head = twelve.c.world.move('forward'), warned = featureC8('c8_line');
+  ok(head.kind === 'moved' && twelve.c.world.state.y === c8.y + 1 && warned.kind === 'event' && head.messages.includes(warned.text) && warned.x === C8.start.x && warned.y === C8.start.y && C8.start.x === 8 && C8.start.y === 1,
+    `at the stair's head, the box's way in, a Rider at the watch says what hunts here, a warning and not a wall (${warned.kind === 'event' ? warned.text : ''})`);
+  twelve.c.world.travel('wold_c8', 8, 1, NORTH);
+  const downStair = Array.from({ length: 11 }, () => twelve.c.world.move('forward'));
+  ok(downStair.every((m) => m.kind === 'moved') && twelve.c.world.zone?.id === 'saltings_c7' && twelve.c.world.state.x === c7.x + 8 && twelve.c.world.state.y === c7.y + 22,
+    'and down again the same way to the notch: the stair is open both ways');
+
+  // The runner on the top flight and the two Riders at the watch, words only (#56's 54 is #532's); the
+  // watch's cairn, yurt and fire at the head, where a company may rest.
+  const runner = personC8('A Compact runner'), watch = personC8('The Riders at the watch');
+  w.world.travel('wold_c8', runner.x, runner.y);
+  const ran = meet(runner, w.party, heard(w.world, runner)).text;
+  w.world.travel('wold_c8', watch.x, watch.y);
+  const asked = meet(watch, w.party, heard(w.world, watch)).text;
+  ok(runner.x === 8 && runner.y === 0 && ran.includes('Dead-Drop') && asked.includes('business') && asked.includes('Akordu')
+    && !C8.features!.some((f) => f.kind === 'npc' && (f.flag || f.quest || f.choice || f.teaches || f.skill || f.hall || f.interior || f.passage)),
+    'on the last flight a Compact runner getting her wind, and at the head two Riders who ask the company\'s business and send it on to Akordu: words only');
+  const campC8 = C8.features!.find((f) => f.kind === 'camp')!, cairnC8 = featureC8('c8_cairn');
+  w.world.travel('wold_c8', campC8.x, campC8.y);
+  ok(restRefused(w.world) === '' && cairnC8.kind === 'cairn' && cairnC8.gold > 0 && C8.rows.join('').split('').filter((c) => c === 'B').length === 1
+    && [campC8, cairnC8, watch].every((f) => Math.abs(f.x - 8) + Math.abs(f.y - 1) <= 3),
+    'the watch\'s cairn, its yurt and its fire at the stair\'s head, where a company may rest');
+
+  // The lip, the view down over the Saltings and the updraught; the grass running south and east to
+  // Akordu, the runner's satchel, the pride's lie, the old skull, the herd's grazing and the glare of the
+  // Glass to the south; and the lion of glass in the basilisks' hills.
+  const lipSeen = ['c8_view', 'c8_lip', 'c8_updraught'], grass = ['c8_smoke', 'c8_post', 'c8_satchel', 'c8_lie', 'c8_skull', 'c8_grazed', 'c8_glare', 'c8_glassed'];
+  for (const id of [...lipSeen, ...grass]) see(w, `wold_c8:${id}`);
+  ok([...lipSeen, ...grass].every((id) => w.world.used(id)) && lipSeen.every((id) => featureC8(id).y <= 2) && chC8(featureC8('c8_glassed').x + 1, featureC8('c8_glassed').y + 1) === '^',
+    'from the lip the Scarp sheer to the pans below, and the grass seen running south and east to Akordu');
+
+  // The groups, each won at 26 and none within twelve steps of the head: the vultures on the lip's
+  // updraught, the pride at its lie in the grass with vultures over it, and the two basilisks in the
+  // hills at the box's east, the hardest at 27.
+  const gC8 = (id: string) => C8.encounters!.find((g) => g.id === id)!;
+  const [vulturesC8, prideC8, basilisksC8] = ['c8_vultures', 'c8_pride', 'c8_basilisk'].map(gC8);
+  ok(C8.encounters!.length === 3 && vulturesC8.monsters.every((m) => m === 'vulture') && vulturesC8.y <= 4
+    && prideC8.monsters.filter((m) => m === 'wold_lion').length === 4 && basilisksC8.monsters.every((m) => m === 'basilisk') && chC8(basilisksC8.x, basilisksC8.y) === '^' && basilisksC8.x >= 24
+    && C8.encounters!.every((g) => !!g.respawn && Math.abs(g.x - C8.start.x) + Math.abs(g.y - C8.start.y) >= 12),
+    'the vultures on the lip\'s updraught, the pride in the grass and the basilisks in the hills at the box\'s east, at 27; none within twelve steps of the stair\'s head');
+  for (const g of C8.encounters!) fight(w, `wold_c8:${g.id}`);
+
+  // The secret: a horse's prints along the lip, shod, where no Rider rides, to a rock east of the stair's
+  // head, searched where they turn back; behind it a dry cleft under the lip and the Compact's last three
+  // drops, gold and a letter nobody on the Wold can read. Walked, waded, climbed or floated, the cleft is
+  // never reached but through its mouth.
+  const [cleft] = C8.secrets!, prints = featureC8('c8_prints');
+  ok(cleft.hint === 'c8_prints' && prints.x === cleft.x && prints.y === cleft.y + 1 && cleft.x > C8.start.x && cleft.y <= 2,
+    'the horse\'s prints along the lip come to a rock east of the stair\'s head');
+  const inBoxC8 = (x: number, y: number): boolean => x >= c8.x && x < c8.x + c8.w && y >= c8.y && y < c8.y + c8.h;
+  const shutC8 = spread(c8.x + cleft.x, c8.y + cleft.y + 1, (x, y) => !(x === c8.x + cleft.x && y === c8.y + cleft.y) && inBoxC8(x, y) && out.passable(x, y, { swim: true, climb: true, float: true }) === 'ok');
+  ok(shutC8.size > 900 && !shutC8.has(key(c8.x + cleft.x, c8.y + cleft.y - 1)) && !shutC8.has(key(c8.x + cleft.x + 1, c8.y + cleft.y - 1)) && chC8(cleft.x, cleft.y - 2) === 'r',
+    `the cleft is shut but for its mouth, its rock between it and the Scarp: none of C8's ${shutC8.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, 'wold_c8:c8_prints');
+  w.world.travel('wold_c8', cleft.x, cleft.y + 1, NORTH);
+  let foundC8 = false;
+  for (let i = 0; i < 20 && !foundC8; i++) foundC8 = w.world.search();
+  const intoCleft = foundC8 ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(foundC8 && intoCleft.every((m) => m.kind === 'moved') && w.world.used('c8_cleft'), 'searched where the prints turn back, the rock gives on a dry cleft under the lip, three bundles on a ledge sealed in black wax');
+  listen(w);
+  const drops = featureC8('c8_drops');
+  ok(drops.kind === 'chest' && drops.gold > 0 && drops.items.join() === 'cipher_letter' && drops.y === cleft.y - 1 && Math.abs(drops.x - cleft.x) === 1
+    && item('cipher_letter').slot === 'none' && !item('cipher_letter').price,
+    `the Compact's last three drops: ${drops.kind === 'chest' ? drops.gold : 0} gold and a Letter in Cipher, which nobody on the Wold reads and no shop buys`);
+
+  // Over the east edge the grass runs on into Akordu's box, one land, and nothing is said.
+  const across = newWalk(ok);
+  for (const m of across.party.members) m.level = 26;
+  across.world.travel('wold_c8', 31, 5, EAST);
+  const over = across.world.move('forward');
+  ok(over.kind === 'moved' && across.world.zone?.id === 'wold_d8' && !over.messages.some((m) => m.startsWith('The Wold')),
+    'over C8\'s east edge the grass runs on into Akordu\'s box, one land, and nothing is said');
 };
