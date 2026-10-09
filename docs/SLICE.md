@@ -111,20 +111,22 @@ DESIGN.md first for the why.
   `q_tide_home` holds, which the plinth at Stienwierde sets as it takes the Stone (#191); the Grove
   once a Lantern has mended it, `q_grove_mended`, which nothing sets yet (#56); the Anvil Stone once
   the Warden of the Anvil has fallen and its tear is closed, bought back or taken alike,
-  `q_anvil_closed` (#540), which the Rift sets once its Warden falls (#465); the rest as their areas
-  write them. By night, outdoors and in a town, the Hearth stands over the far hills in its true
-  bearing from the party, faint from the first night and taller and brighter by a step for each
-  Stone. The title reads the save in storage and draws its column steadier, taller and wider by a
-  step; the world map's flickers less; the almanac adds a word on it once one is restored. The Tide
-  Stone and the Anvil Stone can be restored so far.
-- **Crossings** (`game/passage.ts`, #164): a person may sell passage by coach or by boat (`passage`,
+  `q_anvil_closed` (#540), which the Rift sets once its Warden falls (#465); the Ember Stone once it
+  is lit, its three parts set, `q_ember_lit` (#548), which its dungeon will set (#516, not built
+  yet); the rest as their areas write them. By night, outdoors and in a town, the Hearth stands over
+  the far hills in its true bearing from the party, faint from the first night and taller and
+  brighter by a step for each Stone. The title reads the save in storage and draws its column
+  steadier, taller and wider by a step; the world map's flickers less; the almanac adds a word on it
+  once one is restored. The Tide Stone and the Anvil Stone can be restored so far.
+- **Crossings** (`game/passage.ts`, #164): a person may sell passage by coach, by boat or on a
+  Rider's horse, whose terms are the Riders' own (`passage`,
   a list of `Passage`). Their words close onto a menu of the crossings, each with its fare and days,
   then the terms: when it leaves and when it lands, and to a company under the far end's floor the
   seller's warning, never a refusal. A crossing leaves at its hour every day, so a company that buys
   after it waits for the next, and lands its days later at its own hour; the fare is the company's,
   pays its board and lands it rested, as an inn does (the dead stay dead, and no food is eaten).
   Open to anyone with the fare, it is free once its `free` holds. On the world map a boat is a way
-  by sea and a coach a way of its own (`coach`); the gate check counts each landing as a way in, and
+  by sea and a coach or a horse a way of its own (`coach`); the gate check counts each landing as a way in, and
   where a crossing lands in a town, that town's ways out (`landings`, `tools/tests/gate.ts`), and
   the outdoors' walk (`tools/tests/outdoors.ts`) starts from each landing as well. Saltmouth's quay
   sells the boat to Wrackholm's landing and the landing sells it back (#177).
@@ -137,7 +139,11 @@ DESIGN.md first for the why.
   that way built. Kilnhaven's ferry to Saltmouth, the Compact ship to Cinderport and the drove road's
   coach to Rime Lodge are written, and Kilnhaven writes its three landings (#469): the ferry and the
   coach run, each sold at both its ends by its master and its coachman, and the ship waits on
-  Cinderport (#512).
+  Cinderport (#512). Act IV's are written (#547): the ship's Cinderport end, halved there for a
+  member of the Compact; the Rider's ride between Cinderport and Akordu; and the last crossing to
+  Hearth Isle. An end may be a zone, a camp or a shore, landing on the map of the box that holds it,
+  and a link to a zone sold both ways is drawn as built too. All three wait on Cinderport (#512),
+  and the far ones on Akordu (#526) and Hearth Isle (Phase 1.5).
 - **Kiln-script and the secondary skills** (`game/inscriptions.ts`, `game/skills.ts`, #538; DESIGN
   §5, §9): a sign with a second text (`read`) is an inscription. Its words are said to every
   company, and its reading after them only to one with a reader, as `<name> reads: "<reading>"`:
@@ -371,7 +377,9 @@ Pillar 4 says the world has a clock. It now has a year and a sky as well.
   (`EncounterDef.when`), only after a step (`after`), or stop coming back once something holds
   (`until`, the quest log's conditions). Out of its hours it is not there, not drawn, fought or in
   the way, and comes back where it stood. Nothing new is saved: the clock, the weather and the save
-  already hold all they read. Thornmark's Rift stops coming back once the Warden of the Cut is dead.
+  already hold all they read. Thornmark's Rift stops coming back once the Warden of the Cut is dead,
+  and Ashfall's sentries wait on the Ember Stone's flag, `q_ember_lit`, as its boxes place them
+  (#548, #449).
 
 ## The road to level 10
 
@@ -818,7 +826,7 @@ does.
 | `content/progression.ts` | the curve: each area's band, next floor and price window, the xp and gold a clear should give, and what is owed; checked by `tools/tests/curve.ts` |
 | `content/rifts/` | the eight Rift templates and the four materials (ember, brine, black glass and slag, MONSTERS §2.1), `rift` for an area to place one by ids, and `RIFT_SAMPLES`, each template dressed once for the tests and the contact sheet (`--rifts`) |
 | `content/stones.ts` | the Wardstones a company may restore, each with its area and the condition it is restored on (or the issue that owes it); held to the atlas by `tools/tests/stones.ts`, read by `game/stones.ts` |
-| `content/crossings.ts` | the crossings between towns, each with its fare, days and hours and its two ends, each end's landing once its town is built (or the issue that owes it), and `sells`, the passages a town's person sells on them; held to the atlas and the towns by `tools/tests/passage.ts` |
+| `content/crossings.ts` | the crossings between towns, or from a town to a camp or a shore in a zone, each with its fare, days and hours and its two ends, each end's landing once its place is built (in a zone, on the box that holds it; or the issue that owes it), and `sells`, the passages a place's person sells on them; held to the atlas and the towns by `tools/tests/passage.ts` |
 | `content/locks.ts` | the story locks (each flag that closes something, where and why) and how many an area and the road may spend; held to by `tools/tests/pillars.ts`, read by nothing in the game. Holds one: Act III's, the Sleepers' Bay's door under Loch Fuar's ice, shut on `q_wenna_up` (#440, docs/areas/rimewater.md §5); the road's first, the pass's flag, went with #40 |
 | `content/maps.ts` | the maps as played: `PLAYED_DEFS`, the outdoors laid out, and `buildMaps` |
 | `content/shipped.json` | what a save may refer to: each played map's size, chests, once-events, the other features spent once, inscriptions read, groups and door squares, the zones' places, the flags, items, spells, monsters, classes, races, conditions and skills; written by `tools/shipped.ts`, held to by `tools/tests/shipped.ts` |

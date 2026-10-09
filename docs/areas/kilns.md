@@ -338,6 +338,8 @@ landings (#469): the ferry's at its steps on the quay, the ship's on the Compact
 coach's in the inn yard. The ferry runs, its master selling it on Kilnhaven's quay and on
 Saltmouth's, and so does the coach, its coachman selling it in the yard and in Rime Lodge's coach
 house (#487); the ship waits on Cinderport (#512), since nothing is sold toward a town not built.
+Its Cinderport end is written (#547): where she ties up, owed to #512, and her fare halved there for
+a member of the Compact (docs/areas/ashfall.md §9).
 
 The systems it waited on were the rest of #432's: ash and pine underfoot (#536, built: ash, `a`, on
 O6, slow going as hills are, and pine, `p`, on M3 and O3, a ground of its own where Sunderwood drew
@@ -1742,7 +1744,7 @@ Decided by delegate for #539, each the owner's to overturn:
    ferry sails at 8 and the ship at 20, as his does, each landing at 16; the coach runs 6 to 12.
 6. **A seller may halve a fare for his own guild at his own end,** and Kilnhaven halves none
    (§4.14). Whether Cinderport halves the ship for the Compact, as docs/areas/ashfall.md §4 has it,
-   is #547's to settle with #512.
+   is #547's to settle with #512 (settled by #547: it does, at Cinderport's end only).
 7. **The atlas's link, sold both ways, is drawn as that way built,** on its course and under its
    name, and not again as planned.
 8. **The gate needs nothing new:** #164's `landings` makes a town a crossing lands in a way into the

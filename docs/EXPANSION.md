@@ -476,7 +476,7 @@ docs/areas/<area>.md                    the area's brief, and what was built
 | The Kilns | 16–18 | ash and pine, built (#536); Kiln-script and Linguist; Kilnhaven's ferry and ship (#432) |
 | Cairnmoor, Rimewater | 18–22 | ice and lying snow as terrain (heather came with Act II; ice came with #536 and lets a group stand on it; lying snow is the maps' snow); regeneration, curse and calls; the drove road's coach; the one story lock the act spends (#432, #440) |
 | The Whitespine | 22–24 | cliffs and peaks, with the road through them, built (#543); a group that talks before it fights; sweep (#442) |
-| Ashfall | 24–26 | the crossing by ship, open from the start; volcano and lava fields, built (#543); sweep with fire; the sentries after the Stone (#442) |
+| Ashfall | 24–26 | the crossing by ship, open from the start; volcano and lava fields, built (#543); sweep with fire (#442); the sentries after the Stone, built (#548) |
 | The Glasswold | 26–28 | steppe and dunes, built (#543); stone and its cure; the Rider's ride to Cinderport; a lava flow sealing the Glass, drawn by the Wold's doc (#442, #523) |
 | Hearth Isle, the Underdeep | 28–32 | the Underdeep's look; the endings |
 | The reach: the Glass, and Glacier Foot with the Vault (DESIGN.md §9) | the cap | glass and dunes; a lava flow sealing the Glass from the Ember Waste; the Vault's new kind of map, the inside of the sky; the atlas marking reach areas beside the road, not on it (its test holds the bands rising along the road, and a reach area's would not); super dungeons of many levels; artifacts |

@@ -580,6 +580,17 @@ Decided by delegate for #542, each the owner's to overturn (docs/areas/ashfall.m
    with a plus, the briefs' Horn Bow or Shield, takes the Ashwood Bow or the Basalt Shield of
    `src/content/areas/ashfall/items.ts`, off the ladder (docs/areas/ashfall.md §9, #542's 6).
 
+Decided by delegate for #547, each the owner's to overturn (docs/areas/ashfall.md §9 has the rest):
+
+1. **Akordu owes the ride its landing and its seller** (#526): a square at the horse-lines, on its
+   end of `RIDERS_RIDE` in `content/crossings.ts` with D8's map as its `map`, and the Rider whose
+   `passage` is `sells('wold', RIDERS_RIDE)`. Once Cinderport lands too, the check wants both ends
+   to sell it.
+2. **The ride is 325 gold and a day** on a Rider's horse, leaving either end at 14 and coming in at
+   9 the next day, by the Wold's floor of 26, the dearer end's. Nobody halves it.
+3. **The camp is a way in once the ride runs:** the gate counts the landing as a way into the Wold
+   (#164's `landings`), so the groups nearest it are held to the zone's gentlest.
+
 ## 10. Names
 
 The Glasswold's naming pass, by the rules of `docs/NAMES.md`: the Wold Riders' tongue was left to

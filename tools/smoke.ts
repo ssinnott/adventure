@@ -69,6 +69,8 @@ const DETACHED: Partial<Record<MonsterSprite, { what: string; pieces: number; sh
   salamander: { what: 'embers', pieces: 3, share: 0.01 },
   great_salamander: { what: 'embers', pieces: 3, share: 0.01 },
   ember_salamander: { what: 'embers', pieces: 3, share: 0.01 },
+  cinder_drake: { what: 'ember plume', pieces: 4, share: 0.01 },
+  old_drake: { what: 'ember plume', pieces: 4, share: 0.01 },
   bog_light: { what: 'motes rising into it', pieces: 2, share: 0.06 },
   ashen_hand: { what: 'embers', pieces: 5, share: 0.01 },
   wraith: { what: 'fading tongue of cloth', pieces: 1, share: 0.01 },
