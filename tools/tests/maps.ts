@@ -23,6 +23,7 @@ const UNPLACED: Record<string, string> = {
   bell_ringer: '#500', abbot: '#500', ashen_mason: '#504',
   stair_giant: '#502', stair_king: '#502',
   ash_husk: '#514', old_drake: '#515',
+  stoker: '#513', sentry: '#514', sentinel: '#516',
 };
 
 /** The monsters a company can meet on `defs`: those their groups place, and those a placed one calls (`calls`), and so on down. */
