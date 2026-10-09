@@ -271,9 +271,9 @@ export const walkthrough: Walkthrough = (ok) => {
   for (const m of w.party.members) m.level = 22;
 
   // The trail on north to the edge at 18,0, where the atlas's trail crosses, on into I9 (#503); off it
-  // west, the road to the Stair's head at the atlas's link, 272,306; and
-  // the Stair down through the Sheer to the west edge at 0,20, for Ashfall's H10 (#510), past which,
-  // for now, the world ends too.
+  // west, the road to the Stair's head at the atlas's link, 272,306; and the Stair down through the
+  // Sheer to the west edge at 0,20 and on down onto Ashfall's H10 at its 31,20 (#510), whose
+  // walkthrough walks it.
   const onI10 = (x: number, y: number): boolean => x >= i10.x && x < i10.x + i10.w && y >= i10.y && y < i10.y + i10.h;
   const at10 = (f: { x: number; y: number }): number => (i10.y + f.y) * out.width + i10.x + f.x;
   const walked10 = reach(i10.x + 27, i10.y + 31, (x, y) => onI10(x, y) && out.passable(x, y) === 'ok');
@@ -282,8 +282,8 @@ export const walkthrough: Walkthrough = (ok) => {
   const link = ATLAS.links.find((l) => l.note === 'the Giants\' Stair')!;
   ok(link.b?.[0] === i10.x + 8 && link.b?.[1] === i10.y + 20 && [...Array(16).keys()].every((i) => road(i10.x + 8 + i, i10.y + 20)),
     'the road leaves the trail west for the Stair\'s head, at the atlas\'s link, 272,306');
-  ok(road(i10.x, i10.y + 20) && road(i10.x + 1, i10.y + 20) && out.at(i10.x, i10.y + 19).ch === '|' && out.at(i10.x + 1, i10.y + 21).ch === '|' && walked10.has(at10({ x: 0, y: 20 })) && out.passable(i10.x - 1, i10.y + 20) !== 'ok',
-    'the Stair goes down through the Sheer to the west edge at 0,20, and past it, for now, the world ends');
+  ok(road(i10.x, i10.y + 20) && road(i10.x + 1, i10.y + 20) && out.at(i10.x, i10.y + 19).ch === '|' && out.at(i10.x + 1, i10.y + 21).ch === '|' && walked10.has(at10({ x: 0, y: 20 })) && road(i10.x - 1, i10.y + 20) && out.zones.find((z) => z.id === 'cindercoast_h10')?.x === i10.x - 32,
+    'the Stair goes down through the Sheer to the west edge at 0,20, and on down onto Ashfall\'s H10 at its 31,20');
 
   // The caravan drawn up short of the head that cannot pay (#56's 47, #506's), past the Stair in snow:
   // the master by his wagons, and at the head his girl, whom the king keeps; people with words only.

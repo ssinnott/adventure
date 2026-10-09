@@ -115,7 +115,7 @@ features and ten groups, about one rest's fights at the band (MONSTERS §4.4), w
     aim of 9.25 to 11.25 and the limit of 7.75 to 13.75, with 87.7% of its days ending in a fight
     broken off: the furnace's fight runs past 15 rounds once spell points run low, as G11's
     stokers' did (94.7%), which the gate shows and never judges. Its under-check is n/a, its floor
-    being over the area's; Ashfall's pool at 22 is won in all of its 16 groups, owed to #18 as
+    being over the area's; Ashfall's pool at 22 is won in all of its 24 groups, owed to #18 as
     before. The vents pay 2,146 xp a member for the brief's 2,200 and hold 900 gold and a Sapphire
     Vial. Density 100.0% within 7 steps (279 of 279) and the furthest 6, with no sign among its 25
     points. The curve's rank correlation is 0.63: the round nearest at 12 steps, level 24.5, and
@@ -196,7 +196,7 @@ in it; a way out that is not a way in; a window. The vents claim none of it (§8
   split about 2,200 and 2,700. The camp, about 3,000, pays outside any area's budget, as Wrackholm
   counts the Dead-Drop and Ashfall its country behind; pay by level (#159) keeps a company that
   goes down early from overshooting. As built, the vents pay 2,146 a member, 0.98 of their 2,200
-  (§4.1; §8, the vents' 3); with Ashfall's other maps a clear is 9,203 of the area's 19,467 (ashfall
+  (§4.1; §8, the vents' 3); with Ashfall's other maps a clear is 14,182 of the area's 19,467 (ashfall
   §8).
 - **The gate.** Each level is held at its own floor (EXPANSION §5.2). The Brood Drake is won about
   half the time at 26, the corridors' floor, and nearly always at 28. As built, a company at the

@@ -1,29 +1,40 @@
-// Ashfall's walkthrough. Its chapter, The Window, is #518's, which plays it here; until then,
-// Cinderport's box (G10, #511) walked: put down at the gate's front, where Cinderport's way out lands,
-// since only the Waste's road west of it and Fire Mountain's flank south of it are built beside it; the
-// gate a door into the town (#512); the road square to square from the gate's front up the wall to the
-// north edge, past which, for now, the world ends, and out south-west to the west edge, where F10's road
-// meets it; the trading ground: the ground's line, the eldest's story, the Riders' fires and horses and
-// their shrine; the milestone; the chandler's racks under the wall; the stream forded on its stones and
-// the knoll over it; the hermit and the clay pit under the vines; the box's groups won at its floor, the
-// vines never roaming; and the factor's hide, found from the cut vines at its mouth. Then Cinderport
-// (#512), in at the gate and out again, its businesses, its two halls and its crossings. Then Fire
-// Mountain's flank (G11, #513), walked onto over G10's south edge: the crossing line both ways; the track
-// past the shrine at its head to Grimsforge, the warlord's heir at the anvil, the camp in its lee and the
-// scavenger by the fire; the vents, the middle mouth the way down into Meridian Camp, and the
-// furnace-draught that is no way in; the cone's mouth and the lookout on its shoulder; the box's groups
-// won at its floor, the sentry only after the Stone; and the scavenger's hole, found from the rope at
-// its mouth, its far end going down. Then Meridian Camp's first level, the vents (#22): down the middle
-// mouth and up again, down the scavenger's rope and up again; the flue hall, the drift and the stokers'
-// path; the Company's trail, the Guild's chain pin and the chalked arrows down past their cold camp to
-// the stair, barred until the iron corridors are built; the grates and the rounds; the groups won at
-// 25, the sentry only after the Stone; and the furnace room, with the Ember Stone's first part in the
-// furnace's mouth and the stokers' parts beside it. Then the Ember Waste's road (F10 and E10, #517): over G10's west edge, walked,
-// the Waste's crossing words and back the coast's; the road square to square over F10 and E10 to the
-// Wold's edge; the milestone, the vines' end, the Archdruid at his outcrop, the shrine, the cairn and the
-// camp; over onto E10 with nothing said; the notch and its waymark, the hermit, the flow's head; E10 laid
-// whole and bare of the Wold's; the groups won at the floor; and the grave, found from the cairn that
-// looks back.
+// Ashfall's walkthrough. Its chapter, The Window, is #518's, which plays it here; until then, the boxes
+// in road order. The Stair's foot (H10, #510): down the Giants' Stair from I10 onto H10, Cindercoast's
+// crossing words walked; the Stair's last flights to the landing and the step; the road across the sand,
+// past Scaldwell and through the vines to the west edge, onto G10's vines; the seams; the pools, the
+// bathhouse keeper, the shrine and the stoker at its rock; the groups won at the floor; and the vent
+// under the rock, found from the path trodden to it. Then Cinderport's box (G10, #511) walked: put down
+// at the gate's front, where Cinderport's way out lands and the ship comes in; the gate a door into the
+// town (#512); the road square to square from the gate's front up the wall to the north edge, past which,
+// for now, the world ends, and out south-west to the west edge, where F10's road meets it; the trading
+// ground: the ground's line, the eldest's story, the Riders' fires and horses and their shrine; the
+// milestone; the chandler's racks under the wall; the stream forded on its stones and the knoll over it;
+// the hermit and the clay pit under the vines; the box's groups won at its floor, the vines never
+// roaming; and the factor's hide, found from the cut vines at its mouth. Then Cinderport (#512), in at
+// the gate and out again, its businesses, its two halls and its crossings. Then Fire Mountain's flank
+// (G11, #513), walked onto over G10's south edge: the crossing line both ways; the track past the shrine
+// at its head to Grimsforge, the warlord's heir at the anvil, the camp in its lee and the scavenger by
+// the fire; the vents, the middle mouth the way down into Meridian Camp, and the furnace-draught that is
+// no way in; the cone's mouth and the lookout on its shoulder; the box's groups won at its floor, the
+// sentry only after the Stone; and the scavenger's hole, found from the rope at its mouth, its far end
+// going down. Then Meridian Camp's first level, the vents (#22): down the middle mouth and up again,
+// down the scavenger's rope and up again; the flue hall, the drift and the stokers' path; the Company's
+// trail, the Guild's chain pin and the chalked arrows down past their cold camp to the stair, barred
+// until the iron corridors are built; the grates and the rounds; the groups won at 25, the sentry only
+// after the Stone; and the furnace room, with the Ember Stone's first part in the furnace's mouth and
+// the stokers' parts beside it. Then the Ember Waste's road (F10 and E10, #517): over G10's west edge,
+// walked, the Waste's
+// crossing words and back the coast's; the road square to square over F10 and E10 to the Wold's edge; the
+// milestone, the vines' end, the Archdruid at his outcrop, the shrine, the cairn and the camp; over onto
+// E10 with nothing said; the notch and its waymark, the hermit, the flow's head; E10 laid whole and bare
+// of the Wold's; the groups won at the floor; and the grave, found from the cairn that looks back.
+// Then Old Cinder's and the Ember Stone's box (F11, #514), walked onto over F10's south edge and over
+// G11's west: the crater, its roofs standing out of the pit, the way down at its lip barred until Old
+// Cinder is built, the old Lightbearer by it and the cairn on its rim; the hermit and the camp in the
+// rock; the causeway over the flow and its milestone; the Stone half-built on its field of cinders in its
+// iron scaffold, the way in barred until the Ember Stone is built, and the shrine at the field's edge;
+// the groups won at the floor, the husks only by night and the sentries only after the Stone; and the
+// builders' hollow, found from the rock's scored face.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen } from '../../../../tools/walk.ts';
 import type { Walk } from '../../../../tools/walk.ts';
@@ -53,12 +64,14 @@ import { INTERIORS } from './interiors.ts';
 import { GATE } from './maps/cindercoast_g10.ts';
 import { VENTS, HOLE } from './maps/firemount_g11.ts';
 import { STAIR } from './maps/meridian_camp.ts';
+import { CRATER, STONE } from './maps/emberwaste_f11.ts';
 
 const G10 = MAP_DEFS.find((d) => d.id === 'cindercoast_g10')!, G11 = MAP_DEFS.find((d) => d.id === 'firemount_g11')!;
 const person = (name: string, d = G10): Person => d.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
 const COAST = ATLAS.zones.find((z) => z.id === 'cindercoast')!;
 
 export const walkthrough: Walkthrough = (ok) => {
+  stairFoot(ok);
   const w = newWalk(ok);
   const out = buildMaps()[OUTDOORS];
   const g10 = out.zones.find((z) => z.id === 'cindercoast_g10')!;
@@ -80,8 +93,8 @@ export const walkthrough: Walkthrough = (ok) => {
   // Cinderport's way out lands (#512) and the ship and the ride come in through the town (#547).
   ok(G10.start.x === GATE.x && G10.start.y === GATE.y + 1 && G10.start.facing === SOUTH && G10.exits?.length === 1 && G10.exits[0] === GATE,
     'the box\'s way in is the gate\'s front, 6,3, facing south, and its one way out but its edges is Cinderport\'s gate');
-  ok(COAST.maps?.length === 1 && COAST.maps[0].map === 'cindercoast_g10' && !!COAST.crossing?.harder && !!COAST.crossing?.warning,
-    'Cindercoast holds G10 and has its crossing words, said when a box beside it is built and walked over (#166)');
+  ok(COAST.maps?.map((m) => m.map).join() === 'cindercoast_h10,cindercoast_g10' && !!COAST.crossing?.harder && !!COAST.crossing?.warning,
+    'Cindercoast holds H10 and G10 and has its crossing words, said coming down the Stair onto H10 (#166, #510)');
   w.world.travel('cindercoast_g10', G10.start.x, G10.start.y, SOUTH);
   ok(w.world.zone?.id === 'cindercoast_g10' && w.world.state.x === g10.x + GATE.x && w.world.state.y === g10.y + GATE.y + 1, 'put down at the gate\'s front on G10');
 
@@ -240,8 +253,8 @@ export const walkthrough: Walkthrough = (ok) => {
   for (const g of G11.encounters!) fight(w, `firemount_g11:${g.id}`);
 
   // The secret: the rope on the rock where no vine grows and the smith's word; the search there, the
-  // ledge behind the rocks with his finds, and the hole going on down, barred until Meridian Camp is
-  // built (HOLE). Walked, waded, climbed or floated, the hole is never reached but through its mouth.
+  // ledge behind the rocks with his finds, and the hole going on down into Meridian Camp (HOLE). Walked,
+  // waded, climbed or floated, the hole is never reached but through its mouth.
   const [mouth] = G11.secrets!;
   const shut11 = reach(mouth.x - 1, mouth.y, (x, y) => !(x === g11.x + mouth.x && y === g11.y + mouth.y) && on11(x, y) && out.passable(x, y, { swim: true, climb: true, float: true }) === 'ok', g11);
   ok(shut11.size > 300 && !shut11.has(at11(mouth.x + 1, mouth.y)) && !shut11.has(at11(mouth.x + 2, mouth.y)), `the hole is shut but for its mouth: none of G11's ${shut11.size} squares walked, waded, climbed or floated reaches it`);
@@ -328,7 +341,7 @@ export const walkthrough: Walkthrough = (ok) => {
   const wasteLow = cross(21, 'cindercoast_g10', 0, 7, WEST), wasteTwo = cross(22, 'cindercoast_g10', 0, 7, WEST), wasteDue = cross(24, 'cindercoast_g10', 0, 7, WEST);
   ok(w.world.zone?.id === 'emberwaste_f10' && w.world.state.x === f10.x + 31 && w.world.state.y === f10.y + 7 && f10.x + f10.w === g10.x && F10.start.x === 31 && F10.start.y === 7,
     'over G10\'s west edge from 0,7 onto F10\'s 31,7, walked, the box\'s way in');
-  ok(WASTE.maps?.map((m) => m.map).join() === 'emberwaste_f10,emberwaste_e10' && wasteDue.join(' / ') === 'The Ember Waste.', `at 24, the Ember Waste named, no more (${wasteDue.join(' / ')})`);
+  ok(WASTE.maps?.map((m) => m.map).join() === 'emberwaste_f10,emberwaste_e10,emberwaste_f11' && wasteDue.join(' / ') === 'The Ember Waste.', `at 24, the Ember Waste named, no more (${wasteDue.join(' / ')})`);
   ok(wasteTwo.join(' / ') === `The Ember Waste. ${WASTE.crossing?.harder}`, `at 22, the rest in the Waste's own words (${wasteTwo.join(' / ')})`);
   ok(wasteLow.join(' / ') === `The Ember Waste. ${WASTE.crossing?.warning}`, `at 21, the harsher words, and the coast behind (${wasteLow.join(' / ')})`);
   const back = cross(24, 'emberwaste_f10', 31, 7, EAST);
@@ -339,9 +352,9 @@ export const walkthrough: Walkthrough = (ok) => {
   for (const m of w.party.members) m.level = 24;
 
   // The road square to square from G10's edge at rows 7 and 8, out of the vines and south-west over
-  // F10's ash, west along its south rows past F11's corner at columns 5 to 11, over onto E10 at rows 29
-  // and 30, through the Hills' notch and down to the west edge at 0,6; past F11 and D10, for now, the
-  // world ends.
+  // F10's ash, west along its south rows past F11's corner at columns 5 to 11, where F11's north row
+  // carries it too (#514), over onto E10 at rows 29 and 30, through the Hills' notch and down to the west
+  // edge at 0,6; past D10, for now, the world ends.
   const key = (x: number, y: number): number => y * out.width + x;
   const inBox = (z: typeof f10, x: number, y: number): boolean => x >= z.x && x < z.x + z.w && y >= z.y && y < z.y + z.h;
   const spread = (x0: number, y0: number, along: (x: number, y: number) => boolean): Set<number> => {
@@ -356,8 +369,8 @@ export const walkthrough: Walkthrough = (ok) => {
   const wasteRoad = spread(f10.x + 31, f10.y + 7, (x, y) => (inBox(f10, x, y) || inBox(e10, x, y)) && out.at(x, y).ch === '=');
   ok([7, 8].every((y) => wasteRoad.has(key(f10.x + 31, f10.y + y))) && [5, 6, 7, 8, 9, 10, 11].every((x) => wasteRoad.has(key(f10.x + x, f10.y + 31)))
     && [29, 30].every((y) => wasteRoad.has(key(f10.x, f10.y + y)) && wasteRoad.has(key(e10.x + 31, e10.y + y))) && wasteRoad.has(key(e10.x, e10.y + 6))
-    && out.passable(f10.x + 8, f10.y + 32) !== 'ok' && out.passable(e10.x - 1, e10.y + 6) !== 'ok',
-    'the road runs square to square from G10\'s edge over F10, along its south rows past F11\'s corner and over E10 to its west edge at 0,6, and past F11 and D10, for now, the world ends');
+    && [5, 6, 7, 8, 9, 10, 11].every((x) => out.at(f10.x + x, f10.y + 32).ch === '=') && out.passable(e10.x - 1, e10.y + 6) !== 'ok',
+    'the road runs square to square from G10\'s edge over F10, along its south rows past F11\'s corner, where F11\'s north row carries it too, and over E10 to its west edge at 0,6, and past D10, for now, the world ends');
   const mile = F10.features!.find((f) => f.kind === 'event' && f.id === 'f10_milestone');
   ok(mile?.kind === 'event' && mile.text.includes('THE WOLD 2, CINDERPORT 4') && beside(f10, mile.x, mile.y, wasteRoad),
     'the milestone stands by the road where it turns west along the rocks: THE WOLD 2, CINDERPORT 4, as G10\'s THE WOLD 6 has it');
@@ -422,7 +435,251 @@ export const walkthrough: Walkthrough = (ok) => {
   listen(w);
   const bow = E10.features!.find((f) => f.kind === 'chest' && f.id === 'e10_grave');
   ok(bow?.kind === 'chest' && bow.items.includes('horn_bow+2') && bow.gold > 0 && bow.x === grave.x - 2 && bow.y === grave.y, 'in the grave, her saddle\'s silver and a Horn Bow +2');
+
+  // Old Cinder's and the Ember Stone's box (F11, #514). Over F10's south edge from its 16,31 onto F11's
+  // 16,0, walked, the box's way in: the same land, so not named, and its floor a level over F10's, so
+  // one or two under it the Waste's harder words and three under its warning; at the floor, nothing.
+  // Over G11's west edge onto F11's 31,16, the land named and its words; straight back, nothing.
+  const F11 = MAP_DEFS.find((d) => d.id === 'emberwaste_f11')!, f11 = out.zones.find((z) => z.id === 'emberwaste_f11')!;
+  const on11f = (x: number, y: number): boolean => inBox(f11, x, y);
+  const at11f = (x: number, y: number): number => key(f11.x + x, f11.y + y);
+  const inLow = cross(22, 'emberwaste_f10', F11.start.x, 31, SOUTH), inTwo = cross(24, 'emberwaste_f10', F11.start.x, 31, SOUTH), inDue = cross(25, 'emberwaste_f10', F11.start.x, 31, SOUTH);
+  ok(w.world.zone?.id === 'emberwaste_f11' && w.world.state.x === f11.x + F11.start.x && w.world.state.y === f11.y && f11.x === f10.x && f11.y === f10.y + 32 && F11.start.y === 0 && F11.start.facing === SOUTH && !(F11.exits ?? []).length,
+    'over F10\'s south edge from its 16,31 onto F11\'s 16,0, walked, the box\'s way in, and it has no way out but its edges');
+  ok(!inDue.length && inTwo.join(' / ') === WASTE.crossing?.harder && inLow.join(' / ') === WASTE.crossing?.warning,
+    `the same land, so not named: at 25 nothing, at 24 the Waste's harder words, at 22 its warning (${inDue.join(' / ') || 'nothing'}; ${inTwo.join(' / ')}; ${inLow.join(' / ')})`);
+  const westLow = cross(22, 'firemount_g11', 0, 16, WEST), westTwo = cross(23, 'firemount_g11', 0, 16, WEST), westDue = cross(25, 'firemount_g11', 0, 16, WEST);
+  ok(w.world.zone?.id === 'emberwaste_f11' && w.world.state.x === f11.x + 31 && w.world.state.y === f11.y + 16 && westDue.join(' / ') === 'The Ember Waste.'
+    && westTwo.join(' / ') === `The Ember Waste. ${WASTE.crossing?.harder}` && westLow.join(' / ') === `The Ember Waste. ${WASTE.crossing?.warning}`,
+    `over G11's west edge onto F11's 31,16, the Ember Waste named, and under its floor its own words (${westDue.join(' / ')}; ${westTwo.join(' / ')}; ${westLow.join(' / ')})`);
+  const backG11 = cross(25, 'emberwaste_f11', 31, 16, EAST);
+  ok(!backG11.length && w.world.zone?.id === 'firemount_g11', `straight back onto G11, nothing more (${backG11.join(' / ') || 'nothing'})`);
+  w.level = 25;
+  for (const m of w.party.members) m.level = 25;
+
+  // Old Cinder's crater: its rim at the atlas's mark, the pit below it with the town's roof-ridges
+  // standing out of it, and the way down at its west lip, barred until Old Cinder is built (CRATER), its
+  // line said at its front each time; the old Lightbearer sitting by it (#448 his trainer and quest),
+  // and the cairn on the rim.
+  const walkF = (x: number, y: number): boolean => on11f(x, y) && out.passable(x, y) === 'ok';
+  const ash = reach(F11.start.x, F11.start.y, walkF, f11);
+  const ruin = ATLAS.sites.find((q) => q.name === 'Old Cinder')!;
+  const [rx, ry] = [Math.floor(ruin.at[0]) - f11.x, Math.floor(ruin.at[1]) - f11.y];
+  const pit = [...F11.rows.join('')].filter((c) => c === 'v').length, roofs = [...F11.rows.slice(1, 8).join('')].filter((c) => c === 'B').length;
+  ok(rx === 22 && ry === 0 && ash.has(at11f(rx, ry)) && out.at(f11.x + rx, f11.y + ry + 1).terrain === 'chasm' && pit >= 25 && roofs >= 6,
+    `the crater's rim is Old Cinder's mark on the atlas, F11's 22,0, the pit below it (${pit} squares) and the town's roofs standing out of it (${roofs})`);
+  const lip = F11.features!.find((f) => f.kind === 'event' && f.id === 'f11_lip');
+  ok(lip?.kind === 'event' && !lip.once && lip.x === CRATER.x - 1 && lip.y === CRATER.y && CRATER.to === 'old_cinder' && out.passable(f11.x + CRATER.x, f11.y + CRATER.y) !== 'ok'
+    && out.at(f11.x + CRATER.x, f11.y + CRATER.y).solid === 'building' && out.at(f11.x + CRATER.x + 1, f11.y + CRATER.y).terrain === 'chasm' && ash.has(at11f(lip.x, lip.y)),
+    'the way down into Old Cinder is a roof-ridge at the crater\'s west lip, 19,4, barred until Old Cinder is built (CRATER), and its line is said at its front each time');
+  see(w, 'emberwaste_f11:f11_lip');
+  const old = person('An old Lightbearer', F11);
+  w.world.travel('emberwaste_f11', old.x, old.y);
+  ok(meet(old, w.party, heard(w.world, old)).text.includes('lamp at the bottom') && !!lip && Math.abs(old.x - lip.x) + Math.abs(old.y - lip.y) === 1 && out.at(f11.x + old.x + 1, f11.y + old.y).terrain === 'chasm',
+    'an old Lightbearer sits on the lip beside the way down: a lamp at the bottom of that town went out');
+  const rimCairn = F11.features!.find((f) => f.kind === 'cairn' && f.id === 'f11_cairn');
+  ok(rimCairn?.kind === 'cairn' && rimCairn.gold > 0 && [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => out.at(f11.x + rimCairn.x + dx, f11.y + rimCairn.y + dy).terrain === 'chasm'), 'a cairn on the crater\'s rim');
+
+  // The Waste's rock: the hermit in a cleft of it, who has counted the stokers walking out for forty
+  // years, and a camp in another cleft.
+  const hermitF = person('A hermit', F11);
+  w.world.travel('emberwaste_f11', hermitF.x, hermitF.y);
+  const count = meet(hermitF, w.party, heard(w.world, hermitF)).text;
+  ok(count.includes('stokers') && count.includes('Forty years') && [[0, -1], [0, 1], [-1, 0]].every(([dx, dy]) => out.at(f11.x + hermitF.x + dx, f11.y + hermitF.y + dy).solid === 'rock'),
+    'the hermit in a cleft of the rock counts the stokers that walk out, and in forty years the count has not changed');
+  const cleft = F11.features!.find((f) => f.kind === 'camp');
+  ok(!!cleft && ash.has(at11f(cleft.x, cleft.y)) && [[0, -1], [-1, 0]].every(([dx, dy]) => out.at(f11.x + cleft.x + dx, f11.y + cleft.y + dy).solid === 'rock'), 'a camp in a cleft of the rock');
+
+  // The west flow, from the east edge where G11's leaves its west edge at rows 10 and 11, west into the
+  // rock to its end at 6,12; the causeway of slag over it, the Stone seen from it, and the milestone at
+  // its end, as F10's stone counts.
+  ok([10, 11].every((y) => out.at(f11.x + 31, f11.y + y).terrain === 'lava' && out.at(g11.x, g11.y + y).terrain === 'lava') && out.at(f11.x + 6, f11.y + 12).terrain === 'lava' && ash.has(at11f(6, 12)),
+    'the west flow comes in off the mountain where G11\'s leaves its west edge and runs west into the rock to its end at 6,12');
+  ok([12, 13].every((y) => F11.rows[y][18] === '"' && F11.rows[y][17] === '!' && F11.rows[y][19] === '!') && ash.has(at11f(18, 11)) && ash.has(at11f(18, 14)),
+    'a causeway of slag crosses the flow at column 18, the lava either side of it');
+  const stoneMile = F11.features!.find((f) => f.kind === 'event' && f.id === 'f11_milestone');
+  ok(stoneMile?.kind === 'event' && stoneMile.x === 18 && stoneMile.y === 14 && stoneMile.text.includes('THE WOLD 4, CINDERPORT 4'),
+    'the milestone at the causeway\'s end: THE WOLD 4, CINDERPORT 4, as F10\'s THE WOLD 2, CINDERPORT 4 counts');
+  for (const id of ['f11_road', 'f11_rim', 'f11_roofs', 'f11_foot', 'f11_causeway', 'f11_milestone', 'f11_seal', 'f11_ruts', 'f11_floor', 'f11_tyre', 'f11_flow', 'f11_dusk', 'f11_crust', 'f11_hooves']) see(w, `emberwaste_f11:${id}`);
+
+  // The Ember Stone half-built at the atlas's mark on its field of cinders, in its iron scaffold: the way
+  // in barred until the Ember Stone is built (STONE), and the step's line at its front each time; the
+  // shrine of the first Cinderport folk at the field's edge.
+  const stoneMark = ATLAS.sites.find((q) => q.name === 'Ember Stone')!;
+  const field = [...Array(81).keys()].map((i) => [STONE.x - 4 + (i % 9), STONE.y - 4 + Math.floor(i / 9)]).filter(([x, y]) => Math.abs(x - STONE.x) + Math.abs(y - STONE.y) <= 4 && F11.rows[y]?.[x] === ':');
+  ok(Math.floor(stoneMark.at[0]) === f11.x + STONE.x && Math.floor(stoneMark.at[1]) === f11.y + STONE.y && STONE.to === 'ember_stone' && out.at(f11.x + STONE.x, f11.y + STONE.y).solid === 'pillar'
+    && [[-1, -1], [1, -1], [-1, 1], [1, 1]].every(([dx, dy]) => out.at(f11.x + STONE.x + dx, f11.y + STONE.y + dy).solid === 'pillar') && field.length >= 35,
+    `the Stone stands at the Ember Stone's mark on the atlas, F11's 8,24, in an iron scaffold of four uprights, on a field of cinders (${field.length} squares and the Stone's five)`);
+  const step = F11.features!.find((f) => f.kind === 'event' && f.id === 'f11_stone');
+  ok(step?.kind === 'event' && !step.once && step.x === STONE.x && step.y === STONE.y - 1 && step.text === 'On a field of cinders, a Stone half-built. The scaffold round it is iron and has not rusted.' && ash.has(at11f(step.x, step.y)),
+    'the way into the Ember Stone is the Stone itself, barred until it is built (STONE), and the step\'s line is said at its front each time');
+  see(w, 'emberwaste_f11:f11_stone');
+  const firstFolk = F11.features!.find((f) => f.kind === 'shrine' && f.id === 'f11_shrine');
+  ok(firstFolk?.kind === 'shrine' && ash.has(at11f(firstFolk.x, firstFolk.y)) && Math.abs(firstFolk.x - STONE.x) + Math.abs(firstFolk.y - STONE.y) === 5 && firstFolk.text.includes('first Cinderport folk'),
+    'the first Cinderport folk\'s shrine stands at the field\'s edge');
+
+  // The box's groups, each won at its floor: beetles below the crater, nearest the way in; husks out of
+  // the crater only by night; a cinder drake on the flow, the hardest before the Stone; and sentries on
+  // the way back from the Stone only once it is lit, the box's top.
+  const husks = F11.encounters!.find((g) => g.id === 'f11_husks'), sentries = F11.encounters!.find((g) => g.id === 'f11_sentries');
+  ok(JSON.stringify(husks?.when) === JSON.stringify({ hours: 'night' }) && !!husks?.monsters.every((m) => m === 'ash_husk') && !husks?.after,
+    'the ash husks come out of the crater only by night');
+  ok(JSON.stringify(sentries?.after) === JSON.stringify({ flag: 'q_ember_lit' }) && !!sentries?.monsters.every((m) => m === 'sentry') && F11.encounters!.filter((g) => g.after).length === 1,
+    'the sentries walk the ash only once the Ember Stone is lit');
+  for (const g of F11.encounters!) fight(w, `emberwaste_f11:${g.id}`);
+
+  // The secret: the rock's face west of the field scored in straight lines, searched where it is scored;
+  // behind it the hollow where the Stone's builders left their tools, and a Chain Mail +2 with them.
+  // Walked, waded, climbed or floated, the hollow is never reached but through its mouth.
+  const [face] = F11.secrets!;
+  const shutF = reach(face.x + 1, face.y, (x, y) => !(x === f11.x + face.x && y === f11.y + face.y) && on11f(x, y) && out.passable(x, y, { swim: true, climb: true, float: true }) === 'ok', f11);
+  ok(shutF.size > 300 && !shutF.has(at11f(face.x - 1, face.y)) && !shutF.has(at11f(face.x - 2, face.y)), `the hollow is shut but for its mouth: none of F11's ${shutF.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, 'emberwaste_f11:f11_scored');
+  w.world.travel('emberwaste_f11', face.x + 1, face.y, WEST);
+  let foundHollow = false;
+  for (let i = 0; i < 20 && !foundHollow; i++) foundHollow = w.world.search();
+  const intoHollow = foundHollow ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(foundHollow && intoHollow.every((r) => r.kind === 'moved') && w.world.used('f11_tools'), 'searched where the rock is scored, it opens, and in the hollow behind it the builders\' tools in rows');
+  listen(w);
+  const mail = F11.features!.find((f) => f.kind === 'chest' && f.id === 'f11_hollow');
+  ok(mail?.kind === 'chest' && mail.items.includes('chain+2') && mail.gold > 0 && mail.x === face.x - 2 && mail.y === face.y, 'with the tools, a Chain Mail +2');
 };
+
+/**
+ * The Stair's foot (H10, #510), the area's first box in road order: down the Giants' Stair from I10's
+ * 0,20 onto H10's 31,20, Cindercoast's crossing words said to a company of 21 and 22 and its name alone
+ * at 24, nothing straight back; the Stair's last flights to the landing at 26,20, the atlas's link, and
+ * the step there; the road square to square from the Stair west across the sand and through the shore's
+ * vines to the west edge, out onto G10's vines; the seams with I10 and G10, and past the north and south
+ * edges, for now, the world ends; Scaldwell: its pools, the bathhouse keeper, a Rider with words only
+ * (#56's 49 is #519's), the Riders' shrine and the stoker seen at its rock; the milestone, the camp and
+ * the cairn; the groups won at the floor, the vines and the stoker never roaming; and the vent under
+ * the rock, found from the path trodden to it, shut but for its door.
+ */
+function stairFoot(ok: (cond: boolean, msg: string) => void): void {
+  const w = newWalk(ok);
+  const out = buildMaps()[OUTDOORS];
+  const H10 = MAP_DEFS.find((d) => d.id === 'cindercoast_h10')!;
+  const h10 = out.zones.find((z) => z.id === 'cindercoast_h10')!, i10 = out.zones.find((z) => z.id === 'highspine_i10')!;
+  const g10 = out.zones.find((z) => z.id === 'cindercoast_g10')!;
+  const onH10 = (x: number, y: number): boolean => x >= h10.x && x < h10.x + h10.w && y >= h10.y && y < h10.y + h10.h;
+  const at = (x: number, y: number): number => (h10.y + y) * out.width + h10.x + x;
+  const reach = (fx: number, fy: number, along: (x: number, y: number) => boolean): Set<number> => {
+    const seen = new Set([at(fx, fy)]), q = [[h10.x + fx, h10.y + fy]];
+    for (let i = 0; i < q.length; i++) {
+      const [x, y] = q[i];
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const k = (y + dy) * out.width + x + dx; if (!seen.has(k) && along(x + dx, y + dy)) { seen.add(k); q.push([x + dx, y + dy]); } }
+    }
+    return seen;
+  };
+  const walk = (x: number, y: number): boolean => onH10(x, y) && out.passable(x, y) === 'ok';
+  const feature = (id: string): Feature => H10.features!.find((f) => 'id' in f && f.id === id)!;
+  const beside = (f: { x: number; y: number }, set: Set<number>): boolean => [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => set.has(at(f.x + dx, f.y + dy)));
+
+  // Down the Stair from I10's 0,20 onto H10's 31,20, the box's way in: a company under Cindercoast's floor
+  // is told how the far side feels, one at it hears the land's name alone; straight back, nothing.
+  ok(h10.x + h10.w === i10.x && h10.y === i10.y && H10.start.x === 31 && H10.start.y === 20 && H10.start.facing === WEST,
+    'the box\'s way in is the Stair, from I10\'s 0,20 onto H10\'s 31,20, facing west');
+  const down = (level: number): string => {
+    for (const m of w.party.members) m.level = level;
+    w.world.travel('highspine_i10', 0, 20, WEST);
+    const r = w.world.move('forward');
+    return r.kind === 'moved' && w.world.zone?.id === 'cindercoast_h10' && w.world.state.x === h10.x + 31 ? r.messages.join(' ') : `(${r.kind})`;
+  };
+  const said = [down(21), down(22), down(24)];
+  ok(said[0] === `Cindercoast. ${COAST.crossing!.warning}` && said[1] === `Cindercoast. ${COAST.crossing!.harder}` && said[2] === 'Cindercoast.',
+    `down the Stair onto the far side, Cindercoast's words to a company of 21 and of 22, and its name alone at 24 (${said.join(' / ')})`);
+  w.world.travel('cindercoast_h10', 31, 20, EAST);
+  const back = w.world.move('forward');
+  // Straight back up, the land is not named again; the king's giants, seen up the Stair, are I10's.
+  ok(back.kind === 'moved' && !back.messages.some((m) => m.includes('High Spine')) && w.world.zone?.id === 'highspine_i10',
+    `straight back up onto I10's 0,20, the land is not named again (${back.kind === 'moved' ? back.messages.join(' / ') : back.kind})`);
+  w.level = 24;
+  for (const m of w.party.members) m.level = 24;
+
+  // The Stair's last flights along the Sheer's foot to the landing at 26,20, the atlas's link, and the
+  // step said there; from it the road west across the sand, past Scaldwell and through the vines to the
+  // west edge at 0,11, where it comes out onto G10's vines for Cinderport.
+  const road = reach(31, 20, (x, y) => onH10(x, y) && out.at(x, y).ch === '=');
+  const link = ATLAS.links.find((l) => l.note === 'the Giants\' Stair')!;
+  ok(link.a?.[0] === h10.x + 26 && link.a?.[1] === h10.y + 20 && road.has(at(26, 20)) && [28, 29, 30, 31].every((x) => out.at(h10.x + x, h10.y + 19).solid !== 'none'),
+    'the Stair\'s last flights come down under the Sheer to the landing at 26,20, the atlas\'s link, 258,306');
+  ok(road.has(at(0, 11)) && out.at(h10.x - 1, h10.y + 11).ch === '&' && out.passable(h10.x - 1, h10.y + 11) === 'ok',
+    'the road runs square to square from the Stair across the sand and through the vines to the west edge at 0,11, out onto G10\'s vines');
+  see(w, 'cindercoast_h10:h10_foot');
+  const foot = feature('h10_foot');
+  ok(foot.kind === 'event' && foot.x === 26 && foot.y === 20 && foot.text.includes('ends in black sand') && w.world.used('h10_foot'),
+    'at the landing, the step: the last flight ends in black sand, and ahead a mountain smokes over everything');
+  const cairn = feature('h10_cairn');
+  ok(cairn.kind === 'cairn' && Math.abs(cairn.x - foot.x) + Math.abs(cairn.y - foot.y) <= 2 && cairn.items.includes('potion_sp_great'), 'a cairn at the Stair\'s foot');
+  const stone = feature('h10_milestone');
+  ok(stone.kind === 'event' && stone.text.includes('CINDERPORT 5') && beside(stone, road) && out.at(h10.x + stone.x, h10.y + stone.y).ch === '&',
+    'the milestone stands by the track where it leaves the sand for the vines: CINDERPORT 5');
+  see(w, 'cindercoast_h10:h10_milestone');
+
+  // The seams: the east edge meets I10's west square for square, the Sheer against the Sheer, the Stair
+  // against the Stair and the ground under it against the ground; the west meets G10's east but at the
+  // track, the stream going on at rows 22 and 23, and over it, the same land at the same floor, nothing
+  // is said. Past the north and south edges, for now, the world ends.
+  const column = (x: number): string => [...Array(32).keys()].map((y) => out.at(x, h10.y + y).ch).join('');
+  ok(column(h10.x + 31) === column(i10.x) && g10.x + g10.w === h10.x && g10.y === h10.y, `the east edge meets I10's west edge square for square (${column(h10.x + 31)})`);
+  ok([...Array(32).keys()].every((y) => y === 11 || out.at(h10.x, h10.y + y).ch === out.at(h10.x - 1, h10.y + y).ch) && out.at(h10.x, h10.y + 22).ch === '~',
+    'the west edge meets G10\'s east edge square for square but at the track, the stream going on at rows 22 and 23');
+  w.world.travel('cindercoast_h10', 0, 15, WEST);
+  const over = w.world.move('forward');
+  ok(over.kind === 'moved' && !over.messages.length && w.world.zone?.id === 'cindercoast_g10', 'over the west edge onto G10, the same land at the same floor, nothing is said');
+  ok([...Array(32).keys()].every((i) => out.passable(h10.x + i, h10.y - 1) !== 'ok' && out.passable(h10.x + i, h10.y + 32) !== 'ok'), 'past the north and south edges, for now, the world ends');
+
+  // Scaldwell, the springs on the atlas: its pools in the ash, the bathhouse and its keeper, a Rider with
+  // words only, and the Riders' shrine; past them the stoker at the rock, seen from the track first.
+  const dry = reach(31, 20, walk);
+  const pools = feature('h10_pools');
+  const scald = ATLAS.sites.find((s) => s.name === 'Scaldwell')!;
+  ok(!scald.planned && scald.at[0] === h10.x + pools.x && scald.at[1] === h10.y + pools.y && out.at(h10.x + pools.x, h10.y + pools.y + 1).ch === '~' && dry.has(at(pools.x, pools.y)),
+    'Scaldwell, the springs at 240,300 on the atlas, is the pools in the ash at 8,14');
+  see(w, 'cindercoast_h10:h10_pools');
+  const keeper = H10.features!.find((f) => f.kind === 'npc' && f.name === 'The bathhouse keeper') as Person;
+  ok([[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => out.at(h10.x + keeper.x + dx, h10.y + keeper.y + dy).solid === 'building'), 'the keeper stands by the bathhouse');
+  w.world.travel('cindercoast_h10', keeper.x, keeper.y);
+  const words = meet(keeper, w.party, heard(w.world, keeper)).text;
+  ok(words.includes('Anvil Stone') && words.includes('grey part') && words.includes('not there'),
+    'the bathhouse keeper: the springs went cold with the Anvil Stone and warm again, things come up in the water, and the thing at the rock is not always there');
+  const shrine = feature('h10_shrine');
+  ok(shrine.kind === 'shrine' && dry.has(at(shrine.x, shrine.y)) && Math.abs(shrine.x - pools.x) + Math.abs(shrine.y - pools.y) <= 4 && shrine.text.includes('Riders'),
+    'the Riders\' shrine stands by the pools');
+  see(w, 'cindercoast_h10:h10_shovel');
+  const [door] = H10.secrets!;
+  const stoker = H10.encounters!.find((g) => g.id === 'h10_stoker')!;
+  ok(stoker.monsters.join() === 'stoker' && stoker.roams === false && Math.abs(stoker.x - door.x) + Math.abs(stoker.y - door.y) <= 3,
+    'at the rock where the water comes up, a stoker shovelling, which never roams: the first heavy machine');
+
+  // On the sand: the camp under the Sheer, the dune over the Sound, what has come down the Stair the short
+  // way; and over the stream on its stones, the heron in the corner under it.
+  const camp = H10.features!.find((f) => f.kind === 'camp');
+  ok(!!camp && dry.has(at(camp.x, camp.y)) && out.at(h10.x + camp.x, h10.y + camp.y).ch === 'a' && out.at(h10.x + 30, h10.y + camp.y).ch === '|', 'the camp on the sand under the Sheer');
+  ok(dry.has(at(1, 29)) && !reach(31, 20, (x, y) => walk(x, y) && out.at(x, y).ch !== '"').has(at(1, 29)), 'the stream is crossed on its stones to the corner under it');
+  for (const id of ['h10_lookout', 'h10_fallen', 'h10_heron']) see(w, `cindercoast_h10:${id}`);
+
+  // The box's groups, each won at its floor: beetles just past the Stair's foot, the area's gentlest, and
+  // on the sand toward the dune; the vines in the shore's first trees and the stoker at its rock, which
+  // never roam.
+  ok(H10.encounters!.filter((g) => g.monsters.some((m) => m === 'strangler_vine' || m === 'stoker')).every((g) => g.roams === false), 'the strangler vines and the stoker never roam');
+  for (const g of H10.encounters!) fight(w, `cindercoast_h10:${g.id}`);
+
+  // The secret: the path trodden to the rock, the search there and the vent behind it. Walked, waded,
+  // climbed or floated, the vent is never reached but through its door.
+  const hoard = feature('h10_vent_hoard');
+  const shut = reach(door.x, door.y - 1, (x, y) => !(x === h10.x + door.x && y === h10.y + door.y) && onH10(x, y) && out.passable(x, y, { swim: true, climb: true, float: true }) === 'ok');
+  ok(shut.size > 300 && !shut.has(at(door.x, door.y + 1)) && !shut.has(at(hoard.x, hoard.y)), `the vent is shut but for its door: none of H10's ${shut.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, 'cindercoast_h10:h10_trodden');
+  w.world.travel('cindercoast_h10', door.x, door.y - 1, SOUTH);
+  let opens = false;
+  for (let i = 0; i < 20 && !opens; i++) opens = w.world.search();
+  const inside = opens ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(opens && inside.every((r) => r.kind === 'moved') && w.world.used('h10_vent'), 'searched where the trodden path ends, the rock opens, and the vent behind it can be walked down to');
+  listen(w);
+  ok(hoard.kind === 'chest' && hoard.items.includes('plate+2') && hoard.gold === 750 && hoard.x === door.x && hoard.y === door.y + 2, 'down the vent, coin of every age and a Plate Mail +2');
+}
 
 /**
  * Cinderport (#512): in at G10's gate with the town's gate line, a step inside to the gate-ward, and
