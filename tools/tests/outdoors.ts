@@ -136,8 +136,8 @@ export function outdoors(): void {
   // The Tiefzeche's box (N4, #461), the heart's first: open land on from N3 with the trail through it
   // at columns 4 and 5, square for square with N3's south edge; the drove road out by the south edge
   // for N5, with the stream for the smelter at the corner; open grass, the knoll and the old workings'
-  // ground on the west against M4, and the first crags and the hills on the east against O4, none of
-  // them built, so the world ends past them.
+  // ground on the west against M4, laid since (#474), and the first crags and the hills on the east
+  // against O4, not built, so the world ends past it.
   const n4 = out.zones.find((z) => z.id === 'kilnsheart_n4')!;
   ok(northOf(n4) === southOf(n3) && southOf(n4) === ':'.repeat(11) + ','.repeat(9) + '=,,' + '^'.repeat(5) + ',,~~',
     `N4's north edge is N3's south edge, square for square, with the trail through it, and its south edge the old workings' ground, the grass and the drove road out for N5 (${northOf(n4)}; ${southOf(n4)})`);
