@@ -16,7 +16,10 @@ import { xpForLevel, trainPrice } from '../game/party.ts';
 
 /** What the curve says of an area. */
 export interface AreaCurve {
-  /** The levels its maps are tuned for: every map's band sits inside it. */
+  /**
+   * The levels its maps are tuned for: every map's band sits inside it, but a map past it, a later
+   * area's country, which pays nothing here or, listed in its area's `outside`, outside any budget.
+   */
   band: [number, number];
   /** The next area's floor, which three quarters of a clear here must reach. */
   next: number;
@@ -37,7 +40,7 @@ export const MEMBERS = 6;
  * The areas next on the road that have a row before they have a map, in road order. An area leaves
  * this list when its first map lists it in AREAS; the curve check fails while it is in both.
  */
-export const PLANNED = ['glasswold'] as const;
+export const PLANNED = [] as const;
 
 /** Every area's row, and every planned area's: an area without one is a type error. */
 export const CURVE: Record<RegionId | (typeof PLANNED)[number], AreaCurve> = {
@@ -81,7 +84,7 @@ export const CURVE: Record<RegionId | (typeof PLANNED)[number], AreaCurve> = {
   // Glasswold sell nothing: the pass has no town and the Wold buys at Cinderport.
   whitespine: {
     band: [22, 24], next: 24, price: 5000,
-    owed: { whose: '#445', why: 'the Whitespine is built box by box', xp: 17429, gold: 5290 },
+    owed: { whose: '#445', why: 'the Whitespine is built box by box', gold: 5290 },
   },
   ashfall: {
     band: [24, 26], next: 26, price: 5500,
@@ -89,7 +92,7 @@ export const CURVE: Record<RegionId | (typeof PLANNED)[number], AreaCurve> = {
   },
   glasswold: {
     band: [26, 28], next: 28, price: 6000,
-    owed: { whose: '#447', why: 'the Glasswold is not built yet', xp: 0, gold: 0 },
+    owed: { whose: '#447', why: 'the Glasswold is built box by box', xp: 2940, gold: 1350 },
   },
 };
 

@@ -22,8 +22,7 @@ import { ok, owed, stopsWalk } from './lib.ts';
 const UNPLACED: Record<string, string> = {
   sentinel: '#516',
   loader: '#22, dead_drop', tally_clerk: '#22, dead_drop', hold_keeper: '#22, dead_drop2', tallymaster: '#22, dead_drop3',
-  glass_scorpion: '#525', basilisk: '#526', grey_lion: '#529',
-  glass_walker: '#525',
+  basilisk: '#526', grey_lion: '#529',
 };
 
 /** The monsters a company can meet on `defs`: those their groups place, and those a placed one calls (`calls`), and so on down. */

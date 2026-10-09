@@ -597,7 +597,7 @@ export const walkthrough: Walkthrough = (ok) => {
   // The Wold's line is its own row's, said where a Wold map is first entered (D10 over E10's west edge,
   // #527): E10 is the Waste's land, so it says the Waste's.
   const WOLD = ATLAS.zones.find((z) => z.id === 'wold');
-  ok(!!WOLD?.crossing?.harder && !!WOLD.crossing.warning && !WOLD.maps?.length, 'the Wold\'s own words are on its row, for the first Wold map to say');
+  ok(!!WOLD?.crossing?.harder && !!WOLD.crossing.warning, 'the Wold\'s own words are on its row, for the first Wold map to say');
 
   // The secret: the Hills' cairns all face the steppe but the one that looks back at the Stone, searched
   // where it looks; behind its stones the first Rider who came down to trade, on her saddle. Walked,

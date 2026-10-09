@@ -39,6 +39,12 @@ export const STAIR_PASSED: When = [{ flag: 'toll_paid' }, { flag: 'toll_part' },
  */
 export const STAIR_TOP = 'q_stair_top';
 
+/**
+ * The Toll (#56's 47, #506) done: the toll answered or the king fallen, his girl walks down to the
+ * wagons, and her father, thanked for nothing, sets it.
+ */
+export const TOLL_DONE = 'q_toll_done';
+
 export const HIGHSPINE_I10: MapDef = {
   id: 'highspine_i10',
   name: 'The High Spine',
@@ -89,11 +95,25 @@ export const HIGHSPINE_I10: MapDef = {
     { kind: 'event', x: 19, y: 3, id: 'i10_north', once: true, text: 'North, the ridge trail runs on along the crest toward the Point. Nobody has walked it since the snow.' },
     { kind: 'event', x: 20, y: 16, id: 'i10_bones', once: true, text: 'Bones under the snow by the trail, too big for a bear\'s. One end of each is burnt black.' },
     // Where the road leaves the trail west for the Stair, the cairn; on the road, the caravan drawn up
-    // short of the head that cannot pay (#56's 47, #506's), and the Stair in snow.
+    // short of the head that cannot pay, and the Stair in snow. The Toll (#56's 47, #506): the master
+    // gives it; once the toll is answered or the king is down, his girl is by him (a person who moves,
+    // #76) and he thanks the company.
     { kind: 'cairn', x: 22, y: 21, id: 'i10_cairn', text: 'A cairn where the road leaves the ridge trail for the Stair, built of stones no man could lift.', gold: 0, items: ['potion_sp_great'] },
-    { kind: 'npc', x: 18, y: 19, name: 'A caravan-master', lines: [
+    { kind: 'npc', x: 18, y: 19, name: 'A caravan-master', flag: 'q_toll', lines: [
       'A caravan-master stamps by his wagons, his hands under his arms, watching the road to the head.',
       '"He wants more than the load is worth. And he has my girl until I pay it."',
+    ], says: [
+      { after: { flag: TOLL_DONE }, lines: ['The caravan-master at his wagons, mending a harness. His girl hands him the awl.', '"We go down when the snow lets us."'] },
+      { after: STAIR_PASSED, sets: 'q_toll', lines: ['The caravan-master has his girl by him at the wagons, his coat round her.', '"She walked down to us on her own feet. What do I owe you?"'], choice: { ask: '"Name it."', answers: [
+        { label: 'Nothing.', sets: TOLL_DONE, pay: { xp: 1500 }, says: [
+          'He takes each of your hands in both of his, and is slow to let go.',
+          '"Then every caravan up this road will hear your names."',
+        ] },
+      ] } },
+    ] },
+    { kind: 'npc', x: 19, y: 19, name: 'The caravan-master\'s girl', after: STAIR_PASSED, lines: [
+      'The girl from the head by the wagons, wrapped to the ears in her father\'s coat.',
+      '"Nobody stopped me. I walked down, and I never once looked round."',
     ] },
     { kind: 'event', x: 18, y: 21, id: 'i10_caravan', once: true, text: 'Three wagons drawn up off the road, the mules blanketed against the snow. Nothing has been unloaded.' },
     { kind: 'event', x: 12, y: 21, id: 'i10_drift', once: true, text: 'A drift lies across the road, waist-deep and smooth. The wind did not lay it.' },
@@ -106,7 +126,7 @@ export const HIGHSPINE_I10: MapDef = {
     { kind: 'event', x: 1, y: 20, id: 'i10_top', once: true, after: STAIR_PASSED, sets: STAIR_TOP, text: 'Below the head the Stair goes down the Sheer into the ash, step under step, further than you can see.' },
     { kind: 'event', x: 4, y: 21, id: 'i10_tollstone', once: true, text: 'The toll-stone, its top worn hollow by coin. Under its lip, cut small and sharp, a ring with a bar across it.' },
     { kind: 'shrine', x: 7, y: 21, id: 'i10_shrine', text: 'A shrine at the head, older than the monks\': a niche cut square, and in it a stone hand, held out.', stat: 'might', done: 'The old shrine at the Stair\'s head, its stone hand held out.' },
-    { kind: 'npc', x: 6, y: 19, name: 'A girl', lines: [
+    { kind: 'npc', x: 6, y: 19, name: 'A girl', until: STAIR_PASSED, lines: [
       'A girl sits on the cut stone with her knees drawn up, a giant\'s shadow over her.',
       '"They feed me. They don\'t talk, but the old one. Only ever about the toll."',
     ] },

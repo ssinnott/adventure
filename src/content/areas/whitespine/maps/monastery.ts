@@ -8,6 +8,12 @@
 // area's floor as Carn Dubh's cairn is; docs/areas/whitespine.md §4.3 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH, WEST } from '../../../../game/types.ts';
+import { NEST_CELL } from './highspine_i11.ts';
+
+/** The Novice told, back from his mother: he walks out at the gate, home to Anvilhall (#56's 45, #506). */
+export const NOVICE_TOLD = 'q_novice_told';
+/** The Novice told only that his mother is well: he keeps the fasts in his cell. */
+export const NOVICE_KEPT = 'q_novice_kept';
 
 export const MONASTERY: MapDef = {
   id: 'monastery',
@@ -50,12 +56,40 @@ export const MONASTERY: MapDef = {
     // The board of the hours, in Kiln-script (#538), and the refectory.
     { kind: 'sign', x: 5, y: 4, id: 'hc1_board', text: 'By the refectory door a board of the hours, chalked fresh in the old script.', read: 'KEEP THE HOURS. KEEP THE HOUSE. OPEN THE GATE.' },
     { kind: 'event', x: 2, y: 5, id: 'hc1_refectory', once: true, text: 'The refectory: long tables laid, a bowl and a spoon at every place. The bowls are dusted, and empty.' },
-    // The cells along the east walk, and the Novice in the last (#56's 45, #506's quest).
+    // The cells along the east walk, a brother standing in each. The one in the first takes the
+    // Lantern's badge from a company that carries it (The Eagles' Nest, #56's 46, #506), as the Reader
+    // at Lantern Watch does: either ends it.
     { kind: 'event', x: 11, y: 5, id: 'hc1_cells', once: true, text: 'A brother in each cell, standing. Not one of them is praying.' },
-    { kind: 'npc', x: 14, y: 9, name: 'A novice', lines: [
+    { kind: 'npc', x: 14, y: 3, name: 'A brother in its cell', lines: [
+      'A brother stands in the first cell, its face a hand from the wall, its hands in its sleeves.',
+      'Its breath does not show on the cold stone.',
+    ], says: [
+      { after: { item: 'lantern_badge' }, lines: ['The brother in the first cell turns its hood to the badge in your hand, and holds out its own.'], choice: { ask: 'It holds out its hand.', answers: [
+        { label: 'Give it the badge.', takes: 'lantern_badge', sets: NEST_CELL, pay: { xp: 1200 }, says: [
+          'Its fingers close on the badge, and it turns back to the wall.',
+          'It bows to the stone, the same bow to the inch.',
+        ] },
+      ] } },
+    ] },
+    // The Novice in the last (The Novice, #56's 45, #506): his letter to his mother at Anvilhall, and on
+    // the company's return, told or not. Told, he walks out at the gate, home to her (anvilhall.ts).
+    { kind: 'npc', x: 14, y: 9, name: 'A novice', flag: 'q_novice', until: { flag: NOVICE_TOLD }, lines: [
       'A boy in a novice\'s robe too big for him, sweeping a floor already clean.',
       '"They let me in at the gate. Nobody has said a word to me since."',
       '"I keep the fasts with them. I have never once seen a brother break one."',
+    ], choice: { ask: '"Would you take a letter to my mother? She is at Anvilhall."', answers: [
+      { label: 'Take his letter.', sets: 'q_novice_letter', gives: 'novice_letter', says: ['He takes it out of his sleeve, sealed with candle wax, and puts it in your hand without letting go of it at once.'] },
+      { label: 'Not now.', says: ['"Another day, then." He goes back to his sweeping.'] },
+    ] }, says: [
+      { after: { flag: NOVICE_KEPT }, lines: ['The novice sweeps a floor already clean.', '"She is well. I keep the fasts."'] },
+      { after: { flag: 'q_novice_home' }, lines: ['The novice leans on his broom in the door of the last cell.', '"You found her? Did she read it?"'], choice: { ask: '"What did she say?"', answers: [
+        { label: 'Tell him.', sets: NOVICE_TOLD, pay: { xp: 1200 }, says: [
+          'He hears you out, looking down the walk at the brothers in their cells. Not one of them looks back.',
+          'He leans the broom by the door and walks out at the gate, and the brother in it bows him by.',
+        ] },
+        { label: 'Say she is well.', sets: NOVICE_KEPT, pay: { xp: 1200 }, says: ['"Good. Tell her I keep the fasts."', 'He goes back to his sweeping.'] },
+      ] } },
+      { after: { flag: 'q_novice_letter' }, lines: ['The novice sweeps a floor already clean.', '"Anvilhall. Ask on the terraces for the woman who knits."'] },
     ] },
     // The bell tower's foot, the stair winding up, and the bells, where the Laureate hides among the
     // ringers (the Bard's third, #448).

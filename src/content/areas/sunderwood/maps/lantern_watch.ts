@@ -9,6 +9,7 @@
 import type { MapDef, Words } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { LAMP_LIT, WALL_WALKED } from '../quests.ts';
+import { NEST_WATCH } from '../../whitespine/maps/highspine_i11.ts';
 
 /**
  * The Reader's words, read to what the company carries: the papers, the log or both, each opened
@@ -137,7 +138,20 @@ export const LANTERN_WATCH: MapDef = {
       'A woman at the desk with a cut wick in a dish beside her, a book shut under her hand. She does not stand.',
       '"Hester Dunmore, Reader of the Watch. Helmstow sends oil and orders, and once a season somebody to count the jars."',
       '"Sometimes papers come instead, and those come to me." She looks past you at the door. "Shut it, if you would."',
-    ], says: [
+    ], quest: { item: 'lantern_instruments', reward: 0, setFlag: 'q_nest_instruments', done: [
+      'She opens the case, reads the list inside the lid, and shuts it again.',
+      '"The Peak Stone, not ticked. They go back to the hall."',
+    ] }, says: [
+      // The Eagles' Nest (the Whitespine's #56's 46, #506): the Lantern's badge from the nest above the
+      // Peak Stone, carried here, goes into her book, or stays with the company; either way she says
+      // no more of it after. The instruments from under the Stone's slab she takes at the first meeting.
+      { after: { item: 'lantern_badge' }, lines: ['She looks a long while at the badge in your hand before she reaches for it.', '"That pin was torn off a coat. Where did you find him?"'], choice: { ask: '"Will you leave it with me? His name goes in the book."', answers: [
+        { label: 'Give her the badge.', takes: 'lantern_badge', sets: NEST_WATCH, pay: { xp: 1200 }, says: [
+          'She opens the book, writes a line, and lays the badge in the fold of the page.',
+          '"The Peak Stone was his to survey. The reading never came down."',
+        ] },
+        { label: 'Keep it.', says: ['"Then keep it close."'] },
+      ] } },
       // The Length of the Wall told (#205): said once.
       { after: { flag: [MET, 'q_wall_told'] }, until: { flag: 'q_wall_reader' }, sets: 'q_wall_reader', lines: [
         '"The surveyor\'s six words are in the hall\'s book. They are in mine too, and mine says who carried them." She keeps her hand on it, shut.',

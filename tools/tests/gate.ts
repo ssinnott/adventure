@@ -7,6 +7,7 @@
 // until it holds.
 import { AREAS } from '../../src/content/index.ts';
 import type { RegionId } from '../../src/content/index.ts';
+import type { Area } from '../../src/content/area.ts';
 import { ATLAS, ITEMS, MAP_DEFS, MONSTERS } from '../../src/content/index.ts';
 import type { ItemDef } from '../../src/game/items.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
@@ -141,6 +142,10 @@ export const ROADS: Record<string, readonly string[]> = {
   // West out of G10 onto the Waste's ash past the beetles below the vines and the drake on the rocks
   // where the road turns west, and over the Cinder Hills past the drakes at their far end (#517).
   emberwaste: ['emberwaste_f10:f10_beetles', 'emberwaste_f10:f10_drake', 'emberwaste_e10:e10_drakes'],
+  // Onto the steppe over its south edge, past the pride at its kill by the way in, west along the road
+  // past the scorpions at the dunes' edge to the glass walker at the far south-west, and north up the
+  // Riders' track past the north pride (#525).
+  wold: ['wold_d9:d9_pride', 'wold_d9:d9_scorpions', 'wold_d9:d9_walker', 'wold_d9:d9_pride_north'],
   // Over the crest from the vale and up the path to the Peak Stone, past the brothers walking it (#501);
   // then up the ridge trail and west along the road to the Stair, past the giant and the troll in the
   // snow short of the head (#502).
@@ -152,7 +157,7 @@ export const ROADS: Record<string, readonly string[]> = {
 };
 
 /** What an area is called in the check, apart from the map it shares an id with. */
-const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Thornmark', saltreach: 'Saltreach', wrackholm: 'Wrackholm', sunderwood: 'Sunderwood', kilns: 'the Kilns', cairnmoor: 'Cairnmoor', rimewater: 'Rimewater', whitespine: 'the Whitespine', ashfall: 'Ashfall' };
+const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Thornmark', saltreach: 'Saltreach', wrackholm: 'Wrackholm', sunderwood: 'Sunderwood', kilns: 'the Kilns', cairnmoor: 'Cairnmoor', rimewater: 'Rimewater', whitespine: 'the Whitespine', ashfall: 'Ashfall', glasswold: 'the Glasswold' };
 
 /**
  * The figures past their limits someone owes, by check: who owes each, and the figure it stood at
@@ -227,6 +232,9 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   // And Old Cinder's undercroft (#515), banded from the area's floor as Highcell's upper house is.
   'old_cinder2: under': { whose: '#18', at: 1 },
   'Ashfall: under': { whose: '#18', at: 1 },
+  // And the Glasswold's first box (#525): the steppe, two under, wins every fight, as Ashfall's boxes do.
+  'wold_d9: under': { whose: '#18', at: 1 },
+  'the Glasswold: under': { whose: '#18', at: 1 },
   'highspine_i11: under': { whose: '#18', at: 1 },
   // And the ridge north (#503), banded from the area's floor as I11 is: its three groups are won every
   // time two under, and with them the area's pool passes its limit again.
@@ -342,7 +350,8 @@ const median = (v: readonly number[]): number => { const s = [...v].sort((a, b) 
 
 /**
  * A map at its floor through, two levels under it back (or n/a, where that is under level 1). Two
- * under is asked of a map alone only where `judgeUnder` says: where its floor is its area's. A map with
+ * under is asked of a map alone only where `judgeUnder` says: where its floor is its area's, or where
+ * it pays outside the area's budget (`Area.outside`), out of the area's pools. A map with
  * a higher floor is held at its floor alone, and its groups count two under in the area's pool
  * (`areaPools`; the owner's decisions on #40, 28 September, and #209, 29 September).
  */
@@ -568,10 +577,12 @@ export function gate(): void {
       return fought.find((d) => d.id === map)?.encounters!.find((e) => e.id === g);
     };
 
-    // Each map against its sign.
+    // Each map against its sign. A map outside the area's budget (`Area.outside`) is its own: judged
+    // two under its own floor, and left out of the area's pools.
+    const outside = new Set((area as Area).outside ?? []);
     for (const d of fought) {
       const groups = d.encounters!;
-      margins(d.id, groups, d.band, d.band[0] === band[0]);
+      margins(d.id, groups, d.band, d.band[0] === band[0] || outside.has(d.id));
       for (const b of bosses.filter((ref) => ref.startsWith(`${d.id}:`))) {
         const boss = groups.find((e) => `${d.id}:${e.id}` === b);
         if (!boss) continue;
@@ -593,7 +604,7 @@ export function gate(): void {
     const name = NAMES[id];
     const lost = [...bosses, ...zones.flatMap((z) => ROADS[z.id] ?? [])].filter((ref) => !find(ref));
     ok(!lost.length, `${name}: its bosses and its roads are groups of its maps${lost.length ? ` (not: ${lost.join(', ')})` : ''}`);
-    const pools = areaPools(fought, band[0]);
+    const pools = areaPools(fought.filter((d) => !outside.has(d.id)), band[0]);
     if (pools.through === null) console.log(`  n/a:  ${name} has no groups yet`);
     else check(`${name}: floor`, pools.through, atLeast(GATE.through.aim), atLeast(GATE.through.limit), `${name} at its maps' floors: ${pc(pools.through)} of its ${pools.groups} groups' fights won (${aims(pc(GATE.through.aim), pc(GATE.through.limit))})`);
     if (pools.back === null) console.log(`  n/a:  ${name} ${GATE.under} under its maps' floors: no group has a company there`);
