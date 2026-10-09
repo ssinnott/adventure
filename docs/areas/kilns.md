@@ -2636,8 +2636,7 @@ Decided by delegate for #469, each the owner's to overturn:
     anchor in for mending.
 17. **Owed on:** the ship's landing and seller at Cinderport (#512); Tallis's man's hand-in and the
     crown's end (#471); the chapter's step (#470) (the last two built since; the ship still waits on
-    #512). The sheet's crop of the world map for the town centres on Saltmouth's gate, the first way
-    in `tools/sheet.ts` finds, the ferry's: the quality lane's to change.
+    #512).
 18. **The coach runs,** Rime Lodge being built (#487): Murdo sells it to the lodge's coach house and
     its coachman back to the yard. The gate's `landings` now count the lodge's two ways out onto M9
     and hold the groups nearest them to the gentlest; the pike beside the lake door's landing, which
