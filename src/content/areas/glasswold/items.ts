@@ -16,6 +16,9 @@ export const ITEMS: readonly ItemDef[] = [
   // In the hollow of the fallen walker's chest on D9 (#525): no shop buys it.
   { id: 'etched_glass', name: 'Etched Glass', slot: 'none', price: 0 },
   hoardShield,
+  leatherCoat,
+  // In the Riders' hoard behind the dry well at Akordu (D8, #526): the Riders' own make, with a plus.
+  P(leatherCoat, 2),
   // With the Compact's last three drops in the cleft under the Scarp's lip on C8 (#528): nobody on the
   // Wold reads it; Lantern Watch's reader (#204) or the Compact's hall at Cinderport is owed it.
   { id: 'cipher_letter', name: 'Letter in Cipher', slot: 'none', price: 0 },
@@ -25,7 +28,4 @@ export const ITEMS: readonly ItemDef[] = [
     'A piece of glass the size of a fist, smooth on every side, and in it a light, cold green-white, that does not flicker.',
     'It is no warmer for the light, nor for your hand. Turned, shaken or covered, it is the same.',
   ] },
-  leatherCoat,
-  // In the Riders' hoard behind the dry well at Akordu (D8, #526): the Riders' own make, with a plus.
-  P(leatherCoat, 2),
 ];

@@ -52,6 +52,11 @@ import { TIDE_SHIP } from './maps/tide_ship.ts';
 import { TIDE_SHIP2 } from './maps/tide_ship2.ts';
 import { TIDE_SHIP3, TIDE_RIFT } from './maps/tide_ship3.ts';
 import { DEAD_DROP_STAIR } from './maps/dead_drop_stair.ts';
+import { DEAD_DROP, VAULT_STAIR } from './maps/dead_drop.ts';
+import { DEAD_DROP2, WRITER_STAIR, HOIST } from './maps/dead_drop2.ts';
+import { GameMap } from '../../../game/map.ts';
+import type { Feature } from '../../../game/map.ts';
+import { item } from '../../../game/items.ts';
 
 /** The clock on to the next hour given. */
 const clock = (w: Walk, hour: number): void => { const m = w.world.state.minutes; w.world.state.minutes = m - (m % 1440) + 1440 + hour * 60; };
@@ -220,9 +225,31 @@ function theStoneCarriedHome(ok: (cond: boolean, msg: string) => void): void {
   everyGoalWalked(ok, [CHAPTER]);
 }
 
+/**
+ * The causeway seen (#449): once the company has stood on its first stone at Sheer Point (the
+ * Whitespine's step, `sheerpoint_i8:i8_causeway`), the Saltings' shore by Saltmouth's road and the
+ * Tide Ship's starboard rail look east on a line on the sea under the Hearth's light, each said once;
+ * before it, neither shows anything.
+ */
+function causewaySeen(ok: (cond: boolean, msg: string) => void): void {
+  const said = (w: Walk, map: string, id: string): string[] => {
+    const f = MAP_DEFS.find((d) => d.id === map)!.features!.find((x) => x.kind === 'event' && x.id === id)!;
+    w.world.travel(map, f.x, f.y);
+    return w.world.eventsHere();
+  };
+  const both = (w: Walk): string[][] => [said(w, 'saltings_c6', 'c6_causeway'), said(w, 'tide_ship', 'ts_causeway')];
+  ok(both(newWalk(ok)).every((s) => !s.length), 'before the causeway at Sheer Point is stood on, the Saltings\' shore and the Tide Ship\'s deck show nothing');
+  const w = newWalk(ok);
+  see(w, 'sheerpoint_i8:i8_causeway');
+  const [shore, deck] = both(w), again = both(w);
+  ok([shore, deck].every((s) => s.length === 1 && s[0].includes('straight as a rule')) && again.every((s) => !s.length),
+    `once it is, a line on the sea under the Hearth's light from the shore and from the deck, each said once (${shore.join(' / ')}; ${deck.join(' / ')})`);
+}
+
 export const walkthrough: Walkthrough = (ok) => {
   theStoneCarriedHome(ok);
   sideQuests(ok);
+  causewaySeen(ok);
 
   const w = newWalk(ok);
   w.level = 12;
@@ -387,6 +414,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(w.world.map.def.band?.[0] === 26, 'the stair\'s foot is the Dead-Drop\'s country, 26 and over, as its sign says');
   fence(w);
   see(w, `${foot.id}:dd_door`);
+  drop(w);
   walkThrough(w, foot.id, 4, 6, SOUTH, hold.id, 1);
 };
 
@@ -419,6 +447,141 @@ function fence(w: Walk): void {
   const late = fenced(), early = takeWork(q, w.world.state, late);
   w.ok(early.length === 2 && early[0].startsWith(q.early![0]) && /not yet/i.test(early[0]) && late.gold === gold + 200 && rankOf('compact', late) === 3,
     `a company that had seen the foot is paid at the taking, with the early words (${early.join(' ').replace(/\n+/g, ' ')})`);
+}
+
+/**
+ * The Dead-Drop's drop (#22), at 26, its floor, as Meridian Camp's levels are walked at theirs: down the stair's
+ * foot's far end onto its first square, facing in, and back up in front of it; no machine in sight of the way
+ * in or the drop, even by a light, the first group round the corner; the cargo left at the drop, the rails, a
+ * post, the shards stacked by size and the counting floor; every group won at 26, the hold keeper at 27 the
+ * farthest; a loader's parts and the Compact's coin; and the rails' way down to the vaults (VAULT_STAIR), its
+ * line said at its head the once, and the vaults below it.
+ */
+function drop(w: Walk): void {
+  const D = DEAD_DROP, foot = DEAD_DROP_STAIR, level = w.level, way = foot.exits!.find((e) => e.to === D.id)!;
+  const here = (): string => `${w.world.state.mapId} ${w.world.state.x},${w.world.state.y}`;
+  w.world.travel(foot.id, way.x, way.y + 1, NORTH);
+  const down = w.world.move('forward');
+  w.ok(down.kind === 'moved' && w.world.state.mapId === D.id && w.world.state.x === D.start.x && w.world.state.y === D.start.y && w.world.state.facing === D.start.facing
+    && way.tx === D.start.x && way.ty === D.start.y && down.messages.includes(way.label!),
+    `the stair's foot's far end goes on down into the drop, facing in (${here()}: ${down.kind === 'moved' ? down.messages.join(' / ') : down.kind})`);
+  const up = [w.world.move('forward'), w.world.move('back')];
+  w.ok(up.every((r) => r.kind === 'moved') && w.world.state.mapId === foot.id && w.world.state.x === way.x && w.world.state.y === way.y + 1 && w.world.state.facing === SOUTH,
+    `and back up onto the stair's foot in front of it, facing away from it (${here()})`);
+
+  // Whichever way a company looks from the way in or the drop, by a light, no machine is in sight: the
+  // first stands round the corner, so the band's sign is met before any of them.
+  const map = new GameMap(D), seen: string[] = [];
+  for (let y = 1; y <= 11; y++) for (let x = 2; x <= 6; x++) {
+    if (map.passable(x, y) !== 'ok') continue;
+    for (const f of [NORTH, EAST, SOUTH, WEST]) {
+      w.world.travel(D.id, x, y, f);
+      w.world.state.light = 9;
+      if (w.world.groupsInSight().length) seen.push(`${x},${y}`);
+    }
+  }
+  w.world.state.light = 0;
+  w.ok(!seen.length, `no machine is in sight of the way in or the drop, the first round the corner${seen.length ? ` (seen from ${[...new Set(seen)].join(' ')})` : ''}`);
+
+  w.level = 26;
+  for (const id of ['dd_in', 'dd_drop', 'dd_rails', 'dd_buffer', 'dd_post', 'dd_small', 'dd_middling', 'dd_large', 'dd_floor', 'dd_coin', 'dd_water']) see(w, `${D.id}:${id}`);
+  const groups = D.encounters!, keeper = groups.find((g) => g.id === 'dd_keeper');
+  w.ok(groups.every((g) => g.monsters.every((m) => m === 'loader' || m === 'tally_clerk') || g === keeper) && keeper?.monsters.join() === 'hold_keeper'
+    && groups.every((g) => !!g.respawn && !g.after),
+    `loaders and tally clerks, ${groups.length - 1} groups, and at the far end a hold keeper come up from the vaults`);
+  for (const g of groups) fight(w, `${D.id}:${g.id}`);
+  w.ok(open(w, D.id, 'dd_heap').every((i) => item(i).slot === 'none' && !item(i).price), 'where the rails end, a loader\'s parts, which no shop buys');
+  const gold = w.party.gold;
+  open(w, D.id, 'dd_strongbox');
+  w.ok(w.party.gold - gold >= 1000, `under the counting floor's posts, the Compact's drop coin, heavy (${w.party.gold - gold} gold)`);
+
+  const head = D.features!.find((f) => f.kind === 'event' && f.id === 'dd_down');
+  w.ok(VAULT_STAIR.to === DEAD_DROP2.id && (D.exits ?? []).includes(VAULT_STAIR) && map.passable(VAULT_STAIR.x, VAULT_STAIR.y) === 'ok'
+    && head?.kind === 'event' && !!head.once && head.x === VAULT_STAIR.x && head.y === VAULT_STAIR.y - 1,
+    'the rails go on down to the vaults (VAULT_STAIR), and the line at their head is said the once');
+  see(w, `${D.id}:dd_down`);
+  vaults(w);
+  w.level = level;
+}
+
+/**
+ * The Dead-Drop's vaults (#22), at 27, their floor: down the drop's rails' slope onto their first square, facing
+ * in, and back up onto the slope's head; the shards' vault, and at its far end the rails' door, a wall drawn as a
+ * door, the knockers at it and crates beside it under the Hand's seal, in Sheer Point's words; the people's vault,
+ * its pens, the rest in an empty pen and the count on the wall, two columns, a mark by Wenna's name alone and no
+ * word of what it is; every group won at 27, loaders, keepers and the knockers at 28 the hardest; a keeper's parts,
+ * the named piece and the Compact's coin; the hoist's chains, a search where they go into the wall and the cage up
+ * to the drop's crates; and the steps down to the writer's room, barred until it is built (WRITER_STAIR), its line
+ * said at its head each time.
+ */
+function vaults(w: Walk): void {
+  const V = DEAD_DROP2, D = DEAD_DROP, level = w.level, map = new GameMap(V);
+  const here = (): string => `${w.world.state.mapId} ${w.world.state.x},${w.world.state.y}`;
+  const ev = (id: string): Extract<Feature, { kind: 'event' }> | undefined => V.features!.find((f): f is Extract<Feature, { kind: 'event' }> => f.kind === 'event' && f.id === id);
+  w.world.travel(D.id, VAULT_STAIR.x, VAULT_STAIR.y - 1, SOUTH);
+  const down = w.world.move('forward');
+  w.ok(down.kind === 'moved' && w.world.state.mapId === V.id && w.world.state.x === V.start.x && w.world.state.y === V.start.y && w.world.state.facing === V.start.facing
+    && VAULT_STAIR.tx === V.start.x && VAULT_STAIR.ty === V.start.y && down.messages.includes(VAULT_STAIR.label!),
+    `the drop's rails go on down into the vaults, facing in (${here()}: ${down.kind === 'moved' ? down.messages.join(' / ') : down.kind})`);
+  const up = [w.world.move('forward'), w.world.move('back')];
+  w.ok(up.every((r) => r.kind === 'moved') && w.world.state.mapId === D.id && w.world.state.x === VAULT_STAIR.x && w.world.state.y === VAULT_STAIR.y - 1 && w.world.state.facing === NORTH,
+    `and back up onto the slope's head, facing away from it (${here()})`);
+
+  w.level = 27;
+  for (const id of ['dd2_in', 'dd2_vault', 'dd2_bare', 'dd2_rails', 'dd2_coin', 'dd2_door', 'dd2_seal', 'dd2_pens', 'dd2_count', 'dd2_left', 'dd2_right']) see(w, `${V.id}:${id}`);
+  // The rails' door opens for nobody the company has; beside it the Hand's seal, as on Sheer Point's crates.
+  const door = ev('dd2_door')!, cave = MAP_DEFS.find((d) => d.id === 'sheerpoint_i8')?.features?.find((f) => f.kind === 'event' && f.id === 'i8_crates');
+  const sealed = [[-1, 0], [1, 0], [0, -1], [0, 1]].map(([dx, dy]) => ({ x: door.x + dx, y: door.y + dy })).filter((c) => map.at(c.x, c.y).door === 'door' && map.passable(c.x, c.y) !== 'ok');
+  w.ok(sealed.length === 1 && !(V.exits ?? []).some((e) => e.x === sealed[0].x && e.y === sealed[0].y),
+    `at the vault's far end the rails run under a door that opens for nobody, a wall drawn as a door (${sealed.map((c) => `${c.x},${c.y}`).join(' ')})`);
+  w.ok(cave?.kind === 'event' && ['under the Hand\'s seal, packed in straw', 'shards of every colour, not yet cut'].every((t) => ev('dd2_seal')!.text.includes(t) && cave.text.includes(t)),
+    'the crates beside it are under the Hand\'s seal, in the words of Sheer Point\'s crates, and nothing says what that means');
+  // The count: two columns, the knot at the head, Wenna's name alone marked, and no word of what the mark is.
+  const right = ev('dd2_right')!.text, said = (V.features ?? []).flatMap((f) => 'text' in f && typeof f.text === 'string' ? [f.text] : []).join(' ');
+  w.ok(/two columns/.test(ev('dd2_count')!.text) && right.includes('Wenna, of Gullwick') && right.includes('a loop inside a loop') && !/captain|the line\b|queen/i.test(said),
+    'on the wall the count in two columns, and by Wenna\'s name alone a loop inside a loop, never said to be anything');
+  const groups = V.encounters!, kinds = (id: string): string => groups.find((g) => g.id === id)?.monsters.join() ?? '';
+  w.ok(groups.length === 5 && groups.every((g) => !!g.respawn && !g.after && !g.when)
+    && groups.filter((g) => g.y <= 11).every((g) => g.monsters.every((m) => m === 'loader') || g.id === 'dd2_knockers')
+    && groups.filter((g) => g.y >= 15).every((g) => g.monsters.every((m) => m === 'hold_keeper'))
+    && kinds('dd2_knockers') === 'deep_knocker,deep_knocker,deep_knocker,deep_knocker' && Math.abs(groups.find((g) => g.id === 'dd2_knockers')!.x - sealed[0]?.x) <= 2,
+    'loaders in the shards\' vault, hold keepers in the people\'s and four deep knockers at the rails\' door');
+  for (const g of groups) fight(w, `${V.id}:${g.id}`);
+  const rest = V.features!.find((f) => f.kind === 'camp');
+  w.ok(rest?.kind === 'camp' && rest.y >= 15 && (rest.x < 15 || rest.x > 17), `an empty pen off the aisle is the vaults' rest (${rest?.kind === 'camp' ? `${rest.name}, ${rest.x},${rest.y}` : 'none'})`);
+  const gold = w.party.gold;
+  open(w, V.id, 'dd2_box1');
+  open(w, V.id, 'dd2_box2');
+  w.ok(w.party.gold - gold >= 1000, `by the rails, the Compact's drop coin, heavy (${w.party.gold - gold} gold)`);
+  w.ok(open(w, V.id, 'dd2_heap').every((i) => item(i).slot === 'none' && !item(i).price), 'in a pen, a keeper\'s parts, which no shop buys');
+  const piece = open(w, V.id, 'dd2_straw');
+  w.ok(piece.length === 1 && !!item(piece[0]).plus && item(piece[0]).price <= 6000, `in another pen's straw, a named piece inside the band's window (${piece.map((i) => `${item(i).name}, ${item(i).price}`).join()})`);
+
+  // The hoist: its chains go into the wall by the count; a search there, and the cage takes the company up
+  // beside the drop's crates. Nothing on the drop leads down it.
+  const [secret] = V.secrets!, chains = ev(secret.hint)!;
+  w.ok(V.secrets!.length === 1 && secret.hint === 'dd2_chains' && !chains.once && HOIST.x === secret.x - 1 && HOIST.y === secret.y && (V.exits ?? []).includes(HOIST)
+    && !(D.exits ?? []).some((e) => e.to === V.id && e !== VAULT_STAIR),
+    'the hoist is behind the wall where the chains go in, its one secret, and the drop has no way down it');
+  w.world.travel(V.id, chains.x, chains.y, WEST);
+  w.world.eventsHere();
+  let found = false;
+  for (let i = 0; i < 20 && !found; i++) found = w.world.search();
+  const ride = found ? [w.world.move('forward'), w.world.move('forward')] : [];
+  w.ok(found && ride.every((r) => r.kind === 'moved') && w.world.state.mapId === D.id && w.world.state.x === HOIST.tx && w.world.state.y === HOIST.ty && w.world.state.facing === EAST
+    && ride[1]?.kind === 'moved' && ride[1].messages.includes(HOIST.label!)
+    && D.features!.some((f) => f.kind === 'event' && f.id === 'dd_cage' && f.x === HOIST.tx && f.y === HOIST.ty),
+    `searched where the chains go into the wall, a door, and the cage up to the drop beside its crates, where it is seen from above too (${here()})`);
+  listen(w);
+  see(w, `${D.id}:dd_cage`);
+
+  // The steps down to the writer's room, barred until it is built (WRITER_STAIR): its line at its head, each time.
+  const bars = ev('dd2_down');
+  w.ok(WRITER_STAIR.to === 'dead_drop3' && !(V.exits ?? []).some((e) => e.to === WRITER_STAIR.to) && map.passable(WRITER_STAIR.x, WRITER_STAIR.y) !== 'ok'
+    && bars?.kind === 'event' && !bars.once && bars.x === WRITER_STAIR.x && bars.y === WRITER_STAIR.y - 1,
+    'the steps go on down to the writer\'s room, barred until it is built (WRITER_STAIR), and its line is said at its head each time');
+  see(w, `${V.id}:dd2_down`);
+  w.level = level;
 }
 
 // ---- the side quests (#192) ----

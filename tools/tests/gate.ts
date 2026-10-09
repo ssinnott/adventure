@@ -181,6 +181,9 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'tide_ship2: under': { whose: '#18', at: 1 },
   'tide_ship3: under': { whose: '#18', at: 1 },
   'Wrackholm: under': { whose: '#18', at: 1 },
+  // And the Dead-Drop's drop (#22), past Wrackholm's band and outside its budget, judged two under its own floor.
+  'dead_drop: under': { whose: '#18', at: 1 },
+  'dead_drop2: under': { whose: '#18', at: 1 },
   'eaves_i2: under': { whose: '#18', at: 1 },
   'eaves_j2: under': { whose: '#18', at: 1 },
   'Sunderwood: under': { whose: '#18', at: 1 },
@@ -243,11 +246,13 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'meridian_camp3: under': { whose: '#18', at: 1 },
   // And the Glasswold's first box (#525): the steppe, two under, wins every fight, as Ashfall's boxes do.
   'wold_d9: under': { whose: '#18', at: 1 },
-  // And the mesas (#527), the same; Akordu's box (#526) the same, the Scarp's edge (#528) and the Glass's
-  // edge (#530), banded from the area's floor for its walkers' pair.
-  'wold_d10: under': { whose: '#18', at: 1 },
+  // Akordu's box (#526) the same.
   'wold_d8: under': { whose: '#18', at: 1 },
+  // And the mesas (#527), the same.
+  'wold_d10: under': { whose: '#18', at: 1 },
+  // And the Scarp's edge (#528), the same.
   'wold_c8: under': { whose: '#18', at: 1 },
+  // And the Glass's edge (#530), banded from the area's floor: two under, it wins every fight.
   'wold_b9: under': { whose: '#18', at: 1 },
   'the Glasswold: under': { whose: '#18', at: 1 },
   'highspine_i11: under': { whose: '#18', at: 1 },

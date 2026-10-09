@@ -4,6 +4,7 @@ import type { ItemDef } from '../../../game/items.ts';
 import { P, core } from '../../items.ts';
 import { ITEMS as THORNMARK } from '../thornmark/items.ts';
 import { longAxe } from '../saltreach/items.ts';
+import { marlinspike } from '../ashfall/items.ts';
 
 const plate = THORNMARK.find((i) => i.id === 'plate')!;
 
@@ -30,6 +31,18 @@ export const ITEMS: readonly ItemDef[] = [
   ] },
   P(core('shortsword'), 2, { id: 'tide_cutlass', name: 'Slack Water, Cutlass +2' }),
   { id: 'tide_stone', name: 'The Tide Stone', slot: 'none', price: 0 },
+  // The Dead-Drop's (#22): the parts a loader shed against the rails' end in the drop, which no shop buys and
+  // no hand-in takes (MONSTERS §2), as the stokers' and the flue walker's.
+  { id: 'loader_port', name: 'Loader\'s Fire Port', slot: 'none', price: 0 },
+  { id: 'loader_iron', name: 'Loader\'s Crate Iron', slot: 'none', price: 0 },
+  // The vaults' (#22): a hold keeper's yoke and pail, heaped in a pen, which no shop buys either; and in another
+  // pen's straw the named piece, Cinderport's marlinspike with a plus of 5, at 3,050, inside the window of the
+  // Glasswold's 6,000 that the curve holds a map at 27 to.
+  { id: 'keeper_yoke', name: 'Hold Keeper\'s Yoke', slot: 'none', price: 0 },
+  { id: 'keeper_pail', name: 'Hold Keeper\'s Pail', slot: 'none', price: 0 },
+  P(marlinspike, 5, { id: 'fishers_spike', name: 'Fisher\'s Spike +5', text: [
+    'A splicing spike, its grip bound in tarred cord, its point worn down to a needle.',
+  ] }),
   // The side quests' letters (#192): Colan's to his brother, sealed (The Captain's Brother); the
   // founder's last, which Merryn carried ten years (The Hermit of the Point); and the clerk's
   // book from the Tide Ship's cabin, every name the hold carried (Every Name in the Column).

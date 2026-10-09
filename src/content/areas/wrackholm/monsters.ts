@@ -39,14 +39,17 @@ export const MONSTERS: readonly MonsterDef[] = [
   { id: 'tide_warden', name: 'Warden of the Tide', plural: 'Wardens of the Tide', sprite: 'tide_warden', kind: 'rift', look: "The Stone's own light, standing guard over it.", level: 14, hp: 674, ac: 20, attack: 11, dice: 10, sides: 7, bonus: 15, speed: 13, xp: 8853, gold: [0, 0], immune: ['asleep'], tint: '#2a7a6c', size: 1.25 },
   // The Dead-Drop's (#22; MONSTERS §8.5), down the stair from the Tide Ship's hold and placed by its band, 26 to 28,
   // not Wrackholm's (§2.2): machines, every one (§2), drawn ahead of the levels that place them.
-  // the drop and the shards' vault, a brute on MONSTERS §4.4's line at 26: a heavy machine with a crate over its head
-  { id: 'loader', name: 'Loader', plural: 'Loaders', sprite: 'loader', kind: 'machine', look: 'It carries a crate the size of a cart, and does not set it down.', level: 26, hp: 735, ac: 23, attack: 16, dice: 6, sides: 8, bonus: 6, speed: 8, xp: 2067, gold: [0, 0], tint: '#6d5341', size: 1.4 },
-  // the drop, a caller on a soldier's numbers at 26 (MONSTERS §4.2), as the tallyman is at 20: it calls two loaders at a
-  // half a turn, the pair #537's test has a clerk call, a brute group's two beside it
-  { id: 'tally_clerk', name: 'Tally Clerk', plural: 'Tally Clerks', sprite: 'tally_clerk', kind: 'machine', look: 'It counts the crates, then turns and counts you.', level: 26, hp: 362, ac: 24, attack: 15, dice: 4, sides: 8, bonus: 5, speed: 11, xp: 1033, gold: [0, 0], calls: { monsters: ['loader', 'loader'], chance: 0.5 }, tint: '#8b7b60', size: 0.55 },
-  // the people's vault, a controller on MONSTERS §4.4's line at 27: as the Bay Keeper, its touch puts to sleep at 0.3 a hit
-  // and it mends the most hurt of its group one turn in four
-  { id: 'hold_keeper', name: 'Hold Keeper', plural: 'Hold Keepers', sprite: 'hold_keeper', kind: 'machine', look: 'It carries water to the pens, and nobody is in them.', level: 27, hp: 356, ac: 25, attack: 15, dice: 4, sides: 8, bonus: 6, speed: 12, xp: 1073, gold: [0, 0], inflict: { cond: 'asleep', chance: 0.3 }, cast: { spells: ['heal'], chance: 0.25 }, tint: '#7c857d', size: 1.1 },
+  // the drop and the shards' vault, a brute on MONSTERS §4.4's line at 26 as #549 made it, restated by the drop (#22):
+  // a heavy machine with a crate over its head
+  { id: 'loader', name: 'Loader', plural: 'Loaders', sprite: 'loader', kind: 'machine', look: 'It carries a crate the size of a cart, and does not set it down.', level: 26, hp: 692, ac: 23, attack: 16, dice: 5, sides: 7, bonus: 10, speed: 8, xp: 2067, gold: [0, 0], tint: '#6d5341', size: 1.4 },
+  // the drop, a caller on a soldier's numbers at 26 (MONSTERS §4.2), as the tallyman is at 20, restated on the line as
+  // #549 made it by the drop (#22): it calls two loaders at a half a turn, the pair #537's test has a clerk call, a
+  // brute group's two beside it
+  { id: 'tally_clerk', name: 'Tally Clerk', plural: 'Tally Clerks', sprite: 'tally_clerk', kind: 'machine', look: 'It counts the crates, then turns and counts you.', level: 26, hp: 321, ac: 24, attack: 15, dice: 4, sides: 8, bonus: 3, speed: 11, xp: 1033, gold: [0, 0], calls: { monsters: ['loader', 'loader'], chance: 0.5 }, tint: '#8b7b60', size: 0.55 },
+  // the people's vault, and one up at the drop's way down, a controller on MONSTERS §4.4's line at 27 as #549 made it,
+  // restated by the drop (#22): as the Bay Keeper, its touch puts to sleep at 0.3 a hit and it mends the most hurt of
+  // its group one turn in four
+  { id: 'hold_keeper', name: 'Hold Keeper', plural: 'Hold Keepers', sprite: 'hold_keeper', kind: 'machine', look: 'It carries water to the pens, and nobody is in them.', level: 27, hp: 376, ac: 25, attack: 15, dice: 5, sides: 7, bonus: 7, speed: 12, xp: 1073, gold: [0, 0], inflict: { cond: 'asleep', chance: 0.3 }, cast: { spells: ['heal'], chance: 0.25 }, tint: '#7c857d', size: 1.1 },
   // the counting house, its boss at 28 on MONSTERS §4.4's boss line, for dead_drop3's gate to tune, judged at 27, the
   // room's floor; it fights only when the company steps to its desk (the map's), and calls two clerks at a half a turn,
   // who may call their loaders; size 1.6 and drawn inside TALL_REACH

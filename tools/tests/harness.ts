@@ -164,9 +164,6 @@ export const WHOLE: Record<string, { role: Role; share: number; why: string }> =
  * leaves this list then.
  */
 export const RESTATE: Record<string, string> = {
-  loader: "a brute at 26, the Dead-Drop's (#22)",
-  tally_clerk: "a skirmisher at 26, the Dead-Drop's (#22)",
-  hold_keeper: "a controller at 27, the Dead-Drop's (#22)",
   tallymaster: "the boss at 28, the Dead-Drop's (#22)",
 };
 

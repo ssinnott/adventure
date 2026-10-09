@@ -181,7 +181,9 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
   master on the quay by day, two Wrack smugglers and two bowmen under the sea wall by night, and four
   salt crabs at the pans' edge. The secret is the smugglers' stair in the sea wall's dry end, its
   cache at the foot by a sea door barred from within, the hint the rope hanging over it with
-  nothing on it. The gate holds at 11, at 7.3 fights to a rest (7.0 before the re-stat, #18).
+  nothing on it. The gate holds at 11, at 7.3 fights to a rest (7.0 before the re-stat, #18). Once
+  the causeway at Sheer Point has been stood on, the sand at the east edge, 31,17, says a line on the
+  sea under the Hearth's light, once (#449; docs/areas/ashfall.md §9, #449's 1 and 2).
 - **Saltmouth** (`saltmouth`, town, band 10–12; #177): the free port behind C6's land gate, §4.9.
 - **The salt pans** (C7, `saltings_c7`, country, band 11–12; #178): the salt runs on south from C6's
   pans into six walled pans, walked in lanes, each with a gap for its sluice but one; the last marsh
@@ -635,7 +637,8 @@ settled in its issue, and what the pilot teaches changes them.
 - **Purpose.** The Saltings' pans south of Saltmouth, the salt crabs' country, and the Scarp rising
   at the box's south edge toward the Glasswold, Act IV's border.
 - **Landmarks.** Salt flats with the pans' walls and the salters' huts, walked in lanes; the Scarp's
-  cliff as the south edge with the stair's foot at 80,206 seen and not climbed; the last marsh
+  cliff as the south edge with the stair's foot at 80,206 seen and, since the Wold's C8 (#528),
+  climbed (docs/areas/glasswold.md §4.6); the last marsh
   between the pans and the town.
 - **Points of interest,** about five features and five groups:
   - a salter with a rumour of the star that moved (#56's 24);
@@ -803,8 +806,9 @@ Two halls open here (DESIGN §8), on the rules and the hall menu built in #132:
 
   The quests of ranks 2 and 3, offered to a Surveyor and a Mapmaker, ride Act IV's dungeons (#635,
   DESIGN §8): the Surveyor's, *The Fourth Journal*, is the Ember Stone's, built
-  (docs/areas/ashfall.md §6, §9, #516's 16), and the Mapmaker's rides Meridian Camp (#22).
-  Geographer, the fourth rank, is the top and has none.
+  (docs/areas/ashfall.md §6, §9, #516's 16), and the Mapmaker's, *Fane's Fire*, is Meridian Camp's,
+  built (docs/areas/ashfall.md §6, §9, #635's PR C). Geographer, the fourth rank, is the top and has
+  none.
 - **The Salt Compact** (#182, built), the harbour tavern (#253): the first task, a run of brandy past
   the customs house; a first rank of two quests, the crews' crate on C6's quay and the watcher's
   place on Wrackholm's west cliff; the boat's fare halved for a member (§4.9). Its line begins
@@ -1198,7 +1202,8 @@ Decided by delegate for #178, each the owner's to overturn:
    A map is its whole box, so Act IV opens them by editing this one.
 4. **The stair's foot is a notch at 8,22,** at the end of a track from the link's 80,206, its lowest
    flight fallen with the face: rock in plain sight with its reason on it, no flag and nothing in
-   `locks.ts`. The link stays the plan's, for Act IV to move with the way past the fall.
+   `locks.ts`. The link stays the plan's: Act IV's C8 (#528) kept it and built the way
+   past the fall as a rope ladder (docs/areas/glasswold.md §4.6, §9, #528's 2 and 4).
 5. **The Star That Moved's watch is built as a night event that sets nothing,** and the salter's
    rumour names no one: the quest and its choice are #183's, with Hiske, Saltmouth's astrologer
    (#177), and it rewrites `c7_star` as the watch. The quest's pay is §6's, not C7's.

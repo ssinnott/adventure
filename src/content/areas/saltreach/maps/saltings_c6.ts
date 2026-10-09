@@ -95,6 +95,9 @@ export const SALTINGS_C6: MapDef = {
     { kind: 'event', x: 6, y: 15, id: 'c6_glass', once: true, text: 'Brine glass across a pool, and a heron stood in it to the knee, grey and still. It has been still a long time.' },
     { kind: 'event', x: 3, y: 23, id: 'c6_ford', once: true, text: 'A ford over the river\'s west arm: a Tidefolk causeway sunk knee-deep, its stones laid close enough to walk in the dark.' },
     { kind: 'event', x: 4, y: 28, id: 'c6_hut', once: true, text: 'An eel-catcher\'s hut fallen in, far from any road. A reed trap on the floor, and in it the bones of what it caught.' },
+    // The shore by the road, looking east to the Hearth: once the causeway at Sheer Point has been stood
+    // on (the Whitespine's step, #449), its line on the sea.
+    { kind: 'event', x: 31, y: 17, id: 'c6_causeway', once: true, after: { seen: 'sheerpoint_i8:i8_causeway' }, text: 'Far out east, where the Hearth\'s light lies on the sea, a thin line runs over the water, straight as a rule.' },
   ],
   secrets: [{ x: 28, y: 19, hint: 'c6_rope' }],
   encounters: [

@@ -19,6 +19,7 @@ import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { INTERIORS } from './interiors.ts';
 import { QUESTS } from './quests.ts';
+import { CHAPTER } from './chapter.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
@@ -38,11 +39,12 @@ export const AREA = {
   // staff and Fane's map in the camp (#22).
   items: ITEMS,
   // What the Springs Bring Up, The Founding Stone and The Shovel That Does Not Blunt (#519).
+  // The third prestiges' quests of the three classes taught here, the Paladin's, the Barbarian's and the
+  // Druid's (#448).
   quests: QUESTS,
   // The Cartographers' Surveyor's rung, the fourth Meridian journal found under the Ember Stone (#635).
   guilds: GUILDS,
-  // The Window, the act's second chapter, is #518's.
-  chapter: undefined,
+  chapter: CHAPTER,
   // The coast under the mountain: warm and wet, the vines green the year round, smoke for fog and the
   // mountain for thunder.
   climate: { summer: 24, winter: 10, daily: 6, damp: [0.04, 0.11], wettest: 200, fog: 0.3, lag: 16,
