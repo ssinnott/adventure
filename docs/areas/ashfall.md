@@ -2453,6 +2453,15 @@ Decided by delegate for #518, each the owner's to overturn:
     parts' order shuffled, the window looked through once and passed once and west once by the ride
     (§5).
 
+Decided by delegate for #634, each the owner's to overturn:
+
+1. **Ashfall passes the lead's line by name** (EXPANSION §5.2): it leaves a company 1.1 over 26,
+   at 27.13, held at 27.2 in `OVER_ROAD`, for the Stone, the rungs, the quests and the sentries.
+2. **Nothing built is trimmed:** at 1.25 times its ask Ashfall would lose 26% of its kill xp for
+   0.5 of a level at its exit and 0.3 at the Wold's end, and every box touched redone.
+3. **The parked country behind (#522) adds about 0.2 to the figure when built,** so it comes in
+   lighter or raises Ashfall's figure in `OVER_ROAD` by name.
+
 ## 10. Names
 
 Ashfall's naming pass, by the rules of `docs/NAMES.md`, chosen for #444. Cindercoast's folk came

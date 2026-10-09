@@ -1228,6 +1228,9 @@ dungeon entered from the ice is no kind the check knows, so neither is claimed (
   find, the Guide's Staff +1 at 1,750, is the ladder's and inside the window too, and the clear
   holds 6,720 of the 9,840. A Sword at the Hole pays 300 more (#439): 7,020. The coachman pays 200
   for the healer's note (#494), and no answer pays gold: 7,220, which the curve's owed row keeps.
+  The 2,620 short stays owed to the country behind (#497): gold is cumulative, and Act III gives
+  1.15 times its ask. Paid by level, the country lands on the lead's line (EXPANSION §5.2, #634),
+  so its seven boxes should pay a little under the brief's 1,000 xp each.
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
   (docs/areas/thornmark.md §9, 17): a company at 20 wins nine in ten of M9's fights and walks the
   drove road to the lodge resting at the inn; one at 18 wins no more than one in four, which is how
