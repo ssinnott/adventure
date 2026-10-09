@@ -36,9 +36,11 @@ export const MONSTERS: readonly MonsterDef[] = [
   // #514), an elite on the line at 26 as #549 made it again: the long arm's clamp holds, paralysed at 0.15 as the
   // elite's line has it
   { id: 'sentry', name: 'Sentry', plural: 'Sentries', sprite: 'sentry', kind: 'machine', look: 'It is looking for whoever touched the Stones.', level: 26, hp: 597, ac: 25, attack: 16, dice: 5, sides: 8, bonus: 4, speed: 15, xp: 2067, gold: [0, 0], inflict: { cond: 'paralysed', chance: 0.15 }, tint: '#5e656d', size: 1.45 },
-  // the Ember Stone, the moment it lights (#516), its boss at 26 on MONSTERS §4.4's boss line, for #516's gate to tune;
-  // size 2 and drawn inside TALL_REACH
-  { id: 'sentinel', name: 'The Sentinel', plural: 'Sentinels', sprite: 'sentinel', kind: 'machine', look: 'The first thing up through the doors.', level: 26, hp: 1442, ac: 26, attack: 17, dice: 24, sides: 8, bonus: 29, speed: 13, xp: 16533, gold: [0, 0], tint: '#4f5359', size: 2 },
+  // the Ember Stone, the moment it lights (#516), its boss at 26, off the line (tools/tests/harness.ts): its hit points
+  // are set for the Stone's gate, the line's 1,498 to 1,400 (won 58% at 25 and 94% at 27 on the line), two times in
+  // three at the level's floor, 25, which keeps the floor with its one other fight; its blow is the line's 25d7+42.
+  // Size 2 and drawn inside TALL_REACH
+  { id: 'sentinel', name: 'The Sentinel', plural: 'Sentinels', sprite: 'sentinel', kind: 'machine', look: 'The first thing up through the doors.', level: 26, hp: 1400, ac: 26, attack: 17, dice: 25, sides: 7, bonus: 42, speed: 13, xp: 16533, gold: [0, 0], tint: '#4f5359', size: 2 },
   // Meridian Camp's (MONSTERS §8.4; #22), drawn ahead of its three levels and kept here, the camp being Ashfall's.
   // The nest off the iron corridors (meridian_camp2), fodder on MONSTERS §4.4's line at 26 as #549 made it again, six to a
   // group: it flies, so it reaches the back row (`ranged`), and fire does not touch it, as it does not its kin; too young yet
