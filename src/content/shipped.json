@@ -1540,6 +1540,38 @@
       "groups": [],
       "doors": []
     },
+    "dead_drop": {
+      "size": "32x32",
+      "used": [
+        "dd_buffer",
+        "dd_coin",
+        "dd_drop",
+        "dd_floor",
+        "dd_heap",
+        "dd_in",
+        "dd_large",
+        "dd_middling",
+        "dd_post",
+        "dd_rails",
+        "dd_small",
+        "dd_strongbox",
+        "dd_tread",
+        "dd_water"
+      ],
+      "groups": [
+        "dd_clerk1",
+        "dd_clerk2",
+        "dd_clerk3",
+        "dd_clerk4",
+        "dd_keeper",
+        "dd_loader1",
+        "dd_loader2",
+        "dd_loader3",
+        "dd_loader4",
+        "dd_pair"
+      ],
+      "doors": []
+    },
     "dead_drop_stair": {
       "size": "10x9",
       "used": [
@@ -3117,6 +3149,8 @@
     "lanterns_staff",
     "leather",
     "leather+1",
+    "loader_iron",
+    "loader_port",
     "long_axe",
     "long_axe+1",
     "longbow",
