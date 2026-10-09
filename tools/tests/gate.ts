@@ -127,9 +127,10 @@ export const ROADS: Record<string, readonly string[]> = {
   // Down off the pass past the brothers at its foot, and on down the road to the gate past the brothers
   // walking it (#499).
   monksvale: ['monksvale_j11:j11_brothers_foot', 'monksvale_j11:j11_brothers_road'],
-  // Out of Cinderport's gate and south over the ash past the beetles below the ground to the salamanders
-  // where it warms toward the mountain (#511).
-  cindercoast: ['cindercoast_g10:g10_beetles', 'cindercoast_g10:g10_salamanders'],
+  // Down the Giants' Stair past the beetles at its foot (#510), then out of Cinderport's gate and south
+  // over the ash past the beetles below the ground to the salamanders where it warms toward the mountain
+  // (#511).
+  cindercoast: ['cindercoast_h10:h10_beetles_foot', 'cindercoast_g10:g10_beetles', 'cindercoast_g10:g10_salamanders'],
   // Over the crest from the vale and up the path to the Peak Stone, past the brothers walking it (#501);
   // then up the ridge trail and west along the road to the Stair, past the giant and the troll in the
   // snow short of the head (#502).
@@ -204,6 +205,8 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'monastery: under': { whose: '#18', at: 1 },
   // And Ashfall's first box (#511), in Rimewater's gear and the finds by 24, as the Whitespine's are.
   'cindercoast_g10: under': { whose: '#18', at: 1 },
+  // And the Stair's foot (#510): the box that turns a Whitespine company back, at 22, wins every fight.
+  'cindercoast_h10: under': { whose: '#18', at: 1 },
   'Ashfall: under': { whose: '#18', at: 1 },
   'highspine_i11: under': { whose: '#18', at: 1 },
   // Act II's bosses were set by their gates against a company without its first prestige, which the

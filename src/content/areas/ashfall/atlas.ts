@@ -4,7 +4,7 @@ import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
   {
-    id: 'cindercoast', name: 'Cindercoast', area: 'ashfall', band: [24, 25], maps: [{ map: 'cindercoast_g10', at: [200, 286] }], seeds: [[200, 284], [236, 286]], label: [238, 292],
+    id: 'cindercoast', name: 'Cindercoast', area: 'ashfall', band: [24, 25], maps: [{ map: 'cindercoast_h10', at: [232, 286] }, { map: 'cindercoast_g10', at: [200, 286] }], seeds: [[200, 284], [236, 286]], label: [238, 292],
     // The crossing line said coming onto the shore (#166, #511): how the far side feels to a company under its floor.
     crossing: { harder: 'The far side begins here, and it is harder than the range behind.', warning: 'The far side, and nothing on it would spare you. The way back is still open.' },
   },
@@ -25,7 +25,7 @@ export const SITES: readonly AtlasSite[] = [
   { name: 'Fire Mountain', icon: 'volcano', at: [215, 326], label: 'none', planned: true },
   { name: 'Old Cinder', icon: 'ruin', at: [190, 318], label: 'below', planned: true },
   { name: 'Ember Stone', icon: 'stone', at: [176, 342], label: 'below', planned: true },
-  { name: 'Scaldwell', icon: 'springs', at: [240, 300], label: 'below', planned: true }, // the Hot Springs
+  { name: 'Scaldwell', icon: 'springs', at: [240, 300], label: 'below' }, // the Hot Springs: H10's pools at 8,14 (#510)
   { name: 'Meridian Camp', icon: 'cave', at: [226, 334], label: 'below', planned: true }, // the vents' mouth: the Lost Expedition's last camp lies below
   { name: 'Grimsforge', icon: 'forge', at: [230, 330], label: 'right', planned: true }, // Warlord's Forge, by the vents' mouth: the Barbarian's third prestige
 ];

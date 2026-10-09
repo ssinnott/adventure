@@ -281,25 +281,38 @@ export function outdoors(): void {
   // square, the ridge trail crossing at 27, walked, the mountain closing the Stone's ring round above
   // it; on the north the Sheer, the pines and the trail at 18,0, where the atlas's trail crosses, then
   // the mountain and the peaks against I9; on the west the Sheer, the Stair cut down through it at
-  // 0,20, and Ashfall's ground under it against H10; on the east the range against J10. None of I9,
-  // H10 and J10 is built, so the world ends past them, the Stair's foot included.
+  // 0,20, and Ashfall's ground under it against H10's east edge square for square (#510), the Stair
+  // going on down onto H10's 31,20; on the east the range against J10. Neither I9 nor J10 is built,
+  // so the world ends past them.
   ok(southOf(i10) === 'ppp||' + 'p'.repeat(21) + 'M=MMM%' && [...Array(32).keys()].every((i) => out.at(i10.x + i, i10.y + 32).ch === northOf(i11)[i]),
     `I10's south edge is the pines, the Sheer, the ridge trail at 27 and the mountain against I11's north (${southOf(i10)})`);
-  ok(northOf(i10) === '|' + 'p'.repeat(17) + '=' + '%'.repeat(5) + 'A'.repeat(7) + '%' && westOf(i10) === '|'.repeat(20) + '=pppp' + 'aa' + 'p'.repeat(5) && eastOf(i10) === '%%%' + 'A'.repeat(11) + '%%' + 'A'.repeat(7) + '%'.repeat(9)
-    && [...Array(32).keys()].every((i) => [out.at(i10.x - 1, i10.y + i), out.at(i10.x + 32, i10.y + i), out.at(i10.x + i, i10.y - 1)].every((c) => c.ch === '%')),
-    `I10's north edge is the Sheer, the pines and the trail at 18,0 against I9, its west edge the Sheer with the Stair at 0,20 against H10 and its east edge the range against J10, past which the world ends (${northOf(i10)}; ${westOf(i10)}; ${eastOf(i10)})`);
+  ok(northOf(i10) === '|' + 'p'.repeat(17) + '=' + '%'.repeat(5) + 'A'.repeat(7) + '%' && eastOf(i10) === '%%%' + 'A'.repeat(11) + '%%' + 'A'.repeat(7) + '%'.repeat(9)
+    && [...Array(32).keys()].every((i) => [out.at(i10.x + 32, i10.y + i), out.at(i10.x + i, i10.y - 1)].every((c) => c.ch === '%')),
+    `I10's north edge is the Sheer, the pines and the trail at 18,0 against I9 and its east edge the range against J10, past which the world ends (${northOf(i10)}; ${eastOf(i10)})`);
+  const h10 = out.zones.find((z) => z.id === 'cindercoast_h10')!;
+  ok(westOf(i10) === '|'.repeat(20) + '=pppp' + 'aa' + 'p'.repeat(5) && h10.x + h10.w === i10.x && h10.y === i10.y && eastOf(h10) === westOf(i10),
+    `I10's west edge, the Sheer with the Stair at 0,20 and Ashfall's ground under it, meets H10's east edge square for square, the Stair going on down at 31,20 (${westOf(i10)})`);
   // Cinderport's box (G10, #511), Ashfall's first, begun by sea and joined overland to nothing yet: on
   // the north the vines, the road at column 3 up the wall's west side, Cinderport's wall, the stream
   // and the grass against G9's shore; on the south the ash either side of Fire Mountain's foot (the ring,
   // so the void) against G11; on the west the vines, the road out at rows 7 and 8 and the ash against
-  // F10; and on the east the vines, the ash and the stream at rows 22 and 23 against H10. None of G9,
-  // G11, F10 and H10 is built, so the world ends past them.
+  // F10; and on the east the vines, the ash and the stream at rows 22 and 23 against H10's west edge,
+  // square for square but at row 11, where H10's shore track comes out onto G10's vines (#510). None of
+  // G9, G11 and F10 is built, so the world ends past them.
   const g10 = out.zones.find((z) => z.id === 'cindercoast_g10')!;
   ok(northOf(g10) === '&&&=' + 'B'.repeat(10) + '~~~,,,,^^,,,,,&&&&' && southOf(g10) === 'a'.repeat(6) + '%'.repeat(15) + 'a'.repeat(11)
-    && [...Array(32).keys()].every((i) => [out.at(g10.x + 32, g10.y + i), out.at(g10.x - 1, g10.y + i), out.at(g10.x + i, g10.y + 32), out.at(g10.x + i, g10.y - 1)].every((c) => c.ch === '%')),
+    && [...Array(32).keys()].every((i) => [out.at(g10.x - 1, g10.y + i), out.at(g10.x + i, g10.y + 32), out.at(g10.x + i, g10.y - 1)].every((c) => c.ch === '%')),
     `G10's north edge is the vines, the road at column 3, the town's wall, the stream and the grass against G9, and its south edge the ash either side of the mountain against G11, past which the world ends (${northOf(g10)}; ${southOf(g10)})`);
-  ok(westOf(g10) === '&'.repeat(7) + '==' + '&'.repeat(5) + 'a'.repeat(18) && eastOf(g10) === '&'.repeat(14) + 'a'.repeat(8) + '~~' + 'a'.repeat(8),
-    `G10's west edge is the vines, the road out at rows 7 and 8 and the ash against F10, and its east edge the vines, the ash and the stream against H10, past which the world ends (${westOf(g10)}; ${eastOf(g10)})`);
+  ok(westOf(g10) === '&'.repeat(7) + '==' + '&'.repeat(5) + 'a'.repeat(18) && [...Array(32).keys()].every((i) => out.at(g10.x - 1, g10.y + i).ch === '%'),
+    `G10's west edge is the vines, the road out at rows 7 and 8 and the ash against F10, past which the world ends (${westOf(g10)})`);
+  ok(eastOf(g10) === '&'.repeat(14) + 'a'.repeat(8) + '~~' + 'a'.repeat(8) && g10.x + g10.w === h10.x && g10.y === h10.y && westOf(h10) === eastOf(g10).slice(0, 11) + '=' + eastOf(g10).slice(12),
+    `G10's east edge, the vines, the ash and the stream at rows 22 and 23, meets H10's west edge square for square but at row 11, H10's track out of the vines (${eastOf(g10)}; ${westOf(h10)})`);
+  // The Stair's foot (H10, #510): on the north the vines, the grass of the shore, the pines and the Sheer
+  // against H9's shore; on the south the ash, the stream at 4 and 5 and the pines under the Sheer against
+  // H11. Neither H9 nor H11 is built, so the world ends past them.
+  ok(northOf(h10) === '&'.repeat(7) + ','.repeat(22) + 'p||' && southOf(h10) === 'aaaa~~' + 'a'.repeat(22) + 'pppp'
+    && [...Array(32).keys()].every((i) => [out.at(h10.x + i, h10.y - 1), out.at(h10.x + i, h10.y + 32)].every((c) => c.ch === '%')),
+    `H10's north edge is the vines, the grass, the pines and the Sheer against H9, and its south edge the ash, the stream and the pines against H11, past which the world ends (${northOf(h10)}; ${southOf(h10)})`);
   // Fionnlios's box (O7, #477): its west edge meets N7's east edge square for square, the peat-cutter's
   // track crossing at row 22 and the tarn's stream at the corner, out into N7's corner and O8's; its
   // north edge the hills and the Kilns' grass under O6, square for square with O6's south edge but its

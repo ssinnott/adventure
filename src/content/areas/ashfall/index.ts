@@ -1,6 +1,7 @@
 // Ashfall, the far side of the Sound (band 24-26): Cindercoast, Fire Mountain and the Ember Waste, the
 // second area of Act IV, begun by sea (#443, call 6). docs/areas/ashfall.md is its brief.
 import type { Area } from '../../area.ts';
+import { CINDERCOAST_H10 } from './maps/cindercoast_h10.ts';
 import { CINDERCOAST_G10 } from './maps/cindercoast_g10.ts';
 import { CINDERPORT } from './maps/cinderport.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
@@ -10,7 +11,8 @@ import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
   id: 'ashfall' as const,
-  maps: [CINDERCOAST_G10, CINDERPORT],
+  // In road order: the Stair's foot (#510), Cinderport's box (#511) and the town (#512).
+  maps: [CINDERCOAST_H10, CINDERCOAST_G10, CINDERPORT],
   monsters: MONSTERS,
   sprites: SPRITES,
   // Cinderport's armourer's step (#542) and the chandler's stone cure (#546), sold in the town (#512).
@@ -24,7 +26,8 @@ export const AREA = {
     fogText: 'Smoke comes down off the mountain and lies along the shore.', thunderText: 'Thunder over the mountain, or the mountain itself.' },
   // Cinderport's rooms (#521), each opened by its business in the town (#512).
   interiors: INTERIORS,
-  // Vines underfoot (#543) and the drakes, a family of their own (#520), with G10 (#511).
-  novel: { families: ['drakes'], terrain: ['vines'], mechanics: [], landmarks: [] },
+  // Vines underfoot (#543) and the drakes, a family of their own (#520), with G10 (#511); the heavy
+  // machines (#520) and the hot springs, Scaldwell, with H10 (#510).
+  novel: { families: ['drakes', 'machines'], terrain: ['vines'], mechanics: [], landmarks: ['springs'] },
   atlas: { zones: ZONES, places: PLACES, sites: SITES },
 } satisfies Area;
