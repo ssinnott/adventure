@@ -28,7 +28,12 @@
 // the head, the runner on the last flight and the two Riders at the watch, words only; the watch's cairn,
 // yurt and fire; the view down over the Saltings and the rest of the box seen; its groups won at 26;
 // the Compact's last three drops in the cleft under the lip, found from a horse's prints; and over the
-// east edge into Akordu's box, one land.
+// east edge into Akordu's box, one land. The Wold's heart (B8, #529): over C8's west edge under the rim,
+// nothing said; the hunters' fire, a rest, the young Rider and the eldest's word, words only; Kushtash
+// seen, the rim, the cairn and its draught, the well, the running horse and the hermit under the rim; the
+// pride and the mesa fight won at 27 and the Grey Lion alone on his ground at 28, the hunter's saddlebags
+// on the kill-ground; and the way up Kushtash, the stepped scree on its rim side found from the smoke off
+// its top, the fire by night, the ledge, the scout at her fire, words only, and the view.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen } from '../../../../tools/walk.ts';
 import { NORTH, EAST, SOUTH, WEST } from '../../../game/types.ts';
@@ -507,4 +512,119 @@ export const walkthrough: Walkthrough = (ok) => {
   const over = across.world.move('forward');
   ok(over.kind === 'moved' && across.world.zone?.id === 'wold_d8' && !over.messages.some((m) => m.startsWith('The Wold')),
     'over C8\'s east edge the grass runs on into Akordu\'s box, one land, and nothing is said');
+
+  // The Wold's heart (B8, #529): on the Wold's row at 40,222, west of the Scarp's edge, core, at 27-28, the
+  // band's top; Kushtash on the world map no longer planned.
+  const B8 = MAP_DEFS.find((d) => d.id === 'wold_b8')!, b8 = out.zones.find((z) => z.id === 'wold_b8')!;
+  const atB8 = (x: number, y: number): number => key(b8.x + x, b8.y + y);
+  const inB8 = (x: number, y: number): boolean => x >= b8.x && x < b8.x + b8.w && y >= b8.y && y < b8.y + b8.h;
+  const chB8 = (x: number, y: number): string => out.at(b8.x + x, b8.y + y).ch;
+  const featureB8 = (id: string) => B8.features!.find((f) => 'id' in f && f.id === id)!;
+  const saysB8 = (name: string): { p: Person; text: string } => {
+    const p = B8.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
+    w.world.travel('wold_b8', p.x, p.y);
+    return { p, text: meet(p, w.party, heard(w.world, p)).text };
+  };
+  ok(!!WOLD.maps?.some((m) => `${m.map} ${m.at.join(',')}` === 'wold_b8 40,222') && b8.x === 40 && b8.y === 222 && b8.x + b8.w === c8.x && b8.y === c8.y
+    && B8.density === 'core' && B8.band?.join('-') === '27-28' && B8.region === 'glasswold' && ATLAS.sites.some((x) => x.name === 'Kushtash' && !x.planned && x.at.join() === '46,242'),
+    'the Wold\'s heart, B8, laid at 40,222 west of the Scarp\'s edge: core, band 27-28, and Kushtash on the world map built');
+
+  // Over C8's west edge onto B8's east edge at 31,4, the box's way in, one land and nothing said.
+  const fromC8 = newWalk(ok);
+  for (const m of fromC8.party.members) m.level = 27;
+  fromC8.world.travel('wold_c8', 0, 4, WEST);
+  const intoB8 = fromC8.world.move('forward');
+  ok(intoB8.kind === 'moved' && fromC8.world.zone?.id === 'wold_b8' && fromC8.world.state.x === b8.x + 31 && fromC8.world.state.y === b8.y + 4 && !intoB8.messages.some((m) => m.startsWith('The Wold'))
+    && B8.start.x === 31 && B8.start.y === 4 && B8.start.facing === WEST,
+    'over C8\'s west edge onto B8\'s 31,4, the box\'s way in: the grass runs on under the rim, one land, and nothing is said');
+  for (const m of w.party.members) m.level = 27;
+  w.level = 27;
+
+  // The hunters' camp by the way in, a rest, the Riders' own; the young Rider who has asked for the last
+  // blow, and a Rider out from Akordu with the eldest's word (#56's 53, #532's): words only.
+  const hunt = B8.features!.find((f) => f.kind === 'camp')!;
+  w.world.travel('wold_b8', hunt.x, hunt.y);
+  ok(restRefused(w.world) === '' && chB8(hunt.x, hunt.y) === ':' && Math.abs(hunt.x - B8.start.x) + Math.abs(hunt.y - B8.start.y) <= 8,
+    'the hunters\' fire in its ring of saddles by the way in, where a company may rest');
+  const boyB8 = saysB8('The young Rider'), eldestWord = saysB8('A Rider from Akordu');
+  ok(boyB8.text.includes('Grey Lion') && boyB8.text.includes('last blow') && eldestWord.text.includes('eldest') && eldestWord.text.includes('Let him die')
+    && !B8.features!.some((f) => f.kind === 'npc' && (f.flag || f.quest || f.choice || f.says || f.teaches || f.skill || f.hall || f.interior || f.passage)),
+    'the young Rider has asked for the last blow, and a Rider from Akordu brings the eldest\'s word, let him die: words only');
+
+  // Kushtash seen from the way in; the rim; the Riders' cairn and its draught, their well, the hunters'
+  // horses; the pride's kill, the lesser mesa and the glassed hunter at its foot; the vultures over the
+  // kill-ground; the walker's prints up out of the dunes, a lie in the grass, a horse's bones under the rim.
+  for (const id of ['b8_kushtash', 'b8_rim', 'b8_horses', 'b8_kill', 'b8_mesa_seen', 'b8_glassed', 'b8_vultures', 'b8_kill_ground', 'b8_tracks', 'b8_lie', 'b8_bones']) see(w, `wold_b8:${id}`);
+  const cairnB8 = featureB8('b8_cairn'), wellB8 = B8.features!.find((f) => f.kind === 'well')!;
+  ok(cairnB8.kind === 'cairn' && cairnB8.gold > 0 && cairnB8.items.join() === 'quickening' && chB8(cairnB8.x, cairnB8.y) === '^' && !!wellB8
+    && featureB8('b8_rim').x <= 3 && [...Array(32).keys()].every((i) => B8.rows[i][0] === 'M' && out.passable(b8.x, b8.y + i) !== 'ok'),
+    'a Riders\' cairn on the hill with gold and a Quickening Draught, a well, and the rim down the west, the world\'s end');
+
+  // The Riders' running horse in white stones on the rise: a stat no other shrine on the Wold gives.
+  const horseB8 = featureB8('b8_shrine');
+  w.world.travel('wold_b8', horseB8.x, horseB8.y);
+  const knelt8 = w.world.featureHere();
+  const blessed = MAP_DEFS.filter((d) => d.region === 'glasswold' && d.id !== 'wold_b8').flatMap((d) => (d.features ?? []).flatMap((f) => (f.kind === 'shrine' || f.kind === 'fountain' ? [f.stat] : [])));
+  ok(knelt8?.kind === 'shrine' && horseB8.kind === 'shrine' && horseB8.stat === 'speed' && !blessed.includes('speed') && useShrine(w.world, w.party, knelt8)[0] === horseB8.text,
+    `the company kneels at the running horse, and it gives speed, which no other shrine on the Wold gives (${blessed.join(', ')})`);
+
+  // The hermit under the rim, who went into the Glass once and saw one of its walkers: words only.
+  const hermit = saysB8('A hermit under the rim');
+  ok(hermit.text.includes('the Glass') && hermit.text.includes('lamp for a face') && hermit.p.x <= 3 && chB8(hermit.p.x, hermit.p.y) === ':',
+    'in a hollow under the rim a hermit who went into the Glass once, and what walked there had a lamp for a face');
+
+  // The groups: the pride at its kill by the way in with the vultures down on it, and the mesa fight in the
+  // scree under the lesser mesa's south face, a basilisk behind four lions, each won at 27; the Grey Lion
+  // alone on open ground between the mesas, the box's boss, at 28.
+  const gB8 = (id: string) => B8.encounters!.find((g) => g.id === id)!;
+  const [prideB8, mesaB8, lion] = ['b8_pride', 'b8_mesa', 'b8_grey_lion'].map(gB8);
+  ok(B8.encounters!.length === 3 && prideB8.monsters.filter((m) => m === 'wold_lion').length === 4 && prideB8.monsters.filter((m) => m === 'vulture').length === 3
+    && mesaB8.monsters.filter((m) => m === 'wold_lion').length === 4 && mesaB8.monsters.filter((m) => m === 'basilisk').length === 1 && chB8(mesaB8.x, mesaB8.y) === '^' && chB8(mesaB8.x, mesaB8.y - 1) === 'r'
+    && lion.monsters.join() === 'grey_lion' && chB8(lion.x, lion.y) === 's' && !lion.respawn && !!lion.slainText && MONSTERS.grey_lion.level === 28
+    && [prideB8, mesaB8].every((g) => !!g.respawn),
+    'the pride at its kill with three vultures, a basilisk behind four lions in the lesser mesa\'s scree, and the Grey Lion alone on open ground, the boss at 28');
+  fight(w, 'wold_b8:b8_pride');
+  fight(w, 'wold_b8:b8_mesa');
+  w.level = 28;
+  for (const m of w.party.members) m.level = 28;
+  fight(w, 'wold_b8:b8_grey_lion');
+  w.level = 27;
+  for (const m of w.party.members) m.level = 27;
+  const bags = featureB8('b8_saddlebags');
+  ok(bags.kind === 'chest' && bags.gold > 0 && bags.items.join() === 'elixir' && Math.abs(bags.x - lion.x) + Math.abs(bags.y - lion.y) <= 4,
+    `on the kill-ground a hunter's saddlebags: ${bags.kind === 'chest' ? bags.gold : 0} gold and an Elixir`);
+
+  // The secret: the way up Kushtash, the scree on its rim side stepped by hand, and a ledge from the steps'
+  // head to the top; hinted by the smoke off the top and the vultures that never wheel over it, by day,
+  // and the fire on it by night. Walked, waded, climbed or floated, the top is never reached but up the steps.
+  const [steps] = B8.secrets!, smoke = featureB8('b8_smoke');
+  ok(steps.hint === 'b8_smoke' && smoke.kind === 'event' && !smoke.when && steps.x === 2 && steps.y === 17 && chB8(steps.x - 1, steps.y) === 's' && out.passable(b8.x + steps.x - 2, b8.y + steps.y) !== 'ok',
+    'the smoke off Kushtash\'s top is the steps\' hint, and the steps are on the mesa\'s rim side, under the rim');
+  see(w, 'wold_b8:b8_smoke');
+  w.world.state.minutes = Math.floor(w.world.state.minutes / MINUTES_PER_DAY) * MINUTES_PER_DAY + MINUTES_PER_DAY + 60;
+  see(w, 'wold_b8:b8_fire');
+  ok(w.world.used('b8_smoke') && w.world.used('b8_fire'), 'by day the smoke off the top, by night a fire on it');
+  w.world.state.minutes = Math.floor(w.world.state.minutes / MINUTES_PER_DAY) * MINUTES_PER_DAY + 9 * 60;
+  const scout = B8.features!.find((f) => f.kind === 'npc' && f.name === 'The scout') as Person;
+  const below = spread(b8.x + steps.x - 1, b8.y + steps.y, (x, y) => !(x === b8.x + steps.x && y === b8.y + steps.y) && inB8(x, y) && out.passable(x, y, { swim: true, climb: true, float: true }) === 'ok');
+  ok(below.size > 700 && !below.has(atB8(steps.x + 1, steps.y)) && !below.has(atB8(scout.x, scout.y)),
+    `Kushtash's top is shut but for the steps: none of B8's ${below.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, 'wold_b8:b8_scree');
+  w.world.travel('wold_b8', steps.x - 1, steps.y, EAST);
+  let setStones = false;
+  for (let i = 0; i < 20 && !setStones; i++) setStones = w.world.search();
+  const upSteps = setStones ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(setStones && upSteps.every((m) => m.kind === 'moved') && w.world.used('b8_steps'), 'searched where the scree is bare, the stones are set and not fallen: steps, going up the face');
+  listen(w);
+  const topB8 = spread(b8.x + steps.x + 1, b8.y + steps.y, (x, y) => !(x === b8.x + steps.x && y === b8.y + steps.y) && inB8(x, y) && out.passable(x, y) === 'ok');
+  const ledge = featureB8('b8_ledge'), viewB8 = featureB8('b8_view');
+  ok(topB8.has(atB8(scout.x, scout.y)) && topB8.has(atB8(ledge.x, ledge.y)) && topB8.has(atB8(viewB8.x, viewB8.y)) && topB8.size === 30 && chB8(ledge.x, ledge.y) === ':',
+    `up the steps and along the ledge to the top, ${topB8.size} squares from the steps' foot, the scout's fire among them`);
+  for (const id of ['b8_ledge', 'b8_lookout', 'b8_view']) see(w, `wold_b8:${id}`);
+  const scoutSays = saysB8('The scout');
+  const told = B8.features!.flatMap((f) => [...('text' in f && f.text ? [f.text] : []), ...(f.kind === 'npc' ? f.lines : []), ...(f.kind === 'shrine' ? [f.done] : [])]).join(' ');
+  ok(scoutSays.text.includes('Meridian Company') && !/journal|map|teach|ranger/i.test(scoutSays.text) && !scout.teaches,
+    'at her fire on the top the scout who guided the Meridian Company, who says nothing of what she wants: words only (#448 gives her the rest)');
+  ok(viewB8.kind === 'event' && viewB8.text.includes('Glass') && viewB8.text.includes('crown') && !/hull|ship|orbit|voyage|custodian/i.test(told),
+    'from the top the Wold open to Akordu and the Glass with its dark crown, and nothing in the box\'s words of what the crown is');
 };
