@@ -121,10 +121,13 @@ export const ROADS: Record<string, readonly string[]> = {
   // In from L9 under the pines past the lynxes there, and down the shore past the lynxes at the
   // loch's foot to the crack in the ice and the door (#489).
   coldmere: ['coldmere_k9:k9_lynx_pines', 'coldmere_k9:k9_lynx_foot'],
+  // Down off the pass past the brothers at its foot, and on down the road to the gate past the brothers
+  // walking it (#499).
+  monksvale: ['monksvale_j11:j11_brothers_foot', 'monksvale_j11:j11_brothers_road'],
 };
 
 /** What an area is called in the check, apart from the map it shares an id with. */
-const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Thornmark', saltreach: 'Saltreach', wrackholm: 'Wrackholm', sunderwood: 'Sunderwood', kilns: 'the Kilns', cairnmoor: 'Cairnmoor', rimewater: 'Rimewater' };
+const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Thornmark', saltreach: 'Saltreach', wrackholm: 'Wrackholm', sunderwood: 'Sunderwood', kilns: 'the Kilns', cairnmoor: 'Cairnmoor', rimewater: 'Rimewater', whitespine: 'the Whitespine' };
 
 /**
  * The figures past their limits someone owes, by check: who owes each, and the figure it stood at
@@ -185,6 +188,9 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   // And the Sleepers' Bay's stair (#490), banded from the area's floor as Carn Dubh's cairn is.
   'sleepers_bay: under': { whose: '#18', at: 1 },
   'Rimewater: under': { whose: '#18', at: 1 },
+  // And the Whitespine's first box (#499), in Rimewater's gear and the finds by 22, as Rimewater's are.
+  'monksvale_j11: under': { whose: '#18', at: 1 },
+  'the Whitespine: under': { whose: '#18', at: 1 },
   // Act II's bosses were set by their gates against a company without its first prestige, which the
   // gate's company never took until #541 made it harness's. With it, at 11, four of the six strike
   // twice a turn and the casters cast at their first rank, and each boss is won nearly always at its
