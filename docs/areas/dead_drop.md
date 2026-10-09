@@ -38,8 +38,10 @@ docs/areas/whitespine.md). The road never needs it.
 
 ## 3. What is built
 
-The stair's foot only (#190). The rest waits on what §7 lists; it is the last thing of Act IV to
-build.
+The stair's foot (#190), and four of its five monsters, drawn ahead of the levels that place them
+(#22, §8): the loader, the tally clerk, the hold keeper and the Tallymaster, in Wrackholm's table.
+The deep knocker is Meridian Camp's to draw, and not yet merged. The rest waits on what §7 lists;
+it is the last thing of Act IV to build.
 
 ## 4. The levels
 
@@ -158,6 +160,35 @@ comment on #22; each may be overturned:
 10. **It pays outside any area's budget,** about 9,000 xp a member, as Wrackholm's §9 already counts
     it; its gold is the Compact's drop coin, heavy; its finds sit in the band-28 window.
 11. **It is built last in Act IV,** after the novelty check learns to place a map by its band.
+
+Decided by delegate for #22 (the drop's monsters), each the owner's to overturn:
+
+1. **The four are Wrackholm's defs, drawn ahead:** in its table and its `SPRITES`, the area its maps
+   will be, so no `AHEAD` entry; `shipped.json` takes their ids, and `UNPLACED` owes each to the
+   level that first places it: the loader and the clerk to `dead_drop`, the keeper to `dead_drop2`,
+   the Tallymaster to `dead_drop3`.
+2. **The loader** is a brute on MONSTERS §4.4's line at 26 (735 hit points, 6d8+6), size 1.4: the
+   heavy machines' frame with a body of its own, a crate the size of a cart held over its head and
+   no head of its own, the fire in two ports under the crate. Not the Stoker's boiler, the Sentry's
+   eye or the Sentinel's block; rust for a tint, since the hold is wet.
+3. **The tally clerk** is the knockers' (MONSTERS §8.5, §11), a caller on a soldier's numbers at 26
+   as the tallyman is at 20, size 0.55; it calls two loaders at a half a turn, the pair #537's test
+   has a clerk call. Low and dust-coloured with no feelers, a counting frame on its back: not the
+   tallyman's lifted front, tallies and frost, nor the Foreman's slate.
+4. **The hold keeper** is a controller on the line at 27 that puts to sleep at 0.3 a hit and mends
+   one turn in four, as the Bay Keeper. Bare like the Bay Keeper but shorter, a little stooped and
+   salt-green, with a yoke and two pails; the Matron has four arms, a cap and an apron, the monks
+   robes.
+5. **The Tallymaster** is a boss on the line at 28 (1,497 hit points, 25d8+28), judged at 27 by
+   `dead_drop3`'s gate, which tunes it; it calls two clerks at a half a turn, who may call their
+   loaders, within #537's three groups. Size 1.6, drawn at its desk, its crown at 0.81 of its
+   height.
+6. **"Only at its desk" is the map's,** a group `dead_drop3` places at the desk; the desk is drawn
+   as part of it, so the fight shows it there. Its pens write in two ledgers at once.
+7. **The no-machine rule needs nothing:** `paceFaults` judges a map's groups, not a table's defs,
+   and a level floored at 26 stands at the Glasswold's place, past the Mines (§6).
+8. **The deep knocker is not drawn here:** Meridian Camp's pull request draws it on the knockers'
+   frame and has not merged; the vaults place that one when it has.
 
 ## 9. Names
 
