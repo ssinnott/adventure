@@ -24,7 +24,14 @@
 // trail square to square to the north edge; the wind warm off the sea, the giants' cairn, the snow
 // gone off the rocks, and at the trail's end the Hearth and the causeway; the box's groups won at its
 // floor, the masons who never break; the first masons' camp, abandoned, and behind their tally the
-// cache of shards; the hermit at the shore, the lamp at the Sheer's edge and the camp in the lee.
+// cache of shards; the hermit at the shore, the lamp at the Sheer's edge and the camp in the lee. Then
+// Sheer Point (I8, #504) walked: on up the trail from the ridge, nothing said, to its end over the
+// tip and the masons' track down to the shore; the causeway of cut stone out over the water, the
+// stone carved apart from the rest and its end over deep water; the box's groups won at its floor,
+// the foreman's the hardest and a troll by night; Wenna moving from the lodge to Highcell's gate and
+// on to the camp on the shingle, and the night she is taken, her knot on the first stone; Rook's Nest
+// at the atlas's site and the watcher in it; the Hand's sea cave under it, found from the wet rock at
+// the hollow's back; the cairn, the drowned god's shrine and the deserter in the rocks with his tally.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, see, fight, listen, type Walk } from '../../../../tools/walk.ts';
 import { NORTH, SOUTH, EAST, WEST } from '../../../game/types.ts';
@@ -40,6 +47,8 @@ import { readLine } from '../../../game/inscriptions.ts';
 import { MONSTERS } from './monsters.ts';
 import { SADDLE } from '../rimewater/maps/coldmere_k10.ts';
 import { CLIMB, GATE } from './maps/monksvale_j11.ts';
+import { WENNA_TAKEN } from './maps/sheerpoint_i8.ts';
+import { WENNA_LODGE } from '../rimewater/maps/rime_lodge.ts';
 
 const J11 = MAP_DEFS.find((d) => d.id === 'monksvale_j11')!;
 const person = (name: string): Person => J11.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
@@ -422,14 +431,13 @@ export const walkthrough: Walkthrough = (ok) => {
   for (const m of w.party.members) m.level = 22;
 
   // The ridge trail square to square from the way in at 18,31 to the north edge at 20,0, where the
-  // atlas's trail crosses for I8 (#504), and past it, for now, the world ends; the pines open across
-  // the south edge into I10's.
+  // atlas's trail crosses, and on into I8 (#504); the pines open across the south edge into I10's.
   const onI9 = (x: number, y: number): boolean => x >= i9.x && x < i9.x + i9.w && y >= i9.y && y < i9.y + i9.h;
   const at9 = (f: { x: number; y: number }): number => (i9.y + f.y) * out.width + i9.x + f.x;
   const trail9 = reach(i9.x + 18, i9.y + 31, (x, y) => onI9(x, y) && road(x, y));
   const walked9 = reach(i9.x + 18, i9.y + 31, (x, y) => onI9(x, y) && out.passable(x, y) === 'ok');
-  ok(trail9.has(at9({ x: 20, y: 0 })) && road(i9.x + 20, i9.y) && out.passable(i9.x + 20, i9.y - 1) !== 'ok',
-    'the ridge trail runs square to square from 18,31 to the north edge at 20,0, and past the edge, for now, the world ends');
+  ok(trail9.has(at9({ x: 20, y: 0 })) && road(i9.x + 20, i9.y) && road(i9.x + 20, i9.y - 1) && out.passable(i9.x + 20, i9.y - 1) === 'ok',
+    'the ridge trail runs square to square from 18,31 to the north edge at 20,0, and on into I8');
   ok([...Array(17).keys()].every((i) => out.at(i9.x + 1 + i, i9.y + 31).ch === 'p' && out.passable(i9.x + 1 + i, i9.y + 32) === 'ok'), 'the pines run on across the south edge into I10\'s');
 
   // Up the trail the wind off the sea warm over the crest, the giants' cairn, the snow gone off the
@@ -492,6 +500,145 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(!!lamp && walked9.has(at9(lamp)) && out.at(i9.x + lamp.x - 1, i9.y + lamp.y).ch === '|', 'the lamp in the stone at the Sheer\'s edge');
   const lee = I9.features!.find((f) => f.kind === 'camp' && f.name === 'The lee of the crest');
   ok(!!lee && walked9.has(at9(lee)) && out.at(i9.x + lee.x, i9.y + lee.y).ch === 'p', 'the camp in the crest\'s lee, in the pines');
+
+  // I8, Sheer Point (#504), the Point's tip. On up the ridge trail from I9's 20,0 onto I8's 20,31,
+  // walked: the same land at the same floor, so nothing is said at any level, nor straight back.
+  const I8 = MAP_DEFS.find((d) => d.id === 'sheerpoint_i8')!, i8 = out.zones.find((z) => z.id === 'sheerpoint_i8')!;
+  const onTo8 = (level: number) => {
+    for (const m of w.party.members) m.level = level;
+    w.world.travel('sheerpoint_i9', 20, 0, NORTH);
+    return w.world.move('forward');
+  };
+  const tipLow = onTo8(19), tip = onTo8(22);
+  ok(tip.kind === 'moved' && w.world.zone?.id === 'sheerpoint_i8' && w.world.state.x === i8.x + 20 && w.world.state.y === i8.y + 31 && i8.x === i9.x && i8.y + i8.h === i9.y && I8.start.x === 20 && I8.start.y === 31 && I8.band?.[0] === I9.band?.[0],
+    'on up the ridge trail from I9\'s 20,0 onto I8\'s 20,31, walked, the box\'s way in, at I9\'s floor');
+  w.world.travel('sheerpoint_i8', 20, 31, SOUTH);
+  const tipBack = w.world.move('forward');
+  ok([tipLow, tip, tipBack].every((r) => r.kind === 'moved' && !r.messages.length) && w.world.zone?.id === 'sheerpoint_i9',
+    `the same land at the same floor: nothing said onto the Point at 19 or 22, nor straight back (${[tipLow, tip, tipBack].map((r) => (r.kind === 'moved' ? r.messages.join(' / ') : r.kind)).join('; ')})`);
+  listen(w);
+
+  // The trail square to square from the way in to its end at the atlas's 286,236, the rock warm under
+  // it; from the end the masons' track down through the rock to the tip, and the tip's shores. The sea
+  // on the north and west and unbuilt J8 on the east end the world.
+  const onI8 = (x: number, y: number): boolean => x >= i8.x && x < i8.x + i8.w && y >= i8.y && y < i8.y + i8.h;
+  const at8 = (f: { x: number; y: number }): number => (i8.y + f.y) * out.width + i8.x + f.x;
+  const trail8 = reach(i8.x + 20, i8.y + 31, (x, y) => onI8(x, y) && road(x, y));
+  const walked8 = reach(i8.x + 20, i8.y + 31, (x, y) => onI8(x, y) && out.passable(x, y) === 'ok');
+  const ev8 = (id: string): { x: number; y: number } => I8.features!.find((f) => f.kind === 'event' && f.id === id)!;
+  ok(trail8.has(at8({ x: 22, y: 14 })) && i8.x + 22 === 286 && i8.y + 14 === 236 && [21, 23].every((x) => !road(i8.x + x, i8.y + 13)) && !road(i8.x + 22, i8.y + 13),
+    'the ridge trail runs square to square from 20,31 to its end at 22,14, the atlas\'s 286,236');
+  ok(trail8.has(at8(ev8('i8_warm'))) && ev8('i8_trail_end').x === 22 && ev8('i8_trail_end').y === 14, 'on the trail the rock warm under it, and at its end the Point below');
+  for (const id of ['i8_warm', 'i8_trail_end']) see(w, `sheerpoint_i8:${id}`);
+  ok(walked8.has(at8({ x: 17, y: 6 })) && walked8.has(at8({ x: 26, y: 3 })) && walked8.has(at8({ x: 31, y: 30 })) && walked8.has(at8({ x: 6, y: 31 }))
+    && [...Array(32).keys()].every((i) => [[i8.x + i, i8.y - 1], [i8.x - 1, i8.y + i], [i8.x + 32, i8.y + i]].every(([x, y]) => out.passable(x, y) !== 'ok')),
+    'from the trail\'s end the track goes down to the shore, the tip is walked to its last rock and down the pines on both sides, and past the north, west and east edges the world ends');
+
+  // The causeway: cut stone a square wide from the shore at 17,6 out over the water to 17,1, where it
+  // stops over deep water short of the north edge; the first stone, the step's line; one stone carved
+  // apart from the rest; at its root the masons' tally-house.
+  const water = (x: number, y: number): boolean => ['W', '~'].includes(out.at(i8.x + x, i8.y + y).ch);
+  ok([1, 2, 3, 4, 5, 6].every((y) => out.at(i8.x + 17, i8.y + y).ch === '"' && water(16, y)) && [1, 2, 3, 4, 5].every((y) => water(18, y)) && out.at(i8.x + 17, i8.y).ch === 'W' && walked8.has(at8({ x: 17, y: 1 })),
+    'the causeway runs a square wide from the shore at 17,6 out over the water to 17,1, and stops over deep water');
+  ok(ev8('i8_causeway').x === 17 && ev8('i8_causeway').y === 6 && I8.features!.some((f) => f.kind === 'event' && f.id === 'i8_causeway' && f.text.endsWith('the way the shards do.')),
+    'its first stone glows a little, the way the shards do');
+  for (const id of ['i8_causeway', 'i8_lid', 'i8_end', 'i8_tallyhouse']) see(w, `sheerpoint_i8:${id}`);
+
+  // The box's groups, each won at its floor: the eagles over the tip at the track's foot, the masons at
+  // the causeway's root, and on its end the second group with their foreman, the box's hardest, who
+  // stand at their work; by night a snow troll come down to the shore. The Hand never breaks.
+  const g8 = (id: string) => I8.encounters!.find((g) => g.id === id)!;
+  const [masons8, foreman8, troll8] = ['i8_masons', 'i8_foreman', 'i8_troll'].map(g8);
+  ok(masons8.x === 17 && masons8.y === 7 && foreman8.x === 17 && foreman8.y === 2 && foreman8.monsters.length > masons8.monsters.length && [...masons8.monsters, ...foreman8.monsters].every((m) => m === 'ashen_mason')
+    && foreman8.leader === 'ashen_mason' && foreman8.roams === false && !!MONSTER_DEFS.ashen_mason.steady,
+    'the masons at the causeway\'s root, and on its end more of them with their foreman, at work, who never break');
+  ok(troll8.monsters.join() === 'snow_troll' && JSON.stringify(troll8.when) === JSON.stringify({ hours: 'night' }) && walked8.has(at8(troll8)) && water(troll8.x + 1, troll8.y), 'by night a snow troll come down to the shore');
+  for (const id of ['i8_eagles', 'i8_masons', 'i8_foreman', 'i8_troll']) fight(w, `sheerpoint_i8:${id}`);
+
+  // Wenna, a person who moves (#76; §9's 2), as Rimewater's walk leaves her, spoken at the lodge after
+  // the bay: by the lodge's fire until the company comes into the range, then by Highcell's gate until
+  // it reaches the Point, then at the camp on the shingle; never two at once, nor before the lodge.
+  const LODGE = MAP_DEFS.find((d) => d.id === 'rime_lodge')!;
+  const wenna = (d: MapDef): Person => d.features!.find((f) => f.kind === 'npc' && f.name === 'The girl out of the hole') as Person;
+  const byLodge = wenna(LODGE), byGate = wenna(J11), byCamp = wenna(I8);
+  const v = newWalk(ok);
+  const where = (): string => [byLodge, byGate, byCamp].map((p) => (v.world.present(p) ? 1 : 0)).join('');
+  const unmet = where();
+  v.party.flags[WENNA_LODGE] = 1;
+  const lodged = where();
+  v.world.travel('monksvale_j11', GATE.x, GATE.y - 1, NORTH);
+  const gated = where();
+  v.world.travel('sheerpoint_i8', byCamp.x + 1, byCamp.y, WEST);
+  const camped = where();
+  ok(unmet === '000' && lodged === '100' && gated === '010' && camped === '001' && Math.abs(byGate.x - GATE.x) + Math.abs(byGate.y - (GATE.y - 1)) === 1,
+    `Wenna by the lodge's fire, then by Highcell's gate beside its front, then at the Point's camp, one at a time (${[unmet, lodged, gated, camped].join(' ')})`);
+  const camp8 = I8.features!.find((f) => f.kind === 'camp' && f.name === 'The shingle fire');
+  ok(!!camp8 && walked8.has(at8(camp8)) && Math.abs(camp8.x - byCamp.x) + Math.abs(camp8.y - byCamp.y) === 1 && water(byCamp.x, byCamp.y - 1),
+    'the camp on the shingle, Wenna beside it');
+  // The night: she puts it, and slept, she is gone; one of the company shouting, the boat going out
+  // along the stones from nowhere seen, and her knot on the first stone. Never before she is met.
+  const knot = I8.features!.find((f) => f.kind === 'event' && f.id === 'i8_knot')!;
+  const unslept = !v.party.flags[WENNA_TAKEN] && !v.world.present(knot);
+  const met = meet(byCamp, v.party, heard(v.world, byCamp));
+  const sleep = met.choice?.answers.find((a) => a.label === 'Sleep');
+  const woke = sleep ? answer(sleep, v.party) : '';
+  ok(unslept && met.text.includes('Sleep. I\'ll keep the first watch.') && woke.includes('Her blanket by the fire is cold.') && woke.includes('none of you saw where it put out from')
+    && !!v.party.flags[WENNA_TAKEN] && !v.world.present(byCamp) && v.world.present(knot),
+    'met at the camp, she keeps the first watch; slept, she is gone, a boat going out along the stones, and the flag is set');
+  v.world.travel('sheerpoint_i8', knot.x, knot.y);
+  ok(v.world.eventsHere().includes('Scratched fresh, at the height of a girl\'s shoulder, a loop inside a loop.'), 'and on the first stone her knot, scratched fresh');
+
+  // Rook's Nest (#448) at the atlas's site, a hollow high in the tip's rock over the causeway, and the
+  // watcher in it, words only.
+  const [nx, ny] = ATLAS.sites.find((s) => s.name === 'Rook\'s Nest')!.at;
+  const watcher = I8.features!.find((f) => f.kind === 'npc' && f.name === 'A watcher') as Person;
+  ok(ev8('i8_nest').x + i8.x === nx && ev8('i8_nest').y + i8.y === ny && !ATLAS.sites.find((s) => s.name === 'Rook\'s Nest')!.planned && walked8.has(at8(ev8('i8_nest'))),
+    'Rook\'s Nest at the atlas\'s site, 22,8, built');
+  see(w, 'sheerpoint_i8:i8_nest');
+  w.world.travel('sheerpoint_i8', watcher.x + 1, watcher.y, WEST);
+  ok(meet(watcher, w.party, heard(w.world, watcher)).text.includes('They never once look up.'), 'the watcher in the hollow counts the stones');
+
+  // The secret: at the hollow's back the rock is wet and smells of the sea, and by night oars are heard
+  // under it; searched, it gives on the Hand's sea cave, its water running out under the rock beside
+  // the stones: the boats, the crates under the Hand's seal with shards not yet cut, seen and never
+  // carried, and the takings. Walked, waded, climbed or floated, it is never reached but from the nest.
+  const [door8] = I8.secrets!;
+  const oars = I8.features!.find((f) => f.kind === 'event' && f.id === 'i8_oars');
+  ok(door8.hint === 'i8_damp' && ev8('i8_damp').x === door8.x && ev8('i8_damp').y === door8.y + 1 && oars?.kind === 'event' && oars.x === door8.x && oars.y === door8.y + 1 && JSON.stringify(oars.when) === JSON.stringify({ hours: 'night' }),
+    'at the back of the nest the rock is wet, and by night oars are heard under it');
+  const hold8 = I8.features!.find((f) => f.kind === 'chest' && f.id === 'i8_hold');
+  const sealed8 = new Set<number>(), go8 = [[i8.x + 20, i8.y + 31]];
+  while (go8.length) {
+    const [x, y] = go8.pop()!, k = y * out.width + x;
+    if (sealed8.has(k) || (x === i8.x + door8.x && y === i8.y + door8.y) || !onI8(x, y) || out.passable(x, y, { swim: true, climb: true, float: true }) !== 'ok') continue;
+    sealed8.add(k);
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) go8.push([x + dx, y + dy]);
+  }
+  ok(!!hold8 && sealed8.size > 300 && ['i8_boats', 'i8_crates'].every((id) => !sealed8.has(at8(ev8(id)))) && !sealed8.has(at8(hold8)),
+    `the sea cave is shut but for the nest's back: none of I8's ${sealed8.size} squares walked, waded, climbed or floated reaches it`);
+  w.world.travel('sheerpoint_i8', door8.x, door8.y + 1, NORTH);
+  let found8 = false;
+  for (let i = 0; i < 20 && !found8; i++) found8 = w.world.search();
+  const downIn = found8 ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(found8 && downIn.every((r) => r.kind === 'moved') && w.world.state.y === i8.y + door8.y - 1, 'searched at the wet rock, the way down is found, into the cave');
+  for (const id of ['i8_crates', 'i8_boats']) see(w, `sheerpoint_i8:${id}`);
+  ok(hold8?.kind === 'chest' && hold8.gold === 400 && !hold8.items.length && water(ev8('i8_boats').x, ev8('i8_boats').y - 1),
+    'in the cave the Hand\'s boats on the water running out under the rock, and 400 gold; no shard to carry off, the act having no Rift to take one to');
+
+  // The tip's east side: the cairn on its last rock, the drowned god's shrine with its bowl of shells,
+  // the troll's leavings and, down the pines, the mason who deserted, in the rocks with his tally
+  // (#56's 48, #506's to make the quest). And on the west, the boat's ribs and the pines in the sea.
+  const cairn8 = I8.features!.find((f) => f.kind === 'cairn' && f.id === 'i8_cairn');
+  ok(cairn8?.kind === 'cairn' && cairn8.items.includes('potion_sp_great') && walked8.has(at8(cairn8)) && [...Array(cairn8.y).keys()].every((y) => [...Array(32).keys()].every((x) => x === 17 || !walked8.has(at8({ x, y })))),
+    'a cairn on the last rock of the Point, a Sapphire Vial in it');
+  const shrine8 = I8.features!.find((f) => f.kind === 'shrine' && f.id === 'i8_shrine');
+  ok(shrine8?.kind === 'shrine' && shrine8.text.includes('heaped with shells') && walked8.has(at8(shrine8)) && water(shrine8.x + 1, shrine8.y), 'the drowned god\'s shrine at the tide\'s edge, its bowl heaped with shells');
+  const deserter = I8.features!.find((f) => f.kind === 'npc' && f.name === 'A deserter') as Person;
+  w.world.travel('sheerpoint_i8', deserter.x, deserter.y - 1, SOUTH);
+  ok(meet(deserter, w.party, heard(w.world, deserter)).text.includes('Eleven more and the road reaches the isle.') && walked8.has(at8(deserter)) && out.at(i8.x + deserter.x, i8.y + deserter.y + 1).ch === 'r',
+    'the deserter in the rocks at the end of the pines, who will not set the last stones');
+  for (const id of ['i8_tally', 'i8_hammer', 'i8_bones', 'i8_wreck', 'i8_pines']) see(w, `sheerpoint_i8:${id}`);
+  listen(w);
 };
 
 /**

@@ -141,8 +141,9 @@ export const ROADS: Record<string, readonly string[]> = {
   // snow short of the head (#502).
   highspine: ['highspine_i11:i11_brothers', 'highspine_i10:i10_stair'],
   // North along the ridge trail from the Stair's head, past the snow trolls lying in the gully off it
-  // and the masons on its end (#503).
-  sheerpoint: ['sheerpoint_i9:i9_trolls', 'sheerpoint_i9:i9_masons'],
+  // and the masons on its end (#503), and down off the trail's end to the Point's shore, past the
+  // eagles over the tip, to the masons at the causeway's root and their foreman's on its end (#504).
+  sheerpoint: ['sheerpoint_i9:i9_trolls', 'sheerpoint_i9:i9_masons', 'sheerpoint_i8:i8_eagles', 'sheerpoint_i8:i8_masons', 'sheerpoint_i8:i8_foreman'],
 };
 
 /** What an area is called in the check, apart from the map it shares an id with. */
@@ -221,6 +222,9 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   // And the ridge north (#503), banded from the area's floor as I11 is: its three groups are won every
   // time two under, and with them the area's pool passes its limit again.
   'sheerpoint_i9: under': { whose: '#18', at: 1 },
+  // And the Point (#504), banded from the area's floor as I9 is: its four groups are won every time two
+  // under.
+  'sheerpoint_i8: under': { whose: '#18', at: 1 },
   'the Whitespine: under': { whose: '#18', at: 1 },
   // Act II's bosses were set by their gates against a company without its first prestige, which the
   // gate's company never took until #541 made it harness's. With it, at 11, four of the six strike
