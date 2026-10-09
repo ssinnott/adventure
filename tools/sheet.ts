@@ -6,8 +6,9 @@
 //   node tools/sheet.ts out.png --rifts all          (or --rifts ring,spiral)
 //   node tools/sheet.ts out.png --ground all         (or --ground ash,ice or cliff,peak or steppe,volcano)
 // --changed draws what changed since the base, as tools/changed.ts reads it; with nothing changed
-// it says so, writes nothing and exits 0. A change to this tool draws everything. --rifts draws the
-// Rift templates as content/rifts' samples dress them, which no area places; a placed Rift is a map.
+// it says so, writes nothing and exits 0. A change to this tool or to tools/ways.ts, which finds a
+// map's way in, draws everything. --rifts draws the Rift templates as content/rifts' samples dress
+// them, which no area places; a placed Rift is a map.
 // --ground draws the samples of the ground underfoot (tools/grounds.ts), and so does a change that
 // draws every map or the samples, so a new ground is seen before any map holds it.
 // Each map from its arrivals and, outdoors, from each of its sites on the world map, by day and by
@@ -22,8 +23,9 @@ import { changedFiles, changedMaps, changedMonsters, changedInteriors } from './
 import { AREAS, MAP_DEFS as PLACED, MONSTERS, INTERIORS, ATLAS, CLIMATES } from '../src/content/index.ts';
 import { RIFT_SAMPLES } from '../src/content/rifts/index.ts';
 import { GROUND_SAMPLES } from './grounds.ts';
+import { waysOut, entrance } from './ways.ts';
 import { GameMap } from '../src/game/map.ts';
-import { worldPoint, mapAt } from '../src/game/atlas.ts';
+import { mapAt } from '../src/game/atlas.ts';
 import type { MapDef } from '../src/game/map.ts';
 import { FACING_DX, FACING_DY } from '../src/game/types.ts';
 import type { Facing } from '../src/game/types.ts';
@@ -76,7 +78,7 @@ if (areaId) {
 const base = opt('changed');
 if (base) {
   const files = changedFiles(base);
-  const everything = files.includes('tools/sheet.ts');
+  const everything = files.includes('tools/sheet.ts') || files.includes('tools/ways.ts');
   const m = await changedMaps(files), mo = await changedMonsters(files, base), i = await changedInteriors(files, base);
   maps = [...maps, ...(everything || m.all ? MAP_DEFS.map((d) => d.id) : m.maps), ...(files.includes('tools/grounds.ts') ? GROUND_SAMPLES.map((d) => d.id) : [])];
   monsters = [...monsters, ...(everything || mo.all ? Object.keys(MONSTERS) : mo.monsters)];
@@ -99,14 +101,6 @@ interface MapPlan { id: string; name: string; kind: string; region: RegionId; vi
 
 const FACING_NAME = ['north', 'east', 'south', 'west'];
 const open = (m: GameMap, x: number, y: number): boolean => m.inBounds(x, y) && m.at(x, y).solid === 'none' && !['water', 'deep', 'lava', 'chasm'].includes(m.at(x, y).terrain);
-
-/**
- * A map's ways out: its exits, its tears into Rifts, which are walked through as exits are, and the
- * crossings its people sell, from where the seller stands to where the crossing lands.
- */
-type Way = { x: number; y: number; to: string; tx: number; ty: number; tf?: Facing; sold?: boolean };
-const waysOut = (d: MapDef): Way[] =>
-  [...(d.exits ?? []), ...(d.features ?? []).flatMap((f): Way[] => (f.kind === 'rift' ? [f] : f.kind === 'npc' ? (f.passage ?? []).map((p) => ({ x: f.x, y: f.y, to: p.to, tx: p.x, ty: p.y, tf: p.facing, sold: true })) : []))];
 
 /** Where the party arrives: the map's start, and every other map's way in, once each. */
 function arrivals(def: MapDef): View[] {
@@ -141,21 +135,6 @@ function siteView(m: GameMap, name: string, at: readonly [number, number]): View
   return null;
 }
 
-/**
- * The outdoor square, as a world point, that leads to a map, through as many maps as it takes. A way
- * in by an exit or a rift, the gate, comes before one a crossing's seller gives, which is the ship's
- * port and not the town: a town's crop is centred on its gate.
- */
-function entrance(id: string, seen = new Set<string>()): [number, number] | null {
-  seen.add(id);
-  for (const sold of [false, true]) for (const d of MAP_DEFS) for (const e of waysOut(d)) {
-    if (!!e.sold !== sold || e.to !== id || seen.has(d.id)) continue;
-    const p = worldPoint(ATLAS, d.id, e.x, e.y) ?? entrance(d.id, seen);
-    if (p) return p;
-  }
-  return null;
-}
-
 function planMap(id: string): MapPlan {
   const def = MAP_DEFS.find((d) => d.id === id)!;
   const m = new GameMap(def);
@@ -173,7 +152,7 @@ function planMap(id: string): MapPlan {
   let world: MapPlan['world'] | undefined;
   if (at) world = { x: at[0] - 8, y: at[1] - 8, w: m.width + 16, h: m.height + 16, mark: [at[0] + views[0].x + 0.5, at[1] + views[0].y + 0.5] };
   else {
-    const door = entrance(id);
+    const door = entrance(MAP_DEFS, ATLAS, id);
     if (door) world = { x: Math.floor(door[0]) - 20, y: Math.floor(door[1]) - 20, w: 40, h: 40, mark: door };
   }
   // A sample is entered from nowhere, so it has no crop; it is put into the game's maps to be shot.
