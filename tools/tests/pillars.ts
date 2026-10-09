@@ -24,7 +24,7 @@ import { NORTH } from '../../src/game/types.ts';
 import { FONT_CHARS, measureText } from '../../src/lib/engine/text.ts';
 import { logLines, logTail, LOG_LINES, COMBAT_LOG_LINES, LAYOUT } from '../../src/ui/frame.ts';
 import { lookLine } from '../../src/game/wilds.ts';
-import { handIns, choices } from '../../src/game/people.ts';
+import { handIns, choices, answerNote } from '../../src/game/people.ts';
 import { hoardLine } from '../../src/game/dens.ts';
 import { ok, owed, familyModules } from './lib.ts';
 
@@ -89,6 +89,11 @@ function apart(a: Partial<Presence>, b: Partial<Presence>): boolean {
  */
 export function lineFaults(def: MapDef): string[] {
   const out: string[] = [], squares = new Map<string, { n: number; p: Partial<Presence> }[]>();
+  // A group's answer is said in the log as one entry, before the fight or the walk past (#544).
+  for (const e of def.encounters ?? []) for (const a of e.choice?.answers ?? []) {
+    const n = logLines([...a.says, ...answerNote(a)].join(' ')).length;
+    if (n > MOST_LINES) out.push(`${e.id}'s answer '${a.label}' takes ${n} lines`);
+  }
   for (const f of def.features ?? []) {
     // A wilderness feature's lines are said on Space, one event at a time, each held to the most.
     if (f.kind === 'shrine' || f.kind === 'fountain' || f.kind === 'cairn' || f.kind === 'statue' || f.kind === 'camp') {

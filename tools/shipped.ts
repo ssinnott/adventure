@@ -17,7 +17,7 @@ import { SAVE_VERSION } from '../src/game/save.ts';
 import { spentId } from '../src/game/wilds.ts';
 import { readId } from '../src/game/inscriptions.ts';
 import { SKILLS } from '../src/game/skills.ts';
-import { personFlags } from '../src/game/people.ts';
+import { personFlags, groupFlags } from '../src/game/people.ts';
 import { GLOVE_FLAG } from '../src/game/combat.ts';
 import { UPGRADES } from '../src/game/upgrades.ts';
 import type { Upgrade } from '../src/game/upgrades.ts';
@@ -100,6 +100,7 @@ export function collect(c: Content): Ids {
       if (f.kind === 'event') for (const x of [f.sets ?? []].flat()) flags.add(x);
       if (f.kind === 'inn') for (const x of f.nights ?? []) flags.add(x);
     }
+    for (const e of m.encounters) for (const x of groupFlags(e)) flags.add(x);
     maps[m.id] = { size: `${m.width}x${m.height}`, used: sorted(used), groups: sorted(m.encounters.map((e) => e.id)), doors: sorted(doors) };
     for (const z of m.zones) zones[z.id] = { at: `${z.x},${z.y}`, size: `${z.w}x${z.h}` };
   }

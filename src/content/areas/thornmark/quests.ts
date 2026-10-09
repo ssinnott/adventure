@@ -65,6 +65,26 @@ export const QUESTS: readonly QuestDef[] = [
     ],
   },
   {
+    // #56's thirteenth (#544): Kerra's brother Pasco feeds the old tower's ogre for its Warden iron,
+    // and the ogre puts its bargain before the fight. Killed, Pasco comes home and will not say the
+    // company's names; kept, it keeps the tower until the company goes back on its word.
+    id: 'ogre',
+    title: 'The Ogre\'s Boy',
+    start: { flag: 'q_ogre_boy' },
+    done: [{ slain: 'thornmark:tm_ogre' }, { flag: 'q_ogre_kept' }],
+    entries: [
+      { id: 'kerra', when: { flag: 'q_ogre_boy' },
+        text: 'Kerra of Thornhold\'s brother Pasco went to the old Warden tower in Thornmark\'s north-west for Warden iron. An ogre keeps the tower.' },
+      { id: 'kept', when: { flag: 'q_ogre_kept' },
+        text: 'The ogre is old and half blind, and Pasco fed it for its iron. We let it keep the tower, and he went home.' },
+      { id: 'slain', when: { slain: 'thornmark:tm_ogre' },
+        text: 'The tower\'s ogre is dead, and Pasco is home. It was old and half blind, he says, and it fed him.' },
+    ],
+    goals: [
+      { when: { flag: 'q_ogre_boy' }, text: 'Bring Pasco home from the old Warden tower, in Thornmark\'s north-west.', at: 'thornmark' },
+    ],
+  },
+  {
     // #56's fourteenth (#214): the survey team's orders, burnt in their camp over the Deepthorn's
     // edge. Idony carries them east to Lantern Watch, or hands them back for the Council.
     id: 'orders',

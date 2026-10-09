@@ -306,6 +306,31 @@ export class Game {
     this.push(new CombatScreen(state, groupIds));
   }
 
+  /**
+   * A group that talks before it fights (#544): its question through the choice screen, as a
+   * person's is, its price listed and barred to a company short of it, its answer's words to the log.
+   * The refusal, or Esc, starts the fight; any other answer stands the group aside, and the party
+   * meets whatever else stands beside it.
+   */
+  parley(id: string): void {
+    const c = this.world.question(id);
+    if (!c) { this.engage(); return; }
+    const def = this.world.groupDefs([id])[0];
+    this.push(new ChoiceScreen(asked(c, this.party), c.answers.map(answerLabel), (i) => {
+      const a = c.answers[i] ?? c.answers.find((x) => x.fight);
+      if (a) this.say(answer(a, this.party).split('\n\n').join(' '));
+      if (a && !a.fight) { this.engage(); return; }
+      const ids = this.world.adjacentGroups();
+      this.fight(ids.length ? ids : [id]);
+    }, monster(def.leader ?? def.monsters[0]).name, c.answers.map((a) => barred(a, this.party))));
+  }
+
+  /** The groups beside the party: the first that talks puts its question, else they fight. */
+  engage(): void {
+    const ids = this.world.adjacentGroups(), asks = ids.find((q) => this.world.question(q));
+    if (asks) this.parley(asks); else if (ids.length) this.fight(ids);
+  }
+
   /** Called by the combat screen when the fight ends. */
   afterCombat(groupIds: string[], outcome: 'victory' | 'defeat' | 'fled'): void {
     this.pop();
@@ -373,7 +398,8 @@ export class ExploreScreen implements Screen {
       else {
         const ahead = w.map.ahead(w.state.x, w.state.y, w.state.facing);
         const grp = w.groupAt(ahead.x, ahead.y);
-        if (grp) g.fight(w.adjacentGroups().length ? w.adjacentGroups() : [grp.def.id]);
+        if (grp && w.question(grp.def.id)) g.parley(grp.def.id);
+        else if (grp) g.fight(w.adjacentGroups().length ? w.adjacentGroups() : [grp.def.id]);
         else g.say('Nothing here.');
       }
     }
@@ -392,6 +418,7 @@ export class ExploreScreen implements Screen {
     for (const m of res.messages) g.say(m);
     if (res.arrived) { g.enterCell(); return; }
     // Hunger: a day without food costs the party.
+    if (res.asks) { g.parley(res.asks); return; }
     if (res.encounter) { g.fight(res.encounter); return; }
     g.enterCell();
   }

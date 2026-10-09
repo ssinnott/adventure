@@ -241,11 +241,12 @@ made once in the systems lane and first spent by the area named, which waits for
 | Sweep | one attack at every member of a row, with an element if it has one | the Whitespine; with fire, Ashfall | the giants; the drakes' breath |
 | A light seen past the fog | a monster carrying a light is seen a square further than the weather allows (wanted, not needed) | the Downs | the lampmen |
 | The Core's clock | the last fight counts rounds to the light going out | the Core | STORY.md, Act Five |
+| A question first | `choice` on a group: a person's question, put before the fight; the refusal fights, and an answer of gold, an item or a flag stands the group aside | Thornmark's ogre (#56's 13); the Whitespine | the ogre's bargain; the giants' toll |
 
 Built: `level` (#31); `kind`, `look`, `when`, `until` and `after` (#41); ranks and morale (#160);
 elements, casting and drain (#161); regeneration, curse and calls (#537) and sweep (#545), each with
-the gate bot's answer, a drain of spell points' with #541. Still to come: stone and its cure, a light
-seen past the fog and the Core's clock.
+the gate bot's answer, a drain of spell points' with #541; a question first (#544), the bot refusing
+it. Still to come: stone and its cure, a light seen past the fog and the Core's clock.
 
 Decided by delegate for #537, each the owner's to overturn:
 
@@ -328,6 +329,35 @@ Decided by delegate for #545, each the owner's to overturn:
 9. **A placed sweeper stands on the line as the test giant or drake does,** its chance and element
    with it, or is set off it with a reason (`tools/tests/harness.ts`). The giants and the drakes are
    neither placed nor drawn yet (#502, #507, #513, #515, #520): a fixture in the tests sweeps for them.
+
+Decided by delegate for #544, each the owner's to overturn:
+
+1. **A group's question is a person's `Choice` on `EncounterDef.choice`, with one answer that
+   `fight`s:** `World` puts it when the company comes beside the group (`asks`, in place of the
+   step's `encounter`), the choice screen answers it, and the resolver is untouched.
+2. **Esc is the refusal:** a group in the road is no person to walk away from, so no company walks
+   past one unanswered. Space at a group that still asks puts its question first.
+3. **The refusal sets no flag, so it is put again after a flight;** every other answer sets one (the
+   people check holds both), so a toll paid is paid once and remembered as a person's answer is, in
+   the party's flags: nothing new is saved.
+4. **A group answered without a fight stands aside for that company:** it neither asks, fights nor
+   follows, and the company walks through its square. It is still drawn and Space still sets on it,
+   which breaks the bargain; its `until` and `after` read as before.
+5. **The toll's shape:** a price in gold, or an item (`takes`, new: barred to a company without it,
+   said "(The X given.)"), on an answer that sets the toll's flag. Paid once, the Stair stays open to
+   that company; the king's own group asks it, so with the king dead nobody keeps it. Its sum is
+   #502's, inside the band's window (docs/areas/whitespine.md §8).
+6. **The giants' group is I10's (#502):** this places no giant, since they are not drawn yet (#507),
+   and 47, The Toll (#506), answers the king with `takes`.
+7. **The gate's bot refuses and fights** (`gateAnswer`), so the gate measures each group as before,
+   and `gatePass` is the walk past, the first answer a company can give; the gate check pins both on
+   a fixture toll. The curve counts a talking group's fight with it: a company that pays forgoes the
+   group's pay, as the Whitespine's doc says of the king's share. The Act IV bot is #549's.
+8. **The answer's words are one entry of the log, held to three lines;** the choice screen is titled
+   by the group's leader, else its first monster.
+9. **Thornmark claims the mechanic (`encounter:choice`):** its ogre (#56's 13) is the first group on
+   the road to ask, so the Whitespine's toll is the second, and its doc's "first choice put before a
+   fight" (§2) is #502's to restate; the giants, sweep and the cliff stay the Whitespine's own.
 
 ---
 
@@ -1161,10 +1191,11 @@ eagles from the birds; the Hand as its masons.
   again.
 
 The giants' toll is a choice before the fight, put the way a business puts its menu, so it needs
-nothing new of the resolver (#544); a company that pays walks up the Stair. The giants are `kind:
-person` and break when the king falls: they came in the ship awake, the crew that built the inside
-and were never cargo, posted to keep the Stair, which is the hull's service ramp, and the toll is
-the order they were given (#443, call 1; DESIGN.md §9). The king's words hint it and never say it.
+nothing new of the resolver (#544, built: §3.3); a company that pays walks up the Stair. The giants
+are `kind: person` and break when the king falls: they came in the ship awake, the crew that built
+the inside and were never cargo, posted to keep the Stair, which is the hull's service ramp, and the
+toll is the order they were given (#443, call 1; DESIGN.md §9). The king's words hint it and never
+say it.
 
 Drawn (#507), the monks robed on the keepers' frame (`src/ui/monsters/keepers.ts`): the bay's walk
 and six lit fingers in the dead monks' habits, girt with a cord, the plate showing at the shins and
