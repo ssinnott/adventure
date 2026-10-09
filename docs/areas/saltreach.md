@@ -181,7 +181,9 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
   master on the quay by day, two Wrack smugglers and two bowmen under the sea wall by night, and four
   salt crabs at the pans' edge. The secret is the smugglers' stair in the sea wall's dry end, its
   cache at the foot by a sea door barred from within, the hint the rope hanging over it with
-  nothing on it. The gate holds at 11, at 7.3 fights to a rest (7.0 before the re-stat, #18).
+  nothing on it. The gate holds at 11, at 7.3 fights to a rest (7.0 before the re-stat, #18). Once
+  the causeway at Sheer Point has been stood on, the sand at the east edge, 31,17, says a line on the
+  sea under the Hearth's light, once (#449; docs/areas/ashfall.md §9, #449's 1 and 2).
 - **Saltmouth** (`saltmouth`, town, band 10–12; #177): the free port behind C6's land gate, §4.9.
 - **The salt pans** (C7, `saltings_c7`, country, band 11–12; #178): the salt runs on south from C6's
   pans into six walled pans, walked in lanes, each with a gap for its sluice but one; the last marsh
