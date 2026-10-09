@@ -132,11 +132,11 @@ need first:
   be measured on the harness's what-if gear and say nothing (EXPANSION §5.2).
 - **Calls** (#537) and the keepers' sleep.
 - **Rook's Nest and #448,** for the Thief's quest to have a trainer.
-- **The novelty check by band** (quality lane): `noveltyFaults` counts every map in an area's
-  folder at that area's place, so the Dead-Drop's knockers, keepers, heavy machines and calls would
-  stand at Wrackholm's place and fail the Kilns', Rimewater's and Ashfall's claims as on the road
-  before them. The ledger must place a map by its band, as `paceFaults` does, sharing one
-  `placeOf`. This can be done now, in the quality lane, with a fixture.
+- **The novelty check by band** (quality lane) is done: `noveltyFaults` counts a map where
+  `roadPlace` puts it, as `paceFaults` does (with its area, or, where its floor is over the area's
+  band, with the last area whose floor is at or under its own), so the Dead-Drop's knockers,
+  keepers, heavy machines and calls stand with the Glasswold, after the Kilns', Rimewater's and
+  Ashfall's claims.
 
 ## 8. Decisions
 

@@ -359,7 +359,9 @@ to place and worth the walk.
   log's. British spelling, as the game has it (colour, armour).
 - **Novelty.** An area declares what is new in it: monster families (not only variants), terrain,
   mechanics, landmarks. The check proves each exists, is used in the area and appears nowhere
-  earlier on the road. Whether it is interesting is the owner's call; the check keeps the claim
+  earlier on the road. A map counts where the pace check places it (MONSTERS §2.2): in its area, or
+  where its floor is over that area's band, in the last area whose floor is at or under its own; a
+  site stays with its area. Whether it is interesting is the owner's call; the check keeps the claim
   from being empty.
 - **The land agrees with the map.** Where a zone map's edge meets unbuilt atlas land, its rivers,
   roads and coast carry on across the edge.
