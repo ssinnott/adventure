@@ -121,6 +121,14 @@ export const ANVILHALL: MapDef = {
     { kind: 'npc', x: 10, y: 6, name: 'Ilse, who cuts the old script', lines: [
       'An old dwarf on a ladder at the mine-surgeon\'s lintel, cutting the old script fresh into the rock.',
       '"Ilse. Every spring I cut them fresh, stroke for stroke as they were. Change a stroke and you change the blessing."',
+    ], says: [
+      // The Older Mark's kept rubbing (Thornmark's, #56's 16 and its promise in 34; #637): she reads it as
+      // a cutter does, by its strokes and no more, to a company carrying it; every other company hears her
+      // own words. The flag is the journal's: Thornmark's `mark` adds her finding.
+      { after: { item: 'stone_rubbing' }, sets: 'q_mark_read', lines: [
+        'The old dwarf comes down her ladder for the rubbing and follows its strokes with her thumb, as along a lintel.',
+        '"Every stroke is one I cut. But mine waver, as my master\'s did, and these do not." She holds it to the light. "Whoever cut this was not copying."',
+      ] },
     ] },
     { kind: 'well', x: 5, y: 7, text: 'A cistern cut in the rock. The water comes up warm from below, and tastes of iron.' },
     { kind: 'event', x: 4, y: 9, id: 'ah_chalk', once: true, text: 'Chalk on the terrace wall at a child\'s height: three marks of the old script, over and over, copied off a lintel.' },

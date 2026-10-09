@@ -140,7 +140,8 @@ export const QUESTS: readonly QuestDef[] = [
   },
   {
     // #56's sixteenth (#49, #218): Senara asks for a rubbing of the standing stone on Penspern's
-    // crown, takes it and asks whether to burn it. Kept, the dwarves read it, later (#56's 34).
+    // crown, takes it and asks whether to burn it. Kept, a dwarf at Anvilhall reads it (#56's 34, #637):
+    // Ilse's line sets q_mark_read, which adds the last entry.
     id: 'mark',
     title: 'The Older Mark',
     start: [{ flag: 'q_mark' }, { flag: 'q_mark_shown' }],
@@ -155,7 +156,9 @@ export const QUESTS: readonly QuestDef[] = [
       { id: 'burnt', when: { flag: 'q_mark_burnt' },
         text: 'Senara burnt the rubbing. The hold\'s seal is its own again, for as long as nobody takes another.' },
       { id: 'kept', when: { flag: 'q_mark_kept' },
-        text: 'We kept the rubbing, to carry to someone who reads cut marks: the dwarves, Senara thinks.' },
+        text: 'We kept the rubbing, to carry to someone who reads cut marks: the dwarves, Senara thinks. Anvilhall, in the Iron Fells, is theirs.' },
+      { id: 'read', when: { flag: ['q_mark_kept', 'q_mark_read'] },
+        text: 'Ilse, who cuts the old script at Anvilhall, knew every stroke of the rubbing, and said whoever cut it was not copying.' },
     ],
     goals: [
       { when: { flag: 'q_mark_shown' }, text: 'Answer Senara in Henlys: burn the rubbing, or keep it?' },
