@@ -7,13 +7,14 @@ import { MONASTERY2 } from './maps/monastery2.ts';
 import { HIGHSPINE_I11 } from './maps/highspine_i11.ts';
 import { HIGHSPINE_I10 } from './maps/highspine_i10.ts';
 import { SHEERPOINT_I9 } from './maps/sheerpoint_i9.ts';
+import { SHEERPOINT_I8 } from './maps/sheerpoint_i8.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
   id: 'whitespine' as const,
-  maps: [MONKSVALE_J11, MONASTERY, MONASTERY2, HIGHSPINE_I11, HIGHSPINE_I10, SHEERPOINT_I9],
+  maps: [MONKSVALE_J11, MONASTERY, MONASTERY2, HIGHSPINE_I11, HIGHSPINE_I10, SHEERPOINT_I9, SHEERPOINT_I8],
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,
@@ -29,7 +30,9 @@ export const AREA = {
   // Peaks underfoot, with the road through them (#543), with J11 (#499); a monastery kept by what did
   // not build it, with Highcell (#500); the Sheer's cliff, seen from its top and climbed down by a
   // Mountaineer, with I11 (#501); the giants, a new family, with I10 (#502), whose sweep and toll have
-  // no token of their own to claim (the toll is Thornmark's).
+  // no token of their own to claim (the toll is Thornmark's). Sheer Point's sea reached from the range,
+  // its causeway over the water and the person taken from its shore (#504) have none either: the
+  // causeway's stone is the Kilns' pier's, and a cave on the atlas is on the road before.
   novel: { families: ['giants'], terrain: ['peak', 'cliff'], mechanics: [], landmarks: ['monastery'] },
   atlas: { zones: ZONES, places: PLACES, sites: SITES },
 } satisfies Area;
