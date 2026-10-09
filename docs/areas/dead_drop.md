@@ -10,9 +10,9 @@ under Phase 1.4 (#441). Every call below is a decision the owner may overturn; �
 Built: the stair's foot, `dead_drop_stair`, one room at 26–28 with no group and no chest, the
 way back up and, at its far end, the way on (docs/areas/wrackholm.md §4.5, §9, 6); the first
 level, the drop (#22, §4.1); the second, the vaults (#22, §4.2); and the third and last, the
-counting house (#22, §4.3), which the plan called the writer's room. The Dead-Drop is built. Owed,
-in pull requests of their own: the Factor's rung with Ruan's choice and the Thief's third
-prestige (§5, §10). Its maps are Wrackholm's, in `src/content/areas/wrackholm/maps/`, the area
+counting house (#22, §4.3), which the plan called the writer's room. The Dead-Drop is built, and
+so are the quests that go down: the Factor's rung and Ruan's choice (#635's PR D) and the Thief's
+third prestige (#448), both in §5. Its maps are Wrackholm's, in `src/content/areas/wrackholm/maps/`, the area
 that opens on them. Its ids: `dead_drop` (the drop), `dead_drop2` (the vaults) and `dead_drop3`
 (the counting house); the first keeps the plan's id and place, its atlas row now the built plate
 (§8, the drop's 8); the others have plates of their own (§8, the vaults' 14 and the counting
@@ -54,7 +54,8 @@ the tally clerk and the hold keeper, restated on the line (§8, the drop's 5); t
 places the Tallymaster, set off the line for its gate (§8, the counting house's 4). The deep
 knocker is Meridian Camp's, drawn by #657. The vaults place it at the sealed door, with the loader
 and the keeper again; they restate nothing (§8, the vaults' 5). The counting house places the
-tally clerk with a loader again. The Dead-Drop is built; its quests are owed (§5, §10).
+tally clerk with a loader again. The Dead-Drop is built; its Factor's rung and Ruan's choice and
+the Thief's third prestige are built (§5).
 
 ## 4. The levels
 
@@ -254,12 +255,16 @@ knot, which no text calls anything (§8, the vaults' 8).
 
 ## 5. The quests here
 
-- **The Compact's line** (DESIGN §10.2): the orders, carried up, open the rank that reveals, where
-  #182 left the founder's seal (docs/areas/saltreach.md §9; docs/areas/wrackholm.md §4.4). The
-  choice is put by Ruan in the Keel at Saltmouth, not below: the Compact is people, and a person
-  puts a choice. Hand it to the Wardens or take it over; either way it stops taking the
-  Tallymaster's orders. The orders are the counting house's `compact_orders` (§4.3), and the
-  Factor's rung asks for `{ item: 'compact_orders' }`; the rung and Ruan's choice are owed (§10).
+- **The Compact's line** (DESIGN §10.2), built (#635's PR D): the orders, carried up, open the rank
+  that reveals, where #182 left the founder's seal (docs/areas/saltreach.md §9; docs/areas/
+  wrackholm.md §4.4). The choice is put by Ruan in the Keel at Saltmouth, not below: the Compact is
+  people, and a person puts a choice. Hand it to the Wardens or take it over; either way it stops
+  taking the Tallymaster's orders. The orders are the counting house's `compact_orders` (§4.3), and
+  the Factor's rung, *In the Founder's Hand* (`compact_factor`, Wrackholm's `guilds.ts`), asks for
+  `{ item: 'compact_orders' }` and leaves them in the pack; paid at either hall for 800 gold and
+  4,800 xp, it makes a Partner. Ruan's words follow it (`q_compact_factor_done`): one question,
+  and two answers that set `q_compact_wardens` or `q_compact_over` and pay nothing; the seal is not
+  taken (docs/areas/wrackholm.md §9, PR D's 5 to 7).
 - **The Thief's third prestige** (#448), Whose Hand, built: steal the orders and learn who writes
   them, for Hereward in Rook's Nest (docs/areas/whitespine.md §6). Seeing the Tallymaster write is
   `dd3_writes`, which sets `q_writer_seen`; with the orders in the pack too he reads them, once,
@@ -627,7 +632,7 @@ Decided by delegate for #22 (the counting house), each the owner's to overturn:
 - **A way on down from the counting house:** none; the vaults' steps are its one way out (the
   counting house's 15).
 - **The Factor's rung** (`In the Founder's Hand`, which asks for `compact_orders`) with **Ruan's
-  choice at the Keel,** in a pull request of their own (PR D of #635): owed (§5).
+  choice at the Keel,** left to a pull request of their own (PR D of #635): built there (§5).
 - **MONSTERS §4.4's 6 and 8** still owe the Dead-Drop's monsters a restating and report the
   Tallymaster at 57% at 28; the counting house sets it off the line and its gate wins it 70% at 27
   (the counting house's 4). Left as they stand, a shared doc.
