@@ -93,6 +93,8 @@ export const BOSSES: Record<string, readonly string[]> = {
   // The Old Drake asleep on Old Cinder's square, down off F11's crater (#515); the Sentinel up through
   // the Ember Stone's door the moment it lights, down inside the Stone on F11 (#516).
   emberwaste: ['old_cinder:oc1_drake', 'ember_stone:es_sentinel'],
+  // The Grey Lion alone on his ground between the mesas, under the rim (#529).
+  wold: ['wold_b8:b8_grey_lion'],
 };
 
 /** Each zone's road: the groups met on it, in order, from its way in. Every zone with groups names one. */
@@ -241,10 +243,10 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'meridian_camp3: under': { whose: '#18', at: 1 },
   // And the Glasswold's first box (#525): the steppe, two under, wins every fight, as Ashfall's boxes do.
   'wold_d9: under': { whose: '#18', at: 1 },
-  // Akordu's box (#526) the same.
-  'wold_d8: under': { whose: '#18', at: 1 },
-  // And the mesas (#527), the same.
+  // And the mesas (#527), the same; Akordu's box (#526) the same, and the Scarp's edge (#528).
   'wold_d10: under': { whose: '#18', at: 1 },
+  'wold_d8: under': { whose: '#18', at: 1 },
+  'wold_c8: under': { whose: '#18', at: 1 },
   'the Glasswold: under': { whose: '#18', at: 1 },
   'highspine_i11: under': { whose: '#18', at: 1 },
   // And the ridge north (#503), banded from the area's floor as I11 is: its three groups are won every
