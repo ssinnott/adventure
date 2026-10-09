@@ -125,6 +125,8 @@ export const ROADS: Record<string, readonly string[]> = {
   // Down off the pass past the brothers at its foot, and on down the road to the gate past the brothers
   // walking it (#499).
   monksvale: ['monksvale_j11:j11_brothers_foot', 'monksvale_j11:j11_brothers_road'],
+  // Over the crest from the vale and up the path to the Peak Stone, past the brothers walking it (#501).
+  highspine: ['highspine_i11:i11_brothers'],
 };
 
 /** What an area is called in the check, apart from the map it shares an id with. */
@@ -194,6 +196,7 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   // And Highcell's upper house (#500), banded from the area's floor as Carn Dubh's cairn is.
   'monastery: under': { whose: '#18', at: 1 },
   'the Whitespine: under': { whose: '#18', at: 1 },
+  'highspine_i11: under': { whose: '#18', at: 1 },
   // Act II's bosses were set by their gates against a company without its first prestige, which the
   // gate's company never took until #541 made it harness's. With it, at 11, four of the six strike
   // twice a turn and the casters cast at their first rank, and each boss is won nearly always at its

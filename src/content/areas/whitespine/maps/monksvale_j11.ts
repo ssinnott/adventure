@@ -6,8 +6,9 @@
 // and behind the wall, the brothers' trodden line to the rock.
 // In from Rimewater's K10 (#491) over the pass, taken, not walked, parked J10 lying between: K10's
 // SADDLE lands on the road at 20,1, and the road's first square, 20,0, leads back (CLIMB). The gate
-// at 26,24 is the way into Highcell (#500, GATE). The east, south and west
-// edges end the world against K11, J12 and I11, and the north edge against J10.
+// at 26,24 is the way into Highcell (#500, GATE). The summit's path goes on west over the crest at
+// row 10 into I11 (#501), walked. The east and south edges end the world against K11 and J12, and the
+// north edge against J10.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/whitespine.md §4.2 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
@@ -47,7 +48,7 @@ export const MONKSVALE_J11: MapDef = {
     'AAAAAAAAAMMMMM^^^^^=,,,^^^^^MMMM',
     'AAAAAAAAAMMMMM^^^^,==,,,^^^^^MMM',
     'AAAAAAAAMMMMM^^^^^,,=,,,,^^^^MMM',
-    'MMM*****MMMMM^^^^^,,=,,,,,^^^^MM',
+    '********MMMMM^^^^^,,=,,,,,^^^^MM',
     'MMMMMMM****MM^^^^^,,=,,,,,^^^^MM',
     'MMMMMMMMMM***^^^^^,,==,,BB,^^^^M',
     'MMMMMMMMMMMMM^^^^^,,,=,,BB,^^^^M',

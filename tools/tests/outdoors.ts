@@ -255,15 +255,27 @@ export function outdoors(): void {
   // Monks' Vale (J11, #499), the Whitespine's first box: in over the pass from K10, taken, its road's
   // first square at 20,0 against J10's corner, where the atlas's road crosses, between the hills and the
   // pines; on the north otherwise the peaks and the mountain (the ring, so the void) against J10; on the
-  // west the crest's peaks against I11; on the south the peaks and the hills against J12; and on the east
-  // a peak, the hills and the vale's grass against K11. None of J10, I11, J12 and K11 is built, so the
-  // world ends past them.
+  // west the crest's mountain and peaks against I11 (#501), the summit's path going on over it at row 10;
+  // on the south the peaks and the hills against J12; and on the east a peak, the hills and the vale's
+  // grass against K11. None of J10, J12 and K11 is built, so the world ends past them.
   const j11 = out.zones.find((z) => z.id === 'monksvale_j11')!;
   ok(northOf(j11) === '%%%%AAAA%%%%%^^^^^,,=pp%AAAAAA%%' && southOf(j11) === '%%%%' + 'A'.repeat(8) + '%'.repeat(6) + '^'.repeat(14)
-    && [...Array(32).keys()].every((i) => [out.at(j11.x + 32, j11.y + i), out.at(j11.x - 1, j11.y + i), out.at(j11.x + i, j11.y + 32), out.at(j11.x + i, j11.y - 1)].every((c) => c.ch === '%')),
+    && [...Array(32).keys()].every((i) => [out.at(j11.x + 32, j11.y + i), out.at(j11.x + i, j11.y + 32), out.at(j11.x + i, j11.y - 1)].every((c) => c.ch === '%')),
     `J11's north edge is the peaks, the hills, the road at column 20 and the pines against J10, and its south edge the peaks and the hills against J12, past which the world ends (${northOf(j11)}; ${southOf(j11)})`);
-  ok(westOf(j11) === '%%%' + 'A'.repeat(7) + '%'.repeat(10) + 'A'.repeat(8) + '%%%%' && eastOf(j11) === '%%A' + '%'.repeat(11) + '^^^^' + ','.repeat(13) + '^',
-    `J11's west edge is the crest's peaks against I11, and its east edge a peak, the hills and the vale's grass against K11, past which the world ends (${westOf(j11)}; ${eastOf(j11)})`);
+  ok(westOf(j11) === '%MM' + 'A'.repeat(7) + '*' + 'M'.repeat(9) + 'A'.repeat(8) + 'MMM%' && eastOf(j11) === '%%A' + '%'.repeat(11) + '^^^^' + ','.repeat(13) + '^',
+    `J11's west edge is the crest's mountain and peaks against I11, the summit's path crossing at row 10, and its east edge a peak, the hills and the vale's grass against K11, past which the world ends (${westOf(j11)}; ${eastOf(j11)})`);
+  // The Peak Stone's box (I11, #501): its east edge meets J11's west edge square for square, the
+  // summit's path crossing at row 10, walked; on the north the pines, the Sheer, the ridge trail at
+  // 27,0 where the atlas's trail crosses, beside the
+  // Stone at 28,0, and the mountain (the ring, so the void) against I10; on the west Ashfall's pines,
+  // grass and ash under the Sheer against H11; on the south the ash, the hills, the Sheer, the pines and
+  // the mountain against I12. None of I10, H11 and I12 is built, so the world ends past them.
+  const i11 = out.zones.find((z) => z.id === 'highspine_i11')!;
+  ok(eastOf(i11) === '%MM' + 'A'.repeat(7) + '*' + 'M'.repeat(7) + 'A'.repeat(9) + 'MMMM%' && [...Array(32).keys()].every((i) => out.at(i11.x + 32, i11.y + i).ch === westOf(j11)[i]),
+    `I11's east edge is the crest's mountain and peaks against J11's west, the summit's path crossing at row 10 (${eastOf(i11)})`);
+  ok(northOf(i11) === 'ppp||' + 'p'.repeat(20) + '%%="%%%' && southOf(i11) === 'aaa^^pp||' + 'p'.repeat(17) + '%'.repeat(6) && westOf(i11) === 'ppppppp,' + 'a'.repeat(13) + ',' + 'a'.repeat(10)
+    && [...Array(32).keys()].every((i) => [out.at(i11.x - 1, i11.y + i), out.at(i11.x + i, i11.y + 32), out.at(i11.x + i, i11.y - 1)].every((c) => c.ch === '%')),
+    `I11's north edge is the pines, the Sheer, the trail at 27,0 and the Stone at 28,0 against I10, its west edge Ashfall's ground under the Sheer against H11 and its south edge the ash, the Sheer, the pines and the mountain against I12, past which the world ends (${northOf(i11)}; ${westOf(i11)}; ${southOf(i11)})`);
   // Fionnlios's box (O7, #477): its west edge meets N7's east edge square for square, the peat-cutter's
   // track crossing at row 22 and the tarn's stream at the corner, out into N7's corner and O8's; its
   // north edge the hills and the Kilns' grass under O6, square for square with O6's south edge but its
