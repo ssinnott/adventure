@@ -1011,10 +1011,10 @@ the Dead-Drop for the Riders: coin to buy their silence about the Glass. Deliver
 Riders take the coin and say nothing; give them to the Riders as what they are, and the Riders shut
 the Glass to the Hand; burn them, and the runner's next climb finds the company. The Compact's hall
 at Cinderport gives it (DESIGN §10.2). As built (#532): Hendra, the Compact's factor, asks
-(`q_orders`); her runner on the top flight gives up the orders to a company Hendra sent
-(`q_orders_carried`, Orders for the Riders, read from the pack); and the eldest at Akordu has them
-sealed (`q_orders_sealed`), hears what they say (`q_orders_told`) or watches them burn
-(`q_orders_burned`), when the runner's next climb finds the company (§9, #532's 10 and 11).
+(`q_scarp`); her runner on the top flight gives up the orders to a company Hendra sent
+(`q_scarp_carried`, Orders for the Riders, read from the pack); and the eldest at Akordu has them
+sealed (`q_scarp_sealed`), hears what they say (`q_scarp_told`) or watches them burn
+(`q_scarp_burned`), when the runner's next climb finds the company (§9, #532's 10 and 11).
 
 **The Garden of Glass** (55). The Riders keep a garden of their glassed dead at Akordu's edge, the
 ones who went to look at the basilisk. A mother asks that her son be carried to the temple at
@@ -1858,11 +1858,11 @@ Decided by delegate for #532, each the owner's to overturn:
 9. **Hunted, the camp's trade adds nothing:** the trader sells from the start (call 5), so the
    boy's being a Rider is words.
 10. **54's three answers are §6's,** put by the eldest at Akordu, where the watch sends a climber:
-    given sealed (`q_orders_sealed`), told (`q_orders_told`) or burned (`q_orders_burned`). The
+    given sealed (`q_scarp_sealed`), told (`q_scarp_told`) or burned (`q_scarp_burned`). The
     letter is the runner's orders (`riders_orders`, read from the pack); the cleft's Letter in
     Cipher keeps no reader (§11).
-11. **Hendra asks (`q_orders`), and the runner gives up the orders only to a company Hendra sent**
-    (`q_orders_carried`); burned, her next climb finds the company, in her words.
+11. **Hendra asks (`q_scarp`), and the runner gives up the orders only to a company Hendra sent**
+    (`q_scarp_carried`); burned, her next climb finds the company, in her words.
 12. **55's son is the garden's boy** (`d8_figure`, gone once carried): the mother gives him
     (`q_garden_carried`, the Boy of Glass), and a priest at the Harbour Temple's door, there only
     for a company that carries him, takes him in (`q_garden_brought`).

@@ -17,8 +17,8 @@ import { SOUTH } from '../../../../game/types.ts';
  * and at Akordu gives them to the eldest sealed (`ORDERS_SEALED`), tells her what they say
  * (`ORDERS_TOLD`) or burns them (`ORDERS_BURNED`), when the runner climbs again.
  */
-export const ORDERS_ASKED = 'q_orders', ORDERS_CARRIED = 'q_orders_carried';
-export const ORDERS_SEALED = 'q_orders_sealed', ORDERS_TOLD = 'q_orders_told', ORDERS_BURNED = 'q_orders_burned';
+export const ORDERS_ASKED = 'q_scarp', ORDERS_CARRIED = 'q_scarp_carried';
+export const ORDERS_SEALED = 'q_scarp_sealed', ORDERS_TOLD = 'q_scarp_told', ORDERS_BURNED = 'q_scarp_burned';
 
 export const WOLD_C8: MapDef = {
   id: 'wold_c8',
