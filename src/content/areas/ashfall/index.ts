@@ -39,6 +39,8 @@ export const AREA = {
   // staff and Fane's map in the camp (#22).
   items: ITEMS,
   // What the Springs Bring Up, The Founding Stone and The Shovel That Does Not Blunt (#519).
+  // The third prestiges' quests of the three classes taught here, the Paladin's, the Barbarian's and the
+  // Druid's (#448).
   quests: QUESTS,
   // The Cartographers' Surveyor's rung, the fourth Meridian journal found under the Ember Stone (#635).
   guilds: GUILDS,
