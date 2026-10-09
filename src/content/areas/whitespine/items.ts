@@ -20,4 +20,16 @@ export const ITEMS: readonly ItemDef[] = [
     'A case of stiff leather stamped with the Lanterns\' lamp: a sighting glass, a level and a chain.',
     'Inside the lid, a list of Stones in a small hand. The Peak Stone is the last, and not ticked.',
   ] },
+  // The side quests (#506; docs/areas/whitespine.md §6). The Novice (#56's 45): his letter from the last
+  // cell at Highcell to his mother at Anvilhall, who takes it.
+  { id: 'novice_letter', name: 'The Novice\'s Letter', slot: 'none', price: 0, text: [
+    'To my mother at Anvilhall. The brothers keep every fast, and I have never once seen one of them eat.',
+    'I am hungry all the time. I pray it passes, and I grow as holy as they are.',
+  ] },
+  // The Mason's Tally (#56's 48): the causeway's true tally, which the deserter gives a company that
+  // swaps its page; he goes back with a count chalked short.
+  { id: 'masons_tally', name: 'The Masons\' Tally', slot: 'none', price: 0, text: [
+    'A slate off the causeway\'s tally, chalked in fives in a careful hand.',
+    'Under the last row: ELEVEN.',
+  ] },
 ];

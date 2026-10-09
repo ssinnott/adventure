@@ -15,10 +15,10 @@ IV's systems are #442's (§3). Figures are measured on main at `6032251` (2 Octo
 Its first five boxes are built, J11, Monks' Vale (#499, §4.2), which lists the area, I11, the
 Peak Stone's (#501, §4.4), I10, Stairwatch and the Stair's head (#502, §4.5), I9, the ridge north
 (#503, §4.6) and I8, Sheer Point (#504, §4.7), and so is Highcell, the dungeon through J11's gate
-(#500, §4.3); its eight monsters are drawn (§3), and its chapter, The Bells, is written (#505,
-§5); the rest is to build. Its content is `src/content/areas/whitespine/` (maps, monsters, items,
+(#500, §4.3); its eight monsters are drawn (§3), its chapter, The Bells, is written (#505, §5)
+and its four side quests are in the log (#506, §6); the rest is to build. Its content is `src/content/areas/whitespine/` (maps, monsters, items,
 climate, its part of the world map, its walkthrough and its chapter of the one quest, The Bells, in
-`chapter.ts`; its side quests in `quests.ts` are to come); it has no town, so no rooms. Its ids:
+`chapter.ts`; its side quests in `quests.ts`, #506); it has no town, so no rooms. Its ids:
 the area `whitespine`, its zones `monksvale`, `highspine` and `sheerpoint`, the dungeon `monastery`
 and `monastery2` (the ids stay under the new name, §10).
 
@@ -205,10 +205,19 @@ The chapter, on the places built (#505):
   Stair's first step below the king's, I10's 1,20, which sets `q_stair_top` once the toll is
   answered or the king is down; Ashfall's chapter (#518) reads that flag (§5).
 
+The side quests, on the places built and three beyond the range (#506):
+
+- **The Novice, The Eagles' Nest, The Toll and The Mason's Tally** (`quests.ts`, #506): #56's 45
+  to 48, their people on Highcell's, J11's, I10's and I8's maps and the nest on I11's, and three
+  beyond the range: the novice's mother at Anvilhall (Kilns), the deserter at Cinderport (Ashfall)
+  and the Reader at Lantern Watch (Sunderwood), who takes the badge and the instruments.
+  Each pays its xp whichever way it goes, 200, 200, 250 and 250 a member (§6, §8).
+
 Its row on the curve is in (#542), in `src/content/progression.ts`: band 22–24, next 24, window
-5,000, owed to #445 while the area is built box by box, with 17,429 xp a member and 5,290 gold in
-the boxes built, J11's 2,791 and 700, Highcell's 4,183 and 600, I11's 2,355 and 300, I10's 4,197 and
-1,920, I9's 1,800 and 790 and I8's 2,104 and 980 (§8). It has no step on the gear ladder, no town to
+5,000, its gold owed to #445 while the area is built box by box: 17,429 xp a member and 5,290 gold
+in the boxes built, J11's 2,791 and 700, Highcell's 4,183 and 600, I11's 2,355 and 300, I10's 4,197
+and 1,920, I9's 1,800 and 790 and I8's 2,104 and 980, and the side quests' 900 xp, which take a
+clear to 18,329, past the curve's 17,867, so that no xp is owed (§8, #506). It has no step on the gear ladder, no town to
 sell one: Rime Lodge's rung is the pass's, and Cinderport's step (docs/areas/ashfall.md §4.4) comes
 two levels on; J11's store holds a second of Rimewater's Guide's Staff +1 (§4.2), Highcell's
 undercroft an Ice Axe +1 and a Skinning Knife +1 (§4.3), I10's hoard a Bear Spear +1, Rimewater's
@@ -306,7 +315,7 @@ settled in its issue.
   standard encounters between rests (EXPANSION §5.2).
 - **Pay.** The area owes 17,867 xp a member (§8). The shares below are a first cut, and §8 says
   how they stand against the curve.
-- **Side quests** are #56's 45 to 48, placed as §6 has them (#506).
+- **Side quests** are #56's 45 to 48, placed and built as §6 has them (#506).
 - **Finds.** No step of the gear ladder is here (#542): Rime Lodge's rung is behind and
   Cinderport's ahead, so the boxes place gold, potions and a plus or two on Rimewater's rung, each
   inside the band's price window of 5,000. **Lines** are drafts, two to an event (DESIGN §11).
@@ -362,8 +371,8 @@ settled in its issue.
   monks' shrine at 21,10 (personality), and east of it the pilgrims' hostel, a building of 2 by 2 at
   24 to 25, 12 to 13, its event at the front, 23,13 (§9, #499's 14). West, snow lying in drifts
   along the crest's foot, a path up it into the snow at 13,12 and Spine Summit at 4,10, a camp, with
-  the hermit at 3,10, words only (§9, #499's 12); at the vale's east edge the herder at 27,19, words
-  only, and his fold, a ring of rock at 28 to 30, 18 to 20 (§9, #499's 13). The monastery fills rows
+  the hermit at 3,10, words only (§9, #499's 12); at the vale's east edge the herder at 27,19, who
+  gives The Eagles' Nest (§6, #506), and his fold, a ring of rock at 28 to 30, 18 to 20 (§9, #499's 13). The monastery fills rows
   24 to 28 and columns 20 to 29 of its shelf, with two bell towers over its wall (29,22) and the
   camp in the shelf's lee at 21,23; its gate at 26,24, the brother standing in it as the brief's
   line has it, was barred until #500 and is the way into Highcell now (§4.3; §9, #499's 5 to 7,
@@ -379,7 +388,7 @@ settled in its issue.
   hold 700 gold between them. It departs from the brief in the monastery, a block of building
   squares and not drawn tall over one square (§11); in the gate, barred until #500 opened it; and
   in the hostel, which is only kept wrongly where the issue made its cellar the secret (§11). The
-  step is the chapter's (§5, #505); the Eagles' Nest is owed to #506 and the hermit's vigil to #448
+  step is the chapter's (§5, #505); the Eagles' Nest is built (§6, #506) and the hermit's vigil owed to #448
   (§9, #499's 16).
   - **Measured.** A company at 22 wins every fight and manages 10.50 fights to a rest, the aim's
     top, with 15% of its days ending in a fight broken off; it walks Monks' Vale's road, past the
@@ -426,7 +435,8 @@ settled in its issue.
   the refectory door (5,4) a board of the hours in the old script, which marks nothing (§9, #500's
   13); in the refectory (2,5) the tables laid and every bowl empty. Along the east walk the cells, a
   brother standing in each (11,5), and three brothers keeping the hours before them (11,7); in the
-  last cell the Novice (14,9), words only. At the south walk's west end the bell tower's foot (3,11)
+  last cell the Novice (14,9), who gives The Novice, and in the first (14,3) a brother who takes
+  the Eagles' Nest's badge (§6, #506). At the south walk's west end the bell tower's foot (3,11)
   and its stair winding up (1,13); under the bells (4,13) the ringers at their ropes, the bells
   ringing eleven, a gap, eleven, each time a company comes by, and one who pulls a beat behind the
   rest (6,14), thin, in a robe that is not his, words only: the Laureate. Four bell-ringers come
@@ -523,8 +533,8 @@ settled in its issue.
   snow line between the crest path and the Stone, 23,5; spine eagles, 4, over the snow line south of
   the path, 22,14; and snow trolls, 2, in the snow at the crest's foot, 22,21, who do not roam, the
   box's hardest at 23, at the far end. It departs from the brief in the band, 22 to 23 and not 23,
-  and in its groups, four for six (§9, #501's 1 and 8). The Eagles' Nest's hand-ins are owed to #506
-  (§11).
+  and in its groups, four for six (§9, #501's 1 and 8). The Eagles' Nest's hand-ins are built
+  (§6, #506).
   - **Measured.** A company at 22 wins every fight and manages 10.12 fights to a rest, inside the
     aim, with 14.3% of its days ending in a fight broken off; it walks the High Spine's road, past
     the brothers, every time. I11 pays 2,355 xp a member and 300 gold. Two under, at 20, it wins
@@ -589,7 +599,7 @@ settled in its issue.
   a caravan drawn up,
   its master at 18,19 and the wagons at 18,21, and then the Stair in snow at 13,20, a giant and a
   snow troll in a drift (rows 18 to 22, columns 10 to 16); the master's girl is at the head, 6,19,
-  off the road. The drift at 12,21, *The wind did not lay it.*, and burnt bones by the trail at
+  off the road, and by the wagons, 19,19, once the toll is answered or the king is down (§6, #506). The drift at 12,21, *The wind did not lay it.*, and burnt bones by the trail at
   20,16 are things seen (§9, #502's 8 and 12). At the head a toll-stone at 4,21 bears a ring with a
   bar across it, cut small under its lip, and a shrine older than the monks' at 7,21, of might,
   holds out a stone hand (§9, #502's 13 and 14). The king's seat is a slab of rock (2 to 4,17 and 3
@@ -598,8 +608,8 @@ settled in its issue.
   that square (§9, #502's 4). *The king holds out his hand from the seat. "Toll. We have taken it
   since we were set here, and nobody has come to say stop."* A company may pay 1,500 gold, give him
   the grey part from I11's nest, give him the faceless coin of #56's 9, or refuse, and the fight is
-  his and theirs; the three that satisfy him set `toll_paid`, `toll_part` or `toll_coin`, for #506's
-  47 to read, and the giants step off the Stair and stand aside (§9, #502's 5). Below the king's
+  his and theirs; the three that satisfy him set `toll_paid`, `toll_part` or `toll_coin`, which The
+  Toll reads (§6, #506), and the giants step off the Stair and stand aside (§9, #502's 5). Below the king's
   square, at 1,20, the way down is seen once the toll is answered or the king is down (`i10_top`),
   and the chapter ends there (§5, #505). Under the seat,
   walled in rock (the Sheer's cliff at 1,18 and 1,19 is made rock, so no climb reaches it), the
@@ -778,8 +788,8 @@ settled in its issue.
   last rock, 26,3, a cairn, a Sapphire Vial in it and no gold; at the tide's edge, 27,5, the drowned
   god's shrine, its bowl heaped with shells (endurance). Things seen: the troll's leavings at 28,12,
   a grey boat's ribs at 8,13 and the pines grown down into the sea at 6,26. Down the east pines a
-  mason's hammer dropped at 30,19 and, in the rocks at their end, 31,30, the deserter, words only,
-  with his tally at 31,29, which ends ELEVEN; his quest, The Mason's Tally, is #506's (§6; §9,
+  mason's hammer dropped at 30,19 and, in the rocks at their end, 31,30, the deserter,
+  with his tally at 31,29, which ends ELEVEN; his quest, The Mason's Tally, is built (§6, #506; §9,
   #504's 12 and 13). Four groups (§9, #504's 5): spine eagles, 4, at the track's foot, 18,9, the
   nearest, at 22; Ashen masons, 3, at the causeway's root, 17,7; the foreman's, five masons, the
   foreman their `leader`, not roaming, at work on the causeway's end, 17,2, the box's hardest; and a
@@ -853,35 +863,46 @@ the goal stays on the Stair. Each ends once and reads the same but for the toll 
 ## 6. Side quests
 
 #56's four for the Whitespine, all standing (#443, call 9), each built with its box on the systems
-of #76 (#506):
+of #76 and joined by #506, their journal in `quests.ts`:
 
 | # | Quest | Level | Where | What it needs | Pay | Built in |
 |---|---|---|---|---|---|---|
-| 45 | The Novice | 23 | Highcell; Anvilhall | a letter carried; a choice put by a person; `after` (#41) | 200 | #500 |
-| 46 | The Eagles' Nest | 23 | the herder's fold (J11); the nest (I11); Lantern Watch or Highcell | an item no shop buys; a hand-in at the first meeting (#43) | 200 | #499, #501 |
-| 47 | The Toll | 24 | the Stair's head (I10) | the toll (#544); an item given in place of gold; a choice; a person who moves | 250 | #502 |
-| 48 | The Mason's Tally | 24 | the rocks on the Point (I8); Cinderport | a choice put by a person; an item swapped | 250 | #504 |
+| 45 | The Novice | 23 | Highcell; Anvilhall | a letter carried; a choice put by a person; `after` (#41) | 200, either answer (`q_novice_told`, `q_novice_kept`) | #500, #506 |
+| 46 | The Eagles' Nest | 23 | the herder's fold (J11); the nest (I11); Lantern Watch or Highcell | an item no shop buys; a hand-in at the first meeting (#43) | 200, either taker (`q_nest_watch`, `q_nest_cell`) | #499, #501, #506 |
+| 47 | The Toll | 24 | the Stair's head (I10) | the toll (#544); an item given in place of gold; a choice; a person who moves | 250, any answer or the king slain (`q_toll_done`) | #502, #506 |
+| 48 | The Mason's Tally | 24 | the rocks on the Point (I8); Cinderport | a choice put by a person; an item swapped | 250, either answer (`q_mason_passage`, `q_mason_swapped`) | #504, #506 |
 
-Pay is xp a member, whichever way the choice goes, shared by level: about 900 between the four
-(§8). As #56 drafts them:
+Pay is xp a member, whichever way the choice goes: 900 between the four (§8), paid by the answer
+that ends each and split among the living as a fight's is (§9, #506's 1). As #56 drafts them, and
+as built:
 
 - **The Novice.** One real novice lives among the brothers and does not know. The company carries
   his letter to his mother in Anvilhall; on its return it tells him, and the brothers let him walk
-  out, or does not.
+  out, or does not. As built (#506) the boy in the last cell gives his letter to a company that
+  will carry it, and the woman knitting on Anvilhall's middle terrace (5,9) takes it at the first
+  meeting: *"Hungry, he says, and all of them fasting. Tell him his mother says come home."* Back in
+  the cell, told, he walks out at the gate and is on the step below her (6,9); told she is well,
+  he sweeps on.
 - **The Eagles' Nest.** A herder at the vale's edge loses lambs to the eagles. In the nest on the
   peaks above the Stone are smooth grey parts and a Lantern's badge: a Lantern came to survey the
-  Peak Stone and never came down. The badge goes to Lantern Watch, or to Highcell.
+  Peak Stone and never came down. The badge goes to Lantern Watch, or to Highcell. As built (#506)
+  the herder gives it, or the nest does, opened, and once it is he remembers a Lantern going up for
+  the Stone with a glass and a chain. The badge goes to Hester Dunmore, the Reader at Lantern Watch,
+  who may be refused, or to a brother standing in Highcell's first cell (14,3), who holds out its
+  hand only to a company carrying it; the Reader takes the Lantern's Instruments too, for nothing.
 - **The Toll.** A caravan at the Stair's head cannot pay, and the Stair-king keeps the
   caravan-master's daughter until it is paid. Pay in gold; or give him something from below, the
   faceless coin of #56's 9 or a part from the nest, and he says his people were on the mountain
-  before anyone came down the sky; or fight. His words hint and never say (#443, call 1). As built
-  (#502) the king's answers are the box's, and the caravan-master, his wagons and his girl stand
-  there as words only; the quest that joins them is #506's (§4.5; §9, #502's 5 and 12).
+  before anyone came down the sky; or fight. His words hint and never say (#443, call 1). The
+  king's answers are the box's (#502, §4.5) and the quest rides on them (#506): the caravan-master
+  gives it, and once the toll is answered or the king is down his girl is gone from the head and by
+  the wagons (19,19), and her father asks what he owes. Nothing, and the pay is the company's.
 - **The Mason's Tally.** A mason has deserted the causeway and hides in the rocks with the tally:
   eleven more shards and the road reaches the isle. He wants passage to Cinderport. Buy it for him,
-  or swap the tally's page so the Hand sends for the wrong count. As built (#504) the deserter
-  stands in the rocks at the pines' end with his tally, as words only; the quest that joins them is
-  #506's (§4.7; §9, #504's 12).
+  or swap the tally's page so the Hand sends for the wrong count. As built (#504, #506) the
+  deserter in the rocks asks: his passage bought, the Compact's fare of 600, he is by the fire in
+  Cinderport's inn; or the page swapped, he chalks a slate short of the true count and goes back to
+  work below the tally-house (18,8), and the true tally, ELEVEN, is the company's.
 
 ## 7. Encounters, and what is new
 
@@ -930,7 +951,9 @@ road before (§4.7; §9, #504's 14).
   its 3,500, under the 4,375 cap, and 1,046 to a company that pays the toll; I9 1,800 (#503), 0.88
   times its 2,050; I8 2,104 (#504), 0.96 times its 2,200: 17,429 between them by the curve's sum, so
   with the side quests' scaled share (1,300) the shares stand at about 18,729, 1.05 times the ask
-  (§9, #499's 9; #500's 4; #501's 9; #502's 10; #503's 9; #504's 6).
+  (§9, #499's 9; #500's 4; #501's 9; #502's 10; #503's 9; #504's 6). The side quests as built (#506)
+  pay 900 a member, not the scaled 1,300: a clear gives 18,329, 1.03 times the ask, and the curve's
+  row owes no xp (§9, #506's 1 and 14).
 - **Gold.** Training six members from 22 to 24 costs about 10,800 with today's `trainPrice`, but
   nothing trains here (#443, call 7): the gold goes over the range to Cinderport, which teaches to
   27, and the third prestiges ask quests, not gold (DESIGN §5). The band's price window is 5,000
@@ -1527,6 +1550,37 @@ Decided by delegate for #505, each the owner's to overturn:
     and plays The Sleepers' last two triggers; the toll is paid from 1,500 gold given.
 13. **The chapter pays no xp:** §8 gives it none, so the curve's row is unchanged.
 
+Decided by delegate for #506, each the owner's to overturn:
+
+1. **The pay rides on the answer that ends each quest,** a hand-in (#43) paying only gold: 1,200,
+   1,200, 1,500 and 1,500 xp, split evenly among the living as a fight's is, 900 a member.
+2. **The Novice ends where §6 puts it,** Highcell and Anvilhall, not the issue's Rime Lodge too:
+   told, the boy is on the step below his mother (`after` `q_novice_told`).
+3. **"Tells him" is the company's answer, not the text's:** *Tell him.* never says what the brothers
+   are; the letter, his mother and the boy say only what he saw, that nobody eats.
+4. **The badge's two takers:** Hester Dunmore, the Reader at Lantern Watch, whose book takes it, and
+   a brother standing in Highcell's first cell (14,3), who holds out its hand only to the badge.
+5. **The Reader may be refused** (*Keep it.*), so Sunderwood's clear counts no pay from an Act IV
+   quest; the brother's question has the one answer, so the Whitespine's counts the 200.
+6. **The Lantern's Instruments go to the Reader too,** a hand-in at the first meeting that pays
+   nothing, I11's chest having paid 300 with them (#501's 11).
+7. **The herder hires, and the nest opened begins it too;** once it is, he remembers the Lantern
+   going up for the Stone with a glass and a chain, the instruments' own.
+8. **The girl moves, not the caravan:** at the head until the toll is answered or the king is down
+   (`STAIR_PASSED`), then by the wagons (19,19); nobody says the caravan goes down.
+9. **Her father's thanks pay the 250,** a one-answer question as Rimewater's guide's, and set
+   `q_toll` too, so a company that answered the toll before meeting him still has the quest.
+10. **The passage is a price on the deserter's question,** the Compact's fare, 600, unhalved (he is
+    no member): no ticket is carried and no seller beyond the range is touched.
+11. **The swap is his:** he chalks a slate short of the true count and goes back to the causeway,
+    below the tally-house (18,8); the item swapped is the true page, The Masons' Tally.
+12. **No `after` on the masons' number:** the doc's only count is the tally's ELEVEN; the masons'
+    groups come back, so `slain` cannot key on them; nothing counts them.
+13. **Quest ids `novice`, `nest`, `toll` and `mason`,** the flags `q_mason*`: Cairnmoor's quest is
+    `tally`, with `q_tally*`.
+14. **The curve's row owes no xp now:** the quests take the clear to 18,329, past 17,867, and the
+    test asks the entry dropped; the gold, 5,290 of 10,800, stays owed to #445.
+
 ## 10. Names
 
 The Whitespine's naming pass, by the rules of `docs/NAMES.md`: the range keeps the Crown's and the
@@ -1583,14 +1637,14 @@ Cut and owed, from Highcell (#500):
   Abbot falls (§9, #500's 16).
 - **The issue's own secret,** the bells' pattern on the frame, hinted by the lighthouse keeper's
   log, is not built: the undercroft behind the seat is, as §4.3 has it (§9, #500's 14).
-- **The Novice's letter** is #506's and **the Laureate's** trainer entry is #448's; both stand as
-  words only (§9, #500's 11 and 12). The chapter's Highcell entries are written (§5, #505).
+- **The Laureate's** trainer entry is #448's, and he stands as words only; the Novice's letter is
+  built (§6, #506; §9, #500's 11 and 12). The chapter's Highcell entries are written (§5, #505).
 
 Owed, from I11 (#501):
 
-- **The Eagles' Nest hand-ins.** The Lantern's Badge and the Lantern's Instruments, which the
-  Lanterns' halls take, are found and not yet taken; the Smooth Grey Part is what the toll at the
-  Stair's head takes (#502, §4.5). The quest, #56's 46, is #506's (§9, #501's 10 and 11).
+- **The Eagles' Nest hand-ins** are built: the Reader at Lantern Watch takes the Lantern's Badge
+  and the Lantern's Instruments, a brother at Highcell the badge, and the Smooth Grey Part is what
+  the toll at the Stair's head takes (#502, §4.5; §6, #506; §9, #501's 10 and 11).
 
 Cut and owed, from I10 (#502):
 
@@ -1603,9 +1657,8 @@ Cut and owed, from I10 (#502):
   door: the chimney to the ledge is the secret, as §4.5 has it (§9, #502's 13).
 - **The Stair's foot** was owed to #510 with the rest of H10, and is built: its 31,20 is road against
   I10's 0,20 and `EDGES_OWED` is empty (§9, #502's 7).
-- **The Toll and the ledge.** The Toll (#56's 47) is #506's, with the caravan-master, his wagons and
-  his girl as words only and the flags `toll_paid`, `toll_part` and `toll_coin` for it to read; the
-  old champion on the ledge has words only, his trainer entry and the night on the ledge being
+- **The Toll and the ledge.** The Toll (#56's 47) is built, on the flags `toll_paid`, `toll_part`
+  and `toll_coin` and the king slain (§6, #506); the old champion on the ledge has words only, his trainer entry and the night on the ledge being
   #448's (§9, #502's 5, 11 and 12).
 
 Cut and owed, from I9 (#503):
@@ -1636,9 +1689,9 @@ Cut and owed, from I8 (#504):
   and not taken, and a chest of 400 gold; #548 places the item if it wants one (§9, #504's 10).
 - **The issue's own secret,** the way up to Rook's Nest, hinted by the deserter, is not built: the
   doc's sea cave is, as §4.7 has it (§9, #504's 9).
-- **The Mason's Tally and the Thief's third.** The deserter and the watcher in Rook's Nest have
-  words only: the Mason's Tally (#56's 48) is #506's, and the watcher's trainer entry and the
-  Thief's quest are #448's (§9, #504's 11 and 12).
+- **The Mason's Tally and the Thief's third.** The Mason's Tally (#56's 48) is built (§6, #506);
+  the watcher in Rook's Nest has words only, his trainer entry and the Thief's quest being #448's
+  (§9, #504's 11 and 12).
 - **Two under.** I8 at 20 and the area's pool, 93% two under against a limit of 90%, are owed to #18
   (§9, #504's 15).
 - **The world ends past I8,** in the sea to the north and west and against J8, not built, to the
@@ -1651,3 +1704,8 @@ Owed, from the chapter (#505):
 - **The explorers' line** is first written in the journal: the Meridian Journal, vol. I
   (Thornmark's item) has no text, so *The heart opens for whoever makes it whole* is nowhere else in
   the game. Its last page is Thornmark's to write, the owner's to ask for (§9, #505's 4).
+
+Cut, from the side quests (#506):
+
+- **The issue's Rime Lodge** for The Novice, its `after` on the masons' number for The Mason's
+  Tally and a passage ticket carried: §6 has none of them (§9, #506's 2, 10 and 12).

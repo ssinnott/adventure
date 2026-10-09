@@ -10,7 +10,13 @@
 // west (H11, Ashfall's) and the south (I12, parked).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/whitespine.md §4.4 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
+import type { QuestCond } from '../../../../game/quests.ts';
 import { WEST } from '../../../../game/types.ts';
+
+/** The eagles' nest opened, the Lantern's badge in it found: The Eagles' Nest begins on it (#56's 46, #506). */
+export const NEST_FOUND: QuestCond = { seen: 'highspine_i11:i11_nest_bones' };
+/** The badge given to the Reader at Lantern Watch, or to the brother in Highcell's first cell: either ends it. */
+export const NEST_WATCH = 'q_nest_watch', NEST_CELL = 'q_nest_cell';
 
 export const HIGHSPINE_I11: MapDef = {
   id: 'highspine_i11',

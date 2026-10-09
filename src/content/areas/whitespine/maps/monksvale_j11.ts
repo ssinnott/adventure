@@ -13,6 +13,7 @@
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { WENNA_LODGE } from '../../rimewater/maps/rime_lodge.ts';
+import { NEST_FOUND } from './highspine_i11.ts';
 
 /**
  * The way back over the pass (#491): from the road's first square at the north edge, 20,0, across
@@ -88,11 +89,15 @@ export const MONKSVALE_J11: MapDef = {
       '"Eleven, a gap, eleven. Every hour, day and night, and never a stroke late."',
       '"I came up here for the quiet. The bells are all that breaks it."',
     ] },
-    // The herder's fold at the vale's edge, and the herder, who loses his lambs to the eagles.
-    { kind: 'npc', x: 27, y: 19, name: 'A herder', lines: [
+    // The herder's fold at the vale's edge, and the herder, who loses his lambs to the eagles: he gives
+    // The Eagles' Nest (#56's 46, #506), and once the nest above the Peak Stone is opened, he remembers
+    // who went up the summit's path in the summer.
+    { kind: 'npc', x: 27, y: 19, name: 'A herder', flag: 'q_nest', lines: [
       'A herder at the gap of his fold, a crook across his knees, counting his ewes with his lips.',
       '"Two lambs this week. The eagles take them off the hill in broad day."',
       '"The brothers walk by every morning. Not one of them has ever looked at a sheep."',
+    ], says: [
+      { after: NEST_FOUND, lines: ['The herder at the gap of his fold, counting.', '"A Lantern came up the vale in the summer with a glass and a chain, for the Stone. I told him the eagles were bad up there."'] },
     ] },
     { kind: 'event', x: 29, y: 19, id: 'j11_fold', once: true, text: 'Ewes packed close in the fold, their breath smoking. A tuft of lamb\'s wool is caught on the wall.' },
     // The monastery on its shelf: the towers over the wall and the camp in the shelf's lee; the gate,

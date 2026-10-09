@@ -8,6 +8,7 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { FORGE, ANVIL_STONE_PRICE } from '../items.ts';
+import { NOVICE_TOLD, NOVICE_KEPT } from '../../whitespine/maps/monastery.ts';
 
 /** The verse read the old way, by the Lantern reader or after the company's own reader: the chapter's step (#470). */
 export const VERSE_READ = 'anvil_verse_read';
@@ -123,6 +124,22 @@ export const ANVILHALL: MapDef = {
     ] },
     { kind: 'well', x: 5, y: 7, text: 'A cistern cut in the rock. The water comes up warm from below, and tastes of iron.' },
     { kind: 'event', x: 4, y: 9, id: 'ah_chalk', once: true, text: 'Chalk on the terrace wall at a child\'s height: three marks of the old script, over and over, copied off a lintel.' },
+    // The Novice (#56's 45, the Whitespine's #506): his mother on the terrace step, who takes his letter
+    // from Highcell's last cell; and once he is told, the boy himself beside her, home.
+    { kind: 'npc', x: 5, y: 9, name: 'A woman knitting', lines: [
+      'A woman on a step of the middle terrace, knitting something grey and very long.',
+      '"My boy went up to the bells with the pilgrims, two springs gone. Not a word since."',
+    ], quest: { item: 'novice_letter', reward: 0, setFlag: 'q_novice_home', done: [
+      'She holds the letter at arm\'s length and reads it twice, her lips moving.',
+      '"Hungry, he says, and all of them fasting. Tell him his mother says come home."',
+    ], after: ['"Tell him to come home. That is all."'] }, says: [
+      { after: { flag: NOVICE_TOLD }, lines: ['The woman knitting on the terrace step, her boy on the step below.', '"He eats as if he had forgotten how. Up there, he says, nobody ever did."'] },
+      { after: { flag: NOVICE_KEPT }, lines: ['The woman knitting on the terrace step, the grey thing longer.', '"Well, is he? Then he will write again."'] },
+    ] },
+    { kind: 'npc', x: 6, y: 9, name: 'The boy from Highcell', after: { flag: NOVICE_TOLD }, lines: [
+      'A thin boy on the step below his mother, a bowl in both hands, still in the novice\'s robe.',
+      '"I wake for the hours still. Nobody rings them here."',
+    ] },
 
     // The lower terrace, inside the gate: the stores and the inn, the warder and his book.
     { kind: 'shop', x: 2, y: 12, name: 'The Hold Stores', stock: ['rations', 'torch', 'lantern_oil', 'potion_heal', 'antidote', 'elixir', 'potion_sp', 'potion_sp_great'], interior: 'anvilhall_stores' },
