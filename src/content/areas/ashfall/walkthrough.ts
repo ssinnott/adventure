@@ -1583,7 +1583,7 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
 // ---- the chapter (#518) ----
 
 const mapOf = (id: string): MapDef => MAP_DEFS.find((d) => d.id === id)!;
-const SOCKETED = mapOf('ember_stone').features!.filter((f): f is Person => f.kind === 'npc');
+const SOCKETED = mapOf('ember_stone').features!.filter((f): f is Person => f.kind === 'npc' && /socket/i.test(f.name));
 const FANE = mapOf('meridian_camp3').features!.find((f): f is Person => f.kind === 'npc' && f.name === 'Oriel Fane')!;
 const goalOf = (start: string): string => CHAPTER.goals.find((g) => g.text.startsWith(start))!.text;
 
