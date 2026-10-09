@@ -2,10 +2,10 @@
 // it fell (MONSTERS §8.3), and older than any of the vessel's hands. Not the heavy machines' plate
 // riveted on drums (machines.ts), the knockers' shells on rods nor the keepers' frames under a robe:
 // a tall, spare frame of old bronze gone green in its seams, a man's shape and more than a man's
-// height, a shell of a chest with a door in it (the Riders' cache is in one, docs/areas/glasswold.md
+// height, a shell of a chest with a door in it (a cache is found in one, docs/areas/glasswold.md
 // §4.8), a waist and hips of balls and rods, long legs and a smooth head with one lamp in it. Small
-// enough to sit a horse (§6's Horse That Came Back). The Glass has it now: it walked out of the melt
-// and the melt set on it as it went, to the knees on both legs, and over its left shoulder and down
+// enough to sit a horse (that doc's §6). The Glass has it now: it walked out of the melt and the
+// melt set on it as it went, to the knees on both legs, and over its left shoulder and down
 // that arm, the arm and the hand gone into a club of the Wold's green glass that drags on the ground
 // beside it with the bronze seen dark through it, shards of it standing up off the shoulder and runs
 // of it down the chest. The rest of it is bare. The lamp is still lit, a cold green-white, the
