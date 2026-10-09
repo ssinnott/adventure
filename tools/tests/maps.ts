@@ -22,7 +22,6 @@ import { ok, owed, stopsWalk } from './lib.ts';
 const UNPLACED: Record<string, string> = {
   sentinel: '#516',
   loader: '#22, dead_drop', tally_clerk: '#22, dead_drop', hold_keeper: '#22, dead_drop2', tallymaster: '#22, dead_drop3',
-  drakeling: '#22 meridian_camp2', brood_drake: '#22 meridian_camp2', flue_walker: '#22 meridian_camp2',
   deep_knocker: '#22 meridian_camp3', inspector: '#22 meridian_camp3',
   glass_scorpion: '#525', basilisk: '#526', grey_lion: '#529',
   glass_walker: '#525',
