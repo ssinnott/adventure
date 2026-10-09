@@ -17,17 +17,18 @@ calls are #443's, the names #444's, the third prestiges' quests #448's and the r
 Figures are measured on main at `6032251` (2 October 2026) with `worldGrid` (`src/game/atlas.ts`):
 land without shallows or rivers, and "walkable" what is not mountain, peak, cliff or chasm.
 
-Built so far: E10's Wold half (#524, §4.2), on the box laid whole for Ashfall's Ember Waste (#517),
-and D9, the steppe (#525, §4.3), which lists the area and places the glass scorpion E10 cut and the
-first glass walker. `AHEAD` and `PLANNED` are empty; the Wold's step of the quest and the area's
-chapter are owed to #531. Its content is `src/content/areas/glasswold/` (maps, monsters, items,
-climate, its part of the world map in `atlas.ts` and its walkthrough; its chapter of the one quest,
-The Warning, in `chapter.ts` and its side quests in `quests.ts`, to come); it has no town and no
-businesses, so no rooms.
+Built so far: E10's Wold half (#524, §4.2), on the box laid whole for Ashfall's Ember Waste (#517);
+D9, the steppe (#525, §4.3), which lists the area and places the glass scorpion E10 cut and the
+first glass walker; and D8, Akordu, the Riders' camp (#526, §4.4), which places the basilisk and
+lands the Rider's ride to Cinderport. `AHEAD` and `PLANNED` are empty; the Wold's step of the quest
+and the area's chapter are owed to #531. Its content is `src/content/areas/glasswold/` (maps,
+interiors, monsters, items, climate, its part of the world map in `atlas.ts` and its walkthrough;
+its chapter of the one quest, The Warning, in `chapter.ts` and its side quests in `quests.ts`, to
+come); it has no town and one business, the Riders' trader at Akordu, whose tent has a room.
 Its ids: the area `glasswold`, its zones `wold` and `theglass`, the plan's; the Buried Tower
-`buried_tower`, the plan's, left to the reach. Akordu's (the Wold Riders' camp) and Kushtash's (the
-Eyrie) ids are their boxes' to set (#526, #529); the Eyrie's site keeps its name in the issues until
-#444 renames it.
+`buried_tower`, the plan's, left to the reach. Akordu's (the Wold Riders' camp) is the site's name
+and its map `wold_d8` (#526); Kushtash's (the Eyrie) id is B8's to set (#529), and the Eyrie's site
+keeps its name in the issues until #444 renames it.
 
 ---
 
@@ -38,9 +39,9 @@ Glasswold two zones:
 
 | Zone | Band | Squares today | Built |
 |---|---|---|---|
-| The Wold | 26–28 | 6,240 (steppe 3,133, hills 1,151, mountain 646, dunes 540, grass 369) | D9 |
+| The Wold | 26–28 | 6,240 (steppe 3,133, hills 1,151, mountain 646, dunes 540, grass 369) | D9 and D8 |
 | The Glass, the reach | 30–32 | 4,813 (steppe 1,306, mountain 1,028, hills 838, glass 817, dunes 626) | nothing, and not this phase's |
-| The area | 26–28 | 11,053 | D9 |
+| The area | 26–28 | 11,053 | D9 and D8 |
 
 Squares are the land `worldGrid` gives each zone by today's seeds, without shallows or rivers;
 9,349 of them a company could walk, and nearly half of those are steppe. That is about 10.8 zone
@@ -51,7 +52,8 @@ D11, B10, C11 and B9's south; the zones' figures are measured again when the fol
 The Wold's band is the area's, 26–28, and the boxes rise through it (§4); the Glass's is the cap's,
 as the reach is (DESIGN §9; MONSTERS open question 3, answered by call 5). No Wardstone stands here.
 
-The squares are the plan's, before any box. D9 (#525) is laid whole in the Wold (§4, §9).
+The squares are the plan's, before any box. D9 (#525) and D8 (#526) are laid whole in the Wold (§4,
+§9).
 
 **The grid** (EXPANSION §8.2; docs/areas/shelf.md §1). Boxes are 32×32 with A1's corner at 8,−2,
 so a box's corner is x = 8 + 32i, y = −2 + 32j. The Wold is the B, C, D and E columns from row 8 to
@@ -63,8 +65,9 @@ Scarp's lip, are cut (§11).
 **D9 and E10 meet at a corner only,** D9's 31,31 (135,285) and E10's 0,0 (136,286), and D10 lies
 between them: E10's west-edge road, at its 0,6, meets D10 at its 31,6, and D10's north edge, at 22
 to 23,0, meets D9's south edge, where the atlas's road crosses at 22 to 23,31 (126 to 127,285). D9
-is owed to #527 in the outdoors reach test's `CUT_OFF` until D10 joins them (§9, #525's 6); D8 and
-the ride's landing there (#526) reach it from the north.
+was owed to #527 in the outdoors reach test's `CUT_OFF` until a box reached it from outside (§9,
+#525's 6); D8 (#526) does, from the north, its south edge square for square with D9's north, and
+`CUT_OFF` is empty (§4.4, §9, #526's 20).
 
 Its edges:
 
@@ -116,7 +119,7 @@ glare from the south-west on a clear noon.
 
 ## 3. What is built
 
-One box of its own, the area's first, which lists the area (#525):
+Two boxes of its own, D9 the area's first, which lists the area (#525) and D8 (#526):
 
 - **The steppe** (D9, `wold_d9`, core, band 26–27; #525): open grass with glass in it, laid whole at
   104,254. The atlas's road comes over the south edge and runs north-west and west to the gap; a
@@ -126,6 +129,14 @@ One box of its own, the area's first, which lists the area (#525):
   not graze, holds the fallen walker. Four groups: two prides of four lions, each with the three
   vultures over its kill, four glass scorpions at the dunes' edge and a glass walker alone at the
   far south-west (§4.3).
+- **The Riders' camp** (D8, `wold_d8`, core, band 26–27; #526): Akordu, white tents in a ring under
+  the mesa's south face, laid whole at 104,222, north of D9 and joined to its Riders' track. The
+  eldest tells the oldest story at her fire; the trader's tent, with a room of its own, sells
+  consumables and a leather coat; a Rider at the horse-lines sells the ride to Cinderport and back.
+  East of the ring stands a garden of glass, and against the mesa's foot a dry well with no rope
+  hides the Riders' hoard. Three groups: a pride of four lions by night, six glass scorpions in the
+  broken ground under the mesa's east face and the basilisk alone in the mesa's shade, on its north
+  side (§4.4).
 
 Its atlas rows are charted in `src/content/areas/glasswold/atlas.ts`, the area's own `atlas` since
 D9 lists the area; until then `src/content/atlas.ts` spread them into the plan where its rows were,
@@ -136,8 +147,9 @@ Tower's plate at 30–32, and the sites, Akordu (the plan's Wold Riders camp at 
 lettered as the plan letters them. The lava flow is drawn in the plan's ridges
 (`src/content/atlas.ts`), the one line outside the folder this doc asks for (call 5). Its row on
 the curve is in (#542), in `src/content/progression.ts` (band 26–28, next 28, window 6,000), owed to
-#447 while the area is built box by box, with D9's 2,940 xp a member and 1,350 gold the clear's
-floor (§8); the Wold takes no step on the gear ladder, no town to sell one (§9). Its ground is laid
+#447 while the area is built box by box, with D9's and D8's 4,841 xp a member and 2,850 gold the
+clear's floor (§8); the Wold takes no step on the gear ladder, no town to sell one (§9); the
+trader's coat is off it (§9, #526's 7). Its ground is laid
 (#543): steppe (`s`), walked as grass and tawny at Harvest, and dunes (`u`), sand in ridges walked
 as slowly as hills, so the scaffold drafted D9 with its 807 squares of steppe and 171 of dunes
 (docs/SLICE.md). Its six monsters are drawn (#533, MONSTERS §8.3): five on frames that exist, the
@@ -146,25 +158,26 @@ the first of a family of its own (`src/ui/monsters/glasswalkers.ts`); their defs
 `src/content/areas/glasswold/monsters.ts`, the Area's own since D9 lists it (`AHEAD`,
 `src/content/index.ts`, listed them until then), and each was owed in `UNPLACED`
 (`tools/tests/maps.ts`) to the box that first places it: E10 places the vulture and the Wold lion
-(#524) and D9 the glass scorpion and the glass walker (#525); the basilisk is owed to #526 and the
-Grey Lion to #529, though listing the area records all six in `src/content/shipped.json`. Its one
-item, the Etched Glass, is in `items.ts` (§9, #525's 11), and its climate is the steppe's (§9,
-#525's 2). Its crossing line is on the Wold's zone row (#524), said where a map of the Wold is first
-entered, and not walked yet, no built map meeting D9 (§9, #525's 14). E10's Wold half is built on
-the Waste's map (§4.2). Nothing else: no quest.
+(#524), D9 the glass scorpion and the glass walker (#525) and D8 the basilisk (#526); the Grey Lion
+is owed to #529, though listing the area records all six in `src/content/shipped.json`. Its items,
+the Etched Glass and the Leather Coat with its plus, are in `items.ts` (§9, #525's 11, #526's 7),
+and its climate is the steppe's (§9, #525's 2). Its crossing line is on the Wold's zone row (#524),
+said where a map of the Wold is first entered, and not walked yet, D10 (#527) being the first Wold
+map entered (§9, #525's 14). The ride's crossing has its Akordu end in D8 (§4.4). E10's Wold half is
+built on the Waste's map (§4.2). Nothing else: no quest.
 Every brief below is a draft.
 
 ## 4. What is still to build
 
-All of it but D9, built (#525, §4.3), and E10's Wold half (#524, §4.2): 11,053 squares of land,
-9,349 of them walkable, the plan's figures (§1). On the grid the plan is seven boxes, which hold
-5,557 of those squares, 5,379 walkable, the table the epic #447 carries:
+All of it but D9 and D8, built (#525, §4.3; #526, §4.4), and E10's Wold half (#524, §4.2): 11,053
+squares of land, 9,349 of them walkable, the plan's figures (§1). On the grid the plan is seven
+boxes, which hold 5,557 of those squares, 5,379 walkable, the table the epic #447 carries:
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
 |---|---|---|---|---|---|---|---|---|
 | E10 | The road onto the steppe | the Wold | country | 25–26 | 620 (hills 302, steppe 215, ash 64, grass 39) | the road over the Cinder Hills from the Waste at 156,312 → 144,300, laid whole by #517 (ashfall.md §4.9); its Wold half built by #524 at 25–26: beetles over from the Waste, the first vultures and a pride, a camp, the Riders and the glare from the crest (§4.2) | none | #524 |
 | D9 | The steppe | the Wold | core | 26–27 | 1,024 (steppe 807, dunes 171, road 29, rock 11, hills 6) | the grass with glass in it; the lions' prides; the dunes' first edge at the south-west corner; built by #525 at 26–27: the Riders' well and track, two prides with their vultures, the scorpions and the glass walker at the dunes' edge, the fallen walker in the long mound and the horse that came back, seen (§4.3) | the glass in the grass | #525, built |
-| D8 | The Riders' camp | the Wold | core | 27 | 810 (steppe 657, rock 85, hills 68) | Akordu at 120,250 under its mesa: the eldest, the trader, the Rider who rides to Cinderport; the garden of glass | the eldest's story | #526 |
+| D8 | The Riders' camp | the Wold | core | 26–27 | 1,024 (steppe 757, hills 93, rock 90, earth 67, felt 9, crystal 6, doors 2) | Akordu at 120,250 under its mesa: the eldest, the trader, the Rider who rides to Cinderport; the garden of glass; built by #526 at 26–27: the eldest's story told once, the trader's tent with its own room, the Rider who sells the ride to Cinderport and back, the garden of glass, the dry well and its hoard, the mesa with the basilisk in its shade (§4.4) | the eldest's story | #526, built |
 | D10 | The mesas | the Wold | core | 27 | 1,024 (steppe 772, hills 141, rock 88, dunes 23) | the basilisks' mesas; the mesa fight; the Eyrie's old mesa at 132,289, empty | none | #527 |
 | C8 | The Scarp's edge | the Wold | country | 27 | 367 (steppe 314, hills 53) | the Scarp's lip over the pans; the stair's head at 80,216 on C7; the Riders' watch on it | none | #528 |
 | B8 | The Wold's heart | the Wold | core | 28 | 795 (steppe 587, rock 116, hills 92) | the Grey Lion's ground; Kushtash, the far-west mesa under the rim at about 46,242, the Ranger's third | none | #529 |
@@ -177,16 +190,17 @@ density; E10, C8 and B9 are country, built to the looser floor with the wilderne
 walkable), D11 (500, 202), B10 (287, 72), C11 (133, 10) and E11's west part, about 3,000 squares,
 are the reach's (§11). The bands rise from the way in, 26 at the Cinder Hills' foot, to 28 at the
 Wold's heart and the Glass's edge, as the gate asks (EXPANSION §5.2), and each box holds a group at
-the top of its band for the curve. Nothing in the area trains, sells gear or teaches a spell (call
-7): Cinderport does, a Rider's ride away (call 5, #547), and the ladder takes no step on the Wold
-(#542).
+the top of its band for the curve. Nothing in the area trains or teaches a spell (call 7), and its
+one trader sells consumables and a leather coat, no steel (call 5): Cinderport sells the gear, a
+Rider's ride away (call 5, #547), and the ladder takes no step on the Wold (#542).
 
-**Two boxes hold land of two zones by today's seeds.** B9's dunes run south into the Glass, and
-D9's cut gives 913 squares to the Wold and 111 to the Ember Waste, none to the Glass. Both are laid
-in the Wold, D9 whole (§9, #525's 1), and with the seeds moved (§9) the zone line runs along the
-glass's own edge in C9. A map is its whole box (EXPANSION §8.2), so each is built to its edges; the
-zone a square belongs to decides only its crossing line (#166) and its band, and the crossing line
-into the Glass is the Riders' watch's to say (§4.8).
+**Three boxes hold land of two zones by today's seeds.** B9's dunes run south into the Glass; D9's
+cut gives 913 squares to the Wold and 111 to the Ember Waste, none to the Glass; and D8's gives 845
+to the Wold and 179 to the Saltings. All three are laid in the Wold, D9 and D8 whole (§9, #525's 1,
+#526's 21), and with the seeds moved (§9) the zone line runs along the glass's own edge in C9. A map is its
+whole box (EXPANSION §8.2), so each is built to its edges; the zone a square belongs to decides only
+its crossing line (#166) and its band, and the crossing line into the Glass is the Riders' watch's
+to say (§4.8).
 
 **The order** is the road's from Cinderport, and the quest's: E10, the only box that meets the
 Waste; D9 and D8, west over the steppe to Akordu; D10, south to the mesas; C8, north to the Scarp's
@@ -198,7 +212,7 @@ The places, as the atlas and the docs have them:
 
 | Place | Box | What the docs say | On the atlas |
 |---|---|---|---|
-| Akordu (the Wold Riders' camp) | D8 | the horse people and their eldest, who tells the oldest story on that side of the sea (STORY, Act Four; DESIGN §9); the Wold's rest, a trader and the Rider's ride (call 5); the garden of glass (#56's 55); the horse that came back (#56's 51) | a camp, "Wold Riders", at 120,250, planned |
+| Akordu (the Wold Riders' camp) | D8 | the horse people and their eldest, who tells the oldest story on that side of the sea (STORY, Act Four; DESIGN §9); the Wold's rest, a trader and the Rider's ride (call 5); the garden of glass (#56's 55); the horse that came back (#56's 51) | a camp, "Akordu", at 120,250, built with D8 (#526) |
 | Kushtash (the Eyrie) | B8 | the Wold Rider scout who guided the Meridian Company, on the far-west mesa under the rim: the Ranger's third prestige (DESIGN §5, #448) | a camp at 132,289 in D10 today; moves to about 46,242 (call 5) |
 | The mesas | D10, D8, B8 | the basilisks' ground; the mesa fight (MONSTERS §8.3) | rock, five outcrops of 11 to 16 squares |
 | The dunes | B9, D9 | the glass scorpions' ground (MONSTERS §8.3); the crescent round the glass | dunes, 1,166 squares across both zones |
@@ -342,9 +356,9 @@ settled in its issue, and what Ashfall teaches changes them.
   the chapter's, #531's, and the horse's quest #532's; the Wold's crossing words, on its zone row,
   are not walked (§9, #525's 14 and 18).
 
-### 4.4 D8, the Riders' camp, Akordu (#526): core, band 27
+### 4.4 D8, the Riders' camp, Akordu (#526): core, band 26–27
 
-- **Purpose.** The Wold's rest and its step: Akordu, the white camp, under its mesa's north face at
+- **Purpose.** The Wold's rest and its step: Akordu, the white camp, under its mesa's south face at
   120,250, where the eldest tells the oldest story on that side of the sea (STORY, Act Four), a
   trader sells the band's consumables and leather and a Rider rides a company to Cinderport and
   back (call 5). The camp sells and teaches nothing else (call 7).
@@ -362,7 +376,7 @@ settled in its issue, and what Ashfall teaches changes them.
   - the horse that came back, and the Riders who want it broken (#56's 51);
   - the young Rider at the lines who wants the last blow (#56's 53).
 - **Encounters.** A pride of lions that comes at the horses by night (`when`); vultures over the
-  garden; a basilisk in the mesa's shade at the box's south, the hardest at 27; glass scorpions in
+  garden; a basilisk in the mesa's shade on its north side, the hardest at 27; glass scorpions in
   the broken ground under the mesa.
 - **Quests.** The step. The Horse That Came Back, The Lion's Share and The Garden of Glass all
   begin or end here (§6); Orders on the Scarp Stair ends here (§6).
@@ -377,6 +391,69 @@ settled in its issue, and what Ashfall teaches changes them.
   meets it at its 16,31 (120,253) or lets it fade into the grass. The atlas's road runs west from
   D9 to the gap and never to Akordu, so the track is the only way laid toward the camp, and the
   atlas may want a road drawn to it here (§9, #525's 4).
+- **Built** (#526, 9 October): the brief's places, with three groups for its four encounters, laid
+  whole in the Wold at 104,222, band 26–27, the gate holding it at 26, not 27 (§9, #526's 1). The
+  mesa stands north of the camp, rock in rows 13 to 22 and columns 10 to 19, as the atlas cuts it:
+  the camp lies under its south face and the basilisk in its shade on the north side (§9, #526's
+  2). The camp is trodden earth in an oval round the fires, 67 squares, its rest the camp feature at
+  16,27; nine squares of white felt make the ring of tents: the eldest's against the mesa at 16,23,
+  five round the ring and the trader's, three squares and a door at 21,27 facing in (§9, #526's 3).
+  The start is the end of D9's Riders' track on the south edge, 16,31 facing north, its earth going
+  on into the ring; the ride's landing at the horse-lines, 9,27 facing east, is the second way in
+  (§9, #526's 4). The four edges are pinned in `tools/tests/outdoors.ts`: the south square for
+  square with D9's north (steppe at 0 to 15, the track at 16, steppe at 17 to 31) and the others in
+  the void, the north against a box that is not built, the west against C8's (#528) and the east
+  against E8's (parked, #534). The ride's Akordu end is on the crossing (`src/content/crossings.ts`):
+  the landing at the horse-lines and the Rider there (9,26) who sells it, 325 gold and a day,
+  leaving at 14 and coming in at 9; it runs both ways now, Cinderport's Rider at the gate (9,13)
+  selling it from his end (§9, #526's 5). The Trader's Tent (21,27) is a shop with a room of its
+  own, `akordu_trader`, drawn for it in `src/ui/interiors/glasswold/`; it sells consumables, the
+  Quickening Draught and the Leather Coat, nothing of steel (§9, #526's 6 and 7). The eldest sits
+  before her tent (16,24) and tells the story once, her words below (§9, #526's 11); the Rider at
+  the lines, a young Rider (8,29), a Rider with a hammer (5,25) and a woman among the figures
+  (26,27) have words only (§9, #526's 12); the horse that came back stands tethered apart at 4,24,
+  seen and no more (§9, #526's 13). East of the ring is the garden of glass, six crystal squares,
+  its figures facing south-west, a boy among them with his hand to his eyes and the vultures
+  turning over it (§9, #526's 14); under the mesa the watch-fire seen from below, smoke by day and a
+  fire by night (15,23), a shrine of horses' tails (19,21) and two wells beside the dry one (§9,
+  #526's 15 and 16); thirty features for the brief's nine in all (§9, #526's 17). Three groups, for
+  the brief's four: a pride of four lions by night, 4,21, west of the lines; six glass scorpions in
+  the broken ground under the mesa's east face, 22,17, the nearest, at 26 and 20 steps from the way
+  in; and the basilisk alone, 13,12, the box's hardest, at 27 and 30 steps in. The vultures over the
+  garden are seen, not fought (§9, #526's 8). The secret is the dry well with no rope. Its hint is
+  a well against the mesa's foot with its windlass bare (`d8_ropeless`, 13,23); its mouth a secret
+  door at 13,22 (117,244), searched facing north, into a hollow of two squares in the rock, 12 to
+  13,21: bronze plates, a lamp of glass and a hand of metal laid in rows, what the Riders took from
+  the walkers (`d8_hollow`, 13,21); and their chest (`d8_hoard`, 12,21), 1,500 gold and the Leather
+  Coat +2 (§9, #526's 10). It departs from the brief in the band, 26–27 for 27; in the groups,
+  three for four; in the pay, 1,901 xp a member against the share of 1,950 (§8, §9, #526's 9); and
+  in the mesa's faces, corrected above (§9, #526's 2). The step on `akordu_story` is the chapter's,
+  #531's, and the Akordu ends of 51, 53, 54 and 55 are #532's (§9, #526's 11 and 12).
+- **The eldest's words,** verbatim, for the owner's review (§9, #526's 11). At the first meeting,
+  which sets `akordu_story`:
+
+  > The eldest sits at her fire before her tent, a horse-blanket round her and her braid white to the waist.
+  >
+  > "On the day the sky opened, the grass stood still and the birds came down out of the air."
+  >
+  > "A door stood open in the sky to the south-west. Something went up to it on a pillar of fire, slow, as a heavy thing climbs."
+  >
+  > "Halfway, the fire failed. It fell, and where it fell the land burned three days, and cooled to glass."
+  >
+  > "What lies in the glass tried to leave. The sky opened for it. Remember what that cost, if anyone ever offers to open it for you."
+
+  After it, once the flag holds:
+
+  > The eldest looks into her fire.
+  >
+  > "That is the story as the young hear it. The rest is for those who have earned it."
+
+  The camp's other people:
+
+  - The Rider at the lines: "East to the port, a day over the grass and the ash. We go at two, and we do not wait."
+  - The young Rider: "They hunt the Grey Lion at the turn of the year, and the last blow is the youngest's. I have asked for it. The eldest says let him die."
+  - The Rider with a hammer: "The horse is ours. What sits on it is not. When it moves, I break it."
+  - The woman among the figures: "My son went to look at the basilisk under the mesa. He is looking still."
 
 ### 4.5 D10, the mesas (#527): core, band 27
 
@@ -513,7 +590,9 @@ maps the save holds:
 - **Akordu.** The eldest tells the oldest story on that side of the sea: long ago a door opened in
   the sky, something rose toward it on a pillar of fire and fell, and the land where it fell burned
   to glass. *What lies in the glass tried to leave. The sky opened for it. Remember what that cost,
-  if anyone ever offers to open it for you.* The goal turns west, to the way into the Glass.
+  if anyone ever offers to open it for you.* The goal turns west, to the way into the Glass. D8 lays
+  the flag this keys on, `akordu_story`, set by her telling and exported as `STORY` from the map;
+  the step is #531's (§9, #526's 11).
 - **The gap.** The Riders keep the only way in, three of them at a fire on the last grass, and they
   are right to: something walks out of it now and then, and has walked a long way. The Glass is
   seen, and the Tower's crown in it. The goal turns back east, to Cinderport and the last crossing,
@@ -586,14 +665,18 @@ exist, the Grey Lion the cats' with a mane, and the glass walker the first of it
 to §4.8 place every group, box by box, the vultures at the hills' foot and the walkers in their
 pair at the gap. D9's vultures fight with its prides, three to a pride, and have no flocks of their
 own: they land where something is about to die, and six groups failed the gate (§4.3, §9, #525's
-7). The Wold spends MONSTERS §3.3's stone (#546); the sweep (#545) and the toll (#544) are the
-Whitespine's and Ashfall's, spent before it.
+7). D8's turn over the garden and never come down, seen and not fought, and its basilisk stands
+alone, since the curve wants the hardest group to average 27 and only a basilisk or a walker is 27
+(§4.4, §9, #526's 8). The Wold spends MONSTERS §3.3's stone (#546); the sweep (#545) and the toll
+(#544) are the Whitespine's and Ashfall's, spent before it.
 
 New in the Glasswold, for the novelty check (EXPANSION §5.4): the glass walkers, a new family, and
 dunes underfoot (#543), both claimed by D9, which places them first (§9, #525's 15); steppe
-underfoot, E10's first; stone and its cure (#546); a camp that is an area's rest, with a `coach`
-sold from it (#547); the reach seen from the road and its band said. Its landmarks: a mesa, a camp
-of tents, a garden of the glassed, a lava flow seen, a cliff from its top.
+underfoot, E10's first; stone and its cure (#546), the stone claimed by D8, whose basilisk places
+it first; a camp that is an area's rest, with a `coach` sold from it (#547), built at Akordu,
+though the check refuses the camp landmark, which is on the road before (§9, #526's 18); the reach
+seen from the road and its band said. Its landmarks: a mesa, a camp of tents, a garden of the
+glassed, a lava flow seen, a cliff from its top.
 
 ## 8. The numbers
 
@@ -620,8 +703,9 @@ of tents, a garden of the glassed, a lava flow seen, a cliff from its top.
   is Hearth Isle's to teach or the owner's to place. A clear should pay for the training at least,
   in the hoards, the drops and the quests' pay, and the ride's fare on top; the band's price window
   is 6,000 (#542), and no find or ware comes within 400 of it (docs/areas/saltreach.md §9, #399's
-  4). The Wold sells nothing and adds no rung: a company that rides to Cinderport buys there, the
-  armourer's step 1,400 to 3,100 gold (docs/areas/ashfall.md §8).
+  4). The Wold adds no rung: Akordu's trader sells consumables and one Leather Coat (armour 12,
+  2,400 gold, off the ladder), and a company that rides to Cinderport buys there, the armourer's
+  step 1,400 to 3,100 gold (docs/areas/ashfall.md §8).
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
   (docs/areas/thornmark.md §9, 17): a company at 26 wins nine in ten of E10's fights and walks the
   road over the hills resting at its camp; one at 24 wins no more than one in four. The Grey Lion is
@@ -646,6 +730,19 @@ of tents, a garden of the glassed, a lava flow seen, a cliff from its top.
   The pay stands under the share because the day sits at the aim's foot: no group more fits (§9,
   #525's 8). Density 99.8% within 8 steps (1,003 of its 1,005 open squares) and the furthest 9, with
   no sign among its 22 points.
+- **As built, D8** (#526). It pays 1,901 xp a member, 0.97 times its scaled 1,950 (the cap is about
+  2,440), and 1,500 gold, all in the hoard behind the dry well, with the Leather Coat +2. The
+  Glasswold's row is owed to #447 for the rest: a clear gives 4,841 xp a member of the 21,067 asked
+  and 2,850 gold of the 12,720. With the scaled shares still to build (D10 3,250, C8 1,650, B8
+  4,250, B9 2,600, side quests 1,650) the row comes to about 18,240, 0.87 times the ask; E10's
+  2,450, which D9's 20,740 counted, is Ashfall's row's. At its floor, 26, a company wins every fight
+  and manages 10.95 fights to a rest (aim 9.5 to 11.5, limit 8 to 14), 17.3% of days ending in a
+  fight broken off; two under, at 24, it wins every fight too, owed to #18 as the Glasswold's pool
+  is. From the horse's landing, 9,27, the groups nearest, the pride and the basilisk, are won at 24
+  as often as the median group (100%). The gate holds the box at 26 though its band is 26–27 (§9,
+  #526's 1). Density 100.0% within 8 steps (919 of its 919 open squares) and the furthest 8, with
+  no sign among its 32 points. The dearest find, the Leather Coat +2 at 2,700 gold, sits in the
+  window's 6,000.
 
 ## 9. Decisions
 
@@ -709,7 +806,7 @@ Decided by delegate for #547, each the owner's to overturn (docs/areas/ashfall.m
 1. **Akordu owes the ride its landing and its seller** (#526): a square at the horse-lines, on its
    end of `RIDERS_RIDE` in `content/crossings.ts` with D8's map as its `map`, and the Rider whose
    `passage` is `sells('wold', RIDERS_RIDE)`. Once Cinderport lands too, the check wants both ends
-   to sell it.
+   to sell it. Built by #526 (§4.4, #526's 5).
 2. **The ride is 325 gold and a day** on a Rider's horse, leaving either end at 14 and coming in at
    9 the next day, by the Wold's floor of 26, the dearer end's. Nobody halves it.
 3. **The camp is a way in once the ride runs:** the gate counts the landing as a way into the Wold
@@ -845,6 +942,104 @@ Decided by delegate for #525, each the owner's to overturn:
 18. **The quests test** owes the Wold's step (its `PLANNED` zone) and the Glasswold's chapter
     (`CHAPTER_OWED`) to #531; the walkthrough is new, in Ashfall's form.
 
+Decided by delegate for #526, each the owner's to overturn:
+
+1. **The band is 26–27, not the brief's 27,** and the gate holds D8 at 26, as D9: the curve's rise
+   check holds a box's hardest group at max(floor + 1, top − 2), 28 for a band of 27 alone, and
+   nothing on the Wold but the Grey Lion, B8's boss, is past 27. `wold_d8`, "The Wold", core, region
+   `glasswold`, at 104,222, second on the zone row `wold`. B8's band, 28 in §4.7, will need the
+   same: a one-level band wants a group above it.
+2. **The atlas wins over §4.4's prose on the mesa:** it stands north of the site, rock in rows 13 to
+   22 and columns 10 to 19, and Akordu's site (120,250, local 16,28) and the ride's link are fixed
+   south of it. So the camp lies under the mesa's south face, not its north, and the basilisk in
+   its shade on the north side, 13,12, not at the box's south, where it is the group furthest from
+   both ways in, as the curve's rise and the gate's landing check want. §4.4 is corrected.
+3. **The camp is trodden earth,** 67 squares in an oval round the fires, its rest the camp feature
+   `Akordu` at 16,27. Nine squares of white felt make the ring of tents, in the map's `palette`
+   (wall #e4dac8, smooth): the eldest's against the mesa at 16,23, five round the ring (13,24;
+   19,24; 11,27; 13,30; 19,30) and the trader's, three squares and a door facing in.
+4. **Two ways in:** the map's `start` is the end of D9's Riders' track on the south edge, 16,31
+   facing north, its earth going on into the ring; the ride's landing at the horse-lines, 9,27
+   facing east, is the second (the gate's `landings`).
+5. **The ride's Akordu end** (`src/content/crossings.ts`) is the landing `wold_d8` 9,27 facing east,
+   `owed` dropped and its label kept. Its seller is "A Rider at the lines" (9,26), with `passage:
+   sells('wold', RIDERS_RIDE)`: the end's `at` is the zone `wold` (#547's 1), and `sells('akordu')`
+   would throw. Cinderport's Rider (9,13) already had `sells('cinderport', RIDERS_RIDE)`, which
+   sells by itself now, so Cinderport's map is unchanged. The fare is #547's, 325 gold and a day.
+6. **The trader is a shop with a room of its own:** "The Trader's Tent" at 21,27, interior
+   `akordu_trader`. The maps check wants every business to have a door and a room of its own, and
+   no tent room existed, so the builder drew one, an art-lane piece the shop needed:
+   `src/ui/interiors/glasswold/akordu_trader.ts` (white felt on its lattice, roof poles to the
+   crown, three leather coats on a pole, a horse's skull with a red brow, the painted chest, sacks,
+   a dung brazier), listed in the area's new `interiors.ts` and registered in `src/ui/interior.ts`.
+   It sells at list price the band's consumables (rations, torch, lantern oil, healing draught,
+   antidote, elixir, the blue and sapphire vials), the Quickening Draught (`CURES`, #546) and the
+   Leather Coat; nothing of steel (call 7), and no inn, temple, guild or trainer at Akordu.
+7. **Leather:** `leather_coat`, "Leather Coat" (armour 12, 2,400 gold, `NO_CASTER_HEAVY`), in the
+   Wold's `items.ts`: a step under Cinderport's Drakeskin (13, 3,100) and off the ladder, #542's 2
+   giving the Wold no step. The hoard holds `leather_coat+2` (14, 2,700), the Riders' own make. The
+   trader sells no Bearskin or Drakeskin (Rimewater's and Cinderport's).
+8. **Three groups, the fewest that pass:** a pride of four lions by night (`when: { hours: 'night'
+   }`) at 4,21, west of the horse-lines; six glass scorpions at 22,17, in broken ground under the
+   mesa's east face (six rocks laid there); the basilisk alone at 13,12, the hardest at 27. It must
+   be alone: the curve wants the hardest group to average 27, and only a basilisk or a walker is 27.
+   The vultures over the garden are seen, not fought (`d8_vultures`: they turn over it and never
+   come down). The brief's four groups (pride 4, vultures 5, scorpions 4, basilisk) gave 16.3
+   fights to a rest at 26, past the limit of 14, and a flock heavy enough to count, 8 vultures,
+   takes the pay past the cap.
+9. **Pay 1,901 xp a member,** 0.97 times the scaled share of 1,950: the doc wins over the issue's
+   1,200. The cap is about 2,440. Gold 1,500, all in the hoard. The Glasswold's owed row is set to
+   4,841 xp and 2,850 gold, "the Glasswold is built box by box" (§8).
+10. **The secret is the doc's: the dry well with no rope.** The hint is `d8_ropeless` at 13,23
+    against the mesa's foot (no rope, no bucket, the horses watered at the others). The mouth is a
+    secret door at 13,22 (117,244), searched facing north, into a hollow of two squares cut into
+    the rock at 12 to 13,21, with rock added at 12,22. Inside, `d8_hollow` (13,21: bronze plates, a
+    lamp of glass, a hand of metal, laid in rows, what the Riders took from the walkers) and the
+    chest `d8_hoard` (12,21): 1,500 gold and the Leather Coat +2. The issue's hint, the eldest's
+    story, is superseded (21).
+11. **The eldest is G10's,** the Riders' eldest at the port's trading ground, a horse-blanket and a
+    braid white to the waist: "The eldest" at 16,24, before her tent. Her first meeting is the whole
+    telling (a look and four lines) and sets the flag `akordu_story`, exported as `STORY` from the
+    map for #531's step to key on; after it her `says` holds, so the story is told once. Her first
+    line carries on from D9's old Rider ("the grass stood still and the birds came down out of the
+    air"). No word of a hull, ship, orbit, voyage or Custodian; the walkthrough checks for those
+    words. Her words are in §4.4, for the owner's review.
+12. **People with words only,** with no flag, quest or choice (#532's): the Rider at the lines, who
+    sells the ride; a young Rider (8,29), who wants the last blow at the Grey Lion, the eldest
+    saying let him die (53); a Rider with a hammer (5,25), who waits to break what sits the horse
+    (51); a woman among the figures (26,27), whose son went to look at the basilisk (55).
+13. **The horse that came back is `d8_horse`** at 4,24, tethered apart from the lines, glass in its
+    hooves, the thing in its saddle unmoved since it came in. It matches D9's `d9_horse`, in off
+    the dunes with something very still in the saddle. No flag.
+14. **The garden:** six crystal squares (`c`) east of the ring (25,24; 27,24; 26,26; 28,26; 25,28;
+    27,28), with the events `d8_garden` (23,25: the figures face south-west), `d8_figure` (25,26: a
+    boy, his hand to his eyes) and `d8_vultures` (29,25). Crystal draws purplish and the Wold's
+    glass is green in every text, so D8's says "glass" and no colour.
+15. **The mesa's watch-fire** is two events on 15,23, `d8_watch` by day (smoke) and
+    `d8_watch_night` (a fire), as Cinderport's mountain is two.
+16. **Shrine and wells:** `d8_shrine` at 19,21 against the rock (might), a post hung with horses'
+    tails, one for each Rider who rode into the Glass; two `well`s, at 18,22 under the mesa and
+    6,29 by the lines, beside the dry one.
+17. **The rest of the box:** the herd (4,4), skull poles at the grazing's end (9,1), the view from
+    the hill's crown (20,5), a dead foal (28,4), Riders on the skyline (28,14), graves (4,12), lion
+    tracks toward the lines (7,17), a glassed horse in the mesa's shade (17,12, the basilisk's
+    sign) and the broken ground (22,21). D8 has 30 features, 32 points with the groups, the
+    watch-fire's two sharing a square.
+18. **Novelty claims `inflict:stoned`,** the basilisk's stone, new on the road. The check refused
+    the `camp` landmark, which is on the road before.
+19. **`ROADS.wold` is unchanged,** D9's four: D8 lies north of the steppe, off the road to the gap;
+    the landing's warning check holds its groups instead.
+20. **Test entries:** gate OWED `wold_d8: under` to #18 (100% won two under, as every box's); maps
+    `UNPLACED` drops the basilisk; ladder `CURE_SOLD` for the Glasswold is '', so #546's second half
+    is settled and nothing stays owed for the cure; outdoors `CUT_OFF` is empty, D9 now reached from
+    D8's south edge (1,005 of 1,005). The walkthrough rides the Rider both ways.
+21. **The issue is superseded by the doc in three places:** its glass walker "once, at the camp's
+    edge by night" (the walker seen is the one in the horse's saddle), its hint "by the eldest's
+    story" (the ropeless well) and its 1,200 xp (the doc's share is 1,950). Its squares, "810,
+    steppe 657, rock 85, hills 68", are not today's cut: the scaffold gives steppe 845, hills 94
+    and rock 85, its zones in the cut the Wold 845 and the Saltings 179. A map is one land, so all
+    of it is the Wold's.
+
 ## 10. Names
 
 The Glasswold's naming pass, by the rules of `docs/NAMES.md`: the Wold Riders' tongue was left to
@@ -872,7 +1067,8 @@ for #444.
   names for plain things as the Grove Stone is, lettered as the plan has them until the reach's doc
   says otherwise; the Grey Lion, a beast and not a place.
 - **Ids stay:** `wold` and `theglass` are the plan's zones; the Eyrie's site keeps its name in the
-  issues until #444 renames it, and its id is #529's to set when it is placed; Akordu's is #526's.
+  issues until #444 renames it, and its id is #529's to set when it is placed; Akordu's is its
+  site's name and its map `wold_d8`, set by #526.
 
 ## 11. What was cut
 
@@ -907,3 +1103,23 @@ Owed, from D9 (#525):
   climbed (#528) (§9, #525's 14).
 - **The figures two under the floor** are owed to #18 and **the area's pay and gold** to #447: 2,940
   xp of 21,067 and 1,350 gold of 12,720 (§8).
+
+Owed, from D8 (#526):
+
+- **The vultures' flock and the night walker are cut:** the vultures over the garden are seen, not
+  fought, and the issue's glass walker seen once at the camp's edge by night is cut, the thing in
+  the horse's saddle being the walker seen. The brief's four groups gave 16.3 fights to a rest at
+  26, past the limit of 14, and a flock heavy enough to count takes the pay past the cap (§4.4, §7,
+  §9, #526's 8 and 21).
+- **The step and the chapter's Akordu** are #531's, keyed on `akordu_story` (§5, §9, #526's 11);
+  **quests 51, 53, 54 and 55** have their Akordu ends in #532's, with the rest of the eldest's story
+  for 53 ("the rest is for those who have earned it"): the young Rider, the Rider with a hammer, the
+  woman among the figures and the horse that came back stand there with words only (§6, §9, #526's
+  12 and 13).
+- **The tents draw as white felt boxes:** the renderer gives buildings one shape, and its only
+  landmark kind is the lighthouse, so a tent shape is a renderer change, not made.
+- **`CUT_OFF` is empty,** D9's entry (#527) gone, D8's south edge reaching it; D8's other three
+  edges end in the void, against a box not built, C8 (#528) and E8 (#534) (§1, §9, #526's 20).
+- **B8's band** will need a floor below its top, as D8's 26–27 has (§9, #526's 1).
+- **The figures two under the floor** are owed to #18 and **the area's pay and gold** to #447, now
+  4,841 xp of 21,067 and 2,850 gold of 12,720 (§8).
