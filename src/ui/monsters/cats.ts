@@ -12,6 +12,17 @@
 // tufts on its ears, a ruff of barred fur hanging from its cheeks to a point under the jaw, a bob of
 // a tail with a black end, and paws like snowshoes. Idle: it hangs at the top of the leap, the
 // forepaws reaching and drawing in, the tail flicking, the jaw opening on its teeth.
+//
+// The Wold Lion: tawny as the grass, and seen only when it moves. The frame grown long and heavy and
+// put down on the ground in a stalk: the shoulders high, the head carried low and level in front of
+// them, the belly near the grass, the ears small and round, the muzzle long, and a long tail falling
+// from the rump and turned up at its end in a black tuft. No spots, no tufts, no ruff; a pale belly.
+// Idle: the near forepaw lifts, reaches and is set down again, slowly, and the tuft swings.
+//
+// The Grey Lion: old, scarred, and king of all of this. The frame at its heaviest, standing square
+// with its head up over a mane that hangs from behind its ears to its chest, dark and grizzled; the
+// coat gone grey, three old rakes pale down across the eye and two on the flank. Idle: the tail
+// swings, and the jaw opens slowly on its teeth.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
@@ -20,7 +31,7 @@ import type { Part } from './gloss.ts';
 import { mix, shade } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['snow_lynx'];
+export const KINDS: readonly MonsterSprite[] = ['snow_lynx', 'wold_lion', 'grey_lion'];
 
 /**
  * The frame's parts, as proportions of the lynx's where they are numbers (1 = the lynx, 0 = none),
@@ -47,6 +58,24 @@ interface Build {
   spots: number;
   /** The underside's colour, mixed into the tint on the belly, the throat and the inside of the legs. */
   belly: string;
+  /** 1 or none the lynx's tall pointed ears; below 1 small round ones: the lions'. */
+  ears?: number;
+  /** The muzzle's length forward of the eye: the lynx's short one is 1, the lions' longer. */
+  muzzle?: number;
+  /** How far the jaw opens in the idle: the lynx's 1. */
+  jaw?: number;
+  /** 0 or none; 1 the near forepaw lifts, reaches and is set down again: the Wold lion's stalk. */
+  creep?: number;
+  /** A mane from behind the ears over the neck to the chest, 0 or none: the Grey Lion's. */
+  mane?: number;
+  /** The mane's colour, mixed into the coat. */
+  maneHex?: string;
+  /** Old scars, pale across the eye and the flank, 0 or none: the Grey Lion's. */
+  scars?: number;
+  /** The shadow's width: the lynx's in its leap is 1. */
+  shadow?: number;
+  /** How thick the legs are against the body: the lynx's 1, the lions' leaner. */
+  limb?: number;
 }
 interface Pt { x: number; y: number }
 const at = (x: number, y: number): Pt => ({ x, y });
@@ -55,8 +84,11 @@ const plus = (a: Pt, b: Pt, k = 1): Pt => ({ x: a.x + b.x * k, y: a.y + b.y * k 
 
 /** A leg's four points: the shoulder or hip, the elbow or stifle, the wrist or hock, and the paw. */
 type Leg = readonly [Pt, Pt, Pt, Pt];
-/** Where everything stands in a pose: the tail as the way it points from the rump. */
-interface Pose { rump: Pt; chest: Pt; head: Pt; fore: Leg; farFore: Leg; hind: Leg; farHind: Leg; tail: Pt }
+/**
+ * Where everything stands in a pose: the tail as the way it points from the rump, and a long tail's
+ * `hang`, the way its end turns to past its middle.
+ */
+interface Pose { rump: Pt; chest: Pt; head: Pt; fore: Leg; farFore: Leg; hind: Leg; farHind: Leg; tail: Pt; hang?: Pt }
 /** At the top of the leap: the body rising to the chest, the forelegs thrown out ahead, the hind legs stretched behind. */
 const LEAP: Pose = {
   rump: at(-14, 50), chest: at(10, 60), head: at(22, 76),
@@ -65,10 +97,25 @@ const LEAP: Pose = {
   tail: at(-0.85, 0.5),
 };
 const LYNX: Build = { pose: LEAP, air: 1, bulk: 1, head: 1, tufts: 1, ruff: 1, tail: 1, paws: 1, spots: 1, belly: '#ece6da' };
+/** The stalk, all four on the ground: the shoulders high, the head low and level in front of them, the belly near the grass. */
+const STALK: Pose = {
+  rump: at(-30, 51), chest: at(17.5, 55), head: at(44.5, 52.5),
+  fore: [at(17.5, 50), at(23, 30), at(25.5, 12), at(31, 5.5)], farFore: [at(12, 50), at(8, 30), at(12, 12), at(16, 5.5)],
+  hind: [at(-31, 48.5), at(-19, 32.5), at(-35, 15), at(-30, 5.5)], farHind: [at(-27, 50), at(-15, 34), at(-28, 15), at(-23, 5.5)],
+  tail: at(-0.7, -0.7), hang: at(-0.8, 0.6),
+};
+/** Standing square, the head up and the tail hanging from the rump. */
+const STAND: Pose = {
+  rump: at(-32, 52), chest: at(16, 55), head: at(40, 74),
+  fore: [at(16, 52), at(20, 32), at(21, 13), at(25, 6.2)], farFore: [at(10, 52), at(7, 32), at(7, 13), at(11, 6.2)],
+  hind: [at(-33, 50), at(-22, 34), at(-36, 15), at(-32, 6.2)], farHind: [at(-28, 51), at(-16, 35), at(-27, 15), at(-23, 6.2)],
+  tail: at(-0.55, -0.83), hang: at(-0.85, 0.3),
+};
+const LION: Build = { pose: STALK, air: 0, bulk: 1.45, head: 1.85, tufts: 0, ruff: 0, tail: 4.9, paws: 1.4, spots: 0, belly: '#ece0c4', ears: 0, muzzle: 1.15, jaw: 0.3, creep: 1, shadow: 1.6, limb: 0.82 };
+const GREY: Build = { pose: STAND, air: 0, bulk: 1.62, head: 1.75, tufts: 0, ruff: 0, tail: 4.2, paws: 1.6, spots: 0, belly: '#d6d0c4', ears: 0, muzzle: 1.15, jaw: 0.55, mane: 1.05, maneHex: '#3a3028', scars: 1, shadow: 1.7, limb: 0.85 };
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
-  void kind;
-  cat(ctx, x, y, h, p, LYNX);
+  cat(ctx, x, y, h, p, kind === 'wold_lion' ? LION : kind === 'grey_lion' ? GREY : LYNX);
 };
 
 /** Straight between the points of a table of [s, value]. */
@@ -89,30 +136,45 @@ function cat(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: 
   const C = (q: Pt): [number, number] => [X(q.x), Y(q.y)];
   const rump = P.rump, chest = P.chest;
   const out = (leg: Leg, k: number): Leg => [leg[0], plus(leg[1], at(k * 0.5, 0)), plus(leg[2], at(k * 1.2, k * 0.4)), plus(leg[3], at(k * 1.6, k * 0.6))];
-  const fore = out(P.fore, reach), farFore = out(P.farFore, -reach * 0.8), hind = P.hind, farHind = P.farHind;
+  // Creeping, the near forepaw lifts, reaches and is set down again, slowly.
+  const step = b.creep ? b.creep * Math.max(0, Math.sin(t / 16)) : 0, fore0 = out(P.fore, reach);
+  const fore: Leg = step ? [fore0[0], plus(fore0[1], at(step * 1.6, step * 2)), plus(fore0[2], at(step * 4, step * 6)), plus(fore0[3], at(step * 5.4, step * 6.8))] : fore0;
+  const farFore = out(P.farFore, -reach * 0.8), hind = P.hind, farHind = P.farHind;
   const coat = p.base, far = shade(p.dark, 0.95), pale = mix(coat, shade(b.belly, p.tone), 0.8), ink = shade('#16120e', Math.max(0.6, p.tone));
   const len = Math.hypot(chest.x - rump.x, chest.y - rump.y), d = at((chest.x - rump.x) / len, (chest.y - rump.y) / len), n = at(-d.y, d.x);
   const spine = (s: number, off: number): Pt => plus(plus(rump, d, s * len), n, off);
-  const r = (q: number): number => q * K * u;
-  const hc = P.head, hr = 8.4 * b.head;
-  const H = (dx: number, dy: number): Pt => at(hc.x + dx * hr, hc.y + dy * hr);
+  const r = (q: number): number => q * K * u, lk = b.limb ?? 1, rl = (q: number): number => r(q) * lk;
+  const hc = P.head, hr = 8.4 * b.head, mz = b.muzzle ?? 1, round = (b.ears ?? 1) < 1;
+  // A longer muzzle draws the head out forward of its middle: the lions'.
+  const H = (dx: number, dy: number): Pt => at(hc.x + (mz !== 1 && dx > 0.2 ? 0.2 + (dx - 0.2) * mz : dx) * hr, hc.y + dy * hr);
 
   // Its shadow on the snow, left behind it a little by the leap.
-  groundShadow(ctx, X(-2 - 4 * L), y + 1, (44 - 6 * L) * u);
+  groundShadow(ctx, X(-2 - 4 * L), y + 1, (44 - 6 * L) * u * (b.shadow ?? 1));
 
   // --- the far legs and the far ear, a step darker, behind everything -----------------------------
   blob(ctx, B, far, [
-    ...tube(C, farFore, r(4.6), r(2.6)), ...tube(C, farHind, r(6), r(2.4)),
+    ...tube(C, farFore, rl(4.6), rl(2.6)), ...tube(C, farHind, rl(6), rl(2.4)),
     paw(C, farFore, 4.2 * b.paws * u, 3 * b.paws * u), paw(C, farHind, 4 * b.paws * u, 2.7 * b.paws * u),
-    { k: 'poly', pts: [...C(H(-0.95, 0.42)), ...C(H(-0.38, 0.7)), ...C(H(-0.9, 1.72))] },
+    round
+      ? { k: 'ell', x: C(H(-0.8, 0.74))[0], y: C(H(-0.8, 0.74))[1], rx: hr * 0.2 * u, ry: hr * 0.19 * u }
+      : { k: 'poly', pts: [...C(H(-0.95, 0.42)), ...C(H(-0.38, 0.7)), ...C(H(-0.9, 1.72))] },
   ], { h, formK: 0.35, tex: 'fur', seed: 51, amount: 0.35 });
 
-  // --- the tail: a bob off the rump, its end black --------------------------------------------------
-  const tailDir = P.tail, flick = Math.sin(t / 11) * 0.14;
-  const t0 = spine(-0.08, 5.5), td = at(tailDir.x - flick * tailDir.y, tailDir.y + flick * tailDir.x), tl = 9 * b.tail;
-  const t1 = plus(t0, td, tl * 0.55), t2 = plus(t0, td, tl);
-  blob(ctx, B, shade(coat, 0.95), [{ k: 'tube', pts: [...C(t0), ...C(t1), ...C(t2)], r0: r(3), r1: r(2.4) }], { h, formK: 0.4, tex: 'fur', seed: 52, amount: 0.4 });
-  patch(ctx, B, ink, [{ k: 'ell', x: C(plus(t2, td, -0.6))[0], y: C(plus(t2, td, -0.6))[1], rx: r(2.4), ry: r(2.2) }], { alpha: 0.85, feather: 0.3 });
+  if (P.hang) {
+    // --- a lion's tail: long, falling from the rump and turned up at its end in a black tuft that swings
+    const sw = Math.sin(t / 13) * 0.22, hang = at(P.hang.x - sw * P.hang.y, P.hang.y + sw * P.hang.x), tl = 9 * b.tail;
+    const t0 = spine(-0.08, 5.5), t1 = plus(t0, P.tail, tl * 0.4), t2 = plus(t1, mixPt(P.tail, hang, 0.5), tl * 0.32), t3 = plus(t2, hang, tl * 0.28);
+    blob(ctx, B, shade(coat, 0.95), [{ k: 'tube', pts: [...C(t0), ...C(t1), ...C(t2), ...C(t3)], r0: r(2.6), r1: r(1.5) }], { h, formK: 0.4, tex: 'fur', seed: 52, amount: 0.4 });
+    const tuft = C(plus(t3, hang, 1.4));
+    blob(ctx, B, ink, [{ k: 'ell', x: tuft[0], y: tuft[1], rx: r(2.6), ry: r(1.8), rot: -Math.atan2(hang.y, hang.x) }], { h, formK: 0.3, tex: 'fur', seed: 53, amount: 0.5 });
+  } else {
+    // --- the tail: a bob off the rump, its end black --------------------------------------------------
+    const tailDir = P.tail, flick = Math.sin(t / 11) * 0.14;
+    const t0 = spine(-0.08, 5.5), td = at(tailDir.x - flick * tailDir.y, tailDir.y + flick * tailDir.x), tl = 9 * b.tail;
+    const t1 = plus(t0, td, tl * 0.55), t2 = plus(t0, td, tl);
+    blob(ctx, B, shade(coat, 0.95), [{ k: 'tube', pts: [...C(t0), ...C(t1), ...C(t2)], r0: r(3), r1: r(2.4) }], { h, formK: 0.4, tex: 'fur', seed: 52, amount: 0.4 });
+    patch(ctx, B, ink, [{ k: 'ell', x: C(plus(t2, td, -0.6))[0], y: C(plus(t2, td, -0.6))[1], rx: r(2.4), ry: r(2.2) }], { alpha: 0.85, feather: 0.3 });
+  }
 
   // --- the coat: body, haunch, shoulder, neck and near legs, one mass ------------------------------
   const outline: Pt[] = [];
@@ -124,26 +186,42 @@ function cat(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: 
     { k: 'ell', x: C(spine(0.04, 1))[0], y: C(spine(0.04, 1))[1], rx: r(10), ry: r(10.6), rot },
     { k: 'ell', x: C(spine(0.92, -0.5))[0], y: C(spine(0.92, -0.5))[1], rx: r(7.6), ry: r(10), rot },
     { k: 'cap', x0: C(spine(0.98, 4))[0], y0: C(spine(0.98, 4))[1], x1: X(hc.x - hr * 0.45), y1: Y(hc.y - hr * 0.2), r0: r(8.4), r1: hr * 0.72 * u },
-    ...tube(C, hind, r(7), r(2.8)), ...tube(C, fore, r(5.6), r(3)),
+    ...tube(C, hind, rl(7), rl(2.8)), ...tube(C, fore, rl(5.6), rl(3)),
     paw(C, hind, 4.6 * b.paws * u, 3.1 * b.paws * u), paw(C, fore, 5.2 * b.paws * u, 3.6 * b.paws * u),
   ], { h, tex: 'fur', seed: 5, amount: 0.5, formK: 0.4, spread: 0.85, creases: [
-    { x0: C(spine(0.76, 7.5))[0], y0: C(spine(0.76, 7.5))[1], x1: C(spine(0.76, -6))[0], y1: C(spine(0.76, -6))[1], r: r(1.6), a: 0.2 },
-    { x0: C(spine(0.2, 7.5))[0], y0: C(spine(0.2, 7.5))[1], x1: C(spine(0.2, -5))[0], y1: C(spine(0.2, -5))[1], r: r(1.6), a: 0.18 },
+    { x0: C(spine(0.76, 7.5 * K))[0], y0: C(spine(0.76, 7.5 * K))[1], x1: C(spine(0.76, -6 * K))[0], y1: C(spine(0.76, -6 * K))[1], r: r(1.6), a: 0.2 },
+    { x0: C(spine(0.2, 7.5 * K))[0], y0: C(spine(0.2, 7.5 * K))[1], x1: C(spine(0.2, -5 * K))[0], y1: C(spine(0.2, -5 * K))[1], r: r(1.6), a: 0.18 },
   ] });
   patch(ctx, B, pale, [
-    { k: 'curve', pts: [spine(0.05, -5), spine(0.4, -3.6), spine(0.8, -6.5), spine(1.05, -8.5), spine(0.8, -10), spine(0.4, -6.4), spine(0.05, -7.8)].flatMap(C), wobble: 0.06, spiky: 0.05, seed: 21, sub: 2 },
+    { k: 'curve', pts: [spine(0.05, -5 * K), spine(0.4, -3.6 * K), spine(0.8, -6.5 * K), spine(1.05, -8.5 * K), spine(0.8, -10 * K), spine(0.4, -6.4 * K), spine(0.05, -7.8 * K)].flatMap(C), wobble: 0.06, spiky: 0.05, seed: 21, sub: 2 },
   ], { alpha: 0.72, feather: 0.5 });
 
+  // --- a lion's mane, from behind the ears over the neck to the chest, dark and grizzled -----------
+  if (b.mane) {
+    const mk = b.mane, maneHex = mix(coat, shade(b.maneHex ?? '#4a4038', p.tone), 0.85), mc = at(hc.x - hr * 0.5, hc.y - hr * 0.25), chestQ = C(spine(0.98, -2));
+    blob(ctx, B, maneHex, [
+      { k: 'curve', pts: ring(X(mc.x), Y(mc.y), hr * 1.4 * mk * u, hr * 1.45 * mk * u, 20), wobble: 0.1, spiky: 0.14, seed: 61, sub: 3 },
+      { k: 'cap', x0: X(hc.x - hr * 0.6), y0: Y(hc.y - hr * 0.7), x1: chestQ[0], y1: chestQ[1], r0: hr * 1.15 * mk * u, r1: r(8.5) },
+    ], { h, tex: 'fur', seed: 62, amount: 0.7, formK: 0.4, spread: 0.85 });
+    if (!B.override) for (let i = 0; i < 8; i++) {
+      // Grizzled: grey hairs combed back and down through it.
+      const a = 1.1 + i * 0.5, q0 = at(mc.x + Math.cos(a) * hr * 0.95 * mk, mc.y + Math.sin(a) * hr * 1.0 * mk), q1 = at(q0.x - hr * 0.42 * mk, q0.y - hr * 0.22 * mk);
+      softLine(ctx, B, [X(q0.x), Y(q0.y), X(q1.x), Y(q1.y)], mix(maneHex, shade('#d8d4cc', p.tone), 0.5), Math.max(1, 0.6 * u), 0.6);
+    }
+  }
+
   // --- the head, a form of its own over the neck: round skull, the ruff, short muzzle, jaw, ear -----
-  const gape = 0.5 + 0.5 * Math.sin(t / 13);
+  const gape = (0.5 + 0.5 * Math.sin(t / 13)) * (b.jaw ?? 1);
   const jawTip = H(0.84, -0.6 - 0.22 * gape);
   const head: Part[] = [
     { k: 'curve', pts: ring(X(hc.x), Y(hc.y), hr * u, hr * 0.92 * u, 12), wobble: 0.03, spiky: 0.04, seed: 3, sub: 2 },
     // The muzzle, short and broad, and the lower jaw hanging open under it.
     { k: 'cap', x0: X(H(0.3, -0.16).x), y0: Y(H(0.3, -0.16).y), x1: X(H(0.86, -0.26).x), y1: Y(H(0.86, -0.26).y), r0: hr * 0.5 * u, r1: hr * 0.38 * u },
     { k: 'cap', x0: X(H(0.2, -0.54).x), y0: Y(H(0.2, -0.54).y), x1: X(jawTip.x), y1: Y(jawTip.y), r0: hr * 0.3 * u, r1: hr * 0.2 * u },
-    // The near ear, tall and pointed.
-    { k: 'poly', pts: [...C(H(-0.62, 0.56)), ...C(H(0.05, 0.8)), ...C(H(-0.36, 1.78))] },
+    // The near ear, tall and pointed; a lion's small and round.
+    round
+      ? { k: 'ell', x: C(H(-0.46, 0.84))[0], y: C(H(-0.46, 0.84))[1], rx: hr * 0.22 * u, ry: hr * 0.2 * u }
+      : { k: 'poly', pts: [...C(H(-0.62, 0.56)), ...C(H(0.05, 0.8)), ...C(H(-0.36, 1.78))] },
   ];
   // The ruff: barred fur from under the ear round the cheek, hanging to a point under the jaw.
   if (b.ruff > 0) {
@@ -176,7 +254,8 @@ function cat(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: 
     }
   }
   // The near ear's back, dark, and its tuft standing up off the tip, blown back by the leap.
-  patch(ctx, B, ink, [{ k: 'poly', pts: [...C(H(-0.55, 1.12)), ...C(H(-0.15, 1.15)), ...C(H(-0.36, 1.78))] }], { alpha: 0.8, feather: 0.2 });
+  if (round) patch(ctx, B, ink, [{ k: 'ell', x: C(H(-0.5, 0.9))[0], y: C(H(-0.5, 0.9))[1], rx: hr * 0.12 * u, ry: hr * 0.1 * u }], { alpha: 0.7, feather: 0.3 });
+  else patch(ctx, B, ink, [{ k: 'poly', pts: [...C(H(-0.55, 1.12)), ...C(H(-0.15, 1.15)), ...C(H(-0.36, 1.78))] }], { alpha: 0.8, feather: 0.2 });
   if (b.tufts > 0) {
     const tip = H(-0.36, 1.74), quiver = Math.sin(t / 5) * 0.3, back = (1.2 + 1.6 * L + quiver) * b.tufts;
     const mid = at(tip.x - back * 0.35, tip.y + 3.6 * b.tufts), end = at(tip.x - back, tip.y + 6.6 * b.tufts);
@@ -201,6 +280,18 @@ function cat(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: 
   softLine(ctx, B, [ex - er * 0.8, ey + er * 0.4, ex - er * 3.4, ey + er * 2.2], coat, Math.max(1, er * 0.6), 0.75);
   eye(ctx, ex, ey, er, p.amber);
   softLine(ctx, B, [ex - er * 1.4, ey - er * 1.3, ex + er * 1.5, ey - er * 1.1], coat, Math.max(1, er * 0.7), 0.7);
+  if (b.scars && !B.override) {
+    // Old wounds, pale through the coat: three rakes down across the eye and the muzzle, two on the flank.
+    const scar = mix(coat, shade('#efe6d6', p.tone), 0.6), w = Math.max(1, 0.55 * u);
+    for (let i = 0; i < 3; i++) {
+      const a = H(0.12 + i * 0.2, 0.78 - i * 0.06), z = H(0.4 + i * 0.2, -0.28 - i * 0.06);
+      softLine(ctx, B, [X(a.x), Y(a.y), X(z.x), Y(z.y)], scar, w, 0.8 * b.scars);
+    }
+    for (let i = 0; i < 2; i++) {
+      const a = C(spine(0.5 + i * 0.12, 6)), z = C(spine(0.38 + i * 0.12, -3));
+      softLine(ctx, B, [a[0], a[1], z[0], z[1]], scar, w, 0.7 * b.scars);
+    }
+  }
   if (L > 0.3) claws(ctx, C, fore, b, u, p.tone);
 }
 

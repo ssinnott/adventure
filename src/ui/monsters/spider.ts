@@ -19,6 +19,9 @@
 // braced under a high domed shell, a broad shield over a low head, and a live coal set in its back.
 // The cinder beetle has its legs under a body low and broad where that one is high, a digger's, with
 // one horn up over its shell and no fire in it.
+// The glass scorpion has a body of its own too, of the Wold's green glass: eight short legs splayed
+// under a low body, two big claws held up and open at its sides, and the tail rising behind in five
+// segments and arched over toward the company, a clear glass sting hanging from its end.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
@@ -28,7 +31,7 @@ import { shade, mix, rgba } from '../../lib/art/palettes.ts';
 import { pathEllipse } from '../../lib/art/shapes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['spider', 'thorn_spider', 'crab', 'rift_crawler', 'barnacle_crab', 'salt_crab', 'glass_spider', 'fire_beetle', 'cinder_beetle'];
+export const KINDS: readonly MonsterSprite[] = ['spider', 'thorn_spider', 'crab', 'rift_crawler', 'barnacle_crab', 'salt_crab', 'glass_spider', 'fire_beetle', 'cinder_beetle', 'glass_scorpion'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'thorn_spider') thorn(ctx, x, y, h, p);
@@ -39,6 +42,7 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   else if (kind === 'glass_spider') glassSpider(ctx, x, y, h, p);
   else if (kind === 'fire_beetle') beetle(ctx, x, y, h, p);
   else if (kind === 'cinder_beetle') cinderBeetle(ctx, x, y, h, p);
+  else if (kind === 'glass_scorpion') glassScorpion(ctx, x, y, h, p);
   else marsh(ctx, x, y, h, p);
 };
 
@@ -296,9 +300,11 @@ function thorn(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
  * of what makes a claw a claw, so it is drawn as a gap in the silhouette rather than as a crease.
  */
 function chela(ctx: CanvasRenderingContext2D, sh: Pt2, el: Pt2, wr: Pt2, aim: number, s: number,
-  h: number, hex: string, seed: number, k: number): void {
+  h: number, hex: string, seed: number, k: number, glassy = false): void {
   const ux = Math.cos(aim), uy = Math.sin(aim), nx = -uy, ny = ux;
   const P = (u: number, v: number): number[] => [wr.x + ux * h * u + nx * h * v * s, wr.y + uy * h * u + ny * h * v * s];
+  // Glass (the glass scorpion's) is faceted and glossy where a crab's shell is stippled.
+  const shine = glassy ? { gloss: 0.8 } : {};
   blob(ctx, B, hex, [
     { k: 'cap', x0: sh.x, y0: sh.y, x1: el.x, y1: el.y, r0: h * 0.038 * k, r1: h * 0.03 * k },
     { k: 'cap', x0: el.x, y0: el.y, x1: wr.x, y1: wr.y, r0: h * 0.031 * k, r1: h * 0.036 * k },
@@ -306,13 +312,13 @@ function chela(ctx: CanvasRenderingContext2D, sh: Pt2, el: Pt2, wr: Pt2, aim: nu
     { k: 'ell', x: P(0.04 * k, 0.004 * k)[0], y: P(0.04 * k, 0.004 * k)[1], rx: h * 0.084 * k, ry: h * 0.066 * k, rot: aim },
     { k: 'cap', x0: P(0.07 * k, 0.03 * k)[0], y0: P(0.07 * k, 0.03 * k)[1],
       x1: P(0.204 * k, 0.046 * k)[0], y1: P(0.204 * k, 0.046 * k)[1], r0: h * 0.038 * k, r1: h * 0.013 * k },
-  ], { h, formK: 0.55, spread: 0.8, tex: 'stipple', seed: seed + 1, amount: 0.35 });
+  ], { h, formK: 0.55, spread: 0.8, tex: glassy ? 'facets' : 'stipple', seed: seed + 1, amount: 0.35, ...shine });
   // The hinged jaw, its own mass and angled UP off the lower one, so the gape is a wedge of
   // background rather than a crease -- which is the whole of what makes a claw a claw.
   blob(ctx, B, shade(hex, 1.08), [
     { k: 'cap', x0: P(0.06 * k, -0.03 * k)[0], y0: P(0.06 * k, -0.03 * k)[1],
       x1: P(0.192 * k, -0.074 * k)[0], y1: P(0.192 * k, -0.074 * k)[1], r0: h * 0.034 * k, r1: h * 0.012 * k },
-  ], { h, formK: 0.6, spread: 0.7 });
+  ], { h, formK: 0.6, spread: 0.7, ...shine });
 }
 
 /** Where a crab's parts sit. Its own layout: nothing here is shaped like the spiders' rig. */
@@ -650,6 +656,107 @@ function glassSpider(ctx: CanvasRenderingContext2D, x: number, y: number, h: num
   glow(ctx, B, cx, cy - h * 0.095, h * 0.15, SUNDER, 0.2 + pulse * 0.1, SUNDER_HOT);
   eyes(ctx, cx, cy - h * 0.095, h, mix(SUNDER, '#b8c8e8', 0.3 - pulse * 0.2));
   fangs(ctx, cx, cy + h * 0.03, h, h * 0.028, h * 0.13, shade(mix(SUNDER, '#9aa8c4', 0.5), Math.max(0.7, p.tone)));
+}
+
+// ------------------------------------------------------------------ the glass scorpion ----
+/**
+ * The Glass Scorpion: its sting is glass, and so is its shell. Seen from the front and a little
+ * above: eight short legs splayed under a low body, the carapace in front and the segmented back
+ * behind it, two big claws held up and open at its sides, and the tail rising from behind the back in
+ * five segments, arched over toward the company with the sting hanging from its end. All of it the
+ * Wold's green glass, the light through it at its edges and catching on its facets; the sting clear.
+ * Idle: the tail sways and now and then draws back and strikes, the claws work and the legs twitch.
+ */
+function glassScorpion(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const f = p.frame, bob = p.breathe * h * 0.01;
+  const glass = p.base, deep = shade(p.dark, 0.8);
+  const edge = shade(mix('#eafff2', glass, 0.3), Math.max(0.7, p.tone));
+  const clear = shade(mix('#f2fff8', glass, 0.22), Math.max(0.75, p.tone));
+  const cx = x + h * 0.03, cy = y - h * 0.2 + bob * 0.4, cw = h * 0.17, ch = h * 0.1;
+  const mx = x - h * 0.01, my = y - h * 0.33 + bob, mw = h * 0.2, mh = h * 0.11;
+  groundShadow(ctx, x, y + 1, h * 1.3);
+
+  // --- the tail, rising behind the back and arched over toward the company, the sting at its end ---
+  const st = f % 140, strike = st < 24 ? Math.sin((st / 24) * Math.PI) : 0, sway = Math.sin(f / 15) * h * 0.012;
+  const SPINE: readonly [number, number][] = [[-0.02, 0.42], [-0.05, 0.53], [-0.055, 0.64], [-0.03, 0.745], [0.025, 0.82], [0.1, 0.845]];
+  const seg = SPINE.map(([dx, dy], i): [number, number] => {
+    const k = (i / 5) ** 2;
+    return [x + h * dx + sway * (i / 5) + strike * h * 0.02 * k, y - h * dy + bob + strike * h * 0.06 * k];
+  });
+  const [lx, ly] = seg[5], bx = lx + h * 0.065, by = ly + h * 0.02;
+  blob(ctx, B, shade(glass, 0.94), [
+    { k: 'tube', pts: seg.flat(), r0: h * 0.052, r1: h * 0.04 },
+    ...seg.map(([sx, sy], i): Part => ({ k: 'ball', x: sx, y: sy, r: h * (0.058 - i * 0.004) })),
+    { k: 'ell', x: bx, y: by, rx: h * 0.056, ry: h * 0.043, rot: 0.35 },
+  ], { h, formK: 0.5, gloss: 0.8, spread: 0.7, tex: 'facets', seed: 45, amount: 0.5 });
+  // The joints between the segments, and the light along the tail's top.
+  for (let i = 1; i < 6; i++) {
+    const [ax, ay] = seg[i - 1], [zx, zy] = seg[i], jx = (ax + zx) / 2, jy = (ay + zy) / 2, len = Math.hypot(zx - ax, zy - ay) || 1, r = h * (0.05 - i * 0.003);
+    softLine(ctx, B, [jx - ((zy - ay) / len) * r, jy + ((zx - ax) / len) * r, jx + ((zy - ay) / len) * r, jy - ((zx - ax) / len) * r], deep, Math.max(1, h * 0.01), 0.6);
+  }
+  softLine(ctx, B, seg.slice(1).flatMap(([sx, sy]) => [sx - h * 0.025, sy - h * 0.02]), edge, Math.max(1, h * 0.01), 0.5);
+  // The sting: clear glass, curved down and forward off the bulb to a fine point.
+  const sting = [bx + h * 0.035, by + h * 0.012, bx + h * 0.052, by + h * 0.065, bx + h * 0.028, by + h * 0.112];
+  blob(ctx, B, clear, [{ k: 'tube', pts: sting, r0: h * 0.022, r1: h * 0.003 }], { h, form: false, gloss: 0.9 });
+
+  // --- the legs, four a side, splayed: the back two pairs darker, behind the body ------------------
+  /** A leg's hip, knee and foot. */
+  const joints = (s: number, i: number): number[] => {
+    const tw = Math.sin(f / 8 + i * 1.9 + s * 0.7) * h * 0.01;
+    return [cx + s * h * (0.11 + i * 0.015), cy - h * (0.0 + i * 0.04), x + s * h * (0.27 + i * 0.05), y - h * (0.33 - i * 0.015) + tw, x + s * h * (0.38 + i * 0.075), y - h * (0.02 + i * 0.04)];
+  };
+  const leg = (s: number, i: number): Part[] => {
+    const [hx, hy, kx, ky, fx, fy] = joints(s, i);
+    return [
+      { k: 'cap', x0: hx, y0: hy, x1: kx, y1: ky, r0: h * 0.032, r1: h * 0.024 },
+      { k: 'ball', x: kx, y: ky, r: h * 0.026 },
+      { k: 'tube', pts: [kx, ky, (kx + fx) / 2 + s * h * 0.02, (ky + fy) / 2, fx, fy], r0: h * 0.022, r1: h * 0.006 },
+    ];
+  };
+  const pairs = (is: readonly number[]): Part[] => [-1, 1].flatMap((s) => is.flatMap((i) => leg(s, i)));
+  blob(ctx, B, shade(glass, 0.72), pairs([2, 3]), { h, formK: 0.45, gloss: 0.6, spread: 0.7 });
+
+  // --- the back: its plates across it, behind the carapace -----------------------------------------
+  blob(ctx, B, glass, [{ k: 'curve', pts: ring(mx, my, mw, mh, 11, 41), wobble: 0.03, seed: 41, sub: 3 }], { h, formK: 0.55, gloss: 0.9, spread: 0.65, tex: 'facets', seed: 42, amount: 0.5 });
+  for (let i = 0; i < 4; i++) {
+    const yy = my - mh * 0.62 + i * mh * 0.36, w = mw * Math.sqrt(Math.max(0, 1 - ((yy - my) / mh) ** 2)) * 0.9;
+    softLine(ctx, B, [mx - w, yy + h * 0.01, mx, yy - h * 0.012, mx + w, yy + h * 0.01], deep, Math.max(1, h * 0.011), 0.55);
+  }
+  blob(ctx, B, shade(glass, 0.86), pairs([0, 1]), { h, formK: 0.5, gloss: 0.7, spread: 0.7 });
+  if (h >= 30) for (const s of [-1, 1]) for (const i of [0, 1]) {
+    const [hx, hy, kx, ky] = joints(s, i);
+    softLine(ctx, B, [hx, hy - h * 0.018, kx, ky - h * 0.018], edge, Math.max(1, h * 0.008), 0.45);
+  }
+
+  // --- the carapace, a shield wider at the front, and its edge catching the light ------------------
+  blob(ctx, B, shade(glass, 1.08), [{ k: 'curve', pts: [
+    cx - cw, cy + ch * 0.55, cx - cw * 0.9, cy - ch * 0.4, cx - cw * 0.5, cy - ch * 0.95, cx, cy - ch * 1.05, cx + cw * 0.5, cy - ch * 0.95, cx + cw * 0.9, cy - ch * 0.4,
+    cx + cw, cy + ch * 0.55, cx + cw * 0.5, cy + ch * 0.95, cx, cy + ch, cx - cw * 0.5, cy + ch * 0.95,
+  ], wobble: 0.03, seed: 43, sub: 3 },
+  { k: 'tube', pts: [cx - h * 0.026, cy + ch * 0.7, cx - h * 0.028, cy + ch * 1.2], r0: h * 0.015, r1: h * 0.011 },
+  { k: 'tube', pts: [cx + h * 0.026, cy + ch * 0.7, cx + h * 0.028, cy + ch * 1.2], r0: h * 0.015, r1: h * 0.011 },
+  ], { h, formK: 0.5, gloss: 0.8, spread: 0.7, tex: 'facets', seed: 44, amount: 0.5 });
+  softLine(ctx, B, [cx - cw * 0.8, cy - ch * 0.3, cx, cy - ch * 0.85, cx + cw * 0.8, cy - ch * 0.3], edge, Math.max(1, h * 0.012), 0.5);
+  // Two eyes on a bump toward the back of it, dark beads in the glass.
+  const bead = shade('#10221a', Math.max(0.6, p.tone));
+  for (const s of [-1, 1]) eye(ctx, cx + s * h * 0.016, cy - ch * 0.55, h * 0.011, bead, false);
+
+  // --- the claws, big, raised high and open either side of the tail, clear of the legs; they work --
+  for (const s of [-1, 1] as const) {
+    const work = Math.sin(f / 12 + (s > 0 ? 1.4 : 0)) * h * 0.012;
+    chela(ctx, { x: cx + s * cw * 0.85, y: cy - ch * 0.1 }, { x: x + s * h * 0.36, y: y - h * 0.3 + work }, { x: x + s * h * 0.43, y: y - h * 0.46 + work * 0.5 },
+      s > 0 ? -Math.PI / 2 + 0.28 : -Math.PI / 2 - 0.28, s, h, shade(glass, s > 0 ? 1.04 : 0.94), 80 + (s > 0 ? 3 : 0), 1.45, true);
+  }
+
+  // --- the light on the glass: points that come and go on the shell, the claws and the sting -------
+  if (!B.override && h >= 24) {
+    const stars: readonly [number, number][] = [[cx - cw * 0.45, cy - ch * 0.45], [mx + mw * 0.45, my - mh * 0.4], [bx - h * 0.01, by - h * 0.02], [sting[2], sting[3]], [x - h * 0.45, y - h * 0.52], [x + h * 0.45, y - h * 0.53]];
+    stars.forEach(([gx, gy], i) => {
+      const tw = 0.5 + 0.5 * Math.sin(f / 7 + i * 2.1);
+      ctx.fillStyle = rgba('#ffffff', 0.3 + 0.6 * tw);
+      ctx.beginPath(); ctx.arc(gx, gy, Math.max(0.7, h * 0.008 * (0.6 + tw)), 0, Math.PI * 2); ctx.fill();
+    });
+  }
 }
 
 // ------------------------------------------------------------------ the fire beetle ----
