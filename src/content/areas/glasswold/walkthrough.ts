@@ -1,4 +1,4 @@
-// The Glasswold's walkthrough. Its chapter, The Warning, is #531's, which plays it here; until then, the
+// The Glasswold's walkthrough. Its chapter, The Warning (#531), is played last (theWarning); first, the
 // boxes in road order. The mesas (D10, #527), the Wold's way in: over E10's west edge at 0,6 onto the road,
 // the Wold's own words said by level and nothing straight back; the road square to square along the great
 // mesa's foot and up its west side to the north edge, where D9's road carries it on; the glassed round the
@@ -40,9 +40,10 @@
 // gap is walked to without them: the stones and the Riders' word, the walker's tracks and the Glass seen
 // from the last square, no exit; and the walker half-buried in the dune that does not shift, its cache
 // and the glass with a light in it. Then the Ranger's third (#448), Oriel Fane's Map, played by a company
-// of 27 to the teaching (`fanesMap`).
+// of 27 to the teaching (`fanesMap`). Last the chapter, three ways in (`theWarning`).
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, see, fight, listen, walkThrough } from '../../../../tools/walk.ts';
+import { newWalk, see, fight, listen, walkThrough, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
+import type { Walk, Step } from '../../../../tools/walk.ts';
 import { NORTH, EAST, SOUTH, WEST } from '../../../game/types.ts';
 import { addCondition, hasCondition, lift, templePrice, xpForLevel, takePrestige, className } from '../../../game/party.ts';
 import { offers, teach, barOf } from '../../../game/prestige.ts';
@@ -66,7 +67,11 @@ import { take as ride } from '../../../game/passage.ts';
 import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
 import { RIDERS_RIDE } from '../../crossings.ts';
 import { CURES } from '../ashfall/items.ts';
-import { STORY } from './maps/wold_d8.ts';
+import { STORY, ROAD_EAST } from './maps/wold_d8.ts';
+import { CHAPTER } from './chapter.ts';
+import { CHAPTER as WINDOW } from '../ashfall/chapter.ts';
+import { LIT } from '../ashfall/maps/ember_stone.ts';
+import { ROAD_WEST } from '../ashfall/maps/emberwaste_e10.ts';
 import { WATCH } from './maps/wold_b9.ts';
 
 export const walkthrough: Walkthrough = (ok) => {
@@ -747,6 +752,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(!/hull|ship|orbit|voyage|custodian|tower/i.test(toldB9), 'nothing in the box\'s words, or the glass\'s, of what the crown is');
 
   fanesMap(ok);
+  theWarning(ok);
 };
 
 /**
@@ -804,4 +810,142 @@ function fanesMap(ok: (cond: boolean, msg: string) => void): void {
     `and her menu teaches the third, earned, for no gold (${r.line})`);
   const after = talk();
   ok(after.text === aysu.lines.join('\n\n') && !after.choice, 'after, her own words again, and nothing asked');
+}
+
+// ---- the chapter (#531) ----
+
+const npcOn = (map: string, name: string): Person => MAP_DEFS.find((d) => d.id === map)!.features!.find((f): f is Person => f.kind === 'npc' && f.name === name)!;
+const goalOf = (start: string): string => CHAPTER.goals.find((g) => g.text.startsWith(start))!.text;
+
+/** A step played at a level, the company levelled to it. */
+const atLevel = (level: number, s: Step): Step => ({ name: `${s.name} at ${level}`, play: (w) => {
+  for (const m of w.party.members) { m.level = level; m.xp = xpForLevel(level); }
+  w.level = level;
+  s.play(w);
+} });
+
+/** The entries written on a chapter's page. */
+const written = (w: Walk, c = CHAPTER): string[] => (quest(w)?.pages.find((p) => p.def === c)?.entries ?? []).map((e) => e.id);
+
+/** Take the Rider's ride from the Rider who sells it, at nine in the morning with the fare in hand. */
+function rideFrom(w: Walk, map: string, name: string): { taken: boolean; said: string[] } {
+  const rider = npcOn(map, name);
+  w.world.travel(map, rider.x, rider.y);
+  w.world.state.minutes = Math.floor(w.world.state.minutes / MINUTES_PER_DAY) * MINUTES_PER_DAY + 9 * 60;
+  w.party.gold = RIDERS_RIDE.fare;
+  const rode = ride(rider.passage![0], w.world, w.party), said = rode.taken ? w.world.eventsHere() : [];
+  listen(w);
+  return { taken: rode.taken, said };
+}
+
+/** Up the Riders' road from E10 through the mesas onto the steppe: the glass in the grass on D9's road in. */
+const GRASS: Step = { name: 'the glass in the grass', play: (w) => see(w, 'wold_d9:d9_glass') };
+
+/** Up the Riders' track over D9's north edge, the seam at 16, into Akordu's ring of tents. */
+const TENTS: Step = { name: 'up the track into Akordu', play: (w) => { walkThrough(w, 'wold_d9', 16, 0, NORTH, 'wold_d8', 1); see(w, 'wold_d8:d8_akordu'); } };
+
+/** East over the Scarp's edge, C8's 31,5, into Akordu's box, one land. */
+const ACROSS: Step = { name: 'over the Scarp\'s edge into Akordu', play: (w) => walkThrough(w, 'wold_c8', 31, 5, EAST, 'wold_d8', 1) };
+
+/** The eldest at her own fire before her tent, her story told once. */
+const ELDEST: Step = { name: 'the eldest', play: (w) => meetWho(w, STORY) };
+
+/** West over C8's edge under the rim and south over B8's into the dunes, to the old Rider at the watch's fire. */
+const WATCHED: Step = { name: 'the watch at the gap', play: (w) => {
+  walkThrough(w, 'wold_c8', 0, 4, WEST, 'wold_b8', 1);
+  walkThrough(w, 'wold_b8', 16, 31, SOUTH, 'wold_b9', 1);
+  const old = npcOn('wold_b9', 'An old Rider at the fire');
+  w.world.travel('wold_b9', old.x, old.y);
+  meet(old, w.party, heard(w.world, old));
+  listen(w);
+} };
+
+/** On past the stones to the gap's last square, the Glass and its crown seen; then the two walkers at the gap won. */
+const GAP: Step = { name: 'the gap', play: (w) => {
+  for (const id of ['b9_line', 'b9_tracks', 'b9_glass']) see(w, `wold_b9:${id}`);
+  fight(w, 'wold_b9:b9_walkers');
+} };
+
+/** Back north and east over the seams to Akordu's horse-lines, turned east for the port. */
+const LINES: Step = { name: 'back to Akordu\'s horse-lines', play: (w) => {
+  walkThrough(w, 'wold_b9', 16, 0, NORTH, 'wold_b8', 1);
+  walkThrough(w, 'wold_b8', 31, 4, EAST, 'wold_c8', 1);
+  walkThrough(w, 'wold_c8', 31, 5, EAST, 'wold_d8', 1);
+  see(w, 'wold_d8:d8_turned');
+} };
+
+/**
+ * The Warning (#531), begun where The Window ends and played at 26, 27 and 28 three ways in: by the road
+ * over the Cinder Hills, its parts in the goals' order; set down at Akordu's horse-lines by the Rider's ride
+ * from Cinderport, the watch and the gap before the eldest, and back east to the port on the ride; and up
+ * the Scarp stair from the Saltings, which ends The Window without its road west, the gap first. Nothing
+ * on the Wold shuts, and the journal reads true by every way in.
+ */
+function theWarning(ok: (cond: boolean, msg: string) => void): void {
+  const texts = [...CHAPTER.entries.map((e) => e.text), ...CHAPTER.goals.map((g) => g.text)];
+  ok(texts.every((t) => !/hull|ship|orbit|voyage|custodian|tower/i.test(t)), 'nothing in the chapter names a hull, a ship, an orbit, a voyage, a Custodian or a tower');
+  const early = newWalk(ok);
+  for (const f of [LIT, ROAD_WEST, STORY, WATCH]) early.party.flags[f] = 1;
+  early.world.travel('wold_d8', 8, 27, WEST);
+  ok(!early.world.eventsHere().length && !early.party.flags[ROAD_EAST], 'at Akordu\'s horse-lines with the eldest and the watch heard and the Glass unseen, nothing is said or set: the gap is no lock, and the chapter waits on it');
+  const read: string[] = [];
+  for (const how of ['by the road, in the goals\' order', 'by the Rider\'s ride, the gap before the eldest', 'up the Scarp stair, the gap first']) {
+    const w = newWalk(ok);
+    for (const m of w.party.members) { m.level = 26; m.xp = xpForLevel(26); }
+    w.level = 26;
+    w.party.flags[LIT] = 1;
+    listen(w);
+    if (how.startsWith('by the road')) {
+      // Where The Window ends: up the road onto the Cinder Hills' last shoulder, the grass below.
+      w.world.travel('emberwaste_e10', 1, 8, NORTH);
+      w.world.move('forward');
+      w.world.move('forward');
+      w.world.eventsHere();
+      listen(w);
+      ok(!!w.party.flags[ROAD_WEST] && quest(w)?.goal === goalOf('West up the Riders\' road') && !written(w).length,
+        `${how}, The Window done on the Hills' last shoulder, the chapter begins, its goal west onto the steppe (${quest(w)?.goal})`);
+      playChapter(w, CHAPTER, [atLevel(26, GRASS), atLevel(26, TENTS), atLevel(26, ELDEST), atLevel(27, WATCHED), atLevel(28, GAP), atLevel(28, LINES)], how);
+    } else if (how.startsWith('by the Rider\'s ride')) {
+      const west = rideFrom(w, 'cinderport', 'A Rider by the gate');
+      ok(west.taken && w.world.zone?.id === 'wold_d8' && !!w.party.flags[ROAD_WEST] && quest(w)?.goal === goalOf('In Akordu') && written(w).join() === 'akordu',
+        `${how}, set down at Akordu's horse-lines, The Window done and the chapter begun, its goal the eldest's fire (${quest(w)?.goal})`);
+      atLevel(27, WATCHED).play(w);
+      atLevel(28, GAP).play(w);
+      w.world.travel('wold_d8', 8, 27, WEST);
+      const unsaid = w.world.eventsHere();
+      listen(w);
+      ok(!unsaid.length && !w.party.flags[ROAD_EAST] && quest(w)?.goal === goalOf('In Akordu') && written(w).join(', ') === 'akordu, watch, glass',
+        `${how}, the watch heard and the Glass seen first, the goal is the eldest still, and the lines say nothing yet (${written(w).join(', ')}: ${quest(w)?.goal})`);
+      playChapter(w, CHAPTER, [atLevel(28, ELDEST), atLevel(28, LINES)], how);
+      const east = rideFrom(w, 'wold_d8', 'A Rider at the lines');
+      ok(east.taken && w.world.state.mapId === 'cinderport' && !!w.party.flags[ROAD_EAST], `${how}, and east on the ride to Cinderport's gate, for the last crossing`);
+    } else {
+      // Up from the Saltings' notch at C7's 8,22, the flights and the lip, onto the stair's head at C8's 8,1.
+      w.world.travel('saltings_c7', 8, 22, SOUTH);
+      const climbed = Array.from({ length: 11 }, () => w.world.move('forward'));
+      listen(w);
+      const window = quest(w)?.pages.find((p) => p.def === WINDOW);
+      ok(climbed.every((m) => m.kind === 'moved') && w.world.zone?.id === 'wold_c8' && !!window?.done && !written(w, WINDOW).includes('west') && !w.party.flags[ROAD_WEST]
+        && quest(w)?.goal === goalOf('Over the grass of the Wold') && written(w).join() === 'stair',
+        `${how}, the Stone lit, the stair's head ends The Window without its road west and begins the chapter, its goal over the grass to Akordu (${quest(w)?.goal})`);
+      atLevel(27, WATCHED).play(w);
+      atLevel(28, GAP).play(w);
+      ok(quest(w)?.goal === goalOf('Over the grass of the Wold') && written(w).join(', ') === 'stair, watch, glass',
+        `${how}, the watch heard and the Glass seen before Akordu, the goal is Akordu still (${written(w).join(', ')}: ${quest(w)?.goal})`);
+      playChapter(w, CHAPTER, [atLevel(28, ACROSS), atLevel(28, ELDEST), atLevel(28, LINES)], how);
+      w.world.travel('wold_d8', 9, 27, EAST);
+      const landing = w.world.eventsHere();
+      listen(w);
+      ok(!landing.length && !w.party.flags[ROAD_WEST] && !written(w, WINDOW).includes('west'), `${how}, the ride's landing at the lines says nothing of the road west to a company that came up the stair`);
+    }
+    goalFromBegun(w, how);
+    const ends = w.news.filter((n) => n === `Chapter complete: ${CHAPTER.title}.`).length;
+    ok(!!quest(w)?.pages.find((p) => p.def === CHAPTER)?.done && ends === 1 && w.level === 28 && !!w.party.flags[ROAD_EAST],
+      `${how}, turned east at Akordu's horse-lines, the chapter is done at 28, and said so once (${ends})`);
+    read.push(written(w).join(', '));
+  }
+  const whole = 'grass, akordu, eldest, watch, glass, east';
+  ok(read[0] === whole && read[1] === whole.replace('grass, ', '') && read[2] === whole.replace('grass, ', 'stair, '),
+    `the journal reads the same in every order and by every way in, but for the glass in the grass seen only on the road and the warning at the stair's head only up the stair (${read.join(' / ')})`);
+  everyGoalWalked(ok, [CHAPTER]);
 }
