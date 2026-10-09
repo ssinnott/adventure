@@ -111,12 +111,13 @@ DESIGN.md first for the why.
   `q_tide_home` holds, which the plinth at Stienwierde sets as it takes the Stone (#191); the Grove
   once a Lantern has mended it, `q_grove_mended`, which nothing sets yet (#56); the Anvil Stone once
   the Warden of the Anvil has fallen and its tear is closed, bought back or taken alike,
-  `q_anvil_closed` (#540), which the Rift sets once its Warden falls (#465); the rest as their areas
-  write them. By night, outdoors and in a town, the Hearth stands over the far hills in its true
-  bearing from the party, faint from the first night and taller and brighter by a step for each
-  Stone. The title reads the save in storage and draws its column steadier, taller and wider by a
-  step; the world map's flickers less; the almanac adds a word on it once one is restored. The Tide
-  Stone and the Anvil Stone can be restored so far.
+  `q_anvil_closed` (#540), which the Rift sets once its Warden falls (#465); the Ember Stone once it
+  is lit, its three parts set, `q_ember_lit` (#548), which its dungeon will set (#516, not built
+  yet); the rest as their areas write them. By night, outdoors and in a town, the Hearth stands over
+  the far hills in its true bearing from the party, faint from the first night and taller and
+  brighter by a step for each Stone. The title reads the save in storage and draws its column
+  steadier, taller and wider by a step; the world map's flickers less; the almanac adds a word on it
+  once one is restored. The Tide Stone and the Anvil Stone can be restored so far.
 - **Crossings** (`game/passage.ts`, #164): a person may sell passage by coach, by boat or on a
   Rider's horse, whose terms are the Riders' own (`passage`,
   a list of `Passage`). Their words close onto a menu of the crossings, each with its fare and days,
@@ -376,7 +377,9 @@ Pillar 4 says the world has a clock. It now has a year and a sky as well.
   (`EncounterDef.when`), only after a step (`after`), or stop coming back once something holds
   (`until`, the quest log's conditions). Out of its hours it is not there, not drawn, fought or in
   the way, and comes back where it stood. Nothing new is saved: the clock, the weather and the save
-  already hold all they read. Thornmark's Rift stops coming back once the Warden of the Cut is dead.
+  already hold all they read. Thornmark's Rift stops coming back once the Warden of the Cut is dead,
+  and Ashfall's sentries wait on the Ember Stone's flag, `q_ember_lit`, as its boxes place them
+  (#548, #449).
 
 ## The road to level 10
 
