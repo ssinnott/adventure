@@ -1,6 +1,7 @@
 // Ashfall, the far side of the Sound (band 24-26): Cindercoast, Fire Mountain and the Ember Waste, the
 // second area of Act IV, begun by sea (#443, call 6). docs/areas/ashfall.md is its brief.
 import type { Area } from '../../area.ts';
+import { CINDERCOAST_H10 } from './maps/cindercoast_h10.ts';
 import { CINDERCOAST_G10 } from './maps/cindercoast_g10.ts';
 import { CINDERPORT } from './maps/cinderport.ts';
 import { FIREMOUNT_G11 } from './maps/firemount_g11.ts';
@@ -13,7 +14,9 @@ import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
   id: 'ashfall' as const,
-  maps: [CINDERCOAST_G10, CINDERPORT, FIREMOUNT_G11, EMBERWASTE_F10, EMBERWASTE_E10],
+  // In road order: the Stair's foot (#510), Cinderport's box (#511), the town (#512), Fire Mountain's
+  // flank (#513) and the Waste's road west of the box (#517).
+  maps: [CINDERCOAST_H10, CINDERCOAST_G10, CINDERPORT, FIREMOUNT_G11, EMBERWASTE_F10, EMBERWASTE_E10],
   monsters: MONSTERS,
   sprites: SPRITES,
   // Cinderport's armourer's step (#542) and the chandler's stone cure (#546), sold in the town (#512).
@@ -29,7 +32,8 @@ export const AREA = {
   interiors: INTERIORS,
   // Vines underfoot (#543) and the drakes, a family of their own (#520), with G10 (#511); the heavy
   // machines (#520), the volcano and its vents underfoot (#543) and the volcano on the map, with G11
-  // (#513). Lava was the Kilns' first, and the sweep with fire has no token to claim (#545).
-  novel: { families: ['drakes', 'machines'], terrain: ['vines', 'volcano', 'vent'], mechanics: [], landmarks: ['volcano'] },
+  // (#513), and the hot springs, Scaldwell, with H10 (#510). Lava was the Kilns' first, and the sweep with
+  // fire has no token to claim (#545).
+  novel: { families: ['drakes', 'machines'], terrain: ['vines', 'volcano', 'vent'], mechanics: [], landmarks: ['volcano', 'springs'] },
   atlas: { zones: ZONES, places: PLACES, sites: SITES },
 } satisfies Area;
