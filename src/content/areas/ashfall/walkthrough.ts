@@ -49,7 +49,8 @@ import { OUTDOORS } from '../../../game/outdoors.ts';
 import { GameMap } from '../../../game/map.ts';
 import type { Feature, MapDef } from '../../../game/map.ts';
 import { restRefused } from '../../../game/wilds.ts';
-import { meet, heard } from '../../../game/people.ts';
+import { meet, heard, answer } from '../../../game/people.ts';
+import { questLog } from '../../../game/quests.ts';
 import type { Person } from '../../../game/people.ts';
 import { buy, item } from '../../../game/items.ts';
 import { canTrainAt, xpForLevel, rest, trainPrice, levelUp, templePrice, addCondition } from '../../../game/party.ts';
@@ -68,6 +69,7 @@ import { GATE } from './maps/cindercoast_g10.ts';
 import { VENTS, HOLE } from './maps/firemount_g11.ts';
 import { STAIR } from './maps/meridian_camp.ts';
 import { STAIR2 } from './maps/meridian_camp2.ts';
+import { ROPE } from './maps/meridian_camp3.ts';
 import { CRATER, STONE } from './maps/emberwaste_f11.ts';
 
 const G10 = MAP_DEFS.find((d) => d.id === 'cindercoast_g10')!, G11 = MAP_DEFS.find((d) => d.id === 'firemount_g11')!;
@@ -377,17 +379,104 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(hoard?.kind === 'chest' && hoard.gold > 0 && hoard.x > brood.x - 5 && Math.abs(hoard.y - brood.y) <= 2, 'behind the drake its hoard');
 
   // The corridors' end: the Ember Stone's third part, a quest item, taken for the Stone (#516); beside it the
-  // walker's parts, which no shop buys; and the stair down to the camp, barred until it is built (STAIR2), its
-  // square solid and its line said at its head each time.
+  // walker's parts, which no shop buys; and the stair down to the camp (STAIR2), its square open and among
+  // the exits, and its line said at its head the once.
   const part3 = MC2.features!.find((f) => f.kind === 'chest' && f.id === 'mc2_part'), heap2 = MC2.features!.find((f) => f.kind === 'chest' && f.id === 'mc2_heap');
   ok(part3?.kind === 'chest' && part3.items.join() === 'ember_part3' && item('ember_part3').slot === 'none' && !item('ember_part3').price, 'at the corridors\' end the Ember Stone\'s third part, a quest item');
   if (part3?.kind === 'chest') { w.world.travel('meridian_camp2', part3.x, part3.y); w.world.markUsed(part3.id); w.party.bag.push(...part3.items); }
   ok(heap2?.kind === 'chest' && heap2.items.length === 2 && heap2.items.every((i) => item(i).slot === 'none' && !item(i).price), 'beside it a heap of the walker\'s parts, which no shop buys');
   const stair2 = MC2.features!.find((f) => f.kind === 'event' && f.id === 'mc2_stair');
-  ok(STAIR2.to === 'meridian_camp3' && !(MC2.exits ?? []).some((e) => e.to === STAIR2.to) && new GameMap(MC2).passable(STAIR2.x, STAIR2.y) !== 'ok'
-    && stair2?.kind === 'event' && !stair2.once && stair2.x === STAIR2.x && stair2.y === STAIR2.y - 1,
-    'the stair at the corridors\' end goes down to the camp, barred until it is built (STAIR2), and its line is said at its head each time');
+  ok(STAIR2.to === 'meridian_camp3' && (MC2.exits ?? []).includes(STAIR2) && new GameMap(MC2).passable(STAIR2.x, STAIR2.y) === 'ok'
+    && stair2?.kind === 'event' && !!stair2.once && stair2.x === STAIR2.x && stair2.y === STAIR2.y - 1,
+    'the stair at the corridors\' end goes down to the camp (STAIR2), and its line is said at its head the once');
   see(w, 'meridian_camp2:mc2_stair');
+  listen(w);
+
+  // Meridian Camp's third level, the camp (#22), at 26, its floor. Down the corridors' stair onto the camp's
+  // first square, facing in; stepped back into, the stair's foot lets the company up onto its head, facing
+  // away from it.
+  const MC3 = MAP_DEFS.find((d) => d.id === 'meridian_camp3')!;
+  w.world.travel('meridian_camp2', STAIR2.x, STAIR2.y - 1, SOUTH);
+  const downStair2 = w.world.move('forward');
+  ok(downStair2.kind === 'moved' && w.world.state.mapId === 'meridian_camp3' && w.world.state.x === MC3.start.x && w.world.state.y === MC3.start.y && w.world.state.facing === SOUTH
+    && STAIR2.tx === MC3.start.x && STAIR2.ty === MC3.start.y && downStair2.messages.includes(STAIR2.label!),
+    `the corridors' stair takes the company down into the camp, facing in (${here()}: ${downStair2.kind === 'moved' ? downStair2.messages.join(' / ') : downStair2.kind})`);
+  const upStair2 = [w.world.move('forward'), w.world.move('back')];
+  ok(upStair2.every((r) => r.kind === 'moved') && w.world.state.mapId === 'meridian_camp2' && w.world.state.x === STAIR2.x && w.world.state.y === STAIR2.y - 1 && w.world.state.facing === NORTH,
+    `and back up onto the stair's head, facing away from it (${here()})`);
+
+  // The camp: the cold at the stair's foot and the Company's last arrow; firelight on the one way in, which
+  // the Mapmaker's rung reads (\`mc3_fire\`, #635); the tents laced shut but one, the plotting table and a
+  // second grave with a note; the window in the room beside the hall, seen the once (\`mc3_window\`, which the
+  // chapter's entry reads, #518); the foot of Fane's rope; the steps down to the knockers' gallery, and the
+  // door at its end, a wall drawn as a door that opens for nobody.
+  for (const id of ['mc3_in', 'mc3_arrow', 'mc3_fire', 'mc3_tents', 'mc3_table', 'mc3_grave', 'mc3_window', 'mc3_rope', 'mc3_steps', 'mc3_knocks', 'mc3_pick', 'mc3_door']) see(w, `meridian_camp3:${id}`);
+  const ev3 = (id: string): Extract<Feature, { kind: 'event' }> | undefined => MC3.features!.find((f): f is Extract<Feature, { kind: 'event' }> => f.kind === 'event' && f.id === id);
+  const camp3 = MC3.features!.find((f) => f.kind === 'camp')!, fane = MC3.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'Oriel Fane')!;
+  const fire3 = ev3('mc3_fire')!, map3 = new GameMap(MC3);
+  const reach3 = (shut: { x: number; y: number }): boolean => {
+    const seen = new Set([`${MC3.start.x},${MC3.start.y}`]), todo = [[MC3.start.x, MC3.start.y]];
+    while (todo.length) {
+      const [x, y] = todo.pop()!;
+      for (const [nx, ny] of [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]]) {
+        if (seen.has(`${nx},${ny}`) || (nx === shut.x && ny === shut.y) || map3.passable(nx, ny) !== 'ok') continue;
+        seen.add(`${nx},${ny}`); todo.push([nx, ny]);
+      }
+    }
+    return seen.has(`${camp3.x},${camp3.y}`);
+  };
+  ok(!!fire3.once && reach3({ x: -1, y: -1 }) && !reach3(fire3), 'the firelight is seen on the one way from the stair to the fire, the once');
+  const door3 = ev3('mc3_door')!, win = ev3('mc3_window')!;
+  ok(map3.passable(door3.x + 1, door3.y) !== 'ok' && map3.at(door3.x + 1, door3.y).door === 'door' && !!win.once && !/hull|ship|orbit|voyage|Custodian/i.test(win.text),
+    'the door at the gallery\'s end is a wall that opens for nobody; the window says what the eyes see, the once');
+  const kit3 = MC3.features!.find((f) => f.kind === 'chest' && f.id === 'mc3_kit');
+  ok(kit3?.kind === 'chest' && kit3.items.join() === 'meridian_staff' && item('meridian_staff').slot === 'weapon' && item('meridian_staff').price <= 5500,
+    'in the tents the Company\'s kit, a named staff inside the window');
+
+  // Fane's fire, the third of the Company's camps and the only warm one, the level's one rest, with Oriel
+  // Fane standing at it, alive, never in a fight. At the first meeting his words know whether the first
+  // journal was read, and count nothing; whichever, he holds out his map, sewn shut, and its giving sets
+  // \`meridian_map\`, the Lost Expedition done. After, he keeps his fire.
+  ok(MC3.features!.filter((f) => f.kind === 'camp').length === 1 && camp3.kind === 'camp' && camp3.text.includes('warmth') && Math.abs(camp3.x - fane.x) + Math.abs(camp3.y - fane.y) === 1
+    && MC3.encounters!.every((g) => Math.abs(g.x - fane.x) + Math.abs(g.y - fane.y) > 6), 'Fane\'s fire, the only warm camp, Fane standing at it and no group near him');
+  w.world.travel('meridian_camp3', camp3.x, camp3.y);
+  ok(restRefused(w.world) === '', 'and a company may rest at it');
+  w.world.travel('meridian_camp3', fane.x, fane.y);
+  const flags = w.party.flags, had = !!flags.meridian_read;
+  flags.meridian_read = 1;
+  const readWords = meet(fane, w.party, heard(w.world, fane));
+  if (!had) delete flags.meridian_read;
+  const plainWords = had ? readWords : meet(fane, w.party, heard(w.world, fane));
+  ok([readWords, plainWords].every((m) => m.text.includes('You took your time')) && readWords.text.includes('somebody read me') && plainWords.text.includes(had ? 'somebody read me' : 'as if counting')
+    && !!readWords.choice && readWords.choice === plainWords.choice,
+    `Fane at the first meeting: "You took your time"; to a company that had the first journal read, that somebody read him; his map held out to both (${had ? 'read' : 'not read'})`);
+  const given3 = answer(plainWords.choice!.answers[0], w.party);
+  ok(!!w.party.flags.meridian_map && w.party.bag.includes('fane_map') && item('fane_map').slot === 'none' && !item('fane_map').price && given3.includes('Fane\'s Map'),
+    `he gives his map, a quest item sewn shut, and its giving sets meridian_map (${given3})`);
+  ok(meet(fane, w.party, heard(w.world, fane)).text.includes('fire to keep') && !meet(fane, w.party, heard(w.world, fane)).choice, 'after, he keeps his fire, and asks nothing');
+  listen(w);
+  ok(!!questLog(w.world.state, { ...w.party, bag: [...w.party.bag, 'meridian_journal'] }).find((v) => v.def.id === 'meridian')?.done, 'and the Lost Expedition, begun with the first journal, is done');
+
+  // The groups, each won at 26: the deep knockers along their gallery in ones and twos, and the inspector
+  // before the door, which calls them; by night two on the steps up to the camp, never at the fire; and the
+  // sentry at the stair's foot only once the Ember Stone is lit.
+  const night = MC3.encounters!.find((g) => g.id === 'mc3_night')!, sentry3 = MC3.encounters!.find((g) => g.id === 'mc3_sentry')!, insp = MC3.encounters!.find((g) => g.id === 'mc3_inspector')!;
+  ok(MC3.encounters!.length === 8 && MC3.encounters!.every((g) => !!g.respawn && g.monsters.every((m) => ['deep_knocker', 'inspector', 'sentry'].includes(m)))
+    && JSON.stringify(night.when) === JSON.stringify({ hours: 'night' }) && night.roams === false && JSON.stringify(sentry3.after) === JSON.stringify({ flag: 'q_ember_lit' })
+    && insp.monsters.join() === 'inspector' && (MONSTERS.inspector.calls?.monsters ?? []).every((m) => m === 'deep_knocker'),
+    'deep knockers in their gallery, the inspector that calls them before the door, two by night on the steps, and a sentry only once the Ember Stone is lit');
+  for (const g of MC3.encounters!) fight(w, `meridian_camp3:${g.id}`);
+
+  // Fane's rope, up the cold flue: out onto Fire Mountain's shoulder beside the lookout, facing down the
+  // slope; nothing on G11 leads back down it, so it is a way out and never in.
+  w.world.travel('meridian_camp3', ROPE.x, ROPE.y + 1, NORTH);
+  const climb = w.world.move('forward');
+  ok(climb.kind === 'moved' && w.world.zone?.id === 'firemount_g11' && w.world.state.x === g11.x + ROPE.tx && w.world.state.y === g11.y + ROPE.ty && w.world.state.facing === SOUTH
+    && climb.messages.includes(ROPE.label!) && (MC3.exits ?? []).includes(ROPE) && !(G11.exits ?? []).some((e) => e.to === 'meridian_camp3'),
+    `Fane's rope goes up the cold flue onto the mountain's shoulder, and nothing on G11 leads back down it (${here()})`);
+  const look = G11.features!.find((f) => f.kind === 'event' && f.id === 'g11_lookout')!;
+  ok(Math.abs(look.x - ROPE.tx) + Math.abs(look.y - ROPE.ty) === 1 && (G11.encounters ?? []).every((g) => Math.abs(g.x - ROPE.tx) + Math.abs(g.y - ROPE.ty) > (g.aware ?? 5)),
+    'it lands beside the lookout, out of every group\'s notice');
   listen(w);
   w.level = 25;
 

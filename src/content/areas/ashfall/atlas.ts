@@ -24,6 +24,7 @@ export const PLACES: readonly AtlasPlace[] = [
   { id: 'ember_stone', name: 'The Ember Stone', kind: 'dungeon', planned: true, band: [26, 26], at: [176, 348] }, // one level under F11's field of cinders (#516)
   { id: 'meridian_camp', kind: 'dungeon', band: [25, 28], at: [226, 340] }, // Meridian Camp: the vents, down the middle of G11's three mouths at 26,16 (#22); three levels in all, the band their union (#443, call 4)
   { id: 'meridian_camp2', kind: 'dungeon', at: [226, 346] }, // the iron corridors, down the vents' stair at 4,30 (#22), the second plate six squares south
+  { id: 'meridian_camp3', kind: 'dungeon', at: [226, 352] }, // the camp, down the corridors' stair at 4,30 (#22), the third plate six squares south of the second
 ];
 
 export const SITES: readonly AtlasSite[] = [
