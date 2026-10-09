@@ -23,9 +23,12 @@ export const AREA = {
   monsters: MONSTERS,
   sprites: SPRITES,
   // The boxes' finds, the Riders' leather their trader sells at Akordu (#526) and the Compact's letter in
-  // the cleft under the Scarp's lip (#528); no step on the ladder (#542).
+  // the cleft under the Scarp's lip (#528), and the side quests' three things carried (#532); no step on
+  // the ladder (#542).
   items: ITEMS,
-  // The Ranger's third prestige's quest, Oriel Fane's Map, from Aysu on Kushtash (#448).
+  // #56's four side quests (#532): The Horse That Came Back and Orders on the Scarp Stair, given from
+  // Cinderport's halls, The Lion's Share and The Garden of Glass, from Akordu; and the Ranger's third
+  // prestige's quest, Oriel Fane's Map, from Aysu on Kushtash (#448).
   quests: QUESTS,
   // The Warning, the act's third chapter, is #531's.
   chapter: undefined,
