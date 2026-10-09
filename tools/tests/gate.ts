@@ -133,6 +133,9 @@ export const ROADS: Record<string, readonly string[]> = {
   // Down the track off the coast past the salamanders on the slope to the stokers at the vents' mouths,
   // the way down to Meridian Camp (#513).
   firemount: ['firemount_g11:g11_salamanders', 'firemount_g11:g11_stokers'],
+  // West out of G10 onto the Waste's ash past the beetles below the vines and the drake on the rocks
+  // where the road turns west, and over the Cinder Hills past the drakes at their far end (#517).
+  emberwaste: ['emberwaste_f10:f10_beetles', 'emberwaste_f10:f10_drake', 'emberwaste_e10:e10_drakes'],
   // Over the crest from the vale and up the path to the Peak Stone, past the brothers walking it (#501);
   // then up the ridge trail and west along the road to the Stair, past the giant and the troll in the
   // snow short of the head (#502).
@@ -207,6 +210,9 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'monastery: under': { whose: '#18', at: 1 },
   // And Ashfall's first box (#511), in Rimewater's gear and the finds by 24, as the Whitespine's are.
   'cindercoast_g10: under': { whose: '#18', at: 1 },
+  // And the Ember Waste's road (#517), its two country boxes.
+  'emberwaste_f10: under': { whose: '#18', at: 1 },
+  'emberwaste_e10: under': { whose: '#18', at: 1 },
   'Ashfall: under': { whose: '#18', at: 1 },
   'highspine_i11: under': { whose: '#18', at: 1 },
   // Act II's bosses were set by their gates against a company without its first prestige, which the

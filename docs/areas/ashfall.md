@@ -13,8 +13,9 @@ it, the plan for building it, box by box, and the briefs. Its work is filed unde
 country behind (#522, parked); this doc is #509. Figures are measured on main at `6032251` (2
 October 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Three of its maps are built, G10, Cinderport's box (#511, §4.3), which lists the area, Cinderport
-behind its gate (#512, §4.4) and G11, Fire Mountain's flank (#513, §4.5); its nine monsters and the
+Five maps are built: G10, Cinderport's box (#511, §4.3), which lists the area; Cinderport behind its
+gate (#512, §4.4); G11, Fire Mountain's flank (#513, §4.5); and F10 and E10, the Ember Waste's road
+(#517, §4.9). Its nine monsters and the
 armourer's step are drawn (§3), and the rest is to build. Its content is
 `src/content/areas/ashfall/` (maps, monsters, items, climate, its part of the world map and its
 walkthrough; its chapter of the one quest, The Window, in `chapter.ts`, and its side quests in
@@ -33,8 +34,8 @@ three zones:
 |---|---|---|---|
 | Cindercoast | 24–25 | 3,657 | G10 |
 | Fire Mountain | 25–26 | 3,795 | G11 |
-| The Ember Waste | 25–26 | 3,284 | none |
-| The area | 24–26 | 10,736 | G10, G11 |
+| The Ember Waste | 25–26 | 3,284 | F10, E10 |
+| The area | 24–26 | 10,736 | G10, G11, F10, E10 |
 
 Squares are land without shallows or rivers, about 10.5 zone maps (EXPANSION §1 has 10.5), and
 9,228 of them a company could walk: the rest is Fire Mountain's cone, the Sheer's foot and the rim.
@@ -44,8 +45,9 @@ rock 382, hills 203 and vines 71. It runs from the Cinder Hills at about x 146 e
 x 266, and from the Sound's shore at about y 275 down to the rim at y 370. The zones' bands are the
 folder's: the atlas gives the area 24–26 and the boxes rise through it (§4).
 
-The squares are the plan's, before any box. G10 (#511) is laid whole in Cindercoast and G11 (#513)
-in Fire Mountain (§4, §9).
+The squares are the plan's, before any box. G10 (#511) is laid whole in Cindercoast, G11 (#513) in
+Fire Mountain and F10 and E10 (#517) in the Ember Waste, whose band stays the plan's 25–26 on its row
+where the boxes are built at 24–26 (§4, §9, #517's 2).
 
 **The grid** (EXPANSION §8.2; docs/areas/shelf.md §1). Ashfall is the E to H columns from row 9 to
 row 12, with a sliver in I. The land worth a map is six boxes: H10 and G10 along the Sound, the
@@ -100,8 +102,8 @@ off the springs; the vines' shore humid.
 
 ## 3. What is built
 
-Three maps: the area's first box, which lists the area (#511), the town behind its gate (#512) and
-the second box (#513):
+Five maps: the area's first box, which lists the area (#511), the town behind its gate (#512), the
+second box (#513) and the Waste's road, F10 and E10 (#517):
 
 - **Cinderport's box** (G10, `cindercoast_g10`, core, band 24–25; #511): the town's wall along the
   north edge, a block of building squares with its gate in its face, which opens into Cinderport
@@ -132,22 +134,31 @@ the second box (#513):
   same way. Five groups: ember salamanders on the track and on the cone's shoulder, two stokers with
   ember salamanders at the vents, a cinder drake alone on the south-east flow and, after the Stone,
   a sentry walking in from the Waste (§4.5).
+- **The Ember Waste's road** (F10 and E10, `emberwaste_f10` and `emberwaste_e10`, country, band
+  24–26; #517): the road west from Cinderport's box, out of the vines and over the Waste's bare ash,
+  past the Riders' ring and along the rocks of F10's south rows, then up the Cinder Hills of E10 by
+  the notch where a Rider's waymark stands and down onto the steppe, the Wold's, where the world
+  ends for now. In F10's north-west a rock outcrop with the Archdruid in its lee, words only; on the
+  ash a cairn, a shrine and the drifts; on the Hills the cairns, all facing the steppe but one that
+  looks back at the Stone, a grave. Three groups: cinder beetles and a cinder drake in F10 and two
+  cinder drakes on the Hills' crest (§4.9).
 
 Its atlas rows are charted in `src/content/areas/ashfall/atlas.ts`, the area's own `atlas` since G10
 lists the area; until then `src/content/atlas.ts` spread them into the plan where its rows were, as
 Saltreach's were before #170: the zones with their bands (Cindercoast 24–25, with G10 laid on it and
 its crossing words on its row, §9, #511's 13, reworded by G11, #513's 15; Fire Mountain 25–26, with
-G11 laid on it; the Ember Waste 25–26), Cinderport at 24–26, built since #512 with its plate at the
-gate, 206,288; Old Cinder at 25–26, the Ember Stone at 26 and Meridian Camp at 25–28 as planned
-plates; the sites (Cinderport, its port site at 206,277 on G9's shore no longer planned; Fire
-Mountain and Grimsforge, built on G11 and no longer planned; Old Cinder, the Ember Stone, Scaldwell
-and Meridian Camp still planned; the Sheer and the Cinder Hills, the plan's, §10) and its links: the
-Stair down the Sheer, the ship from Kilnhaven, the town's way in (moved from the site to the gate,
-§9, #512's 13), the three dungeons' ways in, the road to the Wold and the last crossing.
+G11 laid on it; the Ember Waste 25–26, with F10 and E10 laid on it at 24–26 and its crossing words on
+its row, §9, #517's 2 and 6), Cinderport at 24–26, built since #512 with its plate at the gate,
+206,288; Old Cinder at 25–26, the Ember Stone at 26 and Meridian Camp at 25–28 as planned plates; the
+sites (Cinderport, its port site at 206,277 on G9's shore no longer planned; Fire Mountain and
+Grimsforge, built on G11 and no longer planned; Old Cinder, the Ember Stone, Scaldwell and Meridian
+Camp still planned; the Sheer and the Cinder Hills, the plan's, §10) and its links: the Stair down the
+Sheer, the ship from Kilnhaven, the town's way in (moved from the site to the gate, §9, #512's 13), the
+three dungeons' ways in, the road to the Wold and the last crossing.
 
 Its row on the curve and its step on the gear ladder are in (#542): the row in
 `src/content/progression.ts` (band 24–26, next 26, window 5,500), owed to #446 while the area is
-built box by box, with G10's and G11's 5,216 xp a member and 1,900 gold the clear's floor, which
+built box by box, with the four boxes' 7,057 xp a member and 3,100 gold the clear's floor, which
 Cinderport leaves as it is, a town paying nothing (§8); and the step in
 `src/content/areas/ashfall/items.ts`, the Area's own since G10 lists it (`ITEMS_AHEAD`,
 `src/content/index.ts`, held it until then), so that the harness and the gate dress by it:
@@ -155,7 +166,7 @@ Cinderport's armourer's eight wares (`ARMOURER`, §4.4), each owed to the armour
 there. The stone cure is in the table too (#546): the Quickening Draught (`CURES`), which the company
 carries from 25, sold at Cinderport's chandler's since #512 and owed to the Riders' trader at Akordu
 (#526). The boxes' new finds are there as they come: G11's Great Axe +2 (`scavengersAxe`, §9, #513's
-12).
+12) and E10's Horn Bow +2 (`graveBow`, §9, #517's 11).
 
 Its ground (#543): vines (`&`), walked through as the woods are, the shore's trees hung with
 creepers; the volcano (`V`) and a vent in it (`@`), the mountain's rock to walk into, see and climb,
@@ -226,10 +237,10 @@ Riders' ride and the last crossing (#547) and the bot grown to the band (#549); 
 
 ## 4. What is still to build
 
-All of it but G10, the town and G11, built (§4.3 to §4.5): 10,736 squares of land, 9,228 of
-them walkable, the plan's figures (§1). On the grid the plan is six boxes, two dungeons and a town,
-and the boxes hold 5,462 of those squares, 5,120 walkable; the seven parked behind them hold 4,454
-(§4.10), the cuts and the sliver about 700 (§11):
+All of it but G10, the town, G11, F10 and E10, built (§4.3 to §4.5 and §4.9): 10,736 squares of
+land, 9,228 of them walkable, the plan's figures (§1). On the grid the plan is six boxes, two
+dungeons and a town, and the boxes hold 5,462 of those squares, 5,120 walkable; the seven parked
+behind them hold 4,454 (§4.10), the cuts and the sliver about 700 (§11):
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
 |---|---|---|---|---|---|---|---|---|
@@ -240,7 +251,7 @@ and the boxes hold 5,462 of those squares, 5,120 walkable; the seven parked behi
 | F11 | Old Cinder's and the Ember Stone's box | the Ember Waste, Fire Mountain, Cindercoast | core | 25–26 | 1,024 (ash 664, rock 301, lava 46) | Old Cinder at 190,318; the Ember Stone at 176,342; the west lava flow between | the Stone seen; the Stone lit | #514 |
 | | Old Cinder | | dungeon, two levels of 16×16 | 25–26 | | the buried town and the Old Drake; the undercroft and the lamp | a part | #515 |
 | | The Ember Stone | | dungeon, one level of 16×16 | 26 | | the half-built Stone; the hand-in; the Sentinel | the Stone lit | #516 |
-| F10, E10 | The Ember Waste's road | the Ember Waste, Cindercoast | country | 25–26 | 1,024 (ash 760, vines 216, rock 48) and 404 (ash 403) | the road west to the Wold at 156,312; the Cinder Hills; the Druid's trainer | none | #517 |
+| F10, E10 | The Ember Waste's road | the Ember Waste, Cindercoast, the Wold | country | 24–26 | 1,024 (ash 730, vines 209, road 44, rock 41) and 1,024 (ash 443, hills 280, steppe 211, road 49, grass 39, lava 2) | the road west to the Wold at 156,312; the Cinder Hills; the Druid's trainer | none | #517, built |
 | | The chapter | | | | | The Window | | #518 |
 | | Side quests | | | | | #56's 49, 50 and 52 | | #519 |
 | | The nine drawings | | | | | MONSTERS §8.2's roster | | #520 |
@@ -255,10 +266,10 @@ Stair's foot, to 26 at the Stone and Old Cinder's crater, as the gate asks (EXPA
 each box holds a group at the top of its band for the curve (§7).
 
 **Boxes of more than one zone.** F11 is the Waste's (951) with a corner of Fire Mountain (40) and
-the road's end of Cindercoast (33); F10 is the Waste's (800) with Cindercoast's vines along its
-north (224); E10 is the Waste's, and the Wold's E10 is the same box, so whichever of #517 and #524
-lands first lays it. A map is its whole box (EXPANSION §8.2): each is built to its edges and laid in
-one zone, and the zone a square belongs to decides only its crossing line (#166) and its band.
+the road's end of Cindercoast (33); F10 is the Waste's (573) with Cindercoast's (451); E10 is the
+Waste's (219) with the Wold's (805), and the Wold's E10 is the same box: #517 laid it, for the Waste
+(§9, #517's 13). A map is its whole box (EXPANSION §8.2): each is built to its edges and laid in one
+zone, and the zone a square belongs to decides only its crossing line (#166) and its band.
 
 **The order** is the Stair's, and the quest's: H10, the only box that meets the Whitespine; G10 and
 Cinderport; G11 and the vents; F11 with Old Cinder and the Stone; then F10 and E10. Road order holds
@@ -373,9 +384,10 @@ half, with the wilderness features (#45); no more than one point in four is a si
   gate's front west under the wall, up the wall's west side to the north edge at 3,0 (the atlas's
   road into G9 at 203,285), and out south-west through the vines to the west edge at 0,7 and 0,8
   (F10's road at 31,7 and 31,8); the milestone, OLD CINDER 4, THE WOLD 6, stands at the fork, 3,4
-  (§9, #511's 5). Three of its edges end the world against G9, F10 and H10, pinned in
-  `tools/tests/outdoors.ts` with void past them, and the south meets G11 (#513), the ash either side
-  of the mountain's foot (§9, #513's 4). The stream is crossed on stones at 18 to 19,3 by
+  (§9, #511's 5). Two of its edges end the world against G9 and H10, pinned in
+  `tools/tests/outdoors.ts` with void past them; the west meets F10 (#517, §4.9), road to road at
+  rows 7 and 8, and the south meets G11 (#513), the ash either side of the mountain's foot (§9,
+  #513's 4). The stream is crossed on stones at 18 to 19,3 by
   the ground and at 26,14 on the ash (§9, #511's 6). On the ground, the step's event at 8,4
   (`g10_ground`) and the eldest at 11,5, who tells the story in three lines (§9, #511's 11); the
   Riders' shrine at 10,3 (speed), their fires a camp at 13,4 by the horse-lines (`g10_horses`,
@@ -661,7 +673,7 @@ half, with the wilderness features (#45); no more than one point in four is a si
   benches, the ladder's (#542).
 - **Pay.** About 2,200 xp a member.
 
-### 4.9 F10 and E10, the Ember Waste's road (#517): country, band 25–26
+### 4.9 F10 and E10, the Ember Waste's road (#517): country, band 24–26
 
 - **Purpose.** The road from Old Cinder's causeway west over the Waste and the Cinder Hills to the
   Wold at 156,312 to 144,300, Act IV's third area, the crossing line facing back; F10's ash and the
@@ -689,6 +701,46 @@ half, with the wilderness features (#45); no more than one point in four is a si
 - **New here.** Act IV's third area seen: the Wold's road.
 - **Finds.** The Horn Bow +2 in the grave.
 - **Pay.** About 1,400 xp a member between them.
+- **As built** (#517, 9 October): the brief's places, with three groups for its seven or so, both
+  boxes laid whole in the Ember Waste, F10 at 168,286 and E10 at 136,286, band 24–26 where the brief
+  has 25–26 (§1; §9, #517's 1, 2 and 7). F10 meets G10's west edge square for square, the road at
+  rows 7 and 8, and the map starts at 31,7 facing west; E10 meets F10's west edge, the road at rows
+  29 and 30, and starts at 31,29. Past F9, F11, E9, E11 and D10 the world ends for now; the seams
+  are pinned in `tools/tests/outdoors.ts`. The roads are the atlas's, made to meet it at the edges
+  and square to square (§9, #517's 3): F10's leaves the vines at 26,13, crosses the ash past the
+  Riders' ring and runs west along the rocks of its south rows, past F11's corner (columns 5 to 11
+  of row 31); E10's crosses the ash, climbs the Hills to the notch at 14,20 (150,306), comes down to
+  the link's end at 8,14 (144,300) and leaves by the west edge at 0,6. The Waste has crossing words
+  of its own, on its zone row, walked over G10's west edge (§9, #517's 6). In F10: the vines' end
+  where the road leaves them (26,13), their edge in the north (12,5) and a tree they killed (24,3);
+  in the north-west the Druid's outcrop, rock at 1 to 5 by 1 to 4 on the atlas's ash, and the
+  Archdruid in its lee at 6,3 (§9, #517's 4); on the ash the cairn (14,12) with 250 gold and a
+  Sapphire Vial, the shrine (5,13, endurance: a stone on end with a hand pressed into it), the
+  drifts (13,20) and the Riders' ring, a camp by the road (20,22); in the south the flow's end,
+  warm, words only (27,30), and the milestone, THE WOLD 2, CINDERPORT 4, at 3,29 where the road
+  turns west along the rocks (§9, #517's 5). In E10: on the ash the cinder cones (25,4) and the
+  veils of ash (27,16), and at the south edge the lava flow's head (24,30) over the atlas's two lava
+  squares; in the Hills the waymark in the notch (14,20), the crest cairn (14,16) with 250 gold and
+  a vial, the cairns on every rise (12,23), the Riders' sky-stone on the crest (8,3, accuracy; §9,
+  #517's 12) and the hermit (13,13), words only; on the steppe the view west (1,11), the wind (4,21)
+  and the hoofprints (5,27). Three groups (§9, #517's 7 and 8): in F10 cinder beetles, 4, on the ash
+  below the vines, 22,16, nearest the way in, at 24, and one cinder drake on the rocks over the
+  road's west run, 9,26, the box's hardest, at 25; in E10 two cinder drakes at 6,9 on the Hills'
+  crest at the far end, by the road coming down to the steppe, at 25. The secret is the grave in the
+  Hills, its mouth a secret door at 18,27 (154,313), its hint `e10_back` at 19,27, the woman on her
+  saddle (`e10_rider`, 17,27) and the chest (`e10_grave`, 16,27) inside (§9, #517's 10 and 11). It
+  departs from the brief in the band, 24–26 for 25–26 (§9, #517's 2); in the groups, three for seven
+  or so, a drake in each box (#517's 7 and 8); in the milestone, CINDERPORT 4 for 7 (#517's 5); in
+  the pay, 1,841 xp a member between them where the brief has 1,400 (#517's 9); and in E10, laid
+  whole as the atlas cuts it, the Wold's steppe and grass with it, bare of the Wold's monsters,
+  quests and crossing line, which are #524's (#517's 13). The sentries `after` the Stone, one group
+  on each box's road at the band's top, are #449's (§11).
+  - **Measured.** A company at 24 wins every fight and manages 10.66 fights to a rest on F10 and
+    10.51 on E10, inside the aim of 9 to 11, with 19% of F10's days ending in a fight broken off and
+    0.3% of E10's; it walks the Waste's road, past the beetles, the drake and the two drakes, every
+    time. F10 pays 1,178 xp a member and 250 gold, E10 662 and 950. Two under, at 22, it wins every
+    fight too, owed to #18 as G10's is. Density 100.0% within 12 steps, the country floor, and the
+    furthest 12 of 20, with no sign among F10's 12 points or E10's 15. It claims nothing new (§7).
 
 ### 4.10 The country behind (#522): country, band 25–26, parked
 
@@ -826,14 +878,16 @@ the vents lightning is the answer. With them all nine of #520's drawings are don
 
 Proposed, against the roster's Where column: the Cinder Drake over Cindercoast's shore (H10, G10)
 and on the Hills (E10), where MONSTERS §8.2 has it on Fire Mountain's slopes only, and the Ember
-Salamander at G10's far end and F10's flow, where it has them at the vents. They stand in the
-briefs as proposals; if the owner takes them, MONSTERS' Where column says so, in a pull request of
-its own. G10 takes its two (#511, §9's 8). One gap for the owner, real since G11: before the Stone
-is lit the roster has no roaming monster at 26, so a box of 25–26 holds its top either in the
-sentries after or in two drakes together, and the curve asks 26 of every Ashfall box laid at 25.
+Salamander at G10's far end and F10's flow, where it has them at the vents. They stand in the briefs
+as proposals; if the owner takes them, MONSTERS' Where column says so, in a pull request of its own.
+G10 takes its two (#511, §9's 8); F10 and E10 take the Cinder Drake, on F10's rocks and on the
+Hills, and place no salamander (#517, §9's 7 and 8). One gap for the owner, real since G11: before
+the Stone is lit the roster has no roaming monster at 26, so a box of 25–26 holds its top either in
+the sentries after or in two drakes together, and the curve asks 26 of every Ashfall box laid at 25.
 G11 (#513) holds its top in a sentry after the Stone, the sentry's first placing taken from F11 (§9,
 #513's 10); F11 (#514) meets the rule too, and the roster answers it only with a sentry after or
-#22's drakeling. Whether the curve forgives it or #520 wants a 26 is the owner's.
+#22's drakeling. Whether the curve forgives it or #520 wants a 26 is the owner's. F10 and E10 hold
+their top at 25 over a floor of 24, F10 with one drake and E10 with two together (§9, #517's 2 and 8).
 
 New in Ashfall, for the novelty check (EXPANSION §5.4): the drakes and the heavy machines, two new
 families (#520); sweep with fire, the drakes' breath (#545); the volcano, lava fields and vines
@@ -844,7 +898,9 @@ spider frame as the cinder beetle, the skeleton frame as the ash husk.
 The area's `novel` claims each as a box places it, since the check asks that what is claimed be
 used: the drakes and the vines underfoot with G10 (#511), the heavy machines, the volcano and the
 vent underfoot and the volcano on the map with G11 (#513, §9's 13); the rest waits for the box that
-places it, and sweep with fire has no token to claim (§9, #511's 14).
+places it, and sweep with fire has no token to claim (§9, #511's 14). F10 and E10 claim nothing more:
+lava is on the road before Ashfall, and steppe, first laid in E10, is the Wold's ground (#543), left
+unclaimed (§9, #517's 15; §11).
 
 ## 8. The numbers
 
@@ -865,10 +921,11 @@ places it, and sweep with fire has no token to claim (§9, #511's 14).
   above, the shares are H10 2,250, G10 2,000, Cinderport 800, G11 2,650, F11 2,400, Old Cinder
   3,450, the Ember Stone 2,950, F10 and E10 1,850 and the side quests about 1,100: about 19,450. The
   issues (#510 to #519) carry the first figures until their briefs are settled. As built: G10 2,449
-  (#511), 1.22 times its scaled share (§9, #511's 9), and G11 2,768 (#513), 1.04 times its own (§9,
-  #513's 11): 5,216 of the 19,467 asked, so with the other scaled shares, 14,800, the shares stand
-  at about 20,000, 1.03 times the ask. Cinderport pays nothing, as a town pays none, and its two
-  halls add no quest (§9, #512's 6): its 600, 800 scaled, is unpaid (§11).
+  (#511), 1.22 times its scaled share (§9, #511's 9), F10 and E10 1,841 between them (#517), 0.99
+  times theirs, and G11 2,768 (#513), 1.04 times its own (§9, #517's 9, #513's 11): 7,057 of the
+  19,467 asked, so with the other scaled shares, 12,950, the shares stand at about 20,000, 1.03 times
+  the ask. Cinderport pays nothing, as a town pays none, and its two halls add no quest (§9, #512's
+  6): its 600, 800 scaled, is unpaid (§11).
 - **Gold.** Training six members from 24 to 26 costs 11,760 with today's `trainPrice`, and to 27,
   the third prestige's level, 6,240 more; the thirds ask a quest, not gold (DESIGN §5). A clear
   should pay for the training at least, in chests, drops, the halls' pay and the sentries' parts.
@@ -877,9 +934,11 @@ places it, and sweep with fire has no token to claim (§9, #511's 14).
   3,100, the rest 1,400 to 2,400. The armourer's full set for the premade six comes to about
   26,900, its weapons 13,900. As built: G10 holds 900 (#511), 300 in the cairn where the ash begins
   and 600 in the hide, its dearest find the Long Sword +2 at 420, inside the window; G11 holds 1,000
-  (#513), 300 and a Sapphire Vial in its cairn and 700 in the hole, so the two hold 1,900 of the
-  11,760 the training costs, with the War Hammer +1 in the forge's rack; the area's dearest find is
-  the hole's Great Axe +2 at 1,500, inside the window. Cinderport holds no gold, a town paying
+  (#513), 300 and a Sapphire Vial in its cairn and 700 in the hole, with the War Hammer +1 in the
+  forge's rack, its dearest find, the area's, the Great Axe +2 at 1,500, inside the window; F10 and
+  E10 hold 1,200 (#517), 250 and a Sapphire Vial in the cairn of each and 700 in the grave, their
+  dearest find the Horn Bow +2 at 1,050, inside the window; the four hold 3,100 of the 11,760 the
+  training costs. Cinderport holds no gold, a town paying
   nothing; the dearest ware at its armourer's is the Drakeskin Coat at 3,100 and the Quickening
   Draught at its chandler's, the company's kit from 25, is 2,000, both inside the window (#512).
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
@@ -894,13 +953,16 @@ places it, and sweep with fire has no token to claim (§9, #511's 14).
   rest; one at 22 wins every fight too, owed to #18 as the Whitespine's boxes' is (§4.3). The town
   adds a way in, the boat's landing at 6,3; the groups nearest it are won at 22 as often as the
   median group or more (§4.4). A company at 25 wins every G11 fight and walks Fire Mountain's road
-  every time, 10.23 fights to a rest, 94.7% of its days ending in a fight broken off (§4.5).
+  every time, 10.23 fights to a rest, 94.7% of its days ending in a fight broken off (§4.5). On F10
+  and E10 a company at 24 wins every fight and walks the Waste's road every time, 10.66 fights to a
+  rest on F10 and 10.51 on E10; one at 22 wins every fight too, owed to #18 (§4.9).
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3); the
   Stone's chamber holds the door's squares empty until it opens, as the Sunder's floor holds the
   wall's. As built: G10 97.3% within 8 steps and the furthest 12, with no sign among its 26 points
   (#511); Cinderport, a town, 100.0% within 7 steps (86 of 86) and the furthest 4, with no sign
   among its 25 (#512); G11 100.0% within 8 steps and the furthest 8, with no sign among its 27
-  points (#513).
+  points (#513); F10 and E10 100.0% within 12 steps, the furthest 12 of 20, with no sign among their
+  12 and 15 points (#517).
 
 ## 9. Decisions
 
@@ -1334,9 +1396,10 @@ Decided by delegate for #513, each the owner's to overturn:
     covers G11. Its 2,067 xp count in G11's clear.
 11. **G11 pays 2,768 xp a member,** 16,605 over six (the salamanders' groups 3,812 and 2,859, the
     stokers' fight 5,880, the drake 1,987, the sentry 2,067): 1.04 times the doc's scaled share of
-    2,650 (the doc wins over the issue's 2,000). The area: G10 2,449 and G11 2,768, 5,216 of the
-    19,467 asked; with the other scaled shares (14,800) about 20,000, 1.03 times the ask (§8). Gold
-    1,000: the cairn 300 and a Sapphire Vial, the hole 700; the War Hammer +1 at the forge.
+    2,650 (the doc wins over the issue's 2,000). The area: G10 2,449, F10 and E10 1,841 and G11
+    2,768, 7,057 of the 19,467 asked; with the other scaled shares (12,950) about 20,000, 1.03 times
+    the ask (§8). Gold 1,000: the cairn 300 and a Sapphire Vial, the hole 700; the War Hammer +1 at
+    the forge.
 12. **The Great Axe +2 is new:** `scavengersAxe`, a +2 of Sunderwood's `great_axe` made with `P` in
     `ashfall/items.ts`, as the Kilns' pluses are made on other areas' bases; 1,500 gold, inside the
     window (5,500).
@@ -1362,6 +1425,76 @@ Decided by delegate for #513, each the owner's to overturn:
     from anything, so `g11_bed` and `g11_crust` stand on them. G11's 15 events are all at two lines.
 19. **The shrine at the track's head blesses endurance** (`g11_shrine`), where the ash is trodden
     flat.
+
+Decided by delegate for #517, each the owner's to overturn:
+
+1. **Both boxes are laid whole in the Ember Waste,** country, region `ashfall`: F10 at 168,286 and
+   E10 at 136,286, on the zone row `emberwaste`, F10 first, the zone's way in. E10 is laid as the
+   atlas cuts it, the Wold's steppe and grass with it (13).
+2. **The band is 24–26, not the brief's 25–26:** the curve holds a map's hardest group at
+   max(floor+1, top-2), so a floor of 25 asks a group at 26, and no roaming monster stands at 26
+   before the Stone (§7). A floor of 24, the beetles', lets the drake at 25 hold the top; 26 is kept
+   as the top for the sentries (#449) and the Wold's side. The zone row keeps its planned 25–26, and
+   the gate holds at 24, so at 25 a fortiori.
+3. **The roads are the atlas's, made to meet it at the edges** (the pillars' edge check binds) **and
+   square to square** (a company moves on four sides; the scaffold's road steps diagonally in
+   places): F10 adds 30,8, 29,10, 27,13, 25,16 and 23,19; E10 adds 3,10, 8,14, 15,20, 17,20, 20,24
+   and 23,26. F10's south rows carry the road along columns 5 to 11 of row 31, where F11's lies at
+   its row 0 (the scaffold had 1 to 4 and 12 to 13); E10's leaves its west edge at 0,6, where D10's
+   lies at its 31,6 (the scaffold had 0,7); F10's 0,29 is road to meet E10's 31,29.
+4. **The Druid's outcrop is in the north-west,** as the brief says: rock, 14 squares at 1 to 5 by 1
+   to 4, on the atlas's ash; the atlas's own rock stays in the south-west, the road running along
+   it. The Archdruid sits in its lee at 6,3, 28 squares from the road: words only, his trainer and
+   quest #448's.
+5. **The milestone reads THE WOLD 2, CINDERPORT 4,** not the brief's CINDERPORT 7: G10's stone, by
+   the gate, says THE WOLD 6, so 7 would put this one past the Wold. It stands at 3,29, where the
+   road turns west along the rocks, about 2.6 of G10's units (half a box each) from the Wold's grass
+   at 144,300.
+6. **The Waste has crossing words of its own,** on its zone row: harder, *Nothing grows out here,
+   and what lives on the ash is harder.* and warning, *Nothing on the ash would spare you. The coast
+   is behind you still.* Walked over G10's west edge at 21, 22 and 24 and straight back, nothing
+   said, and Cindercoast's words back over at 22 and 21, walked for the first time (#511's 13). F10
+   onto E10 says nothing: one land, one floor.
+7. **Three groups for the brief's seven or so, the fewest that pass:** F10 cinder beetles (4) below
+   the vines, nearest the way in, and a cinder drake on the rocks over the road's west run; E10 two
+   cinder drakes on the Hills' crest at the far end. The brief's set (F10 beetles 3, salamanders 3,
+   drake 1; E10 beetles 3, drake 1) gave 15.56 and 15.01 fights to a rest (limit 13.5) and paid
+   2,410 (1.30 times); a lighter group raises the figure and an added one the pay. The harness at
+   24, by group: beetles of 3 9.7, of 4 6.5, salamanders 3 16.6, one drake 29.8, two drakes 10.5.
+   Cut: the salamanders at the flow's end, F10's second beetles and E10's beetles (#524's issue has
+   beetles come over from the Waste: its to place).
+8. **Each box holds a drake, the top:** F10 needs a group at 25 as E10 does (2), and one drake alone
+   is too light a day for E10 (29.8), so E10 has the doc's two drakes together (§7). §7's proposal
+   of the Cinder Drake on the Hills is taken; MONSTERS' Where column is a pull request of its own.
+9. **Pay 1,841 xp a member,** 0.99 times the doc's scaled share of 1,850 (the doc wins over the
+   issue's 1,400): F10 1,178 (4 × 1,271 + 1,987 over six), E10 662 (2 × 1,987 over six). Ashfall
+   stands at 4,290 of 19,467 and, with the other scaled shares (15,600), at about 19,890, 1.02 times
+   the ask (§8; 7,057 and about 20,000, 1.03 times, with G11, #513's 11). Gold 1,200: F10's cairn 250
+   and a Sapphire Vial, E10's cairn 250 and a vial, the grave 700.
+10. **The secret is the grave in the Hills, as the doc has it** (the issue's Meridian cache is
+    superseded): a cairn of rock at 15 to 18 by 26 to 28, its mouth a secret door drawn as rock at
+    18,27 (154,313), facing east to the Stone. The hint is the doc's line (`e10_back`, 19,27);
+    inside, the woman on her saddle, seen and never named, and the chest: the Horn Bow +2 and 700
+    gold. The cairns that face west are the crest cairn, the cairns on every rise and six single
+    rocks on the rises.
+11. **The Horn Bow +2 is Saltreach's bow with a plus** (`horn_bow+2`, in Ashfall's `items.ts`):
+    1,050 gold, bonus 6, inside the window (5,500). An Act II bow in Act IV, as G10's Long Sword +2
+    is, kept as written; the owner may want the act's step with a plus (the Ashwood Bow) instead.
+12. **The brief's places are each a feature** (§4.9), the Archdruid and the hermit words only; the
+    Riders' sky-stone on the crest (8,3, accuracy) is the Wold's brief's shrine, so #524 has it.
+13. **E10's zone and band lines are the Waste's:** a map is one land, so all of E10, steppe and
+    grass too, is the Ember Waste for the crossing line and the band, though the atlas gives 805 of
+    its squares to the Wold and 219 to the Waste. The Wold's line is said where a company crosses
+    into a map laid in the Wold (D10, #527, over E10's west edge at 0,6), in the Wold's zone row's
+    words (it has none yet); #524 walks them, or says its crest line as an event.
+14. **The Wold's seed at 140,296 moves to 134,296,** just west of E10: the atlas check holds each
+    zone's seed inside the zone, and E10, laid for the Waste, now holds that square. 134,296 keeps
+    the Wold's border where it was.
+15. **Novelty claims nothing new:** lava is on the road before Ashfall (the check said so); steppe
+    is first laid here, the Wold's ground (#543), and left unclaimed (§11).
+16. **F10 and E10 need no `CUT_OFF` entry:** they join only G10, which the reach walk now reaches by
+    the town's ways out (§9, #512's 14), so the outdoors test reaches them without one. The gate
+    figures under the floor are owed to #18, as G10's are.
 
 ## 10. Names
 
@@ -1446,3 +1579,26 @@ Owed, from G11 (#513):
   #22's drakeling.
 - **The warlord's heir and the scavenger have words only:** the Barbarian's trainer entry and quest
   are #448's, and #56's 52 is #519's (§9, #513's 7).
+
+Owed, from F10 and E10 (#517):
+
+- **The Archdruid's trainer entry and the Druid's quest** on him are #448's: he stands in the
+  outcrop's lee at F10's 6,3, words only (§9, #517's 4).
+- **The sentries** `after` the Stone, one group on each box's road at the band's top, 26, are
+  #449's: neither box places one (§9, #517's 2).
+- **E10 is laid bare of the Wold's:** its monsters, quests, outriders and crossing line are #524's
+  (docs/areas/glasswold.md §4.2), the line said where D10 is crossed (#527) or by #524's crest event
+  (§9, #517's 13).
+- **Steppe is unclaimed.** E10 lays steppe first, so the Wold's "New here: steppe underfoot"
+  (docs/areas/glasswold.md §4.2) cannot be claimed: the novelty check would say it is on the road
+  before it. The owner's: Ashfall claims steppe, or the Wold claims something else (§9, #517's 15).
+- **Three groups stand for the brief's seven or so** (§9, #517's 7): the salamanders at the flow's
+  end, F10's second beetles and E10's beetles are cut for the gate and the pay; #524's issue has
+  beetles come over from the Waste, its to place.
+- **The milestone reads CINDERPORT 4** where the brief has 7, G10's stone saying THE WOLD 6 (§9,
+  #517's 5).
+- **Lava has no effect underfoot:** `passable` has no rule for it, so the flow that seals the Glass
+  is words only (E10's 24,30).
+- **The grave's Horn Bow +2** is Saltreach's bow with a plus, an Act II find at 1,050 gold, as G10's
+  Long Sword +2 is at 420: the window passes. The owner may want the act's step with a plus there
+  instead, the Ashwood Bow (§9, #517's 11).

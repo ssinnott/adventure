@@ -10,7 +10,11 @@ export const ZONES: readonly AtlasZone[] = [
     crossing: { harder: 'The far side, and it is harder than the range over the Sheer.', warning: 'The far side, and nothing on it would spare you. The way back is still open.' },
   },
   { id: 'firemount', name: 'Fire Mountain', area: 'ashfall', band: [25, 26], maps: [{ map: 'firemount_g11', at: [200, 318] }], seeds: [[214, 330], [240, 340]] },
-  { id: 'emberwaste', name: 'The Ember Waste', area: 'ashfall', band: [25, 26], seeds: [[172, 336], [180, 300]] },
+  {
+    id: 'emberwaste', name: 'The Ember Waste', area: 'ashfall', band: [25, 26], maps: [{ map: 'emberwaste_f10', at: [168, 286] }, { map: 'emberwaste_e10', at: [136, 286] }], seeds: [[172, 336], [180, 300]],
+    // The crossing line said coming off the coast onto the ash (#166, #517).
+    crossing: { harder: 'Nothing grows out here, and what lives on the ash is harder.', warning: 'Nothing on the ash would spare you. The coast is behind you still.' },
+  },
 ];
 
 export const PLACES: readonly AtlasPlace[] = [

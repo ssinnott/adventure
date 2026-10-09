@@ -4,6 +4,8 @@ import type { Area } from '../../area.ts';
 import { CINDERCOAST_G10 } from './maps/cindercoast_g10.ts';
 import { CINDERPORT } from './maps/cinderport.ts';
 import { FIREMOUNT_G11 } from './maps/firemount_g11.ts';
+import { EMBERWASTE_F10 } from './maps/emberwaste_f10.ts';
+import { EMBERWASTE_E10 } from './maps/emberwaste_e10.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { INTERIORS } from './interiors.ts';
@@ -11,7 +13,7 @@ import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
   id: 'ashfall' as const,
-  maps: [CINDERCOAST_G10, CINDERPORT, FIREMOUNT_G11],
+  maps: [CINDERCOAST_G10, CINDERPORT, FIREMOUNT_G11, EMBERWASTE_F10, EMBERWASTE_E10],
   monsters: MONSTERS,
   sprites: SPRITES,
   // Cinderport's armourer's step (#542) and the chandler's stone cure (#546), sold in the town (#512).

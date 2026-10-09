@@ -7,7 +7,7 @@
 import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
-  { id: 'wold', name: 'The Wold', area: 'glasswold', band: [26, 28], seeds: [[100, 232], [132, 262], [50, 230], [140, 296], [120, 296]] },
+  { id: 'wold', name: 'The Wold', area: 'glasswold', band: [26, 28], seeds: [[100, 232], [132, 262], [50, 230], [134, 296], [120, 296]] }, // 140,296 moved west of E10, laid for the Waste (#517)
   { id: 'theglass', name: 'The Glass', area: 'glasswold', seeds: [[80, 282], [90, 300], [78, 312]], label: [96, 304] },
 ];
 
