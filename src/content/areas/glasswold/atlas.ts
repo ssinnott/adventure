@@ -8,10 +8,11 @@ import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
   {
-    id: 'wold', name: 'The Wold', area: 'glasswold', band: [26, 28], maps: [{ map: 'wold_d9', at: [104, 254] }],
+    // The mesas first, the zone's way in over E10's west edge (#527), then the steppe (#525).
+    id: 'wold', name: 'The Wold', area: 'glasswold', band: [26, 28], maps: [{ map: 'wold_d10', at: [104, 286] }, { map: 'wold_d9', at: [104, 254] }],
     seeds: [[100, 232], [132, 262], [50, 230], [134, 296], [120, 296]], // 140,296 moved west of E10, laid for the Waste (#517)
     // The crossing line (#166, #524), said where a Wold map is first walked into over E10's west edge
-    // (D10, #527) or climbed into up the Scarp stair (C8, #528, a jump: #616), so true both ways in.
+    // (D10, #527, walked) or climbed into up the Scarp stair (C8, #528, a jump: #616), so true both ways in.
     crossing: { harder: 'The grass is long, and what hunts in it is harder than the road behind.', warning: 'Nothing that hunts the grass would spare you. The way back is still open.' },
   },
   { id: 'theglass', name: 'The Glass', area: 'glasswold', seeds: [[80, 282], [90, 300], [78, 312]], label: [96, 304] },
