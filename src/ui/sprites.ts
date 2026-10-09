@@ -32,6 +32,7 @@ import * as lights from './monsters/lights.ts';
 import * as keepers from './monsters/keepers.ts';
 import * as cats from './monsters/cats.ts';
 import * as giants from './monsters/giants.ts';
+import * as drakes from './monsters/drakes.ts';
 
 export { groundShadow } from './monsters/common.ts';
 
@@ -412,6 +413,7 @@ export const FAMILY: Readonly<Record<MonsterSprite, MonsterDrawer>> = {
   bay_keeper: keepers.draw, matron: keepers.draw, brother: keepers.draw, bell_ringer: keepers.draw, abbot: keepers.draw,
   snow_lynx: cats.draw,
   stair_giant: giants.draw, stair_king: giants.draw,
+  cinder_drake: drakes.draw, old_drake: drakes.draw,
 };
 
 /**
@@ -452,6 +454,7 @@ export const SPAN: Readonly<Record<MonsterSprite, readonly [number, number]>> = 
   bay_keeper: [0.28, 0.28], matron: [0.32, 0.33], brother: [0.28, 0.28], bell_ringer: [0.28, 0.39], abbot: [0.23, 0.26],
   snow_lynx: [0.48, 0.47],
   stair_giant: [0.21, 0.39], stair_king: [0.26, 0.47],
+  cinder_drake: [0.56, 0.56], old_drake: [0.38, 0.63],
 };
 /** How many pixels a drawing may reach past its span at any size, and so how far inside the view's edge a fight keeps the spans. */
 export const SPAN_SLACK = 2;
