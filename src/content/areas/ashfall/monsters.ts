@@ -8,6 +8,7 @@ import type { MonsterDef } from '../../../game/monsters.ts';
 export const SPRITES = [
   'strangler_vine', 'cinder_beetle', 'ember_salamander', 'ash_husk',
   'cinder_drake', 'old_drake',
+  'stoker', 'sentry', 'sentinel',
 ] as const;
 
 export const MONSTERS: readonly MonsterDef[] = [
@@ -26,4 +27,12 @@ export const MONSTERS: readonly MonsterDef[] = [
   // Old Cinder's crater (#515), its boss at 26: the boss line come down whole to a sweeper's share (MONSTERS §3.3) with the
   // drakes' breath, set off the line for its gate to set (tools/tests/harness.ts); it lies on its town and does not fly
   { id: 'old_drake', name: 'The Old Drake', plural: 'Old Drakes', sprite: 'old_drake', kind: 'beast', look: 'The mountain\'s eldest, asleep on what is left of the town.', level: 26, hp: 1226, ac: 26, attack: 17, dice: 21, sides: 7, bonus: 32, speed: 13, xp: 16533, gold: [0, 0], immune: ['fire'], sweep: { chance: 0.25, element: 'fire' }, tint: '#58524c', size: 1.8 },
+  // the vents (#513), a brute on MONSTERS §4.4's line at 25: a machine (§2), and fire does not touch it (§8.2)
+  { id: 'stoker', name: 'Stoker', plural: 'Stokers', sprite: 'stoker', kind: 'machine', look: 'It shovels nothing into nothing, and turns as you come.', level: 25, hp: 687, ac: 22, attack: 15, dice: 5, sides: 8, bonus: 8, speed: 8, xp: 1987, gold: [0, 0], immune: ['fire'], tint: '#57514a', size: 1.3 },
+  // all of Ashfall once the Ember Stone is lit, its groups `after` (F11's road first, #514), an elite on the line at 26:
+  // the long arm's clamp holds, paralysed at 0.15 as the elite's line has it
+  { id: 'sentry', name: 'Sentry', plural: 'Sentries', sprite: 'sentry', kind: 'machine', look: 'It is looking for whoever touched the Stones.', level: 26, hp: 584, ac: 25, attack: 16, dice: 6, sides: 8, bonus: 5, speed: 15, xp: 2067, gold: [0, 0], inflict: { cond: 'paralysed', chance: 0.15 }, tint: '#5e656d', size: 1.45 },
+  // the Ember Stone, the moment it lights (#516), its boss at 26 on MONSTERS §4.4's boss line, for #516's gate to tune;
+  // size 2 and drawn inside TALL_REACH
+  { id: 'sentinel', name: 'The Sentinel', plural: 'Sentinels', sprite: 'sentinel', kind: 'machine', look: 'The first thing up through the doors.', level: 26, hp: 1442, ac: 26, attack: 17, dice: 24, sides: 8, bonus: 29, speed: 13, xp: 16533, gold: [0, 0], tint: '#4f5359', size: 2 },
 ];

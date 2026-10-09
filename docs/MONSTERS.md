@@ -1250,9 +1250,9 @@ salamanders; the spider frame as the cinder beetle; the dead, cast in ash.
 | Ash Husk | skeleton | soldier, 25 | Old Cinder | *A man of ash, still holding his cup.* |
 | Stoker | heavy machines, new | brute, 25 | the vents | *It shovels nothing into nothing, and turns as you come.* Fire does not touch it |
 | Cinder Drake | drakes, new | brute, 25 | Fire Mountain's slopes | *The mountain has children.* Flies; its breath burns a row; fire does not touch it |
-| Sentry | heavy machines, new | elite, 26 | all of Ashfall, once the Ember Stone is lit | *It is looking for whoever touched the Stones.* |
+| Sentry | heavy machines, new | elite, 26 | all of Ashfall, once the Ember Stone is lit | *It is looking for whoever touched the Stones.* Holds (paralysis, 0.15) |
 | The Old Drake | drakes, new | boss, 26 | Old Cinder's crater | *The mountain's eldest, asleep on what is left of the town.* Size 1.8; its breath burns a row; fire does not touch it |
-| The Sentinel | heavy machines, new | boss, 26 | the Ember Stone, the moment it lights | *The first thing up through the doors.* |
+| The Sentinel | heavy machines, new | boss, 26 | the Ember Stone, the moment it lights | *The first thing up through the doors.* Size 2 |
 
 - **The vents**: two stokers with ember salamanders, where fire is useless and nothing but
   lightning troubles the machines.
@@ -1279,6 +1279,21 @@ haunches, its wings half folded, darker and crusted with sulphur, and scarred: a
 blind eye, a notch torn in a wing. Both breathe fire on a row and fire does not touch them; the
 Cinder Drake stands on the test drake's line (§3.3) and the Old Drake is set off it for Old Cinder's
 gate (docs/areas/ashfall.md §9). G10 and Old Cinder place them (#511, #515).
+
+The heavy machines are drawn (#520), a new family on a frame of its own
+(`src/ui/monsters/machines.ts`): the hull's own heavy work, plain plate riveted along ruled seams
+and joined at drums, each on the same legs, a rod of a thigh, a drum at the knee, a greave and a
+flat foot, with one fire in all of them seen only where the plate opens, and the chisel's mark cut
+once in each. The Stoker is a boiler on short bowed legs, its dome black with soot and a stack on
+it, the furnace door glowing in its belly; its near arm is a shovel, the blade worn bright at the
+lip, scooping at nothing. The Sentry is leaner and upright on long legs, for a head an eye, a lamp
+under a brow of plate that turns as it looks, and one arm long, hanging past the knee to an open
+clamp. The Sentinel is the family at its largest and plainest, size 2: a block of plate on legs
+planted wide, fists like anvils, a slit of fire for a visor and down its chest the line between two
+doors, the fire through it. Fire does not touch the stoker and the sentry's clamp holds
+(docs/areas/ashfall.md §9); the flue walker, the loader and the core sentry are each the frame's
+`Build` and a tint (§11). With them and the drakes, #520's nine are drawn. The boxes place them
+(#513, #514, #516).
 
 **Asks:** sweep with an element; `after`.
 
