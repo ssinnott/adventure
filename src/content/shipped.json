@@ -2774,6 +2774,8 @@
     "q_brother_truth",
     "q_carto_chain",
     "q_carto_chain_done",
+    "q_carto_fane",
+    "q_carto_fane_done",
     "q_carto_fen_edge",
     "q_carto_fen_edge_done",
     "q_carto_journal",

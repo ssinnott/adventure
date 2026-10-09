@@ -41,7 +41,8 @@
 // inside the Stone: the gallery, the benches, the lookout and the seedling's bed; the three parts set in
 // their sockets in any order, the Stone lit, the Sentinel won in its door and the sentries after it;
 // the lower gallery behind the housing's foot and the fourth journal in it; and the Cartographers'
-// Surveyor's rung paid for it at a hall of the Guild, the Chart House's shelf full (#635). Then the three
+// Surveyor's rung paid for it at a hall of the Guild, the Chart House's shelf full, and the Mapmaker's
+// rung after it, paid for the firelight on Meridian Camp's third level (#635). Then the three
 // third prestiges taught here (#448), each its trainer's quest played to the teaching by a company of 27:
 // the Paladin's lamp, the Barbarian's nest and the Druid's seedling.
 import type { Walkthrough } from '../../area.ts';
@@ -885,7 +886,9 @@ function oldCinder(w: Walk, ok: (cond: boolean, msg: string) => void): void {
  * and the Stone lit on F11; the lower gallery, found where the chain pin is driven into the housing's
  * foot and reached only through it, and the fourth journal in it; and the Cartographers' Surveyor's rung
  * for the journal found (#635), offered once Act III is done at any hall of the Guild, paid at the Chart
- * House, whose shelf then holds four.
+ * House, whose shelf then holds four; and after it the Mapmaker's rung, "Fane's Fire" (#635), offered to
+ * Mapmakers at either hall and paid at the Chart House for the firelight on Meridian Camp's third level,
+ * seen the once, Cador Lusk's word then changed.
  */
 function emberStone(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   const ES = MAP_DEFS.find((d) => d.id === 'ember_stone')!;
@@ -1045,6 +1048,48 @@ function emberStone(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   const lateGold = late.party.gold, early = take(q, late.world.state, late.party);
   ok(early.length === 2 && early[0].startsWith(q.early![0]) && late.party.gold === lateGold + 500 && rankOf('cartographers', late.party) === 3,
     `a company that had found the journal is paid at the taking, with the early words (${early.join(' ').replace(/\n+/g, ' ')})`);
+
+  // The Cartographers' Mapmaker's rung (#635), "Fane's Fire", on the same fresh Surveyors: not offered before
+  // the Surveyor's is paid, then offered alone at any hall of the Guild and taking nothing; taken with the
+  // fire unseen, the hall pays nothing; the firelight seen on the one way to the fire (Meridian Camp's third
+  // level, walked above), the Chart House pays 800 gold and 4,800 xp, once, the pack as it was with Fane's map
+  // in it, the company are Geographers and Cador Lusk has a pin past the vents. A company that had seen the
+  // fire first is paid at the taking, with the early words.
+  const fq = GUILD_QUESTS.find((g) => g.id === 'carto_fane')!, FIRE = 'meridian_camp3:mc3_fire';
+  const cador = CP.features!.find((p): p is Person => p.kind === 'npc' && p.name.startsWith('Cador Lusk'))!;
+  const word = (v: Walk): string => { v.world.travel('cinderport', cador.x, cador.y); return meet(cador, v.party, heard(v.world, cador)).text; };
+  const mapmakers = (): Walk => {
+    const v = surveyors();
+    v.party.flags[SLEEPERS_SEEN] = 1;
+    v.party.bag.push('fane_map');
+    return v;
+  };
+  /** The Surveyor's rung paid with the fourth journal found first, so the company are Mapmakers. */
+  const surveyed = (v: Walk): void => { open(v, ES.id, 'es_journal'); take(q, v.world.state, v.party); };
+  const m = mapmakers();
+  ok(offered('cartographers', m.party).map((o) => o.id).join() === q.id && fq.rank === 3 && !fq.item,
+    `${fq.title} waits behind ${q.title}: a Surveyor with the Sleepers seen is offered the fourth journal alone`);
+  surveyed(m);
+  const said = word(m), pack = m.party.bag.join(), purse2 = m.party.gold, xp2 = xpOf(m.party);
+  ok(rankOf('cartographers', m.party) === 3 && offered('cartographers', m.party).map((o) => o.id).join() === fq.id && ['Map Room', 'Chart House'].every((h) => fq.goals[0].text.includes(h)),
+    'the Surveyor\'s paid, the company are Mapmakers and it is offered alone at any hall of the Guild, Saltmouth\'s Map Room or the Chart House, and takes nothing');
+  ok(!take(fq, m.world.state, m.party).length && !report('cartographers', m.world.state, m.party).length && rankOf('cartographers', m.party) === 3, 'taken with the fire unseen, the hall pays nothing');
+  see(m, FIRE);
+  m.world.travel('cinderport', chart.x, chart.y);
+  const mapped = report('cartographers', m.world.state, m.party), pinned = word(m);
+  ok(mapped.length === 2 && mapped[0].startsWith(fq.paid[0]) && m.party.gold === purse2 + 800 && xpOf(m.party) >= xp2 + 4800 - m.party.members.length && rankOf('cartographers', m.party) === 4
+    && !!m.party.flags[doneFlag(fq.id)] && m.party.bag.join() === pack && m.party.bag.includes('fane_map'),
+    `the fire seen, the Chart House pays 800 gold and 4,800 xp, the pack as it was with Fane's map in it, and the company are Geographers (${mapped.join(' ').replace(/\n+/g, ' ')})`);
+  ok(!report('cartographers', m.world.state, m.party).length && !offered('cartographers', m.party).length && m.party.gold === purse2 + 800,
+    'and it is paid the once: a second report pays nothing, and nothing is offered');
+  ok(said.includes('no further') && pinned.includes('a pin in the map past the vents') && !pinned.includes('no further'),
+    'and Cador Lusk, who had the Company no further than the vents, has a pin in the map past them');
+  const soon = mapmakers();
+  surveyed(soon);
+  see(soon, FIRE);
+  const soonGold = soon.party.gold, hasty = take(fq, soon.world.state, soon.party);
+  ok(hasty.length === 2 && hasty[0].startsWith(fq.early![0]) && soon.party.gold === soonGold + 800 && rankOf('cartographers', soon.party) === 4,
+    `a company that had seen the fire first is paid at the taking, with the early words (${hasty.join(' ').replace(/\n+/g, ' ')})`);
 }
 
 /**
