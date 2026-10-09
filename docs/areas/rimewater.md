@@ -442,7 +442,8 @@ what is new, with points of interest and a first share of the pay.
 
 - **Purpose.** The act's last town and the Lanterns' fourth hall (call 5): where the cargo comes up
   through the ice, where the company stands the four nights, where tier 7 is sold (DESIGN §7) and
-  the act's gear step is bought (#535), and where Wenna waits after the bay (#76).
+  the act's gear step is bought (#535), and where Wenna waits after the bay, until the company is
+  in Monks' Vale (#76; #504).
 - **Businesses,** each with a room of its own (#496), the `interior` its feature names given with
   it:
   - The inn, whose rests count the nights, with the yard's door onto the ice at the hole. Interior:
@@ -457,9 +458,10 @@ what is new, with points of interest and a first share of the pay.
   - The provisioner. Interior: `rime_provisioner`.
   - The trainer's yard, to 23 (DESIGN §5). Interior: `rime_yard`.
 - **People.** The lodge-keepers, Lanterns who hold the hole open; the arrivals, a few a night, in
-  the yard by the fire; Wenna, after the bay (§5); the coachman of the yard (#539), and the one who
-  did not come (#56's 40); the stonecutter of Cairnmoor's 39, come down the drove road; the woman of
-  42, whose people are under Loch Fuar; the guide of 43, before she goes out to the glacier.
+  the yard by the fire; Wenna, after the bay and until the company is in Monks' Vale (§5); the
+  coachman of the yard (#539), and the one who did not come (#56's 40); the stonecutter of
+  Cairnmoor's 39, come down the drove road; the woman of 42, whose people are under Loch Fuar; the
+  guide of 43, before she goes out to the glacier.
 - **The nights.** Four flags, `night_1` to `night_4`, a flag a night, each set by a rest at the inn
   once the one before is set (call 5). Each night's arrivals are a once-event in the yard keyed on
   its flag: a man alone, then three, then a family; on the fourth the tallyman and the knockers out
@@ -926,9 +928,9 @@ holds:
   on the inside of the door, scratched with a nail, THE BLOOD OPENS THE DOOR. "We didn't grow here.
   We were brought." The entry says what is seen and the hand feels; it never says what the Stones
   are (DESIGN §7). The Matron falls, or does not: the step is the beds.
-- **South.** Back up, Wenna speaks at the door, and then she is at the lodge (#76). The two hundred
-  went south under the world; the goal points over the pass into Monks' Vale, Act IV's first step
-  (#499). The chapter's done flag ends the act.
+- **South.** Back up, Wenna speaks at the door, and then she is at the lodge (#76), until the
+  company is in Monks' Vale (#504). The two hundred went south under the world; the goal points over
+  the pass into Monks' Vale, Act IV's first step (#499). The chapter's done flag ends the act.
 
 **The lock** (EXPANSION §2.3; call 4). The door is Act III's one story lock: it opens for a company
 that has met Wenna, `q_wenna_up`, set when she comes up on the fourth night, and for no one before.
@@ -988,8 +990,10 @@ with it; the Whitespine's chapter (#505) takes it on over the pass. The door's l
 voice's word as it opens, so the journal's door is what every company saw. Back up from the beds,
 the girl out of the hole speaks at the door (K9's 24,28): they have marched the two hundred on
 south, under the world, for the mountains and the sea. Her words set `q_wenna_lodge`, her `until`
-there and her `after` by the yard's fire at Rime Lodge, 10,13, so she is never in two places. She is
-unnamed in every line, and in the journal. The walkthrough plays it at 20, 21 and 22: the four
+there and her `after` by the yard's fire at Rime Lodge, 10,13, so she is never in two places, and
+she is there until the company is in Monks' Vale, when she has gone on to Highcell's gate (the
+Whitespine's §9, #504's 8). She is unnamed in every line, and in the journal. The walkthrough plays
+it at 20, 21 and 22: the four
 nights stood at the inn and paid, the hole fought and the girl met at 20, the door at 21, the beds
 and the mouth at 22; in order, and with the pass's mouth reached first, when the journal writes
 nothing of it until the beds end the chapter. Each reads the same and ends once (§9, #492).
@@ -1836,12 +1840,13 @@ Decided by delegate for #492, each the owner's to overturn:
    west way alone.
 7. **Back up from the beds she speaks at the door, and then she is at the lodge:** a word of K9's
    girl, `after` the beds' flag, sets `q_wenna_lodge`; K9's girl goes `until` it and a girl by the
-   yard's fire at Rime Lodge, 10,13, comes `after` it, as M9's girl hands on to K9's on
+   yard's fire at Rime Lodge, 10,13, comes `after` it and goes `until` the company has entered
+   Monks' Vale, when she has gone on to Highcell's gate (#504's 8), as M9's girl hands on to K9's on
    `q_wenna_up`. Her `until` on the beds alone would take her from the door before she could speak
    there, so her words set the one new flag. No entry reads it, so nothing she says is written into
-   a chapter done. At the door: the two hundred marched on south, under the world, for the
-   mountains and the sea (STORY, Act Four); at the lodge: she goes home to her mother when they are
-   brought up, not before. She is unnamed in every line.
+   a chapter done. At the door: the two hundred marched on south, under the world, for the mountains
+   and the sea (STORY, Act Four); at the lodge: she goes home to her mother when they are brought
+   up, not before. She is unnamed in every line.
 8. **The south's entry says what is seen,** the two hundred not in the beds and the pass's snow
    trodden, and not her words, since with the pass taken first it is written at the beds, before she
    speaks. Its goal points up the road from Loch Fuar to the pass's mouth on K10.
@@ -1983,9 +1988,9 @@ Owed by Rime Lodge as built (#487, §4.3):
 - **To #492 and #494:** the chapter's entries on the nights and on Wenna, and her place at the lodge
   after the bay (#492); the words of 39, 40, 42 and 43 on the people placed, and the lodge's guide
   before she goes (#494). The chapter's are built: an entry a night, hers on the fourth and her
-  place by the yard's fire after she speaks at the door (§5; #492's 2 and 7). The side quests' are
-  built: the words of 39, 40, 42 and 43, with the guide by the gate before she goes (§6; #494's 8
-  and 10).
+  place by the yard's fire after she speaks at the door, until the company is in Monks' Vale (§5;
+  #492's 2 and 7; #504's 8). The side quests' are built: the words of 39, 40, 42 and 43, with the
+  guide by the gate before she goes (§6; #494's 8 and 10).
 - **To #489 and #490:** Wenna's `until` at the hole, and her place at the door. K9 built both
   (§4.5, §5) and the bay the door's exit (§4.6, §5).
 

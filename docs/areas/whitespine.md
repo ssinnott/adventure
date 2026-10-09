@@ -12,10 +12,10 @@ is in it, the plan for building it, box by box, and the briefs. Its work is file
 IV's systems are #442's (§3). Figures are measured on main at `6032251` (2 October 2026) with
 `worldGrid` (`src/game/atlas.ts`).
 
-Its first four boxes are built, J11, Monks' Vale (#499, §4.2), which lists the area, I11, the
-Peak Stone's (#501, §4.4), I10, Stairwatch and the Stair's head (#502, §4.5) and I9, the ridge
-north (#503, §4.6), and so is Highcell, the dungeon through J11's gate (#500, §4.3); its eight
-monsters are drawn (§3), and the rest is to build. Its content is
+Its first five boxes are built, J11, Monks' Vale (#499, §4.2), which lists the area, I11, the
+Peak Stone's (#501, §4.4), I10, Stairwatch and the Stair's head (#502, §4.5), I9, the ridge north
+(#503, §4.6) and I8, Sheer Point (#504, §4.7), and so is Highcell, the dungeon through J11's gate
+(#500, §4.3); its eight monsters are drawn (§3), and the rest is to build. Its content is
 `src/content/areas/whitespine/` (maps, monsters, items, climate, its part of the world map and its
 walkthrough; its chapter of the one quest, The Bells, in `chapter.ts`, and its side quests in
 `quests.ts`, to come); it has no town, so no rooms. Its ids: the area `whitespine`, its zones
@@ -33,8 +33,8 @@ Whitespine three zones:
 |---|---|---|---|
 | Monks' Vale | 22–23 | 3,402 | J11 |
 | The High Spine | 23–24 | 3,118 | I11, I10 |
-| Sheer Point | 23–24 | 1,396 | I9 |
-| The area | 22–24 | 7,916 | J11, I11, I10, I9 |
+| Sheer Point | 23–24 | 1,396 | I9, I8 |
+| The area | 22–24 | 7,916 | J11, I11, I10, I9, I8 |
 
 Squares are land without shallows or rivers. The area is about 7.7 zone maps (EXPANSION §1 has
 7.7), and only 3,961 of its squares a company could walk: more than half of it is mountain and peak
@@ -50,9 +50,11 @@ laid whole in the High Spine, takes 154 of Monks' Vale's on its crest and 187 of
 Sheer. I10 (#502), laid whole in the High Spine, takes 31 of Loch Fuar's at its north-east corner,
 all peak and mountain, and 3 of Cindercoast's, the cliff at its north-west corner. I9 (#503), laid
 whole in Sheer Point, holds 278 of its 1,024 squares in that zone by the atlas's cut as it stands,
-with 547 of the High Spine's, 194 of Loch Fuar's and 5 of no zone's (§4; §9, #503's 1). Laying
-Highcell (#500) moves no square: its two plates, at 322,346 and 322,352, are places on the atlas,
-which the grid does not read.
+with 547 of the High Spine's, 194 of Loch Fuar's and 5 of no zone's (§4; §9, #503's 1). I8 (#504),
+laid whole in Sheer Point, has nothing of another zone's: by the atlas's cut as it stands 757 of its
+1,024 squares are the Point's, land and shallows, and 267 are sea in no zone (§4; §9, #504's 1).
+Laying Highcell (#500) moves no square: its two plates, at 322,346 and 322,352, are places on the
+atlas, which the grid does not read.
 
 **The grid** (EXPANSION §8.2; docs/areas/shelf.md §1). The Whitespine is the I and J columns from
 row 8 to row 12, with K11 and K12 holding Monks' Vale's east under the pass. The land worth a map is
@@ -103,8 +105,8 @@ crest the year round, wind, cloud below the peaks; clear and bitter at night.
 
 ## 3. What is built
 
-Four boxes and a dungeon, J11, the area's first, which lists the area (#499), Highcell, through
-its gate (#500), I11 (#501), I10 (#502) and I9 (#503):
+Five boxes and a dungeon, J11, the area's first, which lists the area (#499), Highcell, through
+its gate (#500), I11 (#501), I10 (#502), I9 (#503) and I8 (#504):
 
 - **Monks' Vale** (J11, `monksvale_j11`, core, band 22–23; #499): the pass's road down from K10's
   saddle, which is taken and not walked, over the north edge, then square to square through the
@@ -161,34 +163,48 @@ its gate (#500), I11 (#501), I10 (#502) and I9 (#503):
   stone stands on the trail and the masons beyond it. In the pines a camp in the crest's lee, a
   lamp kept burning at the Sheer's edge and a hermit by the shore. Three groups: spine eagles in
   the pines by the way in, snow trolls in the gully and Ashen masons at the trail's end.
+- **Sheer Point** (I8, `sheerpoint_i8`, core, band 22–24; #504): on up the ridge trail, the rock
+  warm under it, to its end on a lip over the tip, where the Point runs out into the sea and the
+  heat comes up off it. A masons' track goes down through the rock to the shore, and from the shore
+  the Hand's causeway of cut stone runs out over the water, a square wide, every stone glowing a
+  little, and stops over deep water, as far as the Hand has built it, the Hearth's light beyond.
+  Masons work at its root and, with their foreman, on its end; eagles hunt over the tip, and by
+  night a snow troll comes down to the east shore. On the shingle west of the root a camp, where
+  Wenna waits and asks whether the company will sleep by her fire; if it does, it wakes to her
+  blanket cold, a boat going out along the stones and, on the first stone, her knot. In the tip's
+  rock Rook's Nest, a hollow with a watcher who counts the stones; its back wall is wet and by night
+  oars are heard behind it, where the Hand keeps its boats and its crates under seal. On the tip's
+  last rock a cairn and, at the tide's edge, the drowned god's shrine; down the pines to the east a
+  deserter in the rocks with his tally. Four groups: spine eagles by the track's foot, masons at the
+  causeway's root, their foreman's on its end and a snow troll by night.
 
 Its atlas rows are charted in `src/content/areas/whitespine/atlas.ts` (#498), the area's own `atlas`
 since J11 lists the area; until then `src/content/atlas.ts` spread them into the plan where its rows
 were, as Saltreach's was before #170: the zones with their bands (Monks' Vale 22–23, with J11 laid
 on it and its crossing line said in its own words, §4.2; the High Spine 23–24, with I11 and I10 laid
-on it and its crossing line said in its own words, §4.4; Sheer Point 23–24, with I9 laid on it and
-its crossing line said in its own words, §4.6), Highcell's two plates,
+on it and its crossing line said in its own words, §4.4; Sheer Point 23–24, with I9 and I8 laid
+on it and its crossing line said in its own words, §4.6), Highcell's two plates,
 `monastery` at 322,346 and `monastery2` at 322,352 (the first moved from K12's, §9), its sites
 (Highcell at J11's gate, 322,342, the Peak Stone, Stairwatch, Spine Summit, Rook's Nest and the
 Giants, its own; the Sheer, the plan's, §10) and its links: the pass in, the monastery's way in, the
 Giants' Stair and the ridge trail (#443, call 3). Spine Summit is a camp now, the Peak Stone a
-stone, Highcell built and Stairwatch a ledge, none planned any more (§9, #499's 12; #500's 1;
-#501's 16; #502's 11).
+stone, Highcell built, Stairwatch a ledge and Rook's Nest a hollow, none planned any more (§9,
+#499's 12; #500's 1; #501's 16; #502's 11; #504's 11).
 
 Its ground (#543): peaks (`A`) and cliffs (`|`), the mountain's rock to walk into, see and climb,
 with the road through them plain road, so the scaffold drafts each box square for square (J11's 202
 peaks, I11's 48 peaks and 64 cliffs) and the view draws a summit and a face (docs/SLICE.md).
 
 Its row on the curve is in (#542), in `src/content/progression.ts`: band 22–24, next 24, window
-5,000, owed to #445 while the area is built box by box, with 15,325 xp a member and 4,310 gold in
-the boxes built, J11's 2,791 and 700, Highcell's 4,183 and 600, I11's 2,355 and 300, I10's 4,197
-and 1,920 and I9's 1,800 and 790 (§8). It has no step on the gear ladder, no town to sell one: Rime
-Lodge's rung is the pass's, and Cinderport's step (docs/areas/ashfall.md §4.4) comes two levels on;
-J11's store holds a second of Rimewater's Guide's Staff +1 (§4.2), Highcell's undercroft an Ice Axe
-+1 and a Skinning Knife +1 (§4.3), I10's hoard a Bear Spear +1, Rimewater's rung (§4.5) and I9's
-cache a Hunter's Bow +1 on the same rung (§4.6). The systems it waits on are the rest of
-#442's: the toll (#544), sweep (#545), stone (#546), the crossings (#547), the Ember Stone (#548)
-and the bot (#549).
+5,000, owed to #445 while the area is built box by box, with 17,429 xp a member and 5,290 gold in
+the boxes built, J11's 2,791 and 700, Highcell's 4,183 and 600, I11's 2,355 and 300, I10's 4,197 and
+1,920, I9's 1,800 and 790 and I8's 2,104 and 980 (§8). It has no step on the gear ladder, no town to
+sell one: Rime Lodge's rung is the pass's, and Cinderport's step (docs/areas/ashfall.md §4.4) comes
+two levels on; J11's store holds a second of Rimewater's Guide's Staff +1 (§4.2), Highcell's
+undercroft an Ice Axe +1 and a Skinning Knife +1 (§4.3), I10's hoard a Bear Spear +1, Rimewater's
+rung (§4.5) and I9's cache a Hunter's Bow +1 on the same rung (§4.6); I8's cave holds none (§4.7).
+The systems it waits on are the rest of #442's: the toll (#544), sweep (#545), stone (#546), the
+crossings (#547), the Ember Stone (#548) and the bot (#549).
 
 The monks are drawn (#507), three of MONSTERS §8.1's eight, ahead of the boxes that place them: the
 Brother, the Bell-ringer and the Abbot, robed on the keepers' frame (`src/ui/monsters/keepers.ts`).
@@ -210,10 +226,10 @@ its line and the king by his gate (§9, #502's 2 and 3). §9 has the decisions.
 
 ## 4. What is still to build
 
-All of it but J11, Highcell, I11, I10 and I9, built (#499, §4.2; #500, §4.3; #501, §4.4; #502,
-§4.5; #503, §4.6): 7,916 squares of land, 3,961 of them walkable, the plan's figures (§1). On the
-grid the plan is eight boxes and a dungeon, five boxes on the road and three behind; the five hold
-5,138 of those squares, 2,199 of them walkable:
+All of it but J11, Highcell, I11, I10, I9 and I8, built (#499, §4.2; #500, §4.3; #501, §4.4; #502,
+§4.5; #503, §4.6; #504, §4.7): 7,916 squares of land, 3,961 of them walkable, the plan's figures
+(§1). On the grid the plan is eight boxes and a dungeon, five boxes on the road and three behind;
+the five hold 5,138 of those squares, 2,199 of them walkable:
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
 |---|---|---|---|---|---|---|---|---|
@@ -222,7 +238,7 @@ grid the plan is eight boxes and a dungeon, five boxes on the road and three beh
 | I11 | The Peak Stone's box | the High Spine | core | 22–23 | 837 (pine 536, mountain 210, peak 48, cliff 42) | the Peak Stone at 292,318, whole; the ridge trail's foot; the eagles' nest | none | #501 |
 | I10 | Stairwatch and the Stair's head | the High Spine | core | 22–24 | 961 (pine 665, mountain 194, peak 85, cliff 17) | the Stair's head at 272,306 and the toll; the Stair-king; Stairwatch at 270,312 | the Stair and its toll | #502 |
 | I9 | The ridge north | Sheer Point | country | 22–23 | 774 (pine 357, mountain 205, peak 204), 11 shallow | the ridge trail along the crest; snow trolls; the Hearth seen | none | #503 |
-| I8 | Sheer Point | Sheer Point | core | 24 | 542 (mountain 261, hills 134, peak 122, pine 17), 86 shallow | the causeway; the Hand's camp and Wenna; Rook's Nest at 286,230 | the causeway; Wenna taken | #504 |
+| I8 | Sheer Point | Sheer Point | core | 22–24 | 542 (mountain 261, hills 134, peak 122, pine 17), 86 shallow | the causeway; the Hand's camp and Wenna; Rook's Nest at 286,230 | the causeway; Wenna taken | #504 |
 | J10, I12, J12 | The country behind | Monks' Vale, the High Spine | country, behind the road | 23–24 | 875, 959 and 937 | the giants' ground above the Stair at 300,296; the range running on south | none | #508 |
 
 The core is the four boxes the owner's plan names (J11, I10 and I8, which hold a step, and I11,
@@ -634,10 +650,11 @@ settled in its issue.
   you came is still open.*); the floor is 22 on both sides, so nothing rises; straight back it
   hears nothing (§9, #503's 2 and 3). The trail goes up the crest to the north edge, at 18 from row
   31 to 16, at 19 from 15 to 7 and at 20 from 7 to 0, out at 20,0 (284,254), where the atlas's
-  meets it at 284,253 (§9, #503's 5). The north, west and east edges end the world against I8, H9
-  and J9, pinned in `tools/tests/outdoors.ts` with void past them, and I10's north edge is pinned
-  against this south one; nothing leaves north until I8 is built (§9, #503's 18). Up the trail the
-  Hearth's heat grows: at 18,28 the wind comes warm out of the north and the snow is wet; at 19,15
+  meets it at 284,253 and I8 takes it on (§4.7; §9, #503's 5). The west and east edges end the world
+  against H9 and J9, pinned in `tools/tests/outdoors.ts` with void past them, and I10's north edge
+  is pinned against this south one and I8's south edge against this north one (§4.7). Up the trail
+  the Hearth's heat grows: at 18,28 the wind comes warm out of the north and the snow is wet; at
+  19,15
   the snow is gone off the rocks; at 20,2 the Hearth stands up out of the water, *so close its heat
   is on your face*; at 20,1 a road of cut stone runs out over the sea, *and every stone of it
   catches the light*, the causeway seen and no word of the shards (§9, #503's 13). On the crest at
@@ -672,7 +689,7 @@ settled in its issue.
     412 squares, 371 needed) and the furthest 10, with no sign among its 22 points. It claims
     nothing as new (§7).
 
-### 4.7 I8, Sheer Point (#504): core, band 24
+### 4.7 I8, Sheer Point (#504): core, band 22–24
 
 - **Purpose.** Sheer Point's step of the quest, and the act's turn: the finger of land toward the
   Hearth, the Hand's causeway of cut stone running out over the water, every stone a stolen shard,
@@ -709,6 +726,62 @@ settled in its issue.
 - **New here.** The sea reached from the range; a causeway over water; a person taken.
 - **Finds.** A shard from the cave, a quest item for #548's Stone; 400 gold.
 - **Pay.** About 1,500 xp a member.
+- **As built** (#504, 9 October): the brief's places, its secret the doc's sea cave, laid whole in
+  Sheer Point at 264,222, band 22–24 (§9, #504's 1, 2 and 9). The box is its whole 1,024 squares:
+  mountain 307, sea 270, hills 142, peak 121, shallow 89, pine 35, road 20, dirt 13, rock 7, stone
+  6, sand 6, grass 6, the hut 1 and the door 1; by the atlas's cut 757 are the Point's and 267 sea
+  in no zone (§1). The seam with I9 is walked, the shallows at 2 to 3 and the pines at 4 to 6 open
+  across it, and the ridge trail goes on from I9's 20,0 (284,254) to I8's 20,31 (284,253); the zone
+  and the floor are the same, so nothing is said going or coming back. The trail runs at 20 from row
+  31 to 27 and at 21 from 27 to 14, to its end at 22,14 (286,236), the atlas's, with the rock warm
+  under it at 21,24; from its end the masons' track, dirt, goes down through the rock to the tip's
+  hills at 20,9 (§9, #504's 3). The north and west edges are the sea and the east edge the tip's
+  hills and the pines against J8, pinned in `tools/tests/outdoors.ts` with void past them, and I9's
+  north edge is pinned against this south one; nothing leaves the box. The causeway is cut stone, a
+  square wide, from its first stone on the shore at 17,6 to 17,1 (281,223), over deep water one
+  short of the north edge: as far as the Hand has built it, the Hearth's light beyond (§9, #504's
+  4). At its root the masons' tally-house, a hut of the same stone, at 18,6; on the causeway a stone
+  at 17,4 is cut deep with THE SKY IS A LID, plain, with no reading and no word of it elsewhere. The
+  step is the first stone's, in the doc's line, and after the night the doc's other line shows on it
+  as the knot (§9, #504's 13). Wenna goes on ahead: by the lodge's fire until the company is in
+  Monks' Vale, at J11's gate, 27,23, until it is on the Point, and then at the camp, The shingle
+  fire, 14,8, standing at 13,8 until she is taken (§9, #504's 8). The game has no hook for a rest at
+  a camp, so the night is her question: her first words end in *Sleep by her fire?* and Sleep sets
+  `q_wenna_taken` (`WENNA_TAKEN`, exported from `maps/sheerpoint_i8.ts`), with *One of you is
+  shouting at the water. Her blanket by the fire is cold.* and *Out along the stones a boat is
+  going, rowed hard, and none of you saw where it put out from.*; Not yet sets nothing and she asks
+  again. The camp's own rest does not take her: that wants a camp `nights` like the inn's, a systems
+  change, the owner's to ask for, and the chapter's step (#505) reads `q_wenna_taken`, which only
+  this choice sets (§9, #504's 7; §11). Rook's Nest is a hollow high in the tip's rock at the
+  atlas's site, 22,8 (286,230), its mouth onto the hills at 22,9, and the watcher in it, at 21,7, is
+  words only, his trainer entry and the Thief's quest being #448's (§9, #504's 11). At the hollow's
+  back, 22,7, the rock is wet and smells of the sea, the hint (`i8_damp`, always there), and by
+  night oars are heard under it (`i8_oars`); the wet rock hides a secret door at 22,6, and behind it
+  the sea cave, 20 to 22,5, walled in rock and deep water so that no climb, wade or float reaches it
+  (740 squares checked). In it are the Hand's grey boats at 20,5, their water, 20,4, running out
+  under the rock beside the stones and hidden from the causeway by the mountain at 19,4 and 5;
+  crates under the Hand's seal at 21,5, with shards of every colour not yet cut in the straw, seen
+  and not taken, the act having no Rift to take one to; and at 22,5 the chest `i8_hold`, 400 gold
+  and no item (§9, #504's 9 and 10). The boat from nowhere is in the waking's words. On the tip's
+  last rock, 26,3, a cairn, a Sapphire Vial in it and no gold; at the tide's edge, 27,5, the drowned
+  god's shrine, its bowl heaped with shells (endurance). Things seen: the troll's leavings at 28,12,
+  a grey boat's ribs at 8,13 and the pines grown down into the sea at 6,26. Down the east pines a
+  mason's hammer dropped at 30,19 and, in the rocks at their end, 31,30, the deserter, words only,
+  with his tally at 31,29, which ends ELEVEN; his quest, The Mason's Tally, is #506's (§6; §9,
+  #504's 12 and 13). Four groups (§9, #504's 5): spine eagles, 4, at the track's foot, 18,9, the
+  nearest, at 22; Ashen masons, 3, at the causeway's root, 17,7; the foreman's, five masons, the
+  foreman their `leader`, not roaming, at work on the causeway's end, 17,2, the box's hardest; and a
+  snow troll, 1, by night, not roaming, at the east shore, 29,8. It departs from the brief in the
+  band, 22–24 and not 24, in the night, which is Wenna's question and not the camp's rest, in the
+  finds, which hold no shard, and in the secret, which is the doc's and not the issue's (§9, #504's
+  2, 7, 9 and 10).
+  - **Measured.** A company at 22 wins every fight and manages 8.99 fights to a rest, inside the
+    aim, with 64.7% of its days ending in a fight broken off, the foreman's five, against I9's
+    21.3%; the check does not bind it. It walks Sheer Point's road, I9's trolls and masons and I8's
+    eagles, masons and foreman's, every time. Two under, at 20, it wins every fight too, owed to #18
+    (§9, #504's 15). I8 pays 2,104 xp a member and 980 gold a clear. Density 100.0% within 8 steps
+    (all 229 squares, 207 needed) and the furthest 8, with no sign among its 26 points. It claims
+    nothing as new (§7).
 
 ### 4.8 J10, I12 and J12, the country behind (#508): country, band 23–24, parked
 
@@ -733,9 +806,9 @@ and goals, in the journal's voice, keyed to flags, events and maps the save hold
 - **The causeway.** The finger of land toward the Hearth, so close its heat is felt; the Hand's
   road of cut stone, every stone a stolen shard. Every shard is a step. Wenna is at the camp.
 - **The night.** Wenna gone, a boat going out along the stones, her knot on the first one
-  (`q_wenna_taken`). Cassian reads the Meridian journal's last line, *The heart opens for whoever
-  makes it whole*: one Stone left, on the far side, never finished. The goal turns south to the
-  Stair.
+  (`q_wenna_taken`, which only her question at the camp sets, not a rest: §4.7). Cassian reads the
+  Meridian journal's last line, *The heart opens for whoever makes it whole*: one Stone left, on the
+  far side, never finished. The goal turns south to the Stair.
 - **The Stair.** The giants and their toll, over the range and down. Paid or fought, the chapter's
   done flag is set at the head, looking down into ash; the next chapter is Ashfall's.
 
@@ -773,7 +846,9 @@ Pay is xp a member, whichever way the choice goes, shared by level: about 900 be
   there as words only; the quest that joins them is #506's (§4.5; §9, #502's 5 and 12).
 - **The Mason's Tally.** A mason has deserted the causeway and hides in the rocks with the tally:
   eleven more shards and the road reaches the isle. He wants passage to Cinderport. Buy it for him,
-  or swap the tally's page so the Hand sends for the wrong count.
+  or swap the tally's page so the Hand sends for the wrong count. As built (#504) the deserter
+  stands in the rocks at the pines' end with his tally, as words only; the quest that joins them is
+  #506's (§4.7; §9, #504's 12).
 
 ## 7. Encounters, and what is new
 
@@ -797,7 +872,10 @@ with J11 (#499), the monastery with Highcell (#500), cliffs with I11 (#501) and 
 (#502), the family alone, since the toll is Thornmark's mechanic (`encounter:choice`) and sweep has
 no token to claim; a machine in a robe has no token either and a bell that holds is paralysis, on
 the road before in the Kilns and others (§9, #499's 15; #500's 17; #501's 13; #502's 15). I9 (#503)
-claims nothing, its brief having nothing new: the ridge is the walk (§4.6; §9, #503's 16).
+claims nothing, its brief having nothing new: the ridge is the walk (§4.6; §9, #503's 16). I8 (#504)
+claims nothing either: the sea reached from the range, a causeway over water and a person taken have
+no token to claim, the causeway's stone being the Kilns' pier's, and a cave on the atlas is on the
+road before (§4.7; §9, #504's 14).
 
 ## 8. The numbers
 
@@ -817,29 +895,31 @@ claims nothing, its brief having nothing new: the ridge is the walk (§4.6; §9,
   briefs are settled. As built: J11 2,791 (#499), 1.05 times its scaled share; Highcell 4,183
   (#500), 1.10 times its 3,800; I11 2,355 (#501), 1.00 times its 2,350; I10 4,197 (#502), 1.20 times
   its 3,500, under the 4,375 cap, and 1,046 to a company that pays the toll; I9 1,800 (#503), 0.88
-  times its 2,050: 15,325 between them by the curve's sum, so with the other scaled shares (3,500)
-  the shares stand at about 18,825, 1.05 times the ask (§9, #499's 9; #500's 4; #501's 9; #502's 10;
-  #503's 9).
+  times its 2,050; I8 2,104 (#504), 0.96 times its 2,200: 17,429 between them by the curve's sum, so
+  with the side quests' scaled share (1,300) the shares stand at about 18,729, 1.05 times the ask
+  (§9, #499's 9; #500's 4; #501's 9; #502's 10; #503's 9; #504's 6).
 - **Gold.** Training six members from 22 to 24 costs about 10,800 with today's `trainPrice`, but
   nothing trains here (#443, call 7): the gold goes over the range to Cinderport, which teaches to
   27, and the third prestiges ask quests, not gold (DESIGN §5). The band's price window is 5,000
   (#542), and no find or ware in the area comes near it: the pass has no step of its own and wears
   Rimewater's rung, 1,750 to 2,050 gold with its pluses. The toll is set with #544 inside the
-  window, dear enough to be a choice and never a wall. A clear should still pay the training, in the hoard, the
-  undercroft and the masons' cache. As built: J11 holds 700 (#499), 300 in the cairn at the pass's
-  foot and 400 in the store; Highcell holds 600 (#500), in the undercroft's chest; I11 holds 300
-  (#501), in the chest under the slab; I10 holds 1,920 (#502), 1,200 in the hoard under the seat
-  and the purses of the king (250 to 500) and of three giants (70 to 160 each); I9 holds 790
-  (#503), 500 in the cache behind the tally and the purses of four masons (45 to 100 each); so the
-  five hold 4,310 of the 10,800. The toll is 1,500, about what the range's finds hold before the
-  head (J11, I11 and Highcell, 1,600) and under the dearest ware the pass wears. The dearest find
-  is I10's Bear Spear +1 at 2,050, Rimewater's rung, in the hoard, inside the window; I9's Hunter's
-  Bow +1 in the cache is the same rung at the same price; Highcell's is the Ice Axe +1 at 1,950 and
-  J11's the Guide's Staff +1 at 1,750 (§9, #502's 5 and 6; #503's 6).
+  window, dear enough to be a choice and never a wall. A clear should still pay the training, in the
+  hoard, the undercroft, the masons' cache and the sea cave. As built: J11 holds 700 (#499), 300 in
+  the cairn at the pass's foot and 400 in the store; Highcell holds 600 (#500), in the undercroft's
+  chest; I11 holds 300 (#501), in the chest under the slab; I10 holds 1,920 (#502), 1,200 in the
+  hoard under the seat and the purses of the king (250 to 500) and of three giants (70 to 160 each);
+  I9 holds 790 (#503), 500 in the cache behind the tally and the purses of four masons (45 to 100
+  each); I8 holds 980 (#504), 400 in the sea cave's chest and the purses of eight masons; so the six
+  hold 5,290 of the 10,800. The toll is 1,500, about what the range's finds hold before the head
+  (J11, I11 and Highcell, 1,600) and under the dearest ware the pass wears. The dearest find is
+  I10's Bear Spear +1 at 2,050, Rimewater's rung, in the hoard, inside the window; I9's Hunter's Bow
+  +1 in the cache is the same rung at the same price; Highcell's is the Ice Axe +1 at 1,950 and
+  J11's the Guide's Staff +1 at 1,750; I8 holds no ware, its chest gold alone (§9, #502's 5 and 6;
+  #503's 6; #504's 10).
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor: a
   company at 22 wins nine in ten of J11's fights and walks the road from the pass's foot to the gate
-  resting at its camp; one at 20 wins no more than one in four. The Abbot is won about half the
-  time at 23 and nearly always at 25; the Stair-king the same. The bot must know the toll (#549): it
+  resting at its camp; one at 20 wins no more than one in four. The Abbot is won about half the time
+  at 23 and nearly always at 25; the Stair-king the same. The bot must know the toll (#549): it
   refuses, so that the gate measures the fight. As built: a company at 22 wins every fight on J11
   and walks Monks' Vale's road every time, 10.50 fights to a rest; one at 20 wins every fight too,
   owed to #18 as Rimewater's boxes' is (§4.2). On Highcell a company at 22 wins every fight in the
@@ -854,16 +934,20 @@ claims nothing, its brief having nothing new: the ridge is the walk (§4.6; §9,
   the gate's own measure 56% at 23 and 97% at 25, so "about half at 23, nearly always at 25" holds
   (§4.5; §9, #502's 1 and 3). On I9 a company at 22 wins every fight and walks the road past the
   trolls and the masons every time, 9.43 fights to a rest, inside the aim; one at 20 wins every
-  fight too, owed to #18 (§4.6; §9, #503's 11). The Whitespine's 19 groups are won 96% of the
-  fights at their maps' floors and 91.5% two under, over the limit of 90%, so the area's owed entry
-  (#18) is back.
+  fight too, owed to #18 (§4.6; §9, #503's 11). On I8 a company at 22 wins every fight and walks the
+  road past I9's trolls and masons and I8's eagles, masons and foreman's every time, 8.99 fights to
+  a rest, inside the aim, with 64.7% of its days ending in a fight broken off; one at 20 wins every
+  fight too, owed to #18 (§4.7; §9, #504's 15). The Whitespine's 23 groups are won 96.7% of the
+  fights at their maps' floors and 93% two under, over the limit of 90%, so the area's owed entry
+  (#18) stays.
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3),
   measured over the squares the mountain leaves. As built: J11 99.1% within 8 steps and the furthest
   9, with no sign among its 22 points (#499); Highcell's two levels 100.0% within 7 steps, the
   furthest 5 on both, with one sign among their 15 and 9 points (#500); I11 99.5% within 8 steps and
   the furthest 9, with no sign among its 26 points (#501); I10 99.7% within 8 steps and the furthest
   9, with no sign among its 31 points (#502); I9, country, 100.0% within 12 steps (all 412 squares,
-  371 needed) and the furthest 10, with no sign among its 22 points (#503).
+  371 needed) and the furthest 10, with no sign among its 22 points (#503); I8, core, 100.0% within
+  8 steps (all 229 squares, 207 needed) and the furthest 8, with no sign among its 26 points (#504).
 
 ## 9. Decisions
 
@@ -877,8 +961,10 @@ Decided by the owner's delegate on 2 October 2026 (#443), and followed here:
    `kind: person`, and break when the king falls. This answers MONSTERS' open question 2.
 2. **Sheer Point is reached along the ridge** (call 3): the new trail from the Peak Stone north,
    open from the start, with the causeway's camp on the Point's shore. Wenna is a person who moves
-   (#76): after the bay at Rime Lodge, then at Highcell's gate when the company arrives, then at
-   the camp, never in a fight. Resting at the camp sets `q_wenna_taken`: one once-event, no counter.
+   (#76): after the bay at Rime Lodge, by the yard's fire until the company is in Monks' Vale, then
+   at Highcell's gate, J11's 27,23, until it is on the Point, then at the camp, never in a fight.
+   At the camp her question sets `q_wenna_taken`, not a rest: one once-event, no counter (§4.7; §9,
+   #504's 7 and 8).
 3. **Road order holds** (call 6): the Whitespine is Act IV's first area, the Stair its way on.
 4. **Cinderport holds the halls** (call 7): Highcell sells and teaches nothing, its brothers being
    machines, and the Bard's trainer in the bell tower is a living Laureate hiding among them.
@@ -904,7 +990,7 @@ Proposed, for the owner, each in the issue that would build it:
 - **I8's band.** The plan gives it 24, and a band of 24 alone wants its hardest group at 24; the
   roster's top below the bosses is the masons at 23. Either the box is laid 23–24, as C7 was
   (docs/areas/saltreach.md §9, #178's 2), or the masons' foreman, a stat and not a drawing, averages
-  the second group to 24. For the owner, with #504.
+  the second group to 24. For the owner, with #504. Built at 22–24, neither way (§9, #504's 2).
 - **The toll's price and its remembering** (#544): a sum inside the window (§8); paid once, the
   Stair stays open to that company; the king dead, nobody keeps it. The bot refuses (#549).
 - **The giants' ground is J10's,** parked with it; the Stair's head holds the king and the two
@@ -1326,7 +1412,59 @@ Decided by delegate for #503, each the owner's to overturn:
 17. **Sheer Point's road** (the gate's `ROADS`) is the trolls and the masons; the eagles are off
     the trail, as I10's are off the High Spine's road.
 18. **No exit north:** the world ends past 20,0 until I8 (#504) is built, and the walkthrough says
-    so.
+    so. I8 is built: the trail goes on into it (#504's 3).
+
+Decided by delegate for #504, each the owner's to overturn:
+
+1. **I8 is laid in Sheer Point** (`sheerpoint_i8`, 264,222, core): the cut is all the Point's, 757
+   squares of land and shallows, and 267 are sea in no zone. No crossing line from I9: same zone,
+   same floor.
+2. **Band 22–24, not the doc's 24:** the curve wants the hardest group at the greater of the floor
+   plus 1 and the top less 2, 25 at 24 alone and 24 at 23–24, and the roster's top below the bosses
+   is 23, so the box is banded from the area's floor as I10 is (#502's 1). The foreman is the
+   group's `leader`, not a level; the gate judges the box at 22.
+3. **The trail as the atlas cuts it,** ending at 22,14 (286,236); the masons' track goes down from
+   it to the tip's hills, dirt.
+4. **The causeway** is cut stone, as the Kilns' pier is, a square wide, from the shore at 17,6 to
+   17,1 (281,223) out of the tip's north-west shore, since off the north shore it could run two or
+   three squares only. It ends over deep water one short of the north edge: as far as the Hand has
+   built it.
+5. **Four groups, the brief's kinds once each, the fewest that pass:** eagles (4), masons (3), the
+   foreman's five and a snow troll by night. Four masons with the foreman drew 13.17 fights to a
+   rest, past the limit of 13; five give 8.99.
+6. **I8 pays 2,104 xp a member,** 0.96 times the doc's scaled 2,200 (the doc wins over the issue's
+   1,500): eagles 4 × 873, masons 3 × 913, the foreman's 5 × 913 and the troll 1,827, 12,623 between
+   six. It holds 980 gold, the cave's 400 and eight masons' purses. The area stands at 17,429 of
+   17,867, about 18,729 with the side quests' scaled 1,300, 1.05 times the ask (§8).
+7. **The night is Wenna's question, not the camp's rest:** the game has no hook for a rest at a camp
+   (an inn's `nights` set a flag on a stay, and the Whitespine has no inn room). Sleep sets
+   `q_wenna_taken` (`WENNA_TAKEN`, exported from `maps/sheerpoint_i8.ts`) and says the waking; Not
+   yet sets nothing. A camp `nights` is a systems change, the owner's to ask for; #505's step reads
+   the flag, which only that choice sets.
+8. **Wenna moves** (#76), named The girl out of the hole as at M9, K9 and the lodge: the lodge's
+   fire gains an `until`, the first visit to J11 (a one-line edit to `rime_lodge.ts`); then J11's
+   gate, 27,23, until the first visit to the Point; then the camp, 13,8, until the flag. One place
+   at a time, never in a fight; the walkthrough checks the four states.
+9. **The secret is the doc's sea cave,** not the issue's way up to Rook's Nest: shut to climb, wade
+   and float (740 squares checked), its water running out under the rock beside the stones. The hint
+   is `i8_damp`, always there; the doc's oars, `i8_oars`, are by night on the same square, since the
+   pillars' hint rule refuses a hint by night alone; the boat from nowhere is in the waking's words.
+10. **The finds:** the chest `i8_hold`, 400 gold and no item; the uncut shards are seen in the
+    crates under the Hand's seal (`i8_crates`), as at G10's hide and I9's cache. Act IV has no Rift,
+    so there is no shard item and no quest item for #548: the doc's *a shard from the cave* is
+    #548's to place.
+11. **Rook's Nest** is a hollow in the tip's rock at the atlas's site, 22,8 (286,230); the watcher
+    is words only, #448 keeping his trainer entry and the Thief's quest. The site loses `planned`.
+12. **The deserter** (#56's 48) is words only, #506 making the quest: he stands in the rocks at the
+    east pines' end, 31,30, his tally seen at 31,29 (ELEVEN).
+13. **The features** are the Point's own: a cairn (a Sapphire Vial, no gold), the drowned god's
+    shrine (endurance), the camp and eight things seen (§4.7). The step's line, the doc's, is
+    `i8_causeway` on the first stone.
+14. **Novelty claims nothing:** there is no token for the sea reached from the range, a causeway
+    over water (its stone is the Kilns' pier's) or a person taken, and a cave on the atlas is on the
+    road before.
+15. **The gate:** `ROADS` `sheerpoint` runs on to `i8_eagles`, `i8_masons` and `i8_foreman`, the
+    troll being off the road, by night; `'sheerpoint_i8: under'` is owed to #18.
 
 ## 10. Names
 
@@ -1419,9 +1557,30 @@ Cut and owed, from I9 (#503):
   #503's 6).
 - **Two under.** I9 at 20 and the area's pool, 91.5% two under against a limit of 90%, are owed to
   #18, as the Whitespine's was before I10 dropped it (§9, #503's 11).
-- **The world ends past I9.** Nothing leaves it north until I8 (#504) is built, nor west until H9
-  or east until J9 (§9, #503's 18).
+- **The world ends past I9** to the west until H9 is built and to the east until J9 is; north the
+  trail goes on into I8 (#504) (§9, #503's 18).
 - **The shrine's kneel.** The walkthrough checks the lamp at 1,19 by place: `kneel` in
   `tools/walk.ts` compares the map def's shrine with the outdoors' placed copy, so it fails on any
   zone map's shrine, which only a dungeon's had used; a systems change, the owner's to ask for
   (§9, #503's 12).
+
+Cut and owed, from I8 (#504):
+
+- **The camp's rest.** The game has no hook for a rest at a camp, so the night is Wenna's question
+  and the camp's own rest does not take her; a camp `nights` like the inn's is a systems change, the
+  owner's to ask for. The chapter's step (#505) reads `q_wenna_taken`, which only her question sets
+  (§4.7; §9, #504's 7).
+- **The shard from the cave,** the doc's quest item for #548's Stone, is not placed: Act IV has no
+  Rift to take one to. The cave holds the Hand's boats, crates of uncut shards under its seal, seen
+  and not taken, and a chest of 400 gold; #548 places the item if it wants one (§9, #504's 10).
+- **The issue's own secret,** the way up to Rook's Nest, hinted by the deserter, is not built: the
+  doc's sea cave is, as §4.7 has it (§9, #504's 9).
+- **The Mason's Tally and the Thief's third.** The deserter and the watcher in Rook's Nest have
+  words only: the Mason's Tally (#56's 48) is #506's, and the watcher's trainer entry and the
+  Thief's quest are #448's (§9, #504's 11 and 12).
+- **Two under.** I8 at 20 and the area's pool, 93% two under against a limit of 90%, are owed to #18
+  (§9, #504's 15).
+- **The world ends past I8,** in the sea to the north and west and against J8, not built, to the
+  east (§4.7).
+- **The shrine's kneel,** as I9's: the drowned god's shrine at 27,5 is checked by place (§9, #503's
+  12).
