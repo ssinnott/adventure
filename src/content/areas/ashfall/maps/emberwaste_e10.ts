@@ -6,9 +6,8 @@
 // drakes over the road at the far end; and in the hills south of the notch the one cairn that looks
 // back, a grave. West of the Hills the steppe.
 // Laid whole for the Waste (#517) as the atlas cuts it, the Wold's steppe and grass with it: the Wold's
-// monsters, its outriders and its crossing line land here with #524. Joined only to F10, so cut off
-// with G10 until Cinderport is built (#512); the west edge ends the world against D10 and the north
-// and south edges against E9 and E11.
+// monsters, its outriders and its crossing line land here with #524. Joined only to F10, on its east
+// edge; the west edge ends the world against D10 and the north and south edges against E9 and E11.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/ashfall.md §4.9 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';

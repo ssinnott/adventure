@@ -13,14 +13,14 @@ it, the plan for building it, box by box, and the briefs. Its work is filed unde
 country behind (#522, parked); this doc is #509. Figures are measured on main at `6032251` (2
 October 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Three boxes are built: G10, Cinderport's box (#511, §4.3), which lists the area, and F10 and E10,
-the Ember Waste's road (#517, §4.9); its nine monsters, the armourer's step and Cinderport's eight
-rooms are drawn (§3), and the rest is to build. Its content is `src/content/areas/ashfall/` (maps,
-monsters, items, climate, its part of the world map and its walkthrough; its chapter of the one
-quest, The Window, in `chapter.ts`, and its side quests in `quests.ts`, to come) and its businesses'
-rooms `src/ui/interiors/ashfall/`. Its ids, the plan's: the area `ashfall`, its zones `cindercoast`,
-`firemount` and `emberwaste`, the town `cinderport`, the dungeons `old_cinder`, `ember_stone` and
-`meridian_camp`.
+Four maps are built: G10, Cinderport's box (#511, §4.3), which lists the area; Cinderport behind its
+gate (#512, §4.4); and F10 and E10, the Ember Waste's road (#517, §4.9). Its nine monsters and the
+armourer's step are drawn (§3), and the rest is to build. Its content is
+`src/content/areas/ashfall/` (maps, monsters, items, climate, its part of the world map and its
+walkthrough; its chapter of the one quest, The Window, in `chapter.ts`, and its side quests in
+`quests.ts`, to come) and its businesses' rooms `src/ui/interiors/ashfall/`. Its ids, the plan's:
+the area `ashfall`, its zones `cindercoast`, `firemount` and `emberwaste`, the town `cinderport`,
+the dungeons `old_cinder`, `ember_stone` and `meridian_camp`.
 
 ---
 
@@ -58,9 +58,10 @@ shore; §4.10), and F12 and E12 are cut (§11).
 Its edges:
 
 - **North: the Ember Sound,** the sea along Ashfall, with Sheer Point across it to the north-east
-  and Hearth Isle beyond. The Compact's ship from Kilnhaven comes in to Cinderport at 206,277
-  (`src/content/atlas.ts`; #547), a crossing open from the start for the fare (EXPANSION §2.2); the
-  last crossing leaves from the same quay for Hearth Isle (via 228,236 to 252,188), Act V's.
+  and Hearth Isle beyond. The Compact's ship from Kilnhaven comes in to Cinderport, whose port site
+  is 206,277 (`src/content/atlas.ts`; #547) and whose steps are in the town (§4.4), a crossing open
+  from the start for the fare (EXPANSION §2.2); the last crossing leaves from the same steps for
+  Hearth Isle (via 228,236 to 252,188), Act V's.
 - **East: the Sheer,** the cliff down the Whitespine's west side (x about 264 to 272), lettered at
   262,300. The Giants' Stair comes down it at 258,306 from the High Spine's I10 (272,306; #502), a
   road link open from the start and the only way over: a company that comes by land arrives here.
@@ -100,12 +101,12 @@ off the springs; the vines' shore humid.
 
 ## 3. What is built
 
-Three boxes, G10 the area's first, which lists the area (#511), and the Waste's road, F10 and E10
-(#517):
+Four maps: the area's first box, which lists the area (#511), the town behind its gate (#512) and
+the Waste's road, F10 and E10 (#517):
 
 - **Cinderport's box** (G10, `cindercoast_g10`, core, band 24–25; #511): the town's wall along the
-  north edge, a block of building squares with its gate in its face, barred until Cinderport is
-  built (#512), and before it the trading ground where the Riders come down: horse-lines and their
+  north edge, a block of building squares with its gate in its face, which opens into Cinderport
+  (#512), and before it the trading ground where the Riders come down: horse-lines and their
   fires, a shrine, and their eldest, who tells the oldest story on this side of the sea. Roads run
   square to square from the gate's front to the north edge and out south-west through the vines to
   the west edge, a milestone at the fork. A stream runs from the north edge to the east edge,
@@ -113,6 +114,14 @@ Three boxes, G10 the area's first, which lists the area (#511), and the Waste's 
   vines, where a clearing walled by the trees holds the factor's hide. The ash lies south of the
   ground, with a cairn where it begins. Four groups: beetles on the ash, strangler vines in the
   shore's trees, salamanders where the ash warms and a cinder drake with them (§4.3).
+- **Cinderport** (`cinderport`, town, 16×16, band 24–26; #512): the town behind G10's gate, opened.
+  A street runs from the gate in the south wall, 8,15, north to the quay over the harbour, with two
+  cross streets, a square inside the gate, the square by the quay and the Compact's pier off the
+  quay. Eight businesses, each a door into its room (#521): the inn, the temple, the armourer's, the
+  chandler's, the Ash Yard that trains to 27, the Chart House and the Factor's House (the two halls)
+  and the potter's. The ship and the last crossing land on the Compact's steps under the factor's
+  house and the ride just inside the gate; Jago sells the ship at both quays, and the other two are
+  sold by nobody yet. Four people speak with words only, and the town holds no secret (§4.4).
 - **The Ember Waste's road** (F10 and E10, `emberwaste_f10` and `emberwaste_e10`, country, band
   24–26; #517): the road west from Cinderport's box, out of the vines and over the Waste's bare ash,
   past the Riders' ring and along the rocks of F10's south rows, then up the Cinder Hills of E10 by
@@ -127,20 +136,23 @@ lists the area; until then `src/content/atlas.ts` spread them into the plan wher
 Saltreach's were before #170: the zones with their bands (Cindercoast 24–25, with G10 laid on it and
 its crossing words on its row, §9, #511's 13; Fire Mountain 25–26; the Ember Waste 25–26, with F10
 and E10 laid on it at 24–26 and its crossing words on its row, §9, #517's 2 and 6), Cinderport at
-24–26, Old Cinder at 25–26, the Ember Stone at 26 and Meridian Camp at 25–28 as planned plates, the
-sites (Cinderport, Fire Mountain, Old Cinder, the Ember Stone, Scaldwell, Meridian Camp, Grimsforge;
-the Sheer and the Cinder Hills, the plan's, §10) and its links: the Stair down the Sheer, the ship
-from Kilnhaven, the town's and the three dungeons' ways in, the road to the Wold and the last
-crossing.
+24–26, built since #512 with its plate at the gate, 206,288; Old Cinder at 25–26, the Ember Stone at
+26 and Meridian Camp at 25–28 as planned plates; the sites (Cinderport, its port site at 206,277 on
+G9's shore no longer planned; Fire Mountain, Old Cinder, the Ember Stone, Scaldwell, Meridian Camp,
+Grimsforge; the Sheer and the Cinder Hills, the plan's, §10) and its links: the Stair down the
+Sheer, the ship from Kilnhaven, the town's way in (moved from the site to the gate, §9, #512's 13),
+the three dungeons' ways in, the road to the Wold and the last crossing.
 
 Its row on the curve and its step on the gear ladder are in (#542): the row in
 `src/content/progression.ts` (band 24–26, next 26, window 5,500), owed to #446 while the area is
-built box by box, with the three boxes' 4,290 xp a member and 2,100 gold the clear's floor (§8); and
-the step in `src/content/areas/ashfall/items.ts`, the Area's own since G10 lists it (`ITEMS_AHEAD`,
+built box by box, with the three boxes' 4,290 xp a member and 2,100 gold the clear's floor, which
+Cinderport leaves as it is, a town paying nothing (§8); and the step in
+`src/content/areas/ashfall/items.ts`, the Area's own since G10 lists it (`ITEMS_AHEAD`,
 `src/content/index.ts`, held it until then), so that the harness and the gate dress by it:
-Cinderport's armourer's eight wares (`ARMOURER`, §4.4), each owed to the armourer (#512) until it is
-sold. The stone cure is in the table too (#546): the Quickening Draught (`CURES`), which the company
-carries from 25, owed to the chandler (#512) and the Riders' trader at Akordu (#526).
+Cinderport's armourer's eight wares (`ARMOURER`, §4.4), each owed to the armourer until #512 sold it
+there. The stone cure is in the table too (#546): the Quickening Draught (`CURES`), which the company
+carries from 25, sold at Cinderport's chandler's since #512 and owed to the Riders' trader at Akordu
+(#526).
 
 Its ground (#543): vines (`&`), walked through as the woods are, the shore's trees hung with
 creepers; the volcano (`V`) and a vent in it (`@`), the mountain's rock to walk into, see and climb,
@@ -161,8 +173,10 @@ Its crossings are written (#547), in `src/content/crossings.ts`, each on its lin
 its fare, its days and its hours, the same either way (§4.4, §9): the Compact's ship from
 Kilnhaven, whose Cinderport end says where she ties up; the Rider's ride, on a Rider's horse
 between Cinderport's gate and Akordu in the Wold; and the last crossing over the Sound to Hearth
-Isle. Every end here waits on Cinderport (#512), and the far ones on Akordu (#526) and Hearth Isle
-(Phase 1.5); nothing is sold toward a place not built, so none runs yet.
+Isle. The Cinderport ends are landed (#512), the ship's and the last crossing's on the Compact's
+steps and the ride's just inside the gate (§4.4), and the ship runs, sold by Jago at both quays.
+The ride and the last crossing wait on their far ends, Akordu (#526) and Hearth Isle (Phase 1.5),
+and are sold by nobody: nothing is sold toward a place not built (§9, #512's 5).
 
 All nine of its monsters are drawn ahead of the area (#520): the Strangler Vine, the Cinder Beetle,
 the Ember Salamander and the Ash Husk, on the old wood's, the spider's, the salamanders' and the
@@ -178,8 +192,8 @@ Old Drake to #515 and the Sentinel to #516, though listing the area records all 
 The rooms are drawn (#521), one to each business of Cinderport, ahead of the town as Rime Lodge's
 were. `src/content/areas/ashfall/interiors.ts` lists them, the Area's own `interiors` since G10
 lists the area (`ROOMS_AHEAD`, `src/content/index.ts`, merged them until then);
-`tools/tests/maps.ts` reports each owed to #512 until a business there opens into it, and §4.4 names
-the ids. They are a scene to a file in `src/ui/interiors/ashfall/`, what they share in
+`tools/tests/maps.ts` owed each to #512 until a business there opened into it, and each does now;
+§4.4 names the ids. They are a scene to a file in `src/ui/interiors/ashfall/`, what they share in
 `basalt.ts`: basalt in pale lime, limewashed above the sills; ash along the foot of every wall;
 vines hung over the glass; the cup in the old Cinder style and two views: the Sound, the Compact's
 ship at the quay and the column of light beyond, and the mountain, smoking by day and red at its
@@ -207,16 +221,16 @@ Riders' ride and the last crossing (#547) and the bot grown to the band (#549); 
 
 ## 4. What is still to build
 
-All of it but G10, F10 and E10, built (#511 and #517, §4.3 and §4.9): 10,736 squares of land, 9,228
-of them walkable, the plan's figures (§1). On the grid the plan is six boxes, two dungeons and a
-town, and the boxes hold 5,462 of those squares, 5,120 walkable; the seven parked behind them hold
-4,454 (§4.10), the cuts and the sliver about 700 (§11):
+All of it but G10, the town, F10 and E10, built (#511, §4.3; #512, §4.4; #517, §4.9): 10,736 squares
+of land, 9,228 of them walkable, the plan's figures (§1). On the grid the plan is six boxes, two
+dungeons and a town, and the boxes hold 5,462 of those squares, 5,120 walkable; the seven parked
+behind them hold 4,454 (§4.10), the cuts and the sliver about 700 (§11):
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
 |---|---|---|---|---|---|---|---|---|
 | H10 | The Stair's foot | Cindercoast | core | 24 | 1,009 (ash 644, vines 207, grass 82, pine 56), 15 shallow | the Stair down the Sheer at 258,306; Scaldwell at 240,300; the vines; the gentlest groups | the far side reached | #510 |
 | G10 | Cinderport's box | Cindercoast | core | 24–25 | 977 (ash 618, vines 236, grass 74), 47 shallow | the town's gate at 206,288 on the north edge; the trading ground; the road south-west | the eldest's story | #511, built |
-| | Cinderport | | town, 16×16 | 24–26 | | eight businesses; the two halls; the ship; the trainer to 27 | the port; the last crossing | #512 |
+| | Cinderport | | town, 16×16 | 24–26 | | eight businesses; the two halls; the ship; the trainer to 27 | the port; the last crossing | #512, built |
 | G11 | Fire Mountain's flank | Fire Mountain | core | 25 | 1,024 (ash 641, mountain 281, lava 102) | the cone at 215,326; the vents at 226,334; Grimsforge at 230,330; the drakes | the vents | #513 |
 | F11 | Old Cinder's and the Ember Stone's box | the Ember Waste, Fire Mountain, Cindercoast | core | 25–26 | 1,024 (ash 664, rock 301, lava 46) | Old Cinder at 190,318; the Ember Stone at 176,342; the west lava flow between | the Stone seen; the Stone lit | #514 |
 | | Old Cinder | | dungeon, two levels of 16×16 | 25–26 | | the buried town and the Old Drake; the undercroft and the lamp | a part | #515 |
@@ -345,11 +359,12 @@ half, with the wilderness features (#45); no more than one point in four is a si
   Cindercoast at 200,286, band 24–25 (§1). The town's wall is a block of building squares along the
   north edge, rows 0 to 2 and columns 4 to 13, with the gate at 6,2 (206,288, Cinderport's plate) in
   its face; the harbour and the site at 206,277 are G9's, seen over it, and the gate's line and the
-  knoll's say masts (§9, #511's 2). The gate is barred: `GATE` is exported and not in `exits`, its
-  square a building, and `g10_gate` stands at its front, 6,3; #512 lists it, opens the square and
-  drops the event, and its way back lands on 6,3 facing south (§9, #511's 3). No box beside G10 is
-  built and the ship lands in the town (#547), so the way in is the gate's front: the map starts at
-  6,3 facing south (§9, #511's 4). The roads are the atlas's, made to meet it at the edges: from the
+  knoll's say masts (§9, #511's 2). The gate was barred, `GATE` exported and not in `exits`, its
+  square a building and `g10_gate` at its front, 6,3, until #512 listed it, opened the square and
+  dropped the event (§9, #512's 12); its way back lands on 6,3 facing south (§9, #511's 3). No box
+  beside G10 is built and the ship lands in the town (#547), so the way in is the gate's front: the
+  map starts at 6,3 facing south (§9, #511's 4).
+  The roads are the atlas's, made to meet it at the edges: from the
   gate's front west under the wall, up the wall's west side to the north edge at 3,0 (the atlas's
   road into G9 at 203,285), and out south-west through the vines to the west edge at 0,7 and 0,8
   (F10's road at 31,7 and 31,8); the milestone, OLD CINDER 4, THE WOLD 6, stands at the fork, 3,4
@@ -376,14 +391,13 @@ half, with the wilderness features (#45); no more than one point in four is a si
   line, which reads "on the grass", the ground being the atlas's grass (§9, #511's 11). The step's
   quest and goal are #518's, and Cindercoast's crossing words, on its zone row, are not walked, no
   box beside G10 being built (§9, #511's 13).
-  - **Measured.** A company at 24 wins every fight and manages 10.94 fights to a rest, inside the
-    aim of 9 to 11, with 16.3% of its days ending in a fight broken off; it walks Cindercoast's
+  - **Measured.** A company at 24 wins every fight and manages 10.88 fights to a rest, inside the
+    aim of 9 to 11, with 15% of its days ending in a fight broken off; it walks Cindercoast's
     road, past the beetles and then the salamanders, every time. G10 pays 2,449 xp a member and 900
     gold. Two under, at 22, it wins every fight too, owed to #18 as the Whitespine's boxes' is.
     Density 97.3% within 8 steps and the furthest 12, with no sign among its 26 points. The
-    harness's two drakes at 25 are won every time in 5.6 rounds, 10.4 fights to a rest (10.25
-    asked), their sweep at its worst 43 to each of a front row of 199, 147 and 113. It claims the
-    drakes and the vines underfoot as new (§7).
+    harness's two drakes at 25 are won every time in 5.5 rounds, 10.3 fights to a rest (10.25
+    asked). It claims the drakes and the vines underfoot as new (§7).
 
 ### 4.4 Cinderport (#512): town, 16×16, band 24–26
 
@@ -421,6 +435,46 @@ half, with the wilderness features (#45); no more than one point in four is a si
   the Sound, a column of light.*
 - **New here.** A guild hall with a map of the far side; a trainer to 27; the last crossing seen.
 - **Pay.** About 600 xp a member in the halls' quests.
+- **As built** (#512, 9 October): the brief's eight businesses and the quay, laid in a 16×16 plate,
+  Kilnhaven's form turned on its side. The gate is in the south wall at 8,15, and G10's `GATE`
+  (206,288) lands on 8,14 facing north, where the town starts. The street runs from the gate north
+  to the quay along the north side, over the harbour (G9's water, the Sound past the wall), with
+  two cross streets, a square inside the gate, the square by the quay and the Compact's pier off the
+  quay, 13,1 to 2 (§9, #512's 1 and 2); banners hang on the wall either side of the gate, 7,15 and
+  9,15 (§9, #512's 17). The temple, 4,5, stands on the square by the quay and the inn, 9,5, across
+  the street from it; the Chart House is at 3,8; the potter's at 7,9 and the armourer's across the
+  street from it at 9,9; the Factor's House at 13,4 over the Compact's steps; and the yard, 2,12, and
+  the chandler's, 11,13, either side of the square inside the gate. The ship and the last crossing
+  land on the Compact's steps, 13,2 facing south, and the ride just inside the gate, 9,14 facing
+  north, by the Riders' rail, with the Rider at 9,13 (§9, #512's 3). Jago, 14,3, is the ship's master
+  on both quays and sells her back to Kilnhaven's steps, halved for a member of the Compact;
+  Morwenna the harbourmaster, 11,3, has the last crossing and the Rider the ride, and both sell
+  nothing until their far ends are built (§9, #512's 4 and 5). The Chart House and the Factor's
+  House are persons with rooms, as the Keel is, each offering and paying its Guild's one ladder, the
+  Fence's rung among it, with no quest added (§9, #512's 6); the potter's is a person with a room and
+  no ware (§9, #512's 7). Gorran the smith, Jenifer the potter, Cador Lusk of the Cartographers'
+  Guild and Hendra the factor speak with words only, for #519, #635 and #448 to give their quests and
+  choices (§9, #512's 8). The inn takes 55 a head, the armourer's and the chandler's sell at list,
+  the temple charges the engine's and the yard trains to 27 (§9, #512's 10); the chandler's stock is
+  the Act III provisioners' set and the Quickening Draught (§9, #512's 11). Thirteen events carry the
+  rest along the street, the lanes and the quay, the quay's line among them, where the street meets
+  the quay, 8,3 (§9, #512's 16). The town holds no secret, its contract asking none (§9, #512's 15).
+  It departs from the brief in the people it does not place, the Riders' eldest, who is G10's, on the
+  trading ground, and the mason of #56's 48, who is #504's (§9, #512's 9); in the ride and the last
+  crossing, which are sold by nobody yet; and in the halls, which add no quest. G10's gate is opened,
+  `g10_gate` dropped and the atlas's planned way into the town met at it (§9, #512's 12 and 13), and
+  the outdoors reach walk seeds a town's ways out, so that the ship's landing reaches G10 and
+  `CUT_OFF` is empty (§9, #512's 14).
+  - **Measured.** Every open cell is reachable from the start (112 of 112) and the Ash Yard teaches
+    to 27. Density 100.0% within 7 steps (86 of 86, 78 needed) and the furthest 4, with no sign among
+    its 25 points; its 21 events, labels, landing lines and warnings are all two lines. A town pays
+    nothing, no xp and no gold (§8). The gate check's boat now lands through the town and puts the
+    company down at 6,3 in G10, and the groups nearest it, the beetles and the vines, are won at 22
+    as often as the median group or more. The outdoors walk reaches every open square, 43,915 of
+    43,915, G10's 945 among them. The walkthrough goes in and out at the gate and spends a night;
+    buys the step, the Draught and a stone lifted at 2,000; trains to 27; joins both halls' ladders,
+    the Fence's rung paid at the factor's house; and sails to Kilnhaven and back, 600 gold and 300 for
+    a member of the Compact, finding the ride and the last crossing unsold.
 
 ### 4.5 G11, Fire Mountain's flank (#513): core, band 25
 
@@ -704,7 +758,8 @@ Two halls open here (DESIGN §8; #443, call 7), on the rules and the hall menu b
 - **The Cartographers' Guild's second hall** at Cinderport (#512): its map of the far side and the
   Meridian journals' shelf, with a gap for the fourth; the Guild's line ends at Meridian Camp (DESIGN
   §10.3), and #56's 51 is its guildsman's. The quests it offers a Surveyor and a Mapmaker are on
-  Ashfall's boxes, settled in #512 with the owner.
+  Ashfall's boxes, settled in #512: it offers and pays the Guild's one ladder and adds none of its
+  own (§9, #512's 6).
 - **The Compact's factor's house** at Cinderport (#512): the Compact's ship lands here (#547), the
   fare halved for a member; #56's 54's runner is theirs. What the factor's hide in G10's vines
   holds (§4.3) is seen and never said.
@@ -792,7 +847,9 @@ unclaimed (§9, #517's 15; §11).
   3,450, the Ember Stone 2,950, F10 and E10 1,850 and the side quests about 1,100: about 19,450. The
   issues (#510 to #519) carry the first figures until their briefs are settled. As built: G10 2,449
   (#511), 1.22 times its scaled share, and F10 and E10 1,841 between them (#517), 0.99 times theirs,
-  so the shares stand at about 19,890, 1.02 times the ask (§9, #511's 9, #517's 9).
+  so the shares stand at about 19,890, 1.02 times the ask (§9, #511's 9, #517's 9). Cinderport pays
+  nothing, as a town pays none, and its two halls add no quest (§9, #512's 6): its 600, 800 scaled,
+  is unpaid (§11).
 - **Gold.** Training six members from 24 to 26 costs 11,760 with today's `trainPrice`, and to 27,
   the third prestige's level, 6,240 more; the thirds ask a quest, not gold (DESIGN §5). A clear
   should pay for the training at least, in chests, drops, the halls' pay and the sentries' parts.
@@ -802,7 +859,9 @@ unclaimed (§9, #517's 15; §11).
   26,900, its weapons 13,900. As built: G10 holds 900 (#511), 300 in the cairn where the ash begins
   and 600 in the hide, its dearest find the Long Sword +2 at 420, inside the window; F10 and E10
   hold 1,200 (#517), 250 and a Sapphire Vial in the cairn of each and 700 in the grave, their
-  dearest find the Horn Bow +2 at 1,050, inside the window.
+  dearest find the Horn Bow +2 at 1,050, inside the window. Cinderport holds no gold, a town paying
+  nothing; the dearest ware at its armourer's is the Drakeskin Coat at 3,100 and the Quickening
+  Draught at its chandler's, the company's kit from 25, is 2,000, both inside the window (#512).
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
   (docs/areas/thornmark.md §9, 17): a company at 24 wins nine in ten of H10's fights and walks the
   shore resting at its camp; one at 22 wins no more than one in four, which is how the Stair's foot
@@ -811,15 +870,18 @@ unclaimed (§9, #517's 15; §11).
   and pick lightning for the machines, or the vents will read harder than they are. #542's ladder
   dresses a company at 26 in Cinderport's step, and one at 24, the floor, in Rimewater's rung, as
   the Whitespine's at 22 is; whether that holds the figures is each box's to measure. As built: a
-  company at 24 wins every fight on G10 and walks Cindercoast's road every time, 10.94 fights to a
-  rest; one at 22 wins every fight too, owed to #18 as the Whitespine's boxes' is (§4.3). On F10 and
-  E10 a company at 24 wins every fight and walks the Waste's road every time, 10.66 fights to a rest
-  on F10 and 10.51 on E10; one at 22 wins every fight too, owed to #18 (§4.9).
-- **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3); the
+  company at 24 wins every fight on G10 and walks Cindercoast's road every time, 10.88 fights to a
+  rest; one at 22 wins every fight too, owed to #18 as the Whitespine's boxes' is (§4.3). The town
+  adds a way in, the boat's landing at 6,3; the groups nearest it are won at 22 as often as the
+  median group or more (§4.4). On F10 and E10 a company at 24 wins every fight and walks the Waste's
+  road every time, 10.66 fights to a rest on F10 and 10.51 on E10; one at 22 wins every fight too,
+  owed to #18 (§4.9).
+- - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3); the
   Stone's chamber holds the door's squares empty until it opens, as the Sunder's floor holds the
   wall's. As built: G10 97.3% within 8 steps and the furthest 12, with no sign among its 26 points
-  (#511); F10 and E10 100.0% within 12 steps, the furthest 12 of 20, with no sign among their 12 and
-  15 points (#517).
+  (#511); Cinderport, a town, 100.0% within 7 steps (86 of 86) and the furthest 4, with no sign
+  among its 25 (#512); F10 and E10 100.0% within 12 steps, the furthest 12 of 20, with no sign among
+  their 12 and 15 points (#517).
 
 ## 9. Decisions
 
@@ -1158,6 +1220,61 @@ Decided by delegate for #511, each the owner's to overturn:
 16. **The climate is the coast's:** summer 24, winter 10, daily 6, damp 0.04 to 0.11, wettest 200,
     fog 0.3, lag 16; smoke comes down off the mountain for fog and the mountain is the thunder.
 
+Decided by delegate for #512, each the owner's to overturn:
+
+1. **The gate is in the town's south wall, at 8,15,** since G10's `GATE` lands on 8,14 facing north
+   and G10 lies south of the town; the quay runs along the north side over the harbour, G9's water,
+   the Sound past its wall.
+2. **The plate is 16×16 in Kilnhaven's form turned on its side:** the street from the gate north to
+   the quay, two cross streets, a square inside the gate, the square by the quay and the Compact's
+   pier (13,1 to 2) off the quay.
+3. **The ship and the last crossing land on the Compact's steps, 13,2, facing south,** on the pier
+   under the factor's house (door 13,4); **the ride just inside the gate, 9,14, facing north,** by
+   the Riders' rail with the Rider at 9,13 (§4.4's "the Compact's steps, the same steps and just
+   inside the gate"; #547's 8).
+4. **Jago is the ship's master on both quays,** as Dunstan is the ferry's (#539): here he sells her
+   back to Kilnhaven's steps, halved for `q_compact_run_done` (the end's `half`, #547's 7).
+   Kilnhaven halves none.
+5. **The harbourmaster, Morwenna, sells the last crossing and a nameless Rider the ride** (§10 names
+   nothing of the Riders'). Both sell nothing until Phase 1.5 and #526 land the far ends (`sells`
+   gives none, #547's 2), and their words name no fare, as Jago's did at Kilnhaven before this.
+   Hers say Hearth Isle and no more (#547's 9).
+6. **The two halls are persons with rooms, as the Keel is** (`kind: 'npc'`, `interior`, `hall`): the
+   Chart House (`cartographers`, 3,8) and the Factor's House (`compact`, 13,4). Each offers and pays
+   its Guild's one ladder (`game/guilds.ts`), the Fence's rung among it; no quest is added. The
+   Chart House sells nothing: the chandler's carries the kit that Saltmouth's Map Room sells.
+7. **The potter's is a person with a room too** (7,9): no ware fits, the cups being no item.
+8. **People with words only,** none with a flag, a choice or a quest, so #519, #635 and #448 add
+   theirs: Gorran the smith in the armourer's (#521's 6; his shovel-head "will not take a burr"),
+   Jenifer the potter (the cups the first folk's shape), Cador Lusk the guildsman (the shelf's gap
+   and the hint §4.8 names for #516) and Hendra the factor (Ruan reads her book). Names are the
+   coast's trade-English, as Saltreach's and Kilnhaven's are (§10), checked against the content for
+   clashes.
+9. **Not placed: the Riders' eldest and the mason.** The eldest is G10's, on the trading ground
+   outside the gate where §4.4 puts her (#511); `when` has hours, sky and season and no trading
+   day. The mason of #56's 48 hides at Sheer Point wanting passage to Cinderport (whitespine.md
+   §6), so he stands here only once #504's quest buys it: #504's to place, `after` its own flag.
+10. **Prices:** the inn 55 a head (Kilnhaven 35, Rime Lodge 45); the armourer's and the chandler's
+    at list (no `prices`); the temple at the engine's (`templePrice`: the stone 80 a level, 2,000
+    for a member of 25, the draught's price); the yard to 27 (`trainerCeiling`, 26 + 1) at
+    `trainPrice` (1,040 for a member of 26).
+11. **The chandler's stock is the Act III provisioners' set plus the Quickening Draught** (`CURES`).
+12. **G10's gate is opened as Kilnhaven's was:** `exits: [GATE]`, 6,2 a door, `g10_gate` dropped (not
+    `once`, not in `shipped.json`) and `GATE` given the town's gate line; G10's `start` stays 6,3
+    facing south.
+13. **The atlas:** Cinderport's place is built (`planned`, `name` and `band` dropped, as Kilnhaven's
+    were) and its plate kept at the gate, 206,288, where G10's walkthrough holds it; its port site is
+    kept at 206,277 on G9's shore (the port check wants the sea within 4) and no longer planned; the
+    planned way `cindercoast` to `cinderport` moves from 206,277 to the gate, 206,288.
+14. **The reach walk seeds a town's ways out where a crossing lands in the town,** as the gate
+    check's `landings` does: the ship to Cinderport reaches G10 at 6,3, and `CUT_OFF` in
+    `tools/tests/outdoors.ts` is empty.
+15. **No secret:** the town contract asks none (neither precedent has one), and the density floor is
+    met without.
+16. **The quay's line is an event where the street meets the quay** (8,3), the doc's words exactly;
+    by night the renderer draws the column of light in the sky to the north on its own.
+17. **Banners either side of the gate,** on the wall (7,15 and 9,15), an ember red.
+
 Decided by delegate for #517, each the owner's to overturn:
 
 1. **Both boxes are laid whole in the Ember Waste,** country, region `ashfall`: F10 at 168,286 and
@@ -1224,9 +1341,9 @@ Decided by delegate for #517, each the owner's to overturn:
     the Wold's border where it was.
 15. **Novelty claims nothing new:** lava is on the road before Ashfall (the check said so); steppe
     is first laid here, the Wold's ground (#543), and left unclaimed (§11).
-16. **F10 and E10 are owed to #512 in `CUT_OFF`** (`tools/tests/outdoors.ts`) with G10, for the same
-    reason: they join only G10, which joins nothing yet. The gate figures under the floor are owed
-    to #18, as G10's are.
+16. **F10 and E10 need no `CUT_OFF` entry:** they join only G10, which the reach walk now reaches by
+    the town's ways out (§9, #512's 14), so the outdoors test reaches them without one. The gate
+    figures under the floor are owed to #18, as G10's are.
 
 ## 10. Names
 
@@ -1264,17 +1381,12 @@ is parked, not cut (#522, §4.10).
 
 Owed, from G10 (#511):
 
-- **Cinderport's gate stays barred** until #512 builds the town, lists `GATE` in G10's exits, opens
-  its square, drops `g10_gate` and sets the landing it is asked for, 8,14 facing north; the way back
-  lands on 6,3 facing south (§9, #511's 3). The atlas's planned way into the town, `cindercoast` to
-  `cinderport`, stays at the site, 206,277, where the gate and the plate are 206,288, and #512 meets
-  it when it builds the edge.
-- **The outdoors reach test's `CUT_OFF`** (`tools/tests/outdoors.ts`) owes G10 to #512, and #512
-  opening the gate may not clear it: the walk seeds only the outdoors' start and the crossings that
-  land on zone maps, and the ship lands in the town. Unless the walk also seeds a landing in a town
-  by its ways out, as the gate check's `landings` does, the entry stays until a box joins G10
-  overland (H10 with the Stair, #510 and #502). Where the entry belongs is the owner's (§9, #511's
-  4).
+- **Cinderport's gate stood barred** until #512 built the town, which listed `GATE` in G10's exits,
+  opened the square, dropped `g10_gate`, set the landing at 8,14 facing north and met the atlas's
+  planned way at the gate (§9, #512's 12 and 13).
+- **The outdoors reach test's `CUT_OFF`** (`tools/tests/outdoors.ts`) owed G10 to #512, which seeds
+  a town's ways out where a crossing lands in the town, as the gate check's `landings` does: it is
+  empty (§9, #512's 14).
 - **Sweep with fire cannot be claimed as new:** the novelty check has no `Mechanic` token for it
   (`src/content/area.ts`), so it takes a systems change, if the owner wants one (§9, #511's 14).
 - **Four groups stand for the brief's seven** (§4.3, §9, #511's 7): the brief's set gave 15.08
@@ -1286,11 +1398,20 @@ Owed, from G10 (#511):
 - **The hide's Long Sword +2** is the brief's, and Act II's find (420 gold, as K2's and L3's): the
   ladder and the window pass. The owner may want the act's step with a plus there instead (§4.1).
 
+Owed, from Cinderport (#512):
+
+- **The Riders' eldest and the mason are not placed in the town** (§9, #512's 9): the eldest is
+  G10's and a trading day is no `when`; the mason is #504's, `after` the quest that buys his
+  passage from Sheer Point.
+- **The ride and the last crossing are sold by nobody** until their far ends are built, Akordu
+  (#526) and Hearth Isle (Phase 1.5): the Rider and the harbourmaster have the passages and `sells`
+  gives none (§9, #512's 5). The Quickening Draught at Akordu stays owed to #526 (§3).
+- **No quest and no pay:** the halls offer and pay their Guilds' ladders and add none, and the four
+  who speak have words only, so #519, #635 and #448 add theirs (§9, #512's 6 and 8); a town pays
+  nothing, so the 600 the plan gave the halls' quests is unpaid (§8).
+
 Owed, from F10 and E10 (#517):
 
-- **The outdoors reach test's `CUT_OFF`** (`tools/tests/outdoors.ts`) owes F10 and E10 to #512 with
-  G10, for the same reason: they join only G10, which joins nothing yet, so they follow its entry
-  above (§9, #517's 16).
 - **The Archdruid's trainer entry and the Druid's quest** on him are #448's: he stands in the
   outcrop's lee at F10's 6,3, words only (§9, #517's 4).
 - **The sentries** `after` the Stone, one group on each box's road at the band's top, 26, are

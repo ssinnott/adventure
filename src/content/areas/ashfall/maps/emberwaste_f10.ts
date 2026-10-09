@@ -4,7 +4,7 @@
 // the Wold. North, the vines' edge and a dead tree in them; in the north-west, far from the road, a rock
 // outcrop and the Archdruid in its lee (#448); on the ash a cairn, a shrine, the drifts and the beetles;
 // in the south the flow's end, warm, the drake on the rocks and the milestone where the road turns west.
-// Joined only to G10, which is cut off until Cinderport is built (#512). The north edge ends the world
+// Joined to G10 on its east edge and E10 on its west. The north edge ends the world
 // against F9 and the south against F11, which the road runs along at columns 5 to 11.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/ashfall.md §4.9 is its brief.
 import type { MapDef } from '../../../../game/map.ts';

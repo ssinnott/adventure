@@ -15,7 +15,7 @@
 import type { Passage } from '../game/map.ts';
 import type { When } from '../game/quests.ts';
 import type { Facing } from '../game/types.ts';
-import { EAST, WEST } from '../game/types.ts';
+import { EAST, NORTH, SOUTH, WEST } from '../game/types.ts';
 
 /** One end of a crossing: a town, or a camp or a shore in a zone, and where the crossing puts a company down there once it is built. */
 export interface CrossingEnd {
@@ -98,7 +98,7 @@ export const COMPACT_SHIP: Crossing = {
       warning: 'Jago looks you over. "Cinderport is ash and worse. I put you ashore; I don\'t come back for you."' },
     // On the Compact's steps at Cinderport's quay, under the factor's house, where she ties up; her
     // master there halves the fare for a member of the Compact, as Kitto does (#512).
-    { at: 'cinderport', name: 'Cinderport', owed: '#512', half: { flag: 'q_compact_run_done' },
+    { at: 'cinderport', name: 'Cinderport', landing: { x: 13, y: 2, facing: SOUTH }, half: { flag: 'q_compact_run_done' },
       label: 'The ship ties up at Cinderport\'s quay, and you step ashore, rested. Ash settles on your sleeves.' },
   ],
 };
@@ -121,9 +121,9 @@ export const DROVE_COACH: Crossing = {
 export const RIDERS_RIDE: Crossing = {
   name: 'the Rider\'s ride', by: 'horse', fare: 325, departs: 14, days: 1, arrives: 9,
   ends: [
-    // Just inside the gate, on the town's own map: G10's trading ground outside it is where the
-    // Riders come down to trade and their horses wait (#512).
-    { at: 'cinderport', name: 'Cinderport', owed: '#512',
+    // Just inside the gate, on the town's own map, by the Riders' rail: G10's trading ground outside it
+    // is where the Riders come down to trade and their horses wait (#512).
+    { at: 'cinderport', name: 'Cinderport', landing: { x: 9, y: 14, facing: NORTH },
       label: 'The Rider sets you down at Cinderport\'s gate, rested, and turns back for the grass.',
       warning: 'The Rider looks you over. "There are lions in the grass. I outride them. You will not."' },
     // At Akordu's horse-lines, on the map of D8, the Wold's box that holds the camp (#526).
@@ -136,8 +136,8 @@ export const RIDERS_RIDE: Crossing = {
 export const LAST_CROSSING: Crossing = {
   name: 'the last crossing', by: 'boat', fare: 350, departs: 20, days: 1, arrives: 16,
   ends: [
-    // From the steps the Compact's ship uses, on Cinderport's quay (#512).
-    { at: 'cinderport', name: 'Cinderport', owed: '#512',
+    // On the steps the Compact's ship uses, at Cinderport's quay (#512).
+    { at: 'cinderport', name: 'Cinderport', landing: { x: 13, y: 2, facing: SOUTH },
       label: 'The boat puts you back on Cinderport\'s steps, rested. The light stands behind you.',
       warning: 'The harbourmaster looks you over. "Folk go over strong and come back quiet. You are not strong."' },
     // On the isle's shore under its rim, where Act V begins (Phase 1.5).

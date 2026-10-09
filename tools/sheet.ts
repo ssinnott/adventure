@@ -104,9 +104,9 @@ const open = (m: GameMap, x: number, y: number): boolean => m.inBounds(x, y) && 
  * A map's ways out: its exits, its tears into Rifts, which are walked through as exits are, and the
  * crossings its people sell, from where the seller stands to where the crossing lands.
  */
-type Way = { x: number; y: number; to: string; tx: number; ty: number; tf?: Facing };
+type Way = { x: number; y: number; to: string; tx: number; ty: number; tf?: Facing; sold?: boolean };
 const waysOut = (d: MapDef): Way[] =>
-  [...(d.exits ?? []), ...(d.features ?? []).flatMap((f): Way[] => (f.kind === 'rift' ? [f] : f.kind === 'npc' ? (f.passage ?? []).map((p) => ({ x: f.x, y: f.y, to: p.to, tx: p.x, ty: p.y, tf: p.facing })) : []))];
+  [...(d.exits ?? []), ...(d.features ?? []).flatMap((f): Way[] => (f.kind === 'rift' ? [f] : f.kind === 'npc' ? (f.passage ?? []).map((p) => ({ x: f.x, y: f.y, to: p.to, tx: p.x, ty: p.y, tf: p.facing, sold: true })) : []))];
 
 /** Where the party arrives: the map's start, and every other map's way in, once each. */
 function arrivals(def: MapDef): View[] {
@@ -141,11 +141,15 @@ function siteView(m: GameMap, name: string, at: readonly [number, number]): View
   return null;
 }
 
-/** The outdoor square, as a world point, that leads to a map, through as many maps as it takes. */
+/**
+ * The outdoor square, as a world point, that leads to a map, through as many maps as it takes. A way
+ * in by an exit or a rift, the gate, comes before one a crossing's seller gives, which is the ship's
+ * port and not the town: a town's crop is centred on its gate.
+ */
 function entrance(id: string, seen = new Set<string>()): [number, number] | null {
   seen.add(id);
-  for (const d of MAP_DEFS) for (const e of waysOut(d)) {
-    if (e.to !== id || seen.has(d.id)) continue;
+  for (const sold of [false, true]) for (const d of MAP_DEFS) for (const e of waysOut(d)) {
+    if (!!e.sold !== sold || e.to !== id || seen.has(d.id)) continue;
     const p = worldPoint(ATLAS, d.id, e.x, e.y) ?? entrance(d.id, seen);
     if (p) return p;
   }

@@ -17,7 +17,7 @@ export const ZONES: readonly AtlasZone[] = [
 ];
 
 export const PLACES: readonly AtlasPlace[] = [
-  { id: 'cinderport', name: 'Cinderport', kind: 'town', planned: true, band: [24, 26], at: [206, 288] }, // behind G10's gate (#511, #512)
+  { id: 'cinderport', kind: 'town', at: [206, 288] }, // the far side's port, behind G10's gate at 6,2 (#511, #512)
   { id: 'old_cinder', name: 'Old Cinder', kind: 'dungeon', planned: true, band: [25, 26], at: [190, 324] }, // two levels under F11's crater (#515)
   { id: 'ember_stone', name: 'The Ember Stone', kind: 'dungeon', planned: true, band: [26, 26], at: [176, 348] }, // one level under F11's field of cinders (#516)
   { id: 'meridian_camp', name: 'Meridian Camp', kind: 'dungeon', planned: true, band: [25, 28], at: [226, 340] }, // three levels down Fire Mountain's vents (#22; #443, call 4)
@@ -25,7 +25,7 @@ export const PLACES: readonly AtlasPlace[] = [
 
 export const SITES: readonly AtlasSite[] = [
   // X. Ashfall (docs/areas/ashfall.md §10: the coast's English, kept, and two new names).
-  { name: 'Cinderport', icon: 'port', at: [206, 277], label: 'right', planned: true },
+  { name: 'Cinderport', icon: 'port', at: [206, 277], label: 'right' }, // on G9's shore over G10's gate at 6,2 (#511, #512)
   { name: 'Fire Mountain', icon: 'volcano', at: [215, 326], label: 'none', planned: true },
   { name: 'Old Cinder', icon: 'ruin', at: [190, 318], label: 'below', planned: true },
   { name: 'Ember Stone', icon: 'stone', at: [176, 342], label: 'below', planned: true },
