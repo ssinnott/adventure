@@ -19,20 +19,20 @@ land without shallows or rivers, and "walkable" what is not mountain, peak, clif
 
 Built so far: E10's Wold half (#524, §4.2), on the box laid whole for Ashfall's Ember Waste (#517);
 D9, the steppe (#525, §4.3), which lists the area and places the glass scorpion E10 cut and the
-first glass walker; D10, the mesas (#527, §4.5), which joins E10 and D9 overland, so `CUT_OFF`
-is empty, and places the basilisk and spends stone first; D8, Akordu, the Riders' camp (#526,
-§4.4), which lands the Rider's ride to Cinderport; and C8, the Scarp's edge (#528, §4.6), where the
-Scarp stair from the Saltings' C7 comes up onto the lip, nine squares of C7 opened for it. `AHEAD`
+first glass walker; D10, the mesas (#527, §4.5), which joins E10 and D9 overland, so `CUT_OFF` is
+empty, and places the basilisk and spends stone first; D8, Akordu, the Riders' camp (#526, §4.4),
+which lands the Rider's ride to Cinderport; C8, the Scarp's edge (#528, §4.6), where the Scarp stair
+from the Saltings' C7 comes up onto the lip, nine squares of C7 opened for it; and B8, the Wold's
+heart (#529, §4.7), which places the Grey Lion, set off the line, and the way up Kushtash. `AHEAD`
 and `PLANNED` are empty; the Wold's step of the quest and the area's chapter are owed to #531. Its
-content is `src/content/areas/glasswold/`
-(maps, interiors, monsters, items, climate, its part of the world map in `atlas.ts` and its
-walkthrough; its chapter of the one quest, The Warning, in `chapter.ts` and its side quests in
-`quests.ts`, to come); it has no town and one business, the Riders' trader at Akordu, whose tent has
-a room.
-Its ids: the area `glasswold`, its zones `wold` and `theglass`, the plan's; the Buried Tower
-`buried_tower`, the plan's, left to the reach. Akordu's (the Wold Riders' camp) is the site's name
-and its map `wold_d8` (#526); Kushtash's (the Eyrie) id is B8's to set (#529), and the Eyrie's site
-keeps its name in the issues until #444 renames it.
+content is `src/content/areas/glasswold/` (maps, interiors, monsters, items, climate, its part of
+the world map in `atlas.ts` and its walkthrough; its chapter of the one quest, The Warning, in
+`chapter.ts` and its side quests in `quests.ts`, to come); it has no town and one business, the
+Riders' trader at Akordu, whose tent has a room. Its ids: the area `glasswold`, its zones `wold` and
+`theglass`, the plan's; the Buried Tower `buried_tower`, the plan's, left to the reach. Akordu's
+(the Wold Riders' camp) is the site's name and its map `wold_d8` (#526); Kushtash's (the Eyrie) is
+the site's name and its map `wold_b8` (#529), and the Eyrie's site keeps its name in the issues
+until #444 renames it.
 
 ---
 
@@ -43,9 +43,9 @@ Glasswold two zones:
 
 | Zone | Band | Squares today | Built |
 |---|---|---|---|
-| The Wold | 26–28 | 6,240 (steppe 3,133, hills 1,151, mountain 646, dunes 540, grass 369) | D9, D10, D8 and C8 |
+| The Wold | 26–28 | 6,240 (steppe 3,133, hills 1,151, mountain 646, dunes 540, grass 369) | D9, D10, D8, C8 and B8 |
 | The Glass, the reach | 30–32 | 4,813 (steppe 1,306, mountain 1,028, hills 838, glass 817, dunes 626) | nothing, and not this phase's |
-| The area | 26–28 | 11,053 | D9, D10, D8 and C8 |
+| The area | 26–28 | 11,053 | D9, D10, D8, C8 and B8 |
 
 Squares are the land `worldGrid` gives each zone by today's seeds, without shallows or rivers;
 9,349 of them a company could walk, and nearly half of those are steppe. That is about 10.8 zone
@@ -56,8 +56,8 @@ D11, B10, C11 and B9's south; the zones' figures are measured again when the fol
 The Wold's band is the area's, 26–28, and the boxes rise through it (§4); the Glass's is the cap's,
 as the reach is (DESIGN §9; MONSTERS open question 3, answered by call 5). No Wardstone stands here.
 
-The squares are the plan's, before any box. D9 (#525), D10 (#527), D8 (#526) and C8 (#528) are laid
-whole in the Wold (§4, §9).
+The squares are the plan's, before any box. D9 (#525), D10 (#527), D8 (#526), C8 (#528) and B8
+(#529) are laid whole in the Wold (§4, §9).
 
 **The grid** (EXPANSION §8.2; docs/areas/shelf.md §1). Boxes are 32×32 with A1's corner at 8,−2,
 so a box's corner is x = 8 + 32i, y = −2 + 32j. The Wold is the B, C, D and E columns from row 8 to
@@ -94,7 +94,8 @@ Its edges:
   §5.8's reach check passes: a dead end with a single way in, which cutting off leaves the road
   whole. Before the flow the Wold bordered four zones on the road and the Glass two.
 - **West: the rim,** the A column, mountain with the Wold's last grass under it; Kushtash, the
-  far-west mesa, stands under it in B8.
+  far-west mesa, stands under it in B8, whose column 0 is the rim's foot, laid as the world's end
+  (§4.7).
 
 The steppe runs from the Scarp's lip south to the dunes and east to the Cinder Hills, with mesas
 standing out of it; the dunes lie in a crescent round the glass, which is C9's, 602 squares, with
@@ -125,7 +126,7 @@ glare from the south-west on a clear noon.
 
 ## 3. What is built
 
-Four boxes of its own, the first of which lists the area (#525):
+Five boxes of its own, the first of which lists the area (#525):
 
 - **The steppe** (D9, `wold_d9`, core, band 26–27; #525): open grass with glass in it, laid whole at
   104,254. The atlas's road comes over the south edge and runs north-west and west to the gap; a
@@ -160,42 +161,51 @@ Four boxes of its own, the first of which lists the area (#525):
   the lip, east of the head, a cleft behind a rock holds the Compact's last three drops. Three
   groups: six vultures on the lip's updraught, a pride of four lions with three vultures over it
   and two basilisks in the hills at the east (§4.6).
+- **The Wold's heart** (B8, `wold_b8`, core, band 27–28; #529): the far west under the rim, laid
+  whole at 40,222, west of the Scarp's edge. The Riders' hunters keep a fire by the way in, with a
+  young Rider and a Rider come from Akordu with the eldest's word. Between the mesas lies the Grey
+  Lion's ground, the beaten kill-ground with the vultures turning over it, and the lesser mesa
+  stands east of Kushtash with a basilisk behind a pride at its foot. Kushtash, the tallest mesa on
+  the Wold, stands under the rim, its top shut by rock but for a stepped scree found from the smoke
+  off it, where the scout who guided the Meridian Company keeps her fire. A cairn, a well, a shrine
+  and a hermit in a hollow under the rim. Three groups: a pride of four lions with three vultures
+  over its kill, the mesa fight, and the Grey Lion alone (§4.7).
 
 Its atlas rows are charted in `src/content/areas/glasswold/atlas.ts`, the area's own `atlas` since
 D9 lists the area; until then `src/content/atlas.ts` spread them into the plan where its rows were,
-as Saltreach's and Wrackholm's were until each had a map (docs/areas/saltreach.md §9, #169's 1):
-the zones with their bands, the Wold 26–28, with D9, D10, D8 and C8 laid on it, D10 first, and the Glass
-30–32, the Buried Tower's plate at 30–32, and the sites, Akordu (the plan's Wold Riders camp at
-120,250), Kushtash (the Eyrie, moved to about 46,242, call 5) and the Buried Tower, "The Glass" and
-"Buried Tower" lettered as the plan letters them. The lava flow is drawn in the plan's ridges
-(`src/content/atlas.ts`), the one line outside the folder this doc asks for (call 5). Its row on the
-curve is in (#542), in `src/content/progression.ts` (band 26–28, next 28, window 6,000), owed to
-#447 while the area is built box by box, with the four boxes' 9,861 xp a member and 5,450 gold the
-clear's floor (§8); the Wold takes no step on the gear ladder, no town to sell one (§9); the
-trader's coat is off it (§9, #526's 7). Its ground is laid (#543): steppe (`s`), walked as grass and
-tawny at Harvest, and dunes (`u`), sand in ridges walked as slowly as hills, so the scaffold drafted
-D9 with its 807 squares of steppe and 171 of dunes (docs/SLICE.md). Its six monsters are drawn
-(#533, MONSTERS §8.3): five on frames that exist, the vulture, the Wold lion, the Grey Lion, the
-glass scorpion and the basilisk, and the glass walker, the first of a family of its own
-(`src/ui/monsters/glasswalkers.ts`); their defs are in `src/content/areas/glasswold/monsters.ts`,
-the Area's own since D9 lists it (`AHEAD`, `src/content/index.ts`, listed them until then), and each
-was owed in `UNPLACED` (`tools/tests/maps.ts`) to the box that first places it: E10 places the
-vulture and the Wold lion (#524), D9 the glass scorpion and the glass walker (#525) and D10 the
-basilisk (#527); the Grey Lion is owed to #529, though listing the area records all six in
-`src/content/shipped.json`. Its items, the Etched Glass, the hoard's Basalt Shield +2, the Leather
-Coat with its plus and the cleft's Letter in Cipher, are in `items.ts` (§9, #525's 11, #527's 12,
-#526's 7, #528's 13), and its climate is the steppe's (§9, #525's 2). Its crossing line is on the
-Wold's zone row (#524), said where a map of the Wold is first entered, and walked at D10, over
-E10's west edge (§9, #527's 14) and at C8, on the step up the Scarp stair onto the lip (§9, #528's
-2). The ride's crossing has its Akordu end in D8 (§4.4). E10's Wold half is built on the Waste's
-map (§4.2). C8 is cut through the Saltings' C7, nine squares of its column 8 and its notch's
-words, with the owner's leave (#412, #528; §4.6). Nothing else: no quest.
-Every brief below is a draft.
+as Saltreach's and Wrackholm's were until each had a map (docs/areas/saltreach.md §9, #169's 1): the
+zones with their bands, the Wold 26–28, with D9, D10, D8, C8 and B8 laid on it, D10 first, and the
+Glass 30–32, the Buried Tower's plate at 30–32, and the sites, Akordu (the plan's Wold Riders camp
+at 120,250), Kushtash (the Eyrie, moved to about 46,242, call 5, built with B8) and the Buried
+Tower, "The Glass" and "Buried Tower" lettered as the plan letters them. The lava flow is drawn in
+the plan's ridges (`src/content/atlas.ts`), the one line outside the folder this doc asks for (call
+5). Its row on the curve is in (#542), in `src/content/progression.ts` (band 26–28, next 28, window
+6,000), owed to #447 while the area is built box by box, with the five boxes' 14,645 xp a member and
+7,650 gold the clear's floor (§8); the Wold takes no step on the gear ladder, no town to sell one
+(§9); the trader's coat is off it (§9, #526's 7). Its ground is laid (#543): steppe (`s`), walked as
+grass and tawny at Harvest, and dunes (`u`), sand in ridges walked as slowly as hills, so the
+scaffold drafted D9 with its 807 squares of steppe and 171 of dunes (docs/SLICE.md). Its six
+monsters are drawn (#533, MONSTERS §8.3): five on frames that exist, the vulture, the Wold lion, the
+Grey Lion, the glass scorpion and the basilisk, and the glass walker, the first of a family of its
+own (`src/ui/monsters/glasswalkers.ts`); their defs are in
+`src/content/areas/glasswold/monsters.ts`, the Area's own since D9 lists it (`AHEAD`,
+`src/content/index.ts`, listed them until then), and each was owed in `UNPLACED`
+(`tools/tests/maps.ts`) to the box that first places it: E10 places the vulture and the Wold lion
+(#524), D9 the glass scorpion and the glass walker (#525), D10 the basilisk (#527) and B8 the Grey
+Lion (#529), though listing the area records all six in `src/content/shipped.json`. Its items, the
+Etched Glass, the hoard's Basalt Shield +2, the Leather Coat with its plus and the cleft's Letter in
+Cipher, are in `items.ts` (§9, #525's 11, #527's 12, #526's 7, #528's 13), and its climate is the
+steppe's (§9, #525's 2). Its crossing line is on the Wold's zone row (#524), said where a map of the
+Wold is first entered, and walked at D10, over E10's west edge (§9, #527's 14) and at C8, on the
+step up the Scarp stair onto the lip (§9, #528's 2). The ride's crossing has its Akordu end in D8
+(§4.4). E10's Wold half is built on the Waste's map (§4.2). C8 is cut through the Saltings' C7, nine
+squares of its column 8 and its notch's words, with the owner's leave (#412, #528; §4.6). Nothing
+else: no quest. Every brief below is a draft.
 
 ## 4. What is still to build
 
-All of it but D9, D10, D8 and C8, built (#525, #527, #526, #528; §4.3, §4.5, §4.4, §4.6), and E10's
-Wold half (#524, §4.2): 11,053
+All of it but D9, D10, D8, C8 and B8, built (#525, #527, #526, #528, #529; §4.3, §4.5, §4.4, §4.6,
+§4.7), and E10's Wold half (#524, §4.2): 11,053
 squares of land, 9,349 of them walkable, the plan's figures (§1). On the grid the plan is seven
 boxes, which hold 5,557 of those squares, 5,379 walkable, the table the epic #447 carries:
 
@@ -206,7 +216,7 @@ boxes, which hold 5,557 of those squares, 5,379 walkable, the table the epic #44
 | D8 | The Riders' camp | the Wold | core | 26–27 | 1,024 (steppe 757, hills 93, rock 90, earth 67, felt 9, crystal 6, doors 2) | Akordu at 120,250 under its mesa: the eldest, the trader, the Rider who rides to Cinderport; the garden of glass; built by #526 at 26–27: the eldest's story told once, the trader's tent with its own room, the Rider who sells the ride to Cinderport and back, the garden of glass, the dry well and its hoard, the mesa with the basilisk in its shade (§4.4) | the eldest's story | #526, built |
 | D10 | The mesas | the Wold | core | 26–27 | 1,024 (steppe 765, hills 160, rock 53, dunes 23, road 22, a secret door 1) | the basilisks' mesas; the mesa fight; the Eyrie's old mesa at 132,289, empty; built by #527 at 26–27: the road from E10 to D9 under the great mesa, the glassed all facing the notch, the secret door and the top with its nest, hoard and view of the Glass, two prides with the near one's vultures, the mesa fight, the scorpions and a basilisk alone under the small mesa (§4.5) | none | #527, built |
 | C8 | The Scarp's edge | the Wold | country | 26–27 | 1,024 (steppe 923, hills 54, cliff 23, earth 11, rock 8, stone 3, felt 1, a secret door 1) | the Scarp's lip over the pans; the stair's head at 80,216 on C7; the Riders' watch on it; built by #528 at 26–27: the Scarp stair opened up C7's column 8 to the lip, the stair's head and the Riders' watch with their cairn, yurt and fire at 80,223, the Compact's runner on the last flight, the Saltings seen from the lip, the cleft under the lip with the Compact's last three drops, vultures, a pride and two basilisks (§4.6) | none | #528, built |
-| B8 | The Wold's heart | the Wold | core | 28 | 795 (steppe 587, rock 116, hills 92) | the Grey Lion's ground; Kushtash, the far-west mesa under the rim at about 46,242, the Ranger's third | none | #529 |
+| B8 | The Wold's heart | the Wold | core | 27–28 | 1,024 (steppe 769, rock 101, hills 77, mountain 33, cliff 30, earth 9, stone 4, a secret door 1) | the Grey Lion's ground; Kushtash, the far-west mesa under the rim at about 46,242, the Ranger's third; built by #529 at 27–28: the hunters' camp by the way in with the young Rider and the eldest's word, the kill-ground with the vultures over it, a pride, the mesa fight and the Grey Lion alone, a cairn, a well, a shrine that gives speed, a hermit under the rim, and Kushtash with its stepped scree up from a secret door and the scout at her fire on the top (§4.7) | none | #529, built |
 | B9 | The Glass's edge | the Wold | country | 28 | 917 (dunes 500, mountain 178, steppe 83, hills 79), 739 walkable | the dunes and the scorpions; the gap at the mesas and dunes; the Riders' watch on the only way in; the glass walkers | the Riders keep the way in | #530 |
 | E9, E8 | The country behind | the Wold | country, behind the road, parked | 27–28 | 931 (hills 411, steppe 264, grass 222) and 305 | the hills down to the coast; the shore | none | #534 |
 
@@ -241,7 +251,7 @@ The places, as the atlas and the docs have them:
 | Place | Box | What the docs say | On the atlas |
 |---|---|---|---|
 | Akordu (the Wold Riders' camp) | D8 | the horse people and their eldest, who tells the oldest story on that side of the sea (STORY, Act Four; DESIGN §9); the Wold's rest, a trader and the Rider's ride (call 5); the garden of glass (#56's 55); the horse that came back (#56's 51) | a camp, "Akordu", at 120,250, built with D8 (#526) |
-| Kushtash (the Eyrie) | B8 | the Wold Rider scout who guided the Meridian Company, on the far-west mesa under the rim: the Ranger's third prestige (DESIGN §5, #448) | a camp at 132,289 in D10 today; moves to about 46,242 (call 5) |
+| Kushtash (the Eyrie) | B8 | the Wold Rider scout who guided the Meridian Company, on the far-west mesa under the rim: the Ranger's third prestige (DESIGN §5, #448) | a camp, "Kushtash", at 46,242, built with B8 (#529); moved from 132,289 (call 5) |
 | The mesas | D10, D8, B8 | the basilisks' ground; the mesa fight (MONSTERS §8.3) | rock, five outcrops of 11 to 16 squares |
 | The dunes | B9, D9 | the glass scorpions' ground (MONSTERS §8.3); the crescent round the glass | dunes, 1,166 squares across both zones |
 | The Scarp stair | C8, and C7 | Act IV's way down into Saltreach; the Compact runner on it (#56's 54) | a road link at 80,206 → 80,216, "the Scarp stair" |
@@ -642,9 +652,10 @@ settled in its issue, and what Ashfall teaches changes them.
   at 9 to 20, the cleft's rock at 21 to 24, cliff at 25 to 27 and steppe at 28 to 31, open only at
   column 8; east, D8's west edge square for square (x 103 against x 104), steppe at rows 0 to 17,
   hills at 18 to 19, steppe at 20 to 24, hills at 25 to 30 and steppe at 31, all walkable, and
-  nothing said over it: one land; the west, the lip's cliff at row 0 and steppe below it, lies
-  against B8 (#529) and the south, steppe at 0 to 26, hills at 27 to 28 and steppe at 29 to 31,
-  against C9, the Glass's and left to the reach, and the world ends at both. All are pinned in
+  nothing said over it: one land; the west, the lip's cliff at row 0 and steppe below it, meets
+  B8's east edge (#529, §4.7) square for square, and the south, steppe at 0 to 26, hills at 27 to 28
+  and steppe at 29 to 31, lies against C9, the Glass's and left to the reach, where the world ends.
+  All are pinned in
   `tools/tests/outdoors.ts`. It has no exit: it is reached over D8's west edge and up the stair
   from C7, and `CUT_OFF` stays empty. It pays 1,822 xp a member, 1.10 times the scaled share of
   1,650, and 1,100 gold, the cleft's 900 and the cairn's 200 and an Elixir (§8, §9, #528's 10 and
@@ -652,7 +663,7 @@ settled in its issue, and what Ashfall teaches changes them.
   of C7 opened, nine for 301; the novelty, none claimed (§9, #528's 14); and the pay, the scaled
   share over the brief's about 1,000 (§9, #528's 17).
 
-### 4.7 B8, the Wold's heart, and Kushtash (#529): core, band 28
+### 4.7 B8, the Wold's heart, and Kushtash (#529): core, band 27–28
 
 - **Purpose.** The far west under the rim: the Grey Lion's ground, the Riders' hunt, and Kushtash,
   the bird's rock, the far-west mesa where the scout who guided the Meridian Company keeps her
@@ -680,6 +691,94 @@ settled in its issue, and what Ashfall teaches changes them.
 - **New here.** A third prestige's trainer on a mesa top; the area's boss on open ground.
 - **Finds.** Gold and an elixir at the lion's kill-ground; the scout gives nothing but the prestige.
 - **Pay.** About 2,600 xp a member, the Grey Lion's on the hunt.
+- **Built** (#529, 9 October): the brief's places, with three groups for its eight and twenty-seven
+  features for its nine, laid whole in the Wold at 40,222, band 27–28 and not 28: a band of one
+  level cannot pass the curve's rise rule, the hardest group at least max(floor + 1, top − 2), so at
+  27–28 the hardest must be 28, and the Grey Lion, the Wold's one 28, carries it; the gate's company
+  is tuned at 27, where the third prestige comes (§9, #529's 1). It is the fifth map on the Wold's
+  zone row, after D10, D9, D8 and C8, and last in the Area's `maps`. Its start is the way in, 31,4
+  facing west (71,226), where C8's west edge is walked onto it and nothing is said: one land. Of its
+  1,024 squares 860 are open: steppe 769, hills 77 (the six of the lesser mesa's scree among them),
+  earth 9 (the hunters' fire 5, the ledge 2, the scout's fire 1, the hermit's hollow 1), stone 4
+  (the steps) and the secret door 1; the rest is rock 101, mountain 33 and cliff 30. Column 0 is
+  mountain on all 32 rows, the rim's foot as the source reads, and row 0 the Scarp's lip, cliff from
+  column 2 and mountain at the corner; the outdoors lays a zone map's mountain that faces nothing
+  built as the world's end, so in play column 0 and the corner are void and the open land is columns
+  1 to 31 (§9, #529's 13).
+  The hunters' camp is a `camp` (#45) at 25,5 (65,227) on trodden earth, 7 steps from the way in:
+  the second rest on the Wold after Akordu, the Riders' second peopled camp. It is unnamed, as D9's,
+  D10's and C8's camps are, only Akordu's having a name, and reads as the hunters' fire in a ring of
+  saddles (§9, #529's 10). At it sit the young Rider (24,4), a boy in a man's coat who has asked for
+  the last blow, and a Rider from Akordu (26,6) who brings the eldest's word: let him die on his own
+  ground. Both are words only. D8 has a young Rider at the horse-lines with near the same words, so
+  one boy stands in two places until #532 settles which (§9, #529's 11; §11).
+  Kushtash is seen from the way in (`b8_kushtash`, 29,4), the tallest mesa on the Wold, sheer on
+  every side, its top out of sight. The atlas's rock mass under the rim (columns 2 to 13, rows 11 to
+  19) is kept and its top carved out and shut by rock on every side, rock and not cliff, since a
+  Mountaineer climbs cliff and mountain and not rock. The secret is the way up (§9, #529's 7), a
+  door at 2,17 (42,239) on the mesa's rim side, searched from 1,17 facing east. Inside, stone steps
+  go up the face, 3,17 to 3,14, then a ledge, 4,14 and 5,14, onto the top at 6,14 (46,236). The top
+  is 24 squares, rows 14 to 17 (columns 6 to 10, 5 to 11, 5 to 11 and 6 to 10). The walkthrough
+  checks that nothing reaches it but the steps (859 squares walked, waded, climbed or floated) and
+  that the steps' foot reaches the 30 squares inside. The hint is the doc's (§9, #529's 8): smoke
+  off the top (`b8_smoke`, 8,10, the mesa's north foot) and the vultures never over it; the fire on
+  the top by night (`b8_fire`, 14,12, seen from the kill-ground); and in front of the door one run
+  of the scree bare of lichen (`b8_scree`, 1,17). No text says there are steps until they are found
+  (`b8_steps`, 3,17); the ledge (`b8_ledge`, 4,14) is a stride wide with the drop at your elbow.
+  On the top are the scout's fire (`b8_lookout`, 7,15), a ring of stones at the edge with a hide
+  stretched against the wind; the scout (8,16); and the view (`b8_view`, 10,15), the Wold open east
+  to the haze over Akordu and the Glass white to the south-east with a dark crown standing in it,
+  nothing said of what it is. The scout is a woman of the Riders with a bow across her knees,
+  watching the Glass: she guided the Meridian Company, and says nothing of the journals, the map or
+  what she would teach (§9, #529's 9). **For the Ranger's third** (#448, part 3, to build after the
+  Dead-Drop and this box merge): she is the person 'The scout' of the map `wold_b8`, who has no id,
+  people having none, at 8,16 (48,238); the way up is the door at 2,17 (42,239) and the steps; the
+  top is landed at 6,14 (46,236). The quest adds her `teaches` and her asking there.
+  Round the box: the rim (`b8_rim`, 3,4); the hunters' horses hobbled in the grass (`b8_horses`,
+  28,9); a well of the Riders (10,6); the Riders' cairn on the north hill (`b8_cairn`, 16,2), with
+  600 gold and a Quickening Draught, for the mesa's stone; a hermit in a hollow under the rim
+  (3,24), words only, an old Rider with eyes pale at the edges as if burnt, who went into the Glass
+  once and saw something walk there in a man's shape, taller than any man, green as old bronze, with
+  a lamp for a face; the kill-ground between the mesas (`b8_kill_ground`, 16,16), where the hunter's
+  saddlebags lie (`b8_saddlebags`, 15,20), 1,600 gold and an Elixir; a dozen vultures turning low
+  over it, none coming down (`b8_vultures`, 19,12); the lesser mesa seen (`b8_mesa_seen`, 29,17)
+  with a hunter of glass crouched in the grass, his face turned up to its lip (`b8_glassed`, 28,21);
+  a horse pulled down in the pride's grass (`b8_kill`, 29,13); the glass walker's prints up out of
+  the south, glittering (`b8_tracks`, 19,27); a pride's lie in the south-east (`b8_lie`, 26,28); and
+  a horse's bones under the rim (`b8_bones`, 6,29). The shrine is the Riders' running horse in white
+  stones on the rise (`b8_shrine`, 10,27), and it gives speed: E10's gives accuracy, D9's well
+  endurance, D8's might and D10's luck, C8 has none, and the walkthrough checks that no other shrine
+  on the Wold gives speed (§9, #529's 12). The scout gives nothing, and nothing comes near the
+  window (§9, #529's 14).
+  Three groups, the fewest that pass (§9, #529's 2 and 3): a pride of four lions with three vultures
+  down on their kill (`b8_pride`, 27,13), 13 steps from the way in and the nearest, at level 26.0;
+  the mesa fight in the scree under the lesser mesa's south face, a basilisk behind four lions
+  (`b8_mesa`, 24,23), the brief's basilisk behind a pride; and the Grey Lion alone on open steppe
+  between the mesas (`b8_grey_lion`, 17,19), the boss, who does not roam and does not come again, 29
+  steps in and the hardest, at level 28.0. The second pride, the vultures over the kill-ground and
+  the glass walker are seen and not fought (§9, #529's 4): a third group would lift the day off its
+  aim, the walker to about 13.9 fights to a rest, or the pay past the cap, two walkers or a second
+  pride to about 5,500 xp a member, 1.30 times the share. When the Grey Lion falls he lies down in
+  the beaten grass as if to sleep and the vultures begin to come down.
+  The Grey Lion is set off the line in `OFF_LINE` (`tools/tests/harness.ts`), as the Stair's head's
+  boss was: 3,000 hit points and 16d8+16 (average 88) for the boss line's 1,552 and 26d8+29 (average
+  146), with his level 28, armour class 27, attack 18, xp 17,813, size, look and sprite as they
+  were. On the line he fell 86% of the time at 27, past the limit of 80%, and 92% at 29; as set he
+  falls 75% at 27 (aim 30% to 70%, limit 20% to 80%) and 91% at 29 (aim 90%, limit 75%), and the
+  gate leaves him out of the day (§9, #529's 5 and 6).
+  The edges: east, C8's west edge square for square (x 71 against x 72), the lip's end at row 0 and
+  steppe at rows 1 to 31, all open both sides; north, row 0 against B7 (cut), mountain at 0 to 1,
+  laid void, and the Scarp's lip, cliff, at 2 to 31; west, column 0 against A8 (cut), mountain on
+  all rows, laid void, the rim; south, row 31 against B9 (#530, not built), void at 0, hills at 1 to
+  7, steppe at 8, hills at 9 and steppe at 10 to 31, columns 1 to 31 open, which B9's builder meets
+  and re-pins. All are pinned in `tools/tests/outdoors.ts`, C8's pin there no longer wanting the
+  void west of it. It has no exit: it is reached over C8's west edge, and `CUT_OFF` stays empty. It
+  pays 4,784 xp a member, 1.13 times the scaled share of 4,250 (the cap is about 5,310), and 2,200
+  gold, the saddlebags' 1,600 and an Elixir and the cairn's 600 and a Quickening Draught (§8, §9,
+  #529's 14 and 17). It departs from the brief in the band, 27–28 for 28; the groups, three for
+  eight; the Grey Lion, alone and not with his pride, and set off the line; the hint, the doc's
+  smoke where the issue has the eldest; the novelty, none claimed (§9, #529's 15); and the pay, the
+  scaled share over the issue's 2,600.
 
 ### 4.8 B9, the Glass's edge (#530): country, band 28
 
@@ -787,12 +886,12 @@ for Phase 1.6 to pick up.
 
 ### The third prestiges
 
-Two of DESIGN §5's thirds sit in the Glasswold (#448, call 8). The Ranger's is built with B8: the
-scout on Kushtash names the Meridian journals and sends the company down Fire Mountain's vents to
-Meridian Camp for Oriel Fane's map, Ashfall's dungeon (#441), and teaches the Unerring when it is
-brought back. The Sorcerer's, at the Buried Tower's crown, is the reach's and waits for Phase 1.6;
-until then the seeking quest names the place (DESIGN §5) and the gap's Riders say what stands
-between.
+Two of DESIGN §5's thirds sit in the Glasswold (#448, call 8). The Ranger's is placed with B8, the
+scout on Kushtash with words only (§4.7), and built by #448: she names the Meridian journals and
+sends the company down Fire Mountain's vents to Meridian Camp for Oriel Fane's map, Ashfall's
+dungeon (#441), and teaches the Unerring when it is brought back. The Sorcerer's, at the Buried
+Tower's crown, is the reach's and waits for Phase 1.6; until then the seeking quest names the place
+(DESIGN §5) and the gap's Riders say what stands between.
 
 ## 7. Encounters, and what is new
 
@@ -810,19 +909,23 @@ near pride has its three, for the same reason (§4.5, §9, #527's 8). D8's vultu
 garden and never come down, seen and not fought, and its basilisk stands alone, since the curve
 wants the hardest group to average 27 and only a basilisk or a walker is 27 (§4.4, §9, #526's 8).
 C8's pride has its three too. Its vultures come as a flock of six on the lip's updraught and its
-basilisks stand as a pair, one having run the day past its aim (§4.6, §9, #528's 9). The Wold
-spends MONSTERS §3.3's stone (#546), first at D10, where the basilisk is placed, behind the mesa's
-lions and alone under the small mesa (§4.5, §9, #527's 15 and 16), and again at D8, alone in the
-mesa's shade (§4.4), then at C8, a pair in the hills (§4.6); the sweep (#545) and the toll (#544)
-are the Whitespine's and Ashfall's, spent before it.
+basilisks stand as a pair, one having run the day past its aim (§4.6, §9, #528's 9). B8's pride has
+its three, down on their kill; its dozen vultures turn over the kill-ground and never land, seen and
+not fought, and begin to come down when the Grey Lion falls, who stands alone, set off the line
+(§4.7, §9, #529's 4 and 5). The Wold spends MONSTERS §3.3's stone (#546), first at D10, where the
+basilisk is placed, behind the mesa's lions and alone under the small mesa (§4.5, §9, #527's 15 and
+16), and again at D8, alone in the mesa's shade (§4.4), then at C8, a pair in the hills (§4.6), and
+at B8, behind four lions under the lesser mesa (§4.7); the sweep (#545) and the toll (#544) are the
+Whitespine's and Ashfall's, spent before it.
 
 New in the Glasswold, for the novelty check (EXPANSION §5.4): the glass walkers, a new family, and
 dunes underfoot (#543), both claimed by D9, which places them first (§9, #525's 15); steppe
 underfoot, E10's first; stone and its cure (#546), claimed by D10, which places the basilisk first
 (§9, #527's 15); a camp that is an area's rest, with a `coach` sold from it (#547), built at Akordu,
 though the check refuses the camp landmark, which is on the road before (§9, #526's 18); the reach
-seen from the road and its band said. C8 claims nothing of its own (§9, #528's 14). Its landmarks: a mesa, a camp of tents, a garden of the
-glassed, a lava flow seen, a cliff from its top.
+seen from the road and its band said. C8 and B8 claim nothing of their own (§9, #528's 14, #529's
+15). Its landmarks: a mesa, a camp of tents, a garden of the glassed, a lava flow seen, a cliff from
+its top.
 
 ## 8. The numbers
 
@@ -854,11 +957,11 @@ glassed, a lava flow seen, a cliff from its top.
   step 1,400 to 3,100 gold (docs/areas/ashfall.md §8).
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
   (docs/areas/thornmark.md §9, 17): a company at 26 wins nine in ten of E10's fights and walks the
-  road over the hills resting at its camp; one at 24 wins no more than one in four. The Grey Lion is
-  won about half the time at 28 and nearly always at 30. The reach's own gate is the cap's
-  (EXPANSION §5.2) and not this doc's. A company that climbs the Scarp stair from the Saltings at
-  12 meets C8's line on the step onto the lip and, 21 steps from the head, its vultures: a warning,
-  not a wall, and a fight it can run from.
+  road over the hills resting at its camp; one at 24 wins no more than one in four. The Grey Lion,
+  set off the line, is won three times in four at 27, B8's floor, and nine times in ten at 29
+  (§4.7). The reach's own gate is the cap's (EXPANSION §5.2) and not this doc's. A company that
+  climbs the Scarp stair from the Saltings at 12 meets C8's line on the step onto the lip and, 21
+  steps from the head, its vultures: a warning, not a wall, and a fight it can run from.
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3).
 - **As built.** E10 (#517, #524) pays 2,543 xp a member, 1.04 times its scaled 2,450, and 950 gold,
   counted in Ashfall's row since its map is the Waste's (20,142 of 19,467, the row's xp met). At its floor, 25, a
@@ -917,6 +1020,23 @@ glassed, a lava flow seen, a cliff from its top.
   100.0% within 12 steps (992 of its 992 open squares) and the furthest 12 of 20, with no sign among
   its 22 points. Its dearest find is the Elixir; the area's stays the
   Leather Coat +2, 2,700 gold of the window's 6,000.
+- **As built, B8** (#529). It pays 4,784 xp a member, 1.13 times its scaled 4,250 (the cap is about
+  5,310; the pride 947, the mesa 868, the Grey Lion 2,969), and 2,200 gold: 1,600 and an Elixir in
+  the hunter's saddlebags, 600 and a Quickening Draught in the Riders' cairn. The Glasswold's row is
+  owed to #447 for the rest: a clear gives 14,645 xp a member of the 21,067 asked and 7,650 gold of
+  the 12,720. With B9's 2,600 and the side quests' 1,650 to come the area comes to about 18,900,
+  0.90 times the ask. At its floor, 27, a company wins 91.7% of its fights (aim 90%, limit 80%) and
+  manages 10.91 fights to a rest (aim 9.75 to 11.75, limit 8.25 to 14.25), 7% of days ending in a
+  fight broken off. The Grey Lion, set off the line, is won 75% of the time at 27 (aim 30% to 70%,
+  limit 20% to 80%) and 91% at 29 (aim 90%, limit 75%), and is left out of the day (§9, #529's 5).
+  Two under its floor is n/a, the floor being above the area's: its groups count in the Glasswold's
+  pool of 18, won 98.6% at the floors and 94.4% two under, owed to #18 as before. Alone at 27 the
+  pride costs 9% a fight and is 11.3 fights to a rest, the mesa fight 12% and 10.7; the walkthrough
+  wins the pride and the mesa fight ten times in ten at 27 and the Grey Lion nine in ten at 28. A
+  third group would break the day's aim or pass the cap (§9, #529's 2). Density 100.0% within 8
+  steps (860 of its 860 open squares) and the furthest 8 of 15, with no sign among its 30 points.
+  The area's dearest find stays the Leather Coat +2, 2,700 gold of the window's 6,000; B8's are an
+  Elixir and a Quickening Draught.
 
 ## 9. Decisions
 
@@ -1352,6 +1472,97 @@ Decided by delegate for #528, each the owner's to overturn:
     cut: the scaffold gives steppe 971 and hills 53, its zones in the cut the Saltings 528 and the
     Wold 496. A map is one land, so all of it is the Wold's.
 
+Decided by delegate for #529, each the owner's to overturn:
+
+1. **The band is 27–28, not the brief's 28.** The curve's rise rule holds a box's hardest group at
+   max(floor + 1, top − 2), which a band of one level cannot pass: at 27–28 the hardest must be 28,
+   and the Grey Lion, the Wold's one 28, carries it. The gate's company is tuned at 27, where the
+   third prestige comes. `wold_b8`, "The Wold", core, region `glasswold`, at 40,222, fifth on the
+   zone row `wold` and last in the Area's `maps`.
+2. **Three groups, the fewest that pass,** for the brief's eight. Priced at 27, each alone (the
+   harness, fights to a rest): a pride of four with three vultures 11.3; four lions and a basilisk
+   10.7; three lions and two basilisks 8.6; a glass walker alone 30.0; two walkers 10.8; four lions
+   alone 18.8; six vultures 22.8. The pride and the mesa fight make a day of 10.91 (aim 9.75 to
+   11.75) at 4,784 xp a member with the boss. A third group lifts the day off its aim (the walker:
+   about 13.9) or the pay past the cap (two walkers or a second pride: about 5,500, 1.30 times the
+   share). `b8_pride` (27,13) is four lions with three vultures down on their kill, nearest the way
+   in, 13 steps; `b8_mesa` (24,23), in the scree under the lesser mesa's south face, a basilisk
+   behind four lions, the brief's basilisk behind a pride; `b8_grey_lion` (17,19), the boss, on open
+   steppe between the mesas.
+3. **The Grey Lion is alone,** not with his pride: the boss is judged by itself at its gate, a pride
+   with him adds about 344 xp a member against the cap, and the lion the eldest would let die is the
+   old one left alone on his ground. `roams: false`, no respawn, and a `slainText`.
+4. **The second pride, the vultures over the kill-ground and the walker are seen, not fought:**
+   `b8_vultures` (a dozen turning low over the kill-ground, never landing, until the Grey Lion's
+   `slainText` has them begin to come down), `b8_tracks` (the walker's prints up out of the south,
+   glittering) and `b8_lie` (a pride's lie in the south-east).
+5. **The Grey Lion is set off the line by the gate,** in `OFF_LINE` (`tools/tests/harness.ts`), as
+   the Stair's head's boss was (#502): the boss line's 1,552 hit points and 26d8+29 (average 146)
+   become 3,000 and 16d8+16 (average 88); level 28, armour class 27, attack 18, xp 17,813, size,
+   look and sprite kept. On the line he fell 86% at 27, past the limit of 80%, and 92% at 29. Tried
+   with the gate's company, 100 seeds, at 27, 28 and 29: 2,000 and 26d8+29, 63, 72 and 74%; 3,100
+   and 16d8+16, 60, 82 and 81%; 3,050 and 16d8+16, 68, 88 and 86%; 3,000 and 16d8+20, 70, 82 and
+   86%; 3,000 and 16d8+16, 75, 90 and 91%. The step from 28 to 29 is flat, so the floor and two
+   above cannot both sit at their aims; 3,000 and 16d8+16 keeps two of the three at aim (two above,
+   and the box's floor pool, 91.7%) and the floor's 75% between its aim (70%) and its limit (80%).
+   3,050 would put the floor at aim (68%) and the pool, 89.3%, and two above, 86%, off it.
+6. **The boss is on the gate's list:** `BOSSES` has `wold: ['wold_b8:b8_grey_lion']` in
+   `tools/tests/gate.ts`, and the gate leaves him out of the day.
+7. **Kushtash, the way up (the secret):** the atlas's rock mass under the rim (columns 2 to 13, rows
+   11 to 19) is kept, its top carved out and shut by rock (`r`, which no Mountaineer climbs) on
+   every side. The secret door is at 2,17 (42,239) on the mesa's rim side, searched from 1,17 facing
+   east; inside, stone steps up the face, 3,17 to 3,14, then the ledge, 4,14 and 5,14, onto the top
+   at 6,14 (46,236). The top is 24 squares, rows 14 to 17 (columns 6 to 10, 5 to 11, 5 to 11 and 6
+   to 10). The walkthrough checks that nothing reaches the top but the steps (859 squares walked,
+   waded, climbed or floated) and that the steps' foot reaches the 30 squares inside. The door sits
+   at 2,17 and not 2,16 because the art check wants a map's wall squares dressed by the old rule and
+   bare today, and at 2,16 the square was bare under both.
+8. **The hint is the doc's:** `b8_smoke` (8,10, no `when`, so the pillars check holds), smoke off
+   the top and the vultures never over it; `b8_fire` (14,12, `when: night`), the fire on the top
+   seen from the kill-ground; `b8_scree` (1,17), in front of the door, one run of the scree bare of
+   lichen. No text says there are steps until they are found (`b8_steps`). The issue's "hinted by
+   the eldest" is superseded by the doc.
+9. **The scout** is the npc 'The scout' at 8,16 (48,238), words only: she guided the Meridian
+   Company, and says nothing of the journals, the map or what she would teach. People have no `id`
+   field, so #448 finds her by the map `wold_b8` and her name (or her square) and adds her `teaches`
+   and her asking there. Neither she nor the hermit ('A hermit under the rim', 3,24) is named, as
+   the Riders at C8's watch are not: §10 has nothing to add.
+10. **The hunters' camp is the second rest on the Wold,** after Akordu: a `camp` at 25,5 (65,227) on
+    trodden earth, 7 steps from the way in, unnamed as D9's, D10's and C8's camps are (only Akordu's
+    has a name). It reads as the hunters' fire in a ring of saddles, the Riders' second peopled
+    camp.
+11. **The young Rider and the eldest's word are words only:** 'The young Rider' at 24,4 and 'A Rider
+    from Akordu' at 26,6, who brings the eldest's word, let him die on his own ground. D8 already
+    has 'A young Rider' at the horse-lines with near the same words; one boy in two places is #532's
+    to settle (`until` or `after`).
+12. **The shrine gives speed** (`b8_shrine`, the running horse in white stones, 10,27): E10's gives
+    accuracy, D9's well endurance, D8's might and D10's luck, and C8 has none. The walkthrough
+    checks that no other Wold shrine gives speed.
+13. **The rim:** column 0 is mountain on all 32 rows, the rim's foot as the source reads, and row 0
+    is the Scarp's lip, cliff from column 2 and mountain at the corner. The outdoors lays a zone
+    map's mountain that faces nothing built as the world's end (`src/game/outdoors.ts`), so in play
+    column 0 and the corner are void and the box's open land is columns 1 to 31, as at C7's corners.
+    The doc's §1 has the rim as the A column, cut.
+14. **Finds, 2,200 gold:** the hunter's saddlebags on the kill-ground (the chest `b8_saddlebags`,
+    15,20), 1,600 gold and an Elixir; the Riders' cairn on the north hill (`b8_cairn`, 16,2), 600
+    gold and a Quickening Draught, for the mesa's stone. The scout gives nothing. Nothing comes near
+    the window.
+15. **Novelty claims nothing:** B8's ground (steppe, hills, rock, cliff, stone, earth), kinds (cats,
+    birds, salamanders) and features are on the road before; the brief's "a third prestige's trainer
+    on a mesa top" and "the area's boss on open ground" have no token.
+16. **`ROADS.wold` is unchanged,** D10's five groups then D9's four: B8 is off the road, and the
+    gate reads the zone's way in from its first map.
+17. **Pay 4,784 xp a member,** 1.13 times the scaled share of 4,250, under the cap (about 5,310):
+    the pride 947, the mesa 868, the Grey Lion 2,969. The Wold's row stands at 14,645 of 21,067 xp
+    and 7,650 of 12,720 gold (2,200 here: 14); with B9's 2,600 and the side quests' 1,650 to come
+    the area comes to about 18,900, 0.90 times the ask (§8).
+18. **Test entries:** gate `BOSSES` (6) and harness `OFF_LINE` (5); maps drops the Grey Lion from
+    `UNPLACED`; outdoors pins B8's four edges, and C8's pin no longer wants the void west of it;
+    `CUT_OFF` stays empty; the gate has no OWED `wold_b8: under`, B8's floor being above the area's,
+    so its groups count two under in the Glasswold's pool, owed to #18 as before.
+19. **The issue is superseded by the doc in three places:** its 2,600 xp (the doc's share is 4,250:
+    17), its "795 squares" (860 are open) and its hint, "by the eldest" (the doc's is the smoke: 8).
+
 ## 10. Names
 
 The Glasswold's naming pass, by the rules of `docs/NAMES.md`: the Wold Riders' tongue was left to
@@ -1379,8 +1590,8 @@ for #444.
   names for plain things as the Grove Stone is, lettered as the plan has them until the reach's doc
   says otherwise; the Grey Lion, a beast and not a place.
 - **Ids stay:** `wold` and `theglass` are the plan's zones; the Eyrie's site keeps its name in the
-  issues until #444 renames it, and its id is #529's to set when it is placed; Akordu's is its
-  site's name and its map `wold_d8`, set by #526.
+  issues until #444 renames it, and Kushtash's id is its site's name and its map `wold_b8`, set by
+  #529; Akordu's is its site's name and its map `wold_d8`, set by #526.
 
 ## 11. What was cut
 
@@ -1443,7 +1654,6 @@ Owed, from D8 (#526):
   landmark kind is the lighthouse, so a tent shape is a renderer change, not made.
 - **D8's north and east edges end in the void:** a box not built to the north and E8 (#534,
   parked) to the east; its west edge meets C8's (#528, §4.6) (§4.4, §9, #526's 20).
-- **B8's band** will need a floor below its top, as D8's 26–27 has (§9, #526's 1).
 - **The figures two under the floor** are owed to #18 and **the area's pay and gold** to #447:
   8,040 xp of 21,067 and 4,350 gold of 12,720 (§8).
 
@@ -1458,7 +1668,29 @@ Owed, from C8 (#528):
   stair's nine being the only ones opened (§4.6, §9, #528's 3).
 - **The chapter's play** with the Wold entered by the stair is #531's (§5): the walkthrough here
   climbs the stair at 12, 25 and 26 and plays no step.
-- **C8's west and south edges end in the void:** B8 (#529) to the west and C9, the Glass's and left
-  to the reach, to the south (§4.6, §9, #528's 16).
+- **C8's south edge ends in the void** against C9, the Glass's and left to the reach; its west edge
+  meets B8's (#529, §4.7) (§4.6, §9, #528's 16).
 - **The figures two under the floor** are owed to #18 and **the area's pay and gold** to #447:
   9,861 xp of 21,067 and 5,450 gold of 12,720 (§8).
+
+Owed, from B8 (#529):
+
+- **The groups not built:** the brief's eight are three. The second pride, the vultures' flock and
+  the glass walker are seen and not fought (`b8_lie`, `b8_vultures`, `b8_tracks`); a third group
+  would break the day's aim or pass the cap (§4.7, §9, #529's 2 and 4).
+- **The Ranger's third** (#448, part 3, to build after the Dead-Drop and B8 merge): the scout's
+  `teaches` and her asking, keyed on the map `wold_b8` and her name 'The scout' at 8,16 (48,238),
+  who has no id; the way up is the door at 2,17 (42,239) and the steps, and the top is landed at
+  6,14 (46,236) (§4.7, §9, #529's 9).
+- **The young Rider stands at Akordu and at the hunt,** at D8's horse-lines and B8's camp, with near
+  the same words, and the eldest's word is B8's Rider's: #532 settles which, with the quest's choice
+  (53, `until` or `after`). The walkthrough kills the Grey Lion at 28, where "let him die" may want
+  him gated (§6, §9, #529's 11).
+- **B9 meets B8's south edge** (#530): columns 1 to 31 are open, and B9's builder re-pins the edge
+  (§4.7, §9, #529's 18).
+- **The chapter's step at the heart,** if it has one, is #531's (§5).
+- **The rim is laid as the world's end:** column 0 and the corner are void in play, and the open
+  land is columns 1 to 31 (§4.7, §9, #529's 13).
+- **The figures two under the floor** are n/a for B8, its floor being above the area's, and the
+  Glasswold's pool is owed to #18; **the area's pay and gold** are owed to #447: 14,645 xp of 21,067
+  and 7,650 gold of 12,720 (§8).
