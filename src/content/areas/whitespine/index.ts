@@ -2,12 +2,14 @@
 // Point, the first of Act IV. docs/areas/whitespine.md is its brief.
 import type { Area } from '../../area.ts';
 import { MONKSVALE_J11 } from './maps/monksvale_j11.ts';
+import { MONASTERY } from './maps/monastery.ts';
+import { MONASTERY2 } from './maps/monastery2.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
   id: 'whitespine' as const,
-  maps: [MONKSVALE_J11],
+  maps: [MONKSVALE_J11, MONASTERY, MONASTERY2],
   monsters: MONSTERS,
   sprites: SPRITES,
   items: [],
@@ -20,7 +22,8 @@ export const AREA = {
     fogText: 'Cloud comes down off the crest and lies in the vale.', thunderText: 'Thunder rolls along the range.' },
   // No town, and no business (#443, call 7).
   interiors: [] as const,
-  // Peaks underfoot, with the road through them (#543), with J11 (#499).
-  novel: { families: [], terrain: ['peak'], mechanics: [], landmarks: [] },
+  // Peaks underfoot, with the road through them (#543), with J11 (#499); a monastery kept by what did
+  // not build it, with Highcell (#500).
+  novel: { families: [], terrain: ['peak'], mechanics: [], landmarks: ['monastery'] },
   atlas: { zones: ZONES, places: PLACES, sites: SITES },
 } satisfies Area;

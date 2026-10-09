@@ -84,6 +84,7 @@ export const BOSSES: Record<string, readonly string[]> = {
   kilnsheart: ['deep_mines3:dm3_foreman', 'anvil_stone:as_warden', 'lava_tubes2:lt2_great_salamander'],
   cairnfield: ['cairns2:cd2_king'],
   coldmere: ['sleepers_bay2:sb2_matron'],
+  monksvale: ['monastery2:hc2_abbot'],
 };
 
 /** Each zone's road: the groups met on it, in order, from its way in. Every zone with groups names one. */
@@ -190,6 +191,8 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'Rimewater: under': { whose: '#18', at: 1 },
   // And the Whitespine's first box (#499), in Rimewater's gear and the finds by 22, as Rimewater's are.
   'monksvale_j11: under': { whose: '#18', at: 1 },
+  // And Highcell's upper house (#500), banded from the area's floor as Carn Dubh's cairn is.
+  'monastery: under': { whose: '#18', at: 1 },
   'the Whitespine: under': { whose: '#18', at: 1 },
   // Act II's bosses were set by their gates against a company without its first prestige, which the
   // gate's company never took until #541 made it harness's. With it, at 11, four of the six strike

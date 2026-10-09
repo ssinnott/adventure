@@ -6,7 +6,7 @@
 // and behind the wall, the brothers' trodden line to the rock.
 // In from Rimewater's K10 (#491) over the pass, taken, not walked, parked J10 lying between: K10's
 // SADDLE lands on the road at 20,1, and the road's first square, 20,0, leads back (CLIMB). The gate
-// at 26,24 is the way into Highcell (#500), barred until it is built (GATE). The east, south and west
+// at 26,24 is the way into Highcell (#500, GATE). The east, south and west
 // edges end the world against K11, J12 and I11, and the north edge against J10.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/whitespine.md §4.2 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
@@ -20,12 +20,12 @@ import { NORTH, SOUTH } from '../../../../game/types.ts';
 export const CLIMB: Exit = { x: 20, y: 0, to: 'coldmere_k10', tx: 1, ty: 19, tf: NORTH, label: 'Back up over the pass to the cold loch.' };
 
 /**
- * The way into Highcell (#500): the gate in the monastery's north wall at 26,24, onto the dungeon's
- * first square inside its own gate, 7,1, facing south, which this asks #500 to give it. An exit leads
- * only to a built map, so Highcell lists it in this map's exits, opens the gate's square and drops
- * `j11_gate`; its way back out lands on 26,23, facing north, on the road's end before the gate.
+ * The way into Highcell (#500): the gate in the monastery's north wall at 26,24, past the brother in
+ * it, onto the upper house's first square inside, 7,1, facing south; the way back out lands on 26,23,
+ * facing north, on the road's end before the gate.
  */
-export const GATE: Exit = { x: 26, y: 24, to: 'monastery', tx: 7, ty: 1, tf: SOUTH };
+export const GATE: Exit = { x: 26, y: 24, to: 'monastery', tx: 7, ty: 1, tf: SOUTH,
+  label: 'The gate stands open, and a brother stands in it. It bows, and the bow is a shape someone described to it.' };
 
 export const MONKSVALE_J11: MapDef = {
   id: 'monksvale_j11',
@@ -35,7 +35,7 @@ export const MONKSVALE_J11: MapDef = {
   band: [22, 23],
   region: 'whitespine',
   start: { x: 20, y: 1, facing: SOUTH },
-  exits: [CLIMB],
+  exits: [CLIMB, GATE],
   rows: [
     'MMMMAAAAMMMMM^^^^^,,=ppMAAAAAAMM',
     'MMMAAAAAMMMMM^^^^^^==^^MMAAAAAAM',
@@ -61,7 +61,7 @@ export const MONKSVALE_J11: MapDef = {
     'AAAAAAAAAAAMMMMM^^^^^,,==,,,,,,,',
     'AAAAAAAAMMMMMMMMM^^^^^,,=,,,,,,,',
     'AAAAAAAAMMMMMMMMM^^^^^,,===,,,,,',
-    'AAAAAAAAMMMMMMMMMrrrBBBBBBBBBB,,',
+    'AAAAAAAAMMMMMMMMMrrrBBBBBBDBBB,,',
     'AAAAAAAAMMMMMMMMMrrrBBBBBBBBBB,,',
     'AAAAAAAAMMMMMMMMMrrrBBBBBBBBBB,,',
     'AAAAAAAAMMMMMMMMMrrrBBBBBBBBBB,,',
@@ -93,11 +93,10 @@ export const MONKSVALE_J11: MapDef = {
       '"The brothers walk by every morning. Not one of them has ever looked at a sheep."',
     ] },
     { kind: 'event', x: 29, y: 19, id: 'j11_fold', once: true, text: 'Ewes packed close in the fold, their breath smoking. A tuft of lamb\'s wool is caught on the wall.' },
-    // The monastery on its shelf: the towers over the wall, the camp in the shelf's lee, and the gate,
-    // barred until Highcell is built (GATE).
+    // The monastery on its shelf: the towers over the wall and the camp in the shelf's lee; the gate,
+    // the way into Highcell, is GATE.
     { kind: 'event', x: 29, y: 22, id: 'j11_towers', once: true, text: 'Over the monastery\'s wall stand two bell towers. Between the hours nothing moves in them.' },
     { kind: 'camp', x: 21, y: 23, name: 'The shelf\'s lee', text: 'A hollow in the lee of the shelf, out of the wind: old ash in a ring of stones.' },
-    { kind: 'event', x: 26, y: 23, id: 'j11_gate', text: 'The gate stands open, and a brother stands in it. It bows, and the bow is a shape someone described to it.' },
     // Behind the wall, the brothers' trodden line to the rock, and the store cut into it.
     { kind: 'event', x: 29, y: 29, id: 'j11_trodden', once: true, text: 'Behind the wall the snow is trodden in one straight line west to the rock. No print turns off it.' },
     { kind: 'event', x: 29, y: 29, id: 'j11_walker', once: true, when: { hours: 'night' }, text: 'A brother walks the trodden line toward the rock, setting its feet in the old prints.' },
