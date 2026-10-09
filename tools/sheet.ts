@@ -4,7 +4,7 @@
 //   node tools/sheet.ts out.png [--maps thornhold,grove1] [--monsters tm_ogre] [--interiors green_man]
 //   node tools/sheet.ts out.png --changed origin/main
 //   node tools/sheet.ts out.png --rifts all          (or --rifts ring,spiral)
-//   node tools/sheet.ts out.png --ground all         (or --ground ash,ice or cliff,peak)
+//   node tools/sheet.ts out.png --ground all         (or --ground ash,ice or cliff,peak or steppe,volcano)
 // --changed draws what changed since the base, as tools/changed.ts reads it; with nothing changed
 // it says so, writes nothing and exits 0. A change to this tool draws everything. --rifts draws the
 // Rift templates as content/rifts' samples dress them, which no area places; a placed Rift is a map.
@@ -325,7 +325,7 @@ const shot = await page.evaluate(async (o: { maps: MapPlan[]; times: Record<stri
       // A sample is on no world map: its plan instead, the tear red, the warden and the groups
       // orange, the hoard gold, the looks pale and the way in green; a ground's in its grounds' colours.
       const d = m.sample, cs = Math.floor(CROP / d.rows.length), dot = (x: number, y: number, c: string): void => { cc.fillStyle = c; cc.fillRect(x * cs + cs / 4, y * cs + cs / 4, cs / 2, cs / 2); };
-      const ground = (ch: string): string => { const q = GM.LEGEND[ch]; return q.solid === 'wall' ? '#3a3440' : q.solid === 'mountain' ? (q.terrain === 'peak' || q.terrain === 'cliff' ? P.TERRAIN_COLORS[q.terrain] : '#6a6058') : q.solid === 'rock' ? '#8a7a6a' : P.TERRAIN_COLORS[q.terrain]; };
+      const ground = (ch: string): string => { const q = GM.LEGEND[ch]; return q.solid === 'wall' ? '#3a3440' : q.solid === 'mountain' ? (['peak', 'cliff', 'volcano', 'vent'].includes(q.terrain) ? P.TERRAIN_COLORS[q.terrain] : '#6a6058') : q.solid === 'rock' ? '#8a7a6a' : P.TERRAIN_COLORS[q.terrain]; };
       d.rows.forEach((row: string, y: number) => [...row].forEach((ch, x) => { cc.fillStyle = m.ground ? ground(ch) : ch === '#' ? '#3a3440' : ch === 'o' ? '#6a6070' : ch === 'D' ? '#8a5a2a' : '#d8ccb0'; cc.fillRect(x * cs, y * cs, cs - 1, cs - 1); }));
       for (const f of d.features ?? []) dot(f.x, f.y, f.kind === 'chest' ? '#e0b030' : 'id' in f && /_look\d+$/.test(f.id ?? '') ? '#9aa0b0' : '#c0201a');
       for (const e of d.encounters ?? []) dot(e.x, e.y, '#e07020');

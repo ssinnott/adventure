@@ -121,10 +121,13 @@ export const ROADS: Record<string, readonly string[]> = {
   // In from L9 under the pines past the lynxes there, and down the shore past the lynxes at the
   // loch's foot to the crack in the ice and the door (#489).
   coldmere: ['coldmere_k9:k9_lynx_pines', 'coldmere_k9:k9_lynx_foot'],
+  // Down off the pass past the brothers at its foot, and on down the road to the gate past the brothers
+  // walking it (#499).
+  monksvale: ['monksvale_j11:j11_brothers_foot', 'monksvale_j11:j11_brothers_road'],
 };
 
 /** What an area is called in the check, apart from the map it shares an id with. */
-const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Thornmark', saltreach: 'Saltreach', wrackholm: 'Wrackholm', sunderwood: 'Sunderwood', kilns: 'the Kilns', cairnmoor: 'Cairnmoor', rimewater: 'Rimewater' };
+const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Thornmark', saltreach: 'Saltreach', wrackholm: 'Wrackholm', sunderwood: 'Sunderwood', kilns: 'the Kilns', cairnmoor: 'Cairnmoor', rimewater: 'Rimewater', whitespine: 'the Whitespine' };
 
 /**
  * The figures past their limits someone owes, by check: who owes each, and the figure it stood at
@@ -185,6 +188,9 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   // And the Sleepers' Bay's stair (#490), banded from the area's floor as Carn Dubh's cairn is.
   'sleepers_bay: under': { whose: '#18', at: 1 },
   'Rimewater: under': { whose: '#18', at: 1 },
+  // And the Whitespine's first box (#499), in Rimewater's gear and the finds by 22, as Rimewater's are.
+  'monksvale_j11: under': { whose: '#18', at: 1 },
+  'the Whitespine: under': { whose: '#18', at: 1 },
   // Act II's bosses were set by their gates against a company without its first prestige, which the
   // gate's company never took until #541 made it harness's. With it, at 11, four of the six strike
   // twice a turn and the casters cast at their first rank, and each boss is won nearly always at its
@@ -450,6 +456,10 @@ export function gate(): void {
     // skill: climbed as the mountain is, the road through them walked.
     const cut: MapDef = { id: 'fx_cut', name: 'Cut', kind: 'outdoor', start: { x: 1, y: 1, facing: 0 }, rows: ['MMMMMMM', 'M=A=|=M', 'MMMMMMM'] };
     ok(stepsFrom(cut)(5, 1) === 4, `the walk from a way in climbs a peak and a cliff as it does the mountain (${stepsFrom(cut)(5, 1)} steps over four squares)`);
+    // The steppe, the dunes and the vines (#543) are open ground to the walk; the volcano and a vent
+    // in it are the mountain's rock, climbed as it is.
+    const far: MapDef = { id: 'fx_far', name: 'Far', kind: 'outdoor', start: { x: 1, y: 1, facing: 0 }, rows: ['MMMMMMMMM', 'M,su&V@=M', 'MMMMMMMMM'] };
+    ok(stepsFrom(far)(7, 1) === 6, `the walk from a way in crosses steppe, dunes and vines and climbs the volcano and a vent (${stepsFrom(far)(7, 1)} steps over six squares)`);
     const at = (x: number): EncounterDef => ({ id: `g${x}`, x, y: 0, monsters: ['rat'] }), line = [at(1), { ...at(2), after: { flag: 'f' } }, at(3), at(4)];
     ok(nearestWayIn(line, (x) => x).map((g) => g.id).join() === 'g1,g3', 'the groups nearest the way in skip one that comes only after a step');
     // A den's keepers are its camp's hardest fight: won no more often than any of its brood.
