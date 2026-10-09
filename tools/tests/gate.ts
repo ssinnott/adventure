@@ -143,10 +143,13 @@ export const ROADS: Record<string, readonly string[]> = {
   // West out of G10 onto the Waste's ash past the beetles below the vines and the drake on the rocks
   // where the road turns west, and over the Cinder Hills past the drakes at their far end (#517).
   emberwaste: ['emberwaste_f10:f10_beetles', 'emberwaste_f10:f10_drake', 'emberwaste_e10:e10_drakes'],
-  // Onto the steppe over its south edge, past the pride at its kill by the way in, west along the road
-  // past the scorpions at the dunes' edge to the glass walker at the far south-west, and north up the
-  // Riders' track past the north pride (#525).
-  wold: ['wold_d9:d9_pride', 'wold_d9:d9_scorpions', 'wold_d9:d9_walker', 'wold_d9:d9_pride_north'],
+  // Onto the mesas over E10's west edge, past the pride at its kill by the way in and the south pride in
+  // the grass, along the great mesa's foot to the mesa fight in the scree under its north face, out to the
+  // scorpions at the dunes' edge and the basilisk alone under the small mesa (#527); then onto the steppe
+  // over its south edge, past the pride at its kill, west along the road past the scorpions at the dunes'
+  // edge to the glass walker at the far south-west, and north up the Riders' track past the north pride (#525).
+  wold: ['wold_d10:d10_pride', 'wold_d10:d10_pride_south', 'wold_d10:d10_mesa', 'wold_d10:d10_scorpions', 'wold_d10:d10_basilisk',
+    'wold_d9:d9_pride', 'wold_d9:d9_scorpions', 'wold_d9:d9_walker', 'wold_d9:d9_pride_north'],
   // Over the crest from the vale and up the path to the Peak Stone, past the brothers walking it (#501);
   // then up the ridge trail and west along the road to the Stair, past the giant and the troll in the
   // snow short of the head (#502).
@@ -235,6 +238,8 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'Ashfall: under': { whose: '#18', at: 1 },
   // And the Glasswold's first box (#525): the steppe, two under, wins every fight, as Ashfall's boxes do.
   'wold_d9: under': { whose: '#18', at: 1 },
+  // And the mesas (#527), the same.
+  'wold_d10: under': { whose: '#18', at: 1 },
   'the Glasswold: under': { whose: '#18', at: 1 },
   'highspine_i11: under': { whose: '#18', at: 1 },
   // And the ridge north (#503), banded from the area's floor as I11 is: its three groups are won every
