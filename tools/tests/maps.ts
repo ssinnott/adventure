@@ -25,6 +25,8 @@ const UNPLACED: Record<string, string> = {
   strangler_vine: '#510', cinder_beetle: '#510', ember_salamander: '#511', ash_husk: '#514',
   cinder_drake: '#511', old_drake: '#515',
   stoker: '#513', sentry: '#514', sentinel: '#516',
+  drakeling: '#22 meridian_camp2', brood_drake: '#22 meridian_camp2', flue_walker: '#22 meridian_camp2',
+  deep_knocker: '#22 meridian_camp3', inspector: '#22 meridian_camp3',
   cinderport_inn: '#512', cinderport_temple: '#512', cinderport_armourer: '#512', cinderport_chandlery: '#512', cinderport_yard: '#512', cinderport_cartographers: '#512', cinderport_factor: '#512', cinderport_potter: '#512',
 };
 
