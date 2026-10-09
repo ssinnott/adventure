@@ -20,7 +20,9 @@
 // fight as it stands each turn, the groups called into it too. It wakes a sleeper of the front row,
 // or a caster, before it strikes. It never sleeps, blesses, drinks or flees, nor cures anything but
 // sleep, so it is weaker than a player; single fights at full health are kinder than play. A group
-// that asks before it fights (#544) it refuses, and fights.
+// that asks before it fights (#544) it refuses, and fights. Between fights, where the gate check
+// mends, it lifts stone first, by Absolve or the draught it carries from 25 (#546), as harness's
+// company does.
 // Read the numbers as where the fights bite, not as a promise. tools/tests/gate.ts holds every map
 // and area to them (the gate check); it imports this file, whose table runs only from the command
 // line.

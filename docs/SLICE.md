@@ -61,6 +61,8 @@ DESIGN.md first for the why.
   room for the whole of it under twelve monsters in three groups, the fallen counted (`calls`) (#537).
   A monster may sweep a row at a chance a turn, its arm the front row or its breath the fuller row
   with its element, which Lampglass halves (`sweep`) (#545).
+  A hit may turn a member to glass, out of the fight and the walk and through a rest till Absolve, a
+  Quickening Draught or a temple lifts it (`inflict: stoned`) (#546).
   The first Smite or Wrath of the Hearth to pass through a machine and do nothing is followed in the
   log by the light going into it like a hand into a glove, once a game (`glove_seen`, MONSTERS §2).
   A group placed on ice (`under: 'ice'`, #536) lives under it: it
@@ -113,7 +115,8 @@ DESIGN.md first for the why.
   the Warden of the Anvil has fallen and its tear is closed, bought back or taken alike,
   `q_anvil_closed` (#540), which the Rift sets once its Warden falls (#465); the Ember Stone once it
   is lit, its three parts set, `q_ember_lit` (#548), which its dungeon will set (#516, not built
-  yet); the rest as their areas write them. By night, outdoors and in a town, the Hearth stands over
+  yet); the Peak Stone, whole and never broken, once the company has stood beside it, the once event
+  at the Stone on I11 (#501); the rest as their areas write them. By night, outdoors and in a town, the Hearth stands over
   the far hills in its true bearing from the party, faint from the first night and taller and
   brighter by a step for each Stone. The title reads the save in storage and draws its column
   steadier, taller and wider by a step; the world map's flickers less; the almanac adds a word on it

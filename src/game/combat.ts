@@ -10,7 +10,7 @@ import { item } from './items.ts';
 import {
   armorClass, attackBonus, weaponOf, isDown, canAct, damage, heal, addCondition, removeCondition, hasCondition, bonus, canTrain, killPay,
   hasTrait, spellHeal, rankMult, spellRank, WEAPON_MASTER_DMG, HOLY_STRIKE_DMG, MARKSMAN_DMG, SPELLFIRE_DMG, SNEAK_ATTACK_DMG, RAGE_DMG, INSPIRE_HIT,
-  prestigeOf, deathAt, resists,
+  prestigeOf, deathAt, resists, lift,
 } from './party.ts';
 import type { ClassId } from './party.ts';
 import type { ItemDef } from './items.ts';
@@ -135,6 +135,8 @@ export const ROUT_LINE = (names: string, one: boolean): string => one ? `${names
  */
 export const GLOVE_LINE = (one: boolean): string => `The light goes into ${one ? 'it' : 'them'} like a hand into a glove.`;
 export const GLOVE_FLAG = 'glove_seen';
+/** The log's word when a hit turns a member to glass (#546), in place of the condition's name and a fall. */
+export const STONE_LINE = (who: string): string => `${who} turns to glass!`;
 /** What the buffs are worth while they last. */
 export const BLESS_HIT = 2, HASTE_HIT = 1, HASTE_SPEED = 8, WARD_AC = 3;
 
@@ -389,7 +391,7 @@ export function partyAct(s: CombatState, party: Party, rng: RngInstance, action:
       holder.splice(holder.indexOf(d.id), 1);
       if (d.use.heal) s.log.push(`${target.name} recovers ${heal(target, d.use.heal)}.`);
       if (d.use.sp) { target.sp = Math.min(target.maxSp, target.sp + d.use.sp); s.log.push(`${target.name} feels sharper.`); }
-      if (d.use.cure) { for (const k of d.use.cure) removeCondition(target, k as Condition); s.log.push(`${target.name} is cleansed.`); }
+      if (d.use.cure) s.log.push(lift(target, d.use.cure) ? `${target.name} is flesh again.` : `${target.name} is cleansed.`);
       break;
     }
     case 'flee': {
@@ -518,9 +520,7 @@ export function castOnParty(c: Character, sp: SpellDef, party: Party, step?: num
  */
 export function castOnAlly(c: Character, sp: SpellDef, a: Character, step?: number): string {
   if (sp.cure?.includes('stoned')) {
-    const stone = hasCondition(a, 'stoned'), curse = hasCondition(a, 'cursed');
-    removeCondition(a, 'stoned'); removeCondition(a, 'cursed');
-    if (stone && a.hp <= 0 && !hasCondition(a, 'dead')) addCondition(a, 'unconscious');
+    const curse = hasCondition(a, 'cursed'), stone = lift(a, sp.cure);
     return stone && curse ? `${c.name} casts ${sp.name}: ${a.name} is flesh again, and the curse lifts.` : stone ? `${c.name} casts ${sp.name}: ${a.name} is flesh again.`
       : curse ? `${c.name} casts ${sp.name}: the curse lifts from ${a.name}.` : `${c.name} casts ${sp.name}, but ${a.name} needs no absolving.`;
   }
@@ -770,13 +770,14 @@ export function monsterAct(s: CombatState, party: Party, rng: RngInstance): bool
     let line = fromSp === 0 ? `${m.def.name} hits ${pick.c.name} for ${dmg}${m.def.drain === 'hp' ? ' and drinks' : ''}.`
       : fromSp === dmg ? `${m.def.name} hits ${pick.c.name} for ${dmg} spell points.` : `${m.def.name} hits ${pick.c.name} for ${fromSp} spell points and ${dmg - fromSp}.`;
     line += woke;
-    // The line says only what takes: not on one it cannot touch (Faith keeps a curse off a cleric), nor again.
+    // The line says only what takes: not on one it cannot touch (Faith keeps a curse off a cleric), nor again;
+    // one turned to glass is said so, and not as fallen.
     if (m.def.inflict && !isDown(pick.c) && !songWards(party, m.def.inflict.cond) && rng.chance(m.def.inflict.chance)) {
       const k = m.def.inflict.cond, had = hasCondition(pick.c, k);
       addCondition(pick.c, k);
-      if (!had && hasCondition(pick.c, k)) line += ` ${pick.c.name} is ${k}!`;
+      if (!had && hasCondition(pick.c, k)) line += ` ${k === 'stoned' ? STONE_LINE(pick.c.name) : `${pick.c.name} is ${k}!`}`;
     }
-    if (isDown(pick.c)) line += ` ${pick.c.name} falls!`;
+    if (isDown(pick.c) && !hasCondition(pick.c, 'stoned')) line += ` ${pick.c.name} falls!`;
     s.log.push(line);
   } else s.log.push(`${m.def.name} misses ${pick.c.name}.`);
   s.turn++;

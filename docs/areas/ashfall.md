@@ -126,7 +126,8 @@ built box by box, with G10's 2,449 xp a member and 900 gold the clear's floor (ย
 `src/content/areas/ashfall/items.ts`, the Area's own since G10 lists it (`ITEMS_AHEAD`,
 `src/content/index.ts`, held it until then), so that the harness and the gate dress by it:
 Cinderport's armourer's eight wares (`ARMOURER`, ยง4.4), each owed to the armourer (#512) until it is
-sold.
+sold. The stone cure is in the table too (#546): the Quickening Draught (`CURES`), which the company
+carries from 25, owed to the chandler (#512) and the Riders' trader at Akordu (#526).
 
 Its ground (#543): vines (`&`), walked through as the woods are, the shore's trees hung with
 creepers; the volcano (`V`) and a vent in it (`@`), the mountain's rock to walk into, see and climb,
@@ -382,7 +383,8 @@ half, with the wilderness features (#45); no more than one point in four is a si
   - The inn (rest). Interior: `cinderport_inn`.
   - The temple, cures and raising at the band's price. Interior: `cinderport_temple`.
   - The armourer, the act's gear step (#542, by 25). Interior: `cinderport_armourer`.
-  - A chandler, provisions and lamp oil. Interior: `cinderport_chandlery`.
+  - A chandler, provisions, lamp oil and the stone cure, the Quickening Draught at 2,000 (#546).
+    Interior: `cinderport_chandlery`.
   - A trainer's yard, to 27. Interior: `cinderport_yard`.
   - The Cartographers' hall, its map of the far side on the wall and the Meridian journals' shelf
     (#443, call 7). Interior: `cinderport_cartographers`.

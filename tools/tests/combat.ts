@@ -7,8 +7,8 @@ import { ITEMS, MONSTERS, SPELLS } from '../../src/content/index.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { World } from '../../src/game/world.ts';
 import { serialize, deserialize } from '../../src/game/save.ts';
-import { defaultParty, equip, addCondition, hasCondition, killPay, spellHeal, rankMult, resists, rest, attackBonus, armorClass, canAct, spellTierAt } from '../../src/game/party.ts';
-import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, castOnAlly, castOnParty, frontStands, monsterAc, monsterHit, canCall, WARD_AC, BLESS_HIT, BREAK_LINE, ROUT_LINE, MEND_LINE, SMOULDER_LINE, CALL_LINE, GLOVE_LINE, GLOVE_FLAG, MAX_MONSTERS, MAX_GROUPS, SWEEP_LINE } from '../../src/game/combat.ts';
+import { defaultParty, equip, addCondition, hasCondition, killPay, spellHeal, rankMult, resists, rest, attackBonus, armorClass, canAct, spellTierAt, isDown, lift, templePrice } from '../../src/game/party.ts';
+import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, castOnAlly, castOnParty, frontStands, monsterAc, monsterHit, canCall, WARD_AC, BLESS_HIT, BREAK_LINE, ROUT_LINE, MEND_LINE, SMOULDER_LINE, CALL_LINE, GLOVE_LINE, GLOVE_FLAG, MAX_MONSTERS, MAX_GROUPS, SWEEP_LINE, STONE_LINE } from '../../src/game/combat.ts';
 import type { CombatState, CombatGroup, PartyAction } from '../../src/game/combat.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import { elementMult, monsterSpells, monsterCanCast, KINDS } from '../../src/game/monsters.ts';
@@ -164,6 +164,7 @@ export function combat(): void {
   pastTen();
   regeneration();
   curse();
+  stone();
   calls();
   glove();
   sweep();
@@ -722,6 +723,44 @@ function curse(): void {
   const plain = defaultParty(makeRng(94)).members[0], cursed = structuredClone(plain);
   addCondition(cursed, 'cursed');
   ok(attackBonus(cursed) === attackBonus(plain) && armorClass(cursed) === armorClass(plain) && canAct(cursed), 'and a curse takes nothing in a fight: what it costs is the cure');
+}
+
+/**
+ * Stone (MONSTERS §3.3, #546): a basilisk's hit turns a member to glass, out of the fight and passed
+ * over, through the fight's end and a rest, till a draught, Absolve or a temple lifts it.
+ */
+function stone(): void {
+  const basilisk: MonsterDef = { ...MONSTERS.wraith, id: 'test_basilisk', name: 'Basilisk', plural: 'Basilisks', attack: 99, dice: 1, sides: 1, bonus: 0, inflict: { cond: 'stoned', chance: 1 } };
+  const p = defaultParty(makeRng(95)), s = startCombat(p, [{ id: 'b', monsters: [basilisk] }], makeRng(95));
+  untilActs(s, p, 95, 0);
+  const line = s.log.find((l) => l.startsWith('Basilisk hits')) ?? '', hit = p.members.find((c) => line.startsWith(`Basilisk hits ${c.name} `));
+  ok(!!hit && hasCondition(hit, 'stoned') && line === `Basilisk hits ${hit.name} for 1. ${STONE_LINE(hit.name)}` && logLines(line).length <= 2, `a basilisk's hit turns a member to glass, and the log says so and not a fall (${line})`);
+  if (!hit) return;
+  untilActs(s, p, 96, 0);
+  const next = s.log.filter((l) => l.startsWith('Basilisk hits'))[1] ?? '';
+  ok(isDown(hit) && !canAct(hit) && !!next && !next.startsWith(`Basilisk hits ${hit.name} `), `the glassed is out of the fight, and passed over (${next})`);
+  // Not the fight's, as sleep is: it outlasts the fight's end and a rest, which mends nothing in it.
+  const hp = hit.hp;
+  s.monsters[0].hp = 0;
+  partyAct(s, p, makeRng(97), { type: 'defend' });
+  rest(hit);
+  ok(s.outcome === 'victory' && hasCondition(hit, 'stoned') && hit.hp === hp, 'it outlasts the fight and a rest, which mends nothing in it');
+  // The draught lifts it, in a fight from the bag as on the walk; one glassed at no hit points comes back out cold.
+  const draught = ITEMS.quickening, q = defaultParty(makeRng(98)), glassed = q.members[0];
+  addCondition(glassed, 'stoned'); q.bag.push(draught.id);
+  const t = startCombat(q, [{ id: 'b', monsters: [{ ...basilisk, inflict: undefined }] }], makeRng(98)), rng = makeRng(98);
+  for (let guard = 0; guard < 50 && currentTurn(t, q, rng)?.side === 'monster'; guard++) monsterAct(t, q, rng);
+  partyAct(t, q, rng, { type: 'use', itemId: draught.id, target: 0 });
+  const out = structuredClone(glassed);
+  out.hp = 0; out.conditions = ['stoned'];
+  ok(draught.slot === 'none' && draught.use?.cure?.join() === 'stoned' && !hasCondition(glassed, 'stoned') && t.log.includes(`${glassed.name} is flesh again.`) && !q.bag.includes(draught.id)
+    && lift(out, draught.use.cure) && hasCondition(out, 'unconscious') && !hasCondition(out, 'stoned'), `a Quickening Draught lifts it, in a fight and on the walk, one at no hit points coming back out cold (${t.log.at(-1)})`);
+  // Absolve lifts it at tier 7, and any temple for a company with neither: 80 gold a level, a member
+  // of 27 dearer there than the draught, which is the temple's price for one of 25.
+  addCondition(glassed, 'stoned');
+  const absolved = castOnAlly(q.members[4], SPELLS.absolve, glassed), at = (level: number): number => templePrice({ ...glassed, level, conditions: ['stoned'] });
+  ok(!hasCondition(glassed, 'stoned') && absolved === `Maren casts Absolve: ${glassed.name} is flesh again.` && SPELLS.absolve.level === 7, `Absolve lifts it (${absolved})`);
+  ok(at(27) === 2160 && at(25) === draught.price && templePrice({ ...glassed, conditions: [] }) === 0, `and a temple, for ${at(27)} gold at 27, where the draught is ${draught.price} anywhere it is sold`);
 }
 
 /** Calls (MONSTERS §3.3, #537): a caller's turn brings its group in whole, as a group of its own, inside the cap of 12 in three groups, those down counted. */
