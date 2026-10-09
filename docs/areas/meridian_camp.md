@@ -8,10 +8,10 @@ hull and the room with a window (DESIGN §9, §10.3). This is its brief (EXPANSI
 for #22 under Phase 1.4 (#441). It is Ashfall's dungeon, and docs/areas/ashfall.md §4.11 points
 here. Every call below is a decision the owner may overturn; §8 lists them.
 
-Its first two levels, the vents and the iron corridors, are built (#22, §4.1 and §4.2); the camp is
-to build. Its maps are in `src/content/areas/ashfall/maps/`, beside the area's, and its monsters
-Ashfall's. Its ids: `meridian_camp` (the vents), `meridian_camp2` (the iron corridors) and
-`meridian_camp3` (the camp); the first keeps the plan's id and its atlas row, as `tide_ship` did.
+Its three levels, the vents, the iron corridors and the camp, are built (#22, §4.1 to §4.3). Its
+maps are in `src/content/areas/ashfall/maps/`, beside the area's, and its monsters Ashfall's. Its
+ids: `meridian_camp` (the vents), `meridian_camp2` (the iron corridors) and `meridian_camp3` (the
+camp); the first keeps the plan's id and its atlas row, as `tide_ship` did.
 
 ---
 
@@ -22,15 +22,17 @@ The atlas (`src/content/areas/ashfall/atlas.ts`) has Meridian Camp as a dungeon 
 row's band is the union of the three levels' and agrees with them (§4). Laying the vents moves
 nothing: the row keeps its id, its place and its band and loses `planned` and `name`; the site at
 the mouth loses `planned` (§8, the vents' 12). The corridors add a second plate,
-`meridian_camp2` at 226,346, six squares south, with no band and no name (§8, the corridors' 15).
+`meridian_camp2` at 226,346, six squares south, with no band and no name (§8, the corridors' 15),
+and the camp a third, `meridian_camp3` at 226,352, six squares south of that (§8, the camp's 15).
 
 - **In:** the vents' mouth on G11, and the scavenger's hole beside Grimsforge, which comes in behind
   the furnace room (ashfall §4.5, #56's 52). Both are open since the vents were built (§4.1).
 - **Out:** the way in, and Fane's rope up a cold flue from the camp to G11's lookout on the cone's
-  shoulder, a way out and never in, as Kelp Hole's flooded passage is (an addition, §8, 3).
+  shoulder, a way out and never in, as Kelp Hole's flooded passage is (an addition, §8, 3); it is
+  built (§4.3; §8, the camp's 11).
 - **Down:** a stair at each level's far end; the vents' is open onto the corridors (§4.1) and the
-  corridors' is built and barred until the camp is (§4.2). A door below the camp opens on the
-  service ways and for nobody, as the Deep Mines' CREW ONLY is a wall (docs/areas/kilns.md §9, 4).
+  corridors' onto the camp (§4.2). A door below the camp opens on the service ways and for nobody,
+  as the Deep Mines' CREW ONLY is a wall (§4.3; docs/areas/kilns.md §9, 4).
 
 ## 2. What it is for
 
@@ -44,7 +46,7 @@ DESIGN §8).
 
 ## 3. What is built
 
-Two levels of three. The vents (`meridian_camp`, 32×32, band 25; #22, §4.1): in at G11's middle
+Three levels. The vents (`meridian_camp`, 32×32, band 25; #22, §4.1): in at G11's middle
 mouth, open now, or up from the scavenger's hole, onto a flue hall of iron under the three mouths,
 black with soot, with a drift under the west mouth and under the east the floor worn bright in a
 path. West, the Company's trail: a Guild chain pin at the flue's head and chalked arrows down the
@@ -64,10 +66,19 @@ two drakelings and the Brood Drake on its eggs, with its hoard behind it. At the
 Ember Stone's third part, a heap of the walker's parts and the stair down to the camp, barred. Four
 groups, one a sentry that comes up that stair once the Stone is lit.
 
-The camp (§4.3) is to build, once the Wold's curve row is in (§8, 11). The corridors place three of
-the five new monsters, drawn ahead of the levels on the frames of the drakes, the heavy machines and
-the knockers: the drakeling, the Brood Drake and the flue walker. The deep knocker and the
-inspector are the camp's (§6, §8; MONSTERS §8.4).
+The camp (`meridian_camp3`, 32×32, band 27–28; #22, §4.3): down the corridors' stair into the cold
+at the stair's foot, a last chalk arrow with a ring drawn beside it (a fire drawn) and firelight on
+the one way in. The Company's third camp is the only warm one: tents laced shut but one, their kit
+in a chest, a plotting table, a second grave with a note and, at his fire, Oriel Fane, alive, who
+gives his map, sewn shut. In the room beside the hall, through a door with no name, the window.
+North, a cold flue and Fane's rope up it to G11's lookout, a way out and never in; south, the steps
+down to the deep knockers' gallery, and at its end a door that opens for nobody. Six groups, one a
+sentry that goes up the stair once the Stone is lit and one a pair on the steps by night, whose
+lamps go over the camp and past the old man. The camp pays outside Ashfall's budget.
+
+The three levels place the five new monsters, drawn ahead of the levels on the frames of the drakes,
+the heavy machines and the knockers: the corridors the drakeling, the Brood Drake and the flue
+walker, the camp the deep knocker and the inspector (§6, §8; MONSTERS §8.4).
 
 ## 4. The levels
 
@@ -204,8 +215,9 @@ features and ten groups, about one rest's fights at the band (MONSTERS §4.4), w
 - **Landmarks.** The tents and Fane's fire, the third camp and the only warm one; the room beside
   it with the window, which has no sign and no name; a second grave; the deep knockers' gallery
   below the camp at 28, ending at the door to the service ways; the foot of Fane's rope.
-- **Encounters.** Fewer groups and more features than the levels above, about eight: deep knockers
-  and an inspector that calls them, in the gallery below the camp; none at the fire. The knockers
+- **Encounters.** Fewer groups and more features than the levels above, about eight (six as built,
+  §8, the camp's 2): deep knockers and an inspector that calls them, in the gallery below the camp;
+  none at the fire. The knockers
   inspect the camp each night and leave Fane alone, because he is not in their way (MONSTERS §2).
 - **Oriel Fane** is alive and very old: a person who stands at his fire, never in a fight, and
   never leaves. He gives his map at the first meeting, and his words know whether the journals were
@@ -221,11 +233,53 @@ features and ten groups, about one rest's fights at the band (MONSTERS §4.4), w
   the building session's, for the owner's review; this brief holds none.
 - **Finds.** The map; the Company's kit, a named piece in the band-28 window.
 - **Pay.** About 3,000 xp a member, outside any area's budget (§7).
+- **As built** (#22, 9 October): the brief's places laid whole in 226 open squares, as a hall and
+  two arms, with six groups (§8, the camp's 1 and 2). Band 27–28, outside Ashfall's budget (the
+  camp's 4), the map named The Camp (the camp's 15). The corridors' stair, open now, lets a company
+  in at 4,1 facing south, the stair's foot, where the heat is gone (4,2). A landing (3–5 by 2), a way
+  down x 4 and east along row 8 lead to **the camp's hall** (10–21 by 6–14, four iron pillars): a
+  last chalk arrow with a ring drawn beside it (4,7) and, on the one way in, firelight on the iron
+  ahead (9,8). In the hall are the tents in a row, laced shut but one (13,7), with the Company's
+  kit in a chest (11,6); **Fane's fire** (15,10), the level's one rest, with Oriel Fane beside it
+  (16,10); the second grave, a heap of slag with a chain pin and a note in a shaking hand (11,13);
+  and a plotting table with a lamp, a rule and a pen laid square (20,13). East of the hall, through
+  a door with no name (23,10), is **the window's room** (24–27 by 9–11) and the window (27,10).
+  North, a cold flue (x 19, rows 2–5) with a rope hanging in it (19,4) and Fane's rope at its top
+  (19,2). South, the steps (x 15, rows 15–25), with knocking coming up them (15,15), go down to
+  **the knockers' gallery** (3–28 by 26–28): its iron knocked bright in rows (12,27), a pick turned
+  back on itself at its west end (3,27) and, at its east end, the door to the service ways (29,27),
+  flush in the iron with a chain pin jammed in its seam (28,27), a wall drawn as a door, as the
+  Deep Mines' CREW ONLY is (`dm3_door`).
+  - **Groups.** The deep knockers in the gallery: a three at its west end (`mc3_west`, 6,27), a
+    lone one beside it (`mc3_knocker`, 10,26) and a four in the middle (`mc3_four`, 19,28), still;
+    before the door the inspector (`mc3_inspector`, 27,27), which calls three more. By night a pair
+    stands on the steps (`mc3_night`, 15,17), and at the camp the lamps go over every tent and past
+    the old man (`mc3_lamps`, 15,13). One sentry `after` `q_ember_lit` at the stair's foot
+    (`mc3_sentry`, 4,5), going up. No group is within 6 of Fane. Six groups, not the brief's about
+    eight: the eight small ones first laid gave 19.56 fights to a rest at the floor, 27, and the
+    same ten knockers in these give 10.64 (§8, the camp's 2).
+  - **Seams.** The corridors' stair, 4,30 (`STAIR2`, open now, labelled, in their exits), to the
+    camp's 4,1 facing south, and back from 4,1 to their 4,29 facing north. Fane's rope, one way:
+    the camp's 19,2 (`ROPE`, exported, in this map's exits only) to G11's 13,10 facing south, ash
+    beside the lookout (14,10) and out of every G11 group's notice; nothing on G11 leads back (§8,
+    the camp's 11 and 12). The atlas plate `meridian_camp3` at 226,352.
+  - **Measured.** At its floor, 27, a company wins every fight and manages 10.64 fights to a rest,
+    inside the aim of 9.75 to 11.75 and the limit of 8.25 to 14.25, with 73% of its days ending in
+    a fight broken off; two under, at 25, it wins every fight too, owed to #18 as the other boxes'
+    are (§8, the camp's 2 and 18). The level pays 3,003 xp a member for the brief's 3,000, under
+    the cap of 3,750; it holds 1,200 gold and the Meridian Staff +4 at 2,600, inside the
+    Glasswold's window of 6,000 (§7). Density 100.0% within 7 steps (226 of 226) and the furthest 6
+    of 10, with no sign among its 24 points. The curve's rank correlation is 0.65: the sentry
+    nearest at 4 steps, level 26.0, and the night pair the hardest at 27 steps, level 28.0, at
+    least 28. The gate counts the sentry in the level's day, though a company before the Stone never
+    meets it, and the night pair, though they are there only by night. The walkthrough wins every
+    group at 27, goes down and up the corridors' stair, meets Fane with the first journal read and
+    without it and goes out by the rope.
 
 ### 4.4 Rests
 
 The Company's three camps are the dungeon's rests, one a level: the first two cold and empty, the
-last Fane's.
+last Fane's, the only warm one (§4.3).
 
 ## 5. The quests here
 
@@ -234,7 +288,8 @@ last Fane's.
   `ember_part1`, found in the furnace's mouth, which sets no flag; the corridors' is `ember_part3`,
   in a chest at their end, which sets none; Old Cinder's is `ember_part2`, and sets none either (§8,
   the vents' 4; the corridors' 7).
-- **The Lost Expedition** (DESIGN §10.3) ends at Fane's fire. The trail inside is the Company's
+- **The Lost Expedition** (DESIGN §10.3) ends at Fane's fire, done on `meridian_map`, which the giving of his map sets
+  (§8, the camp's 6). The trail inside is the Company's
   marks: pins, arrows and two graves with notes for the reader of every note. No new numbered
   journal: the fourth stays in the Ember Stone's lower gallery (ashfall §4.8), and filling
   Cinderport's shelf is #512's.
@@ -248,12 +303,12 @@ MONSTERS §8.4 has the roster. No new family: Ashfall already adds the drakes an
 machines, and the camp is Ashfall's (MONSTERS §11). New defs in old families: the drakeling, the
 Brood Drake, the flue walker and the inspector; the deep knocker is first met here at 28 and is
 back in the Underdeep. Asks: sweep with fire (#545), calls (#537), elements. The corridors place
-the drakeling, the Brood Drake and the flue walker (§4.2); the inspector and the deep knocker are
-the camp's.
+the drakeling, the Brood Drake and the flue walker (§4.2); the camp places the inspector and the
+deep knocker (§4.3), restated on the line at 28 (§8, the camp's 17).
 
 New here, for the novelty check (EXPANSION §5.4): a camp of the dead expedition with a living man
 in it; a way out that is not a way in; a window. The vents claim none of it (§8, the vents' 14),
-nor do the corridors (§8, the corridors' 16).
+nor do the corridors (§8, the corridors' 16) or the camp (§8, the camp's 16).
 
 ## 7. The numbers
 
@@ -262,21 +317,28 @@ nor do the corridors (§8, the corridors' 16).
   counts the Dead-Drop and Ashfall its country behind; pay by level (#159) keeps a company that
   goes down early from overshooting. As built, the vents pay 2,146 a member, 0.98 of their 2,200
   (§4.1; §8, the vents' 3). The corridors pay 4,399, 1.63 of their 2,700 and over the cap of 3,375,
-  the Brood Drake alone paying 2,862 (§4.2; §8, the corridors' 3); with Ashfall's other maps a
-  clear is 24,541 of the area's 19,467 (ashfall §8).
+  the Brood Drake alone paying 2,862 (§4.2; §8, the corridors' 3). The camp pays 3,003, 1.00 of its
+  3,000 and under its cap of 3,750, outside any area's budget: Ashfall lists it `outside`, so the
+  curve prints its pay as a figure and no clear counts it (§4.3; §8, the camp's 3 and 4). With
+  Ashfall's other maps a clear is 28,586 of the area's 19,467 (ashfall §8).
 - **The gate.** Each level is held at its own floor (EXPANSION §5.2). The Brood Drake is won about
   half the time at 26, the corridors' floor, and nearly always at 28. As built, a company at the
   vents' floor, 25, wins every fight and manages 10.98 fights to a rest (§4.1); at the corridors'
   floor, 26, it wins 90.3% of the fights and manages 8.69, and the Brood Drake is won 61% of the
-  time at 26 and 100% at 28 (§4.2; §8, the corridors' 5).
+  time at 26 and 100% at 28 (§4.2; §8, the corridors' 5). At the camp's floor, 27, it wins every
+  fight and manages 10.64 fights to a rest; two under, at 25, it wins every fight, owed to #18
+  (§4.3; §8, the camp's 2 and 18).
 - **Gold and finds.** Machines carry parts; the Company's kit is the finds, a named piece on each
   of the lower two levels, in the band's window. As built, the vents hold 900 gold and a Sapphire
   Vial, in the drift, but no gear (§8, the vents' 8); their parts are the Stone's first, a quest
   item, and the stokers' firebar and shovel blade, which no shop buys (§8, the vents' 4 and 5). The
   corridors hold 1,500 gold, in the nest's hoard, and the Company's kit in the cold camp, Meridian
-  Mail +3 at 2,450, inside the window and under Old Cinder's Flamberge +1 at 2,550, Ashfall's
-  dearest find (§8, the corridors' 8 and 12); their parts are the Stone's third, a quest item, and
-  the flue walker's damper and climbing iron, which no shop buys (§8, the corridors' 7 and 9).
+  Mail +3 at 2,450, inside the window and under the Ember Stone's Drakeskin Coat +1 at 3,250,
+  Ashfall's dearest find (§8, the corridors' 8 and 12); their parts are the Stone's third, a quest
+  item, and the flue walker's damper and climbing iron, which no shop buys (§8, the corridors' 7 and
+  9). The camp holds 1,200 gold and, in the Company's kit in the tents, the Meridian Staff +4 at
+  2,600, inside the Glasswold's window of 6,000, which holds a map outside the budget; and Fane's
+  Map, a quest item (§8, the camp's 6 and 13).
 
 ## 8. Decisions
 
@@ -299,8 +361,9 @@ comment on #22; each may be overturned:
    not a door into a wider map.
 9. **No new family;** four new defs and the deep knocker brought forward to 28 (MONSTERS §8.4).
 10. **The camp level pays outside any budget,** about 3,000; the upper two are Ashfall's 4,900.
+    Built so (the camp's 3 and 4).
 11. **Build order:** the upper two levels in Ashfall's flight, right after G11 (#513), since the
-    chapter needs the parts; the camp once the Wold's curve row is in.
+    chapter needs the parts; the camp once the Wold's curve row is in. The camp is built (§4.3).
 
 Decided by delegate for #22 (the camp's monsters), each the owner's to overturn:
 
@@ -325,7 +388,7 @@ Decided by delegate for #22 (the camp's monsters), each the owner's to overturn:
    boss's crown; the drakeling 0.6, the flue walker 1.5, the deep knocker 0.75, the inspector 0.8.
 8. **Each is owed to the level that first places it** (`UNPLACED`): the drakeling, the Brood Drake
    and the flue walker to `meridian_camp2`, which placed them (the corridors' 6); the deep knocker
-   and the inspector to `meridian_camp3`.
+   and the inspector to `meridian_camp3`, which placed them (the camp's 17).
 
 Decided by delegate for #22, each the owner's to overturn:
 
@@ -447,9 +510,10 @@ Decided by delegate for #22, each the owner's to overturn:
     level's gold.
 13. **The way down is `STAIR2`, exported:** `{ x: 4, y: 30, to: 'meridian_camp3', tx: 4, ty: 1, tf:
     SOUTH }`, its square wall, with `mc2_stair` at its head (4,29), not once: a cold draught up the
-    steps, bars that will not give. The camp lists it in this map's exits, opens 4,30, drops or
-    rewrites `mc2_stair`, gives the landing (asked for: 4,1 facing south), lands the way back up on
-    4,29 facing north and changes the walkthrough's `STAIR2` line, which asserts it shut.
+    steps, bars that will not give. The camp then listed it in this map's exits, opened 4,30,
+    rewrote `mc2_stair`, gave the landing (asked for: 4,1 facing south), landed the way back up on
+    4,29 facing north and changed the walkthrough's `STAIR2` line, which asserted it shut (the
+    camp's 12).
 14. **The vents' stair is opened as the vents' handoff asked:** `STAIR` takes a label ("Down the
     steps into the red dark...") and is in `meridian_camp`'s exits; 4,30 is floor. `mc1_stair` is
     rewritten (heat coming up like breath) and made `once`: said each time while barred, it would
@@ -465,12 +529,105 @@ Decided by delegate for #22, each the owner's to overturn:
     (tools/tests/gate.ts), the zone the dungeon opens from, so the boss is judged at 26 and 28 and
     left out of the day.
 
+Decided by delegate for #22 (the camp), each the owner's to overturn:
+
+1. **The camp is laid as a hall and two arms,** 226 open squares (§4.3, as built): the stair's foot
+   (4,1) and a landing, down x 4 and east on row 8 into the hall (10–21 by 6–14, four iron pillars),
+   the window's room east of it through an unnamed door (23,10), the cold flue north (x 19, rows
+   2–5) and the steps south (x 15, rows 15–25) to the knockers' gallery (3–28 by 26–28), which ends
+   at the door to the service ways (29,27), a legend `Z` wall drawn as a door, as the Deep Mines'
+   CREW ONLY is (`dm3_door`).
+2. **Six groups, not the brief's about eight.** At the floor, 27, the eight small groups first laid
+   (the sentry, the night pair, the inspector, three pairs along the gallery and two lone
+   knockers) were too easy: 19.56 fights to a rest against 9.91 at 26, the aim 9.75 to 11.75 and
+   the limit 8.25 to 14.25. The same ten knockers, over 300 days at 27: a pair, a four and a pair
+   10.37; a lone one, a three and a four 10.64; a lone one, a pair and a five 11.03; a three, a
+   three and a pair 12.23; two fours 8.14, past the limit. The pick is the second, nearest the
+   aim's middle: `mc3_west` three, `mc3_knocker` one and `mc3_four` four, beside the night pair, the
+   sentry and the inspector as built. Monsters, levels and pay are as built (3), the night pair
+   stands where it did (9) and the rise holds (4). The owner's to overturn: more groups make a day
+   twice the aim's length, fewer one past its limit.
+3. **Pay 3,003 xp a member** (18,020 between six: the sentry 2,067; the ten deep knockers 1,484
+   each, 14,840; the inspector 1,113), 1.00 of the brief's 3,000 and under its cap of 3,750.
+   The curve counts only the groups' own monsters, never the knockers the inspector calls. The
+   regrouping moves none of it.
+4. **The band is 27–28, and Ashfall lists the camp `outside`** (`outside: ['meridian_camp3']`, PR
+   #679's rule: a map whose floor, 27, is past the area's band, 24–26, may pay outside any area's
+   budget). The curve holds it to its band, its monsters' levels (the sentry 26, every other group
+   28) and the window of the Glasswold's row, 6,000, the last on the road whose floor, 26, is at or
+   under its own; no clear counts its 3,003 xp or 1,200 gold, which the curve prints as a figure;
+   the gate judges it at 27 and 25, out of Ashfall's pools. Ashfall's clear is 28,586 xp a member
+   of 19,467 and 9,900 gold of 11,760, none of it the camp's. The first build banded it 26–26 to sit
+   in Ashfall's row, and its pay then counted in the clear, 3,003 xp and 1,200 gold more. Rise: the
+   sentry (26) is nearest the way in and every other group 28 (rank correlation 0.65, the hardest
+   at least 28).
+5. **Oriel Fane is an `npc` at 16,10 beside his fire** (the `camp`, 15,10), no group within 6 of
+   him (the walk checks it). The first meeting is the default `lines` and, before them, a `says`
+   entry `after` `{ flag: 'meridian_read' }` (Ysolde read the first journal, the only read-token
+   in the game) with the same choice: nothing counts the journals. The map is a one-answer
+   `choice` (`MAP`, one object shared by both, so the curve counts it once): "Take it." sets
+   `meridian_map` and gives `fane_map`. Once it is given a `says` entry `after` `meridian_map`
+   holds his later words, with no choice. "You took your time" is said to every company (ashfall
+   §5's line); only a reader hears that somebody read him.
+6. **`fane_map`, "Fane's Map",** is a quest item (no slot, no price), two lines of look, sewn shut,
+   nothing to read; `meridian_map` is set only by the giving. The Lost Expedition (`meridian`,
+   thornmark/quests.ts) now has `done: { flag: 'meridian_map' }` and an entry `fane`, since the
+   engine's own note says a quest with no `done` is one whose end is not built. Its start stays the
+   first journal: started by the flag it would start done with no goal, which the quests check
+   fails ("starts with a goal").
+7. **The fire's once event for the Mapmaker's rung is `mc3_fire`** (9,8), on the one way from the
+   stair to the fire: the walk checks the fire cannot be reached without passing it. The deed is
+   `seen: 'meridian_camp3:mc3_fire'`; the rung is owed (§10).
+8. **The window is `mc3_window`** (27,10, `once`), in the room through the unnamed door: no sign, no
+   name, no label. The chapter's entry (#518) can key on `seen: 'meridian_camp3:mc3_window'`. The
+   walk checks that its text names no hull, ship, orbit, voyage or Custodian.
+9. **The knockers inspect the camp by night and leave Fane alone:** a `when: { hours: 'night' }`
+   group of two deep knockers, `roams: false`, on the steps at 15,17 (7 from the fire, 8 from Fane:
+   it never reaches the camp's squares) and a night-only once event at the camp, `mc3_lamps`
+   (15,13), the lamps going over everything but the old man. By day the steps are clear.
+10. **One sentry `after` `q_ember_lit`,** at 4,5 on the way from the stair (the levels above's
+    pattern, one sentry each), "going up"; it is the level's lowest group and carries the rise.
+11. **Fane's rope is `ROPE`, exported:** `{ x: 19, y: 2, to: 'firemount_g11', tx: 13, ty: 10, tf:
+    SOUTH, label }`, in this map's exits only. G11 lists nothing to `meridian_camp3` (the walk
+    checks it), as Kelp Hole's flooded passage onto F6. 13,10 is ash beside the lookout (14,10),
+    four from `g11_slope` (16,11, aware 3); the walk checks it is out of every G11 group's notice.
+    G11 gets only a comment saying so: no square changes and its exits stay two.
+12. **The corridors' `STAIR2` is opened** as their handoff asked: a label, in `meridian_camp2`'s
+    exits, 4,30 floor, `mc2_stair` rewritten ("There is smoke on it.") and made `once` (said each
+    time, it would now be said on every return up). The camp's way back up lands on 4,29 facing
+    north; the landing is 4,1 facing south, as asked.
+13. **The Company's kit is `meridian_staff`, "Meridian Staff +4":** the armourer's Battle Staff with
+    a plus of 4 (2,600, any class), a surveyor's staff notched in spans (Fane: "Every span of it
+    walked"), in the kit chest in the tents (`mc3_kit`, 11,6) with 1,200 gold. It is the camp's
+    dearest find, in the Glasswold's window of 6,000, where a map outside the budget is held (4).
+    Ashfall's dearest is the Ember Stone's Drakeskin Coat +1 at 3,250.
+14. **The second grave is `mc3_grave`** (11,13): slag, a chain pin and a note in a shaking hand, ONE
+    MORE DAY, the corridors' note FANE SAYS ONE MORE DAY answered (for the reader of every note).
+15. **The map is named The Camp,** the plain name §9 has ("Meridian Camp" is the vents' map's name
+    already): band 27–28, region Ashfall, `bare`, a cold grey iron palette and `smooth` walls. The
+    atlas plate is a third row, `meridian_camp3` at 226,352, six squares south of the second, with
+    no band and no name.
+16. **No secret on the level, and novelty claims nothing:** no check asks a secret of a dungeon
+    level, and no token on the level is new (npc, camp, event and chest; a door; `after`, `when`
+    and `roams`; machines and calls: all met before), so Ashfall's claim stands. The camp with a
+    living man, the way out that is not a way in and the window have no token.
+17. **The deep knocker and the inspector are restated on the line** as #549 made it (PR #661): the
+    deep knocker to the armoured line at 28 (517 and 5d7+11 to 523 and 6d8+5), the inspector to the
+    soldier's at 28 (5d8+3 to 5d7+8, hit points 408 kept); ids, looks, sprites and calls kept. Both
+    leave `RESTATE` (tools/tests/harness.ts) and `UNPLACED` (tools/tests/maps.ts). No boss on the
+    level, so no `BOSSES` entry.
+18. **The gate's two-under figure is owed to #18:** a company at 25 wins every fight, as it does in
+    every box past Act II's first, for the aims for the day and for two under pull against each
+    other past 10. The row is `'meridian_camp3: under'` in `OWED` (tools/tests/gate.ts), held at
+    100%. The day's figure, 10.64, is not owed: it is inside its aim.
+
 ## 9. Names
 
 - **Meridian Camp** stands, the Guild's name for the Company's last camp (ashfall §10).
 - **The levels** take plain names, as the Tide Ship's decks do: the Vents, the Iron Corridors and
   Meridian Camp. The vents' map is named Meridian Camp, since a built place's plate shows its map's
-  name (§8, the vents' 11); the corridors' is named The Iron Corridors (§8, the corridors' 15).
+  name (§8, the vents' 11); the corridors' is named The Iron Corridors (§8, the corridors' 15); the
+  camp's is named The Camp (§8, the camp's 15).
 - **The window's room has no name** in the game. The item is Fane's Map.
 
 ## 10. What was cut
@@ -502,7 +659,22 @@ Cut and owed, from the corridors (#22):
 - **No secret on this level** (§8, the corridors' 16): the dungeon asks none of a level.
 - **The third part is placed,** `ember_part3` in a chest at 2,27, for the hand-in (#516) to read
   (§8, the corridors' 7).
-- **The stair down stands barred** until the camp is built, which lists `STAIR2` in the corridors'
-  exits, opens 4,30, drops or rewrites `mc2_stair`, gives the landing asked for (4,1 facing south),
-  lands the way back up on 4,29 facing north and changes the walkthrough's `STAIR2` line (§8, the
-  corridors' 13).
+- **The stair down stood barred** until the camp was built, which listed `STAIR2` in the corridors'
+  exits, opened 4,30, rewrote `mc2_stair`, gave the landing asked for (4,1 facing south), landed
+  the way back up on 4,29 facing north and changed the walkthrough's `STAIR2` line (§8, the
+  corridors' 13; the camp's 12).
+
+Cut and owed, from the camp (#22):
+
+- **Six groups stand for the brief's about eight** (§8, the camp's 2): at the floor, 27, the eight
+  small groups first laid gave 19.56 fights to a rest, so the same ten deep knockers stand in a
+  three, a lone one and a four.
+- **The Mapmaker's rung, "Fane's Fire",** (the Cartographers' rank 3) is owed: its deed is `seen:
+  'meridian_camp3:mc3_fire'`, the once event on the one way to the fire (§8, the camp's 7; ashfall
+  §11). It needs the Surveyor's rung, which the Ember Stone built.
+- **The chapter's window entry** is #518's and can key on `seen: 'meridian_camp3:mc3_window'` (§8,
+  the camp's 8).
+- **The Dead-Drop's three levels** are the rest of #22 (docs/areas/dead_drop.md) and are planned to
+  pay outside their area's budget as the camp does (EXPANSION §5.2).
+- **No secret on this level** (§8, the camp's 16): the dungeon asks none of a level.
+- **The two-under figure is owed to #18,** as the other boxes' are (§8, the camp's 18).
