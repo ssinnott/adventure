@@ -1395,10 +1395,11 @@ Decided by delegate for #513, each the owner's to overturn:
    Cinderport's ways out since #512, reaches it: it takes no `CUT_OFF` entry.
 5. **The vents are three mouths and the middle one is barred,** `VENTS` exported and not in `exits`,
    its square solid, as G10's gate is; `g11_vents` (not `once`) says the brief's line each time at
-   its front. #22 opens it (§11).
+   its front. #22 opened it (§11; §9, #22's 2).
 6. **The secret is the scavenger's hole in a ring of rock** (`r`, which no climber passes), its far
    end barred as the vents are (`HOLE`), with rock behind it so that it opens only from the hole.
    The hint is the brief's: the rope, and the heir's word of a man who went down beside the forge.
+   #22 opened its far end the same way (§9, #22's 2).
 7. **Grimsforge is a block of building squares three wide:** two wide dressed 60% of its 10 wall
    faces and the art check's cap is 50% under 100; three wide dresses 41.7% of 12. The heir and the
    scavenger have words only: the Barbarian's trainer entry and quest are #448's, and #56's 52 is
