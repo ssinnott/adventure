@@ -64,6 +64,7 @@ import { INTERIORS } from './interiors.ts';
 import { GATE } from './maps/cindercoast_g10.ts';
 import { VENTS, HOLE } from './maps/firemount_g11.ts';
 import { STAIR } from './maps/meridian_camp.ts';
+import { STAIR2 } from './maps/meridian_camp2.ts';
 import { CRATER, STONE } from './maps/emberwaste_f11.ts';
 
 const G10 = MAP_DEFS.find((d) => d.id === 'cindercoast_g10')!, G11 = MAP_DEFS.find((d) => d.id === 'firemount_g11')!;
@@ -304,12 +305,12 @@ export const walkthrough: Walkthrough = (ok) => {
   w.world.travel('meridian_camp', camps[0].x, camps[0].y);
   ok(restRefused(w.world) === '', 'and a company may rest at it');
 
-  // The stair at the far end, down to the iron corridors, barred until they are built (STAIR): its square
-  // solid and its line said at its head each time.
+  // The stair at the far end, down to the iron corridors (STAIR): its square open and among the exits, and
+  // its line said at its head the once.
   const stair = MC.features!.find((f) => f.kind === 'event' && f.id === 'mc1_stair');
-  ok(STAIR.to === 'meridian_camp2' && !(MC.exits ?? []).some((e) => e.to === STAIR.to) && new GameMap(MC).passable(STAIR.x, STAIR.y) !== 'ok'
-    && stair?.kind === 'event' && !stair.once && stair.x === STAIR.x && stair.y === STAIR.y - 1,
-    'the stair at the far end goes down to the iron corridors, barred until they are built (STAIR), and its line is said at its head each time');
+  ok(STAIR.to === 'meridian_camp2' && (MC.exits ?? []).includes(STAIR) && new GameMap(MC).passable(STAIR.x, STAIR.y) === 'ok'
+    && stair?.kind === 'event' && !!stair.once && stair.x === STAIR.x && stair.y === STAIR.y - 1,
+    'the stair at the far end goes down to the iron corridors (STAIR), and its line is said at its head the once');
   see(w, 'meridian_camp:mc1_stair');
 
   // The groups, each won at 25: the stokers' rounds, a stoker and a salamander by the grates and a stoker
@@ -331,6 +332,61 @@ export const walkthrough: Walkthrough = (ok) => {
   if (part?.kind === 'chest') { w.world.travel('meridian_camp', part.x, part.y); w.world.markUsed(part.id); w.party.bag.push(...part.items); }
   ok(heap?.kind === 'chest' && heap.items.length === 2 && heap.items.every((i) => item(i).slot === 'none' && !item(i).price), 'beside it a heap of the stokers\' parts, which no shop buys');
   listen(w);
+
+  // Meridian Camp's second level, the iron corridors (#22), at 26, its floor. Down the vents' stair onto the
+  // corridors' first square, facing in; stepped back into, the stair's foot lets the company up onto its
+  // head, facing away from it.
+  w.level = 26;
+  const MC2 = MAP_DEFS.find((d) => d.id === 'meridian_camp2')!;
+  w.world.travel('meridian_camp', STAIR.x, STAIR.y - 1, SOUTH);
+  const downStair = w.world.move('forward');
+  ok(downStair.kind === 'moved' && w.world.state.mapId === 'meridian_camp2' && w.world.state.x === MC2.start.x && w.world.state.y === MC2.start.y && w.world.state.facing === SOUTH
+    && STAIR.tx === MC2.start.x && STAIR.ty === MC2.start.y && downStair.messages.includes(STAIR.label!),
+    `the vents' stair takes the company down into the iron corridors, facing in (${here()}: ${downStair.kind === 'moved' ? downStair.messages.join(' / ') : downStair.kind})`);
+  const upStair = [w.world.move('forward'), w.world.move('back')];
+  ok(upStair.every((r) => r.kind === 'moved') && w.world.state.mapId === 'meridian_camp' && w.world.state.x === STAIR.x && w.world.state.y === STAIR.y - 1 && w.world.state.facing === NORTH,
+    `and back up onto the stair's head, facing away from it (${here()})`);
+
+  // The corridors, iron hot enough to blister and dead straight, doubling back down the level; the Company's
+  // arrows, their second camp, cold, the level's one rest, with their kit left in it; the grave with a note.
+  for (const id of ['mc2_in', 'mc2_glove', 'mc2_true', 'mc2_arrow', 'mc2_walk', 'mc2_tracks', 'mc2_arrow2', 'mc2_skin', 'mc2_grave', 'mc2_grate', 'mc2_heat', 'mc2_crust', 'mc2_end']) see(w, `meridian_camp2:${id}`);
+  const camps2 = MC2.features!.filter((f) => f.kind === 'camp');
+  ok(camps2.length === 1 && camps2[0].text.includes('fire'), 'the second of the Company\'s camps, cold, the level\'s one rest');
+  w.world.travel('meridian_camp2', camps2[0].x, camps2[0].y);
+  ok(restRefused(w.world) === '', 'and a company may rest at it');
+  const kit = MC2.features!.find((f) => f.kind === 'chest' && f.id === 'mc2_kit');
+  ok(kit?.kind === 'chest' && kit.items.join() === 'meridian_mail' && item('meridian_mail').slot === 'armor' && item('meridian_mail').price <= 5500,
+    'in it the Company\'s kit, a named coat of mail inside the window');
+  const grave2 = MC2.features!.find((f) => f.kind === 'event' && f.id === 'mc2_grave');
+  ok(grave2?.kind === 'event' && grave2.text.includes('chain pin') && grave2.text.includes('note'), 'a grave with a Guild chain pin at its head and a note tied to it');
+
+  // The groups, each won at 26: the flue walker on its round with a stoker and a cinder drake; in the nest,
+  // a side gallery off the last corridor, two drakelings and the Brood Drake on its eggs, still, the boss and
+  // the Barbarian's quarry (#448), won about half the time at the floor; and the sentry that comes up the
+  // stair only once the Ember Stone is lit.
+  const [walker, kin, brood, sentry2] = ['mc2_walker', 'mc2_drakelings', 'mc2_brood', 'mc2_sentry'].map((id) => MC2.encounters!.find((g) => g.id === id)!);
+  ok(MC2.encounters!.length === 4 && walker.roams !== false && walker.monsters.join() === 'flue_walker,stoker,cinder_drake'
+    && kin.roams === false && kin.monsters.every((m) => m === 'drakeling') && brood.roams === false && brood.monsters.join() === 'brood_drake' && !brood.respawn && !!brood.slainText
+    && JSON.stringify(sentry2.after) === JSON.stringify({ flag: 'q_ember_lit' }) && [walker, kin, sentry2].every((g) => !!g.respawn),
+    'the flue walker on its round, drakelings and the Brood Drake in the nest, and a sentry only once the Ember Stone is lit');
+  for (const g of MC2.encounters!) fight(w, `meridian_camp2:${g.id}`);
+  const hoard = MC2.features!.find((f) => f.kind === 'chest' && f.id === 'mc2_hoard');
+  ok(hoard?.kind === 'chest' && hoard.gold > 0 && hoard.x > brood.x - 5 && Math.abs(hoard.y - brood.y) <= 2, 'behind the drake its hoard');
+
+  // The corridors' end: the Ember Stone's third part, a quest item, taken for the Stone (#516); beside it the
+  // walker's parts, which no shop buys; and the stair down to the camp, barred until it is built (STAIR2), its
+  // square solid and its line said at its head each time.
+  const part3 = MC2.features!.find((f) => f.kind === 'chest' && f.id === 'mc2_part'), heap2 = MC2.features!.find((f) => f.kind === 'chest' && f.id === 'mc2_heap');
+  ok(part3?.kind === 'chest' && part3.items.join() === 'ember_part3' && item('ember_part3').slot === 'none' && !item('ember_part3').price, 'at the corridors\' end the Ember Stone\'s third part, a quest item');
+  if (part3?.kind === 'chest') { w.world.travel('meridian_camp2', part3.x, part3.y); w.world.markUsed(part3.id); w.party.bag.push(...part3.items); }
+  ok(heap2?.kind === 'chest' && heap2.items.length === 2 && heap2.items.every((i) => item(i).slot === 'none' && !item(i).price), 'beside it a heap of the walker\'s parts, which no shop buys');
+  const stair2 = MC2.features!.find((f) => f.kind === 'event' && f.id === 'mc2_stair');
+  ok(STAIR2.to === 'meridian_camp3' && !(MC2.exits ?? []).some((e) => e.to === STAIR2.to) && new GameMap(MC2).passable(STAIR2.x, STAIR2.y) !== 'ok'
+    && stair2?.kind === 'event' && !stair2.once && stair2.x === STAIR2.x && stair2.y === STAIR2.y - 1,
+    'the stair at the corridors\' end goes down to the camp, barred until it is built (STAIR2), and its line is said at its head each time');
+  see(w, 'meridian_camp2:mc2_stair');
+  listen(w);
+  w.level = 25;
 
   // The Ember Waste's road (#517). Over G10's west edge from 0,7 onto F10's 31,7, walked: three under the
   // Waste's floor its harsher words, two under its own, at the floor its name and nothing more; straight

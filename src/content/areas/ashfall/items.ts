@@ -8,6 +8,7 @@ import type { ItemDef } from '../../../game/items.ts';
 import { W, A, P, MARTIAL, MAIL, NO_CASTER_HEAVY } from '../../items.ts';
 import { ITEMS as SUNDERWOOD } from '../sunderwood/items.ts';
 import { hornBow } from '../saltreach/items.ts';
+import { dwarfMail } from '../kilns/items.ts';
 
 // Sold at Cinderport's armourer (#512): a step past Rime Lodge's finds for every class, at 25.
 export const slagMace = W('slag_mace', 'Slag Mace', 2300, 2, 12, { bonus: 5, classes: [...MARTIAL, 'cleric'] });
@@ -48,10 +49,32 @@ export const emberPart1: ItemDef = { id: 'ember_part1', name: 'Ember Stone\'s Fi
   'One face of it is cut to fit something, exactly.',
 ] };
 
-/** The parts the stokers shed, on the furnace room's heap (#22), which no shop buys and no hand-in takes (MONSTERS §2). */
+/**
+ * The Ember Stone's third part (#22; docs/areas/ashfall.md §5), at the end of Meridian Camp's iron
+ * corridors (meridian_camp2): a quest item for the Stone's hand-in of three (#516), as the first is.
+ */
+export const emberPart3: ItemDef = { id: 'ember_part3', name: 'Ember Stone\'s Third Part', slot: 'none', price: 0, text: [
+  'A wedge of grey iron the length of a forearm, warm through, and heavier than it looks.',
+  'Its broad face is cut to fit something, exactly.',
+] };
+
+/**
+ * The Company's kit in its second camp, cold, on the iron corridors (#22; meridian_camp.md §4.2): the
+ * Kilns' dwarf mail with a plus of 3, named, at 2,450, inside Ashfall's window of 5,500.
+ */
+export const meridianMail = P(dwarfMail, 3, { id: 'meridian_mail', name: 'Meridian Mail +3', text: [
+  'A coat of fine rings left spread on a bedroll, its lining burnt through across the shoulders.',
+] });
+
+/**
+ * The parts the machines shed, which no shop buys and no hand-in takes (MONSTERS §2): the stokers' on the
+ * vents' furnace room's heap, and the flue walker's on the heap at the iron corridors' end (#22).
+ */
 const PARTS: ItemDef[] = [
   { id: 'stoker_firebar', name: 'Stoker\'s Firebar', slot: 'none', price: 0 },
   { id: 'stoker_blade', name: 'Stoker\'s Shovel Blade', slot: 'none', price: 0 },
+  { id: 'walker_damper', name: 'Flue Walker\'s Damper', slot: 'none', price: 0 },
+  { id: 'walker_iron', name: 'Flue Walker\'s Climbing Iron', slot: 'none', price: 0 },
 ];
 
-export const ITEMS: readonly ItemDef[] = [...WARES, quickening, scavengersAxe, graveBow, emberPart1, ...PARTS];
+export const ITEMS: readonly ItemDef[] = [...WARES, quickening, scavengersAxe, graveBow, emberPart1, emberPart3, meridianMail, ...PARTS];

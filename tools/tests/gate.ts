@@ -87,6 +87,8 @@ export const BOSSES: Record<string, readonly string[]> = {
   monksvale: ['monastery2:hc2_abbot'],
   // The Stair-king at the Stair's head, who asks the toll first; the bot refuses (#502).
   highspine: ['highspine_i10:i10_king'],
+  // The Brood Drake on its eggs in the nest off Meridian Camp's iron corridors, under Fire Mountain (#22).
+  firemount: ['meridian_camp2:mc2_brood'],
 };
 
 /** Each zone's road: the groups met on it, in order, from its way in. Every zone with groups names one. */

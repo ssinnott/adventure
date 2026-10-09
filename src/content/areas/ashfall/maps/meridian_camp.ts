@@ -1,8 +1,8 @@
 // Meridian Camp, level one: the vents. Down the middle of G11's three mouths (VENTS) into the flue hall
 // under them, the drift under the west mouth and the stokers' path worn bright under the east; west
 // from the hall the Company's trail, a Guild chain pin at the flue's head and chalked arrows down the
-// west flue past the first of their camps, cold, to the stair at the far end (STAIR, barred until the
-// iron corridors are built); down the middle the grates, with a stoker and a salamander on their round,
+// west flue past the first of their camps, cold, to the stair at the far end, down to the iron corridors
+// (STAIR); down the middle the grates, with a stoker and a salamander on their round,
 // and a stoker alone on the east flue's; at the bottom the lower gallery and the stokers' furnace room,
 // where two stokers with their salamanders shovel nothing into nothing and the Ember Stone's first part
 // lies in the furnace's mouth beside a heap of their parts; behind it the scavenger's hole, up his rope
@@ -13,11 +13,11 @@ import { EAST, SOUTH, WEST } from '../../../../game/types.ts';
 
 /**
  * The way down to the iron corridors (meridian_camp2, #22's second level): the stair at the far end,
- * 4,30, onto the corridors' first square at 4,1, facing south, which this asks that level to give it. An
- * exit leads only to a built map, so the corridors list it in this map's exits, open the stair's square
- * and drop or rewrite `mc1_stair`; their way back up lands on 4,29, facing north, the stair's head.
+ * 4,30, onto the corridors' first square at 4,1, facing south; their way back up lands on 4,29, facing
+ * north, the stair's head.
  */
-export const STAIR: Exit = { x: 4, y: 30, to: 'meridian_camp2', tx: 4, ty: 1, tf: SOUTH };
+export const STAIR: Exit = { x: 4, y: 30, to: 'meridian_camp2', tx: 4, ty: 1, tf: SOUTH,
+  label: 'Down the steps into the red dark, the heat climbing to meet you a step at a time.' };
 
 export const MERIDIAN_CAMP: MapDef = {
   id: 'meridian_camp',
@@ -60,7 +60,7 @@ export const MERIDIAN_CAMP: MapDef = {
     '##......###########...###.....##',
     '##......###########.........#.##',
     '##......#####################.##',
-    '#############################.##',
+    '####.########################.##',
     '################################',
   ],
   exits: [
@@ -68,6 +68,8 @@ export const MERIDIAN_CAMP: MapDef = {
     { x: 16, y: 1, to: 'firemount_g11', tx: 27, ty: 16, tf: EAST, label: 'Up the rungs, out of the heat, and into the ash beside the mouths.' },
     // The scavenger's rope, up his hole onto his ledge on G11 (HOLE).
     { x: 29, y: 30, to: 'firemount_g11', tx: 31, ty: 16, tf: WEST, label: 'Up the rope, hand over hand, onto the scavenger\'s ledge.' },
+    // The stair at the far end, down to the iron corridors (STAIR).
+    STAIR,
   ],
   features: [
     // The flue hall under the three mouths: the drift under the west one, the stokers' path under the east.
@@ -81,8 +83,8 @@ export const MERIDIAN_CAMP: MapDef = {
     { kind: 'camp', x: 7, y: 14, name: 'A cold camp', text: 'Hollows in the soot where people slept against the wall, and a ring of stones round ash long cold.' },
     { kind: 'event', x: 3, y: 18, id: 'mc1_arrow2', once: true, text: 'Another chalk arrow, lower on the iron, as if whoever drew it was tired. It points down.' },
     { kind: 'event', x: 2, y: 29, id: 'mc1_arrow3', once: true, text: 'By the stair\'s head, a last chalk arrow, pointing down it.' },
-    // The stair down to the iron corridors, barred until they are built (STAIR): its line at its head, each time.
-    { kind: 'event', x: 4, y: 29, id: 'mc1_stair', text: 'Steps cut down through the floor into a red dark. The heat coming up them stops you on the first.' },
+    // The stair down to the iron corridors (STAIR): its line at its head, the once.
+    { kind: 'event', x: 4, y: 29, id: 'mc1_stair', once: true, text: 'Steps cut down through the floor into a red dark, and heat coming up them like breath.' },
     // The stokers' rounds: the slag swept into heaps, the grates and what breathes under them, the tracks.
     { kind: 'event', x: 7, y: 10, id: 'mc1_slag', once: true, text: 'Slag swept into heaps along the wall, each heap the same size and a hand from the next.' },
     { kind: 'event', x: 16, y: 10, id: 'mc1_grates', once: true, text: 'Grates in the floor, and heat coming up through them from somewhere a long way down.' },
