@@ -296,8 +296,9 @@ last Fane's, the only warm one (§4.3).
 - **The Cartographers' line** ends here (DESIGN §8; #443, call 7): the Mapmaker's rung, *Fane's
   Fire*, is paid for the firelight on the one way to the fire (`mc3_fire`, §8, the camp's 7; ashfall
   §6, §9, #635's PR C).
-- **Third prestiges** (#448): the Barbarian's, kill the drake that nests in the corridors (the Brood
-  Drake, ashfall §6); the Ranger's, bring Fane's map back to the Wold's scout.
+- **Third prestiges** (#448): the Barbarian's, What Nests There, built: kill the Brood Drake on its
+  eggs in the nest off the corridors' last run (`slain` `meridian_camp2:mc2_brood`, ashfall §6), for
+  the warlord's heir at Grimsforge; the Ranger's, bring Fane's map back to the Wold's scout.
 
 ## 6. Encounters, and what is new
 
