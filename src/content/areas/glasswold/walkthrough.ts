@@ -33,17 +33,27 @@
 // seen, the rim, the cairn and its draught, the well, the running horse and the hermit under the rim; the
 // pride and the mesa fight won at 27 and the Grey Lion alone on his ground at 28, the hunter's saddlebags
 // on the kill-ground; and the way up Kushtash, the stepped scree on its rim side found from the smoke off
-// its top, the fire by night, the ledge, the scout at her fire, words only, and the view.
+// its top, the fire by night, the ledge, Aysu the scout at her fire, who says nothing of what she wants,
+// and the view. Then the Ranger's third (#448), Oriel Fane's Map, played by a company of 27 to the
+// teaching (`fanesMap`).
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, see, fight, listen } from '../../../../tools/walk.ts';
+import { newWalk, see, fight, listen, walkThrough } from '../../../../tools/walk.ts';
 import { NORTH, EAST, SOUTH, WEST } from '../../../game/types.ts';
-import { addCondition, hasCondition, lift, templePrice } from '../../../game/party.ts';
+import { addCondition, hasCondition, lift, templePrice, xpForLevel, takePrestige, className } from '../../../game/party.ts';
+import { offers, teach, barOf } from '../../../game/prestige.ts';
+import { seekId } from '../../../game/seeking.ts';
+import { questLog } from '../../../game/quests.ts';
+import { VENTS } from '../ashfall/maps/firemount_g11.ts';
+import { STAIR } from '../ashfall/maps/meridian_camp.ts';
+import { STAIR2 } from '../ashfall/maps/meridian_camp2.ts';
+import { ROPE } from '../ashfall/maps/meridian_camp3.ts';
+import { SCOUT_ASKED, MAP_GIVEN } from './maps/wold_b8.ts';
 import { AREAS, AHEAD, ATLAS, MAP_DEFS, MONSTERS } from '../../index.ts';
 import { PLANNED, CURVE } from '../../progression.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { restRefused, useShrine } from '../../../game/wilds.ts';
-import { meet, heard } from '../../../game/people.ts';
+import { meet, heard, answer } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
 import { buy, item } from '../../../game/items.ts';
 import type { Feature } from '../../../game/map.ts';
@@ -548,8 +558,8 @@ export const walkthrough: Walkthrough = (ok) => {
     'the hunters\' fire in its ring of saddles by the way in, where a company may rest');
   const boyB8 = saysB8('The young Rider'), eldestWord = saysB8('A Rider from Akordu');
   ok(boyB8.text.includes('Grey Lion') && boyB8.text.includes('last blow') && eldestWord.text.includes('eldest') && eldestWord.text.includes('Let him die')
-    && !B8.features!.some((f) => f.kind === 'npc' && (f.flag || f.quest || f.choice || f.says || f.teaches || f.skill || f.hall || f.interior || f.passage)),
-    'the young Rider has asked for the last blow, and a Rider from Akordu brings the eldest\'s word, let him die: words only');
+    && !B8.features!.some((f) => f.kind === 'npc' && f.name !== 'Aysu, the scout' && (f.flag || f.quest || f.choice || f.says || f.teaches || f.skill || f.hall || f.interior || f.passage)),
+    'the young Rider has asked for the last blow, and a Rider from Akordu brings the eldest\'s word, let him die: words only, as is everyone on B8 but Aysu, the Ranger\'s third\'s');
 
   // Kushtash seen from the way in; the rim; the Riders' cairn and its draught, their well, the hunters'
   // horses; the pride's kill, the lesser mesa and the glassed hunter at its foot; the vultures over the
@@ -605,7 +615,7 @@ export const walkthrough: Walkthrough = (ok) => {
   see(w, 'wold_b8:b8_fire');
   ok(w.world.used('b8_smoke') && w.world.used('b8_fire'), 'by day the smoke off the top, by night a fire on it');
   w.world.state.minutes = Math.floor(w.world.state.minutes / MINUTES_PER_DAY) * MINUTES_PER_DAY + 9 * 60;
-  const scout = B8.features!.find((f) => f.kind === 'npc' && f.name === 'The scout') as Person;
+  const scout = B8.features!.find((f) => f.kind === 'npc' && f.name === 'Aysu, the scout') as Person;
   const below = spread(b8.x + steps.x - 1, b8.y + steps.y, (x, y) => !(x === b8.x + steps.x && y === b8.y + steps.y) && inB8(x, y) && out.passable(x, y, { swim: true, climb: true, float: true }) === 'ok');
   ok(below.size > 700 && !below.has(atB8(steps.x + 1, steps.y)) && !below.has(atB8(scout.x, scout.y)),
     `Kushtash's top is shut but for the steps: none of B8's ${below.size} squares walked, waded, climbed or floated reaches it`);
@@ -621,10 +631,68 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(topB8.has(atB8(scout.x, scout.y)) && topB8.has(atB8(ledge.x, ledge.y)) && topB8.has(atB8(viewB8.x, viewB8.y)) && topB8.size === 30 && chB8(ledge.x, ledge.y) === ':',
     `up the steps and along the ledge to the top, ${topB8.size} squares from the steps' foot, the scout's fire among them`);
   for (const id of ['b8_ledge', 'b8_lookout', 'b8_view']) see(w, `wold_b8:${id}`);
-  const scoutSays = saysB8('The scout');
+  const scoutSays = saysB8('Aysu, the scout');
   const told = B8.features!.flatMap((f) => [...('text' in f && f.text ? [f.text] : []), ...(f.kind === 'npc' ? f.lines : []), ...(f.kind === 'shrine' ? [f.done] : [])]).join(' ');
-  ok(scoutSays.text.includes('Meridian Company') && !/journal|map|teach|ranger/i.test(scoutSays.text) && !scout.teaches,
-    'at her fire on the top the scout who guided the Meridian Company, who says nothing of what she wants: words only (#448 gives her the rest)');
+  ok(scoutSays.text.includes('Meridian Company') && !/journal|map|teach|ranger/i.test(scoutSays.text) && scout.teaches?.cls === 'ranger' && scout.teaches.prestige === 3,
+    'at her fire on the top Aysu, the scout who guided the Meridian Company, who says nothing of what she wants to a company with no ranger of 27 to ask: the Ranger\'s third is hers (#448)');
   ok(viewB8.kind === 'event' && viewB8.text.includes('Glass') && viewB8.text.includes('crown') && !/hull|ship|orbit|voyage|custodian/i.test(told),
     'from the top the Wold open to Akordu and the Glass with its dark crown, and nothing in the box\'s words of what the crown is');
+  fanesMap(ok);
 };
+
+/**
+ * The Ranger's third (#448), Oriel Fane's Map, played by a company of 27 whose ranger has the second: sent
+ * to Aysu on Kushtash by its seeking quest; her own words first, then her ask, once, which begins the quest
+ * and ends the seeking, and the third waits on the map. Down Fire Mountain's vents from Grimsforge, the
+ * camps' groups that stand won at 27, as built; Fane's map taken at his fire, and out by his rope. Up on
+ * Kushtash the map given from the pack at her question, the Lost Expedition still done on `meridian_map`;
+ * and her menu teaches the third for it and no gold. After, her own words again, and nothing asked.
+ */
+function fanesMap(ok: (cond: boolean, msg: string) => void): void {
+  const w = newWalk(ok), LEVEL = 27;
+  w.level = LEVEL;
+  for (const m of w.party.members) { m.level = LEVEL; m.xp = xpForLevel(LEVEL); }
+  const wren = w.party.members[2];
+  takePrestige(wren); takePrestige(wren);
+  const [B8, MC3] = ['wold_b8', 'meridian_camp3'].map((id) => MAP_DEFS.find((d) => d.id === id)!);
+  const aysu = B8.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'Aysu, the scout')!;
+  const fane = MC3.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'Oriel Fane')!;
+  const log = (id: string, bag = w.party.bag) => questLog(w.world.state, { ...w.party, bag }).find((v) => v.def.id === id);
+  const talk = (): ReturnType<typeof meet> => { w.world.travel('wold_b8', aysu.x, aysu.y); const m = meet(aysu, w.party, heard(w.world, aysu)); listen(w); return m; };
+  const won = (id: string): void => { for (const g of MAP_DEFS.find((d) => d.id === id)!.encounters ?? []) if (w.world.walks(g, g.x, g.y) && !w.world.ended(g)) fight(w, `${id}:${g.id}`); };
+  const sent = log(seekId(2, 3))?.goal;
+  ok(sent === 'Find Aysu, the scout in The Wold.' && wren.cls === 'ranger' && !!aysu.teaches?.seek?.includes('Unerring'), `at ${LEVEL} with the second, Wren is sent to Aysu (${sent})`);
+  const said = [talk(), talk(), talk()].map((m) => m.text);
+  ok(said[0] === aysu.lines.join('\n\n') && said[1].includes('bring me his map') && said[2] === said[0] && !!w.party.flags[SCOUT_ASKED] && log(seekId(2, 3))?.done === true && log('scout_map')?.done === false
+    && barOf(aysu.teaches!, wren, w.party, w.world.state) === 'the quest first' && !teach(aysu.teaches!, w.party, w.world.state, 2).taught,
+    `Aysu: her own words first, then her ask, once (${said[1].split('\n\n')[1]}), which begins ${log('scout_map')?.def.title} and ends the seeking; the third waits on it`);
+  ok(log('scout_map')?.goal === 'Follow the Meridian journals down Fire Mountain\'s vents to Meridian Camp, and find Fane\'s map.', `the log sends the company down the vents (${log('scout_map')?.goal})`);
+
+  // Down the vents' middle mouth from Grimsforge and down the stairs, the camps' groups won at 27.
+  walkThrough(w, 'firemount_g11', VENTS.x + 1, VENTS.y, WEST, 'meridian_camp', 1);
+  won('meridian_camp');
+  walkThrough(w, 'meridian_camp', STAIR.x, STAIR.y - 1, SOUTH, 'meridian_camp2', 1);
+  won('meridian_camp2');
+  walkThrough(w, 'meridian_camp2', STAIR2.x, STAIR2.y - 1, SOUTH, 'meridian_camp3', 1);
+  won('meridian_camp3');
+  w.world.travel('meridian_camp3', fane.x, fane.y);
+  const held = meet(fane, w.party, heard(w.world, fane)).choice?.answers[0], given = held ? answer(held, w.party) : '';
+  listen(w);
+  ok(!!w.party.flags.meridian_map && w.party.bag.includes('fane_map') && given.includes('Fane\'s Map') && log('scout_map')?.goal === 'Take Fane\'s map up Kushtash to Aysu.'
+    && !!log('scout_map')?.pages[0].entries.some((e) => e.id === 'fane'),
+    `at his fire Fane gives his map, sewn shut, and the log sends the company back up to Aysu (${log('scout_map')?.goal})`);
+  walkThrough(w, 'meridian_camp3', ROPE.x, ROPE.y + 1, NORTH, 'firemount_g11', 1);
+
+  // On Kushtash: the map in the pack, her question; given, she takes it and the third is taught for it.
+  const gold = w.party.gold, asked = talk(), give = asked.choice?.answers.find((a) => a.takes === 'fane_map');
+  const handed = give ? answer(give, w.party) : '';
+  listen(w);
+  const lost = log('meridian', [...w.party.bag, 'meridian_journal']);
+  ok(!!give && !w.party.bag.includes('fane_map') && !!w.party.flags[MAP_GIVEN] && !!w.party.flags.meridian_map && lost?.done === true && log('scout_map')?.done === true && log('scout_map')?.goal === null,
+    `Aysu asks for the map in the pack (${asked.choice?.ask}) and takes it (${handed.split('\n\n')[1]}); ${log('scout_map')?.def.title} is done, and the Lost Expedition stays done on meridian_map`);
+  const [offer] = offers(aysu.teaches!, w.party, w.world.state), r = teach(aysu.teaches!, w.party, w.world.state, 2);
+  ok(offer?.who === 2 && offer.bar === '' && offer.price === 0 && r.taught && className(wren) === 'Unerring' && w.party.gold === gold,
+    `and her menu teaches the third, earned, for no gold (${r.line})`);
+  const after = talk();
+  ok(after.text === aysu.lines.join('\n\n') && !after.choice, 'after, her own words again, and nothing asked');
+}
