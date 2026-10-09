@@ -124,7 +124,7 @@ boxes, which hold 5,557 of those squares, 5,379 walkable, the table the epic #44
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
 |---|---|---|---|---|---|---|---|---|
-| E10 | The road onto the steppe | the Wold | country | 26 | 620 (hills 302, steppe 215, ash 64, grass 39) | the road over the Cinder Hills from the Waste at 156,312 → 144,300; the first vultures; the crossing line | none | #524 |
+| E10 | The road onto the steppe | the Wold | country | 26 | 620 (hills 302, steppe 215, ash 64, grass 39) | the road over the Cinder Hills from the Waste at 156,312 → 144,300, laid whole by #517 (ashfall.md §4.9) at 24–26, bare of the Wold's monsters and quests; the first vultures and the Wold's line are left (§4.2) | none | #524 |
 | D9 | The steppe | the Wold | core | 26–27 | 1,024 (steppe 827, dunes 180, rock 11) | the grass with glass in it; the lions' prides; the dunes' first edge at the south-west corner | the glass in the grass | #525 |
 | D8 | The Riders' camp | the Wold | core | 27 | 810 (steppe 657, rock 85, hills 68) | Akordu at 120,250 under its mesa: the eldest, the trader, the Rider who rides to Cinderport; the garden of glass | the eldest's story | #526 |
 | D10 | The mesas | the Wold | core | 27 | 1,024 (steppe 772, hills 141, rock 88, dunes 23) | the basilisks' mesas; the mesa fight; the Eyrie's old mesa at 132,289, empty | none | #527 |
@@ -218,6 +218,21 @@ settled in its issue, and what Ashfall teaches changes them.
   first monster that flies on the road since the gulls.
 - **Finds.** A Horn Bow with a plus, Cinderport's step (#542), in the grave, and gold.
 - **Pay.** About 1,500 xp a member.
+- **Laid by #517** (docs/areas/ashfall.md §4.9; 9 October): the box whole, steppe and grass
+  included, as the Ember Waste's at band 24–26, with its road, the Hills' notch and waymark, the
+  cairns, the Riders' sky-stone on the crest, a hermit, two cinder drakes at 25 and the secret, the
+  Rider's grave with the Horn Bow +2 (a cairn that looks back at the Stone, with a woman on her
+  saddle and 700 gold in it). It pays 662 xp a member. Left to #524: the vultures (two groups, the
+  nearest), the pride of lions, the glass scorpion where the flow has burned the grass, the beetles
+  come over from the Waste (on E10's east ash, empty now), the outriders who watch and do not fight,
+  the Rider met on the road with a rumour, a camp in the hills' lee, the Glass's glare from the
+  crest, a Riders' cairn where the grass begins and the pay of 1,500 xp a member on top of the 662.
+  A second hint of the grave, the vultures circling where nothing is dying, fits as an event, not a
+  second grave. The Wold's line is said where D10 is crossed (#527, over E10's west edge at 0,6) or
+  by a crest event here; E10 is the Waste's for the line and the band, so #524's gate (a company of
+  24 turned back) asks its floor raised, a band of 25–26 passing the curve with a group at 26
+  placed. "Steppe underfoot" cannot be claimed, E10 laying steppe first (ashfall.md §11): the
+  owner's.
 
 ### 4.3 D9, the steppe (#525): core, band 26–27
 
@@ -559,8 +574,11 @@ Proposed, for the owner, each in the issue that would build it:
   are country (§4).
 - **The seeds move** so the steppe is the Wold's and the Glass is the fused desert and its dunes:
   the Wold's at about 100,232, 132,262, 50,230, 150,300 and 120,296, the Glass's at about 80,282 and
-  100,320 (`src/content/areas/glasswold/atlas.ts`, #523). Today's seeds give the Glass 993 of D10's
-  1,024 squares and 440 of E10's 620, the road in among them.
+  100,320 (`src/content/areas/glasswold/atlas.ts`, #523); the fourth, built at 140,296, moved to
+  134,296 for #517, just west of E10, since the atlas check holds each zone's seed inside the zone
+  and E10, laid for the Waste, now holds that square, and 134,296 keeps the Wold's border where it
+  was. Today's seeds give the Glass 993 of D10's 1,024 squares and 440 of E10's 620, the road in
+  among them.
 - **The lava flow's line** as decision 1 has it; the owner's word moves a point.
 - **The names** (§10): Akordu, Kushtash and Tashkum, the last left for the reach's doc to decide.
 - **The eldest at Akordu,** her own fire, where STORY has her tell the story at the port (#531):
