@@ -271,8 +271,9 @@ export interface Choice {
  * An answer: it sets its flags, hands the company `gives` if it has an item, pays `pay` if it has
  * any (the gold to the company, the xp split among the living, as a fight's is) and the person
  * `says` it. One with a `price` is sold as a ware is: listed at it, barred to a company with less,
- * and paid as it is answered (the thane's for the Anvil Stone, #459). An answer that gives, pays or
- * costs sets a flag, so it is answered once.
+ * and paid as it is answered (the thane's for the Anvil Stone, #459). One that `takes` an item hands
+ * it over from the pack, barred to a company without it. An answer that gives, pays or costs sets a
+ * flag, so it is answered once.
  */
 export interface Answer {
   label: string;
@@ -280,6 +281,9 @@ export interface Answer {
   gives?: string;
   pay?: { gold?: number; xp?: number };
   price?: number;
+  takes?: string;
+  /** Of a group's question (`EncounterDef.choice`), the refusal: said, then the fight. It sets no flag, so the question is put again. */
+  fight?: boolean;
   says: readonly string[];
 }
 
@@ -304,6 +308,12 @@ export interface EncounterDef extends Presence {
   respawn?: number;
   /** Said in the log when the party beats the group: what its death changes. */
   slainText?: string;
+  /**
+   * A question put when the company comes beside the group, before the fight, as a person's is (the
+   * giants' toll, MONSTERS §8.1, #544): its refusal starts the fight, and once another answer's
+   * flags are set the group stands aside for that company, never asking or fighting unless set on.
+   */
+  choice?: Choice;
   /**
    * Placed on ice, it lives under it (the pike): it moves only under the ice, strikes only a company
    * standing on the ice beside it and in the fight reaches only the front row over it.

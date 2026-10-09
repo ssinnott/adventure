@@ -7,7 +7,7 @@ import { MAP_DEFS, ITEMS, QUESTS } from '../../src/content/index.ts';
 import { World } from '../../src/game/world.ts';
 import { defaultParty, countItem } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
-import { meet, answer, answerNote, answerLabel, asked, barred, SHORT, heard, handIns, personFlags, personGives, readText, choices } from '../../src/game/people.ts';
+import { meet, answer, answerNote, answerLabel, asked, barred, SHORT, NONE, heard, handIns, personFlags, personGives, readText, choices } from '../../src/game/people.ts';
 import type { Person } from '../../src/game/people.ts';
 import { questLog } from '../../src/game/quests.ts';
 import type { PageView, QuestCond, QuestDef } from '../../src/game/quests.ts';
@@ -43,6 +43,16 @@ export function people(): void {
   }
   // Everything a person says fits the box.
   for (const { map, p } of all) { const bad = boxFaults(p); ok(!bad.length, `${map} ${p.x},${p.y}: every text fits the box, and every question its answers${bad.length ? ' -> ' + bad.join('; ') : ''}`); }
+  // Every group that asks before it fights (#544) can be refused, and only once: the refusal costs and
+  // sets nothing, so it is put again, and every other answer sets a flag, so the walk past is
+  // remembered. Its question fits the box, as a person's does.
+  for (const d of MAP_DEFS) for (const e of d.encounters ?? []) if (e.choice) {
+    const no = e.choice.answers.filter((a) => a.fight), rest = e.choice.answers.filter((a) => !a.fight);
+    ok(no.length === 1 && !no[0].price && !no[0].takes && !no[0].sets && rest.length > 0 && rest.every((a) => [a.sets ?? []].flat().length > 0),
+      `${d.id}: ${e.id} asks before it fights, with one refusal that costs and sets nothing, and other answers that each set a flag`);
+    const bad = boxFaults({ kind: 'npc', x: e.x, y: e.y, name: e.id, lines: [], choice: e.choice });
+    ok(!bad.length, `${d.id}: ${e.id}'s question fits the box, and its answers the side panel${bad.length ? ' -> ' + bad.join('; ') : ''}`);
+  }
   for (const i of Object.values(ITEMS)) if (i.text) ok(wrap(i.text.join('\n\n'), SAY_W).length <= SAY_LINES, `${i.id}: the letter fits the box's ${SAY_LINES} lines`);
   // Every answer that hands over an item, pays or costs sets a flag, so the question is put once and
   // the item given, the pay paid or the price taken, once.
@@ -193,6 +203,15 @@ function fixtures(fresh: () => { party: Party; world: World }, all: readonly { m
     const bought = answer(deed, poor.party);
     ok(!barred(deed, { ...poor.party, gold: 5000 }) && bought === 'He counts it.\n\n(5000 gold paid.)' && poor.party.gold === 0 && !!poor.party.flags.fx_bought,
       `with the price, it is paid, its flag set and the line says so (${bought.split('\n\n')[1]})`);
+
+    // An answer that takes an item, as a toll may (#544): barred to a company without it, which it
+    // changes nothing for; given, it leaves the pack, and the line says so.
+    const coin: Answer = { label: 'Give him the letter', sets: 'fx_given', takes: LETTER.id, says: ['He weighs it.'] };
+    const empty = fresh();
+    ok(barred(coin, empty.party) && answer(coin, empty.party) === NONE && !empty.party.flags.fx_given, 'an answer that takes an item is barred to a company without it, and answered anyway, nothing changes');
+    empty.party.bag.push(LETTER.id);
+    const handed = !barred(coin, empty.party) && answer(coin, empty.party);
+    ok(handed === 'He weighs it.\n\n(A Sealed Letter given.)' && !countItem(empty.party, LETTER.id) && !!empty.party.flags.fx_given, `with it, it is taken, its flag set and the line says so: ${String(handed).split('\n\n')[1]}`);
 
     // The log reads the answer's flag: a quest done either way, and the entry of the road taken.
     const quest: QuestDef = {

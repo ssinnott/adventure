@@ -11,14 +11,17 @@ import { ATLAS, ITEMS, MAP_DEFS, MONSTERS } from '../../src/content/index.ts';
 import type { ItemDef } from '../../src/game/items.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import { CURVE } from '../../src/content/progression.ts';
-import type { EncounterDef, Feature, MapDef } from '../../src/game/map.ts';
+import type { EncounterDef, Feature, MapDef, Choice } from '../../src/game/map.ts';
+import { GameMap } from '../../src/game/map.ts';
+import { World } from '../../src/game/world.ts';
+import { EAST } from '../../src/game/types.ts';
 import { rest, hasCondition, className } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { startCombat, currentTurn, monsterAct, asGroup, aliveMonsters } from '../../src/game/combat.ts';
 import type { CombatState, Fighters } from '../../src/game/combat.ts';
 import { spell } from '../../src/game/spells.ts';
-import { gateCompany, gateFight, gateOpts, gateTurn, fightSeed, winRate } from '../gate.ts';
+import { gateCompany, gateFight, gateOpts, gateTurn, fightSeed, winRate, gateAnswer, gatePass } from '../gate.ts';
 import { days, fightsPerRest, mendBetween, mustRest, companyAt, markOf, ROUND_CAP, ANSWER } from '../harness.ts';
 import { testMonster, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, giantEncounter, drakeEncounter } from '../testmonster.ts';
 import { stepsFrom } from './curve.ts';
@@ -403,6 +406,34 @@ export function gate(): void {
   // A fight nobody finishes in fifteen rounds is broken off, and counted as not won.
   const slow = [testMonster('soldier', 1, 400, 0.01)];
   ok(gateFight(gateCompany(3, 36), slow, 36) && !gateFight(gateCompany(3, 36), slow, 36, ROUND_CAP), `a fight won only past ${ROUND_CAP} rounds is broken off at ${ROUND_CAP}, and not won`);
+  // A group that asks before it fights (#544), on a fixture: the bot refuses, so the gate measures the
+  // fight, the group's own; the walk past pays the price once, and in the world the group then stands
+  // aside for that company, through a save and a load, where one short of the price is fought.
+  {
+    const toll: Choice = { ask: '"Toll."', answers: [
+      { label: 'Pay', price: 300, sets: 'fx_toll_paid', says: ['He steps aside.'] },
+      { label: 'Refuse', fight: true, says: ['He stands.'] },
+    ] };
+    const band: EncounterDef = { id: 'fx_toll', x: 2, y: 1, monsters: ['bandit', 'bandit', 'bandit'], aware: 3, roams: false, choice: toll };
+    const won = rate(band, 2);
+    ok(gateAnswer(band)?.label === 'Refuse' && !gateAnswer({ choice: undefined }) && won === rate({ monsters: band.monsters }, 2),
+      `the gate's bot refuses a toll and fights the group, its figure the group's own (${pc(won)} won at 2)`);
+    const stair: MapDef = { id: 'fx_stair', name: 'Fixture Stair', kind: 'outdoor', density: 'country', start: { x: 0, y: 1, facing: EAST }, rows: [',,,,', ',,,,', ',,,,'], encounters: [band] };
+    const walk = (gold: number): { p: Party; w: World; at: ReturnType<World['move']> } => {
+      const p = gateCompany(2, 1); p.gold = gold;
+      const w = new World({ fx_stair: new GameMap(stair) }, p, makeRng(1));
+      return { p, w, at: w.move('forward') };
+    };
+    const short = walk(299), rich = walk(300);
+    ok(short.at.kind === 'moved' && short.at.asks === 'fx_toll' && !short.at.encounter && !gatePass(short.p, band) && short.p.gold === 299 && !!short.w.question('fx_toll'),
+      'beside the group its question comes before the fight, and a company short of the price cannot pay it and is fought');
+    ok(gatePass(rich.p, band) && rich.p.gold === 0 && !rich.w.question('fx_toll') && rich.w.standsAside(band) && !rich.w.adjacentGroups().length,
+      'one with the price pays it, once, and the group stands aside: no question and no fight');
+    const past = [rich.w.move('forward'), rich.w.move('forward')];
+    const data = JSON.parse(JSON.stringify({ party: rich.p, world: rich.w.state })), loaded = new World({ fx_stair: new GameMap(stair) }, data.party, makeRng(1), data.world);
+    ok(past.every((r) => r.kind === 'moved' && !r.asks && !r.encounter) && rich.w.state.x === 3 && loaded.standsAside(band) && !loaded.question('fx_toll'),
+      'the company walks past it, through its square, and the toll is remembered through a save and a load');
+  }
   // A group's time to walk: fog brings the bows' toll to its fights, and nothing else does; an
   // `until` changes no fight; a group that waits on an `after` is no warning at the way in.
   {
