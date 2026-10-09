@@ -2173,6 +2173,8 @@
     "q_column_saltmouth",
     "q_compact_crate",
     "q_compact_crate_done",
+    "q_compact_fence",
+    "q_compact_fence_done",
     "q_compact_lookout",
     "q_compact_lookout_done",
     "q_compact_run",
