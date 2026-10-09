@@ -31,15 +31,22 @@
 // blotches but in bands right across it, from flank to flank down the back and round the tail, white
 // at their hearts. Idle: the bands breathe each on its own beat, it bobs its head quicker and more
 // often, and more embers come off it.
+//
+// The Basilisk: don't meet its eyes. Its kin gone cold on the Wold: lichen-grey, no fire showing
+// through the skin and no embers; the head carried high on a long body, the snout drawn out, a crown
+// of glass spikes standing up round the back of the skull and a crest of glass shards down the spine,
+// and the eyes big, bulging and lit, a cold green-white with the slit across them. What light is in
+// it shows there, and in the mouth when it parts. Idle: the throat pumps, the eyes breathe, now and
+// then it bobs its head and the mouth parts on the cold light.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B } from './common.ts';
 import { blob, glow, patch, softLine } from './gloss.ts';
 import type { Part } from './gloss.ts';
-import { rgba, shade } from '../../lib/art/palettes.ts';
+import { mix, rgba, shade } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['salamander', 'great_salamander', 'ember_salamander'];
+export const KINDS: readonly MonsterSprite[] = ['salamander', 'great_salamander', 'ember_salamander', 'basilisk'];
 
 /**
  * The frame's parts, as proportions of the salamander's (1 = the salamander, 0 = none), each named
@@ -85,6 +92,10 @@ interface Build {
   deep: string; glow: string; hot: string; core: string;
   /** The eyes' colour. */
   eyeHex: string;
+  /** A crown of spikes standing up round the back of the skull, 0 or none: the basilisk's. */
+  crown?: number;
+  /** The ridge and the crown in glass, pale and pointed, where the great salamander's are rock: the basilisk's. */
+  glass?: number;
 }
 const SALAMANDER: Build = {
   length: 1, bulk: 1, head: 1, snout: 1, gape: 0, rear: 1, bob: 1, tail: 1, blotches: 1, bands: 0, crust: 0, ridge: 0, horns: 0, eye: 1, fire: 1, embers: 1, claws: 0,
@@ -109,8 +120,18 @@ const EMBER: Build = {
   deep: '#d0360a', glow: '#ff8a1c', hot: '#ffe066', core: '#ffffff', eyeHex: '#fff2b0',
 };
 
+/**
+ * The Basilisk: cold, the fire gone out of the skin and left in the eyes, big and lit; longer in the
+ * body and the snout, the head high, a crown of glass round the back of the skull and a crest of glass
+ * down the spine.
+ */
+const BASILISK: Build = {
+  length: 1.1, bulk: 0.95, head: 1.08, snout: 1.4, gape: 0, rear: 1.6, bob: 0.7, tail: 1.3, blotches: 0, bands: 0, crust: 0, ridge: 0.9, horns: 0, eye: 1.55, fire: 0.9, embers: 0, claws: 0.5,
+  deep: '#1e5a46', glow: '#62d8a8', hot: '#c4ffe4', core: '#f4fffa', eyeHex: '#d8ffec', crown: 1, glass: 1,
+};
+
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
-  salamander(ctx, x, y, h, p, kind === 'great_salamander' ? GREAT : kind === 'ember_salamander' ? EMBER : SALAMANDER);
+  salamander(ctx, x, y, h, p, kind === 'great_salamander' ? GREAT : kind === 'ember_salamander' ? EMBER : kind === 'basilisk' ? BASILISK : SALAMANDER);
 };
 
 /** A point of the model: x across to the salamander's right, y up, z back from its head. */
@@ -256,7 +277,7 @@ function salamander(ctx: CanvasRenderingContext2D, x0: number, y: number, h: num
 
   // --- the fit, on the pose at rest: the crown at CROWN, the whole centred on x0 ------------------
   const rest = pose(b, 0, 0, 0);
-  const tops: V3[] = [...SKULL, ...SOCKET.map(([[sx, sy, sz], r]) => [sx, sy + r * b.eye, sz] as V3), ...(b.horns > 0 ? HORNS.map(([, tip]) => tip) : [])];
+  const tops: V3[] = [...SKULL, ...SOCKET.map(([[sx, sy, sz], r]) => [sx, sy + r * b.eye, sz] as V3), ...(b.horns > 0 ? HORNS.map(([, tip]) => tip) : []), ...(b.crown ? SPIKES.map(([root, tip]) => lerp3(root, tip, b.crown!)) : [])];
   const hips = rest.SPINE[3];
   const crownRaw = Math.max(seen([0, hips[1] + hips[3], hips[2]])[1], ...tops.map((q) => seen(rest.toBody(q))[1]), ...rest.plates.map(([q, tall]) => { const [, c, s2] = seen(q); return c + tall * s2; }));
   const k = (h * CROWN / 100) / crownRaw;
@@ -359,6 +380,11 @@ const HORNS: readonly [V3, V3, number][] = [
   [[-7.6, 5.2, 4], [-10.8, 9.4, 11.5], 2.3], [[7.6, 5.2, 4], [10.8, 9.4, 11.5], 2.3],
   [[-4.2, 7, -4.2], [-5, 9.6, -2.2], 1.2], [[4.2, 7, -4.2], [5, 9.6, -2.2], 1.2],
   [[-9.6, 0.4, 1], [-11.4, 1.6, 3.6], 1.4], [[9.6, 0.4, 1], [11.4, 1.6, 3.6], 1.4],
+];
+/** The basilisk's crown: spikes standing up in an arc round the back of the skull, the middle one tallest; root, tip and the width at the root. */
+const SPIKES: readonly [V3, V3, number][] = [
+  [[-7, 4.8, 3], [-9.4, 9.6, 5.4], 1.3], [[-3.8, 5.7, 5.2], [-4.8, 11.6, 7.4], 1.4], [[0, 6, 6.2], [0, 12.6, 8.6], 1.5],
+  [[3.8, 5.7, 5.2], [4.8, 11.6, 7.4], 1.4], [[7, 4.8, 3], [9.4, 9.6, 5.4], 1.3],
 ];
 
 /** The convex outline round a set of canvas points, as a flat list. */
@@ -500,6 +526,19 @@ type Plate = readonly [V3, number];
  */
 function ridge(ctx: CanvasRenderingContext2D, S: (q: V3) => V2, h: number, plates: readonly Plate[], b: Build, skin: string): void {
   const parts: Part[] = [], roots: V2[] = [];
+  if (b.glass) {
+    // The basilisk's crest: narrow shards of glass, pointed and leaning back, rooted in the back, the
+    // cold light faint at their roots.
+    for (const [q, tall] of plates) {
+      const [x, y, s] = S(q), hgt = tall * 1.25 * s, w = (1.6 + tall * 0.18) * s, lean = -0.3;
+      parts.push({ k: 'poly', pts: [x - w, y + s * 1.5, x - w * 0.35 + lean * hgt * 0.5, y - hgt * 0.62, x + lean * hgt, y - hgt, x + w * 0.4 + lean * hgt * 0.4, y - hgt * 0.42, x + w, y + s * 1.5] });
+      roots.push([x, y, s]);
+    }
+    blob(ctx, B, mix(skin, b.hot, 0.45), parts, { h, tex: 'facets', seed: 52, amount: 0.6, form: false, spread: 0.7, gloss: 0.7 });
+    if (B.override) return;
+    for (const [i, [rx, ry, s]] of roots.entries()) glow(ctx, B, rx, ry, 2.6 * s, b.glow, 0.18 + 0.06 * Math.sin(i * 2.3), b.hot);
+    return;
+  }
   for (const [q, tall] of plates) {
     const [x, y, s] = S(q), hgt = tall * s, w = (2.4 + tall * 0.32) * s, lean = -0.35;
     parts.push({ k: 'poly', pts: [x - w, y + s * 1.5, x - w * 0.7 + lean * hgt * 0.3, y - hgt * 0.7, x - w * 0.1 + lean * hgt * 0.5, y - hgt, x + w * 0.55 + lean * hgt * 0.35, y - hgt * 0.78, x + w, y + s * 1.5] });
@@ -579,6 +618,17 @@ function head(ctx: CanvasRenderingContext2D, HS: (q: V3) => V2, h: number, b: Bu
       return { k: 'tube', pts: [x0, y0, x1, y1, x2, y2], r0: w * s0, r1: 0.4 * s2 };
     });
     blob(ctx, B, shade(skin, 0.92), parts, { h, tex: 'cracks', seed: 31, amount: 0.6, formK: 0.4, spread: 0.75 });
+  }
+  // The basilisk's crown: spikes of glass in an arc round the back of the skull, a line of light up each.
+  if (b.crown) {
+    const k = b.crown, glassHex = mix(skin, b.hot, 0.5), tips: [number, number, number, number][] = [];
+    const parts = SPIKES.map(([root, tip0, w]): Part => {
+      const tip = lerp3(root, tip0, k), [x0, y0, s0] = HS(root), [x1, y1] = HS(lerp3(root, tip, 0.5)), [x2, y2, s2] = HS(tip);
+      tips.push([x0, y0, x2, y2]);
+      return { k: 'tube', pts: [x0, y0, x1, y1, x2, y2], r0: w * s0, r1: 0.3 * s2 };
+    });
+    blob(ctx, B, glassHex, parts, { h, tex: 'facets', seed: 33, amount: 0.5, formK: 0.4, spread: 0.7, gloss: 0.7 });
+    if (!B.override) for (const [x0, y0, x2, y2] of tips) softLine(ctx, B, [x0 + (x2 - x0) * 0.2, y0 + (y2 - y0) * 0.2, x0 + (x2 - x0) * 0.85, y0 + (y2 - y0) * 0.85], shade(b.hot, 1), Math.max(1, 0.5 * u), 0.55);
   }
 
   // The fire behind the eyes, as a fire salamander carries its yellow there, on the crown and on the snout.

@@ -34,6 +34,11 @@
 // its back with the fingered primaries spread, the feathered legs thrust forward and the yellow feet
 // open under them, just off the ground. Dark brown, the crown and nape gold, a heavy brow over the
 // eye and a deep yellow bill hooked at the tip. It does not hop; now and then the wings settle.
+// The Vulture is the frame hunched on the ground to wait, as heavy in the body as the eagle: the broad
+// wings held low and open round it, the head hung forward and down on a long bare neck out of a ruff
+// of pale down, the head and neck bare and pink, a heavy brow, and a pale bill hooked at the tip. Dun,
+// the ruff cream. It does not hop; now and then it hisses, the head bowing, the bill opening and the
+// ruff standing up.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
@@ -42,7 +47,7 @@ import type { Part } from './gloss.ts';
 import { mix, shade } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['crow', 'owl', 'old_rook', 'grey_heron', 'wrack_gull', 'raven', 'spine_eagle'];
+export const KINDS: readonly MonsterSprite[] = ['crow', 'owl', 'old_rook', 'grey_heron', 'wrack_gull', 'raven', 'spine_eagle', 'vulture'];
 
 /**
  * The frame's parts, as proportions of the crow's (1 = the crow, 0 = none). Each is named for the
@@ -124,6 +129,10 @@ interface Build {
   toes?: string;
   /** A heavy brow over the eye, 0 none: the spine eagle's. */
   brow?: number;
+  /** 0 none; 1 the wings held low and open round it and the head hung forward and down: the vulture's wait. */
+  hunch?: number;
+  /** A bare-necked bird's ruff, at the neck's root and of this colour: the vulture's pale down. */
+  collar?: string;
 }
 const CROW: Build = {
   body: 1, neck: 1, head: 1, face: 0, bill: 1, hook: 0, arch: 0, leg: 1, wing: 1, broad: 1, tail: 1, wedge: 0.3, ruff: 0.35, bare: 0,
@@ -183,9 +192,20 @@ const EAGLE: Build = {
   crest: 0, pale: 0, streaks: 0, billHex: '#e2b040', mantle: null, tips: 0, gape: 0, fold: 0, call: 0,
   raise: 0.4, strike: 1, nape: '#c8963c', toes: '#e2b040', brow: 1,
 };
+/**
+ * The vulture: the eagle's bulk hunched on the ground, the broad wings low and open round it, a small
+ * bare head hung forward on a long bare neck out of a cream ruff, a heavy brow and a pale hooked bill.
+ * Dun and matte. It does not hop; it hisses.
+ */
+const VULTURE: Build = {
+  body: 1.3, neck: 1.35, head: 0.8, face: 0, bill: 1.1, hook: 1.1, arch: 0.5, leg: 0.95, wing: 1.35, broad: 1.6, tail: 0.7, wedge: 0, ruff: 1.6, bare: 0.9,
+  sheen: null, gloss: 0.1, feathered: 0, lean: -0.5, hop: 0, tufts: 0, bars: 0, mask: 0,
+  crest: 0, pale: 0, streaks: 0, billHex: '#d6cbb0', mantle: null, tips: 0, gape: 0, fold: 0, call: 0.7,
+  brow: 0.7, hunch: 1, collar: '#e4dac4',
+};
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
-  const b = kind === 'owl' ? OWL : kind === 'old_rook' ? ROOK : kind === 'grey_heron' ? HERON : kind === 'wrack_gull' ? GULL : kind === 'raven' ? RAVEN : kind === 'spine_eagle' ? EAGLE : CROW;
+  const b = kind === 'owl' ? OWL : kind === 'old_rook' ? ROOK : kind === 'grey_heron' ? HERON : kind === 'wrack_gull' ? GULL : kind === 'raven' ? RAVEN : kind === 'spine_eagle' ? EAGLE : kind === 'vulture' ? VULTURE : CROW;
   // The pose is the Build's `face`. Turned to the party, the raised wings reach higher than the
   // crow's hop: drawn inside 0.85 of its height, as the lampman is, the owl's tips keep clear of the
   // top of the combat canvas (at full height and wing 1.6 they run off it), and the wings as much
@@ -257,7 +277,7 @@ function bird(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
   const ht = f % 120, hop = ht < 20 ? Math.sin(ht / 20 * Math.PI) * b.hop : 0;
   const ft = (f + 64) % 96, flick = ft < 16 ? Math.sin(ft / 16 * Math.PI) : 0;
   // Coming down (the eagle's strike), the body rides over its feet and the feet over the ground.
-  const raise = b.raise ?? 0, strike = b.strike ?? 0;
+  const raise = b.raise ?? 0, strike = b.strike ?? 0, hunch = b.hunch ?? 0;
   const L = 0.2 * b.leg, by = L + hop * 0.07 + p.breathe * 0.004 + strike * 0.09, feet = hop * 0.03 + strike * 0.06;
   // The call, every 110 frames: the head bows forward, the bill opens, the hackles bristle out.
   const ct = f % 110, call = b.call > 0 && ct < 30 ? Math.sin(ct / 30 * Math.PI) * b.call : 0;
@@ -274,13 +294,15 @@ function bird(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
 
   // Where the parts join, in sprite units.
   const nl = 0.06 * b.neck, rH = 0.115 * b.head;
-  const hx = 0.24 + nl * 0.6 + 0.04 * call, hy = by + 0.4 * bs + nl + 0.07 - 0.05 * call;
+  // Hunched, the head hangs forward and down to the height of the shoulders.
+  const hx = 0.24 + nl * 0.6 + 0.04 * call + (hunch ? 0.07 * hunch : 0), hy = by + 0.4 * bs + nl + 0.07 - 0.05 * call - (hunch ? 0.14 * hunch : 0);
   const sx = 0.08, sy = by + 0.4 * bs;
   const ax = -0.18, ay = by + 0.22 * bs;
   // The flick and the hop both lift the wings, never more than one at a time's worth: together they
   // would raise the far wing's tip past the top of the combat canvas.
   // Raised wings beat less far: the eagle's flick is a settling of them.
-  const th = 0.8 + raise + 0.3 * Math.max(flick, hop) * (1 - raise);
+  // Hunched, they are held low and open round it.
+  const th = 0.8 + raise + 0.3 * Math.max(flick, hop) * (1 - raise) - 0.38 * hunch;
   const W = b.wing;
 
   /**
@@ -347,25 +369,43 @@ function bird(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
     { k: 'ell', x: X(-0.04), y: U(by + 0.22 * bs), rx: h * 0.32 * bs, ry: h * 0.16 * bs, rot: b.lean },
     { k: 'ell', x: X(0.12), y: U(by + 0.3 * bs), rx: h * 0.14 * bs, ry: h * 0.15 * bs },
     { k: 'ell', x: X(0.0), y: U(by + 0.1), rx: h * 0.07, ry: h * 0.06 },
-    // A long neck is a crouched S, back from the breast and forward again under the head; a short
-    // one is a straight piece of the mass.
-    b.neck > 1.5
-      ? { k: 'tube', pts: px(neckS(0.15, by + 0.36 * bs, hx - rH * 0.2, hy - rH * 0.3, nl)), r0: h * 0.07 * bs, r1: h * rH * 0.62 }
-      : { k: 'cap', x0: X(0.15), y0: U(by + 0.36 * bs), x1: X(hx - rH * 0.2), y1: U(hy - rH * 0.3), r0: h * 0.12 * bs, r1: h * rH * 0.78 },
   ];
+  // A long neck is a crouched S, back from the breast and forward again under the head; a short
+  // one is a straight piece of the mass. A bare neck is skin, drawn after the plumage.
+  if (!bare) body.push(b.neck > 1.5
+    ? { k: 'tube', pts: px(neckS(0.15, by + 0.36 * bs, hx - rH * 0.2, hy - rH * 0.3, nl)), r0: h * 0.07 * bs, r1: h * rH * 0.62 }
+    : { k: 'cap', x0: X(0.15), y0: U(by + 0.36 * bs), x1: X(hx - rH * 0.2), y1: U(hy - rH * 0.3), r0: h * 0.12 * bs, r1: h * rH * 0.78 });
   if (!bare) body.push({ k: 'ball', x: X(hx), y: U(hy), r: h * rH, gloss: 0.3 * b.gloss });
-  // Hackles: the loose feathers of the throat, a ragged edge under the chin.
+  // Hackles: the loose feathers of the throat, a ragged edge under the chin; on a bare neck, a ruff
+  // of down round its root, the vulture's, drawn over the skin.
+  let collar: Part | null = null;
   if (b.ruff > 0) {
-    const rr = rH * (0.4 + 0.5 * b.ruff) * (1 + 0.3 * call), cx = hx - rH * 0.15, cy = hy - rH * 1.05;
+    const rr = rH * (0.4 + 0.5 * b.ruff) * (1 + 0.3 * call), cx = bare ? 0.17 : hx - rH * 0.15, cy = bare ? by + 0.43 * bs : hy - rH * 1.05;
     const ring: number[] = [];
     for (let i = 0; i < 10; i++) { const a = i / 10 * Math.PI * 2; ring.push(X(cx + Math.cos(a) * rr), U(cy + Math.sin(a) * rr * 0.8)); }
-    body.push({ k: 'curve', pts: ring, wobble: 0.05, spiky: 0.1 * b.ruff * (1 + call), seed: 7, sub: 2 });
+    const ruff: Part = { k: 'curve', pts: ring, wobble: 0.05, spiky: 0.1 * b.ruff * (1 + call), seed: 7, sub: 2 };
+    if (bare) collar = ruff; else body.push(ruff);
   }
   blob(ctx, B, plume, body, { h, formK: 0.4, spread: 0.8, creases: [
     { x0: X(0.2), y0: U(by + 0.5 * bs), x1: X(0.14), y1: U(by + 0.36 * bs), r: h * 0.03, a: 0.22 },   // where the neck meets the breast
     { x0: X(-0.02), y0: U(by + 0.1), x1: X(0.05), y1: U(by + 0.05), r: h * 0.02, a: 0.25 },            // the thigh into the belly
   ] });
-  if (bare) blob(ctx, B, mix(plume, skin, b.bare), [{ k: 'ball', x: X(hx), y: U(hy), r: h * rH }], { h, formK: 0.4 });
+  if (bare) {
+    // The bare neck and head, the skin wrinkled across the neck, then the ruff over the neck's root.
+    const bareHex = mix(plume, skin, b.bare), n0 = [0.15, by + 0.4 * bs], n1 = [hx - rH * 0.2, hy - rH * 0.3];
+    blob(ctx, B, bareHex, [
+      { k: 'cap', x0: X(n0[0]), y0: U(n0[1]), x1: X(n1[0]), y1: U(n1[1]), r0: h * 0.045 * bs, r1: h * rH * 0.62 },
+      { k: 'ball', x: X(hx), y: U(hy), r: h * rH },
+    ], { h, formK: 0.4 });
+    if (h >= 30 && !B.override) {
+      const dx = n1[0] - n0[0], dy = n1[1] - n0[1], len = Math.hypot(dx, dy) || 1;
+      for (const k of [0.45, 0.62, 0.79]) {
+        const cx = n0[0] + dx * k, cy = n0[1] + dy * k, w = (0.045 * bs * (1 - k) + rH * 0.62 * k) * 0.8;
+        softLine(ctx, B, px([cx + (dy / len) * w, cy - (dx / len) * w, cx - (dy / len) * w, cy + (dx / len) * w]), shade(bareHex, 0.72), Math.max(1, h * 0.006), 0.55);
+      }
+    }
+    if (collar) blob(ctx, B, b.collar ? shade(b.collar, tone) : plume, [collar], { h, formK: 0.35, tex: 'fur', seed: 8, amount: 0.4 });
+  }
   // The eagle's gold, a marking on the one mass: the crown, and down the back of the neck.
   if (b.nape) patch(ctx, B, shade(b.nape, tone), [
     { k: 'ell', x: X(hx - rH * 0.45), y: U(hy - rH * 0.05), rx: h * rH * 1.05, ry: h * rH * 0.7, rot: -0.85 },
