@@ -17,9 +17,11 @@ calls are #443's, the names #444's, the third prestiges' quests #448's and the r
 Figures are measured on main at `6032251` (2 October 2026) with `worldGrid` (`src/game/atlas.ts`):
 land without shallows or rivers, and "walkable" what is not mountain, peak, cliff or chasm.
 
-Nothing is built. Its content will be `src/content/areas/glasswold/` (maps, monsters, items,
-climate, its part of the world map in `atlas.ts`, its chapter of the one quest, The Warning, in
-`chapter.ts` and its side quests in `quests.ts`); it has no town and no businesses, so no rooms.
+Built so far: E10's Wold half (#524, §4.2), on the box laid whole for Ashfall's Ember Waste (#517);
+the area is listed when D9 is built (#525). Its content will be `src/content/areas/glasswold/`
+(maps, monsters, items, climate, its part of the world map in `atlas.ts`, its chapter of the one
+quest, The Warning, in `chapter.ts` and its side quests in `quests.ts`); it has no town and no
+businesses, so no rooms.
 Its ids: the area `glasswold`, its zones `wold` and `theglass`, the plan's; the Buried Tower
 `buried_tower`, the plan's, left to the reach. Akordu's (the Wold Riders' camp) and Kushtash's (the
 Eyrie) ids are their boxes' to set (#526, #529); the Eyrie's site keeps its name in the issues until
@@ -111,14 +113,17 @@ bands, the Wold 26–28 and the Glass 30–32, the Buried Tower's plate at 30–
 the Buried Tower, "The Glass" and "Buried Tower" lettered as the plan letters them. The lava flow
 is drawn in the plan's ridges (`src/content/atlas.ts`), the one line outside the folder this doc
 asks for (call 5). Its row on the curve is in (#542), in `src/content/progression.ts`, planned until
-#524 lists the area (band 26–28, next 28, window 6,000); the Wold takes no step on the gear ladder,
+D9 (#525) lists the area (band 26–28, next 28, window 6,000); the Wold takes no step on the gear ladder,
 no town to sell one (§9). Its ground is laid (#543): steppe (`s`), walked as grass and tawny at
 Harvest, and dunes (`u`), sand in ridges walked as slowly as hills, so the scaffold drafts D9 with its
 807 squares of steppe and 171 of dunes (docs/SLICE.md). Its six monsters are drawn ahead of the
 boxes (#533, MONSTERS §8.3): five on frames that exist, the vulture, the Wold lion, the Grey Lion,
 the glass scorpion and the basilisk, and the glass walker, the first of a family of its own
 (`src/ui/monsters/glasswalkers.ts`); their defs are in `src/content/areas/glasswold/monsters.ts`,
-listed in `AHEAD` until #524 lists the area. Nothing else: no map and no quest.
+listed in `AHEAD` until D9 (#525) lists the area; E10 places the vulture and the Wold lion first
+(#524). Its crossing line is on the Wold's zone row (#524), said where a map of the Wold is first
+entered. E10's Wold half is built on the Waste's map (§4.2). Nothing else: no map of its own and no
+quest.
 Every brief below is a draft.
 
 ## 4. What is still to build
@@ -128,7 +133,7 @@ boxes, which hold 5,557 of those squares, 5,379 walkable, the table the epic #44
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
 |---|---|---|---|---|---|---|---|---|
-| E10 | The road onto the steppe | the Wold | country | 26 | 620 (hills 302, steppe 215, ash 64, grass 39) | the road over the Cinder Hills from the Waste at 156,312 → 144,300, laid whole by #517 (ashfall.md §4.9) at 24–26, bare of the Wold's monsters and quests; the first vultures and the Wold's line are left (§4.2) | none | #524 |
+| E10 | The road onto the steppe | the Wold | country | 25–26 | 620 (hills 302, steppe 215, ash 64, grass 39) | the road over the Cinder Hills from the Waste at 156,312 → 144,300, laid whole by #517 (ashfall.md §4.9); its Wold half built by #524 at 25–26: beetles over from the Waste, the first vultures and a pride, a camp, the Riders and the glare from the crest (§4.2) | none | #524 |
 | D9 | The steppe | the Wold | core | 26–27 | 1,024 (steppe 827, dunes 180, rock 11) | the grass with glass in it; the lions' prides; the dunes' first edge at the south-west corner | the glass in the grass | #525 |
 | D8 | The Riders' camp | the Wold | core | 27 | 810 (steppe 657, rock 85, hills 68) | Akordu at 120,250 under its mesa: the eldest, the trader, the Rider who rides to Cinderport; the garden of glass | the eldest's story | #526 |
 | D10 | The mesas | the Wold | core | 27 | 1,024 (steppe 772, hills 141, rock 88, dunes 23) | the basilisks' mesas; the mesa fight; the Eyrie's old mesa at 132,289, empty | none | #527 |
@@ -197,7 +202,7 @@ settled in its issue, and what Ashfall teaches changes them.
   cures: Absolve, the Quickening Draught (2,000 gold, the trader's at Akordu and Cinderport's
   chandler's) and a temple, Cinderport's the nearest (MONSTERS §3.3).
 
-### 4.2 E10, the road onto the steppe (#524): country, band 26
+### 4.2 E10, the road onto the steppe (#524): country, band 25–26
 
 - **Purpose.** Act IV's last way in, and the Wold's first ground: the road from the Ember Waste
   over the Cinder Hills, the area's gentlest groups, and the crossing line that tells a company
@@ -222,21 +227,21 @@ settled in its issue, and what Ashfall teaches changes them.
   first monster that flies on the road since the gulls.
 - **Finds.** A Horn Bow with a plus, Cinderport's step (#542), in the grave, and gold.
 - **Pay.** About 1,500 xp a member.
-- **Laid by #517** (docs/areas/ashfall.md §4.9; 9 October): the box whole, steppe and grass
-  included, as the Ember Waste's at band 24–26, with its road, the Hills' notch and waymark, the
-  cairns, the Riders' sky-stone on the crest, a hermit, two cinder drakes at 25 and the secret, the
-  Rider's grave with the Horn Bow +2 (a cairn that looks back at the Stone, with a woman on her
-  saddle and 700 gold in it). It pays 662 xp a member. Left to #524: the vultures (two groups, the
-  nearest), the pride of lions, the glass scorpion where the flow has burned the grass, the beetles
-  come over from the Waste (on E10's east ash, empty now), the outriders who watch and do not fight,
-  the Rider met on the road with a rumour, a camp in the hills' lee, the Glass's glare from the
-  crest, a Riders' cairn where the grass begins and the pay of 1,500 xp a member on top of the 662.
-  A second hint of the grave, the vultures circling where nothing is dying, fits as an event, not a
-  second grave. The Wold's line is said where D10 is crossed (#527, over E10's west edge at 0,6) or
-  by a crest event here; E10 is the Waste's for the line and the band, so #524's gate (a company of
-  24 turned back) asks its floor raised, a band of 25–26 passing the curve with a group at 26
-  placed. "Steppe underfoot" cannot be claimed, E10 laying steppe first (ashfall.md §11): the
-  owner's.
+- **Built** (#517 and #524, 9 October; docs/areas/ashfall.md §4.9): the box whole as the Ember
+  Waste's, steppe and grass included, its band raised from 24–26 to 25–26 for the Wold's groups at
+  26 (§9, #524's 1). #517 laid the road, the Hills' notch and waymark, the cairns, the Riders'
+  sky-stone, a hermit, two cinder drakes at 25 and the secret, the Rider's grave with the Horn Bow +2
+  (a cairn that looks back at the Stone, a woman on her saddle and 700 gold in it). #524 added four
+  cinder beetles come over from the Waste, on the ash nearest the way in (27,23); six vultures at the
+  hills' foot (21,18); a pride of three Wold lions in the first grass west of the Hills (7,23); the
+  Riders' camp under the hills by the road (17,22); vultures seen from the road turning over the
+  grave's hills (`e10_circle`, 26,26), the grave's second hint; the glare off the Glass from the
+  crest (`e10_glare`, 12,18); the Riders' cairn where the grass begins (`e10_mark`, 7,14); and a
+  Rider coming up the road (9,13), with word of Akordu and of the vultures, and two outriders on the
+  last rise (3,16), who watch and stop nobody, words only. The Wold's line is its zone row's, said
+  where D10 is entered (#524's 4). Cut for the gate's day: the second vulture group and the glass
+  scorpion (#524's 2). It pays 2,543 xp a member, 662 of it #517's (§8). "Steppe underfoot" cannot
+  be claimed, E10 laying steppe first (ashfall.md §11): the owner's.
 
 ### 4.3 D9, the steppe (#525): core, band 26–27
 
@@ -547,6 +552,11 @@ cliff from its top.
   (EXPANSION §5.2) and not this doc's. A company that climbs the Scarp stair from the Saltings at
   12 meets C8's line and C8's lions: a warning, not a wall, and a fight it can run from.
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3).
+- **As built.** E10 (#517, #524) pays 2,543 xp a member, 1.04 times its scaled 2,450, and 950 gold,
+  counted in Ashfall's row since its map is the Waste's (16,062 of 19,467). At its floor, 25, a
+  company wins every fight and manages 10.83 fights to a rest (aim 9.25 to 11.25), 7.7% of days
+  ending in a fight broken off; two under, its groups count in Ashfall's pool, all won (owed to #18).
+  Density 100.0% within 12, no sign among its 24 points. The Wold's own row is owed to #447 whole.
 
 ## 9. Decisions
 
@@ -659,6 +669,30 @@ Decided by delegate for #533 (the glass walkers), each the owner's to overturn:
    (§4.3), so by 7 above it is owed there.
 9. **One kind, on a Build:** the Buried Tower's walkers, at their worst (MONSTERS §10.1), are to
    be a Build and a colouring of this frame, not a module of their own.
+
+Decided by delegate for #524, each the owner's to overturn:
+
+1. **E10's band is 25–26,** up from #517's 24–26: the Wold's groups stand at 26 and the issue's gate
+   turns back a company under the band. F10 stays 24–26, so onto E10 at 24 the Waste's harder words.
+2. **The fewest groups that pass:** four beetles, six vultures and three lions with the drakes, 10.83
+   fights to a rest at 25; each set tried with a second vulture group or the lone scorpion missed the
+   day's aim (12.3 to 15.7). Both cut, the scorpion owed to D9's dunes (#525).
+3. **The beetles stand nearest the way in,** on the ash: at 24 they let the levels rise to the drakes
+   at the far end (rank correlation 0.32), where a group at 26 nearest would not.
+4. **The Wold's line is its zone row's,** not a crest event: the line is said by level where the
+   land changes (#166), an event the same to all. E10 is the Waste's land, so D10 (#527) says it
+   first, and C8's stair (#528, a jump: #616) too, so its words hold both ways in.
+5. **The camp is under the hills' east face** (17,22), out of the steppe's wind, by the road below
+   the notch, so a company rests before the crest and the grass.
+6. **The grave's second hint is seen from the road on the ash:** vultures turning over its hills,
+   nothing under them moving. The Rider's word, that they come down where something is about to die,
+   is the other half; no text joins them.
+7. **The Rider names Akordu** (§10) and the hoofprints north-west, toward D8 (#526); no quest, the
+   chapter's and #532's.
+8. **Pay 1,881 xp a member,** 2,543 with #517's 662, 1.04 times the scaled 2,450; no gold or find
+   added, the grave's Horn Bow +2 and gold standing as the finds.
+9. **Nothing new is claimed:** steppe is #517's first, and the vulture, lion and beetle come of
+   families already on the road.
 
 ## 10. Names
 
