@@ -242,7 +242,8 @@ export interface Passage {
   facing?: Facing;
   /** What the menu calls the far end. */
   name: string;
-  by: 'coach' | 'boat';
+  /** By road or by sea: a coach, or a Rider's horse (a `coach` way on the atlas), or a boat. */
+  by: 'coach' | 'boat' | 'horse';
   fare: number;
   departs: number;
   days: number;

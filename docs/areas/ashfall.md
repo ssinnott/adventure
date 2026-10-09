@@ -116,6 +116,13 @@ a vent's fire in its lip and its smoke going up; lava is the `!` there was. The 
 with its 207 squares of vines and G11 with its 102 of lava; the atlas lays the cone as mountain, so
 #513 letters it `V` and its mouth `@` over the draft (docs/SLICE.md).
 
+Its crossings are written (#547), in `src/content/crossings.ts`, each on its link of the atlas with
+its fare, its days and its hours, the same either way (§4.4, §9): the Compact's ship from
+Kilnhaven, whose Cinderport end says where she ties up; the Rider's ride, on a Rider's horse
+between Cinderport's gate and Akordu in the Wold; and the last crossing over the Sound to Hearth
+Isle. Every end here waits on Cinderport (#512), and the far ones on Akordu (#526) and Hearth Isle
+(Phase 1.5); nothing is sold toward a place not built, so none runs yet.
+
 All nine of its monsters are drawn ahead of the area (#520): the Strangler Vine, the Cinder Beetle,
 the Ember Salamander and the Ash Husk, on the old wood's, the spider's, the salamanders' and the
 skeleton's frames; the Cinder Drake and the Old Drake on the drakes', new; and the Stoker, the
@@ -281,10 +288,14 @@ half, with the wilderness features (#45); no more than one point in four is a si
   outside the gate (§5); the mason of #56's 48, who wants passage.
 - **Quests.** The chapter's goals (§5); The Founding Stone and The Shovel That Does Not Blunt given
   here (§6); the two halls' quests (§6); the seeking quests for the third prestiges (#448).
-- **The ship** (#547): from Kilnhaven's quay to Cinderport's and back, a fare, never a favour,
-  halved for a member of the Compact as Kitto's boat is (docs/areas/saltreach.md §4.9); the last
-  crossing to Hearth Isle from the same steps, Act V's, open to anyone with the fare (EXPANSION
-  §2.2). The Riders' ride west to the Wold leaves from the trading ground (#547, §9).
+- **The ship** (#547): from Kilnhaven's quay to Cinderport's and back, 600 gold and two days, a
+  fare, never a favour, halved here for a member of the Compact as Kitto's boat is
+  (docs/areas/saltreach.md §4.9); the last crossing to Hearth Isle from the same steps, Act V's, 350
+  and a day, open to anyone with the fare (EXPANSION §2.2). The Riders' ride west to Akordu, 325 and
+  a day, leaves from the gate by the trading ground (#547, §9). The town writes where each puts a
+  company down, on its ends in `content/crossings.ts`: the Compact's steps, the same steps and just
+  inside the gate. It sells each by a person whose `passage` is `sells('cinderport', ...)`: the
+  ship's master, the harbourmaster and a Rider.
 - **Lines:** the quay: *The Compact's ship rides at the quay with Kilnhaven's mark on her. Beyond
   the Sound, a column of light.*
 - **New here.** A guild hall with a map of the far side; a trainer to 27; the last crossing seen.
@@ -804,6 +815,40 @@ Decided by delegate for #520 (the heavy machines), each the owner's to overturn:
    stoker at H10's springs, §6's 49, strikes the line if it is built first); the sentry to F11
    (#514), whose road has the first sentries after the Stone (§4.6), before #516's door; and the
    Sentinel to the Ember Stone (#516). Nothing is declared apart: each is one silhouette.
+
+Decided by delegate for #547, each the owner's to overturn:
+
+1. **Each crossing is written once with both ends** in `content/crossings.ts`, as #539's are: the
+   Compact's ship gains its Cinderport end, and the Rider's ride (`RIDERS_RIDE`) and the last
+   crossing (`LAST_CROSSING`) are new. Each is open from the start, no flag and no lock (EXPANSION
+   §2.2).
+2. **Nothing is sold toward a place not built** (#539's 2): every end here names #512, Akordu's
+   #526 and the isle's Phase 1.5, so none runs yet. Jago sells the ship the day #512 writes her steps.
+3. **An end may be a zone,** a camp or a shore, as the atlas names its place (`wold`,
+   `hearthisle`): it lands on the map of the box that holds it (`landing.map`), since a zone is built
+   a box at a time, and its floor is the zone's (its area's when it has none). The check holds the
+   box to the zone. The world map draws a link to a zone sold both ways as built, as it does a
+   town's, so Kitto's boat to Wrackholm (#177) is now drawn once, under its name.
+4. **The fares keep #539's rule,** 12.5 gold a level of the dearer end's floor for each day: the
+   ride 325 (the Wold's 26) and the last crossing 350 (Hearth Isle's 28); the ship stays 600.
+5. **The days keep Kitto's pace,** some five squares an hour: the ride's 95 from the gate at 206,288
+   to Akordu at 120,250 take a day, leaving at 14 and coming in at 9; the last crossing's 110 over the
+   Sound take a day, sailing at 20 and landing at 16, as the ship does.
+6. **The ride is on a Rider's horse** (`by: 'horse'`), a crossing by road on the atlas's `coach`
+   way, so its terms are the Riders' own ("The Riders ride at 14:00 and come in the next day at
+   09:00") and never a coach's.
+7. **The ship is halved at Cinderport for a member of the Compact** (`q_compact_run_done`, Kitto's),
+   by her master at the Compact's steps; Kilnhaven halves none (docs/areas/kilns.md §4.14), as #539
+   left it. Nobody halves the ride or the last crossing.
+8. **The ride lands just inside the gate,** on the town's own map, as Kilnhaven's coach lands in its
+   inn yard: G10's trading ground outside is where the Riders come down and the horses wait (#511),
+   and a Rider by the gate sells the ride (#512). At Akordu it lands at the horse-lines on D8's map.
+9. **The last crossing says where it goes and no more:** the menu names Hearth Isle and the landing
+   sees the rim and the light rising from within; to a company under 28 the harbourmaster says folk
+   go over strong and come back quiet. Nothing says where the Stones lead.
+10. **A save made at a landing loads there** by #164's save, which keeps the map and the square: the
+    check rides a fixture to a camp on a Wrackholm box and loads it there. The isle's waits on Phase
+    1.5's map, and each end's own on its place.
 
 ## 10. Names
 

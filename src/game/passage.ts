@@ -1,4 +1,4 @@
-// Crossings: a coach or a boat a person sells passage on (#164; EXPANSION §2.1, §2.2). A crossing
+// Crossings: a coach, a boat or a Rider's horse a person sells passage on (#164; EXPANSION §2.1, §2.2). A crossing
 // is open to anyone with the fare. It leaves at its hour every day, so a company that buys outside
 // it waits for the next one, and it lands its days later at its own hour: the clock is what it
 // costs, as well as the gold. The fare pays board, so the company lands rested and eats nothing on
@@ -80,15 +80,21 @@ export const NOT_NOW = 'Not now';
 const days = (n: number): string => (n === 0 ? 'same day' : `${n} day${n === 1 ? '' : 's'}`);
 const OFFER = (name: string, fare: number, n: number): string => `${name}\t${fare ? `${fare}g` : 'free'}\t${days(n)}`;
 const WHEN = (n: number): string => (n === 0 ? 'the same day' : n === 1 ? 'the next day' : `${n} days on`);
+/** How the terms say each kind goes and comes in: a Rider's horse is the Riders' to ride. */
+const RUNS: Record<Passage['by'], readonly [string, string]> = {
+  coach: ['The coach leaves', 'lands'], boat: ['The boat leaves', 'lands'], horse: ['The Riders ride', 'come in'],
+};
 const TERMS = (by: Passage['by'], leaves: string, lands: string, n: number): string =>
-  `The ${by} leaves at ${leaves} and lands ${WHEN(n)} at ${lands}. The fare pays your board.`;
+  `${RUNS[by][0]} at ${leaves} and ${RUNS[by][1]} ${WHEN(n)} at ${lands}. The fare pays your board.`;
 const PAY = (fare: number): string => (fare ? `Pay the fare (${fare} gold)` : 'Board');
 const WARNING: Record<Passage['by'], string> = {
   coach: 'The coachman looks you over. "I carry you there. I do not carry you back."',
   boat: 'The boatman looks you over. "I land you. What the shore does with you is its own affair."',
+  horse: 'The Rider looks you over. "The horse carries you. It does not fight for you."',
 };
 const SHORT = 'You cannot afford the fare.';
 const LANDED: Record<Passage['by'], string> = {
   coach: 'The coach stops and you step down, rested. The road is behind you.',
   boat: 'The boat comes in and you step ashore, rested. The sea is behind you.',
+  horse: 'The Rider reins in and you get down, rested. The road is behind you.',
 };
