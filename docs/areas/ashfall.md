@@ -16,8 +16,9 @@ October 2026) with `worldGrid` (`src/game/atlas.ts`).
 Thirteen maps are built: H10, the Stair's foot (#510, §4.2), which joins the area to the Whitespine
 overland; G10, Cinderport's box (#511, §4.3), which lists the area; Cinderport behind its gate
 (#512, §4.4); G11, Fire Mountain's flank (#513, §4.5); the vents, the iron corridors and the camp,
-Meridian Camp's three levels (#22, docs/areas/meridian_camp.md §4.1 to §4.3); F11, Old Cinder's and the
-Ember Stone's box (#514, §4.6); Old Cinder's two levels, the buried town and the undercroft, through
+Meridian Camp's three levels (#22, docs/areas/meridian_camp.md §4.1 to §4.3), with the Cartographers'
+Mapmaker's rung for the camp's fire (#635, §6); F11, Old Cinder's and the Ember Stone's box (#514,
+§4.6); Old Cinder's two levels, the buried town and the undercroft, through
 F11's crater (#515, §4.7); the Ember Stone, one level under F11's field of cinders (#516, §4.8),
 with the Cartographers' Surveyor's rung (#635, §6); and F10 and E10, the Ember Waste's road (#517,
 §4.9). Its three side quests are written (#519, §6). Its nine monsters and the armourer's step are
@@ -242,8 +243,8 @@ second row, `meridian_camp2` at 226,346, six squares south of the first (docs/ar
 Its row on the curve and its step on the gear ladder are in (#542): the row in
 `src/content/progression.ts` (band 24–26, next 26, window 5,500), owed to #446 while the area is
 built box by box, with the six boxes', the vents', Old Cinder's, E10's Wold half's, the corridors',
-the Ember Stone's, the Surveyor's rung's and the side quests' 29,386 xp a member and 9,900 gold the
-clear's floor; its
+the Ember Stone's, the Surveyor's and the Mapmaker's rungs' and the side quests' 30,186 xp a member
+and 10,700 gold the clear's floor; its
 xp is met since E10's Wold half (#524) and its gold alone is owed, which Cinderport leaves as it is,
 a town paying nothing (§8); the camp's 3,003 xp and 1,200 gold are outside it, the area listing
 the camp `outside` (§9, #22's 5);
@@ -1186,11 +1187,17 @@ Two halls open here (DESIGN §8; #443, call 7), on the rules and the hall menu b
   §10.3), and #56's 51 is its guildsman's. The quests it offers a Surveyor and a Mapmaker are on
   Ashfall's boxes, settled in #512: it offers and pays the Guild's one ladder and adds none of its
   own (§9, #512's 6). The Surveyor's, *The Fourth Journal*, is built with the Ember Stone (#516; PR
-  B of four for #635: A, the Fence's, merged as #648; C, the Mapmaker's, rides Meridian Camp's third
-  level; D, the Factor's, rides the Dead-Drop). Either hall offers it to a Surveyor once the
-  Sleepers are seen (`q_sleepers_seen`, the Act IV opening); its deed is the fourth journal's chest
-  opened in the lower gallery under the Stone (§4.8), and the hall pays 500 gold and 3,600 xp, 600 a
-  member, and fills the shelf (§9, #516's 16 and 17).
+  B of four for #635: A, the Fence's, merged as #648; C, the Mapmaker's, built with Meridian Camp's
+  third level, below; D, the Factor's, rides the Dead-Drop). Either hall offers it to a Surveyor
+  once the Sleepers are seen (`q_sleepers_seen`, the Act IV opening); its deed is the fourth
+  journal's chest opened in the lower gallery under the Stone (§4.8), and the hall pays 500 gold and
+  3,600 xp, 600 a member, and fills the shelf (§9, #516's 16 and 17). The Mapmaker's, *Fane's Fire*
+  (`carto_fane`, PR C), is the camp's: either hall offers it to a Mapmaker, a company paid the
+  Surveyor's, and its deed is the firelight seen on the one way to the fire on the camp's third level
+  (`seen: 'meridian_camp3:mc3_fire'`, docs/areas/meridian_camp.md §8, the camp's 7). It takes
+  nothing, for Fane's map is the Ranger's, and the hall pays 800 gold and 4,800 xp, 800 a member;
+  paid, the company are Geographers, the top rank, and Cador Lusk has a pin in the map past the
+  vents (§9, #635's 1 to 7).
 - **The Compact's factor's house** at Cinderport (#512): the Compact's ship lands here (#547), the
   fare halved for a member; #56's 54's runner is theirs. What the factor's hide in G10's vines
   holds (§4.3) is seen and never said.
@@ -1302,13 +1309,16 @@ before, and a Stone that lights is the Hearth's count (§9, #516's 15).
   2,862 (§9, #22's 4): 24,541, 1.26 times the ask. The Ember Stone (#516) adds 3,445, 1.17 times its
   scaled 2,950 and under 3,700 (§9, #516's 14), and the Surveyor's rung 600 (#635): 28,586 of the
   19,467 asked, 1.47 times, over 1.3. The side quests (#519) add 800, 250, 250 and 300 a member,
-  under their scaled 1,100 (§9, #519's 11): 29,386, 1.51 times. Meridian Camp's third
+  under their scaled 1,100 (§9, #519's 11): 29,386, 1.51 times. The Mapmaker's rung (#635) adds 800,
+  4,800 xp shared by six, counted here as every guild quest is (§9, #635's 4): 30,186, 1.55 times.
+  Meridian Camp's third
   level (#22) pays 3,003, 1.00 of the brief's 3,000, outside the area's budget (EXPANSION §5.2): the
   area lists it `outside`, so the curve prints its pay as a figure and no clear counts it (§9,
   #22's 5). Cinderport pays nothing,
-  as a town pays none, and its halls add no quest of their own (§9, #512's 6): its 600 is the
-  Cartographers' Surveyor's rung's, 3,600 xp shared by six and 500 gold for the fourth journal found
-  under the Ember Stone, paid at any hall of the Guild (#635).
+  as a town pays none, and its halls add no quest of their own (§9, #512's 6): its 1,400 is the
+  Cartographers' two rungs', the Surveyor's 3,600 xp shared by six and 500 gold for the fourth journal
+  found under the Ember Stone and the Mapmaker's 4,800 and 800 gold for Fane's fire, paid at any
+  hall of the Guild (#635).
 - **Gold.** Training six members from 24 to 26 costs 11,760 with today's `trainPrice`, and to 27,
   the third prestige's level, 6,240 more; the thirds ask a quest, not gold (DESIGN §5). A clear
   should pay for the training at least, in chests, drops, the halls' pay and the sentries' parts.
@@ -1332,8 +1342,9 @@ before, and a Stone that lights is the Hearth's count (§9, #516's 15).
   cold camp, their dearest find, inside the window; the Ember Stone holds 600 (#516), in the
   benches' chest with a Battle Staff +1 and a Drakeskin Coat +1, the coat at 3,250 its dearest find,
   now the area's, inside the window. The six boxes, the vents, Old Cinder, the corridors and the
-  Stone hold 9,400 of the 11,760 the training costs, and 9,900 with the Surveyor's rung's 500, paid
-  at the hall. The camp's 1,200 gold and its Meridian Staff +4 at 2,600, in the kit chest, are
+  Stone hold 9,400 of the 11,760 the training costs, and 10,700 with the Surveyor's rung's 500 and
+  the Mapmaker's 800, paid at the halls. The camp's 1,200 gold and its Meridian Staff +4 at 2,600, in
+  the kit chest, are
   outside the area's budget and held to the Glasswold's window of 6,000 (§9, #22's 5).
   Cinderport holds no gold, a town paying
   nothing; the dearest ware at its armourer's is the Drakeskin Coat at 3,100 and the Quickening
@@ -2304,6 +2315,25 @@ Decided by delegate for #519, each the owner's to overturn:
     member; the clear goes from 28,586 to 29,386 a member, and its gold, 9,900, does not move.
 12. **Every new event is two lines of the log or one,** and every person's words fit the box.
 
+Decided by delegate for #635 (PR C), each the owner's to overturn:
+
+1. **The rung is `carto_fane`, *Fane's Fire*,** the Cartographers' rank 3, PR C of four: the area's
+   second guild quest, in `ashfall/guilds.ts` beside the Surveyor's (flags `q_carto_fane` and
+   `q_carto_fane_done`).
+2. **The deed is the firelight,** `seen: 'meridian_camp3:mc3_fire'`, the once event on the way to the
+   fire (the camp's 7), not Fane met. It takes nothing: his map is the Ranger's.
+3. **It has no `after`:** a company is Mapmakers only once the Surveyor's is paid, and that waits for
+   the Sleepers (#516's 16), so a flag of its own would say it twice.
+4. **It pays 800 gold and 4,800 xp, 800 a member.** The curve counts a guild quest with the area whose
+   file holds it and cannot hold one outside, as it holds the camp's levels: Ashfall's clear is
+   30,186 xp a member (1.55 times the 19,467) and 10,700 gold, the row's owed gold.
+5. **The texts name no giver and explain nothing:** one serves both halls. The offer is Cador Lusk's
+   "as far as the vents" put as a charge; the clerk inks a flame past where the ink stopped.
+6. **Cador Lusk has one added line,** first in his `says` (the first that holds is said), since his
+   "no further" is wrong after. The shelf and the room's picture are not touched.
+7. **Paid, the company are Geographers,** rank 4, the top, which has no quest (DESIGN §8).
+   `OWED_RANKS` drops `cartographers[3]`; the Factor's rung stays owed to the Dead-Drop (PR D).
+
 ## 10. Names
 
 Ashfall's naming pass, by the rules of `docs/NAMES.md`, chosen for #444. Cindercoast's folk came
@@ -2499,9 +2529,8 @@ Cut and owed, from the Ember Stone (#516):
   #516's 12).
 - **The chapter reads `q_ember_lit`:** its Stone lit step and the road on are #518's, and so are the
   sentries' parts (F11's, §9, #514's 18).
-- **The Mapmaker's rung,** "Fane's Fire" (the Cartographers' rank 3), is owed now that Meridian
-  Camp's third level is built: its deed is `seen: 'meridian_camp3:mc3_fire'` (docs/areas/meridian_camp.md
-  §8, the camp's 7). The Factor's rides the Dead-Drop (#635's C and D). The Chart House's picture
+- **The Factor's rung** (the Compact's rank 3) is owed to the Dead-Drop (#635's PR D, #22); the
+  Mapmaker's, *Fane's Fire*, is built (§6; §9, #635's 1 to 7). The Chart House's picture
   (`cinderport_cartographers`, in `src/ui/interiors`) may draw the shelf's gap; the flag does not
   change it.
 - **MONSTERS §8.2's Where column for the Sentinel** and its figure there (54% at 26) predate this,
