@@ -1129,6 +1129,14 @@ pale, its hood drawn up to a point and a crook in its hand, and its robe has fal
 plate and the chisel's mark. The bell is `ranged`, so it holds from the back rank
 (docs/areas/whitespine.md §9). The boxes place them (#499, #500).
 
+Three on frames that exist are drawn (#507): the Spine Eagle, the birds' frame at its biggest,
+coming down with its wings raised high and its yellow feet thrust forward, the nape gold and the
+bill hooked; the Snow Troll, the tor troll's frame made of snow, rimed, a cornice over its brow
+with icicles at the lip, standing in the drift it rose from; and the Ashen Mason, the overseer's
+hitched robe under a mason's apron white with dust, a glass shard on its shoulder and a hammer low
+in its fist. The troll mends as #537 made trolls, and the boxes place them (#499, #501 to #504;
+docs/areas/whitespine.md §9).
+
 **Asks:** sweep.
 
 ### 8.2 Ashfall (band 24–26)
