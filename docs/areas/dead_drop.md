@@ -359,7 +359,7 @@ Decided by delegate for #22 (the drop), each the owner's to overturn:
    link from the Tide Ship to `dead_drop` (stairs, planned) is removed: the built exits draw the
    way now (the hold, the stair's foot, the drop), and a planned link beside them would draw a
    second, dashed stair to the same plate. The vaults and the writer's room take a plate each
-   when built.
+   when built: the vaults' is built (the vaults' 14).
 9. **The finds** are the Compact's drop coin (2,000 gold in one strongbox, `dd_strongbox`, 3,29,
    under the counting floor's posts, its weight said by `dd_coin` at 4,28) and two parts,
    `loader_port` ("Loader's Fire Port") and `loader_iron` ("Loader's Crate Iron"), slot none and
