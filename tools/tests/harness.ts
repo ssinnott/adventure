@@ -163,8 +163,6 @@ export const WHOLE: Record<string, { role: Role; share: number; why: string }> =
  */
 export const RESTATE: Record<string, string> = {
   sentinel: "the boss at 26, the Ember Stone's (#516)",
-  deep_knocker: "armoured at 28, Meridian Camp's gallery (#22)",
-  inspector: "a caller on a soldier's numbers at 28, Meridian Camp's gallery (#22)",
   loader: "a brute at 26, the Dead-Drop's (#22)",
   tally_clerk: "a skirmisher at 26, the Dead-Drop's (#22)",
   hold_keeper: "a controller at 27, the Dead-Drop's (#22)",
