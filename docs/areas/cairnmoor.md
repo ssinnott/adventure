@@ -802,6 +802,9 @@ passes without it.
   gives 13,641, 1,026 short: M7 and M8's 1,200 close it when they are built (#484), and the
   curve's row owes it to them. The Lanterns' ring ask, What the Ring Said (#439, §6), is filed here
   and pays 400 a member: a clear gives 14,041, 626 short, still M7 and M8's.
+  By the lead over the road (EXPANSION §5.2, #634) the shortfall does not matter: three quarters
+  cleared from 18, paid by level, a company leaves 0.1 under 20, and walking the road 0.7 over it.
+  The Glasswold's is the same, 0.3 under 28.
 - **Gold.** Training six members from 18 to 20 costs 8,880 with today's `trainPrice`, and the second
   prestiges about 4,000 each (DESIGN §5, #19); nothing on the moor sells or trains, so a clear's
   chests and drops must carry the gold to Rime Lodge, and the coach's fare (#539) with it. The band's
