@@ -25,6 +25,8 @@ export const AREA = {
   // the Waste's road west of the box (#517), Old Cinder's and the Ember Stone's box south of it (#514) and
   // Old Cinder's two levels under its crater (#515).
   maps: [CINDERCOAST_H10, CINDERCOAST_G10, CINDERPORT, FIREMOUNT_G11, MERIDIAN_CAMP, MERIDIAN_CAMP2, MERIDIAN_CAMP3, EMBERWASTE_F10, EMBERWASTE_E10, EMBERWASTE_F11, OLD_CINDER, OLD_CINDER2],
+  // The camp pays outside any area's budget: its floor, 27, is past Ashfall's band (EXPANSION §5.2, #679).
+  outside: ['meridian_camp3'],
   monsters: MONSTERS,
   sprites: SPRITES,
   // Cinderport's armourer's step (#542) and the chandler's stone cure (#546), sold in the town (#512); the

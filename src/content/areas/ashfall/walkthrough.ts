@@ -392,7 +392,7 @@ export const walkthrough: Walkthrough = (ok) => {
   see(w, 'meridian_camp2:mc2_stair');
   listen(w);
 
-  // Meridian Camp's third level, the camp (#22), at 26, its floor. Down the corridors' stair onto the camp's
+  // Meridian Camp's third level, the camp (#22), at 26, a level under its floor. Down the corridors' stair onto the camp's
   // first square, facing in; stepped back into, the stair's foot lets the company up onto its head, facing
   // away from it.
   const MC3 = MAP_DEFS.find((d) => d.id === 'meridian_camp3')!;

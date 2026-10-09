@@ -33,7 +33,7 @@ export const MERIDIAN_CAMP3: MapDef = {
   id: 'meridian_camp3',
   name: 'The Camp',
   kind: 'dungeon',
-  band: [26, 26],
+  band: [27, 28],
   region: 'ashfall',
   start: { x: 4, y: 1, facing: SOUTH },
   // Iron gone cold, grey as a winter sea, smooth and seamless, and nothing hung on it.
