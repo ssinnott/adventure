@@ -15,7 +15,7 @@ import type { EncounterDef, Feature, MapDef, Choice } from '../../src/game/map.t
 import { GameMap } from '../../src/game/map.ts';
 import { World } from '../../src/game/world.ts';
 import { EAST } from '../../src/game/types.ts';
-import { rest, hasCondition, className } from '../../src/game/party.ts';
+import { rest, hasCondition, className, addCondition } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { startCombat, currentTurn, monsterAct, asGroup, aliveMonsters } from '../../src/game/combat.ts';
@@ -405,6 +405,27 @@ export function gate(): void {
     const lifted = glassed.filter(({ p }) => !p.members.some((m) => hasCondition(m, 'stoned'))).length, drunk = glassed.filter(({ p }) => !p.bag.includes('quickening')).length;
     ok(won(mesas) >= 0.9 && glassed.length > 0 && lifted === glassed.length,
       `it plays stone: it wins ${pc(won(mesas))} of the mesa's fights at 27, ${glassed.length} of ${seeds} leaving someone glassed, and lifts it between fights in ${lifted}, by the draught in ${drunk}`);
+    // It plays a hold (#549): four controllers at 24 holding at the vines' 0.3, and it frees one held
+    // of its front row, or a caster, by the cheapest cure it has before it strikes.
+    const vines = Array.from({ length: 4 }, (): MonsterDef => ({ ...testMonster('controller', 24), inflict: { cond: 'paralysed', chance: 0.3 } }));
+    const freed = fought(24, vines);
+    ANSWER.hold = false;
+    const bound = fought(24, vines);
+    ANSWER.hold = true;
+    const cleansed = freed.filter(({ s }) => s.log.some((l) => / casts Cleanse/.test(l))).length;
+    ok(won(freed) >= 0.9 && cleansed >= seeds / 4 && won(freed) >= won(bound) && !bound.some(({ s }) => s.log.some((l) => / casts Cleanse/.test(l))),
+      `it plays a hold: against four controllers holding at 0.3 it frees the held by Cleanse in ${cleansed} of ${seeds} fights at 24 and wins ${pc(won(freed))}, where with no answer it wins ${pc(won(bound))}`);
+    // It keeps a breath off its casters where it can (#549): with one of its front row fallen a breath
+    // takes the back row, so while a drake stands it raises the fallen first. Two drakes at 25 against
+    // a company whose knight lies fallen from the start breathe on the back row in fewer fights than
+    // with no answer, since the gate's bot mends only the standing.
+    const felledKnight = (p: Party): Party => { p.members[0].hp = -1; addCondition(p.members[0], 'unconscious'); return p; };
+    const back = (fs: { s: CombatState }[]): number => fs.filter(({ s }) => s.log.some((l) => / breathes fire on the back row/.test(l))).length;
+    const guarded = back(fought(25, drakeEncounter(25), ROUND_CAP, felledKnight));
+    ANSWER.breath = false;
+    const open = back(fought(25, drakeEncounter(25), ROUND_CAP, felledKnight));
+    ANSWER.breath = true;
+    ok(guarded < open / 2, `it keeps a breath off its casters: with its knight fallen, two drakes at 25 breathe on the back row in ${guarded} of ${seeds} fights, where with no answer in ${open}`);
   }
   // The gate's company is harness's (#541): it takes its prestiges at 11, 19 and 27, with their perks
   // and ranks, as play gives them, and wears what harness's wears.
