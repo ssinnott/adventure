@@ -10,6 +10,7 @@ import { SHEERPOINT_I9 } from './maps/sheerpoint_i9.ts';
 import { SHEERPOINT_I8 } from './maps/sheerpoint_i8.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
+import { CHAPTER } from './chapter.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
@@ -19,8 +20,7 @@ export const AREA = {
   sprites: SPRITES,
   items: ITEMS,
   quests: [],
-  // The Bells, the act's first chapter, is #505's.
-  chapter: undefined,
+  chapter: CHAPTER,
   // The range's: cold, the snow lying from the autumn to the late spring, the wind along the crest,
   // and cloud down in the vale.
   climate: { summer: 8, winter: -12, daily: 7, damp: [0.03, 0.08], wettest: 330, fog: 0.4, lag: 12,

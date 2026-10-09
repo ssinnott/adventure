@@ -15,12 +15,12 @@ IV's systems are #442's (§3). Figures are measured on main at `6032251` (2 Octo
 Its first five boxes are built, J11, Monks' Vale (#499, §4.2), which lists the area, I11, the
 Peak Stone's (#501, §4.4), I10, Stairwatch and the Stair's head (#502, §4.5), I9, the ridge north
 (#503, §4.6) and I8, Sheer Point (#504, §4.7), and so is Highcell, the dungeon through J11's gate
-(#500, §4.3); its eight monsters are drawn (§3), and the rest is to build. Its content is
-`src/content/areas/whitespine/` (maps, monsters, items, climate, its part of the world map and its
-walkthrough; its chapter of the one quest, The Bells, in `chapter.ts`, and its side quests in
-`quests.ts`, to come); it has no town, so no rooms. Its ids: the area `whitespine`, its zones
-`monksvale`, `highspine` and `sheerpoint`, the dungeon `monastery` and `monastery2` (the ids stay
-under the new name, §10).
+(#500, §4.3); its eight monsters are drawn (§3), and its chapter, The Bells, is written (#505,
+§5); the rest is to build. Its content is `src/content/areas/whitespine/` (maps, monsters, items,
+climate, its part of the world map, its walkthrough and its chapter of the one quest, The Bells, in
+`chapter.ts`; its side quests in `quests.ts` are to come); it has no town, so no rooms. Its ids:
+the area `whitespine`, its zones `monksvale`, `highspine` and `sheerpoint`, the dungeon `monastery`
+and `monastery2` (the ids stay under the new name, §10).
 
 ---
 
@@ -194,6 +194,16 @@ stone, Highcell built, Stairwatch a ledge and Rook's Nest a hollow, none planned
 Its ground (#543): peaks (`A`) and cliffs (`|`), the mountain's rock to walk into, see and climb,
 with the road through them plain road, so the scaffold drafts each box square for square (J11's 202
 peaks, I11's 48 peaks and 64 cliffs) and the view draws a summit and a face (docs/SLICE.md).
+
+The chapter, on the places built (#505):
+
+- **The Bells** (`chapter.ts`, #505): begun where The Sleepers ends, the beds seen and K10's pass's
+  mouth reached, or in Monks' Vale: the bells on J11's road; Highcell's cells, its board read and
+  its Abbot fallen; the Peak Stone; the causeway's first stone; the night she is taken and her
+  knot; and the Stair's head and its toll, paid or refused. Its goals stand in Highcell, on I8 and
+  on I10, so Monks' Vale, Sheer Point and the High Spine each hold a step. It is done on the
+  Stair's first step below the king's, I10's 1,20, which sets `q_stair_top` once the toll is
+  answered or the king is down; Ashfall's chapter (#518) reads that flag (§5).
 
 Its row on the curve is in (#542), in `src/content/progression.ts`: band 22–24, next 24, window
 5,000, owed to #445 while the area is built box by box, with 17,429 xp a member and 5,290 gold in
@@ -369,8 +379,8 @@ settled in its issue.
   hold 700 gold between them. It departs from the brief in the monastery, a block of building
   squares and not drawn tall over one square (§11); in the gate, barred until #500 opened it; and
   in the hostel, which is only kept wrongly where the issue made its cellar the secret (§11). The
-  step is owed to the chapter (#505), the Eagles' Nest to #506 and the hermit's vigil to #448 (§9,
-  #499's 16).
+  step is the chapter's (§5, #505); the Eagles' Nest is owed to #506 and the hermit's vigil to #448
+  (§9, #499's 16).
   - **Measured.** A company at 22 wins every fight and manages 10.50 fights to a rest, the aim's
     top, with 15% of its days ending in a fight broken off; it walks Monks' Vale's road, past the
     brothers at the pass's foot and on the road, every time. J11 pays 2,791 xp a member and 700
@@ -589,7 +599,9 @@ settled in its issue.
   since we were set here, and nobody has come to say stop."* A company may pay 1,500 gold, give him
   the grey part from I11's nest, give him the faceless coin of #56's 9, or refuse, and the fight is
   his and theirs; the three that satisfy him set `toll_paid`, `toll_part` or `toll_coin`, for #506's
-  47 to read, and the giants step off the Stair and stand aside (§9, #502's 5). Under the seat,
+  47 to read, and the giants step off the Stair and stand aside (§9, #502's 5). Below the king's
+  square, at 1,20, the way down is seen once the toll is answered or the king is down (`i10_top`),
+  and the chapter ends there (§5, #505). Under the seat,
   walled in rock (the Sheer's cliff at 1,18 and 1,19 is made rock, so no climb reaches it), the
   hollow of his hoard: at 2,19 *Coin of Helmstow on top. Under it, coin with no face. Under that,
   nothing.*, and at 2,18 the chest `i10_hoard`, 1,200 gold and a Bear Spear +1, Rimewater's rung at
@@ -814,8 +826,29 @@ and goals, in the journal's voice, keyed to flags, events and maps the save hold
 
 Nothing in the chapter is a lock (EXPANSION §2.3; #450): the gate stands open at any hour, the
 Stair goes down for anyone who pays or wins, the ridge trail is open from the start (#443, call 3)
-and a company that reaches the Point first reads the journal true in that order. The walkthrough
-plays it at 22, 23 and 24, paying the toll once and refusing it once.
+and a company that reaches the Point first reads the journal true in that order.
+
+As built (#505, 9 October): `chapter.ts`, begun where The Sleepers ends (`q_sleepers_seen` with
+`k10_mouth` seen) or in Monks' Vale (`visited`). Fourteen entries, none over two lines on the
+journal's page: the bells, on `j11_bells`, the same eleven and the same gaps; the brothers in their
+cells, on `hc1_cells`; their board of the hours, on `hc1_board`, a reader's alone; that none of them
+bled and the Abbot's grey plate, on `hc2_abbot` slain; the Peak Stone whole, on `i11_stone`; the
+road of cut stone, on `i8_causeway`, its first stone; the night, the explorers' line read again and
+the one Stone left, each on `q_wenna_taken`; her knot, on `i8_knot`; the Stair's head, on
+`i10_head`; the toll paid (`toll_paid`, `toll_part` or `toll_coin`) or the king fought (`i10_king`
+slain); and the way down, on `q_stair_top`. Seven goals, furthest along first: the way down (on
+`STAIR_PASSED`, the toll answered or the king slain), the toll (on `i10_head`) and the Stair (on
+`q_wenna_taken`), all on I10; her fire (on `i8_causeway`) and the Point (on `hc2_chapter`), on I8;
+Highcell's chapter house (on `monastery` visited) and its gate (the start), in Highcell. The
+chapter is done on `q_stair_top` (`STAIR_TOP`, exported from `maps/highspine_i10.ts`), which a new
+once-event, `i10_top`, sets on the Stair's first step below the king's, I10's 1,20; it is
+there only once the toll is answered or the king is down. **Ashfall's chapter (#518) reads
+`q_stair_top`.** She is unnamed in the journal, as in every line, and nobody is named reading the
+line. The chapter pays no xp of its own (§8 gives it none). The walkthrough plays it at 22, 23 and
+24: in order, over the pass at 22, Highcell and the Point at 23, the night (she is taken at 24) and
+the Stair at 24, the toll paid; and with the Point reached first, the night before Highcell, the
+toll refused and the king fought, when the journal holds nothing of Highcell until it is walked and
+the goal stays on the Stair. Each ends once and reads the same but for the toll (§9, #505).
 
 ## 6. Side quests
 
@@ -1140,9 +1173,9 @@ Decided by delegate for #499, each the owner's to overturn:
 15. **Novelty claims terrain `peak` alone:** the cut has no cliff (I11's 42 or I10's 17 can claim
     it) and `uses()` has no token for a machine in a robe, whose family, the keepers', is
     Rimewater's.
-16. **The chapter is owed to #505:** the quests test lists `monksvale`, `highspine` and `sheerpoint`
-    as planned and `whitespine` as owing its chapter. The gate figures under the floor are owed to
-    #18, as Rimewater's are.
+16. **The chapter is owed to #505:** the quests test listed `monksvale`, `highspine` and
+    `sheerpoint` as planned and `whitespine` as owing its chapter, until #505 wrote it. The gate
+    figures under the floor are owed to #18, as Rimewater's are.
 17. **The climate is the range's:** summer 8, winter -12, daily 7, damp 0.03 to 0.08, wettest 330,
     fog 0.4, lag 12; cloud comes down off the crest and thunder rolls along the range.
 
@@ -1466,6 +1499,34 @@ Decided by delegate for #504, each the owner's to overturn:
 15. **The gate:** `ROADS` `sheerpoint` runs on to `i8_eagles`, `i8_masons` and `i8_foreman`, the
     troll being off the road, by night; `'sheerpoint_i8: under'` is owed to #18.
 
+Decided by delegate for #505, each the owner's to overturn:
+
+1. **Begun where The Sleepers ends, or in Monks' Vale:** its start is Rimewater's end, so the goal
+   goes on over the pass with no gap, and a company in J11 by any other way begins it there.
+2. **Done on `q_stair_top`:** `i10_top`, on the step below the king's, there once the toll is
+   answered or the king is down; named for the place, not the working title, for #518 to read.
+3. **She is unnamed in the journal:** the girl out of the hole in the goal and her in the entries,
+   as Rimewater's journal and every line have her; Wenna is the docs' name.
+4. **Nobody is named reading the explorers' line:** the doc's Cassian is a member a company may not
+   have, so one of us reads it; the line is in no text before this (§11).
+5. **The bells are the same eleven and the same gaps,** the issue's words, not the doc's night the
+   Queen died: the keeper's log holds that, and the company finds it (DESIGN §7).
+6. **Highcell is three entries:** the cells for every company; the board for a reader alone (its id
+   is kept only when read, #538); the grey plate on the Abbot slain, as the brothers come back.
+7. **Two goals in Highcell:** the gate turns the goal to the chapter house, whose sight
+   (`hc2_chapter`) turns it north before any fight there, so the Abbot locks nothing.
+8. **The Stone is an entry and no step:** the High Spine's step is the Stair's, one to a zone
+   (EXPANSION §5.8).
+9. **Paid and fought are two entries,** on the toll's three flags and on the king slain, so the
+   journal says which.
+10. **Her fire's goal names her:** a company that never heard her at Rimewater's door finds nobody
+    there, and the Stair's goals still come once its head is seen, so nothing locks.
+11. **Fourteen short entries** in place of the doc's five long ones, each two lines at most on the
+    journal's page.
+12. **The walkthrough sets her words at the door** (`q_wenna_lodge`) by hand, as I8's block does,
+    and plays The Sleepers' last two triggers; the toll is paid from 1,500 gold given.
+13. **The chapter pays no xp:** §8 gives it none, so the curve's row is unchanged.
+
 ## 10. Names
 
 The Whitespine's naming pass, by the rules of `docs/NAMES.md`: the range keeps the Crown's and the
@@ -1523,7 +1584,7 @@ Cut and owed, from Highcell (#500):
 - **The issue's own secret,** the bells' pattern on the frame, hinted by the lighthouse keeper's
   log, is not built: the undercroft behind the seat is, as §4.3 has it (§9, #500's 14).
 - **The Novice's letter** is #506's and **the Laureate's** trainer entry is #448's; both stand as
-  words only (§9, #500's 11 and 12). The chapter's Highcell entry (§5) is #505's.
+  words only (§9, #500's 11 and 12). The chapter's Highcell entries are written (§5, #505).
 
 Owed, from I11 (#501):
 
@@ -1584,3 +1645,9 @@ Cut and owed, from I8 (#504):
   east (§4.7).
 - **The shrine's kneel,** as I9's: the drowned god's shrine at 27,5 is checked by place (§9, #503's
   12).
+
+Owed, from the chapter (#505):
+
+- **The explorers' line** is first written in the journal: the Meridian Journal, vol. I
+  (Thornmark's item) has no text, so *The heart opens for whoever makes it whole* is nowhere else in
+  the game. Its last page is Thornmark's to write, the owner's to ask for (§9, #505's 4).
