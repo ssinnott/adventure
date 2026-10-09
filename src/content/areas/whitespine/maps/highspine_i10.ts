@@ -45,6 +45,13 @@ export const STAIR_TOP = 'q_stair_top';
  */
 export const TOLL_DONE = 'q_toll_done';
 
+/**
+ * The Knight's third (#448), The Ledge: Edric asks a company with a Knight Banneret of 27 to hold the
+ * ledge with him through a night (`LEDGE_ASKED`); the toll-takers come up at night, and once they are
+ * down his words at first light set `LEDGE_HELD`, which his teaching reads.
+ */
+export const LEDGE_ASKED = 'q_ledge', LEDGE_HELD = 'q_ledge_held';
+
 export const HIGHSPINE_I10: MapDef = {
   id: 'highspine_i10',
   name: 'The High Spine',
@@ -137,10 +144,21 @@ export const HIGHSPINE_I10: MapDef = {
     { kind: 'event', x: 9, y: 22, id: 'i10_smoke', once: true, text: 'Smoke goes up thin from the top of the rock south of the Stair, where nothing stands.' },
     { kind: 'event', x: 6, y: 23, id: 'i10_rope', once: true, text: 'One rock at the pines\' edge is worn smooth in a band, the way a rope wears it.' },
     { kind: 'event', x: 6, y: 26, id: 'i10_ledge', once: true, text: 'A ledge high over the Stair, a fire banked in a ring of stones and every step of the Stair below it.' },
-    { kind: 'npc', x: 5, y: 26, name: 'An old champion', lines: [
+    // Edric teaches the Knight's third (#448) for The Ledge: asked by a company with a Knight Banneret
+    // of 27, he keeps the ledge with it through the night the toll-takers come up, and at first light
+    // his words set the quest done.
+    { kind: 'npc', x: 5, y: 26, name: 'Edric, the old champion', lines: [
       'An old man in a knight\'s coat gone to rags sits by the fire, his sword across his knees.',
       '"They take it, and they stand aside, and not one of them has ever gone down. Forty years I have watched."',
-    ] },
+    ], says: [
+      { after: { flag: LEDGE_HELD }, lines: ['Edric sits by his fire, his sword across his knees. Below, the Stair is empty and white.', '"Forty years I held it alone. One night I did not."'] },
+      { after: { slain: 'highspine_i10:i10_tolltakers2' }, sets: LEDGE_HELD, lines: ['First light. Edric wipes his blade in the snow and sits down by the fire.', '"Not one of them got past us. I have waited forty years to see that."'] },
+      { after: { flag: LEDGE_ASKED }, lines: ['"They come up when the Stair is dark. Keep your back to the rock."'] },
+      { after: { member: { cls: 'knight', level: 27, prestige: 2 } }, lines: ['The old man looks a long while at your knight\'s banner.', '"At night they come up to see who is watching. Hold the ledge with me till morning."'], choice: { ask: '"Will you hold it?"', answers: [
+        { label: 'Hold it.', sets: LEDGE_ASKED, says: ['"Good. Nothing goes past this fire."'] },
+        { label: 'Not tonight.', says: ['"The Stair will keep."'] },
+      ] } },
+    ], teaches: { cls: 'knight', prestige: 3, asks: 'ledge', done: { flag: LEDGE_HELD }, seek: 'Edric, the old champion, keeps a fire on a ledge over the Giants\' Stair, and can make a Knight Paramount of a Knight Banneret.' } },
     // The pines: the giants' leavings, the Sheer's edge, the drovers' fire and the ground at its foot.
     { kind: 'event', x: 10, y: 5, id: 'i10_tracks', once: true, text: 'Tracks in the snow under the pines, each as long as a man\'s arm, going up toward the crest.' },
     { kind: 'event', x: 2, y: 3, id: 'i10_sheer', once: true, text: 'The pines stop at the Sheer. A warm wind comes up it out of Ashfall, and the snow at the edge is grey.' },
@@ -163,5 +181,12 @@ export const HIGHSPINE_I10: MapDef = {
     { id: 'i10_stair', x: 13, y: 20, monsters: ['stair_giant', 'snow_troll'], aware: 3, respawn: 2880, roams: false },
     { id: 'i10_king', x: 2, y: 20, monsters: ['stair_king', 'stair_giant', 'stair_giant'], leader: 'stair_king', aware: 3, roams: false, choice: TOLL,
       slainText: 'The king is down. Nobody holds out a hand on the Stair now.' },
+    // The Ledge (#448): once Edric is answered, by night two toll-takers come up the chimney's shaft
+    // to the ledge, and once they are down two more, and never again. The Knight's third's fight, the
+    // two set at 26 between them with the Stair's own giants (§9, #448's 2).
+    { id: 'i10_tolltakers', x: 6, y: 25, monsters: ['stair_giant', 'stair_giant'], aware: 2, roams: false, after: { flag: LEDGE_ASKED }, when: { hours: 'night' },
+      slainText: 'They go back down the shaft the hard way. Further down, something else is climbing.' },
+    { id: 'i10_tolltakers2', x: 6, y: 25, monsters: ['stair_giant', 'stair_giant'], aware: 2, roams: false, after: { slain: 'highspine_i10:i10_tolltakers' }, when: { hours: 'night' },
+      slainText: 'The last of them goes down the shaft and does not come up. Below, the Stair is dark and empty.' },
   ],
 };

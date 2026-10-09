@@ -15,8 +15,9 @@ IV's systems are #442's (§3). Figures are measured on main at `6032251` (2 Octo
 Its first five boxes are built, J11, Monks' Vale (#499, §4.2), which lists the area, I11, the
 Peak Stone's (#501, §4.4), I10, Stairwatch and the Stair's head (#502, §4.5), I9, the ridge north
 (#503, §4.6) and I8, Sheer Point (#504, §4.7), and so is Highcell, the dungeon through J11's gate
-(#500, §4.3); its eight monsters are drawn (§3), its chapter, The Bells, is written (#505, §5)
-and its four side quests are in the log (#506, §6); the rest is to build. Its content is `src/content/areas/whitespine/` (maps, monsters, items,
+(#500, §4.3); its eight monsters are drawn (§3), its chapter, The Bells, is written (#505, §5),
+its four side quests are in the log (#506, §6) and so are three of its third prestiges' quests,
+the Knight's, the Monk's and the Bard's (#448, §6); the rest is to build. Its content is `src/content/areas/whitespine/` (maps, monsters, items,
 climate, its part of the world map, its walkthrough and its chapter of the one quest, The Bells, in
 `chapter.ts`; its side quests in `quests.ts`, #506); it has no town, so no rooms. Its ids:
 the area `whitespine`, its zones `monksvale`, `highspine` and `sheerpoint`, the dungeon `monastery`
@@ -97,7 +98,8 @@ road out over the water, every stone a stolen shard, and takes Wenna out along i
 (DESIGN §9, the captain's line). The Giants' Stair is the road over the range and down into Ashfall,
 and its toll is the second choice put before a fight (#544), after Thornmark's ogre's bargain
 (#645). Four of the third prestiges' places lie here and are built with it (#448): Stairwatch,
-Spine Summit, Rook's Nest and the bell tower.
+Spine Summit, Rook's Nest and the bell tower. Three of their quests are built, the Knight's, the
+Monk's and the Bard's (§6); the Thief's, out to the Dead-Drop, is still to come (#448, #22).
 
 Nothing trains or sells here (#443, call 7): Rime Lodge teaches to 23 behind and Cinderport to 27
 ahead, so a company carries what it has over the range. The weather is the range's: snow on the
@@ -114,19 +116,22 @@ its gate (#500), I11 (#501), I10 (#502), I9 (#503) and I8 (#504):
   (§4.3). At the pass's foot the bells first heard and a cairn; by the road the monks'
   shrine, its bell on a post with no rope, and east of it the pilgrims' hostel, kept wrongly, the
   blankets under the beds and a bowl of snow by each. On the west the crest under its snow and a
-  path up it in steps to Spine Summit, a camp, with the hermit beside it; at the vale's east edge
+  path up it in steps to Spine Summit, a camp, with Oswin the hermit beside it, who teaches the
+  Monk's third for a night's vigil (§6, #448); at the vale's east edge
   the herder at his fold. The monastery is a block of building squares on its shelf, with two bell
   towers over its wall and a camp in the shelf's lee; behind the wall the snow is trodden in one
   line west to the rock, a brother walking it by night; in the rock, the store (§4.2). Five groups:
   brothers at the pass's foot and on the road to the gate, spine eagles either side of the road and
-  snow trolls at the far end of the summit's path.
+  snow trolls at the far end of the summit's path; and a sixth, the vigil's brothers, up the path by
+  night once Oswin is answered.
 - **Highcell** (`monastery` and `monastery2`, dungeon, two levels of 16 by 16, band 22–24; #500): in
   at the gate in J11's wall, open now, past the brother standing in it, onto a cloister swept bare
   round a garth of snow with its well, the bucket dry. By the refectory door a board of the hours in
   the old script; in the refectory the tables laid and every bowl empty; along the east walk the
   cells, a brother standing in each, and the Novice in the last. At the south walk's west end the
   bell tower's foot and its stair winding up to the bells, where the ringers ring the eleven and one
-  pulls a beat behind the rest; at its east end the night stair down. Brothers keep the hours by the
+  pulls a beat behind the rest, Brother Lark, who teaches the Bard's third for the eleven's verses
+  (§6, #448); at its east end the night stair down. Brothers keep the hours by the
   cells and ringers come down the tower's stair. Below, the chapter house, a vault on four columns,
   with brothers before two bell-ringers and, at the far end on a seat of stone, the Abbot, a boss
   that does not come back. Behind the seat, found from it, the undercroft: the monks of Highcell in
@@ -150,8 +155,10 @@ its gate (#500), I11 (#501), I10 (#502), I9 (#503) and I8 (#504):
   Stair-king keeps the top step from his seat of rock, with two giants, and holds out his hand: the
   toll is gold, a grey part or a faceless coin, or the fight (§4.5). Under the seat, walled in rock,
   his hoard. South of the head, in the rock, Stairwatch: a chimney found off the pines climbs to a
-  ledge over the Stair, where an old champion keeps his watch. Three groups: spine eagles in the
-  pines nearest the way in, the Stair in snow and the king's.
+  ledge over the Stair, where Edric, an old champion, keeps his watch and teaches the Knight's third
+  for a night held with him (§6, #448). Three groups: spine eagles in the pines nearest the way in,
+  the Stair in snow and the king's; and by night, once Edric is answered, the toll-takers up the
+  shaft, two and then two more.
 - **The ridge north** (I9, `sheerpoint_i9`, country, band 22–23; #503): on up the ridge trail from
   I10, north along the crest in the snow, peaks either side and the pines below on the west, the
   Sheer beyond them and the sea in the north-west corner. The wind turns warm and the snow wet,
@@ -341,7 +348,8 @@ settled in its issue.
   foot: MONSTERS §8.1's soldier, which a company that fought the bay's keepers knows the walk of);
   spine eagles over the hills; a snow troll in the snow on the summit's path, the box's hardest, at
   the far end from the pass.
-- **Quests.** The step. The Eagles' Nest begins here (§6). The Monk's third prestige's quest (#448).
+- **Quests.** The step. The Eagles' Nest begins here (§6). The Monk's third prestige's quest, The
+  Vigil, built (§6, #448).
 - **The secret and its hint.** Behind the shelf the brothers' path runs on past the monastery's
   wall to a blank face of rock, and the rock opens: a store cut into the mountain, the robes of
   Highcell folded on shelves by the dozen, and the gear of the monks who wore them first. Found,
@@ -371,7 +379,7 @@ settled in its issue.
   monks' shrine at 21,10 (personality), and east of it the pilgrims' hostel, a building of 2 by 2 at
   24 to 25, 12 to 13, its event at the front, 23,13 (§9, #499's 14). West, snow lying in drifts
   along the crest's foot, a path up it into the snow at 13,12 and Spine Summit at 4,10, a camp, with
-  the hermit at 3,10, words only (§9, #499's 12); at the vale's east edge the herder at 27,19, who
+  Oswin, the summit's hermit, at 3,10, the Monk's third's trainer (§6, #448); at the vale's east edge the herder at 27,19, who
   gives The Eagles' Nest (§6, #506), and his fold, a ring of rock at 28 to 30, 18 to 20 (§9, #499's 13). The monastery fills rows
   24 to 28 and columns 20 to 29 of its shelf, with two bell towers over its wall (29,22) and the
   camp in the shelf's lee at 21,23; its gate at 26,24, the brother standing in it as the brief's
@@ -379,7 +387,9 @@ settled in its issue.
   #500's 8). Five groups: brothers, 3, at the
   pass's foot, 19,6, the gentlest; spine eagles, 4, west of the road at 15,9 and 4 east of it at
   25,8; brothers, 4, on the road to the gate, 23,19; and two snow trolls at the far end of the
-  summit's path, 6,10, who do not roam, the box's hardest at 23 (§9, #499's 8). The store is cut
+  summit's path, 6,10, who do not roam, the box's hardest at 23 (§9, #499's 8). A sixth, the
+  vigil's, comes only by night once Oswin is answered: five brothers at 5,10, beside the summit's
+  camp, who do not roam and do not come back (§6; §9, #448's 2). The store is cut
   into rock, not mountain, so a Mountaineer's climb does not reach it: the secret door at 16,29 is
   drawn as rock, the blank face, and behind it at 14,29 and 15,29 are the robes of Highcell folded
   by the dozen and the chest, 400 gold and a second Guide's Staff +1 (`guides_staff+1`, Rimewater's
@@ -388,14 +398,16 @@ settled in its issue.
   hold 700 gold between them. It departs from the brief in the monastery, a block of building
   squares and not drawn tall over one square (§11); in the gate, barred until #500 opened it; and
   in the hostel, which is only kept wrongly where the issue made its cellar the secret (§11). The
-  step is the chapter's (§5, #505); the Eagles' Nest is built (§6, #506) and the hermit's vigil owed to #448
-  (§9, #499's 16).
-  - **Measured.** A company at 22 wins every fight and manages 10.50 fights to a rest, the aim's
-    top, with 15% of its days ending in a fight broken off; it walks Monks' Vale's road, past the
+  step is the chapter's (§5, #505); the Eagles' Nest is built (§6, #506) and so is the hermit's
+  vigil (§6, #448; §9, #499's 16).
+  - **Measured.** A company at 22 wins every fight, the vigil's counted, and manages 8.69 fights to
+    a rest, inside the aim, with 38.7% of its days ending in a fight broken off (10.50 and 15%
+    before the vigil); it walks Monks' Vale's road, past the
     brothers at the pass's foot and on the road, every time. J11 pays 2,791 xp a member and 700
-    gold. Two under, at 20, it wins every fight too, owed to #18 as Rimewater's boxes' is. Density
-    99.1% within 8 steps (418 of 422, with the three squares I11 opened) and the furthest 9, with
-    no sign among its 22 points. It claims peaks underfoot as new (§7).
+    gold, and the vigil's brothers 727 more to a company that keeps it. Two under, at 20, it wins
+    every fight too, owed to #18 as Rimewater's boxes' is. Density
+    99.1% within 8 steps (419 of 423, with the three squares I11 opened) and the furthest 9, with
+    no sign among its 24 points. It claims peaks underfoot as new (§7).
 
 ### 4.3 Highcell (#500): dungeon, two levels of 16×16, band 22–24
 
@@ -412,8 +424,8 @@ settled in its issue.
   two bell-ringers, the bells holding the front row while the brothers close, and the cleric's
   light doing nothing (MONSTERS §8.1's first fight); the Abbot, boss, level 24, whose robe falls
   open as it falls.
-- **Quests.** The step (§5). The Novice (§6). The Bard's third prestige's quest, sung in the tower
-  (#448).
+- **Quests.** The step (§5). The Novice (§6). The Bard's third prestige's quest, The Eleven, sung
+  in the tower, built (§6, #448).
 - **The secret and its hint.** The undercroft under the chapter house, through the wall behind the
   Abbot's seat: the monks of Highcell in their niches, one to a niche, every niche filled and the
   last one's lip cut with a tally in Kiln-script, which a dwarf or a Linguist reads as a count that
@@ -439,7 +451,8 @@ settled in its issue.
   the Eagles' Nest's badge (§6, #506). At the south walk's west end the bell tower's foot (3,11)
   and its stair winding up (1,13); under the bells (4,13) the ringers at their ropes, the bells
   ringing eleven, a gap, eleven, each time a company comes by, and one who pulls a beat behind the
-  rest (6,14), thin, in a robe that is not his, words only: the Laureate. Four bell-ringers come
+  rest (6,14), thin, in a robe that is not his: Brother Lark, the Laureate, the Bard's third's
+  trainer (§6, #448). Four bell-ringers come
   down the stair (1,12). At the walk's east end the night stair goes down (12,12; the way down is
   13,13). **The lower house** (`monastery2`): the night stair comes down to 7,1 facing south, and
   the way up lands on the cloister's 12,13 facing west. It opens at 7,3 on the chapter house,
@@ -562,8 +575,8 @@ settled in its issue.
   and one getting up again unless burned (MONSTERS §8.1's second fight), on the road short of the
   head; eagles in the pines; the Stair-king at the head with two giants, boss, level 24, who asks
   before he fights; the giants are `kind: person` and break when he falls (#443, call 1).
-- **Quests.** The step. The Toll (§6). The Knight's third prestige's quest, a night on the ledge
-  (#448).
+- **Quests.** The step. The Toll (§6). The Knight's third prestige's quest, The Ledge, a night on
+  the ledge, built (§6, #448).
 - **The toll** (#544). The king puts his price before the fight the way a business puts its menu:
   pay, and the company walks down the Stair, the giants standing aside; refuse, and the fight is
   his and theirs. The price and its remembering are §9's.
@@ -618,24 +631,29 @@ settled in its issue.
   2,050, the area's dearest find. Its one mouth is the king's square, so a company that paid walks
   through it and can rob the hoard (§9, #502's 6). South of the head, Stairwatch: rock at 3 to 8,24
   to 25, 4,26, 7 to 8,26 and 4 to 7,27, and in it a chimney, a secret door at 6,24 off the pines,
-  its shaft at 6,25 and the ledge at 5,26 and 6,26, where the old champion stands (5,26) and the
+  its shaft at 6,25 and the ledge at 5,26 and 6,26, where Edric, the old champion, stands (5,26),
+  the Knight's third's trainer (§6, #448), and the
   ledge's event, `i10_ledge`, is at the atlas's site, 6,26 (270,312). The hints are smoke at 9,22
   and the rope's wear at 6,23, the secret's declared hint (§9, #502's 11). The camp, The drovers'
   fire, is in the pines at 11,28 and the cairn at the trail's crossing, 22,21, holds a Sapphire Vial
   and no gold (§9, #502's 14). Three groups: spine eagles, 3, in the pines nearest the way in,
   17,25; the Stair in snow, a Stair Giant and a snow troll at 13,20, who do not roam; and the
-  king's, the box's hardest at 23.3, who do not roam and do not come back. It departs from the brief
+  king's, the box's hardest at 23.3, who do not roam and do not come back. Two more come only by
+  night once Edric is answered, the toll-takers up the shaft at 6,25, two Stair Giants and, once
+  they are down, two more, who do not roam and do not come back (§6; §9, #448's 2). It departs from the brief
   in the band, 22–24 and not 23–24, in its groups, three for seven, and in its secret, the issue's
   maintenance mark being a thing seen on the toll-stone and the doc's chimney the door (§9, #502's
-  1, 9 and 13). The Toll, the quest, and the old champion's trainer entry are owed (§11).
-  - **Measured.** A company at 22 wins 86% of the fights, the king counted, and manages 11.72
-    fights to a rest, over the aim and inside the limit, with 7.7% of its days ending in a fight
-    broken off; it walks the High Spine's road, past the giant and the troll in the snow, every
+  1, 9 and 13). The Toll is built (§6, #506) and so is Edric's night (§6, #448).
+  - **Measured.** A company at 22 wins 91.6% of the fights, the king and the toll-takers counted,
+    and manages 10.59 fights to a rest, just over the aim and inside the limit, with 2.7% of its
+    days ending in a fight broken off (86%, 11.72 and 7.7% before the toll-takers); it walks the
+    High Spine's road, past the giant and the troll in the snow, every
     time. The king is won 58% at 22 and 79% at 24, the gate's floors for him; measured as the gate
     measures a fight, from 21 to 25 he is won 7%, 58%, 56%, 79% and 97%. Two under, at 20, the box
-    is won 68%, inside the limit, so nothing is owed. I10 pays 4,197 xp a member, 1,046 to a
-    company that pays the toll, and 1,920 gold a clear. Density 99.7% within 8 steps and the
-    furthest 9, with no sign among its 31 points. It claims the giants as new (§7).
+    is won 80.8%, inside the limit, so nothing is owed. I10 pays 4,197 xp a member, 1,046 to a
+    company that pays the toll, and 1,920 gold a clear, and the toll-takers 1,218 xp a member and
+    about 460 gold more to a company that holds the ledge. Density 99.7% within 8 steps (681 of
+    683) and the furthest 9, with no sign among its 34 points. It claims the giants as new (§7).
 
 ### 4.6 I9, the ridge north (#503): country, band 22–23
 
@@ -903,6 +921,34 @@ as built:
   deserter in the rocks asks: his passage bought, the Compact's fare of 600, he is by the fire in
   Cinderport's inn; or the page swapped, he chalks a slate short of the true count and goes back to
   work below the tally-house (18,8), and the true tally, ELEVEN, is the company's.
+
+**The third prestiges' quests.** Three of the four whose trainers live here are built (#448), their
+journal in `quests.ts` beside the side quests. Each is its trainer's `asks`: the trainer puts it
+only to a company whose member of the class is at 27 with the second taken, and its seeking quest
+(#384) is done once it begins. Each pays nothing but the prestige, which the trainer's menu teaches
+once the done flag holds, for no gold (§9, #448's 1). The Thief's, at Rook's Nest (I8), is still
+#448's, with the Dead-Drop (#22).
+
+| Class | Quest | Trainer | What it asks | Fights | Flags |
+|---|---|---|---|---|---|
+| Knight | The Ledge (`ledge`) | Edric, the old champion, on Stairwatch's ledge (I10, 5,26) | hold the ledge with him through a night | by night, two toll-takers up the shaft, then two more (`i10_tolltakers`, `i10_tolltakers2`) | `q_ledge` asked; `q_ledge_held` done |
+| Monk | The Vigil (`vigil`) | Oswin, the summit's hermit, on Spine Summit (J11, 3,10) | sit the night with him on the summit | by night, five brothers up the path (`j11_vigil`) | `q_vigil` asked; `q_vigil_kept` done |
+| Bard | The Eleven (`eleven`) | Brother Lark, a ringer a beat behind the rest, in Highcell's bell tower (`monastery`, 6,14) | find the eleven's three verses and sing them to him under the bells | none | `q_eleven` asked; `q_eleven_sung` done |
+
+- **The Ledge.** Edric looks at the knight's banner and asks the company to hold the ledge till
+  morning: *"At night they come up to see who is watching."* Answered, by night two Stair Giants
+  come up the shaft at 6,25, and once they are down two more; neither pair comes by day or comes
+  back. Spoken to after, at first light, he wipes his blade in the snow and sets `q_ledge_held`.
+- **The Vigil.** Oswin opens one eye at the monk: *"Every night something comes up the path to see
+  if I still sit here."* Answered, by night five brothers come up the summit's path to 5,10, beside
+  the camp; where they fall the snow is not red, and the last one's hood has come away on grey
+  plate. Spoken to after, at dawn, he sets `q_vigil_kept`.
+- **The Eleven.** Brother Lark wants words for the bells: *"A drowned bell's count, a miners'
+  hymn, a lighthouse log."* The three are what the save already holds: the Tide Bell back on its
+  frame in the drowned temples' door (`q_tide_bell_done`, #56's 23), the oldest miner's last verse
+  at Anvilhall (`q_hymn_sung`, #56's 36) and the keeper's log taken off Crowness Light's table
+  (`downs_e3:e3_log`, #67). Asked and holding all three, the company sings them to him under the
+  bells, and every word falls on a stroke; that sets `q_eleven_sung`.
 
 ## 7. Encounters, and what is new
 
@@ -1581,6 +1627,35 @@ Decided by delegate for #506, each the owner's to overturn:
 14. **The curve's row owes no xp now:** the quests take the clear to 18,329, past 17,867, and the
     test asks the entry dropped; the gold, 5,290 of 10,800, stays owed to #445.
 
+Decided by delegate for #448 (the Whitespine's three), each the owner's to overturn:
+
+1. **The prestige is the pay.** No answer pays xp or gold; the quests' own fights pay as any fight
+   does, and the curve counts them with every group: the clear is 20,274 xp a member (18,329
+   before) and 5,750 gold, the owed row's floor raised to it. The budgets stand.
+2. **Set at 26 with monsters already drawn.** Each night is a group of the box's own kind that
+   comes only `after` the trainer is answered and only by night, never back once down. By the
+   harness, a company at 26 fights 10.7 of the five brothers to a rest (10.5 asked) and 15.7 of two
+   giants, so the two pairs together cost it a fight and a third of its day.
+3. **Two pairs, not three giants, on the ledge.** Three giants at once ran I10's day to 6.62 fights
+   to a rest, past the gate's limit; two pairs keep it at 10.59 and the floor at 91.6% (86% before).
+   The second pair comes once the first is down, so the night is a hold, wave after wave.
+4. **A night is the hours, not the whole of one.** No engine counts a night through; the groups
+   walk only by night (`hours: 'night'`) and the trainer's words after the last is down are the
+   dawn. A company may fight the two pairs on two nights (§11).
+5. **The trainers are named,** since the seeking quest's goal reads "Find <name> in <place>.":
+   Edric, the old champion; Oswin, the summit's hermit; Brother Lark, whose name keeps him among
+   the brothers until he is met.
+6. **Asked only of the class at 27 with the second,** as the third is taught (DESIGN §5): to any
+   other company the trainer says only their first words.
+7. **The Stone Ring's call is the miners' hymn.** DESIGN names the Stone Ring's call; #56's 36 as
+   built (#471) is the hymn, its flag `q_hymn_sung` written for this quest, so the Bard keys on it.
+8. **The keeper's log is the chest taken** (`downs_e3:e3_log`), not the item carried, so it holds
+   once the log is found whatever later leaves the pack (the Cleric's crossing to Anchorhold).
+9. **The vigil's brothers at 5,10, beside the camp,** where a company resting there keeps the
+   vigil; the toll-takers at the shaft's 6,25, the ledge's one way up.
+10. **Quest ids `ledge`, `vigil` and `eleven`;** flags `q_ledge`, `q_ledge_held`, `q_vigil`,
+    `q_vigil_kept`, `q_eleven` and `q_eleven_sung`.
+
 ## 10. Names
 
 The Whitespine's naming pass, by the rules of `docs/NAMES.md`: the range keeps the Crown's and the
@@ -1637,8 +1712,9 @@ Cut and owed, from Highcell (#500):
   Abbot falls (§9, #500's 16).
 - **The issue's own secret,** the bells' pattern on the frame, hinted by the lighthouse keeper's
   log, is not built: the undercroft behind the seat is, as §4.3 has it (§9, #500's 14).
-- **The Laureate's** trainer entry is #448's, and he stands as words only; the Novice's letter is
-  built (§6, #506; §9, #500's 11 and 12). The chapter's Highcell entries are written (§5, #505).
+- **The Laureate's** trainer entry is built: Brother Lark teaches the Bard's third for The Eleven
+  (§6, #448); the Novice's letter is built (§6, #506; §9, #500's 11 and 12). The chapter's Highcell
+  entries are written (§5, #505).
 
 Owed, from I11 (#501):
 
@@ -1658,8 +1734,8 @@ Cut and owed, from I10 (#502):
 - **The Stair's foot** was owed to #510 with the rest of H10, and is built: its 31,20 is road against
   I10's 0,20 and `EDGES_OWED` is empty (§9, #502's 7).
 - **The Toll and the ledge.** The Toll (#56's 47) is built, on the flags `toll_paid`, `toll_part`
-  and `toll_coin` and the king slain (§6, #506); the old champion on the ledge has words only, his trainer entry and the night on the ledge being
-  #448's (§9, #502's 5, 11 and 12).
+  and `toll_coin` and the king slain (§6, #506); the old champion on the ledge, Edric, has his
+  trainer entry and the night on the ledge, The Ledge (§6, #448; §9, #502's 5, 11 and 12).
 
 Cut and owed, from I9 (#503):
 
@@ -1709,3 +1785,11 @@ Cut, from the side quests (#506):
 
 - **The issue's Rime Lodge** for The Novice, its `after` on the masons' number for The Mason's
   Tally and a passage ticket carried: §6 has none of them (§9, #506's 2, 10 and 12).
+
+Owed, from the third prestiges (#448):
+
+- **A night held through** needs the engine to count one: the nights are groups that walk only by
+  night, so a company may fight the ledge's two pairs on two nights, and nothing stops it resting
+  between them. A systems change the owner may ask for (§9, #448's 4).
+- **The Thief's,** at Rook's Nest (I8), is #448's still, with the Dead-Drop (#22); the watcher in
+  the hollow keeps words only until then.
