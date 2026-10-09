@@ -37,6 +37,10 @@ const ICE_AT = [424, 286] as const;
 /** J11, Monks' Vale, with the peaks on its crest; and I11 over it, the Peak Stone's box, with peaks and cliffs (#543). */
 const PEAK_AT = [296, 318] as const;
 const CLIFF_AT = [264, 318] as const;
+/** H10, the Stair's foot, with the shore's vines; D9, the steppe, with the dunes' first edge; and G11, Fire Mountain's flank, with its lava (#543). */
+const VINES_AT = [232, 286] as const;
+const STEPPE_AT = [104, 254] as const;
+const LAVA_AT = [200, 318] as const;
 
 /** The draft as the tool writes it: its module, written out and imported back, by export name. */
 async function exported(d: Draft, zone: string, x: number, y: number): Promise<Record<string, MapDef>> {
@@ -173,11 +177,13 @@ export async function scaffold(): Promise<void> {
   // The Saltings and Wrackholm: salt, tidal ground and heather, which no map character was until
   // #162, cut and laid back; written as sand, shallows and grass, they are not the atlas. The same
   // for the Kilns' ash and pine and Glacier Foot's ice (#536), written as dirt, forest and shallows,
-  // and the Whitespine's peaks and cliffs (#543), written as snow and rock.
+  // and the Whitespine's peaks and cliffs (#543), written as snow and rock; the shore's vines, the
+  // Wold's steppe and dunes and Fire Mountain's lava (#543), written as woods, grass, sand and ash.
   for (const [zoneId, [bx, by], kinds, plain] of [
     ['saltings', SALT_AT, ['salt', 'tidal'], { '-': '_', ';': '~' }], ['wrackholm', MOOR_AT, ['heather'], { h: ',' }],
     ['kilnsheart', ASH_AT, ['ash'], { a: ':' }], ['ironfells', PINE_AT, ['pine'], { p: 'T' }], ['glacierfoot', ICE_AT, ['ice'], { i: '~' }],
     ['monksvale', PEAK_AT, ['peak'], { A: '*' }], ['highspine', CLIFF_AT, ['peak', 'cliff'], { A: '*', '|': 'r' }],
+    ['cindercoast', VINES_AT, ['vines'], { '&': 't' }], ['wold', STEPPE_AT, ['steppe', 'dunes'], { s: ',', u: '_' }], ['firemount', LAVA_AT, ['lava'], { '!': 'a' }],
   ] as const) {
     const world = unbuilt(bx, by), gr = baseline(world.atlas, world.defs);
     const dr = cut(world.atlas, world.defs, gr, REGIONS, zoneId, bx, by);

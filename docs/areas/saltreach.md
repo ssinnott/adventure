@@ -801,15 +801,18 @@ Two halls open here (DESIGN §8), on the rules and the hall menu built in #132:
   | 1 | The Fen's Edge | west past Stienwierde to where the fen ends (`delta_b5:b5_west`) | 200 gold, 360 xp |
   | 1 | The West Arm | over the west arm's ford to the eel-catcher's hut (`saltings_c6:c6_hut`) | 200 gold, 360 xp |
 
-  The quests of ranks 2 and 3, offered to a Surveyor and a Mapmaker, are for the boxes still to
-  build; Geographer, the fourth rank, is the top and has none.
+  The quests of ranks 2 and 3, offered to a Surveyor and a Mapmaker, ride Act IV's dungeons (#635,
+  DESIGN §8): the Surveyor's with the Ember Stone (#516) and the Mapmaker's with Meridian Camp
+  (#22). Geographer, the fourth rank, is the top and has none.
 - **The Salt Compact** (#182, built), the harbour tavern (#253): the first task, a run of brandy past
   the customs house; a first rank of two quests, the crews' crate on C6's quay and the watcher's
   place on Wrackholm's west cliff; the boat's fare halved for a member (§4.9). Its line begins
   with the hermit's letter from Wrackholm (#56's 26, #192): the founder is a decade dead and the
   orders come from below (DESIGN §10.2). The crews the company fights on the river and the isle
   have left the Compact for the Hand's coin, so killing them costs nothing with the guild (#151,
-  call 4).
+  call 4). A Fence's rung, *Where the Cargo Goes*, is Wrackholm's, the stair's foot under the Tide
+  Ship seen (docs/areas/wrackholm.md §9, #635); the Factor's, offered to a Factor, rides the
+  Dead-Drop (#22). Partner, the fourth rank, is the top and has none.
 
 ## 7. Encounters, and what is new
 

@@ -40,7 +40,10 @@ import type { PageView } from '../../../game/quests.ts';
 import type { Person } from '../../../game/people.ts';
 import { take } from '../../../game/passage.ts';
 import { NORTH, EAST, SOUTH, WEST } from '../../../game/types.ts';
-import { MAP_DEFS } from '../../index.ts';
+import { MAP_DEFS, GUILD_QUESTS } from '../../index.ts';
+import { rankFlag, takenFlag, doneFlag } from '../../guilds.ts';
+import { take as takeWork, report, offered, rankOf } from '../../../game/guilds.ts';
+import type { Party } from '../../../game/party.ts';
 import { WRACKHOLM_E6 } from './maps/wrackholm_e6.ts';
 import { WRACKHOLM_F6 } from './maps/wrackholm_f6.ts';
 import { SMUGGLERS_COVE } from './maps/smugglers_cove.ts';
@@ -382,9 +385,41 @@ export const walkthrough: Walkthrough = (ok) => {
   see(w, `${hold.id}:ts3_hatch`);
   walkThrough(w, hold.id, 7, 13, SOUTH, foot.id, 1);
   ok(w.world.map.def.band?.[0] === 26, 'the stair\'s foot is the Dead-Drop\'s country, 26 and over, as its sign says');
+  fence(w);
   see(w, `${foot.id}:dd_door`);
   walkThrough(w, foot.id, 4, 6, SOUTH, hold.id, 1);
 };
+
+/**
+ * The Compact's Fence's rung at the stair's foot (DESIGN §8, #635), on copies of the walk's company
+ * made Fences who have done the first rank. A Runner is not offered it and a Fence is. Taken with the
+ * foot unseen, the hall pays nothing; the foot seen, the report pays 200 gold, says not yet and makes
+ * the company a Factor. A company that had seen the foot before it took the quest is paid at the
+ * taking, with the words for one that came early.
+ */
+function fence(w: Walk): void {
+  const q = GUILD_QUESTS.find((g) => g.id === 'compact_fence')!;
+  const fenced = (): Party => {
+    const p: Party = structuredClone(w.party);
+    for (const id of ['compact_run', 'compact_crate', 'compact_lookout']) p.flags[takenFlag(id)] = p.flags[doneFlag(id)] = 1;
+    p.flags[rankFlag('compact')] = 2;
+    return p;
+  };
+  const runner: Party = structuredClone(w.party), p = fenced();
+  runner.flags[rankFlag('compact')] = 1;
+  w.ok(!offered('compact', runner).some((o) => o.id === q.id) && offered('compact', p).map((o) => o.id).join() === q.id,
+    `${q.title}: a Runner is not offered it, and a Fence is, alone`);
+  const gold = p.gold;
+  w.ok(!takeWork(q, w.world.state, p).length && !report('compact', w.world.state, p).length && rankOf('compact', p) === 2,
+    'taken with the stair\'s foot unseen, the hall pays nothing');
+  see(w, `${DEAD_DROP_STAIR.id}:dd_foot`);
+  const said = report('compact', w.world.state, p);
+  w.ok(said.length === 2 && said[0].startsWith(q.paid[0]) && /not yet/i.test(said[0]) && said[1] === 'Your rank with the Salt Compact is now Factor.' && p.gold === gold + 200 && rankOf('compact', p) === 3,
+    `the foot seen, the hall pays 200 gold, says not yet and makes the company a Factor (${said.join(' ').replace(/\n+/g, ' ')})`);
+  const late = fenced(), early = takeWork(q, w.world.state, late);
+  w.ok(early.length === 2 && early[0].startsWith(q.early![0]) && /not yet/i.test(early[0]) && late.gold === gold + 200 && rankOf('compact', late) === 3,
+    `a company that had seen the foot is paid at the taking, with the early words (${early.join(' ').replace(/\n+/g, ' ')})`);
+}
 
 // ---- the side quests (#192) ----
 

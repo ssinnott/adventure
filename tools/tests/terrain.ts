@@ -1,5 +1,5 @@
 // Hills, farmland, woods, dead wood, crystal, the chasm, salt, heather, tidal ground, ash, pine, ice,
-// peaks and cliffs: their legend characters, snow and the crops through the year, the fields'
+// peaks and cliffs, steppe, dunes, vines and the volcano: their legend characters, snow and the crops through the year, the fields'
 // patchwork, the tide, the ice through the year and every terrain's own colour on the automap.
 import { GameMap } from '../../src/game/map.ts';
 import { NORTH } from '../../src/game/types.ts';
@@ -74,6 +74,19 @@ export function terrain(): void {
   const [kr, kg, kb] = hexToRgb(TERRAIN_COLORS.peak), [cr, , cb] = hexToRgb(TERRAIN_COLORS.cliff);
   ok(Math.min(kr, kg, kb) >= 170 && Math.max(kr, kg, kb) - Math.min(kr, kg, kb) < 16 && cb > cr + 20 && cb < 140, `a peak is inked pale grey and a cliff dark slate (${TERRAIN_COLORS.peak}, ${TERRAIN_COLORS.cliff})`);
   ok(SNOW_HOLD.peak >= SNOW_HOLD.hills - 0.05 && SNOW_HOLD.cliff > 0.4 && SNOW_HOLD.cliff < SNOW_HOLD.peak, `snow lies on the scree under a peak as on the hills, and less at a cliff's foot (${SNOW_HOLD.peak}, ${SNOW_HOLD.cliff})`);
+  // Steppe, dunes and vines (#543): the Wold's open grass, its sand in ridges and the shore's creepers,
+  // all walked; the volcano's cone and a vent in it, the mountain's rock to walk into, climb and see
+  // past. On the world map each is the atlas's own, and a vent its volcano.
+  const far = new GameMap({ id: 'fixture_far', name: 'Far side fixture', kind: 'outdoor', start: { x: 1, y: 1, facing: NORTH }, rows: ['MMMMMMM', 'Msu&V@M', 'MMMMMMM'] });
+  const laid = (['steppe', 'dunes', 'vines', 'volcano', 'vent'] as const).map((t, i) => far.at(i + 1, 1).terrain === t && MAP_TERRAIN['su&V@'[i]] === (t === 'vent' ? 'volcano' : t));
+  ok(laid.every(Boolean) && [1, 2, 3].every((x) => far.passable(x, 1) === 'ok' && !far.blocksView(x, 1)),
+    `'s' is steppe, 'u' dunes and '&' vines, each walked and seen across, and so on the world map (${[1, 2, 3].map((x) => `${far.at(x, 1).terrain} ${far.passable(x, 1)}`).join(', ')})`);
+  ok([4, 5].every((x) => far.at(x, 1).solid === 'mountain' && far.passable(x, 1) === 'mountain' && far.passable(x, 1, { climb: true }) === 'ok' && far.blocksView(x, 1)),
+    `'V' is the volcano and '@' a vent, both the mountain's rock: they stop a company, a Mountaineer climbs them and neither is seen past (${[4, 5].map((x) => `${far.at(x, 1).terrain} ${far.at(x, 1).solid}`).join(', ')})`);
+  const [vr, vg, vb] = hexToRgb(TERRAIN_COLORS.volcano), [er] = hexToRgb(TERRAIN_COLORS.vent);
+  ok(vr + vg + vb < 3 * 90 && vr > vb + 30 && er > vr + 30, `the volcano is inked black-red and a vent redder (${TERRAIN_COLORS.volcano}, ${TERRAIN_COLORS.vent})`);
+  ok(SNOW_HOLD.steppe >= SNOW_HOLD.grass - 0.05 && SNOW_HOLD.dunes === SNOW_HOLD.sand && SNOW_HOLD.vines < SNOW_HOLD.steppe && SNOW_HOLD.volcano < 0.5 && SNOW_HOLD.vent === 0,
+    `snow lies on the steppe as on grass and on the dunes as on sand, the creepers keep some off, the cone's warmth thins it and a vent takes none (${['steppe', 'dunes', 'vines', 'volcano', 'vent'].map((t) => SNOW_HOLD[t as 'steppe']).join(', ')})`);
   // The samples the smoke test sweeps and the contact sheet shows (tools/grounds.ts): one to each
   // ground, its own ground in view from the start, a wall in it, square and placed by no area.
   const sampled = GROUND_SAMPLES.map((d) => {
@@ -82,7 +95,8 @@ export function terrain(): void {
     const walls = g.cells.some((c) => c.solid === 'wall'), square = d.rows.every((r) => r.length === d.rows[0].length);
     return { t, fine: seen && walls && square && !MAP_DEFS.some((m) => m.id === d.id) };
   });
-  const grounds = ['ash', 'pine', 'ice', 'cliff', 'peak'];
+  const grounds = ['ash', 'pine', 'ice', 'cliff', 'peak',
+    'steppe', 'dunes', 'vines', 'volcano'];
   ok(sampled.map((s) => s.t).join() === grounds.join() && sampled.every((s) => s.fine), `a sample of each ground, its ground in view from its start, a wall in it and no area's (${sampled.map((s) => `${s.t} ${s.fine ? 'fine' : 'wrong'}`).join(', ')})`);
   // Snow lies on both; the grain greens in Sowing and goes gold by Harvest, and fields span squares.
   ok(SNOW_HOLD.hills >= 0.85 && SNOW_HOLD.farm >= 0.85, `snow lies white on hills and fields (${SNOW_HOLD.hills}, ${SNOW_HOLD.farm})`);
