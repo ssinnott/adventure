@@ -18,7 +18,7 @@ export const MONSTERS: readonly MonsterDef[] = [
   { id: 'wold_lion', name: 'Wold Lion', plural: 'Wold Lions', sprite: 'wold_lion', kind: 'beast', look: 'Tawny as the grass, and seen only when it moves.', level: 26, hp: 332, ac: 24, attack: 15, dice: 3, sides: 8, bonus: 6, speed: 15, xp: 1033, gold: [0, 0], tint: '#b08a52', size: 1 },
   // the dunes (#525 first), a controller on the line at 26: its hold is the roster's poison, at 0.35
   { id: 'glass_scorpion', name: 'Glass Scorpion', plural: 'Glass Scorpions', sprite: 'glass_scorpion', kind: 'beast', look: 'Its sting is glass, and so is its shell.', level: 26, hp: 290, ac: 24, attack: 15, dice: 4, sides: 8, bonus: 4, speed: 12, xp: 1033, gold: [0, 0], inflict: { cond: 'poisoned', chance: 0.35 }, tint: '#5f8a6a', size: 0.7 },
-  // the mesas (#526 first), the test basilisk at 27 (tools/testmonster.ts, #546): the controller on the line, its hold a
+  // the mesas (#527 first, D10's), the test basilisk at 27 (tools/testmonster.ts, #546): the controller on the line, its hold a
   // stone at 0.15 and its gaze reaching the back row
   { id: 'basilisk', name: 'Basilisk', plural: 'Basilisks', sprite: 'basilisk', kind: 'beast', look: "Don't meet its eyes.", level: 27, hp: 376, ac: 25, attack: 15, dice: 5, sides: 7, bonus: 7, speed: 12, xp: 1073, gold: [0, 0], ranged: true, inflict: { cond: 'stoned', chance: 0.15 }, tint: '#5c6650', size: 0.85 },
   // the Wold's heart (#529), its boss on the line at 28: the pride's old one, for B8's gate to set
