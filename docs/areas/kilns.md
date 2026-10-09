@@ -2705,6 +2705,15 @@ Decided by delegate for #637, each the owner's to overturn:
 5. **Nothing else moves:** no map square, group, monster or pay, so no gate, density or curve figure
    (§8) changes; the walkthrough plays Ilse with the rubbing and without it.
 
+Decided by delegate for #634, each the owner's to overturn:
+
+1. **The Kilns pass the lead's line by name** (EXPANSION §5.2): they leave a company 1.2 over 18,
+   at 19.18, held at 19.2 in `OVER_ROAD`, for the bosses pay the line's (§8).
+2. **Nothing built is trimmed:** at 1.25 times their ask the Kilns would lose 42% of their kill xp
+   for 0.6 of a level at their exit and 0.1 to 0.2 at Act III's end, and every box touched redone.
+3. **The parked country behind (#474) adds about 0.2 to the figure when built,** so it comes in
+   lighter or raises the Kilns' figure in `OVER_ROAD` by name.
+
 ## 10. Names
 
 The Kilns' naming pass, by the rules of `docs/NAMES.md`: the dwarves' tongue was left to choose

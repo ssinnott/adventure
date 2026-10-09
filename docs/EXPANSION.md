@@ -273,6 +273,15 @@ at three or more over. Simulated from Saltreach on, that kept companies that cle
 nearly four levels over by the Glasswold. Each town's trainers teach to its band's top plus one.
 Gold and loot stay fixed, so a full clear still pays, in gear, gold and secrets.
 
+So an area may give more than its ask (#634): paid by level, a lead does not build up, for the next
+area takes it back. What the curve holds is the lead itself: a company of six entering an area at
+its floor and clearing three quarters of it, paid by level, leaves it no more than a level over the
+next floor. Two built areas pass that line and are named in `OVER_ROAD` (`tools/tests/curve.ts`),
+each held at the level it leaves as built so that neither grows unnoticed: the Kilns at 19.2, their
+bosses paying the line's, and Ashfall at 27.2, for the Stone, the rungs, the quests and the
+sentries. Walked in road order, Act III ends 0.8 over the road at three quarters cleared and 1.4 at
+a full clear; Act IV ends 0.6 and 1.3 over, Act II's own areas 0.5 to 0.8 and 1.2 to 1.6.
+
 Its first rows are the slice's own figures from SLICE.md: level 2 from the Foreland and the cellar,
 level 4 with Brandy Hole, level 9 from one clear of everything, about two fifths of one more sweep
 of the Grove to 10 (a sweep pays 34% less once the Warden of the Cut is dead) and about 8,400 gold

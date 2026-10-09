@@ -2,9 +2,11 @@
 // is the atlas's, three quarters of a clear's xp reaches the next area's floor, a clear's gold
 // trains the party through the band, every monster's level sits in its maps' bands, on each map
 // the groups' levels rise with walking steps from the way in, the nearest group is near the floor
-// and the hardest near the top, and no chest or drop is dearer than the area's window. What a row
-// says is owed is reported, not failed, until it holds. A map an area lists `outside` is held to
-// its own band and its country's window, and what it pays is a figure, counted in no clear.
+// and the hardest near the top, and no chest or drop is dearer than the area's window. Entered at
+// its floor and three quarters cleared, paid by level, an area leaves a company no more than a
+// level over the next floor, unless it is named as passing that. What a row says is owed is
+// reported, not failed, until it holds. A map an area lists `outside` is held to its own band and
+// its country's window, and what it pays is a figure, counted in no clear.
 import { AREAS, ATLAS, MAP_DEFS, MONSTERS, ITEMS } from '../../src/content/index.ts';
 import type { RegionId } from '../../src/content/index.ts';
 import type { Area } from '../../src/content/area.ts';
@@ -16,6 +18,7 @@ import type { MonsterDef } from '../../src/game/monsters.ts';
 import { areaBand } from '../../src/game/atlas.ts';
 import { giftOf, spentId } from '../../src/game/wilds.ts';
 import { handIns, choices } from '../../src/game/people.ts';
+import { xpForLevel, killPay, MAX_LEVEL } from '../../src/game/party.ts';
 import { ok, owed } from './lib.ts';
 
 /**
@@ -97,8 +100,11 @@ export function outsideFaults(area: { id: string; maps: readonly Pick<MapDef, 'i
   });
 }
 
-/** What a clear of some maps gives: a member's share of the xp, the gold in cash, the monsters it places and its features. */
-interface Clear { xp: number; gold: number; placed: MonsterDef[]; features: Feature[] }
+/**
+ * What a clear of some maps gives: a member's share of the xp, the gold in cash, the monsters it
+ * places in their groups' order, its features and a member's share of its quests' xp.
+ */
+interface Clear { xp: number; gold: number; placed: MonsterDef[]; features: Feature[]; quest: number }
 
 /** A clear of these maps: every group once, a member's share of the xp summed; the gold in cash. */
 function clearOf(maps: readonly MapDef[], guild: NonNullable<Area['guilds']> = []): Clear {
@@ -109,14 +115,56 @@ function clearOf(maps: readonly MapDef[], guild: NonNullable<Area['guilds']> = [
   // A question two people share (one person in two places) is counted once.
   const asked = [...new Set(features.flatMap((f) => f.kind === 'npc' ? choices(f) : []))];
   const sure = (k: 'xp' | 'gold'): number => asked.reduce((t, c) => t + Math.min(...c.answers.map((a) => a.pay?.[k] ?? 0)), 0);
-  const xp = Math.floor((placed.reduce((t, m) => t + m.xp, 0) + guild.reduce((t, q) => t + (q.pay.xp ?? 0), 0) + sure('xp')) / MEMBERS);
+  const quest = guild.reduce((t, q) => t + (q.pay.xp ?? 0), 0) + sure('xp');
+  const xp = Math.floor((placed.reduce((t, m) => t + m.xp, 0) + quest) / MEMBERS);
   // A hand-in's reward, once an item: of two people who take it, the larger.
   const rewards = new Map<string, number>();
   for (const f of features) if (f.kind === 'npc') for (const q of handIns(f)) rewards.set(q.item, Math.max(rewards.get(q.item) ?? 0, q.reward));
   const gold = placed.reduce((t, m) => t + (m.gold[0] + m.gold[1]) / 2, 0)
     + features.reduce((t, f) => t + (giftOf(f)?.gold ?? 0), 0) + [...rewards.values()].reduce((t, r) => t + r, 0)
     + guild.reduce((t, q) => t + (q.pay.gold ?? 0), 0) + sure('gold');
-  return { xp, gold, placed, features };
+  return { xp, gold, placed, features, quest: quest / MEMBERS };
+}
+
+/**
+ * The level a company of six leaves an area at, as a decimal (19.2 is level 19 and two tenths of
+ * the way to 20), entered at its floor and three quarters cleared, paid as the game pays: a kill
+ * pays a member a sixth of its xp by its level against the company's (`killPay`), one at a time,
+ * the company training as soon as it can; the quests pay theirs fixed, spread evenly through the
+ * kills. Chests pay no xp.
+ */
+export function leaves(floor: number, kills: readonly Pick<MonsterDef, 'xp' | 'level'>[], quest: number): number {
+  let xp = xpForLevel(floor), level = floor;
+  for (const m of kills) {
+    xp += 0.75 * ((m.xp / MEMBERS) * killPay(m.level, level) + quest / kills.length);
+    while (level < MAX_LEVEL && xp >= xpForLevel(level + 1)) level++;
+  }
+  return level < MAX_LEVEL ? level + (xp - xpForLevel(level)) / (xpForLevel(level + 1) - xpForLevel(level)) : level;
+}
+
+/** How far over the next floor an area may leave that company: a level (EXPANSION §5.2, #634). */
+const LEAD = 1;
+
+/**
+ * The areas that leave it further over, each held at the level it leaves as built, rounded up, as
+ * a row's `owed` holds a floor, so that none grows unnoticed; once inside the line, it is dropped.
+ */
+const OVER_ROAD: Partial<Record<RegionId, { level: number; why: string }>> = {
+  kilns: { level: 19.2, why: 'the bosses pay the line\'s (MONSTERS §4.3 and §4.4)' },
+  ashfall: { level: 27.2, why: 'the Stone, the rungs, the quests and the sentries' },
+};
+
+const leadSaid = (id: string, left: number, next: number): string =>
+  `${id}: entered at its floor and three quarters cleared, paid by level, a company leaves at ${left.toFixed(1)}, ${left < next ? '' : '+'}${(left - next).toFixed(1)} over the next floor ${next}`;
+
+/**
+ * What is wrong with the level an area leaves that company at, against the next floor and the
+ * figure it is named at: nothing when it holds.
+ */
+export function leadFault(id: string, left: number, next: number, named?: { level: number }): string | undefined {
+  if (!named) return left - next > LEAD ? `${leadSaid(id, left, next)}: more than a level, and it is not named in OVER_ROAD` : undefined;
+  if (left > named.level) return `${leadSaid(id, left, next)}: past its named ${named.level}, so it grew`;
+  return left - next > LEAD ? undefined : `${leadSaid(id, left, next)}: inside the line, so drop it from OVER_ROAD`;
 }
 
 /**
@@ -141,6 +189,13 @@ export function curve(): void {
   const isle = { id: 'fixture', maps: [{ id: 'fx_shore', band: fx }, { id: 'fx_drop', band: [26, 28] as [number, number] }] };
   ok(!outsideFaults({ ...isle, outside: ['fx_drop'] }, fx).length && outsideFaults({ ...isle, outside: ['fx_shore', 'fx_vault'] }, fx).length === 2,
     'an area may list a map of its own outside its budget where it stands past its band, and not one in its band or none of its maps');
+  const climb = (MEMBERS * (xpForLevel(6) - xpForLevel(5))) / 0.75, near = (a: number, b: number): boolean => Math.abs(a - b) < 1e-9;
+  ok(near(leaves(5, [{ xp: climb, level: 5 }], 0), 6) && near(leaves(5, [{ xp: 0, level: 9 }], climb / MEMBERS), 6) && near(leaves(5, [{ xp: climb, level: 2 }], 0), 5.1),
+    'three quarters of the climb from 5, paid by a kill at the company\'s level or by quests, reaches 6; paid by a kill three under, a tenth of the way');
+  ok(!leadFault('fx', 19, 18) && !!leadFault('fx', 19.1, 18), 'an area may leave a company a level over the next floor, and no more unless it is named');
+  const named = { level: 19.2 };
+  ok(!leadFault('fx', 19.2, 18, named) && !!leadFault('fx', 19.3, 18, named) && !!leadFault('fx', 19, 18, named),
+    'a named area may leave it further over, up to its figure, and not past it, nor stay named once inside the line');
   // The built areas and the planned ones, which have rows before they have maps, in the atlas's
   // order: an area may be listed before an earlier one is, and its row still follows that one's. A
   // planned area's clear gives nothing yet, and its row says who owes it.
@@ -175,6 +230,12 @@ export function curve(): void {
     const clear = clearOf(maps, area?.guilds ?? []);
     budget(id, 'xp a member', clear.xp, xpBudget(row), row.owed, row.owed?.xp);
     budget(id, 'gold', Math.floor(clear.gold), goldBudget(row), row.owed, row.owed?.gold);
+    // The lead over the road (#634): the level that clear leaves a company at, paid by level,
+    // against the next floor and, for an area named in OVER_ROAD, its figure.
+    if (area) {
+      const left = leaves(lo, clear.placed, clear.quest), held = OVER_ROAD[id], fault = leadFault(id, left, row.next, held);
+      ok(!fault, fault ?? `${leadSaid(id, left, row.next)}${held ? `, a named exception held at ${held.level}: ${held.why}` : ''}`);
+    }
     // What the maps outside give is a figure, never a failure: no clear counts it, and no one owes
     // it, for they are the deepest levels, which the road never needs.
     if (apart.length) {
