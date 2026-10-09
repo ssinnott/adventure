@@ -36,7 +36,7 @@ DESIGN.md first for the why.
   gated by party abilities, hills (`^`), farmland (`f`), light woods (`t`) and dead wood (`d`, on no
   built map yet) open to all, the Sunder's glass trees (`c`) and chasm (`v`), on none yet, salt
   (`-`), heather (`h`) and tidal ground (`;`), on none yet, ash (`a`), pine (`p`) and ice (`i`), on
-  none yet (#536), peaks (`A`) and cliffs (`|`), solid as the mountain is, on none yet (#543), a calendar and weather over a day/night clock (below), automap with field-of-view reveal, rest with
+  none yet (#536), peaks (`A`) and cliffs (`|`), solid as the mountain is, on none yet (#543), steppe (`s`), dunes (`u`) and vines (`&`), walked, and the volcano (`V`) and a vent (`@`), solid, on none yet (#543), a calendar and weather over a day/night clock (below), automap with field-of-view reveal, rest with
   food, a search action, exploration spells (Light, Wizard Eye). The wilderness features (a shrine
   on F2; the rest on E2): a shrine or fountain that gives every member a stat point once, a cairn
   with a cache, a statue whose riddle takes its answer typed and a camp where the party may rest
@@ -263,10 +263,13 @@ Decided by delegate for #536, each the owner's to overturn:
    sweeps them for cracks every run and paints the grounds through the year, and the sheet shows them
    with `--ground` and whenever it draws every map, as the Rift samples show the templates.
 
-- **Act IV's ground** (#543, its first half). Peaks and cliffs have their characters (`A`, `|`), and
-  on the world map they are the atlas's peak and cliff, so the scaffold drafts the Whitespine's boxes
-  with them: J11's 202 peaks, I11's 48 peaks and 64 cliffs. Steppe, dunes, vines and the volcano are
-  the issue's second half.
+- **Act IV's ground** (#543). Peaks and cliffs have their characters (`A`, `|`), and on the world map
+  they are the atlas's peak and cliff, so the scaffold drafts the Whitespine's boxes with them: J11's
+  202 peaks, I11's 48 peaks and 64 cliffs. Steppe (`s`), dunes (`u`) and vines (`&`) are walked, and
+  the volcano (`V`) and a vent in it (`@`) are the mountain's rock; on the world map each is the
+  atlas's own, a vent its volcano, so the scaffold drafts the Wold's and the shore's boxes with them:
+  D9's 807 steppe and 171 dunes, H10's 207 vines. G11 cuts with its 102 squares of lava and the cone
+  as mountain: the atlas lays no volcano square yet (below).
 
 Decided by delegate for #543 (cliffs and peaks), each the owner's to overturn:
 
@@ -288,6 +291,42 @@ Decided by delegate for #543 (cliffs and peaks), each the owner's to overturn:
 6. **A sample of each with the road cut through** (`ground_cliff`, `ground_peak`), swept for cracks
    and shown on the sheet; the smoke test paints a peak and a cliff beside a mountain through the
    year and holds each to its shape.
+
+Decided by delegate for #543 (steppe, dunes, vines and the volcano), each the owner's to overturn:
+
+1. **Their characters are `s`, `u`, `&`, `V` and `@`:** lower case for the grounds walked, as the
+   others are (`d` and `v` were taken), `&` a tangle of creepers, and capitals and marks for the rock.
+2. **Steppe is walked as grass,** at the usual six minutes, as the atlas's table has it (grass's 2).
+   It is dun after the winter, green-gold in Sowing, gold by Longlight and tawny at Harvest, the lions'
+   colour, then straw: tall dry grass in tufts leaning one way, with seed heads. Snow lies as on grass.
+3. **Dunes are walked as slowly as hills** (`DRAG`), as the table has them as slow as ash: warm ochre
+   sand with a crest across each near square, lit along its top with its lee in shadow, and the wind's
+   ripples over the rest. Snow lies as on sand.
+4. **Vines are walked through as the woods are,** with no drag (the table's 3 is the pines'): the
+   shore's trees stand to the sides of each square hung with the creepers' curtains, the way through
+   open, green the year round and duller in the winter. A strangler vine is a group placed in them with
+   `roams: false` (MONSTERS §8.2): its placement holds it, not the ground.
+5. **The volcano and a vent are the mountain's rock** (`cell('volcano', 'mountain')`): solid, never
+   seen past and climbed by a Mountaineer and nobody else, as the table's 30 (a peak's) says. G11's
+   vents' mouth, Grimsforge and the salamanders' slopes are on the ash foot round the cone (ashfall.md
+   §4.5), so nothing walked is lost. Neither slows a climb.
+6. **A box draws the cone as `V` and a vent as `@`, both the atlas's volcano:** the cone black-red rock,
+   broader than a mountain and flat at its lip, ash run grey down its flanks; a vent the same with its
+   fire in the lip, dull by day and bright by night, its smoke going up. The scaffold writes `V`
+   and the author letters the vents (the mouth at 215,326 is one); the three iron mouths at 226,334
+   are the way into #22, a feature on the ash.
+7. **The atlas lays no volcano square today:** the range at 204–226,326 paints the cone as mountain
+   over the volcano patch under it, so G11 cuts with the cone as `M` (281 squares). Its builder letters
+   the cone `V` and its mouth `@` over the draft, and the world map takes them from the built map.
+8. **Lava is the `!` there was:** walked and glowing, with no harm in it, as before. A flow is a line of it
+   from the cone's foot down the ash and a field is laid wide, as the cut brings them: G11's three
+   flows come through square for square.
+9. **On the automap** the steppe, the dunes and the vines are washed as open ground is, each its own
+   colour; the volcano is inked black-red and a vent redder, unwashed as the mountain is.
+10. **A sample of each** (`ground_steppe`, `ground_dunes`, `ground_vines` with a strangler vine standing
+    in it, `ground_volcano` with a vent and a flow), swept for cracks and shown on the sheet; the smoke
+    test paints the three grounds through the year with the others, and the cone and a vent beside the
+    mountain, a vent's fire by night and its smoke over the cone.
 
 ## The calendar and the weather
 
@@ -512,7 +551,12 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   over the mountains, taller and steeper, white from its top to a snow line that comes down in the
   winter and further under lying snow, in tongues down its gullies. A cliff (`|`) is an escarpment's
   sheer face, upright and broken a little along its top, its beds in ledges, a line of them one face;
-  snow lies along its top in the winter and on its ledges under a deep fall. Broadleaf trees bud in Thaw, blossom in
+  snow lies along its top in the winter and on its ledges under a deep fall. The steppe (`s`) is dry
+  grass in tufts, tawny at Harvest and greener in Sowing; dunes (`u`) are warm sand, a crest across the
+  square and ripples; vines (`&`) are dark ground under the shore's trees hung with creepers, standing
+  to the sides of the square as the woods' do. The volcano (`V`) is a cone of black-red rock flat at its
+  lip, ash run down its flanks; a vent (`@`) has its fire in the lip, bright by night, with its smoke
+  going up. Broadleaf trees bud in Thaw, blossom in
   Sowing, turn orange and gold in Leafturn, brown and drop in Mistfall and stand bare through the
   winter (`treeSeason()` in `ui/sprites.ts`); flowers only come out between Sowing and Leafturn.
   Lamps and windows light early on a dark day. Every frame, over the scene (and over the monsters in
@@ -563,7 +607,7 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   one silhouette and to its span (within 2 px at any size, and no more than a twentieth of a height
   wider; it prints the span to write), every pair of sprite part kinds to a union with no hole, and
   sweeps for cracks between walls: one way from every square of the cellar, Helmstow, its keep and
-  the ground's samples (`tools/grounds.ts`, a small map each of ash, pine, ice, cliffs and peaks) each run, all four
+  the ground's samples (`tools/grounds.ts`, a small map each of ash, pine, ice, cliffs, peaks, steppe, dunes, vines and the volcano) each run, all four
   ways on the maps changed since `SMOKE_BASE=<ref>` (CI passes the pull request's base;
   `node tools/changed.ts <ref> maps` names them, and `monsters` or `interiors` the sheet's), or on
   those `SMOKE_SWEEP=all|<id>,<id>` names. `SMOKE_SHOT=<png>` saves a screenshot of the play, which
@@ -668,9 +712,10 @@ over content broken on purpose too, and two tools to theirs:
   which only their own; and that it reads each family module's `KINDS` from the module's text as the
   module lists them.
 - `scaffold` (§8.2): the Downs' draft, the Deepthorn's first and J4, the Sunder's K3, the Saltings'
-  C6, Wrackholm's F6, the Kilns' O6 and M3, Glacier Foot's N10 and the Whitespine's J11 and I11,
-  their light woods, dead wood, chasm, crystal, salt, tidal ground, heather, ash, pine, ice, peaks and
-  cliffs and all, laid back into the atlas, are the atlas square for square.
+  C6, Wrackholm's F6, the Kilns' O6 and M3, Glacier Foot's N10, the Whitespine's J11 and I11,
+  Cindercoast's H10, the Wold's D9 and Fire Mountain's G11, their light woods, dead wood, chasm,
+  crystal, salt, tidal ground, heather, ash, pine, ice, peaks, cliffs, vines, steppe, dunes and lava
+  and all, laid back into the atlas, are the atlas square for square.
 - `ladder`: every class betters its kit by level 3 and again by level 5 (`GEAR` in
   `tools/harness.ts`), every find is an item within the Foreland's window and owed to its box until
   a chest, cairn or statue gives it or a monster drops it, Mottram's sells the band's gear and the
@@ -730,7 +775,7 @@ does.
 
 | File | Owns |
 |---|---|
-| `game/map.ts` | the terrains (hills, farmland, woods, dead wood, crystal, the chasm, salt, heather, tidal ground, ash, pine, ice, peaks and cliffs named as the atlas names them, and `DRAG`, the slow ones), `MapDef` (rows + legend + features + encounters, a sign's reading and marks, `secrets` with each secret door's hint, a town's or a dungeon's placed `banners`, its `landmarks`, an outdoor map's `density` and, on the outdoors, its gates and zones; the wilderness features and a statue's `Gift`, the den; a person's hand-ins, `Words`, `Choice`, `Answer` and the crossings they sell, `Passage`), `GameMap` queries (passable, `exitAt` (an exit or a tear into a Rift), blocksView, the zone and palette at a cell, `bannerAt`); the void; `Presence`, when a thing is in the world (`when` as `Hours`, `until`, `after`), which a group and a person's words wear |
+| `game/map.ts` | the terrains (hills, farmland, woods, dead wood, crystal, the chasm, salt, heather, tidal ground, ash, pine, ice, peaks, cliffs, steppe, dunes, vines and the volcano named as the atlas names them, and `DRAG`, the slow ones), `MapDef` (rows + legend + features + encounters, a sign's reading and marks, `secrets` with each secret door's hint, a town's or a dungeon's placed `banners`, its `landmarks`, an outdoor map's `density` and, on the outdoors, its gates and zones; the wilderness features and a statue's `Gift`, the den; a person's hand-ins, `Words`, `Choice`, `Answer` and the crossings they sell, `Passage`), `GameMap` queries (passable, `exitAt` (an exit or a tear into a Rift), blocksView, the zone and palette at a cell, `bannerAt`); the void; `Presence`, when a thing is in the world (`when` as `Hours`, `until`, `after`), which a group and a person's words wear |
 | `game/outdoors.ts` | `layOutdoors`: the maps as played, the placed zone maps laid into one outdoors the size of the world, void where nothing is built, their ways between them walked and gated |
 | `game/atlas.ts` | the world map's model: `Atlas`, the land drawn in strokes, `worldGrid` (a cell a square, the built outdoor maps stamped in 1:1, each cell's zone), the ways between areas (the exits, the crossings people sell and the planned links, a crossing link sold both ways drawn as built) and the road's steps |
 | `game/world.ts` | `WorldState` (position, clock, weather seed, per-map state with cells seen in bits, zones set foot in, the kinds met; a group a map has gained since a save, and a saved door only where the map still has one), the zone the party is in and what it is called, movement across zones and gates, reveal, the weather's reach into play (sight, snow, the log, the almanac, fights), roaming groups and when they walk (`walks`, `ended`, `hoursHold`), whether a person or an event is there (`present`), what is in sight (the viewport's rule: `VIEW_DEPTH`, `lineOfSight`) and the looks said on first meeting (`sightings`, `meet`, a den's too), a den's brood paced as they come back, encounter triggers (a group under the ice keeping to it and striking only a company on it), rest, search |
@@ -753,7 +798,7 @@ does.
 | `game/wilds.ts` | the wilderness features: what a feature gives (`giftOf`) and the id it is spent by (`spentId`), the shrine, the cairn, the statue's answer and when the party may rest; pure |
 | `game/dens.ts` | dens: the brood's `until` (`denBurnt`), the pace, the approach, the burning and its hoard, the look on first sight; pure |
 | `game/rifts.ts` | the Rift generator: a 12 by 12 Rift from a template, a Stone's material, an area's table and a seed (turned one of eight ways, its groups in its slots, its looks on their squares), its groups stopping and its tear going quiet once `until` holds; `riftWay`, the tear on a zone map that leads in, walked through as an exit is; pure |
-| `ui/viewport.ts` | the depth-layered first-person compositor, the hills, the farmland's fields and hedges and the trees about the woods, the dead wood and the pinewoods, the glass trees and the chasm's drop, the ash and the ice through the year, a group drawn under the ice and the peaks and cliffs, a landmark drawn tall over its building's square and seen out to `LANDMARK_REACH` (Crowness Light, its lamp lit by night once its flag is held), the wall dressing and its rates (`DRESSING_RATES`, held by `tools/tests/art.ts`), what a cell is drawn as (`drawnCell`: a secret door outdoors among mountain, rock or trees as they are), the sky, the end of the world in pink and the weather drawn over it |
+| `ui/viewport.ts` | the depth-layered first-person compositor, the hills, the farmland's fields and hedges and the trees about the woods, the dead wood and the pinewoods, the glass trees and the chasm's drop, the ash and the ice through the year, a group drawn under the ice, the peaks and cliffs, the steppe, the dunes, the vines' hung trees and the volcano and its vents, a landmark drawn tall over its building's square and seen out to `LANDMARK_REACH` (Crowness Light, its lamp lit by night once its flag is held), the wall dressing and its rates (`DRESSING_RATES`, held by `tools/tests/art.ts`), what a cell is drawn as (`drawnCell`: a secret door outdoors among mountain, rock or trees as they are), the sky, the end of the world in pink and the weather drawn over it |
 | `ui/frame.ts` | layout constants, status strip (time, date, the sky and its glyph), automap (whole, or a window round the party on the outdoors; a spent feature gone from it, a den standing or burnt), party cards, log, purse |
 | `ui/riddle.ts` | a statue's riddle, the answer typed in the text mode |
 | `ui/worldmap.ts` | the world map (M): the cloth painted from the atlas and the built maps, the zone overlay (Tab) and the almanac (Space), and the pins of a place sought and of one a reading marked |

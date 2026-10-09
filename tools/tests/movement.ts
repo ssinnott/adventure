@@ -1,6 +1,6 @@
 // Moving about: steps and the clock, doors, keys and secrets, water and mountains, the end of the
 // world, the open pass walked into Thornmark and back, Town Portal, the stairs, Helmstow's two
-// gates, a group under the ice and the road cut through cliffs and peaks.
+// gates, a group under the ice, the road cut through cliffs and peaks and the far side's ground.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { World, WALK_STEPS, WALK_ENDS, FLOAT_ENDS, FLOAT_FAILS } from '../../src/game/world.ts';
@@ -247,6 +247,7 @@ export function movement(): void {
   }
   underIce();
   range();
+  farSide();
 }
 
 /**
@@ -287,4 +288,20 @@ function underIce(): void {
   for (let k = 0; k < 6; k++) { w.moveMonsters(); path.push(`${g.state.x},${g.state.y}`); }
   ok(path.every((p) => { const [x, y] = p.split(',').map(Number); return w.map.at(x, y).terrain === 'ice'; }) && path.at(-1) === '5,2', `a roaming pike comes on under the ice and stops at its edge (${path.join(' ')})`);
   ok(w.groupDefs(['pike'])[0].under === 'ice', 'and its fight is told it fights from under the ice');
+}
+
+/**
+ * The far side's ground (#543): the steppe, the dunes and the vines are walked; a step into the
+ * volcano or a vent in it is refused as one into the mountain is, and a Mountaineer climbs onto either.
+ */
+function farSide(): void {
+  const def: MapDef = { id: 'fx_far', name: 'Far', kind: 'outdoor', start: { x: 2, y: 2, facing: NORTH }, rows: ['MMMMM', 'MVs@M', 'Mu&uM', 'MMMMM'] };
+  const rng = makeRng(17), party = defaultParty(rng), w = new World({ fx_far: new GameMap(def) }, party, rng);
+  const step = (x: number, y: number, f: Facing): string => { w.travel('fx_far', x, y, f); const r = w.move('forward'); return r.kind === 'blocked' ? r.reason : `${r.kind} ${w.state.x},${w.state.y}`; };
+  const walked = [step(2, 2, NORTH), step(2, 2, WEST), step(1, 2, EAST)], refused = [step(2, 1, WEST), step(2, 1, EAST)];
+  party.flags.skill_mountaineer = 1;
+  const climbed = [step(2, 1, WEST), step(2, 1, EAST)];
+  delete party.flags.skill_mountaineer;
+  ok(walked.join(' / ') === 'moved 2,1 / moved 1,2 / moved 2,2', `the steppe, the dunes and the vines are walked (${walked.join(' / ')})`);
+  ok(refused.every((r) => r === 'Too steep to climb without a Mountaineer.') && climbed.join(' / ') === 'moved 1,1 / moved 3,1', `a step into the volcano or a vent is refused as one into the mountain is, and a Mountaineer climbs onto either (${refused.join(' / ')}; ${climbed.join(' / ')})`);
 }
