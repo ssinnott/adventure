@@ -20,7 +20,7 @@ import { ok, owed, stopsWalk } from './lib.ts';
  * keepers and the Matron by #490.
  */
 const UNPLACED: Record<string, string> = {
-  loader: '#22, dead_drop', tally_clerk: '#22, dead_drop', hold_keeper: '#22, dead_drop2', tallymaster: '#22, dead_drop3',
+  tallymaster: '#22, dead_drop3',
   grey_lion: '#529',
 };
 
