@@ -6,11 +6,16 @@ import { buildMaps } from '../../src/content/maps.ts';
 import { ATLAS } from '../../src/content/index.ts';
 import { STONES, WHOLE } from '../../src/content/stones.ts';
 import { World } from '../../src/game/world.ts';
+import { GameMap } from '../../src/game/map.ts';
+import type { MapDef } from '../../src/game/map.ts';
+import { NORTH } from '../../src/game/types.ts';
 import { defaultParty } from '../../src/game/party.ts';
 import { save } from '../../src/game/save.ts';
 import type { Store } from '../../src/game/save.ts';
 import { stonesRestored, savedStones, hearthBearing, flickerOf, steadier, MOST } from '../../src/game/stones.ts';
+import { testMonster } from '../testmonster.ts';
 import { condFaults } from './quests.ts';
+import { presenceFaults } from './structure.ts';
 import { ok, owed } from './lib.ts';
 
 export function stones(): void {
@@ -54,6 +59,21 @@ export function stones(): void {
     `the Ember Stone counts once it is lit and not before, and the almanac says the Hearth hardly wavers ("${steadier(4)}")`);
   ok(stonesRestored(world.state, alone) === 1, 'lit with no other Stone restored it counts all the same: nothing in the road orders them');
   ok([0, 1, 2, 3, 4, 5].every((n, i, a) => i === 0 || flickerOf(n) < flickerOf(a[i - 1])) && flickerOf(9) === flickerOf(5), 'each Stone steadies the flicker, and past the last it holds');
+
+  // The Underdeep notices (docs/MONSTERS.md §8.2, #548): once the Stone is lit, sentries hunt Ashfall, a group of them on every box `after` the
+  // very condition the Hearth counts (#449 places them, #520 draws them). A fixture box carries one, of the elite of tools/testmonster.ts at the
+  // Sentry's level: it is not there before the Stone is lit, and stands where it was put, alive and in the way, after.
+  const lit = STONES.find((s) => s.name === 'Ember Stone')?.restored, sentry = testMonster('elite', 26).id, at = { x: 2, y: 2 };
+  const field: MapDef = {
+    id: 'fx_ashfall', name: 'Fixture', kind: 'outdoor', start: { x: 2, y: 3, facing: NORTH }, rows: Array.from({ length: 5 }, () => ','.repeat(5)),
+    encounters: [{ id: 'fx_sentries', ...at, monsters: [sentry, sentry], roams: false, after: lit }],
+  };
+  const camp = defaultParty(makeRng(548)), fx = new World({ [field.id]: new GameMap(field) }, camp, makeRng(548));
+  const stands = (): boolean => fx.liveGroups().some((g) => g.def.id === 'fx_sentries' && g.state.dead === -1 && g.state.x === at.x && g.state.y === at.y);
+  ok(!!lit && !presenceFaults(field).length, 'a sentry group\'s `after` names the Stone\'s flag, which a box may write before the Stone\'s dungeon sets it');
+  ok(!stands() && !fx.adjacentGroups().length && !fx.groupAt(at.x, at.y), 'the sentries are not on the box before the Stone is lit: not drawn, in the way or fought');
+  camp.flags.q_ember_lit = 1;
+  ok(stands() && fx.adjacentGroups().join() === 'fx_sentries' && !!fx.groupAt(at.x, at.y), 'and once it is lit they stand where they were put, in the way and fought');
 
   // The title reads the save in storage: none, or one that cannot be read, is none restored.
   const box = new Map<string, string>(), store: Store = { getItem: (k) => box.get(k) ?? null, setItem: (k, v) => void box.set(k, v), removeItem: (k) => void box.delete(k) };
