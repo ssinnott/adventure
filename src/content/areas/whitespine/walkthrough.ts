@@ -18,7 +18,13 @@
 // edge; the caravan short of the head, its master and his girl; the toll-stone and the old shrine; the
 // box's groups won at its floor, the giants sweeping; the toll put before the fight: refused, the
 // fight and the hoard under the seat; paid in gold or in the grey part, the walk down the Stair;
-// and Stairwatch's ledge, found up the chimney behind the pines, and the old champion on it.
+// and Stairwatch's ledge, found up the chimney behind the pines, and the old champion on it. Then the
+// ridge north (I9, #503) walked: north along the ridge trail from the Stair's head, Sheer Point named
+// in its own words to a company under its floor, and the High Spine's read true coming back; the
+// trail square to square to the north edge; the wind warm off the sea, the giants' cairn, the snow
+// gone off the rocks, and at the trail's end the Hearth and the causeway; the box's groups won at its
+// floor, the masons who never break; the first masons' camp, abandoned, and behind their tally the
+// cache of shards; the hermit at the shore, the lamp at the Sheer's edge and the camp in the lee.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, see, fight, listen, type Walk } from '../../../../tools/walk.ts';
 import { NORTH, SOUTH, EAST, WEST } from '../../../game/types.ts';
@@ -168,7 +174,7 @@ export const walkthrough: Walkthrough = (ok) => {
     'over the crest from J11\'s 0,10 onto I11\'s 31,10, walked, the box\'s way in');
   ok(crestDue.join(' / ') === 'The High Spine.', `at 22, the High Spine named, no more (${crestDue.join(' / ')})`);
   ok(crestTwo.join(' / ') === `The High Spine. ${SPINE.crossing?.harder}`, `at 20, the rest in the crest's own words (${crestTwo.join(' / ')})`);
-  ok(crestLow.join(' / ') === `The High Spine. ${SPINE.crossing?.warning}`, `at 19, the harsher words, and the way back down open (${crestLow.join(' / ')})`);
+  ok(crestLow.join(' / ') === `The High Spine. ${SPINE.crossing?.warning}`, `at 19, the harsher words, and the way back open (${crestLow.join(' / ')})`);
   w.world.travel('highspine_i11', 31, 10, EAST);
   const crestBack = w.world.move('forward');
   ok(crestBack.kind === 'moved' && w.world.zone?.id === 'monksvale_j11' && crestBack.messages.length === 0, `straight back over the crest onto J11, nothing said (${crestBack.kind === 'moved' ? crestBack.messages.join(' / ') : crestBack.kind})`);
@@ -264,15 +270,15 @@ export const walkthrough: Walkthrough = (ok) => {
   listen(w);
   for (const m of w.party.members) m.level = 22;
 
-  // The trail on north to the edge at 18,0, where the atlas's trail crosses for I9 (#503), and past it,
-  // for now, the world ends; off it west, the road to the Stair's head at the atlas's link, 272,306; and
-  // the Stair down through the Sheer to the west edge at 0,20 and on down onto Ashfall's H10 at its
-  // 31,20 (#510), whose walkthrough walks it.
+  // The trail on north to the edge at 18,0, where the atlas's trail crosses, on into I9 (#503); off it
+  // west, the road to the Stair's head at the atlas's link, 272,306; and the Stair down through the
+  // Sheer to the west edge at 0,20 and on down onto Ashfall's H10 at its 31,20 (#510), whose
+  // walkthrough walks it.
   const onI10 = (x: number, y: number): boolean => x >= i10.x && x < i10.x + i10.w && y >= i10.y && y < i10.y + i10.h;
   const at10 = (f: { x: number; y: number }): number => (i10.y + f.y) * out.width + i10.x + f.x;
   const walked10 = reach(i10.x + 27, i10.y + 31, (x, y) => onI10(x, y) && out.passable(x, y) === 'ok');
-  ok(road(i10.x + 18, i10.y) && walked10.has(at10({ x: 18, y: 0 })) && out.passable(i10.x + 18, i10.y - 1) !== 'ok',
-    'the ridge trail leaves north at 18,0, and past the edge, for now, the world ends');
+  ok(road(i10.x + 18, i10.y) && walked10.has(at10({ x: 18, y: 0 })) && road(i10.x + 18, i10.y - 1),
+    'the ridge trail leaves north at 18,0, on into I9 (#503)');
   const link = ATLAS.links.find((l) => l.note === 'the Giants\' Stair')!;
   ok(link.b?.[0] === i10.x + 8 && link.b?.[1] === i10.y + 20 && [...Array(16).keys()].every((i) => road(i10.x + 8 + i, i10.y + 20)),
     'the road leaves the trail west for the Stair\'s head, at the atlas\'s link, 272,306');
@@ -380,6 +386,112 @@ export const walkthrough: Walkthrough = (ok) => {
   // The drovers' fire back in the pines.
   const fire = I10.features!.find((f) => f.kind === 'camp' && f.name === 'The drovers\' fire');
   ok(!!fire && walked10.has(at10(fire)) && out.at(i10.x + fire.x, i10.y + fire.y).ch === 'p', 'the drovers\' fire, back in the pines');
+
+  // I9, the ridge north (#503), Sheer Point's first box. North along the ridge trail from I10's 18,0
+  // onto I9's 18,31, walked: the same floor, but a new land, so three under it the harsher words, two
+  // under its own, at the floor its name and nothing more; straight back, nothing. Coming back south
+  // later, the High Spine named in words that say nothing of a crest crossed or a vale behind.
+  const I9 = MAP_DEFS.find((d) => d.id === 'sheerpoint_i9')!, i9 = out.zones.find((z) => z.id === 'sheerpoint_i9')!;
+  const POINT = ATLAS.zones.find((z) => z.id === 'sheerpoint')!;
+  const north = (level: number): string[] => {
+    for (const m of w.party.members) m.level = level;
+    w.world.travel('highspine_i10', 18, 0, NORTH);
+    const r = w.world.move('forward');
+    // The crossing line is the step's first entry; the eagles coming down over the pines may follow it.
+    return r.kind === 'moved' ? r.messages.slice(0, 1) : [r.kind];
+  };
+  const northLow = north(19), northTwo = north(20), northDue = north(22);
+  ok(w.world.zone?.id === 'sheerpoint_i9' && w.world.state.x === i9.x + 18 && w.world.state.y === i9.y + 31 && i9.x === i10.x && i9.y + i9.h === i10.y && I9.start.x === 18 && I9.start.y === 31 && I9.band?.[0] === I10.band?.[0],
+    'north along the ridge trail from I10\'s 18,0 onto I9\'s 18,31, walked, the box\'s way in, at I10\'s floor');
+  ok(northDue.join(' / ') === 'Sheer Point.', `at 22, Sheer Point named, no more (${northDue.join(' / ')})`);
+  ok(northTwo.join(' / ') === `Sheer Point. ${POINT.crossing?.harder}`, `at 20, the rest in the Point's own words (${northTwo.join(' / ')})`);
+  ok(northLow.join(' / ') === `Sheer Point. ${POINT.crossing?.warning}`, `at 19, the harsher words, and the way back open (${northLow.join(' / ')})`);
+  w.world.travel('sheerpoint_i9', 18, 31, SOUTH);
+  const northBack = w.world.move('forward');
+  ok(northBack.kind === 'moved' && w.world.zone?.id === 'highspine_i10' && !northBack.messages.length, `straight back onto I10, nothing said (${northBack.kind === 'moved' ? northBack.messages.join(' / ') : northBack.kind})`);
+  for (const m of w.party.members) m.level = 20;
+  w.world.travel('highspine_i11', 27, 0, NORTH);
+  w.world.move('forward');
+  w.world.travel('sheerpoint_i9', 18, 31, SOUTH);
+  const south = w.world.move('forward');
+  const southSaid = south.kind === 'moved' ? south.messages.join(' / ') : south.kind;
+  ok(southSaid === `The High Spine. ${SPINE.crossing?.harder}` && !/over the crest|vale/i.test(`${SPINE.crossing?.harder} ${SPINE.crossing?.warning}`),
+    `south along the ridge from the Point into I10 later, the High Spine named in words true of either way in (${southSaid})`);
+  listen(w);
+  w.level = 22;
+  for (const m of w.party.members) m.level = 22;
+
+  // The ridge trail square to square from the way in at 18,31 to the north edge at 20,0, where the
+  // atlas's trail crosses for I8 (#504), and past it, for now, the world ends; the pines open across
+  // the south edge into I10's.
+  const onI9 = (x: number, y: number): boolean => x >= i9.x && x < i9.x + i9.w && y >= i9.y && y < i9.y + i9.h;
+  const at9 = (f: { x: number; y: number }): number => (i9.y + f.y) * out.width + i9.x + f.x;
+  const trail9 = reach(i9.x + 18, i9.y + 31, (x, y) => onI9(x, y) && road(x, y));
+  const walked9 = reach(i9.x + 18, i9.y + 31, (x, y) => onI9(x, y) && out.passable(x, y) === 'ok');
+  ok(trail9.has(at9({ x: 20, y: 0 })) && road(i9.x + 20, i9.y) && out.passable(i9.x + 20, i9.y - 1) !== 'ok',
+    'the ridge trail runs square to square from 18,31 to the north edge at 20,0, and past the edge, for now, the world ends');
+  ok([...Array(17).keys()].every((i) => out.at(i9.x + 1 + i, i9.y + 31).ch === 'p' && out.passable(i9.x + 1 + i, i9.y + 32) === 'ok'), 'the pines run on across the south edge into I10\'s');
+
+  // Up the trail the wind off the sea warm over the crest, the giants' cairn, the snow gone off the
+  // rocks, the masons' sledge, and at the end the Hearth over the sea, its heat on the face, and the
+  // causeway running out to it; beside the trail the cairns to steer by in cloud.
+  const ev9 = (id: string): { x: number; y: number } => I9.features!.find((f) => f.kind === 'event' && f.id === id)!;
+  const upTrail = ['i9_wind', 'i9_giants', 'i9_thaw', 'i9_sledge', 'i9_hearth', 'i9_causeway'];
+  ok(upTrail.every((id) => trail9.has(at9(ev9(id)))) && upTrail.every((id, i) => i === 0 || ev9(id).y < ev9(upTrail[i - 1]).y),
+    'on the trail north, in order: the warm wind, the giants\' cairn, the snow gone off the rocks, the sledge, the Hearth and the causeway');
+  for (const id of upTrail) see(w, `sheerpoint_i9:${id}`);
+  const cairn9 = I9.features!.find((f) => f.kind === 'cairn' && f.id === 'i9_cairn');
+  ok(cairn9?.kind === 'cairn' && cairn9.items.includes('potion_sp_great') && walked9.has(at9(cairn9)) && trail9.has(at9({ x: cairn9.x - 1, y: cairn9.y })),
+    'a cairn beside the trail to steer by in cloud, a Sapphire Vial in it');
+
+  // The box's groups, each won at its floor: the eagles over the pines by the way in, the snow trolls
+  // lying in the gully where the snow is trodden to ice, and on the trail's end the Ashen masons, the
+  // Hand's people, who never break.
+  const masons = I9.encounters!.find((g) => g.id === 'i9_masons')!;
+  ok(MONSTER_DEFS.ashen_mason.kind === 'person' && !!MONSTER_DEFS.ashen_mason.steady && masons.monsters.every((m) => m === 'ashen_mason') && trail9.has(at9(masons)) && masons.y < ev9('i9_sledge').y,
+    'on the trail\'s end, past their sledge, the Ashen masons, people who never break');
+  see(w, 'sheerpoint_i9:i9_trodden');
+  fight(w, 'sheerpoint_i9:i9_eagles');
+  fight(w, 'sheerpoint_i9:i9_trolls');
+  fight(w, 'sheerpoint_i9:i9_masons');
+
+  // The first masons' camp on its shelf off the trail, abandoned, and their tally cut in the rock face,
+  // its last row running into a crack; searched, the crack opens on their cache: the shards they set by
+  // in the straw, seen and not carried off, and what else they kept. Walked, waded, climbed or floated,
+  // the cache is never reached but through the crack.
+  see(w, 'sheerpoint_i9:i9_masons_camp');
+  see(w, 'sheerpoint_i9:i9_tally');
+  const [crack] = I9.secrets!;
+  const cache9 = I9.features!.find((f) => f.kind === 'chest' && f.id === 'i9_cache');
+  const sealed9 = new Set<number>(), go9 = [[i9.x + 18, i9.y + 31]];
+  while (go9.length) {
+    const [x, y] = go9.pop()!, k = y * out.width + x;
+    if (sealed9.has(k) || (x === i9.x + crack.x && y === i9.y + crack.y) || !onI9(x, y) || out.passable(x, y, { swim: true, climb: true, float: true }) !== 'ok') continue;
+    sealed9.add(k);
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) go9.push([x + dx, y + dy]);
+  }
+  ok(cache9?.kind === 'chest' && sealed9.size > 400 && !sealed9.has(at9(cache9)) && crack.hint === 'i9_tally' && Math.abs(ev9('i9_tally').x - crack.x) + Math.abs(ev9('i9_tally').y - crack.y) === 1,
+    `the cache is shut but for the crack beside the tally: none of I9's ${sealed9.size} squares walked, waded, climbed or floated reaches it`);
+  w.world.travel('sheerpoint_i9', crack.x + 1, crack.y, WEST);
+  let found9 = false;
+  for (let i = 0; i < 20 && !found9; i++) found9 = w.world.search();
+  const into = found9 ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(found9 && into.every((r) => r.kind === 'moved') && w.world.used('i9_shards'), 'searched at the tally, the crack is found, and in the cache shards of every colour in the straw');
+  ok(cache9?.kind === 'chest' && cache9.gold === 500 && cache9.items.length === 1 && cache9.items.includes('hunters_bow+1'),
+    'and in the cache 500 gold and a Hunter\'s Bow +1, and no shard to carry off: the act has no Rift to take one to');
+  listen(w);
+
+  // West of the crest: the pines stopping at the sea with steam on it, the hermit under the peaks who
+  // watches the Hand's boats go round the Point, the warm hollow, the eagles' kill, the Sheer's edge
+  // and the lamp kept burning at it, and the camp in the crest's lee.
+  for (const id of ['i9_shore', 'i9_hollow', 'i9_kill', 'i9_sheer']) see(w, `sheerpoint_i9:${id}`);
+  const hermit9 = I9.features!.find((f) => f.kind === 'npc' && f.name === 'A hermit') as Person;
+  w.world.travel('sheerpoint_i9', hermit9.x, hermit9.y);
+  ok(meet(hermit9, w.party, heard(w.world, hermit9)).text.includes('round the Point') && walked9.has(at9(hermit9)), 'the hermit under the peaks, who watches the Hand\'s boats go round the Point');
+  const lamp = I9.features!.find((f) => f.kind === 'shrine' && f.id === 'i9_shrine');
+  ok(!!lamp && walked9.has(at9(lamp)) && out.at(i9.x + lamp.x - 1, i9.y + lamp.y).ch === '|', 'the lamp in the stone at the Sheer\'s edge');
+  const lee = I9.features!.find((f) => f.kind === 'camp' && f.name === 'The lee of the crest');
+  ok(!!lee && walked9.has(at9(lee)) && out.at(i9.x + lee.x, i9.y + lee.y).ch === 'p', 'the camp in the crest\'s lee, in the pines');
 };
 
 /**
