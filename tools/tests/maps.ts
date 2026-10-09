@@ -23,7 +23,7 @@ const UNPLACED: Record<string, string> = {
   ashen_mason: '#504',
   stair_giant: '#502', stair_king: '#502',
   ash_husk: '#514', old_drake: '#515',
-  sentry: '#514', sentinel: '#516',
+  sentinel: '#516',
   loader: '#22, dead_drop', tally_clerk: '#22, dead_drop', hold_keeper: '#22, dead_drop2', tallymaster: '#22, dead_drop3',
   drakeling: '#22 meridian_camp2', brood_drake: '#22 meridian_camp2', flue_walker: '#22 meridian_camp2',
   deep_knocker: '#22 meridian_camp3', inspector: '#22 meridian_camp3',

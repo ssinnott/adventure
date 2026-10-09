@@ -6,7 +6,7 @@
 // vent-scavenger sits; the vents at 26,16, three mouths in the ash where the stokers come and go, the
 // way down to Meridian Camp (#22); the scavenger's hole in the rocks beside them, his second way down;
 // the furnace-draught breathing in the rock; a lookout on the cone's shoulder over the Waste, a cairn
-// on its ash foot in the north-west, the Cinder Hills' line on the west, and the drakes on the flows.
+// on its ash foot in the north-west, the Cinder Hills' line on the west, and a drake on a flow.
 // Its way in is G10's south edge: the track at columns 23 to 31, and the cairn's corner at 0 to 4.
 // The vents and the hole's far end are barred until Meridian Camp is built (VENTS, HOLE). The east,
 // south and west edges end the world against H11, G12 and F11.
@@ -51,8 +51,8 @@ export const FIREMOUNT_G11: MapDef = {
     'MM!!!!MMM!!!VVVVV!!VVMMMMMMMMMaa',
     '!!!!MMMMM!!!Vaaaaa!!VMMMMMMMMMaa',
     '!MMMMMMM!!!Maaaaaaa!!a@MMMMMaaaa',
-    'aMMMMMM!!!aaaaaaaaaaa!aaaaaaaaBB',
-    'aaaaMM!!!aaaaaaaaaaaa!!aaaaaaaBB',
+    'aMMMMMM!!!aaaaaaaaaaa!aaaaaaaBBB',
+    'aaaaMM!!!aaaaaaaaaaaa!!aaaaaaBBB',
     'aaaaaa!!!aaaaaaaaaaaaa!!aaaaaaaa',
     'aaaaa!!!aaaaaaaaaaaaaaa!!a@aarrr',
     'aaaa!!!aaaaaaaaaaaaaaaaa!!@aaSaa',
@@ -75,11 +75,11 @@ export const FIREMOUNT_G11: MapDef = {
   features: [
     // The track's head, where the stokers' tracks begin, and the shrine there.
     { kind: 'shrine', x: 27, y: 2, id: 'g11_shrine', text: 'A shrine at the head of the track, black stones piled round a slab. Past it the ash is trodden flat.', stat: 'endurance', done: 'The shrine at the track\'s head, its slab warm under the hand.' },
-    // Grimsforge, the old warlord's heir at the anvil (the Barbarian's third is #448's), and a rack by
-    // the forge; in its lee a camp, and the vent-scavenger by the fire.
-    { kind: 'event', x: 29, y: 12, id: 'g11_forge', once: true, text: 'Grimsforge: a forge of black stone in the mountain\'s foot, its fire lit. The anvil rings.' },
-    { kind: 'chest', x: 28, y: 12, id: 'g11_rack', gold: 0, items: ['warhammer+1'] },
-    { kind: 'npc', x: 29, y: 13, name: 'The warlord\'s heir', lines: [
+    // Grimsforge, the old warlord's heir at the anvil (the Barbarian's third is #448's); in its lee a
+    // rack and a camp, and the vent-scavenger by the fire.
+    { kind: 'event', x: 28, y: 12, id: 'g11_forge', once: true, text: 'Grimsforge: a forge of black stone in the mountain\'s foot, its fire lit. The anvil rings.' },
+    { kind: 'chest', x: 29, y: 14, id: 'g11_rack', gold: 0, items: ['warhammer+1'] },
+    { kind: 'npc', x: 28, y: 13, name: 'The warlord\'s heir', lines: [
       'A big man at the anvil, grey in the beard. An old axe hangs over the fire, its edge long gone.',
       '"Grimsforge. My grandfather kept it, and fought from it. I keep the fire."',
       '"There was a man went down beside the forge with a rope. He comes up when he likes, with things."',
@@ -118,12 +118,14 @@ export const FIREMOUNT_G11: MapDef = {
   ],
   secrets: [{ x: 29, y: 16, hint: 'g11_rope' }],
   encounters: [
-    // Ember salamanders on the slope under the track, the box's gentlest, nearest the way in; the vents'
-    // fight at the mouths, two stokers with ember salamanders, where fire is useless; a cinder drake
-    // alone on the south-east flow; and two on the west flow at the far end, the box's top.
+    // Ember salamanders on the slope under the track, the box's gentlest, nearest the way in, and three
+    // more on the cone's shoulder; the vents' fight at the mouths, two stokers with ember salamanders,
+    // where fire is useless; a cinder drake alone on the south-east flow; and, once the Ember Stone is
+    // lit, a sentry come up through the doors below, walking in from the Waste: the box's top, at 26.
     { id: 'g11_salamanders', x: 30, y: 6, monsters: ['ember_salamander', 'ember_salamander', 'ember_salamander', 'ember_salamander'], aware: 3, respawn: 1440 },
+    { id: 'g11_slope', x: 16, y: 11, monsters: ['ember_salamander', 'ember_salamander', 'ember_salamander'], aware: 3, respawn: 1440 },
     { id: 'g11_stokers', x: 28, y: 19, monsters: ['stoker', 'ember_salamander', 'stoker', 'ember_salamander'], aware: 3, respawn: 1440 },
     { id: 'g11_drake', x: 28, y: 22, monsters: ['cinder_drake'], aware: 5, respawn: 2880 },
-    { id: 'g11_drakes', x: 3, y: 19, monsters: ['cinder_drake', 'cinder_drake'], aware: 5, respawn: 2880 },
+    { id: 'g11_sentry', x: 4, y: 24, monsters: ['sentry'], aware: 4, respawn: 2880, after: { flag: 'q_ember_lit' } },
   ],
 };
