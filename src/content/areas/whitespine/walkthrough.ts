@@ -1,4 +1,4 @@
-// The Whitespine's walkthrough. Its chapter, The Bells, is #505's, which plays it here; until then,
+// The Whitespine's walkthrough. Its chapter, The Bells (#505), is played last (theBells); first,
 // Monks' Vale (J11, #499) walked: over the pass from Rimewater's K10, taken across parked J10's
 // corner, the crossing line said in the range's words to a company under the vale's floor and its name
 // alone to one at it, and back; the road square to square from the pass's foot to the gate's front, the
@@ -33,7 +33,8 @@
 // at the atlas's site and the watcher in it; the Hand's sea cave under it, found from the wet rock at
 // the hollow's back; the cairn, the drowned god's shrine and the deserter in the rocks with his tally.
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, walkThrough, see, fight, listen, type Walk } from '../../../../tools/walk.ts';
+import { newWalk, walkThrough, see, fight, listen, playChapter, everyGoalWalked, goalFromBegun, quest, type Walk, type Step } from '../../../../tools/walk.ts';
+import { xpForLevel } from '../../../game/party.ts';
 import { NORTH, SOUTH, EAST, WEST } from '../../../game/types.ts';
 import { stonesRestored } from '../../../game/stones.ts';
 import { ATLAS, MAP_DEFS, MONSTERS as MONSTER_DEFS } from '../../index.ts';
@@ -49,6 +50,8 @@ import { SADDLE } from '../rimewater/maps/coldmere_k10.ts';
 import { CLIMB, GATE } from './maps/monksvale_j11.ts';
 import { WENNA_TAKEN } from './maps/sheerpoint_i8.ts';
 import { WENNA_LODGE } from '../rimewater/maps/rime_lodge.ts';
+import { STAIR_TOP } from './maps/highspine_i10.ts';
+import { CHAPTER } from './chapter.ts';
 
 const J11 = MAP_DEFS.find((d) => d.id === 'monksvale_j11')!;
 const person = (name: string): Person => J11.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
@@ -639,6 +642,7 @@ export const walkthrough: Walkthrough = (ok) => {
     'the deserter in the rocks at the end of the pines, who will not set the last stones');
   for (const id of ['i8_tally', 'i8_hammer', 'i8_bones', 'i8_wreck', 'i8_pines']) see(w, `sheerpoint_i8:${id}`);
   listen(w);
+  theBells(ok);
 };
 
 /**
@@ -760,4 +764,154 @@ function highcell(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   const things = L2.features!.find((f) => f.kind === 'chest' && f.id === 'hc2_things');
   ok(things?.kind === 'chest' && things.gold === 600 && things.items.join() === 'ice_axe+1,skinning_knife+1', 'by the niches the monks\' things: 600 gold, an Ice Axe +1 and a Skinning Knife +1');
   listen(w);
+}
+
+// ---- the chapter (#505) ----
+
+const mapOf = (id: string): MapDef => MAP_DEFS.find((d) => d.id === id)!;
+const KING = mapOf('highspine_i10').encounters!.find((g) => g.id === 'i10_king')!;
+
+/** A step played at a level, the company levelled to it. */
+const atLevel = (level: number, s: Step): Step => ({ name: `${s.name} at ${level}`, play: (w) => {
+  for (const m of w.party.members) { m.level = level; m.xp = xpForLevel(level); }
+  w.level = level;
+  s.play(w);
+} });
+
+/** The entries written on the chapter's page. */
+const written = (w: Walk): string[] => (quest(w)?.pages.find((p) => p.def === CHAPTER)?.entries ?? []).map((e) => e.id);
+
+/** Over the pass from K10 onto J11's road at its foot, where the bells are heard. */
+function overThePass(w: Walk): void {
+  w.world.travel('coldmere_k10', SADDLE.x + 1, SADDLE.y, WEST);
+  w.world.move('forward');
+  listen(w);
+  see(w, 'monksvale_j11:j11_bells');
+}
+
+/** Over the pass, the bells, and down the road to Highcell's gate and in. */
+const TO_THE_GATE: Step = { name: 'over the pass to Highcell', play: (w) => {
+  overThePass(w);
+  walkThrough(w, 'monksvale_j11', GATE.x, GATE.y - 1, SOUTH, 'monastery', 1);
+} };
+
+/**
+ * Highcell, in at the gate: the cells, the board of the hours read the old way by a reader, down the
+ * night stair to the chapter house, and its brothers and bells and the Abbot on its seat won.
+ */
+const HIGHCELL: Step = { name: 'Highcell', play: (w) => {
+  walkThrough(w, 'monksvale_j11', GATE.x, GATE.y - 1, SOUTH, 'monastery', 1);
+  see(w, 'monastery:hc1_cells');
+  const board = mapOf('monastery').features!.find((f) => f.kind === 'sign' && f.id === 'hc1_board')!;
+  const reader = w.party.members[4], skills = reader.skills;
+  reader.skills = ['linguist'];
+  w.world.travel('monastery', board.x, board.y);
+  w.world.eventsHere();
+  reader.skills = skills;
+  listen(w);
+  walkThrough(w, 'monastery', 12, 13, EAST, 'monastery2', 1);
+  see(w, 'monastery2:hc2_chapter');
+  fight(w, 'monastery2:hc2_chapter');
+  fight(w, 'monastery2:hc2_abbot');
+} };
+
+/** Over the crest past the Peak Stone, north along the ridge trail to Sheer Point, and the causeway's first stone. */
+const POINT: Step = { name: 'the Point', play: (w) => {
+  see(w, 'highspine_i11:i11_stone');
+  see(w, 'sheerpoint_i9:i9_causeway');
+  see(w, 'sheerpoint_i8:i8_causeway');
+} };
+
+/** The night: met at her fire on the shingle and slept by, she is gone, and on the first stone her knot. */
+const NIGHT: Step = { name: 'the night', play: (w) => {
+  const her = mapOf('sheerpoint_i8').features!.find((f) => f.kind === 'npc' && f.name === 'The girl out of the hole') as Person;
+  w.world.travel('sheerpoint_i8', her.x + 1, her.y, WEST);
+  const there = w.world.present(her);
+  const sleep = meet(her, w.party, heard(w.world, her)).choice?.answers.find((a) => a.label === 'Sleep');
+  const woke = sleep ? answer(sleep, w.party) : '';
+  listen(w);
+  see(w, 'sheerpoint_i8:i8_knot');
+  w.ok(there && woke.includes('Her blanket by the fire is cold.') && !!w.party.flags[WENNA_TAKEN] && w.level === 24 && ['night', 'knot', 'heart', 'far'].every((e) => written(w).includes(e)),
+    `at ${w.level} she is met at her fire and slept by, and taken: the night, her knot and the line read again are written (${written(w).join(', ')})`);
+} };
+
+/** South along the ridge to the Stair's head, where the king holds out his hand. */
+const HEAD: Step = { name: 'the Stair\'s head', play: (w) => see(w, 'highspine_i10:i10_head') };
+
+/** Beside the king's group on the head the toll is put before the fight: answered, the answer's words. */
+function parley(w: Walk, label: string): string {
+  w.world.travel('highspine_i10', KING.x + 2, KING.y, WEST);
+  const r = w.world.move('forward'), a = w.world.question(KING.id)?.answers.find((x) => x.label === label);
+  w.ok(r.kind === 'moved' && r.asks === KING.id && !!a, `beside the king the toll is put before the fight, and '${label}' answers it`);
+  const said = a ? answer(a, w.party) : '';
+  listen(w);
+  return said;
+}
+
+const PAY: Step = { name: 'the toll paid', play: (w) => {
+  const purse = w.party.gold, said = parley(w, 'Pay the toll.');
+  w.ok(purse - w.party.gold === 1500 && !!w.party.flags.toll_paid && said.includes('stand aside'), `the toll paid, 1,500 gold, and the giants stand aside (${said})`);
+} };
+
+const REFUSE: Step = { name: 'the toll refused', play: (w) => {
+  const said = parley(w, 'Refuse.');
+  fight(w, 'highspine_i10:i10_king');
+  w.ok(said.startsWith('He sighs') && !w.party.flags.toll_paid, `the toll refused, the king fights and falls (${said})`);
+} };
+
+/** Past the king's square onto the Stair's top step, looking down into the ash. */
+const DOWN: Step = { name: 'the top step', play: (w) => {
+  w.world.travel('highspine_i10', KING.x + 1, KING.y, WEST);
+  const steps = [w.world.move('forward'), w.world.move('forward')];
+  const said = [...steps.flatMap((r) => (r.kind === 'moved' ? r.messages : [])), ...w.world.eventsHere()];
+  listen(w);
+  w.ok(steps.every((r) => r.kind === 'moved' && !r.encounter && !r.asks) && said.some((t) => t.startsWith('From the top step the Stair goes down')) && !!w.party.flags[STAIR_TOP],
+    `past the king's square to the top step, the way down into the ash, and ${STAIR_TOP} is set`);
+} };
+
+/**
+ * The Bells (#505), begun where Rimewater's chapter ends: in order, over the pass at 22, Highcell and
+ * the Point at 23, the night and the Stair at 24, the toll paid; and with the Point reached first, the
+ * night before Highcell and the toll refused, where the journal holds nothing of Highcell until it is
+ * walked, the goal stays on the Stair, and at the end it reads the same but for the toll. Nobody on
+ * the top step is told anything before the toll is answered or the king falls.
+ */
+function theBells(ok: (cond: boolean, msg: string) => void): void {
+  const early = newWalk(ok);
+  early.world.travel('highspine_i10', 1, 20, WEST);
+  ok(!early.world.eventsHere().length && !early.party.flags[STAIR_TOP], 'on the top step before the toll is answered or the king falls, nothing is said or set');
+  const south = CHAPTER.goals.at(-1)!.text, stair = CHAPTER.goals.find((g) => g.text.startsWith('South again'))!.text;
+  const read: string[] = [];
+  for (const [how, pointFirst] of [['in order, the toll paid', false], ['the Point first, the toll refused', true]] as const) {
+    const w = newWalk(ok);
+    for (const m of w.party.members) { m.level = 22; m.xp = xpForLevel(22); }
+    w.level = 22;
+    w.party.gold = 1500;
+    // Where The Sleepers ends (#492): her words at K9's door after the beds, the beds and the pass's mouth.
+    w.party.flags[WENNA_LODGE] = 1;
+    see(w, 'sleepers_bay2:sb2_beds');
+    see(w, 'coldmere_k10:k10_mouth');
+    ok(quest(w)?.goal === south && !!quest(w)?.pages.find((p) => p.def === CHAPTER)?.begun && !written(w).length,
+      `${how}, The Sleepers done at the pass's mouth, the chapter begins, its goal south to Highcell's gate (${quest(w)?.goal})`);
+    if (!pointFirst) {
+      playChapter(w, CHAPTER, [atLevel(22, TO_THE_GATE), atLevel(23, HIGHCELL), atLevel(23, POINT), atLevel(24, NIGHT), atLevel(24, HEAD), atLevel(24, PAY), atLevel(24, DOWN)], how);
+    } else {
+      overThePass(w);
+      playChapter(w, CHAPTER, [atLevel(23, POINT), atLevel(24, NIGHT)], how);
+      ok(written(w).join(', ') === 'bells, stone, causeway, night, knot, heart, far' && quest(w)?.goal === stair,
+        `${how}, after the night the journal holds nothing of Highcell, and the goal is the Stair (${written(w).join(', ')}: ${quest(w)?.goal})`);
+      atLevel(24, HIGHCELL).play(w);
+      ok(written(w).join(', ') === 'bells, cells, board, abbot, stone, causeway, night, knot, heart, far' && quest(w)?.goal === stair,
+        `${how}, Highcell walked after the night writes its own in their place, and the goal stays on the Stair (${written(w).join(', ')})`);
+      playChapter(w, CHAPTER, [atLevel(24, HEAD), atLevel(24, REFUSE), atLevel(24, DOWN)], how);
+    }
+    goalFromBegun(w, how);
+    const ends = w.news.filter((n) => n === `Chapter complete: ${CHAPTER.title}.`).length;
+    ok(!!quest(w)?.pages.find((p) => p.def === CHAPTER)?.done && ends === 1 && w.level === 24,
+      `${how}, the top step stood on, the chapter is done at 24, and said so once (${ends})`);
+    read.push(written(w).join(', '));
+  }
+  ok(read[0] === 'bells, cells, board, abbot, stone, causeway, night, knot, heart, far, stair, paid, top' && read[1] === read[0].replace('paid', 'fought'),
+    `the chapter reads the same in order and with the Point first, but for the toll (${read.join(' / ')})`);
+  everyGoalWalked(ok, [CHAPTER]);
 }
