@@ -160,7 +160,7 @@ comment on #22; each may be overturned:
 10. **It pays outside any area's budget,** about 9,000 xp a member, as Wrackholm's §9 already counts
     it; its gold is the Compact's drop coin, heavy; its finds sit in the band-28 window. Wrackholm
     declares it so by listing the three ids in its `outside` (EXPANSION §5.2).
-11. **It is built last in Act IV,** after the novelty check learns to place a map by its band.
+11. **It is built last in Act IV,** after the novelty check learns to place a map by its band (done in #682).
 
 Decided by delegate for #22 (the drop's monsters), each the owner's to overturn:
 
