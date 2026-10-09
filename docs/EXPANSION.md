@@ -475,7 +475,7 @@ docs/areas/<area>.md                    the area's brief, and what was built
 | Sunderwood | 14–16 | chasm, crystal and dead wood as terrain; the Rift generator |
 | The Kilns | 16–18 | ash and pine, built (#536); Kiln-script and Linguist; Kilnhaven's ferry and ship (#432) |
 | Cairnmoor, Rimewater | 18–22 | ice and lying snow as terrain (heather came with Act II; ice came with #536 and lets a group stand on it; lying snow is the maps' snow); regeneration, curse and calls; the drove road's coach; the one story lock the act spends (#432, #440) |
-| The Whitespine | 22–24 | cliffs and peaks, with the road through them; a group that talks before it fights; sweep (#442) |
+| The Whitespine | 22–24 | cliffs and peaks, with the road through them, built (#543); a group that talks before it fights; sweep (#442) |
 | Ashfall | 24–26 | the crossing by ship, open from the start; volcano and lava fields; sweep with fire; the sentries after the Stone (#442) |
 | The Glasswold | 26–28 | steppe and dunes; stone and its cure; the Rider's ride to Cinderport; a lava flow sealing the Glass, drawn by the Wold's doc (#442, #523) |
 | Hearth Isle, the Underdeep | 28–32 | the Underdeep's look; the endings |

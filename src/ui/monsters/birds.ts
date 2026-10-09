@@ -30,6 +30,10 @@
 // primaries lie back along its side and over a long wedge of a tail, the bill is deep and arched,
 // the throat shaggy, and the black takes a green and violet gloss. It does not hop. Now and then it
 // calls: the head bows forward, the bill opens and the hackles bristle out into a beard.
+// The Spine Eagle is the frame at its biggest, coming down out of the sky: the wings raised high over
+// its back with the fingered primaries spread, the feathered legs thrust forward and the yellow feet
+// open under them, just off the ground. Dark brown, the crown and nape gold, a heavy brow over the
+// eye and a deep yellow bill hooked at the tip. It does not hop; now and then the wings settle.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
@@ -38,7 +42,7 @@ import type { Part } from './gloss.ts';
 import { mix, shade } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['crow', 'owl', 'old_rook', 'grey_heron', 'wrack_gull', 'raven'];
+export const KINDS: readonly MonsterSprite[] = ['crow', 'owl', 'old_rook', 'grey_heron', 'wrack_gull', 'raven', 'spine_eagle'];
 
 /**
  * The frame's parts, as proportions of the crow's (1 = the crow, 0 = none). Each is named for the
@@ -110,6 +114,16 @@ interface Build {
   fold: number;
   /** The call, 0 none: now and then the head bows, the bill opens and the hackles bristle, the raven's. */
   call: number;
+  /** How far the wings are raised past the crow's, radians, 0 none: the spine eagle's, coming down. */
+  raise?: number;
+  /** 0 standing; 1 the feet thrust forward and open, just off the ground: the spine eagle's strike. */
+  strike?: number;
+  /** A crown and nape of another colour, the wing's coverts touched with it: the spine eagle's gold. */
+  nape?: string;
+  /** The feet's colour under feathered legs, each toe with a dark talon: the spine eagle's yellow. */
+  toes?: string;
+  /** A heavy brow over the eye, 0 none: the spine eagle's. */
+  brow?: number;
 }
 const CROW: Build = {
   body: 1, neck: 1, head: 1, face: 0, bill: 1, hook: 0, arch: 0, leg: 1, wing: 1, broad: 1, tail: 1, wedge: 0.3, ruff: 0.35, bare: 0,
@@ -158,9 +172,20 @@ const RAVEN: Build = {
   sheen: '#4e9488', gloss: 0.9, feathered: 0, lean: -0.3, hop: 0, tufts: 0, bars: 0, mask: 0,
   crest: 0, pale: 0, streaks: 0, billHex: null, mantle: null, tips: 0, gape: 0, fold: 1, call: 1,
 };
+/**
+ * The spine eagle: the biggest body on the frame, coming down on its prey with the wings raised high
+ * and the primaries spread, the feathered legs thrust forward and the yellow feet open. Dark brown and
+ * matte, a gold crown and nape, a heavy brow and a deep yellow bill with a hook. It does not hop.
+ */
+const EAGLE: Build = {
+  body: 1.3, neck: 0.9, head: 1, face: 0, bill: 0.95, hook: 1, arch: 0.6, leg: 0.95, wing: 1.55, broad: 1.55, tail: 0.85, wedge: 0, ruff: 0.5, bare: 0,
+  sheen: null, gloss: 0.15, feathered: 1, lean: -0.55, hop: 0, tufts: 0, bars: 0, mask: 0,
+  crest: 0, pale: 0, streaks: 0, billHex: '#e2b040', mantle: null, tips: 0, gape: 0, fold: 0, call: 0,
+  raise: 0.4, strike: 1, nape: '#c8963c', toes: '#e2b040', brow: 1,
+};
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
-  const b = kind === 'owl' ? OWL : kind === 'old_rook' ? ROOK : kind === 'grey_heron' ? HERON : kind === 'wrack_gull' ? GULL : kind === 'raven' ? RAVEN : CROW;
+  const b = kind === 'owl' ? OWL : kind === 'old_rook' ? ROOK : kind === 'grey_heron' ? HERON : kind === 'wrack_gull' ? GULL : kind === 'raven' ? RAVEN : kind === 'spine_eagle' ? EAGLE : CROW;
   // The pose is the Build's `face`. Turned to the party, the raised wings reach higher than the
   // crow's hop: drawn inside 0.85 of its height, as the lampman is, the owl's tips keep clear of the
   // top of the combat canvas (at full height and wing 1.6 they run off it), and the wings as much
@@ -169,6 +194,9 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   // The heron's stilts and neck carry its crown to about 1.2 of the crow's frame: drawn inside 0.74
   // of its height, its crown stands where a crow's does.
   else if (b.leg > 2) bird(ctx, x, y, h * 0.74, p, b);
+  // The eagle's raised wings carry their tips to about 1.6 of the crow's frame: drawn inside 0.62 of
+  // its height, they keep clear of the top of the combat canvas.
+  else if (b.raise) bird(ctx, x, y, h * 0.62, p, b);
   else bird(ctx, x, y, h, p, b);
 };
 
@@ -228,7 +256,9 @@ function bird(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
   // flick comes between hops.
   const ht = f % 120, hop = ht < 20 ? Math.sin(ht / 20 * Math.PI) * b.hop : 0;
   const ft = (f + 64) % 96, flick = ft < 16 ? Math.sin(ft / 16 * Math.PI) : 0;
-  const L = 0.2 * b.leg, by = L + hop * 0.07 + p.breathe * 0.004, feet = hop * 0.03;
+  // Coming down (the eagle's strike), the body rides over its feet and the feet over the ground.
+  const raise = b.raise ?? 0, strike = b.strike ?? 0;
+  const L = 0.2 * b.leg, by = L + hop * 0.07 + p.breathe * 0.004 + strike * 0.09, feet = hop * 0.03 + strike * 0.06;
   // The call, every 110 frames: the head bows forward, the bill opens, the hackles bristle out.
   const ct = f % 110, call = b.call > 0 && ct < 30 ? Math.sin(ct / 30 * Math.PI) * b.call : 0;
 
@@ -249,23 +279,41 @@ function bird(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
   const ax = -0.18, ay = by + 0.22 * bs;
   // The flick and the hop both lift the wings, never more than one at a time's worth: together they
   // would raise the far wing's tip past the top of the combat canvas.
-  const th = 0.8 + 0.3 * Math.max(flick, hop);
+  // Raised wings beat less far: the eagle's flick is a settling of them.
+  const th = 0.8 + raise + 0.3 * Math.max(flick, hop) * (1 - raise);
   const W = b.wing;
 
-  /** A leg from the hip down to the foot, with three toes forward and one back, all one piece. */
-  const leg = (dx: number, out: Part[]) => {
-    const fx = 0.02 + dx, fy = feet + 0.01, r = 0.02 * h, t = 0.012 * h;
-    out.push({ k: 'tube', pts: px([0.01 + dx, by + 0.07, -0.015 + dx, (by + feet) / 2 + 0.02, fx, fy]), r0: r, r1: r * 0.78 });
-    out.push({ k: 'tube', pts: px([fx, fy, fx + 0.06, feet + 0.004, fx + 0.11, feet + 0.006]), r0: t, r1: t * 0.8 });
-    out.push({ k: 'tube', pts: px([fx, fy, fx + 0.08, feet + 0.02]), r0: t, r1: t * 0.8 });
-    out.push({ k: 'tube', pts: px([fx, fy, fx - 0.07, feet + 0.006]), r0: t, r1: t * 0.8 });
+  /**
+   * A leg from the hip down to the foot, with three toes forward and one back, all one piece; or the
+   * toes apart in `toes`, each with a talon hooked from its end in `claws`. Thrust forward to strike,
+   * the leg is a thick feathered trouser and the forward toes reach down, open.
+   */
+  const leg = (dx: number, out: Part[], toes: Part[] = out, claws: Part[] | null = null) => {
+    const fx = 0.02 + dx + strike * 0.22, fy = feet + 0.01, r = 0.02 * h * (1 + strike * 0.7), t = 0.012 * h * (1 + strike * 0.3);
+    out.push({ k: 'tube', pts: px([0.01 + dx, by + 0.07, -0.015 + dx + strike * 0.08, (by + feet) / 2 + 0.02, fx, fy]), r0: r, r1: r * 0.78 });
+    const ends = [[fx + 0.11, feet + 0.006 - strike * 0.03], [fx + 0.08, feet + 0.02 - strike * 0.01], [fx - 0.07, feet + 0.006]];
+    toes.push({ k: 'tube', pts: px([fx, fy, fx + 0.06, feet + 0.004, ends[0][0], ends[0][1]]), r0: t, r1: t * 0.8 });
+    toes.push({ k: 'tube', pts: px([fx, fy, ends[1][0], ends[1][1]]), r0: t, r1: t * 0.8 });
+    toes.push({ k: 'tube', pts: px([fx, fy, ends[2][0], ends[2][1]]), r0: t, r1: t * 0.8 });
+    if (claws) for (const [ex, ey] of ends) {
+      const s = ex < fx ? -1 : 1;
+      claws.push({ k: 'tube', pts: px([ex, ey, ex + s * 0.02, ey - 0.008, ex + s * 0.026, ey - 0.03]), r0: t * 0.75, r1: t * 0.2 });
+    }
+  };
+  /** The eagle's toes in their own yellow, and the talons dark at their ends. */
+  const toeHex = b.toes ? shade(b.toes, Math.max(0.6, tone)) : null;
+  const foot = (toes: Part[], claws: Part[], k: number): void => {
+    if (!toeHex) return;
+    blob(ctx, B, shade(toeHex, k), toes, { h, formK: 0.3 });
+    blob(ctx, B, horn, claws, { h, form: false });
   };
 
   // ---- far side, in shadow: the far wing raised a little higher than the near, and the far leg.
   // A folded far wing lies on the bird's far side, hidden by the body.
-  const farLeg: Part[] = [];
-  leg(-0.09, farLeg);
+  const farLeg: Part[] = [], farToes: Part[] = [], farClaws: Part[] = [];
+  leg(-0.09, farLeg, toeHex ? farToes : farLeg, toeHex ? farClaws : null);
   blob(ctx, B, shade(shank, 0.85), farLeg, { h, formK: 0.3 });
+  foot(farToes, farClaws, 0.85);
   const mantle = b.mantle ? shade(b.mantle, tone) : null;
   if (!b.fold) {
     const fw = wingOutline(sx - 0.05, sy + 0.02, th + 0.15, W, b.broad, ax, ay + 0.04);
@@ -288,9 +336,10 @@ function bird(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
   }
 
   // ---- the near leg, scaled horn, under the belly feathers.
-  const nearLeg: Part[] = [];
-  leg(0, nearLeg);
+  const nearLeg: Part[] = [], nearToes: Part[] = [], nearClaws: Part[] = [];
+  leg(0, nearLeg, toeHex ? nearToes : nearLeg, toeHex ? nearClaws : null);
   blob(ctx, B, shank, nearLeg, { h, formK: 0.3 });
+  foot(nearToes, nearClaws, 1);
 
   // ---- the plumage: body, breast, belly, the feathered thigh, neck and head, ONE mass.
   const bare = b.bare > 0;
@@ -317,6 +366,10 @@ function bird(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
     { x0: X(-0.02), y0: U(by + 0.1), x1: X(0.05), y1: U(by + 0.05), r: h * 0.02, a: 0.25 },            // the thigh into the belly
   ] });
   if (bare) blob(ctx, B, mix(plume, skin, b.bare), [{ k: 'ball', x: X(hx), y: U(hy), r: h * rH }], { h, formK: 0.4 });
+  // The eagle's gold, a marking on the one mass: the crown, and down the back of the neck.
+  if (b.nape) patch(ctx, B, shade(b.nape, tone), [
+    { k: 'ell', x: X(hx - rH * 0.45), y: U(hy - rH * 0.05), rx: h * rH * 1.05, ry: h * rH * 0.7, rot: -0.85 },
+  ], { alpha: 0.85, feather: 0.45 });
   // The heron's white head and neck, a marking on the one mass, and the streaks down its front.
   if (b.pale > 0) {
     const white = mix(plume, shade('#f2f0ea', tone), b.pale);
@@ -345,6 +398,10 @@ function bird(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
     if (mantle) patch(ctx, B, mantle, [{ k: 'ell', x: X(-0.06), y: U(by + 0.3 * bs), rx: h * 0.24 * bs, ry: h * 0.07 * bs, rot: b.lean }], { alpha: 0.85, feather: 0.4 });
     blob(ctx, B, mantle ?? mix(plume, far, 0.15), [{ k: 'poly', pts: px(nw.pts) }], { h, formK: 0.35, spread: 0.8, gloss: 0.2 * b.gloss });
     wingTips(ctx, nw, b.tips, h, px, tone, 1);
+    // The eagle's coverts, touched with the gold of its nape.
+    if (b.nape) patch(ctx, B, mix(plume, shade(b.nape, tone), 0.6), [
+      { k: 'ell', x: X((sx + nw.wrist[0] + ax) / 3), y: U((sy + nw.wrist[1] + ay) / 3), rx: h * 0.11 * W, ry: h * 0.05 * W, rot: -1.1 },
+    ], { alpha: 0.5, feather: 0.6 });
     // The sheen: blue-violet on the coverts and the nape, where a crow's black catches the light.
     if (sheen) patch(ctx, B, sheen, [
       { k: 'ell', x: X((sx + nw.wrist[0] + ax) / 3), y: U((sy + nw.wrist[1] + ay) / 3), rx: h * 0.1 * W, ry: h * 0.07 * W, rot: -0.9 },
@@ -410,6 +467,8 @@ function bird(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
 
   // ---- the eye: bright and watching. In profile only the one (a bird turned to the party is `facing`).
   const er = rH * 0.2 * h;
+  // The eagle's brow, heavy over the eye and down toward the bill: the glare.
+  if (b.brow) softLine(ctx, B, px([hx - rH * 0.15, hy + rH * 0.44, hx + rH * 0.35, hy + rH * 0.42, hx + rH * 0.78, hy + rH * 0.2]), far, Math.max(1, h * rH * 0.24 * b.brow), 0.8);
   eye(ctx, X(hx + rH * 0.22), U(hy + rH * 0.18), er, eyeCol);
 }
 

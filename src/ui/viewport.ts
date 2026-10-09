@@ -28,12 +28,12 @@ import { FACING_DX, FACING_DY } from '../game/types.ts';
 import type { Facing } from '../game/types.ts';
 import { shade, mix, rgba } from '../lib/art/palettes.ts';
 import { TERRAIN_COLORS, VOID_PINK } from './palette.ts';
-import { drawMonsterSprite, drawTreeSprite, drawDeadTreeSprite, drawCrystalSprite, drawLighthouseSprite, LIGHTHOUSE_HEIGHT, LIGHTHOUSE_BANDS, drawRockSprite, drawMountainSprite, drawPillarSprite, treeSeason, HIGH_SUMMER } from './sprites.ts';
+import { drawMonsterSprite, drawTreeSprite, drawDeadTreeSprite, drawCrystalSprite, drawLighthouseSprite, LIGHTHOUSE_HEIGHT, LIGHTHOUSE_BANDS, drawRockSprite, drawMountainSprite, drawPeakSprite, drawCliffSprite, drawPillarSprite, treeSeason, HIGH_SUMMER } from './sprites.ts';
 import type { TreeSeason } from './sprites.ts';
 import type { MonsterSprite } from '../game/monsters.ts';
 import type { Weather } from '../game/weather.ts';
 import { mixHash, weatherSight } from '../game/weather.ts';
-import { sunTimes } from '../game/calendar.ts';
+import { sunTimes, DAYS_PER_YEAR } from '../game/calendar.ts';
 import type { Tide } from '../game/calendar.ts';
 import { hash } from './brush.ts';
 import { hearthBearing } from '../game/stones.ts';
@@ -91,6 +91,8 @@ export const SNOW_HOLD: Record<Terrain, number> = {
   salt: 0.6, heather: 0.85, water: 0, deep: 0, lava: 0, chasm: 0, tidal: 0,
   // The ash is warm and greys what falls on it; the pines keep some off; a frozen lake takes it all.
   ash: 0.65, pine: 0.72, ice: 0.8,
+  // The scree under a peak takes it as the hills do; the foot of a cliff, sheltered by its face, less.
+  peak: 0.9, cliff: 0.6,
 };
 type Ramp = readonly [number, string][];
 /** A colour through the year: the ramp's stops by day of the year, mixed between. */
@@ -111,6 +113,8 @@ export function heatherBloom(day: number): number { return Math.max(0, Math.min(
 function heatherColor(day: number): string { return mix('#644a48', '#7a4a6c', heatherBloom(day)); }
 /** The floor of the woods: the grass of the year in the trees' shade, over moss and leaf litter. */
 function woodsColor(day: number): string { return mix(grassColor(day), '#3e5028', 0.45); }
+/** How cold the year is on the heights: 1 in deep Frost, about 0 at Harvest. */
+function cold(day: number): number { return (1 + Math.cos((2 * Math.PI * (day - 100)) / DAYS_PER_YEAR)) / 2; }
 /** The pinewoods' floor: needles and moss, brown through the year and a little greener in the spring. */
 function pineColor(day: number): string { return mix(TERRAIN_COLORS.pine, grassColor(day), 0.18); }
 /**
@@ -434,6 +438,9 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
         if (cell.solid === 'tree' && cell.terrain === 'crystal') drawCrystalSprite(ctx, bx, by, u, tone, Math.floor(hash(c.x, c.y) * 3), dark ? 0 : daylight * (1 - cloud));
         else if (cell.solid === 'tree') drawTreeSprite(ctx, bx, by, u, tone, Math.floor(hash(c.x, c.y) * 5), env.trees);
         else if (cell.solid === 'rock') drawRockSprite(ctx, bx, by, u, tone, env.cover);
+        // A peak's snow comes down in the winter and further under lying snow; a cliff's lies along its top.
+        else if (cell.solid === 'mountain' && cell.terrain === 'peak') drawPeakSprite(ctx, bx, by, u, tone, Math.floor(hash(c.x, c.y, 3) * 3), 0.5 + 0.18 * cold(env.day) + 0.3 * env.cover);
+        else if (cell.solid === 'mountain' && cell.terrain === 'cliff') drawCliffSprite(ctx, bx, by, u, tone, Math.floor(hash(c.x, c.y, 3) * 3), 0.3 * cold(env.day) + env.cover);
         else if (cell.solid === 'mountain') drawMountainSprite(ctx, bx, by, u, tone, Math.floor(hash(c.x, c.y, 3) * 3));
         else if (cell.solid === 'pillar') drawPillarSprite(ctx, bx, horizon, u, tone);
       } else if (d > 0 && (cell.terrain === 'woods' || cell.terrain === 'deadwood' || cell.terrain === 'pine') && !backdrop) {

@@ -26,6 +26,7 @@ export const TERRAIN_COLORS: Record<Terrain, string> = {
   hills: '#7a8e48', farm: '#b8b030', woods: '#2e6436', deadwood: '#6a645c',
   salt: '#e6e2d8', heather: '#7c4466', tidal: '#a0a088', crystal: '#9ab4c8', chasm: '#0c0a12',
   ash: '#34302e', pine: '#52542e', ice: '#b8d0e0',
+  peak: '#c0bcc0', cliff: '#56607c',
 };
 /** How far the automap washes a terrain's colour toward the parchment. */
 export const AUTOMAP_WASH = 0.55;

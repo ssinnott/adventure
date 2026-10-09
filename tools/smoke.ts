@@ -797,6 +797,62 @@ const iced = await page.evaluate(async () => {
   }
   return { below, above, standing };
 });
+
+// Cliffs and peaks (#543): on the Foreland, grass laid all about, a mountain, a peak and a cliff each
+// put two squares ahead in turn, as near as the night lets the view see, by day and by night in each season and under snow, and what each
+// paints over the horizon read off against the grass alone. Each paints in every light; the peak
+// stands taller and whiter than the mountain, the cliff is a sheer face, about as wide at its top as
+// at its foot where the mountain and the peak narrow, the three are each their own colours, and a
+// deep snow whitens the peak and the cliff.
+const range = await page.evaluate(async () => {
+  const V = await import('/src/ui/viewport.ts' as string), M = await import('/src/game/map.ts' as string);
+  const w = (window as any).__game.game.world;
+  const W = 400, H = 268, c = document.createElement('canvas'), sky = document.createElement('canvas');
+  c.width = sky.width = W; c.height = sky.height = H;
+  const ctx = c.getContext('2d', { willReadFrequently: true })!, skyCtx = sky.getContext('2d')!;
+  const minutes = w.state.minutes;
+  w.travel('shelf', 16, 16, 0);
+  const m = w.map, kept = m.cells.slice(), px = w.state.x, py = w.state.y, ahead = (py - 2) * m.width + px;
+  for (let y = py - 6; y <= py + 1; y++) for (let x = px - 4; x <= px + 4; x++) m.cells[y * m.width + x] = { ...M.LEGEND[','], ch: ',' };
+  const paint = (ch: string | null, doy: number, hour: number, snow: boolean): Uint8ClampedArray => {
+    m.cells[ahead] = { ...M.LEGEND[ch ?? ','], ch: ch ?? ',' };
+    w.state.minutes = ((doy - 75 + 120) % 120) * 1440 + hour * 60;
+    w.cached = { seed: w.state.weatherSeed, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: snow ? -4 : 12, cover: snow ? 1 : 0, wet: 0 } };
+    ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H });
+    return ctx.getImageData(0, 0, W, H).data;
+  };
+  // Over the horizon only, down to above the floor of the square beyond, which the solid hides.
+  const below = H / 2 + 20;
+  const read = (a: Uint8ClampedArray, bare: Uint8ClampedArray) => {
+    const rows = new Map<number, number[]>(), seen = new Set<number>(), sum = [0, 0, 0];
+    let n = 0;
+    for (let y = 0; y < below; y++) for (let x = 0; x < W; x++) {
+      const i = (y * W + x) * 4;
+      if (Math.abs(a[i] - bare[i]) + Math.abs(a[i + 1] - bare[i + 1]) + Math.abs(a[i + 2] - bare[i + 2]) <= 24) continue;
+      n++; seen.add((a[i] << 16) | (a[i + 1] << 8) | a[i + 2]); sum[0] += a[i]; sum[1] += a[i + 1]; sum[2] += a[i + 2];
+      const r = rows.get(y) ?? [x, x]; r[0] = Math.min(r[0], x); r[1] = Math.max(r[1], x); rows.set(y, r);
+    }
+    const ys = [...rows.keys()].sort((p, q) => p - q), top = ys[0] ?? below, span = below - top;
+    const width = (y: number): number => { const r = rows.get(Math.round(y)); return r ? r[1] - r[0] + 1 : 0; };
+    const mean = sum.map((v) => (n ? v / n : 0));
+    return { n, colours: seen.size, top, mean, light: (mean[0] + mean[1] + mean[2]) / 3, sheer: width(top + span * 0.15) / Math.max(1, width(below - 1)) };
+  };
+  const kinds: [string, string][] = [['mountain', 'M'], ['peak', 'A'], ['cliff', '|']];
+  const days: [string, number][] = [['spring', 20], ['summer', 50], ['autumn', 65], ['winter', 100], ['snow', 100]];
+  const thin: string[] = [], at: Record<string, ReturnType<typeof read>> = {};
+  for (const [name, doy] of days) for (const hour of [12, 0]) {
+    const bare = paint(null, doy, hour, name === 'snow');
+    for (const [kind, ch] of kinds) {
+      const r = read(paint(ch, doy, hour, name === 'snow'), bare);
+      if (r.n < 300 || r.colours < 4) thin.push(`${kind} ${name}@${hour} (${r.n} pixels, ${r.colours} colours)`);
+      if (hour === 12) at[`${kind} ${name}`] = r;
+    }
+  }
+  for (let i = 0; i < kept.length; i++) m.cells[i] = kept[i];
+  w.state.minutes = minutes; w.cached = undefined;
+  const day = (kind: string) => { const r = at[`${kind} summer`]; return { top: r.top, light: Math.round(r.light), sheer: Math.round(r.sheer * 100) / 100, mean: r.mean.map(Math.round), winter: Math.round(at[`${kind} winter`].light), snowed: Math.round(at[`${kind} snow`].light) }; };
+  return { thin, mountain: day('mountain'), peak: day('peak'), cliff: day('cliff') };
+});
 // The quest log: Vask's contract is announced as his dialogue closes, and J opens the log on it. He
 // holds court on the keep's door, in the throne room.
 await page.evaluate(() => { const g = (window as any).__game.game; g.world.travel('keep', 7, 4, 0); g.interact(g.world.featureHere()); });
@@ -1312,6 +1368,16 @@ ok(torches.shown && torches.covers && torches.behind, `an ogre before a sconced 
 ok(sunder.rows > 20 && sunder.drop > 40 && sunder.wall > 20, `a chasm paints darker than grass, its far wall under the rim lighter than the drop (${sunder.rows} rows straight ahead, ${sunder.drop} darker than grass in the lower half; the wall ${sunder.wall} lighter than the foot)`);
 ok(sunder.glass > 200 && sunder.bluer, `glass trees stand over the horizon beyond the chasm, bluer than red (${sunder.glass} pixels, ${sunder.bluer ? 'bluer' : 'not bluer'})`);
 ok(iced.below > 100 && iced.above === 0 && iced.standing > 100, `a group placed on ice is drawn under it, in the ice and nothing of it over the horizon, where the same group on the ice stands up over it (${iced.below} pixels in the ice, ${iced.above} over the horizon; standing, ${iced.standing} over it)`);
+{
+  const { mountain, peak, cliff } = range;
+  ok(range.thin.length === 0, `a mountain, a peak and a cliff paint by day and by night in each season and under snow${range.thin.length ? ' -> too faint: ' + range.thin.join(', ') : ''}`);
+  ok(peak.top < mountain.top - 10 && peak.light > mountain.light + 20, `a peak stands taller and whiter than a mountain (its top at ${peak.top} against ${mountain.top}; ${peak.light} light against ${mountain.light})`);
+  ok(cliff.sheer > 0.85 && mountain.sheer < 0.6 && peak.sheer < 0.6, `a cliff is a sheer face, as wide near its top as at its foot, where a mountain and a peak narrow (${cliff.sheer}, against ${mountain.sheer} and ${peak.sheer})`);
+  const apart = (a: number[], b: number[]): number => Math.round(Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]));
+  const gaps = [apart(mountain.mean, peak.mean), apart(mountain.mean, cliff.mean), apart(peak.mean, cliff.mean)];
+  ok(gaps.every((g) => g >= 20), `a mountain, a peak and a cliff are each their own colours (${gaps.join(', ')} apart: mountain and peak, mountain and cliff, peak and cliff)`);
+  ok(peak.snowed > peak.winter + 10 && cliff.snowed > cliff.winter + 5, `a deep snow whitens the peak and the cliff (${peak.winter} to ${peak.snowed} light, and ${cliff.winter} to ${cliff.snowed})`);
+}
 ok(smooth.stone.end > 2 && smooth.stone.side > 2 && smooth.flat.end === 1 && smooth.flat.side === 1, `a smooth wall is one colour down its face, end and side, where stone shows its courses (stone ${smooth.stone.end} and ${smooth.stone.side} colours, smooth ${smooth.flat.end} and ${smooth.flat.side})`);
 ok(smooth.door > 2 && smooth.seam === 1, `a door in a smooth wall is its seam alone, where in stone it is planks and bands (smooth, ${smooth.seam} colour in its middle; in stone, ${smooth.door})`);
 {
