@@ -26,17 +26,24 @@ export type MapKind = 'town' | 'dungeon' | 'outdoor';
  * through among the pines as the woods are; ice is a frozen lake, walked, with what lives under it.
  * A peak (`A`) and a cliff (`|`) are the range's rock, solid as the mountain is and climbed as it is,
  * by a Mountaineer and nobody else: a summit over the mountains, and an escarpment's sheer face.
+ * Steppe (`s`) is the Wold's open dry grass, walked as grass is; dunes (`u`) are sand in ridges,
+ * walked as slowly as hills; vines (`&`) are the shore's creepers hung from its trees, walked through
+ * as the woods are. The volcano (`V`) is the cone's black rock and a vent (`@`) a mouth smoking in it,
+ * both solid as the mountain is and climbed as it is, by a Mountaineer and nobody else.
  */
 export type Terrain =
   | 'floor' | 'grass' | 'dirt' | 'road' | 'sand' | 'water' | 'deep' | 'swamp' | 'lava' | 'stone' | 'snow'
   | 'hills' | 'farm' | 'woods' | 'deadwood' | 'crystal' | 'chasm' | 'salt' | 'heather' | 'tidal'
   | 'ash' | 'pine' | 'ice'
-  | 'peak' | 'cliff';
+  | 'peak' | 'cliff'
+  | 'steppe' | 'dunes' | 'vines' | 'volcano' | 'vent';
 
 /** Minutes a step onto hills costs over the usual six in the open. */
 export const HILL_DRAG = 2;
-/** Minutes a step onto slow ground costs over the usual six in the open: hills, and ash as much. */
-export const DRAG: Partial<Record<Terrain, number>> = { hills: HILL_DRAG, ash: HILL_DRAG };
+/** Minutes a step onto slow ground costs over the usual six in the open: hills, and ash and dunes as much. */
+export const DRAG: Partial<Record<Terrain, number>> = { hills: HILL_DRAG, ash: HILL_DRAG,
+  dunes: HILL_DRAG,
+};
 
 /**
  * What stands in a cell. `wall` blocks movement and sight; billboards block movement, not sight;
@@ -442,6 +449,7 @@ export const LEGEND: Record<string, Cell> = {
   'M': cell('stone', 'mountain'),
   'A': cell('peak', 'mountain'),
   '|': cell('cliff', 'mountain'),
+  's': cell('steppe'), 'u': cell('dunes'), '&': cell('vines'), 'V': cell('volcano', 'mountain'), '@': cell('vent', 'mountain'),
   '"': cell('stone'),
   [VOID_CH]: cell('floor', 'void'),
 };

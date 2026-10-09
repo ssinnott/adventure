@@ -4,7 +4,7 @@
 // centred on (x, y) with y the ground line and `h` the intended height. `tone` darkens with
 // distance; `flash` paints the hit frame white.
 import type { MonsterSprite } from '../game/monsters.ts';
-import { shade, mix } from '../lib/art/palettes.ts';
+import { shade, mix, rgba } from '../lib/art/palettes.ts';
 import { celBall, celCapsule, celPoly, celTaper, band } from '../lib/art/shading.ts';
 import { B, paintFor, stroke } from './monsters/common.ts';
 import type { MonsterDrawer } from './monsters/common.ts';
@@ -300,6 +300,71 @@ export function drawCliffSprite(ctx: CanvasRenderingContext2D, x: number, y: num
   const deep = 0.03 + 0.07 * Math.min(1, snow), white = shade(SNOW_WHITE, tone);
   celPoly(ctx, B, [...top.flatMap(([t, f]) => pt(t, f)), ...[...top].reverse().flatMap(([t, f]) => pt(t - deep, f * 0.98))], white, 0.2, 0.1);
   if (snow > 0.5) for (const t of beds) stroke(ctx, [...pt(t + 0.03, -0.45), ...pt(t + 0.05, 0.45)], white, lw);
+}
+
+/**
+ * The volcano: a cone of black rock, broader than a mountain and cut off flat at its lip, with ash
+ * run grey down its flanks. A vent (`vent`) is a mouth in it: its fire showing in the lip, `glow` of
+ * the way to its brightest (by night), and its smoke going up. Snow lies thin under the lip, `snow`
+ * of the way to its deepest, and never in the mouth.
+ */
+export function drawVolcanoSprite(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, tone: number, variant: number, vent: boolean, glow: number, snow: number): void {
+  const w = u * 2.8, h = u * (1.75 + variant * 0.15), c = shade('#48302c', tone);
+  const pt = (t: number, f: number): number[] => [x + f * w, y - t * h];
+  const left: [number, number][] = [[0, -0.5], [0.18, -0.36], [0.45, -0.24], [0.75, -0.155], [1, -0.11]];
+  const right: [number, number][] = [[1, 0.1], [0.72, 0.15], [0.42, 0.23], [0.16, 0.35], [0, 0.5]];
+  celPoly(ctx, B, [...left.flatMap(([t, f]) => pt(t, f)), ...pt(0.97, -0.04), ...pt(0.99, 0.03), ...right.flatMap(([t, f]) => pt(t, f))], c, 0.45, 0.25);
+  // The ash run down the flanks from the lip, each streak inside the cone.
+  const ash = shade('#746a64', tone), lw = Math.max(1, u * 0.06);
+  for (const [f0, f1, t1] of [[-0.08, -0.2, 0.3], [0.02 + 0.02 * variant, 0.05, 0.12], [0.07, 0.22, 0.25]]) stroke(ctx, [...pt(0.96, f0), ...pt(0.6, (f0 * 2 + f1) / 3), ...pt(t1, f1)], ash, lw);
+  if (snow > 0.05) {
+    const line = 1 - 0.3 * Math.min(1, snow), at = (side: [number, number][], t: number): number => {
+      for (let i = 0; i < side.length - 1; i++) { const [t0, g0] = side[i], [t1, g1] = side[i + 1]; if ((t - t0) * (t - t1) <= 0) return g0 + ((g1 - g0) * (t - t0)) / (t1 - t0); }
+      return 0;
+    };
+    const fl = at(left, line), fr = at(right, line), cap = [...pt(line, fl), ...pt(1, -0.11), ...pt(0.97, -0.04), ...pt(0.99, 0.03), ...pt(1, 0.1), ...pt(line, fr)];
+    for (let k = 1; k < 6; k++) cap.push(...pt(k % 2 ? line + 0.06 : line - 0.04 * (1 + ((k + variant) % 2)), fr + ((fl - fr) * k) / 6));
+    celPoly(ctx, B, cap, shade(SNOW_WHITE, tone), 0.22, 0.15);
+  }
+  if (!vent) return;
+  // The mouth: dark rock about a fire that is dull by day and bright by night, whatever the light.
+  const [mx, my] = pt(0.99, 0), mw = w * 0.16, mh = Math.max(1.5, h * 0.05);
+  ctx.fillStyle = shade('#2a1e1e', tone); ctx.beginPath(); ctx.ellipse(mx, my, mw, mh, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = mix('#7a2a14', '#ffb040', glow); ctx.beginPath(); ctx.ellipse(mx, my + mh * 0.15, mw * 0.7, mh * 0.6, 0, 0, Math.PI * 2); ctx.fill();
+  // The smoke, rising and leaning off with the wind, lit red from under by night.
+  for (let k = 0; k < 3; k++) {
+    const r = u * (0.14 + 0.06 * k), sx = mx + u * (0.05 + 0.1 * k) * (variant === 1 ? -1 : 1), sy = my - u * (0.16 + 0.27 * k);
+    ctx.fillStyle = rgba(mix(shade('#9a948e', Math.max(tone, 0.4)), '#c0583a', glow * (0.5 - k * 0.12)), 0.6 - k * 0.14);
+    ctx.beginPath(); ctx.arc(sx, sy, r, 0, Math.PI * 2); ctx.fill();
+  }
+}
+
+/**
+ * A tree of the shore hung with creepers: a leaning trunk, a broad crown and the creepers' curtains
+ * hanging from it most of the way to the ground, leaves along each strand. They keep their green on
+ * the warm shore, duller as the trees' leaves go; snow lies along the crown.
+ */
+export function drawVineSprite(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, tone: number, variant: number, season: TreeSeason = HIGH_SUMMER): void {
+  const h = u * 2.5, dull = (1 - season.leaf) * 0.6, lean = u * 0.1 * (variant - 1);
+  const trunk = shade('#4a3a2c', tone), leaf = shade(mix('#2a6a2e', '#5a6a34', dull), tone), strand = shade(mix('#3a7a30', '#6a6a38', dull), tone);
+  const cx = x + lean, cy = y - h * 0.74, r = u * 0.7;
+  celTaper(ctx, B, x, y, cx, y - h * 0.66, u * 0.15, u * 0.09, trunk, 0.2);
+  celBall(ctx, B, cx - r * 0.62, cy + r * 0.12, r * 0.66, shade(leaf, 0.9));
+  celBall(ctx, B, cx + r * 0.62, cy + r * 0.08, r * 0.66, shade(leaf, 1.05));
+  celBall(ctx, B, cx, cy - r * 0.18, r * 0.78, leaf);
+  // The curtains: strands from under the crown, longer and shorter by turns, each a little waved.
+  const sw = Math.max(1, u * 0.045);
+  for (let k = 0; k < 6; k++) {
+    const sx = cx + (-0.8 + 0.32 * k) * r, top = cy + r * (0.3 + 0.25 * (1 - Math.abs(-0.8 + 0.32 * k))), len = h * (0.28 + 0.06 * ((k * 3 + variant * 2) % 5));
+    const sway = u * 0.05 * (k % 2 ? 1 : -1);
+    stroke(ctx, [sx, top, sx + sway, top + len * 0.5, sx, top + len], strand, sw);
+    ctx.fillStyle = shade(leaf, 1.12);
+    for (let j = 1; j < 4; j++) { const ly = top + (len * j) / 4, lx = sx + (j % 2 ? sway : -sway * 0.5); ctx.beginPath(); ctx.ellipse(lx + (j % 2 ? sw : -sw), ly, sw * 1.6, sw, 0, 0, Math.PI * 2); ctx.fill(); }
+  }
+  if (season.snow > 0.15) {
+    const white = shade(SNOW_WHITE, tone), sl = Math.max(1, u * 0.08 * season.snow);
+    stroke(ctx, [cx - r * 1.1, cy + r * 0.02, cx - r * 0.6, cy - r * 0.5, cx, cy - r * 0.92, cx + r * 0.6, cy - r * 0.52, cx + r * 1.1, cy - r * 0.02], white, sl);
+  }
 }
 
 export function drawPillarSprite(ctx: CanvasRenderingContext2D, x: number, horizon: number, u: number, tone: number): void {
