@@ -1006,6 +1006,12 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     ok(/Lantern Watch, or to Highcell/.test(goal(w, 'nest')) && hear(w, 'monksvale_j11', HERDER).includes('A Lantern came up the vale'),
       `${how}: the nest opened, the herder remembers the Lantern who went up, and the goal is the badge's (${goal(w, 'nest')})`);
     if (who === READER) {
+      // The instruments from under the Stone's slab, carried with the badge, she takes first, at the
+      // first meeting, and pays nothing; the badge she asks for at the next.
+      w.party.bag.push('lantern_instruments');
+      const gold = w.party.gold, took = hear(w, map, who);
+      ok(took.includes('not ticked') && !w.party.bag.includes('lantern_instruments') && w.party.gold === gold && !!w.party.flags.q_nest_instruments && w.party.bag.includes('lantern_badge'),
+        'watch: the Reader takes the Lantern\'s Instruments at the first meeting, for nothing, and leaves the badge for the next');
       w.world.travel(map, who.x, who.y);
       const keep = meet(who, w.party, heard(w.world, who)).choice?.answers.find((a) => !a.sets);
       ok(!!keep && answer(keep, w.party).includes('keep it close') && w.party.bag.includes('lantern_badge') && !page(w, 'nest')?.done, 'watch: refused, the Reader lets the company keep the badge');
