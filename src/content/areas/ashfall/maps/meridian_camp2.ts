@@ -4,19 +4,19 @@
 // and a cinder drake; off the west end the Company's second camp, cold, where they left their kit; off the
 // third a grave with a note; off the fourth the drake's nest, two drakelings and the Brood Drake on its
 // eggs and its hoard, a side gallery the walk to the end never enters; and at the corridors' end the Ember
-// Stone's third part, a heap of the walker's parts and the stair down to the camp (STAIR2, barred until the
-// camp is built). Once the Stone is lit a sentry comes up that stair. Band 26, the area's top, its nest and
+// Stone's third part, a heap of the walker's parts and the stair down to the camp (STAIR2). Once the Stone is
+// lit a sentry comes up that stair. Band 26, the area's top, its nest and
 // its elite at 27; docs/areas/meridian_camp.md §4.2 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 
 /**
  * The way down to the camp (meridian_camp3, #22's third level): the stair at the corridors' end, 4,30,
- * onto the camp's first square at 4,1, facing south, which this asks that level to give it. An exit leads
- * only to a built map, so the camp lists it in this map's exits, opens the stair's square and drops or
- * rewrites `mc2_stair`; its way back up lands on 4,29, facing north, the stair's head.
+ * onto the camp's first square at 4,1, facing south; its way back up lands on 4,29, facing north, the
+ * stair's head.
  */
-export const STAIR2: Exit = { x: 4, y: 30, to: 'meridian_camp3', tx: 4, ty: 1, tf: SOUTH };
+export const STAIR2: Exit = { x: 4, y: 30, to: 'meridian_camp3', tx: 4, ty: 1, tf: SOUTH,
+  label: 'Down the steps out of the heat, into a cold that takes the breath.' };
 
 export const MERIDIAN_CAMP2: MapDef = {
   id: 'meridian_camp2',
@@ -59,12 +59,14 @@ export const MERIDIAN_CAMP2: MapDef = {
     '##...........................###',
     '##.....#########################',
     '##.....#########################',
-    '################################',
+    '####.###########################',
     '################################',
   ],
   exits: [
     // The stair's foot, up onto the vents' floor at the stair's head (STAIR), facing away from it.
     { x: 4, y: 1, to: 'meridian_camp', tx: 4, ty: 29, tf: NORTH, label: 'Up the steps, out of the worst of the heat, onto the vents\' floor.' },
+    // The stair at the corridors' end, down to the camp (STAIR2).
+    STAIR2,
   ],
   features: [
     // The first corridor: hot enough to blister and straighter than anything made by hand; the Company's
@@ -89,11 +91,11 @@ export const MERIDIAN_CAMP2: MapDef = {
     { kind: 'event', x: 14, y: 26, id: 'mc2_crust', once: true, text: 'Bits of crust like broken pots at the mouth of a gallery, still warm. From inside, a hiss.' },
     { kind: 'chest', x: 18, y: 21, id: 'mc2_hoard', gold: 1500, items: [] },
     // The corridors' end: the Ember Stone's third part (#516), the walker's parts, which no shop buys, and
-    // the stair down to the camp, barred until it is built (STAIR2): its line at its head, each time.
+    // the stair down to the camp (STAIR2): its line at its head, the once.
     { kind: 'event', x: 6, y: 27, id: 'mc2_end', once: true, text: 'The corridor ends in a wall of iron, flat and blind, as if whoever made it stopped here.' },
     { kind: 'chest', x: 2, y: 27, id: 'mc2_part', gold: 0, items: ['ember_part3'] },
     { kind: 'chest', x: 2, y: 29, id: 'mc2_heap', gold: 0, items: ['walker_damper', 'walker_iron'] },
-    { kind: 'event', x: 4, y: 29, id: 'mc2_stair', text: 'Steps going down, and up them a draught, cold, the first in days. Bars across them will not give.' },
+    { kind: 'event', x: 4, y: 29, id: 'mc2_stair', once: true, text: 'Steps going down, and up them a draught, cold, the first in days. There is smoke on it.' },
   ],
   encounters: [
     // The flue walker on its round with a stoker and a cinder drake in its heat; in the nest two drakelings,

@@ -21,7 +21,6 @@ import { ok, owed, stopsWalk } from './lib.ts';
  */
 const UNPLACED: Record<string, string> = {
   tallymaster: '#22, dead_drop3',
-  deep_knocker: '#22 meridian_camp3', inspector: '#22 meridian_camp3',
   grey_lion: '#529',
 };
 

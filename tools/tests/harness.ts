@@ -163,8 +163,6 @@ export const WHOLE: Record<string, { role: Role; share: number; why: string }> =
  * leaves this list then.
  */
 export const RESTATE: Record<string, string> = {
-  deep_knocker: "armoured at 28, Meridian Camp's gallery (#22)",
-  inspector: "a caller on a soldier's numbers at 28, Meridian Camp's gallery (#22)",
   tallymaster: "the boss at 28, the Dead-Drop's (#22)",
 };
 

@@ -7,6 +7,7 @@ import { CINDERPORT } from './maps/cinderport.ts';
 import { FIREMOUNT_G11 } from './maps/firemount_g11.ts';
 import { MERIDIAN_CAMP } from './maps/meridian_camp.ts';
 import { MERIDIAN_CAMP2 } from './maps/meridian_camp2.ts';
+import { MERIDIAN_CAMP3 } from './maps/meridian_camp3.ts';
 import { EMBERWASTE_F10 } from './maps/emberwaste_f10.ts';
 import { EMBERWASTE_E10 } from './maps/emberwaste_e10.ts';
 import { EMBERWASTE_F11 } from './maps/emberwaste_f11.ts';
@@ -17,22 +18,27 @@ import { GUILDS } from './guilds.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { INTERIORS } from './interiors.ts';
+import { QUESTS } from './quests.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
   id: 'ashfall' as const,
   // In road order: the Stair's foot (#510), Cinderport's box (#511), the town (#512), Fire Mountain's
-  // flank (#513), the vents beneath it and the iron corridors under them (#22), the Waste's road west of
-  // the box (#517), Old Cinder's and the Ember Stone's box south of it (#514), Old Cinder's two
-  // levels under its crater (#515) and the Ember Stone under its field of cinders (#516).
-  maps: [CINDERCOAST_H10, CINDERCOAST_G10, CINDERPORT, FIREMOUNT_G11, MERIDIAN_CAMP, MERIDIAN_CAMP2, EMBERWASTE_F10, EMBERWASTE_E10, EMBERWASTE_F11, OLD_CINDER, OLD_CINDER2, EMBER_STONE],
+  // flank (#513), the vents beneath it, the iron corridors under them and the camp at the bottom (#22),
+  // the Waste's road west of the box (#517), Old Cinder's and the Ember Stone's box south of it (#514),
+  // Old Cinder's two levels under its crater (#515) and the Ember Stone under its field of cinders (#516).
+  maps: [CINDERCOAST_H10, CINDERCOAST_G10, CINDERPORT, FIREMOUNT_G11, MERIDIAN_CAMP, MERIDIAN_CAMP2, MERIDIAN_CAMP3, EMBERWASTE_F10, EMBERWASTE_E10, EMBERWASTE_F11, OLD_CINDER, OLD_CINDER2, EMBER_STONE],
+  // The camp pays outside any area's budget: its floor, 27, is past Ashfall's band (EXPANSION §5.2, #679).
+  outside: ['meridian_camp3'],
   monsters: MONSTERS,
   sprites: SPRITES,
   // Cinderport's armourer's step (#542) and the chandler's stone cure (#546), sold in the town (#512); the
   // boxes' finds; the Ember Stone's first part and the stokers' parts, on Meridian Camp's vents, and its
-  // third part, the Company's mail and the flue walker's parts, on the iron corridors (#22).
+  // third part, the Company's mail and the flue walker's parts, on the iron corridors, and the Company's
+  // staff and Fane's map in the camp (#22).
   items: ITEMS,
-  quests: [],
+  // What the Springs Bring Up, The Founding Stone and The Shovel That Does Not Blunt (#519).
+  quests: QUESTS,
   // The Cartographers' Surveyor's rung, the fourth Meridian journal found under the Ember Stone (#635).
   guilds: GUILDS,
   // The Window, the act's second chapter, is #518's.
