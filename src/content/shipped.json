@@ -1675,6 +1675,41 @@
         "7,11"
       ]
     },
+    "monastery": {
+      "size": "16x16",
+      "used": [
+        "hc1_board",
+        "hc1_cells",
+        "hc1_down",
+        "hc1_gate",
+        "hc1_refectory",
+        "hc1_stair",
+        "hc1_tower"
+      ],
+      "groups": [
+        "hc1_brothers",
+        "hc1_ringers"
+      ],
+      "doors": []
+    },
+    "monastery2": {
+      "size": "16x16",
+      "used": [
+        "hc2_chapter",
+        "hc2_niches",
+        "hc2_seat",
+        "hc2_stair",
+        "hc2_tally",
+        "hc2_things"
+      ],
+      "groups": [
+        "hc2_abbot",
+        "hc2_chapter"
+      ],
+      "doors": [
+        "7,11"
+      ]
+    },
     "rime_lodge": {
       "size": "16x16",
       "used": [

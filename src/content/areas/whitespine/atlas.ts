@@ -1,5 +1,5 @@
-// The Whitespine's part of the world map: its three zones, the plate of its one dungeon, and its
-// sites. docs/areas/whitespine.md is its brief (#498).
+// The Whitespine's part of the world map: its three zones, the plates of its one dungeon's two levels,
+// and its sites. docs/areas/whitespine.md is its brief (#498).
 import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
@@ -17,12 +17,13 @@ export const ZONES: readonly AtlasZone[] = [
 ];
 
 export const PLACES: readonly AtlasPlace[] = [
-  { id: 'monastery', name: 'Highcell', kind: 'dungeon', planned: true, band: [23, 24], at: [322, 346] }, // the Monastery, two levels behind J11's gate at 322,342 (#500); its plate moved from K12 (#443, call 9)
+  { id: 'monastery', kind: 'dungeon', at: [322, 346] }, // Highcell, the Monastery: the upper house, through J11's gate at 26,24 (#499, #500); its plate moved from K12 (#443, call 9)
+  { id: 'monastery2', kind: 'dungeon', at: [322, 352] }, // the lower house, down the night stair
 ];
 
 export const SITES: readonly AtlasSite[] = [
   // IX. The Whitespine (docs/areas/whitespine.md §10: the Crown's and the Lanterns' English, kept).
-  { name: 'Highcell', icon: 'monastery', at: [322, 342], label: 'right', planned: true }, // the Monastery
+  { name: 'Highcell', icon: 'monastery', at: [322, 342], label: 'right' }, // the Monastery, at the gate on J11, 26,24 (#499, #500)
   { name: 'Peak Stone', icon: 'stone', at: [292, 318], label: 'below' }, // whole, on I11 at 28,0 (#501)
   { name: 'Giants', icon: 'label', at: [300, 296], planned: true },
   { name: 'Stairwatch', icon: 'tower', at: [270, 312], label: 'right', planned: true }, // over the Giants' Stair: the Knight's third prestige
