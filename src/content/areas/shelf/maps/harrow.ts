@@ -1,7 +1,7 @@
 // Helmstow, capital of the Foreland. The party's home town for the slice: inn, temple, shop, guild,
 // trainer and tavern, with the gate south onto the Foreland road, the harbour postern beside it and
 // the gatehouse north into the keep's ward (keep.ts), where the Regent-Warden holds court. After Act
-// II it is his city (#157). Two first prestiges are taught here, in both cities: the Paladin's by
+// II it is his city (#157), and once the Hand has Wenna it is worse (#449). Two first prestiges are taught here, in both cities: the Paladin's by
 // Mottram the chandler and the Bard's by a luthier under the Hearthlight's eaves (#19).
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
@@ -14,6 +14,7 @@ const DEARER: Readonly<Record<string, number>> = {
 const CURFEW = 'The curfew bell, from the Chapel tower: whoever has the rope now hauls it like a bucket.';
 const GATE_WARDENS = 'Wardens on the wall-walk and Wardens inside the gate, new faces all of them. They look you over slowly, the way men do who have nothing else to look at.';
 const POSTERN_WARDENS = 'Wardens on the wall above the postern, grey against the grey. None of them looks down; a fish cart is not their business, and nor, it seems, are you.';
+const GIBBET = 'A gibbet in the street, new, its timber still pale. The rope is tarred against the weather, and nothing hangs from it.';
 
 export const HARROW: MapDef = {
   id: 'harrow',
@@ -89,6 +90,13 @@ export const HARROW: MapDef = {
       'A fisherman, to nobody: "Thirty years that bell told me when to come in off the water. Now it tells me when to get off the street. Same bell. Different rope."',
       'A dockhand: "They boarded the Chapel on a Tuesday. Nobody carried anything out but the sexton, and he had a book under his coat, out of the rain. There was no rain."',
       'A Warden, into his cup: "Ask at the Drillyard if you want paying. Ask on the wall if you want telling. Don\'t ask either one about the other."',
+    ], says: [
+      // After the Hand has Wenna (`q_wenna_taken`, #449): Vask's city again, and the Eel's talk is the gibbet's.
+      { after: { flag: 'q_wenna_taken' }, lines: [
+        'The tavern is near empty. A Warden sits by the door with his helm on, and drinks nothing.',
+        'A dockhand, low: "They built it in the street and hanged nobody on it. It is there to be looked at, so we look."',
+        'A fisherman: "The oars off every boat in the harbour, locked in the keep. We fish when the Regent says."',
+      ] },
     ] },
     { kind: 'well', x: 7, y: 6, text: 'The town well. The water tastes faintly of iron.' },
     { kind: 'sign', x: 8, y: 14, text: 'Helmstow. North gate: the keep. South gate: the Foreland road, the farms and the Salt Road.' },
@@ -101,6 +109,10 @@ export const HARROW: MapDef = {
     { kind: 'event', x: 8, y: 13, id: 'gate_wardens2', once: true, after: { flag: 'q_salt_done' }, until: { seen: 'harrow:gate_wardens' }, text: GATE_WARDENS },
     { kind: 'event', x: 12, y: 14, id: 'postern_wardens', once: true, after: { flag: 'q_salt_done' }, until: { seen: 'harrow:postern_wardens2' }, text: POSTERN_WARDENS },
     { kind: 'event', x: 14, y: 14, id: 'postern_wardens2', once: true, after: { flag: 'q_salt_done' }, until: { seen: 'harrow:postern_wardens' }, text: POSTERN_WARDENS },
+    // After the Hand has Wenna at Sheer Point (`q_wenna_taken`, #449): a gibbet in the middle street,
+    // said on whichever of its two squares is walked first, once.
+    { kind: 'event', x: 7, y: 9, id: 'gibbet', once: true, after: { flag: 'q_wenna_taken' }, until: { seen: 'harrow:gibbet2' }, text: GIBBET },
+    { kind: 'event', x: 8, y: 9, id: 'gibbet2', once: true, after: { flag: 'q_wenna_taken' }, until: { seen: 'harrow:gibbet' }, text: GIBBET },
     { kind: 'sign', x: 13, y: 14, text: 'Chalked over the postern, in a dockhand\'s hand: CARTS DOWN BEFORE THE BELL. Under it, newer and smaller: AND THE REST OF YOU.' },
     // The Bell That Rang Twice and The Rest of the Survey (#77, from #56): Osmund in the Chapel, the
     // two who saw the bell rung (all three gone after Act II, #157), and Ebba, at the Eel from a new game or, her name kept, in the Chapel.

@@ -333,7 +333,9 @@ Foreland map's density.
   leaving at midnight and landing an hour on (a crossing, #164); by day nobody rows, and a company
   rows itself back over the side at any hour. The weather deck: the rail and the boats under it, the
   foremast, the waist, the main hatch, the helm and the bow, a locker with 300 gold, and four
-  devilfish over the side by night. The lower deck: eight bilge rats in the crews' quarters, three
+  devilfish over the side by night. Once the causeway at Sheer Point has been stood on, the
+  starboard rail, 11,6, looks east on its line on the sea, once (#449; docs/areas/ashfall.md §9,
+  #449's 1 and 2). The lower deck: eight bilge rats in the crews' quarters, three
   Ashen Overseers at the hatch down, and aft the captain's cabin, with the ship's papers and the log
   on the table and the sea chest with Slack Water, a Cutlass +2, and 1,000 gold. The hold: the
   chained rows under the beam carved EVERY SHARD IS A STEP, the shards in straw, and among the rows

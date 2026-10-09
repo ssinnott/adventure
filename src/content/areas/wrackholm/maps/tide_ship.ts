@@ -48,6 +48,9 @@ export const TIDE_SHIP: MapDef = {
     { kind: 'event', x: 10, y: 8, id: 'ts_waist', once: true, text: 'The waist, the planks wet in long sweeps, as if something had hauled itself over the side by night and gone back the same way.' },
     { kind: 'event', x: 8, y: 5, id: 'ts_hatch', once: true, text: 'The main hatch stands open. Up it comes a smell of straw and people, and a sound, low and many, that stops when you stand still.' },
     { kind: 'event', x: 8, y: 13, id: 'ts_helm', once: true, text: 'The wheel aft, lashed with a turn of rope, and nobody at it. The anchor cable creaks at the bow like a held breath.' },
+    // The starboard rail, east toward the Hearth: once the causeway at Sheer Point has been stood on (the
+    // Whitespine's step, #449), its line on the sea.
+    { kind: 'event', x: 11, y: 6, id: 'ts_causeway', once: true, after: { seen: 'sheerpoint_i8:i8_causeway' }, text: 'Over the starboard rail, under the Hearth\'s light, a line lies on the sea, straight as a rule. It glows a little.' },
     { kind: 'event', x: 7, y: 1, id: 'ts_bow', once: true, text: 'The bow. Black water, and the cliffs standing out of it, blacker, one light up on the point. Behind you the ship creaks under its load.' },
     { kind: 'chest', x: 10, y: 12, id: 'ts_locker', gold: 300, items: ['potion_heal', 'potion_heal'] },
     // Every Name in the Column (#192): freed from the hold, Hale waits at the rail over the boats with

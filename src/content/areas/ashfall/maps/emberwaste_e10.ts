@@ -123,5 +123,7 @@ export const EMBERWASTE_E10: MapDef = {
     { id: 'e10_beetles', x: 27, y: 23, monsters: ['cinder_beetle', 'cinder_beetle', 'cinder_beetle', 'cinder_beetle'], aware: 3, respawn: 1440 },
     { id: 'e10_vultures', x: 21, y: 18, monsters: ['vulture', 'vulture', 'vulture', 'vulture', 'vulture', 'vulture'], aware: 5, respawn: 1440 },
     { id: 'e10_lions', x: 7, y: 23, monsters: ['wold_lion', 'wold_lion', 'wold_lion'], aware: 4, respawn: 2880 },
+    // Once the Stone is lit (#449), two sentries by the road up into the Hills, the box's top at 26.
+    { id: 'e10_sentries', x: 10, y: 16, monsters: ['sentry', 'sentry'], aware: 4, respawn: 2880, after: { flag: 'q_ember_lit' } },
   ],
 };

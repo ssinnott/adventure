@@ -221,8 +221,9 @@ Waste's road, F10 and E10 (#517):
   Druid's third (§6); on the
   ash a cairn, a shrine and the drifts; on the Hills the cairns, all facing the steppe but one that
   looks back at the Stone, a grave. Three groups: cinder beetles and a cinder drake in F10 and two
-  cinder drakes on the Hills' crest (§4.9). On the road's last shoulder, 1,6, once the Stone is lit,
-  the chapter's end (`e10_west`, #518, §5).
+  cinder drakes on the Hills' crest (§4.9); and once the Stone is lit two sentries by each box's
+  road (#449). On the road's last shoulder, 1,6, once the Stone is lit, the chapter's end (`e10_west`,
+  #518, §5).
 
 Its atlas rows are charted in `src/content/areas/ashfall/atlas.ts`, the area's own `atlas` since G10
 lists the area; until then `src/content/atlas.ts` spread them into the plan where its rows were, as
@@ -249,8 +250,8 @@ second row, `meridian_camp2` at 226,346, six squares south of the first (docs/ar
 Its row on the curve and its step on the gear ladder are in (#542): the row in
 `src/content/progression.ts` (band 24–26, next 26, window 5,500), owed to #446 while the area is
 built box by box, with the six boxes', the vents', Old Cinder's, E10's Wold half's, the corridors',
-the Ember Stone's, the Surveyor's and the Mapmaker's rungs' and the side quests' 30,186 xp a member
-and 10,700 gold the clear's floor; its
+the Ember Stone's, the Surveyor's and the Mapmaker's rungs', the side quests' and the road behind's
+sentries' (#449) 31,564 xp a member and 10,700 gold the clear's floor; its
 xp is met since E10's Wold half (#524) and its gold alone is owed, which Cinderport leaves as it is,
 a town paying nothing (§8); the camp's 3,003 xp and 1,200 gold are outside it, the area listing
 the camp `outside` (§9, #22's 5);
@@ -306,8 +307,9 @@ The sentries stand
 `after` that flag on every box (#449): the Hearth's check (`tools/tests/stones.ts`) holds a fixture
 box with a group of the test elite at the Sentry's level `after` it, not there before the Stone is
 lit and standing, in the way and fought, after. G11 places the first, one sentry (#513, §9's 10),
-F11 a group of two (#514, §9's 10), and the words on the roads and in Cinderport that say they are
-not what they were are the boxes' and #449's.
+F11 a group of two (#514, §9's 10) and F10 and E10 a group of two each by their roads (#449). The
+Rider by Cinderport's gate says so once the Stone is lit; no word on the roads had called them safe,
+so none changes (§9, #449's 3 to 5).
 
 Its crossings are written (#547), in `src/content/crossings.ts`, each on its link of the atlas with
 its fare, its days and its hours, the same either way (§4.4, §9): the Compact's ship from
@@ -656,7 +658,8 @@ half, with the wilderness features (#45); no more than one point in four is a si
   north, by the Riders' rail, with the Rider at 9,13 (§9, #512's 3). Jago, 14,3, is the ship's master
   on both quays and sells her back to Kilnhaven's steps, halved for a member of the Compact;
   Morwenna the harbourmaster, 11,3, has the last crossing and the Rider the ride, and both sell
-  nothing until their far ends are built (§9, #512's 4 and 5). The Chart House and the Factor's
+  nothing until their far ends are built (§9, #512's 4 and 5). Once the Ember Stone is lit the
+  Rider says there is iron walking the road (#449). The Chart House and the Factor's
   House are persons with rooms, as the Keel is, each offering and paying its Guild's one ladder, the
   Fence's rung among it, with no quest added (§9, #512's 6); the potter's is a person with a room and
   no ware (§9, #512's 7). Gorran the smith and Jenifer the potter give The Shovel That Does Not
@@ -1077,7 +1080,8 @@ half, with the wilderness features (#45); no more than one point in four is a si
   the pay, 1,841 xp a member between them where the brief has 1,400 (#517's 9); and in E10, laid
   whole as the atlas cuts it, the Wold's steppe and grass with it (#517's 13), whose Wold half #524
   has built since, its band raised to 25–26 (docs/areas/glasswold.md §4.2). The sentries `after`
-  the Stone, one group on each box's road at the band's top, are #449's (§11).
+  the Stone are #449's, built: two by each box's road at the band's top, F10's at 18,29 by the road
+  back from F11's corner and E10's at 10,16 by the road up into the Hills (§9, #449's 3 and 4).
   - **Measured.** A company at 24 wins every fight and manages 10.66 fights to a rest on F10 and
     10.51 on E10, inside the aim of 9 to 11, with 19% of F10's days ending in a fight broken off and
     0.3% of E10's; it walks the Waste's road, past the beetles, the drake and the two drakes, every
@@ -1085,7 +1089,9 @@ half, with the wilderness features (#45); no more than one point in four is a si
     fight too, owed to #18 as G10's is. Density 100.0% within 12 steps, the country floor, and the
     furthest 12 of 20, with no sign among F10's 12 points or E10's 15. It claims nothing new (§7).
     Since #524 E10's floor is 25: a company there manages 10.83 fights to a rest, and the box pays
-    2,543 xp a member (docs/areas/glasswold.md §8).
+    2,543 xp a member (docs/areas/glasswold.md §8). With the sentries (#449), which the gate counts
+    standing, F10 at 24 manages 9.19 with 19% of days broken off and E10 at 25 10.49 with 9%, both
+    in the aim; each pair pays 689 xp a member.
 
 ### 4.10 The country behind (#522): country, band 25–26, parked
 
@@ -1342,7 +1348,8 @@ before, and a Stone that lights is the Hearth's count (§9, #516's 15).
   19,467 asked, 1.47 times, over 1.3. The side quests (#519) add 800, 250, 250 and 300 a member,
   under their scaled 1,100 (§9, #519's 11): 29,386, 1.51 times. The Mapmaker's rung (#635) adds 800,
   4,800 xp shared by six, counted here as every guild quest is (§9, #635's 4): 30,186, 1.55 times.
-  Meridian Camp's third
+  The sentries on F10's and E10's roads (#449) add 1,378, two pairs at 2,067 a sentry shared by six,
+  and no gold: 31,564, 1.62 times (§9, #449's 3). Meridian Camp's third
   level (#22) pays 3,003, 1.00 of the brief's 3,000, outside the area's budget (EXPANSION §5.2): the
   area lists it `outside`, so the curve prints its pay as a figure and no clear counts it (§9,
   #22's 5). Cinderport pays nothing,
@@ -2392,6 +2399,25 @@ Decided by delegate for #635 (PR C), each the owner's to overturn:
 7. **Paid, the company are Geographers,** rank 4, the top, which has no quest (DESIGN §8).
    `OWED_RANKS` drops `cartographers[3]`; the Factor's rung stays owed to the Dead-Drop (PR D).
 
+Decided by delegate for #449, each the owner's to overturn:
+
+1. **The causeway is seen once its first stone is stood on** (`seen: 'sheerpoint_i8:i8_causeway'`,
+   the chapter's causeway goal): the Whitespine sets no flag that the Hand has built, and I8 lays
+   the causeway from the start, so the company's first sight of it is the honest moment.
+2. **Events say it, not the almanac or the sky:** the almanac reads the Stones' count and the
+   weather and takes no map's words, so a line there is a systems change (`src/game/world.ts`,
+   §11). A once event on the Saltings' shore (C6 31,17) and the Tide Ship's starboard rail (11,6).
+3. **The sentries are two pairs, F10's and E10's,** F11's form: a lone sentry is a cheap fight and
+   lifted F10 to 13.19 fights to a rest and E10 to 12.48, out of the aim; pairs hold 9.19 and 10.49.
+4. **E10's pair stands by the road up into the Hills** (10,16), past the vultures: by the way in
+   (24,27) the curve's rise from the way in went negative (-0.11); there it reads 0.22.
+5. **The Rider by Cinderport's gate says it,** his words `after` `q_ember_lit`: the Riders ride the
+   road. No line on Ashfall's roads called it safe, so none is changed.
+6. **Helmstow worsens by a gibbet and the Eel's talk,** `after` `q_wenna_taken`, in #157's shape:
+   nothing shuts and nothing is dearer (docs/areas/shelf.md §5.1).
+7. **Helmstow's words ride on Act II's Eel** (`after` `q_salt_done`): a save with Wenna taken but
+   Act II not done keeps the old Eel and gets the gibbet alone, so the acts' changes stack.
+
 Decided by delegate for #518, each the owner's to overturn:
 
 1. **The chapter is The Window,** id `window`, the doc's working title, joined after The Bells.
@@ -2536,8 +2562,10 @@ Owed, from F10 and E10 (#517):
 
 - **The Archdruid's trainer entry and the Druid's quest** are built (#448, §6): he stands in the
   outcrop's lee at F10's 6,3 (§9, #517's 4).
-- **The sentries** `after` the Stone, one group on each box's road at the band's top, 26, are
-  #449's: neither box places one (§9, #517's 2).
+- **The sentries** `after` the Stone, one group on each box's road at the band's top, 26, were
+  #449's: built, two by each box's road (§4.9; §9, #449's 3 and 4).
+- **The almanac's or the sky's word on the causeway** (#449) is not said: the almanac takes no
+  map's words, and giving it some is a systems change, owed to the owner's call (§9, #449's 2).
 - **The Wold's line is said where D10 is crossed** (#527): E10, the Waste's land, says the Waste's
   (docs/areas/glasswold.md §9, #524's 4). E10's Wold half is built (#524).
 - **Steppe is unclaimed.** E10 lays steppe first, so the Wold's "New here: steppe underfoot"
