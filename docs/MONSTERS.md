@@ -1433,7 +1433,16 @@ sting. On the salamanders' (`salamanders.ts`): the Basilisk, its kin gone cold, 
 fire in the skin, the snout drawn out, a crown of glass spikes round the back of the skull, a crest
 of glass shards down the spine and big eyes lit a cold green-white. Their numbers are their roles'
 at their levels on the line #661 made again (§4.4), the basilisk the test basilisk (§3.3). The boxes
-place them (docs/areas/glasswold.md §9); the glass walker is the second pull request's.
+place them (docs/areas/glasswold.md §9).
+
+The glass walker is drawn too (#533), the first of its family (`src/ui/monsters/glasswalkers.ts`):
+a tall frame of old bronze gone green in its seams, a man's shape and a head over a man's height,
+balls and rods at its joints, a shell of a chest with a door in it and a smooth head with one lamp,
+lit a cold green-white. It has waded out of the Glass to the knees, and its left arm has gone into
+a club of the Wold's green glass that drags beside it, the bronze dark inside, shards standing off
+the shoulder and runs of glass down the chest; its right side is bare. It walks in place, the club
+dragging. The elite at 27 on the line, a machine; the Buried Tower's are to be its frame at their
+worst (§10.1).
 
 **Asks:** stone, and its cure.
 

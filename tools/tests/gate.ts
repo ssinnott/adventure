@@ -140,6 +140,9 @@ export const ROADS: Record<string, readonly string[]> = {
   // then up the ridge trail and west along the road to the Stair, past the giant and the troll in the
   // snow short of the head (#502).
   highspine: ['highspine_i11:i11_brothers', 'highspine_i10:i10_stair'],
+  // North along the ridge trail from the Stair's head, past the snow trolls lying in the gully off it
+  // and the masons on its end (#503).
+  sheerpoint: ['sheerpoint_i9:i9_trolls', 'sheerpoint_i9:i9_masons'],
 };
 
 /** What an area is called in the check, apart from the map it shares an id with. */
@@ -215,6 +218,10 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'emberwaste_e10: under': { whose: '#18', at: 1 },
   'Ashfall: under': { whose: '#18', at: 1 },
   'highspine_i11: under': { whose: '#18', at: 1 },
+  // And the ridge north (#503), banded from the area's floor as I11 is: its three groups are won every
+  // time two under, and with them the area's pool passes its limit again.
+  'sheerpoint_i9: under': { whose: '#18', at: 1 },
+  'the Whitespine: under': { whose: '#18', at: 1 },
   // Act II's bosses were set by their gates against a company without its first prestige, which the
   // gate's company never took until #541 made it harness's. With it, at 11, four of the six strike
   // twice a turn and the casters cast at their first rank, and each boss is won nearly always at its

@@ -280,14 +280,27 @@ export function outdoors(): void {
   // Stairwatch and the Stair's head (I10, #502): its south edge meets I11's north edge square for
   // square, the ridge trail crossing at 27, walked, the mountain closing the Stone's ring round above
   // it; on the north the Sheer, the pines and the trail at 18,0, where the atlas's trail crosses, then
-  // the mountain and the peaks against I9; on the west the Sheer, the Stair cut down through it at
-  // 0,20, and Ashfall's ground under it against H10; on the east the range against J10. None of I9,
-  // H10 and J10 is built, so the world ends past them, the Stair's foot included.
+  // the mountain and the peaks against I9's south edge (#503), the trail going on north; on the west
+  // the Sheer, the Stair cut down through it at 0,20, and Ashfall's ground under it against H10; on the
+  // east the range against J10. Neither H10 nor J10 is built, so the world ends past them, the Stair's
+  // foot included.
   ok(southOf(i10) === 'ppp||' + 'p'.repeat(21) + 'M=MMM%' && [...Array(32).keys()].every((i) => out.at(i10.x + i, i10.y + 32).ch === northOf(i11)[i]),
     `I10's south edge is the pines, the Sheer, the ridge trail at 27 and the mountain against I11's north (${southOf(i10)})`);
-  ok(northOf(i10) === '|' + 'p'.repeat(17) + '=' + '%'.repeat(5) + 'A'.repeat(7) + '%' && westOf(i10) === '|'.repeat(20) + '=pppp' + 'aa' + 'p'.repeat(5) && eastOf(i10) === '%%%' + 'A'.repeat(11) + '%%' + 'A'.repeat(7) + '%'.repeat(9)
-    && [...Array(32).keys()].every((i) => [out.at(i10.x - 1, i10.y + i), out.at(i10.x + 32, i10.y + i), out.at(i10.x + i, i10.y - 1)].every((c) => c.ch === '%')),
-    `I10's north edge is the Sheer, the pines and the trail at 18,0 against I9, its west edge the Sheer with the Stair at 0,20 against H10 and its east edge the range against J10, past which the world ends (${northOf(i10)}; ${westOf(i10)}; ${eastOf(i10)})`);
+  const i9 = out.zones.find((z) => z.id === 'sheerpoint_i9')!;
+  ok(northOf(i10) === '|' + 'p'.repeat(17) + '=' + 'M'.repeat(5) + 'A'.repeat(7) + '%' && westOf(i10) === '|'.repeat(20) + '=pppp' + 'aa' + 'p'.repeat(5) && eastOf(i10) === '%%%' + 'A'.repeat(11) + '%%' + 'A'.repeat(7) + '%'.repeat(9)
+    && [...Array(32).keys()].every((i) => [out.at(i10.x - 1, i10.y + i), out.at(i10.x + 32, i10.y + i)].every((c) => c.ch === '%') && out.at(i10.x + i, i10.y - 1).ch === southOf(i9)[i]),
+    `I10's north edge is the Sheer, the pines and the trail at 18,0 against I9's south, its west edge the Sheer with the Stair at 0,20 against H10 and its east edge the range against J10, past which the world ends (${northOf(i10)}; ${westOf(i10)}; ${eastOf(i10)})`);
+  // The ridge north (I9, #503), Sheer Point's first box: its south edge meets I10's north edge square
+  // for square, the pines open across it and the ridge trail crossing at 18, walked; on the north the
+  // sea and the shallows, the pines, the mountain and the peaks and the trail at 20,0, where the
+  // atlas's trail crosses, against I8; on the west the sea, the pines and the Sheer against H9; on the
+  // east Loch Fuar's mountain and peaks against J9. None of I8, H9 and J9 is built, so the world ends
+  // past them.
+  ok(southOf(i9) === '|' + 'p'.repeat(17) + '=' + 'MMMM' + 'A'.repeat(8) + '%' && [...Array(32).keys()].every((i) => out.at(i9.x + i, i9.y + 32).ch === northOf(i10)[i]) && i9.x === i10.x && i9.y + i9.h === i10.y,
+    `I9's south edge is the Sheer, the pines, the ridge trail at 18 and the mountain against I10's north (${southOf(i9)})`);
+  ok(northOf(i9) === 'WW~~ppp' + '%'.repeat(7) + 'A'.repeat(6) + '=' + '%'.repeat(11) && westOf(i9) === 'WWWW~~_' + 'p'.repeat(10) + '|'.repeat(15) && eastOf(i9) === '%'.repeat(20) + 'A'.repeat(5) + '%'.repeat(7)
+    && [...Array(32).keys()].every((i) => [out.at(i9.x - 1, i9.y + i), out.at(i9.x + 32, i9.y + i), out.at(i9.x + i, i9.y - 1)].every((c) => c.ch === '%')),
+    `I9's north edge is the sea, the pines, the peaks and the trail at 20,0 against I8, its west edge the sea, the pines and the Sheer against H9 and its east edge Loch Fuar's mountain against J9, past which the world ends (${northOf(i9)}; ${westOf(i9)}; ${eastOf(i9)})`);
   // Cinderport's box (G10, #511), Ashfall's first, begun by sea and joined overland to nothing but the
   // Waste's road west of it (#517) and Fire Mountain's flank south of it (#513): on the north the vines,
   // the road at column 3 up the wall's west side, Cinderport's wall, the stream and the grass against
