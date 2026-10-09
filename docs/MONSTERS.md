@@ -1225,6 +1225,17 @@ salamanders; the spider frame as the cinder beetle; the dead, cast in ash.
   lightning troubles the machines.
 - **After the Stone**: sentries on the road back to Cinderport, which was safe the day before.
 
+Four on frames that exist are drawn (#520). The Strangler Vine, on the old wood's frame
+(`src/ui/monsters/oldwood.ts`), is a grey tree it has killed, wound round with green cables, its ropes
+hanging nearly to the ground from the two limbs and the outermost ending in curls; the face is the
+tree's knotholes. The Cinder Beetle has the fire beetle's legs set wide under a body low and black,
+ridged and knobbed, with ash in its grooves and one forked horn over it. The Ember Salamander is its
+kin's frame lither and longer in the tail, the head high, coal-red, the fire in bands across it and
+white at their hearts. The Ash Husk is no bones but the cast of a man in his tunic, pale grey and
+crazed, his cup held up at his shoulder and the far hand crumbled off. The vine holds as the bramble
+does and its groups never roam; fire does not touch the beetle or the salamander
+(docs/areas/ashfall.md §9). The boxes place them (#510, #511, #514).
+
 **Asks:** sweep with an element; `after`.
 
 ### 8.3 The Wold (band 26–28)

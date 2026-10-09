@@ -108,13 +108,20 @@ Its row on the curve and its step on the gear ladder are in (#542): the row in
 and the step in `src/content/areas/ashfall/items.ts`, made ahead of the area (`ITEMS_AHEAD`,
 `src/content/index.ts`) so that the harness and the gate dress by it: Cinderport's armourer's eight
 wares (`ARMOURER`, §4.4), each owed to the armourer (#512) until it is sold. The first box takes the
-table into its Area. Nothing else is built.
+table into its Area.
+
+Four of its nine monsters are drawn ahead of the area (#520): the Strangler Vine, the Cinder Beetle,
+the Ember Salamander and the Ash Husk, on the old wood's, the spider's, the salamanders' and the
+skeleton's frames (§7), in `src/content/areas/ashfall/monsters.ts` and listed in `AHEAD`
+(`src/content/index.ts`) until #510 lists the area. Each is owed to the box that first places it
+(`UNPLACED`, `tools/tests/maps.ts`): the vine and the beetle to #510, the salamander to #511 and the
+husk to #514. Nothing else is built.
 
 The systems it waits on are the rest of #442's: the volcano, lava fields and vines underfoot (#543),
 sweep with fire (#545), the ship to Cinderport, the Riders' ride and the last crossing (#547), the
 Ember Stone for the Hearth and the sentries after (#548) and the bot grown to the band (#549); the
-giants' toll (#544) and stone (#546) are its neighbours'. Its monsters are drawn in #520 and its
-rooms in #521. Meridian Camp is #22, parked until #443 unparks it.
+giants' toll (#544) and stone (#546) are its neighbours'. The rest of its monsters, the drakes and
+the heavy machines, are #520's to draw, and its rooms #521's. Meridian Camp is #22, parked until #443 unparks it.
 
 ## 4. What is still to build
 
@@ -549,6 +556,12 @@ the answer; after the Stone, sentries on the road back to Cinderport. Their draw
 nine. §4.2 to §4.9 place every group, box by box, the gentlest at the Stair's foot and the Sentinel
 at the top of the band.
 
+Four of the nine are drawn (#520): the Strangler Vine, a grey tree it has killed, its ropes hanging
+nearly to the ground; the Cinder Beetle, low and black with one forked horn; the Ember Salamander,
+lither than its kin, coal-red, its fire in bands; and the Ash Husk, the cast of a man holding his cup
+up. Each stands on MONSTERS §4.4's line at its level; the vine holds as the bramble does, and the
+groups that place it are set not to roam (§9). The drakes and the heavy machines are still to draw.
+
 Proposed, against the roster's Where column: the Cinder Drake over Cindercoast's shore (H10, G10)
 and on the Hills (E10), where MONSTERS §8.2 has it on Fire Mountain's slopes only, and the Ember
 Salamander at G10's far end and F10's flow, where it has them at the vents. They stand in the
@@ -690,6 +703,33 @@ Decided by delegate for #542, each the owner's to overturn:
    encounters to a rest where it fought 11.0 without it (11 asked), and one of 26 fights 8.6 where it
    fought 7.8 (10.5 asked, the line there interpolated between 24 and 28). #549 makes the line again
    with the step, as #541 did after Act III's.
+
+Decided by delegate for #520 (the four on frames), each the owner's to overturn:
+
+1. **Each stands on the line at its level** (MONSTERS §4.4), `testMonster`'s numbers with the
+   roster's notes on top: the vine a controller at 24 (284, 3d8+6), the beetle armoured at 24 (397,
+   4d8+5), the salamander a skirmisher at 24 (330, 3d8+4) and the husk a soldier at 25 (340, 4d8+3).
+   The boxes' gates tune them.
+2. **The vine holds as the bramble does,** `inflict: paralysed` at 0.3 (the roster's, over the test
+   controller's 0.15), at the bramble's speed of 6. Never roaming is a group's, not a def's: each box
+   that places it sets `roams: false` on the group, as a Rift's warden is set (`src/game/rifts.ts`).
+   Nothing new is owed to the systems.
+3. **Fire does not touch the cinder beetle,** as it does not the fire beetle (MONSTERS §2): `immune:
+   ['fire']`, though the roster's row does not say so. It is the line to drop if the owner wants the
+   coast's beetles to burn.
+4. **The ember salamander keeps its kin's fire and cold** (immune to fire, weak to cold) and is
+   quicker and smaller: speed 16 over the salamander's 15, size 0.62 over 0.68.
+5. **The husk is the dead and carries nothing,** as the bog body: Holy Strike lands on it and sleep
+   and the swarm do nothing; it drops no gold. Speed 10, a stiff soldier's.
+6. **Each is a drawing of its own on its frame:** the vine a dead tree wound with vine, not a tree
+   that walks, its leaves green where the Deepthorn's are dead oak; the beetle low and horned where
+   the fire beetle is high and lit, with no fire on it; the salamander lither, coal-red and banded
+   where its kin is charcoal and spotted; the husk no skeleton but the cast of a man, his cup held up
+   at his shoulder. The salamander's embers are its declared parts (`tools/smoke.ts`); the husk's
+   sifting ash is too faint to be ink.
+7. **Each is owed to the first box that places it:** the vine and the beetle to H10 (#510), the
+   salamander to G10 (#511, the proposal in §7; to G11, #513, if the owner does not take it) and the
+   husk to F11 (#514), whose crater sends them out by night before Old Cinder (#515).
 
 ## 10. Names
 
