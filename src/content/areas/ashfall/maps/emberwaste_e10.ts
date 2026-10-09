@@ -2,7 +2,7 @@
 // road in off F10 over the Waste's ash, past the cinder cones and the lava flow's head at the south
 // edge, up into the Hills and through their notch, where a Rider's waymark stands, and down their west
 // foot onto the grass of the steppe and out over the west edge. On the crest the cairns, all facing the
-// steppe, the sky-stone, the hermit who has looked down on the Stone's field all his life and two
+// steppe, their stones standing on the rises, the sky-stone, the hermit who has looked down on the Stone's field all his life and two
 // drakes over the road at the far end; and in the hills south of the notch the one cairn that looks
 // back, a grave. West of the Hills the steppe.
 // Laid whole for the Waste (#517) as the atlas cuts it, the Wold's steppe and grass with it: the Wold's
@@ -26,32 +26,32 @@ export const EMBERWASTE_E10: MapDef = {
     '^^^^^ss^^^^^^sss,,,aaaaaaaaaaaaa',
     '^^^^^^s^^^^^^sss,,,aaaaaaaaaaaaa',
     '^^^^^^s^^^^^^sss,,aaaaaaaaaaaaaa',
-    '^^^^^^s^^^^^^ss,,,aaaaaaaaaaaaaa',
+    '^^^r^^s^^^^^^ss,,,aaaaaaaaaaaaaa',
     '^^^^^^ss^^^^^s,,,,aaaaaaaaaaaaaa',
     '==^^^^^s^^^^^s,,,,aaaaaaaaaaaaaa',
     '^=^^^^^^^^^^^,,,,aaaaaaaaaaaaaaa',
     's==^^^^^^^^^^^,aaaaaaaaaaaaaaaaa',
-    'ss==^^^^^^^^^^,aaaaaaaaaaaaaaaaa',
+    'ss==^^^^^r^^^^,aaaaaaaaaaaaaaaaa',
     'ss^===^^^^^^^^,aaaaaaaaaaaaaaaaa',
-    'ss^^^==^^^^^^^,aaaaaaaaaaaaaaaaa',
+    'ss^^^==^^^^r^^,aaaaaaaaaaaaaaaaa',
     's^^^^^==s^^^^^^,aaaaaaaaaaaaaaaa',
     's^^^^^^==s^^^^^aaaaaaaaaaaaaaaaa',
     's^^^^^ss===^^^^aaaaaaaaaaaaaaaaa',
     's^^^^sssss==^^^aaaaaaaaaaaaaaaaa',
     's^^^^sssss^==^^^aaaaaaaaaaaaaaaa',
-    'ss^^^sssss^^==^^aaaaaaaaaaaaaaaa',
+    'ss^^^sssss^^==^raaaaaaaaaaaaaaaa',
     'ss^^sssssss^^==^aaaaaaaaaaaaaaaa',
     'sssssssssss^^^==aaaaaaaaaaaaaaaa',
     'sssssssssss^^^^===aaaaaaaaaaaaaa',
     'sssssssssss^^^^^^==aaaaaaaaaaaaa',
     'sssssssssss^^^^^^a==aaaaaaaaaaaa',
-    'sssssssssss^^^^^^^a==aaaaaaaaaaa',
+    'sssssssssss^^^^^r^a==aaaaaaaaaaa',
     'ssssssssss,^^^^^^^aa===aaaaaaaaa',
     'sssssssssss^^^^^^^^aaa==aaaaaaaa',
-    'sssssssssss^^^rrrr^,aaa===aaaaaa',
-    'ssssssssss^^^^r^^S^,aaaaa===aaaa',
-    'sssssssssss^^^rrrr^,aaaaaaa===aa',
-    'ssssssssss,^^^^^^^^^aaaaaaaaa===',
+    'sssssssssss^^^^rrrr,aaa===aaaaaa',
+    'ssssssssss^^^^^r^^S,aaaaa===aaaa',
+    'sssssssssss^^^^rrrr,aaaaaaa===aa',
+    'ssssssssss,^r^^^^^^^aaaaaaaaa===',
     'ssssssssss,^^^^^^^^^aaaaaaaaaaa=',
     'sssssssss,,^^^^^^^^^aaa!!aaaaaaa',
   ],
@@ -73,15 +73,15 @@ export const EMBERWASTE_E10: MapDef = {
       '"They say it will be lit one day. I have stopped looking."',
     ] },
     // South of the notch, the cairn that looks back: a grave, its mouth among the stones.
-    { kind: 'event', x: 18, y: 27, id: 'e10_back', once: true, text: 'The Hills\' cairns all look west to the steppe. This one looks back at the Stone.' },
-    { kind: 'event', x: 16, y: 27, id: 'e10_rider', once: true, text: 'Under the stones a woman laid out on her saddle, a bow across her. The silver on the saddle has gone black.' },
-    { kind: 'chest', x: 15, y: 27, id: 'e10_grave', gold: 700, items: ['horn_bow+2'] },
+    { kind: 'event', x: 19, y: 27, id: 'e10_back', once: true, text: 'The Hills\' cairns all look west to the steppe. This one looks back at the Stone.' },
+    { kind: 'event', x: 17, y: 27, id: 'e10_rider', once: true, text: 'Under the stones a woman laid out on her saddle, a bow across her. The silver on the saddle has gone black.' },
+    { kind: 'chest', x: 16, y: 27, id: 'e10_grave', gold: 700, items: ['horn_bow+2'] },
     // West of the Hills the steppe, the Wold's (#524), to the world's end for now.
     { kind: 'event', x: 1, y: 11, id: 'e10_steppe', once: true, text: 'West of the hills the steppe, flat and yellow, runs on to the sky.' },
     { kind: 'event', x: 4, y: 21, id: 'e10_wind', once: true, text: 'The wind comes over the steppe and the grass goes down before it in waves.' },
     { kind: 'event', x: 5, y: 27, id: 'e10_hooves', once: true, text: 'Hoofprints in the grass, unshod, a great many, going north-west.' },
   ],
-  secrets: [{ x: 17, y: 27, hint: 'e10_back' }],
+  secrets: [{ x: 18, y: 27, hint: 'e10_back' }],
   encounters: [
     // Two cinder drakes on the Hills' crest at the far end, by the road coming down to the steppe, the
     // box's group at 25: one alone is too light a fight for the gate, and no roaming monster stands at
