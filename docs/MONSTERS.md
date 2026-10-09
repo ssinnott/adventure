@@ -845,12 +845,14 @@ Decided by delegate for #549, each the owner's to overturn:
    mending, fire's nothing and the salamander's cold ask nothing new, read as the bots read any.
 5. **The line is made again at 25, 26, 27, 28 and 32,** each of Act IV's steps on its own; 22 to 24
    stay #541's, since their company has not changed and the Whitespine's placed monsters stand on them.
-6. **Ashfall's five drawn on the old line are owed a restating** (`RESTATE`): the Ash Husk, Cinder
-   Drake and Stoker at 25, the Sentry and Sentinel at 26, each by the box that places it.
+6. **Twelve drawn on the old line from 25 are owed a restating** (`RESTATE`), each by the box that
+   places it: Ashfall's Ash Husk, Stoker, Sentry and Sentinel, and Meridian Camp's and the
+   Dead-Drop's eight (#22). The Cinder Drake, placed at G10 (#660), is set off the line for its gate.
 7. **The harness's company needed nothing new:** tier 7 from 23, the step and a draught from 25 and
    the third prestige at 27, its last rite and third blow, were in; the line's points lagged.
-8. **Act IV's bosses are reported, not set:** from two under the Abbot and the Stair-king are won 38%
-   at 24, the Old Drake 35% and the Sentinel 54% at 26, the test boss 38% and 48% (`--abilities`).
+8. **Act IV's bosses are reported, not set** (`--abilities`): from two under, the Stair-king is won
+   38% at 24, the Old Drake 35% and the Sentinel 54% at 26, the Brood Drake 15% at 27 and the
+   Tallymaster 57% at 28, the test boss 38 to 53%; the Abbot, which #500's gate set, 68%.
 9. **The mesa is held to about its aim, not over it:** on the line made again at 27 it is fought
    10.6 to a rest (10.75 asked), 11.6 where the hold paralyses.
 

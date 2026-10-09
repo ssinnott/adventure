@@ -149,6 +149,7 @@ export const OFF_LINE: Record<string, string> = {
   abbot: "Highcell's boss, its hit points and its blow set by its gate (#500)",
   old_drake: "Old Cinder's boss, the boss line come down whole to a sweeper's share with the drakes' breath, for its gate to set (#515)",
   brood_drake: "the corridors' boss, the boss line come down whole to a sweeper's share with the drakes' breath, as the Old Drake, for the corridors' gate to set (#22)",
+  cinder_drake: "Cinderport's box's drake, placed on the test drake's line at 25 before #549 made it again, and held there by its gate (#660)",
 };
 /** The monsters past 10 on a role's line come down whole, hit points and blow together (MONSTERS §4.4): the role, the share and why. */
 export const WHOLE: Record<string, { role: Role; share: number; why: string }> = {
@@ -161,10 +162,17 @@ export const WHOLE: Record<string, { role: Role; share: number; why: string }> =
  */
 export const RESTATE: Record<string, string> = {
   ash_husk: "a soldier at 25, Old Cinder's (#514, #515)",
-  cinder_drake: "the test drake at 25, Fire Mountain's (#511, #513)",
   stoker: "a brute at 25, the vents' (#513)",
   sentry: "an elite at 26, Ashfall's once the Ember Stone is lit (#514)",
   sentinel: "the boss at 26, the Ember Stone's (#516)",
+  drakeling: "fodder at 26, Meridian Camp's nest (#22)",
+  flue_walker: "an elite at 27, Meridian Camp's corridors (#22)",
+  deep_knocker: "armoured at 28, Meridian Camp's gallery (#22)",
+  inspector: "a caller on a soldier's numbers at 28, Meridian Camp's gallery (#22)",
+  loader: "a brute at 26, the Dead-Drop's (#22)",
+  tally_clerk: "a skirmisher at 26, the Dead-Drop's (#22)",
+  hold_keeper: "a controller at 27, the Dead-Drop's (#22)",
+  tallymaster: "the boss at 28, the Dead-Drop's (#22)",
 };
 
 /** Every monster past 10 on the line at its level, or set off it with a reason (OFF_LINE). */
