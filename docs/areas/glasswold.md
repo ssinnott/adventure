@@ -114,10 +114,11 @@ asks for (call 5). Its row on the curve is in (#542), in `src/content/progressio
 #524 lists the area (band 26–28, next 28, window 6,000); the Wold takes no step on the gear ladder,
 no town to sell one (§9). Its ground is laid (#543): steppe (`s`), walked as grass and tawny at
 Harvest, and dunes (`u`), sand in ridges walked as slowly as hills, so the scaffold drafts D9 with its
-807 squares of steppe and 171 of dunes (docs/SLICE.md). Five of its monsters are drawn ahead of the
-boxes, on frames that exist (#533, MONSTERS §8.3): the vulture, the Wold lion, the Grey Lion, the
-glass scorpion and the basilisk, their defs in `src/content/areas/glasswold/monsters.ts`, listed in
-`AHEAD` until #524 lists the area. Nothing else: no map, no quest, and the glass walker not yet drawn.
+807 squares of steppe and 171 of dunes (docs/SLICE.md). Its six monsters are drawn ahead of the
+boxes (#533, MONSTERS §8.3): five on frames that exist, the vulture, the Wold lion, the Grey Lion,
+the glass scorpion and the basilisk, and the glass walker, the first of a family of its own
+(`src/ui/monsters/glasswalkers.ts`); their defs are in `src/content/areas/glasswold/monsters.ts`,
+listed in `AHEAD` until #524 lists the area. Nothing else: no map and no quest.
 Every brief below is a draft.
 
 ## 4. What is still to build
@@ -500,10 +501,11 @@ MONSTERS §8.3 has the roster and the fight: the Vulture (fodder, 26, the birds)
 frame; poison 0.35), the Basilisk (controller, 27, the salamanders; stone 0.15), the Glass Walker
 (elite, 27, the glass walkers, new; a machine older than the rest) and the Grey Lion (boss, 28, the
 cats); the mesa, a basilisk behind a pride, the lions holding the front row while the basilisk
-glasses whoever looks up. Their drawings are #533's, six: five on frames that exist, the Grey Lion
-the cats' with a mane, all drawn (§3), and the walker's new family. §4.2 to §4.8 place every group, box by box, the vultures at the hills'
-foot and the walkers in their pair at the gap. The Wold spends MONSTERS §3.3's stone (#546); the
-sweep (#545) and the toll (#544) are the Whitespine's and Ashfall's, spent before it.
+glasses whoever looks up. Their drawings are #533's, six, all drawn (§3): five on frames that
+exist, the Grey Lion the cats' with a mane, and the glass walker the first of its new family. §4.2
+to §4.8 place every group, box by box, the vultures at the hills' foot and the walkers in their
+pair at the gap. The Wold spends MONSTERS §3.3's stone (#546); the sweep (#545) and the toll (#544)
+are the Whitespine's and Ashfall's, spent before it.
 
 New in the Glasswold, for the novelty check (EXPANSION §5.4): the glass walkers, a new family (D9
 claims it, placing one first); steppe and dunes underfoot (#543); stone and its cure (#546); a camp
@@ -636,6 +638,27 @@ Decided by delegate for #533 (the Wold's five on frames), each the owner's to ov
    Sunder's is black (the glass spider). A tint and a Build to change.
 9. **The defs wait in the area's folder,** listed in `AHEAD` until #524 lists the area, as Ashfall's
    did; the glass walkers' family joins the same file in the second pull request.
+
+Decided by delegate for #533 (the glass walkers), each the owner's to overturn:
+
+1. **A man's shape, not a beast's:** the briefs give a walker a chest that opens (§4.3's and
+   §4.8's secrets) and sit one in a horse's saddle (§6), so it is a tall machine in a man's shape.
+2. **Older than the vessel's hands, and unlike them:** smooth bronze gone green in its seams, balls
+   and rods at the joints, a lamp for a head; no plate on drums, shell on rods or robe.
+3. **Fused with its glass on one side:** waded to the knees, its left arm gone into a club of glass
+   dragging beside it, shards off the shoulder; the right side bare, the silhouette the glass's.
+4. **The glass is the Wold's green** (8 above), lit at its edges, the arm dark through it and a
+   light held in it, as the Tower's glass holds one (§4.8); the lamp the basilisk's green-white.
+5. **The test elite at 27, on the line #661 made again:** 670 hit points, armour 25, +16, 7d8+7,
+   speed 15, 2,147 xp; its hold the elite's paralysis at 0.15, a grip, as the Sentry's is.
+6. **A machine** (MONSTERS §2): it never breaks and carries no gold, only parts, none set yet;
+   it resists nothing, the roster giving nothing (5 above).
+7. **Size 1.2,** a head over a man and under the Sentry's 1.45, so it stands in its group's rank and
+   no crown is held; its span [0.39, 0.22], wider on the club's side.
+8. **Owed to D9 (#525), not B9:** D9's brief places the first walker, "placed here first"
+   (§4.3), so by 7 above it is owed there.
+9. **One kind, on a Build:** the Buried Tower's walkers, at their worst (MONSTERS §10.1), are to
+   be a Build and a colouring of this frame, not a module of their own.
 
 ## 10. Names
 
