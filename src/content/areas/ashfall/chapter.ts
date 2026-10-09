@@ -25,9 +25,11 @@ export const CHAPTER: Chapter = {
   // Down the Stair from the Whitespine's end, or ashore at Cinderport with the Compact from Kilnhaven.
   start: [{ flag: STAIR_TOP }, { visited: 'cinderport' }],
   // The road west taken once the Stone is lit: `e10_west` sets it on the road over the Cinder Hills,
-  // and `d8_east` at Akordu's horse-lines for a company that rides west instead. Nothing is a lock: the
-  // parts are found in any order and set as they come, and the journal reads true either way west.
-  done: { flag: ROAD_WEST },
+  // and `d8_east` at Akordu's horse-lines for a company that rides west instead; or, the Stone lit, the
+  // Scarp stair's head for one that comes up onto the Wold from the Saltings, where the Wold's chapter
+  // starts too (#531). Nothing is a lock: the parts are found in any order and set as they come, and the
+  // journal reads true every way west.
+  done: [{ flag: ROAD_WEST }, { flag: LIT, seen: 'wold_c8:c8_line' }],
   entries: [
     { id: 'sand', when: { seen: 'cindercoast_h10:h10_foot' },
       text: 'At the foot of the Giants\' Stair, black sand and hanging vines, and a mountain that smokes over everything.' },
