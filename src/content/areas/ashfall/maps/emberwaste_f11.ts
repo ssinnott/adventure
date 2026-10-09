@@ -82,7 +82,7 @@ export const EMBERWASTE_F11: MapDef = {
     // ask, once, his oil and flint for the lamp at the bottom (old_cinder2), and once it is lit his last
     // words and the teaching. The cairn on the rim, the roof-ridges seen from the east, and the rim at the
     // atlas's mark.
-    { kind: 'npc', x: 18, y: 5, name: 'An old Lightbearer', lines: [
+    { kind: 'npc', x: 18, y: 5, name: 'Wystan, an old Lightbearer', lines: [
       'An old man in a Lightbearer\'s white gone grey, sitting on the lip with his staff across his knees.',
       '"There is a lamp at the bottom of that town. It went out, and nobody went down to light it."',
       '"I am too old for the climb. I sit where I can see the way."',
@@ -95,7 +95,7 @@ export const EMBERWASTE_F11: MapDef = {
         'He looks your paladin over a long while, then holds out a flask and a flint.',
         '"Oil, and my flint. Go down to the bottom of the town and light the lamp. I will be here."',
       ] },
-    ], teaches: { cls: 'paladin', prestige: 3, done: { flag: LAMP_LIT }, asks: 'old_lamp', seek: 'An old Lightbearer, who sits on the west lip of Old Cinder\'s crater in the Ember Waste, can make an Exemplar of a Justicar.' } },
+    ], teaches: { cls: 'paladin', prestige: 3, asks: 'old_lamp', done: { flag: LAMP_LIT }, seek: 'Wystan, an old Lightbearer, who sits on the west lip of Old Cinder\'s crater in the Ember Waste, can make an Exemplar of a Justicar.' } },
     { kind: 'cairn', x: 24, y: 1, id: 'f11_cairn', text: 'A cairn on the crater\'s rim, its stones black and light as loaves.', gold: 300, items: ['potion_sp_great'] },
     { kind: 'event', x: 22, y: 0, id: 'f11_rim', once: true, text: 'The crater\'s rim. The mountain buried a town here, and only its roofs stand out of the ash.' },
     { kind: 'event', x: 27, y: 7, id: 'f11_roofs', once: true, text: 'Roof-ridges stand out of the crater in rows, a street\'s worth. One still has its chimney.' },

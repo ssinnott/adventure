@@ -96,7 +96,7 @@ export const FIREMOUNT_G11: MapDef = {
     // last words and the teaching. In its lee a rack and a camp, and the vent-scavenger by the fire.
     { kind: 'event', x: 28, y: 12, id: 'g11_forge', once: true, text: 'Grimsforge: a forge of black stone in the mountain\'s foot, its fire lit. The anvil rings.' },
     { kind: 'chest', x: 29, y: 14, id: 'g11_rack', gold: 0, items: ['warhammer+1'] },
-    { kind: 'npc', x: 28, y: 13, name: 'The warlord\'s heir', lines: [
+    { kind: 'npc', x: 28, y: 13, name: 'Petroc, the warlord\'s heir', lines: [
       'A big man at the anvil, grey in the beard. An old axe hangs over the fire, its edge long gone.',
       '"Grimsforge. My grandfather kept it, and fought from it. I keep the fire."',
       '"There was a man went down beside the forge with a rope. He comes up when he likes, with things."',
@@ -110,7 +110,7 @@ export const FIREMOUNT_G11: MapDef = {
         '"Something nests down the vents, where the iron runs hot. My grandfather heard it breathe from here."',
         '"Go down and kill it. Then come up, and I will put an edge on you."',
       ] },
-    ], teaches: { cls: 'barbarian', prestige: 3, done: { flag: BROOD_ASKED, slain: BROOD }, asks: 'brood', seek: 'The warlord\'s heir, at the anvil in Grimsforge by the mouth of Fire Mountain\'s vents, can make a Warlord of an Ironhide.' } },
+    ], teaches: { cls: 'barbarian', prestige: 3, asks: 'brood', done: { flag: BROOD_ASKED, slain: BROOD }, seek: 'Petroc, the warlord\'s heir, at the anvil in Grimsforge by the mouth of Fire Mountain\'s vents, can make a Warlord of an Ironhide.' } },
     // The scavenger, a person who moves (#519): asked for the smith once his ledge is found, he tells
     // where the shovel-head came from and goes to Cinderport (SHOVEL_STORY).
     { kind: 'camp', x: 30, y: 14, name: 'The forge\'s lee', text: 'A fire in the lee of the forge, out of the mountain\'s breath, and room by it for one more.' },

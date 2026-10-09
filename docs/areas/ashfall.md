@@ -1202,9 +1202,9 @@ and none adds a fight: the prestige is the pay, and the fights are the places' o
 
 | Class | Trainer, where | The quest | Flags: asked; the deed |
 |---|---|---|---|
-| Paladin | an old Lightbearer, on Old Cinder's crater lip (F11, 18,5) | The Cold Lamp (`old_lamp`): down into the undercroft, and light the lamp at the bottom of the walk with his oil and flint (`oc2_relit`, 8,13) | `q_old_lamp`; `q_old_lamp_lit` |
-| Barbarian | the warlord's heir, at the anvil in Grimsforge, by the vents' mouth (G11, 28,13) | What Nests There (`brood`): down the vents to Meridian Camp, and kill the Brood Drake on its eggs in the nest off the corridors' last run (#22) | `q_brood`; `slain` `meridian_camp2:mc2_brood` |
-| Druid | the Archdruid, in the lee of the rock outcrop in F10's north-west (6,3, §4.9) | The Seedling (`seedling`): lift a seedling under the Grove's oaks (Thornmark's hollow, 3,27), plant it in the bed under the Stone's lookout (14,8), and keep it there till the Stone is lit | `q_seedling`; `q_seedling_taken`, then `q_seedling_planted` and `q_ember_lit` |
+| Paladin | Wystan, an old Lightbearer, on Old Cinder's crater lip (F11, 18,5) | The Cold Lamp (`old_lamp`): down into the undercroft, and light the lamp at the bottom of the walk with his oil and flint (`oc2_relit`, 8,13) | `q_old_lamp`; `q_old_lamp_lit` |
+| Barbarian | Petroc, the warlord's heir, at the anvil in Grimsforge, by the vents' mouth (G11, 28,13) | What Nests There (`brood`): down the vents to Meridian Camp, and kill the Brood Drake on its eggs in the nest off the corridors' last run (#22) | `q_brood`; `slain` `meridian_camp2:mc2_brood` |
+| Druid | Kenver, the Archdruid, in the lee of the rock outcrop in F10's north-west (6,3, §4.9) | The Seedling (`seedling`): lift a seedling under the Grove's oaks (Thornmark's hollow, 3,27), plant it in the bed under the Stone's lookout (14,8), and keep it there till the Stone is lit | `q_seedling`; `q_seedling_taken`, then `q_seedling_planted` and `q_ember_lit` |
 | Ranger | the Eyrie, the Wold's (#524) | down the vents to Meridian Camp, and bring Oriel Fane's map back to the scout (DESIGN §10.3) | |
 
 The Ranger's is the Wold's to place and #22's to end; it is here because its road is Ashfall's.
@@ -2310,8 +2310,8 @@ Decided by delegate for #448 (Ashfall's three), each the owner's to overturn:
    once asked and once: a chest would give it unasked, and an event cannot give an item.
 10. **Nothing withers the seedling:** the engine keeps no clock on an item or a flag and a quest no
     time, so 'alive until' is the planting and `q_ember_lit` read after it, in either order (§11).
-11. **The trainers keep their names and first words;** the seeking goal reads "Find An old
-    Lightbearer in The Ember Waste.", in the system's words, as High Moor's piper's does.
+11. **The trainers are named,** as the Whitespine's are (#684), since the seeking goal reads "Find
+    <name> in <place>.": Wystan, an old Lightbearer; Petroc, the warlord's heir; Kenver, the Archdruid.
 12. **The walkthrough plays the three on a company of 27** with its seconds taken, a barbarian and a
     druid in for its ranger and thief; the Ember Stone's walk now finds its sockets by their parts.
 

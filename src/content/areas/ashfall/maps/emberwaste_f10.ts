@@ -63,7 +63,7 @@ export const EMBERWASTE_F10: MapDef = {
     // prestige (#448): his own words first, then, to a druid of 27 with the second, his ask, once, for a
     // seedling from the Grove kept living in the Waste until the Ember Stone is lit; planted, his word that
     // it waits; and once it is planted and the Stone lit, his last words and the teaching.
-    { kind: 'npc', x: 6, y: 3, name: 'The Archdruid', lines: [
+    { kind: 'npc', x: 6, y: 3, name: 'Kenver, the Archdruid', lines: [
       'An old man in the lee of the rocks, his robe gone from green to grey. Seedlings stand round him in pots of ash.',
       '"I came out of the Grove to see whether anything would grow here. I am still seeing."',
       '"Something will. Something always does. It will not be what you planted."',
@@ -77,7 +77,7 @@ export const EMBERWASTE_F10: MapDef = {
         'He looks your druid over, then turns a pot to show you: ash, and a stalk in it, dead.',
         '"Nothing I bring out lives. Bring me one from the Grove, and keep it living here till the Stone is lit."',
       ] },
-    ], teaches: { cls: 'druid', prestige: 3, done: { flag: [SEEDLING_PLANTED, LIT] }, asks: 'seedling', seek: 'The Archdruid, in the lee of a rock in the Ember Waste\'s north-west, far off the road, can make an Archdruid of a Thornspeaker.' } },
+    ], teaches: { cls: 'druid', prestige: 3, asks: 'seedling', done: { flag: [SEEDLING_PLANTED, LIT] }, seek: 'Kenver, the Archdruid, in the lee of a rock in the Ember Waste\'s north-west, far off the road, can make an Archdruid of a Thornspeaker.' } },
     // On the ash: the cairn, the shrine, the drifts and the Riders' ring by the road.
     { kind: 'cairn', x: 14, y: 12, id: 'f10_cairn', text: 'A cairn on the bare ash, its stones black, a strip of red cloth tied in the top.', gold: 250, items: ['potion_sp_great'] },
     { kind: 'shrine', x: 5, y: 13, id: 'f10_shrine', text: 'A stone set on end in the ash, a hand pressed into its black face while it was soft.', stat: 'endurance', done: 'The stone on end, ash lying in the print of the hand.' },

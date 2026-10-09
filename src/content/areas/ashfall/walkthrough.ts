@@ -228,7 +228,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(!forge.planned && Math.floor(forge.at[0]) === g11.x + 30 && Math.floor(forge.at[1]) === g11.y + 12 && out.at(g11.x + 30, g11.y + 12).solid === 'building',
     `Grimsforge stands at the atlas's mark, G11's 30,12, built (${forge.at.join(',')})`);
   see(w, 'firemount_g11:g11_forge');
-  const heir = person('The warlord\'s heir', G11);
+  const heir = person('Petroc, the warlord\'s heir', G11);
   w.world.travel('firemount_g11', heir.x, heir.y);
   ok(meet(heir, w.party, heard(w.world, heir)).text.includes('went down beside the forge'), 'the warlord\'s heir at the anvil: a man went down beside the forge with a rope');
   const rack = G11.features!.find((f) => f.kind === 'chest' && f.id === 'g11_rack');
@@ -455,7 +455,7 @@ export const walkthrough: Walkthrough = (ok) => {
   // quest); the shrine and the cairn on the ash, and the Riders' ring a camp by the road.
   see(w, 'emberwaste_f10:f10_vines');
   see(w, 'emberwaste_f10:f10_edge');
-  const druid = F10.features!.find((f) => f.kind === 'npc' && f.name === 'The Archdruid') as Person;
+  const druid = F10.features!.find((f) => f.kind === 'npc' && f.name === 'Kenver, the Archdruid') as Person;
   const far = Math.min(...[...wasteRoad].filter((k) => inBox(f10, k % out.width, Math.floor(k / out.width))).map((k) => Math.abs(k % out.width - f10.x - druid.x) + Math.abs(Math.floor(k / out.width) - f10.y - druid.y)));
   ok(druid.x < 16 && druid.y < 16 && far >= 15 && [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => out.at(f10.x + druid.x + dx, f10.y + druid.y + dy).solid === 'rock'),
     `the Archdruid sits in the lee of the outcrop in the north-west, ${far} squares from the road`);
@@ -579,7 +579,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(CRATER.to === 'old_cinder' && out.at(f11.x + CRATER.x, f11.y + CRATER.y).terrain === 'ash' && out.at(f11.x + CRATER.x, f11.y + CRATER.y).solid === 'none'
     && out.at(f11.x + CRATER.x + 1, f11.y + CRATER.y).terrain === 'chasm' && ash.has(at11f(lip.x, lip.y)) && !F11.features!.some((f) => f.x === lip.x && f.y === lip.y),
     'the way down into Old Cinder is the crater\'s west lip, 19,4, its ash open now the town is built (CRATER), and nothing stands at its front');
-  const old = person('An old Lightbearer', F11);
+  const old = person('Wystan, an old Lightbearer', F11);
   w.world.travel('emberwaste_f11', old.x, old.y);
   ok(meet(old, w.party, heard(w.world, old)).text.includes('lamp at the bottom') && Math.abs(old.x - lip.x) + Math.abs(old.y - lip.y) === 1 && out.at(f11.x + old.x + 1, f11.y + old.y).terrain === 'chasm',
     'an old Lightbearer sits on the lip beside the way down: a lamp at the bottom of that town went out');
@@ -984,7 +984,7 @@ function thirdPrestiges(ok: (cond: boolean, msg: string) => void): void {
   const written = (id: string): string[] => log(id)?.pages.flatMap((p) => p.entries.map((e) => e.id)) ?? [];
   const talk = (d: MapDef, p: Person): string => { w.world.travel(d.id, p.x, p.y); const said = meet(p, w.party, heard(w.world, p)).text; listen(w); return said; };
   const ask = (d: MapDef, p: Person): string => { w.world.travel(d.id, p.x, p.y); const [a] = meet(p, w.party, heard(w.world, p)).choice?.answers ?? []; const said = a ? answer(a, w.party) : ''; listen(w); return said; };
-  const old = person('An old Lightbearer', F11), heir = person('The warlord\'s heir', G11), druid = person('The Archdruid', F10);
+  const old = person('Wystan, an old Lightbearer', F11), heir = person('Petroc, the warlord\'s heir', G11), druid = person('Kenver, the Archdruid', F10);
   const sent = sought(questLog(w.world.state, w.party));
   ok(([[F11, old, idris], [G11, heir, ragna], [F10, druid, bryn]] as const).every(([d, p, c]) => sent.find((s) => s.at === d.id)?.who.includes(c.name) && p.teaches?.prestige === 3 && p.teaches.seek?.includes(PRESTIGES[c.cls].titles[2])),
     'at 27 with the second, the paladin is sent to the old Lightbearer, the barbarian to the warlord\'s heir and the druid to the Archdruid, each seeking naming the third');
