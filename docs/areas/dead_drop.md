@@ -260,9 +260,10 @@ knot, which no text calls anything (§8, the vaults' 8).
   puts a choice. Hand it to the Wardens or take it over; either way it stops taking the
   Tallymaster's orders. The orders are the counting house's `compact_orders` (§4.3), and the
   Factor's rung asks for `{ item: 'compact_orders' }`; the rung and Ruan's choice are owed (§10).
-- **The Thief's third prestige** (#448): steal the orders and learn who writes them. Seeing the
-  Tallymaster write is `dd3_writes`, which sets `q_writer_seen`: the quest is to key on `seen:
-  'dead_drop3:dd3_writes'` and that flag. It is owed (§10).
+- **The Thief's third prestige** (#448), Whose Hand, built: steal the orders and learn who writes
+  them, for Hereward in Rook's Nest (docs/areas/whitespine.md §6). Seeing the Tallymaster write is
+  `dd3_writes`, which sets `q_writer_seen`; with the orders in the pack too he reads them, once,
+  and hands them back, so they stay the company's. Nothing on this level changed for it.
 - **The Scarp Stair's runner** (#56's 54, docs/areas/glasswold.md §6) carries orders from here; the
   cleft under the Scarp's lip holds the last three drops. Neither changes.
 
@@ -627,8 +628,6 @@ Decided by delegate for #22 (the counting house), each the owner's to overturn:
   counting house's 15).
 - **The Factor's rung** (`In the Founder's Hand`, which asks for `compact_orders`) with **Ruan's
   choice at the Keel,** in a pull request of their own (PR D of #635): owed (§5).
-- **The Thief's third prestige** (#448, part 3), which keys on `dd3_writes` and `q_writer_seen`:
-  owed (§5).
 - **MONSTERS §4.4's 6 and 8** still owe the Dead-Drop's monsters a restating and report the
   Tallymaster at 57% at 28; the counting house sets it off the line and its gate wins it 70% at 27
   (the counting house's 4). Left as they stand, a shared doc.

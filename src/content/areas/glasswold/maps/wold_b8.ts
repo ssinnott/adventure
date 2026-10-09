@@ -1,7 +1,8 @@
 // The Glasswold, box B8: the Wold's heart, and Kushtash. Core, band 27-28: the far west under the rim,
 // walked into over the east edge from the Scarp's edge (C8). The Riders' hunting camp by the way in, the
 // hunters at their fire waiting on the Grey Lion; Kushtash under the rim, the tallest mesa on the Wold,
-// its top out of sight, where the scout who guided the Meridian Company keeps her fire; the lesser mesa
+// its top out of sight, where Aysu, the scout who guided the Meridian Company, keeps her fire and teaches
+// the Ranger's third for Oriel Fane's map (#448); the lesser mesa
 // east of it, a basilisk behind a pride at its foot; and between the two the Grey Lion's ground, the
 // kill-ground, the vultures over it. A cairn, a well and the Riders' running horse; a hermit in a hollow
 // under the rim, who went into the Glass once; and something come up out of the dunes to the south.
@@ -10,6 +11,13 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/glasswold.md §4.7 is its brief (#529).
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
+
+/**
+ * The Ranger's third (#448): Aysu has asked a ranger of 27 with the second for Oriel Fane's map, from the
+ * last of the Meridian Company's camps under Fire Mountain (`SCOUT_ASKED`), and been given it (`MAP_GIVEN`).
+ * She takes it from the pack; the Lost Expedition stays done on `meridian_map`, which Fane's giving set.
+ */
+export const SCOUT_ASKED = 'q_scout_asked', MAP_GIVEN = 'q_scout_map';
 
 export const WOLD_B8: MapDef = {
   id: 'wold_b8',
@@ -81,12 +89,29 @@ export const WOLD_B8: MapDef = {
     { kind: 'event', x: 3, y: 17, id: 'b8_steps', once: true, text: 'The scree is stepped: each stone set flat on the one below, and not one of them fallen. They go up.' },
     { kind: 'event', x: 4, y: 14, id: 'b8_ledge', once: true, text: 'From the steps a ledge runs along the face to the top, a stride wide, the drop at your elbow.' },
     { kind: 'event', x: 7, y: 15, id: 'b8_lookout', once: true, text: 'A fire in a ring of stones at the edge, dung and thorn, a hide stretched against the wind. Not a bone up here.' },
-    // The scout (#448 gives her the Ranger's third and its asking): words only here.
-    { kind: 'npc', x: 8, y: 16, name: 'The scout', lines: [
+    // Aysu, the scout, the Ranger's third prestige (#448): her own words first, then, to a ranger of 27 with
+    // the second, her ask, once, to follow the Meridian journals down Fire Mountain's vents for Oriel Fane's
+    // map; with the map in the pack, a question, and given, the teaching; after it, her own words again.
+    { kind: 'npc', x: 8, y: 16, name: 'Aysu, the scout', lines: [
       'A woman of the Riders sits at the fire with a bow across her knees, watching the Glass. She does not get up.',
       '"I guided the Meridian Company over the Wold. Good walkers. They asked too many questions."',
       '"They went east, to the mountain that burns. None of them came back this way. I keep the fire lit."',
-    ] },
+    ], flag: 'b8_scout_met', says: [
+      { after: { flag: SCOUT_ASKED, item: 'fane_map' }, lines: [
+        'She sees the oilcloth in your pack before you are off the ledge.',
+      ], choice: { ask: 'Give her Fane\'s map?', answers: [
+        { label: 'Give it', takes: 'fane_map', sets: MAP_GIVEN, says: [
+          'She takes it in both hands and weighs it, and does not open it.',
+          '"So he finished it. Sit down, ranger."',
+        ] },
+        { label: 'Not yet', says: ['She looks back to the Glass.'] },
+      ] } },
+      { after: { flag: 'b8_scout_met', member: { cls: 'ranger', level: 27, prestige: 2 } }, until: { flag: SCOUT_ASKED }, sets: SCOUT_ASKED, lines: [
+        'She looks your ranger over: the bow first, then the hands on it.',
+        '"Their mapmaker, Fane, drew every step they took. Follow their journals down the mountain, and bring me his map."',
+        '"Then I will show you what a Rider sees."',
+      ] },
+    ], teaches: { cls: 'ranger', prestige: 3, asks: 'scout_map', done: { flag: MAP_GIVEN }, seek: 'Aysu, the scout who guided the Meridian Company, keeps a fire on Kushtash, the tallest mesa on the Wold, and can make an Unerring of a Deadeye.' } },
     { kind: 'event', x: 10, y: 15, id: 'b8_view', once: true, text: 'The Wold lies open from here, east to the haze over Akordu. South-east the Glass lies white, a dark crown standing in it.' },
     // The Grey Lion's ground between the mesas: the kill-ground, a hunter's saddlebags in it, the vultures over.
     { kind: 'event', x: 16, y: 16, id: 'b8_kill_ground', once: true, text: 'Between the mesas the grass is beaten flat and fouled. Bones lie in it from many kills: horses, lions, men.' },

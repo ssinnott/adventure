@@ -32,8 +32,9 @@
 // on to the camp on the shingle, and the night she is taken, her knot on the first stone; Rook's Nest
 // at the atlas's site and the watcher in it; the Hand's sea cave under it, found from the wet rock at
 // the hollow's back; the cairn, the drowned god's shrine and the deserter in the rocks with his tally.
-// Last, three of the third prestiges (#448) taken at 27, each for its trainer's quest: the ledge held
-// with Edric, the vigil kept with Oswin and the eleven sung to Brother Lark (`thirdPrestiges`).
+// Last, the four third prestiges taught here (#448) taken at 27, each for its trainer's quest: the ledge
+// held with Edric, the vigil kept with Oswin, the eleven sung to Brother Lark and the Compact's orders
+// read to Hereward in Rook's Nest (`thirdPrestiges`).
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, see, fight, listen, playChapter, everyGoalWalked, goalFromBegun, quest, type Walk, type Step } from '../../../../tools/walk.ts';
 import { xpForLevel, createCharacter, takePrestige, prestigeOf } from '../../../game/party.ts';
@@ -54,7 +55,7 @@ import { readLine } from '../../../game/inscriptions.ts';
 import { MONSTERS } from './monsters.ts';
 import { SADDLE } from '../rimewater/maps/coldmere_k10.ts';
 import { CLIMB, GATE, VIGIL_ASKED, VIGIL_KEPT } from './maps/monksvale_j11.ts';
-import { WENNA_TAKEN, MASON_PASSAGE, MASON_SWAPPED } from './maps/sheerpoint_i8.ts';
+import { WENNA_TAKEN, MASON_PASSAGE, MASON_SWAPPED, ORDERS_ASKED, ORDERS_READ } from './maps/sheerpoint_i8.ts';
 import { WENNA_LODGE } from '../rimewater/maps/rime_lodge.ts';
 import { STAIR_TOP, TOLL_DONE, LEDGE_ASKED, LEDGE_HELD } from './maps/highspine_i10.ts';
 import { NOVICE_TOLD, NOVICE_KEPT, ELEVEN_ASKED, ELEVEN_SUNG } from './maps/monastery.ts';
@@ -601,9 +602,9 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(v.world.eventsHere().includes('Scratched fresh, at the height of a girl\'s shoulder, a loop inside a loop.'), 'and on the first stone her knot, scratched fresh');
 
   // Rook's Nest (#448) at the atlas's site, a hollow high in the tip's rock over the causeway, and the
-  // watcher in it, words only.
+  // watcher in it, Hereward, who teaches the Thief's third (`thirdPrestiges`).
   const [nx, ny] = ATLAS.sites.find((s) => s.name === 'Rook\'s Nest')!.at;
-  const watcher = I8.features!.find((f) => f.kind === 'npc' && f.name === 'A watcher') as Person;
+  const watcher = I8.features!.find((f) => f.kind === 'npc' && f.name === 'Hereward, the watcher') as Person;
   ok(ev8('i8_nest').x + i8.x === nx && ev8('i8_nest').y + i8.y === ny && !ATLAS.sites.find((s) => s.name === 'Rook\'s Nest')!.planned && walked8.has(at8(ev8('i8_nest'))),
     'Rook\'s Nest at the atlas\'s site, 22,8, built');
   see(w, 'sheerpoint_i8:i8_nest');
@@ -657,12 +658,14 @@ export const walkthrough: Walkthrough = (ok) => {
 };
 
 /**
- * Three of the third prestiges (#448), each played by a company of 27 whose member of the class has
- * the second: sent to the trainer by its seeking quest, asked, the quest done as the log says, and
+ * The four third prestiges taught here (#448), each played by a company of 27 whose member of the class
+ * has the second: sent to the trainer by its seeking quest, asked, the quest done as the log says, and
  * the third taken at the trainer's menu, earned and costing no gold. The Ledge: Edric's toll-takers
  * up the shaft by night and never by day, won at 27, and his words at first light. The Vigil: Oswin's
  * brothers up the summit's path by night, won at 27, and his words at dawn. The Eleven: Brother Lark
- * asks; the Tide Bell hung, the miners' hymn heard and the keeper's log taken, and sung to him.
+ * asks; the Tide Bell hung, the miners' hymn heard and the keeper's log taken, and sung to him. Whose
+ * Hand: Hereward asks; down the Dead-Drop, the Tallymaster seen writing and the orders taken from its
+ * tray without a fight, and read to him from the pack, which keeps them.
  */
 function thirdPrestiges(ok: (cond: boolean, msg: string) => void): void {
   const LEVEL = 27, rng = makeRng(448);
@@ -759,6 +762,48 @@ function thirdPrestiges(ok: (cond: boolean, msg: string) => void): void {
     ok(sung.includes('every word falls on a stroke') && !!w.party.flags[ELEVEN_SUNG], `The Eleven: sung to him under the bells (${sung.split('\n\n')[1] ?? sung})`);
     finished(w, 'eleven', ['asked', 'count', 'doors', 'light', 'sung'], 'The Eleven');
     taught(w, lark, 2, 'The Eleven');
+  }
+
+  // Whose Hand: asked in Rook's Nest; down the Dead-Drop from the stair's foot under the Tide Ship, the
+  // levels' groups that stand won at 27; in the counting house the writer seen through the gate in the
+  // rail and the orders out of the tray with no group beside, the Tallymaster left at its desk; back up
+  // the way down, and read to him from the pack, once, which keeps them.
+  {
+    const w = company(3, 'thief'), hereward = npc('sheerpoint_i8', 'Hereward, the watcher');
+    ok(seeking(w, 3) === 'Find Hereward, the watcher in Sheer Point.', `Whose Hand: at ${LEVEL} with the second, the thief is sent to Rook's Nest (${seeking(w, 3)})`);
+    const said = [hear(w, 'sheerpoint_i8', hereward), hear(w, 'sheerpoint_i8', hereward), hear(w, 'sheerpoint_i8', hereward)];
+    ok(said[0] === hereward.lines.join('\n\n') && said[1].includes('whose hand writes them') && said[2] === said[0] && !!w.party.flags[ORDERS_ASKED] && page(w, seekId(3, 3))?.done === true
+      && offers(hereward.teaches!, w.party, w.world.state)[0]?.bar === 'the quest first' && /Go down the Dead-Drop/.test(page(w, 'whose_hand')?.goal ?? ''),
+      `Whose Hand: his own words first, then his ask, once, which begins it and ends the seeking, and the menu waits on it (${page(w, 'whose_hand')?.goal})`);
+    const won = (id: string): void => { for (const g of mapOf(id).encounters ?? []) if (w.world.walks(g, g.x, g.y) && !w.world.ended(g)) fight(w, `${id}:${g.id}`); };
+    const way = (from: string, to: string) => mapOf(from).exits!.find((e) => e.to === to)!;
+    const foot = way('dead_drop_stair', 'dead_drop');
+    walkThrough(w, 'dead_drop_stair', foot.x, foot.y + 1, NORTH, 'dead_drop', 1);
+    won('dead_drop');
+    for (const [from, to] of [['dead_drop', 'dead_drop2'], ['dead_drop2', 'dead_drop3']]) { const e = way(from, to); walkThrough(w, from, e.x, e.y - 1, SOUTH, to, 1); if (to !== 'dead_drop3') won(to); }
+    const C = mapOf('dead_drop3'), desk = C.encounters!.find((g) => g.id === 'dd3_tallymaster')!, writes = C.features!.find((f) => f.kind === 'event' && f.id === 'dd3_writes')!;
+    const tray = C.features!.find((f) => f.kind === 'chest' && f.id === 'dd3_orders')!;
+    see(w, `${C.id}:dd3_writes`);
+    const besideWrites = w.world.adjacentGroups().length;
+    w.world.travel(C.id, tray.x, tray.y);
+    const besideTray = w.world.adjacentGroups().length;
+    if (tray.kind === 'chest') { w.world.markUsed(tray.id); w.party.bag.push(...tray.items); }
+    listen(w);
+    ok(!!w.party.flags.q_writer_seen && w.party.bag.includes('compact_orders') && !besideWrites && !besideTray && !w.world.ended(desk) && writes.x === desk.x
+      && page(w, 'whose_hand')?.goal === 'Take the orders up to Hereward in Rook\'s Nest, on Sheer Point.',
+      `Whose Hand: through the gate in the rail the Tallymaster seen writing, and the orders out of the tray at its right hand with no group beside, the Tallymaster left at its desk (${page(w, 'whose_hand')?.goal})`);
+    for (const [from, to] of [['dead_drop3', 'dead_drop2'], ['dead_drop2', 'dead_drop'], ['dead_drop', 'dead_drop_stair']]) { const s = mapOf(from).start; walkThrough(w, from, s.x, s.y + 1, NORTH, to, 1); }
+    const read = hear(w, 'sheerpoint_i8', hereward);
+    ok(read.includes('reads the orders through twice') && !!w.party.flags[ORDERS_READ] && w.party.bag.includes('compact_orders'),
+      `Whose Hand: in Rook's Nest he reads the orders from the pack, once, and hands them back (${read.split('\n\n')[1] ?? read})`);
+    finished(w, 'whose_hand', ['asked', 'writer', 'orders', 'read'], 'Whose Hand');
+    // Read once, the third is his to teach though the orders leave the pack after.
+    const kept = w.party.bag.splice(w.party.bag.indexOf('compact_orders'), 1);
+    ok(kept.join() === 'compact_orders' && offers(hereward.teaches!, w.party, w.world.state)[0]?.bar === '', 'Whose Hand: read once, the third waits on nothing more, the orders carried or not');
+    taught(w, hereward, 3, 'Whose Hand');
+    w.party.bag.push(...kept);
+    const after = hear(w, 'sheerpoint_i8', hereward);
+    ok(after.includes('Still counting') && w.party.bag.includes('compact_orders'), `Whose Hand: after, his words of the stones, and the orders still the company's (${after.split('\n\n')[1] ?? after})`);
   }
 }
 
