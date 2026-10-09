@@ -267,16 +267,27 @@ export function outdoors(): void {
     `J11's west edge is the crest's mountain and peaks against I11, the summit's path crossing at row 10, and its east edge a peak, the hills and the vale's grass against K11, past which the world ends (${westOf(j11)}; ${eastOf(j11)})`);
   // The Peak Stone's box (I11, #501): its east edge meets J11's west edge square for square, the
   // summit's path crossing at row 10, walked; on the north the pines, the Sheer, the ridge trail at
-  // 27,0 where the atlas's trail crosses, beside the
-  // Stone at 28,0, and the mountain (the ring, so the void) against I10; on the west Ashfall's pines,
-  // grass and ash under the Sheer against H11; on the south the ash, the hills, the Sheer, the pines and
-  // the mountain against I12. None of I10, H11 and I12 is built, so the world ends past them.
-  const i11 = out.zones.find((z) => z.id === 'highspine_i11')!;
-  ok(eastOf(i11) === '%MM' + 'A'.repeat(7) + '*' + 'M'.repeat(7) + 'A'.repeat(9) + 'MMMM%' && [...Array(32).keys()].every((i) => out.at(i11.x + 32, i11.y + i).ch === westOf(j11)[i]),
+  // 27,0 where the atlas's trail crosses, beside the Stone at 28,0, and the mountain against I10's
+  // south edge (#502), the trail going on north; on the west Ashfall's pines, grass and ash under the
+  // Sheer against H11; on the south the ash, the hills, the Sheer, the pines and the mountain against
+  // I12. Neither H11 nor I12 is built, so the world ends past them.
+  const i11 = out.zones.find((z) => z.id === 'highspine_i11')!, i10 = out.zones.find((z) => z.id === 'highspine_i10')!;
+  ok(eastOf(i11) === 'MMM' + 'A'.repeat(7) + '*' + 'M'.repeat(7) + 'A'.repeat(9) + 'MMMM%' && [...Array(32).keys()].every((i) => out.at(i11.x + 32, i11.y + i).ch === westOf(j11)[i]),
     `I11's east edge is the crest's mountain and peaks against J11's west, the summit's path crossing at row 10 (${eastOf(i11)})`);
-  ok(northOf(i11) === 'ppp||' + 'p'.repeat(20) + '%%="%%%' && southOf(i11) === 'aaa^^pp||' + 'p'.repeat(17) + '%'.repeat(6) && westOf(i11) === 'ppppppp,' + 'a'.repeat(13) + ',' + 'a'.repeat(10)
-    && [...Array(32).keys()].every((i) => [out.at(i11.x - 1, i11.y + i), out.at(i11.x + i, i11.y + 32), out.at(i11.x + i, i11.y - 1)].every((c) => c.ch === '%')),
-    `I11's north edge is the pines, the Sheer, the trail at 27,0 and the Stone at 28,0 against I10, its west edge Ashfall's ground under the Sheer against H11 and its south edge the ash, the Sheer, the pines and the mountain against I12, past which the world ends (${northOf(i11)}; ${westOf(i11)}; ${southOf(i11)})`);
+  ok(northOf(i11) === 'ppp||' + 'p'.repeat(20) + 'MM="MMM' && southOf(i11) === 'aaa^^pp||' + 'p'.repeat(17) + '%'.repeat(6) && westOf(i11) === 'ppppppp,' + 'a'.repeat(13) + ',' + 'a'.repeat(10)
+    && [...Array(32).keys()].every((i) => [out.at(i11.x - 1, i11.y + i), out.at(i11.x + i, i11.y + 32)].every((c) => c.ch === '%') && out.at(i11.x + i, i11.y - 1).ch === southOf(i10)[i]),
+    `I11's north edge is the pines, the Sheer, the trail at 27,0 and the Stone at 28,0 against I10's south edge, its west edge Ashfall's ground under the Sheer against H11 and its south edge the ash, the Sheer, the pines and the mountain against I12, past which the world ends (${northOf(i11)}; ${westOf(i11)}; ${southOf(i11)})`);
+  // Stairwatch and the Stair's head (I10, #502): its south edge meets I11's north edge square for
+  // square, the ridge trail crossing at 27, walked, the mountain closing the Stone's ring round above
+  // it; on the north the Sheer, the pines and the trail at 18,0, where the atlas's trail crosses, then
+  // the mountain and the peaks against I9; on the west the Sheer, the Stair cut down through it at
+  // 0,20, and Ashfall's ground under it against H10; on the east the range against J10. None of I9,
+  // H10 and J10 is built, so the world ends past them, the Stair's foot included.
+  ok(southOf(i10) === 'ppp||' + 'p'.repeat(21) + 'M=MMM%' && [...Array(32).keys()].every((i) => out.at(i10.x + i, i10.y + 32).ch === northOf(i11)[i]),
+    `I10's south edge is the pines, the Sheer, the ridge trail at 27 and the mountain against I11's north (${southOf(i10)})`);
+  ok(northOf(i10) === '|' + 'p'.repeat(17) + '=' + '%'.repeat(5) + 'A'.repeat(7) + '%' && westOf(i10) === '|'.repeat(20) + '=pppp' + 'aa' + 'p'.repeat(5) && eastOf(i10) === '%%%' + 'A'.repeat(11) + '%%' + 'A'.repeat(7) + '%'.repeat(9)
+    && [...Array(32).keys()].every((i) => [out.at(i10.x - 1, i10.y + i), out.at(i10.x + 32, i10.y + i), out.at(i10.x + i, i10.y - 1)].every((c) => c.ch === '%')),
+    `I10's north edge is the Sheer, the pines and the trail at 18,0 against I9, its west edge the Sheer with the Stair at 0,20 against H10 and its east edge the range against J10, past which the world ends (${northOf(i10)}; ${westOf(i10)}; ${eastOf(i10)})`);
   // Cinderport's box (G10, #511), Ashfall's first, begun by sea and joined overland to nothing but the
   // Waste's road west of it (#517): on the north the vines, the road at column 3 up the wall's west side,
   // Cinderport's wall, the stream and the grass against G9's shore; on the south the ash either side of
