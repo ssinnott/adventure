@@ -68,7 +68,7 @@ Its edges:
   J11's 20,1 at 316,319 (#499, §4.2).
 - **West: the Sheer,** the cliff down the range's west side at x 264–272 from y 272 to y 372,
   walling Ashfall (24–26) off; the Giants' Stair is the road through it, from the head at 272,306
-  in I10 to Ashfall's H10 at 258,306 (`src/content/atlas.ts`; #510 builds the foot). North of the
+  in I10 to Ashfall's H10 at 258,306 (`src/content/atlas.ts`; #510 built the foot). North of the
   Sheer the Point's west side falls to the sea, Cindercoast across it.
 - **South: the range,** on through I12 and J12 to the rim: country behind, parked (#508).
 
@@ -139,7 +139,8 @@ its gate (#500), I11 (#501) and I10 (#502):
   trolls in the snow at the crest's foot. The Stone counts for the Hearth once stood at (§9, #501's 5).
 - **Stairwatch and the Stair's head** (I10, `highspine_i10`, core, band 22–24; #502): up the ridge
   trail from the Stone and on north through the pines, then a road west off it to the Stair's head,
-  cut stone at the top of the Stair, where the road goes down through the Sheer to the west edge.
+  cut stone at the top of the Stair, where the road goes down through the Sheer to the west edge and
+  on down onto Ashfall's H10 (#510).
   Short of the head the road runs past a caravan drawn up and through the Stair in snow, a giant and
   a snow troll in a drift; at the head are a toll-stone and a shrine older than the monks'. The
   Stair-king keeps the top step from his seat of rock, with two giants, and holds out his hand: the
@@ -537,10 +538,10 @@ settled in its issue.
   road leaves the trail at 23,20 and runs west to 8,20, the atlas's link end (272,306); the head is
   cut stone at 2 to 7,20, 3 to 7,21 and 5 to 7,19, and the Stair, road at 1,20 and 0,20, goes down
   through the Sheer to the west edge (0,20 is 264,306), where Ashfall's ground lies at the cliff's
-  foot, 0,21 to 0,31, and runs south into I11's. The north, west and east edges end the world
-  against I9, H10 and J10, pinned in `tools/tests/outdoors.ts` with void past them, and the south
-  edge is pinned against I11's; the atlas draws no road for the Stair's link, so the edge square at
-  0,20 is owed to #510 (§9, #502's 7). Short of the head, west along the road: a caravan drawn up,
+  foot, 0,21 to 0,31, and runs south into I11's. The north and east edges end the world against I9
+  and J10, pinned in `tools/tests/outdoors.ts` with void past them, the south edge is pinned against
+  I11's and the west edge meets H10's east edge square for square, the Stair going on down onto H10's
+  31,20 (#510; §9, #502's 7). Short of the head, west along the road: a caravan drawn up,
   its master at 18,19 and the wagons at 18,21, and then the Stair in snow at 13,20, a giant and a
   snow troll in a drift (rows 18 to 22, columns 10 to 16); the master's girl is at the head, 6,19,
   off the road. The drift at 12,21, *The wind did not lay it.*, and burnt bones by the trail at
@@ -1139,7 +1140,8 @@ Decided by delegate for #502, each the owner's to overturn:
 7. **The Stair and the head:** the road leaves the trail at 23,20 and runs west to 8,20, the
    atlas's link end (272,306); the head is cut stone at 2 to 7,20, 3 to 7,21 and 5 to 7,19, the
    Stair road at 1,20 and 0,20 through the Sheer to the west edge. The atlas draws no road for the
-   link, so the edge check's square 0,20 is owed to #510 (`EDGES_OWED`, `tools/tests/pillars.ts`).
+   link, so the edge check's square 0,20 was owed to #510 (`EDGES_OWED`, `tools/tests/pillars.ts`),
+   which lays H10's 31,20 as road against it and empties the list.
 8. **The Stair in snow,** `i10_stair` at 13,20 on the road short of the head: a giant and a snow
    troll, not roaming, respawning at 2880, snow drifted round them (rows 18 to 22, columns 10 to
    16). The drift at 12,21 (*The wind did not lay it.*) and burnt bones by the trail at 20,16 are
@@ -1248,8 +1250,8 @@ Cut and owed, from I10 (#502):
   accept it or ask for a systems change (§9, #502's 6).
 - **The issue's own secret,** the maintenance mark, is a thing seen on the toll-stone and not a
   door: the chimney to the ledge is the secret, as §4.5 has it (§9, #502's 13).
-- **The Stair's foot.** Its edge square at 0,20 is owed to #510 with the rest of H10, the atlas
-  drawing no road for the link (§9, #502's 7).
+- **The Stair's foot** was owed to #510 with the rest of H10, and is built: its 31,20 is road against
+  I10's 0,20 and `EDGES_OWED` is empty (§9, #502's 7).
 - **The Toll and the ledge.** The Toll (#56's 47) is #506's, with the caravan-master, his wagons and
   his girl as words only and the flags `toll_paid`, `toll_part` and `toll_coin` for it to read; the
   old champion on the ledge has words only, his trainer entry and the night on the ledge being

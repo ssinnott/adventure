@@ -13,8 +13,9 @@ it, the plan for building it, box by box, and the briefs. Its work is filed unde
 country behind (#522, parked); this doc is #509. Figures are measured on main at `6032251` (2
 October 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Four maps are built: G10, Cinderport's box (#511, §4.3), which lists the area; Cinderport behind its
-gate (#512, §4.4); and F10 and E10, the Ember Waste's road (#517, §4.9). Its nine monsters and the
+Five maps are built: H10, the Stair's foot (#510, §4.2), which joins the area to the Whitespine
+overland; G10, Cinderport's box (#511, §4.3), which lists the area; Cinderport behind its gate
+(#512, §4.4); and F10 and E10, the Ember Waste's road (#517, §4.9). Its nine monsters and the
 armourer's step are drawn (§3), and the rest is to build. Its content is
 `src/content/areas/ashfall/` (maps, monsters, items, climate, its part of the world map and its
 walkthrough; its chapter of the one quest, The Window, in `chapter.ts`, and its side quests in
@@ -31,10 +32,10 @@ three zones:
 
 | Zone | Band | Squares | Built |
 |---|---|---|---|
-| Cindercoast | 24–25 | 3,657 | G10 |
+| Cindercoast | 24–25 | 3,657 | H10, G10 |
 | Fire Mountain | 25–26 | 3,795 | none |
 | The Ember Waste | 25–26 | 3,284 | F10, E10 |
-| The area | 24–26 | 10,736 | G10, F10, E10 |
+| The area | 24–26 | 10,736 | H10, G10, F10, E10 |
 
 Squares are land without shallows or rivers, about 10.5 zone maps (EXPANSION §1 has 10.5), and
 9,228 of them a company could walk: the rest is Fire Mountain's cone, the Sheer's foot and the rim.
@@ -44,9 +45,9 @@ rock 382, hills 203 and vines 71. It runs from the Cinder Hills at about x 146 e
 x 266, and from the Sound's shore at about y 275 down to the rim at y 370. The zones' bands are the
 folder's: the atlas gives the area 24–26 and the boxes rise through it (§4).
 
-The squares are the plan's, before any box. G10 (#511) is laid whole in Cindercoast and F10 and E10
-(#517) in the Ember Waste, whose band stays the plan's 25–26 on its row where the boxes are built at
-24–26 (§4, §9, #517's 2).
+The squares are the plan's, before any box. H10 (#510) and G10 (#511) are laid whole in Cindercoast
+and F10 and E10 (#517) in the Ember Waste, whose band stays the plan's 25–26 on its row where the
+boxes are built at 24–26 (§4, §9, #517's 2).
 
 **The grid** (EXPANSION §8.2; docs/areas/shelf.md §1). Ashfall is the E to H columns from row 9 to
 row 12, with a sliver in I. The land worth a map is six boxes: H10 and G10 along the Sound, the
@@ -66,6 +67,8 @@ Its edges:
   262,300. The Giants' Stair comes down it at 258,306 from the High Spine's I10 (272,306; #502), a
   road link open from the start and the only way over: a company that comes by land arrives here.
   The link's `from` is `firemount` on the plan while its foot lands in Cindercoast's H10 (§9).
+  H10 is built (#510): I10's 0,20 meets its 31,20, road on both sides, and Ashfall is joined to the
+  Whitespine overland (§4.2).
 - **South: the rim,** under Fire Mountain's south slopes and the Waste's.
 - **West: the Cinder Hills,** a hills ridge running north to south at x about 146 to 152 between
   Ashfall and the Glasswold, with the road to the Wold over them at 156,312 to 144,300 in E10,
@@ -101,9 +104,19 @@ off the springs; the vines' shore humid.
 
 ## 3. What is built
 
-Four maps: the area's first box, which lists the area (#511), the town behind its gate (#512) and
-the Waste's road, F10 and E10 (#517):
+Five maps: the Stair's foot (#510), Cinderport's box, which lists the area (#511), the town behind
+its gate (#512) and the Waste's road, F10 and E10 (#517):
 
+- **The Stair's foot** (H10, `cindercoast_h10`, core, band 24; #510): the Giants' Stair's last
+  flights, cut along the Sheer's foot from I10's 0,20 to a landing on the black sand, where the step
+  is said, and the pines under the Sheer to the south, where things fallen from the Stair lie. A
+  track runs from the landing west across the sand, past Scaldwell and through the shore's vines to
+  the west edge, where it comes out onto G10's vines. Scaldwell is pools in the ash, a bathhouse of
+  planks with its keeper, a Rider with words only, the Riders' shrine and, beyond the pools, a rock
+  outcrop where the water comes up, with a stoker shovelling at it. A camp under the Sheer, a cairn
+  at the Stair's foot, a milestone where the track leaves the sand and a lookout on the dune.
+  Four groups: beetles at the Stair's foot and toward the dune, strangler vines in the shore's first
+  trees and the stoker, the first heavy machine (§4.2).
 - **Cinderport's box** (G10, `cindercoast_g10`, core, band 24–25; #511): the town's wall along the
   north edge, a block of building squares with its gate in its face, which opens into Cinderport
   (#512), and before it the trading ground where the Riders come down: horse-lines and their
@@ -141,11 +154,12 @@ and E10 laid on it at 24–26 and its crossing words on its row, §9, #517's 2 a
 G9's shore no longer planned; Fire Mountain, Old Cinder, the Ember Stone, Scaldwell, Meridian Camp,
 Grimsforge; the Sheer and the Cinder Hills, the plan's, §10) and its links: the Stair down the
 Sheer, the ship from Kilnhaven, the town's way in (moved from the site to the gate, §9, #512's 13),
-the three dungeons' ways in, the road to the Wold and the last crossing.
+the three dungeons' ways in, the road to the Wold and the last crossing. H10 is first on
+Cindercoast's row, and Scaldwell, built with it, is no longer planned (§9, #510's 2 and 6).
 
 Its row on the curve and its step on the gear ladder are in (#542): the row in
 `src/content/progression.ts` (band 24–26, next 26, window 5,500), owed to #446 while the area is
-built box by box, with the three boxes' 4,290 xp a member and 2,100 gold the clear's floor, which
+built box by box, with the four boxes' 6,739 xp a member and 3,100 gold the clear's floor, which
 Cinderport leaves as it is, a town paying nothing (§8); and the step in
 `src/content/areas/ashfall/items.ts`, the Area's own since G10 lists it (`ITEMS_AHEAD`,
 `src/content/index.ts`, held it until then), so that the harness and the gate dress by it:
@@ -157,8 +171,8 @@ carries from 25, sold at Cinderport's chandler's since #512 and owed to the Ride
 Its ground (#543): vines (`&`), walked through as the woods are, the shore's trees hung with
 creepers; the volcano (`V`) and a vent in it (`@`), the mountain's rock to walk into, see and climb,
 a vent's fire in its lip and its smoke going up; lava is the `!` there was. The scaffold drafts H10
-with its 207 squares of vines and G11 with its 102 of lava; the atlas lays the cone as mountain, so
-#513 letters it `V` and its mouth `@` over the draft (docs/SLICE.md).
+with its 207 squares of vines (187 as built, §4.2) and G11 with its 102 of lava; the atlas lays the
+cone as mountain, so #513 letters it `V` and its mouth `@` over the draft (docs/SLICE.md).
 
 The Ember Stone counts for the Hearth (#548): its row in `src/content/stones.ts` restores it on
 `q_ember_lit`, the flag the Stone's dungeon sets the moment its third part is in and it lights
@@ -185,9 +199,10 @@ Sentry and the Sentinel on the heavy machines', new (`src/ui/monsters/machines.t
 `src/content/areas/ashfall/monsters.ts`, the area's own since G10 lists it (`AHEAD`,
 `src/content/index.ts`, listed them until then), and each was owed in `UNPLACED`
 (`tools/tests/maps.ts`) to the box that first places it: G10 places the vine, the beetle, the
-salamander and the drake (#511); the stoker is owed to #513, the husk and the sentry to #514, the
-Old Drake to #515 and the Sentinel to #516, though listing the area records all nine in
-`src/content/shipped.json`.
+salamander and the drake (#511); H10 places the stoker (#510); the husk and the sentry are owed to
+#514, the Old Drake to #515 and the Sentinel to #516, though listing the area records all nine in
+`src/content/shipped.json`. The stoker is restated on #549's line, 665 hit points for 687 (§9,
+#510's 10).
 
 The rooms are drawn (#521), one to each business of Cinderport, ahead of the town as Rime Lodge's
 were. `src/content/areas/ashfall/interiors.ts` lists them, the Area's own `interiors` since G10
@@ -221,14 +236,14 @@ Riders' ride and the last crossing (#547) and the bot grown to the band (#549); 
 
 ## 4. What is still to build
 
-All of it but G10, the town, F10 and E10, built (#511, §4.3; #512, §4.4; #517, §4.9): 10,736 squares
-of land, 9,228 of them walkable, the plan's figures (§1). On the grid the plan is six boxes, two
-dungeons and a town, and the boxes hold 5,462 of those squares, 5,120 walkable; the seven parked
-behind them hold 4,454 (§4.10), the cuts and the sliver about 700 (§11):
+All of it but H10, G10, the town, F10 and E10, built (#510, §4.2; #511, §4.3; #512, §4.4; #517,
+§4.9): 10,736 squares of land, 9,228 of them walkable, the plan's figures (§1). On the grid the plan
+is six boxes, two dungeons and a town, and the boxes hold 5,462 of those squares, 5,120 walkable;
+the seven parked behind them hold 4,454 (§4.10), the cuts and the sliver about 700 (§11):
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
 |---|---|---|---|---|---|---|---|---|
-| H10 | The Stair's foot | Cindercoast | core | 24 | 1,009 (ash 644, vines 207, grass 82, pine 56), 15 shallow | the Stair down the Sheer at 258,306; Scaldwell at 240,300; the vines; the gentlest groups | the far side reached | #510 |
+| H10 | The Stair's foot | Cindercoast | core | 24 | 1,009 (ash 644, vines 207, grass 82, pine 56), 15 shallow | the Stair down the Sheer at 258,306; Scaldwell at 240,300; the vines; the gentlest groups | the far side reached | #510, built |
 | G10 | Cinderport's box | Cindercoast | core | 24–25 | 977 (ash 618, vines 236, grass 74), 47 shallow | the town's gate at 206,288 on the north edge; the trading ground; the road south-west | the eldest's story | #511, built |
 | | Cinderport | | town, 16×16 | 24–26 | | eight businesses; the two halls; the ship; the trainer to 27 | the port; the last crossing | #512, built |
 | G11 | Fire Mountain's flank | Fire Mountain | core | 25 | 1,024 (ash 641, mountain 281, lava 102) | the cone at 215,326; the vents at 226,334; Grimsforge at 230,330; the drakes | the vents | #513 |
@@ -258,8 +273,9 @@ zone, and the zone a square belongs to decides only its crossing line (#166) and
 **The order** is the Stair's, and the quest's: H10, the only box that meets the Whitespine; G10 and
 Cinderport; G11 and the vents; F11 with Old Cinder and the Stone; then F10 and E10. Road order holds
 (#443, call 6), but Cinderport's box may begin by sea, the second area in flight, once the
-Whitespine's first box is in. G10 begins it (#511), with no neighbour built, so its way in is the
-gate's front (§9, #511's 4). Building waits on #442's systems (§3); the briefs and the drawings do
+Whitespine's first box is in. G10 began it (#511), with no neighbour built, so its way in is the
+gate's front (§9, #511's 4); H10 (#510) is built beside it, and a company on foot comes in at the
+Stair's foot (§9, #510's 2). Building waits on #442's systems (§3); the briefs and the drawings do
 not.
 
 The places, as the atlas and the docs have them:
@@ -324,6 +340,59 @@ half, with the wilderness features (#45); no more than one point in four is a si
 - **New here.** Ash and vines underfoot (#543); the far side's weather; a company told it is early.
 - **Finds.** The Plate Mail +2 in the cleft.
 - **Pay.** About 1,700 xp a member.
+- **As built** (#510, 9 October): the brief's places, with four groups for its five, laid whole in
+  Cindercoast at 232,286, core, band 24–24 (§9, #510's 1). The map starts at 31,20 facing west, the
+  square the Stair comes onto from I10's 0,20: the two edges meet square for square, road on both
+  sides, and Ashfall is joined to the Whitespine overland (§1). The Sheer is cliff at columns 30 and
+  31, rows 0 to 19, closed, meeting I10's cliff column; the Stair's last flights are road at 27 to
+  31,20 along its foot, with the notch's lip rock at 28,19, and the landing, 26,20, is the atlas's
+  link end (258,306), where the step's event, `h10_foot`, says the brief's line. South of the Stair
+  the Sheer is I10's, and its ground goes on as pines at 28 to 31, rows 21 to 31 (§9, #510's 3). The
+  Sound along the north is H9's, so the north edge is the vines and the shore's grass, and the black
+  sand is the atlas's ash. The track runs from the landing west along rows 20 and 21, north-west to
+  15,13, west to 10,13, north to 10,11 and west along row 11 to the west edge at 0,11 (232,297),
+  where it comes out onto G10's vines at 31,11 and stops: G10's east edge has no road and the atlas
+  none at the seam, so no road runs into G10 (§9, #510's 4). Cindercoast's crossing words are walked
+  down the Stair, the warning at 21, the harder line at 22 and the land's name alone at 24, and
+  nothing is said going straight back up (§9, #510's 13). Scaldwell (240,300, local 8,14) is six
+  pools of shallow water in the ash, 7 to 9,15 and 8 to 10,16, the event `h10_pools` on the site's
+  square; the bathhouse is a block of building squares at 4 to 6,12 to 13 with no interior, its
+  keeper at 7,13 a Rider with four lines and words only (#56's 49, whose quest is #519's), and the
+  Riders' shrine at 11,15 gives endurance (§9, #510's 6). The stoker stands at 6,17 beside the rock,
+  one, not roaming, seen first from the track (`h10_shovel`, 14,15), a plain group until #519 makes
+  it 49's fight (§9, #510's 7). The secret is the issue's, the springs' source down a vent the water
+  comes up, and not the brief's cleft south of the Stair, which has no Sheer of H10's to stand in: a
+  secret door at 8,18 in a rock outcrop (6 to 10,18 to 21) beside the pools, the vent behind it at
+  8,19 (`h10_vent`) and the hoard at 8,20 (`h10_vent_hoard`), 750 gold and the brief's Plate Mail
+  +2, the brief's "coin of every age" being the vent's line. The hint is the brief's own, a path
+  trodden flat in the ash up to the rock and ending at it (`h10_trodden`, 8,17), and the keeper
+  hints it in words: "Some days it is not there." What the giants let fall is seen in the pines
+  under the Sheer (`h10_fallen`, 29,27) (§9, #510's 5). The cairn at the Stair's foot, 27,21, holds
+  250 gold and a Sapphire Vial. The brief's other places are each a feature: the camp Under the
+  Sheer (27,17), the milestone where the track leaves the sand for the vines (11,12, CINDERPORT 5)
+  and the lookout on the dune's crest (20,1, Sheer Point); and for density, things seen, from the
+  Sheer's face and a goat on it to a crust on the ash, black glass and a shod horse's bones (§9,
+  #510's 14). The stream is the atlas's: in at the south edge at 4 and 5,31, out at the west edge
+  at 0,22 and 23 into G10's, and crossed on stones at 3 to 4,29, so the corner west of it, with its
+  heron (`h10_heron`, 1,29), is walked within the box (§9, #510's 12). The north and south edges
+  end the world against H9's shore and H11, pinned in `tools/tests/outdoors.ts` with void past
+  them. Its 1,024 squares are ash 554, vines 187, grass 78, pine 68, cliff 41, road 41, shallow 20
+  (the stream 14, the pools 6), rock 18, hills 6, building 6, the vent's floor 2, stones 2 and the
+  secret door. Four groups: beetles, 3, just past the Stair's foot, 21,23, the area's gentlest, at
+  24; beetles, 4, on the sand toward the dune, 21,6; strangler vines, 4, in the shore's first
+  trees, 14,10, which do not roam; and the stoker, 1, the box's group at 25. No cinder drake is
+  placed (§9, #510's 8). It departs from the brief in the band, 24 to 24, and the groups, four for
+  its five (§9, #510's 1 and 8); in the secret, the vent for the cleft (§9, #510's 5); in the pay,
+  2,449 xp a member for about 1,700 (§8); and in the track, which stops at G10's vines (§9,
+  #510's 4). The step's entry and goal are #518's, and 49's quest is #519's.
+  - **Measured.** A company at 24 wins every fight and manages 10.21 fights to a rest, inside the
+    aim of 9 to 11, with 17.3% of its days ending in a fight broken off; it walks Cindercoast's
+    road, past the beetles at the Stair's foot and then G10's beetles and salamanders, every time.
+    H10 pays 2,449 xp a member and 1,000 gold. Two under, at 22, it wins every fight too, owed to
+    #18 as the Whitespine's boxes' is, and the two groups nearest the Stair are won at 22 every
+    time. Density 100.0% within 8 steps and the furthest 8, with no sign among its 30 points. The
+    walkthrough wins every group at 24, ten fights in ten. It claims the heavy machines and the
+    springs as new (§7).
 
 ### 4.3 G10, Cinderport's box (#511): core, band 24–25
 
@@ -696,7 +765,8 @@ eldest's story, Fire Mountain's at the vents, the Ember Waste's at the Stone. It
 in the journal's voice, keyed to flags, events and maps the save holds:
 
 - **The far side.** Down the Stair onto black sand, hanging vines, a mountain that smokes over
-  everything; the goal points west along the shore to Cinderport.
+  everything; the goal points west along the shore to Cinderport. Its event stands at the Stair's
+  landing, 26,20 (`h10_foot`, #510); the entry and the goal are #518's.
 - **The eldest's story.** At the trading ground the Riders' eldest tells the oldest story on this
   side of the sea: a door opened in the sky, something rose toward it on a pillar of fire and fell,
   and the land where it fell burned to glass. *Remember what that cost, if anyone ever offers to
@@ -742,7 +812,9 @@ Pay is xp a member, whichever way the choice goes, shared by level: about 800 be
 - **49.** The bathhouse keeper, a Rider, says the springs went cold the day the Anvil Stone was cut
   and warm when it was restored, and that things come up in the water: a grey part, a bead of
   glass, a bone. At the source a stoker shovels. Break it and the springs go cold for good; leave it
-  and take what comes up.
+  and take what comes up. As built (#510): the keeper speaks four lines, words only, and the stoker
+  stands at the rock, a group like any other; the choice, the fight's change and the springs going
+  cold are #519's (§4.2, §9, #510's 6 and 7).
 - **50.** A Cinderport potter wants the town's founding stone brought out from under the ash; it
   says the town was founded by the first who came down from the mountain. Bring it out and
   Cinderport raises a shrine on the trading ground and the Riders object; or leave it.
@@ -808,7 +880,8 @@ Proposed, against the roster's Where column: the Cinder Drake over Cindercoast's
 and on the Hills (E10), where MONSTERS §8.2 has it on Fire Mountain's slopes only, and the Ember
 Salamander at G10's far end and F10's flow, where it has them at the vents. They stand in the briefs
 as proposals; if the owner takes them, MONSTERS' Where column says so, in a pull request of its own.
-G10 takes its two (#511, §9's 8); F10 and E10 take the Cinder Drake, on F10's rocks and on the
+G10 takes its two (#511, §9's 8); H10 takes neither, the stoker being its group at 25 (#510, §9's
+8); F10 and E10 take the Cinder Drake, on F10's rocks and on the
 Hills, and place no salamander (#517, §9's 7 and 8). One gap for the owner: before the Stone is lit
 the roster has no roaming monster at 26, so a box of 25–26 holds its top either in the sentries
 after or in two drakes together; whether the curve forgives it or #520 wants a 26 is the owner's.
@@ -825,7 +898,8 @@ The area's `novel` claims each as a box places it, since the check asks that wha
 used: the drakes and the vines underfoot with G10 (#511); the rest waits for the box that places it,
 and sweep with fire has no token to claim (§9, #511's 14). F10 and E10 claim nothing more: lava is
 on the road before Ashfall, and steppe, first laid in E10, is the Wold's ground (#543), left
-unclaimed (§9, #517's 15; §11).
+unclaimed (§9, #517's 15; §11). H10 claims the heavy machines, with the stoker, and the springs,
+with Scaldwell (#510, §9's 11).
 
 ## 8. The numbers
 
@@ -846,8 +920,9 @@ unclaimed (§9, #517's 15; §11).
   above, the shares are H10 2,250, G10 2,000, Cinderport 800, G11 2,650, F11 2,400, Old Cinder
   3,450, the Ember Stone 2,950, F10 and E10 1,850 and the side quests about 1,100: about 19,450. The
   issues (#510 to #519) carry the first figures until their briefs are settled. As built: G10 2,449
-  (#511), 1.22 times its scaled share, and F10 and E10 1,841 between them (#517), 0.99 times theirs,
-  so the shares stand at about 19,890, 1.02 times the ask (§9, #511's 9, #517's 9). Cinderport pays
+  (#511), 1.22 times its scaled share, H10 2,449 (#510), 1.09 times its own, and F10 and E10 1,841
+  between them (#517), 0.99 times theirs, so the shares stand at about 20,090, 1.03 times the ask
+  (§9, #510's 9, #511's 9, #517's 9). Cinderport pays
   nothing, as a town pays none, and its two halls add no quest (§9, #512's 6): its 600, 800 scaled,
   is unpaid (§11).
 - **Gold.** Training six members from 24 to 26 costs 11,760 with today's `trainPrice`, and to 27,
@@ -859,7 +934,9 @@ unclaimed (§9, #517's 15; §11).
   26,900, its weapons 13,900. As built: G10 holds 900 (#511), 300 in the cairn where the ash begins
   and 600 in the hide, its dearest find the Long Sword +2 at 420, inside the window; F10 and E10
   hold 1,200 (#517), 250 and a Sapphire Vial in the cairn of each and 700 in the grave, their
-  dearest find the Horn Bow +2 at 1,050, inside the window. Cinderport holds no gold, a town paying
+  dearest find the Horn Bow +2 at 1,050, inside the window; H10 holds 1,000 (#510), 250 and a
+  Sapphire Vial in the cairn at the Stair's foot and 750 in the vent, its dearest find the Plate
+  Mail +2 at 1,500, inside the window. Cinderport holds no gold, a town paying
   nothing; the dearest ware at its armourer's is the Drakeskin Coat at 3,100 and the Quickening
   Draught at its chandler's, the company's kit from 25, is 2,000, both inside the window (#512).
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
@@ -875,13 +952,16 @@ unclaimed (§9, #517's 15; §11).
   adds a way in, the boat's landing at 6,3; the groups nearest it are won at 22 as often as the
   median group or more (§4.4). On F10 and E10 a company at 24 wins every fight and walks the Waste's
   road every time, 10.66 fights to a rest on F10 and 10.51 on E10; one at 22 wins every fight too,
-  owed to #18 (§4.9).
+  owed to #18 (§4.9). On H10 a company at 24 wins every fight and walks Cindercoast's road from the
+  Stair every time, 10.21 fights to a rest; one at 22 wins every fight too, owed to #18, and the
+  groups nearest the Stair are won at 22 every time (§4.2).
 - - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3); the
   Stone's chamber holds the door's squares empty until it opens, as the Sunder's floor holds the
   wall's. As built: G10 97.3% within 8 steps and the furthest 12, with no sign among its 26 points
   (#511); Cinderport, a town, 100.0% within 7 steps (86 of 86) and the furthest 4, with no sign
   among its 25 (#512); F10 and E10 100.0% within 12 steps, the furthest 12 of 20, with no sign among
-  their 12 and 15 points (#517).
+  their 12 and 15 points (#517); H10 100.0% within 8 steps and the furthest 8, with no sign among
+  its 30 points (#510).
 
 ## 9. Decisions
 
@@ -1345,6 +1425,67 @@ Decided by delegate for #517, each the owner's to overturn:
     the town's ways out (§9, #512's 14), so the outdoors test reaches them without one. The gate
     figures under the floor are owed to #18, as G10's are.
 
+Decided by delegate for #510, each the owner's to overturn:
+
+1. **H10 is laid whole in Cindercoast at 232,286,** core, band 24–24, region `ashfall`: the doc's
+   and the issue's band 24, where the scaffold gave the zone's 24–25. The curve's top is then 25,
+   which the stoker meets. The map starts at 31,20 facing west, the square the Stair comes onto
+   from I10.
+2. **H10 is Cindercoast's first map,** first in the zone row and in the Area's `maps` (road order),
+   so the gate's "nearest the way in" judges the Stair's foot; G10's gate front is still judged as
+   the boat's landing through the town (`landings`). The walkthrough walks H10 first.
+3. **The Sheer is cliff at columns 30 and 31, rows 0 to 19** (the atlas had cliff at 31, rows 0 to
+   13, and pines at 29 and 30), meeting I10's cliff column square for square. The Stair's last
+   flights are road at 27 to 31,20, the notch's lip rock at 28,19 and cliff at 29,19; the landing,
+   26,20, is the atlas's link end (258,306). South of the Stair the Sheer is I10's, so its ground
+   goes on as pines at 28 to 31, rows 21 to 31 (ash at 31,25 and 26), matching I10's column 0.
+4. **The track stops at G10's vines.** It runs from the landing west to the edge at 0,11 and comes
+   out onto G10's vines at 31,11. G10 has no road on its east edge and the atlas none at the seam,
+   so G10 is not touched: its east vines lead on to its stones at 18 to 19,3 and the gate.
+5. **The secret is the issue's,** the springs' source down a vent the water comes up, not §4.2's
+   cleft south of the Stair: south of the Stair the Sheer is I10's, so H10 has none to stand a
+   cleft in. A secret door at 8,18 in a rock outcrop beside the pools, the vent at 8,19 and the
+   hoard at 8,20: 750 gold and the brief's Plate Mail +2 ("coin of every age" is the vent's line).
+   The hint is the brief's own, a path trodden in the ash up to the rock and ending at it, and the
+   keeper hints it in words: "Some days it is not there." What the giants let fall is a thing seen
+   in the pines under the Sheer.
+6. **Scaldwell is six pools of shallow water in the ash** (7 to 9,15; 8 to 10,16), the event
+   `h10_pools` on the site's square; the bathhouse a block of building squares with no interior;
+   its keeper a Rider with four lines, words only (#56's 49, the quest #519's); the Riders' shrine,
+   of endurance. The site loses `planned` on the atlas.
+7. **One stoker, at 6,17 beside the rock,** not roaming (seen at its work, MONSTERS §8.2) and
+   respawning at 2880: no quest names it yet, so it is a plain group. #519 makes it 49's fight
+   and may take the respawn away ("break it and the springs go cold for good").
+8. **Four groups for the brief's five:** beetles (3) just past the foot, beetles (4) on the sand
+   toward the dune, vines (4) in the shore's first trees, not roaming, and the stoker. The proposed
+   cinder drake is not placed: the stoker is the box's group at 25, and the pay and the fights to a
+   rest sit inside their aims without it.
+9. **H10 pays 2,449 xp a member,** 1.09 times the doc's scaled share of 2,250 (the doc wins over
+   the issue's 1,700), under the 2,812 cap: its four groups' 14,696 xp over six (3 × 1,271, 4 ×
+   1,271, 4 × 953 and 1,987). Gold 1,000: the cairn 250 and a Sapphire Vial, the vent 750. The
+   Plate Mail +2 at 1,500 is the area's dearest find, inside the 5,500 window.
+10. **The stoker is restated on #549's line:** 665 hit points for 687, 5d8+8 and 1,987 xp the
+    same. It leaves `RESTATE` (`tools/tests/harness.ts`) and `UNPLACED` (`tools/tests/maps.ts`).
+11. **Novelty claims the family `machines`** (the stoker) **and the landmark `springs`** (Scaldwell,
+    no longer planned). G11's box (#513) claims `machines` too: whichever merges second drops it.
+12. **The stream is the atlas's:** in at the south edge at 4 and 5,31 (5,31 made shallow, the
+    atlas's river being at 237,318, for the edge check) and out at the west edge at 0,22 and 23
+    into G10's. It is crossed on stones at 3 to 4,29, so the corner west of it, with its heron, is
+    walked within the box.
+13. **Cindercoast's crossing words (#511's 13) are walked down the Stair:** the warning at 21, the
+    harder line at 22, the land's name alone at 24. Straight back up, the land is not named: from
+    I10's 0,20 the king's giants are seen, I10's own lines.
+14. **The brief's places are each a feature:** the camp Under the Sheer (27,17), the cairn at the
+    Stair's foot (27,21), the milestone where the track leaves the sand for the vines (11,12,
+    CINDERPORT 5) and the lookout on the dune's crest (20,1, Sheer Point). For density, things
+    seen: the Sheer's face, a goat on it, the dune, driftwood, the vines at the water, a deer in the
+    vines, planks behind the bathhouse, steam from the foot, a crust on the ash, black glass, a shod
+    horse's bones (G10's Riders' horses are unshod) and the stream.
+15. **The gate's figure two under is owed to #18:** at 22 a company wins every H10 fight
+    (`cindercoast_h10: under`), as G10's and the Whitespine's do.
+16. **Cindercoast's road** (`ROADS`, `tools/tests/gate.ts`) is H10's foot beetles, then G10's
+    beetles and salamanders.
+
 ## 10. Names
 
 Ashfall's naming pass, by the rules of `docs/NAMES.md`, chosen for #444. Cindercoast's folk came
@@ -1393,8 +1534,8 @@ Owed, from G10 (#511):
   fights to a rest, past the limit, and two groups of beetles of four would pay 1.43 times the
   share; its mixed group of salamanders and a drake failed the curve's top, so the drake stands
   alone at 25.
-- **Cindercoast's crossing words** are not walked until a box beside G10 is built; the first that is
-  (#510, #513 or #517) walks them (§9, #511's 13).
+- **Cindercoast's crossing words** were not walked until a box beside G10 was built: H10 walks them
+  down the Stair (§9, #510's 13) and F10 and E10 back over G10's west edge (§9, #511's 13).
 - **The hide's Long Sword +2** is the brief's, and Act II's find (420 gold, as K2's and L3's): the
   ladder and the window pass. The owner may want the act's step with a plus there instead (§4.1).
 
@@ -1432,3 +1573,20 @@ Owed, from F10 and E10 (#517):
 - **The grave's Horn Bow +2** is Saltreach's bow with a plus, an Act II find at 1,050 gold, as G10's
   Long Sword +2 is at 420: the window passes. The owner may want the act's step with a plus there
   instead, the Ashwood Bow (§9, #517's 11).
+
+Owed, from H10 (#510):
+
+- **49's quest is #519's:** the keeper has words only and the stoker is a plain group, respawning at
+  2880; #519 adds the choice and may take the respawn away, so that the springs go cold for good
+  (§9, #510's 6 and 7).
+- **No cinder drake stands at H10:** the brief's drake over the shore's far end is not placed, the
+  stoker holding the top at 25; the pay and the fights to a rest sit inside their aims without it
+  (§9, #510's 8).
+- **The brief's cleft moved to the vent:** the Plate Mail +2 and the coin of every age are the
+  vent's, the Sheer south of the Stair being I10's (§9, #510's 5).
+- **The track ends at G10's vines:** no road runs into G10, whose east edge has none, nor does the
+  atlas at the seam. The owner's, if a road should run on (§9, #510's 4).
+- **The gate's figure two under is owed to #18:** at 22 a company wins every H10 fight, where §8
+  asks no more than one in four (§9, #510's 15).
+- **The Stair's link** keeps `from: 'firemount'`, though its `a` end, 258,306, lies in Cindercoast's
+  H10: untouched, and no check reads it (§9).
