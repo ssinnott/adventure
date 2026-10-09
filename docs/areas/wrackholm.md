@@ -14,8 +14,8 @@ E6, the moor and the landing, is built (#187), and with it the area is listed in
 two levels are built under it (#188), F6, the east rocks, beside it (#189), and the Tide Ship's
 three decks, its Rift and the stair's foot off F6's shore (#190). Its content is
 `src/content/areas/wrackholm/` (`index.ts`, its maps, monsters, items and atlas, its walkthrough;
-its chapter of the one quest, The Stone Carried Home, in `chapter.ts`, its side quests in
-`quests.ts`, #192, and the Compact's Fence's rung in `guilds.ts`, #635); it has no town and no
+its chapter of the one quest, The Stone Carried Home, in `chapter.ts` and its side quests in
+`quests.ts`, #192, with the Compact's Fence's rung in `guilds.ts`, #635); it has no town and no
 businesses, so no rooms. Its part of the world map is
 its folder's (`atlas.ts`, #186), which the Area now carries; the plan no longer spreads it in. Its
 ids: the area and its zone `wrackholm`, the cove `smugglers_cove` (the id stays under the new name,
