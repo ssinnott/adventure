@@ -117,4 +117,13 @@ export const meridianJournal4: ItemDef = { id: 'meridian_journal4', name: 'Merid
   '"Camped under the Stone. Its builders left their tools on the benches, as if called away. The vents tomorrow."',
 ] };
 
-export const ITEMS: readonly ItemDef[] = [...WARES, quickening, scavengersAxe, graveBow, emberPart1, emberPart3, meridianMail, ...PARTS, squareFlamberge, foundingStone, emberPart2, hearthSymbol, benchStaff, benchCoat, sentinelVisor, meridianJournal4];
+/**
+ * The Druid's third prestige (#448): a seedling lifted at the Grove once the Archdruid has asked for one,
+ * a quest item no shop buys, carried into the Waste and planted in the bed under the Ember Stone's
+ * lookout, which takes it.
+ */
+export const groveSeedling: ItemDef = { id: 'grove_seedling', name: 'The Grove Seedling', slot: 'none', price: 0, text: [
+  'An oak seedling no higher than a hand, two leaves on it, in a ball of its own earth.',
+] };
+
+export const ITEMS: readonly ItemDef[] = [...WARES, quickening, scavengersAxe, graveBow, emberPart1, emberPart3, meridianMail, ...PARTS, squareFlamberge, foundingStone, emberPart2, hearthSymbol, benchStaff, benchCoat, sentinelVisor, meridianJournal4, groveSeedling];

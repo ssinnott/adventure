@@ -18,6 +18,7 @@ import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { INTERIORS } from './interiors.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
+import { QUESTS } from './quests.ts';
 
 export const AREA = {
   id: 'ashfall' as const,
@@ -32,7 +33,9 @@ export const AREA = {
   // boxes' finds; the Ember Stone's first part and the stokers' parts, on Meridian Camp's vents, and its
   // third part, the Company's mail and the flue walker's parts, on the iron corridors (#22).
   items: ITEMS,
-  quests: [],
+  // The third prestiges' quests of the three classes taught here, the Paladin's, the Barbarian's and the
+  // Druid's (#448).
+  quests: QUESTS,
   // The Cartographers' Surveyor's rung, the fourth Meridian journal found under the Ember Stone (#635).
   guilds: GUILDS,
   // The Window, the act's second chapter, is #518's.

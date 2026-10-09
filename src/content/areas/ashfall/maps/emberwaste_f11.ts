@@ -13,6 +13,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/ashfall.md §4.6 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
+import { LAMP_ASKED, LAMP_LIT } from './old_cinder2.ts';
 
 /**
  * The way down into Old Cinder (#515): the crater's west lip, 19,4, where a roof-ridge stood until the
@@ -76,14 +77,25 @@ export const EMBERWASTE_F11: MapDef = {
   features: [
     // The Waste's road along the north edge, F10's, kept to the rocks.
     { kind: 'event', x: 8, y: 0, id: 'f11_road', once: true, text: 'The road keeps to the rocks here, out of the ash. South-east over them, smoke goes up out of a crater.' },
-    // Old Cinder's crater: the way down at its west lip (CRATER, #515); the old Lightbearer by it (the
-    // Paladin's third is #448's); the cairn on the rim, the roof-ridges seen from the east, and the rim
-    // at the atlas's mark.
+    // Old Cinder's crater: the way down at its west lip (CRATER, #515); the old Lightbearer by it, the
+    // Paladin's third prestige (#448): his own words first, then, to a paladin of 27 with the second, his
+    // ask, once, his oil and flint for the lamp at the bottom (old_cinder2), and once it is lit his last
+    // words and the teaching. The cairn on the rim, the roof-ridges seen from the east, and the rim at the
+    // atlas's mark.
     { kind: 'npc', x: 18, y: 5, name: 'An old Lightbearer', lines: [
       'An old man in a Lightbearer\'s white gone grey, sitting on the lip with his staff across his knees.',
       '"There is a lamp at the bottom of that town. It went out, and nobody went down to light it."',
       '"I am too old for the climb. I sit where I can see the way."',
-    ] },
+    ], flag: 'f11_lightbearer_met', says: [
+      { after: { flag: LAMP_LIT }, lines: [
+        'He smells the oil on your hands before you say a word, and gets up off the lip.',
+        '"Lit. Then I sat here for something. Kneel."',
+      ] },
+      { after: { flag: 'f11_lightbearer_met', member: { cls: 'paladin', level: 27, prestige: 2 } }, until: { flag: LAMP_ASKED }, sets: LAMP_ASKED, lines: [
+        'He looks your paladin over a long while, then holds out a flask and a flint.',
+        '"Oil, and my flint. Go down to the bottom of the town and light the lamp. I will be here."',
+      ] },
+    ], teaches: { cls: 'paladin', prestige: 3, done: { flag: LAMP_LIT }, asks: 'old_lamp', seek: 'An old Lightbearer, who sits on the west lip of Old Cinder\'s crater in the Ember Waste, can make an Exemplar of a Justicar.' } },
     { kind: 'cairn', x: 24, y: 1, id: 'f11_cairn', text: 'A cairn on the crater\'s rim, its stones black and light as loaves.', gold: 300, items: ['potion_sp_great'] },
     { kind: 'event', x: 22, y: 0, id: 'f11_rim', once: true, text: 'The crater\'s rim. The mountain buried a town here, and only its roofs stand out of the ash.' },
     { kind: 'event', x: 27, y: 7, id: 'f11_roofs', once: true, text: 'Roof-ridges stand out of the crater in rows, a street\'s worth. One still has its chimney.' },

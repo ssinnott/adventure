@@ -14,6 +14,15 @@
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 
+/** The Barbarian's third (#448): the warlord's heir has asked for what nests down the vents killed. */
+export const BROOD_ASKED = 'q_brood';
+/**
+ * What nests there: the Brood Drake on its eggs in the nest off the iron corridors' last run
+ * (meridian_camp2), a guardian that never comes back, so its death stays held. The drakelings round it
+ * come back, and a quest keyed on them would undo itself.
+ */
+export const BROOD = 'meridian_camp2:mc2_brood';
+
 /**
  * The way down to Meridian Camp (#22): the middle of the vents' three mouths, 26,16, open ash between
  * the two still breathing, onto the vents' flue hall at 16,1, facing south; the way back up lands on
@@ -75,15 +84,27 @@ export const FIREMOUNT_G11: MapDef = {
   features: [
     // The track's head, where the stokers' tracks begin, and the shrine there.
     { kind: 'shrine', x: 27, y: 2, id: 'g11_shrine', text: 'A shrine at the head of the track, black stones piled round a slab. Past it the ash is trodden flat.', stat: 'endurance', done: 'The shrine at the track\'s head, its slab warm under the hand.' },
-    // Grimsforge, the old warlord's heir at the anvil (the Barbarian's third is #448's); in its lee a
-    // rack and a camp, and the vent-scavenger by the fire.
+    // Grimsforge, the old warlord's heir at the anvil, the Barbarian's third prestige (#448): his own
+    // words first, then, to a barbarian of 27 with the second, his ask, once, to go down the vents and
+    // kill what nests in the iron corridors (the Brood Drake on its eggs, BROOD), and once it is dead his
+    // last words and the teaching. In its lee a rack and a camp, and the vent-scavenger by the fire.
     { kind: 'event', x: 28, y: 12, id: 'g11_forge', once: true, text: 'Grimsforge: a forge of black stone in the mountain\'s foot, its fire lit. The anvil rings.' },
     { kind: 'chest', x: 29, y: 14, id: 'g11_rack', gold: 0, items: ['warhammer+1'] },
     { kind: 'npc', x: 28, y: 13, name: 'The warlord\'s heir', lines: [
       'A big man at the anvil, grey in the beard. An old axe hangs over the fire, its edge long gone.',
       '"Grimsforge. My grandfather kept it, and fought from it. I keep the fire."',
       '"There was a man went down beside the forge with a rope. He comes up when he likes, with things."',
-    ] },
+    ], flag: 'g11_heir_met', says: [
+      { after: { flag: BROOD_ASKED, slain: BROOD }, lines: [
+        'He hears you out with the hammer still in his fist, then takes the old axe down off its hook.',
+        '"Quiet down there, after three lives of it. Come to the anvil."',
+      ] },
+      { after: { flag: 'g11_heir_met', member: { cls: 'barbarian', level: 27, prestige: 2 } }, until: { flag: BROOD_ASKED }, sets: BROOD_ASKED, lines: [
+        'He sets his hammer down and looks your barbarian over, slowly, from the boots up.',
+        '"Something nests down the vents, where the iron runs hot. My grandfather heard it breathe from here."',
+        '"Go down and kill it. Then come up, and I will put an edge on you."',
+      ] },
+    ], teaches: { cls: 'barbarian', prestige: 3, done: { flag: BROOD_ASKED, slain: BROOD }, asks: 'brood', seek: 'The warlord\'s heir, at the anvil in Grimsforge by the mouth of Fire Mountain\'s vents, can make a Warlord of an Ironhide.' } },
     { kind: 'camp', x: 30, y: 14, name: 'The forge\'s lee', text: 'A fire in the lee of the forge, out of the mountain\'s breath. The scavenger moves his sack.' },
     { kind: 'npc', x: 31, y: 14, name: 'A scavenger', lines: [
       'A thin man by the fire, grey dust in the creases of his hands, a sack between his feet.',
