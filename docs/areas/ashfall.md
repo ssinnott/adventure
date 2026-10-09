@@ -116,17 +116,18 @@ a vent's fire in its lip and its smoke going up; lava is the `!` there was. The 
 with its 207 squares of vines and G11 with its 102 of lava; the atlas lays the cone as mountain, so
 #513 letters it `V` and its mouth `@` over the draft (docs/SLICE.md).
 
-Four of its nine monsters are drawn ahead of the area (#520): the Strangler Vine, the Cinder Beetle,
+All nine of its monsters are drawn ahead of the area (#520): the Strangler Vine, the Cinder Beetle,
 the Ember Salamander and the Ash Husk, on the old wood's, the spider's, the salamanders' and the
-skeleton's frames (§7), in `src/content/areas/ashfall/monsters.ts` and listed in `AHEAD`
-(`src/content/index.ts`) until #510 lists the area. Each is owed to the box that first places it
-(`UNPLACED`, `tools/tests/maps.ts`): the vine and the beetle to #510, the salamander to #511 and the
-husk to #514. Nothing else is built.
+skeleton's frames; the Cinder Drake and the Old Drake on the drakes', new; and the Stoker, the
+Sentry and the Sentinel on the heavy machines', new (`src/ui/monsters/machines.ts`; §7). They are in
+`src/content/areas/ashfall/monsters.ts` and listed in `AHEAD` (`src/content/index.ts`) until #510
+lists the area. Each is owed to the box that first places it (`UNPLACED`, `tools/tests/maps.ts`):
+the vine and the beetle to #510, the salamander and the drake to #511, the stoker to #513, the husk
+and the sentry to #514, the Old Drake to #515 and the Sentinel to #516. Nothing else is built.
 
 The systems it waits on are the rest of #442's: sweep with fire (#545), the ship to Cinderport, the Riders' ride and the last crossing (#547), the
 Ember Stone for the Hearth and the sentries after (#548) and the bot grown to the band (#549); the
-giants' toll (#544) and stone (#546) are its neighbours'. The rest of its monsters, the drakes and
-the heavy machines, are #520's to draw, and its rooms #521's. Meridian Camp is #22, parked until #443 unparks it.
+giants' toll (#544) and stone (#546) are its neighbours'. Its rooms are #521's. Meridian Camp is #22, parked until #443 unparks it.
 
 ## 4. What is still to build
 
@@ -565,7 +566,12 @@ Four of the nine are drawn (#520): the Strangler Vine, a grey tree it has killed
 nearly to the ground; the Cinder Beetle, low and black with one forked horn; the Ember Salamander,
 lither than its kin, coal-red, its fire in bands; and the Ash Husk, the cast of a man holding his cup
 up. Each stands on MONSTERS §4.4's line at its level; the vine holds as the bramble does, and the
-groups that place it are set not to roam (§9). The drakes and the heavy machines are still to draw.
+groups that place it are set not to roam (§9). The heavy machines are drawn on a frame of their own:
+the Stoker a sooted boiler on short bowed legs, the furnace door glowing in its belly and its near
+arm a shovel; the Sentry leaner and upright, an eye under a brow of plate and one arm long, its
+clamp holding; and the Sentinel the family at its largest and plainest, a block of plate with a slit
+of fire for a visor and the fire through the line down its chest. Fire does not touch the stoker, so
+at the vents lightning is the answer. With the drakes, all nine of #520's drawings are done (§9).
 
 Proposed, against the roster's Where column: the Cinder Drake over Cindercoast's shore (H10, G10)
 and on the Hills (E10), where MONSTERS §8.2 has it on Fire Mountain's slopes only, and the Ember
@@ -735,6 +741,38 @@ Decided by delegate for #520 (the four on frames), each the owner's to overturn:
 7. **Each is owed to the first box that places it:** the vine and the beetle to H10 (#510), the
    salamander to G10 (#511, the proposal in §7; to G11, #513, if the owner does not take it) and the
    husk to F11 (#514), whose crater sends them out by night before Old Cinder (#515).
+
+Decided by delegate for #520 (the heavy machines), each the owner's to overturn:
+
+1. **Each stands on the line at its level** (MONSTERS §4.4): the Stoker a brute at 25 (687, 5d8+8),
+   the Sentry an elite at 26 (584, 6d8+5) and the Sentinel on the boss's line at 26 (1,442,
+   24d8+29), for #516's gate to tune. They carry no gold (MONSTERS §2); the parts they carry, the
+   first sentry's and the Sentinel's, named, are the boxes' to give with their items (#514, #516).
+2. **Fire does not touch the Stoker,** `immune: ['fire']` on top of the machine's own (lightning
+   bites; sleep, holy and nature do nothing). The Sentry and the Sentinel are the machine and no
+   more: they come up through the doors, not out of the vents' fire, and the roster gives them
+   nothing of it.
+3. **The Sentry's long arm holds,** `inflict: paralysed` at 0.15, the test elite's own note, so it
+   stands on the elite's line whole, at its speed of 15.
+4. **The Sentinel is plain:** no call and no sweep, the boss's line and the kind's. Whether it calls
+   the sentries up through the door after it (MONSTERS §3.3, calls) is #516's, with its gate.
+5. **Their sizes:** the Stoker 1.3 and squat; the Sentry 1.45, the tallest under the tall boss's
+   1.5, so it stands over the stoker by its height and not its breadth; the Sentinel 2, drawn inside
+   the tall boss's crown (the smoke test measures it at 0.814 of its height, under 0.82).
+6. **One family, of the hull's own make:** plain plate on ruled seams, rivets, a drum at every joint
+   and the same legs, a rod of a thigh, a drum at the knee, a greave and a flat foot; one fire in
+   all three, seen only where the plate opens. Nothing of the knockers' smooth shells on rods and
+   their lamp, nor of the keepers' robe and fingers.
+7. **The chisel's mark is cut once in each,** small, beside the door, on the chest and on the left
+   of the two doors: the makers' mark is on all the crew's machines (MONSTERS §2), and these are the
+   same makers' hands, the heaviest of them.
+8. **A `Build` of body, reach, breadth, legs, knee, fire and soot,** and the plate and joints from
+   the def's tint, so the flue walker, the loader and the core sentry are each a Build and a tint
+   (MONSTERS §11).
+9. **Each is owed to the box that first places it:** the stoker to G11 (#513), the vents' fight (the
+   stoker at H10's springs, §6's 49, strikes the line if it is built first); the sentry to F11
+   (#514), whose road has the first sentries after the Stone (§4.6), before #516's door; and the
+   Sentinel to the Ember Stone (#516). Nothing is declared apart: each is one silhouette.
 
 ## 10. Names
 
