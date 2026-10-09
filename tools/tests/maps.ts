@@ -23,7 +23,7 @@ const UNPLACED: Record<string, string> = {
   sentinel: '#516',
   loader: '#22, dead_drop', tally_clerk: '#22, dead_drop', hold_keeper: '#22, dead_drop2', tallymaster: '#22, dead_drop3',
   deep_knocker: '#22 meridian_camp3', inspector: '#22 meridian_camp3',
-  vulture: '#524', wold_lion: '#524', glass_scorpion: '#524', basilisk: '#526', grey_lion: '#529',
+  glass_scorpion: '#525', basilisk: '#526', grey_lion: '#529',
   glass_walker: '#525',
 };
 

@@ -187,8 +187,8 @@ features and ten groups, about one rest's fights at the band (MONSTERS §4.4), w
     corridors' 5). It manages 8.69 fights to a rest, under the aim of 9.5 to 11.5 and inside the
     limit of 8 to 14, with 88% of its days ending in a fight broken off: the walker's three run
     past 15 rounds once spell points run low, as the vents' furnace does, which the gate shows and
-    never judges. Its under-check is n/a, its floor being over the area's; Ashfall's 31 groups at
-    their maps' floors are won 97.6% of the time, and two under them 93.6%, owed to #18 as before.
+    never judges. Its under-check is n/a, its floor being over the area's; Ashfall's 34 groups at
+    their maps' floors are won 97.8% of the time, and two under them 94.1%, owed to #18 as before.
     The corridors pay 4,399 xp a member for the brief's 2,700, over the cap of 3,375 (§8, the
     corridors' 3), and hold 1,500 gold and Meridian Mail +3. Density 100.0% within 7 steps (193 of
     193) and the furthest 7 of 10, with no sign among its 24 points. The curve's rank correlation
@@ -263,7 +263,7 @@ nor do the corridors (§8, the corridors' 16).
   goes down early from overshooting. As built, the vents pay 2,146 a member, 0.98 of their 2,200
   (§4.1; §8, the vents' 3). The corridors pay 4,399, 1.63 of their 2,700 and over the cap of 3,375,
   the Brood Drake alone paying 2,862 (§4.2; §8, the corridors' 3); with Ashfall's other maps a
-  clear is 22,660 of the area's 19,467 (ashfall §8).
+  clear is 24,541 of the area's 19,467 (ashfall §8).
 - **The gate.** Each level is held at its own floor (EXPANSION §5.2). The Brood Drake is won about
   half the time at 26, the corridors' floor, and nearly always at 28. As built, a company at the
   vents' floor, 25, wins every fight and manages 10.98 fights to a rest (§4.1); at the corridors'

@@ -220,9 +220,10 @@ second row, `meridian_camp2` at 226,346, six squares south of the first (docs/ar
 
 Its row on the curve and its step on the gear ladder are in (#542): the row in
 `src/content/progression.ts` (band 24–26, next 26, window 5,500), owed to #446 while the area is
-built box by box, in its gold alone now that the clear's xp meets the curve's ask, with the six
-boxes', the vents', the corridors' and Old Cinder's 22,660 xp a member and 8,800 gold the clear's
-floor, which Cinderport leaves as it is, a town paying nothing (§8); and the step in
+built box by box, with the six boxes', the vents', Old Cinder's, E10's Wold half's and the
+corridors' 24,541 xp a member and 8,800 gold the clear's floor; its xp is met since E10's Wold half
+(#524) and its gold alone is owed, which Cinderport leaves as it is, a town paying nothing (§8);
+and the step in
 `src/content/areas/ashfall/items.ts`, the Area's own since G10 lists it (`ITEMS_AHEAD`,
 `src/content/index.ts`, held it until then), so that the harness and the gate dress by it:
 Cinderport's armourer's eight wares (`ARMOURER`, §4.4), each owed to the armourer until #512 sold it
@@ -914,7 +915,7 @@ half, with the wilderness features (#45); no more than one point in four is a si
 - **Landmarks.** F10: the road along the south rows from F11's corner; the vines' edge in the
   north, where Cindercoast ends; a rock outcrop in the north-west, the Druid's. E10: the Cinder
   Hills across the box, the road's notch through them at about 150,306, and the Wold's steppe
-  beyond, the world's end there until #524.
+  beyond, the world's end there until D10 (#527).
 - **Points of interest,** about five features and five groups each:
   - F10: a milestone (THE WOLD 2, CINDERPORT 7), a camp (#45), a shrine (#45), a cairn (#45); the
     Druid's trainer at the outcrop, an Archdruid who came from the Grove and stayed (#448);
@@ -967,15 +968,17 @@ half, with the wilderness features (#45); no more than one point in four is a si
   departs from the brief in the band, 24–26 for 25–26 (§9, #517's 2); in the groups, three for seven
   or so, a drake in each box (#517's 7 and 8); in the milestone, CINDERPORT 4 for 7 (#517's 5); in
   the pay, 1,841 xp a member between them where the brief has 1,400 (#517's 9); and in E10, laid
-  whole as the atlas cuts it, the Wold's steppe and grass with it, bare of the Wold's monsters,
-  quests and crossing line, which are #524's (#517's 13). The sentries `after` the Stone, one group
-  on each box's road at the band's top, are #449's (§11).
+  whole as the atlas cuts it, the Wold's steppe and grass with it (#517's 13), whose Wold half #524
+  has built since, its band raised to 25–26 (docs/areas/glasswold.md §4.2). The sentries `after`
+  the Stone, one group on each box's road at the band's top, are #449's (§11).
   - **Measured.** A company at 24 wins every fight and manages 10.66 fights to a rest on F10 and
     10.51 on E10, inside the aim of 9 to 11, with 19% of F10's days ending in a fight broken off and
     0.3% of E10's; it walks the Waste's road, past the beetles, the drake and the two drakes, every
     time. F10 pays 1,178 xp a member and 250 gold, E10 662 and 950. Two under, at 22, it wins every
     fight too, owed to #18 as G10's is. Density 100.0% within 12 steps, the country floor, and the
     furthest 12 of 20, with no sign among F10's 12 points or E10's 15. It claims nothing new (§7).
+    Since #524 E10's floor is 25: a company there manages 10.83 fights to a rest, and the box pays
+    2,543 xp a member (docs/areas/glasswold.md §8).
 
 ### 4.10 The country behind (#522): country, band 25–26, parked
 
@@ -1179,12 +1182,14 @@ group and the ruin's icon is the Shelf's Berth's (§9, #515's 16).
   2,530 (#514), 1.05 times its own (§9, #517's 9, #513's 11, #510's 9, #514's 11): 12,036 of the
   19,467 asked. Old Cinder (#515) adds 4,079, 1.18 times its scaled 3,450 and under 4,300 (§9,
   #515's 4): 16,115. The vents (#22) add 2,146, 0.98 of the brief's 2,200 and in none of the scaled
-  shares, which leave the camp's levels out: 18,261 of the 19,467 asked. The iron corridors (#22)
-  add 4,399, 1.63 of the brief's 2,700 and over the cap of 3,375, the Brood Drake alone paying 2,862
-  (§9, #22's 4): 22,660, 1.16 times the ask. So with the Ember Stone's share (2,950) and the side
-  quests (about 1,100) the shares stand at about 26,700, 1.37 times the ask, over 1.3. Cinderport
-  pays nothing, as a town pays none, and its two halls add no quest (§9, #512's 6): its 600, 800
-  scaled, is unpaid (§11).
+  shares, which leave the camp's levels out: 18,261 of the 19,467 asked. E10's Wold half (#524)
+  adds 1,881, counted here as the map is the Waste's though its share is the Wold's
+  (docs/areas/glasswold.md §8): 20,142, past the ask, so the row owes gold alone. The iron corridors
+  (#22) add 4,399, 1.63 of the brief's 2,700 and over the cap of 3,375, the Brood Drake alone paying
+  2,862 (§9, #22's 4): 24,541, 1.26 times the ask. So with the Ember Stone's share (2,950) and the
+  side quests (about 1,100) the shares stand at about 28,600, 1.47 times the ask, over 1.3.
+  Cinderport pays nothing, as a town pays none, and its two halls add no quest (§9, #512's 6): its
+  600, 800 scaled, is unpaid (§11).
 - **Gold.** Training six members from 24 to 26 costs 11,760 with today's `trainPrice`, and to 27,
   the third prestige's level, 6,240 more; the thirds ask a quest, not gold (DESIGN §5). A clear
   should pay for the training at least, in chests, drops, the halls' pay and the sentries' parts.
@@ -1232,8 +1237,8 @@ group and the ruin's icon is the Shelf's Berth's (§9, #515's 16).
   manages 11.76 fights to a rest, over the aim and inside the limit, with 4.3% of its days broken
   off; the Old Drake is won 65% at 25 and 99% at 27, set off the boss line (§4.7; §9, #515's 5). In
   the undercroft a company at 24 wins every fight and manages 10.10 fights to a rest, with 4.7% of
-  its days broken off; one at 22 wins every fight too, owed to #18. Ashfall's 31 groups are won
-  97.6% of the fights at their maps' floors and 93.6% two under, owed to #18. On F10
+  its days broken off; one at 22 wins every fight too, owed to #18. Ashfall's 34 groups are won
+  97.8% of the fights at their maps' floors and 94.1% two under, owed to #18. On F10
   and E10 a company at 24 wins every fight and walks the Waste's road every time, 10.66 fights to a
   rest on F10 and 10.51 on E10; one at 22 wins every fight too, owed to #18 (§4.9). On H10 a company
   at 24 wins every fight and walks Cindercoast's road from the Stair every time, 10.21 fights to a
@@ -2017,11 +2022,12 @@ docs/areas/meridian_camp.md §8:
    Brood Drake alone pays 2,862 and the gate's day then needs a hard corridor group beside the
    sentry. The pick keeps every kind the brief names, two drakelings in place of six; the cheapest
    mix that passes the gate pays 3,895 and places no drakelings or cinder drakes (the dungeon's §8,
-   the corridors' 3). With Old Cinder built Ashfall's clear is now 22,660 xp a member of the 19,467
-   asked, 1.16 times, and the Ember Stone's Sentinel, still to come, pays about 2,755 alone, which
-   would take it to about 25,400, 1.31 times; the shares as §8 counts them stand at about 26,700,
-   1.37 times, over 1.3. Pay by level keeps a company that goes down early from overshooting, and
-   the Brood Drake and the Old Drake are optional kills: the chapter never passes them.
+   the corridors' 3). With Old Cinder and E10's Wold half built Ashfall's clear is now 24,541 xp a
+   member of the 19,467 asked, 1.26 times, and the Ember Stone's Sentinel, still to come, pays about
+   2,755 alone, which would take it to about 27,300, 1.40 times; the shares as §8 counts them stand
+   at about 28,600, 1.47 times, over 1.3. Pay by level keeps a company that goes down early from
+   overshooting, and the Brood Drake and the Old Drake are optional kills: the chapter never passes
+   them.
 
 ## 10. Names
 
@@ -2136,15 +2142,14 @@ Owed, from F10 and E10 (#517):
   outcrop's lee at F10's 6,3, words only (§9, #517's 4).
 - **The sentries** `after` the Stone, one group on each box's road at the band's top, 26, are
   #449's: neither box places one (§9, #517's 2).
-- **E10 is laid bare of the Wold's:** its monsters, quests, outriders and crossing line are #524's
-  (docs/areas/glasswold.md §4.2), the line said where D10 is crossed (#527) or by #524's crest event
-  (§9, #517's 13).
+- **The Wold's line is said where D10 is crossed** (#527): E10, the Waste's land, says the Waste's
+  (docs/areas/glasswold.md §9, #524's 4). E10's Wold half is built (#524).
 - **Steppe is unclaimed.** E10 lays steppe first, so the Wold's "New here: steppe underfoot"
   (docs/areas/glasswold.md §4.2) cannot be claimed: the novelty check would say it is on the road
   before it. The owner's: Ashfall claims steppe, or the Wold claims something else (§9, #517's 15).
 - **Three groups stand for the brief's seven or so** (§9, #517's 7): the salamanders at the flow's
-  end, F10's second beetles and E10's beetles are cut for the gate and the pay; #524's issue has
-  beetles come over from the Waste, its to place.
+  end, F10's second beetles and E10's beetles are cut for the gate and the pay; #524 placed four
+  beetles come over from the Waste on E10's ash.
 - **The milestone reads CINDERPORT 4** where the brief has 7, G10's stone saying THE WOLD 6 (§9,
   #517's 5).
 - **Lava has no effect underfoot:** `passable` has no rule for it, so the flow that seals the Glass
