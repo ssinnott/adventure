@@ -7,6 +7,7 @@ import type { MonsterDef } from '../../../game/monsters.ts';
 /** The drawings the Wold's monsters are drawn with, one kind to each. src/ui/sprites.ts must draw every one. */
 export const SPRITES = [
   'vulture', 'wold_lion', 'glass_scorpion', 'basilisk', 'grey_lion',
+  'glass_walker',
 ] as const;
 
 export const MONSTERS: readonly MonsterDef[] = [
@@ -22,4 +23,8 @@ export const MONSTERS: readonly MonsterDef[] = [
   { id: 'basilisk', name: 'Basilisk', plural: 'Basilisks', sprite: 'basilisk', kind: 'beast', look: "Don't meet its eyes.", level: 27, hp: 376, ac: 25, attack: 15, dice: 5, sides: 7, bonus: 7, speed: 12, xp: 1073, gold: [0, 0], ranged: true, inflict: { cond: 'stoned', chance: 0.15 }, tint: '#5c6650', size: 0.85 },
   // the Wold's heart (#529), its boss on the line at 28: the pride's old one, for B8's gate to set
   { id: 'grey_lion', name: 'The Grey Lion', plural: 'Grey Lions', sprite: 'grey_lion', kind: 'beast', look: 'Old, scarred, and king of all of this.', level: 28, hp: 1552, ac: 27, attack: 18, dice: 26, sides: 8, bonus: 29, speed: 13, xp: 17813, gold: [0, 0], tint: '#7c7466', size: 1.4 },
+  // the steppe's far south-west (#525 first, the first machine seen on the Wold), the Glass's edge (#530) and the Buried
+  // Tower's decks after (MONSTERS §10.1), an elite on the line at 27: a machine (§2), so it never breaks; its free hand
+  // holds, paralysed at 0.15 as the elite's line has it
+  { id: 'glass_walker', name: 'Glass Walker', plural: 'Glass Walkers', sprite: 'glass_walker', kind: 'machine', look: 'Something walking out of the Glass, and it has walked a long way.', level: 27, hp: 670, ac: 25, attack: 16, dice: 7, sides: 8, bonus: 7, speed: 15, xp: 2147, gold: [0, 0], inflict: { cond: 'paralysed', chance: 0.15 }, tint: '#5f8a6a', size: 1.2 },
 ];

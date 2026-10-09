@@ -21,11 +21,12 @@ import { ok, owed, stopsWalk } from './lib.ts';
  */
 const UNPLACED: Record<string, string> = {
   ash_husk: '#514', old_drake: '#515',
-  stoker: '#513', sentry: '#514', sentinel: '#516',
+  sentinel: '#516',
   loader: '#22, dead_drop', tally_clerk: '#22, dead_drop', hold_keeper: '#22, dead_drop2', tallymaster: '#22, dead_drop3',
   drakeling: '#22 meridian_camp2', brood_drake: '#22 meridian_camp2', flue_walker: '#22 meridian_camp2',
   deep_knocker: '#22 meridian_camp3', inspector: '#22 meridian_camp3',
   vulture: '#524', wold_lion: '#524', glass_scorpion: '#524', basilisk: '#526', grey_lion: '#529',
+  glass_walker: '#525',
 };
 
 /** The monsters a company can meet on `defs`: those their groups place, and those a placed one calls (`calls`), and so on down. */
