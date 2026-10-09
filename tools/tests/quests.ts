@@ -31,9 +31,7 @@ import { ok, owed } from './lib.ts';
  * reported as that issue's while nothing does, and failed once something does, so its entry is
  * dropped here.
  */
-export const UNSET: Record<string, string> = {
-  q_ember_lit: '#518', // the Ember Stone lit, its three parts set: the Stone's dungeon sets it (#516), the Window's chapter reads it, the Hearth counts the Stone on it and the sentries on every box of Ashfall stand after it (#548)
-};
+export const UNSET: Record<string, string> = {};
 
 /** The flags a feature sets: a person's, met, and an event's, said (#156). */
 const featureFlags = (f: Feature): readonly string[] => f.kind === 'npc' ? personFlags(f) : f.kind === 'event' ? [f.sets ?? []].flat() : f.kind === 'inn' ? f.nights ?? [] : [];
