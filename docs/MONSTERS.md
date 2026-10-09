@@ -526,15 +526,16 @@ calibration:
   boss held so takes the raised factor for its blow as well (#541).
 - The boss, one monster acting once a round against six, has both raised together until a company
   two levels under it wins half the time (EXPANSION.md §5.2).
-- It is made at every level to 10, every fourth level to 32 and every level of Act III, 300 seeds a
-  point (200 for the levels past 10, made again with #20 and #541), with the levels between
-  interpolated. Past 10 the company runs on play's rules: its spells stop growing at 10 (#159), it
-  takes its prestiges at 11, 19 and 27 with their hit points, spell points and perks (#19), and with
-  them its spell ranks, and it learns tiers 6 and 7 at 15 and 23 (#20). It wore the ladder's gear to
-  22: Act II's steps were in when the levels past 10 were made again (#399, #18), and Act III's when
-  the levels past 16 were (#535, #541), each of 17 to 22 on its own, since the company steps at 17,
-  19, 21 and 22. Act IV's step takes the ladder's top to 25 (#542), and the levels past 22 wait to
-  be made again with it (#549).
+- It is made at every level to 10, every fourth level to 32, every level of Act III and every level
+  of Act IV from 24, 300 seeds a point (200 for the levels past 10, made again with #20, #541 and
+  #549), with the levels between interpolated. Past 10 the company runs on play's rules: its spells
+  stop growing at 10 (#159), it takes its prestiges at 11, 19 and 27 with their hit points, spell
+  points and perks (#19), and with them its spell ranks, and it learns tiers 6 and 7 at 15 and 23
+  (#20). It wears the ladder's gear: Act II's steps were in when the levels past 10 were made again
+  (#399, #18), Act III's when the levels past 16 were (#535, #541), each of 17 to 22 on its own,
+  since the company steps at 17, 19, 21 and 22, and Act IV's one, Cinderport's armourer at 25
+  (#542), when 25 to 28 and 32 were (#549), each of 25 to 28 on its own, since the company steps at
+  25 and at 27, its third prestige. 22 to 24 are #541's still: their company has not changed.
 
 Hit points / average damage a hit, by role and level:
 
@@ -559,8 +560,11 @@ Hit points / average damage a hit, by role and level:
 | 21 | 170 / 15 | 289 / 17.5 | 315 / 16 | 268 / 18 | 394 / 20 | 248 / 20 | 358 / 18.5 | 504 / 24 | 570 / 27 | 1294 / 126.5 |
 | 22 | 186 / 14.5 | 328 / 18 | 317 / 20 | 324 / 18 | 427 / 22 | 282 / 20 | 360 / 24 | 505 / 27.5 | 621 / 28 | 1299 / 126 |
 | 24 | 188 / 15 | 330 / 17.5 | 319 / 20 | 327 / 18 | 443 / 24 | 284 / 19.5 | 397 / 23 | 509 / 27 | 641 / 28 | 1381 / 132 |
-| 28 | 300 / 11.5 | 414 / 23 | 408 / 25.5 | 437 / 25.5 | 635 / 28.5 | 381 / 25 | 517 / 31 | 665 / 37 | 834 / 38 | 1497 / 140.5 |
-| 32 | 305 / 13 | 449 / 23 | 449 / 25 | 484 / 26 | 644 / 33 | 387 / 25 | 525 / 33 | 721 / 36 | 847 / 40 | 1876 / 173 |
+| 25 | 188 / 17 | 331 / 18.5 | 320 / 20 | 328 / 19 | 444 / 23 | 289 / 20 | 398 / 21 | 596 / 26 | 665 / 30.5 | 1496 / 142.5 |
+| 26 | 191 / 17.5 | 332 / 19.5 | 321 / 21 | 328 / 21 | 479 / 23 | 290 / 22 | 399 / 25 | 597 / 26.5 | 692 / 30 | 1498 / 142 |
+| 27 | 260 / 16 | 383 / 26 | 378 / 28.5 | 402 / 26.5 | 533 / 31 | 376 / 27 | 522 / 31 | 670 / 38.5 | 988 / 34 | 1550 / 146 |
+| 28 | 276 / 15.5 | 411 / 25.5 | 408 / 28 | 429 / 27 | 563 / 33 | 400 / 25 | 523 / 32 | 689 / 37.5 | 990 / 35 | 1552 / 146 |
+| 32 | 286 / 15.5 | 451 / 25 | 445 / 26 | 483 / 27 | 571 / 36.5 | 442 / 23 | 531 / 34 | 753 / 36 | 1005 / 34 | 1922 / 177 |
 
 Armour and to-hit are the line's, rounded, plus the role's offsets in §4.2: armour 12 and to-hit 2
 at level 1, 16 and 7 at 10, 27 and 18 at 32. Speeds are the roles': fodder, archers, casters and
@@ -736,6 +740,31 @@ What it shows:
   end in one broken off. A line made at 18, 20 and 22 alone left 19 up to two and a half fights over
   its aim, and one made at 20 and 24, as before, left the armoured at 17 and 18 ending two days in
   three badly; both were worse at 21 too.
+- **Made again with Act IV's step and the third prestige, at every level from 25 (#549).** The line
+  past 24 was drawn straight to 28, made there against a company in Act III's gear: at 25 and 26,
+  where the company has Cinderport's step but not yet its third prestige, it fought 5.8 to 10.0 and
+  5.9 to 8.3 standard encounters to a rest where 10.25 and 10.5 are asked, and 18 to 92% of its days
+  ended badly; at 27 and 28, the prestige in, it fought 11.3 to 13.9 where 10.75 and 11 are. Made
+  again at 25, 26, 27, 28 and 32, against the bots that free the held and keep a breath off the
+  casters: monsters carry 3.5 to 6.7 times the line's hit points from 25 to 28 and hit 1.3 to 2 times
+  as hard, in fights of three to ten rounds; hit points are held at the level under's for 19 of the
+  50 points, the boss's at 26 and 28 among them. Every role fights within a fight of its aim at
+  every level from 22 to 28, and the boss is won 43 to 52% from two under. Fights to a rest, the
+  least and the most of the nine regular roles:
+
+  | Level | 22 | 23 | 24 | 25 | 26 | 27 | 28 |
+  |---|---|---|---|---|---|---|---|
+  | Asked | 9.5 | 9.75 | 10 | 10.25 | 10.5 | 10.75 | 11 |
+  | On #541's line | 9.3–9.9 | 8.9–10.1 | 9.2–10.3 | 5.8–10.0 | 5.9–8.3 | 11.3–13.9 | 11.5–12.0 |
+  | Made again | 9.0–9.9 | 8.9–10.1 | 9.2–10.3 | 9.5–10.8 | 9.9–11.1 | 10.6–11.0 | 10.7–11.3 |
+
+  The brutes, which #18 found a fight or two short at 24 and 28 (above), fight 9.7 and 10.7 of 10
+  and 11, and end 17% and 4% of their days badly. From 26 to 28 every role ends a fifth of its days
+  badly or fewer, most a tenth or fewer. At 25, where the line's armour rounds up and the company's
+  to-hit falls a point (the Slag Mace has no plus where the ice axe +1 had one), six roles are held at
+  24's hit points and their fights run long: the armoured end 53% of their days badly, in fights
+  broken off, as at 21, and the casters, brutes and skirmishers about a fifth. Freeing the held
+  takes the controllers' bad days at 22 to 24 from 21, 35 and 19% to 14, 13 and 7%.
 
 `node tools/harness.ts` reports every role's standard encounter at every calibrated level: the
 fights before a rest, what ended the day, the rounds a fight took, what one fight from a fresh start
@@ -744,8 +773,9 @@ of that level, each on its own and then all of them dealt in a new order. `--sta
 lines with their dice, and `--calibrate --write` re-derives the tables when the rules change.
 `--abilities` puts Act III's abilities on the test monsters, two trolls, four wights, a caller
 beside six fodder and three lights with a hound (§3.3, #537, #541), at 19 and 20 or the levels
-asked; Act IV's sweep, two giants and two drakes (#545), at 23 and 25; and its stone, the mesa's
-basilisk behind three skirmishers (#546), at 27.
+asked; Act IV's sweep, two giants and two drakes (#545), at 23 and 25; its stone, the mesa's
+basilisk behind three skirmishers (#546), at 27; its holds, four vines (#549), at 24; and its
+bosses as they stand, each won from two under beside the test boss of its level.
 `--spell-cap`, `--gear-grows`, `--level-bonus` and `--level-traits` run any of it as if damage
 spells stopped growing at another level than play's 10, or the company gained gear, a bonus or
 blows as it levelled past it; `--rank-step` as if a spell rank added another share than play's 15%.
@@ -803,6 +833,29 @@ Decided by delegate for #541, each the owner's to overturn:
    about as often, 35% to 29%, in fights broken off where the brutes' end in deaths; on a brute's
    whole hit points weapons alone win 2% inside fifteen rounds. The caller costs a company of 20
    about two fights a day, 7.0 to a rest where it fights 9.0 with no call.
+
+Decided by delegate for #549, each the owner's to overturn:
+
+1. **The bots free the held as they wake a sleeper** (`wakeWith`): one of the front row, then a
+   caster, by the cheapest cure the member knows, so the bells, the vines and the clamps are answered.
+2. **That moves built figures a little, inside every limit:** fights to a rest by 0.46 at most (the
+   Sunder at 14), the Tide Ship at 12 to 5.72, under its aim of 6; fights broken off fall.
+3. **While a foe breathes, the bots raise the front row's fallen first** (`breathGuard`): with its
+   knight fallen, two drakes at 25 breathe on the back row in 0 of 40 gate fights, 35 with no answer.
+4. **The toll, the sweep and stone stand as #644, #645 and #658 left them;** the Snow Troll's
+   mending, fire's nothing and the salamander's cold ask nothing new, read as the bots read any.
+5. **The line is made again at 25, 26, 27, 28 and 32,** each of Act IV's steps on its own; 22 to 24
+   stay #541's, since their company has not changed and the Whitespine's placed monsters stand on them.
+6. **Twelve drawn on the old line from 25 are owed a restating** (`RESTATE`), each by the box that
+   places it: Ashfall's Ash Husk, Stoker, Sentry and Sentinel, and Meridian Camp's and the
+   Dead-Drop's eight (#22). The Cinder Drake, placed at G10 (#660), is set off the line for its gate.
+7. **The harness's company needed nothing new:** tier 7 from 23, the step and a draught from 25 and
+   the third prestige at 27, its last rite and third blow, were in; the line's points lagged.
+8. **Act IV's bosses are reported, not set** (`--abilities`): from two under, the Stair-king is won
+   38% at 24, the Old Drake 35% and the Sentinel 54% at 26, the Brood Drake 15% at 27 and the
+   Tallymaster 57% at 28, the test boss 38 to 53%; the Abbot, which #500's gate set, 68%.
+9. **The mesa is held to about its aim, not over it:** on the line made again at 27 it is fought
+   10.6 to a rest (10.75 asked), 11.6 where the hold paralyses.
 
 ---
 

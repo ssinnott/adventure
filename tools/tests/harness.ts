@@ -3,15 +3,15 @@
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { defaultParty, xpForLevel, levelUp, armorClass, weaponOf, MAX_LEVEL, addCondition, className, rankMult, hasCondition } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
-import { startCombat, currentTurn, partyAct, monsterAct, describeGroups, blowsOf, MAX_MONSTERS, MAX_GROUPS } from '../../src/game/combat.ts';
+import { startCombat, currentTurn, partyAct, monsterAct, describeGroups, blowsOf, sweptRow, MAX_MONSTERS, MAX_GROUPS, FRONT_ROW } from '../../src/game/combat.ts';
 import type { CombatState, Fighters } from '../../src/game/combat.ts';
 import { spell, spellDice, SPELLS_GROW_TO } from '../../src/game/spells.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
-import { MONSTERS } from '../../src/content/index.ts';
+import { MONSTERS, MAP_DEFS } from '../../src/content/index.ts';
 import { gateCompany } from '../gate.ts';
 import { testMonster, standardEncounter, line, scaleAt, groupsPerLevel, xpFor, HP, DAMAGE, ROLES, ROLE_IDS, TROLL, SWEEP, testTroll, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, testDrake, giantEncounter, drakeEncounter, BASILISK_STONE, testBasilisk, basiliskEncounter } from '../testmonster.ts';
 import type { Role } from '../testmonster.ts';
-import { measure, days, fight, play, outcomeOf, companyAt, edgeOf, spent, mustRest, mendBetween, day as oneDay, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP, RULES, GEAR_TOP } from '../harness.ts';
+import { measure, days, fight, play, outcomeOf, companyAt, edgeOf, spent, mustRest, mendBetween, day as oneDay, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP, RULES, GEAR_TOP, ANSWER, wakeWith, breathGuard } from '../harness.ts';
 import { ok } from './lib.ts';
 
 export function harness(): void {
@@ -115,6 +115,10 @@ export function harness(): void {
   // And through Act III, 16 to 22, about its fights at every level, a fight more every four levels.
   const act = [16, 17, 18, 19, 20, 21, 22].map((l) => ({ l, d: days(l, [standardEncounter('soldier', l)], 40, 5001) }));
   ok(act.every(({ l, d }) => Math.abs(d.fights - fightsPerRest(l)) <= 1.5), `through Act III a company fights about its own of 4 Test Soldiers between rests: ${act.map(({ l, d }) => `${d.fights.toFixed(1)} at ${l} (${fightsPerRest(l)})`).join(', ')}`);
+  // And through Act IV, 23 to 28, where it steps at 23 (tier 7), 25 (Cinderport's armourer) and 27
+  // (the third prestige), the line from 25 made again with them (#549).
+  const four = [23, 24, 25, 26, 27, 28].map((l) => ({ l, d: days(l, [standardEncounter('soldier', l)], 40, 5001) }));
+  ok(four.every(({ l, d }) => Math.abs(d.fights - fightsPerRest(l)) <= 1.5), `through Act IV a company fights about its own of 4 Test Soldiers between rests: ${four.map(({ l, d }) => `${d.fights.toFixed(1)} at ${l} (${fightsPerRest(l)})`).join(', ')}`);
   // A test monster's encounter pays what the curve gives a group at the built areas' pinned pace (docs/MONSTERS.md §4.4).
   const pays = [1, 10, 32].map((l) => Math.round((6 * (xpForLevel(l + 1) - xpForLevel(l))) / (0.75 * groupsPerLevel(l))));
   ok(pays.join() === '99,1573,5093' && xpFor('boss', 10) === 6293, `an encounter pays ${pays.join(', ')} at 1, 10 and 32, as MONSTERS §4.4 says, and a boss four`);
@@ -146,10 +150,30 @@ export const OFF_LINE: Record<string, string> = {
   stair_king: "the Stair's head's boss, its hit points and its blow set by its gate (#502)",
   old_drake: "Old Cinder's boss, the boss line come down whole to a sweeper's share with the drakes' breath, for its gate to set (#515)",
   brood_drake: "the corridors' boss, the boss line come down whole to a sweeper's share with the drakes' breath, as the Old Drake, for the corridors' gate to set (#22)",
+  cinder_drake: "Cinderport's box's drake, placed on the test drake's line at 25 before #549 made it again, and held there by its gate (#660)",
 };
 /** The monsters past 10 on a role's line come down whole, hit points and blow together (MONSTERS §4.4): the role, the share and why. */
 export const WHOLE: Record<string, { role: Role; share: number; why: string }> = {
   bog_light: { role: 'controller', share: 0.575, why: "four on the line end a company's day in four fights (#597)" },
+};
+/**
+ * The monsters drawn on the line before #549 made 25 to 28 again, and placed in no box yet: each is
+ * re-derived on the line by the box that places it, since a def is its box's (MONSTERS §4.4), and
+ * leaves this list then.
+ */
+export const RESTATE: Record<string, string> = {
+  ash_husk: "a soldier at 25, Old Cinder's (#514, #515)",
+  stoker: "a brute at 25, the vents' (#513)",
+  sentry: "an elite at 26, Ashfall's once the Ember Stone is lit (#514)",
+  sentinel: "the boss at 26, the Ember Stone's (#516)",
+  drakeling: "fodder at 26, Meridian Camp's nest (#22)",
+  flue_walker: "an elite at 27, Meridian Camp's corridors (#22)",
+  deep_knocker: "armoured at 28, Meridian Camp's gallery (#22)",
+  inspector: "a caller on a soldier's numbers at 28, Meridian Camp's gallery (#22)",
+  loader: "a brute at 26, the Dead-Drop's (#22)",
+  tally_clerk: "a skirmisher at 26, the Dead-Drop's (#22)",
+  hold_keeper: "a controller at 27, the Dead-Drop's (#22)",
+  tallymaster: "the boss at 28, the Dead-Drop's (#22)",
 };
 
 /** Every monster past 10 on the line at its level, or set off it with a reason (OFF_LINE). */
@@ -161,14 +185,18 @@ function onTheLine(): void {
     return [...ROLE_IDS.map((r) => testMonster(r, l)), testTroll(l), testGiant(l), testDrake(l), ...(w ? [testMonster(w.role, l, scaleAt(HP, w.role, l) * w.share, scaleAt(DAMAGE, w.role, l) * w.share)] : [])];
   };
   const on = (m: MonsterDef): boolean => shapes(m).some((t) => t.hp === m.hp && Math.abs(blow(t) - blow(m)) <= 0.5 && (t.regen ?? 0) === (m.regen ?? 0) && (t.sweep?.chance ?? 0) === (m.sweep?.chance ?? 0) && t.sweep?.element === m.sweep?.element);
-  const past = Object.values(MONSTERS).filter((m) => m.level > 10), set = past.filter((m) => OFF_LINE[m.id]);
-  const off = past.filter((m) => !OFF_LINE[m.id] && !on(m)).map((m) => {
+  const past = Object.values(MONSTERS).filter((m) => m.level > 10), set = past.filter((m) => OFF_LINE[m.id] || RESTATE[m.id]);
+  const off = past.filter((m) => !OFF_LINE[m.id] && !RESTATE[m.id] && !on(m)).map((m) => {
     const near = shapes(m).sort((a, b) => Math.abs(a.hp - m.hp) - Math.abs(b.hp - m.hp))[0];
     return `${m.id} at ${m.level}, ${m.hp} / ${blow(m)}, where the nearest is ${near.name} ${near.hp} / ${blow(near)}`;
   });
   ok(!off.length, `every monster past 10 stands on the line at its level, its hit points and its blow, or is set off it with a reason: ${past.length - set.length} on it, ${set.length} set off it${off.length ? ` (off it: ${off.join('; ')})` : ''}`);
-  const stale = [...Object.keys(OFF_LINE), ...Object.keys(WHOLE)].filter((id) => !MONSTERS[id] || MONSTERS[id].level <= 10 || (OFF_LINE[id] && on(MONSTERS[id])));
-  ok(!stale.length, `and every monster set off it or come down whole is a monster past 10, and one set off it is off it${stale.length ? ` (not: ${stale.join(', ')})` : ''}`);
+  const stale = [...Object.keys(OFF_LINE), ...Object.keys(WHOLE), ...Object.keys(RESTATE)].filter((id) => !MONSTERS[id] || MONSTERS[id].level <= 10 || ((OFF_LINE[id] || RESTATE[id]) && on(MONSTERS[id])));
+  ok(!stale.length, `and every monster set off it, come down whole or owed a restating is a monster past 10, and one set off it or owed is off it${stale.length ? ` (not: ${stale.join(', ')})` : ''}`);
+  // One owed a restating is placed in no box: the box that places it restates it (#549).
+  const placed = new Set(MAP_DEFS.flatMap((d) => (d.encounters ?? []).flatMap((g) => g.monsters)));
+  const owedPlaced = Object.keys(RESTATE).filter((id) => placed.has(id));
+  ok(!owedPlaced.length, `and none owed a restating is placed in a box yet (${Object.keys(RESTATE).length} owed${owedPlaced.length ? `; placed: ${owedPlaced.join(', ')}` : ''})`);
   // It can fail: a soldier a few hit points short, a troll mending four too few, a giant sweeping
   // twice as often and a light seven too many are each caught; on the line they pass.
   const soldier = testMonster('soldier', 19), troll = testTroll(19), share = WHOLE.bog_light, light = MONSTERS.bog_light;
@@ -252,8 +280,9 @@ function abilities(): void {
   const mesa = basiliskEncounter(27), held = mesa.map((m): MonsterDef => (m.inflict?.cond === 'stoned' ? { ...m, inflict: { cond: 'paralysed', chance: BASILISK_STONE } } : m));
   const mb = bout(27, mesa, 40, 5001), glassed = mb.fights.filter(({ p }) => p.members.some((m) => hasCondition(m, 'stoned'))).length;
   const sday = days(27, [mesa], 40, 5001), pday = days(27, [held], 40, 5001);
-  ok(mb.won >= 0.95 && glassed >= 2 && sday.fights < pday.fights && sday.fights > pday.fights - 2.5 && sday.fights >= fightsPerRest(27),
-    `a company of 27 wins ${pc(mb.won)} of the mesa's fights, ${glassed} of 40 leaving someone glassed, and lifting the stone between fights it fights ${sday.fights.toFixed(1)} of them to a rest, where the hold paralysing it fights ${pday.fights.toFixed(1)}: stone costs it a fight or two, and leaves more than asked (${fightsPerRest(27)})`);
+  // On the line made again at 27 (#549) the mesa is fought about as many times as asked, no longer more.
+  ok(mb.won >= 0.95 && glassed >= 2 && sday.fights < pday.fights && sday.fights > pday.fights - 2.5 && Math.abs(sday.fights - fightsPerRest(27)) <= 1.5,
+    `a company of 27 wins ${pc(mb.won)} of the mesa's fights, ${glassed} of 40 leaving someone glassed, and lifting the stone between fights it fights ${sday.fights.toFixed(1)} of them to a rest, where the hold paralysing it fights ${pday.fights.toFixed(1)}: stone costs it up to a fight or two, and leaves about what is asked (${fightsPerRest(27)})`);
   // Between fights it lifts stone (`unstone`) by Absolve while a member standing has it and the
   // points, and keeps its draught; by the draught, carried from 25, when all who know Absolve are
   // glassed, the first lifted then absolving the next; with neither they wait for a temple, and the
@@ -276,4 +305,28 @@ function abilities(): void {
   const bare = (p: Party): Party => { for (const c of p.members) c.spells = c.spells.filter((id) => id !== 'absolve'); p.bag = p.bag.filter((id) => id !== 'quickening'); return p; };
   const cureless = Array.from({ length: 40 }, (_, n) => oneDay(27, [mesa], 5001 + n, 30, bare)).reduce((t, d) => t + d.fights, 0) / 40;
   ok(cureless < sday.fights - 2, `with neither Absolve nor a draught it fights ${cureless.toFixed(1)} of the mesa's fights to a rest, where with them ${sday.fights.toFixed(1)}`);
+  // The bots free the held as they wake a sleeper (#549): one of the front row first, then a caster,
+  // by the cheapest cure the member knows; with the answer off a hold is left to break of itself.
+  const bells = companyAt(24, 1), cleric = bells.members.find((m) => m.cls === 'cleric')!, back = bells.members.findIndex((m, j) => j >= FRONT_ROW && m.maxSp > 0);
+  addCondition(bells.members[back], 'paralysed');
+  const casterFirst = wakeWith(bells, cleric);
+  addCondition(bells.members[1], 'paralysed');
+  const frontFirst = wakeWith(bells, cleric);
+  ANSWER.hold = false;
+  const unanswered = wakeWith(bells, cleric);
+  ANSWER.hold = true;
+  ok(casterFirst?.target === back && frontFirst?.target === 1 && spell(frontFirst.spellId).cure?.includes('paralysed') === true && !unanswered,
+    `the bots free the held, one of the front row before a caster, by ${frontFirst ? spell(frontFirst.spellId).name : 'nothing'}, and leave a hold with the answer off`);
+  // While a foe breathes they raise one of the front row fallen first (`breathGuard`): with it down
+  // the breath takes the back row, which has more standing; an arm's sweep asks nothing of it.
+  const ring = (enc: MonsterDef[]): { s: CombatState; p: Party } => {
+    const p = companyAt(25, 1), s = startCombat(p, [{ id: 'h', monsters: enc }], makeRng(5));
+    p.members[0].hp = -1; addCondition(p.members[0], 'unconscious');
+    return { s, p };
+  };
+  const breath = ring(drakeEncounter(25)), arm = ring(giantEncounter(25)), drake = breath.s.monsters[0];
+  const turned = sweptRow(breath.p, drake).every(({ i }) => i >= FRONT_ROW), guarded = breathGuard(breath.s, breath.p);
+  breath.p.members[0].hp = 1; breath.p.members[0].conditions = breath.p.members[0].conditions.filter((k) => k !== 'unconscious');
+  ok(turned && guarded === 0 && breathGuard(arm.s, arm.p) === undefined && sweptRow(breath.p, drake).every(({ i }) => i < FRONT_ROW) && breathGuard(breath.s, breath.p) === undefined,
+    `while a drake stands the bots raise the front row's fallen first (slot ${guarded}): the breath it turned on the back row takes the front again, and a giant's arm asks nothing`);
 }
