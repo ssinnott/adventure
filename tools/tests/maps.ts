@@ -23,7 +23,7 @@ const UNPLACED: Record<string, string> = {
   sentinel: '#516',
   loader: '#22, dead_drop', tally_clerk: '#22, dead_drop', hold_keeper: '#22, dead_drop2', tallymaster: '#22, dead_drop3',
   deep_knocker: '#22 meridian_camp3', inspector: '#22 meridian_camp3',
-  basilisk: '#526', grey_lion: '#529',
+  grey_lion: '#529',
 };
 
 /** The monsters a company can meet on `defs`: those their groups place, and those a placed one calls (`calls`), and so on down. */
