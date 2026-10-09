@@ -13,10 +13,10 @@ it, the plan for building it, box by box, and the briefs. Its work is filed unde
 country behind (#522, parked); this doc is #509. Figures are measured on main at `6032251` (2
 October 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Five maps are built: G10, Cinderport's box (#511, §4.3), which lists the area; Cinderport behind its
-gate (#512, §4.4); G11, Fire Mountain's flank (#513, §4.5); and F10 and E10, the Ember Waste's road
-(#517, §4.9). Its nine monsters and the
-armourer's step are drawn (§3), and the rest is to build. Its content is
+Six maps are built: G10, Cinderport's box (#511, §4.3), which lists the area; Cinderport behind its
+gate (#512, §4.4); G11, Fire Mountain's flank (#513, §4.5); the vents, Meridian Camp's first level
+(#22, docs/areas/meridian_camp.md §4.1); and F10 and E10, the Ember Waste's road (#517, §4.9). Its
+nine monsters and the armourer's step are drawn (§3), and the rest is to build. Its content is
 `src/content/areas/ashfall/` (maps, monsters, items, climate, its part of the world map and its
 walkthrough; its chapter of the one quest, The Window, in `chapter.ts`, and its side quests in
 `quests.ts`, to come) and its businesses' rooms `src/ui/interiors/ashfall/`. Its ids, the plan's:
@@ -102,8 +102,8 @@ off the springs; the vines' shore humid.
 
 ## 3. What is built
 
-Five maps: the area's first box, which lists the area (#511), the town behind its gate (#512), the
-second box (#513) and the Waste's road, F10 and E10 (#517):
+Six maps: the area's first box, which lists the area (#511), the town behind its gate (#512), the
+second box (#513), the vents (#22) and the Waste's road, F10 and E10 (#517):
 
 - **Cinderport's box** (G10, `cindercoast_g10`, core, band 24–25; #511): the town's wall along the
   north edge, a block of building squares with its gate in its face, which opens into Cinderport
@@ -129,11 +129,17 @@ second box (#513) and the Waste's road, F10 and E10 (#517):
   from G10's south edge between the mountain and the east edge, a shrine at its head, to Grimsforge,
   a block of black stone with its fire lit and the old warlord's heir at the anvil, and a camp in
   its lee where the scavenger sits. South of it the vents are three mouths in the ash, the middle
-  one the way down to Meridian Camp, barred until it is built (#22); beside them, in a ring of rock
-  against the east edge, lies the scavenger's hole, his second way down, barred at its far end the
-  same way. Five groups: ember salamanders on the track and on the cone's shoulder, two stokers with
-  ember salamanders at the vents, a cinder drake alone on the south-east flow and, after the Stone,
-  a sentry walking in from the Waste (§4.5).
+  one the way down to Meridian Camp, open since #22 built its first level; beside them, in a ring of
+  rock against the east edge, lies the scavenger's hole, his second way down, open at its far end
+  the same way. Five groups: ember salamanders on the track and on the cone's shoulder, two stokers
+  with ember salamanders at the vents, a cinder drake alone on the south-east flow and, after the
+  Stone, a sentry walking in from the Waste (§4.5).
+- **Meridian Camp's vents** (`meridian_camp`, dungeon, the first of three levels of 32×32, band 25;
+  #22): in by G11's middle mouth or up the scavenger's hole, a flue hall of iron under the three
+  mouths, the Company's trail down the west flue to a stair that is barred until the corridors are
+  built, the grates with the stokers' rounds and, last, the stokers' furnace room, where the Ember
+  Stone's first part lies (`ember_part1`). Four groups, a sentry among them once the Stone is lit
+  (docs/areas/meridian_camp.md §4.1).
 - **The Ember Waste's road** (F10 and E10, `emberwaste_f10` and `emberwaste_e10`, country, band
   24–26; #517): the road west from Cinderport's box, out of the vines and over the Waste's bare ash,
   past the Riders' ring and along the rocks of F10's south rows, then up the Cinder Hills of E10 by
@@ -149,24 +155,26 @@ Saltreach's were before #170: the zones with their bands (Cindercoast 24–25, w
 its crossing words on its row, §9, #511's 13, reworded by G11, #513's 15; Fire Mountain 25–26, with
 G11 laid on it; the Ember Waste 25–26, with F10 and E10 laid on it at 24–26 and its crossing words on
 its row, §9, #517's 2 and 6), Cinderport at 24–26, built since #512 with its plate at the gate,
-206,288; Old Cinder at 25–26, the Ember Stone at 26 and Meridian Camp at 25–28 as planned plates; the
-sites (Cinderport, its port site at 206,277 on G9's shore no longer planned; Fire Mountain and
-Grimsforge, built on G11 and no longer planned; Old Cinder, the Ember Stone, Scaldwell and Meridian
-Camp still planned; the Sheer and the Cinder Hills, the plan's, §10) and its links: the Stair down the
+206,288; Old Cinder at 25–26 and the Ember Stone at 26 as planned plates and Meridian Camp at 25–28,
+built since the vents (#22; the band is the union of its three levels'); the sites (Cinderport, its
+port site at 206,277 on G9's shore no longer planned; Fire Mountain, Grimsforge and Meridian Camp,
+built on G11 and no longer planned; Old Cinder, the Ember Stone and Scaldwell still planned; the
+Sheer and the Cinder Hills, the plan's, §10) and its links: the Stair down the
 Sheer, the ship from Kilnhaven, the town's way in (moved from the site to the gate, §9, #512's 13), the
 three dungeons' ways in, the road to the Wold and the last crossing.
 
 Its row on the curve and its step on the gear ladder are in (#542): the row in
 `src/content/progression.ts` (band 24–26, next 26, window 5,500), owed to #446 while the area is
-built box by box, with the four boxes' 7,057 xp a member and 3,100 gold the clear's floor, which
-Cinderport leaves as it is, a town paying nothing (§8); and the step in
+built box by box, with the boxes' and the vents' 9,203 xp a member and 4,000 gold the clear's floor,
+which Cinderport leaves as it is, a town paying nothing (§8); and the step in
 `src/content/areas/ashfall/items.ts`, the Area's own since G10 lists it (`ITEMS_AHEAD`,
 `src/content/index.ts`, held it until then), so that the harness and the gate dress by it:
 Cinderport's armourer's eight wares (`ARMOURER`, §4.4), each owed to the armourer until #512 sold it
 there. The stone cure is in the table too (#546): the Quickening Draught (`CURES`), which the company
 carries from 25, sold at Cinderport's chandler's since #512 and owed to the Riders' trader at Akordu
 (#526). The boxes' new finds are there as they come: G11's Great Axe +2 (`scavengersAxe`, §9, #513's
-12) and E10's Horn Bow +2 (`graveBow`, §9, #517's 11).
+12), E10's Horn Bow +2 (`graveBow`, §9, #517's 11) and the vents' Ember Stone's first part and
+stokers' parts, which no shop buys (`ember_part1`, `stoker_firebar` and `stoker_blade`, §9, #22's 1).
 
 Its ground (#543): vines (`&`), walked through as the woods are, the shore's trees hung with
 creepers; the volcano (`V`) and a vent in it (`@`), the mountain's rock to walk into, see and climb,
@@ -286,7 +294,7 @@ The places, as the atlas and the docs have them:
 | Scaldwell (the Hot Springs) | H10 | the springs that went cold the day the Anvil Stone was cut (#56's 49) | a springs site at 240,300 |
 | Cinderport | G10, and its own map | the far side's port, where the last crossing leaves (DESIGN §9); the Cartographers' second hall and the Compact's factor (#443, call 7); trains to 27 (DESIGN §5) | a port, its gate at 206,288 and its site at 206,277 on G9's shore |
 | Fire Mountain | G11 | the volcano; its vents are the Underdeep's exhaust and the way down (DESIGN §9) | a volcano at 215,326; a ridge at 204–226,326 with three lava flows |
-| Meridian Camp | G11, and below | the Meridian Company's last camp, Oriel Fane and the window (DESIGN §9, §10.3, STORY); three levels of 32×32 (#443, call 4) | a planned dungeon at 226,340, its way in at 226,334 |
+| Meridian Camp | G11, and below | the Meridian Company's last camp, Oriel Fane and the window (DESIGN §9, §10.3, STORY); three levels of 32×32 (#443, call 4) | a dungeon at 226,340, its way in at 226,334; its first level, the vents, built (#22) |
 | Grimsforge (Warlord's Forge) | G11 | the Barbarian's third prestige, by the vents' mouth (DESIGN §5, #448) | a forge at 230,330 |
 | Old Cinder | F11, and below | the town the mountain buried, its people cast in ash (MONSTERS §8.2); the Paladin's third (DESIGN §5); the founding stone (#56's 50); the Old Drake | a planned dungeon at 190,324, its way in at 190,318 |
 | The Ember Stone | F11, and below | never finished; the company completes it with parts from below and the Underdeep notices (DESIGN §9); the Druid's third (DESIGN §5); the Sentinel (MONSTERS §8.2) | a planned dungeon at 176,348, its way in at 176,342 |
@@ -550,14 +558,16 @@ half, with the wilderness features (#45); no more than one point in four is a si
   in Cinderport and says nothing of where he goes. The furnace-draught is a vent in the mountain's
   foot at 22,11, `g11_draught` at its front, 22,12: no wider than an arm, so no way in (§9, #513's
   8). The vents are three mouths at 26,15 to 26,17, and the middle one, 26,16 (Meridian Camp's site,
-  226,334), is barred: `VENTS` is exported and not in `exits`, its square solid, and `g11_vents`
-  (not `once`) stands at its front, 27,16, with the step's line each time (§9, #513's 5). The secret
+  226,334), is the way down: `VENTS` is in `exits`, its square open ash since #22 opened it (the side
+  mouths stay vents), and `g11_vents` (not `once`) stands at its front, 27,16, with the step's line
+  each time (§9, #513's 5; #22's 2). The secret
   is the scavenger's hole, in a ring of rock against the east edge that no climber passes: its mouth
   a secret door at 29,16, the ledge behind it (`g11_finds`, 30,16, grey parts in heaps and a cold
   draught from below) and the chest (`g11_hole`, 31,16): the Great Axe +2 and 700 gold. Its far
-  end, 31,17, is rock and barred as the vents are (`HOLE`), with rock at 31,18 so that it opens only
-  from the hole. The hint is the rope (`g11_rope`, 28,16): a vine rope knotted round a rock where no
-  vine grows, and the heir's word that a man went down beside the forge with a rope (§9, #513's 6).
+  end, 31,17, is open ash since #22, the way down (`HOLE`, in `exits`), with rock at 31,18 and 30,17
+  so that it opens only from the hole. The hint is the rope (`g11_rope`, 28,16): a vine rope knotted
+  round a rock where no vine grows, and the heir's word that a man went down beside the forge with a
+  rope (§9, #513's 6).
   For density besides, the lookout over the Waste on the cone's shoulder (`g11_lookout`, 14,10), the
   cairn at the ash foot with 300 gold and a Sapphire Vial (1,2), the Hills' line from the west
   (2,15), the flows' beds (`g11_bed`, 5,8; §9, #513's 18) and, on the ash, the stokers' heaps
@@ -760,6 +770,10 @@ that nests in the corridors (the Barbarian's quarry) and deep knockers below the
 Stone's parts lie on its upper levels, never its bottom (call 2; §5), so the chapter walks the vents
 and the corridors and never needs the camp, the window or the map.
 
+Its first level, the vents, is built (docs/areas/meridian_camp.md §4.1): the Stone's first part lies
+in the stokers' furnace room (`ember_part1`, §9, #22's 1), and the stair down to the corridors is
+barred until they are built.
+
 ## 5. The one quest here
 
 Ashfall's chapter is The Window (`chapter.ts`, #518, a working title), joined after the Whitespine's
@@ -776,17 +790,18 @@ in the journal's voice, keyed to flags, events and maps the save holds:
 - **The Stone seen.** Half-built on a field of cinders, three sockets empty and the parts it lacks
   only below. The goal names the three places: the vents, Old Cinder, the corridors.
 - **The vents.** Down the first level of the vents to the stokers' furnace room (#22), where the
-  machines shovel nothing into nothing, and the first part.
+  machines shovel nothing into nothing, and the first part, `ember_part1`, in the furnace's mouth.
+  Finding it sets no flag (§9, #22's 1).
 - **Old Cinder.** Down through the buried town to the undercroft's bottom, and the second part
-  beside the dark lamp (§4.7).
+  beside the dark lamp (§4.7), to be `ember_part2` (§9, #22's 1).
 - **The corridors.** Iron corridors hot enough to blister, and at their end the third part (#22's
-  second level). Below them a camp, and an old man who says *You took your time*: the window's
-  entry is written if the company goes on down to it, and never asked for; what it sees there is in
-  the entry and nowhere else (DESIGN §7).
-- **The Stone lit.** The parts carried up and set, a hand-in of three items that takes each at the
-  first meeting (EXPANSION §2.3). The Stone lights; every door below opens at once; the Sentinel
-  comes up. The Hearth burns steadier than in all our lives (#548). From then on sentries walk the
-  road back to Cinderport (`after`), which was safe the day before.
+  second level), to be `ember_part3`. Below them a camp, and an old man who says *You took your
+  time*: the window's entry is written if the company goes on down to it, and never asked for; what
+  it sees there is in the entry and nowhere else (DESIGN §7).
+- **The Stone lit.** The parts carried up and set, a hand-in of three items (#516) that takes each
+  at the first meeting (EXPANSION §2.3). The Stone lights; every door below opens at once; the
+  Sentinel comes up. The Hearth burns steadier than in all our lives (#548). From then on sentries
+  walk the road back to Cinderport (`after`), which was safe the day before.
 - **The road on.** The goal turns west to the Wold, whose chapter follows (#524); the last crossing
   waits at Cinderport's quay for Act V.
 
@@ -924,8 +939,9 @@ unclaimed (§9, #517's 15; §11).
   (#511), 1.22 times its scaled share (§9, #511's 9), F10 and E10 1,841 between them (#517), 0.99
   times theirs, and G11 2,768 (#513), 1.04 times its own (§9, #517's 9, #513's 11): 7,057 of the
   19,467 asked, so with the other scaled shares, 12,950, the shares stand at about 20,000, 1.03 times
-  the ask. Cinderport pays nothing, as a town pays none, and its two halls add no quest (§9, #512's
-  6): its 600, 800 scaled, is unpaid (§11).
+  the ask. The vents (#22) add 2,146, 0.98 of the brief's 2,200 and in none of the scaled shares,
+  which leave the camp's levels out: 9,203 of the 19,467 asked. Cinderport pays nothing, as a town
+  pays none, and its two halls add no quest (§9, #512's 6): its 600, 800 scaled, is unpaid (§11).
 - **Gold.** Training six members from 24 to 26 costs 11,760 with today's `trainPrice`, and to 27,
   the third prestige's level, 6,240 more; the thirds ask a quest, not gold (DESIGN §5). A clear
   should pay for the training at least, in chests, drops, the halls' pay and the sentries' parts.
@@ -937,7 +953,8 @@ unclaimed (§9, #517's 15; §11).
   (#513), 300 and a Sapphire Vial in its cairn and 700 in the hole, with the War Hammer +1 in the
   forge's rack, its dearest find, the area's, the Great Axe +2 at 1,500, inside the window; F10 and
   E10 hold 1,200 (#517), 250 and a Sapphire Vial in the cairn of each and 700 in the grave, their
-  dearest find the Horn Bow +2 at 1,050, inside the window; the four hold 3,100 of the 11,760 the
+  dearest find the Horn Bow +2 at 1,050, inside the window; the vents hold 900 (#22), in the drift
+  under the west mouth with a Sapphire Vial, but no gear; the five hold 4,000 of the 11,760 the
   training costs. Cinderport holds no gold, a town paying
   nothing; the dearest ware at its armourer's is the Drakeskin Coat at 3,100 and the Quickening
   Draught at its chandler's, the company's kit from 25, is 2,000, both inside the window (#512).
@@ -953,7 +970,9 @@ unclaimed (§9, #517's 15; §11).
   rest; one at 22 wins every fight too, owed to #18 as the Whitespine's boxes' is (§4.3). The town
   adds a way in, the boat's landing at 6,3; the groups nearest it are won at 22 as often as the
   median group or more (§4.4). A company at 25 wins every G11 fight and walks Fire Mountain's road
-  every time, 10.23 fights to a rest, 94.7% of its days ending in a fight broken off (§4.5). On F10
+  every time, 10.23 fights to a rest, 94.7% of its days ending in a fight broken off (§4.5). On the
+  vents a company at 25 wins every fight and manages 10.98 fights to a rest, 87.7% of its days
+  ending in a fight broken off (docs/areas/meridian_camp.md §4.1). On F10
   and E10 a company at 24 wins every fight and walks the Waste's road every time, 10.66 fights to a
   rest on F10 and 10.51 on E10; one at 22 wins every fight too, owed to #18 (§4.9).
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3); the
@@ -961,8 +980,9 @@ unclaimed (§9, #517's 15; §11).
   wall's. As built: G10 97.3% within 8 steps and the furthest 12, with no sign among its 26 points
   (#511); Cinderport, a town, 100.0% within 7 steps (86 of 86) and the furthest 4, with no sign
   among its 25 (#512); G11 100.0% within 8 steps and the furthest 8, with no sign among its 27
-  points (#513); F10 and E10 100.0% within 12 steps, the furthest 12 of 20, with no sign among their
-  12 and 15 points (#517).
+  points (#513); the vents 100.0% within 7 steps (279 of 279) and the furthest 6, with no sign among
+  their 25 points (#22); F10 and E10 100.0% within 12 steps, the furthest 12 of 20, with no sign
+  among their 12 and 15 points (#517).
 
 ## 9. Decisions
 
@@ -1496,6 +1516,18 @@ Decided by delegate for #517, each the owner's to overturn:
     the town's ways out (§9, #512's 14), so the outdoors test reaches them without one. The gate
     figures under the floor are owed to #18, as G10's are.
 
+Decided by delegate for #22 (the vents), each the owner's to overturn; the dungeon's own are in
+docs/areas/meridian_camp.md §8:
+
+1. **The Ember Stone's parts are `ember_part1`, `ember_part2` and `ember_part3`,** in the chapter's
+   order (§5). The vents place the first, "Ember Stone's First Part", found in the furnace's mouth
+   and setting no flag; Old Cinder's (#515) and the corridors' (#22's second level) are to be named
+   so by their builders, and the Stone's hand-in (#516) takes the three. The ids are save keys once
+   merged.
+2. **G11's middle mouth and the scavenger's hole are open:** `VENTS` and `HOLE` are in its `exits`;
+   26,16 and 31,17 are ash; the landings are the ones #513 asked for, 16,1 facing south and 29,30
+   facing north, back up onto 27,16 facing east and 31,16 facing west (§4.5; §9, #513's 5 and 6).
+
 ## 10. Names
 
 Ashfall's naming pass, by the rules of `docs/NAMES.md`, chosen for #444. Cindercoast's folk came
@@ -1563,15 +1595,13 @@ Owed, from Cinderport (#512):
 
 Owed, from G11 (#513):
 
-- **The vents stay barred** until #22 builds Meridian Camp: it lists `VENTS` in G11's exits,
-  re-letters 26,16 to ground an exit can stand on, drops or rewrites `g11_vents` (27,16) and sets
-  the landing it is asked for, 16,1 facing south; its way back up lands on 27,16 facing east (§9,
-  #513's 5). Meanwhile a vent is climbable mountain, so a Climber can stand on the barred mouth;
-  nothing leads on from it.
-- **The scavenger's hole stays barred at its far end** until #22 lists `HOLE`, opens 31,17 and sets
-  the landing it is asked for, 29,30 facing north, out behind the stokers' furnace room; its way
-  back up lands in the hole on 31,16 facing west (§9, #513's 6). The walkthrough asserts both
-  mouths shut and the three vents `vent` underfoot: #22 changes those lines when it opens them.
+- **The vents stood barred** until #22 built Meridian Camp's first level, which listed `VENTS` in
+  G11's exits, re-lettered 26,16 ash, kept `g11_vents` (27,16) and set the landing asked for, 16,1
+  facing south; its way back up lands on 27,16 facing east (§9, #513's 5; #22's 2).
+- **The scavenger's hole stood barred at its far end** until #22 listed `HOLE`, opened 31,17 and set
+  the landing asked for, 29,30 facing north, out behind the stokers' furnace room; its way back up
+  lands in the hole on 31,16 facing west (§9, #513's 6; #22's 2). The walkthrough's lines on the
+  shut mouths changed with them.
 - **Five groups stand for the brief's nine** (§4.5, §9, #513's 9): the second drake group, a pair,
   is cut, for with it the box read 8.88 fights to a rest, under the aim.
 - **The sentry's first placing is taken from F11** for G11's top (§7, §9, #513's 10): F11 (#514)
