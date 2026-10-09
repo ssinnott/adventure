@@ -4,7 +4,8 @@
 // foot onto the grass of the steppe and out over the west edge. On the crest the cairns, all facing the
 // steppe, their stones standing on the rises, the sky-stone, the hermit who has looked down on the Stone's field all his life and two
 // drakes over the road at the far end; and in the hills south of the notch the one cairn that looks
-// back, a grave. West of the Hills the steppe.
+// back, a grave. West of the Hills the steppe, and on the road's last shoulder, once the Stone is lit,
+// the end of Ashfall's chapter (#518).
 // Laid whole for the Waste (#517) as the atlas cuts it, the Wold's steppe and grass with it; the Wold's
 // half is #524's: beetles over from the Waste on the ash, vultures at the hills' foot circling the
 // grave's hills, a camp in the hills' lee, the glare seen from the crest, a Rider on the road, the
@@ -14,6 +15,14 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/ashfall.md §4.9 and docs/areas/glasswold.md §4.2 are its briefs.
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
+import { LIT } from './ember_stone.ts';
+
+/**
+ * The road west taken once the Stone is lit: `e10_west` sets it on the Hills' last shoulder, the once,
+ * and the Wold's D8 at its horse-lines (`d8_east`) for a company that rides west instead. Ashfall's
+ * chapter, The Window, is done on it, and the Wold's (#531) starts on it.
+ */
+export const ROAD_WEST = 'q_road_west';
 
 export const EMBERWASTE_E10: MapDef = {
   id: 'emberwaste_e10',
@@ -80,6 +89,8 @@ export const EMBERWASTE_E10: MapDef = {
     { kind: 'chest', x: 16, y: 27, id: 'e10_grave', gold: 700, items: ['horn_bow+2'] },
     // West of the Hills the steppe, the Wold's (#524), to the world's end for now.
     { kind: 'event', x: 1, y: 11, id: 'e10_steppe', once: true, text: 'West of the hills the steppe, flat and yellow, runs on to the sky.' },
+    // The road's last square but one before the west edge, the Stone lit: the chapter is done (#518).
+    { kind: 'event', x: 1, y: 6, id: 'e10_west', once: true, after: { flag: LIT }, sets: ROAD_WEST, text: 'At the Hills\' last shoulder the road goes down onto the grass. Back east, the Stone burns white on its field.' },
     { kind: 'event', x: 4, y: 21, id: 'e10_wind', once: true, text: 'The wind comes over the steppe and the grass goes down before it in waves.' },
     { kind: 'event', x: 5, y: 27, id: 'e10_hooves', once: true, text: 'Hoofprints in the grass, unshod, a great many, going north-west.' },
     // The Wold's half (#524). From the road on the ash, vultures turning over the grave's hills: its

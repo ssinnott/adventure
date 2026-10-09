@@ -12,6 +12,8 @@ import type { MapDef } from '../../../../game/map.ts';
 import { EAST, NORTH } from '../../../../game/types.ts';
 import { RIDERS_RIDE, sells } from '../../../crossings.ts';
 import { CURES } from '../../ashfall/items.ts';
+import { LIT } from '../../ashfall/maps/ember_stone.ts';
+import { ROAD_WEST } from '../../ashfall/maps/emberwaste_e10.ts';
 
 /** The flag the eldest's telling sets, said once: The Warning's step at Akordu keys on it (#531). */
 export const STORY = 'akordu_story';
@@ -91,6 +93,9 @@ export const WOLD_D8: MapDef = {
     // the young Rider who wants the last blow (#56's 53, #532's), a well, and the horse that came back
     // (#56's 51, #532's), tethered apart, with the Rider who wants it broken.
     { kind: 'event', x: 7, y: 27, id: 'd8_lines', once: true, text: 'The horse-lines: a rope between stakes and sixty horses on it, heads down, a boy walking the line with water.' },
+    // Where the ride sets a company down, once the Ember Stone is lit: Ashfall's chapter is done for a
+    // company that came west by the ride and never walked the road over the Cinder Hills (#518).
+    { kind: 'event', x: 9, y: 27, id: 'd8_east', once: true, after: { flag: LIT }, sets: ROAD_WEST, text: 'The Riders at the lines are looking east, over the hills, and none of them is talking.' },
     { kind: 'npc', x: 9, y: 26, name: 'A Rider at the lines', lines: [
       'A Rider checks a horse\'s feet at the end of the lines, a second horse saddled beside it.',
       '"East to the port, a day over the grass and the ash. We go at two, and we do not wait."',
