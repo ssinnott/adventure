@@ -295,6 +295,21 @@
         "c7_slate",
         "c7_star",
         "c7_stone",
+        "c8_cairn",
+        "c8_cleft",
+        "c8_drops",
+        "c8_glare",
+        "c8_glassed",
+        "c8_grazed",
+        "c8_lie",
+        "c8_line",
+        "c8_lip",
+        "c8_post",
+        "c8_satchel",
+        "c8_skull",
+        "c8_smoke",
+        "c8_updraught",
+        "c8_view",
         "coast",
         "d2_cairn",
         "d2_cist",
@@ -1171,6 +1186,9 @@
         "c6_smugglers",
         "c7_crabs",
         "c7_toads",
+        "c8_basilisk",
+        "c8_pride",
+        "c8_vultures",
         "cliff_smugglers",
         "coast_bandits",
         "d2_crows",
@@ -1510,6 +1528,7 @@
         "53,140",
         "77,108",
         "81,75",
+        "94,224",
         "99,148"
       ]
     },
@@ -2584,6 +2603,10 @@
       "at": "72,62",
       "size": "32x32"
     },
+    "wold_c8": {
+      "at": "72,222",
+      "size": "32x32"
+    },
     "wold_d8": {
       "at": "104,222",
       "size": "32x32"
@@ -2940,6 +2963,7 @@
     "chain+1",
     "chain+2",
     "cinder_robe",
+    "cipher_letter",
     "clerks_book",
     "clerks_seal",
     "club",
