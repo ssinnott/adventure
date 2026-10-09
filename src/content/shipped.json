@@ -599,6 +599,26 @@
         "i5_hearth",
         "i5_hollow",
         "i5_roost",
+        "i8_boats",
+        "i8_bones",
+        "i8_cairn",
+        "i8_causeway",
+        "i8_crates",
+        "i8_damp",
+        "i8_end",
+        "i8_hammer",
+        "i8_hold",
+        "i8_knot",
+        "i8_lid",
+        "i8_nest",
+        "i8_oars",
+        "i8_pines",
+        "i8_shrine",
+        "i8_tally",
+        "i8_tallyhouse",
+        "i8_trail_end",
+        "i8_warm",
+        "i8_wreck",
         "i9_cache",
         "i9_cairn",
         "i9_causeway",
@@ -1223,6 +1243,10 @@
         "i5_brood2",
         "i5_keepers",
         "i5_rootwalkers",
+        "i8_eagles",
+        "i8_foreman",
+        "i8_masons",
+        "i8_troll",
         "i9_eagles",
         "i9_masons",
         "i9_trolls",
@@ -1396,6 +1420,7 @@
         "281,41",
         "285,116",
         "286,135",
+        "286,228",
         "290,322",
         "297,145",
         "308,112",
@@ -1963,6 +1988,46 @@
         "7,11"
       ]
     },
+    "old_cinder": {
+      "size": "16x16",
+      "used": [
+        "oc1_board",
+        "oc1_door",
+        "oc1_hall",
+        "oc1_kilns",
+        "oc1_shop",
+        "oc1_sill",
+        "oc1_square",
+        "oc1_stall",
+        "oc1_street",
+        "oc1_table"
+      ],
+      "groups": [
+        "oc1_drake",
+        "oc1_husks"
+      ],
+      "doors": []
+    },
+    "old_cinder2": {
+      "size": "16x16",
+      "used": [
+        "oc2_cellars",
+        "oc2_fallen",
+        "oc2_keeper",
+        "oc2_keepers",
+        "oc2_niche",
+        "oc2_part",
+        "oc2_set",
+        "oc2_stone",
+        "oc2_walk"
+      ],
+      "groups": [
+        "oc2_husks"
+      ],
+      "doors": [
+        "7,10"
+      ]
+    },
     "rime_lodge": {
       "size": "16x16",
       "used": [
@@ -2443,6 +2508,10 @@
       "at": "72,190",
       "size": "32x32"
     },
+    "sheerpoint_i8": {
+      "at": "264,222",
+      "size": "32x32"
+    },
     "sheerpoint_i9": {
       "at": "264,254",
       "size": "32x32"
@@ -2743,6 +2812,7 @@
     "q_well_wardens",
     "q_wenna",
     "q_wenna_lodge",
+    "q_wenna_taken",
     "q_wenna_up",
     "q_wentback",
     "q_wentback_home",
@@ -2818,12 +2888,14 @@
     "elfbow+2",
     "elixir",
     "ember_part1",
+    "ember_part2",
     "ember_part3",
     "faceless_coin",
     "flail",
     "flail+1",
     "flail+2",
     "flamberge",
+    "flamberge+1",
     "foreman_slate",
     "foremans_tally",
     "forge_hammer",
@@ -2832,6 +2904,7 @@
     "forge_shield+1",
     "founders_letter",
     "founders_seal",
+    "founding_stone",
     "fur_robe",
     "great_axe",
     "great_axe+1",
@@ -2851,6 +2924,7 @@
     "hale_token",
     "healers_note",
     "hearth_key",
+    "hearth_symbol",
     "hill_torc",
     "horn_bow",
     "horn_bow+1",

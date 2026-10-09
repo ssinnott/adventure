@@ -187,8 +187,8 @@ features and ten groups, about one rest's fights at the band (MONSTERS §4.4), w
     corridors' 5). It manages 8.69 fights to a rest, under the aim of 9.5 to 11.5 and inside the
     limit of 8 to 14, with 88% of its days ending in a fight broken off: the walker's three run
     past 15 rounds once spell points run low, as the vents' furnace does, which the gate shows and
-    never judges. Its under-check is n/a, its floor being over the area's; Ashfall's 28 groups at
-    their maps' floors are won 98.6% of the time, and two under them 96.4%, owed to #18 as before.
+    never judges. Its under-check is n/a, its floor being over the area's; Ashfall's 31 groups at
+    their maps' floors are won 97.6% of the time, and two under them 93.6%, owed to #18 as before.
     The corridors pay 4,399 xp a member for the brief's 2,700, over the cap of 3,375 (§8, the
     corridors' 3), and hold 1,500 gold and Meridian Mail +3. Density 100.0% within 7 steps (193 of
     193) and the furthest 7 of 10, with no sign among its 24 points. The curve's rank correlation
@@ -232,8 +232,8 @@ last Fane's.
 - **The one quest** (Ashfall's chapter, The Window): its Fire Mountain step and its corridors' step
   are the upper two levels (ashfall §5). The window is an entry, never a goal. The vents' part is
   `ember_part1`, found in the furnace's mouth, which sets no flag; the corridors' is `ember_part3`,
-  in a chest at their end, which sets none; Old Cinder's is to be `ember_part2` (§8, the vents' 4;
-  the corridors' 7).
+  in a chest at their end, which sets none; Old Cinder's is `ember_part2`, and sets none either (§8,
+  the vents' 4; the corridors' 7).
 - **The Lost Expedition** (DESIGN §10.3) ends at Fane's fire. The trail inside is the Company's
   marks: pins, arrows and two graves with notes for the reader of every note. No new numbered
   journal: the fourth stays in the Ember Stone's lower gallery (ashfall §4.8), and filling
@@ -263,7 +263,7 @@ nor do the corridors (§8, the corridors' 16).
   goes down early from overshooting. As built, the vents pay 2,146 a member, 0.98 of their 2,200
   (§4.1; §8, the vents' 3). The corridors pay 4,399, 1.63 of their 2,700 and over the cap of 3,375,
   the Brood Drake alone paying 2,862 (§4.2; §8, the corridors' 3); with Ashfall's other maps a
-  clear is 18,581 of the area's 19,467 (ashfall §8).
+  clear is 22,660 of the area's 19,467 (ashfall §8).
 - **The gate.** Each level is held at its own floor (EXPANSION §5.2). The Brood Drake is won about
   half the time at 26, the corridors' floor, and nearly always at 28. As built, a company at the
   vents' floor, 25, wins every fight and manages 10.98 fights to a rest (§4.1); at the corridors'
@@ -274,9 +274,9 @@ nor do the corridors (§8, the corridors' 16).
   Vial, in the drift, but no gear (§8, the vents' 8); their parts are the Stone's first, a quest
   item, and the stokers' firebar and shovel blade, which no shop buys (§8, the vents' 4 and 5). The
   corridors hold 1,500 gold, in the nest's hoard, and the Company's kit in the cold camp, Meridian
-  Mail +3 at 2,450, inside the window and Ashfall's dearest find (§8, the corridors' 8 and 12);
-  their parts are the Stone's third, a quest item, and the flue walker's damper and climbing iron,
-  which no shop buys (§8, the corridors' 7 and 9).
+  Mail +3 at 2,450, inside the window and under Old Cinder's Flamberge +1 at 2,550, Ashfall's
+  dearest find (§8, the corridors' 8 and 12); their parts are the Stone's third, a quest item, and
+  the flue walker's damper and climbing iron, which no shop buys (§8, the corridors' 7 and 9).
 
 ## 8. Decisions
 
@@ -431,7 +431,8 @@ Decided by delegate for #22, each the owner's to overturn:
 8. **The Company's kit is `meridian_mail`, "Meridian Mail +3":** the Kilns' Dwarf Mail with a plus
    of 3 (AC 14, the heavy classes', 2,450, inside the 5,500 window), named as the Foreland's
    Captain's Mail is, with a line of look (its lining burnt through across the shoulders), in a
-   chest at the cold camp (`mc2_kit`, 8,14). It is now Ashfall's dearest find.
+   chest at the cold camp (`mc2_kit`, 8,14). Old Cinder's Flamberge +1 at 2,550 stays Ashfall's
+   dearest find, the Mail the next.
 9. **The machines' parts are two new items,** `walker_damper` ("Flue Walker's Damper") and
    `walker_iron` ("Flue Walker's Climbing Iron"), no slot and no price, as the stokers', in the heap
    at the corridors' end (`mc2_heap`, 2,29).
@@ -487,8 +488,8 @@ Cut and owed, from the vents (#22):
 - **The stair stood barred** until the corridors were built, which listed `STAIR` in the vents'
   exits, opened 4,30 and landed the way back up on 4,29 facing north (§8, the vents' 9; the
   corridors' 14).
-- **The second part** is to be `ember_part2` (Old Cinder, #515); the hand-in (#516) takes the
-  three (§8, the vents' 4).
+- **The second part,** `ember_part2`, is Old Cinder's (#515); the hand-in (#516) takes the three
+  (§8, the vents' 4).
 
 Cut and owed, from the corridors (#22):
 

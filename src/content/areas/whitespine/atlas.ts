@@ -4,7 +4,7 @@ import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
   {
-    id: 'sheerpoint', name: 'Sheer Point', area: 'whitespine', band: [23, 24], maps: [{ map: 'sheerpoint_i9', at: [264, 254] }], seeds: [[282, 244], [276, 262]],
+    id: 'sheerpoint', name: 'Sheer Point', area: 'whitespine', band: [23, 24], maps: [{ map: 'sheerpoint_i9', at: [264, 254] }, { map: 'sheerpoint_i8', at: [264, 222] }], seeds: [[282, 244], [276, 262]],
     // The crossing line said north along the ridge from the High Spine, at the same floor (#166, #503).
     crossing: { harder: 'Out here the land runs thin toward the sea, and nothing on it is any kinder than the range.', warning: 'Nothing on the Point would spare you. The way you came is still open.' },
   },
@@ -33,5 +33,5 @@ export const SITES: readonly AtlasSite[] = [
   { name: 'Giants', icon: 'label', at: [300, 296], planned: true },
   { name: 'Stairwatch', icon: 'tower', at: [270, 312], label: 'right' }, // over the Giants' Stair: the Knight's third prestige; the ledge on I10, 6,26 (#502, #448)
   { name: 'Spine Summit', icon: 'camp', at: [300, 328], label: 'right' }, // the Monk's third prestige: the camp on J11, 4,10 (#499, #448)
-  { name: 'Rook\'s Nest', icon: 'cave', at: [286, 230], label: 'right', planned: true }, // on Sheer Point, over the Hand's causeway: the Thief's third prestige
+  { name: 'Rook\'s Nest', icon: 'cave', at: [286, 230], label: 'right' }, // over the Hand's causeway: the Thief's third prestige; the hollow on I8, 22,8 (#504, #448)
 ];

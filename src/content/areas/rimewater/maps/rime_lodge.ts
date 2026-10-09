@@ -184,8 +184,9 @@ export const RIME_LODGE: MapDef = {
     { kind: 'event', x: 6, y: 12, id: 'rl_night_3', once: true, after: { flag: 'night_3' }, until: { flag: 'night_4' }, text: 'Morning. A family by the fire, the children asleep. "A girl led us to the stair. She went back down."' },
     { kind: 'event', x: 6, y: 12, id: 'rl_night_4', once: true, after: { flag: 'night_4' }, text: 'Morning, and nobody by the fire. Out on the ice the keepers stand back from the hole, and it is clicking.' },
     // The girl out of the hole, by the yard's fire once she has spoken at the door after the bay (§5,
-    // #492): K9's girl goes on the same flag, so she is never in two places.
-    { kind: 'npc', x: 10, y: 13, name: 'The girl out of the hole', after: { flag: WENNA_LODGE }, lines: [
+    // #492): K9's girl goes on the same flag, so she is never in two places. Once the company comes
+    // into the Whitespine she has gone on ahead of it, to Highcell's gate (#504).
+    { kind: 'npc', x: 10, y: 13, name: 'The girl out of the hole', after: { flag: WENNA_LODGE }, until: { visited: 'monksvale_j11' }, lines: [
       'The girl out of the hole, by the yard\'s fire at last in a lodge blanket, the nail still in her fist.',
       '"Bring them up, and I\'ll go home to my mother. Not before."',
     ] },

@@ -29,14 +29,17 @@
 // E10 with nothing said; the notch and its waymark, the hermit, the flow's head; E10 laid whole and bare
 // of the Wold's; the groups won at the floor; and the grave, found from the cairn that looks back.
 // Then Old Cinder's and the Ember Stone's box (F11, #514), walked onto over F10's south edge and over
-// G11's west: the crater, its roofs standing out of the pit, the way down at its lip barred until Old
-// Cinder is built, the old Lightbearer by it and the cairn on its rim; the hermit and the camp in the
-// rock; the causeway over the flow and its milestone; the Stone half-built on its field of cinders in its
-// iron scaffold, the way in barred until the Ember Stone is built, and the shrine at the field's edge;
-// the groups won at the floor, the husks only by night and the sentries only after the Stone; and the
-// builders' hollow, found from the rock's scored face.
+// G11's west: the crater, its roofs standing out of the pit, the way down at its lip, the old
+// Lightbearer by it and the cairn on its rim; the hermit and the camp in the rock; the causeway over the
+// flow and its milestone; the Stone half-built on its field of cinders in its iron scaffold, the way in
+// barred until the Ember Stone is built, and the shrine at the field's edge; the groups won at the
+// floor, the husks only by night and the sentries only after the Stone; and the builders' hollow, found
+// from the rock's scored face. Then Old Cinder (#515), down off the crater's lip: the buried town's
+// street and its people in their doorways, the well, the kilns, the husks and the Old Drake asleep on
+// the square; down the hall's stair to the cellars, the founding stone, the lamp at the bottom and the
+// Ember Stone's second part beside it; and the lamp-keeper's cellar behind the fallen stair.
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, see, fight, listen } from '../../../../tools/walk.ts';
+import { newWalk, see, fight, listen, walkThrough } from '../../../../tools/walk.ts';
 import type { Walk } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import type { Facing } from '../../../game/types.ts';
@@ -44,7 +47,7 @@ import { ATLAS, MAP_DEFS, MONSTERS, GUILD_QUESTS } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { GameMap } from '../../../game/map.ts';
-import type { Feature } from '../../../game/map.ts';
+import type { Feature, MapDef } from '../../../game/map.ts';
 import { restRefused } from '../../../game/wilds.ts';
 import { meet, heard } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
@@ -500,8 +503,8 @@ export const walkthrough: Walkthrough = (ok) => {
   const on11f = (x: number, y: number): boolean => inBox(f11, x, y);
   const at11f = (x: number, y: number): number => key(f11.x + x, f11.y + y);
   const inLow = cross(22, 'emberwaste_f10', F11.start.x, 31, SOUTH), inTwo = cross(24, 'emberwaste_f10', F11.start.x, 31, SOUTH), inDue = cross(25, 'emberwaste_f10', F11.start.x, 31, SOUTH);
-  ok(w.world.zone?.id === 'emberwaste_f11' && w.world.state.x === f11.x + F11.start.x && w.world.state.y === f11.y && f11.x === f10.x && f11.y === f10.y + 32 && F11.start.y === 0 && F11.start.facing === SOUTH && !(F11.exits ?? []).length,
-    'over F10\'s south edge from its 16,31 onto F11\'s 16,0, walked, the box\'s way in, and it has no way out but its edges');
+  ok(w.world.zone?.id === 'emberwaste_f11' && w.world.state.x === f11.x + F11.start.x && w.world.state.y === f11.y && f11.x === f10.x && f11.y === f10.y + 32 && F11.start.y === 0 && F11.start.facing === SOUTH && (F11.exits ?? []).length === 1 && F11.exits![0] === CRATER,
+    'over F10\'s south edge from its 16,31 onto F11\'s 16,0, walked, the box\'s way in, and it has no way out but its edges and the crater\'s, down into Old Cinder');
   ok(!inDue.length && inTwo.join(' / ') === WASTE.crossing?.harder && inLow.join(' / ') === WASTE.crossing?.warning,
     `the same land, so not named: at 25 nothing, at 24 the Waste's harder words, at 22 its warning (${inDue.join(' / ') || 'nothing'}; ${inTwo.join(' / ')}; ${inLow.join(' / ')})`);
   const westLow = cross(22, 'firemount_g11', 0, 16, WEST), westTwo = cross(23, 'firemount_g11', 0, 16, WEST), westDue = cross(25, 'firemount_g11', 0, 16, WEST);
@@ -514,24 +517,23 @@ export const walkthrough: Walkthrough = (ok) => {
   for (const m of w.party.members) m.level = 25;
 
   // Old Cinder's crater: its rim at the atlas's mark, the pit below it with the town's roof-ridges
-  // standing out of it, and the way down at its west lip, barred until Old Cinder is built (CRATER), its
-  // line said at its front each time; the old Lightbearer sitting by it (#448 his trainer and quest),
-  // and the cairn on the rim.
+  // standing out of it, and the way down at its west lip (CRATER), open since Old Cinder was built
+  // (#515), nothing at its front; the old Lightbearer sitting by it (#448 his trainer and quest), and
+  // the cairn on the rim.
   const walkF = (x: number, y: number): boolean => on11f(x, y) && out.passable(x, y) === 'ok';
   const ash = reach(F11.start.x, F11.start.y, walkF, f11);
   const ruin = ATLAS.sites.find((q) => q.name === 'Old Cinder')!;
   const [rx, ry] = [Math.floor(ruin.at[0]) - f11.x, Math.floor(ruin.at[1]) - f11.y];
   const pit = [...F11.rows.join('')].filter((c) => c === 'v').length, roofs = [...F11.rows.slice(1, 8).join('')].filter((c) => c === 'B').length;
-  ok(rx === 22 && ry === 0 && ash.has(at11f(rx, ry)) && out.at(f11.x + rx, f11.y + ry + 1).terrain === 'chasm' && pit >= 25 && roofs >= 6,
+  ok(rx === 22 && ry === 0 && !ruin.planned && ash.has(at11f(rx, ry)) && out.at(f11.x + rx, f11.y + ry + 1).terrain === 'chasm' && pit >= 25 && roofs >= 6,
     `the crater's rim is Old Cinder's mark on the atlas, F11's 22,0, the pit below it (${pit} squares) and the town's roofs standing out of it (${roofs})`);
-  const lip = F11.features!.find((f) => f.kind === 'event' && f.id === 'f11_lip');
-  ok(lip?.kind === 'event' && !lip.once && lip.x === CRATER.x - 1 && lip.y === CRATER.y && CRATER.to === 'old_cinder' && out.passable(f11.x + CRATER.x, f11.y + CRATER.y) !== 'ok'
-    && out.at(f11.x + CRATER.x, f11.y + CRATER.y).solid === 'building' && out.at(f11.x + CRATER.x + 1, f11.y + CRATER.y).terrain === 'chasm' && ash.has(at11f(lip.x, lip.y)),
-    'the way down into Old Cinder is a roof-ridge at the crater\'s west lip, 19,4, barred until Old Cinder is built (CRATER), and its line is said at its front each time');
-  see(w, 'emberwaste_f11:f11_lip');
+  const lip = { x: CRATER.x - 1, y: CRATER.y };
+  ok(CRATER.to === 'old_cinder' && out.at(f11.x + CRATER.x, f11.y + CRATER.y).terrain === 'ash' && out.at(f11.x + CRATER.x, f11.y + CRATER.y).solid === 'none'
+    && out.at(f11.x + CRATER.x + 1, f11.y + CRATER.y).terrain === 'chasm' && ash.has(at11f(lip.x, lip.y)) && !F11.features!.some((f) => f.x === lip.x && f.y === lip.y),
+    'the way down into Old Cinder is the crater\'s west lip, 19,4, its ash open now the town is built (CRATER), and nothing stands at its front');
   const old = person('An old Lightbearer', F11);
   w.world.travel('emberwaste_f11', old.x, old.y);
-  ok(meet(old, w.party, heard(w.world, old)).text.includes('lamp at the bottom') && !!lip && Math.abs(old.x - lip.x) + Math.abs(old.y - lip.y) === 1 && out.at(f11.x + old.x + 1, f11.y + old.y).terrain === 'chasm',
+  ok(meet(old, w.party, heard(w.world, old)).text.includes('lamp at the bottom') && Math.abs(old.x - lip.x) + Math.abs(old.y - lip.y) === 1 && out.at(f11.x + old.x + 1, f11.y + old.y).terrain === 'chasm',
     'an old Lightbearer sits on the lip beside the way down: a lamp at the bottom of that town went out');
   const rimCairn = F11.features!.find((f) => f.kind === 'cairn' && f.id === 'f11_cairn');
   ok(rimCairn?.kind === 'cairn' && rimCairn.gold > 0 && [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => out.at(f11.x + rimCairn.x + dx, f11.y + rimCairn.y + dy).terrain === 'chasm'), 'a cairn on the crater\'s rim');
@@ -599,7 +601,136 @@ export const walkthrough: Walkthrough = (ok) => {
   listen(w);
   const mail = F11.features!.find((f) => f.kind === 'chest' && f.id === 'f11_hollow');
   ok(mail?.kind === 'chest' && mail.items.includes('chain+2') && mail.gold > 0 && mail.x === face.x - 2 && mail.y === face.y, 'with the tools, a Chain Mail +2');
+
+  oldCinder(w, ok);
 };
+
+/**
+ * Old Cinder (#515): down off F11's crater lip into the buried town, its line said, and back up onto the
+ * lip's front facing away from the pit; the street the ash has left and its people in the doorways, the
+ * houses either side with their people as they were, every one with a cup; the well at the crossing full
+ * of ash; the potters' kilns and the broken one beside them to rest in; the man in his doorway at the
+ * lane's end; the husks in the street won; the square, the Old Drake asleep on it off the way across,
+ * which wakes only beside it, won at the town's floor, never back and its death closing nothing, and the
+ * stall it lies beside with the ladder's Flamberge +1; the hall's door and its stair down; the cellars,
+ * the founding stone in its niche, the dry cellar to rest in and the husks won; the lamp-keeper's walk to
+ * the lamp at the bottom, cold each time, and the Ember Stone's second part set in the floor beside it,
+ * reached with nothing searched for; the lamp-keeper's cellar, found where the oil channel runs on under
+ * a fallen stair; and back up the stair to the square.
+ */
+function oldCinder(w: Walk, ok: (cond: boolean, msg: string) => void): void {
+  const [L1, L2] = ['old_cinder', 'old_cinder2'].map((id) => MAP_DEFS.find((d) => d.id === id)!);
+  const at = (): string => `${w.world.state.mapId} ${w.world.state.x},${w.world.state.y}`;
+  const feature = (d: MapDef, id: string): Feature | undefined => d.features!.find((f) => 'id' in f && f.id === id);
+  const beside = (a: { x: number; y: number }, x: number, y: number): boolean => Math.abs(a.x - x) + Math.abs(a.y - y) === 1;
+  /** Whether a level's square is reached from its start without passing its secret doors, or swimming, climbing or floating. */
+  const reached = (d: MapDef, x: number, y: number): boolean => {
+    const m = new GameMap(d), seen = new Set<number>(), todo = [[d.start.x, d.start.y]];
+    while (todo.length) {
+      const [cx, cy] = todo.pop()!, k = cy * m.width + cx;
+      if (seen.has(k) || !m.inBounds(cx, cy) || m.at(cx, cy).door === 'secret' || m.passable(cx, cy, { swim: true, climb: true, float: true }) !== 'ok') continue;
+      seen.add(k);
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([cx + dx, cy + dy]);
+    }
+    return seen.has(y * m.width + x);
+  };
+  w.level = 25;
+
+  // Down off the lip on F11 into the street, facing in, the way's line said, and the street's said at the
+  // first step; stepped back onto, the way lets the company out onto the lip's front, facing away from
+  // the pit.
+  w.world.travel('emberwaste_f11', CRATER.x - 1, CRATER.y, EAST);
+  const down = w.world.move('forward');
+  ok(down.kind === 'moved' && w.world.state.mapId === 'old_cinder' && w.world.state.x === L1.start.x && w.world.state.y === L1.start.y && w.world.state.facing === SOUTH && down.messages.includes(CRATER.label!),
+    `off the crater's lip the company climbs down into the buried town, facing in (${at()}: ${down.kind === 'moved' ? down.messages.join(' / ') : down.kind})`);
+  const street = feature(L1, 'oc1_street'), first = w.world.move('forward');
+  ok(street?.kind === 'event' && first.kind === 'moved' && first.messages.includes(street.text) && street.text.includes('the people stand as they stood'),
+    `and its first step into the street says it (${first.kind === 'moved' ? first.messages.join(' / ') : first.kind})`);
+  const up = w.world.move('back'), waste = w.world.zone;
+  ok(up.kind === 'moved' && waste?.id === 'emberwaste_f11' && w.world.state.x - waste.x === CRATER.x - 1 && w.world.state.y - waste.y === CRATER.y && w.world.state.facing === WEST,
+    `and back up over the lip onto its front on F11, facing away from the pit (${at()})`);
+  ok([L1, L2].every((d) => (d.exits ?? []).every((e) => !e.shut && !e.needFlag) && !d.features!.some((f) => ['inn', 'temple', 'shop', 'guild', 'trainer'].includes(f.kind)) && d.features!.filter((f) => f.kind === 'camp').length === 1),
+    'nothing shuts a way in Old Cinder, nothing in it sells or teaches, and each level has one place to rest');
+
+  // The town (25): the houses either side of the street, their people as they were, every one with a
+  // cup; the well at the crossing; the potters' kilns and the broken one beside them; the man in his
+  // doorway at the lane's end.
+  const houses = ['oc1_table', 'oc1_sill', 'oc1_shop', 'oc1_board'].map((id) => feature(L1, id));
+  for (const h of houses) if (h?.kind === 'event') see(w, `old_cinder:${h.id}`);
+  ok(houses.every((h) => h?.kind === 'event' && h.once && h.text.includes('cup') && w.world.used(h.id)), 'in the houses either side of the street, its people as they were, every one with a cup');
+  const well = L1.features!.find((f) => f.kind === 'well');
+  ok(well?.kind === 'well' && !well.heal && well.text.includes('full of ash'), 'the well at the crossing is full of ash, and mends nobody');
+  see(w, 'old_cinder:oc1_kilns');
+  const kiln = L1.features!.find((f) => f.kind === 'camp');
+  ok(kiln?.kind === 'camp' && L1.rows[kiln.y][kiln.x - 1] === 'o' && w.world.used('oc1_kilns'), 'the potters\' kilns in a row, and one broken open beside them, dry inside, to rest in');
+  see(w, 'old_cinder:oc1_door');
+
+  // The husks in the street, between the well and the square.
+  const [husks, drake] = L1.encounters!;
+  ok(L1.encounters!.length === 2 && husks.monsters.join() === 'ash_husk,ash_husk,ash_husk,ash_husk' && !!husks.respawn && husks.roams === false,
+    'four husks stand in the street between the well and the square');
+  fight(w, `old_cinder:${husks.id}`);
+
+  // The square: the Old Drake asleep on it, off the way across to the hall's door, waking only when the
+  // company comes beside it; won at the town's floor, it never comes back and its death closes nothing.
+  // Beside it the stall, and on it the ladder's Flamberge +1.
+  see(w, 'old_cinder:oc1_square');
+  const hall = feature(L1, 'oc1_hall');
+  ok(drake.monsters.join() === 'old_drake' && drake.roams === false && !drake.respawn && hall?.kind === 'event' && !beside(drake, hall.x, hall.y) && !beside(drake, 8, 10)
+    && MONSTERS.old_drake.level === 26 && MONSTERS.old_drake.sweep?.element === 'fire' && !!drake.slainText?.includes('Nothing else in the town has moved'),
+    'the Old Drake lies asleep on the square, off the way across it, and wakes only beside it; it breathes fire on a row, and its death closes nothing');
+  fight(w, `old_cinder:${drake.id}`);
+  const stall = feature(L1, 'oc1_stall');
+  ok(stall?.kind === 'chest' && stall.items.join() === 'flamberge+1' && stall.gold > 0 && beside(drake, stall.x, stall.y), 'on the stall it lay beside, coin and a Flamberge +1');
+
+  // The hall's door under the square, and its stair down to the cellars.
+  see(w, 'old_cinder:oc1_hall');
+  walkThrough(w, 'old_cinder', hall!.x, hall!.y, SOUTH, 'old_cinder2', 2);
+  ok(w.world.state.x === L2.start.x && w.world.state.y === L2.start.y && w.world.state.facing === SOUTH, `the hall's stair comes down into its cellars (${at()})`);
+
+  // The undercroft (24): the cellars, the founding stone in its niche off them (#56's 50; its quest is
+  // #519's), the dry cellar to rest in, and the husks before the walk.
+  see(w, 'old_cinder2:oc2_cellars');
+  see(w, 'old_cinder2:oc2_niche');
+  const stone = feature(L2, 'oc2_stone');
+  ok(stone?.kind === 'chest' && stone.items.join() === 'founding_stone' && item('founding_stone').slot === 'none' && reached(L2, stone.x, stone.y) && w.world.used('oc2_niche'),
+    'in a niche off the west cellar, the town\'s founding stone, a cup cut in its face');
+  const [cellar] = L2.encounters!;
+  ok(L2.encounters!.length === 1 && cellar.monsters.join() === 'ash_husk,ash_husk,ash_husk,ash_husk' && !!cellar.respawn && cellar.roams === false, 'four husks stand in the cellars');
+  fight(w, `old_cinder2:${cellar.id}`);
+
+  // The lamp-keeper's walk down to the lamp at the bottom, cold and said so each time (the Paladin's
+  // third relights it, #448), and beside it the Ember Stone's second part set in the floor (§5).
+  see(w, 'old_cinder2:oc2_walk');
+  const lamp = feature(L2, 'oc2_lamp');
+  w.world.travel('old_cinder2', lamp!.x, lamp!.y);
+  const lit = [w.world.eventsHere(), w.world.eventsHere()];
+  ok(lamp?.kind === 'event' && !lamp.once && lit.every((said) => said.includes(lamp.text)) && L2.rows[lamp.y + 1][lamp.x] === 'o', 'at the bottom of the walk the lamp, cold, and so each time');
+  see(w, 'old_cinder2:oc2_set');
+  const part = feature(L2, 'oc2_part');
+  ok(part?.kind === 'chest' && part.items.join() === 'ember_part2' && item('ember_part2').name === 'Ember Stone\'s Second Part' && beside(part, lamp!.x, lamp!.y + 1) && reached(L2, part.x, part.y),
+    'set in the floor beside the lamp, the Ember Stone\'s second part, reached with nothing searched for');
+
+  // The secret: a stair fallen against the walk's wall, the oil channel running on under it; searched
+  // there, it gives on the lamp-keeper's own cellar, his symbol and his plate. Walked, it is never reached
+  // but through the fallen stair.
+  const [fallen] = L2.secrets!;
+  ok(!reached(L2, fallen.x - 1, fallen.y) && reached(L2, fallen.x + 1, fallen.y) && fallen.hint === 'oc2_fallen', 'the lamp-keeper\'s cellar is reached only through the fallen stair');
+  see(w, 'old_cinder2:oc2_fallen');
+  w.world.travel('old_cinder2', fallen.x + 1, fallen.y, WEST);
+  let found = false;
+  for (let i = 0; i < 20 && !found; i++) found = w.world.search();
+  const into = found ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(found && into.every((r) => r.kind === 'moved') && w.world.used('oc2_keeper'), 'searched where the channel runs under the fallen stair, it gives on the lamp-keeper\'s cellar');
+  const keepers = feature(L2, 'oc2_keepers');
+  ok(keepers?.kind === 'chest' && keepers.items.join() === 'hearth_symbol,plate+2' && keepers.gold > 0 && !!item('hearth_symbol').resist?.includes('fire'),
+    'in it his Holy Symbol of the Hearth, which its bearer carries against fire, and a Plate Mail +2');
+
+  // Back up the stair, out at the hall's door onto the square.
+  walkThrough(w, 'old_cinder2', L2.start.x, L2.start.y + 1, NORTH, 'old_cinder', 1);
+  ok(w.world.state.x === hall!.x && w.world.state.y === hall!.y && w.world.state.facing === NORTH, `the stair climbs back out at the hall's door, onto the square (${at()})`);
+  listen(w);
+}
 
 /**
  * The Stair's foot (H10, #510), the area's first box in road order: down the Giants' Stair from I10's

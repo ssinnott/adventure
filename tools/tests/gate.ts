@@ -89,6 +89,8 @@ export const BOSSES: Record<string, readonly string[]> = {
   highspine: ['highspine_i10:i10_king'],
   // The Brood Drake on its eggs in the nest off Meridian Camp's iron corridors, under Fire Mountain (#22).
   firemount: ['meridian_camp2:mc2_brood'],
+  // The Old Drake asleep on Old Cinder's square, down off F11's crater (#515).
+  emberwaste: ['old_cinder:oc1_drake'],
 };
 
 /** Each zone's road: the groups met on it, in order, from its way in. Every zone with groups names one. */
@@ -144,8 +146,9 @@ export const ROADS: Record<string, readonly string[]> = {
   // snow short of the head (#502).
   highspine: ['highspine_i11:i11_brothers', 'highspine_i10:i10_stair'],
   // North along the ridge trail from the Stair's head, past the snow trolls lying in the gully off it
-  // and the masons on its end (#503).
-  sheerpoint: ['sheerpoint_i9:i9_trolls', 'sheerpoint_i9:i9_masons'],
+  // and the masons on its end (#503), and down off the trail's end to the Point's shore, past the
+  // eagles over the tip, to the masons at the causeway's root and their foreman's on its end (#504).
+  sheerpoint: ['sheerpoint_i9:i9_trolls', 'sheerpoint_i9:i9_masons', 'sheerpoint_i8:i8_eagles', 'sheerpoint_i8:i8_masons', 'sheerpoint_i8:i8_foreman'],
 };
 
 /** What an area is called in the check, apart from the map it shares an id with. */
@@ -221,11 +224,16 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   // And the Ember Waste's road (#517), its two country boxes.
   'emberwaste_f10: under': { whose: '#18', at: 1 },
   'emberwaste_e10: under': { whose: '#18', at: 1 },
+  // And Old Cinder's undercroft (#515), banded from the area's floor as Highcell's upper house is.
+  'old_cinder2: under': { whose: '#18', at: 1 },
   'Ashfall: under': { whose: '#18', at: 1 },
   'highspine_i11: under': { whose: '#18', at: 1 },
   // And the ridge north (#503), banded from the area's floor as I11 is: its three groups are won every
   // time two under, and with them the area's pool passes its limit again.
   'sheerpoint_i9: under': { whose: '#18', at: 1 },
+  // And the Point (#504), banded from the area's floor as I9 is: its four groups are won every time two
+  // under.
+  'sheerpoint_i8: under': { whose: '#18', at: 1 },
   'the Whitespine: under': { whose: '#18', at: 1 },
   // Act II's bosses were set by their gates against a company without its first prestige, which the
   // gate's company never took until #541 made it harness's. With it, at 11, four of the six strike

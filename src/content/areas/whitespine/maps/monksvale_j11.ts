@@ -8,10 +8,11 @@
 // SADDLE lands on the road at 20,1, and the road's first square, 20,0, leads back (CLIMB). The gate
 // at 26,24 is the way into Highcell (#500, GATE). The summit's path goes on west over the crest at
 // row 10 into I11 (#501), walked. The east and south edges end the world against K11 and J12, and the
-// north edge against J10.
+// north edge against J10. Wenna waits by the gate on her way to the Point (I8, #504).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/whitespine.md §4.2 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { WENNA_LODGE } from '../../rimewater/maps/rime_lodge.ts';
 
 /**
  * The way back over the pass (#491): from the road's first square at the north edge, 20,0, across
@@ -98,6 +99,13 @@ export const MONKSVALE_J11: MapDef = {
     // the way into Highcell, is GATE.
     { kind: 'event', x: 29, y: 22, id: 'j11_towers', once: true, text: 'Over the monastery\'s wall stand two bell towers. Between the hours nothing moves in them.' },
     { kind: 'camp', x: 21, y: 23, name: 'The shelf\'s lee', text: 'A hollow in the lee of the shelf, out of the wind: old ash in a ring of stones.' },
+    // Wenna at the gate, a person who moves (#76; §9's 2): here once the company has come into the range
+    // after she spoke at the lodge (Rimewater's `WENNA_LODGE`), until it reaches the Point, where she
+    // waits at the camp on the shore (I8, #504).
+    { kind: 'npc', x: 27, y: 23, name: 'The girl out of the hole', after: { flag: WENNA_LODGE, visited: 'monksvale_j11' }, until: { visited: 'sheerpoint_i8' }, lines: [
+      'The girl out of the hole, by the monastery\'s gate in her lodge blanket, her feet bound in rags.',
+      '"The ones I left below came this way, walking. I\'m going on to the sea. Find me at the Point."',
+    ] },
     // Behind the wall, the brothers' trodden line to the rock, and the store cut into it.
     { kind: 'event', x: 29, y: 29, id: 'j11_trodden', once: true, text: 'Behind the wall the snow is trodden in one straight line west to the rock. No print turns off it.' },
     { kind: 'event', x: 29, y: 29, id: 'j11_walker', once: true, when: { hours: 'night' }, text: 'A brother walks the trodden line toward the rock, setting its feet in the old prints.' },
