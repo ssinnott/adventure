@@ -293,9 +293,12 @@ last Fane's, the only warm one (§4.3).
   marks: pins, arrows and two graves with notes for the reader of every note. No new numbered
   journal: the fourth stays in the Ember Stone's lower gallery (ashfall §4.8), and filling
   Cinderport's shelf is #512's.
-- **The Cartographers' line** ends here (DESIGN §8; #443, call 7).
-- **Third prestiges** (#448): the Barbarian's, kill the drake that nests in the corridors (the Brood
-  Drake, ashfall §6); the Ranger's, bring Fane's map back to the Wold's scout.
+- **The Cartographers' line** ends here (DESIGN §8; #443, call 7): the Mapmaker's rung, *Fane's
+  Fire*, is paid for the firelight on the one way to the fire (`mc3_fire`, §8, the camp's 7; ashfall
+  §6, §9, #635's PR C).
+- **Third prestiges** (#448): the Barbarian's, What Nests There, built: kill the Brood Drake on its
+  eggs in the nest off the corridors' last run (`slain` `meridian_camp2:mc2_brood`, ashfall §6), for
+  the warlord's heir at Grimsforge; the Ranger's, bring Fane's map back to the Wold's scout.
 
 ## 6. Encounters, and what is new
 
@@ -577,7 +580,7 @@ Decided by delegate for #22 (the camp), each the owner's to overturn:
    fails ("starts with a goal").
 7. **The fire's once event for the Mapmaker's rung is `mc3_fire`** (9,8), on the one way from the
    stair to the fire: the walk checks the fire cannot be reached without passing it. The deed is
-   `seen: 'meridian_camp3:mc3_fire'`; the rung is owed (§10).
+   `seen: 'meridian_camp3:mc3_fire'`; the rung is built (§10; ashfall §9, #635's PR C).
 8. **The window is `mc3_window`** (27,10, `once`), in the room through the unnamed door: no sign, no
    name, no label. The chapter's entry (#518) can key on `seen: 'meridian_camp3:mc3_window'`. The
    walk checks that its text names no hull, ship, orbit, voyage or Custodian.
@@ -669,9 +672,10 @@ Cut and owed, from the camp (#22):
 - **Six groups stand for the brief's about eight** (§8, the camp's 2): at the floor, 27, the eight
   small groups first laid gave 19.56 fights to a rest, so the same ten deep knockers stand in a
   three, a lone one and a four.
-- **The Mapmaker's rung, "Fane's Fire",** (the Cartographers' rank 3) is owed: its deed is `seen:
-  'meridian_camp3:mc3_fire'`, the once event on the one way to the fire (§8, the camp's 7; ashfall
-  §11). It needs the Surveyor's rung, which the Ember Stone built.
+- **The Mapmaker's rung, "Fane's Fire",** (the Cartographers' rank 3) is built and no longer owed: its
+  deed is `seen: 'meridian_camp3:mc3_fire'`, the once event on the one way to the fire (§8, the
+  camp's 7), and it follows the Surveyor's rung, which the Ember Stone built (ashfall §6, §9,
+  #635's PR C). The Factor's, the Compact's, is the Dead-Drop's.
 - **The chapter's window entry** is #518's and can key on `seen: 'meridian_camp3:mc3_window'` (§8,
   the camp's 8).
 - **The Dead-Drop's three levels** are the rest of #22 (docs/areas/dead_drop.md) and are planned to

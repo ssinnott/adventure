@@ -41,7 +41,10 @@
 // inside the Stone: the gallery, the benches, the lookout and the seedling's bed; the three parts set in
 // their sockets in any order, the Stone lit, the Sentinel won in its door and the sentries after it;
 // the lower gallery behind the housing's foot and the fourth journal in it; and the Cartographers'
-// Surveyor's rung paid for it at a hall of the Guild, the Chart House's shelf full (#635).
+// Surveyor's rung paid for it at a hall of the Guild, the Chart House's shelf full, and the Mapmaker's
+// rung after it, paid for the firelight on Meridian Camp's third level (#635). Then the three
+// third prestiges taught here (#448), each its trainer's quest played to the teaching by a company of 27:
+// the Paladin's lamp, the Barbarian's nest and the Druid's seedling.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen, walkThrough } from '../../../../tools/walk.ts';
 import type { Walk } from '../../../../tools/walk.ts';
@@ -57,7 +60,9 @@ import { meet, heard, answer, barred } from '../../../game/people.ts';
 import { questLog } from '../../../game/quests.ts';
 import type { Person } from '../../../game/people.ts';
 import { buy, item } from '../../../game/items.ts';
-import { canTrainAt, xpForLevel, rest, trainPrice, levelUp, templePrice, addCondition } from '../../../game/party.ts';
+import { canTrainAt, xpForLevel, rest, trainPrice, levelUp, templePrice, addCondition, createCharacter, takePrestige, className, PRESTIGES } from '../../../game/party.ts';
+import { teach, barOf } from '../../../game/prestige.ts';
+import { seekId, sought } from '../../../game/seeking.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
 import { offered, take, inHand, report, rankOf } from '../../../game/guilds.ts';
 import { rankFlag, takenFlag, doneFlag } from '../../guilds.ts';
@@ -71,14 +76,15 @@ import { ACT_IV } from '../../../../tools/tests/ladder.ts';
 import { ARMOURER, CURES } from './items.ts';
 import { INTERIORS } from './interiors.ts';
 import { GATE, FOUNDING_RAISED } from './maps/cindercoast_g10.ts';
-import { VENTS, HOLE, SHOVEL_STORY } from './maps/firemount_g11.ts';
+import { VENTS, HOLE, SHOVEL_STORY, BROOD_ASKED, BROOD } from './maps/firemount_g11.ts';
 import { SPRINGS_BREAK, SPRINGS_LEFT, SPRINGS_COLD } from './maps/cindercoast_h10.ts';
 import { FOUNDING_UP, FOUNDING_LEFT, SHOVEL_THANE, SHOVEL_WARDENS, SHOVEL_KEPT } from './maps/cinderport.ts';
 import { STAIR } from './maps/meridian_camp.ts';
 import { STAIR2 } from './maps/meridian_camp2.ts';
 import { ROPE } from './maps/meridian_camp3.ts';
 import { CRATER, STONE } from './maps/emberwaste_f11.ts';
-import { LIT, LIGHTS, SOCKETS } from './maps/ember_stone.ts';
+import { LIT, LIGHTS, SOCKETS, SEEDLING, SEEDLING_ASKED, SEEDLING_TAKEN, SEEDLING_PLANTED } from './maps/ember_stone.ts';
+import { LAMP_ASKED, LAMP_LIT } from './maps/old_cinder2.ts';
 import { SLEEPERS_SEEN } from '../rimewater/chapter.ts';
 
 const G10 = MAP_DEFS.find((d) => d.id === 'cindercoast_g10')!, G11 = MAP_DEFS.find((d) => d.id === 'firemount_g11')!;
@@ -224,7 +230,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(!forge.planned && Math.floor(forge.at[0]) === g11.x + 30 && Math.floor(forge.at[1]) === g11.y + 12 && out.at(g11.x + 30, g11.y + 12).solid === 'building',
     `Grimsforge stands at the atlas's mark, G11's 30,12, built (${forge.at.join(',')})`);
   see(w, 'firemount_g11:g11_forge');
-  const heir = person('The warlord\'s heir', G11);
+  const heir = person('Petroc, the warlord\'s heir', G11);
   w.world.travel('firemount_g11', heir.x, heir.y);
   ok(meet(heir, w.party, heard(w.world, heir)).text.includes('went down beside the forge'), 'the warlord\'s heir at the anvil: a man went down beside the forge with a rope');
   const rack = G11.features!.find((f) => f.kind === 'chest' && f.id === 'g11_rack');
@@ -539,7 +545,7 @@ export const walkthrough: Walkthrough = (ok) => {
   // quest); the shrine and the cairn on the ash, and the Riders' ring a camp by the road.
   see(w, 'emberwaste_f10:f10_vines');
   see(w, 'emberwaste_f10:f10_edge');
-  const druid = F10.features!.find((f) => f.kind === 'npc' && f.name === 'The Archdruid') as Person;
+  const druid = F10.features!.find((f) => f.kind === 'npc' && f.name === 'Kenver, the Archdruid') as Person;
   const far = Math.min(...[...wasteRoad].filter((k) => inBox(f10, k % out.width, Math.floor(k / out.width))).map((k) => Math.abs(k % out.width - f10.x - druid.x) + Math.abs(Math.floor(k / out.width) - f10.y - druid.y)));
   ok(druid.x < 16 && druid.y < 16 && far >= 15 && [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => out.at(f10.x + druid.x + dx, f10.y + druid.y + dy).solid === 'rock'),
     `the Archdruid sits in the lee of the outcrop in the north-west, ${far} squares from the road`);
@@ -663,7 +669,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(CRATER.to === 'old_cinder' && out.at(f11.x + CRATER.x, f11.y + CRATER.y).terrain === 'ash' && out.at(f11.x + CRATER.x, f11.y + CRATER.y).solid === 'none'
     && out.at(f11.x + CRATER.x + 1, f11.y + CRATER.y).terrain === 'chasm' && ash.has(at11f(lip.x, lip.y)) && !F11.features!.some((f) => f.x === lip.x && f.y === lip.y),
     'the way down into Old Cinder is the crater\'s west lip, 19,4, its ash open now the town is built (CRATER), and nothing stands at its front');
-  const old = person('An old Lightbearer', F11);
+  const old = person('Wystan, an old Lightbearer', F11);
   w.world.travel('emberwaste_f11', old.x, old.y);
   ok(meet(old, w.party, heard(w.world, old)).text.includes('lamp at the bottom') && Math.abs(old.x - lip.x) + Math.abs(old.y - lip.y) === 1 && out.at(f11.x + old.x + 1, f11.y + old.y).terrain === 'chasm',
     'an old Lightbearer sits on the lip beside the way down: a lamp at the bottom of that town went out');
@@ -738,6 +744,7 @@ export const walkthrough: Walkthrough = (ok) => {
   oldCinder(w, ok);
   emberStone(w, ok);
   sideQuests(ok);
+  thirdPrestiges(ok);
 };
 
 /**
@@ -879,7 +886,9 @@ function oldCinder(w: Walk, ok: (cond: boolean, msg: string) => void): void {
  * and the Stone lit on F11; the lower gallery, found where the chain pin is driven into the housing's
  * foot and reached only through it, and the fourth journal in it; and the Cartographers' Surveyor's rung
  * for the journal found (#635), offered once Act III is done at any hall of the Guild, paid at the Chart
- * House, whose shelf then holds four.
+ * House, whose shelf then holds four; and after it the Mapmaker's rung, "Fane's Fire" (#635), offered to
+ * Mapmakers at either hall and paid at the Chart House for the firelight on Meridian Camp's third level,
+ * seen the once, Cador Lusk's word then changed.
  */
 function emberStone(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   const ES = MAP_DEFS.find((d) => d.id === 'ember_stone')!;
@@ -953,7 +962,7 @@ function emberStone(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   // own part alone, barred to a company without it, and is gone once it is in; the Stone stays dark and
   // nothing stands in the door until the last is in, whichever it is, and the last lights it.
   for (const [map, id] of [['meridian_camp', 'mc1_part'], ['old_cinder2', 'oc2_part'], ['meridian_camp2', 'mc2_part']]) open(w, map, id);
-  const sockets = ES.features!.filter((f): f is Person => f.kind === 'npc'), [loaf, wedge, long] = sockets;
+  const sockets = ES.features!.filter((f): f is Person => f.kind === 'npc' && !!f.choice?.answers.some((a) => a.takes?.startsWith('ember_part'))), [loaf, wedge, long] = sockets;
   const sentinel = ES.encounters!.find((g) => g.id === 'es_sentinel')!, sentries = ES.encounters!.find((g) => g.id === 'es_sentries')!;
   const there = (g: typeof sentinel): boolean => w.world.walks(g, g.x, g.y) && !w.world.ended(g);
   const put = (p: Person): string => {
@@ -1039,6 +1048,152 @@ function emberStone(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   const lateGold = late.party.gold, early = take(q, late.world.state, late.party);
   ok(early.length === 2 && early[0].startsWith(q.early![0]) && late.party.gold === lateGold + 500 && rankOf('cartographers', late.party) === 3,
     `a company that had found the journal is paid at the taking, with the early words (${early.join(' ').replace(/\n+/g, ' ')})`);
+
+  // The Cartographers' Mapmaker's rung (#635), "Fane's Fire", on the same fresh Surveyors: not offered before
+  // the Surveyor's is paid, then offered alone at any hall of the Guild and taking nothing; taken with the
+  // fire unseen, the hall pays nothing; the firelight seen on the one way to the fire (Meridian Camp's third
+  // level, walked above), the Chart House pays 800 gold and 4,800 xp, once, the pack as it was with Fane's map
+  // in it, the company are Geographers and Cador Lusk has a pin past the vents. A company that had seen the
+  // fire first is paid at the taking, with the early words.
+  const fq = GUILD_QUESTS.find((g) => g.id === 'carto_fane')!, FIRE = 'meridian_camp3:mc3_fire';
+  const cador = CP.features!.find((p): p is Person => p.kind === 'npc' && p.name.startsWith('Cador Lusk'))!;
+  const word = (v: Walk): string => { v.world.travel('cinderport', cador.x, cador.y); return meet(cador, v.party, heard(v.world, cador)).text; };
+  const mapmakers = (): Walk => {
+    const v = surveyors();
+    v.party.flags[SLEEPERS_SEEN] = 1;
+    v.party.bag.push('fane_map');
+    return v;
+  };
+  /** The Surveyor's rung paid with the fourth journal found first, so the company are Mapmakers. */
+  const surveyed = (v: Walk): void => { open(v, ES.id, 'es_journal'); take(q, v.world.state, v.party); };
+  const m = mapmakers();
+  ok(offered('cartographers', m.party).map((o) => o.id).join() === q.id && fq.rank === 3 && !fq.item,
+    `${fq.title} waits behind ${q.title}: a Surveyor with the Sleepers seen is offered the fourth journal alone`);
+  surveyed(m);
+  const said = word(m), pack = m.party.bag.join(), purse2 = m.party.gold, xp2 = xpOf(m.party);
+  ok(rankOf('cartographers', m.party) === 3 && offered('cartographers', m.party).map((o) => o.id).join() === fq.id && ['Map Room', 'Chart House'].every((h) => fq.goals[0].text.includes(h)),
+    'the Surveyor\'s paid, the company are Mapmakers and it is offered alone at any hall of the Guild, Saltmouth\'s Map Room or the Chart House, and takes nothing');
+  ok(!take(fq, m.world.state, m.party).length && !report('cartographers', m.world.state, m.party).length && rankOf('cartographers', m.party) === 3, 'taken with the fire unseen, the hall pays nothing');
+  see(m, FIRE);
+  m.world.travel('cinderport', chart.x, chart.y);
+  const mapped = report('cartographers', m.world.state, m.party), pinned = word(m);
+  ok(mapped.length === 2 && mapped[0].startsWith(fq.paid[0]) && m.party.gold === purse2 + 800 && xpOf(m.party) >= xp2 + 4800 - m.party.members.length && rankOf('cartographers', m.party) === 4
+    && !!m.party.flags[doneFlag(fq.id)] && m.party.bag.join() === pack && m.party.bag.includes('fane_map'),
+    `the fire seen, the Chart House pays 800 gold and 4,800 xp, the pack as it was with Fane's map in it, and the company are Geographers (${mapped.join(' ').replace(/\n+/g, ' ')})`);
+  ok(!report('cartographers', m.world.state, m.party).length && !offered('cartographers', m.party).length && m.party.gold === purse2 + 800,
+    'and it is paid the once: a second report pays nothing, and nothing is offered');
+  ok(said.includes('no further') && pinned.includes('a pin in the map past the vents') && !pinned.includes('no further'),
+    'and Cador Lusk, who had the Company no further than the vents, has a pin in the map past them');
+  const soon = mapmakers();
+  surveyed(soon);
+  see(soon, FIRE);
+  const soonGold = soon.party.gold, hasty = take(fq, soon.world.state, soon.party);
+  ok(hasty.length === 2 && hasty[0].startsWith(fq.early![0]) && soon.party.gold === soonGold + 800 && rankOf('cartographers', soon.party) === 4,
+    `a company that had seen the fire first is paid at the taking, with the early words (${hasty.join(' ').replace(/\n+/g, ' ')})`);
+}
+
+/**
+ * The third prestiges taught here (#448), each a trainer's quest played to the teaching by a company of
+ * 27 with its seconds taken, its premade paladin beside a barbarian and a druid. At 27 each is sent to
+ * its trainer; each trainer's own words come first, then the ask, once, which begins the quest and ends
+ * the member's seeking; and the third waits on the quest's deed. The Paladin's: down off the lip into
+ * Old Cinder, the street's husks and the cellars' won at 27, the lamp at the bottom of the walk lit with
+ * the old man's oil and flint, the dark said before the lighting and the burning after; back up, his last
+ * words and the third, the quest done. The Barbarian's: down the vents' middle mouth from Grimsforge and
+ * down their stair, the levels' groups won at 27, the nest's drakelings and the Brood Drake on its eggs;
+ * back up, the heir's words and the third. The Druid's: the seedling under the Grove's oaks only once
+ * asked, lifted once with its earth, carried into the Waste and planted in the bed under the Ember
+ * Stone's lookout, which takes it and no other; grey and the third barred while the Stone is dark; the
+ * three parts set and the Stone lit, the bed green and the third taught.
+ */
+function thirdPrestiges(ok: (cond: boolean, msg: string) => void): void {
+  const w = newWalk(ok);
+  w.party.members[2] = createCharacter('Ragna', 'human', 'barbarian', { might: 15, endurance: 14, speed: 12 }, makeRng(19));
+  w.party.members[3] = createCharacter('Bryn', 'human', 'druid', { intellect: 14, personality: 15 }, makeRng(23));
+  for (const c of w.party.members) { c.xp = xpForLevel(27); c.level = 27; takePrestige(c); takePrestige(c); }
+  w.level = 27;
+  const [idris, ragna, bryn] = [1, 2, 3].map((i) => w.party.members[i]);
+  const [F10, F11, L1, L2, MC, MC2, ES, TM] = ['emberwaste_f10', 'emberwaste_f11', 'old_cinder', 'old_cinder2', 'meridian_camp', 'meridian_camp2', 'ember_stone', 'thornmark'].map((id) => MAP_DEFS.find((d) => d.id === id)!);
+  const log = (id: string) => questLog(w.world.state, w.party).find((v) => v.def.id === id);
+  const written = (id: string): string[] => log(id)?.pages.flatMap((p) => p.entries.map((e) => e.id)) ?? [];
+  const talk = (d: MapDef, p: Person): string => { w.world.travel(d.id, p.x, p.y); const said = meet(p, w.party, heard(w.world, p)).text; listen(w); return said; };
+  const ask = (d: MapDef, p: Person): string => { w.world.travel(d.id, p.x, p.y); const [a] = meet(p, w.party, heard(w.world, p)).choice?.answers ?? []; const said = a ? answer(a, w.party) : ''; listen(w); return said; };
+  const old = person('Wystan, an old Lightbearer', F11), heir = person('Petroc, the warlord\'s heir', G11), druid = person('Kenver, the Archdruid', F10);
+  const sent = sought(questLog(w.world.state, w.party));
+  ok(([[F11, old, idris], [G11, heir, ragna], [F10, druid, bryn]] as const).every(([d, p, c]) => sent.find((s) => s.at === d.id)?.who.includes(c.name) && p.teaches?.prestige === 3 && p.teaches.seek?.includes(PRESTIGES[c.cls].titles[2])),
+    'at 27 with the second, the paladin is sent to the old Lightbearer, the barbarian to the warlord\'s heir and the druid to the Archdruid, each seeking naming the third');
+  /** A trainer's own words, then the ask once, which begins the quest and ends the seeking; the third waits on the deed. */
+  const asked = (d: MapDef, p: Person, who: number, flag: string, quest: string, words: string): void => {
+    const said = [talk(d, p), talk(d, p), talk(d, p)];
+    ok(said[0] === p.lines.join('\n\n') && said[1].includes(words) && said[2] === p.lines.join('\n\n') && !!w.party.flags[flag] && log(seekId(who, 3))?.done === true && log(quest)?.done === false
+      && barOf(p.teaches!, w.party.members[who], w.party, w.world.state) === 'the quest first' && !teach(p.teaches!, w.party, w.world.state, who).taught,
+      `${p.name}: his own words first, then his ask, once: ${said[1].split('\n\n')[1]}, which begins ${log(quest)?.def.title} and ends the seeking; the third waits on it`);
+  };
+  /** Back to the trainer: his last words, and the third taught for the deed, not gold, the quest done. */
+  const taught = (d: MapDef, p: Person, who: number, quest: string, words: string): void => {
+    const gold = w.party.gold, said = talk(d, p), c = w.party.members[who];
+    ok(said.includes(words) && teach(p.teaches!, w.party, w.world.state, who).taught && className(c) === PRESTIGES[c.cls].titles[2] && w.party.gold === gold && log(quest)?.done === true,
+      `${p.name}: ${said.split('\n\n')[1] ?? said} And ${c.name} is ${className(c)} for the deed and no gold, ${log(quest)?.def.title} done`);
+  };
+
+  // The Paladin's: the lamp at the bottom of Old Cinder's undercroft.
+  asked(F11, old, 1, LAMP_ASKED, 'old_lamp', 'flask and a flint');
+  ok(log('old_lamp')?.goal === 'Go down under Old Cinder, and light the lamp at the bottom.', `the log sends the company down (${log('old_lamp')?.goal})`);
+  walkThrough(w, 'emberwaste_f11', CRATER.x - 1, CRATER.y, EAST, 'old_cinder', 1);
+  fight(w, `old_cinder:${L1.encounters![0].id}`);
+  const stair = L1.exits!.find((e) => e.to === 'old_cinder2')!;
+  walkThrough(w, 'old_cinder', stair.x, stair.y - 1, SOUTH, 'old_cinder2', 1);
+  fight(w, 'old_cinder2:oc2_husks');
+  const [cold, burning, relit] = ['oc2_lamp', 'oc2_burning', 'oc2_relit'].map((id) => L2.features!.find((f): f is Extract<Feature, { kind: 'event' }> => f.kind === 'event' && f.id === id)!);
+  w.world.travel('old_cinder2', cold.x, cold.y);
+  const lighting = w.world.eventsHere(), after = [w.world.eventsHere(), w.world.eventsHere()];
+  listen(w);
+  ok(lighting.join(' ') === `${cold.text} ${relit.text}` && !!w.party.flags[LAMP_LIT] && after.every((said) => said.join(' ') === burning.text) && [burning, relit].every((e) => e.x === cold.x && e.y === cold.y),
+    `the lamp at the bottom, cold, lit with the old man's oil and flint ("${relit.text}"), and burning each time after`);
+  ok(log('old_lamp')?.goal === 'Climb back up to the old Lightbearer on Old Cinder\'s lip.', `lit, the log sends the company back up (${log('old_lamp')?.goal})`);
+  walkThrough(w, 'old_cinder2', L2.start.x, L2.start.y + 1, NORTH, 'old_cinder', 1);
+  walkThrough(w, 'old_cinder', L1.start.x, L1.start.y + 1, NORTH, 'emberwaste_f11', 1);
+  taught(F11, old, 1, 'old_lamp', 'Then I sat here for something');
+
+  // The Barbarian's: down the vents from Grimsforge, and what nests in the iron corridors.
+  asked(G11, heir, 2, BROOD_ASKED, 'brood', 'Something nests down the vents');
+  walkThrough(w, 'firemount_g11', VENTS.x + 1, VENTS.y, WEST, 'meridian_camp', 1);
+  for (const g of MC.encounters!) if (w.world.walks(g, g.x, g.y) && !w.world.ended(g)) fight(w, `meridian_camp:${g.id}`);
+  walkThrough(w, 'meridian_camp', STAIR.x, STAIR.y - 1, SOUTH, 'meridian_camp2', 1);
+  ok(!written('brood').includes('nest') && BROOD === 'meridian_camp2:mc2_brood', 'the nest stands until the company comes to it');
+  for (const g of MC2.encounters!) if (w.world.walks(g, g.x, g.y) && !w.world.ended(g)) fight(w, `meridian_camp2:${g.id}`);
+  ok(written('brood').includes('nest') === true && log('brood')?.goal === 'Climb back up to the warlord\'s heir at Grimsforge.', `the Brood Drake dead over its eggs, the log sends the company back up (${log('brood')?.goal})`);
+  taught(G11, heir, 2, 'brood', 'Quiet down there');
+
+  // The Druid's: the seedling from the Grove, kept in the Waste till the Ember Stone is lit.
+  const oak = TM.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'A seedling oak')!;
+  const bed = ES.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'A bed of earth')!;
+  const [grey, green] = ['es_seedling', 'es_green'].map((id) => ES.features!.find((f): f is Extract<Feature, { kind: 'event' }> => f.kind === 'event' && f.id === id)!);
+  w.world.travel('thornmark', oak.x, oak.y);
+  ok(!w.world.present(oak) && !w.world.present(bed), 'before the ask, nothing grows under the Grove\'s oaks to lift, and the bed asks nothing');
+  asked(F10, druid, 3, SEEDLING_ASKED, 'seedling', 'Bring me one from the Grove');
+  const lifted = ask(TM, oak);
+  ok(lifted.includes('roots and earth') && w.party.bag.includes(SEEDLING) && !!w.party.flags[SEEDLING_TAKEN] && !w.world.present(oak) && item(SEEDLING).slot === 'none' && !item(SEEDLING).price,
+    `under the Grove's oldest oaks a seedling, lifted once with its earth, a quest item no shop buys (${lifted.replace(/\n+/g, ' ')})`);
+  const empty = structuredClone(w.party);
+  empty.bag = empty.bag.filter((i) => i !== SEEDLING);
+  ok(bed.x === 14 && bed.y === 8 && barred(bed.choice!.answers[0], empty) && w.world.present(bed), 'the bed under the Ember Stone\'s lookout asks the planting, barred to a company without the seedling');
+  w.world.travel('ember_stone', bed.x, bed.y);
+  w.world.eventsHere();
+  const planted = ask(ES, bed);
+  w.world.travel('ember_stone', bed.x, bed.y);
+  const greyed = w.world.eventsHere();
+  ok(!!w.party.flags[SEEDLING_PLANTED] && !w.party.bag.includes(SEEDLING) && !w.world.present(bed) && greyed.join(' ') === grey.text && !w.party.flags[LIT],
+    `planted, the seedling stands grey in its bed while the Stone is dark (${planted.replace(/\n+/g, ' ')} / ${greyed.join(' ')})`);
+  ok(talk(F10, druid).includes('waiting for something') && barOf(druid.teaches!, bryn, w.party, w.world.state) === 'the quest first' && log('seedling')?.goal === 'Keep the seedling living till the Ember Stone is lit.',
+    'the Archdruid\'s word that it waits, and the third waits with it');
+  const sockets = ES.features!.filter((f): f is Person => f.kind === 'npc' && !!f.choice?.answers.some((a) => a.takes?.startsWith('ember_part')));
+  w.party.bag.push('ember_part1', 'ember_part2', 'ember_part3');
+  for (const s of sockets) ask(ES, s);
+  w.world.travel('ember_stone', bed.x, bed.y);
+  const greened = w.world.eventsHere();
+  ok(!!w.party.flags[LIT] && greened.join(' ') === green.text && written('seedling').includes('green'), `the three parts set and the Stone lit, the seedling stands green in its bed (${greened.join(' ')})`);
+  taught(F10, druid, 3, 'seedling', 'Green, out here');
 }
 
 /**
@@ -1184,9 +1339,10 @@ function stairFoot(ok: (cond: boolean, msg: string) => void): void {
  * the stone cure at the chandler's, the stone lifted at the temple at the cure's price for a member of
  * 25, and training to 27 at the yard; either hall's ladder joined, the Cartographers' at the Chart
  * House and the Compact's at the factor's house, which pays the Fence's rung; the Compact's ship from
- * Kilnhaven's steps to the Compact's steps here and back, halved here for a member of the Compact; and
- * the ride and the last crossing, whose far ends are not built, sold by nobody yet, their sellers only
- * talking and their landings written; the smith, the potter, the guildsman and the factor with words
+ * Kilnhaven's steps to the Compact's steps here and back, halved here for a member of the Compact; the
+ * ride, sold by the Rider by the gate to Akordu's horse-lines, its far end built (#526), and the last
+ * crossing, whose far end is not built, sold by nobody yet, its seller only talking; both landings
+ * written here; the smith, the potter, the guildsman and the factor with words
  * only, their quests others' (#519, #635, #448).
  */
 function cinderport(ok: (cond: boolean, msg: string) => void): void {
@@ -1311,8 +1467,9 @@ function cinderport(ok: (cond: boolean, msg: string) => void): void {
   ok(w.world.used('cp_quay') && quay.text === 'The Compact\'s ship rides at the quay with Kilnhaven\'s mark on her. Beyond the Sound, a column of light.', 'on the quay, the ship with Kilnhaven\'s mark and a column of light beyond the Sound');
 
   // The ride and the last crossing (#547): Cinderport writes where each puts a company down, just inside
-  // the gate by the Riders' rail and on the Compact's steps; each is sold once its far end lands (Akordu,
-  // #526; Hearth Isle, Phase 1.5) and not before, its seller only talking and naming no fare.
+  // the gate by the Riders' rail and on the Compact's steps; each is sold once its far end lands and not
+  // before, its seller only talking and naming no fare till then: the ride now Akordu lands (#526), the
+  // last crossing once Hearth Isle does (Phase 1.5).
   for (const [c, seller] of [[RIDERS_RIDE, RIDER], [LAST_CROSSING, MORWENNA]] as const) {
     const ours = c.ends.find((e) => e.at === 'cinderport')!, far = c.ends.find((e) => e.at !== 'cinderport')!, words = says(w, seller);
     ok(!!ours.landing && !ours.owed && (seller.passage ?? []).length === (far.landing ? 1 : 0) && (!!far.landing || !/gold|fare|hundred/i.test(words)),

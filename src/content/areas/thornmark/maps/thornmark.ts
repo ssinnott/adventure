@@ -178,6 +178,14 @@ export const THORNMARK: MapDef = {
     ] },
     { kind: 'event', x: 9, y: 27, id: 'tm_zealot_camp', once: true, text: 'The zealots\' camp: a fire, a scatter of grey, and a Lantern\'s case, its straps cut, thrown down unopened.' },
     { kind: 'chest', x: 10, y: 27, id: 'tm_kit', gold: 0, items: ['mending_kit'] },
+    // The Druid's third prestige (Ashfall's, #448; docs/areas/ashfall.md §6): once the Archdruid in the
+    // Ember Waste has asked for one (q_seedling), a seedling under the hollow's oldest oaks, a person with
+    // no face as the Ember Stone's sockets are, lifted once with its earth (q_seedling_taken).
+    {
+      kind: 'npc', x: 3, y: 27, name: 'A seedling oak', after: { flag: 'q_seedling' }, until: { flag: 'q_seedling_taken' },
+      lines: ['Under the hollow\'s oldest oaks, among their roots, a seedling no higher than a hand. Two leaves, and a third coming.'],
+      choice: { ask: 'Lift it, with its earth?', answers: [{ label: 'Lift it.', gives: 'grove_seedling', sets: 'q_seedling_taken', says: ['It comes up whole, roots and earth, and sits in two hands.'] }] },
+    },
   ],
   encounters: [
     { id: 'tm_wolves1', x: 5, y: 9, monsters: ['dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf'], aware: 5, respawn: 1440 },
