@@ -77,7 +77,9 @@ export const WOLD_D9: MapDef = {
     { kind: 'event', x: 28, y: 26, id: 'd9_kill', once: true, text: 'A horse pulled down in the grass, half eaten, the grass flattened all round it.' },
     { kind: 'event', x: 24, y: 17, id: 'd9_lie', once: true, text: 'The grass is pressed flat in a hollow here, and warm. Whatever lay in it has gone.' },
     { kind: 'event', x: 29, y: 3, id: 'd9_bones', once: true, text: 'The bones of a wild ass in the grass, picked white. Something dragged the rest of it away.' },
-    // The dunes' edge: the cairn where the grass gives out, the Glass seen from the dunes, and the walker's tracks.
+    // The dunes' edge: the horse that came back (#56's 51, the Riders' and the Cartographers' to settle,
+    // #532), the cairn where the grass gives out, the Glass seen from the dunes, and the walker's tracks.
+    { kind: 'event', x: 8, y: 17, id: 'd9_horse', once: true, text: 'A horse comes in off the dunes alone, glass in its hooves. Something sits its saddle, very still.' },
     { kind: 'cairn', x: 7, y: 21, id: 'd9_edge_cairn', text: 'A cairn where the grass gives out to the dunes, a flat stone set in its west face.', gold: 300, items: ['elixir'] },
     { kind: 'event', x: 2, y: 14, id: 'd9_glass_seen', once: true, text: 'From the dune\'s top the ground beyond goes white to the sky, and shines. It is glass, all of it.' },
     { kind: 'event', x: 7, y: 27, id: 'd9_tracks', once: true, text: 'Tracks across the dunes\' edge, each as long as a man\'s arm, and beside them a furrow, as if something dragged.' },

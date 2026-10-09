@@ -97,13 +97,15 @@ export const walkthrough: Walkthrough = (ok) => {
   const first = meet(old, w.party, heard(w.world, old)).text;
   ok(first.includes('the sky opened') && first.includes('Akordu'), 'the old Rider has the first words of the day the sky opened, and leaves the rest to the eldest at Akordu');
 
-  // The prides' kills and the lions' lie; the dunes' edge: the cairn where the grass gives out, the Glass
-  // seen from the dunes, and the glass walker's tracks across their edge.
-  for (const id of ['d9_kill', 'd9_bones', 'd9_lie', 'd9_glass_seen', 'd9_tracks']) see(w, `wold_d9:${id}`);
+  // The prides' kills and the lions' lie; the dunes' edge: the horse that came back, seen only (#532 gives
+  // its quest), the cairn where the grass gives out, the Glass seen from the dunes, and the glass walker's
+  // tracks across their edge.
+  for (const id of ['d9_kill', 'd9_bones', 'd9_lie', 'd9_horse', 'd9_glass_seen', 'd9_tracks']) see(w, `wold_d9:${id}`);
   const dunes = new Set(D9.rows.flatMap((r, y) => [...r].flatMap((c, x) => (c === 'u' ? [key(d9.x + x, d9.y + y)] : []))));
-  const edge = feature('d9_edge_cairn'), seen = feature('d9_glass_seen'), tracks = feature('d9_tracks');
-  ok(edge.kind === 'cairn' && edge.gold > 0 && beside(edge.x, edge.y, dunes) && dunes.has(key(d9.x + seen.x, d9.y + seen.y)) && beside(tracks.x, tracks.y, dunes),
-    'at the dunes\' edge a cairn where the grass gives out, the Glass seen from the dunes, and tracks across their edge');
+  const edge = feature('d9_edge_cairn'), seen = feature('d9_glass_seen'), tracks = feature('d9_tracks'), horse = feature('d9_horse');
+  ok(edge.kind === 'cairn' && edge.gold > 0 && beside(edge.x, edge.y, dunes) && dunes.has(key(d9.x + seen.x, d9.y + seen.y)) && beside(tracks.x, tracks.y, dunes)
+    && horse.kind === 'event' && beside(horse.x, horse.y, dunes) && !horse.sets && !D9.features!.some((f) => f.kind === 'npc' && (f.quest || f.flag)),
+    'at the dunes\' edge the horse that came back, seen and no more, a cairn where the grass gives out, the Glass seen from the dunes, and tracks across their edge');
 
   // The groups, each won at 26: the near pride at its kill with the vultures down on it, the glass
   // scorpions at the dunes' edge, the glass walker alone at the far south-west, the box's hardest at 27,
