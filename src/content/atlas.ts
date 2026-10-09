@@ -319,7 +319,7 @@ export const PLAN: Atlas = {
     { from: 'monksvale', to: 'monastery', kind: 'enter', a: [322, 342] },
     { from: 'kilnhaven', to: 'saltmouth', kind: 'sea', via: [[340, 150], [296, 160], [230, 146], [160, 150]], note: 'the ferry', noteAt: [230, 140] },
     { from: 'kilnhaven', to: 'cinderport', kind: 'sea', via: [[352, 162], [316, 168], [298, 198], [264, 220], [240, 254]], note: 'Compact ship', noteAt: [300, 210] },
-    { from: 'cindercoast', to: 'cinderport', kind: 'enter', a: [206, 277] },
+    { from: 'cindercoast', to: 'cinderport', kind: 'enter', a: [206, 288] },
     { from: 'cinderport', to: 'wold', kind: 'coach', b: [120, 250], note: 'a Rider\'s horse' },
     { from: 'firemount', to: 'old_cinder', kind: 'enter', a: [190, 318] },
     { from: 'firemount', to: 'meridian_camp', kind: 'enter', a: [226, 334] },

@@ -55,7 +55,7 @@
 // hears the harbourmaster read the manifests and the dwarf on the quay say where the corridors run,
 // and meets Tallis's man on the street; takes the ferry over to Saltmouth's quay and back, a save
 // made there loading there, and the coach to Rime Lodge's coach house and back; and finds the ship's
-// master selling nothing toward a town not built. Erzkamm (N2,
+// master selling the Compact ship to Cinderport (#512). Erzkamm (N2,
 // #460): up the open fell out of N3 with nothing said, the box's groups won at its floor, the scholar
 // at the wall, and the doors behind the blank face found from the worn floor, the wall beside it read
 // by a reader alone; the Barbarian's second prestige, taught by Hartmut at the cave's mouth (#19):
@@ -911,7 +911,7 @@ function anvilhall(w: Walk, ok: (cond: boolean, msg: string) => void): void {
  * company the thane has shut out, and training to 19 at the ore shed; the manifests read by the
  * harbourmaster, and the dwarf's word on the corridors; the ferry over to Saltmouth's quay and back
  * from its master there, halved for nobody; the coach to Rime Lodge's coach house and back from its
- * coachman there; the ship, whose far end is not built, sold by nobody yet, its master only talking;
+ * coachman there; the ship, sold by its master to Cinderport's steps, its far end built (#512);
  * and Tallis's man on the street, whose words name nothing in his parcel (A Crown to Order is walked
  * in `sideQuests`).
  */
@@ -1048,15 +1048,15 @@ function kilnhaven(ok: (cond: boolean, msg: string) => void): void {
     && landed.lines.join() === DROVE_COACH.ends.find((e) => e.at === 'kilnhaven')!.label && HAVEN.rows[landing.y][landing.x] === ':' && Math.abs(landing.x - HAVEN.start.x) + Math.abs(landing.y - HAVEN.start.y) <= 3,
     `the coach back puts the company down in the inn yard just inside the east gate, with the town's own line (${landed?.lines.join(' ')}${stood.length ? ` / ${stood.join(' / ')}` : ''})`);
 
-  // The ship (#539's 2): sold by nobody while its far end, Cinderport, is not built, its master only
-  // talking and naming no fare; Kilnhaven has written where the ship's boat puts a company down, on the
-  // Compact's steps down the quay, and its far end's seller comes with Cinderport (#512).
+  // The ship (#539's 2): sold by its master to Cinderport, whose far end is built (#512); sold by nobody
+  // while it was not, its master only talking and naming no fare, which the check still holds. Kilnhaven
+  // has written where the ship's boat puts a company down, on the Compact's steps down the quay.
   const cinderport = MAP_DEFS.some((d) => d.id === 'cinderport'), cruise = JAGO.passage ?? [];
   ok(cinderport ? cruise.length === 1 && cruise[0].to === 'cinderport' && cruise[0].fare === COMPACT_SHIP.fare : !cruise.length && !sells('kilnhaven', COMPACT_SHIP).length,
     cinderport ? 'Jago sells the Compact ship to Cinderport' : 'Jago sells nothing yet: Cinderport is not built');
   const ship = COMPACT_SHIP.ends.find((e) => e.at === 'kilnhaven')?.landing;
   ok(ship?.x === 4 && ship.y === 12 && HAVEN.rows[ship.y][ship.x] === '"', 'and the ship puts a company down on the Compact\'s steps down the quay');
-  // A seller with nothing to sell only talks, and names no fare in his words.
+  // Before Cinderport, a seller with nothing to sell only talks, and names no fare in his words.
   w.world.travel('kilnhaven', JAGO.x, JAGO.y);
   const shipTalk = says(w, JAGO);
   ok(cinderport || !/gold|fare|hundred/i.test(shipTalk), `Jago's words name no fare, while he sells none (${shipTalk.split('\n\n').at(-1)})`);
