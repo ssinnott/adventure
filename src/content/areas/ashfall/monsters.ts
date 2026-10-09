@@ -24,9 +24,11 @@ export const MONSTERS: readonly MonsterDef[] = [
   // Fire Mountain's slopes and the shore under them (#511, #513), a brute at 25 on the test drake's line (MONSTERS §3.3):
   // it flies, so it reaches the back row as the eagle does (`ranged`); fire does nothing to it, and its breath burns a row
   { id: 'cinder_drake', name: 'Cinder Drake', plural: 'Cinder Drakes', sprite: 'cinder_drake', kind: 'beast', look: 'The mountain has children.', level: 25, hp: 584, ac: 22, attack: 15, dice: 5, sides: 8, bonus: 3, speed: 8, xp: 1987, gold: [0, 0], ranged: true, immune: ['fire'], sweep: { chance: 0.25, element: 'fire' }, tint: '#7a736b', size: 1.3 },
-  // Old Cinder's crater (#515), its boss at 26: the boss line come down whole to a sweeper's share (MONSTERS §3.3) with the
-  // drakes' breath, set off the line for its gate to set (tools/tests/harness.ts); it lies on its town and does not fly
-  { id: 'old_drake', name: 'The Old Drake', plural: 'Old Drakes', sprite: 'old_drake', kind: 'beast', look: 'The mountain\'s eldest, asleep on what is left of the town.', level: 26, hp: 1226, ac: 26, attack: 17, dice: 21, sides: 7, bonus: 32, speed: 13, xp: 16533, gold: [0, 0], immune: ['fire'], sweep: { chance: 0.25, element: 'fire' }, tint: '#58524c', size: 1.8 },
+  // Old Cinder's square (#515), its boss at 26: the boss line come down whole to a sweeper's share (MONSTERS §3.3) with the
+  // drakes' breath, off the line (tools/tests/harness.ts); it lies on its town and does not fly. Its hit points are set for
+  // #515's gate, 1,226 to 1,000 (won 51% at 25 and 99% at 27 on the line): two times in three at the town's floor, 25,
+  // which keeps the floor with its one other fight, and nearly always at 27; its blow is the line's
+  { id: 'old_drake', name: 'The Old Drake', plural: 'Old Drakes', sprite: 'old_drake', kind: 'beast', look: 'The mountain\'s eldest, asleep on what is left of the town.', level: 26, hp: 1000, ac: 26, attack: 17, dice: 21, sides: 7, bonus: 32, speed: 13, xp: 16533, gold: [0, 0], immune: ['fire'], sweep: { chance: 0.25, element: 'fire' }, tint: '#58524c', size: 1.8 },
   // the vents (#513), a brute on MONSTERS §4.4's line at 25 as #549 made it again: a machine (§2), and fire does
   // not touch it (§8.2)
   { id: 'stoker', name: 'Stoker', plural: 'Stokers', sprite: 'stoker', kind: 'machine', look: 'It shovels nothing into nothing, and turns as you come.', level: 25, hp: 665, ac: 22, attack: 15, dice: 5, sides: 8, bonus: 8, speed: 8, xp: 1987, gold: [0, 0], immune: ['fire'], tint: '#57514a', size: 1.3 },
