@@ -292,7 +292,7 @@ export const FAMILY: Readonly<Record<MonsterSprite, MonsterDrawer>> = {
   knocker: knockers.draw, mender: knockers.draw, foreman: knockers.draw, tallyman: knockers.draw,
   salamander: salamanders.draw, great_salamander: salamanders.draw,
   bog_light: lights.draw,
-  bay_keeper: keepers.draw, matron: keepers.draw,
+  bay_keeper: keepers.draw, matron: keepers.draw, brother: keepers.draw, bell_ringer: keepers.draw, abbot: keepers.draw,
   snow_lynx: cats.draw,
   stair_giant: giants.draw, stair_king: giants.draw,
 };
@@ -332,7 +332,7 @@ export const SPAN: Readonly<Record<MonsterSprite, readonly [number, number]>> = 
   knocker: [0.51, 0.68], mender: [0.46, 0.63], foreman: [0.45, 0.52], tallyman: [0.58, 0.55],
   salamander: [0.78, 0.84], great_salamander: [0.71, 0.72],
   bog_light: [0.15, 0.16],
-  bay_keeper: [0.28, 0.28], matron: [0.32, 0.33],
+  bay_keeper: [0.28, 0.28], matron: [0.32, 0.33], brother: [0.28, 0.28], bell_ringer: [0.28, 0.39], abbot: [0.23, 0.26],
   snow_lynx: [0.48, 0.47],
   stair_giant: [0.21, 0.39], stair_king: [0.26, 0.47],
 };

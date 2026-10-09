@@ -20,6 +20,7 @@ import { ok, owed, stopsWalk } from './lib.ts';
  * keepers and the Matron by #490.
  */
 const UNPLACED: Record<string, string> = {
+  brother: '#499', bell_ringer: '#500', abbot: '#500',
   stair_giant: '#502', stair_king: '#502',
 };
 
