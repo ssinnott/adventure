@@ -416,6 +416,7 @@ export const FAMILY: Readonly<Record<MonsterSprite, MonsterDrawer>> = {
   stair_giant: giants.draw, stair_king: giants.draw,
   cinder_drake: drakes.draw, old_drake: drakes.draw,
   stoker: machines.draw, sentry: machines.draw, sentinel: machines.draw,
+  loader: machines.draw, tally_clerk: knockers.draw, hold_keeper: keepers.draw, tallymaster: keepers.draw,
   drakeling: drakes.draw, brood_drake: drakes.draw, flue_walker: machines.draw, deep_knocker: knockers.draw, inspector: knockers.draw,
 };
 
@@ -459,6 +460,7 @@ export const SPAN: Readonly<Record<MonsterSprite, readonly [number, number]>> = 
   stair_giant: [0.21, 0.39], stair_king: [0.26, 0.47],
   cinder_drake: [0.56, 0.56], old_drake: [0.38, 0.63],
   stoker: [0.4, 0.54], sentry: [0.21, 0.28], sentinel: [0.33, 0.33],
+  loader: [0.43, 0.43], tally_clerk: [0.48, 0.53], hold_keeper: [0.36, 0.36], tallymaster: [0.26, 0.27],
   drakeling: [0.37, 0.37], brood_drake: [0.6, 0.63], flue_walker: [0.37, 0.37], deep_knocker: [0.58, 0.78], inspector: [0.49, 0.54],
 };
 /** How many pixels a drawing may reach past its span at any size, and so how far inside the view's edge a fight keeps the spans. */

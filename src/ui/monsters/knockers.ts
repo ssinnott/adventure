@@ -32,6 +32,12 @@
 // no feelers, and off its back a mast on ball joints that carries a second lamp in a hood, hard and
 // white as the deep knockers' own. Idle: the mast lamp turns up to the wall and down to the company,
 // and flares when it finds you: that is its call.
+//
+// The Tally Clerk: it counts the crates, then turns and counts you. A knocker of the Dead-Drop's
+// floor, low and long and the colour of the hold's dust, with no feelers, for it does not knock, and
+// stood up on its back the clerk's counting frame: two posts and a rail, three rods between the posts
+// and four beads on each. Idle: a bead goes across at each click and the lamp dips with it; when a
+// rod's beads are all across they come back together and one goes across on the rod above.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, groundShadow } from './common.ts';
@@ -40,7 +46,7 @@ import type { Part } from './gloss.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['knocker', 'mender', 'foreman', 'tallyman', 'deep_knocker', 'inspector'];
+export const KINDS: readonly MonsterSprite[] = ['knocker', 'mender', 'foreman', 'tallyman', 'deep_knocker', 'inspector', 'tally_clerk'];
 
 /**
  * The frame's parts, as proportions of the knocker's where they are numbers (1 = the knocker, 0 =
@@ -80,6 +86,8 @@ interface Build {
   tally: number;
   /** Frost along the back and icicles off the shell's lip, 0 none: the tallyman's, up through the ice. */
   rime: number;
+  /** The counting frame stood up on the back, its beads going across one a click, 0 none: the tally clerk's. */
+  beads: number;
   /** How large the mark is cut, and where along the body (0 the tail, 1 the cowl). */
   mark: number;
   markAt: number;
@@ -96,7 +104,7 @@ interface Build {
   mast: number;
 }
 const KNOCKER: Build = {
-  length: 1, dome: 1, taper: 0, rear: 0, plates: 6, legs: 6, stance: 1, step: 1, cowl: 1, feelers: 1, spool: 0, needle: 0, slate: 0, count: 0, tally: 0, rime: 0, mark: 1, markAt: 0.42,
+  length: 1, dome: 1, taper: 0, rear: 0, plates: 6, legs: 6, stance: 1, step: 1, cowl: 1, feelers: 1, spool: 0, needle: 0, slate: 0, count: 0, tally: 0, rime: 0, beads: 0, mark: 1, markAt: 0.42,
   lampHex: '#fff3c4', glowHex: '#ffc860', arcHex: '#d8f0ff', ridge: 0, hard: 0, mast: 0,
 };
 /**
@@ -106,7 +114,7 @@ const KNOCKER: Build = {
  * and out, and the light at its point flares each time.
  */
 const MENDER: Build = {
-  length: 0.9, dome: 1.22, taper: 0, rear: 0, plates: 5, legs: 5, stance: 1.05, step: 1, cowl: 1, feelers: 0.5, spool: 1, needle: 1, slate: 0, count: 0, tally: 0, rime: 0, mark: 1, markAt: 0.6,
+  length: 0.9, dome: 1.22, taper: 0, rear: 0, plates: 5, legs: 5, stance: 1.05, step: 1, cowl: 1, feelers: 0.5, spool: 1, needle: 1, slate: 0, count: 0, tally: 0, rime: 0, beads: 0, mark: 1, markAt: 0.6,
   lampHex: '#fff3c4', glowHex: '#ffc860', arcHex: '#d8f0ff', ridge: 0, hard: 0, mast: 0,
 };
 /**
@@ -117,22 +125,27 @@ const MENDER: Build = {
  * the company and bows to the slate again.
  */
 const FOREMAN: Build = {
-  length: 1.25, dome: 0.86, taper: 0.38, rear: 1, plates: 10, legs: 6, stance: 1.2, step: 0.35, cowl: 1.1, feelers: 0, spool: 0, needle: 0, slate: 1, count: 0, tally: 0, rime: 0, mark: 1.35, markAt: 0.25,
+  length: 1.25, dome: 0.86, taper: 0.38, rear: 1, plates: 10, legs: 6, stance: 1.2, step: 0.35, cowl: 1.1, feelers: 0, spool: 0, needle: 0, slate: 1, count: 0, tally: 0, rime: 0, beads: 0, mark: 1.35, markAt: 0.25,
   lampHex: '#fff3c4', glowHex: '#ffc860', arcHex: '#d8f0ff', ridge: 0, hard: 0, mast: 0,
 };
 const TALLYMAN: Build = {
-  length: 1.08, dome: 1.06, taper: 0.12, rear: 0.46, plates: 7, legs: 6, stance: 1.12, step: 0.3, cowl: 1.14, feelers: 0, spool: 0, needle: 0, slate: 0, count: 1, tally: 1, rime: 1, mark: 1.1, markAt: 0.3,
+  length: 1.08, dome: 1.06, taper: 0.12, rear: 0.46, plates: 7, legs: 6, stance: 1.12, step: 0.3, cowl: 1.14, feelers: 0, spool: 0, needle: 0, slate: 0, count: 1, tally: 1, rime: 1, beads: 0, mark: 1.1, markAt: 0.3,
+  lampHex: '#fff3c4', glowHex: '#ffc860', arcHex: '#d8f0ff', ridge: 0, hard: 0, mast: 0,
+};
+/** The Tally Clerk: low and long, no feelers, and its counting frame stood up on its back. */
+const TALLY_CLERK: Build = {
+  length: 0.96, dome: 0.84, taper: 0.06, rear: 0, plates: 6, legs: 5, stance: 1.05, step: 0.55, cowl: 1.04, feelers: 0, spool: 0, needle: 0, slate: 0, count: 0, tally: 0, rime: 0, beads: 1, mark: 1, markAt: 0.08,
   lampHex: '#fff3c4', glowHex: '#ffc860', arcHex: '#d8f0ff', ridge: 0, hard: 0, mast: 0,
 };
 const DEEP: Build = {
-  length: 1.2, dome: 1.08, taper: 0, rear: 0, plates: 7, legs: 7, stance: 1.22, step: 0.7, cowl: 1.12, feelers: 1.22, spool: 0, needle: 0, slate: 0, count: 0, tally: 0, rime: 0, mark: 1.2, markAt: 0.42,
+  length: 1.2, dome: 1.08, taper: 0, rear: 0, plates: 7, legs: 7, stance: 1.22, step: 0.7, cowl: 1.12, feelers: 1.22, spool: 0, needle: 0, slate: 0, count: 0, tally: 0, rime: 0, beads: 0, mark: 1.2, markAt: 0.42,
   lampHex: '#f4fbff', glowHex: '#a4d4ff', arcHex: '#d8f0ff', ridge: 1.5, hard: 1, mast: 0,
 };
 const INSPECTOR: Build = {
-  length: 1, dome: 0.96, taper: 0.1, rear: 0, plates: 6, legs: 5, stance: 1.4, step: 0.45, cowl: 1.04, feelers: 0, spool: 0, needle: 0, slate: 0, count: 0, tally: 0, rime: 0, mark: 1, markAt: 0.3,
+  length: 1, dome: 0.96, taper: 0.1, rear: 0, plates: 6, legs: 5, stance: 1.4, step: 0.45, cowl: 1.04, feelers: 0, spool: 0, needle: 0, slate: 0, count: 0, tally: 0, rime: 0, beads: 0, mark: 1, markAt: 0.3,
   lampHex: '#f4fbff', glowHex: '#a4d4ff', arcHex: '#d8f0ff', ridge: 0, hard: 1, mast: 1,
 };
-const BUILDS: Partial<Record<MonsterSprite, Build>> = { knocker: KNOCKER, mender: MENDER, foreman: FOREMAN, tallyman: TALLYMAN, deep_knocker: DEEP, inspector: INSPECTOR };
+const BUILDS: Partial<Record<MonsterSprite, Build>> = { knocker: KNOCKER, mender: MENDER, foreman: FOREMAN, tallyman: TALLYMAN, deep_knocker: DEEP, inspector: INSPECTOR, tally_clerk: TALLY_CLERK };
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   knocker(ctx, x, y, h, p, BUILDS[kind] ?? KNOCKER);
@@ -159,6 +172,8 @@ const BELLY: readonly (readonly [number, number])[] = [[0, 0.55], [0.2, 0.95], [
 const COWL = 0.86;
 /** The mender's wire, and the Foreman's slate: darkened with distance, as the tint is. */
 const COPPER = '#c08a4e', SLATE = '#2a2e34';
+/** The tally clerk's beads, lacquered. */
+const BEAD = '#c4643c';
 
 /** The body laid out: where the spine runs and which way, and its two edges at any point along it. */
 interface Body {
@@ -248,7 +263,9 @@ function knocker(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
   const body = layout(b, 1 - look);
   const shell = p.base, under = shade(mix(p.dark, '#1c1e24', 0.45), 0.92), joint = shade(mix(p.light, '#e8ecf0', 0.25), 1);
   const ink = shade('#14161a', Math.max(0.6, p.tone));
-  const lampOn = b.count > 0 ? 1 - 0.5 * click : b.hard > 0 || (t % 160) < 150 ? 1 : 0.35;   // a blink, now and then, but not a hard lamp's; the tallyman's dips at each click
+  // The tally clerk's lamp dips as each bead goes across.
+  const bead = b.beads > 0 && t % 13 < 4 ? 1 - (t % 13) / 4 : 0;
+  const lampOn = b.count > 0 ? 1 - 0.5 * click : b.beads > 0 ? 1 - 0.45 * bead : b.hard > 0 || (t % 160) < 150 ? 1 : 0.35;   // a blink, now and then, but not a hard lamp's; the tallyman's dips at each click
   const g0 = body.at(0), g1 = body.at(body.ground);
   groundShadow(ctx, f.X((g0.x + g1.x) / 2 + 3), y + 1, (g1.x - g0.x + 30) * u);
   // Where the lamp sits, in the cowl's face, and the light it throws on the rock ahead of a body on the ground.
@@ -360,6 +377,7 @@ function knocker(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
   if (b.needle > 0) needle(ctx, f, body, b, h, t, under, lampC, p.tone);
   if (b.slate > 0) slate(ctx, f, body, b, h, t, shell, under, look, p.tone);
   if (b.mast > 0) mast(ctx, f, body, b, h, t, shell, under, p.tone);
+  if (b.beads > 0) countingFrame(ctx, f, body, b, h, t, under, p.tone);
 }
 
 /**
@@ -404,6 +422,40 @@ function mast(ctx: CanvasRenderingContext2D, f: F, body: Body, b: Build, h: numb
   glow(ctx, B, f.X(lens.x), f.Y(lens.y), lr * 0.8 * u, b.lampHex, 0.9 * on, '#ffffff');
   ctx.strokeStyle = rgba(mix(hood, '#ffffff', 0.35), 0.85); ctx.lineWidth = Math.max(1, 1.2 * u);
   ctx.beginPath(); ctx.arc(f.X(lens.x), f.Y(lens.y), lr * 0.86 * u, 0, Math.PI * 2); ctx.stroke();
+}
+
+/**
+ * The tally clerk's counting frame, stood up on its back: two posts and a rail, three rods between the
+ * posts and four beads on each. A bead goes across at each click, toward the tail, in the first four
+ * frames of the thirteen; when a rod's beads are all across they come back together and one goes
+ * across on the rod above, as a counting frame counts.
+ */
+function countingFrame(ctx: CanvasRenderingContext2D, f: F, body: Body, b: Build, h: number, t: number, under: string, tone: number): void {
+  const u = f.u, k = b.beads, a = body.back(0.2), z = body.back(0.72);
+  let crest = 0;
+  for (let s = 0.2; s <= 0.721; s += 0.04) crest = Math.max(crest, body.back(s).y);
+  const rods = [0, 1, 2].map((i) => crest + (4.8 + 6.6 * i) * k), rail = crest + 23.4 * k;
+  const post = shade(under, 1.12), rod = shade(under, 1.35);
+  blob(ctx, B, post, [
+    { k: 'cap', x0: f.X(a.x), y0: f.Y(a.y - 2), x1: f.X(a.x), y1: f.Y(rail), r0: 1.7 * u, r1: 1.35 * u },
+    { k: 'cap', x0: f.X(z.x), y0: f.Y(z.y - 2), x1: f.X(z.x), y1: f.Y(rail), r0: 1.7 * u, r1: 1.35 * u },
+    { k: 'cap', x0: f.X(a.x - 1.4), y0: f.Y(rail), x1: f.X(z.x + 1.4), y1: f.Y(rail), r0: 1.55 * u, r1: 1.55 * u },
+  ], { h, formK: 0.35, spread: 0.7, gloss: 0.4 });
+  const thin = Math.max(0.8 * u, 0.9);
+  blob(ctx, B, rod, rods.map((y): Part => ({ k: 'cap', x0: f.X(a.x), y0: f.Y(y), x1: f.X(z.x), y1: f.Y(y), r0: thin, r1: thin })), { h, form: false });
+  // The count, in fives: a rod's beads across are its figure.
+  const n = Math.floor(t / 13), q = smooth(0, 1, (t % 13) / 4), pitch = 3.4;
+  const figure = (c: number, i: number): number => Math.floor(c / 5 ** i) % 5;
+  const beads: Part[] = [];
+  for (let i = 0; i < rods.length; i++) {
+    const was = figure(Math.max(0, n - 1), i), now = figure(n, i);
+    for (let j = 0; j < 4; j++) {
+      const place = (d: number): number => (j < d ? a.x + 3.4 + j * pitch : z.x - 3.4 - (3 - j) * pitch);
+      const bx = place(was) + (place(now) - place(was)) * q;
+      beads.push({ k: 'ell', x: f.X(bx), y: f.Y(rods[i]), rx: 1.65 * u, ry: 2.8 * u });
+    }
+  }
+  blob(ctx, B, shade(BEAD, tone), beads, { h, formK: 0.45, spread: 0.7, gloss: 0.55 });
 }
 
 /** A stroke along screen points, no ink of its own. */

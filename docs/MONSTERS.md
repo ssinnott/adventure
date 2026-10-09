@@ -1424,15 +1424,28 @@ lines are the building session's.
 
 | Monster | Family | Role, level | Where | Look; what it does |
 |---|---|---|---|---|
-| Loader | heavy machines, a new def | brute, 26 | the drop and the vaults | Lifts a crate the size of a cart |
-| Tally Clerk | knockers, a new def | caller, 26 | the drop | Calls loaders |
-| Hold Keeper | keepers, a new def | controller, 27 | the people's vault | Puts to sleep (0.3); mends its group |
+| Loader | heavy machines, a new def | brute, 26 | the drop and the vaults | *It carries a crate the size of a cart, and does not set it down.* Size 1.4 |
+| Tally Clerk | knockers, a new def | caller, 26 | the drop | *It counts the crates, then turns and counts you.* Calls two loaders |
+| Hold Keeper | keepers, a new def | controller, 27 | the people's vault | *It carries water to the pens, and nobody is in them.* Puts to sleep (0.3); mends its group |
 | Deep Knocker | knockers | armoured, 28 | at the rails' sealed door | §9.2's |
-| The Tallymaster | keepers, a new def | boss, 28 | the counting house | Fights only when the company steps to its desk; calls tally clerks; size 1.6 |
+| The Tallymaster | keepers, a new def | boss, 28 | the counting house | *It writes, and does not look up.* Fights only when the company steps to its desk; calls two tally clerks; size 1.6 |
 
 The Tallymaster is judged at 27, the counting house's floor. The stair's foot, `dead_drop_stair`,
 holds no group, and `dead_drop`'s first stands out of sight of it: the band's sign is the warning
 (§2.2).
+
+The four new defs are drawn (#22), each on a frame that exists and in Wrackholm's table, ahead of
+the levels that place them. The Loader is the heavy machines' (`src/ui/monsters/machines.ts`): a
+squat hull on short bowed legs, both arms up and holding over its head a crate the size of a cart,
+planked, strapped with iron and chalked with a clerk's tally; it has no head, and the fire shows
+through two ports under the crate. The Tally Clerk is the knockers': low, long and the colour of the
+hold's dust, with no feelers, and stood up on its back a counting frame whose beads go across one a
+click. The Hold Keeper is the bay's keeper kept in the hold, bare, shorter and a little stooped, a
+yoke across its shoulders and a pail at each end. The Tallymaster is the keepers' largest and
+strangest, size 1.6: it stands behind a clerk's desk among piled ledgers on a neck grown long,
+writing with a pen in each hand in two ledgers at once, six lights counting across its brow. The
+deep knocker is Meridian Camp's, drawn with the inspector (§8.4, #657); the vaults place that one
+(docs/areas/dead_drop.md §8).
 
 **Asks:** calls and the sleeping touch, both Rimewater's.
 
