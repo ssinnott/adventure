@@ -334,10 +334,11 @@ Decided by delegate for #545, each the owner's to overturn:
    than it saved, 10 spell points a fight for half of a breath or two, and a company fought 7.8 pairs
    of drakes to a rest at 23 where it fought 9.2 with none (on 7's first draft, mending at 60%).
 9. **A placed sweeper stands on the line as the test giant or drake does,** its chance and element
-   with it, or is set off it with a reason (`tools/tests/harness.ts`). The giants and the drakes are
-   drawn (#507, #520) and not yet placed (#502, #511, #513, #515): a fixture in the tests sweeps for
-   them. The drakes sweep already, the Cinder Drake on the test drake's line and the Old Drake set off
-   it for Old Cinder's gate (docs/areas/ashfall.md §9).
+   with it, or is set off it with a reason (`tools/tests/harness.ts`). The giants are placed (#502),
+   the Stair Giant on the sweeper's line and the Stair-king set off it by his gate
+   (docs/areas/whitespine.md §9); the drakes are drawn (#520) and not yet placed (#511, #513, #515):
+   a fixture in the tests sweeps for them. The drakes sweep already, the Cinder Drake on the test
+   drake's line and the Old Drake set off it for Old Cinder's gate (docs/areas/ashfall.md §9).
 
 Decided by delegate for #544, each the owner's to overturn:
 
@@ -366,7 +367,7 @@ Decided by delegate for #544, each the owner's to overturn:
    by the group's leader, else its first monster.
 9. **Thornmark claims the mechanic (`encounter:choice`):** its ogre (#56's 13) is the first group on
    the road to ask, so the Whitespine's toll is the second, and its doc's "first choice put before a
-   fight" (§2) is #502's to restate; the giants, sweep and the cliff stay the Whitespine's own.
+   fight" (§2) is restated by #502; the giants, sweep and the cliff stay the Whitespine's own.
 
 Decided by delegate for #546, each the owner's to overturn:
 
@@ -1276,7 +1277,7 @@ eagles from the birds; the Hand as its masons.
 | Brother | keepers | soldier, 22 | the monastery and Monks' Vale | *A monk, walking as if someone had described walking to it.* A machine under the robe |
 | Bell-ringer | keepers | controller, 23 | the monastery's towers | *Eleven strokes, a gap, and eleven more.* Its bell holds (paralysis, 0.2) |
 | Snow Troll | ogre | brute, 23 | the High Spine's snow | *A drift that stood up.* Mends unless burned |
-| Stair Giant | giants, new | brute, 23 | the Giants' Stair | *A man as tall as a house, holding out his hand.* Size 2; sweeps the front row; asks a toll before it fights |
+| Stair Giant | giants, new | brute, 23 | the Giants' Stair | *A man as tall as a house, holding out his hand.* Size 2; sweeps the front row; asks a toll before it fights, beside the king |
 | Ashen Mason | cultist | soldier, 23 | Sheer Point, on the causeway | *A hammer from below, and a shard to set.* |
 | The Abbot | keepers | boss, 24 | the monastery's chapter house | *The abbot keeps the hours, and it is time.* Its robe falls open as it falls |
 | The Stair-king | giants, new | boss, 24 | the top of the Stair | *He has taken the toll here since before Helmstow.* Size 2; the giants break when he falls |
@@ -1317,7 +1318,8 @@ cupped for the toll, and the far hand hangs, bigger than a man's head. The Stair
 eighth broader, his head sunk under a mantle of dark fur, white-haired and bearded to the belt, and
 crowned in the toll: coin set on edge round his brow, the oldest at the front with no face. Both are
 size 2, drawn inside the tall boss's crown, and with them #507's eight are drawn
-(docs/areas/whitespine.md §9). I10 places them (#502), and gives them sweep (#545).
+(docs/areas/whitespine.md §9). I10 placed them (#502) and gave them sweep (#545), the king's group
+asking the toll (docs/areas/whitespine.md §4.5).
 
 **Asks:** sweep.
 

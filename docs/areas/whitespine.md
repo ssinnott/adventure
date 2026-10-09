@@ -12,9 +12,10 @@ is in it, the plan for building it, box by box, and the briefs. Its work is file
 IV's systems are #442's (§3). Figures are measured on main at `6032251` (2 October 2026) with
 `worldGrid` (`src/game/atlas.ts`).
 
-Its first two boxes are built, J11, Monks' Vale (#499, §4.2), which lists the area, and I11, the
-Peak Stone's (#501, §4.4), and so is Highcell, the dungeon through J11's gate (#500, §4.3); its
-eight monsters are drawn (§3), and the rest is to build. Its content is
+Its first three boxes are built, J11, Monks' Vale (#499, §4.2), which lists the area, I11, the
+Peak Stone's (#501, §4.4) and I10, Stairwatch and the Stair's head (#502, §4.5), and so is
+Highcell, the dungeon through J11's gate (#500, §4.3); its eight monsters are drawn (§3), and the
+rest is to build. Its content is
 `src/content/areas/whitespine/` (maps, monsters, items, climate, its part of the world map and its
 walkthrough; its chapter of the one quest, The Bells, in `chapter.ts`, and its side quests in
 `quests.ts`, to come); it has no town, so no rooms. Its ids: the area `whitespine`, its zones
@@ -31,9 +32,9 @@ Whitespine three zones:
 | Zone | Band | Squares | Built |
 |---|---|---|---|
 | Monks' Vale | 22–23 | 3,402 | J11 |
-| The High Spine | 23–24 | 3,118 | I11 |
+| The High Spine | 23–24 | 3,118 | I11, I10 |
 | Sheer Point | 23–24 | 1,396 | none |
-| The area | 22–24 | 7,916 | J11, I11 |
+| The area | 22–24 | 7,916 | J11, I11, I10 |
 
 Squares are land without shallows or rivers. The area is about 7.7 zone maps (EXPANSION §1 has
 7.7), and only 3,961 of its squares a company could walk: more than half of it is mountain and peak
@@ -46,8 +47,10 @@ area 22–24 and the boxes rise through it (§4).
 The squares are the plan's, before any box. J11 (#499), laid whole in Monks' Vale, takes the 110
 squares of the High Spine on its crest with it, as a map laid in one zone does (§4, §9). I11 (#501),
 laid whole in the High Spine, takes 154 of Monks' Vale's on its crest and 187 of Ashfall's under the
-Sheer. Laying Highcell (#500) moves no square: its two plates, at 322,346 and 322,352, are places
-on the atlas, which the grid does not read.
+Sheer. I10 (#502), laid whole in the High Spine, takes 31 of Loch Fuar's at its north-east corner,
+all peak and mountain, and 3 of Cindercoast's, the cliff at its north-west corner. Laying Highcell
+(#500) moves no square: its two plates, at 322,346 and 322,352, are places on the atlas, which the
+grid does not read.
 
 **The grid** (EXPANSION §8.2; docs/areas/shelf.md §1). The Whitespine is the I and J columns from
 row 8 to row 12, with K11 and K12 holding Monks' Vale's east under the pass. The land worth a map is
@@ -88,8 +91,9 @@ them (MONSTERS §8.1). Their bells ring the eleven of Crowness Light's log, the 
 by a machine that was told to ring them and never told to stop. On Sheer Point the Hand builds its
 road out over the water, every stone a stolen shard, and takes Wenna out along it in the night
 (DESIGN §9, the captain's line). The Giants' Stair is the road over the range and down into Ashfall,
-and its toll is the first choice put before a fight (#544). Four of the third prestiges' places lie
-here and are built with it (#448): Stairwatch, Spine Summit, Rook's Nest and the bell tower.
+and its toll is the second choice put before a fight (#544), after Thornmark's ogre's bargain
+(#645). Four of the third prestiges' places lie here and are built with it (#448): Stairwatch,
+Spine Summit, Rook's Nest and the bell tower.
 
 Nothing trains or sells here (#443, call 7): Rime Lodge teaches to 23 behind and Cinderport to 27
 ahead, so a company carries what it has over the range. The weather is the range's: snow on the
@@ -97,8 +101,8 @@ crest the year round, wind, cloud below the peaks; clear and bitter at night.
 
 ## 3. What is built
 
-Two boxes and a dungeon, J11, the area's first, which lists the area (#499), Highcell, through its
-gate (#500) and I11 (#501):
+Three boxes and a dungeon, J11, the area's first, which lists the area (#499), Highcell, through
+its gate (#500), I11 (#501) and I10 (#502):
 
 - **Monks' Vale** (J11, `monksvale_j11`, core, band 22–23; #499): the pass's road down from K10's
   saddle, which is taken and not walked, over the north edge, then square to square through the
@@ -133,28 +137,40 @@ gate (#500) and I11 (#501):
   its foot Ashfall's own grey pines, reached by a climb down. Four groups: spine eagles at the nest
   and over the snow line, brothers on the snow line between the crest path and the Stone and snow
   trolls in the snow at the crest's foot. The Stone counts for the Hearth once stood at (§9, #501's 5).
+- **Stairwatch and the Stair's head** (I10, `highspine_i10`, core, band 22–24; #502): up the ridge
+  trail from the Stone and on north through the pines, then a road west off it to the Stair's head,
+  cut stone at the top of the Stair, where the road goes down through the Sheer to the west edge.
+  Short of the head the road runs past a caravan drawn up and through the Stair in snow, a giant and
+  a snow troll in a drift; at the head are a toll-stone and a shrine older than the monks'. The
+  Stair-king keeps the top step from his seat of rock, with two giants, and holds out his hand: the
+  toll is gold, a grey part or a faceless coin, or the fight (§4.5). Under the seat, walled in rock,
+  his hoard. South of the head, in the rock, Stairwatch: a chimney found off the pines climbs to a
+  ledge over the Stair, where an old champion keeps his watch. Three groups: spine eagles in the
+  pines nearest the way in, the Stair in snow and the king's.
 
 Its atlas rows are charted in `src/content/areas/whitespine/atlas.ts` (#498), the area's own `atlas`
 since J11 lists the area; until then `src/content/atlas.ts` spread them into the plan where its rows
 were, as Saltreach's was before #170: the zones with their bands (Monks' Vale 22–23, with J11 laid
-on it and its crossing line said in its own words, §4.2; the High Spine 23–24, with I11 laid on it
-and its crossing line said in its own words, §4.4; Sheer Point 23–24), Highcell's two plates,
+on it and its crossing line said in its own words, §4.2; the High Spine 23–24, with I11 and I10 laid
+on it and its crossing line said in its own words, §4.4; Sheer Point 23–24), Highcell's two plates,
 `monastery` at 322,346 and `monastery2` at 322,352 (the first moved from K12's, §9), its sites
 (Highcell at J11's gate, 322,342, the Peak Stone, Stairwatch, Spine Summit, Rook's Nest and the
 Giants, its own; the Sheer, the plan's, §10) and its links: the pass in, the monastery's way in, the
-Giants' Stair and the ridge trail (#443, call 3). Spine Summit is a camp now, the Peak Stone a stone
-and Highcell built, none planned any more (§9, #499's 12; #500's 1; #501's 16).
+Giants' Stair and the ridge trail (#443, call 3). Spine Summit is a camp now, the Peak Stone a
+stone, Highcell built and Stairwatch a ledge, none planned any more (§9, #499's 12; #500's 1;
+#501's 16; #502's 11).
 
 Its ground (#543): peaks (`A`) and cliffs (`|`), the mountain's rock to walk into, see and climb,
 with the road through them plain road, so the scaffold drafts each box square for square (J11's 202
 peaks, I11's 48 peaks and 64 cliffs) and the view draws a summit and a face (docs/SLICE.md).
 
 Its row on the curve is in (#542), in `src/content/progression.ts`: band 22–24, next 24, window
-5,000, owed to #445 while the area is built box by box, with 9,329 xp a member and 1,600 gold in the
-boxes built, J11's 2,791 and 700, Highcell's 4,183 and 600 and I11's 2,355 and 300 (§8). It has no
-step on the gear ladder, no town to sell one: Rime Lodge's rung is the pass's, and Cinderport's step
-(docs/areas/ashfall.md §4.4) comes two levels on; J11's store holds a second of Rimewater's Guide's
-Staff +1 (§4.2) and Highcell's undercroft an Ice Axe +1 and a Skinning Knife +1 (§4.3). The systems
+5,000, owed to #445 while the area is built box by box, with 13,525 xp a member and 3,520 gold in
+the boxes built, J11's 2,791 and 700, Highcell's 4,183 and 600, I11's 2,355 and 300 and I10's 4,197
+and 1,920 (§8). It has no step on the gear ladder, no town to sell one: Rime Lodge's rung is the
+pass's, and Cinderport's step (docs/areas/ashfall.md §4.4) comes two levels on; J11's store holds a
+second of Rimewater's Guide's Staff +1 (§4.2), Highcell's undercroft an Ice Axe +1 and a Skinning
+Knife +1 (§4.3) and I10's hoard a Bear Spear +1, Rimewater's rung (§4.5). The systems
 it waits on are the rest of
 #442's: the toll (#544), sweep (#545), stone (#546), the crossings (#547), the Ember Stone (#548)
 and the bot (#549).
@@ -173,23 +189,23 @@ first box whose brief places it (§4): J11 places the eagles and the troll (#499
 owed to I8 (#504). §9 has the decisions.
 
 The giants are drawn (#507), a new family on a frame of their own (`src/ui/monsters/giants.ts`): the
-Stair Giant and the Stair-king, ahead of the box that places them. Their defs are with the monks',
-and both are owed in `UNPLACED` to I10 (#502), whose brief places them (§4.5), though listing the
-area records them in `src/content/shipped.json`. §9 has the decisions.
+Stair Giant and the Stair-king. Their defs are with the monks', and I10 places both (#502, §4.5), so
+that neither is owed in `UNPLACED` now; both sweep the front row a turn in four, the giant set to
+its line and the king by his gate (§9, #502's 2 and 3). §9 has the decisions.
 
 ## 4. What is still to build
 
-All of it but J11, Highcell and I11, built (#499, §4.2; #500, §4.3; #501, §4.4): 7,916 squares of
-land, 3,961 of them walkable, the plan's figures (§1). On the grid the plan is eight boxes and a
-dungeon, five boxes on the road and three behind; the five hold 5,138 of those squares, 2,199 of
-them walkable:
+All of it but J11, Highcell, I11 and I10, built (#499, §4.2; #500, §4.3; #501, §4.4; #502, §4.5):
+7,916 squares of land, 3,961 of them walkable, the plan's figures (§1). On the grid the plan is
+eight boxes and a dungeon, five boxes on the road and three behind; the five hold 5,138 of those
+squares, 2,199 of them walkable:
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
 |---|---|---|---|---|---|---|---|---|
 | J11 | Monks' Vale | Monks' Vale, the High Spine | core | 22–23 | 1,024 (mountain 342, hills 264, grass 214, peak 202) | the pass's foot at 318,318; Highcell's gate at 322,342; Spine Summit at 300,328; the herder | the bells; the monastery | #499 |
 | | Highcell | | dungeon, two levels of 16×16 | 22–24 | | the cloister and the cells; the bell tower; the chapter house and the Abbot; the undercroft behind the seat | | #500 |
 | I11 | The Peak Stone's box | the High Spine | core | 22–23 | 837 (pine 536, mountain 210, peak 48, cliff 42) | the Peak Stone at 292,318, whole; the ridge trail's foot; the eagles' nest | none | #501 |
-| I10 | Stairwatch and the Stair's head | the High Spine, Sheer Point | core | 23–24 | 961 (pine 665, mountain 194, peak 85, cliff 17) | the Stair's head at 272,306 and the toll; the Stair-king; Stairwatch at 270,312 | the Stair and its toll | #502 |
+| I10 | Stairwatch and the Stair's head | the High Spine | core | 22–24 | 961 (pine 665, mountain 194, peak 85, cliff 17) | the Stair's head at 272,306 and the toll; the Stair-king; Stairwatch at 270,312 | the Stair and its toll | #502 |
 | I9 | The ridge north | Sheer Point | country | 23 | 774 (pine 357, mountain 205, peak 204), 11 shallow | the ridge trail along the crest; snow trolls; the Hearth seen | none | #503 |
 | I8 | Sheer Point | Sheer Point | core | 24 | 542 (mountain 261, hills 134, peak 122, pine 17), 86 shallow | the causeway; the Hand's camp and Wenna; Rook's Nest at 286,230 | the causeway; Wenna taken | #504 |
 | J10, I12, J12 | The country behind | Monks' Vale, the High Spine | country, behind the road | 23–24 | 875, 959 and 937 | the giants' ground above the Stair at 300,296; the range running on south | none | #508 |
@@ -203,11 +219,12 @@ Stair-king and the causeway, as the gate asks (EXPANSION §5.2), and each box ho
 top of its band for the curve.
 
 **Three boxes hold land of more than one zone.** J11 is Monks' Vale with 110 squares of the High
-Spine on its crest, I10 is the High Spine with 65 of Sheer Point at its north edge, and I11 is the
-High Spine with 154 of Monks' Vale on its crest and, under the Sheer, 187 of Ashfall's. A map is its
-whole box (EXPANSION §8.2), so each is built to its edges and the zone line runs inside it; the zone
-a square belongs to decides only its crossing line (#166) and its band. Each is laid in its larger
-zone (§9); J11 is, in Monks' Vale (#499), and I11 in the High Spine (#501).
+Spine on its crest, I10 is the High Spine's 990 squares with 31 of Loch Fuar's in its north-east
+corner and 3 of Cindercoast's in its north-west, none of them walked, and I11 is the High Spine with
+154 of Monks' Vale on its crest and, under the Sheer, 187 of Ashfall's. A map is its whole box
+(EXPANSION §8.2), so each is built to its edges and the zone line runs inside it; the zone a square
+belongs to decides only its crossing line (#166) and its band. Each is laid in its larger zone
+(§9); J11 is, in Monks' Vale (#499), I11 in the High Spine (#501) and I10 in the High Spine (#502).
 
 **The order** is the road's, and the quest's: J11, the only box that meets Coldmere's pass, and
 Highcell behind its gate; I11, over the crest to the Stone; I10, the Stair's head, where the road
@@ -435,12 +452,13 @@ settled in its issue.
   not taken: J11's row 10 is opened at 0 to 2, from mountain to snow, and I11's row 10 is snow from
   31,10 west to the snow line at 22,10, so the summit's path goes on over the crest; no exit is
   added (§9, #501's 2). The ridge trail leaves by the north edge at 27,0 (291,318), a square from
-  the scaffold's 28,0, to meet the atlas's trail beyond at 291,317; the north, west and south edges
-  end the world against I10, H11 and I12, pinned in `tools/tests/outdoors.ts` with void past them
-  (§9, #501's 4). The Stone stands at 28,0 (292,318) on bare rock beside the trail's square, in a
-  ring of bare stone, a 3 by 3 at 27 to 29, 1 to 3, its stones set round it as rocks and the ring
-  entered from the snow line through a gap at 26,3; the Stone is on the north edge, so the ring is
-  open to I10 there (§9, #501's 6). Its once event, *The Peak Stone. Whole, and steady. The snow
+  the scaffold's 28,0, to meet the atlas's trail beyond at 291,317, which I10 takes on (§4.5); the
+  west and south edges end the world against H11 and I12, pinned in `tools/tests/outdoors.ts` with
+  void past them (§9, #501's 4). The Stone stands at 28,0 (292,318) on bare rock beside the trail's
+  square, in a ring of bare stone, a 3 by 3 at 27 to 29, 1 to 3, its stones set round it as rocks
+  and the ring entered from the snow line through a gap at 26,3; the Stone is on the north edge, so
+  the ring was open to I10 there (§9, #501's 6), which closes it round on its row 31 (§9, #502's
+  17). Its once event, *The Peak Stone. Whole, and steady. The snow
   stops a yard short of it all the way round.*, is what counts it for the Hearth (§9, #501's 5).
   The brother who keeps it (`i11_keeper`, 28,1) is a thing seen, the snow on its shoulders that does
   not melt; at the Stone's foot the monks' shrine at 29,1 (endurance, its eleven pebbles) and, just
@@ -453,8 +471,9 @@ settled in its issue.
   eagles on the spur (§9, #501's 10 and 11). The snow line runs down the crest's flank from row 1 to
   row 26, pines below it and rock above, the camp, The last pines, at 20,12 under it (§9, #501's
   14). The Sheer is kept as the atlas cuts it: the cliff, 2 wide, down the west, Ashfall's grey
-  pines, grass, hills and ash beyond it, reached only by a Mountaineer's climb down; the lookout at
-  its top, 6,9, sees Fire Mountain, and three events carry the density below it (§9, #501's 13).
+  pines, grass, hills and ash beyond it, reached by a Mountaineer's climb down and, from I10, down
+  the Stair; the lookout at its top, 6,9, sees Fire Mountain, and three events carry the density
+  below it (§9, #501's 13).
   Four groups: spine eagles, 4, at the nest, 29,9, the nearest, who do not roam; brothers, 4, on the
   snow line between the crest path and the Stone, 23,5; spine eagles, 4, over the snow line south of
   the path, 22,14; and snow trolls, 2, in the snow at the crest's foot, 22,21, who do not roam, the
@@ -467,7 +486,7 @@ settled in its issue.
     every fight too, owed to #18 as J11's is. Density 99.5% within 8 steps and the furthest 9, with
     no sign among its 26 points. It claims cliffs as new (§7).
 
-### 4.5 I10, Stairwatch and the Stair's head (#502): core, band 23–24
+### 4.5 I10, Stairwatch and the Stair's head (#502): core, band 22–24
 
 - **Purpose.** The High Spine's step of the quest: the Giants' Stair's head in the Sheer at
   272,306, the giants at it, the Stair-king and his toll, and the road down into Ashfall. Stairwatch
@@ -506,6 +525,59 @@ settled in its issue.
   (#545); the cliff with the road through it (#543).
 - **Finds.** The king's hoard: 1,200 gold in coin of every age, and a plus on Rimewater's rung.
 - **Pay.** About 2,400 xp a member, the king's share only on refusing the toll.
+- **As built** (#502, 9 October): the brief's places, with three groups for its seven, laid whole in
+  the High Spine at 264,286, band 22–24 (§9, #502's 1 and 9). The box is its whole 1,024 squares:
+  pine 586, mountain 178, peak 91, road 56, cliff 46, rock 26, snow 19, cut stone 16, ash 2 and 4 in
+  the hollows and the chimney, 990 of them the High Spine's, 31 in the north-east corner Loch Fuar's
+  and 3 in the north-west Cindercoast's, none of those walked (§1). The seam with I11 is walked, the
+  ridge trail going on from I11's 27,0 (291,318) to I10's 27,31 (291,317), and nothing is said
+  there, the floor being 22 on both sides (§9, #502's 1); the mountain closes the Stone's ring round
+  on I10's row 31, the trail its one way north (§9, #502's 17). The trail goes on through the pines
+  to the north edge at 18,0 (282,286), where the atlas's meets it at 282,285 (§9, #502's 16). The
+  road leaves the trail at 23,20 and runs west to 8,20, the atlas's link end (272,306); the head is
+  cut stone at 2 to 7,20, 3 to 7,21 and 5 to 7,19, and the Stair, road at 1,20 and 0,20, goes down
+  through the Sheer to the west edge (0,20 is 264,306), where Ashfall's ground lies at the cliff's
+  foot, 0,21 to 0,31, and runs south into I11's. The north, west and east edges end the world
+  against I9, H10 and J10, pinned in `tools/tests/outdoors.ts` with void past them, and the south
+  edge is pinned against I11's; the atlas draws no road for the Stair's link, so the edge square at
+  0,20 is owed to #510 (§9, #502's 7). Short of the head, west along the road: a caravan drawn up,
+  its master at 18,19 and the wagons at 18,21, and then the Stair in snow at 13,20, a giant and a
+  snow troll in a drift (rows 18 to 22, columns 10 to 16); the master's girl is at the head, 6,19,
+  off the road. The drift at 12,21, *The wind did not lay it.*, and burnt bones by the trail at
+  20,16 are things seen (§9, #502's 8 and 12). At the head a toll-stone at 4,21 bears a ring with a
+  bar across it, cut small under its lip, and a shrine older than the monks' at 7,21, of might,
+  holds out a stone hand (§9, #502's 13 and 14). The king's seat is a slab of rock (2 to 4,17 and 3
+  to 4,18 to 19), and his group, `i10_king`, the king and two giants, stands at 2,20, the Stair's
+  top step, so that no company goes down unasked: the Stair is reached from the top only through
+  that square (§9, #502's 4). *The king holds out his hand from the seat. "Toll. We have taken it
+  since we were set here, and nobody has come to say stop."* A company may pay 1,500 gold, give him
+  the grey part from I11's nest, give him the faceless coin of #56's 9, or refuse, and the fight is
+  his and theirs; the three that satisfy him set `toll_paid`, `toll_part` or `toll_coin`, for #506's
+  47 to read, and the giants step off the Stair and stand aside (§9, #502's 5). Under the seat,
+  walled in rock (the Sheer's cliff at 1,18 and 1,19 is made rock, so no climb reaches it), the
+  hollow of his hoard: at 2,19 *Coin of Helmstow on top. Under it, coin with no face. Under that,
+  nothing.*, and at 2,18 the chest `i10_hoard`, 1,200 gold and a Bear Spear +1, Rimewater's rung at
+  2,050, the area's dearest find. Its one mouth is the king's square, so a company that paid walks
+  through it and can rob the hoard (§9, #502's 6). South of the head, Stairwatch: rock at 3 to 8,24
+  to 25, 4,26, 7 to 8,26 and 4 to 7,27, and in it a chimney, a secret door at 6,24 off the pines,
+  its shaft at 6,25 and the ledge at 5,26 and 6,26, where the old champion stands (5,26) and the
+  ledge's event, `i10_ledge`, is at the atlas's site, 6,26 (270,312). The hints are smoke at 9,22
+  and the rope's wear at 6,23, the secret's declared hint (§9, #502's 11). The camp, The drovers'
+  fire, is in the pines at 11,28 and the cairn at the trail's crossing, 22,21, holds a Sapphire Vial
+  and no gold (§9, #502's 14). Three groups: spine eagles, 3, in the pines nearest the way in,
+  17,25; the Stair in snow, a Stair Giant and a snow troll at 13,20, who do not roam; and the
+  king's, the box's hardest at 23.3, who do not roam and do not come back. It departs from the brief
+  in the band, 22–24 and not 23–24, in its groups, three for seven, and in its secret, the issue's
+  maintenance mark being a thing seen on the toll-stone and the doc's chimney the door (§9, #502's
+  1, 9 and 13). The Toll, the quest, and the old champion's trainer entry are owed (§11).
+  - **Measured.** A company at 22 wins 86% of the fights, the king counted, and manages 11.72
+    fights to a rest, over the aim and inside the limit, with 7.7% of its days ending in a fight
+    broken off; it walks the High Spine's road, past the giant and the troll in the snow, every
+    time. The king is won 58% at 22 and 79% at 24, the gate's floors for him; measured as the gate
+    measures a fight, from 21 to 25 he is won 7%, 58%, 56%, 79% and 97%. Two under, at 20, the box
+    is won 68%, inside the limit, so nothing is owed. I10 pays 4,197 xp a member, 1,046 to a
+    company that pays the toll, and 1,920 gold a clear. Density 99.7% within 8 steps and the
+    furthest 9, with no sign among its 31 points. It claims the giants as new (§7).
 
 ### 4.6 I9, the ridge north (#503): country, band 23
 
@@ -627,7 +699,9 @@ Pay is xp a member, whichever way the choice goes, shared by level: about 900 be
 - **The Toll.** A caravan at the Stair's head cannot pay, and the Stair-king keeps the
   caravan-master's daughter until it is paid. Pay in gold; or give him something from below, the
   faceless coin of #56's 9 or a part from the nest, and he says his people were on the mountain
-  before anyone came down the sky; or fight. His words hint and never say (#443, call 1).
+  before anyone came down the sky; or fight. His words hint and never say (#443, call 1). As built
+  (#502) the king's answers are the box's, and the caravan-master, his wagons and his girl stand
+  there as words only; the quest that joins them is #506's (§4.5; §9, #502's 5 and 12).
 - **The Mason's Tally.** A mason has deserted the causeway and hides in the rocks with the tally:
   eleven more shards and the road reaches the isle. He wants passage to Cinderport. Buy it for him,
   or swap the tally's page so the Hand sends for the wrong count.
@@ -644,14 +718,16 @@ Snow Troll and the Ashen Mason; and the giants, the Stair Giant and the Stair-ki
 their own.
 
 New in the Whitespine, for the novelty check (EXPANSION §5.4): the giants, a new family (#507), and
-with them the toll, a choice before a fight (#544), and sweep, one blow at every member of a row
-(#545); cliffs and peaks with the road through them (#543); a machine in a robe, which holy light
-passes through, and a bell that holds (MONSTERS §8.1). Its landmarks: a monastery kept by what did
-not build it, a whole Stone with the snow stopped round it, a stair cut in a cliff, a causeway of
-shards over the sea. The area's `novel` claims each as a box places it, since the check asks that
-what is claimed be used: peaks underfoot with J11 (#499), the monastery with Highcell (#500) and
-cliffs with I11 (#501); a machine in a robe has no token to claim and a bell that holds is
-paralysis, on the road before in the Kilns and others (§9, #499's 15; #500's 17; #501's 13).
+with them the toll, a choice before a fight (#544), the second after Thornmark's ogre's bargain
+(#645), and sweep, one blow at every member of a row (#545); cliffs and peaks with the road through
+them (#543); a machine in a robe, which holy light passes through, and a bell that holds (MONSTERS
+§8.1). Its landmarks: a monastery kept by what did not build it, a whole Stone with the snow
+stopped round it, a stair cut in a cliff, a causeway of shards over the sea. The area's `novel`
+claims each as a box places it, since the check asks that what is claimed be used: peaks underfoot
+with J11 (#499), the monastery with Highcell (#500), cliffs with I11 (#501) and the giants with I10
+(#502), the family alone, since the toll is Thornmark's mechanic (`encounter:choice`) and sweep has
+no token to claim; a machine in a robe has no token either and a bell that holds is paralysis, on
+the road before in the Kilns and others (§9, #499's 15; #500's 17; #501's 13; #502's 15).
 
 ## 8. The numbers
 
@@ -669,9 +745,10 @@ paralysis, on the road before in the Kilns and others (§9, #499's 15; #500's 17
   the shares are J11 2,650, Highcell 3,800, I11 2,350, I10 3,500, I9 2,050, I8 2,200 and the side
   quests about 1,300: about 17,850. The issues (#499 to #506) carry the first figures until their
   briefs are settled. As built: J11 2,791 (#499), 1.05 times its scaled share; Highcell 4,183
-  (#500), 1.10 times its 3,800; I11 2,355 (#501), 1.00 times its 2,350: 9,329 between them, so with
-  the other scaled shares (9,050) the shares stand at about 18,379, 1.03 times the ask (§9, #499's
-  9; #500's 4; #501's 9).
+  (#500), 1.10 times its 3,800; I11 2,355 (#501), 1.00 times its 2,350; I10 4,197 (#502), 1.20 times
+  its 3,500, under the 4,375 cap, and 1,046 to a company that pays the toll: 13,525 between them by
+  the curve's sum, so with the other scaled shares (5,550) the shares stand at about 19,075, 1.07
+  times the ask (§9, #499's 9; #500's 4; #501's 9; #502's 10).
 - **Gold.** Training six members from 22 to 24 costs about 10,800 with today's `trainPrice`, but
   nothing trains here (#443, call 7): the gold goes over the range to Cinderport, which teaches to
   27, and the third prestiges ask quests, not gold (DESIGN §5). The band's price window is 5,000
@@ -680,8 +757,12 @@ paralysis, on the road before in the Kilns and others (§9, #499's 15; #500's 17
   window, dear enough to be a choice and never a wall. A clear should still pay the training, in the hoard, the
   undercroft and the trolls' cave. As built: J11 holds 700 (#499), 300 in the cairn at the pass's
   foot and 400 in the store; Highcell holds 600 (#500), in the undercroft's chest; I11 holds 300
-  (#501), in the chest under the slab; so the three hold 1,600 of the 10,800. The dearest find is
-  Highcell's Ice Axe +1 at 1,950, inside the window; J11's is the Guide's Staff +1 at 1,750.
+  (#501), in the chest under the slab; I10 holds 1,920 (#502), 1,200 in the hoard under the seat
+  and the purses of the king (250 to 500) and of three giants (70 to 160 each); so the four hold
+  3,520 of the 10,800. The toll is 1,500, about what the range's finds hold before the head (J11,
+  I11 and Highcell, 1,600) and under the dearest ware the pass wears. The dearest find is I10's
+  Bear Spear +1 at 2,050, Rimewater's rung, in the hoard, inside the window; Highcell's is the Ice
+  Axe +1 at 1,950 and J11's the Guide's Staff +1 at 1,750 (§9, #502's 5 and 6).
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor: a
   company at 22 wins nine in ten of J11's fights and walks the road from the pass's foot to the gate
   resting at its camp; one at 20 wins no more than one in four. The Abbot is won about half the
@@ -694,13 +775,18 @@ paralysis, on the road before in the Kilns and others (§9, #499's 15; #500's 17
   manages 10.99 fights to a rest, a little over the aim; the Abbot is won 66% at 23 and 93% at 25,
   set off the boss line (§4.3; §9, #500's 6). On I11 a company at 22 wins every fight and walks the
   High Spine's road every time, 10.12 fights to a rest; one at 20 wins every fight too, owed to #18
-  (§4.4). The Whitespine's 13 groups are won 97.4% of the fights at their maps' floors and 95% two
-  under, owed to #18.
+  (§4.4). On I10 a company at 22 wins 86% of the fights, the king counted, and walks the road past
+  the giant and the troll every time, 11.72 fights to a rest, over the aim; one at 20 wins 68%, so
+  nothing is owed. The Stair-king is won 58% at 22 and 79% at 24, the gate's floors for him, and by
+  the gate's own measure 56% at 23 and 97% at 25, so "about half at 23, nearly always at 25" holds
+  (§4.5; §9, #502's 1 and 3). The Whitespine's 16 groups are won 95.3% of the fights at their maps'
+  floors and 89.9% two under, which holds, so the area's owed entry (#18) is dropped.
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3),
   measured over the squares the mountain leaves. As built: J11 99.1% within 8 steps and the furthest
   9, with no sign among its 22 points (#499); Highcell's two levels 100.0% within 7 steps, the
   furthest 5 on both, with one sign among their 15 and 9 points (#500); I11 99.5% within 8 steps and
-  the furthest 9, with no sign among its 26 points (#501).
+  the furthest 9, with no sign among its 26 points (#501); I10 99.7% within 8 steps and the furthest
+  9, with no sign among its 31 points (#502).
 
 ## 9. Decisions
 
@@ -1014,6 +1100,80 @@ Decided by delegate for #501, each the owner's to overturn:
 16. **The site "Peak Stone" loses `planned`,** and the `highspine` zone row gets its map and its
     crossing words.
 
+Decided by delegate for #502, each the owner's to overturn:
+
+1. **I10 is banded 22–24, not the doc's 23–24.** The curve wants a map's hardest group at least the
+   larger of its floor plus one and its top less two, which at 23–24 is 24, and only the king alone
+   is that: the brief's group, the king and two giants, is 23.3. Banded from the area's floor, as
+   Highcell's upper house and I11 are, it keeps that group with the king its leader. The gate
+   judges the box at 22 and the king at 22 and 24 (58% and 79%); as it measures a fight he is 56%
+   at 23 and 97% at 25, so "about half at 23, nearly always at 25" holds. The other way: the king
+   alone as the boss, as the Abbot is, and the giants a group of their own, which loses their
+   breaking when he falls.
+2. **The giants sweep** (`sweep: { chance: 0.25 }`, bare: an arm, the front row), both. The Stair
+   Giant is MONSTERS §3.3's sweeper, the brute come down whole to 0.85 of its line: 632 hit points
+   to 537 and 5d7+8 to 4d7+8; its xp (1,827) and gold (70 to 160) are kept.
+3. **The Stair-king is tuned by the gate, level 24 kept:** 1,381 hit points to 1,650 and 24d8+24 to
+   16d8+16, sweeping a turn in four; xp 15,253 and gold 250 to 500 kept. 1,600 and 18d8+18 was 73%
+   at 24, under the limit; 1,700 and 15d8+15 was 38% at 22, which drops the map's floor figure
+   under 80%. He is listed off the line, as the Abbot is (`OFF_LINE`, `tools/tests/harness.ts`).
+4. **The king's group** `i10_king` stands at 2,20, the Stair's top step: the king and two giants,
+   he their leader, not roaming, not coming back, with a slain line. The Stair (the road at 0,20 and
+   1,20 between the Sheer's cliff and the seat's rock) is reached from the top only through 2,20,
+   so no company goes down unasked. A Mountaineer can still climb down the Sheer anywhere, as at
+   I11.
+5. **The toll** (`TOLL`, exported from the map) is 1,500 gold: inside the 5,000 window, about what
+   the range's finds hold before the head (J11 700, I11 300, Highcell 600, so the range pays its
+   own toll if nothing else is spent) and under the dearest ware the pass wears (2,050). The
+   answers: pay; give him the grey part (I11's nest); give him the faceless coin (Thornmark's, #56's
+   9); refuse. Each of the three sets a flag, `toll_paid`, `toll_part` or `toll_coin`, for #506's 47
+   to read. The ask is the doc's toll line, and the part's answer carries *We were on this mountain
+   before anyone came down the sky.*
+6. **The hoard** is under the seat, a slab of rock: a hollow at 2,18 (the chest `i10_hoard`: 1,200
+   gold and a Bear Spear +1, Rimewater's rung at 2,050, the area's dearest find) and 2,19 (the
+   doc's hoard line, `i10_hoard_seen`), walled in rock (the Sheer's cliff at 1,18 and 1,19 made
+   rock, so no climb reaches it), its one mouth the king's square. A company that paid walks through
+   his square (a group answered stands aside and is walked through, MONSTERS #544's 4), so it can
+   rob the hoard: the game has no chest kept shut while its group stands. For the owner: accept it,
+   or a systems call.
+7. **The Stair and the head:** the road leaves the trail at 23,20 and runs west to 8,20, the
+   atlas's link end (272,306); the head is cut stone at 2 to 7,20, 3 to 7,21 and 5 to 7,19, the
+   Stair road at 1,20 and 0,20 through the Sheer to the west edge. The atlas draws no road for the
+   link, so the edge check's square 0,20 is owed to #510 (`EDGES_OWED`, `tools/tests/pillars.ts`).
+8. **The Stair in snow,** `i10_stair` at 13,20 on the road short of the head: a giant and a snow
+   troll, not roaming, respawning at 2880, snow drifted round them (rows 18 to 22, columns 10 to
+   16). The drift at 12,21 (*The wind did not lay it.*) and burnt bones by the trail at 20,16 are
+   things seen.
+9. **Three groups, the brief's encounters, not §4.5's seven:** eagles (3) in the pines nearest the
+   way in (17,25), the Stair in snow and the king's. The king's alone pays 3,151; four eagles would
+   pay 4,343 (1.24 times its share), three pay 4,197.
+10. **I10 pays 4,197 xp a member,** 1.20 times the doc's scaled share of 3,500 (the doc wins over
+    the issue's 2,400), under the 4,375 cap; 1,046 to a company that pays the toll. The area stands
+    at 13,525; with I9, I8 and the side quests' scaled shares (5,550) it comes to about 19,075,
+    1.07 times the ask (§8).
+11. **Stairwatch** is the rock south of the head (3 to 8,24 to 25; 4,26; 7 to 8,26; 4 to 7,27), the
+    chimney a secret door at 6,24 off the pines, its shaft 6,25, the ledge 5,26 and 6,26. The
+    ledge's event `i10_ledge` is at the atlas's site, 6,26 (270,312), and the site loses `planned`,
+    as Spine Summit's did. The hints are the rope's wear at 6,23 (the secret's `hint`) and smoke at
+    9,22. The old champion (5,26) has words only; #448 keeps his trainer entry and the night on the
+    ledge.
+12. **The caravan** short of the head: the caravan-master (18,19) and the wagons (18,21) east of the
+    Stair in snow, and his girl (6,19) at the head, off the road. People with words only, as J11's
+    herder; #506's 47 makes the quest.
+13. **The issue's secret, the maintenance mark,** is a thing seen on the toll-stone (`i10_tollstone`
+    at 4,21: a ring with a bar across it), not a door; the doc's secret, the chimney, is the box's.
+14. **The shrine older than the monks'** is at 7,21, of might, a stone hand held out; the cairn at
+    the trail's crossing, 22,21, holds a Sapphire Vial and no gold; the camp, The drovers' fire, is
+    at 11,28.
+15. **Novelty claims the family `giants` alone:** `uses()` has no token for sweep (as G10 found),
+    and `encounter:choice` is Thornmark's (#645). The toll is the second choice put before a fight,
+    and §2 says so.
+16. **The trail behind the north ring:** 19,1 is pine and 18,2 road, not the scaffold's road at
+    19,1, which sat behind the ring square 19,0 against the atlas's mountain at 283,285 (the edge
+    check).
+17. **The Stone's ring** (#501's 6) is closed round on I10's row 31 by the mountain at 26 and 28 to
+    30, the trail at 27 its one way north.
+
 ## 10. Names
 
 The Whitespine's naming pass, by the rules of `docs/NAMES.md`: the range keeps the Crown's and the
@@ -1075,9 +1235,22 @@ Cut and owed, from Highcell (#500):
 
 Owed, from I11 (#501):
 
-- **The ring closed round.** The Stone stands on the north edge and its ring is open to I10 there;
-  #502 may close it on its row 31 (26 to 30) and take the ridge trail on from 27,0 (§9, #501's 4
-  and 6).
 - **The Eagles' Nest hand-ins.** The Lantern's Badge and the Lantern's Instruments, which the
   Lanterns' halls take, are found and not yet taken; the Smooth Grey Part is what the toll at the
-  Stair's head may take (#502). The quest, #56's 46, is #506's (§9, #501's 10 and 11).
+  Stair's head takes (#502, §4.5). The quest, #56's 46, is #506's (§9, #501's 10 and 11).
+
+Cut and owed, from I10 (#502):
+
+- **Three groups for the brief's seven,** the pay at 1.20 times its share already: a fourth eagle
+  would take the box to 4,343, 1.24 times, near the 4,375 cap (§9, #502's 9).
+- **The hoard can be robbed once the toll is paid.** The game has no chest kept shut while its group
+  stands, and a company that paid walks through the king's square to the hollow: the owner may
+  accept it or ask for a systems change (§9, #502's 6).
+- **The issue's own secret,** the maintenance mark, is a thing seen on the toll-stone and not a
+  door: the chimney to the ledge is the secret, as §4.5 has it (§9, #502's 13).
+- **The Stair's foot.** Its edge square at 0,20 is owed to #510 with the rest of H10, the atlas
+  drawing no road for the link (§9, #502's 7).
+- **The Toll and the ledge.** The Toll (#56's 47) is #506's, with the caravan-master, his wagons and
+  his girl as words only and the flags `toll_paid`, `toll_part` and `toll_coin` for it to read; the
+  old champion on the ledge has words only, his trainer entry and the night on the ledge being
+  #448's (§9, #502's 5, 11 and 12).

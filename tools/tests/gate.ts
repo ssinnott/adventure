@@ -85,6 +85,8 @@ export const BOSSES: Record<string, readonly string[]> = {
   cairnfield: ['cairns2:cd2_king'],
   coldmere: ['sleepers_bay2:sb2_matron'],
   monksvale: ['monastery2:hc2_abbot'],
+  // The Stair-king at the Stair's head, who asks the toll first; the bot refuses (#502).
+  highspine: ['highspine_i10:i10_king'],
 };
 
 /** Each zone's road: the groups met on it, in order, from its way in. Every zone with groups names one. */
@@ -131,8 +133,10 @@ export const ROADS: Record<string, readonly string[]> = {
   // Down the track off the coast past the salamanders on the slope to the stokers at the vents' mouths,
   // the way down to Meridian Camp (#513).
   firemount: ['firemount_g11:g11_salamanders', 'firemount_g11:g11_stokers'],
-  // Over the crest from the vale and up the path to the Peak Stone, past the brothers walking it (#501).
-  highspine: ['highspine_i11:i11_brothers'],
+  // Over the crest from the vale and up the path to the Peak Stone, past the brothers walking it (#501);
+  // then up the ridge trail and west along the road to the Stair, past the giant and the troll in the
+  // snow short of the head (#502).
+  highspine: ['highspine_i11:i11_brothers', 'highspine_i10:i10_stair'],
 };
 
 /** What an area is called in the check, apart from the map it shares an id with. */
@@ -201,7 +205,6 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'monksvale_j11: under': { whose: '#18', at: 1 },
   // And Highcell's upper house (#500), banded from the area's floor as Carn Dubh's cairn is.
   'monastery: under': { whose: '#18', at: 1 },
-  'the Whitespine: under': { whose: '#18', at: 1 },
   // And Ashfall's first box (#511), in Rimewater's gear and the finds by 24, as the Whitespine's are.
   'cindercoast_g10: under': { whose: '#18', at: 1 },
   'Ashfall: under': { whose: '#18', at: 1 },

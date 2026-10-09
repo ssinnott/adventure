@@ -30,8 +30,11 @@ export const MONSTERS: readonly MonsterDef[] = [
   // on the causeway at Sheer Point (#504), a soldier on MONSTERS §4.4's line at 23: the Hand, so it never breaks
   { id: 'ashen_mason', name: 'Ashen Mason', plural: 'Ashen Masons', sprite: 'mason', kind: 'person', steady: true, look: 'A hammer from below, and a shard to set.', level: 23, hp: 319, ac: 23, attack: 13, dice: 4, sides: 8, bonus: 2, speed: 11, xp: 913, gold: [45, 100], tint: '#5a5250', size: 0.95 },
   // the Giants' Stair (#502), a brute on MONSTERS §4.4's line at 23, size 2 and drawn inside TALL_REACH: people, so they
-  // break when their king falls; sweep (#545) and the toll (#544) are their builders' to give them
-  { id: 'stair_giant', name: 'Stair Giant', plural: 'Stair Giants', sprite: 'stair_giant', kind: 'person', look: 'A man as tall as a house, holding out his hand.', level: 23, hp: 632, ac: 21, attack: 14, dice: 5, sides: 7, bonus: 8, speed: 8, xp: 1827, gold: [70, 160], tint: '#6c6152', size: 2 },
-  // the Stair's head (#502), its boss at 24 on MONSTERS §4.4's boss line, for #502's gate to tune; the toll's coin in his purse
-  { id: 'stair_king', name: 'The Stair-king', plural: 'Stair-kings', sprite: 'stair_king', kind: 'person', look: 'He has taken the toll here since before Helmstow.', level: 24, hp: 1381, ac: 25, attack: 16, dice: 24, sides: 8, bonus: 24, speed: 13, xp: 15253, gold: [250, 500], tint: '#4f5560', size: 2 },
+  // break when their king falls (the leader of I10's group); a sweeper, so the brute come down whole to 0.85 of its line
+  // (632 hit points and 5d7+8 to 537 and 4d7+8), its arm sweeping the front row a turn in four (MONSTERS §3.3, #545)
+  { id: 'stair_giant', name: 'Stair Giant', plural: 'Stair Giants', sprite: 'stair_giant', kind: 'person', look: 'A man as tall as a house, holding out his hand.', level: 23, hp: 537, ac: 21, attack: 14, dice: 4, sides: 7, bonus: 8, speed: 8, xp: 1827, gold: [70, 160], sweep: { chance: 0.25 }, tint: '#6c6152', size: 2 },
+  // the Stair's head (#502), its boss at 24 with two giants, sweeping as they do; tuned by #502's gate from the boss
+  // line's 1,381 and 24d8+24 to 1,650 and 16d8+16, won about half the time at 22 and 23 and nearly always at 25; the
+  // toll's coin in his purse
+  { id: 'stair_king', name: 'The Stair-king', plural: 'Stair-kings', sprite: 'stair_king', kind: 'person', look: 'He has taken the toll here since before Helmstow.', level: 24, hp: 1650, ac: 25, attack: 16, dice: 16, sides: 8, bonus: 16, speed: 13, xp: 15253, gold: [250, 500], sweep: { chance: 0.25 }, tint: '#4f5560', size: 2 },
 ];
