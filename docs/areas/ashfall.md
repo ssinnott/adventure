@@ -1223,7 +1223,7 @@ Two halls open here (DESIGN §8; #443, call 7), on the rules and the hall menu b
   Ashfall's boxes, settled in #512: it offers and pays the Guild's one ladder and adds none of its
   own (§9, #512's 6). The Surveyor's, *The Fourth Journal*, is built with the Ember Stone (#516; PR
   B of four for #635: A, the Fence's, merged as #648; C, the Mapmaker's, built with Meridian Camp's
-  third level, below; D, the Factor's, rides the Dead-Drop). Either hall offers it to a Surveyor
+  third level, below; D, the Factor's, is built, #697). Either hall offers it to a Surveyor
   once the Sleepers are seen (`q_sleepers_seen`, the Act IV opening); its deed is the fourth
   journal's chest opened in the lower gallery under the Stone (§4.8), and the hall pays 500 gold and
   3,600 xp, 600 a member, and fills the shelf (§9, #516's 16 and 17). The Mapmaker's, *Fane's Fire*
@@ -2650,7 +2650,7 @@ Cut and owed, from the Ember Stone (#516):
   #516's 12).
 - **The chapter reads `q_ember_lit`:** its Stone lit and the road on are built (#518, §5), and the
   sentries carry no part (§9, #518's 10).
-- **The Factor's rung** (the Compact's rank 3) is owed to the Dead-Drop (#635's PR D, #22); the
+- **The Factor's rung** (the Compact's rank 3) is built (#635's PR D, #697); the
   Mapmaker's, *Fane's Fire*, is built (§6; §9, #635's 1 to 7). The Chart House's picture
   (`cinderport_cartographers`, in `src/ui/interiors`) may draw the shelf's gap; the flag does not
   change it.

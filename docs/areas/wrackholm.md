@@ -15,7 +15,7 @@ two levels are built under it (#188), F6, the east rocks, beside it (#189), and 
 three decks, its Rift and the stair's foot off F6's shore (#190). Its content is
 `src/content/areas/wrackholm/` (`index.ts`, its maps, monsters, items and atlas, its walkthrough;
 its chapter of the one quest, The Stone Carried Home, in `chapter.ts` and its side quests in
-`quests.ts`, #192, with the Compact's Fence's rung in `guilds.ts`, #635); it has no town and no
+`quests.ts`, #192, with the Compact's Fence's and Factor's rungs in `guilds.ts`, #635); it has no town and no
 businesses, so no rooms. Its part of the world map is
 its folder's (`atlas.ts`, #186), which the Area now carries; the plan no longer spreads it in. Its
 ids: the area and its zone `wrackholm`, the cove `smugglers_cove` (the id stays under the new name,
@@ -141,7 +141,7 @@ The places, as the atlas and the docs have them:
 | Kelp Hole (Smugglers' Cove) | E6, and below | the Compact's crews and the Hand's cargo; the sea cave, where the Great Devilfish is fed (MONSTERS §6.2); the captain's brother (#56's 25); what the smugglers feed (#56's 28) | built: its two plates at 150,158 and 150,164, its way in at 154,170 |
 | The east rocks | F6 | the hermit who has counted the ships since the founder died (#56's 26) | rock, 105 squares at the isle's east end |
 | The Tide Ship | F6, and aboard | the hold's two kinds of cargo; Hale in the last row; the papers on Wenna; the Stone in the forward hold, with its Rift (DESIGN §9, STORY, MONSTERS §6.2); every name in the column (#56's 27) | a planned wreck at 182,188, its plate at 208,192 |
-| The Dead-Drop | below the hold | the Compact's orders come from there; three third-prestige quests go down (#22, #19) | built: the drop, the vaults and the counting house, their plates at 208,204, 208,210 and 208,216, band 26–28 (#22); the quests that go down are owed (docs/areas/dead_drop.md §10) |
+| The Dead-Drop | below the hold | the Compact's orders come from there; three third-prestige quests go down (#22, #19) | built: the drop, the vaults and the counting house, their plates at 208,204, 208,210 and 208,216, band 26–28 (#22); the Compact's Factor's rung, which asks for its orders, is built (§6, #635), and so is the Thief's third prestige, which steals them (docs/areas/dead_drop.md §5) |
 
 ### 4.1 The briefs
 
@@ -466,6 +466,19 @@ a company that has been down the hatch already is paid at the taking, with the w
 came early, and both say not yet and name nothing below. The walkthrough takes it at the stair's
 foot, before the foot is seen and after, and a Runner is not offered it.
 
+**The Compact's Factor's rung** (#635, PR D) is the next in `guilds.ts`: *In the Founder's Hand*
+(`compact_factor`, rank 3), offered to a Factor at either hall once Act IV opens (the Sleepers
+seen, as the Surveyor's). A hall asks an order brought up from below; the deed is the Compact's
+Orders in the pack (`{ item: 'compact_orders' }`, the counting house's out-tray, docs/areas/
+dead_drop.md §4.3), a goal and never a hand-in, so the hall takes nothing and the Thief's third
+prestige can still carry them. It pays 800 gold and 4,800 xp, once, and makes the company Partners;
+a company that carried the orders before it took the rung is paid at the taking, with the words
+for one that came early. The rank it pays reveals: Ruan, in the Keel at Saltmouth, puts the
+Compact's choice once the rung is paid (docs/areas/saltreach.md §4.9, docs/areas/dead_drop.md §5),
+the orders handed to the Wardens or the Compact taken over, each setting its own flag. The
+walkthrough plays the rung beside the counting house's orders, not offered before the Sleepers are
+seen, paid at the Keel and early, and Ruan's choice both ways.
+
 ## 7. Encounters, and what is new
 
 MONSTERS §6.2 has the roster and the fights: the Wrack Gull, the Bilge Rat, the Wrack Smuggler and
@@ -497,7 +510,9 @@ besides the devilfish and the heather (#190): the wreck, the Tide Ship's site.
   and in the quarters and the bowman over the side are cut, but each deck keeps a group strong
   enough for the gate's fights to a rest. A clear of the four maps gives 10,526 a member, 7% over
   the curve, and the side quests' 900 would bring it to about 11,430, 16% over. The Fence's rung
-  (§6) adds 100 a member: the curve test counts 10,626 of the 9,867, 8% over (§9, #635's 6).
+  (§6) adds 100 a member: the curve test counts 10,626 of the 9,867, 8% over (§9, #635's 6). The
+  Factor's rung (§6) adds 800 more, with the guild quests counted in the area whose file holds
+  them: 11,426 of the 9,867, 16% over (§9, PR D's 8).
   From here on a kill pays
   by level (#159); the curve's row reports what a clear falls short of as owed to #154 until the
   maps exist, and MONSTERS' open question 4, what a fight is worth from Saltreach on, is settled on
@@ -505,7 +520,7 @@ besides the devilfish and the heather (#190): the wreck, the Tide Ship's site.
 - **Gold.** Training six members from 12 to 14 costs about 6,000 with today's `trainPrice`; the
   hold's strongboxes and the crews' drops pay it, and the isle has no shop to spend it in until the
   boat back. As built a clear gives 6,079 (#190): the ship's chests carry 3,200 of it. The curve
-  test counts 6,479 now, with the Fence's rung's 200 (§9, #635's 6).
+  test counts 7,279 now, with the Fence's rung's 200 and the Factor's 800 (§9, #635's 6, PR D's 8).
 - **The gate.** Each map at its own floor (docs/areas/thornmark.md §9, 17): a company at 12 wins nine
   in ten on E6 and one at 10 no more than one in four; the Great Devilfish is won about half the time
   at 12 and nearly always at 14, the Warden of the Tide the same.
@@ -561,6 +576,33 @@ Decided by delegate for #635 (the Fence's rung), each the owner's to overturn:
    as the side quests' pay is (§8): the curve test counts 10,626 xp a member of the 9,867 asked
    (10,526 before) and 6,479 gold of the 6,000 (6,279 before), both 8% over, so the row needs no
    owed figure.
+
+Decided by delegate for #635 (PR D), each the owner's to overturn:
+
+1. **The rung is built now,** on the counting house's orders (#22): *In the Founder's Hand*
+   (`compact_factor`, `guilds.ts`, rank 3), offered to a Factor at either hall, naming no giver but
+   Ruan and no Tallymaster.
+2. **The deed is `goal: { item: 'compact_orders' }`, never `item:`:** a hall takes nothing, so the
+   orders stay in the pack for the Thief's third prestige (#448), which asks for them too.
+3. **It waits for Act IV on the Surveyor's `after`** (`q_sleepers_seen`), since the Fence's rung
+   below has none; its goal names the Keel and the factor's house.
+4. **The pay is 800 gold and 4,800 xp,** 800 a member, the Mapmaker's sum and the ladder's last
+   rise after the Fence's 200 and 600. It makes a Partner, the top rank, which has no quest.
+5. **Ruan's choice is keyed to the rung paid** (`q_compact_factor_done`), not to `rank_compact`,
+   which is the rank's number and holds from Runner. No rank waits on it; it is put until answered.
+6. **One question, two answers, a flag each** (`q_compact_wardens`, `q_compact_over`): nothing is
+   paid, given or taken, since dead_drop.md §5 names none and the orders stay in the pack. Only
+   her words read them.
+7. **The founder's seal is not taken by either answer,** though #182 left it to this rank (§4.4):
+   its grave is a secret, and an answer that took it would bar a company that never opened it. The
+   take-over answer may `take` it, if the owner wants.
+8. **The curve holds it** (guild quests count with the area that holds them): 11,426 xp a member of
+   the 9,867, 16% over (10,626 before), and 7,279 gold of the 6,000, 21% over (6,479 before). The
+   row owes nothing, so `progression.ts` is untouched.
+9. **`OWED_RANKS` owes nothing now:** the Compact's entry is all `undefined`, as the other guilds',
+   and each guild has its four ranks.
+10. **One edit to a built place:** Ruan in the Keel (`saltmouth.ts`) gains three entries in her
+    `says`, before the Runner's; no tile, sprite or interior changes, so no contact sheet.
 
 Decided by delegate for #192, each the owner's to overturn:
 
