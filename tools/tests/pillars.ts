@@ -388,11 +388,7 @@ export function edgeFaults(atlas: Atlas, defs: readonly MapDef[]): EdgeFault[] {
  * The squares where map and atlas disagree today, by whose fix they wait on: each is reported, and
  * fails once it agrees, so it is dropped here.
  */
-const EDGES_OWED: Record<string, readonly string[]> = {
-  // The Giants' Stair goes down through the Sheer out of I10's west edge for Ashfall's H10, a way
-  // between the zones (the atlas's link, 272,306 to 258,306) that the atlas draws no road for (#502).
-  '#510': ['highspine_i10 0,20'],
-};
+const EDGES_OWED: Record<string, readonly string[]> = {};
 
 /**
  * A flag that closes something, found in the maps: an exit, a hand-in, a service, or anything else
