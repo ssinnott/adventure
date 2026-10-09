@@ -19,7 +19,7 @@ export const CHAPTER: Chapter = {
   title: 'The Bells',
   start: OVER,
   // The Stair's top step stood on, past the king, paid or fought: `i10_top` sets it. Nothing is a lock:
-  // the gate is open at every hour, the ridge trail from the start, and the Stair to whoever pays or
+  // the gate is open at every hour, the ridge trail from the start and the Stair to whoever pays or
   // wins, so a company may reach the Point before Highcell and the journal reads true in that order.
   done: { flag: STAIR_TOP },
   entries: [

@@ -796,8 +796,8 @@ const TO_THE_GATE: Step = { name: 'over the pass to Highcell', play: (w) => {
 } };
 
 /**
- * Highcell, in at the gate: the cells, the board of the hours read the old way by a reader, down the
- * night stair to the chapter house, and its brothers and bells and the Abbot on its seat won.
+ * Highcell, in at the gate: the cells, the board of the hours read the old way by a reader, the night
+ * stair down to the chapter house and its brothers and bells and the Abbot on its seat won.
  */
 const HIGHCELL: Step = { name: 'Highcell', play: (w) => {
   walkThrough(w, 'monksvale_j11', GATE.x, GATE.y - 1, SOUTH, 'monastery', 1);
@@ -873,8 +873,8 @@ const DOWN: Step = { name: 'the top step', play: (w) => {
  * The Bells (#505), begun where Rimewater's chapter ends: in order, over the pass at 22, Highcell and
  * the Point at 23, the night and the Stair at 24, the toll paid; and with the Point reached first, the
  * night before Highcell and the toll refused, where the journal holds nothing of Highcell until it is
- * walked, the goal stays on the Stair, and at the end it reads the same but for the toll. Nobody on
- * the top step is told anything before the toll is answered or the king falls.
+ * walked and the goal stays on the Stair, and at the end it reads the same but for the toll. Nobody
+ * on the top step is told anything before the toll is answered or the king falls.
  */
 function theBells(ok: (cond: boolean, msg: string) => void): void {
   const early = newWalk(ok);
