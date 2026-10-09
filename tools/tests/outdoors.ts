@@ -23,7 +23,8 @@ import { logLines } from '../../src/ui/frame.ts';
  * Ashfall, begun by sea (#443, call 6), by the Compact's ship to Cinderport and out at its gate (#512).
  * The Wold's steppe, D9, met E10 only corner to corner until the mesas, D10 (#527), joined the two; it
  * is reached from Akordu's box, D8, over its north edge too (#526), D8 by the Riders' ride from
- * Cinderport to its landing there (#547).
+ * Cinderport to its landing there (#547). The Scarp's edge, C8, is reached over D8's west edge and up the
+ * Scarp stair from the Saltings' C7 (#528).
  */
 const CUT_OFF: Record<string, string> = {};
 
@@ -403,12 +404,12 @@ export function outdoors(): void {
     `D9's north edge is the steppe and the Riders' track at column 16, square for square with D8's south edge, its west the steppe, the dunes and the road at row 21 against C9 and its east the steppe against E9, past both of which the world ends, and its south the dunes, the steppe, the road at columns 22 and 23 and the rocks against D10 (${northOf(d9)}; ${southOf(d9)}; ${westOf(d9)}; ${eastOf(d9)})`);
   // Akordu's box (D8, #526): its south edge meets D9's north edge, the Riders' track at column 16 coming
   // up into the camp; its north edge the steppe and a knoll at columns 7 and 8 against D7, its west the
-  // steppe and the hills under the Scarp against C8 (#528) and its east the steppe against E8, parked
-  // (#534). None of those three is built, so the world ends past them.
+  // steppe and the hills against C8 (#528), square for square below, and its east the steppe against E8,
+  // parked (#534). D7 and E8 are not built, so the world ends past them.
   ok(southOf(d8) === 's'.repeat(16) + ':' + 's'.repeat(15) && northOf(d8) === 's'.repeat(7) + '^^' + 's'.repeat(23)
     && westOf(d8) === 's'.repeat(18) + '^^' + 's'.repeat(5) + '^'.repeat(6) + 's' && eastOf(d8) === 's'.repeat(32)
-    && [...Array(32).keys()].every((i) => [out.at(d8.x + i, d8.y - 1), out.at(d8.x - 1, d8.y + i), out.at(d8.x + 32, d8.y + i)].every((c) => c.ch === '%')),
-    `D8's south edge is the steppe and the Riders' track at column 16 against D9; its north the steppe and a knoll against D7, its west the steppe and the hills against C8 and its east the steppe against E8, past which the world ends (${northOf(d8)}; ${westOf(d8)}; ${eastOf(d8)})`);
+    && [...Array(32).keys()].every((i) => [out.at(d8.x + i, d8.y - 1), out.at(d8.x + 32, d8.y + i)].every((c) => c.ch === '%')),
+    `D8's south edge is the steppe and the Riders' track at column 16 against D9; its north the steppe and a knoll against D7 and its east the steppe against E8, past which the world ends, and its west the steppe and the hills against C8 (${northOf(d8)}; ${westOf(d8)}; ${eastOf(d8)})`);
   // The mesas (D10, #527), the Wold's way in, between E10 and D9. Its east edge meets E10's west: the great
   // mesa's east face at rows 0 to 5 against E10's steppe and hills, the road at row 6, and the hills and the
   // steppe below it open both sides. Its north edge meets D9's south: the dunes and the hills against D9's
@@ -425,6 +426,19 @@ export function outdoors(): void {
   ok(westOf(d10) === 'u'.repeat(7) + 's'.repeat(8) + 'r'.repeat(8) + 's'.repeat(8) + '^' && southOf(d10) === '^s' + '^'.repeat(22) + 's'.repeat(8)
     && [...Array(32).keys()].every((i) => [out.at(d10.x - 1, d10.y + i), out.at(d10.x + i, d10.y + 32)].every((c) => c.ch === '%')),
     `D10's west edge is the dunes, the steppe, the small mesa's rock and the steppe again against C10, and its south the hills and the steppe against D11, past both of which the world ends (${westOf(d10)}; ${southOf(d10)})`);
+  // The Scarp's edge (C8, #528): its east edge meets D8's west edge square for square, the steppe and the
+  // hills; its north edge is the Scarp's lip, cliff over the Saltings' C7, the rock of the cleft at
+  // columns 21 to 24 and the steppe where the lip bends north at the east end, open only at column 8, the
+  // stair's last flight, which meets C7's flights cut up column 8 through the mountain from the notch; its
+  // west edge the lip's end and the steppe against B8 (#529) and its south the steppe and the hills against
+  // C9, parked. Neither is built, so the world ends past them.
+  const c8 = out.zones.find((z) => z.id === 'wold_c8')!, c7 = out.zones.find((z) => z.id === 'saltings_c7')!;
+  ok(c8.x + c8.w === d8.x && c8.y === d8.y && eastOf(c8) === westOf(d8) && c7.x === c8.x && c7.y + c7.h === c8.y
+    && northOf(c8) === '|'.repeat(8) + '"' + '|'.repeat(12) + 'rrrr' + '|||' + 'ssss' && southOf(c7) === '%' + 'M'.repeat(7) + '"' + 'M'.repeat(22) + '%'
+    && out.passable(c8.x + 8, c8.y - 1) === 'ok' && out.passable(c8.x + 8, c8.y) === 'ok'
+    && westOf(c8) === '|' + 's'.repeat(31) && southOf(c8) === 's'.repeat(27) + '^^sss'
+    && [...Array(32).keys()].every((i) => [out.at(c8.x - 1, c8.y + i), out.at(c8.x + i, c8.y + 32)].every((c) => c.ch === '%')),
+    `C8's east edge meets D8's west edge square for square; its north edge is the Scarp's lip over C7's mountain, open only where the stair's last flight meets C7's flights at column 8; its west the steppe against B8 and its south the steppe and the hills against C9, past which the world ends (${northOf(c8)}; ${southOf(c7)}; ${westOf(c8)}; ${southOf(c8)})`);
   // Fionnlios's box (O7, #477): its west edge meets N7's east edge square for square, the peat-cutter's
   // track crossing at row 22 and the tarn's stream at the corner, out into N7's corner and O8's; its
   // north edge the hills and the Kilns' grass under O6, square for square with O6's south edge but its

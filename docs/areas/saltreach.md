@@ -637,7 +637,8 @@ settled in its issue, and what the pilot teaches changes them.
 - **Purpose.** The Saltings' pans south of Saltmouth, the salt crabs' country, and the Scarp rising
   at the box's south edge toward the Glasswold, Act IV's border.
 - **Landmarks.** Salt flats with the pans' walls and the salters' huts, walked in lanes; the Scarp's
-  cliff as the south edge with the stair's foot at 80,206 seen and not climbed; the last marsh
+  cliff as the south edge with the stair's foot at 80,206 seen and, since the Wold's C8 (#528),
+  climbed (docs/areas/glasswold.md §4.6); the last marsh
   between the pans and the town.
 - **Points of interest,** about five features and five groups:
   - a salter with a rumour of the star that moved (#56's 24);
@@ -1201,7 +1202,8 @@ Decided by delegate for #178, each the owner's to overturn:
    A map is its whole box, so Act IV opens them by editing this one.
 4. **The stair's foot is a notch at 8,22,** at the end of a track from the link's 80,206, its lowest
    flight fallen with the face: rock in plain sight with its reason on it, no flag and nothing in
-   `locks.ts`. The link stays the plan's, for Act IV to move with the way past the fall.
+   `locks.ts`. The link stays the plan's: Act IV's C8 (#528) kept it and built the way
+   past the fall as a rope ladder (docs/areas/glasswold.md §4.6, §9, #528's 2 and 4).
 5. **The Star That Moved's watch is built as a night event that sets nothing,** and the salter's
    rumour names no one: the quest and its choice are #183's, with Hiske, Saltmouth's astrologer
    (#177), and it rewrites `c7_star` as the watch. The quest's pay is §6's, not C7's.
