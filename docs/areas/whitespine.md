@@ -202,8 +202,8 @@ The chapter, on the places built (#505):
   its Abbot fallen; the Peak Stone; the causeway's first stone; the night she is taken and her
   knot; and the Stair's head and its toll, paid or refused. Its goals stand in Highcell, on I8 and
   on I10, so Monks' Vale, Sheer Point and the High Spine each hold a step. It is done on the
-  Stair's top step, I10's 1,20, which sets `q_stair_top` once the toll is answered or the king is
-  down; Ashfall's chapter (#518) reads that flag (§5).
+  Stair's first step below the king's, I10's 1,20, which sets `q_stair_top` once the toll is
+  answered or the king is down; Ashfall's chapter (#518) reads that flag (§5).
 
 Its row on the curve is in (#542), in `src/content/progression.ts`: band 22–24, next 24, window
 5,000, owed to #445 while the area is built box by box, with 17,429 xp a member and 5,290 gold in
@@ -599,7 +599,9 @@ settled in its issue.
   since we were set here, and nobody has come to say stop."* A company may pay 1,500 gold, give him
   the grey part from I11's nest, give him the faceless coin of #56's 9, or refuse, and the fight is
   his and theirs; the three that satisfy him set `toll_paid`, `toll_part` or `toll_coin`, for #506's
-  47 to read, and the giants step off the Stair and stand aside (§9, #502's 5). Under the seat,
+  47 to read, and the giants step off the Stair and stand aside (§9, #502's 5). Below the king's
+  square, at 1,20, the way down is seen once the toll is answered or the king is down (`i10_top`),
+  and the chapter ends there (§5, #505). Under the seat,
   walled in rock (the Sheer's cliff at 1,18 and 1,19 is made rock, so no climb reaches it), the
   hollow of his hoard: at 2,19 *Coin of Helmstow on top. Under it, coin with no face. Under that,
   nothing.*, and at 2,18 the chest `i10_hoard`, 1,200 gold and a Bear Spear +1, Rimewater's rung at
@@ -834,12 +836,12 @@ bled and the Abbot's grey plate, on `hc2_abbot` slain; the Peak Stone whole, on 
 road of cut stone, on `i8_causeway`, its first stone; the night, the explorers' line read again and
 the one Stone left, each on `q_wenna_taken`; her knot, on `i8_knot`; the Stair's head, on
 `i10_head`; the toll paid (`toll_paid`, `toll_part` or `toll_coin`) or the king fought (`i10_king`
-slain); and the way down, on `q_stair_top`. Seven goals, furthest along first: the top step (on
+slain); and the way down, on `q_stair_top`. Seven goals, furthest along first: the way down (on
 `STAIR_PASSED`, the toll answered or the king slain), the toll (on `i10_head`) and the Stair (on
 `q_wenna_taken`), all on I10; her fire (on `i8_causeway`) and the Point (on `hc2_chapter`), on I8;
 Highcell's chapter house (on `monastery` visited) and its gate (the start), in Highcell. The
 chapter is done on `q_stair_top` (`STAIR_TOP`, exported from `maps/highspine_i10.ts`), which a new
-once-event, `i10_top`, sets on the Stair's top step at I10's 1,20, past the king's square; it is
+once-event, `i10_top`, sets on the Stair's first step below the king's, I10's 1,20; it is
 there only once the toll is answered or the king is down. **Ashfall's chapter (#518) reads
 `q_stair_top`.** She is unnamed in the journal, as in every line, and nobody is named reading the
 line. The chapter pays no xp of its own (§8 gives it none). The walkthrough plays it at 22, 23 and
@@ -1501,8 +1503,8 @@ Decided by delegate for #505, each the owner's to overturn:
 
 1. **Begun where The Sleepers ends, or in Monks' Vale:** its start is Rimewater's end, so the goal
    goes on over the pass with no gap, and a company in J11 by any other way begins it there.
-2. **Done on `q_stair_top`:** `i10_top`, on the top step past the king, there once the toll is
-   answered or the king is down; named for the step, not the working title, for #518 to read.
+2. **Done on `q_stair_top`:** `i10_top`, on the step below the king's, there once the toll is
+   answered or the king is down; named for the place, not the working title, for #518 to read.
 3. **She is unnamed in the journal:** the girl out of the hole in the goal and her in the entries,
    as Rimewater's journal and every line have her; Wenna is the docs' name.
 4. **Nobody is named reading the explorers' line:** the doc's Cassian is a member a company may not

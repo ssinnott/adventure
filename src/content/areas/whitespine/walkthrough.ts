@@ -859,14 +859,14 @@ const REFUSE: Step = { name: 'the toll refused', play: (w) => {
   w.ok(said.startsWith('He sighs') && !w.party.flags.toll_paid, `the toll refused, the king fights and falls (${said})`);
 } };
 
-/** Past the king's square onto the Stair's top step, looking down into the ash. */
-const DOWN: Step = { name: 'the top step', play: (w) => {
+/** Past the king's square onto the Stair below it, looking down into the ash. */
+const DOWN: Step = { name: 'onto the Stair', play: (w) => {
   w.world.travel('highspine_i10', KING.x + 1, KING.y, WEST);
   const steps = [w.world.move('forward'), w.world.move('forward')];
   const said = [...steps.flatMap((r) => (r.kind === 'moved' ? r.messages : [])), ...w.world.eventsHere()];
   listen(w);
-  w.ok(steps.every((r) => r.kind === 'moved' && !r.encounter && !r.asks) && said.some((t) => t.startsWith('From the top step the Stair goes down')) && !!w.party.flags[STAIR_TOP],
-    `past the king's square to the top step, the way down into the ash, and ${STAIR_TOP} is set`);
+  w.ok(steps.every((r) => r.kind === 'moved' && !r.encounter && !r.asks) && said.some((t) => t.startsWith('Below the head the Stair goes down')) && !!w.party.flags[STAIR_TOP],
+    `past the king's square onto the Stair, the way down into the ash, and ${STAIR_TOP} is set`);
 } };
 
 /**
@@ -874,12 +874,12 @@ const DOWN: Step = { name: 'the top step', play: (w) => {
  * the Point at 23, the night and the Stair at 24, the toll paid; and with the Point reached first, the
  * night before Highcell and the toll refused, where the journal holds nothing of Highcell until it is
  * walked and the goal stays on the Stair, and at the end it reads the same but for the toll. Nobody
- * on the top step is told anything before the toll is answered or the king falls.
+ * on the Stair below the king is told anything before the toll is answered or the king falls.
  */
 function theBells(ok: (cond: boolean, msg: string) => void): void {
   const early = newWalk(ok);
   early.world.travel('highspine_i10', 1, 20, WEST);
-  ok(!early.world.eventsHere().length && !early.party.flags[STAIR_TOP], 'on the top step before the toll is answered or the king falls, nothing is said or set');
+  ok(!early.world.eventsHere().length && !early.party.flags[STAIR_TOP], 'on the Stair below the king before the toll is answered or the king falls, nothing is said or set');
   const south = CHAPTER.goals.at(-1)!.text, stair = CHAPTER.goals.find((g) => g.text.startsWith('South again'))!.text;
   const read: string[] = [];
   for (const [how, pointFirst] of [['in order, the toll paid', false], ['the Point first, the toll refused', true]] as const) {
@@ -908,7 +908,7 @@ function theBells(ok: (cond: boolean, msg: string) => void): void {
     goalFromBegun(w, how);
     const ends = w.news.filter((n) => n === `Chapter complete: ${CHAPTER.title}.`).length;
     ok(!!quest(w)?.pages.find((p) => p.def === CHAPTER)?.done && ends === 1 && w.level === 24,
-      `${how}, the top step stood on, the chapter is done at 24, and said so once (${ends})`);
+      `${how}, down onto the Stair, the chapter is done at 24, and said so once (${ends})`);
     read.push(written(w).join(', '));
   }
   ok(read[0] === 'bells, cells, board, abbot, stone, causeway, night, knot, heart, far, stair, paid, top' && read[1] === read[0].replace('paid', 'fought'),

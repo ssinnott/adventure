@@ -3,7 +3,7 @@
 // giant and the snow troll in the snow on it and the caravan drawn up short of the head; the head,
 // cut too regular for a road, the toll-stone, the old shrine, the king's seat and the hoard under it,
 // and the Stair-king with two giants, who asks the toll before he fights; the Stair itself, cut down
-// through the Sheer to the west edge, and its top step, past the king, where the Whitespine's chapter
+// through the Sheer to the west edge, and the step below the king's, where the Whitespine's chapter
 // ends (#505); Stairwatch's ledge on the rock south of the head, up a chimney behind the pines, with
 // the old champion on it; the eagles and the drovers' fire in the pines.
 // In from I11 (#501) walked, up the ridge trail: I11's 27,0 is this map's 27,31's neighbour, and
@@ -34,7 +34,7 @@ export const TOLL: Choice = {
 export const STAIR_PASSED: When = [{ flag: 'toll_paid' }, { flag: 'toll_part' }, { flag: 'toll_coin' }, { slain: 'highspine_i10:i10_king' }];
 
 /**
- * The Stair's top step stood on, past the king, looking down into the ash: `i10_top` sets it, the
+ * The Stair stood on below the king's step, looking down into the ash: `i10_top` sets it, the
  * once. The Whitespine's chapter, The Bells, is done on it, and Ashfall's (#518) reads it.
  */
 export const STAIR_TOP = 'q_stair_top';
@@ -101,9 +101,9 @@ export const HIGHSPINE_I10: MapDef = {
     // its lip, the shrine older than the monks', the caravan-master's girl, and the seat, a slab the
     // size of a house, with the hoard in the hollow under it, whose one mouth is the king's square.
     { kind: 'event', x: 7, y: 20, id: 'i10_head', once: true, text: 'A stair cut in the cliff, each step the height of a man. At its head a giant sits, and holds out his hand.' },
-    // The Stair's top step, past the king's square: the toll answered or the king fallen, the company
+    // The Stair's first step below the king's square: the toll answered or the king fallen, the company
     // looks down into the ash, and the chapter is done (#505).
-    { kind: 'event', x: 1, y: 20, id: 'i10_top', once: true, after: STAIR_PASSED, sets: STAIR_TOP, text: 'From the top step the Stair goes down the Sheer into the ash, step under step, further than you can see.' },
+    { kind: 'event', x: 1, y: 20, id: 'i10_top', once: true, after: STAIR_PASSED, sets: STAIR_TOP, text: 'Below the head the Stair goes down the Sheer into the ash, step under step, further than you can see.' },
     { kind: 'event', x: 4, y: 21, id: 'i10_tollstone', once: true, text: 'The toll-stone, its top worn hollow by coin. Under its lip, cut small and sharp, a ring with a bar across it.' },
     { kind: 'shrine', x: 7, y: 21, id: 'i10_shrine', text: 'A shrine at the head, older than the monks\': a niche cut square, and in it a stone hand, held out.', stat: 'might', done: 'The old shrine at the Stair\'s head, its stone hand held out.' },
     { kind: 'npc', x: 6, y: 19, name: 'A girl', lines: [

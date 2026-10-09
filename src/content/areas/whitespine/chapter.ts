@@ -18,7 +18,7 @@ export const CHAPTER: Chapter = {
   id: 'bells',
   title: 'The Bells',
   start: OVER,
-  // The Stair's top step stood on, past the king, paid or fought: `i10_top` sets it. Nothing is a lock:
+  // The Stair stood on below the king's step, paid or fought: `i10_top` sets it. Nothing is a lock:
   // the gate is open at every hour, the ridge trail from the start and the Stair to whoever pays or
   // wins, so a company may reach the Point before Highcell and the journal reads true in that order.
   done: { flag: STAIR_TOP },
@@ -50,10 +50,10 @@ export const CHAPTER: Chapter = {
     { id: 'fought', when: { slain: 'highspine_i10:i10_king' },
       text: 'We would not pay. The king fell on his own Stair, and nobody holds out a hand there now.' },
     { id: 'top', when: { flag: STAIR_TOP },
-      text: 'From the top step the Stair goes down the Sheer into the ash, further than we could see. We go down.' },
+      text: 'Below the head the Stair goes down the Sheer into the ash, further than we could see. We go down.' },
   ],
   goals: [
-    { when: STAIR_PASSED, at: 'highspine_i10', text: 'Past the king to the top step of the Giants\' Stair on the High Spine, and look down.' },
+    { when: STAIR_PASSED, at: 'highspine_i10', text: 'Past the king and onto the Giants\' Stair on the High Spine, and look down it.' },
     { when: { seen: 'highspine_i10:i10_head' }, at: 'highspine_i10', text: 'The king\'s toll at the head of the Giants\' Stair on the High Spine: pay it, or refuse him.' },
     { when: { flag: WENNA_TAKEN }, at: 'highspine_i10', text: 'South again along the ridge trail to the High Spine, and west off it to the Giants\' Stair, down to Ashfall.' },
     { when: { seen: 'sheerpoint_i8:i8_causeway' }, at: 'sheerpoint_i8', text: 'To the girl out of the hole, at her fire on the shingle under Sheer Point by the causeway, and sleep there.' },
