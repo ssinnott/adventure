@@ -103,9 +103,9 @@ peaks, I11's 48 peaks and 64 cliffs) and the view draws a summit and a face (doc
 Its row on the curve is in (#542), in `src/content/progression.ts`, planned until #499 lists the
 area (band 22–24, next 24, window 5,000). It has no step on the gear ladder, no town to sell one:
 Rime Lodge's rung is the pass's, and Cinderport's step (docs/areas/ashfall.md §4.4) comes two
-levels on. Nothing else is built but six of its monsters (below). The systems it waits on are the
+levels on. Nothing else is built but its eight monsters (below). The systems it waits on are the
 rest of #442's: the toll (#544), sweep (#545), stone (#546), the crossings (#547), the Ember Stone
-(#548) and the bot (#549). The giants are #507's, the last of its eight drawings.
+(#548) and the bot (#549).
 
 The monks are drawn (#507), three of MONSTERS §8.1's eight, ahead of the boxes that place them: the
 Brother, the Bell-ringer and the Abbot, robed on the keepers' frame (`src/ui/monsters/keepers.ts`).
@@ -118,6 +118,10 @@ Three more on frames that exist are drawn (#507), the Spine Eagle on the birds',
 the ogre's and the Ashen Mason on the cultists', in the same file and list, each owed in `UNPLACED`
 to the first box whose brief places it (§4): the eagles and the troll to J11 (#499) and the masons
 to I8 (#504). §9 has the decisions.
+
+The giants are drawn (#507), a new family on a frame of their own (`src/ui/monsters/giants.ts`): the
+Stair Giant and the Stair-king, ahead of the box that places them. Their defs are with the monks', and
+both are owed in `UNPLACED` to I10 (#502), whose brief places them (§4.5). §9 has the decisions.
 
 ## 4. What is still to build
 
@@ -454,9 +458,10 @@ MONSTERS §8.1 has the roster and the fights: the Spine Eagle, the Brother, the 
 Troll, the Stair Giant, the Ashen Mason, the Abbot and the Stair-king; the chapter house and the
 Stair in snow. Their drawings are #507's, eight in all, the giants new and the rest on frames that
 exist. §4.2 to §4.7 place every group, box by box, the gentlest at the pass's foot and the Abbot,
-the king and the masons at the top of the band. Six are drawn (#507, §3): the monks, the Brother, the
-Bell-ringer and the Abbot, robed on the keepers' frame, and the Spine Eagle, the Snow Troll and the
-Ashen Mason.
+the king and the masons at the top of the band. All eight of #507's drawings are done (§3, §9): the
+monks, the Brother, the Bell-ringer and the Abbot, robed on the keepers' frame; the Spine Eagle, the
+Snow Troll and the Ashen Mason; and the giants, the Stair Giant and the Stair-king, on a frame of
+their own.
 
 New in the Whitespine, for the novelty check (EXPANSION §5.4): the giants, a new family (#507), and
 with them the toll, a choice before a fight (#544), and sweep, one blow at every member of a row
@@ -604,6 +609,33 @@ Decided by delegate for #542, each the owner's to overturn (docs/areas/ashfall.m
 2. **The pass has no step on the ladder,** no town to sell one: its gear is Rimewater's rung, the
    top at 22, so a company at 24 wears what one at 22 does and Cinderport's step comes at 25. The
    briefs' pieces of Rimewater's rung with a plus stand; they are the ladder's.
+
+Decided by delegate for #507 (the giants), each the owner's to overturn:
+
+1. **A giant is a man as tall as a house, standing as a man stands:** upright, his weight on both
+   feet, no stoop and no club, so he reads apart from the ogres and the trolls at a glance.
+2. **His near arm is held out from the elbow, the hand open and cupped, thumb and fingers turned
+   up:** the toll asked in the silhouette, the arm the bar across the road. The far hand hangs, huge.
+3. **He wears the crew's working clothes kept four hundred years:** a knee-length coat of felted wool,
+   belted, split and patched, a fleece collar, leggings bound to the knee and heavy boots.
+4. **On his shoulder is a worn round badge whose mark is long gone:** a thing seen, which nothing
+   explains (DESIGN §7).
+5. **His head is small for his height and bowed to look down at the company,** the hair cropped and
+   iron-grey, the beard on his chest, the eyes pale and deep under the brow: patient, not fierce.
+6. **The Stair-king is the frame an eighth broader, his head sunk between his shoulders,** under a
+   mantle of dark fur to the knee; white-haired, the beard to his belt, his coat slate to their grey.
+7. **His crown is the toll:** coin set on edge in a band at his brow, gold and silver either side and
+   at the front the oldest, dull and with no face, as his hoard lies (§4.5); more studs his belt.
+8. **Both are size 2, as MONSTERS §8.1 has the giant, drawn inside TALL_REACH:** the giant's crown at
+   about 0.75 of his height and the king's at 0.81, so the king stands over his giants at their size.
+9. **The giant is a brute on the line at 23** (632 hit points, 5d7+8) and the king on the boss line at
+   24 (1,381, 24d8+24), for #502's gate to tune.
+10. **People carry gold:** the giant 70 to 160 and the king 250 to 500, the toll's coin, for the
+    curve to weigh with #502; the hoard is the box's find (§4.5).
+11. **Sweep is left to #502:** main has no `sweep` on `MonsterDef` yet (#545), so the box that places
+    the giants declares it on both. The toll is #544's, and the leader whose fall breaks them #502's.
+12. **Nothing is declared apart:** the hand, the coins and the fur are one piece of ink with the body
+    at combat size. Each breathes slowly, the held-out hand lifting a little and settling.
 
 ## 10. Names
 
