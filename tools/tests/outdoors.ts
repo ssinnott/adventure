@@ -25,6 +25,8 @@ const CUT_OFF: Record<string, string> = {
   // Ashfall is begun by sea (#443, call 6): G10 is reached through Cinderport's gate, where the Compact's
   // ship and the Rider's ride come in (#547), until the Stair's foot joins it to the Whitespine (#510).
   cindercoast_g10: '#512',
+  // And G11 (#513) is reached over G10's south edge alone, so through the same gate.
+  firemount_g11: '#512',
 };
 
 export function outdoors(): void {
@@ -282,16 +284,28 @@ export function outdoors(): void {
     `I11's north edge is the pines, the Sheer, the trail at 27,0 and the Stone at 28,0 against I10, its west edge Ashfall's ground under the Sheer against H11 and its south edge the ash, the Sheer, the pines and the mountain against I12, past which the world ends (${northOf(i11)}; ${westOf(i11)}; ${southOf(i11)})`);
   // Cinderport's box (G10, #511), Ashfall's first, begun by sea and joined to nothing yet (CUT_OFF): on
   // the north the vines, the road at column 3 up the wall's west side, Cinderport's wall, the stream
-  // and the grass against G9's shore; on the south the ash either side of Fire Mountain's foot (the ring,
-  // so the void) against G11; on the west the vines, the road out at rows 7 and 8 and the ash against
-  // F10; and on the east the vines, the ash and the stream at rows 22 and 23 against H10. None of G9,
-  // G11, F10 and H10 is built, so the world ends past them.
+  // and the grass against G9's shore; on the south the ash either side of Fire Mountain's foot against
+  // G11, built (#513), so the foot stays mountain between the two; on the west the vines, the road out
+  // at rows 7 and 8 and the ash against F10; and on the east the vines, the ash and the stream at rows
+  // 22 and 23 against H10. None of G9, F10 and H10 is built, so the world ends past them.
   const g10 = out.zones.find((z) => z.id === 'cindercoast_g10')!;
-  ok(northOf(g10) === '&&&=' + 'B'.repeat(10) + '~~~,,,,^^,,,,,&&&&' && southOf(g10) === 'a'.repeat(6) + '%'.repeat(15) + 'a'.repeat(11)
-    && [...Array(32).keys()].every((i) => [out.at(g10.x + 32, g10.y + i), out.at(g10.x - 1, g10.y + i), out.at(g10.x + i, g10.y + 32), out.at(g10.x + i, g10.y - 1)].every((c) => c.ch === '%')),
-    `G10's north edge is the vines, the road at column 3, the town's wall, the stream and the grass against G9, and its south edge the ash either side of the mountain against G11, past which the world ends (${northOf(g10)}; ${southOf(g10)})`);
+  ok(northOf(g10) === '&&&=' + 'B'.repeat(10) + '~~~,,,,^^,,,,,&&&&' && southOf(g10) === 'a'.repeat(6) + 'M'.repeat(15) + 'a'.repeat(11)
+    && [...Array(32).keys()].every((i) => [out.at(g10.x + 32, g10.y + i), out.at(g10.x - 1, g10.y + i), out.at(g10.x + i, g10.y - 1)].every((c) => c.ch === '%')),
+    `G10's north edge is the vines, the road at column 3, the town's wall, the stream and the grass against G9, past which the world ends, and its south edge the ash either side of the mountain's foot against G11 (${northOf(g10)}; ${southOf(g10)})`);
   ok(westOf(g10) === '&'.repeat(7) + '==' + '&'.repeat(5) + 'a'.repeat(18) && eastOf(g10) === '&'.repeat(14) + 'a'.repeat(8) + '~~' + 'a'.repeat(8),
     `G10's west edge is the vines, the road out at rows 7 and 8 and the ash against F10, and its east edge the vines, the ash and the stream against H10, past which the world ends (${westOf(g10)}; ${eastOf(g10)})`);
+  // Fire Mountain's flank (G11, #513), joined to G10 alone (CUT_OFF): its north edge meets G10's south
+  // edge, each as the atlas cuts it, the ash either side of the mountain's foot, walked across at columns
+  // 0 to 4 and 23 to 31; on the west the ash, the cone's flank (the ring, so the void) and the two flows
+  // leaving west against F11; on the east the ash, Grimsforge's wall, the scavenger's rocks and the
+  // south-east flow leaving against H11; on the south the ash against G12. None of F11, H11 and G12 is
+  // built, so the world ends past them.
+  const g11 = out.zones.find((z) => z.id === 'firemount_g11')!;
+  ok(g11.x === g10.x && g11.y === g10.y + 32 && northOf(g11) === 'a'.repeat(5) + 'M'.repeat(18) + 'a'.repeat(9) && southOf(g11) === 'a'.repeat(32)
+    && [...Array(32).keys()].every((i) => [out.at(g11.x + 32, g11.y + i), out.at(g11.x - 1, g11.y + i), out.at(g11.x + i, g11.y + 32)].every((c) => c.ch === '%')),
+    `G11's north edge meets G10's south edge, the ash either side of the mountain's foot, and its south edge is the ash against G12, past which the world ends (${northOf(g11)}; ${southOf(g11)})`);
+  ok(westOf(g11) === 'a'.repeat(4) + '%'.repeat(6) + '!!' + 'a'.repeat(9) + '!!!' + 'a'.repeat(8) && eastOf(g11) === 'a'.repeat(12) + 'BBararr' + 'a'.repeat(8) + '!!!!a',
+    `G11's west edge is the ash, the cone's flank and the two flows against F11, and its east edge the ash, Grimsforge, the scavenger's rocks and the south-east flow against H11, past which the world ends (${westOf(g11)}; ${eastOf(g11)})`);
   // Fionnlios's box (O7, #477): its west edge meets N7's east edge square for square, the peat-cutter's
   // track crossing at row 22 and the tarn's stream at the corner, out into N7's corner and O8's; its
   // north edge the hills and the Kilns' grass under O6, square for square with O6's south edge but its

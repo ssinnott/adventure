@@ -128,6 +128,9 @@ export const ROADS: Record<string, readonly string[]> = {
   // Out of Cinderport's gate and south over the ash past the beetles below the ground to the salamanders
   // where it warms toward the mountain (#511).
   cindercoast: ['cindercoast_g10:g10_beetles', 'cindercoast_g10:g10_salamanders'],
+  // Down the track off the coast past the salamanders on the slope to the stokers at the vents' mouths,
+  // the way down to Meridian Camp (#513).
+  firemount: ['firemount_g11:g11_salamanders', 'firemount_g11:g11_stokers'],
   // Over the crest from the vale and up the path to the Peak Stone, past the brothers walking it (#501).
   highspine: ['highspine_i11:i11_brothers'],
 };

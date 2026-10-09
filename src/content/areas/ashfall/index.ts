@@ -2,6 +2,7 @@
 // second area of Act IV, begun by sea (#443, call 6). docs/areas/ashfall.md is its brief.
 import type { Area } from '../../area.ts';
 import { CINDERCOAST_G10 } from './maps/cindercoast_g10.ts';
+import { FIREMOUNT_G11 } from './maps/firemount_g11.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { INTERIORS } from './interiors.ts';
@@ -9,7 +10,7 @@ import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
   id: 'ashfall' as const,
-  maps: [CINDERCOAST_G10],
+  maps: [CINDERCOAST_G10, FIREMOUNT_G11],
   monsters: MONSTERS,
   sprites: SPRITES,
   // Cinderport's armourer's step (#542), sold when the town is built (#512).
@@ -23,7 +24,9 @@ export const AREA = {
     fogText: 'Smoke comes down off the mountain and lies along the shore.', thunderText: 'Thunder over the mountain, or the mountain itself.' },
   // Cinderport's rooms are #521's, drawn ahead of the town (#512).
   interiors: INTERIORS,
-  // Vines underfoot (#543) and the drakes, a family of their own (#520), with G10 (#511).
-  novel: { families: ['drakes'], terrain: ['vines'], mechanics: [], landmarks: [] },
+  // Vines underfoot (#543) and the drakes, a family of their own (#520), with G10 (#511); the heavy
+  // machines (#520), the volcano and its vents underfoot (#543) and the volcano on the map, with G11
+  // (#513). Lava was the Kilns' first, and the sweep with fire has no token to claim (#545).
+  novel: { families: ['drakes', 'machines'], terrain: ['vines', 'volcano', 'vent'], mechanics: [], landmarks: ['volcano'] },
   atlas: { zones: ZONES, places: PLACES, sites: SITES },
 } satisfies Area;
