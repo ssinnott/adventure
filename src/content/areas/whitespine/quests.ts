@@ -3,12 +3,18 @@
 // at Anvilhall), The Eagles' Nest (the herder at J11's fold, the nest above the Peak Stone, and the
 // badge to Lantern Watch or to Highcell), The Toll (the caravan-master short of the Stair's head, and
 // the king's toll) and The Mason's Tally (the deserter in the rocks on Sheer Point, and Cinderport).
+// Then three of the third prestiges' quests (#448), each its trainer's `asks`, paying nothing but the
+// prestige: The Ledge (Edric at Stairwatch, the Knight's), The Vigil (Oswin on Spine Summit, the
+// Monk's) and The Eleven (Brother Lark in Highcell's bell tower, the Bard's).
 // How the words are keyed is in src/content/area.ts (`quests`); tools/tests/quests.ts checks every key.
 import type { QuestDef } from '../../../game/quests.ts';
-import { NOVICE_TOLD, NOVICE_KEPT } from './maps/monastery.ts';
+import { NOVICE_TOLD, NOVICE_KEPT, ELEVEN_ASKED, ELEVEN_SUNG, VERSES, SING } from './maps/monastery.ts';
 import { NEST_FOUND, NEST_WATCH, NEST_CELL } from './maps/highspine_i11.ts';
-import { STAIR_PASSED, TOLL_DONE } from './maps/highspine_i10.ts';
+import { STAIR_PASSED, TOLL_DONE, LEDGE_ASKED, LEDGE_HELD } from './maps/highspine_i10.ts';
 import { MASON_PASSAGE, MASON_SWAPPED } from './maps/sheerpoint_i8.ts';
+import { VIGIL_ASKED, VIGIL_KEPT } from './maps/monksvale_j11.ts';
+import { BELL_HUNG } from '../saltreach/maps/drowned_temples.ts';
+import { HYMN_SUNG } from '../kilns/maps/anvilhall.ts';
 
 export const QUESTS: readonly QuestDef[] = [
   {
@@ -83,6 +89,62 @@ export const QUESTS: readonly QuestDef[] = [
     ],
     goals: [
       { when: { flag: 'q_mason' }, text: 'Answer the deserter in the rocks on Sheer Point: his passage, or the page.', at: 'sheerpoint_i8' },
+    ],
+  },
+  {
+    // #448, the Knight's third: Edric on the ledge over the Stair asks a company with a Knight Banneret
+    // of 27. By night the toll-takers come up the shaft, two and two; once all are down, his words at
+    // first light.
+    id: 'ledge',
+    title: 'The Ledge',
+    start: { flag: LEDGE_ASKED },
+    done: { flag: LEDGE_HELD },
+    entries: [
+      { id: 'asked', when: { flag: LEDGE_ASKED }, text: 'Edric has kept a fire on the ledge over the Giants\' Stair for forty years. He asked us to hold it with him through a night.' },
+      { id: 'night', when: { slain: 'highspine_i10:i10_tolltakers' }, text: 'In the dark two of the toll-takers came up the shaft, and got no further than the fire.' },
+      { id: 'more', when: { slain: 'highspine_i10:i10_tolltakers2' }, text: 'Before dawn two more came up behind them, and got no further either.' },
+      { id: 'held', when: { flag: LEDGE_HELD }, text: 'At first light Edric wiped his blade in the snow and sat down by the fire.' },
+    ],
+    goals: [
+      { when: { slain: 'highspine_i10:i10_tolltakers2' }, text: 'Sit with Edric by his fire at first light.', at: 'highspine_i10' },
+      { when: { flag: LEDGE_ASKED }, text: 'Hold the ledge over the Giants\' Stair with Edric through a night.', at: 'highspine_i10' },
+    ],
+  },
+  {
+    // #448, the Monk's third: Oswin on Spine Summit asks a company with a Windwalker of 27. By night the
+    // brothers come up the summit's path; once they are down, his words at dawn.
+    id: 'vigil',
+    title: 'The Vigil',
+    start: { flag: VIGIL_ASKED },
+    done: { flag: VIGIL_KEPT },
+    entries: [
+      { id: 'asked', when: { flag: VIGIL_ASKED }, text: 'Oswin sits in the snow on Spine Summit every night of the year. He asked us to sit with him till dawn.' },
+      { id: 'night', when: { slain: 'monksvale_j11:j11_vigil' }, text: 'In the night five brothers came up the path. Where they fell, the snow was not red.' },
+      { id: 'kept', when: { flag: VIGIL_KEPT }, text: 'At dawn Oswin opened his eyes. "You sat it out," he said. "Few do."' },
+    ],
+    goals: [
+      { when: { slain: 'monksvale_j11:j11_vigil' }, text: 'Sit with Oswin on Spine Summit at dawn.', at: 'monksvale_j11' },
+      { when: { flag: VIGIL_ASKED }, text: 'Keep the vigil with Oswin on Spine Summit through a night.', at: 'monksvale_j11' },
+    ],
+  },
+  {
+    // #448, the Bard's third: Brother Lark among Highcell's ringers asks a company with a Skald of 27 for
+    // the eleven's verses, the Tide Bell's count (#56's 23), the miners' hymn (#56's 36) and the keeper's
+    // log (#67). Held, they are sung to him under the bells.
+    id: 'eleven',
+    title: 'The Eleven',
+    start: { flag: ELEVEN_ASKED },
+    done: { flag: ELEVEN_SUNG },
+    entries: [
+      { id: 'asked', when: { flag: ELEVEN_ASKED }, text: 'A man among Highcell\'s ringers came to set the bells\' eleven to words. He wants the verses others sang of it.' },
+      { id: 'count', when: BELL_HUNG, text: 'The count: the Tide Bell in the drowned temples\' door, ten even strokes and the last a beat late.' },
+      { id: 'doors', when: { flag: HYMN_SUNG }, text: 'The doors: "Last door, the captain\'s door. Shut, and all hands counted."' },
+      { id: 'light', when: { seen: VERSES.seen }, text: 'The light: the Hearth out eleven times in the keeper\'s log at Crowness, the pairs even, as if measured.' },
+      { id: 'sung', when: { flag: ELEVEN_SUNG }, text: 'We sang them to him under the bells, and every word fell on a stroke.' },
+    ],
+    goals: [
+      { when: SING, text: 'Sing the verses to Brother Lark in Highcell\'s bell tower.', at: 'monastery' },
+      { when: { flag: ELEVEN_ASKED }, text: 'Find the eleven\'s verses: a drowned bell\'s count, a miners\' hymn, a lighthouse log.' },
     ],
   },
 ];

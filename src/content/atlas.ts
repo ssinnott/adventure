@@ -270,7 +270,6 @@ export const PLAN: Atlas = {
     { id: 'hearthisle', name: 'Hearth Isle', area: 'hearth', seeds: [[256, 172]] },
   ],
   places: [
-    { id: 'dead_drop', name: 'The Dead-Drop', kind: 'dungeon', planned: true, band: [26, 28], at: [208, 204] }, // below the Tide Ship's hold: three levels of 32 by 32 (#22; #443, call 4)
     { id: 'underdeep', name: 'The Underdeep', kind: 'deep', planned: true, order: 13, band: [30, 31], at: [216, 168] },
     { id: 'core', name: 'The Core', kind: 'deep', planned: true, order: 14, band: [32, 32], at: [216, 176] },
   ],
@@ -293,7 +292,6 @@ export const PLAN: Atlas = {
     { from: 'saltmouth', to: 'wrackholm', kind: 'sea', b: [152, 172], note: 'smuggler boat' },
     { from: 'wrackholm', to: 'smugglers_cove', kind: 'enter', a: [154, 170] },
     { from: 'wrackholm', to: 'tide_ship', kind: 'enter', a: [182, 188] },
-    { from: 'tide_ship', to: 'dead_drop', kind: 'stairs' },
     { from: 'thornmark', to: 'deepthorn', kind: 'road', a: [240, 60.5], b: [242, 66] },
     { from: 'thornmark', to: 'eaves', kind: 'road', a: [263.5, 40.5], b: [272, 39.5], note: 'the east road', noteAt: [290, 30] },
     { from: 'eaves', to: 'lanternwood', kind: 'road', a: [330, 56], b: [346, 56], note: 'rope bridge' },

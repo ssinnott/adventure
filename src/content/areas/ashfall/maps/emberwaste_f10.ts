@@ -9,6 +9,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/ashfall.md §4.9 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
+import { LIT, SEEDLING_ASKED, SEEDLING_PLANTED } from './ember_stone.ts';
 
 export const EMBERWASTE_F10: MapDef = {
   id: 'emberwaste_f10',
@@ -58,13 +59,25 @@ export const EMBERWASTE_F10: MapDef = {
     { kind: 'event', x: 26, y: 13, id: 'f10_vines', once: true, text: 'The road comes out of the vines onto bare ash. The last of them are short and grey.' },
     { kind: 'event', x: 12, y: 5, id: 'f10_edge', once: true, text: 'The vines stop here as if cut with a knife. On this side the ash, and nothing growing in it.' },
     { kind: 'event', x: 24, y: 3, id: 'f10_tree', once: true, text: 'A grey tree in the vines, killed long ago, its ropes of vine hanging nearly to the ground.' },
-    // The outcrop in the north-west, far from the road, and the Archdruid in its lee: his trainer and
-    // his quest are #448's.
-    { kind: 'npc', x: 6, y: 3, name: 'The Archdruid', lines: [
+    // The outcrop in the north-west, far from the road, and the Archdruid in its lee, the Druid's third
+    // prestige (#448): his own words first, then, to a druid of 27 with the second, his ask, once, for a
+    // seedling from the Grove kept living in the Waste until the Ember Stone is lit; planted, his word that
+    // it waits; and once it is planted and the Stone lit, his last words and the teaching.
+    { kind: 'npc', x: 6, y: 3, name: 'Kenver, the Archdruid', lines: [
       'An old man in the lee of the rocks, his robe gone from green to grey. Seedlings stand round him in pots of ash.',
       '"I came out of the Grove to see whether anything would grow here. I am still seeing."',
       '"Something will. Something always does. It will not be what you planted."',
-    ] },
+    ], flag: 'f10_archdruid_met', says: [
+      { after: { flag: [SEEDLING_PLANTED, LIT] }, lines: [
+        'He hears you out, and for once looks up from his pots.',
+        '"Green, out here? Then I have seen it. Sit down, and learn to wait as it did."',
+      ] },
+      { after: { flag: SEEDLING_PLANTED }, lines: ['"In the ground, and grey? Then it is waiting for something. So am I."'] },
+      { after: { flag: 'f10_archdruid_met', member: { cls: 'druid', level: 27, prestige: 2 } }, until: { flag: SEEDLING_ASKED }, sets: SEEDLING_ASKED, lines: [
+        'He looks your druid over, then turns a pot to show you: ash, and a stalk in it, dead.',
+        '"Nothing I bring out lives. Bring me one from the Grove, and keep it living here till the Stone is lit."',
+      ] },
+    ], teaches: { cls: 'druid', prestige: 3, asks: 'seedling', done: { flag: [SEEDLING_PLANTED, LIT] }, seek: 'Kenver, the Archdruid, in the lee of a rock in the Ember Waste\'s north-west, far off the road, can make an Archdruid of a Thornspeaker.' } },
     // On the ash: the cairn, the shrine, the drifts and the Riders' ring by the road.
     { kind: 'cairn', x: 14, y: 12, id: 'f10_cairn', text: 'A cairn on the bare ash, its stones black, a strip of red cloth tied in the top.', gold: 250, items: ['potion_sp_great'] },
     { kind: 'shrine', x: 5, y: 13, id: 'f10_shrine', text: 'A stone set on end in the ash, a hand pressed into its black face while it was soft.', stat: 'endurance', done: 'The stone on end, ash lying in the print of the hand.' },
@@ -80,5 +93,8 @@ export const EMBERWASTE_F10: MapDef = {
     // Stone (§7). The brief's second beetles and the salamanders at the flow's end are cut for the pay.
     { id: 'f10_beetles', x: 22, y: 16, monsters: ['cinder_beetle', 'cinder_beetle', 'cinder_beetle', 'cinder_beetle'], aware: 3, respawn: 1440 },
     { id: 'f10_drake', x: 9, y: 26, monsters: ['cinder_drake'], aware: 5, respawn: 2880 },
+    // Once the Stone is lit (#449), two sentries by the road back from F11's corner toward Cinderport, the
+    // box's top at 26, where nothing stood the day before.
+    { id: 'f10_sentries', x: 18, y: 29, monsters: ['sentry', 'sentry'], aware: 4, respawn: 2880, after: { flag: 'q_ember_lit' } },
   ],
 };

@@ -8,14 +8,14 @@ import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
   {
-    // The mesas first, the zone's way in over E10's west edge (#527), then the steppe (#525), Akordu's box
-    // (#526), the Scarp's edge (#528) and the Wold's heart (#529).
+    // The mesas first, the zone's way in over E10's west edge (#527), then the steppe (#525), Akordu's
+    // box, the camp (#526), the Scarp's edge west of it (#528) and the Wold's heart west again (#529).
     id: 'wold', name: 'The Wold', area: 'glasswold', band: [26, 28],
     maps: [{ map: 'wold_d10', at: [104, 286] }, { map: 'wold_d9', at: [104, 254] }, { map: 'wold_d8', at: [104, 222] }, { map: 'wold_c8', at: [72, 222] }, { map: 'wold_b8', at: [40, 222] }],
     seeds: [[100, 232], [132, 262], [50, 230], [134, 296], [120, 296]], // 140,296 moved west of E10, laid for the Waste (#517)
     // The crossing line (#166, #524), said where a Wold map is first walked into over E10's west edge
-    // (D10, #527) or climbed into up the Scarp stair, walked from the Saltings' C7 onto C8's lip at the
-    // stair's head (#528), so true both ways in.
+    // (D10, #527, walked) or climbed into up the Scarp stair, walked from the Saltings' C7 onto C8's lip
+    // at the stair's head (C8, #528), so true both ways in.
     crossing: { harder: 'The grass is long, and what hunts in it is harder than the road behind.', warning: 'Nothing that hunts the grass would spare you. The way back is still open.' },
   },
   { id: 'theglass', name: 'The Glass', area: 'glasswold', seeds: [[80, 282], [90, 300], [78, 312]], label: [96, 304] },

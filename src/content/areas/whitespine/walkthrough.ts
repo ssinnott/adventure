@@ -32,9 +32,15 @@
 // on to the camp on the shingle, and the night she is taken, her knot on the first stone; Rook's Nest
 // at the atlas's site and the watcher in it; the Hand's sea cave under it, found from the wet rock at
 // the hollow's back; the cairn, the drowned god's shrine and the deserter in the rocks with his tally.
+// Last, three of the third prestiges (#448) taken at 27, each for its trainer's quest: the ledge held
+// with Edric, the vigil kept with Oswin and the eleven sung to Brother Lark (`thirdPrestiges`).
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, see, fight, listen, playChapter, everyGoalWalked, goalFromBegun, quest, type Walk, type Step } from '../../../../tools/walk.ts';
-import { xpForLevel } from '../../../game/party.ts';
+import { xpForLevel, createCharacter, takePrestige, prestigeOf } from '../../../game/party.ts';
+import type { ClassId } from '../../../game/party.ts';
+import { offers, teach } from '../../../game/prestige.ts';
+import { seekId } from '../../../game/seeking.ts';
+import { makeRng } from '../../../lib/engine/rng.ts';
 import { NORTH, SOUTH, EAST, WEST } from '../../../game/types.ts';
 import { stonesRestored } from '../../../game/stones.ts';
 import { ATLAS, MAP_DEFS, MONSTERS as MONSTER_DEFS } from '../../index.ts';
@@ -47,11 +53,11 @@ import type { MapDef } from '../../../game/map.ts';
 import { readLine } from '../../../game/inscriptions.ts';
 import { MONSTERS } from './monsters.ts';
 import { SADDLE } from '../rimewater/maps/coldmere_k10.ts';
-import { CLIMB, GATE } from './maps/monksvale_j11.ts';
+import { CLIMB, GATE, VIGIL_ASKED, VIGIL_KEPT } from './maps/monksvale_j11.ts';
 import { WENNA_TAKEN, MASON_PASSAGE, MASON_SWAPPED } from './maps/sheerpoint_i8.ts';
 import { WENNA_LODGE } from '../rimewater/maps/rime_lodge.ts';
-import { STAIR_TOP, TOLL_DONE } from './maps/highspine_i10.ts';
-import { NOVICE_TOLD, NOVICE_KEPT } from './maps/monastery.ts';
+import { STAIR_TOP, TOLL_DONE, LEDGE_ASKED, LEDGE_HELD } from './maps/highspine_i10.ts';
+import { NOVICE_TOLD, NOVICE_KEPT, ELEVEN_ASKED, ELEVEN_SUNG } from './maps/monastery.ts';
 import { NEST_WATCH, NEST_CELL } from './maps/highspine_i11.ts';
 import { questLog } from '../../../game/quests.ts';
 import { CHAPTER } from './chapter.ts';
@@ -127,7 +133,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(!!summit && j11.x + summit.x === Math.floor(sx) && j11.y + summit.y === Math.floor(sy) && !ATLAS.sites.find((s) => s.name === 'Spine Summit')!.planned,
     'Spine Summit\'s camp is at the atlas\'s site, 4,10, and the site is built');
   ok(reach(j11.x + 20, j11.y + 1, (x, y) => onJ11(x, y) && out.passable(x, y) === 'ok').has((j11.y + summit!.y) * out.width + j11.x + summit!.x), 'the path goes up from the hills to the summit');
-  const hermit = person('A hermit');
+  const hermit = person('Oswin, the summit\'s hermit');
   w.world.travel('monksvale_j11', hermit.x, hermit.y);
   ok(meet(hermit, w.party, heard(w.world, hermit)).text.includes('Eleven, a gap, eleven'), 'the hermit at the summit counts the bells');
 
@@ -303,7 +309,7 @@ export const walkthrough: Walkthrough = (ok) => {
   // The caravan drawn up short of the head that cannot pay (#56's 47, #506's), past the Stair in snow:
   // the master by his wagons, and at the head his girl, whom the king keeps (The Toll, #506, `sideQuests`).
   const who10 = (name: string): Person => I10.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
-  const [master, girl, champion] = [who10('A caravan-master'), who10('A girl'), who10('An old champion')];
+  const [master, girl, champion] = [who10('A caravan-master'), who10('A girl'), who10('Edric, the old champion')];
   const king = I10.encounters!.find((g) => g.id === 'i10_king')!, stair = I10.encounters!.find((g) => g.id === 'i10_stair')!;
   w.world.travel('highspine_i10', master.x, master.y);
   ok(meet(master, w.party, heard(w.world, master)).text.includes('he has my girl') && master.x > stair.x && stair.x > 7 && walked10.has(at10(master)),
@@ -647,7 +653,114 @@ export const walkthrough: Walkthrough = (ok) => {
   listen(w);
   theBells(ok);
   sideQuests(ok);
+  thirdPrestiges(ok);
 };
+
+/**
+ * Three of the third prestiges (#448), each played by a company of 27 whose member of the class has
+ * the second: sent to the trainer by its seeking quest, asked, the quest done as the log says, and
+ * the third taken at the trainer's menu, earned and costing no gold. The Ledge: Edric's toll-takers
+ * up the shaft by night and never by day, won at 27, and his words at first light. The Vigil: Oswin's
+ * brothers up the summit's path by night, won at 27, and his words at dawn. The Eleven: Brother Lark
+ * asks; the Tide Bell hung, the miners' hymn heard and the keeper's log taken, and sung to him.
+ */
+function thirdPrestiges(ok: (cond: boolean, msg: string) => void): void {
+  const LEVEL = 27, rng = makeRng(448);
+  /** A company of 27, its member in `slot` made one of `cls` with the first two prestiges taken. */
+  const company = (slot: number, cls: ClassId): Walk => {
+    const w = newWalk(ok);
+    w.level = LEVEL;
+    if (w.party.members[slot].cls !== cls) w.party.members[slot] = createCharacter(w.party.members[slot].name, 'human', cls, { might: 13, speed: 13, personality: 13 }, rng);
+    for (const m of w.party.members) { m.level = LEVEL; m.xp = xpForLevel(LEVEL); }
+    takePrestige(w.party.members[slot]); takePrestige(w.party.members[slot]);
+    return w;
+  };
+  const npc = (map: string, name: string): Person => mapOf(map).features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
+  const page = (w: Walk, id: string) => questLog(w.world.state, w.party).find((v) => v.def.id === id);
+  const hear = (w: Walk, map: string, p: Person): string => { w.world.travel(map, p.x, p.y); const said = meet(p, w.party, heard(w.world, p)).text; listen(w); return said; };
+  const ask = (w: Walk, map: string, p: Person, sets: string): string => {
+    w.world.travel(map, p.x, p.y);
+    const m = meet(p, w.party, heard(w.world, p)), a = m.choice?.answers.find((x) => x.sets === sets), not = m.choice?.answers.find((x) => !x.sets);
+    ok(!!a && !!not, `${p.name} asks (${m.choice?.ask ?? 'no question'}), and an answer sets ${sets}`);
+    const said = a ? answer(a, w.party) : '';
+    listen(w);
+    return said;
+  };
+  /** The clock on to the next `hour` o'clock. */
+  const until = (w: Walk, hour: number): void => {
+    const now = w.world.state.minutes, at = Math.floor(now / 1440) * 1440 + hour * 60;
+    w.world.advance((at > now ? at : at + 1440) - now);
+  };
+  /** The trainer's menu: the member of the class barred by `bar` before, and taught after, for nothing. */
+  const taught = (w: Walk, p: Person, slot: number, how: string): void => {
+    const t = p.teaches!, gold = w.party.gold, [offer] = offers(t, w.party, w.world.state);
+    const r = teach(t, w.party, w.world.state, slot);
+    ok(t.prestige === 3 && offer?.who === slot && offer.bar === '' && offer.price === 0 && r.taught && w.party.gold === gold && prestigeOf(w.party.members[slot]) === 3,
+      `${how}: ${p.name.split(',')[0]}'s menu offers the third, earned, and teaches it for no gold (${r.line})`);
+  };
+  /** The quest done once, with no goal, its entries all written. */
+  const finished = (w: Walk, id: string, entries: readonly string[], how: string): void => {
+    const v = page(w, id), title = v?.def.title ?? id, ids = v?.pages[0].entries.map((e) => e.id) ?? [];
+    ok(!!v?.done && v.goal === null && entries.every((e) => ids.includes(e)) && w.news.filter((n) => n === `Quest complete: ${title}.`).length === 1,
+      `${how}: done with no goal, its entries ${ids.join(', ')}, and said complete once`);
+  };
+  const seeking = (w: Walk, slot: number): string | null | undefined => page(w, seekId(slot, 3))?.goal;
+
+  // The two nights: asked by day, each group is not there by day and is by night, the next only once the
+  // one before is down; won at 27, the trainer's words at first light set the quest done, and the menu
+  // teaches the third.
+  const nights = [
+    { how: 'The Ledge', cls: 'knight', slot: 0, map: 'highspine_i10', who: 'Edric, the old champion', groups: ['i10_tolltakers', 'i10_tolltakers2'], asked: LEDGE_ASKED, held: LEDGE_HELD, quest: 'ledge', goal: /Hold the ledge/, dawn: 'Not one of them got past us', entries: ['asked', 'night', 'more', 'held'] },
+    { how: 'The Vigil', cls: 'monk', slot: 3, map: 'monksvale_j11', who: 'Oswin, the summit\'s hermit', groups: ['j11_vigil'], asked: VIGIL_ASKED, held: VIGIL_KEPT, quest: 'vigil', goal: /Keep the vigil/, dawn: 'You sat it out', entries: ['asked', 'night', 'kept'] },
+  ] as const;
+  for (const n of nights) {
+    const w = company(n.slot, n.cls), p = npc(n.map, n.who), gs = n.groups.map((id) => mapOf(n.map).encounters!.find((e) => e.id === id)!);
+    const sent = seeking(w, n.slot);
+    ok(sent === `Find ${n.who} in ${mapOf(n.map).name}.`, `${n.how}: at ${LEVEL} with the second, ${w.party.members[n.slot].name} is sent to the trainer (${sent})`);
+    until(w, 12);
+    ask(w, n.map, p, n.asked);
+    ok(!!page(w, n.quest)?.pages[0].begun && n.goal.test(page(w, n.quest)?.goal ?? '') && page(w, seekId(n.slot, 3))?.done === true,
+      `${n.how}: asked, it begins and the seeking is done (${page(w, n.quest)?.goal})`);
+    ok(offers(p.teaches!, w.party, w.world.state)[0]?.bar === 'the quest first' && !teach(p.teaches!, w.party, w.world.state, n.slot).taught, `${n.how}: and the menu waits on the quest`);
+    for (const g of gs) {
+      w.world.travel(n.map, p.x, p.y);
+      until(w, 12);
+      const byDay = w.world.walks(g, g.x, g.y);
+      until(w, 1);
+      const later = gs.slice(gs.indexOf(g) + 1).some((x) => w.world.walks(x, x.x, x.y));
+      ok(!byDay && w.world.walks(g, g.x, g.y) && !later && !g.respawn && g.roams === false,
+        `${n.how}: ${g.id}, ${g.monsters.length} of them, come by night and not by day, none after them yet, and never again once down`);
+      fight(w, `${n.map}:${g.id}`);
+    }
+    until(w, 8);
+    const dawn = hear(w, n.map, p);
+    ok(dawn.includes(n.dawn) && !!w.party.flags[n.held], `${n.how}: at first light the trainer's words set it done (${dawn.split('\n\n')[1] ?? dawn})`);
+    finished(w, n.quest, n.entries, n.how);
+    taught(w, p, n.slot, n.how);
+  }
+
+  // The Eleven: asked in the bell tower, the verses gathered where they are sung, and sung there.
+  {
+    const w = company(2, 'bard'), lark = npc('monastery', 'Brother Lark');
+    ok(seeking(w, 2) === 'Find Brother Lark in Highcell.', `The Eleven: at ${LEVEL} with the second, the bard is sent to the bell tower (${seeking(w, 2)})`);
+    ask(w, 'monastery', lark, ELEVEN_ASKED);
+    ok(/Find the eleven/.test(page(w, 'eleven')?.goal ?? '') && page(w, seekId(2, 3))?.done === true, `The Eleven: asked, the goal is the verses (${page(w, 'eleven')?.goal})`);
+    // The keeper's log off Crowness Light's table; the Tide Bell back to the priestess at the dry door;
+    // the hymn's doors heard going down, and the oldest miner's last verse.
+    const log = mapOf('downs_e3').features!.find((f) => f.kind === 'chest' && f.id === 'e3_log');
+    if (log?.kind === 'chest') { w.world.travel('downs_e3', log.x, log.y); w.world.markUsed(log.id); w.party.bag.push(...log.items); }
+    w.party.bag.push('tide_bell');
+    hear(w, 'delta_b6', npc('delta_b6', 'a priestess at the dry door'));
+    see(w, 'deep_mines:dm1_door3');
+    hear(w, 'anvilhall', npc('anvilhall', 'The oldest miner'));
+    ok(['count', 'doors', 'light'].every((e) => page(w, 'eleven')?.pages[0].entries.some((x) => x.id === e)) && /Sing the verses/.test(page(w, 'eleven')?.goal ?? ''),
+      `The Eleven: the count, the doors and the light gathered, the goal is the bell tower (${page(w, 'eleven')?.goal})`);
+    const sung = hear(w, 'monastery', lark);
+    ok(sung.includes('every word falls on a stroke') && !!w.party.flags[ELEVEN_SUNG], `The Eleven: sung to him under the bells (${sung.split('\n\n')[1] ?? sung})`);
+    finished(w, 'eleven', ['asked', 'count', 'doors', 'light', 'sung'], 'The Eleven');
+    taught(w, lark, 2, 'The Eleven');
+  }
+}
 
 /**
  * Highcell (#500): in at the gate past the brother in it, and out again; the upper house at 23, the
@@ -727,7 +840,7 @@ function highcell(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   w.world.travel('monastery', 4, 13);
   const bells = w.world.eventsHere();
   ok(bells.some((t) => t.includes('they ring: eleven, a gap, eleven')), `under the bells the ringers ring the eleven (${bells.join(' / ')})`);
-  const ringer = L1.features!.find((f) => f.kind === 'npc' && f.name === 'A ringer') as Person;
+  const ringer = L1.features!.find((f) => f.kind === 'npc' && f.name === 'Brother Lark') as Person;
   w.world.travel('monastery', ringer.x, ringer.y);
   ok(meet(ringer, w.party, heard(w.world, ringer)).text.includes('There are no words for it'), 'among the ringers one breathes, and has found no words for the bells');
   ok([[ringer.x, ringer.y], [novice.x, novice.y], [13, 13]].every(([x, y]) => reached(L1, [L1.start.x, L1.start.y], [x, y])),

@@ -181,6 +181,8 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'tide_ship2: under': { whose: '#18', at: 1 },
   'tide_ship3: under': { whose: '#18', at: 1 },
   'Wrackholm: under': { whose: '#18', at: 1 },
+  // And the Dead-Drop's drop (#22), past Wrackholm's band and outside its budget, judged two under its own floor.
+  'dead_drop: under': { whose: '#18', at: 1 },
   'eaves_i2: under': { whose: '#18', at: 1 },
   'eaves_j2: under': { whose: '#18', at: 1 },
   'Sunderwood: under': { whose: '#18', at: 1 },
@@ -238,11 +240,16 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   // And Old Cinder's undercroft (#515), banded from the area's floor as Highcell's upper house is.
   'old_cinder2: under': { whose: '#18', at: 1 },
   'Ashfall: under': { whose: '#18', at: 1 },
+  // And the camp (#22), Meridian Camp's third level, which pays outside the area's budget and is judged two under its
+  // own floor: a company at 25 beats its groups every time, as the other boxes' are.
+  'meridian_camp3: under': { whose: '#18', at: 1 },
   // And the Glasswold's first box (#525): the steppe, two under, wins every fight, as Ashfall's boxes do.
   'wold_d9: under': { whose: '#18', at: 1 },
-  // And the mesas (#527), the same; Akordu's box (#526) the same, and the Scarp's edge (#528).
-  'wold_d10: under': { whose: '#18', at: 1 },
+  // Akordu's box (#526) the same.
   'wold_d8: under': { whose: '#18', at: 1 },
+  // And the mesas (#527), the same.
+  'wold_d10: under': { whose: '#18', at: 1 },
+  // And the Scarp's edge (#528), the same.
   'wold_c8: under': { whose: '#18', at: 1 },
   'the Glasswold: under': { whose: '#18', at: 1 },
   'highspine_i11: under': { whose: '#18', at: 1 },

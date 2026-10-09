@@ -4,9 +4,15 @@
 // lamp's oil cut along its floor, to the lamp at the bottom, dark, and beside it the Ember Stone's
 // second part set in the floor. Halfway down a stair lies fallen against the wall and the channel runs
 // on under it; behind it, the lamp-keeper's own cellar. Band 24-25, from the area's floor, as Highcell's
-// upper house is; docs/areas/ashfall.md §4.7 is its brief.
+// upper house is; docs/areas/ashfall.md §4.7 is its brief. The Paladin's third prestige (#448) is to
+// light the lamp: asked by the old Lightbearer on F11's lip, it is lit here.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
+
+/** The Paladin's third (#448): the old Lightbearer on F11's lip has asked for the lamp lit, and given his oil and flint. */
+export const LAMP_ASKED = 'q_old_lamp';
+/** The lamp at the bottom of the walk lit: what the old Lightbearer teaches the third for. */
+export const LAMP_LIT = 'q_old_lamp_lit';
 
 export const OLD_CINDER2: MapDef = {
   id: 'old_cinder2',
@@ -51,9 +57,13 @@ export const OLD_CINDER2: MapDef = {
     { kind: 'event', x: 8, y: 6, id: 'oc2_walk', once: true, text: 'A walk goes down from the cellars, narrow, a channel cut along its floor. Black oil has dried in it.' },
     // The hint: the channel runs on under a stair fallen against the wall, where no room is.
     { kind: 'event', x: 8, y: 10, id: 'oc2_fallen', once: true, text: 'A stair lies fallen against the wall here, rubble to the roof. The oil channel runs on under it.' },
-    // The lamp at the bottom, dark, said each time (the Paladin's third relights it, #448), and the
-    // Ember Stone's second part set in the floor beside it (§5).
-    { kind: 'event', x: 8, y: 13, id: 'oc2_lamp', text: 'At the bottom of the walk, the lamp: an iron bowl on a stem, taller than a man. It is cold.' },
+    // The lamp at the bottom, dark, said each time until it is lit; the Paladin's third (#448) lights it
+    // with the old Lightbearer's oil and flint once he has asked, and lit it burns, said each time. The
+    // lit words stand before the lighting, so the step that lights it says the lighting alone after the
+    // dark. Beside it the Ember Stone's second part set in the floor (§5).
+    { kind: 'event', x: 8, y: 13, id: 'oc2_lamp', until: { flag: LAMP_LIT }, text: 'At the bottom of the walk, the lamp: an iron bowl on a stem, taller than a man. It is cold.' },
+    { kind: 'event', x: 8, y: 13, id: 'oc2_burning', after: { flag: LAMP_LIT }, text: 'At the bottom of the walk the lamp burns in its iron bowl, and the walk is lit to the top.' },
+    { kind: 'event', x: 8, y: 13, id: 'oc2_relit', once: true, after: { flag: LAMP_ASKED }, sets: LAMP_LIT, text: 'You fill the bowl from the old Lightbearer\'s flask and strike his flint. The flame takes, low and then tall.' },
     { kind: 'event', x: 9, y: 13, id: 'oc2_set', once: true, text: 'Set in the floor beside the lamp, a piece of grey iron, as if someone had meant to carry it on.' },
     { kind: 'chest', x: 9, y: 14, id: 'oc2_part', gold: 0, items: ['ember_part2'] },
     // The secret: the lamp-keeper's own cellar behind the fallen stair, his symbol and his plate.

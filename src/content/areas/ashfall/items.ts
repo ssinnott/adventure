@@ -10,7 +10,7 @@ import type { ItemDef } from '../../../game/items.ts';
 import { W, A, P, MARTIAL, MAIL, NO_CASTER_HEAVY } from '../../items.ts';
 import { ITEMS as SUNDERWOOD } from '../sunderwood/items.ts';
 import { hornBow } from '../saltreach/items.ts';
-import { dwarfMail } from '../kilns/items.ts';
+import { dwarfMail, mattock } from '../kilns/items.ts';
 
 // Sold at Cinderport's armourer (#512): a step past Rime Lodge's finds for every class, at 25.
 export const slagMace = W('slag_mace', 'Slag Mace', 2300, 2, 12, { bonus: 5, classes: [...MARTIAL, 'cleric'] });
@@ -69,6 +69,24 @@ export const meridianMail = P(dwarfMail, 3, { id: 'meridian_mail', name: 'Meridi
 ] });
 
 /**
+ * The Company's kit in its last camp, Fane's, at the bottom of Meridian Camp (meridian_camp3; #22, §4.3):
+ * the armourer's battle staff with a plus of 4, named, at 2,600, inside Ashfall's window of 5,500.
+ */
+export const meridianStaff = P(battleStaff, 4, { id: 'meridian_staff', name: 'Meridian Staff +4', text: [
+  'A staff shod with iron, notched along its length in spans and half-spans, the notches worn smooth.',
+] });
+
+/**
+ * Oriel Fane's map (#22; meridian_camp.md §4.3; #443, call 4), which he gives at the first meeting: a quest
+ * item, sewn shut, with nothing a player can read. Its giving sets `meridian_map`, the Lost Expedition
+ * done; the Wold's scout takes it, looks, and gives it back (#447).
+ */
+export const faneMap: ItemDef = { id: 'fane_map', name: 'Fane\'s Map', slot: 'none', price: 0, text: [
+  'A roll of oilcloth the length of a forearm, sewn shut along its seam with sail thread.',
+  'It is heavier than paper has any right to be.',
+] };
+
+/**
  * The parts the machines shed, which no shop buys and no hand-in takes (MONSTERS §2): the stokers' on the
  * vents' furnace room's heap, and the flue walker's on the heap at the iron corridors' end (#22).
  */
@@ -117,4 +135,23 @@ export const meridianJournal4: ItemDef = { id: 'meridian_journal4', name: 'Merid
   '"Camped under the Stone. Its builders left their tools on the benches, as if called away. The vents tomorrow."',
 ] };
 
-export const ITEMS: readonly ItemDef[] = [...WARES, quickening, scavengersAxe, graveBow, emberPart1, emberPart3, meridianMail, ...PARTS, squareFlamberge, foundingStone, emberPart2, hearthSymbol, benchStaff, benchCoat, sentinelVisor, meridianJournal4];
+/**
+ * The Shovel That Does Not Blunt (#56's 52, #519): the grey shovel-head off a stoker, which the smith
+ * hafts for a company that keeps it. That it never dulls is its plus: the Kilns' mattock with a plus of
+ * 3, named, at 1,950, inside Ashfall's window of 5,500.
+ */
+export const greyShovel = P(mattock, 3, { id: 'grey_shovel', name: 'Grey Shovel +3', text: [
+  'A shovel-head of smooth grey stuff on a haft of ash, bound with wire.',
+  'Its edge takes no burr, and loses none.',
+] });
+
+/**
+ * The Druid's third prestige (#448): a seedling lifted at the Grove once the Archdruid has asked for one,
+ * a quest item no shop buys, carried into the Waste and planted in the bed under the Ember Stone's
+ * lookout, which takes it.
+ */
+export const groveSeedling: ItemDef = { id: 'grove_seedling', name: 'The Grove Seedling', slot: 'none', price: 0, text: [
+  'An oak seedling no higher than a hand, two leaves on it, in a ball of its own earth.',
+] };
+
+export const ITEMS: readonly ItemDef[] = [...WARES, quickening, scavengersAxe, graveBow, emberPart1, emberPart3, meridianMail, meridianStaff, faneMap, ...PARTS, squareFlamberge, foundingStone, emberPart2, hearthSymbol, benchStaff, benchCoat, sentinelVisor, meridianJournal4, greyShovel, groveSeedling];
