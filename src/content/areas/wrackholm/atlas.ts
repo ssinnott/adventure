@@ -18,6 +18,7 @@ export const PLACES: readonly AtlasPlace[] = [
   { id: 'dead_drop_stair', kind: 'dungeon', band: [26, 28], at: [214, 204] }, // the stair's foot, by the Dead-Drop's plate (#22)
   { id: 'dead_drop', kind: 'dungeon', band: [26, 28], at: [208, 204] }, // the Dead-Drop: the drop, through the stair's foot's far end (#22); three levels in all, the band their union (#443, call 4)
   { id: 'dead_drop2', kind: 'dungeon', at: [208, 210] }, // the vaults, down the drop's rails, six below it as the Tide Ship's decks are (#22)
+  { id: 'dead_drop3', kind: 'dungeon', at: [208, 216] }, // the counting house, down the vaults' steps, six below them again (#22)
 ];
 
 export const SITES: readonly AtlasSite[] = [

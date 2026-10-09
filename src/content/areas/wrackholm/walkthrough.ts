@@ -54,6 +54,7 @@ import { TIDE_SHIP3, TIDE_RIFT } from './maps/tide_ship3.ts';
 import { DEAD_DROP_STAIR } from './maps/dead_drop_stair.ts';
 import { DEAD_DROP, VAULT_STAIR } from './maps/dead_drop.ts';
 import { DEAD_DROP2, WRITER_STAIR, HOIST } from './maps/dead_drop2.ts';
+import { DEAD_DROP3 } from './maps/dead_drop3.ts';
 import { GameMap } from '../../../game/map.ts';
 import type { Feature } from '../../../game/map.ts';
 import { item } from '../../../game/items.ts';
@@ -511,8 +512,8 @@ function drop(w: Walk): void {
  * its pens, the rest in an empty pen and the count on the wall, two columns, a mark by Wenna's name alone and no
  * word of what it is; every group won at 27, loaders, keepers and the knockers at 28 the hardest; a keeper's parts,
  * the named piece and the Compact's coin; the hoist's chains, a search where they go into the wall and the cage up
- * to the drop's crates; and the steps down to the writer's room, barred until it is built (WRITER_STAIR), its line
- * said at its head each time.
+ * to the drop's crates; and the steps down to the writer's room (WRITER_STAIR), their line said at their head the
+ * once, and the counting house below them.
  */
 function vaults(w: Walk): void {
   const V = DEAD_DROP2, D = DEAD_DROP, level = w.level, map = new GameMap(V);
@@ -575,12 +576,92 @@ function vaults(w: Walk): void {
   listen(w);
   see(w, `${D.id}:dd_cage`);
 
-  // The steps down to the writer's room, barred until it is built (WRITER_STAIR): its line at its head, each time.
-  const bars = ev('dd2_down');
-  w.ok(WRITER_STAIR.to === 'dead_drop3' && !(V.exits ?? []).some((e) => e.to === WRITER_STAIR.to) && map.passable(WRITER_STAIR.x, WRITER_STAIR.y) !== 'ok'
-    && bars?.kind === 'event' && !bars.once && bars.x === WRITER_STAIR.x && bars.y === WRITER_STAIR.y - 1,
-    'the steps go on down to the writer\'s room, barred until it is built (WRITER_STAIR), and its line is said at its head each time');
+  // The steps down to the writer's room, the counting house (WRITER_STAIR): its line at its head, the once.
+  const head = ev('dd2_down');
+  w.ok(WRITER_STAIR.to === DEAD_DROP3.id && (V.exits ?? []).includes(WRITER_STAIR) && map.passable(WRITER_STAIR.x, WRITER_STAIR.y) === 'ok'
+    && head?.kind === 'event' && !!head.once && head.x === WRITER_STAIR.x && head.y === WRITER_STAIR.y - 1,
+    'the steps go on down to the writer\'s room (WRITER_STAIR), and the line at their head is said the once');
   see(w, `${V.id}:dd2_down`);
+  countingHouse(w);
+  w.level = level;
+}
+
+/**
+ * The Dead-Drop's counting house (#22), at 27, its floor: down the vaults' steps onto its first square, facing in,
+ * and back up onto the steps' head; over its door the vessel's word for the room, to a reader of Kiln-script, and
+ * no word of what the vessel is; the room of desks, and a tally clerk with a loader by the rail; through the gate
+ * in the rail the Tallymaster in sight at its desk, writing, the once, which sets the flag that the company has
+ * learned who writes the orders; beside the desk the in-tray, letters in the hand that countersigned the customs
+ * seal, never named, and the out-tray, the orders, reached from the door without coming beside any group; the
+ * Compact's coin and a clerk's parts; the Tallymaster, open only before its desk, never moving, never coming back
+ * once broken, won at 27; and no way on down.
+ */
+function countingHouse(w: Walk): void {
+  const C = DEAD_DROP3, V = DEAD_DROP2, level = w.level, map = new GameMap(C);
+  const here = (): string => `${w.world.state.mapId} ${w.world.state.x},${w.world.state.y}`;
+  const ev = (id: string): Extract<Feature, { kind: 'event' }> | undefined => C.features!.find((f): f is Extract<Feature, { kind: 'event' }> => f.kind === 'event' && f.id === id);
+  w.world.travel(V.id, WRITER_STAIR.x, WRITER_STAIR.y - 1, SOUTH);
+  const down = w.world.move('forward');
+  w.ok(down.kind === 'moved' && w.world.state.mapId === C.id && w.world.state.x === C.start.x && w.world.state.y === C.start.y && w.world.state.facing === C.start.facing
+    && WRITER_STAIR.tx === C.start.x && WRITER_STAIR.ty === C.start.y && down.messages.includes(WRITER_STAIR.label!),
+    `the vaults' steps go on down into the counting house, facing in (${here()}: ${down.kind === 'moved' ? down.messages.join(' / ') : down.kind})`);
+  const up = [w.world.move('forward'), w.world.move('back')];
+  w.ok(up.every((r) => r.kind === 'moved') && w.world.state.mapId === V.id && w.world.state.x === WRITER_STAIR.x && w.world.state.y === WRITER_STAIR.y - 1 && w.world.state.facing === NORTH,
+    `and back up onto the steps' head, facing away from them (${here()})`);
+
+  // Over the door at the steps' foot, marks like the Kilns': the room's word, read by a reader, and nothing of a vessel.
+  const marks = C.features!.find((f) => f.kind === 'sign' && f.id === 'dd3_marks');
+  const door = { x: C.start.x, y: C.start.y + 2 };
+  w.ok(marks?.kind === 'sign' && !!marks.read && marks.x === C.start.x && marks.y === C.start.y + 1 && map.at(door.x, door.y).door === 'door' && map.passable(door.x, door.y) === 'ok'
+    && !/\b(hull|ship|orbit|voyage|custodian|core)\b/i.test(`${marks.text} ${marks.read}`),
+    `over the door at the steps' foot, marks a reader of Kiln-script reads, the vessel's word for the room and no word of a vessel (${marks?.kind === 'sign' ? marks.read : 'none'})`);
+
+  w.level = 27;
+  for (const id of ['dd3_in', 'dd3_ledgers', 'dd3_shelves', 'dd3_stools']) see(w, `${C.id}:${id}`);
+  const groups = C.encounters!, desk = groups.find((g) => g.id === 'dd3_tallymaster'), clerk = groups.find((g) => g.id === 'dd3_clerk');
+  w.ok(groups.length === 2 && clerk?.monsters.join() === 'tally_clerk,loader' && !!clerk.respawn && clerk.roams === false && clerk.y < 16
+    && desk?.monsters.join() === 'tallymaster' && desk.roams === false && !desk.respawn && !!desk.slainText && !desk.after && !desk.when,
+    'a tally clerk with a loader by the rail, and at the room\'s head the Tallymaster alone at its desk, which never moves and once broken stays so');
+  if (!desk) return;
+  const beside = [[-1, 0], [1, 0], [0, -1], [0, 1]].map(([dx, dy]) => ({ x: desk.x + dx, y: desk.y + dy })).filter((c) => map.passable(c.x, c.y) === 'ok');
+  w.ok(beside.length === 1 && beside[0].x === desk.x && beside[0].y === desk.y - 1,
+    `it fights only a company that steps to its desk: the one square beside it is before the desk (${beside.map((c) => `${c.x},${c.y}`).join(' ')})`);
+
+  // Through the gate in the rail it is in sight, writing, out of its reach: the once, and the flag.
+  const writes = ev('dd3_writes')!;
+  w.world.travel(C.id, writes.x, writes.y, SOUTH);
+  w.world.state.light = 9;
+  const sighted = w.world.groupsInSight().map((g) => g.def.id);
+  w.world.state.light = 0;
+  w.ok(!!writes.once && writes.sets === 'q_writer_seen' && sighted.includes(desk.id) && !w.world.adjacentGroups().length,
+    `through the gate in the rail the Tallymaster is in sight at its desk, writing, out of its reach (${here()}: ${sighted.join(', ') || 'nothing in sight'})`);
+  see(w, `${C.id}:dd3_writes`);
+  w.ok(!!w.party.flags.q_writer_seen, 'seen writing, it sets the flag that the company has learned who writes the orders (q_writer_seen)');
+
+  // The trays: the letters and the orders, reached from the door without coming beside any group.
+  const clear = (x: number, y: number): boolean => map.passable(x, y) === 'ok' && groups.every((g) => Math.abs(g.x - x) + Math.abs(g.y - y) > 1);
+  const reach = new Set([`${C.start.x},${C.start.y}`]), todo: [number, number][] = [[C.start.x, C.start.y]];
+  for (let i = 0; i < todo.length; i++) for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+    const x = todo[i][0] + dx, y = todo[i][1] + dy;
+    if (!reach.has(`${x},${y}`) && clear(x, y)) { reach.add(`${x},${y}`); todo.push([x, y]); }
+  }
+  const orders = C.features!.find((f) => f.kind === 'chest' && f.id === 'dd3_orders'), letters = ev('dd3_intray')!;
+  w.ok(orders?.kind === 'chest' && orders.items.join() === 'compact_orders' && reach.has(`${orders.x},${orders.y}`) && reach.has(`${letters.x},${letters.y}`),
+    'the in-tray and the out-tray, the orders in it, are reached from the door without coming beside any group: taken without a fight');
+  const said = (C.features ?? []).flatMap((f) => 'text' in f && typeof f.text === 'string' ? [f.text] : []).join(' ');
+  w.ok(/countersigned/.test(letters.text) && /Helmstow seal/.test(letters.text) && !/Regent/i.test(said),
+    'in the in-tray letters in the hand that countersigned the customs seal, its owner never named');
+  for (const id of ['dd3_intray', 'dd3_outtray', 'dd3_coin', 'dd3_nibs']) see(w, `${C.id}:${id}`);
+  const taken = open(w, C.id, 'dd3_orders'), read = item('compact_orders');
+  w.ok(taken.join() === 'compact_orders' && read.slot === 'none' && !read.price && !!read.text?.length && w.party.bag.includes('compact_orders'),
+    `from the out-tray the Compact's orders, read from the pack (${read.name})`);
+  const gold = w.party.gold;
+  open(w, C.id, 'dd3_strongbox');
+  w.ok(w.party.gold - gold >= 1000, `by the desk, the Compact's drop coin, heavy (${w.party.gold - gold} gold)`);
+  w.ok(open(w, C.id, 'dd3_heap').every((i) => item(i).slot === 'none' && !item(i).price), 'in a bin of spent nibs, a clerk\'s frame and a nib, which no shop buys');
+
+  for (const g of groups) fight(w, `${C.id}:${g.id}`);
+  w.ok((C.exits ?? []).length === 1 && C.exits![0].to === V.id && !C.secrets?.length, 'and no way on down: the counting house\'s one way out is back up the steps');
   w.level = level;
 }
 

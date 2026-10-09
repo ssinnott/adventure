@@ -50,8 +50,10 @@ export const MONSTERS: readonly MonsterDef[] = [
   // restated by the drop (#22): as the Bay Keeper, its touch puts to sleep at 0.3 a hit and it mends the most hurt of
   // its group one turn in four
   { id: 'hold_keeper', name: 'Hold Keeper', plural: 'Hold Keepers', sprite: 'hold_keeper', kind: 'machine', look: 'It carries water to the pens, and nobody is in them.', level: 27, hp: 376, ac: 25, attack: 15, dice: 5, sides: 7, bonus: 7, speed: 12, xp: 1073, gold: [0, 0], inflict: { cond: 'asleep', chance: 0.3 }, cast: { spells: ['heal'], chance: 0.25 }, tint: '#7c857d', size: 1.1 },
-  // the counting house, its boss at 28 on MONSTERS §4.4's boss line, for dead_drop3's gate to tune, judged at 27, the
-  // room's floor; it fights only when the company steps to its desk (the map's), and calls two clerks at a half a turn,
-  // who may call their loaders; size 1.6 and drawn inside TALL_REACH
-  { id: 'tallymaster', name: 'The Tallymaster', plural: 'Tallymasters', sprite: 'tallymaster', kind: 'machine', look: 'It writes, and does not look up.', level: 28, hp: 1497, ac: 27, attack: 18, dice: 25, sides: 8, bonus: 28, speed: 13, xp: 17813, gold: [0, 0], calls: { monsters: ['tally_clerk', 'tally_clerk'], chance: 0.5 }, tint: '#6f7780', size: 1.6 },
+  // the counting house, its boss at 28, off the line (tools/tests/harness.ts): restated on the boss line as #549 made
+  // it, 1,552 hit points and 26d8+29, it was won 89% at 27, the room's floor, past the gate's limit; so its hit points
+  // are the line's and its blow is set by dead_drop3's gate, 28d8+50, won 70% at 27 and 83% at 29. It fights only when
+  // the company steps to its desk (the map's), and calls two clerks at a half a turn, who may call their loaders;
+  // size 1.6 and drawn inside TALL_REACH
+  { id: 'tallymaster', name: 'The Tallymaster', plural: 'Tallymasters', sprite: 'tallymaster', kind: 'machine', look: 'It writes, and does not look up.', level: 28, hp: 1552, ac: 27, attack: 18, dice: 28, sides: 8, bonus: 50, speed: 13, xp: 17813, gold: [0, 0], calls: { monsters: ['tally_clerk', 'tally_clerk'], chance: 0.5 }, tint: '#6f7780', size: 1.6 },
 ];

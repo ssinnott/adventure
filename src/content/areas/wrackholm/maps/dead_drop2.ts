@@ -3,20 +3,19 @@
 // door at its far end that opens for nobody the company has, deep knockers at it and crates under the Hand's
 // seal beside it. Off the vault's south aisle, the people's vault: pens with old straw and a pail at every gate,
 // hold keepers carrying the water, and on its end wall the count, two columns. An empty pen is the rest. The
-// hoist up to the drop is behind the aisle's wall, found by a search; the steps down to the writer's room
-// (WRITER_STAIR) are barred until it is built. Loaders at 26, keepers at 27, knockers at 28. It pays outside
-// any area's budget (EXPANSION §5.2; Wrackholm's `outside`). docs/areas/dead_drop.md §4.2 is its brief.
+// hoist up to the drop is behind the aisle's wall, found by a search; the steps down to the writer's room, the
+// counting house (WRITER_STAIR), are at the aisle's end. Loaders at 26, keepers at 27, knockers at 28. It pays
+// outside any area's budget (EXPANSION §5.2; Wrackholm's `outside`). docs/areas/dead_drop.md §4.2 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { NORTH, EAST, SOUTH } from '../../../../game/types.ts';
 
 /**
  * The way down to the writer's room (dead_drop3, #22's third level): the steps at the people's vault's end,
- * 16,30, a door drawn in the wall, onto the room's first square at 16,1, facing south, which this asks that
- * level to give it. An exit leads only to a built map, so the writer's room lists it in this map's exits,
- * opens its square (the `Z` to floor; the legend stays, for the rails' door) and drops or rewrites
- * `dd2_down`; its way back up lands on 16,29, facing north.
+ * 16,30, onto the counting house's first square at 16,1, facing south, its door two squares on; its way back
+ * up lands on 16,29, facing north.
  */
-export const WRITER_STAIR: Exit = { x: 16, y: 30, to: 'dead_drop3', tx: 16, ty: 1, tf: SOUTH };
+export const WRITER_STAIR: Exit = { x: 16, y: 30, to: 'dead_drop3', tx: 16, ty: 1, tf: SOUTH,
+  label: 'Down the steps a long way, to a door. The scratching is louder.' };
 
 /** The cargo hoist (an addition, dead_drop.md §1): behind the secret door at 14,28, the cage, one way up onto the drop's 1,10. */
 export const HOIST: Exit = { x: 13, y: 28, to: 'dead_drop', tx: 1, ty: 10, tf: EAST,
@@ -32,8 +31,7 @@ export const DEAD_DROP2: MapDef = {
   // The drop's stone, smooth and cold and lit from nowhere, all the way down.
   palette: { wall: '#8a8c90', wallDark: '#5e6064', floor: '#6a6c70', ceiling: '#4a4c50', door: '#5a5c60', wallStyle: 'stone', ceilingStyle: 'vault', banner: '#3a3c40' },
   bare: true,
-  // The rails' sealed door, which opens for nobody the company has, and the door at the foot of the steps
-  // down to the writer's room until it is built (WRITER_STAIR): walls drawn as doors.
+  // The rails' sealed door, which opens for nobody the company has: a wall drawn as a door.
   legend: { Z: { solid: 'wall', door: 'door' } },
   rows: [
     '################################',
@@ -66,13 +64,14 @@ export const DEAD_DROP2: MapDef = {
     '###############...##############',
     '#############.S...##############',
     '###############...##############',
-    '################Z###############',
+    '################.###############',
     '################################',
   ],
   exits: [
     // The way back up the rails' slope, onto the drop's 25,29 at the head of its way down, facing away from it.
     { x: 25, y: 1, to: 'dead_drop', tx: 25, ty: 29, tf: NORTH, label: 'Up the rails\' slope a long way, and the drop\'s far end again.' },
     HOIST,
+    WRITER_STAIR,
   ],
   features: [
     // The way in and the shards' vault: racks in rows, the shards on them sorted by colour, the rails between.
@@ -97,10 +96,10 @@ export const DEAD_DROP2: MapDef = {
     { kind: 'event', x: 17, y: 26, id: 'dd2_count', once: true, text: 'Names cut into the wall in two columns, the Compact\'s knot at the head, in a hand that never once shakes.' },
     { kind: 'event', x: 17, y: 27, id: 'dd2_left', once: true, text: 'The left column runs down to the floor: names and homes, Gullwick, Reedholm, Brockholt, Ashcombe, and on.' },
     { kind: 'event', x: 17, y: 28, id: 'dd2_right', once: true, text: 'The right is short: a name, then three, then a family. Last, Wenna, of Gullwick, and by hers alone a loop inside a loop.' },
-    // The hoist's chains, going into the wall (the hint, each time), and the steps down to the writer's room,
-    // barred until it is built (WRITER_STAIR): its line at its head, each time.
+    // The hoist's chains, going into the wall (the hint, each time), and the steps down to the writer's room
+    // (WRITER_STAIR): its line at its head, the once.
     { kind: 'event', x: 15, y: 28, id: 'dd2_chains', text: 'Two chains come down the wall out of a slot in the roof and go into the stone at the floor. They are greased.' },
-    { kind: 'event', x: 16, y: 29, id: 'dd2_down', text: 'Steps go down at the aisle\'s end to a door, shut fast. Through it, faint and steady, a nib scratching.' },
+    { kind: 'event', x: 16, y: 29, id: 'dd2_down', once: true, text: 'Steps go down at the aisle\'s end into the dark. From below, faint and steady, a nib scratching.' },
   ],
   secrets: [{ x: 14, y: 28, hint: 'dd2_chains' }],
   encounters: [

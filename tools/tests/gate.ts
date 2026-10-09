@@ -79,7 +79,8 @@ export const BOSSES: Record<string, readonly string[]> = {
   downs: ['mill:m_warden', 'berth:berth_captain'],
   thornmark: ['grove2:g2_hand', 'grove2:g2_warden'],
   deepthorn: ['deepthorn_j5:j5_eldest'],
-  wrackholm: ['smugglers_cove2:kh2_great_devilfish', 'tide_ship_rift:tide_ship_rift_warden'],
+  // The Tallymaster at its desk in the Dead-Drop's counting house, down the stair from the Tide Ship's hold (#22).
+  wrackholm: ['smugglers_cove2:kh2_great_devilfish', 'tide_ship_rift:tide_ship_rift_warden', 'dead_drop3:dd3_tallymaster'],
   eaves: ['the_sunder2:su2_warden'],
   delta: ['drowned_temples2:dt2_choirmaster'],
   kilnsheart: ['deep_mines3:dm3_foreman', 'anvil_stone:as_warden', 'lava_tubes2:lt2_great_salamander'],
