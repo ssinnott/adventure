@@ -19,8 +19,8 @@ export const MONSTERS: readonly MonsterDef[] = [
   { id: 'cinder_beetle', name: 'Cinder Beetle', plural: 'Cinder Beetles', sprite: 'cinder_beetle', kind: 'beast', look: 'Its shell is the colour of the beach.', level: 24, hp: 397, ac: 25, attack: 14, dice: 4, sides: 8, bonus: 5, speed: 8, xp: 1271, gold: [0, 0], immune: ['fire'], tint: '#34343a', size: 0.8 },
   // the vents and the ash toward them (#511, #513), a skirmisher on the line at 24: its kin's fire and its cold, and quicker
   { id: 'ember_salamander', name: 'Ember Salamander', plural: 'Ember Salamanders', sprite: 'ember_salamander', kind: 'beast', look: 'Grown in the mountain\'s own fire.', level: 24, hp: 330, ac: 23, attack: 14, dice: 3, sides: 8, bonus: 4, speed: 16, xp: 953, gold: [0, 0], immune: ['fire'], weak: ['cold'], tint: '#4a1c12', size: 0.62 },
-  // Old Cinder (#514, #515), a soldier on the line at 25: the dead, cast in ash
-  { id: 'ash_husk', name: 'Ash Husk', plural: 'Ash Husks', sprite: 'ash_husk', kind: 'dead', look: 'A man of ash, still holding his cup.', level: 25, hp: 340, ac: 24, attack: 14, dice: 4, sides: 8, bonus: 3, speed: 10, xp: 993, gold: [0, 0], tint: '#9c978e', size: 1 },
+  // Old Cinder's crater (#514, #515), a soldier on MONSTERS §4.4's line at 25 as #549 made it again: the dead, cast in ash
+  { id: 'ash_husk', name: 'Ash Husk', plural: 'Ash Husks', sprite: 'ash_husk', kind: 'dead', look: 'A man of ash, still holding his cup.', level: 25, hp: 320, ac: 24, attack: 14, dice: 4, sides: 8, bonus: 2, speed: 10, xp: 993, gold: [0, 0], tint: '#9c978e', size: 1 },
   // Fire Mountain's slopes and the shore under them (#511, #513), a brute at 25 on the test drake's line (MONSTERS §3.3):
   // it flies, so it reaches the back row as the eagle does (`ranged`); fire does nothing to it, and its breath burns a row
   { id: 'cinder_drake', name: 'Cinder Drake', plural: 'Cinder Drakes', sprite: 'cinder_drake', kind: 'beast', look: 'The mountain has children.', level: 25, hp: 584, ac: 22, attack: 15, dice: 5, sides: 8, bonus: 3, speed: 8, xp: 1987, gold: [0, 0], ranged: true, immune: ['fire'], sweep: { chance: 0.25, element: 'fire' }, tint: '#7a736b', size: 1.3 },
