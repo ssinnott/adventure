@@ -3,15 +3,16 @@
 // at Anvilhall), The Eagles' Nest (the herder at J11's fold, the nest above the Peak Stone, and the
 // badge to Lantern Watch or to Highcell), The Toll (the caravan-master short of the Stair's head, and
 // the king's toll) and The Mason's Tally (the deserter in the rocks on Sheer Point, and Cinderport).
-// Then three of the third prestiges' quests (#448), each its trainer's `asks`, paying nothing but the
-// prestige: The Ledge (Edric at Stairwatch, the Knight's), The Vigil (Oswin on Spine Summit, the
-// Monk's) and The Eleven (Brother Lark in Highcell's bell tower, the Bard's).
+// Then the four third prestiges' quests whose trainers live here (#448), each its trainer's `asks`,
+// paying nothing but the prestige: The Ledge (Edric at Stairwatch, the Knight's), The Vigil (Oswin on
+// Spine Summit, the Monk's), The Eleven (Brother Lark in Highcell's bell tower, the Bard's) and Whose
+// Hand (Hereward in Rook's Nest, the Thief's, and the Dead-Drop's counting house).
 // How the words are keyed is in src/content/area.ts (`quests`); tools/tests/quests.ts checks every key.
 import type { QuestDef } from '../../../game/quests.ts';
 import { NOVICE_TOLD, NOVICE_KEPT, ELEVEN_ASKED, ELEVEN_SUNG, VERSES, SING } from './maps/monastery.ts';
 import { NEST_FOUND, NEST_WATCH, NEST_CELL } from './maps/highspine_i11.ts';
 import { STAIR_PASSED, TOLL_DONE, LEDGE_ASKED, LEDGE_HELD } from './maps/highspine_i10.ts';
-import { MASON_PASSAGE, MASON_SWAPPED } from './maps/sheerpoint_i8.ts';
+import { MASON_PASSAGE, MASON_SWAPPED, ORDERS_ASKED, ORDERS_READ } from './maps/sheerpoint_i8.ts';
 import { VIGIL_ASKED, VIGIL_KEPT } from './maps/monksvale_j11.ts';
 import { BELL_HUNG } from '../saltreach/maps/drowned_temples.ts';
 import { HYMN_SUNG } from '../kilns/maps/anvilhall.ts';
@@ -145,6 +146,28 @@ export const QUESTS: readonly QuestDef[] = [
     goals: [
       { when: SING, text: 'Sing the verses to Brother Lark in Highcell\'s bell tower.', at: 'monastery' },
       { when: { flag: ELEVEN_ASKED }, text: 'Find the eleven\'s verses: a drowned bell\'s count, a miners\' hymn, a lighthouse log.' },
+    ],
+  },
+  {
+    // #448, the Thief's third: Hereward in Rook's Nest asks a company with a Nightjar of 27 for a set of the
+    // Compact's orders and whose hand writes them. Down the Dead-Drop to its counting house: through the gate
+    // in the rail the Tallymaster seen writing (`dd3_writes` sets `q_writer_seen`), and the orders out of the
+    // tray at its right hand without a fight; back in Rook's Nest he reads them from the pack, once, and
+    // hands them back. Nothing takes them, so the Factor's rung (#635) finds them carried still.
+    id: 'whose_hand',
+    title: 'Whose Hand',
+    start: { flag: ORDERS_ASKED },
+    done: { flag: ORDERS_READ },
+    entries: [
+      { id: 'asked', when: { flag: ORDERS_ASKED }, text: 'In Rook\'s Nest, Hereward, who counts the Hand\'s stones, asked for a set of the Compact\'s orders, and whose hand writes them.' },
+      { id: 'writer', when: { flag: 'q_writer_seen' }, text: 'At the bottom of the Dead-Drop something tall writes at a desk, a pen in each hand. Neither hand shakes.' },
+      { id: 'orders', when: { seen: 'dead_drop3:dd3_orders' }, text: 'From the tray at its right hand we took a set of the orders, sealed with the knot.' },
+      { id: 'read', when: { flag: ORDERS_READ }, text: 'Hereward read the orders through twice in Rook\'s Nest, and handed them back.' },
+    ],
+    goals: [
+      { when: { flag: [ORDERS_ASKED, 'q_writer_seen'], item: 'compact_orders' }, text: 'Take the orders up to Hereward in Rook\'s Nest, on Sheer Point.', at: 'sheerpoint_i8' },
+      { when: { flag: ORDERS_ASKED, item: 'compact_orders' }, text: 'Learn whose hand writes the orders, at the bottom of the Dead-Drop.', at: 'dead_drop3' },
+      { when: { flag: ORDERS_ASKED }, text: 'Go down the Dead-Drop, under the Tide Ship, for a set of the Compact\'s orders and whose hand writes them.', at: 'dead_drop3' },
     ],
   },
 ];

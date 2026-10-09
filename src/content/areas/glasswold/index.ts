@@ -11,6 +11,7 @@ import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
 import { INTERIORS } from './interiors.ts';
+import { QUESTS } from './quests.ts';
 
 export const AREA = {
   id: 'glasswold' as const,
@@ -24,7 +25,8 @@ export const AREA = {
   // The boxes' finds, the Riders' leather their trader sells at Akordu (#526) and the Compact's letter in
   // the cleft under the Scarp's lip (#528); no step on the ladder (#542).
   items: ITEMS,
-  quests: [],
+  // The Ranger's third prestige's quest, Oriel Fane's Map, from Aysu on Kushtash (#448).
+  quests: QUESTS,
   // The Warning, the act's third chapter, is #531's.
   chapter: undefined,
   // The steppe: hot summers and hard winters, the days warm and the nights cold, little rain and that

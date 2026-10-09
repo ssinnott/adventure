@@ -16,8 +16,8 @@ Its first five boxes are built, J11, Monks' Vale (#499, §4.2), which lists the 
 Peak Stone's (#501, §4.4), I10, Stairwatch and the Stair's head (#502, §4.5), I9, the ridge north
 (#503, §4.6) and I8, Sheer Point (#504, §4.7), and so is Highcell, the dungeon through J11's gate
 (#500, §4.3); its eight monsters are drawn (§3), its chapter, The Bells, is written (#505, §5),
-its four side quests are in the log (#506, §6) and so are three of its third prestiges' quests,
-the Knight's, the Monk's and the Bard's (#448, §6); the rest is to build. Its content is `src/content/areas/whitespine/` (maps, monsters, items,
+its four side quests are in the log (#506, §6) and so are its four third prestiges' quests,
+the Knight's, the Monk's, the Bard's and the Thief's (#448, §6); the rest is to build. Its content is `src/content/areas/whitespine/` (maps, monsters, items,
 climate, its part of the world map, its walkthrough and its chapter of the one quest, The Bells, in
 `chapter.ts`; its side quests in `quests.ts`, #506); it has no town, so no rooms. Its ids:
 the area `whitespine`, its zones `monksvale`, `highspine` and `sheerpoint`, the dungeon `monastery`
@@ -98,8 +98,8 @@ road out over the water, every stone a stolen shard, and takes Wenna out along i
 (DESIGN §9, the captain's line). The Giants' Stair is the road over the range and down into Ashfall,
 and its toll is the second choice put before a fight (#544), after Thornmark's ogre's bargain
 (#645). Four of the third prestiges' places lie here and are built with it (#448): Stairwatch,
-Spine Summit, Rook's Nest and the bell tower. Three of their quests are built, the Knight's, the
-Monk's and the Bard's (§6); the Thief's, out to the Dead-Drop, is still to come (#448, #22).
+Spine Summit, Rook's Nest and the bell tower. Their four quests are built, the Knight's, the
+Monk's, the Bard's and the Thief's, out to the Dead-Drop (§6, #448).
 
 Nothing trains or sells here (#443, call 7): Rime Lodge teaches to 23 behind and Cinderport to 27
 ahead, so a company carries what it has over the range. The weather is the range's: snow on the
@@ -179,7 +179,8 @@ its gate (#500), I11 (#501), I10 (#502), I9 (#503) and I8 (#504):
   night a snow troll comes down to the east shore. On the shingle west of the root a camp, where
   Wenna waits and asks whether the company will sleep by her fire; if it does, it wakes to her
   blanket cold, a boat going out along the stones and, on the first stone, her knot. In the tip's
-  rock Rook's Nest, a hollow with a watcher who counts the stones; its back wall is wet and by night
+  rock Rook's Nest, a hollow where Hereward watches and counts the stones, the Thief's third's
+  trainer (§6, #448); its back wall is wet and by night
   oars are heard behind it, where the Hand keeps its boats and its crates under seal. On the tip's
   last rock a cairn and, at the tide's edge, the drowned god's shrine; down the pines to the east a
   deserter in the rocks with his tally. Four groups: spine eagles by the track's foot, masons at the
@@ -302,7 +303,7 @@ The places, as the atlas and the docs have them:
 | The Giants' Stair | I10, and Ashfall's H10 | the road over the range and down, past the giants who gave it its name (DESIGN §9); the toll (MONSTERS §8.1, #544); the Stair-king; the caravan that cannot pay (#56's 47) | a road link, 272,306 to 258,306 |
 | Stairwatch | I10 | the Knight's third prestige: a ledge above the Stair, its way up found off the Stair (DESIGN §5, #448) | a tower at 270,312 |
 | Sheer Point | I8 | the Hand's causeway of stolen shards; Wenna taken (DESIGN §9, STORY); the masons (MONSTERS §8.1); the mason's tally (#56's 48) | the zone, its tip at about y 226 |
-| Rook's Nest | I8 | the Thief's third prestige: a hide over the causeway, and the Dead-Drop's orders (DESIGN §5, §10.2, #448, #22) | a cave at 286,230 |
+| Rook's Nest | I8 | the Thief's third prestige: a hide over the causeway, and the Dead-Drop's orders (DESIGN §5, §10.2, #448, #22); Hereward, built with Whose Hand (§6) | a cave at 286,230 |
 | The Giants | J10 | the giants' own ground above the Stair (#443, call 1) | a label at 300,296; the Sheer lettered at 262,300 |
 
 ### 4.1 The briefs
@@ -750,8 +751,8 @@ settled in its issue.
 - **Encounters.** Ashen masons on the causeway (two groups, MONSTERS §8.1: a hammer from below and
   a shard to set), the second with their foreman the box's hardest; spine eagles over the tip; a
   snow troll come down to the shore by night (`when`).
-- **Quests.** The step. The Mason's Tally (§6). The Thief's third prestige's quest, which goes down
-  to the Dead-Drop (#448, #22).
+- **Quests.** The step. The Mason's Tally (§6). The Thief's third prestige's quest, Whose Hand,
+  which goes down to the Dead-Drop, built (§6, #448).
 - **Wenna** is a person who moves (#76; §9, 2): at the camp when the company comes, never in a
   fight. Resting there sets `q_wenna_taken`, and the company wakes to the boat going out along the
   stones and her knot on the first one: one once-event, no counter.
@@ -794,7 +795,8 @@ settled in its issue.
   change, the owner's to ask for, and the chapter's step (#505) reads `q_wenna_taken`, which only
   this choice sets (§9, #504's 7; §11). Rook's Nest is a hollow high in the tip's rock at the
   atlas's site, 22,8 (286,230), its mouth onto the hills at 22,9, and the watcher in it, at 21,7, is
-  words only, his trainer entry and the Thief's quest being #448's (§9, #504's 11). At the hollow's
+  Hereward, who teaches the Thief's third for a set of the Compact's orders and whose hand writes
+  them (§6; §9, #504's 11; the Ranger's and the Thief's 1 to 4). At the hollow's
   back, 22,7, the rock is wet and smells of the sea, the hint (`i8_damp`, always there), and by
   night oars are heard under it (`i8_oars`); the wet rock hides a secret door at 22,6, and behind it
   the sea cave, 20 to 22,5, walled in rock and deep water so that no climb, wade or float reaches it
@@ -922,18 +924,19 @@ as built:
   Cinderport's inn; or the page swapped, he chalks a slate short of the true count and goes back to
   work below the tally-house (18,8), and the true tally, ELEVEN, is the company's.
 
-**The third prestiges' quests.** Three of the four whose trainers live here are built (#448), their
-journal in `quests.ts` beside the side quests. Each is its trainer's `asks`: the trainer puts it
-only to a company whose member of the class is at 27 with the second taken, and its seeking quest
-(#384) is done once it begins. Each pays nothing but the prestige, which the trainer's menu teaches
-once the done flag holds, for no gold (§9, #448's 1). The Thief's, at Rook's Nest (I8), is still
-#448's, with the Dead-Drop (#22).
+**The third prestiges' quests.** The four whose trainers live here are built (#448), their journal
+in `quests.ts` beside the side quests. Each is its trainer's `asks`: the trainer puts it only to a
+company whose member of the class is at 27 with the second taken, and its seeking quest (#384) is
+done once it begins. Each pays nothing but the prestige, which the trainer's menu teaches once the
+done flag holds, for no gold (§9, #448's 1). The Thief's goes down to the Dead-Drop's counting house
+(docs/areas/dead_drop.md §4.3).
 
 | Class | Quest | Trainer | What it asks | Fights | Flags |
 |---|---|---|---|---|---|
 | Knight | The Ledge (`ledge`) | Edric, the old champion, on Stairwatch's ledge (I10, 5,26) | hold the ledge with him through a night | by night, two toll-takers up the shaft, then two more (`i10_tolltakers`, `i10_tolltakers2`) | `q_ledge` asked; `q_ledge_held` done |
 | Monk | The Vigil (`vigil`) | Oswin, the summit's hermit, on Spine Summit (J11, 3,10) | sit the night with him on the summit | by night, five brothers up the path (`j11_vigil`) | `q_vigil` asked; `q_vigil_kept` done |
 | Bard | The Eleven (`eleven`) | Brother Lark, a ringer a beat behind the rest, in Highcell's bell tower (`monastery`, 6,14) | find the eleven's three verses and sing them to him under the bells | none | `q_eleven` asked; `q_eleven_sung` done |
+| Thief | Whose Hand (`whose_hand`) | Hereward, the watcher, in Rook's Nest (I8, 21,7) | a set of the Compact's orders out of the Dead-Drop, and whose hand writes them | none of its own: the Dead-Drop's as built, and the orders taken without one | `q_rook_orders` asked; `q_writer_seen` (dead_drop3's `dd3_writes`); `q_rook_read` done |
 
 - **The Ledge.** Edric looks at the knight's banner and asks the company to hold the ledge till
   morning: *"At night they come up to see who is watching."* Answered, by night two Stair Giants
@@ -949,6 +952,12 @@ once the done flag holds, for no gold (§9, #448's 1). The Thief's, at Rook's Ne
   at Anvilhall (`q_hymn_sung`, #56's 36) and the keeper's log taken off Crowness Light's table
   (`downs_e3:e3_log`, #67). Asked and holding all three, the company sings them to him under the
   bells, and every word falls on a stroke; that sets `q_eleven_sung`.
+- **Whose Hand.** Hereward lowers his glass at the thief: *"The Compact's orders come up out of the
+  Dead-Drop, under the Tide Ship. Bring me a set."* At the counting house's foot, through the gate in
+  the rail, the Tallymaster is seen writing (`dd3_writes` sets `q_writer_seen`), and the orders
+  (`compact_orders`) are taken from the out-tray at its right hand, no group beside it. Spoken to
+  with the orders in the pack and the writer seen, he reads them through twice and hands them back,
+  which sets `q_rook_read`; they are never handed in (§9, the Ranger's and the Thief's 2 and 3).
 
 ## 7. Encounters, and what is new
 
@@ -1656,6 +1665,21 @@ Decided by delegate for #448 (the Whitespine's three), each the owner's to overt
 10. **Quest ids `ledge`, `vigil` and `eleven`;** flags `q_ledge`, `q_ledge_held`, `q_vigil`,
     `q_vigil_kept`, `q_eleven` and `q_eleven_sung`.
 
+Decided by delegate for #448 (the Ranger's and the Thief's), each the owner's to overturn:
+
+1. **The watcher is Hereward** (§10), named as the other trainers are, so the seeking goal reads
+   "Find Hereward, the watcher in Sheer Point."; his words from #504 stand as his first meeting's.
+2. **The orders are read from the pack, never handed in:** holding them with the writer seen, he
+   reads them once (`q_rook_read`) and hands them back, so the Factor's rung (#635) finds them
+   carried. He teaches on both held at once, or on `q_rook_read`, so they may leave the pack after.
+3. **Learning who writes them is seeing it write,** `dd3_writes` and its flag `q_writer_seen`
+   (#22); nothing says whose hand. No fight is asked: the walkthrough takes the orders with no
+   group beside and leaves the Tallymaster at its desk, but a company that fights it still finishes.
+4. **No group placed and no pay:** the Dead-Drop's levels are 26 to 28 as built, the groups that
+   stand won at 27 in the walkthrough; no gate, density or curve figure moves.
+5. **Quest id `whose_hand`; flags `q_rook_orders` and `q_rook_read`,** since `orders` and
+   `q_orders_read` are Thornmark's survey orders already.
+
 ## 10. Names
 
 The Whitespine's naming pass, by the rules of `docs/NAMES.md`: the range keeps the Crown's and the
@@ -1672,6 +1696,8 @@ founded from below and the giants, who have no names on the map. Chosen for #444
   |---|---|---|---|
   | the Monastery | Highcell | a monastery is cells, and this one is high | Bellhouse, which says too much; Spine Abbey |
 
+- **A person:** Hereward, the watcher in Rook's Nest, the Thief's third (#448), in the Crown's old
+  English as Edric and Oswin are. He was "A watcher" while he had words only.
 - **Kept:** the Whitespine, the Crown's name for the range; Monks' Vale, the High Spine and Sheer
   Point, the zones, each a place and a plain thing; the Giants' Stair, which the giants gave their
   name to and not the other way; Stairwatch, Spine Summit and Rook's Nest, the Lanterns' names for
@@ -1791,5 +1817,6 @@ Owed, from the third prestiges (#448):
 - **A night held through** needs the engine to count one: the nights are groups that walk only by
   night, so a company may fight the ledge's two pairs on two nights, and nothing stops it resting
   between them. A systems change the owner may ask for (§9, #448's 4).
-- **The Thief's,** at Rook's Nest (I8), is #448's still, with the Dead-Drop (#22); the watcher in
-  the hollow keeps words only until then.
+- **The orders kept to the end:** nothing takes them from the pack today. Were a later hand-in to
+  (the Factor's rung, #635, if it took them), a company that gave them up before Hereward read them
+  could not finish the Thief's (§9, the Ranger's and the Thief's 2).

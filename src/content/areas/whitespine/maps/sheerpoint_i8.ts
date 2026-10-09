@@ -4,7 +4,8 @@
 // the Hand has built it, every stone glowing the way the shards do, the masons at work on it and
 // their tally-house at its root; the camp on the shingle where Wenna waits for the company, and the
 // night she is taken (`WENNA_TAKEN`); Rook's Nest, a hollow high in the tip's rock over the causeway
-// at the atlas's site, and under it the Hand's sea cave, where its boats are kept; on the east the
+// at the atlas's site, where Hereward watches and teaches the Thief's third for the Compact's orders
+// (#448), and under it the Hand's sea cave, where its boats are kept; on the east the
 // cairn on the last rock, the drowned god's shrine, a snow troll come down to the shore by night and,
 // at the end of the pines, the mason who deserted with his tally.
 // In from I9 (#503) walked, up the ridge trail: I9's 20,0 is this map's 20,31's neighbour, and the
@@ -24,6 +25,16 @@ export const WENNA_TAKEN = 'q_wenna_taken';
  * goes back to the causeway with it, so the Hand sends for the wrong count.
  */
 export const MASON_PASSAGE = 'q_mason_passage', MASON_SWAPPED = 'q_mason_swapped';
+
+/**
+ * The Thief's third (#448): Hereward has asked a thief of 27 with the second for a set of the Compact's
+ * orders, out of the Dead-Drop's counting house, and whose hand writes them (`ORDERS_ASKED`). With the
+ * orders in the pack and the Tallymaster seen writing (dead_drop3's `dd3_writes` sets `q_writer_seen`) he
+ * reads them, once (`ORDERS_READ`), and hands them back: read from the pack and never handed in, as the
+ * Factor's rung (#635) wants them carried too. Read once, the third stays his to teach should they leave
+ * the pack after.
+ */
+export const ORDERS_ASKED = 'q_rook_orders', ORDERS_READ = 'q_rook_read';
 
 export const SHEERPOINT_I8: MapDef = {
   id: 'sheerpoint_i8',
@@ -94,14 +105,30 @@ export const SHEERPOINT_I8: MapDef = {
       ] },
       { label: 'Not yet', says: ['"Then I\'ll keep it alone."'] },
     ] } },
-    // Rook's Nest (#448), a hollow high in the tip's rock at the atlas's site, and the one who waits in
-    // it, words only: #448 keeps his trainer entry and the Thief's quest. At its back the rock is wet,
-    // and by night oars are heard under it.
+    // Rook's Nest, a hollow high in the tip's rock at the atlas's site, and Hereward, who watches from it,
+    // the Thief's third prestige (#448): his own words first, then, to a thief of 27 with the second, his
+    // ask, once, for a set of the Compact's orders out of the Dead-Drop and whose hand writes them; with the
+    // orders in the pack and the writer seen, he reads them, once, and teaches. At the hollow's back the
+    // rock is wet, and by night oars are heard under it.
     { kind: 'event', x: 22, y: 8, id: 'i8_nest', once: true, text: 'A hollow high in the rock of the tip, a bed of bracken in it. Below, the whole causeway, stone by stone.' },
-    { kind: 'npc', x: 21, y: 7, name: 'A watcher', lines: [
+    { kind: 'npc', x: 21, y: 7, name: 'Hereward, the watcher', lines: [
       'A man lies on the bracken at the back of the hollow, a glass to his eye and the causeway in it.',
       '"A stone a day, and I count every one. They never once look up."',
-    ] },
+    ], flag: 'i8_watcher_met', says: [
+      { after: { flag: [ORDERS_ASKED, 'q_writer_seen'], item: 'compact_orders' }, until: { flag: ORDERS_READ }, sets: ORDERS_READ, lines: [
+        'He reads the orders through twice, his lips moving, and hands them back.',
+        '"And you saw it write them. Sit down, thief."',
+      ] },
+      { after: { flag: ORDERS_READ }, lines: [
+        'He has the glass to his eye again, and the causeway in it.',
+        '"Still counting. Somebody has to."',
+      ] },
+      { after: { flag: 'i8_watcher_met', member: { cls: 'thief', level: 27, prestige: 2 } }, until: { flag: ORDERS_ASKED }, sets: ORDERS_ASKED, lines: [
+        'He lowers the glass and looks your thief over, the way he looks at the stones.',
+        '"The Compact\'s orders come up out of the Dead-Drop, under the Tide Ship. Bring me a set."',
+        '"And learn whose hand writes them."',
+      ] },
+    ], teaches: { cls: 'thief', prestige: 3, asks: 'whose_hand', done: [{ flag: [ORDERS_ASKED, 'q_writer_seen'], item: 'compact_orders' }, { flag: ORDERS_READ }], seek: 'Hereward watches the Hand\'s causeway from Rook\'s Nest, high on the tip of Sheer Point, and can make a Faceless of a Nightjar.' } },
     { kind: 'event', x: 22, y: 7, id: 'i8_damp', once: true, text: 'At the back of the hollow the rock is wet, and smells of the sea.' },
     { kind: 'event', x: 22, y: 7, id: 'i8_oars', once: true, when: { hours: 'night' }, text: 'Under the rock, faint, oars. Then nothing.' },
     // The secret: behind the hollow's wet back wall, the Hand's sea cave, its water running out under

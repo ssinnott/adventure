@@ -23,18 +23,20 @@ first glass walker; D10, the mesas (#527, §4.5), which joins E10 and D9 overlan
 empty, and places the basilisk and spends stone first; D8, Akordu, the Riders' camp (#526, §4.4),
 which lands the Rider's ride to Cinderport; C8, the Scarp's edge (#528, §4.6), where the Scarp stair
 from the Saltings' C7 comes up onto the lip, nine squares of C7 opened for it; B8, the Wold's heart
-(#529, §4.7), which places the Grey Lion, set off the line, and the way up Kushtash; and B9, the
-Glass's edge (#530, §4.8), the dunes and the Riders' watch at the gap, whose last square looks onto
-the Glass. With it the Wold is complete overland but for E9 and E8, the country behind (#534,
-parked). `AHEAD` and `PLANNED` are empty; the Wold's step of the quest, which keys on B9's flag
-`gap_watch` or its event `wold_b9:b9_glass`, and the area's chapter are owed to #531. Its content is
-`src/content/areas/glasswold/` (maps, interiors, monsters, items, climate, its part of the world map
-in `atlas.ts` and its walkthrough; its chapter of the one quest, The Warning, in `chapter.ts` and
-its side quests in `quests.ts`, to come); it has no town and one business, the Riders' trader at
-Akordu, whose tent has a room. Its ids: the area `glasswold`, its zones `wold` and `theglass`, the
-plan's; the Buried Tower `buried_tower`, the plan's, left to the reach. Akordu's (the Wold Riders'
-camp) is the site's name and its map `wold_d8` (#526); Kushtash's (the Eyrie) is the site's name and
-its map `wold_b8` (#529), and the Eyrie's site keeps its name in the issues until #444 renames it.
+(#529, §4.7), which places the Grey Lion, set off the line, and the way up Kushtash; B9, the Glass's
+edge (#530, §4.8), the dunes and the Riders' watch at the gap, whose last square looks onto the
+Glass; and the Ranger's third prestige (#448, §6), Aysu the scout on Kushtash and Oriel Fane's Map,
+the area's first quest. With B9 the Wold is complete overland but for E9 and E8, the country behind
+(#534, parked). `AHEAD` and `PLANNED` are empty; the Wold's step of the quest, which keys on B9's
+flag `gap_watch` or its event `wold_b9:b9_glass`, and the area's chapter are owed to #531. Its
+content is `src/content/areas/glasswold/` (maps, interiors, monsters, items, climate, its part of
+the world map in `atlas.ts` and its walkthrough; its chapter of the one quest, The Warning, in
+`chapter.ts`, to come, and its quests in `quests.ts`, the Ranger's third's first); it has no town
+and one business, the Riders' trader at Akordu, whose tent has a room. Its ids: the area
+`glasswold`, its zones `wold` and `theglass`, the plan's; the Buried Tower `buried_tower`, the
+plan's, left to the reach. Akordu's (the Wold Riders' camp) is the site's name and its map `wold_d8`
+(#526); Kushtash's (the Eyrie) is the site's name and its map `wold_b8` (#529), and the Eyrie's site
+keeps its name in the issues until #444 renames it.
 
 ---
 
@@ -172,7 +174,8 @@ Six boxes of its own, the first of which lists the area (#525):
   Lion's ground, the beaten kill-ground with the vultures turning over it, and the lesser mesa
   stands east of Kushtash with a basilisk behind a pride at its foot. Kushtash, the tallest mesa on
   the Wold, stands under the rim, its top shut by rock but for a stepped scree found from the smoke
-  off it, where the scout who guided the Meridian Company keeps her fire. A cairn, a well, a shrine
+  off it, where Aysu, the scout who guided the Meridian Company, keeps her fire and teaches the
+  Ranger's third for Oriel Fane's map (§6, #448). A cairn, a well, a shrine
   and a hermit in a hollow under the rim. Three groups: a pride of four lions with three vultures
   over its kill, the mesa fight, and the Grey Lion alone (§4.7).
 - **The Glass's edge** (B9, `wold_b9`, country, band 26–28; #530): the dunes down to the rim's foot,
@@ -268,7 +271,7 @@ The places, as the atlas and the docs have them:
 | Place | Box | What the docs say | On the atlas |
 |---|---|---|---|
 | Akordu (the Wold Riders' camp) | D8 | the horse people and their eldest, who tells the oldest story on that side of the sea (STORY, Act Four; DESIGN §9); the Wold's rest, a trader and the Rider's ride (call 5); the garden of glass (#56's 55); the horse that came back (#56's 51) | a camp, "Akordu", at 120,250, built with D8 (#526) |
-| Kushtash (the Eyrie) | B8 | the Wold Rider scout who guided the Meridian Company, on the far-west mesa under the rim: the Ranger's third prestige (DESIGN §5, #448) | a camp, "Kushtash", at 46,242, built with B8 (#529); moved from 132,289 (call 5) |
+| Kushtash (the Eyrie) | B8 | the Wold Rider scout who guided the Meridian Company, on the far-west mesa under the rim: the Ranger's third prestige (DESIGN §5, #448), Aysu, built with Oriel Fane's Map (§6) | a camp, "Kushtash", at 46,242, built with B8 (#529); moved from 132,289 (call 5) |
 | The mesas | D10, D8, B8 | the basilisks' ground; the mesa fight (MONSTERS §8.3) | rock, five outcrops of 11 to 16 squares |
 | The dunes | B9, D9 | the glass scorpions' ground (MONSTERS §8.3); the crescent round the glass | dunes, 1,166 squares across both zones |
 | The Scarp stair | C8, and C7 | Act IV's way down into Saltreach; the Compact runner on it (#56's 54) | a road link at 80,206 → 80,216, "the Scarp stair" |
@@ -700,8 +703,9 @@ settled in its issue, and what Ashfall teaches changes them.
 - **Encounters.** The Grey Lion, boss, level 28, old and scarred, alone or with his pride once it
   has fallen back to him; a basilisk behind a pride at the second mesa, the mesa fight at 28; two
   prides; vultures over the kill-ground; a glass walker come up from the dunes to the box's south.
-- **Quests.** The Lion's Share (§6). The Ranger's third (#448): the quest's own fights are set at
-  26 where it goes down Fire Mountain's vents, and the scout waits here while it does.
+- **Quests.** The Lion's Share (§6). The Ranger's third, Oriel Fane's Map (#448, built, §6): its
+  fights are Meridian Camp's own, 26 to 28 as built, down Fire Mountain's vents, and Aysu waits here
+  while it goes down.
 - **The secret and its hint.** The way up Kushtash, a stepped scree on the mesa's rim side where the
   stones have been set, not fallen, and a ledge path from its top. The hint: smoke from the top by
   day and a fire by night, and the vultures never land there.
@@ -743,14 +747,15 @@ settled in its issue, and what Ashfall teaches changes them.
   of the scree bare of lichen (`b8_scree`, 1,17). No text says there are steps until they are found
   (`b8_steps`, 3,17); the ledge (`b8_ledge`, 4,14) is a stride wide with the drop at your elbow.
   On the top are the scout's fire (`b8_lookout`, 7,15), a ring of stones at the edge with a hide
-  stretched against the wind; the scout (8,16); and the view (`b8_view`, 10,15), the Wold open east
-  to the haze over Akordu and the Glass white to the south-east with a dark crown standing in it,
-  nothing said of what it is. The scout is a woman of the Riders with a bow across her knees,
-  watching the Glass: she guided the Meridian Company, and says nothing of the journals, the map or
-  what she would teach (§9, #529's 9). **For the Ranger's third** (#448, part 3, to build after the
-  Dead-Drop and this box merge): she is the person 'The scout' of the map `wold_b8`, who has no id,
-  people having none, at 8,16 (48,238); the way up is the door at 2,17 (42,239) and the steps; the
-  top is landed at 6,14 (46,236). The quest adds her `teaches` and her asking there.
+  stretched against the wind; Aysu, the scout (8,16, 48,238); and the view (`b8_view`, 10,15), the
+  Wold open east to the haze over Akordu and the Glass white to the south-east with a dark crown
+  standing in it, nothing said of what it is. The scout is a woman of the Riders with a bow across her
+  knees, watching the Glass: she guided the Meridian Company, and to a company with no ranger of 27 to
+  ask says nothing of the journals, the map or what she would teach (§9, #529's 9). **The Ranger's
+  third** (#448, built): to a ranger of 27 with the second her own words first, then her ask, once
+  (`q_scout_asked`), for Fane's map down the vents; with the map in the pack a question, and given
+  from the pack (`q_scout_map`) she teaches the Unerring for it and no gold (§6; §9, the Ranger's
+  and the Thief's 1 to 4).
   Round the box: the rim (`b8_rim`, 3,4); the hunters' horses hobbled in the grass (`b8_horses`,
   28,9); a well of the Riders (10,6); the Riders' cairn on the north hill (`b8_cairn`, 16,2), with
   600 gold and a Quickening Draught, for the mesa's stone; a hermit in a hollow under the rim
@@ -991,10 +996,23 @@ for Phase 1.6 to pick up.
 
 ### The third prestiges
 
-Two of DESIGN §5's thirds sit in the Glasswold (#448, call 8). The Ranger's is placed with B8, the
-scout on Kushtash with words only (§4.7), and built by #448: she names the Meridian journals and
-sends the company down Fire Mountain's vents to Meridian Camp for Oriel Fane's map, Ashfall's
-dungeon (#441), and teaches the Unerring when it is brought back. The Sorcerer's, at the Buried
+Two of DESIGN §5's thirds sit in the Glasswold (#448, call 8). The Ranger's is built (#448), its
+quest in `quests.ts`, paying nothing but the prestige:
+
+| Quest | Trainer | Asked of | The deed | Flags |
+|---|---|---|---|---|
+| Oriel Fane's Map (`scout_map`) | Aysu, the scout, at her fire on Kushtash (B8, 8,16) | a ranger of 27 with the second | Fane's map from his fire at the last of the Meridian Company's camps (meridian_camp3), given to her from the pack | `q_scout_asked`, `q_scout_map` |
+
+**Oriel Fane's Map.** Met first, Aysu says her own words, as #529 built them. To a ranger of 27 with
+the second she asks, once: their mapmaker drew every step they took; follow their journals down the
+mountain and bring her his map. That begins the quest and ends the ranger's seeking. The log sends the
+company down Fire Mountain's vents to Meridian Camp; at Fane's fire his own giving puts the map in the
+pack and sets `meridian_map`, so the Lost Expedition ends as it did. Back on Kushtash, the map in the
+pack, she puts a question; given (her answer takes it), she does not open it, and her menu teaches the
+Unerring for it and no gold. After, her own words again. The fights are Meridian Camp's own, as built
+(§9, the Ranger's and the Thief's 3).
+
+The Sorcerer's, at the Buried
 Tower's crown, is the reach's and waits for Phase 1.6; until then the seeking quest names the place
 (DESIGN §5) and the gap's Riders say what stands between.
 
@@ -1689,6 +1707,21 @@ Decided by delegate for #529, each the owner's to overturn:
 19. **The issue is superseded by the doc in three places:** its 2,600 xp (the doc's share is 4,250:
     17), its "795 squares" (860 are open) and its hint, "by the eldest" (the doc's is the smoke: 8).
 
+Decided by delegate for #448 (the Ranger's and the Thief's), each the owner's to overturn:
+
+1. **The scout is Aysu** (§10), named as the other thirds' trainers are, so the seeking goal reads
+   "Find Aysu, the scout in The Wold."; her words from #529 stand as her first meeting's.
+2. **The map is given at her question, not handed in:** a question after her ask with Fane's map in
+   the pack, whose answer takes it and sets `q_scout_map`, her `done`. A hand-in would take the map
+   from any company that climbs Kushtash, ranger or not.
+3. **No group placed and no pay:** the fights are Meridian Camp's three levels as built, 26 to 28,
+   won at 27 in the walkthrough; no gate, density or curve figure moves. The prestige is the pay.
+4. **Done when she has the map,** as the Whitespine's thirds are done on their deeds; her menu
+   teaches in the same meeting. She has no words after it but her own: the people check plays a
+   question's after-words without the item its answer takes, so they could not be kept.
+5. **The Lost Expedition is untouched:** it ends on `meridian_map`, which Fane's giving sets; the map
+   leaving the pack for Aysu does not undo it, and the walkthrough checks so.
+
 Decided by delegate for #530, each the owner's to overturn:
 
 1. **The band is 26–28, not the brief's 28 nor B8's 27–28.** The curve's rise rule wants the hardest
@@ -1782,6 +1815,8 @@ for #444.
   | the Eyrie | Kushtash | the bird's rock: the scout's lookout on the far-west mesa, where the vultures never land | Kushdag, the bird's mountain |
   | the Glass, in the Riders' mouths | Tashkum | the stone sand; noted here and left for the reach's doc (Phase 1.6), with "The Glass" and "Buried Tower" still lettered | Akkum, the white sand |
 
+- **A person:** Aysu, the scout on Kushtash, the Ranger's third (#448): *ay* the moon and *su*
+  water, a Rider's name in the Riders' tongue. She was "The scout" while she had words only.
 - **Kept:** the Glasswold and the Wold, the Crown's names for the area and its steppe, which the
   road leans on; the Scarp and the Scarp stair, the Foreland folk's, Saltreach's border
   (docs/areas/saltreach.md §10); the Cinder Hills, Ashfall's; the Glass and the Buried Tower, plain
@@ -1876,10 +1911,6 @@ Owed, from B8 (#529):
 - **The groups not built:** the brief's eight are three. The second pride, the vultures' flock and
   the glass walker are seen and not fought (`b8_lie`, `b8_vultures`, `b8_tracks`); a third group
   would break the day's aim or pass the cap (§4.7, §9, #529's 2 and 4).
-- **The Ranger's third** (#448, part 3, to build after the Dead-Drop and B8 merge): the scout's
-  `teaches` and her asking, keyed on the map `wold_b8` and her name 'The scout' at 8,16 (48,238),
-  who has no id; the way up is the door at 2,17 (42,239) and the steps, and the top is landed at
-  6,14 (46,236) (§4.7, §9, #529's 9).
 - **The young Rider stands at Akordu and at the hunt,** at D8's horse-lines and B8's camp, with near
   the same words, and the eldest's word is B8's Rider's: #532 settles which, with the quest's choice
   (53, `until` or `after`). The walkthrough kills the Grey Lion at 28, where "let him die" may want
