@@ -111,6 +111,9 @@ export function weather(): void {
   // Ash is as slow as hills (#536); the pinewoods and the ice are walked at the usual pace.
   const [ash, pine, ice] = (['ash', 'pine', 'ice'] as const).map((t) => hillStep('shelf', 16, 8, clearAt, true, t));
   ok(DRAG.ash === HILL_DRAG && ash === 8 && pine === 6 && ice === 6, `a dry step onto ash takes eight minutes, as onto hills, and onto pine or ice the usual six (${ash}, ${pine}, ${ice})`);
+  // Dunes are as slow as hills (#543); the steppe and the vines are walked at the usual pace.
+  const [steppe, dunes, vines] = (['steppe', 'dunes', 'vines'] as const).map((t) => hillStep('shelf', 16, 8, clearAt, true, t));
+  ok(DRAG.dunes === HILL_DRAG && dunes === 8 && steppe === 6 && vines === 6, `a dry step onto dunes takes eight minutes, as onto hills, and onto the steppe or the vines the usual six (${dunes}, ${steppe}, ${vines})`);
   const street = MAP_DEFS.find((d) => d.id === 'harrow')!, streets = new GameMap(street);
   let sx = -1, sy = -1;
   for (let y = 1; y < streets.height - 1 && sx < 0; y++) for (let x = 1; x < streets.width - 1; x++) {

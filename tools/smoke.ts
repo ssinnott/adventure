@@ -424,7 +424,7 @@ const terrains = await page.evaluate(async () => {
   // The search is bounded: a view it cannot find fails the check plainly rather than hanging.
   const fits = (): boolean => V.fieldAt(w.state.x, w.state.y - 1).crop <= 1 && crops(w.state.x, w.state.y).size >= 2;
   for (let tries = 0; tries < 200 && !fits(); tries++) w.state.x++;
-  if (!fits()) return { missing: `no square in 200 east of the Foreland's 16,16 faces a field of grain with two crops in view`, trees: 0, path: 0, overWall: 0, dead: { trees: 0, path: 0, overWall: 0 }, pine: { trees: 0, path: 0, overWall: 0 }, thin: [], form: {}, hedge: { off: 0, apart: 0 }, patchwork: 0, turns: 0, whiten: [] as number[], flats: null as any, ground: null as any };
+  if (!fits()) return { missing: `no square in 200 east of the Foreland's 16,16 faces a field of grain with two crops in view`, trees: 0, path: 0, overWall: 0, dead: { trees: 0, path: 0, overWall: 0 }, pine: { trees: 0, path: 0, overWall: 0 }, vines: { trees: 0, path: 0, overWall: 0 }, wold: null as any, thin: [], form: {}, hedge: { off: 0, apart: 0 }, patchwork: 0, turns: 0, whiten: [] as number[], flats: null as any, ground: null as any };
   const m = w.map, kept = m.cells.slice(), sx = w.state.x, sy = w.state.y;
   let hedge = { off: 999, apart: 0 }, patchwork = 0;
   // The ash's embers glowing by night: the floor's pixels that are a hot orange, by season.
@@ -432,7 +432,8 @@ const terrains = await page.evaluate(async () => {
   // The square ahead spans y 194..254 on the view and x 140..260 at its far edge: sample well inside.
   const x0 = W / 2 - 40, y0 = 202, sw = 80, sh = 44;
   const days: [string, number][] = [['spring', 20], ['summer', 50], ['autumn', 65], ['winter', 100], ['snow', 100]];
-  for (const terrain of ['grass', 'hills', 'farm', 'woods', 'deadwood', 'salt', 'heather', 'tidal', 'ash', 'pine', 'ice']) {
+  for (const terrain of ['grass', 'hills', 'farm', 'woods', 'deadwood', 'salt', 'heather', 'tidal', 'ash', 'pine', 'ice',
+    'steppe', 'dunes', 'vines']) {
     for (let y = sy - 6; y <= sy + 6; y++) for (let x = sx - 6; x <= sx + 6; x++) m.cells[y * m.width + x] = { terrain, solid: 'none', door: 'none', ch: '.' };
     for (const [name, doy] of days) for (const hour of [12, 0]) {
       if (terrain === 'grass' && (name !== 'summer' || hour !== 12)) continue;
@@ -501,9 +502,10 @@ const terrains = await page.evaluate(async () => {
   woodsBy('woods'); const withTrees = shot();
   woodsBy('deadwood'); const withDead = shot();
   woodsBy('pine'); const withPines = shot();
+  woodsBy('vines'); const withVines = shot();
   woodsBy('grass'); const bare = shot(), mask = shot('#ff00ff');
   // Dead wood and the pinewoods stand their trees as the woods do, so they are held to the same.
-  let overWall = 0, deadOverWall = 0, pineOverWall = 0;
+  let overWall = 0, deadOverWall = 0, pineOverWall = 0, vinesOverWall = 0;
   const off = (a: Uint8ClampedArray, i: number): boolean => Math.abs(a[i] - bare[i]) + Math.abs(a[i + 1] - bare[i + 1]) + Math.abs(a[i + 2] - bare[i + 2]) > 30;
   for (let i = 0; i < mask.length; i += 4) {
     // The backdrop shows through where nothing stands, a little dimmed by the day's veil.
@@ -511,6 +513,7 @@ const terrains = await page.evaluate(async () => {
     if (wall && off(withTrees, i)) overWall++;
     if (wall && off(withDead, i)) deadOverWall++;
     if (wall && off(withPines, i)) pineOverWall++;
+    if (wall && off(withVines, i)) vinesOverWall++;
   }
   for (let i = 0; i < kept.length; i++) m.cells[i] = kept[i];
   w.state.minutes = minutes; w.cached = undefined;
@@ -530,8 +533,11 @@ const terrains = await page.evaluate(async () => {
     return { trees: Math.round(1000 * risen / (upper[t].length / 4)) / 10, path: Math.round(1000 * blocked / strip) / 10 };
   };
   const { trees, path } = stand('woods'), dead = { ...stand('deadwood'), overWall: deadOverWall }, pine = { ...stand('pine'), overWall: pineOverWall };
+  const vines = { ...stand('vines'), overWall: vinesOverWall };
   return {
-    trees, path, overWall, dead, pine,
+    trees, path, overWall, dead, pine, vines,
+    // The steppe at Harvest and in Sowing, the dunes and the grass by day (#543).
+    wold: { steppe: mean['steppe summer'], sowing: mean['steppe spring'], dunes: mean['dunes summer'], grass: mean['grass summer'] },
     missing: '', thin, form, hedge, patchwork, turns: Math.round(dist(mean['farm spring'], mean['farm summer'])),
     whiten: ['hills', 'farm', 'woods', 'deadwood', 'heather', 'ash', 'pine'].map((t) => Math.round(light(mean[`${t} snow`]) - light(mean[`${t} winter`]))),
     // The salt by day against the grass; the heather in flower against Sowing's; tidal ground at low and high water.
@@ -828,19 +834,24 @@ const range = await page.evaluate(async () => {
   const below = H / 2 + 20;
   const read = (a: Uint8ClampedArray, bare: Uint8ClampedArray) => {
     const rows = new Map<number, number[]>(), seen = new Set<number>(), sum = [0, 0, 0];
-    let n = 0;
+    let n = 0, hot = 0;
     for (let y = 0; y < below; y++) for (let x = 0; x < W; x++) {
       const i = (y * W + x) * 4;
       if (Math.abs(a[i] - bare[i]) + Math.abs(a[i + 1] - bare[i + 1]) + Math.abs(a[i + 2] - bare[i + 2]) <= 24) continue;
       n++; seen.add((a[i] << 16) | (a[i + 1] << 8) | a[i + 2]); sum[0] += a[i]; sum[1] += a[i + 1]; sum[2] += a[i + 2];
+      // A fire's own light: a bright red-orange, which no rock and no sky is.
+      if (a[i] > 200 && a[i] - a[i + 2] > 120) hot++;
       const r = rows.get(y) ?? [x, x]; r[0] = Math.min(r[0], x); r[1] = Math.max(r[1], x); rows.set(y, r);
     }
     const ys = [...rows.keys()].sort((p, q) => p - q), top = ys[0] ?? below, span = below - top;
     const width = (y: number): number => { const r = rows.get(Math.round(y)); return r ? r[1] - r[0] + 1 : 0; };
     const mean = sum.map((v) => (n ? v / n : 0));
-    return { n, colours: seen.size, top, mean, light: (mean[0] + mean[1] + mean[2]) / 3, sheer: width(top + span * 0.15) / Math.max(1, width(below - 1)) };
+    return { n, hot, colours: seen.size, top, mean, light: (mean[0] + mean[1] + mean[2]) / 3, sheer: width(top + span * 0.15) / Math.max(1, width(below - 1)) };
   };
-  const kinds: [string, string][] = [['mountain', 'M'], ['peak', 'A'], ['cliff', '|']];
+  const kinds: [string, string][] = [['mountain', 'M'], ['peak', 'A'], ['cliff', '|'],
+    ['volcano', 'V'], ['vent', '@']];
+  // The fire's pixels by night, for the volcano and a vent (#543).
+  const glow: Record<string, number> = {};
   const days: [string, number][] = [['spring', 20], ['summer', 50], ['autumn', 65], ['winter', 100], ['snow', 100]];
   const thin: string[] = [], at: Record<string, ReturnType<typeof read>> = {};
   for (const [name, doy] of days) for (const hour of [12, 0]) {
@@ -849,12 +860,14 @@ const range = await page.evaluate(async () => {
       const r = read(paint(ch, doy, hour, name === 'snow'), bare);
       if (r.n < 300 || r.colours < 4) thin.push(`${kind} ${name}@${hour} (${r.n} pixels, ${r.colours} colours)`);
       if (hour === 12) at[`${kind} ${name}`] = r;
+      else glow[`${kind} ${name}`] = r.hot;
     }
   }
   for (let i = 0; i < kept.length; i++) m.cells[i] = kept[i];
   w.state.minutes = minutes; w.cached = undefined;
   const day = (kind: string) => { const r = at[`${kind} summer`]; return { top: r.top, light: Math.round(r.light), sheer: Math.round(r.sheer * 100) / 100, mean: r.mean.map(Math.round), winter: Math.round(at[`${kind} winter`].light), snowed: Math.round(at[`${kind} snow`].light) }; };
-  return { thin, mountain: day('mountain'), peak: day('peak'), cliff: day('cliff') };
+  return { thin, mountain: day('mountain'), peak: day('peak'), cliff: day('cliff'),
+    volcano: { ...day('volcano'), fire: at['volcano summer'].hot, night: glow['volcano summer'] }, vent: { ...day('vent'), fire: at['vent summer'].hot, night: glow['vent summer'], snowedNight: glow['vent snow'] } };
 });
 // The quest log: Vask's contract is announced as his dialogue closes, and J opens the log on it. He
 // holds court on the keep's door, in the throne room.
@@ -1373,13 +1386,19 @@ ok(sunder.glass > 200 && sunder.bluer, `glass trees stand over the horizon beyon
 ok(iced.below > 100 && iced.above === 0 && iced.standing > 100, `a group placed on ice is drawn under it, in the ice and nothing of it over the horizon, where the same group on the ice stands up over it (${iced.below} pixels in the ice, ${iced.above} over the horizon; standing, ${iced.standing} over it)`);
 {
   const { mountain, peak, cliff } = range;
-  ok(range.thin.length === 0, `a mountain, a peak and a cliff paint by day and by night in each season and under snow${range.thin.length ? ' -> too faint: ' + range.thin.join(', ') : ''}`);
+  ok(range.thin.length === 0, `a mountain, a peak, a cliff, the volcano and a vent paint by day and by night in each season and under snow${range.thin.length ? ' -> too faint: ' + range.thin.join(', ') : ''}`);
   ok(peak.top < mountain.top - 10 && peak.light > mountain.light + 20, `a peak stands taller and whiter than a mountain (its top at ${peak.top} against ${mountain.top}; ${peak.light} light against ${mountain.light})`);
   ok(cliff.sheer > 0.85 && mountain.sheer < 0.6 && peak.sheer < 0.6, `a cliff is a sheer face, as wide near its top as at its foot, where a mountain and a peak narrow (${cliff.sheer}, against ${mountain.sheer} and ${peak.sheer})`);
   const apart = (a: number[], b: number[]): number => Math.round(Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]));
   const gaps = [apart(mountain.mean, peak.mean), apart(mountain.mean, cliff.mean), apart(peak.mean, cliff.mean)];
   ok(gaps.every((g) => g >= 20), `a mountain, a peak and a cliff are each their own colours (${gaps.join(', ')} apart: mountain and peak, mountain and cliff, peak and cliff)`);
   ok(peak.snowed > peak.winter + 10 && cliff.snowed > cliff.winter + 5, `a deep snow whitens the peak and the cliff (${peak.winter} to ${peak.snowed} light, and ${cliff.winter} to ${cliff.snowed})`);
+  // The volcano and a vent in it (#543): a cone darker than the mountain; a vent's fire dull by day
+  // and bright by night, in snow too, and its smoke standing up over the cone.
+  const { volcano, vent } = range;
+  ok(volcano.light < mountain.light - 10 && volcano.mean[0] > volcano.mean[2] + 5, `the volcano stands black-red where the mountain stands grey (${volcano.light} light against ${mountain.light}; ${volcano.mean.join(',')})`);
+  ok(vent.night > 20 && vent.snowedNight > 20 && vent.fire === 0 && volcano.night === 0, `a vent's fire shows by night, under snow too, and not by day, and the cone about it has none (${vent.night} and ${vent.snowedNight} pixels by night, ${vent.fire} at noon; the cone ${volcano.night})`);
+  ok(vent.top < volcano.top - 8, `a vent's smoke stands up over the cone (its top at ${vent.top} against ${volcano.top})`);
 }
 ok(smooth.stone.end > 2 && smooth.stone.side > 2 && smooth.flat.end === 1 && smooth.flat.side === 1, `a smooth wall is one colour down its face, end and side, where stone shows its courses (stone ${smooth.stone.end} and ${smooth.stone.side} colours, smooth ${smooth.flat.end} and ${smooth.flat.side})`);
 ok(smooth.door > 2 && smooth.seam === 1, `a door in a smooth wall is its seam alone, where in stone it is planks and bands (smooth, ${smooth.seam} colour in its middle; in stone, ${smooth.door})`);
@@ -1391,7 +1410,7 @@ ok(smooth.door > 2 && smooth.seam === 1, `a door in a smooth wall is its seam al
 }
 ok(!terrains.missing, `a view over the fields is found for the hills and farmland checks${terrains.missing ? ' -> ' + terrains.missing : ''}`);
 if (!terrains.missing) {
-  ok(terrains.thin.length === 0, `hills, farmland, woods, dead wood, salt, heather, tidal ground, ash, pine and ice paint by day and by night in each season and under snow${terrains.thin.length ? ' -> too flat: ' + terrains.thin.join(', ') : ''}`);
+  ok(terrains.thin.length === 0, `hills, farmland, woods, dead wood, salt, heather, tidal ground, ash, pine, ice, steppe, dunes and vines paint by day and by night in each season and under snow${terrains.thin.length ? ' -> too flat: ' + terrains.thin.join(', ') : ''}`);
   {
     const { grass, hills, farm, woods } = terrains.form;
     ok(terrains.trees >= 10 && terrains.path <= PATH_MAX && woods.edges > grass.edges, `trees stand about the woods where grass lies open, and the way ahead stays open (${terrains.trees}% of the band over the horizon is trees, ${terrains.path}% of the strip straight ahead, at most ${PATH_MAX}; edges across the square ahead: grass ${grass.edges}, woods ${woods.edges})`);
@@ -1400,6 +1419,8 @@ if (!terrains.missing) {
     ok(dead.trees >= DEAD_MIN && dead.path <= PATH_MAX && dead.overWall === 0, `dead trees stand about the dead wood, the way ahead open and none in front of a wall beside its square (${dead.trees}% of the band over the horizon is trees, at least ${DEAD_MIN}; ${dead.path}% of the strip ahead, at most ${PATH_MAX}; ${dead.overWall} pixels over the wall's faces)`);
     const pine = terrains.pine;
     ok(pine.trees >= PINE_MIN && pine.path <= PATH_MAX && pine.overWall === 0, `pines stand about the pinewoods, the way ahead open and none in front of a wall beside its square (${pine.trees}% of the band over the horizon is trees, at least ${PINE_MIN}; ${pine.path}% of the strip ahead, at most ${PATH_MAX}; ${pine.overWall} pixels over the wall's faces)`);
+    const vines = terrains.vines;
+    ok(vines.trees >= 10 && vines.path <= PATH_MAX && vines.overWall === 0, `trees hung with creepers stand about the vines, the way ahead open and none in front of a wall beside its square (${vines.trees}% of the band over the horizon, at least 10; ${vines.path}% of the strip ahead, at most ${PATH_MAX}; ${vines.overWall} pixels over the wall's faces)`);
     ok(terrains.hedge.off < 50 && terrains.hedge.apart > 40 && terrains.patchwork > 60, `the fields lie in patchwork with hedges between them (the hedge ${terrains.hedge.off} off its colour and ${terrains.hedge.apart} from the crop beside it; ${terrains.patchwork} between the most different squares in view)`);
     ok(hills.tones >= 12 && hills.tones >= 3 * grass.tones && farm.edges >= 2 && farm.edges > grass.edges, `a hill rises where grass lies flat, and a field has rows (tones down the square: grass ${grass.tones}, hills ${hills.tones}; edges across it: grass ${grass.edges}, farm ${farm.edges})`);
   }
@@ -1417,6 +1438,11 @@ if (!terrains.missing) {
     ok(embers['summer@0'] > 0 && embers['winter@0'] > 0 && embers['summer@12'] === 0 && embers['snow@0'] === 0, `by night an ember glows in the ash here and there and by day none does; a deep snow puts them out (${embers['summer@0']} and ${embers['winter@0']} pixels by night, ${embers['summer@12']} at noon, ${embers['snow@0']} under snow)`);
     const iceLight = Math.round((ice[0] + ice[1] + ice[2]) / 3);
     ok(ice[2] > ice[0] + 10 && iceLight > grass + 40 && frost > iceLight + 10 && snowed >= frost, `the ice lies pale and blue, whiter in Frost than at Harvest and white under snow (${ice.map(Math.round).join(',')} at Harvest, ${frost} light in Frost, ${snowed} under snow)`);
+    // The steppe (#543): tawny at Harvest where the grass is green, and greener in Sowing; the dunes
+    // lie lighter than it and warm.
+    const { steppe, sowing, dunes } = terrains.wold, green = (c: number[]): number => c[1] - c[0], light = (c: number[]): number => Math.round((c[0] + c[1] + c[2]) / 3);
+    ok(steppe[0] > terrains.wold.grass[0] + 40 && green(sowing) > green(steppe) + 15, `the steppe lies tawny at Harvest where the grass lies green, and greener in Sowing (${steppe.map(Math.round).join(',')} at Harvest, ${sowing.map(Math.round).join(',')} in Sowing)`);
+    ok(light(dunes) > light(steppe) + 5 && dunes[0] > dunes[2] + 60, `the dunes lie lighter than the steppe, and warm (${dunes.map(Math.round).join(',')} against ${light(steppe)} light)`);
   }
 }
 ok(questLine === 'New quest: The Dimming.', `closing Vask's dialogue announces his quest (${questLine})`);

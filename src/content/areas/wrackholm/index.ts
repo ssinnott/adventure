@@ -12,6 +12,7 @@ import { DEAD_DROP_STAIR } from './maps/dead_drop_stair.ts';
 import { ITEMS } from './items.ts';
 import { CHAPTER } from './chapter.ts';
 import { QUESTS } from './quests.ts';
+import { GUILDS } from './guilds.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
 
@@ -22,6 +23,8 @@ export const AREA = {
   sprites: SPRITES,
   items: ITEMS,
   quests: QUESTS,
+  // The Compact's Fence's rung, the stair's foot under the Tide Ship seen (#635).
+  guilds: GUILDS,
   chapter: CHAPTER,
   // Out in the gulf: mild winters, cool summers, wind and spray, and fog off the water.
   climate: { summer: 16, winter: 4, daily: 3, damp: [0.02, 0.09], wettest: 300, fog: 0.9, lag: 3,

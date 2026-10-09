@@ -30,6 +30,7 @@ import { shade, mix, rgba } from '../lib/art/palettes.ts';
 import { TERRAIN_COLORS, VOID_PINK } from './palette.ts';
 import { drawMonsterSprite, drawTreeSprite, drawDeadTreeSprite, drawCrystalSprite, drawLighthouseSprite, LIGHTHOUSE_HEIGHT, LIGHTHOUSE_BANDS, drawRockSprite, drawMountainSprite, drawPeakSprite, drawCliffSprite, drawPillarSprite, treeSeason, HIGH_SUMMER } from './sprites.ts';
 import type { TreeSeason } from './sprites.ts';
+import { drawVolcanoSprite, drawVineSprite } from './sprites.ts';
 import type { MonsterSprite } from '../game/monsters.ts';
 import type { Weather } from '../game/weather.ts';
 import { mixHash, weatherSight } from '../game/weather.ts';
@@ -93,6 +94,9 @@ export const SNOW_HOLD: Record<Terrain, number> = {
   ash: 0.65, pine: 0.72, ice: 0.8,
   // The scree under a peak takes it as the hills do; the foot of a cliff, sheltered by its face, less.
   peak: 0.9, cliff: 0.6,
+  // The steppe takes it as the grass does and the dunes as sand; the creepers keep some off; the
+  // cone's warmth thins it and a vent's fire takes it all.
+  steppe: 0.9, dunes: 0.6, vines: 0.7, volcano: 0.4, vent: 0,
 };
 type Ramp = readonly [number, string][];
 /** A colour through the year: the ramp's stops by day of the year, mixed between. */
@@ -121,6 +125,14 @@ function pineColor(day: number): string { return mix(TERRAIN_COLORS.pine, grassC
  * A frozen lake through the year: white-grey deep in the winter and bluer and darker with meltwater
  * in the summer, but never open (the lakes under the glacier keep their ice).
  */
+/**
+ * The steppe through the year: dun after the winter, green-gold in Sowing, gold by Longlight and
+ * tawny at Harvest, the lions' colour, then straw and dun again.
+ */
+const STEPPE: Ramp = [[0, '#8a8458'], [14, '#8a9a50'], [28, '#9aa24a'], [42, '#b4a44c'], [56, '#bca252'], [72, '#a8985e'], [94, '#948a62'], [120, '#8a8458']];
+function steppeColor(day: number): string { return rampColor(STEPPE, day); }
+/** The ground under the shore's creepers: dark loam and moss, greener in the summer. */
+function vinesColor(day: number): string { return mix(TERRAIN_COLORS.vines, grassColor(day), 0.3); }
 const ICE: Ramp = [[0, '#c0d0dc'], [24, '#a8bccc'], [46, '#98b0c2'], [66, '#a8bcca'], [88, '#c4d4e0'], [104, '#d2dee8'], [120, '#c0d0dc']];
 export function iceColor(day: number): string { return rampColor(ICE, day); }
 
@@ -158,6 +170,7 @@ function groundColor(t: Terrain, kind: string, floorPal: string, crop = 0): stri
   if (kind === 'dungeon') return floorPal;
   const terrain = asDrawn(t);
   let c = terrain === 'grass' ? grassColor(env.day) : terrain === 'hills' ? hillColor(env.day) : terrain === 'woods' ? woodsColor(env.day) : terrain === 'farm' ? cropColor(crop, env.day) : terrain === 'heather' ? heatherColor(env.day)
+    : terrain === 'steppe' ? steppeColor(env.day) : terrain === 'vines' ? vinesColor(env.day)
     : terrain === 'pine' ? pineColor(env.day) : terrain === 'ice' ? iceColor(env.day) : (TERRAIN_COLORS[terrain] ?? floorPal);
   if (env.wet > 0 && terrain !== 'water' && terrain !== 'deep' && terrain !== 'lava' && terrain !== 'chasm') c = shade(c, 1 - 0.18 * env.wet);
   const s = env.cover * SNOW_HOLD[terrain];
@@ -440,10 +453,12 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
         else if (cell.solid === 'rock') drawRockSprite(ctx, bx, by, u, tone, env.cover);
         // A peak's snow comes down in the winter and further under lying snow; a cliff's lies along its top.
         else if (cell.solid === 'mountain' && cell.terrain === 'peak') drawPeakSprite(ctx, bx, by, u, tone, Math.floor(hash(c.x, c.y, 3) * 3), 0.5 + 0.18 * cold(env.day) + 0.3 * env.cover);
+        // The volcano's cone, and a vent's fire in its lip, dull by day and bright by night; snow lies thin on it.
+        else if (cell.solid === 'mountain' && (cell.terrain === 'volcano' || cell.terrain === 'vent')) drawVolcanoSprite(ctx, bx, by, u, tone, Math.floor(hash(c.x, c.y, 3) * 3), cell.terrain === 'vent', dark ? 1 : 0.35, 0.6 * env.cover);
         else if (cell.solid === 'mountain' && cell.terrain === 'cliff') drawCliffSprite(ctx, bx, by, u, tone, Math.floor(hash(c.x, c.y, 3) * 3), 0.3 * cold(env.day) + env.cover);
         else if (cell.solid === 'mountain') drawMountainSprite(ctx, bx, by, u, tone, Math.floor(hash(c.x, c.y, 3) * 3));
         else if (cell.solid === 'pillar') drawPillarSprite(ctx, bx, horizon, u, tone);
-      } else if (d > 0 && (cell.terrain === 'woods' || cell.terrain === 'deadwood' || cell.terrain === 'pine') && !backdrop) {
+      } else if (d > 0 && (cell.terrain === 'woods' || cell.terrain === 'deadwood' || cell.terrain === 'pine' || cell.terrain === 'vines') && !backdrop) {
         // Light woods: a tree or two stand to the sides of the square, leaving the way through it open.
         // None stands on a side a wall or the void closes: drawn after them, it would stand in front.
         // Dead wood stands the same, its trees dead; the pinewoods closer, taller and all pines.
@@ -454,6 +469,8 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
           const bx = cx + (l * 2 + side * (0.62 + 0.22 * hash(c.x, c.y, 62 + side))) * u, by = horizon + u * (0.8 + 0.4 * hash(c.x, c.y, 64 + side));
           const s = u * (pine ? 0.55 + 0.25 * hash(c.x, c.y, 66 + side) : 0.5 + 0.2 * hash(c.x, c.y, 66 + side));
           if (cell.terrain === 'deadwood') drawDeadTreeSprite(ctx, bx, by, s, tone, Math.floor(hash(c.x, c.y, 68 + side) * 3), env.cover);
+          // The shore's trees, hung with their creepers.
+          else if (cell.terrain === 'vines') drawVineSprite(ctx, bx, by, s, tone, Math.floor(hash(c.x, c.y, 68 + side) * 3), env.trees);
           else drawTreeSprite(ctx, bx, by, s, tone, pine ? 3 + Math.floor(hash(c.x, c.y, 68 + side) * 2) : Math.floor(hash(c.x, c.y, 68 + side) * 5), env.trees);
         }
       }
@@ -961,6 +978,7 @@ function drawFloor(ctx: CanvasRenderingContext2D, laid: Terrain, kind: string, c
     }
   }
   const deco = terrain === 'grass' ? 7 : terrain === 'woods' ? 6 : terrain === 'deadwood' ? 5 : terrain === 'dirt' ? 3 : terrain === 'sand' ? 4 : terrain === 'salt' ? 5 : terrain === 'heather' ? 7 : terrain === 'tidal' ? 5 : terrain === 'swamp' ? 3 : terrain === 'water' ? 3 : terrain === 'snow' ? 2
+    : terrain === 'steppe' ? 7 : terrain === 'dunes' ? 5 : terrain === 'vines' ? 6
     : terrain === 'ash' ? 6 : terrain === 'pine' ? 6 : terrain === 'ice' ? 4 : flag ? 2 : 0;
   for (let i = 0; i < deco; i++) {
     const s = hash(seed, 7, i), t = hash(seed, 9, i);
@@ -1080,6 +1098,39 @@ function drawFloor(ctx: CanvasRenderingContext2D, laid: Terrain, kind: string, c
         const a = (hash(seed, 60, i) - 0.5) * 1.6, len = (4 + 5 * hash(seed, 61, i)) * sc, b = a + (hash(seed, 62, i) - 0.5);
         ctx.strokeStyle = fog(shade(base, 1.2), d, dark, haze); ctx.lineWidth = 1;
         ctx.beginPath(); ctx.moveTo(x - Math.cos(a) * len, y - Math.sin(a) * len * 0.4); ctx.lineTo(x, y); ctx.lineTo(x + Math.cos(b) * len, y + Math.sin(b) * len * 0.4); ctx.stroke();
+      }
+    } else if (terrain === 'steppe') {
+      // Tall dry grass in tufts, all leaning one way, pale and dark by turns, a seed head on some. A
+      // light snow leaves their tops showing; a deep one flattens them.
+      if (env.cover > 0.55) continue;
+      ctx.strokeStyle = fog(env.cover > 0.05 ? shade(steppeColor(env.day), 0.8) : shade(base, i % 2 ? 1.3 : 0.8), d, dark, haze); ctx.lineWidth = Math.max(1, sc * 0.8);
+      ctx.beginPath(); ctx.moveTo(x, y); ctx.quadraticCurveTo(x, y - 3 * sc, x + 2 * sc, y - 5.5 * sc); ctx.moveTo(x + sc, y); ctx.quadraticCurveTo(x + 1.5 * sc, y - 2.5 * sc, x + 3.5 * sc, y - 4 * sc); ctx.moveTo(x - sc, y); ctx.lineTo(x - 0.5 * sc, y - 4.5 * sc); ctx.stroke();
+      if (i < 2 && env.cover <= 0.05) { ctx.fillStyle = fog(shade(base, 1.45), d, dark, haze); ctx.fillRect(Math.round(x + sc), Math.round(y - 6.5 * sc), Math.max(1, Math.round(1.5 * sc)), Math.max(1, Math.round(2 * sc))); }
+    } else if (terrain === 'dunes') {
+      // Sand in ridges: a dune's crest across the square, lit along its top with its lee in shadow,
+      // and the wind's ripples over the rest. A deep snow hides them.
+      if (env.cover > 0.55) continue;
+      if (i === 0) {
+        // The crest, kept inside its square, so it never reaches the foot of a wall beyond.
+        if (d > 3) continue;
+        const ds = 0.4 + 0.25 * hash(seed, 52), tilt = 0.12 * (hash(seed, 53) - 0.5);
+        const a = floorPt(cx, horizon, h, d, l, ds - tilt, 0.04), b = floorPt(cx, horizon, h, d, l, ds + tilt, 0.96), mid = floorPt(cx, horizon, h, d, l, ds + 0.1, 0.5);
+        quad(ctx, a, b, floorPt(cx, horizon, h, d, l, ds + tilt - 0.16, 0.96), floorPt(cx, horizon, h, d, l, ds - tilt - 0.16, 0.04), fog(shade(base, 0.8), d, dark, haze));
+        ctx.strokeStyle = fog(shade(base, 1.2), d, dark, haze); ctx.lineWidth = Math.max(1, sc * 1.4);
+        ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.quadraticCurveTo(mid[0], mid[1], b[0], b[1]); ctx.stroke();
+      } else {
+        ctx.strokeStyle = fog(shade(base, i % 2 ? 1.14 : 0.86), d, dark, haze); ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(x - 4 * sc, y); ctx.quadraticCurveTo(x, y - 1.2 * sc, x + 4 * sc, y); ctx.stroke();
+      }
+    } else if (terrain === 'vines') {
+      // Fallen leaves and a creeper's runners over the dark ground, buried by a deep snow.
+      if (env.cover > 0.55) continue;
+      if (i < 3) {
+        ctx.fillStyle = fog(['#2e5a26', '#4a3a24', '#4a7a2e'][Math.floor(hash(seed, 54, i) * 3)], d, dark, haze);
+        ctx.fillRect(Math.round(x), Math.round(y - sc), Math.max(1, Math.round(3 * sc)), Math.max(1, Math.round(1.5 * sc)));
+      } else {
+        ctx.strokeStyle = fog(shade(base, 1.5), d, dark, haze); ctx.lineWidth = Math.max(1, sc * 0.8);
+        ctx.beginPath(); ctx.moveTo(x - 5 * sc, y); ctx.bezierCurveTo(x - 2 * sc, y - 2 * sc, x + 2 * sc, y + sc, x + 5 * sc, y - sc); ctx.stroke();
       }
     } else if (terrain === 'swamp') {
       ctx.strokeStyle = fog('#6a7a3a', d, dark, haze); ctx.lineWidth = 1;

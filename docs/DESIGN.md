@@ -480,8 +480,10 @@ ship lands there.
   their fourth (#439), two asks each, offered once Act II is done: the Wardens' through the cousin's
   captains at the Drillyard, whose asks are the act's own matter, the Lanterns' at their halls,
   whose asks are the Deep Mines' inscription copied and the ring's voice reported (Act III's guild
-  quests, below). The Cartographers and the Compact climb with their own areas, and no hall gives
-  an Act III or Act IV side quest but Cinderport's two (#56's 51 and 54).
+  quests, below). The Cartographers and the Compact climb with their own areas: the Compact's
+  Fence's rung is Act II's, under the Tide Ship; the other three rungs owed are Act IV's dungeons'
+  (Act IV's guild quests, below). No hall gives an Act III or Act IV side quest but Cinderport's
+  two (#56's 51 and 54).
 
   | Guild | 1 | 2 | 3 | 4 |
   |---|---|---|---|---|
@@ -559,6 +561,28 @@ The Wardens' asks are Ordgar's, the cousin's captain's, who writes what he is to
 boot; the Lanterns' show their split and never tell it, a Lantern who would not have the words
 copied and one who goes out at what the ring said. No hall takes the Watcher's page: he sends it
 down (docs/areas/cairnmoor.md §6).
+
+### Act IV's guild quests
+
+Four rungs are owed, the Cartographers' second and third and the Compact's second and third (#635),
+each a deed on a place seen or a thing brought, with no new monster group. Any hall of the guild
+offers and pays them, Saltmouth's or Cinderport's (one ladder, above). The Fence's is Act II's and
+built, the stair's foot under the Tide Ship's hold seen, so the Compact's ladder climbs on past
+Saltreach's top at 12 and no longer rests there until Cinderport's floor at 24. The other three
+ride Act IV's dungeons and are built with them: a ladder may not skip a rank, so the Surveyor's
+goes in before the Mapmaker's, and the Surveyor's and the Factor's wait for the act on its opening
+flag, as Act III's do. The pay climbs with the band; the xp is each place's own budget.
+
+| Guild | Rank | Quest | Sits with | The deed | Gold |
+|---|---|---|---|---|---|
+| Compact | 2 | Where the Cargo Goes | the Tide Ship's stair, built | the stair's foot seen, where Ruan's count of the cargo does not close | 200 |
+| Cartographers | 2 | The Fourth Journal | the Ember Stone (#516) | the lower gallery's journal seen, where Fane wrote at the Stone | 500 |
+| Cartographers | 3 | Fane's Fire | Meridian Camp (#22) | the fire where the Company ended seen | 800 |
+| Compact | 3 | In the Founder's Hand | the Dead-Drop (#22) | an order brought up from below | 800 |
+
+The Fence's rung pays 600 xp, 100 a member, which Wrackholm's budget takes (docs/areas/wrackholm.md
+§9). Its paid words say not yet and name nothing below: what lies past the stair's foot is found,
+never told.
 
 ---
 

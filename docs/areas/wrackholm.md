@@ -14,8 +14,9 @@ E6, the moor and the landing, is built (#187), and with it the area is listed in
 two levels are built under it (#188), F6, the east rocks, beside it (#189), and the Tide Ship's
 three decks, its Rift and the stair's foot off F6's shore (#190). Its content is
 `src/content/areas/wrackholm/` (`index.ts`, its maps, monsters, items and atlas, its walkthrough;
-its chapter of the one quest, The Stone Carried Home, in `chapter.ts`, and its side quests in
-`quests.ts`, #192); it has no town and no businesses, so no rooms. Its part of the world map is
+its chapter of the one quest, The Stone Carried Home, in `chapter.ts` and its side quests in
+`quests.ts`, #192, with the Compact's Fence's rung in `guilds.ts`, #635); it has no town and no
+businesses, so no rooms. Its part of the world map is
 its folder's (`atlas.ts`, #186), which the Area now carries; the plan no longer spreads it in. Its
 ids: the area and its zone `wrackholm`, the cove `smugglers_cove` (the id stays under the new name,
 NAMES §3) and its sea cave `smugglers_cove2`, the ship's decks `tide_ship`, `tide_ship2` and
@@ -450,6 +451,14 @@ or fitted to the maps by a fable pass (§9, decided by delegate for #192).
 
 The walkthrough plays each both ways, in more than one order, and reads the log after each.
 
+**The Compact's Fence's rung** (#635) is a guild quest and no one of #56's, built in `guilds.ts` on
+the rules of DESIGN §8: *Where the Cargo Goes* (`compact_fence`, rank 2). Ruan says cargo goes
+aboard the Tide Ship and none comes off, and sends a Fence to find where. The deed is the stair's
+foot seen (`dead_drop_stair:dd_foot`), reported at any hall of the Compact for 200 gold and 600 xp;
+a company that has been down the hatch already is paid at the taking, with the words for one that
+came early, and both say not yet and name nothing below. The walkthrough takes it at the stair's
+foot, before the foot is seen and after, and a Runner is not offered it.
+
 ## 7. Encounters, and what is new
 
 MONSTERS §6.2 has the roster and the fights: the Wrack Gull, the Bilge Rat, the Wrack Smuggler and
@@ -480,14 +489,16 @@ besides the devilfish and the heather (#190): the wreck, the Tide Ship's site.
   200 over its share: its groups are trimmed to one or two a deck, and the brief's crews on the rail
   and in the quarters and the bowman over the side are cut, but each deck keeps a group strong
   enough for the gate's fights to a rest. A clear of the four maps gives 10,526 a member, 7% over
-  the curve, and the side quests' 900 would bring it to about 11,430, 16% over.
+  the curve, and the side quests' 900 would bring it to about 11,430, 16% over. The Fence's rung
+  (§6) adds 100 a member: the curve test counts 10,626 of the 9,867, 8% over (§9, #635's 6).
   From here on a kill pays
   by level (#159); the curve's row reports what a clear falls short of as owed to #154 until the
   maps exist, and MONSTERS' open question 4, what a fight is worth from Saltreach on, is settled on
   the first box built.
 - **Gold.** Training six members from 12 to 14 costs about 6,000 with today's `trainPrice`; the
   hold's strongboxes and the crews' drops pay it, and the isle has no shop to spend it in until the
-  boat back. As built a clear gives 6,079 (#190): the ship's chests carry 3,200 of it.
+  boat back. As built a clear gives 6,079 (#190): the ship's chests carry 3,200 of it. The curve
+  test counts 6,479 now, with the Fence's rung's 200 (§9, #635's 6).
 - **The gate.** Each map at its own floor (docs/areas/thornmark.md §9, 17): a company at 12 wins nine
   in ten on E6 and one at 10 no more than one in four; the Great Devilfish is won about half the time
   at 12 and nearly always at 14, the Warden of the Tide the same.
@@ -518,6 +529,31 @@ Proposed, for the owner, each in the issue that would build it:
 - **The bands on the atlas's rows** (#186): the zone 12–14, Kelp Hole 12–14, the Tide Ship 13–14.
   They are set already in `src/content/areas/wrackholm/atlas.ts`, where only the scaffold reads
   them, for a box's draft; the owner's word changes them there.
+
+Decided by delegate for #635 (the Fence's rung), each the owner's to overturn:
+
+1. **The rung is built now, on Act II's country,** since it is a deed on a built map. *Where the
+   Cargo Goes* (`compact_fence`, `guilds.ts`, listed in the area's index) is the quest a Fence is
+   offered, and its deed is the stair's foot seen (`dead_drop_stair:dd_foot`, the room's first
+   once-event, #190). No group, no new feature and no change to a map, so no contact sheet.
+2. **The ladder no longer rests from 12 to 24.** As the docs stood, the Compact's climb stopped at
+   the Fence from Saltreach's top at 12 to Cinderport's floor at 24; with the rung it climbs on in
+   Act II's band. DESIGN §8 says so, and its table of Act IV's guild quests places the other three.
+3. **The other three rungs ride Act IV's dungeons,** with no new feature or group: the Surveyor's
+   with the Ember Stone (#516), the Mapmaker's with Meridian Camp and the Factor's with the
+   Dead-Drop (#22). `OWED_RANKS` in `tools/tests/guilds.ts` drops the Fence's entry and owes the
+   three to them, in the order a ladder allows: #516 before the Mapmaker's.
+4. **Any hall offers and pays it,** one ladder (DESIGN §8), and the rung has no `after`, since the
+   stair opens in Act II: a Fence is offered it as the rank is held. The log's goal names the Keel
+   in Saltmouth and the factor's house at Cinderport (#512), and the words name no giver but Ruan.
+5. **Her paid words say not yet and name nothing below.** The company is made a Factor, whose
+   rung is Act IV's; what lies past the stair's foot is found, never told (DESIGN §7), and the
+   Dead-Drop's brief is #22's (docs/areas/dead_drop.md).
+6. **The pay is 200 gold and 600 xp,** the next rise of the Compact's ladder after the crate's 100
+   and 360 and the lookout's 150 and 480. The 600 is 100 a member, which the area's budget absorbs
+   as the side quests' pay is (§8): the curve test counts 10,626 xp a member of the 9,867 asked
+   (10,526 before) and 6,479 gold of the 6,000 (6,279 before), both 8% over, so the row needs no
+   owed figure.
 
 Decided by delegate for #192, each the owner's to overturn:
 
