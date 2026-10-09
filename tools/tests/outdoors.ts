@@ -382,12 +382,15 @@ export function outdoors(): void {
   { // Every open square of the outdoors can be walked to from its start, given keys, secrets, water and climbing, and never through the void or the chasm,
     // but for a zone map laid before the one that joins it (CUT_OFF). A crossing a person sells
     // (game/passage.ts) puts the company down on its landing, so each landing on a zone map is
-    // walked from too, as the gate counts it a way in (`landings`, tools/tests/gate.ts).
+    // walked from too, and so is a town's way out onto one where the landing is in the town, as G10 is
+    // reached through Cinderport (#512): the gate counts each a way in (`landings`, tools/tests/gate.ts).
     const reached = new Uint8Array(out.width * out.height);
     const stack = [[out.def.start.x, out.def.start.y]];
     for (const d of MAP_DEFS) for (const f of d.features ?? []) if (f.kind === 'npc') for (const p of f.passage ?? []) {
       const z = out.zones.find((q) => q.id === p.to);
       if (z) stack.push([z.x + p.x, z.y + p.y]);
+      const town = MAP_DEFS.find((t) => t.id === p.to && t.kind === 'town');
+      for (const e of town?.exits ?? []) { const w = out.zones.find((q) => q.id === e.to); if (w) stack.push([w.x + e.tx, w.y + e.ty]); }
     }
     // A way taken between two zone maps of the outdoors, as N8's notch is down onto M9 (#486), is walked
     // as a step: whoever stands on it is set down on its landing.
