@@ -1,6 +1,6 @@
 // Moving about: steps and the clock, doors, keys and secrets, water and mountains, the end of the
 // world, the open pass walked into Thornmark and back, Town Portal, the stairs, Helmstow's two
-// gates and a group under the ice.
+// gates, a group under the ice and the road cut through cliffs and peaks.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { World, WALK_STEPS, WALK_ENDS, FLOAT_ENDS, FLOAT_FAILS } from '../../src/game/world.ts';
@@ -246,6 +246,23 @@ export function movement(): void {
     ok(!unseen.some((t) => t.includes('tide')), 'and not where there are none');
   }
   underIce();
+  range();
+}
+
+/**
+ * Cliffs and peaks (#543), with a road cut between them: a step into a peak or a cliff is refused as
+ * one into the mountain is, a Mountaineer climbs onto either, and anyone walks the road.
+ */
+function range(): void {
+  const cut: MapDef = { id: 'fx_cut', name: 'Cut', kind: 'outdoor', start: { x: 2, y: 2, facing: NORTH }, rows: ['MMMMM', 'MA=|M', 'MA=|M', 'MMMMM'] };
+  const rng = makeRng(13), party = defaultParty(rng), w = new World({ fx_cut: new GameMap(cut) }, party, rng);
+  const step = (f: Facing): string => { w.travel('fx_cut', 2, 2, f); const r = w.move('forward'); return r.kind === 'blocked' ? r.reason : `${r.kind} ${w.state.x},${w.state.y}`; };
+  const peak = step(WEST), cliff = step(EAST), road = step(NORTH);
+  party.flags.skill_mountaineer = 1;
+  const climbed = [step(WEST), step(EAST)];
+  delete party.flags.skill_mountaineer;
+  ok(peak === 'Too steep to climb without a Mountaineer.' && cliff === peak && road === 'moved 2,1', `a step into a peak or a cliff is refused as one into the mountain is, and the road between them is walked (${peak} / ${cliff} / ${road})`);
+  ok(climbed.join(' / ') === 'moved 1,2 / moved 3,2', `a Mountaineer climbs onto either (${climbed.join(' / ')})`);
 }
 
 /**

@@ -10,8 +10,8 @@ its doc is Phase 1.6's. This is the area doc (EXPANSION §4, §6 and §8.2): whe
 what the atlas and the docs put in it, the plan for building it, box by box, and the briefs. Its
 work is filed under #447 (Phase 1.4, #441): this doc (#523), the boxes as §4's table has them
 (#524 to #530), its chapter (#531), its side quests (#532), its six drawings (#533) and the country
-behind, parked (#534). The act's systems are #442's: the curve's row and the gear ladder (#542),
-steppe and dunes underfoot (#543), the toll (#544) and the sweep (#545), stone and its cure (#546),
+behind, parked (#534). The act's systems are #442's: the curve's row (#542, in: §3), steppe and
+dunes underfoot (#543), the toll (#544) and the sweep (#545), stone and its cure (#546),
 the crossings, the Rider's ride to Cinderport among them (#547), and the bot (#549). The owner's
 calls are #443's, the names #444's, the third prestiges' quests #448's and the road behind #449's.
 Figures are measured on main at `6032251` (2 October 2026) with `worldGrid` (`src/game/atlas.ts`):
@@ -110,7 +110,9 @@ bands, the Wold 26–28 and the Glass 30–32, the Buried Tower's plate at 30–
 (the plan's Wold Riders camp at 120,250), Kushtash (the Eyrie, moved to about 46,242, call 5) and
 the Buried Tower, "The Glass" and "Buried Tower" lettered as the plan letters them. The lava flow
 is drawn in the plan's ridges (`src/content/atlas.ts`), the one line outside the folder this doc
-asks for (call 5). Nothing else: no map, no monster, no quest. Every brief below is a draft.
+asks for (call 5). Its row on the curve is in (#542), in `src/content/progression.ts`, planned until
+#524 lists the area (band 26–28, next 28, window 6,000); the Wold takes no step on the gear ladder,
+no town to sell one (§9). Nothing else: no map, no monster, no quest. Every brief below is a draft.
 
 ## 4. What is still to build
 
@@ -510,7 +512,9 @@ cliff from its top.
   nothing on the Wold trains: Cinderport teaches to 27, a Rider's ride away (call 5, #547), and 28
   is Hearth Isle's to teach or the owner's to place. A clear should pay for the training at least,
   in the hoards, the drops and the quests' pay, and the ride's fare on top; the band's price window
-  is 6,000, and no find or ware comes within 400 of it (docs/areas/saltreach.md §9, #399's 4).
+  is 6,000 (#542), and no find or ware comes within 400 of it (docs/areas/saltreach.md §9, #399's
+  4). The Wold sells nothing and adds no rung: a company that rides to Cinderport buys there, the
+  armourer's step 1,400 to 3,100 gold (docs/areas/ashfall.md §8).
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
   (docs/areas/thornmark.md §9, 17): a company at 26 wins nine in ten of E10's fights and walks the
   road over the hills resting at its camp; one at 24 wins no more than one in four. The Grey Lion is
@@ -563,6 +567,15 @@ Proposed, for the owner, each in the issue that would build it:
 - **The bands on the atlas's rows:** the Wold 26–28, the Glass 30–32 and the Buried Tower 30–32,
   set in `src/content/areas/glasswold/atlas.ts`, where only the scaffold reads them; the owner's
   word changes them there.
+
+Decided by delegate for #542, each the owner's to overturn (docs/areas/ashfall.md §9 has the step):
+
+1. **The Glasswold's row is 26–28, next 28, window 6,000,** owed to #447 with nothing given, as
+   the issue has it: 21,067 xp a member and 12,720 gold, the training of six from 26 to 28.
+2. **The Wold takes no step on the ladder:** no town sells, and the Riders buy at Cinderport by the
+   ride (call 5, #547). A company at 26 wears Cinderport's step. A box that places a piece of it
+   with a plus, the briefs' Horn Bow or Shield, takes the Ashwood Bow or the Basalt Shield of
+   `src/content/areas/ashfall/items.ts`, off the ladder (docs/areas/ashfall.md §9, #542's 6).
 
 ## 10. Names
 

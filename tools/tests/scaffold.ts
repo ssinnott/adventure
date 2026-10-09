@@ -34,6 +34,9 @@ const ASH_AT = [456, 158] as const;
 const PINE_AT = [392, 62] as const;
 /** N10, Glacier Foot under the glacier, with the atlas's ice: the lochs are water on it, and a box draws them frozen. */
 const ICE_AT = [424, 286] as const;
+/** J11, Monks' Vale, with the peaks on its crest; and I11 over it, the Peak Stone's box, with peaks and cliffs (#543). */
+const PEAK_AT = [296, 318] as const;
+const CLIFF_AT = [264, 318] as const;
 
 /** The draft as the tool writes it: its module, written out and imported back, by export name. */
 async function exported(d: Draft, zone: string, x: number, y: number): Promise<Record<string, MapDef>> {
@@ -111,7 +114,7 @@ export async function scaffold(): Promise<void> {
   ok(refused('downs', AT[0] + 1, AT[1], /lies over shelf/), 'it refuses a cut over a laid zone map, ring and all');
   ok(refused('downs', ATLAS.width - SIZE + 1, AT[1], /outside the world/), 'and one outside the world');
   ok(refused('nowhere', AT[0], AT[1], /no zone/), 'and a zone the atlas has not');
-  ok(refused('downs', 72, 30, /cliff \d+/), 'and ground no map character is, counting its squares (Kestrel Edge\'s cliffs at 72,30, west of D2, north of Rietum)');
+  ok(refused('downs', 70, 262, /glass \d+/), 'and ground no map character is, counting its squares (the Wold\'s glass at 70,262)');
   ok(refused('downs', AT[0], AT[1], /built already/, 'shelf') && refused('downs', AT[0], AT[1], /no map id/, 'Downs-2'), 'and an id a built map has, or no map id could be');
 
   // --id names the map and its export.
@@ -169,10 +172,12 @@ export async function scaffold(): Promise<void> {
 
   // The Saltings and Wrackholm: salt, tidal ground and heather, which no map character was until
   // #162, cut and laid back; written as sand, shallows and grass, they are not the atlas. The same
-  // for the Kilns' ash and pine and Glacier Foot's ice (#536), written as dirt, forest and shallows.
+  // for the Kilns' ash and pine and Glacier Foot's ice (#536), written as dirt, forest and shallows,
+  // and the Whitespine's peaks and cliffs (#543), written as snow and rock.
   for (const [zoneId, [bx, by], kinds, plain] of [
     ['saltings', SALT_AT, ['salt', 'tidal'], { '-': '_', ';': '~' }], ['wrackholm', MOOR_AT, ['heather'], { h: ',' }],
     ['kilnsheart', ASH_AT, ['ash'], { a: ':' }], ['ironfells', PINE_AT, ['pine'], { p: 'T' }], ['glacierfoot', ICE_AT, ['ice'], { i: '~' }],
+    ['monksvale', PEAK_AT, ['peak'], { A: '*' }], ['highspine', CLIFF_AT, ['peak', 'cliff'], { A: '*', '|': 'r' }],
   ] as const) {
     const world = unbuilt(bx, by), gr = baseline(world.atlas, world.defs);
     const dr = cut(world.atlas, world.defs, gr, REGIONS, zoneId, bx, by);

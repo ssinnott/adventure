@@ -4,21 +4,23 @@
 //   node tools/gate.ts --maps thornmark,grove2 --levels 2,3,4,5 --seeds 200
 //   node tools/gate.ts --road thornmark:tm_wolves1,tm_brigands2,tm_hounds,tm_zealots
 // The premade company is trained to each level, dressed by the ladder (GEAR, tools/harness.ts: to
-// 22, Rime Lodge's furrier's with a plus, and past it in that top step) and takes the prestiges its
+// 25, Cinderport's armourer's, and past it in that top step) and takes the prestiges its
 // level brings, at 11, 19 and 27, as harness's company does (it is that company, `companyAt`),
 // and fights every group of a map alone from full health, once per seed. --road instead fights the
 // groups named, in order, with no rest between, and counts the companies still standing after each;
 // one group is one fight. A plain bot plays the party: mend the weakest when someone is under 40%,
-// else the strongest damage spell it can afford, else a weapon, else brace; it aims at a leader where
-// it can reach one, since the people break at its fall, or at a caller while the fight has room for
-// its call, or at a light whose touch takes spell points, since its fall keeps the casters' points,
-// and else a weapon at the first foe it reaches. Once it has seen what an element does to a
-// foe it casts the element that foe is weakest to, and never one it has seen do nothing to any foe
-// still standing; once it has seen a foe mend, it burns it with fire each round before it casts
-// anything else. It reads the fight as it stands each turn, the groups called into it too. It wakes a
-// sleeper of the front row, or a caster, before it strikes. It never sleeps, blesses, drinks or flees,
-// nor cures anything but sleep, so it is weaker than a player; single fights at full health are
-// kinder than play. A group that asks before it fights (#544) it refuses, and fights.
+// or in the row a foe that sweeps would take under the most one sweep could deal them, so that none
+// of the front row falls to one sweep and it never turns on the back row; else the strongest damage
+// spell it can afford, else a weapon, else brace. It aims at a leader where it can reach one, since
+// the people break at its fall, or at a caller while the fight has room for its call, or at a light
+// whose touch takes spell points, since its fall keeps the casters' points, and else a weapon at
+// the first foe it reaches. Once it has seen what an element does to a foe it casts the element
+// that foe is weakest to, and never one it has seen do nothing to any foe still standing; once it
+// has seen a foe mend, it burns it with fire each round before it casts anything else. It reads the
+// fight as it stands each turn, the groups called into it too. It wakes a sleeper of the front row,
+// or a caster, before it strikes. It never sleeps, blesses, drinks or flees, nor cures anything but
+// sleep, so it is weaker than a player; single fights at full health are kinder than play. A group
+// that asks before it fights (#544) it refuses, and fights.
 // Read the numbers as where the fights bite, not as a promise. tools/tests/gate.ts holds every map
 // and area to them (the gate check); it imports this file, whose table runs only from the command
 // line.
@@ -33,7 +35,7 @@ import { RANGED_PENALTY } from '../src/game/weather.ts';
 import { spell } from '../src/game/spells.ts';
 import type { SpellDef, SpellTarget } from '../src/game/spells.ts';
 import { MAP_DEFS } from '../src/content/index.ts';
-import { companyAt, wakeWith, markOf } from './harness.ts';
+import { companyAt, wakeWith, markOf, mendLines } from './harness.ts';
 import type { EncounterDef, Answer } from '../src/game/map.ts';
 import { answer, barred } from '../src/game/people.ts';
 
@@ -118,7 +120,7 @@ export function gateTurn(s: CombatState, p: Party, rng: RngInstance, i: number):
   const c = p.members[i], foes = aliveMonsters(s), lead = markOf(s, foes), foe = lead ?? foes[0];
   const blade = lead !== undefined && canReach(s, c, lead) ? lead : foes.find((f) => canReach(s, c, f)) ?? foe;
   const known = c.spells.map(spell).filter((x) => x.context !== 'explore' && x.sp <= c.sp);
-  const low = p.members.map((m, j) => ({ m, j })).filter(({ m }) => !isDown(m) && m.hp < m.maxHp * 0.4).sort((a, b) => a.m.hp - b.m.hp)[0];
+  const lines = mendLines(s, p), low = p.members.map((m, j) => ({ m, j })).filter(({ m, j }) => !isDown(m) && m.hp < lines[j]).sort((a, b) => a.m.hp - b.m.hp)[0];
   const mend = known.filter((x) => x.heal && !x.raise).sort((a, b) => (b.heal ?? 0) - (a.heal ?? 0))[0];
   const blast = gateBlast(s, c);
   if (low && mend && partyAct(s, p, rng, { type: 'cast', spellId: mend.id, target: low.j })) return;

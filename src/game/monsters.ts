@@ -95,6 +95,13 @@ export interface MonsterDef {
    * (combat.ts `canCall`): the tallyman's knockers, Vask's sentries (#537). By id; a tool may hand in defs.
    */
   calls?: { monsters: readonly (string | MonsterDef)[]; chance: number };
+  /**
+   * One attack at every member of a row, at `chance` a turn, a to-hit and its own dice rolled for each
+   * (combat.ts `sweep`, #545). Bare it is an arm, and takes the front row, the back once the front is
+   * down: the giants. With an element it is a breath, and takes the row with more standing in it, the
+   * front on a tie: the drakes. It neither drains nor inflicts. MONSTERS §3.3 sizes it.
+   */
+  sweep?: { chance: number; element?: Element };
   /** Never breaks, whatever its kind: the Hand (docs/MONSTERS.md §2). */
   steady?: boolean;
   /** Tint of the sprite. */

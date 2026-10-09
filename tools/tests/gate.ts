@@ -22,8 +22,8 @@ import { startCombat, currentTurn, monsterAct, asGroup, aliveMonsters } from '..
 import type { CombatState, Fighters } from '../../src/game/combat.ts';
 import { spell } from '../../src/game/spells.ts';
 import { gateCompany, gateFight, gateOpts, gateTurn, fightSeed, winRate, gateAnswer, gatePass } from '../gate.ts';
-import { days, fightsPerRest, mendBetween, mustRest, companyAt, markOf, ROUND_CAP } from '../harness.ts';
-import { testMonster, trollEncounter, wightEncounter, callerEncounter, lightEncounter } from '../testmonster.ts';
+import { days, fightsPerRest, mendBetween, mustRest, companyAt, markOf, ROUND_CAP, ANSWER } from '../harness.ts';
+import { testMonster, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, giantEncounter, drakeEncounter } from '../testmonster.ts';
 import { stepsFrom } from './curve.ts';
 import { ok, owed } from './lib.ts';
 
@@ -368,6 +368,18 @@ export function gate(): void {
     const atLights = lit.filter(({ s }) => s.log.map((l) => blade.exec(l)?.[1]).find((x) => x) === 'Test Light').length;
     ok(mark !== undefined && first.monsters[mark].def.drain === 'sp' && won(lit) >= 0.9 && atLights >= seeds * 0.9,
       `it keeps its casters' spell points from the lights: it marks a light before the hound, so its first blade falls on a light in ${atLights} of ${seeds} fights at 19, and it wins ${pc(won(lit))}`);
+    // It plays the sweep (#545): two giants at 23 and two drakes at 25, and wins; and it mends the row
+    // a sweep would take before one sweep could fell anyone in it, so against giants of twice the blow
+    // fewer of its front row fall to a sweep than with no answer.
+    const giants = fought(23, giantEncounter(23)), drakes = fought(25, drakeEncounter(25)), heavy = [testGiant(23, 2), testGiant(23, 2)];
+    const felled = (fs: { s: CombatState }[]): number => fs.filter(({ s }) => s.log.some((l) => / (sweeps|breathes) /.test(l) && /falls?!$/.test(l))).length;
+    const answered = felled(fought(23, heavy));
+    ANSWER.sweep = false;
+    const bare = felled(fought(23, heavy));
+    ANSWER.sweep = true;
+    const swept = giants.filter(({ s }) => s.log.some((l) => l.startsWith('Test Giant sweeps the front row'))).length;
+    ok(won(giants) >= 0.9 && won(drakes) >= 0.9 && swept >= seeds / 2 && answered < bare,
+      `it plays the sweep: it wins ${pc(won(giants))} of two giants' fights at 23, swept in ${swept} of ${seeds}, and ${pc(won(drakes))} of two drakes' at 25; and against giants of twice the blow one of a row falls to a sweep in ${answered} of ${seeds} fights, where with no answer in ${bare}`);
   }
   // The gate's company is harness's (#541): it takes its prestiges at 11, 19 and 27, with their perks
   // and ranks, as play gives them, and wears what harness's wears.
@@ -434,6 +446,10 @@ export function gate(): void {
     ok(iced > dry, `six smuggler bowmen under the ice are fought from under it (${pc(iced)} won at 1, against ${pc(dry)} on dry ground)`);
     const strip: MapDef = { id: 'fx_strip', name: 'Strip', kind: 'outdoor', start: { x: 1, y: 1, facing: 0 }, rows: ['MMMMMMM', 'M,apiaM', 'MMMMMMM'] };
     ok(stepsFrom(strip)(5, 1) === 4, `the walk from a way in crosses ash, pine and ice (${stepsFrom(strip)(5, 1)} steps over four squares)`);
+    // A peak and a cliff (#543) are the mountain's rock to the walk, which goes as a company with every
+    // skill: climbed as the mountain is, the road through them walked.
+    const cut: MapDef = { id: 'fx_cut', name: 'Cut', kind: 'outdoor', start: { x: 1, y: 1, facing: 0 }, rows: ['MMMMMMM', 'M=A=|=M', 'MMMMMMM'] };
+    ok(stepsFrom(cut)(5, 1) === 4, `the walk from a way in climbs a peak and a cliff as it does the mountain (${stepsFrom(cut)(5, 1)} steps over four squares)`);
     const at = (x: number): EncounterDef => ({ id: `g${x}`, x, y: 0, monsters: ['rat'] }), line = [at(1), { ...at(2), after: { flag: 'f' } }, at(3), at(4)];
     ok(nearestWayIn(line, (x) => x).map((g) => g.id).join() === 'g1,g3', 'the groups nearest the way in skip one that comes only after a step');
     // A den's keepers are its camp's hardest fight: won no more often than any of its brood.

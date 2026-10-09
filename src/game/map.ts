@@ -24,11 +24,14 @@ export type MapKind = 'town' | 'dungeon' | 'outdoor';
  * Tidal ground is the shore the sea leaves twice a day: sand at low water, water at high (`tideAt`).
  * Ash is the vents' fall, deep and loose, walked as slowly as hills; pine is the pinewoods, walked
  * through among the pines as the woods are; ice is a frozen lake, walked, with what lives under it.
+ * A peak (`A`) and a cliff (`|`) are the range's rock, solid as the mountain is and climbed as it is,
+ * by a Mountaineer and nobody else: a summit over the mountains, and an escarpment's sheer face.
  */
 export type Terrain =
   | 'floor' | 'grass' | 'dirt' | 'road' | 'sand' | 'water' | 'deep' | 'swamp' | 'lava' | 'stone' | 'snow'
   | 'hills' | 'farm' | 'woods' | 'deadwood' | 'crystal' | 'chasm' | 'salt' | 'heather' | 'tidal'
-  | 'ash' | 'pine' | 'ice';
+  | 'ash' | 'pine' | 'ice'
+  | 'peak' | 'cliff';
 
 /** Minutes a step onto hills costs over the usual six in the open. */
 export const HILL_DRAG = 2;
@@ -447,6 +450,8 @@ export const LEGEND: Record<string, Cell> = {
   'T': cell('grass', 'tree'),
   'r': cell('dirt', 'rock'),
   'M': cell('stone', 'mountain'),
+  'A': cell('peak', 'mountain'),
+  '|': cell('cliff', 'mountain'),
   '"': cell('stone'),
   [VOID_CH]: cell('floor', 'void'),
 };
