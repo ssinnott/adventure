@@ -87,6 +87,8 @@ export const BOSSES: Record<string, readonly string[]> = {
   monksvale: ['monastery2:hc2_abbot'],
   // The Stair-king at the Stair's head, who asks the toll first; the bot refuses (#502).
   highspine: ['highspine_i10:i10_king'],
+  // The Old Drake asleep on Old Cinder's square, down off F11's crater (#515).
+  emberwaste: ['old_cinder:oc1_drake'],
 };
 
 /** Each zone's road: the groups met on it, in order, from its way in. Every zone with groups names one. */
@@ -220,6 +222,8 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   // And the Ember Waste's road (#517), its two country boxes.
   'emberwaste_f10: under': { whose: '#18', at: 1 },
   'emberwaste_e10: under': { whose: '#18', at: 1 },
+  // And Old Cinder's undercroft (#515), banded from the area's floor as Highcell's upper house is.
+  'old_cinder2: under': { whose: '#18', at: 1 },
   'Ashfall: under': { whose: '#18', at: 1 },
   'highspine_i11: under': { whose: '#18', at: 1 },
   // And the ridge north (#503), banded from the area's floor as I11 is: its three groups are won every
