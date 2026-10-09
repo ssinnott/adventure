@@ -1107,7 +1107,7 @@ eagles from the birds; the Hand as its masons.
 | Stair Giant | giants, new | brute, 23 | the Giants' Stair | *A man as tall as a house, holding out his hand.* Size 2; sweeps the front row; asks a toll before it fights |
 | Ashen Mason | cultist | soldier, 23 | Sheer Point, on the causeway | *A hammer from below, and a shard to set.* |
 | The Abbot | keepers | boss, 24 | the monastery's chapter house | *The abbot keeps the hours, and it is time.* Its robe falls open as it falls |
-| The Stair-king | giants, new | boss, 24 | the top of the Stair | *He has taken the toll here since before Helmstow.* |
+| The Stair-king | giants, new | boss, 24 | the top of the Stair | *He has taken the toll here since before Helmstow.* Size 2; the giants break when he falls |
 
 - **The chapter house**: brothers in front of two bell-ringers, the bells holding the front row
   while the brothers close, and the cleric's light doing nothing.
@@ -1119,6 +1119,15 @@ nothing new of the resolver (#544); a company that pays walks up the Stair. The 
 person` and break when the king falls: they came in the ship awake, the crew that built the inside
 and were never cargo, posted to keep the Stair, which is the hull's service ramp, and the toll is
 the order they were given (#443, call 1; DESIGN.md §9). The king's words hint it and never say it.
+
+Drawn (#507), on the giants' frame (`src/ui/monsters/giants.ts`): a man as tall as a house, upright
+in the coat of felted wool he has worn four hundred years, belted and patched, his leggings bound to
+the knee and a worn badge on his shoulder; his near arm is held out from the elbow, the hand open and
+cupped for the toll, and the far hand hangs, bigger than a man's head. The Stair-king is the frame an
+eighth broader, his head sunk under a mantle of dark fur, white-haired and bearded to the belt, and
+crowned in the toll: coin set on edge round his brow, the oldest at the front with no face. Both are
+size 2, drawn inside the tall boss's crown, and with them #507's eight are drawn
+(docs/areas/whitespine.md §9). I10 places them (#502), and gives them sweep (#545).
 
 **Asks:** sweep.
 

@@ -96,9 +96,16 @@ the plan (`src/content/atlas.ts` imports it where its rows were), as Saltreach's
 the area cannot be listed in AREAS until #499 gives it a map, which points the area's `atlas` at
 the folder and takes the import out.
 
-Nothing else is built. The systems it waits on are #442's: the curve's rows and the gear past 22
-(#542), cliffs and peaks with the road through them (#543), the toll (#544), sweep (#545), stone
-(#546), the crossings (#547), the Ember Stone (#548) and the bot (#549). Its monsters are #507's.
+The giants are drawn (#507, below), and nothing else is built. The systems it waits on are #442's:
+the curve's rows and the gear past 22 (#542), cliffs and peaks with the road through them (#543),
+the toll (#544), sweep (#545), stone (#546), the crossings (#547), the Ember Stone (#548) and the
+bot (#549). The rest of its monsters are #507's.
+
+Drawn ahead of the box that places them (#507): the giants, a new family on a frame of their own
+(`src/ui/monsters/giants.ts`), the Stair Giant and the Stair-king. Their defs are in
+`src/content/areas/whitespine/monsters.ts`, listed in `AHEAD` (`src/content/index.ts`) until #499
+lists the area, and both are owed in `UNPLACED` (`tools/tests/maps.ts`) to I10 (#502), whose brief
+places them (§4.5). §9 has the decisions.
 
 ## 4. What is still to build
 
@@ -434,8 +441,8 @@ Pay is xp a member, whichever way the choice goes, shared by level: about 900 be
 MONSTERS §8.1 has the roster and the fights: the Spine Eagle, the Brother, the Bell-ringer, the Snow
 Troll, the Stair Giant, the Ashen Mason, the Abbot and the Stair-king; the chapter house and the
 Stair in snow. Their drawings are #507's, eight in all, the giants new and the rest on frames that
-exist. §4.2 to §4.7 place every group, box by box, the gentlest at the pass's foot and the Abbot,
-the king and the masons at the top of the band.
+exist; the giants, drawn last (§3, §9), finish them. §4.2 to §4.7 place every group, box by box, the
+gentlest at the pass's foot and the Abbot, the king and the masons at the top of the band.
 
 New in the Whitespine, for the novelty check (EXPANSION §5.4): the giants, a new family (#507), and
 with them the toll, a choice before a fight (#544), and sweep, one blow at every member of a row
@@ -518,6 +525,33 @@ Proposed, for the owner, each in the issue that would build it:
   Stair stays open to that company; the king dead, nobody keeps it. The bot refuses (#549).
 - **The giants' ground is J10's,** parked with it; the Stair's head holds the king and the two
   that stand with him. **The lines** of §4 are drafts, the owner's to reword.
+
+Decided by delegate for #507 (the giants), each the owner's to overturn:
+
+1. **A giant is a man as tall as a house, standing as a man stands:** upright, his weight on both
+   feet, no stoop and no club, so he reads apart from the ogres and the trolls at a glance.
+2. **His near arm is held out from the elbow, the hand open and cupped, thumb and fingers turned
+   up:** the toll asked in the silhouette, the arm the bar across the road. The far hand hangs, huge.
+3. **He wears the crew's working clothes kept four hundred years:** a knee-length coat of felted wool,
+   belted, split and patched, a fleece collar, leggings bound to the knee and heavy boots.
+4. **On his shoulder is a worn round badge whose mark is long gone:** a thing seen, which nothing
+   explains (DESIGN §7).
+5. **His head is small for his height and bowed to look down at the company,** the hair cropped and
+   iron-grey, the beard on his chest, the eyes pale and deep under the brow: patient, not fierce.
+6. **The Stair-king is the frame an eighth broader, his head sunk between his shoulders,** under a
+   mantle of dark fur to the knee; white-haired, the beard to his belt, his coat slate to their grey.
+7. **His crown is the toll:** coin set on edge in a band at his brow, gold and silver either side and
+   at the front the oldest, dull and with no face, as his hoard lies (§4.5); more studs his belt.
+8. **Both are size 2, as MONSTERS §8.1 has the giant, drawn inside TALL_REACH:** the giant's crown at
+   about 0.75 of his height and the king's at 0.81, so the king stands over his giants at their size.
+9. **The giant is a brute on the line at 23** (632 hit points, 5d7+8) and the king on the boss line at
+   24 (1,381, 24d8+24), for #502's gate to tune.
+10. **People carry gold:** the giant 70 to 160 and the king 250 to 500, the toll's coin, for the
+    curve to weigh with #502; the hoard is the box's find (§4.5).
+11. **Sweep is left to #502:** main has no `sweep` on `MonsterDef` yet (#545), so the box that places
+    the giants declares it on both. The toll is #544's, and the leader whose fall breaks them #502's.
+12. **Nothing is declared apart:** the hand, the coins and the fur are one piece of ink with the body
+    at combat size. Each breathes slowly, the held-out hand lifting a little and settling.
 
 ## 10. Names
 
