@@ -7,7 +7,7 @@
 // by a causeway of slag with a milestone at its end; and south-west the Ember Stone half-built on its
 // field of cinders, its iron scaffold round it, a shrine at the field's edge and the builders' hollow in
 // the rock west of it. A second flow comes in off the mountain at the east edge and runs out south.
-// The crater's way is open (CRATER, #515); the Stone's is barred until the Ember Stone is built (STONE).
+// The crater's way is open (CRATER, #515), and the Stone's (STONE, #516).
 // Joined to F10 on the north edge and G11 on the east; the west and south edges end the world against
 // E11 and F12.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/ashfall.md §4.6 is its brief.
@@ -22,12 +22,12 @@ import { SOUTH } from '../../../../game/types.ts';
 export const CRATER: Exit = { x: 19, y: 4, to: 'old_cinder', tx: 8, ty: 1, tf: SOUTH, label: 'You climb down off the lip between the roofs, into a street the ash has left.' };
 
 /**
- * The way into the Ember Stone (#516): the Stone itself, 8,24, inside its iron scaffold, onto the
- * housing's level at 8,1, facing south, which this asks #516 to give it. The Ember Stone lists it in
- * this map's exits, opens the square and drops or rewrites `f11_stone`; its way back up lands on 8,23,
- * facing north, the Stone's front between the scaffold's uprights.
+ * The way into the Ember Stone (#516): the Stone itself, 8,24, inside its iron scaffold, its square
+ * open since the Stone was built, down the builders' stair onto the housing's level at 8,1, facing
+ * south. Its way back up lands on 8,23, facing north, the Stone's front between the scaffold's uprights,
+ * away from the Stone.
  */
-export const STONE: Exit = { x: 8, y: 24, to: 'ember_stone', tx: 8, ty: 1, tf: SOUTH };
+export const STONE: Exit = { x: 8, y: 24, to: 'ember_stone', tx: 8, ty: 1, tf: SOUTH, label: 'You go down into the Stone between the uprights, by a stair its builders left.' };
 
 export const EMBERWASTE_F11: MapDef = {
   id: 'emberwaste_f11',
@@ -62,7 +62,7 @@ export const EMBERWASTE_F11: MapDef = {
     'rrraaaa:::aaaaaaaaaaaaaaaaaaaaa!',
     'rrrraa:::::aaaaaaaaaaaaaaaaaaaa!',
     'raaSa::o:o::aaaaaaaaaaaaaaaaaa!!',
-    'rrrr::::o::::aaaaaaaaaaaaaaaaa!a',
+    'rrrr:::::::::aaaaaaaaaaaaaaaaa!a',
     'rrraa::o:o::aaaaaaaaaaaaaaaaa!!a',
     'aaaaaa:::::aaaaaaaaaaaaaaaaaa!!a',
     'aaaaaaa:::aaaaaaaaaaaaaaaaaa!!aa',
@@ -71,8 +71,8 @@ export const EMBERWASTE_F11: MapDef = {
     'MMMaaaaaaaaaaaaaaaaaaaaaaaa!!aaa',
     'MMMMaaaaaaaaaaaaaaaaaaaaaaa!!aaa',
   ],
-  // Down off the crater's lip into Old Cinder (#515).
-  exits: [CRATER],
+  // Down off the crater's lip into Old Cinder (#515), and down inside the Stone into the Ember Stone (#516).
+  exits: [CRATER, STONE],
   features: [
     // The Waste's road along the north edge, F10's, kept to the rocks.
     { kind: 'event', x: 8, y: 0, id: 'f11_road', once: true, text: 'The road keeps to the rocks here, out of the ash. South-east over them, smoke goes up out of a crater.' },
@@ -100,10 +100,11 @@ export const EMBERWASTE_F11: MapDef = {
     { kind: 'event', x: 18, y: 11, id: 'f11_causeway', once: true, text: 'A causeway of slag over the flow, its blocks laid close. Far off south-west a Stone stands alone.' },
     { kind: 'event', x: 18, y: 14, id: 'f11_milestone', once: true, text: 'A milestone at the causeway\'s end: THE WOLD 4, CINDERPORT 4. Ash lies in the letters.' },
     { kind: 'event', x: 6, y: 12, id: 'f11_seal', once: true, text: 'The flow runs into the rock and ends against it. Where it touched, the rock has gone to glass.' },
-    // The Ember Stone on its field of cinders: the step's line at the Stone's front each time, the way in
-    // barred until the Ember Stone is built (STONE); the first Cinderport folk's shrine at the field's
-    // edge, the carts' ruts from the causeway, and the ground ringing under the cinders.
-    { kind: 'event', x: 8, y: 23, id: 'f11_stone', text: 'On a field of cinders, a Stone half-built. The scaffold round it is iron and has not rusted.' },
+    // The Ember Stone on its field of cinders: the step's line at the Stone's front each time until it is
+    // lit, and the Stone lit after (#516), the way in down inside it (STONE); the first Cinderport folk's
+    // shrine at the field's edge, the carts' ruts from the causeway, and the ground ringing under the cinders.
+    { kind: 'event', x: 8, y: 23, id: 'f11_stone', until: { flag: 'q_ember_lit' }, text: 'On a field of cinders, a Stone half-built. The scaffold round it is iron and has not rusted.' },
+    { kind: 'event', x: 8, y: 23, id: 'f11_lit', after: { flag: 'q_ember_lit' }, text: 'On the field of cinders the Stone burns white at its heart. The cinders round it are warm.' },
     { kind: 'shrine', x: 13, y: 24, id: 'f11_shrine', text: 'A shrine at the field\'s edge, the first Cinderport folk\'s: cinders heaped round a slab.', stat: 'personality', done: 'The first folk\'s shrine at the field\'s edge, its slab warm.' },
     { kind: 'event', x: 20, y: 18, id: 'f11_ruts', once: true, text: 'Ruts in the ash, set hard, run from the causeway to the south-west. Carts came this way, long ago.' },
     { kind: 'event', x: 6, y: 29, id: 'f11_floor', once: true, text: 'South of the Stone the cinders thin, and the ground under them rings hollow at a step.' },
