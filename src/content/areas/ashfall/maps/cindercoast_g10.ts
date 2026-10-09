@@ -5,21 +5,21 @@
 // for Old Cinder and the Wold; the stream down to the harbour, forded on stones by the ground and on the ash; the knoll over it, and the
 // vines thick along the shore east of the town, with the factor's hide in them; under the west vines the
 // hermit and the potter's clay pit; and south of the ground the ash, to Fire Mountain's foot.
-// No box beside it is built and nothing yet leads in: its way in is the gate's front, 6,3, where
-// Cinderport's way out will land (#512), and the Compact's ship and the Rider's ride come in through the
-// town (#547). The gate is barred until the town is built (GATE). The east, south and west edges end the
-// world against H10, G11 and F10, and the north edge, beside the wall, against G9's shore.
+// No box beside it is built: its way in is Cinderport's gate (GATE), the town's way out landing on the
+// gate's front, 6,3, and the Compact's ship and the Rider's ride come in through the town (#547). The
+// east, south and west edges end the world against H10, G11 and F10, and the north edge, beside the
+// wall, against G9's shore.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/ashfall.md §4.3 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 
 /**
- * The way into Cinderport (#512): the gate in the town's south wall at 6,2, onto the town's first
- * square inside its own gate, 8,14, facing north, which this asks #512 to give it. An exit leads only
- * to a built map, so Cinderport lists it in this map's exits, opens the gate's square and drops
- * `g10_gate`; its way back out lands on 6,3, facing south, the gate's front and this box's way in.
+ * The way into Cinderport (#512): a door in the town's south wall at 6,2, onto the town's first square
+ * inside its own gate, 8,14, facing north, saying the town's gate line as the company goes in; the
+ * town's way back out lands on 6,3, facing south, the gate's front and this box's way in.
  */
-export const GATE: Exit = { x: 6, y: 2, to: 'cinderport', tx: 8, ty: 14, tf: NORTH };
+export const GATE: Exit = { x: 6, y: 2, to: 'cinderport', tx: 8, ty: 14, tf: NORTH,
+  label: 'Cinderport: black stone limed pale, ash along every wall, and the sea behind it.' };
 
 export const CINDERCOAST_G10: MapDef = {
   id: 'cindercoast_g10',
@@ -32,7 +32,7 @@ export const CINDERCOAST_G10: MapDef = {
   rows: [
     '&&&=BBBBBBBBBB~~~,,,,^^,,,,,&&&&',
     '&&&=BBBBBBBBBB,,~~,,^^^&,,&TTTT&',
-    '&&&=BBBBBBBBBB,,,~~,^^^&&&&S&&T&',
+    '&&&=BBDBBBBBBB,,,~~,^^^&&&&S&&T&',
     '&&=====,,,,,,,,,,,""^^^&&&&TTTT&',
     '&&=&,,,,,,,,,,,,,,,~~^^&&&&&&&&&',
     '&&=&&,,,,,,,,,,,,,,~~~^^&&&&&&&&',
@@ -63,9 +63,9 @@ export const CINDERCOAST_G10: MapDef = {
     'aaaaaaaMMMMMMMMMMMMaaaaaaaaaaaaa',
     'aaaaaaMMMMMMMMMMMMMMMaaaaaaaaaaa',
   ],
+  exits: [GATE],
   features: [
-    // The gate, barred until Cinderport is built (GATE), and the milestone where the road leaves the ground.
-    { kind: 'event', x: 6, y: 3, id: 'g10_gate', text: 'Cinderport\'s gate, and a gate-ward in it with his pike across the way. Over the wall stand masts.' },
+    // The milestone where the road leaves the ground. The gate's own words are its label, said going in (GATE).
     { kind: 'event', x: 3, y: 4, id: 'g10_milestone', once: true, text: 'A milestone where the road leaves the ground: OLD CINDER 4, THE WOLD 6. Ash lies in the letters.' },
     // The trading ground: the Riders' horses and fires, their shrine, and their eldest, the step (§5).
     { kind: 'event', x: 8, y: 4, id: 'g10_ground', once: true, text: 'Horses on the grass outside the gate, and fires. The Riders come down to trade, the gate-ward says, and their eldest talks.' },

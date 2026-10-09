@@ -19,13 +19,10 @@ import { logLines } from '../../src/ui/frame.ts';
  * Zone maps laid before the map that joins them to the rest, and whose map that is: their squares
  * are reported as that issue's while none can be walked to, and fail once they all can, so the
  * entry is dropped here. Henlys, I4, is reached through I3 (#215), as H4 between it and H3 is cut.
- * Wrackholm's isle is reached by the smugglers' boat from Saltmouth (#177), a crossing's landing.
+ * Wrackholm's isle is reached by the smugglers' boat from Saltmouth (#177), a crossing's landing, and
+ * Ashfall, begun by sea (#443, call 6), by the Compact's ship to Cinderport and out at its gate (#512).
  */
-const CUT_OFF: Record<string, string> = {
-  // Ashfall is begun by sea (#443, call 6): G10 is reached through Cinderport's gate, where the Compact's
-  // ship and the Rider's ride come in (#547), until the Stair's foot joins it to the Whitespine (#510).
-  cindercoast_g10: '#512',
-};
+const CUT_OFF: Record<string, string> = {};
 
 export function outdoors(): void {
   // The outdoors is played as one map the size of the world, every zone map the atlas places laid into it.
@@ -291,7 +288,7 @@ export function outdoors(): void {
   ok(northOf(i10) === '|' + 'p'.repeat(17) + '=' + '%'.repeat(5) + 'A'.repeat(7) + '%' && westOf(i10) === '|'.repeat(20) + '=pppp' + 'aa' + 'p'.repeat(5) && eastOf(i10) === '%%%' + 'A'.repeat(11) + '%%' + 'A'.repeat(7) + '%'.repeat(9)
     && [...Array(32).keys()].every((i) => [out.at(i10.x - 1, i10.y + i), out.at(i10.x + 32, i10.y + i), out.at(i10.x + i, i10.y - 1)].every((c) => c.ch === '%')),
     `I10's north edge is the Sheer, the pines and the trail at 18,0 against I9, its west edge the Sheer with the Stair at 0,20 against H10 and its east edge the range against J10, past which the world ends (${northOf(i10)}; ${westOf(i10)}; ${eastOf(i10)})`);
-  // Cinderport's box (G10, #511), Ashfall's first, begun by sea and joined to nothing yet (CUT_OFF): on
+  // Cinderport's box (G10, #511), Ashfall's first, begun by sea and joined overland to nothing yet: on
   // the north the vines, the road at column 3 up the wall's west side, Cinderport's wall, the stream
   // and the grass against G9's shore; on the south the ash either side of Fire Mountain's foot (the ring,
   // so the void) against G11; on the west the vines, the road out at rows 7 and 8 and the ash against
@@ -393,12 +390,15 @@ export function outdoors(): void {
   { // Every open square of the outdoors can be walked to from its start, given keys, secrets, water and climbing, and never through the void or the chasm,
     // but for a zone map laid before the one that joins it (CUT_OFF). A crossing a person sells
     // (game/passage.ts) puts the company down on its landing, so each landing on a zone map is
-    // walked from too, as the gate counts it a way in (`landings`, tools/tests/gate.ts).
+    // walked from too, and so is a town's way out onto one where the landing is in the town, as G10 is
+    // reached through Cinderport (#512): the gate counts each a way in (`landings`, tools/tests/gate.ts).
     const reached = new Uint8Array(out.width * out.height);
     const stack = [[out.def.start.x, out.def.start.y]];
     for (const d of MAP_DEFS) for (const f of d.features ?? []) if (f.kind === 'npc') for (const p of f.passage ?? []) {
       const z = out.zones.find((q) => q.id === p.to);
       if (z) stack.push([z.x + p.x, z.y + p.y]);
+      const town = MAP_DEFS.find((t) => t.id === p.to && t.kind === 'town');
+      for (const e of town?.exits ?? []) { const w = out.zones.find((q) => q.id === e.to); if (w) stack.push([w.x + e.tx, w.y + e.ty]); }
     }
     // A way taken between two zone maps of the outdoors, as N8's notch is down onto M9 (#486), is walked
     // as a step: whoever stands on it is set down on its landing.

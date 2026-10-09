@@ -1313,6 +1313,26 @@
         "99,148"
       ]
     },
+    "cinderport": {
+      "size": "16x16",
+      "used": [
+        "cp_boats",
+        "cp_cup",
+        "cp_driftwood",
+        "cp_gate",
+        "cp_heap",
+        "cp_lime",
+        "cp_mountain",
+        "cp_mountain_night",
+        "cp_pier",
+        "cp_quay",
+        "cp_rail",
+        "cp_steps",
+        "cp_vines"
+      ],
+      "groups": [],
+      "doors": []
+    },
     "dead_drop_stair": {
       "size": "10x9",
       "used": [
