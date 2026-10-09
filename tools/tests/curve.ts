@@ -3,14 +3,16 @@
 // trains the party through the band, every monster's level sits in its maps' bands, on each map
 // the groups' levels rise with walking steps from the way in, the nearest group is near the floor
 // and the hardest near the top, and no chest or drop is dearer than the area's window. What a row
-// says is owed is reported, not failed, until it holds.
+// says is owed is reported, not failed, until it holds. A map an area lists `outside` is held to
+// its own band and its country's window, and what it pays is a figure, counted in no clear.
 import { AREAS, ATLAS, MAP_DEFS, MONSTERS, ITEMS } from '../../src/content/index.ts';
 import type { RegionId } from '../../src/content/index.ts';
 import type { Area } from '../../src/content/area.ts';
 import { CURVE, PLANNED, MEMBERS, xpBudget, goldBudget } from '../../src/content/progression.ts';
 import type { AreaCurve } from '../../src/content/progression.ts';
 import { GameMap } from '../../src/game/map.ts';
-import type { MapDef } from '../../src/game/map.ts';
+import type { MapDef, Feature } from '../../src/game/map.ts';
+import type { MonsterDef } from '../../src/game/monsters.ts';
 import { areaBand } from '../../src/game/atlas.ts';
 import { giftOf, spentId } from '../../src/game/wilds.ts';
 import { handIns, choices } from '../../src/game/people.ts';
@@ -77,14 +79,68 @@ const BAND_OWED: Record<string, string> = {};
 /**
  * Whether a map's floor is over its area's band: a later area's country reached from this one, as
  * the Dead-Drop's stair under the Tide Ship is, 26 to 28 in Act II's isle. The pace check places it
- * with that later area (tools/tests/pillars.ts); here it stands outside its area's band and clear.
+ * with that later area (tools/tests/pillars.ts); here it stands outside its area's band and clear,
+ * and pays nothing unless its area lists it `outside`.
  */
 export const beyond = (d: Pick<MapDef, 'band'>, band: readonly [number, number]): boolean => !!d.band && d.band[0] > band[1];
+
+/**
+ * What is wrong with an area's `outside`, the maps that pay outside any area's budget: an id that is
+ * none of its maps, or a map that does not stand past its band. Only a map past it may: the deepest
+ * levels, which the road never needs.
+ */
+export function outsideFaults(area: { id: string; maps: readonly Pick<MapDef, 'id' | 'band'>[]; outside?: readonly string[] }, band: readonly [number, number]): string[] {
+  return (area.outside ?? []).flatMap((id) => {
+    const d = area.maps.find((m) => m.id === id);
+    if (!d) return [`${area.id}: ${id}, listed outside its budget, is none of its maps`];
+    return beyond(d, band) ? [] : [`${area.id}: ${id}, listed outside its budget, does not stand past its band ${band.join('-')} (${d.band?.join('-') ?? 'none'})`];
+  });
+}
+
+/** What a clear of some maps gives: a member's share of the xp, the gold in cash, the monsters it places and its features. */
+interface Clear { xp: number; gold: number; placed: MonsterDef[]; features: Feature[] }
+
+/** A clear of these maps: every group once, a member's share of the xp summed; the gold in cash. */
+function clearOf(maps: readonly MapDef[], guild: NonNullable<Area['guilds']> = []): Clear {
+  const groups = maps.flatMap((d) => d.encounters ?? []);
+  const placed = groups.flatMap((e) => e.monsters.map((m) => MONSTERS[m]));
+  const features = maps.flatMap((d) => d.features ?? []);
+  // A question's pay, whichever way it is answered: of its answers, the least, for each of xp and gold.
+  // A question two people share (one person in two places) is counted once.
+  const asked = [...new Set(features.flatMap((f) => f.kind === 'npc' ? choices(f) : []))];
+  const sure = (k: 'xp' | 'gold'): number => asked.reduce((t, c) => t + Math.min(...c.answers.map((a) => a.pay?.[k] ?? 0)), 0);
+  const xp = Math.floor((placed.reduce((t, m) => t + m.xp, 0) + guild.reduce((t, q) => t + (q.pay.xp ?? 0), 0) + sure('xp')) / MEMBERS);
+  // A hand-in's reward, once an item: of two people who take it, the larger.
+  const rewards = new Map<string, number>();
+  for (const f of features) if (f.kind === 'npc') for (const q of handIns(f)) rewards.set(q.item, Math.max(rewards.get(q.item) ?? 0, q.reward));
+  const gold = placed.reduce((t, m) => t + (m.gold[0] + m.gold[1]) / 2, 0)
+    + features.reduce((t, f) => t + (giftOf(f)?.gold ?? 0), 0) + [...rewards.values()].reduce((t, r) => t + r, 0)
+    + guild.reduce((t, q) => t + (q.pay.gold ?? 0), 0) + sure('gold');
+  return { xp, gold, placed, features };
+}
+
+/**
+ * The price window: no weapon, armour or shield in a clear's chests or its monsters' drops dearer
+ * than `price`. Keys, quest items and consumables are exempt.
+ */
+function priceWindow(who: string, { placed, features }: Clear, price: number): void {
+  const found = [
+    ...features.flatMap((f) => (giftOf(f)?.items ?? []).map((it) => ({ it, from: `${f.kind} ${spentId(f)}` }))),
+    ...[...new Set(placed)].flatMap((m) => (m.drops ?? []).map((x) => ({ it: x.item, from: `${m.id}'s drop` }))),
+  ].filter(({ it }) => ITEMS[it].slot !== 'none' && ITEMS[it].price > 0);
+  const dearer = found.filter((x) => ITEMS[x.it].price > price);
+  for (const x of dearer) ok(false, `${who}: ${x.it} (${ITEMS[x.it].price} gold, ${x.from}) is dearer than its window's ${price}`);
+  const dearest = found.reduce((p, x) => (ITEMS[x.it].price > ITEMS[p.it].price ? x : p), found[0]);
+  if (!dearer.length && dearest) ok(true, `${who}: its dearest find, ${dearest.it} at ${ITEMS[dearest.it].price} gold, sits in its window (${price})`);
+}
 
 export function curve(): void {
   const fx: [number, number] = [12, 14];
   ok(beyond({ band: [26, 28] }, fx) && !beyond({ band: [12, 14] }, fx) && !beyond({ band: [10, 11] }, fx) && !beyond({}, fx),
     'a map whose floor is over its area\'s band stands past it; one in it, under it or with none does not');
+  const isle = { id: 'fixture', maps: [{ id: 'fx_shore', band: fx }, { id: 'fx_drop', band: [26, 28] as [number, number] }] };
+  ok(!outsideFaults({ ...isle, outside: ['fx_drop'] }, fx).length && outsideFaults({ ...isle, outside: ['fx_shore', 'fx_vault'] }, fx).length === 2,
+    'an area may list a map of its own outside its budget where it stands past its band, and not one in its band or none of its maps');
   // The built areas and the planned ones, which have rows before they have maps, in the atlas's
   // order: an area may be listed before an earlier one is, and its row still follows that one's. A
   // planned area's clear gives nothing yet, and its row says who owes it.
@@ -97,7 +153,11 @@ export function curve(): void {
     const row = CURVE[id];
     const [lo, hi] = row.band;
     const maps = (area?.maps ?? []).filter((d) => !beyond(d, row.band));
-    for (const d of (area?.maps ?? []).filter((q) => beyond(q, row.band))) ok(!d.encounters?.length && !d.features?.some((f) => f.kind === 'chest'), `${id}: ${d.id}, at ${d.band!.join('-')}, stands past its band, a later area's country, and pays nothing here`);
+    // A map past the band pays nothing here, unless the area lists it outside its budget: then it is
+    // held to its own band and its country's window, and what it pays is counted in no clear.
+    const apart = (area?.maps ?? []).filter((d) => beyond(d, row.band) && !!area?.outside?.includes(d.id));
+    for (const d of (area?.maps ?? []).filter((q) => beyond(q, row.band) && !apart.includes(q))) ok(!d.encounters?.length && !d.features?.some((f) => f.kind === 'chest'), `${id}: ${d.id}, at ${d.band!.join('-')}, stands past its band, a later area's country, and pays nothing here`);
+    if (area) for (const f of outsideFaults(area, row.band)) ok(false, f);
     // The band: the atlas's, holding every map's, and the next floor the next area's.
     const atlas = areaBand(ATLAS, MAP_DEFS, id);
     const bandMsg = `${id}: its band ${lo}-${hi} is the atlas's (${atlas?.join('-') ?? 'none'})`, bandHolds = !!atlas && atlas[0] === lo && atlas[1] === hi;
@@ -111,27 +171,20 @@ export function curve(): void {
     if (later) ok(order(later.id) === at + 1, `${id}: ${later.id}, its next row, is the atlas's next area`);
 
     // What a clear gives: every group once, a member's share of the xp summed; the gold in cash.
-    const groups = maps.flatMap((d) => d.encounters ?? []);
-    const placed = groups.flatMap((e) => e.monsters.map((m) => MONSTERS[m]));
     // The area's guild quests pay too, counted with the area whose file holds them.
-    const guild = area?.guilds ?? [];
-    const features = maps.flatMap((d) => d.features ?? []);
-    // A question's pay, whichever way it is answered: of its answers, the least, for each of xp and gold.
-    // A question two people share (one person in two places) is counted once.
-    const asked = [...new Set(features.flatMap((f) => f.kind === 'npc' ? choices(f) : []))];
-    const sure = (k: 'xp' | 'gold'): number => asked.reduce((t, c) => t + Math.min(...c.answers.map((a) => a.pay?.[k] ?? 0)), 0);
-    const xp = Math.floor((placed.reduce((t, m) => t + m.xp, 0) + guild.reduce((t, q) => t + (q.pay.xp ?? 0), 0) + sure('xp')) / MEMBERS);
-    // A hand-in's reward, once an item: of two people who take it, the larger.
-    const rewards = new Map<string, number>();
-    for (const f of features) if (f.kind === 'npc') for (const q of handIns(f)) rewards.set(q.item, Math.max(rewards.get(q.item) ?? 0, q.reward));
-    const gold = placed.reduce((t, m) => t + (m.gold[0] + m.gold[1]) / 2, 0)
-      + features.reduce((t, f) => t + (giftOf(f)?.gold ?? 0), 0) + [...rewards.values()].reduce((t, r) => t + r, 0)
-      + guild.reduce((t, q) => t + (q.pay.gold ?? 0), 0) + sure('gold');
-    budget(id, 'xp a member', xp, xpBudget(row), row.owed, row.owed?.xp);
-    budget(id, 'gold', Math.floor(gold), goldBudget(row), row.owed, row.owed?.gold);
+    const clear = clearOf(maps, area?.guilds ?? []);
+    budget(id, 'xp a member', clear.xp, xpBudget(row), row.owed, row.owed?.xp);
+    budget(id, 'gold', Math.floor(clear.gold), goldBudget(row), row.owed, row.owed?.gold);
+    // What the maps outside give is a figure, never a failure: no clear counts it, and no one owes
+    // it, for they are the deepest levels, which the road never needs.
+    if (apart.length) {
+      const out = clearOf(apart);
+      ok(true, `${id}: outside its budget, ${apart.map((d) => d.id).join(', ')} give ${fmt(out.xp)} xp a member and ${fmt(out.gold)} gold, counted in no clear`);
+    }
 
-    // Every monster's level: at least 1, and within two of the band of every map that places it.
-    for (const d of maps) {
+    // Every monster's level: at least 1, and within two of the band of every map that places it, a
+    // map outside the budget its own.
+    for (const d of [...maps, ...apart]) {
       if (!d.encounters?.length) continue;
       const [a, b] = d.band ?? [1, 0];
       // A caller's retinue, the kind it calls, stands in its group at its own level, as the calls it
@@ -163,16 +216,10 @@ export function curve(): void {
       ok(hardest.level >= top, `${d.id}: the hardest group, ${hardest.id} at ${hardest.steps} steps, is near the top ${b} (level ${hardest.level.toFixed(1)}, at least ${top})`);
     }
 
-    // The price window: no weapon, armour or shield in its chests or its monsters' drops dearer
-    // than the row allows. Keys, quest items and consumables are exempt.
-    const found = [
-      ...features.flatMap((f) => (giftOf(f)?.items ?? []).map((it) => ({ it, from: `${f.kind} ${spentId(f)}` }))),
-      ...[...new Set(placed)].flatMap((m) => (m.drops ?? []).map((x) => ({ it: x.item, from: `${m.id}'s drop` }))),
-    ].filter(({ it }) => ITEMS[it].slot !== 'none' && ITEMS[it].price > 0);
-    const dearer = found.filter((x) => ITEMS[x.it].price > row.price);
-    for (const x of dearer) ok(false, `${id}: ${x.it} (${ITEMS[x.it].price} gold, ${x.from}) is dearer than its window's ${row.price}`);
-    const dearest = found.reduce((p, x) => (ITEMS[x.it].price > ITEMS[p.it].price ? x : p), found[0]);
-    if (!dearer.length && dearest) ok(true, `${id}: its dearest find, ${dearest.it} at ${ITEMS[dearest.it].price} gold, sits in its window (${row.price})`);
+    // The price window, the row's. A map outside the budget is held to its country's: the window of
+    // the last area on the road whose floor is at or under its own, as the pace check places it.
+    priceWindow(id, clear, row.price);
+    for (const d of apart) priceWindow(d.id, clearOf([d]), CURVE[road.filter((r) => CURVE[r.id].band[0] <= d.band![0]).pop()!.id].price);
     // The window never narrows along the road.
     const before = road[i - 1];
     if (before) ok(row.price >= CURVE[before.id].price, `${id}: its window, ${row.price}, is no narrower than ${before.id}'s (${CURVE[before.id].price})`);

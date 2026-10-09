@@ -1645,6 +1645,28 @@
       ],
       "doors": []
     },
+    "ember_stone": {
+      "size": "16x16",
+      "used": [
+        "es_bed",
+        "es_bench",
+        "es_benches",
+        "es_gallery",
+        "es_heart",
+        "es_journal",
+        "es_lookout",
+        "es_lower",
+        "es_open",
+        "es_pin"
+      ],
+      "groups": [
+        "es_sentinel",
+        "es_sentries"
+      ],
+      "doors": [
+        "8,13"
+      ]
+    },
     "greywater1": {
       "size": "16x16",
       "used": [
@@ -2633,6 +2655,8 @@
     "q_carto_chain_done",
     "q_carto_fen_edge",
     "q_carto_fen_edge_done",
+    "q_carto_journal",
+    "q_carto_journal_done",
     "q_carto_west_arm",
     "q_carto_west_arm_done",
     "q_coach",
@@ -2668,6 +2692,10 @@
     "q_ebba_chapel",
     "q_eleven",
     "q_eleven_sung",
+    "q_ember_lit",
+    "q_ember_socket1",
+    "q_ember_socket2",
+    "q_ember_socket3",
     "q_faces",
     "q_faces_finished",
     "q_faces_home",
@@ -2899,6 +2927,7 @@
     "banded_staff+1",
     "basalt_shield",
     "battle_staff",
+    "battle_staff+1",
     "battleaxe",
     "bear_spear",
     "bear_spear+1",
@@ -2934,6 +2963,7 @@
     "dagger",
     "dagger+1",
     "drakeskin",
+    "drakeskin+1",
     "drovers_goad",
     "dunstan_letter",
     "dwarf_mail",
@@ -3026,6 +3056,7 @@
     "mender_spool",
     "mending_kit",
     "meridian_journal",
+    "meridian_journal4",
     "meridian_mail",
     "morning_star",
     "morning_star+1",
@@ -3058,6 +3089,7 @@
     "scale+1",
     "seax",
     "seax+1",
+    "sentinel_visor",
     "sharkskin",
     "sharkskin+2",
     "shield",

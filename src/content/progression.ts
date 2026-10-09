@@ -16,7 +16,10 @@ import { xpForLevel, trainPrice } from '../game/party.ts';
 
 /** What the curve says of an area. */
 export interface AreaCurve {
-  /** The levels its maps are tuned for: every map's band sits inside it. */
+  /**
+   * The levels its maps are tuned for: every map's band sits inside it, but a map past it, a later
+   * area's country, which pays nothing here or, listed in its area's `outside`, outside any budget.
+   */
   band: [number, number];
   /** The next area's floor, which three quarters of a clear here must reach. */
   next: number;
@@ -85,7 +88,7 @@ export const CURVE: Record<RegionId | (typeof PLANNED)[number], AreaCurve> = {
   },
   ashfall: {
     band: [24, 26], next: 26, price: 5500,
-    owed: { whose: '#446', why: 'Ashfall is built box by box', gold: 8800 },
+    owed: { whose: '#446', why: 'Ashfall is built box by box', gold: 9900 },
   },
   glasswold: {
     band: [26, 28], next: 28, price: 6000,
