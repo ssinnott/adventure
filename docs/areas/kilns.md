@@ -1447,7 +1447,9 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
     in both, owed to #18. Density: O3 100% within 12 steps and the furthest 10, no sign among its 12
     points; O4 99.1% within 12 and the furthest 17, none among its 16. The walkthrough finds each
     secret from its hint, shows its prize shut to a walker, a swimmer, a climber and a levitator, and
-    shows the terraces and the gate shut from O3's west edge. They claim nothing new (§7).
+    shows the terraces and the gate shut from O3's west edge. The issue's walkable counts for the two,
+    641 and 863, count rock as walkable, which the game blocks: O4's crag alone is 69 squares. They
+    claim nothing new (§7).
 
 ## 5. The one quest here
 
