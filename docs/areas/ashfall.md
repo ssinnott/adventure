@@ -611,8 +611,9 @@ half, with the wilderness features (#45); no more than one point in four is a si
   the Act III provisioners' set and the Quickening Draught (§9, #512's 11). Thirteen events carry the
   rest along the street, the lanes and the quay, the quay's line among them, where the street meets
   the quay, 8,3 (§9, #512's 16). The town holds no secret, its contract asking none (§9, #512's 15).
-  It departs from the brief in the people it does not place, the Riders' eldest, who is G10's, on the
-  trading ground, and the mason of #56's 48, who is #504's (§9, #512's 9); in the ride and the last
+  It departs from the brief in the person it does not place, the Riders' eldest, who is G10's, on the
+  trading ground (§9, #512's 9), the mason of #56's 48 being by the inn's fire once his passage is
+  bought (whitespine.md §6, #506); in the ride and the last
   crossing, which are sold by nobody yet; and in the halls, which add no quest. G10's gate is opened,
   `g10_gate` dropped and the atlas's planned way into the town met at it (§9, #512's 12 and 13), and
   the outdoors reach walk seeds a town's ways out, so that the ship's landing reaches G10 and
@@ -2085,9 +2086,9 @@ Owed, from G10 (#511):
 
 Owed, from Cinderport (#512):
 
-- **The Riders' eldest and the mason are not placed in the town** (§9, #512's 9): the eldest is
-  G10's and a trading day is no `when`; the mason is #504's, `after` the quest that buys his
-  passage from Sheer Point.
+- **The Riders' eldest is not placed in the town** (§9, #512's 9): she is G10's and a trading
+  day is no `when`. The mason is (#506): by the inn's fire, `after` the passage bought for him from
+  Sheer Point (`q_mason_passage`).
 - **The ride and the last crossing are sold by nobody** until their far ends are built, Akordu
   (#526) and Hearth Isle (Phase 1.5): the Rider and the harbourmaster have the passages and `sells`
   gives none (§9, #512's 5). The Quickening Draught at Akordu stays owed to #526 (§3).

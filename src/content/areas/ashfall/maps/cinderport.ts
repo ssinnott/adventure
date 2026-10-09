@@ -11,6 +11,7 @@ import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { ARMOURER, CURES } from '../items.ts';
 import { GATE } from './cindercoast_g10.ts';
 import { COMPACT_SHIP, RIDERS_RIDE, LAST_CROSSING, sells } from '../../../crossings.ts';
+import { MASON_PASSAGE } from '../../whitespine/maps/sheerpoint_i8.ts';
 
 export const CINDERPORT: MapDef = {
   id: 'cinderport',
@@ -112,6 +113,12 @@ export const CINDERPORT: MapDef = {
     { kind: 'well', x: 6, y: 5, text: 'A cistern under the square, its grating swept. The water tastes of ash.' },
     { kind: 'temple', x: 4, y: 5, name: 'The Harbour Temple', interior: 'cinderport_temple' },
     { kind: 'inn', x: 9, y: 5, name: 'The Ship and Horse', price: 55, interior: 'cinderport_inn' },
+    // The Mason's Tally (the Whitespine's #56's 48, #506): the deserter off Sheer Point, once a company
+    // has bought his passage over the water (MASON_PASSAGE), by the inn's fire, a person who moves.
+    { kind: 'npc', x: 9, y: 5, name: 'A mason off the Point', after: { flag: MASON_PASSAGE }, lines: [
+      'A man by the inn\'s fire with white dust still in the seams of his hands, his back to the wall.',
+      '"Nobody here has heard of the Point. I mean to keep it so."',
+    ] },
 
     // The Compact's house, the factor's, over its steps on the quay: the Compact's second hall
     // (#443, call 7), which offers and pays its one ladder, the Fence's rung among it (#635). The
