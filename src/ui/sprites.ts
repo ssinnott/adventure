@@ -250,6 +250,58 @@ export function drawMountainSprite(ctx: CanvasRenderingContext2D, x: number, y: 
   stroke(ctx, [x - w * 0.08, y - h, x - w * 0.02, y - h * 0.6, x + w * 0.06, y - h * 0.3], shade(c, 0.7), 1);
 }
 
+/**
+ * A peak: a summit standing over the mountains, taller and steeper than any of them, white from its
+ * top down to the snow line, `snow` of its height, and below the line in tongues down its gullies.
+ */
+export function drawPeakSprite(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, tone: number, variant: number, snow: number): void {
+  const w = u * 2.4, h = u * (2.6 + variant * 0.25);
+  // Its flanks as [height, offset], from the foot (0) to the top (1), the offset a share of its width.
+  const left: [number, number][] = [[0, -0.5], [0.42, -0.3], [0.76, -0.13], [1, 0.02]];
+  const right: [number, number][] = [[1, 0.02], [0.84, 0.13], [0.55, 0.3], [0, 0.5]];
+  const across = (side: [number, number][], t: number): number => {
+    for (let i = 0; i < side.length - 1; i++) {
+      const [t0, f0] = side[i], [t1, f1] = side[i + 1];
+      if ((t - t0) * (t - t1) <= 0) return f0 + ((f1 - f0) * (t - t0)) / (t1 - t0);
+    }
+    return 0;
+  };
+  const pt = (t: number, f: number): number[] => [x + f * w, y - t * h];
+  const c = shade('#7c7e8a', tone);
+  celPoly(ctx, B, [...left, ...right.slice(1)].flatMap(([t, f]) => pt(t, f)), c, 0.45, 0.25);
+  // The snow: up the left flank from the line, over the top and down the right, then back along the
+  // line in tongues, each inside the flanks, which only widen below it.
+  const line = 1 - Math.min(0.88, Math.max(0.2, snow)), fl = across(left, line), fr = across(right, line);
+  const cap = [...pt(line, fl), ...left.filter(([t]) => t > line).flatMap(([t, f]) => pt(t, f)), ...right.slice(1).filter(([t]) => t > line).flatMap(([t, f]) => pt(t, f)), ...pt(line, fr)];
+  for (let k = 1; k < 8; k++) cap.push(...pt(k % 2 ? Math.max(0.03, line - 0.05 - 0.04 * ((k * 7 + variant * 3) % 3)) : line + 0.02, fr + ((fl - fr) * k) / 8));
+  celPoly(ctx, B, cap, shade(SNOW_WHITE, tone), 0.22, 0.15);
+  stroke(ctx, [...pt(1, 0.02), ...pt(0.72, 0.07), ...pt(0.45, 0.15)], shade(c, 0.75), 1);
+}
+
+/**
+ * A cliff: an escarpment's sheer face, as tall as a mountain but upright at its sides and broken only
+ * a little along its top, so a line of them stands as one face. Its beds run across it in ledges, lit
+ * along their lips; snow lies along its top, `snow` of the way to its deepest (0 to 1), and once deep
+ * on the ledges too.
+ */
+export function drawCliffSprite(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, tone: number, variant: number, snow: number): void {
+  const w = u * 2.1, h = u * (1.9 + variant * 0.2), c = shade('#585c6a', tone);
+  const pt = (t: number, f: number): number[] => [x + f * w, y - t * h];
+  const top: [number, number][] = [[0.95, -0.49], [1, -0.32], [0.96, -0.1], [0.93 + 0.03 * variant, 0.16], [0.98, 0.34], [0.95, 0.49]];
+  celPoly(ctx, B, [...pt(0, -0.5), ...top.flatMap(([t, f]) => pt(t, f)), ...pt(0, 0.5)], c, 0.3, 0.2);
+  // The beds, each a ledge dark under its lip and lit along it, and the joints down the face.
+  const lw = Math.max(1, u * 0.05), beds = [0.22, 0.47, 0.7];
+  for (const t of beds) {
+    stroke(ctx, [...pt(t, -0.47), ...pt(t + 0.02, 0.47)], shade(c, 0.66), lw);
+    stroke(ctx, [...pt(t + 0.035, -0.46), ...pt(t + 0.055, 0.46)], shade(c, 1.18), Math.max(1, lw * 0.6));
+  }
+  for (const [f, t0, t1] of [[-0.3 + 0.08 * variant, 0.9, 0.5], [0.12, 0.45, 0.06], [0.33 - 0.06 * variant, 0.86, 0.24]]) stroke(ctx, [...pt(t0, f), ...pt(t1, f + 0.02)], shade(c, 0.6), 1);
+  if (snow <= 0.05) return;
+  const deep = 0.03 + 0.07 * Math.min(1, snow), white = shade(SNOW_WHITE, tone);
+  celPoly(ctx, B, [...top.flatMap(([t, f]) => pt(t, f)), ...[...top].reverse().flatMap(([t, f]) => pt(t - deep, f * 0.98))], white, 0.2, 0.1);
+  if (snow > 0.5) for (const t of beds) stroke(ctx, [...pt(t + 0.03, -0.45), ...pt(t + 0.05, 0.45)], white, lw);
+}
+
 export function drawPillarSprite(ctx: CanvasRenderingContext2D, x: number, horizon: number, u: number, tone: number): void {
   const w = u * 0.5, c = shade('#8a8690', tone);
   celPoly(ctx, B, [x - w / 2, horizon + u, x - w * 0.4, horizon - u * 0.9, x + w * 0.4, horizon - u * 0.9, x + w / 2, horizon + u], c, 0.4, 0.3);

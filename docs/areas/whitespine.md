@@ -96,10 +96,13 @@ the plan (`src/content/atlas.ts` imports it where its rows were), as Saltreach's
 the area cannot be listed in AREAS until #499 gives it a map, which points the area's `atlas` at
 the folder and takes the import out.
 
+Its ground (#543): peaks (`A`) and cliffs (`|`), the mountain's rock to walk into, see and climb,
+with the road through them plain road, so the scaffold drafts each box square for square (J11's 202
+peaks, I11's 48 peaks and 64 cliffs) and the view draws a summit and a face (docs/SLICE.md).
+
 Nothing else is built but some of its monsters (below). The systems it waits on are #442's: the
-curve's rows and the gear past 22 (#542), cliffs and peaks with the road through them (#543), the
-toll (#544), sweep (#545), stone (#546), the crossings (#547), the Ember Stone (#548) and the bot
-(#549). Its monsters are #507's.
+curve's rows and the gear past 22 (#542), the toll (#544), sweep (#545), stone (#546), the crossings
+(#547), the Ember Stone (#548) and the bot (#549). Its monsters are #507's.
 
 The monks are drawn (#507), three of MONSTERS §8.1's eight, ahead of the boxes that place them: the
 Brother, the Bell-ringer and the Abbot, robed on the keepers' frame (`src/ui/monsters/keepers.ts`).
