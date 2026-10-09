@@ -6,13 +6,14 @@ import { MONASTERY } from './maps/monastery.ts';
 import { MONASTERY2 } from './maps/monastery2.ts';
 import { HIGHSPINE_I11 } from './maps/highspine_i11.ts';
 import { HIGHSPINE_I10 } from './maps/highspine_i10.ts';
+import { SHEERPOINT_I9 } from './maps/sheerpoint_i9.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
   id: 'whitespine' as const,
-  maps: [MONKSVALE_J11, MONASTERY, MONASTERY2, HIGHSPINE_I11, HIGHSPINE_I10],
+  maps: [MONKSVALE_J11, MONASTERY, MONASTERY2, HIGHSPINE_I11, HIGHSPINE_I10, SHEERPOINT_I9],
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,
