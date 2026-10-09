@@ -110,6 +110,12 @@ and the step in `src/content/areas/ashfall/items.ts`, made ahead of the area (`I
 wares (`ARMOURER`, §4.4), each owed to the armourer (#512) until it is sold. The first box takes the
 table into its Area.
 
+Its ground (#543): vines (`&`), walked through as the woods are, the shore's trees hung with
+creepers; the volcano (`V`) and a vent in it (`@`), the mountain's rock to walk into, see and climb,
+a vent's fire in its lip and its smoke going up; lava is the `!` there was. The scaffold drafts H10
+with its 207 squares of vines and G11 with its 102 of lava; the atlas lays the cone as mountain, so
+#513 letters it `V` and its mouth `@` over the draft (docs/SLICE.md).
+
 Four of its nine monsters are drawn ahead of the area (#520): the Strangler Vine, the Cinder Beetle,
 the Ember Salamander and the Ash Husk, on the old wood's, the spider's, the salamanders' and the
 skeleton's frames (§7), in `src/content/areas/ashfall/monsters.ts` and listed in `AHEAD`
@@ -117,8 +123,7 @@ skeleton's frames (§7), in `src/content/areas/ashfall/monsters.ts` and listed i
 (`UNPLACED`, `tools/tests/maps.ts`): the vine and the beetle to #510, the salamander to #511 and the
 husk to #514. Nothing else is built.
 
-The systems it waits on are the rest of #442's: the volcano, lava fields and vines underfoot (#543),
-sweep with fire (#545), the ship to Cinderport, the Riders' ride and the last crossing (#547), the
+The systems it waits on are the rest of #442's: sweep with fire (#545), the ship to Cinderport, the Riders' ride and the last crossing (#547), the
 Ember Stone for the Hearth and the sentries after (#548) and the bot grown to the band (#549); the
 giants' toll (#544) and stone (#546) are its neighbours'. The rest of its monsters, the drakes and
 the heavy machines, are #520's to draw, and its rooms #521's. Meridian Camp is #22, parked until #443 unparks it.
