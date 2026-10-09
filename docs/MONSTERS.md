@@ -1393,6 +1393,21 @@ salamanders and the drakes; the knockers, deep.
 After the Ember Stone is lit, one sentry group joins the vents and one the corridors (`after`), as
 in all of Ashfall. The Brood Drake is judged at 26, the corridors' floor.
 
+The five new here are drawn (#22), ahead of the levels, on frames that exist. On the drakes'
+(`src/ui/monsters/drakes.ts`): the Drakeling, small and round under a head too big even for it, its
+crust not set, the hide a soft ember-pink with the fire showing through, with two nubs of horn,
+large eyes, a short tail and stubs of wings beating fast, too young to breathe; and the Brood Drake,
+rust-dark as the corridors' iron, settled on its haunches over three eggs of clinker cracked with
+the fire, its wings mantled down and out round them and its horns long. On the heavy machines'
+(`machines.ts`): the Flue Walker, a length of flue on the family's long legs, hooped and pale with
+ash, with a chimney's cap over a collar open on the fire, a damper of three slots in its middle and
+its arms bowed out to climbing irons. On the knockers' (`knockers.ts`): the Deep Knocker, longer,
+higher on its legs and pale, the plates' edges standing up along its back, its knobs heavy and its
+lamp hard and cold in a ring of plate; and the Inspector, umber-dark on long legs, with no feelers
+and a mast off its back carrying a second lamp, which it turns from the wall to the company. Their
+numbers are their roles' at their levels (§4.4), the Brood Drake set off the line for the corridors'
+gate as the Old Drake is (docs/areas/meridian_camp.md §8). The levels place them (#22).
+
 **Asks:** sweep with fire; calls; elements.
 
 ### 8.5 The Dead-Drop (band 26–28)

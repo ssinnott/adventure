@@ -39,11 +39,10 @@ DESIGN §8).
 
 ## 3. What is built
 
-Nothing. Its plate and its way in are on the atlas as planned. It waits on Ashfall's systems
-(#442): the curve's rows past 16, the gear step at Cinderport, the volcano underfoot, sweep with
-fire for the drakes and calls (#537) for the knockers; on its monsters' families, the drakes, the
-heavy machines and the knockers (#520, the Kilns'); and on G11 (#513), whose map it exits to
-(EXPANSION §8.2).
+No level yet. Its plate and its way in are on the atlas as planned, and its five new monsters are
+drawn ahead of the levels, on the frames of the drakes, the heavy machines and the knockers (§6,
+§8; MONSTERS §8.4). It waits on Ashfall's systems (#442): the curve's rows past 16, the gear step
+at Cinderport and the volcano underfoot; and on G11 (#513), whose map it exits to (EXPANSION §8.2).
 
 ## 4. The levels
 
@@ -165,6 +164,29 @@ comment on #22; each may be overturned:
 10. **The camp level pays outside any budget,** about 3,000; the upper two are Ashfall's 4,900.
 11. **Build order:** the upper two levels in Ashfall's flight, right after G11 (#513), since the
     chapter needs the parts; the camp once the Wold's curve row is in.
+
+Decided by delegate for #22 (the camp's monsters), each the owner's to overturn:
+
+1. **The inspector is a knocker,** on the knockers' frame, as MONSTERS §8.4 and §11 and the frame's
+   own notes have it (the brief put it on the heavy machines'): the deep knockers' caller.
+2. **The looks:** the drakeling *The mountain's youngest. Its crust has not set.*; the Brood Drake
+   *It will not leave the eggs.*; the flue walker *It walks the corridor to its end, and back.*; the
+   inspector *It holds its light to the wall, and then to you.*; the deep knocker §9.2's.
+3. **Fire does not touch the drakeling or the Brood Drake,** as it does not their kin, though the
+   roster says only that they fly; both reach the back row (`ranged`), as the Cinder Drake does.
+4. **The drakeling does not breathe:** fodder on the line at 26 and six to a group, with no sweep.
+5. **The Brood Drake is set off the line as the Old Drake is:** the boss line at 27 come down whole
+   to a sweeper's share, 1,250 and 21d7+34, its breath fire on a row a turn in four, for the
+   corridors' gate (§7) to set.
+6. **The flue walker is the elite's line at 27,** its hooks holding at the elite's 0.15 as the
+   Sentry's clamp does; the deep knocker the armoured line at 28 with no parts yet; the inspector a
+   caller on a soldier's numbers at 28, calling three deep knockers at a half a turn, as the
+   tallyman calls knockers at 20.
+7. **The Brood Drake is drawn settled on its clutch,** three eggs between its feet and its wings
+   mantled round them, though it flies: the nest is where it is met. Size 1.8, inside the tall
+   boss's crown; the drakeling 0.6, the flue walker 1.5, the deep knocker 0.75, the inspector 0.8.
+8. **Each is owed to the level that first places it** (`UNPLACED`): the drakeling, the Brood Drake
+   and the flue walker to `meridian_camp2`; the deep knocker and the inspector to `meridian_camp3`.
 
 ## 9. Names
 
