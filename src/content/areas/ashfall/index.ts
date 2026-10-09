@@ -15,6 +15,7 @@ import { OLD_CINDER2 } from './maps/old_cinder2.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { INTERIORS } from './interiors.ts';
+import { QUESTS } from './quests.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
@@ -30,7 +31,7 @@ export const AREA = {
   // boxes' finds; the Ember Stone's first part and the stokers' parts, on Meridian Camp's vents, and its
   // third part, the Company's mail and the flue walker's parts, on the iron corridors (#22).
   items: ITEMS,
-  quests: [],
+  quests: QUESTS,
   // The Window, the act's second chapter, is #518's.
   chapter: undefined,
   // The coast under the mountain: warm and wet, the vines green the year round, smoke for fog and the
