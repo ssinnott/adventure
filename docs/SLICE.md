@@ -113,7 +113,8 @@ DESIGN.md first for the why.
   the Warden of the Anvil has fallen and its tear is closed, bought back or taken alike,
   `q_anvil_closed` (#540), which the Rift sets once its Warden falls (#465); the Ember Stone once it
   is lit, its three parts set, `q_ember_lit` (#548), which its dungeon will set (#516, not built
-  yet); the rest as their areas write them. By night, outdoors and in a town, the Hearth stands over
+  yet); the Peak Stone, whole and never broken, once the company has stood beside it, the once event
+  at the Stone on I11 (#501); the rest as their areas write them. By night, outdoors and in a town, the Hearth stands over
   the far hills in its true bearing from the party, faint from the first night and taller and
   brighter by a step for each Stone. The title reads the save in storage and draws its column
   steadier, taller and wider by a step; the world map's flickers less; the almanac adds a word on it
