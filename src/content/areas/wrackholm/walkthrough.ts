@@ -19,7 +19,9 @@
 // papers, the log and the cutlass in the cabin; the hold's crew, strangers in the last row while Hale
 // holds the Scarth and Hale once he is taken from it, freed and gone; the straw that is fresh on one
 // side, and the shard-cut behind it found by a search and not told; the tear, the Warden at 14 and
-// the Stone; and down the hatch to the stair's foot, and back up.
+// the Stone; and down the hatch to the stair's foot, and back up. The Compact's rungs are played on the
+// way (#635): the Fence's at the stair's foot and, with the counting house's orders in the pack, the
+// Factor's and Ruan's choice at the Keel, both ways.
 //
 // Last, the side quests (#192), each played both ways and in more than one order: Kitto asks and
 // the truth is told, so the cove's landing crew comes no more, or Colan is met first and his letter
@@ -32,12 +34,14 @@ import { newWalk, see, fight, listen, walkThrough, meetWho, playChapter, ending,
 import type { Step, Walk } from '../../../../tools/walk.ts';
 import { CHAPTER } from './chapter.ts';
 import { CHAPTER as TIDE } from '../saltreach/chapter.ts';
+import { SLEEPERS_SEEN } from '../rimewater/chapter.ts';
+import { COMPACT_WARDENS, COMPACT_OVER } from '../saltreach/maps/saltmouth.ts';
 import { inOrder, saltmouthFirst } from '../saltreach/walkthrough.ts';
 import { stonesRestored } from '../../../game/stones.ts';
 import { meet, heard, answer } from '../../../game/people.ts';
 import { questLog } from '../../../game/quests.ts';
 import type { PageView } from '../../../game/quests.ts';
-import type { Person } from '../../../game/people.ts';
+import type { Person, Meeting } from '../../../game/people.ts';
 import { take } from '../../../game/passage.ts';
 import { NORTH, EAST, SOUTH, WEST } from '../../../game/types.ts';
 import { MAP_DEFS, GUILD_QUESTS } from '../../index.ts';
@@ -416,6 +420,7 @@ export const walkthrough: Walkthrough = (ok) => {
   fence(w);
   see(w, `${foot.id}:dd_door`);
   drop(w);
+  factor(w);
   walkThrough(w, foot.id, 4, 6, SOUTH, hold.id, 1);
 };
 
@@ -448,6 +453,79 @@ function fence(w: Walk): void {
   const late = fenced(), early = takeWork(q, w.world.state, late);
   w.ok(early.length === 2 && early[0].startsWith(q.early![0]) && /not yet/i.test(early[0]) && late.gold === gold + 200 && rankOf('compact', late) === 3,
     `a company that had seen the foot is paid at the taking, with the early words (${early.join(' ').replace(/\n+/g, ' ')})`);
+}
+
+/**
+ * The Compact's Factor's rung (#635), "In the Founder's Hand", and Ruan's choice at the Keel, on fresh companies
+ * made Factors, with the orders in the pack as the counting house's out-tray gave them (taken above): not offered
+ * before Act IV opens, the Sleepers seen, and then offered alone at any hall of the Compact and taking nothing;
+ * taken with no orders in the pack, the hall pays nothing; with them, the Keel pays 800 gold and 4,800 xp, once, the
+ * orders stay in the pack (the Thief's third prestige, #448, asks for them too) and the company are Partners. A
+ * company that carried them before it took the rung is paid at the taking, with the early words. Ruan has her
+ * Runner's words until the rung is paid; then she puts one question, again if it is not answered, and no rank waits
+ * on it; each of its two answers, the orders to the Wardens or the Compact taken over, sets its own flag, pays
+ * nothing and changes her words to its own. Both are played.
+ */
+function factor(w: Walk): void {
+  const q = GUILD_QUESTS.find((g) => g.id === 'compact_factor')!, ruan = RUAN(), done = doneFlag(q.id);
+  w.ok(w.party.bag.includes('compact_orders'), 'the orders from the counting house\'s out-tray are in the pack, for the Factor\'s rung to find');
+  const xpOf = (p: Party): number => p.members.reduce((t, m) => t + m.xp, 0);
+  /** A fresh company that has done the Compact's ranks below the Factor's, with the orders in the pack or not. */
+  const factors = (orders: boolean): Walk => {
+    const v = newWalk(w.ok);
+    for (const g of GUILD_QUESTS) if (g.guild === 'compact' && g.rank < q.rank) v.party.flags[takenFlag(g.id)] = v.party.flags[doneFlag(g.id)] = 1;
+    v.party.flags[rankFlag('compact')] = q.rank;
+    if (orders) v.party.bag.push('compact_orders');
+    return v;
+  };
+  /** What Ruan says to a company, and the question she puts. */
+  const ruanSays = (v: Walk): Meeting => { v.world.travel('saltmouth', ruan.x, ruan.y); return meet(ruan, v.party, heard(v.world, ruan)); };
+
+  const a = factors(false);
+  w.ok(q.rank === 3 && !offered('compact', a.party).some((o) => o.id === q.id), `${q.title} waits for Act IV: a Factor is not offered it before the Sleepers are seen`);
+  a.party.flags[SLEEPERS_SEEN] = 1;
+  w.ok(offered('compact', a.party).map((o) => o.id).join() === q.id && !q.item && ['Keel', 'factor\'s house'].every((h) => q.goals[0].text.includes(h)),
+    'then it is offered alone at any hall of the Compact, the Keel in Saltmouth or the factor\'s house at Cinderport, and takes nothing');
+  const fence = factors(false);
+  fence.party.flags[rankFlag('compact')] = 2;
+  delete fence.party.flags[takenFlag('compact_fence')]; delete fence.party.flags[doneFlag('compact_fence')];
+  fence.party.flags[SLEEPERS_SEEN] = 1;
+  w.ok(offered('compact', fence.party).map((o) => o.id).join() === 'compact_fence', 'a Fence, the Sleepers seen, is offered the Fence\'s rung and not this one');
+  const runner = ruanSays(a);
+  w.ok(!takeWork(q, a.world.state, a.party).length && !report('compact', a.world.state, a.party).length && rankOf('compact', a.party) === 3 && !runner.choice && runner.text.startsWith('"Runner."'),
+    'taken with no orders in the pack, the hall pays nothing, and Ruan has her Runner\'s words and no question');
+
+  // The orders carried up: paid at the Keel, once, and the orders stay in the pack.
+  a.party.bag.push('compact_orders');
+  const purse = a.party.gold, xp = xpOf(a.party), pack = a.party.bag.join();
+  a.world.travel('saltmouth', ruan.x, ruan.y);
+  const paid = report('compact', a.world.state, a.party);
+  w.ok(paid.length === 2 && paid[0].startsWith(q.paid[0]) && paid[1] === 'Your rank with the Salt Compact is now Partner.' && a.party.gold === purse + 800 && xpOf(a.party) >= xp + 4800 - a.party.members.length
+    && rankOf('compact', a.party) === 4 && !!a.party.flags[done] && a.party.bag.join() === pack,
+    `the orders in the pack, the Keel pays 800 gold and 4,800 xp, leaves them in the pack and makes the company Partners (${paid.join(' ').replace(/\n+/g, ' ')})`);
+  w.ok(!report('compact', a.world.state, a.party).length && !offered('compact', a.party).length && a.party.gold === purse + 800, 'and it is paid the once: a second report pays nothing, and nothing is offered');
+  const late = factors(true);
+  late.party.flags[SLEEPERS_SEEN] = 1;
+  const lateGold = late.party.gold, hasty = takeWork(q, late.world.state, late.party);
+  w.ok(hasty.length === 2 && hasty[0].startsWith(q.early![0]) && late.party.gold === lateGold + 800 && rankOf('compact', late.party) === 4 && late.party.bag.includes('compact_orders'),
+    `a company that carried the orders before it took the rung is paid at the taking, with the early words (${hasty.join(' ').replace(/\n+/g, ' ')})`);
+
+  // Ruan's choice, put once the rung is paid: no rank waits on it, an unanswered question is put again, and the answers pay nothing.
+  const reveal = (ruan.says ?? []).find((x) => [x.after ?? []].flat().some((c) => [c.flag ?? []].flat().includes(done)));
+  w.ok(reveal?.choice?.answers.length === 2 && reveal.choice.answers.map((x) => x.sets).join() === `${COMPACT_WARDENS},${COMPACT_OVER}`
+    && reveal.choice.answers.every((x) => !x.pay && !x.gives && !x.price && !x.takes) && !reveal.sets,
+    'Ruan has one question with two answers, the orders to the Wardens or the Compact taken over, each setting its own flag and paying, giving and taking nothing');
+  const put = ruanSays(a), again = ruanSays(a);
+  w.ok(rankOf('compact', a.party) === 4 && !!reveal && put.text === reveal.lines.join('\n\n') && put.choice === reveal.choice && again.choice === reveal.choice && !a.party.flags[COMPACT_WARDENS] && !a.party.flags[COMPACT_OVER],
+    'the rung paid, Ruan puts it at the Keel with the company already Partners, and puts it again if it is not answered');
+  for (const [how, sets, other] of [['the orders to the Wardens', COMPACT_WARDENS, COMPACT_OVER], ['the Compact taken over', COMPACT_OVER, COMPACT_WARDENS]] as const) {
+    const v = sets === COMPACT_OVER ? factors(true) : a;
+    if (v !== a) { v.party.flags[SLEEPERS_SEEN] = 1; takeWork(q, v.world.state, v.party); }
+    const gold = v.party.gold, xpNow = xpOf(v.party);
+    const said = answerTo(v, 'saltmouth', ruan, sets), next = ruanSays(v);
+    w.ok(!!v.party.flags[sets] && !v.party.flags[other] && v.party.gold === gold && xpOf(v.party) === xpNow && rankOf('compact', v.party) === 4 && next.text === words(ruan, sets) && !next.choice,
+      `${how}: its flag is set and the other's is not, nothing is paid, Ruan says her words for it and the question is not put again (${said.replace(/\n+/g, ' ')})`);
+  }
 }
 
 /**
