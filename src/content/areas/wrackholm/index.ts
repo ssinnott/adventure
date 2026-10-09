@@ -10,6 +10,7 @@ import { TIDE_SHIP2 } from './maps/tide_ship2.ts';
 import { TIDE_SHIP3, TIDE_RIFT } from './maps/tide_ship3.ts';
 import { DEAD_DROP_STAIR } from './maps/dead_drop_stair.ts';
 import { DEAD_DROP } from './maps/dead_drop.ts';
+import { DEAD_DROP2 } from './maps/dead_drop2.ts';
 import { ITEMS } from './items.ts';
 import { CHAPTER } from './chapter.ts';
 import { QUESTS } from './quests.ts';
@@ -19,9 +20,9 @@ import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
   id: 'wrackholm' as const,
-  maps: [WRACKHOLM_E6, SMUGGLERS_COVE, SMUGGLERS_COVE2, WRACKHOLM_F6, TIDE_SHIP, TIDE_SHIP2, TIDE_SHIP3, TIDE_RIFT.map, DEAD_DROP_STAIR, DEAD_DROP],
+  maps: [WRACKHOLM_E6, SMUGGLERS_COVE, SMUGGLERS_COVE2, WRACKHOLM_F6, TIDE_SHIP, TIDE_SHIP2, TIDE_SHIP3, TIDE_RIFT.map, DEAD_DROP_STAIR, DEAD_DROP, DEAD_DROP2],
   // The Dead-Drop pays outside any area's budget (EXPANSION §5.2): its levels, past the band, as they are built.
-  outside: ['dead_drop'],
+  outside: ['dead_drop', 'dead_drop2'],
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,
