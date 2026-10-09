@@ -163,7 +163,6 @@ export const WHOLE: Record<string, { role: Role; share: number; why: string }> =
  */
 export const RESTATE: Record<string, string> = {
   ash_husk: "a soldier at 25, Old Cinder's (#514, #515)",
-  sentry: "an elite at 26, Ashfall's once the Ember Stone is lit (#514)",
   sentinel: "the boss at 26, the Ember Stone's (#516)",
   drakeling: "fodder at 26, Meridian Camp's nest (#22)",
   flue_walker: "an elite at 27, Meridian Camp's corridors (#22)",
