@@ -1,7 +1,6 @@
 // Ashfall's items: Cinderport's armourer's step on the ladder (#542), the act's one, by 25. Made
-// ahead of the area (ITEMS_AHEAD in content/index.ts), as the Kilns' were: the first box (#510) takes
-// the table into its Area and the armourer (#512) sells the step. docs/areas/ashfall.md §8 and §9 have
-// the sums.
+// ahead of the area, as the Kilns' were: the first box (G10, #511) took the table into its Area and
+// the armourer (#512) sells the step. docs/areas/ashfall.md §8 and §9 have the sums.
 import type { ItemDef } from '../../../game/items.ts';
 import { W, A, MARTIAL, MAIL, NO_CASTER_HEAVY } from '../../items.ts';
 
