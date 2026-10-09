@@ -1,6 +1,7 @@
 // Ashfall's items: Cinderport's armourer's step on the ladder (#542), the act's one, by 25, the stone
 // cure (#546) and the boxes' new finds: the Great Axe +2 in the scavenger's hole (G11, #513) and the
-// Horn Bow +2 in the grave in the Cinder Hills (E10, #517). The step and the cure were made ahead of
+// Horn Bow +2 in the grave in the Cinder Hills (E10, #517); and Old Cinder's finds, the Ember Stone's
+// second part and the founding stone among them (#515). The step and the cure were made ahead of
 // the area, as the Kilns' were: the first box (G10, #511) took the table into its Area, the armourer
 // (#512) sells the step and the chandler the cure.
 // docs/areas/ashfall.md §8 and §9 have the sums.
@@ -37,4 +38,25 @@ export const scavengersAxe = P(SUNDERWOOD.find((i) => i.id === 'great_axe')!, 2)
 /** The find in the grave in the Cinder Hills (E10, #517): the brief's Horn Bow +2, Saltreach's bow with a plus. */
 export const graveBow = P(hornBow, 2);
 
-export const ITEMS: readonly ItemDef[] = [...WARES, quickening, scavengersAxe, graveBow];
+/**
+ * Old Cinder's finds (#515): the ladder's plus at the square, on the stall the Old Drake sleeps beside;
+ * the town's founding stone in its niche in the undercroft, for the Cinderport potter (#56's 50, its quest
+ * #519's); the Ember Stone's second part, set in the floor beside the dark lamp at the undercroft's
+ * bottom, a quest item for the Stone's hand-in of three (#516; docs/areas/ashfall.md §5); and in the
+ * lamp-keeper's own cellar his holy symbol, which its bearer carries against fire, with a Plate Mail +2.
+ */
+export const squareFlamberge = P(flamberge, 1);
+export const foundingStone: ItemDef = { id: 'founding_stone', name: 'The Founding Stone', slot: 'none', price: 0, text: [
+  'A block of grey stone, a cup cut in its face and names under it, worn smooth.',
+  'It is heavy, and someone kept it dusted.',
+] };
+export const emberPart2: ItemDef = { id: 'ember_part2', name: 'Ember Stone\'s Second Part', slot: 'none', price: 0, text: [
+  'A wedge of grey iron, warm through, and heavier than it looks.',
+  'Two of its faces are cut to fit something, exactly.',
+] };
+export const hearthSymbol: ItemDef = { id: 'hearth_symbol', name: 'Holy Symbol of the Hearth', slot: 'none', price: 400, resist: ['fire'], text: [
+  'A disc of iron on a cord, black with soot. On its face a flame is cut in a ring of hands.',
+  'It is warm to hold, even down here.',
+] };
+
+export const ITEMS: readonly ItemDef[] = [...WARES, quickening, scavengersAxe, graveBow, squareFlamberge, foundingStone, emberPart2, hearthSymbol];
