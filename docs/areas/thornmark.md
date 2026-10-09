@@ -578,7 +578,7 @@ were (docs/areas/shelf.md §6), each is built where its places are:
 | 13 | The Ogre's Boy | 7 | the old tower; Thornhold | a group that talks before it fights | the built maps, with the toll's system (#544), built |
 | 14 | How Did He Know | 7 | the survey team's camp (H3); the Split Oak | a letter read from the pack; a hand-in; a choice | H3 (#214), built |
 | 15 | The Hunters' Bargain | 8 | Deepthorn Lodge (I3) | a choice; the hunters' path, a secret hinted | I3 (#215), built |
-| 16 | The Older Mark | 8 | Henlys (I4) and Penspern (J5) | a rubbing, an item made at the stone; a hand-in; a choice | I4 and J5 (#49, #218), built |
+| 16 | The Older Mark | 8 | Henlys (I4) and Penspern (J5) | a rubbing, an item made at the stone; a hand-in; a choice | I4 and J5 (#49, #218), built; kept, read at Anvilhall (#637), built |
 | 17 | Terms From the Brigands | 9 | a brigands' camp off the Warden road; Thornhold | a choice; brigand groups that stop coming (`until`) | the built maps (#219), built |
 | 18 | The Mender | 9 | the Grove road, the Grove and the Cut Stone | a person who moves; an event that changes with a flag; an item | the built maps (#219), built |
 | 19 | The Light on Penspern | 10 | Penspern (J5), by night | people and groups by night (`when`); a choice | J5 (#218), built |
@@ -615,6 +615,10 @@ Taken: all twelve, 9 to 20. The changes to #56's drafts:
 - **14's orders and 16's rubbing are taken, then asked about.** #56 has the company give each or
   keep it; an answer cannot take an item (#76), so Idony and Senara take theirs at the first
   meeting (#43) and put the question at the next, and "keep" hands it back.
+- **16's kept rubbing is read at Anvilhall.** #56's 16 promises that in the Kilns a dwarf reads it
+  (its 34). Ilse, who cuts the old script, reads it by its strokes to a company carrying it
+  (docs/areas/kilns.md §9, #637). The journal's kept entry names Anvilhall and a last one, on the
+  flag her line sets (`q_mark_read`), gives her finding; the quest still ends at the answer.
 - **11's second payment is a Sapphire Vial.** #56 has the Reader pay double for silence; an answer
   cannot pay gold, so it hands over the vial instead.
 - **10's burner ends at the pass's Thornmark end,** not the Hearthlight, which is the Foreland's
