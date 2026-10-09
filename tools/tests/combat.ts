@@ -1,19 +1,20 @@
 // The combat resolver: a seeded fight replays byte for byte, the cap, the rows, fleeing, the spells
 // that hit every foe, Ward and Revive; the ranks and morale (#160); elements, monsters that cast and
-// drain, and a hit that wakes a sleeper (#161); regeneration, curse and calls (#537); and the light
-// that goes into a machine like a hand into a glove.
+// drain, and a hit that wakes a sleeper (#161); regeneration, curse and calls (#537); the light
+// that goes into a machine like a hand into a glove; and sweep (#545).
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { ITEMS, MONSTERS, SPELLS } from '../../src/content/index.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { World } from '../../src/game/world.ts';
 import { serialize, deserialize } from '../../src/game/save.ts';
 import { defaultParty, equip, addCondition, hasCondition, killPay, spellHeal, rankMult, resists, rest, attackBonus, armorClass, canAct, spellTierAt } from '../../src/game/party.ts';
-import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, castOnAlly, castOnParty, frontStands, monsterAc, monsterHit, canCall, WARD_AC, BLESS_HIT, BREAK_LINE, ROUT_LINE, MEND_LINE, SMOULDER_LINE, CALL_LINE, GLOVE_LINE, GLOVE_FLAG, MAX_MONSTERS, MAX_GROUPS } from '../../src/game/combat.ts';
+import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, castOnAlly, castOnParty, frontStands, monsterAc, monsterHit, canCall, WARD_AC, BLESS_HIT, BREAK_LINE, ROUT_LINE, MEND_LINE, SMOULDER_LINE, CALL_LINE, GLOVE_LINE, GLOVE_FLAG, MAX_MONSTERS, MAX_GROUPS, SWEEP_LINE } from '../../src/game/combat.ts';
 import type { CombatState, CombatGroup, PartyAction } from '../../src/game/combat.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import { elementMult, monsterSpells, monsterCanCast, KINDS } from '../../src/game/monsters.ts';
-import { gateBlast, gateBurn } from '../gate.ts';
-import { wakeWith, markOf } from '../harness.ts';
+import { gateBlast, gateBurn, gateTurn } from '../gate.ts';
+import { wakeWith, markOf, mendLines, ANSWER } from '../harness.ts';
+import { logLines } from '../../src/ui/frame.ts';
 import type { Party } from '../../src/game/party.ts';
 import { spell } from '../../src/game/spells.ts';
 import { RANGED_PENALTY } from '../../src/game/weather.ts';
@@ -165,6 +166,7 @@ export function combat(): void {
   curse();
   calls();
   glove();
+  sweep();
 }
 
 /** A fight played out: each member strikes `aim`'s pick where it can and braces where it cannot. */
@@ -807,4 +809,77 @@ function glove(): void {
   // The flag goes into the save with the party, and the company that loads it is not told again.
   const loaded = deserialize(serialize(new World(buildMaps(), p, makeRng(117)).state, p, 0)).party;
   ok(loaded.flags[GLOVE_FLAG] === 1 && said(cast(loaded, ['knocker'], 'smite', 118)).length === 0, 'the flag survives a save and a load, and the light goes through again unsaid');
+}
+
+/**
+ * Sweep (MONSTERS §3.3, #545): an arm takes the front row, the back once the front is down, and holds
+ * in the back rank; a breath takes the fuller row, from either rank, halved once by Lampglass or a
+ * member's own resistance; the fallen are passed over; and the bots mend the row a sweep would take
+ * before one sweep could fell anyone in it.
+ */
+function sweep(): void {
+  const giant: MonsterDef = { ...MONSTERS.ogre, id: 'test_giant', name: 'Giant', plural: 'Giants', hp: 999, attack: 99, dice: 1, sides: 1, bonus: 39, speed: 99, sweep: { chance: 1 } };
+  const drake: MonsterDef = { ...giant, id: 'test_drake', name: 'Drake', plural: 'Drakes', sweep: { chance: 1, element: 'fire' } };
+  const charm = { id: 'test_ember_charm', name: 'Ember Charm', slot: 'none' as const, price: 0, resist: ['fire' as const] };
+  ITEMS[charm.id] = charm;
+  const down = (q: Party, ...at: number[]): void => { for (const i of at) { q.members[i].hp = 0; addCondition(q.members[i], 'unconscious'); } };
+  /** What each member took from the first turn of `m`, at the head of the round, on a company of 200 apiece dressed by `dress`. */
+  const swept = (m: MonsterDef, dress: (q: Party, s: CombatState) => void = () => {}, seed = 120): { took: number[]; s: CombatState } => {
+    const q = defaultParty(makeRng(seed));
+    for (const c of q.members) c.hp = c.maxHp = 200;
+    const s = startCombat(q, [{ id: 'g', monsters: [m] }], makeRng(seed));
+    dress(q, s);
+    const before = q.members.map((c) => c.hp);
+    untilActs(s, q, seed, 0);
+    return { took: q.members.map((c, i) => before[i] - c.hp), s };
+  };
+  /** Each of the row at `from` took nothing or `each`, one of them at least, and nobody else anything; and the line says it. */
+  const fell = ({ took, s }: { took: number[]; s: CombatState }, from: number, each: number, who: string, el?: 'fire', skip: number[] = []): boolean => {
+    const row = [from, from + 1, from + 2].filter((i) => !skip.includes(i)), sum = took.reduce((a, b) => a + b, 0);
+    return took.every((x, i) => (row.includes(i) ? x === 0 || x === each : x === 0)) && sum > 0 && s.log.includes(SWEEP_LINE(who, el, from ? 'the back row' : 'the front row', sum));
+  };
+  const arm = swept(giant);
+  ok(fell(arm, 0, 40, 'Giant'), `a giant's arm takes the front row, a to-hit and its blow for each, and the back row nothing (${arm.took.join(', ')}; ${arm.s.log.at(-1)})`);
+  ok(fell(swept(giant, (q) => down(q, 0)), 0, 40, 'Giant', undefined, [0]) && fell(swept(giant, (q) => down(q, 0, 1, 2)), 3, 40, 'Giant'), 'it passes over a member who is down, and once the front row is down it takes the back');
+  ok(fell(swept(giant, (_q, s) => { s.glass = { element: 'fire', rounds: 5 }; }), 0, 40, 'Giant'), 'Lampglass on fire does nothing to a bare arm');
+  const breath = swept(drake);
+  ok(fell(breath, 0, 40, 'Drake', 'fire') && fell(swept(drake, (q) => down(q, 0)), 3, 40, 'Drake', 'fire'), `a drake's breath burns the fuller row, the front on a tie and the back once the front is thinner (${breath.s.log.at(-1)})`);
+  const glass = swept(drake, (_q, s) => { s.glass = { element: 'fire', rounds: 5 }; }), worn = swept(drake, (q) => { q.members[0].pack.push(charm.id); });
+  const both = swept(drake, (q, s) => { q.members[0].pack.push(charm.id); s.glass = { element: 'fire', rounds: 5 }; });
+  ok(fell(glass, 0, 20, 'Drake', 'fire') && [0, 20].includes(worn.took[0]) && [0, 40].includes(worn.took[1]) && fell(both, 0, 20, 'Drake', 'fire'),
+    `Lampglass on fire halves the breath on the whole row, a charm against fire on its bearer alone, and the two together halve it once, never to a quarter (${glass.took.slice(0, 3).join(', ')}; ${worn.took.slice(0, 3).join(', ')}; ${both.took.slice(0, 3).join(', ')})`);
+  ok(SWEEP_LINE('Giant', undefined, 'the front row') === 'Giant sweeps the front row and misses.' && logLines(`${SWEEP_LINE('Cinder Drake', 'fire', 'the back row', 999)} Ottilie wakes. Ottilie, Maren and Cassian fall!`).length <= 2,
+    'a sweep that hits nobody misses, and the longest line a breath can say fits two lines of the log');
+  // A giant in the back rank holds while the front stands, as a blow would; a drake there breathes, as a spell is cast.
+  const rearguard = (m: MonsterDef, seed: number): { acted: boolean; s: CombatState } => {
+    const q = defaultParty(makeRng(seed));
+    for (const c of q.members) c.hp = c.maxHp = 999;
+    const s = startCombat(q, [{ id: 'g', monsters: [{ ...MONSTERS.ogre, hp: 999, attack: -99 }, m], back: 1 }], makeRng(seed));
+    return { acted: untilActs(s, q, seed, 1), s };
+  };
+  const held = rearguard(giant, 121), loosed = rearguard(drake, 122);
+  ok(!held.acted && !held.s.log.some((l) => l.includes(' sweeps ')) && loosed.acted && loosed.s.log.some((l) => l.startsWith('Drake breathes fire on the front row')), 'a giant in the back rank waits for the front to fall; a drake there breathes over it');
+  // The bots' answer: a member of the row a sweep would take is mended once one sweep could fell them.
+  const heavy: MonsterDef = { ...giant, bonus: 99, speed: 0 }, lines = (m: MonsterDef, dress: (q: Party) => void = () => {}): number[] => {
+    const q = defaultParty(makeRng(123));
+    for (const c of q.members) c.hp = c.maxHp = 200;
+    dress(q);
+    return mendLines(startCombat(q, [{ id: 'g', monsters: [m] }], makeRng(123)), q);
+  };
+  ANSWER.sweep = false;
+  const unanswered = lines(heavy);
+  ANSWER.sweep = true;
+  ok(lines(heavy).join() === '100,100,100,80,80,80' && lines({ ...heavy, sweep: undefined }).join() === '80,80,80,80,80,80' && unanswered.join() === '80,80,80,80,80,80' && lines({ ...heavy, sweep: { chance: 1, element: 'fire' } }, (q) => down(q, 0)).join() === '80,80,80,100,100,100',
+    'the bots mend the row a sweeper would take under what one sweep could deal them, the rest at 40%, and the back row once a breath would turn on it');
+  const mended = (answer: boolean): number => {
+    ANSWER.sweep = answer;
+    const q = defaultParty(makeRng(124)), rng = makeRng(124);
+    for (const c of q.members) c.hp = c.maxHp = 200;
+    q.members[1].hp = 90;
+    const s = startCombat(q, [{ id: 'g', monsters: [heavy] }], rng);
+    for (let n = 0; n < 20; n++) { const t = currentTurn(s, q, rng); if (!t || t.side === 'monster') break; if (t.i === 4) { gateTurn(s, q, rng, 4); break; } partyAct(s, q, rng, { type: 'defend' }); }
+    ANSWER.sweep = true;
+    return q.members[1].hp;
+  };
+  ok(mended(true) > 90 && mended(false) === 90, `so the gate's cleric mends Idris at 90 of 200 before a giant's sweep of 100 (${mended(true)}), and with no answer leaves him (${mended(false)})`);
 }

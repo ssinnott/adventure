@@ -19,8 +19,8 @@ import { startCombat, currentTurn, monsterAct, asGroup, aliveMonsters } from '..
 import type { CombatState, Fighters } from '../../src/game/combat.ts';
 import { spell } from '../../src/game/spells.ts';
 import { gateCompany, gateFight, gateOpts, gateTurn, fightSeed, winRate } from '../gate.ts';
-import { days, fightsPerRest, mendBetween, mustRest, companyAt, markOf, ROUND_CAP } from '../harness.ts';
-import { testMonster, trollEncounter, wightEncounter, callerEncounter, lightEncounter } from '../testmonster.ts';
+import { days, fightsPerRest, mendBetween, mustRest, companyAt, markOf, ROUND_CAP, ANSWER } from '../harness.ts';
+import { testMonster, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, giantEncounter, drakeEncounter } from '../testmonster.ts';
 import { stepsFrom } from './curve.ts';
 import { ok, owed } from './lib.ts';
 
@@ -365,6 +365,18 @@ export function gate(): void {
     const atLights = lit.filter(({ s }) => s.log.map((l) => blade.exec(l)?.[1]).find((x) => x) === 'Test Light').length;
     ok(mark !== undefined && first.monsters[mark].def.drain === 'sp' && won(lit) >= 0.9 && atLights >= seeds * 0.9,
       `it keeps its casters' spell points from the lights: it marks a light before the hound, so its first blade falls on a light in ${atLights} of ${seeds} fights at 19, and it wins ${pc(won(lit))}`);
+    // It plays the sweep (#545): two giants at 23 and two drakes at 25, and wins; and it mends the row
+    // a sweep would take before one sweep could fell anyone in it, so against giants of twice the blow
+    // fewer of its front row fall to a sweep than with no answer.
+    const giants = fought(23, giantEncounter(23)), drakes = fought(25, drakeEncounter(25)), heavy = [testGiant(23, 2), testGiant(23, 2)];
+    const felled = (fs: { s: CombatState }[]): number => fs.filter(({ s }) => s.log.some((l) => / (sweeps|breathes) /.test(l) && /falls?!$/.test(l))).length;
+    const answered = felled(fought(23, heavy));
+    ANSWER.sweep = false;
+    const bare = felled(fought(23, heavy));
+    ANSWER.sweep = true;
+    const swept = giants.filter(({ s }) => s.log.some((l) => l.startsWith('Test Giant sweeps the front row'))).length;
+    ok(won(giants) >= 0.9 && won(drakes) >= 0.9 && swept >= seeds / 2 && answered < bare,
+      `it plays the sweep: it wins ${pc(won(giants))} of two giants' fights at 23, swept in ${swept} of ${seeds}, and ${pc(won(drakes))} of two drakes' at 25; and against giants of twice the blow one of a row falls to a sweep in ${answered} of ${seeds} fights, where with no answer in ${bare}`);
   }
   // The gate's company is harness's (#541): it takes its prestiges at 11, 19 and 27, with their perks
   // and ranks, as play gives them, and wears what harness's wears.

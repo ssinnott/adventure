@@ -1,4 +1,5 @@
-// The combat harness and its test monster (docs/MONSTERS.md §4.4), and Act III's abilities on it (#537).
+// The combat harness and its test monster (docs/MONSTERS.md §4.4), and Act III's abilities on it (#537)
+// and Act IV's sweep (#545).
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { defaultParty, xpForLevel, levelUp, armorClass, weaponOf, MAX_LEVEL, addCondition, className, rankMult, hasCondition } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
@@ -8,7 +9,7 @@ import { spell, spellDice, SPELLS_GROW_TO } from '../../src/game/spells.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import { MONSTERS } from '../../src/content/index.ts';
 import { gateCompany } from '../gate.ts';
-import { testMonster, standardEncounter, line, scaleAt, groupsPerLevel, xpFor, HP, DAMAGE, ROLES, ROLE_IDS, TROLL, testTroll, trollEncounter, wightEncounter, callerEncounter, lightEncounter } from '../testmonster.ts';
+import { testMonster, standardEncounter, line, scaleAt, groupsPerLevel, xpFor, HP, DAMAGE, ROLES, ROLE_IDS, TROLL, SWEEP, testTroll, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, testDrake, giantEncounter, drakeEncounter } from '../testmonster.ts';
 import type { Role } from '../testmonster.ts';
 import { measure, days, fight, play, outcomeOf, companyAt, edgeOf, spent, mustRest, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP, RULES, GEAR_TOP } from '../harness.ts';
 import { ok } from './lib.ts';
@@ -120,10 +121,11 @@ export function harness(): void {
 
 /**
  * The monsters past Act I set off the line on purpose (MONSTERS §4.4), each with why. Every other
- * monster of level 11 or more stands on the line at its level: some role's test monster's hit points
- * and blow, the test troll's (#537) or a role's come down whole by a share named in WHOLE. So when
- * the line is made again a monster left on the old one fails until it is re-derived. One a box's gate
- * tunes off the line goes here with the issue that tuned it.
+ * monster of level 11 or more stands on the line at its level: some role's test monster's hit
+ * points and blow, the test troll's (#537), giant's or drake's (#545) or a role's come down whole
+ * by a share named in WHOLE. So when the line is made again a monster left on the old one fails
+ * until it is re-derived. One a box's gate tunes off the line goes here with the issue that tuned
+ * it.
  */
 export const OFF_LINE: Record<string, string> = {
   choirmaster: "the Drowned Temples' boss, set by their gate (#175)",
@@ -147,9 +149,9 @@ function onTheLine(): void {
   /** The shapes a monster of its level may stand on: each role's line, the test troll's and its share in WHOLE. */
   const shapes = (m: MonsterDef): MonsterDef[] => {
     const w = WHOLE[m.id], l = m.level;
-    return [...ROLE_IDS.map((r) => testMonster(r, l)), testTroll(l), ...(w ? [testMonster(w.role, l, scaleAt(HP, w.role, l) * w.share, scaleAt(DAMAGE, w.role, l) * w.share)] : [])];
+    return [...ROLE_IDS.map((r) => testMonster(r, l)), testTroll(l), testGiant(l), testDrake(l), ...(w ? [testMonster(w.role, l, scaleAt(HP, w.role, l) * w.share, scaleAt(DAMAGE, w.role, l) * w.share)] : [])];
   };
-  const on = (m: MonsterDef): boolean => shapes(m).some((t) => t.hp === m.hp && Math.abs(blow(t) - blow(m)) <= 0.5 && (t.regen ?? 0) === (m.regen ?? 0));
+  const on = (m: MonsterDef): boolean => shapes(m).some((t) => t.hp === m.hp && Math.abs(blow(t) - blow(m)) <= 0.5 && (t.regen ?? 0) === (m.regen ?? 0) && (t.sweep?.chance ?? 0) === (m.sweep?.chance ?? 0) && t.sweep?.element === m.sweep?.element);
   const past = Object.values(MONSTERS).filter((m) => m.level > 10), set = past.filter((m) => OFF_LINE[m.id]);
   const off = past.filter((m) => !OFF_LINE[m.id] && !on(m)).map((m) => {
     const near = shapes(m).sort((a, b) => Math.abs(a.hp - m.hp) - Math.abs(b.hp - m.hp))[0];
@@ -158,12 +160,12 @@ function onTheLine(): void {
   ok(!off.length, `every monster past 10 stands on the line at its level, its hit points and its blow, or is set off it with a reason: ${past.length - set.length} on it, ${set.length} set off it${off.length ? ` (off it: ${off.join('; ')})` : ''}`);
   const stale = [...Object.keys(OFF_LINE), ...Object.keys(WHOLE)].filter((id) => !MONSTERS[id] || MONSTERS[id].level <= 10 || (OFF_LINE[id] && on(MONSTERS[id])));
   ok(!stale.length, `and every monster set off it or come down whole is a monster past 10, and one set off it is off it${stale.length ? ` (not: ${stale.join(', ')})` : ''}`);
-  // It can fail: a soldier a few hit points short, a troll mending four too few and a light seven too
-  // many are each caught; on the line they pass.
+  // It can fail: a soldier a few hit points short, a troll mending four too few, a giant sweeping
+  // twice as often and a light seven too many are each caught; on the line they pass.
   const soldier = testMonster('soldier', 19), troll = testTroll(19), share = WHOLE.bog_light, light = MONSTERS.bog_light;
   const lit = testMonster(share.role, light.level, scaleAt(HP, share.role, light.level) * share.share, scaleAt(DAMAGE, share.role, light.level) * share.share);
-  const probes = [{ ...soldier, hp: soldier.hp - 5 }, { ...troll, regen: (troll.regen ?? 0) - 4 }, { ...light, hp: lit.hp + 7 }];
-  ok(probes.every((m) => !on(m)) && [soldier, troll, { ...light, hp: lit.hp, dice: lit.dice, sides: lit.sides, bonus: lit.bonus }].every(on), 'and a monster left off it is caught: a soldier five hit points short, a troll mending four too few and a light seven too many');
+  const giant = testGiant(23), probes = [{ ...soldier, hp: soldier.hp - 5 }, { ...troll, regen: (troll.regen ?? 0) - 4 }, { ...light, hp: lit.hp + 7 }, { ...giant, sweep: { chance: 0.5 } }];
+  ok(probes.every((m) => !on(m)) && [soldier, troll, giant, { ...light, hp: lit.hp, dice: lit.dice, sides: lit.sides, bonus: lit.bonus }].every(on), 'and a monster left off it is caught: a soldier five hit points short, a troll mending four too few, a giant sweeping twice as often and a light seven too many');
 }
 
 /** The company with no fire: its members' fire spells forgotten. */
@@ -186,7 +188,8 @@ function bout(level: number, enc: Fighters, seeds: number, from: number, dress: 
 /**
  * Act III's abilities on the test monsters (MONSTERS §3.3, #537, #541), where the road first meets
  * them: two trolls at 19, burnt or not; four wights at 19; a caller beside six fodder at 20, its fight
- * growing; three lights and a hound at 19, the lights felled first.
+ * growing; three lights and a hound at 19, the lights felled first; and Act IV's sweep (#545), two
+ * giants at 23 and two drakes at 25.
  */
 function abilities(): void {
   const pc = (x: number): string => `${Math.round(x * 100)}%`;
@@ -219,4 +222,16 @@ function abilities(): void {
   ok(lit.won >= 0.95 && sp(lit) > sp(flat), `a company of 19 wins ${pc(lit.won)} of three lights' and a hound's fights, ${pc(sp(lit))} of its spell points spent or taken, against ${pc(sp(flat))} where the lights take hit points`);
   const lday = days(19, [lights], 40, 5001), hday = days(19, [hound], 40, 5001);
   ok(lday.fights > hday.fights, `and felling the lights first it fights ${lday.fights.toFixed(1)} of them to a rest, where felling the hound first it fights ${hday.fights.toFixed(1)} (${fightsPerRest(19)} asked)`);
+  // The sweep (#545), sized against a row's hit points: the test giant is the brute come down whole,
+  // sweeping a turn in four, so one sweep at its worst takes a third of the front row's least; and a
+  // company fights about as many pairs of giants at 23, or of drakes at 25, to a rest as of brutes.
+  const blow = (m: MonsterDef): number => (m.dice * (m.sides + 1)) / 2 + m.bonus;
+  const giant = testGiant(23), whole = testMonster('brute', 23, scaleAt(HP, 'brute', 23) * SWEEP.share, scaleAt(DAMAGE, 'brute', 23) * SWEEP.share);
+  const worst = giant.dice * giant.sides + giant.bonus, least = Math.min(...companyAt(23, 1).members.slice(0, 3).map((m) => m.maxHp));
+  ok(giant.hp === whole.hp && blow(giant) === blow(whole) && giant.sweep?.chance === SWEEP.chance && !giant.sweep.element && testDrake(25).sweep?.element === 'fire' && worst * 2 < least,
+    `the test giant at 23 is the test brute come down whole to ${SWEEP.share}, ${giant.hp} / ${blow(giant)}, sweeping at ${SWEEP.chance} a turn, one sweep at its worst ${worst} to each of a front row whose least has ${least}; the drake breathes fire`);
+  for (const [l, enc, what] of [[23, giantEncounter(23), 'giants'], [25, drakeEncounter(25), 'drakes']] as const) {
+    const b = bout(l, enc, 40, 5001), day = days(l, [enc], 40, 5001), brutes = days(l, [standardEncounter('brute', l)], 40, 5001);
+    ok(b.won >= 0.95 && Math.abs(day.fights - brutes.fights) <= 1.5, `a company of ${l} wins ${pc(b.won)} of two ${what}' fights, ${b.rounds.toFixed(1)} rounds for ${(b.cost * 100).toFixed(1)}% of itself, and fights ${day.fights.toFixed(1)} of them to a rest, about as many as of plain brutes (${brutes.fights.toFixed(1)}; ${fightsPerRest(l)} asked)`);
+  }
 }

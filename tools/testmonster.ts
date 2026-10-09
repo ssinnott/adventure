@@ -199,3 +199,21 @@ export function testLight(level: number): MonsterDef {
 }
 /** Lights round the ring with a hound (§7.2's fight): three lights in a controller's three shares and the test skirmisher in its one. */
 export const lightEncounter = (level: number): MonsterDef[] => [...Array.from({ length: 3 }, () => testLight(level)), testMonster('skirmisher', level)];
+
+// Act IV's sweep on the test monsters (docs/MONSTERS.md §3.3, #545), at the size decided there.
+
+/** What a sweeper is made of: the test brute come down whole to SWEEP.share of its line, sweeping its row at SWEEP.chance a turn. */
+export const SWEEP = { chance: 0.25, share: 0.85 };
+
+/** The test giant: the test brute on SWEEP.share of its hit points and blow, its arm sweeping the front row (`sweep`); `heavier` times the blow, to try one. */
+export function testGiant(level: number, heavier = 1): MonsterDef {
+  const m = testMonster('brute', level, scaleAt(HP, 'brute', level) * SWEEP.share, scaleAt(DAMAGE, 'brute', level) * SWEEP.share * heavier);
+  return { ...m, id: `test_giant_${level}`, name: 'Test Giant', plural: 'Test Giants', sweep: { chance: SWEEP.chance } };
+}
+/** The test drake: the test giant, its sweep a breath of fire on a row. */
+export function testDrake(level: number): MonsterDef {
+  return { ...testGiant(level), id: `test_drake_${level}`, name: 'Test Drake', plural: 'Test Drakes', sweep: { chance: SWEEP.chance, element: 'fire' } };
+}
+/** Their standard encounters (§4.4): two giants and two drakes, as brutes come. */
+export const giantEncounter = (level: number): MonsterDef[] => Array.from({ length: ROLES.brute.group }, () => testGiant(level));
+export const drakeEncounter = (level: number): MonsterDef[] => Array.from({ length: ROLES.brute.group }, () => testDrake(level));
