@@ -616,8 +616,12 @@ settled in its issue, and what the pilot teaches changes them.
   has the journal read.
 - **The Compact's hall** (#182, 1 October): the Keel is the Salt Compact's hall, a tavern that carries `hall`
   (#417), so its menu is the talk of the room, the Compact's work and Ruan, who keeps it. Her words
-  are plain to a stranger and a degree warmer to a Runner, and never touch the line's reveal. The
-  first task, The Long Way: the warehouse clerk on C6's quay hands over a cask of brandy once the
+  are plain to a stranger and a degree warmer to a Runner, and never touch the line's reveal. That
+  is hers once the Factor's rung is paid (#635, PR D): she says the orders come from below in the
+  founder's hand, ten years under his cairn, and puts the one question the line has, the orders to
+  the Wardens or the Compact taken over. Each answer sets its own flag (`q_compact_wardens`, `q_compact_over`), pays
+  nothing and changes her words; the question is put again until it is answered, and no rank waits
+  on it (docs/areas/wrackholm.md §9). The first task, The Long Way: the warehouse clerk on C6's quay hands over a cask of brandy once the
   run is taken, an event by the customs house door at 4,13 shows only while the cask is carried,
   and the hall pays when that has been seen and takes the cask: 30 gold and 120 xp, and the company
   is a Runner. The first rank's two: What the Crews Carry, the crate of the crews' cargo on C6's
@@ -816,8 +820,10 @@ Two halls open here (DESIGN §8), on the rules and the hall menu built in #132:
   orders come from below (DESIGN §10.2). The crews the company fights on the river and the isle
   have left the Compact for the Hand's coin, so killing them costs nothing with the guild (#151,
   call 4). A Fence's rung, *Where the Cargo Goes*, is Wrackholm's, the stair's foot under the Tide
-  Ship seen (docs/areas/wrackholm.md §9, #635); the Factor's, offered to a Factor, rides the
-  Dead-Drop (#22). Partner, the fourth rank, is the top and has none.
+  Ship seen (docs/areas/wrackholm.md §9, #635); the Factor's, *In the Founder's Hand*, is the
+  Dead-Drop's, built: an order from its counting house carried up, once the Sleepers are seen
+  (docs/areas/wrackholm.md §6, §9, #635's PR D). The rank it pays, Partner, is the top and has no
+  quest, and opens Ruan's choice in the Keel (§4.9).
 
 ## 7. Encounters, and what is new
 
