@@ -412,10 +412,11 @@ calibration:
   point (200 for the levels past 10, made again with #20 and #541), with the levels between
   interpolated. Past 10 the company runs on play's rules: its spells stop growing at 10 (#159), it
   takes its prestiges at 11, 19 and 27 with their hit points, spell points and perks (#19), and with
-  them its spell ranks, and it learns tiers 6 and 7 at 15 and 23 (#20). It wears the ladder's gear to
-  its top at 22: Act II's steps were in when the levels past 10 were made again (#399, #18), and Act
-  III's when the levels past 16 were (#535, #541), each of 17 to 22 on its own, since the company
-  steps at 17, 19, 21 and 22.
+  them its spell ranks, and it learns tiers 6 and 7 at 15 and 23 (#20). It wore the ladder's gear to
+  22: Act II's steps were in when the levels past 10 were made again (#399, #18), and Act III's when
+  the levels past 16 were (#535, #541), each of 17 to 22 on its own, since the company steps at 17,
+  19, 21 and 22. Act IV's step takes the ladder's top to 25 (#542), and the levels past 22 wait to
+  be made again with it (#549).
 
 Hit points / average damage a hit, by role and level:
 
