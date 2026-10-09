@@ -682,6 +682,17 @@ The Foreland's walkthrough walks both cities: the old one, then the changed one 
 company, whose paladin Idris is orcblood, and to one without him. The flag is set by hand, since
 the road's band refuses Helmstow to a company of 16.
 
+Once the Hand has Wenna (`q_wenna_taken`, set by her question at the camp's fire on Sheer Point,
+docs/areas/whitespine.md) the city is worse again (#449), on top of Act II's changes:
+
+- **A gibbet** in the middle street, new and empty: a once-event on the first step onto either of
+  its squares, 7,9 or 8,9.
+- **The Gilded Eel** near empty, a Warden by its door; its talk is the gibbet's and the oars locked
+  in the keep, the Act II Eel's words `after` the flag.
+
+Nothing shuts and nothing is dearer. The walkthrough walks the changed city before the flag and
+after it, the flags set by hand (docs/areas/ashfall.md §9, #449's 6 and 7).
+
 ## 6. Side quests
 
 #56 drafts eight for the Foreland, levels 1 to 4. The owner asked for the ones that fit to be pulled

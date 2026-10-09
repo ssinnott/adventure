@@ -93,5 +93,8 @@ export const EMBERWASTE_F10: MapDef = {
     // Stone (§7). The brief's second beetles and the salamanders at the flow's end are cut for the pay.
     { id: 'f10_beetles', x: 22, y: 16, monsters: ['cinder_beetle', 'cinder_beetle', 'cinder_beetle', 'cinder_beetle'], aware: 3, respawn: 1440 },
     { id: 'f10_drake', x: 9, y: 26, monsters: ['cinder_drake'], aware: 5, respawn: 2880 },
+    // Once the Stone is lit (#449), two sentries by the road back from F11's corner toward Cinderport, the
+    // box's top at 26, where nothing stood the day before.
+    { id: 'f10_sentries', x: 18, y: 29, monsters: ['sentry', 'sentry'], aware: 4, respawn: 2880, after: { flag: 'q_ember_lit' } },
   ],
 };

@@ -68,6 +68,12 @@ export const CINDERPORT: MapDef = {
     { kind: 'npc', x: 9, y: 13, name: 'A Rider by the gate', lines: [
       'A Rider leans on the rail inside the gate, a rein over his arm and the horse behind him dozing.',
       '"West to the camp, a day over the ash and into the grass. We go at two, and we do not wait."',
+    ], says: [
+      // Once the Stone is lit the sentries walk the roads (#449), and the Riders know it.
+      { after: { flag: 'q_ember_lit' }, lines: [
+        'The Rider at the rail has his horse saddled and his bow strung.',
+        '"West at two, still. But there is iron walking the road since the Stone took light, and yesterday there was none."',
+      ] },
     ], passage: sells('cinderport', RIDERS_RIDE) },
     { kind: 'event', x: 10, y: 12, id: 'cp_rail', once: true, text: 'A rail inside the gate where the Riders tie their horses on trading days. A trough, and dung swept into the ash.' },
     { kind: 'event', x: 5, y: 13, id: 'cp_driftwood', once: true, text: 'Driftwood stacked by the yard wall for the fire-baskets, white with salt and grey with ash.' },
