@@ -9,9 +9,24 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { ARMOURER, CURES } from '../items.ts';
-import { GATE } from './cindercoast_g10.ts';
+import { GATE, FOUNDING_RAISED } from './cindercoast_g10.ts';
+import { SHOVEL_STORY } from './firemount_g11.ts';
 import { COMPACT_SHIP, RIDERS_RIDE, LAST_CROSSING, sells } from '../../../crossings.ts';
 import { MASON_PASSAGE } from '../../whitespine/maps/sheerpoint_i8.ts';
+
+/**
+ * The Founding Stone (#56's 50, #519): the stone carried up from Old Cinder's undercroft and handed to
+ * the potter; then raised on the trading ground (FOUNDING_RAISED, G10's), or taken back down to the dead.
+ */
+export const FOUNDING_UP = 'q_founding_up';
+export const FOUNDING_LEFT = 'q_founding_left';
+/**
+ * The Shovel That Does Not Blunt (#56's 52, #519): the shovel-head, its story found, sold through the
+ * smith to the thane's agent or to the Wardens, or kept, hafted.
+ */
+export const SHOVEL_THANE = 'q_shovel_thane';
+export const SHOVEL_WARDENS = 'q_shovel_wardens';
+export const SHOVEL_KEPT = 'q_shovel_kept';
 
 export const CINDERPORT: MapDef = {
   id: 'cinderport',
@@ -67,21 +82,50 @@ export const CINDERPORT: MapDef = {
     { kind: 'event', x: 14, y: 11, id: 'cp_heap', once: true, text: 'Ash swept into a heap at the lane\'s end. By morning the wind off the mountain brings it back.' },
 
     // Up the street: the armourer's, the smith's, who sells the act's step (#542), and the potter's
-    // across from it. The smith, the potter and their quests (#56's 52 and 50) are #519's: words only.
+    // across from it. The smith gives The Shovel That Does Not Blunt and the potter The Founding Stone
+    // (#56's 52 and 50, #519); the scavenger off the mountain is at the smith's once his story is told.
     { kind: 'shop', x: 9, y: 9, name: 'The Hide and Hammer', stock: [...ARMOURER], interior: 'cinderport_armourer' },
-    { kind: 'npc', x: 9, y: 9, name: 'Gorran, the smith', lines: [
+    { kind: 'npc', x: 9, y: 9, name: 'Gorran, the smith', flag: 'q_shovel', lines: [
       'A broad man at the forge, a drake\'s hide laced on its frame behind him to cure.',
       '"Gorran. Drake hide for coats, the mountain\'s slag for maces, basalt for a shield. What the coast has, I make into what it kills you with."',
       '"And a shovel-head off a scavenger from the vents. Grey, smooth, and it will not take a burr. I have tried."',
+      '"The thane\'s agent wants it, and the Wardens. Find me where he gets them, and it is yours to sell or keep."',
+    ], says: [
+      { after: { flag: SHOVEL_THANE }, lines: ['Gorran at his anvil, a drake\'s hide curing behind him.', '"The thane\'s forges will have it in pieces by spring, to learn it."'] },
+      { after: { flag: SHOVEL_WARDENS }, lines: ['Gorran at his anvil, a drake\'s hide curing behind him.', '"The Wardens put it in a box, and the box in a vault. Nobody learns anything."'] },
+      { after: { flag: SHOVEL_KEPT }, lines: ['Gorran looks at the grey shovel on your back.', '"Has it dulled yet? No. Nor will it."'] },
+      { after: { flag: SHOVEL_STORY }, lines: ['Gorran turns the grey shovel-head in the forge\'s light.', '"Off one of the walking boilers under the mountain, then. And where there is one, there are more."'], choice: { ask: '"Yours to sell, or I haft it for you."', answers: [
+        { label: 'Sell it to the thane\'s agent.', sets: SHOVEL_THANE, pay: { gold: 1000, xp: 1800 }, says: ['"He pays in the thane\'s gold, and asks where it came from. I tell him the vents."'] },
+        { label: 'Sell it to the Wardens.', sets: SHOVEL_WARDENS, pay: { gold: 600, xp: 1800 }, says: ['"They pay less, and ask nothing. That is the Wardens."'] },
+        { label: 'Haft it.', sets: SHOVEL_KEPT, gives: 'grey_shovel', pay: { xp: 1800 }, says: ['He sets it on a haft of ash and binds it with wire.', '"It will not take a burr. Nor will it lose its edge."'] },
+      ] } },
+    ] },
+    { kind: 'npc', x: 9, y: 9, name: 'A scavenger off the mountain', after: { flag: SHOVEL_STORY }, lines: [
+      'A thin man at the counter, grey dust in the creases of his hands, his sack at his feet.',
+      '"My ledge is found, so I sell the last of it and go. He pays fair."',
     ] },
     { kind: 'npc', x: 7, y: 9, name: 'The Potter\'s', interior: 'cinderport_potter', lines: [
       'Shelves of cups in the old Cinder style, beakers flared on a short foot, some under an ash glaze and some bare red clay.',
       'At the back the kiln, a beehive of brick, its fire in the mouth.',
     ] },
-    { kind: 'npc', x: 7, y: 9, name: 'Jenifer, the potter', lines: [
+    { kind: 'npc', x: 7, y: 9, name: 'Jenifer, the potter', flag: 'q_founding', lines: [
       'A woman at the kick wheel, red clay to the elbow, a cup rising under her hands.',
       '"Jenifer. The town drinks from my cups, and the dead under the ash from the old ones. The same shape, and the same clay, out of the pit in the vines."',
       '"The first who came down off the mountain made them so. I make them so."',
+      '"The town was founded on a stone, and it lies under the ash in Old Cinder. Somebody should bring it up."',
+    ], quest: { item: 'founding_stone', reward: 0, setFlag: FOUNDING_UP, done: [
+      'She stops her wheel and takes the stone in both arms.',
+      '"Their cup, and their names. I make it so because they did."',
+    ], early: [
+      'She sees the stone in your arms, and stops her wheel.',
+      '"That is the town\'s. Where did you find it? Give it here."',
+    ] }, says: [
+      { after: { flag: FOUNDING_RAISED }, lines: ['Jenifer at her wheel, a cup rising in the old shape.', '"The Riders spit when they pass it. Their grandmothers did not."'] },
+      { after: { flag: FOUNDING_LEFT }, lines: ['Jenifer at her wheel, ash on her boots to the knee.', '"It is back in its niche, and dusted. Nobody asked me where I went."'] },
+      { after: { flag: FOUNDING_UP }, lines: ['Jenifer has the stone on her bench, a cloth over it.'], choice: { ask: '"Does it stand on the trading ground, for the town? Or go back to the dead?"', answers: [
+        { label: 'The trading ground.', sets: FOUNDING_RAISED, pay: { xp: 1500 }, says: ['"Then the town sees what it stands on. The Riders will not like it."'] },
+        { label: 'Back to the dead.', sets: FOUNDING_LEFT, pay: { xp: 1500 }, says: ['"Then I take it down myself at first light, and dust it."'] },
+      ] } },
     ] },
 
     // The Cartographers' second hall (#443, call 7): its map of the far side and the Meridian journals'
