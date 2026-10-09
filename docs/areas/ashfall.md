@@ -749,11 +749,12 @@ half, with the wilderness features (#45); no more than one point in four is a si
     night husks by day and the sentries before the Stone is lit, as it counts every group: only the
     nearest-way-in check skips a group `after`, and no check skips one `when`. The Waste's road and
     way in are F10's and E10's, unchanged. F11 pays 2,530 xp a member and 1,000 gold. Its
-    under-check is n/a, its floor being over the area's; Ashfall's 16 groups at the floors are won
-    every time. The curve's rise reads 0.95 by rank, the nearest group the beetles, 13 steps from
-    the way in, and the hardest the sentries, 24 steps; the walkthrough wins every group at 25.
-    Density 100.0% within 8 steps and the furthest 8 of 15, with no sign among its 28 points; the
-    art check dresses 10.7% of its wall faces. It claims nothing new (§7).
+    under-check is n/a, its floor being over the area's; Ashfall's 20 groups at the floors, H10's
+    four with the 16 before them, are won every time. The curve's rise reads 0.95 by rank, the
+    nearest group the beetles, 13 steps from the way in, and the hardest the sentries, 24 steps; the
+    walkthrough wins every group at 25. Density 100.0% within 8 steps and the furthest 8 of 15, with
+    no sign among its 28 points; the art check dresses 10.7% of its wall faces. It claims nothing
+    new (§7).
 
 ### 4.7 Old Cinder (#515): dungeon, two levels of 16×16, band 25–26
 
