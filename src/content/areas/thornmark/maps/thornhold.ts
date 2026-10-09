@@ -280,6 +280,22 @@ export const THORNHOLD: MapDef = {
     ] },
     // The Elder's Four (#219): Keyne by the spring. The dead and Meva are in the Grove Roots; her
     // words for either answer end the quest, and the rite is said under the oaks once after.
+    // The Ogre's Boy (#56's 13, #544): Kerra asks her brother home from the old tower; what she says
+    // after is what the company did there. Pasco is home once it is done, either way.
+    { kind: 'npc', x: 13, y: 7, name: 'Kerra, a girl of Thornhold', lines: [
+      'A girl with a basket of bread sits on a step, watching the north-west road.',
+      '"The ogre in the old Warden tower took my brother. Pasco went up for Warden iron, to sell. Bring him home."',
+    ], flag: 'q_ogre_boy', says: [
+      { after: { flag: 'q_ogre_kept', slain: 'thornmark:tm_ogre' }, sets: 'q_ogre_boy', lines: ['"You gave it your word, and went back with swords. Pasco hasn\'t spoken since."'] },
+      { after: { slain: 'thornmark:tm_ogre' }, sets: 'q_ogre_boy', lines: ['"Pasco\'s home. He says it was old, and blind, and it fed him. He won\'t say your names."'] },
+      { after: { flag: 'q_ogre_kept' }, sets: 'q_ogre_boy', lines: ['"Pasco\'s home. On market days he takes bread up the tower road. I don\'t ask."'] },
+    ] },
+    { kind: 'npc', x: 14, y: 7, name: 'Pasco, Kerra\'s brother', after: [{ slain: 'thornmark:tm_ogre' }, { flag: 'q_ogre_kept' }], lines: [
+      'A boy whittles by the door, a Warden buckle on his belt.',
+      '"It\'s only old. Somebody has to feed it."',
+    ], says: [
+      { after: { slain: 'thornmark:tm_ogre' }, lines: ['A boy whittles by the door, and does not look up.', '"It couldn\'t see you. It shared."'] },
+    ] },
     { kind: 'npc', x: 6, y: 7, name: 'Keyne, whose son went under the roots', lines: [
       'A woman fills a jar at the spring that is already full, and has been filling it since you came through the gate.',
       '"Sylvane will have told you: what came through took four of ours. Told you like a number. One of the four is my son, Ruan, who went under the roots with a bow and three friends because the Elder asked for volunteers and he was nineteen." She sets the jar down. "One of them is dead by the stair, they say; nobody will go down to see. The others nobody has seen."',

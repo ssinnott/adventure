@@ -187,6 +187,7 @@ const WYSTAN = (): Person => who('thornhold', 9, 14, 'Wystan'), WYSTAN_DOOR = ()
 const HALE = (): Person => who('tide_ship3', 10, 12, 'Captain Hale');
 const JAGO = (): Person => who('thornhold', 4, 10, 'Jago'), DERWA = (): Person => who('thornhold', 11, 4, 'Derwa'), LOWEN = (): Person => who('thornhold', 14, 1, 'Lowen');
 const CUTHRED = (): Person => who('deepthorn_i3', 7, 2, 'Cuthred');
+const KERRA = (): Person => who('thornhold', 13, 7, 'Kerra'), PASCO = (): Person => who('thornhold', 14, 7, 'Pasco');
 
 /** Whether a person stands where they are listed now. */
 const there = (w: Walk, p: Person, map: string): boolean => { w.world.travel(map, p.x, p.y); return w.world.present(p); };
@@ -204,6 +205,17 @@ function answerTo(w: Walk, map: string, p: Person, label: string): string {
   w.world.travel(map, p.x, p.y);
   const m = meet(p, w.party, heard(w.world, p)), a = m.choice?.answers.find((x) => x.label === label);
   w.ok(!!a, `${p.name.split(',')[0]} asks, and '${label}' is an answer (${m.choice?.ask ?? 'no question'})`);
+  const said = a ? answer(a, w.party) : '';
+  listen(w);
+  return said;
+}
+
+/** Come beside a group, 'map:id', from the north and answer the question it puts first with `label` (#544); what is said. */
+function parley(w: Walk, at: string, label: string): string {
+  const [map, id] = at.split(':'), g = MAP_DEFS.find((d) => d.id === map)!.encounters!.find((e) => e.id === id)!;
+  w.world.travel(map, g.x, g.y - 1);
+  const c = w.world.question(id), a = c?.answers.find((x) => x.label === label);
+  w.ok(!!a && w.world.adjacentGroups().includes(id), `beside ${id} it asks before it fights, and '${label}' is an answer (${c?.ask ?? 'no question'})`);
   const said = a ? answer(a, w.party) : '';
   listen(w);
   return said;
@@ -350,6 +362,28 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     const first = hear(w, 'thornhold', KEYNE()), then = hear(w, 'thornhold', KEYNE());
     w.ok(first.startsWith('A woman fills a jar') && then.startsWith('Keyne hears where Ruan lies, and where Mylor lies'), 'Keyne asks first, then hears the lie');
     reads(w, 'four', 'The Elder\'s Four', ['keyne', 'meva', 'lie'], ['truth'], 'the lie told');
+  }
+  { // The Ogre's Boy (#544): Kerra asks her brother home; the ogre puts its bargain first, and is refused and killed.
+    const w = newWalk(ok);
+    w.level = 7;
+    w.ok(!there(w, PASCO(), 'thornhold'), 'before the tower, Pasco is not home');
+    w.ok(hear(w, 'thornhold', KERRA()).startsWith('A girl with a basket') && w.news.at(-1) === 'New quest: The Ogre\'s Boy.', `Kerra asks her brother home, and The Ogre's Boy begins (${w.news.at(-1)})`);
+    w.ok(parley(w, 'thornmark:tm_ogre', 'Kill it.').startsWith('The boy drops the bucket') && !!w.world.question('tm_ogre'), 'refused, the ogre is fought, and would ask again');
+    fight(w, 'thornmark:tm_ogre');
+    w.ok(hear(w, 'thornhold', KERRA()).startsWith('"Pasco\'s home. He says it was old') && there(w, PASCO(), 'thornhold') && hear(w, 'thornhold', PASCO()).endsWith('"It couldn\'t see you. It shared."'), 'Pasco is home, and will not say the company\'s names');
+    reads(w, 'ogre', 'The Ogre\'s Boy', ['kerra', 'slain'], ['kept'], 'the ogre killed');
+  }
+  { // The Ogre's Boy: the bargain kept, the ogre keeps the tower and stands aside, until the company goes back with swords.
+    const w = newWalk(ok);
+    w.level = 7;
+    hear(w, 'thornhold', KERRA());
+    const ogre = MAP_DEFS.find((d) => d.id === 'thornmark')!.encounters!.find((e) => e.id === 'tm_ogre')!;
+    w.ok(parley(w, 'thornmark:tm_ogre', 'Let it keep the tower.').startsWith('The ogre grunts') && !w.world.question('tm_ogre') && w.world.standsAside(ogre) && !w.world.adjacentGroups().length && shows(w, 'thornmark', 'tm_ogre'),
+      'the bargain struck, the ogre keeps the tower and stands aside: no question and no fight');
+    w.ok(hear(w, 'thornhold', KERRA()).startsWith('"Pasco\'s home. On market days') && hear(w, 'thornhold', PASCO()).endsWith('"It\'s only old. Somebody has to feed it."'), 'Pasco is home, and feeds it still');
+    reads(w, 'ogre', 'The Ogre\'s Boy', ['kerra', 'kept'], ['slain'], 'the bargain kept');
+    fight(w, 'thornmark:tm_ogre');
+    w.ok(hear(w, 'thornhold', KERRA()).startsWith('"You gave it your word'), 'gone back on, the ogre is dead and Kerra says so');
   }
   { // Terms From the Brigands: Sylvane's terms after the chisel, carried; the road's brigands stop.
     const w = newWalk(ok);
