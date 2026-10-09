@@ -14,6 +14,8 @@
 // The temples' own drowned man is their congregation: heavier, bowed, salt-crusted, hugging the
 // stone it roped to its neck. Cairnmoor's bog body is the dead the peat has kept, leather over bone
 // with a rope still round its neck; the Cairn King is the oldest of them, crowned, on his seat.
+// Old Cinder's ash husk is no bones at all: a man the mountain's ash fell on and set round, the cast
+// of him walking, his cup still in his hand.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, groundShadow, eye } from './common.ts';
@@ -33,10 +35,11 @@ const BONE = (t: number): Mats => ({
 import { pathEllipse } from '../../lib/art/shapes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['skeleton', 'bone_knight', 'ghoul', 'drowned', 'barrow_guard', 'barrow_captain', 'temple_drowned', 'drowned_chanter', 'choirmaster', 'bog_body', 'cairn_king'];
+export const KINDS: readonly MonsterSprite[] = ['skeleton', 'bone_knight', 'ghoul', 'drowned', 'barrow_guard', 'barrow_captain', 'temple_drowned', 'drowned_chanter', 'choirmaster', 'bog_body', 'cairn_king', 'ash_husk'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'bog_body') bogBody(ctx, x, y, h, p);
+  else if (kind === 'ash_husk') ashHusk(ctx, x, y, h, p);
   else if (kind === 'cairn_king') cairnKing(ctx, x, y, h, p);
   else if (kind === 'bone_knight') knight(ctx, x, y, h, p);
   else if (kind === 'ghoul') ghoul(ctx, x, y, h, p);
@@ -1433,6 +1436,120 @@ function bogHand(ctx: CanvasRenderingContext2D, wx: number, wy: number, s: numbe
     parts.push({ k: 'tube', pts: [bx, by, bx + s * h * 0.004, by + l * 0.6, bx - s * h * 0.008, by + l], r0: h * 0.01 * k, r1: h * 0.005, wobble: 0.05, seed: 140 + i });
   }
   blob(ctx, B, hex, parts, { h, formK: 0.5, spread: 0.75 });
+}
+
+// ------------------------------------------------------------------ the ash husk ----
+/**
+ * The Ash Husk: a man of ash, still holding his cup. Old Cinder's dead as the mountain left them, the
+ * ash set round each man in his shape, so it is no skeleton but the cast of one: whole and heavy,
+ * pale grey, the tunic he died in set in its folds to the knee with the belt at his waist, the face
+ * gone smooth, two hollows for eyes and the mouth open. His near arm is up, the cup in his fist
+ * held out at his shoulder as if the toast were still going round; the far arm hangs forward, the
+ * hand crumbled off short of the fingers. The ash is crazed all over and cracks open as he walks, and
+ * a little of it sifts down off him. Idle: he sways, stiff from the hips, and the cup trembles.
+ */
+function ashHusk(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const R = makeRig(x, y, h, p, { tilt: 0.01, hipTilt: 0.01, turn: 0.004, near: [0.07, 0.09, 0.1], far: [-0.072, -0.082, -0.09], toe: [0.4, -0.5] }, BONE);
+  const { sy } = R;
+  const ash = p.base, ashD = shade(mix(p.dark, '#2a2622', 0.35), 0.9), ashL = mix(p.light, '#f2efe8', 0.3), hollow = shade('#1e1a18', p.tone);
+  const cup = shade('#5c4636', p.tone), cupL = shade('#8a7058', p.tone);
+  const sway = Math.sin(p.frame / 34) * h * 0.006, shake = Math.sin(p.frame / 3.1) * h * 0.0025;
+  const D = (v: number) => sy + v * h;
+  const cx = x + sway;
+  groundShadow(ctx, x, y + 1, h * 0.6);
+
+  // ---- the far arm, hanging forward, a step darker: the hand gone short of the fingers.
+  const farEl = { x: R.sFar.x - h * 0.03, y: D(0.19) }, farWr = { x: R.sFar.x + h * 0.004 + sway, y: D(0.37) };
+  blob(ctx, B, shade(ash, 0.76), [
+    ...limb(R.sFar.x, R.sFar.y, farEl.x, farEl.y, farWr.x, farWr.y, h * 0.044, h * 0.034, 201),
+    { k: 'curve', pts: [farWr.x - h * 0.03, farWr.y - h * 0.01, farWr.x + h * 0.03, farWr.y - h * 0.012, farWr.x + h * 0.026, farWr.y + h * 0.03, farWr.x + h * 0.004, farWr.y + h * 0.05, farWr.x - h * 0.02, farWr.y + h * 0.034], wobble: 0.12, spiky: 0.1, seed: 203, sub: 2 },
+  ], { h, formK: 0.5, spread: 0.7 });
+
+  // ---- the shins below the hem and the feet, flat on the ground.
+  const leg = (l: readonly { x: number; y: number }[], s: number, seed: number): Part[] => {
+    const [, kn, a] = l;
+    return [
+      { k: 'tube', pts: [kn.x, kn.y - h * 0.04, (kn.x + a.x) / 2, (kn.y + a.y) / 2, a.x, a.y], r0: h * 0.044, r1: h * 0.034, seed },
+      { k: 'curve', pts: [a.x - s * h * 0.035, y - h * 0.002, a.x - s * h * 0.02, y - h * 0.06, a.x + s * h * 0.03, y - h * 0.034, a.x + s * h * 0.078, y - h * 0.012, a.x + s * h * 0.07, y + h * 0.006, a.x - s * h * 0.024, y + h * 0.008], wobble: 0.05, seed: seed + 3, sub: 2 },
+    ];
+  };
+  blob(ctx, B, shade(ash, 0.8), leg(R.legL, -1, 205), { h, formK: 0.5, spread: 0.7 });
+  blob(ctx, B, ash, leg(R.legR, 1, 207), { h, formK: 0.5, spread: 0.7 });
+
+  // ---- the trunk in its tunic, the neck and the shoulders, one cast: broad at the shoulders, the
+  //      belt at the waist and the skirt falling in folds to the knee.
+  const hem = R.legR[1].y - h * 0.02;
+  blob(ctx, B, ash, [
+    { k: 'cap', x0: cx, y0: D(0.02), x1: cx + h * 0.012, y1: D(-0.07), r0: h * 0.04, r1: h * 0.036 },
+    { k: 'curve', pts: [
+      cx - h * 0.14, D(0.03), cx - h * 0.06, D(-0.03), cx + h * 0.06, D(-0.032), cx + h * 0.15, D(0.03),
+      cx + h * 0.13, D(0.12), cx + h * 0.112, D(0.19), cx + h * 0.15, hem - h * 0.07, cx + h * 0.16, hem,
+      cx + h * 0.06, hem + h * 0.012, cx - h * 0.04, hem - h * 0.006, cx - h * 0.15, hem + h * 0.008,
+      cx - h * 0.14, hem - h * 0.07, cx - h * 0.11, D(0.19), cx - h * 0.125, D(0.12),
+    ], wobble: 0.025, seed: 209, sub: 3 },
+    { k: 'ball', x: R.sNear.x - h * 0.012, y: R.sNear.y + h * 0.01, r: h * 0.05 },
+    { k: 'ball', x: R.sFar.x + h * 0.012, y: R.sFar.y + h * 0.012, r: h * 0.046 },
+  ], { h, formK: 0.55, spread: 0.8, tex: 'cracks', seed: 211, amount: 0.7, creases: [
+    { x0: cx - h * 0.11, y0: D(0.18), x1: cx + h * 0.11, y1: D(0.185), r: h * 0.016, a: 0.55 },            // under the belt
+    { x0: cx - h * 0.05, y0: D(0.22), x1: cx - h * 0.08, y1: hem - h * 0.01, r: h * 0.016, a: 0.4 },      // the skirt's folds
+    { x0: cx + h * 0.03, y0: D(0.22), x1: cx + h * 0.05, y1: hem - h * 0.01, r: h * 0.016, a: 0.35 },
+    { x0: cx - h * 0.12, y0: D(0.06), x1: cx - h * 0.1, y1: D(0.16), r: h * 0.03, a: 0.3 },               // the far side, away from the light
+  ] });
+  if (!B.override) {
+    // The belt, and the neck of the tunic.
+    softLine(ctx, B, [cx - h * 0.115, D(0.165), cx, D(0.175), cx + h * 0.118, D(0.165)], ashD, Math.max(1, h * 0.018), 0.6);
+    softLine(ctx, B, [cx - h * 0.05, D(-0.02), cx + h * 0.004, D(0.03), cx + h * 0.055, D(-0.022)], ashD, Math.max(1, h * 0.01), 0.55);
+    // The crazing: the ash cracked open on him, wider where he bends.
+    for (const c of [
+      [cx - h * 0.1, D(0.06), cx - h * 0.04, D(0.09), cx - h * 0.02, D(0.14)],
+      [cx + h * 0.06, D(0.03), cx + h * 0.09, D(0.1), cx + h * 0.07, D(0.15)],
+      [cx - h * 0.02, D(0.24), cx + h * 0.01, D(0.3), cx - h * 0.03, D(0.36)],
+      [cx + h * 0.1, D(0.25), cx + h * 0.12, D(0.33)],
+      [R.legR[1].x + h * 0.01, R.legR[1].y + h * 0.04, R.legR[1].x - h * 0.012, R.legR[1].y + h * 0.1],
+    ]) softLine(ctx, B, c, hollow, Math.max(1, h * 0.008), 0.6);
+    softLine(ctx, B, [cx - h * 0.12, D(0.02), cx - h * 0.05, D(-0.025)], ashL, Math.max(1, h * 0.01), 0.45);
+  }
+
+  // ---- the head, bowed a little: smooth, the eyes two hollows, the mouth open.
+  const hx = cx + h * 0.012, hy = sy - h * 0.1, hr = h * 0.07;
+  blob(ctx, B, shade(ash, 1.04), [{ k: 'curve', pts: ring(hx, hy, hr * 0.92, hr, 12), wobble: 0.03, seed: 213, sub: 2 }], { h, formK: 0.6, spread: 0.8, creases: [
+    { x0: hx - hr * 0.8, y0: hy - hr * 0.1, x1: hx - hr * 0.6, y1: hy + hr * 0.6, r: hr * 0.22, a: 0.3 },
+  ] });
+  if (!B.override) {
+    ctx.fillStyle = B.col(hollow);
+    for (const s2 of [-1, 1]) { ctx.beginPath(); ctx.ellipse(hx + s2 * hr * 0.36, hy + hr * 0.02, hr * 0.2, hr * 0.15, s2 * 0.2, 0, Math.PI * 2); ctx.fill(); }
+    ctx.beginPath(); ctx.ellipse(hx + hr * 0.02, hy + hr * 0.5, hr * 0.16, hr * 0.2, 0, 0, Math.PI * 2); ctx.fill();
+    softLine(ctx, B, [hx - hr * 0.6, hy - hr * 0.62, hx - hr * 0.1, hy - hr * 0.86, hx + hr * 0.4, hy - hr * 0.7], ashL, Math.max(1, hr * 0.12), 0.45);
+  }
+
+  // ---- the near arm, up: the elbow out, the forearm standing, the cup held out at his shoulder.
+  const nearEl = { x: R.sNear.x + h * 0.06, y: D(0.17) }, nearWr = { x: R.sNear.x + h * 0.075 + shake, y: D(0.02) };
+  blob(ctx, B, ash, [
+    ...limb(R.sNear.x, R.sNear.y, nearEl.x, nearEl.y, nearWr.x, nearWr.y, h * 0.046, h * 0.036, 215),
+    { k: 'ell', x: nearWr.x, y: nearWr.y - h * 0.008, rx: h * 0.034, ry: h * 0.03, rot: 0.2 },
+  ], { h, formK: 0.5, spread: 0.7, tex: 'cracks', seed: 217, amount: 0.5 });
+  // The cup: a beaker on a short foot, the fist round its stem.
+  const ux = nearWr.x + h * 0.002, uy = nearWr.y - h * 0.03;
+  blob(ctx, B, cup, [
+    { k: 'poly', pts: [ux - h * 0.036, uy - h * 0.074, ux + h * 0.04, uy - h * 0.07, ux + h * 0.026, uy - h * 0.012, ux + h * 0.014, uy + h * 0.004, ux - h * 0.012, uy + h * 0.004, ux - h * 0.024, uy - h * 0.014] },
+    { k: 'ell', x: ux + h * 0.002, y: uy - h * 0.072, rx: h * 0.038, ry: h * 0.012, rot: -0.06 },
+  ], { h, formK: 0.5, spread: 0.7, gloss: 0.15 });
+  if (!B.override) {
+    ctx.fillStyle = B.col(shade('#2a1e16', p.tone)); ctx.beginPath(); ctx.ellipse(ux + h * 0.002, uy - h * 0.072, h * 0.03, h * 0.0075, -0.06, 0, Math.PI * 2); ctx.fill();
+    softLine(ctx, B, [ux - h * 0.03, uy - h * 0.06, ux - h * 0.018, uy - h * 0.016], cupL, Math.max(1, h * 0.008), 0.5);
+    // Ash settled on the rim.
+    patch(ctx, B, ash, [{ k: 'ell', x: ux + h * 0.02, y: uy - h * 0.08, rx: h * 0.02, ry: h * 0.008, rot: 0 }], { alpha: 0.7, feather: 0.5 });
+  }
+  // The fingers round the stem, over the cup's foot.
+  blob(ctx, B, shade(ash, 1.03), [0, 1, 2].map((i): Part => ({ k: 'tube', pts: [nearWr.x - h * 0.03, nearWr.y - h * 0.016 + i * h * 0.012, ux + h * 0.02, nearWr.y - h * 0.02 + i * h * 0.012, ux + h * 0.024, nearWr.y - h * 0.008 + i * h * 0.012], r0: h * 0.009, r1: h * 0.008, wobble: 0.05, seed: 219 + i })), { h, formK: 0.5, spread: 0.75 });
+
+  // A little ash sifting off him, too faint to be ink: off the broken hand, the elbow and the hem.
+  if (!B.override) for (let i = 0; i < 5; i++) {
+    const k = ((p.frame * 0.012 + i * 0.21) % 1);
+    const sx = [farWr.x, farWr.x + h * 0.02, nearEl.x, cx - h * 0.1, cx + h * 0.12][i], sy2 = [farWr.y + h * 0.05, farWr.y + h * 0.04, nearEl.y + h * 0.03, hem, hem][i];
+    ctx.fillStyle = rgba(ash, 0.3 * (1 - k));
+    ctx.fillRect(Math.round(sx + Math.sin(k * 6 + i) * h * 0.01), Math.round(sy2 + k * h * 0.12), Math.max(1, Math.round(h * 0.008)), Math.max(1, Math.round(h * 0.008)));
+  }
 }
 
 // ------------------------------------------------------------------ the Cairn King ----

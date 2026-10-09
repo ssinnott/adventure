@@ -17,6 +17,8 @@
 // standing on threads of glass it has strung from its feet out across the air.
 // The fire beetle is no arachnid either, and like the crab has a body of its own: six short legs
 // braced under a high domed shell, a broad shield over a low head, and a live coal set in its back.
+// The cinder beetle has its legs under a body low and broad where that one is high, a digger's, with
+// one horn up over its shell and no fire in it.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
@@ -26,7 +28,7 @@ import { shade, mix, rgba } from '../../lib/art/palettes.ts';
 import { pathEllipse } from '../../lib/art/shapes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['spider', 'thorn_spider', 'crab', 'rift_crawler', 'barnacle_crab', 'salt_crab', 'glass_spider', 'fire_beetle'];
+export const KINDS: readonly MonsterSprite[] = ['spider', 'thorn_spider', 'crab', 'rift_crawler', 'barnacle_crab', 'salt_crab', 'glass_spider', 'fire_beetle', 'cinder_beetle'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'thorn_spider') thorn(ctx, x, y, h, p);
@@ -36,6 +38,7 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   else if (kind === 'rift_crawler') crawler(ctx, x, y, h, p);
   else if (kind === 'glass_spider') glassSpider(ctx, x, y, h, p);
   else if (kind === 'fire_beetle') beetle(ctx, x, y, h, p);
+  else if (kind === 'cinder_beetle') cinderBeetle(ctx, x, y, h, p);
   else marsh(ctx, x, y, h, p);
 };
 
@@ -811,6 +814,104 @@ function beetle(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
     px + h * 0.15, py - h * 0.06, px, py - h * 0.07, px - h * 0.15, py - h * 0.06,
   ], wobble: 0.015, seed: 156, sub: 3, gloss: 0.3 }], { h, formK: 0.55, spread: 0.65, gloss: 0.15 });
   softLine(ctx, B, [px - h * 0.22, py + h * 0.045, px - h * 0.12, py + h * 0.074, px - h * 0.05, py + h * 0.06, px + h * 0.06, py + h * 0.06, px + h * 0.13, py + h * 0.074, px + h * 0.22, py + h * 0.04], copper, Math.max(1, h * 0.014), 0.6);
+}
+
+// ------------------------------------------------------------------ the cinder beetle ----
+/**
+ * The Cinder Beetle: its shell is the colour of the beach. The fire beetle's six legs, set wider under
+ * a body low and broad where that one's is high, as a beetle that digs in sand is built: the wing
+ * cases long and flat, seen from the front so their length runs up the screen to a rounded end, each
+ * case ridged twice from the shoulder back and every ridge a row of knobs, so the skyline is rough;
+ * black, with the black sand's glitter on it and a grey bloom of ash in the grooves. A squared shield
+ * over a broad flat head that shovels forward, and out of the head one horn, thick at the root, curved
+ * up and back over the shell and forked at the tip. The forelegs are spades, toothed down their edge.
+ * It carries no fire. Idle: it shoves, the horn tipping with it; the legs shift; the feelers' fans
+ * open and close.
+ */
+function cinderBeetle(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const shove = Math.sin(p.frame / 14), bob = p.breathe * h * 0.006;
+  const shell = shade(mix(p.base, '#0c0c10', 0.2), 1), sheen = shade(mix(p.base, '#c4c8d0', 0.5), Math.max(0.7, p.tone));
+  const ash = shade('#aaa59b', p.tone), ashD = shade('#6e6a64', p.tone);
+  const wide = (q: Pt2): Pt2 => ({ x: x + (q.x - x) * 1.3, y: q.y });
+  const legs = beetleLegs(x, y, h * 0.82, p.frame).map((l) => ({ ...l, hip: wide(l.hip), knee: wide(l.knee), foot: wide(l.foot) }));
+  groundShadow(ctx, x, y + 1, h * 1.12);
+
+  // The rear pairs and the far middle leg, behind.
+  const behind = legs.filter((l) => l.i === 2 || (l.i === 1 && l.s < 0));
+  blob(ctx, B, shade(shell, 0.7), behind.flatMap((l) => beetleLegParts(l, h * 0.92, 1.12)), { h, formK: 0.4, spread: 0.75 });
+
+  // The wing cases: wide at the shoulders, low, running up the screen to a rounded end, the knobs of
+  // the ridges in the same mass so they break its skyline.
+  const ex = x - h * 0.01, top = y - h * 0.5 + bob, sh = y - h * 0.22 + bob;
+  const cases: number[] = [
+    ex - h * 0.37, sh, ex - h * 0.38, sh - h * 0.09, ex - h * 0.33, sh - h * 0.18, ex - h * 0.22, top + h * 0.035,
+    ex, top, ex + h * 0.22, top + h * 0.035, ex + h * 0.33, sh - h * 0.18, ex + h * 0.38, sh - h * 0.09, ex + h * 0.37, sh,
+    ex + h * 0.2, sh + h * 0.03, ex - h * 0.2, sh + h * 0.03,
+  ];
+  /** A ridge of case s, k across it at the shoulder: from the shoulder back toward the end, t 0 to 1. */
+  const ridgeAt = (s: number, k: number, t: number): Pt2 => ({ x: ex + s * h * 0.36 * k * (1 - t * 0.55), y: sh - h * 0.02 - t * (sh - top - h * 0.05) * (1 - k * 0.25) });
+  const knobs: Part[] = [];
+  for (const s of [-1, 1]) for (const k of [0.38, 0.8]) for (let i = 0; i < 5; i++) {
+    const q = ridgeAt(s, k, i / 4.4);
+    knobs.push({ k: 'ball', x: q.x, y: q.y - h * 0.008, r: h * (0.03 - i * 0.0025) });
+  }
+  blob(ctx, B, shell, [{ k: 'curve', pts: cases, wobble: 0.02, seed: 171, sub: 3, gloss: 0.4 }, ...knobs], { h, formK: 0.5, spread: 0.75, gloss: 0.25, tex: 'stipple', seed: 171, amount: 0.6, creases: [
+    { x0: ex, y0: top + h * 0.03, x1: ex + h * 0.005, y1: sh, r: h * 0.012, a: 0.75 },
+  ] });
+  if (!B.override) {
+    // Ash in the grooves between the ridges and drifted on the back, and the sand's glitter.
+    ctx.save(); ctx.beginPath(); ctx.moveTo(cases[0], cases[1]); for (let i = 2; i < cases.length; i += 2) ctx.lineTo(cases[i], cases[i + 1]); ctx.closePath(); ctx.clip();
+    for (const s of [-1, 1]) for (const k of [0.18, 0.59, 0.98]) {
+      const a = ridgeAt(s, k, 0), b = ridgeAt(s, k, 0.95);
+      softLine(ctx, B, [a.x, a.y, (a.x + b.x) / 2, (a.y + b.y) / 2 - h * 0.004, b.x, b.y], ash, Math.max(1, h * 0.03), 0.72);
+    }
+    patch(ctx, B, ash, [{ k: 'curve', pts: ring(ex - h * 0.05, top + h * 0.065, h * 0.17, h * 0.045, 9, 5), wobble: 0.2, seed: 173, sub: 2 }], { alpha: 0.8, feather: 0.55 });
+    ctx.restore();
+    for (const q of knobs) if (q.k === 'ball') { ctx.fillStyle = rgba(sheen, 0.55); ctx.beginPath(); ctx.arc(q.x - q.r * 0.3, q.y - q.r * 0.35, Math.max(0.6, q.r * 0.35), 0, Math.PI * 2); ctx.fill(); }
+    for (let i = 0; i < 14; i++) {
+      const gx = ex + (nz(i, 3) - 0.5) * h * 0.6, gy = sh - nz(i, 7) * (sh - top) * 0.9, on = Math.sin(p.frame / 7 + i * 2.3) > 0.55;
+      if (on) { ctx.fillStyle = rgba('#f4f2ec', 0.85); ctx.fillRect(Math.round(gx), Math.round(gy), Math.max(1, Math.round(h * 0.008)), Math.max(1, Math.round(h * 0.008))); }
+    }
+  }
+
+  // The front pairs and the near middle leg over it; the forelegs broad as spades, toothed.
+  const front = legs.filter((l) => l.i === 0 || (l.i === 1 && l.s > 0));
+  blob(ctx, B, shade(shell, 0.92), front.flatMap((l) => beetleLegParts(l, h * 0.92, l.i === 0 ? 1.45 : 1.15)), { h, formK: 0.5, spread: 0.7 });
+
+  // The shield: squared, as wide as the shoulders, its front edge hollowed over the head.
+  const px = x + h * 0.01, py = sh + h * 0.025;
+  blob(ctx, B, shade(shell, 1.08), [{ k: 'curve', pts: [
+    px - h * 0.3, py - h * 0.04, px - h * 0.31, py + h * 0.03, px - h * 0.2, py + h * 0.075, px - h * 0.08, py + h * 0.06,
+    px + h * 0.08, py + h * 0.06, px + h * 0.2, py + h * 0.075, px + h * 0.31, py + h * 0.03, px + h * 0.3, py - h * 0.04,
+    px + h * 0.15, py - h * 0.065, px - h * 0.15, py - h * 0.065,
+  ], wobble: 0.015, seed: 175, sub: 3, gloss: 0.35 }], { h, formK: 0.55, spread: 0.65, gloss: 0.2, tex: 'stipple', seed: 175, amount: 0.5 });
+  softLine(ctx, B, [px - h * 0.28, py + h * 0.02, px - h * 0.2, py + h * 0.06, px - h * 0.08, py + h * 0.048, px + h * 0.08, py + h * 0.048, px + h * 0.2, py + h * 0.06, px + h * 0.28, py + h * 0.02], sheen, Math.max(1, h * 0.012), 0.45);
+
+  // The head: broad and flat, a shovel at the front; the feelers short, each ending in a fan.
+  const hx = x + h * 0.02, hy = y - h * 0.1 + bob * 0.4 + shove * h * 0.006, fan = 0.6 + 0.4 * Math.max(0, Math.sin(p.frame / 11));
+  blob(ctx, B, shade(shell, 1.0), [-1, 1].flatMap((s, i): Part[] => {
+    const tx = hx + s * h * 0.17, ty = hy - h * 0.03;
+    return [
+      { k: 'tube', pts: [hx + s * h * 0.08, hy - h * 0.005, hx + s * h * 0.13, hy - h * 0.025, tx, ty], r0: h * 0.013, r1: h * 0.011, seed: 177 + i },
+      ...[-1, 0, 1].map((j): Part => ({ k: 'ell', x: tx + s * h * 0.02, y: ty - j * h * 0.014 * fan, rx: h * 0.022, ry: h * 0.008, rot: s * (0.2 + j * 0.45 * fan) })),
+    ];
+  }), { h, formK: 0.4, spread: 0.7 });
+  blob(ctx, B, shade(shell, 1.04), [
+    { k: 'curve', pts: [hx - h * 0.13, hy - h * 0.03, hx - h * 0.15, hy + h * 0.02, hx - h * 0.1, hy + h * 0.06, hx, hy + h * 0.075, hx + h * 0.1, hy + h * 0.06, hx + h * 0.15, hy + h * 0.02, hx + h * 0.13, hy - h * 0.03, hx, hy - h * 0.05], wobble: 0.02, seed: 179, sub: 2, gloss: 0.3 },
+  ], { h, formK: 0.5, spread: 0.65 });
+  for (const s of [-1, 1]) eye(ctx, hx + s * h * 0.105, hy, h * 0.017, shade('#0a0a0c', Math.max(0.6, p.tone)), false);
+
+  // The horn: out of the head, thick at the root, swept up and back over the shield and the shell,
+  // forked at the tip; it tips with the shove.
+  const lean = shove * h * 0.02, rx0 = hx, ry0 = hy - h * 0.02;
+  const mid1 = { x: rx0 + h * 0.06 + lean * 0.4, y: ry0 - h * 0.24 }, tip = { x: rx0 - h * 0.035 + lean, y: ry0 - h * 0.55 };
+  blob(ctx, B, shade(shell, 1.12), [
+    { k: 'tube', pts: [rx0, ry0 + h * 0.03, rx0 + h * 0.05, ry0 - h * 0.09, mid1.x, mid1.y, (mid1.x + tip.x) / 2 + h * 0.03, (mid1.y + tip.y) / 2 - h * 0.01, tip.x, tip.y], r0: h * 0.08, r1: h * 0.02, seed: 181 },
+    { k: 'tube', pts: [tip.x, tip.y + h * 0.015, tip.x - h * 0.03, tip.y - h * 0.03, tip.x - h * 0.065, tip.y - h * 0.035], r0: h * 0.02, r1: h * 0.008, seed: 182 },
+    { k: 'tube', pts: [tip.x, tip.y + h * 0.015, tip.x + h * 0.035, tip.y - h * 0.02, tip.x + h * 0.05, tip.y - h * 0.05], r0: h * 0.018, r1: h * 0.007, seed: 183 },
+  ], { h, formK: 0.55, spread: 0.65, gloss: 0.35 });
+  softLine(ctx, B, [rx0 + h * 0.06, ry0 - h * 0.05, mid1.x + h * 0.035, mid1.y + h * 0.04, mid1.x + h * 0.025, mid1.y - h * 0.08, tip.x + h * 0.02, tip.y + h * 0.05], sheen, Math.max(1, h * 0.016), 0.55);
+  if (!B.override) patch(ctx, B, ashD, [{ k: 'ell', x: rx0 + h * 0.01, y: ry0 - h * 0.015, rx: h * 0.04, ry: h * 0.02, rot: 0 }], { alpha: 0.4, feather: 0.6 });
 }
 
 /** A pale edge down each segment of a glass leg, on its lit side: what makes a dark rod read as glass. */

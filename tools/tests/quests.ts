@@ -13,7 +13,7 @@ import { defaultParty, takeItem } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
 import { serialize, deserialize } from '../../src/game/save.ts';
 import { questLog, questMarks, questNews } from '../../src/game/quests.ts';
-import { handIns, personFlags } from '../../src/game/people.ts';
+import { handIns, personFlags, groupFlags } from '../../src/game/people.ts';
 import type { Chapter, LogQuest, PageView, QuestCond, QuestDef, QuestView, When } from '../../src/game/quests.ts';
 import { questSheets, chapterHeading, openingSheet, PAGE, LIST } from '../../src/ui/quests.ts';
 import { wrap } from '../../src/ui/draw.ts';
@@ -43,9 +43,10 @@ const featureFlags = (f: Feature): readonly string[] => f.kind === 'npc' ? perso
  * maps are the game's unless given.
  */
 export function condFaults(w: When, maps: readonly MapDef[] = MAP_DEFS): string[] {
-  // The flags people and events set, and the guild quests' own (a hall sets them: game/guilds.ts).
+  // The flags people, groups' questions and events set, and the guild quests' own (a hall sets them: game/guilds.ts).
   const npcFlags = new Set([
     ...maps.flatMap((d) => (d.features ?? []).flatMap(featureFlags)),
+    ...maps.flatMap((d) => (d.encounters ?? []).flatMap(groupFlags)),
     ...GUILD_QUESTS.flatMap((q) => [takenFlag(q.id), doneFlag(q.id)]),
   ]);
   const onMap = (ref: string): { map: MapDef | undefined; id: string } => { const [m, id] = ref.split(':'); return { map: maps.find((d) => d.id === m), id }; };

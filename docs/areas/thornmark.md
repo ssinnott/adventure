@@ -575,7 +575,7 @@ were (docs/areas/shelf.md §6), each is built where its places are:
 | 10 | Leave the Trees Standing | 5 | the Grove road; Thornhold | a choice put by a person; a person who moves | the built maps (#219), built |
 | 11 | The Dark Glass | 6 | Lyngwyn; the Chapterhouse | a hand-in; words that change with a flag; a choice | the built maps (#219), after the Lanterns' Dark Marker (#146), built |
 | 12 | The Elder's Four | 6 | the Grove Roots; Thornhold | a person found below; a choice; an event that comes with a flag | the built maps (#219), built |
-| 13 | The Ogre's Boy | 7 | the old tower; Thornhold | a group that talks before it fights | held (below) |
+| 13 | The Ogre's Boy | 7 | the old tower; Thornhold | a group that talks before it fights | the built maps, with the toll's system (#544), built |
 | 14 | How Did He Know | 7 | the survey team's camp (H3); the Split Oak | a letter read from the pack; a hand-in; a choice | H3 (#214), built |
 | 15 | The Hunters' Bargain | 8 | Deepthorn Lodge (I3) | a choice; the hunters' path, a secret hinted | I3 (#215), built |
 | 16 | The Older Mark | 8 | Henlys (I4) and Penspern (J5) | a rubbing, an item made at the stone; a hand-in; a choice | I4 and J5 (#49, #218), built |
@@ -584,11 +584,14 @@ were (docs/areas/shelf.md §6), each is built where its places are:
 | 19 | The Light on Penspern | 10 | Penspern (J5), by night | people and groups by night (`when`); a choice | J5 (#218), built |
 | 20 | Hale's Sergeant | 10 | Thornhold; the Deepthorn's shore | Hale gone from the Scarth | Act II (#558, after #156 and #190), built |
 
-Taken: 9 to 12 and 14 to 20. The changes to #56's drafts:
+Taken: all twelve, 9 to 20. The changes to #56's drafts:
 
-- **13 is held.** The Wardens' rank 1 quest (#144) kills the tower's ogre, and 13's bargain leaves it
-  alive, which asks for a group that talks before it fights: the toll the giants take on their Stair
-  (MONSTERS §8.1), first needed in the Whitespine. It is built with that system, not before.
+- **13 was held for its system, and is built with it (#544).** The Wardens' rank 1 quest (#144)
+  kills the tower's ogre, and 13's bargain leaves it alive, which asked for a group that talks before
+  it fights: the toll the giants take on their Stair (MONSTERS §8.1). The tower's band now puts its
+  bargain first. Kerra asks her brother Pasco home from Thornhold; refused, the band is the Wardens'
+  errand as before; kept, it keeps the tower, and the errand waits until the company goes back on
+  its word (§9, 53 to 56).
 - **20 goes to Act II.** Hale's vanishing is Act II's news (DESIGN §9, STORY) and his checkpoint is
   the Wardens' first task (DESIGN §8); the quest would take him off the Foreland map at level 10. It
   is Act II's: it starts at Thornhold once Hale is gone from the pass (`q_hale_taken`, which #156
@@ -861,6 +864,23 @@ overturn (docs/areas/kilns.md §9 has the guilds' asks):
 52. **Hendar is not held to Rietum's ten-squares rule:** I5's strip has no square ten from all five
     groups. She stands beside the rootwalkers, who sleep `until: TEAR_CLOSED`, which the mending
     needs; while she is there the nearest group is the roost's night brood, seven squares off.
+
+Decided by delegate for #544's The Ogre's Boy (#56's 13), on 9 October 2026, each the owner's to
+overturn (MONSTERS §3.3 has the system's):
+
+53. **The bargain is put by the tower's band as it stands** (`tm_ogre`: the ogre, its archer and
+    three brigands, unchanged), so its fight, figures and drops are as they were: the gate, the
+    density and the curve read Thornmark as before.
+54. **The Wardens' tower (#144) and 13 ask opposite things of one ogre, and the company chooses.**
+    Refused, it is the Wardens' errand as it was. Kept, the errand stays open, and the Wardens'
+    second rank waits on it, until the company goes back with swords (Space sets on a group that
+    stands aside), which Kerra hears of. Neither guild's words change: the Wardens want the tower.
+55. **Kerra gives it at Thornhold (13,7), and Pasco is home beside her (14,7) once it is done,**
+    either way. A company that killed the ogre first hears that he is home, and the quest begins
+    done; one that struck the bargain first, the same.
+56. **The hoard is the tower's chest as built** (`tm_tower`), and the bargain pays nothing, as
+    #56's other Thornmark quests pay none: the fight, the Wardens' pay and the chest are the kill's,
+    and the boy's good will the bargain's. The boy feeds it from home; the words are drafts.
 
 Fitted on 29 September to Act II, filed as Phase 1.2 (#149) the night before: 7 (Sunderwood's plan
 cuts the same land), 14 (20 is #156's and #190's), 16 (#163 gives dead wood its character, so the
