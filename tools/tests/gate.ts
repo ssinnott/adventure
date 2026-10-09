@@ -216,9 +216,9 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'cindercoast_g10: under': { whose: '#18', at: 1 },
   // And the Stair's foot (#510): the box that turns a Whitespine company back, at 22, wins every fight.
   'cindercoast_h10: under': { whose: '#18', at: 1 },
-  // And the Ember Waste's road (#517), its two country boxes.
+  // And the Ember Waste's road (#517), F10; E10's floor is over the area's since #524, so its groups
+  // count two under in Ashfall's pool.
   'emberwaste_f10: under': { whose: '#18', at: 1 },
-  'emberwaste_e10: under': { whose: '#18', at: 1 },
   'Ashfall: under': { whose: '#18', at: 1 },
   'highspine_i11: under': { whose: '#18', at: 1 },
   // And the ridge north (#503), banded from the area's floor as I11 is: its three groups are won every

@@ -393,14 +393,16 @@ export const walkthrough: Walkthrough = (ok) => {
   see(w, 'emberwaste_f10:f10_flow');
   for (const g of F10.encounters!) fight(w, `emberwaste_f10:${g.id}`);
 
-  // Over F10's west edge onto E10, walked: the same land and the same floor, so nothing is said.
-  const onto = cross(24, 'emberwaste_f10', 0, 30, WEST);
-  ok(w.world.zone?.id === 'emberwaste_e10' && w.world.state.x === e10.x + 31 && w.world.state.y === e10.y + 30 && e10.x + e10.w === f10.x && !onto.length,
-    `over F10's west edge at 0,30 onto E10's 31,30, walked, and nothing said: the same land, the same floor (${onto.join(' / ') || 'nothing'})`);
+  // Over F10's west edge onto E10, walked: the same land, so not named, and its floor a level over F10's
+  // since the Wold's half came (#524), so at 25 nothing, at 24 the Waste's harder words, at 22 its warning.
+  const ontoLow = cross(22, 'emberwaste_f10', 0, 30, WEST), ontoTwo = cross(24, 'emberwaste_f10', 0, 30, WEST), onto = cross(25, 'emberwaste_f10', 0, 30, WEST);
+  ok(w.world.zone?.id === 'emberwaste_e10' && w.world.state.x === e10.x + 31 && w.world.state.y === e10.y + 30 && e10.x + e10.w === f10.x && !onto.length
+    && E10.band?.join('-') === '25-26' && ontoTwo.join(' / ') === WASTE.crossing?.harder && ontoLow.join(' / ') === WASTE.crossing?.warning,
+    `over F10's west edge at 0,30 onto E10's 31,30, walked: the same land, so not named; at 25 nothing, at 24 the Waste's harder words, at 22 its warning (${onto.join(' / ') || 'nothing'}; ${ontoTwo.join(' / ')}; ${ontoLow.join(' / ')})`);
 
   // E10: the notch the road takes through the Cinder Hills at about 150,306, a Rider's waymark in it;
   // the hermit on the crest; the flow's head at the south edge; the box laid whole, the Wold's steppe
-  // and grass with it, and bare of the Wold's monsters, outriders and quests (#524's).
+  // and grass with it (#517), and the Wold's half on it (#524).
   const mark = E10.features!.find((f) => f.kind === 'event' && f.id === 'e10_waymark')!;
   ok(Math.abs(e10.x + mark.x - 150) <= 2 && Math.abs(e10.y + mark.y - 306) <= 2 && beside(e10, mark.x, mark.y, wasteRoad) && out.at(e10.x + mark.x, e10.y + mark.y).ch === '^',
     `the road takes the Hills by their notch at ${e10.x + mark.x},${e10.y + mark.y}, a Rider's waymark beside it`);
@@ -413,10 +415,41 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(flow.y === 30 && out.at(e10.x + flow.x, e10.y + 31).ch === '!', 'the lava flow\'s head lies at E10\'s south edge, and is seen from the ash over it');
   see(w, 'emberwaste_e10:e10_flow');
   const ground = E10.rows.join('');
-  ok([...ground].filter((c) => c === 's').length > 200 && ground.includes(',') && E10.encounters!.every((g) => g.monsters.every((m) => m === 'cinder_drake'))
-    && E10.features!.filter((f) => f.kind === 'npc').length === 1 && !E10.features!.some((f) => f.kind === 'npc' && (f.quest || f.flag)),
-    'E10 is laid whole, the Wold\'s steppe and grass with it, and holds nothing of the Wold\'s: its monsters, outriders and crossing line are #524\'s');
+  ok([...ground].filter((c) => c === 's').length > 200 && ground.includes(','), 'E10 is laid whole, the Wold\'s steppe and grass with it');
+
+  // The Wold's half (#524). Its groups: the beetles come over from the Waste on the ash, nearest the
+  // way in; the vultures at the hills' foot, the Wold's nearest; the pride of three in the first grass
+  // west of the Hills; and the drakes on the crest (#517). All won at the box's floor.
+  const group = (id: string) => E10.encounters!.find((g) => g.id === id)!;
+  const [beetles, vultures, lions] = ['e10_beetles', 'e10_vultures', 'e10_lions'].map(group);
+  const from = (g: { x: number; y: number }): number => Math.abs(g.x - E10.start.x) + Math.abs(g.y - E10.start.y);
+  ok(beetles.monsters.every((m) => m === 'cinder_beetle') && out.at(e10.x + beetles.x, e10.y + beetles.y).ch === 'a'
+    && vultures.monsters.every((m) => m === 'vulture') && lions.monsters.join() === 'wold_lion,wold_lion,wold_lion' && out.at(e10.x + lions.x, e10.y + lions.y).ch === 's'
+    && from(beetles) < from(vultures) && from(vultures) < from(lions) && lions.x < 11,
+    'the beetles over from the Waste on the ash nearest the way in, the vultures at the hills\' foot after them, and a pride of three in the first grass west of the Hills');
   for (const g of E10.encounters!) fight(w, `emberwaste_e10:${g.id}`);
+  // From the road on the ash, the vultures turning over the grave's hills; under the hills by the
+  // road, the Riders' camp; over the crest, the glare off the Glass; where the grass begins, the
+  // Riders' cairn.
+  const nearRoad = (id: string, ch: string): boolean => { const f = E10.features!.find((x) => 'id' in x && x.id === id)!; return beside(e10, f.x, f.y, wasteRoad) && out.at(e10.x + f.x, e10.y + f.y).ch === ch; };
+  const fire = E10.features!.find((f) => f.kind === 'camp')!;
+  ok(nearRoad('e10_circle', 'a') && nearRoad('e10_glare', '^') && nearRoad('e10_mark', 's') && beside(e10, fire.x, fire.y, wasteRoad) && out.at(e10.x + fire.x - 1, e10.y + fire.y).ch === '^',
+    'by the road the vultures seen turning over the hills, a camp under them, the glare from the crest and the Riders\' cairn where the grass begins');
+  for (const id of ['e10_circle', 'e10_glare', 'e10_mark']) see(w, `emberwaste_e10:${id}`);
+  // A Rider coming up the road, with word of the tents and of the vultures; two outriders on the last
+  // rise, who watch and stop nobody. Words only: no quest, no flag.
+  const people = E10.features!.filter((f) => f.kind === 'npc') as Person[];
+  const rider = people.find((p) => p.name === 'A Rider')!, outriders = people.find((p) => p.name === 'Two outriders')!;
+  ok(people.length === 3 && people.every((p) => !p.quest && !p.flag), 'E10\'s people, the hermit, the Rider and the outriders, have words only');
+  w.world.travel('emberwaste_e10', rider.x, rider.y);
+  const word = meet(rider, w.party, heard(w.world, rider)).text;
+  ok(word.includes('Akordu') && word.includes('vultures') && beside(e10, rider.x, rider.y, wasteRoad), 'the Rider on the road tells of the tents at Akordu and of what the vultures mean');
+  w.world.travel('emberwaste_e10', outriders.x, outriders.y);
+  ok(meet(outriders, w.party, heard(w.world, outriders)).text.includes('We watch'), 'the outriders on the last rise watch, and stop nobody');
+  // The Wold's line is its own row's, said where a Wold map is first entered (D10 over E10's west edge,
+  // #527): E10 is the Waste's land, so it says the Waste's.
+  const WOLD = ATLAS.zones.find((z) => z.id === 'wold');
+  ok(!!WOLD?.crossing?.harder && !!WOLD.crossing.warning && !WOLD.maps?.length, 'the Wold\'s own words are on its row, for the first Wold map to say');
 
   // The secret: the Hills' cairns all face the steppe but the one that looks back at the Stone, searched
   // where it looks; behind its stones the first Rider who came down to trade, on her saddle. Walked,
