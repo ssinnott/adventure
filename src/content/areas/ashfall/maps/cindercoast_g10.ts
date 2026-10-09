@@ -21,6 +21,12 @@ import { NORTH, SOUTH } from '../../../../game/types.ts';
 export const GATE: Exit = { x: 6, y: 2, to: 'cinderport', tx: 8, ty: 14, tf: NORTH,
   label: 'Cinderport: black stone limed pale, ash along every wall, and the sea behind it.' };
 
+/**
+ * The Founding Stone (#56's 50, #519): the stone carried up from Old Cinder and given to the potter to
+ * stand on the trading ground, where Cinderport raises a shrine for it and the Riders move off.
+ */
+export const FOUNDING_RAISED = 'q_founding_raised';
+
 export const CINDERCOAST_G10: MapDef = {
   id: 'cindercoast_g10',
   name: 'Cindercoast',
@@ -76,6 +82,8 @@ export const CINDERCOAST_G10: MapDef = {
       '"Where it fell the land burned to glass. Remember what that cost, if anyone ever offers to open it for you."',
     ] },
     { kind: 'camp', x: 13, y: 4, name: 'The Riders\' fires', text: 'A fire of dung and driftwood by the horse-lines. The Riders shift along to make room.' },
+    // The founding stone raised (#519), and the Riders' answer to it.
+    { kind: 'event', x: 9, y: 5, id: 'g10_founding', once: true, after: { flag: FOUNDING_RAISED }, text: 'A shrine of new basalt on the grass, the founding stone set in its face. The Riders have moved their horses off from it.' },
     { kind: 'event', x: 16, y: 5, id: 'g10_horses', once: true, text: 'Horses on a line between stakes, short and shaggy, ash in their manes. Not one of them is shod.' },
     // Under the town's east wall, the chandler's racks.
     { kind: 'event', x: 14, y: 1, id: 'g10_racks', once: true, text: 'Racks under the wall, hung with candles drying in pairs by their wicks. The chandler counts them twice.' },
