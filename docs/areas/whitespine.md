@@ -96,10 +96,16 @@ the plan (`src/content/atlas.ts` imports it where its rows were), as Saltreach's
 the area cannot be listed in AREAS until #499 gives it a map, which points the area's `atlas` at
 the folder and takes the import out.
 
-Nothing else is built but some of its monsters (below). The systems it waits on are #442's: the
-curve's rows and the gear past 22 (#542), cliffs and peaks with the road through them (#543), the
-toll (#544), sweep (#545), stone (#546), the crossings (#547), the Ember Stone (#548) and the bot
-(#549). Its monsters are #507's.
+Its ground (#543): peaks (`A`) and cliffs (`|`), the mountain's rock to walk into, see and climb,
+with the road through them plain road, so the scaffold drafts each box square for square (J11's 202
+peaks, I11's 48 peaks and 64 cliffs) and the view draws a summit and a face (docs/SLICE.md).
+
+Its row on the curve is in (#542), in `src/content/progression.ts`, planned until #499 lists the
+area (band 22–24, next 24, window 5,000). It has no step on the gear ladder, no town to sell one:
+Rime Lodge's rung is the pass's, and Cinderport's step (docs/areas/ashfall.md §4.4) comes two
+levels on. Nothing else is built but its eight monsters (below). The systems it waits on are the
+rest of #442's: the toll (#544), sweep (#545), stone (#546), the crossings (#547), the Ember Stone
+(#548) and the bot (#549).
 
 The monks are drawn (#507), three of MONSTERS §8.1's eight, ahead of the boxes that place them: the
 Brother, the Bell-ringer and the Abbot, robed on the keepers' frame (`src/ui/monsters/keepers.ts`).
@@ -107,6 +113,11 @@ Their defs are in `src/content/areas/whitespine/monsters.ts`, listed in `AHEAD`
 (`src/content/index.ts`) until #499 lists the area, and each is owed in `UNPLACED`
 (`tools/tests/maps.ts`) to the issue that places it: the Brother to #499 and the Bell-ringer and the
 Abbot to #500. §9 has the decisions.
+
+Three more on frames that exist are drawn (#507), the Spine Eagle on the birds', the Snow Troll on
+the ogre's and the Ashen Mason on the cultists', in the same file and list, each owed in `UNPLACED`
+to the first box whose brief places it (§4): the eagles and the troll to J11 (#499) and the masons
+to I8 (#504). §9 has the decisions.
 
 The giants are drawn (#507), a new family on a frame of their own (`src/ui/monsters/giants.ts`): the
 Stair Giant and the Stair-king, ahead of the box that places them. Their defs are with the monks', and
@@ -447,9 +458,10 @@ MONSTERS §8.1 has the roster and the fights: the Spine Eagle, the Brother, the 
 Troll, the Stair Giant, the Ashen Mason, the Abbot and the Stair-king; the chapter house and the
 Stair in snow. Their drawings are #507's, eight in all, the giants new and the rest on frames that
 exist. §4.2 to §4.7 place every group, box by box, the gentlest at the pass's foot and the Abbot,
-the king and the masons at the top of the band. The monks are drawn (#507, §3): the Brother, the
-Bell-ringer and the Abbot, robed on the keepers' frame; and the giants, the Stair Giant and the
-Stair-king, on a frame of their own (§3, §9), the last of the eight.
+the king and the masons at the top of the band. All eight of #507's drawings are done (§3, §9): the
+monks, the Brother, the Bell-ringer and the Abbot, robed on the keepers' frame; the Spine Eagle, the
+Snow Troll and the Ashen Mason; and the giants, the Stair Giant and the Stair-king, on a frame of
+their own.
 
 New in the Whitespine, for the novelty check (EXPANSION §5.4): the giants, a new family (#507), and
 with them the toll, a choice before a fight (#544), and sweep, one blow at every member of a row
@@ -476,9 +488,10 @@ shards over the sea.
   briefs are settled.
 - **Gold.** Training six members from 22 to 24 costs about 10,800 with today's `trainPrice`, but
   nothing trains here (#443, call 7): the gold goes over the range to Cinderport, which teaches to
-  27, and the third prestiges ask quests, not gold (DESIGN §5). The band's price window is 5,000,
-  and no find or ware in the area comes near it; the toll is set with #544 inside it, dear enough
-  to be a choice and never a wall. A clear should still pay the training, in the hoard, the
+  27, and the third prestiges ask quests, not gold (DESIGN §5). The band's price window is 5,000
+  (#542), and no find or ware in the area comes near it: the pass has no step of its own and wears
+  Rimewater's rung, 1,750 to 2,050 gold with its pluses. The toll is set with #544 inside the
+  window, dear enough to be a choice and never a wall. A clear should still pay the training, in the hoard, the
   undercroft and the trolls' cave.
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor: a
   company at 22 wins nine in ten of J11's fights and walks the road from the pass's foot to the gate
@@ -558,6 +571,44 @@ Decided by delegate for #507 (the monks), each the owner's to overturn:
    gives the Abbot a find. Sizes 1.1, 1.1 and 1.4.
 7. **Each is owed to the box that places it first:** the Brother to #499, on the vale's road, and
    the Bell-ringer and the Abbot to #500 (`UNPLACED` in `tools/tests/maps.ts`).
+
+Decided by delegate for #507 (the eagle, the troll and the mason), each the owner's to overturn:
+
+1. **The Spine Eagle is the birds' frame at its biggest, coming down on its prey:** the wings
+   raised high with the primaries spread, the feathered legs thrust forward and the yellow feet open
+   just off the ground; dark brown, the crown and nape gold, a heavy brow and a hooked yellow bill.
+2. **The eagle is drawn inside 0.62 of its height, at size 0.9,** so the raised wings keep inside
+   the view; its body is still half as big again as the raven's. It does not hop: the wings settle.
+3. **The eagle is a skirmisher on the line at 22** (328 hit points, 3d7+6), flying and reaching
+   the back row as the raven does (MONSTERS §8.1: it flies); a beast, it carries no gold.
+4. **The Snow Troll is the tor troll's frame made of snow,** a Build of it as MONSTERS §11 has it:
+   no beds, lichen or heather; rime along the hump and the shoulders, a cornice over the brow with
+   icicles at its lip, a maw with icicles for teeth, blue shadows and a cold light in the eyes.
+5. **It stands in the drift it rose from, the fists sunk in it:** a drift that stood up, and the
+   widest base of any troll, so it reads apart from the tor troll at a glance as well as by colour.
+6. **The troll is #537's at 23:** size 1.6 with its crown at 0.80 of its height, under 0.82; three
+   quarters of the brute's line, 474 hit points, mending 47 a round unless fire struck it.
+7. **The Ashen Mason wears the overseer's hitched robe under a mason's leather apron,** white with
+   dust at the hem, the Hand's grey up to the elbow, a step on from the gleaner's. A glass shard to
+   set rides on the far shoulder, lit from inside; the hammer is low in the near fist, its head by
+   the foot, and now and then it lifts off the stones: a hammer from below.
+8. **The mason is a soldier on the line at 23** (319 hit points, 4d8+2); the Hand, it never breaks
+   (`steady`), and it carries 45 to 100 gold, on from the overseer's and the gleaner's. Its sprite
+   kind is `mason`, as theirs are named for their work.
+9. **Nothing is declared apart:** the shard, the hammer, the raised wings and the talons are each
+   one piece of ink with the body at combat size.
+10. **Each is owed to the first box whose brief places it** (§3): the eagles and the troll to J11
+    (#499), the masons to I8 (#504).
+11. **What was drawn before is unchanged to the pixel:** the eagle and the troll are Builds on
+    their frames, their new parts off for every other kind; the mason is a function of its own.
+
+Decided by delegate for #542, each the owner's to overturn (docs/areas/ashfall.md §9 has the step):
+
+1. **The Whitespine's row is 22–24, next 24, window 5,000,** owed to #445 with nothing given, as
+   the issue has it: 17,867 xp a member and 10,800 gold, the training of six from 22 to 24.
+2. **The pass has no step on the ladder,** no town to sell one: its gear is Rimewater's rung, the
+   top at 22, so a company at 24 wears what one at 22 does and Cinderport's step comes at 25. The
+   briefs' pieces of Rimewater's rung with a plus stand; they are the ladder's.
 
 Decided by delegate for #507 (the giants), each the owner's to overturn:
 

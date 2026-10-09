@@ -1,11 +1,11 @@
 // The Ashen cult: cultist, acolyte, zealot, adept, deacon and the Hand of Ash, six ranks in one
-// order, the overseer who keeps the Hand's chains and the gleaner who quarries the Sunder. Painted
-// as masses, not parts: every robe is ONE blob in the def's tint (gown, cowl and near sleeve
-// together, with creases under the arm and at the belt and a folds texture), the far arm its own
-// darker mass behind it, then the other materials (skin, bone mask, mantle, rope, leather, steel)
-// each as their own blob, then the crisp details (ember eyes, sigils, runes, blades) on top. Ember
-// orange is the cult's accent and is never toned: it is the light source, so every ember sits on a
-// glow().
+// order, the overseer who keeps the Hand's chains, the gleaner who quarries the Sunder and the mason
+// who builds its causeway at Sheer Point. Painted as masses, not parts: every robe is ONE blob in
+// the def's tint (gown, cowl and near sleeve together, with creases under the arm and at the belt
+// and a folds texture), the far arm its own darker mass behind it, then the other materials (skin,
+// bone mask, mantle, rope, leather, steel) each as their own blob, then the crisp details (ember
+// eyes, sigils, runes, blades) on top. Ember orange is the cult's accent and is never toned: it is
+// the light source, so every ember sits on a glow().
 // The bodies under the robes come from figure.ts, the same measured frame the bandits stand on:
 // shoulders at -0.755, the joints a deltoid's radius under that line, a trunk that narrows to a
 // waist, arms that taper to a wrist half a shoulder wide, and joint angles a person could hold.
@@ -20,7 +20,7 @@ import type { Arm, Mats, Pt, Rig } from './figure.ts';
 import { armParts, elbowCrease, hand as fist, legs, makeRig, trunkW, FAR } from './figure.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['cultist', 'acolyte', 'zealot', 'adept', 'deacon', 'ashen_hand', 'overseer', 'gleaner'];
+export const KINDS: readonly MonsterSprite[] = ['cultist', 'acolyte', 'zealot', 'adept', 'deacon', 'ashen_hand', 'overseer', 'gleaner', 'mason'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'zealot') zealot(ctx, x, y, h, p);
@@ -30,6 +30,7 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   else if (kind === 'deacon') deacon(ctx, x, y, h, p);
   else if (kind === 'overseer') overseer(ctx, x, y, h, p);
   else if (kind === 'gleaner') gleaner(ctx, x, y, h, p);
+  else if (kind === 'mason') mason(ctx, x, y, h, p);
   else cultist(ctx, x, y, h, p);
 };
 
@@ -270,6 +271,104 @@ function gleaner(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
   blob(ctx, B, greyArm, [tube([near[1].x, near[1].y, near[2].x, near[2].y], h * 0.038, h * 0.027, 0.03, 116)], { h, formK: 0.5 });
   const ka = knife(ctx, near[2].x, near[2].y, 0.35, h * 0.17, h, m.steel, m.leather, m.bone, false);
   fist(ctx, R, near[2], ka, 117, { hex: grey, k: 0.98, flip: 1 });
+  void p.light;
+}
+
+// ------------------------------------------------------------------ the mason ----
+/**
+ * The mason: the Hand's builder on the causeway at Sheer Point (MONSTERS §8.1). The overseer's robe
+ * hitched up over trousers and boots, a mason's leather apron over it, white with stone dust at the
+ * hem, and the sleeves pushed up off grey forearms: the grey has reached the elbow, a step on from
+ * the gleaner's. A shard to set rides on the far shoulder, a long blade of glass lit from inside, and
+ * low in the near fist is a mason's hammer, its head down by the near foot: it comes from below.
+ * Idle: now and then the hammer's head lifts off the stones and drops back, and the shard's light
+ * moves in it.
+ */
+function mason(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const m = mats(p.tone);
+  const R = makeRig(x, y, h, p, { tilt: -0.025, hipTilt: 0.02, turn: 0.02, near: [0.062, 0.088, 0.11], far: [-0.056, -0.07, -0.08], toe: [0.85, -0.35] }, CULT);
+  const { sy, hx, hy, hr } = R;
+  const pulse = 0.5 + 0.5 * Math.sin(p.frame / 6), shimmer = 0.5 + 0.5 * Math.sin(p.frame / 9 + 1);
+  // The hammer comes up every 150 frames: its head lifts off the stones and drops back.
+  const ht = p.frame % 150, lift = ht < 36 ? Math.sin((ht / 36) * Math.PI) : 0;
+  const beltY = sy + h * 0.18, hemY = sy + h * 0.5;
+  // The far arm bent up, its fist over the far shoulder steadying the shard on it; the near one
+  // low, the fist at the hip closed on the hammer's haft.
+  const far: Arm = [R.sFar, { x: x - h * 0.225, y: sy + h * 0.13 }, { x: x - h * 0.165, y: sy - h * 0.025 }];
+  const near: Arm = [R.sNear, { x: x + h * 0.245, y: sy + h * 0.2 }, { x: x + h * 0.27, y: sy + h * 0.355 }];
+  // The sleeves are pushed up to the elbow.
+  const cuff = (a: Arm): Pt => ({ x: a[1].x + (a[2].x - a[1].x) * 0.06, y: a[1].y + (a[2].y - a[1].y) * 0.06 });
+  const grey = shade(mix(m.skin, m.ash, 0.9), 0.6), greyArm = shade(mix(m.skin, m.ash, 0.88), 0.72);
+  const hide = shade('#6e5844', p.tone), dust = shade('#d6d0c4', p.tone);
+  groundShadow(ctx, x + h * 0.05, y + 1, h * 0.8);
+
+  // The shard, behind everything: a slab of the Stone's glass from behind the far shoulder up past
+  // the cowl, broken off in two points at its top, faceted, and lit from inside.
+  const s0 = { x: far[2].x + h * 0.06, y: far[2].y + h * 0.1 }, s1 = { x: far[2].x - h * 0.1, y: far[2].y - h * 0.27 };
+  const sa = Math.atan2(s1.y - s0.y, s1.x - s0.x), sw = h * 0.05, nx = -Math.sin(sa), ny = Math.cos(sa);
+  const at = (t: number, k: number): [number, number] => [s0.x + (s1.x - s0.x) * t + nx * sw * k, s0.y + (s1.y - s0.y) * t + ny * sw * k];
+  glossPoly(ctx, B, [
+    ...at(0, 0.7), ...at(0.5, 1.15), ...at(0.9, 0.95), ...at(1.05, 0.5), ...at(0.93, 0.05), ...at(1.01, -0.45), ...at(0.84, -1), ...at(0.35, -1.05), ...at(0, -0.6),
+  ], shade('#a8d6e4', p.tone), { gloss: 1, h });
+  if (!B.override) {
+    softLine(ctx, B, [...at(0.04, 0.05), ...at(0.5, 0.15), ...at(0.93, 0.05)], '#f4fbff', Math.max(1, h * 0.008), 0.6);
+    softLine(ctx, B, [...at(0.5, 0.15), ...at(0.9, 0.95)], '#f4fbff', Math.max(1, h * 0.006), 0.45);
+    glow(ctx, B, ...at(0.35 + 0.3 * shimmer, 0), h * 0.09, '#bff0ff', 0.4 + 0.25 * pulse, '#ffffff');
+  }
+
+  // The far arm: the sleeve to the elbow, the grey forearm, the fist on the shard.
+  blob(ctx, B, greyArm, [tube([far[1].x, far[1].y, far[2].x, far[2].y], h * 0.036, h * 0.026, 0.03, 121)], { h, formK: 0.5 });
+  blob(ctx, B, p.dark, armParts(R, [far[0], far[1], cuff(far)], 122, 1.25), { h, formK: 0.55, creases: [elbowCrease(R, far)] });
+  fist(ctx, R, far[2], sa, 123, { hex: shade(grey, 0.9), k: 0.95, flip: 1 });
+
+  legs(ctx, R, shade('#3a3430', p.tone), 124, [0.85, -0.35]);
+
+  // The robe: gown and cowl in the tint, hitched to the knee, and the near sleeve to the elbow.
+  blob(ctx, B, p.base, [
+    robePart(R, beltY, hemY, 0.24, 125, 0.03),
+    cowlPart(R, 1.2, 126),
+    ...armParts(R, [near[0], near[1], cuff(near)], 127, 1.25),
+  ], { h, tex: 'folds', seed: 128, amount: 0.7, formK: 0.6, creases: [
+    { x0: x + trunkW(R, sy + h * 0.06) - h * 0.01, y0: sy + h * 0.07, x1: x + trunkW(R, beltY), y1: beltY - h * 0.01, r: h * 0.022, a: 0.35 },
+    { x0: hx - hr * 1.1, y0: hy + hr * 1.25, x1: hx + hr * 1.1, y1: hy + hr * 1.3, r: h * 0.02, a: 0.35 },
+    elbowCrease(R, near),
+  ] });
+  drape(ctx, h, p.base, x + h * 0.06, beltY + h * 0.01, h * 0.16, hemY - beltY - h * 0.03, 4, 129, 0.4, 0.3);
+  sleeveEdge(ctx, h, p.base, near[0].x, near[0].y, near[1].x, near[1].y, h * 0.05);
+
+  // The apron: a mason's leather from the chest to the knee on straps over the shoulders, white
+  // with the dust of the stone at its hem.
+  const ax = x + h * 0.012, aw0 = trunkW(R, sy + h * 0.08) * 0.72, aw1 = trunkW(R, beltY) + h * 0.03, ay0 = sy + h * 0.07, ay1 = sy + h * 0.6;
+  blob(ctx, B, m.leather, [
+    tube([ax - aw0, ay0 + h * 0.01, x - h * 0.07, sy - h * 0.005], h * 0.01, h * 0.009, 0.03, 130),
+    tube([ax + aw0, ay0 + h * 0.01, x + h * 0.08, sy - h * 0.005], h * 0.01, h * 0.009, 0.03, 131),
+  ], { h, formK: 0.4 });
+  blob(ctx, B, hide, [{ k: 'poly', pts: [
+    ax - aw0, ay0, ax + aw0, ay0, ax + aw1, beltY, ax + aw1 + h * 0.014, ay1, ax - aw1 * 0.86, ay1 + h * 0.008, ax - aw1 * 0.86, beltY,
+  ] }], { h, tex: 'stipple', seed: 132, amount: 0.4, formK: 0.5 });
+  patch(ctx, B, dust, [{ k: 'poly', pts: [ax - aw1 * 0.86, ay1 - h * 0.11, ax + aw1 + h * 0.012, ay1 - h * 0.08, ax + aw1 + h * 0.014, ay1, ax - aw1 * 0.86, ay1 + h * 0.008] }], { alpha: 0.5, feather: 0.6 });
+
+  // The face: the void under the cowl and its embers.
+  faceVoid(ctx, hx, hy + h * 0.016, hr * 0.92, hr * 1.08, 133);
+  emberEyes(ctx, hx - hr * 0.46, hy, hx + hr * 0.46, hy, h * 0.014, pulse, false, 2.1);
+
+  // A leather belt over the apron, and a chisel pushed through it at the near hip.
+  const bw = trunkW(R, beltY) + h * 0.03;
+  blob(ctx, B, m.leather, [tube([x - bw, beltY + h * 0.012, x, beltY - h * 0.004, x + bw, beltY + h * 0.008], h * 0.016, h * 0.016, 0.06, 134)], { h, formK: 0.5 });
+  blob(ctx, B, m.steel, [tube([x + h * 0.09, beltY + h * 0.04, x + h * 0.11, beltY - h * 0.075], h * 0.008, h * 0.006, 0, 135)], { h, formK: 0.4, gloss: 0.5 });
+
+  // The near forearm, grey to the elbow; then the hammer, low, and the fist closed on its haft. An
+  // ash haft from the fist down past the near foot, and a square iron head across its end.
+  blob(ctx, B, greyArm, [tube([near[1].x, near[1].y, near[2].x, near[2].y], h * 0.038, h * 0.027, 0.03, 136)], { h, formK: 0.5 });
+  const ha = 1.24 - 0.32 * lift, hl = h * 0.37, hc = Math.cos(ha), hs = Math.sin(ha);
+  const g0 = { x: near[2].x - hc * h * 0.04, y: near[2].y - hs * h * 0.04 }, g1 = { x: near[2].x + hc * hl, y: near[2].y + hs * hl };
+  blob(ctx, B, shade('#8a6a48', p.tone), [tube([g0.x, g0.y, g1.x, g1.y], h * 0.014, h * 0.016, 0.02, 137)], { h, formK: 0.4 });
+  const hw = h * 0.066, hd = h * 0.033;
+  blob(ctx, B, shade('#5c5e66', p.tone), [{ k: 'poly', pts: [
+    g1.x - hc * hd - hs * hw, g1.y - hs * hd + hc * hw, g1.x + hc * hd - hs * hw * 0.9, g1.y + hs * hd + hc * hw * 0.9,
+    g1.x + hc * hd + hs * hw * 0.9, g1.y + hs * hd - hc * hw * 0.9, g1.x - hc * hd + hs * hw, g1.y - hs * hd - hc * hw,
+  ] }], { h, formK: 0.4, gloss: 0.35 });
+  fist(ctx, R, near[2], ha, 138, { hex: grey, k: 1.02, flip: 1 });
   void p.light;
 }
 

@@ -21,6 +21,7 @@ import { ok, owed, stopsWalk } from './lib.ts';
  */
 const UNPLACED: Record<string, string> = {
   brother: '#499', bell_ringer: '#500', abbot: '#500',
+  spine_eagle: '#499', snow_troll: '#499', ashen_mason: '#504',
   stair_giant: '#502', stair_king: '#502',
 };
 

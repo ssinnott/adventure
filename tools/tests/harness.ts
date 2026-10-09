@@ -50,11 +50,12 @@ export function harness(): void {
     `the company takes its prestiges at 11, 19 and 27 (the knight a ${className(taken[3])} at 27, striking ${blowsAt.join(', ')} times at 10, 11, 19 and 27), and with them the sorcerer's spells gain 15% at the first and 45% by the third, the paladin's half that and the knight's none (${ranks.join(', ')})`);
   // The curve's gear, as a what-if: past the ladder's top weapons and armour keep growing; play has none of it.
   const knight = (p: ReturnType<typeof companyAt>): [number, number] => [weaponOf(p.members[0]).bonus ?? 0, armorClass(p.members[0])];
-  const flat = [knight(companyAt(GEAR_TOP, 37)), knight(companyAt(24, 37))];
+  const past = GEAR_TOP + 2;
+  const flat = [knight(companyAt(GEAR_TOP, 37)), knight(companyAt(past, 37))];
   RULES.gearGrows = true;
-  const grown = [knight(companyAt(GEAR_TOP, 37)), knight(companyAt(24, 37))];
+  const grown = [knight(companyAt(GEAR_TOP, 37)), knight(companyAt(past, 37))];
   RULES.gearGrows = undefined;
-  ok(grown[0].join() === flat[0].join() && grown[1][0] > flat[1][0] && grown[1][1] === flat[1][1] + (24 - GEAR_TOP) / 2, `gear grows past the ladder's top, ${GEAR_TOP}, only where a what-if asks: at 24 the knight's weapon gains ${grown[1][0] - flat[1][0]} and the knight's armour ${grown[1][1] - flat[1][1]}`);
+  ok(grown[0].join() === flat[0].join() && grown[1][0] > flat[1][0] && grown[1][1] === flat[1][1] + (past - GEAR_TOP) / 2, `gear grows past the ladder's top, ${GEAR_TOP}, only where a what-if asks: at ${past} the knight's weapon gains ${grown[1][0] - flat[1][0]} and the knight's armour ${grown[1][1] - flat[1][1]}`);
   // Fights may run longer as both sides grow, and never to the cap; a fight that would is broken off.
   const allowed = Array.from({ length: CAP }, (_, k) => [longest(k + 1), slowest(k + 1)]);
   ok(longest(1) === 4 && slowest(1) === 6 && allowed.every(([a, b], k) => a <= b && b < ROUND_CAP && (k === 0 || a >= allowed[k - 1][0])), `a fight's rounds run from ${longest(1)} (${slowest(1)} at most) at level 1 to ${longest(CAP).toFixed(1)} (${slowest(CAP).toFixed(1)}) at ${CAP}`);
@@ -75,6 +76,10 @@ export function harness(): void {
   // And at Act III's, by its steps at Anvilhall and Rime Lodge and the finds after each (#535).
   ok([18, 20, 22].every((l) => gateCompany(l, 32).members.every((m) => m.level === l)) && gear(18) !== gear(16) && gear(20) !== gear(18) && gear(22) !== gear(20),
     `the gate's company trains to 18, 20 and 22, and dresses past the one two under it (${gear(22)})`);
+  // And at Act IV's, by its one step at Cinderport's armourer: the floor at 26 wears it and the one at
+  // 24 does not (#542).
+  ok([24, 26, 28].every((l) => gateCompany(l, 32).members.every((m) => m.level === l)) && gear(26) !== gear(24),
+    `the gate's company trains to 24, 26 and 28, and dresses past the one two under it at 26 (${gear(26)})`);
   // What a fight costs: all of a fallen member's hit points, and every spell point cast.
   const p = defaultParty(makeRng(33)), fallen = p.members[5];
   const pool = p.members.reduce((a, m) => a + m.maxHp + m.maxSp, 0);
@@ -102,8 +107,8 @@ export function harness(): void {
     const d = days(l, [standardEncounter(r, l)], 60, 5001), bad = d.why.dead + d.why.lost + d.why.long;
     ok(Math.abs(d.fights - fightsPerRest(l)) <= 1 && bad <= worst, `a company of level ${l} fights ${d.fights.toFixed(1)} encounters of ${ROLES[r].group} ${ROLES[r].plural} between rests (${fightsPerRest(l)} asked), and ${(bad * 100).toFixed(0)}% of its days end badly (${(worst * 100).toFixed(0)}% at most)`);
   }
-  // Past 10 the target grows: a company of 24 fights about ten between rests, in Act III's gear to the
-  // ladder's top at 22 (#535), the line past 16 made again with it (#541).
+  // Past 10 the target grows: a company of 24 fights about ten between rests, in Act III's gear to 22
+  // (#535), which it wears till Act IV's step at 25 (#542), the line past 16 made again with it (#541).
   const late = days(24, [standardEncounter('soldier', 24)], 40, 5001);
   ok(Math.abs(late.fights - fightsPerRest(24)) <= 1.5, `a company of level 24 fights ${late.fights.toFixed(1)} encounters of 4 Test Soldiers between rests (${fightsPerRest(24)} asked)`);
   // And through Act III, 16 to 22, about its fights at every level, a fight more every four levels.
