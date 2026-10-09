@@ -22,8 +22,7 @@
 import type { Atlas } from '../game/atlas.ts';
 // The planned areas chart their own rows in their folders, spread in here where the plan's were
 // until each area's first box lists it (as Saltreach's, Sunderwood's, the Kilns', Cairnmoor's,
-// Rimewater's and the Whitespine's were, #169, #194, #457, #476, #486, #499).
-import * as ASHFALL from './areas/ashfall/atlas.ts';
+// Rimewater's, the Whitespine's and Ashfall's were, #169, #194, #457, #476, #486, #499, #511).
 import * as GLASSWOLD from './areas/glasswold/atlas.ts';
 
 export const PLAN: Atlas = {
@@ -268,19 +267,16 @@ export const PLAN: Atlas = {
     { id: 'hearth', name: 'Hearth Isle', order: 12, band: [28, 30], label: [256, 196], note: 'The temple over the core' },
   ],
   zones: [
-    ...ASHFALL.ZONES,
     ...GLASSWOLD.ZONES,
     { id: 'hearthisle', name: 'Hearth Isle', area: 'hearth', seeds: [[256, 172]] },
   ],
   places: [
     { id: 'dead_drop', name: 'The Dead-Drop', kind: 'dungeon', planned: true, band: [26, 28], at: [208, 204] }, // below the Tide Ship's hold: three levels of 32 by 32 (#22; #443, call 4)
-    ...ASHFALL.PLACES,
     ...GLASSWOLD.PLACES,
     { id: 'underdeep', name: 'The Underdeep', kind: 'deep', planned: true, order: 13, band: [30, 31], at: [216, 168] },
     { id: 'core', name: 'The Core', kind: 'deep', planned: true, order: 14, band: [32, 32], at: [216, 176] },
   ],
   sites: [
-    ...ASHFALL.SITES,
     ...GLASSWOLD.SITES,
     // XII. The middle of the world, and the names of waters and walls.
     { name: 'The Hearth', icon: 'hearth', at: [256, 174], label: 'none', planned: true },

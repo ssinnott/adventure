@@ -20,11 +20,13 @@ import { ok, owed, stopsWalk } from './lib.ts';
  * keepers and the Matron by #490.
  */
 const UNPLACED: Record<string, string> = {
-  bell_ringer: '#500', abbot: '#500', ashen_mason: '#504',
+  ashen_mason: '#504',
   stair_giant: '#502', stair_king: '#502',
-  strangler_vine: '#510', cinder_beetle: '#510', ember_salamander: '#511', ash_husk: '#514',
-  cinder_drake: '#511', old_drake: '#515',
+  ash_husk: '#514', old_drake: '#515',
   stoker: '#513', sentry: '#514', sentinel: '#516',
+  loader: '#22, dead_drop', tally_clerk: '#22, dead_drop', hold_keeper: '#22, dead_drop2', tallymaster: '#22, dead_drop3',
+  drakeling: '#22 meridian_camp2', brood_drake: '#22 meridian_camp2', flue_walker: '#22 meridian_camp2',
+  deep_knocker: '#22 meridian_camp3', inspector: '#22 meridian_camp3',
   cinderport_inn: '#512', cinderport_temple: '#512', cinderport_armourer: '#512', cinderport_chandlery: '#512', cinderport_yard: '#512', cinderport_cartographers: '#512', cinderport_factor: '#512', cinderport_potter: '#512',
 };
 

@@ -13,12 +13,13 @@ IV's systems are #442's (§3). Figures are measured on main at `6032251` (2 Octo
 `worldGrid` (`src/game/atlas.ts`).
 
 Its first two boxes are built, J11, Monks' Vale (#499, §4.2), which lists the area, and I11, the
-Peak Stone's (#501, §4.4); its eight monsters are drawn (§3), and the rest is to build. Its content
-is `src/content/areas/whitespine/` (maps, monsters, items, climate, its part of the world map and its
+Peak Stone's (#501, §4.4), and so is Highcell, the dungeon through J11's gate (#500, §4.3); its
+eight monsters are drawn (§3), and the rest is to build. Its content is
+`src/content/areas/whitespine/` (maps, monsters, items, climate, its part of the world map and its
 walkthrough; its chapter of the one quest, The Bells, in `chapter.ts`, and its side quests in
-`quests.ts`, to come); it has no town, so no rooms.
-Its ids: the area `whitespine`, its zones `monksvale`, `highspine` and `sheerpoint`, the monastery
-`monastery`, which stays under its new name (§10).
+`quests.ts`, to come); it has no town, so no rooms. Its ids: the area `whitespine`, its zones
+`monksvale`, `highspine` and `sheerpoint`, the dungeon `monastery` and `monastery2` (the ids stay
+under the new name, §10).
 
 ---
 
@@ -45,7 +46,8 @@ area 22–24 and the boxes rise through it (§4).
 The squares are the plan's, before any box. J11 (#499), laid whole in Monks' Vale, takes the 110
 squares of the High Spine on its crest with it, as a map laid in one zone does (§4, §9). I11 (#501),
 laid whole in the High Spine, takes 154 of Monks' Vale's on its crest and 187 of Ashfall's under the
-Sheer.
+Sheer. Laying Highcell (#500) moves no square: its two plates, at 322,346 and 322,352, are places
+on the atlas, which the grid does not read.
 
 **The grid** (EXPANSION §8.2; docs/areas/shelf.md §1). The Whitespine is the I and J columns from
 row 8 to row 12, with K11 and K12 holding Monks' Vale's east under the pass. The land worth a map is
@@ -95,12 +97,13 @@ crest the year round, wind, cloud below the peaks; clear and bitter at night.
 
 ## 3. What is built
 
-Two boxes, J11, the area's first, which lists the area (#499), and I11 (#501):
+Two boxes and a dungeon, J11, the area's first, which lists the area (#499), Highcell, through its
+gate (#500) and I11 (#501):
 
 - **Monks' Vale** (J11, `monksvale_j11`, core, band 22–23; #499): the pass's road down from K10's
   saddle, which is taken and not walked, over the north edge, then square to square through the
-  hills and the vale's grass to the gate in the monastery's wall on its shelf, barred until Highcell
-  is built (#500). At the pass's foot the bells first heard and a cairn; by the road the monks'
+  hills and the vale's grass to the gate in the monastery's wall on its shelf, open now on Highcell
+  (§4.3). At the pass's foot the bells first heard and a cairn; by the road the monks'
   shrine, its bell on a post with no rope, and east of it the pilgrims' hostel, kept wrongly, the
   blankets under the beds and a bowl of snow by each. On the west the crest under its snow and a
   path up it in steps to Spine Summit, a camp, with the hermit beside it; at the vale's east edge
@@ -109,6 +112,17 @@ Two boxes, J11, the area's first, which lists the area (#499), and I11 (#501):
   line west to the rock, a brother walking it by night; in the rock, the store (§4.2). Five groups:
   brothers at the pass's foot and on the road to the gate, spine eagles either side of the road and
   snow trolls at the far end of the summit's path.
+- **Highcell** (`monastery` and `monastery2`, dungeon, two levels of 16 by 16, band 22–24; #500): in
+  at the gate in J11's wall, open now, past the brother standing in it, onto a cloister swept bare
+  round a garth of snow with its well, the bucket dry. By the refectory door a board of the hours in
+  the old script; in the refectory the tables laid and every bowl empty; along the east walk the
+  cells, a brother standing in each, and the Novice in the last. At the south walk's west end the
+  bell tower's foot and its stair winding up to the bells, where the ringers ring the eleven and one
+  pulls a beat behind the rest; at its east end the night stair down. Brothers keep the hours by the
+  cells and ringers come down the tower's stair. Below, the chapter house, a vault on four columns,
+  with brothers before two bell-ringers and, at the far end on a seat of stone, the Abbot, a boss
+  that does not come back. Behind the seat, found from it, the undercroft: the monks of Highcell in
+  their niches, every niche full, the last cut with a count, and their things laid by (§4.3).
 - **The Peak Stone's box** (I11, `highspine_i11`, core, band 22–23; #501): over the crest from
   Monks' Vale, J11's summit path going on west in the snow to the snow line, with the pines below it
   and a camp, the last pines, under it. At the north edge the Peak Stone, whole, in a ring of bare
@@ -124,23 +138,24 @@ Its atlas rows are charted in `src/content/areas/whitespine/atlas.ts` (#498), th
 since J11 lists the area; until then `src/content/atlas.ts` spread them into the plan where its rows
 were, as Saltreach's was before #170: the zones with their bands (Monks' Vale 22–23, with J11 laid
 on it and its crossing line said in its own words, §4.2; the High Spine 23–24, with I11 laid on it
-and its crossing line said in its own words, §4.4; Sheer Point 23–24), Highcell at 23–24 with its
-plate at J11's gate, 322,342 (moved from K12's, §9), its sites (the Peak Stone, Stairwatch, Spine
-Summit, Rook's Nest and the Giants, its own; the Sheer, the plan's, §10) and its links: the pass in,
-the monastery's way in, the Giants' Stair and the ridge trail (#443, call 3). Spine Summit is a camp
-now and the Peak Stone a stone, neither planned any more; Highcell's plate stays planned until #500
-builds it (§9, #499's 12; #501's 16).
+and its crossing line said in its own words, §4.4; Sheer Point 23–24), Highcell's two plates,
+`monastery` at 322,346 and `monastery2` at 322,352 (the first moved from K12's, §9), its sites
+(Highcell at J11's gate, 322,342, the Peak Stone, Stairwatch, Spine Summit, Rook's Nest and the
+Giants, its own; the Sheer, the plan's, §10) and its links: the pass in, the monastery's way in, the
+Giants' Stair and the ridge trail (#443, call 3). Spine Summit is a camp now, the Peak Stone a stone
+and Highcell built, none planned any more (§9, #499's 12; #500's 1; #501's 16).
 
 Its ground (#543): peaks (`A`) and cliffs (`|`), the mountain's rock to walk into, see and climb,
 with the road through them plain road, so the scaffold drafts each box square for square (J11's 202
 peaks, I11's 48 peaks and 64 cliffs) and the view draws a summit and a face (docs/SLICE.md).
 
 Its row on the curve is in (#542), in `src/content/progression.ts`: band 22–24, next 24, window
-5,000, owed to #445 while the area is built box by box, with 5,146 xp a member and 1,000 gold in the
-boxes built, J11's 2,791 and 700 and I11's 2,355 and 300 (§8). It has no step on the gear ladder, no
-town to sell one: Rime Lodge's rung is the pass's, and Cinderport's step (docs/areas/ashfall.md
-§4.4) comes two levels on; J11's store holds a second of Rimewater's Guide's Staff +1 (§4.2). The
-systems it waits on are the rest of
+5,000, owed to #445 while the area is built box by box, with 9,329 xp a member and 1,600 gold in the
+boxes built, J11's 2,791 and 700, Highcell's 4,183 and 600 and I11's 2,355 and 300 (§8). It has no
+step on the gear ladder, no town to sell one: Rime Lodge's rung is the pass's, and Cinderport's step
+(docs/areas/ashfall.md §4.4) comes two levels on; J11's store holds a second of Rimewater's Guide's
+Staff +1 (§4.2) and Highcell's undercroft an Ice Axe +1 and a Skinning Knife +1 (§4.3). The systems
+it waits on are the rest of
 #442's: the toll (#544), sweep (#545), stone (#546), the crossings (#547), the Ember Stone (#548)
 and the bot (#549).
 
@@ -148,8 +163,9 @@ The monks are drawn (#507), three of MONSTERS §8.1's eight, ahead of the boxes 
 Brother, the Bell-ringer and the Abbot, robed on the keepers' frame (`src/ui/monsters/keepers.ts`).
 Their defs are in `src/content/areas/whitespine/monsters.ts`, the area's own since J11 lists it
 (`AHEAD`, `src/content/index.ts`, listed them until then), and each was owed in `UNPLACED`
-(`tools/tests/maps.ts`) to the issue that places it: J11 places the Brother (#499); the Bell-ringer
-and the Abbot are owed to #500. §9 has the decisions.
+(`tools/tests/maps.ts`) to the issue that places it: J11 places the Brother (#499) and Highcell the
+Bell-ringer and the Abbot (#500), so that none of the monks is owed now. §9 has the decisions, the
+Abbot's tuned def among them (#500's 6).
 
 Three more on frames that exist are drawn (#507), the Spine Eagle on the birds', the Snow Troll on
 the ogre's and the Ashen Mason on the cultists', in the same file, each owed in `UNPLACED` to the
@@ -163,14 +179,15 @@ area records them in `src/content/shipped.json`. §9 has the decisions.
 
 ## 4. What is still to build
 
-All of it but J11 and I11, built (#499, §4.2; #501, §4.4): 7,916 squares of land, 3,961 of them
-walkable, the plan's figures (§1). On the grid the plan is eight boxes and a dungeon, five boxes on
-the road and three behind; the five hold 5,138 of those squares, 2,199 of them walkable:
+All of it but J11, Highcell and I11, built (#499, §4.2; #500, §4.3; #501, §4.4): 7,916 squares of
+land, 3,961 of them walkable, the plan's figures (§1). On the grid the plan is eight boxes and a
+dungeon, five boxes on the road and three behind; the five hold 5,138 of those squares, 2,199 of
+them walkable:
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
 |---|---|---|---|---|---|---|---|---|
 | J11 | Monks' Vale | Monks' Vale, the High Spine | core | 22–23 | 1,024 (mountain 342, hills 264, grass 214, peak 202) | the pass's foot at 318,318; Highcell's gate at 322,342; Spine Summit at 300,328; the herder | the bells; the monastery | #499 |
-| | Highcell | | dungeon, two levels of 16×16 | 23–24 | | the cloister and the cells; the bell tower; the chapter house and the Abbot | | #500 |
+| | Highcell | | dungeon, two levels of 16×16 | 22–24 | | the cloister and the cells; the bell tower; the chapter house and the Abbot; the undercroft behind the seat | | #500 |
 | I11 | The Peak Stone's box | the High Spine | core | 22–23 | 837 (pine 536, mountain 210, peak 48, cliff 42) | the Peak Stone at 292,318, whole; the ridge trail's foot; the eagles' nest | none | #501 |
 | I10 | Stairwatch and the Stair's head | the High Spine, Sheer Point | core | 23–24 | 961 (pine 665, mountain 194, peak 85, cliff 17) | the Stair's head at 272,306 and the toll; the Stair-king; Stairwatch at 270,312 | the Stair and its toll | #502 |
 | I9 | The ridge north | Sheer Point | country | 23 | 774 (pine 357, mountain 205, peak 204), 11 shallow | the ridge trail along the crest; snow trolls; the Hearth seen | none | #503 |
@@ -201,7 +218,7 @@ The places, as the atlas and the docs have them:
 
 | Place | Box | What the docs say | On the atlas |
 |---|---|---|---|
-| Highcell (the Monastery) | J11, and below | the monks died long ago and the Custodian's hands keep the monastery in their robes; its bells ring the eleven (DESIGN §9, STORY); the chapter house and the Abbot (MONSTERS §8.1); the Bard's third prestige in its bell tower (DESIGN §5); the Novice (#56's 45) | a planned dungeon, its plate moved from 330,356 to the gate at 322,342 |
+| Highcell (the Monastery) | J11, and below | the monks died long ago and the Custodian's hands keep the monastery in their robes; its bells ring the eleven (DESIGN §9, STORY); the chapter house and the Abbot (MONSTERS §8.1); the Bard's third prestige in its bell tower (DESIGN §5); the Novice (#56's 45) | a site at the gate, 322,342, and two plates, 322,346 and 322,352, the first moved from 330,356 |
 | The Peak Stone | I11 | whole: the Whitespine has no Rifts (MONSTERS §2.1); a Lantern came to survey it and never came down (#56's 46) | a stone at 292,318, no longer planned (#501) |
 | Spine Summit | J11 | the Monk's third prestige: the hermit's vigil through a night (DESIGN §5, #448) | a camp at 300,328 |
 | The Giants' Stair | I10, and Ashfall's H10 | the road over the range and down, past the giants who gave it its name (DESIGN §9); the toll (MONSTERS §8.1, #544); the Stair-king; the caravan that cannot pay (#56's 47) | a road link, 272,306 to 258,306 |
@@ -286,8 +303,9 @@ settled in its issue.
   the hermit at 3,10, words only (§9, #499's 12); at the vale's east edge the herder at 27,19, words
   only, and his fold, a ring of rock at 28 to 30, 18 to 20 (§9, #499's 13). The monastery fills rows
   24 to 28 and columns 20 to 29 of its shelf, with two bell towers over its wall (29,22) and the
-  camp in the shelf's lee at 21,23; its gate at 26,24 is barred, the brother standing in it as the
-  brief's line has it (`j11_gate`, 26,23; §9, #499's 5 to 7). Five groups: brothers, 3, at the
+  camp in the shelf's lee at 21,23; its gate at 26,24, the brother standing in it as the brief's
+  line has it, was barred until #500 and is the way into Highcell now (§4.3; §9, #499's 5 to 7,
+  #500's 8). Five groups: brothers, 3, at the
   pass's foot, 19,6, the gentlest; spine eagles, 4, west of the road at 15,9 and 4 east of it at
   25,8; brothers, 4, on the road to the gate, 23,19; and two snow trolls at the far end of the
   summit's path, 6,10, who do not roam, the box's hardest at 23 (§9, #499's 8). The store is cut
@@ -297,10 +315,10 @@ settled in its issue.
   rung). The hint is the trodden line, row 29's snow from 29,29 west to the rock (`j11_trodden`),
   and by night a brother walking it (`j11_walker`) (§9, #499's 10 and 11). The cairn and the store
   hold 700 gold between them. It departs from the brief in the monastery, a block of building
-  squares and not drawn tall over one square (§11); in the gate, barred until #500; and in the
-  hostel, which is only kept wrongly where the issue made its cellar the secret (§11). The step is
-  owed to the chapter (#505), the Eagles' Nest to #506 and the hermit's vigil to #448 (§9, #499's
-  16).
+  squares and not drawn tall over one square (§11); in the gate, barred until #500 opened it; and
+  in the hostel, which is only kept wrongly where the issue made its cellar the secret (§11). The
+  step is owed to the chapter (#505), the Eagles' Nest to #506 and the hermit's vigil to #448 (§9,
+  #499's 16).
   - **Measured.** A company at 22 wins every fight and manages 10.50 fights to a rest, the aim's
     top, with 15% of its days ending in a fight broken off; it walks Monks' Vale's road, past the
     brothers at the pass's foot and on the road, every time. J11 pays 2,791 xp a member and 700
@@ -308,7 +326,7 @@ settled in its issue.
     99.1% within 8 steps (418 of 422, with the three squares I11 opened) and the furthest 9, with
     no sign among its 22 points. It claims peaks underfoot as new (§7).
 
-### 4.3 Highcell (#500): dungeon, two levels of 16×16, band 23–24
+### 4.3 Highcell (#500): dungeon, two levels of 16×16, band 22–24
 
 - **Purpose.** The area's dungeon: a monastery still kept, four hundred years after its monks died,
   by the Custodian's hands in their robes (MONSTERS §8.1). It sells and teaches nothing (#443,
@@ -338,6 +356,46 @@ settled in its issue.
   house still kept by what killed nobody.
 - **Finds.** Two of Rimewater's rung with a plus in the undercroft (#542), and 600 gold.
 - **Pay.** About 2,600 xp a member.
+- **As built** (#500, 9 October): two levels of 16 by 16, hand-built, the upper house at band 22–24
+  (the area's floor, the brief's 23 less one) and the lower at 23–24 (§9, #500's 2). **The upper
+  house** (`monastery`): J11's gate, open now (§4.2), lets a company in to 7,1 facing south, past
+  the brother in it, and lets it out onto the road's end before the gate, facing north. Inside the
+  wall, at 7,2, a cloister swept bare round a garth of snow, with the well (8,6), its bucket dry. By
+  the refectory door (5,4) a board of the hours in the old script, which marks nothing (§9, #500's
+  13); in the refectory (2,5) the tables laid and every bowl empty. Along the east walk the cells, a
+  brother standing in each (11,5), and three brothers keeping the hours before them (11,7); in the
+  last cell the Novice (14,9), words only. At the south walk's west end the bell tower's foot (3,11)
+  and its stair winding up (1,13); under the bells (4,13) the ringers at their ropes, the bells
+  ringing eleven, a gap, eleven, each time a company comes by, and one who pulls a beat behind the
+  rest (6,14), thin, in a robe that is not his, words only: the Laureate. Four bell-ringers come
+  down the stair (1,12). At the walk's east end the night stair goes down (12,12; the way down is
+  13,13). **The lower house** (`monastery2`): the night stair comes down to 7,1 facing south, and
+  the way up lands on the cloister's 12,13 facing west. It opens at 7,3 on the chapter house,
+  benches round its walls under a vault on four columns; brothers stand in front of two
+  bell-ringers (7,6), and at the far end on a seat cut from one stone the Abbot keeps the hours
+  (7,9): level 24, 1,700 hit points, 19d8+16, a boss that does not come back. When it falls its robe
+  falls open on grey plate and the bells overhead ring the hour all the same. The hint is the seat
+  (7,10), which stands a hand off the hollows its feet have worn in the floor. The secret, searched
+  for at the seat, is the wall behind it (7,11), which gives on the undercroft, two rows of rock (12
+  and 13): niches cut down both walls, a monk of Highcell laid in each and every niche full (7,12),
+  and the last niche's lip cut with marks in the old script (13,12), a count that ends on eleven,
+  which a dwarf or a Linguist reads (§9, #500's 14). At the far end the monks' things (2,13) in a
+  chest: 600 gold, an Ice Axe +1 and a Skinning Knife +1.
+  - **Seams.** J11's gate, 26,24 (322,342), to `monastery` 7,1 facing south, and back from 7,1 to
+    J11's 26,23 facing north; the night stair, 13,13, to `monastery2` 7,1 facing south, and back
+    from 7,1 to 12,13 facing west. The secret wall is 7,11. There is no other way in or out.
+  - **Measured.** A company at 22 wins every fight in the upper house and manages 11.80 fights to a
+    rest, over the aim (8.5 to 10.5) and inside the limit (7 to 13), with 5% of its days ending in a
+    fight broken off; two under, at 20, it wins every fight too, owed to #18. In the lower house a
+    company at 23 wins 83% of the fights, the Abbot counted, off the aim of 90% and inside the limit
+    of 80%; it manages 10.99 fights to a rest, a little over the aim (8.75 to 10.75) and inside the
+    limit (7.25 to 13.25), with 3.7% of its days broken off, and the Abbot is won 66% at 23 and 93%
+    at 25, set off the boss line (§9, #500's 6). Highcell pays 4,183 xp a member for the brief's
+    2,600 and holds 600 gold. Density 100.0% within 7 steps on both levels, the furthest 5 on both,
+    with one sign among their 15 and 9 points. The curve's rank correlation is 1.00 on both: in the
+    upper house the brothers nearest at 10 steps, level 22, and the ringers on the stair the hardest
+    at 17, level 23; in the lower the chapter house nearest at 5, level 22.5, and the Abbot the
+    hardest at 8, level 24.
 
 ### 4.4 I11, the Peak Stone's box (#501): core, band 22–23
 
@@ -591,8 +649,9 @@ with them the toll, a choice before a fight (#544), and sweep, one blow at every
 passes through, and a bell that holds (MONSTERS §8.1). Its landmarks: a monastery kept by what did
 not build it, a whole Stone with the snow stopped round it, a stair cut in a cliff, a causeway of
 shards over the sea. The area's `novel` claims each as a box places it, since the check asks that
-what is claimed be used: peaks underfoot with J11 (#499) and cliffs with I11 (#501); a machine in a
-robe has no token to claim (§9, #499's 15; #501's 13).
+what is claimed be used: peaks underfoot with J11 (#499), the monastery with Highcell (#500) and
+cliffs with I11 (#501); a machine in a robe has no token to claim and a bell that holds is
+paralysis, on the road before in the Kilns and others (§9, #499's 15; #500's 17; #501's 13).
 
 ## 8. The numbers
 
@@ -609,9 +668,10 @@ robe has no token to claim (§9, #499's 15; #501's 13).
   Scaled to the curve, which §9 proposes as the briefs' working figures until each box is built,
   the shares are J11 2,650, Highcell 3,800, I11 2,350, I10 3,500, I9 2,050, I8 2,200 and the side
   quests about 1,300: about 17,850. The issues (#499 to #506) carry the first figures until their
-  briefs are settled. As built: J11 2,791 (#499), 1.05 times its scaled share, and I11 2,355 (#501),
-  1.00 times its 2,350: 5,146 between them, so with the other scaled shares (12,850) the shares
-  stand at about 17,996, 1.01 times the ask (§9, #499's 9; #501's 9).
+  briefs are settled. As built: J11 2,791 (#499), 1.05 times its scaled share; Highcell 4,183
+  (#500), 1.10 times its 3,800; I11 2,355 (#501), 1.00 times its 2,350: 9,329 between them, so with
+  the other scaled shares (9,050) the shares stand at about 18,379, 1.03 times the ask (§9, #499's
+  9; #500's 4; #501's 9).
 - **Gold.** Training six members from 22 to 24 costs about 10,800 with today's `trainPrice`, but
   nothing trains here (#443, call 7): the gold goes over the range to Cinderport, which teaches to
   27, and the third prestiges ask quests, not gold (DESIGN §5). The band's price window is 5,000
@@ -619,21 +679,28 @@ robe has no token to claim (§9, #499's 15; #501's 13).
   Rimewater's rung, 1,750 to 2,050 gold with its pluses. The toll is set with #544 inside the
   window, dear enough to be a choice and never a wall. A clear should still pay the training, in the hoard, the
   undercroft and the trolls' cave. As built: J11 holds 700 (#499), 300 in the cairn at the pass's
-  foot and 400 in the store, its dearest find the Guide's Staff +1 at 1,750, inside the window; I11
-  holds 300 (#501), in the chest under the slab, so the two hold 1,000 between them.
+  foot and 400 in the store; Highcell holds 600 (#500), in the undercroft's chest; I11 holds 300
+  (#501), in the chest under the slab; so the three hold 1,600 of the 10,800. The dearest find is
+  Highcell's Ice Axe +1 at 1,950, inside the window; J11's is the Guide's Staff +1 at 1,750.
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor: a
   company at 22 wins nine in ten of J11's fights and walks the road from the pass's foot to the gate
   resting at its camp; one at 20 wins no more than one in four. The Abbot is won about half the
   time at 23 and nearly always at 25; the Stair-king the same. The bot must know the toll (#549): it
   refuses, so that the gate measures the fight. As built: a company at 22 wins every fight on J11
   and walks Monks' Vale's road every time, 10.50 fights to a rest; one at 20 wins every fight too,
-  owed to #18 as Rimewater's boxes' is (§4.2). On I11 a company at 22 wins every fight and walks the
+  owed to #18 as Rimewater's boxes' is (§4.2). On Highcell a company at 22 wins every fight in the
+  upper house and manages 11.80 fights to a rest, over the aim and inside the limit; one at 20 wins
+  every fight too, owed to #18. In the lower house a company at 23 wins 83% of the fights and
+  manages 10.99 fights to a rest, a little over the aim; the Abbot is won 66% at 23 and 93% at 25,
+  set off the boss line (§4.3; §9, #500's 6). On I11 a company at 22 wins every fight and walks the
   High Spine's road every time, 10.12 fights to a rest; one at 20 wins every fight too, owed to #18
-  (§4.4).
+  (§4.4). The Whitespine's 13 groups are won 97.4% of the fights at their maps' floors and 95% two
+  under, owed to #18.
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3),
   measured over the squares the mountain leaves. As built: J11 99.1% within 8 steps and the furthest
-  9, with no sign among its 22 points (#499); I11 99.5% within 8 steps and the furthest 9, with no
-  sign among its 26 points (#501).
+  9, with no sign among its 22 points (#499); Highcell's two levels 100.0% within 7 steps, the
+  furthest 5 on both, with one sign among their 15 and 9 points (#500); I11 99.5% within 8 steps and
+  the furthest 9, with no sign among its 26 points (#501).
 
 ## 9. Decisions
 
@@ -794,10 +861,10 @@ Decided by delegate for #499, each the owner's to overturn:
 6. **The gate at 26,24 is barred, as N8's door was before #617:** `GATE` is exported and not in
    `exits`, its square a building, and the event `j11_gate` (not `once`) stands at its front, 26,23.
    #500 lists it, makes the square a door, drops the event and sets the landing (asked: 7,1 facing
-   south); its way back lands on 26,23.
+   south); its way back lands on 26,23. #500 did all four (§9, #500's 8).
 7. **The gate's line keeps the brief's,** with the brother standing in the open gate so that it
    reads true while the gate is barred: *The gate stands open, and a brother stands in it. It bows,
-   and the bow is a shape someone described to it.*
+   and the bow is a shape someone described to it.* It is the gate's label now (§9, #500's 8).
 8. **Five groups for the brief's six:** brothers (3) at the pass's foot, the gentlest and nearest;
    eagles (4) west of the road and (4) east; brothers (4) on the road to the gate; snow trolls (2)
    at the summit path's far end, not roaming, at 23, the hardest. Smaller groups gave 14.6 fights to
@@ -814,8 +881,8 @@ Decided by delegate for #499, each the owner's to overturn:
     gear). A clear pays 700 gold.
 12. **Spine Summit is a camp at the atlas's site,** 4,10, up a snow path carved through the crest
     from the hills at 13,12, and the site loses `planned`. The hermit beside it (3,10) has words
-    only: #448 keeps his trainer entry and the vigil. Highcell's plate stays planned until #500, as
-    Carn Dubh's did until #617.
+    only: #448 keeps his trainer entry and the vigil. Highcell's plate stayed planned until #500, as
+    Carn Dubh's did until #617, and is built (§9, #500's 1).
 13. **The herder** at his fold (27,19; the fold a ring of rock at 28 to 30, 18 to 20) has words only
     (#506's 46).
 14. **The pilgrims' hostel** is a building of 2 by 2 east of the road (24 to 25, 12 to 13), its
@@ -829,6 +896,61 @@ Decided by delegate for #499, each the owner's to overturn:
     #18, as Rimewater's are.
 17. **The climate is the range's:** summer 8, winter -12, daily 7, damp 0.03 to 0.08, wettest 330,
     fog 0.4, lag 12; cloud comes down off the crest and thunder rolls along the range.
+
+Decided by delegate for #500, each the owner's to overturn:
+
+1. **Ids follow Carn Dubh's:** `monastery` is the upper house and `monastery2` the lower, plates at
+   322,346 and 322,352, both named Highcell as the Sleepers' Bay's two are. The planned row's name
+   and band go and the site at 322,342 loses `planned`; ids are `hc1_*` and `hc2_*`.
+2. **Bands 22–24 above and 23–24 below.** The upper house is banded from the area's floor, as Carn
+   Dubh's cairn is: at 23–24 the rise check wants its hardest group at 24, and only the Abbot is.
+   The lower's floor, 23, judges the Abbot at 23 and 25. Two under is owed to #18
+   (`monastery: under`).
+3. **Four groups for the brief's sixteen,** for the pay: brothers (3) by the cells, the nearest;
+   bell-ringers (4) down the tower's stair, the upper house's hardest at 23; brothers (2) before
+   bell-ringers (2) in the chapter house; the Abbot alone. Two ringers alone were 28 fights to a
+   rest at 22, four are 9.2.
+4. **Highcell pays 4,183 xp a member,** 1.10 times the doc's scaled share of 3,800 (the doc wins over
+   the issue's 2,600): brother 873 × 5, bell-ringer 913 × 6 and the Abbot 15,253, 25,096 shared by
+   six. With J11's it comes to 6,974, and with I11's 2,355 and the other scaled shares (9,050) the
+   area to about 18,379, 1.03 times the ask (§8).
+5. **The chapter house is two brothers and two ringers, not three and two:** three and two cost the
+   lower house 7.53 fights to a rest, under the aim of 8.75, and 146 xp a member more; two and two
+   give 10.99.
+6. **The Abbot is 1,700 hit points and 19d8+16** for the boss line's 1,381 and 24d8+24: won 66% at
+   23 and 93% at 25. The line's 59% at 23 is nearer half, but the lower house counts the boss among
+   its fights, and with one other group the mean of that group's 100% and the boss's must reach the
+   limit of 80%: 79.5% at 59%, 83% at 66%. A second group below would take the pay past 4,300. Named
+   in `OFF_LINE` and in `BOSSES` under `monksvale`.
+7. **The upper house sits at 11.80 fights to a rest,** over the aim (8.5 to 10.5) and inside the
+   limit (7 to 13): four brothers by the cells would make it about 9.4 and the pay 4,328.
+8. **The gate is opened as N8's door was by #617:** J11's 26,24 is a door, `GATE` is in J11's exits,
+   `j11_gate` is gone and its line (#499's 7) is the gate's label, said as the company passes the
+   brother in it. In at 7,1 facing south, as J11 asked; out lands on 26,23 facing north.
+9. **No rest inside,** as in Carn Dubh: the shelf's lee camp, J11's 21,23, is five squares from the
+   gate. The well has no `heal`: no foot has crossed the snow to it.
+10. **The cells' brothers and the ringers at the ropes are sights, not fights:** the cells' line is
+    said on the east walk (11,5) and the ringers who fight are those come down the stair. The
+    bells' event (4,13) does not use up and rings eleven, a gap, eleven, each time.
+11. **The Laureate is the npc "A ringer"** (6,14), words only: a man in a robe not his, a beat
+    behind the rest. The name keeps him hidden; #448 gives him the Bard's trainer entry and may name
+    him.
+12. **The Novice is "A novice"** in the last cell (14,9), words only: he keeps the fasts and has
+    never seen a brother break one. #506 gives him the letter.
+13. **The board of the hours is an inscription** (5,4, by the refectory door), read by a dwarf or a
+    Linguist as *KEEP THE HOURS. KEEP THE HOUSE. OPEN THE GATE.* It marks nothing.
+14. **The secret:** the seat's hint `hc2_seat` (7,10) stands a hand off the hollows its feet have
+    worn; the secret door is at 7,11 behind it and the undercroft rows 12 and 13. The doc's line is
+    split: the niches' event says *Every niche is full.* and the last niche's lip (13,12) is an
+    inscription whose reading, ONE to ELEVEN, is the count that ends on eleven, read only by a dwarf
+    or a Linguist.
+15. **The finds:** the monks' things at the undercroft's far end (2,13): 600 gold, an Ice Axe +1
+    (1,950, the dearest find, in the window of 5,000) and a Skinning Knife +1, Rimewater's rung.
+    With J11's, a clear pays 1,300 gold.
+16. **The Abbot's slain line says the robe:** *The Abbot falls, and its robe falls open on grey
+    plate. Overhead the bells ring the hour all the same.* It never comes back.
+17. **Novelty claims the landmark `monastery`,** Highcell's site, built now. A machine in a robe
+    still has no token, and paralysis is on the road before, in the Kilns and others.
 
 Decided by delegate for #501, each the owner's to overturn:
 
@@ -914,8 +1036,8 @@ founded from below and the giants, who have no names on the map. Chosen for #444
   the three places where the third prestiges wait (DESIGN §5), each one place and one name; the
   Peak Stone, as the Grove Stone and the Tide Stone are; the Sheer, lettered on the plan's rows as
   Kestrel Edge and the Scarp are (docs/areas/saltreach.md §10).
-- **Ids stay:** `monastery` is the dungeon's id under its new name, `whitespine`, `monksvale`,
-  `highspine` and `sheerpoint` the plan's.
+- **Ids stay:** `monastery` is the dungeon's id under its new name and `monastery2` its lower
+  house's, `whitespine`, `monksvale`, `highspine` and `sheerpoint` the plan's.
 
 ## 11. What was cut
 
@@ -937,8 +1059,19 @@ Owed, from J11 (#499):
   it as a block of building squares on its shelf (§9, #499's 5).
 - **The pilgrims' hostel's cellar,** the issue's secret, is not built: the doc's store behind the
   wall is (§4.2, §9, #499's 14).
-- **Highcell's gate stays barred** until #500 builds the dungeon, lists the gate in J11's exits,
-  opens its square and sets the landing (§9, #499's 6).
+
+Cut and owed, from Highcell (#500):
+
+- **The sparse groups:** four for the brief's sixteen, the pay held (§9, #500's 3). The upper house
+  sits at 11.80 fights to a rest, over the aim, and four brothers by the cells would make it about
+  9.4 and the pay 4,328 (§9, #500's 7).
+- **The Abbot's robe opening as it is hurt** waits on a systems change, the owner's to ask for: a
+  drawing is not told its monster's wounds (§9, #507's 5). The slain line says the robe as the
+  Abbot falls (§9, #500's 16).
+- **The issue's own secret,** the bells' pattern on the frame, hinted by the lighthouse keeper's
+  log, is not built: the undercroft behind the seat is, as §4.3 has it (§9, #500's 14).
+- **The Novice's letter** is #506's and **the Laureate's** trainer entry is #448's; both stand as
+  words only (§9, #500's 11 and 12). The chapter's Highcell entry (§5) is #505's.
 
 Owed, from I11 (#501):
 

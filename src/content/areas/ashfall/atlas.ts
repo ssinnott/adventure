@@ -1,10 +1,13 @@
 // Ashfall's part of the world map: its three zones, the plates of its town and dungeons, and its
-// sites. docs/areas/ashfall.md is its brief (#509). Spread into the plan until the area's first box
-// lists it (#510). Meridian Camp is #22's, down the vents.
+// sites. docs/areas/ashfall.md is its brief (#509). Meridian Camp is #22's, down the vents.
 import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
-  { id: 'cindercoast', name: 'Cindercoast', area: 'ashfall', band: [24, 25], seeds: [[200, 284], [236, 286]], label: [238, 292] },
+  {
+    id: 'cindercoast', name: 'Cindercoast', area: 'ashfall', band: [24, 25], maps: [{ map: 'cindercoast_g10', at: [200, 286] }], seeds: [[200, 284], [236, 286]], label: [238, 292],
+    // The crossing line said coming onto the shore (#166, #511): how the far side feels to a company under its floor.
+    crossing: { harder: 'The far side begins here, and it is harder than the range behind.', warning: 'The far side, and nothing on it would spare you. The way back is still open.' },
+  },
   { id: 'firemount', name: 'Fire Mountain', area: 'ashfall', band: [25, 26], seeds: [[214, 330], [240, 340]] },
   { id: 'emberwaste', name: 'The Ember Waste', area: 'ashfall', band: [25, 26], seeds: [[172, 336], [180, 300]] },
 ];

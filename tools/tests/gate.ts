@@ -84,6 +84,7 @@ export const BOSSES: Record<string, readonly string[]> = {
   kilnsheart: ['deep_mines3:dm3_foreman', 'anvil_stone:as_warden', 'lava_tubes2:lt2_great_salamander'],
   cairnfield: ['cairns2:cd2_king'],
   coldmere: ['sleepers_bay2:sb2_matron'],
+  monksvale: ['monastery2:hc2_abbot'],
 };
 
 /** Each zone's road: the groups met on it, in order, from its way in. Every zone with groups names one. */
@@ -124,12 +125,15 @@ export const ROADS: Record<string, readonly string[]> = {
   // Down off the pass past the brothers at its foot, and on down the road to the gate past the brothers
   // walking it (#499).
   monksvale: ['monksvale_j11:j11_brothers_foot', 'monksvale_j11:j11_brothers_road'],
+  // Out of Cinderport's gate and south over the ash past the beetles below the ground to the salamanders
+  // where it warms toward the mountain (#511).
+  cindercoast: ['cindercoast_g10:g10_beetles', 'cindercoast_g10:g10_salamanders'],
   // Over the crest from the vale and up the path to the Peak Stone, past the brothers walking it (#501).
   highspine: ['highspine_i11:i11_brothers'],
 };
 
 /** What an area is called in the check, apart from the map it shares an id with. */
-const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Thornmark', saltreach: 'Saltreach', wrackholm: 'Wrackholm', sunderwood: 'Sunderwood', kilns: 'the Kilns', cairnmoor: 'Cairnmoor', rimewater: 'Rimewater', whitespine: 'the Whitespine' };
+const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Thornmark', saltreach: 'Saltreach', wrackholm: 'Wrackholm', sunderwood: 'Sunderwood', kilns: 'the Kilns', cairnmoor: 'Cairnmoor', rimewater: 'Rimewater', whitespine: 'the Whitespine', ashfall: 'Ashfall' };
 
 /**
  * The figures past their limits someone owes, by check: who owes each, and the figure it stood at
@@ -192,7 +196,12 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'Rimewater: under': { whose: '#18', at: 1 },
   // And the Whitespine's first box (#499), in Rimewater's gear and the finds by 22, as Rimewater's are.
   'monksvale_j11: under': { whose: '#18', at: 1 },
+  // And Highcell's upper house (#500), banded from the area's floor as Carn Dubh's cairn is.
+  'monastery: under': { whose: '#18', at: 1 },
   'the Whitespine: under': { whose: '#18', at: 1 },
+  // And Ashfall's first box (#511), in Rimewater's gear and the finds by 24, as the Whitespine's are.
+  'cindercoast_g10: under': { whose: '#18', at: 1 },
+  'Ashfall: under': { whose: '#18', at: 1 },
   'highspine_i11: under': { whose: '#18', at: 1 },
   // Act II's bosses were set by their gates against a company without its first prestige, which the
   // gate's company never took until #541 made it harness's. With it, at 11, four of the six strike
