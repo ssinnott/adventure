@@ -24,6 +24,7 @@ const UNPLACED: Record<string, string> = {
   stair_giant: '#502', stair_king: '#502',
   strangler_vine: '#510', cinder_beetle: '#510', ember_salamander: '#511', ash_husk: '#514',
   cinder_drake: '#511', old_drake: '#515',
+  cinderport_inn: '#512', cinderport_temple: '#512', cinderport_armourer: '#512', cinderport_chandlery: '#512', cinderport_yard: '#512', cinderport_cartographers: '#512', cinderport_factor: '#512', cinderport_potter: '#512',
 };
 
 /** The monsters a company can meet on `defs`: those their groups place, and those a placed one calls (`calls`), and so on down. */
