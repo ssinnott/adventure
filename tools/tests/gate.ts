@@ -236,6 +236,9 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   // And Old Cinder's undercroft (#515), banded from the area's floor as Highcell's upper house is.
   'old_cinder2: under': { whose: '#18', at: 1 },
   'Ashfall: under': { whose: '#18', at: 1 },
+  // And the camp (#22), Meridian Camp's third level, which pays outside the area's budget and is judged two under its
+  // own floor: a company at 25 beats its groups every time, as the other boxes' are.
+  'meridian_camp3: under': { whose: '#18', at: 1 },
   // And the Glasswold's first box (#525): the steppe, two under, wins every fight, as Ashfall's boxes do.
   'wold_d9: under': { whose: '#18', at: 1 },
   // And the mesas (#527), the same.
