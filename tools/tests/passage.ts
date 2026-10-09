@@ -3,8 +3,9 @@
 // a save made at the far end loads there. Half once its `half` holds, free once its `free` does; a
 // warning, never a refusal, to a company under the far end's floor. On the atlas a boat is a way by
 // sea and a coach a way of its own, each travelled both ways where a crossing runs back; the gate
-// counts its landing as a way in. The crossings between towns (#539, content/crossings.ts) run on
-// the atlas's links, are sold at either end once both ends land, and never toward a town not built.
+// counts its landing as a way in. The crossings (#539, #547, content/crossings.ts), between towns or
+// from a town to a camp or a shore in a zone, run on the atlas's links, are sold at either end once
+// both ends land, and never toward a place not built.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { MapDef, Passage } from '../../src/game/map.ts';
@@ -18,7 +19,7 @@ import { zoneEdges } from '../../src/game/atlas.ts';
 import type { Atlas, LinkKind } from '../../src/game/atlas.ts';
 import { ATLAS, MAP_DEFS } from '../../src/content/index.ts';
 import { CROSSINGS, sells } from '../../src/content/crossings.ts';
-import type { Crossing } from '../../src/content/crossings.ts';
+import type { Crossing, CrossingEnd } from '../../src/content/crossings.ts';
 import { landings } from './gate.ts';
 import { ok } from './lib.ts';
 
@@ -65,44 +66,53 @@ export function passageFaults(defs: readonly MapDef[]): string[] {
 }
 
 /** The kind of way on the atlas a crossing runs on. */
-const WAY: Record<Passage['by'], LinkKind> = { boat: 'sea', coach: 'coach' };
+const WAY: Record<Passage['by'], LinkKind> = { boat: 'sea', coach: 'coach', horse: 'coach' };
 /** A fare's rule (#539): 12.5 gold a level of the dearer end's floor for each day, as Kitto's boat is 150 for a night to Wrackholm's 12. */
 export const fareRule = (floor: number, days: number): number => Math.round(12.5 * floor * days);
 
 /**
- * What is wrong with the crossings between towns (#539): one on no way of its kind the atlas charts
- * between its two ends, or a crossing way the atlas charts between two towns that runs none; terms
- * off the clock, a crossing that costs no day, or a fare off its rule; an end that is no town on the
- * atlas, a built town that writes nowhere to land or lands off open ground, an end not built that
- * writes a landing or names no issue that owes it, or one that lands and still names one; and a
- * crossing both ends land that nobody at one of them sells.
+ * What is wrong with the crossings (#539, #547): one on no way of its kind the atlas charts between
+ * its two ends, or a crossing way the atlas charts between two towns that runs none; terms off the
+ * clock, a crossing that costs no day, or a fare off its rule; an end that is no town or zone on the
+ * atlas, a built town that writes nowhere to land, a landing off open ground or, in a zone, on no map
+ * of it; an end not built that writes a landing or names no issue that owes it, or one that lands
+ * and still names one; and a crossing both ends land that nobody at one of them sells.
  */
-export function crossingFaults(crossings: readonly Crossing[], atlas: Pick<Atlas, 'places' | 'links'>, defs: readonly MapDef[]): string[] {
+export function crossingFaults(crossings: readonly Crossing[], atlas: Pick<Atlas, 'areas' | 'zones' | 'places' | 'links'>, defs: readonly MapDef[]): string[] {
   const out: string[] = [];
   const same = (a: string, b: string, c: string, d: string): boolean => (a === c && b === d) || (a === d && b === c);
   const town = (id: string): Atlas['places'][number] | undefined => atlas.places.find((p) => p.id === id && p.kind === 'town');
+  const zone = (id: string): Atlas['zones'][number] | undefined => atlas.zones.find((z) => z.id === id);
   const built = (id: string): MapDef | undefined => defs.find((d) => d.id === id);
+  // The map an end lands on: a town's own, or the box's in a zone, which is built a box at a time.
+  const lands = (e: CrossingEnd): string => e.landing?.map ?? e.at;
+  // An end's floor: its town's (its map's once built), or its zone's on the atlas (its area's when it has none).
+  const floor = (e: CrossingEnd): number | undefined => {
+    const z = zone(e.at);
+    return (z ? z.band ?? atlas.areas.find((r) => r.id === z.area)?.band : built(e.at)?.band ?? town(e.at)?.band)?.[0];
+  };
   for (const c of crossings) {
     const [a, b] = c.ends;
     if (!atlas.links.some((l) => l.kind === WAY[c.by] && same(l.from, l.to, a.at, b.at))) out.push(`${c.name}: the atlas charts no ${WAY[c.by]} way between ${a.at} and ${b.at}`);
     if (![c.departs, c.arrives].every((h) => Number.isInteger(h) && h >= 0 && h < 24) || c.days < 1 || c.fare <= 0) out.push(`${c.name}: its hours, days or fare are off the clock, or it costs no day`);
     for (const e of c.ends) {
-      const map = built(e.at);
-      if (!town(e.at)) out.push(`${c.name}: ${e.at} is no town on the atlas`);
+      const map = built(lands(e)), z = zone(e.at);
+      if (!town(e.at) && !z) out.push(`${c.name}: ${e.at} is no town or zone on the atlas`);
       if (map && !e.landing) out.push(`${c.name}: ${e.name} is built, and writes nowhere to land`);
       if (map && e.landing && !openGround(map, e.landing.x, e.landing.y)) out.push(`${c.name}: lands at ${e.name} on ${e.landing.x},${e.landing.y}, which is not open ground`);
+      if (z && e.landing && !z.maps?.some((m) => m.map === e.landing?.map)) out.push(`${c.name}: lands at ${e.name} on ${e.landing.map ?? 'no map'}, which is no map of ${z.name}`);
       if (!map && e.landing) out.push(`${c.name}: ${e.name} writes a landing, and is not built`);
       if (!map && !e.landing && !e.owed) out.push(`${c.name}: ${e.name} is not built, and names no issue that owes it`);
       if (e.landing && e.owed) out.push(`${c.name}: ${e.name} lands, and still names ${e.owed}`);
     }
-    const floors = c.ends.map((e) => (built(e.at)?.band ?? town(e.at)?.band)?.[0]);
+    const floors = c.ends.map(floor);
     if (floors.every((f) => f !== undefined)) {
       const want = fareRule(Math.max(...(floors as number[])), c.days);
       if (c.fare !== want) out.push(`${c.name}: its fare is ${c.fare}, where its rule asks ${want}`);
     }
     // A crossing that runs one way is not honest: once both ends land, a person at each sells it.
     if (a.landing && b.landing) for (const [here, there] of [[a, b], [b, a]]) {
-      const sold = (built(here.at)?.features ?? []).some((f) => f.kind === 'npc' && (f.passage ?? []).some((p) => p.to === there.at && p.by === c.by && p.fare === c.fare && p.days === c.days));
+      const sold = (built(lands(here))?.features ?? []).some((f) => f.kind === 'npc' && (f.passage ?? []).some((p) => p.to === lands(there) && p.by === c.by && p.fare === c.fare && p.days === c.days));
       if (!sold) out.push(`${c.name}: lands at both ends, and nobody at ${here.name} sells it`);
     }
   }
@@ -196,6 +206,12 @@ export function passage(): void {
   let threw = '';
   try { sells('fx_nowhere', DROVE); } catch (e) { threw = e instanceof Error ? e.message : String(e); }
   ok(threw === 'the fixture coach does not run from fx_nowhere', `a town at neither end cannot sell it ("${threw}")`);
+  // To a camp or a shore in a zone (#547): the end is the zone as the atlas names it, and the crossing
+  // lands on the map of the box that holds its landing; a Rider's horse says its terms in its own words.
+  const RIDE: Crossing = { name: 'the fixture ride', by: 'horse', fare: 200, departs: 14, days: 1, arrives: 9,
+    ends: [DROVE.ends[0], { at: 'wrackholm', name: 'Camp', landing: { map: 'wrackholm_e6', x: 16, y: 15, facing: NORTH } }] };
+  const riding = sells('fx_haven', RIDE)[0];
+  ok(riding?.to === 'wrackholm_e6' && riding.x === 16 && riding.y === 15 && riding.name === 'Camp' && riding.by === 'horse', 'toward a zone it lands on the map of the box that holds its landing');
 
   // Bought at either end: the fare paid, the clock run to the landing, and a save made there loads there.
   const towns = (): Record<string, GameMap> => Object.fromEntries([HAVEN, LODGE].map((d) => [d.id, new GameMap(d)]));
@@ -211,6 +227,17 @@ export function passage(): void {
   const down = take(coachman(LODGE), road, company);
   ok(down.taken && road.state.mapId === 'fx_haven' && road.state.x === 1 && road.state.y === 1 && company.gold === 100 && road.state.minutes === at(5, 12),
     `and bought back at Lodge, it sets the company down at Haven, its calendar moved again (day ${road.day}, ${road.hour}:00)`);
+  // And to a zone: on the box's map, its calendar moved, and a save made there loads there.
+  const E6 = MAP_DEFS.find((d) => d.id === 'wrackholm_e6')!;
+  const steppe = (): Record<string, GameMap> => ({ fx_haven: new GameMap(HAVEN), wrackholm_e6: new GameMap(E6) });
+  const rider = new World(steppe(), company, crng);
+  rider.state.minutes = at(1, 7);
+  company.gold = 300;
+  const told = terms(riding, rider);
+  ok(told.startsWith('The Riders ride at 14:00 and come in the next day at 09:00.'), `a Rider's horse has terms of its own ("${told}")`);
+  const rode = take(riding, rider, company), held = deserialize(serialize(rider.state, company, 0)), camp = new World(steppe(), held.party, makeRng(1), held.world);
+  ok(rode.taken && camp.state.mapId === 'wrackholm_e6' && camp.state.x === 16 && camp.state.y === 15 && camp.state.minutes === at(2, 9) && held.party.gold === 100,
+    `bought at Haven at 07:00, the horse sets the company down on the camp's box the next day at 09:00, and a save made there loads there (day ${camp.day}, ${camp.hour}:00, ${held.party.gold} gold left)`);
 
   // On the atlas: the crossing link the two now sell both ways is that way built, on its course and
   // under its name; sold one way only, the link stays planned beside it.
@@ -220,6 +247,13 @@ export function passage(): void {
   ok(built.length === 1 && !built[0].planned && built[0].both && built[0].kind === 'coach' && built[0].note === 'the fixture coach' && built[0].via?.map((p) => p.join()).join(' ') === (built[0].from === 'fx_haven' ? '20,20 10,10' : '10,10 20,20'),
     `the atlas's link, the crossing sold both ways on it, is one built way, both ways, on the link's course and under its name (${built.map((e) => `${e.from} to ${e.to}, ${e.planned ? 'planned' : 'built'}, via ${e.via?.map((p) => p.join()).join(' ')}`).join('; ')})`);
   ok(oneWay.length === 2 && oneWay.some((e) => e.planned) && oneWay.some((e) => !e.planned && !e.both), 'sold one way only, the link stays planned beside it');
+  // A link to a zone, the crossing sold both ways from the box it lands on, is that way built too.
+  const E6R: MapDef = { ...E6, features: [...(E6.features ?? []), { kind: 'npc', x: 15, y: 15, name: 'A Rider', lines: ['"Haven?"'], passage: sells('wrackholm', RIDE) }] };
+  const RIDING = town('fx_haven', [16, 18], [{ kind: 'npc', x: 2, y: 1, name: 'A Rider', lines: ['"The camp?"'], passage: sells('fx_haven', RIDE) }]);
+  const ridden: Atlas = { ...ATLAS, links: [...ATLAS.links, { from: 'fx_haven', to: 'wrackholm', kind: 'coach', note: 'the fixture ride' }] };
+  const rideWay = zoneEdges(ridden, [...MAP_DEFS.filter((d) => d.id !== 'wrackholm_e6'), E6R, RIDING]).filter((e) => [e.from, e.to].includes('fx_haven'));
+  ok(rideWay.length === 1 && !rideWay[0].planned && rideWay[0].both && rideWay[0].kind === 'coach' && rideWay[0].note === 'the fixture ride',
+    `a link to a zone, the crossing sold both ways from the box it lands on, is one built way under its name (${rideWay.map((e) => `${e.from} to ${e.to}, ${e.planned ? 'planned' : 'built'}`).join('; ')})`);
   // The gate: either town is a crossing's landing, so either town's way out is a way in.
   const ins = landings([HAVEN, LODGE], 'thornmark');
   ok(ins.length === 2 && ins.some((w) => w.x === 24 && w.by === 'coach from fx_haven through fx_lodge') && ins.some((w) => w.x === 23 && w.by === 'coach from fx_lodge through fx_haven'),
@@ -237,9 +271,12 @@ export function passage(): void {
   const unrun = found.filter((f) => !CROSSINGS.some((c) => f.startsWith(`${c.name}:`)));
   ok(!unrun.length, `every crossing way the atlas charts between two towns runs a crossing${unrun.length ? `: ${unrun.join('; ')}` : ''}`);
   // And the check catches what it should.
-  const fx: Pick<Atlas, 'places' | 'links'> = {
+  const fx: Pick<Atlas, 'areas' | 'zones' | 'places' | 'links'> = {
+    // Two zones: Wrackholm with its built boxes, and a shore with no band of its own, its area's (Hearth Isle's, 28-30).
+    areas: ATLAS.areas, zones: [...ATLAS.zones.filter((z) => z.id === 'wrackholm'), { id: 'fx_shore', name: 'Shore', area: 'hearth' }],
     places: [{ id: 'fx_haven', kind: 'town', at: [0, 0] }, { id: 'fx_lodge', kind: 'town', at: [0, 0] }, { id: 'fx_far', kind: 'town', planned: true, band: [24, 26], at: [0, 0] }, { id: 'fx_deep', kind: 'dungeon', planned: true, band: [24, 26], at: [0, 0] }],
-    links: [{ from: 'fx_haven', to: 'fx_lodge', kind: 'coach' }, { from: 'fx_haven', to: 'fx_far', kind: 'sea' }, { from: 'fx_lodge', to: 'fx_far', kind: 'sea' }, { from: 'fx_haven', to: 'fx_deep', kind: 'sea' }],
+    links: [{ from: 'fx_haven', to: 'fx_lodge', kind: 'coach' }, { from: 'fx_haven', to: 'fx_far', kind: 'sea' }, { from: 'fx_lodge', to: 'fx_far', kind: 'sea' }, { from: 'fx_haven', to: 'fx_deep', kind: 'sea' },
+      { from: 'fx_far', to: 'wrackholm', kind: 'coach' }, { from: 'fx_far', to: 'fx_shore', kind: 'sea' }],
   };
   const far = (end: Partial<Crossing['ends'][number]> = {}): Crossing['ends'][number] => ({ at: 'fx_far', name: 'Far', owed: '#0', ...end });
   const wrongs = crossingFaults([
@@ -250,10 +287,14 @@ export function passage(): void {
     { name: 'w4', by: 'boat', fare: 600, departs: 20, days: 2, arrives: 16, ends: [{ ...DROVE.ends[0], landing: { x: 0, y: 1 } }, far({ landing: { x: 1, y: 1 } })] },
     { name: 'w5', by: 'boat', fare: 600, departs: 20, days: 2, arrives: 16, ends: [{ ...DROVE.ends[0], owed: '#0' }, { at: 'fx_deep', name: 'Deep', owed: '#0' }] },
     { ...DROVE, name: 'w6', fare: 260 },
-  ], fx, [HAVEN, LODGE]);
+    { ...RIDE, name: 'w7', fare: 300, ends: [far(), RIDE.ends[1]] },
+    { ...RIDE, name: 'w8', fare: 300, ends: [far(), { ...RIDE.ends[1], landing: { map: 'fx_haven', x: 1, y: 1 } }] },
+    { name: 'w9', by: 'boat', fare: 300, departs: 20, days: 1, arrives: 16, ends: [far(), { at: 'fx_shore', name: 'Shore', owed: '#0' }] },
+  ], fx, [HAVEN, LODGE, E6]);
   const caught = ['w1: the atlas charts no sea way', 'w2: its hours, days or fare are off the clock', 'w3: Haven is built, and writes nowhere to land', 'w3: Far is not built, and names no issue',
     'w4: lands at Haven on 0,1', 'w4: Far writes a landing, and is not built', 'w5: fx_deep is no town', 'w5: Haven lands, and still names #0', 'w6: its fare is 260, where its rule asks 250',
-    'w6: lands at both ends, and nobody at Haven sells it', 'w6: lands at both ends, and nobody at Lodge sells it', 'between fx_lodge and fx_far runs no crossing'];
+    'w6: lands at both ends, and nobody at Haven sells it', 'w6: lands at both ends, and nobody at Lodge sells it', 'between fx_lodge and fx_far runs no crossing',
+    'w8: lands at Camp on fx_haven, which is no map of Wrackholm', 'w9: its fare is 300, where its rule asks 350'];
   const missed = caught.filter((c) => !wrongs.some((w) => w.includes(c)));
-  ok(!missed.length && !wrongs.some((w) => w.startsWith('the fixture coach:')), `the check catches a crossing off the atlas's ways, off the clock, at a town built with nowhere to land or one not built that lands, off its fare's rule or sold at one end only, and a way between towns that runs none${missed.length ? ` (missed: ${missed.join('; ')}; found: ${wrongs.join('; ')})` : ''}`);
+  ok(!missed.length && !wrongs.some((w) => w.startsWith('the fixture coach:') || w.startsWith('w7:')), `the check catches a crossing off the atlas's ways, off the clock, at a town built with nowhere to land or one not built that lands, in a zone on no map of it, off its fare's rule (a zone's floor its area's when it has none) or sold at one end only, and a way between towns that runs none; a camp on its box's open ground passes${missed.length ? ` (missed: ${missed.join('; ')}; found: ${wrongs.join('; ')})` : ''}`);
 }

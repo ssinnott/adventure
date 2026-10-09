@@ -33,5 +33,8 @@ export const STONES: readonly Wardstone[] = [
   // Whole, never broken (the Whitespine has no Rift): it counts once the company has stood beside it, on
   // the event at the Stone on I11 (docs/areas/whitespine.md §4.4, #501).
   { name: 'Peak Stone', area: 'whitespine', restored: { seen: 'highspine_i11:i11_stone' } },
-  { name: 'Ember Stone', area: 'ashfall' },
+  // Counts once the Stone is lit: its three parts set in the sockets, a hand-in that shuts nothing before it (docs/areas/ashfall.md §9,
+  // #548). The Stone's dungeon sets its flag the moment it lights (#516), the Window's chapter reads it (#518) and the sentries stand
+  // `after` it on every box of Ashfall (#449). Its flag is owed to #518 in tools/tests/quests.ts's UNSET.
+  { name: 'Ember Stone', area: 'ashfall', restored: { flag: 'q_ember_lit' } },
 ];

@@ -116,17 +116,35 @@ a vent's fire in its lip and its smoke going up; lava is the `!` there was. The 
 with its 207 squares of vines and G11 with its 102 of lava; the atlas lays the cone as mountain, so
 #513 letters it `V` and its mouth `@` over the draft (docs/SLICE.md).
 
-Four of its nine monsters are drawn ahead of the area (#520): the Strangler Vine, the Cinder Beetle,
-the Ember Salamander and the Ash Husk, on the old wood's, the spider's, the salamanders' and the
-skeleton's frames (§7), in `src/content/areas/ashfall/monsters.ts` and listed in `AHEAD`
-(`src/content/index.ts`) until #510 lists the area. Each is owed to the box that first places it
-(`UNPLACED`, `tools/tests/maps.ts`): the vine and the beetle to #510, the salamander to #511 and the
-husk to #514. Nothing else is built.
+The Ember Stone counts for the Hearth (#548): its row in `src/content/stones.ts` restores it on
+`q_ember_lit`, the flag the Stone's dungeon sets the moment its third part is in and it lights
+(#516, §9). Nothing sets it yet, so it is owed to the chapter (#518) in `UNSET`
+(`tools/tests/quests.ts`) and the first map that sets it drops the entry there. The sentries stand
+`after` that flag on every box (#449): the Hearth's check (`tools/tests/stones.ts`) holds a fixture
+box with a group of the test elite at the Sentry's level `after` it, not there before the Stone is
+lit and standing, in the way and fought, after. No box places one yet, and the words on the roads
+and in Cinderport that say they are not what they were are the boxes' and #449's.
 
-The systems it waits on are the rest of #442's: sweep with fire (#545), the ship to Cinderport, the Riders' ride and the last crossing (#547), the
-Ember Stone for the Hearth and the sentries after (#548) and the bot grown to the band (#549); the
-giants' toll (#544) and stone (#546) are its neighbours'. The rest of its monsters, the drakes and
-the heavy machines, are #520's to draw, and its rooms #521's. Meridian Camp is #22, parked until #443 unparks it.
+Its crossings are written (#547), in `src/content/crossings.ts`, each on its link of the atlas with
+its fare, its days and its hours, the same either way (§4.4, §9): the Compact's ship from
+Kilnhaven, whose Cinderport end says where she ties up; the Rider's ride, on a Rider's horse
+between Cinderport's gate and Akordu in the Wold; and the last crossing over the Sound to Hearth
+Isle. Every end here waits on Cinderport (#512), and the far ones on Akordu (#526) and Hearth Isle
+(Phase 1.5); nothing is sold toward a place not built, so none runs yet.
+
+All nine of its monsters are drawn ahead of the area (#520): the Strangler Vine, the Cinder Beetle,
+the Ember Salamander and the Ash Husk, on the old wood's, the spider's, the salamanders' and the
+skeleton's frames; the Cinder Drake and the Old Drake on the drakes', new; and the Stoker, the
+Sentry and the Sentinel on the heavy machines', new (`src/ui/monsters/machines.ts`; §7). They are in
+`src/content/areas/ashfall/monsters.ts` and listed in `AHEAD` (`src/content/index.ts`) until #510
+lists the area. Each is owed to the box that first places it (`UNPLACED`, `tools/tests/maps.ts`):
+the vine and the beetle to #510, the salamander and the drake to #511, the stoker to #513, the husk
+and the sentry to #514, the Old Drake to #515 and the Sentinel to #516. Nothing else is built.
+
+The systems it waits on are the rest of #442's: sweep with fire (#545), the ship to Cinderport, the
+Riders' ride and the last crossing (#547) and the bot grown to the band (#549); the giants' toll
+(#544) and stone (#546) are its neighbours'. Its rooms are #521's. Meridian Camp is #22, parked
+until #443 unparks it.
 
 ## 4. What is still to build
 
@@ -280,10 +298,14 @@ half, with the wilderness features (#45); no more than one point in four is a si
   outside the gate (§5); the mason of #56's 48, who wants passage.
 - **Quests.** The chapter's goals (§5); The Founding Stone and The Shovel That Does Not Blunt given
   here (§6); the two halls' quests (§6); the seeking quests for the third prestiges (#448).
-- **The ship** (#547): from Kilnhaven's quay to Cinderport's and back, a fare, never a favour,
-  halved for a member of the Compact as Kitto's boat is (docs/areas/saltreach.md §4.9); the last
-  crossing to Hearth Isle from the same steps, Act V's, open to anyone with the fare (EXPANSION
-  §2.2). The Riders' ride west to the Wold leaves from the trading ground (#547, §9).
+- **The ship** (#547): from Kilnhaven's quay to Cinderport's and back, 600 gold and two days, a
+  fare, never a favour, halved here for a member of the Compact as Kitto's boat is
+  (docs/areas/saltreach.md §4.9); the last crossing to Hearth Isle from the same steps, Act V's, 350
+  and a day, open to anyone with the fare (EXPANSION §2.2). The Riders' ride west to Akordu, 325 and
+  a day, leaves from the gate by the trading ground (#547, §9). The town writes where each puts a
+  company down, on its ends in `content/crossings.ts`: the Compact's steps, the same steps and just
+  inside the gate. It sells each by a person whose `passage` is `sells('cinderport', ...)`: the
+  ship's master, the harbourmaster and a Rider.
 - **Lines:** the quay: *The Compact's ship rides at the quay with Kilnhaven's mark on her. Beyond
   the Sound, a column of light.*
 - **New here.** A guild hall with a map of the far side; a trainer to 27; the last crossing seen.
@@ -391,7 +413,7 @@ half, with the wilderness features (#45); no more than one point in four is a si
   as the builders left them, three sockets empty and a door in the floor that has never opened.
   Finishing the Stone is a hand-in of three items, which shuts nothing before it (#443, call 2;
   #450); the moment it lights, the Sentinel comes up through the door, the first thing up (MONSTERS
-  §8.2), and the Hearth steadies (#548).
+  §8.2), and the Hearth steadies (#548, on `q_ember_lit`, §9).
 - **Landmarks.** The housing, iron that has not rusted; the gallery round it; the three sockets at
   its heart; the door in the floor, shut; the builders' benches; the seedling's bed at the field's
   edge, where the Druid's quest ends (#448, §4.9).
@@ -400,7 +422,7 @@ half, with the wilderness features (#45); no more than one point in four is a si
 - **Encounters.** Cinder beetles nesting in the works (two groups); a cinder drake on the housing's
   top; after the hand-in, the Sentinel, boss, level 26, in the chamber as the door opens, and
   sentries up through it after (`after`), two groups.
-- **Quests.** The Stone lit: the chapter's last step (§5). The Druid's third: the seedling kept
+- **Quests.** The Stone lit, on `q_ember_lit` (§9): the chapter's last step (§5). The Druid's third: the seedling kept
   alive until it is (#448).
 - **The secret and its hint.** A lower gallery under the housing where the Meridian Company stopped
   on their way to the vents, and the fourth journal in it, the one the shelf at Cinderport lacks
@@ -565,7 +587,16 @@ Four of the nine are drawn (#520): the Strangler Vine, a grey tree it has killed
 nearly to the ground; the Cinder Beetle, low and black with one forked horn; the Ember Salamander,
 lither than its kin, coal-red, its fire in bands; and the Ash Husk, the cast of a man holding his cup
 up. Each stands on MONSTERS §4.4's line at its level; the vine holds as the bramble does, and the
-groups that place it are set not to roam (§9). The drakes and the heavy machines are still to draw.
+groups that place it are set not to roam (§9). The drakes are drawn on a frame of their own: the
+Cinder Drake, hunched and crusted ash-grey, small-winged and heavy-headed, hanging on its wings with
+its jaw open on the glow and the fire in the seams of its belly; and the Old Drake, the frame larger
+and settled, its wings half folded, scarred and crusted with its crater's sulphur. Both breathe fire
+on a row and fire does nothing to them (§9). The heavy machines have a frame of their own too: the
+Stoker a sooted boiler on short bowed legs, the furnace door glowing in its belly and its near arm a
+shovel; the Sentry leaner and upright, an eye under a brow of plate and one arm long, its clamp
+holding; and the Sentinel the family at its largest and plainest, a block of plate with a slit of
+fire for a visor and the fire through the line down its chest. Fire does not touch the stoker, so at
+the vents lightning is the answer. With them all nine of #520's drawings are done (§9).
 
 Proposed, against the roster's Where column: the Cinder Drake over Cindercoast's shore (H10, G10)
 and on the Hills (E10), where MONSTERS §8.2 has it on Fire Mountain's slopes only, and the Ember
@@ -735,6 +766,128 @@ Decided by delegate for #520 (the four on frames), each the owner's to overturn:
 7. **Each is owed to the first box that places it:** the vine and the beetle to H10 (#510), the
    salamander to G10 (#511, the proposal in §7; to G11, #513, if the owner does not take it) and the
    husk to F11 (#514), whose crater sends them out by night before Old Cinder (#515).
+
+Decided by delegate for #520 (the drakes), each the owner's to overturn:
+
+1. **The Cinder Drake stands on the test drake's line at 25** (MONSTERS §3.3): 584 hit points, 5d8+3
+   and its breath, `sweep: { chance: 0.25, element: 'fire' }`, as `testDrake` has them
+   (`tools/testmonster.ts`), so `tools/tests/harness.ts` holds it there. Its speed is the line's 8,
+   though it flies.
+2. **It flies as the Spine Eagle does,** `ranged`, so its blows reach the back row as well as its
+   breath. The Old Drake does not: the roster gives it the breath and not the wings, and it lies on
+   its town with them folded; its breath still takes either row.
+3. **The Old Drake is the boss line at 26 come down whole to a sweeper's 0.85,** 1,226 hit points and
+   21d7+32, as the test drake is the brute's, with the drakes' breath; no shape of the harness is a
+   boss that sweeps, so it is set off the line (`OFF_LINE`) for Old Cinder's gate to set (#515), as
+   the bosses with turns of their own are.
+4. **Fire does nothing to either,** `immune: ['fire']`, though the roster's rows do not say so: they
+   are grown in the vents, as the cinder beetle and the ember salamander are. Neither is weak to
+   cold, which the roster does not give them either.
+5. **Sizes 1.3 and 1.8:** the Cinder Drake a brute's, the Old Drake the Brood Drake's (MONSTERS §8.4),
+   drawn with its wings folded inside the tall boss's crown, at 0.80 of its height. Settled and
+   broader, it stands over its young though they hang in the air.
+6. **The family is a frame and a Build** (`src/ui/monsters/drakes.ts`): height, breadth, head, how
+   high it hangs, how far its wings open and beat, its colours, sulphur and scars, so the drakeling
+   and the Brood Drake (MONSTERS §11) are a Build each. Nothing of the picture book's dragon: no long
+   neck, no great wings, no spines, but a hunched thing with a head of basalt turned to the company.
+   The breath's embers are its declared parts (`tools/smoke.ts`), four at most.
+7. **Each is owed to the box that first places it:** the Cinder Drake to G10 (#511, the proposal in
+   §7; to G11, #513, if the owner does not take it) and the Old Drake to Old Cinder (#515).
+
+Decided by delegate for #520 (the heavy machines), each the owner's to overturn:
+
+1. **Each stands on the line at its level** (MONSTERS §4.4): the Stoker a brute at 25 (687, 5d8+8),
+   the Sentry an elite at 26 (584, 6d8+5) and the Sentinel on the boss's line at 26 (1,442,
+   24d8+29), for #516's gate to tune. They carry no gold (MONSTERS §2); the parts they carry, the
+   first sentry's and the Sentinel's, named, are the boxes' to give with their items (#514, #516).
+2. **Fire does not touch the Stoker,** `immune: ['fire']` on top of the machine's own (lightning
+   bites; sleep, holy and nature do nothing). The Sentry and the Sentinel are the machine and no
+   more: they come up through the doors, not out of the vents' fire, and the roster gives them
+   nothing of it.
+3. **The Sentry's long arm holds,** `inflict: paralysed` at 0.15, the test elite's own note, so it
+   stands on the elite's line whole, at its speed of 15.
+4. **The Sentinel is plain:** no call and no sweep, the boss's line and the kind's. Whether it calls
+   the sentries up through the door after it (MONSTERS §3.3, calls) is #516's, with its gate.
+5. **Their sizes:** the Stoker 1.3 and squat; the Sentry 1.45, the tallest under the tall boss's
+   1.5, so it stands over the stoker by its height and not its breadth; the Sentinel 2, drawn inside
+   the tall boss's crown (the smoke test measures it at 0.814 of its height, under 0.82).
+6. **One family, of the hull's own make:** plain plate on ruled seams, rivets, a drum at every joint
+   and the same legs, a rod of a thigh, a drum at the knee, a greave and a flat foot; one fire in
+   all three, seen only where the plate opens. Nothing of the knockers' smooth shells on rods and
+   their lamp, nor of the keepers' robe and fingers.
+7. **The chisel's mark is cut once in each,** small, beside the door, on the chest and on the left
+   of the two doors: the makers' mark is on all the crew's machines (MONSTERS §2), and these are the
+   same makers' hands, the heaviest of them.
+8. **A `Build` of body, reach, breadth, legs, knee, fire and soot,** and the plate and joints from
+   the def's tint, so the flue walker, the loader and the core sentry are each a Build and a tint
+   (MONSTERS §11).
+9. **Each is owed to the box that first places it:** the stoker to G11 (#513), the vents' fight (the
+   stoker at H10's springs, §6's 49, strikes the line if it is built first); the sentry to F11
+   (#514), whose road has the first sentries after the Stone (§4.6), before #516's door; and the
+   Sentinel to the Ember Stone (#516). Nothing is declared apart: each is one silhouette.
+
+Decided by delegate for #547, each the owner's to overturn:
+
+1. **Each crossing is written once with both ends** in `content/crossings.ts`, as #539's are: the
+   Compact's ship gains its Cinderport end, and the Rider's ride (`RIDERS_RIDE`) and the last
+   crossing (`LAST_CROSSING`) are new. Each is open from the start, no flag and no lock (EXPANSION
+   §2.2).
+2. **Nothing is sold toward a place not built** (#539's 2): every end here names #512, Akordu's
+   #526 and the isle's Phase 1.5, so none runs yet. Jago sells the ship the day #512 writes her steps.
+3. **An end may be a zone,** a camp or a shore, as the atlas names its place (`wold`,
+   `hearthisle`): it lands on the map of the box that holds it (`landing.map`), since a zone is built
+   a box at a time, and its floor is the zone's (its area's when it has none). The check holds the
+   box to the zone. The world map draws a link to a zone sold both ways as built, as it does a
+   town's, so Kitto's boat to Wrackholm (#177) is now drawn once, under its name.
+4. **The fares keep #539's rule,** 12.5 gold a level of the dearer end's floor for each day: the
+   ride 325 (the Wold's 26) and the last crossing 350 (Hearth Isle's 28); the ship stays 600.
+5. **The days keep Kitto's pace,** some five squares an hour: the ride's 95 from the gate at 206,288
+   to Akordu at 120,250 take a day, leaving at 14 and coming in at 9; the last crossing's 110 over the
+   Sound take a day, sailing at 20 and landing at 16, as the ship does.
+6. **The ride is on a Rider's horse** (`by: 'horse'`), a crossing by road on the atlas's `coach`
+   way, so its terms are the Riders' own ("The Riders ride at 14:00 and come in the next day at
+   09:00") and never a coach's.
+7. **The ship is halved at Cinderport for a member of the Compact** (`q_compact_run_done`, Kitto's),
+   by her master at the Compact's steps; Kilnhaven halves none (docs/areas/kilns.md §4.14), as #539
+   left it. Nobody halves the ride or the last crossing.
+8. **The ride lands just inside the gate,** on the town's own map, as Kilnhaven's coach lands in its
+   inn yard: G10's trading ground outside is where the Riders come down and the horses wait (#511),
+   and a Rider by the gate sells the ride (#512). At Akordu it lands at the horse-lines on D8's map.
+9. **The last crossing says where it goes and no more:** the menu names Hearth Isle and the landing
+   sees the rim and the light rising from within; to a company under 28 the harbourmaster says folk
+   go over strong and come back quiet. Nothing says where the Stones lead.
+10. **A save made at a landing loads there** by #164's save, which keeps the map and the square: the
+    check rides a fixture to a camp on a Wrackholm box and loads it there. The isle's waits on Phase
+    1.5's map, and each end's own on its place.
+
+Decided by delegate for #548, each the owner's to overturn:
+
+1. **The flag is `q_ember_lit`,** set the moment the Stone's third part is in and it lights. The
+   Stone's dungeon sets it (#516: the hand-in's last part, in the same step that brings the Sentinel
+   up), the chapter reads it for the Stone lit and the road on (#518, §5) and the sentries and the
+   Sentinel stand `after` it (#449, #516). It is the Stones' own form (`q_tide_home`,
+   `q_grove_mended`, `q_anvil_closed`) and not `_done`, which would read as the chapter's end
+   (docs/areas/kilns.md §9, #540). Nobody renames it or adds a second.
+2. **The Hearth counts the lighting, not the parts.** A part carried, or one or two set, restores
+   nothing; the Stone counts once all three are in and it lights (call 2: a hand-in that shuts
+   nothing before it). No flag per part is decided here: #516 chooses how the hand-in remembers the
+   parts that are in, and the Hearth reads only the lighting. It counts whatever else the company
+   has restored, as the Anvil Stone does: the road's order is not a lock (§5).
+3. **A flag, owed to #518 in `UNSET`** (`tools/tests/quests.ts`, #415), as `q_anvil_closed` was
+   (docs/areas/kilns.md §9, #540): the Stone's dungeon is not built, and the structure check reads a
+   group's `after` as a real flag, so every box may place its sentries `after` it meanwhile. The
+   first map to set it drops the entry there.
+4. **The sentries need no new field.** `after` (#41) is the whole of it, and the Hearth's check
+   (`tools/tests/stones.ts`) holds a fixture box carrying a group of the test elite at the Sentry's
+   level (26) `after` the Ember Stone's own `restored` condition, so the flag that counts is the flag
+   they wait on: not there before the Stone is lit, standing after it, in the way and fought. The
+   Sentry (#520) and its groups on every box (#449) are not built here, nor the words on the roads
+   and in Cinderport that say the roads are not what they were.
+5. **No wording changes.** The title, the sky and the almanac read the count, which stands at five
+   Stones already, so the Ember Stone is one step more wherever it falls: four in the table as it
+   stands, the Peak Stone having no condition yet, where the almanac says "It hardly wavers now."
+   The Hearth burning steadier than in all our lives (STORY) is the count rising, and the chapter's
+   to say if it says it (#518), not the almanac's.
 
 ## 10. Names
 
