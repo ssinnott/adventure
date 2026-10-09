@@ -347,6 +347,23 @@ export function addCondition(c: Character, k: Condition): void {
   if (!c.conditions.includes(k)) c.conditions.push(k);
 }
 export function removeCondition(c: Character, k: Condition): void { c.conditions = c.conditions.filter((x) => x !== k); }
+/**
+ * A cure's conditions lifted from a member, as a draught or Absolve lifts them: one turned to glass
+ * comes back as it was, out cold if its wounds say so (#546). Whether stone was among those lifted.
+ */
+export function lift(c: Character, ks: readonly string[]): boolean {
+  const stone = ks.includes('stoned') && hasCondition(c, 'stoned');
+  for (const k of ks) removeCondition(c, k as Condition);
+  if (stone && c.hp <= 0 && !hasCondition(c, 'dead')) addCondition(c, 'unconscious');
+  return stone;
+}
+/**
+ * What any temple asks to restore a member (#546 makes it the rule, not a town's): the dead 100 gold
+ * a level, the stoned 80, any other condition 25, the well nothing.
+ */
+export function templePrice(c: Character): number {
+  return hasCondition(c, 'dead') ? 100 * c.level : hasCondition(c, 'stoned') ? 80 * c.level : c.conditions.length ? 25 : 0;
+}
 
 /** The worst condition, for the party card. */
 export function worstCondition(c: Character): Condition | null {

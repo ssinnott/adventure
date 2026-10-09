@@ -23,7 +23,7 @@ import type { CombatState, Fighters } from '../../src/game/combat.ts';
 import { spell } from '../../src/game/spells.ts';
 import { gateCompany, gateFight, gateOpts, gateTurn, fightSeed, winRate, gateAnswer, gatePass } from '../gate.ts';
 import { days, fightsPerRest, mendBetween, mustRest, companyAt, markOf, ROUND_CAP, ANSWER } from '../harness.ts';
-import { testMonster, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, giantEncounter, drakeEncounter } from '../testmonster.ts';
+import { testMonster, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, giantEncounter, drakeEncounter, basiliskEncounter } from '../testmonster.ts';
 import { stepsFrom } from './curve.ts';
 import { ok, owed } from './lib.ts';
 
@@ -392,6 +392,13 @@ export function gate(): void {
     const swept = giants.filter(({ s }) => s.log.some((l) => l.startsWith('Test Giant sweeps the front row'))).length;
     ok(won(giants) >= 0.9 && won(drakes) >= 0.9 && swept >= seeds / 2 && answered < bare,
       `it plays the sweep: it wins ${pc(won(giants))} of two giants' fights at 23, swept in ${swept} of ${seeds}, and ${pc(won(drakes))} of two drakes' at 25; and against giants of twice the blow one of a row falls to a sweep in ${answered} of ${seeds} fights, where with no answer in ${bare}`);
+    // It plays stone (#546): it wins the mesa at 27, someone glassed in some fights, and between
+    // fights lifts the stone as the road mends, by Absolve or by the draught it carries.
+    const mesas = fought(27, basiliskEncounter(27)), glassed = mesas.filter(({ p }) => p.members.some((m) => hasCondition(m, 'stoned')));
+    for (const { p } of glassed) mendBetween(p);
+    const lifted = glassed.filter(({ p }) => !p.members.some((m) => hasCondition(m, 'stoned'))).length, drunk = glassed.filter(({ p }) => !p.bag.includes('quickening')).length;
+    ok(won(mesas) >= 0.9 && glassed.length > 0 && lifted === glassed.length,
+      `it plays stone: it wins ${pc(won(mesas))} of the mesa's fights at 27, ${glassed.length} of ${seeds} leaving someone glassed, and lifts it between fights in ${lifted}, by the draught in ${drunk}`);
   }
   // The gate's company is harness's (#541): it takes its prestiges at 11, 19 and 27, with their perks
   // and ranks, as play gives them, and wears what harness's wears.

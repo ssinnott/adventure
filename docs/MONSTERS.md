@@ -172,8 +172,7 @@ A monster that `calls` names a group and a chance a turn to spend its turn bring
 into the fight, as a group of its own that acts from the next round, while the fight has room for it
 under 12 monsters in three groups, those already down counted; the called pay as the rest. Both
 bots burn with fire what they have seen mend, and aim at a caller that has room to call as at a
-leader and after both at a light whose touch takes spell points (#541). Nothing gives stone,
-though the condition exists: Absolve lifts it, and a temple.
+leader and after both at a light whose touch takes spell points (#541).
 
 And for sweep (#545). A monster that sweeps (`sweep`) may spend its turn, at a chance a turn, on one
 attack at every member of a row still standing, a to-hit and its own dice for each. Bare it is an
@@ -181,6 +180,14 @@ arm, and takes the front row, the back once the front is down; with an element i
 the row with more standing in it, the front on a tie, and is loosed from the back rank too. Bracing
 halves it, and Lampglass on a breath's element or a member's own resistance halves it once more.
 Both bots mend a member of the row a sweep would take once one sweep could fell them.
+
+And for stone (#546). A hit may turn a member to glass at its chance (`inflict`'s `stoned`), as a
+hit curses, and the log says *Bram turns to glass!* in place of a fall. The glassed is out of the
+fight and the walk, passed over by blows, sweeps and spells, and stays so through the fight's end
+and a rest, which mends nothing in it, till Absolve, a Quickening Draught or any temple lifts it;
+it comes back as it was, out cold if its wounds say so. Both bots lift it between fights, by
+Absolve where a member standing has it and the points, else by the draught the company carries
+from 25.
 
 And for the Hearth's light through a machine (§2). The first time Smite or Wrath of the Hearth
 passes through one and does nothing, the log says so after the spell's line, once a game: *The light
@@ -244,9 +251,9 @@ made once in the systems lane and first spent by the area named, which waits for
 | A question first | `choice` on a group: a person's question, put before the fight; the refusal fights, and an answer of gold, an item or a flag stands the group aside | Thornmark's ogre (#56's 13); the Whitespine | the ogre's bargain; the giants' toll |
 
 Built: `level` (#31); `kind`, `look`, `when`, `until` and `after` (#41); ranks and morale (#160);
-elements, casting and drain (#161); regeneration, curse and calls (#537) and sweep (#545), each with
-the gate bot's answer, a drain of spell points' with #541; a question first (#544), the bot refusing
-it. Still to come: stone and its cure, a light seen past the fog and the Core's clock.
+elements, casting and drain (#161); regeneration, curse and calls (#537), sweep (#545) and stone and
+its cure (#546), each with the gate bot's answer, a drain of spell points' with #541; a question
+first (#544), the bot refusing it. Still to come: a light seen past the fog and the Core's clock.
 
 Decided by delegate for #537, each the owner's to overturn:
 
@@ -360,6 +367,39 @@ Decided by delegate for #544, each the owner's to overturn:
 9. **Thornmark claims the mechanic (`encounter:choice`):** its ogre (#56's 13) is the first group on
    the road to ask, so the Whitespine's toll is the second, and its doc's "first choice put before a
    fight" (§2) is #502's to restate; the giants, sweep and the cliff stay the Whitespine's own.
+
+Decided by delegate for #546, each the owner's to overturn:
+
+1. **Stone rides a hit, as a curse does** (`inflict: { cond: 'stoned', chance }`): a hit that lands
+   and does not fell the member glasses it at its chance, and the log says "Bram turns to glass!"
+   in place of a fall, once. The party card shows it as it shows the fallen, STONED in grey.
+2. **The glassed are out of the fight and the walk, as `party.ts` had them, and a rest mends
+   nothing in them:** DESIGN §6's "or time" is not stone's. Their wounds wait as they were, and a
+   raising does not touch them.
+3. **One rule lifts it in three places:** Absolve (tier 7, from 23) as before; a Quickening
+   Draught, which lifts stone and nothing else, from the bag or a pack, in a fight or on the walk;
+   and any temple, at 80 gold a level of the member (`templePrice`, the rule and not a town's). The
+   lifted come back as they were, out cold if their wounds say so.
+4. **The draught is 2,000 gold, the temple's price for a member of 25,** Cinderport's step: it saves
+   the ride, not the gold (a temple asks 2,160 at 27). It is made ahead in Ashfall's items, inside
+   Ashfall's window of 5,500 and the Wold's of 6,000. The ladder check owes it to Cinderport's
+   chandler (#512) and the Riders' trader at Akordu (#526), as it owes the armourer's step to #512.
+   D10's box may place one as a find (#527).
+5. **The test basilisk is the test controller whole, its hold a stone at 0.15 and its gaze reaching
+   the back row** (`BASILISK_STONE`, `ranged`), so it glasses whoever looks up from behind the
+   lions (§8.3). On the mesa, a basilisk behind three test skirmishers in one standard encounter, a
+   company of 27 wins every fight, someone glassed in 3 to 5 of 40. It fights 11.9 to 12.6 of them
+   to a rest (the test's seeds and the harness's own) where with paralysis for the hold it fights
+   13.5: stone costs a fight or two a day and leaves more than the 10.75 asked. With neither
+   Absolve nor a draught it fights 7.0. A placed basilisk stands on the controller's line, as the
+   wights do.
+6. **The bots lift stone between fights, not in one** (`unstone`, before the mending): by Absolve
+   where a member standing has it and the points (the paladin has it too), else by a draught, the
+   bag's before a pack's. One with neither waits for a temple, and the company rests, as for the
+   dead. In a fight the glassed are out, as the fallen are, and the bots spend no turn on them.
+7. **The company carries one draught from 25** (`KIT`, `tools/harness.ts`; the gate's company is
+   harness's): with Absolve in two hands it is drunk only when both are glassed, so no figure the
+   checks print moves. The ladder check holds the kit to Ashfall's window.
 
 ---
 
@@ -703,7 +743,8 @@ of that level, each on its own and then all of them dealt in a new order. `--sta
 lines with their dice, and `--calibrate --write` re-derives the tables when the rules change.
 `--abilities` puts Act III's abilities on the test monsters, two trolls, four wights, a caller
 beside six fodder and three lights with a hound (§3.3, #537, #541), at 19 and 20 or the levels
-asked, and Act IV's sweep, two giants and two drakes (#545), at 23 and 25.
+asked; Act IV's sweep, two giants and two drakes (#545), at 23 and 25; and its stone, the mesa's
+basilisk behind three skirmishers (#546), at 27.
 `--spell-cap`, `--gear-grows`, `--level-bonus` and `--level-traits` run any of it as if damage
 spells stopped growing at another level than play's 10, or the company gained gear, a bonus or
 blows as it levelled past it; `--rank-step` as if a spell rank added another share than play's 15%.
