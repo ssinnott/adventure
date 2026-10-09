@@ -566,12 +566,16 @@ Four of the nine are drawn (#520): the Strangler Vine, a grey tree it has killed
 nearly to the ground; the Cinder Beetle, low and black with one forked horn; the Ember Salamander,
 lither than its kin, coal-red, its fire in bands; and the Ash Husk, the cast of a man holding his cup
 up. Each stands on MONSTERS §4.4's line at its level; the vine holds as the bramble does, and the
-groups that place it are set not to roam (§9). The heavy machines are drawn on a frame of their own:
-the Stoker a sooted boiler on short bowed legs, the furnace door glowing in its belly and its near
-arm a shovel; the Sentry leaner and upright, an eye under a brow of plate and one arm long, its
-clamp holding; and the Sentinel the family at its largest and plainest, a block of plate with a slit
-of fire for a visor and the fire through the line down its chest. Fire does not touch the stoker, so
-at the vents lightning is the answer. With the drakes, all nine of #520's drawings are done (§9).
+groups that place it are set not to roam (§9). The drakes are drawn on a frame of their own: the
+Cinder Drake, hunched and crusted ash-grey, small-winged and heavy-headed, hanging on its wings with
+its jaw open on the glow and the fire in the seams of its belly; and the Old Drake, the frame larger
+and settled, its wings half folded, scarred and crusted with its crater's sulphur. Both breathe fire
+on a row and fire does nothing to them (§9). The heavy machines have a frame of their own too: the
+Stoker a sooted boiler on short bowed legs, the furnace door glowing in its belly and its near arm a
+shovel; the Sentry leaner and upright, an eye under a brow of plate and one arm long, its clamp
+holding; and the Sentinel the family at its largest and plainest, a block of plate with a slit of
+fire for a visor and the fire through the line down its chest. Fire does not touch the stoker, so at
+the vents lightning is the answer. With them all nine of #520's drawings are done (§9).
 
 Proposed, against the roster's Where column: the Cinder Drake over Cindercoast's shore (H10, G10)
 and on the Hills (E10), where MONSTERS §8.2 has it on Fire Mountain's slopes only, and the Ember
@@ -741,6 +745,33 @@ Decided by delegate for #520 (the four on frames), each the owner's to overturn:
 7. **Each is owed to the first box that places it:** the vine and the beetle to H10 (#510), the
    salamander to G10 (#511, the proposal in §7; to G11, #513, if the owner does not take it) and the
    husk to F11 (#514), whose crater sends them out by night before Old Cinder (#515).
+
+Decided by delegate for #520 (the drakes), each the owner's to overturn:
+
+1. **The Cinder Drake stands on the test drake's line at 25** (MONSTERS §3.3): 584 hit points, 5d8+3
+   and its breath, `sweep: { chance: 0.25, element: 'fire' }`, as `testDrake` has them
+   (`tools/testmonster.ts`), so `tools/tests/harness.ts` holds it there. Its speed is the line's 8,
+   though it flies.
+2. **It flies as the Spine Eagle does,** `ranged`, so its blows reach the back row as well as its
+   breath. The Old Drake does not: the roster gives it the breath and not the wings, and it lies on
+   its town with them folded; its breath still takes either row.
+3. **The Old Drake is the boss line at 26 come down whole to a sweeper's 0.85,** 1,226 hit points and
+   21d7+32, as the test drake is the brute's, with the drakes' breath; no shape of the harness is a
+   boss that sweeps, so it is set off the line (`OFF_LINE`) for Old Cinder's gate to set (#515), as
+   the bosses with turns of their own are.
+4. **Fire does nothing to either,** `immune: ['fire']`, though the roster's rows do not say so: they
+   are grown in the vents, as the cinder beetle and the ember salamander are. Neither is weak to
+   cold, which the roster does not give them either.
+5. **Sizes 1.3 and 1.8:** the Cinder Drake a brute's, the Old Drake the Brood Drake's (MONSTERS §8.4),
+   drawn with its wings folded inside the tall boss's crown, at 0.80 of its height. Settled and
+   broader, it stands over its young though they hang in the air.
+6. **The family is a frame and a Build** (`src/ui/monsters/drakes.ts`): height, breadth, head, how
+   high it hangs, how far its wings open and beat, its colours, sulphur and scars, so the drakeling
+   and the Brood Drake (MONSTERS §11) are a Build each. Nothing of the picture book's dragon: no long
+   neck, no great wings, no spines, but a hunched thing with a head of basalt turned to the company.
+   The breath's embers are its declared parts (`tools/smoke.ts`), four at most.
+7. **Each is owed to the box that first places it:** the Cinder Drake to G10 (#511, the proposal in
+   §7; to G11, #513, if the owner does not take it) and the Old Drake to Old Cinder (#515).
 
 Decided by delegate for #520 (the heavy machines), each the owner's to overturn:
 
