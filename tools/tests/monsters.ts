@@ -1,7 +1,7 @@
 // Monster groups on the map: stepping toward the party, encounters, respawn, the truce after
 // fleeing, the Cut Stone's tear closing on the Warden's death and the Rift that stops coming back
-// with it, the groups that walk only in their hours or only after a step, and a kind's look said the
-// first time it is seen or fought, and never again.
+// with it, the groups that walk only in their hours or only after a step, the flags a group sets as
+// it falls, and a kind's look said the first time it is seen or fought, and never again.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { World, FOG } from '../../src/game/world.ts';
@@ -54,11 +54,13 @@ export function monsters(): void {
     w.killGroups(['tm_hounds', 'tm_elders', 'tm_wolves1']); w.advance(2880);
     ok(!live('tm_hounds') && !live('tm_elders') && live('tm_wolves1'), 'once the Warden is dead the hounds and the elders stay dead, and the wolves still come back');
   }
-  // A time to walk: a doctored group beside the party in Helmstow, with and without it.
-  const beside = (change: Partial<EncounterDef>): { w: World; id: string } => {
+  // A time to walk: a doctored group beside the party in Helmstow, with and without it (and others
+  // in its square, by their ids, for a fall's flags).
+  const beside = (change: Partial<EncounterDef>, others: Record<string, Partial<EncounterDef>> = {}): { w: World; id: string } => {
     const rng = makeRng(3), maps = buildMaps(), first = new World(buildMaps(), defaultParty(rng), rng);
     const h = maps.harrow.def, rats = maps[OUTDOORS].encounters[0];
-    maps.harrow = new GameMap({ ...h, encounters: [...(h.encounters ?? []), { ...rats, id: 'test_rats', x: first.state.x, y: first.state.y - 1, roams: false, respawn: undefined, ...change }] });
+    const group = (id: string, c: Partial<EncounterDef>): EncounterDef => ({ ...rats, id, x: first.state.x, y: first.state.y - 1, roams: false, respawn: undefined, ...c });
+    maps.harrow = new GameMap({ ...h, encounters: [...(h.encounters ?? []), group('test_rats', change), ...Object.entries(others).map(([id, c]) => group(id, c))] });
     return { w: new World(maps, first.party, makeRng(1), first.state), id: 'test_rats' };
   };
   const at = (w: World, minutes: number): void => { w.state.minutes = minutes; };
@@ -100,6 +102,26 @@ export function monsters(): void {
     w.party.flags.test_flag = 1;
     const g = w.liveGroups().find((x) => x.def.id === 'test_rats');
     ok(!!g && g.state.dead === -1 && g.state.x === w.state.x && g.state.y === w.state.y - 1, 'and stands alive at its square once it does');
+  }
+  // A group's fall sets its flags (#636): in the call that marks it dead, before any step, kept in a
+  // save as any flag is, and read at the very next look by the groups held until or after one.
+  {
+    const { w } = beside({ sets: 'test_flag' }, {
+      test_list: { sets: ['test_a', 'test_b'], slainText: 'The test falls.' },
+      test_plain: { respawn: 60 },
+      test_held: { respawn: 60, until: { flag: 'test_flag' } },
+      test_after: { after: { flag: 'test_flag' } },
+    });
+    const flags = (x: World): string => Object.keys(x.party.flags).filter((f) => f.startsWith('test_')).sort().join();
+    const live = (x: World): string => x.liveGroups().map((g) => g.def.id).filter((id) => id.startsWith('test_')).sort().join();
+    const before = JSON.stringify(w.party.flags);
+    ok(!w.killGroups(['test_plain', 'test_held']).length && JSON.stringify(w.party.flags) === before, 'a group with no flags to set sets none as it falls, and says nothing');
+    w.state.minutes += 60; // both are due back, and nothing has looked
+    ok(!w.killGroups(['test_rats']).length && flags(w) === 'test_flag', 'a group\'s fall sets its flag in the call that marks it dead, before any step');
+    ok(live(w) === 'test_after,test_list,test_plain', `and at the very next look the group held until it stays dead and the one held after it is there, as the one held by nothing comes back (${live(w)})`);
+    ok(w.killGroups(['test_list']).join() === 'The test falls.' && flags(w) === 'test_a,test_b,test_flag', 'a group with a list sets every flag on it, as its slainText is said');
+    const saved = deserialize(serialize(w.state, w.party, 1)), again = new World(w.maps, saved.party, makeRng(1), saved.world);
+    ok(flags(again) === 'test_a,test_b,test_flag' && live(again) === 'test_after,test_plain', `and the flags a fall sets are kept in a save and a load, as any flag is (${flags(again)}; ${live(again)})`);
   }
   // A look: said once, the first time a group of the kind comes into sight or into a fight. The
   // content has none yet, so the rat and the wolf are given one for the while.

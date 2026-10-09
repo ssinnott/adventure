@@ -43,7 +43,7 @@ const featureFlags = (f: Feature): readonly string[] => f.kind === 'npc' ? perso
  * maps are the game's unless given.
  */
 export function condFaults(w: When, maps: readonly MapDef[] = MAP_DEFS): string[] {
-  // The flags people, groups' questions and events set, and the guild quests' own (a hall sets them: game/guilds.ts).
+  // The flags people, groups (by their falls and questions) and events set, and the guild quests' own (a hall sets them: game/guilds.ts).
   const npcFlags = new Set([
     ...maps.flatMap((d) => (d.features ?? []).flatMap(featureFlags)),
     ...maps.flatMap((d) => (d.encounters ?? []).flatMap(groupFlags)),
