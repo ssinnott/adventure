@@ -59,6 +59,8 @@ DESIGN.md first for the why.
   sleep ends with the fight (#161). A monster may mend each round but a round fire struck it
   (`regen`), curse with its hits and spend a turn calling its group into the fight while there is
   room for the whole of it under twelve monsters in three groups, the fallen counted (`calls`) (#537).
+  A monster may sweep a row at a chance a turn, its arm the front row or its breath the fuller row
+  with its element, which Lampglass halves (`sweep`) (#545).
   The first Smite or Wrath of the Hearth to pass through a machine and do nothing is followed in the
   log by the light going into it like a hand into a glove, once a game (`glove_seen`, MONSTERS §2).
   A group placed on ice (`under: 'ice'`, #536) lives under it: it

@@ -9,10 +9,11 @@
 //   node tools/harness.ts --under 2                    the company two levels under the monsters
 //   node tools/harness.ts --map thornmark --level 5    a map's own groups, against a company of 5
 //   node tools/harness.ts --stats                      the test monsters' stat lines, as markdown
-//   node tools/harness.ts --abilities [--levels 19,20] Act III's trolls, wights, caller and lights on the test monsters (#537, #541)
+//   node tools/harness.ts --abilities [--levels 19,20] Act III's trolls, wights, caller and lights on the test monsters (#537, #541),
+//                                                      and Act IV's giants and drakes at 23 and 25 (#545)
 //   node tools/harness.ts --calibrate [--write]        re-derive HP and DAMAGE in tools/testmonster.ts
 //   node tools/harness.ts --spell-cap 32 [...]         any of the above as if spells stopped growing elsewhere than 10
-//   node tools/harness.ts --gear-grows [...]           ... or as if the company's gear kept growing past 22
+//   node tools/harness.ts --gear-grows [...]           ... or as if the company's gear kept growing past 25
 //   node tools/harness.ts --level-traits [...]         ... or its fighters gained a blow a promotion (--level-bonus: a bonus)
 //   node tools/harness.ts --rank-step 0.25 [...]       ... or a spell rank added another share than play's 15%
 // The company is the premade six, trained to the level (to the road's cap, 32), with the prestiges
@@ -33,7 +34,7 @@ import { makeRng } from '../src/lib/engine/rng.ts';
 import type { RngInstance } from '../src/lib/engine/rng.ts';
 import { CLASSES, defaultParty, xpForLevel, levelUp, isDown, hasCondition, removeCondition, heal, equip, weaponOf, attackBonus, armorClass, bonus, hasTrait, spellHeal, rankMult, RANK_STEP, SPELLFIRE_DMG, SNEAK_ATTACK_DMG, MAX_LEVEL, PRESTIGE_LEVELS, prestigeOf, takePrestige } from '../src/game/party.ts';
 import type { Character, Party } from '../src/game/party.ts';
-import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, isLeader, canCall, asGroup, castOnAlly, castOnParty, toHit, buffHit, traitDamage, monsterAc, monsterHit, seenMult, blowsOf, songDamage, FRONT_ROW } from '../src/game/combat.ts';
+import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, isLeader, canCall, sweptRow, asGroup, castOnAlly, castOnParty, toHit, buffHit, traitDamage, monsterAc, monsterHit, seenMult, blowsOf, songDamage, FRONT_ROW } from '../src/game/combat.ts';
 import type { CombatState, MonsterInst, PartyAction, Edge, Fighters } from '../src/game/combat.ts';
 import { spell, spellDice, SPELLS_GROW_TO } from '../src/game/spells.ts';
 import type { SpellDef } from '../src/game/spells.ts';
@@ -42,7 +43,7 @@ import { ITEMS } from '../src/content/index.ts';
 import type { ItemDef } from '../src/game/items.ts';
 import type { MonsterDef } from '../src/game/monsters.ts';
 import { MAP_DEFS } from '../src/content/index.ts';
-import { ROLES, ROLE_IDS, LEVELS, HP, DAMAGE, line, standardEncounter, testMonster, TROLL, WIGHT_CURSE, CALL, LIGHT, trollEncounter, wightEncounter, callerEncounter, lightEncounter } from './testmonster.ts';
+import { ROLES, ROLE_IDS, LEVELS, HP, DAMAGE, line, standardEncounter, testMonster, TROLL, WIGHT_CURSE, CALL, LIGHT, SWEEP, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, giantEncounter, drakeEncounter } from './testmonster.ts';
 import type { Role } from './testmonster.ts';
 
 /**
@@ -109,9 +110,10 @@ export function edgeOf(c: Character, round: number): Edge {
  * (#399): Saltmouth's armourer's step from 11, the same with a plus from Saltreach's and Wrackholm's
  * boxes by 13, Lantern Watch's stores from 14 and theirs with a plus from the Sunder by 16. Then
  * Act III's (#535): Anvilhall's forge from 17, the same with a plus from the Kilns' and Cairnmoor's
- * boxes by 19, Rime Lodge's furrier from 21 and theirs with a plus from Rimewater by 22. Each member
- * takes the best its class can use of the kind it already carries, which flatters the company a
- * little. The harness and the gate check both dress their company from it.
+ * boxes by 19, Rime Lodge's furrier from 21 and theirs with a plus from Rimewater by 22. Then Act
+ * IV's one (#542): Cinderport's armourer from 25. Each member takes the best its class can use of
+ * the kind it already carries, which flatters the company a little. The harness and the gate check
+ * both dress their company from it.
  */
 export const GEAR: readonly (readonly [number, readonly string[]])[] = [
   [3, ['longsword', 'axe', 'longbow', 'shield', 'scale', 'chain', 'dagger+1', 'mace+1', 'shortsword+1', 'staff+1']],
@@ -127,6 +129,7 @@ export const GEAR: readonly (readonly [number, readonly string[]])[] = [
   [19, ['plate+3', 'forge_hammer+1', 'mattock+1', 'steel_bow+1', 'seax+1', 'kiln_robe+1', 'banded_staff+1']],
   [21, ['ice_axe', 'skinning_knife', 'hunters_bow', 'bear_spear', 'guides_staff', 'bearskin', 'fur_robe']],
   [22, ['ice_axe+1', 'skinning_knife+1', 'bear_spear+1', 'guides_staff+1', 'hunters_bow+1', 'plate+4']],
+  [25, ['slag_mace', 'marlinspike', 'ashwood_bow', 'flamberge', 'battle_staff', 'drakeskin', 'cinder_robe', 'basalt_shield']],
 ];
 /** The ladder's top: past it, gear grows only in a what-if (`RULES.gearGrows`). */
 export const GEAR_TOP = GEAR[GEAR.length - 1][0];
@@ -233,7 +236,9 @@ function incoming(s: CombatState, p: Party): number {
     const d = s.monsters[f].def, reach = d.ranged || !front.length ? up : front;
     if (!reach.length) continue;
     const ac = reach.reduce((a, { c }) => a + armorClass(c) + edgeOf(c, s.round).ac, 0) / reach.length;
-    total += toHit(monsterHit(s, s.monsters[f]), ac) * Math.max(0, (d.dice * (d.sides + 1)) / 2 + d.bonus);
+    // A sweeper's turn is, at its chance, a blow at each of the row it would take.
+    const many = d.sweep ? 1 + d.sweep.chance * (sweptRow(p, s.monsters[f]).length - 1) : 1;
+    total += toHit(monsterHit(s, s.monsters[f]), ac) * Math.max(0, (d.dice * (d.sides + 1)) / 2 + d.bonus) * many;
   }
   return total;
 }
@@ -263,6 +268,24 @@ export function markOf(s: CombatState, foes: readonly number[]): number | undefi
   return foes.find((f) => isLeader(s, s.monsters[f])) ?? foes.find((f) => canCall(s, s.monsters[f])) ?? foes.find((f) => s.monsters[f].def.drain === 'sp');
 }
 
+/** The bots' answers a tool may switch off to see a fight without one: the sweep's (`mendLines`, #545). */
+export const ANSWER = { sweep: true };
+
+/**
+ * The hit points under which the bots mend each member, by their slot: 40% of their own, or, in the
+ * row a foe that sweeps would take (`sweptRow`, #545), the most one sweep of it could deal them where
+ * that is more. So the front row's hit points are spread, none of it falls to one sweep, and the
+ * sweep never turns on the back row.
+ */
+export function mendLines(s: CombatState, p: Party): number[] {
+  const at = p.members.map((m) => m.maxHp * 0.4);
+  for (const f of ANSWER.sweep ? aliveMonsters(s) : []) {
+    const m = s.monsters[f], d = m.def;
+    if (d.sweep) for (const { i } of sweptRow(p, m)) at[i] = Math.max(at[i], d.dice * d.sides + d.bonus);
+  }
+  return at;
+}
+
 /** What a caster's spell point is worth in hit points: what its best mend gives for one, or one if it has none. */
 function mendRate(c: Character): number {
   let best = 1;
@@ -278,7 +301,7 @@ function mendRate(c: Character): number {
  * each weighed by how much of that pool the company has left above the rest line. So it spends on
  * what hurts and not on what does not, keeps a healer's points for mending, and casts less as its
  * spell points run down. Under the rest line spell points cost nothing: the company rests after this
- * fight whatever it casts.
+ * fight whatever it casts. While a foe that sweeps stands it mends the row it would take sooner (#545).
  */
 export const thrifty: Bot = (s, p, rng, i) => {
   const c = p.members[i];
@@ -287,7 +310,7 @@ export const thrifty: Bot = (s, p, rng, i) => {
   const living = p.members.map((m, j) => ({ m, j })).filter(({ m }) => !hasCondition(m, 'dead') && !hasCondition(m, 'stoned'));
   const everyone = known.filter((x) => x.heal && x.target === 'party').sort((a, b) => (b.heal ?? 0) - (a.heal ?? 0))[0];
   if (everyone && living.filter(({ m }) => m.hp < m.maxHp / 2).length >= 2 && partyAct(s, p, rng, { type: 'cast', spellId: everyone.id, target: i })) return;
-  const worst = living.filter(({ m }) => m.hp < m.maxHp * 0.4).sort((a, b) => a.m.hp / a.m.maxHp - b.m.hp / b.m.maxHp)[0];
+  const lines = mendLines(s, p), worst = living.filter(({ m, j }) => m.hp < lines[j]).sort((a, b) => a.m.hp / a.m.maxHp - b.m.hp / b.m.maxHp)[0];
   const mends = known.filter((x) => x.heal && x.target === 'ally' && !x.raise);
   if (worst && mends.length) {
     // The cheapest mend that closes half the wound, else the biggest there is.
@@ -669,6 +692,17 @@ async function main(): Promise<void> {
       const plain = [...Array.from({ length: 3 }, () => testMonster('controller', l)), testMonster('skirmisher', l)];
       const whole = enc.map((m): MonsterDef => (m.drain ? { ...testMonster('controller', l), id: m.id, kind: m.kind, ranged: true, drain: m.drain, inflict: undefined } : m));
       console.log(`  ${l}: ${one(fs)}, its spell points ${pct(mean(fs, (o) => o.sp))}% spent or taken (${pct(mean(fights(l, houndFirst), (o) => o.sp))}% with the hound marked first); ${rest(l, enc, ['the hound marked first', houndFirst])}; ${days(l, [plain], seeds).fights.toFixed(1)} for three test controllers and the hound, and ${days(l, [whole], seeds).fights.toFixed(1)} for lights on the controller's whole line`);
+    }
+    // Act IV's sweep (#545), where the road first meets it: the giants at 23, the drakes at 25.
+    console.log(`Two giants and two drakes: the test brute come down whole to ${SWEEP.share} of its line, its arm sweeping the front row or its breath burning a row with fire at ${SWEEP.chance} a turn.`);
+    const felled = (fs: { s: CombatState }[]): number => fs.filter(({ s }) => s.log.some((l) => / (sweeps|breathes) /.test(l) && /falls?!$/.test(l))).length;
+    for (const l of opt('levels') ? levels : [23, 25]) {
+      const g = testGiant(l), front = companyAt(l, 1).members.slice(0, FRONT_ROW).map((m) => m.maxHp), heavy = [testGiant(l, 2), testGiant(l, 2)];
+      const answered = felled(fights(l, heavy));
+      ANSWER.sweep = false;
+      const bare = felled(fights(l, heavy));
+      ANSWER.sweep = true;
+      console.log(`  ${l}: giants ${one(fights(l, giantEncounter(l)))}, ${rest(l, giantEncounter(l), ['plain brutes', standardEncounter('brute', l)])}; drakes ${one(fights(l, drakeEncounter(l)))}, ${rest(l, drakeEncounter(l))}; a sweep at its worst ${g.dice * g.sides + g.bonus} to each of a front row of ${front.join(', ')}; giants of twice the blow fell one of a row in ${answered} of ${seeds} fights, ${bare} with no answer`);
     }
     return;
   }

@@ -326,8 +326,8 @@ export function canReach(s: CombatState, c: Character, target: number): boolean 
   return !!m && standing(m) && (!m.back || !!weaponOf(c).ranged || !frontStands(s));
 }
 
-/** A monster of the back rank with no bow, spell or call waits for the front to fall before it steps up. */
-const waits = (s: CombatState, m: MonsterInst): boolean => m.back && !m.def.ranged && !m.def.cast && !m.def.calls && frontStands(s);
+/** A monster of the back rank with no bow, spell, call or breath waits for the front to fall before it steps up. */
+const waits = (s: CombatState, m: MonsterInst): boolean => m.back && !m.def.ranged && !m.def.cast && !m.def.calls && !m.def.sweep?.element && frontStands(s);
 
 /** A monster's armour, with a Ward over its group. */
 export const monsterAc = (s: CombatState, m: MonsterInst): number => m.def.ac + (s.foeShield[m.band] > 0 ? WARD_AC : 0);
@@ -540,11 +540,30 @@ export function castOnAlly(c: Character, sp: SpellDef, a: Character, step?: numb
 const rowOf = (party: Party, back: boolean): { c: Character; i: number }[] =>
   party.members.map((c, i) => ({ c, i })).filter(({ c, i }) => (i >= FRONT_ROW) === back && !isDown(c));
 
-/** The row a monster's spell on a row falls on: the one with more standing in it (for Slumber, more awake), the front on a tie. */
-function rowFor(party: Party, sp: SpellDef): { c: Character; i: number }[] {
-  const count = (back: boolean): number => rowOf(party, back).filter(({ c }) => !sp.inflict || !hasCondition(c, 'asleep')).length;
+/** The row a monster's spell on a row or its breath falls on: the one with more standing in it (for Slumber, `awake`, more awake), the front on a tie. */
+function rowFor(party: Party, awake = false): { c: Character; i: number }[] {
+  const count = (back: boolean): number => rowOf(party, back).filter(({ c }) => !awake || !hasCondition(c, 'asleep')).length;
   return rowOf(party, count(true) > count(false));
 }
+
+/**
+ * The row a sweep falls on (`MonsterDef.sweep`): an arm's the front, the back once the front is down,
+ * as its blows reach; a breath's the row with more standing in it, the front on a tie, as a monster's
+ * Fire Bolt falls. From under the ice either reaches only the front row over it. Its members still
+ * standing, the asleep and the held among them; the fallen are passed over.
+ */
+export function sweptRow(party: Party, m: Pick<MonsterInst, 'def' | 'under'>): { c: Character; i: number }[] {
+  const front = rowOf(party, false);
+  if (m.under) return front;
+  if (m.def.sweep?.element) return rowFor(party);
+  return front.length ? front : rowOf(party, true);
+}
+
+/** A member's armour against a monster's blow or sweep: bracing, the Ward over the party and their own edge. */
+const guard = (s: CombatState, c: Character, i: number): number => armorClass(c) + (s.defending[i] ? 4 : 0) + (s.shield > 0 ? WARD_AC : 0) + (s.edge?.(c, s).ac ?? 0);
+
+/** Whether Lampglass or a member's own resistance halves an element on them: once between them, never to a quarter (#555). */
+const dimmed = (s: CombatState, c: Character, el: Element | undefined): boolean => !!el && (s.glass?.element === el || resists(c).includes(el));
 
 /** The monster's group still in the fight: those that came in with it. */
 const bandOf = (s: CombatState, m: MonsterInst): MonsterInst[] => s.monsters.filter((q) => q.band === m.band && standing(q));
@@ -562,7 +581,7 @@ function castable(s: CombatState, party: Party, m: MonsterInst, sp: SpellDef): b
   if (sp.heal) return bandOf(s, m).some(hurt);
   if (sp.buff === 'bless') return !(s.foeBless[m.band] > 0);
   if (sp.buff === 'shield') return !(s.foeShield[m.band] > 0);
-  if (sp.inflict) return rowFor(party, sp).some(({ c }) => !hasCondition(c, 'asleep'));
+  if (sp.inflict) return rowFor(party, true).some(({ c }) => !hasCondition(c, 'asleep'));
   return true;
 }
 
@@ -589,9 +608,7 @@ function monsterCast(s: CombatState, party: Party, rng: RngInstance, m: MonsterI
   const dmgOf = (k: number): number => {
     let d = roll(rng, spellDice(sp, m.def.level), sp.sides ?? 4, 0);
     if (s.defending[k]) d = Math.ceil(d / 2);
-    // Lampglass and a member's own resistance halve it once between them, never to a quarter (#555).
-    const dimmed = !!sp.element && (s.glass?.element === sp.element || resists(party.members[k]).includes(sp.element));
-    return dimmed ? Math.ceil(d / 2) : d;
+    return dimmed(s, party.members[k], sp.element) ? Math.ceil(d / 2) : d;
   };
   if (sp.heal) {
     const mine = bandOf(s, m);
@@ -610,7 +627,7 @@ function monsterCast(s: CombatState, party: Party, rng: RngInstance, m: MonsterI
   }
   if (sp.inflict) {
     const fell: Character[] = [];
-    for (const { c } of rowFor(party, sp)) if (!hasCondition(c, sp.inflict) && !songWards(party, sp.inflict) && rng.chance(SLUMBER_CHANCE)) { const before = c.conditions.length; addCondition(c, sp.inflict); if (c.conditions.length > before) fell.push(c); }
+    for (const { c } of rowFor(party, true)) if (!hasCondition(c, sp.inflict) && !songWards(party, sp.inflict) && rng.chance(SLUMBER_CHANCE)) { const before = c.conditions.length; addCondition(c, sp.inflict); if (c.conditions.length > before) fell.push(c); }
     s.log.push(fell.length ? `${who} casts ${sp.name}: ${names(fell)} ${fell.length === 1 ? 'falls' : 'fall'} asleep.` : `${who} casts ${sp.name}, but no one sleeps.`);
     return;
   }
@@ -622,7 +639,7 @@ function monsterCast(s: CombatState, party: Party, rng: RngInstance, m: MonsterI
     s.log.push(`${who} casts ${sp.name}: ${pick.c.name} takes ${d}.${woke}` + (isDown(pick.c) ? ` ${pick.c.name} falls!` : ''));
     return;
   }
-  const row = sp.target === 'all' ? party.members.map((c, i) => ({ c, i })).filter(({ c }) => !isDown(c)) : rowFor(party, sp);
+  const row = sp.target === 'all' ? party.members.map((c, i) => ({ c, i })).filter(({ c }) => !isDown(c)) : rowFor(party);
   let total = 0, woke = '';
   for (const { c, i } of row) { const d = dmgOf(i); total += d; woke += struck(party, c, d); }
   const fell = row.map(({ c }) => c).filter(isDown);
@@ -643,6 +660,32 @@ export const SLUMBER_CHANCE = 0.7;
 export const MEND_LINE = (names: string, one: boolean, n: number): string => `${names} ${one ? 'mends' : 'mend'} ${n}.`;
 export const SMOULDER_LINE = (names: string, one: boolean): string => one ? `${names} smoulders and does not mend.` : `${names} smoulder and do not mend.`;
 export const CALL_LINE = (caller: string, names: string, one: boolean): string => `${caller} calls, and ${names} ${one ? 'answers' : 'answer'}.`;
+/** The log's line for a sweep (`sweep`): an arm across a row or a breath of its element on one, and what it dealt, or its miss. */
+export const SWEEP_LINE = (who: string, el: Element | undefined, row: string, dealt?: number): string =>
+  `${who} ${el ? `breathes ${GLASS_WORD[el]} on` : 'sweeps'} ${row}${dealt === undefined ? ' and misses.' : `: ${dealt} damage.`}`;
+
+/**
+ * A monster's turn spent on a sweep (`MonsterDef.sweep`, #545): one attack at every member of its row
+ * (`sweptRow`), a to-hit and its own dice rolled for each, halved for one bracing and, for a breath,
+ * once more where Lampglass or the member's own resistance dims its element. False, and the turn is
+ * a blow's, where the row is empty.
+ */
+function sweep(s: CombatState, party: Party, rng: RngInstance, m: MonsterInst): boolean {
+  const row = sweptRow(party, m), el = m.def.sweep?.element;
+  if (!row.length) return false;
+  let dealt: number | undefined, woke = '';
+  for (const { c, i } of row) {
+    if (!rng.chance(toHit(monsterHit(s, m), guard(s, c, i)))) continue;
+    let d = roll(rng, m.def.dice, m.def.sides, m.def.bonus);
+    if (s.defending[i]) d = Math.ceil(d / 2);
+    if (dimmed(s, c, el)) d = Math.ceil(d / 2);
+    dealt = (dealt ?? 0) + d;
+    woke += struck(party, c, d);
+  }
+  const fell = row.map(({ c }) => c).filter(isDown);
+  s.log.push(SWEEP_LINE(m.def.name, el, row[0].i >= FRONT_ROW ? 'the back row' : 'the front row', dealt) + woke + (fell.length ? ` ${names(fell)} ${fell.length === 1 ? 'falls' : 'fall'}!` : ''));
+  return true;
+}
 
 /**
  * The round's end for what mends (`MonsterDef.regen`): each one standing mends its amount, never past
@@ -703,7 +746,10 @@ export function monsterAct(s: CombatState, party: Party, rng: RngInstance): bool
     const sp = monsterSpells(m.def).find((x) => castable(s, party, m, x));
     if (sp) { monsterCast(s, party, rng, m, sp); s.turn++; checkOutcome(s, party, rng); return true; }
   }
-  if (m.back && !m.def.ranged && frontStands(s)) { s.turn++; checkOutcome(s, party, rng); return true; }
+  // A sweeper may spend its turn on a row: a breath from either rank, as a spell, an arm only where its blows reach.
+  const holds = m.back && !m.def.ranged && frontStands(s);
+  if (m.def.sweep && (m.def.sweep.element || !holds) && rng.chance(m.def.sweep.chance) && sweep(s, party, rng, m)) { s.turn++; checkOutcome(s, party, rng); return true; }
+  if (holds) { s.turn++; checkOutcome(s, party, rng); return true; }
   // A thief gone from sight is no one's mark, while anyone else is.
   const seen = party.members.map((c, i) => ({ c, i })).filter(({ c }) => !isDown(c) && !vanished(s, c));
   const front = seen.filter(({ i }) => i < FRONT_ROW);
@@ -712,8 +758,7 @@ export function monsterAct(s: CombatState, party: Party, rng: RngInstance): bool
   const pool = m.under ? front : m.def.ranged || front.length === 0 ? any : front;
   const pick = rng.pick(pool);
   if (!pick) { s.turn++; checkOutcome(s, party, rng); return true; }
-  const ac = armorClass(pick.c) + (s.defending[pick.i] ? 4 : 0) + (s.shield > 0 ? WARD_AC : 0) + (s.edge?.(pick.c, s).ac ?? 0);
-  if (rng.chance(toHit(monsterHit(s, m), ac))) {
+  if (rng.chance(toHit(monsterHit(s, m), guard(s, pick.c, pick.i)))) {
     let dmg = roll(rng, m.def.dice, m.def.sides, m.def.bonus);
     if (s.defending[pick.i]) dmg = Math.ceil(dmg / 2);
     // A drain on spell points takes what it can of them, and the rest from hit points.
