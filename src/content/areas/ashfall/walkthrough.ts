@@ -14,10 +14,16 @@
 // the gate and out again, its businesses, its two halls and its crossings. Then Fire Mountain's flank
 // (G11, #513), walked onto over G10's south edge: the crossing line both ways; the track past the shrine
 // at its head to Grimsforge, the warlord's heir at the anvil, the camp in its lee and the scavenger by
-// the fire; the vents, barred until Meridian Camp is built, and the furnace-draught that is no way in;
-// the cone's mouth and the lookout on its shoulder; the box's groups won at its floor, the sentry only
-// after the Stone; and the scavenger's hole, found from the rope at its mouth, its far end barred as the
-// vents are. Then the Ember Waste's road (F10 and E10, #517): over G10's west edge, walked, the Waste's
+// the fire; the vents, the middle mouth the way down into Meridian Camp, and the furnace-draught that is
+// no way in; the cone's mouth and the lookout on its shoulder; the box's groups won at its floor, the
+// sentry only after the Stone; and the scavenger's hole, found from the rope at its mouth, its far end
+// going down. Then Meridian Camp's first level, the vents (#22): down the middle mouth and up again,
+// down the scavenger's rope and up again; the flue hall, the drift and the stokers' path; the Company's
+// trail, the Guild's chain pin and the chalked arrows down past their cold camp to the stair, barred
+// until the iron corridors are built; the grates and the rounds; the groups won at 25, the sentry only
+// after the Stone; and the furnace room, with the Ember Stone's first part in the furnace's mouth and
+// the stokers' parts beside it. Then the Ember Waste's road (F10 and E10, #517): over G10's west edge,
+// walked, the Waste's
 // crossing words and back the coast's; the road square to square over F10 and E10 to the Wold's edge; the
 // milestone, the vines' end, the Archdruid at his outcrop, the shrine, the cairn and the camp; over onto
 // E10 with nothing said; the notch and its waymark, the hermit, the flow's head; E10 laid whole and bare
@@ -40,8 +46,9 @@ import type { Facing } from '../../../game/types.ts';
 import { ATLAS, MAP_DEFS, MONSTERS, GUILD_QUESTS } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
-import type { Feature, MapDef } from '../../../game/map.ts';
 import { GameMap } from '../../../game/map.ts';
+import type { Feature, MapDef } from '../../../game/map.ts';
+import { restRefused } from '../../../game/wilds.ts';
 import { meet, heard } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
 import { buy, item } from '../../../game/items.ts';
@@ -59,6 +66,7 @@ import { ARMOURER, CURES } from './items.ts';
 import { INTERIORS } from './interiors.ts';
 import { GATE } from './maps/cindercoast_g10.ts';
 import { VENTS, HOLE } from './maps/firemount_g11.ts';
+import { STAIR } from './maps/meridian_camp.ts';
 import { CRATER, STONE } from './maps/emberwaste_f11.ts';
 
 const G10 = MAP_DEFS.find((d) => d.id === 'cindercoast_g10')!, G11 = MAP_DEFS.find((d) => d.id === 'firemount_g11')!;
@@ -178,8 +186,8 @@ export const walkthrough: Walkthrough = (ok) => {
   const at11 = (x: number, y: number): number => (g11.y + y) * out.width + g11.x + x;
   const down = (level: number): string[] => cross(level, 'cindercoast_g10', G11.start.x, 31, SOUTH);
   const low = down(22), two = down(23), due = down(25);
-  ok(w.world.zone?.id === 'firemount_g11' && w.world.state.x === g11.x + G11.start.x && w.world.state.y === g11.y && g11.x === g10.x && g11.y === g10.y + 32 && G11.start.y === 0 && G11.start.facing === SOUTH && !(G11.exits ?? []).length,
-    'over G10\'s south edge from its 28,31 onto G11\'s 28,0, walked, the box\'s way in, and it has no way out but its edges');
+  ok(w.world.zone?.id === 'firemount_g11' && w.world.state.x === g11.x + G11.start.x && w.world.state.y === g11.y && g11.x === g10.x && g11.y === g10.y + 32 && G11.start.y === 0 && G11.start.facing === SOUTH && G11.exits?.length === 2 && G11.exits.includes(VENTS) && G11.exits.includes(HOLE),
+    'over G10\'s south edge from its 28,31 onto G11\'s 28,0, walked, the box\'s way in, and no way out but its edges and the two down into Meridian Camp');
   ok(due.join(' / ') === 'Fire Mountain.', `at 25, Fire Mountain named, no more (${due.join(' / ')})`);
   ok(two.join(' / ') === 'Fire Mountain. The land here is harder than the road behind.', `at 23, the land harder than the road behind (${two.join(' / ')})`);
   ok(low.join(' / ') === 'Fire Mountain. Nothing here would spare you. The road behind is still open.', `at 22, the plainer warning, and the road behind open (${low.join(' / ')})`);
@@ -216,12 +224,12 @@ export const walkthrough: Walkthrough = (ok) => {
   const sold = meet(scavenger, w.party, heard(w.world, scavenger)).text;
   ok(sold.includes('smith in Cinderport') && !['rope', 'hole', 'down'].some((word) => sold.includes(word)), 'the scavenger sells to a smith in Cinderport, and says nothing of where he goes');
 
-  // The vents: three mouths, the middle one the way down to Meridian Camp, barred until it is built
-  // (VENTS), and the step's line at their front each time; the furnace-draught, a vent and no way in.
+  // The vents: three mouths, the middle one open, the way down into Meridian Camp (VENTS), and the step's
+  // line at their front each time; the furnace-draught, a vent and no way in.
   const vents = G11.features!.find((f) => f.kind === 'event' && f.id === 'g11_vents');
-  ok(vents?.kind === 'event' && !vents.once && vents.x === VENTS.x + 1 && vents.y === VENTS.y && VENTS.to === 'meridian_camp' && out.passable(g11.x + VENTS.x, g11.y + VENTS.y) !== 'ok'
-    && [-1, 0, 1].every((dy) => out.at(g11.x + VENTS.x, g11.y + VENTS.y + dy).terrain === 'vent'),
-    'the vents are three mouths at 26,15 to 17, the middle one barred until Meridian Camp is built (VENTS), and their line is said at its front each time');
+  ok(vents?.kind === 'event' && !vents.once && vents.x === VENTS.x + 1 && vents.y === VENTS.y && VENTS.to === 'meridian_camp' && out.passable(g11.x + VENTS.x, g11.y + VENTS.y) === 'ok'
+    && [-1, 1].every((dy) => out.at(g11.x + VENTS.x, g11.y + VENTS.y + dy).terrain === 'vent' && out.passable(g11.x + VENTS.x, g11.y + VENTS.y + dy) !== 'ok'),
+    'the vents are three mouths at 26,15 to 17, the middle one open, the way down into Meridian Camp (VENTS), and their line is said at its front each time');
   const vmark = ATLAS.sites.find((q) => q.name === 'Meridian Camp')!;
   ok(Math.floor(vmark.at[0]) === g11.x + VENTS.x && Math.floor(vmark.at[1]) === g11.y + VENTS.y, `the middle mouth is Meridian Camp's mark on the atlas (${vmark.at.join(',')})`);
   see(w, 'firemount_g11:g11_vents');
@@ -248,8 +256,8 @@ export const walkthrough: Walkthrough = (ok) => {
   for (const g of G11.encounters!) fight(w, `firemount_g11:${g.id}`);
 
   // The secret: the rope on the rock where no vine grows and the smith's word; the search there, the
-  // ledge behind the rocks with his finds, and the hole going on down, barred until Meridian Camp is
-  // built (HOLE). Walked, waded, climbed or floated, the hole is never reached but through its mouth.
+  // ledge behind the rocks with his finds, and the hole going on down into Meridian Camp (HOLE). Walked,
+  // waded, climbed or floated, the hole is never reached but through its mouth.
   const [mouth] = G11.secrets!;
   const shut11 = reach(mouth.x - 1, mouth.y, (x, y) => !(x === g11.x + mouth.x && y === g11.y + mouth.y) && on11(x, y) && out.passable(x, y, { swim: true, climb: true, float: true }) === 'ok', g11);
   ok(shut11.size > 300 && !shut11.has(at11(mouth.x + 1, mouth.y)) && !shut11.has(at11(mouth.x + 2, mouth.y)), `the hole is shut but for its mouth: none of G11's ${shut11.size} squares walked, waded, climbed or floated reaches it`);
@@ -262,8 +270,70 @@ export const walkthrough: Walkthrough = (ok) => {
   listen(w);
   const finds = G11.features!.find((f) => f.kind === 'chest' && f.id === 'g11_hole');
   ok(finds?.kind === 'chest' && finds.items.includes('great_axe+2') && finds.x === mouth.x + 2 && finds.y === mouth.y, 'in the hole, with his finds, a Great Axe +2');
-  ok(HOLE.to === 'meridian_camp' && HOLE.x === mouth.x + 2 && HOLE.y === mouth.y + 1 && out.passable(g11.x + HOLE.x, g11.y + HOLE.y) !== 'ok',
-    'the hole goes on down at 31,17, barred until Meridian Camp is built (HOLE)');
+  ok(HOLE.to === 'meridian_camp' && HOLE.x === mouth.x + 2 && HOLE.y === mouth.y + 1 && out.passable(g11.x + HOLE.x, g11.y + HOLE.y) === 'ok'
+    && [[0, 1], [-1, 0]].every(([dx, dy]) => out.passable(g11.x + HOLE.x + dx, g11.y + HOLE.y + dy, { swim: true, climb: true, float: true }) !== 'ok'),
+    'the hole goes on down at 31,17, into Meridian Camp behind the furnace room (HOLE), reached only from the hole');
+
+  // Meridian Camp's first level, the vents (#22), at 25. Down the middle mouth onto the flue hall, facing
+  // in; stepped back into, the mouth lets the company up onto the vents' front, facing away from them.
+  // Down the scavenger's rope the same, behind the furnace room, and up it onto his ledge.
+  const MC = MAP_DEFS.find((d) => d.id === 'meridian_camp')!;
+  const here = (): string => `${w.world.state.mapId} ${w.world.state.x},${w.world.state.y}`;
+  w.world.travel('firemount_g11', VENTS.x + 1, VENTS.y, WEST);
+  const dropped = w.world.move('forward');
+  ok(dropped.kind === 'moved' && w.world.state.mapId === 'meridian_camp' && w.world.state.x === MC.start.x && w.world.state.y === MC.start.y && w.world.state.facing === SOUTH && dropped.messages.includes(VENTS.label!),
+    `the middle mouth takes the company down onto the flue hall, facing in (${here()}: ${dropped.kind === 'moved' ? dropped.messages.join(' / ') : dropped.kind})`);
+  const upMouth = [w.world.move('forward'), w.world.move('back')];
+  ok(upMouth.every((r) => r.kind === 'moved') && w.world.zone?.id === 'firemount_g11' && w.world.state.x - g11.x === VENTS.x + 1 && w.world.state.y - g11.y === VENTS.y && w.world.state.facing === EAST,
+    `and back up the rungs onto the vents' front, facing away from them (${here()})`);
+  w.world.travel('firemount_g11', HOLE.x, HOLE.y - 1, SOUTH);
+  const roped = w.world.move('forward');
+  ok(roped.kind === 'moved' && w.world.state.mapId === 'meridian_camp' && w.world.state.x === HOLE.tx && w.world.state.y === HOLE.ty && w.world.state.facing === NORTH && roped.messages.includes(HOLE.label!),
+    `the scavenger's rope goes down behind the furnace room, facing in (${here()}: ${roped.kind === 'moved' ? roped.messages.join(' / ') : roped.kind})`);
+  const upRope = [w.world.move('forward'), w.world.move('back')];
+  ok(upRope.every((r) => r.kind === 'moved') && w.world.zone?.id === 'firemount_g11' && w.world.state.x - g11.x === HOLE.x && w.world.state.y - g11.y === HOLE.y - 1 && w.world.state.facing === WEST,
+    `and up it onto his ledge (${here()})`);
+
+  // The flue hall under the mouths, the drift under the west one and the stokers' path under the east; the
+  // Company's trail west, the Guild's chain pin at the flue's head (as at the Ember Stone, §4.8) and chalked
+  // arrows down past their first camp, cold, the level's one rest, to the stair; the grates and the rounds.
+  for (const id of ['mc1_in', 'mc1_path', 'mc1_pin', 'mc1_arrow', 'mc1_arrow2', 'mc1_arrow3', 'mc1_slag', 'mc1_grates', 'mc1_glow', 'mc1_tracks', 'mc1_scrape', 'mc1_boots', 'mc1_hole']) see(w, `meridian_camp:${id}`);
+  const drift = MC.features!.find((f) => f.kind === 'cairn' && f.id === 'mc1_drift');
+  ok(drift?.kind === 'cairn' && drift.gold > 0 && drift.x === 11 && drift.y === 1, 'under the west mouth the drift of what fell down it, coins in it');
+  const pin = MC.features!.find((f) => f.kind === 'event' && f.id === 'mc1_pin');
+  ok(pin?.kind === 'event' && pin.text.includes('chain pin') && pin.text.includes('Guild'), 'at the west flue\'s head a chain pin with the Guild\'s mark on it');
+  const camps = MC.features!.filter((f) => f.kind === 'camp');
+  ok(camps.length === 1 && camps[0].text.includes('long cold'), 'the first of the Company\'s camps, cold, the level\'s one rest');
+  w.world.travel('meridian_camp', camps[0].x, camps[0].y);
+  ok(restRefused(w.world) === '', 'and a company may rest at it');
+
+  // The stair at the far end, down to the iron corridors, barred until they are built (STAIR): its square
+  // solid and its line said at its head each time.
+  const stair = MC.features!.find((f) => f.kind === 'event' && f.id === 'mc1_stair');
+  ok(STAIR.to === 'meridian_camp2' && !(MC.exits ?? []).some((e) => e.to === STAIR.to) && new GameMap(MC).passable(STAIR.x, STAIR.y) !== 'ok'
+    && stair?.kind === 'event' && !stair.once && stair.x === STAIR.x && stair.y === STAIR.y - 1,
+    'the stair at the far end goes down to the iron corridors, barred until they are built (STAIR), and its line is said at its head each time');
+  see(w, 'meridian_camp:mc1_stair');
+
+  // The groups, each won at 25: the stokers' rounds, a stoker and a salamander by the grates and a stoker
+  // alone on the east flue; the furnace room's two stokers with their salamanders, the level's hardest,
+  // at the furnace; and the sentry that comes up the stair only once the Ember Stone is lit.
+  const [round, flue, furnace, sentry] = ['mc1_round', 'mc1_flue', 'mc1_stokers', 'mc1_sentry'].map((id) => MC.encounters!.find((g) => g.id === id)!);
+  ok(MC.encounters!.length === 4 && round.roams !== false && flue.roams !== false && furnace.roams === false
+    && furnace.monsters.filter((m) => m === 'stoker').length === 2 && furnace.monsters.filter((m) => m === 'ember_salamander').length === 2
+    && JSON.stringify(sentry.after) === JSON.stringify({ flag: 'q_ember_lit' }) && MC.encounters!.every((g) => !!g.respawn),
+    'stokers on their rounds, two stokers with their salamanders at the furnace, and a sentry only once the Ember Stone is lit');
+  for (const g of MC.encounters!) fight(w, `meridian_camp:${g.id}`);
+
+  // The furnace room: the stokers shovel nothing into nothing, and in the furnace's mouth the Ember
+  // Stone's first part, a quest item, taken for the Stone (#516); beside it the stokers' parts, which no
+  // shop buys.
+  see(w, 'meridian_camp:mc1_furnace');
+  const part = MC.features!.find((f) => f.kind === 'chest' && f.id === 'mc1_part'), heap = MC.features!.find((f) => f.kind === 'chest' && f.id === 'mc1_heap');
+  ok(part?.kind === 'chest' && part.items.join() === 'ember_part1' && item('ember_part1').slot === 'none' && !item('ember_part1').price, 'in the furnace\'s mouth the Ember Stone\'s first part, a quest item');
+  if (part?.kind === 'chest') { w.world.travel('meridian_camp', part.x, part.y); w.world.markUsed(part.id); w.party.bag.push(...part.items); }
+  ok(heap?.kind === 'chest' && heap.items.length === 2 && heap.items.every((i) => item(i).slot === 'none' && !item(i).price), 'beside it a heap of the stokers\' parts, which no shop buys');
+  listen(w);
 
   // The Ember Waste's road (#517). Over G10's west edge from 0,7 onto F10's 31,7, walked: three under the
   // Waste's floor its harsher words, two under its own, at the floor its name and nothing more; straight

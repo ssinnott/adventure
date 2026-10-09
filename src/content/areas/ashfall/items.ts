@@ -39,6 +39,23 @@ export const scavengersAxe = P(SUNDERWOOD.find((i) => i.id === 'great_axe')!, 2)
 export const graveBow = P(hornBow, 2);
 
 /**
+ * The Ember Stone's first part (#22; docs/areas/ashfall.md §5, #548), in the furnace's mouth in the
+ * stokers' furnace room on Meridian Camp's first level: a quest item for the Stone's hand-in of three
+ * (#516), which takes each part at the first meeting. Old Cinder's undercroft holds the second (#515) and
+ * the iron corridors' end the third (meridian_camp2).
+ */
+export const emberPart1: ItemDef = { id: 'ember_part1', name: 'Ember Stone\'s First Part', slot: 'none', price: 0, text: [
+  'A piece of grey iron the size of a loaf, warm through, and heavier than it looks.',
+  'One face of it is cut to fit something, exactly.',
+] };
+
+/** The parts the stokers shed, on the furnace room's heap (#22), which no shop buys and no hand-in takes (MONSTERS §2). */
+const PARTS: ItemDef[] = [
+  { id: 'stoker_firebar', name: 'Stoker\'s Firebar', slot: 'none', price: 0 },
+  { id: 'stoker_blade', name: 'Stoker\'s Shovel Blade', slot: 'none', price: 0 },
+];
+
+/**
  * Old Cinder's finds (#515): the ladder's plus at the square, on the stall the Old Drake sleeps beside;
  * the town's founding stone in its niche in the undercroft, for the Cinderport potter (#56's 50, its quest
  * #519's); the Ember Stone's second part, set in the floor beside the dark lamp at the undercroft's
@@ -59,4 +76,4 @@ export const hearthSymbol: ItemDef = { id: 'hearth_symbol', name: 'Holy Symbol o
   'It is warm to hold, even down here.',
 ] };
 
-export const ITEMS: readonly ItemDef[] = [...WARES, quickening, scavengersAxe, graveBow, squareFlamberge, foundingStone, emberPart2, hearthSymbol];
+export const ITEMS: readonly ItemDef[] = [...WARES, quickening, scavengersAxe, graveBow, emberPart1, ...PARTS, squareFlamberge, foundingStone, emberPart2, hearthSymbol];

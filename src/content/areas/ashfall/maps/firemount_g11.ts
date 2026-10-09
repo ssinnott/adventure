@@ -8,27 +8,26 @@
 // the furnace-draught breathing in the rock; a lookout on the cone's shoulder over the Waste, a cairn
 // on its ash foot in the north-west, the Cinder Hills' line on the west, and a drake on a flow.
 // Its way in is G10's south edge: the track at columns 23 to 31, and the cairn's corner at 0 to 4.
-// The vents and the hole's far end are barred until Meridian Camp is built (VENTS, HOLE). The east,
-// south and west edges end the world against H11, G12 and F11.
+// The middle mouth and the hole's far end are the ways down into Meridian Camp's vents (VENTS, HOLE;
+// #22). The east, south and west edges end the world against H11, G12 and F11.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/ashfall.md §4.5 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 
 /**
- * The way down to Meridian Camp (#22): the middle of the vents' three mouths, 26,16, onto the camp's
- * first level at 16,1, facing south, which this asks #22 to give it. An exit leads only to a built map,
- * so Meridian Camp lists it in this map's exits, opens the mouth's square and drops `g11_vents`; its
- * way back up lands on 27,16, facing east, the vents' front.
+ * The way down to Meridian Camp (#22): the middle of the vents' three mouths, 26,16, open ash between
+ * the two still breathing, onto the vents' flue hall at 16,1, facing south; the way back up lands on
+ * 27,16, facing east, the vents' front.
  */
-export const VENTS: Exit = { x: 26, y: 16, to: 'meridian_camp', tx: 16, ty: 1, tf: SOUTH };
+export const VENTS: Exit = { x: 26, y: 16, to: 'meridian_camp', tx: 16, ty: 1, tf: SOUTH,
+  label: 'Down into the middle mouth on rungs hot through the glove, and a drop at the end onto iron.' };
 
 /**
- * The scavenger's way down (#56's 52): the far end of his hole, 31,17, onto the camp's first level
- * behind the stokers' furnace room, at 29,30 facing north, which this asks #22 to give it. Meridian
- * Camp lists it in this map's exits and opens the square; its way back up lands in the hole on 31,16,
- * facing west.
+ * The scavenger's way down (#56's 52): the far end of his hole, 31,17, onto the vents behind the stokers'
+ * furnace room, at 29,30 facing north (#22); the way back up lands in the hole on 31,16, facing west.
  */
-export const HOLE: Exit = { x: 31, y: 17, to: 'meridian_camp', tx: 29, ty: 30, tf: NORTH };
+export const HOLE: Exit = { x: 31, y: 17, to: 'meridian_camp', tx: 29, ty: 30, tf: NORTH,
+  label: 'Down the scavenger\'s rope, hand under hand, a long way through the slag, and out into heat.' };
 
 export const FIREMOUNT_G11: MapDef = {
   id: 'firemount_g11',
@@ -38,6 +37,7 @@ export const FIREMOUNT_G11: MapDef = {
   band: [25, 25],
   region: 'ashfall',
   start: { x: 28, y: 0, facing: SOUTH },
+  exits: [VENTS, HOLE],
   rows: [
     'aaaaaMMMMMMMMMMMMMMMMMMaaaaaaaaa',
     'aaaMMMMMMMMMMMMMMMMMMMMMaaaaaaaa',
@@ -55,8 +55,8 @@ export const FIREMOUNT_G11: MapDef = {
     'aaaaMM!!!aaaaaaaaaaaa!!aaaaaaBBB',
     'aaaaaa!!!aaaaaaaaaaaaa!!aaaaaaaa',
     'aaaaa!!!aaaaaaaaaaaaaaa!!a@aarrr',
-    'aaaa!!!aaaaaaaaaaaaaaaaa!!@aaSaa',
-    'aaaa!!aaaaaaaaaaaaaaaaaaa!@aarrr',
+    'aaaa!!!aaaaaaaaaaaaaaaaa!!aaaSaa',
+    'aaaa!!aaaaaaaaaaaaaaaaaaa!@aarra',
     'aaa!!aaaaaaaaaaaaaaaaaaaa!!aaaar',
     'aa!!aaaaaaaaaaaaaaaaaaaaaa!!aaaa',
     'a!!!aaaaaaaaaaaaaaaaaaaaaaa!aaaa',
@@ -90,10 +90,10 @@ export const FIREMOUNT_G11: MapDef = {
       '"I find things. The mountain gives them up, if you know where to dig."',
       '"A smith in Cinderport buys what I bring. He never asks where I go."',
     ] },
-    // The vents, barred until Meridian Camp is built (VENTS): the step's line at their front, each time.
+    // The vents, the middle mouth the way down into Meridian Camp (VENTS): the step's line at their front, each time.
     { kind: 'event', x: 27, y: 16, id: 'g11_vents', text: 'Three mouths of iron in the ash, each as wide as a door, breathing heat. The tracks in the ash go in and come out.' },
     // The scavenger's hole in the rocks beside the vents: the rope at its mouth, his finds on the ledge,
-    // and the far end going down, barred until Meridian Camp is built (HOLE).
+    // and the far end going down into Meridian Camp behind the furnace room (HOLE).
     { kind: 'event', x: 28, y: 16, id: 'g11_rope', once: true, text: 'A rope of vine knotted round a rock and let down between the stones. No vine grows within a day of here.' },
     { kind: 'event', x: 30, y: 16, id: 'g11_finds', once: true, text: 'A ledge in the rock, and on it grey parts sorted into heaps. A cold draught comes up from below.' },
     { kind: 'chest', x: 31, y: 16, id: 'g11_hole', gold: 700, items: ['great_axe+2'] },

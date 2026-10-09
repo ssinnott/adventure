@@ -324,13 +324,13 @@ export function outdoors(): void {
   // it, the ash either side of the mountain's foot, walked across at columns 0 to 4 and 23 to 31; on the
   // west the ash, the cone's flank and the two flows leaving west against F11, built (#514), so the flank
   // stays mountain between the two; on the east the ash, Grimsforge's wall, the scavenger's rocks and the
-  // south-east flow leaving against H11; on the south the ash against G12. Neither H11 nor G12 is built,
-  // so the world ends past them.
+  // south-east flow leaving against H11, the hole's far end open ash, the way down into Meridian Camp
+  // (#22); on the south the ash against G12. Neither H11 nor G12 is built, so the world ends past them.
   const g11 = out.zones.find((z) => z.id === 'firemount_g11')!;
   ok(g11.x === g10.x && g11.y === g10.y + 32 && northOf(g11) === 'a'.repeat(5) + 'M'.repeat(18) + 'a'.repeat(9) && southOf(g11) === 'a'.repeat(32)
     && [...Array(32).keys()].every((i) => [out.at(g11.x + 32, g11.y + i), out.at(g11.x + i, g11.y + 32)].every((c) => c.ch === '%')),
     `G11's north edge meets G10's south edge, the ash either side of the mountain's foot, and its south edge is the ash against G12, past which the world ends (${northOf(g11)}; ${southOf(g11)})`);
-  ok(westOf(g11) === 'a'.repeat(4) + 'M'.repeat(6) + '!!' + 'a'.repeat(9) + '!!!' + 'a'.repeat(8) && eastOf(g11) === 'a'.repeat(12) + 'BBararr' + 'a'.repeat(8) + '!!!!a',
+  ok(westOf(g11) === 'a'.repeat(4) + 'M'.repeat(6) + '!!' + 'a'.repeat(9) + '!!!' + 'a'.repeat(8) && eastOf(g11) === 'a'.repeat(12) + 'BBaraar' + 'a'.repeat(8) + '!!!!a',
     `G11's west edge is the ash, the cone's flank and the two flows against F11, and its east edge the ash, Grimsforge, the scavenger's rocks and the south-east flow against H11, past which the world ends (${westOf(g11)}; ${eastOf(g11)})`);
   // The Stair's foot (H10, #510): on the north the vines, the grass of the shore, the pines and the Sheer
   // against H9's shore; on the south the ash, the stream at 4 and 5 and the pines under the Sheer against
