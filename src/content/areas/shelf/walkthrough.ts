@@ -102,6 +102,7 @@ export const walkthrough: Walkthrough = (ok) => {
   haleGone(ok);
   walkWorth(ok);
   homecoming(ok);
+  underVask(ok);
   trainers(ok);
 };
 
@@ -725,6 +726,31 @@ function homecoming(ok: (cond: boolean, msg: string) => void): void {
     w.ok(w.world.state.x === 7 && w.world.state.y === 14, 'after Act II the south gate lets a company with no orcblood member in');
     const wardens = step(w), beside = (w.world.travel('harrow', 8, 13, NORTH), w.world.eventsHere());
     w.ok(wardens.some((m) => m.startsWith('Wardens on the wall-walk')) && !beside.length, 'and the Wardens at the gate look it over on the first step inside, once');
+  }
+}
+
+/**
+ * Helmstow once the Hand has Wenna (#449): `q_wenna_taken`, set by her question at the camp's fire on
+ * Sheer Point, makes Vask's city worse again. After Act II and before it, the middle street is bare and
+ * the Eel talks of the curfew; after it, a gibbet stands in the street, said once on either of its two
+ * squares, and the Eel talks of that and of the oars locked in the keep. The flags are set by hand, as
+ * the homecoming's is.
+ */
+function underVask(ok: (cond: boolean, msg: string) => void): void {
+  const eel = MAP_DEFS.find((d) => d.id === 'harrow')!.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'The Gilded Eel' && JSON.stringify(f.after) === JSON.stringify({ flag: 'q_salt_done' }))!;
+  const street = (w: Walk, x: number): string[] => { w.world.travel('harrow', x, 9, NORTH); return w.world.eventsHere(); };
+  { // After Act II, before Wenna is taken: no gibbet, and the Eel's talk the curfew's.
+    const w = newWalk(ok);
+    w.party.flags.q_salt_done = 1;
+    w.ok(!street(w, 7).length && !street(w, 8).length && hear(w, 'harrow', eel) === eel.lines.join('\n\n'), 'after Act II, before the Hand has Wenna, the middle street is bare and the Eel talks of the curfew');
+  }
+  { // After it: the gibbet, said once on whichever square of the street is walked first, and the Eel's talk of it.
+    const w = newWalk(ok);
+    w.party.flags.q_salt_done = 1;
+    w.party.flags.q_wenna_taken = 1;
+    const first = street(w, 8), again = [...street(w, 7), ...street(w, 8)], talk = hear(w, 'harrow', eel);
+    w.ok(first.length === 1 && first[0].startsWith('A gibbet') && !again.length, `once the Hand has Wenna, a gibbet stands new in Helmstow's street, said once (${first.join(' / ')})`);
+    w.ok(talk.startsWith('The tavern is near empty') && talk.includes('hanged nobody') && wrap(talk, SAY_W).length <= SAY_LINES, 'and the Eel is near empty, and talks of the gibbet and the oars locked in the keep');
   }
 }
 
