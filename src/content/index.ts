@@ -24,6 +24,7 @@ import { AREA as cairnmoor } from './areas/cairnmoor/index.ts';
 import { AREA as rimewater } from './areas/rimewater/index.ts';
 import { AREA as whitespine } from './areas/whitespine/index.ts';
 import { AREA as ashfall } from './areas/ashfall/index.ts';
+import * as glasswold from './areas/glasswold/monsters.ts';
 import { ITEMS as CORE_ITEMS } from './items.ts';
 import { SPELLS as ALL_SPELLS } from './spells.ts';
 import { PLAN } from './atlas.ts';
@@ -36,7 +37,9 @@ export const AREAS = [shelf, thornmark, saltreach, wrackholm, sunderwood, kilns,
  * on, and its monsters may be drawn before that. Each is merged into MONSTERS and MonsterSprite as
  * an area's are; once the area is listed, its Area takes the import and its line here goes.
  */
-export const AHEAD = [] as const;
+export const AHEAD = [
+  { id: 'glasswold' as const, sprites: glasswold.SPRITES, monsters: glasswold.MONSTERS },
+] as const;
 
 /**
  * Rooms drawn ahead of their area, as AHEAD's monsters are: an area's businesses' rooms may be
