@@ -12,17 +12,18 @@
 // each owed to its shop or box while its area is planned; and Kilnhaven's smith's quarter more on
 // the forge's wares sits inside the Kilns' window too. Then Act IV (#542), one step: Cinderport's
 // armourer at 25, bettering the furrier's and Rimewater's finds for every class, owed to the town's
-// box while Ashfall is planned.
+// box while Ashfall is planned; and the stone cure (#546), a consumable inside the window, which the
+// company carries from 25, owed to Cinderport's chandler and the Riders' trader.
 import { AREAS, MAP_DEFS, MONSTERS, ITEMS } from '../../src/content/index.ts';
 import type { Area } from '../../src/content/area.ts';
 import { CURVE } from '../../src/content/progression.ts';
 import { FORGE, SMITH_PRICES, quarterMore } from '../../src/content/areas/kilns/items.ts';
 import { FURRIER } from '../../src/content/areas/rimewater/items.ts';
-import { ARMOURER } from '../../src/content/areas/ashfall/items.ts';
+import { ARMOURER, CURES } from '../../src/content/areas/ashfall/items.ts';
 import { CLASSES, robeLike } from '../../src/game/party.ts';
 import type { ClassId } from '../../src/game/party.ts';
 import type { ItemDef } from '../../src/game/items.ts';
-import { GEAR, companyAt } from '../harness.ts';
+import { GEAR, KIT, companyAt } from '../harness.ts';
 import { gateCompany } from '../gate.ts';
 import { giftOf, spentId } from '../../src/game/wilds.ts';
 import { ok, owed } from './lib.ts';
@@ -220,6 +221,12 @@ export const ACT_IV: readonly Rung<'ashfall'>[] = [
   },
 ];
 
+/**
+ * Who sells the stone cure (#546): Cinderport's chandler (#512) and the Riders' trader at Akordu
+ * (#526), the Wold having no temple nearer; each owed it while its area is planned.
+ */
+export const CURE_SOLD: readonly (readonly ['ashfall' | 'glasswold', string])[] = [['ashfall', '#512'], ['glasswold', '#526']];
+
 /** An item's kind: a hand weapon, a bow, armour or a shield. Only the same kind is bettered. */
 const kind = (d: ItemDef): string => (d.slot === 'weapon' ? (d.ranged ? 'bow' : 'hand') : d.slot);
 /** How good an item is of its kind: a weapon's mean blow with its plus, armour's and a shield's AC. */
@@ -330,6 +337,19 @@ export function ladder(): void {
       : a.maps.some((m) => (m.features ?? []).some((f) => f.kind === 'shop' && f.stock.includes(id))));
     const msg = plus ? `find ${id} lies in a chest, a cairn, a statue's gift or a hoard in ${area}` : `ware ${id} is sold in ${area}`;
     if (whose) owed(there, msg, whose); else ok(there, msg);
+  }
+
+  // The stone cure is a consumable sold by the chandler and the trader, inside each one's window; and
+  // the company's kit (KIT, tools/harness.ts) is wares sold by its level, no dearer than that window.
+  for (const id of CURES) for (const [area, whose] of CURE_SOLD) {
+    const d = ITEMS[id], a = areaOf(area);
+    ok(!!d && d.slot === 'none' && !!d.use?.cure?.includes('stoned') && d.price > 0 && d.price <= CURVE[area].price, `ware ${id} is a cure for stone within ${area}'s window (${d?.price} of ${CURVE[area].price} gold)`);
+    owed(!!a && a.maps.some((m) => (m.features ?? []).some((f) => f.kind === 'shop' && f.stock.includes(id))), `ware ${id} is sold in ${area}`, whose);
+  }
+  for (const [at, ids] of KIT) {
+    const area = CURE_SOLD.map(([x]) => x).find((k) => CURVE[k].band[0] <= at && at <= CURVE[k].band[1]);
+    const cost = ids.reduce((t, id) => t + (ITEMS[id]?.price ?? 0), 0);
+    ok(!!area && ids.every((id) => CURES.includes(id)) && cost <= CURVE[area].price, `the company's kit from ${at}, ${ids.join(', ')}, is sold there (${area}) and costs ${cost} of its window of ${area ? CURVE[area].price : '?'} gold`);
   }
 
   // Kilnhaven's smith asks a quarter more for the forge's step (#434's call 1), in whole gold and

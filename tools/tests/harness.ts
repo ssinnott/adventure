@@ -9,9 +9,9 @@ import { spell, spellDice, SPELLS_GROW_TO } from '../../src/game/spells.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import { MONSTERS } from '../../src/content/index.ts';
 import { gateCompany } from '../gate.ts';
-import { testMonster, standardEncounter, line, scaleAt, groupsPerLevel, xpFor, HP, DAMAGE, ROLES, ROLE_IDS, TROLL, SWEEP, testTroll, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, testDrake, giantEncounter, drakeEncounter } from '../testmonster.ts';
+import { testMonster, standardEncounter, line, scaleAt, groupsPerLevel, xpFor, HP, DAMAGE, ROLES, ROLE_IDS, TROLL, SWEEP, testTroll, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, testDrake, giantEncounter, drakeEncounter, BASILISK_STONE, testBasilisk, basiliskEncounter } from '../testmonster.ts';
 import type { Role } from '../testmonster.ts';
-import { measure, days, fight, play, outcomeOf, companyAt, edgeOf, spent, mustRest, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP, RULES, GEAR_TOP } from '../harness.ts';
+import { measure, days, fight, play, outcomeOf, companyAt, edgeOf, spent, mustRest, mendBetween, day as oneDay, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP, RULES, GEAR_TOP } from '../harness.ts';
 import { ok } from './lib.ts';
 
 export function harness(): void {
@@ -195,7 +195,7 @@ function bout(level: number, enc: Fighters, seeds: number, from: number, dress: 
  * Act III's abilities on the test monsters (MONSTERS §3.3, #537, #541), where the road first meets
  * them: two trolls at 19, burnt or not; four wights at 19; a caller beside six fodder at 20, its fight
  * growing; three lights and a hound at 19, the lights felled first; and Act IV's sweep (#545), two
- * giants at 23 and two drakes at 25.
+ * giants at 23 and two drakes at 25, and stone (#546), the mesa at 27.
  */
 function abilities(): void {
   const pc = (x: number): string => `${Math.round(x * 100)}%`;
@@ -240,4 +240,37 @@ function abilities(): void {
     const b = bout(l, enc, 40, 5001), day = days(l, [enc], 40, 5001), brutes = days(l, [standardEncounter('brute', l)], 40, 5001);
     ok(b.won >= 0.95 && Math.abs(day.fights - brutes.fights) <= 1.5, `a company of ${l} wins ${pc(b.won)} of two ${what}' fights, ${b.rounds.toFixed(1)} rounds for ${(b.cost * 100).toFixed(1)}% of itself, and fights ${day.fights.toFixed(1)} of them to a rest, about as many as of plain brutes (${brutes.fights.toFixed(1)}; ${fightsPerRest(l)} asked)`);
   }
+  // Stone (#546), at the mesas' 27: the test basilisk is the test controller whole, its hold a stone
+  // and its gaze reaching the back row. The company wins the mesa, lifts the stone between fights and
+  // fights a fight or two fewer to a rest than where the hold paralyses; with no cure it rests at the first.
+  const basilisk = testBasilisk(27), controller = testMonster('controller', 27);
+  ok(basilisk.hp === controller.hp && blow(basilisk) === blow(controller) && basilisk.inflict?.cond === 'stoned' && basilisk.inflict.chance === BASILISK_STONE && basilisk.ranged === true,
+    `the test basilisk at 27 is the test controller, ${basilisk.hp} / ${blow(basilisk)}, its hold a stone at ${BASILISK_STONE} a hit and its gaze reaching the back row`);
+  const mesa = basiliskEncounter(27), held = mesa.map((m): MonsterDef => (m.inflict?.cond === 'stoned' ? { ...m, inflict: { cond: 'paralysed', chance: BASILISK_STONE } } : m));
+  const mb = bout(27, mesa, 40, 5001), glassed = mb.fights.filter(({ p }) => p.members.some((m) => hasCondition(m, 'stoned'))).length;
+  const sday = days(27, [mesa], 40, 5001), pday = days(27, [held], 40, 5001);
+  ok(mb.won >= 0.95 && glassed >= 2 && sday.fights < pday.fights && sday.fights > pday.fights - 2.5 && sday.fights >= fightsPerRest(27),
+    `a company of 27 wins ${pc(mb.won)} of the mesa's fights, ${glassed} of 40 leaving someone glassed, and lifting the stone between fights it fights ${sday.fights.toFixed(1)} of them to a rest, where the hold paralysing it fights ${pday.fights.toFixed(1)}: stone costs it a fight or two, and leaves more than asked (${fightsPerRest(27)})`);
+  // Between fights it lifts stone (`unstone`) by Absolve while a member standing has it and the
+  // points, and keeps its draught; by the draught, carried from 25, when all who know Absolve are
+  // glassed, the first lifted then absolving the next; with neither they wait for a temple, and the
+  // company must rest.
+  const draughts = (p: Party): number => p.bag.filter((id) => id === 'quickening').length, points = (p: Party): number => p.members.reduce((t, m) => t + m.sp, 0);
+  const glass = (knowers: boolean): { p: Party; who: Party['members']; sp: number } => {
+    const p = companyAt(27, 1), who = knowers ? p.members.filter((m) => m.spells.includes('absolve')) : [p.members[0]];
+    for (const m of who) addCondition(m, 'stoned');
+    return { p, who, sp: points(p) };
+  };
+  const byAbsolve = glass(false), byDraught = glass(true), stranded = glass(true);
+  stranded.p.bag = stranded.p.bag.filter((id) => id !== 'quickening');
+  for (const x of [byAbsolve, byDraught, stranded]) mendBetween(x.p);
+  const flesh = (x: { who: Party['members'] }): boolean => x.who.every((m) => !hasCondition(m, 'stoned'));
+  ok(draughts(companyAt(24, 1)) === 0 && draughts(companyAt(25, 1)) === 1 && byDraught.who.length >= 1
+    && flesh(byAbsolve) && points(byAbsolve.p) === byAbsolve.sp - spell('absolve').sp && draughts(byAbsolve.p) === 1
+    && flesh(byDraught) && draughts(byDraught.p) === 0 && mustRest(byDraught.p) === null
+    && stranded.who.every((m) => hasCondition(m, 'stoned')) && mustRest(stranded.p) === 'dead',
+    `between fights the company lifts stone by Absolve, keeping its draught; by the draught it carries from 25 when all ${byDraught.who.length} who know Absolve are glassed; and with neither rests for a temple`);
+  const bare = (p: Party): Party => { for (const c of p.members) c.spells = c.spells.filter((id) => id !== 'absolve'); p.bag = p.bag.filter((id) => id !== 'quickening'); return p; };
+  const cureless = Array.from({ length: 40 }, (_, n) => oneDay(27, [mesa], 5001 + n, 30, bare)).reduce((t, d) => t + d.fights, 0) / 40;
+  ok(cureless < sday.fights - 2, `with neither Absolve nor a draught it fights ${cureless.toFixed(1)} of the mesa's fights to a rest, where with them ${sday.fights.toFixed(1)}`);
 }

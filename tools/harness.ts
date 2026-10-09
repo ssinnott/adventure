@@ -10,7 +10,7 @@
 //   node tools/harness.ts --map thornmark --level 5    a map's own groups, against a company of 5
 //   node tools/harness.ts --stats                      the test monsters' stat lines, as markdown
 //   node tools/harness.ts --abilities [--levels 19,20] Act III's trolls, wights, caller and lights on the test monsters (#537, #541),
-//                                                      and Act IV's giants and drakes at 23 and 25 (#545)
+//                                                      and Act IV's giants and drakes at 23 and 25 (#545) and the mesa at 27 (#546)
 //   node tools/harness.ts --calibrate [--write]        re-derive HP and DAMAGE in tools/testmonster.ts
 //   node tools/harness.ts --spell-cap 32 [...]         any of the above as if spells stopped growing elsewhere than 10
 //   node tools/harness.ts --gear-grows [...]           ... or as if the company's gear kept growing past 25
@@ -32,7 +32,7 @@ import os from 'node:os';
 import { Worker, isMainThread, parentPort } from 'node:worker_threads';
 import { makeRng } from '../src/lib/engine/rng.ts';
 import type { RngInstance } from '../src/lib/engine/rng.ts';
-import { CLASSES, defaultParty, xpForLevel, levelUp, isDown, hasCondition, removeCondition, heal, equip, weaponOf, attackBonus, armorClass, bonus, hasTrait, spellHeal, rankMult, RANK_STEP, SPELLFIRE_DMG, SNEAK_ATTACK_DMG, MAX_LEVEL, PRESTIGE_LEVELS, prestigeOf, takePrestige } from '../src/game/party.ts';
+import { CLASSES, defaultParty, xpForLevel, levelUp, isDown, hasCondition, removeCondition, lift, heal, equip, weaponOf, attackBonus, armorClass, bonus, hasTrait, spellHeal, rankMult, RANK_STEP, SPELLFIRE_DMG, SNEAK_ATTACK_DMG, MAX_LEVEL, PRESTIGE_LEVELS, prestigeOf, takePrestige } from '../src/game/party.ts';
 import type { Character, Party } from '../src/game/party.ts';
 import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, isLeader, canCall, sweptRow, asGroup, castOnAlly, castOnParty, toHit, buffHit, traitDamage, monsterAc, monsterHit, seenMult, blowsOf, songDamage, FRONT_ROW } from '../src/game/combat.ts';
 import type { CombatState, MonsterInst, PartyAction, Edge, Fighters } from '../src/game/combat.ts';
@@ -43,7 +43,8 @@ import { ITEMS } from '../src/content/index.ts';
 import type { ItemDef } from '../src/game/items.ts';
 import type { MonsterDef } from '../src/game/monsters.ts';
 import { MAP_DEFS } from '../src/content/index.ts';
-import { ROLES, ROLE_IDS, LEVELS, HP, DAMAGE, line, standardEncounter, testMonster, TROLL, WIGHT_CURSE, CALL, LIGHT, SWEEP, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, giantEncounter, drakeEncounter } from './testmonster.ts';
+import { ROLES, ROLE_IDS, LEVELS, HP, DAMAGE, line, standardEncounter, testMonster, TROLL, WIGHT_CURSE, CALL, LIGHT, SWEEP, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, giantEncounter, drakeEncounter, BASILISK_STONE, basiliskEncounter } from './testmonster.ts';
+import { quickening } from '../src/content/areas/ashfall/items.ts';
 import type { Role } from './testmonster.ts';
 
 /**
@@ -203,6 +204,7 @@ export function companyAt(level: number, seed: number): Party {
     const rng = makeRng(seed);
     p = defaultParty(rng);
     for (const c of p.members) { c.xp = xpForLevel(level); levelUp(c, rng); outfit(c, level); }
+    p.bag.push(...KIT.filter(([at]) => at <= level).flatMap(([, ids]) => ids));
     prestige(p);
     for (const c of p.members) { c.hp = c.maxHp; c.sp = c.maxSp; }
     companies.set(key, p);
@@ -400,8 +402,31 @@ export function measure(level: number, monsters: Encounter, seeds: number, from 
   };
 }
 
-/** Between fights, the company mends itself as a player would, while it has the spell points to. */
+/**
+ * What the company carries beside its gear, by a level: from 25 a Quickening Draught, the stone cure
+ * Cinderport's chandler sells by the ladder's step (#546), for a glassed member no one standing can
+ * absolve. tools/tests/ladder.ts holds it to the band's window.
+ */
+export const KIT: readonly (readonly [number, readonly string[]])[] = [[25, [quickening.id]]];
+
+/**
+ * Between fights, stone first (#546): each member turned to glass is lifted by Absolve where a member
+ * standing knows it and has the points, else by a draught the company carries, the bag's before a
+ * pack's. One with neither waits for a temple, and the company must rest (`mustRest`).
+ */
+export function unstone(p: Party): void {
+  const absolve = spell('absolve'), cures = (id: string): boolean => !!item(id).use?.cure?.includes('stoned');
+  for (const m of p.members.filter((x) => hasCondition(x, 'stoned'))) {
+    const caster = p.members.find((c) => !isDown(c) && c.spells.includes(absolve.id) && c.sp >= absolve.sp);
+    if (caster) { caster.sp -= absolve.sp; castOnAlly(caster, absolve, m, RULES.rankStep); continue; }
+    const holder = [p.bag, ...p.members.map((c) => c.pack)].find((h) => h.some(cures)), id = holder?.find(cures);
+    if (holder && id) { holder.splice(holder.indexOf(id), 1); lift(m, item(id).use?.cure ?? []); }
+  }
+}
+
+/** Between fights, the company lifts stone (`unstone`), then mends itself as a player would, while it has the spell points to. */
 export function mendBetween(p: Party): void {
+  unstone(p);
   for (let guard = 0; guard < 60; guard++) {
     const hurt = p.members.filter((m) => !hasCondition(m, 'dead') && !hasCondition(m, 'stoned') && m.hp < m.maxHp / 2).sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp);
     if (!hurt.length) return;
@@ -437,10 +462,10 @@ export interface Day { fights: number; rounds: number; why: Why }
 
 /**
  * Encounters in a row from a fresh company, in turn from `encounters`, mending between them, until it
- * loses one or must rest. The fights it won, the rounds they took on average, and what ended the day.
+ * loses one or must rest; `dress` changes the company first, to try it without something. The fights it won, the rounds they took on average, and what ended the day.
  */
-export function day(level: number, encounters: readonly Encounter[], seed: number, most = 30): Day {
-  const p = companyAt(level, seed);
+export function day(level: number, encounters: readonly Encounter[], seed: number, most = 30, dress = (p: Party): Party => p): Day {
+  const p = dress(companyAt(level, seed));
   let rounds = 0;
   for (let n = 0; n < most; n++) {
     const o = fight(p, encounters[n % encounters.length], seed * 104729 + n);
@@ -703,6 +728,15 @@ async function main(): Promise<void> {
       const bare = felled(fights(l, heavy));
       ANSWER.sweep = true;
       console.log(`  ${l}: giants ${one(fights(l, giantEncounter(l)))}, ${rest(l, giantEncounter(l), ['plain brutes', standardEncounter('brute', l)])}; drakes ${one(fights(l, drakeEncounter(l)))}, ${rest(l, drakeEncounter(l))}; a sweep at its worst ${g.dice * g.sides + g.bonus} to each of a front row of ${front.join(', ')}; giants of twice the blow fell one of a row in ${answered} of ${seeds} fights, ${bare} with no answer`);
+    }
+    // Act IV's stone (#546), where the road first meets it: the mesas at 27.
+    console.log(`The mesa: the test controller, its hold a stone at ${BASILISK_STONE} a hit and its gaze reaching the back row, behind three of the test skirmisher.`);
+    const glassed = (fs: { p: Party }[]): number => fs.filter(({ p }) => p.members.some((m) => hasCondition(m, 'stoned'))).length;
+    const uncured = (p: Party): Party => { forget((x) => x.id !== 'absolve')(p); p.bag = p.bag.filter((id) => !item(id).use?.cure?.includes('stoned')); return p; };
+    for (const l of opt('levels') ? levels : [27]) {
+      const enc = basiliskEncounter(l), held = enc.map((m): MonsterDef => (m.inflict?.cond === 'stoned' ? { ...m, inflict: { cond: 'paralysed', chance: BASILISK_STONE } } : m));
+      const fs = fights(l, enc), cureless = Array.from({ length: seeds }, (_, n) => day(l, [enc], n + 1, 30, uncured)).reduce((t, d) => t + d.fights, 0) / seeds;
+      console.log(`  ${l}: ${one(fs)}, ${glassed(fs)} of ${seeds} leaving someone glassed; ${rest(l, enc, ['its hold a paralysis', held])}, and ${cureless.toFixed(1)} with neither Absolve nor a draught`);
     }
     return;
   }

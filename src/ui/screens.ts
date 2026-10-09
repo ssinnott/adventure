@@ -15,7 +15,7 @@ import { item, priceIn, buy } from '../game/items.ts';
 import { readText } from '../game/people.ts';
 import { ITEMS } from '../content/index.ts';
 import { spell, spellsFor } from '../game/spells.ts';
-import { CLASSES, RACES, TRAITS, STATS, armorClass, attackBonus, equip, heal, removeCondition, isDown, hasCondition, xpForLevel, levelUp, rest, stayNight, canTrain, canTrainAt, trainPrice, MAX_LEVEL, guildFlag, className, resists } from '../game/party.ts';
+import { CLASSES, RACES, TRAITS, STATS, armorClass, attackBonus, equip, heal, lift, templePrice, isDown, hasCondition, xpForLevel, levelUp, rest, stayNight, canTrain, canTrainAt, trainPrice, MAX_LEVEL, guildFlag, className, resists } from '../game/party.ts';
 import { castOnAlly } from '../game/combat.ts';
 import type { Character } from '../game/party.ts';
 import type { GuildId } from '../content/guilds.ts';
@@ -224,7 +224,7 @@ export class SheetScreen implements Screen {
           src.splice(src.indexOf(it.id), 1);
           if (d.use!.heal) g.say(`${t.name} recovers ${heal(t, d.use!.heal)}.`);
           if (d.use!.sp) { t.sp = Math.min(t.maxSp, t.sp + d.use!.sp); g.say(`${t.name} feels sharper.`); }
-          if (d.use!.cure) { for (const k of d.use!.cure) removeCondition(t, k as never); g.say(`${t.name} is cleansed.`); }
+          if (d.use!.cure) g.say(lift(t, d.use!.cure) ? `${t.name} is flesh again.` : `${t.name} is cleansed.`);
           if (d.use!.food) { g.party.food += d.use!.food; g.say(`The party's food grows by ${d.use!.food}.`); }
         });
       } else if (readText(it.id)) g.push(new MessageScreen(readText(it.id)!.join('\n\n'), undefined, d.name));
@@ -460,7 +460,7 @@ function inn(g: Game, f: Extract<Feature, { kind: 'inn' }>): Screen {
 }
 
 function temple(g: Game, f: Extract<Feature, { kind: 'temple' }>): Screen {
-  const priceOf = (c: Character): number => hasCondition(c, 'dead') ? 100 * c.level : hasCondition(c, 'stoned') ? 80 * c.level : c.conditions.length ? 25 : 0;
+  const priceOf = templePrice;
   const names = g.party.members.map((m) => `${m.name}: ${m.conditions.length ? m.conditions.join(', ') : 'well'}\t${priceOf(m) ? `${priceOf(m)}g` : ''}`);
   return new ChoiceScreen(`The Lanterns keep the chapel lit day and night. "Who needs the light?" (${g.party.gold} gold.)`,
     [...names, 'Donate 10 gold', 'Leave'], (i) => {
