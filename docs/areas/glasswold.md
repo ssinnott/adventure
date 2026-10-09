@@ -20,9 +20,11 @@ land without shallows or rivers, and "walkable" what is not mountain, peak, clif
 Built so far: E10's Wold half (#524, §4.2), on the box laid whole for Ashfall's Ember Waste (#517);
 D9, the steppe (#525, §4.3), which lists the area and places the glass scorpion E10 cut and the
 first glass walker; D10, the mesas (#527, §4.5), which joins E10 and D9 overland, so `CUT_OFF`
-is empty, and places the basilisk and spends stone first; and D8, Akordu, the Riders' camp (#526,
-§4.4), which lands the Rider's ride to Cinderport. `AHEAD` and `PLANNED` are empty; the Wold's step
-of the quest and the area's chapter are owed to #531. Its content is `src/content/areas/glasswold/`
+is empty, and places the basilisk and spends stone first; D8, Akordu, the Riders' camp (#526,
+§4.4), which lands the Rider's ride to Cinderport; and C8, the Scarp's edge (#528, §4.6), where the
+Scarp stair from the Saltings' C7 comes up onto the lip, nine squares of C7 opened for it. `AHEAD`
+and `PLANNED` are empty; the Wold's step of the quest and the area's chapter are owed to #531. Its
+content is `src/content/areas/glasswold/`
 (maps, interiors, monsters, items, climate, its part of the world map in `atlas.ts` and its
 walkthrough; its chapter of the one quest, The Warning, in `chapter.ts` and its side quests in
 `quests.ts`, to come); it has no town and one business, the Riders' trader at Akordu, whose tent has
@@ -41,9 +43,9 @@ Glasswold two zones:
 
 | Zone | Band | Squares today | Built |
 |---|---|---|---|
-| The Wold | 26–28 | 6,240 (steppe 3,133, hills 1,151, mountain 646, dunes 540, grass 369) | D9, D10 and D8 |
+| The Wold | 26–28 | 6,240 (steppe 3,133, hills 1,151, mountain 646, dunes 540, grass 369) | D9, D10, D8 and C8 |
 | The Glass, the reach | 30–32 | 4,813 (steppe 1,306, mountain 1,028, hills 838, glass 817, dunes 626) | nothing, and not this phase's |
-| The area | 26–28 | 11,053 | D9, D10 and D8 |
+| The area | 26–28 | 11,053 | D9, D10, D8 and C8 |
 
 Squares are the land `worldGrid` gives each zone by today's seeds, without shallows or rivers;
 9,349 of them a company could walk, and nearly half of those are steppe. That is about 10.8 zone
@@ -54,9 +56,8 @@ D11, B10, C11 and B9's south; the zones' figures are measured again when the fol
 The Wold's band is the area's, 26–28, and the boxes rise through it (§4); the Glass's is the cap's,
 as the reach is (DESIGN §9; MONSTERS open question 3, answered by call 5). No Wardstone stands here.
 
-The squares are the plan's, before any box. D9 (#525), D10 (#527) and D8 (#526) are laid whole in
-the Wold (§4,
-§9).
+The squares are the plan's, before any box. D9 (#525), D10 (#527), D8 (#526) and C8 (#528) are laid
+whole in the Wold (§4, §9).
 
 **The grid** (EXPANSION §8.2; docs/areas/shelf.md §1). Boxes are 32×32 with A1's corner at 8,−2,
 so a box's corner is x = 8 + 32i, y = −2 + 32j. The Wold is the B, C, D and E columns from row 8 to
@@ -77,8 +78,10 @@ Its edges:
 - **North: the Scarp,** the cliff ridge along y 206 to 216 between the Saltings below and the Wold
   above. The Scarp stair climbs it at 80,206 → 80,216, a road link open from the start (EXPANSION
   §2.2), its foot a notch in Saltreach's C7 where the lowest flight has fallen (docs/areas/saltreach.md
-  §4.10; #412, the Scarp's fallen stair). Its head at 80,216 is in C7 too, so the Wold's C8 meets it
-  at its north edge, and the way past the fall is built with C8 (§4.6).
+  §4.10; #412, the Scarp's fallen stair). The link's ends, 80,206 and 80,216, are in C7 too, so the Wold's C8
+  meets the stair at its north edge. As built (#528) the flights run on through C7's column 8 to its
+  south edge, the last is C8's 8,0 (80,222), the head and the Riders' watch lie at 80,223 and the
+  way past the fall is a rope ladder (§4.6).
 - **East: the Cinder Hills,** a hills ridge at x 146 to 152 between the Wold and Ashfall's Ember
   Waste. The road from the Waste crosses it at 156,312 → 144,300, inside E10, open from the start;
   Ashfall's side of it is #517's, and Cinderport, the act's town, is #512's. North of the hills E9
@@ -122,7 +125,7 @@ glare from the south-west on a clear noon.
 
 ## 3. What is built
 
-Three boxes of its own, the first of which lists the area (#525):
+Four boxes of its own, the first of which lists the area (#525):
 
 - **The steppe** (D9, `wold_d9`, core, band 26–27; #525): open grass with glass in it, laid whole at
   104,254. The atlas's road comes over the south edge and runs north-west and west to the gap; a
@@ -149,17 +152,25 @@ Three boxes of its own, the first of which lists the area (#525):
   hides the Riders' hoard. Three groups: a pride of four lions by night, six glass scorpions in the
   broken ground under the mesa's east face and the basilisk alone in the mesa's shade, on its north
   side (§4.4).
+- **The Scarp's edge** (C8, `wold_c8`, country, band 26–27; #528): the Wold's north edge over the
+  Saltings, laid whole at 72,222, west of Akordu. The Scarp stair comes up from the Saltings' C7
+  through nine squares of its column 8 and a last flight cut through the lip, to the stair's head,
+  where the Riders keep a watch of a cairn, a yurt and a fire with two Riders. A Compact runner
+  sits on the last flight getting her wind. The grass runs south and east from the lip to Akordu. Under
+  the lip, east of the head, a cleft behind a rock holds the Compact's last three drops. Three
+  groups: six vultures on the lip's updraught, a pride of four lions with three vultures over it
+  and two basilisks in the hills at the east (§4.6).
 
 Its atlas rows are charted in `src/content/areas/glasswold/atlas.ts`, the area's own `atlas` since
 D9 lists the area; until then `src/content/atlas.ts` spread them into the plan where its rows were,
 as Saltreach's and Wrackholm's were until each had a map (docs/areas/saltreach.md §9, #169's 1):
-the zones with their bands, the Wold 26–28, with D9, D10 and D8 laid on it, D10 first, and the Glass
+the zones with their bands, the Wold 26–28, with D9, D10, D8 and C8 laid on it, D10 first, and the Glass
 30–32, the Buried Tower's plate at 30–32, and the sites, Akordu (the plan's Wold Riders camp at
 120,250), Kushtash (the Eyrie, moved to about 46,242, call 5) and the Buried Tower, "The Glass" and
 "Buried Tower" lettered as the plan letters them. The lava flow is drawn in the plan's ridges
 (`src/content/atlas.ts`), the one line outside the folder this doc asks for (call 5). Its row on the
 curve is in (#542), in `src/content/progression.ts` (band 26–28, next 28, window 6,000), owed to
-#447 while the area is built box by box, with the three boxes' 8,040 xp a member and 4,350 gold the
+#447 while the area is built box by box, with the four boxes' 9,861 xp a member and 5,450 gold the
 clear's floor (§8); the Wold takes no step on the gear ladder, no town to sell one (§9); the
 trader's coat is off it (§9, #526's 7). Its ground is laid (#543): steppe (`s`), walked as grass and
 tawny at Harvest, and dunes (`u`), sand in ridges walked as slowly as hills, so the scaffold drafted
@@ -171,18 +182,20 @@ the Area's own since D9 lists it (`AHEAD`, `src/content/index.ts`, listed them u
 was owed in `UNPLACED` (`tools/tests/maps.ts`) to the box that first places it: E10 places the
 vulture and the Wold lion (#524), D9 the glass scorpion and the glass walker (#525) and D10 the
 basilisk (#527); the Grey Lion is owed to #529, though listing the area records all six in
-`src/content/shipped.json`. Its items, the Etched Glass, the hoard's Basalt Shield +2 and the
-Leather Coat with its plus, are in `items.ts` (§9, #525's 11, #527's 12, #526's 7), and its climate
-is the steppe's (§9, #525's 2). Its crossing line is on the Wold's zone row (#524), said where a map
-of the Wold is first entered, and walked at D10, over E10's west edge (§9, #527's 14). The ride's
-crossing has its Akordu end in D8 (§4.4). E10's Wold half is built on the Waste's map (§4.2).
-Nothing else: no quest.
+`src/content/shipped.json`. Its items, the Etched Glass, the hoard's Basalt Shield +2, the Leather
+Coat with its plus and the cleft's Letter in Cipher, are in `items.ts` (§9, #525's 11, #527's 12,
+#526's 7, #528's 13), and its climate is the steppe's (§9, #525's 2). Its crossing line is on the
+Wold's zone row (#524), said where a map of the Wold is first entered, and walked at D10, over
+E10's west edge (§9, #527's 14) and at C8, on the step up the Scarp stair onto the lip (§9, #528's
+2). The ride's crossing has its Akordu end in D8 (§4.4). E10's Wold half is built on the Waste's
+map (§4.2). C8 is cut through the Saltings' C7, nine squares of its column 8 and its notch's
+words, with the owner's leave (#412, #528; §4.6). Nothing else: no quest.
 Every brief below is a draft.
 
 ## 4. What is still to build
 
-All of it but D9, D10 and D8, built (#525, #527, #526; §4.3, §4.5, §4.4), and E10's Wold half
-(#524, §4.2): 11,053
+All of it but D9, D10, D8 and C8, built (#525, #527, #526, #528; §4.3, §4.5, §4.4, §4.6), and E10's
+Wold half (#524, §4.2): 11,053
 squares of land, 9,349 of them walkable, the plan's figures (§1). On the grid the plan is seven
 boxes, which hold 5,557 of those squares, 5,379 walkable, the table the epic #447 carries:
 
@@ -192,7 +205,7 @@ boxes, which hold 5,557 of those squares, 5,379 walkable, the table the epic #44
 | D9 | The steppe | the Wold | core | 26–27 | 1,024 (steppe 807, dunes 171, road 29, rock 11, hills 6) | the grass with glass in it; the lions' prides; the dunes' first edge at the south-west corner; built by #525 at 26–27: the Riders' well and track, two prides with their vultures, the scorpions and the glass walker at the dunes' edge, the fallen walker in the long mound and the horse that came back, seen (§4.3) | the glass in the grass | #525, built |
 | D8 | The Riders' camp | the Wold | core | 26–27 | 1,024 (steppe 757, hills 93, rock 90, earth 67, felt 9, crystal 6, doors 2) | Akordu at 120,250 under its mesa: the eldest, the trader, the Rider who rides to Cinderport; the garden of glass; built by #526 at 26–27: the eldest's story told once, the trader's tent with its own room, the Rider who sells the ride to Cinderport and back, the garden of glass, the dry well and its hoard, the mesa with the basilisk in its shade (§4.4) | the eldest's story | #526, built |
 | D10 | The mesas | the Wold | core | 26–27 | 1,024 (steppe 765, hills 160, rock 53, dunes 23, road 22, a secret door 1) | the basilisks' mesas; the mesa fight; the Eyrie's old mesa at 132,289, empty; built by #527 at 26–27: the road from E10 to D9 under the great mesa, the glassed all facing the notch, the secret door and the top with its nest, hoard and view of the Glass, two prides with the near one's vultures, the mesa fight, the scorpions and a basilisk alone under the small mesa (§4.5) | none | #527, built |
-| C8 | The Scarp's edge | the Wold | country | 27 | 367 (steppe 314, hills 53) | the Scarp's lip over the pans; the stair's head at 80,216 on C7; the Riders' watch on it | none | #528 |
+| C8 | The Scarp's edge | the Wold | country | 26–27 | 1,024 (steppe 923, hills 54, cliff 23, earth 11, rock 8, stone 3, felt 1, a secret door 1) | the Scarp's lip over the pans; the stair's head at 80,216 on C7; the Riders' watch on it; built by #528 at 26–27: the Scarp stair opened up C7's column 8 to the lip, the stair's head and the Riders' watch with their cairn, yurt and fire at 80,223, the Compact's runner on the last flight, the Saltings seen from the lip, the cleft under the lip with the Compact's last three drops, vultures, a pride and two basilisks (§4.6) | none | #528, built |
 | B8 | The Wold's heart | the Wold | core | 28 | 795 (steppe 587, rock 116, hills 92) | the Grey Lion's ground; Kushtash, the far-west mesa under the rim at about 46,242, the Ranger's third | none | #529 |
 | B9 | The Glass's edge | the Wold | country | 28 | 917 (dunes 500, mountain 178, steppe 83, hills 79), 739 walkable | the dunes and the scorpions; the gap at the mesas and dunes; the Riders' watch on the only way in; the glass walkers | the Riders keep the way in | #530 |
 | E9, E8 | The country behind | the Wold | country, behind the road, parked | 27–28 | 931 (hills 411, steppe 264, grass 222) and 305 | the hills down to the coast; the shore | none | #534 |
@@ -207,11 +220,12 @@ the top of its band for the curve. Nothing in the area trains or teaches a spell
 one trader sells consumables and a leather coat, no steel (call 5): Cinderport sells the gear, a
 Rider's ride away (call 5, #547), and the ladder takes no step on the Wold (#542).
 
-**Four boxes hold land of more than one zone by today's seeds.** B9's dunes run south into the
+**Five boxes hold land of more than one zone by today's seeds.** B9's dunes run south into the
 Glass; D9's cut gives 913 squares to the Wold and 111 to the Ember Waste, none to the Glass; D10's
-gives 659 to the Wold, 316 to the Ember Waste and 49 to the Glass; and D8's gives 845 to the Wold
-and 179 to the Saltings. Each is laid in the Wold, D9, D10 and D8 whole (§9, #525's 1, #527's 1,
-#526's 21), and with the seeds moved (§9) the zone line runs along the glass's own edge in C9. A map
+gives 659 to the Wold, 316 to the Ember Waste and 49 to the Glass; D8's gives 845 to the Wold and
+179 to the Saltings; and C8's gives 496 to the Wold and 528 to the Saltings. Each is laid in the
+Wold, D9, D10, D8 and C8 whole (§9, #525's 1, #527's 1, #526's 21, #528's 17), and with the seeds
+moved (§9) the zone line runs along the glass's own edge in C9. A map
 is its whole box (EXPANSION §8.2), so each is built to its edges; the zone a square belongs to
 decides only its crossing line (#166) and its band, and the crossing line into the Glass is the
 Riders' watch's to say (§4.8).
@@ -415,9 +429,10 @@ settled in its issue, and what Ashfall teaches changes them.
   The start is the end of D9's Riders' track on the south edge, 16,31 facing north, its earth going
   on into the ring; the ride's landing at the horse-lines, 9,27 facing east, is the second way in
   (§9, #526's 4). The four edges are pinned in `tools/tests/outdoors.ts`: the south square for
-  square with D9's north (steppe at 0 to 15, the track at 16, steppe at 17 to 31) and the others in
-  the void, the north against a box that is not built, the west against C8's (#528) and the east
-  against E8's (parked, #534). The ride's Akordu end is on the crossing (`src/content/crossings.ts`):
+  square with D9's north (steppe at 0 to 15, the track at 16, steppe at 17 to 31), the west square
+  for square with C8's east (#528, §4.6) and the others in the void, the north against a box that is
+  not built and the east against E8's (parked, #534). The ride's Akordu end is on the crossing
+  (`src/content/crossings.ts`):
   the landing at the horse-lines and the Rider there (9,26) who sells it, 325 gold and a day,
   leaving at 14 and coming in at 9; it runs both ways now, Cinderport's Rider at the gate (9,13)
   selling it from his end (§9, #526's 5). The Trader's Tent (21,27) is a shop with a room of its
@@ -546,7 +561,7 @@ settled in its issue, and what Ashfall teaches changes them.
   inside the mesa and not in its north face; the hint, the doc's figures facing the notch where the
   issue has the garden's mother; and the pay, the doc's share over the issue's 2,000.
 
-### 4.6 C8, the Scarp's edge (#528): country, band 27
+### 4.6 C8, the Scarp's edge (#528): country, band 26–27
 
 - **Purpose.** The steppe's north edge over the Saltings: the Scarp's lip, the stair's head, and the
   Riders' watch on it. The way a company that came up from Saltreach enters the Wold, two acts
@@ -571,9 +586,72 @@ settled in its issue, and what Ashfall teaches changes them.
 - **Finds.** Gold, and the letter for Lantern Watch's reader (#204) or the Compact's hall.
 - **Pay.** About 1,000 xp a member.
 - **The stair.** The head is on C7, Saltreach's map, which closed the Glasswold's 301 squares as
-  mountain and left the lowest flight fallen (docs/areas/saltreach.md §9, #178's 3 and 4). C8 opens
-  them and builds the way past the fall, and rewrites C7's notch event: an edit outside the area's
-  folder, with the owner's leave (#412, #528). The link stays the plan's.
+  mountain and left the lowest flight fallen (docs/areas/saltreach.md §9, #178's 3 and 4). C8 builds
+  the way past the fall and rewrites C7's notch event, an edit outside the area's folder, with the
+  owner's leave (#412, #528). As built it opens the stair's nine squares and no more: C7's column 8,
+  rows 23 to 31 (80,213 to 80,221), goes from mountain to stone, nine flights between mountain, and
+  the other 292 stay closed, since opened whole they would be the Wold's grass on a band 11–12 map,
+  walked with no line until C8 and bare of points (§9, #528's 3). The notch at 8,22 and the track
+  from 8,16 are as they were; `c7_stair` now reads "The stair's foot: its lowest flight fallen with
+  the face. A rope ladder hangs past the fall, pegged to the flight above." (§9, #528's 4). The
+  link stays the plan's, 80,206 to 80,216, and is walked and not moved or jumped: the flights meet
+  C8's last flight at 8,0 (80,222) and the Wold's crossing line is said on the step onto it, the
+  stair's head being the border (§9, #528's 2). As built the foot is the notch at 80,212 and the
+  head the watch at 80,223. C7's groups, gate lines and density are as they were, the nine squares
+  lying within nine steps of `c7_stair`. The stair is open both ways from the start, no flag and no
+  lock: the walkthrough climbs it at 12, 25 and 26 and comes down again.
+- **Built** (#528, 9 October): the brief's places, with three groups for its four and nineteen
+  features for its five, laid whole in the Wold at 72,222, band 26–27 and not 27, the gate holding
+  it at 26: a floor of 27 asks a group at 28, and the Wold's only 28 is the Grey Lion, B8's (§9,
+  #528's 1). It is the fourth map on the Wold's zone row, after D10, D9 and D8. Its start is the
+  stair's head, 8,1 facing south (80,223), which the curve's rise reads; a company on the road walks
+  in over the east edge from D8 as well (§9, #528's 5). Of its 1,024 squares 992 are open: steppe
+  923, hills 54, cliff 23, earth 11, rock 8, stone 3 (the last flight and the cleft), felt 1 and
+  the secret door 1. The lip is its north edge, a row of cliff but for the last flight at 8,0, a
+  knot of rock at 21 to 24 where the cleft lies and steppe at 28 to 31, where the lip bends north
+  toward D7. The Wold's crossing words, on its zone row, are walked here from the Saltings, on the
+  step from C7's 8,31 onto 8,0 (§9, #528's 2 and 8): a company at 26 or over reads "The Wold."
+  alone; at 25 or 24, "The Wold. The grass is long, and what hunts in it is harder than the road
+  behind."; at 23 or under, a company at 12 among them, "The Wold. Nothing that hunts the grass
+  would spare you. The way back is still open." At the head a Rider gets up at the cairn and says
+  it again in his own words (`c8_line`, once), a warning and not a wall. The watch is trodden
+  earth, 11 squares, round the head: the yurt, one square of white felt in Akordu's palette (6,2);
+  the watch-cairn (9,2) with 200 gold and an Elixir; the two Riders (10,1), who ask the company's
+  business and send it on to Akordu; and the fire, a `camp` (#45) (9,3), where a company may rest
+  (§9, #528's 6). On the last flight, 8,0, a Compact runner gets her wind: she carries the
+  Dead-Drop's orders for the Riders and does not name the cleft (§9, #528's 7). Both are words
+  only, and the runner's quest (#56's 54) is #532's. The lip has the view down over the Saltings
+  (`c8_view`, 4,1), the edge (15,1) and the updraught (26,2); the grass is seen running south and
+  east to Akordu, its smoke (16,9), the Riders' waymarks (27,10), a runner's satchel torn open
+  (4,12), the pride's lie (15,17), an old skull (21,21), the herd's grazing (4,25) and the Glass's
+  glare past the dunes (15,28); and in the hills stands a lion of glass (25,24), the basilisks'
+  sign. Three groups, the fewest that bring the day inside its aim (§9, #528's 9): six vultures on
+  the lip's updraught (`c8_vultures`, 27,3), 21 steps from the head; a pride of four lions at its lie
+  in the grass with three vultures waiting over it (`c8_pride`, 12,19), 22; and two basilisks in the
+  hills at the box's east (`c8_basilisk`, 28,27), the hardest at 27 and 46 steps in. None stands
+  within 12 steps of the head, so a company that climbs at 12 hears its line and can walk back down.
+  The secret is the cleft (§9, #528's 12). The hint is a horse's prints (`c8_prints`, 22,3, not
+  once) along the lip to the rock and back: shod, where the Riders' horses are unshod, and no text
+  says so. The mouth is a secret door at 22,2 (94,224) in the knot of rock, searched facing north;
+  the cleft behind it, at 22 to 23,1, is stone, shut by rock on every side, rock and not cliff, since
+  a Mountaineer climbs cliff and mountain and not rock. In it are three bundles in oilcloth sealed in
+  black wax (`c8_cleft`, 22,1) and the chest `c8_drops` (23,1): 900 gold and a Letter in Cipher,
+  the Compact's last three drops. Nobody on the Wold reads the letter and no shop buys it (§9,
+  #528's 13; §11). The edges: north, C7's row 31, mountain but for the flight at its column 8
+  (80,221) and void at its corners, against C8's row 0, cliff at 0 to 7, the last flight at 8, cliff
+  at 9 to 20, the cleft's rock at 21 to 24, cliff at 25 to 27 and steppe at 28 to 31, open only at
+  column 8; east, D8's west edge square for square (x 103 against x 104), steppe at rows 0 to 17,
+  hills at 18 to 19, steppe at 20 to 24, hills at 25 to 30 and steppe at 31, all walkable, and
+  nothing said over it: one land; the west, the lip's cliff at row 0 and steppe below it, lies
+  against B8 (#529) and the south, steppe at 0 to 26, hills at 27 to 28 and steppe at 29 to 31,
+  against C9, the Glass's and left to the reach, and the world ends at both. All are pinned in
+  `tools/tests/outdoors.ts`. It has no exit: it is reached over D8's west edge and up the stair
+  from C7, and `CUT_OFF` stays empty. It pays
+  1,822 xp a member, 1.10 times the scaled share of 1,650, and 1,100 gold, the cleft's 900 and the
+  cairn's 200 and an Elixir (§8, §9, #528's 10 and 11). It departs from the brief in the band,
+  26–27 for 27; the basilisks, two for one; the squares of C7 opened, nine for 301; the novelty,
+  none claimed (§9, #528's 14); and the pay, the scaled share over the brief's about 1,000 (§9,
+  #528's 17).
 
 ### 4.7 B8, the Wold's heart, and Kushtash (#529): core, band 28
 
@@ -732,17 +810,19 @@ land where something is about to die, and six groups failed the gate (§4.3, §9
 near pride has its three, for the same reason (§4.5, §9, #527's 8). D8's vultures turn over the
 garden and never come down, seen and not fought, and its basilisk stands alone, since the curve
 wants the hardest group to average 27 and only a basilisk or a walker is 27 (§4.4, §9, #526's 8).
-The Wold spends MONSTERS §3.3's stone (#546), first at D10, where the basilisk is placed, behind the
-mesa's lions and alone under the small mesa (§4.5, §9, #527's 15 and 16), and again at D8, alone in
-the mesa's shade (§4.4); the sweep (#545) and the toll (#544) are the Whitespine's and Ashfall's,
-spent before it.
+C8's pride has its three too. Its vultures come as a flock of six on the lip's updraught and its
+basilisks stand as a pair, one having run the day past its aim (§4.6, §9, #528's 9). The Wold
+spends MONSTERS §3.3's stone (#546), first at D10, where the basilisk is placed, behind the mesa's
+lions and alone under the small mesa (§4.5, §9, #527's 15 and 16), and again at D8, alone in the
+mesa's shade (§4.4), then at C8, a pair in the hills (§4.6); the sweep (#545) and the toll (#544)
+are the Whitespine's and Ashfall's, spent before it.
 
 New in the Glasswold, for the novelty check (EXPANSION §5.4): the glass walkers, a new family, and
 dunes underfoot (#543), both claimed by D9, which places them first (§9, #525's 15); steppe
 underfoot, E10's first; stone and its cure (#546), claimed by D10, which places the basilisk first
 (§9, #527's 15); a camp that is an area's rest, with a `coach` sold from it (#547), built at Akordu,
 though the check refuses the camp landmark, which is on the road before (§9, #526's 18); the reach
-seen from the road and its band said. Its landmarks: a mesa, a camp of tents, a garden of the
+seen from the road and its band said. C8 claims nothing of its own (§9, #528's 14). Its landmarks: a mesa, a camp of tents, a garden of the
 glassed, a lava flow seen, a cliff from its top.
 
 ## 8. The numbers
@@ -778,7 +858,8 @@ glassed, a lava flow seen, a cliff from its top.
   road over the hills resting at its camp; one at 24 wins no more than one in four. The Grey Lion is
   won about half the time at 28 and nearly always at 30. The reach's own gate is the cap's
   (EXPANSION §5.2) and not this doc's. A company that climbs the Scarp stair from the Saltings at
-  12 meets C8's line and C8's lions: a warning, not a wall, and a fight it can run from.
+  12 meets C8's line on the step onto the lip and, 21 steps from the head, its vultures: a warning,
+  not a wall, and a fight it can run from.
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3).
 - **As built.** E10 (#517, #524) pays 2,543 xp a member, 1.04 times its scaled 2,450, and 950 gold,
   counted in Ashfall's row since its map is the Waste's (20,142 of 19,467, the row's xp met). At its floor, 25, a
@@ -824,6 +905,19 @@ glassed, a lava flow seen, a cliff from its top.
   though its band is 26–27 (§9, #526's 1). Density 100.0% within 8 steps (919 of its 919 open
   squares) and the furthest 8, with no sign among its 32 points. The dearest find is now the Leather
   Coat +2, 2,700 gold of the window's 6,000.
+- **As built, C8** (#528). It pays 1,822 xp a member, 1.10 times its scaled 1,650 (the cap is about
+  2,060; the vultures about 516, the pride 947, the basilisks 358), and 1,100 gold: 900 and the
+  Letter in Cipher in the cleft, 200 and an Elixir in the watch-cairn. The Glasswold's row is owed
+  to #447 for the rest: a clear gives 9,861 xp a member of the 21,067 asked and 5,450 gold of the
+  12,720. With the other scaled shares (E10 2,450, B8 4,250, B9 2,600 and the side quests 1,650) the
+  area comes to about 20,810, 0.99 times the ask. At its floor, 26, a company wins every fight and
+  manages 10.46 fights to a rest (aim 9.5 to 11.5, limit 8 to 14), 22% of days ending in a fight
+  broken off; two under, at 24, it wins every fight too, owed to #18 as the Glasswold's pool is. C8
+  is off the Wold's road, which stands as it was (§9, #528's 15). The pair of basilisks is what
+  brings the day inside its aim: one ran it to 13.1 fights to a rest at 26 (§9, #528's 9). Density
+  100.0% within 12 steps (992 of its 992 open squares) and the furthest 12 of 20, with no sign among
+  its 22 points. Its dearest find is the Elixir; the area's stays the
+  Leather Coat +2, 2,700 gold of the window's 6,000.
 
 ## 9. Decisions
 
@@ -866,7 +960,8 @@ Proposed, for the owner, each in the issue that would build it:
 - **The eldest at Akordu,** her own fire, where STORY has her tell the story at the port (#531):
   the chapter's step wants a place on the Wold, and the Rider's ride carries the company between
   the two. The owner may put a second telling at Cinderport's gate, or move the step.
-- **The stair's head opened by C8** (#528), an edit to Saltreach's C7, with #412.
+- **The stair's head opened by C8** (#528), an edit to Saltreach's C7, with #412: done, nine of its
+  301 squares (§4.6, §9, #528's 3).
 - **The pay's shares** (§8), the epic's 12,900 against the curve's 21,067, closed by the fights as
   the boxes are built or rescaled by the owner.
 - **The bands on the atlas's rows:** the Wold 26–28, the Glass 30–32 and the Buried Tower 30–32,
@@ -948,7 +1043,7 @@ Decided by delegate for #524, each the owner's to overturn:
    at the far end (rank correlation 0.32), where a group at 26 nearest would not.
 4. **The Wold's line is its zone row's,** not a crest event: the line is said by level where the
    land changes (#166), an event the same to all. E10 is the Waste's land, so D10 (#527) says it
-   first, and C8's stair (#528, a jump: #616) too, so its words hold both ways in.
+   first, and C8's stair (#528, walked and not jumped: #528's 2) too, so its words hold both ways in.
 5. **The camp is under the hills' east face** (17,22), out of the steppe's wind, by the road below
    the notch, so a company rests before the crest and the grass.
 6. **The grave's second hint is seen from the road on the ash:** vultures turning over its hills,
@@ -1185,6 +1280,79 @@ Decided by delegate for #526, each the owner's to overturn:
     and rock 85, its zones in the cut the Wold 845 and the Saltings 179. A map is one land, so all
     of it is the Wold's.
 
+Decided by delegate for #528, each the owner's to overturn:
+
+1. **The band is 26–27, not the brief's 27,** and the gate holds C8 at 26, as D9, D8 and D10 (#527's
+   1, #526's 1): the curve holds a box's hardest group at max(floor + 1, top − 2), so a floor of 27
+   wants a group at 28, and the Wold's one 28 is the Grey Lion, B8's boss. `wold_c8`, "The Wold",
+   country, region `glasswold`, at 72,222, fourth on the zone row `wold` (D10, D9, D8, C8).
+2. **The stair is walked, not jumped:** C7's column 8 is opened from the notch to C7's south edge
+   and meets C8's last flight at 8,0, so the Wold's crossing line is said on the step onto C8: the
+   stair's head is the border. A jump from the notch (#616) would need the atlas's link moved, both
+   its ends (80,206 and 80,216) lying on C7 and the atlas check wanting a jump's two squares beside
+   the link's ends. The brief keeps the link the plan's, so it is untouched and walked, and the
+   zone row's comment, which said "a jump: #616", now says walked.
+3. **Of C7's 301 Glasswold squares only the stair's nine are opened,** with the owner's leave (#412,
+   #528). Opened whole they would be the Wold's grass on a band 11–12 map of the Saltings, walked
+   with no line until C8 and bare of points (C7's density). The Scarp's mass stays closed; the lip
+   is C8's north edge, a row of cliff but for the stair, a knot of rock at the cleft and steppe at
+   the east end, where the lip bends north toward D7.
+4. **The way past the fall is a rope ladder,** pegged to the flight above (`c7_stair`'s new words).
+   No flag and no lock: the stair is open both ways from the start, and the walkthrough climbs it
+   at 12, 25 and 26 and comes down again.
+5. **C8's way in is the stair's head,** `start` 8,1 facing south, which the curve's rise reads. A
+   company on the road walks in over the east edge from D8 as well.
+6. **The watch** is trodden earth, 11 squares, round the head: the yurt, one square of white felt
+   in Akordu's palette (6,2), the watch-cairn (9,2), the two Riders (10,1) and the fire, a `camp`
+   (#45) (9,3). The yurt sits at 6,2 and the cleft's door at 22,2 because the art check (walls
+   dressed as before #9 must fail) wants a small map's two wall squares dressed by the old rule and
+   under today's cap: at 7,2 the yurt was dressed today, and at 21,2 the door was bare under the
+   old rule.
+7. **The runner** is "A Compact runner" on the last flight, 8,0, words only (#56's 54 is #532's).
+   She carries the Dead-Drop's orders for the Riders and does not name the cleft: the secret is
+   found.
+8. **The line at the top is an event,** `c8_line` (once) at the head, in a Rider's voice. The zone
+   row's crossing words come with it, said by the engine at the company's level on the step before.
+9. **Three groups, the doc's kinds, the fewest that bring the day inside its aim:** six vultures on
+   the lip's updraught (27,3); the pride at its lie in the grass (12,19), four lions with three
+   vultures waiting over it, D9's pride; and **two basilisks** in the hills at the box's east
+   (28,27), the hardest at 27, not the doc's one. With one basilisk (29.4 fights to a rest alone)
+   the day at 26 ran to 13.1 fights to a rest, off its aim of 9.5 to 11.5; a flock of eight with
+   the lone basilisk gave 12.5; the pair (13.1 alone) brings the day to 10.46. None stands within 12
+   steps of the head: the nearest, the vultures, are 21 off.
+10. **Pay 1,822 xp a member,** 1.10 times the scaled share of 1,650, under the cap (about 2,060):
+    the vultures about 516, the pride 947, the basilisks 358. The Wold's row stands at 9,861 of
+    21,067; with the other scaled shares (E10 2,450, B8 4,250, B9 2,600 and the side quests 1,650)
+    the area comes to about 20,810, 0.99 times the ask (§8).
+11. **Gold 1,100:** the cleft 900 and the letter; the watch-cairn 200 and an Elixir. The Wold stands
+    at 5,450 gold of 12,720.
+12. **The secret is the doc's cleft.** The hint, `c8_prints` (22,3, not once), is a shod horse's
+    prints along the lip to the rock and back; the Riders' horses are unshod (D9's herd) and no
+    text says so. The mouth is a secret door at 22,2 (94,224) in a knot of rock at the lip,
+    searched facing north. The cleft, 22 to 23,1, is stone, shut by rock on every side: rock and
+    not cliff, since a Mountaineer climbs cliff and mountain and not rock. The walkthrough checks
+    that nothing reaches it but its mouth. Inside are `c8_cleft` (22,1) and the chest `c8_drops`
+    (23,1).
+13. **The letter** is `cipher_letter`, "Letter in Cipher" (slot none, price 0), in the area's
+    `items.ts`. Nobody on the Wold reads it and no shop buys it. What takes it is owed: Lantern
+    Watch's reader (#204) or the Compact's hall at Cinderport (#512, #532); neither is edited here
+    (§11).
+14. **Novelty claims nothing new:** C8's ground (steppe, hills, cliff, stone, rock and earth), its
+    features and its kinds are all on the road before, cliff and stone being Ashfall's and the
+    Whitespine's. The brief's "a way into an area from two acts back" has no token.
+15. **`ROADS.wold` is unchanged,** D10's five groups then D9's four: C8 is off the road, and the
+    gate reads the zone's way in from its first map.
+16. **Test entries:** gate OWED `wold_c8: under` to #18 (100% won two under, as every box's);
+    outdoors: D8's west edge, which faced the void, is pinned square for square against C8's east
+    edge; C8's four edges and C7's south edge are pinned; `CUT_OFF` stays empty; maps has nothing to
+    drop, D8 having dropped the basilisk's `UNPLACED`. The Glasswold's walkthrough asks of the zone
+    row that it hold D8 at 104,222, not that it be exactly D10, D9 and D8.
+17. **The issue is superseded by the doc in three places:** its secret, a smugglers' cache hinted by
+    the runner's orders (the doc's is the cleft, hinted by a horse's prints: 12), its 1,000 xp (the
+    doc's share is 1,650: 10) and its squares, "367, steppe 314, hills 53", which are not today's
+    cut: the scaffold gives steppe 971 and hills 53, its zones in the cut the Saltings 528 and the
+    Wold 496. A map is one land, so all of it is the Wold's.
+
 ## 10. Names
 
 The Glasswold's naming pass, by the rules of `docs/NAMES.md`: the Wold Riders' tongue was left to
@@ -1243,8 +1411,8 @@ Owed, from D9 (#525):
   south edge meets D10 and `CUT_OFF` is empty (#527; §1, §9, #525's 3 to 6).
 - **The step and the chapter** on `d9_glass` are #531's (§5); **quest 51** and the Etched Glass's
   buyer are #532's, #526's and #512's (§6, §9, #525's 11 and 12).
-- **The Wold's crossing words** are walked at D10 (#527), and by the Scarp stair when it is climbed
-  (#528) (§9, #525's 14).
+- **The Wold's crossing words** are walked at D10 (#527) and at the Scarp stair's head (#528)
+  (§9, #525's 14, #528's 2).
 - **The figures two under the floor** are owed to #18 and **the area's pay and gold** to #447: 2,940
   xp of 21,067 and 1,350 gold of 12,720 (§8).
 
@@ -1274,8 +1442,24 @@ Owed, from D8 (#526):
   12 and 13).
 - **The tents draw as white felt boxes:** the renderer gives buildings one shape, and its only
   landmark kind is the lighthouse, so a tent shape is a renderer change, not made.
-- **D8's north, west and east edges end in the void:** a box not built to the north, C8 (#528) to
-  the west and E8 (#534, parked) to the east (§4.4, §9, #526's 20).
+- **D8's north and east edges end in the void:** a box not built to the north and E8 (#534,
+  parked) to the east; its west edge meets C8's (#528, §4.6) (§4.4, §9, #526's 20).
 - **B8's band** will need a floor below its top, as D8's 26–27 has (§9, #526's 1).
-- **The figures two under the floor** are owed to #18 and **the area's pay and gold** to #447, now
+- **The figures two under the floor** are owed to #18 and **the area's pay and gold** to #447:
   8,040 xp of 21,067 and 4,350 gold of 12,720 (§8).
+
+Owed, from C8 (#528):
+
+- **The letter in the cleft has no reader:** nobody on the Wold reads the Letter in Cipher and no
+  shop buys it. What takes it is owed: Lantern Watch's reader (#204) or the Compact's hall at
+  Cinderport (#512, #532). Neither is changed here (§4.6, §9, #528's 13).
+- **The runner and the Riders at the watch are people with words only,** and the quest, Orders on
+  the Scarp Stair (#56's 54), with its Akordu end, is #532's (§6, §4.6, §9, #528's 7).
+- **The Scarp's mass stays closed:** 292 of C7's 301 Glasswold squares are mountain still, the
+  stair's nine being the only ones opened (§4.6, §9, #528's 3).
+- **The chapter's play** with the Wold entered by the stair is #531's (§5): the walkthrough here
+  climbs the stair at 12, 25 and 26 and plays no step.
+- **C8's west and south edges end in the void:** B8 (#529) to the west and C9, the Glass's and left
+  to the reach, to the south (§4.6, §9, #528's 16).
+- **The figures two under the floor** are owed to #18 and **the area's pay and gold** to #447:
+  9,861 xp of 21,067 and 5,450 gold of 12,720 (§8).
