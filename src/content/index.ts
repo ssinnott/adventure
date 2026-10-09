@@ -23,6 +23,7 @@ import { AREA as kilns } from './areas/kilns/index.ts';
 import { AREA as cairnmoor } from './areas/cairnmoor/index.ts';
 import { AREA as rimewater } from './areas/rimewater/index.ts';
 import * as whitespine from './areas/whitespine/monsters.ts';
+import * as ashfall from './areas/ashfall/monsters.ts';
 import { ITEMS as ASHFALL_ITEMS } from './areas/ashfall/items.ts';
 import { ITEMS as CORE_ITEMS } from './items.ts';
 import { SPELLS as ALL_SPELLS } from './spells.ts';
@@ -38,6 +39,7 @@ export const AREAS = [shelf, thornmark, saltreach, wrackholm, sunderwood, kilns,
  */
 export const AHEAD = [
   { id: 'whitespine' as const, sprites: whitespine.SPRITES, monsters: whitespine.MONSTERS },
+  { id: 'ashfall' as const, sprites: ashfall.SPRITES, monsters: ashfall.MONSTERS },
 ] as const;
 
 /**
