@@ -96,9 +96,17 @@ the plan (`src/content/atlas.ts` imports it where its rows were), as Saltreach's
 the area cannot be listed in AREAS until #499 gives it a map, which points the area's `atlas` at
 the folder and takes the import out.
 
-Nothing else is built. The systems it waits on are #442's: the curve's rows and the gear past 22
-(#542), cliffs and peaks with the road through them (#543), the toll (#544), sweep (#545), stone
-(#546), the crossings (#547), the Ember Stone (#548) and the bot (#549). Its monsters are #507's.
+Three of its monsters are drawn (#507, below), and nothing else is built. The systems it waits on
+are #442's: the curve's rows and the gear past 22 (#542), cliffs and peaks with the road through
+them (#543), the toll (#544), sweep (#545), stone (#546), the crossings (#547), the Ember Stone
+(#548) and the bot (#549). The rest of its monsters are #507's.
+
+Drawn ahead of the boxes that place them (#507): three on frames that exist, the Spine Eagle on the
+birds', the Snow Troll on the ogre's and the Ashen Mason on the cultists'. Their defs are in
+`src/content/areas/whitespine/monsters.ts`, listed in `AHEAD` (`src/content/index.ts`) until #499
+lists the area, and each is owed in `UNPLACED` (`tools/tests/maps.ts`) to the first box whose brief
+places it (§4): the eagles and the troll to J11 (#499) and the masons to I8 (#504). §9 has the
+decisions.
 
 ## 4. What is still to build
 
@@ -434,7 +442,8 @@ Pay is xp a member, whichever way the choice goes, shared by level: about 900 be
 MONSTERS §8.1 has the roster and the fights: the Spine Eagle, the Brother, the Bell-ringer, the Snow
 Troll, the Stair Giant, the Ashen Mason, the Abbot and the Stair-king; the chapter house and the
 Stair in snow. Their drawings are #507's, eight in all, the giants new and the rest on frames that
-exist. §4.2 to §4.7 place every group, box by box, the gentlest at the pass's foot and the Abbot,
+exist; the Spine Eagle, the Snow Troll and the Ashen Mason are drawn (§3, §9). §4.2 to §4.7 place
+every group, box by box, the gentlest at the pass's foot and the Abbot,
 the king and the masons at the top of the band.
 
 New in the Whitespine, for the novelty check (EXPANSION §5.4): the giants, a new family (#507), and
@@ -518,6 +527,36 @@ Proposed, for the owner, each in the issue that would build it:
   Stair stays open to that company; the king dead, nobody keeps it. The bot refuses (#549).
 - **The giants' ground is J10's,** parked with it; the Stair's head holds the king and the two
   that stand with him. **The lines** of §4 are drafts, the owner's to reword.
+
+Decided by delegate for #507 (the eagle, the troll and the mason), each the owner's to overturn:
+
+1. **The Spine Eagle is the birds' frame at its biggest, coming down on its prey:** the wings
+   raised high with the primaries spread, the feathered legs thrust forward and the yellow feet open
+   just off the ground; dark brown, the crown and nape gold, a heavy brow and a hooked yellow bill.
+2. **The eagle is drawn inside 0.62 of its height, at size 0.9,** so the raised wings keep inside
+   the view; its body is still half as big again as the raven's. It does not hop: the wings settle.
+3. **The eagle is a skirmisher on the line at 22** (328 hit points, 3d7+6), flying and reaching
+   the back row as the raven does (MONSTERS §8.1: it flies); a beast, it carries no gold.
+4. **The Snow Troll is the tor troll's frame made of snow,** a Build of it as MONSTERS §11 has it:
+   no beds, lichen or heather; rime along the hump and the shoulders, a cornice over the brow with
+   icicles at its lip, a maw with icicles for teeth, blue shadows and a cold light in the eyes.
+5. **It stands in the drift it rose from, the fists sunk in it:** a drift that stood up, and the
+   widest base of any troll, so it reads apart from the tor troll at a glance as well as by colour.
+6. **The troll is #537's at 23:** size 1.6 with its crown at 0.80 of its height, under 0.82; three
+   quarters of the brute's line, 474 hit points, mending 47 a round unless fire struck it.
+7. **The Ashen Mason wears the overseer's hitched robe under a mason's leather apron,** white with
+   dust at the hem, the Hand's grey up to the elbow, a step on from the gleaner's. A glass shard to
+   set rides on the far shoulder, lit from inside; the hammer is low in the near fist, its head by
+   the foot, and now and then it lifts off the stones: a hammer from below.
+8. **The mason is a soldier on the line at 23** (319 hit points, 4d8+2); the Hand, it never breaks
+   (`steady`), and it carries 45 to 100 gold, on from the overseer's and the gleaner's. Its sprite
+   kind is `mason`, as theirs are named for their work.
+9. **Nothing is declared apart:** the shard, the hammer, the raised wings and the talons are each
+   one piece of ink with the body at combat size.
+10. **Each is owed to the first box whose brief places it** (§3): the eagles and the troll to J11
+    (#499), the masons to I8 (#504).
+11. **What was drawn before is unchanged to the pixel:** the eagle and the troll are Builds on
+    their frames, their new parts off for every other kind; the mason is a function of its own.
 
 ## 10. Names
 
