@@ -2,13 +2,21 @@
 // (#519; §6 of docs/areas/ashfall.md). What the Springs Bring Up (the bathhouse keeper at Scaldwell
 // and the stoker at the rock, H10), The Founding Stone (Jenifer the potter at Cinderport and the stone
 // under Old Cinder's hall) and The Shovel That Does Not Blunt (Gorran the smith at Cinderport and the
-// scavenger by Grimsforge's fire, G11, who moves to the town).
+// scavenger by Grimsforge's fire, G11, who moves to the town). Then the third prestiges' quests of the
+// three classes taught here (#448; DESIGN §5): The Cold Lamp (the old Lightbearer on Old Cinder's lip,
+// and the lamp at the bottom of the undercroft), What Nests There (the warlord's heir at Grimsforge, and
+// the Brood Drake on its eggs in the iron corridors) and The Seedling (the Archdruid at his rock, a
+// seedling from the Grove and the bed under the Ember Stone's lookout). Each third is begun by its
+// trainer's ask to a member at 27 with the second, which ends that member's seeking (`teaches.asks`);
+// its deed done, the trainer teaches (`teaches.done`), and the quest ends with the prestige taught.
 // How the words are keyed is in src/content/area.ts (`quests`); tools/tests/quests.ts checks every key.
 import type { QuestDef } from '../../../game/quests.ts';
 import { COLD, SPRINGS_BREAK, SPRINGS_LEFT, SPRINGS_COLD } from './maps/cindercoast_h10.ts';
 import { FOUNDING_RAISED } from './maps/cindercoast_g10.ts';
 import { FOUNDING_UP, FOUNDING_LEFT, SHOVEL_THANE, SHOVEL_WARDENS, SHOVEL_KEPT } from './maps/cinderport.ts';
-import { SHOVEL_STORY } from './maps/firemount_g11.ts';
+import { SHOVEL_STORY, BROOD_ASKED, BROOD } from './maps/firemount_g11.ts';
+import { LAMP_ASKED, LAMP_LIT } from './maps/old_cinder2.ts';
+import { LIT, SEEDLING_ASKED, SEEDLING_TAKEN, SEEDLING_PLANTED } from './maps/ember_stone.ts';
 
 const SHOVEL_SEEN = { seen: 'cindercoast_h10:h10_shovel' };
 const LEDGE = { seen: 'firemount_g11:g11_finds' };
@@ -76,6 +84,56 @@ export const QUESTS: readonly QuestDef[] = [
       { when: { flag: SHOVEL_STORY }, text: 'Go back to Gorran at Cinderport: sell the shovel-head, or keep it.', at: 'cinderport' },
       { when: LEDGE, text: 'Ask the scavenger by Grimsforge\'s fire about his ledge.', at: 'firemount_g11' },
       { when: { flag: 'q_shovel' }, text: 'Find where the scavenger by Grimsforge\'s fire gets his finds.', at: 'firemount_g11' },
+    ],
+  },
+  {
+    // The Paladin's: asked on the lip, the lamp lit at the bottom of the walk, and back up to be taught.
+    id: 'old_lamp',
+    title: 'The Cold Lamp',
+    start: { flag: LAMP_ASKED },
+    done: { member: { cls: 'paladin', prestige: 3 } },
+    entries: [
+      { id: 'lip', when: { flag: LAMP_ASKED }, text: 'On Old Cinder\'s lip an old Lightbearer gave us his oil and his flint, for the lamp at the bottom of the buried town.' },
+      { id: 'lit', when: { flag: LAMP_LIT }, text: 'At the bottom of the lamp-keeper\'s walk we lit the lamp again, and the walk was lit to the top.' },
+    ],
+    goals: [
+      { when: { flag: LAMP_LIT }, text: 'Climb back up to the old Lightbearer on Old Cinder\'s lip.', at: 'emberwaste_f11' },
+      { when: { flag: LAMP_ASKED }, text: 'Go down under Old Cinder, and light the lamp at the bottom.', at: 'old_cinder2' },
+    ],
+  },
+  {
+    // The Barbarian's: asked at the anvil, down the vents to the nest off the last corridor, and back.
+    id: 'brood',
+    title: 'What Nests There',
+    start: { flag: BROOD_ASKED },
+    done: { member: { cls: 'barbarian', prestige: 3 } },
+    entries: [
+      { id: 'anvil', when: { flag: BROOD_ASKED }, text: 'At Grimsforge the warlord\'s heir sent us down the vents. Something nests where the iron runs hot, and his grandfather heard it breathe.' },
+      { id: 'nest', when: { slain: BROOD }, text: 'In a gallery off the last corridor the Brood Drake died over its eggs.' },
+    ],
+    goals: [
+      { when: { flag: BROOD_ASKED, slain: BROOD }, text: 'Climb back up to the warlord\'s heir at Grimsforge.', at: 'firemount_g11' },
+      { when: { flag: BROOD_ASKED }, text: 'Go down Fire Mountain\'s vents to Meridian Camp, and kill what nests there.', at: 'meridian_camp2' },
+    ],
+  },
+  {
+    // The Druid's: asked at the rock, the seedling lifted at the Grove, planted in the Stone's bed, kept
+    // till the Stone is lit (planted first or after), and back to the rock.
+    id: 'seedling',
+    title: 'The Seedling',
+    start: { flag: SEEDLING_ASKED },
+    done: { member: { cls: 'druid', prestige: 3 } },
+    entries: [
+      { id: 'rock', when: { flag: SEEDLING_ASKED }, text: 'The Archdruid at his rock in the Waste asked for a seedling from the Grove, kept living here till the Ember Stone is lit.' },
+      { id: 'grove', when: { flag: SEEDLING_TAKEN }, text: 'Under the Grove\'s oldest oaks we lifted a seedling, roots and earth.' },
+      { id: 'bed', when: { flag: SEEDLING_PLANTED }, text: 'We planted it in the bed of earth under the Ember Stone\'s lookout, where the cinders blow in.' },
+      { id: 'green', when: { flag: [SEEDLING_PLANTED, LIT] }, text: 'With the Stone lit, the seedling in its bed put out a new leaf, green.' },
+    ],
+    goals: [
+      { when: { flag: [SEEDLING_PLANTED, LIT] }, text: 'Go back to the Archdruid at his rock in the Ember Waste.', at: 'emberwaste_f10' },
+      { when: { flag: SEEDLING_PLANTED }, text: 'Keep the seedling living till the Ember Stone is lit.', at: 'ember_stone' },
+      { when: { flag: SEEDLING_TAKEN }, text: 'Carry the seedling into the Ember Waste, and plant it where it might live.' },
+      { when: { flag: SEEDLING_ASKED }, text: 'Bring a seedling from the Grove, in Thornmark.', at: 'thornmark' },
     ],
   },
 ];
