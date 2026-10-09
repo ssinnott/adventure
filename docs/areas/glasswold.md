@@ -646,12 +646,11 @@ settled in its issue, and what Ashfall teaches changes them.
   against B8 (#529) and the south, steppe at 0 to 26, hills at 27 to 28 and steppe at 29 to 31,
   against C9, the Glass's and left to the reach, and the world ends at both. All are pinned in
   `tools/tests/outdoors.ts`. It has no exit: it is reached over D8's west edge and up the stair
-  from C7, and `CUT_OFF` stays empty. It pays
-  1,822 xp a member, 1.10 times the scaled share of 1,650, and 1,100 gold, the cleft's 900 and the
-  cairn's 200 and an Elixir (§8, §9, #528's 10 and 11). It departs from the brief in the band,
-  26–27 for 27; the basilisks, two for one; the squares of C7 opened, nine for 301; the novelty,
-  none claimed (§9, #528's 14); and the pay, the scaled share over the brief's about 1,000 (§9,
-  #528's 17).
+  from C7, and `CUT_OFF` stays empty. It pays 1,822 xp a member, 1.10 times the scaled share of
+  1,650, and 1,100 gold, the cleft's 900 and the cairn's 200 and an Elixir (§8, §9, #528's 10 and
+  11). It departs from the brief in the band, 26–27 for 27; the basilisks, two for one; the squares
+  of C7 opened, nine for 301; the novelty, none claimed (§9, #528's 14); and the pay, the scaled
+  share over the brief's about 1,000 (§9, #528's 17).
 
 ### 4.7 B8, the Wold's heart, and Kushtash (#529): core, band 28
 
