@@ -56,8 +56,8 @@ The squares are the plan's, before any box. M9 (#486), laid whole in Loch Fada, 
 seeded from every square of it move 1,154 squares, none on a built map: Loch Fada takes 791 of
 Glacier Foot's, 176 of the Cairnfield's, 129 of Loch Fuar's and 19 that were void, and about 40
 change hands elsewhere on the world. Laid whole, M9 seeded Loch Fada up the Rimefells into most of
-M8, so a row of seeds along M8's south edge holds the Cairnfield there (§9, 20); N9's north-west
-corner goes to Loch Fada and is left so. With M9 Loch Fada walks to 5,748 squares, Loch Fuar to
+M8, so a row of seeds along M8's south edge holds the Cairnfield there (§9, 20), M8 since laid (#484) and M9's north-west corner walked from it;
+N9's north-west corner goes to Loch Fada and is left so. With M9 Loch Fada walks to 5,748 squares, Loch Fuar to
 5,081 and Glacier Foot to 2,270, the area to 13,099 of land, 10,056 of them walkable, and the
 Cairnfield to 3,672. L9 (#488), laid whole in Loch Fada, moves 1,437 squares more by the same walk,
 none on a built map: Loch Fada takes 1,327 of Loch Fuar's and 46 of the Cairnfield's, and about 60
@@ -86,7 +86,7 @@ Its edges:
 - **North: the Rimefells,** the ridge between Cairnmoor and Rimewater, and over it the Cairnfield
   (18–20). The drove road comes down from Cairnmoor's N8 at 424,250 to 414,262 on M9, the only way
   between the two areas and open from the start (EXPANSION §2.2); it is taken, not walked, since the
-  two boxes meet only at a corner across parked M8 (§4.2). The crossing line (#166) falls at the
+  two boxes meet only at a corner across M8, laid since (#484), from which M9's north-west corner is walked (§4.2). The crossing line (#166) falls at the
   Rimefells' foot, but a jump says none (§9, 2).
 - **East: the glacier,** coming down from the rim into Glacier Foot, the reach (DESIGN §9), off the
   road and void until Phase 1.6. M9's east edge is the glacier's edge in Loch Fada, where #56's 43
@@ -425,7 +425,7 @@ what is new, with points of interest and a first share of the pay.
     which kept their squares (#487's 9). West, L9 (#488): the stream, water, at 0,2 to 0,4
     against the atlas's at L9's 31,2 to 31,4, and the road out at 0,20 against its 31,20, hills on
     rows 12 to 19 and grass from row 21; L9 puts water at 31,2 to 31,4 and the road at 31,20, which
-    the edge check matches. North, M8 (#484, parked): grass and pines at columns 0 to 4, the rest
+    the edge check matches. North, M8 (#484, laid since): grass and pines at columns 0 to 4, walked from M8's 0 to 4,31, the rest
     the fells, void. East, N9 (parked): mountain the whole edge, void. South, M10 (parked): the
     loch, its shores, the hills, the crag and the pines, the atlas's row with the corner closed.
   - **Measured.** A company at 20 wins every fight and manages 9.55 fights to a rest, inside the
@@ -1449,7 +1449,7 @@ Decided by delegate for #486, each the owner's to overturn:
    Loch Fada's atlas row for L9's seam. Overtaken: a jump now says the crossing line after its label
    (SLICE, the line at a border), so the label is "Down through the notch to the frozen loch." and
    the loch's name and words follow it.
-3. **No road crosses M9's north edge** (M8 parked): the atlas's road comes down the north-east
+3. **No road crosses M9's north edge** (M8 was parked): the atlas's road comes down the north-east
    diagonal, but here it starts at the landing under a cleft of the fells. The edge is the
    Rimefells, closed but for grass and pines at columns 0 to 4, and the north-east corner mountain,
    the shoulder that meets N8's.
@@ -1500,7 +1500,7 @@ Decided by delegate for #486, each the owner's to overturn:
     the "no exit joins one zone to the next" check names the notch's two ways, and the atlas's "exit
     and arrival are neighbours" check lets an exit take one of the atlas's own links between its
     ends.
-20. **The Cairnfield is held in parked M8 by seeds** along its south edge (y 253, x 392 to 423,
+20. **The Cairnfield is held in M8 by seeds** (laid since, #484; M9's north-west corner is walked from it) along its south edge (y 253, x 392 to 423,
     `cairnmoor/atlas.ts`): laid whole, M9 seeded Loch Fada up the Rimefells into most of M8. N9's
     north-west corner (x 424 to 426, y 254 to 259) goes from the Cairnfield to Loch Fada and is left
     so, N9 being Rimewater's (§4.8).

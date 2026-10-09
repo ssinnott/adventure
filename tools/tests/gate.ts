@@ -221,6 +221,8 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'cairns: under': { whose: '#18', at: 1 },
   'highmoor_o7: under': { whose: '#18', at: 1 },
   'highmoor_o8: under': { whose: '#18', at: 1 },
+  'cairnfield_m7: under': { whose: '#18', at: 1 },
+  'cairnfield_m8: under': { whose: '#18', at: 1 },
   'Cairnmoor: under': { whose: '#18', at: 1 },
   // And Rimewater's boxes (#486, #488, #489, #491), in Cairnmoor's gear and the finds by 21, as Cairnmoor's are.
   'longmere_m9: under': { whose: '#18', at: 1 },

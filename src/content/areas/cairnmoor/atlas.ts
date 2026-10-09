@@ -16,8 +16,9 @@ const col = (x: number, y0: number, y1: number): [number, number][] => Array.fro
  * N7, and N8 along its north edge under N7 and its east edge beside O8; High Moor holds O7 and P7
  * along their north edges under O6 and P6, and O8 along its west edge. The seams down N8's and O8's
  * sides stop at y 246, short of the Rimefells, which their walk leaves as it was. With Rimewater's M9
- * laid whole in Loch Fada (#486), the Cairnfield holds parked M8 along its south edge over M9, where
- * the loch's walk would otherwise climb the Rimefells into it.
+ * laid whole in Loch Fada (#486), the Cairnfield held M8 along its south edge over M9 while M8 was
+ * parked, where the loch's walk would otherwise climb the Rimefells into it. M7 and M8, laid whole in
+ * the Cairnfield (#484), hold their own squares now, and the seeds along their edges change nothing.
  */
 const CAIRNFIELD_HELD = [...row(394, 423, 190), ...col(423, 191, 221), ...row(424, 455, 222), ...col(455, 223, 246), ...row(392, 423, 253)];
 const HIGHMOOR_HELD = [...row(456, 497, 190), ...col(456, 222, 246)];
@@ -28,7 +29,7 @@ export const ZONES: readonly AtlasZone[] = [
     // The crossing line said in snow (#166, #476): how the moor feels to a company under its floor.
     crossing: { harder: 'The snow begins here, and the land is harder than the road behind.', warning: 'Snow, and nothing on this moor would spare you. The road behind is still open.' },
   },
-  { id: 'cairnfield', name: 'The Cairnfield', area: 'cairnmoor', band: [19, 20], maps: [{ map: 'cairnfield_n8', at: [424, 222] }], seeds: [[426, 236], [412, 220], ...CAIRNFIELD_HELD], label: [418, 214] },
+  { id: 'cairnfield', name: 'The Cairnfield', area: 'cairnmoor', band: [19, 20], maps: [{ map: 'cairnfield_n8', at: [424, 222] }, { map: 'cairnfield_m7', at: [392, 190] }, { map: 'cairnfield_m8', at: [392, 222] }], seeds: [[426, 236], [412, 220], ...CAIRNFIELD_HELD], label: [418, 214] },
 ];
 
 export const PLACES: readonly AtlasPlace[] = [
