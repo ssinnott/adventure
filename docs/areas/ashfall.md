@@ -13,11 +13,12 @@ it, the plan for building it, box by box, and the briefs. Its work is filed unde
 country behind (#522, parked); this doc is #509. Figures are measured on main at `6032251` (2
 October 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Nothing is built. Its content will be `src/content/areas/ashfall/` (maps, monsters, items,
-climate, its part of the world map, its chapter of the one quest, The Window, in `chapter.ts`, its
-side quests in `quests.ts`) and its businesses' rooms `src/ui/interiors/ashfall/`. Its ids, the
-plan's: the area `ashfall`, its zones `cindercoast`, `firemount` and `emberwaste`, the town
-`cinderport`, the dungeons `old_cinder`, `ember_stone` and `meridian_camp`.
+Nothing a company walks is built; what is drawn and made ahead of it is in §3. Its content will be
+`src/content/areas/ashfall/` (maps, monsters, items, climate, its part of the world map, its chapter
+of the one quest, The Window, in `chapter.ts`, its side quests in `quests.ts`) and its businesses'
+rooms `src/ui/interiors/ashfall/`. Its ids, the plan's: the area `ashfall`, its zones `cindercoast`,
+`firemount` and `emberwaste`, the town `cinderport`, the dungeons `old_cinder`, `ember_stone` and
+`meridian_camp`.
 
 ---
 
@@ -139,12 +140,37 @@ Sentry and the Sentinel on the heavy machines', new (`src/ui/monsters/machines.t
 `src/content/areas/ashfall/monsters.ts` and listed in `AHEAD` (`src/content/index.ts`) until #510
 lists the area. Each is owed to the box that first places it (`UNPLACED`, `tools/tests/maps.ts`):
 the vine and the beetle to #510, the salamander and the drake to #511, the stoker to #513, the husk
-and the sentry to #514, the Old Drake to #515 and the Sentinel to #516. Nothing else is built.
+and the sentry to #514, the Old Drake to #515 and the Sentinel to #516.
+
+The rooms are drawn (#521), one to each business of Cinderport, ahead of the town as Rime Lodge's
+were. `src/content/areas/ashfall/interiors.ts` lists them and `ROOMS_AHEAD` in
+`src/content/index.ts` merges them, until #510 lists the area and its `interiors` takes the list;
+`tools/tests/maps.ts` reports each owed to #512 until a business there opens into it, and §4.4
+names the ids. They are a scene to a file in `src/ui/interiors/ashfall/`, what they share in
+`basalt.ts`: basalt in pale lime, limewashed above the sills; ash along the foot of every wall;
+vines hung over the glass; the cup in the old Cinder style and two views: the Sound, the Compact's
+ship at the quay and the column of light beyond, and the mountain, smoking by day and red at its
+mouth by night. The inn, the fire under a mantel of the potter's cups, the stair up to the
+rooms and the broom at its foot with the ash it swept; the temple, a nave between two columns, a
+basin of Scaldwell's water steaming on the altar under the round window where the column of light
+stands, the healer's cot and a brazier; the armourer, a cinder drake's hide laced on its frame, the
+Drakeskin Coat on its stand, the Basalt Shield on the wall, the Flamberge, the Slag Mace, a Battle
+Staff and the Ashwood Bow in the rack and the forge under its hood; the chandler, the Riders'
+saddle on its trestle over a cloth in red and ochre bands, bridles and a halter on the pegs, lamp
+oil in a tapped cask by the clay lamps it burns in and the fish off the racks tied in bundles; the
+trainer's yard, ash raked inside the wall with the vines come over it, a pell of driftwood wrapped
+in vine rope, the arms in their rack, the butt and fire-baskets for the dark; the Cartographers'
+hall, the far side pinned to the limewash with the land behind the coast left blank, the Meridian
+journals' shelf with three and a gap for the fourth, the charts rolled in their pigeonholes and one
+spread on the table; the Compact's house, the ledgers in one binding, the counting table with its
+scales and the manifests on their spike, the strongbox, bales under the window on the quay and,
+apart in the corner, a crate under the Helmstow customs seal; the potter's, the old Cinder cups on
+the shelves, glazed and bare, a board of new ones drying, the kiln a beehive of brick in the back
+wall and the kick wheel with a cup on it. §9 has the decisions. Nothing else is built.
 
 The systems it waits on are the rest of #442's: sweep with fire (#545), the ship to Cinderport, the
 Riders' ride and the last crossing (#547) and the bot grown to the band (#549); the giants' toll
-(#544) and stone (#546) are its neighbours'. Its rooms are #521's. Meridian Camp is #22, parked
-until #443 unparks it.
+(#544) and stone (#546) are its neighbours'. Meridian Camp is #22, parked until #443 unparks it.
 
 ## 4. What is still to build
 
@@ -287,11 +313,17 @@ half, with the wilderness features (#45); no more than one point in four is a si
   landfall, the Cartographers' second hall, where three classes are sent to their third prestige
   and where the last crossing leaves. It sells and teaches what the band needs (EXPANSION §4) and
   trains to 27, the third prestige's level (DESIGN §5).
-- **Businesses,** each with a room of its own (#521), about eight: the inn (rest); the temple
-  (cures and raising at the band's price); the armourer (the act's gear step, #542, by 25); a
-  chandler (provisions, lamp oil); a trainer's yard to 27; the Cartographers' hall (its map of the
-  far side on the wall and the Meridian journals' shelf, #443, call 7); the Compact's house, the
-  factor's; the potter's. No spell hall: tier 7 is Rime Lodge's (DESIGN §7).
+- **Businesses,** each with a room of its own (#521), the `interior` its feature names given with
+  it. No spell hall: tier 7 is Rime Lodge's (DESIGN §7).
+  - The inn (rest). Interior: `cinderport_inn`.
+  - The temple, cures and raising at the band's price. Interior: `cinderport_temple`.
+  - The armourer, the act's gear step (#542, by 25). Interior: `cinderport_armourer`.
+  - A chandler, provisions and lamp oil. Interior: `cinderport_chandlery`.
+  - A trainer's yard, to 27. Interior: `cinderport_yard`.
+  - The Cartographers' hall, its map of the far side on the wall and the Meridian journals' shelf
+    (#443, call 7). Interior: `cinderport_cartographers`.
+  - The Compact's house, the factor's. Interior: `cinderport_factor`.
+  - The potter's. Interior: `cinderport_potter`.
 - **People.** The harbourmaster and the ship's master (#547); the Cartographers' guildsman, whose
   line ends at Meridian Camp (#56's 51); the Compact's factor, whose runner is #56's 54's; the
   potter (#56's 50) and the smith (#56's 52); the Riders' eldest on trading days, at the ground
@@ -888,6 +920,43 @@ Decided by delegate for #548, each the owner's to overturn:
    stands, the Peak Stone having no condition yet, where the almanac says "It hardly wavers now."
    The Hearth burning steadier than in all our lives (STORY) is the count rising, and the chapter's
    to say if it says it (#518), not the almanac's.
+
+Decided by delegate for #521, each the owner's to overturn:
+
+1. **The rooms are §4.4's eight, which are the issue's.** The ship's master, the harbourmaster and
+   the Rider sell their passages as people with no room, as Kitto sells his boat on Saltmouth's
+   quay; the guildsman and the factor are in their halls' rooms.
+2. **The ids are `cinderport_` and the business,** as Rime Lodge's are `rime_`; the chandler's is
+   `cinderport_chandlery` as Kilnhaven's is, the Compact's house `cinderport_factor` for its keeper
+   as `kilnhaven_harbourmaster` is and the guild's `cinderport_cartographers`, since two halls open
+   here (§6). They are save keys: §4.4 gives them for #512, and nobody renames them.
+3. **Cinderport is built of basalt,** the coast's black stone, in pale lime, limewashed above the
+   sills where people sit (the inn, the guild's hall, the Compact's house) and bare elsewhere; ash
+   lies along the foot of every wall, and vines hang over the windows from the shore's trees.
+4. **The column of light is seen from the town,** as the quay's line has it (§4.4): in the temple's
+   round window and through the inn's and the Compact's windows, the ship at the quay before it.
+   The mountain is seen from the chandler's window and over the yard's wall, smoking by day and red
+   at its mouth by night; the yard's fire-baskets are lit only by night.
+5. **The temple is the town's,** not the Riders' (their shrine is on the ground, §4.3): a basin of
+   Scaldwell's water steams on its altar, carried up from the springs for the healing. No emblem is
+   drawn on its linen, since none is decided.
+6. **The armourer is the smith's** (#56's 52): a cinder drake's hide laced on its frame to cure by
+   the Drakeskin Coat on its stand, so the coat is seen made here; the Basalt Shield, the Flamberge,
+   the Slag Mace, a Battle Staff and the Ashwood Bow shown, the Marlinspike and the Cinder Robe not,
+   for room.
+7. **The chandler keeps the Riders' trade** for the trading days (§4.3): their saddle over a cloth
+   woven in red and ochre bands (the room's own until the Wold's are decided), bridles and a halter;
+   lamp oil by its clay lamps and the fish off the racks under the wall, dried flat.
+8. **The journals' shelf holds three and a gap for the fourth** (#443, call 7): three in one green
+   binding against a stone, a book's width empty before it, nothing lettered. The map inks the
+   coast, the Sheer, the cone and the road west to where it stops, pins three camps and names
+   nothing.
+9. **The Compact's house holds one crate under the Helmstow customs seal,** apart in the corner,
+   corded and waxed as the crates in G10's hide are (§4.3); nothing says what is in it (§6). The
+   ledgers carry no number and the house no device of the Compact's.
+10. **The potter's cups are the Ash Husk's:** a beaker flared on a short foot in the husk's own
+    red-brown clay (`src/ui/monsters/skeleton.ts`), a band of red slip under the rim or an ash glaze
+    run down from it; the inn's mantel holds a row of them, and the kiln is a beehive of brick.
 
 ## 10. Names
 
