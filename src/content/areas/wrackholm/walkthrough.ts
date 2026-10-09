@@ -220,9 +220,31 @@ function theStoneCarriedHome(ok: (cond: boolean, msg: string) => void): void {
   everyGoalWalked(ok, [CHAPTER]);
 }
 
+/**
+ * The causeway seen (#449): once the company has stood on its first stone at Sheer Point (the
+ * Whitespine's step, `sheerpoint_i8:i8_causeway`), the Saltings' shore by Saltmouth's road and the
+ * Tide Ship's starboard rail look east on a line on the sea under the Hearth's light, each said once;
+ * before it, neither shows anything.
+ */
+function causewaySeen(ok: (cond: boolean, msg: string) => void): void {
+  const said = (w: Walk, map: string, id: string): string[] => {
+    const f = MAP_DEFS.find((d) => d.id === map)!.features!.find((x) => x.kind === 'event' && x.id === id)!;
+    w.world.travel(map, f.x, f.y);
+    return w.world.eventsHere();
+  };
+  const both = (w: Walk): string[][] => [said(w, 'saltings_c6', 'c6_causeway'), said(w, 'tide_ship', 'ts_causeway')];
+  ok(both(newWalk(ok)).every((s) => !s.length), 'before the causeway at Sheer Point is stood on, the Saltings\' shore and the Tide Ship\'s deck show nothing');
+  const w = newWalk(ok);
+  see(w, 'sheerpoint_i8:i8_causeway');
+  const [shore, deck] = both(w), again = both(w);
+  ok([shore, deck].every((s) => s.length === 1 && s[0].includes('straight as a rule')) && again.every((s) => !s.length),
+    `once it is, a line on the sea under the Hearth's light from the shore and from the deck, each said once (${shore.join(' / ')}; ${deck.join(' / ')})`);
+}
+
 export const walkthrough: Walkthrough = (ok) => {
   theStoneCarriedHome(ok);
   sideQuests(ok);
+  causewaySeen(ok);
 
   const w = newWalk(ok);
   w.level = 12;
