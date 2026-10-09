@@ -407,6 +407,10 @@ export function gate(): void {
     // skill: climbed as the mountain is, the road through them walked.
     const cut: MapDef = { id: 'fx_cut', name: 'Cut', kind: 'outdoor', start: { x: 1, y: 1, facing: 0 }, rows: ['MMMMMMM', 'M=A=|=M', 'MMMMMMM'] };
     ok(stepsFrom(cut)(5, 1) === 4, `the walk from a way in climbs a peak and a cliff as it does the mountain (${stepsFrom(cut)(5, 1)} steps over four squares)`);
+    // The steppe, the dunes and the vines (#543) are open ground to the walk; the volcano and a vent
+    // in it are the mountain's rock, climbed as it is.
+    const far: MapDef = { id: 'fx_far', name: 'Far', kind: 'outdoor', start: { x: 1, y: 1, facing: 0 }, rows: ['MMMMMMMMM', 'M,su&V@=M', 'MMMMMMMMM'] };
+    ok(stepsFrom(far)(7, 1) === 6, `the walk from a way in crosses steppe, dunes and vines and climbs the volcano and a vent (${stepsFrom(far)(7, 1)} steps over six squares)`);
     const at = (x: number): EncounterDef => ({ id: `g${x}`, x, y: 0, monsters: ['rat'] }), line = [at(1), { ...at(2), after: { flag: 'f' } }, at(3), at(4)];
     ok(nearestWayIn(line, (x) => x).map((g) => g.id).join() === 'g1,g3', 'the groups nearest the way in skip one that comes only after a step');
     // A den's keepers are its camp's hardest fight: won no more often than any of its brood.

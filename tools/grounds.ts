@@ -90,4 +90,70 @@ export const GROUND_SAMPLES: readonly MapDef[] = [
       'MMMMMMMMMMMM',
     ],
   },
+  {
+    // The open steppe, a track over it, a Riders' hut and an outcrop of rock.
+    id: 'ground_steppe', name: 'Steppe', kind: 'outdoor', start: { x: 5, y: 8, facing: NORTH },
+    rows: [
+      'MMMMMMMMMMMM',
+      'MssssssssrrM',
+      'MsssssssssrM',
+      'Mss##ssssssM',
+      'Mss#sss:sssM',
+      'Mssssss:sssM',
+      'Msssss::sssM',
+      'Mssss::ssssM',
+      'Mssss:sssssM',
+      'MMMMMMMMMMMM',
+    ],
+  },
+  {
+    // The dunes' edge: the steppe running out into sand in ridges, a ruin and a rock in the sand.
+    id: 'ground_dunes', name: 'Dunes', kind: 'outdoor', start: { x: 6, y: 8, facing: NORTH },
+    rows: [
+      'MMMMMMMMMMMM',
+      'MuuuuuuuuuuM',
+      'MuuuuuuuuuuM',
+      'Muuu##uuuuuM',
+      'Muuu#uuuuruM',
+      'MsuuuuuuuuuM',
+      'MssuuuuuuusM',
+      'MsssuuuuussM',
+      'MssssssssssM',
+      'MMMMMMMMMMMM',
+    ],
+  },
+  {
+    // The shore's hanging vines, a path through them down to the sand and the Sound; a hut and a
+    // rock among them.
+    id: 'ground_vines', name: 'Vines', kind: 'outdoor', start: { x: 6, y: 8, facing: NORTH },
+    rows: [
+      'MMMMMMMMMMMM',
+      'M~~~~~~~~~~M',
+      'M__________M',
+      'M&&&&&_&&&&M',
+      'M&&##&_&&&&M',
+      'M&&#&&_&r&&M',
+      'M&&&&&:&&&&M',
+      'M&&&&&:&&&&M',
+      'M&&&&&:&&&&M',
+      'MMMMMMMMMMMM',
+    ],
+  },
+  {
+    // The volcano's flank: the cone over its ash foot with a vent in it ahead, a flow of lava down
+    // from the cone opening into a field; a forge's ruin and a rock on the ash.
+    id: 'ground_volcano', name: 'Volcano', kind: 'outdoor', start: { x: 5, y: 6, facing: NORTH },
+    rows: [
+      'MMMMMMMMMMMM',
+      'MVVVVVVVVVVM',
+      'MVVVVVVVVVVM',
+      'MaVVV@VV!VaM',
+      'MaaVaaaa!aaM',
+      'Maaaaaa!!!aM',
+      'Ma##aaa!!!!M',
+      'Ma#aaraa!!aM',
+      'Maaaaaaaa!aM',
+      'MMMMMMMMMMMM',
+    ],
+  },
 ];
