@@ -10,7 +10,7 @@ import type { ItemDef } from '../../../game/items.ts';
 import { W, A, P, MARTIAL, MAIL, NO_CASTER_HEAVY } from '../../items.ts';
 import { ITEMS as SUNDERWOOD } from '../sunderwood/items.ts';
 import { hornBow } from '../saltreach/items.ts';
-import { dwarfMail } from '../kilns/items.ts';
+import { dwarfMail, mattock } from '../kilns/items.ts';
 
 // Sold at Cinderport's armourer (#512): a step past Rime Lodge's finds for every class, at 25.
 export const slagMace = W('slag_mace', 'Slag Mace', 2300, 2, 12, { bonus: 5, classes: [...MARTIAL, 'cleric'] });
@@ -117,4 +117,14 @@ export const meridianJournal4: ItemDef = { id: 'meridian_journal4', name: 'Merid
   '"Camped under the Stone. Its builders left their tools on the benches, as if called away. The vents tomorrow."',
 ] };
 
-export const ITEMS: readonly ItemDef[] = [...WARES, quickening, scavengersAxe, graveBow, emberPart1, emberPart3, meridianMail, ...PARTS, squareFlamberge, foundingStone, emberPart2, hearthSymbol, benchStaff, benchCoat, sentinelVisor, meridianJournal4];
+/**
+ * The Shovel That Does Not Blunt (#56's 52, #519): the grey shovel-head off a stoker, which the smith
+ * hafts for a company that keeps it. That it never dulls is its plus: the Kilns' mattock with a plus of
+ * 3, named, at 1,950, inside Ashfall's window of 5,500.
+ */
+export const greyShovel = P(mattock, 3, { id: 'grey_shovel', name: 'Grey Shovel +3', text: [
+  'A shovel-head of smooth grey stuff on a haft of ash, bound with wire.',
+  'Its edge takes no burr, and loses none.',
+] });
+
+export const ITEMS: readonly ItemDef[] = [...WARES, quickening, scavengersAxe, graveBow, emberPart1, emberPart3, meridianMail, ...PARTS, squareFlamberge, foundingStone, emberPart2, hearthSymbol, benchStaff, benchCoat, sentinelVisor, meridianJournal4, greyShovel];

@@ -17,6 +17,7 @@ import { GUILDS } from './guilds.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { INTERIORS } from './interiors.ts';
+import { QUESTS } from './quests.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
@@ -32,7 +33,8 @@ export const AREA = {
   // boxes' finds; the Ember Stone's first part and the stokers' parts, on Meridian Camp's vents, and its
   // third part, the Company's mail and the flue walker's parts, on the iron corridors (#22).
   items: ITEMS,
-  quests: [],
+  // What the Springs Bring Up, The Founding Stone and The Shovel That Does Not Blunt (#519).
+  quests: QUESTS,
   // The Cartographers' Surveyor's rung, the fourth Meridian journal found under the Ember Stone (#635).
   guilds: GUILDS,
   // The Window, the act's second chapter, is #518's.

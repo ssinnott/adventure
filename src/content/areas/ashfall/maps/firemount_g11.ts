@@ -29,6 +29,12 @@ export const VENTS: Exit = { x: 26, y: 16, to: 'meridian_camp', tx: 16, ty: 1, t
 export const HOLE: Exit = { x: 31, y: 17, to: 'meridian_camp', tx: 29, ty: 30, tf: NORTH,
   label: 'Down the scavenger\'s rope, hand under hand, a long way through the slag, and out into heat.' };
 
+/**
+ * The Shovel That Does Not Blunt (#56's 52, #519): the scavenger's story, told to a company sent by
+ * the smith once it has found his ledge; then he is gone from the fire, to Cinderport.
+ */
+export const SHOVEL_STORY = 'q_shovel_story';
+
 export const FIREMOUNT_G11: MapDef = {
   id: 'firemount_g11',
   name: 'Fire Mountain',
@@ -84,11 +90,15 @@ export const FIREMOUNT_G11: MapDef = {
       '"Grimsforge. My grandfather kept it, and fought from it. I keep the fire."',
       '"There was a man went down beside the forge with a rope. He comes up when he likes, with things."',
     ] },
-    { kind: 'camp', x: 30, y: 14, name: 'The forge\'s lee', text: 'A fire in the lee of the forge, out of the mountain\'s breath. The scavenger moves his sack.' },
-    { kind: 'npc', x: 31, y: 14, name: 'A scavenger', lines: [
+    // The scavenger, a person who moves (#519): asked for the smith once his ledge is found, he tells
+    // where the shovel-head came from and goes to Cinderport (SHOVEL_STORY).
+    { kind: 'camp', x: 30, y: 14, name: 'The forge\'s lee', text: 'A fire in the lee of the forge, out of the mountain\'s breath, and room by it for one more.' },
+    { kind: 'npc', x: 31, y: 14, name: 'A scavenger', until: { flag: SHOVEL_STORY }, lines: [
       'A thin man by the fire, grey dust in the creases of his hands, a sack between his feet.',
       '"I find things. The mountain gives them up, if you know where to dig."',
       '"A smith in Cinderport buys what I bring. He never asks where I go."',
+    ], says: [
+      { after: { flag: 'q_shovel', seen: 'firemount_g11:g11_finds' }, sets: SHOVEL_STORY, lines: ['The scavenger looks at the grey dust on your boots, and spits in the fire.', '"So you found my ledge. Down there they shovel all day, and when one stops, its shovel is anybody\'s."'] },
     ] },
     // The vents, the middle mouth the way down into Meridian Camp (VENTS): the step's line at their front, each time.
     { kind: 'event', x: 27, y: 16, id: 'g11_vents', text: 'Three mouths of iron in the ash, each as wide as a door, breathing heat. The tracks in the ash go in and come out.' },
