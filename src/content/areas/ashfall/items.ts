@@ -145,4 +145,13 @@ export const greyShovel = P(mattock, 3, { id: 'grey_shovel', name: 'Grey Shovel 
   'Its edge takes no burr, and loses none.',
 ] });
 
-export const ITEMS: readonly ItemDef[] = [...WARES, quickening, scavengersAxe, graveBow, emberPart1, emberPart3, meridianMail, meridianStaff, faneMap, ...PARTS, squareFlamberge, foundingStone, emberPart2, hearthSymbol, benchStaff, benchCoat, sentinelVisor, meridianJournal4, greyShovel];
+/**
+ * The Druid's third prestige (#448): a seedling lifted at the Grove once the Archdruid has asked for one,
+ * a quest item no shop buys, carried into the Waste and planted in the bed under the Ember Stone's
+ * lookout, which takes it.
+ */
+export const groveSeedling: ItemDef = { id: 'grove_seedling', name: 'The Grove Seedling', slot: 'none', price: 0, text: [
+  'An oak seedling no higher than a hand, two leaves on it, in a ball of its own earth.',
+] };
+
+export const ITEMS: readonly ItemDef[] = [...WARES, quickening, scavengersAxe, graveBow, emberPart1, emberPart3, meridianMail, meridianStaff, faneMap, ...PARTS, squareFlamberge, foundingStone, emberPart2, hearthSymbol, benchStaff, benchCoat, sentinelVisor, meridianJournal4, greyShovel, groveSeedling];

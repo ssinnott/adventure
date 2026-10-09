@@ -8,8 +8,9 @@ import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
   {
-    // The mesas first, the zone's way in over E10's west edge (#527), then the steppe (#525).
-    id: 'wold', name: 'The Wold', area: 'glasswold', band: [26, 28], maps: [{ map: 'wold_d10', at: [104, 286] }, { map: 'wold_d9', at: [104, 254] }],
+    // The mesas first, the zone's way in over E10's west edge (#527), then the steppe (#525) and Akordu's
+    // box, the camp (#526).
+    id: 'wold', name: 'The Wold', area: 'glasswold', band: [26, 28], maps: [{ map: 'wold_d10', at: [104, 286] }, { map: 'wold_d9', at: [104, 254] }, { map: 'wold_d8', at: [104, 222] }],
     seeds: [[100, 232], [132, 262], [50, 230], [134, 296], [120, 296]], // 140,296 moved west of E10, laid for the Waste (#517)
     // The crossing line (#166, #524), said where a Wold map is first walked into over E10's west edge
     // (D10, #527, walked) or climbed into up the Scarp stair (C8, #528, a jump: #616), so true both ways in.
@@ -25,6 +26,6 @@ export const PLACES: readonly AtlasPlace[] = [
 export const SITES: readonly AtlasSite[] = [
   // XI. The Glasswold (docs/areas/glasswold.md §10 has the Riders' names).
   { name: 'Buried Tower', icon: 'obelisk', at: [84, 280], label: 'below', planned: true },
-  { name: 'Akordu', icon: 'camp', at: [120, 250], label: 'below', planned: true }, // the Wold Riders' camp
+  { name: 'Akordu', icon: 'camp', at: [120, 250], label: 'below' }, // the Wold Riders' camp, built with D8 (#526)
   { name: 'Kushtash', icon: 'camp', at: [46, 242], label: 'right', planned: true }, // the Eyrie, on the far-west mesa under the rim: the Ranger's third prestige (moved from 132,289; #443, call 5)
 ];
