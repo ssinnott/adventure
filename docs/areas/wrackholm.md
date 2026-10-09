@@ -20,9 +20,9 @@ businesses, so no rooms. Its part of the world map is
 its folder's (`atlas.ts`, #186), which the Area now carries; the plan no longer spreads it in. Its
 ids: the area and its zone `wrackholm`, the cove `smugglers_cove` (the id stays under the new name,
 NAMES §3) and its sea cave `smugglers_cove2`, the ship's decks `tide_ship`, `tide_ship2` and
-`tide_ship3`, its Rift `tide_ship_rift`, the stair's foot `dead_drop_stair` and, below it, the drop
-and the vaults, the Dead-Drop's first two levels, `dead_drop` and `dead_drop2`
-(docs/areas/dead_drop.md).
+`tide_ship3`, its Rift `tide_ship_rift`, the stair's foot `dead_drop_stair` and, below it, the drop,
+the vaults and the counting house, the Dead-Drop's three levels, `dead_drop`, `dead_drop2` and
+`dead_drop3` (docs/areas/dead_drop.md).
 
 ---
 
@@ -58,8 +58,9 @@ Its edges are the sea on every side. Its ways:
   off the shore, its decks' plates at 208,192 and beside it in the sea, and a company rows itself
   back to the shingle at any hour.
 - **The Dead-Drop's stair,** from the Tide Ship's hold down to the stair's foot, one room at 26–28
-  with the way back up (#190): a warning, not a wall. The Dead-Drop past it is #22's; its first
-  two levels, the drop and the vaults, are built (docs/areas/dead_drop.md §4.1, §4.2).
+  with the way back up (#190): a warning, not a wall. The Dead-Drop past it is #22's; its three
+  levels, the drop, the vaults and the counting house, are built (docs/areas/dead_drop.md §4.1 to
+  §4.3).
 
 `node tools/worldmap.ts out.png --zones` paints it.
 
@@ -83,8 +84,9 @@ The weather is the gulf's: wind, spray on the cliffs, gulls and the moor's heath
 Its atlas rows (`src/content/areas/wrackholm/atlas.ts`, #186): the zone at 12–14, Kelp Hole's two
 plates (#188), the Tide Ship at 13–14 and the sites. The atlas has the cove and the ship as planned plates,
 the sites (Kelp Hole, the Tide Ship) and the links (the boat and the two ways in); the
-Dead-Drop's plates are the drop's and the vaults', built (#22), and the built exits draw the
-stair. Its systems are Saltreach's (#150) and the boat's (#164); its monsters are drawn in #193.
+Dead-Drop's plates are the drop's, the vaults' and the counting house's, built (#22), and the
+built exits draw the stair. Its systems are Saltreach's (#150) and the boat's (#164); its monsters
+are drawn in #193.
 
 - **The moor and the landing** (E6, `wrackholm_e6`, core, band 12–13; #187): the landing stage at
   the head of an inlet on the isle's west side, the smugglers' huts round it, Kelp Hole's mouth in
@@ -139,7 +141,7 @@ The places, as the atlas and the docs have them:
 | Kelp Hole (Smugglers' Cove) | E6, and below | the Compact's crews and the Hand's cargo; the sea cave, where the Great Devilfish is fed (MONSTERS §6.2); the captain's brother (#56's 25); what the smugglers feed (#56's 28) | built: its two plates at 150,158 and 150,164, its way in at 154,170 |
 | The east rocks | F6 | the hermit who has counted the ships since the founder died (#56's 26) | rock, 105 squares at the isle's east end |
 | The Tide Ship | F6, and aboard | the hold's two kinds of cargo; Hale in the last row; the papers on Wenna; the Stone in the forward hold, with its Rift (DESIGN §9, STORY, MONSTERS §6.2); every name in the column (#56's 27) | a planned wreck at 182,188, its plate at 208,192 |
-| The Dead-Drop | below the hold | the Compact's orders come from there; three third-prestige quests go down (#22, #19) | built in part: the drop and the vaults, their plates at 208,204 and 208,210, band 26–28; the writer's room to build (#22) |
+| The Dead-Drop | below the hold | the Compact's orders come from there; three third-prestige quests go down (#22, #19) | built: the drop, the vaults and the counting house, their plates at 208,204, 208,210 and 208,216, band 26–28 (#22); the quests that go down are owed (docs/areas/dead_drop.md §10) |
 
 ### 4.1 The briefs
 
@@ -734,7 +736,7 @@ Decided by delegate for #186, each the owner's to overturn:
 3. **The Tide Ship is 13–14,** not the plan's 12–14: §4.5 gives it so, and it is boarded from F6,
    which is 13–14; the world map shows a plate's band.
 4. **The Dead-Drop stays the plan's:** its band and brief are Phase 4's (#22), and this act builds
-   only the hatch and one room. The drop and the vaults are built since (docs/areas/dead_drop.md).
+   only the hatch and one room. The three levels are built since (docs/areas/dead_drop.md).
 5. **The pay is scaled to 9,867,** the side quests inside and the Dead-Drop outside, as Sunderwood
    counts Wrackholm's: 100 more each to E6, F6 and the Tide Ship.
 
@@ -753,5 +755,5 @@ isle is the Compact's, not theirs. The Dead-Drop keeps its name until #22 says o
   its box's edge where E6 or F6 reaches it, and the rest stays void: a strip of beach with nothing
   on it (DESIGN §1).
 - **The Dead-Drop** below the ship, which is Phase 4's (#22): this act builds the hatch and one
-  room, no more. Its first two levels, the drop and the vaults, are built since
-  (docs/areas/dead_drop.md §4.1, §4.2).
+  room, no more. Its three levels, the drop, the vaults and the counting house, are built since
+  (docs/areas/dead_drop.md §4.1 to §4.3).

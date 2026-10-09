@@ -1679,6 +1679,7 @@
         "dd2_coin",
         "dd2_count",
         "dd2_door",
+        "dd2_down",
         "dd2_heap",
         "dd2_in",
         "dd2_left",
@@ -1699,6 +1700,29 @@
       "doors": [
         "14,28"
       ]
+    },
+    "dead_drop3": {
+      "size": "32x32",
+      "used": [
+        "dd3_coin",
+        "dd3_heap",
+        "dd3_in",
+        "dd3_intray",
+        "dd3_ledgers",
+        "dd3_marks",
+        "dd3_nibs",
+        "dd3_orders",
+        "dd3_outtray",
+        "dd3_shelves",
+        "dd3_stools",
+        "dd3_strongbox",
+        "dd3_writes"
+      ],
+      "groups": [
+        "dd3_clerk",
+        "dd3_tallymaster"
+      ],
+      "doors": []
     },
     "dead_drop_stair": {
       "size": "10x9",
@@ -3171,6 +3195,7 @@
     "q_wentback",
     "q_wentback_home",
     "q_wentback_witness",
+    "q_writer_seen",
     "rank_cartographers",
     "rank_compact",
     "rank_lanterns",
@@ -3221,10 +3246,12 @@
     "chain+2",
     "cinder_robe",
     "cipher_letter",
+    "clerk_frame",
     "clerks_book",
     "clerks_seal",
     "club",
     "colans_letter",
+    "compact_orders",
     "copybook",
     "crabshell_buckler",
     "crossbow",
@@ -3407,6 +3434,7 @@
     "sunder_shard",
     "survey_orders",
     "survey_wand",
+    "tally_nib",
     "tenant_paper",
     "tide_bell",
     "tide_cutlass",

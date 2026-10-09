@@ -43,6 +43,16 @@ export const ITEMS: readonly ItemDef[] = [
   P(marlinspike, 5, { id: 'fishers_spike', name: 'Fisher\'s Spike +5', text: [
     'A splicing spike, its grip bound in tarred cord, its point worn down to a needle.',
   ] }),
+  // The counting house's (#22): the orders in the out-tray, read from the pack, an order to a runner in the
+  // founder's hand, which a company takes without a fight (the Thief's, #448; the Factor's rung asks for them);
+  // and in a bin of spent nibs by the desk a clerk's counting frame and a nib, which no shop buys.
+  { id: 'compact_orders', name: 'The Compact\'s Orders', slot: 'none', price: 0, text: [
+    'A sheet folded in four and sealed with the Compact\'s knot. The hand is the founder\'s, and it never once shakes.',
+    '"To the runner on the Scarp Stair. The coin to the Riders, as before. The count to the cleft under the lip. Back by the stair."',
+    'Under it the knot again, where a name would go.',
+  ] },
+  { id: 'clerk_frame', name: 'Tally Clerk\'s Frame', slot: 'none', price: 0 },
+  { id: 'tally_nib', name: 'Tallymaster\'s Nib', slot: 'none', price: 0 },
   // The side quests' letters (#192): Colan's to his brother, sealed (The Captain's Brother); the
   // founder's last, which Merryn carried ten years (The Hermit of the Point); and the clerk's
   // book from the Tide Ship's cabin, every name the hold carried (Every Name in the Column).
