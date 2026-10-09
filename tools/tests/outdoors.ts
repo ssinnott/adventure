@@ -301,17 +301,17 @@ export function outdoors(): void {
     `G10's north edge is the vines, the road at column 3, the town's wall, the stream and the grass against G9, past which the world ends, and its south edge the ash either side of the mountain's foot against G11 (${northOf(g10)}; ${southOf(g10)})`);
   ok(westOf(g10) === '&'.repeat(7) + '==' + '&'.repeat(5) + 'a'.repeat(18) && eastOf(g10) === '&'.repeat(14) + 'a'.repeat(8) + '~~' + 'a'.repeat(8),
     `G10's west edge is the vines, the road out at rows 7 and 8 and the ash against F10, and its east edge the vines, the ash and the stream against H10, past which the world ends (${westOf(g10)}; ${eastOf(g10)})`);
-  // Fire Mountain's flank (G11, #513), joined to G10 alone: its north edge meets G10's south
-  // edge, each as the atlas cuts it, the ash either side of the mountain's foot, walked across at columns
-  // 0 to 4 and 23 to 31; on the west the ash, the cone's flank (the ring, so the void) and the two flows
-  // leaving west against F11; on the east the ash, Grimsforge's wall, the scavenger's rocks and the
-  // south-east flow leaving against H11; on the south the ash against G12. None of F11, H11 and G12 is
-  // built, so the world ends past them.
+  // Fire Mountain's flank (G11, #513): its north edge meets G10's south edge, each as the atlas cuts
+  // it, the ash either side of the mountain's foot, walked across at columns 0 to 4 and 23 to 31; on the
+  // west the ash, the cone's flank and the two flows leaving west against F11, built (#514), so the flank
+  // stays mountain between the two; on the east the ash, Grimsforge's wall, the scavenger's rocks and the
+  // south-east flow leaving against H11; on the south the ash against G12. Neither H11 nor G12 is built,
+  // so the world ends past them.
   const g11 = out.zones.find((z) => z.id === 'firemount_g11')!;
   ok(g11.x === g10.x && g11.y === g10.y + 32 && northOf(g11) === 'a'.repeat(5) + 'M'.repeat(18) + 'a'.repeat(9) && southOf(g11) === 'a'.repeat(32)
-    && [...Array(32).keys()].every((i) => [out.at(g11.x + 32, g11.y + i), out.at(g11.x - 1, g11.y + i), out.at(g11.x + i, g11.y + 32)].every((c) => c.ch === '%')),
+    && [...Array(32).keys()].every((i) => [out.at(g11.x + 32, g11.y + i), out.at(g11.x + i, g11.y + 32)].every((c) => c.ch === '%')),
     `G11's north edge meets G10's south edge, the ash either side of the mountain's foot, and its south edge is the ash against G12, past which the world ends (${northOf(g11)}; ${southOf(g11)})`);
-  ok(westOf(g11) === 'a'.repeat(4) + '%'.repeat(6) + '!!' + 'a'.repeat(9) + '!!!' + 'a'.repeat(8) && eastOf(g11) === 'a'.repeat(12) + 'BBararr' + 'a'.repeat(8) + '!!!!a',
+  ok(westOf(g11) === 'a'.repeat(4) + 'M'.repeat(6) + '!!' + 'a'.repeat(9) + '!!!' + 'a'.repeat(8) && eastOf(g11) === 'a'.repeat(12) + 'BBararr' + 'a'.repeat(8) + '!!!!a',
     `G11's west edge is the ash, the cone's flank and the two flows against F11, and its east edge the ash, Grimsforge, the scavenger's rocks and the south-east flow against H11, past which the world ends (${westOf(g11)}; ${eastOf(g11)})`);
   // The Ember Waste's road (F10 and E10, #517), joined to G10 alone, over its west edge. F10's east edge meets G10's
   // west square for square, the road at rows 7 and 8, and its west edge E10's east, the road at rows 29
@@ -319,7 +319,7 @@ export function outdoors(): void {
   // and its south the rocks and the road at columns 5 to 11, F11's corner, against F11; E10's north is
   // the hills, the steppe, the grass and the ash against E9, its south the steppe, the hills, the ash
   // and the flow's head against E11, and its west the hills and the steppe, the road at row 6, against
-  // the Wold's D10. None of F9, F11, E9, E11 and D10 is built, so the world ends past them.
+  // the Wold's D10. F11 is built under F10 (#514); none of F9, E9, E11 and D10 is, so the world ends past them.
   const f10 = out.zones.find((z) => z.id === 'emberwaste_f10')!, e10 = out.zones.find((z) => z.id === 'emberwaste_e10')!;
   const open = (x: number, y: number): boolean => out.passable(x, y) === 'ok';
   ok(f10.x + f10.w === g10.x && f10.y === g10.y && eastOf(f10) === westOf(g10) && [...Array(32).keys()].every((i) => open(f10.x + 31, f10.y + i) && open(g10.x, g10.y + i)),
@@ -328,12 +328,27 @@ export function outdoors(): void {
     && [...Array(31).keys()].every((i) => open(e10.x + 31, e10.y + i) && open(f10.x, f10.y + i)),
     `F10's west edge meets E10's east edge square for square, the road at rows 29 and 30, F10's rock at the corner (${westOf(f10)}; ${eastOf(e10)})`);
   ok(northOf(f10) === 'a'.repeat(11) + '&'.repeat(21) && southOf(f10) === 'r'.repeat(5) + '='.repeat(7) + 'r'.repeat(3) + 'a'.repeat(17)
-    && [...Array(32).keys()].every((i) => [out.at(f10.x + i, f10.y - 1), out.at(f10.x + i, f10.y + 32)].every((c) => c.ch === '%')),
-    `F10's north edge is the ash and the vines against F9, and its south edge the rocks and the road at columns 5 to 11 against F11, past which the world ends (${northOf(f10)}; ${southOf(f10)})`);
+    && [...Array(32).keys()].every((i) => out.at(f10.x + i, f10.y - 1).ch === '%'),
+    `F10's north edge is the ash and the vines against F9, past which the world ends, and its south edge the rocks and the road at columns 5 to 11 against F11 (${northOf(f10)}; ${southOf(f10)})`);
   ok(northOf(e10) === 's'.repeat(7) + '^'.repeat(6) + 's'.repeat(3) + ','.repeat(3) + 'a'.repeat(13) && southOf(e10) === 's'.repeat(9) + ',,' + '^'.repeat(9) + 'aaa!!' + 'a'.repeat(7)
     && westOf(e10) === 's' + '^'.repeat(5) + '=^' + 's'.repeat(24)
     && [...Array(32).keys()].every((i) => [out.at(e10.x + i, e10.y - 1), out.at(e10.x + i, e10.y + 32), out.at(e10.x - 1, e10.y + i)].every((c) => c.ch === '%')),
     `E10's north edge is the hills, the steppe, the grass and the ash against E9, its south the steppe, the hills, the ash and the flow's head against E11, and its west the hills and the steppe, the road at row 6, against D10, past which the world ends (${northOf(e10)}; ${southOf(e10)}; ${westOf(e10)})`);
+  // Old Cinder's and the Ember Stone's box (F11, #514), joined to F10 over its north edge and to G11 over its
+  // east. Its north edge meets F10's south edge square for square, the rocks, the Waste's road at columns
+  // 5 to 11 and the ash, every square of the ash open both sides; its east edge meets G11's west, the ash,
+  // the mountain's foot, the west flow at rows 10 and 11 and the second flow at rows 21 to 23. On the
+  // west the Waste's rock, the ash and the builders' rock against E11, the mountain's corner the ring; on
+  // the south the corner, the ash and the second flow going on against F12. Neither E11 nor F12 is
+  // built, so the world ends past them.
+  const f11 = out.zones.find((z) => z.id === 'emberwaste_f11')!;
+  ok(f11.x === f10.x && f11.y === f10.y + 32 && northOf(f11) === southOf(f10) && [...Array(17).keys()].every((i) => open(f11.x + 15 + i, f11.y) && open(f10.x + 15 + i, f10.y + 31)),
+    `F11's north edge meets F10's south edge square for square, the rocks, the road at columns 5 to 11 and the ash, the ash open both sides (${northOf(f11)})`);
+  ok(f11.x + f11.w === g11.x && f11.y === g11.y && eastOf(f11) === westOf(g11),
+    `F11's east edge meets G11's west edge square for square, the ash, the mountain's foot and the two flows (${eastOf(f11)})`);
+  ok(westOf(f11) === 'r'.repeat(19) + 'aa' + 'r'.repeat(5) + 'aaa' + '%%%' && southOf(f11) === '%'.repeat(4) + 'a'.repeat(23) + '!!' + 'aaa'
+    && [...Array(32).keys()].every((i) => [out.at(f11.x - 1, f11.y + i), out.at(f11.x + i, f11.y + 32)].every((c) => c.ch === '%')),
+    `F11's west edge is the rock and the ash against E11, and its south edge the ash and the second flow against F12, past which the world ends (${westOf(f11)}; ${southOf(f11)})`);
   // Fionnlios's box (O7, #477): its west edge meets N7's east edge square for square, the peat-cutter's
   // track crossing at row 22 and the tarn's stream at the corner, out into N7's corner and O8's; its
   // north edge the hills and the Kilns' grass under O6, square for square with O6's south edge but its
