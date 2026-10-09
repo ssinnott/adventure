@@ -1229,9 +1229,10 @@ function stairFoot(ok: (cond: boolean, msg: string) => void): void {
  * the stone cure at the chandler's, the stone lifted at the temple at the cure's price for a member of
  * 25, and training to 27 at the yard; either hall's ladder joined, the Cartographers' at the Chart
  * House and the Compact's at the factor's house, which pays the Fence's rung; the Compact's ship from
- * Kilnhaven's steps to the Compact's steps here and back, halved here for a member of the Compact; and
- * the ride and the last crossing, whose far ends are not built, sold by nobody yet, their sellers only
- * talking and their landings written; the smith, the potter, the guildsman and the factor with words
+ * Kilnhaven's steps to the Compact's steps here and back, halved here for a member of the Compact; the
+ * ride, sold by the Rider by the gate to Akordu's horse-lines, its far end built (#526), and the last
+ * crossing, whose far end is not built, sold by nobody yet, its seller only talking; both landings
+ * written here; the smith, the potter, the guildsman and the factor with words
  * only, their quests others' (#519, #635, #448).
  */
 function cinderport(ok: (cond: boolean, msg: string) => void): void {
@@ -1356,8 +1357,9 @@ function cinderport(ok: (cond: boolean, msg: string) => void): void {
   ok(w.world.used('cp_quay') && quay.text === 'The Compact\'s ship rides at the quay with Kilnhaven\'s mark on her. Beyond the Sound, a column of light.', 'on the quay, the ship with Kilnhaven\'s mark and a column of light beyond the Sound');
 
   // The ride and the last crossing (#547): Cinderport writes where each puts a company down, just inside
-  // the gate by the Riders' rail and on the Compact's steps; each is sold once its far end lands (Akordu,
-  // #526; Hearth Isle, Phase 1.5) and not before, its seller only talking and naming no fare.
+  // the gate by the Riders' rail and on the Compact's steps; each is sold once its far end lands and not
+  // before, its seller only talking and naming no fare till then: the ride now Akordu lands (#526), the
+  // last crossing once Hearth Isle does (Phase 1.5).
   for (const [c, seller] of [[RIDERS_RIDE, RIDER], [LAST_CROSSING, MORWENNA]] as const) {
     const ours = c.ends.find((e) => e.at === 'cinderport')!, far = c.ends.find((e) => e.at !== 'cinderport')!, words = says(w, seller);
     ok(!!ours.landing && !ours.owed && (seller.passage ?? []).length === (far.landing ? 1 : 0) && (!!far.landing || !/gold|fare|hundred/i.test(words)),
