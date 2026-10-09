@@ -46,6 +46,13 @@ export function stones(): void {
   }
   party.flags.q_anvil_closed = 1;
   ok(world.stones === 3, 'a tear closed before the thane was spoken to counts too: the choice is how the Stone came to the company, not what restores it');
+  // The Ember Stone counts once it is lit (#548), its three parts set in the sockets (docs/areas/ashfall.md §9): the Stone's dungeon sets
+  // the flag as it lights (#516), and a company that has not lit it has not restored it, whatever else it holds. It shuts nothing before it.
+  const unlit = world.stones, alone = defaultParty(makeRng(548));
+  party.flags.q_ember_lit = 1; alone.flags.q_ember_lit = 1;
+  ok(unlit === 3 && world.stones === 4 && steadier(4) !== steadier(3) && world.almanac().split('\n')[0] === `${plain} ${steadier(4)}`,
+    `the Ember Stone counts once it is lit and not before, and the almanac says the Hearth hardly wavers ("${steadier(4)}")`);
+  ok(stonesRestored(world.state, alone) === 1, 'lit with no other Stone restored it counts all the same: nothing in the road orders them');
   ok([0, 1, 2, 3, 4, 5].every((n, i, a) => i === 0 || flickerOf(n) < flickerOf(a[i - 1])) && flickerOf(9) === flickerOf(5), 'each Stone steadies the flicker, and past the last it holds');
 
   // The title reads the save in storage: none, or one that cannot be read, is none restored.
@@ -54,7 +61,7 @@ export function stones(): void {
   save(store, world.state, party, 0);
   const kept = savedStones(store);
   box.set([...box.keys()][0], '{not a save');
-  ok(empty === 0 && kept === 3 && savedStones(store) === 0 && savedStones(null) === 0, `the title reads the saved company's count (${kept}), and none from no save or a broken one`);
+  ok(empty === 0 && kept === 4 && savedStones(store) === 0 && savedStones(null) === 0, `the title reads the saved company's count (${kept}), and none from no save or a broken one`);
 
   // The night sky's Hearth lies where the Hearth does: south of Helmstow, east from the far west shore.
   world.travel('harrow', 7, 14);
