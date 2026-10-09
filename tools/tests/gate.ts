@@ -183,6 +183,7 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'Wrackholm: under': { whose: '#18', at: 1 },
   // And the Dead-Drop's drop (#22), past Wrackholm's band and outside its budget, judged two under its own floor.
   'dead_drop: under': { whose: '#18', at: 1 },
+  'dead_drop2: under': { whose: '#18', at: 1 },
   'eaves_i2: under': { whose: '#18', at: 1 },
   'eaves_j2: under': { whose: '#18', at: 1 },
   'Sunderwood: under': { whose: '#18', at: 1 },

@@ -1618,7 +1618,9 @@
       "size": "32x32",
       "used": [
         "dd_buffer",
+        "dd_cage",
         "dd_coin",
+        "dd_down",
         "dd_drop",
         "dd_floor",
         "dd_heap",
@@ -1645,6 +1647,36 @@
         "dd_pair"
       ],
       "doors": []
+    },
+    "dead_drop2": {
+      "size": "32x32",
+      "used": [
+        "dd2_bare",
+        "dd2_box1",
+        "dd2_box2",
+        "dd2_coin",
+        "dd2_count",
+        "dd2_door",
+        "dd2_heap",
+        "dd2_in",
+        "dd2_left",
+        "dd2_pens",
+        "dd2_rails",
+        "dd2_right",
+        "dd2_seal",
+        "dd2_straw",
+        "dd2_vault"
+      ],
+      "groups": [
+        "dd2_keepers",
+        "dd2_keepers2",
+        "dd2_knockers",
+        "dd2_loader",
+        "dd2_loaders"
+      ],
+      "doors": [
+        "14,28"
+      ]
     },
     "dead_drop_stair": {
       "size": "10x9",
@@ -3192,6 +3224,7 @@
     "etched_glass",
     "faceless_coin",
     "fane_map",
+    "fishers_spike",
     "flail",
     "flail+1",
     "flail+2",
@@ -3241,6 +3274,8 @@
     "ironwood_bow",
     "ironwood_bow+1",
     "ironwood_bow+2",
+    "keeper_pail",
+    "keeper_yoke",
     "keepers_log",
     "key_iron",
     "kiln_robe",
