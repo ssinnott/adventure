@@ -21,8 +21,9 @@ export const MONSTERS: readonly MonsterDef[] = [
   // the mesas (#527 first, D10's), the test basilisk at 27 (tools/testmonster.ts, #546): the controller on the line, its hold a
   // stone at 0.15 and its gaze reaching the back row
   { id: 'basilisk', name: 'Basilisk', plural: 'Basilisks', sprite: 'basilisk', kind: 'beast', look: "Don't meet its eyes.", level: 27, hp: 376, ac: 25, attack: 15, dice: 5, sides: 7, bonus: 7, speed: 12, xp: 1073, gold: [0, 0], ranged: true, inflict: { cond: 'stoned', chance: 0.15 }, tint: '#5c6650', size: 0.85 },
-  // the Wold's heart (#529), its boss on the line at 28: the pride's old one, for B8's gate to set
-  { id: 'grey_lion', name: 'The Grey Lion', plural: 'Grey Lions', sprite: 'grey_lion', kind: 'beast', look: 'Old, scarred, and king of all of this.', level: 28, hp: 1552, ac: 27, attack: 18, dice: 26, sides: 8, bonus: 29, speed: 13, xp: 17813, gold: [0, 0], tint: '#7c7466', size: 1.4 },
+  // the Wold's heart (#529), its boss at 28, set off the line by B8's gate: the boss line's 1,552 and 26d8+29 to 3,000
+  // and 16d8+16, won 75% at B8's floor, 27, where the third prestige comes, and 91% at 29; on the line he fell 86% at 27
+  { id: 'grey_lion', name: 'The Grey Lion', plural: 'Grey Lions', sprite: 'grey_lion', kind: 'beast', look: 'Old, scarred, and king of all of this.', level: 28, hp: 3000, ac: 27, attack: 18, dice: 16, sides: 8, bonus: 16, speed: 13, xp: 17813, gold: [0, 0], tint: '#7c7466', size: 1.4 },
   // the steppe's far south-west (#525 first, the first machine seen on the Wold), the Glass's edge (#530) and the Buried
   // Tower's decks after (MONSTERS §10.1), an elite on the line at 27: a machine (§2), so it never breaks; its free hand
   // holds, paralysed at 0.15 as the elite's line has it

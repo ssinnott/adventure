@@ -152,6 +152,7 @@ export const OFF_LINE: Record<string, string> = {
   brood_drake: "the corridors' boss, the boss line come down whole to a sweeper's share with the drakes' breath, as the Old Drake, its blow set by the corridors' gate (#22)",
   cinder_drake: "Cinderport's box's drake, placed on the test drake's line at 25 before #549 made it again, and held there by its gate (#660)",
   sentinel: "the Ember Stone's boss, the boss line made again by #549 with its hit points set by its gate and its blow the line's (#516)",
+  grey_lion: "the Wold's boss, its hit points and its blow set by B8's gate (#529)",
 };
 /** The monsters past 10 on a role's line come down whole, hit points and blow together (MONSTERS §4.4): the role, the share and why. */
 export const WHOLE: Record<string, { role: Role; share: number; why: string }> = {
