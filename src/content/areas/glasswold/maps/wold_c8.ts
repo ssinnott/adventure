@@ -11,6 +11,15 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 
+/**
+ * Orders on the Scarp Stair (#56's 54, #532): sent up the stair by Hendra, the Compact's factor at
+ * Cinderport (`ORDERS_ASKED`), the company takes the runner's orders for the Riders (`ORDERS_CARRIED`)
+ * and at Akordu gives them to the eldest sealed (`ORDERS_SEALED`), tells her what they say
+ * (`ORDERS_TOLD`) or burns them (`ORDERS_BURNED`), when the runner climbs again.
+ */
+export const ORDERS_ASKED = 'q_scarp', ORDERS_CARRIED = 'q_scarp_carried';
+export const ORDERS_SEALED = 'q_scarp_sealed', ORDERS_TOLD = 'q_scarp_told', ORDERS_BURNED = 'q_scarp_burned';
+
 export const WOLD_C8: MapDef = {
   id: 'wold_c8',
   name: 'The Wold',
@@ -56,13 +65,19 @@ export const WOLD_C8: MapDef = {
     'sssssssssssssssssssssssssss^^sss',
   ],
   features: [
-    // The stair's last flight through the lip, and its head: the runner getting her wind (#56's 54, its
-    // quest #532's), the line the Riders give whoever climbs, their watch-cairn, yurt and fire, and the
-    // two Riders, words only.
+    // The stair's last flight through the lip, and its head: the runner getting her wind, who gives up
+    // her orders to a company Hendra sent (#56's 54, #532), the line the Riders give whoever climbs,
+    // their watch-cairn, yurt and fire, and the two Riders, words only.
     { kind: 'npc', x: 8, y: 0, name: 'A Compact runner', lines: [
       'A runner sits on the top flight getting her wind, a satchel across her knees sealed in black wax.',
       '"Six hundred steps, and the bottom ones gone. The Dead-Drop pays by the climb, not by the step."',
       '"Orders for the Riders. They will not like them."',
+    ], says: [
+      { after: { flag: ORDERS_BURNED }, lines: ['The runner is on the top flight again, a new satchel across her knees.', '"Burned in the eldest\'s fire, they tell me. Now the Dead-Drop pays me to climb, and to look at faces."'] },
+      { after: { flag: ORDERS_CARRIED }, lines: ['The runner rubs her knees on the top flight.', '"Six hundred steps down. Down is worse."'] },
+      { after: { flag: ORDERS_ASKED }, lines: ['The runner looks at you a long moment, the satchel on her knees.', '"Hendra sent you? Then you carry them. My knees are done."'], choice: { ask: '"To the eldest at Akordu, in her hand."', answers: [
+        { label: 'Take the orders.', gives: 'riders_orders', sets: ORDERS_CARRIED, says: ['She lifts the strap over her head and hands it up.', '"Do not open them. Everybody does."'] },
+      ] } },
     ] },
     { kind: 'event', x: 8, y: 1, id: 'c8_line', once: true, text: 'A Rider gets up at the cairn. "This is the Wold. What hunts here kills Riders. Go back down, or go carefully."' },
     { kind: 'cairn', x: 9, y: 2, id: 'c8_cairn', text: 'The Riders\' watch-cairn at the stair\'s head, a horse\'s skull on top of it, looking down the Scarp.', gold: 200, items: ['elixir'] },

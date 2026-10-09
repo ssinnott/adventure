@@ -19,6 +19,16 @@ import { WEST } from '../../../../game/types.ts';
  */
 export const SCOUT_ASKED = 'q_scout_asked', MAP_GIVEN = 'q_scout_map';
 
+/**
+ * The Lion's Share (#56's 53, #532): the young Rider at Akordu asks for the last blow (`LION_ASKED`), and
+ * the company hunts the Grey Lion with him (`LION_HUNT`), when he is at the hunters' fire here and not
+ * at Akordu, or lets the old lion die (`LION_LEFT`), when the eldest tells the rest (`LION_TOLD`, D8's).
+ * The lion down (`LION_DOWN`), the boy's is the last blow (`LION_BLOW`); down unasked, it was nobody's
+ * of theirs (`LION_TAKEN`).
+ */
+export const LION_ASKED = 'q_lion', LION_HUNT = 'q_lion_hunt', LION_LEFT = 'q_lion_left', LION_BLOW = 'q_lion_blow';
+export const LION_TOLD = 'q_lion_told', LION_TAKEN = 'q_lion_taken', LION_DOWN = 'wold_b8:b8_grey_lion';
+
 export const WOLD_B8: MapDef = {
   id: 'wold_b8',
   name: 'The Wold',
@@ -66,9 +76,15 @@ export const WOLD_B8: MapDef = {
     // fire, the young Rider and the eldest's word come out from Akordu (#56's 53, #532's), and their horses.
     { kind: 'event', x: 29, y: 4, id: 'b8_kushtash', once: true, text: 'West, under the rim, a mesa stands higher than any on the Wold, sheer on every side. Its top is out of sight.' },
     { kind: 'camp', x: 25, y: 5, text: 'The hunters\' fire in a ring of saddles, a hide pegged out beside it and the horses hobbled close.' },
-    { kind: 'npc', x: 24, y: 4, name: 'The young Rider', lines: [
+    // The young Rider is here once the company has said it will hunt with him, and at Akordu till then (#532).
+    { kind: 'npc', x: 24, y: 4, name: 'The young Rider', after: { flag: LION_HUNT }, lines: [
       'A boy in a man\'s coat sits apart from the hunters, a lance too long for him across his knees.',
-      '"When the Grey Lion comes out to his kill, the hunt goes in. The last blow is the youngest\'s, and I have asked."',
+      '"When the Grey Lion comes out to his kill, the hunt goes in. Bring him down, and leave the last blow to me."',
+    ], says: [
+      { after: { flag: LION_BLOW }, lines: ['The young Rider sits among the hunters, his hair cut short as theirs is.', '"Next year the last blow is somebody else\'s."'] },
+      { after: { flag: LION_HUNT, slain: LION_DOWN }, lines: ['The boy comes in from the lion\'s ground, his lance dark to the hand.', '"He lay down when you were done with him, and I gave him the last blow."'], choice: { ask: '"Will you say so at the fire?"', answers: [
+        { label: 'It was his blow.', sets: LION_BLOW, pay: { xp: 1500 }, says: ['The hunters cut his hair short at the fire, as theirs is. He is a Rider.'] },
+      ] } },
     ] },
     { kind: 'npc', x: 26, y: 6, name: 'A Rider from Akordu', lines: [
       'A woman of the Riders, dust to the knees, her horse still saddled. She has ridden out from Akordu.',

@@ -15,6 +15,8 @@ import { CURES } from '../../ashfall/items.ts';
 import { LIT } from '../../ashfall/maps/ember_stone.ts';
 import { ROAD_WEST } from '../../ashfall/maps/emberwaste_e10.ts';
 import { WATCH } from './wold_b9.ts';
+import { LION_ASKED, LION_HUNT, LION_LEFT, LION_TOLD, LION_TAKEN, LION_DOWN } from './wold_b8.ts';
+import { ORDERS_SEALED, ORDERS_TOLD, ORDERS_BURNED } from './wold_c8.ts';
 
 /** The flag the eldest's telling sets, said once: The Warning's step at Akordu keys on it (#531). */
 export const STORY = 'akordu_story';
@@ -25,6 +27,18 @@ export const STORY = 'akordu_story';
  * chapter starts on it.
  */
 export const ROAD_EAST = 'q_road_east';
+
+/**
+ * The Horse That Came Back (#56's 51, #532): asked at the Chart House in Cinderport (`HORSE_ASKED`), the
+ * Rider with a hammer breaks what sits the horse (`HORSE_BROKEN`), or the company takes it whole
+ * (`HORSE_CARRIED`) to Cador Lusk (`HORSE_WHOLE`). The Garden of Glass (#56's 55): the mother among the
+ * figures asks (`GARDEN_ASKED`) and gives her son to be carried (`GARDEN_CARRIED`) to the Harbour Temple,
+ * whose priest takes him in (`GARDEN_BROUGHT`) and lifts the stone (`GARDEN_LIFTED`), or a draught does
+ * (`GARDEN_DRAUGHT`).
+ */
+export const HORSE_ASKED = 'q_horse', HORSE_BROKEN = 'q_horse_broken', HORSE_CARRIED = 'q_horse_carried', HORSE_WHOLE = 'q_horse_whole';
+export const GARDEN_ASKED = 'q_garden', GARDEN_CARRIED = 'q_garden_carried', GARDEN_BROUGHT = 'q_garden_brought';
+export const GARDEN_LIFTED = 'q_garden_lifted', GARDEN_DRAUGHT = 'q_garden_draught';
 
 export const WOLD_D8: MapDef = {
   id: 'wold_d8',
@@ -75,7 +89,8 @@ export const WOLD_D8: MapDef = {
     { kind: 'event', x: 16, y: 30, id: 'd8_akordu', once: true, text: 'White tents in a ring under the mesa, smoke going up from the fires inside. Akordu.' },
     { kind: 'camp', x: 16, y: 27, name: 'Akordu', text: 'The fires of Akordu in the ring of tents, dung burning low. The Riders make room for you and ask nothing.' },
     // The eldest at her own fire before her tent, against the mesa: the oldest story, told once (the
-    // chapter's step, #531), and the Lion's Share's other voice to come (#56's 53, #532).
+    // chapter's step, #531); the Compact's orders put in her hand, or not (#56's 54, #532); and the rest
+    // of the story, for a company that let the old lion die (#56's 53, #532).
     { kind: 'npc', x: 16, y: 24, name: 'The eldest', flag: STORY, lines: [
       'The eldest sits at her fire before her tent, a horse-blanket round her and her braid white to the waist.',
       '"On the day the sky opened, the grass stood still and the birds came down out of the air."',
@@ -83,6 +98,17 @@ export const WOLD_D8: MapDef = {
       '"Halfway, the fire failed. It fell, and where it fell the land burned three days, and cooled to glass."',
       '"What lies in the glass tried to leave. The sky opened for it. Remember what that cost, if anyone ever offers to open it for you."',
     ], says: [
+      { after: { flag: STORY, item: 'riders_orders' }, until: [{ flag: ORDERS_SEALED }, { flag: ORDERS_TOLD }, { flag: ORDERS_BURNED }], lines: ['The eldest sees the black wax in your hands, and holds out her own.'], choice: { ask: '"The Compact writes to us again. Well?"', answers: [
+        { label: 'Give them to her sealed.', takes: 'riders_orders', sets: ORDERS_SEALED, pay: { xp: 1500 }, says: ['She cuts the purse free and weighs it, and puts the orders unread in her fire.', '"Silver for silence. We are silent anyway."'] },
+        { label: 'Tell her what they say.', takes: 'riders_orders', sets: ORDERS_TOLD, pay: { xp: 1500 }, says: ['She hears it to the end, and puts orders and purse in her fire together.', '"Then the Hand buys nothing on the grass, and nothing of theirs goes past the gap."'] },
+        { label: 'Burn them.', takes: 'riders_orders', sets: ORDERS_BURNED, pay: { xp: 1500 }, says: ['The wax runs and the purse blackens in her fire. She does not ask what they said.', '"They will send another. They always do."'] },
+      ] } },
+      { after: { flag: [STORY, LION_LEFT] }, until: { flag: LION_TOLD }, sets: LION_TOLD, lines: [
+        'The eldest feeds her fire, and waits until it catches.',
+        '"What fell did not lie down. It stands in the glass on its end, as it stood to climb, and the glass came up round it to the crown."',
+        '"That is the crown the watch sees from the gap. What tried to leave once may try again, and the sky would open for it."',
+      ] },
+      { after: { flag: LION_TOLD }, lines: ['The eldest looks into her fire.', '"You have all of it now. Keep it as we keep it."'] },
       { after: { flag: STORY }, lines: ['The eldest looks into her fire.', '"That is the story as the young hear it. The rest is for those who have earned it."'] },
     ] },
     // The trader's tent on the ring's east side: the band's consumables and the Riders' leather at list,
@@ -98,8 +124,9 @@ export const WOLD_D8: MapDef = {
     { kind: 'event', x: 13, y: 21, id: 'd8_hollow', once: true, text: 'Behind the walled shaft, a hollow in the rock: plates of green bronze, a lamp of glass and a hand of metal, laid in rows.' },
     { kind: 'chest', x: 12, y: 21, id: 'd8_hoard', gold: 1500, items: ['leather_coat+2'] },
     // The horse-lines to the west, where the ride comes in: the Rider who rides to the port and back,
-    // the young Rider who wants the last blow (#56's 53, #532's), a well, and the horse that came back
-    // (#56's 51, #532's), tethered apart, with the Rider who wants it broken.
+    // the young Rider who wants the last blow (#56's 53, #532), here until the company will hunt with
+    // him and then at the hunters' fire (B8), a well, and the horse that came back (#56's 51, #532),
+    // tethered apart, what sits it still until it is broken or taken, with the Rider who would break it.
     { kind: 'event', x: 7, y: 27, id: 'd8_lines', once: true, text: 'The horse-lines: a rope between stakes and sixty horses on it, heads down, a boy walking the line with water.' },
     // Where the ride sets a company down, once the Ember Stone is lit: Ashfall's chapter is done for a
     // company that came west by the ride and never walked the road over the Cinder Hills (#518). Gone for
@@ -112,23 +139,42 @@ export const WOLD_D8: MapDef = {
       'A Rider checks a horse\'s feet at the end of the lines, a second horse saddled beside it.',
       '"East to the port, a day over the grass and the ash. We go at two, and we do not wait."',
     ], passage: sells('wold', RIDERS_RIDE) },
-    { kind: 'npc', x: 8, y: 29, name: 'A young Rider', lines: [
+    { kind: 'npc', x: 8, y: 29, name: 'A young Rider', flag: LION_ASKED, until: { flag: LION_HUNT }, lines: [
       'A boy in a man\'s coat rubs down a grey with a twist of grass, talking while he works.',
       '"They hunt the Grey Lion at the turn of the year, and the last blow is the youngest\'s. I have asked for it. The eldest says let him die."',
+    ], choice: { ask: '"Will you hunt him with me?"', answers: [
+      { label: 'Hunt the Grey Lion with him.', sets: LION_HUNT, says: ['He drops the twist of grass and goes for his saddle.', '"The hunters\' fire, under the rim. I ride tonight."'] },
+      { label: 'Let the old lion die.', sets: LION_LEFT, pay: { xp: 1500 }, says: ['He spits in the dust, and goes back to the grey.', '"Then you are the eldest\'s. Go and hear the rest of her story."'] },
+    ] }, says: [
+      { after: { flag: LION_LEFT, slain: LION_DOWN }, lines: ['The boy does not look up from the grey.', '"Let him die, you told me. Then you killed him."'] },
+      { after: { flag: LION_LEFT }, lines: ['The boy rubs down the grey, and does not look up.', '"Next year I ask again."'] },
+      { after: { slain: LION_DOWN }, sets: LION_TAKEN, lines: ['The boy rubs down the grey, and does not look up.', '"The Grey Lion is dead, and the last blow was not mine."'] },
     ] },
     { kind: 'well', x: 6, y: 29, text: 'A well by the horse-lines, its trough full. A boy hauls on the rope and the horses crowd him.' },
-    { kind: 'event', x: 4, y: 24, id: 'd8_horse', once: true, text: 'A horse tethered short, apart from the lines, glass in its hooves. The thing in its saddle has not moved since it came in.' },
+    { kind: 'event', x: 4, y: 24, id: 'd8_horse', once: true, until: [{ flag: HORSE_BROKEN }, { flag: HORSE_CARRIED }], text: 'A horse tethered short, apart from the lines, glass in its hooves. The thing in its saddle has not moved since it came in.' },
     { kind: 'npc', x: 5, y: 25, name: 'A Rider with a hammer', lines: [
       'A Rider sits on his heels a rope\'s length from the tethered horse, a stone hammer across his knees.',
       '"The horse is ours. What sits on it is not. When it moves, I break it."',
+    ], choice: { ask: '"Break it now, or take it off our grass?"', answers: [
+      { label: 'Break it.', sets: HORSE_BROKEN, pay: { xp: 1200 }, says: ['He walks up to the horse and swings once. The glass goes everywhere, and the horse does not shy.', '"All the way home it sat as still as that. Only at night it turned its head, and looked back south-west."'] },
+      { label: 'Take it whole.', gives: 'saddle_walker', sets: HORSE_CARRIED, pay: { xp: 1200 }, says: ['He cuts the girth, and you lift it down between you. It is cold, and it does not move.', '"Take it far off. The horse will eat once it is gone."'] },
+    ] }, says: [
+      { after: { flag: HORSE_BROKEN }, lines: ['The Rider sits by the lines, the stone hammer through his belt.', '"It never moved. Not even when I swung."'] },
+      { after: { flag: HORSE_CARRIED }, lines: ['The Rider sits by the lines, the stone hammer across his knees.', '"Gone to the port with you, is it? Let the port lie awake, then."'] },
     ] },
-    // The garden of glass at the camp's east edge, its figures facing south-west (#56's 55, #532's).
+    // The garden of glass at the camp's east edge, its figures facing south-west, and the mother among
+    // them, whose son is carried to the Harbour Temple at Cinderport (#56's 55, #532).
     { kind: 'event', x: 23, y: 25, id: 'd8_garden', once: true, text: 'Figures of glass stand in rows at the camp\'s edge, men and women and a horse, all facing south-west.' },
     { kind: 'event', x: 29, y: 25, id: 'd8_vultures', once: true, text: 'Vultures turn over the garden of glass, low and slow. None of them comes down.' },
-    { kind: 'event', x: 25, y: 26, id: 'd8_figure', once: true, text: 'One of them is a boy, his hand up to his eyes and his mouth open.' },
-    { kind: 'npc', x: 26, y: 27, name: 'A woman among the figures', lines: [
+    { kind: 'event', x: 25, y: 26, id: 'd8_figure', once: true, until: { flag: GARDEN_CARRIED }, text: 'One of them is a boy, his hand up to his eyes and his mouth open.' },
+    { kind: 'npc', x: 26, y: 27, name: 'A woman among the figures', flag: GARDEN_ASKED, lines: [
       'A woman sits in the dust among the figures, one hand on the foot of the smallest.',
       '"My son went to look at the basilisk under the mesa. He is looking still."',
+    ], choice: { ask: '"At the port, they say, the priests lift stone. Will you carry him there?"', answers: [
+      { label: 'Carry him to the port.', gives: 'glass_boy', sets: GARDEN_CARRIED, says: ['She helps you wrap him in a horse-blanket, and ties it with her own belt.', '"The Riders\' ride goes at two. They will not wait."'] },
+    ] }, says: [
+      { after: [{ flag: GARDEN_LIFTED }, { flag: GARDEN_DRAUGHT }], lines: ['The woman sits among the figures, her son beside her, his hand up against the light.', '"He looks at nothing now but the grass."'] },
+      { after: { flag: GARDEN_CARRIED }, lines: ['The woman sits in the dust where the smallest stood.', '"Go on. I have waited this long."'] },
     ] },
     // Round the mesa: the lions' tracks and the Riders' graves to the west, the basilisk's shade to the
     // north, the broken ground under the east face.

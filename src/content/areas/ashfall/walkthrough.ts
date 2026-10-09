@@ -1511,12 +1511,12 @@ function cinderport(ok: (cond: boolean, msg: string) => void): void {
   ok(says(w, MORWENNA).includes('Hearth Isle'), 'the harbourmaster says where the last crossing goes, and no more');
 
   // The smith with the shovel that does not blunt, the potter, the guildsman and the factor speak; the
-  // smith and the potter give their quests (#519, `sideQuests`), and the guildsman and the factor ask
-  // nothing yet: theirs are #635's and #448's.
+  // smith and the potter give their quests (#519, `sideQuests`), and the guildsman and the factor the
+  // Wold's, The Horse That Came Back and Orders on the Scarp Stair (#532, played in the Glasswold's walkthrough).
   const shovel = says(w, GORRAN), cups = says(w, JENIFER), shelf = says(w, CADOR);
-  ok([CADOR, HENDRA].every((p) => !p.choice && !p.quest && !p.flag && !p.interior) && [GORRAN, JENIFER].every((p) => !!p.flag && !p.interior)
-    && shovel.includes('will not take a burr') && cups.includes('came down off the mountain') && shelf.includes('they stopped at the Stone'),
-    'the smith\'s shovel-head will not take a burr, the potter\'s cups are the first folk\'s shape, and the guildsman says Fane wrote at the Stone; the smith and the potter give their quests, and the others ask nothing yet');
+  ok([GORRAN, JENIFER, CADOR, HENDRA].every((p) => !!p.flag && !p.choice && !p.interior) && !!CADOR.quest && !HENDRA.quest
+    && shovel.includes('will not take a burr') && cups.includes('came down off the mountain') && shelf.includes('they stopped at the Stone') && shelf.includes('I want it whole'),
+    'the smith\'s shovel-head will not take a burr, the potter\'s cups are the first folk\'s shape, and the guildsman says Fane wrote at the Stone; the smith and the potter give their quests, and the guildsman and the factor the Wold\'s');
 }
 
 /**

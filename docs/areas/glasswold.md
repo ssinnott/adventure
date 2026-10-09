@@ -26,13 +26,14 @@ from the Saltings' C7 comes up onto the lip, nine squares of C7 opened for it; B
 (#529, §4.7), which places the Grey Lion, set off the line, and the way up Kushtash; B9, the Glass's
 edge (#530, §4.8), the dunes and the Riders' watch at the gap, whose last square looks onto the
 Glass; the Ranger's third prestige (#448, §6), Aysu the scout on Kushtash and Oriel Fane's Map, the
-area's first quest; and its chapter of the one quest, The Warning (#531, §5), from the glass in the
-grass to the gap and back to Akordu's horse-lines, done on `q_road_east`. With B9 the Wold is
+area's first quest; its chapter of the one quest, The Warning (#531, §5), from the glass in the
+grass to the gap and back to Akordu's horse-lines, done on `q_road_east`; and #56's four side
+quests (#532, §6), two given from Cinderport's halls and two at Akordu. With B9 the Wold is
 complete overland but for E9 and E8, the country behind (#534, parked). `AHEAD` and `PLANNED` are
 empty, and the Wold holds the quest's step. Its content is `src/content/areas/glasswold/` (maps,
 interiors, monsters, items, climate, its part of the world map in `atlas.ts` and its walkthrough;
-its chapter, The Warning, in `chapter.ts`, and its quests in `quests.ts`, the Ranger's third's
-first); it has no town
+its chapter, The Warning, in `chapter.ts`, and its quests in `quests.ts`, the Ranger's third's and
+#56's four); it has no town
 and one business, the Riders' trader at Akordu, whose tent has a room. Its ids: the area
 `glasswold`, its zones `wold` and `theglass`, the plan's; the Buried Tower `buried_tower`, the
 plan's, left to the reach. Akordu's (the Wold Riders' camp) is the site's name and its map `wold_d8`
@@ -199,9 +200,10 @@ camp at 120,250), Kushtash (the Eyrie, moved to about 46,242, call 5, built with
 Tower, "The Glass" and "Buried Tower" lettered as the plan letters them. The lava flow is drawn in
 the plan's ridges (`src/content/atlas.ts`), the one line outside the folder this doc asks for (call
 5). Its row on the curve is in (#542), in `src/content/progression.ts` (band 26–28, next 28, window
-6,000), owed to #447 while the area is built box by box, with the six boxes' 17,613 xp a member and
-9,650 gold the clear's floor (§8); the Wold takes no step on the gear ladder, no town to sell one
-(§9); the trader's coat is off it (§9, #526's 7). Its ground is laid (#543): steppe (`s`), walked as
+6,000), owed to #447 while the area is built box by box, with the six boxes' and the side quests'
+18,313 xp a member and 9,650 gold the clear's floor (§8); the Wold takes no step on the gear
+ladder, no town to sell one (§9); the trader's coat is off it (§9, #526's 7). Its ground is laid
+(#543): steppe (`s`), walked as
 grass and tawny at Harvest, and dunes (`u`), sand in ridges walked as slowly as hills, so the
 scaffold drafted D9 with its 807 squares of steppe and 171 of dunes (docs/SLICE.md). Its six
 monsters are drawn (#533, MONSTERS §8.3): five on frames that exist, the vulture, the Wold lion, the
@@ -213,8 +215,9 @@ own (`src/ui/monsters/glasswalkers.ts`); their defs are in
 (#524), D9 the glass scorpion and the glass walker (#525), D10 the basilisk (#527) and B8 the Grey
 Lion (#529), though listing the area records all six in `src/content/shipped.json`. Its items, the
 Etched Glass, the hoard's Basalt Shield +2, the Leather Coat with its plus, the cleft's Letter in
-Cipher and the half-buried walker's Glass with a Light, are in `items.ts` (§9, #525's 11, #527's 12,
-#526's 7, #528's 13, #530's 12), and its climate is the steppe's (§9, #525's 2). Its crossing line
+Cipher, the half-buried walker's Glass with a Light and the side quests' three things carried, are
+in `items.ts` (§9, #525's 11, #527's 12, #526's 7, #528's 13, #530's 12, #532's 2, 10 and 12),
+and its climate is the steppe's (§9, #525's 2). Its crossing line
 is on the Wold's zone row (#524), said where a map of the Wold is first entered, and walked at D10,
 over E10's west edge (§9, #527's 14) and at C8, on the step up the Scarp stair onto the lip (§9,
 #528's 2). The Riders' word on the Glass is B9's, an event at the gap's stones, since nothing can
@@ -222,7 +225,9 @@ cross into the Glass while it is void (§4.8, §9, #530's 9). The ride's crossin
 in D8 (§4.4). E10's Wold half is built on the Waste's map (§4.2). C8 is cut through the Saltings'
 C7, nine squares of its column 8 and its notch's words, with the owner's leave (#412, #528; §4.6).
 Its chapter of the one quest, The Warning, is `chapter.ts`, walked three ways in (§5, #531); its
-one quest so far, Oriel Fane's Map, is `quests.ts` (§6, #448). Every brief below is a draft.
+quests are `quests.ts`, Oriel Fane's Map (§6, #448) and #56's four side quests (§6, #532), with
+small edits to Cinderport's Chart House, factor's house and temple door (§9). Every brief below is
+a draft.
 
 ## 4. What is still to build
 
@@ -413,8 +418,8 @@ settled in its issue, and what Ashfall teaches changes them.
   in the groups, four for six, the vultures fighting with the prides (§9, #525's 7); in the pay,
   2,940 xp a member against the share of 3,250 (§8, §9, #525's 8); and in the secret, the doc's
   fallen walker where the issue has a lions' den (§9, #525's 10). The step's event, `d9_glass`, is
-  the chapter's, #531's, and the horse's quest #532's; the Wold's crossing words, on its zone row,
-  are walked at D10 (§4.5; §9, #525's 14 and 18).
+  the chapter's, #531's, and the horse is read into its quest's log (#532, §6); the Wold's
+  crossing words, on its zone row, are walked at D10 (§4.5; §9, #525's 14 and 18).
 
 ### 4.4 D8, the Riders' camp, Akordu (#526): core, band 26–27
 
@@ -471,9 +476,10 @@ settled in its issue, and what Ashfall teaches changes them.
   own, `akordu_trader`, drawn for it in `src/ui/interiors/glasswold/`; it sells consumables, the
   Quickening Draught and the Leather Coat, nothing of steel (§9, #526's 6 and 7). The eldest sits
   before her tent (16,24) and tells the story once, her words below (§9, #526's 11); the Rider at
-  the lines, a young Rider (8,29), a Rider with a hammer (5,25) and a woman among the figures
-  (26,27) have words only (§9, #526's 12); the horse that came back stands tethered apart at 4,24,
-  seen and no more (§9, #526's 13). East of the ring is the garden of glass, six crystal squares,
+  the lines has words only, and a young Rider (8,29), a Rider with a hammer (5,25) and a woman among
+  the figures (26,27) put their quests' questions (§6; §9, #526's 12, #532); the horse that came
+  back stands tethered apart at 4,24, what sits it still until its quest settles it (§9, #526's
+  13). East of the ring is the garden of glass, six crystal squares,
   its figures facing south-west, a boy among them with his hand to his eyes and the vultures
   turning over it (§9, #526's 14); under the mesa the watch-fire seen from below, smoke by day and a
   fire by night (15,23), a shrine of horses' tails (19,21) and two wells beside the dry one (§9,
@@ -489,7 +495,7 @@ settled in its issue, and what Ashfall teaches changes them.
   Coat +2 (§9, #526's 10). It departs from the brief in the band, 26–27 for 27; in the groups,
   three for four; in the pay, 1,901 xp a member against the share of 1,950 (§8, §9, #526's 9); and
   in the mesa's faces, corrected above (§9, #526's 2). The step on `akordu_story` is the chapter's,
-  #531's, and the Akordu ends of 51, 53, 54 and 55 are #532's (§9, #526's 11 and 12).
+  #531's, and the Akordu ends of 51, 53, 54 and 55 are built (#532, §6; §9, #526's 11 and 12).
 - **The eldest's words,** verbatim, for the owner's review (§9, #526's 11). At the first meeting,
   which sets `akordu_story`:
 
@@ -651,8 +657,9 @@ settled in its issue, and what Ashfall teaches changes them.
   the watch-cairn (9,2) with 200 gold and an Elixir; the two Riders (10,1), who ask the company's
   business and send it on to Akordu; and the fire, a `camp` (#45) (9,3), where a company may rest
   (§9, #528's 6). On the last flight, 8,0, a Compact runner gets her wind: she carries the
-  Dead-Drop's orders for the Riders and does not name the cleft (§9, #528's 7). Both are words
-  only, and the runner's quest (#56's 54) is #532's. The lip has the view down over the Saltings
+  Dead-Drop's orders for the Riders and does not name the cleft (§9, #528's 7). She gives up her
+  orders to a company Hendra sends (#56's 54, #532, §6); the Riders are words only. The lip has
+  the view down over the Saltings
   (`c8_view`, 4,1), the edge (15,1) and the updraught (26,2); the grass is seen running south and
   east to Akordu, its smoke (16,9), the Riders' waymarks (27,10), a runner's satchel torn open
   (4,12), the pride's lie (15,17), an old skull (21,21), the herd's grazing (4,25) and the Glass's
@@ -731,10 +738,10 @@ settled in its issue, and what Ashfall teaches changes them.
   The hunters' camp is a `camp` (#45) at 25,5 (65,227) on trodden earth, 7 steps from the way in:
   the second rest on the Wold after Akordu, the Riders' second peopled camp. It is unnamed, as D9's,
   D10's and C8's camps are, only Akordu's having a name, and reads as the hunters' fire in a ring of
-  saddles (§9, #529's 10). At it sit the young Rider (24,4), a boy in a man's coat who has asked for
-  the last blow, and a Rider from Akordu (26,6) who brings the eldest's word: let him die on his own
-  ground. Both are words only. D8 has a young Rider at the horse-lines with near the same words, so
-  one boy stands in two places until #532 settles which (§9, #529's 11; §11).
+  saddles (§9, #529's 10). At it sits a Rider from Akordu (26,6), who brings the eldest's word,
+  let him die on his own ground, words only; and the young Rider (24,4), a boy in a man's coat who
+  wants the last blow, once a company will hunt with him: until then he is at Akordu's horse-lines
+  (#532, §6; §9, #529's 11).
   Kushtash is seen from the way in (`b8_kushtash`, 29,4), the tallest mesa on the Wold, sheer on
   every side, its top out of sight. The atlas's rock mass under the rim (columns 2 to 13, rows 11 to
   19) is kept and its top carved out and shut by rock on every side, rock and not cliff, since a
@@ -851,8 +858,9 @@ settled in its issue, and what Ashfall teaches changes them.
   Round the dunes: the dunes seen from the way in (`b9_dunes`, 16,2), ridge on ridge to the rim's
   foot; the Riders' cairn at their head (`b9_cairn`, 13,4, on the last steppe beside the first
   dune), with 400 gold and an Elixir; the rim (`b9_rim`, 3,5); a horse's prints up out of the dunes,
-  one horse alone and deep, going north (`b9_horse`, 26,4), the horse that came back, seen and no
-  quest (§9, #530's 15); the glare to the south-east with something dark standing in it (`b9_glare`,
+  one horse alone and deep, going north (`b9_horse`, 26,4), the horse that came back, read into its
+  quest's log (#532, §6; §9, #530's 15); the glare to the south-east with something dark standing
+  in it (`b9_glare`,
   28,9); the wind that shifts the dunes (`b9_shifting`, 12,10); a lion the scorpions met, dead in a
   hollow with three small wounds glittering in its flank (`b9_stung`, 7,16); the mesa at the dunes'
   east end (`b9_mesa`, 24,17); the rim's foot shutting the south (`b9_rim_foot`, 18,28); and the
@@ -971,36 +979,59 @@ between (§9).
 systems of #76 (#532); 51 and 54 are given from Cinderport's halls (call 7), since the camp sells
 and teaches nothing but its trade:
 
-| # | Quest | Level | Where | What it needs | Built in |
-|---|---|---|---|---|---|
-| 51 | The Horse That Came Back | 26 | the Cartographers' hall at Cinderport (#512); the horse at Akordu (D8); the Glass's edge (B9) | a choice put by a person; a hand-in at the first meeting (#43) | #526, #530, #512 |
-| 53 | The Lion's Share | 27 | Akordu (D8); the hunting camp and the Grey Lion (B8) | a choice put by a person; `after` (#41) | #526, #529 |
-| 54 | Orders on the Scarp Stair | 27 | the Compact's hall at Cinderport (#512); the runner on the stair (C8); the Riders at Akordu (D8) | a letter read from the pack (#76); a three-way choice; a hand-in (#43) | #528, #526, #512 |
-| 55 | The Garden of Glass | 28 | the garden at Akordu (D8); the temple at Cinderport (#512) | the Rider's ride with a passenger (#547); stone's cure at a temple (#546) | #526, #512 |
+| # | Quest | Level | Where | What it needs | Pay | Built in |
+|---|---|---|---|---|---|---|
+| 51 | The Horse That Came Back | 26 | the Cartographers' hall at Cinderport (#512); the horse at Akordu (D8); the Glass's edge (B9) | a choice put by a person; a hand-in at the first meeting (#43) | 200 | #532 |
+| 53 | The Lion's Share | 27 | Akordu (D8); the hunting camp and the Grey Lion (B8) | a choice put by a person; `after` (#41) | 250 | #532 |
+| 54 | Orders on the Scarp Stair | 27 | the Compact's hall at Cinderport (#512); the runner on the stair (C8); the Riders at Akordu (D8) | a letter read from the pack (#76); a three-way choice; a hand-in (#43) | 250 | #532 |
+| 55 | The Garden of Glass | 28 | the garden at Akordu (D8); the temple at Cinderport (#512) | the Rider's ride with a passenger (#547); stone's cure at a temple (#546) | 300 | #532 |
+
+Pay is xp a member, whichever way the choice goes, shared by level: 1,000 between the four as built,
+§8's figure, 1,200, 1,500, 1,500 and 1,800 shared by six (§8, §9, #532's 1). Their words are in
+`src/content/areas/glasswold/quests.ts`, and the walkthrough plays each every way at its level.
 
 **The Horse That Came Back** (51). A Rider's horse strayed into the Glass and came back with glass
 in its hooves and a glass walker in the saddle, sitting still. The Riders want it broken; the
 Cartographers' guildsman at Cinderport wants it whole for the map, the first thing out of the Glass
 anyone has held. Broken, the Riders say what they saw it do on the way home; carried whole, the
-Guild's map gains the Glass's edge.
+Guild's map gains the Glass's edge. As built (#532): Cador Lusk asks at the Chart House (`q_horse`);
+at Akordu what sits the horse is still (`d8_horse`, gone once it is settled), and the Rider with a
+hammer puts it to any company: broken (`q_horse_broken`), it turned its head at night to look back
+south-west, he says; taken whole (`q_horse_carried`, the Walker from the Saddle), Cador takes it at
+any meeting, the first too (`q_horse_whole`). The horse seen on D9 and its prints at the Glass's
+edge are read into the log (§9, #532's 2 to 4).
 
 **The Lion's Share** (53). The Riders hunt the Grey Lion as a rite, and a young Rider asks to
 strike the last blow. The eldest says the lion is old and should be let die. Hunt it with the boy
 and he is a Rider, and the camp trades: what that adds once the trader sells from the start (call
 5) is #532's to settle. Let it die, and the eldest tells the rest of the story of the day the sky
 opened, the part the chapter does not: words only, and the secret found in them, never told.
+As built (#532): the young Rider at Akordu asks (`q_lion`). Hunted (`q_lion_hunt`), he is at the
+hunters' fire on B8 and gone from Akordu, and once the Grey Lion is down the last blow is his, told
+at the fire (`q_lion_blow`). Let die (`q_lion_left`), he stays at Akordu and the eldest tells the
+rest, once (`q_lion_told`); the lion stays to be fought, and killed after all the boy says so.
+Killed before the boy is answered, it was nobody's blow (`q_lion_taken`), and pays nothing. The
+camp's trade is as it was (§9, #532's 5 to 9).
 
 **Orders on the Scarp Stair** (54). A Compact runner on the stair's top flight carries orders from
 the Dead-Drop for the Riders: coin to buy their silence about the Glass. Deliver them, and the
 Riders take the coin and say nothing; give them to the Riders as what they are, and the Riders shut
 the Glass to the Hand; burn them, and the runner's next climb finds the company. The Compact's hall
-at Cinderport gives it (DESIGN §10.2).
+at Cinderport gives it (DESIGN §10.2). As built (#532): Hendra, the Compact's factor, asks
+(`q_scarp`); her runner on the top flight gives up the orders to a company Hendra sent
+(`q_scarp_carried`, Orders for the Riders, read from the pack); and the eldest at Akordu has them
+sealed (`q_scarp_sealed`), hears what they say (`q_scarp_told`) or watches them burn
+(`q_scarp_burned`), when the runner's next climb finds the company (§9, #532's 10 and 11).
 
 **The Garden of Glass** (55). The Riders keep a garden of their glassed dead at Akordu's edge, the
 ones who went to look at the basilisk. A mother asks that her son be carried to the temple at
 Cinderport: the Rider's ride takes him (#547). Carried, he wakes cured and says what he saw before
 his eyes went: the Buried Tower's crown, and something moving on it. The reach's first rumour, left
-for Phase 1.6 to pick up.
+for Phase 1.6 to pick up. As built (#532): the woman among the figures asks (`q_garden`) and gives
+her son (`q_garden_carried`, the Boy of Glass), his figure gone from the garden; at the Harbour
+Temple a priest at the door takes him in (`q_garden_brought`) and lifts the stone at the temple's
+price, 2,240 at 28 (`q_garden_lifted`), or a Quickening Draught of the company's does
+(`q_garden_draught`). He wakes, says what he saw and goes home to her (§9, #532's 12 to 14).
 
 ### The third prestiges
 
@@ -1189,6 +1220,11 @@ from its top.
   9 of 20, with no sign among its 25 points. The area's dearest find stays the Leather Coat +2,
   2,700 gold of the window's 6,000; B9's are an Elixir and the Glass with a Light, which has no
   price.
+- **As built, the side quests** (#532). They pay §8's 1,000 xp a member whichever way each goes,
+  51 200, 53 250, 54 250 and 55 300, and add no gold, group or chest. The curve counts 700 of it
+  here, 55's 300 being paid at Cinderport's temple and so counted in Ashfall's clear: a clear of the
+  Glasswold gives 18,313 xp a member of the 21,067 asked, 0.87 times, and 9,650 gold of the 12,720,
+  the owed row's floor (§9, #532's 1 and 14).
 
 ## 9. Decisions
 
@@ -1824,6 +1860,47 @@ Decided by delegate for #531, each the owner's to overturn:
    before Akordu in the journal, where the stair puts it.
 10. **No xp of its own,** §8 giving the chapter no share.
 
+Decided by delegate for #532, each the owner's to overturn:
+
+1. **Pay is §8's 1,000 xp a member between the four, shared by level,** whichever way each goes:
+   200 for 51 at 26, 250 for 53 and 54 at 27 and 300 for 55 at 28 (1,200, 1,500, 1,500 and 1,800
+   shared by six), under the scaled 1,650 as Ashfall's 800 was under its 1,100; no gold or group.
+2. **51's question is the Rider with a hammer's, put to any company:** break it (`q_horse_broken`)
+   or take it whole (`q_horse_carried`, the Walker from the Saddle), each paying 1,200 there. Cador
+   Lusk asks (`q_horse`) and takes it at any meeting, the first too (`q_horse_whole`, a hand-in).
+3. **The glass walker that sits still is D8's `d8_horse`,** gone (`until`) once broken or taken; no
+   group is added. D9's sighting and B9's prints are read into the log (`seen`), neither map edited.
+4. **Broken, the Rider says it turned its head at night to look back south-west;** carried, the
+   Guild inks the Glass's edge. The Etched Glass keeps no buyer: the Chart House takes the walker.
+5. **The young Rider is at Akordu until the company will hunt with him** (`q_lion_hunt`), then at
+   the hunters' fire on B8 (`after`), as #76 places a person who moves; let die (`q_lion_left`), he
+   stays at Akordu. The question is his, so the eldest's first telling stands as built.
+6. **The rite's fight is B8's Grey Lion as built, and the boy's last blow is told:** a fight has no
+   ally to strike in it, so once the lion is down the boy says the last blow was his, at the
+   hunters' fire, and his question sets `q_lion_blow` and pays. It is the nearest honest means.
+7. **Let die, the eldest tells the rest once, after her first telling** (`q_lion_told`): what fell
+   stands in the glass on its end, as it stood to climb, the crown the watch sees from the gap; no
+   word of what it is. The Grey Lion is not gated (a group's `until` leaves a standing one, and the
+   quests are not locks); killed after all, the boy says so.
+8. **A lion killed before the boy is answered is nobody's blow** (`q_lion_taken`): the quest ends,
+   paying nothing, and a company that never met the boy never has it.
+9. **Hunted, the camp's trade adds nothing:** the trader sells from the start (call 5), so the
+   boy's being a Rider is words.
+10. **54's three answers are §6's,** put by the eldest at Akordu, where the watch sends a climber:
+    given sealed (`q_scarp_sealed`), told (`q_scarp_told`) or burned (`q_scarp_burned`). The
+    letter is the runner's orders (`riders_orders`, read from the pack); the cleft's Letter in
+    Cipher keeps no reader (§11).
+11. **Hendra asks (`q_scarp`), and the runner gives up the orders only to a company Hendra sent**
+    (`q_scarp_carried`); burned, her next climb finds the company, in her words.
+12. **55's son is the garden's boy** (`d8_figure`, gone once carried): the mother gives him
+    (`q_garden_carried`, the Boy of Glass), and a priest at the Harbour Temple's door, there only
+    for a company that carries him, takes him in (`q_garden_brought`).
+13. **The priest lifts the stone at 2,240, `templePrice` for a stoned member at the quest's 28,** or
+    a Quickening Draught of the company's does (`q_garden_lifted`, `q_garden_draught`), each paying
+    1,800. A member's Absolve cannot reach a boy in the pack, so the temple's is the spell's way.
+14. **55 pays at Cinderport,** so the curve counts its 300 a member in Ashfall's clear and the other
+    700 here: a clear of the Glasswold gives 18,313, the owed row's floor (§8).
+
 ## 10. Names
 
 The Glasswold's naming pass, by the rules of `docs/NAMES.md`: the Wold Riders' tongue was left to
@@ -1882,8 +1959,8 @@ Owed, from D9 (#525):
 - **D9's edges end in the void:** the west edge against C9, the Glass's and left to the reach, and
   the east against E9 (#534); its north edge meets D8's, the track at 16,0 (#526, §4.4), and its
   south edge meets D10 and `CUT_OFF` is empty (#527; §1, §9, #525's 3 to 6).
-- **The step and the chapter** on `d9_glass` are built (#531, §5); **quest 51** and the Etched Glass's
-  buyer are #532's, #526's and #512's (§6, §9, #525's 11 and 12).
+- **The step and the chapter** on `d9_glass` are built (#531, §5); **quest 51** is built (#532),
+  and the Etched Glass keeps no buyer: the Chart House takes the walker (§6, §9, #525's 11, #532's 4).
 - **The Wold's crossing words** are walked at D10 (#527) and at the Scarp stair's head (#528)
   (§9, #525's 14, #528's 2).
 - **The figures two under the floor** are owed to #18 and **the area's pay and gold** to #447: 2,940
@@ -1894,7 +1971,7 @@ Owed, from D10 (#527):
 - **The vultures have no flock of their own, and five groups stand for the brief's eight:** two
   prides, the mesa fight, the scorpions and a basilisk alone, the vultures fighting in the near
   pride (§4.5, §9, #527's 8). The pay stays under the share, 3,199 xp a member of 3,250 (§8).
-- **The garden at Akordu** is built (#526, §4.4) and **the mothers who sit in it** are #532's (55);
+- **The garden at Akordu** is built (#526, §4.4), and **the mother in it** gives 55 (#532);
   the Rider on the hill says only that the ones carried home stand there (§4.5).
 - **The chapter's steps** on the Wold are built (#531, §5); **the draught at Akordu's trader** is built
   (§4.4, §9, #526's 6).
@@ -1909,10 +1986,9 @@ Owed, from D8 (#526):
   26, past the limit of 14, and a flock heavy enough to count takes the pay past the cap (§4.4, §7,
   §9, #526's 8 and 21).
 - **The step and the chapter's Akordu** are built (#531), keyed on `akordu_story` (§5, §9, #526's 11);
-  **quests 51, 53, 54 and 55** have their Akordu ends in #532's, with the rest of the eldest's story
-  for 53 ("the rest is for those who have earned it"): the young Rider, the Rider with a hammer, the
-  woman among the figures and the horse that came back stand there with words only (§6, §9, #526's
-  12 and 13).
+  **quests 51, 53, 54 and 55** have their Akordu ends built (#532), the rest of the eldest's story
+  53's: the young Rider, the Rider with a hammer and the woman among the figures put their
+  questions, and the eldest takes the Compact's orders (§6, §9, #526's 12 and 13).
 - **The tents draw as white felt boxes:** the renderer gives buildings one shape, and its only
   landmark kind is the lighthouse, so a tent shape is a renderer change, not made.
 - **D8's north and east edges end in the void:** a box not built to the north and E8 (#534,
@@ -1923,10 +1999,10 @@ Owed, from D8 (#526):
 Owed, from C8 (#528):
 
 - **The letter in the cleft has no reader:** nobody on the Wold reads the Letter in Cipher and no
-  shop buys it. What takes it is owed: Lantern Watch's reader (#204) or the Compact's hall at
-  Cinderport (#512, #532). Neither is changed here (§4.6, §9, #528's 13).
-- **The runner and the Riders at the watch are people with words only,** and the quest, Orders on
-  the Scarp Stair (#56's 54), with its Akordu end, is #532's (§6, §4.6, §9, #528's 7).
+  shop buys it. What takes it is owed: Lantern Watch's reader (#204); #532's letter is the runner's
+  orders, and the Compact's hall does not take it (§4.6, §9, #528's 13, #532's 10).
+- **The Riders at the watch are words only;** the runner gives up her orders for Orders on the
+  Scarp Stair (#56's 54, #532), with its Akordu end (§6, §4.6, §9, #528's 7).
 - **The Scarp's mass stays closed:** 292 of C7's 301 Glasswold squares are mountain still, the
   stair's nine being the only ones opened (§4.6, §9, #528's 3).
 - **The chapter's play** with the Wold entered by the stair is built (#531, §5): the box's walk
@@ -1941,10 +2017,9 @@ Owed, from B8 (#529):
 - **The groups not built:** the brief's eight are three. The second pride, the vultures' flock and
   the glass walker are seen and not fought (`b8_lie`, `b8_vultures`, `b8_tracks`); a third group
   would break the day's aim or pass the cap (§4.7, §9, #529's 2 and 4).
-- **The young Rider stands at Akordu and at the hunt,** at D8's horse-lines and B8's camp, with near
-  the same words, and the eldest's word is B8's Rider's: #532 settles which, with the quest's choice
-  (53, `until` or `after`). The walkthrough kills the Grey Lion at 28, where "let him die" may want
-  him gated (§6, §9, #529's 11).
+- **The young Rider is at Akordu until a company will hunt with him,** then at B8's camp (#532,
+  `until` and `after`), and the eldest's word stays B8's Rider's. "Let him die" leaves the Grey
+  Lion ungated: the quests are not locks, and the boy remembers it (§6, §9, #529's 11, #532's 7).
 - **B9 meets B8's south edge** (#530, built): columns 1 to 31 are open both sides, and B9's builder
   re-pinned the edge (§4.7, §4.8, §9, #529's 18, #530's 19).
 - **The chapter has no step at the heart** (§5, §9, #531's 7).
@@ -1965,8 +2040,8 @@ Owed, from B9 (#530):
 - **The Glass with a Light does nothing,** its use being the reach's (Phase 1.6), and **the Glass's
   zone row has no band and no crossing words:** the Riders' word at the stones is the line (§4.8,
   §9, #530's 9 and 12).
-- **The horse that came back** is seen as prints going north; its way through B9, if the quest wants
-  more than the prints, is #532's (§6, §9, #530's 15).
+- **The horse that came back** is seen as prints going north, read into its quest's log; the quest
+  wants no more of B9 (#532, §6, §9, #530's 15).
 - **The watch is words only:** three Riders at the fire, no quest and no teaching (§4.8, §9, #530's
   7).
 - **`tools/scaffold.ts` cannot cut a box with glass in it,** the glass having no map character: C9's

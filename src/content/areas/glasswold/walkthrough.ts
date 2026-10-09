@@ -21,15 +21,18 @@
 // the seam into the ring of tents under the mesa; a rest at the camp's fires; the eldest's story, told
 // once; the trader's tent, its consumables, the stone's cure and the Riders' leather bought at list; the
 // ride from the horse-lines to Cinderport's gate and back; the shrine, the wells, the horse that came
-// back, the garden of glass and the camp's people, words only; the box's groups won at 26; and the
+// back, the garden of glass and the camp's people, who put the side quests' questions (#532); the
+// box's groups won at 26; and the
 // Riders' hoard behind the dry well with no rope. The Scarp's edge (C8, #528): up the Scarp stair from
 // the Saltings' notch, past the fall by the rope ladder and up the flights onto the lip, at 12, 25 and 26,
 // the Wold's line said at the stair's head as each would hear it, and down again; the Rider's warning at
-// the head, the runner on the last flight and the two Riders at the watch, words only; the watch's cairn,
+// the head, the runner on the last flight, who gives her orders to a company sent for them (#532), and
+// the two Riders at the watch, words only; the watch's cairn,
 // yurt and fire; the view down over the Saltings and the rest of the box seen; its groups won at 26;
 // the Compact's last three drops in the cleft under the lip, found from a horse's prints; and over the
 // east edge into Akordu's box, one land. The Wold's heart (B8, #529): over C8's west edge under the rim,
-// nothing said; the hunters' fire, a rest, the young Rider and the eldest's word, words only; Kushtash
+// nothing said; the hunters' fire, a rest, the eldest's word, words only, and the young Rider, there once
+// a company will hunt with him (#532); Kushtash
 // seen, the rim, the cairn and its draught, the well, the running horse and the hermit under the rim; the
 // pride and the mesa fight won at 27 and the Grey Lion alone on his ground at 28, the hunter's saddlebags
 // on the kill-ground; and the way up Kushtash, the stepped scree on its rim side found from the smoke off
@@ -40,7 +43,8 @@
 // gap is walked to without them: the stones and the Riders' word, the walker's tracks and the Glass seen
 // from the last square, no exit; and the walker half-buried in the dune that does not shift, its cache
 // and the glass with a light in it. Then the Ranger's third (#448), Oriel Fane's Map, played by a company
-// of 27 to the teaching (`fanesMap`). Last the chapter, three ways in (`theWarning`).
+// of 27 to the teaching (`fanesMap`); #56's four side quests (#532), each at its level and every way
+// it goes (`woldQuests`). Last the chapter, three ways in (`theWarning`).
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen, walkThrough, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
 import type { Walk, Step } from '../../../../tools/walk.ts';
@@ -53,7 +57,10 @@ import { VENTS } from '../ashfall/maps/firemount_g11.ts';
 import { STAIR } from '../ashfall/maps/meridian_camp.ts';
 import { STAIR2 } from '../ashfall/maps/meridian_camp2.ts';
 import { ROPE } from '../ashfall/maps/meridian_camp3.ts';
-import { SCOUT_ASKED, MAP_GIVEN } from './maps/wold_b8.ts';
+import { SCOUT_ASKED, MAP_GIVEN, LION_HUNT, LION_LEFT, LION_BLOW, LION_TOLD, LION_TAKEN, LION_DOWN } from './maps/wold_b8.ts';
+import { HORSE_ASKED, HORSE_BROKEN, HORSE_CARRIED, HORSE_WHOLE, GARDEN_CARRIED, GARDEN_BROUGHT, GARDEN_LIFTED, GARDEN_DRAUGHT } from './maps/wold_d8.ts';
+import { ORDERS_CARRIED, ORDERS_SEALED, ORDERS_TOLD, ORDERS_BURNED } from './maps/wold_c8.ts';
+import { QUESTS } from './quests.ts';
 import { AREAS, AHEAD, ATLAS, MAP_DEFS, MONSTERS } from '../../index.ts';
 import { PLANNED, CURVE } from '../../progression.ts';
 import { buildMaps } from '../../maps.ts';
@@ -353,8 +360,8 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(D8.features!.filter((f) => 'interior' in f && f.interior).length === 1 && trader.interior === 'akordu_trader' && ch8(trader.x, trader.y) === 'D' && !trader.prices
     && CURES.every((id) => trader.stock.includes(id)) && wares.every((d) => d.slot === 'none' || d.id === 'leather_coat') && trader.stock.includes('leather_coat'),
     `the trader's tent sells the band's consumables, the stone's cure and the Riders' leather at list price, and nothing of steel (${wares.map((d) => d.name).join(', ')})`);
-  ok(!D8.features!.some((f) => ['inn', 'temple', 'guild', 'trainer'].includes(f.kind) || (f.kind === 'npc' && (f.teaches || f.skill || f.hall || f.quest || f.choice || f.interior))),
-    'the camp sells and teaches nothing else, and nobody at it asks anything yet (#532)');
+  ok(!D8.features!.some((f) => ['inn', 'temple', 'guild', 'trainer'].includes(f.kind) || (f.kind === 'npc' && (f.teaches || f.skill || f.hall || f.quest || f.interior))),
+    'the camp sells and teaches nothing else, and takes nothing in by hand; its questions are the side quests\' (#532, `woldQuests`)');
   w.party.gold += 5000;
   const purse = w.party.gold;
   ok(!!buy(w.party, trader, 'quickening') && !!buy(w.party, trader, 'leather_coat') && purse - w.party.gold === item('quickening').price + item('leather_coat').price,
@@ -397,8 +404,9 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(wells.length === 2 && tethered.kind === 'event' && !tethered.sets && figures >= 5 && D8.rows.every((row) => [...row].every((c, x) => c !== 'c' || x > camp.x + 6)),
     `the wells, the horse that came back tethered apart, and ${figures} figures of glass at the camp's east edge`);
   const boy = says8('A young Rider'), hammer = says8('A Rider with a hammer'), mother = says8('A woman among the figures');
-  ok(boy.includes('Grey Lion') && boy.includes('last blow') && hammer.includes('break') && mother.includes('basilisk') && D8.features!.every((f) => f.kind !== 'npc' || !f.flag || f.flag === STORY),
-    'the young Rider wants the last blow at the Grey Lion, a Rider waits to break what sits the horse, and the mother\'s son went to look at the basilisk: words only');
+  ok(boy.includes('Grey Lion') && boy.includes('last blow') && hammer.includes('break') && mother.includes('basilisk')
+    && ['A young Rider', 'A Rider with a hammer', 'A woman among the figures'].every((n) => !!person8(n).choice),
+    'the young Rider wants the last blow at the Grey Lion, a Rider waits to break what sits the horse, and the mother\'s son went to look at the basilisk: each puts a side quest\'s question (#532)');
 
   // The groups, none inside the camp, each won at 26: the pride that comes at the horses by night, the
   // glass scorpions in the broken ground under the mesa's east face, and the basilisk alone in its shade
@@ -569,8 +577,8 @@ export const walkthrough: Walkthrough = (ok) => {
     'the hunters\' fire in its ring of saddles by the way in, where a company may rest');
   const boyB8 = saysB8('The young Rider'), eldestWord = saysB8('A Rider from Akordu');
   ok(boyB8.text.includes('Grey Lion') && boyB8.text.includes('last blow') && eldestWord.text.includes('eldest') && eldestWord.text.includes('Let him die')
-    && !B8.features!.some((f) => f.kind === 'npc' && f.name !== 'Aysu, the scout' && (f.flag || f.quest || f.choice || f.says || f.teaches || f.skill || f.hall || f.interior || f.passage)),
-    'the young Rider has asked for the last blow, and a Rider from Akordu brings the eldest\'s word, let him die: words only, as is everyone on B8 but Aysu, the Ranger\'s third\'s');
+    && !B8.features!.some((f) => f.kind === 'npc' && !['Aysu, the scout', 'The young Rider'].includes(f.name) && (f.flag || f.quest || f.choice || f.says || f.teaches || f.skill || f.hall || f.interior || f.passage)),
+    'the young Rider wants the last blow, and a Rider from Akordu brings the eldest\'s word, let him die: words only, as is everyone on B8 but Aysu, the Ranger\'s third\'s, and the boy, the Lion\'s Share\'s (#532)');
 
   // Kushtash seen from the way in; the rim; the Riders' cairn and its draught, their well, the hunters'
   // horses; the pride's kill, the lesser mesa and the glassed hunter at its foot; the vultures over the
@@ -752,6 +760,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(!/hull|ship|orbit|voyage|custodian|tower/i.test(toldB9), 'nothing in the box\'s words, or the glass\'s, of what the crown is');
 
   fanesMap(ok);
+  woldQuests(ok);
   theWarning(ok);
 };
 
@@ -810,6 +819,166 @@ function fanesMap(ok: (cond: boolean, msg: string) => void): void {
     `and her menu teaches the third, earned, for no gold (${r.line})`);
   const after = talk();
   ok(after.text === aysu.lines.join('\n\n') && !after.choice, 'after, her own words again, and nothing asked');
+}
+
+/**
+ * #56's four side quests (#532), each at its level and answered every way, each paying its xp whichever
+ * way it goes, shared by six. The Horse That Came Back, at 26: asked by Cador Lusk at the Chart House,
+ * the horse seen in off the dunes and its prints at the Glass's edge, and what sits it taken whole from
+ * the Rider with a hammer at Akordu and handed in, or broken there; or taken by a company Cador never met
+ * and handed in at his first meeting. The Lion's Share, at 27: the young Rider asks at Akordu, and the
+ * Grey Lion is hunted with him, the boy at the hunters' fire on B8 and gone from Akordu, his the last
+ * blow; or the old lion let die, the eldest telling the rest, and the lion killed after all remembered;
+ * or the lion killed first, nobody's blow, which pays nothing. Orders on the Scarp Stair, at 27: Hendra
+ * asks, her runner gives up the orders, read from the pack, and the eldest has them sealed, hears what
+ * they say or watches them burn, when the runner climbs again. The Garden of Glass, at 28: the mother
+ * gives her son, the figure gone from the garden, and the priest at the Harbour Temple takes him in and
+ * lifts the stone at the temple's price, or a draught does; he wakes, and is home beside her.
+ */
+function woldQuests(ok: (cond: boolean, msg: string) => void): void {
+  const at = (level: number): Walk => {
+    const w = newWalk(ok);
+    w.level = level;
+    for (const m of w.party.members) { m.level = level; m.xp = xpForLevel(level); }
+    return w;
+  };
+  const mapOf = (id: string) => MAP_DEFS.find((d) => d.id === id)!;
+  const npc = (map: string, name: string): Person => mapOf(map).features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
+  const ev = (map: string, id: string): Feature => mapOf(map).features!.find((f) => f.kind === 'event' && f.id === id)!;
+  const page = (w: Walk, id: string) => questLog(w.world.state, w.party).find((v) => v.def.id === id)?.pages[0];
+  const goal = (w: Walk, id: string): string => page(w, id)?.goal ?? '(no goal)';
+  const began = (w: Walk, title: string): boolean => w.news.includes(`New quest: ${title}.`);
+  const there = (w: Walk, map: string, f: Feature): boolean => { w.world.travel(map, f.x, f.y); return w.world.present(f); };
+  const hear = (w: Walk, map: string, p: Person): string => { w.world.travel(map, p.x, p.y); const said = meet(p, w.party, heard(w.world, p)).text; listen(w); return said; };
+  const answerTo = (w: Walk, map: string, p: Person, sets: string): string => {
+    w.world.travel(map, p.x, p.y);
+    const m = meet(p, w.party, heard(w.world, p)), a = m.choice?.answers.find((x) => x.sets === sets);
+    ok(!!a, `${p.name.split(',')[0]} asks, and an answer sets ${sets} (${m.choice?.ask ?? 'no question'})`);
+    const said = a ? answer(a, w.party) : '';
+    listen(w);
+    return said;
+  };
+  const reads = (w: Walk, id: string, want: readonly string[], not: readonly string[], how: string): void => {
+    const pg = page(w, id), ids = pg?.entries.map((e) => e.id) ?? [], title = pg?.def.title ?? id;
+    const done = w.news.filter((n) => n === `Quest complete: ${title}.`).length;
+    ok(!!pg?.done && pg.goal === null && want.every((e) => ids.includes(e)) && !not.some((e) => ids.includes(e)) && done === 1,
+      `${how}: ${title} is done with no goal, its entries ${ids.join(', ')}, and said complete once (${done})`);
+  };
+  const xpOf = (w: Walk): number => w.party.members.reduce((t, m) => t + m.xp, 0);
+  const told = QUESTS.filter((q) => q.id !== 'scout_map').flatMap((q) => [...q.entries.map((e) => e.text), ...q.goals.map((g) => g.text)]).join(' ');
+  ok(!/hull|ship|orbit|voyage|custodian/i.test(told), 'nothing in the side quests\' log of a hull, a ship, an orbit, a voyage or a Custodian');
+
+  // The Horse That Came Back (#56's 51), at 26: 1,200 xp either way, 200 a member.
+  const CADOR = npc('cinderport', 'Cador Lusk, of the Cartographers\' Guild'), HAMMER = npc('wold_d8', 'A Rider with a hammer'), HORSE = ev('wold_d8', 'd8_horse');
+  for (const how of ['whole', 'unasked', 'broken'] as const) {
+    const w = at(26);
+    if (how !== 'unasked') {
+      ok(hear(w, 'cinderport', CADOR).includes('I want it whole') && began(w, 'The Horse That Came Back') && /tethered at Akordu/.test(goal(w, 'horse_back')),
+        `${how}: Cador Lusk at the Chart House wants what sits the horse that came back, whole (${goal(w, 'horse_back')})`);
+      see(w, 'wold_d9:d9_horse');
+      see(w, 'wold_b9:b9_horse');
+    }
+    ok(there(w, 'wold_d8', HORSE), `${how}: at Akordu the horse that came back stands tethered apart, the thing in its saddle still`);
+    const xp = xpOf(w);
+    if (how === 'broken') {
+      const said = answerTo(w, 'wold_d8', HAMMER, HORSE_BROKEN);
+      ok(xpOf(w) - xp === 1200 && said.includes('south-west') && !there(w, 'wold_d8', HORSE) && hear(w, 'wold_d8', HAMMER).includes('never moved') && hear(w, 'cinderport', CADOR).includes('no glass'),
+        `broken: the Rider breaks it, 1,200 xp between the six, and says what it did on the way home (${said.split('\n\n')[1]})`);
+      reads(w, 'horse_back', ['cador', 'dunes', 'prints', 'broken'], ['carried', 'whole'], how);
+      continue;
+    }
+    const said = answerTo(w, 'wold_d8', HAMMER, HORSE_CARRIED);
+    ok(xpOf(w) - xp === 1200 && w.party.bag.includes('saddle_walker') && !there(w, 'wold_d8', HORSE) && began(w, 'The Horse That Came Back')
+      && /Chart House/.test(goal(w, 'horse_back')) && hear(w, 'wold_d8', HAMMER).includes('lie awake'),
+      `${how}: taken whole off the saddle, 1,200 xp between the six, and the log sends it to the Chart House (${said.split('\n\n')[0]})`);
+    const handed = hear(w, 'cinderport', CADOR);
+    ok(!w.party.bag.includes('saddle_walker') && !!w.party.flags[HORSE_WHOLE] && !!w.party.flags[HORSE_ASKED] === (how === 'whole') && handed.includes('inks the Glass\'s edge')
+      && handed.includes(how === 'whole' ? 'walks round it' : 'Set it there'),
+      `${how}: Cador takes it ${how === 'whole' ? 'as he asked' : 'at the first meeting'} (${handed.split('\n\n')[0]})`);
+    reads(w, 'horse_back', how === 'whole' ? ['cador', 'dunes', 'prints', 'carried', 'whole'] : ['carried', 'whole'], how === 'whole' ? ['broken'] : ['cador', 'broken'], how);
+  }
+
+  // The Lion's Share (#56's 53), at 27: 1,500 xp hunted or let die, 250 a member; nothing for a lion
+  // killed before the boy is answered.
+  const BOY = npc('wold_d8', 'A young Rider'), BOY_B8 = npc('wold_b8', 'The young Rider'), ELDEST = npc('wold_d8', 'The eldest');
+  for (const how of ['blow', 'rest', 'taken'] as const) {
+    const w = at(27);
+    ok(there(w, 'wold_d8', BOY) && !there(w, 'wold_b8', BOY_B8) && hear(w, 'wold_d8', BOY).includes('let him die') && began(w, 'The Lion\'s Share') && /hunt the Grey Lion with him/.test(goal(w, 'lions_share')),
+      `${how}: the young Rider at Akordu, and not at the hunters' fire, wants the last blow (${goal(w, 'lions_share')})`);
+    if (how === 'taken') {
+      const xp = xpOf(w);
+      fight(w, LION_DOWN);
+      ok(hear(w, 'wold_d8', BOY).includes('was not mine') && !!w.party.flags[LION_TAKEN] && xpOf(w) === xp, 'taken: the Grey Lion killed before the boy is answered, his blow never struck, and nothing paid');
+      reads(w, 'lions_share', ['boy', 'taken'], ['hunt', 'blow', 'left', 'rest'], how);
+      continue;
+    }
+    if (how === 'blow') {
+      const xp = xpOf(w), said = answerTo(w, 'wold_d8', BOY, LION_HUNT);
+      ok(xpOf(w) === xp && !there(w, 'wold_d8', BOY) && there(w, 'wold_b8', BOY_B8) && /Bring the Grey Lion down/.test(goal(w, 'lions_share')) && hear(w, 'wold_b8', BOY_B8).includes('leave the last blow to me'),
+        `blow: the company will hunt with him, and he is at the hunters' fire and gone from Akordu (${said.split('\n\n')[1]})`);
+      fight(w, LION_DOWN);
+      ok(/young Rider at the hunters' fire/.test(goal(w, 'lions_share')), `blow: the Grey Lion down on his ground, the log sends the company back to the boy (${goal(w, 'lions_share')})`);
+      const before = xpOf(w), blow = answerTo(w, 'wold_b8', BOY_B8, LION_BLOW);
+      ok(xpOf(w) - before === 1500 && blow.includes('He is a Rider') && hear(w, 'wold_b8', BOY_B8).includes('somebody else'),
+        `blow: the last blow the boy's, 1,500 xp between the six (${blow.split('\n\n')[0]})`);
+      reads(w, 'lions_share', ['boy', 'hunt', 'blow'], ['left', 'rest', 'taken'], how);
+      continue;
+    }
+    const story = hear(w, 'wold_d8', ELDEST), xp = xpOf(w), said = answerTo(w, 'wold_d8', BOY, LION_LEFT);
+    ok(story.includes('the sky opened') && xpOf(w) - xp === 1500 && there(w, 'wold_d8', BOY) && hear(w, 'wold_d8', BOY).includes('ask again') && /rest of the eldest's story/.test(goal(w, 'lions_share')),
+      `rest: the old lion let die, 1,500 xp between the six, and the boy stays at Akordu (${said.split('\n\n')[1]})`);
+    const rest = hear(w, 'wold_d8', ELDEST), after = hear(w, 'wold_d8', ELDEST);
+    ok(rest.includes('on its end') && rest.includes('crown') && !!w.party.flags[LION_TOLD] && after.includes('all of it now') && !/hull|ship|orbit|voyage|custodian/i.test(rest),
+      `rest: the eldest tells the rest, once, and no word of what the crown is (${rest.split('\n\n')[1]})`);
+    reads(w, 'lions_share', ['boy', 'left', 'rest'], ['hunt', 'blow', 'taken'], how);
+    fight(w, LION_DOWN);
+    ok(hear(w, 'wold_d8', BOY).includes('Then you killed him'), 'rest: the Grey Lion still stands to be fought, no lock, and killed after all the boy says so');
+  }
+
+  // Orders on the Scarp Stair (#56's 54), at 27: 1,500 xp whichever of the three, 250 a member.
+  const HENDRA = npc('cinderport', 'Hendra, the Compact\'s factor'), RUNNER = npc('wold_c8', 'A Compact runner'), orders = item('riders_orders');
+  for (const [how, sets] of [['sealed', ORDERS_SEALED], ['told', ORDERS_TOLD], ['burned', ORDERS_BURNED]] as const) {
+    const w = at(27);
+    ok(hear(w, 'cinderport', HENDRA).includes('Carry them the rest of the way') && began(w, 'Orders on the Scarp Stair') && /runner on the Scarp stair/.test(goal(w, 'scarp_orders')),
+      `${how}: Hendra, the Compact's factor, sends the company up the Scarp stair after her runner (${goal(w, 'scarp_orders')})`);
+    const given = answerTo(w, 'wold_c8', RUNNER, ORDERS_CARRIED);
+    ok(w.party.bag.includes('riders_orders') && orders.slot === 'none' && !orders.price && !!orders.text?.join(' ').includes('silver') && hear(w, 'wold_c8', RUNNER).includes('Down is worse')
+      && /eldest at Akordu/.test(goal(w, 'scarp_orders')),
+      `${how}: on the top flight the runner gives up her orders, which read from the pack (${given.split('\n\n')[1]})`);
+    hear(w, 'wold_d8', ELDEST);
+    const xp = xpOf(w), said = answerTo(w, 'wold_d8', ELDEST, sets);
+    ok(xpOf(w) - xp === 1500 && !w.party.bag.includes('riders_orders') && hear(w, 'cinderport', HENDRA).includes('Ruan will read')
+      && hear(w, 'wold_c8', RUNNER).includes('look at faces') === (how === 'burned'),
+      `${how}: the eldest has the orders, 1,500 xp between the six${how === 'burned' ? ', and the runner climbs again' : ''} (${said.split('\n\n')[1]})`);
+    reads(w, 'scarp_orders', ['factor', 'runner', how], ['sealed', 'told', 'burned'].filter((e) => e !== how), how);
+  }
+
+  // The Garden of Glass (#56's 55), at 28: 1,800 xp lifted at the temple or by a draught, 300 a member.
+  const MOTHER = npc('wold_d8', 'A woman among the figures'), PRIEST = npc('cinderport', 'A priest of the Harbour Temple'), FIGURE = ev('wold_d8', 'd8_figure');
+  for (const [how, sets] of [['lifted', GARDEN_LIFTED], ['draught', GARDEN_DRAUGHT]] as const) {
+    const w = at(28);
+    w.party.gold = 5000;
+    if (how === 'draught') w.party.bag.push('quickening');
+    ok(!there(w, 'cinderport', PRIEST) && there(w, 'wold_d8', FIGURE) && hear(w, 'wold_d8', MOTHER).includes('looking still') && began(w, 'The Garden of Glass'),
+      `${how}: the mother among the figures at Akordu, her son a boy of glass by her, and nobody at the temple door yet`);
+    see(w, 'wold_d10:d10_glassed');
+    const given = answerTo(w, 'wold_d8', MOTHER, GARDEN_CARRIED);
+    ok(w.party.bag.includes('glass_boy') && !there(w, 'wold_d8', FIGURE) && hear(w, 'wold_d8', MOTHER).includes('waited this long') && /Harbour Temple/.test(goal(w, 'glass_garden')),
+      `${how}: she gives him to be carried, and the garden has a space where he stood (${given.split('\n\n')[1]})`);
+    const took = hear(w, 'cinderport', PRIEST);
+    ok(there(w, 'cinderport', PRIEST) && !w.party.bag.includes('glass_boy') && !!w.party.flags[GARDEN_BROUGHT] && took.includes('eighty a level'),
+      `${how}: at the Harbour Temple a priest takes him in (${took.split('\n\n')[0]})`);
+    const stoned = structuredClone(w.party.members[0]);
+    addCondition(stoned, 'stoned');
+    const price = PRIEST.says?.flatMap((s) => s.choice?.answers ?? []).find((a) => a.sets === GARDEN_LIFTED)?.price ?? 0;
+    const gold = w.party.gold, xp = xpOf(w), woke = answerTo(w, 'cinderport', PRIEST, sets);
+    ok(price === templePrice(stoned) && xpOf(w) - xp === 1800 && woke.includes('a crown standing up in the Glass') && !!item('quickening').use?.cure?.includes('stoned')
+      && (how === 'lifted' ? w.party.gold === gold - price : w.party.gold === gold && !w.party.bag.includes('quickening')),
+      `${how}: ${how === 'lifted' ? `the stone lifted at the temple's price, ${price} gold, 80 a level at 28` : 'a Quickening Draught lifts the stone'}, 1,800 xp between the six, and he wakes (${woke.split('\n\n')[1]})`);
+    ok(hear(w, 'cinderport', PRIEST).includes('went home') && hear(w, 'wold_d8', MOTHER).includes('her son beside her') && !/hull|ship|orbit|voyage|custodian/i.test(woke),
+      `${how}: he went home on the Riders' ride, and sits by his mother among the figures`);
+    reads(w, 'glass_garden', ['mother', 'mesas', 'carried', 'temple', 'woke'], [], how);
+  }
 }
 
 // ---- the chapter (#531) ----
