@@ -1993,6 +1993,7 @@
         "mc2_kit",
         "mc2_part",
         "mc2_skin",
+        "mc2_stair",
         "mc2_tracks",
         "mc2_true",
         "mc2_walk"
@@ -2002,6 +2003,34 @@
         "mc2_drakelings",
         "mc2_sentry",
         "mc2_walker"
+      ],
+      "doors": []
+    },
+    "meridian_camp3": {
+      "size": "32x32",
+      "used": [
+        "mc3_arrow",
+        "mc3_door",
+        "mc3_fire",
+        "mc3_grave",
+        "mc3_in",
+        "mc3_kit",
+        "mc3_knocks",
+        "mc3_lamps",
+        "mc3_pick",
+        "mc3_rope",
+        "mc3_steps",
+        "mc3_table",
+        "mc3_tents",
+        "mc3_window"
+      ],
+      "groups": [
+        "mc3_four",
+        "mc3_inspector",
+        "mc3_knocker",
+        "mc3_night",
+        "mc3_sentry",
+        "mc3_west"
       ],
       "doors": []
     },
@@ -2651,6 +2680,7 @@
     "lanterns_split",
     "log_read",
     "manifests_read",
+    "meridian_map",
     "meridian_read",
     "n2_hartmut_lesson",
     "n2_hartmut_met",
@@ -3024,6 +3054,7 @@
     "ember_part3",
     "etched_glass",
     "faceless_coin",
+    "fane_map",
     "flail",
     "flail+1",
     "flail+2",
@@ -3106,6 +3137,7 @@
     "meridian_journal",
     "meridian_journal4",
     "meridian_mail",
+    "meridian_staff",
     "morning_star",
     "morning_star+1",
     "name_boards",

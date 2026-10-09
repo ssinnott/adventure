@@ -69,6 +69,24 @@ export const meridianMail = P(dwarfMail, 3, { id: 'meridian_mail', name: 'Meridi
 ] });
 
 /**
+ * The Company's kit in its last camp, Fane's, at the bottom of Meridian Camp (meridian_camp3; #22, §4.3):
+ * the armourer's battle staff with a plus of 4, named, at 2,600, inside Ashfall's window of 5,500.
+ */
+export const meridianStaff = P(battleStaff, 4, { id: 'meridian_staff', name: 'Meridian Staff +4', text: [
+  'A staff shod with iron, notched along its length in spans and half-spans, the notches worn smooth.',
+] });
+
+/**
+ * Oriel Fane's map (#22; meridian_camp.md §4.3; #443, call 4), which he gives at the first meeting: a quest
+ * item, sewn shut, with nothing a player can read. Its giving sets `meridian_map`, the Lost Expedition
+ * done; the Wold's scout takes it, looks, and gives it back (#447).
+ */
+export const faneMap: ItemDef = { id: 'fane_map', name: 'Fane\'s Map', slot: 'none', price: 0, text: [
+  'A roll of oilcloth the length of a forearm, sewn shut along its seam with sail thread.',
+  'It is heavier than paper has any right to be.',
+] };
+
+/**
  * The parts the machines shed, which no shop buys and no hand-in takes (MONSTERS §2): the stokers' on the
  * vents' furnace room's heap, and the flue walker's on the heap at the iron corridors' end (#22).
  */
@@ -127,4 +145,4 @@ export const greyShovel = P(mattock, 3, { id: 'grey_shovel', name: 'Grey Shovel 
   'Its edge takes no burr, and loses none.',
 ] });
 
-export const ITEMS: readonly ItemDef[] = [...WARES, quickening, scavengersAxe, graveBow, emberPart1, emberPart3, meridianMail, ...PARTS, squareFlamberge, foundingStone, emberPart2, hearthSymbol, benchStaff, benchCoat, sentinelVisor, meridianJournal4, greyShovel];
+export const ITEMS: readonly ItemDef[] = [...WARES, quickening, scavengersAxe, graveBow, emberPart1, emberPart3, meridianMail, meridianStaff, faneMap, ...PARTS, squareFlamberge, foundingStone, emberPart2, hearthSymbol, benchStaff, benchCoat, sentinelVisor, meridianJournal4, greyShovel];

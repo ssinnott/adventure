@@ -11,15 +11,19 @@ import type { QuestDef } from '../../../game/quests.ts';
 export const QUESTS: readonly QuestDef[] = [
   {
     // The Lost Expedition (DESIGN.md 10.3) begins with the first of the Meridian Company's
-    // journals. The rest of its trail is not built yet, so it has no `done` and stays open. Nothing
-    // takes the journal (no hand-in asks for it and no shop buys it; tools/tests/quests.ts holds to
-    // that), so the item alone keeps the entry written.
+    // journals and ends at Fane's fire, at the bottom of Meridian Camp (#22): his map given sets
+    // `meridian_map`, and that flag, not the map held, is it done. Nothing takes the journal (no
+    // hand-in asks for it and no shop buys it; tools/tests/quests.ts holds to that), so the item
+    // alone keeps the entry written.
     id: 'meridian',
     title: 'The Lost Expedition',
     start: { item: 'meridian_journal' },
+    done: { flag: 'meridian_map' },
     entries: [
       { id: 'journal', when: { item: 'meridian_journal' },
         text: 'Where the Warden of the Cut fell lay the first volume of the Meridian Company\'s journal. The Company went down to map the Underdeep thirty years ago, and never came back.' },
+      { id: 'fane', when: { flag: 'meridian_map' },
+        text: 'Under Fire Mountain, at the last of the Company\'s camps, Oriel Fane keeps a fire. He gave us his map, sewn shut.' },
     ],
     goals: [
       { when: { item: 'meridian_journal' }, text: 'Find the other volumes of the Meridian journal.' },

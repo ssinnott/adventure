@@ -13,10 +13,10 @@ it, the plan for building it, box by box, and the briefs. Its work is filed unde
 country behind (#522, parked); this doc is #509. Figures are measured on main at `6032251` (2
 October 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Twelve maps are built: H10, the Stair's foot (#510, §4.2), which joins the area to the Whitespine
+Thirteen maps are built: H10, the Stair's foot (#510, §4.2), which joins the area to the Whitespine
 overland; G10, Cinderport's box (#511, §4.3), which lists the area; Cinderport behind its gate
-(#512, §4.4); G11, Fire Mountain's flank (#513, §4.5); the vents and the iron corridors, Meridian
-Camp's first two levels (#22, docs/areas/meridian_camp.md §4.1 and §4.2); F11, Old Cinder's and the
+(#512, §4.4); G11, Fire Mountain's flank (#513, §4.5); the vents, the iron corridors and the camp,
+Meridian Camp's three levels (#22, docs/areas/meridian_camp.md §4.1 to §4.3); F11, Old Cinder's and the
 Ember Stone's box (#514, §4.6); Old Cinder's two levels, the buried town and the undercroft, through
 F11's crater (#515, §4.7); the Ember Stone, one level under F11's field of cinders (#516, §4.8),
 with the Cartographers' Surveyor's rung (#635, §6); and F10 and E10, the Ember Waste's road (#517,
@@ -113,8 +113,8 @@ off the springs; the vines' shore humid.
 
 ## 3. What is built
 
-Twelve maps: the Stair's foot (#510), Cinderport's box, which lists the area (#511), the town behind
-its gate (#512), Fire Mountain's flank (#513), the vents and the iron corridors (#22), Old Cinder's
+Thirteen maps: the Stair's foot (#510), Cinderport's box, which lists the area (#511), the town behind
+its gate (#512), Fire Mountain's flank (#513), the vents, the iron corridors and the camp (#22), Old Cinder's
 and the Ember Stone's box (#514), Old Cinder's two levels (#515), the Ember Stone (#516) and the
 Waste's road, F10 and E10 (#517):
 
@@ -168,8 +168,15 @@ Waste's road, F10 and E10 (#517):
   back down the level, the flue walker on its round, the Company's second camp, cold, behind a door
   and a grave with a note, the drake's nest off the last corridor with the Brood Drake on its eggs
   and, at the corridors' end, the Ember Stone's third part (`ember_part3`) and the stair down to the
-  camp, barred until the camp is built. Four groups, a sentry among them once the Stone is lit
+  camp. Four groups, a sentry among them once the Stone is lit
   (docs/areas/meridian_camp.md §4.2).
+- **Meridian Camp's camp** (`meridian_camp3`, dungeon, the last of three levels of 32×32, band
+  27–28, outside the area's budget; #22): down the corridors' stair into the cold, a last chalk
+  arrow with a fire drawn beside it and firelight on the one way in; the Company's third camp, the
+  only warm one, with Oriel Fane alive at his fire, his map and the Company's kit; the room with
+  the window beside it, a cold flue with Fane's rope up to G11's lookout, a way out and never in,
+  and the steps down to the deep knockers' gallery, which ends in a door that opens for nobody. Six
+  groups, a sentry among them once the Stone is lit (docs/areas/meridian_camp.md §4.3).
 - **Old Cinder's and the Ember Stone's box** (F11, `emberwaste_f11`, core, band 25–26; #514): the
   buried town's crater at the north edge, a pit seen across and never walked with six roof-ridges
   standing out of it, and on its west lip an old Lightbearer beside the way down, open since #515
@@ -229,7 +236,8 @@ the site to the gate, §9, #512's 13), the three dungeons' ways in (Old Cinder's
 Mountain to the Ember Waste and the crater's lip, 187,322, §9, #515's 15), the road to the Wold and
 the last crossing. H10 is first on Cindercoast's row (§9, #510's 2). The corridors' plate is a
 second row, `meridian_camp2` at 226,346, six squares south of the first (docs/areas/meridian_camp.md
-§8, the corridors' 15).
+§8, the corridors' 15); the camp's is a third, `meridian_camp3` at 226,352
+(docs/areas/meridian_camp.md §8, the camp's 15).
 
 Its row on the curve and its step on the gear ladder are in (#542): the row in
 `src/content/progression.ts` (band 24–26, next 26, window 5,500), owed to #446 while the area is
@@ -237,7 +245,8 @@ built box by box, with the six boxes', the vents', Old Cinder's, E10's Wold half
 the Ember Stone's, the Surveyor's rung's and the side quests' 29,386 xp a member and 9,900 gold the
 clear's floor; its
 xp is met since E10's Wold half (#524) and its gold alone is owed, which Cinderport leaves as it is,
-a town paying nothing (§8);
+a town paying nothing (§8); the camp's 3,003 xp and 1,200 gold are outside it, the area listing
+the camp `outside` (§9, #22's 5);
 and the step in
 `src/content/areas/ashfall/items.ts`, the Area's own since G10 lists it (`ITEMS_AHEAD`,
 `src/content/index.ts`, held it until then), so that the harness and the gate dress by it:
@@ -254,7 +263,9 @@ and 12); F11's Chain Mail +2 and Old Cinder's Plate Mail +2 are the game's own (
 Sunderwood's; `plate+2`), no new item (§9, #514's 12; #515's 11). The corridors add the Stone's
 third part, `ember_part3` (§9, #22's 1), the Company's Meridian Mail +3 (`meridian_mail`) and the
 flue walker's parts, `walker_damper` and `walker_iron`, which no shop buys
-(docs/areas/meridian_camp.md §8, the corridors' 7 to 9). The Ember Stone adds the ladder's Battle
+(docs/areas/meridian_camp.md §8, the corridors' 7 to 9). The camp adds the Company's Meridian Staff
++4 (`meridian_staff`) and Fane's Map (`fane_map`), a quest item (docs/areas/meridian_camp.md §8, the
+camp's 6 and 13). The Ember Stone adds the ladder's Battle
 Staff +1 (`battle_staff+1`) and a Drakeskin Coat +1 (`drakeskin+1`), the fourth journal
 (`meridian_journal4`, a quest item) and the Sentinel's Visor (`sentinel_visor`, a part), none of
 them sold (§9, #516's 5 and 11). The side quests add the Grey Shovel +3 (`grey_shovel`), the Kilns'
@@ -393,7 +404,7 @@ The places, as the atlas and the docs have them:
 | Scaldwell (the Hot Springs) | H10 | the springs that went cold the day the Anvil Stone was cut (#56's 49) | a springs site at 240,300 |
 | Cinderport | G10, and its own map | the far side's port, where the last crossing leaves (DESIGN §9); the Cartographers' second hall and the Compact's factor (#443, call 7); trains to 27 (DESIGN §5) | a port, its gate at 206,288 and its site at 206,277 on G9's shore |
 | Fire Mountain | G11 | the volcano; its vents are the Underdeep's exhaust and the way down (DESIGN §9) | a volcano at 215,326; a ridge at 204–226,326 with three lava flows |
-| Meridian Camp | G11, and below | the Meridian Company's last camp, Oriel Fane and the window (DESIGN §9, §10.3, STORY); three levels of 32×32 (#443, call 4) | a dungeon at 226,340, its way in at 226,334; its first two levels, the vents and the iron corridors, built (#22) |
+| Meridian Camp | G11, and below | the Meridian Company's last camp, Oriel Fane and the window (DESIGN §9, §10.3, STORY); three levels of 32×32 (#443, call 4) | a dungeon at 226,340, its way in at 226,334; all three levels, the vents, the iron corridors and the camp, built (#22) |
 | Grimsforge (Warlord's Forge) | G11 | the Barbarian's third prestige, by the vents' mouth (DESIGN §5, #448) | a forge at 230,330 |
 | Old Cinder | F11, and below | the town the mountain buried, its people cast in ash (MONSTERS §8.2); the Paladin's third (DESIGN §5); the founding stone (#56's 50); the Old Drake | a site on the crater's rim, 190,318, and two plates, 190,324 and 190,330; its way in at the lip, 187,322 |
 | The Ember Stone | F11, and below | never finished; the company completes it with parts from below and the Underdeep notices (DESIGN §9); the Druid's third (DESIGN §5); the Sentinel (MONSTERS §8.2) | a site at 176,342, its way in, and a plate at 176,348 |
@@ -1073,9 +1084,11 @@ that nests in the corridors (the Barbarian's quarry) and deep knockers below the
 Stone's parts lie on its upper levels, never its bottom (call 2; §5), so the chapter walks the vents
 and the corridors and never needs the camp, the window or the map.
 
-Its first two levels are built (docs/areas/meridian_camp.md §4.1 and §4.2): the Stone's first part
-lies in the stokers' furnace room (`ember_part1`, §9, #22's 1) and its third at the corridors' end
-(`ember_part3`), and the corridors' stair down to the camp is barred until the camp is built.
+All three levels are built (docs/areas/meridian_camp.md §4.1 to §4.3): the Stone's first part lies
+in the stokers' furnace room (`ember_part1`, §9, #22's 1) and its third at the corridors' end
+(`ember_part3`), and the corridors' stair leads down to the camp, where Oriel Fane keeps his fire,
+the window is and Fane's rope goes up to G11's lookout, a way out and never in. The camp pays
+outside the area's budget (§8; §9, #22's 5).
 
 ## 5. The one quest here
 
@@ -1101,7 +1114,9 @@ in the journal's voice, keyed to flags, events and maps the save holds:
 - **The corridors.** Iron corridors hot enough to blister, and at their end the third part,
   `ember_part3`, in a chest (#22's second level; §9, #22's 1). Below them a camp, and an old man who
   says *You took your time*: the window's entry is written if the company goes on down to it, and
-  never asked for; what it sees there is in the entry and nowhere else (DESIGN §7).
+  never asked for; what it sees there is in the entry and nowhere else (DESIGN §7). The camp is built: its window is
+  the once event `mc3_window`, which the entry can key on (`seen: 'meridian_camp3:mc3_window'`,
+  docs/areas/meridian_camp.md §8, the camp's 8).
 - **The Stone lit.** The parts carried up and set, a hand-in of three items (#516) that takes each
   at the first meeting (EXPANSION §2.3). The Stone lights; every door below opens at once; the
   Sentinel comes up. The Hearth burns steadier than in all our lives (#548). From then on sentries
@@ -1288,8 +1303,9 @@ before, and a Stone that lights is the Hearth's count (§9, #516's 15).
   scaled 2,950 and under 3,700 (§9, #516's 14), and the Surveyor's rung 600 (#635): 28,586 of the
   19,467 asked, 1.47 times, over 1.3. The side quests (#519) add 800, 250, 250 and 300 a member,
   under their scaled 1,100 (§9, #519's 11): 29,386, 1.51 times. Meridian Camp's third
-  level (#22), still to land, adds about 3,003 to that clear until the outside-budget change, a
-  systems pull request in review, lets it stand outside the area's budget. Cinderport pays nothing,
+  level (#22) pays 3,003, 1.00 of the brief's 3,000, outside the area's budget (EXPANSION §5.2): the
+  area lists it `outside`, so the curve prints its pay as a figure and no clear counts it (§9,
+  #22's 5). Cinderport pays nothing,
   as a town pays none, and its halls add no quest of their own (§9, #512's 6): its 600 is the
   Cartographers' Surveyor's rung's, 3,600 xp shared by six and 500 gold for the fourth journal found
   under the Ember Stone, paid at any hall of the Guild (#635).
@@ -1317,7 +1333,9 @@ before, and a Stone that lights is the Hearth's count (§9, #516's 15).
   benches' chest with a Battle Staff +1 and a Drakeskin Coat +1, the coat at 3,250 its dearest find,
   now the area's, inside the window. The six boxes, the vents, Old Cinder, the corridors and the
   Stone hold 9,400 of the 11,760 the training costs, and 9,900 with the Surveyor's rung's 500, paid
-  at the hall. Cinderport holds no gold, a town paying
+  at the hall. The camp's 1,200 gold and its Meridian Staff +4 at 2,600, in the kit chest, are
+  outside the area's budget and held to the Glasswold's window of 6,000 (§9, #22's 5).
+  Cinderport holds no gold, a town paying
   nothing; the dearest ware at its armourer's is the Drakeskin Coat at 3,100 and the Quickening
   Draught at its chandler's, the company's kit from 25, is 2,000, both inside the window (#512).
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
@@ -1337,7 +1355,10 @@ before, and a Stone that lights is the Hearth's count (§9, #516's 15).
   ending in a fight broken off (docs/areas/meridian_camp.md §4.1). On the iron corridors a company
   at 26 wins 90.3% of the fights and manages 8.69 fights to a rest, 88% of its days ending in a
   fight broken off, and the Brood Drake is won 61% of the time at 26 and 100% at 28
-  (docs/areas/meridian_camp.md §4.2). A company at 25 wins every F11 fight, 10.82 fights to a rest,
+  (docs/areas/meridian_camp.md §4.2). On the camp, judged at its own floor, 27, and out of the area's
+  pools, a company wins every fight and manages 10.64 fights to a rest, 73% of its days ending in a
+  fight broken off; two under, at 25, it wins every fight too, owed to #18
+  (docs/areas/meridian_camp.md §4.3). A company at 25 wins every F11 fight, 10.82 fights to a rest,
   16.3% of its days ending in a fight broken off (§4.6). In Old Cinder's town a company at 25 wins
   82.5% of the fights, the Old Drake counted, off the aim of 90% and inside the limit of 80%, and
   manages 11.76 fights to a rest, over the aim and inside the limit, with 4.3% of its days broken
@@ -1363,7 +1384,8 @@ before, and a Stone that lights is the Hearth's count (§9, #516's 15).
   among its 25 (#512); G11 100.0% within 8 steps and the furthest 8, with no sign among its 27
   points (#513); the vents 100.0% within 7 steps (279 of 279) and the furthest 6, with no sign among
   their 25 points (#22); the iron corridors 100.0% within 7 steps (193 of 193) and the furthest 7 of
-  10, with no sign among their 24 points (#22); F11 100.0% within 8 steps and the furthest 8 of 15,
+  10, with no sign among their 24 points (#22); the camp 100.0% within 7 steps (226 of 226) and the furthest 6
+  of 10, with no sign among its 24 points (#22); F11 100.0% within 8 steps and the furthest 8 of 15,
   with no sign among its 28 points (#514); Old Cinder's two levels 100.0% within 7 steps (92 of 92
   and 67 of 67), the furthest 5 and 4 of 10, with no sign among their 16 and 13 points (#515); the
   Ember Stone 100.0% within 7 steps (108 of 108), the furthest 6 of 10, with no sign among its 15
@@ -2147,6 +2169,15 @@ docs/areas/meridian_camp.md §8:
    overshooting, and the Brood Drake and the Old Drake are optional kills: the chapter never passes
    them.
 
+Decided by delegate for #22 (the camp), each the owner's to overturn; the dungeon's own are in
+docs/areas/meridian_camp.md §8:
+
+5. **The camp pays outside the area's budget,** 3,003 xp a member and 1,200 gold, and Ashfall lists
+   it `outside` (PR #679's rule: the camp's floor, 27, is past the band 24–26). Ashfall's clear is
+   unchanged by it, 29,386 xp a member of the 19,467 asked and 9,900 gold, and the camp's finds sit
+   in the Glasswold's window of 6,000, not Ashfall's 5,500 (the dungeon's §8, the camp's 3, 4 and
+   13).
+
 Decided by delegate for #516, each the owner's to overturn:
 
 1. **The map is `ember_stone`,** the plan's id, one level of 16×16, its ids `es_*`. Its plate at
@@ -2445,8 +2476,8 @@ Owed, from the iron corridors (#22); the dungeon's own are in docs/areas/meridia
   2,27, on `meridian_camp2`), with the vents' `ember_part1` (`mc1_part`, 23,24) and Old Cinder's
   `ember_part2` (#515); none of the three sets a flag on finding, and each socket sets its own (§9,
   #22's 1; #515's 12; #516's 6).
-- **The camp's stair stays barred** until the third level lists `STAIR2`
-  (docs/areas/meridian_camp.md §8, the corridors' 13).
+- **The camp's stair stood barred** until the third level listed `STAIR2`
+  (docs/areas/meridian_camp.md §8, the corridors' 13; the camp's 12).
 
 Cut and owed, from the Ember Stone (#516):
 
@@ -2468,8 +2499,9 @@ Cut and owed, from the Ember Stone (#516):
   #516's 12).
 - **The chapter reads `q_ember_lit`:** its Stone lit step and the road on are #518's, and so are the
   sentries' parts (F11's, §9, #514's 18).
-- **The Mapmaker's rung** (the Cartographers' rank 3) rides Meridian Camp's third level (#22) and
-  the Factor's the Dead-Drop (#635's C and D). The Chart House's picture
+- **The Mapmaker's rung,** "Fane's Fire" (the Cartographers' rank 3), is owed now that Meridian
+  Camp's third level is built: its deed is `seen: 'meridian_camp3:mc3_fire'` (docs/areas/meridian_camp.md
+  §8, the camp's 7). The Factor's rides the Dead-Drop (#635's C and D). The Chart House's picture
   (`cinderport_cartographers`, in `src/ui/interiors`) may draw the shelf's gap; the flag does not
   change it.
 - **MONSTERS §8.2's Where column for the Sentinel** and its figure there (54% at 26) predate this,
