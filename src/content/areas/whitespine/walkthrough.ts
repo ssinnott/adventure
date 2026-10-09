@@ -10,15 +10,22 @@
 // toward the Hearth once stood at; the ridge trail leaving north beside it; the shrine, the keeper, the
 // cairn and the nest; the lookout over Ashfall and the ground under the Sheer, reached by a climb; the
 // camp under the snow line; the box's groups won at its floor; and under the one unfrosted slab of the
-// ring, the Lantern's survey marker and her instruments.
+// ring, the Lantern's survey marker and her instruments. Then Stairwatch and the Stair's head (I10,
+// #502) walked: up the ridge trail from the Stone, nothing said; the trail on north to the edge, the
+// road off it west to the head at the atlas's link and the Stair down through the Sheer to the west
+// edge; the caravan short of the head, its master and his girl; the toll-stone and the old shrine; the
+// box's groups won at its floor, the giants sweeping; the toll put before the fight: refused, the
+// fight and the hoard under the seat; paid in gold or in the grey part, the walk down the Stair;
+// and Stairwatch's ledge, found up the chimney behind the pines, and the old champion on it.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen } from '../../../../tools/walk.ts';
+import type { Walk } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import { stonesRestored } from '../../../game/stones.ts';
-import { ATLAS, MAP_DEFS } from '../../index.ts';
+import { ATLAS, MAP_DEFS, MONSTERS } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
-import { meet, heard } from '../../../game/people.ts';
+import { meet, heard, answer, barred, SHORT, NONE } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
 import { SADDLE } from '../rimewater/maps/coldmere_k10.ts';
 import { CLIMB, GATE } from './maps/monksvale_j11.ts';
@@ -169,8 +176,8 @@ export const walkthrough: Walkthrough = (ok) => {
   const stone = I11.features!.find((f) => f.kind === 'event' && f.id === 'i11_stone')!;
   ok(i11.x + stone.x === Math.floor(peak.at[0]) && i11.y + stone.y === Math.floor(peak.at[1]) && !peak.planned && walked.has(at(stone)),
     'the Peak Stone stands at the atlas\'s site, 28,0, built, and the crest path reaches it from the crossing');
-  ok(road(i11.x + 27, i11.y) && walked.has(at({ x: 27, y: 0 })) && out.passable(i11.x + 27, i11.y - 1) !== 'ok',
-    'the ridge trail leaves north beside the Stone at 27,0, and past the edge, for now, the world ends');
+  ok(road(i11.x + 27, i11.y) && walked.has(at({ x: 27, y: 0 })) && road(i11.x + 27, i11.y - 1),
+    'the ridge trail leaves north beside the Stone at 27,0, on into I10 (#502)');
   // The Stone, whole: stood at, it counts toward the Hearth, though nothing was wrong with it.
   const lit = stonesRestored(w.world.state, w.party);
   see(w, 'highspine_i11:i11_stone');
@@ -229,4 +236,140 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(lifts && down.every((r) => r.kind === 'moved') && w.world.used('i11_marker'), 'searched at the one slab with no frost, it lifts, and the hollow under it can be walked into');
   listen(w);
   ok(survey?.kind === 'chest' && survey.items.includes('lantern_instruments') && survey.gold === 300 && survey.x === slab.x && survey.y === slab.y + 2, 'in the hollow, the Lantern\'s instruments and 300 gold');
+
+  // I10, Stairwatch and the Stair's head (#502). Up the ridge trail from I11's 27,0 onto I10's 27,31,
+  // walked: the same land at the same floor, so nothing is said at any level, nor straight back.
+  const I10 = MAP_DEFS.find((d) => d.id === 'highspine_i10')!, i10 = out.zones.find((z) => z.id === 'highspine_i10')!;
+  const ridge = (level: number): string[] => {
+    for (const m of w.party.members) m.level = level;
+    w.world.travel('highspine_i11', 27, 0, NORTH);
+    const r = w.world.move('forward');
+    return r.kind === 'moved' ? r.messages : [r.kind];
+  };
+  const ridgeSaid = [ridge(19), ridge(20), ridge(22)];
+  ok(w.world.zone?.id === 'highspine_i10' && w.world.state.x === i10.x + 27 && w.world.state.y === i10.y + 31 && i10.x === i11.x && i10.y + i10.h === i11.y && I10.start.x === 27,
+    'up the ridge trail from I11\'s 27,0 onto I10\'s 27,31, walked, the box\'s way in');
+  w.world.travel('highspine_i10', 27, 31, SOUTH);
+  const ridgeBack = w.world.move('forward');
+  ok(ridgeSaid.every((m) => !m.length) && ridgeBack.kind === 'moved' && !ridgeBack.messages.length && w.world.zone?.id === 'highspine_i11',
+    `on the trail between I11 and I10 nothing is said either way, the same land at the same floor (${ridgeSaid.map((m) => m.join(' / ') || 'nothing').join('; ')})`);
+  listen(w);
+  for (const m of w.party.members) m.level = 22;
+
+  // The trail on north to the edge at 18,0, where the atlas's trail crosses for I9 (#503), and past it,
+  // for now, the world ends; off it west, the road to the Stair's head at the atlas's link, 272,306; and
+  // the Stair down through the Sheer to the west edge at 0,20, for Ashfall's H10 (#510), past which,
+  // for now, the world ends too.
+  const onI10 = (x: number, y: number): boolean => x >= i10.x && x < i10.x + i10.w && y >= i10.y && y < i10.y + i10.h;
+  const at10 = (f: { x: number; y: number }): number => (i10.y + f.y) * out.width + i10.x + f.x;
+  const walked10 = reach(i10.x + 27, i10.y + 31, (x, y) => onI10(x, y) && out.passable(x, y) === 'ok');
+  ok(road(i10.x + 18, i10.y) && walked10.has(at10({ x: 18, y: 0 })) && out.passable(i10.x + 18, i10.y - 1) !== 'ok',
+    'the ridge trail leaves north at 18,0, and past the edge, for now, the world ends');
+  const link = ATLAS.links.find((l) => l.note === 'the Giants\' Stair')!;
+  ok(link.b?.[0] === i10.x + 8 && link.b?.[1] === i10.y + 20 && [...Array(16).keys()].every((i) => road(i10.x + 8 + i, i10.y + 20)),
+    'the road leaves the trail west for the Stair\'s head, at the atlas\'s link, 272,306');
+  ok(road(i10.x, i10.y + 20) && road(i10.x + 1, i10.y + 20) && out.at(i10.x, i10.y + 19).ch === '|' && out.at(i10.x + 1, i10.y + 21).ch === '|' && walked10.has(at10({ x: 0, y: 20 })) && out.passable(i10.x - 1, i10.y + 20) !== 'ok',
+    'the Stair goes down through the Sheer to the west edge at 0,20, and past it, for now, the world ends');
+
+  // The caravan drawn up short of the head that cannot pay (#56's 47, #506's), past the Stair in snow:
+  // the master by his wagons, and at the head his girl, whom the king keeps; people with words only.
+  const who10 = (name: string): Person => I10.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
+  const [master, girl, champion] = [who10('A caravan-master'), who10('A girl'), who10('An old champion')];
+  const king = I10.encounters!.find((g) => g.id === 'i10_king')!, stair = I10.encounters!.find((g) => g.id === 'i10_stair')!;
+  w.world.travel('highspine_i10', master.x, master.y);
+  ok(meet(master, w.party, heard(w.world, master)).text.includes('he has my girl') && master.x > stair.x && stair.x > 7 && walked10.has(at10(master)),
+    'the caravan-master waits short of the head, past the Stair in snow, and the king has his girl');
+  see(w, 'highspine_i10:i10_caravan');
+  see(w, 'highspine_i10:i10_drift');
+  w.world.travel('highspine_i10', girl.x, girl.y);
+  ok(meet(girl, w.party, heard(w.world, girl)).text.includes('Only ever about the toll') && Math.abs(girl.x - king.x) + Math.abs(girl.y - king.y) > 1, 'his girl sits at the head, out of the road');
+  // The head: the step's line, the toll-stone with the mark under its lip, the shrine older than the monks'.
+  see(w, 'highspine_i10:i10_head');
+  see(w, 'highspine_i10:i10_tollstone');
+  const old = I10.features!.find((f) => f.kind === 'shrine' && f.id === 'i10_shrine');
+  ok(!!old && walked10.has(at10(old)) && Math.abs(old.x - king.x) <= 5 && old.y >= 19 && old.y <= 21, 'the shrine older than the monks\' at the Stair\'s head');
+
+  // The box's groups, each won at its floor: the eagles in the pines, and the Stair in snow, a giant who
+  // sweeps the front row and a snow troll who mends unless burned (MONSTERS §8.1).
+  ok(stair.monsters.includes('stair_giant') && stair.monsters.includes('snow_troll') && !!MONSTERS.stair_giant.sweep && !MONSTERS.stair_giant.sweep.element && !!MONSTERS.stair_king.sweep && !!MONSTERS.snow_troll.regen,
+    'on the road short of the head a giant who sweeps the front row with his arm, and a troll who mends');
+  fight(w, 'highspine_i10:i10_eagles');
+  fight(w, 'highspine_i10:i10_stair');
+
+  // The toll (#544): beside the king's group on the road it asks before it fights. Refused, it is the
+  // fight, and asked again until then; won at 23, the king falls, and in the hollow under his seat, its
+  // one mouth his square, the hoard.
+  const parley = (v: Walk, label: string): string => {
+    v.world.travel('highspine_i10', king.x + 2, king.y, WEST);
+    const r = v.world.move('forward'), c = v.world.question(king.id), a = c?.answers.find((x) => x.label === label);
+    v.ok(r.kind === 'moved' && r.asks === king.id && !r.encounter && !!a, `beside the king's group the toll is put before the fight, and '${label}' is an answer (${c?.ask ?? 'no question'})`);
+    const said = a ? answer(a, v.party) : '';
+    listen(v);
+    return said;
+  };
+  w.level = 23;
+  for (const m of w.party.members) m.level = 23;
+  ok(parley(w, 'Refuse.').startsWith('He sighs') && !!w.world.question(king.id) && king.leader === 'stair_king' && king.monsters.filter((m) => m === 'stair_giant').length === 2 && MONSTERS.stair_giant.kind === 'person',
+    'refused, the king and his two giants fight, people who break when he falls, and would ask again');
+  fight(w, 'highspine_i10:i10_king');
+  const hoard = I10.features!.find((f) => f.kind === 'chest' && f.id === 'i10_hoard');
+  const hollow = new Set<number>(), dig = [[i10.x + 2, i10.y + 19]];
+  while (dig.length) {
+    const [x, y] = dig.pop()!, k = y * out.width + x;
+    if (hollow.has(k) || (x === i10.x + king.x && y === i10.y + king.y) || !onI10(x, y) || out.passable(x, y, { swim: true, climb: true, float: true }) !== 'ok') continue;
+    hollow.add(k);
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) dig.push([x + dx, y + dy]);
+  }
+  ok(hoard?.kind === 'chest' && hoard.gold === 1200 && hoard.items.includes('bear_spear+1') && hollow.size === 2 && hollow.has(at10(hoard)),
+    `under the seat the hoard, 1,200 gold and a Bear Spear +1, in a hollow of ${hollow.size} squares whose one mouth is the king's square`);
+  see(w, 'highspine_i10:i10_hoard_seen');
+
+  // Paid, in gold or in a part from the nest in place of gold, the giants stand aside and the company
+  // walks down the Stair past them; short of the price, or with no part to give, the toll is barred.
+  const TOLL = king.choice!;
+  for (const how of ['Pay the toll.', 'Give him the grey part.']) {
+    const v = newWalk(ok);
+    v.level = 23;
+    v.party.gold = 1499;
+    const [gold, part] = [TOLL.answers.find((a) => a.label === 'Pay the toll.')!, TOLL.answers.find((a) => a.label === 'Give him the grey part.')!];
+    v.ok(barred(gold, v.party) && answer(gold, v.party) === SHORT && barred(part, v.party) && answer(part, v.party) === NONE && !!TOLL.answers.find((a) => a.takes === 'faceless_coin'),
+      'one short of the 1,500 gold, or with no grey part, the toll is barred; the faceless coin is taken too');
+    if (how === 'Pay the toll.') v.party.gold = 1500; else v.party.bag.push('grey_part');
+    const said = parley(v, how);
+    const down = [v.world.move('forward'), v.world.move('forward'), v.world.move('forward')];
+    v.ok(said.length > 0 && !v.world.question(king.id) && v.world.standsAside(king) && down.every((r) => r.kind === 'moved' && !r.encounter && !r.asks) && v.world.state.x === i10.x && v.world.state.y === i10.y + 20
+      && (how === 'Pay the toll.' ? v.party.gold === 0 : !v.party.bag.includes('grey_part') && said.includes('before anyone came down the sky')),
+      `'${how}': the giants stand aside, and the company walks down the Stair past them (${said.split('\n')[0]})`);
+  }
+
+  // Stairwatch (#448): smoke over the rock south of the head, where nothing stands, and a rope's wear
+  // on one rock at the pines' edge; searched, the chimney behind it, climbed to the ledge at the
+  // atlas's site and the old champion's fire. Walked, waded, climbed or floated, the ledge is never
+  // reached but up the chimney.
+  see(w, 'highspine_i10:i10_smoke');
+  see(w, 'highspine_i10:i10_rope');
+  const [chimney] = I10.secrets!;
+  const ledge = I10.features!.find((f) => f.kind === 'event' && f.id === 'i10_ledge')!;
+  const watch = ATLAS.sites.find((s) => s.name === 'Stairwatch')!;
+  const sealedLedge = new Set<number>(), go = [[i10.x + chimney.x, i10.y + chimney.y - 1]];
+  while (go.length) {
+    const [x, y] = go.pop()!, k = y * out.width + x;
+    if (sealedLedge.has(k) || (x === i10.x + chimney.x && y === i10.y + chimney.y) || !onI10(x, y) || out.passable(x, y, { swim: true, climb: true, float: true }) !== 'ok') continue;
+    sealedLedge.add(k);
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) go.push([x + dx, y + dy]);
+  }
+  ok(sealedLedge.size > 500 && !sealedLedge.has(at10(ledge)) && i10.x + ledge.x === watch.at[0] && i10.y + ledge.y === watch.at[1] && !watch.planned,
+    `the ledge at the atlas's Stairwatch is shut but for the chimney: none of I10's ${sealedLedge.size} squares walked, waded, climbed or floated reaches it`);
+  w.world.travel('highspine_i10', chimney.x, chimney.y - 1, SOUTH);
+  let found = false;
+  for (let i = 0; i < 20 && !found; i++) found = w.world.search();
+  const up = found ? [w.world.move('forward'), w.world.move('forward'), w.world.move('forward')] : [];
+  ok(found && up.every((r) => r.kind === 'moved') && w.world.used('i10_ledge'), 'searched at the worn rock, the chimney is found, and climbed to the ledge over the Stair');
+  w.world.travel('highspine_i10', champion.x, champion.y);
+  ok(meet(champion, w.party, heard(w.world, champion)).text.includes('Forty years') && Math.abs(champion.x - ledge.x) + Math.abs(champion.y - ledge.y) === 1, 'the old champion keeps his watch on the ledge');
+  listen(w);
+
+  // The drovers' fire back in the pines.
+  const fire = I10.features!.find((f) => f.kind === 'camp' && f.name === 'The drovers\' fire');
+  ok(!!fire && walked10.has(at10(fire)) && out.at(i10.x + fire.x, i10.y + fire.y).ch === 'p', 'the drovers\' fire, back in the pines');
 };

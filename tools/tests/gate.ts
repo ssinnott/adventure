@@ -84,6 +84,8 @@ export const BOSSES: Record<string, readonly string[]> = {
   kilnsheart: ['deep_mines3:dm3_foreman', 'anvil_stone:as_warden', 'lava_tubes2:lt2_great_salamander'],
   cairnfield: ['cairns2:cd2_king'],
   coldmere: ['sleepers_bay2:sb2_matron'],
+  // The Stair-king at the Stair's head, who asks the toll first; the bot refuses (#502).
+  highspine: ['highspine_i10:i10_king'],
 };
 
 /** Each zone's road: the groups met on it, in order, from its way in. Every zone with groups names one. */
@@ -124,8 +126,10 @@ export const ROADS: Record<string, readonly string[]> = {
   // Down off the pass past the brothers at its foot, and on down the road to the gate past the brothers
   // walking it (#499).
   monksvale: ['monksvale_j11:j11_brothers_foot', 'monksvale_j11:j11_brothers_road'],
-  // Over the crest from the vale and up the path to the Peak Stone, past the brothers walking it (#501).
-  highspine: ['highspine_i11:i11_brothers'],
+  // Over the crest from the vale and up the path to the Peak Stone, past the brothers walking it (#501);
+  // then up the ridge trail and west along the road to the Stair, past the giant and the troll in the
+  // snow short of the head (#502).
+  highspine: ['highspine_i11:i11_brothers', 'highspine_i10:i10_stair'],
 };
 
 /** What an area is called in the check, apart from the map it shares an id with. */

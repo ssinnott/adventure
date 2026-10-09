@@ -3,13 +3,14 @@
 import type { Area } from '../../area.ts';
 import { MONKSVALE_J11 } from './maps/monksvale_j11.ts';
 import { HIGHSPINE_I11 } from './maps/highspine_i11.ts';
+import { HIGHSPINE_I10 } from './maps/highspine_i10.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
   id: 'whitespine' as const,
-  maps: [MONKSVALE_J11, HIGHSPINE_I11],
+  maps: [MONKSVALE_J11, HIGHSPINE_I11, HIGHSPINE_I10],
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,
@@ -23,7 +24,8 @@ export const AREA = {
   // No town, and no business (#443, call 7).
   interiors: [] as const,
   // Peaks underfoot, with the road through them (#543), with J11 (#499); the Sheer's cliff, seen from
-  // its top and climbed down by a Mountaineer, with I11 (#501).
-  novel: { families: [], terrain: ['peak', 'cliff'], mechanics: [], landmarks: [] },
+  // its top and climbed down by a Mountaineer, with I11 (#501); the giants, a new family, with I10
+  // (#502), whose sweep and toll have no token of their own to claim (the toll is Thornmark's).
+  novel: { families: ['giants'], terrain: ['peak', 'cliff'], mechanics: [], landmarks: [] },
   atlas: { zones: ZONES, places: PLACES, sites: SITES },
 } satisfies Area;
