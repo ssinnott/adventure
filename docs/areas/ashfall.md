@@ -116,6 +116,15 @@ a vent's fire in its lip and its smoke going up; lava is the `!` there was. The 
 with its 207 squares of vines and G11 with its 102 of lava; the atlas lays the cone as mountain, so
 #513 letters it `V` and its mouth `@` over the draft (docs/SLICE.md).
 
+The Ember Stone counts for the Hearth (#548): its row in `src/content/stones.ts` restores it on
+`q_ember_lit`, the flag the Stone's dungeon sets the moment its third part is in and it lights
+(#516, §9). Nothing sets it yet, so it is owed to the chapter (#518) in `UNSET`
+(`tools/tests/quests.ts`) and the first map that sets it drops the entry there. The sentries stand
+`after` that flag on every box (#449): the Hearth's check (`tools/tests/stones.ts`) holds a fixture
+box with a group of the test elite at the Sentry's level `after` it, not there before the Stone is
+lit and standing, in the way and fought, after. No box places one yet, and the words on the roads
+and in Cinderport that say they are not what they were are the boxes' and #449's.
+
 Four of its nine monsters are drawn ahead of the area (#520): the Strangler Vine, the Cinder Beetle,
 the Ember Salamander and the Ash Husk, on the old wood's, the spider's, the salamanders' and the
 skeleton's frames (§7), in `src/content/areas/ashfall/monsters.ts` and listed in `AHEAD`
@@ -123,10 +132,11 @@ skeleton's frames (§7), in `src/content/areas/ashfall/monsters.ts` and listed i
 (`UNPLACED`, `tools/tests/maps.ts`): the vine and the beetle to #510, the salamander to #511 and the
 husk to #514. Nothing else is built.
 
-The systems it waits on are the rest of #442's: sweep with fire (#545), the ship to Cinderport, the Riders' ride and the last crossing (#547), the
-Ember Stone for the Hearth and the sentries after (#548) and the bot grown to the band (#549); the
-giants' toll (#544) and stone (#546) are its neighbours'. The rest of its monsters, the drakes and
-the heavy machines, are #520's to draw, and its rooms #521's. Meridian Camp is #22, parked until #443 unparks it.
+The systems it waits on are the rest of #442's: sweep with fire (#545), the ship to Cinderport, the
+Riders' ride and the last crossing (#547) and the bot grown to the band (#549); the giants' toll
+(#544) and stone (#546) are its neighbours'. The rest of its monsters, the drakes and the heavy
+machines, are #520's to draw, and its rooms #521's. Meridian Camp is #22, parked until #443 unparks
+it.
 
 ## 4. What is still to build
 
@@ -391,7 +401,7 @@ half, with the wilderness features (#45); no more than one point in four is a si
   as the builders left them, three sockets empty and a door in the floor that has never opened.
   Finishing the Stone is a hand-in of three items, which shuts nothing before it (#443, call 2;
   #450); the moment it lights, the Sentinel comes up through the door, the first thing up (MONSTERS
-  §8.2), and the Hearth steadies (#548).
+  §8.2), and the Hearth steadies (#548, on `q_ember_lit`, §9).
 - **Landmarks.** The housing, iron that has not rusted; the gallery round it; the three sockets at
   its heart; the door in the floor, shut; the builders' benches; the seedling's bed at the field's
   edge, where the Druid's quest ends (#448, §4.9).
@@ -400,7 +410,7 @@ half, with the wilderness features (#45); no more than one point in four is a si
 - **Encounters.** Cinder beetles nesting in the works (two groups); a cinder drake on the housing's
   top; after the hand-in, the Sentinel, boss, level 26, in the chamber as the door opens, and
   sentries up through it after (`after`), two groups.
-- **Quests.** The Stone lit: the chapter's last step (§5). The Druid's third: the seedling kept
+- **Quests.** The Stone lit, on `q_ember_lit` (§9): the chapter's last step (§5). The Druid's third: the seedling kept
   alive until it is (#448).
 - **The secret and its hint.** A lower gallery under the housing where the Meridian Company stopped
   on their way to the vents, and the fourth journal in it, the one the shelf at Cinderport lacks
@@ -735,6 +745,35 @@ Decided by delegate for #520 (the four on frames), each the owner's to overturn:
 7. **Each is owed to the first box that places it:** the vine and the beetle to H10 (#510), the
    salamander to G10 (#511, the proposal in §7; to G11, #513, if the owner does not take it) and the
    husk to F11 (#514), whose crater sends them out by night before Old Cinder (#515).
+
+Decided by delegate for #548, each the owner's to overturn:
+
+1. **The flag is `q_ember_lit`,** set the moment the Stone's third part is in and it lights. The
+   Stone's dungeon sets it (#516: the hand-in's last part, in the same step that brings the Sentinel
+   up), the chapter reads it for the Stone lit and the road on (#518, §5) and the sentries and the
+   Sentinel stand `after` it (#449, #516). It is the Stones' own form (`q_tide_home`,
+   `q_grove_mended`, `q_anvil_closed`) and not `_done`, which would read as the chapter's end
+   (docs/areas/kilns.md §9, #540). Nobody renames it or adds a second.
+2. **The Hearth counts the lighting, not the parts.** A part carried, or one or two set, restores
+   nothing; the Stone counts once all three are in and it lights (call 2: a hand-in that shuts
+   nothing before it). No flag per part is decided here: #516 chooses how the hand-in remembers the
+   parts that are in, and the Hearth reads only the lighting. It counts whatever else the company
+   has restored, as the Anvil Stone does: the road's order is not a lock (§5).
+3. **A flag, owed to #518 in `UNSET`** (`tools/tests/quests.ts`, #415), as `q_anvil_closed` was
+   (docs/areas/kilns.md §9, #540): the Stone's dungeon is not built, and the structure check reads a
+   group's `after` as a real flag, so every box may place its sentries `after` it meanwhile. The
+   first map to set it drops the entry there.
+4. **The sentries need no new field.** `after` (#41) is the whole of it, and the Hearth's check
+   (`tools/tests/stones.ts`) holds a fixture box carrying a group of the test elite at the Sentry's
+   level (26) `after` the Ember Stone's own `restored` condition, so the flag that counts is the flag
+   they wait on: not there before the Stone is lit, standing after it, in the way and fought. The
+   Sentry (#520) and its groups on every box (#449) are not built here, nor the words on the roads
+   and in Cinderport that say the roads are not what they were.
+5. **No wording changes.** The title, the sky and the almanac read the count, which stands at five
+   Stones already, so the Ember Stone is one step more wherever it falls: four in the table as it
+   stands, the Peak Stone having no condition yet, where the almanac says "It hardly wavers now."
+   The Hearth burning steadier than in all our lives (STORY) is the count rising, and the chapter's
+   to say if it says it (#518), not the almanac's.
 
 ## 10. Names
 
