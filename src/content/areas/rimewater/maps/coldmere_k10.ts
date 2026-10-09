@@ -1,16 +1,18 @@
 // Rimewater, box K10: the high pass. Core, band 20-22: the road in from L9 over the river out of the
 // lake on split logs, and west through the pines under the cold loch's foot to the pass's mouth, where
-// it climbs into the range between two walls of rock for J11 (#499), the world's end until it is laid;
+// it climbs into the range between two walls of rock and over for the Whitespine's J11 (#499);
 // the lake in the box's east, its shore iced; a Lantern's wayside lamp by the road, dark, its jar full;
 // the milestone at the pass's foot; the pilgrims from Anvilhall camped in the snow below the mouth; and
 // the pass's first shoulder, from which the first peak of the range is seen.
 // In from L9 (#488) by its pass, taken, not walked, parked L10 lying between: L9's PASS lands on the
-// bridge at 30,3, and the road's last square, 31,3, leads back. The north edge meets K9 (#489) square for
-// square, walked anywhere; the west and south edges end the world against J10 and parked K11.
+// bridge at 30,3, and the road's last square, 31,3, leads back. Out over the pass the same way, parked
+// J10 lying between: the road's square at the west edge, 0,19, is taken onto J11's road (SADDLE). The
+// north edge meets K9 (#489) square for square, walked anywhere; the west and south edges end the world
+// against J10 and parked K11.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/rimewater.md §4.7 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import type { When } from '../../../../game/quests.ts';
-import { NORTH, WEST } from '../../../../game/types.ts';
+import { NORTH, SOUTH, WEST } from '../../../../game/types.ts';
 
 /** The pilgrims gone from below the pass, up with the brother or back to the lodge (#56's 44, #494). */
 const GONE: When = [{ flag: 'q_pilgrims_up' }, { flag: 'q_pilgrims_back' }];
@@ -22,6 +24,13 @@ const GONE: When = [{ flag: 'q_pilgrims_up' }, { flag: 'q_pilgrims_back' }];
  */
 export const RIDGE: Exit = { x: 31, y: 3, to: 'longmere_l9', tx: 7, ty: 31, tf: NORTH, label: 'Back up the road to the long loch.' };
 
+/**
+ * Over the pass into the Whitespine (#499): from the road's square at the west edge, 0,19, across
+ * parked J10's corner onto J11's 20,1, facing south, the road's square there below its own way back.
+ * The label leaves the vale's name to the crossing line said after it (#166, #616).
+ */
+export const SADDLE: Exit = { x: 0, y: 19, to: 'monksvale_j11', tx: 20, ty: 1, tf: SOUTH, label: 'Over the saddle of the pass and down the far side.' };
+
 export const COLDMERE_K10: MapDef = {
   id: 'coldmere_k10',
   name: 'Loch Fuar',
@@ -30,7 +39,7 @@ export const COLDMERE_K10: MapDef = {
   band: [20, 22],
   region: 'rimewater',
   start: { x: 30, y: 3, facing: WEST },
-  exits: [RIDGE],
+  exits: [RIDGE, SADDLE],
   rows: [
     'ppppppppppppp^,,,,,,,iiiiiiii~pp',
     'pp^^^pppppppp^,,,,,ppppiiiiii~~p',

@@ -22,7 +22,7 @@ import { AREA as sunderwood } from './areas/sunderwood/index.ts';
 import { AREA as kilns } from './areas/kilns/index.ts';
 import { AREA as cairnmoor } from './areas/cairnmoor/index.ts';
 import { AREA as rimewater } from './areas/rimewater/index.ts';
-import * as whitespine from './areas/whitespine/monsters.ts';
+import { AREA as whitespine } from './areas/whitespine/index.ts';
 import * as ashfall from './areas/ashfall/monsters.ts';
 import { ITEMS as ASHFALL_ITEMS } from './areas/ashfall/items.ts';
 import { ITEMS as CORE_ITEMS } from './items.ts';
@@ -30,7 +30,7 @@ import { SPELLS as ALL_SPELLS } from './spells.ts';
 import { PLAN } from './atlas.ts';
 
 /** The areas in road order. The order is behaviour: a new game starts on the first area's first map. */
-export const AREAS = [shelf, thornmark, saltreach, wrackholm, sunderwood, kilns, cairnmoor, rimewater] as const;
+export const AREAS = [shelf, thornmark, saltreach, wrackholm, sunderwood, kilns, cairnmoor, rimewater, whitespine] as const;
 
 /**
  * Monsters drawn ahead of their area: an area is listed in AREAS only once it has a map to start
@@ -38,7 +38,6 @@ export const AREAS = [shelf, thornmark, saltreach, wrackholm, sunderwood, kilns,
  * an area's are; once the area is listed, its Area takes the import and its line here goes.
  */
 export const AHEAD = [
-  { id: 'whitespine' as const, sprites: whitespine.SPRITES, monsters: whitespine.MONSTERS },
   { id: 'ashfall' as const, sprites: ashfall.SPRITES, monsters: ashfall.MONSTERS },
 ] as const;
 
