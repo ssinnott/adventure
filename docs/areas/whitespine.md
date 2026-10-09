@@ -100,10 +100,12 @@ Its ground (#543): peaks (`A`) and cliffs (`|`), the mountain's rock to walk int
 with the road through them plain road, so the scaffold drafts each box square for square (J11's 202
 peaks, I11's 48 peaks and 64 cliffs) and the view draws a summit and a face (docs/SLICE.md).
 
-Nothing else is built but six of its monsters (below). The systems it waits on are #442's: the
-curve's rows and the gear past 22 (#542), the toll (#544), sweep (#545), stone (#546), the crossings
-(#547), the Ember Stone (#548) and the bot (#549). The giants are #507's, the last of its eight
-drawings.
+Its row on the curve is in (#542), in `src/content/progression.ts`, planned until #499 lists the
+area (band 22–24, next 24, window 5,000). It has no step on the gear ladder, no town to sell one:
+Rime Lodge's rung is the pass's, and Cinderport's step (docs/areas/ashfall.md §4.4) comes two
+levels on. Nothing else is built but six of its monsters (below). The systems it waits on are the
+rest of #442's: the toll (#544), sweep (#545), stone (#546), the crossings (#547), the Ember Stone
+(#548) and the bot (#549). The giants are #507's, the last of its eight drawings.
 
 The monks are drawn (#507), three of MONSTERS §8.1's eight, ahead of the boxes that place them: the
 Brother, the Bell-ringer and the Abbot, robed on the keepers' frame (`src/ui/monsters/keepers.ts`).
@@ -481,9 +483,10 @@ shards over the sea.
   briefs are settled.
 - **Gold.** Training six members from 22 to 24 costs about 10,800 with today's `trainPrice`, but
   nothing trains here (#443, call 7): the gold goes over the range to Cinderport, which teaches to
-  27, and the third prestiges ask quests, not gold (DESIGN §5). The band's price window is 5,000,
-  and no find or ware in the area comes near it; the toll is set with #544 inside it, dear enough
-  to be a choice and never a wall. A clear should still pay the training, in the hoard, the
+  27, and the third prestiges ask quests, not gold (DESIGN §5). The band's price window is 5,000
+  (#542), and no find or ware in the area comes near it: the pass has no step of its own and wears
+  Rimewater's rung, 1,750 to 2,050 gold with its pluses. The toll is set with #544 inside the
+  window, dear enough to be a choice and never a wall. A clear should still pay the training, in the hoard, the
   undercroft and the trolls' cave.
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor: a
   company at 22 wins nine in ten of J11's fights and walks the road from the pass's foot to the gate
@@ -593,6 +596,14 @@ Decided by delegate for #507 (the eagle, the troll and the mason), each the owne
     (#499), the masons to I8 (#504).
 11. **What was drawn before is unchanged to the pixel:** the eagle and the troll are Builds on
     their frames, their new parts off for every other kind; the mason is a function of its own.
+
+Decided by delegate for #542, each the owner's to overturn (docs/areas/ashfall.md §9 has the step):
+
+1. **The Whitespine's row is 22–24, next 24, window 5,000,** owed to #445 with nothing given, as
+   the issue has it: 17,867 xp a member and 10,800 gold, the training of six from 22 to 24.
+2. **The pass has no step on the ladder,** no town to sell one: its gear is Rimewater's rung, the
+   top at 22, so a company at 24 wears what one at 22 does and Cinderport's step comes at 25. The
+   briefs' pieces of Rimewater's rung with a plus stand; they are the ladder's.
 
 ## 10. Names
 
