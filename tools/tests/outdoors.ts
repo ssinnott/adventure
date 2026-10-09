@@ -443,12 +443,24 @@ export function outdoors(): void {
   // 0 and the steppe under it open both sides from row 1 to 31; its north edge is the Scarp's lip, cliff,
   // against B7; its west edge is the rim, the map's mountain laid as the world's end, as a zone map's ring
   // is where it faces nothing built, the corners with it; its south edge the hills under the rim and the
-  // steppe against B9 (#530). B7 and A8 are cut and B9 is not built, so the world ends past them.
+  // steppe, square for square with the Glass's edge, B9 (#530). B7 and A8 are cut, so the world ends past them.
   const b8 = out.zones.find((z) => z.id === 'wold_b8')!;
   ok(b8.x + b8.w === c8.x && b8.y === c8.y && eastOf(b8) === westOf(c8) && [...Array(31).keys()].every((i) => open(b8.x + 31, b8.y + 1 + i) && open(c8.x, c8.y + 1 + i))
     && northOf(b8) === '%%' + '|'.repeat(30) && westOf(b8) === '%'.repeat(32) && southOf(b8) === '%' + '^'.repeat(7) + 's^' + 's'.repeat(22)
-    && [...Array(32).keys()].every((i) => [out.at(b8.x + i, b8.y - 1), out.at(b8.x - 1, b8.y + i), out.at(b8.x + i, b8.y + 32)].every((c) => c.ch === '%')),
-    `B8's east edge meets C8's west edge square for square, open both sides under the lip; its north edge is the Scarp's lip against B7, its west the rim, the world's end, against A8 and its south the hills under the rim and the steppe against B9, past which the world ends (${eastOf(b8)}; ${northOf(b8)}; ${westOf(b8)}; ${southOf(b8)})`);
+    && [...Array(32).keys()].every((i) => [out.at(b8.x + i, b8.y - 1), out.at(b8.x - 1, b8.y + i)].every((c) => c.ch === '%')),
+    `B8's east edge meets C8's west edge square for square, open both sides under the lip; its north edge is the Scarp's lip against B7 and its west the rim, the world's end, against A8, past which the world ends, and its south the hills under the rim and the steppe against B9 (${eastOf(b8)}; ${northOf(b8)}; ${westOf(b8)}; ${southOf(b8)})`);
+  // The Glass's edge (B9, #530): its north edge meets B8's south edge square for square, the hills under
+  // the rim and the steppe, open both sides from column 1 to 31; its west edge is the rim and its south
+  // the rim's foot, the map's mountain laid as the world's end against A9 and B10, the Glass's; its east
+  // edge the steppe and the dunes against C9 down to row 13, the mesa's rock from 14 to 26, the gap's last
+  // square at row 27, open, and the rim's foot under it. C9 and B10 are the reach's, not built, so the world
+  // ends past them: the Glass is seen from the gap and not walked into.
+  const b9 = out.zones.find((z) => z.id === 'wold_b9')!;
+  ok(b9.x === b8.x && b9.y === b8.y + 32 && northOf(b9) === southOf(b8) && [...Array(31).keys()].every((i) => open(b9.x + 1 + i, b9.y) && open(b8.x + 1 + i, b8.y + 31))
+    && westOf(b9) === '%'.repeat(32) && southOf(b9) === '%'.repeat(32) && eastOf(b9) === 's' + 'u'.repeat(13) + 'r'.repeat(13) + 'u' + '%'.repeat(4)
+    && open(b9.x + 31, b9.y + 27) && !out.exitAt(b9.x + 31, b9.y + 27)
+    && [...Array(32).keys()].every((i) => [out.at(b9.x - 1, b9.y + i), out.at(b9.x + 32, b9.y + i), out.at(b9.x + i, b9.y + 32)].every((c) => c.ch === '%')),
+    `B9's north edge meets B8's south edge square for square, open both sides; its west the rim and its south the rim's foot, the world's end, and its east the steppe, the dunes and the mesa against C9 with the gap's last square at row 27, open, past all of which the world ends (${northOf(b9)}; ${westOf(b9)}; ${southOf(b9)}; ${eastOf(b9)})`);
   // Fionnlios's box (O7, #477): its west edge meets N7's east edge square for square, the peat-cutter's
   // track crossing at row 22 and the tarn's stream at the corner, out into N7's corner and O8's; its
   // north edge the hills and the Kilns' grass under O6, square for square with O6's south edge but its
