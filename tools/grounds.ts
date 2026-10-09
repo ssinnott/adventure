@@ -124,7 +124,7 @@ export const GROUND_SAMPLES: readonly MapDef[] = [
   },
   {
     // The shore's hanging vines, a path through them down to the sand and the Sound; a hut and a
-    // rock among them.
+    // rock among them, and a strangler vine standing in them, as it does, never roaming.
     id: 'ground_vines', name: 'Vines', kind: 'outdoor', start: { x: 6, y: 8, facing: NORTH },
     rows: [
       'MMMMMMMMMMMM',
@@ -138,6 +138,7 @@ export const GROUND_SAMPLES: readonly MapDef[] = [
       'M&&&&&:&&&&M',
       'MMMMMMMMMMMM',
     ],
+    encounters: [{ id: 'ground_strangler', x: 7, y: 6, monsters: ['strangler_vine'], roams: false }],
   },
   {
     // The volcano's flank: the cone over its ash foot with a vent in it ahead, a flow of lava down
