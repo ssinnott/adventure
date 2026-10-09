@@ -819,24 +819,19 @@ Decided by delegate for #525, each the owner's to overturn:
 9. **Gold 1,350:** the track's cairn 300 and a Sapphire Vial, the dunes' cairn 300 and an Elixir,
    the hollow 750 with an Elixir and the Etched Glass. #533's "a walker carries no gold" holds: the
    hollow is a chest, not a drop.
-10. **The secret is the doc's,** the issue's lions' den superseded: the long mound at 9 to 12,12 to
-    14, rock round a hollow of two squares, its mouth a secret door at 12,13 (116,267) facing east.
-    The hint is `d9_ungrazed` at 13,13: the grass stands long where the herd cropped all round, and
-    the lions' tracks go round it; the herder's rumour is its words. Inside, `d9_fallen` (11,13) and
-    the chest `d9_hollow` (10,13).
+10. **The secret is the doc's,** the issue's lions' den superseded: the long mound, its mouth a
+    secret door at 12,13 (116,267), its hint `d9_ungrazed` (13,13) with the herder's rumour for its
+    words, the fallen walker and the chest inside (§4.3).
 11. **The thing of glass is `etched_glass`, "Etched Glass"** (slot none, price 0: no shop buys it),
     in the area's new `items.ts`: lines in glass a cartographer would want, nothing explained. Its
     buyer at Cinderport is #532's and #512's.
 12. **The horse that came back is seen and no more:** `d9_horse` at 8,17, coming in off the dunes
     toward the herd, glass in its hooves, something still in its saddle. No flag or quest: 51 is
     #532's, with #526.
-13. **The brief's places are each a feature:** the glass in the grass on the road in (`d9_glass`,
-    18,29, the chapter's id for #531); the well, a fountain giving endurance, at 14,24 by the track,
-    and the camp at 13,23; the tents seen from the middle, on the track (16,15); the Riders' cairn
-    on the watch-mound by the track (15,3); the herd (4,4) and its herder (9,8); the old Rider
-    (28,12), the hermit, words only (the first words of the day the sky opened, the rest the
-    eldest's at Akordu); the kills (28,26; 29,3); the lions' lie (24,17); the dunes' cairn (7,21);
-    the Glass seen from a dune (2,14); the walker's tracks across the dunes' edge (7,27).
+13. **The brief's places are each a feature,** eighteen for its nine (§4.3): the well a fountain
+    that gives endurance, the tents seen from the middle, two cairns, the herd and its herder, the
+    old Rider (the hermit, words only), the kills, the lions' lie, the Glass seen from a dune and the
+    walker's tracks. The glass in the grass, `d9_glass` (18,29), is the chapter's id for #531.
 14. **The Wold's crossing words are #524's,** on the zone row beside D9's map: D9's own first words
     are dropped, E10's having merged first and been made true both ways in (#524's 4). Not walked:
     no built map meets D9, and D10 (#527) is the first Wold map entered.
