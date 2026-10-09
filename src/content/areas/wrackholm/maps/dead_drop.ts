@@ -3,19 +3,19 @@
 // going no further. Round the corner, out of sight of the way in, the rails' hall, crates on rails and the
 // tally clerks' counting posts; off it the shards stacked by size, small, middling and large; behind the small
 // a way down to the counting floor and the Compact's coin; and at the far end the rails going on down to the
-// vaults (VAULT_STAIR, barred until they are built), a hold keeper come up to fill its pails. Loaders and
-// clerks at 26, the keeper at 27. It pays outside any area's budget (EXPANSION §5.2; Wrackholm's `outside`).
+// vaults (VAULT_STAIR), a hold keeper come up to fill its pails. By the drop, the top of the vaults' hoist, a
+// cage in a shaft (the vaults' HOIST lands in it). Loaders and clerks at 26, the keeper at 27. It pays outside any area's budget (EXPANSION §5.2; Wrackholm's `outside`).
 // docs/areas/dead_drop.md §4.1 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 
 /**
  * The way down to the vaults (dead_drop2, #22's second level): the rails' slope at the drop's far end, 25,30,
- * a gate drawn in the wall, onto the vaults' first square at 25,1, facing south, which this asks that level
- * to give it. An exit leads only to a built map, so the vaults list it in this map's exits, open its square
- * (the `Z` to floor) and drop or rewrite `dd_down`; their way back up lands on 25,29, facing north.
+ * onto the vaults' first square at 25,1, facing south; their way back up lands on 25,29, facing north, the
+ * slope's head.
  */
-export const VAULT_STAIR: Exit = { x: 25, y: 30, to: 'dead_drop2', tx: 25, ty: 1, tf: SOUTH };
+export const VAULT_STAIR: Exit = { x: 25, y: 30, to: 'dead_drop2', tx: 25, ty: 1, tf: SOUTH,
+  label: 'Down the rails\' slope a long way, into air that is dry and still.' };
 
 export const DEAD_DROP: MapDef = {
   id: 'dead_drop',
@@ -27,8 +27,6 @@ export const DEAD_DROP: MapDef = {
   // The stair's foot's stone, smooth and cold and lit from nowhere, all the way down.
   palette: { wall: '#8a8c90', wallDark: '#5e6064', floor: '#6a6c70', ceiling: '#4a4c50', door: '#5a5c60', wallStyle: 'stone', ceilingStyle: 'vault', banner: '#3a3c40' },
   bare: true,
-  // The gate across the way down, a wall drawn as a door, until the vaults open it (VAULT_STAIR).
-  legend: { Z: { solid: 'wall', door: 'door' } },
   rows: [
     '################################',
     '###.############################',
@@ -40,7 +38,7 @@ export const DEAD_DROP: MapDef = {
     '###.############################',
     '###.############################',
     '##.....#########################',
-    '##........######################',
+    '#.........######################',
     '##.....##.######################',
     '#########.######################',
     '###..........................###',
@@ -60,17 +58,21 @@ export const DEAD_DROP: MapDef = {
     '###..........................###',
     '###....o.#############.......###',
     '###......#############.......###',
-    '#########################Z######',
+    '#########################.######',
     '################################',
   ],
   exits: [
     // The way back up, onto the stair's foot in front of its far end, facing away from it.
     { x: 3, y: 1, to: 'dead_drop_stair', tx: 4, ty: 2, tf: SOUTH, label: 'Up the long way, and the stair\'s foot again, cold and empty.' },
+    // The rails' slope at the far end, down to the vaults (VAULT_STAIR).
+    VAULT_STAIR,
   ],
   features: [
     // The way in and the drop: the cargo left where the crews stop, and nothing past it in sight.
     { kind: 'event', x: 3, y: 2, id: 'dd_in', once: true, text: 'The way levels out. Ahead, steady as a mill, something heavy is set down, and lifted, and set down again.' },
     { kind: 'event', x: 4, y: 10, id: 'dd_drop', once: true, text: 'Crates in a row across the floor, nailed shut and chalked. Boot marks come this far in the dust and turn back.' },
+    // Beside the drop, the top of the vaults' hoist: the cage its HOIST comes up into, worked from below.
+    { kind: 'event', x: 1, y: 10, id: 'dd_cage', once: true, text: 'A cage in a shaft in the wall, hung on two chains greased black. They run down into the dark.' },
     // Round the corner, the rails' hall: crates on rails, and where the rails end a loader's pieces heaped.
     { kind: 'event', x: 9, y: 13, id: 'dd_rails', once: true, text: 'Two rails run the length of a long hall, polished bright. On them stand crates nose to tail, each the size of a cart.' },
     { kind: 'event', x: 4, y: 14, id: 'dd_buffer', once: true, text: 'The rails end against a block of stone, scored deep. Whatever hit it last lies in pieces by the wall.' },
@@ -86,10 +88,10 @@ export const DEAD_DROP: MapDef = {
     { kind: 'chest', x: 3, y: 29, id: 'dd_strongbox', gold: 2000, items: [] },
     // The aisle east, worn by the walking.
     { kind: 'event', x: 15, y: 26, id: 'dd_tread', once: true, text: 'Two grooves are worn into the floor here, a stride apart, by feet that have come this way more times than anyone could count.' },
-    // The far end: the keeper's trough, and the rails going on down to the vaults, barred until they are
-    // built (VAULT_STAIR): its line at its head, each time.
+    // The far end: the keeper's trough, and the rails going on down to the vaults (VAULT_STAIR): its line at
+    // its head, the once.
     { kind: 'event', x: 24, y: 25, id: 'dd_water', once: true, text: 'A stone trough by the wall, full and clean. A wet track runs from it to the way down, worn into the floor.' },
-    { kind: 'event', x: 25, y: 29, id: 'dd_down', text: 'The rails go on down a slope into the dark, under a gate of bars that fills the way. It will not give.' },
+    { kind: 'event', x: 25, y: 29, id: 'dd_down', once: true, text: 'The rails go on down a long slope into the dark. The air that comes up it smells of nothing at all.' },
   ],
   encounters: [
     // The first, out of sight of the way in, round the corner: a loader on the rails, its crate held up.
