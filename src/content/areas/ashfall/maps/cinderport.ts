@@ -146,7 +146,11 @@ export const CINDERPORT: MapDef = {
       '"Cador Lusk. The Guild\'s man on this side of the Sound, and this is its hall, such as it is."',
       '"Three of Fane\'s on the shelf, and a space. Fane wrote wherever they stopped, and they stopped at the Stone."',
     ],
-    says: [{ after: { flag: 'q_carto_journal_done' }, lines: ['"Four of Fane\'s on the shelf now. The Guild has the Company as far as the vents, and no further."'] }] },
+    // The Mapmaker's rung paid (`q_carto_fane_done`) puts a pin past the vents; it is first, for the first that holds is said (#635).
+    says: [
+      { after: { flag: 'q_carto_fane_done' }, lines: ['"Four of Fane\'s on the shelf, and a pin in the map past the vents. The Guild has the Company to its end."'] },
+      { after: { flag: 'q_carto_journal_done' }, lines: ['"Four of Fane\'s on the shelf now. The Guild has the Company as far as the vents, and no further."'] },
+    ] },
 
     // The cross street: the vines over the west wall, and a cup in the old shape on a doorstep.
     { kind: 'event', x: 1, y: 7, id: 'cp_vines', once: true, text: 'Vines hang over the town wall from the shore\'s trees, and over the windows. They are cut back, and they come back.' },
