@@ -306,8 +306,7 @@ export function outdoors(): void {
   // 0 to 4 and 23 to 31; on the west the ash, the cone's flank (the ring, so the void) and the two flows
   // leaving west against F11; on the east the ash, Grimsforge's wall, the scavenger's rocks and the
   // south-east flow leaving against H11, the hole's far end open ash, the way down into Meridian Camp
-// (#22); on the south the ash against G12. None of F11, H11 and G12 is
-  // built, so the world ends past them.
+  // (#22); on the south the ash against G12. None of F11, H11 and G12 is built, so the world ends past them.
   const g11 = out.zones.find((z) => z.id === 'firemount_g11')!;
   ok(g11.x === g10.x && g11.y === g10.y + 32 && northOf(g11) === 'a'.repeat(5) + 'M'.repeat(18) + 'a'.repeat(9) && southOf(g11) === 'a'.repeat(32)
     && [...Array(32).keys()].every((i) => [out.at(g11.x + 32, g11.y + i), out.at(g11.x - 1, g11.y + i), out.at(g11.x + i, g11.y + 32)].every((c) => c.ch === '%')),
