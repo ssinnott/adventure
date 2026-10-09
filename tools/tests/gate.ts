@@ -249,6 +249,8 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'wold_d8: under': { whose: '#18', at: 1 },
   // And the mesas (#527), the same.
   'wold_d10: under': { whose: '#18', at: 1 },
+  // And the Scarp's edge (#528), the same.
+  'wold_c8: under': { whose: '#18', at: 1 },
   'the Glasswold: under': { whose: '#18', at: 1 },
   'highspine_i11: under': { whose: '#18', at: 1 },
   // And the ridge north (#503), banded from the area's floor as I11 is: its three groups are won every

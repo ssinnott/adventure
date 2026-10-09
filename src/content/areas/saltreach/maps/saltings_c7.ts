@@ -1,11 +1,11 @@
 // The Saltings, box C7: the salt pans. Country, band 12: the salters' pans south of Saltmouth, walled
 // and walked in lanes, the salt crabs' country; the last marsh west of them; and the Scarp, the
 // escarpment to the Glasswold, as the box's south edge, with the stair's foot at 8,22, a track down
-// from the plan's link at 8,16 (80,206 on the atlas), seen and not climbed. The Scarp is mountain,
-// as Kestrel Edge is on D4, and the Glasswold's ground below its line in the box, rows 23 to 31 and
-// the corners above them, is closed with it: that land is band 26-28, owed to Act IV, which opens it
-// by editing this map. Cut from the atlas by tools/scaffold.ts; docs/areas/saltreach.md §4.10 is its
-// brief.
+// from the plan's link at 8,16 (80,206 on the atlas). The Scarp is mountain, as Kestrel Edge is on
+// D4, and the Glasswold's ground below its line in the box, rows 23 to 31 and the corners above them,
+// is closed with it, band 26-28, but for the stair: its flights climb column 8 from the notch, past
+// the fallen one by a rope ladder, to the Wold's lip on C8 (#528). Cut from the atlas by
+// tools/scaffold.ts; docs/areas/saltreach.md §4.10 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 
@@ -43,15 +43,15 @@ export const SALTINGS_C7: MapDef = {
     ',,,,,,,,:,,,,,,,,,,,,,,,MMMMMMMM',
     ',,,,,,,,:,,,,,,MMMMMMMMMMMMMMMMM',
     ',,,,,,MM:MMMMMMMMMMMMMMMMMMMMMMM',
-    'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
-    'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
-    'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
-    'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
-    'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
-    'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
-    'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
-    'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
-    'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
+    'MMMMMMMM"MMMMMMMMMMMMMMMMMMMMMMM',
+    'MMMMMMMM"MMMMMMMMMMMMMMMMMMMMMMM',
+    'MMMMMMMM"MMMMMMMMMMMMMMMMMMMMMMM',
+    'MMMMMMMM"MMMMMMMMMMMMMMMMMMMMMMM',
+    'MMMMMMMM"MMMMMMMMMMMMMMMMMMMMMMM',
+    'MMMMMMMM"MMMMMMMMMMMMMMMMMMMMMMM',
+    'MMMMMMMM"MMMMMMMMMMMMMMMMMMMMMMM',
+    'MMMMMMMM"MMMMMMMMMMMMMMMMMMMMMMM',
+    'MMMMMMMM"MMMMMMMMMMMMMMMMMMMMMMM',
   ],
   features: [
     // In from Saltmouth's pans, and the lanes between the walls.
@@ -75,8 +75,9 @@ export const SALTINGS_C7: MapDef = {
     // The last marsh, and the grass under the Scarp.
     { kind: 'shrine', x: 3, y: 13, id: 'c7_shrine', text: 'A shrine of the drowned god on the marsh\'s last dry ground. Its bowl is not dry like the others: it is full of salt.', stat: 'endurance', done: 'The bowl is still full of salt.' },
     { kind: 'cairn', x: 14, y: 18, id: 'c7_cairn', text: 'A salters\' cairn under the Scarp, of stones fallen off the face, each set with its sharp side to the cliff.', gold: 80, items: ['potion_heal'] },
-    // The Scarp stair's foot: its lowest flight fallen. Act IV builds a way past the fall and rewrites this.
-    { kind: 'event', x: 8, y: 22, id: 'c7_stair', text: 'The stair\'s foot: its lowest flight fallen with the face, the flights above climbing out of reach. Grit glitters on the wind.' },
+    // The Scarp stair's foot: its lowest flight fallen, and a rope ladder past the fall up to the flights
+    // above, which climb to the Wold's lip on C8 (#528).
+    { kind: 'event', x: 8, y: 22, id: 'c7_stair', text: 'The stair\'s foot: its lowest flight fallen with the face. A rope ladder hangs past the fall, pegged to the flight above.' },
   ],
   secrets: [{ x: 30, y: 5, hint: 'c7_trodden' }],
   encounters: [

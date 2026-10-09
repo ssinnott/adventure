@@ -27,6 +27,12 @@ export const GATE: Exit = { x: 6, y: 2, to: 'cinderport', tx: 8, ty: 14, tf: NOR
  */
 export const FOUNDING_RAISED = 'q_founding_raised';
 
+/**
+ * The eldest's three lines heard at the Riders' fire, set at the first meeting: the chapter's step
+ * here keys on it (#518). Her whole telling is Akordu's (`akordu_story`, the Wold's D8).
+ */
+export const ELDEST_HEARD = 'q_eldest_heard';
+
 export const CINDERCOAST_G10: MapDef = {
   id: 'cindercoast_g10',
   name: 'Cindercoast',
@@ -76,7 +82,7 @@ export const CINDERCOAST_G10: MapDef = {
     // The trading ground: the Riders' horses and fires, their shrine, and their eldest, the step (§5).
     { kind: 'event', x: 8, y: 4, id: 'g10_ground', once: true, text: 'Horses on the grass outside the gate, and fires. The Riders come down to trade, the gate-ward says, and their eldest talks.' },
     { kind: 'shrine', x: 10, y: 3, id: 'g10_shrine', text: 'A shrine of the Riders\' on the ground: a horse\'s skull on a post, its brow painted red.', stat: 'speed', done: 'The Riders\' shrine, the red on the skull worn to the bone.' },
-    { kind: 'npc', x: 11, y: 5, name: 'The eldest', lines: [
+    { kind: 'npc', x: 11, y: 5, name: 'The eldest', flag: ELDEST_HEARD, lines: [
       'The Riders\' eldest sits by the fire in a horse-blanket, her braid white to the waist.',
       '"A door opened in the sky. Something went up to it on a pillar of fire, and fell."',
       '"Where it fell the land burned to glass. Remember what that cost, if anyone ever offers to open it for you."',

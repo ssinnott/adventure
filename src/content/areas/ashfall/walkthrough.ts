@@ -1,4 +1,4 @@
-// Ashfall's walkthrough. Its chapter, The Window, is #518's, which plays it here; until then, the boxes
+// Ashfall's walkthrough. Its chapter, The Window (#518), is played last (theWindow); first, the boxes
 // in road order. The Stair's foot (H10, #510): down the Giants' Stair from I10 onto H10, Cindercoast's
 // crossing words walked; the Stair's last flights to the landing and the step; the road across the sand,
 // past Scaldwell and through the vines to the west edge, onto G10's vines; the seams; the pools, the
@@ -41,12 +41,13 @@
 // inside the Stone: the gallery, the benches, the lookout and the seedling's bed; the three parts set in
 // their sockets in any order, the Stone lit, the Sentinel won in its door and the sentries after it;
 // the lower gallery behind the housing's foot and the fourth journal in it; and the Cartographers'
-// Surveyor's rung paid for it at a hall of the Guild, the Chart House's shelf full (#635). Then the three
+// Surveyor's rung paid for it at a hall of the Guild, the Chart House's shelf full, and the Mapmaker's
+// rung after it, paid for the firelight on Meridian Camp's third level (#635). Then the three
 // third prestiges taught here (#448), each its trainer's quest played to the teaching by a company of 27:
 // the Paladin's lamp, the Barbarian's nest and the Druid's seedling.
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, see, fight, listen, walkThrough } from '../../../../tools/walk.ts';
-import type { Walk } from '../../../../tools/walk.ts';
+import { newWalk, see, fight, listen, walkThrough, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
+import type { Walk, Step } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import type { Facing } from '../../../game/types.ts';
 import { ATLAS, MAP_DEFS, MONSTERS, GUILD_QUESTS } from '../../index.ts';
@@ -56,7 +57,7 @@ import { GameMap } from '../../../game/map.ts';
 import type { Feature, MapDef } from '../../../game/map.ts';
 import { restRefused } from '../../../game/wilds.ts';
 import { meet, heard, answer, barred } from '../../../game/people.ts';
-import { questLog } from '../../../game/quests.ts';
+import { questLog, holds } from '../../../game/quests.ts';
 import type { Person } from '../../../game/people.ts';
 import { buy, item } from '../../../game/items.ts';
 import { canTrainAt, xpForLevel, rest, trainPrice, levelUp, templePrice, addCondition, createCharacter, takePrestige, className, PRESTIGES } from '../../../game/party.ts';
@@ -74,7 +75,11 @@ import { COMPACT_SHIP, RIDERS_RIDE, LAST_CROSSING } from '../../crossings.ts';
 import { ACT_IV } from '../../../../tools/tests/ladder.ts';
 import { ARMOURER, CURES } from './items.ts';
 import { INTERIORS } from './interiors.ts';
-import { GATE, FOUNDING_RAISED } from './maps/cindercoast_g10.ts';
+import { GATE, FOUNDING_RAISED, ELDEST_HEARD } from './maps/cindercoast_g10.ts';
+import { ROAD_WEST } from './maps/emberwaste_e10.ts';
+import { CHAPTER } from './chapter.ts';
+import { STAIR_TOP } from '../whitespine/maps/highspine_i10.ts';
+import { stonesRestored } from '../../../game/stones.ts';
 import { VENTS, HOLE, SHOVEL_STORY, BROOD_ASKED, BROOD } from './maps/firemount_g11.ts';
 import { SPRINGS_BREAK, SPRINGS_LEFT, SPRINGS_COLD } from './maps/cindercoast_h10.ts';
 import { FOUNDING_UP, FOUNDING_LEFT, SHOVEL_THANE, SHOVEL_WARDENS, SHOVEL_KEPT } from './maps/cinderport.ts';
@@ -742,8 +747,10 @@ export const walkthrough: Walkthrough = (ok) => {
 
   oldCinder(w, ok);
   emberStone(w, ok);
+  roadBehind(w, ok);
   sideQuests(ok);
   thirdPrestiges(ok);
+  theWindow(ok);
 };
 
 /**
@@ -885,7 +892,9 @@ function oldCinder(w: Walk, ok: (cond: boolean, msg: string) => void): void {
  * and the Stone lit on F11; the lower gallery, found where the chain pin is driven into the housing's
  * foot and reached only through it, and the fourth journal in it; and the Cartographers' Surveyor's rung
  * for the journal found (#635), offered once Act III is done at any hall of the Guild, paid at the Chart
- * House, whose shelf then holds four.
+ * House, whose shelf then holds four; and after it the Mapmaker's rung, "Fane's Fire" (#635), offered to
+ * Mapmakers at either hall and paid at the Chart House for the firelight on Meridian Camp's third level,
+ * seen the once, Cador Lusk's word then changed.
  */
 function emberStone(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   const ES = MAP_DEFS.find((d) => d.id === 'ember_stone')!;
@@ -1045,6 +1054,72 @@ function emberStone(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   const lateGold = late.party.gold, early = take(q, late.world.state, late.party);
   ok(early.length === 2 && early[0].startsWith(q.early![0]) && late.party.gold === lateGold + 500 && rankOf('cartographers', late.party) === 3,
     `a company that had found the journal is paid at the taking, with the early words (${early.join(' ').replace(/\n+/g, ' ')})`);
+
+  // The Cartographers' Mapmaker's rung (#635), "Fane's Fire", on the same fresh Surveyors: not offered before
+  // the Surveyor's is paid, then offered alone at any hall of the Guild and taking nothing; taken with the
+  // fire unseen, the hall pays nothing; the firelight seen on the one way to the fire (Meridian Camp's third
+  // level, walked above), the Chart House pays 800 gold and 4,800 xp, once, the pack as it was with Fane's map
+  // in it, the company are Geographers and Cador Lusk has a pin past the vents. A company that had seen the
+  // fire first is paid at the taking, with the early words.
+  const fq = GUILD_QUESTS.find((g) => g.id === 'carto_fane')!, FIRE = 'meridian_camp3:mc3_fire';
+  const cador = CP.features!.find((p): p is Person => p.kind === 'npc' && p.name.startsWith('Cador Lusk'))!;
+  const word = (v: Walk): string => { v.world.travel('cinderport', cador.x, cador.y); return meet(cador, v.party, heard(v.world, cador)).text; };
+  const mapmakers = (): Walk => {
+    const v = surveyors();
+    v.party.flags[SLEEPERS_SEEN] = 1;
+    v.party.bag.push('fane_map');
+    return v;
+  };
+  /** The Surveyor's rung paid with the fourth journal found first, so the company are Mapmakers. */
+  const surveyed = (v: Walk): void => { open(v, ES.id, 'es_journal'); take(q, v.world.state, v.party); };
+  const m = mapmakers();
+  ok(offered('cartographers', m.party).map((o) => o.id).join() === q.id && fq.rank === 3 && !fq.item,
+    `${fq.title} waits behind ${q.title}: a Surveyor with the Sleepers seen is offered the fourth journal alone`);
+  surveyed(m);
+  const said = word(m), pack = m.party.bag.join(), purse2 = m.party.gold, xp2 = xpOf(m.party);
+  ok(rankOf('cartographers', m.party) === 3 && offered('cartographers', m.party).map((o) => o.id).join() === fq.id && ['Map Room', 'Chart House'].every((h) => fq.goals[0].text.includes(h)),
+    'the Surveyor\'s paid, the company are Mapmakers and it is offered alone at any hall of the Guild, Saltmouth\'s Map Room or the Chart House, and takes nothing');
+  ok(!take(fq, m.world.state, m.party).length && !report('cartographers', m.world.state, m.party).length && rankOf('cartographers', m.party) === 3, 'taken with the fire unseen, the hall pays nothing');
+  see(m, FIRE);
+  m.world.travel('cinderport', chart.x, chart.y);
+  const mapped = report('cartographers', m.world.state, m.party), pinned = word(m);
+  ok(mapped.length === 2 && mapped[0].startsWith(fq.paid[0]) && m.party.gold === purse2 + 800 && xpOf(m.party) >= xp2 + 4800 - m.party.members.length && rankOf('cartographers', m.party) === 4
+    && !!m.party.flags[doneFlag(fq.id)] && m.party.bag.join() === pack && m.party.bag.includes('fane_map'),
+    `the fire seen, the Chart House pays 800 gold and 4,800 xp, the pack as it was with Fane's map in it, and the company are Geographers (${mapped.join(' ').replace(/\n+/g, ' ')})`);
+  ok(!report('cartographers', m.world.state, m.party).length && !offered('cartographers', m.party).length && m.party.gold === purse2 + 800,
+    'and it is paid the once: a second report pays nothing, and nothing is offered');
+  ok(said.includes('no further') && pinned.includes('a pin in the map past the vents') && !pinned.includes('no further'),
+    'and Cador Lusk, who had the Company no further than the vents, has a pin in the map past them');
+  const soon = mapmakers();
+  surveyed(soon);
+  see(soon, FIRE);
+  const soonGold = soon.party.gold, hasty = take(fq, soon.world.state, soon.party);
+  ok(hasty.length === 2 && hasty[0].startsWith(fq.early![0]) && soon.party.gold === soonGold + 800 && rankOf('cartographers', soon.party) === 4,
+    `a company that had seen the fire first is paid at the taking, with the early words (${hasty.join(' ').replace(/\n+/g, ' ')})`);
+}
+
+/**
+ * The road behind (#449): once the Ember Stone is lit, two sentries walk the Waste's road on F10, back
+ * toward Cinderport, and two on E10, on to the Wold, each pair at the band's top, where nothing stood
+ * the day before; and the Rider at Cinderport's gate says so. A company that has not lit it meets
+ * neither, and the Rider says only the ride.
+ */
+function roadBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void {
+  const group = (map: string, id: string) => MAP_DEFS.find((d) => d.id === map)!.encounters!.find((g) => g.id === id)!;
+  const f10 = group('emberwaste_f10', 'f10_sentries'), e10 = group('emberwaste_e10', 'e10_sentries');
+  const there = (v: Walk, map: string, g: typeof f10): boolean => { v.world.travel(map, g.x, g.y); return v.world.walks(g, g.x, g.y) && !v.world.ended(g); };
+  const rider = MAP_DEFS.find((d) => d.id === 'cinderport')!.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'A Rider by the gate')!;
+  const says = (v: Walk): string => { v.world.travel('cinderport', rider.x, rider.y); const t = meet(rider, v.party, heard(v.world, rider)).text; listen(v); return t; };
+  const before = newWalk(ok);
+  ok(!before.party.flags[LIT] && !there(before, 'emberwaste_f10', f10) && !there(before, 'emberwaste_e10', e10) && says(before) === rider.lines.join('\n\n'),
+    'before the Stone is lit no sentry walks F10\'s road or E10\'s, and the Rider at the gate says only the ride');
+  ok([f10, e10].every((g) => g.monsters.join() === 'sentry,sentry' && JSON.stringify(g.after) === JSON.stringify({ flag: LIT }) && !!g.respawn)
+    && !!w.party.flags[LIT] && there(w, 'emberwaste_f10', f10) && there(w, 'emberwaste_e10', e10),
+    'once it is lit, two sentries by F10\'s road back toward Cinderport and two by E10\'s on to the Wold');
+  fight(w, 'emberwaste_f10:f10_sentries');
+  fight(w, 'emberwaste_e10:e10_sentries');
+  const now = says(w);
+  ok(now.includes('iron walking the road') && now.includes('yesterday there was none'), `and the Rider at the gate says the road is not what it was (${now.replace(/\n+/g, ' ')})`);
 }
 
 /**
@@ -1573,4 +1648,196 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     reads(w, 'shovel', ['smith', 'ledge', 'story', how], ['thane', 'wardens', 'kept'].filter((h) => h !== how), how);
     ok(!hear(w, 'cinderport', GORRAN).includes('Yours to sell'), `${how}: after, the smith asks no more`);
   }
+}
+
+// ---- the chapter (#518) ----
+
+const mapOf = (id: string): MapDef => MAP_DEFS.find((d) => d.id === id)!;
+const SOCKETED = mapOf('ember_stone').features!.filter((f): f is Person => f.kind === 'npc' && /socket/i.test(f.name));
+const FANE = mapOf('meridian_camp3').features!.find((f): f is Person => f.kind === 'npc' && f.name === 'Oriel Fane')!;
+const goalOf = (start: string): string => CHAPTER.goals.find((g) => g.text.startsWith(start))!.text;
+
+/** A step played at a level, the company levelled to it. */
+const atLevel = (level: number, s: Step): Step => ({ name: `${s.name} at ${level}`, play: (w) => {
+  for (const m of w.party.members) { m.level = level; m.xp = xpForLevel(level); }
+  w.level = level;
+  s.play(w);
+} });
+
+/** The entries written on the chapter's page. */
+const written = (w: Walk): string[] => (quest(w)?.pages.find((p) => p.def === CHAPTER)?.entries ?? []).map((e) => e.id);
+
+/** Open a chest, 'map:id', as the game does: its gold and its items to the company, and spent. */
+function openChest(w: Walk, at: string): void {
+  const [map, id] = at.split(':');
+  const c = mapOf(map).features!.find((f) => f.kind === 'chest' && f.id === id);
+  if (c?.kind !== 'chest') { w.ok(false, `there is a chest ${at}`); return; }
+  w.world.travel(map, c.x, c.y);
+  if (!w.world.used(id)) { w.world.markUsed(id); w.party.gold += c.gold; w.party.bag.push(...c.items); }
+  listen(w);
+}
+
+/** Down the Stair's last flights to its foot on the black sand. */
+const FOOT: Step = { name: 'the Stair\'s foot', play: (w) => see(w, 'cindercoast_h10:h10_foot') };
+
+/** In at Cinderport's gate from the trading ground. */
+const PORT: Step = { name: 'into Cinderport', play: (w) => walkThrough(w, 'cindercoast_g10', GATE.x, GATE.y + 1, NORTH, 'cinderport', 1) };
+
+/** The eldest at the Riders' fire outside the gate, her three lines heard. */
+const ELDEST: Step = { name: 'the eldest', play: (w) => meetWho(w, ELDEST_HEARD) };
+
+/** Down inside the Stone on its field of cinders, to its heart and the three sockets. */
+const HEART: Step = { name: 'the Stone\'s heart', play: (w) => see(w, 'ember_stone:es_heart') };
+
+/** Down the vents to the furnace room, and the first part out of the furnace's mouth. */
+const FURNACE: Step = { name: 'the vents', play: (w) => {
+  see(w, 'meridian_camp:mc1_furnace');
+  openChest(w, 'meridian_camp:mc1_part');
+} };
+
+/** Down through Old Cinder's buried town to the undercroft's bottom, and the second part by the lamp. */
+const CINDER: Step = { name: 'Old Cinder', play: (w) => {
+  see(w, 'old_cinder:oc1_street');
+  see(w, 'old_cinder2:oc2_set');
+  openChest(w, 'old_cinder2:oc2_part');
+} };
+
+/**
+ * The iron corridors to their end and the third part; and, unless the company turns back there, on down
+ * to the camp, the old man at his fire met and his map taken, and the window looked through or passed.
+ */
+const corridors = (camp: 'none' | 'looked' | 'passed'): Step => ({ name: camp === 'none' ? 'the corridors' : `the corridors and the camp, the window ${camp}`, play: (w) => {
+  see(w, 'meridian_camp2:mc2_in');
+  see(w, 'meridian_camp2:mc2_end');
+  openChest(w, 'meridian_camp2:mc2_part');
+  if (camp === 'none') return;
+  see(w, 'meridian_camp3:mc3_fire');
+  w.world.travel('meridian_camp3', FANE.x, FANE.y);
+  const met = meet(FANE, w.party, heard(w.world, FANE)), take = met.choice?.answers.find((a) => a.label === 'Take it.');
+  if (take) answer(take, w.party);
+  listen(w);
+  if (camp === 'looked') see(w, 'meridian_camp3:mc3_window');
+  const looked = written(w).includes('window');
+  w.ok(met.text.includes('You took your time') && !!w.party.flags.meridian_map && written(w).includes('camp') && looked === (camp === 'looked'),
+    `at ${w.level}, down to the camp, the old man met at his fire and his map taken, and the window ${camp}: its entry ${looked ? 'written' : 'not written'}`);
+} });
+
+/** Up to the Stone with the parts carried, each set in its own socket at a meeting; the last in lights it. */
+const SET: Step = { name: 'the parts set', play: (w) => {
+  const before = stonesRestored(w.world.state, w.party), lit = !!w.party.flags[LIT], said: string[] = [];
+  SOCKETED.forEach((p, i) => {
+    if (!w.party.bag.includes(`ember_part${i + 1}`)) return;
+    w.world.travel('ember_stone', p.x, p.y);
+    const [a] = meet(p, w.party, heard(w.world, p)).choice?.answers ?? [];
+    said.push(a ? answer(a, w.party) : '');
+  });
+  listen(w);
+  const now = stonesRestored(w.world.state, w.party);
+  if (w.party.flags[LIT]) {
+    w.ok(!lit && now === before + 1 && (said.at(-1) ?? '').startsWith(LIGHTS.join('\n\n')) && SOCKETS.every((f) => w.party.flags[f]),
+      `at ${w.level}, the last part in lights the Stone, and it counts for the Hearth (${before} restored, then ${now})`);
+  } else {
+    w.ok(said.length > 0 && now === before, `at ${w.level}, ${said.length} set and the Stone still dark, and the Hearth counts nothing yet (${now})`);
+  }
+} };
+
+/**
+ * West along the road, the Stone lit: the sentries by F10's road and by E10's up into the Hills won at
+ * the step's level (#449), and up onto the Hills' last shoulder, the grass below.
+ */
+const WEST_ROAD: Step = { name: 'the road west', play: (w) => {
+  fight(w, 'emberwaste_f10:f10_sentries');
+  fight(w, 'emberwaste_e10:e10_sentries');
+  w.world.travel('emberwaste_e10', 1, 8, NORTH);
+  const steps = [w.world.move('forward'), w.world.move('forward')];
+  const said = [...steps.flatMap((r) => (r.kind === 'moved' ? r.messages : [])), ...w.world.eventsHere()];
+  listen(w);
+  w.ok(steps.every((r) => r.kind === 'moved') && said.some((t) => t.startsWith('At the Hills\' last shoulder')) && !!w.party.flags[ROAD_WEST],
+    `up the road onto the Hills' last shoulder, the grass below, and ${ROAD_WEST} is set (${said.join(' / ')})`);
+} };
+
+/**
+ * West from Cinderport's gate on the Rider's ride, the Stone lit and the road over the Hills never
+ * walked: set down at Akordu's horse-lines, the landing's line said as the game says it on arrival.
+ */
+const RIDE: Step = { name: 'the Rider\'s ride west', play: (w) => {
+  const rider = mapOf('cinderport').features!.find((f): f is Person => f.kind === 'npc' && f.name === 'A Rider by the gate')!;
+  w.world.travel('cinderport', rider.x, rider.y);
+  w.world.state.minutes = Math.floor(w.world.state.minutes / MINUTES_PER_DAY) * MINUTES_PER_DAY + 9 * 60;
+  w.party.gold = RIDERS_RIDE.fare;
+  const rode = sail(rider.passage![0], w.world, w.party), said = rode.taken ? w.world.eventsHere() : [];
+  listen(w);
+  w.ok(rode.taken && w.world.zone?.id === 'wold_d8' && said.some((t) => t.startsWith('The Riders at the lines')) && !!w.party.flags[ROAD_WEST]
+    && !holds({ seen: 'emberwaste_e10:e10_west' }, w.world.state, w.party),
+    `west on the Rider's ride, the road never walked, set down at Akordu's horse-lines, and ${ROAD_WEST} is set (${said.join(' / ')})`);
+} };
+
+/**
+ * The Window (#518), begun where the Whitespine's chapter ends or at Cinderport off the Compact's
+ * crossing from Kilnhaven, and played at 24, 25 and 26: by the Stair, the parts in the goals' order and
+ * the window looked through; by sea, Old Cinder's part first and the window passed; by the Stair again,
+ * the eldest before the town, Old Cinder's part while the goal names the corridors and the camp never
+ * reached; and by sea again, west at the end on the Rider's ride to Akordu, the road never walked.
+ * Each part found is carried up and set, and the journal reads true in every order and either way west.
+ */
+function theWindow(ok: (cond: boolean, msg: string) => void): void {
+  const early = newWalk(ok);
+  early.world.travel('emberwaste_e10', 1, 6, WEST);
+  const shoulder = early.world.eventsHere();
+  early.world.travel('wold_d8', 9, 27, EAST);
+  ok(!shoulder.length && !early.world.eventsHere().length && !early.party.flags[ROAD_WEST],
+    'on the road\'s last shoulder and at Akordu\'s horse-lines before the Stone is lit, nothing is said or set');
+  const texts = [...CHAPTER.entries.map((e) => e.text), ...CHAPTER.goals.map((g) => g.text)];
+  ok(texts.every((t) => !/hull|ship|orbit|voyage|custodian/i.test(t)), 'nothing in the chapter names a hull, a ship, an orbit, a voyage or a Custodian');
+  const jago = MAP_DEFS.find((d) => d.id === 'kilnhaven')!.features!.find((x): x is Person => x.kind === 'npc' && x.name.startsWith('Jago'))!;
+  const read: string[] = [];
+  for (const how of ['by the Stair, the window looked through', 'by sea, Old Cinder\'s part first and the window passed', 'by the Stair, the parts as they come', 'by sea, and west on the Rider\'s ride']) {
+    const w = newWalk(ok);
+    for (const m of w.party.members) { m.level = 24; m.xp = xpForLevel(24); }
+    w.level = 24;
+    if (how.startsWith('by sea')) {
+      // Kilnhaven's quay at nine in the morning, the fare in hand, and two days on the Compact's steps.
+      w.world.travel('kilnhaven', jago.x, jago.y);
+      w.world.state.minutes = Math.floor(w.world.state.minutes / MINUTES_PER_DAY) * MINUTES_PER_DAY + 9 * 60;
+      w.party.gold = COMPACT_SHIP.fare;
+      const sailed = sail(jago.passage![0], w.world, w.party);
+      w.world.eventsHere();
+      listen(w);
+      ok(sailed.taken && w.world.state.mapId === 'cinderport' && !w.party.flags[STAIR_TOP] && quest(w)?.goal === goalOf('Out of Cinderport') && !written(w).length,
+        `${how}, ashore at Cinderport the chapter begins, its goal out of the gate to the eldest (${quest(w)?.goal})`);
+      if (how.endsWith('passed')) {
+        playChapter(w, CHAPTER, [atLevel(24, ELDEST), atLevel(25, HEART), atLevel(25, CINDER), atLevel(25, SET)], how);
+        ok(written(w).join(', ') === 'eldest, stone, cinder' && quest(w)?.goal === goalOf('Down Fire Mountain\'s vents into'),
+          `${how}, Old Cinder's part set first, the journal holds nothing of the vents and the goal is the vents for what the Stone still lacks (${written(w).join(', ')}: ${quest(w)?.goal})`);
+        playChapter(w, CHAPTER, [atLevel(25, FURNACE), atLevel(25, SET), atLevel(26, corridors('passed')), atLevel(26, SET), atLevel(26, WEST_ROAD)], how);
+      } else {
+        playChapter(w, CHAPTER, [atLevel(24, ELDEST), atLevel(25, HEART), atLevel(25, FURNACE), atLevel(25, SET), atLevel(26, corridors('none')), atLevel(26, SET),
+          atLevel(26, CINDER), atLevel(26, SET), atLevel(26, RIDE)], how);
+      }
+    } else {
+      // Where The Bells ends: on the Stair below the king's step, looking down into the ash (#505).
+      w.party.flags[STAIR_TOP] = 1;
+      listen(w);
+      ok(quest(w)?.goal === CHAPTER.goals.at(-1)!.text && !written(w).length, `${how}, The Bells done on the Stair, the chapter begins, its goal down the Stair (${quest(w)?.goal})`);
+      if (how.endsWith('looked through')) {
+        playChapter(w, CHAPTER, [atLevel(24, FOOT), atLevel(24, PORT), atLevel(24, ELDEST), atLevel(25, HEART), atLevel(25, FURNACE), atLevel(25, SET),
+          atLevel(26, corridors('looked')), atLevel(26, SET), atLevel(26, CINDER), atLevel(26, SET), atLevel(26, WEST_ROAD)], how);
+      } else {
+        playChapter(w, CHAPTER, [atLevel(24, FOOT), atLevel(24, ELDEST), atLevel(25, HEART), atLevel(25, FURNACE), atLevel(25, SET), atLevel(26, CINDER), atLevel(26, SET)], how);
+        ok(written(w).join(', ') === 'sand, eldest, stone, vents, cinder' && quest(w)?.goal === goalOf('Down Fire Mountain\'s vents again'),
+          `${how}, Old Cinder's part fetched while the goal named the corridors, and the goal is the corridors still (${written(w).join(', ')}: ${quest(w)?.goal})`);
+        playChapter(w, CHAPTER, [atLevel(26, corridors('none')), atLevel(26, SET), atLevel(26, WEST_ROAD)], how);
+      }
+    }
+    goalFromBegun(w, how);
+    const ends = w.news.filter((n) => n === `Chapter complete: ${CHAPTER.title}.`).length;
+    ok(!!quest(w)?.pages.find((p) => p.def === CHAPTER)?.done && ends === 1 && w.level === 26 && !!w.party.flags[ROAD_WEST],
+      `${how}, west onto the grass, the chapter is done at 26, and said so once (${ends})`);
+    read.push(written(w).join(', '));
+  }
+  const whole = 'sand, eldest, stone, vents, cinder, corridors, camp, window, lit, hearth, west';
+  ok(read[0] === whole && read[1] === whole.replace('sand, ', '').replace('window, ', '') && read[2] === whole.replace('camp, window, ', '')
+    && read[3] === whole.replace('sand, ', '').replace('camp, window, ', ''),
+    `the journal reads the same in every order and either way west, but for the Stair's foot never reached by sea, the window only for a company that looks and the camp only for one that goes down (${read.join(' / ')})`);
+  everyGoalWalked(ok, [CHAPTER]);
 }

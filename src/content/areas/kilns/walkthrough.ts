@@ -70,7 +70,7 @@ import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, see, fight, listen, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
 import type { Walk, Step } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
-import { AREAS, MAP_DEFS, MONSTERS, GUILD_QUESTS } from '../../index.ts';
+import { AREAS, MAP_DEFS, MONSTERS, GUILD_QUESTS, ATLAS } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { GameMap } from '../../../game/map.ts';
@@ -92,6 +92,7 @@ import type { Party } from '../../../game/party.ts';
 import { FOURTH_RANKS_OPEN } from './guilds.ts';
 import { readLine, markLine, readMarks } from '../../../game/inscriptions.ts';
 import { ACT_III } from '../../../../tools/tests/ladder.ts';
+import { roadPlace } from '../../../../tools/tests/pillars.ts';
 import { FORGE, ANVIL_STONE_PRICE, SMITH_PRICES, quarterMore } from './items.ts';
 import { GATE } from './maps/ironfells_n3.ts';
 import { VERSE_READ, BOUGHT, TAKEN, HYMN_SUNG } from './maps/anvilhall.ts';
@@ -1318,8 +1319,11 @@ function tiefzeche(w: Walk, ok: (cond: boolean, msg: string) => void): void {
     'the dwarves\' tunnel ends at a smooth face with a square hole cut through it, earth underfoot on their side and the corridor\'s floor on the other');
   for (const id of ['dm3_end', 'dm3_ledge', 'dm3_mouth']) see(w, `deep_mines3:${id}`);
   // No machine stands above the bottom (#158): the knockers, the menders and the Foreman are its own.
-  // Past the Kilns they come up into the world (Rimewater's ice-hole, #487), so the road is read to here.
-  const later = new Set(AREAS.slice(AREAS.findIndex((a) => a.id === 'kilns') + 1).flatMap((a) => a.maps.map((d) => d.id)));
+  // Past the Kilns they come up into the world (Rimewater's ice-hole, #487), so the road is read to here:
+  // a map stands where the pace check puts it (`roadPlace`), so the Dead-Drop's loaders, listed by
+  // Wrackholm but at the Glasswold's place by their floor, are past the Kilns.
+  const KILNS = ATLAS.areas.find((a) => a.id === 'kilns')!.order, placeOf = roadPlace(ATLAS, MAP_DEFS);
+  const later = new Set(AREAS.flatMap((a) => a.maps.filter((d) => placeOf(a.id, d) > KILNS).map((d) => d.id)));
   const machines = MAP_DEFS.filter((d) => !later.has(d.id) && (d.encounters ?? []).some((g) => g.monsters.some((m) => MONSTERS[m].kind === 'machine'))).map((d) => d.id);
   ok(machines.join() === 'deep_mines3', `the first machines on the road stand at the bottom of the deepest mine, and nowhere else (${machines.join(', ')})`);
   // The clean corridor: six knockers and a mender, twice, won at the bottom's floor; the menders drop their spools.

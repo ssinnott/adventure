@@ -68,6 +68,12 @@ export const CINDERPORT: MapDef = {
     { kind: 'npc', x: 9, y: 13, name: 'A Rider by the gate', lines: [
       'A Rider leans on the rail inside the gate, a rein over his arm and the horse behind him dozing.',
       '"West to the camp, a day over the ash and into the grass. We go at two, and we do not wait."',
+    ], says: [
+      // Once the Stone is lit the sentries walk the roads (#449), and the Riders know it.
+      { after: { flag: 'q_ember_lit' }, lines: [
+        'The Rider at the rail has his horse saddled and his bow strung.',
+        '"West at two, still. But there is iron walking the road since the Stone took light, and yesterday there was none."',
+      ] },
     ], passage: sells('cinderport', RIDERS_RIDE) },
     { kind: 'event', x: 10, y: 12, id: 'cp_rail', once: true, text: 'A rail inside the gate where the Riders tie their horses on trading days. A trough, and dung swept into the ash.' },
     { kind: 'event', x: 5, y: 13, id: 'cp_driftwood', once: true, text: 'Driftwood stacked by the yard wall for the fire-baskets, white with salt and grey with ash.' },
@@ -146,7 +152,11 @@ export const CINDERPORT: MapDef = {
       '"Cador Lusk. The Guild\'s man on this side of the Sound, and this is its hall, such as it is."',
       '"Three of Fane\'s on the shelf, and a space. Fane wrote wherever they stopped, and they stopped at the Stone."',
     ],
-    says: [{ after: { flag: 'q_carto_journal_done' }, lines: ['"Four of Fane\'s on the shelf now. The Guild has the Company as far as the vents, and no further."'] }] },
+    // The Mapmaker's rung paid (`q_carto_fane_done`) puts a pin past the vents; it is first, for the first that holds is said (#635).
+    says: [
+      { after: { flag: 'q_carto_fane_done' }, lines: ['"Four of Fane\'s on the shelf, and a pin in the map past the vents. The Guild has the Company to its end."'] },
+      { after: { flag: 'q_carto_journal_done' }, lines: ['"Four of Fane\'s on the shelf now. The Guild has the Company as far as the vents, and no further."'] },
+    ] },
 
     // The cross street: the vines over the west wall, and a cup in the old shape on a doorstep.
     { kind: 'event', x: 1, y: 7, id: 'cp_vines', once: true, text: 'Vines hang over the town wall from the shore\'s trees, and over the windows. They are cut back, and they come back.' },

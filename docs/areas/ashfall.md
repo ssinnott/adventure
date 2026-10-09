@@ -16,16 +16,17 @@ October 2026) with `worldGrid` (`src/game/atlas.ts`).
 Thirteen maps are built: H10, the Stair's foot (#510, §4.2), which joins the area to the Whitespine
 overland; G10, Cinderport's box (#511, §4.3), which lists the area; Cinderport behind its gate
 (#512, §4.4); G11, Fire Mountain's flank (#513, §4.5); the vents, the iron corridors and the camp,
-Meridian Camp's three levels (#22, docs/areas/meridian_camp.md §4.1 to §4.3); F11, Old Cinder's and the
-Ember Stone's box (#514, §4.6); Old Cinder's two levels, the buried town and the undercroft, through
+Meridian Camp's three levels (#22, docs/areas/meridian_camp.md §4.1 to §4.3), with the Cartographers'
+Mapmaker's rung for the camp's fire (#635, §6); F11, Old Cinder's and the Ember Stone's box (#514,
+§4.6); Old Cinder's two levels, the buried town and the undercroft, through
 F11's crater (#515, §4.7); the Ember Stone, one level under F11's field of cinders (#516, §4.8),
 with the Cartographers' Surveyor's rung (#635, §6); and F10 and E10, the Ember Waste's road (#517,
 §4.9). Its three side quests are written (#519, §6), and the third prestiges' quests of the three
 classes taught here are built on them: the Paladin's lamp, the Barbarian's nest and the Druid's
-seedling (#448, §6). Its nine monsters and the armourer's step are drawn (§3), and the rest is to
-build. Its content is
+seedling (#448, §6). Its chapter of the one quest, The Window, is written and walked (#518, §5). Its
+nine monsters and the armourer's step are drawn (§3), and the rest is to build. Its content is
 `src/content/areas/ashfall/` (maps, monsters, items, climate, its part of the world map and its
-walkthrough; its chapter of the one quest, The Window, in `chapter.ts`, to come, and its side quests
+walkthrough; its chapter of the one quest, The Window, in `chapter.ts`, and its side quests
 and the third prestiges' three in `quests.ts`) and its businesses' rooms `src/ui/interiors/ashfall/`. Its ids, the plan's:
 the area `ashfall`, its zones `cindercoast`, `firemount` and `emberwaste`, the town `cinderport`,
 the dungeons `old_cinder` and `old_cinder2` (its undercroft, #515), `ember_stone` and
@@ -220,7 +221,9 @@ Waste's road, F10 and E10 (#517):
   Druid's third (§6); on the
   ash a cairn, a shrine and the drifts; on the Hills the cairns, all facing the steppe but one that
   looks back at the Stone, a grave. Three groups: cinder beetles and a cinder drake in F10 and two
-  cinder drakes on the Hills' crest (§4.9).
+  cinder drakes on the Hills' crest (§4.9); and once the Stone is lit two sentries by each box's
+  road (#449). On the road's last shoulder, 1,6, once the Stone is lit, the chapter's end (`e10_west`,
+  #518, §5).
 
 Its atlas rows are charted in `src/content/areas/ashfall/atlas.ts`, the area's own `atlas` since G10
 lists the area; until then `src/content/atlas.ts` spread them into the plan where its rows were, as
@@ -247,8 +250,8 @@ second row, `meridian_camp2` at 226,346, six squares south of the first (docs/ar
 Its row on the curve and its step on the gear ladder are in (#542): the row in
 `src/content/progression.ts` (band 24–26, next 26, window 5,500), owed to #446 while the area is
 built box by box, with the six boxes', the vents', Old Cinder's, E10's Wold half's, the corridors',
-the Ember Stone's, the Surveyor's rung's and the side quests' 29,386 xp a member and 9,900 gold the
-clear's floor; its
+the Ember Stone's, the Surveyor's and the Mapmaker's rungs', the side quests' and the road behind's
+sentries' (#449) 31,564 xp a member and 10,700 gold the clear's floor; its
 xp is met since E10's Wold half (#524) and its gold alone is owed, which Cinderport leaves as it is,
 a town paying nothing (§8); the camp's 3,003 xp and 1,200 gold are outside it, the area listing
 the camp `outside` (§9, #22's 5);
@@ -282,6 +285,13 @@ Area: What the Springs Bring Up at Scaldwell (H10), The Founding Stone from Cind
 to Old Cinder's undercroft and The Shovel That Does Not Blunt from Cinderport's smith to the
 scavenger by Grimsforge (G11), as §6 has them, each walked every way at its level.
 
+Its chapter of the one quest is written (#518): The Window, in `src/content/areas/ashfall/chapter.ts`,
+joined after the Whitespine's The Bells and walked four ways at 24, 25 and 26 (§5). It begins on
+The Bells' end, `q_stair_top`, or at Cinderport for a company come by sea from Kilnhaven, and is done
+on `q_road_west`, which E10's `e10_west` sets on the road's last shoulder once the Stone is lit, and
+the Wold's D8 (`d8_east`, at the horse-lines) for a company that rides west instead: the flag the
+Wold's chapter (#531) starts on. G10's eldest sets `q_eldest_heard` at her first meeting.
+
 Its ground (#543): vines (`&`), walked through as the woods are, the shore's trees hung with
 creepers; the volcano (`V`) and a vent in it (`@`), the mountain's rock to walk into, see and climb,
 a vent's fire in its lip and its smoke going up; lava is the `!` there was. The scaffold drafts H10
@@ -291,13 +301,15 @@ cone as mountain, so #513 lettered it `V` and its mouth `@` over the draft (docs
 The Ember Stone counts for the Hearth (#548): its row in `src/content/stones.ts` restores it on
 `q_ember_lit`, the flag the Stone's dungeon sets the moment its third part is in and it lights
 (#516, §9's 6). It was owed to the chapter (#518) in `UNSET` (`tools/tests/quests.ts`) until the
-Stone's sockets set it and dropped the entry, which leaves the list empty; #518 reads the flag (§5).
+Stone's sockets set it and dropped the entry, which leaves the list empty; the chapter reads it
+(#518, §5).
 The sentries stand
 `after` that flag on every box (#449): the Hearth's check (`tools/tests/stones.ts`) holds a fixture
 box with a group of the test elite at the Sentry's level `after` it, not there before the Stone is
 lit and standing, in the way and fought, after. G11 places the first, one sentry (#513, §9's 10),
-F11 a group of two (#514, §9's 10), and the words on the roads and in Cinderport that say they are
-not what they were are the boxes' and #449's.
+F11 a group of two (#514, §9's 10) and F10 and E10 a group of two each by their roads (#449). The
+Rider by Cinderport's gate says so once the Stone is lit; no word on the roads had called them safe,
+so none changes (§9, #449's 3 to 5).
 
 Its crossings are written (#547), in `src/content/crossings.ts`, each on its link of the atlas with
 its fare, its days and its hours, the same either way (§4.4, §9): the Compact's ship from
@@ -371,8 +383,8 @@ sliver about 700 (§11):
 | F11 | Old Cinder's and the Ember Stone's box | the Ember Waste, Fire Mountain, Cindercoast | core | 25–26 | 1,024 (ash 664, rock 301, lava 46) | Old Cinder at 190,318; the Ember Stone at 176,342; the west lava flow between | the Stone seen; the Stone lit | #514, built |
 | | Old Cinder | | dungeon, two levels of 16×16 | 24–26 | | the buried town and the Old Drake; the undercroft and the lamp | a part | #515, built |
 | | The Ember Stone | | dungeon, one level of 16×16 | 25–26 | | the half-built Stone; the hand-in; the Sentinel | the Stone lit | #516, built |
-| F10, E10 | The Ember Waste's road | the Ember Waste, Cindercoast, the Wold | country | 24–26 | 1,024 (ash 730, vines 209, road 44, rock 41) and 1,024 (ash 443, hills 280, steppe 211, road 49, grass 39, lava 2) | the road west to the Wold at 156,312; the Cinder Hills; the Druid's trainer | none | #517, built |
-| | The chapter | | | | | The Window | | #518 |
+| F10, E10 | The Ember Waste's road | the Ember Waste, Cindercoast, the Wold | country | 24–26 | 1,024 (ash 730, vines 209, road 44, rock 41) and 1,024 (ash 443, hills 280, steppe 211, road 49, grass 39, lava 2) | the road west to the Wold at 156,312; the Cinder Hills; the Druid's trainer | the road on | #517, built |
+| | The chapter | | | | | The Window | | #518, built |
 | | Side quests | | | | | #56's 49, 50 and 52 | | #519, built |
 | | The nine drawings | | | | | MONSTERS §8.2's roster | | #520 |
 | | Cinderport's rooms | | | | | eight | | #521 |
@@ -646,7 +658,8 @@ half, with the wilderness features (#45); no more than one point in four is a si
   north, by the Riders' rail, with the Rider at 9,13 (§9, #512's 3). Jago, 14,3, is the ship's master
   on both quays and sells her back to Kilnhaven's steps, halved for a member of the Compact;
   Morwenna the harbourmaster, 11,3, has the last crossing and the Rider the ride, and both sell
-  nothing until their far ends are built (§9, #512's 4 and 5). The Chart House and the Factor's
+  nothing until their far ends are built (§9, #512's 4 and 5). Once the Ember Stone is lit the
+  Rider says there is iron walking the road (#449). The Chart House and the Factor's
   House are persons with rooms, as the Keel is, each offering and paying its Guild's one ladder, the
   Fence's rung among it, with no quest added (§9, #512's 6); the potter's is a person with a room and
   no ware (§9, #512's 7). Gorran the smith and Jenifer the potter give The Shovel That Does Not
@@ -1067,7 +1080,8 @@ half, with the wilderness features (#45); no more than one point in four is a si
   the pay, 1,841 xp a member between them where the brief has 1,400 (#517's 9); and in E10, laid
   whole as the atlas cuts it, the Wold's steppe and grass with it (#517's 13), whose Wold half #524
   has built since, its band raised to 25–26 (docs/areas/glasswold.md §4.2). The sentries `after`
-  the Stone, one group on each box's road at the band's top, are #449's (§11).
+  the Stone are #449's, built: two by each box's road at the band's top, F10's at 18,29 by the road
+  back from F11's corner and E10's at 10,16 by the road up into the Hills (§9, #449's 3 and 4).
   - **Measured.** A company at 24 wins every fight and manages 10.66 fights to a rest on F10 and
     10.51 on E10, inside the aim of 9 to 11, with 19% of F10's days ending in a fight broken off and
     0.3% of E10's; it walks the Waste's road, past the beetles, the drake and the two drakes, every
@@ -1075,7 +1089,9 @@ half, with the wilderness features (#45); no more than one point in four is a si
     fight too, owed to #18 as G10's is. Density 100.0% within 12 steps, the country floor, and the
     furthest 12 of 20, with no sign among F10's 12 points or E10's 15. It claims nothing new (§7).
     Since #524 E10's floor is 25: a company there manages 10.83 fights to a rest, and the box pays
-    2,543 xp a member (docs/areas/glasswold.md §8).
+    2,543 xp a member (docs/areas/glasswold.md §8). With the sentries (#449), which the gate counts
+    standing, F10 at 24 manages 9.19 with 19% of days broken off and E10 at 25 10.49 with 9%, both
+    in the aim; each pair pays 689 xp a member.
 
 ### 4.10 The country behind (#522): country, band 25–26, parked
 
@@ -1104,48 +1120,55 @@ outside the area's budget (§8; §9, #22's 5).
 ## 5. The one quest here
 
 Ashfall's chapter is The Window (`chapter.ts`, #518, a working title), joined after the Whitespine's
-The Bells; every zone on the road holds a step (EXPANSION §5.8): Cindercoast's at Cinderport and the
-eldest's story, Fire Mountain's at the vents, the Ember Waste's at the Stone. Its entries and goals,
-in the journal's voice, keyed to flags, events and maps the save holds:
+The Bells; every zone on the road holds a step (EXPANSION §5.8): Cindercoast's at the Stair's foot and
+the Riders' fire outside Cinderport's gate, Fire Mountain's at the vents and the corridors, the Ember
+Waste's at the Stone and on the road west. It begins on The Bells' end, `q_stair_top`, or at
+Cinderport for a company come by sea from Kilnhaven, and is done on `q_road_west`. As built, its
+entries and goals, in the journal's voice, keyed to flags, events and maps the save holds:
 
-- **The far side.** Down the Stair onto black sand, hanging vines, a mountain that smokes over
-  everything; the goal points west along the shore to Cinderport. Its event stands at the Stair's
-  landing, 26,20 (`h10_foot`, #510); the entry and the goal are #518's.
-- **The eldest's story.** At the trading ground the Riders' eldest tells the oldest story on this
-  side of the sea: a door opened in the sky, something rose toward it on a pillar of fire and fell,
-  and the land where it fell burned to glass. *Remember what that cost, if anyone ever offers to
-  open it for you.* The goal turns to the Stone.
-- **The Stone seen.** Half-built on a field of cinders, three sockets empty and the parts it lacks
-  only below. The goal names the three places: the vents, Old Cinder, the corridors.
-- **The vents.** Down the first level of the vents to the stokers' furnace room (#22), where the
-  machines shovel nothing into nothing, and the first part, `ember_part1`, in the furnace's mouth.
-  Finding it sets no flag (§9, #22's 1).
-- **Old Cinder.** Down through the buried town to the undercroft's bottom, and the second part
-  beside the dark lamp (§4.7), `ember_part2`. Finding it sets no flag (§9, #22's 1; #515's 12).
-- **The corridors.** Iron corridors hot enough to blister, and at their end the third part,
-  `ember_part3`, in a chest (#22's second level; §9, #22's 1). Below them a camp, and an old man who
-  says *You took your time*: the window's entry is written if the company goes on down to it, and
-  never asked for; what it sees there is in the entry and nowhere else (DESIGN §7). The camp is built: its window is
-  the once event `mc3_window`, which the entry can key on (`seen: 'meridian_camp3:mc3_window'`,
-  docs/areas/meridian_camp.md §8, the camp's 8).
-- **The Stone lit.** The parts carried up and set, a hand-in of three items (#516) that takes each
-  at the first meeting (EXPANSION §2.3). The Stone lights; every door below opens at once; the
-  Sentinel comes up. The Hearth burns steadier than in all our lives (#548). From then on sentries
-  walk the road back to Cinderport (`after`), which was safe the day before. The first sentry was to
-  carry a part (§4.6): F11 gives none, and whether one is carried, and which, is the chapter's
-  builder's (§9, #514's 18). As built (#516), the hand-in is three sockets at the Stone's heart that
-  take the parts in any order, and the third in sets `q_ember_lit`, which the chapter's step reads
-  (#518), and opens the door in the floor on the Sentinel, the sentries after it (§4.8; §9, #516's
-  6).
-- **The road on.** The goal turns west to the Wold, whose chapter follows (#524); the last crossing
-  waits at Cinderport's quay for Act V.
+- **The far side.** At the Stair's foot, black sand, hanging vines and a mountain that smokes over
+  everything (`sand`, on `h10_foot` at the landing, 26,20, #510). The goal goes down the Stair, then
+  west along the sand to Cinderport and the Riders' fires; a company in the town is sent out of its
+  gate to them.
+- **The eldest's story.** At the Riders' fire outside the gate she tells of a door that opened in
+  the sky, and of what it cost (`eldest`, on `q_eldest_heard`, which G10's eldest sets at her first
+  meeting). Her whole telling is Akordu's (`akordu_story`, the Wold's D8). The goal turns south-west
+  to the Ember Stone.
+- **The Stone seen.** Half-built on its field of cinders, three sockets empty in its heart, and what
+  it lacks below (`stone`, on `es_heart` inside the Stone, #516). The goal names the three places:
+  Fire Mountain's vents into Meridian Camp, the iron corridors below and Old Cinder.
+- **The parts.** The vents' furnace and the first part (`vents`, on the chest `mc1_part`, #22); Old
+  Cinder's undercroft and the second, set in the floor by the dark lamp (`cinder`, on `oc2_part`,
+  #515); the corridors' end and the third (`corridors`, on `mc2_part`, #22). Each keys on its chest
+  opened, never on the part, which the Stone takes.
+- **The camp and the window.** Under the corridors a camp and an old man at its fire: *You took your
+  time* (`camp`, on `meridian_map`, his map taken). The window's entry is written only for a company
+  that goes through the door beside the hall and looks (`window`, on `mc3_window`); what it sees is in
+  the entry and nowhere else (DESIGN §7). No goal asks for the camp.
+- **The Stone lit.** The parts carried up and set, the Stone lit and every door below opened at once
+  (`lit`), and the Hearth steadier than in all our lives (`hearth`), both on `q_ember_lit`, which the
+  third part in sets (#516). The Hearth counts it (#548).
+- **The road on.** The goal turns west along the Riders' road over the Ember Waste and the Cinder
+  Hills, onto the steppe. On the road's last shoulder, E10's 1,6, the once event `e10_west`, `after`
+  `q_ember_lit`, says the grass below and the Stone white behind and sets `q_road_west` (`west`): the
+  chapter's done flag, `ROAD_WEST` in the map, on which the Wold's chapter (#531) starts. A company
+  that rides west from Cinderport's gate instead is set down at Akordu's horse-lines (D8's 9,27),
+  where `d8_east`, `after` `q_ember_lit`, sets the same flag.
+
+While the parts are fetched, a part carried sends the company up to the Stone to set it; with none
+carried, what is set picks the next place: Old Cinder once the vents' and the corridors' parts are in,
+the corridors once the vents' is, the vents and the corridors once Old Cinder's alone is, and all
+three places once the Stone is seen.
 
 Nothing in the chapter is a lock (EXPANSION §2.3; #443, call 2; #450): the ship sails for anyone
 with the fare, the three dungeons are open at any hour, a part may be fetched in any order and the
 Stone takes them as they come. A company that reaches Cinderport by Kilnhaven's ship, or finds Old
-Cinder's part before it has heard the eldest, reads the journal true in that order. The walkthrough
-plays it at 24, 25 and 26, in order, once with Cinderport reached by the Stair and once by
-Kilnhaven's ship.
+Cinder's part first, reads the journal true in that order. The walkthrough plays it at 24, 25 and 26
+four ways, each part carried up as found: by the Stair, the parts in the goals' order and the window
+looked through; by Kilnhaven's ship, Old Cinder's part first and the window passed; by the Stair
+again, the eldest before the town, Old Cinder's part fetched while the goal names the corridors and
+the camp never reached; by the ship again, west at the end on the Rider's ride, the road never
+walked. The chapter pays nothing of its own (§8).
 
 ## 6. Side quests
 
@@ -1197,11 +1220,17 @@ Two halls open here (DESIGN §8; #443, call 7), on the rules and the hall menu b
   §10.3), and #56's 51 is its guildsman's. The quests it offers a Surveyor and a Mapmaker are on
   Ashfall's boxes, settled in #512: it offers and pays the Guild's one ladder and adds none of its
   own (§9, #512's 6). The Surveyor's, *The Fourth Journal*, is built with the Ember Stone (#516; PR
-  B of four for #635: A, the Fence's, merged as #648; C, the Mapmaker's, rides Meridian Camp's third
-  level; D, the Factor's, rides the Dead-Drop). Either hall offers it to a Surveyor once the
-  Sleepers are seen (`q_sleepers_seen`, the Act IV opening); its deed is the fourth journal's chest
-  opened in the lower gallery under the Stone (§4.8), and the hall pays 500 gold and 3,600 xp, 600 a
-  member, and fills the shelf (§9, #516's 16 and 17).
+  B of four for #635: A, the Fence's, merged as #648; C, the Mapmaker's, built with Meridian Camp's
+  third level, below; D, the Factor's, rides the Dead-Drop). Either hall offers it to a Surveyor
+  once the Sleepers are seen (`q_sleepers_seen`, the Act IV opening); its deed is the fourth
+  journal's chest opened in the lower gallery under the Stone (§4.8), and the hall pays 500 gold and
+  3,600 xp, 600 a member, and fills the shelf (§9, #516's 16 and 17). The Mapmaker's, *Fane's Fire*
+  (`carto_fane`, PR C), is the camp's: either hall offers it to a Mapmaker, a company paid the
+  Surveyor's, and its deed is the firelight seen on the one way to the fire on the camp's third level
+  (`seen: 'meridian_camp3:mc3_fire'`, docs/areas/meridian_camp.md §8, the camp's 7). It takes
+  nothing, for Fane's map is the Ranger's, and the hall pays 800 gold and 4,800 xp, 800 a member;
+  paid, the company are Geographers, the top rank, and Cador Lusk has a pin in the map past the
+  vents (§9, #635's 1 to 7).
 - **The Compact's factor's house** at Cinderport (#512): the Compact's ship lands here (#547), the
   fare halved for a member; #56's 54's runner is theirs. What the factor's hide in G10's vines
   holds (§4.3) is seen and never said.
@@ -1317,13 +1346,17 @@ before, and a Stone that lights is the Hearth's count (§9, #516's 15).
   2,862 (§9, #22's 4): 24,541, 1.26 times the ask. The Ember Stone (#516) adds 3,445, 1.17 times its
   scaled 2,950 and under 3,700 (§9, #516's 14), and the Surveyor's rung 600 (#635): 28,586 of the
   19,467 asked, 1.47 times, over 1.3. The side quests (#519) add 800, 250, 250 and 300 a member,
-  under their scaled 1,100 (§9, #519's 11): 29,386, 1.51 times. Meridian Camp's third
+  under their scaled 1,100 (§9, #519's 11): 29,386, 1.51 times. The Mapmaker's rung (#635) adds 800,
+  4,800 xp shared by six, counted here as every guild quest is (§9, #635's 4): 30,186, 1.55 times.
+  The sentries on F10's and E10's roads (#449) add 1,378, two pairs at 2,067 a sentry shared by six,
+  and no gold: 31,564, 1.62 times (§9, #449's 3). Meridian Camp's third
   level (#22) pays 3,003, 1.00 of the brief's 3,000, outside the area's budget (EXPANSION §5.2): the
   area lists it `outside`, so the curve prints its pay as a figure and no clear counts it (§9,
   #22's 5). Cinderport pays nothing,
-  as a town pays none, and its halls add no quest of their own (§9, #512's 6): its 600 is the
-  Cartographers' Surveyor's rung's, 3,600 xp shared by six and 500 gold for the fourth journal found
-  under the Ember Stone, paid at any hall of the Guild (#635).
+  as a town pays none, and its halls add no quest of their own (§9, #512's 6): its 1,400 is the
+  Cartographers' two rungs', the Surveyor's 3,600 xp shared by six and 500 gold for the fourth journal
+  found under the Ember Stone and the Mapmaker's 4,800 and 800 gold for Fane's fire, paid at any
+  hall of the Guild (#635).
 - **Gold.** Training six members from 24 to 26 costs 11,760 with today's `trainPrice`, and to 27,
   the third prestige's level, 6,240 more; the thirds ask a quest, not gold (DESIGN §5). A clear
   should pay for the training at least, in chests, drops, the halls' pay and the sentries' parts.
@@ -1347,8 +1380,9 @@ before, and a Stone that lights is the Hearth's count (§9, #516's 15).
   cold camp, their dearest find, inside the window; the Ember Stone holds 600 (#516), in the
   benches' chest with a Battle Staff +1 and a Drakeskin Coat +1, the coat at 3,250 its dearest find,
   now the area's, inside the window. The six boxes, the vents, Old Cinder, the corridors and the
-  Stone hold 9,400 of the 11,760 the training costs, and 9,900 with the Surveyor's rung's 500, paid
-  at the hall. The camp's 1,200 gold and its Meridian Staff +4 at 2,600, in the kit chest, are
+  Stone hold 9,400 of the 11,760 the training costs, and 10,700 with the Surveyor's rung's 500 and
+  the Mapmaker's 800, paid at the halls. The camp's 1,200 gold and its Meridian Staff +4 at 2,600, in
+  the kit chest, are
   outside the area's budget and held to the Glasswold's window of 6,000 (§9, #22's 5).
   Cinderport holds no gold, a town paying
   nothing; the dearest ware at its armourer's is the Drakeskin Coat at 3,100 and the Quickening
@@ -2346,6 +2380,77 @@ Decided by delegate for #448 (Ashfall's three), each the owner's to overturn:
 12. **The walkthrough plays the three on a company of 27** with its seconds taken, a barbarian and a
     druid in for its ranger and thief; the Ember Stone's walk now finds its sockets by their parts.
 
+Decided by delegate for #635 (PR C), each the owner's to overturn:
+
+1. **The rung is `carto_fane`, *Fane's Fire*,** the Cartographers' rank 3, PR C of four: the area's
+   second guild quest, in `ashfall/guilds.ts` beside the Surveyor's (flags `q_carto_fane` and
+   `q_carto_fane_done`).
+2. **The deed is the firelight,** `seen: 'meridian_camp3:mc3_fire'`, the once event on the way to the
+   fire (the camp's 7), not Fane met. It takes nothing: his map is the Ranger's.
+3. **It has no `after`:** a company is Mapmakers only once the Surveyor's is paid, and that waits for
+   the Sleepers (#516's 16), so a flag of its own would say it twice.
+4. **It pays 800 gold and 4,800 xp, 800 a member.** The curve counts a guild quest with the area whose
+   file holds it and cannot hold one outside, as it holds the camp's levels: Ashfall's clear is
+   30,186 xp a member (1.55 times the 19,467) and 10,700 gold, the row's owed gold.
+5. **The texts name no giver and explain nothing:** one serves both halls. The offer is Cador Lusk's
+   "as far as the vents" put as a charge; the clerk inks a flame past where the ink stopped.
+6. **Cador Lusk has one added line,** first in his `says` (the first that holds is said), since his
+   "no further" is wrong after. The shelf and the room's picture are not touched.
+7. **Paid, the company are Geographers,** rank 4, the top, which has no quest (DESIGN §8).
+   `OWED_RANKS` drops `cartographers[3]`; the Factor's rung stays owed to the Dead-Drop (PR D).
+
+Decided by delegate for #449, each the owner's to overturn:
+
+1. **The causeway is seen once its first stone is stood on** (`seen: 'sheerpoint_i8:i8_causeway'`,
+   the chapter's causeway goal): the Whitespine sets no flag that the Hand has built, and I8 lays
+   the causeway from the start, so the company's first sight of it is the honest moment.
+2. **Events say it, not the almanac or the sky:** the almanac reads the Stones' count and the
+   weather and takes no map's words, so a line there is a systems change (`src/game/world.ts`,
+   §11). A once event on the Saltings' shore (C6 31,17) and the Tide Ship's starboard rail (11,6).
+3. **The sentries are two pairs, F10's and E10's,** F11's form: a lone sentry is a cheap fight and
+   lifted F10 to 13.19 fights to a rest and E10 to 12.48, out of the aim; pairs hold 9.19 and 10.49.
+4. **E10's pair stands by the road up into the Hills** (10,16), past the vultures: by the way in
+   (24,27) the curve's rise from the way in went negative (-0.11); there it reads 0.22.
+5. **The Rider by Cinderport's gate says it,** his words `after` `q_ember_lit`: the Riders ride the
+   road. No line on Ashfall's roads called it safe, so none is changed.
+6. **Helmstow worsens by a gibbet and the Eel's talk,** `after` `q_wenna_taken`, in #157's shape:
+   nothing shuts and nothing is dearer (docs/areas/shelf.md §5.1).
+7. **Helmstow's words ride on Act II's Eel** (`after` `q_salt_done`): a save with Wenna taken but
+   Act II not done keeps the old Eel and gets the gibbet alone, so the acts' changes stack.
+
+Decided by delegate for #518, each the owner's to overturn:
+
+1. **The chapter is The Window,** id `window`, the doc's working title, joined after The Bells.
+2. **Both ways in begin it:** `q_stair_top`, The Bells' done flag, or Cinderport visited, for a
+   company come by Kilnhaven's ship; the Stair's foot is written only for one that stands there.
+3. **The done flag is `q_road_west`,** set by a new once event, `e10_west`, on E10's road at 1,6,
+   `after` `q_ember_lit`, as #505 set `q_stair_top` on the Stair, and by a second, `d8_east`, where
+   the Rider's ride sets a company down at Akordu: either way west ends the chapter, and the Wold's
+   starts on it.
+4. **The eldest's step keys on a new flag,** `q_eldest_heard`, her `flag`, set at her first meeting
+   at G10; her three lines are untouched. A once event beside her would not say she was heard.
+5. **The Stone seen keys on `es_heart`,** the three sockets inside the Stone: F11's `f11_stone` is
+   said each time and kept by nothing.
+6. **The parts key on their chests,** `mc1_part`, `oc2_part` and `mc2_part`, never on the items,
+   which the sockets take: an entry must outlast the hand-in.
+7. **The goals read what is set, not what is found:** the log joins flags but not two chests, so a
+   part carried sends the company to the Stone, and the sockets' flags pick the next place. A company
+   that sets the corridors' part before the vents' (the furnace passed by) is sent to both again.
+8. **The camp's entry keys on Fane's map taken** (`meridian_map`), so *You took your time* is
+   written once he has said it. No goal asks for the camp, whose band, 27–28, is over the act's 26.
+9. **The window's entry is two lines and names no hull, ship, orbit, voyage or Custodian;** the
+   walkthrough checks every entry and goal for those words.
+10. **The first sentry carries no part** (§9, #514's 18): the three are placed below, and a fourth
+    would fit no socket.
+11. **The Hearth's line is placed** in `hearth`, on `q_ember_lit` (#548's 5 left it to the chapter).
+    *The heart opens for whoever makes it whole* is not said again: The Bells writes it (`heart`).
+12. **The crossing is the road west onto the grass:** the last crossing waits at Cinderport's quay,
+    the Wold's chapter's end (docs/areas/glasswold.md §5).
+13. **The chapter pays nothing,** as no chapter does: §8 budgets nothing for it.
+14. **The walkthrough plays it four ways** at 24, 25 and 26, each part carried up as found, the
+    parts' order shuffled, the window looked through once and passed once and west once by the ride
+    (§5).
+
 ## 10. Names
 
 Ashfall's naming pass, by the rules of `docs/NAMES.md`, chosen for #444. Cindercoast's folk came
@@ -2447,7 +2552,7 @@ Owed, from F11 (#514):
 - **The milestone reads CINDERPORT 4** where the brief has 5 (§9, #514's 9).
 - **The first sentry's part is not given** (§5, §9, #514's 18): a def's drop would give every sentry
   it, G11's too, and the part is unnamed. #516 names none and gives only the Sentinel's; the
-  chapter's builder (#518) decides whether and how.
+  chapter's builder (#518) gives none (§9, #518's 10).
 - **The hermit has words only** (§9, #514's 14). The old Lightbearer at 18,5 teaches the Paladin's
   third since #448 (§6).
 - **MONSTERS' Where column** for the husk (F11's rim, by night) is a pull request of its own, if the
@@ -2457,8 +2562,10 @@ Owed, from F10 and E10 (#517):
 
 - **The Archdruid's trainer entry and the Druid's quest** are built (#448, §6): he stands in the
   outcrop's lee at F10's 6,3 (§9, #517's 4).
-- **The sentries** `after` the Stone, one group on each box's road at the band's top, 26, are
-  #449's: neither box places one (§9, #517's 2).
+- **The sentries** `after` the Stone, one group on each box's road at the band's top, 26, were
+  #449's: built, two by each box's road (§4.9; §9, #449's 3 and 4).
+- **The almanac's or the sky's word on the causeway** (#449) is not said: the almanac takes no
+  map's words, and giving it some is a systems change, owed to the owner's call (§9, #449's 2).
 - **The Wold's line is said where D10 is crossed** (#527): E10, the Waste's land, says the Waste's
   (docs/areas/glasswold.md §9, #524's 4). E10's Wold half is built (#524).
 - **Steppe is unclaimed.** E10 lays steppe first, so the Wold's "New here: steppe underfoot"
@@ -2539,11 +2646,10 @@ Cut and owed, from the Ember Stone (#516):
   doc's, the lower gallery, is built (§9, #516's 10).
 - **The seedling's bed takes the Druid's seedling** since #448 (§6); before it, words only (§9,
   #516's 12).
-- **The chapter reads `q_ember_lit`:** its Stone lit step and the road on are #518's, and so are the
-  sentries' parts (F11's, §9, #514's 18).
-- **The Mapmaker's rung,** "Fane's Fire" (the Cartographers' rank 3), is owed now that Meridian
-  Camp's third level is built: its deed is `seen: 'meridian_camp3:mc3_fire'` (docs/areas/meridian_camp.md
-  §8, the camp's 7). The Factor's rides the Dead-Drop (#635's C and D). The Chart House's picture
+- **The chapter reads `q_ember_lit`:** its Stone lit and the road on are built (#518, §5), and the
+  sentries carry no part (§9, #518's 10).
+- **The Factor's rung** (the Compact's rank 3) is owed to the Dead-Drop (#635's PR D, #22); the
+  Mapmaker's, *Fane's Fire*, is built (§6; §9, #635's 1 to 7). The Chart House's picture
   (`cinderport_cartographers`, in `src/ui/interiors`) may draw the shelf's gap; the flag does not
   change it.
 - **MONSTERS §8.2's Where column for the Sentinel** and its figure there (54% at 26) predate this,
@@ -2555,3 +2661,8 @@ Owed, from #448's Ashfall three:
   27: a monster of the dead at 26 is a new monster, #18's or the roster's to draw (§9, #448's 4).
 - **Nothing withers the Druid's seedling:** one that dies by the days wants a clock on a flag, which
   the engine does not keep; a system's pull request, if the owner wants it (§9, #448's 10).
+
+Owed, from the chapter (#518):
+- **The explorers' line,** *The heart opens for whoever makes it whole*, is written by The Bells and
+  not again here; its first writing in the Meridian journal stays Thornmark's (docs/areas/whitespine.md
+  §11).
