@@ -69,7 +69,7 @@ export const EMBERWASTE_E11: MapDef = {
     ] },
     { kind: 'event', x: 25, y: 9, id: 'e11_cones', once: true, text: 'The cones stand taller here, one higher than a man, a thread of smoke going up out of its mouth.' },
     { kind: 'cairn', x: 28, y: 15, id: 'e11_cairn', text: 'A cairn of clinker on the ash, and on top of it a cup, turned down.', gold: 50, items: ['potion_sp_great'] },
-    { kind: 'event', x: 24, y: 20, id: 'e11_kill', once: true, text: 'A horse in the ash, picked clean and scorched, its ribs standing up like a fence.' },
+    { kind: 'event', x: 24, y: 20, id: 'e11_kill', once: true, text: 'A goat in the ash, picked clean and scorched black, its horns still on the skull.' },
     { kind: 'camp', x: 27, y: 24, name: 'The knapper\'s camp', text: 'Under the mountain\'s foot a ring of cinder blocks out of the wind, a blanket and a pot in it.' },
     // West of the flow: the steppe's last grass, the black stone stood up in it, the flow seen from the
     // Hills' south end and the horse that went too near.
