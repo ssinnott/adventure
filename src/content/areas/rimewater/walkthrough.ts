@@ -13,7 +13,13 @@
 // ridge and out by the south edge, where the pass for K10 is taken; the milestone on the ridge; the
 // drover by the road and his bell; the lookout over both lochs; the box's groups, the pike under the
 // loch's ice and the bear alone the hardest; and the drovers' summer shieling under the drift at the end
-// of the posts. Then the high pass (K10, #491): on from L9's pass, taken, not walked, the cold loch's
+// of the posts. Then Loch Fada's country behind the road (M10, M11 and N9, #497): down the east shore
+// from M9 onto the loch's foot, walked, the land not named again; the ice fisher; the pike under the ice
+// and the bears past the frozen burn won at its floor; the fishers' ice-house found from the sledge runs;
+// on south into the pines under the rim, the trapper, its groups won, the trappers' cache found from the
+// snares and the world's end past the rim; and east from M9's pines round the fells' shoulder into N9,
+// its only way in, its groups won, the hunters' hide found from the skull and the glacier's wall closed
+// past it, Glacier Foot's slivers drawn closed (call 7). Then the high pass (K10, #491): on from L9's pass, taken, not walked, the cold loch's
 // crossing line said after the pass's own at each level, and back; in from the cold loch (K9) over its
 // south edge, walked, the land not named again; the road square to square to the pass's mouth and out by
 // the west edge, taken on over the pass onto J11; the milestone at the pass's foot, counted along the
@@ -30,6 +36,7 @@
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, see, fight, listen, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
+import type { Facing } from '../../../game/types.ts';
 import { GameMap } from '../../../game/map.ts';
 import type { Feature, MapDef } from '../../../game/map.ts';
 import { LOCKS } from '../../locks.ts';
@@ -81,6 +88,7 @@ function captain(w: Walk): void {
 
 const M9 = MAP_DEFS.find((d) => d.id === 'longmere_m9')!;
 const L9 = MAP_DEFS.find((d) => d.id === 'longmere_l9')!;
+const [M10, M11, N9] = ['longmere_m10', 'longmere_m11', 'longmere_n9'].map((id) => MAP_DEFS.find((d) => d.id === id)!);
 const LOCH = ATLAS.zones.find((z) => z.id === 'longmere')!;
 const K9 = MAP_DEFS.find((d) => d.id === 'coldmere_k9')!;
 const FUAR = ATLAS.zones.find((z) => z.id === 'coldmere')!;
@@ -358,6 +366,98 @@ export const walkthrough: Walkthrough = (ok) => {
   listen(w);
   const box = L9.features!.find((f) => f.kind === 'chest' && f.id === 'l9_strongbox');
   ok(box?.kind === 'chest' && box.items.includes('skinning_knife+1') && box.x === 23 && box.y === 8, 'in the shieling, the drove\'s strongbox and a drover\'s Skinning Knife +1');
+
+  // Loch Fada's country behind the road (#497). M10, the loch's foot: south from M9's east shore at
+  // 16,31 onto M10's 16,0, walked, in Loch Fada still, so the land is not named again; the box has no
+  // way out but its edges.
+  const [m10, m11, n9] = ['longmere_m10', 'longmere_m11', 'longmere_n9'].map((id) => out.zones.find((z) => z.id === id)!);
+  const searched = (map: string, x: number, y: number, facing: Facing, inside: string): boolean => {
+    w.world.travel(map, x, y, facing);
+    let found = false;
+    for (let i = 0; i < 20 && !found; i++) found = w.world.search();
+    const walked = found ? [w.world.move('forward'), w.world.move('forward')] : [];
+    return found && walked.every((r) => r.kind === 'moved') && w.world.used(inside);
+  };
+  const walkedIn = (map: string, x: number, y: number, facing: Facing, z: typeof m9, zx: number, zy: number, how: string): void => {
+    w.world.travel(map, x, y, facing);
+    const r = w.world.move('forward');
+    ok(r.kind === 'moved' && w.world.zone?.id === z.id && w.world.state.x === z.x + zx && w.world.state.y === z.y + zy && !r.messages.some((m) => m.includes('Loch Fada.')),
+      `${how}, walked, and the land not named again (${r.kind === 'moved' ? r.messages.join(' / ') || 'nothing said' : r.kind})`);
+  };
+  walkedIn('longmere_m9', 16, 31, SOUTH, m10, 16, 0, 'south from M9\'s east shore at 16,31 onto M10\'s 16,0');
+  ok([M10, M11, N9].every((d) => !(d.exits ?? []).length) && M10.start.x === 16 && M10.start.y === 0, 'the three boxes have no way out but their edges, and M10 starts on the east shore at its north edge');
+  see(w, 'longmere_m10:m10_shore');
+  listen(w);
+
+  // The ice fisher at the camp, who says the bears come down the burn off the glacier; the box's groups,
+  // each won at its floor: the pike under the ice off the fishers' holes, and the bears in the pines
+  // past the burn, which comes down frozen through the ridge and is walked to them.
+  ok(said(M10, 'An ice fisher').includes('down the burn off the glacier'), 'the ice fisher says the bears come down the burn off the glacier');
+  const burn = reach(m10.x + 16, m10.y + 17, (x, y) => on(m10)(x, y) && out.passable(x, y) === 'ok');
+  ok(out.at(m10.x + 31, m10.y + 18).terrain === 'ice' && out.at(m10.x + 20, m10.y + 17).terrain === 'ice' && burn.has((m10.y + 25) * out.width + m10.x + 27),
+    'the burn comes in off the glacier frozen and runs through the ridge, and the pines past it are walked to along its ice');
+  see(w, 'longmere_m10:m10_burn');
+  for (const g of M10.encounters!.filter((e) => e.under)) ok(g.under === 'ice' && out.at(m10.x + g.x, m10.y + g.y).terrain === 'ice', `${g.id} lives under the loch's ice`);
+  for (const g of M10.encounters!) fight(w, `longmere_m10:${g.id}`);
+
+  // The secret: sledge runs up from the holes in the ice that stop at the bank; the search there, and
+  // the fishers' ice-house behind its turf. Walked, waded, climbed or floated, it is never reached but
+  // through the bank.
+  const icehouse = shut(m10, [16, 21], [17, 21], [19, 21]);
+  ok(icehouse.size > 600 && !icehouse.reached, `the ice-house is shut but for its turf: none of M10's ${icehouse.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, 'longmere_m10:m10_runners');
+  ok(searched('longmere_m10', 16, 21, EAST, 'm10_icehouse'), 'searched at the bank where the runs stop, the turf gives, and the ice-house behind it can be walked into');
+  listen(w);
+  const catchBox = M10.features!.find((f) => f.kind === 'chest' && f.id === 'm10_icehouse_chest');
+  ok(catchBox?.kind === 'chest' && catchBox.gold === 200 && catchBox.items.includes('elixir') && catchBox.x === 19 && catchBox.y === 21, 'under the catch, a box with 200 gold and an Elixir');
+
+  // M11, the pines under the rim: south from the pines at the loch's foot, walked; the trapper, who keeps
+  // his snares off the rim, where the bears den; the box's groups, each won at its floor: the lynxes by
+  // the loch's foot and the bears under the rim.
+  walkedIn('longmere_m10', 10, 31, SOUTH, m11, 10, 0, 'south from M10\'s 10,31 into M11\'s pines at 10,0');
+  see(w, 'longmere_m11:m11_pinewood');
+  ok(said(M11, 'A trapper').includes('bears den'), 'the trapper says the bears den under the rim');
+  for (const g of M11.encounters!) fight(w, `longmere_m11:${g.id}`);
+
+  // The secret: snares on the pines in a line to the rock, all sprung and empty; the search where the
+  // line ends, and the trappers' cache in its cleft. Walked, waded, climbed or floated, it is never
+  // reached but through the rock.
+  const cleft = shut(m11, [13, 21], [13, 22], [13, 24]);
+  ok(cleft.size > 600 && !cleft.reached, `the trappers' cache is shut but for its rock: none of M11's ${cleft.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, 'longmere_m11:m11_snares');
+  ok(searched('longmere_m11', 13, 21, SOUTH, 'm11_cache'), 'searched where the snares end, the rock gives, and the cleft behind it can be walked into');
+  listen(w);
+  const pelts = M11.features!.find((f) => f.kind === 'chest' && f.id === 'm11_cache_chest');
+  ok(pelts?.kind === 'chest' && pelts.gold === 200 && pelts.items.includes('potion_sp_great') && pelts.x === 13 && pelts.y === 24, 'under the pelts, a strongbox with 200 gold and a great spell-point potion');
+
+  // N9, the glacier's edge: east from M9's pines round the fells' shoulder onto N9's 0,10, walked, its
+  // only way in the pines at rows 9 and 10; the glacier's wall along its east and south, past which the
+  // world ends, and Glacier Foot's slivers in it and in M11 drawn closed, nothing on them (call 7).
+  walkedIn('longmere_m9', 31, 10, EAST, n9, 0, 10, 'east from M9\'s 31,10 round the fells\' shoulder onto N9\'s 0,10');
+  ok(N9.start.x === 0 && N9.start.y === 10, 'N9 starts at its way in, the pines round the shoulder');
+  const ways = [...Array(32).keys()].filter((y) => out.passable(n9.x - 1, n9.y + y) === 'ok' && out.passable(n9.x, n9.y + y) === 'ok');
+  ok(ways.join() === '9,10' && [...Array(32).keys()].every((i) => out.passable(n9.x + 32, n9.y + i, { climb: true }) !== 'ok' && out.passable(n9.x + i, n9.y + 32, { climb: true }) !== 'ok'),
+    `N9 is walked into from M9 at rows 9 and 10 alone, and past the glacier's wall on the east and the south the world ends (${ways.join(', ')})`);
+  const slivers: [typeof m9, typeof M9, [number, number][]][] = [
+    [m11, M11, [[31, 5], [27, 6], [28, 6], [29, 6], [30, 6], [31, 6], ...[7, 8, 9, 10].flatMap((y) => [28, 29, 30, 31].map((x): [number, number] => [x, y])), ...[11, 12, 13].flatMap((y) => [29, 30, 31].map((x): [number, number] => [x, y])), [30, 14], [31, 14], [30, 15], [31, 15], [31, 16], [31, 17]]],
+    [n9, N9, [[31, 29], [31, 30], [30, 31], [31, 31]]],
+  ];
+  ok(slivers.every(([z, d, cells]) => cells.every(([x, y]) => out.passable(z.x + x, z.y + y) !== 'ok' && ![...(d.features ?? []), ...(d.encounters ?? [])].some((f) => f.x === x && f.y === y))),
+    'Glacier Foot\'s slivers in M11 and N9 are the ridge and the glacier\'s wall, closed, with nothing on them');
+  see(w, 'longmere_n9:n9_shoulder');
+  see(w, 'longmere_n9:n9_cave');
+  for (const g of N9.encounters!) fight(w, `longmere_n9:${g.id}`);
+
+  // The secret: a bear's skull on a stake before the fell's face, the snow trodden round it; the search
+  // there, and the hunters' hide in the face. Walked, waded, climbed or floated, it is never reached but
+  // through the face.
+  const hide = shut(n9, [24, 10], [24, 9], [24, 7]);
+  ok(hide.size > 600 && !hide.reached, `the hunters' hide is shut but for the fell's face: none of N9's ${hide.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, 'longmere_n9:n9_skull');
+  ok(searched('longmere_n9', 24, 10, NORTH, 'n9_hide'), 'searched at the skull, the fell\'s face gives, and the hide behind it can be walked into');
+  listen(w);
+  const hides = N9.features!.find((f) => f.kind === 'chest' && f.id === 'n9_hide_chest');
+  ok(hides?.kind === 'chest' && hides.gold === 200 && hides.items.includes('elixir') && hides.x === 24 && hides.y === 7, 'under the hides, a chest with 200 gold and an Elixir');
 
   // K10 (#491), the high pass: on from L9's pass onto the bridge at K10's 30,3, taken, not walked, and
   // the cold loch's crossing line said after the pass's own, as at a border walked (#166): at its floor
