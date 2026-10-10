@@ -1,7 +1,8 @@
 // The Whitespine's walkthrough. Its chapter, The Bells (#505), is played last (theBells); first,
-// Monks' Vale (J11, #499) walked: over the pass from Rimewater's K10, taken across parked J10's
-// corner, the crossing line said in the range's words to a company under the vale's floor and its name
-// alone to one at it, and back; the road square to square from the pass's foot to the gate's front, the
+// Monks' Vale (J11, #499) walked: over the pass from Rimewater's K10 by the road across J10's corner
+// (#508), the crossing line said where K10 meets J10, in the range's words to a company under the vale's
+// floor and its name alone to one at it, and back; the road square to square from K10's edge over J10's
+// corner and on from the pass's foot to the gate's front, the
 // bells heard at its foot; the gate and Highcell through it (#500): the cloister, the cells and the
 // Novice, the bells rung eleven and the ringer among them who breathes, the chapter house and the
 // Abbot on its seat, and the undercroft behind the seat; Spine Summit's camp at the atlas's site, and
@@ -32,6 +33,8 @@
 // on to the camp on the shingle, and the night she is taken, her knot on the first stone; Rook's Nest
 // at the atlas's site and the watcher in it; the Hand's sea cave under it, found from the wet rock at
 // the hollow's back; the cairn, the drowned god's shrine and the deserter in the rocks with his tally.
+// Then the country behind the road (#508, `spineBehind`): the giants' ground (J10), the Spine's south
+// (I12) and the vale's end (J12), each walked into, its one group won and its secret found from its hint.
 // Last, the four third prestiges taught here (#448) taken at 27, each for its trainer's quest: the ledge
 // held with Edric, the vigil kept with Oswin, the eleven sung to Brother Lark and the Compact's orders
 // read to Hereward in Rook's Nest (`thirdPrestiges`).
@@ -43,6 +46,7 @@ import { offers, teach } from '../../../game/prestige.ts';
 import { seekId } from '../../../game/seeking.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
 import { NORTH, SOUTH, EAST, WEST } from '../../../game/types.ts';
+import type { Facing } from '../../../game/types.ts';
 import { stonesRestored } from '../../../game/stones.ts';
 import { ATLAS, MAP_DEFS, MONSTERS as MONSTER_DEFS } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
@@ -53,8 +57,7 @@ import { GameMap } from '../../../game/map.ts';
 import type { MapDef } from '../../../game/map.ts';
 import { readLine } from '../../../game/inscriptions.ts';
 import { MONSTERS } from './monsters.ts';
-import { SADDLE } from '../rimewater/maps/coldmere_k10.ts';
-import { CLIMB, GATE, VIGIL_ASKED, VIGIL_KEPT } from './maps/monksvale_j11.ts';
+import { GATE, VIGIL_ASKED, VIGIL_KEPT } from './maps/monksvale_j11.ts';
 import { WENNA_TAKEN, MASON_PASSAGE, MASON_SWAPPED, ORDERS_ASKED, ORDERS_READ } from './maps/sheerpoint_i8.ts';
 import { WENNA_LODGE } from '../rimewater/maps/rime_lodge.ts';
 import { STAIR_TOP, TOLL_DONE, LEDGE_ASKED, LEDGE_HELD } from './maps/highspine_i10.ts';
@@ -71,36 +74,43 @@ export const walkthrough: Walkthrough = (ok) => {
   const w = newWalk(ok);
   const out = buildMaps()[OUTDOORS];
   const j11 = out.zones.find((z) => z.id === 'monksvale_j11')!, k10 = out.zones.find((z) => z.id === 'coldmere_k10')!;
+  const j10 = out.zones.find((z) => z.id === 'monksvale_j10')!;
+  const road = (x: number, y: number): boolean => out.at(x, y).ch === '=';
 
-  // Over the pass: from K10's road at its west edge, taken across parked J10's corner onto J11's road
-  // below its north edge. Three under the vale's floor the harsher words, two under the range's own,
-  // at the floor its name and nothing more.
+  // Over the pass: from K10's road at its west edge onto J10's, walked (#508; taken across parked J10's
+  // corner until it was laid, SADDLE and CLIMB). Three under the vale's floor the harsher words, two
+  // under the range's own, at the floor its name and nothing more.
   const over = (level: number): string[] => {
     for (const m of w.party.members) m.level = level;
-    w.world.travel('coldmere_k10', SADDLE.x + 1, SADDLE.y, WEST);
+    w.world.travel('coldmere_k10', 0, 19, WEST);
     const r = w.world.move('forward');
     return r.kind === 'moved' ? r.messages : [r.kind];
   };
   const low = over(19), two = over(20), due = over(22);
-  ok(w.world.zone?.id === 'monksvale_j11' && w.world.state.x === j11.x + SADDLE.tx && w.world.state.y === j11.y + SADDLE.ty && w.world.state.facing === SOUTH && J11.start.x === SADDLE.tx && J11.start.y === SADDLE.ty,
-    'over the pass from K10\'s 0,19 onto J11\'s road at 20,1, facing south, the box\'s way in');
-  ok(due.join(' / ') === `${SADDLE.label} / Monks' Vale.`, `at 22, the pass's line and then the vale named, no more (${due.join(' / ')})`);
-  ok(two.join(' / ') === `${SADDLE.label} / Monks' Vale. ${VALE.crossing?.harder}`, `at 20, the rest in the range's own words (${two.join(' / ')})`);
-  ok(low.join(' / ') === `${SADDLE.label} / Monks' Vale. ${VALE.crossing?.warning}`, `at 19, the harsher words, and the way back over the pass open (${low.join(' / ')})`);
-  ok(J11.exits?.length === 2 && J11.exits[0] === CLIMB && J11.exits[1] === GATE && CLIMB.x === SADDLE.tx && CLIMB.y === SADDLE.ty - 1 && CLIMB.tx === SADDLE.x + 1 && CLIMB.ty === SADDLE.y,
-    'the way back is the road\'s first square at the north edge, above the landing, and lands beside K10\'s way over: the box\'s only way out but its edges and Highcell\'s gate');
-  // Back over the pass: straight back, the way's own line alone.
-  w.world.travel('monksvale_j11', SADDLE.tx, SADDLE.ty, NORTH);
-  const back = w.world.move('forward');
-  ok(back.kind === 'moved' && w.world.zone?.id === 'coldmere_k10' && w.world.state.x === k10.x + CLIMB.tx && w.world.state.y === k10.y + CLIMB.ty && w.world.state.facing === NORTH
-    && back.messages.join(' / ') === CLIMB.label, `back from J11's 20,0 onto K10's 1,19, facing north; straight back, its own line alone (${back.kind === 'moved' ? back.messages.join(' / ') : back.kind})`);
+  ok(w.world.zone?.id === 'monksvale_j10' && w.world.state.x === j10.x + 31 && w.world.state.y === j10.y + 19 && j10.x + j10.w === k10.x && road(k10.x, k10.y + 19) && road(j10.x + 31, j10.y + 19),
+    'over the pass west along the road from K10\'s 0,19 onto J10\'s 31,19, walked');
+  ok(due.join(' / ') === 'Monks\' Vale.', `at 22, the vale named, no more (${due.join(' / ')})`);
+  ok(two.join(' / ') === `Monks' Vale. ${VALE.crossing?.harder}`, `at 20, the rest in the range's own words (${two.join(' / ')})`);
+  ok(low.join(' / ') === `Monks' Vale. ${VALE.crossing?.warning}`, `at 19, the harsher words, and the way back over the pass open (${low.join(' / ')})`);
+  const K10 = MAP_DEFS.find((d) => d.id === 'coldmere_k10')!, J10 = MAP_DEFS.find((d) => d.id === 'monksvale_j10')!;
+  ok(J11.exits?.length === 1 && J11.exits[0] === GATE && !(K10.exits ?? []).length && !(J10.exits ?? []).length,
+    'nothing is taken over the pass: the vale\'s only way out but its edges is Highcell\'s gate, and K10 and J10 have none');
+  // Back over the pass: straight back within the hour, nothing said.
+  const back = w.world.move('back');
+  ok(back.kind === 'moved' && w.world.zone?.id === 'coldmere_k10' && w.world.state.x === k10.x && w.world.state.y === k10.y + 19 && !back.messages.length,
+    `back from J10's 31,19 onto K10's 0,19, walked; straight back, nothing said (${back.kind === 'moved' ? back.messages.join(' / ') || 'nothing said' : back.kind})`);
+  // Down off the pass: J10's road at its south edge onto J11's first square at 20,0, walked, the same
+  // land at the same floor, so nothing named.
+  w.world.travel('monksvale_j10', 20, 31, SOUTH);
+  const offPass = w.world.move('forward');
+  ok(offPass.kind === 'moved' && w.world.zone?.id === 'monksvale_j11' && w.world.state.x === j11.x + 20 && w.world.state.y === j11.y && j10.y + j10.h === j11.y && !offPass.messages.some((m) => m.includes(VALE.name)),
+    `down the road from J10's 20,31 onto J11's 20,0, walked, and the vale not named again (${offPass.kind === 'moved' ? offPass.messages.join(' / ') || 'nothing said' : offPass.kind})`);
   listen(w);
   w.level = 22;
   for (const m of w.party.members) m.level = 22;
 
-  // The road square to square from the pass's foot to the gate's front, the atlas's way into Highcell;
-  // past the north edge, for now, the world ends.
-  const road = (x: number, y: number): boolean => out.at(x, y).ch === '=';
+  // The road square to square from K10's edge over J10's corner and down from the pass's foot to the
+  // gate's front, the atlas's way into Highcell.
   const onJ11 = (x: number, y: number): boolean => x >= j11.x && x < j11.x + j11.w && y >= j11.y && y < j11.y + j11.h;
   const reach = (fx: number, fy: number, along: (x: number, y: number) => boolean): Set<number> => {
     const seen = new Set([fy * out.width + fx]), q = [[fx, fy]];
@@ -111,8 +121,10 @@ export const walkthrough: Walkthrough = (ok) => {
     return seen;
   };
   const way = ATLAS.links.find((l) => l.from === 'monksvale' && l.to === 'monastery')!.a!;
-  ok(reach(j11.x + CLIMB.x, j11.y + CLIMB.y, (x, y) => road(x, y) && onJ11(x, y)).has((j11.y + GATE.y - 1) * out.width + j11.x + GATE.x) && out.passable(j11.x + CLIMB.x, j11.y - 1) !== 'ok',
-    'the road runs square to square over J11 from the pass\'s foot at 20,0 to the gate\'s front at 26,23, and past the north edge, for now, the world ends');
+  const onJ10 = (x: number, y: number): boolean => x >= j10.x && x < j10.x + j10.w && y >= j10.y && y < j10.y + j10.h;
+  const byRoad = reach(j10.x + 31, j10.y + 19, (x, y) => road(x, y) && (onJ10(x, y) || onJ11(x, y)));
+  ok(byRoad.has(j11.y * out.width + j11.x + 20) && byRoad.has((j11.y + GATE.y - 1) * out.width + j11.x + GATE.x) && road(j10.x + 32, j10.y + 19),
+    'the road runs square to square from K10\'s edge over J10\'s corner to its south edge at 20,31, and over J11 from the pass\'s foot at 20,0 to the gate\'s front at 26,23');
   ok(Math.floor(way[0]) === j11.x + GATE.x && Math.floor(way[1]) === j11.y + GATE.y, `the gate at 26,24 is the atlas's way into Highcell (${way.join(',')})`);
 
   // The bells, heard at the pass's foot on the road, the step's first line.
@@ -652,10 +664,128 @@ export const walkthrough: Walkthrough = (ok) => {
     'the deserter in the rocks at the end of the pines, who will not set the last stones');
   for (const id of ['i8_tally', 'i8_hammer', 'i8_bones', 'i8_wreck', 'i8_pines']) see(w, `sheerpoint_i8:${id}`);
   listen(w);
+  spineBehind(w, ok);
   theBells(ok);
   sideQuests(ok);
   thirdPrestiges(ok);
 };
+
+/**
+ * The country behind the road (#508). The giants' ground (J10): in over the pass on its road, walked
+ * above, nothing taken out of it; the saddle and the vale below; the giants' fire on the slope over
+ * I10's trail, kept with nobody at it, and their own with its seats, their prints, their felled pines
+ * and the bark rubbed off at their height; the goatherd, who says they ask nothing off the Stair; the
+ * giants at their fire, the box's one fight, asking no toll; and behind the rock where the old coins lie
+ * in the snow, their cauldron of the toll. The Spine's south (I12): south from I11's pines, walked, the
+ * land not named again; the pines along the Sheer, the eagles' nest and the rim, and under the Sheer the
+ * ash and the burst pack; the charcoal-burner, who knows where the trolls lie up; the trolls, the box's
+ * one fight; and the cleft behind the rock where the old tracks stop. The vale's end (J12): south from
+ * J11's hills, walked, the land not named again; the vale run out under the peaks, the bell under the
+ * snow, the drop, the eagles, the trolls' bowl and the pilgrim; the trolls, the box's one fight; and the
+ * cell behind the bell-rope. Walked, waded, climbed or floated, no prize is reached but through its door.
+ */
+function spineBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void {
+  const out = buildMaps()[OUTDOORS];
+  const [J10, I12, J12] = ['monksvale_j10', 'highspine_i12', 'monksvale_j12'].map(mapOf);
+  const [j10, i11, i12, j11, j12] = [J10.id, 'highspine_i11', I12.id, 'monksvale_j11', J12.id].map((id) => out.zones.find((z) => z.id === id)!);
+  const said = (r: ReturnType<typeof w.world.move>): string => (r.kind === 'moved' ? r.messages.join(' / ') || 'nothing said' : r.kind);
+  const shut = (z: typeof j10, from: [number, number], door: [number, number], prize: [number, number]): { size: number; reached: boolean } => {
+    const seen = new Set<number>(), todo = [[z.x + from[0], z.y + from[1]]];
+    while (todo.length) {
+      const [x, y] = todo.pop()!, k = y * out.width + x;
+      if (seen.has(k) || (x === z.x + door[0] && y === z.y + door[1]) || x < z.x || x >= z.x + z.w || y < z.y || y >= z.y + z.h
+        || out.passable(x, y, { swim: true, climb: true, float: true }) !== 'ok') continue;
+      seen.add(k);
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+    }
+    return { size: seen.size, reached: seen.has((z.y + prize[1]) * out.width + z.x + prize[0]) };
+  };
+  const search = (map: string, x: number, y: number, facing: Facing, room: string): boolean => {
+    w.world.travel(map, x, y, facing);
+    let found = false;
+    for (let i = 0; i < 20 && !found; i++) found = w.world.search();
+    const into = found ? [w.world.move('forward'), w.world.move('forward')] : [];
+    listen(w);
+    return found && into.every((r) => r.kind === 'moved') && w.world.used(room);
+  };
+  const npc = (def: MapDef, name: string): Person => def.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
+  const chest = (def: MapDef, id: string) => def.features!.find((f) => f.kind === 'chest' && f.id === id);
+  w.level = 22;
+  for (const m of w.party.members) m.level = 22;
+
+  // The giants' ground: in over the pass on its road at the east edge, walked (above), and nothing
+  // taken out of it; the saddle, and below it the vale.
+  ok(J10.start.x === 31 && J10.start.y === 19 && J10.start.facing === WEST && !(J10.exits ?? []).length && j10.x + j10.w === out.zones.find((z) => z.id === 'coldmere_k10')!.x,
+    'the giants\' ground starts on the road at its east edge, where the pass comes over, and nothing is taken out of it');
+  for (const id of ['j10_saddle', 'j10_vale']) see(w, `${J10.id}:${id}`);
+
+  // Their fire on the slope over I10's trail, the one seen from it, kept with nobody at it; their own
+  // with its seats; their prints, the pines they snapped off and the bark rubbed off at their height.
+  const fire = J10.features!.find((f) => f.kind === 'event' && f.id === 'j10_fire'), seen = mapOf('highspine_i10').features!.find((f) => f.kind === 'event' && f.id === 'i10_fires');
+  ok(fire?.kind === 'event' && seen?.kind === 'event' && fire.y === seen.y && fire.text.includes('Nobody sits at it') && seen.text.includes('Nobody sits at it'),
+    'the fire on the slope east of I10\'s trail is J10\'s, up the slope on the same row, and nobody sits at it');
+  for (const id of ['j10_fire', 'j10_seats', 'j10_tracks', 'j10_felled', 'j10_rubbed', 'j10_goat', 'j10_loch']) see(w, `${J10.id}:${id}`);
+  listen(w);
+
+  // The goatherd who grazes their ground, who says they ask nothing off the Stair.
+  const goatherd = npc(J10, 'A goatherd');
+  w.world.travel(J10.id, goatherd.x, goatherd.y);
+  ok(meet(goatherd, w.party, heard(w.world, goatherd)).text.includes('Off the Stair they ask nothing'), 'the goatherd grazes the giants\' ground, and off the Stair they ask nothing of anybody');
+  listen(w);
+
+  // The box's one group, won at its floor: the giants at their own fire, who ask no toll, without
+  // their king, who is the Stair's and is never met again.
+  ok(J10.encounters!.length === 1 && J10.encounters!.every((g) => !g.choice && !g.leader && !g.monsters.includes('stair_king') && g.monsters.every((m) => m === 'stair_giant')),
+    'two giants at their fire, the box\'s one group, who ask no toll and have no king with them');
+  for (const g of J10.encounters!) fight(w, `${J10.id}:${g.id}`);
+
+  // The secret: old coins in the snow at the foot of the rock, and the search there; behind it the
+  // giants' cauldron of the toll, the coins at its bottom without faces.
+  const cauldron = shut(j10, [13, 16], [12, 16], [10, 16]);
+  ok(cauldron.size > 600 && !cauldron.reached, `the cauldron is shut but for the rock: none of J10's ${cauldron.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${J10.id}:j10_coins`);
+  ok(search(J10.id, 13, 16, WEST, 'j10_cave'), 'searched where the coins lie, the rock gives, and the cave behind it can be walked into');
+  const tolls = chest(J10, 'j10_tolls');
+  ok(tolls?.kind === 'chest' && tolls.gold === 1400 && tolls.x === 10 && tolls.y === 16, 'in the cave, the giants\' cauldron of the toll');
+
+  // The Spine's south: south from I11's pines onto I12's 18,0, walked, in the High Spine still, so the
+  // land is not named again.
+  w.world.travel('highspine_i11', 18, 31, SOUTH);
+  const south = w.world.move('forward');
+  ok(south.kind === 'moved' && w.world.zone?.id === I12.id && w.world.state.x === i12.x + 18 && w.world.state.y === i12.y && i11.y + i11.h === i12.y
+    && !south.messages.some((m) => m.includes('The High Spine.')), `south from I11's 18,31 onto I12's 18,0 under the pines, walked, and the land not named again (${said(south)})`);
+  listen(w);
+  ok(I12.start.x === 18 && I12.start.y === 0 && I12.start.facing === SOUTH && !(I12.exits ?? []).length, 'the Spine\'s south starts at its north edge under the pines, and nothing is taken out of it');
+  for (const id of ['i12_south', 'i12_edge', 'i12_eyrie', 'i12_rim', 'i12_stripped', 'i12_under', 'i12_pack']) see(w, `${I12.id}:${id}`);
+  const burner = npc(I12, 'A charcoal-burner');
+  w.world.travel(I12.id, burner.x, burner.y);
+  ok(meet(burner, w.party, heard(w.world, burner)).text.includes('where the pines stop'), 'the charcoal-burner at his clamp knows where the trolls lie up');
+  listen(w);
+  for (const g of I12.encounters!) fight(w, `${I12.id}:${g.id}`);
+  const cleft = shut(i12, [17, 19], [17, 20], [17, 22]);
+  ok(cleft.size > 600 && !cleft.reached, `the cleft is shut but for the rock: none of I12's ${cleft.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${I12.id}:i12_tracks`);
+  ok(search(I12.id, 17, 19, SOUTH, 'i12_cleft'), 'searched where the old tracks stop at the rock, it gives, and the cleft behind it can be walked into');
+  const packs = chest(I12, 'i12_packs');
+  ok(packs?.kind === 'chest' && packs.gold === 1400 && packs.x === 17 && packs.y === 22, 'in the cleft, the strongbox nobody came back for');
+
+  // The vale's end: south from J11's hills onto J12's 25,0, walked, in Monks' Vale still, so the land
+  // is not named again.
+  w.world.travel('monksvale_j11', 25, 31, SOUTH);
+  const end = w.world.move('forward');
+  ok(end.kind === 'moved' && w.world.zone?.id === J12.id && w.world.state.x === j12.x + 25 && w.world.state.y === j12.y && j11.y + j11.h === j12.y
+    && !end.messages.some((m) => m.includes(VALE.name)), `south from J11's 25,31 onto J12's 25,0 over the hills, walked, and the land not named again (${said(end)})`);
+  listen(w);
+  ok(J12.start.x === 25 && J12.start.y === 0 && J12.start.facing === SOUTH && !(J12.exits ?? []).length, 'the vale\'s end starts at its north edge in the hills, and nothing is taken out of it');
+  for (const id of ['j12_end', 'j12_under', 'j12_drop', 'j12_eyrie', 'j12_bowl', 'j12_pilgrim']) see(w, `${J12.id}:${id}`);
+  for (const g of J12.encounters!) fight(w, `${J12.id}:${g.id}`);
+  const cell = shut(j12, [19, 11], [18, 11], [16, 11]);
+  ok(cell.size > 600 && !cell.reached, `the cell is shut but for the rock: none of J12's ${cell.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${J12.id}:j12_rope`);
+  ok(search(J12.id, 19, 11, WEST, 'j12_cell'), 'searched under the bell-rope, the rock gives, and the cell behind it can be walked into');
+  const alms = chest(J12, 'j12_alms');
+  ok(alms?.kind === 'chest' && alms.gold === 1400 && alms.x === 16 && alms.y === 11, 'in the cell, its alms box');
+}
 
 /**
  * The four third prestiges taught here (#448), each played by a company of 27 whose member of the class
@@ -943,9 +1073,14 @@ const atLevel = (level: number, s: Step): Step => ({ name: `${s.name} at ${level
 /** The entries written on the chapter's page. */
 const written = (w: Walk): string[] => (quest(w)?.pages.find((p) => p.def === CHAPTER)?.entries ?? []).map((e) => e.id);
 
-/** Over the pass from K10 onto J11's road at its foot, where the bells are heard. */
+/**
+ * Over the pass from K10 onto J10's road, and down it across J10's corner onto J11's road at its foot,
+ * where the bells are heard (the road walked square to square in the walkthrough's opening).
+ */
 function overThePass(w: Walk): void {
-  w.world.travel('coldmere_k10', SADDLE.x + 1, SADDLE.y, WEST);
+  w.world.travel('coldmere_k10', 0, 19, WEST);
+  w.world.move('forward');
+  w.world.travel('monksvale_j10', 20, 31, SOUTH);
   w.world.move('forward');
   listen(w);
   see(w, 'monksvale_j11:j11_bells');

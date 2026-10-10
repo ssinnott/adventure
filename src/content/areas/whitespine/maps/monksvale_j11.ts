@@ -4,23 +4,17 @@
 // road and the pilgrims' hostel they keep; the crest along the west under its snow and the path up to
 // Spine Summit and the hermit; the herder's fold at the vale's edge; the camp in the lee of the shelf;
 // and behind the wall, the brothers' trodden line to the rock.
-// In from Rimewater's K10 (#491) over the pass, taken, not walked, parked J10 lying between: K10's
-// SADDLE lands on the road at 20,1, and the road's first square, 20,0, leads back (CLIMB). The gate
-// at 26,24 is the way into Highcell (#500, GATE). The summit's path goes on west over the crest at
-// row 10 into I11 (#501), walked. The east and south edges end the world against K11 and J12, and the
-// north edge against J10. Wenna waits by the gate on her way to the Point (I8, #504).
+// In from Rimewater's K10 (#491) over the pass, by the road across J10's corner, walked (#508): J10's
+// road at 20,31 meets this map's first square at 20,0 (until J10 was laid, K10's SADDLE was taken onto
+// 20,1 and 20,0 led back, CLIMB). The gate at 26,24 is the way into Highcell (#500, GATE). The summit's
+// path goes on west over the crest at row 10 into I11 (#501), walked. The east edge meets K11 (#497)
+// at the hills and the grass, the south edge J12 (#508) at the hills, and the north edge J10 at the
+// hills and the pines either side of the road. Wenna waits by the gate on her way to the Point (I8, #504).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/whitespine.md §4.2 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
-import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { SOUTH } from '../../../../game/types.ts';
 import { WENNA_LODGE } from '../../rimewater/maps/rime_lodge.ts';
 import { NEST_FOUND } from './highspine_i11.ts';
-
-/**
- * The way back over the pass (#491): from the road's first square at the north edge, 20,0, across
- * parked J10's corner onto K10's 1,19, facing north, the road's last square there beside its own way
- * over. The label leaves the loch's name to the crossing line said after it (#166, #616).
- */
-export const CLIMB: Exit = { x: 20, y: 0, to: 'coldmere_k10', tx: 1, ty: 19, tf: NORTH, label: 'Back up over the pass to the cold loch.' };
 
 /**
  * The way into Highcell (#500): the gate in the monastery's north wall at 26,24, past the brother in
@@ -45,7 +39,7 @@ export const MONKSVALE_J11: MapDef = {
   band: [22, 23],
   region: 'whitespine',
   start: { x: 20, y: 1, facing: SOUTH },
-  exits: [CLIMB, GATE],
+  exits: [GATE],
   rows: [
     'MMMMAAAAMMMMM^^^^^,,=ppMAAAAAAMM',
     'MMMAAAAAMMMMM^^^^^^==^^MMAAAAAAM',
