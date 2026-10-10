@@ -6,23 +6,17 @@
 // the pass's first shoulder, from which the first peak of the range is seen.
 // In from L9 (#488) by the road across L10's corner, walked (#497): the road's last square at the east
 // edge, 31,3, meets L10's at 0,3 (until L10 was laid, L9's pass was taken onto the bridge at 30,3 and
-// 31,3 led back). Out over the pass, taken, not walked, parked J10 lying between: the road's square at
-// the west edge, 0,19, is taken onto J11's road (SADDLE). The north edge meets K9 (#489) square for
-// square, walked anywhere; the west and south edges end the world against J10 and parked K11.
+// 31,3 led back). Out over the pass by the road at the west edge, 0,19, onto J10's at 31,19, walked on
+// across J10's corner to J11's road (#508; taken, not walked, SADDLE, while J10 was parked). The north
+// edge meets K9 (#489) square for square, walked anywhere; the west edge J10 and the south edge K11
+// (#497).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/rimewater.md §4.7 is its brief.
-import type { Exit, MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/map.ts';
 import type { When } from '../../../../game/quests.ts';
-import { SOUTH, WEST } from '../../../../game/types.ts';
+import { WEST } from '../../../../game/types.ts';
 
 /** The pilgrims gone from below the pass, up with the brother or back to the lodge (#56's 44, #494). */
 const GONE: When = [{ flag: 'q_pilgrims_up' }, { flag: 'q_pilgrims_back' }];
-
-/**
- * Over the pass into the Whitespine (#499): from the road's square at the west edge, 0,19, across
- * parked J10's corner onto J11's 20,1, facing south, the road's square there below its own way back.
- * The label leaves the vale's name to the crossing line said after it (#166, #616).
- */
-export const SADDLE: Exit = { x: 0, y: 19, to: 'monksvale_j11', tx: 20, ty: 1, tf: SOUTH, label: 'Over the saddle of the pass and down the far side.' };
 
 export const COLDMERE_K10: MapDef = {
   id: 'coldmere_k10',
@@ -32,7 +26,6 @@ export const COLDMERE_K10: MapDef = {
   band: [20, 22],
   region: 'rimewater',
   start: { x: 30, y: 3, facing: WEST },
-  exits: [SADDLE],
   rows: [
     'ppppppppppppp^,,,,,,,iiiiiiii~pp',
     'pp^^^pppppppp^,,,,,ppppiiiiii~~p',

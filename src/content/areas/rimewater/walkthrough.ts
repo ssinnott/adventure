@@ -74,7 +74,6 @@ import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
 import type { Person } from '../../../game/people.ts';
 import { NOTCH } from '../cairnmoor/maps/cairnfield_n8.ts';
 import { UP, GATE, LAKE_DOOR } from './maps/longmere_m9.ts';
-import { SADDLE } from './maps/coldmere_k10.ts';
 import { DOOR } from './maps/coldmere_k9.ts';
 import type { Walk, Step } from '../../../../tools/walk.ts';
 import { GUILD_QUESTS } from '../../index.ts';
@@ -394,8 +393,8 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(passIn.join(' / ') === 'Loch Fuar.', `at 20, the cold loch named, no more (${passIn.join(' / ')})`);
   ok(passTwo.join(' / ') === `Loch Fuar. ${FUAR.crossing?.harder}`, `at 18, the rest in the cold loch's own words (${passTwo.join(' / ')})`);
   ok(passLow.join(' / ') === `Loch Fuar. ${FUAR.crossing?.warning}`, `at 17, the harsher words, and the way back east open (${passLow.join(' / ')})`);
-  ok(K10.start.x === 30 && K10.start.y === 3 && (K10.exits ?? []).length === 1 && K10.exits!.includes(SADDLE),
-    'the box starts on the bridge at 30,3, and has no way out but its edges and the pass on over to J11 (SADDLE, #499)');
+  ok(K10.start.x === 30 && K10.start.y === 3 && !(K10.exits ?? []).length,
+    'the box starts on the bridge at 30,3, and has no way out but its edges: the road over the pass is walked on through J10 (#508)');
   // Back from the road's last square: straight back within the hour, nothing said; come to it from
   // elsewhere, over K9's south edge, walked, and the land not named again, the long loch named.
   w.world.travel('coldmere_k10', 31, 3, EAST);
@@ -411,12 +410,12 @@ export const walkthrough: Walkthrough = (ok) => {
     `south from K9's 20,31 onto K10's 20,0, walked, and the land not named again (${seam.kind === 'moved' ? seam.messages.join(' / ') || 'nothing said' : seam.kind}); back by the road, the long loch named (${round.kind === 'moved' ? round.messages.join(' / ') : round.kind})`);
 
   // The road square to square from the bridge to the pass's mouth and out by the west edge at 0,19,
-  // taken on over the pass onto J11 across parked J10's corner (#499, SADDLE: the Whitespine's
-  // walkthrough crosses it); the milestone at the pass's foot, to the lodge's gate and
-  // over the pass to the road's end at the monks' gate in Monks' Vale.
+  // walked on over the pass onto J10's road and across its corner to J11 (#508: the Whitespine's
+  // walkthrough walks it; taken across parked J10, SADDLE, until it was laid); the milestone at the
+  // pass's foot, to the lodge's gate and over the pass to the road's end at the monks' gate in Monks' Vale.
   const onK10 = on(k10), k10Road = reach(k10.x + 30, k10.y + 3, (x, y) => road(x, y) && onK10(x, y));
-  ok(k10Road.has((k10.y + 3) * out.width + k10.x + 31) && k10Road.has((k10.y + 15) * out.width + k10.x + 5) && k10Road.has((k10.y + 19) * out.width + k10.x) && out.passable(k10.x - 1, k10.y + 19) !== 'ok' && SADDLE.x === 0 && SADDLE.y === 19,
-    'the road runs square to square over K10 from the bridge at 30,3 to the pass\'s mouth at 5,15 and out by the west edge at 0,19, taken on over the pass, parked J10 between');
+  ok(k10Road.has((k10.y + 3) * out.width + k10.x + 31) && k10Road.has((k10.y + 15) * out.width + k10.x + 5) && k10Road.has((k10.y + 19) * out.width + k10.x) && road(k10.x - 1, k10.y + 19) && out.zoneAt(k10.x - 1, k10.y + 19)?.id === 'monksvale_j10',
+    'the road runs square to square over K10 from the bridge at 30,3 to the pass\'s mouth at 5,15 and out by the west edge at 0,19, on onto J10\'s road over the pass');
   const vale = ATLAS.links.find((l) => l.from === 'monksvale' && l.to === 'monastery')!.a!;
   const k10Stone = counted(k10, K10, 'k10_milestone', { name: 'MONKS\' VALE', at: vale });
   ok(k10Stone.says, `at the pass's foot the milestone says RIME LODGE ${units(k10Stone.toLodge)} and MONKS' VALE ${units(k10Stone.toPass)}: ${k10Stone.toLodge} squares along the road to the lodge's gate and ${k10Stone.toPass} over the pass to the monks' gate`);

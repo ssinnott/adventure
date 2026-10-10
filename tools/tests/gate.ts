@@ -279,6 +279,11 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   // And the Point (#504), banded from the area's floor as I9 is: its four groups are won every time two
   // under.
   'sheerpoint_i8: under': { whose: '#18', at: 1 },
+  // And the country behind (#508), banded from the area's floor as I9 is: each box's one group is won
+  // every time two under.
+  'monksvale_j10: under': { whose: '#18', at: 1 },
+  'highspine_i12: under': { whose: '#18', at: 1 },
+  'monksvale_j12: under': { whose: '#18', at: 1 },
   'the Whitespine: under': { whose: '#18', at: 1 },
   // Act II's bosses were set by their gates against a company without its first prestige, which the
   // gate's company never took until #541 made it harness's. With it, at 11, four of the six strike
