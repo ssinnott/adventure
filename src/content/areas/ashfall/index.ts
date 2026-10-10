@@ -18,6 +18,9 @@ import { EMBER_STONE } from './maps/ember_stone.ts';
 import { CINDERCOAST_F9 } from './maps/cindercoast_f9.ts';
 import { CINDERCOAST_G9 } from './maps/cindercoast_g9.ts';
 import { CINDERCOAST_H9 } from './maps/cindercoast_h9.ts';
+import { FIREMOUNT_H11 } from './maps/firemount_h11.ts';
+import { FIREMOUNT_H12 } from './maps/firemount_h12.ts';
+import { FIREMOUNT_G12 } from './maps/firemount_g12.ts';
 import { GUILDS } from './guilds.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
@@ -32,7 +35,9 @@ export const AREA = {
   // flank (#513), the vents beneath it, the iron corridors under them and the camp at the bottom (#22),
   // the Waste's road west of the box (#517), Old Cinder's and the Ember Stone's box south of it (#514),
   // Old Cinder's two levels under its crater (#515) and the Ember Stone under its field of cinders (#516).
-  maps: [CINDERCOAST_H10, CINDERCOAST_G10, CINDERPORT, FIREMOUNT_G11, MERIDIAN_CAMP, MERIDIAN_CAMP2, MERIDIAN_CAMP3, EMBERWASTE_F10, EMBERWASTE_E10, EMBERWASTE_F11, OLD_CINDER, OLD_CINDER2, EMBER_STONE, CINDERCOAST_F9, CINDERCOAST_G9, CINDERCOAST_H9, EMBERWASTE_E11],
+  maps: [CINDERCOAST_H10, CINDERCOAST_G10, CINDERPORT, FIREMOUNT_G11, MERIDIAN_CAMP, MERIDIAN_CAMP2, MERIDIAN_CAMP3, EMBERWASTE_F10, EMBERWASTE_E10, EMBERWASTE_F11, OLD_CINDER, OLD_CINDER2, EMBER_STONE, CINDERCOAST_F9, CINDERCOAST_G9, CINDERCOAST_H9, EMBERWASTE_E11,
+    // Fire Mountain's east flank, its south-east foot and its south foot, the last of the country behind the road (#522).
+    FIREMOUNT_H11, FIREMOUNT_H12, FIREMOUNT_G12],
   // The camp pays outside any area's budget: its floor, 27, is past Ashfall's band (EXPANSION §5.2, #679).
   outside: ['meridian_camp3'],
   monsters: MONSTERS,
