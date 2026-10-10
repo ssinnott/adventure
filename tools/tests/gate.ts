@@ -254,6 +254,10 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'emberwaste_f10: under': { whose: '#18', at: 1 },
   // And Old Cinder's undercroft (#515), banded from the area's floor as Highcell's upper house is.
   'old_cinder2: under': { whose: '#18', at: 1 },
+  // And the Sound's shore behind the road (#522), F9, G9 and H9, two under, as the coast's other boxes do.
+  'cindercoast_f9: under': { whose: '#18', at: 1 },
+  'cindercoast_g9: under': { whose: '#18', at: 1 },
+  'cindercoast_h9: under': { whose: '#18', at: 1 },
   'Ashfall: under': { whose: '#18', at: 1 },
   // And the camp (#22), Meridian Camp's third level, which pays outside the area's budget and is judged two under its
   // own floor: a company at 25 beats its groups every time, as the other boxes' are.
