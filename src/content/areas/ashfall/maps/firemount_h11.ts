@@ -65,7 +65,7 @@ export const FIREMOUNT_H11: MapDef = {
     // West of the stream: the mountain over the forge, the forge's back wall, the cairn and the flow.
     { kind: 'event', x: 2, y: 4, id: 'h11_cone', once: true, text: 'West the mountain stands over the forge\'s roof, its smoke leaning away toward the sea.' },
     { kind: 'event', x: 0, y: 12, id: 'h11_forge', once: true, text: 'The back of Grimsforge, black stone, warm through. On the far side of it the anvil rings.' },
-    { kind: 'cairn', x: 6, y: 21, id: 'h11_cairn', text: 'A cairn on the slope, grey with ash, and set in its top a drake\'s tooth as long as a hand.', gold: 100, items: ['potion_sp_great'] },
+    { kind: 'cairn', x: 6, y: 21, id: 'h11_cairn', text: 'A cairn on the slope, grey with ash, and set in its top a drake\'s tooth as long as a hand.', gold: 110, items: ['potion_sp_great'] },
     { kind: 'event', x: 2, y: 30, id: 'h11_flow', once: true, text: 'The flow comes in out of the west under its crust, slower here, and smokes where it cracks.' },
     // Under the Sheer: the pines, the drake-watcher at their edge and his fire, and the Sheer itself.
     { kind: 'event', x: 27, y: 2, id: 'h11_pines', once: true, text: 'Pines under the Sheer, the only green between the mountain and the snow, ash in their needles.' },
