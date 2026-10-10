@@ -6,8 +6,8 @@
 // foot Ashfall's own grey pines, reached by a climb.
 // In from J11 (#499) walked, over the crest on the summit's path: J11's 0,10 is this map's 31,10's
 // neighbour, the line between them the crossing line (#166). The ridge trail leaves beside the Stone
-// (28,0), at 27,0, for I10 (#502); until it is built the world ends past the north edge, as past the
-// west (H11, Ashfall's); the south edge meets I12's (#508), walked.
+// (28,0), at 27,0, for I10 (#502); the west edge meets H11's (Ashfall's, #522) square for square, the
+// pines, the grass and the ash; the south edge meets I12's (#508), walked.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/whitespine.md §4.4 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import type { QuestCond } from '../../../../game/quests.ts';

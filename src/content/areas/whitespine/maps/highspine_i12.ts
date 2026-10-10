@@ -7,8 +7,8 @@
 // west, Ashfall's ground runs on south from I11's, the ash in drifts and a burst pack at the cliff's foot.
 // In from I11 (#501) walked, under the pines: I11's south edge meets this map's north edge square for
 // square, nothing said crossing between them, the same land at the same floor (#166); the strip under
-// the Sheer meets I11's the same way. The west edge ends the world against H12 (Ashfall's country,
-// parked), the east edge is the Spine against J12, and the south edge is the range and the rim.
+// the Sheer meets I11's the same way. The west edge meets H12's (Ashfall's country, #522) square for
+// square, the east edge is the Spine against J12, and the south edge is the range and the rim.
 // Cut from the atlas by tools/scaffold.ts, the world's end cut by hand; docs/areas/whitespine.md §4.8
 // is its brief.
 import type { MapDef } from '../../../../game/map.ts';
