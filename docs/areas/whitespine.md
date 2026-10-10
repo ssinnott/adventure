@@ -8,16 +8,17 @@ shards; and the Giants' Stair, the road through the Sheer and down into Ashfall,
 take their toll. This is its area doc (EXPANSION §4, §6 and §8.2): where the atlas puts it, what
 is in it, the plan for building it, box by box, and the briefs. Its work is filed under #445 (Phase
 1.4, #441): the boxes as §4's table has them, Highcell (#500), its chapter (#505), its side quests
-(#506), its eight drawings (#507) and the country behind (#508, parked); this doc is #498 and Act
+(#506), its eight drawings (#507) and the country behind (#508); this doc is #498 and Act
 IV's systems are #442's (§3). Figures are measured on main at `6032251` (2 October 2026) with
 `worldGrid` (`src/game/atlas.ts`).
 
-Its first five boxes are built, J11, Monks' Vale (#499, §4.2), which lists the area, I11, the
+Its eight boxes are built, J11, Monks' Vale (#499, §4.2), which lists the area, I11, the
 Peak Stone's (#501, §4.4), I10, Stairwatch and the Stair's head (#502, §4.5), I9, the ridge north
-(#503, §4.6) and I8, Sheer Point (#504, §4.7), and so is Highcell, the dungeon through J11's gate
-(#500, §4.3); its eight monsters are drawn (§3), its chapter, The Bells, is written (#505, §5),
+(#503, §4.6), I8, Sheer Point (#504, §4.7) and, behind the road, J10, the giants' ground, I12, the
+Spine's south and J12, the vale's end (#508, §4.8), and so is Highcell, the dungeon through J11's
+gate (#500, §4.3); its eight monsters are drawn (§3), its chapter, The Bells, is written (#505, §5),
 its four side quests are in the log (#506, §6) and so are its four third prestiges' quests,
-the Knight's, the Monk's, the Bard's and the Thief's (#448, §6); the rest is to build. Its content is `src/content/areas/whitespine/` (maps, monsters, items,
+the Knight's, the Monk's, the Bard's and the Thief's (#448, §6); K11 and K12 stay cut (§11). Its content is `src/content/areas/whitespine/` (maps, monsters, items,
 climate, its part of the world map, its walkthrough and its chapter of the one quest, The Bells, in
 `chapter.ts`; its side quests in `quests.ts`, #506); it has no town, so no rooms. Its ids:
 the area `whitespine`, its zones `monksvale`, `highspine` and `sheerpoint`, the dungeon `monastery`
@@ -32,10 +33,10 @@ Whitespine three zones:
 
 | Zone | Band | Squares | Built |
 |---|---|---|---|
-| Monks' Vale | 22–23 | 3,402 | J11 |
-| The High Spine | 23–24 | 3,118 | I11, I10 |
+| Monks' Vale | 22–23 | 3,402 | J11, J10, J12 |
+| The High Spine | 23–24 | 3,118 | I11, I10, I12 |
 | Sheer Point | 23–24 | 1,396 | I9, I8 |
-| The area | 22–24 | 7,916 | J11, I11, I10, I9, I8 |
+| The area | 22–24 | 7,916 | J11, I11, I10, I9, I8, J10, I12, J12 |
 
 Squares are land without shallows or rivers. The area is about 7.7 zone maps (EXPANSION §1 has
 7.7), and only 3,961 of its squares a company could walk: more than half of it is mountain and peak
@@ -55,12 +56,15 @@ with 547 of the High Spine's, 194 of Loch Fuar's and 5 of no zone's (§4; §9, #
 laid whole in Sheer Point, has nothing of another zone's: by the atlas's cut as it stands 757 of its
 1,024 squares are the Point's, land and shallows, and 267 are sea in no zone (§4; §9, #504's 1).
 Laying Highcell (#500) moves no square: its two plates, at 322,346 and 322,352, are places on the
-atlas, which the grid does not read.
+atlas, which the grid does not read. J10, I12 and J12 (#508), laid whole in Monks' Vale and the
+High Spine (§9, #508's 2), are counted as the plan has them, and what the zone walk moves is not
+counted here.
 
 **The grid** (EXPANSION §8.2; docs/areas/shelf.md §1). The Whitespine is the I and J columns from
 row 8 to row 12, with K11 and K12 holding Monks' Vale's east under the pass. The land worth a map is
 eight boxes: J11, the Vale and the monastery; I11, the Stone's; I10, the Stair's head; I9 and I8,
-the ridge and the Point; behind them J10, I12 and J12. K11 and K12 are cut (§11).
+the ridge and the Point; behind them J10, I12 and J12, built since (#508, §4.8). K11 and K12 are
+cut (§11).
 
 Its edges:
 
@@ -69,13 +73,13 @@ Its edges:
 - **East: Coldmere,** Rimewater's frozen lake (20–22, Act III). The high pass comes over from K10
   at 334,302 and down to J11's north edge at 318,318 (`src/content/atlas.ts`), the one way in from
   the road behind, open from the start (EXPANSION §2.2: the atlas's "Mountaineer" road became a road
-  through the range). Rimewater's pass box is #491; the pass is taken, K10's saddle at 328,305 onto
-  J11's 20,1 at 316,319 (#499, §4.2).
+  through the range). Rimewater's pass box is #491; the road is walked, K10's west edge at 328,305 onto
+  J10's 31,19 at 327,305, across J10's corner and down onto J11's 20,0 at 316,318 (#508, §4.8).
 - **West: the Sheer,** the cliff down the range's west side at x 264–272 from y 272 to y 372,
   walling Ashfall (24–26) off; the Giants' Stair is the road through it, from the head at 272,306
   in I10 to Ashfall's H10 at 258,306 (`src/content/atlas.ts`; #510 built the foot). North of the
   Sheer the Point's west side falls to the sea, Cindercoast across it.
-- **South: the range,** on through I12 and J12 to the rim: country behind, parked (#508).
+- **South: the range,** on through I12 and J12 to the rim: the country behind, built (#508, §4.8).
 
 The great spine runs north to south at x 282–304 with snow on it the year round, Spine Summit on
 it at 300,328 and the Peak Stone at its foot at 292,318. The ridge trail from the Stone north along
@@ -107,11 +111,12 @@ crest the year round, wind, cloud below the peaks; clear and bitter at night.
 
 ## 3. What is built
 
-Five boxes and a dungeon, J11, the area's first, which lists the area (#499), Highcell, through
-its gate (#500), I11 (#501), I10 (#502), I9 (#503) and I8 (#504):
+Eight boxes and a dungeon, J11, the area's first, which lists the area (#499), Highcell, through
+its gate (#500), I11 (#501), I10 (#502), I9 (#503), I8 (#504) and the country behind the road,
+J10, I12 and J12 (#508):
 
 - **Monks' Vale** (J11, `monksvale_j11`, core, band 22–23; #499): the pass's road down from K10's
-  saddle, which is taken and not walked, over the north edge, then square to square through the
+  west edge, walked across J10's corner (#508), over the north edge, then square to square through the
   hills and the vale's grass to the gate in the monastery's wall on its shelf, open now on Highcell
   (§4.3). At the pass's foot the bells first heard and a cairn; by the road the monks'
   shrine, its bell on a post with no rope, and east of it the pilgrims' hostel, kept wrongly, the
@@ -185,19 +190,44 @@ its gate (#500), I11 (#501), I10 (#502), I9 (#503) and I8 (#504):
   last rock a cairn and, at the tide's edge, the drowned god's shrine; down the pines to the east a
   deserter in the rocks with his tally. Four groups: spine eagles by the track's foot, masons at the
   causeway's root, their foreman's on its end and a snow troll by night.
+- **The giants' ground** (J10, `monksvale_j10`, country, band 22–23; #508): the road over the saddle
+  from K10's west edge, walked, down through the box's south-east corner to the vale; the pines
+  under the range's slope, the range itself on the west and the cold loch seen white to the north.
+  On the slope a fire of whole pines burning with nobody at it, and in a snow clearing in the pines
+  the giants' own, with a ring of stone seats; their prints, felled pines and a pine rubbed bare. A
+  goatherd who grazes their ground and says they ask nothing off the Stair, a lean-to for a camp, a
+  cairn and a fallen seat with a pool that does not freeze, which gives might. Old coins in the snow
+  lead to the rock, and in it stands the giants' cauldron of the toll with its chest, shut to
+  walkers, swimmers, climbers and floaters. One group: two stair giants at their fire.
+- **The Spine's south** (I12, `highspine_i12`, country, band 22–23; #508): south from the Peak
+  Stone's box along the Sheer's edge, the pines running on with no trail through them; Ashfall's ash
+  lies under the cliff on the west and a wall of rock, the rim, closes the south. A charcoal-burner
+  with his hut for a camp, who says the trolls lie up where the pines stop and that fire stops their
+  mending; a cairn, a warm spring that gives endurance, a pine leaning out over the drop, the
+  eagles' nest high on the Spine and pines stripped of their bark. Old tracks go up to the rock face
+  and stop at it, and behind it lie a cleft, packs frozen under a hide and a strongbox, shut to
+  walkers, swimmers, climbers and floaters. One group: two snow trolls.
+- **The vale's end** (J12, `monksvale_j12`, country, band 22–23; #508): south from Monks' Vale over
+  the hills, the vale running out under the peaks with the snow going up to their feet unbroken and
+  the far pines in the south; a bell is heard faintly below, underfoot. A stone seat in the hills
+  that gives intellect, a cairn, the drop to the east, eagles turning over the crags with bones in
+  the snow under them, and in the pines the trolls' bowl scraped to the earth and a pilgrim frozen
+  where he sat. A bell-rope hangs out of a crack in the rock, the snow under it worn by knees, and
+  behind the rock is a cell with a bell with no tongue and an alms box, shut to walkers, swimmers,
+  climbers and floaters. One group: two snow trolls.
 
 Its atlas rows are charted in `src/content/areas/whitespine/atlas.ts` (#498), the area's own `atlas`
 since J11 lists the area; until then `src/content/atlas.ts` spread them into the plan where its rows
-were, as Saltreach's was before #170: the zones with their bands (Monks' Vale 22–23, with J11 laid
-on it and its crossing line said in its own words, §4.2; the High Spine 23–24, with I11 and I10 laid
-on it and its crossing line said in its own words, §4.4; Sheer Point 23–24, with I9 and I8 laid
+were, as Saltreach's was before #170: the zones with their bands (Monks' Vale 22–23, with J11, J10 and
+J12 laid on it and its crossing line said in its own words, §4.2; the High Spine 23–24, with I11, I10 and I12
+laid on it and its crossing line said in its own words, §4.4; Sheer Point 23–24, with I9 and I8 laid
 on it and its crossing line said in its own words, §4.6), Highcell's two plates,
 `monastery` at 322,346 and `monastery2` at 322,352 (the first moved from K12's, §9), its sites
 (Highcell at J11's gate, 322,342, the Peak Stone, Stairwatch, Spine Summit, Rook's Nest and the
 Giants, its own; the Sheer, the plan's, §10) and its links: the pass in, the monastery's way in, the
 Giants' Stair and the ridge trail (#443, call 3). Spine Summit is a camp now, the Peak Stone a
-stone, Highcell built, Stairwatch a ledge and Rook's Nest a hollow, none planned any more (§9,
-#499's 12; #500's 1; #501's 16; #502's 11; #504's 11).
+stone, Highcell built, Stairwatch a ledge and Rook's Nest a hollow, none planned any more, and the Giants' label has its land laid, J10, and is
+planned no more (§9, #499's 12; #500's 1; #501's 16; #502's 11; #504's 11; #508's 12).
 
 Its ground (#543): peaks (`A`) and cliffs (`|`), the mountain's rock to walk into, see and climb,
 with the road through them plain road, so the scaffold drafts each box square for square (J11's 202
@@ -222,10 +252,15 @@ The side quests, on the places built and three beyond the range (#506):
   Each pays its xp whichever way it goes, 200, 200, 250 and 250 a member (§6, §8).
 
 Its row on the curve is in (#542), in `src/content/progression.ts`: band 22–24, next 24, window
-5,000, its gold owed to #445 while the area is built box by box: 17,429 xp a member and 5,290 gold
-in the boxes built, J11's 2,791 and 700, Highcell's 4,183 and 600, I11's 2,355 and 300, I10's 4,197
-and 1,920, I9's 1,800 and 790 and I8's 2,104 and 980, and the side quests' 900 xp, which take a
-clear to 18,329, past the curve's 17,867, so that no xp is owed (§8, #506). It has no step on the gear ladder, no town to
+5,000, its gold owed to #445 while the area was built box by box, the entry gone with the country
+behind (§9, #508's 11): a clear gives 22,101 xp a member of the 17,867 asked and 11,080 gold of
+the 10,800. The boxes gave
+17,429 xp and 5,290 gold before the country behind, J11's 2,791 and 700, Highcell's 4,183 and 600,
+I11's 2,355 and 300, I10's 4,197 and 1,920, I9's 1,800 and 790 and I8's 2,104 and 980; the side
+quests' 900 xp took a clear to 18,329, past the curve's 17,867 (§8, #506), the third prestiges'
+fights to 20,274 and 5,750 gold (§9, #448's 1) and the country behind's 609 xp and 1,700 gold a
+box, J10 with two giants' purses besides, to 22,101 and 11,080 (§8; §9, #508's 3 and 10). It has no
+step on the gear ladder, no town to
 sell one: Rime Lodge's rung is the pass's, and Cinderport's step (docs/areas/ashfall.md §4.4) comes
 two levels on; J11's store holds a second of Rimewater's Guide's Staff +1 (§4.2), Highcell's
 undercroft an Ice Axe +1 and a Skinning Knife +1 (§4.3), I10's hoard a Bear Spear +1, Rimewater's
@@ -253,10 +288,11 @@ its line and the king by his gate (§9, #502's 2 and 3). §9 has the decisions.
 
 ## 4. What is still to build
 
-All of it but J11, Highcell, I11, I10, I9 and I8, built (#499, §4.2; #500, §4.3; #501, §4.4; #502,
-§4.5; #503, §4.6; #504, §4.7): 7,916 squares of land, 3,961 of them walkable, the plan's figures
-(§1). On the grid the plan is eight boxes and a dungeon, five boxes on the road and three behind;
-the five hold 5,138 of those squares, 2,199 of them walkable:
+All of it is built, J11, Highcell, I11, I10, I9, I8 and the three behind the road (#499, §4.2;
+#500, §4.3; #501, §4.4; #502, §4.5; #503, §4.6; #504, §4.7; #508, §4.8): 7,916 squares of land,
+3,961 of them walkable, the plan's figures (§1). On the grid the plan is eight boxes and a
+dungeon, five boxes on the road and three behind; the five hold 5,138 of those squares, 2,199 of
+them walkable, and the three behind 2,771, 1,277 of them walkable (§11):
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
 |---|---|---|---|---|---|---|---|---|
@@ -266,13 +302,13 @@ the five hold 5,138 of those squares, 2,199 of them walkable:
 | I10 | Stairwatch and the Stair's head | the High Spine | core | 22–24 | 961 (pine 665, mountain 194, peak 85, cliff 17) | the Stair's head at 272,306 and the toll; the Stair-king; Stairwatch at 270,312 | the Stair and its toll | #502 |
 | I9 | The ridge north | Sheer Point | country | 22–23 | 774 (pine 357, mountain 205, peak 204), 11 shallow | the ridge trail along the crest; snow trolls; the Hearth seen | none | #503 |
 | I8 | Sheer Point | Sheer Point | core | 22–24 | 542 (mountain 261, hills 134, peak 122, pine 17), 86 shallow | the causeway; the Hand's camp and Wenna; Rook's Nest at 286,230 | the causeway; Wenna taken | #504 |
-| J10, I12, J12 | The country behind | Monks' Vale, the High Spine | country, behind the road | 23–24 | 875, 959 and 937 | the giants' ground above the Stair at 300,296; the range running on south | none | #508 |
+| J10, I12, J12 | The giants' ground; the Spine's south; the vale's end | Monks' Vale (J10, J12), the High Spine (I12) | country, behind the road | 22–23 (§9, #508's 1) | 875, 959 and 937 | the road across J10's corner, walked; the giants' fire on the slope and their own seats and the goatherd (J10); the pines along the Sheer, the charcoal-burner and the snow trolls (I12); the bell heard below and the trolls' bowl (J12) | none | #508 |
 
 The core is the four boxes the owner's plan names (J11, I10 and I8, which hold a step, and I11,
 which holds the Stone), built at full density; the rest is country, built to the looser floor with
 the wilderness features (EXPANSION §2.1 (b) and §5.3, #45). I9 is built with the act, the only
-country between the Stone and the Point; the country behind is parked until the owner has played it
-(#443, call 9). The bands rise from the way in, 22 at the pass's foot, to 24 at the Abbot, the
+country between the Stone and the Point; the country behind was parked until the owner had played it
+(#443, call 9) and is built (#508). The bands rise from the way in, 22 at the pass's foot, to 24 at the Abbot, the
 Stair-king and the causeway, as the gate asks (EXPANSION §5.2), and each box holds a group at the
 top of its band for the curve.
 
@@ -286,11 +322,12 @@ belongs to decides only its crossing line (#166) and its band. Each but I9 is la
 zone (§9); J11 is, in Monks' Vale (#499), I11 in the High Spine (#501) and I10 in the High Spine
 (#502). I9 is laid in Sheer Point, though the High Spine holds more of it, for the atlas check wants
 300 squares of land in every zone and laid in the High Spine the box would leave the Point's 79
-(§9, #503's 1).
+(§9, #503's 1). J10 and J12 (#508) are laid in Monks' Vale and I12 in the High Spine (§9, #508's 2).
 
 **The order** is the road's, and the quest's: J11, the only box that meets Coldmere's pass, and
 Highcell behind its gate; I11, over the crest to the Stone; I10, the Stair's head, where the road
-goes down; I9 and I8, north along the ridge to the Point. Building waits on #442's systems (§3) and
+goes down; I9 and I8, north along the ridge to the Point; then the country behind (#508), J10 across the
+road's corner and I12 and J12 south of the Stone and the Vale. Building waits on #442's systems (§3) and
 on the two-areas rule (EXPANSION §3); the briefs and the drawings do not (#445).
 
 The places, as the atlas and the docs have them:
@@ -304,7 +341,7 @@ The places, as the atlas and the docs have them:
 | Stairwatch | I10 | the Knight's third prestige: a ledge above the Stair, its way up found off the Stair (DESIGN §5, #448) | a tower at 270,312 |
 | Sheer Point | I8 | the Hand's causeway of stolen shards; Wenna taken (DESIGN §9, STORY); the masons (MONSTERS §8.1); the mason's tally (#56's 48) | the zone, its tip at about y 226 |
 | Rook's Nest | I8 | the Thief's third prestige: a hide over the causeway, and the Dead-Drop's orders (DESIGN §5, §10.2, #448, #22); Hereward, built with Whose Hand (§6) | a cave at 286,230 |
-| The Giants | J10 | the giants' own ground above the Stair (#443, call 1) | a label at 300,296; the Sheer lettered at 262,300 |
+| The Giants | J10 | the giants' own ground above the Stair (#443, call 1) | a label at 300,296, no longer planned (#508); the Sheer lettered at 262,300 |
 
 ### 4.1 The briefs
 
@@ -364,17 +401,21 @@ settled in its issue.
 - **Finds.** A plus on Rimewater's rung in the store, and 400 gold.
 - **Pay.** About 1,800 xp a member.
 - **As built** (#499, 9 October): the brief's places, with five groups for its six, laid whole in
-  Monks' Vale at band 22–23 (§1). The pass is taken, not walked (§9, #499's 3): K10's saddle at 0,19
-  (328,305) lands on the road at 20,1 facing south, with *Over the saddle of the pass and down the
-  far side.*, and the road's first square, 20,0 (316,318), leads back up to K10's 1,19 facing north,
-  with *Back up over the pass to the cold loch.* K10's milestone still reads MONKS' VALE 6, counted
-  now along this road. Going over, a company hears *Monks' Vale.* after the saddle's line and, two
-  under the floor, in the range's own words on its atlas row, *The range begins here, and it is
-  harder than the lochs behind.* (three under, *The range, and nothing in it would spare you. The
-  way back over the pass is still open.*); going back it hears the climb's line alone (§9, #499's
-  4). The road runs square to square from 20,0 to the gate's front at 26,23, four squares added at
-  its diagonal steps (§9, #499's 2). The south and east edges end the world against J12 and K11,
-  pinned in `tools/tests/outdoors.ts` with void past them; the west edge is I11's now (§4.4). Down
+  Monks' Vale at band 22–23 (§1). The pass was taken, not walked, until J10 was laid (§9, #499's 3;
+  #508's 7): the road is walked now from K10's west edge at 0,19 (328,305) onto J10's 31,19, across
+  J10's corner to its south edge at 20,31 and onto this box's 20,0 (316,318), the road's first
+  square; the start stays at 20,1, the second (§9, #508's 9). K10's milestone still reads MONKS'
+  VALE 6: 72 squares, now walked across J10. Going over, a company hears *Monks' Vale.* at K10's
+  edge and, two under the floor, in the range's own words on its atlas row, *The range begins here,
+  and it is harder than the lochs behind.* (three under, *The range, and nothing in it would spare
+  you. The way back over the pass is still open.*); going back it hears nothing straight away, and
+  *Loch Fuar.* when it comes to K10's edge from elsewhere, as at any walked border, and nothing is
+  said where J10's road meets this box (§9, #499's 4; #508's 8). The road runs square to square
+  from 20,0 to the gate's front at 26,23, four squares added at its diagonal steps (§9, #499's 2).
+  The north edge meets J10's south row, hills, grass and pines at 13 to 22 on both sides, walked,
+  and the south edge J12's north row, hills at 19 to 31 on both sides, walked (J11's 18 is hills
+  against J12's mountain); the east edge ends the world against K11, pinned in
+  `tools/tests/outdoors.ts` with void past it; the west edge is I11's now (§4.4). Down
   off the pass the bells
   (`j11_bells`, 19,2) and, at 17,4, a cairn with 300 gold and a Sapphire Vial. By the road the
   monks' shrine at 21,10 (personality), and east of it the pilgrims' hostel, a building of 2 by 2 at
@@ -522,8 +563,9 @@ settled in its issue.
   31,10 west to the snow line at 22,10, so the summit's path goes on over the crest; no exit is
   added (§9, #501's 2). The ridge trail leaves by the north edge at 27,0 (291,318), a square from
   the scaffold's 28,0, to meet the atlas's trail beyond at 291,317, which I10 takes on (§4.5); the
-  west and south edges end the world against H11 and I12, pinned in `tools/tests/outdoors.ts` with
-  void past them (§9, #501's 4). The Stone stands at 28,0 (292,318) on bare rock beside the trail's
+  west edge ends the world against H11, pinned in `tools/tests/outdoors.ts` with void past it, and
+  the south edge meets I12's north row, the pines walked and the Sheer at 7 and 8 (#508, §4.8; §9,
+  #501's 4). The Stone stands at 28,0 (292,318) on bare rock beside the trail's
   square, in a ring of bare stone, a 3 by 3 at 27 to 29, 1 to 3, its stones set round it as rocks
   and the ring entered from the snow line through a gap at 26,3; the Stone is on the north edge, so
   the ring was open to I10 there (§9, #501's 6), which closes it round on its row 31 (§9, #502's
@@ -563,7 +605,7 @@ settled in its issue.
 - **Landmarks.** Pines over most of the box, the Sheer's cliff down the west with the Stair cut
   into it, the road through the cliff (#543), going down out of the box at 258,306 for Ashfall's H10
   (#510); the king's seat at the head, a slab the size of a house; the giants' fires above, in J10
-  (parked, #508); Stairwatch, a ledge above the head at 270,312, its way up found off the Stair; the
+  (#508, built); Stairwatch, a ledge above the head at 270,312, its way up found off the Stair; the
   ridge trail across the box's east at 286,300.
 - **Points of interest,** about nine features and seven groups:
   - the head, the king and the toll: the step (§5), and the choice (#544);
@@ -606,9 +648,9 @@ settled in its issue.
   (§4.6; §9, #502's 16). The road leaves the trail at 23,20 and runs west to 8,20, the atlas's link
   end (272,306); the head is cut stone at 2 to 7,20, 3 to 7,21 and 5 to 7,19, and the Stair, road
   at 1,20 and 0,20, goes down through the Sheer to the west edge (0,20 is 264,306), where Ashfall's
-  ground lies at the cliff's foot, 0,21 to 0,31, and runs south into I11's. The east edge ends the
-  world against J10, pinned in `tools/tests/outdoors.ts` with void past it, the south and north edges
-  are pinned against I11's and I9's and the west edge meets H10's east edge square for square, the
+  ground lies at the cliff's foot, 0,21 to 0,31, and runs south into I11's. The east edge meets
+  J10's west edge (#508), the range on both sides and nothing walked, pinned in
+  `tools/tests/outdoors.ts`, the south and north edges are pinned against I11's and I9's and the west edge meets H10's east edge square for square, the
   Stair going on down onto H10's 31,20 (#510; §9, #502's 7). Short of the head, west along the road:
   a caravan drawn up,
   its master at 18,19 and the wagons at 18,21, and then the Stair in snow at 13,20, a giant and a
@@ -825,12 +867,117 @@ settled in its issue.
     (all 229 squares, 207 needed) and the furthest 8, with no sign among its 26 points. It claims
     nothing as new (§7).
 
-### 4.8 J10, I12 and J12, the country behind (#508): country, band 23–24, parked
+### 4.8 J10, I12 and J12, the country behind (#508): country, band 22–23
 
 - **Purpose.** The giants' own ground above the Stair's head (J10, lettered at 300,296) and the
-  range running on south of the Stone and the Vale (I12, J12), built once the owner has played the
+  range running on south of the Stone and the Vale (I12, J12), built after the owner had played the
   act (#443, call 9): the giants' fires and stone seats, and giants at them who ask no toll off the
-  Stair; the crest south to the rim, with snow trolls and eagles. About 400 xp a member each.
+  Stair; the crest south to the rim, with snow trolls and eagles. All three are built, and this
+  closes #508.
+- **Encounters.** Stair giants and snow trolls, a heavy pair a box; the eagles are sights and no
+  group (§9, #508's 4), and the den (#88) is in none of the three (§9, #508's 13).
+- **Pay.** About 400 xp a member each in the brief. As built about 609 a box (§8; §9, #508's 3).
+- **As built** (#508, 10 October): all three laid whole at band 22–23, the brief's 23–24 lowered by
+  one (§9, #508's 1), with no exit and no step of the quest. J10 and J12 are laid in Monks' Vale and
+  I12 in the High Spine (§9, #508's 2). Each has a heavy pair for its one group, one secret and no
+  den; nothing is claimed as new (§7). The road across J10's corner is walked (§9, #508's 7).
+  - **J10, the giants' ground** (`monksvale_j10`, corner 296,286; start 31,19, facing west on the
+    road). **The land.** The road comes in from K10's west edge at 31,19, goes over the saddle and
+    down through the box's south-east corner to the south edge at 20,31, walked, three road squares
+    added at its diagonal steps (30,19, 29,20 and 20,29; §9, #508's 7). The pines stand under the
+    range's slope, the range filling the west; the giants' fire is in a snow clearing on the slope
+    (6 to 10, 8 to 10) and their own in another in the pines (15 to 21, 5 to 7). The density check
+    counts 666 open squares. **The landmarks.** The saddle, where the road drops through the pines
+    and the range stands up ahead (`j10_saddle`, 30,20), and the vale below with a bell far off
+    (`j10_vale`, 20,30); a fallen stone seat with a pool that does not freeze, which gives might
+    (`j10_pool`, 28,28); the fire on the slope, whole pines laid end to end and burning, nobody
+    sitting at it, which answers I10's `i10_fires` on the same row (`j10_fire`, 7,9; §9, #508's 6);
+    the giants' seats, slabs stood on end round a fire (`j10_seats`, 17,6); their prints
+    (`j10_tracks`, 18,21), felled pines (`j10_felled`, 21,25) and a pine rubbed bare (`j10_rubbed`,
+    14,24); a goatherd at 16,28, who says *Off the Stair they ask nothing of anybody.*, and his goat
+    on a ledge (`j10_goat`, 6,3); a camp, The lean-to (27,4); the cold loch seen north through the
+    pines (`j10_loch`, 20,1); and a cairn, 300 gold and a Sapphire Vial (`j10_cairn`, 25,13). **The
+    secret.** The hint is old coins in the snow at the foot of the rock (`j10_coins`, 13,16).
+    Searched from there, the rock gives at 12,16 on the giants' cauldron of the toll (`j10_cave`,
+    11,16), the coins at the bottom without faces: the chest (`j10_tolls`, 10,16), 1,400 gold and an
+    elixir. It is shut in rock to walkers, swimmers, climbers and floaters; its door is at 12,16,
+    not 12,15 (§9, #508's 14). **The group.** Two stair giants at their fire (`j10_giants`, 19,6;
+    back after two days), the box's nearest at 25 steps and its hardest (level 23); they do not
+    roam, and ask no toll (§9, #508's 5).
+  - **I12, the Spine's south** (`highspine_i12`, corner 264,350; start 18,0, facing south). **The
+    land.** South from I11 along the Sheer's edge, the pines running on with no trail through them,
+    the Sheer itself at 5 to 8 with Ashfall's ash under it on the west, and the rim's wall of rock
+    from row 20, the world ending past it. The density check counts 539 open squares. **The
+    landmarks.** The pines along the Sheer (`i12_south`, 17,2); a cairn at the Sheer's edge, 300
+    gold and a Sapphire Vial (`i12_cairn`, 10,5); a pine leaning out over the drop (`i12_edge`,
+    8,9); the eagles' nest high on the Spine, a sight (`i12_eyrie`, 26,7); a warm spring that gives
+    endurance (`i12_spring`, 14,12); a charcoal-burner at 21,10, who says the trolls lie up where
+    the pines stop and that fire stops their mending, and his hut for a camp, The burner's hut
+    (23,11); pines stripped of their bark (`i12_stripped`, 14,16); the rim, the pines stopping under
+    a wall of rock (`i12_rim`, 24,20); and under the Sheer the ash in drifts (`i12_under`, 2,4) and
+    a pack burst open at the cliff's foot (`i12_pack`, 2,15). **The secret.** The hint is old tracks
+    in the snow going up to the rock face and stopping at it (`i12_tracks`, 17,19). Searched from
+    there, the rock gives at 17,20 on a cleft (`i12_cleft`, 17,21) with packs frozen under a hide
+    and a strongbox nobody came back for: the chest (`i12_packs`, 17,22), 1,400 gold and an elixir.
+    It is shut in rock as J10's is; its door is at 17,20, not 18,20 (§9, #508's 14). **The group.**
+    Two snow trolls (`i12_trolls`, 12,18; back after two days), the box's nearest at 24 steps and
+    its hardest (level 23); they do not roam.
+  - **J12, the vale's end** (`monksvale_j12`, corner 296,350; start 25,0, facing south). **The
+    land.** South from J11's hills, the vale's hills and grass running out under the peaks, with the
+    far pines at 18 to 30, 15 to 21. The plate of `monastery2` lies at 26,2, a plate only:
+    Highcell's lower house is under the vale. The east edge is hills, grass and pines at rows 0 to
+    15 against K12, cut, and void past it; the south edge is the rim. The density check counts 250
+    open squares. **The landmarks.** The vale's end, the snow going up to the peaks' feet unbroken
+    (`j12_end`, 25,3); a bell heard faintly below, underfoot (`j12_under`, 27,5); a stone seat in
+    the hills with a bowl cut in its arm, which gives intellect (`j12_seat`, 22,7); a cairn, 300
+    gold and a Sapphire Vial (`j12_cairn`, 29,7); the drop to the east (`j12_drop`, 30,4); eagles
+    over the crags and bones under them (`j12_eyrie`, 21,13); and in the pines the trolls' bowl, the
+    snow scraped back to the earth (`j12_bowl`, 23,17), and a pilgrim frozen where he sat
+    (`j12_pilgrim`, 28,15). **The secret.** The hint is a bell-rope hanging out of a crack in the
+    rock, the snow under it worn into a hollow by knees (`j12_rope`, 19,11). Searched from there,
+    the rock gives at 18,11 on a cell (`j12_cell`, 17,11), a shelf for a bed and a bell hung with no
+    tongue: the chest (`j12_alms`, 16,11), 1,400 gold and an elixir. It is shut in rock as the
+    others are; its door is at 18,11, not 18,10 (§9, #508's 14). **The group.** Two snow trolls in
+    the far pines (`j12_trolls`, 21,19; back after two days), the box's nearest at 23 steps and its
+    hardest (level 23); they do not roam.
+  - **Seams, J10 to J12.** J10's north, 0,0 to 31,0 (296 to 327,286), meets J9's south row (285)
+    square for square: mountain at 0 to 3 and pines at 4 to 31 on both sides, walked. J10's east (x
+    327) meets K10's west (328): the road at 31,19 against K10's 0,19 (328,305), walked, J10's pines
+    meeting K10's pines and hills at rows 0 to 12, 18 and 23 to 30, K10's pass walls at 13 to 17 and
+    20 to 22 being mountain. J10's south (y 317) meets J11's north row (318): the road at 20,31
+    against J11's 20,0 (316,318), walked, hills, grass and pines on both sides at 13 to 22 and the
+    peaks and mountain elsewhere. J10's west (296) meets I10's east (295): the range on both sides,
+    nothing walked, a climber's only. I12's north (y 350) meets I11's south row (349): the ash,
+    hills and pines under the Sheer at 0 to 6 and the pines at 9 to 25 on both sides, walked, the
+    Sheer at 7 and 8. I12's west (264) meets H12's east (263, Ashfall's country, not built): ash,
+    grass and hills at rows 0 to 19 and mountain below, pinned with void past it for H12 to match.
+    I12's east (295) meets J12's west (296): mountain and peaks on both sides, nothing walked. J12's
+    north (350) meets J11's south row (349): hills at 19 to 31 on both sides, walked (J11's 18 is
+    hills against J12's mountain). J12's east (327) meets K12, cut: hills, grass and pines at rows 0
+    to 15, void past it. The south edges of I12 and J12 are the rim, the world's end, pinned. The
+    outdoors test follows the neighbours: J9's south and west, K10's west, J11's four edges, I11's
+    east and south and I10's north, south and east are re-pinned, their ring reading mountain, not
+    void.
+  - **Measured, J10, I12 and J12.** At 22 a company wins every fight in all three, and at 20 too,
+    owed to #18 as every box's. J10 manages 9.72 fights to a rest, inside the aim of 8.5 to 10.5
+    (limit 7 to 13), with no day ending in a fight broken off; I12 and J12 manage 8.22, just under
+    the aim and inside the limit, 48.3% of their days ending in a fight broken off. Density, within
+    12 steps (the country floor): J10 100.0% (666 of 666, 600 needed) and the furthest 9, with no
+    sign among its 17 points; I12 100.0% (539 of 539, 486 needed) and the furthest 9, with none
+    among its 15; J12 100.0% (250 of 250, 225 needed) and the furthest 9, with none among its 12.
+    Each pays about 609 xp a member and holds 1,700 gold, the secret's 1,400 and a cairn's 300,
+    J10's two giants' purses (70 to 160 each) besides; the finds are elixirs and Sapphire Vials, no
+    ware (§9, #508's 10). None claims anything as new.
+  - **Walkthrough, J10, I12 and J12.** `whitespine/walkthrough.ts` walks the pass over J10: K10's
+    0,19 onto J10's 31,19 at 19, 20 and 22 for the crossing line, back with nothing said, J10's
+    20,31 onto J11's 20,0 with nothing said, and the road square to square from K10's edge to the
+    gate's front. `spineBehind`, called before `theBells`, walks the three: each way in, the sights,
+    the person, the group won at 22 and the prize, shut to walkers, swimmers, climbers and floaters
+    and found from its hint. `rimewater/walkthrough.ts` has no exit to take from K10: its road goes
+    on onto J10's.
+  - **Built boxes changed.** Rimewater's K10 loses `SADDLE` and J11 loses `CLIMB`, and the atlas
+    test its corner exception; the headers of K10, J9, J11, I10 and I11 are restated; the outdoors
+    pins of J9, K10, J11, I10 and I11 follow the new neighbours (§9, #508's 7).
 
 ## 5. The one quest here
 
@@ -964,7 +1111,7 @@ done flag holds, for no gold (§9, #448's 1). The Thief's goes down to the Dead-
 MONSTERS §8.1 has the roster and the fights: the Spine Eagle, the Brother, the Bell-ringer, the Snow
 Troll, the Stair Giant, the Ashen Mason, the Abbot and the Stair-king; the chapter house and the
 Stair in snow. Their drawings are #507's, eight in all, the giants new and the rest on frames that
-exist. §4.2 to §4.7 place every group, box by box, the gentlest at the pass's foot and the Abbot,
+exist. §4.2 to §4.8 place every group, box by box, the gentlest at the pass's foot and the Abbot,
 the king and the masons at the top of the band. All eight of #507's drawings are done (§3, §9): the
 monks, the Brother, the Bell-ringer and the Abbot, robed on the keepers' frame; the Spine Eagle, the
 Snow Troll and the Ashen Mason; and the giants, the Stair Giant and the Stair-king, on a frame of
@@ -984,7 +1131,8 @@ the road before in the Kilns and others (§9, #499's 15; #500's 17; #501's 13; #
 claims nothing, its brief having nothing new: the ridge is the walk (§4.6; §9, #503's 16). I8 (#504)
 claims nothing either: the sea reached from the range, a causeway over water and a person taken have
 no token to claim, the causeway's stone being the Kilns' pier's, and a cave on the atlas is on the
-road before (§4.7; §9, #504's 14).
+road before (§4.7; §9, #504's 14). J10, I12 and J12 (#508) claim nothing either: the giants are
+I10's and the trolls J11's (§4.8).
 
 ## 8. The numbers
 
@@ -992,12 +1140,12 @@ road before (§4.7; §9, #504's 14).
   next area's floor, divided by 0.75: from 22 to 24 that is about 17,867 xp a member with today's
   `xpForLevel`. The shares of §4 are J11 1,800, Highcell 2,600, I11 1,600, I10 2,400 (the king's
   share only on refusing the toll), I9 1,400, I8 1,500 and the four side quests about 900 between
-  them: 12,200 without the country behind, which adds about 1,200 when it is built. That is some
+  them: 12,200 without the country behind, which adds about 1,200 when it is built (1,827 as built, below). That is some
   5,700 short of the curve, and the shares are first cuts: from Saltreach on every box built has
   paid over its share, since a fight inside the gate's aim costs what its monsters are worth
   (docs/areas/saltreach.md §8). Each box is priced by its fights when it is built, the sum here is
-  restated with each, and the curve's row reports what a clear falls short of as owed to #445 until
-  the boxes exist. A company that pays the toll forgoes the king's share and keeps its gold.
+  restated with each, and the curve's row reported what a clear fell short of as owed to #445 until
+  the boxes existed; it keeps none now (§9, #508's 11). A company that pays the toll forgoes the king's share and keeps its gold.
   Scaled to the curve, which §9 proposes as the briefs' working figures until each box is built,
   the shares are J11 2,650, Highcell 3,800, I11 2,350, I10 3,500, I9 2,050, I8 2,200 and the side
   quests about 1,300: about 17,850. The issues (#499 to #506) carry the first figures until their
@@ -1008,7 +1156,12 @@ road before (§4.7; §9, #504's 14).
   with the side quests' scaled share (1,300) the shares stand at about 18,729, 1.05 times the ask
   (§9, #499's 9; #500's 4; #501's 9; #502's 10; #503's 9; #504's 6). The side quests as built (#506)
   pay 900 a member, not the scaled 1,300: a clear gives 18,329, 1.03 times the ask, and the curve's
-  row owes no xp (§9, #506's 1 and 14).
+  row owes no xp (§9, #506's 1 and 14). The third prestiges' fights take it to 20,274 (§9, #448's
+  1). The country behind (#508) pays about 609 a member in each of J10, I12 and J12, 1,827 between
+  them, against the brief's about 400 a box and inside the 400 to 700 asked (§9, #508's 3): a clear
+  gives 22,101 xp a member of the 17,867 asked, 1.24 times, and the curve's row owes nothing.
+  Entered at its floor and three quarters cleared, paid by level, a company leaves at 24.3, +0.3
+  over the next floor, 24, where the lead allows +1 (EXPANSION §5.2, #634).
 - **Gold.** Training six members from 22 to 24 costs about 10,800 with today's `trainPrice`, but
   nothing trains here (#443, call 7): the gold goes over the range to Cinderport, which teaches to
   27, and the third prestiges ask quests, not gold (DESIGN §5). The band's price window is 5,000
@@ -1026,7 +1179,11 @@ road before (§4.7; §9, #504's 14).
   I10's Bear Spear +1 at 2,050, Rimewater's rung, in the hoard, inside the window; I9's Hunter's Bow
   +1 in the cache is the same rung at the same price; Highcell's is the Ice Axe +1 at 1,950 and
   J11's the Guide's Staff +1 at 1,750; I8 holds no ware, its chest gold alone (§9, #502's 5 and 6;
-  #503's 6; #504's 10).
+  #503's 6; #504's 10). The country behind (#508) holds 1,700 in each of J10, I12 and J12, 1,400 in
+  the strongbox behind the secret and 300 in the cairn, and J10 the purses of its two giants (70 to
+  160 each); its finds are elixirs and Sapphire Vials, no ware, as the Whitespine sells nothing (§9,
+  #508's 10). A clear gives 11,080 gold of the 10,800, 5,750 before the three, and the curve's owed
+  row is gone (§9, #508's 11).
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor: a
   company at 22 wins nine in ten of J11's fights and walks the road from the pass's foot to the gate
   resting at its camp; one at 20 wins no more than one in four. The Abbot is won about half the time
@@ -1048,9 +1205,14 @@ road before (§4.7; §9, #504's 14).
   fight too, owed to #18 (§4.6; §9, #503's 11). On I8 a company at 22 wins every fight and walks the
   road past I9's trolls and masons and I8's eagles, masons and foreman's every time, 8.99 fights to
   a rest, inside the aim, with 64.7% of its days ending in a fight broken off; one at 20 wins every
-  fight too, owed to #18 (§4.7; §9, #504's 15). The Whitespine's 23 groups are won 96.7% of the
+  fight too, owed to #18 (§4.7; §9, #504's 15). On J10 (#508) a company at 22 wins every fight and
+  manages 9.72 fights to a rest, inside the aim of 8.5 to 10.5 (limit 7 to 13), no day ending in a
+  fight broken off; on I12 and J12 it wins every fight and manages 8.22, just under the aim and
+  inside the limit, 48.3% of its days ending in a fight broken off; at 20 it wins every fight in
+  each too, owed to #18 (§4.8; §9, #508's 3). The Whitespine's 23 groups were won 96.7% of the
   fights at their maps' floors and 93% two under, over the limit of 90%, so the area's owed entry
-  (#18) stays.
+  (#18) stays; with the country behind its 29 groups are won 97.4% and 94.4% two under, and it
+  stays.
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3),
   measured over the squares the mountain leaves. As built: J11 99.1% within 8 steps and the furthest
   9, with no sign among its 22 points (#499); Highcell's two levels 100.0% within 7 steps, the
@@ -1058,7 +1220,10 @@ road before (§4.7; §9, #504's 14).
   the furthest 9, with no sign among its 26 points (#501); I10 99.7% within 8 steps and the furthest
   9, with no sign among its 31 points (#502); I9, country, 100.0% within 12 steps (all 412 squares,
   371 needed) and the furthest 10, with no sign among its 22 points (#503); I8, core, 100.0% within
-  8 steps (all 229 squares, 207 needed) and the furthest 8, with no sign among its 26 points (#504).
+  8 steps (all 229 squares, 207 needed) and the furthest 8, with no sign among its 26 points (#504); J10, country, 100.0% within 12 steps (all
+  666 squares, 600 needed) and the furthest 9, with no sign among its 17 points; I12 100.0% (all
+  539, 486 needed) and the furthest 9, with none among its 15; J12 100.0% (all 250, 225 needed) and
+  the furthest 9, with none among its 12 (#508).
 
 ## 9. Decisions
 
@@ -1081,8 +1246,8 @@ Decided by the owner's delegate on 2 October 2026 (#443), and followed here:
    machines, and the Bard's trainer in the bell tower is a living Laureate hiding among them.
 5. **The third prestiges are built in Act IV** (call 8, #448): Stairwatch, Spine Summit, Rook's
    Nest and the bell tower here, with their quests as DESIGN §5 sketches them.
-6. **The cuts stand, the country behind is parked and all four side quests stand** (call 9): §11,
-   #508 and §6. **The names** are #444's (§10).
+6. **The cuts stand, the country behind was parked and all four side quests stand** (call 9): §11,
+   #508 and §6; the country behind is built since (§4.8). **The names** are #444's (§10).
 
 Proposed, for the owner, each in the issue that would build it:
 
@@ -1104,7 +1269,7 @@ Proposed, for the owner, each in the issue that would build it:
   the second group to 24. For the owner, with #504. Built at 22–24, neither way (§9, #504's 2).
 - **The toll's price and its remembering** (#544): a sum inside the window (§8); paid once, the
   Stair stays open to that company; the king dead, nobody keeps it. The bot refuses (#549).
-- **The giants' ground is J10's,** parked with it; the Stair's head holds the king and the two
+- **The giants' ground is J10's,** parked with it and built since (§4.8); the Stair's head holds the king and the two
   that stand with him. **The lines** of §4 are drafts, the owner's to reword.
 
 Decided by delegate for #507 (the monks), each the owner's to overturn:
@@ -1207,13 +1372,14 @@ Decided by delegate for #499, each the owner's to overturn:
    318,318 (22,0, pine on the cut): the atlas's road beyond runs at 316,317 and the edge check
    binds. It runs square to square to the gate's front at 26,23, four squares added at its diagonal
    steps.
-3. **The pass is taken, not walked,** as N8's notch, L9's pass and K10's ridge are: K10's `SADDLE`
-   at 0,19 lands on J11's 20,1 facing south and J11's `CLIMB` at 20,0 on K10's 1,19 facing north.
-   Each label leaves the land's name to the crossing line (#616).
+3. **The pass was taken, not walked,** as N8's notch is and L9's pass and K10's ridge were: K10's
+   `SADDLE` at 0,19 landed on J11's 20,1 facing south and J11's `CLIMB` at 20,0 on K10's 1,19 facing
+   north. Each label left the land's name to the crossing line (#616). J10 laid (#508), the road is
+   walked and both are gone (#508's 7).
 4. **Monks' Vale's crossing words are the range's own:** two under the floor, *The range begins
    here, and it is harder than the lochs behind.* and three under, *The range, and nothing in it
    would spare you. The way back over the pass is still open.* The walkthrough walks it at 19, 20
-   and 22 (the name alone).
+   and 22 (the name alone). Since #508 it is said where K10 meets J10 (#508's 2 and 8).
 5. **The monastery is a block of building squares on its shelf,** rows 24 to 28, columns 20 to 29,
    joined to the mountain by rock (columns 17 to 19). Drawn tall over one square, as the brief asks,
    it needs a `Landmark` kind besides the lighthouse's (`src/game/map.ts`, `src/ui`): a systems
@@ -1680,6 +1846,49 @@ Decided by delegate for #448 (the Ranger's and the Thief's), each the owner's to
 5. **Quest id `whose_hand`; flags `q_rook_orders` and `q_rook_read`,** since `orders` and
    `q_orders_read` are Thornmark's survey orders already.
 
+Decided by delegate for #508, each the owner's to overturn:
+
+1. **Band 22–23 for all three, not the brief's 23–24:** the curve wants the hardest group at 24 in
+   23–24 and the roster's ordinary monsters top out at 23, its 24s being guardians; as I9, I11 and
+   J11 are built.
+2. **J10 and J12 are in Monks' Vale's zone, I12 in the High Spine's:** the crossing from K10 is said
+   where it meets J10, in the range's own words as the jump said it, and not again down into J11;
+   J12 and I12 go on from J11's and I11's land, so no line falls between.
+3. **One group a box, a heavy pair:** two stair giants at their fire (J10), two snow trolls (I12,
+   J12), the fewest the pace, gate and density checks pass. Each pays about 609 xp a member, inside
+   the 400 to 700 asked.
+4. **The brief's eagles are sights, not a group:** the nest on the Spine in I12, the eagles and
+   bones over J12's crags. An eagle group or a mixed one falls under the hardest-group floor of 23
+   or pays past the share.
+5. **The giants ask no toll:** their group has no choice, no leader and no king (the Stair-king is a
+   guardian, never repeated). The goatherd says *Off the Stair they ask nothing of anybody.*
+6. **J10's fire on the slope answers I10's `i10_fires`** on the same row (9): *Nobody sits at it,
+   but somebody keeps it fed.* The giants sit at their own fire in a snow clearing in the pines,
+   with its ring of stone seats.
+7. **The road across J10's corner is walked,** as #712 walked L10's: K10's `SADDLE` and J11's
+   `CLIMB` are removed, the atlas test's corner exception (`across`) goes with them, none being
+   left, and the outdoors test's taken-exits check names the notch alone. Three road squares are
+   added at the diagonal steps (30,19, 29,20 and 20,29), so that the road runs square to square as
+   J11's four do (#499's 2).
+8. **`SADDLE`'s words live on as a sight on J10's road** (`j10_saddle`, 30,20). `CLIMB`'s line is
+   gone: back over the border straight away nothing is said, and come to it from elsewhere the log
+   names Loch Fuar, as at any walked border.
+9. **J11's start stays at 20,1,** where `SADDLE` landed, the road's second square: nothing needs it
+   moved.
+10. **Gold is carried in finds, 1,700 a box:** 1,400 in each strongbox (the giants' cauldron of the
+    toll, the abandoned packs in the cleft, the cell's alms box) and 300 in each cairn; elixirs in
+    the strongboxes and Sapphire Vials in the cairns, no ware, as the Whitespine sells nothing.
+11. **The owed row (`CURVE.whitespine.owed`, #508) is removed:** the curve says xp and gold both
+    hold.
+12. **The Giants label on the atlas loses `planned`,** its land being laid.
+13. **No den (#88) in any of the three:** a den's keepers and brood pace past the limit or pay past
+    the share, as in Rimewater's seven (#497's 20).
+14. **The secret doors stand a square from the first cut** (J10 12,16; I12 17,20; J12 18,11): each
+    is its box's only counted wall, so one door decides the art check's 0% or 100%, and these
+    squares pass both its rules (as M10's did, #497's 24).
+15. **The people are unnamed** ("A goatherd", "A charcoal-burner"), as I9's hermit and L10's
+    trapper.
+
 ## 10. Names
 
 The Whitespine's naming pass, by the rules of `docs/NAMES.md`: the range keeps the Crown's and the
@@ -1716,7 +1925,7 @@ founded from below and the giants, who have no names on the map. Chosen for #444
   (#491) and H10 the Stair's foot as Ashfall's (#510); the rest, about 110 squares of mountain at
   the zone line, goes with those boxes' edges.
 - **The country behind** is not cut: J10, I12 and J12, 2,771 squares of land, 1,277 walkable, are
-  parked (#508), to be built when the act has been played.
+  built (#508, §4.8), which closes #508.
 
 About 900 squares in all cut, to come back as country only if the act plays short.
 
@@ -1820,3 +2029,19 @@ Owed, from the third prestiges (#448):
 - **The orders kept to the end:** nothing takes them from the pack today. Were a later hand-in to
   (the Factor's rung, #635, if it took them), a company that gave them up before Hereward read them
   could not finish the Thief's (§9, the Ranger's and the Thief's 2).
+
+Cut and owed, from the country behind (#508):
+
+- **The brief's eagles** as a group in I12 and J12: they are sights, the nest on the Spine and the
+  eagles and bones over the crags; an eagle group or a mixed one falls under the hardest-group floor
+  of 23 or pays past the share (§9, #508's 4).
+- **The giants' toll:** they ask none off the Stair, and J10's group has no king, no leader and no
+  choice (§9, #508's 5).
+- **The den (#88)** in none of the three: a den's keepers and brood pace past the limit or pay past
+  the share, as in Rimewater's seven (§9, #508's 13).
+- **Two under.** J10, I12 and J12 at 20 win every fight, owed to #18 as every box's: `OWED` in
+  `tools/tests/gate.ts` names each, and the area's pool stays over the limit (§8).
+- **To H12, Ashfall's country behind (#522):** I12's west edge, ash, grass and hills at rows 0 to 19
+  and mountain below, is pinned against void; H12's builder matches it and moves the pin.
+- **The world ends past J12** to the east against K12, cut, and to the south at the rim, as I12's
+  does (§4.8).
