@@ -11,7 +11,7 @@ export const ZONES: readonly AtlasZone[] = [
   },
   { id: 'firemount', name: 'Fire Mountain', area: 'ashfall', band: [25, 26], maps: [{ map: 'firemount_g11', at: [200, 318] }], seeds: [[214, 330], [240, 340]] },
   {
-    id: 'emberwaste', name: 'The Ember Waste', area: 'ashfall', band: [25, 26], maps: [{ map: 'emberwaste_f10', at: [168, 286] }, { map: 'emberwaste_e10', at: [136, 286] }, { map: 'emberwaste_f11', at: [168, 318] }], seeds: [[172, 336], [180, 300]],
+    id: 'emberwaste', name: 'The Ember Waste', area: 'ashfall', band: [25, 26], maps: [{ map: 'emberwaste_f10', at: [168, 286] }, { map: 'emberwaste_e10', at: [136, 286] }, { map: 'emberwaste_f11', at: [168, 318] }, { map: 'emberwaste_e11', at: [136, 318] }], seeds: [[172, 336], [180, 300]],
     // The crossing line said coming off the coast onto the ash (#166, #517).
     crossing: { harder: 'Nothing grows out here, and what lives on the ash is harder.', warning: 'Nothing on the ash would spare you. The coast is behind you still.' },
   },

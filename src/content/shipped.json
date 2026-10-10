@@ -465,6 +465,19 @@
         "e10_waymark",
         "e10_west",
         "e10_wind",
+        "e11_cairn",
+        "e11_cones",
+        "e11_draught",
+        "e11_end",
+        "e11_horse",
+        "e11_in",
+        "e11_kill",
+        "e11_pack",
+        "e11_road",
+        "e11_shrine",
+        "e11_skins",
+        "e11_steppe",
+        "e11_tube",
         "e2_cairn",
         "e2_ford",
         "e2_hoard",
@@ -1515,6 +1528,7 @@
         "e10_lions",
         "e10_sentries",
         "e10_vultures",
+        "e11_drakelings",
         "e2_boar",
         "e2_crows",
         "e2_crows2",
@@ -1807,6 +1821,7 @@
         "148,271",
         "149,179",
         "154,313",
+        "154,330",
         "155,91",
         "158,56",
         "169,78",
@@ -2987,6 +3002,10 @@
     },
     "emberwaste_e10": {
       "at": "136,286",
+      "size": "32x32"
+    },
+    "emberwaste_e11": {
+      "at": "136,318",
       "size": "32x32"
     },
     "emberwaste_f10": {
