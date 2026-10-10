@@ -4,22 +4,12 @@
 // and the open water in its middle; the stream off the fells bending north; the high meadow under the
 // ridge's north end where the drovers' summer shieling lies drifted over; a drover wintering in his
 // bothy by the road; and on the ridge's crest the lookout over both lochs and a cairn.
-// In from M9 by the road at 31,20; out by the south edge at 6,31 and 7,31, where the atlas's road runs
-// on across parked L10's corner to K10 (#491), taken, not walked (PASS). The west edge meets K9 (#489),
-// where Loch Fuar begins.
+// In from M9 by the road at 31,20; out by the south edge at 6,31 and 7,31 onto L10's road, walked on
+// across L10's corner to K10 (#497; taken, not walked, while L10 was parked). The west edge meets K9
+// (#489), where Loch Fuar begins.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/rimewater.md §4.4 is its brief.
-import type { Exit, MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
-
-/**
- * The way on to the cold loch (#491): the atlas's road leaves the south edge at 6,31 and 7,31 and runs
- * on across parked L10's corner to K10's east edge, never entering K9, so L9 and K10 meet only at a
- * corner and the road is not walked but taken. The road's last square, 6,31, leads onto K10's bridge
- * at 30,3 (the atlas's 358,289), facing west, beside the road's last square there, 31,3, which is K10's
- * way back (`RIDGE`) and lands on 7,31, facing north, the road's last square here beside the pass. The
- * label leaves the loch's name to the crossing line said after it (World's `crossing`, #166).
- */
-export const PASS: Exit = { x: 6, y: 31, to: 'coldmere_k10', tx: 30, ty: 3, tf: WEST, label: 'On down the road to the cold loch.' };
 
 export const LONGMERE_L9: MapDef = {
   id: 'longmere_l9',
@@ -29,7 +19,6 @@ export const LONGMERE_L9: MapDef = {
   band: [20, 21],
   region: 'rimewater',
   start: { x: 31, y: 20, facing: WEST },
-  exits: [PASS],
   rows: [
     'iiiiiiiWWWWWWii_pppppp~~~~~~ppp,',
     'iiipiiiiiWWWWiipppppppppppp~~i~p',

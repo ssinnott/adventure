@@ -2,8 +2,9 @@
 // the Cairnfield's notch to the lodge's gate, the coach yard outside it and the Lanterns' lamp; the
 // lodge's walls on the shore of the long loch's head, frozen, with the ice-hole a few squares out from
 // the lake wall, its fire and the one who waits at its foot; the causeway over the head and the road
-// on west along the shore for the pass; the pines under the fells; and along the east the glacier's
-// edge, the guide's cairn and the one bare face of its foot.
+// on west along the shore for the pass; the pines under the fells, running on east at rows 9 and 10
+// round the fells' shoulder into N9 (#497); and along the east the glacier's edge, the guide's cairn
+// and the one bare face of its foot, rock at 31,24 shutting the hollow from the wall over N9.
 // The road is taken down from N8's notch onto 22,8 (NOTCH, in cairnfield_n8.ts) and back up from 23,8
 // (UP); the gate at 18,8 is the way into Rime Lodge (#487, GATE), and the door in the lake wall at
 // 13,10 its way onto the ice (LAKE_DOOR), where on the fourth night the hole gives up its fight.
@@ -68,8 +69,8 @@ export const LONGMERE_M9: MapDef = {
     ',~~~pp*ppp^BBBBBBBB:::MMMMMMMMMM',
     ',,~~~ppppp,BBBBBBBB:::MMMMMMMMMM',
     ',*,~~~ppp,,BBBBBBBD=====MMMMMMMM',
-    ',,*,~~p,,,,BBBBBBBB=,pppppppMMMM',
-    ',,,^,~~,,,,BBDBBBBB=,,ppppppMMMM',
+    ',,*,~~p,,,,BBBBBBBB=,ppppppppppp',
+    ',,,^,~~,,,,BBDBBBBB=,,pppppppppp',
     ',^^_~~iiiiiiiiiiii*=^^pppp***MMM',
     '^^^_iiiiiiiiiiiiii_=^^pp*piiiMMM',
     '^^^_iiiiiiiiiiiiii_=^^ppppiiiMMM',
@@ -83,7 +84,7 @@ export const LONGMERE_M9: MapDef = {
     ',,,_~~WWWWWWW~~_,,^^^^ppppiiiMMM',
     ',,,_~~WWWWWWW~~_,,^^^^pp*piiiMMM',
     ',,_~~WWWWWWWW~~_,,^^^^ppppiiiMrM',
-    ',,_~~WWWWWWWW~~_,,^^^^ppppiiiSiM',
+    ',,_~~WWWWWWWW~~_,,^^^^ppppiiiSir',
     ',_~~WWWWWWWWW~~_,,^^^^ppppiiiMrM',
     ',_~~WWWWWWWWWW~~_,^^^^pppp*iiMMM',
     ',_~~WWWWWWWWWW~~_,^^^^ppppiiiMMM',

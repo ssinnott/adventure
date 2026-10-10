@@ -229,8 +229,13 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   // And Rimewater's boxes (#486, #488, #489, #491, #497), in Cairnmoor's gear and the finds by 21, as Cairnmoor's are.
   'longmere_m9: under': { whose: '#18', at: 1 },
   'longmere_l9: under': { whose: '#18', at: 1 },
+  'longmere_l10: under': { whose: '#18', at: 1 },
+  'longmere_l11: under': { whose: '#18', at: 1 },
   'coldmere_k9: under': { whose: '#18', at: 1 },
   'coldmere_k10: under': { whose: '#18', at: 1 },
+  'longmere_m10: under': { whose: '#18', at: 1 },
+  'longmere_m11: under': { whose: '#18', at: 1 },
+  'longmere_n9: under': { whose: '#18', at: 1 },
   'coldmere_j9: under': { whose: '#18', at: 1 },
   'coldmere_k11: under': { whose: '#18', at: 1 },
   // And the Sleepers' Bay's stair (#490), banded from the area's floor as Carn Dubh's cairn is.

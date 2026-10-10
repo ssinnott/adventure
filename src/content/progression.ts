@@ -72,9 +72,6 @@ export const CURVE: Record<RegionId | (typeof PLANNED)[number], AreaCurve> = {
   },
   rimewater: {
     band: [20, 22], next: 22, price: 4500,
-    // Built but for the country behind (docs/areas/rimewater.md §4.8, §8): its gold
-    // meets the curve.
-    owed: { whose: '#497', why: 'L10, L11, M10, M11 and N9, the rest of the country behind, are not built', gold: 9220 },
   },
   // Act IV (#542). The windows rise 500 a band, as Act III's did; the one step on the ladder, at
   // Cinderport's armourer, fits inside Ashfall's, its dearest ware 3,100. The Whitespine and the

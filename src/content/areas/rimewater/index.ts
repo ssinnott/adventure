@@ -4,12 +4,17 @@ import type { Area } from '../../area.ts';
 import { LONGMERE_M9 } from './maps/longmere_m9.ts';
 import { RIME_LODGE } from './maps/rime_lodge.ts';
 import { LONGMERE_L9 } from './maps/longmere_l9.ts';
+import { LONGMERE_L10 } from './maps/longmere_l10.ts';
+import { LONGMERE_L11 } from './maps/longmere_l11.ts';
 import { COLDMERE_K9 } from './maps/coldmere_k9.ts';
 import { COLDMERE_K10 } from './maps/coldmere_k10.ts';
 import { COLDMERE_J9 } from './maps/coldmere_j9.ts';
 import { COLDMERE_K11 } from './maps/coldmere_k11.ts';
 import { SLEEPERS_BAY } from './maps/sleepers_bay.ts';
 import { SLEEPERS_BAY2 } from './maps/sleepers_bay2.ts';
+import { LONGMERE_M10 } from './maps/longmere_m10.ts';
+import { LONGMERE_M11 } from './maps/longmere_m11.ts';
+import { LONGMERE_N9 } from './maps/longmere_n9.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { CHAPTER } from './chapter.ts';
@@ -20,7 +25,7 @@ import { QUESTS } from './quests.ts';
 
 export const AREA = {
   id: 'rimewater' as const,
-  maps: [LONGMERE_M9, RIME_LODGE, LONGMERE_L9, COLDMERE_K9, COLDMERE_K10, SLEEPERS_BAY, SLEEPERS_BAY2, COLDMERE_J9, COLDMERE_K11],
+  maps: [LONGMERE_M9, RIME_LODGE, LONGMERE_L9, COLDMERE_K9, COLDMERE_K10, SLEEPERS_BAY, SLEEPERS_BAY2, COLDMERE_J9, COLDMERE_K11, LONGMERE_L10, LONGMERE_L11, LONGMERE_M10, LONGMERE_M11, LONGMERE_N9],
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,
