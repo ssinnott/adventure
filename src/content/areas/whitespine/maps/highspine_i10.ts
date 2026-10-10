@@ -9,7 +9,7 @@
 // In from I11 (#501) walked, up the ridge trail: I11's 27,0 is this map's 27,31's neighbour, and
 // nothing is said crossing between them, the same land at the same floor (#166). The trail leaves
 // north at 18,0 into I9 (#503), Sheer Point's, and the Stair west at 0,20 for Ashfall's H10 (#510);
-// until H10 is built the world ends past the west edge, as past the east (J10, parked).
+// until H10 is built the world ends past the west edge; the east edge is the range against J10's (#508).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/whitespine.md §4.5 is its brief.
 import type { MapDef, Choice } from '../../../../game/map.ts';
 import type { When } from '../../../../game/quests.ts';
@@ -95,7 +95,7 @@ export const HIGHSPINE_I10: MapDef = {
     'ppp||pppppppppppppppppppppM=MMMM',
   ],
   features: [
-    // The ridge trail: up from the Stone, the giants' fire on the slope above it (J10, parked), and on
+    // The ridge trail: up from the Stone, the giants' fire on the slope above it (J10's, #508), and on
     // north along the crest past the edge at 18,0, where the atlas's trail crosses, for I9 (#503).
     { kind: 'event', x: 26, y: 27, id: 'i10_trail', once: true, text: 'Above the Stone the trail climbs north between the pines and the rock, and the wind drops.' },
     { kind: 'event', x: 20, y: 9, id: 'i10_fires', once: true, text: 'Up the slope east of the trail a fire burns in the open, too big for any camp. Nobody sits at it.' },

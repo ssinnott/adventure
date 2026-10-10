@@ -5,7 +5,8 @@
 // under the mountain, where a trapper's blazes stop, his store behind the rock.
 // In from K9 (#489) over its west edge, walked: K9's 0,0 to 0,31 meets 31,0 to 31,31 here square for
 // square, the open water at rows 0 to 9, the ice at 10 and 11 and the pines below. I9's east edge (#503)
-// is the Sheer Point's mountain, and J8 and J10 are not built, so the world ends past the other edges.
+// is the Sheer Point's mountain; the south edge meets J10 (#508) under the pines, walked; J8 is not
+// built, so the world ends past the north edge.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/rimewater.md §4.8 is its brief (#497).
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';

@@ -78,7 +78,6 @@ export const CURVE: Record<RegionId | (typeof PLANNED)[number], AreaCurve> = {
   // Glasswold sell nothing: the pass has no town and the Wold buys at Cinderport.
   whitespine: {
     band: [22, 24], next: 24, price: 5000,
-    owed: { whose: '#508', why: 'J10, I12 and J12, the country behind, are parked', gold: 5750 },
   },
   ashfall: {
     band: [24, 26], next: 26, price: 5500,
