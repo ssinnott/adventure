@@ -85,7 +85,6 @@ export const CURVE: Record<RegionId | (typeof PLANNED)[number], AreaCurve> = {
   },
   glasswold: {
     band: [26, 28], next: 28, price: 6000,
-    owed: { whose: '#534', why: 'E9 and E8, the country behind, are parked', xp: 18313, gold: 9650 },
   },
 };
 

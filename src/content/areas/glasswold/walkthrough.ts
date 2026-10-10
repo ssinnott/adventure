@@ -49,6 +49,7 @@ import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen, walkThrough, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
 import type { Walk, Step } from '../../../../tools/walk.ts';
 import { NORTH, EAST, SOUTH, WEST } from '../../../game/types.ts';
+import type { Facing } from '../../../game/types.ts';
 import { addCondition, hasCondition, lift, templePrice, xpForLevel, takePrestige, className } from '../../../game/party.ts';
 import { offers, teach, barOf } from '../../../game/prestige.ts';
 import { seekId } from '../../../game/seeking.ts';
@@ -69,7 +70,7 @@ import { restRefused, useShrine } from '../../../game/wilds.ts';
 import { meet, heard, answer } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
 import { buy, item } from '../../../game/items.ts';
-import type { Feature } from '../../../game/map.ts';
+import type { Feature, MapDef } from '../../../game/map.ts';
 import { take as ride } from '../../../game/passage.ts';
 import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
 import { RIDERS_RIDE } from '../../crossings.ts';
@@ -759,10 +760,183 @@ export const walkthrough: Walkthrough = (ok) => {
   const toldB9 = [...B9.features!.flatMap((f) => [...('text' in f && f.text ? [f.text] : []), ...(f.kind === 'npc' ? f.lines : [])]), ...light.text!].join(' ');
   ok(!/hull|ship|orbit|voyage|custodian|tower/i.test(toldB9), 'nothing in the box\'s words, or the glass\'s, of what the crown is');
 
+  woldBehind(w, ok);
   fanesMap(ok);
   woldQuests(ok);
   theWarning(ok);
 };
+
+/**
+ * The country behind the road (#534), at the boxes' floor, 26. The hills behind the road (E9): north from
+ * E10's 4,0 onto its 4,31, walked, the Wold named and no more at 26 and its harder words at 25, and east
+ * from D9's 31,20 onto its 0,20, one land and nothing said; the hills' sights, the skull on its pole and
+ * a Riders' cairn; the summer camp on the sea grass, a rest, and the herder's and the boy's words; the
+ * vultures on the crest, the pride at the pasture's south end and the basilisks on the hills' north end,
+ * each won; and the herders' store in the hill where their path stops. The shore (E8): east from Akordu's
+ * box at D8's 31,26 onto its 0,26, and north from E9's 10,0 onto its 10,31, one land; the strand's sights
+ * and a fire-ring, a rest; the Rider who swims the mares to the island, which a swimmer reaches and
+ * nobody on foot; the pride on the strand, the vultures on the boat's ribs and the basilisks at the
+ * strand's north end; and the sea-chest in the cleft behind the rope's end. Walked, waded, climbed or
+ * floated, neither prize is reached but through its door.
+ */
+function woldBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void {
+  const out = buildMaps()[OUTDOORS];
+  const [E9, E8] = ['wold_e9', 'wold_e8'].map((id) => MAP_DEFS.find((d) => d.id === id)!);
+  const [e9, e8, d9, d8, e10] = [E9.id, E8.id, 'wold_d9', 'wold_d8', 'emberwaste_e10'].map((id) => out.zones.find((z) => z.id === id)!);
+  const WOLD = ATLAS.zones.find((z) => z.id === 'wold')!;
+  const said = (r: ReturnType<typeof w.world.move>): string => (r.kind === 'moved' ? r.messages.join(' / ') || 'nothing said' : r.kind);
+  const at = (z: typeof e9, x: number, y: number): number => (z.y + y) * out.width + z.x + x;
+  // The squares of a box a company reaches from a square, given its abilities, never through `door`.
+  const reach = (z: typeof e9, from: readonly [number, number], can: { swim?: boolean; climb?: boolean; float?: boolean }, door?: readonly [number, number]): Set<number> => {
+    const seen = new Set<number>(), todo = [[z.x + from[0], z.y + from[1]]];
+    while (todo.length) {
+      const [x, y] = todo.pop()!, k = y * out.width + x;
+      if (seen.has(k) || (door && x === z.x + door[0] && y === z.y + door[1]) || x < z.x || x >= z.x + z.w || y < z.y || y >= z.y + z.h
+        || out.passable(x, y, can) !== 'ok') continue;
+      seen.add(k);
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+    }
+    return seen;
+  };
+  const search = (map: string, x: number, y: number, facing: Facing, room: string): boolean => {
+    w.world.travel(map, x, y, facing);
+    let found = false;
+    for (let i = 0; i < 20 && !found; i++) found = w.world.search();
+    const into = found ? [w.world.move('forward'), w.world.move('forward')] : [];
+    listen(w);
+    return found && into.every((r) => r.kind === 'moved') && w.world.used(room);
+  };
+  const feature = (d: MapDef, id: string) => d.features!.find((f) => 'id' in f && f.id === id)!;
+  const words = (d: MapDef, name: string): string => {
+    const p = d.features!.find((f): f is Person => f.kind === 'npc' && f.name === name)!;
+    w.world.travel(d.id, p.x, p.y);
+    const text = meet(p, w.party, heard(w.world, p)).text;
+    listen(w);
+    return text;
+  };
+  const count = (g: { monsters: readonly string[] }, m: string): number => g.monsters.filter((n) => n === m).length;
+  const pride = (g: { monsters: readonly string[] }): boolean => g.monsters.length === 7 && count(g, 'wold_lion') === 4 && count(g, 'vulture') === 3;
+  const flock = (g: { monsters: readonly string[] }): boolean => g.monsters.length === 3 && count(g, 'vulture') === 3;
+  w.level = 26;
+  ok(!!WOLD.maps?.some((m) => `${m.map} ${m.at.join(',')}` === 'wold_e9 136,254') && !!WOLD.maps?.some((m) => `${m.map} ${m.at.join(',')}` === 'wold_e8 136,222')
+    && e9.x === e10.x && e9.y + 32 === e10.y && e9.x === d9.x + 32 && e9.y === d9.y && e8.x === e9.x && e8.y + 32 === e9.y && e8.x === d8.x + 32 && e8.y === d8.y
+    && [E9, E8].every((d) => d.density === 'country' && d.band?.join('-') === '26-27' && d.region === 'glasswold' && !(d.exits ?? []).length),
+    'the hills behind the road, E9, laid at 136,254 over E10 and east of the steppe, and the shore, E8, north of it at 136,222 east of Akordu\'s box: country, band 26-27, nothing taken out of either');
+
+  // The hills behind the road: north from E10's 4,0 onto E9's 4,31, walked, the box's way in, where at 26
+  // the Wold is named and no more and at 25 its harder words are said, true off the road over the hills
+  // too; and east from D9's 31,20 onto its 0,20, one land and nothing said.
+  const cross = (level: number): { r: ReturnType<typeof w.world.move>; on: Walk } => {
+    const from = newWalk(ok);
+    for (const m of from.party.members) m.level = level;
+    from.world.travel(e10.id, E9.start.x, 0, NORTH);
+    return { r: from.world.move('forward'), on: from };
+  };
+  const due = cross(26), one = cross(25);
+  ok(due.r.kind === 'moved' && due.on.world.zone?.id === E9.id && due.on.world.state.x === e9.x + 4 && due.on.world.state.y === e9.y + 31
+    && E9.start.x === 4 && E9.start.y === 31 && E9.start.facing === NORTH && due.r.messages.join(' / ') === 'The Wold.',
+    `north from E10's 4,0 onto E9's 4,31, walked, the box's way in: at 26 the Wold named, no more (${said(due.r)})`);
+  ok(one.r.kind === 'moved' && one.r.messages.join(' / ') === `The Wold. ${WOLD.crossing?.harder}`, `at 25 the Wold's harder words, true off the road over the hills too (${said(one.r)})`);
+  w.world.travel(d9.id, 31, 20, EAST);
+  const east = w.world.move('forward');
+  ok(east.kind === 'moved' && w.world.zone?.id === E9.id && w.world.state.x === e9.x && w.world.state.y === e9.y + 20 && !east.messages.some((m) => m.startsWith('The Wold')),
+    `east from D9's 31,20 onto E9's 0,20, walked, one land and nothing said (${said(east)})`);
+  listen(w);
+
+  // Up onto the hills: the pale sky over them, the Waste's ash at their foot, the folds and a horse the
+  // vultures had; the steppe down the west; the brow over the sea and a ewe gone to stone; the herds on
+  // the sea grass, the sea and the coast toward the Waste; the skull on its pole and a Riders' cairn.
+  for (const id of ['e9_hills', 'e9_ash', 'e9_folds', 'e9_bones', 'e9_steppe', 'e9_brow', 'e9_ewe', 'e9_cropped', 'e9_herd', 'e9_sea', 'e9_coast']) see(w, `${E9.id}:${id}`);
+  const skull = feature(E9, 'e9_shrine');
+  w.world.travel(E9.id, skull.x, skull.y);
+  const kneltAt = w.world.featureHere();
+  ok(kneltAt?.kind === 'shrine' && skull.kind === 'shrine' && E9.rows[skull.y][skull.x] === '^' && useShrine(w.world, w.party, kneltAt)[0] === skull.text, 'the company kneels at the skull on its pole on the rise');
+  listen(w);
+  const cairn9 = feature(E9, 'e9_cairn');
+  const ground = (ch: string): number => E9.rows.join('').split('').filter((c) => c === ch).length;
+  ok(cairn9.kind === 'cairn' && cairn9.gold === 400 && cairn9.items.join() === 'elixir' && E9.rows[cairn9.y][cairn9.x] === '^'
+    && ground('^') > ground('s') && ground('^') > ground(',') && !E9.rows.some((r) => r.includes('=')),
+    `a Riders' cairn on a hilltop with gold and an Elixir; the hills the most of the box, ${ground('^')} squares to the steppe's ${ground('s')} and the sea grass's ${ground(',')}, and no road through them`);
+
+  // The Riders' summer camp on the sea grass: a rest, and the herder and the boy, words only.
+  const camp9 = E9.features!.find((f) => f.kind === 'camp')!;
+  w.world.travel(E9.id, camp9.x, camp9.y);
+  ok(restRefused(w.world) === '' && E9.rows[camp9.y][camp9.x] === ',', 'the Riders\' summer camp on the sea grass, where a company may rest');
+  const herder = words(E9, 'A herder at the yurts'), boy = words(E9, 'A boy with a foal');
+  ok(herder.includes('lions come after them') && herder.includes('north end') && boy.includes('Mares swim')
+    && ![E9, E8].some((d) => d.features!.some((f) => f.kind === 'npc' && (f.quest || f.choice || f.says || f.teaches || f.skill || f.hall || f.interior || f.passage || f.flag))),
+    'the herder: the lions follow the herds, and on the hills\' north end the ewes stand still for ever; the boy: mares swim and lions will not; words only in both boxes');
+
+  // The groups, each won at 26: the vultures on the crest, the pride at the pasture's south end after the
+  // herd, its vultures with it, and the two basilisks on the hills' north end, the hardest. Nothing of the
+  // Glass in either box.
+  const g9 = (id: string) => E9.encounters!.find((g) => g.id === id)!;
+  ok(E9.encounters!.length === 3 && flock(g9('e9_vultures')) && pride(g9('e9_pride')) && g9('e9_basilisks').monsters.join() === 'basilisk,basilisk' && E9.rows[g9('e9_basilisks').y][g9('e9_basilisks').x] === '^'
+    && [E9, E8].every((d) => d.encounters!.every((g) => g.respawn === 2880 && !g.slainText && g.monsters.every((m) => ['wold_lion', 'vulture', 'basilisk'].includes(m)))),
+    'three vultures on the crest, a pride of four lions and three vultures on the pasture and two basilisks on the hills\' north end; nothing of the Glass in either box');
+  for (const g of E9.encounters!) fight(w, `${E9.id}:${g.id}`);
+
+  // The secret: the herders' path up the hillside to the slab it stops at, searched; their store dug into
+  // the hill behind it, with a strongbox.
+  const [slab] = E9.secrets!;
+  ok(slab.hint === 'e9_path' && feature(E9, 'e9_path').x === slab.x + 1 && feature(E9, 'e9_path').y === slab.y, 'the herders\' path stops at the slab\'s side');
+  const store = reach(e9, [slab.x + 1, slab.y], { swim: true, climb: true, float: true }, [slab.x, slab.y]);
+  ok(store.size > 800 && !store.has(at(e9, slab.x - 1, slab.y)) && !store.has(at(e9, slab.x - 2, slab.y)),
+    `the store is shut but for the slab: none of E9's ${store.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${E9.id}:e9_path`);
+  ok(search(E9.id, slab.x + 1, slab.y, WEST, 'e9_store'), 'searched where the path stops, the slab gives, and the herders\' store behind it can be walked into');
+  const box9 = feature(E9, 'e9_strongbox');
+  ok(box9.kind === 'chest' && box9.gold === 1200 && box9.items.join() === 'potion_sp_great' && box9.x === slab.x - 2 && box9.y === slab.y, 'in the store, the herders\' strongbox: 1,200 gold and a Sapphire Vial');
+
+  // The shore: east from Akordu's box at D8's 31,26 onto E8's 0,26, walked, the box's way in, and north
+  // from E9's 10,0 onto its 10,31, one land and nothing said either way.
+  w.world.travel(d8.id, 31, 26, EAST);
+  const shore = w.world.move('forward');
+  ok(shore.kind === 'moved' && w.world.zone?.id === E8.id && w.world.state.x === e8.x && w.world.state.y === e8.y + 26 && E8.start.x === 0 && E8.start.y === 26 && E8.start.facing === EAST
+    && !shore.messages.some((m) => m.startsWith('The Wold')), `east from D8's 31,26 onto E8's 0,26, walked, the box's way in, one land and nothing said (${said(shore)})`);
+  listen(w);
+  w.world.travel(E9.id, 10, 0, NORTH);
+  const up = w.world.move('forward');
+  ok(up.kind === 'moved' && w.world.zone?.id === E8.id && w.world.state.x === e8.x + 10 && w.world.state.y === e8.y + 31 && !up.messages.some((m) => m.startsWith('The Wold')),
+    `north from E9's 10,0 onto E8's 10,31, walked, one land and nothing said (${said(up)})`);
+  listen(w);
+
+  // Down the strand: the sea, a mare the lions had, a boat nobody on the Wold built, Akordu's smoke, a gull
+  // gone to stone and the strand narrowing north to nothing; a fire-ring above the tide-line, a rest.
+  for (const id of ['e8_strand', 'e8_mare', 'e8_boat', 'e8_smoke', 'e8_gull', 'e8_narrows']) see(w, `${E8.id}:${id}`);
+  const camp8 = E8.features!.find((f) => f.kind === 'camp')!;
+  w.world.travel(E8.id, camp8.x, camp8.y);
+  ok(restRefused(w.world) === '', 'a fire-ring above the tide-line, where a company may rest');
+
+  // The Rider who swims the mares to the island, words only; the island and its cairn, and another island's
+  // south end, reached over the bars of shallows by a swimmer and by nobody on foot.
+  const rider = words(E8, 'A Rider at the water\'s edge');
+  const cairn8 = feature(E8, 'e8_cairn');
+  const afoot = reach(e8, [E8.start.x, E8.start.y], {}), swum = reach(e8, [E8.start.x, E8.start.y], { swim: true });
+  ok(rider.includes('swim the mares') && rider.includes('never had a lion') && cairn8.kind === 'cairn' && cairn8.gold === 300 && cairn8.items.join() === 'elixir'
+    && [cairn8, feature(E8, 'e8_island'), feature(E8, 'e8_tip')].every((f) => swum.has(at(e8, f.x, f.y)) && !afoot.has(at(e8, f.x, f.y))),
+    'the Rider at the water\'s edge swims the mares to the island, where no lion has been; its cairn, gold and an Elixir, and another island\'s south end are reached by a swimmer over the shallows, and not on foot');
+
+  // The groups, each won at 26: the pride on the strand after the mares, its vultures with it, the vultures
+  // on the boat's ribs and the two basilisks at the strand's north end, the hardest.
+  const g8 = (id: string) => E8.encounters!.find((g) => g.id === id)!;
+  ok(E8.encounters!.length === 3 && pride(g8('e8_pride')) && flock(g8('e8_vultures')) && g8('e8_basilisks').monsters.join() === 'basilisk,basilisk',
+    'a pride of four lions and three vultures on the strand, three vultures on the boat\'s ribs and two basilisks at the strand\'s north end');
+  for (const g of E8.encounters!) fight(w, `${E8.id}:${g.id}`);
+
+  // The secret: the rope's end out of the black rocks, searched; the cleft behind them, with a sea-chest.
+  const [crack] = E8.secrets!;
+  ok(crack.hint === 'e8_rope' && feature(E8, 'e8_rope').x === crack.x - 1 && feature(E8, 'e8_rope').y === crack.y, 'the rope\'s end hangs out of the rocks at the crack\'s side');
+  const cleft = reach(e8, [crack.x - 1, crack.y], { swim: true, climb: true, float: true }, [crack.x, crack.y]);
+  ok(cleft.size > 400 && !cleft.has(at(e8, crack.x + 1, crack.y)) && !cleft.has(at(e8, crack.x + 2, crack.y)),
+    `the cleft is shut but for the crack: none of E8's ${cleft.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${E8.id}:e8_rope`);
+  ok(search(E8.id, crack.x - 1, crack.y, EAST, 'e8_cleft'), 'searched where the rope\'s end hangs, the rock gives, and the cleft behind it can be walked into');
+  const chest8 = feature(E8, 'e8_sea_chest');
+  ok(chest8.kind === 'chest' && chest8.gold === 1200 && chest8.items.join() === 'potion_sp_great' && chest8.x === crack.x + 2 && chest8.y === crack.y, 'in the cleft, the sea-chest: 1,200 gold and a Sapphire Vial');
+  const told = [E9, E8].flatMap((d) => d.features!.flatMap((f) => [...('text' in f && f.text ? [f.text] : []), ...(f.kind === 'npc' ? f.lines : [])])).join(' ');
+  ok(!/glass|hull|ship|orbit|voyage|custodian|tower/i.test(told), 'nothing in either box\'s words of the Glass, or of what the crown is');
+}
 
 /**
  * The Ranger's third (#448), Oriel Fane's Map, played by a company of 27 whose ranger has the second: sent
