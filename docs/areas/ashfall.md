@@ -1050,8 +1050,9 @@ half, with the wilderness features (#45); no more than one point in four is a si
   has 25–26 (§1; §9, #517's 1, 2 and 7). F10 meets G10's west edge square for square, the road at
   rows 7 and 8, and the map starts at 31,7 facing west; E10 meets F10's west edge, the road at rows
   29 and 30, and starts at 31,29. F10's south edge meets F11's north edge (#514), the ash open at
-  columns 15 to 31 and the road's strip at 5 to 11 with rock under it; past F9, E9, E11 and D10 the
-  world ends for now. The seams are pinned in `tools/tests/outdoors.ts`. The roads are the atlas's,
+  columns 15 to 31 and the road's strip at 5 to 11 with rock under it; past F9, E11 and D10 the
+  world ends for now, and E10's north edge meets E9, the Wold's (#534). The seams are pinned in
+  `tools/tests/outdoors.ts`. The roads are the atlas's,
   made to meet it at the edges
   and square to square (§9, #517's 3): F10's leaves the vines at 26,13, crosses the ash past the
   Riders' ring and runs west along the rocks of its south rows, past F11's corner (columns 5 to 11
