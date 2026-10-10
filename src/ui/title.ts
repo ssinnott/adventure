@@ -18,7 +18,11 @@ export class TitleScreen implements Screen {
   /** The Stones the saved company has restored, read once from storage. */
   private restored: number | null = null;
   private stones(g: Game): number { return (this.restored ??= this.canContinue ? savedStones(g.store) : 0); }
-  constructor(private canContinue: boolean, private note = '') {
+  private canContinue: boolean;
+  private note: string;
+  constructor(canContinue: boolean, note = '') {
+    this.canContinue = canContinue;
+    this.note = note;
     this.items = canContinue ? ['Continue', 'New Game'] : ['New Game'];
   }
   update(g: Game, a: Action | null): void {

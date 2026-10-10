@@ -15,7 +15,7 @@ import { ok, fail, failureCount, owedCount, summary } from './tests/lib.ts';
 import type { Walkthrough } from '../src/content/area.ts';
 
 /** The suites as they ran before the runner found them, kept in that order. */
-const FIRST = ['maps', 'movement', 'monsters', 'combat', 'harness', 'party', 'traits', 'calendar', 'terrain', 'weather', 'atlas', 'outdoors', 'save', 'quests'];
+const FIRST = ['maps', 'movement', 'monsters', 'combat', 'harness', 'party', 'traits', 'calendar', 'terrain', 'weather', 'atlas', 'outdoors', 'save', 'quests', 'game'];
 
 type Suite = () => void | Promise<void>;
 /**

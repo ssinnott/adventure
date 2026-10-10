@@ -41,7 +41,13 @@ export class InteriorScreen implements Screen {
    * what that step said (a doorway's event) and what is said inside.
    */
   private readonly from: number;
-  constructor(g: Game, readonly at: { x: number; y: number }, readonly interior: Interior) { this.from = Math.min(g.actionFrom, g.said); }
+  readonly at: { x: number; y: number };
+  readonly interior: Interior;
+  constructor(g: Game, at: { x: number; y: number }, interior: Interior) {
+    this.at = at;
+    this.interior = interior;
+    this.from = Math.min(g.actionFrom, g.said);
+  }
   /** Never reached with a menu open, and closed before the next step without one. */
   update(): void {}
   /** The visit is over: out of the business, and out of its doorway into the street. */
@@ -80,7 +86,14 @@ export class MessageScreen implements Screen {
   readonly overlay = true;
   /** In the side panel a long message is read a page at a time. */
   private page = 0;
-  constructor(private text: string, private then?: () => void, private title = '') {}
+  private text: string;
+  private then?: () => void;
+  private title: string;
+  constructor(text: string, then?: () => void, title = '') {
+    this.text = text;
+    this.then = then;
+    this.title = title;
+  }
   update(g: Game, a: Action | null): void {
     if (is(a, 'interact') && visiting(g) && this.page < this.pages().length - 1) { this.page++; return; }
     if (is(a, 'interact', 'cancel')) { g.pop(); this.then?.(); }
@@ -128,7 +141,18 @@ export class ChoiceScreen implements Screen {
    * `text` and `choices` may be made when drawn, for words and options that change while the menu
    * waits under another (a person an answer sends away is gone from a business's menu).
    */
-  constructor(private text: string | (() => string), private choices: string[] | (() => string[]), private then: (i: number) => void, private title = '', private disabled: boolean[] = []) {}
+  private text: string | (() => string);
+  private choices: string[] | (() => string[]);
+  private then: (i: number) => void;
+  private title: string;
+  private disabled: boolean[];
+  constructor(text: string | (() => string), choices: string[] | (() => string[]), then: (i: number) => void, title = '', disabled: boolean[] = []) {
+    this.text = text;
+    this.choices = choices;
+    this.then = then;
+    this.title = title;
+    this.disabled = disabled;
+  }
   /** The prompt as it reads now. */
   get words(): string { return typeof this.text === 'function' ? this.text() : this.text; }
   /** The options as they read now. */
@@ -199,7 +223,8 @@ export function pickMember(g: Game, text: string, then: (i: number) => void, fil
 export class SheetScreen implements Screen {
   readonly overlay = true;
   sel = 0;
-  constructor(private who: number) {}
+  private who: number;
+  constructor(who: number) { this.who = who; }
   update(g: Game, a: Action | null): void {
     if (!a) return;
     const c = g.party.members[this.who];
@@ -272,7 +297,12 @@ export class SpellScreen implements Screen {
   readonly overlay = true;
   private who = -1;
   private sel = 0;
-  constructor(private context: 'explore', private onDone?: () => void) {}
+  private context: 'explore';
+  private onDone?: () => void;
+  constructor(context: 'explore', onDone?: () => void) {
+    this.context = context;
+    this.onDone = onDone;
+  }
   private casters(g: Game): number[] { return g.party.members.map((m, i) => ({ m, i })).filter(({ m }) => m.spells.length && !isDown(m) && !hasCondition(m, 'asleep')).map(({ i }) => i); }
   private list(g: Game): string[] { return g.party.members[this.who].spells.filter((s) => spell(s).context !== 'combat'); }
   update(g: Game, a: Action | null): void {

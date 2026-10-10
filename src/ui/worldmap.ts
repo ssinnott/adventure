@@ -1561,7 +1561,9 @@ export class WorldMapScreen implements Screen {
   private still = 999;
   whole = false;
 
-  constructor(public mode: WorldMapMode = 'art') {}
+  mode: WorldMapMode;
+
+  constructor(mode: WorldMapMode = 'art') { this.mode = mode; }
 
   /** Whether the cloth is painted yet (the first opening paints it behind a progress bar). */
   get ready(): boolean { return painted !== null; }

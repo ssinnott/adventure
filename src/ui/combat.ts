@@ -39,7 +39,11 @@ export class CombatScreen implements Screen {
   private bands: number;
   /** The group labels as last painted, for the smoke test to read. */
   labels: LabelLine[] = [];
-  constructor(readonly state: CombatState, readonly groupIds: string[]) {
+  readonly state: CombatState;
+  readonly groupIds: string[];
+  constructor(state: CombatState, groupIds: string[]) {
+    this.state = state;
+    this.groupIds = groupIds;
     this.lastMonsterHp = state.monsters.map((m) => m.hp);
     this.bands = state.groupIds.length;
   }

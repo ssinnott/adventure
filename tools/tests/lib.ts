@@ -4,6 +4,8 @@
 import { readdirSync } from 'node:fs';
 import type { World } from '../../src/game/world.ts';
 import type { GameMap } from '../../src/game/map.ts';
+import { Game } from '../../src/game/game.ts';
+import type { Action } from '../../src/input.ts';
 
 let failures = 0;
 export const ok = (cond: boolean, msg: string): void => { console.log((cond ? '  ok:   ' : '  FAIL: ') + msg); if (!cond) failures++; };
@@ -57,4 +59,18 @@ export async function familyModules(): Promise<Family[]> {
     if (m.KINDS) out.push({ name: f.slice(0, -3), kinds: m.KINDS, draw: m.draw });
   }
   return out;
+}
+
+/** A Game under Node, on a new game at `seed` with the premade company, with the pilot off. */
+export function headlessGame(seed = 4): Game {
+  const g = new Game(null);
+  g.input = { textMode: false, drainText: (c) => c };
+  g.newGame(seed);
+  return g;
+}
+
+/** Presses `actions` into the game, one per tick, then `settle` ticks of nothing. */
+export function drive(g: Game, actions: readonly (Action | null)[], settle = 0): void {
+  for (const a of actions) g.update(a);
+  for (let i = 0; i < settle; i++) g.update(null);
 }
