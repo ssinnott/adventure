@@ -4,7 +4,7 @@ import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
   {
-    id: 'cindercoast', name: 'Cindercoast', area: 'ashfall', band: [24, 25], maps: [{ map: 'cindercoast_h10', at: [232, 286] }, { map: 'cindercoast_g10', at: [200, 286] }], seeds: [[200, 284], [236, 286]], label: [238, 292],
+    id: 'cindercoast', name: 'Cindercoast', area: 'ashfall', band: [24, 25], maps: [{ map: 'cindercoast_h10', at: [232, 286] }, { map: 'cindercoast_g10', at: [200, 286] }, { map: 'cindercoast_f9', at: [168, 254] }, { map: 'cindercoast_g9', at: [200, 254] }, { map: 'cindercoast_h9', at: [232, 254] }], seeds: [[200, 284], [236, 286]], label: [238, 292],
     // The crossing line said coming onto the shore (#166, #511): how the far side feels to a company under its floor,
     // in words as true coming down off the mountain (G11, #513) as down the Stair.
     crossing: { harder: 'The far side, and it is harder than the range over the Sheer.', warning: 'The far side, and nothing on it would spare you. The way back is still open.' },
@@ -16,7 +16,7 @@ export const ZONES: readonly AtlasZone[] = [
     crossing: { harder: 'The ground is warm through the boots, and what lives on the mountain is harder.', warning: 'Nothing on the mountain would spare you. The way back is still open.' },
   },
   {
-    id: 'emberwaste', name: 'The Ember Waste', area: 'ashfall', band: [25, 26], maps: [{ map: 'emberwaste_f10', at: [168, 286] }, { map: 'emberwaste_e10', at: [136, 286] }, { map: 'emberwaste_f11', at: [168, 318] }], seeds: [[172, 336], [180, 300]],
+    id: 'emberwaste', name: 'The Ember Waste', area: 'ashfall', band: [25, 26], maps: [{ map: 'emberwaste_f10', at: [168, 286] }, { map: 'emberwaste_e10', at: [136, 286] }, { map: 'emberwaste_f11', at: [168, 318] }, { map: 'emberwaste_e11', at: [136, 318] }], seeds: [[172, 336], [180, 300]],
     // The crossing line said coming off the coast onto the ash (#166, #517).
     crossing: { harder: 'Nothing grows out here, and what lives on the ash is harder.', warning: 'Nothing on the ash would spare you. The coast is behind you still.' },
   },

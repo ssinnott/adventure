@@ -733,8 +733,9 @@ settled in its issue.
   you came is still open.*); the floor is 22 on both sides, so nothing rises; straight back it
   hears nothing (§9, #503's 2 and 3). The trail goes up the crest to the north edge, at 18 from row
   31 to 16, at 19 from 15 to 7 and at 20 from 7 to 0, out at 20,0 (284,254), where the atlas's
-  meets it at 284,253 and I8 takes it on (§4.7; §9, #503's 5). The west and east edges end the world
-  against H9 and J9, pinned in `tools/tests/outdoors.ts` with void past them, and I10's north edge
+  meets it at 284,253 and I8 takes it on (§4.7; §9, #503's 5). The west edge meets H9's, the Sheer from
+  row 5 (built, #522), and the east edge J9's (built, #497), pinned in `tools/tests/outdoors.ts`, and
+  I10's north edge
   is pinned against this south one and I8's south edge against this north one (§4.7). Up the trail
   the Hearth's heat grows: at 18,28 the wind comes warm out of the north and the snow is wet; at
   19,15
@@ -1982,8 +1983,8 @@ Cut and owed, from I9 (#503):
   #503's 6).
 - **Two under.** I9 at 20 and the area's pool, 91.5% two under against a limit of 90%, are owed to
   #18, as the Whitespine's was before I10 dropped it (§9, #503's 11).
-- **The world ends past I9** to the west until H9 is built and to the east until J9 is; north the
-  trail goes on into I8 (#504) (§9, #503's 18).
+- **I9's west edge is shut:** H9 is built (#522) and the Sheer shuts its east edge, so the Stair stays
+  the only way over; north the trail goes on into I8 (#504) (§9, #503's 18).
 - **The shrine's kneel.** The walkthrough checks the lamp at 1,19 by place: `kneel` in
   `tools/walk.ts` compares the map def's shrine with the outdoors' placed copy, so it fails on any
   zone map's shrine, which only a dungeon's had used; a systems change, the owner's to ask for

@@ -8,8 +8,8 @@
 // field of cinders, its iron scaffold round it, a shrine at the field's edge and the builders' hollow in
 // the rock west of it. A second flow comes in off the mountain at the east edge and runs out south.
 // The crater's way is open (CRATER, #515), and the Stone's (STONE, #516).
-// Joined to F10 on the north edge and G11 on the east; the west and south edges end the world against
-// E11 and F12.
+// Joined to F10 on the north edge, G11 on the east and E11 on the west, at the ash (#522); the south
+// edge ends the world against F12.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/ashfall.md §4.6 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
