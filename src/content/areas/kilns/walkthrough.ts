@@ -39,9 +39,9 @@
 // Then the Anvil Stone's Rift (#465), in through the tear and out again: the lanes and the slag run
 // down them from the back, the groups won at its floor, the hollow found from the lane whose slag set
 // running up and the first cutter's tools in it, the Warden won and its heart taken, and the tear
-// closed by the first step after it falls, which the Hearth counts and the strays outside read;
-// outside, the torn ground closed over, and a company gone by Town Portal closing it on its first
-// step back in or on the track beside the tear. The roads
+// closed on the blow, which the Hearth counts and the strays outside read, gone quiet on the next
+// step; outside, the torn ground closed over, and a company gone by Town Portal finding the tear
+// closed behind it. The roads
 // south and west (N6 and M6, #467): the drove road on from N5 with nothing said, and out for
 // Cairnmoor past the moor's border; the milestone at the fork, counted along the roads; the drover
 // at the camp; the boxes' groups won at their floor; the coach's old halt found from the worn
@@ -1261,10 +1261,10 @@ function kilnhaven(ok: (cond: boolean, msg: string) => void): void {
  * The Anvil Stone's Rift (#465): in through O5's tear and out again; the lanes, the iron run, the
  * ridge and the slag run down from the back; the groups won at the Rift's floor, 17; the hollow found
  * from the lane whose slag set running up, and the first cutter's tools in it; the Warden won at 17
- * and its heart taken; the tear closed by the first step after it falls, whichever way, which sets
- * the flag the Hearth counts and stops the Rift's groups and the strays outside coming back; the torn
- * ground closed over on O5; and a company gone by Town Portal over the Warden closing it on its first
- * step back in.
+ * and its heart taken; the tear closed on the blow (#636), with no step taken, which sets the flag
+ * the Hearth counts and stops the Rift's groups and the strays outside coming back; the quiet said on
+ * the first step after, whichever way; the torn ground closed over on O5; and a company gone by Town
+ * Portal over the Warden finding the tear closed before it is back.
  */
 function anvilRift(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   const RIFT = MAP_DEFS.find((d) => d.id === 'anvil_stone')!, rift = new GameMap(RIFT);
@@ -1323,64 +1323,58 @@ function anvilRift(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   ok(tools?.kind === 'chest' && tools.items.join() === 'cutters_pick,cutters_chisel' && tools.gold === 1910 && tools.x === 13 && tools.y === 1, 'against the Stone, the first cutter\'s tools: a pick and a chisel with a plus, and 1,910 gold');
 
   // The Warden, standing up out of the cut at the back: fought only from the square before the cut,
-  // and from there every step goes into the cut or back out of it, each a square that closes the tear.
+  // and from there every step goes into the cut or back out of it, each a square that says the quiet.
   const open = (x: number, y: number): [number, number][] => ([[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]] as [number, number][]).filter(([a, b]) => rift.passable(a, b) === 'ok');
-  const quiet = (x: number, y: number): boolean => RIFT.features!.some((f) => f.kind === 'event' && f.x === x && f.y === y && f.sets === 'q_anvil_closed' && JSON.stringify(f.after) === JSON.stringify(WARDEN_SLAIN));
+  const quiet = (x: number, y: number): boolean => RIFT.features!.some((f) => f.kind === 'event' && f.x === x && f.y === y && f.text === SLAG.quiet && !f.sets && JSON.stringify(f.after) === JSON.stringify(WARDEN_SLAIN));
   const before = open(warden.x, warden.y);
-  ok(before.length === 1 && open(...before[0]).every(([x, y]) => quiet(x, y)), `the Warden is fought only from ${before.join(' ')}, and every step from there closes the tear`);
+  ok(before.length === 1 && open(...before[0]).every(([x, y]) => quiet(x, y)), `the Warden is fought only from ${before.join(' ')}, and every step from there says the tear has gone quiet, and sets nothing`);
   see(w, 'anvil_stone:as_back');
   const lit = w.world.stones;
+  const strays = [...rest, ...O5.encounters!.filter((g) => g.monsters.includes('slagling')), N3.encounters!.find((g) => g.id === 'n3_slaglings')!, N5.encounters!.find((g) => g.id === 'n5_elder')!, O6.encounters!.find((g) => g.id === 'o6_elder')!];
+  ok(!strays.some((g) => w.world.ended(g)), 'while the Warden stands, the Rift\'s groups, O5\'s slaglings and the strays on N3, N5 and O6 come back');
   fight(w, 'anvil_stone:as_warden');
-  ok(w.party.bag.includes('anvil_heart') && warden.slainText === 'The red goes out of the slag. The ground stops humming. Up at the cut, the Stone is only a stone.' && !w.party.flags.q_anvil_closed,
+  ok(w.party.bag.includes('anvil_heart') && warden.slainText === 'The red goes out of the slag. The ground stops humming. Up at the cut, the Stone is only a stone.' && warden.sets === 'q_anvil_closed',
     'the Warden falls at 17: the red goes out of the slag, and its heart, the Heart of the Anvil, is taken');
 
-  // The first step after it falls, into the cut or back out of it, says the tear has gone quiet and
-  // sets the flag; the other square says nothing more. The Hearth counts the Stone, and the Rift's
-  // groups, O5's slaglings and the strays on N3, N5 and O6 come back no more.
+  // The blow closes the tear, with no step taken: the flag is set, the Hearth counts the Stone, and the
+  // Rift's groups, O5's slaglings and the strays on N3, N5 and O6 come back no more.
+  ok(!!w.party.flags.q_anvil_closed && w.world.stones === lit + 1, `the blow closes the tear with no step taken, and the Hearth counts the Anvil Stone (${lit} Stones to ${w.world.stones})`);
+  ok(strays.every((g) => w.world.ended(g)), `the Rift's groups, O5's slaglings and the strays on N3, N5 and O6 come back no more (${strays.map((g) => g.id).join(', ')})`);
+
+  // The first step after it falls, into the cut or back out of it, says the tear has gone quiet; the
+  // other square says nothing more.
   for (const [dx, dy] of [[0, -1], [0, 1]]) {
     const t = dy < 0 ? w : newWalk(ok);
     t.level = 17;
     if (t !== w) { t.world.travel('anvil_stone', warden.x, warden.y + 1, NORTH); t.world.killGroups([warden.id]); }
     t.world.travel('anvil_stone', warden.x, warden.y + 1, NORTH);
     const step = t.world.move(dy < 0 ? 'forward' : 'back');
-    ok(step.kind === 'moved' && t.world.state.x === warden.x && t.world.state.y === warden.y + 1 + dy && step.messages.includes(SLAG.quiet) && !!t.party.flags.q_anvil_closed,
-      `a step ${dy < 0 ? 'into the cut' : 'back out of it'} after the Warden falls: the tear goes quiet, and its flag is set (${step.kind === 'moved' ? step.messages.join(' / ') : step.kind})`);
+    ok(step.kind === 'moved' && t.world.state.x === warden.x && t.world.state.y === warden.y + 1 + dy && step.messages.includes(SLAG.quiet),
+      `a step ${dy < 0 ? 'into the cut' : 'back out of it'} after the Warden falls: the tear has gone quiet (${step.kind === 'moved' ? step.messages.join(' / ') : step.kind})`);
     t.world.travel('anvil_stone', warden.x, warden.y + 1 - dy, NORTH);
     ok(!t.world.eventsHere().includes(SLAG.quiet), 'and the other square says nothing more');
   }
-  ok(w.world.stones === lit + 1, `the Hearth counts the Anvil Stone (${lit} Stones to ${w.world.stones})`);
-  const strays = [...rest, ...O5.encounters!.filter((g) => g.monsters.includes('slagling')), N3.encounters!.find((g) => g.id === 'n3_slaglings')!, N5.encounters!.find((g) => g.id === 'n5_elder')!, O6.encounters!.find((g) => g.id === 'o6_elder')!];
-  ok(strays.every((g) => w.world.ended(g)), `the Rift's groups, O5's slaglings and the strays on N3, N5 and O6 come back no more (${strays.map((g) => g.id).join(', ')})`);
   listen(w);
 
   // Outside, the torn ground has closed over: the tear's line and the Stone's are not said, and the
   // track beside the tear says so.
   w.world.travel('kilnsheart_o5', TEAR.x - 1, TEAR.y);
   const closed = w.world.eventsHere(), shut = O5.features!.find((f) => f.kind === 'event' && f.id === 'o5_closed')!;
-  ok(shut.kind === 'event' && closed.join() === shut.text && !w.world.present(O5.features!.find((f) => f.kind === 'event' && f.id === 'o5_stone')!), `beside the track the torn ground has closed over (${closed.join(' / ')})`);
+  ok(shut.kind === 'event' && !shut.sets && closed.join() === shut.text && !w.world.present(O5.features!.find((f) => f.kind === 'event' && f.id === 'o5_stone')!), `beside the track the torn ground has closed over, and that sets nothing (${closed.join(' / ')})`);
 
-  // A company gone from the Rift another way over the Warden, by Town Portal, has not closed the tear:
-  // its first step back in closes it, and so does the track beside the tear, walked up again.
+  // A company gone from the Rift another way over the Warden, by Town Portal, left the tear closed:
+  // the Hearth counts the Stone before it is back, and its first step back in says the quiet.
   const away = newWalk(ok);
   away.level = 17;
   away.world.travel('anvil_stone', warden.x, warden.y + 1, NORTH);
+  const unlit = away.world.stones;
   away.world.killGroups([warden.id]);
   away.world.townPortal();
-  const open5 = !away.party.flags.q_anvil_closed;
+  const shut5 = !!away.party.flags.q_anvil_closed && away.world.stones === unlit + 1;
   away.world.travel('kilnsheart_o5', TEAR.x - 1, TEAR.y, EAST);
   const inAgain = [away.world.move('forward'), away.world.move('forward')];
-  ok(open5 && inAgain.every((r) => r.kind === 'moved') && away.world.state.mapId === 'anvil_stone' && inAgain[1].kind === 'moved' && inAgain[1].messages.includes(SLAG.quiet) && !!away.party.flags.q_anvil_closed,
-    `a company gone by Town Portal over the Warden closes the tear on its first step back into the Rift (${at(away)})`);
-  const track = newWalk(ok);
-  track.level = 17;
-  track.world.travel('anvil_stone', warden.x, warden.y + 1, NORTH);
-  track.world.killGroups([warden.id]);
-  track.world.townPortal();
-  const unlit = track.world.stones, open6 = !track.party.flags.q_anvil_closed;
-  track.world.travel('kilnsheart_o5', TEAR.x - 1, TEAR.y);
-  const walked = track.world.eventsHere();
-  ok(open6 && shut.kind === 'event' && walked.join() === shut.text && !!track.party.flags.q_anvil_closed && track.world.stones === unlit + 1,
-    `or walks back up the track beside the tear, which has closed over and closes it, and the Hearth counts the Stone (${walked.join(' / ')})`);
+  ok(shut5 && inAgain.every((r) => r.kind === 'moved') && away.world.state.mapId === 'anvil_stone' && inAgain[1].kind === 'moved' && inAgain[1].messages.includes(SLAG.quiet),
+    `a company gone by Town Portal over the Warden left the tear closed, the Hearth counting the Stone before it is back, and its first step back into the Rift says the quiet (${at(away)})`);
 }
 
 /**
@@ -1822,9 +1816,6 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
 
 // ---- the chapter (#470) ----
 
-const RIFT = MAP_DEFS.find((d) => d.id === 'anvil_stone')!;
-const WARDEN = RIFT.encounters!.find((g) => g.id === 'as_warden')!;
-
 /** A step played at a level, the company levelled to it. */
 const atLevel = (level: number, s: Step): Step => ({ name: `${s.name} at ${level}`, play: (w) => {
   for (const m of w.party.members) { m.level = level; m.xp = xpForLevel(level); }
@@ -1862,19 +1853,16 @@ const DOOR: Step = { name: 'the door', play: (w) => {
 } };
 
 /**
- * In at the tear under the Stone, past the thane's iron if it was taken; the Warden won, and the first
- * step after it closes the tear, which the Hearth counts.
+ * In at the tear under the Stone, past the thane's iron if it was taken; the Warden won, whose fall
+ * closes the tear with no step taken, which the Hearth counts.
  */
 const stone = (way: string): Step => ({ name: 'the tear closed', play: (w) => {
   if (way === TAKEN) fight(w, 'kilnsheart_o5:o5_guard');
   walkThrough(w, 'kilnsheart_o5', TEAR.x - 1, TEAR.y, EAST, 'anvil_stone', 2);
   const lit = w.world.stones;
   fight(w, 'anvil_stone:as_warden');
-  w.world.travel('anvil_stone', WARDEN.x, WARDEN.y + 1, NORTH);
-  w.world.move('forward');
-  listen(w);
   w.ok(!!w.party.flags.q_anvil_closed && w.world.stones === lit + 1 && written(w).includes('stone'),
-    `the Stone ${named(way)}, the tear closes, the Hearth counts it (${lit} Stones to ${w.world.stones}) and it is written`);
+    `the Stone ${named(way)}, the Warden's fall closes the tear, the Hearth counts it (${lit} Stones to ${w.world.stones}) and it is written`);
 } });
 
 /** At Kilnhaven, the harbourmaster's manifests read and the old dwarf heard on the quay. */

@@ -48,6 +48,6 @@ export const AREA = {
   climate: { summer: 21, winter: -3, daily: 7, damp: [0, 0.05], wettest: 80, fog: 0.3, lag: 10,
     fogText: 'A haze comes down off the Fells, and it smells of smoke.', thunderText: 'Thunder rolls along the Fells.' },
   interiors: INTERIORS,
-  novel: { families: ['salamanders', 'knockers'], terrain: ['pine', 'ash', 'lava'], mechanics: ['sign:read', 'sign:marks'], landmarks: ['fortress', 'forge', 'mine'] },
+  novel: { families: ['salamanders', 'knockers'], terrain: ['pine', 'ash', 'lava'], mechanics: ['sign:read', 'sign:marks', 'encounter:sets'], landmarks: ['fortress', 'forge', 'mine'] },
   atlas: { zones: ZONES, places: PLACES, sites: SITES },
 } satisfies Area;
