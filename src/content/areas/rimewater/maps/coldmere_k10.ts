@@ -4,25 +4,18 @@
 // the lake in the box's east, its shore iced; a Lantern's wayside lamp by the road, dark, its jar full;
 // the milestone at the pass's foot; the pilgrims from Anvilhall camped in the snow below the mouth; and
 // the pass's first shoulder, from which the first peak of the range is seen.
-// In from L9 (#488) by its pass, taken, not walked, parked L10 lying between: L9's PASS lands on the
-// bridge at 30,3, and the road's last square, 31,3, leads back. Out over the pass the same way, parked
-// J10 lying between: the road's square at the west edge, 0,19, is taken onto J11's road (SADDLE). The
-// north edge meets K9 (#489) square for square, walked anywhere; the west and south edges end the world
-// against J10 and parked K11.
+// In from L9 (#488) by the road across L10's corner, walked (#497): the road's last square at the east
+// edge, 31,3, meets L10's at 0,3 (until L10 was laid, L9's pass was taken onto the bridge at 30,3 and
+// 31,3 led back). Out over the pass, taken, not walked, parked J10 lying between: the road's square at
+// the west edge, 0,19, is taken onto J11's road (SADDLE). The north edge meets K9 (#489) square for
+// square, walked anywhere; the west and south edges end the world against J10 and parked K11.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/rimewater.md §4.7 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import type { When } from '../../../../game/quests.ts';
-import { NORTH, SOUTH, WEST } from '../../../../game/types.ts';
+import { SOUTH, WEST } from '../../../../game/types.ts';
 
 /** The pilgrims gone from below the pass, up with the brother or back to the lodge (#56's 44, #494). */
 const GONE: When = [{ flag: 'q_pilgrims_up' }, { flag: 'q_pilgrims_back' }];
-
-/**
- * The way back to the long loch (#488): from the road's last square at the east edge, 31,3, across
- * parked L10's corner onto L9's 7,31, facing north, the road's last square there beside its pass. The
- * label leaves the loch's name to the crossing line said after it (World's `crossing`, #166).
- */
-export const RIDGE: Exit = { x: 31, y: 3, to: 'longmere_l9', tx: 7, ty: 31, tf: NORTH, label: 'Back up the road to the long loch.' };
 
 /**
  * Over the pass into the Whitespine (#499): from the road's square at the west edge, 0,19, across
@@ -39,7 +32,7 @@ export const COLDMERE_K10: MapDef = {
   band: [20, 22],
   region: 'rimewater',
   start: { x: 30, y: 3, facing: WEST },
-  exits: [RIDGE, SADDLE],
+  exits: [SADDLE],
   rows: [
     'ppppppppppppp^,,,,,,,iiiiiiii~pp',
     'pp^^^pppppppp^,,,,,ppppiiiiii~~p',

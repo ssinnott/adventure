@@ -54,8 +54,7 @@ import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
 import type { Person } from '../../../game/people.ts';
 import { NOTCH } from '../cairnmoor/maps/cairnfield_n8.ts';
 import { UP, GATE, LAKE_DOOR } from './maps/longmere_m9.ts';
-import { PASS } from './maps/longmere_l9.ts';
-import { RIDGE, SADDLE } from './maps/coldmere_k10.ts';
+import { SADDLE } from './maps/coldmere_k10.ts';
 import { DOOR } from './maps/coldmere_k9.ts';
 import type { Walk, Step } from '../../../../tools/walk.ts';
 import { GUILD_QUESTS } from '../../index.ts';
@@ -315,19 +314,16 @@ export const walkthrough: Walkthrough = (ok) => {
 
   // L9 (#488), the long loch's shore: west from M9's 0,20 onto L9's 31,20, walked, in Loch Fada still,
   // so the land is not named again; the road square to square under the pines, over the ridge by its
-  // saddle and out by the south edge at 6,31 and 7,31, as the atlas's road runs on across parked L10's
-  // corner for K10 (#491), taken, not walked.
+  // saddle and out by the south edge at 6,31 and 7,31 onto L10's road, walked on across L10's corner
+  // for K10 (#497; taken, not walked, while L10 was parked).
   w.world.travel('longmere_m9', 0, 20, WEST);
   const over = w.world.move('forward');
   ok(over.kind === 'moved' && w.world.zone?.id === 'longmere_l9' && w.world.state.x === l9.x + 31 && w.world.state.y === l9.y + 20 && !over.messages.some((m) => m.includes('Loch Fada.')),
     `west from M9's 0,20 onto L9's 31,20, walked, and the land not named again (${over.kind === 'moved' ? over.messages.join(' / ') || 'nothing said' : over.kind})`);
-  ok(L9.start.x === 31 && L9.start.y === 20 && (L9.exits ?? []).length === 1, 'the box starts on the road at its east edge, and has no way out but its edges and the pass');
+  ok(L9.start.x === 31 && L9.start.y === 20 && (L9.exits ?? []).length === 0, 'the box starts on the road at its east edge, and has no way out but its edges');
   const l9Road = reach(l9.x + 31, l9.y + 20, (x, y) => road(x, y) && onL9(x, y));
-  ok([6, 7].every((x) => l9Road.has((l9.y + 31) * out.width + l9.x + x)) && [6, 7].every((x) => out.passable(l9.x + x, l9.y + 32) !== 'ok'),
-    'the road runs square to square over L9 from 31,20 over the ridge to the south edge at 6,31 and 7,31, and past it, for now, the world ends');
-  ok(PASS.x === 6 && PASS.y === 31 && PASS.to === 'coldmere_k10' && (L9.exits ?? []).includes(PASS) && l9Road.has((l9.y + RIDGE.ty) * out.width + l9.x + RIDGE.tx)
-    && RIDGE.tx === PASS.x + 1 && RIDGE.ty === PASS.y && !(L9.exits ?? []).some((e) => e.x === RIDGE.tx && e.y === RIDGE.ty),
-    'the road is taken, not walked, from its last square at 6,31 onto K10, and the square beside it, where the way back lands, stays plain road');
+  ok([6, 7].every((x) => l9Road.has((l9.y + 31) * out.width + l9.x + x)) && [6, 7].every((x) => road(l9.x + x, l9.y + 32)),
+    'the road runs square to square over L9 from 31,20 over the ridge to the south edge at 6,31 and 7,31, and on onto L10\'s');
   const l9Stone = counted(l9, L9, 'l9_milestone');
   ok(l9Stone.says, `on the ridge the milestone says RIME LODGE ${units(l9Stone.toLodge)} and THE PASS ${units(l9Stone.toPass)}: ${l9Stone.toLodge} squares along the road to the lodge's gate and ${l9Stone.toPass} to the high pass`);
 
@@ -359,45 +355,46 @@ export const walkthrough: Walkthrough = (ok) => {
   const box = L9.features!.find((f) => f.kind === 'chest' && f.id === 'l9_strongbox');
   ok(box?.kind === 'chest' && box.items.includes('skinning_knife+1') && box.x === 23 && box.y === 8, 'in the shieling, the drove\'s strongbox and a drover\'s Skinning Knife +1');
 
-  // K10 (#491), the high pass: on from L9's pass onto the bridge at K10's 30,3, taken, not walked, and
-  // the cold loch's crossing line said after the pass's own, as at a border walked (#166): at its floor
-  // the name alone, two under the rest in its own words, three under the harsher and the way back east
-  // still open.
+  // K10 (#491), the high pass: on from L9 down the road across L10's corner (#497), walked, onto the road's
+  // last square at K10's 31,3 beside the bridge, and the cold loch's crossing line said as at any border
+  // walked (#166): at its floor the name alone, two under the rest in its own words, three under the
+  // harsher and the way back east still open.
   const K10 = MAP_DEFS.find((d) => d.id === 'coldmere_k10')!, k10 = out.zones.find((z) => z.id === 'coldmere_k10')!;
+  const l10 = out.zones.find((z) => z.id === 'longmere_l10')!;
   const pass = (level: number): string[] => {
     for (const m of w.party.members) m.level = level;
-    w.world.travel('longmere_l9', PASS.x, PASS.y - 1, SOUTH);
+    w.world.travel('longmere_l10', 0, 3, WEST);
     const r = w.world.move('forward');
     return r.kind === 'moved' ? r.messages : [r.kind];
   };
   const passLow = pass(17), passTwo = pass(18), passIn = pass(20);
-  ok(w.world.zone?.id === 'coldmere_k10' && w.world.state.x === k10.x + PASS.tx && w.world.state.y === k10.y + PASS.ty && w.world.state.facing === WEST,
-    'down the pass at L9\'s 6,31 onto K10\'s bridge at 30,3, facing west');
-  ok(passIn.join(' / ') === `${PASS.label} / Loch Fuar.`, `at 20, the pass's line and then the cold loch named, no more (${passIn.join(' / ')})`);
-  ok(passTwo.join(' / ') === `${PASS.label} / Loch Fuar. ${FUAR.crossing?.harder}`, `at 18, the rest in the cold loch's own words (${passTwo.join(' / ')})`);
-  ok(passLow.join(' / ') === `${PASS.label} / Loch Fuar. ${FUAR.crossing?.warning}`, `at 17, the harsher words, and the way back east open (${passLow.join(' / ')})`);
-  ok(K10.start.x === PASS.tx && K10.start.y === PASS.ty && (K10.exits ?? []).length === 2 && K10.exits!.includes(RIDGE) && K10.exits!.includes(SADDLE) && RIDGE.x === PASS.tx + 1 && RIDGE.y === PASS.ty,
-    'the landing is the box\'s way in and no way out, and the way back is the road\'s last square beside it, its only way out but its edges and the pass on over to J11 (SADDLE, #499)');
-  // Back from the road's last square: straight back within the hour, the way's own line alone; come to
-  // it from elsewhere, over K9's south edge, walked, and the land not named again, the long loch named.
-  w.world.travel('coldmere_k10', PASS.tx, PASS.ty, EAST);
+  ok(w.world.zone?.id === 'coldmere_k10' && w.world.state.x === k10.x + 31 && w.world.state.y === k10.y + 3 && l10.x === k10.x + k10.w && road(l10.x, l10.y + 3) && road(k10.x + 31, k10.y + 3),
+    'west along the road from L10\'s 0,3 onto K10\'s 31,3, walked, the road\'s last square beside the bridge');
+  ok(passIn.join(' / ') === 'Loch Fuar.', `at 20, the cold loch named, no more (${passIn.join(' / ')})`);
+  ok(passTwo.join(' / ') === `Loch Fuar. ${FUAR.crossing?.harder}`, `at 18, the rest in the cold loch's own words (${passTwo.join(' / ')})`);
+  ok(passLow.join(' / ') === `Loch Fuar. ${FUAR.crossing?.warning}`, `at 17, the harsher words, and the way back east open (${passLow.join(' / ')})`);
+  ok(K10.start.x === 30 && K10.start.y === 3 && (K10.exits ?? []).length === 1 && K10.exits!.includes(SADDLE),
+    'the box starts on the bridge at 30,3, and has no way out but its edges and the pass on over to J11 (SADDLE, #499)');
+  // Back from the road's last square: straight back within the hour, nothing said; come to it from
+  // elsewhere, over K9's south edge, walked, and the land not named again, the long loch named.
+  w.world.travel('coldmere_k10', 31, 3, EAST);
   const back = w.world.move('forward');
-  ok(back.kind === 'moved' && w.world.zone?.id === 'longmere_l9' && w.world.state.x === l9.x + RIDGE.tx && w.world.state.y === l9.y + RIDGE.ty && w.world.state.facing === NORTH
-    && back.messages.join(' / ') === RIDGE.label, `back from K10's 31,3 onto L9's 7,31, facing north, beside the pass; straight back, its own line alone (${back.kind === 'moved' ? back.messages.join(' / ') : back.kind})`);
+  ok(back.kind === 'moved' && w.world.zone?.id === 'longmere_l10' && w.world.state.x === l10.x && w.world.state.y === l10.y + 3 && !back.messages.length,
+    `back from K10's 31,3 onto L10's 0,3, walked; straight back, nothing said (${back.kind === 'moved' ? back.messages.join(' / ') || 'nothing said' : back.kind})`);
   const kn = out.zones.find((z) => z.id === 'coldmere_k9')!;
   w.world.travel('coldmere_k9', 20, 31, SOUTH);
   const seam = w.world.move('forward'), crossed = w.world.zone?.id === 'coldmere_k10' && w.world.state.y === k10.y;
-  w.world.travel('coldmere_k10', PASS.tx, PASS.ty, EAST);
+  w.world.travel('coldmere_k10', 31, 3, EAST);
   const round = w.world.move('forward');
-  ok(seam.kind === 'moved' && crossed && kn.y + kn.h === k10.y && !seam.messages.some((m) => m.includes('Loch Fuar.')) && round.kind === 'moved' && round.messages.join(' / ') === `${RIDGE.label} / Loch Fada.`,
+  ok(seam.kind === 'moved' && crossed && kn.y + kn.h === k10.y && !seam.messages.some((m) => m.includes('Loch Fuar.')) && round.kind === 'moved' && round.messages.join(' / ') === 'Loch Fada.',
     `south from K9's 20,31 onto K10's 20,0, walked, and the land not named again (${seam.kind === 'moved' ? seam.messages.join(' / ') || 'nothing said' : seam.kind}); back by the road, the long loch named (${round.kind === 'moved' ? round.messages.join(' / ') : round.kind})`);
 
   // The road square to square from the bridge to the pass's mouth and out by the west edge at 0,19,
   // taken on over the pass onto J11 across parked J10's corner (#499, SADDLE: the Whitespine's
   // walkthrough crosses it); the milestone at the pass's foot, to the lodge's gate and
   // over the pass to the road's end at the monks' gate in Monks' Vale.
-  const onK10 = on(k10), k10Road = reach(k10.x + PASS.tx, k10.y + PASS.ty, (x, y) => road(x, y) && onK10(x, y));
-  ok(k10Road.has((k10.y + RIDGE.y) * out.width + k10.x + RIDGE.x) && k10Road.has((k10.y + 15) * out.width + k10.x + 5) && k10Road.has((k10.y + 19) * out.width + k10.x) && out.passable(k10.x - 1, k10.y + 19) !== 'ok' && SADDLE.x === 0 && SADDLE.y === 19,
+  const onK10 = on(k10), k10Road = reach(k10.x + 30, k10.y + 3, (x, y) => road(x, y) && onK10(x, y));
+  ok(k10Road.has((k10.y + 3) * out.width + k10.x + 31) && k10Road.has((k10.y + 15) * out.width + k10.x + 5) && k10Road.has((k10.y + 19) * out.width + k10.x) && out.passable(k10.x - 1, k10.y + 19) !== 'ok' && SADDLE.x === 0 && SADDLE.y === 19,
     'the road runs square to square over K10 from the bridge at 30,3 to the pass\'s mouth at 5,15 and out by the west edge at 0,19, taken on over the pass, parked J10 between');
   const vale = ATLAS.links.find((l) => l.from === 'monksvale' && l.to === 'monastery')!.a!;
   const k10Stone = counted(k10, K10, 'k10_milestone', { name: 'MONKS\' VALE', at: vale });
@@ -502,6 +499,74 @@ export const walkthrough: Walkthrough = (ok) => {
   const iron = K9.features!.find((f) => f.kind === 'chest' && f.id === 'k9_iron');
   ok(iron?.kind === 'chest' && iron.items.includes('bear_spear+1') && iron.items.includes('lann_fuar') && iron.x === 12 && iron.y === 18,
     'in the hole, the smith\'s iron: a Bear Spear +1, and his own blade, Lann Fuar');
+  // The country behind the road (#497). L10, the cold loch's head: down the road from L9's south edge at
+  // 7,31 onto L10's 7,0, walked, in Loch Fada still, so the land is not named again; the road square to
+  // square across the box's corner to its west edge at 0,3, against K10's 31,3, walked above.
+  const L10 = MAP_DEFS.find((d) => d.id === 'longmere_l10')!, L11 = MAP_DEFS.find((d) => d.id === 'longmere_l11')!;
+  const l11 = out.zones.find((z) => z.id === 'longmere_l11')!, onL10 = on(l10);
+  w.world.travel('longmere_l9', 7, 31, SOUTH);
+  const toL10 = w.world.move('forward');
+  ok(toL10.kind === 'moved' && w.world.zone?.id === 'longmere_l10' && w.world.state.x === l10.x + 7 && w.world.state.y === l10.y && !toL10.messages.some((m) => m.includes('Loch Fada.')),
+    `south from L9's 7,31 onto L10's 7,0, walked, and the land not named again (${toL10.kind === 'moved' ? toL10.messages.join(' / ') || 'nothing said' : toL10.kind})`);
+  const l10Road = reach(l10.x + 6, l10.y, (x, y) => road(x, y) && onL10(x, y));
+  ok(l9.y + l9.h === l10.y && l10.x === l9.x && (L10.exits ?? []).length === 0 && l10Road.has((l10.y + 3) * out.width + l10.x),
+    'the road runs square to square over L10\'s corner from 6,0 and 7,0 to the west edge at 0,3; the box has no way out but its edges');
+
+  // The cold loch's east shore, iced, with the dead pines standing in it and the old road going down
+  // into it; east of the ridge the scree, the hills, the trapper at his fire and the bears' kill.
+  for (const id of ['l10_road', 'l10_head', 'l10_trees', 'l10_drowned', 'l10_scree', 'l10_hills', 'l10_split', 'l10_kill']) see(w, `longmere_l10:${id}`);
+  ok(said(L10, 'A trapper').includes('I set no wire there'), 'the trapper at his fire keeps out of the cats\' pines south under the ridge\'s end');
+  listen(w);
+
+  // The box's groups, each won at its floor: the pike under the shore ice, nearest the way in, and the
+  // bears in the far pines, the hardest.
+  for (const g of L10.encounters!.filter((e) => e.under)) ok(g.under === 'ice' && out.at(l10.x + g.x, l10.y + g.y).terrain === 'ice', `${g.id} lives under the cold loch's shore ice`);
+  for (const g of L10.encounters!) fight(w, `longmere_l10:${g.id}`);
+
+  // The secret: the blazes on the pines in a line to the ridge's foot, ending at bare rock; the search
+  // there, and the old trappers' store behind it. Walked, waded, climbed or floated, it is never
+  // reached but through the rock.
+  const store = shut(l10, [9, 6], [10, 6], [11, 6]);
+  ok(store.size > 600 && !store.reached, `the store is shut but for the rock: none of L10's ${store.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, 'longmere_l10:l10_blazes');
+  w.world.travel('longmere_l10', 9, 6, EAST);
+  let blazed = false;
+  for (let i = 0; i < 20 && !blazed; i++) blazed = w.world.search();
+  const inStore = blazed ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(blazed && inStore.every((r) => r.kind === 'moved') && w.world.used('l10_store'), 'searched where the blazes end, the rock gives, and the store behind it can be walked into');
+  listen(w);
+  const pitch = L10.features!.find((f) => f.kind === 'chest' && f.id === 'l10_box');
+  ok(pitch?.kind === 'chest' && pitch.gold === 200 && pitch.x === 11 && pitch.y === 6, 'in the store, the trappers\' box sealed with pitch');
+
+  // L11, the pines under the ridge's end: in from L10 over the north edge, walked; the lynxes' pinewoods,
+  // the tar-burner whose father felled the stumps in the loch, the bog, and the mountain along the south
+  // edge, where the world ends.
+  w.world.travel('longmere_l10', 10, 31, SOUTH);
+  const on11 = w.world.move('forward');
+  ok(on11.kind === 'moved' && w.world.zone?.id === 'longmere_l11' && w.world.state.x === l11.x + 10 && w.world.state.y === l11.y && !on11.messages.some((m) => m.includes('Loch Fada.')) && (L11.exits ?? []).length === 0,
+    `south from L10's 10,31 onto L11's 10,0, walked, and the land not named again; the box has no way out but its edges (${on11.kind === 'moved' ? on11.messages.join(' / ') || 'nothing said' : on11.kind})`);
+  for (const id of ['l11_shore', 'l11_lie', 'l11_bog', 'l11_east', 'l11_reeds', 'l11_south']) see(w, `longmere_l11:${id}`);
+  ok(said(L11, 'A tar-burner').includes('The loch was a field lower then'), 'the tar-burner\'s father felled the stumps that stand in the cold loch\'s ice');
+  listen(w);
+
+  // The box's groups, each won at its floor: the lynxes in the pines below the loch, nearest the way in,
+  // and the bears in the far pines under the mountain, the hardest.
+  for (const g of L11.encounters!) fight(w, `longmere_l11:${g.id}`);
+
+  // The secret: the long mound under the pines, a stone at its end like a lintel; the search there, and
+  // the earth-house under it. Walked, waded, climbed or floated, it is never reached but through the
+  // lintel.
+  const house = shut(l11, [6, 20], [5, 20], [4, 20]);
+  ok(house.size > 600 && !house.reached, `the earth-house is shut but for the lintel: none of L11's ${house.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, 'longmere_l11:l11_mound');
+  w.world.travel('longmere_l11', 6, 20, WEST);
+  let lintel = false;
+  for (let i = 0; i < 20 && !lintel; i++) lintel = w.world.search();
+  const inHouse = lintel ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(lintel && inHouse.every((r) => r.kind === 'moved') && w.world.used('l11_house'), 'searched at the lintel, the stone gives, and the earth-house under the mound can be walked into');
+  listen(w);
+  const kist = L11.features!.find((f) => f.kind === 'chest' && f.id === 'l11_kist');
+  ok(kist?.kind === 'chest' && kist.gold === 200 && kist.x === 4 && kist.y === 20, 'in the earth-house, the kist of oak sealed with fat');
   sleepersBay(w, ok);
   sideQuests(ok);
   theSleepers(ok);

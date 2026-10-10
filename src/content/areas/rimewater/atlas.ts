@@ -6,7 +6,7 @@ import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
   {
-    id: 'longmere', name: 'Loch Fada', area: 'rimewater', band: [20, 21], maps: [{ map: 'longmere_m9', at: [392, 254] }, { map: 'longmere_l9', at: [360, 254] }], seeds: [[392, 284], [410, 272]], // Longmere, the long lake
+    id: 'longmere', name: 'Loch Fada', area: 'rimewater', band: [20, 21], maps: [{ map: 'longmere_m9', at: [392, 254] }, { map: 'longmere_l9', at: [360, 254] }, { map: 'longmere_l10', at: [360, 286] }, { map: 'longmere_l11', at: [360, 318] }], seeds: [[392, 284], [410, 272]], // Longmere, the long lake
     // The crossing line said in ice (#166, #486): how the loch's shore feels to a company under its floor.
     crossing: { harder: 'The loch lies frozen below, and the land is harder than the moor behind.', warning: 'Ice, and nothing on this shore would spare you. The road back over the fells is still open.' },
   },
