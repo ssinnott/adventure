@@ -16,18 +16,21 @@ import { SLAG } from '../../../rifts/materials.ts';
 export const WARDEN_SLAIN: When = { slain: 'anvil_stone:as_warden' };
 
 /**
- * The tear closed (#540): the flag the Rift sets once its Warden has fallen, which its own groups,
- * O5's slaglings, N3's and N5's strays and the Hearth's count all read.
+ * The tear closed (#540): the flag the Warden sets as it falls (#636), which the Rift's own groups,
+ * O5's slaglings, N3's, N5's and O6's strays and the Hearth's count all read.
  */
 export const CLOSED: When = { flag: 'q_anvil_closed' };
 
+/** The tear's quiet said: by any of its three events. */
+const QUIET: When = ['as_quiet_lanes', 'as_quiet_cut', 'as_quiet_back'].map((id) => ({ seen: `anvil_stone:${id}` }));
+
 /**
- * The tear going quiet, which sets the flag: said on the first step after the Warden falls, from the
- * square it is fought from into the cut or back out of it, or by a company gone from the Rift another
- * way on its first step back in. The first said, the rest are gone.
+ * The tear gone quiet: said on the first step after the Warden falls, from the square it is fought
+ * from into the cut or back out of it, or by a company gone from the Rift another way on its first
+ * step back in. The first said, the rest are gone.
  */
 const quiet = (x: number, y: number, id: string): Feature =>
-  ({ kind: 'event', x, y, id, once: true, after: WARDEN_SLAIN, until: CLOSED, sets: 'q_anvil_closed', text: SLAG.quiet });
+  ({ kind: 'event', x, y, id, once: true, after: WARDEN_SLAIN, until: QUIET, text: SLAG.quiet });
 
 export const ANVIL_STONE: MapDef = {
   id: 'anvil_stone',
@@ -90,6 +93,6 @@ export const ANVIL_STONE: MapDef = {
     { id: 'as_elders_east', x: 11, y: 5, monsters: ['slag_elder', 'slag_elder'], aware: 3, respawn: 2880, roams: false, until: CLOSED },
     // The Warden of the Anvil, standing up out of the cut: it never comes back, and the tear closes
     // when it falls.
-    { id: 'as_warden', x: 7, y: 1, monsters: ['anvil_warden'], aware: 2, roams: false, slainText: 'The red goes out of the slag. The ground stops humming. Up at the cut, the Stone is only a stone.' },
+    { id: 'as_warden', x: 7, y: 1, monsters: ['anvil_warden'], aware: 2, roams: false, slainText: 'The red goes out of the slag. The ground stops humming. Up at the cut, the Stone is only a stone.', sets: 'q_anvil_closed' },
   ],
 };

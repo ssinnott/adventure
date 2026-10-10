@@ -210,6 +210,8 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'lava_tubes: under': { whose: '#18', at: 1 },
   'kilnsheart_n6: under': { whose: '#18', at: 1 },
   'kilnmouth_m6: under': { whose: '#18', at: 1 },
+  'ironfells_o3: under': { whose: '#18', at: 1 },
+  'kilnsheart_o4: under': { whose: '#18', at: 1 },
   'kilnmouth_l6: under': { whose: '#18', at: 1 },
   'kilnmouth_m4: under': { whose: '#18', at: 1 },
   'kilnmouth_m5: under': { whose: '#18', at: 1 },
@@ -221,6 +223,8 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'cairns: under': { whose: '#18', at: 1 },
   'highmoor_o7: under': { whose: '#18', at: 1 },
   'highmoor_o8: under': { whose: '#18', at: 1 },
+  'cairnfield_m7: under': { whose: '#18', at: 1 },
+  'cairnfield_m8: under': { whose: '#18', at: 1 },
   'Cairnmoor: under': { whose: '#18', at: 1 },
   // And Rimewater's boxes (#486, #488, #489, #491, #497), in Cairnmoor's gear and the finds by 21, as Cairnmoor's are.
   'longmere_m9: under': { whose: '#18', at: 1 },
@@ -232,6 +236,8 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'longmere_m10: under': { whose: '#18', at: 1 },
   'longmere_m11: under': { whose: '#18', at: 1 },
   'longmere_n9: under': { whose: '#18', at: 1 },
+  'coldmere_j9: under': { whose: '#18', at: 1 },
+  'coldmere_k11: under': { whose: '#18', at: 1 },
   // And the Sleepers' Bay's stair (#490), banded from the area's floor as Carn Dubh's cairn is.
   'sleepers_bay: under': { whose: '#18', at: 1 },
   'Rimewater: under': { whose: '#18', at: 1 },

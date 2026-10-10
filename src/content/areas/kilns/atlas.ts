@@ -19,8 +19,8 @@ const HELD_AT_M2: [number, number][] = Array.from({ length: 29 }, (_, i): [numbe
 const seam = (y: number): [number, number][] => Array.from({ length: 32 }, (_, i): [number, number] => [456 + i, y]);
 
 export const ZONES: readonly AtlasZone[] = [
-  { id: 'ironfells', name: 'The Iron Fells', area: 'kilns', band: [16, 17], maps: [{ map: 'ironfells_m3', at: [392, 62] }, { map: 'ironfells_n3', at: [424, 62] }, { map: 'ironfells_n2', at: [424, 30] }], seeds: [[432, 50], ...HELD_AT_M2, ...seam(93)] },
-  { id: 'kilnsheart', name: 'The Kilns', area: 'kilns', band: [16, 18], maps: [{ map: 'kilnsheart_n4', at: [424, 94] }, { map: 'kilnsheart_n5', at: [424, 126] }, { map: 'kilnsheart_n6', at: [424, 158] }, { map: 'kilnsheart_o5', at: [456, 126] }, { map: 'kilnsheart_o6', at: [456, 158] }], seeds: [[452, 120], [470, 160], ...seam(94)] },
+  { id: 'ironfells', name: 'The Iron Fells', area: 'kilns', band: [16, 17], maps: [{ map: 'ironfells_m3', at: [392, 62] }, { map: 'ironfells_n3', at: [424, 62] }, { map: 'ironfells_n2', at: [424, 30] }, { map: 'ironfells_o3', at: [456, 62] }], seeds: [[432, 50], ...HELD_AT_M2, ...seam(93)] },
+  { id: 'kilnsheart', name: 'The Kilns', area: 'kilns', band: [16, 18], maps: [{ map: 'kilnsheart_n4', at: [424, 94] }, { map: 'kilnsheart_n5', at: [424, 126] }, { map: 'kilnsheart_n6', at: [424, 158] }, { map: 'kilnsheart_o5', at: [456, 126] }, { map: 'kilnsheart_o6', at: [456, 158] }, { map: 'kilnsheart_o4', at: [456, 94] }], seeds: [[452, 120], [470, 160], ...seam(94)] },
   { id: 'kilnmouth', name: 'Kilnmouth', area: 'kilns', band: [16, 18], maps: [{ map: 'kilnmouth_m6', at: [392, 158] }, { map: 'kilnmouth_l6', at: [360, 158] }, { map: 'kilnmouth_m4', at: [392, 94] }, { map: 'kilnmouth_m5', at: [392, 126] }], seeds: [[408, 160]] },
 ];
 

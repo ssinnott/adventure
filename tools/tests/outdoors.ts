@@ -119,30 +119,50 @@ export function outdoors(): void {
     `M3's east edge is open land on into N3 with the trail through it, and its south edge pine but for the ridge and the crag, on into M4 (${eastOf(m3)}; ${southOf(m3)})`);
   // Anvilhall's box (N3, #458): open land on from M3 with the trail through it at rows 27 and 28, and
   // the trail out by the south edge into N4; the open fell on north into N2 (#460) and the crag over
-  // the gate running on into N2's, and the terraces' east end and the hills and rock past them under O3.
+  // the gate running on into N2's and O3's (#474), the terraces' east end shut by O3's crag, and the
+  // hills and rock past them on into O3.
   const n3 = out.zones.find((z) => z.id === 'ironfells_n3')!;
   ok(westOf(n3) === ','.repeat(27) + '==' + ',,,' && southOf(n3) === ',,,,==' + ','.repeat(18) + 'r'.repeat(8),
     `N3's west edge is open land on from M3 with the trail through it, and its south edge open land with the trail out into N4 and rock at the corner (${westOf(n3)}; ${southOf(n3)})`);
-  ok(northOf(n3) === ','.repeat(13) + '^' + 'M'.repeat(17) + '%' && eastOf(n3) === '%'.repeat(9) + ':::ff:ff####::' + '^'.repeat(7) + 'rr',
+  ok(northOf(n3) === ','.repeat(13) + '^' + 'M'.repeat(18) && eastOf(n3) === 'M'.repeat(9) + ':::ff:ff####::' + '^'.repeat(7) + 'rr',
     `N3's north edge is open fell on into N2 but for the crag, and its east edge the crag, the terraces' end and the hills (${northOf(n3)}; ${eastOf(n3)})`);
   // Erzkamm's box (N2, #460): the open fell on from N3 square for square, the crag over Anvilhall's
-  // gate running on along it; the rim over its north and east the world's end; and on its west the
-  // rim's mountain, then the hills and the fell under it, against M2's range.
+  // gate running on along it, but the corner, which faces O2's void on N2's side and O3's crag on N3's;
+  // the rim over its north and east the world's end; and on its west the rim's mountain, then the hills
+  // and the fell under it, against M2's range.
   const n2 = out.zones.find((z) => z.id === 'ironfells_n2')!;
-  ok(southOf(n2) === northOf(n3) && /^%+$/.test(northOf(n2)) && /^%+$/.test(eastOf(n2)),
-    `N2's south edge meets N3's north edge square for square, and its north and east edges, the rim, are the world's end (${southOf(n2)}; ${northOf(n2)}; ${eastOf(n2)})`);
+  ok(southOf(n2) === northOf(n3).slice(0, -1) + '%' && /^%+$/.test(northOf(n2)) && /^%+$/.test(eastOf(n2)),
+    `N2's south edge meets N3's north edge square for square but the corner, and its north and east edges, the rim, are the world's end (${southOf(n2)}; ${northOf(n2)}; ${eastOf(n2)})`);
+  // The Fells' east (O3, #474): the hall's crag run on down its west edge against N3's crag and the
+  // terraces' end, so nothing comes at the gate from this side, then the hills open on from N3's at
+  // rows 21 to 29 and rock at the corner; its north edge the hills and the pines under the world's end
+  // over O2, and its east edge, the mountain, the world's end against P3. On its south the hills and the
+  // pines open on into O4, over the line from the Fells into the heart, with the mountain at the end.
+  const o3 = out.zones.find((z) => z.id === 'ironfells_o3')!, o4 = out.zones.find((z) => z.id === 'kilnsheart_o4')!;
+  ok(westOf(o3) === '%' + 'M'.repeat(20) + '^'.repeat(9) + 'rr' && northOf(o3) === '%%^^^^pp' + '%'.repeat(24) && /^%+$/.test(eastOf(o3)),
+    `O3's west edge is the crag against N3's crag and terraces, then the hills on from N3's and rock at the corner; its north edge the hills and the pines under the void, and its east edge the world's end (${westOf(o3)}; ${northOf(o3)}; ${eastOf(o3)})`);
+  ok(southOf(o3) === 'rr' + '^'.repeat(13) + 'p'.repeat(11) + 'M'.repeat(5) + '%' && northOf(o4) === 'rrr' + '^'.repeat(14) + 'p'.repeat(10) + 'M'.repeat(4) + '%',
+    `O3's south edge and O4's north edge are the rock, the hills and the pines open across, and the mountain at the east end (${southOf(o3)}; ${northOf(o4)})`);
   ok(westOf(n2) === '%' + 'M'.repeat(19) + '^'.repeat(8) + ','.repeat(4),
     `N2's west edge is the rim's mountain, then the hills and the fell under it, against M2's range (${westOf(n2)})`);
   // The Tiefzeche's box (N4, #461), the heart's first: open land on from N3 with the trail through it
   // at columns 4 and 5, square for square with N3's south edge; the drove road out by the south edge
   // for N5, with the stream for the smelter at the corner; open grass, the knoll and the old workings'
   // ground on the west against M4, laid since (#474), and the first crags and the hills on the east
-  // against O4, not built, so the world ends past it.
+  // against O4, laid since too: the crags against its crag and the hills open across, with the stream
+  // at the corner.
   const n4 = out.zones.find((z) => z.id === 'kilnsheart_n4')!;
   ok(northOf(n4) === southOf(n3) && southOf(n4) === ':'.repeat(11) + ','.repeat(9) + '=,,' + '^'.repeat(5) + ',,~~',
     `N4's north edge is N3's south edge, square for square, with the trail through it, and its south edge the old workings' ground, the grass and the drove road out for N5 (${northOf(n4)}; ${southOf(n4)})`);
   ok(westOf(n4) === ','.repeat(18) + '^^^,,f' + ':'.repeat(8) && eastOf(n4) === 'r'.repeat(14) + '^'.repeat(13) + ',,^^~',
     `N4's west edge is grass, the knoll and the old workings' ground against M4, and its east edge the crags and the hills against O4 (${westOf(n4)}; ${eastOf(n4)})`);
+  // The heart's hills (O4, #474): its crag against N4's, the hills open across from N4's hills and grass
+  // and the stream at the corner, run on into N4's and O5's; on the south the hills open into O5's at
+  // columns 2 to 9, then the mountain against O5's mountain and hills, its corner the world's end; and
+  // on the east, against P4, the mountain and the hills with the stream coming in at row 6, the
+  // mountain the world's end.
+  ok(westOf(o4) === 'r'.repeat(15) + '^'.repeat(16) + '~' && southOf(o4) === '~~' + '^'.repeat(11) + 'M'.repeat(18) + '%' && eastOf(o4) === '%'.repeat(6) + '~' + '^'.repeat(15) + '%'.repeat(10),
+    `O4's west edge is the crag and the hills against N4's, with the stream at the corner; its south edge the stream, the hills and the mountain against O5; its east edge the hills and the stream under the world's end (${westOf(o4)}; ${southOf(o4)}; ${eastOf(o4)})`);
   // Gluthutte's box (N5, #463): in from N4 by the drove road at column 20 and the stream at the corner,
   // the slag heap's loose slag on the line; out by the south edge at column 12 for N6. The stream
   // leaves by the west edge at rows 25 and 26 against M5, beside the farms' fields and the woods; on the
@@ -187,12 +207,13 @@ export function outdoors(): void {
     `M5's east edge meets N5's west edge and its south edge M6's north edge square for square, the stream through both, and its west edge is the range and the shingle, the world's end against cut L5 (${westOf(m5)})`);
   // The Anvil Stone's box (O5, #464): in from N5 by the cutters' track at row 24 and over the open hills
   // and grass either side of it, the mountain between them on both sides of the seam and the stream at
-  // the corner. The stream runs on at the north edge's corner into O4, past it the hills and the
-  // mountain, the world's end where its ring faces nothing built; the hills and the crag, run on to the
-  // rim, against P5, cut; and the grass, the hills and the crag against O6 (#466).
+  // the corner. The stream runs on at the north edge's corner into O4 (#474), past it the hills open
+  // into O4's, the mountain against O4's hills and mountain, and the hills against O4's mountain; the
+  // hills and the crag, run on to the rim, against P5, cut; and the grass, the hills and the crag
+  // against O6 (#466).
   const o5 = out.zones.find((z) => z.id === 'kilnsheart_o5')!;
-  ok(westOf(o5) === '~^^^^' + 'M'.repeat(10) + '^^^^' + ','.repeat(5) + ':' + ','.repeat(7) && northOf(o5) === '~~' + '^'.repeat(8) + '%'.repeat(17) + '^'.repeat(5),
-    `O5's west edge meets N5's with the cutters' track, the hills and the mountain, and its north edge is the stream at the corner and the hills under the world's end over O4 (${westOf(o5)}; ${northOf(o5)})`);
+  ok(westOf(o5) === '~^^^^' + 'M'.repeat(10) + '^^^^' + ','.repeat(5) + ':' + ','.repeat(7) && northOf(o5) === '~~' + '^'.repeat(8) + 'M'.repeat(17) + '^'.repeat(5),
+    `O5's west edge meets N5's with the cutters' track, the hills and the mountain, and its north edge is the stream at the corner, the hills and the mountain against O4 (${westOf(o5)}; ${northOf(o5)})`);
   ok(eastOf(o5) === '^'.repeat(22) + 'r'.repeat(10) && southOf(o5) === ',,,,,' + '^'.repeat(8) + 'r'.repeat(19),
     `O5's east edge is the hills and the crag against P5, and its south edge the grass, the hills and the crag against O6 (${eastOf(o5)}; ${southOf(o5)})`);
   // Feuerstollen's box (O6, #466): in from O5 over the grass and the hills square for square, the crag
@@ -211,7 +232,7 @@ export function outdoors(): void {
   // for N8 among the heather, the snow and the marsh, the stream from the tarn clipping the corner; the
   // peat-cutter's track out by the east edge at row 22 in dirt against O7, since the atlas has no road
   // there, meeting O7's (#477); and on the west the grass, the snow, the heather and the hills against
-  // M7. M7 is not built, so the world ends past it.
+  // M7 (#484), below.
   const n7 = out.zones.find((z) => z.id === 'highmoor_n7')!;
   ok(northOf(n7) === ',,,=,' + '^'.repeat(12) + ',,^^^' + 'h'.repeat(8) + '^^' && southOf(n7) === 'hh*hhhw=' + 'w'.repeat(6) + 'hhhh**' + 'h'.repeat(11) + '~',
     `N7's north edge meets N6's hills with the drove road at column 3, and its south edge is the heather, the snow and the marsh with the drove road out for N8 and the stream at the corner (${northOf(n7)}; ${southOf(n7)})`);
@@ -223,14 +244,15 @@ export function outdoors(): void {
   // notch at 0,28 is taken through onto M9 once M9 is built (NOTCH), since the atlas's road crosses the
   // corner on a diagonal and no square of it can be walked off the edge; on the south the hills and the
   // heather against N9, whose fells stand closed against them (#497); on the east the heather and the
-  // marsh against O8, the stream at the corner. M8 is not built, so the world ends past it.
+  // marsh against O8, the stream at the corner. M8 is (#484), below, the shoulder's mountain over the
+  // corner against N8's at row 30.
   const n8 = out.zones.find((z) => z.id === 'cairnfield_n8')!;
-  ok(northOf(n8) === southOf(n7).replace('hhhw=wwwwww', 'hhhh=wwwwhh') && southOf(n8) === '%M' + '^'.repeat(15) + 'h'.repeat(15),
+  ok(northOf(n8) === southOf(n7).replace('hhhw=wwwwww', 'hhhh=wwwwhh') && southOf(n8) === 'MM' + '^'.repeat(15) + 'h'.repeat(15),
     `N8's north edge meets N7's south edge with the drove road at column 7 and the stream at the corner, and its south edge is the Rimefells' shoulder, the hills and the heather against N9 (${northOf(n8)}; ${southOf(n8)})`);
-  ok(westOf(n8) === 'hhhhhhh~hhh' + 'r'.repeat(8) + 'h'.repeat(7) + 'rr^^%%' && eastOf(n8) === '~' + 'h'.repeat(21) + 'w'.repeat(6) + 'hhhh',
+  ok(westOf(n8) === 'hhhhhhh~hhh' + 'r'.repeat(8) + 'h'.repeat(7) + 'rr^^MM' && eastOf(n8) === '~' + 'h'.repeat(21) + 'w'.repeat(6) + 'hhhh',
     `N8's west edge is the heather, the stream, the crags and the notch against M8, and its east edge the stream, the heather and the marsh against O8 (${westOf(n8)}; ${eastOf(n8)})`);
   // Rime Lodge's box (M9, #486), Rimewater's first: taken down onto from N8's notch, not walked, since
-  // the two meet only at a corner across parked M8, where both stand as the Rimefells' shoulder; on the
+  // the two meet only at a corner across M8's, where both stand as the Rimefells' shoulder; on the
   // north the fells closed but for the pines and the grass of the corner against M8; on the east the
   // glacier's edge, closed against N9 (#434, call 7) but for the pines at rows 9 and 10, the way round
   // the fells' shoulder into N9 (#497), with rock at row 24 that shuts the hollow to a climber on the
@@ -238,10 +260,28 @@ export function outdoors(): void {
   // the west the stream from the fells, the grass, the hills and the road out at row 20 onto L9's
   // (#488). M8 is not built, so the world ends past it.
   const m9 = out.zones.find((z) => z.id === 'longmere_m9')!;
-  ok(northOf(m9) === ',,,^^' + '%'.repeat(27) && eastOf(m9) === '%' + 'M'.repeat(8) + 'pp' + 'M'.repeat(13) + 'r' + 'M'.repeat(7) && out.at(m9.x + 31, m9.y).ch === '%' && out.at(n8.x, n8.y + 31).ch === '%',
+  ok(northOf(m9) === ',,,^^' + 'M'.repeat(27) && eastOf(m9) === 'M'.repeat(9) + 'pp' + 'M'.repeat(13) + 'r' + 'M'.repeat(7) && out.at(m9.x + 31, m9.y).ch === 'M' && out.at(n8.x, n8.y + 31).ch === 'M',
     `M9's north edge is the fells, closed but for its west corner against M8, its east edge the glacier's edge, closed against N9 but for the pines at rows 9 and 10 and the hollow's rock at row 24, and its corner and N8's the Rimefells' shoulder (${northOf(m9)}; ${eastOf(m9)})`);
   ok(southOf(m9) === ',_~~' + 'W'.repeat(9) + '~~,,,^^^MM' + 'p'.repeat(7) + 'MM' && westOf(m9) === ',p~~~p' + ','.repeat(6) + '^'.repeat(8) + '=' + ','.repeat(11),
     `M9's south edge is the loch, its shores, the hills, the crag and the pines against M10, and its west edge the stream, the grass, the hills and the road out at row 20 against L9 (${southOf(m9)}; ${westOf(m9)})`);
+  // The country behind (M7 and M8, #484), the Cairnfield's west and south-west, off the road: M7's
+  // north edge M6's south edge square for square, the grass and the hills under the Kilns' farms, but
+  // the corner, which is N7's grass; its east edge N7's west edge square for square, the grass, the
+  // snow, the heather and the hills; its south edge M8's north edge, the sea, the shore, the grass and
+  // the heather. M8's east edge N8's west edge square for square, the heather, the stream and the
+  // crags, but past the notch, where its crags close the notch's west side and the Rimefells' shoulder
+  // stands at the corner (#479's NOTCH, walked only from N8's road); its south edge the grass and the hills of
+  // M9's north-west corner square for square, and the shoulder's mountains over the rest. On the west
+  // the grass, the shore and the sea against L7 and L8; neither is built, so the world ends past them.
+  // No road crosses any of their edges.
+  const m7 = out.zones.find((z) => z.id === 'cairnfield_m7')!, m8 = out.zones.find((z) => z.id === 'cairnfield_m8')!;
+  ok(northOf(m7).slice(0, 31) === southOf(m6).slice(0, 31) && eastOf(m7) === westOf(n7) && southOf(m7) === northOf(m8) && northOf(m8) === 'W'.repeat(9) + '~~_' + ','.repeat(8) + 'h'.repeat(12),
+    `M7's north edge meets M6's south edge square for square but the corner, its east edge N7's west edge, and its south edge M8's north edge (${northOf(m7)}; ${eastOf(m7)}; ${southOf(m7)})`);
+  ok(eastOf(m8) === westOf(n8).slice(0, 28) + 'rrMM' && southOf(m8) === northOf(m9).slice(0, 31) + 'M',
+    `M8's east edge meets N8's west edge square for square but the corner, its crags past the notch and the Rimefells' shoulder, and its south edge M9's north edge, the grass and the hills of its corner and the shoulder's mountains (${eastOf(m8)}; ${southOf(m8)})`);
+  ok(westOf(m7) === ','.repeat(10) + '_~~' + 'W'.repeat(19) && westOf(m8) === 'W'.repeat(12) + '~~~_' + ','.repeat(16)
+    && [...Array(32).keys()].every((i) => [out.at(m7.x - 1, m7.y + i), out.at(m8.x - 1, m8.y + i)].every((c) => c.ch === '%')),
+    `M7's and M8's west edges are the grass, the shore and the sea against L7 and L8, where the world ends (${westOf(m7)}; ${westOf(m8)})`);
   // The long loch's shore (L9, #488): in from M9 by the drove road at row 20, its east edge M9's west
   // edge square for square; on the north Loch Fada's ice, its open water, the pines and the stream
   // going off north against L8; on the west the ice and the pines against K9, where Loch Fuar begins;
@@ -255,31 +295,41 @@ export function outdoors(): void {
     `L9's west edge is the ice and the pines against K9, and its south edge the pines, the road out at columns 6 and 7, the ridge's tail and the grass against L10 (${westOf(l9)}; ${southOf(l9)})`);
   // Loch Fuar (K9, #489): its east edge L9's west edge square for square, the ice at rows 0 and 1 and
   // the pines below, walked anywhere and crossed by no road; on the north the loch's open water and its
-  // ice against K8, on the west the open water, the ice and the pines against J9; on the south the
-  // pines, the hills, the grass, the ice and the loch's water running in at column 29 against K10. Neither
-  // K8 nor J9 is built, so the world ends past them; K10 is (#491), below.
+  // ice against K8, on the west the open water, the ice and the pines against J9 (#497), below; on the
+  // south the pines, the hills, the grass, the ice and the loch's water running in at column 29 against
+  // K10. K8 is not built, so the world ends past it; K10 is (#491), below.
   const k9 = out.zones.find((z) => z.id === 'coldmere_k9')!;
   ok(eastOf(k9) === westOf(l9) && northOf(k9) === 'W'.repeat(29) + 'iii' && westOf(k9) === 'W'.repeat(10) + 'ii' + 'p'.repeat(20),
     `K9's east edge meets L9's west edge square for square, the ice at rows 0 and 1 and the pines below, and its north and west edges are the loch's open water, its ice and the pines against K8 and J9 (${eastOf(k9)}; ${northOf(k9)}; ${westOf(k9)})`);
+  // Loch Fuar's far shore (J9, #497): its east edge K9's west edge square for square, the open water at
+  // rows 0 to 9, the ice at 10 and 11 and the pines below, walked under the pines; on the west the
+  // mountain against I9's (#503), the pines at rows 0 to 7 against its ring; on the north the pines, the
+  // ice and the open water against J8, and on the south the mountain and the pines against J10. Neither
+  // J8 nor J10 is built, so the world ends past them.
+  const j9 = out.zones.find((z) => z.id === 'coldmere_j9')!;
+  ok(eastOf(j9) === westOf(k9) && j9.x + j9.w === k9.x && j9.y === k9.y && westOf(j9) === 'p'.repeat(8) + 'M'.repeat(23) + '%'
+    && northOf(j9) === 'p'.repeat(10) + 'iii' + 'W'.repeat(19) && southOf(j9) === '%%%%' + 'p'.repeat(28)
+    && [...Array(32).keys()].every((i) => [out.at(j9.x + i, j9.y - 1), out.at(j9.x + i, j9.y + 32)].every((c) => c.ch === '%')),
+    `J9's east edge meets K9's west edge square for square, the open water, the ice and the pines, its west edge is the pines and the mountain against I9, and its north and south edges the pines, the ice and the open water against J8 and the mountain and the pines against J10, past which the world ends (${eastOf(j9)}; ${westOf(j9)}; ${northOf(j9)}; ${southOf(j9)})`);
   // The high pass (K10, #491): its north edge K9's south edge square for square, walked anywhere; on the
   // east the pines, the road at row 3, walked on across L10's corner (#497), the river and the lake
   // against L10; on the west the pines, the pass's shoulder, its two walls (the map's
   // ring, so the void) and the road out between them at row 19 against J10, taken on over the pass onto J11's road across
-  // parked J10's corner (#499, SADDLE); on the south the pines and the lake's ice and water against K11. Neither J10 nor
-  // K11 is built, so the world ends past them; L10 is (#497), below.
+  // parked J10's corner (#499, SADDLE); on the south the pines and the lake's ice and water against K11 (#497), below.
+  // J10 is not built, so the world ends past it; L10 is (#497), below.
   const k10 = out.zones.find((z) => z.id === 'coldmere_k10')!;
   ok(northOf(k10) === southOf(k9) && southOf(k9) === 'p'.repeat(13) + '^' + ','.repeat(7) + 'i'.repeat(8) + '~pp',
     `K9's south edge meets K10's north edge square for square, the pines, the hills, the grass, the ice and the loch's water at column 29 (${southOf(k9)}; ${northOf(k10)})`);
   ok(eastOf(k10) === 'ppp=ppp~~' + 'W'.repeat(23) && westOf(k10) === 'p'.repeat(9) + '^^^^%%%%%^=%%%^^' + 'p'.repeat(7) && southOf(k10) === 'p'.repeat(27) + 'iiWWW'
-    && [...Array(32).keys()].every((i) => [out.at(k10.x - 1, k10.y + i), out.at(k10.x + i, k10.y + 32)].every((c) => c.ch === '%')),
-    `K10's east edge is the pines, the road at row 3, the river and the lake against L10, its west edge the pines, the shoulder, the pass's walls and the road out at row 19 against J10, and its south edge the pines and the lake against K11, past which two the world ends (${eastOf(k10)}; ${westOf(k10)}; ${southOf(k10)})`);
+    && [...Array(32).keys()].every((i) => out.at(k10.x - 1, k10.y + i).ch === '%'),
+    `K10's east edge is the pines, the road at row 3, the river and the lake against L10, its west edge the pines, the shoulder, the pass's walls and the road out at row 19 against J10, past which the world ends, and its south edge the pines and the lake against K11 (${eastOf(k10)}; ${westOf(k10)}; ${southOf(k10)})`);
   // The country behind (#497). The cold loch's head (L10): its north edge against L9's south edge, the
   // pines, the road in at columns 6 and 7, the ridge and the grass; its west edge against K10's east
   // edge, the pines, the road at row 3, walked, the river and the lake; on the east the meadow, the hills
   // and the pines against M10. The pines under the ridge's end (L11): its north edge against L10's south
   // edge, the lake, its shore ice, the pines and the ridge; on the west the lake and the pines against
   // K11, on the east the pines and the bog against M11, and on the south the pines and the mountain
-  // (the ring, so the void) against L12. None of K11 and L12 is built, so the world ends past them.
+  // (the ring, so the void) against L12. L12 is not built, so the world ends past it.
   const l10 = out.zones.find((z) => z.id === 'longmere_l10')!, l11 = out.zones.find((z) => z.id === 'longmere_l11')!;
   const [m10, m11, n9] = ['longmere_m10', 'longmere_m11', 'longmere_n9'].map((id) => out.zones.find((z) => z.id === id)!);
   ok(l9.y + l9.h === l10.y && northOf(l10) === 'pppppp==ppppMMMMMMpppppppppp,,,,' && westOf(l10) === 'ppp=ppp~~~' + 'W'.repeat(22),
@@ -288,11 +338,10 @@ export function outdoors(): void {
     `L10's east edge meets M10's west edge, the meadow, the hills and the pines (${eastOf(l10)}; ${westOf(m10)})`);
   ok(southOf(l10) === 'WWWWWiippppppppppMMMMppppppppppp' && northOf(l11) === 'WWWWWWiippppppppppMMMppppppppppp',
     `L10's south edge meets L11's north edge, the lake, its shore ice, the pines and the ridge (${southOf(l10)}; ${northOf(l11)})`);
-  ok(westOf(l11) === 'W'.repeat(7) + '~~' + 'p'.repeat(23) && southOf(l11) === 'p'.repeat(17) + '%'.repeat(15)
-    && [...Array(32).keys()].every((i) => [out.at(l11.x - 1, l11.y + i), out.at(l11.x + i, l11.y + 32)].every((c) => c.ch === '%')),
-    `L11's west edge is the lake and the pines against K11, and its south edge the pines and the mountain against L12, past which two the world ends (${westOf(l11)}; ${southOf(l11)})`);
-  ok(eastOf(l11) === 'p'.repeat(9) + 'w'.repeat(11) + 'p'.repeat(6) + '%'.repeat(6) && westOf(m11) === 'p'.repeat(11) + 'w'.repeat(8) + 'p'.repeat(7) + '%'.repeat(6),
-    `L11's east edge meets M11's west edge, the pines, the bog and the range, the ring (${eastOf(l11)}; ${westOf(m11)})`);
+  ok(southOf(l11) === 'p'.repeat(17) + '%'.repeat(15) && [...Array(32).keys()].every((i) => out.at(l11.x + i, l11.y + 32).ch === '%'),
+    `L11's south edge is the pines and the mountain against L12, past which the world ends (${southOf(l11)})`);
+  ok(eastOf(l11) === 'p'.repeat(9) + 'w'.repeat(11) + 'p'.repeat(6) + 'M'.repeat(5) + '%' && westOf(m11) === 'p'.repeat(11) + 'w'.repeat(8) + 'p'.repeat(7) + 'M'.repeat(5) + '%',
+    `L11's east edge meets M11's west edge, the pines, the bog and the range, ending in the ring's void (${eastOf(l11)}; ${westOf(m11)})`);
   // Loch Fada's country behind the road (M10, M11 and N9, #497). M10 meets M9's south edge, the loch's
   // open water at columns 4 to 12, its shallows, its shores, the hills, the crag and the pines, its own
   // grass against M9's hills at column 18 and its pines against M9's closed corner; on the west the far
@@ -317,13 +366,25 @@ export function outdoors(): void {
   // pines; on the north otherwise the peaks and the mountain (the ring, so the void) against J10; on the
   // west the crest's mountain and peaks against I11 (#501), the summit's path going on over it at row 10;
   // on the south the peaks and the hills against J12; and on the east a peak, the hills and the vale's
-  // grass against K11. None of J10, J12 and K11 is built, so the world ends past them.
+  // grass against K11 (#497), below. Neither J10 nor J12 is built, so the world ends past them.
   const j11 = out.zones.find((z) => z.id === 'monksvale_j11')!;
   ok(northOf(j11) === '%%%%AAAA%%%%%^^^^^,,=pp%AAAAAA%%' && southOf(j11) === '%%%%' + 'A'.repeat(8) + '%'.repeat(6) + '^'.repeat(14)
-    && [...Array(32).keys()].every((i) => [out.at(j11.x + 32, j11.y + i), out.at(j11.x + i, j11.y + 32), out.at(j11.x + i, j11.y - 1)].every((c) => c.ch === '%')),
+    && [...Array(32).keys()].every((i) => [out.at(j11.x + i, j11.y + 32), out.at(j11.x + i, j11.y - 1)].every((c) => c.ch === '%')),
     `J11's north edge is the peaks, the hills, the road at column 20 and the pines against J10, and its south edge the peaks and the hills against J12, past which the world ends (${northOf(j11)}; ${southOf(j11)})`);
-  ok(westOf(j11) === '%MM' + 'A'.repeat(7) + '*' + 'M'.repeat(9) + 'A'.repeat(8) + 'MMM%' && eastOf(j11) === '%%A' + '%'.repeat(11) + '^^^^' + ','.repeat(13) + '^',
-    `J11's west edge is the crest's mountain and peaks against I11, the summit's path crossing at row 10, and its east edge a peak, the hills and the vale's grass against K11, past which the world ends (${westOf(j11)}; ${eastOf(j11)})`);
+  ok(westOf(j11) === '%MM' + 'A'.repeat(7) + '*' + 'M'.repeat(9) + 'A'.repeat(8) + 'MMM%' && eastOf(j11) === '%MA' + 'M'.repeat(11) + '^^^^' + ','.repeat(13) + '^',
+    `J11's west edge is the crest's mountain and peaks against I11, the summit's path crossing at row 10, and its east edge the mountain, a peak, the hills and the vale's grass against K11 (${westOf(j11)}; ${eastOf(j11)})`);
+  // South of the pass (K11, #497): its north edge K10's south edge square for square, the pines, the ice
+  // at 27 and 28 and the lake, walked anywhere; its west edge the mountain at rows 1 to 13 against J11's
+  // mountain and peak, and J11's east edge square for square at 14 to 31, the hills and the vale's grass, walked; on the
+  // east the lake, its ice and the pines against L11, and on the south the vale's grass, the pines and
+  // the rim's crags against K12. K12 is not built, so the world ends past it; L11 is (#497), below.
+  const k11 = out.zones.find((z) => z.id === 'coldmere_k11')!;
+  ok(northOf(k11) === southOf(k10) && k11.y === k10.y + k10.h && k11.x === j11.x + j11.w && westOf(k11).slice(1, 14) === 'M'.repeat(13) && westOf(k11).slice(14) === eastOf(j11).slice(14)
+    && eastOf(k11) === 'W'.repeat(7) + 'ii' + 'p'.repeat(23) && southOf(k11) === '^^,,,,' + 'p'.repeat(8) + '%'.repeat(9) + 'p'.repeat(9)
+    && [...Array(32).keys()].every((i) => out.at(k11.x + i, k11.y + 32).ch === '%'),
+    `K11's north edge meets K10's south edge square for square, its west edge J11's east edge at the hills and the grass, and its east edge is the lake, its ice and the pines against L11 and its south edge the vale's grass, the pines and the crags against K12, past which the world ends (${northOf(k11)}; ${westOf(k11)}; ${eastOf(k11)}; ${southOf(k11)})`);
+  ok(k11.x + k11.w === l11.x && k11.y === l11.y && eastOf(k11) === 'W'.repeat(7) + 'ii' + 'p'.repeat(23) && westOf(l11) === 'W'.repeat(7) + '~~' + 'p'.repeat(23),
+    `K11's east edge meets L11's west edge, the lake, its ice and the pines (${eastOf(k11)}; ${westOf(l11)})`);
   // The Peak Stone's box (I11, #501): its east edge meets J11's west edge square for square, the
   // summit's path crossing at row 10, walked; on the north the pines, the Sheer, the ridge trail at
   // 27,0 where the atlas's trail crosses, beside the Stone at 28,0, and the mountain against I10's
@@ -356,14 +417,14 @@ export function outdoors(): void {
   // for square, the pines open across it and the ridge trail crossing at 18, walked; on the north the
   // sea and the shallows, the pines, the mountain and the peaks and the trail at 20,0, where the
   // atlas's trail crosses, against I8's south edge (#504), the trail going on north; on the west the
-  // sea, the pines and the Sheer against H9; on the east Loch Fuar's mountain and peaks against J9.
-  // Neither H9 nor J9 is built, so the world ends past them.
-  ok(southOf(i9) === '|' + 'p'.repeat(17) + '=' + 'MMMM' + 'A'.repeat(8) + '%' && [...Array(32).keys()].every((i) => out.at(i9.x + i, i9.y + 32).ch === northOf(i10)[i]) && i9.x === i10.x && i9.y + i9.h === i10.y,
+  // sea, the pines and the Sheer against H9; on the east Loch Fuar's mountain and peaks against J9's
+  // mountain and pines (#497). H9 is not built, so the world ends past it.
+  ok(southOf(i9) === '|' + 'p'.repeat(17) + '=' + 'MMMM' + 'A'.repeat(8) + 'M' && [...Array(32).keys()].every((i) => out.at(i9.x + i, i9.y + 32).ch === northOf(i10)[i]) && i9.x === i10.x && i9.y + i9.h === i10.y,
     `I9's south edge is the Sheer, the pines, the ridge trail at 18 and the mountain against I10's north (${southOf(i9)})`);
   const i8 = out.zones.find((z) => z.id === 'sheerpoint_i8')!;
-  ok(northOf(i9) === 'WW~~ppp' + 'M'.repeat(7) + 'A'.repeat(6) + '=' + 'M'.repeat(10) + '%' && westOf(i9) === 'WWWW~~_' + 'p'.repeat(10) + '|'.repeat(15) && eastOf(i9) === '%'.repeat(20) + 'A'.repeat(5) + '%'.repeat(7)
-    && [...Array(32).keys()].every((i) => [out.at(i9.x - 1, i9.y + i), out.at(i9.x + 32, i9.y + i)].every((c) => c.ch === '%') && out.at(i9.x + i, i9.y - 1).ch === southOf(i8)[i]),
-    `I9's north edge is the sea, the pines, the peaks and the trail at 20,0 against I8's south, its west edge the sea, the pines and the Sheer against H9 and its east edge Loch Fuar's mountain against J9, past which the world ends (${northOf(i9)}; ${westOf(i9)}; ${eastOf(i9)})`);
+  ok(northOf(i9) === 'WW~~ppp' + 'M'.repeat(7) + 'A'.repeat(6) + '=' + 'M'.repeat(11) && westOf(i9) === 'WWWW~~_' + 'p'.repeat(10) + '|'.repeat(15) && eastOf(i9) === 'M'.repeat(20) + 'A'.repeat(5) + 'M'.repeat(7)
+    && [...Array(32).keys()].every((i) => out.at(i9.x - 1, i9.y + i).ch === '%' && out.at(i9.x + 32, i9.y + i).ch === westOf(j9)[i] && out.at(i9.x + i, i9.y - 1).ch === southOf(i8)[i]),
+    `I9's north edge is the sea, the pines, the peaks and the trail at 20,0 against I8's south, its west edge the sea, the pines and the Sheer against H9, past which the world ends, and its east edge Loch Fuar's mountain against J9's west (${northOf(i9)}; ${westOf(i9)}; ${eastOf(i9)})`);
   // Sheer Point (I8, #504), the Point's tip: its south edge meets I9's north edge square for square, the
   // shallows and the pines open across it at 2 to 6 and the ridge trail crossing at 20, walked; on the
   // north and the west the sea; on the east the tip's hills and the pines down to the deserter's rocks
@@ -548,7 +609,7 @@ export function outdoors(): void {
   ok(line(sh.x + sh.w - 1, sh.y, 0, 1, sh.h) === ridge && line(th.x, th.y, 0, 1, th.h) === ridge.slice(0, -1) + 'M', 'between them the ridge stands two squares thick with the pass through it, and runs out into the void at its north end and on Thornmark\'s side into the Deepthorn\'s edge at its south');
   // The ways: every one lands on open ground; none joins one zone to the next, which is walked, but the
   // drove road's notch, taken down from N8 onto M9 and back up, since the two meet only at a corner
-  // across parked M8 (#479, #486), and the pass on from K10 over onto J11 and back, the two
+  // across M8's (#479, #486), and the pass on from K10 over onto J11 and back, the two
   // meeting at no square across parked J10's corner (#499); no gate closes the road; and the towns and dungeons open
   // onto the outdoors.
   const maps = buildMaps();

@@ -11,7 +11,7 @@ export const ZONES: readonly AtlasZone[] = [
     crossing: { harder: 'The loch lies frozen below, and the land is harder than the moor behind.', warning: 'Ice, and nothing on this shore would spare you. The road back over the fells is still open.' },
   },
   {
-    id: 'coldmere', name: 'Loch Fuar', area: 'rimewater', band: [21, 22], maps: [{ map: 'coldmere_k9', at: [328, 254] }, { map: 'coldmere_k10', at: [328, 286] }], seeds: [[344, 300], [340, 280]], // Coldmere, the frozen lake
+    id: 'coldmere', name: 'Loch Fuar', area: 'rimewater', band: [21, 22], maps: [{ map: 'coldmere_k9', at: [328, 254] }, { map: 'coldmere_k10', at: [328, 286] }, { map: 'coldmere_j9', at: [296, 254] }, { map: 'coldmere_k11', at: [328, 318] }], seeds: [[344, 300], [340, 280]], // Coldmere, the frozen lake
     // The crossing line said in ice (#166, #489): how the cold loch's shore feels to a company under its floor.
     crossing: { harder: 'The cold loch lies white below, and the land is harder than the long loch\'s shore behind.', warning: 'Black ice, and nothing on this shore would spare you. The way back east under the pines is still open.' },
   },
