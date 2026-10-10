@@ -4,9 +4,10 @@
 // the cairn of its fallen stones; where the Sheer gives out, the pines going up onto the ridge to Sheer
 // Point; and at the Sheer's foot, where a path ends at rocks black with smoke, a cleft with a hearth.
 // In from H10 (#510) over its south edge, walked: the vines at 0 to 6, the grass, the pines and the Sheer
-// square for square with H10's 0,0 to 31,0, nothing named; and from Sheer Point's I9 (#503) over its east
-// edge, walked, the sand at row 7 and the pines at 8 to 16, where the crossing line names Cindercoast;
-// the Sheer below them closes the edge. G9 is west of it; H8 is the sea.
+// square for square with H10's 0,0 to 31,0, nothing named. The east edge is the Sheer from row 5 to row
+// 31 and the deep water above it, so Sheer Point's I9 (#503) meets wall or sea along all of it: nothing
+// is walked or said there, and the Giants' Stair stays the only way over by land. G9 is west of it; H8
+// is the sea.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/ashfall.md §4.10 is its brief (#522).
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
@@ -25,18 +26,18 @@ export const CINDERCOAST_H9: MapDef = {
     'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
     'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
     'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
-    'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW~',
-    'WWWWWWWWWWWWWWWWWWWWWWWWWW~~~~~~',
-    'WWWWWWWWWWWWWWWWWWWWWWWWW~~~~~~_',
-    'WWWWWWWWWWWWWWWWWWWWWWWW~~_____p',
-    'WWWWWWWWWWWWWWWWWWWWWWW~~_,,,,,p',
-    'WWWWWWWWWWWWWWWWWWW~~~~~_,,,,,,p',
-    'WWWWWWWWWWWWWWWWWW~~~~~_,,,,,,pp',
-    'WWWWWWWWWWWWWWWW~~~____,,,,,,,pp',
-    'WWWWWWWWWWWWWWW~~~_,,,,,,,,,,,pp',
-    'WWWWWWWWWWWWWW~~__,,,,,,,,,,,ppp',
-    'WWWWWWWWWWWWWW~~_,,,,,,,,,,,,ppp',
-    'WWWWWWWWWWWWW~~_,,,,,,,,,,,,,ppp',
+    'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW|',
+    'WWWWWWWWWWWWWWWWWWWWWWWWWW~~~~~|',
+    'WWWWWWWWWWWWWWWWWWWWWWWWW~~~~~~|',
+    'WWWWWWWWWWWWWWWWWWWWWWWW~~_____|',
+    'WWWWWWWWWWWWWWWWWWWWWWW~~_,,,,,|',
+    'WWWWWWWWWWWWWWWWWWW~~~~~_,,,,,,|',
+    'WWWWWWWWWWWWWWWWWW~~~~~_,,,,,,p|',
+    'WWWWWWWWWWWWWWWW~~~____,,,,,,,p|',
+    'WWWWWWWWWWWWWWW~~~_,,,,,,,,,,,p|',
+    'WWWWWWWWWWWWWW~~__,,,,,,,,,,,pp|',
+    'WWWWWWWWWWWWWW~~_,,,,,,,,,,,,pp|',
+    'WWWWWWWWWWWWW~~_,,,,,,,,,,,,,pp|',
     'WWWWWWWWWWWWW~~_,,,,,,BB,,,,,,p|',
     'WWWWWWWWWWWWW~~_,,,,,,,,,,,,,pp|',
     'WWWWWWWWWWWW~~_,BB,,,,,,,,,,,pp|',

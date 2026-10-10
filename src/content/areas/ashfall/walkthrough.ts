@@ -47,8 +47,8 @@
 // fishers' slip, the harbour between the sea wall's moles, the drakes on the beach and the smugglers' cell
 // in the mole; west of the town (F9), walked onto from F10 and from the Wold's E9, Cindercoast named, the
 // drakes on the ash and the fishers' store behind the rock; and under the Sheer's north end (H9), walked
-// onto from H10 and from Sheer Point's pines, the drakes on the sand and the cleft behind the sooted
-// rocks. Then the three third prestiges taught here (#448), each its trainer's quest played to the teaching by a company of 27:
+// onto from H10 and shut to Sheer Point's pines by the Sheer, the drakes on the sand and the cleft
+// behind the sooted rocks. Then the three third prestiges taught here (#448), each its trainer's quest played to the teaching by a company of 27:
 // the Paladin's lamp, the Barbarian's nest and the Druid's seedling.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen, walkThrough, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
@@ -1140,8 +1140,8 @@ function roadBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void {
  * more, and straight back, the Wold not named again; the fisherman at his door; the drakes on the ash, the
  * box's one fight; and the fishers' store behind the rock where their path up the ridge stops. Under the
  * Sheer's north end (H9): north from H10's grass at 14,0 onto its 14,31, walked, the land not named
- * again, where the box starts; west from Sheer Point's pines at I9's 0,12 onto its 31,12, walked,
- * Cindercoast named; the fishwife at her door; the drakes on the sand, the box's one fight; and the cleft
+ * again, where the box starts; west from Sheer Point's pines at I9's 0,12 refused, the Sheer shutting
+ * its east edge to the water; the fishwife at her door; the drakes on the sand, the box's one fight; and the cleft
  * behind the sooted rocks at the Sheer's foot. Walked, waded, climbed or floated, no prize is reached but
  * through its door.
  */
@@ -1245,7 +1245,8 @@ function coastBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   ok(casks?.kind === 'chest' && casks.gold === 50 && casks.x === 24 && casks.y === 23, 'in the store, under the casks, the box the Compact never saw');
 
   // Under the Sheer's north end: north from H10's grass at 14,0 onto H9's 14,31, where the box starts, the
-  // land not named again; and west from Sheer Point's pines at I9's 0,12 onto H9's 31,12, Cindercoast named.
+  // land not named again; and west from Sheer Point's pines at I9's 0,12 refused, the Sheer shutting H9's east
+  // edge to the water and the Stair the only way over by land.
   w.world.travel(h10.id, 14, 0, NORTH);
   const over = w.world.move('forward');
   ok(over.kind === 'moved' && at(h9, 14, 31) && h9.x === h10.x && h9.y + h9.h === h10.y && !over.messages.some((m) => m.includes(`${COAST.name}.`))
@@ -1254,8 +1255,8 @@ function coastBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   listen(w);
   w.world.travel(i9.id, 0, 12, WEST);
   const down = w.world.move('forward');
-  ok(down.kind === 'moved' && at(h9, 31, 12) && h9.x + h9.w === i9.x && said(down).startsWith(`${COAST.name}.`),
-    `west from Sheer Point's pines at I9's 0,12 onto H9's 31,12, walked, and Cindercoast named (${said(down)})`);
+  ok(down.kind === 'blocked' && at(i9, 0, 12) && h9.x + h9.w === i9.x && out.at(h9.x + 31, h9.y + 12).ch === '|',
+    `west from Sheer Point's pines at I9's 0,12 the step is refused, the Sheer standing on H9's 31,12 and shutting the edge (${down.kind === 'blocked' ? down.reason : said(down)})`);
   listen(w);
   const wife = words(H9, 'A fishwife');
   ok(wife.includes('Beetles come up the sand') && wife.includes('Mind the Sheer'), `the fishwife at her door: the beetles after the guts, and the Sheer (${wife})`);

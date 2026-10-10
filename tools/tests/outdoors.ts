@@ -418,16 +418,17 @@ export function outdoors(): void {
   // sea and the shallows, the pines, the mountain and the peaks and the trail at 20,0, where the
   // atlas's trail crosses, against I8's south edge (#504), the trail going on north; on the west the
   // sea, the pines and the Sheer against H9; on the east Loch Fuar's mountain and peaks against J9's
-  // mountain and pines (#497). Its west edge meets H9's east (#522), the sand and the pines open both
-  // sides at rows 7 to 16 and the Sheer closing the rest.
+  // mountain and pines (#497). Its west edge meets H9's east (#522), which is deep water to row 4 and the
+  // Sheer from row 5 down: I9's shallows, sand and pines at rows 5 to 16 face the wall, so the edge is
+  // shut (the pines stand open on I9's side only) and the Stair stays the only way over by land.
   ok(southOf(i9) === '|' + 'p'.repeat(17) + '=' + 'MMMM' + 'A'.repeat(8) + 'M' && [...Array(32).keys()].every((i) => out.at(i9.x + i, i9.y + 32).ch === northOf(i10)[i]) && i9.x === i10.x && i9.y + i9.h === i10.y,
     `I9's south edge is the Sheer, the pines, the ridge trail at 18 and the mountain against I10's north (${southOf(i9)})`);
   const i8 = out.zones.find((z) => z.id === 'sheerpoint_i8')!;
   ok(northOf(i9) === 'WW~~ppp' + 'M'.repeat(7) + 'A'.repeat(6) + '=' + 'M'.repeat(11) && westOf(i9) === 'WWWW~~_' + 'p'.repeat(10) + '|'.repeat(15) && eastOf(i9) === 'M'.repeat(20) + 'A'.repeat(5) + 'M'.repeat(7)
-    && h9.x + h9.w === i9.x && h9.y === i9.y && eastOf(h9) === 'W'.repeat(5) + '~~_' + 'p'.repeat(9) + '|'.repeat(15)
-    && [...Array(10).keys()].every((i) => out.passable(i9.x, i9.y + 7 + i) === 'ok' && out.passable(h9.x + 31, h9.y + 7 + i) === 'ok')
+    && h9.x + h9.w === i9.x && h9.y === i9.y && eastOf(h9) === 'W'.repeat(5) + '|'.repeat(27)
+    && [...Array(10).keys()].every((i) => out.passable(i9.x, i9.y + 7 + i) === 'ok') && [...Array(12).keys()].every((i) => out.passable(h9.x + 31, h9.y + 5 + i) === 'mountain')
     && [...Array(32).keys()].every((i) => out.at(i9.x - 1, i9.y + i).ch === eastOf(h9)[i] && out.at(i9.x + 32, i9.y + i).ch === westOf(j9)[i] && out.at(i9.x + i, i9.y - 1).ch === southOf(i8)[i]),
-    `I9's north edge is the sea, the pines, the peaks and the trail at 20,0 against I8's south, its west edge the sea, the pines and the Sheer against H9's east edge, the pines open both sides at rows 7 to 16, and its east edge Loch Fuar's mountain against J9's west (${northOf(i9)}; ${westOf(i9)}; ${eastOf(h9)}; ${eastOf(i9)})`);
+    `I9's north edge is the sea, the pines, the peaks and the trail at 20,0 against I8's south, its west edge the sea, the shallows, the sand, the pines and the Sheer against H9's east edge, the Sheer from row 5 down, so the pines at rows 7 to 16 face a wall and the edge is shut, and its east edge Loch Fuar's mountain against J9's west (${northOf(i9)}; ${westOf(i9)}; ${eastOf(h9)}; ${eastOf(i9)})`);
   // Sheer Point (I8, #504), the Point's tip: its south edge meets I9's north edge square for square, the
   // shallows and the pines open across it at 2 to 6 and the ridge trail crossing at 20, walked; on the
   // north and the west the sea; on the east the tip's hills and the pines down to the deserter's rocks
