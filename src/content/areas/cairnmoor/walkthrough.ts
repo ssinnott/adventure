@@ -14,7 +14,8 @@
 // box's groups won at its floor, the wights cursing; and the coach's strongbox, found from the coach's
 // open door. Last, Fionnlios's box (O7, #477) in a walk of its own: the track on to the ring, the voice
 // there by night, the Watcher and the piper, the groups and the hollow (stoneRing); then the bog (O8,
-// #478), off the road, in another (theBog). Then its chapter, The Ring (#481), played at 18, 19 and 20
+// #478), off the road, in another (theBog), and the country behind, M7 and M8 (#484), in a third
+// (theGrazing). Then its chapter, The Ring (#481), played at 18, 19 and 20
 // in order and with the road's head taken first, resting inside the ring by night (theRing); and its
 // side quests (#482): the Watcher's tally, the ring on the bog body and the faces on the tors, each
 // answered every way (sideQuests).
@@ -173,12 +174,12 @@ export const walkthrough: Walkthrough = (ok) => {
     `the drove road crosses from N7's 7,31 onto N8's 7,0, and the Cairnfield is named (${into.join(' / ')})`);
 
   // The road square to square down the west side to its head, and the notch at its end, where it is
-  // taken down onto M9's road once M9 is built (NOTCH, the atlas's way); past it, for now, the world ends.
+  // taken down onto M9's road (NOTCH, the atlas's way); past it, M8's crags at the Rimefells' shoulder (#484).
   ok(reach(n8.x + 7, n8.y, (x, y) => road(x, y) && onN8(x, y)).has((n8.y + 28) * out.width + n8.x + 1), 'the drove road runs square to square over N8 from 7,0 down its west side to its head at 1,28');
   const down = ATLAS.links.find((l) => l.from === 'cairnfield' && l.to === 'longmere');
   ok(NOTCH.x === 0 && NOTCH.y === 28 && NOTCH.to === 'longmere_m9' && !!N8.exits?.includes(NOTCH) && out.passable(n8.x + NOTCH.x, n8.y + NOTCH.y) === 'ok' && out.passable(n8.x + NOTCH.x - 1, n8.y + NOTCH.y) !== 'ok'
     && down?.a?.[0] === n8.x + NOTCH.x && down.a[1] === n8.y + NOTCH.y && down.b?.[0] === 392 + NOTCH.tx && down.b[1] === 254 + NOTCH.ty,
-  'the road ends at the notch, 0,28, the atlas\'s way down to M9\'s road at 22,8 written beside the map (NOTCH), and past it, for now, the world ends');
+  'the road ends at the notch, 0,28, the atlas\'s way down to M9\'s road at 22,8 written beside the map (NOTCH), and past it M8\'s crags');
 
   // Carn Dubh's door in its side, where the atlas puts the Cairns' way in (DOOR), walked in `carnDubh`
   // below (#480).
@@ -228,6 +229,8 @@ export const walkthrough: Walkthrough = (ok) => {
   stoneRing(ok);
   // The bog (O8, #478), off the road, in a walk of its own.
   theBog(ok);
+  // The country behind (M7 and M8, #484), off the road, in a walk of its own.
+  theGrazing(ok);
   // The chapter (#481) and the side quests (#482), each in walks of their own.
   theRing(ok);
   sideQuests(ok);
@@ -552,6 +555,95 @@ function theBog(ok: (cond: boolean, msg: string) => void): void {
   listen(w);
   const hoard = O8.features!.find((f) => f.kind === 'chest' && f.id === 'o8_hoard');
   ok(hoard?.kind === 'chest' && hoard.items.includes('seax+1') && hoard.gold === 1140 && hoard.x === 20 && hoard.y === 12, 'in the cutting, the hill folk\'s grave-gold and a second Seax +1');
+}
+
+/**
+ * The country behind (M7 and M8, #484), off the road: over the seams from N7's heather onto M7's and
+ * from M6's grass over the Kilns' farms, the Cairnfield named; from M7 onto M8 and from N8's heather
+ * onto M8's, the same field, nothing said; and from M8's grass down onto M9's corner, Loch Fada named;
+ * the shepherd at the shielings, who knows where the fold's stones came from, and the old man fishing
+ * the tarn, who knows the lone tor's troll; the tor's face seen by day and not by night; the boxes'
+ * groups won at their floor, the hounds and the troll by night, mending unless burned (#537); and the
+ * two secrets, each shut but through its door: the cist behind the fold's back wall, found from the
+ * cup and rings on its stone, and the howff under the boulder by the tarn, found from its smoke.
+ */
+function theGrazing(ok: (cond: boolean, msg: string) => void): void {
+  const w = newWalk(ok);
+  w.level = 18;
+  for (const m of w.party.members) m.level = 18;
+  const M7 = MAP_DEFS.find((d) => d.id === 'cairnfield_m7')!, M8 = MAP_DEFS.find((d) => d.id === 'cairnfield_m8')!;
+  const out = buildMaps()[OUTDOORS], zone = (id: string): MapZone => out.zones.find((z) => z.id === id)!;
+  const m7 = zone('cairnfield_m7'), m8 = zone('cairnfield_m8'), m9 = zone('longmere_m9');
+  const day = Math.floor(w.world.state.minutes / MINUTES_PER_DAY) * MINUTES_PER_DAY;
+  const at = (map: string, hour: number, x: number, y: number): string[] => { w.world.state.minutes = day + hour * 60; w.world.travel(map, x, y); return w.world.eventsHere(); };
+  const byNight = (when: unknown): boolean => JSON.stringify(when) === JSON.stringify({ hours: 'night' });
+  /** From a map's square, forward over its seam until the box is the one named: what was said. */
+  const cross = (map: string, x: number, y: number, facing: typeof WEST, into: string): string[] => {
+    w.world.travel(map, x, y, facing);
+    const said: string[] = [];
+    for (let i = 0; i < 3 && w.world.zone?.id !== into; i++) { const r = w.world.move('forward'); if (r.kind === 'moved') said.push(...r.messages); }
+    return said;
+  };
+  const named = (said: string[], name: string): boolean => said.some((m) => m.startsWith(name));
+  const there = (z: MapZone, x: number, y: number): boolean => w.world.zone?.id === z.id && w.world.state.x === z.x + x && w.world.state.y === z.y + y;
+
+  // Over the seams, by day.
+  w.world.state.minutes = day + 12 * 60;
+  const fromN7 = cross('highmoor_n7', 0, 24, WEST, 'cairnfield_m7');
+  ok(there(m7, 31, 24) && named(fromN7, 'The Cairnfield.'), `the heather crosses from N7's 0,24 onto M7's 31,24, and the Cairnfield is named (${fromN7.join(' / ')})`);
+  const fromM6 = cross('kilnmouth_m6', 5, 31, SOUTH, 'cairnfield_m7');
+  ok(there(m7, 5, 0) && named(fromM6, 'The Cairnfield.'), `the grass crosses from M6's 5,31 onto M7's 5,0, out of the Kilns' farms, and the Cairnfield is named (${fromM6.join(' / ')})`);
+  const fromM7 = cross('cairnfield_m7', 15, 31, SOUTH, 'cairnfield_m8'), fromN8 = cross('cairnfield_n8', 0, 22, WEST, 'cairnfield_m8');
+  ok(there(m8, 31, 22) && !named([...fromM7, ...fromN8], 'The Cairnfield.'), 'the grass crosses from M7\'s 15,31 onto M8\'s 15,0, and the heather from N8\'s 0,22 onto M8\'s 31,22: the same field, so no name said');
+  const toM9 = cross('cairnfield_m8', 1, 31, SOUTH, 'longmere_m9');
+  ok(there(m9, 1, 0) && named(toM9, 'Loch Fada.'), `the grass crosses from M8's 1,31 onto M9's corner at 1,0, and Loch Fada is named (${toM9.join(' / ')})`);
+
+  // The shepherd at the shielings and the old man fishing the tarn.
+  const person = (def: MapDef, name: string): Person => def.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
+  const talk = (def: MapDef, p: Person): string => { w.world.travel(def.id, p.x, p.y); return meet(p, w.party, heard(w.world, p)).text; };
+  const shepherd = talk(M7, person(M7, 'A shepherd')), fisher = talk(M8, person(M8, 'A fisher'));
+  ok(shepherd.includes('Black dogs') && shepherd.includes('old cairn'), 'the shepherd at the shielings: black dogs off the moor by night, and the fold built of an old cairn');
+  ok(fisher.includes('troll on the lone tor'), 'the old man fishing the tarn: a troll on the lone tor, as when his father was a boy');
+
+  // The lone tor's face: not seen by night, seen by day.
+  const face = (said: string[]): boolean => said.some((m) => m.includes('a face, worn'));
+  const dark = at('cairnfield_m8', 23, 15, 17), noon = at('cairnfield_m8', 12, 15, 17);
+  ok(!face(dark) && face(noon), 'by night the lone tor shows no face; by day a face is worn in it');
+
+  // The boxes' groups, each won at its floor: the ravens at the ewe and on the crags, and by night
+  // the hounds on the grazing and the troll by its tor, alone, mending unless burned (#537).
+  for (const [def, id] of [[M7, 'cairnfield_m7'], [M8, 'cairnfield_m8']] as const) for (const g of def.encounters!) fight(w, `${id}:${g.id}`);
+  const hounds = M7.encounters!.find((g) => g.id === 'm7_hounds'), troll = M8.encounters!.find((g) => g.id === 'm8_troll');
+  ok(byNight(hounds?.when) && byNight(troll?.when) && troll?.monsters.join() === 'tor_troll' && !!MONSTERS.find((m) => m.id === 'tor_troll')?.regen,
+    'by night the hounds on the grazing, and the troll alone by its tor, mending unless burned');
+
+  // The secrets: the cup and rings on a stone low in the fold's back wall, and the cist of the old
+  // cairn behind it; the smoke on the boulder by the tarn, and the howff under it. Walked, waded,
+  // climbed or floated, neither is reached but through its door.
+  const secret = (def: MapDef, z: MapZone, hint: string, from: [number, number], door: [number, number], inside: string, prize: [number, number]): void => {
+    const steps = [[1, 0], [-1, 0], [0, 1], [0, -1]], seen = new Set<number>(), todo = [[z.x + from[0], z.y + from[1]]];
+    while (todo.length) {
+      const [x, y] = todo.pop()!, k = y * out.width + x;
+      if (seen.has(k) || (x === z.x + door[0] && y === z.y + door[1]) || x < z.x || x >= z.x + z.w || y < z.y || y >= z.y + z.h || out.passable(x, y, { swim: true, climb: true, float: true }) !== 'ok') continue;
+      seen.add(k);
+      for (const [dx, dy] of steps) todo.push([x + dx, y + dy]);
+    }
+    ok(seen.size > 700 && !seen.has((z.y + prize[1]) * out.width + z.x + prize[0]), `${def.id}: the prize is shut but through its door: none of ${seen.size} squares walked, waded, climbed or floated reaches it`);
+    w.world.state.minutes = day + 12 * 60;
+    see(w, `${def.id}:${hint}`);
+    w.world.travel(def.id, from[0], from[1], WEST);
+    let gives = false;
+    for (let i = 0; i < 20 && !gives; i++) gives = w.world.search();
+    const dug = gives ? [w.world.move('forward'), w.world.move('forward')] : [];
+    ok(gives && dug.every((r) => r.kind === 'moved') && w.world.used(inside), `${def.id}: searched at ${hint}, the wall gives, and what is behind it can be reached`);
+    listen(w);
+  };
+  secret(M7, m7, 'm7_cupmark', [15, 25], [14, 25], 'm7_cist', [13, 24]);
+  const rings = M7.features!.find((f) => f.kind === 'chest' && f.id === 'm7_rings');
+  ok(rings?.kind === 'chest' && rings.gold === 160 && !rings.items.length && rings.x === 13 && rings.y === 24, 'in the cist, the gold rings slipped from the dead man\'s fingers');
+  secret(M8, m8, 'm8_smoke', [7, 27], [6, 27], 'm8_howff', [4, 27]);
+  const box = M8.features!.find((f) => f.kind === 'chest' && f.id === 'm8_box');
+  ok(box?.kind === 'chest' && box.items.includes('forge_shield+1') && box.gold === 60 && box.x === 4 && box.y === 27, 'in the howff, a box with a little coin and a Forge Shield +1');
 }
 
 // ---- the chapter (#481) ----

@@ -10,14 +10,14 @@ has no town and needs none (#434, call 9). This is its area doc (EXPANSION §4, 
 where the atlas puts it, what the atlas and the docs put in it, the plan for building it, box by
 box, and the briefs. Its work is filed under #437 (Phase 1.3, #431): the doc (#475), the boxes as
 §4's table has them, Carn Dubh (#480), its chapter (#481), its side quests (#482), its seven
-drawings (#483) and the country behind, parked (#484). Figures are measured on main at `6032251`
+drawings (#483) and the country behind (#484). Figures are measured on main at `6032251`
 (2 October 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Every box is built but the parked M7 and M8 (§4.7): N7, the road up onto the moor (#476, §4.2),
-which lists the area, N8, the Cairnfield's box (#479, §4.5), O7, Fionnlios's box (#477, §4.3), O8,
-the bog (#478, §4.4) and Carn Dubh, the dungeon through N8's door (#480, §4.6). Its seven monsters
-are drawn and every one is placed (§3); its chapter, The Ring (#481, §5), and its three side quests
-(#482, §6) are built, and only the country behind is to build. Its content is `src/content/areas/cairnmoor/` (maps, monsters, items, climate, its part of
+Every box is built: N7, the road up onto the moor (#476, §4.2), which lists the area, N8, the
+Cairnfield's box (#479, §4.5), O7, Fionnlios's box (#477, §4.3), O8, the bog (#478, §4.4) and Carn
+Dubh, the dungeon through N8's door (#480, §4.6), then M7 and M8, the country behind (#484, §4.7),
+which the owner took off parked on 9 October 2026. Its seven monsters are drawn and every one is placed
+(§3); its chapter, The Ring (#481, §5), and its three side quests (#482, §6) are built. Its content is `src/content/areas/cairnmoor/` (maps, monsters, items, climate, its part of
 the world map and its walkthrough; its chapter of the one quest, The Ring, in `chapter.ts`, its
 side quests in `quests.ts` and its guild quest, the Lanterns' ring ask, in `guilds.ts`, #439); it
 has no businesses, so no rooms. Its ids: the area
@@ -34,8 +34,8 @@ two zones:
 | Zone | Band | Squares | Built |
 |---|---|---|---|
 | High Moor | 18–19 | 4,105 | N7, O7, O8 |
-| The Cairnfield | 19–20 | 3,587 | N8 |
-| The area | 18–20 | 7,692 | N7, N8, O7, O8 |
+| The Cairnfield | 19–20 | 3,587 | N8, M7, M8 |
+| The area | 18–20 | 7,692 | N7, N8, O7, O8, M7, M8 |
 
 Squares are land, without the shallows and the rivers. The area is 7,692 squares, about 7.5 zone
 maps (EXPANSION §1 has 7.5), the smallest of the act, and 6,779 of them a company could walk: the
@@ -56,7 +56,7 @@ heart's in O7 and P7, 46 of the Cairnfield's in O8 and 587 of the heart's in O6 
 which O6 took back when it was laid in the heart (#466); the Cairnfield takes 523 of Kilnmouth's in
 M7 and 77 of High Moor's in N8; the Rimefells, cut, give the moor 106 of Loch Fada's and Glacier
 Foot's; and about 120 change hands elsewhere on the world, none on a built map. With N7 High Moor
-walks to 4,635 squares and the Cairnfield to 2,938; Kilnmouth keeps L7, K7 and 11 squares of M7's
+walks to 4,635 squares and the Cairnfield to 2,938; Kilnmouth then kept L7, K7 and 11 squares of M7's
 coast. Laying N8 (#479) whole in the Cairnfield moves 1,007 more: High Moor gives the Cairnfield
 638, Loch Fada 226 and Glacier Foot 35, and about 110 change hands elsewhere on the world, none on
 a built map. With N8 High Moor walks to 3,994 squares and the Cairnfield to 3,838. Laying O7 (#477)
@@ -69,7 +69,13 @@ no zone's and gives 4 to none, and 62 change hands elsewhere on the world, none 
 own water, the pools and the stream at the corner, takes 5 more of High Moor's squares than the
 atlas's shallows did. With O8 High Moor walks to 4,733 squares and the Cairnfield to 3,171. Laying
 Carn Dubh (#480) moves no square: its two plates, at 430,246 and 430,252, stand on N8's, where the
-planned ones stood.
+planned ones stood. Laying M7 and M8 (#484) whole in the Cairnfield moves the squares as their edges
+walk them: the Cairnfield takes 13 of Kilnmouth's squares in M7's coast, 62 of Kilnmouth's 255 in L7
+and 16 of Loch Fada's in L8. Counted by `worldGrid` before and after, the Cairnfield rises from 3,171
+to 3,258 squares, Loch Fuar from 4,953 to 4,960, Kilnmouth falls from 3,397 to 3,331, Loch Fada from
+6,366 to 6,343 and High Moor from 4,288 to 4,287; 5 more squares are no zone's. None is on a built
+map. Kilnmouth keeps K7 and L7 but for the 62, and no seed is added in another area's rows (§9,
+#484's 12).
 
 **The grid** (EXPANSION §8.2; docs/areas/shelf.md §1). Cairnmoor is the M to P columns from row 6
 to row 9. The land worth a map is six boxes: N7 and N8 down the drove road; O7 and O8, the ring and
@@ -90,7 +96,7 @@ Its edges:
   from the start, and Rime Lodge stands at 410,262 just over the ridge on the shore of Loch Fada
   (the long lake, NAMES §4). N8 lays the road to its notch (#479, §4.5) and M9 takes it down
   (#486, docs/areas/rimewater.md §4.2).
-- **West: Kilnmouth's mountains,** L7, and M7 and M8's grass under them, the country behind (§4).
+- **West: Kilnmouth's mountains,** L7, and M7 and M8's grass under them, the country behind (§4.7).
 
 The drove road is the only road: up from the Kilns over N7, south down N8 and over the Rimefells to
 the lodge. Nothing on the moor is on it but the moor; the ring lies a box east.
@@ -119,8 +125,9 @@ crosses it in snow (STORY; MONSTERS §7.2).
 
 ## 3. What is built
 
-Four boxes and a dungeon, N7 the area's first, which lists the area (#476), N8, the Cairnfield's
-(#479), O7, Fionnlios's (#477), O8, the bog (#478) and Carn Dubh, through N8's door (#480):
+Six boxes and a dungeon, N7 the area's first, which lists the area (#476), N8, the Cairnfield's
+(#479), O7, Fionnlios's (#477), O8, the bog (#478) and Carn Dubh, through N8's door (#480), then M7
+and M8, the country behind (#484):
 
 - **The road up onto the moor** (N7, `highmoor_n7`, core, band 18; #476): the drove road on from the
   Kilns' N6 over the low hills, past the milestone where they give out and the drovers' shelter at
@@ -180,24 +187,44 @@ Four boxes and a dungeon, N7 the area's first, which lists the area (#476), N8, 
   the Cairn King on it, crowned, a boss that curses. Behind the seat a door that nothing opens. Off
   the stair, found from the rows, a cell of the dead with the richest grave-gold and the Hill Torc
   (§4.6).
+- **The drovers' grazing** (M7, `cairnfield_m7`, country, band 18–19; #484): the summer grazing west
+  of the drove road under the Kilns' hills, in from N7's heather at the east edge. The drovers'
+  shielings in the north, three turf huts with their fire before them and a shepherd, who says black
+  dogs come off the moor by night; the Kilns' farms seen north, the drovers' sheep on the hill, N7's
+  old snow run over the seam and paw marks by the shore. A drovers' cairn on the hill, the view
+  east to the ring, grey sand with wrack on it and a peat bank. A ewe dead in the heather with the
+  ravens walking round her and, by her, the round sheepfold of grey stones with a hurdle across its
+  gap, built out of an old cairn; behind its back wall, found from a cup and rings cut low on one
+  stone, the cist (§4.7). Two groups: five ravens at the ewe and three moor hounds on the grazing by
+  night.
+- **The tarn under the mountains** (M8, `cairnfield_m8`, country, band 18–19; #484): the country
+  south of M7, in from N8's heather at the east edge, a stream off the moor running through it to the
+  sea, crossed on stepping stones. A boat drawn up on the sand, the drovers' sheep strayed into the
+  heather, sheep's bones under the crags in the east with a raven on every ledge, a slope of shingle
+  to the sea. The lone tor on its rise in the middle, grey slabs heaped, a face worn nearly smooth in
+  its top slab by day and a troll beside it by night. South the tarn, black and still under the
+  Rimefells; an old fisher on a stone at its edge, who says the troll is there yet; and a cairn at
+  the mountains' foot with a ram's skull on it. Under a great boulder by the tarn, found from the
+  heather worn to the earth and the rock black with old smoke, a howff (§4.7). Two groups: eight
+  ravens on the crags and the tor's troll alone by night.
 
 Its atlas rows are charted in `src/content/areas/cairnmoor/atlas.ts`, the area's own `atlas` since
 N7 lists the area; until then `src/content/atlas.ts` spread them into the plan where its rows were,
 as the Kilns' were before their first box (docs/areas/kilns.md §3): the zones with their bands (High
 Moor 18–19, with N7, O7 and O8 laid on it, its crossing line said in its own words and its lines
-held by seeds, §1, §9; the Cairnfield 19–20, with N8 laid on it, §1), Carn Dubh's two plates
+held by seeds, §1, §9; the Cairnfield 19–20, with N8, M7 and M8 laid on it, §1), Carn Dubh's two plates
 (`cairns` at 430,246 and `cairns2` at 430,252) and the sites, the Stone Ring at 462,214 and the
 Watcher's Hut at 466,208 on O7 and Carn Dubh at 430,240, at its door on N8. Its links are the drove
 road from the Kilns, the Cairns' way in and the drove road down to Longmere.
 
 Its row on the curve and its share of the act's gear ladder are in (#535). The row is in
-`src/content/progression.ts`: band 18–20, next 20, window 4,000, owed to #437 while the area is
-built box by box, with N7's, N8's, O7's, O8's and Carn Dubh's 12,941 xp a member and 8,155 gold the
-clear's floor (§8). O7's Banded Staff +1 is in `src/content/areas/cairnmoor/items.ts`, made ahead of
+`src/content/progression.ts`: band 18–20, next 20, window 4,000. Its entry owed to #437 while the
+area was built box by box went with M7 and M8 (#484), a clear giving 15,442 xp a member and 9,115
+gold (§8). O7's Banded Staff +1 is in `src/content/areas/cairnmoor/items.ts`, made ahead of
 the area (`ITEMS_AHEAD`, `src/content/index.ts`) as the Kilns' step was, until N7 took the table
 into its Area, and owed to #477 until it was placed, in O7's hollow (§4.3); N7's cache holds a
-second of the Kilns' Forge Hammer +1 (§4.2), O8's hoard a second of the Kilns' Seax +1 (§4.4) and
-Carn Dubh's cell off the stair the Hill Torc, a piece of its own (§4.6). Of the systems it waits on,
+second of the Kilns' Forge Hammer +1 (§4.2), O8's hoard a second of the Kilns' Seax +1 (§4.4), M8's howff a
+second of the Kilns' Forge Shield +1 (§4.7) and Carn Dubh's cell off the stair the Hill Torc, a piece of its own (§4.6). Of the systems it waits on,
 the rest of #432's, ice and lying snow underfoot (#536; heather is #162's), regeneration and curse
 (#537), the bot that plays them (#541) and the drove road's coach (#539) are built, and
 docs/SLICE.md and docs/MONSTERS.md say what each does; the coach runs, Kilnhaven (#469) and Rime
@@ -226,9 +253,9 @@ The chapter and the side quests, on the boxes built (#481, #482):
 
 ## 4. What is still to build
 
-All of it but M7 and M8, built (#476, #479, #477, #478, #480; §4.2 to §4.6): 7,692 squares of land,
+All of it, built (#476, #479, #477, #478, #480 and #484; §4.2 to §4.7): 7,692 squares of land,
 6,779 of them walkable, the plan's figures (§1). On the grid the plan is four boxes and a dungeon,
-with two boxes behind, and the four hold 3,945 of those squares:
+with two boxes behind, and the four hold 3,945 of those squares and the two behind 1,690:
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
 |---|---|---|---|---|---|---|---|---|
@@ -237,12 +264,12 @@ with two boxes behind, and the four hold 3,945 of those squares:
 | O8 | The bog | High Moor | country | 18–19 | 965 (heather 637, hills 159, marsh 120, mountain 23), 42 shallow | the peat bog and its lights; the tors; the peat-cutter | none | #478 |
 | N8 | The Cairnfield's box | the Cairnfield | core | 18–20 | 970 (heather 858, marsh 59, hills 28, rock 25), 54 shallow | Carn Dubh's way in at 430,240; the cairns; the drove road down to the Rimefells at 424,250; the coach stopped in the snow | the road's head above the lakes | #479 |
 | | Carn Dubh | | dungeon, two levels of 16×16 | 18–20 | | the oldest dead; the Watcher's first page; the Cairn King | none: the door behind the seat stays shut | #480 |
-| M7, M8 | The country behind | the Cairnfield | country, parked | 18–19 | 856 (grass 381, heather 285, hills 164), 46 shallow, and 834 (heather 491, grass 240), 70 shallow | the grass west of the road under the Kilns' hills | none | #484 |
+| M7, M8 | The country behind | the Cairnfield | country, behind the road | 18–19 | 856 (grass 381, heather 285, hills 164), 46 shallow, and 834 (heather 491, grass 240), 70 shallow | the grass west of the road under the Kilns' hills: the drovers' summer grazing and the sheepfold of an old cairn (M7); the tarn under the Rimefells and the lone tor (M8) | none | #484 |
 
 The core is the three boxes that hold a step or carry the road to one (N7, O7 and N8), built at
-full density; O8 is country, built to the looser floor with the wilderness features (EXPANSION §2.1
-(b) and §5.3, #45). The bog is built with the act; M7 and M8 are parked until the owner has played
-it (#434, call 10). The bands rise from the way in, 18 where the drove road comes over the hills, to
+full density; O8, M7 and M8 are country, built to the looser floor with the wilderness features (EXPANSION §2.1
+(b) and §5.3, #45). The bog is built with the act; M7 and M8 were parked until the owner lifted the
+park on 9 October 2026 (#434, call 10). The bands rise from the way in, 18 where the drove road comes over the hills, to
 20 at the Cairn King and the road's head, as the gate asks (EXPANSION §5.2), and each box holds a
 group at the top of its band for the curve.
 
@@ -253,7 +280,7 @@ built to its edges and laid in one zone; the zone a square belongs to decides on
 in it (#479).
 
 **The order** is the drove road's, and the quest's: N7, the only box that meets the Kilns; O7, east
-to the ring and the first step; O8, the bog below it; N8 and Carn Dubh; and the road down. Building
+to the ring and the first step; O8, the bog below it; N8 and Carn Dubh; the road down; and last M7 and M8, the country behind. Building
 waits on the Kilns' Anvil Stone being played, since no more than two areas are in flight at once
 (EXPANSION §3), and on #432's systems (§3); the briefs and the drawings do not (#437).
 
@@ -568,8 +595,8 @@ settled in its issue, and what the Kilns teach changes them.
     back lands on 1,28 facing east. Both are jumps exported from the map (`DOOR`, `NOTCH`) and
     listed in N8's `exits`, the door's way back in the Cairns' (#480) and the notch's way back up in
     M9's (#486). M9's north-east corner meets the same diagonal as N8's south-west, and both stand
-    as the Rimefells' shoulder, mountain with void past it. West, M8 (#484, parked): no road, the
-    stream out at 0,7. East, O8 (#478): heather and marsh, no road. South, N9, cut: hills and
+    as the Rimefells' shoulder, mountain with void past it. West, M8 (#484, §4.7): no road, the
+    stream out at 0,7, rows 0 to 27 square for square. East, O8 (#478): heather and marsh, no road. South, N9, cut: hills and
     heather.
   - **Measured.** A company at 18 wins every fight and manages 8.68 fights to a rest, inside the aim,
     with 3% of its days ending in a fight broken off; it walks the Cairnfield's road, the ravens, the
@@ -648,13 +675,86 @@ settled in its issue, and what the Kilns teach changes them.
     level 18; the north rows' wights the hardest at 13, level 19) and 0.50 under it (the court
     nearest at 9, level 19; the King the hardest at 11, level 20).
 
-### 4.7 M7 and M8, the country behind (#484): country, band 18–19, parked
+### 4.7 M7 and M8, the country behind (#484): country, band 18–19
+
+Built once the owner took the country behind off parked (9 October); the brief was settled by
+delegate (§9, #484's).
 
 - **Purpose.** The Cairnfield's grass west of the drove road under the Kilns' hills and Kilnmouth's
-  mountains, built once the owner has played the act (#434, call 10).
-- **Landmarks.** The drovers' summer grazing; a sheepfold; a tarn under the mountains.
-- **Encounters.** Moor hounds by night; ravens; a troll on a lone tor.
-- **Pay.** About 600 xp a member each.
+  mountains, off the road: the drovers' summer grazing and, under the Rimefells, a tarn.
+- **Landmarks.** M7 the drovers' summer grazing and a sheepfold built of an old cairn; M8 a tarn
+  under the mountains and a lone tor.
+- **Encounters.** Moor hounds by night and ravens at a dead ewe in M7; ravens on the crags and a
+  troll on the lone tor, by night, in M8.
+- **Quests.** None.
+- **The secrets and their hints.** M7: the old cairn's cist behind the fold's back wall, found from a
+  cup and rings cut low on one stone of it. M8: a howff under a great boulder by the tarn, found from
+  the heather worn to the earth under it and its rock black with old smoke.
+- **New here.** Nothing claimed (§7).
+- **Finds.** Each cairn holds 120 gold and a Sapphire Vial; the cist 160 gold; the howff 60 gold and
+  a Forge Shield +1, a second of the Kilns' (§9, #484's 6).
+- **Pay.** About 600 xp a member each in the brief.
+
+- **As built** (#484, 9 October):
+  - **M7, the drovers' grazing** (`cairnfield_m7`, laid whole in the Cairnfield at 392,190): in from
+    N7's heather at 31,24, facing west. The shielings are three turf huts at 8,6, 9,6 and 12,6 (9,7)
+    with the drovers' fire before them, a camp, at 10,7 and a shepherd at 10,6, who says black dogs
+    come down off the moor by night for the ewes and that the fold is his grandfather's, built out of
+    an old cairn ("Said the stones were lying spare."). The Kilns' farms are seen north at 6,1 and the
+    drovers' sheep on the hill at 20,3; N7's old snow lies at 30,7, paw marks as broad as a hand by
+    the shore at 5,11, the view to the ring and the Kilns' smoke at 24,15, grey sand at 10,21, wrack
+    and a sunk boat's ribs at 11,29 and a peat bank at 24,29. The drovers' cairn on the hill, 17,17,
+    holds 120 gold and a Sapphire Vial. A ewe lies dead at 22,24 with five ravens walking round her
+    (`m7_ravens`, 23,25), and by night three moor hounds keep the grazing at 14,9 (`m7_hounds`). The
+    sheepfold is a ring of grey stones, 14 to 18, 23 to 27, a hurdle across its gap at 18,25. The hint
+    is a stone low in its back wall at 15,25 with a cup cut in it and rings round the cup; searched
+    there, the wall gives at 14,25 on a cist of four slabs (13,25), bones in it and gold rings slipped
+    from the fingers, its chest (13,24) holding 160 gold. The wall is rock and the cist shut in it,
+    so a walker, a swimmer, a climber or a levitator reaches the hint and never the prize.
+  - **M8, the tarn under the mountains** (`cairnfield_m8`, laid whole in the Cairnfield at 392,222):
+    in from N8's heather at 31,22, facing west. The stream from the moor runs through the box to the
+    sea, with stepping stones over it at 17,6, dirt, the one way over inside the box; a boat is drawn
+    up on the sand at 12,2 and the drovers' sheep have strayed into the heather at 24,2; the stream
+    shows at 25,8; under the crags at 26,18 lie sheep's bones with a raven on every ledge (eight
+    ravens, `m8_ravens`, 26,21). The lone tor stands on its rise at 15 to 16, 15 to 16, ringed with
+    hills; by day its face, worn nearly smooth, is seen at 15,17, and by night a tor troll keeps it
+    alone (`m8_troll`, 17,16), mending each round unless burned (#537). A slope of shingle runs down
+    to the sea at 1,17 and the grazing on south at 6,21; the tarn lies at 8 to 14, 26 to 29, black and
+    still, deep at its heart, under the Rimefells, which fill rows 30 and 31 (15,28 and 24,30). An old
+    fisher sits on a stone at 14,29 with his line out for the tarn's char; he says there was a troll on
+    the lone tor when his father was a boy and there is one yet. A cairn at the mountains' foot, 18,30,
+    holds 120 gold and a
+    Sapphire Vial. The hint is at 7,27, the heather worn to the earth under a great boulder and its
+    rock black with old smoke; searched there, the rock gives at 6,27 on a howff (5,27), a bed of
+    heather, a hearth and a box pushed to the back (4,27), 60 gold and a Forge Shield +1, shut in rock
+    as M7's cist is.
+  - **Seams.** M7's north edge meets M6's south edge square for square from 0 to 30 (its 31,0 is
+    N7's grass, not M6's hill), and M6's 5,31 to M7's 5,0 names the Cairnfield. M7's east edge meets
+    N7's west edge square for square, every row, and N7's 0,24 to M7's 31,24 names it too. M7's south
+    edge meets M8's north edge square for square, one field, nothing said. M8's east edge meets N8's
+    west edge square for square at rows 0 to 27, N8's 0,22 to M8's 31,22 walked, nothing said; at
+    rows 28 and 29 its crags meet N8's hills, so the notch at N8's 0,28 stays the road's one way down
+    to M9 (§9, #484's 9). M8's south edge meets M9's north edge square for square at 0 to 4, grass and
+    hills, with mountain against mountain from 5 to 30; M8's 1,31 to M9's 1,0 names Loch Fada with its
+    crossing line. Their west edges end the world against L7 and L8, unbuilt: M7's column 0 is grass at
+    rows 0 to 9, sand at 10, shallows at 11 and 12 and sea from 13; M8's is sea at 0 to 11, shallows at
+    12 to 14, sand at 15 and grass from 16. All are pinned in `tools/tests/outdoors.ts`, N8's west
+    edge and M9's north edge re-pinned to what now meets them.
+  - **Measured.** M7: a company at 18 wins every fight and manages 10.51 fights to a rest, off the
+    aim (7.5 to 9.5) and inside the limit (6 to 12), with 1.7% of its days ending in a fight broken
+    off; two under, at 16, it wins every fight too, owed to #18. It pays 674 xp a member (five ravens
+    at 357 and three hounds at 753, shared by six) and holds 280 gold. Density 100.0% within 12 steps,
+    the country floor, the furthest 12, with no sign among its 19 points. The curve's rank correlation
+    is 1.00, the ravens nearest at 9 steps (level 18) and the hounds the hardest at 32 (level 19). M8:
+    11.53 fights to a rest, off the aim and inside the limit, with no day ending in a fight broken
+    off; at 16 it wins every fight too, owed to #18. It pays 727 (eight ravens at 357 and the troll
+    1,507, shared by six) and holds 180 gold. Density 99.7% within 12 steps, the furthest 13, with no
+    sign among its 17 points. Rank correlation 1.00, the ravens nearest at 6 steps (level 18) and the
+    troll the hardest at 20 (level 19). Neither claims anything new (§7).
+  - **Walked.** `theGrazing`, the walkthrough's third walk after `theBog`, crosses the seams, speaks to
+    the shepherd and the fisher, shows the tor's face by day and not by night, wins every group at its
+    floor (the hounds and the troll by night) and finds each secret from its hint, each shut but
+    through its door.
 
 ## 5. The one quest here
 
@@ -760,7 +860,7 @@ Lantern beside her goes out without a word.
 MONSTERS §7.2 has the roster and the fights: the Raven, the Bog Light, the Bog Body, the Moor
 Hound, the Cairn Wight, the Tor Troll and the Cairn King; lights round the ring, trolls on the tor.
 Their drawings are #483's, seven, all drawn (§3, §9). The ring itself holds no monster: inside it
-there is only the voice. §4.2 to §4.6 place every group, box by box, the ravens and the bog bodies
+there is only the voice. §4.2 to §4.7 place every group, box by box, the ravens and the bog bodies
 at the way in and the Cairn King at the top of the band.
 
 Cairnmoor spends four of MONSTERS §3.3's asks, each built in the systems lane first (#537; #41 and
@@ -778,7 +878,8 @@ each as a box places it, since the check asks that what is claimed be used: snow
 (#476), ice and curse with N8 (#479), the lights and the ring with O7 (#477), the rest with theirs.
 Regeneration and the drain of spell points cannot be claimed: the check reads neither (§9, #477's
 13). Carn Dubh claims nothing: its boss that curses is the curse N8 claimed, and the novelty check
-passes without it.
+passes without it. M7 and M8 claim nothing (#484): their monsters are placed already, and a tor and a
+tarn are among the landmarks above.
 
 ## 8. The numbers
 
@@ -792,19 +893,19 @@ passes without it.
   built (§9). A fight inside the gate's aim at 11 cost about 300 a member whatever its monsters, and
   at 18 to 20 costs more, so a box priced by its fights as the Act II boxes were will land over its
   share here: each is measured when it is built, recorded as built where that passes its share, and
-  the sum restated with each. M7 and M8 add about 1,200 when they are built. From here on a kill
+  the sum restated with each. M7 and M8 add 1,401 as built (#484). From here on a kill
   pays by level (#159), so a company that arrives at 18 earns the shares as written and one that
-  arrives at 21 earns less; the curve's row reports what a clear falls short of as owed to #437
-  until the boxes exist. As built: N7 1,803 (#476), N8 2,081 (#479), O7 1,803 (#477) and O8 2,305
+  arrives at 21 earns less; the curve's row reported what a clear fell short of as owed to #437
+  until the boxes existed. As built: N7 1,803 (#476), N8 2,081 (#479), O7 1,803 (#477) and O8 2,305
   (#478), 905 over its brief's 1,400 (§9, #478's 5). Carn Dubh pays 4,948 (#480), 2,748 over its
-  brief's 2,200 (§9, #480's 15). The five hold 12,941 of the 14,667. The side quests pay 700 by
-  their answers (#482: 37 and 38 200 a member each, 39 300) and the chapter nothing, so a clear
-  gives 13,641, 1,026 short: M7 and M8's 1,200 close it when they are built (#484), and the
-  curve's row owes it to them. The Lanterns' ring ask, What the Ring Said (#439, §6), is filed here
-  and pays 400 a member: a clear gives 14,041, 626 short, still M7 and M8's.
-  By the lead over the road (EXPANSION §5.2, #634) the shortfall does not matter: three quarters
-  cleared from 18, paid by level, a company leaves 0.1 under 20, and walking the road 0.7 over it.
-  The Glasswold's is the same, 0.3 under 28.
+  brief's 2,200 (§9, #480's 15). M7 pays 674 and M8 727 (#484), 1.12 and 1.21 times the brief's 600
+  each (§9, #484's 4). The seven hold 14,342 of the 14,667. The side quests pay 700 by their answers
+  (#482: 37 and 38 200 a member each, 39 300) and the Lanterns' ring ask, What the Ring Said (#439,
+  §6), 400; the chapter pays nothing, so a clear gives 15,442, 1.053 times the ask. M7 and M8 closed
+  the 626 that stood short, and the curve's row owes it no longer (§9, #484's 7).
+  By the lead over the road (EXPANSION §5.2, #634), three quarters cleared from 18, paid by level, a
+  company leaves at 20.1, 0.1 over 20 (0.1 under before M7 and M8), and walking the road 0.7 over it.
+  The Glasswold's is 0.3 under 28.
 - **Gold.** Training six members from 18 to 20 costs 8,880 with today's `trainPrice`, and the second
   prestiges about 4,000 each (DESIGN §5, #19); nothing on the moor sells or trains, so a clear's
   chests and drops must carry the gold to Rime Lodge, and the coach's fare (#539) with it. The band's
@@ -817,10 +918,12 @@ passes without it.
   1,400: 260 in the cairn on the east hills, with a Sapphire Vial, and 1,140 in the hoard, with the
   Seax +1; its monsters carry none. Carn Dubh holds 2,225 (#480), its share by the brief's 2,200:
   900 in the cell off the stair, with the Hill Torc, 250 in each of the two cells of rows, the
-  fifteen wights' own 20 to 60 each and the King's 150 to 300; its bog bodies carry none. The five
-  hold 8,155 of the 8,880, and the Watcher pays 200 for his page (#482): 8,355, the 525 short owed
-  to M7 and M8 with the experience (#484). No answer pays gold. What the Ring Said pays 300
-  (#439): 8,655, 225 short.
+  fifteen wights' own 20 to 60 each and the King's 150 to 300; its bog bodies carry none. M7 holds
+  280 (#484): 120 in the drovers' cairn, with a Sapphire Vial, and 160 in the cist. M8 holds 180: 120
+  in the cairn at the mountains' foot, with a Sapphire Vial, and 60 in the howff, with a Forge Shield
+  +1; their monsters carry none. The seven hold 8,615 of the 8,880. The Watcher pays 200 for his page
+  (#482) and What the Ring Said 300 (#439); no answer pays gold. A clear gives 9,115, 1.026 times the
+  ask, the 225 that stood short closed (§9, #484's 6).
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
   (docs/areas/thornmark.md §9, 17): a company at 18 wins nine in ten of N7's fights and walks the
   drove road resting at its camp; one at 16 wins no more than one in four. The Cairn King is won
@@ -839,9 +942,13 @@ passes without it.
   company at 19 wins 85.7% of the fights, off the aim and inside the limit, with 9.20 fights to a
   rest; the Cairn King is won 57% at 19 and 94% at 21 (§4.6). With its trolls apart (#482), O8 at 18 manages
   11.20 fights to a rest, off the aim and inside the limit, 4.3% of its days ending in a fight
-  broken off (§9, #481 and #482's 10). Cairnmoor's 27 groups two under their maps' floors are won
-  96.3% of the fights, owed to #18 as the Kilns' are.
-- **Density.** Core boxes at the Foreland's floor, the bog at the looser one (EXPANSION §5.3). The
+  broken off (§9, #481 and #482's 10). On M7 a company at 18 wins every fight and manages 10.51
+  fights to a rest, off the aim and inside the limit, 1.7% of its days ending in a fight broken off;
+  one at 16 wins every fight too, owed to #18 (§4.7). On M8 it wins every fight and manages 11.53,
+  off the aim and inside the limit, with no day ending in a fight broken off; one at 16 wins every
+  fight too, owed to #18. Cairnmoor's 31 groups are won 98.6% of the fights at their maps' floors and,
+  two under them, 96.8%, owed to #18 as the Kilns' are.
+- **Density.** Core boxes at the Foreland's floor, the bog, M7 and M8 at the looser one (EXPANSION §5.3). The
   ring's inside is held to no feature but the camp, the voice and the bare ground's line, so it
   needs no exception. As built: N7 99.2% within 8 steps and the furthest 10, with one sign among its
   26 points (#476). N8 99.6% within 8 steps and the furthest 9, with no sign among its 31 points
@@ -849,7 +956,8 @@ passes without it.
   steps and the furthest 10, with no sign among its 31 points (#477). O8
   100.0% within 12 steps, the country floor, and the furthest 9, with no sign among its 28 points
   (#478), 29 with the last face whole (#482). Carn Dubh's two levels 100.0% within 7 steps, the furthest 2 and 3, with no sign among
-  their 17 and 11 points (#480).
+  their 17 and 11 points (#480). M7 100.0% within 12 steps, the furthest 12, with no sign among its
+  19 points, and M8 99.7%, the furthest 13, with no sign among its 17 (#484).
 
 ## 9. Decisions
 
@@ -866,7 +974,8 @@ Decided by the owner's delegate on 2 October 2026 (#434), and followed here:
    tarn are camps, EXPANSION §5.3's kind, where a company rests safely and the Sorcerer's second
    (Thaumaturge, at the hut) and the Bard's second (Skald, the piper) are taught; the drove road's
    coach runs Kilnhaven to Rime Lodge over N7 and N8 without a stop (#539).
-5. **The cuts stand** (call 10): §11; M7 and M8 are parked (#484).
+5. **The cuts stand** (call 10): §11; M7 and M8 were parked (#484), and taken off parked by the
+   owner on 9 October 2026.
 6. **All three side quests stand** (call 11): #56's 37 to 39; 40's coach is found stopped in the snow
    on N8's drove road, built with Rimewater's #494.
 7. **The names** (#435): §10.
@@ -982,9 +1091,11 @@ Decided by delegate for #476, each the owner's to overturn:
     way in to the south edge. Ice is left to N8 and Rimewater, whose briefs place it.
 11. **The zone walk is held by seeds in the area's own rows** (§1): the Cairnfield's along M7's north
     and east edges and N8's north and east, High Moor's along O7's and P7's north edges and O8's west.
-    The seams down N8's and O8's sides stop at y 246, so the Rimefells walk as they did.
+    The seams down N8's and O8's sides stop at y 246, so the Rimefells walk as they did. M7 and M8
+    are laid since, and the seeds along their edges sit inside them (#484's 13).
 12. **M7's two westmost squares go unseeded:** a seed there carries the Cairnfield round the coast into
-    Kilnmouth's L6 and K6, so Kilnmouth keeps L7, K7 and 11 squares of M7's coast.
+    Kilnmouth's L6 and K6, so Kilnmouth kept L7, K7 and 11 squares of M7's coast, until M7 was laid
+    whole in the Cairnfield and took the coast's 13 and 62 of L7's (§1, #484's 12).
 13. **High Moor held O6's south and P6 until O6 was laid in the heart** (#466): 587 squares, where the
     plan gave the moor 285. The Kilns' rows held no seam there, and O6 laid whole took its own back,
     388 squares where the plan counted 195 (docs/areas/kilns.md §1).
@@ -993,8 +1104,8 @@ Decided by delegate for #476, each the owner's to overturn:
 15. **Two under is owed to #18,** as the Kilns' boxes' is: a company of 16 beats every group.
 16. **Owed on:** the drove road at N8's 7,0 (431,222, #479), the coach's road over it without a stop
     (#539); the peat-cutter's track at O7's 0,22 (456,212, #477), dirt, toward the ring; on N7's west
-    the grass, the snow, the heather and the hills against M7, with no road (#484, parked); the step
-    the chapter turns east to the ring (#481).
+    the grass, the snow, the heather and the hills against M7, with no road (#484, laid since, square
+    for square); the step the chapter turns east to the ring (#481).
 
 Decided by delegate for #479, each the owner's to overturn:
 
@@ -1247,9 +1358,48 @@ Decided by delegate for #481 and #482, each the owner's to overturn:
 11. **The pay is the answers':** 1,200 xp an answer for 37 and 38 and 1,800 for 39 (§8's 200, 200
     and 300 a member); the Watcher pays 200 gold besides. No answer pays gold.
 12. **The curve's row stays owed, now to M7 and M8 (#484):** a clear gives 13,641 xp of 14,667 and
-    8,355 gold of 8,880, and their share closes both. Nothing is cut for pay.
+    8,355 gold of 8,880, and their share closes both (it did, #484's 7). Nothing is cut for pay.
 13. **The page shows its eleven nights and the ring its crest:** a ring drawn beside eleven rows
     and a year four hundred years gone, seen and never said.
+
+Decided by delegate for #484, each the owner's to overturn:
+
+1. **Both boxes are laid whole in the Cairnfield,** the zone the seeds held them for, at band 18–19 as
+   §4.7 has it, inside the area's 18–20.
+2. **The landmarks are shared out:** M7 the drovers' summer grazing and the sheepfold, M8 the tarn under
+   the mountains and the lone tor; the brief names three for the pair.
+3. **So are the encounters:** M7 the ravens at a dead ewe and the hounds by night; M8 the ravens on the
+   crags and the troll alone by its tor by night, a tor with a face by day, as O7's and O8's.
+4. **The groups are heavier than the brief's 600 a box, for the pace:** the lightest inside the limit
+   of 12 fights to a rest are five ravens and three hounds (10.51) and eight ravens and the troll
+   (11.53); four ravens gave 12.08. They pay 674 and 727 a member, 1.12 and 1.21 times the brief.
+5. **One secret a box, a door in rock, its hint outside** and shut to walkers, swimmers, climbers and
+   levitators: M7's cist behind the fold's back wall, the fold built of an old cairn; M8's howff
+   under a boulder by the tarn.
+6. **The finds are 460 gold:** the cairns 120 each (every moor cairn holds gold and a potion), the cist
+   160, the howff 60 and a Forge Shield +1 (1,250, in the window; no other Cairnmoor find is one).
+7. **The owed entry is dropped** (`CURVE.cairnmoor.owed`, #484): xp and gold both hold, as the curve
+   test asked.
+8. **The seams are square for square with the built neighbours** (M6, N7, N8, M9's corner); where two
+   disagree the corner takes one (M7's 31,0 is N7's grass, not M6's hill). M8's south-east corner is
+   mountain, the Rimefells' shoulder, over the atlas's diagonal road.
+9. **N8's notch stays the road's one way down to M9:** M8's crags at 30–31,28–29 shut the square west of
+   it and nothing steps from M8 onto it. M8 meets M9 on foot only by the grass and hills at 0–4,31
+   onto M9's 0–4,0, where Loch Fada is named.
+10. **Snow runs over M7's seam at 30–31,6–7:** N7's west edge has snow at rows 6 and 7, so it carries
+    on square for square; it is N7's patch (#476's 10), not a new one.
+11. **A ford in M8:** the stream from the moor cut the box in two, so 17,6 is stepping stones (dirt)
+    and the north is walked from the box's own way in, not only from M7 and N8.
+12. **The zone walk's moves are left as laying the boxes makes them,** with no seeds added in another
+    area's rows: the Cairnfield takes 13 of Kilnmouth's squares in M7's coast, 62 of its 255 in L7
+    (the Kilns' doc calls L7 Cairnmoor's in the plan) and 16 of Loch Fada's in L8 (§1).
+13. **The seeds along M7's and M8's edges stay** in `CAIRNFIELD_HELD`, inside laid maps now, as N8's and
+    O8's did when they were laid; the atlas comment says so.
+14. **Two under is owed to #18,** as every Cairnmoor box's: `cairnfield_m7: under` and
+    `cairnfield_m8: under` in the gate test's `OWED`, at 1.
+15. **M8's howff door stands at 6,27, not 5,28:** the art check wants every zone's wall faces over the
+    cap under the old dressing rule; the door is M8's only counted wall, and at 5,28 the old roll
+    (0.977) left it undressed, so M8 failed; at 6,27 it rolls under 0.7.
 
 
 ## 10. Names
@@ -1294,7 +1444,6 @@ elves' Cornish and the Tidefolk's Frisian.
 - **The slivers** in the Kilns' boxes: O6 (388, the plan's 195, in the Lava Tubes' box, built whole
   there), N6 (180) and M6 (127), the moor's land north of the low hills, which the Kilns build with
   their boxes; and L7 (181), in Kilnmouth's box, void. Not Cairnmoor's to build.
-- **The country behind,** M7 and M8 (§4.7): 1,690 squares, parked, not cut (#434, call 10).
 
 About 1,200 squares void and 680 another area's, to come back as country only if the act plays
 short.
@@ -1318,6 +1467,8 @@ Cut from a brief as built (§4):
   draught, is not built; the cell off the stair and the door behind the seat stand in its place, as
   §4.6 has them (§9, #480's 2). The brief's eight groups a level are eight in all, its own seven and
   one more (§9, #480's 14). No group is cut for pay (§9, #480's 15).
+- **M7 and M8** (#484, §4.7): nothing is cut. The brief's landmarks and encounters are all built,
+  shared out between the pair (§9, #484's 2 and 3).
 
 Owed by a box as built (§4):
 
@@ -1326,6 +1477,8 @@ Owed by a box as built (§4):
   own (#483's lane) and the page in its def's `drops` at chance 1 (§9, #480's 6).
 - **The door behind the seat** (#480, §4.6): a wall with a door drawn in it, no lock, no flag and no
   exit. Nothing in Carn Dubh is a step of the chapter (#481).
+- **M7's and M8's west edges** (#484, §4.7): against L7 and L8, unbuilt, with void past them. The
+  outdoors test pins both columns, and a box laid there matches them.
 
 Owed by the chapter and the side quests (§5, §6):
 
@@ -1337,4 +1490,3 @@ Owed by the chapter and the side quests (§5, §6):
   and his words there are #494's.
 - **The ring once gone** (#56's 38): Tallis's man at the Lodge and the elves who would take it are
   no one's yet; the Council weighs the ring (#56's 64).
-- **M7 and M8** (#484): the curve's shortfall, 1,026 xp a member and 525 gold, is theirs.
