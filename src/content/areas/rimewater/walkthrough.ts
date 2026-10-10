@@ -25,11 +25,18 @@
 // has not met the girl out of the hole; the girl gone from M9's ice and waiting at the door; the drowned
 // village under the arm's ice and the house-place above the old bank; the box's groups, the pike under
 // the ice and over the tower by night and the bears the hardest; and the smith's hole under the bank
-// where the stones under the clear ice stop. Then the Sleepers' Bay (#490), through the door: the stair
-// under the ice and the bay of beds, the Matron in the last row and the locker behind it.
+// where the stones under the clear ice stop. Then Loch Fuar's west and south, behind the road (#497):
+// the far shore (J9), in from K9 over its west edge, walked, the land not named again; the old woman of
+// Fuar on the strand and her bears; the box's groups, the pike under the strand's ice and the bears under
+// the mountain the hardest; and the trapper's store behind the rock where his blazes stop. South of the
+// pass (K11), in from K10 over its south edge, walked, and from Monks' Vale's grass over its west edge,
+// the cold loch named; the bears in the cleft under the crags; and the ice-cutters' ice-house in the bank
+// behind their sledge. Then the Sleepers' Bay (#490), through the door: the stair under the ice and the
+// bay of beds, the Matron in the last row and the locker behind it.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, see, fight, listen, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
+import type { Facing } from '../../../game/types.ts';
 import { GameMap } from '../../../game/map.ts';
 import type { Feature, MapDef } from '../../../game/map.ts';
 import { LOCKS } from '../../locks.ts';
@@ -502,10 +509,115 @@ export const walkthrough: Walkthrough = (ok) => {
   const iron = K9.features!.find((f) => f.kind === 'chest' && f.id === 'k9_iron');
   ok(iron?.kind === 'chest' && iron.items.includes('bear_spear+1') && iron.items.includes('lann_fuar') && iron.x === 12 && iron.y === 18,
     'in the hole, the smith\'s iron: a Bear Spear +1, and his own blade, Lann Fuar');
+  fuarBehind(w, ok);
   sleepersBay(w, ok);
   sideQuests(ok);
   theSleepers(ok);
 };
+
+/**
+ * Loch Fuar's west and south, behind the road (#497). The far shore (J9): west from K9's 0,20 onto its
+ * 31,20 under the pines, walked, the land not named again; the old woman of Fuar at her hut on the
+ * strand, and the bears she warns of; the holes in the ice; the box's groups, the pike under the
+ * strand's ice and the bears under the mountain the hardest; and the trapper's store behind the rock
+ * where his blazes stop. South of the pass (K11): south from K10's 20,31 onto its 20,0, walked, the land
+ * not named again, and east from Monks' Vale's grass at J11's 31,20 onto its 0,20, the cold loch named,
+ * and back; the bears' tracks and the bells over the crags; the bears in the cleft, the box's one fight;
+ * and the ice-cutters' ice-house in the bank behind their sledge. Walked, waded, climbed or floated,
+ * neither prize is reached but through its door.
+ */
+function fuarBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void {
+  const out = buildMaps()[OUTDOORS];
+  const [J9, K11] = ['coldmere_j9', 'coldmere_k11'].map((id) => MAP_DEFS.find((d) => d.id === id)!);
+  const [j9, k9, k10, k11] = [J9.id, K9.id, 'coldmere_k10', K11.id].map((id) => out.zones.find((z) => z.id === id)!);
+  const VALE = ATLAS.zones.find((z) => z.id === 'monksvale')!;
+  const said = (r: ReturnType<typeof w.world.move>): string => (r.kind === 'moved' ? r.messages.join(' / ') || 'nothing said' : r.kind);
+  const shut = (z: typeof j9, from: [number, number], door: [number, number], prize: [number, number]): { size: number; reached: boolean } => {
+    const seen = new Set<number>(), todo = [[z.x + from[0], z.y + from[1]]];
+    while (todo.length) {
+      const [x, y] = todo.pop()!, k = y * out.width + x;
+      if (seen.has(k) || (x === z.x + door[0] && y === z.y + door[1]) || x < z.x || x >= z.x + z.w || y < z.y || y >= z.y + z.h
+        || out.passable(x, y, { swim: true, climb: true, float: true }) !== 'ok') continue;
+      seen.add(k);
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+    }
+    return { size: seen.size, reached: seen.has((z.y + prize[1]) * out.width + z.x + prize[0]) };
+  };
+  const search = (map: string, x: number, y: number, facing: Facing, room: string): boolean => {
+    w.world.travel(map, x, y, facing);
+    let found = false;
+    for (let i = 0; i < 20 && !found; i++) found = w.world.search();
+    const into = found ? [w.world.move('forward'), w.world.move('forward')] : [];
+    listen(w);
+    return found && into.every((r) => r.kind === 'moved') && w.world.used(room);
+  };
+  w.level = 20;
+
+  // The far shore: west from K9's 0,20 onto J9's 31,20 under the pines, walked, in Loch Fuar still.
+  w.world.travel(K9.id, 0, 20, WEST);
+  const west = w.world.move('forward');
+  ok(west.kind === 'moved' && w.world.zone?.id === J9.id && w.world.state.x === j9.x + 31 && w.world.state.y === j9.y + 20 && j9.x + j9.w === k9.x
+    && !west.messages.some((m) => m.includes('Loch Fuar.')), `west from K9's 0,20 onto J9's 31,20, walked, and the land not named again (${said(west)})`);
+  listen(w);
+  ok(J9.start.x === 31 && J9.start.y === 20 && J9.start.facing === WEST && !(J9.exits ?? []).length, 'the far shore starts at its east edge under the pines, and nothing is taken out of it');
+
+  // The old woman of Fuar at her hut's door on the strand, and the bears she warns of; her holes in the ice.
+  const crone = person(J9, 'An old woman');
+  w.world.travel(J9.id, crone.x, crone.y);
+  const words = meet(crone, w.party, heard(w.world, crone)).text;
+  ok(words.includes('in Fuar') && words.includes('White bears'), `the old woman on the strand was a girl in Fuar, and bears have the pines under the mountain (${words.replace(/\n+/g, ' ')})`);
+  listen(w);
+  see(w, `${J9.id}:j9_holes`);
+
+  // The box's groups, each won at its floor: the pike under the strand's ice by the holes, and under the
+  // mountain the bears, the hardest.
+  for (const g of J9.encounters!.filter((e) => e.under)) ok(g.under === 'ice' && out.at(j9.x + g.x, j9.y + g.y).terrain === 'ice', `${g.id} lives under the loch's ice`);
+  for (const g of J9.encounters!) fight(w, `${J9.id}:${g.id}`);
+
+  // The secret: the trapper's blazes west through the pines to the mountain's foot, and the search where
+  // they stop; his store behind the rock, with his strongbox.
+  const store = shut(j9, [5, 21], [4, 21], [3, 21]);
+  ok(store.size > 600 && !store.reached, `the store is shut but for the rock: none of J9's ${store.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${J9.id}:j9_blazes`);
+  ok(search(J9.id, 5, 21, WEST, 'j9_store'), 'searched where the blazes stop, the rock gives, and the trapper\'s store behind it can be walked into');
+  const box = J9.features!.find((f) => f.kind === 'chest' && f.id === 'j9_strongbox');
+  ok(box?.kind === 'chest' && box.gold === 700 && box.x === 3 && box.y === 21, 'in the store, the trapper\'s strongbox');
+
+  // South of the pass: south from K10's 20,31 onto K11's 20,0 under the pines, walked, in Loch Fuar still;
+  // and east from Monks' Vale's grass at J11's 31,20 onto K11's 0,20, walked, where at 20 the cold loch is
+  // named and no more, and straight back west, where within the hour nothing more is said.
+  w.world.travel('coldmere_k10', 20, 31, SOUTH);
+  const south = w.world.move('forward');
+  ok(south.kind === 'moved' && w.world.zone?.id === K11.id && w.world.state.x === k11.x + 20 && w.world.state.y === k11.y && k10.y + k10.h === k11.y
+    && !south.messages.some((m) => m.includes('Loch Fuar.')), `south from K10's 20,31 onto K11's 20,0, walked, and the land not named again (${said(south)})`);
+  listen(w);
+  ok(K11.start.x === 20 && K11.start.y === 0 && K11.start.facing === SOUTH && !(K11.exits ?? []).length, 'south of the pass starts at its north edge under the pines, and nothing is taken out of it');
+  w.world.travel('monksvale_j11', 31, 20, EAST);
+  const east = w.world.move('forward');
+  ok(east.kind === 'moved' && w.world.zone?.id === K11.id && w.world.state.x === k11.x && w.world.state.y === k11.y + 20 && said(east) === 'Loch Fuar.',
+    `east from Monks' Vale's grass at J11's 31,20 onto K11's 0,20, walked, and at 20 the cold loch named, no more (${said(east)})`);
+  listen(w);
+  const back = w.world.move('back');
+  ok(back.kind === 'moved' && w.world.zone?.id === 'monksvale_j11' && w.world.state.x === k11.x - 1 && w.world.state.y === k11.y + 20 && !said(back).includes(VALE.name),
+    `and straight back west onto J11's 31,20 within the hour, the vale not named again (${said(back)})`);
+  listen(w);
+
+  // The bears' tracks going to the crags, the cleft under them, and over the crags to the south-west the
+  // vale's grass and the bells.
+  for (const id of ['k11_tracks', 'k11_cleft', 'k11_bells']) see(w, `${K11.id}:${id}`);
+
+  // The box's one group, won at its floor: the bears in the cleft under the crags, the hardest.
+  for (const g of K11.encounters!) fight(w, `${K11.id}:${g.id}`);
+
+  // The secret: the ice-cutters' sledge on the lake's shore, loaded and left, and the search at the bank
+  // behind it; their ice-house in the bank, with their strongbox.
+  const icehouse = shut(k11, [23, 10], [23, 11], [23, 12]);
+  ok(icehouse.size > 600 && !icehouse.reached, `the ice-house is shut but for its door in the bank: none of K11's ${icehouse.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${K11.id}:k11_sledge`);
+  ok(search(K11.id, 23, 10, SOUTH, 'k11_icehouse'), 'searched at the bank behind the sledge, a door gives, and the ice-house in it can be walked into');
+  const strongbox = K11.features!.find((f) => f.kind === 'chest' && f.id === 'k11_strongbox');
+  ok(strongbox?.kind === 'chest' && strongbox.gold === 700 && strongbox.x === 23 && strongbox.y === 12, 'in the ice-house, the ice-cutters\' strongbox');
+}
 
 /**
  * The Sleepers' Bay (#490): in at the door under the ice for a company that has met the girl out of
