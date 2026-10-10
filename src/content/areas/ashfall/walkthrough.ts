@@ -42,7 +42,10 @@
 // their sockets in any order, the Stone lit, the Sentinel won in its door and the sentries after it;
 // the lower gallery behind the housing's foot and the fourth journal in it; and the Cartographers'
 // Surveyor's rung paid for it at a hall of the Guild, the Chart House's shelf full, and the Mapmaker's
-// rung after it, paid for the firelight on Meridian Camp's third level (#635). Then the three
+// rung after it, paid for the firelight on Meridian Camp's third level (#635). Then the Waste's west
+// under the lava flow, behind the road (E11, #522): in off E10 and F11, walked; the knapper at the flow's
+// edge, the drakelings on its warm bank and the tube under it behind the crack that breathes cold air.
+// Then the three
 // third prestiges taught here (#448), each its trainer's quest played to the teaching by a company of 27:
 // the Paladin's lamp, the Barbarian's nest and the Druid's seedling.
 import type { Walkthrough } from '../../area.ts';
@@ -509,7 +512,7 @@ export const walkthrough: Walkthrough = (ok) => {
   const wasteLow = cross(21, 'cindercoast_g10', 0, 7, WEST), wasteTwo = cross(22, 'cindercoast_g10', 0, 7, WEST), wasteDue = cross(24, 'cindercoast_g10', 0, 7, WEST);
   ok(w.world.zone?.id === 'emberwaste_f10' && w.world.state.x === f10.x + 31 && w.world.state.y === f10.y + 7 && f10.x + f10.w === g10.x && F10.start.x === 31 && F10.start.y === 7,
     'over G10\'s west edge from 0,7 onto F10\'s 31,7, walked, the box\'s way in');
-  ok(WASTE.maps?.map((m) => m.map).join() === 'emberwaste_f10,emberwaste_e10,emberwaste_f11' && wasteDue.join(' / ') === 'The Ember Waste.', `at 24, the Ember Waste named, no more (${wasteDue.join(' / ')})`);
+  ok(WASTE.maps?.map((m) => m.map).join() === 'emberwaste_f10,emberwaste_e10,emberwaste_f11,emberwaste_e11' && wasteDue.join(' / ') === 'The Ember Waste.', `at 24, the Ember Waste named, no more (${wasteDue.join(' / ')})`);
   ok(wasteTwo.join(' / ') === `The Ember Waste. ${WASTE.crossing?.harder}`, `at 22, the rest in the Waste's own words (${wasteTwo.join(' / ')})`);
   ok(wasteLow.join(' / ') === `The Ember Waste. ${WASTE.crossing?.warning}`, `at 21, the harsher words, and the coast behind (${wasteLow.join(' / ')})`);
   const back = cross(24, 'emberwaste_f10', 31, 7, EAST);
@@ -748,6 +751,7 @@ export const walkthrough: Walkthrough = (ok) => {
   oldCinder(w, ok);
   emberStone(w, ok);
   roadBehind(w, ok);
+  wasteBehind(w, ok);
   sideQuests(ok);
   thirdPrestiges(ok);
   theWindow(ok);
@@ -1120,6 +1124,74 @@ function roadBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   fight(w, 'emberwaste_e10:e10_sentries');
   const now = says(w);
   ok(now.includes('iron walking the road') && now.includes('yesterday there was none'), `and the Rider at the gate says the road is not what it was (${now.replace(/\n+/g, ' ')})`);
+}
+
+/**
+ * The Waste's west under the lava flow, behind the road (#522). South off E10's ash at its 27,31 onto
+ * E11's 27,0, walked, the land not named again, and west off F11's ash at its 0,19 onto E11's 31,19, the
+ * same; the knapper at the flow's edge, who has seen the young drakes come down to the warm, the cones,
+ * the cast skins in the hollows and the flow going in under the mountains; the box's one group, the
+ * drakelings on the flow's warm bank, the hardest; and the tube under the flow behind the crack that
+ * breathes cold air, a man's bones in it by his pack. Walked, waded, climbed or floated, the tube is
+ * never reached but through the crack.
+ */
+function wasteBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void {
+  const out = buildMaps()[OUTDOORS];
+  const E11 = MAP_DEFS.find((d) => d.id === 'emberwaste_e11')!;
+  const [e10, e11, f11] = ['emberwaste_e10', E11.id, 'emberwaste_f11'].map((id) => out.zones.find((z) => z.id === id)!);
+  const said = (r: ReturnType<typeof w.world.move>): string => (r.kind === 'moved' ? r.messages.join(' / ') || 'nothing said' : r.kind);
+  const shut = (z: typeof e11, from: [number, number], door: [number, number], prize: [number, number]): { size: number; reached: boolean } => {
+    const seen = new Set<number>(), todo = [[z.x + from[0], z.y + from[1]]];
+    while (todo.length) {
+      const [x, y] = todo.pop()!, k = y * out.width + x;
+      if (seen.has(k) || (x === z.x + door[0] && y === z.y + door[1]) || x < z.x || x >= z.x + z.w || y < z.y || y >= z.y + z.h
+        || out.passable(x, y, { swim: true, climb: true, float: true }) !== 'ok') continue;
+      seen.add(k);
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+    }
+    return { size: seen.size, reached: seen.has((z.y + prize[1]) * out.width + z.x + prize[0]) };
+  };
+  w.level = 25;
+
+  // South off E10's ash onto E11's at 27,0, walked, in the Ember Waste still; and west off F11's ash at
+  // its 0,19 onto E11's 31,19, walked, the same.
+  w.world.travel('emberwaste_e10', 27, 31, SOUTH);
+  const south = w.world.move('forward');
+  ok(south.kind === 'moved' && w.world.zone?.id === E11.id && w.world.state.x === e11.x + 27 && w.world.state.y === e11.y && e10.y + e10.h === e11.y
+    && !south.messages.some((m) => m.includes('The Ember Waste.')), `south from E10's 27,31 onto E11's 27,0, walked, and the land not named again (${said(south)})`);
+  listen(w);
+  ok(E11.start.x === 27 && E11.start.y === 0 && E11.start.facing === SOUTH && !(E11.exits ?? []).length, 'the Waste\'s west starts at its north edge on the ash, and nothing is taken out of it');
+  w.world.travel('emberwaste_f11', 0, 19, WEST);
+  const west = w.world.move('forward');
+  ok(west.kind === 'moved' && w.world.zone?.id === E11.id && w.world.state.x === e11.x + 31 && w.world.state.y === e11.y + 19 && e11.x + e11.w === f11.x
+    && !west.messages.some((m) => m.includes('The Ember Waste.')), `west from F11's 0,19 onto E11's 31,19, walked, and the land not named again (${said(west)})`);
+  listen(w);
+
+  // The knapper at the flow's edge, who has seen the young drakes come down to the warm; the cones, the
+  // cast skins in the hollows on the flow's bank and the flow going in under the mountains.
+  const knapper = person('A knapper', E11);
+  w.world.travel(E11.id, knapper.x, knapper.y);
+  const words = meet(knapper, w.party, heard(w.world, knapper)).text;
+  ok(words.includes('flow glass') && words.includes('young drakes'), `the knapper at the flow's edge knocks glass off its crust, and has seen the young drakes come down to the warm (${words.replace(/\n+/g, ' ')})`);
+  listen(w);
+  for (const id of ['e11_cones', 'e11_skins', 'e11_end']) see(w, `${E11.id}:${id}`);
+
+  // The box's one group, won at its floor: the drakelings on the flow's warm bank, the hardest.
+  for (const g of E11.encounters!) fight(w, `${E11.id}:${g.id}`);
+
+  // The secret: the crack in the rocks beside the flow that breathes cold air, and the search there; the
+  // tube under the flow behind it, a man's bones in it by his pack.
+  const tube = shut(e11, [18, 11], [18, 12], [18, 13]);
+  ok(tube.size > 500 && !tube.reached, `the tube is shut but for the crack: none of E11's ${tube.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${E11.id}:e11_draught`);
+  w.world.travel(E11.id, 18, 11, SOUTH);
+  let found = false;
+  for (let i = 0; i < 20 && !found; i++) found = w.world.search();
+  const into = found ? [w.world.move('forward'), w.world.move('forward')] : [];
+  listen(w);
+  ok(found && into.every((r) => r.kind === 'moved') && w.world.used('e11_tube'), 'searched at the crack that breathes cold air, the rock gives, and the tube under the flow behind it can be walked into');
+  const pack = E11.features!.find((f) => f.kind === 'chest' && f.id === 'e11_pack');
+  ok(pack?.kind === 'chest' && pack.gold === 100 && pack.x === 18 && pack.y === 13, 'in the tube, the man\'s pack');
 }
 
 /**
