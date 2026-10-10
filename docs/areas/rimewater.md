@@ -195,9 +195,9 @@ country behind the road, on both lochs (#497):
   Kiln-script over it that opens for nobody; and, behind the last row at the end of the keepers'
   worn path, the locker. Seven groups: the crews twice, the first keeper, the rows three times and
   the Matron.
-- **The high pass** (K10, `coldmere_k10`, core, band 20–22; #491): in from L9 by its pass, taken,
-  not walked, onto a bridge of split logs over the river out of the lake; in from K9's south row,
-  walked. The cold loch's ice runs a tongue into the box's north and the lake lies in its east, its
+- **The high pass** (K10, `coldmere_k10`, core, band 20–22; #491): in from L9 by the road
+  across L10's corner, walked (#497), onto a bridge of split logs over the river out of the lake; in
+  from K9's south row, walked. The cold loch's ice runs a tongue into the box's north and the lake lies in its east, its
   shore iced; the road runs west and south through the pines under them, with three new graves by
   it, to the pass's foot: the milestone, then the mouth, where the snow is trodden and the road
   climbs between two walls of mountain and out by the west edge for J11 (#499), where it lands on
@@ -2261,7 +2261,7 @@ Decided by delegate for #497, each the owner's to overturn:
 1. **No den (#88) in J9 or K11.** A den's keepers and brood, with the level-21 bears the rise rule
    needs, pace past 12.5 fights to a rest unless the box pays about 1,350 a member. Alone, at 20:
    lynx ×2 25.0, ×3 13.6, ×4 9.2, ×5 6.7; pike ×4 9.5, ×5 6.7; bears ×1 29.8, ×2 8.1, ×3 2.7.
-   The den is left to a box still to build.
+   None of the five boxes after them has one either (#497's 20).
 2. **The fewest groups that pass:** J9 four pike and a pair of bears (1,084 a member, 8.81 fights
    to a rest), K11 a pair of bears alone (556, 8.09). Every two-group box under 900 paces past the
    limit (pike ×4 and a bear 14.19; lynx ×2, lynx ×2 and a bear 26.95), and the only one-group box
