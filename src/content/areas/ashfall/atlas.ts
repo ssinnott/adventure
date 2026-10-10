@@ -9,7 +9,12 @@ export const ZONES: readonly AtlasZone[] = [
     // in words as true coming down off the mountain (G11, #513) as down the Stair.
     crossing: { harder: 'The far side, and it is harder than the range over the Sheer.', warning: 'The far side, and nothing on it would spare you. The way back is still open.' },
   },
-  { id: 'firemount', name: 'Fire Mountain', area: 'ashfall', band: [25, 26], maps: [{ map: 'firemount_g11', at: [200, 318] }], seeds: [[214, 330], [240, 340]] },
+  {
+    id: 'firemount', name: 'Fire Mountain', area: 'ashfall', band: [25, 26], maps: [{ map: 'firemount_g11', at: [200, 318] }, { map: 'firemount_h11', at: [232, 318] }, { map: 'firemount_h12', at: [232, 350] }, { map: 'firemount_g12', at: [200, 350] }], seeds: [[214, 330], [240, 340]],
+    // The crossing line said coming onto the mountain (#166, #522): in words as true down G10's track or
+    // off H10's ash as over the border from the High Spine on I11 and I12, where no road runs.
+    crossing: { harder: 'The ground is warm through the boots, and what lives on the mountain is harder.', warning: 'Nothing on the mountain would spare you. The way back is still open.' },
+  },
   {
     id: 'emberwaste', name: 'The Ember Waste', area: 'ashfall', band: [25, 26], maps: [{ map: 'emberwaste_f10', at: [168, 286] }, { map: 'emberwaste_e10', at: [136, 286] }, { map: 'emberwaste_f11', at: [168, 318] }], seeds: [[172, 336], [180, 300]],
     // The crossing line said coming off the coast onto the ash (#166, #517).
