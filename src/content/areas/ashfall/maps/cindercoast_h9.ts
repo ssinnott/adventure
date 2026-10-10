@@ -1,8 +1,9 @@
 // Ashfall, box H9: the Sound's shore under the Sheer's north end. Country, band 24-25, behind the road:
 // the black sand along the Sound and the fishers' hamlet above it, two huts, their fire and a woman at
 // her door; the grass west to the town, the gull stone on it and drakes on the shore; under the Sheer
-// the cairn of its fallen stones; where the Sheer gives out, the pines going up onto the ridge to Sheer
-// Point; and at the Sheer's foot, where a path ends at rocks black with smoke, a cleft with a hearth.
+// the cairn of its fallen stones; the Sheer running on north to the water, the pines above its lip going
+// up onto the ridge to Sheer Point; and at the Sheer's foot, where a path ends at rocks black with
+// smoke, a cleft with a hearth.
 // In from H10 (#510) over its south edge, walked: the vines at 0 to 6, the grass, the pines and the Sheer
 // square for square with H10's 0,0 to 31,0, nothing named. The east edge is the Sheer from row 5 to row
 // 31 and the deep water above it, so Sheer Point's I9 (#503) meets wall or sea along all of it: nothing
@@ -67,8 +68,8 @@ export const CINDERCOAST_H9: MapDef = {
       '"Mind the Sheer. Things come off the top of it, and some of them fly."',
     ] },
     { kind: 'camp', x: 23, y: 20, name: 'The hamlet\'s fire', text: 'A ring of stones above the sand, a pot on it, and fish heads round it for the gulls.' },
-    // Where the Sheer gives out, and the ridge going out to sea; the cairn under the cliff.
-    { kind: 'event', x: 29, y: 18, id: 'h9_sheer', once: true, text: 'The Sheer stops here. North of it the pines climb onto a ridge, and the ridge runs out to sea.' },
+    // The Sheer running on north to the water, and the ridge going out to sea over it; the cairn under the cliff.
+    { kind: 'event', x: 29, y: 18, id: 'h9_sheer', once: true, text: 'The Sheer goes on north to the water. Over its lip the pines climb onto a ridge, and the ridge runs out to sea.' },
     { kind: 'event', x: 27, y: 9, id: 'h9_point', once: true, text: 'East, the ridge goes out into the Sound to Sheer Point, and a line of stones runs out beside it.' },
     { kind: 'cairn', x: 24, y: 24, id: 'h9_cairn', text: 'A cairn of stones fallen off the Sheer, and a boat\'s oar stood up in it.', gold: 100, items: ['potion_sp_great'] },
     // The secret: a path through the grass to the Sheer's foot and the rocks there black with smoke; a
