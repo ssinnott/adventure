@@ -1172,6 +1172,27 @@
         "n8_strongbox",
         "n8_tracks",
         "n8_wind",
+        "o3_cache",
+        "o3_cache_chest",
+        "o3_cairn",
+        "o3_crag",
+        "o3_hills",
+        "o3_mountain",
+        "o3_path",
+        "o3_pines",
+        "o3_warren",
+        "o4_block",
+        "o4_cairn",
+        "o4_crane",
+        "o4_edge",
+        "o4_face",
+        "o4_payhole",
+        "o4_payhole_chest",
+        "o4_pines",
+        "o4_quarry",
+        "o4_ridge",
+        "o4_spoil",
+        "o4_stream",
         "o5_burnt",
         "o5_cairn",
         "o5_closed",
@@ -1567,6 +1588,9 @@
         "n8_ravens",
         "n8_wights_grave",
         "n8_wights_open",
+        "o3_worms",
+        "o4_salamanders",
+        "o4_worms",
         "o5_elder",
         "o5_guard",
         "o5_slag_low",
@@ -1667,9 +1691,11 @@
         "433,43",
         "441,99",
         "453,82",
+        "459,101",
         "465,214",
         "467,135",
         "474,234",
+        "475,75",
         "48,181",
         "481,183",
         "51,78",
@@ -2811,6 +2837,10 @@
       "at": "424,62",
       "size": "32x32"
     },
+    "ironfells_o3": {
+      "at": "456,62",
+      "size": "32x32"
+    },
     "kilnmouth_l6": {
       "at": "360,158",
       "size": "32x32"
@@ -2837,6 +2867,10 @@
     },
     "kilnsheart_n6": {
       "at": "424,158",
+      "size": "32x32"
+    },
+    "kilnsheart_o4": {
+      "at": "456,94",
       "size": "32x32"
     },
     "kilnsheart_o5": {

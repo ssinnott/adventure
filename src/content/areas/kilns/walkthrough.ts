@@ -55,6 +55,12 @@
 // drovers' store found from the hearth's soot; the drovers' track from the shieling to M5's yard; in
 // off the smelter's ground into M5, the woman at the churn, the worms in the lime pits won, the loft
 // found from the swallows, the stream on from N5 to M6 and the world's end past the shingle.
+// The Fells' east and the heart's hills (O3 and O4, #474): the hills on from N3 with nothing said,
+// the hall's crag shutting the terraces off; the pitch-burner at his camp; the warren's pair won at
+// the box's floor; the hunter's cache found from the path that ends at the rock; south over the line
+// into the heart's hills, the Kilns named, and in from N4 with nothing said; the quarryman at his
+// camp; the salamanders on the quarry floor won; the hills over the stream walked to from O5; and
+// the quarrymen's pay-hole found from the block never taken.
 // Then Kilnhaven (#469), in at L6's gate and out again: a company rests, buys the act's first
 // step at the smith at a quarter more, open to it still when the Stone was taken, and trains to 19;
 // hears the harbourmaster read the manifests and the dwarf on the quay say where the corridors run,
@@ -137,6 +143,9 @@ const L6 = MAP_DEFS.find((d) => d.id === 'kilnmouth_l6')!;
 const M4 = MAP_DEFS.find((d) => d.id === 'kilnmouth_m4')!, M5 = MAP_DEFS.find((d) => d.id === 'kilnmouth_m5')!;
 const DROVER4 = M4.features!.find((f) => f.kind === 'npc' && f.name === 'A drover') as Person;
 const CHURN = M5.features!.find((f) => f.kind === 'npc' && f.name === 'A woman at a churn') as Person;
+const O3 = MAP_DEFS.find((d) => d.id === 'ironfells_o3')!, O4 = MAP_DEFS.find((d) => d.id === 'kilnsheart_o4')!;
+const BURNER = O3.features!.find((f) => f.kind === 'npc' && f.name === 'A pitch-burner') as Person;
+const QUARRYMAN = O4.features!.find((f) => f.kind === 'npc' && f.name === 'A quarryman') as Person;
 const CLERK = L6.features!.find((f) => f.kind === 'npc' && f.name.startsWith('The store')) as Person;
 const CROSSING = 'The Iron Fells. Pine, and the ground going up. Somewhere ahead something is being hammered, and has been all day.';
 const TOWN = MAP_DEFS.find((d) => d.id === 'anvilhall')!;
@@ -778,6 +787,84 @@ export const walkthrough: Walkthrough = (ok) => {
   listen(w);
   const loftBox = M5.features!.find((f) => f.kind === 'chest' && f.id === 'm5_loft_chest');
   ok(loftBox?.kind === 'chest' && loftBox.items.includes('elixir') && loftBox.gold === 200 && loftBox.x === 14 && loftBox.y === 6, 'under the nests, a strongbox with 200 gold and an Elixir');
+
+  // The country behind the road (O3 and O4, #474). The Fells' east: on over the hills from N3 under the
+  // terraces, the same land, so nothing is said of it; the hall's crag runs down the west edge to the
+  // terraces' end, so nothing comes at the gate from this side.
+  const o3 = out.zones.find((z) => z.id === 'ironfells_o3')!, o4 = out.zones.find((z) => z.id === 'kilnsheart_o4')!;
+  const roadLevels = w.party.members.map((m) => m.level), roadStep = w.level;
+  for (const m of w.party.members) m.level = 17;
+  w.level = 17;
+  w.world.travel('ironfells_n3', 30, 25, EAST);
+  const intoO3: string[] = [];
+  for (let i = 0; i < 4 && w.world.zone?.id !== 'ironfells_o3'; i++) { const r = w.world.move('forward'); if (r.kind === 'moved') intoO3.push(...r.messages); }
+  ok(w.world.zone?.id === 'ironfells_o3' && !intoO3.some((m) => /Fells|Kilns|harder|spare you/.test(m)), `the hills run on from N3 into O3 with nothing said of the land (${intoO3.join(' / ') || 'nothing'})`);
+  ok(Array.from({ length: 21 }, (_, y) => out.passable(o3.x, o3.y + y)).every((p) => p !== 'ok') && Array.from({ length: 9 }, (_, y) => out.passable(o3.x, o3.y + 21 + y)).every((p) => p === 'ok'),
+    'O3\'s west edge is the crag down to the terraces\' end, and the hills open on from N3\'s under it');
+
+  // The pitch-burner at his camp, with a word on the worms; the warren, and its pair won at the box's
+  // floor.
+  w.world.travel('ironfells_o3', BURNER.x, BURNER.y);
+  const o3Word = meet(BURNER, w.party, heard(w.world, BURNER)).text;
+  ok(o3Word.includes('worms') && o3Word.includes('torches'), 'the pitch-burner at his camp has a word on the worms, and on the hall\'s torches');
+  see(w, 'ironfells_o3:o3_warren');
+  for (const g of O3.encounters!) fight(w, `ironfells_o3:${g.id}`);
+
+  // The secret: a path trodden through the needles to the foot of the rock and no further, the search
+  // there and the hunter's cache in the cleft behind it. Walked, waded, climbed or floated, it is never
+  // reached but through the cleft.
+  const o3Cleft = shut(o3, [18, 13], [19, 13], [21, 13]);
+  ok(o3Cleft.size > 600 && !o3Cleft.reached, `the cache is shut but for the cleft: none of O3's ${o3Cleft.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, 'ironfells_o3:o3_path');
+  w.world.travel('ironfells_o3', 18, 13, EAST);
+  let o3Open = false;
+  for (let i = 0; i < 20 && !o3Open; i++) o3Open = w.world.search();
+  const inCleft = o3Open ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(o3Open && inCleft.every((r) => r.kind === 'moved') && w.world.used('o3_cache'), 'searched at the path\'s end, the rock gives, and the cleft behind it can be walked into');
+  listen(w);
+  const o3Purse = O3.features!.find((f) => f.kind === 'chest' && f.id === 'o3_cache_chest');
+  ok(o3Purse?.kind === 'chest' && o3Purse.gold === 180 && o3Purse.x === 21 && o3Purse.y === 13, 'in the cleft, the hunter\'s purse under its stone');
+
+  // The heart's hills (O4): south out of O3's pines over the line from the Fells, the Kilns named and
+  // no warning at 17; and in from N4's hills, the same land, with nothing said.
+  w.world.travel('ironfells_o3', 10, 30, SOUTH);
+  const intoO4: string[] = [];
+  for (let i = 0; i < 4 && w.world.zone?.id !== 'kilnsheart_o4'; i++) { const r = w.world.move('forward'); if (r.kind === 'moved') intoO4.push(...r.messages); }
+  ok(w.world.zone?.id === 'kilnsheart_o4' && intoO4.includes('The Kilns.') && !intoO4.some((m) => m.includes('harder')), `south out of O3's pines into O4 a company of 17 hears the Kilns named, and no warning (${intoO4.join(' / ')})`);
+  w.world.travel('kilnsheart_n4', 30, 20, EAST);
+  const fromN4: string[] = [];
+  for (let i = 0; i < 4 && w.world.zone?.id !== 'kilnsheart_o4'; i++) { const r = w.world.move('forward'); if (r.kind === 'moved') fromN4.push(...r.messages); }
+  ok(w.world.zone?.id === 'kilnsheart_o4' && !fromN4.some((m) => /Kilns|Fells|harder|spare you/.test(m)), `the hills run on from N4 into O4 with nothing said of the land (${fromN4.join(' / ') || 'nothing'})`);
+
+  // The quarries and the quarryman at his camp; the salamanders on the quarry floor won at the box's
+  // floor; and over the stream the hills under the mountain, walked to from O5's hills with no water
+  // crossed, and the haze at the world's end.
+  see(w, 'kilnsheart_o4:o4_quarry');
+  w.world.travel('kilnsheart_o4', QUARRYMAN.x, QUARRYMAN.y);
+  const o4Word = meet(QUARRYMAN, w.party, heard(w.world, QUARRYMAN)).text;
+  ok(o4Word.includes('Salamanders') && o4Word.includes('stone'), 'the quarryman at his camp says the salamanders come up through the warm stone');
+  for (const g of O4.encounters!) fight(w, `kilnsheart_o4:${g.id}`);
+  const o5Hills = out.zones.find((z) => z.id === 'kilnsheart_o5')!, cairn4 = O4.features!.find((f) => f.kind === 'cairn' && f.id === 'o4_cairn')!;
+  const overStream = steps(o5Hills.x + 5, o5Hills.y + 1, (x, y) => out.passable(x, y) === 'ok');
+  ok(overStream.has((o4.y + cairn4.y) * out.width + o4.x + cairn4.x), 'the cairn on the hills over the stream is walked to from O5\'s hills, no water crossed');
+  see(w, 'kilnsheart_o4:o4_edge');
+
+  // The secret: every block taken from the quarry face has left its wedge-marks, and one was never
+  // taken, its joints mortared; the search there and the quarrymen's pay-hole behind it. Walked, waded,
+  // climbed or floated, it is never reached but through the block.
+  const o4Hole = shut(o4, [4, 7], [3, 7], [1, 7]);
+  ok(o4Hole.size > 600 && !o4Hole.reached, `the pay-hole is shut but for the block: none of O4's ${o4Hole.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, 'kilnsheart_o4:o4_face');
+  w.world.travel('kilnsheart_o4', 4, 7, WEST);
+  let o4Open = false;
+  for (let i = 0; i < 20 && !o4Open; i++) o4Open = w.world.search();
+  const inHole = o4Open ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(o4Open && inHole.every((r) => r.kind === 'moved') && w.world.used('o4_payhole'), 'searched at the mortared block, it gives, and the pay-hole behind it can be walked into');
+  listen(w);
+  const o4Box = O4.features!.find((f) => f.kind === 'chest' && f.id === 'o4_payhole_chest');
+  ok(o4Box?.kind === 'chest' && o4Box.gold === 250 && o4Box.x === 1 && o4Box.y === 7, 'in the pay-hole, the quarrymen\'s strongbox');
+  w.party.members.forEach((m, i) => { m.level = roadLevels[i]; });
+  w.level = roadStep;
 
   kilnhaven(ok);
   anvilhall(w, ok);
