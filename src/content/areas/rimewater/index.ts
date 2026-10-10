@@ -6,6 +6,8 @@ import { RIME_LODGE } from './maps/rime_lodge.ts';
 import { LONGMERE_L9 } from './maps/longmere_l9.ts';
 import { COLDMERE_K9 } from './maps/coldmere_k9.ts';
 import { COLDMERE_K10 } from './maps/coldmere_k10.ts';
+import { COLDMERE_J9 } from './maps/coldmere_j9.ts';
+import { COLDMERE_K11 } from './maps/coldmere_k11.ts';
 import { SLEEPERS_BAY } from './maps/sleepers_bay.ts';
 import { SLEEPERS_BAY2 } from './maps/sleepers_bay2.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
@@ -18,7 +20,7 @@ import { QUESTS } from './quests.ts';
 
 export const AREA = {
   id: 'rimewater' as const,
-  maps: [LONGMERE_M9, RIME_LODGE, LONGMERE_L9, COLDMERE_K9, COLDMERE_K10, SLEEPERS_BAY, SLEEPERS_BAY2],
+  maps: [LONGMERE_M9, RIME_LODGE, LONGMERE_L9, COLDMERE_K9, COLDMERE_K10, SLEEPERS_BAY, SLEEPERS_BAY2, COLDMERE_J9, COLDMERE_K11],
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,
