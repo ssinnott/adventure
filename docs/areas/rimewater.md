@@ -8,7 +8,7 @@ cold loch the sealed bay where every people of Caldera lies asleep in rows. This
 plan for building it, box by box, and the briefs. Its work is filed under #438 (Phase 1.3, #431):
 the boxes as §4's table has them, Rime Lodge (#487), the Sleepers' Bay (#490), its chapter (#492),
 its side quests (#494), its six drawings (#495), Rime Lodge's rooms (#496) and the country behind
-the road (#497), J9 and K11 built and five boxes parked; this doc is #485. Its systems are #432's,
+the road (#497), all seven built; this doc is #485. Its systems are #432's,
 all built: the curve's rows and
 the act's gear (#535), ash, ice and pine and a group placed on ice (#536), regeneration, curse and
 calls (#537), Kiln-script and Linguist (#538), the crossings with the drove road's coach (#539) and
@@ -17,13 +17,14 @@ Figures are measured on main at `6032251` (2 October 2026) with `worldGrid`
 (`src/game/atlas.ts`), for land without shallows or rivers; "walkable" is land that is not mountain,
 peak, cliff or chasm.
 
-Eight places are built: M9, Rime Lodge's box (#486, §4.2), which lists the area; the town behind its
+Thirteen places are built: M9, Rime Lodge's box (#486, §4.2), which lists the area; the town behind its
 gate, Rime Lodge (#487, §4.3); L9, the long loch's shore (#488, §4.4); K9, Loch Fuar (#489, §4.5),
 whose door down to the bay opens for the girl out of the hole; the Sleepers' Bay, two levels under
 the ice (#490, §4.6), where Act III's one story lock is signed in (#440, §5); K10, the high pass
-(#491, §4.7), the road's last box and the act's last ground; and, off the road, J9, Loch Fuar's far
-shore, and K11, south of the pass (#497, §4.8), two of the seven boxes of the country behind it, the
-other five not built. Its chapter, The Sleepers, is written (#492, §5), and its five side quests
+(#491, §4.7), the road's last box and the act's last ground; and, off the road, the country behind it
+in seven boxes (#497, §4.8): J9, Loch Fuar's far shore; K11, south of the pass; L10, the cold loch's
+head; L11, the pines under the ridge's end; M10, the loch's foot; M11, the pines under the rim; and
+N9, the glacier's edge, which closes #497. Its chapter, The Sleepers, is written (#492, §5), and its five side quests
 (#494, §6). Its content is `src/content/areas/rimewater/`
 (maps, monsters, items, climate, its part of the world map, its walkthrough, its guild quest in
 `guilds.ts`, #439, its chapter of the one quest, The Sleepers, in `chapter.ts` and its side quests
@@ -41,10 +42,10 @@ three zones:
 
 | Zone | Band | Squares | Built |
 |---|---|---|---|
-| Loch Fada (Longmere) | 20–21 | 4,858 | M9, L9 |
+| Loch Fada (Longmere) | 20–21 | 4,858 | M9, L9; L10, L11, M10, M11 and N9 (#497) |
 | Loch Fuar (Coldmere) | 21–22 | 5,188 | K9, K10; J9, laid at 296,254, and K11, at 328,318 (#497) |
-| Glacier Foot | the reach: the cap (§9, call 7) | 3,173 | none; cut whole to Phase 1.6 (§11) |
-| The area | 20–22 | 13,219 | M9, L9, K9, K10, J9, K11 |
+| Glacier Foot | the reach: the cap (§9, call 7) | 3,173 | none; cut whole to Phase 1.6 (§11), but for its slivers in M11 and N9, drawn closed (§4.8) |
+| The area | 20–22 | 13,219 | M9, L9, K9, K10, J9, K11, L10, L11, M10, M11, N9 |
 
 Squares are the land `worldGrid` gives each zone, shallows and rivers left out. The area is about
 12.9 zone maps (EXPANSION §1 has 12.9), and 10,021 of its squares a company could walk: the rest is
@@ -60,7 +61,7 @@ seeded from every square of it move 1,154 squares, none on a built map: Loch Fad
 Glacier Foot's, 176 of the Cairnfield's, 129 of Loch Fuar's and 19 that were void, and about 40
 change hands elsewhere on the world. Laid whole, M9 seeded Loch Fada up the Rimefells into most of
 M8, so a row of seeds along M8's south edge holds the Cairnfield there (§9, 20), M8 since laid (#484) and M9's north-west corner walked from it;
-N9's north-west corner goes to Loch Fada and is left so. With M9 Loch Fada walks to 5,748 squares, Loch Fuar to
+N9's north-west corner goes to Loch Fada, and N9, laid since (#497), is laid whole in it. With M9 Loch Fada walks to 5,748 squares, Loch Fuar to
 5,081 and Glacier Foot to 2,270, the area to 13,099 of land, 10,056 of them walkable, and the
 Cairnfield to 3,672. L9 (#488), laid whole in Loch Fada, moves 1,437 squares more by the same walk,
 none on a built map: Loch Fada takes 1,327 of Loch Fuar's and 46 of the Cairnfield's, and about 60
@@ -76,7 +77,8 @@ Fuar takes 940 of Loch Fada's, 506 of Monks' Vale's and 7 of the High Spine's an
 the Cairnfield 3; about 32 change hands elsewhere on the world. Its own squares, 782 Loch Fuar's and
 59 Monks' Vale's in the cut after the bay (§4 has the plan's 782), are laid whole in Loch Fuar.
 J9 and K11 (#497), laid whole in Loch Fuar, leave the zone's seeds as they were; the squares their
-walk moves between the zones are not counted here.
+walk moves between the zones are not counted here. L10, L11, M10, M11 and N9 (#497), laid whole in
+Loch Fada, leave its seeds as they were too, and their walk is not counted either.
 
 **The grid** (EXPANSION §8.2; docs/areas/shelf.md §1). Rimewater is the J to O columns from row 9
 to row 11, with M9 at its head and slivers in rows 8 and 12. The land worth a map is eleven boxes
@@ -95,7 +97,8 @@ Its edges:
   Rimefells' foot, but a jump says none (§9, 2).
 - **East: the glacier,** coming down from the rim into Glacier Foot, the reach (DESIGN §9), off the
   road and void until Phase 1.6. M9's east edge is the glacier's edge in Loch Fada, where #56's 43
-  ends and the guide marks the way into the void (§6; call 7).
+  ends and the guide marks the way into the void (§6; call 7); N9 lies round the fells' shoulder from its
+  pines at rows 9 and 10, built closed (#497, §4.8).
 - **South: the Whitespine** (22–24, Act IV), over the rim's long southern lobe. The high pass climbs
   out of K10 at its mouth, 333,301, and leaves it by the west edge at 328,305 for Monks' Vale at
   318,318 (the atlas's link runs 334,302 to 318,318), the Whitespine's J11 and Act IV's first box
@@ -141,10 +144,10 @@ The weather is the lochs': cold and still, snow lying, ice from autumn, clear ni
 
 ## 3. What is built
 
-Eight places: one box, the area's first, which lists the area (#486), the town behind its gate
+Thirteen places: one box, the area's first, which lists the area (#486), the town behind its gate
 (#487), a second box west along the drove road (#488), a third beyond it, on the cold loch (#489),
-the dungeon under the third (#490), a fourth south of it, the pass (#491) and two boxes of the
-country behind the road, west and south of the cold loch (#497):
+the dungeon under the third (#490), a fourth south of it, the pass (#491) and the seven boxes of the
+country behind the road, on both lochs (#497):
 
 - **Rime Lodge's box** (M9, `longmere_m9`, core, band 20–21; #486): the drove road taken down from
   Cairnmoor's N8 by the notch onto the long loch's shore, past the coach yard to the lodge's gate,
@@ -164,8 +167,8 @@ country behind the road, west and south of the cold loch (#497):
   count the nights, with its yard and a door onto the ice (§4.3).
 - **The long loch's shore** (L9, `longmere_l9`, country, band 20–21; #488): the drove road walked in
   from M9 and on west under the pines, over the ridge between the lochs by a saddle and out by the
-  south edge for K10, where it is taken, not walked, across parked L10's corner (`PASS`, in its
-  exits). Loch Fada's ice along the north rows, a woodcutters' camp on its shore and open water in
+  south edge and on across L10's corner, walked, to K10. Loch Fada's ice along the north rows, a
+  woodcutters' camp on its shore and open water in
   its middle; the stream off the fells bending north; a drover wintering in a bothy by the road, who
   hears a bell from under the cold loch; on the ridge a milestone, a cairn and the lookout over both
   lochs. In the high meadow under the ridge's north end, fence posts and a drift, and under it the
@@ -222,6 +225,50 @@ country behind the road, west and south of the cold loch (#497):
   in the crags' foot, where the pair lie up, the box's one group. On the lake's shore a sledge of
   sawn ice stands with its runners frozen in, and behind it, in the bank, the ice-cutters'
   ice-house and their strongbox, shut to walkers, swimmers, climbers and floaters.
+- **The cold loch's head** (L10, `longmere_l10`, country, band 20–21; #497): down the road from L9's
+  south edge onto the cold loch's head, walked, and on across the box's corner to K10's bridge. The
+  loch's east shore runs down the west side, its shallows frozen, with dead pines standing in the ice
+  and an old road going down into it; the ridge between the lochs runs south down the middle and cuts
+  the box in two, the road and the shore on its west and the pines, the meadow and the hills on its
+  east. A trapper says the cats' pines lie south under the ridge's end; a camp of fishers, a cairn, a
+  holed stone that gives endurance, a frost-split pine, a hind dragged under the pines and the glacier
+  seen from the hills. Blazes on the pines run to bare rock in the ridge's west foot, and in it stands
+  the old trappers' store with its box, shut to walkers, swimmers, climbers and floaters. Two groups:
+  two ice pike under the shore ice and two ice bears in the far pines, the box's hardest.
+- **The pines under the ridge's end** (L11, `longmere_l11`, country, band 20–21; #497): in from L10
+  over the north edge, walked. The cold loch's south end in the north-west corner, its shallows
+  frozen with stumps standing in the ice; the cats' pinewoods west of the ridge, the bog between them
+  and the ridge, a strip of pines and bog east of it under the glacier and the mountain along the
+  south edge. A tar-burner, whose father felled the stumps when the loch was a field lower, with his
+  kiln for a camp; a cat cut in a boulder that gives speed, a cairn and a lynx's lie-up. Under a long
+  mound with a stone like a lintel stands the earth-house with its kist, shut to walkers, swimmers,
+  climbers and floaters. Two groups: three snow lynx in the pines and two ice bears under the
+  mountain, the box's hardest.
+- **The loch's foot** (M10, `longmere_m10`, country, band 20–21; #497): south from M9's east shore
+  onto the loch's foot, walked. The loch is open water under M9's shore and frozen from row 4 to its
+  foot; the far shore's grass and hills on the west, the east shore under the ridge, the lynx's pines
+  past it and the burn in off the glacier, frozen, the one way through the ridge into the south-east
+  pines. An ice fisher at the fishers' camp says the pike lie under the ice and the bears come down
+  the burn; holes in the ice, a cairn, a boat and prints in the snow. Sledge runs from the holes stop
+  at the bank, and behind the turf stands the fishers' ice-house with its box, shut to walkers,
+  swimmers, climbers and floaters. Two groups: two ice pike under the ice and two ice bears in the
+  pines past the burn, the box's hardest.
+- **The pines under the rim** (M11, `longmere_m11`, country, band 20–21; #497): south from M10's pines,
+  walked. The pinewood, a marsh at the west edge, the ridge coming down from M10 to the glacier on the
+  east with Glacier Foot's sliver on it, closed, a pocket east of the ridge reached from M10's
+  south-east pines and the rim's range along the south. A trapper who says the bears den up there, a
+  lean-to for a camp, a cairn and the marsh, the ridge and the rim seen. Snares on the pines run in a
+  line to the rock, and in it stands the trappers' cache with its chest, shut to walkers, swimmers,
+  climbers and floaters. Two groups: three snow lynx in the pines and two ice bears under the rim,
+  the box's hardest.
+- **The glacier's edge** (N9, `longmere_n9`, country, band 20–21; #497): in from M9 at rows 9 and 10,
+  where M9's east wall opens as pines round the fells' shoulder, its only way in. The Rimefells closed
+  along the north, pines down the west, the bent woods in the middle, the moraine's hills and the
+  glacier's foot as ice under a mountain wall along the east and the south, closed against O9 and
+  N10. A bothy for a camp, a cairn, the bears' cave in the ice wall's foot and the wall itself. A
+  bear's skull on a stake stands before the fell's face, the snow trodden round it, and in the face
+  the hunters' hide with its chest, shut to walkers, swimmers, climbers and floaters. Two groups:
+  three snow lynx in the pines and two ice bears at the glacier's foot, the box's hardest.
 
 The chapter and the side quests, on the places built (#492, #494):
 
@@ -248,7 +295,7 @@ retinue at its own level; and the Kilns' first-machines rule is read as far as t
 Its atlas rows are charted in `src/content/areas/rimewater/atlas.ts`, the area's own `atlas` since
 M9 lists the area; until then `src/content/atlas.ts` spread them into the plan, as Saltreach's were
 before #170 (docs/areas/saltreach.md §9): the zones with their bands (Loch Fada 20–21, with M9 and
-L9 laid on it, §1; Loch Fuar 21–22, with K9 and K10 laid on it and its crossing words written, #166;
+L9, L10, L11, M10, M11 and N9 laid on it, §1; Loch Fuar 21–22, with K9, K10, J9 and K11 laid on it and its crossing words written, #166;
 Glacier Foot the reach's), Rime Lodge at 20–22, the Sleepers' Bay's two places, built, with no name
 or band of their own (`sleepers_bay` at the door's square, 352,284; `sleepers_bay2` at 352,290, six
 below it; #490), the sites (Rime Lodge, its own; the Ice Caves, the reach's, placed and not banded
@@ -256,11 +303,10 @@ for this act) and its links: the drove road down from the Cairnfield, the lodge'
 the pass to Monks' Vale and the Ice Caves' way in.
 
 Its row on the curve and its step on the gear ladder are in (#535). The row is in
-`src/content/progression.ts`: band 20–22, next 22, window 4,500, owed to #497, L10, L11, M10, M11
-and N9, the rest of the country behind, which are not built, with 9,220 gold the clear's floor
-(7,220 before J9 and K11), its xp met: 24,285 a member of the 16,267 asked, the built boxes', the
-bay's, K10's, the Wardens' ask's, the side quests' and J9's and K11's (#439, #490, #491, #494, #497;
-§8). The step is
+`src/content/progression.ts`: band 20–22, next 22, window 4,500, with no owed entry now: a clear
+gives 10,720 gold of the 9,840 and 28,781 xp a member of the 16,267 asked, the built boxes', the
+bay's, K10's, the Wardens' ask's, the side quests' and the seven country boxes' (#439, #490, #491,
+#494, #497; §8). The step is
 in `src/content/areas/rimewater/items.ts`, made ahead of the area as the Kilns' was
 (docs/areas/kilns.md §3; `ITEMS_AHEAD`, `src/content/index.ts`) until M9 took the table into its
 Area: the furrier's seven (`FURRIER`) and their plus finds by 22 (§4.1), the seven sold by the
@@ -303,10 +349,10 @@ glacier over the stakes. §9 has the decisions.
 
 ## 4. What is still to build
 
-All of it but M9, Rime Lodge, L9, K9, the bay, K10, J9 and K11, built (#486, §4.2; #487, §4.3;
+All of it is built, M9, Rime Lodge, L9, K9, the bay, K10 and the seven boxes behind (#486, §4.2; #487, §4.3;
 #488, §4.4; #489, §4.5; #490, §4.6; #491, §4.7; #497, §4.8): 13,219 squares of land, 10,021 of
 them walkable, the plan's figures (§1); on the road, 10,046. On the grid the plan is four boxes on
-the road, a town and a dungeon, with seven boxes behind the road, five of them parked still, and
+the road, a town and a dungeon, with seven boxes behind the road, all built, and
 the owner's epic #438 holds this table:
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
@@ -318,13 +364,12 @@ the owner's epic #438 holds this table:
 | | The Sleepers' Bay | | dungeon, two levels of 16×16 | 20–22 (the bay 21–22) | | the stair under the ice; the bay of beds; the keepers; the Matron in the last row | the sleepers | #490 |
 | K10 | The high pass | Loch Fuar | core | 20–22 | 782 (pine 770), 65 shallow | the road round the loch's foot and up to the pass at 334,302; the pilgrims | south, over the pass | #491 |
 | J9, K11 | Loch Fuar's far shore; south of the pass | Loch Fuar | country, behind the road | 20–22 | 885 (797), 632 (568) | the old woman's hut, the strand's ice, the bears under the mountain and the trapper's store (J9); the bears' cleft and the ice-cutters' ice-house (K11) | none | #497 |
-| L10, L11, M10, M11, N9 | The country behind | Loch Fada | country, behind the road | 20–22 | 842 (677), 974 (796), 759 (651), 1,015 (646), 851 (735) | pine and the lochs' far shores; the glacier's edge in N9 | none | #497, parked |
+| L10, L11, M10, M11, N9 | The cold loch's head; the pines under the ridge's end; the loch's foot; the pines under the rim; the glacier's edge | Loch Fada | country, behind the road | 20–21 (§9, #497's 12) | 842 (677), 974 (796), 759 (651), 1,015 (646), 851 (735) | the road across L10's corner, walked; the dead pines in the cold loch and the trappers' store (L10); the cats' pines and the earth-house (L11); the burn off the glacier and the fishers' ice-house (M10); the pines under the rim and the trappers' cache (M11); the glacier's edge, closed, and the hunters' hide (N9) | none | #497 |
 
 The core is the three boxes that hold a step of the quest (M9, K9 and K10), built at full density;
-L9, J9 and K11 are country, built to the looser floor with the wilderness features (EXPANSION
+L9 and the seven behind are country, built to the looser floor with the wilderness features (EXPANSION
 §2.1 (b) and §5.3, #45). The road's four boxes are built with the act; the seven behind were parked
-until the owner had played it (call 10), and of them J9 and K11 are built (#497), the five others
-not. The bands rise from the way in, 20 at the Rimefells' foot, to 22 at
+until the owner had played it (call 10), and are all built (#497). The bands rise from the way in, 20 at the Rimefells' foot, to 22 at
 the pass and the bay's last row, as the gate asks (EXPANSION §5.2), and each box holds a group at
 the top of its band for the curve (§7). The four hold 3,245 squares, 2,830 walkable; the seven
 behind 5,958, 4,870 walkable.
@@ -346,12 +391,12 @@ The places, as the atlas and the docs have them:
 |---|---|---|---|
 | Rime Lodge | M9, and its own map | the lodge on the long loch's shore where the cargo comes up through the ice; the four nights and Wenna (DESIGN §9, STORY); tier 7 (DESIGN §7); the Lanterns' fourth hall and fourth rank (calls 5 and 8); the coach from Kilnhaven (call 9) | a planned town, its gate at 410,262 and its plate at 412,256 |
 | The ice-hole | M9, outside the lodge's lake wall | the hole the lodge-keepers hold open with fire; the tallyman and six knockers on the fourth night (MONSTERS §7.3); the one who went back down at its foot (#56's 41) | not placed; the lodge's |
-| Loch Fada (Longmere) | M9, L9, and behind | the long lake and its meadows (MONSTERS §7.3); the ice pike under its ice | water, lettered |
+| Loch Fada (Longmere) | M9, L9, L10, L11, M10, M11, N9 | the long lake and its meadows (MONSTERS §7.3); the ice pike under its ice | water, lettered |
 | Loch Fuar (Coldmere) | K9, K10, J9, K11 | the frozen lake with the sealed bay under it (DESIGN §9, MONSTERS §7.3); the bell under the ice (#56's 42) | water, lettered |
 | The sealed door | K9, under the ice | opened by Wenna's hand, a soft voice in the wall, "Captain?" (STORY); Act III's lock (call 4) | `sleepers_bay`'s plate at 352,284, the door's square (K9's 24,30), with no name on it: nothing on the surface names it (§10) |
 | The Sleepers' Bay | below K9 | rows of long glass beds, every people of Caldera; the keepers and the Matron (MONSTERS §7.3); THE BLOOD OPENS THE DOOR (DESIGN §9) | a dungeon in two places, `sleepers_bay` at 352,284 and `sleepers_bay2` at 352,290, by call 6; no site paints it |
 | The high pass | K10 | the road from Coldmere into Monks' Vale, a road through the range (EXPANSION §2.2); the pilgrims and the brother (#56's 44) | a road link at 334,302 to 318,318, "the high pass" |
-| The glacier's edge | M9's east, N9 | where the sky meets the ice and the guide marks the way (#56's 43); the reach's way in, in band-20 country (DESIGN §9) | Glacier Foot's border, void |
+| The glacier's edge | M9's east, N9 | where the sky meets the ice and the guide marks the way (#56's 43); the reach's way in, in band-20 country (DESIGN §9) | Glacier Foot's border, void; N9 built closed behind M9's wall (#497) |
 | The Ice Caves | N11, Glacier Foot | the first of the Vault's dungeons (DESIGN §9, MONSTERS §10.2); the reach's band (call 7) | a planned dungeon at 446,340, its way in at 452,326; Phase 1.6 |
 
 ### 4.1 The briefs
@@ -437,13 +482,13 @@ what is new, with points of interest and a first share of the pay.
   A cairn at the fells' foot, 8,5, holds 320 gold and a great spell-point potion; the shore camp
   stands at 16,19 and the lookout on the hills over the loch, 21,18, looks south down its length.
   East, the glacier comes down from the rim: a strip of ice at its foot, 26 to 28, under a mountain
-  wall, 29 to 31, closed against N9 (call 7), and its snout at 27,12. At 27,19 a guide, her hands
+  wall, 29 to 31, closed against N9 (call 7) but for the pines at rows 9 and 10, and its snout at 27,12. At 27,19 a guide, her hands
   bound in rags, took a party up to where the sky meets the ice and came down; her cairn, half
   built, points east at nothing, 27,20 (#56's 43). Two ice bears keep 27,17 and two 27,28, the
   box's hardest. At 28,24 the ice comes down in a wall with snow on every face of it but one, and
   behind that bare face, through the secret door at 29,24, is the hollow, 30,24: a camp forty years
   cold, a bedroll, a stove and an axe. The lost guide's kit holds her Ice Axe +1 (`ice_axe+1`, the
-  ladder's) and 1,200 gold; rock at 30,23 and 30,25 shuts the hollow to a climber over the
+  ladder's) and 1,200 gold; rock at 30,23 and 30,25, and at 31,24 since N9 was laid (§9, #497's 14), shuts the hollow to a climber over the
   glacier's mountains.
   - **Seams.** North-east, N8's 0,28 (424,250) leads onto M9's 22,8 (414,262) facing west and M9's
     23,8 (415,262) onto N8's 1,28 (425,250) facing east, both jumps; M9's 31,0 (423,254) and N8's
@@ -455,8 +500,11 @@ what is new, with points of interest and a first share of the pay.
     against the atlas's at L9's 31,2 to 31,4, and the road out at 0,20 against its 31,20, hills on
     rows 12 to 19 and grass from row 21; L9 puts water at 31,2 to 31,4 and the road at 31,20, which
     the edge check matches. North, M8 (#484, laid since): grass and pines at columns 0 to 4, walked from M8's 0 to 4,31, the rest
-    the fells, void. East, N9 (parked): mountain the whole edge, void. South, M10 (parked): the
-    loch, its shores, the hills, the crag and the pines, the atlas's row with the corner closed.
+    the fells, void. East, N9 (#497, built): mountain the whole edge but for the pines at rows 9 and 10 (28 to 31),
+    opened as N9's only way in and walked (§9, #497's 13), and the rock at 31,24 (§9, #497's 14).
+    South, M10 (#497, built): the loch, its shores, the hills, the crag and the pines against M10's
+    row 0, the open water at 4 to 12 and the shallows at 2 and 3 and 13 and 14 on both sides; walked
+    across at 0 and 1, 15 to 20 and 23 to 29, the corner at 30 and 31 mountain against M10's pines.
   - **Measured.** A company at 20 wins every fight and manages 9.55 fights to a rest, inside the
     aim, with 1.7% of its days ending in a fight broken off; it walks Loch Fada's road, the lynx by
     the landing and the pike by the lake wall, every time; each of the seven groups is won ten
@@ -585,9 +633,9 @@ what is new, with points of interest and a first share of the pay.
   shrine, luck), the stance at 29,28 and the bothy at 25 and 26,26, where a drover winters at 24,26
   and hears a bell from under the cold loch's ice (#56's 42). It crosses the ridge's south end by a
   saddle at row 27, columns 9 to 17, with the milestone on it at 13,27, RIME LODGE 4, THE PASS 5,
-  counted along the roads (§9, #488's 12); it goes out by the south edge at 6,31 and 7,31. From
-  there it is taken, not walked: the square at 6,31 is `PASS`, in the exits since K10 (§9, #488's 2;
-  #491's 1). From the saddle a path of hills climbs the crest: the lookout at 10,22, both lochs seen
+  counted along the roads (§9, #488's 12); it goes out by the south edge at 6,31 and 7,31 and on
+  across L10's corner, walked (§9, #497's 10). From the saddle a path of hills climbs the crest: the
+  lookout at 10,22, both lochs seen
   and nothing moving on either; a cairn at 12,21 holds 300 gold and a great spell-point potion.
   Loch Fada's ice, `i`, runs along the north rows, with a pine islet at 3,1 and a lead of open
   water in its middle, 7 to 12 on rows 0 to 2; the woodcutters' camp stands on its shore at 6,4.
@@ -606,14 +654,12 @@ what is new, with points of interest and a first share of the pay.
     again. West, K9 (#489): L9's 0,0 to 0,31 is ice at rows 0 and 1 and pines below (360,254 to
     360,285), the atlas's pine against K9's 31,0 to 31,31 (359,254 to 359,285); no road crosses,
     and K9 puts dry land on its column 31 at rows 2 to 31. North, L8 (parked): the stream leaves at
-    22 to 27,0 (382 to 387,253) where the atlas's goes on, and the world ends. South, L10 (parked):
-    the road leaves at 6,31 and 7,31 onto the atlas's at 366,286 and 367,286, pines either side of
-    it and the ridge's tail beside them, and the world ends; the atlas's road runs on over about 11
-    squares of L10's corner (360 to 369, 286 to 290) to K10's east edge, so L9's 0,31 (360,285) and
-    K10's 31,0 (359,286) meet only at a corner. The pass, 6,31 (366,285), is listed in the exits and
-    leads to `coldmere_k10` 30,3 (358,289), the bridge, facing west (#491 moved the landing from the
-    guess 31,4, §9, #491's 1), and K10's way back, its road's last square 31,3, lands on 7,31,
-    facing north; 7,31 stays plain road.
+    22 to 27,0 (382 to 387,253) where the atlas's goes on, and the world ends. South, L10 (#497,
+    built): the road runs on from 6,31 and 7,31 onto L10's 6,0 and 7,0 (366,286 and 367,286), walked,
+    pines either side of it at 0 to 5 and 8 to 10, L9's ridge at 11 to 16 against L10's pines at 11
+    and its ridge at 12 to 17 and pines and grass to the east; the outdoors test pins both ways. L9's
+    0,31 (360,285) and K10's 31,0 (359,286) still meet only at a corner, and the road goes round it
+    through L10; `PASS` is gone (§9, #497's 10).
   - **Measured.** A company at 20 wins every fight and manages 9.27 fights to a rest, inside the
     aim, with 0.3% of its days ending in a fight broken off; each of the four groups is won ten
     fights in ten, the lynx at 6.7 fights to a rest each, the pike at 9.5 and the bear at 29.8, the
@@ -895,14 +941,13 @@ what is new, with points of interest and a first share of the pay.
   other way (§9, #491's 12).
   - **Seams.** North, K9 (built): K10's 0,0 to 31,0 (328,286 to 359,286) is K9's south row square
     for square, walked anywhere and pinned both ways in the outdoors test (§4.5). East, L10
-    (parked): K10's 31,0 to 31,31 reads `ppp=ppp~~` and 23 of deep water; the road at 31,3 (359,289)
-    meets the atlas's at 360,289; the world ends past it. The pass is L9's 6,31 to K10's 30,3,
-    facing west, and K10's 31,3 back to L9's 7,31, facing north, both taken, not walked: going on it
-    says *On down the road to the cold loch.* and then Loch Fuar, with the cold loch's harder words
-    after that two under and its warning three under; going back it says *Back up the road to the
-    long loch.* alone, and Loch Fada after it to a company come from elsewhere. The atlas test
-    (`tools/tests/atlas.ts`) lets the pass's two ends lie apart on the world map, the road across
-    parked L10's corner between them, as it lets the notch's. West, J10 (parked): K10's 0,0 to 0,31
+    (#497, built): K10's 31,0 to 31,31 reads `ppp=ppp~~` and 23 of deep water; the road at 31,3 (359,289)
+    meets L10's 0,3 (360,289), `ppp=ppp~~~` and 22 of deep water, pines at rows 0 to 2 and 4 to 6 and
+    the river at 7 to 9 (L10's row 9 water, K10's deep). The road is walked on from L9 across L10's
+    corner to its last square, the bridge at 30,3 staying K10's start (§9, #497's 10 and 11): going on
+    it says *Loch Fuar.* at 20, the cold loch's harder words at 18 and its warning at 17; going back
+    it says *Loch Fada.* to a company come from elsewhere. `PASS` and `RIDGE` are gone, and the atlas
+    test (`tools/tests/atlas.ts`) no longer lets L9 and K10 lie apart on the world map. West, J10 (parked): K10's 0,0 to 0,31
     is pines, hills and the road in the outdoors, the walls' mountain at the edge being the map's
     ring and so void, with the road out at 0,19 (328,305) against the atlas's at 327,305, which goes
     on over J10's corner to the link's 318,318 in J11 (#499); the pass is taken, the saddle onto
@@ -918,8 +963,8 @@ what is new, with points of interest and a first share of the pay.
     each, 6 bears at 1,667, 25,862 over six) and 1,200 gold, the cache's 900 and the cairn's 300;
     its find, the Guide's Staff +1, is the ladder's and inside the window. It claims nothing as new
     (§9, #491's 14).
-  - **Walkthrough.** `rimewater/walkthrough.ts` takes L9's pass at 17, 18 and 20, hears the cold
-    loch's words after the pass's own and takes the way back; walks K9's south edge onto K10's
+  - **Walkthrough.** `rimewater/walkthrough.ts` walks the road west from L10's 0,3 onto K10's 31,3 at 17, 18 and 20, hears the
+    cold loch's words and walks back; walks K9's south edge onto K10's
     north; walks the road square to square from the bridge to the mouth and out by the west edge;
     counts the milestone (112 squares to the lodge's gate and 72 over the pass to the monks' gate);
     sees the step, the pilgrims, the graves and the shoulder; wins the eight groups at 20, the pike
@@ -927,17 +972,18 @@ what is new, with points of interest and a first share of the pay.
     squares walked, waded, climbed or floated reaches it): searched at the dark lamp, walked into,
     with the lamp's silver and the Guide's Staff +1 in the chest.
 
-### 4.8 L10, L11, M10, M11, N9, J9 and K11, the country behind (#497): country, band 20–22; J9 and K11 built, the other five parked
+### 4.8 L10, L11, M10, M11, N9, J9 and K11, the country behind (#497): country, band 20–22; all seven built
 
-- **Purpose.** The lochs' far shores and the pines behind the road, built once the owner has played
+- **Purpose.** The lochs' far shores and the pines behind the road, built after the owner had played
   the act (call 10): Loch Fada's length west and north (L10, L11, M10, M11), the glacier's edge in
-  N9, with Glacier Foot's sliver of 255 drawn closed, and Loch Fuar's west and south (J9, K11).
-- **Encounters.** Lynx, pike, bears at the glacier's edge; a den (#88).
-- **Pay.** About 1,000 xp a member each (§8). The rest of the brief of each box still parked is
-  written when the box is built.
+  N9, with Glacier Foot's slivers in M11 and N9 drawn closed and Loch Fuar's west and south (J9,
+  K11). All seven are built, and this closes #497.
+- **Encounters.** Lynx, pike and bears; the den (#88) in none of the seven (§9, #497's 1 and 20).
+- **Pay.** About 1,000 xp a member each in the brief (§8). As built J9 and K11 pay 820 a box between
+  them and the five after them about 900 (§8; §9, #497's 2 and 19).
 - **As built, J9 and K11** (#497, 10 October): both laid whole in Loch Fuar at band 20–22, the
   zone's 21–22 lowered by one as K9's and K10's are (§9, #497's 3), with no exit, no den (§9,
-  #497's 1) and no step of the quest. L10, L11, M10, M11 and N9 are not built.
+  #497's 1) and no step of the quest.
   - **J9, Loch Fuar's far shore** (`coldmere_j9`, corner 296,254; start 31,20, facing west).
     **The shore.** The cold loch's west shore: open water in the north-east corner, the shallows
     drawn as ice along the strand (§9, #497's 4), sand, the meadow above it and pines everywhere
@@ -1000,11 +1046,11 @@ what is new, with points of interest and a first share of the pay.
     again. K11's west (328) meets J11's east (327, Monks' Vale, #499) square for square: mountain
     at rows 1 to 13, hills at 14 to 17, grass at 18 to 30 and a hill at 31; walked from J11's 31,20
     onto K11's 0,20, which says "Loch Fuar." to a company at 20, and straight back it says nothing.
-    K11's east (359) lies against L11 (not built): open water at rows 0 to 6 (y 318 to 324), ice at
-    7 and 8 and pines from 9 (327 to 349), with only the lake's ice and water in rows 0 to 8 and
+    K11's east (359) meets L11's west (360, built, #497): open water at rows 0 to 6 (y 318 to 324),
+    K11's ice against L11's shallows at 7 and 8 and pines from 9 (327 to 349), pinned both ways, with
     the event `k11_east` at 29,15 within 3 squares of it. K11's south (y 349) lies against K12 (not
     built): hill, grass, 8 pines, the crags at 14 to 22 (read as void) and 9 pines. The world ends
-    past both of those, pinned. The outdoors test follows the neighbours: K10's south edge, J11's
+    past it, pinned. The outdoors test follows the neighbours: K10's south edge, J11's
     east edge and I9's east edge no longer end the world, and J11's and I9's read mountain, not void.
   - **Measured.** At 20 a company wins every fight in both, and at 18 too, owed to #18 as K9's is.
     J9 manages 8.81 fights to a rest, inside the aim, 1% of its days ending in a fight broken off;
@@ -1022,6 +1068,161 @@ what is new, with points of interest and a first share of the pay.
     onto K11's 20,0, and east from J11's 31,20 onto K11's 0,20 and back; the tracks, the cleft and
     the bells; the bears won at 20; the ice-house shut but for its door, the sledge seen, the bank
     searched from 23,10 facing south and the ice-house walked into with its strongbox.
+- **As built, L10, L11, M10, M11 and N9** (#497, 10 October): all five laid whole in Loch Fada at band
+  20–21, the zone's, the brief's 20–22 lowered by one as L9's is (§9, #497's 12), with no exit, no den
+  (§9, #497's 20) and no step of the quest. Each has a group of 20 near the way in, a pair of ice bears
+  far off and one secret.
+  - **L10, the cold loch's head** (`longmere_l10`, corner 360,286; start 6,0, facing south).
+    **The land.** The road from L9's south edge (6,0 and 7,0) bends west across the corner to the west
+    edge at 0,3, against K10's 31,3. The cold loch's east shore runs down the west side, deep water
+    at the edge and the atlas's shallows drawn as ice at 3 to 8 on rows 10 to 31, the river's mouth
+    at rows 7 to 9 left water (§9, #497's 18). The ridge between the lochs runs south down the middle
+    (10 to 20) and cuts the box in two: the west strip, road and shore, is walked from L9 west of the
+    ridge and from K10, the east half, pines, meadow and hills, from L9 east of the ridge and from M10.
+    The density check counts 715 open squares against the table's 677 walkable: the shore ice is walked.
+    **The landmarks.** The road's bend (`l10_road`, 3,2); the loch's head, the river under the bridge
+    (`l10_head`, 3,6); dead pines standing in the loch (`l10_trees`, 7,12); an old road going down
+    into it (`l10_drowned`, 9,24); a camp, The fishers' shelter (10,28); a cairn, 100 gold and a great
+    spell-point potion (`l10_cairn`, 12,30); scree under the ridge (`l10_scree`, 20,3); a holed stone
+    that gives endurance (`l10_stone`, 28,7); the glacier from the hills (`l10_hills`, 28,14); a
+    frost-split pine (`l10_split`, 19,18); and a hind dragged under the pines, the bears' sign
+    (`l10_kill`, 22,27). A trapper at 24,22 says the cats' pines lie south under the ridge's end.
+    **The secret.** The hint is blazes on the pines in a line to the ridge's foot, ending at bare rock
+    (`l10_blazes`, 8,6). Searched from 9,6, the rock gives at 10,6 on the old trappers' store
+    (`l10_store`, 11,6): the box (`l10_box`), 200 gold and an elixir. The store is shut in rock to
+    walkers, swimmers, climbers and floaters, and stands in the ridge's west foot by the road so that
+    the hint is seen from the box's start (§9, #497's 22).
+    **The groups.** Two ice pike under the shore ice (`l10_pike`, 5,14; back a day after they fall),
+    the nearest at 15 steps (level 20), and a pair of ice bears in the far pines (`l10_bears`, 25,29;
+    back after two days), the hardest at 48 (level 21).
+  - **L11, the pines under the ridge's end** (`longmere_l11`, corner 360,318; start 10,0, facing
+    south). **The land.** In from L10 over the north edge. The cold loch's south end in the
+    north-west corner, the shallows drawn as ice at 1 to 7 on rows 0 to 7 (§9, #497's 18) and column 0
+    left the atlas's water; the pines west of the ridge, the bog between them and the ridge, the ridge
+    running south-east and along the south edge and east of it a strip of pines and bog under the
+    glacier. The density check counts 806 open squares (the table's 796). Its ground is mostly Loch
+    Fuar's on the atlas and laid in Loch Fada (§9, #497's 12).
+    **The landmarks.** The stumps in the ice (`l11_shore`, 8,4); a cat cut in a boulder that gives
+    speed (`l11_cat`, 13,5); a cairn, 100 gold and a healing potion (`l11_cairn`, 2,13); a lynx's
+    lie-up (`l11_lie`, 10,16); the bog (`l11_bog`, 18,14); a tar-burner at 13,24, whose father felled
+    the stumps when the loch was a field lower, and his camp, The tar kiln (12,26); the bog east of the
+    ridge under the glacier (`l11_east`, 27,2; `l11_reeds`, 28,14); and the mountain at the south edge
+    (`l11_south`, 8,30).
+    **The secret.** The hint is a long mound with a stone like a lintel (`l11_mound`, 7,20). Searched
+    from 6,20, the rock gives at 5,20 on the earth-house (`l11_house`, 4,20): the kist (`l11_kist`),
+    200 gold and a great spell-point potion. It is shut in rock as the store is.
+    **The groups.** Three snow lynx in the pines below the loch (`l11_lynx`, 12,9; back a day after
+    they fall), the nearest at 11 steps (level 20), and a pair of ice bears under the mountain
+    (`l11_bears`, 6,28; back after two days), the hardest at 32 (level 21).
+  - **M10, the loch's foot** (`longmere_m10`, corner 392,286; start 16,0, facing south).
+    **The land.** South from M9's east shore. The loch is open water at rows 0 to 3, M9's own going
+    on, and frozen from row 4 to its foot at row 25 (#536), walked; the far shore's grass and hills on
+    the west, the east shore under the ridge (19 to 25), the lynx's pines past the ridge and the
+    burn in off N10 at rows 17 to 19, frozen, the only way through the ridge into the south-east
+    pines (§9, #497's 17). The density check counts 864 open squares.
+    **The landmarks.** The shore (`m10_shore`, 17,3); a camp, The fishers' camp (17,9) and an ice
+    fisher at 18,10 who says the pike lie under the ice and the bears come down the burn off the
+    glacier; holes in the ice (`m10_holes`, 10,14); the burn (`m10_burn`, 24,17); pines past the
+    ridge (`m10_pines`, 27,11); a cairn, 100 gold and a great spell-point potion (`m10_cairn`, 27,4);
+    prints in the snow (`m10_prints`, 28,29); the far shore (`m10_far_shore`, 4,22); a boat
+    (`m10_boat`, 10,25); and the way south (`m10_south`, 10,29).
+    **The secret.** The hint is sledge runs from the holes that stop at the bank (`m10_runners`,
+    16,21). Searched from 16,21 facing east, the turf gives at 17,21 on the fishers' ice-house
+    (`m10_icehouse`, 18,21): the box (`m10_icehouse_chest`, 19,21), 200 gold and an elixir. It is
+    shut in rock (17 to 20, rows 20 to 22) as the others are; its door is at 17,21, not 17,20 (§9,
+    #497's 24).
+    **The groups.** Two ice pike under the loch's ice off the holes (`m10_pike`, 8,9; back a day
+    after they fall), the nearest at 17 steps (level 20), and a pair of ice bears in the pines past
+    the burn (`m10_bears`, 27,25; back after two days), the hardest at 36 (level 21).
+  - **M11, the pines under the rim** (`longmere_m11`, corner 392,318; start 10,0, facing south).
+    **The land.** South from M10's pines. The pinewood; the marsh at the west edge (columns 0 and 1,
+    rows 11 to 18); the ridge from M10 down to the glacier on the east, with Glacier Foot's sliver of
+    37 squares (rows 5 to 17, columns 27 to 31) all mountain; and the rim's range along the south
+    (rows 22 to 31), the atlas's nine void squares on row 31 kept (§9, #497's 16). The density check
+    counts 645 open squares.
+    **The landmarks.** The pinewood (`m11_pinewood`, 6,4); the pocket east of the ridge
+    (`m11_under_ridge`, 28,2), reached from M10's south-east pines; a cairn, 100 gold and a healing
+    potion (`m11_cairn`, 22,8); the marsh (`m11_marsh`, 4,15); a trapper at 13,11 who says the bears
+    den up there; the ridge (`m11_ridge`, 24,13); a camp, The trappers' lean-to (7,19); the rim
+    (`m11_rim`, 4,22); and a hollow (`m11_hollow`, 24,21).
+    **The secret.** The hint is snares on the pines in a line to the rock, all sprung and empty
+    (`m11_snares`, 13,20). Searched from 13,21 facing south, the rock gives at 13,22 on the trappers'
+    cache (`m11_cache`, 13,23): the chest (`m11_cache_chest`, 13,24), 200 gold and a great
+    spell-point potion. It is shut in rock (12 to 14, rows 22 to 25).
+    **The groups.** Three snow lynx (`m11_lynx`, 14,5; back a day after they fall), the nearest at 9
+    steps (level 20), and a pair of ice bears under the rim (`m11_bears`, 21,19; back after two
+    days), the hardest at 30 (level 21).
+  - **N9, the glacier's edge** (`longmere_n9`, corner 424,254; start 0,10, facing east).
+    **The land.** In from M9's pines at rows 9 and 10, its only way. The Rimefells closed along the
+    north (rows 0 to 6, and the diagonal to row 10), the atlas's hills and heather there drawn as
+    mountain (§9, #497's 15); pines down the west; the bent woods in the middle; the moraine's
+    hills; and the glacier's foot as ice (columns 27 to 29 from row 12, rows 27 to 29 from column
+    12) under a mountain wall (columns 30 and 31, rows 30 and 31) closed against O9 and N10, Glacier
+    Foot's four squares in the corner wall (§9, #497's 16). The density check counts 636 open squares.
+    **The landmarks.** The shoulder (`n9_shoulder`, 3,10); a cairn, 100 gold and a healing potion
+    (`n9_cairn`, 15,11); the bent woods (`n9_woods`, 10,20); a camp, The cutters' bothy (5,25); the
+    moraine (`n9_moraine`, 24,14); the ice wall (`n9_wall`, 28,15); the snow trodden (`n9_trodden`,
+    20,28); and the bears' cave in the wall's foot (`n9_cave`, 26,22), an event and no den.
+    **The secret.** The hint is a bear's skull on a stake before the fell's face, the snow trodden
+    round it (`n9_skull`, 24,10). Searched from 24,10 facing north, the face gives at 24,9 on the
+    hunters' hide (`n9_hide`, 24,8): the chest (`n9_hide_chest`, 24,7), 200 gold and an elixir. It is
+    shut in rock (23 to 25, rows 6 to 9).
+    **The groups.** Three snow lynx (`n9_lynx`, 8,12; back a day after they fall), the nearest at 10
+    steps (level 20), and a pair of ice bears at the glacier's foot (`n9_bears`, 25,22; back after
+    two days), the hardest at 37 (level 21).
+  - **Seams, L10 to N9.** L10's north, 0,0 to 31,0 (360 to 391,286), meets L9's south row (285): the
+    road at 6 and 7 against L9's 6,31 and 7,31, walked, pines either side at 0 to 5 and 8 to 10, L9's
+    ridge at 11 to 16 against L10's pines at 11 and its ridge at 12 to 17. L10's west (x 360) meets
+    K10's east (359): the road at 0,3 against K10's 31,3 (359,289), walked, pines at rows 0 to 2 and 4
+    to 6, the river at 7 to 9 (L10's row 9 water, K10's deep) and the lake below. L10's east (391)
+    meets M10's west (392): grass at rows 0 to 12 and hills at 13 to 16 both sides, then grass and
+    pines at the foot (L10's pines from row 27, M10's from 28), pinned both ways; the shrine
+    `l10_stone` at 28,7 and the event `l10_hills` at 28,14 lie within 3 squares of it and no group.
+    L10's south (317) meets L11's north (318): deep water at 0 to 4 in L10 and 0 to 5 in L11, the
+    shore ice at 5 and 6 and at 6 and 7, pines at 7 to 16 and 8 to 17, the ridge at 17 to 20 and 18
+    to 20 and pines at 21 to 31 both. L11's west (360) meets K11's east (359), column 0 deep water at
+    rows 0 to 6, water at 7 and 8 against K11's ice and pines from 9, pinned both ways; the cairn
+    `l11_cairn` at 2,13 and the earth-house's rock at 3,19 to 3,21 lie within 3 squares of it and no
+    group. L11's east (391) meets M11's west (392): pines at rows 0 to 8 and 0 to 10, the bog at 9 to
+    19 and the marsh at 11 to 18, pines, then the ridge's mountain at 26 to 31 against the range, the
+    last square void, pinned both ways; `l11_reeds` at 28,14 lies within 3 squares of it. L11's
+    south (y 349) is pines at 0 to 16 and mountain from 17 against L12 (not built): the world ends
+    past it, pinned. M10's north meets M9's south row (see §4.2); its west meets L10's east (above);
+    its east is pines and the burn frozen at rows 18 and 19 against N10 (cut), void past; its south
+    (y 317), pines at 0 to 19, the ridge at 20 to 24 and pines from 25 against M11's north, pines at
+    0 to 19, the ridge at 20 to 25 and pines from 26, walked either side of the ridge (the
+    walkthrough takes M10's 10,31 onto M11's 10,0). M11's east is pines at rows 0 to 4 and 18, the
+    ridge and the sliver otherwise, against N11 (cut), void past; its south, the range and the
+    atlas's nine void squares, against M12. N9's west meets M9's east at rows 9 and 10 alone (M9's
+    31,9 and 31,10 against N9's 0,9 and 0,10, pines), elsewhere M9's mountain (rock at 31,24) against
+    N9's pines at rows 7 to 29 and mountain; N9's north is all mountain against N8's south row (N8's
+    0,31 and 1,31 mountain, hills at 2 to 16, heather at 17 to 31), and N8's south edge is re-pinned
+    in the outdoors test, its two squares reading mountain, not void; N9's east and south, the
+    glacier's wall, are void past (O9 and N10, cut).
+  - **Measured, L10 to N9.** At 20 a company wins every fight in all five, and at 18 too, owed to #18
+    as K9's is. L10 and M10 manage 12.05 fights to a rest, past the aim of 8 to 10 and inside the
+    limit of 12.5, 1.3% of their days ending in a fight broken off; L11, M11 and N9 11.06, 1.7% (§9,
+    #497's 19). Density, within 12 steps (the country floor): L10 100.0% (715 of 715) and the
+    furthest 10, with no sign among its 16 points; L11 96.5% (778 of 806) and the furthest 18, with
+    none among its 14; M10 99.0% (855 of 864) and the furthest 17, with none among its 16; M11 100.0%
+    (645 of 645) and the furthest 10, with none among its 14; N9 100.0% (636 of 636) and the
+    furthest 11, with none among its 13. The curve's rank correlation is 1.00 in each. L10 and M10
+    pay 820 xp a member (two pike 1,586 and two bears 3,334, over six); L11, M11 and N9 952 (three
+    lynx 2,379 and two bears 3,334, over six); 4,496 between the five. Each holds 300 gold, the
+    secret's 200 and a cairn's 100. The finds are potions and elixirs, none that sells (§9, #497's
+    21). None claims anything as new.
+  - **Walkthrough, L10 to N9.** `rimewater/walkthrough.ts` walks the road from L9's south edge across
+    L10's corner to K10 and from L10's 0,3 onto K10's 31,3 at 17, 18 and 20 for the cold loch's words
+    (L9's and K10's old pass steps, rewritten as the road walked); after `fuarBehind` and before the
+    bay's step it walks L10 (the trapper, both groups won at 20, the store shut but for the rock, the
+    blazes seen, the rock searched and the store walked into with its box) and L11 in from L10 (the
+    tar-burner's words, both groups won, the earth-house shut but for the lintel, the mound seen and
+    searched, the kist); then M10 south from M9's 16,31 (the ice fisher, the frozen burn walked to the
+    bears, the pike under the ice, both groups won, the ice-house shut to swimmers, climbers and
+    floaters and found from the runs), M11 south from M10's 10,31 (the trapper, both groups won, the
+    cache found from the snares) and N9 east from M9's 31,10 (walked in at rows 9 and 10 alone, the
+    world's end past its east and south, Glacier Foot's slivers in M11 and N9 closed with nothing on
+    them, both groups won, the hide shut and found from the skull). M9's hollow stays shut to a climber.
 
 ## 5. The one quest here
 
@@ -1253,7 +1454,9 @@ times, four to a group, by the bridge, by the lamp and south of the pass's foot;
 under the lake's shore ice; and ice bears in pairs three times, the box's hardest at 21 (§4.7).
 J9's two (#497) are four ice pike under the strand's ice and a pair of ice bears under the
 mountain, the box's hardest at 21; K11's one is a pair of ice bears in the cleft under the crags
-(§4.8).
+(§4.8). The five in Loch Fada (#497) have two each: two ice pike under the ice and two ice bears in
+L10 and M10, three snow lynx and two ice bears in L11, M11 and N9, the bears the hardest at 21 in
+each (§4.8).
 
 Taken, against the roster's Where column, and built on L9's ridge, K9's far shore, the bay's stair
 and K10's pass (#488, #489, #490, #491): the Ice Bear on the lochs' shores, the ridge and the pass
@@ -1284,7 +1487,7 @@ its exit was listed (#489's 15). The bay (#490) claims the keepers, the family i
 sleeping touch is on the road before it (the check refused `inflict:asleep`), and a lock or a
 dungeon entered from the ice is no kind the check knows, so neither is claimed (#490's 19). K10
 (#491) claims nothing: a landmark claim is an atlas site's icon, and the pass is no site (#491's
-14). J9 and K11 (#497) claim nothing.
+14). J9 and K11 (#497) and the five after them claim nothing.
 
 ## 8. The numbers
 
@@ -1293,14 +1496,14 @@ dungeon entered from the ice is no kind the check knows, so neither is claimed (
   member, with today's `xpForLevel`. The shares of §4 are M9 1,500, Rime Lodge 500, L9 1,300, K9
   1,500, the bay 2,400, K10 1,100 and the five side quests about 900 between them: about 9,200,
   some 43% under the curve. The gap is the country behind's: seven boxes at about 1,000 each
-  (§4.8), parked (call 10), which with the road's shares come to about 16,200. Saltreach's and
+  (§4.8), parked (call 10) and built since (#497), which with the road's shares come to about 16,200 by the brief. Saltreach's and
   Sunderwood's shares were set to sum a little over their curves so that a kill paid by level could
   damp them (docs/areas/saltreach.md §8); here a company that clears the road alone leaves for the
   pass about a level short of the Whitespine's floor. Either the road's shares rise, each box priced
   by its fights at about 300 a fight as the built boxes were, or part of the country is unparked
   with the act: §9 puts it to the owner. Each box is priced when it is built and recorded here, and
-  the curve's row reports what a clear falls short of as owed to #497, the country behind, now the
-  area is built.
+  the curve's row kept what a clear fell short of as owed to #497, the country behind, until the
+  area was built; it keeps none now.
   Scaled to the curve, which §9 proposes as the briefs' working figures until each box is built,
   the shares are M9 2,650, Rime Lodge 900, L9 2,300, K9 2,650, the bay 4,250, K10 1,950 and the
   side quests about 1,600: about 16,300. The issues (#486 to #494) carry the first figures until
@@ -1334,10 +1537,15 @@ dungeon entered from the ice is no kind the check knows, so neither is claimed (
   gives 22,645, 129 under the line.
   J9 and K11 (#497) pay 1,640 between them: J9 1,084 (four pike at 3,172 and a pair of bears at
   3,334, over six) and K11 556 (a pair of bears, 3,334 over six), 820 a box against the brief's
-  1,000 (§9, #497's 2). A clear gives 24,285 xp a member of the 16,267 asked, with five of the
-  country's seven boxes still to build. Entered at its floor and three quarters cleared, paid by
-  level, a company leaves at 22.5, +0.5 over the next floor, 22 (+0.4 before the two), where the
-  lead allows +1 (EXPANSION §5.2, #634).
+  1,000 (§9, #497's 2). A clear gave 24,285 xp a member of the 16,267 asked with those two, five of
+  the country's seven boxes still to build, and a company left at 22.5, +0.5 over the next floor, 22
+  (+0.4 before the two). The five after them (#497) pay 4,496 between them: L10 820 (two pike at
+  1,586 and two bears at 3,334, over six), L11 952 (three lynx at 2,379 and a pair of bears at
+  3,334), M10 820, M11 952 and N9 952, about 900 a box against the brief's 1,000 (§9, #497's 19). A
+  clear gives 28,781 xp a member of the 16,267 asked, the seven built. Entered at its floor and three
+  quarters cleared, paid by level, a company leaves at 22.8, +0.8 over the next floor, 22, where the
+  lead allows +1 (EXPANSION §5.2, #634); the budget's 1.4 times line above is the old rule, and the
+  lead is what the curve test holds.
 - **Gold.** Training six members from 20 to 22 costs about 9,840 with today's `trainPrice`, and
   tier 7 its fee at the hall (#20; the Watch's is 400). A clear should pay for the training at
   least, in chests, drops and the hall's pay; the furrier's step is priced within the band's window
@@ -1356,14 +1564,15 @@ dungeon entered from the ice is no kind the check knows, so neither is claimed (
   inside the window too. K10 adds 1,200 (#491), the Lanterns' cache's 900 and a cairn's 300; its
   find, the Guide's Staff +1 at 1,750, is the ladder's and inside the window too, and the clear
   holds 6,720 of the 9,840. A Sword at the Hole pays 300 more (#439): 7,020. The coachman pays 200
-  for the healer's note (#494), and no answer pays gold: 7,220, which the curve's owed row keeps.
-  The 2,620 short stays owed to the country behind (#497): gold is cumulative, and Act III gives
+  for the healer's note (#494), and no answer pays gold: 7,220, which the curve's owed row kept.
+  The 2,620 short was owed to the country behind (#497): gold is cumulative, and Act III gives
   1.15 times its ask. Paid by level, the country lands on the lead's line (EXPANSION §5.2, #634),
   so its seven boxes should pay a little under the brief's 1,000 xp each. J9 and K11 add 2,000
   (#497), a strongbox of 700 and a cairn of 300 in each, and their finds are potions, none that
-  sells (§9, #497's 6): the clear holds 9,220 of the 9,840, 620 short, and the curve's owed row
-  keeps 9,220 as its floor. At 1,000 a box the next one meets the 620 and removes the entry; those
-  after it may carry less.
+  sells (§9, #497's 6): the clear held 9,220 of the 9,840, 620 short. The five after them add 1,500
+  (#497), the store's, cache's, kist's, ice-house's or hide's 200 and a cairn's 100 in each, and their
+  finds are potions and elixirs, none that sells (§9, #497's 21): the clear holds 10,720 of the 9,840,
+  880 over, and the curve's owed row is gone.
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
   (docs/areas/thornmark.md §9, 17): a company at 20 wins nine in ten of M9's fights and walks the
   drove road to the lodge resting at the inn; one at 18 wins no more than one in four, which is how
@@ -1388,10 +1597,13 @@ dungeon entered from the ice is no kind the check knows, so neither is claimed (
   K10 (#491) the same: at 20 every fight won, 9.45 fights to a rest, 0.7% of its days ending in a
   fight broken off; at 18 every fight won too, owed to #18; its road is not the zone's (§4.7). J9
   and K11 (#497) the same: at 20 every fight won, 8.81 and 8.09 fights to a rest, 1% and 3.3% of
-  their days ending in a fight broken off; at 18 every fight won too, owed to #18 (§4.8). With
+  their days ending in a fight broken off; at 18 every fight won too, owed to #18 (§4.8). L10 and M10 (#497) at 20: every fight won, 12.05 fights to a rest, past the aim
+  and inside the limit of 12.5, 1.3% of their days ending in a fight broken off; L11, M11 and N9 the
+  same, 11.06 and 1.7%; at 18 every fight won too in each, owed to #18 (§4.8). With
   the bay and K10, Rimewater at its maps' floors wins 98.8% of its 35 groups' fights (98.5% of 27
   before K10), the Matron being the shortfall; a company two under wins 97.2% (96.4%), owed to #18;
-  with J9 and K11, 98.9% of its 38 groups' fights, and 97.4% two under, owed to #18.
+  with J9 and K11, 98.9% of its 38 groups' fights, and 97.4% two under, owed to #18;
+  with the five after them, 99.1% of its 48 groups' fights, and 98% two under, owed to #18.
   The side quests (#494) place no group, and the gate is as it was.
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3); the
   bay as a dungeon, 90% within 7 and none past 10. As built: M9 98.0% within 8 steps and the
@@ -1404,7 +1616,11 @@ dungeon entered from the ice is no kind the check knows, so neither is claimed (
   5, with one sign among its 14 (#490); K10 99.9% within 8 steps (848 of 849) and the furthest 9,
   with no sign among its 25 points (#491); J9 100.0% within 12 steps (836 of 836) and the furthest
   10, with no sign among its 17 points, and K11 100.0% (751 of 751) and the furthest 12, with no
-  sign among its 15 (#497). With the chapter and the side quests (#492, #494), as the
+  sign among its 15 (#497); L10 100.0% (715 of 715) and the furthest 10, with no sign among its 16
+  points; L11 96.5% (778 of 806) and the furthest 18, with no sign among its 14; M10 99.0% (855 of
+  864) and the furthest 17, with no sign among its 16; M11 100.0% (645 of 645) and the furthest 10,
+  with no sign among its 14; and N9 100.0% (636 of 636) and the furthest 11, with no sign among its
+  13 (#497). With the chapter and the side quests (#492, #494), as the
   check prints it now: M9 the same, with one sign, the old marks at the ice's edge, among its 34
   points; Rime Lodge the same, with no sign among its 27; K9 the same, with one sign, the bell's lip,
   among its 30; K10 the same, with no sign among its 28.
@@ -1433,8 +1649,8 @@ Decided by the owner's delegate on 2 October 2026 (#434), and followed here:
 5. **The Lanterns' fourth rank opens at Lantern Watch and Rime Lodge** (call 8, #439): built as
    the Luminary asks at every Lantern hall, the goals naming these two to report at (§6).
 6. **The drove road's coach runs Kilnhaven ↔ Rime Lodge** (call 9, #539).
-7. **The cuts stand, and the country behind is parked** (call 10): §11, and #497; J9 and K11 are
-   built since (§4.8), the other five not.
+7. **The cuts stand, and the country behind was parked** (call 10): §11, and #497; all seven boxes
+   are built since (§4.8).
 8. **All of #56's 40 to 44 stand** (call 11), with 43 ended at Loch Fada's edge and 40's coach found
    stopped on Cairnmoor's N8.
 
@@ -1443,7 +1659,7 @@ Proposed, for the owner, each in the issue that would build it:
 - **The briefs** of §4.2 to §4.8: each box's landmarks, points of interest, encounters, secret and
   hint, finds and share of the pay.
 - **The core** is M9, K9 and K10, the boxes that hold a step; L9 is country, and the seven behind
-  are parked (§4).
+  are built (§4).
 - **L9 is laid in Loch Fada,** all of it, so Loch Fuar begins at K9 and K10 and the crossing line
   falls at L9's west edge (§4).
 - **The ice-hole is on M9,** a few squares out from the lodge's lake wall, the inn yard's door its
@@ -1604,7 +1820,8 @@ Decided by delegate for #486, each the owner's to overturn:
    shore and out at 0,20, where the atlas's road crosses. South of the ice the loch is open water.
 7. **The atlas's farm at the loch's head and its mountain spur are redrawn:** the lodge's walls, the
    ice and the hills over the loch; along the east, ice at the glacier's foot (columns 26 to 28)
-   under a mountain wall (29 to 31), closed against N9 (call 7).
+   under a mountain wall (29 to 31), closed against N9 (call 7) but for the pines at rows 9 and 10
+   (§9, #497's 13).
 8. **Seven groups for the brief's eight,** the fourth night's being #487's: snow lynx, four to a
    group, in three (by the landing, the gentlest; under the fells; south-east); ice pike, four, in
    two under the ice; ice bears, two, in two at the glacier's edge, the hardest. The harness gives
@@ -1642,7 +1859,7 @@ Decided by delegate for #486, each the owner's to overturn:
 20. **The Cairnfield is held in M8 by seeds** (laid since, #484; M9's north-west corner is walked from it) along its south edge (y 253, x 392 to 423,
     `cairnmoor/atlas.ts`): laid whole, M9 seeded Loch Fada up the Rimefells into most of M8. N9's
     north-west corner (x 424 to 426, y 254 to 259) goes from the Cairnfield to Loch Fada and is left
-    so, N9 being Rimewater's (§4.8).
+    so, N9 being Rimewater's (§4.8); N9, built, is laid whole in Loch Fada (§9, #497's 12 and 15).
 21. **Pay is the gate's, not the brief's:** 3,754 xp a member against the issue's 1,500 and §8's
     scaled 2,650. Rimewater stands at 3,754 of 16,267; with §8's scaled shares still to come, about
     13,650, at about 17,400, under 1.4 times the ask (22,774), so no group is cut.
@@ -1707,18 +1924,19 @@ Decided by delegate for #487, each the owner's to overturn:
 
 Decided by delegate for #488, each the owner's to overturn:
 
-1. **The road keeps the atlas's line,** out by the south edge at 6,31 and 7,31 and on across parked
-   L10's corner to K10: the atlas's road never enters K9, and the edge check holds a map's roads to
-   the atlas beyond its edge (a road out of the west edge failed it, and so did closing the south
-   edge). The brief's road west for K9 could not hold without editing the shared atlas.
-2. **The road is taken from the south edge, not walked** (`PASS`, 6,31, as N8's notch is): L9 and
-   K10 meet only at a corner, parked L10 between. It led to `coldmere_k10` at 31,4 (359,290), facing
+1. **The road keeps the atlas's line,** out by the south edge at 6,31 and 7,31 and on across L10's
+   corner (parked then, built since, #497) to K10: the atlas's road never enters K9, and the edge
+   check holds a map's roads to the atlas beyond its edge (a road out of the west edge failed it, and
+   so did closing the south edge). The brief's road west for K9 could not hold without editing the
+   shared atlas.
+2. **The road was taken from the south edge, not walked** (`PASS`, 6,31, as N8's notch is): L9 and
+   K10 met only at a corner, L10 between, parked. It led to `coldmere_k10` at 31,4 (359,290), facing
    west, a guess at the atlas's road at K10's east edge, and was listed in no exits. Built (#491):
-   it is listed, the landing is the bridge at 30,3 (358,289) and K10's way back lands on 7,31 facing
-   north, which stays plain road (#491's 1).
+   it was listed, the landing the bridge at 30,3 (358,289) and K10's way back landing on 7,31 facing
+   north (#491's 1). L10 laid (#497), the road is walked and `PASS` is gone (#497's 10).
 3. **No road crosses the west edge:** it is the loch's ice at rows 0 and 1 and pines below, against
-   K9 (#489). The crossing line (#166) falls there once K9 is laid in Loch Fuar, and the pass for
-   K10 says it after its label; Loch Fuar's atlas row has no `crossing` words yet, so the engine's
+   K9 (#489). The crossing line (#166) falls there once K9 is laid in Loch Fuar, and the road on to
+   K10 says it; Loch Fuar's atlas row has no `crossing` words yet, so the engine's
    defaults speak until K9 writes them.
 4. **Band 20–21, the floor lowered by one from the brief's 21:** nothing on the surface is 22, and
    a band of 21 alone would ask a hardest group at 22 (§7); as N2, N8, O8 and Carn Dubh. The bear,
@@ -1899,12 +2117,13 @@ exit and the lock):
 
 Decided by delegate for #491, each the owner's to overturn:
 
-1. **The way in is L9's `PASS`, its landing moved to the bridge at 30,3,** facing west, from the
+1. **The way in was L9's `PASS`, its landing moved to the bridge at 30,3,** facing west, from the
    guess 31,4 (#488's 2): the edge check holds the road to the atlas beyond, and the atlas's road
-   leaves K10's east edge at 360,289 (row 3), not 290. The way back, `RIDGE`, is the road's last
-   square, 31,3, beside the landing (a landing is never an exit), and lands on L9's 7,31 facing
-   north. L9 lists `PASS`; both are taken, not walked, as N8's notch is. The words that called the
-   landing a guess are gone from L9's file and from §4.4, §4.7, §9 and §11.
+   leaves K10's east edge at 360,289 (row 3), not 290. The way back, `RIDGE`, was the road's last
+   square, 31,3, beside the landing (a landing is never an exit), and landed on L9's 7,31 facing
+   north. L9 listed `PASS`; both were taken, not walked, as N8's notch is. L10 laid (#497), the road
+   is walked and both are gone; the bridge at 30,3 stays K10's start (#497's 10 and 11). The words
+   that called the landing a guess are gone from L9's file and from §4.4, §4.7, §9 and §11.
 2. **The road keeps the atlas's line:** in over the lake's river on split logs (30,3) and out by the
    west edge at 0,19 only, the atlas beyond 0,18 being pine, so that 0,18 is a hill. Four joint
    squares (26,5; 18,8; 9,12; 7,13) are added so that it runs square to square, and the river is
@@ -2065,6 +2284,60 @@ Decided by delegate for #497, each the owner's to overturn:
 9. **The walkthrough's steps are one function,** `fuarBehind`, called after K9's step, so the steps
    of the other country boxes meet it at one line.
 
+Decided by delegate for #497, each the owner's to overturn:
+
+10. **The road across L10's corner is walked:** L9's `PASS` and K10's `RIDGE` are gone, as §11 asked.
+    Kept, they threw a company walking L10's road west onto K10's 31,3 back to L9's 7,31, and one
+    walking north up L10's road at column 6 onto K10's bridge.
+11. **No arrival line on the walked road:** the crossing says the cold loch's name and feel as any
+    walked border does (*Loch Fuar.* at 20, its harder words at 18, its warning at 17; *Loch Fada.*
+    coming back from elsewhere); the pass's two labels went with its exits. K10's start stays the
+    bridge, 30,3.
+12. **L10, L11, M10, M11 and N9 are laid whole in Loch Fada at band 20–21,** the zone's and L9's, not
+    the table's 20–22: the rise rule wants a group of 21 at the top either way and no wild monster
+    stands at 22. L11's ground is mostly Loch Fuar's on the atlas (756 land squares to Loch Fada's
+    237); a map seeds its zone, so laid, it is Loch Fada's.
+13. **N9 is walked into from M9 alone:** M9's east wall opens at rows 9 and 10, columns 28 to 31, as
+    pines, the pines under the fells running on round the shoulder. N8's edge is Cairnmoor's, and N10
+    and O9 are cut, so nothing else could reach it.
+14. **M9's 31,24 is rock, not mountain:** with N9 laid, M9's east column is no longer the world's
+    end, and a climber on the wall walked 31,22 to 31,24 and into the hollow. The rock keeps it
+    shut, and the walkthrough checks it.
+15. **N9's north is the Rimefells, closed:** the atlas's hills and heather in its rows 0 to 3, the
+    Cairnfield's, are drawn as mountain, so the notch stays the only way between Cairnmoor and
+    Rimewater and no dead-end pocket opens off the moor.
+16. **The glacier's edge in N9 is drawn closed as M9's is:** ice at its foot under a mountain wall
+    along the east and the south, against O9 and N10 (call 7). Glacier Foot's slivers on today's atlas
+    are M11's 37 squares and N9's 4, M10 holding none; all are mountain with nothing on them, and the
+    maps' void is only the atlas's, M11's nine.
+17. **M10's loch is open water under M9's shore and ice from row 4 to its foot,** walked (#536); the
+    burn off N10 is frozen too, the one way through the ridge, else M10's south-east pines and M11's
+    pocket east of the ridge could be walked by nobody.
+18. **The cold loch's margin is iced in L10 and L11,** the atlas's shallows made ice and kept off the
+    K10 and K11 edge columns: the pike live under ice only, and L9 already calls the cold loch white.
+19. **One real fight a box, a group of 20 near the way in and a pair of ice bears far off:** the rise
+    rule needs a group of 21, which only the bears are, with levels rising from the way in, and the
+    pace needs heavy groups. Two pike in L10 and M10 (820 a member, 12.05 fights to a rest), three lynx in L11,
+    M11 and N9 (952, 11.06). Measured: four pike or four lynx with a lone bear 14.1 to 14.2 and two
+    lynx with two bears 12.91, past the limit of 12.5; three pike with two bears 10.12; two bears
+    alone 8.09 (555).
+20. **No den (#88) in any of the seven:** a den's keepers and lighter brood with the bear group put the
+    pace past 12.5 or the pay past 1,000 (keepers three lynx, brood two and a bear: 939 and about 14
+    to a rest; keepers heavy enough for the pace about 1,600; in N9 13.7 to 17.8 to a rest unless the
+    box paid about 1,230 to 1,375). An all-bear den fails the rise rule. The bears keep N9's cave as
+    an event.
+21. **Finds are 300 gold a box (a cairn's 100 and the secret's 200) and potions or elixirs, no
+    gear:** the five carry 1,500 between them; the clear holds 10,720 gold of the 9,840, so
+    Rimewater's owed entry in `progression.ts` goes.
+22. **L10's secret is in the ridge's west foot by the road:** the pillars' hint check walks from the
+    box's start, the road's 6,0, and the ridge cuts L10's east half off inside the box (the first
+    place, 15,18 in the east half, failed it).
+23. **The cold loch rose:** the drowned road, the dead pines and the stumps standing in the ice; the
+    trapper and the tar-burner say only what L9's drover says already ("the year the cold loch
+    rose") and nothing about the bell.
+24. **M10's ice-house door is at 17,21, not 17,20:** at 17,20 the art check dressed its four faces
+    (100%, the cap 50%).
+
 ## 10. Names
 
 Rimewater's naming pass, by the rules of `docs/NAMES.md`, chosen for #435. The lodge-keepers are
@@ -2106,8 +2379,8 @@ coat of mail. It goes into NAMES §2's row for the hill folk, Cairnmoor's and Ri
 - **Glacier Foot whole,** N10, O9, N11 and O10: 2,766 squares of land, 1,775 a company could walk,
   N10 795 (783) with its snow 169 and ice 56, O9 729 (442), N11 639 (279) with the Ice Caves' way in
   at 452,326, and O10 603 (271). The reach (DESIGN §9), off the quest and optional by design, void
-  until Phase 1.6 (call 7). Its slivers in Loch Fada's boxes behind the road (255, 106, 52 and 61)
-  are built closed with them when #497 is unparked, as J4 painted its dead wood over
+  until Phase 1.6 (call 7). Its slivers in Loch Fada's boxes behind the road, M11's 37 squares and N9's 4 (M10 holds none; the
+  plan's 255, 106, 52 and 61 do not match today's atlas), are built closed (#497, §4.8), as J4 painted its dead wood over
   (docs/areas/sunderwood.md §9).
 - **L12:** the rim's mountain south of Loch Fuar, with nothing on the atlas or in the docs. I9, the
   mountain west of J9, counted with it (566 squares between them, 81 walkable), is Sheer Point's
@@ -2117,8 +2390,8 @@ coat of mail. It goes into NAMES §2's row for the hill folk, Cairnmoor's and Ri
   take or leave as the Downs took the Edge's foot (docs/areas/shelf.md §1).
 
 About 3,900 squares void, 2,766 of them the reach's, to come back with Phase 1.6. The country
-behind the road, 5,958 squares in seven boxes (§4.8), is not cut (#497, call 10): J9 and K11 are
-built, the other five parked.
+behind the road, 5,958 squares in seven boxes (§4.8), is not cut (#497, call 10): all seven are
+built, which closes #497.
 
 Cut from a brief as built (§4):
 
@@ -2144,8 +2417,8 @@ Cut from a brief as built (§4):
   the cache behind it stand in its place, as §4.7 has them (#491's 12).
 - **The issue's "all walkable" pass:** the walls are mountain, as §4.7's "two walls of rock" has
   them (#491's 6).
-- **The brief's den (#88)** in J9 and K11: not built, a den's brood and the level-21 bears the rise
-  rule needs pacing past the limit at these boxes' pay (§9, #497's 1).
+- **The brief's den (#88)** in the seven boxes behind the road: not built, a den's brood and the
+  level-21 bears the rise rule needs pacing past the limit at these boxes' pay (§9, #497's 1 and 20).
 
 Owed by Rime Lodge as built (#487, §4.3):
 
@@ -2170,9 +2443,9 @@ Owed by Rime Lodge as built (#487, §4.3):
 
 Owed to the boxes beside L9 as built (§4.4, §4.7):
 
-- **K10 lists L9's pass,** `PASS`, in L9's exits and adds the way back onto L9's 7,31 facing north;
+- **K10 listed L9's pass,** `PASS`, in L9's exits and added the way back onto L9's 7,31 facing north;
   the landing, `coldmere_k10` at 31,4, was a guess for it to move (#488's 2). Built, the landing
-  moved to 30,3 (§4.7; #491's 1).
+  moved to 30,3 (§4.7; #491's 1). L10 laid, the road is walked and both are gone (#497's 10).
 - **K9 puts dry land on its column 31** at rows 2 to 31 against L9's pines and writes Loch
   Fuar's `crossing` words (#488's 3). Built (§4.5; #489's 13).
 
@@ -2243,19 +2516,16 @@ Owed by the side quests as built (§6):
   ice's edge (#494's 7).
 - **To Phase 1.6:** the stairs the guide's party went up where the sky meets the ice, and the Ice
   Caves the marks name (call 7).
-- **To #499 and #497:** K10's east and west edges end the world against parked L10 and J10, pinned
-  in `tools/tests/outdoors.ts` with void past them. The road leaves by the west edge at 0,19
+- **To #499:** K10's west edge ends the world against parked J10, pinned in
+  `tools/tests/outdoors.ts` with void past it. The road leaves by the west edge at 0,19
   (328,305) against the atlas's at 327,305, which goes on over J10's corner to the link's 318,318
-  in J11: #499 lays J11, joins them and moves the pin; #497 does the same for L10 if it is
-  unparked. Built for J11: the saddle lands on J11's 20,1, the pin moved (#499). Built for K11:
-  K10's south edge meets K11's north square for square, the pin moved (#497, §4.8).
-Owed by J9 and K11 as built (#497, §4.8, §8):
+  in J11: #499 lays J11, joins them and moves the pin. Built for J11: the saddle lands on J11's 20,1,
+  the pin moved (#499). Built for K11 and L10: K10's south edge meets K11's north square for square
+  and its east edge L10's west, the pins moved (#497, §4.8).
+Owed by the country behind as built (#497, §4.8, §8):
 
-- **To the five boxes still to build:** the gold is 620 short of the curve's 9,840 (§8). The next box
-  meets it and should remove the owed entry from `progression.ts`; those after it may carry less.
-  Laying a box also changes its built neighbours' own edge strings in `tools/tests/outdoors.ts`,
-  their ring reading mountain, not void, so their pins change as well as their comments, as I9's
-  and J11's did.
+- **To #18:** the two-under figures of L10, L11, M10, M11 and N9, as every box's: every fight won at
+  18, `OWED` in `tools/tests/gate.ts` naming each.
 - **Loch Fuar's crossing words** ("harder than the long loch's shore behind", "the way back east
   under the pines is still open") read wrong to a company under the floor walking into K11 from
   Monks' Vale. K9's walkthrough pins the warning's words, so they are left as they are.
