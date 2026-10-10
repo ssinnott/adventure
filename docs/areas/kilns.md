@@ -1029,7 +1029,7 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   tear closes when the Warden falls, and the Rift's groups and O5's slaglings stop coming
   (`until`); the Warden never comes back.
 - **Quests.** The chapter's entry: the tear closed (§5). The Stone counts for the Hearth once the
-  tear is closed, bought or taken alike (#540, #168), on the flag the Rift sets (§9).
+  tear is closed, bought or taken alike (#540, #168), on the flag the Warden's fall sets (§9).
 - **The secret and its hint.** A hollow in the slag where the Stone's cut face shows through, and
   against it the first cutter's tools, left when the ground opened under him. The hint: the slag
   has run downhill in every lane but one, where it has set running up.
@@ -1056,12 +1056,13 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   holds the head of each side lane, and all of them come back until the tear is closed. The Warden of
   the Anvil stands up out of a cut a square wide in the face, fought only from the square before it,
   its hit points and its blow set off the line by the gate (§9); it never comes back, and drops the
-  Heart of the Anvil (`anvil_heart`), a keepsake. Its fall says the brief's line, and the first step
-  after it, into the cut or back out of it, says the slag has gone black and cold and sets
-  `q_anvil_closed` (#540), as does a first step back in by a company gone another way, or the track
-  beside the tear on O5, where the torn ground has closed over: the Rift's groups, O5's slaglings and
-  the strays on N3, N5 and O6 stop coming back, the hum's lines go quiet and the Hearth counts the Anvil
-  Stone. The secret: in the fourth lane the ripples of slag run up toward the back, where every other
+  Heart of the Anvil (`anvil_heart`), a keepsake. Its fall says the brief's line and sets
+  `q_anvil_closed` on the blow (#540, #636): the Rift's groups, O5's slaglings and the strays on N3,
+  N5 and O6 stop coming back, the hum's lines go quiet and the Hearth counts the Anvil Stone. The
+  first step after it, into the cut or back out of it, says the slag has gone black and cold, as does
+  a first step back in by a company gone another way, and the track beside the tear on O5 says the
+  torn ground has closed over. The secret: in the fourth lane the ripples of slag run up toward the
+  back, where every other
   lane's run down; searched at its head (14,3), the slag gives on a hollow against the Stone's cut
   face, and in it the first cutter's tools, a Cutter's Pick +1 and a Cutter's Chisel +1
   (`cutters_pick`, `cutters_chisel`), with 1,910 gold, which nothing reaches but through the slag. A
@@ -1864,7 +1865,7 @@ Proposed, for the owner, each in the issue that would build it:
 Decided by delegate for #540, each the owner's to overturn:
 
 1. **The flag is `q_anvil_closed`,** set once the Warden of the Anvil has fallen and the tear is
-   closed. The Rift sets it (#465), the chapter's Stone entry reads it (#470) and O5's slaglings may
+   closed. The Warden's fall sets it (#636), the chapter's Stone entry reads it (#470) and O5's slaglings may
    stop `until` it before the Rift is built (#464; built since: #465). It is the Stones' own form
    (`q_tide_home`, `q_grove_mended`), and not `_done`, which would read as the chapter's end. Nobody
    renames it or adds a second.
@@ -2639,18 +2640,15 @@ Decided by delegate for #465, each the owner's to overturn:
 4. **The Warden is set off the line by the gate,** as the Foreman was (#462's 3): 1,200 hit points and
    13d8+12, where the line's 1,001 and 18d8+20 won 32% at 17 and 69% at 19, past the limit two above.
    It is won 54% and 93%, and named in `OFF_LINE` and `BOSSES`.
-5. **The flag is set by the first step after the Warden falls:** no group sets a flag (a fight's end
-   says its `slainText` and nothing more), so three events set `q_anvil_closed`, after the Warden's
-   death and until the flag, as D5's row sets Hale's (#156): in the cut, back out of it and on the
-   first square in from the tear. The Warden is fought only from the square before the cut, so any
-   step from there sets it. A company gone by Town Portal sets it on its first step back in, or on
-   O5's track beside the tear, where `o5_closed` sets it too, so one that never goes down again is
-   not left with the Stone still red.
+5. **The flag is set by the Warden's fall** (#636's 29; at first by the step after it, when no
+   group could set a flag): three events say the slag gone quiet after the Warden's death, the first
+   said and the rest gone: in the cut, back out of it and on the first square in from the tear. The
+   Warden is fought only from the square before the cut, so any step from there says it.
 6. **The tear closed is the slag gone quiet:** the Rift's groups come back until the flag and the
    Warden never; the lines that hear the hum go once it falls and the slag material's quiet words are
    said in their place. On O5 `o5_closed`, which #464's 3 left here, says the torn ground has closed
    over once the Warden has fallen, and `o5_tear` goes with it, `until` the Warden's death and not
-   the flag, which that line may be the one to set.
+   the flag, which that line once set.
 7. **The Rift wears the slag material:** its palette, its bare walls, its words going out and its name,
    the Slag Rift, as the generated Rifts are named, so the world map letters the Stone and its Rift
    apart; the id stays `anvil_stone`. Its plate moves onto the tear, 468,142, as K3's and the Delta's
@@ -2671,7 +2669,7 @@ Decided by delegate for #465, each the owner's to overturn:
     groups at 14 in the area's pool, where 95.4% of fights are won, owed to #18 as O5's are (#464's 13).
 13. **Owed on:** the chapter's step at the Stone, #470's, which reads `q_anvil_closed` (built since:
     #470); and a group's own `sets`, said with its `slainText`, which would close the tear on the
-    blow itself, the systems lane's to give if it is wanted.
+    blow itself, the systems lane's to give if it is wanted (built since: #636).
 
 Decided by delegate for #466, each the owner's to overturn (the first and the ninth follow the
 orchestrator's calls):
@@ -2951,6 +2949,22 @@ Decided by delegate for #474, each the owner's to overturn:
     in its rows (§11).
 28. **Two under (14) is owed to #18 for both boxes,** as M6's and N6's are, in `OWED` in the gate
     test.
+
+Decided by delegate for #636, each the owner's to overturn:
+
+29. **The Warden of the Anvil sets `q_anvil_closed` as it falls** (`sets` on a group, MONSTERS
+    §3.3): the tear is closed on the blow, so the Rift's groups and the strays stop coming back and
+    the Hearth counts the Stone with no step taken. A company gone by Town Portal leaves it closed.
+30. **The step events keep their words and set nothing:** the quiet in the cut, back out of it and on
+    the first square in from the tear, and `o5_closed` on the track. The quiet's three now go once
+    one of them is said (`seen`), where the flag held them, since the flag is set before any can be.
+31. **No words change:** the slag gone black and cold and the seam closed over read as what the blow
+    left, to a company that heard the red go out of the slag.
+32. **The Kilns claims `encounter:sets`** in its `novel`, the first area on the road to set a flag
+    by a group's fall.
+33. **A save from before #636 with the Warden fallen and the flag unset keeps the tear open:** a
+    company gone by Town Portal and not yet back in or up the track. Nothing sets the flag now. A
+    save upgrade setting it where the Warden is dead would mend it, the systems lane's to give.
 
 ## 10. Names
 
