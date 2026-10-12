@@ -46,7 +46,7 @@ export class Pilot {
   /** Every line said through Game.say, every message opened and every riddle put, the newest last. */
   readonly heard: string[] = [];
   /** What a menu has shown: a shop's wares, a trainer's levels, a person's crossings (Known.features). */
-  readonly told = new WeakSet<Feature>();
+  told = new WeakSet<Feature>();
   /** Ticks counted towards the next beat. */
   private ticks = 0;
   /** The fight last handed to the bot: a key that took it back is not undone. */
@@ -65,8 +65,8 @@ export class Pilot {
   /** A menu has shown what a feature lists. */
   tell(f: Feature): void { this.told.add(f); }
 
-  /** A new company, or one loaded: it has heard nothing yet, and the last run's stop and its why are gone. */
-  forget(): void { this.heard.length = 0; this.stopped = false; this.why = [IDLE]; }
+  /** A new company, or one loaded: it has heard nothing and been shown nothing yet, and the last run's stop and its why are gone. */
+  forget(): void { this.heard.length = 0; this.told = new WeakSet<Feature>(); this.stopped = false; this.why = [IDLE]; }
 
   /** Turns itself off, and says why over every screen until a game starts (#713, Decided 4 and 10). */
   stop(why: string): void { this.on = false; this.why = [why]; this.stopped = true; }

@@ -1,5 +1,5 @@
-// The pilot's frame (#716): what Known lets it see and keeps from it, what it has heard and when it
-// forgets it, the P and T keys and any other, its pace, a fight handed to the bot, a message read and
+// The pilot's frame (#716): what Known lets it see and keeps from it, what it has heard and been shown
+// and when it forgets them, the P and T keys and any other, its pace, a fight handed to the bot, a message read and
 // closed, the why line with no brain to ask, a wipe's why over the title and P there.
 import { GameMap } from '../../src/game/map.ts';
 import type { Feature, MapDef } from '../../src/game/map.ts';
@@ -22,6 +22,9 @@ export function pilot(): void {
   const { x, y } = g.world.state, m = g.maps.harrow;
   const corner = [[0, 0], [m.width - 1, 0], [0, m.height - 1], [m.width - 1, m.height - 1]].sort(([ax, ay], [bx, by]) => Math.abs(bx - x) + Math.abs(by - y) - Math.abs(ax - x) - Math.abs(ay - y))[0];
   ok(knownOf(g).seen('harrow', x, y) && !knownOf(g).seen('harrow', corner[0], corner[1]), `Known has the start square in Helmstow seen and its far corner, ${corner.join(',')}, not`);
+
+  // The fixtures go on Helmstow's features as written, shared by every game, so they all go again at the end.
+  const had = [...m.features];
 
   // What the automap draws: a chest on the start square, and not the event beside it.
   (m.features as Feature[]).push({ kind: 'chest', x, y, id: 'fx_chest', gold: 5, items: [] }, { kind: 'event', x, y, id: 'fx_event', text: 'A cold wind.' });
@@ -67,6 +70,11 @@ export function pilot(): void {
   while (g.screens.length > 1) g.pop();
   ok(!('stock' in wares[0]) && (wares[1].stock as string[] | undefined)?.join() === 'torch' && !('maxLevel' in levels[0]) && levels[1].maxLevel === 5 && !('passage' in ways[0]) && (ways[1].passage as { to: string }[] | undefined)?.[0]?.to === 'thornhold',
     `a shop's wares, a trainer's levels and a person's crossings are Known once the Buy menu, the trainer's and the offer show them, and not before (${JSON.stringify([wares, levels, ways])})`);
+  // A new game forgets what the menus showed: the company that never opened them is not told.
+  g.newGame(4);
+  const untold = ['A fixture stall', 'A fixture master', 'A fixture ferryman'].map(sighted);
+  ok(untold.every((f) => 'name' in f && !('stock' in f) && !('maxLevel' in f) && !('passage' in f)),
+    `a new game, the stall, the trainer and the ferryman are seen and their wares, levels and crossings not Known (${JSON.stringify(untold)})`);
   // The trainer and the ferryman go again, out of the way of the rest; the stall stays, as it was.
   (m.features as Feature[]).splice(-2);
 
@@ -159,6 +167,12 @@ export function pilot(): void {
   ok(idle === null && p.why[0] === IDLE && IDLE === 'Nothing to do.', `with no brain to ask, it presses nothing and says so (${p.why.join(' ')})`);
 
   // A wipe: the next step goes to the title, and the pilot gives the helm back and says why there.
+  // Before it, the stall's Buy menu shows its wares again.
+  g.interact(named('A fixture stall'));
+  pick('Buy and sell');
+  pick('Buy');
+  const shown = sighted('A fixture stall');
+  while (g.screens.length > 1) g.pop();
   g.say('The answer is ten.');
   for (const c of g.party.members) c.conditions = ['dead'];
   g.update('forward');
@@ -171,6 +185,9 @@ export function pilot(): void {
   const taken = p.press(g, 'pilot'), company = muster();
   ok(taken && p.on && !p.stopped && p.why[0] === IDLE && g.top instanceof ExploreScreen && g.party.members.length === 6 && company !== premade && !p.heard.includes('The answer is ten.') && !p.heard.includes('You take the helm.') && p.heard.includes('The pilot takes the helm.'),
     `P on the title starts a new game with a company at random (${company}), and the pilot has heard nothing of the last and says nothing of it (${p.why.join(' ')})`);
+  const unshown = sighted('A fixture stall');
+  ok((shown.stock as string[] | undefined)?.join() === 'torch' && 'name' in unshown && !('stock' in unshown),
+    `the stall's wares, Known as the Buy menu shows them, are forgotten as P on the title starts a new game (${JSON.stringify([shown, unshown])})`);
   g.gameOver();
   p.press(g, 'pilot');
   const redrawn = muster();
@@ -189,4 +206,9 @@ export function pilot(): void {
   for (let i = 0; i <= HEARD_MAX; i++) q.hear(`Line ${i}.`);
   ok(HEARD_MAX === 2000 && q.heard.length === HEARD_MAX && q.heard[0] === 'Line 1.' && q.heard[HEARD_MAX - 1] === `Line ${HEARD_MAX}.`,
     `of ${HEARD_MAX + 1} lines heard, the pilot keeps the last ${q.heard.length}, from "${q.heard[0]}"`);
+
+  // The fixtures go again, and a new game finds Helmstow as it was for every suite after.
+  (m.features as Feature[]).splice(had.length);
+  const after = headlessGame(4).maps.harrow.features;
+  ok(after.length === had.length && after.every((f, i) => f === had[i]), `the fixtures gone, a new game's Helmstow has its ${had.length} features as before (${after.length})`);
 }
