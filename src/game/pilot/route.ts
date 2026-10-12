@@ -2,11 +2,12 @@
 // and by ways off a map it has seen, pressed as a player would press it, a step or a turn a beat. It
 // never steps back or aside, so the viewer sees the party face where it goes. It reads the world only
 // through Known: a secret door is a wall to it until a search finds it, a lock a door until it is
-// tried, and a gate is learnt by trying it. A route is a plan, not a lock: a fight or a message on
-// the way plays out and the walk goes on, and wherever the party stands that the plan did not put
-// it, it plans again.
+// tried, and a gate is learnt by trying it. A route is a plan, not a lock: a fight, a message or a
+// menu on the way plays out and the walk goes on, and wherever the party stands that the plan did
+// not put it, it plans again.
 import type { Game } from '../game.ts';
 import { ExploreScreen } from '../game.ts';
+import { ChoiceScreen } from '../../ui/screens.ts';
 import type { Action } from '../../input.ts';
 import { passCell } from '../map.ts';
 import type { Exit } from '../map.ts';
@@ -31,19 +32,15 @@ export interface Trip {
 /** The steps refused on one goal before it is given up as shut. */
 export const BLOCKS = 3;
 
-/**
- * What a step onto may open, and the walk cannot go on past until it is answered: a person's question
- * or offer, a business's menus, a den's question. Which people ask is not known until they are met,
- * so every person is one.
- */
-const STOPS = new Set(['npc', 'inn', 'temple', 'shop', 'guild', 'trainer', 'den']);
+/** A business: a step onto it goes in, and out again is back onto the street it came from, so it is no way through. */
+const STOPS = new Set(['inn', 'temple', 'shop', 'guild', 'trainer']);
 /** Wider than any map: a square and a facing as one number. */
 const SPAN = 4096;
 
 /**
  * Whether a route on `map` steps onto a square: seen, passable as the company can cross it, and no
  * group in sight on it. A way off the map, an exit or a tear into a Rift, carries the party off it,
- * and a person or a business stops it: each is stepped onto only as (tx, ty), walked to, never over.
+ * and a business turns it back: each is stepped onto only as (tx, ty), walked to, never over.
  */
 function opens(k: Known, map: string, tx: number, ty: number): (x: number, y: number) => boolean {
   const can = k.can(), sq = (cx: number, cy: number): number => cy * SPAN + cx;
@@ -129,8 +126,7 @@ const upper = (s: string): string => s.charAt(0).toUpperCase() + s.slice(1);
 /** The brain: walks p.goal, pressing one key a call. */
 export const route: Brain = (g, k, p) => {
   const goal = p.goal;
-  // Its keys are the explorer's: anything else on top is another brain's, or the screen's own.
-  if (!goal || !(g.top instanceof ExploreScreen)) return null;
+  if (!goal) return null;
   const st = g.world.state;
   let trip = p.trip;
   if (!trip || trip.goal.map !== goal.map || trip.goal.x !== goal.x || trip.goal.y !== goal.y) {
@@ -138,9 +134,17 @@ export const route: Brain = (g, k, p) => {
     p.plan = [];
   }
   trip.goal = goal;
+  // There, whatever its square opens: stood on, or stepped onto though a way off carried the party on.
+  const at = g.world.locate(goal.map, goal.x, goal.y), last = trip.last;
+  const onto = last?.key === 'forward' && last.map === at.mapId && last.x + FACING_DX[last.facing] === at.x && last.y + FACING_DY[last.facing] === at.y && st.steps !== last.steps;
+  if (onto || (st.mapId === at.mapId && st.x === at.x && st.y === at.y)) { p.goal = null; p.trip = null; p.plan = []; return null; }
+  // A menu met on the way it answers with nothing, as Esc does, and walks on: a question waits, an
+  // offer goes by, a den is left and a parley refused is a fight, which plays out.
+  if (g.top instanceof ChoiceScreen) return 'cancel';
+  // Its keys are the explorer's: anything else on top is another brain's, or the screen's own.
+  if (!(g.top instanceof ExploreScreen)) return null;
   // Where the last key left the party: a step that went nowhere was refused, and anywhere the plan
   // did not put it (an exit taken, a flight), it plans again.
-  const last = trip.last;
   trip.last = undefined;
   if (last?.key === 'forward' && st.mapId === last.map && st.steps === last.steps) {
     p.plan = [];
@@ -155,8 +159,6 @@ export const route: Brain = (g, k, p) => {
     const step = last.key === 'forward' ? 1 : 0, f = last.key === 'turnLeft' ? turnLeft(last.facing) : last.key === 'turnRight' ? turnRight(last.facing) : last.facing;
     if (st.mapId !== last.map || st.x !== last.x + FACING_DX[f] * step || st.y !== last.y + FACING_DY[f] * step || st.facing !== f) p.plan = [];
   }
-  const at = g.world.locate(goal.map, goal.x, goal.y);
-  if (st.mapId === at.mapId && st.x === at.x && st.y === at.y) { p.goal = null; p.trip = null; p.plan = []; return null; }
   if (!p.plan.length) {
     const to = at.mapId === st.mapId ? at : routeMaps(k, st.mapId, at.mapId)?.[0]?.exit;
     let keys = to && routeOn(k, st.mapId, st.x, st.y, st.facing, to.x, to.y);

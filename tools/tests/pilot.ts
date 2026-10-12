@@ -1,12 +1,13 @@
 // The pilot's frame (#716): what Known lets it see and keeps from it, what it has heard and been shown
 // and when it forgets them, the P and T keys and any other, its pace, a fight handed to the bot, a message read and
 // closed, the why line with no brain to ask, a wipe's why over the title and P there. The navigator
-// (#717): a route over seen squares, a secret door a wall to it, a group, a person, a way off and a
-// tear walked round, no way past a person on Saltmouth's quay and no stand on their offer, water and
-// a mountain as the company can cross them, the ways between the maps it has been to and no others,
-// the outdoors by a zone's id, a walk to a square, driven, a fight and a message on the way, a route
-// planned again after a flight, the way out from the square landed on, a route planned again after a
-// step refused, a way shut after three refusals, its why lines, and a new game or a load bound nowhere.
+// (#717): a route over seen squares, a secret door a wall to it, a person and a den walked over, a
+// group, a business, a way off and a tear walked round, Saltmouth's quay walked over and an offer on
+// it let go, a goal done as its menu opens, water and a mountain as the company can cross them, the
+// ways between the maps it has been to and no others, the outdoors by a zone's id, a walk to a square,
+// driven, a fight, a message and a parley on the way, a way off as the goal, a route planned again
+// after a flight, the way out from the square landed on, a route planned again after a step refused,
+// a way shut after three refusals, its why lines, and a new game or a load bound nowhere.
 import { GameMap } from '../../src/game/map.ts';
 import type { Feature, MapDef } from '../../src/game/map.ts';
 import { EAST, WEST, SOUTH, FACING_DX, FACING_DY, turnLeft, turnRight } from '../../src/game/types.ts';
@@ -290,8 +291,9 @@ function navigator(): void {
     `a secret door the map lets the party through is a wall to the navigator, which goes the long way round, ${round.length} keys by ${by.join(' ')}, until a search finds it (${through?.join(', ')})`);
 
   // A ring, from its corner to the square two east: two steps by the top, nine keys round by the
-  // bottom. A group in sight on the top, a person, a way off or a tear into a Rift, and it goes round;
-  // the person or the way it walks to when bound there, never over.
+  // bottom. A person or a den on the top it walks over. A group in sight, a business, which turns a
+  // company back onto the street, a way off or a tear into a Rift, and it goes round; the business or
+  // the way it walks to when bound there, never over.
   const r = headlessGame(4), kr = knownOf(r);
   const ring = (id: string, more: Partial<MapDef>): Action[] | null => {
     r.maps[id] = new GameMap({ id, name: 'Ring', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#...#', '#.#.#', '#...#', '#####'], ...more });
@@ -300,28 +302,45 @@ function navigator(): void {
     return routeOn(kr, id, 1, 1, EAST, 3, 1);
   };
   const bare = ring('fx_ring', {}), held = ring('fx_held', { encounters: [{ id: 'fx_band', x: 2, y: 1, monsters: ['brigand'], roams: false }] }), sighted = kr.groups('fx_held');
-  const met = ring('fx_met', { features: [{ kind: 'npc', x: 2, y: 1, name: 'A fixture warden', lines: ['"Halt."'] }] }), toMet = routeOn(kr, 'fx_met', 1, 1, EAST, 2, 1);
+  const met = ring('fx_met', { features: [{ kind: 'npc', x: 2, y: 1, name: 'A fixture warden', lines: ['"Halt."'] }] });
+  const lair = ring('fx_lair', { features: [{ kind: 'den', x: 2, y: 1, id: 'fx_den', text: 'A fixture den.', breeds: ['rat'], keepers: 'fx_keep', brood: [], ask: 'Burn it?', burn: 'Burn it.', burnt: 'It burns.', gold: 0, items: [] }] });
+  const dens = kr.features('fx_lair').filter((f) => f.kind === 'den').length;
+  const inn = ring('fx_inn', { features: [{ kind: 'inn', x: 2, y: 1, name: 'A fixture inn', price: 10, interior: 'hearthlight_inn' }] }), toInn = routeOn(kr, 'fx_inn', 1, 1, EAST, 2, 1);
   const gone = ring('fx_gone', { exits: [{ x: 2, y: 1, to: 'harrow', tx: 1, ty: 1 }] }), toGone = routeOn(kr, 'fx_gone', 1, 1, EAST, 2, 1);
   const torn = ring('fx_torn', { features: [{ kind: 'rift', x: 2, y: 1, id: 'fx_tear', to: 'harrow', tx: 1, ty: 1 }] });
-  const rounds = [held, met, gone, torn].map((keys) => keys?.length === 9 && !walked(keys, 1, 1, EAST).includes('2,1'));
-  ok(bare?.join() === 'forward,forward' && sighted.length === 1 && rounds.every(Boolean) && toMet?.join() === 'forward' && toGone?.join() === 'forward',
-    `round a ring it goes the long way, nine keys, past a group in sight, a person, a way off or a tear on the short one (${rounds.join(', ')}), and walks onto the person or the way when bound there (${toMet?.join()}; ${toGone?.join()})`);
+  const rounds = [held, inn, gone, torn].map((keys) => keys?.length === 9 && !walked(keys, 1, 1, EAST).includes('2,1'));
+  ok(bare?.join() === 'forward,forward' && met?.join() === 'forward,forward' && lair?.join() === 'forward,forward' && dens === 1 && sighted.length === 1 && rounds.every(Boolean)
+    && toInn?.join() === 'forward' && toGone?.join() === 'forward',
+    `round a ring it walks over a person and a den by the short one (${met?.join()}; ${lair?.join()}), goes the long way, nine keys, past a group in sight, a business, a way off or a tear (${rounds.join(', ')}), and walks onto the business or the way when bound there (${toInn?.join()}; ${toGone?.join()})`);
 
-  // Saltmouth's Sail Loft, reached only past Kitto on the quay, who offers his boat to a company that
-  // steps onto him. Walked to and never over, he leaves it no way there until it can answer him: it
-  // never stands on his offer with its goal still set.
-  const sm = headlessGame(4), sp = (sm.pilot = new Pilot({ instant: true }));
+  // Saltmouth's quay, a row of people between the street and the Telhus and the Sail Loft: it walks
+  // over them to each, and to Hessel and to Kitto, who offers his boat to a company that steps onto him.
+  const sm = headlessGame(4), ks = knownOf(sm);
   sm.party.flags.q_passage_owed = 1;
   sm.world.travel('saltmouth', 6, 10, SOUTH);
   see(sm, 'saltmouth');
-  const kitto = knownOf(sm).features('saltmouth').flatMap((f) => f.kind === 'npc' && f.x === 14 && f.y === 10 ? [f.name] : []);
-  sp.toggle(sm);
-  sp.goal = { map: 'saltmouth', x: 14, y: 9, name: 'the Sail Loft' };
-  let stalled = 0;
-  for (let t = 0; t < 200; t++) { drive(sm, [null]); if (sm.top instanceof ChoiceScreen && sp.goal) stalled++; }
-  const stood = `${sm.world.state.x},${sm.world.state.y}`, lost = sp.why.join(' / ');
-  ok(kitto.length === 1 && stalled === 0 && sp.goal === null && lost === 'No way to the Sail Loft that I have seen.' && stood === '6,10',
-    `in Saltmouth, the Sail Loft past ${kitto.join()}, it is never on an offer with its goal set (${stalled} ticks of 200), and says it has no way (${lost}; at ${stood})`);
+  const quay = ks.features('saltmouth').flatMap((f) => f.kind === 'npc' && f.y === 10 && f.x > 9 ? [f.name] : []);
+  const reached = [[12, 9], [14, 9], [12, 10], [14, 10]].map(([tx, ty]) => walked(routeOn(ks, 'saltmouth', 6, 10, SOUTH, tx, ty) ?? [], 6, 10, SOUTH).at(-1));
+  ok(quay.length === 3 && reached.join(' ') === '12,9 14,9 12,10 14,10',
+    `in Saltmouth it walks over the people on the quay (${quay.join('; ')}) to the Telhus, the Sail Loft, Hessel and Kitto (${reached.join(' ')})`);
+
+  // Driven there: bound for the Sail Loft, Kitto's offer on the way it lets go in a beat and walks
+  // on. On the Loft, or bound for Kitto on him, its goal is done as the menu opens, which it leaves
+  // up for the brain whose it is.
+  const quayside = (tx: number, ty: number, name: string): { stood: string; goal: string; offered: number; menu: string } => {
+    const q = headlessGame(4), qp = (q.pilot = new Pilot({ instant: true }));
+    q.party.flags.q_passage_owed = 1;
+    q.world.travel('saltmouth', 6, 10, SOUTH);
+    see(q, 'saltmouth');
+    qp.toggle(q);
+    qp.goal = { map: 'saltmouth', x: tx, y: ty, name };
+    let offered = 0;
+    for (let t = 0; t < 200; t++) { drive(q, [null]); if (q.top instanceof ChoiceScreen && q.top.words.startsWith('"Passage to where?"') && qp.goal) offered++; }
+    return { stood: `${q.world.state.x},${q.world.state.y}`, goal: JSON.stringify(qp.goal), offered, menu: q.top instanceof ChoiceScreen ? q.top.words.split(/[.?]/)[0].replace('"', '') : '' };
+  };
+  const loft = quayside(14, 9, 'the Sail Loft'), boat = quayside(14, 10, 'Kitto');
+  ok(loft.offered === 1 && loft.stood === '14,9' && loft.goal === 'null' && loft.menu === 'The Sail Loft' && boat.stood === '14,10' && boat.goal === 'null' && boat.menu === 'Passage to where',
+    `bound for the Sail Loft it lets Kitto's offer go in ${loft.offered} beat and is on the Loft, bound nowhere, its menu up (${loft.stood}; ${loft.menu}); bound for Kitto, his offer is left up (${boat.stood}; ${boat.menu}; ${boat.goal})`);
 
   // Water, then a mountain, across a passage: the company crosses the water while its tidefolk
   // swims, and the mountain once it has a Mountaineer.
@@ -396,6 +415,42 @@ function navigator(): void {
   const there = `${i.world.state.mapId} ${i.world.state.x},${i.world.state.y}`;
   ok(brawl instanceof CombatScreen && brawl.state.outcome === 'victory' && read && kept && there === 'fx_way 5,1' && ip.goal === null,
     `a fight on the way won and a message read, the pilot walks on by the plan it had, ${owing} keys to press, to the end of the way (${there}; ${read}, ${kept})`);
+
+  // A group that talks, in a nook beside the way: its question, met on the way, the pilot answers
+  // with nothing in a beat, which is a refusal, and the fight plays out and the walk goes on.
+  const t = headlessGame(4), tp = (t.pilot = new Pilot({ instant: true }));
+  t.maps.fx_toll = new GameMap({ id: 'fx_toll', name: 'Toll', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#######', '#.....#', '###.###', '#######'],
+    encounters: [{ id: 'fx_tollers', x: 3, y: 2, monsters: ['rat', 'rat'], roams: false, choice: { ask: '"Toll."', answers: [
+      { label: 'Pay', price: 5000, sets: 'fx_toll_paid', says: ['They stand aside.'] }, { label: 'Refuse', fight: true, says: ['They bare their teeth.'] }] } }] });
+  t.world.travel('fx_toll', 1, 1, EAST);
+  see(t, 'fx_toll');
+  tp.toggle(t);
+  tp.goal = { map: 'fx_toll', x: 5, y: 1, name: 'the far end' };
+  let asked = 0, tolled: CombatScreen | null = null;
+  for (let n = 0; n < 4000 && (tp.goal || !(t.top instanceof ExploreScreen)); n++) {
+    drive(t, [null]);
+    if (t.top instanceof ChoiceScreen && t.top.words.startsWith('"Toll."') && tp.goal) asked++;
+    if (t.top instanceof CombatScreen) tolled = t.top;
+  }
+  const tollEnd = `${t.world.state.x},${t.world.state.y}`;
+  ok(asked === 1 && t.log.includes('They bare their teeth.') && tolled?.state.outcome === 'victory' && tollEnd === '5,1' && tp.goal === null,
+    `a parley on the way is refused in ${asked} beat, the fight won, and the walk goes on to the far end (${tollEnd}; ${JSON.stringify(tp.goal)})`);
+
+  // Bound for a way off: stepped onto, it carries the party on, and the goal is done, not walked back for.
+  const o = headlessGame(4), op = (o.pilot = new Pilot({ instant: true }));
+  o.maps.fx_a = new GameMap({ id: 'fx_a', name: 'Above', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['######', '#....#', '######'], exits: [{ x: 4, y: 1, to: 'fx_b', tx: 2, ty: 1, tf: EAST }] });
+  o.maps.fx_b = new GameMap({ id: 'fx_b', name: 'Below', kind: 'dungeon', start: { x: 2, y: 1, facing: EAST }, rows: ['#####', '#...#', '#####'], exits: [{ x: 1, y: 1, to: 'fx_a', tx: 3, ty: 1, tf: WEST }] });
+  o.world.travel('fx_b', 2, 1, EAST);
+  see(o, 'fx_b');
+  o.world.travel('fx_a', 1, 1, EAST);
+  see(o, 'fx_a');
+  op.toggle(o);
+  op.goal = { map: 'fx_a', x: 4, y: 1, name: 'the way down' };
+  let carried = 0;
+  for (let n = 0, was = o.world.state.mapId; n < 200; n++) { drive(o, [null]); if (o.world.state.mapId !== was) { carried++; was = o.world.state.mapId; } }
+  const below = `${o.world.state.mapId} ${o.world.state.x},${o.world.state.y}`;
+  ok(carried === 1 && below === 'fx_b 2,1' && op.goal === null && op.why.join() === IDLE,
+    `bound for the way down, it steps onto it, is carried off ${carried} time to ${below}, and is bound nowhere (${JSON.stringify(op.goal)}; ${op.why.join(' / ')})`);
 
   // A flight mid-route: carried off the map with keys still to press, though onto the square and
   // facing its last key would have left it on, it plans again from where it stands, back by the way
