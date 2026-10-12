@@ -71,11 +71,11 @@ export function headlessGame(seed = 4, party?: Party): Game {
 }
 
 /**
- * Presses `actions` into the game, one per tick, then `settle` ticks of nothing, as src/main.ts ticks
- * it: a key is the pilot's first (Pilot.press), and a tick of nothing its to fill while it drives.
+ * Presses `actions` into the game, one per tick, then `settle` ticks of nothing: a tick of nothing is
+ * the pilot's to fill while it drives (Pilot.next), as src/main.ts ticks it.
  */
 export function drive(g: Game, actions: readonly (Action | null)[], settle = 0): void {
-  const tick = (a: Action | null): void => { if (!(a && g.pilot?.press(g, a))) g.update(a ?? g.pilot?.next(g) ?? null); };
+  const tick = (a: Action | null): void => g.update(a ?? g.pilot?.next(g) ?? null);
   for (const a of actions) tick(a);
   for (let i = 0; i < settle; i++) tick(null);
 }

@@ -13,7 +13,7 @@ import { passCell } from '../map.ts';
 import type { Exit } from '../map.ts';
 import { FACING_DX, FACING_DY, turnBack, turnLeft, turnRight } from '../types.ts';
 import type { Facing } from '../types.ts';
-import type { Known } from './known.ts';
+import type { Known, Sighted } from './known.ts';
 import type { Brain } from './pilot.ts';
 
 export interface Goal { map: string; x: number; y: number; /** What the why line says: "Bound for <here>". */ name: string }
@@ -40,12 +40,14 @@ const SPAN = 4096;
 /**
  * Whether a route on `map` steps onto a square: seen, passable as the company can cross it, and no
  * group in sight on it. A way off the map, an exit or a tear into a Rift, carries the party off it,
- * and a business turns it back: each is stepped onto only as (tx, ty), walked to, never over.
+ * and a business turns it back, as does a person in a doorway, whose sign over the door is one: each
+ * is stepped onto only as (tx, ty), walked to, never over.
  */
 function opens(k: Known, map: string, tx: number, ty: number): (x: number, y: number) => boolean {
   const can = k.can(), sq = (cx: number, cy: number): number => cy * SPAN + cx;
   const held = new Set(k.groups(map).map((q) => sq(q.x, q.y)));
-  const aside = new Set([...k.exits(map), ...k.features(map).filter((f) => f.kind === 'rift' || STOPS.has(f.kind))].map((q) => sq(q.x, q.y)));
+  const business = (f: Sighted): boolean => STOPS.has(f.kind) || (f.kind === 'npc' && k.cell(map, f.x, f.y)?.door === 'door');
+  const aside = new Set([...k.exits(map), ...k.features(map).filter((f) => f.kind === 'rift' || business(f))].map((q) => sq(q.x, q.y)));
   const open = new Map<number, boolean>();
   return (cx, cy) => {
     const at = sq(cx, cy);

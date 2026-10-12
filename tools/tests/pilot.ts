@@ -2,22 +2,23 @@
 // and when it forgets them, the P and T keys and any other, its pace, a fight handed to the bot, a message read and
 // closed, the why line with no brain to ask, a wipe's why over the title and P there. The navigator
 // (#717): a route over seen squares, a secret door a wall to it, a person and a den walked over, a
-// group, a business, a way off and a tear walked round, Saltmouth's quay walked over and an offer on
-// it let go, a goal done as its menu opens, water and a mountain as the company can cross them, the
-// ways between the maps it has been to and no others, the outdoors by a zone's id, a walk to a square,
-// driven, a fight, a message and a parley on the way, a way off as the goal, a route planned again
-// after a flight, the way out from the square landed on, a route planned again after a step refused,
-// a way shut after three refusals, its why lines, and a new game or a load bound nowhere.
+// group, a business, a person in a doorway, a way off and a tear walked round, Saltmouth's quay walked
+// over and an offer on it let go, a goal done as its menu opens, a corner door with a person in it
+// driven past, water and a mountain as the company can cross them, the ways between the maps it has
+// been to and no others, the outdoors by a zone's id, a walk to a square, driven, a fight, a message
+// and a parley on the way, a way off as the goal, a route planned again after a flight, the way out
+// from the square landed on, a route planned again after a step refused, a way shut after three
+// refusals, its why lines, and a new game or a load bound nowhere.
 import { GameMap } from '../../src/game/map.ts';
 import type { Feature, MapDef } from '../../src/game/map.ts';
-import { EAST, WEST, SOUTH, FACING_DX, FACING_DY, turnLeft, turnRight } from '../../src/game/types.ts';
+import { NORTH, EAST, WEST, SOUTH, FACING_DX, FACING_DY, turnLeft, turnRight } from '../../src/game/types.ts';
 import type { Facing } from '../../src/game/types.ts';
 import { Game, ExploreScreen } from '../../src/game/game.ts';
 import type { Store } from '../../src/game/save.ts';
 import { defaultParty } from '../../src/game/party.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { CombatScreen } from '../../src/ui/combat.ts';
-import { ChoiceScreen, MessageScreen } from '../../src/ui/screens.ts';
+import { ChoiceScreen, InteriorScreen, MessageScreen } from '../../src/ui/screens.ts';
 import { RiddleScreen } from '../../src/ui/riddle.ts';
 import { TitleScreen } from '../../src/ui/title.ts';
 import { Pilot, BRAINS, IDLE, HEARD_MAX } from '../../src/game/pilot/pilot.ts';
@@ -292,8 +293,9 @@ function navigator(): void {
 
   // A ring, from its corner to the square two east: two steps by the top, nine keys round by the
   // bottom. A person or a den on the top it walks over. A group in sight, a business, which turns a
-  // company back onto the street, a way off or a tear into a Rift, and it goes round; the business or
-  // the way it walks to when bound there, never over.
+  // company back onto the street, a person in a doorway, whose sign is a business's, a way off or a
+  // tear into a Rift, and it goes round; the business, the person or the way it walks to when bound
+  // there, never over.
   const r = headlessGame(4), kr = knownOf(r);
   const ring = (id: string, more: Partial<MapDef>): Action[] | null => {
     r.maps[id] = new GameMap({ id, name: 'Ring', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#...#', '#.#.#', '#...#', '#####'], ...more });
@@ -306,12 +308,14 @@ function navigator(): void {
   const lair = ring('fx_lair', { features: [{ kind: 'den', x: 2, y: 1, id: 'fx_den', text: 'A fixture den.', breeds: ['rat'], keepers: 'fx_keep', brood: [], ask: 'Burn it?', burn: 'Burn it.', burnt: 'It burns.', gold: 0, items: [] }] });
   const dens = kr.features('fx_lair').filter((f) => f.kind === 'den').length;
   const inn = ring('fx_inn', { features: [{ kind: 'inn', x: 2, y: 1, name: 'A fixture inn', price: 10, interior: 'hearthlight_inn' }] }), toInn = routeOn(kr, 'fx_inn', 1, 1, EAST, 2, 1);
+  const office = ring('fx_office', { rows: ['#####', '#.D.#', '#.#.#', '#...#', '#####'], features: [{ kind: 'npc', x: 2, y: 1, name: 'A fixture clerk', lines: ['"Next."'], interior: 'hearthlight_inn' }] });
+  const toOffice = routeOn(kr, 'fx_office', 1, 1, EAST, 2, 1);
   const gone = ring('fx_gone', { exits: [{ x: 2, y: 1, to: 'harrow', tx: 1, ty: 1 }] }), toGone = routeOn(kr, 'fx_gone', 1, 1, EAST, 2, 1);
   const torn = ring('fx_torn', { features: [{ kind: 'rift', x: 2, y: 1, id: 'fx_tear', to: 'harrow', tx: 1, ty: 1 }] });
-  const rounds = [held, inn, gone, torn].map((keys) => keys?.length === 9 && !walked(keys, 1, 1, EAST).includes('2,1'));
+  const rounds = [held, inn, office, gone, torn].map((keys) => keys?.length === 9 && !walked(keys, 1, 1, EAST).includes('2,1'));
   ok(bare?.join() === 'forward,forward' && met?.join() === 'forward,forward' && lair?.join() === 'forward,forward' && dens === 1 && sighted.length === 1 && rounds.every(Boolean)
-    && toInn?.join() === 'forward' && toGone?.join() === 'forward',
-    `round a ring it walks over a person and a den by the short one (${met?.join()}; ${lair?.join()}), goes the long way, nine keys, past a group in sight, a business, a way off or a tear (${rounds.join(', ')}), and walks onto the business or the way when bound there (${toInn?.join()}; ${toGone?.join()})`);
+    && toInn?.join() === 'forward' && toOffice?.join() === 'forward' && toGone?.join() === 'forward',
+    `round a ring it walks over a person and a den by the short one (${met?.join()}; ${lair?.join()}), goes the long way, nine keys, past a group in sight, a business, a person in a doorway, a way off or a tear (${rounds.join(', ')}), and walks onto the business, the person or the way when bound there (${toInn?.join()}; ${toOffice?.join()}; ${toGone?.join()})`);
 
   // Saltmouth's quay, a row of people between the street and the Telhus and the Sail Loft: it walks
   // over them to each, and to Hessel and to Kitto, who offers his boat to a company that steps onto him.
@@ -341,6 +345,24 @@ function navigator(): void {
   const loft = quayside(14, 9, 'the Sail Loft'), boat = quayside(14, 10, 'Kitto');
   ok(loft.offered === 1 && loft.stood === '14,9' && loft.goal === 'null' && loft.menu === 'The Sail Loft' && boat.stood === '14,10' && boat.goal === 'null' && boat.menu === 'Passage to where',
     `bound for the Sail Loft it lets Kitto's offer go in ${loft.offered} beat and is on the Loft, bound nowhere, its menu up (${loft.stood}; ${loft.menu}); bound for Kitto, his offer is left up (${boat.stood}; ${boat.menu}; ${boat.goal})`);
+
+  // Driven past a corner door, a person in it with a room of their own, Kilnhaven's harbourmaster and
+  // Saltmouth's locksmith: a step onto it goes in, and out is back where it stepped from, so it goes
+  // round by the street to the square past it and is never inside with its goal set.
+  const doorway = (map: string, x: number, y: number, f: Facing, tx: number, ty: number, door: number[]): string => {
+    const c = headlessGame(4), cp = (c.pilot = new Pilot({ instant: true }));
+    c.world.travel(map, x, y, f);
+    see(c, map);
+    const kept = knownOf(c).features(map).flatMap((q) => q.kind === 'npc' && q.x === door[0] && q.y === door[1] ? [q.name] : []);
+    cp.toggle(c);
+    cp.goal = { map, x: tx, y: ty, name: 'the street' };
+    let inside = 0;
+    for (let t = 0; t < 400; t++) { drive(c, [null]); if (c.screens.some((s) => s instanceof InteriorScreen) && cp.goal) inside++; }
+    return `${kept[0]}: ${c.world.state.x},${c.world.state.y} ${inside} ${JSON.stringify(cp.goal)}`;
+  };
+  const harbour = doorway('kilnhaven', 4, 5, EAST, 5, 4, [5, 5]), locksmith = doorway('saltmouth', 5, 10, NORTH, 6, 8, [5, 9]);
+  ok(harbour === 'The Harbourmaster\'s Office: 5,4 0 null' && locksmith === 'Pender the locksmith: 6,8 0 null',
+    `past a corner door with a person in it, it goes round by the street, never inside with its goal set, and is bound nowhere (${harbour}; ${locksmith})`);
 
   // Water, then a mountain, across a passage: the company crosses the water while its tidefolk
   // swims, and the mountain once it has a Mountaineer.
