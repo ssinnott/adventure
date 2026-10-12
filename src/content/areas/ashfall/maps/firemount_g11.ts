@@ -11,7 +11,8 @@
 // The middle mouth and the hole's far end are the ways down into Meridian Camp's vents (VENTS, HOLE;
 // #22). Fane's rope comes up out of the camp at its bottom onto 13,10, beside the lookout (meridian_camp3's
 // ROPE): a way out and never in, so nothing here leads back down it, and its square is kept clear.
-// The east, south and west edges end the world against H11, G12 and F11.
+// The west edge meets F11 (#514); the east edge meets H11 and the south edge G12 (#522), walked, H11's rocks
+// shutting the scavenger's hole off from the east.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/ashfall.md §4.5 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';

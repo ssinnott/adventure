@@ -1031,10 +1031,10 @@ settled in its issue, and what Ashfall teaches changes them.
     meets E8's south (y 253): E9 has steppe at 0 to 15, grass at 16 to 19, sand at 20 and 21,
     shallows at 22 to 24 and sea at 25 to 31, and E8 steppe at 0 to 15, grass at 16 to 18, sand at
     19, shallows at 20 to 23 and sea at 24 to 31, open both sides at 0 to 19; walked from E9's 10,0
-    onto E8's 10,31. E9's east (x 167) lies against F9 (Ashfall's, parked, #522), and the world ends
-    past it: sea at rows 0 to 4, shallows at 5 and 6, sand at 7, grass at 8 to 14, hills at 15 to 24
-    and ash at 25 to 31, the atlas's own, where F9's column 0 has grass at 8 to 13 and hills from
-    14; whoever lays F9 matches the edge and says the crossing line, F9 being another zone. E8's
+    onto E8's 10,31. E9's east (x 167) meets F9's west (Ashfall's, built, #522) square for square, open both
+    sides from row 7: sea at rows 0 to 4, shallows at 5 and 6, sand at 7, grass at 8 to 14, hills at
+    15 to 24 and ash at 25 to 31; walked from E9's 31,14 onto F9's 0,14, which says "Cindercoast.",
+    F9 being another zone, and straight back within the hour nothing. E8's
     west, 0,0 to 0,31 (136,222 to 136,253), meets D8's east (135,222 to 135,253): E8 has sand at 0,0
     and steppe below, D8 steppe all along, open both sides; walked from D8's 31,26 onto E8's 0,26.
     E8's north (y 222) lies against E7, not built and in no issue (§9, #534's 13), and the world
@@ -2257,9 +2257,9 @@ Owed, from the chapter (#531):
 
 Owed, from E9 and E8 (#534):
 
-- **E9's east edge ends in the void** against F9, Ashfall's and parked (#522): sea at rows 0 to 4,
-  shallows at 5 and 6, sand at 7, grass at 8 to 14, hills at 15 to 24 and ash at 25 to 31. Whoever
-  lays F9 matches it and says the crossing line, F9 being another zone (§4.9).
+- **E9's east edge meets F9,** Ashfall's, built (#522): sea at rows 0 to 4, shallows at 5 and 6, sand
+  at 7, grass at 8 to 14, hills at 15 to 24 and ash at 25 to 31, square for square and pinned. F9 says
+  the crossing line, "Cindercoast.", being another zone (§4.9).
 - **E8's north edge ends in the void** against E7, cut, and its east edge against F8, the sea (§4.9,
   §9, #534's 13).
 - **The world map paints E8's two islands in deep sea:** the bars of shallows out to them are the

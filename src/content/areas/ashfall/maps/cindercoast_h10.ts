@@ -5,8 +5,8 @@
 // sand past Scaldwell (240,300), its pools in the ash, the bathhouse and its keeper, the Riders' shrine
 // and the rock where the water comes up, a stoker shovelling at it; and on through the vines of the
 // shore to the west edge, where G10's vines meet it, for Cinderport. The stream comes up from the south
-// and goes on into G10 at rows 22 and 23. The way in is the Stair, from I10 (#502); the north and south
-// edges end the world against H9's shore and H11.
+// and goes on into G10 at rows 22 and 23. The way in is the Stair, from I10 (#502); the north edge ends
+// the world against H9's shore, and the south edge meets H11's ash (#522), walked.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/ashfall.md §4.2 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import type { When } from '../../../../game/quests.ts';

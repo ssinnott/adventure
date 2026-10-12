@@ -562,8 +562,7 @@ settled in its issue.
   not taken: J11's row 10 is opened at 0 to 2, from mountain to snow, and I11's row 10 is snow from
   31,10 west to the snow line at 22,10, so the summit's path goes on over the crest; no exit is
   added (§9, #501's 2). The ridge trail leaves by the north edge at 27,0 (291,318), a square from
-  the scaffold's 28,0, to meet the atlas's trail beyond at 291,317, which I10 takes on (§4.5); the
-  west edge ends the world against H11, pinned in `tools/tests/outdoors.ts` with void past it, and
+  the scaffold's 28,0, to meet the atlas's trail beyond at 291,317, which I10 takes on (§4.5); the west edge meets H11's east (Ashfall's, built, #522) square for square, the pines, the grass and the ash, pinned in `tools/tests/outdoors.ts`, and
   the south edge meets I12's north row, the pines walked and the Sheer at 7 and 8 (#508, §4.8; §9,
   #501's 4). The Stone stands at 28,0 (292,318) on bare rock beside the trail's
   square, in a ring of bare stone, a 3 by 3 at 27 to 29, 1 to 3, its stones set round it as rocks
@@ -733,8 +732,9 @@ settled in its issue.
   you came is still open.*); the floor is 22 on both sides, so nothing rises; straight back it
   hears nothing (§9, #503's 2 and 3). The trail goes up the crest to the north edge, at 18 from row
   31 to 16, at 19 from 15 to 7 and at 20 from 7 to 0, out at 20,0 (284,254), where the atlas's
-  meets it at 284,253 and I8 takes it on (§4.7; §9, #503's 5). The west and east edges end the world
-  against H9 and J9, pinned in `tools/tests/outdoors.ts` with void past them, and I10's north edge
+  meets it at 284,253 and I8 takes it on (§4.7; §9, #503's 5). The west edge meets H9's, the Sheer from
+  row 5 (built, #522), and the east edge J9's (built, #497), pinned in `tools/tests/outdoors.ts`, and
+  I10's north edge
   is pinned against this south one and I8's south edge against this north one (§4.7). Up the trail
   the Hearth's heat grows: at 18,28 the wind comes warm out of the north and the snow is wet; at
   19,15
@@ -949,8 +949,7 @@ settled in its issue.
     peaks and mountain elsewhere. J10's west (296) meets I10's east (295): the range on both sides,
     nothing walked, a climber's only. I12's north (y 350) meets I11's south row (349): the ash,
     hills and pines under the Sheer at 0 to 6 and the pines at 9 to 25 on both sides, walked, the
-    Sheer at 7 and 8. I12's west (264) meets H12's east (263, Ashfall's country, not built): ash,
-    grass and hills at rows 0 to 19 and mountain below, pinned with void past it for H12 to match.
+    Sheer at 7 and 8. I12's west (264) meets H12's east (263, Ashfall's country, built, #522) square for square: ash at rows 0 to 11, grass at 12 to 14, hills at 15 to 19, mountain at 20 to 30 and void at 31, pinned both ways.
     I12's east (295) meets J12's west (296): mountain and peaks on both sides, nothing walked. J12's
     north (350) meets J11's south row (349): hills at 19 to 31 on both sides, walked (J11's 18 is
     hills against J12's mountain). J12's east (327) meets K12, cut: hills, grass and pines at rows 0
@@ -1982,8 +1981,8 @@ Cut and owed, from I9 (#503):
   #503's 6).
 - **Two under.** I9 at 20 and the area's pool, 91.5% two under against a limit of 90%, are owed to
   #18, as the Whitespine's was before I10 dropped it (§9, #503's 11).
-- **The world ends past I9** to the west until H9 is built and to the east until J9 is; north the
-  trail goes on into I8 (#504) (§9, #503's 18).
+- **I9's west edge is shut:** H9 is built (#522) and the Sheer shuts its east edge, so the Stair stays
+  the only way over; north the trail goes on into I8 (#504) (§9, #503's 18).
 - **The shrine's kneel.** The walkthrough checks the lamp at 1,19 by place: `kneel` in
   `tools/walk.ts` compares the map def's shrine with the outdoors' placed copy, so it fails on any
   zone map's shrine, which only a dungeon's had used; a systems change, the owner's to ask for
@@ -2041,7 +2040,6 @@ Cut and owed, from the country behind (#508):
   the share, as in Rimewater's seven (§9, #508's 13).
 - **Two under.** J10, I12 and J12 at 20 win every fight, owed to #18 as every box's: `OWED` in
   `tools/tests/gate.ts` names each, and the area's pool stays over the limit (§8).
-- **To H12, Ashfall's country behind (#522):** I12's west edge, ash, grass and hills at rows 0 to 19
-  and mountain below, is pinned against void; H12's builder matches it and moves the pin.
+- **H12, Ashfall's country behind, is built (#522):** I12's west edge, ash at rows 0 to 11, grass at 12 to 14, hills at 15 to 19, mountain at 20 to 30 and void at 31, meets its east edge square for square, and the pin follows it.
 - **The world ends past J12** to the east against K12, cut, and to the south at the rim, as I12's
   does (§4.8).

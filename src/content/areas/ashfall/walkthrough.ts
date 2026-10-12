@@ -5,8 +5,8 @@
 // bathhouse keeper, the shrine and the stoker at its rock; the groups won at the floor; and the vent
 // under the rock, found from the path trodden to it. Then Cinderport's box (G10, #511) walked: put down
 // at the gate's front, where Cinderport's way out lands and the ship comes in; the gate a door into the
-// town (#512); the road square to square from the gate's front up the wall to the north edge, past which,
-// for now, the world ends, and out south-west to the west edge, where F10's road meets it; the trading
+// town (#512); the road square to square from the gate's front up the wall to the north edge, where it
+// goes on into G9 (#522), and out south-west to the west edge, where F10's road meets it; the trading
 // ground: the ground's line, the eldest's story, the Riders' fires and horses and their shrine; the
 // milestone; the chandler's racks under the wall; the stream forded on its stones and the knoll over it;
 // the hermit and the clay pit under the vines; the box's groups won at its floor, the vines never
@@ -42,8 +42,17 @@
 // their sockets in any order, the Stone lit, the Sentinel won in its door and the sentries after it;
 // the lower gallery behind the housing's foot and the fourth journal in it; and the Cartographers'
 // Surveyor's rung paid for it at a hall of the Guild, the Chart House's shelf full, and the Mapmaker's
-// rung after it, paid for the firelight on Meridian Camp's third level (#635). Then the three
-// third prestiges taught here (#448), each its trainer's quest played to the teaching by a company of 27:
+// rung after it, paid for the firelight on Meridian Camp's third level (#635). Then the Sound's shore
+// behind the road (#522): Cinderport's harbour side (G9), the road walked on into it from G10 to the
+// fishers' slip, the harbour between the sea wall's moles, the drakes on the beach and the smugglers' cell
+// in the mole; west of the town (F9), walked onto from F10 and from the Wold's E9, Cindercoast named, the
+// drakes on the ash and the
+// fishers' store behind the rock; and under the Sheer's north end (H9), walked onto from H10 and shut to
+// Sheer Point's pines by the Sheer, the drakes on the sand and the cleft behind the sooted rocks. Then the
+// Waste's west under the lava flow, behind the road (E11, #522): in off E10 and F11, walked; the knapper at
+// the flow's edge, the drakelings on its warm bank and the tube under it behind the crack that breathes cold
+// air. Then the three third prestiges taught here (#448), each its trainer's quest played to the teaching by
+// a company of 27:
 // the Paladin's lamp, the Barbarian's nest and the Druid's seedling.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen, walkThrough, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
@@ -118,8 +127,8 @@ export const walkthrough: Walkthrough = (ok) => {
   // Cinderport's way out lands (#512) and the ship and the ride come in through the town (#547).
   ok(G10.start.x === GATE.x && G10.start.y === GATE.y + 1 && G10.start.facing === SOUTH && G10.exits?.length === 1 && G10.exits[0] === GATE,
     'the box\'s way in is the gate\'s front, 6,3, facing south, and its one way out but its edges is Cinderport\'s gate');
-  ok(COAST.maps?.map((m) => m.map).join() === 'cindercoast_h10,cindercoast_g10' && !!COAST.crossing?.harder && !!COAST.crossing?.warning,
-    'Cindercoast holds H10 and G10 and has its crossing words, said coming down the Stair onto H10 (#166, #510)');
+  ok(COAST.maps?.map((m) => m.map).join() === 'cindercoast_h10,cindercoast_g10,cindercoast_f9,cindercoast_g9,cindercoast_h9' && !!COAST.crossing?.harder && !!COAST.crossing?.warning,
+    'Cindercoast holds H10 and G10, and behind the road F9, G9 and H9 (#522), and has its crossing words, said coming down the Stair onto H10 (#166, #510)');
   w.world.travel('cindercoast_g10', G10.start.x, G10.start.y, SOUTH);
   ok(w.world.zone?.id === 'cindercoast_g10' && w.world.state.x === g10.x + GATE.x && w.world.state.y === g10.y + GATE.y + 1, 'put down at the gate\'s front on G10');
 
@@ -130,10 +139,10 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(Math.floor(plate[0]) === g10.x + GATE.x && Math.floor(plate[1]) === g10.y + GATE.y, `the gate at 6,2 is Cinderport's plate on the atlas (${plate.join(',')})`);
 
   // The road square to square from the gate's front, up the wall's west side to the north edge and out
-  // south-west through the vines to the west edge; past both, for now, the world ends.
+  // south-west through the vines to the west edge; at both it goes on, into G9 (#522) and onto F10's road.
   const road = reach(GATE.x, GATE.y + 1, (x, y) => onG10(x, y) && out.at(x, y).ch === '=');
-  ok(road.has(at(3, 0)) && road.has(at(0, 7)) && road.has(at(0, 8)) && out.passable(g10.x + 3, g10.y - 1) !== 'ok' && [7, 8].every((y) => out.at(g10.x - 1, g10.y + y).ch === '='),
-    'the road runs square to square from the gate\'s front to the north edge at 3,0, past which, for now, the world ends, and to the west edge at 0,7 and 0,8, where F10\'s road meets it (#517)');
+  ok(road.has(at(3, 0)) && road.has(at(0, 7)) && road.has(at(0, 8)) && out.at(g10.x + 3, g10.y - 1).ch === '=' && [7, 8].every((y) => out.at(g10.x - 1, g10.y + y).ch === '='),
+    'the road runs square to square from the gate\'s front to the north edge at 3,0, where it goes on into G9 (#522), and to the west edge at 0,7 and 0,8, where F10\'s road meets it (#517)');
   const stone = G10.features!.find((f) => f.kind === 'event' && f.id === 'g10_milestone');
   ok(stone?.kind === 'event' && stone.text.includes('OLD CINDER 4, THE WOLD 6') && [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => road.has(at(stone.x + dx, stone.y + dy))),
     'the milestone stands by the road where it leaves the ground: OLD CINDER 4, THE WOLD 6');
@@ -211,8 +220,9 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(w.world.zone?.id === 'firemount_g11' && w.world.state.x === g11.x + G11.start.x && w.world.state.y === g11.y && g11.x === g10.x && g11.y === g10.y + 32 && G11.start.y === 0 && G11.start.facing === SOUTH && G11.exits?.length === 2 && G11.exits.includes(VENTS) && G11.exits.includes(HOLE),
     'over G10\'s south edge from its 28,31 onto G11\'s 28,0, walked, the box\'s way in, and no way out but its edges and the two down into Meridian Camp');
   ok(due.join(' / ') === 'Fire Mountain.', `at 25, Fire Mountain named, no more (${due.join(' / ')})`);
-  ok(two.join(' / ') === 'Fire Mountain. The land here is harder than the road behind.', `at 23, the land harder than the road behind (${two.join(' / ')})`);
-  ok(low.join(' / ') === 'Fire Mountain. Nothing here would spare you. The road behind is still open.', `at 22, the plainer warning, and the road behind open (${low.join(' / ')})`);
+  const MOUNT = ATLAS.zones.find((z) => z.id === 'firemount')!;
+  ok(two.join(' / ') === `Fire Mountain. ${MOUNT.crossing?.harder}` && !!MOUNT.crossing?.harder?.includes('warm through the boots'), `at 23, the mountain's own harder words (${two.join(' / ')})`);
+  ok(low.join(' / ') === `Fire Mountain. ${MOUNT.crossing?.warning}` && !!MOUNT.crossing?.warning?.includes('way back is still open'), `at 22, its plainer warning, and the way back open (${low.join(' / ')})`);
   const straight = cross(25, 'firemount_g11', G11.start.x, 0, NORTH);
   ok(w.world.zone?.id === 'cindercoast_g10' && straight.length === 0, `straight back over the line onto G10, nothing said (${straight.join(' / ')})`);
   const upTwo = cross(22, 'firemount_g11', G11.start.x, 0, NORTH), upLow = cross(21, 'firemount_g11', G11.start.x, 0, NORTH);
@@ -509,7 +519,7 @@ export const walkthrough: Walkthrough = (ok) => {
   const wasteLow = cross(21, 'cindercoast_g10', 0, 7, WEST), wasteTwo = cross(22, 'cindercoast_g10', 0, 7, WEST), wasteDue = cross(24, 'cindercoast_g10', 0, 7, WEST);
   ok(w.world.zone?.id === 'emberwaste_f10' && w.world.state.x === f10.x + 31 && w.world.state.y === f10.y + 7 && f10.x + f10.w === g10.x && F10.start.x === 31 && F10.start.y === 7,
     'over G10\'s west edge from 0,7 onto F10\'s 31,7, walked, the box\'s way in');
-  ok(WASTE.maps?.map((m) => m.map).join() === 'emberwaste_f10,emberwaste_e10,emberwaste_f11' && wasteDue.join(' / ') === 'The Ember Waste.', `at 24, the Ember Waste named, no more (${wasteDue.join(' / ')})`);
+  ok(WASTE.maps?.map((m) => m.map).join() === 'emberwaste_f10,emberwaste_e10,emberwaste_f11,emberwaste_e11' && wasteDue.join(' / ') === 'The Ember Waste.', `at 24, the Ember Waste named, no more (${wasteDue.join(' / ')})`);
   ok(wasteTwo.join(' / ') === `The Ember Waste. ${WASTE.crossing?.harder}`, `at 22, the rest in the Waste's own words (${wasteTwo.join(' / ')})`);
   ok(wasteLow.join(' / ') === `The Ember Waste. ${WASTE.crossing?.warning}`, `at 21, the harsher words, and the coast behind (${wasteLow.join(' / ')})`);
   const back = cross(24, 'emberwaste_f10', 31, 7, EAST);
@@ -748,6 +758,9 @@ export const walkthrough: Walkthrough = (ok) => {
   oldCinder(w, ok);
   emberStone(w, ok);
   roadBehind(w, ok);
+  coastBehind(w, ok);
+  mountainBehind(w, ok);
+  wasteBehind(w, ok);
   sideQuests(ok);
   thirdPrestiges(ok);
   theWindow(ok);
@@ -1123,6 +1136,342 @@ function roadBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void {
 }
 
 /**
+ * The Sound's shore behind the road (#522). Cinderport's harbour side (G9): north from G10's road at 3,0
+ * onto its 3,31, walked, the land not named again, and the road on square to square up the wall's west
+ * side to its end over the fishers' slip; the old fisherman on the slip; the harbour between the sea
+ * wall's moles against the town's wall, open to the Sound through its mouth on the cove; north from
+ * G10's grass at 19,0 onto 19,31, where the box starts; the sea wall's outer face and its end; the drakes
+ * on the beach, the box's one fight; and the smugglers' cell in the east mole where a step is worn at its
+ * foot. West of the town (F9): north from F10's vines at 16,0 onto its 16,31, walked, Cindercoast named,
+ * where the box starts; east from the Wold's E9 at 31,14 onto its 0,14, walked, Cindercoast named and no
+ * more, and straight back, the Wold not named again; the fisherman at his door; the drakes on the ash, the
+ * box's one fight; and the fishers' store behind the rock where their path up the ridge stops. Under the
+ * Sheer's north end (H9): north from H10's grass at 14,0 onto its 14,31, walked, the land not named
+ * again, where the box starts; west from Sheer Point's pines at I9's 0,12 refused, the Sheer shutting
+ * its east edge to the water; the fishwife at her door; the drakes on the sand, the box's one fight; and the cleft
+ * behind the sooted rocks at the Sheer's foot. Walked, waded, climbed or floated, no prize is reached but
+ * through its door.
+ */
+function coastBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void {
+  const out = buildMaps()[OUTDOORS];
+  const [F9, G9, H9] = ['cindercoast_f9', 'cindercoast_g9', 'cindercoast_h9'].map((id) => MAP_DEFS.find((d) => d.id === id)!);
+  const [f9, g9, h9, g10, f10, h10, e9, i9] = [F9.id, G9.id, H9.id, G10.id, 'emberwaste_f10', 'cindercoast_h10', 'wold_e9', 'sheerpoint_i9'].map((id) => out.zones.find((z) => z.id === id)!);
+  const WOLD = ATLAS.zones.find((z) => z.id === 'wold')!;
+  const said = (r: ReturnType<typeof w.world.move>): string => (r.kind === 'moved' ? r.messages.join(' / ') || 'nothing said' : r.kind);
+  const at = (z: typeof f9, x: number, y: number): boolean => w.world.zone?.id === z.id && w.world.state.x === z.x + x && w.world.state.y === z.y + y;
+  const shut = (z: typeof f9, from: [number, number], door: [number, number], prize: [number, number]): { size: number; reached: boolean } => {
+    const seen = new Set<number>(), todo = [[z.x + from[0], z.y + from[1]]];
+    while (todo.length) {
+      const [x, y] = todo.pop()!, k = y * out.width + x;
+      if (seen.has(k) || (x === z.x + door[0] && y === z.y + door[1]) || x < z.x || x >= z.x + z.w || y < z.y || y >= z.y + z.h
+        || out.passable(x, y, { swim: true, climb: true, float: true }) !== 'ok') continue;
+      seen.add(k);
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+    }
+    return { size: seen.size, reached: seen.has((z.y + prize[1]) * out.width + z.x + prize[0]) };
+  };
+  const search = (map: string, x: number, y: number, facing: Facing, room: string): boolean => {
+    w.world.travel(map, x, y, facing);
+    let found = false;
+    for (let i = 0; i < 20 && !found; i++) found = w.world.search();
+    const into = found ? [w.world.move('forward'), w.world.move('forward')] : [];
+    listen(w);
+    return found && into.every((r) => r.kind === 'moved') && w.world.used(room);
+  };
+  const words = (d: MapDef, name: string): string => { const p = person(name, d); w.world.travel(d.id, p.x, p.y); const t = meet(p, w.party, heard(w.world, p)).text; listen(w); return t.replace(/\n+/g, ' '); };
+  const chest = (d: MapDef, id: string): Feature | undefined => d.features!.find((f) => f.kind === 'chest' && f.id === id);
+  w.level = 24;
+
+  // Cinderport's harbour side: north from G10's road at 3,0 onto G9's 3,31, walked, in Cindercoast still,
+  // and the road on, square to square, up the wall's west side to its end over the fishers' slip.
+  w.world.travel(G10.id, 3, 0, NORTH);
+  const up = w.world.move('forward');
+  ok(up.kind === 'moved' && at(g9, 3, 31) && g9.x === g10.x && g9.y + g9.h === g10.y && !up.messages.some((m) => m.includes(`${COAST.name}.`)),
+    `north from G10's road at 3,0 onto G9's 3,31, walked, and the land not named again (${said(up)})`);
+  const road: string[] = [];
+  for (const step of ['forward', 'right', 'forward', 'left', ...Array<string>(8).fill('forward')]) {
+    if (step !== 'forward') { w.world.turn(step as 'left' | 'right'); continue; }
+    const r = w.world.move('forward');
+    road.push(r.kind === 'moved' ? G9.rows[w.world.state.y - g9.y][w.world.state.x - g9.x] : r.kind);
+  }
+  ok(road.length === 10 && road.every((c) => c === '=') && at(g9, 4, 22) && G9.rows[21][4] === '_',
+    `the road runs on into G9 square to square, up the wall's west side to its end over the slip on the cove (${road.join('')})`);
+  listen(w);
+  const old = words(G9, 'An old fisherman');
+  ok(old.includes('Compact counts every fish') && old.includes('Drakes on the beach'), `the old fisherman on the slip: the Compact counts inside the wall, and drakes on the beach east of it (${old})`);
+  const water = (c: string): boolean => c === 'W' || c === '~';
+  const harbour = [...Array(10).keys()].every((i) => G9.rows[22 + i][5] === 'B' && 'BS'.includes(G9.rows[22 + i][13]) && water(G9.rows[22 + i][6]))
+    && G9.rows[31].slice(5, 14) === 'B' + 'W'.repeat(7) + 'B' && [...Array(10).keys()].every((i) => out.at(g10.x + 4 + i, g10.y).ch === 'B')
+    && [...Array(8).keys()].every((i) => water(G9.rows[21][6 + i]) && water(G9.rows[20][5 + i]));
+  ok(harbour, 'the harbour lies between the sea wall\'s moles against the town\'s wall, its water open to the Sound through its mouth on the cove');
+
+  // North from G10's grass at 19,0 onto G9's 19,31, where the box starts; the sea wall's outer face and
+  // its end; the drakes on the beach, won at the floor.
+  w.world.travel(G10.id, 19, 0, NORTH);
+  const shore = w.world.move('forward');
+  ok(shore.kind === 'moved' && at(g9, 19, 31) && G9.start.x === 19 && G9.start.y === 31 && G9.start.facing === NORTH && !(G9.exits ?? []).length,
+    `north from G10's grass at 19,0 onto G9's 19,31, where the harbour side starts, and nothing is taken out of it (${said(shore)})`);
+  listen(w);
+  for (const id of ['g9_wall', 'g9_head', 'g9_skull']) see(w, `${G9.id}:${id}`);
+  for (const g of G9.encounters!) fight(w, `${G9.id}:${g.id}`);
+
+  // The secret: the step worn at the east mole's foot, and the search there; the cell in the wall.
+  const cell = shut(g9, [14, 28], [13, 28], [12, 28]);
+  ok(cell.size > 250 && !cell.reached, `the cell is shut but for its door in the mole: none of G9's ${cell.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${G9.id}:g9_step`);
+  ok(search(G9.id, 14, 28, WEST, 'g9_cell'), 'searched at the worn step, the mole gives, and the cell in it can be walked into');
+  const box = chest(G9, 'g9_box');
+  ok(box?.kind === 'chest' && box.gold === 50 && box.x === 12 && box.y === 28, 'in the cell, the smugglers\' box');
+
+  // West of the town: north from F10's vines at 16,0 onto F9's 16,31, where the box starts, Cindercoast
+  // named; and east from the Wold's E9 at 31,14 onto F9's 0,14, Cindercoast named and no more, and
+  // straight back west within the hour, where nothing more is said.
+  w.world.travel(f10.id, 16, 0, NORTH);
+  const north = w.world.move('forward');
+  ok(north.kind === 'moved' && at(f9, 16, 31) && f9.x === f10.x && f9.y + f9.h === f10.y && said(north) === `${COAST.name}.`
+    && F9.start.x === 16 && F9.start.y === 31 && F9.start.facing === NORTH && !(F9.exits ?? []).length,
+    `north from F10's vines at 16,0 onto F9's 16,31, walked, Cindercoast named, where the box starts, and nothing is taken out of it (${said(north)})`);
+  listen(w);
+  w.world.travel(e9.id, 31, 14, EAST);
+  const east = w.world.move('forward');
+  ok(east.kind === 'moved' && at(f9, 0, 14) && e9.x + e9.w === f9.x && said(east) === `${COAST.name}.`,
+    `east from the Wold's E9 at 31,14 onto F9's 0,14, walked, and Cindercoast named, no more (${said(east)})`);
+  listen(w);
+  const back = w.world.move('back');
+  ok(back.kind === 'moved' && at(e9, 31, 14) && !said(back).includes(WOLD.name), `and straight back west onto E9's 31,14 within the hour, the Wold not named again (${said(back)})`);
+  listen(w);
+  const fisher = words(F9, 'A fisherman');
+  ok(fisher.includes('harbour dues') && fisher.includes('the seals'), `the fisherman at his door: the Compact's tenth, and the drakes after the seals (${fisher})`);
+  for (const id of ['f9_boats', 'f9_seal', 'f9_ridge']) see(w, `${F9.id}:${id}`);
+  for (const g of F9.encounters!) fight(w, `${F9.id}:${g.id}`);
+  const store = shut(f9, [24, 25], [24, 24], [24, 23]);
+  ok(store.size > 500 && !store.reached, `the store is shut but for the rock: none of F9's ${store.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${F9.id}:f9_track`);
+  ok(search(F9.id, 24, 25, NORTH, 'f9_store'), 'searched where the fishers\' path stops, the rock gives, and their store behind it can be walked into');
+  const casks = chest(F9, 'f9_box');
+  ok(casks?.kind === 'chest' && casks.gold === 50 && casks.x === 24 && casks.y === 23, 'in the store, under the casks, the box the Compact never saw');
+
+  // Under the Sheer's north end: north from H10's grass at 14,0 onto H9's 14,31, where the box starts, the
+  // land not named again; and west from Sheer Point's pines at I9's 0,12 refused, the Sheer shutting H9's east
+  // edge to the water and the Stair the only way over by land.
+  w.world.travel(h10.id, 14, 0, NORTH);
+  const over = w.world.move('forward');
+  ok(over.kind === 'moved' && at(h9, 14, 31) && h9.x === h10.x && h9.y + h9.h === h10.y && !over.messages.some((m) => m.includes(`${COAST.name}.`))
+    && H9.start.x === 14 && H9.start.y === 31 && H9.start.facing === NORTH && !(H9.exits ?? []).length,
+    `north from H10's grass at 14,0 onto H9's 14,31, walked, the land not named again, where the box starts, and nothing is taken out of it (${said(over)})`);
+  listen(w);
+  w.world.travel(i9.id, 0, 12, WEST);
+  const down = w.world.move('forward');
+  ok(down.kind === 'blocked' && at(i9, 0, 12) && h9.x + h9.w === i9.x && out.at(h9.x + 31, h9.y + 12).ch === '|',
+    `west from Sheer Point's pines at I9's 0,12 the step is refused, the Sheer standing on H9's 31,12 and shutting the edge (${down.kind === 'blocked' ? down.reason : said(down)})`);
+  listen(w);
+  const wife = words(H9, 'A fishwife');
+  ok(wife.includes('Beetles come up the sand') && wife.includes('Mind the Sheer'), `the fishwife at her door: the beetles after the guts, and the Sheer (${wife})`);
+  for (const id of ['h9_sand', 'h9_sheer', 'h9_point']) see(w, `${H9.id}:${id}`);
+  for (const g of H9.encounters!) fight(w, `${H9.id}:${g.id}`);
+  const cleft = shut(h9, [26, 27], [27, 27], [28, 27]);
+  ok(cleft.size > 500 && !cleft.reached, `the cleft is shut but for the rocks: none of H9's ${cleft.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${H9.id}:h9_soot`);
+  ok(search(H9.id, 26, 27, EAST, 'h9_cleft'), 'searched where the path ends at the sooted rocks, they give, and the cleft behind them can be walked into');
+  const sea = chest(H9, 'h9_chest');
+  ok(sea?.kind === 'chest' && sea.gold === 50 && sea.x === 28 && sea.y === 27, 'in the cleft, the sea-chest under the sail');
+}
+
+/**
+ * The country behind the road (#522), Fire Mountain's flanks. The east flank (H11): south off H10's ash
+ * onto its 20,0, walked, and the mountain named; the stream going north and the stones across it; the
+ * mountain over the forge, the forge's back wall and the flow coming in under its crust; the pines under
+ * the Sheer and the drake-watcher at their edge, who says where the drakes lay; the Sheer, a shed skin,
+ * the shell where they lay and an old drake's skull; the drakelings at their shell, the box's one fight;
+ * the old war-chest behind the rock the axe-head is driven into; and the scavenger's hole in G11 shut to
+ * this side by its rocks. The border with the High Spine, where no road runs (#616): east onto I11 the
+ * High Spine named, straight back nothing said, and a company of 23 coming in off I12 told the mountain
+ * in its own words. The south-east foot (H12): south from H11, walked, the land not named again; the
+ * flow's end, the drake's track, the hatching, the goat's horns, the wallow, the hills and the rim; the
+ * drakelings by the flow's end; and the tube behind the crust split along one line. The south foot
+ * (G12): south from G11, walked, the land not named again; the folds, the scrapes, the smoke going west,
+ * the hum over Meridian Camp, the pumice and the rim; the drakelings on the slope; and the drakes' hollow
+ * behind the clawed rock. Walked, waded, climbed or floated, no prize is reached but through its door.
+ */
+function mountainBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void {
+  const out = buildMaps()[OUTDOORS];
+  const mapOf = (id: string): MapDef => MAP_DEFS.find((d) => d.id === id)!;
+  const [H11, H12, G12] = ['firemount_h11', 'firemount_h12', 'firemount_g12'].map(mapOf);
+  const [h10, h11, h12, g11, g12, i11] = ['cindercoast_h10', H11.id, H12.id, 'firemount_g11', G12.id, 'highspine_i11'].map((id) => out.zones.find((z) => z.id === id)!);
+  const MOUNT = ATLAS.zones.find((z) => z.id === 'firemount')!;
+  const said = (r: ReturnType<typeof w.world.move>): string => (r.kind === 'moved' ? r.messages.join(' / ') || 'nothing said' : r.kind);
+  const step = (level: number, map: string, x: number, y: number, facing: Facing): ReturnType<typeof w.world.move> => {
+    for (const m of w.party.members) m.level = level;
+    w.world.travel(map, x, y, facing);
+    return w.world.move('forward');
+  };
+  /** Whether `prize` is reached from `from`, walked, waded, climbed or floated, never through `door`, inside `z` and `also`. */
+  const shut = (z: typeof h11, from: [number, number], door: [number, number], prize: [number, number], also: (typeof h11)[] = []): { size: number; reached: boolean } => {
+    const inside = (x: number, y: number): boolean => [z, ...also].some((q) => x >= q.x && x < q.x + q.w && y >= q.y && y < q.y + q.h);
+    const seen = new Set<number>(), todo = [[z.x + from[0], z.y + from[1]]];
+    while (todo.length) {
+      const [x, y] = todo.pop()!, k = y * out.width + x;
+      if (seen.has(k) || !inside(x, y) || (x === z.x + door[0] && y === z.y + door[1]) || out.passable(x, y, { swim: true, climb: true, float: true }) !== 'ok') continue;
+      seen.add(k);
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+    }
+    return { size: seen.size, reached: seen.has((z.y + prize[1]) * out.width + z.x + prize[0]) };
+  };
+  const search = (map: string, x: number, y: number, facing: Facing, room: string): boolean => {
+    w.world.travel(map, x, y, facing);
+    let found = false;
+    for (let i = 0; i < 20 && !found; i++) found = w.world.search();
+    const into = found ? [w.world.move('forward'), w.world.move('forward')] : [];
+    listen(w);
+    return found && into.every((r) => r.kind === 'moved') && w.world.used(room);
+  };
+  const chest = (def: MapDef, id: string) => def.features!.find((f) => f.kind === 'chest' && f.id === id);
+  w.level = 25;
+
+  // The east flank: south off H10's ash onto H11's 20,0, walked, the mountain named and no more at its
+  // floor; nothing taken out of it.
+  const into = step(25, 'cindercoast_h10', 20, 31, SOUTH);
+  ok(into.kind === 'moved' && w.world.zone?.id === H11.id && w.world.state.x === h11.x + 20 && w.world.state.y === h11.y && h10.y + h10.h === h11.y && said(into) === 'Fire Mountain.',
+    `south from H10's 20,31 onto H11's 20,0 over the ash, walked, and Fire Mountain named, no more at 25 (${said(into)})`);
+  listen(w);
+  ok(H11.start.x === 20 && H11.start.y === 0 && H11.start.facing === SOUTH && !(H11.exits ?? []).length, 'the east flank starts at its north edge on the ash, and nothing is taken out of it');
+  for (const id of ['h11_stream', 'h11_stones', 'h11_cone', 'h11_forge', 'h11_flow', 'h11_pines', 'h11_sheer', 'h11_shed', 'h11_nest', 'h11_skull']) see(w, `${H11.id}:${id}`);
+  const watcher = H11.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'A drake-watcher')!;
+  w.world.travel(H11.id, watcher.x, watcher.y);
+  ok(meet(watcher, w.party, heard(w.world, watcher)).text.includes('Leave the hollows be'), 'the drake-watcher at the pines\' edge says where the drakes lay, and to leave the hollows be');
+  listen(w);
+  // Each box's one group, won at its floor: six drakelings, the mountain's youngest, the band's top.
+  ok([H11, H12, G12].every((d) => d.encounters!.length === 1 && d.encounters!.every((g) => g.monsters.length === 6 && g.monsters.every((m) => m === 'drakeling') && !g.after && g.respawn === 2880)),
+    'each box\'s one fight is six drakelings, the mountain\'s youngest, at the band\'s top');
+  for (const g of H11.encounters!) fight(w, `${H11.id}:${g.id}`);
+  // The secret: an old axe-head driven into a rock on the slope, and behind the rock the war-chest.
+  const war = shut(h11, [26, 27], [26, 26], [25, 25]);
+  ok(war.size > 900 && !war.reached, `the war-chest is shut but for the rock: none of H11's ${war.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${H11.id}:h11_axe`);
+  ok(search(H11.id, 26, 27, NORTH, 'h11_hollow'), 'searched where the axe-head is driven into the rock, it gives, and the hollow behind it can be walked into');
+  const kept = chest(H11, 'h11_chest');
+  ok(kept?.kind === 'chest' && kept.gold === 50 && kept.items.join() === 'elixir' && kept.x === 25 && kept.y === 25, 'in the hollow, the old war-chest, and a little left in it');
+  // The scavenger's hole in G11 stays his: H11's rocks shut its far side, so it is reached through its
+  // door alone, from G11 or from H11.
+  const hole = shut(g11, [20, 16], [29, 16], [31, 16], [h11]);
+  ok(hole.size > 1500 && !hole.reached, `the scavenger's hole is shut to H11 by its rocks: none of G11's and H11's ${hole.size} squares reaches it but through its door`);
+
+  // The border with the High Spine, where no road runs (#616): east from H11's 31,10 onto I11's 0,10, the
+  // High Spine named and no more for a company over its floor; straight back, nothing said; and a company
+  // of 23 coming west off I12's 0,5 onto H12's 31,5 hears Fire Mountain named, in the mountain's own words.
+  const east = step(25, H11.id, 31, 10, EAST);
+  ok(east.kind === 'moved' && w.world.zone?.id === 'highspine_i11' && w.world.state.x === i11.x && h11.x + h11.w === i11.x && said(east) === 'The High Spine.',
+    `east from H11's 31,10 onto I11's 0,10, walked, and the High Spine named (${said(east)})`);
+  const back = step(25, 'highspine_i11', 0, 10, WEST);
+  ok(back.kind === 'moved' && w.world.zone?.id === H11.id && said(back) === 'nothing said', `straight back onto H11's 31,10, nothing said (${said(back)})`);
+  const over = step(23, 'highspine_i12', 0, 5, WEST);
+  ok(over.kind === 'moved' && w.world.zone?.id === H12.id && w.world.state.x === h12.x + 31 && said(over) === `Fire Mountain. ${MOUNT.crossing?.harder}`,
+    `west off I12's 0,5 onto H12's 31,5 at 23, Fire Mountain named and its own harder words, no road behind (${said(over)})`);
+
+  // The south-east foot: south from H11's 22,31 onto H12's 22,0, walked, in Fire Mountain still, so the
+  // land is not named again; nothing taken out of it.
+  const south = step(25, H11.id, 22, 31, SOUTH);
+  ok(south.kind === 'moved' && w.world.zone?.id === H12.id && w.world.state.x === h12.x + 22 && w.world.state.y === h12.y && h11.y + h11.h === h12.y && !south.messages.some((m) => m.includes('Fire Mountain.')),
+    `south from H11's 22,31 onto H12's 22,0 over the ash, walked, and the land not named again (${said(south)})`);
+  listen(w);
+  ok(H12.start.x === 22 && H12.start.y === 0 && H12.start.facing === SOUTH && !(H12.exits ?? []).length, 'the south-east foot starts at its north edge on the ash, and nothing is taken out of it');
+  for (const id of ['h12_track', 'h12_end', 'h12_shell', 'h12_horns', 'h12_wallow', 'h12_hills', 'h12_rim']) see(w, `${H12.id}:${id}`);
+  for (const g of H12.encounters!) fight(w, `${H12.id}:${g.id}`);
+  // The secret: the crust at the flow's very end split along one line, and behind it the tube.
+  const tube = shut(h12, [7, 8], [7, 9], [7, 11]);
+  ok(tube.size > 600 && !tube.reached, `the tube is shut but for the crust: none of H12's ${tube.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${H12.id}:h12_seam`);
+  ok(search(H12.id, 7, 8, SOUTH, 'h12_tube'), 'searched where the crust is split at the flow\'s end, it gives, and the tube behind it can be walked into');
+  const left = chest(H12, 'h12_chest');
+  ok(left?.kind === 'chest' && left.gold === 50 && left.items.join() === 'elixir' && left.x === 7 && left.y === 11, 'in the tube, what a drake carried in');
+
+  // The south foot: south from G11's 16,31 onto G12's 16,0, walked, in Fire Mountain still, so the land
+  // is not named again; nothing taken out of it.
+  const foot = step(25, 'firemount_g11', 16, 31, SOUTH);
+  ok(foot.kind === 'moved' && w.world.zone?.id === G12.id && w.world.state.x === g12.x + 16 && w.world.state.y === g12.y && g11.y + g11.h === g12.y && !foot.messages.some((m) => m.includes('Fire Mountain.')),
+    `south from G11's 16,31 onto G12's 16,0 over the ash, walked, and the land not named again (${said(foot)})`);
+  listen(w);
+  ok(G12.start.x === 16 && G12.start.y === 0 && G12.start.facing === SOUTH && !(G12.exits ?? []).length, 'the south foot starts at its north edge on the ash, and nothing is taken out of it');
+  for (const id of ['g12_folds', 'g12_scrapes', 'g12_west', 'g12_hum', 'g12_pumice', 'g12_rim']) see(w, `${G12.id}:${id}`);
+  for (const g of G12.encounters!) fight(w, `${G12.id}:${g.id}`);
+  // The secret: claw-marks scored across one rock at the rim's foot, and behind it the drakes' hollow.
+  const den = shut(g12, [12, 10], [12, 11], [12, 13]);
+  ok(den.size > 500 && !den.reached, `the drakes' hollow is shut but for the rock: none of G12's ${den.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${G12.id}:g12_claws`);
+  ok(search(G12.id, 12, 10, SOUTH, 'g12_hollow'), 'searched where the claw-marks score the rock, it gives, and the hollow behind it can be walked into');
+  const bright = chest(G12, 'g12_hoard');
+  ok(bright?.kind === 'chest' && bright.gold === 50 && bright.items.join() === 'elixir' && bright.x === 12 && bright.y === 13, 'in the hollow, the bright things the drakes bring in');
+}
+
+/**
+ * The Waste's west under the lava flow, behind the road (#522). South off E10's ash at its 27,31 onto
+ * E11's 27,0, walked, the land not named again, and west off F11's ash at its 0,19 onto E11's 31,19, the
+ * same; the knapper at the flow's edge, who has seen the young drakes come down to the warm, the cones,
+ * the cast skins in the hollows and the flow going in under the mountains; the box's one group, the
+ * drakelings on the flow's warm bank, the hardest; and the tube under the flow behind the crack that
+ * breathes cold air, a man's bones in it by his pack. Walked, waded, climbed or floated, the tube is
+ * never reached but through the crack.
+ */
+function wasteBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void {
+  const out = buildMaps()[OUTDOORS];
+  const E11 = MAP_DEFS.find((d) => d.id === 'emberwaste_e11')!;
+  const [e10, e11, f11] = ['emberwaste_e10', E11.id, 'emberwaste_f11'].map((id) => out.zones.find((z) => z.id === id)!);
+  const said = (r: ReturnType<typeof w.world.move>): string => (r.kind === 'moved' ? r.messages.join(' / ') || 'nothing said' : r.kind);
+  const shut = (z: typeof e11, from: [number, number], door: [number, number], prize: [number, number]): { size: number; reached: boolean } => {
+    const seen = new Set<number>(), todo = [[z.x + from[0], z.y + from[1]]];
+    while (todo.length) {
+      const [x, y] = todo.pop()!, k = y * out.width + x;
+      if (seen.has(k) || (x === z.x + door[0] && y === z.y + door[1]) || x < z.x || x >= z.x + z.w || y < z.y || y >= z.y + z.h
+        || out.passable(x, y, { swim: true, climb: true, float: true }) !== 'ok') continue;
+      seen.add(k);
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+    }
+    return { size: seen.size, reached: seen.has((z.y + prize[1]) * out.width + z.x + prize[0]) };
+  };
+  w.level = 25;
+
+  // South off E10's ash onto E11's at 27,0, walked, in the Ember Waste still; and west off F11's ash at
+  // its 0,19 onto E11's 31,19, walked, the same.
+  w.world.travel('emberwaste_e10', 27, 31, SOUTH);
+  const south = w.world.move('forward');
+  ok(south.kind === 'moved' && w.world.zone?.id === E11.id && w.world.state.x === e11.x + 27 && w.world.state.y === e11.y && e10.y + e10.h === e11.y
+    && !south.messages.some((m) => m.includes('The Ember Waste.')), `south from E10's 27,31 onto E11's 27,0, walked, and the land not named again (${said(south)})`);
+  listen(w);
+  ok(E11.start.x === 27 && E11.start.y === 0 && E11.start.facing === SOUTH && !(E11.exits ?? []).length, 'the Waste\'s west starts at its north edge on the ash, and nothing is taken out of it');
+  w.world.travel('emberwaste_f11', 0, 19, WEST);
+  const west = w.world.move('forward');
+  ok(west.kind === 'moved' && w.world.zone?.id === E11.id && w.world.state.x === e11.x + 31 && w.world.state.y === e11.y + 19 && e11.x + e11.w === f11.x
+    && !west.messages.some((m) => m.includes('The Ember Waste.')), `west from F11's 0,19 onto E11's 31,19, walked, and the land not named again (${said(west)})`);
+  listen(w);
+
+  // The knapper at the flow's edge, who has seen the young drakes come down to the warm; the cones, the
+  // cast skins in the hollows on the flow's bank and the flow going in under the mountains.
+  const knapper = person('A knapper', E11);
+  w.world.travel(E11.id, knapper.x, knapper.y);
+  const words = meet(knapper, w.party, heard(w.world, knapper)).text;
+  ok(words.includes('flow glass') && words.includes('young drakes'), `the knapper at the flow's edge knocks glass off its crust, and has seen the young drakes come down to the warm (${words.replace(/\n+/g, ' ')})`);
+  listen(w);
+  for (const id of ['e11_cones', 'e11_skins', 'e11_end']) see(w, `${E11.id}:${id}`);
+
+  // The box's one group, won at its floor: the drakelings on the flow's warm bank, the hardest.
+  for (const g of E11.encounters!) fight(w, `${E11.id}:${g.id}`);
+
+  // The secret: the crack in the rocks beside the flow that breathes cold air, and the search there; the
+  // tube under the flow behind it, a man's bones in it by his pack.
+  const tube = shut(e11, [18, 11], [18, 12], [18, 13]);
+  ok(tube.size > 500 && !tube.reached, `the tube is shut but for the crack: none of E11's ${tube.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${E11.id}:e11_draught`);
+  w.world.travel(E11.id, 18, 11, SOUTH);
+  let found = false;
+  for (let i = 0; i < 20 && !found; i++) found = w.world.search();
+  const into = found ? [w.world.move('forward'), w.world.move('forward')] : [];
+  listen(w);
+  ok(found && into.every((r) => r.kind === 'moved') && w.world.used('e11_tube'), 'searched at the crack that breathes cold air, the rock gives, and the tube under the flow behind it can be walked into');
+  const pack = E11.features!.find((f) => f.kind === 'chest' && f.id === 'e11_pack');
+  ok(pack?.kind === 'chest' && pack.gold === 100 && pack.x === 18 && pack.y === 13, 'in the tube, the man\'s pack');
+}
+
+/**
  * The third prestiges taught here (#448), each a trainer's quest played to the teaching by a company of
  * 27 with its seconds taken, its premade paladin beside a barbarian and a druid. At 27 each is sent to
  * its trainer; each trainer's own words come first, then the ask, once, which begins the quest and ends
@@ -1309,7 +1658,8 @@ function stairFoot(ok: (cond: boolean, msg: string) => void): void {
   w.world.travel('cindercoast_h10', 0, 15, WEST);
   const over = w.world.move('forward');
   ok(over.kind === 'moved' && !over.messages.length && w.world.zone?.id === 'cindercoast_g10', 'over the west edge onto G10, the same land at the same floor, nothing is said');
-  ok([...Array(32).keys()].every((i) => out.passable(h10.x + i, h10.y - 1) !== 'ok' && out.passable(h10.x + i, h10.y + 32) !== 'ok'), 'past the north and south edges, for now, the world ends');
+  ok([...Array(32).keys()].every((i) => (out.passable(h10.x + i, h10.y + 32) === 'ok') === (i !== 4 && i !== 5)) && [...Array(30).keys()].every((i) => out.passable(h10.x + i, h10.y - 1) === 'ok'),
+    'over the north edge H9\'s shore goes on, open from the west to the pines, and past the south edge lies H11 (#522), walked but for the stream at 4 and 5');
 
   // Scaldwell, the springs on the atlas: its pools in the ash, the bathhouse and its keeper, a Rider with
   // words only, and the Riders' shrine; past them the stoker at the rock, seen from the track first.

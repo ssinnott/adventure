@@ -10,8 +10,8 @@
 // half is #524's: beetles over from the Waste on the ash, vultures at the hills' foot circling the
 // grave's hills, a camp in the hills' lee, the glare seen from the crest, a Rider on the road, the
 // outriders watching and the pride in the first grass. The Wold's line is its zone row's, said where a
-// Wold map is first entered (D10, #527). Joined only to F10, on its east edge; the west
-// edge ends the world against D10 and the north and south edges against E9 and E11.
+// Wold map is first entered (D10, #527). Joined to F10 on its east edge, D10 on its west (#527), E9
+// on its north (#534) and E11 on its south (#522).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/ashfall.md §4.9 and docs/areas/glasswold.md §4.2 are its briefs.
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
