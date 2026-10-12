@@ -48,7 +48,7 @@ export type PartyAction =
 export type Outcome = 'ongoing' | 'victory' | 'defeat' | 'fled';
 
 /** A monster's trait the company learns by seeing it (`shown`). */
-export type Shown = 'sweep' | 'drain' | 'calls';
+export type Shown = 'sweep' | 'drain' | 'calls' | 'leader';
 
 /**
  * `xp` is what the kills were worth before the split, each by the monster's level against a
@@ -84,8 +84,9 @@ export interface CombatState {
   mends?: Record<string, number>;
   /**
    * What the company has seen each kind of monster do beside its blows, by its id: sweep a row with
-   * an arm or a breath, drain with its touch and call its group. The game's bot reads a trait only
-   * once it is here (game/bot.ts).
+   * an arm or a breath, drain with its touch, call its group and lead it, by speaking for it before
+   * the fight (`Game.parley`) or by its people breaking at its fall. The game's bot reads a trait
+   * only once it is here (game/bot.ts).
    */
   shown?: Record<string, Partial<Record<Shown, true>>>;
   defending: boolean[];
@@ -822,7 +823,7 @@ function morale(s: CombatState): void {
   if (leaders.length && leaders.every((m) => !standing(m))) {
     const gone = s.monsters.filter((m) => breaks(m, 'leader'));
     for (const m of gone) m.fled = true;
-    if (gone.length) s.log.push(BREAK_LINE(describe(gone), gone.length === 1));
+    if (gone.length) { s.log.push(BREAK_LINE(describe(gone), gone.length === 1)); for (const m of leaders) show(s, m, 'leader'); }
   }
   s.groupIds.forEach((_, band) => {
     const beasts = s.monsters.filter((m) => m.band === band && !m.def.steady && KINDS[m.def.kind].breaks === 'rout');

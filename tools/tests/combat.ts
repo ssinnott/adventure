@@ -237,6 +237,7 @@ function morale(): void {
     play(s, p, 8, atMaster);
     const died = s.log.findIndex((l) => l.includes('Barge Master dies.'));
     ok(s.outcome === 'victory' && s.monsters.filter((m) => m.fled).length === 5 && s.log[died + 1] === BREAK_LINE('5 Bargemen', false), `a barge crew leaves when its master dies, and the log says so (${s.log[died + 1]})`);
+    ok(s.shown?.[master.id]?.leader === true && !s.shown?.[bargeman.id], 'and the company has seen the master lead, and the bot knows it from then (#714)');
     const paid = master.xp * killPay(master.level, 1);
     ok(s.loot?.xp === Math.round(paid) && s.loot.shares.every((x) => x === Math.floor(paid / 6)) && s.loot.gold <= master.gold[1], `the fled pay no xp under the kill pay, the slain master paying by its level against the party's (${master.level} against 1), and take their gold (${s.loot?.xp} xp, ${s.loot?.gold} gold)`);
   }
@@ -965,15 +966,22 @@ function auto(): void {
   delete SPELLS.test_glass_bolt;
   ok(blade?.type === 'attack' && blade.target === 0, `Bram's bolt, refused for want of an element, falls to his blade, and botTurn says so (${JSON.stringify(blade)})`);
   // It aims as the company has seen: at a caller once it has called, a light once it has drunk spell
-  // points and a leader never, which shows only in its fall. The gate's aims at a leader at once.
+  // points and a leader once it has led. The gate's aims at a leader at once.
   const caller: MonsterDef = { ...rat, id: 'test_caller', calls: { monsters: ['rat'], chance: 1 } };
   const light: MonsterDef = { ...rat, id: 'test_light', drain: 'sp' }, chief: MonsterDef = { ...rat, id: 'test_chief' };
   const aim = (m: MonsterDef, shown: Partial<Record<Shown, true>>, leader?: string, gate = false): number | undefined => {
     const a = turn(defaultParty(makeRng(127)), 0, 127, { id: 'g', monsters: [rat, m], leader }, (s) => { s.shown = { [m.id]: shown }; }, gate);
     return a?.type === 'attack' ? a.target : undefined;
   };
-  const aims = [aim(caller, {}), aim(caller, { calls: true }), aim(light, {}), aim(light, { drain: true }), aim(chief, { sweep: true, drain: true, calls: true }, chief.id), aim(chief, {}, chief.id, true)].join();
-  ok(aims === '0,1,0,1,0,1', `Bram strikes a caller once it has called, a light once it has drunk and a leader never; the gate's strikes the leader at once (${aims})`);
+  const aims = [aim(caller, {}), aim(caller, { calls: true }), aim(light, {}), aim(light, { drain: true }), aim(chief, { sweep: true, drain: true, calls: true }, chief.id), aim(chief, { leader: true }, chief.id), aim(chief, {}, chief.id, true)].join();
+  ok(aims === '0,1,0,1,0,1,1', `Bram strikes a caller once it has called, a light once it has drunk and a leader once it has led; the gate's strikes the leader at once (${aims})`);
+  // The company sees a leader lead where it speaks for its group: the king on the Stair, refused.
+  const toll = headlessGame(4, companyAt(3, 4));
+  toll.world.travel('highspine_i10', 3, 20);
+  toll.parley('i10_king');
+  toll.update('cancel');
+  const king = toll.top instanceof CombatScreen ? toll.top.state : undefined;
+  ok(king?.shown?.stair_king?.leader === true && king.leaders[0] === 'stair_king', `the king who put the toll leads the fight that follows its refusal, and the bot knows it (${JSON.stringify(king?.shown)})`);
 
   const g = headlessGame(4, companyAt(3, 4));
   g.world.travel('shelf', 16, 4);

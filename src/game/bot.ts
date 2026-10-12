@@ -12,10 +12,10 @@
 // burns it with fire each round before it casts anything else. It reads the fight as it stands each
 // turn, the groups called into it too. It wakes a sleeper or frees one held (#549) of the front row,
 // or a caster, before it strikes. It never sleeps, blesses, drinks or flees, nor cures anything but
-// sleep and a hold, so it is weaker than a player. In the game it knows a foe's sweep, breath, drain
-// and call only once the company has seen them (`shown`), and no leader, which shows only in its
-// fall; the gate reads them all from the first turn. Between fights the company rests by `mustRest`,
-// the harness's rule and the pilot's.
+// sleep and a hold, so it is weaker than a player. In the game it knows a foe's sweep, breath, drain,
+// call and lead only once the company has seen them (`shown`): a leader once it has spoken for its
+// group before the fight, or its people have broken at its fall; the gate reads them all from the
+// first turn. Between fights the company rests by `mustRest`, the harness's rule and the pilot's.
 import type { RngInstance } from '../lib/engine/rng.ts';
 import { isDown, hasCondition } from './party.ts';
 import type { Party, Character } from './party.ts';
@@ -122,14 +122,14 @@ export function gateBurn(s: CombatState, c: Character): { spellId: string; targe
 }
 
 /**
- * The fight as the company has seen it: each foe's sweep or breath, drain and call only once it has
- * shown them (`shown`), and no leader, which shows only in its fall. What it has seen mend and what
- * the elements do it reads as it is (`mends`, `seen`).
+ * The fight as the company has seen it: each foe's sweep or breath, drain, call and lead only once it
+ * has shown them (`shown`). What it has seen mend and what the elements do it reads as it is (`mends`,
+ * `seen`).
  */
 function sighted(s: CombatState): CombatState {
   return {
     ...s,
-    leaders: s.leaders.map(() => undefined),
+    leaders: s.leaders.map((l) => (l && s.shown?.[l]?.leader ? l : undefined)),
     monsters: s.monsters.map((m) => {
       const k = s.shown?.[m.def.id] ?? {};
       return { ...m, def: { ...m.def, sweep: k.sweep && m.def.sweep, drain: k.drain && m.def.drain, calls: k.calls && m.def.calls } };

@@ -296,10 +296,14 @@ export class Game {
     if (this.world.state.x === at.x && this.world.state.y === at.y) this.world.stepOut();
   }
 
-  /** Start a fight with the given groups; the combat screen calls back on resolution. */
-  fight(groupIds: string[]): void {
+  /**
+   * Start a fight with the given groups; the combat screen calls back on resolution. `spoke`, the
+   * leader that spoke for its group before it (`parley`), which the company has seen lead (`shown`).
+   */
+  fight(groupIds: string[], spoke?: string): void {
     const groups = this.world.groupDefs(groupIds);
     const state = startCombat(this.party, groups, this.rng, this.world.combatWeather());
+    if (spoke) state.shown = { [spoke]: { leader: true } };
     this.world.endWalk();
     // A kind not met before, one unseen beside or behind the party or in the ranks, says what it is as the fight opens.
     state.log.push(...this.world.meet(groups.flatMap((x) => x.monsters)));
@@ -309,8 +313,8 @@ export class Game {
   /**
    * A group that talks before it fights (#544): its question through the choice screen, as a
    * person's is, its price listed and barred to a company short of it, its answer's words to the log.
-   * The refusal, or Esc, starts the fight; any other answer stands the group aside, and the party
-   * meets whatever else stands beside it.
+   * The refusal, or Esc, starts the fight, the leader that spoke known for one; any other answer
+   * stands the group aside, and the party meets whatever else stands beside it.
    */
   parley(id: string): void {
     const c = this.world.question(id);
@@ -321,7 +325,7 @@ export class Game {
       if (a) this.say(answer(a, this.party).split('\n\n').join(' '));
       if (a && !a.fight) { this.engage(); return; }
       const ids = this.world.adjacentGroups();
-      this.fight(ids.length ? ids : [id]);
+      this.fight(ids.length ? ids : [id], def.leader);
     }, monster(def.leader ?? def.monsters[0]).name, c.answers.map((a) => barred(a, this.party))));
   }
 
