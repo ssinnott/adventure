@@ -7,7 +7,7 @@
 // once it is heard.
 // A zone map's id names its part of the outdoors, at the zone's own squares (World.locate).
 import type { Game } from '../game.ts';
-import type { Cell, Exit, Feature, GameMap } from '../map.ts';
+import type { Cell, Door, Exit, Feature, GameMap } from '../map.ts';
 import { seen as seenBit, drawnCell } from '../world.ts';
 import type { MapState } from '../world.ts';
 import { mapPlace } from '../atlas.ts';
@@ -25,13 +25,13 @@ type Sight<F> = F extends Feature ? Pick<F, Extract<keyof F, (typeof SEEN)[numbe
 
 /** A feature as the party knows it: what it sees of it, and what a menu has told. */
 export type Sighted = Sight<Feature>;
-/** A cell as the automap inks it: no legend letter, so a secret door is a wall like any other. */
-export type Inked = Omit<Cell, 'ch'>;
+/** A cell as the automap inks it: no legend letter, so a secret door is a wall like any other, and a locked door a door. */
+export type Inked = Omit<Cell, 'ch' | 'door'> & { door: Exclude<Door, 'locked' | 'secret'> };
 
 export interface Known {
   /** The automap's bit: whether the party has seen the square (MapState.explored). */
   seen(map: string, x: number, y: number): boolean;
-  /** The cell as the automap inks it (drawnCell), or undefined when unseen. A secret door comes back a wall. */
+  /** The cell as the automap inks it (drawnCell), or undefined when unseen. A secret door comes back a wall, and a locked door a door: the pilot learns a lock by trying it. */
   cell(map: string, x: number, y: number): Inked | undefined;
   /** Features the automap draws (onAutomap, and not spent) on seen squares: each its kind, square, id and name, a burnt den its ash, and what a menu has shown. */
   features(map: string): Sighted[];
@@ -72,7 +72,7 @@ export function knownOf(g: Game): Known {
       const fr = frame(map);
       if (!fr || !seenIn(fr, x, y)) return undefined;
       const c = drawnCell(fr.m, fr.ox + x, fr.oy + y);
-      return c.door === 'secret' ? { terrain: c.terrain, solid: 'wall', door: 'none' } : { terrain: c.terrain, solid: c.solid, door: c.door };
+      return c.door === 'secret' ? { terrain: c.terrain, solid: 'wall', door: 'none' } : { terrain: c.terrain, solid: c.solid, door: c.door === 'locked' ? 'door' : c.door };
     },
     features(map) {
       const fr = frame(map);

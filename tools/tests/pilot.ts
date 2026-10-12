@@ -17,14 +17,20 @@ import { knownOf } from '../../src/game/pilot/known.ts';
 import type { Sighted } from '../../src/game/pilot/known.ts';
 import { ok, headlessGame } from './lib.ts';
 
+// The fixtures go on Helmstow's features as written, shared by every game, so they all go again when
+// the suite is done, whether it ends or throws.
 export function pilot(): void {
+  const helmstow = headlessGame(4).maps.harrow.features as Feature[], had = [...helmstow];
+  try { check(); } finally { helmstow.splice(had.length); }
+  const after = headlessGame(4).maps.harrow.features;
+  ok(after.length === had.length && after.every((f, i) => f === had[i]), `the fixtures gone, a new game's Helmstow has its ${had.length} features as before (${after.length})`);
+}
+
+function check(): void {
   const g = headlessGame(4), p = (g.pilot = new Pilot({ instant: true }));
   const { x, y } = g.world.state, m = g.maps.harrow;
   const corner = [[0, 0], [m.width - 1, 0], [0, m.height - 1], [m.width - 1, m.height - 1]].sort(([ax, ay], [bx, by]) => Math.abs(bx - x) + Math.abs(by - y) - Math.abs(ax - x) - Math.abs(ay - y))[0];
   ok(knownOf(g).seen('harrow', x, y) && !knownOf(g).seen('harrow', corner[0], corner[1]), `Known has the start square in Helmstow seen and its far corner, ${corner.join(',')}, not`);
-
-  // The fixtures go on Helmstow's features as written, shared by every game, so they all go again at the end.
-  const had = [...m.features];
 
   // What the automap draws: a chest on the start square, and not the event beside it.
   (m.features as Feature[]).push({ kind: 'chest', x, y, id: 'fx_chest', gold: 5, items: [] }, { kind: 'event', x, y, id: 'fx_event', text: 'A cold wind.' });
@@ -130,6 +136,11 @@ export function pilot(): void {
   const risen = inVault();
   ok(risen === 'A fixture ghost', `the chest opened, Known has it gone, and the ghost risen there (${risen})`);
   ok(kv.visited().join() === 'harrow,fx_vault', `Known has visited Helmstow and the vault, and nothing more (${kv.visited().join(', ')})`);
+  // A locked door, seen and not tried, inked as any door is: the pilot learns the lock by trying it.
+  v.maps.fx_lockup = new GameMap({ id: 'fx_lockup', name: 'Lock-up', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#.L.#', '#####'] });
+  v.world.travel('fx_lockup', 1, 1, EAST);
+  const lock = kv.cell('fx_lockup', 2, 1);
+  ok(v.maps.fx_lockup.at(2, 1).door === 'locked' && lock?.door === 'door' && lock.solid === 'none', `Known inks a locked door, seen and not tried, as a door like any other (${JSON.stringify(lock)})`);
 
   const k = knownOf(g);
   ok(!!k.placeOf('thornmark') && k.placeOf('no_such_map') === undefined, `Known places Thornmark on the world map, at ${k.placeOf('thornmark')?.map((n) => n.toFixed(1)).join(',')}, and no map that is not`);
@@ -225,9 +236,4 @@ export function pilot(): void {
   for (let i = 0; i <= HEARD_MAX; i++) q.hear(`Line ${i}.`);
   ok(HEARD_MAX === 2000 && q.heard.length === HEARD_MAX && q.heard[0] === 'Line 1.' && q.heard[HEARD_MAX - 1] === `Line ${HEARD_MAX}.`,
     `of ${HEARD_MAX + 1} lines heard, the pilot keeps the last ${q.heard.length}, from "${q.heard[0]}"`);
-
-  // The fixtures go again, and a new game finds Helmstow as it was for every suite after.
-  (m.features as Feature[]).splice(had.length);
-  const after = headlessGame(4).maps.harrow.features;
-  ok(after.length === had.length && after.every((f, i) => f === had[i]), `the fixtures gone, a new game's Helmstow has its ${had.length} features as before (${after.length})`);
 }
