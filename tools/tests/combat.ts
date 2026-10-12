@@ -9,7 +9,7 @@ import { World } from '../../src/game/world.ts';
 import { serialize, deserialize } from '../../src/game/save.ts';
 import { defaultParty, equip, addCondition, hasCondition, killPay, spellHeal, rankMult, resists, rest, attackBonus, armorClass, canAct, spellTierAt, isDown, lift, templePrice } from '../../src/game/party.ts';
 import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, castOnAlly, castOnParty, frontStands, monsterAc, monsterHit, canCall, WARD_AC, BLESS_HIT, BREAK_LINE, ROUT_LINE, MEND_LINE, SMOULDER_LINE, CALL_LINE, GLOVE_LINE, GLOVE_FLAG, MAX_MONSTERS, MAX_GROUPS, SWEEP_LINE, STONE_LINE } from '../../src/game/combat.ts';
-import type { CombatState, CombatGroup, PartyAction } from '../../src/game/combat.ts';
+import type { CombatState, CombatGroup, PartyAction, Shown } from '../../src/game/combat.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import { elementMult, monsterSpells, monsterCanCast, KINDS } from '../../src/game/monsters.ts';
 import { gateBlast, gateBurn, gateTurn } from '../gate.ts';
@@ -456,6 +456,7 @@ function drain(): void {
   const t = startCombat(q, [{ id: 'b', monsters: [light] }], makeRng(52));
   untilActs(t, q, 52, 0);
   ok(cassian.sp === 5 && cassian.hp === 30 && t.log.includes('Bog Light hits Cassian for 10 spell points.'), `a bog light takes spell points before hit points (${cassian.sp} sp, ${cassian.hp} hp)`);
+  ok(s.shown?.[leech.id]?.drain === true && t.shown?.[light.id]?.drain === true, 'the company has seen the leech drink and the light take spell points, and the bot knows them from then (#714)');
   for (let k = 53; k < 60 && cassian.sp > 0; k++) untilActs(t, q, k, 0);
   ok(cassian.sp === 0 && cassian.hp === 25 && t.log.includes('Bog Light hits Cassian for 5 spell points and 5.'), `and the rest from hit points once they run dry (${cassian.sp} sp, ${cassian.hp} hp)`);
 }
@@ -780,6 +781,7 @@ function calls(): void {
     const come = s.monsters.filter((m) => m.band === 1);
     ok(s.groupIds.length === 2 && s.leaders.length === 2 && come.length === 3 && come.every((m) => m.def === knocker && !m.back && m.group === 1 && m.hp === knocker.hp) && s.log.includes(CALL_LINE('Tallyman', '3 Knockers', false)),
       `its turn brings three knockers in, a group of their own (${s.log.find((l) => l.startsWith('Tallyman calls'))})`);
+    ok(s.shown?.[tallyman.id]?.calls === true, 'and the company has seen it call, and the bot knows it from then (#714)');
     ok(s.order.every((t) => t.side === 'party' || t.i < 7), 'and they wait for the next round to act');
     throughRound(s, p, 101);
     ok(s.order.some((t) => t.side === 'monster' && t.i >= 7), 'and act in it');
@@ -914,29 +916,36 @@ function sweep(): void {
   ANSWER.sweep = true;
   ok(lines(heavy).join() === '100,100,100,80,80,80' && lines({ ...heavy, sweep: undefined }).join() === '80,80,80,80,80,80' && unanswered.join() === '80,80,80,80,80,80' && lines({ ...heavy, sweep: { chance: 1, element: 'fire' } }, (q) => down(q, 0)).join() === '80,80,80,100,100,100',
     'the bots mend the row a sweeper would take under what one sweep could deal them, the rest at 40%, and the back row once a breath would turn on it');
-  const mended = (answer: boolean): number => {
+  /** Idris's hit points after the cleric's turn: the gate's, or with `shown` the game's, which knows what the company has seen. */
+  const mended = (answer: boolean, shown?: CombatState['shown']): number => {
     ANSWER.sweep = answer;
     const q = defaultParty(makeRng(124)), rng = makeRng(124);
     for (const c of q.members) c.hp = c.maxHp = 200;
     q.members[1].hp = 90;
     const s = startCombat(q, [{ id: 'g', monsters: [heavy] }], rng);
-    for (let n = 0; n < 20; n++) { const t = currentTurn(s, q, rng); if (!t || t.side === 'monster') break; if (t.i === 4) { gateTurn(s, q, rng, 4); break; } partyAct(s, q, rng, { type: 'defend' }); }
+    for (let n = 0; n < 20; n++) { const t = currentTurn(s, q, rng); if (!t || t.side === 'monster') break; if (t.i === 4) { if (shown) { s.shown = shown; botTurn(s, q, rng, 4); } else gateTurn(s, q, rng, 4); break; } partyAct(s, q, rng, { type: 'defend' }); }
     ANSWER.sweep = true;
     return q.members[1].hp;
   };
   ok(mended(true) > 90 && mended(false) === 90, `so the gate's cleric mends Idris at 90 of 200 before a giant's sweep of 100 (${mended(true)}), and with no answer leaves him (${mended(false)})`);
+  // The game's cleric knows the sweep only once the company has seen one: the arm's, above (#714).
+  const unseen = mended(true, {}), seen = mended(true, arm.s.shown ?? {});
+  ok(unseen === 90 && seen > 90, `the game's cleric leaves him before the company has seen a giant sweep (${unseen}), and mends him after (${seen})`);
 }
 
 /**
  * The bot's turn (#714): `botTurn` says what it did, a mend for one under 40% and a brace for one of
- * the back row with no spell and no bow; and auto, which plays a fight to its end and leaves it by
- * its own Space, until a key takes it back.
+ * the back row with no spell and no bow; it passes over what partyAct refuses, and aims only at what
+ * the company has seen. And auto, which plays a fight a turn a tick to its end and leaves it by its
+ * own Space, until a key takes it back.
  */
 function auto(): void {
-  /** The bot's turn for member `who`, those before it bracing, against a rat that acts last. */
-  const turn = (q: Party, who: number, seed: number): PartyAction | undefined => {
-    const rng = makeRng(seed), s = startCombat(q, [{ id: 'g', monsters: [{ ...MONSTERS.rat, speed: 0 }] }], rng);
-    for (let n = 0; n < 20; n++) { const t = currentTurn(s, q, rng); if (!t || t.side === 'monster') break; if (t.i === who) return botTurn(s, q, rng, who); partyAct(s, q, rng, { type: 'defend' }); }
+  const rat: MonsterDef = { ...MONSTERS.rat, speed: 0 };
+  /** The bot's turn for member `who`, those before it bracing, against `g` (a rat that acts last) as `dress` leaves it; `gate`, the gate's. */
+  const turn = (q: Party, who: number, seed: number, g: CombatGroup = { id: 'g', monsters: [rat] }, dress: (s: CombatState) => void = () => {}, gate = false): PartyAction | undefined => {
+    const rng = makeRng(seed), s = startCombat(q, [g], rng);
+    dress(s);
+    for (let n = 0; n < 20; n++) { const t = currentTurn(s, q, rng); if (!t || t.side === 'monster') break; if (t.i === who) return botTurn(s, q, rng, who, gate); partyAct(s, q, rng, { type: 'defend' }); }
     return undefined;
   };
   const hurt = defaultParty(makeRng(124));
@@ -948,22 +957,46 @@ function auto(): void {
   [back.members[0], back.members[3]] = [back.members[3], back.members[0]];
   const brace = turn(back, 3, 125);
   ok(brace?.type === 'defend', `Bram in the back row, with no spell and no bow, braces (${JSON.stringify(brace)})`);
+  // A bolt that wants an element, which the bot never gives, partyAct refuses: the bot takes the next.
+  SPELLS.test_glass_bolt = { ...SPELLS.spark, id: 'test_glass_bolt', sp: 0, glass: true };
+  const armed = defaultParty(makeRng(126));
+  armed.members[0].spells = ['test_glass_bolt'];
+  const blade = turn(armed, 0, 126);
+  delete SPELLS.test_glass_bolt;
+  ok(blade?.type === 'attack' && blade.target === 0, `Bram's bolt, refused for want of an element, falls to his blade, and botTurn says so (${JSON.stringify(blade)})`);
+  // It aims as the company has seen: at a caller once it has called, a light once it has drunk spell
+  // points and a leader never, which shows only in its fall. The gate's aims at a leader at once.
+  const caller: MonsterDef = { ...rat, id: 'test_caller', calls: { monsters: ['rat'], chance: 1 } };
+  const light: MonsterDef = { ...rat, id: 'test_light', drain: 'sp' }, chief: MonsterDef = { ...rat, id: 'test_chief' };
+  const aim = (m: MonsterDef, shown: Partial<Record<Shown, true>>, leader?: string, gate = false): number | undefined => {
+    const a = turn(defaultParty(makeRng(127)), 0, 127, { id: 'g', monsters: [rat, m], leader }, (s) => { s.shown = { [m.id]: shown }; }, gate);
+    return a?.type === 'attack' ? a.target : undefined;
+  };
+  const aims = [aim(caller, {}), aim(caller, { calls: true }), aim(light, {}), aim(light, { drain: true }), aim(chief, { sweep: true, drain: true, calls: true }, chief.id), aim(chief, {}, chief.id, true)].join();
+  ok(aims === '0,1,0,1,0,1', `Bram strikes a caller once it has called, a light once it has drunk and a leader never; the gate's strikes the leader at once (${aims})`);
 
   const g = headlessGame(4, companyAt(3, 4));
   g.world.travel('shelf', 16, 4);
   g.fight(['road_rats']);
   const screen = g.top;
   if (!(screen instanceof CombatScreen)) { ok(false, 'road_rats opens the combat screen'); return; }
+  const s = screen.state;
   CombatScreen.instant = true;
   screen.auto = true;
   screen.update(g, 'forward');
   const taken = !screen.auto;
+  // On the company's turn the key is handled as usual: 4 braces.
+  for (let n = 0; n < 50 && currentTurn(s, g.party, g.rng)?.side !== 'party'; n++) screen.update(g, null);
+  const who = g.party.members[currentTurn(s, g.party, g.rng)?.i ?? 0].name, said = s.log.length;
   screen.auto = true;
-  let ticks = 0;
-  for (; screen.state.outcome === 'ongoing' && ticks < 4000; ticks++) screen.update(g, null);
-  const over = screen.state.outcome, waited = g.top === screen;
+  screen.update(g, 'n4');
+  const handled = !screen.auto && s.log.slice(said).includes(`${who} braces.`);
+  screen.auto = true;
+  let ticks = 0, idle = 0;
+  for (; s.outcome === 'ongoing' && ticks < 4000; ticks++) { const at = `${s.round}.${s.turn}`; screen.update(g, null); if (`${s.round}.${s.turn}` === at) idle++; }
+  const over = s.outcome, waited = g.top === screen;
   screen.update(g, null);
   CombatScreen.instant = false;
-  ok(taken, 'a key while auto plays takes the fight back');
-  ok(over !== 'ongoing' && waited && g.top instanceof ExploreScreen, `auto plays the level-3 company through road_rats in ${ticks} ticks (${over}), and leaves the fight by its own Space for the road`);
+  ok(taken && handled, `a key while auto plays takes the fight back, and is handled as usual: 4 braces ${who}`);
+  ok(over !== 'ongoing' && idle === 0 && waited && g.top instanceof ExploreScreen, `auto plays the level-3 company through road_rats a turn a tick, in ${ticks} ticks (${over}, ${idle} idle), and leaves the fight by its own Space for the road`);
 }

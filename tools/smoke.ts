@@ -1308,6 +1308,24 @@ const glass = await page.evaluate(() => {
   return out;
 });
 
+// Auto in a fight (#714): on the company's turn the panel says AUTO beside the round, and that P takes
+// the fight back where it says ESC BACK; painted twice with auto off, it is the same.
+const autoPanel = await page.evaluate(async () => {
+  const F = await import('/src/ui/frame.ts' as string);
+  const g = (window as any).__game.game, ctx = (document.getElementById('stage') as HTMLCanvasElement).getContext('2d')!, r = F.LAYOUT.map;
+  while (g.screens.length > 1) g.pop();
+  g.fight(['road_rats']);
+  const scr = g.top, s = scr.state;
+  scr.update(g, null);
+  for (let guard = 0; guard < 50 && s.outcome === 'ongoing' && s.order[s.turn]?.side !== 'party'; guard++) scr.update(g, 'interact');
+  const party = s.order[s.turn]?.side === 'party';
+  /** The panel's line with the round and its line with the hint, as painted with auto on or off. */
+  const lines = (on: boolean): string[] => { scr.auto = on; scr.render(g, ctx, 0); return [r.y + 6, r.y + r.h - 14].map((y: number) => ctx.getImageData(r.x, y, r.w, 12).data.join()); };
+  const off = lines(false), on = lines(true), again = lines(false);
+  while (g.screens.length > 1) g.pop();
+  return { party, label: on[0] !== off[0] && off[0] === again[0], hint: on[1] !== off[1] && off[1] === again[1] };
+});
+
 // Waymark with a mark set: the spell asks "Return to the mark" or "Set it here", and the first goes back (#20).
 const mark = await page.evaluate(async () => {
   const S = await import('/src/ui/screens.ts' as string), P = await import('/src/game/spells.ts' as string);
@@ -1345,6 +1363,7 @@ ok(exploreColours > 20, `the viewport, automap and party cards painted (${explor
 ok(screen2 === 'CombatScreen' && combatColours > 20, `a fight opens and paints (${screen2}, ${combatColours} colours)`);
 ok(mark.set && mark.asked.screen === 'ChoiceScreen' && mark.asked.options.join('|') === 'Return to the mark|Set it here' && mark.back, `with a mark set, Waymark asks whether to return or set it here, and returns (${JSON.stringify(mark)})`);
 ok(glass.asked === 'element' && glass.element === 'cold' && glass.line === 'Maren casts Lampglass. The glass dims the cold.', `Lampglass asks against what before it is cast, and casts the pick (${JSON.stringify(glass)})`);
+ok(autoPanel.party && autoPanel.label && autoPanel.hint, `on auto the fight's panel says AUTO beside the round and that P takes the fight back (${JSON.stringify(autoPanel)})`);
 ok(thornColours > 20, `Thornmark's forest paints (${thornColours} colours)`);
 ok(thornFight.screen === 'CombatScreen' && /ogre/.test(thornFight.monsters) && /wraith/.test(thornFight.monsters) && thornFightColours > 20, `the ogre and wraith sprites paint in a fight (${thornFight.monsters}, ${thornFightColours} colours)`);
 ok(ogreView === 'ogre,brigand_archer,brigand', `before the fight the view draws the ogre's band as each of its kinds (${ogreView})`);
