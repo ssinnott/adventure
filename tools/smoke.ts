@@ -1348,9 +1348,10 @@ const mark = await page.evaluate(async () => {
 });
 
 // The pilot (#716): P on the road hands it the game, and over a second with nothing to do its band
-// lies over the top of the view, darker than the view was; T sets its pace, P again takes the game
-// back, and so does any other key, which the screen then has. A wipe leaves its why over the title,
-// darker than the title alone, and P there starts a new game with a company at random.
+// lies over the top of the view, darker than the view was; T sets its pace, the band shows a second
+// line and the pace, and the view leaves out its hint; P again takes the game back, and so does any
+// other key, which the screen then has. A wipe leaves its why over the title, darker than the title
+// alone, and P there starts a new game with a company at random, the why of the last gone.
 const pilotBand = await (async () => {
   const corner = (): Promise<number[]> => page.evaluate(async () => {
     const F = await import('/src/ui/frame.ts' as string), v = F.LAYOUT.view;
@@ -1371,6 +1372,38 @@ const pilotBand = await (async () => {
   const band = await corner(), on = await state();
   await press('KeyT');
   const paced = await state();
+  // Painted between frames: the band with two lines, its pace against `PILOT 2X` drawn alone, and the
+  // view under it with a sign on the party's square, its hint left out while the pilot drives.
+  const drawn = await page.evaluate(async () => {
+    const F = await import('/src/ui/frame.ts' as string), T = await import('/src/lib/engine/text.ts' as string), v = F.LAYOUT.view, g = (window as any).__game.game, p = g.pilot;
+    const ctx = (document.getElementById('stage') as HTMLCanvasElement).getContext('2d')!;
+    const mask = (c: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, rgb: number[]): string => {
+      const d = c.getImageData(x, y, w, h).data;
+      let out = '';
+      for (let i = 0; i < d.length; i += 4) out += d[i] === rgb[0] && d[i + 1] === rgb[1] && d[i + 2] === rgb[2] ? '1' : '0';
+      return out;
+    };
+    const count = (s: string): number => s.split('1').length - 1, YELLOW = [255, 224, 138], GREY = [216, 208, 192];
+    const was = p.why;
+    p.why = ['A fixture line.', 'And a second.'];
+    g.render(ctx);
+    p.why = was;
+    const second = count(mask(ctx, v.x, v.y + 14, v.w / 2, 7, GREY)), pace = mask(ctx, v.x + v.w - 60, v.y + 4, 60, 7, YELLOW);
+    const alone = document.createElement('canvas');
+    alone.width = 640; alone.height = 360;
+    const actx = alone.getContext('2d')!;
+    T.drawText(actx, 'PILOT 2X', v.x + v.w - 6, v.y + 4, { size: 1, color: '#ffe08a', align: 'right' });
+    const label = pace === mask(actx, v.x + v.w - 60, v.y + 4, 60, 7, YELLOW) && count(pace) > 0;
+    const w = g.world, sign = { kind: 'sign', x: w.state.x, y: w.state.y, text: 'A fixture sign.' };
+    w.map.features.push(sign);
+    const hint = (): number => { g.top.render(g, ctx, g.frame); return count(mask(ctx, v.x + v.w / 2 - 60, v.y + 6, 120, 7, YELLOW)); };
+    const hidden = hint();
+    p.on = false;
+    const shown = hint();
+    p.on = true;
+    w.map.features.splice(w.map.features.indexOf(sign), 1);
+    return { second, label, hidden, shown };
+  });
   await press('KeyP');
   const off = await state();
   await press('KeyP');
@@ -1390,7 +1423,7 @@ const pilotBand = await (async () => {
   await press('KeyP');
   const fresh = await state();
   await press('KeyP');
-  return { screen, before, band, on, paced, off, facing, turned, wiped, fallen, bare, fresh };
+  return { screen, before, band, on, paced, drawn, off, facing, turned, wiped, fallen, bare, fresh };
 })();
 
 await browser.close();
@@ -1415,8 +1448,12 @@ ok(pilotBand.on.tempo === 1 && pilotBand.paced.tempo === 2 && pilotBand.paced.on
   `T sets the pilot's pace from 1 to 2 times and leaves it the helm, and a turn takes the helm back and turns the company (${pilotBand.paced.tempo}x; facing ${pilotBand.facing} to ${pilotBand.turned.facing})`);
 ok(pilotBand.wiped.screen === 'TitleScreen' && !pilotBand.wiped.on && pilotBand.wiped.stopped && pilotBand.wiped.why === 'The company has fallen.' && Math.max(...pilotBand.bare) > Math.max(...pilotBand.fallen) + 20,
   `a wipe under the pilot goes to the title, and its why stays up over it, darker than the title alone (${pilotBand.fallen.join(',')} against ${pilotBand.bare.join(',')}; "${pilotBand.wiped.why}")`);
-ok(pilotBand.fresh.screen === 'ExploreScreen' && pilotBand.fresh.on && !pilotBand.fresh.stopped && pilotBand.fresh.company !== 'Bram knight, Idris paladin, Wren ranger, Ottilie thief, Maren cleric, Cassian sorcerer',
-  `P on the title starts a new game the pilot drives, with a company at random (${pilotBand.fresh.company})`);
+ok(pilotBand.drawn.second > 0 && pilotBand.drawn.label,
+  `the pilot's band draws its second line in its own grey and its pace, PILOT 2X, on the right of the first (${JSON.stringify(pilotBand.drawn)})`);
+ok(pilotBand.drawn.hidden === 0 && pilotBand.drawn.shown > 0,
+  `the view leaves out its hint while the pilot drives, and draws it with the helm back (${pilotBand.drawn.hidden} pixels of hint, against ${pilotBand.drawn.shown})`);
+ok(pilotBand.fresh.screen === 'ExploreScreen' && pilotBand.fresh.on && !pilotBand.fresh.stopped && pilotBand.fresh.why === 'Nothing to do.' && pilotBand.fresh.company !== 'Bram knight, Idris paladin, Wren ranger, Ottilie thief, Maren cleric, Cassian sorcerer',
+  `P on the title starts a new game the pilot drives, with a company at random and the last one's why gone (${pilotBand.fresh.company}; "${pilotBand.fresh.why}")`);
 ok(autoPanel.party && autoPanel.label && autoPanel.hint, `on auto the fight's panel says AUTO beside the round and that P takes the fight back (${JSON.stringify(autoPanel)})`);
 ok(thornColours > 20, `Thornmark's forest paints (${thornColours} colours)`);
 ok(thornFight.screen === 'CombatScreen' && /ogre/.test(thornFight.monsters) && /wraith/.test(thornFight.monsters) && thornFightColours > 20, `the ogre and wraith sprites paint in a fight (${thornFight.monsters}, ${thornFightColours} colours)`);

@@ -9,11 +9,12 @@ import type { Store } from '../../src/game/save.ts';
 import { defaultParty } from '../../src/game/party.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { CombatScreen } from '../../src/ui/combat.ts';
-import { MessageScreen } from '../../src/ui/screens.ts';
+import { ChoiceScreen, MessageScreen } from '../../src/ui/screens.ts';
 import { RiddleScreen } from '../../src/ui/riddle.ts';
 import { TitleScreen } from '../../src/ui/title.ts';
-import { Pilot, BRAINS, IDLE } from '../../src/game/pilot/pilot.ts';
+import { Pilot, BRAINS, IDLE, HEARD_MAX } from '../../src/game/pilot/pilot.ts';
 import { knownOf } from '../../src/game/pilot/known.ts';
+import type { Sighted } from '../../src/game/pilot/known.ts';
 import { ok, headlessGame } from './lib.ts';
 
 export function pilot(): void {
@@ -38,13 +39,36 @@ export function pilot(): void {
   ok(!!statue && !('riddle' in statue) && !('answer' in statue) && !!boatman && !('choice' in boatman) && !('passage' in boatman),
     `Known's features hold no statue's riddle or answer and no person's question or crossings (${JSON.stringify([statue, boatman])})`);
 
-  // A shop's wares, once its menu has shown them, and not before.
-  const stall: Feature = { kind: 'shop', x, y, name: 'A fixture stall', stock: ['torch'], interior: 'harrow_provisioner' };
-  (m.features as Feature[]).push(stall);
-  const shut = knownOf(g).features('harrow').find((f) => f.kind === 'shop' && f.name === 'A fixture stall');
-  p.tell(stall);
-  const shown = knownOf(g).features('harrow').find((f) => f.kind === 'shop' && f.name === 'A fixture stall');
-  ok(!!shut && !('stock' in shut) && !!shown && 'stock' in shown && shown.stock?.join() === 'torch', `a shop's wares are Known once its menu has shown them, and not before (${JSON.stringify([shut, shown])})`);
+  // What a menu shows, Known once the menu has shown it and not before: a shop's wares as its Buy
+  // menu opens, a trainer's levels as its menu does, a person's crossings as they are offered.
+  (m.features as Feature[]).push(
+    { kind: 'shop', x, y, name: 'A fixture stall', stock: ['torch'], interior: 'harrow_provisioner' },
+    { kind: 'trainer', x, y, name: 'A fixture master', maxLevel: 5, interior: 'harrow_provisioner' },
+    { kind: 'npc', x, y, name: 'A fixture ferryman', lines: ['"Over the water?"'], passage: [{ to: 'thornhold', x: 7, y: 14, name: 'Thornhold', by: 'boat', fare: 10, departs: 6, days: 1, arrives: 18 }] },
+  );
+  const sighted = (name: string): Record<string, unknown> => ({ ...knownOf(g).features('harrow').find((f) => 'name' in f && f.name === name) });
+  const named = (name: string): Feature => (m.features as Feature[]).find((f) => 'name' in f && f.name === name)!;
+  const pick = (label: string): void => { const c = g.top; if (c instanceof ChoiceScreen && c.options.includes(label)) { c.sel = c.options.indexOf(label); g.update('interact'); } };
+  g.interact(named('A fixture stall'));
+  pick('Buy and sell');
+  const wares = [sighted('A fixture stall')];
+  pick('Buy');
+  wares.push(sighted('A fixture stall'));
+  while (g.screens.length > 1) g.pop();
+  g.interact(named('A fixture master'));
+  const levels = [sighted('A fixture master')];
+  pick('Train');
+  levels.push(sighted('A fixture master'));
+  while (g.screens.length > 1) g.pop();
+  g.interact(named('A fixture ferryman'));
+  const ways = [sighted('A fixture ferryman')];
+  g.update('interact');
+  ways.push(sighted('A fixture ferryman'));
+  while (g.screens.length > 1) g.pop();
+  ok(!('stock' in wares[0]) && (wares[1].stock as string[] | undefined)?.join() === 'torch' && !('maxLevel' in levels[0]) && levels[1].maxLevel === 5 && !('passage' in ways[0]) && (ways[1].passage as { to: string }[] | undefined)?.[0]?.to === 'thornhold',
+    `a shop's wares, a trainer's levels and a person's crossings are Known once the Buy menu, the trainer's and the offer show them, and not before (${JSON.stringify([wares, levels, ways])})`);
+  // The trainer and the ferryman go again, out of the way of the rest; the stall stays, as it was.
+  (m.features as Feature[]).splice(-2);
 
   // Of every feature the content places, seen, no more than its kind, square, id and name: no sign's
   // reading, chest's gold, den's keepers, shrine's gift, rift's way, person's flag, or when it is there.
@@ -56,10 +80,18 @@ export function pilot(): void {
   const scraps = ko.features('ironfells_n3').find((f) => f.kind === 'sign' && f.id === 'n3_scraps'), cache = ko.features('downs_f2').find((f) => f.kind === 'chest' && f.id === 'f2_cache');
   ok(placed.length > 500 && !more.length && JSON.stringify(scraps) === '{"kind":"sign","x":28,"y":12,"id":"n3_scraps"}' && JSON.stringify(cache) === '{"kind":"chest","x":11,"y":2,"id":"f2_cache"}',
     `of the ${placed.length} features placed, seen, Known gives no more than each one's kind, square, id and name (${[...new Set(more)].join(', ') || JSON.stringify([scraps, cache])})`);
-  const ways = ids.flatMap((id) => ko.exits(id)), written = ids.flatMap((id) => o.maps[id].exits);
-  const opened = ways.filter((e) => 'label' in e || 'needFlag' in e || 'shut' in e || 'blockedText' in e), gated = written.filter((e) => e.needFlag || e.shut).length;
-  ok(ways.length === written.length && written.some((e) => e.label) && gated > 0 && !opened.length,
-    `of the ${ways.length} exits, ${gated} gated and every one with a line on arrival, Known gives none of what opens one or what it says (${JSON.stringify(opened.slice(0, 2))})`);
+  const exits = ids.flatMap((id) => ko.exits(id)), written = ids.flatMap((id) => o.maps[id].exits);
+  const opened = exits.filter((e) => 'label' in e || 'needFlag' in e || 'shut' in e || 'blockedText' in e), gated = written.filter((e) => e.needFlag || e.shut).length;
+  ok(exits.length === written.length && written.some((e) => e.label) && gated > 0 && !opened.length,
+    `of the ${exits.length} exits, ${gated} gated and every one with a line on arrival, Known gives none of what opens one or what it says (${JSON.stringify(opened.slice(0, 2))})`);
+
+  // A den burnt shows as ash, as the automap inks it, and a standing one does not.
+  const lair = (zone: string): Sighted | undefined => ko.features(zone).find((f) => f.kind === 'den'), den = lair('deepthorn_i3');
+  o.world.travel('deepthorn_i3', den?.x ?? 0, den?.y ?? 0);
+  o.world.markUsed('i3_den');
+  const ash = lair('deepthorn_i3'), still = lair('eaves_j3');
+  ok(!!den && !('ash' in den) && ash?.kind === 'den' && ash.id === 'i3_den' && ash.ash === true && !!still && !('ash' in still),
+    `Known gives a burnt den its ash and a standing one none (${JSON.stringify([ash, still])})`);
 
   // A riddle put is heard as the statue puts it.
   g.interact((m.features as Feature[]).find((f) => f.kind === 'statue' && f.id === 'fx_statue')!);
@@ -87,10 +119,22 @@ export function pilot(): void {
   ok(tempos.join() === '2,4,1' && !turned && !back && p.heard.includes('You take the helm.') && again && p.on,
     `T sets the pace 2, 4 and 1 times, any other key takes the helm back and goes on to the screen, and P hands it over again (${tempos.join(', ')}; ${turned}, ${back}, ${again})`);
 
+  // Through a zone's id, the outdoors at the zone's own squares (World.locate), and nothing past its edge.
   g.world.travel('shelf', 16, 4);
+  const z = g.world.locate('shelf', 0, 0), kz = knownOf(g), cz = kz.cell('shelf', 16, 4);
+  const zway = ko.exits('shelf').find((e) => e.to === 'harrow'), zsights = ko.features('shelf'), wide = ko.features(z.mapId);
+  ok(kz.seen('shelf', 16, 4) && !!cz && JSON.stringify(cz) === JSON.stringify(kz.cell(z.mapId, z.x + 16, z.y + 4)) && !ko.seen('shelf', 32, 0) && ko.seen(z.mapId, z.x + 32, z.y)
+    && !!zway && ko.exits(z.mapId).some((e) => e.to === 'harrow' && e.x === zway.x + z.x && e.y === zway.y + z.y)
+    && zsights.length > 0 && zsights.every((f) => wide.some((c) => JSON.stringify({ ...c, x: c.x - z.x, y: c.y - z.y }) === JSON.stringify(f))),
+    `through the Foreland's id, Known reads the outdoors at the zone's squares, ${z.x},${z.y} on: its square seen, its cell, its way to Helmstow at ${zway?.x},${zway?.y} and its ${zsights.length} features, and nothing past its edge`);
+
   g.fight(['road_rats']);
   const fight = g.top, handed = p.next(g);
   ok(handed === null && fight instanceof CombatScreen && fight.auto, 'a fight on top the pilot hands to the bot, and presses nothing');
+  // P mid-fight takes the fight back from the bot with the helm, and P again hands both over at once.
+  const dropped = p.press(g, 'pilot') && !p.on && fight instanceof CombatScreen && !fight.auto;
+  const retaken = p.press(g, 'pilot') && p.on && fight instanceof CombatScreen && fight.auto;
+  ok(dropped && retaken, `P mid-fight takes the fight back from the bot, and P again hands it over before the next beat (${dropped}, ${retaken})`);
   let ticks = 0;
   for (; ticks < 4000 && g.top === fight; ticks++) g.update(null);
   ok(g.top !== fight && g.top instanceof ExploreScreen, `ticked with nothing pressed, the fight plays itself out, in ${ticks} ticks (${fight instanceof CombatScreen ? fight.state.outcome : '?'})`);
@@ -120,11 +164,17 @@ export function pilot(): void {
   g.update('forward');
   ok(g.top instanceof TitleScreen && !p.on && p.stopped && p.why[0] === 'The company has fallen.', `a wipe turns the pilot off, its why left up over the title (${p.why.join(' ')})`);
 
-  // P on the title: a new game, on a random seed with a company mustered at random, that has heard nothing of the last.
+  // P on the title: a new game, on a random seed with a company mustered at random, that has heard
+  // nothing of the last and says nothing of it. Another wipe and P again draw another company.
   const premade = defaultParty(makeRng(1)).members.map((c) => `${c.name} ${c.race} ${c.cls}`).join(', ');
-  const taken = p.press(g, 'pilot'), company = g.party.members.map((c) => `${c.name} ${c.race} ${c.cls}`).join(', ');
-  ok(taken && p.on && !p.stopped && g.top instanceof ExploreScreen && g.party.members.length === 6 && company !== premade && !p.heard.includes('The answer is ten.') && !p.heard.includes('You take the helm.') && p.heard.includes('The pilot takes the helm.'),
-    `P on the title starts a new game with a company at random (${company}), and the pilot has heard nothing of the last`);
+  const muster = (): string => g.party.members.map((c) => `${c.name} ${c.race} ${c.cls}`).join(', ');
+  const taken = p.press(g, 'pilot'), company = muster();
+  ok(taken && p.on && !p.stopped && p.why[0] === IDLE && g.top instanceof ExploreScreen && g.party.members.length === 6 && company !== premade && !p.heard.includes('The answer is ten.') && !p.heard.includes('You take the helm.') && p.heard.includes('The pilot takes the helm.'),
+    `P on the title starts a new game with a company at random (${company}), and the pilot has heard nothing of the last and says nothing of it (${p.why.join(' ')})`);
+  g.gameOver();
+  p.press(g, 'pilot');
+  const redrawn = muster();
+  ok(p.on && redrawn !== company && redrawn !== premade, `P on the title again draws another company (${redrawn})`);
 
   // A save loaded: the pilot has heard nothing of the company before it.
   const box = new Map<string, string>(), store: Store = { getItem: (k) => box.get(k) ?? null, setItem: (k, v) => void box.set(k, v), removeItem: (k) => void box.delete(k) };
@@ -133,4 +183,10 @@ export function pilot(): void {
   l.saveGame();
   l.say('The answer is ten.');
   ok(l.loadGame() && !lp.heard.includes('The answer is ten.') && lp.heard.join() === 'Loaded.', `a save loaded, the pilot has heard only that (${lp.heard.join(' / ')})`);
+
+  // What it has heard is kept to the last 2000 lines, the oldest dropped first.
+  const q = new Pilot();
+  for (let i = 0; i <= HEARD_MAX; i++) q.hear(`Line ${i}.`);
+  ok(HEARD_MAX === 2000 && q.heard.length === HEARD_MAX && q.heard[0] === 'Line 1.' && q.heard[HEARD_MAX - 1] === `Line ${HEARD_MAX}.`,
+    `of ${HEARD_MAX + 1} lines heard, the pilot keeps the last ${q.heard.length}, from "${q.heard[0]}"`);
 }

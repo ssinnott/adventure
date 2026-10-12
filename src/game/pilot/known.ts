@@ -2,8 +2,9 @@
 // features and exits on squares the party has seen, the maps it has visited, the world map as drawn
 // and the lines it has heard. Nothing here reads a map as written: not its secrets or its encounters,
 // what opens a gate or an exit or what an exit says on arrival, and of a feature nothing but what the
-// automap and the hint show (its kind, its square and its name, and the id it is known by) until a
-// menu has shown what it lists. What a feature says, holds, gives or wants is known once it is heard.
+// automap and the hint show (its kind, its square and its name, the id it is known by, and a den's
+// ash) until a menu has shown what it lists. What a feature says, holds, gives or wants is known
+// once it is heard.
 // A zone map's id names its part of the outdoors, at the zone's own squares (World.locate).
 import type { Game } from '../game.ts';
 import type { Cell, Exit, Feature, GameMap } from '../map.ts';
@@ -18,7 +19,9 @@ import { onAutomap } from '../../ui/frame.ts';
 const SEEN = ['kind', 'x', 'y', 'id', 'name'] as const;
 /** What a menu tells of a feature (Pilot.tell): the crossings a person has offered, a shop's wares and prices, a trainer's levels. */
 const TOLD = ['passage', 'stock', 'prices', 'maxLevel'] as const;
-type Sight<F> = F extends Feature ? Pick<F, Extract<keyof F, (typeof SEEN)[number]>> & Partial<Pick<F, Extract<keyof F, (typeof TOLD)[number]>>> : never;
+/** A den the automap inks burnt, as ash (frame.ts DEN_ASH). */
+type Ash<F> = F extends { kind: 'den' } ? { ash?: true } : unknown;
+type Sight<F> = F extends Feature ? Pick<F, Extract<keyof F, (typeof SEEN)[number]>> & Partial<Pick<F, Extract<keyof F, (typeof TOLD)[number]>>> & Ash<F> : never;
 
 /** A feature as the party knows it: what it sees of it, and what a menu has told. */
 export type Sighted = Sight<Feature>;
@@ -30,7 +33,7 @@ export interface Known {
   seen(map: string, x: number, y: number): boolean;
   /** The cell as the automap inks it (drawnCell), or undefined when unseen. A secret door comes back a wall. */
   cell(map: string, x: number, y: number): Inked | undefined;
-  /** Features the automap draws (onAutomap, and not spent) on seen squares: each its kind, square, id and name, and what a menu has shown. */
+  /** Features the automap draws (onAutomap, and not spent) on seen squares: each its kind, square, id and name, a burnt den its ash, and what a menu has shown. */
   features(map: string): Sighted[];
   /** Exits on seen squares, without what opens them or the line said on arrival: the pilot learns a way by trying it. The outdoors' zone crossings are plain walking. */
   exits(map: string): Exit[];
@@ -45,10 +48,11 @@ export interface Known {
 /** A map by the id given, as the world plays it: its own, or a zone's outdoor map, with where the zone sits and its size. */
 interface Frame { m: GameMap; ms?: MapState; ox: number; oy: number; w: number; h: number }
 
-/** A feature as the party knows it, at its square on the map as named; `told` adds what a menu has shown. */
+/** A feature as the party knows it, at its square on the map as named, a burnt den as ash; `told` adds what a menu has shown. */
 function sight(f: Feature, fr: Frame, told: boolean): Sighted {
   const all = f as unknown as Record<string, unknown>, out: Record<string, unknown> = {};
   for (const k of told ? [...SEEN, ...TOLD] : SEEN) if (all[k] !== undefined) out[k] = all[k];
+  if (f.kind === 'den' && fr.ms?.used[f.id]) out.ash = true;
   return { ...out, x: f.x - fr.ox, y: f.y - fr.oy } as unknown as Sighted;
 }
 

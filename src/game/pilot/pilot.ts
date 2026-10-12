@@ -65,8 +65,8 @@ export class Pilot {
   /** A menu has shown what a feature lists. */
   tell(f: Feature): void { this.told.add(f); }
 
-  /** A new company, or one loaded: it has heard nothing yet, and the last run's stop is gone. */
-  forget(): void { this.heard.length = 0; this.stopped = false; }
+  /** A new company, or one loaded: it has heard nothing yet, and the last run's stop and its why are gone. */
+  forget(): void { this.heard.length = 0; this.stopped = false; this.why = [IDLE]; }
 
   /** Turns itself off, and says why over every screen until a game starts (#713, Decided 4 and 10). */
   stop(why: string): void { this.on = false; this.why = [why]; this.stopped = true; }
