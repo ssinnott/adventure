@@ -10,7 +10,7 @@ import { ExploreScreen } from '../game.ts';
 import type { Action } from '../../input.ts';
 import { passCell } from '../map.ts';
 import type { Exit } from '../map.ts';
-import { FACING_DX, FACING_DY, turnLeft, turnRight } from '../types.ts';
+import { FACING_DX, FACING_DY, turnBack, turnLeft, turnRight } from '../types.ts';
 import type { Facing } from '../types.ts';
 import type { Known } from './known.ts';
 import type { Brain } from './pilot.ts';
@@ -31,24 +31,26 @@ export interface Trip {
 /** The steps refused on one goal before it is given up as shut. */
 export const BLOCKS = 3;
 
-/** What a step onto opens before the walk can go on: a business's menus, a den's question. A person's words are read and the walk goes on. */
-const STOPS = new Set(['inn', 'temple', 'shop', 'guild', 'trainer', 'den']);
+/**
+ * What a step onto may open, and the walk cannot go on past until it is answered: a person's question
+ * or offer, a business's menus, a den's question. Which people ask is not known until they are met,
+ * so every person is one.
+ */
+const STOPS = new Set(['npc', 'inn', 'temple', 'shop', 'guild', 'trainer', 'den']);
 /** Wider than any map: a square and a facing as one number. */
 const SPAN = 4096;
 
 /**
- * The keys from (x, y, facing) that step onto (tx, ty) over seen, passable squares of one map; null
- * when none. Turning costs 1, a step 1. From (tx, ty) itself, they step off it and back, as a way off
- * the map the party has landed on is taken.
+ * Whether a route on `map` steps onto a square: seen, passable as the company can cross it, and no
+ * group in sight on it. A way off the map, an exit or a tear into a Rift, carries the party off it,
+ * and a person or a business stops it: each is stepped onto only as (tx, ty), walked to, never over.
  */
-export function routeOn(k: Known, map: string, x: number, y: number, facing: Facing, tx: number, ty: number): Action[] | null {
+function opens(k: Known, map: string, tx: number, ty: number): (x: number, y: number) => boolean {
   const can = k.can(), sq = (cx: number, cy: number): number => cy * SPAN + cx;
   const held = new Set(k.groups(map).map((q) => sq(q.x, q.y)));
-  // A way off the map, an exit or a tear into a Rift, carries the party off it, and a business stops
-  // it: each is walked to, never over.
   const aside = new Set([...k.exits(map), ...k.features(map).filter((f) => f.kind === 'rift' || STOPS.has(f.kind))].map((q) => sq(q.x, q.y)));
   const open = new Map<number, boolean>();
-  const walks = (cx: number, cy: number): boolean => {
+  return (cx, cy) => {
     const at = sq(cx, cy);
     let ok = open.get(at);
     if (ok === undefined) {
@@ -58,8 +60,14 @@ export function routeOn(k: Known, map: string, x: number, y: number, facing: Fac
     }
     return ok;
   };
+}
+
+/** The keys from (x, y, facing) to (tx, ty) over seen, passable squares of one map; null when none. Turning costs 1, a step 1. */
+export function routeOn(k: Known, map: string, x: number, y: number, facing: Facing, tx: number, ty: number): Action[] | null {
+  if (x === tx && y === ty) return [];
+  const walks = opens(k, map, tx, ty);
   // Breadth first over the square and the facing, each move a key.
-  const id = (cx: number, cy: number, f: Facing): number => sq(cx, cy) * 4 + f;
+  const id = (cx: number, cy: number, f: Facing): number => (cy * SPAN + cx) * 4 + f;
   const first = id(x, y, facing), came = new Map<number, { from: number; key: Action }>([[first, { from: first, key: 'forward' }]]);
   const queue: [number, number, Facing][] = [[x, y, facing]];
   for (let i = 0; i < queue.length; i++) {
@@ -80,6 +88,17 @@ export function routeOn(k: Known, map: string, x: number, y: number, facing: Fac
     }
   }
   return null;
+}
+
+/**
+ * The keys that step off (x, y) onto an open square beside it and back on, the fewest turns first, as
+ * a way off the map the party stands on is taken; null when none beside it is open.
+ */
+function offAndOn(k: Known, map: string, x: number, y: number, facing: Facing): Action[] | null {
+  const walks = opens(k, map, x, y);
+  const ways: [Facing, Action[]][] = [[facing, []], [turnLeft(facing), ['turnLeft']], [turnRight(facing), ['turnRight']], [turnBack(facing), ['turnLeft', 'turnLeft']]];
+  const off = ways.find(([f]) => walks(x + FACING_DX[f], y + FACING_DY[f]));
+  return off ? [...off[1], 'forward', 'turnLeft', 'turnLeft', 'forward'] : null;
 }
 
 /** The maps and exits from `from` to `to` over visited maps' seen exits; null when none. */
@@ -140,7 +159,10 @@ export const route: Brain = (g, k, p) => {
   if (st.mapId === at.mapId && st.x === at.x && st.y === at.y) { p.goal = null; p.trip = null; p.plan = []; return null; }
   if (!p.plan.length) {
     const to = at.mapId === st.mapId ? at : routeMaps(k, st.mapId, at.mapId)?.[0]?.exit;
-    const keys = to && routeOn(k, st.mapId, st.x, st.y, st.facing, to.x, to.y);
+    let keys = to && routeOn(k, st.mapId, st.x, st.y, st.facing, to.x, to.y);
+    // Landed on the way off it must take, as Brandy Hole lands a company on the square it climbs out
+    // by: it steps off onto an open square beside it and back on.
+    if (keys?.length === 0) keys = offAndOn(k, st.mapId, st.x, st.y, st.facing);
     if (!keys?.length) { p.why = [`No way to ${goal.name} that I have seen.`]; p.goal = null; p.trip = null; return null; }
     p.plan = keys;
   }
