@@ -79,6 +79,8 @@ export function routeOn(k: Known, map: string, x: number, y: number, facing: Fac
 
 /** The maps and exits from `from` to `to` over visited maps' seen exits; null when none. */
 export function routeMaps(k: Known, from: string, to: string): { map: string; exit: Exit }[] | null {
+  // A zone's id is the outdoors': from one zone to the next is walking, no exit.
+  from = k.mapOf(from); to = k.mapOf(to);
   if (from === to) return [];
   const visited = new Set(k.visited()), came = new Map<string, { map: string; exit: Exit }>(), queue = [from];
   for (let i = 0; i < queue.length; i++) {

@@ -40,6 +40,8 @@ export interface Known {
   exits(map: string): Exit[];
   /** Maps visited: the keys of state.maps. */
   visited(): string[];
+  /** The map an id is played on: its own, or for a zone's the outdoors (World.locate). */
+  mapOf(map: string): string;
   /** Where a map is on the world map, in world cells, as the world map places it (mapPlace). */
   placeOf(map: string): [number, number] | undefined;
   /** What the company can cross, as it knows itself: a swimmer, a Mountaineer and the iron keys it carries (partyCan). */
@@ -95,6 +97,7 @@ export function knownOf(g: Game): Known {
       return fr.m.exits.filter((e) => seenIn(fr, e.x - fr.ox, e.y - fr.oy)).map(({ needFlag, shut, blockedText, label, ...e }) => ({ ...e, x: e.x - fr.ox, y: e.y - fr.oy }));
     },
     visited: () => Object.keys(w.state.maps),
+    mapOf: (map) => w.locate(map, 0, 0).mapId,
     placeOf: (map) => mapPlace(ATLAS, MAP_DEFS, map),
     can: () => partyCan(g.party),
     groups(map) {
