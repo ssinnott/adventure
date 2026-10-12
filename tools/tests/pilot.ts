@@ -2,7 +2,8 @@
 // and when it forgets them, the P and T keys and any other, its pace, a fight handed to the bot, a message read and
 // closed, the why line with no brain to ask, a wipe's why over the title and P there. The navigator
 // (#717): a route over seen squares, a secret door a wall to it, the ways between the maps it has
-// been to, and a walk to a square, driven.
+// been to, a walk to a square, driven, a route planned again after a flight, a way shut after three
+// refusals, and its why lines.
 import { GameMap } from '../../src/game/map.ts';
 import type { Feature, MapDef } from '../../src/game/map.ts';
 import { EAST, WEST, FACING_DX, FACING_DY, turnLeft, turnRight } from '../../src/game/types.ts';
@@ -266,11 +267,12 @@ function navigator(): void {
   const g = headlessGame(4);
   g.maps.fx_bend = new GameMap({ id: 'fx_bend', name: 'Bend', kind: 'dungeon', start: { x: 1, y: 1, facing: WEST }, rows: ['#######', '#.....#', '#####.#', '#####.#', '#######'] });
   g.world.travel('fx_bend', 1, 1, WEST);
-  const k = knownOf(g), unseen = routeOn(k, 'fx_bend', 1, 1, WEST, 5, 3);
-  see(g, 'fx_bend');
+  for (let sy = 0; sy < 5; sy++) for (let sx = 0; sx < 7; sx++) if (sx !== 5 || sy !== 3) see(g, 'fx_bend', sx, sy);
+  const k = knownOf(g), short = k.seen('fx_bend', 5, 2) && !k.seen('fx_bend', 5, 3), unseen = routeOn(k, 'fx_bend', 1, 1, WEST, 5, 3);
+  see(g, 'fx_bend', 5, 3);
   const bend = routeOn(k, 'fx_bend', 1, 1, WEST, 5, 3);
-  ok(unseen === null && bend?.join() === 'turnLeft,turnLeft,forward,forward,forward,forward,turnRight,forward,forward',
-    `along a corridor with a turn, from its end facing away, the route is two turns, four steps, a turn and two steps, and none while the far end is unseen (${bend?.join(', ')}; ${unseen})`);
+  ok(short && unseen === null && bend?.join() === 'turnLeft,turnLeft,forward,forward,forward,forward,turnRight,forward,forward',
+    `along a corridor with a turn, from its end facing away, the route is two turns, four steps, a turn and two steps, and none while the far end alone is unseen (${bend?.join(', ')}; ${short}, ${unseen})`);
 
   // A secret door in the wall between two squares, and a way round below: a wall to the navigator,
   // though the map as written lets the party through, until a search finds it.
@@ -290,13 +292,57 @@ function navigator(): void {
   ok(before === null && keep?.length === 1 && keep[0].map === 'harrow' && keep[0].exit.x === 7 && keep[0].exit.y === 0 && keep[0].exit.to === 'keep',
     `from Helmstow to the keep there is no way while the gatehouse is unseen, and one exit once its square, 7,0, is seen (${JSON.stringify(keep)})`);
 
-  // Driven: the pilot at the helm, bound for a square it has seen six keys away, walks there and is bound nowhere.
+  // Driven: the pilot at the helm, bound for a square it has seen six steps up the street, walks there and is bound nowhere.
   const d = headlessGame(4), dp = (d.pilot = new Pilot({ instant: true })), { x, y, facing } = d.world.state;
-  const six = routeOn(knownOf(d), 'harrow', x, y, facing, 6, 10);
+  see(d, 'harrow', 7, 9); see(d, 'harrow', 7, 8);
+  const six = routeOn(knownOf(d), 'harrow', x, y, facing, 7, 8);
   dp.toggle(d);
-  dp.goal = { map: 'harrow', x: 6, y: 10, name: 'the west lane' };
+  dp.goal = { map: 'harrow', x: 7, y: 8, name: 'the high street' };
   drive(d, Array(60).fill(null));
   const stands = `${d.world.state.x},${d.world.state.y}`;
-  ok(six?.length === 6 && d.world.state.mapId === 'harrow' && stands === '6,10' && dp.goal === null,
-    `the pilot, bound for a seen square ${six?.length} keys away (${six?.join(', ')}), walks there in 60 ticks and is bound nowhere (stands at ${stands}; ${JSON.stringify(dp.goal)})`);
+  ok(six?.join() === 'forward,forward,forward,forward,forward,forward' && d.world.state.mapId === 'harrow' && stands === '7,8' && dp.goal === null,
+    `the pilot, bound for a seen square six steps away (${six?.join(', ')}), walks there in 60 ticks and is bound nowhere (stands at ${stands}; ${JSON.stringify(dp.goal)})`);
+
+  // A flight mid-route: carried off the map with keys still to press, though onto the square and
+  // facing its last key would have left it on, it plans again from where it stands, back by the way
+  // it has seen, and walks on.
+  const f = headlessGame(4), fp = (f.pilot = new Pilot({ instant: true })), kf = knownOf(f);
+  f.maps.fx_hall = new GameMap({ id: 'fx_hall', name: 'Hall', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['######', '#....#', '######'] });
+  f.maps.fx_cell = new GameMap({ id: 'fx_cell', name: 'Cell', kind: 'dungeon', start: { x: 2, y: 1, facing: EAST }, rows: ['#####', '#...#', '#####'],
+    exits: [{ x: 1, y: 1, to: 'fx_hall', tx: 1, ty: 1, tf: EAST }] });
+  f.world.travel('fx_cell', 2, 1, EAST);
+  see(f, 'fx_cell');
+  f.world.travel('fx_hall', 1, 1, EAST);
+  see(f, 'fx_hall');
+  fp.toggle(f);
+  fp.goal = { map: 'fx_hall', x: 4, y: 1, name: 'the end of the hall' };
+  drive(f, [null]);
+  const left = fp.plan.length;
+  f.world.travel('fx_cell', 2, 1, EAST);
+  const back = routeOn(kf, 'fx_cell', 2, 1, EAST, 1, 1), key = fp.next(f), replanned = [key, ...fp.plan].join();
+  f.update(key);
+  drive(f, Array(30).fill(null));
+  const end = `${f.world.state.mapId} ${f.world.state.x},${f.world.state.y}`;
+  ok(left === 2 && replanned === back?.join() && end === 'fx_hall 4,1' && fp.goal === null,
+    `carried off the hall with ${left} keys to press, it plans afresh from the cell, ${replanned}, by its way back, and walks on to the hall's end (${end}; ${JSON.stringify(fp.goal)})`);
+
+  // A locked door with no key: refused three times, the way is shut and the square kept for the
+  // explorer, with the line it was told, and the why line says so. Then a goal past any way it has
+  // seen: it says it has none. Each line stays up while it presses nothing.
+  const l = headlessGame(4), lp = (l.pilot = new Pilot({ instant: true }));
+  l.maps.fx_lockup = new GameMap({ id: 'fx_lockup', name: 'Lock-up', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#.L.#', '#####'] });
+  l.world.travel('fx_lockup', 1, 1, EAST);
+  see(l, 'fx_lockup');
+  lp.toggle(l);
+  lp.goal = { map: 'fx_lockup', x: 3, y: 1, name: 'the far cell' };
+  drive(l, [null, null]);
+  const bound = lp.why.join(' / ');
+  drive(l, Array(10).fill(null));
+  const refused = l.log.filter((s) => s === 'Locked. A key would open it.').length, shut = lp.why.join(' / ');
+  lp.goal = { map: 'harrow', x: 1, y: 1, name: 'Helmstow' };
+  drive(l, Array(10).fill(null));
+  const none = lp.why.join(' / ');
+  ok(bound === 'Bound for the far cell. / Locked. A key would open it.' && refused === 3 && JSON.stringify(lp.shut) === '[{"map":"fx_lockup","x":2,"y":1,"why":"Locked. A key would open it."}]'
+    && shut === 'The far cell is shut to me.' && none === 'No way to Helmstow that I have seen.' && lp.goal === null && l.world.state.x === 1,
+    `a locked door refused ${refused} times is shut to the navigator (${JSON.stringify(lp.shut)}), and its why lines say so: ${bound}; ${shut}; ${none}`);
 }

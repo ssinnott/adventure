@@ -31,7 +31,7 @@ export const BRAINS: Brain[] = [route];
 
 /** The lines heard that the pilot keeps, the oldest dropped first. */
 export const HEARD_MAX = 2000;
-/** The why line with no brain to give a key. */
+/** The why line with no brain to give a key, and none that gave up saying why. */
 export const IDLE = 'Nothing to do.';
 
 export class Pilot {
@@ -57,6 +57,8 @@ export class Pilot {
   trip: Trip | null = null;
   /** Ways refused the navigator three times: the square, on the map as played, and the line it was told there (#718 comes back to them). */
   readonly shut: { map: string; x: number; y: number; why: string }[] = [];
+  /** The why a brain said as it gave no key (a goal given up): it stays up until a brain presses one. */
+  private kept: [string, string?] | null = null;
   /** Ticks counted towards the next beat. */
   private ticks = 0;
   /** The fight last handed to the bot: a key that took it back is not undone. */
@@ -118,12 +120,13 @@ export class Pilot {
     }
     if (top instanceof MessageScreen) return 'interact';
     if (top instanceof TitleScreen) return null;
-    const k = knownOf(g);
+    const k = knownOf(g), was = this.why;
     for (const brain of BRAINS) {
       const a = brain(g, k, this);
       if (a) return a;
     }
-    this.why = [IDLE];
+    if (this.why !== was) this.kept = this.why;
+    else if (this.why !== this.kept) this.why = [IDLE];
     return null;
   }
 }
