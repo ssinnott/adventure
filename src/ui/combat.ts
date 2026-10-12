@@ -1,5 +1,7 @@
 // The combat screen: draws the fight over the viewport and turns menu input into PartyActions for
-// the resolver in game/combat.ts. Monster turns play out on a short timer so the log can be read.
+// the resolver in game/combat.ts. Monster turns play out on a short timer so the log can be read. On
+// auto the bot plays the party's turns on a timer of its own (game/bot.ts, #714), until the fight is
+// over or a key takes it back.
 import type { Game, Screen } from '../game/game.ts';
 import type { Action } from '../input.ts';
 import { is } from '../input.ts';
@@ -9,6 +11,7 @@ import { LAYOUT, drawPartyCards, drawStatus, drawPurse, drawViewportFrame, cardR
 import { drawMonsterSprite } from './sprites.ts';
 import { drawViewport, drawWeather } from './viewport.ts';
 import { BRASS, TEXT, TEXT_DIM, RED, YELLOW, GREEN } from './palette.ts';
+import { botTurn } from '../game/bot.ts';
 import { currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, shareRange } from '../game/combat.ts';
 import type { CombatState, PartyAction } from '../game/combat.ts';
 import { spell, ELEMENTS } from '../game/spells.ts';
@@ -19,9 +22,14 @@ import type { LabelLine } from './grouplabels.ts';
 import { seatRow } from './row.ts';
 
 type Mode = 'menu' | 'target' | 'spell' | 'spellTarget' | 'element' | 'item' | 'itemTarget' | 'done';
-const MONSTER_DELAY = 22;
+const MONSTER_DELAY = 22, BOT_DELAY = 22;
 
 export class CombatScreen implements Screen {
+  /** Both timers count as nothing, where a test drives the fight; the pilot's tempo takes this over (#716). */
+  static instant = false;
+  /** The bot plays the party's turns, and Space at the end, until the fight is over or a key is pressed. */
+  auto = false;
+  private botTimer = 0;
   private mode: Mode = 'menu';
   private sel = 0;
   private sub = 0;
@@ -85,7 +93,10 @@ export class CombatScreen implements Screen {
   }
 
   update(g: Game, a: Action | null): void {
-    const s = this.state;
+    const s = this.state, wait = (delay: number): number => (CombatScreen.instant ? 0 : delay);
+    // A key takes the fight back from auto, and is handled as usual.
+    if (this.auto && a) this.auto = false;
+    if (this.auto && s.outcome !== 'ongoing' && ++this.botTimer >= wait(BOT_DELAY)) { this.botTimer = 0; a = 'interact'; }
     if (s.outcome !== 'ongoing') {
       this.mode = 'done';
       if (is(a, 'interact', 'cancel')) g.afterCombat(this.groupIds, s.outcome);
@@ -94,7 +105,11 @@ export class CombatScreen implements Screen {
     const t = currentTurn(s, g.party, g.rng);
     if (!t) { this.mode = 'done'; return; }
     if (t.side === 'monster') {
-      if (++this.timer >= MONSTER_DELAY || is(a, 'interact')) { this.timer = 0; monsterAct(s, g.party, g.rng); this.meetCalled(g); }
+      if (++this.timer >= wait(MONSTER_DELAY) || is(a, 'interact')) { this.timer = 0; monsterAct(s, g.party, g.rng); this.meetCalled(g); }
+      return;
+    }
+    if (this.auto) {
+      if (++this.botTimer >= wait(BOT_DELAY)) { this.botTimer = 0; botTurn(s, g.party, g.rng, t.i); this.mode = 'menu'; this.sel = 0; }
       return;
     }
     if (!a) return;
@@ -238,7 +253,8 @@ export class CombatScreen implements Screen {
     // Right column: the action menu.
     const r = LAYOUT.map;
     panel(ctx, r.x, r.y, r.w, r.h);
-    drawText(ctx, `ROUND ${s.round}`, r.x + 8, r.y + 8, { size: 1, color: TEXT_DIM });
+    const round = drawText(ctx, `ROUND ${s.round}`, r.x + 8, r.y + 8, { size: 1, color: TEXT_DIM });
+    if (this.auto) drawText(ctx, 'AUTO', r.x + 8 + round + 12, r.y + 8, { size: 1, color: TEXT_DIM });
     if (s.outcome !== 'ongoing') {
       drawText(ctx, s.outcome === 'victory' ? 'VICTORY' : s.outcome === 'fled' ? 'ESCAPED' : 'DEFEAT', r.x + 8, r.y + 24, { size: 2, color: s.outcome === 'defeat' ? RED : BRASS });
       if (s.loot) {
@@ -274,7 +290,7 @@ export class CombatScreen implements Screen {
         drawText(ctx, 'ON WHOM', r.x + 8, y, { size: 1, color: TEXT_DIM }); y += 12;
         menu(ctx, g.party.members.map((m) => `${m.name} ${m.hp}/${m.maxHp}`), r.x + 8, y, this.sub);
       }
-      drawText(ctx, 'ESC BACK', r.x + r.w - 8, r.y + r.h - 12, { size: 1, color: TEXT_DIM, align: 'right' });
+      drawText(ctx, this.auto ? 'P takes the fight back' : 'ESC BACK', r.x + r.w - 8, r.y + r.h - 12, { size: 1, color: TEXT_DIM, align: 'right' });
     } else {
       drawText(ctx, 'THE ENEMY MOVES...', r.x + 8, r.y + 22, { size: 1, color: RED });
     }

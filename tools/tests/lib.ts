@@ -5,6 +5,7 @@ import { readdirSync } from 'node:fs';
 import type { World } from '../../src/game/world.ts';
 import type { GameMap } from '../../src/game/map.ts';
 import { Game } from '../../src/game/game.ts';
+import type { Party } from '../../src/game/party.ts';
 import type { Action } from '../../src/input.ts';
 
 let failures = 0;
@@ -61,11 +62,11 @@ export async function familyModules(): Promise<Family[]> {
   return out;
 }
 
-/** A Game under Node, on a new game at `seed` with the premade company, with the pilot off. */
-export function headlessGame(seed = 4): Game {
+/** A Game under Node, on a new game at `seed` with the premade company or `party`, with the pilot off. */
+export function headlessGame(seed = 4, party?: Party): Game {
   const g = new Game(null);
   g.input = { textMode: false, drainText: (c) => c };
-  g.newGame(seed);
+  g.newGame(seed, party);
   return g;
 }
 

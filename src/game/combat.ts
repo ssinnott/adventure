@@ -47,6 +47,9 @@ export type PartyAction =
 
 export type Outcome = 'ongoing' | 'victory' | 'defeat' | 'fled';
 
+/** A monster's trait the company learns by seeing it (`shown`). */
+export type Shown = 'sweep' | 'drain' | 'calls';
+
 /**
  * `xp` is what the kills were worth before the split, each by the monster's level against a
  * member's (`killPay`), and `shares` what each living member took, in party order: one share for all
@@ -79,6 +82,12 @@ export interface CombatState {
   seen: Record<string, Partial<Record<Element, number>>>;
   /** The most the company has seen each kind of monster mend at a round's end, by its id (`regen`). A bot learns from it. */
   mends?: Record<string, number>;
+  /**
+   * What the company has seen each kind of monster do beside its blows, by its id: sweep a row with
+   * an arm or a breath, drain with its touch and call its group. The game's bot reads a trait only
+   * once it is here (game/bot.ts).
+   */
+  shown?: Record<string, Partial<Record<Shown, true>>>;
   defending: boolean[];
   /** To-hit lost by bows, slings and crossbows on both sides: the weather (see weather.ts). */
   rangedPenalty: number;
@@ -664,6 +673,9 @@ export const CALL_LINE = (caller: string, names: string, one: boolean): string =
 export const SWEEP_LINE = (who: string, el: Element | undefined, row: string, dealt?: number): string =>
   `${who} ${el ? `breathes ${GLASS_WORD[el]} on` : 'sweeps'} ${row}${dealt === undefined ? ' and misses.' : `: ${dealt} damage.`}`;
 
+/** The company has seen a kind of monster's trait (`shown`). */
+const show = (s: CombatState, m: MonsterInst, k: Shown): void => { ((s.shown ??= {})[m.def.id] ??= {})[k] = true; };
+
 /**
  * A monster's turn spent on a sweep (`MonsterDef.sweep`, #545): one attack at every member of its row
  * (`sweptRow`), a to-hit and its own dice rolled for each, halved for one bracing and, for a breath,
@@ -683,6 +695,7 @@ function sweep(s: CombatState, party: Party, rng: RngInstance, m: MonsterInst): 
     woke += struck(party, c, d);
   }
   const fell = row.map(({ c }) => c).filter(isDown);
+  show(s, m, 'sweep');
   s.log.push(SWEEP_LINE(m.def.name, el, row[0].i >= FRONT_ROW ? 'the back row' : 'the front row', dealt) + woke + (fell.length ? ` ${names(fell)} ${fell.length === 1 ? 'falls' : 'fall'}!` : ''));
   return true;
 }
@@ -731,6 +744,7 @@ function call(s: CombatState, m: MonsterInst): void {
   const come = calledBy(m.def).map((def): MonsterInst => ({ def, hp: def.hp, group: rank, band, back: false, fled: false, conditions: [], flash: 0 }));
   s.groupIds.push(`${s.groupIds[m.band]}:call${band}`); s.leaders.push(undefined); s.foeBless.push(0); s.foeShield.push(0);
   s.monsters.push(...come);
+  show(s, m, 'calls');
   s.log.push(CALL_LINE(m.def.name, describe(come), come.length === 1));
 }
 
@@ -767,6 +781,7 @@ export function monsterAct(s: CombatState, party: Party, rng: RngInstance): bool
     // A drain on hit points drinks what the member lost, never more than it had to lose.
     const had = pick.c.hp, woke = struck(party, pick.c, dmg - fromSp);
     if (m.def.drain === 'hp') m.hp = Math.min(m.def.hp, m.hp + Math.max(0, had - pick.c.hp));
+    if (m.def.drain === 'hp' || fromSp > 0) show(s, m, 'drain');
     let line = fromSp === 0 ? `${m.def.name} hits ${pick.c.name} for ${dmg}${m.def.drain === 'hp' ? ' and drinks' : ''}.`
       : fromSp === dmg ? `${m.def.name} hits ${pick.c.name} for ${dmg} spell points.` : `${m.def.name} hits ${pick.c.name} for ${fromSp} spell points and ${dmg - fromSp}.`;
     line += woke;

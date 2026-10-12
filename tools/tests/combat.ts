@@ -1,7 +1,7 @@
 // The combat resolver: a seeded fight replays byte for byte, the cap, the rows, fleeing, the spells
 // that hit every foe, Ward and Revive; the ranks and morale (#160); elements, monsters that cast and
 // drain, and a hit that wakes a sleeper (#161); regeneration, curse and calls (#537); the light
-// that goes into a machine like a hand into a glove; and sweep (#545).
+// that goes into a machine like a hand into a glove; sweep (#545); and the bot's turn and auto (#714).
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { ITEMS, MONSTERS, SPELLS } from '../../src/content/index.ts';
 import { buildMaps } from '../../src/content/maps.ts';
@@ -13,12 +13,15 @@ import type { CombatState, CombatGroup, PartyAction } from '../../src/game/comba
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import { elementMult, monsterSpells, monsterCanCast, KINDS } from '../../src/game/monsters.ts';
 import { gateBlast, gateBurn, gateTurn } from '../gate.ts';
-import { wakeWith, markOf, mendLines, ANSWER } from '../harness.ts';
+import { wakeWith, markOf, mendLines, ANSWER, companyAt } from '../harness.ts';
+import { botTurn } from '../../src/game/bot.ts';
+import { ExploreScreen } from '../../src/game/game.ts';
+import { CombatScreen } from '../../src/ui/combat.ts';
 import { logLines } from '../../src/ui/frame.ts';
 import type { Party } from '../../src/game/party.ts';
 import { spell } from '../../src/game/spells.ts';
 import { RANGED_PENALTY } from '../../src/game/weather.ts';
-import { ok } from './lib.ts';
+import { ok, headlessGame } from './lib.ts';
 
 export function combat(): void {
   // A scripted policy: everyone attacks the first living monster, casters cast when they can.
@@ -168,6 +171,7 @@ export function combat(): void {
   calls();
   glove();
   sweep();
+  auto();
 }
 
 /** A fight played out: each member strikes `aim`'s pick where it can and braces where it cannot. */
@@ -921,4 +925,45 @@ function sweep(): void {
     return q.members[1].hp;
   };
   ok(mended(true) > 90 && mended(false) === 90, `so the gate's cleric mends Idris at 90 of 200 before a giant's sweep of 100 (${mended(true)}), and with no answer leaves him (${mended(false)})`);
+}
+
+/**
+ * The bot's turn (#714): `botTurn` says what it did, a mend for one under 40% and a brace for one of
+ * the back row with no spell and no bow; and auto, which plays a fight to its end and leaves it by
+ * its own Space, until a key takes it back.
+ */
+function auto(): void {
+  /** The bot's turn for member `who`, those before it bracing, against a rat that acts last. */
+  const turn = (q: Party, who: number, seed: number): PartyAction | undefined => {
+    const rng = makeRng(seed), s = startCombat(q, [{ id: 'g', monsters: [{ ...MONSTERS.rat, speed: 0 }] }], rng);
+    for (let n = 0; n < 20; n++) { const t = currentTurn(s, q, rng); if (!t || t.side === 'monster') break; if (t.i === who) return botTurn(s, q, rng, who); partyAct(s, q, rng, { type: 'defend' }); }
+    return undefined;
+  };
+  const hurt = defaultParty(makeRng(124));
+  for (const c of hurt.members) c.hp = c.maxHp = 200;
+  hurt.members[1].hp = 70;
+  const mend = turn(hurt, 4, 124);
+  ok(mend?.type === 'cast' && mend.target === 1 && hurt.members[1].hp > 70, `the bot's cleric mends Idris at 70 of 200, and botTurn says so (${JSON.stringify(mend)})`);
+  const back = defaultParty(makeRng(125));
+  [back.members[0], back.members[3]] = [back.members[3], back.members[0]];
+  const brace = turn(back, 3, 125);
+  ok(brace?.type === 'defend', `Bram in the back row, with no spell and no bow, braces (${JSON.stringify(brace)})`);
+
+  const g = headlessGame(4, companyAt(3, 4));
+  g.world.travel('shelf', 16, 4);
+  g.fight(['road_rats']);
+  const screen = g.top;
+  if (!(screen instanceof CombatScreen)) { ok(false, 'road_rats opens the combat screen'); return; }
+  CombatScreen.instant = true;
+  screen.auto = true;
+  screen.update(g, 'forward');
+  const taken = !screen.auto;
+  screen.auto = true;
+  let ticks = 0;
+  for (; screen.state.outcome === 'ongoing' && ticks < 4000; ticks++) screen.update(g, null);
+  const over = screen.state.outcome, waited = g.top === screen;
+  screen.update(g, null);
+  CombatScreen.instant = false;
+  ok(taken, 'a key while auto plays takes the fight back');
+  ok(over !== 'ongoing' && waited && g.top instanceof ExploreScreen, `auto plays the level-3 company through road_rats in ${ticks} ticks (${over}), and leaves the fight by its own Space for the road`);
 }
