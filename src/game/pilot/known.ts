@@ -4,7 +4,8 @@
 // a map as written: not its secrets or its encounters, what opens a gate or an exit or what an exit
 // says on arrival, and of a feature nothing but what the automap and the hint show (its kind, its
 // square and its name, the id it is known by, and a den's ash) until a menu has shown what it lists.
-// What a feature says, holds, gives or wants is known once it is heard.
+// What a feature says, holds, gives or wants is known once it is heard. A tear into a Rift is an exit
+// to it, as the game walks it.
 // A zone map's id names its part of the outdoors, at the zone's own squares (World.locate).
 import type { Game } from '../game.ts';
 import type { Cell, Door, Exit, Feature, GameMap } from '../map.ts';
@@ -36,7 +37,7 @@ export interface Known {
   cell(map: string, x: number, y: number): Inked | undefined;
   /** Features the automap draws (onAutomap, and not spent) on seen squares: each its kind, square, id and name, a burnt den its ash, and what a menu has shown. */
   features(map: string): Sighted[];
-  /** Exits on seen squares, without what opens them or the line said on arrival: the pilot learns a way by trying it. The outdoors' zone crossings are plain walking. */
+  /** Exits and tears into a Rift on seen squares, without what opens them or the line said on arrival: the pilot learns a way by trying it. The outdoors' zone crossings are plain walking. */
   exits(map: string): Exit[];
   /** Maps visited: the keys of state.maps. */
   visited(): string[];
@@ -94,7 +95,9 @@ export function knownOf(g: Game): Known {
     exits(map) {
       const fr = frame(map);
       if (!fr) return [];
-      return fr.m.exits.filter((e) => seenIn(fr, e.x - fr.ox, e.y - fr.oy)).map(({ needFlag, shut, blockedText, label, ...e }) => ({ ...e, x: e.x - fr.ox, y: e.y - fr.oy }));
+      // A tear into a Rift is walked through as an exit is (GameMap.exitAt).
+      const tears = fr.m.features.flatMap((f): Exit[] => (f.kind === 'rift' ? [{ x: f.x, y: f.y, to: f.to, tx: f.tx, ty: f.ty, tf: f.tf }] : []));
+      return [...fr.m.exits, ...tears].filter((e) => seenIn(fr, e.x - fr.ox, e.y - fr.oy)).map(({ needFlag, shut, blockedText, label, ...e }) => ({ ...e, x: e.x - fr.ox, y: e.y - fr.oy }));
     },
     visited: () => Object.keys(w.state.maps),
     mapOf: (map) => w.locate(map, 0, 0).mapId,
