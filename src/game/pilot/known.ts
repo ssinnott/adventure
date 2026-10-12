@@ -1,0 +1,92 @@
+// What the pilot may know of the world (#713, Decided 1): the automap's bits and its ink, the
+// features and exits on squares the party has seen, the maps it has visited, the world map as drawn
+// and the lines it has heard. Nothing here reads a map as written: not its secrets or its encounters,
+// what opens a gate or an exit, a person's words before they are said, a crossing before it is
+// offered, a statue's riddle or answer, or what a shop or a trainer lists before its menu has shown
+// it. A zone map's id names its part of the outdoors, at the zone's own squares (World.locate).
+import type { Game } from '../game.ts';
+import type { Cell, Exit, Feature, GameMap } from '../map.ts';
+import { seen as seenBit, drawnCell } from '../world.ts';
+import type { MapState } from '../world.ts';
+import { mapPlace } from '../atlas.ts';
+import { spentId } from '../wilds.ts';
+import { ATLAS, MAP_DEFS } from '../../content/index.ts';
+import { onAutomap } from '../../ui/frame.ts';
+
+/** What a menu tells of a feature (Pilot.tell): the crossings a person has offered, a shop's wares and prices, a trainer's levels. */
+const TOLD = ['passage', 'stock', 'prices', 'maxLevel'] as const;
+/** What a feature keeps from the party until it is said or shown: those, and a person's words, questions and hand-ins, and a statue's riddle, answer and gift. */
+const UNTOLD = [...TOLD, 'lines', 'says', 'choice', 'quest', 'riddle', 'answer', 'gift'] as const;
+type Untold = (typeof UNTOLD)[number];
+type Sight<F> = F extends Feature ? Omit<F, Untold> & Partial<Pick<F, Extract<keyof F, (typeof TOLD)[number]>>> : never;
+
+/** A feature as the party knows it: without what it keeps until told, and with what a menu has told. */
+export type Sighted = Sight<Feature>;
+/** A cell as the automap inks it: no legend letter, so a secret door is a wall like any other. */
+export type Inked = Omit<Cell, 'ch'>;
+
+export interface Known {
+  /** The automap's bit: whether the party has seen the square (MapState.explored). */
+  seen(map: string, x: number, y: number): boolean;
+  /** The cell as the automap inks it (drawnCell), or undefined when unseen. A secret door comes back a wall. */
+  cell(map: string, x: number, y: number): Inked | undefined;
+  /** Features the automap draws (onAutomap, and not spent) on seen squares. */
+  features(map: string): Sighted[];
+  /** Exits on seen squares, without what opens them: the pilot learns a way by trying it. The outdoors' zone crossings are plain walking. */
+  exits(map: string): Exit[];
+  /** Maps visited: the keys of state.maps. */
+  visited(): string[];
+  /** Where a map is on the world map, in world cells, as the world map places it (mapPlace). */
+  placeOf(map: string): [number, number] | undefined;
+  /** Lines heard: everything said through Game.say and every message opened (Pilot.hear). */
+  heard: readonly string[];
+}
+
+/** A map by the id given, as the world plays it: its own, or a zone's outdoor map, with where the zone sits and its size. */
+interface Frame { m: GameMap; ms?: MapState; ox: number; oy: number; w: number; h: number }
+
+/** A feature as the party knows it, at its square on the map as named; `told` keeps what a menu has shown. */
+function sight(f: Feature, fr: Frame, told: boolean): Sighted {
+  const out: Record<string, unknown> = { ...f, x: f.x - fr.ox, y: f.y - fr.oy };
+  for (const k of UNTOLD) if (!(told && (TOLD as readonly string[]).includes(k))) delete out[k];
+  return out as unknown as Sighted;
+}
+
+export function knownOf(g: Game): Known {
+  const w = g.world, p = g.pilot, all = !!p?.omniscient;
+  const frame = (map: string): Frame | undefined => {
+    const at = w.locate(map, 0, 0), m = g.maps[at.mapId];
+    if (!m) return undefined;
+    const z = at.mapId === map ? undefined : m.zones.find((q) => q.id === map);
+    return { m, ms: w.state.maps[m.id], ox: at.x, oy: at.y, w: z?.w ?? m.width, h: z?.h ?? m.height };
+  };
+  const seenIn = (fr: Frame, x: number, y: number): boolean =>
+    x >= 0 && y >= 0 && x < fr.w && y < fr.h && (all || (!!fr.ms && seenBit(fr.ms.explored, (fr.oy + y) * fr.m.width + fr.ox + x)));
+  return {
+    seen(map, x, y) { const fr = frame(map); return !!fr && seenIn(fr, x, y); },
+    cell(map, x, y) {
+      const fr = frame(map);
+      if (!fr || !seenIn(fr, x, y)) return undefined;
+      const c = drawnCell(fr.m, fr.ox + x, fr.oy + y);
+      return c.door === 'secret' ? { terrain: c.terrain, solid: 'wall', door: 'none' } : { terrain: c.terrain, solid: c.solid, door: c.door };
+    },
+    features(map) {
+      const fr = frame(map);
+      if (!fr) return [];
+      return fr.m.features.filter((f) => {
+        if (!seenIn(fr, f.x - fr.ox, f.y - fr.oy) || !onAutomap(w, f)) return false;
+        // As the automap has it: a den shows burnt, and anything else spent is gone.
+        const spent = spentId(f);
+        return f.kind === 'den' || !spent || !fr.ms?.used[spent];
+      }).map((f) => sight(f, fr, !!p?.told.has(f)));
+    },
+    exits(map) {
+      const fr = frame(map);
+      if (!fr) return [];
+      return fr.m.exits.filter((e) => seenIn(fr, e.x - fr.ox, e.y - fr.oy)).map(({ needFlag, shut, blockedText, ...e }) => ({ ...e, x: e.x - fr.ox, y: e.y - fr.oy }));
+    },
+    visited: () => Object.keys(w.state.maps),
+    placeOf: (map) => mapPlace(ATLAS, MAP_DEFS, map),
+    heard: p?.heard ?? [],
+  };
+}

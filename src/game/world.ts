@@ -5,7 +5,7 @@
 // the place. Pure with respect to rendering and input; the Game drives it and reads the results.
 import type { RngInstance } from '../lib/engine/rng.ts';
 import { GameMap, DRAG } from './map.ts';
-import type { Feature, Exit, EncounterDef, Door, MapZone, Cell, Hours, Presence, Choice } from './map.ts';
+import type { Feature, Exit, EncounterDef, Door, MapZone, Cell, Solid, Hours, Presence, Choice } from './map.ts';
 import type { Facing } from './types.ts';
 import { FACING_DX, FACING_DY, turnLeft, turnRight, turnBack, manhattan } from './types.ts';
 import { partyCan, takeItem, isDown, hasTrait, companyLevel } from './party.ts';
@@ -108,6 +108,35 @@ export function viewCell(px: number, py: number, f: Facing, d: number, l: number
 
 /** What is drawn as faces rather than as a floor and a sprite: walls, buildings, doors, and the void. */
 export function isSolidWall(c: Cell): boolean { return c.solid === 'wall' || c.solid === 'building' || c.solid === 'void' || c.door !== 'none'; }
+
+/** The billboards a door outdoors may be set among, in the order a tie goes. */
+const GUISES = ['mountain', 'rock', 'tree', 'glass'] as const;
+/** What a cell stands as for a secret door beside it: a glass tree is a guise of its own, not a tree. */
+const guiseOf = (c: Cell): Solid | 'glass' => (c.solid === 'tree' && c.terrain === 'crystal' ? 'glass' : c.solid);
+
+/**
+ * What a cell is drawn as. Outdoors or underground, a secret door set among mountain, rock or trees
+ * (a sett in the fells, a cave in a crag, a gap behind a rock fall) is drawn as most of its
+ * neighbours are, so it is found and never seen; beside a wall or a building it stays a door in the
+ * wall. Once found it is a door, and so is every door the map shows: no door is hidden that has no
+ * hint. Underground, a found one among them is the gap it is, open ground, since a dungeon's door
+ * is drawn in its walls' style and a crag has none. Anywhere else, the cell itself. The viewport and
+ * the automap draw it so, and the pilot reads the automap's ink (game/pilot/known.ts).
+ */
+export function drawnCell(map: GameMap, x: number, y: number): Cell {
+  const c = map.at(x, y);
+  const found = map.kind === 'dungeon' && c.ch === 'S' && c.door === 'door';
+  if (map.kind === 'town' || (c.door !== 'secret' && !found)) return c;
+  const around = [[x - 1, y], [x + 1, y], [x, y - 1], [x, y + 1]].filter(([nx, ny]) => map.inBounds(nx, ny)).map(([nx, ny]) => map.at(nx, ny));
+  if (around.some((n) => n.solid === 'wall' || n.solid === 'building')) return c;
+  if (found) return { ...c, solid: 'none', door: 'none' };
+  let best = c, most = 0;
+  for (const g of GUISES) {
+    const of = around.filter((n) => guiseOf(n) === g);
+    if (of.length > most) { most = of.length; best = of[0]; }
+  }
+  return best;
+}
 
 /** Whether the cell at (d, l) can be seen from the eye: walk the straight line and stop at walls. */
 export function lineOfSight(map: GameMap, px: number, py: number, f: Facing, d: number, l: number): boolean {

@@ -17,6 +17,7 @@ import { wakeWith, markOf, mendLines, ANSWER, companyAt } from '../harness.ts';
 import { botTurn } from '../../src/game/bot.ts';
 import { ExploreScreen } from '../../src/game/game.ts';
 import { CombatScreen } from '../../src/ui/combat.ts';
+import { Pilot } from '../../src/game/pilot/pilot.ts';
 import { logLines } from '../../src/ui/frame.ts';
 import type { Party } from '../../src/game/party.ts';
 import { spell } from '../../src/game/spells.ts';
@@ -989,7 +990,7 @@ function auto(): void {
   const screen = g.top;
   if (!(screen instanceof CombatScreen)) { ok(false, 'road_rats opens the combat screen'); return; }
   const s = screen.state;
-  CombatScreen.instant = true;
+  g.pilot = new Pilot({ instant: true });
   screen.auto = true;
   screen.update(g, 'forward');
   const taken = !screen.auto;
@@ -1004,7 +1005,6 @@ function auto(): void {
   for (; s.outcome === 'ongoing' && ticks < 4000; ticks++) { const at = `${s.round}.${s.turn}`; screen.update(g, null); if (`${s.round}.${s.turn}` === at) idle++; }
   const over = s.outcome, waited = g.top === screen;
   screen.update(g, null);
-  CombatScreen.instant = false;
   ok(taken && handled, `a key while auto plays takes the fight back, and is handled as usual: 4 braces ${who}`);
   ok(over !== 'ongoing' && idle === 0 && waited && g.top instanceof ExploreScreen, `auto plays the level-3 company through road_rats a turn a tick, in ${ticks} ticks (${over}, ${idle} idle), and leaves the fight by its own Space for the road`);
 }

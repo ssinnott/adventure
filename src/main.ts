@@ -3,7 +3,9 @@ import { createCanvas } from './lib/engine/canvas.ts';
 import { createLoop } from './lib/engine/loop.ts';
 import { setTextDefaults } from './lib/engine/text.ts';
 import { Game } from './game/game.ts';
-import { Input } from './input.ts';
+import { Input, is } from './input.ts';
+import { Pilot } from './game/pilot/pilot.ts';
+import type { Tempo } from './game/pilot/pilot.ts';
 import { INK } from './ui/palette.ts';
 
 setTextDefaults({ shadowColor: INK, outline: INK });
@@ -15,9 +17,20 @@ canvas.addEventListener('pointerdown', () => canvas.focus());
 const input = new Input(window);
 const game = new Game();
 game.input = input;
+game.pilot = new Pilot();
 
 const loop = createLoop({
-  update() { game.update(input.next()); },
+  // P and T are the pilot's before any screen's: P hands it the game and takes it back, T sets its
+  // pace, and any other key takes the game back and is handled as usual. Else the pilot's key, if any.
+  update() {
+    const a = input.next();
+    if (a && game.pilot) {
+      if (is(a, 'pilot')) { game.pilot.toggle(game); return; }
+      if (is(a, 'tempo')) { game.pilot.tempo = game.pilot.tempo === 4 ? 1 : (game.pilot.tempo * 2) as Tempo; return; }
+      if (game.pilot.on) game.pilot.toggle(game);
+    }
+    game.update(a ?? game.pilot?.next(game) ?? null);
+  },
   render() { game.render(ctx); },
 });
 loop.start();

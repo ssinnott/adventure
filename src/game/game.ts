@@ -1,7 +1,7 @@
 // The Game: owns the world, the party, the rng and a stack of screens, and dispatches one input
 // action per fixed step to the top screen. Screens are small objects with update/render; the
 // exploration screen is here because it is the game's spine, the others live in ui/.
-import { rng } from '../lib/engine/rng.ts';
+import { rng, freshSeed } from '../lib/engine/rng.ts';
 import type { Rng } from '../lib/engine/rng.ts';
 import { World } from './world.ts';
 import { signSays } from './inscriptions.ts';
@@ -24,7 +24,7 @@ import { is } from '../input.ts';
 import { monster } from './monsters.ts';
 import { drawViewport } from '../ui/viewport.ts';
 import type { ViewMonster } from '../ui/viewport.ts';
-import { LAYOUT, drawStatus, drawAutomap, drawPartyCards, drawLog, drawFrameBackground, drawPurse, drawViewportFrame } from '../ui/frame.ts';
+import { LAYOUT, drawStatus, drawAutomap, drawPartyCards, drawLog, drawFrameBackground, drawPurse, drawViewportFrame, drawWhy } from '../ui/frame.ts';
 import { CombatScreen } from '../ui/combat.ts';
 import { MessageScreen, ChoiceScreen, SheetScreen, serviceScreen, SpellScreen, InteriorScreen, skillMenu } from '../ui/screens.ts';
 import { QuestScreen } from '../ui/quests.ts';
@@ -35,6 +35,7 @@ import { drawText } from '../lib/engine/text.ts';
 import { RiddleScreen } from '../ui/riddle.ts';
 import { stepLine, useShrine, openCairn, answerRiddle, restRefused, restParty } from './wilds.ts';
 import { approach, burn } from './dens.ts';
+import type { Pilot } from './pilot/pilot.ts';
 
 export interface Screen {
   /** Called once per fixed step with the next queued action (or null). */
@@ -65,6 +66,8 @@ export class Game {
   /** What the quest log held at the last look, so each change to it is announced once. */
   private questMarked = new Set<string>();
   maps: Record<string, GameMap> = buildMaps();
+  /** The pilot (game/pilot/pilot.ts): built by main.ts and the tests, and never saved. */
+  pilot: Pilot | null = null;
 
   constructor(store: Store | null = browserStore()) {
     this.store = store;
@@ -83,6 +86,13 @@ export class Game {
     for (const m of this.world.eventsHere()) this.say(m);
     this.enterCell();
     this.markQuests();
+  }
+
+  /** A new game on a random seed, its company rolled from the seed as party creation rolls the premade one: P on the title. */
+  randomGame(): void {
+    const seed = freshSeed();
+    this.rng.seed(seed);
+    this.newGame(seed, defaultParty(this.rng));
   }
 
   loadGame(): boolean {
@@ -108,9 +118,10 @@ export class Game {
 
   // ---- screens ----
   get top(): Screen { return this.screens[this.screens.length - 1]; }
-  push(s: Screen): void { this.screens.push(s); }
+  /** A message's words the pilot hears as it opens, as it hears every line said. */
+  push(s: Screen): void { this.screens.push(s); if (s instanceof MessageScreen) this.pilot?.hear(s.text); }
   pop(): void { if (this.screens.length > 1) this.screens.pop(); }
-  say(line: string): void { this.log.push(line); this.said++; if (this.log.length > 60) this.log.shift(); }
+  say(line: string): void { this.log.push(line); this.said++; if (this.log.length > 60) this.log.shift(); this.pilot?.hear(line); }
   message(text: string, then?: () => void): void { this.push(new MessageScreen(text, then)); }
 
   update(a: Action | null): void {
@@ -135,6 +146,8 @@ export class Game {
     // Draw the exploration frame under any overlay screen.
     const base = this.screens.findIndex((s) => !s.overlay);
     for (let i = Math.max(0, base); i < this.screens.length; i++) this.screens[i].render(this, ctx, this.frame);
+    // The pilot's why, over every screen.
+    if (this.pilot?.on) drawWhy(ctx, this.pilot.why, this.pilot.tempo);
   }
 
   // ---- quests ----
@@ -230,7 +243,7 @@ export class Game {
    */
   talkScreen(p: Person): Screen {
     const m = meet(p, this.party, heard(this.world, p));
-    const then = m.choice ? (): void => this.ask(m.choice!, p.name) : p.passage?.length ? (): void => this.offer(p.passage!, p.name) : p.teaches ? (): void => this.train(p.teaches!, p.name)
+    const then = m.choice ? (): void => this.ask(m.choice!, p.name) : p.passage?.length ? (): void => { this.pilot?.tell(p); this.offer(p.passage!, p.name); } : p.teaches ? (): void => this.train(p.teaches!, p.name)
       : p.skill ? (): void => this.push(skillMenu(this, [p.skill!], p.name)) : undefined;
     return new MessageScreen(m.text, then, p.name);
   }
@@ -344,6 +357,8 @@ export class Game {
   }
 
   gameOver(): void {
+    // A wipe ends the pilot's run: it gives the helm back, and says why.
+    if (this.pilot?.on) { this.pilot.on = false; this.pilot.why = ['The company has fallen.']; }
     this.screens = [new TitleScreen(hasSave(this.store), 'The party has fallen. Caldera goes on without them.')];
   }
 
@@ -433,7 +448,8 @@ export class ExploreScreen implements Screen {
     const f = g.world.featureHere();
     const grp = g.world.groupAt(ahead.x, ahead.y);
     const hint = grp ? `${monster(grp.def.monsters[0]).plural}: Space to attack` : f ? `${featureLabel(f)}: Space` : '';
-    if (hint) drawText(ctx, hint, LAYOUT.view.x + LAYOUT.view.w / 2, LAYOUT.view.y + 6, { size: 1, color: '#ffe08a', align: 'center' });
+    // The pilot's band takes the hint's place while it drives.
+    if (hint && !g.pilot?.on) drawText(ctx, hint, LAYOUT.view.x + LAYOUT.view.w / 2, LAYOUT.view.y + 6, { size: 1, color: '#ffe08a', align: 'center' });
     drawStatus(ctx, g.world);
     drawAutomap(ctx, g.world, frame);
     drawPartyCards(ctx, g.party, -1, frame);

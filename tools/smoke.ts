@@ -1051,7 +1051,7 @@ await page.evaluate(async (defs: any[]) => {
 const sweeps = [...GROUND_SAMPLES.map((d) => ({ id: d.id, all: false })), ...FLOOR.filter((id) => !SWEEP.includes(id)).map((id) => ({ id, all: false })), ...SWEEP.map((id) => ({ id, all: true }))];
 const cracks = await page.evaluate(async (maps: { id: string; all: boolean }[]) => {
   const load = (p: string): Promise<any> => import(p);
-  const V = await load('/src/ui/viewport.ts'), T = await load('/src/game/types.ts');
+  const V = await load('/src/ui/viewport.ts'), T = await load('/src/game/types.ts'), Wd = await load('/src/game/world.ts');
   const w = (window as any).__game.game.world;
   const W = 400, H = 268, band = 16, bad: string[] = [];
   let views = 0;
@@ -1081,7 +1081,7 @@ const cracks = await page.evaluate(async (maps: { id: string; all: boolean }[]) 
         views++;
         const shows = (px: number, py: number) => { const i = (py * W + px) * 4; return Math.abs(a[i] - b[i]) > 8 || Math.abs(a[i + 1] - b[i + 1]) > 8; };
         // Beside the party a wall, as it is drawn: a secret door among the peaks is a peak, not a wall.
-        const walled = (s: number) => V.isSolidWall(V.drawnCell(m, ax + s * T.FACING_DX[rf], ay + s * T.FACING_DY[rf]));
+        const walled = (s: number) => Wd.isSolidWall(Wd.drawnCell(m, ax + s * T.FACING_DX[rf], ay + s * T.FACING_DY[rf]));
         let spot = '', level: ((px: number, py: number) => boolean) | undefined;
         for (let py = 0; py < band * 2 && !spot; py++) for (let px = 0; px < W && !spot; px++) {
           if (!shows(px, py)) continue;
@@ -1347,6 +1347,23 @@ const mark = await page.evaluate(async () => {
   return { set, asked, back };
 });
 
+// The pilot (#716): P on the road hands it the game, and over a second with nothing to do its band
+// lies dark over the top of the view; P again takes the game back.
+const pilotBand = await (async () => {
+  const corner = (): Promise<number[]> => page.evaluate(async () => {
+    const F = await import('/src/ui/frame.ts' as string), v = F.LAYOUT.view;
+    return [...(document.getElementById('stage') as HTMLCanvasElement).getContext('2d')!.getImageData(v.x + 2, v.y + 2, 1, 1).data.slice(0, 3)];
+  });
+  const screen = await page.evaluate(() => (window as any).__game.game.top.constructor.name), before = await corner();
+  await page.keyboard.press('KeyP');
+  const from = await page.evaluate(() => (window as any).__game.game.frame);
+  await page.waitForFunction((f: number) => (window as any).__game.game.frame >= f + 60, from);
+  const band = await corner(), on = await page.evaluate(() => { const p = (window as any).__game.game.pilot; return { on: p.on, why: p.why[0] }; });
+  await page.keyboard.press('KeyP'); await page.waitForTimeout(50);
+  const off = await page.evaluate(() => (window as any).__game.game.pilot.on);
+  return { screen, before, band, ...on, off };
+})();
+
 await browser.close();
 server.close();
 
@@ -1363,6 +1380,8 @@ ok(exploreColours > 20, `the viewport, automap and party cards painted (${explor
 ok(screen2 === 'CombatScreen' && combatColours > 20, `a fight opens and paints (${screen2}, ${combatColours} colours)`);
 ok(mark.set && mark.asked.screen === 'ChoiceScreen' && mark.asked.options.join('|') === 'Return to the mark|Set it here' && mark.back, `with a mark set, Waymark asks whether to return or set it here, and returns (${JSON.stringify(mark)})`);
 ok(glass.asked === 'element' && glass.element === 'cold' && glass.line === 'Maren casts Lampglass. The glass dims the cold.', `Lampglass asks against what before it is cast, and casts the pick (${JSON.stringify(glass)})`);
+ok(pilotBand.screen === 'ExploreScreen' && pilotBand.on && pilotBand.why === 'Nothing to do.' && Math.max(...pilotBand.band) < 110 && pilotBand.off === false,
+  `P on the road hands the game to the pilot, its band dark over the top of the view a second on (${pilotBand.band.join(',')}, ${pilotBand.before.join(',')} before), and P again takes it back (${JSON.stringify({ on: pilotBand.on, why: pilotBand.why, off: pilotBand.off })})`);
 ok(autoPanel.party && autoPanel.label && autoPanel.hint, `on auto the fight's panel says AUTO beside the round and that P takes the fight back (${JSON.stringify(autoPanel)})`);
 ok(thornColours > 20, `Thornmark's forest paints (${thornColours} colours)`);
 ok(thornFight.screen === 'CombatScreen' && /ogre/.test(thornFight.monsters) && /wraith/.test(thornFight.monsters) && thornFightColours > 20, `the ogre and wraith sprites paint in a fight (${thornFight.monsters}, ${thornFightColours} colours)`);

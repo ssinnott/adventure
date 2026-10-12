@@ -2,12 +2,13 @@
 // log. Layout for the 640x360 canvas is fixed here in LAYOUT so every screen agrees on it.
 import { drawText } from '../lib/engine/text.ts';
 import type { World } from '../game/world.ts';
+import { drawnCell } from '../game/world.ts';
 import type { Feature } from '../game/map.ts';
 import type { Party, Character } from '../game/party.ts';
 import { worstCondition, isDown, CLASSES, xpForLevel } from '../game/party.ts';
 import { FACING_NAMES } from '../game/types.ts';
 import { panel, bar, wrap } from './draw.ts';
-import { viewCells, drawnCell } from './viewport.ts';
+import { viewCells } from './viewport.ts';
 import { drawPortrait } from './portraits.ts';
 import { INK, PANEL, PANEL_LIGHT, BRASS, BRASS_DARK, TEXT, TEXT_DIM, RED, BLUE, GREEN, YELLOW, PURPLE, TERRAIN_COLORS, AUTOMAP_WASH, PARCHMENT, WOOD, WOOD_DARK, VOID_PINK } from './palette.ts';
 import { shade, rgba, mix } from '../lib/art/palettes.ts';
@@ -235,6 +236,16 @@ export function logTail(lines: readonly string[], max = LOG_LINES): { text: stri
   const wrapped: { text: string; latest: boolean }[] = [];
   lines.slice(-max).forEach((l, i, arr) => { for (const w of logLines(l)) wrapped.push({ text: w, latest: i === arr.length - 1 }); });
   return wrapped.slice(-max);
+}
+
+/** The pilot's band over the top of the viewport (game/pilot/pilot.ts): why it does what it does, two lines at most, and its pace. */
+export function drawWhy(ctx: CanvasRenderingContext2D, why: readonly [string, string?], tempo: number): void {
+  const v = LAYOUT.view;
+  ctx.fillStyle = 'rgba(0,0,0,0.6)';
+  ctx.fillRect(v.x, v.y, v.w, 24);
+  drawText(ctx, why[0], v.x + 6, v.y + 4, { size: 1, color: '#ffe08a' });
+  if (why[1]) drawText(ctx, why[1], v.x + 6, v.y + 14, { size: 1, color: '#d8d0c0' });
+  drawText(ctx, `PILOT ${tempo}X`, v.x + v.w - 6, v.y + 4, { size: 1, color: '#ffe08a', align: 'right' });
 }
 
 /** The last few log lines, over the bottom of the viewport. */

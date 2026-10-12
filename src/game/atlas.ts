@@ -923,3 +923,21 @@ export function homeMap(defs: readonly MapDef[], mapId: string): MapDef | undefi
   }
   return undefined;
 }
+
+/**
+ * Where a map is on the world map, in world cells, as the world map places it: a place's plate, else
+ * a zone map's middle, else the middle of the outdoor map it opens onto (ui/worldmap.ts, the pilot's
+ * Known).
+ */
+export function mapPlace(atlas: Atlas, defs: readonly MapDef[], mapId: string): [number, number] | undefined {
+  const pl = atlas.places.find((q) => q.id === mapId);
+  if (pl) return [pl.at[0], pl.at[1]];
+  const middle = (id: string): [number, number] | undefined => {
+    const at = mapAt(atlas, id), def = defs.find((q) => q.id === id);
+    return at && def ? [at[0] + Math.max(...def.rows.map((s) => s.length)) / 2, at[1] + def.rows.length / 2] : undefined;
+  };
+  const mid = middle(mapId);
+  if (mid) return mid;
+  const home = homeMap(defs, mapId);
+  return home && middle(home.id);
+}

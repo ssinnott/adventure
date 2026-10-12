@@ -86,7 +86,8 @@ export class MessageScreen implements Screen {
   readonly overlay = true;
   /** In the side panel a long message is read a page at a time. */
   private page = 0;
-  private text: string;
+  /** Its words, which the pilot hears as it opens (Game.push). */
+  readonly text: string;
   private then?: () => void;
   private title: string;
   constructor(text: string, then?: () => void, title = '') {
@@ -515,6 +516,7 @@ function shop(g: Game, f: Extract<Feature, { kind: 'shop' }>): Screen {
 }
 
 function buyScreen(g: Game, f: Extract<Feature, { kind: 'shop' }>): Screen {
+  g.pilot?.tell(f);
   const names = f.stock.map((id) => `${item(id).name}\t${priceIn(f, id)}g\t${describe(id)}`);
   const s: ChoiceScreen = new ChoiceScreen(`What will it be? (${g.party.gold} gold.)`, [...names, 'Done'], (i) => {
     if (i < 0 || i === names.length) return;
@@ -587,6 +589,7 @@ function guild(g: Game, f: Extract<Feature, { kind: 'guild' }>): Screen {
 export function spellPrice(tier: number): number { return 40 * Math.pow(2, tier - 1); }
 
 function trainer(g: Game, f: Extract<Feature, { kind: 'trainer' }>): Screen {
+  g.pilot?.tell(f);
   const cost = trainPrice;
   const can = g.party.members.map((c) => canTrainAt(c, f.maxLevel) && !isDown(c));
   const names = g.party.members.map((c, i) => `${c.name}  L${c.level}\t${can[i] ? `train ${cost(c)}g` : c.level >= f.maxLevel ? 'beyond me' : `needs ${xpForLevel(c.level + 1) - c.xp} xp`}`);

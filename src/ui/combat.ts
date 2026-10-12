@@ -25,8 +25,6 @@ type Mode = 'menu' | 'target' | 'spell' | 'spellTarget' | 'element' | 'item' | '
 const MONSTER_DELAY = 22, BOT_DELAY = 22;
 
 export class CombatScreen implements Screen {
-  /** Both timers count as nothing, where a test drives the fight; the pilot's tempo takes this over (#716). */
-  static instant = false;
   /** The bot plays the party's turns, and Space at the end, until the fight is over or a key is pressed. */
   auto = false;
   private botTimer = 0;
@@ -93,7 +91,8 @@ export class CombatScreen implements Screen {
   }
 
   update(g: Game, a: Action | null): void {
-    const s = this.state, wait = (delay: number): number => (CombatScreen.instant ? 0 : delay);
+    // Both timers count as nothing under an instant pilot: the tests' and the headless run's.
+    const s = this.state, wait = (delay: number): number => (g.pilot?.instant ? 0 : delay);
     // A key takes the fight back from auto, and is handled as usual.
     if (this.auto && a) this.auto = false;
     if (this.auto && s.outcome !== 'ongoing' && ++this.botTimer >= wait(BOT_DELAY)) { this.botTimer = 0; a = 'interact'; }

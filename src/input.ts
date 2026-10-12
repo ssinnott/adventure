@@ -7,7 +7,9 @@ export type Action =
   | 'interact' | 'cancel' | 'map' | 'rest' | 'search' | 'cast' | 'inventory' | 'journal'
   | 'up' | 'down' | 'left' | 'right'
   | 'n1' | 'n2' | 'n3' | 'n4' | 'n5' | 'n6' | 'n7' | 'n8' | 'n9' | 'n0'
-  | 'save' | 'load' | 'next' | 'zoom';
+  | 'save' | 'load' | 'next' | 'zoom'
+  /** The pilot's (game/pilot/pilot.ts), taken by main.ts before any screen: P hands the game over and takes it back, T sets its pace. */
+  | 'pilot' | 'tempo';
 
 const KEYS: Record<string, Action[]> = {
   ArrowUp: ['forward', 'up'], KeyW: ['forward', 'up'],
@@ -20,6 +22,7 @@ const KEYS: Record<string, Action[]> = {
   KeyM: ['map'], KeyR: ['rest'], KeyF: ['search'], KeyC: ['cast'], KeyI: ['inventory'], KeyJ: ['journal'],
   Digit1: ['n1'], Digit2: ['n2'], Digit3: ['n3'], Digit4: ['n4'], Digit5: ['n5'], Digit6: ['n6'], Digit7: ['n7'], Digit8: ['n8'], Digit9: ['n9'], Digit0: ['n0'],
   F5: ['save'], F9: ['load'], KeyZ: ['zoom'],
+  KeyP: ['pilot'], KeyT: ['tempo'],
 };
 
 export class Input {
