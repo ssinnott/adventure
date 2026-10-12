@@ -1,5 +1,5 @@
 // Party creation: six characters, each named, raced, classed and rolled, or the premade company
-// for players who want to be walking in thirty seconds.
+// for players who want to be walking in thirty seconds, or a company mustered at random for the pilot.
 import type { Game, Screen } from '../game/game.ts';
 import type { Action } from '../input.ts';
 import { is } from '../input.ts';
@@ -9,7 +9,7 @@ import type { RngInstance } from '../lib/engine/rng.ts';
 import { panel, menu, paragraph } from './draw.ts';
 import { INK, BRASS, TEXT, TEXT_DIM, YELLOW, GREEN } from './palette.ts';
 import { RACES, CLASSES, TRAITS, STATS, createCharacter, createParty, defaultParty, bonus, NAME_MAX } from '../game/party.ts';
-import type { Character, RaceId, ClassId, Stats } from '../game/party.ts';
+import type { Character, RaceId, ClassId, Stats, Party } from '../game/party.ts';
 
 type Step = 'intro' | 'name' | 'race' | 'class' | 'stats' | 'review';
 
@@ -21,6 +21,12 @@ function rollStats(rng: RngInstance): Stats {
   const s = {} as Stats;
   for (const k of STATS) s[k] = 8 + rng.int(1, 4) + rng.int(1, 4);
   return s;
+}
+
+/** Six of the suggested names, each with a race and a class drawn at random and rolled: P on the title (#713, Decided 11). */
+export function randomParty(rng: RngInstance): Party {
+  const names = [...SUGGESTED];
+  return createParty(Array.from({ length: 6 }, () => createCharacter(names.splice(rng.int(0, names.length - 1), 1)[0], rng.pick(RACE_IDS)!, rng.pick(CLASS_IDS)!, rollStats(rng), rng)));
 }
 
 export class CreateScreen implements Screen {

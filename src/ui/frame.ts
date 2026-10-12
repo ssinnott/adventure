@@ -238,14 +238,14 @@ export function logTail(lines: readonly string[], max = LOG_LINES): { text: stri
   return wrapped.slice(-max);
 }
 
-/** The pilot's band over the top of the viewport (game/pilot/pilot.ts): why it does what it does, two lines at most, and its pace. */
-export function drawWhy(ctx: CanvasRenderingContext2D, why: readonly [string, string?], tempo: number): void {
+/** The pilot's band over the top of the viewport (game/pilot/pilot.ts): why it does what it does, two lines at most, and its pace while it drives. */
+export function drawWhy(ctx: CanvasRenderingContext2D, why: readonly [string, string?], tempo?: number): void {
   const v = LAYOUT.view;
   ctx.fillStyle = 'rgba(0,0,0,0.6)';
   ctx.fillRect(v.x, v.y, v.w, 24);
   drawText(ctx, why[0], v.x + 6, v.y + 4, { size: 1, color: '#ffe08a' });
   if (why[1]) drawText(ctx, why[1], v.x + 6, v.y + 14, { size: 1, color: '#d8d0c0' });
-  drawText(ctx, `PILOT ${tempo}X`, v.x + v.w - 6, v.y + 4, { size: 1, color: '#ffe08a', align: 'right' });
+  if (tempo) drawText(ctx, `PILOT ${tempo}X`, v.x + v.w - 6, v.y + 4, { size: 1, color: '#ffe08a', align: 'right' });
 }
 
 /** The last few log lines, over the bottom of the viewport. */

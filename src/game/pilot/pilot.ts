@@ -1,11 +1,12 @@
 // The pilot (#713): the game playing itself, for watching. It presses the keys a player would, one
 // a beat through Game.update, and reads the world only through Known (known.ts). P hands it the game
-// and takes it back, T sets its pace, and any other key takes it back (src/main.ts). A fight it hands
-// to the bot (ui/combat.ts auto, game/bot.ts) and a message it reads and closes; for the rest it asks
-// its brains in turn. Its why line, two at most, is drawn over the top of the view (Game.render). It
-// lives on the Game and never in the save.
+// and takes it back, T sets its pace, and any other key takes it back (press, from src/main.ts). A
+// fight it hands to the bot (ui/combat.ts auto, game/bot.ts) and a message it reads and closes; for
+// the rest it asks its brains in turn. Its why line, two at most, is drawn over the top of the view
+// (Game.render), and a wipe's stays up over the title. It lives on the Game and never in the save.
 import type { Game } from '../game.ts';
 import type { Action } from '../../input.ts';
+import { is } from '../../input.ts';
 import type { Feature } from '../map.ts';
 import { CombatScreen } from '../../ui/combat.ts';
 import { MessageScreen } from '../../ui/screens.ts';
@@ -40,7 +41,9 @@ export class Pilot {
   readonly omniscient: boolean;
   /** The two why lines, drawn over the top of the view while it is on. */
   why: [string, string?] = [IDLE];
-  /** Every line said through Game.say and every message opened, the newest last. */
+  /** Turned off by its own hand (stop): its why line stays drawn until a game starts. */
+  stopped = false;
+  /** Every line said through Game.say, every message opened and every riddle put, the newest last. */
   readonly heard: string[] = [];
   /** What a menu has shown: a shop's wares, a trainer's levels, a person's crossings (Known.features). */
   readonly told = new WeakSet<Feature>();
@@ -61,6 +64,23 @@ export class Pilot {
 
   /** A menu has shown what a feature lists. */
   tell(f: Feature): void { this.told.add(f); }
+
+  /** A new company, or one loaded: it has heard nothing yet, and the last run's stop is gone. */
+  forget(): void { this.heard.length = 0; this.stopped = false; }
+
+  /** Turns itself off, and says why over every screen until a game starts (#713, Decided 4 and 10). */
+  stop(why: string): void { this.on = false; this.why = [why]; this.stopped = true; }
+
+  /**
+   * A key pressed, before any screen has it (src/main.ts): P hands the game over or takes it back, T
+   * sets the pace, and any other key takes it back and is the screen's. True when the key was the pilot's.
+   */
+  press(g: Game, a: Action): boolean {
+    if (is(a, 'pilot')) { this.toggle(g); return true; }
+    if (is(a, 'tempo')) { this.tempo = this.tempo === 4 ? 1 : (this.tempo * 2) as Tempo; return true; }
+    if (this.on) this.toggle(g);
+    return false;
+  }
 
   /** Turns on or off; says the line. With no game going, on the title, P starts one at random (#713, Decided 11). */
   toggle(g: Game): void {

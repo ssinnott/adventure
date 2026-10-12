@@ -16,7 +16,8 @@ export class RiddleScreen implements Screen {
   readonly overlay = true;
   word = '';
   private readonly title: string;
-  private readonly riddle: string;
+  /** The question, which the pilot hears as the screen opens (Game.push). */
+  readonly riddle: string;
   private readonly answer: (word: string) => void;
   /** Opens with the text mode on; `answer` is called with the word on Enter, after the screen has closed. */
   constructor(g: Game, title: string, riddle: string, answer: (word: string) => void) {

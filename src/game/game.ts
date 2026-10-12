@@ -30,6 +30,7 @@ import { MessageScreen, ChoiceScreen, SheetScreen, serviceScreen, SpellScreen, I
 import { QuestScreen } from '../ui/quests.ts';
 import { questLog, questMarks, questNews } from './quests.ts';
 import { TitleScreen } from '../ui/title.ts';
+import { randomParty } from '../ui/create.ts';
 import { WorldMapScreen } from '../ui/worldmap.ts';
 import { drawText } from '../lib/engine/text.ts';
 import { RiddleScreen } from '../ui/riddle.ts';
@@ -76,6 +77,7 @@ export class Game {
 
   // ---- lifecycle ----
   newGame(seed: number, party?: Party): void {
+    this.pilot?.forget();
     this.rng.seed(seed);
     this.maps = buildMaps();
     this.party = party ?? defaultParty(this.rng);
@@ -88,11 +90,11 @@ export class Game {
     this.markQuests();
   }
 
-  /** A new game on a random seed, its company rolled from the seed as party creation rolls the premade one: P on the title. */
+  /** A new game on a random seed, its company mustered at random from the seed (ui/create.ts randomParty): P on the title. */
   randomGame(): void {
     const seed = freshSeed();
     this.rng.seed(seed);
-    this.newGame(seed, defaultParty(this.rng));
+    this.newGame(seed, randomParty(this.rng));
   }
 
   loadGame(): boolean {
@@ -105,6 +107,7 @@ export class Game {
     this.world = new World(this.maps, this.party, this.rng, data.world as WorldState);
     this.log = [];
     this.screens = [new ExploreScreen()];
+    this.pilot?.forget();
     this.say('Loaded.');
     // A save carries its quest log implicitly; take it as read rather than announcing it all again.
     this.markQuests();
@@ -118,8 +121,12 @@ export class Game {
 
   // ---- screens ----
   get top(): Screen { return this.screens[this.screens.length - 1]; }
-  /** A message's words the pilot hears as it opens, as it hears every line said. */
-  push(s: Screen): void { this.screens.push(s); if (s instanceof MessageScreen) this.pilot?.hear(s.text); }
+  /** A message's words and a riddle the pilot hears as they open, as it hears every line said. */
+  push(s: Screen): void {
+    this.screens.push(s);
+    if (s instanceof MessageScreen) this.pilot?.hear(s.text);
+    else if (s instanceof RiddleScreen) this.pilot?.hear(s.riddle);
+  }
   pop(): void { if (this.screens.length > 1) this.screens.pop(); }
   say(line: string): void { this.log.push(line); this.said++; if (this.log.length > 60) this.log.shift(); this.pilot?.hear(line); }
   message(text: string, then?: () => void): void { this.push(new MessageScreen(text, then)); }
@@ -146,8 +153,9 @@ export class Game {
     // Draw the exploration frame under any overlay screen.
     const base = this.screens.findIndex((s) => !s.overlay);
     for (let i = Math.max(0, base); i < this.screens.length; i++) this.screens[i].render(this, ctx, this.frame);
-    // The pilot's why, over every screen.
-    if (this.pilot?.on) drawWhy(ctx, this.pilot.why, this.pilot.tempo);
+    // The pilot's why, over every screen: while it drives, and once it has stopped itself, until a game starts.
+    const p = this.pilot;
+    if (p && (p.on || p.stopped)) drawWhy(ctx, p.why, p.on ? p.tempo : undefined);
   }
 
   // ---- quests ----
@@ -357,8 +365,8 @@ export class Game {
   }
 
   gameOver(): void {
-    // A wipe ends the pilot's run: it gives the helm back, and says why.
-    if (this.pilot?.on) { this.pilot.on = false; this.pilot.why = ['The company has fallen.']; }
+    // A wipe ends the pilot's run: it gives the helm back, and says why over the title.
+    if (this.pilot?.on) this.pilot.stop('The company has fallen.');
     this.screens = [new TitleScreen(hasSave(this.store), 'The party has fallen. Caldera goes on without them.')];
   }
 

@@ -1,9 +1,10 @@
 // What the pilot may know of the world (#713, Decided 1): the automap's bits and its ink, the
 // features and exits on squares the party has seen, the maps it has visited, the world map as drawn
 // and the lines it has heard. Nothing here reads a map as written: not its secrets or its encounters,
-// what opens a gate or an exit, a person's words before they are said, a crossing before it is
-// offered, a statue's riddle or answer, or what a shop or a trainer lists before its menu has shown
-// it. A zone map's id names its part of the outdoors, at the zone's own squares (World.locate).
+// what opens a gate or an exit or what an exit says on arrival, and of a feature nothing but what the
+// automap and the hint show (its kind, its square and its name, and the id it is known by) until a
+// menu has shown what it lists. What a feature says, holds, gives or wants is known once it is heard.
+// A zone map's id names its part of the outdoors, at the zone's own squares (World.locate).
 import type { Game } from '../game.ts';
 import type { Cell, Exit, Feature, GameMap } from '../map.ts';
 import { seen as seenBit, drawnCell } from '../world.ts';
@@ -13,14 +14,13 @@ import { spentId } from '../wilds.ts';
 import { ATLAS, MAP_DEFS } from '../../content/index.ts';
 import { onAutomap } from '../../ui/frame.ts';
 
+/** What the party sees of a feature: its kind and square on the automap, the id it is known by, and its name, the hint's. */
+const SEEN = ['kind', 'x', 'y', 'id', 'name'] as const;
 /** What a menu tells of a feature (Pilot.tell): the crossings a person has offered, a shop's wares and prices, a trainer's levels. */
 const TOLD = ['passage', 'stock', 'prices', 'maxLevel'] as const;
-/** What a feature keeps from the party until it is said or shown: those, and a person's words, questions and hand-ins, and a statue's riddle, answer and gift. */
-const UNTOLD = [...TOLD, 'lines', 'says', 'choice', 'quest', 'riddle', 'answer', 'gift'] as const;
-type Untold = (typeof UNTOLD)[number];
-type Sight<F> = F extends Feature ? Omit<F, Untold> & Partial<Pick<F, Extract<keyof F, (typeof TOLD)[number]>>> : never;
+type Sight<F> = F extends Feature ? Pick<F, Extract<keyof F, (typeof SEEN)[number]>> & Partial<Pick<F, Extract<keyof F, (typeof TOLD)[number]>>> : never;
 
-/** A feature as the party knows it: without what it keeps until told, and with what a menu has told. */
+/** A feature as the party knows it: what it sees of it, and what a menu has told. */
 export type Sighted = Sight<Feature>;
 /** A cell as the automap inks it: no legend letter, so a secret door is a wall like any other. */
 export type Inked = Omit<Cell, 'ch'>;
@@ -30,9 +30,9 @@ export interface Known {
   seen(map: string, x: number, y: number): boolean;
   /** The cell as the automap inks it (drawnCell), or undefined when unseen. A secret door comes back a wall. */
   cell(map: string, x: number, y: number): Inked | undefined;
-  /** Features the automap draws (onAutomap, and not spent) on seen squares. */
+  /** Features the automap draws (onAutomap, and not spent) on seen squares: each its kind, square, id and name, and what a menu has shown. */
   features(map: string): Sighted[];
-  /** Exits on seen squares, without what opens them: the pilot learns a way by trying it. The outdoors' zone crossings are plain walking. */
+  /** Exits on seen squares, without what opens them or the line said on arrival: the pilot learns a way by trying it. The outdoors' zone crossings are plain walking. */
   exits(map: string): Exit[];
   /** Maps visited: the keys of state.maps. */
   visited(): string[];
@@ -45,11 +45,11 @@ export interface Known {
 /** A map by the id given, as the world plays it: its own, or a zone's outdoor map, with where the zone sits and its size. */
 interface Frame { m: GameMap; ms?: MapState; ox: number; oy: number; w: number; h: number }
 
-/** A feature as the party knows it, at its square on the map as named; `told` keeps what a menu has shown. */
+/** A feature as the party knows it, at its square on the map as named; `told` adds what a menu has shown. */
 function sight(f: Feature, fr: Frame, told: boolean): Sighted {
-  const out: Record<string, unknown> = { ...f, x: f.x - fr.ox, y: f.y - fr.oy };
-  for (const k of UNTOLD) if (!(told && (TOLD as readonly string[]).includes(k))) delete out[k];
-  return out as unknown as Sighted;
+  const all = f as unknown as Record<string, unknown>, out: Record<string, unknown> = {};
+  for (const k of told ? [...SEEN, ...TOLD] : SEEN) if (all[k] !== undefined) out[k] = all[k];
+  return { ...out, x: f.x - fr.ox, y: f.y - fr.oy } as unknown as Sighted;
 }
 
 export function knownOf(g: Game): Known {
@@ -83,7 +83,7 @@ export function knownOf(g: Game): Known {
     exits(map) {
       const fr = frame(map);
       if (!fr) return [];
-      return fr.m.exits.filter((e) => seenIn(fr, e.x - fr.ox, e.y - fr.oy)).map(({ needFlag, shut, blockedText, ...e }) => ({ ...e, x: e.x - fr.ox, y: e.y - fr.oy }));
+      return fr.m.exits.filter((e) => seenIn(fr, e.x - fr.ox, e.y - fr.oy)).map(({ needFlag, shut, blockedText, label, ...e }) => ({ ...e, x: e.x - fr.ox, y: e.y - fr.oy }));
     },
     visited: () => Object.keys(w.state.maps),
     placeOf: (map) => mapPlace(ATLAS, MAP_DEFS, map),

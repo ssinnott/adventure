@@ -1348,20 +1348,49 @@ const mark = await page.evaluate(async () => {
 });
 
 // The pilot (#716): P on the road hands it the game, and over a second with nothing to do its band
-// lies dark over the top of the view; P again takes the game back.
+// lies over the top of the view, darker than the view was; T sets its pace, P again takes the game
+// back, and so does any other key, which the screen then has. A wipe leaves its why over the title,
+// darker than the title alone, and P there starts a new game with a company at random.
 const pilotBand = await (async () => {
   const corner = (): Promise<number[]> => page.evaluate(async () => {
     const F = await import('/src/ui/frame.ts' as string), v = F.LAYOUT.view;
     return [...(document.getElementById('stage') as HTMLCanvasElement).getContext('2d')!.getImageData(v.x + 2, v.y + 2, 1, 1).data.slice(0, 3)];
   });
+  const ticks = async (n: number): Promise<void> => {
+    const to = await page.evaluate(() => (window as any).__game.game.frame) + n;
+    await page.waitForFunction((f: number) => (window as any).__game.game.frame >= f, to);
+  };
+  const state = (): Promise<{ screen: string; on: boolean; why: string; tempo: number; stopped: boolean; facing: number; company: string }> => page.evaluate(() => {
+    const g = (window as any).__game.game, p = g.pilot;
+    return { screen: g.top.constructor.name, on: p.on, why: p.why[0], tempo: p.tempo, stopped: p.stopped, facing: g.world.state.facing, company: g.party.members.map((c: any) => `${c.name} ${c.cls}`).join(', ') };
+  });
+  const press = async (key: string): Promise<void> => { await page.keyboard.press(key); await ticks(2); };
   const screen = await page.evaluate(() => (window as any).__game.game.top.constructor.name), before = await corner();
   await page.keyboard.press('KeyP');
-  const from = await page.evaluate(() => (window as any).__game.game.frame);
-  await page.waitForFunction((f: number) => (window as any).__game.game.frame >= f + 60, from);
-  const band = await corner(), on = await page.evaluate(() => { const p = (window as any).__game.game.pilot; return { on: p.on, why: p.why[0] }; });
-  await page.keyboard.press('KeyP'); await page.waitForTimeout(50);
-  const off = await page.evaluate(() => (window as any).__game.game.pilot.on);
-  return { screen, before, band, ...on, off };
+  await ticks(60);
+  const band = await corner(), on = await state();
+  await press('KeyT');
+  const paced = await state();
+  await press('KeyP');
+  const off = await state();
+  await press('KeyP');
+  const facing = (await state()).facing;
+  await press('ArrowLeft');
+  const turned = await state();
+  await press('KeyP');
+  await page.evaluate(() => (window as any).__game.game.gameOver());
+  await ticks(2);
+  const wiped = await state(), fallen = await corner();
+  // The title alone, painted with nothing over it, to hold the band against.
+  const bare = await page.evaluate(async () => {
+    const F = await import('/src/ui/frame.ts' as string), v = F.LAYOUT.view, g = (window as any).__game.game, ctx = (document.getElementById('stage') as HTMLCanvasElement).getContext('2d')!;
+    g.top.render(g, ctx, g.frame);
+    return [...ctx.getImageData(v.x + 2, v.y + 2, 1, 1).data.slice(0, 3)];
+  });
+  await press('KeyP');
+  const fresh = await state();
+  await press('KeyP');
+  return { screen, before, band, on, paced, off, facing, turned, wiped, fallen, bare, fresh };
 })();
 
 await browser.close();
@@ -1380,8 +1409,14 @@ ok(exploreColours > 20, `the viewport, automap and party cards painted (${explor
 ok(screen2 === 'CombatScreen' && combatColours > 20, `a fight opens and paints (${screen2}, ${combatColours} colours)`);
 ok(mark.set && mark.asked.screen === 'ChoiceScreen' && mark.asked.options.join('|') === 'Return to the mark|Set it here' && mark.back, `with a mark set, Waymark asks whether to return or set it here, and returns (${JSON.stringify(mark)})`);
 ok(glass.asked === 'element' && glass.element === 'cold' && glass.line === 'Maren casts Lampglass. The glass dims the cold.', `Lampglass asks against what before it is cast, and casts the pick (${JSON.stringify(glass)})`);
-ok(pilotBand.screen === 'ExploreScreen' && pilotBand.on && pilotBand.why === 'Nothing to do.' && Math.max(...pilotBand.band) < 110 && pilotBand.off === false,
-  `P on the road hands the game to the pilot, its band dark over the top of the view a second on (${pilotBand.band.join(',')}, ${pilotBand.before.join(',')} before), and P again takes it back (${JSON.stringify({ on: pilotBand.on, why: pilotBand.why, off: pilotBand.off })})`);
+ok(pilotBand.screen === 'ExploreScreen' && pilotBand.on.on && pilotBand.on.why === 'Nothing to do.' && Math.max(...pilotBand.band) < 110 && Math.max(...pilotBand.before) > Math.max(...pilotBand.band) + 60 && !pilotBand.off.on,
+  `P on the road hands the game to the pilot, its band dark over the top of the view a second on, darker than the view before it (${pilotBand.band.join(',')}, ${pilotBand.before.join(',')} before), and P again takes it back (${JSON.stringify({ on: pilotBand.on.on, why: pilotBand.on.why, off: pilotBand.off.on })})`);
+ok(pilotBand.on.tempo === 1 && pilotBand.paced.tempo === 2 && pilotBand.paced.on && !pilotBand.turned.on && pilotBand.turned.facing === (pilotBand.facing + 3) % 4,
+  `T sets the pilot's pace from 1 to 2 times and leaves it the helm, and a turn takes the helm back and turns the company (${pilotBand.paced.tempo}x; facing ${pilotBand.facing} to ${pilotBand.turned.facing})`);
+ok(pilotBand.wiped.screen === 'TitleScreen' && !pilotBand.wiped.on && pilotBand.wiped.stopped && pilotBand.wiped.why === 'The company has fallen.' && Math.max(...pilotBand.bare) > Math.max(...pilotBand.fallen) + 20,
+  `a wipe under the pilot goes to the title, and its why stays up over it, darker than the title alone (${pilotBand.fallen.join(',')} against ${pilotBand.bare.join(',')}; "${pilotBand.wiped.why}")`);
+ok(pilotBand.fresh.screen === 'ExploreScreen' && pilotBand.fresh.on && !pilotBand.fresh.stopped && pilotBand.fresh.company !== 'Bram knight, Idris paladin, Wren ranger, Ottilie thief, Maren cleric, Cassian sorcerer',
+  `P on the title starts a new game the pilot drives, with a company at random (${pilotBand.fresh.company})`);
 ok(autoPanel.party && autoPanel.label && autoPanel.hint, `on auto the fight's panel says AUTO beside the round and that P takes the fight back (${JSON.stringify(autoPanel)})`);
 ok(thornColours > 20, `Thornmark's forest paints (${thornColours} colours)`);
 ok(thornFight.screen === 'CombatScreen' && /ogre/.test(thornFight.monsters) && /wraith/.test(thornFight.monsters) && thornFightColours > 20, `the ogre and wraith sprites paint in a fight (${thornFight.monsters}, ${thornFightColours} colours)`);
