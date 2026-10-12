@@ -1,9 +1,12 @@
 // The pilot's frame (#716): what Known lets it see and keeps from it, what it has heard and been shown
 // and when it forgets them, the P and T keys and any other, its pace, a fight handed to the bot, a message read and
-// closed, the why line with no brain to ask, a wipe's why over the title and P there.
+// closed, the why line with no brain to ask, a wipe's why over the title and P there. The navigator
+// (#717): a route over seen squares, a secret door a wall to it, the ways between the maps it has
+// been to, and a walk to a square, driven.
 import { GameMap } from '../../src/game/map.ts';
 import type { Feature, MapDef } from '../../src/game/map.ts';
-import { EAST } from '../../src/game/types.ts';
+import { EAST, WEST, FACING_DX, FACING_DY, turnLeft, turnRight } from '../../src/game/types.ts';
+import type { Facing } from '../../src/game/types.ts';
 import { Game, ExploreScreen } from '../../src/game/game.ts';
 import type { Store } from '../../src/game/save.ts';
 import { defaultParty } from '../../src/game/party.ts';
@@ -15,13 +18,15 @@ import { TitleScreen } from '../../src/ui/title.ts';
 import { Pilot, BRAINS, IDLE, HEARD_MAX } from '../../src/game/pilot/pilot.ts';
 import { knownOf } from '../../src/game/pilot/known.ts';
 import type { Sighted } from '../../src/game/pilot/known.ts';
-import { ok, headlessGame } from './lib.ts';
+import { routeOn, routeMaps } from '../../src/game/pilot/route.ts';
+import type { Action } from '../../src/input.ts';
+import { ok, headlessGame, drive } from './lib.ts';
 
 // The fixtures go on Helmstow's features as written, shared by every game, so they all go again when
 // the suite is done, whether it ends or throws.
 export function pilot(): void {
   const helmstow = headlessGame(4).maps.harrow.features as Feature[], had = [...helmstow];
-  try { check(); } finally { helmstow.splice(had.length); }
+  try { check(); navigator(); } finally { helmstow.splice(had.length); }
   const after = headlessGame(4).maps.harrow.features;
   ok(after.length === had.length && after.every((f, i) => f === had[i]), `the fixtures gone, a new game's Helmstow has its ${had.length} features as before (${after.length})`);
 }
@@ -236,4 +241,62 @@ function check(): void {
   for (let i = 0; i <= HEARD_MAX; i++) q.hear(`Line ${i}.`);
   ok(HEARD_MAX === 2000 && q.heard.length === HEARD_MAX && q.heard[0] === 'Line 1.' && q.heard[HEARD_MAX - 1] === `Line ${HEARD_MAX}.`,
     `of ${HEARD_MAX + 1} lines heard, the pilot keeps the last ${q.heard.length}, from "${q.heard[0]}"`);
+}
+
+/** Marks a square seen on the automap, or with no square the whole map, as walking there would. */
+function see(g: Game, map: string, x?: number, y?: number): void {
+  const bits = g.world.state.maps[map].explored, i = y === undefined || x === undefined ? -1 : y * g.maps[map].width + x;
+  if (i < 0) bits.fill(-1); else bits[i >> 5] |= 1 << (i & 31);
+}
+
+/** The squares a party stands on, pressing `keys` from (x, y, f): forward a step, a turn none. */
+function walked(keys: readonly Action[], x: number, y: number, f: Facing): string[] {
+  const at = [`${x},${y}`];
+  for (const key of keys) {
+    if (key === 'turnLeft') f = turnLeft(f);
+    else if (key === 'turnRight') f = turnRight(f);
+    else if (key === 'forward') { x += FACING_DX[f]; y += FACING_DY[f]; at.push(`${x},${y}`); }
+  }
+  return at;
+}
+
+function navigator(): void {
+  // A corridor with a turn, as movement's fixtures build a map: east along the top, then south. From
+  // its west end, facing the wall, the way is two turns, the length of it, a turn and the rest.
+  const g = headlessGame(4);
+  g.maps.fx_bend = new GameMap({ id: 'fx_bend', name: 'Bend', kind: 'dungeon', start: { x: 1, y: 1, facing: WEST }, rows: ['#######', '#.....#', '#####.#', '#####.#', '#######'] });
+  g.world.travel('fx_bend', 1, 1, WEST);
+  const k = knownOf(g), unseen = routeOn(k, 'fx_bend', 1, 1, WEST, 5, 3);
+  see(g, 'fx_bend');
+  const bend = routeOn(k, 'fx_bend', 1, 1, WEST, 5, 3);
+  ok(unseen === null && bend?.join() === 'turnLeft,turnLeft,forward,forward,forward,forward,turnRight,forward,forward',
+    `along a corridor with a turn, from its end facing away, the route is two turns, four steps, a turn and two steps, and none while the far end is unseen (${bend?.join(', ')}; ${unseen})`);
+
+  // A secret door in the wall between two squares, and a way round below: a wall to the navigator,
+  // though the map as written lets the party through, until a search finds it.
+  g.maps.fx_door = new GameMap({ id: 'fx_door', name: 'Door', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#.S.#', '#.#.#', '#...#', '#####'] });
+  g.world.travel('fx_door', 1, 1, EAST);
+  see(g, 'fx_door');
+  const round = routeOn(k, 'fx_door', 1, 1, EAST, 3, 1) ?? [], by = walked(round, 1, 1, EAST);
+  for (let i = 0; i < 20 && !g.world.search(); i++);
+  const through = routeOn(k, 'fx_door', 1, 1, EAST, 3, 1);
+  ok(g.maps.fx_door.passable(2, 1) === 'ok' && round.length === 9 && by.at(-1) === '3,1' && !by.includes('2,1') && through?.join() === 'forward,forward',
+    `a secret door the map lets the party through is a wall to the navigator, which goes the long way round, ${round.length} keys by ${by.join(' ')}, until a search finds it (${through?.join(', ')})`);
+
+  // Helmstow to the keep: no way while the gatehouse is unseen, and one exit once it is.
+  const h = headlessGame(4), kh = knownOf(h), before = routeMaps(kh, 'harrow', 'keep');
+  see(h, 'harrow', 7, 0);
+  const keep = routeMaps(kh, 'harrow', 'keep');
+  ok(before === null && keep?.length === 1 && keep[0].map === 'harrow' && keep[0].exit.x === 7 && keep[0].exit.y === 0 && keep[0].exit.to === 'keep',
+    `from Helmstow to the keep there is no way while the gatehouse is unseen, and one exit once its square, 7,0, is seen (${JSON.stringify(keep)})`);
+
+  // Driven: the pilot at the helm, bound for a square it has seen six keys away, walks there and is bound nowhere.
+  const d = headlessGame(4), dp = (d.pilot = new Pilot({ instant: true })), { x, y, facing } = d.world.state;
+  const six = routeOn(knownOf(d), 'harrow', x, y, facing, 6, 10);
+  dp.toggle(d);
+  dp.goal = { map: 'harrow', x: 6, y: 10, name: 'the west lane' };
+  drive(d, Array(60).fill(null));
+  const stands = `${d.world.state.x},${d.world.state.y}`;
+  ok(six?.length === 6 && d.world.state.mapId === 'harrow' && stands === '6,10' && dp.goal === null,
+    `the pilot, bound for a seen square ${six?.length} keys away (${six?.join(', ')}), walks there in 60 ticks and is bound nowhere (stands at ${stands}; ${JSON.stringify(dp.goal)})`);
 }

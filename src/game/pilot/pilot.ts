@@ -13,6 +13,8 @@ import { MessageScreen } from '../../ui/screens.ts';
 import { TitleScreen } from '../../ui/title.ts';
 import { knownOf } from './known.ts';
 import type { Known } from './known.ts';
+import { route } from './route.ts';
+import type { Goal, Trip } from './route.ts';
 
 export type Tempo = 1 | 2 | 4;
 export interface PilotOpts { instant?: boolean; omniscient?: boolean }
@@ -25,7 +27,7 @@ export type Brain = (g: Game, k: Known, p: Pilot) => Action | null;
  * (#719), the strategist's (#720), the navigator's (#717), the explorer's (#718) and talk (#721).
  * Each takes its place as its module lands.
  */
-export const BRAINS: Brain[] = [];
+export const BRAINS: Brain[] = [route];
 
 /** The lines heard that the pilot keeps, the oldest dropped first. */
 export const HEARD_MAX = 2000;
@@ -47,6 +49,14 @@ export class Pilot {
   readonly heard: string[] = [];
   /** What a menu has shown: a shop's wares, a trainer's levels, a person's crossings (Known.features). */
   told = new WeakSet<Feature>();
+  /** Where the navigator is bound (route.ts): a square, on a map or a zone by its id, and what the why line calls it. */
+  goal: Goal | null = null;
+  /** The keys the navigator has left to press on the way, the next first: planned again when they run out, or the party is not where they put it. */
+  plan: Action[] = [];
+  /** The navigator's reckoning of its goal between beats (route.ts). */
+  trip: Trip | null = null;
+  /** Ways refused the navigator three times: the square, on the map as played, and the line it was told there (#718 comes back to them). */
+  readonly shut: { map: string; x: number; y: number; why: string }[] = [];
   /** Ticks counted towards the next beat. */
   private ticks = 0;
   /** The fight last handed to the bot: a key that took it back is not undone. */
@@ -65,8 +75,11 @@ export class Pilot {
   /** A menu has shown what a feature lists. */
   tell(f: Feature): void { this.told.add(f); }
 
-  /** A new company, or one loaded: it has heard nothing and been shown nothing yet, and the last run's stop and its why are gone. */
-  forget(): void { this.heard.length = 0; this.told = new WeakSet<Feature>(); this.stopped = false; this.why = [IDLE]; }
+  /** A new company, or one loaded: it has heard nothing, been shown nothing and is bound nowhere yet, and the last run's stop and its why are gone. */
+  forget(): void {
+    this.heard.length = 0; this.told = new WeakSet<Feature>(); this.stopped = false; this.why = [IDLE];
+    this.goal = null; this.plan = []; this.trip = null; this.shut.length = 0;
+  }
 
   /** Turns itself off, and says why over every screen until a game starts (#713, Decided 4 and 10). */
   stop(why: string): void { this.on = false; this.why = [why]; this.stopped = true; }

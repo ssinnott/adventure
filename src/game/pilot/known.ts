@@ -1,16 +1,17 @@
 // What the pilot may know of the world (#713, Decided 1): the automap's bits and its ink, the
-// features and exits on squares the party has seen, the maps it has visited, the world map as drawn
-// and the lines it has heard. Nothing here reads a map as written: not its secrets or its encounters,
-// what opens a gate or an exit or what an exit says on arrival, and of a feature nothing but what the
-// automap and the hint show (its kind, its square and its name, the id it is known by, and a den's
-// ash) until a menu has shown what it lists. What a feature says, holds, gives or wants is known
-// once it is heard.
+// features and exits on squares the party has seen, the maps it has visited, the world map as drawn,
+// what the company can cross, the groups in its sight and the lines it has heard. Nothing here reads
+// a map as written: not its secrets or its encounters, what opens a gate or an exit or what an exit
+// says on arrival, and of a feature nothing but what the automap and the hint show (its kind, its
+// square and its name, the id it is known by, and a den's ash) until a menu has shown what it lists.
+// What a feature says, holds, gives or wants is known once it is heard.
 // A zone map's id names its part of the outdoors, at the zone's own squares (World.locate).
 import type { Game } from '../game.ts';
 import type { Cell, Door, Exit, Feature, GameMap } from '../map.ts';
 import { seen as seenBit, drawnCell } from '../world.ts';
 import type { MapState } from '../world.ts';
 import { mapPlace } from '../atlas.ts';
+import { partyCan } from '../party.ts';
 import { spentId } from '../wilds.ts';
 import { ATLAS, MAP_DEFS } from '../../content/index.ts';
 import { onAutomap } from '../../ui/frame.ts';
@@ -41,6 +42,10 @@ export interface Known {
   visited(): string[];
   /** Where a map is on the world map, in world cells, as the world map places it (mapPlace). */
   placeOf(map: string): [number, number] | undefined;
+  /** What the company can cross, as it knows itself: a swimmer, a Mountaineer and the iron keys it carries (partyCan). */
+  can(): { swim: boolean; climb: boolean; keys: number };
+  /** The squares of the groups in the party's sight now, as the viewport draws them (World.groupsInSight); none on any other map. */
+  groups(map: string): { x: number; y: number }[];
   /** Lines heard: everything said through Game.say and every message opened (Pilot.hear). */
   heard: readonly string[];
 }
@@ -91,6 +96,12 @@ export function knownOf(g: Game): Known {
     },
     visited: () => Object.keys(w.state.maps),
     placeOf: (map) => mapPlace(ATLAS, MAP_DEFS, map),
+    can: () => partyCan(g.party),
+    groups(map) {
+      const fr = frame(map);
+      if (!fr || fr.m.id !== w.state.mapId) return [];
+      return (all ? w.liveGroups() : w.groupsInSight()).map((q) => ({ x: q.state.x - fr.ox, y: q.state.y - fr.oy })).filter(({ x, y }) => x >= 0 && y >= 0 && x < fr.w && y < fr.h);
+    },
     heard: p?.heard ?? [],
   };
 }
