@@ -31,18 +31,22 @@ export interface Trip {
 /** The steps refused on one goal before it is given up as shut. */
 export const BLOCKS = 3;
 
-/** What a step onto opens before the walk can go on: a person's words, a business's menus, a den's question. */
-const STOPS = new Set(['npc', 'inn', 'temple', 'shop', 'guild', 'trainer', 'den']);
+/** What a step onto opens before the walk can go on: a business's menus, a den's question. A person's words are read and the walk goes on. */
+const STOPS = new Set(['inn', 'temple', 'shop', 'guild', 'trainer', 'den']);
 /** Wider than any map: a square and a facing as one number. */
 const SPAN = 4096;
 
-/** The keys from (x, y, facing) to (tx, ty) over seen, passable squares of one map; null when none. Turning costs 1, a step 1. */
+/**
+ * The keys from (x, y, facing) that step onto (tx, ty) over seen, passable squares of one map; null
+ * when none. Turning costs 1, a step 1. From (tx, ty) itself, they step off it and back, as a way off
+ * the map the party has landed on is taken.
+ */
 export function routeOn(k: Known, map: string, x: number, y: number, facing: Facing, tx: number, ty: number): Action[] | null {
-  if (x === tx && y === ty) return [];
   const can = k.can(), sq = (cx: number, cy: number): number => cy * SPAN + cx;
   const held = new Set(k.groups(map).map((q) => sq(q.x, q.y)));
-  // A way off the map carries the party off it, and a person or a business stops it: each is walked to, never over.
-  const aside = new Set([...k.exits(map), ...k.features(map).filter((f) => STOPS.has(f.kind))].map((q) => sq(q.x, q.y)));
+  // A way off the map, an exit or a tear into a Rift, carries the party off it, and a business stops
+  // it: each is walked to, never over.
+  const aside = new Set([...k.exits(map), ...k.features(map).filter((f) => f.kind === 'rift' || STOPS.has(f.kind))].map((q) => sq(q.x, q.y)));
   const open = new Map<number, boolean>();
   const walks = (cx: number, cy: number): boolean => {
     const at = sq(cx, cy);
@@ -63,14 +67,15 @@ export function routeOn(k: Known, map: string, x: number, y: number, facing: Fac
     const moves: [Action, number, number, Facing][] = [['forward', cx + FACING_DX[f], cy + FACING_DY[f], f], ['turnLeft', cx, cy, turnLeft(f)], ['turnRight', cx, cy, turnRight(f)]];
     for (const [key, mx, my, mf] of moves) {
       if (key === 'forward' && !walks(mx, my)) continue;
+      // Only a step onto it arrives: a turn on it is the party standing there still.
+      if (key === 'forward' && mx === tx && my === ty) {
+        const keys: Action[] = [key];
+        for (let s = here; s !== first; s = came.get(s)!.from) keys.unshift(came.get(s)!.key);
+        return keys;
+      }
       const there = id(mx, my, mf);
       if (came.has(there)) continue;
       came.set(there, { from: here, key });
-      if (mx === tx && my === ty) {
-        const keys: Action[] = [];
-        for (let s = there; s !== first; s = came.get(s)!.from) keys.unshift(came.get(s)!.key);
-        return keys;
-      }
       queue.push([mx, my, mf]);
     }
   }
