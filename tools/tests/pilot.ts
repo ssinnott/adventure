@@ -107,13 +107,29 @@ export function pilot(): void {
   if (riddle instanceof RiddleScreen) riddle.update(g, 'cancel');
   ok(riddle instanceof RiddleScreen && p.heard.includes('What has ten toes and no feet?'), 'a statue\'s riddle, put, is heard');
 
-  // A secret door, as movement's fixtures build a map: inked as a wall.
-  const vault: MapDef = { id: 'fx_vault', name: 'Vault', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#.S.#', '#####'] };
+  // A secret door, as movement's fixtures build a map: inked as a wall, and the square past it unseen.
+  // On the near side a way, a chest and a ghost not risen; past the door a way and a hoard.
+  const vault: MapDef = { id: 'fx_vault', name: 'Vault', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#.S.#', '#####'],
+    exits: [{ x: 1, y: 1, to: 'harrow', tx: 1, ty: 1 }, { x: 3, y: 1, to: 'harrow', tx: 1, ty: 1 }],
+    features: [
+      { kind: 'chest', x: 1, y: 1, id: 'fx_near', gold: 5, items: [] },
+      { kind: 'npc', x: 1, y: 1, name: 'A fixture ghost', lines: ['"Boo."'], after: { flag: 'fx_risen' } },
+      { kind: 'chest', x: 3, y: 1, id: 'fx_hoard', gold: 50, items: [] },
+    ] };
   const v = headlessGame(4);
   v.maps.fx_vault = new GameMap(vault);
   v.world.travel('fx_vault', 1, 1, EAST);
-  const door = knownOf(v).cell('fx_vault', 2, 1);
-  ok(door?.solid === 'wall' && door.door === 'none' && !('ch' in door), `Known inks a seen secret door as a wall (${JSON.stringify(door)})`);
+  const kv = knownOf(v), door = kv.cell('fx_vault', 2, 1), past = kv.cell('fx_vault', 3, 1);
+  ok(door?.solid === 'wall' && door.door === 'none' && !('ch' in door) && past === undefined, `Known inks a seen secret door as a wall and the square past it not at all (${JSON.stringify([door, past])})`);
+  const inVault = (): string => kv.features('fx_vault').map((f) => ('id' in f && f.id) || ('name' in f && f.name)).join(', ');
+  const near = kv.exits('fx_vault'), kept = inVault();
+  ok(near.length === 1 && near[0].x === 1 && kept === 'fx_near',
+    `of the vault's ways and features, Known has those on seen squares and drawn: the near way and chest, not the ghost not risen or what is past the door (${JSON.stringify(near)}; ${kept})`);
+  v.world.markUsed('fx_near');
+  v.party.flags.fx_risen = 1;
+  const risen = inVault();
+  ok(risen === 'A fixture ghost', `the chest opened, Known has it gone, and the ghost risen there (${risen})`);
+  ok(kv.visited().join() === 'harrow,fx_vault', `Known has visited Helmstow and the vault, and nothing more (${kv.visited().join(', ')})`);
 
   const k = knownOf(g);
   ok(!!k.placeOf('thornmark') && k.placeOf('no_such_map') === undefined, `Known places Thornmark on the world map, at ${k.placeOf('thornmark')?.map((n) => n.toFixed(1)).join(',')}, and no map that is not`);
@@ -148,7 +164,7 @@ export function pilot(): void {
   ok(g.top !== fight && g.top instanceof ExploreScreen, `ticked with nothing pressed, the fight plays itself out, in ${ticks} ticks (${fight instanceof CombatScreen ? fight.state.outcome : '?'})`);
 
   g.message('A fixture note.');
-  ok(g.top instanceof MessageScreen && p.next(g) === 'interact', 'a message on top the pilot reads and closes with Space');
+  ok(g.top instanceof MessageScreen && p.heard.includes('A fixture note.') && p.next(g) === 'interact', 'a message on top the pilot hears as it opens, and reads and closes with Space');
   // Paced as watched: a beat every 15, 8 or 4 ticks at 1, 2 or 4 times.
   const beats = ([1, 2, 4] as const).map((t) => {
     const q = new Pilot();
@@ -200,6 +216,9 @@ export function pilot(): void {
   l.saveGame();
   l.say('The answer is ten.');
   ok(l.loadGame() && !lp.heard.includes('The answer is ten.') && lp.heard.join() === 'Loaded.', `a save loaded, the pilot has heard only that (${lp.heard.join(' / ')})`);
+  // A wipe with the player at the helm: the pilot has nothing to say over the title.
+  l.gameOver();
+  ok(l.top instanceof TitleScreen && !lp.on && !lp.stopped && lp.why[0] === IDLE, `a wipe with the player at the helm leaves no why of the pilot's over the title (${lp.why.join(' ')})`);
 
   // What it has heard is kept to the last 2000 lines, the oldest dropped first.
   const q = new Pilot();
