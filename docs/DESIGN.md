@@ -298,8 +298,9 @@ quest's own fights are set at 26.
   person who teaches it, by a company that is a Lantern; the dwarves are born to it, and a copybook
   carried does its work (§9, Act III). The other eleven come as their shortcuts and secrets do.
 - Weapon and magic skills have **Novice / Expert / Master** tiers. Trainers for Expert live in
-  regional towns; Master trainers are hidden, expensive, and often want a favour. Neither tier is
-  built yet: both wait on the skill tiers (#18), and Master trainers with them (#739, call 11).
+  regional towns; Master trainers are hidden, expensive, and often want a favour. The tiers are not
+  built yet: Expert and Master trainers both wait on them (#18), and Master trainers are out of M3
+  until they are (#739, call 11).
 
 ---
 

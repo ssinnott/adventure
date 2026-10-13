@@ -1576,11 +1576,12 @@ Its boss is the Core's.
 *The hull's service layer, where geometry becomes too regular and materials too smooth. The final
 dungeon descends through it from the temple.*
 
-The Underdeep is the machine at work and nothing else: every machine family at its full size and on
-its own ground, the keepers with no robes, knockers still inspecting walls that have not cracked in
-four hundred years, and the vessel's defences, which caught the Hand on the stairs. And rats. They
-are the only animals below the world, and nobody brought them: they came aboard the way rats do. A
-company that met its first rat in a farm cellar meets its last one here.
+The Underdeep is the machine at work, with the last of the Hand still standing on its stairs: every
+machine family at its full size and on its own ground, the keepers with no robes, knockers still
+inspecting walls that have not cracked in four hundred years, and the vessel's defences, which
+caught the Hand on the stairs. And rats. They are the only animals below the world, and nobody
+brought them: they came aboard the way rats do. A company that met its first rat in a farm cellar
+meets its last one here.
 
 **New:** crawlers, the long-legged things that walk the walls and ceilings. **Back:** every machine
 family, at work, the deep knockers from Meridian Camp (§8.4); the rats.
