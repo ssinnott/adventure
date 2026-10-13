@@ -3001,6 +3001,45 @@
         "tide_ship_rift_warden"
       ],
       "doors": []
+    },
+    "underdeep": {
+      "size": "32x32",
+      "used": [
+        "ud_crack",
+        "ud_crawl_chest",
+        "ud_crew_sign",
+        "ud_end",
+        "ud_feet",
+        "ud_hatch",
+        "ud_in",
+        "ud_knot1",
+        "ud_knot2",
+        "ud_knot3",
+        "ud_knot4",
+        "ud_knot5",
+        "ud_knot6",
+        "ud_knot7",
+        "ud_knot8",
+        "ud_rats",
+        "ud_store",
+        "ud_voice"
+      ],
+      "groups": [
+        "ud_crawlers",
+        "ud_crew_guard",
+        "ud_keepers1",
+        "ud_keepers2",
+        "ud_keepers3",
+        "ud_keepers4",
+        "ud_knockers1",
+        "ud_knockers2",
+        "ud_knockers3",
+        "ud_rats1",
+        "ud_rats2"
+      ],
+      "doors": [
+        "24,14"
+      ]
     }
   },
   "zones": {
@@ -3507,6 +3546,10 @@
     "q_council_early",
     "q_council_late",
     "q_council_met",
+    "q_crack_sealed",
+    "q_crack_wide",
+    "q_crew_open",
+    "q_crew_shut",
     "q_crown",
     "q_crown_carried",
     "q_crown_sailed",
@@ -3903,6 +3946,7 @@
     "grey_knife",
     "grey_part",
     "grey_robe",
+    "grey_shield",
     "grey_shovel",
     "greywater_ledger",
     "grove_seedling",
@@ -3976,6 +4020,7 @@
     "name_boards",
     "night_light",
     "novice_letter",
+    "old_lanterns_staff",
     "pilots_slate",
     "plate",
     "plate+1",
