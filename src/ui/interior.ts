@@ -15,9 +15,10 @@ import { SCENES as KILNS } from './interiors/kilns/index.ts';
 import { SCENES as RIMEWATER } from './interiors/rimewater/index.ts';
 import { SCENES as ASHFALL } from './interiors/ashfall/index.ts';
 import { SCENES as GLASSWOLD } from './interiors/glasswold/index.ts';
+import { SCENES as HEARTH } from './interiors/hearth/index.ts';
 
 /** Every business's scene, an area's at a time: an interior with no scene fails the typecheck here. */
-export const SCENES: Record<Interior, Scene> = { ...SHELF, ...THORNMARK, ...SALTREACH, ...SUNDERWOOD, ...KILNS, ...RIMEWATER, ...ASHFALL, ...GLASSWOLD };
+export const SCENES: Record<Interior, Scene> = { ...SHELF, ...THORNMARK, ...SALTREACH, ...SUNDERWOOD, ...KILNS, ...RIMEWATER, ...ASHFALL, ...GLASSWOLD, ...HEARTH };
 
 /** The last room painted: repainted when the business, the size or the hour (to an eighth of a day's light) changes. */
 let painted: { key: string; room: HTMLCanvasElement; lights: Light[] } | null = null;
