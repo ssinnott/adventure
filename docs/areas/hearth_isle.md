@@ -1729,6 +1729,28 @@ Decided by delegate for #762, each the owner's to overturn:
 6. **Ahead through `ROOMS_AHEAD`,** as Cinderport's went, and owed to #753 in `UNPLACED`: the check
    that every business has a room fails on a room no business opens into, so H6 drops both.
 
+Decided by delegate for #761, each the owner's to overturn:
+
+1. **The Champion drops nothing yet.** §7 gives it `grey_knife` at 0.1, but the knife is #746's and
+   not on main, so the def leaves the drop out and #746 adds it with the item.
+2. **Vask is a tall boss.** Size 1.6, drawn at 0.78 of the frame, his crown at 0.801 under the
+   markers (0.82), as the Tallymaster's and the Sentinel's are: a tall man over Grey Hands at 1.05.
+3. **The core's light is white and gold:** the Core Sentry's ring and port, the Queen's ring on
+   Vask's hand and the Underdeep keeper's lights, against the furnaces' orange and the bay's blue,
+   so the core's machines and the ring that orders them read as one.
+4. **The keeper is told apart by its pose and its plate:** the bay keeper's frame bare, taller and
+   thinner, dark, seven fingers, both hands raised to touch (`raise` in the keepers' Build, 0 for
+   every keeper before it).
+5. **The Core Sentry has a body of its own,** `core`: the Sentry's legs and keel with a ring for a
+   head and two long arms alike. MONSTERS has it the frame's Build and a tint, but a tint alone
+   would be the Sentry again.
+6. **The deep rat is pale,** bred out of the sun: lean, up on its legs, ribbed and red-eyed, against
+   the rat's brown, the barn rat's fat and the bilge rat's slick black.
+7. **Nothing comes loose but the moth's dust.** The preacher's embers and the Grey Hands' ash broke
+   the silhouette at combat size, so they are not drawn: the fire on the palm carries the sermon.
+8. **The Wold's walkthrough reads AHEAD by name.** It asserted AHEAD empty, true only while it was;
+   it now asserts the Glasswold out of it, which is what it meant.
+
 Decided by delegate for #751, each the owner's to overturn:
 
 1. **`toV5` reads what the game's own `seen` reads.** The event counts as seen when the High Spine
@@ -1797,6 +1819,33 @@ Decided by delegate for #764, each the owner's to overturn:
    `UNSET`, as are the endings' flags (#759), read from `src/content/endings.ts`.
 10. **A port's prices are twice the old city's,** the Lantern Oil as before: dearer than the Regent's
     half again, as §6's *dearer for Tallis* asks, and the oil's forty is Mottram's own word.
+
+Decided by delegate for #764 (the doorway check), each the owner's to overturn:
+
+1. **A chain, and nothing wider.** `doorwayFaults` (`tools/tests/maps.ts`) takes businesses with a room
+   each, in order on the square: the first only `until` X1, each next `after` the one before's `until`
+   and, but the last, `until` its own, none with a `when`, the last only `after`. A word or twin on
+   another condition, a gap, a `when` on a link, a link gone with nothing after it, a person before the
+   business, a second business and a doorway with no business fail as they did.
+2. **The Chapel's way is a word, then the business back.** A shut door's word (an event `after` X and
+   `until` Y, no `when`) may be followed at once by the business again `after` Y, as the next link. The
+   word must go on Y, or it would be said at an open door; a word that does not go leaves the business
+   behind it a second business, as before.
+3. **A chain may end in a word.** Any link that is gone may be followed by the shut door's word, as the
+   first always could, so the stores may shut after they go dearer. The word may stand anywhere after the
+   link, as it did; only a twin or the business back must follow at once.
+4. **Conditions compare as `same(...)` did,** to the letter: a `When` list on a word's `until` and on its
+   business's `after` is one constant (the hold's verdict with `ENDED`, in #765).
+5. **Checked against the old rule, not only on the maps:** over every list of up to four features on a
+   doorway (4.7 million; three flags, a `when`, events, people and keepers) nothing the old rule passed
+   fails, a list passes that did not only if it is a chain (a second recogniser, written from the issue,
+   agrees on every list), and every list outside a chain gets the same faults word for word. The run was
+   a scratch script; the fixtures in the maps check are what stays.
+6. **No doc line described the rule,** so none is changed: EXPANSION §8.2 is the zone-map recipe, and
+   the comment above `doorwayFaults` is where the rule is told.
+7. **This unblocks the twins owed in the Council block's 7 and in #765.** The inn at 12, the Chapel for the
+   hold and Mottram's for Tallis are each a link added to a chain; the Chapel is its word gone `until` the
+   hold's verdict and the endings, and its temple again `after` the same list. No map is touched here.
 
 Decided by delegate for #764 (the doorway check), each the owner's to overturn:
 

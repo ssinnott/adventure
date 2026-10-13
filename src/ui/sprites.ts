@@ -385,7 +385,7 @@ export function drawPillarSprite(ctx: CanvasRenderingContext2D, x: number, horiz
  * the gallery and `tools/changed.ts` read; tools/tests/art.ts holds the two to each other.
  */
 export const FAMILY: Readonly<Record<MonsterSprite, MonsterDrawer>> = {
-  rat: rat.draw, barn_rat: rat.draw, bilge_rat: rat.draw,
+  rat: rat.draw, barn_rat: rat.draw, bilge_rat: rat.draw, deep_rat: rat.draw,
   slime: slime.draw,
   wolf: wolf.draw, dire_wolf: wolf.draw, rift_hound: wolf.draw, black_dog: wolf.draw, chalk_wolf: wolf.draw, barrow_wolf: wolf.draw, sunder_hound: wolf.draw, moor_hound: wolf.draw,
   boar: boar.draw, tusker: boar.draw,
@@ -395,7 +395,7 @@ export const FAMILY: Readonly<Record<MonsterSprite, MonsterDrawer>> = {
   wrecker: bandit.draw, lampman: bandit.draw, footpad: bandit.draw, poacher: bandit.draw, billman: bandit.draw, slinger: bandit.draw, cutthroat: bandit.draw,
   bargeman: bandit.draw, barge_master: bandit.draw, wrack_smuggler: bandit.draw, wrack_bowman: bandit.draw, anvil_guard: bandit.draw,
   cultist: cultist.draw, zealot: cultist.draw, adept: cultist.draw, ashen_hand: cultist.draw,
-  acolyte: cultist.draw, deacon: cultist.draw, overseer: cultist.draw, gleaner: cultist.draw, mason: cultist.draw,
+  acolyte: cultist.draw, deacon: cultist.draw, overseer: cultist.draw, gleaner: cultist.draw, mason: cultist.draw, ashen_champion: cultist.draw, ashen_preacher: cultist.draw, hand_rearguard: cultist.draw, grey_hand: cultist.draw, vask: cultist.draw,
   skeleton: skeleton.draw, bone_knight: skeleton.draw, ghoul: skeleton.draw, drowned: skeleton.draw,
   barrow_guard: skeleton.draw, barrow_captain: skeleton.draw, temple_drowned: skeleton.draw, drowned_chanter: skeleton.draw, choirmaster: skeleton.draw,
   bog_body: skeleton.draw, cairn_king: skeleton.draw, ash_husk: skeleton.draw,
@@ -408,7 +408,7 @@ export const FAMILY: Readonly<Record<MonsterSprite, MonsterDrawer>> = {
   fen_toad: toads.draw, bull_toad: toads.draw,
   devilfish: devilfish.draw, great_devilfish: devilfish.draw,
   pine_bear: bears.draw, glass_bear: bears.draw, ice_bear: bears.draw,
-  lantern_moth: moths.draw, deathshead: moths.draw,
+  lantern_moth: moths.draw, deathshead: moths.draw, hearth_moth: moths.draw,
   knocker: knockers.draw, mender: knockers.draw, foreman: knockers.draw, tallyman: knockers.draw,
   salamander: salamanders.draw, great_salamander: salamanders.draw, ember_salamander: salamanders.draw,
   bog_light: lights.draw,
@@ -417,7 +417,7 @@ export const FAMILY: Readonly<Record<MonsterSprite, MonsterDrawer>> = {
   stair_giant: giants.draw, stair_king: giants.draw,
   cinder_drake: drakes.draw, old_drake: drakes.draw,
   stoker: machines.draw, sentry: machines.draw, sentinel: machines.draw,
-  loader: machines.draw, tally_clerk: knockers.draw, hold_keeper: keepers.draw, tallymaster: keepers.draw,
+  loader: machines.draw, core_sentry: machines.draw, tally_clerk: knockers.draw, hold_keeper: keepers.draw, tallymaster: keepers.draw, keeper: keepers.draw,
   drakeling: drakes.draw, brood_drake: drakes.draw, flue_walker: machines.draw, deep_knocker: knockers.draw, inspector: knockers.draw,
   vulture: birds.draw, wold_lion: cats.draw, grey_lion: cats.draw, glass_scorpion: spider.draw, basilisk: salamanders.draw,
   glass_walker: glasswalkers.draw,
@@ -431,7 +431,7 @@ export const FAMILY: Readonly<Record<MonsterSprite, MonsterDrawer>> = {
  * numbers the test prints.
  */
 export const SPAN: Readonly<Record<MonsterSprite, readonly [number, number]>> = {
-  rat: [1.05, 0.97], barn_rat: [1.06, 1.01], bilge_rat: [1.06, 0.92],
+  rat: [1.05, 0.97], barn_rat: [1.06, 1.01], bilge_rat: [1.06, 0.92], deep_rat: [0.96, 0.85],
   slime: [1.11, 0.88],
   wolf: [0.58, 0.77], dire_wolf: [0.59, 0.82], rift_hound: [0.57, 0.78], black_dog: [0.58, 0.86], chalk_wolf: [0.58, 0.83], barrow_wolf: [0.57, 0.8], sunder_hound: [0.56, 0.79], moor_hound: [0.67, 0.76],
   boar: [0.74, 0.74], tusker: [0.74, 0.73],
@@ -441,7 +441,7 @@ export const SPAN: Readonly<Record<MonsterSprite, readonly [number, number]>> = 
   wrecker: [0.26, 0.37], lampman: [0.26, 0.49], footpad: [0.26, 0.47], poacher: [0.34, 0.28], billman: [0.27, 0.44], slinger: [0.3, 0.39], cutthroat: [0.28, 0.49],
   bargeman: [0.64, 0.88], barge_master: [0.42, 0.33], wrack_smuggler: [0.32, 0.42], wrack_bowman: [0.26, 0.47], anvil_guard: [0.44, 0.5],
   cultist: [0.25, 0.33], zealot: [0.47, 0.51], adept: [0.42, 0.39], ashen_hand: [0.47, 0.47],
-  acolyte: [0.23, 0.43], deacon: [0.29, 0.29], overseer: [0.46, 0.5], gleaner: [0.43, 0.45], mason: [0.3, 0.58],
+  acolyte: [0.23, 0.43], deacon: [0.29, 0.29], overseer: [0.46, 0.5], gleaner: [0.43, 0.45], mason: [0.3, 0.58], ashen_champion: [0.26, 0.28], ashen_preacher: [0.41, 0.37], hand_rearguard: [0.25, 0.37], grey_hand: [0.4, 0.41], vask: [0.23, 0.25],
   skeleton: [0.22, 0.39], bone_knight: [0.36, 0.42], ghoul: [0.33, 0.38], drowned: [0.27, 0.3],
   barrow_guard: [0.2, 0.33], barrow_captain: [0.27, 0.29], temple_drowned: [0.34, 0.34], drowned_chanter: [0.27, 0.28], choirmaster: [0.32, 0.35],
   bog_body: [0.23, 0.25], cairn_king: [0.32, 0.35], ash_husk: [0.23, 0.3],
@@ -454,7 +454,7 @@ export const SPAN: Readonly<Record<MonsterSprite, readonly [number, number]>> = 
   fen_toad: [0.58, 0.58], bull_toad: [0.61, 0.61],
   devilfish: [0.51, 0.51], great_devilfish: [0.66, 0.7],
   pine_bear: [0.75, 0.66], glass_bear: [0.7, 0.65], ice_bear: [0.73, 0.73],
-  lantern_moth: [0.71, 0.71], deathshead: [0.81, 0.81],
+  lantern_moth: [0.71, 0.71], deathshead: [0.81, 0.81], hearth_moth: [0.73, 0.73],
   knocker: [0.51, 0.68], mender: [0.46, 0.63], foreman: [0.45, 0.52], tallyman: [0.58, 0.55],
   salamander: [0.78, 0.84], great_salamander: [0.71, 0.72], ember_salamander: [0.8, 0.8],
   bog_light: [0.15, 0.16],
@@ -463,7 +463,7 @@ export const SPAN: Readonly<Record<MonsterSprite, readonly [number, number]>> = 
   stair_giant: [0.21, 0.39], stair_king: [0.26, 0.47],
   cinder_drake: [0.56, 0.56], old_drake: [0.38, 0.63],
   stoker: [0.4, 0.54], sentry: [0.21, 0.28], sentinel: [0.33, 0.33],
-  loader: [0.43, 0.43], tally_clerk: [0.48, 0.53], hold_keeper: [0.36, 0.36], tallymaster: [0.26, 0.27],
+  loader: [0.43, 0.43], core_sentry: [0.25, 0.26], tally_clerk: [0.48, 0.53], hold_keeper: [0.36, 0.36], tallymaster: [0.26, 0.27], keeper: [0.29, 0.29],
   drakeling: [0.37, 0.37], brood_drake: [0.6, 0.63], flue_walker: [0.37, 0.37], deep_knocker: [0.58, 0.78], inspector: [0.49, 0.54],
   vulture: [0.79, 0.7], wold_lion: [0.76, 0.69], grey_lion: [0.7, 0.62], glass_scorpion: [0.63, 0.63], basilisk: [0.74, 0.73],
   glass_walker: [0.39, 0.22],
