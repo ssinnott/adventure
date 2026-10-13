@@ -24,8 +24,8 @@ export const PILLARS = 'hearthfane:hf_pillars';
 export const LAMP_FLAGS = ['lamp_sea', 'lamp_shore', 'lamp_house', 'lamp_hearth'] as const;
 
 /**
- * The stair down behind the altar into the crypt, `hearthfane2` (#756), which lists it here, opens 8,1
- * and lands its way back up on the altar's square, 8,2. Until then the square is wall.
+ * The stair down behind the altar into the crypt, `hearthfane2` (#756), onto its foot facing up the
+ * passage; the crypt's way back up lands on the altar's square, 8,2, facing south.
  */
 export const STAIR: Exit = { x: 8, y: 1, to: 'hearthfane2', tx: 8, ty: 14, tf: NORTH, label: 'Down the stair behind the altar, into the crypt. The hum is louder below.' };
 
@@ -63,7 +63,7 @@ export const HEARTHFANE: MapDef = {
   palette: { wall: '#b8a890', wallDark: '#7a6c58', floor: '#8a7c64', ceiling: '#2a2420', door: '#5a4030', wallStyle: 'stone', ceilingStyle: 'vault', banner: '#6a6866' },
   rows: [
     '################',
-    '################',
+    '########.#######',
     '#####.......####',
     '#####.......####',
     '#####.......####',
@@ -84,6 +84,8 @@ export const HEARTHFANE: MapDef = {
   exits: [
     // Out by the door onto the Bowl before the mound, facing away from it.
     { x: 8, y: 15, to: 'hearthisle_h6', tx: 18, ty: 15, tf: SOUTH, label: 'Out of the temple into the Bowl. The light is at your back.' },
+    // Down the stair behind the altar into the crypt (#756).
+    STAIR,
   ],
   // The treasury's door opens to the sacristan's key and to nothing else: no iron key fits it.
   gates: [{ x: 11, y: 10, after: { item: FANE_KEY }, blockedText: 'Locked, and the lock is old. Nothing you carry fits it.' }],

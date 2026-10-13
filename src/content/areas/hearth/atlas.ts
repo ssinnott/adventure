@@ -19,6 +19,7 @@ export const ZONES: readonly AtlasZone[] = [
 
 export const PLACES: readonly AtlasPlace[] = [
   { id: 'hearthfane', kind: 'dungeon', at: [250, 172] }, // Hearthfane, the temple: in at its door in the mound on H6, 18,14 (#755)
+  { id: 'hearthfane2', kind: 'dungeon', at: [250, 178] }, // the crypt: down the stair behind the temple's altar, 8,1 (#756)
   { id: 'underdeep', name: 'The Underdeep', kind: 'deep', planned: true, order: 13, band: [30, 31], at: [216, 168] },
   { id: 'core', name: 'The Core', kind: 'deep', planned: true, order: 14, band: [32, 32], at: [216, 176] },
 ];
