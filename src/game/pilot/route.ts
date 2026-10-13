@@ -27,7 +27,13 @@ import type { Facing } from '../types.ts';
 import type { Known } from './known.ts';
 import type { Brain } from './pilot.ts';
 
-export interface Goal { map: string; x: number; y: number; /** What the why line says: "Bound for <here>". */ name: string }
+export interface Goal {
+  map: string; x: number; y: number;
+  /** What the why line calls it: "Bound for <here>". */
+  name: string;
+  /** What the why line says on the way instead, as the explorer's "Looking about Helmstow." (#718). */
+  why?: string;
+}
 
 /**
  * The navigator's reckoning of its goal, kept between beats: the goal, the lines said before it was
@@ -61,7 +67,7 @@ const SPAN = 4096;
  * gets past: a way off and a tear carry the party off, and a business or a person in a doorway turns
  * it back onto the street, where a person or a den in the open is stood on.
  */
-function stops(k: Known, map: string, all = true): { x: number; y: number }[] {
+export function stops(k: Known, map: string, all = true): { x: number; y: number }[] {
   return [...k.exits(map), ...k.features(map).filter((f) => OPENS.has(f.kind) && (all || !STANDS.has(f.kind) || k.cell(map, f.x, f.y)?.door === 'door'))];
 }
 
@@ -82,9 +88,9 @@ function opens(k: Known, map: string, held: readonly { x: number; y: number }[])
   };
 }
 
-/** The keys from (x, y, facing) to (tx, ty) by the squares `walks` steps onto; none from (tx, ty) itself, and null when there is no way. Turning costs 1, a step 1. */
-function keysTo(walks: (x: number, y: number) => boolean, x: number, y: number, facing: Facing, tx: number, ty: number): Action[] | null {
-  if (x === tx && y === ty) return [];
+/** The keys from (x, y, facing) to the nearest square `at` holds, by the squares `walks` steps onto; none from one itself, and null when there is no way. Turning costs 1, a step 1. */
+function keysTo(walks: (x: number, y: number) => boolean, x: number, y: number, facing: Facing, at: (x: number, y: number) => boolean): Action[] | null {
+  if (at(x, y)) return [];
   const id = (cx: number, cy: number, f: Facing): number => (cy * SPAN + cx) * 4 + f, first = id(x, y, facing);
   // Breadth first over the square and the facing, each move a key.
   const came = new Map<number, { from: number; key: Action }>([[first, { from: first, key: 'forward' }]]);
@@ -95,7 +101,7 @@ function keysTo(walks: (x: number, y: number) => boolean, x: number, y: number, 
     for (const [key, mx, my, mf] of moves) {
       if (key === 'forward' && !walks(mx, my)) continue;
       // Only a step onto it arrives: a turn on it is the party standing there still.
-      if (key === 'forward' && mx === tx && my === ty) {
+      if (key === 'forward' && at(mx, my)) {
         const keys: Action[] = [key];
         for (let s = here; s !== first; s = came.get(s)!.from) keys.unshift(came.get(s)!.key);
         return keys;
@@ -133,7 +139,7 @@ function reaches(walks: (x: number, y: number) => boolean, x: number, y: number)
 
 /** The keys from (x, y, facing) to (tx, ty) over seen, passable squares of one map, round a group in sight; null when none. Turning costs 1, a step 1. */
 export function routeOn(k: Known, map: string, x: number, y: number, facing: Facing, tx: number, ty: number): Action[] | null {
-  return keysTo(opens(k, map, []), x, y, facing, tx, ty);
+  return keysTo(opens(k, map, []), x, y, facing, (cx, cy) => cx === tx && cy === ty);
 }
 
 /**
@@ -142,9 +148,25 @@ export function routeOn(k: Known, map: string, x: number, y: number, facing: Fac
  * quay is past its stevedore.
  */
 export function walkOn(k: Known, map: string, x: number, y: number, facing: Facing, tx: number, ty: number, aside: readonly { x: number; y: number }[] = []): Action[] | null {
+  return nearestOn(k, map, x, y, facing, [{ x: tx, y: ty }], aside)?.keys ?? null;
+}
+
+/**
+ * The nearest of `squares` by the brain's route (walkOn), round the squares in `aside`: the square,
+ * and the keys there, none when the party stands on one; null when it reaches none.
+ */
+export function nearestOn(k: Known, map: string, x: number, y: number, facing: Facing, squares: readonly { x: number; y: number }[], aside: readonly { x: number; y: number }[] = []): { x: number; y: number; keys: Action[] } | null {
+  const wanted = new Set(squares.map((q) => q.y * SPAN + q.x)), at = (cx: number, cy: number): boolean => wanted.has(cy * SPAN + cx);
   for (const all of [true, false]) {
-    const keys = keysTo(opens(k, map, [...aside, ...stops(k, map, all).filter((q) => q.x !== tx || q.y !== ty)]), x, y, facing, tx, ty);
-    if (keys) return keys;
+    const keys = keysTo(opens(k, map, [...aside, ...stops(k, map, all).filter((q) => !at(q.x, q.y))]), x, y, facing, at);
+    if (!keys) continue;
+    let ex = x, ey = y, f = facing;
+    for (const key of keys) {
+      if (key === 'turnLeft') f = turnLeft(f);
+      else if (key === 'turnRight') f = turnRight(f);
+      else { ex += FACING_DX[f]; ey += FACING_DY[f]; }
+    }
+    return { x: ex, y: ey, keys };
   }
   return null;
 }
@@ -224,7 +246,7 @@ export const route: Brain = (g, k, p) => {
     p.trip = { goal, said: g.said, refused: [], groups: [] };
     p.plan = [];
   }
-  const trip = p.trip, last = trip.last, bound = `Bound for ${goal.name}.`, done = (): null => { p.goal = null; p.trip = null; p.plan = []; return null; };
+  const trip = p.trip, last = trip.last, bound = goal.why ?? `Bound for ${goal.name}.`, done = (): null => { p.goal = null; p.trip = null; p.plan = []; return null; };
   if (st.mapId === at.mapId && st.x === at.x && st.y === at.y) return done();
   // The step onto a stop it is bound for, taken: what opens there, or where it leads, is not the
   // navigator's. Refused, it is counted as any step refused.

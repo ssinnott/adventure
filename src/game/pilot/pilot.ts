@@ -15,6 +15,7 @@ import { knownOf } from './known.ts';
 import type { Known } from './known.ts';
 import { route } from './route.ts';
 import type { Goal, Trip } from './route.ts';
+import { explore } from './explore.ts';
 
 export type Tempo = 1 | 2 | 4;
 export interface PilotOpts { instant?: boolean; omniscient?: boolean }
@@ -27,7 +28,7 @@ export type Brain = (g: Game, k: Known, p: Pilot) => Action | null;
  * (#719), the strategist's (#720), the navigator's (#717), the explorer's (#718) and talk (#721).
  * Each takes its place as its module lands.
  */
-export const BRAINS: Brain[] = [route];
+export const BRAINS: Brain[] = [route, explore];
 
 /** The lines heard that the pilot keeps, the oldest dropped first. */
 export const HEARD_MAX = 2000;
@@ -55,8 +56,16 @@ export class Pilot {
   plan: Action[] = [];
   /** The navigator's reckoning of its goal between beats (route.ts). */
   trip: Trip | null = null;
-  /** Ways refused the navigator three times on one goal, each once: the square, on the map as played, and the line it was told there, '' when the log has lost it (#718 comes back to them). */
-  readonly shut: { map: string; x: number; y: number; why: string }[] = [];
+  /**
+   * Ways refused the navigator three times on one goal, each once: the square, on the map as played,
+   * and the line it was told there, '' when the log has lost it; and the count of the company's flags
+   * as the explorer was told of it, which comes back to it once it can open it (explore.ts).
+   */
+  readonly shut: { map: string; x: number; y: number; why: string; flags?: number }[] = [];
+  /** The walls the explorer has searched, each from one side: "map:x,y,f", on the map as played. */
+  readonly searched = new Set<string>();
+  /** A map or a zone the strategist wants explored (#720): the explorer walks it while it is on the map the party is on. */
+  prefer: string | null = null;
   /** The why a brain said as it gave no key (a goal given up): it stays up until a brain presses one. */
   private kept: [string, string?] | null = null;
   /** Ticks counted towards the next beat. */
@@ -77,10 +86,10 @@ export class Pilot {
   /** A menu has shown what a feature lists. */
   tell(f: Feature): void { this.told.add(f); }
 
-  /** A new company, or one loaded: it has heard nothing, been shown nothing and is bound nowhere yet, and the last run's stop and its why are gone. */
+  /** A new company, or one loaded: it has heard nothing, been shown nothing, searched nothing and is bound nowhere yet, and the last run's stop and its why are gone. */
   forget(): void {
     this.heard.length = 0; this.told = new WeakSet<Feature>(); this.stopped = false; this.why = [IDLE];
-    this.goal = null; this.plan = []; this.trip = null; this.shut.length = 0;
+    this.goal = null; this.plan = []; this.trip = null; this.shut.length = 0; this.searched.clear(); this.prefer = null;
   }
 
   /** Turns itself off, and says why over every screen until a game starts (#713, Decided 4 and 10). */

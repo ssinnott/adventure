@@ -39,6 +39,8 @@ export interface Known {
   features(map: string): Sighted[];
   /** Exits and tears into a Rift on seen squares, without what opens them or the line said on arrival: the pilot learns a way by trying it. The outdoors' zone crossings are plain walking. */
   exits(map: string): Exit[];
+  /** The size of a map, or of a zone's part of the outdoors, as the automap draws its grid; none for a map there is not. */
+  size(map: string): { w: number; h: number };
   /** Maps visited: the keys of state.maps. */
   visited(): string[];
   /** The map an id is played on: its own, or for a zone's the outdoors (World.locate). */
@@ -99,6 +101,7 @@ export function knownOf(g: Game): Known {
       const tears = fr.m.features.flatMap((f): Exit[] => (f.kind === 'rift' ? [{ x: f.x, y: f.y, to: f.to, tx: f.tx, ty: f.ty, tf: f.tf }] : []));
       return [...fr.m.exits, ...tears].filter((e) => seenIn(fr, e.x - fr.ox, e.y - fr.oy)).map(({ needFlag, shut, blockedText, label, ...e }) => ({ ...e, x: e.x - fr.ox, y: e.y - fr.oy }));
     },
+    size(map) { const fr = frame(map); return { w: fr?.w ?? 0, h: fr?.h ?? 0 }; },
     visited: () => Object.keys(w.state.maps),
     mapOf: (map) => w.locate(map, 0, 0).mapId,
     placeOf: (map) => mapPlace(ATLAS, MAP_DEFS, map),

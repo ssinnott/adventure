@@ -19,13 +19,19 @@
 // the way planned for afresh, a route planned again after a flight, the way out from the square landed
 // on by each side, round a lock and at it when it is the only way, and none when sealed in, a lock
 // refused and walked round, a way shut after three refusals, with no line once the log has lost it,
-// its why lines, and a new game or a load bound nowhere.
+// its why lines, and a new game or a load bound nowhere. The explorer (#718): the frontier, a room's
+// door out and nothing inside it; the suspects, a dead end's end wall and nothing on open floor;
+// Helmstow walked out, every square of it seen; a secret door at a dead end searched and found, a
+// wall that hides nothing searched once from each side; a lock and a gate shut to it and come back
+// to with a key and a flag; and the outdoors, the zone it stands in, and one beyond its strength
+// left alone until preferred.
 import { GameMap } from '../../src/game/map.ts';
 import type { Exit, Feature, MapDef } from '../../src/game/map.ts';
 import { NORTH, EAST, WEST, SOUTH, FACING_DX, FACING_DY, turnLeft, turnRight } from '../../src/game/types.ts';
 import type { Facing } from '../../src/game/types.ts';
 import { Game, ExploreScreen } from '../../src/game/game.ts';
 import type { Store } from '../../src/game/save.ts';
+import { seen as seenBit } from '../../src/game/world.ts';
 import { defaultParty } from '../../src/game/party.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { CombatScreen } from '../../src/ui/combat.ts';
@@ -35,7 +41,8 @@ import { TitleScreen } from '../../src/ui/title.ts';
 import { Pilot, BRAINS, IDLE, HEARD_MAX } from '../../src/game/pilot/pilot.ts';
 import { knownOf } from '../../src/game/pilot/known.ts';
 import type { Known, Sighted } from '../../src/game/pilot/known.ts';
-import { route, routeOn, walkOn, routeMaps, HELD } from '../../src/game/pilot/route.ts';
+import { route, routeOn, walkOn, nearestOn, routeMaps, HELD } from '../../src/game/pilot/route.ts';
+import { explore, frontier, suspects, SEARCHING } from '../../src/game/pilot/explore.ts';
 import type { Action } from '../../src/input.ts';
 import { ok, headlessGame, drive } from './lib.ts';
 
@@ -46,7 +53,12 @@ export function pilot(): void {
   try { check(); } finally { helmstow.splice(had.length); }
   const after = headlessGame(4).maps.harrow.features;
   ok(after.length === had.length && after.every((f, i) => f === had[i]), `the fixtures gone, a new game's Helmstow has its ${had.length} features as before (${after.length})`);
-  navigator();
+  // The navigator's checks are its own: the explorer, which makes a goal wherever it has none, is held
+  // back from them, and back after, whether they end or throw.
+  const brains = BRAINS.splice(0, BRAINS.length, route);
+  try { navigator(); } finally { BRAINS.splice(0, BRAINS.length, ...brains); }
+  ok(BRAINS.length === 2 && BRAINS[0] === route && BRAINS[1] === explore, 'the brains are asked in order: the navigator, then the explorer');
+  explorer();
 }
 
 function check(): void {
@@ -920,4 +932,142 @@ function navigator(): void {
   const loaded = s.loadGame() && forgot();
   ok(!!was.goal && !!was.trip && was.plan.length > 0 && was.shut.length === 1 && anew && loaded,
     `bound for the high street with ${was.plan.length} keys to press and ${was.shut.length} way shut, a new game is bound nowhere with none (${anew}), and so is a save loaded (${loaded})`);
+}
+
+/** Marks every square of a map unseen, as a map not yet walked. */
+function unsee(g: Game, map: string): void { g.world.state.maps[map].explored.fill(0); }
+
+function explorer(): void {
+  // A room, seen, with a door out of it to a corridor unseen: the door's square is the frontier, and
+  // nothing inside the room is, though every square of it is seen and passable.
+  const r = headlessGame(4), kr = knownOf(r);
+  r.maps.fx_room = new GameMap({ id: 'fx_room', name: 'Room', kind: 'dungeon', start: { x: 2, y: 2, facing: WEST }, rows: ['########', '#...#..#', '#...D..#', '#...#..#', '########'] });
+  r.world.travel('fx_room', 2, 2, WEST);
+  unsee(r, 'fx_room');
+  for (let sy = 0; sy < 5; sy++) for (let sx = 0; sx < 5; sx++) see(r, 'fx_room', sx, sy);
+  const edge = frontier(kr, r, 'fx_room');
+  ok(JSON.stringify(edge) === '[{"x":4,"y":2}]' && kr.seen('fx_room', 3, 2) && !kr.seen('fx_room', 5, 2),
+    `of a seen room with a door out, the frontier is the door's square and nothing inside the room (${JSON.stringify(edge)})`);
+
+  // A dead end each side of a secret door at the top of a U, all of it seen: the secret door, inked as
+  // a wall, is the dead ends' end wall and the one suspect, faced from either side; open floor has none.
+  const crypt: MapDef = { id: 'fx_crypt', name: 'Crypt', kind: 'dungeon', start: { x: 3, y: 4, facing: NORTH }, rows: ['#######', '#..S..#', '#.###.#', '#.###.#', '#.....#', '#######'] };
+  const s = headlessGame(4), ks = knownOf(s);
+  s.maps.fx_crypt = new GameMap(crypt);
+  s.maps.fx_hall = new GameMap({ id: 'fx_hall', name: 'Hall', kind: 'dungeon', start: { x: 2, y: 2, facing: NORTH }, rows: ['#####', '#...#', '#...#', '#...#', '#####'] });
+  for (const id of ['fx_hall', 'fx_crypt']) { s.world.travel(id, 2, 2, NORTH); see(s, id); }
+  const ends = suspects(ks, 'fx_crypt'), open = suspects(ks, 'fx_hall');
+  ok(ks.cell('fx_crypt', 3, 1)?.solid === 'wall' && JSON.stringify(ends) === `[{"x":3,"y":1,"facing":${EAST}},{"x":3,"y":1,"facing":${WEST}}]` && !open.length,
+    `the end wall of a seen dead end, a secret door Known inks as a wall, is the one suspect, from each side (${JSON.stringify(ends)}), and seen open floor has none (${JSON.stringify(open)})`);
+
+  // Helmstow, at the helm from the start with the navigator and the explorer: 3000 ticks walk it out,
+  // every passable square seen but those behind a lock, as the map is written (the test's privilege,
+  // not the pilot's), and it never leaves the town, nor goes into a business.
+  const h = headlessGame(4), hp = (h.pilot = new Pilot({ instant: true })), m = h.maps.harrow;
+  hp.toggle(h);
+  let inside = 0, out = 0, done = -1;
+  for (let t = 0; t < 3000; t++) {
+    drive(h, [null]);
+    if (h.screens.some((q) => q instanceof InteriorScreen)) inside++;
+    if (h.world.state.mapId !== 'harrow') out++;
+    if (done < 0 && hp.why[0] === 'Helmstow is walked out.') done = t;
+  }
+  const start = m.def.start, reach = new Set([`${start.x},${start.y}`]), queue = [[start.x, start.y]];
+  for (let i = 0; i < queue.length; i++) for (let f = 0; f < 4; f++) {
+    const nx = queue[i][0] + FACING_DX[f], ny = queue[i][1] + FACING_DY[f];
+    if (reach.has(`${nx},${ny}`) || m.passable(nx, ny) !== 'ok') continue;
+    reach.add(`${nx},${ny}`); queue.push([nx, ny]);
+  }
+  const passable: string[] = [];
+  for (let sy = 0; sy < m.height; sy++) for (let sx = 0; sx < m.width; sx++) if (m.passable(sx, sy) === 'ok') passable.push(`${sx},${sy}`);
+  const bits = h.world.state.maps.harrow.explored, unseen = [...reach].filter((q) => { const [sx, sy] = q.split(',').map(Number); return !seenBit(bits, sy * m.width + sx); }).length;
+  ok(reach.size === passable.length && unseen === 0 && !inside && !out && done > 0 && hp.why[0] === 'Helmstow is walked out.',
+    `3000 ticks with the explorer leave every one of Helmstow's ${passable.length} passable squares seen, none behind a lock (${unseen} unseen, ${passable.length - reach.size} behind), walked out in ${done} ticks, never out of the town (${out}) or inside (${inside}): ${hp.why.join(' / ')}`);
+
+  // The same U, its secret door unseen and the company at the bottom of it with the helm handed over:
+  // it walks the U out, and then, with nothing unseen beside a square it can reach, goes to the dead
+  // end's end wall, faces it and searches it, and the door is found within 400 ticks. A new game
+  // has searched nothing and prefers nowhere.
+  const v = headlessGame(4), vp = (v.pilot = new Pilot({ instant: true }));
+  v.maps.fx_crypt = new GameMap(crypt);
+  v.world.travel('fx_crypt', 3, 4, NORTH);
+  const hidden = v.maps.fx_crypt.at(3, 1).door;
+  vp.toggle(v);
+  let found = -1, why = '', walked = false;
+  for (let t = 0; t < 400 && found < 0; t++) {
+    const said = vp.heard.length;
+    drive(v, [null]);
+    if (vp.heard.slice(said).includes('You find a hidden door!')) {
+      found = t; why = vp.why.join(' / ');
+      walked = crypt.rows.every((row, sy) => [...row].every((ch, sx) => ch !== '.' || knownOf(v).seen('fx_crypt', sx, sy)));
+    }
+  }
+  const searches = vp.heard.filter((l) => l === 'You search the wall ahead and find nothing.').length, marks = [...vp.searched].join(' ');
+  ok(hidden === 'secret' && found >= 0 && v.maps.fx_crypt.at(3, 1).door === 'door' && walked && why === SEARCHING && !searches && /^fx_crypt:3,1,[13]$/.test(marks),
+    `the U walked out (${walked}), it searches the dead end's end wall and finds the door, now ${v.maps.fx_crypt.at(3, 1).door}, in ${found} ticks, with ${searches} searches for nothing (${why}; ${marks})`);
+  vp.prefer = 'fx_crypt';
+  v.newGame(4);
+  ok(!vp.searched.size && vp.prefer === null, `a new game, the pilot has searched no wall and prefers nowhere (${vp.searched.size}, ${vp.prefer})`);
+
+  // The U with a plain wall at its top: the wall is searched once from each side, finds nothing, and
+  // is never searched again; the crypt is walked out.
+  const n = headlessGame(4), np = (n.pilot = new Pilot({ instant: true }));
+  n.maps.fx_crypt = new GameMap({ ...crypt, rows: crypt.rows.map((row) => row.replace('S', '#')) });
+  n.world.travel('fx_crypt', 3, 4, NORTH);
+  np.toggle(n);
+  drive(n, [], 400);
+  const nothing = np.heard.filter((l) => l === 'You search the wall ahead and find nothing.').length;
+  ok(nothing === 2 && np.searched.size === 2 && np.why[0] === 'Crypt is walked out.',
+    `a wall that hides nothing is searched ${nothing} times in 400 ticks, once from each side (${[...np.searched].join(' ')}), and the crypt is walked out (${np.why.join(' / ')})`);
+
+  // A lock and a gate across a passage that turns out of sight past them: each refused three times and
+  // shut, the passage is walked out with no more refusals while it is shut. With a key, the explorer
+  // goes back to the lock and it opens; with a flag set since, back to the gate and it opens; and the
+  // passage past each is walked.
+  const passage = (rows: string[], more: Partial<MapDef>, open: (c: Game) => void): string => {
+    const c = headlessGame(4), cp = (c.pilot = new Pilot({ instant: true }));
+    c.maps.fx_way = new GameMap({ id: 'fx_way', name: 'Passage', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows, ...more });
+    c.world.travel('fx_way', 1, 1, EAST);
+    cp.toggle(c);
+    const refusals = (): number => cp.heard.filter((l) => l === 'Locked. A key would open it.' || l === 'The way is closed.').length;
+    drive(c, [], 100);
+    const before = `${refusals()} ${JSON.stringify(cp.shut)} ${JSON.stringify(frontier(knownOf(c), c, 'fx_way'))} ${cp.why[0]}`;
+    open(c);
+    drive(c, [], 100);
+    const end = knownOf(c).seen('fx_way', 5, 4);
+    return `${before}; ${refusals()} ${cp.shut.length} ${end} ${cp.why[0]}`;
+  };
+  const turn = ['#######', '#.....#', '#####.#', '#####.#', '#####.#', '#######'];
+  const flags = Object.keys(headlessGame(4).party.flags).length;
+  const lock = passage(turn.map((row, sy) => (sy === 1 ? '#.L...#' : row)), {}, (c) => { c.party.bag.push('key_iron'); });
+  const gate = passage(turn, { gates: [{ x: 2, y: 1, needFlag: 'fx_open' }] }, (c) => { c.party.flags.fx_open = 1; });
+  ok(lock === `3 [{"map":"fx_way","x":2,"y":1,"why":"Locked. A key would open it.","flags":${flags}}] [] Passage is walked out.; 3 0 true Passage is walked out.`
+    && gate === `3 [{"map":"fx_way","x":2,"y":1,"why":"The way is closed.","flags":${flags}}] [{"x":3,"y":1}] Passage is walked out.; 3 0 true Passage is walked out.`,
+    `a lock and a gate, each refused three times, are shut, the lock no square of the frontier, and the passage walked out with no more refusals; a key, and a flag set since, and it goes back to each, opens it and walks on (${lock}; ${gate})`);
+
+  // The outdoors: at the Foreland's east edge, facing Thornmark, the nearest square with one unseen
+  // beside it is Thornmark's, but it looks about the Foreland it stands in; preferred, it looks about
+  // Thornmark. In Thornmark, beyond a company of level 1, it goes nowhere, until Thornmark is preferred.
+  const o = headlessGame(4), op = (o.pilot = new Pilot({ instant: true })), ko = knownOf(o), zones = o.maps.caldera.zones;
+  const zoneOf = (q: { x: number; y: number } | null): string => zones.find((z) => !!q && q.x >= z.x && q.y >= z.y && q.x < z.x + z.w && q.y < z.y + z.h)?.id ?? 'none';
+  const look = (): string => {
+    op.goal = null; op.trip = null; op.plan = [];
+    const key = explore(o, ko, op);
+    return `${key} ${zoneOf(op.goal)} ${op.why[0]}`;
+  };
+  o.world.travel('shelf', 31, 9, EAST);
+  const st = o.world.state, both = ['shelf', 'thornmark'].flatMap((id) => { const at = o.world.locate(id, 0, 0); return frontier(ko, o, id).map((q) => ({ x: q.x + at.x, y: q.y + at.y })); });
+  const nearest = zoneOf(nearestOn(ko, st.mapId, st.x, st.y, st.facing, both));
+  const home = look();
+  op.prefer = 'thornmark';
+  const preferred = look();
+  op.prefer = null;
+  o.world.travel('thornmark', 2, 9, EAST);
+  const wild = look();
+  op.prefer = 'thornmark';
+  const sought = look();
+  const walks = (l: string): boolean => !l.startsWith('null ');
+  ok(nearest === 'thornmark' && walks(home) && home.endsWith(' shelf Looking about the Foreland.') && walks(preferred) && preferred.endsWith(' thornmark Looking about Thornmark.')
+    && wild === 'null none Thornmark is beyond us yet.' && walks(sought) && sought.endsWith(' thornmark Looking about Thornmark.'),
+    `at the Foreland's edge, the nearest unseen is Thornmark's, but it looks about the Foreland (${home}), and preferred, Thornmark (${preferred}); in Thornmark, beyond it, it goes nowhere (${wild}) until preferred (${sought})`);
 }

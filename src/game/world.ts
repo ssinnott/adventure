@@ -804,7 +804,8 @@ export const WALK_STEPS = 12, FLOAT_STEPS = 6;
 /** What the log says as each ends, and as a step would leave the party over the drop with the float spent. */
 export const WALK_ENDS = 'The water no longer bears you.', FLOAT_ENDS = 'Your feet find the ground.', FLOAT_FAILS = 'You would fall before the far side.';
 
-const BLOCK_TEXT: Record<string, string> = {
+/** What the log says of a step refused, by what refused it: the pilot knows a lock by its line (game/pilot/explore.ts). */
+export const BLOCK_TEXT: Record<string, string> = {
   void: 'The world ends here.',
   wall: 'A wall blocks the way.',
   blocked: 'Something blocks the way.',

@@ -1351,7 +1351,13 @@ const mark = await page.evaluate(async () => {
 // lies over the top of the view, darker than the view was; T sets its pace, the band shows a second
 // line and the pace, and the view leaves out its hint; P again takes the game back, and so does any
 // other key, which the screen then has. A wipe leaves its why over the title, darker than the title
-// alone, and P there starts a new game with a company at random, the why of the last gone.
+// alone, and P there starts a new game with a company at random, the why of the last gone. The
+// explorer (#718), which would walk the road, is held back throughout, and put back after.
+const hold = (back: boolean): Promise<void> => page.evaluate(async (back: boolean) => {
+  const P = await import('/src/game/pilot/pilot.ts' as string), E = await import('/src/game/pilot/explore.ts' as string);
+  if (back) P.BRAINS.push(E.explore); else P.BRAINS.splice(P.BRAINS.indexOf(E.explore), 1);
+}, back);
+await hold(false);
 const pilotBand = await (async () => {
   const corner = (): Promise<number[]> => page.evaluate(async () => {
     const F = await import('/src/ui/frame.ts' as string), v = F.LAYOUT.view;
@@ -1425,6 +1431,7 @@ const pilotBand = await (async () => {
   await press('KeyP');
   return { screen, before, band, on, paced, drawn, off, facing, turned, wiped, fallen, bare, fresh };
 })();
+await hold(true);
 
 await browser.close();
 server.close();
