@@ -1,7 +1,9 @@
 // The quartermaster (#719): keeps the company fit to fight, on screen. Where the harness would rest
-// (bot.ts mustRest) it rests where it stands, if it may and has the rations; else it makes for the
-// nearest place it has seen that meets the need, the temple for the dead, a camp or an inn for rest,
-// an inn or a shop for rations, a trainer for a level and a shop for gear that betters what is worn.
+// (bot.ts mustRest, the dead and the stoned left out) it rests where it stands, if it may and has the
+// rations; else it makes for the nearest place it has seen that meets the need, the temple for the
+// dead, a camp or an inn for rest, an inn or a shop for rations, a trainer for a level and a shop for
+// gear that betters what is worn, or to see the wares of one it has not looked in. A need it has no
+// way to meet, the temple it cannot pay or has not seen, gives way to the next.
 // In a business it picks from the menus by their labels, as drawn, a key a beat: down to the line and
 // Space. What it carries that betters what is worn, bought or found, it takes up through the sheet. A
 // well near, it drinks there while any of the company is under half, and remembers one that did
@@ -43,6 +45,8 @@ export const reserve = (p: Party): number => 100 * Math.max(0, ...p.members.map(
 export const spare = (p: Party): number => Math.max(0, p.gold - reserve(p));
 /** Short of rations: under two nights' for each of the company. */
 const hungry = (p: Party): boolean => p.food < 2 * p.members.length;
+/** The harness's rest rule (mustRest) for the living: the dead and the stoned, whom rest does not mend, left out. */
+const tired = (p: Party): boolean => !!mustRest({ ...p, members: p.members.filter((m) => !hasCondition(m, 'dead') && !hasCondition(m, 'stoned')) });
 
 /**
  * The best of `ids` that betters what `c` wears, in the first of weapon, armour and shield where one
@@ -71,6 +75,9 @@ export function better(c: Character, stock: readonly string[], shop: Pick<Shop, 
 /** What a member carries in the pack, or the company in the bag, that betters what the member wears. */
 const carried = (p: Party, c: Character): string | undefined => upgrade(c, [...c.pack, ...p.bag]);
 
+/** A shop it has not seen the wares of, worth a look while there is gold over the reserve to spend. */
+const unread = (p: Party, f: Sighted): boolean => f.kind === 'shop' && !f.stock && spare(p) > 0;
+
 /** The first of the company a shop it knows the wares of has something for, and what: none for one who carries better already. */
 function ware(p: Party, f: Sighted): { id: string; who: Character } | undefined {
   if (f.kind !== 'shop' || !f.stock) return undefined;
@@ -90,22 +97,28 @@ function basket(p: Party, f: Extract<Sighted, { kind: 'shop' }>): { id: string; 
 const trainee = (p: Party, maxLevel: number): number => p.members.findIndex((c) => canTrainAt(c, maxLevel) && !isDown(c) && trainPrice(c) <= spare(p));
 
 /**
- * What the company needs, in order of urgency, or null: the temple for the dead or the stoned, rest by
- * the harness's rule, rations, a level one of it has the xp and the gold over the reserve for, and
- * gear that a shop it has seen sells and betters what one of it wears.
+ * What the company needs, in order of urgency: the temple for the dead or the stoned, rest by the
+ * harness's rule for the living, rations, a level one of it has the xp and the gold over the reserve
+ * for, and gear that a shop it has seen sells and betters what one of it wears, or a look in a shop it
+ * has not seen the wares of.
  */
-export function need(g: Game, k: Known = knownOf(g)): Need | null {
-  const p = g.party, why = mustRest(p);
-  if (why === 'dead') return 'temple';
-  if (why) return 'rest';
-  if (hungry(p)) return 'food';
-  if (p.members.some((c) => canTrain(c) && trainPrice(c) <= spare(p))) return 'train';
-  return k.visited().some((map) => k.features(map).some((f) => ware(p, f))) ? 'gear' : null;
+function needs(g: Game, k: Known): Need[] {
+  const p = g.party;
+  return ([
+    mustRest(p) === 'dead' && 'temple',
+    tired(p) && 'rest',
+    hungry(p) && 'food',
+    p.members.some((c) => canTrain(c) && trainPrice(c) <= spare(p)) && 'train',
+    k.visited().some((map) => k.features(map).some((f) => ware(p, f) || unread(p, f))) && 'gear',
+  ] as const).filter((n): n is Need => !!n);
 }
 
-/** What tripped the rest rule, as the why line says it: the first of the company under a quarter, or the spell points. */
+/** What the company needs most, or null. */
+export const need = (g: Game, k: Known = knownOf(g)): Need | null => needs(g, k)[0] ?? null;
+
+/** What tripped the rest rule, as the why line says it: the first of the living under a quarter, or the spell points. */
 function low(p: Party): string {
-  const c = p.members.find((m) => m.hp < m.maxHp * REST_AT);
+  const c = p.members.find((m) => !hasCondition(m, 'dead') && !hasCondition(m, 'stoned') && m.hp < m.maxHp * REST_AT);
   return c ? `${c.name} is under a quarter.` : 'the spell points are low.';
 }
 
@@ -120,10 +133,11 @@ const short = (g: Game, p: Pilot, map: string, f: { x: number; y: number }, n: N
 /**
  * The places that meet a need, seen on the maps visited, in groups by preference, each with what it is
  * for: for rest, where the company has the rations, a camp, but the one it stands on, before an inn;
- * for rations an inn or a shop it knows sells them for the gold over the reserve; a trainer it does not
- * know the levels of, or one that teaches one of it now; a temple only while the purse pays for one of
- * the dead or the stoned. None that is shut to the navigator, nor an inn's room or rations it could not
- * pay for.
+ * for rations an inn, or a shop it knows sells them for the gold over the reserve or has not seen the
+ * wares of; a trainer it does not know the levels of, or one that teaches one of it now; for gear a
+ * shop with something for one of it, or one it has not seen the wares of; a temple only while the purse
+ * pays for one of the dead or the stoned. None that is shut to the navigator, nor an inn's room or
+ * rations it could not pay for.
  */
 function spots(g: Game, k: Known, p: Pilot, n: Need): Spot[][] {
   const party = g.party, st = g.world.state;
@@ -141,13 +155,13 @@ function spots(g: Game, k: Known, p: Pilot, n: Need): Spot[][] {
       return [fed ? all.filter(({ map, f }) => f.kind === 'camp' && !(map === st.mapId && f.x === st.x && f.y === st.y)).map(as(low(party))) : [], inns('rest').map(as(low(party)))];
     }
     case 'food':
-      return [[...inns('food'), ...all.filter(({ f }) => f.kind === 'shop' && !!f.stock?.includes('rations') && priceIn(f, 'rations') <= spare(party))].map(as('the rations are low.'))];
+      return [[...inns('food'), ...all.filter(({ f }) => unread(party, f) || (f.kind === 'shop' && !!f.stock?.includes('rations') && priceIn(f, 'rations') <= spare(party)))].map(as('the rations are low.'))];
     case 'train': {
       const c = party.members.find((m) => canTrain(m) && trainPrice(m) <= spare(party))!;
       return [all.filter(({ f }) => f.kind === 'trainer' && (f.maxLevel === undefined || trainee(party, f.maxLevel) >= 0)).map(as(`${c.name} is ready to train.`))];
     }
     case 'gear':
-      return [all.flatMap(({ map, f }) => { const w = ware(party, f); return w ? [{ map, f, why: `${item(w.id).name} for ${w.who.name}.` }] : []; })];
+      return [all.flatMap(({ map, f }) => { const w = ware(party, f); return w ? [{ map, f, why: `${item(w.id).name} for ${w.who.name}.` }] : unread(party, f) ? [{ map, f, why: 'to see its wares.' }] : []; })];
   }
 }
 
@@ -196,16 +210,20 @@ function toNearest(g: Game, k: Known, p: Pilot, group: Spot[]): Action | null {
   return null;
 }
 
-/** On the street: what it carries taken up, rest where it stands, a well near, else the nearest place that meets the need. */
+/**
+ * On the street: what it carries taken up, rest where it stands, a well near, else the nearest place
+ * that meets the first need it has a way to meet, resting where it stands in its turn.
+ */
 function street(g: Game, k: Known, p: Pilot): Action | null {
   const w = g.world, st = w.state, party = g.party;
   // A well stood on: whether the company stands there whole, as one that restores leaves it.
   if (k.features(st.mapId).some((f) => f.kind === 'well' && f.x === st.x && f.y === st.y)) p.wells.set(`${st.mapId}:${st.x},${st.y}`, !party.members.some((m) => !isDown(m) && m.hp < m.maxHp));
   const fit = party.members.find((c) => carried(party, c));
   if (fit) { p.why = [`Fitting out ${fit.name}.`]; return 'inventory'; }
-  const n = need(g, k);
+  const wants = needs(g, k), stay = !restRefused(w) && party.food >= party.members.length;
   // Rest where it stands: restRefused says what R would.
-  if (n === 'rest' && !restRefused(w) && party.food >= party.members.length) { p.why = [`Resting: ${low(party)}`]; return 'rest'; }
+  const rest = (): Action => { p.why = [`Resting: ${low(party)}`]; return 'rest'; };
+  if (wants[0] === 'rest' && stay) return rest();
   // A well near while any of the company is under half and no group is in sight; none that did nothing.
   const hurt = party.members.find((m) => !isDown(m) && m.hp < m.maxHp / 2);
   if (hurt && !k.groups(st.mapId).length) {
@@ -214,10 +232,13 @@ function street(g: Game, k: Known, p: Pilot): Action | null {
     const key = near && near.keys.filter((a) => a === 'forward').length <= WELL_STEPS && go(g, k, p, { map: st.mapId, x: near.x, y: near.y, name: 'the well', why: `To the well: ${hurt.name} is under half.` });
     if (key) return key;
   }
-  if (!n) return null;
-  for (const group of spots(g, k, p, n)) {
-    const key = toNearest(g, k, p, group);
-    if (key) return key;
+  // A need it has no way to meet, the dead with no temple to pay or none seen, gives way to the next.
+  for (const n of wants) {
+    if (n === 'rest' && stay) return rest();
+    for (const group of spots(g, k, p, n)) {
+      const key = toNearest(g, k, p, group);
+      if (key) return key;
+    }
   }
   return null;
 }
@@ -226,10 +247,10 @@ function street(g: Game, k: Known, p: Pilot): Action | null {
 const pick = (top: { sel: number; options: string[] }, i: number): Action => (Math.min(top.sel, top.options.length - 1) === i ? 'interact' : 'down');
 
 /** Whether a business's trade has something for the company now, so its first menu opens it rather than Leave. A shop or a trainer it has not seen the wares or levels of it looks in. */
-function errand(g: Game, p: Pilot, map: string, f: Trade, n: Need | null): boolean {
+function errand(g: Game, p: Pilot, map: string, f: Trade, wants: Need[]): boolean {
   const party = g.party;
   switch (f.kind) {
-    case 'inn': return (n === 'rest' && !short(g, p, map, f, 'rest')) || (hungry(party) && !short(g, p, map, f, 'food'));
+    case 'inn': return (wants.includes('rest') && !short(g, p, map, f, 'rest')) || (hungry(party) && !short(g, p, map, f, 'food'));
     case 'temple': return party.members.some((c) => templePrice(c) > 0 && templePrice(c) <= party.gold);
     case 'shop': return !f.stock || !!basket(party, f);
     case 'trainer': return f.maxLevel === undefined || trainee(party, f.maxLevel) >= 0;
@@ -249,9 +270,9 @@ function counter(g: Game, k: Known, p: Pilot, top: ChoiceScreen): Action | null 
   if (!f) return null;
   // In at the door, the trip there is over.
   if (p.goal && MINE.has(p.goal) && p.goal.map === st.mapId && p.goal.x === f.x && p.goal.y === f.y) { p.goal = null; p.trip = null; p.plan = []; }
-  const party = g.party, opts = top.options, n = need(g, k), gold = spare(party), leave = opts.lastIndexOf('Leave');
+  const party = g.party, opts = top.options, wants = needs(g, k), gold = spare(party), leave = opts.lastIndexOf('Leave');
   if (opts[0] === TRADE[f.kind] && leave === opts.length - 1) {
-    if (!errand(g, p, st.mapId, f, n)) return pick(top, leave);
+    if (!errand(g, p, st.mapId, f, wants)) return pick(top, leave);
     p.why = [`In ${named(f)}.`];
     return pick(top, 0);
   }
@@ -261,7 +282,7 @@ function counter(g: Game, k: Known, p: Pilot, top: ChoiceScreen): Action | null 
       if (stay < 0 || buy < 0) return null;
       // What each costs, as its line says: the inn's prices are known only once inside.
       const cost = (i: number): number => Number(/\((\d+) gold\)/.exec(opts[i])?.[1] ?? Infinity), owed = (want: Need): void => void p.short.set(`${st.mapId}:${f.x},${f.y}:${want}`, party.gold);
-      if (n === 'rest' && !short(g, p, st.mapId, f, 'rest')) {
+      if (wants.includes('rest') && !short(g, p, st.mapId, f, 'rest')) {
         if (cost(stay) <= gold) { p.why = ['Taking a room.']; return pick(top, stay); }
         owed('rest');
       }
@@ -280,7 +301,7 @@ function counter(g: Game, k: Known, p: Pilot, top: ChoiceScreen): Action | null 
       return pick(top, due.i);
     }
     case 'shop': {
-      if (opts.join() === 'Buy,Sell,Leave') return pick(top, errand(g, p, st.mapId, f, n) ? 0 : leave);
+      if (opts.join() === 'Buy,Sell,Leave') return pick(top, errand(g, p, st.mapId, f, wants) ? 0 : leave);
       if (!top.words.startsWith('What will it be?')) return 'cancel';
       const want = basket(party, f);
       if (!want) return 'cancel';
@@ -307,11 +328,10 @@ function sheet(g: Game, p: Pilot, top: SheetScreen): Action {
   return pick({ sel: top.sel, options: [...c.pack, ...party.bag] }, [...c.pack, ...party.bag].indexOf(carried(party, c)!));
 }
 
-/** The offer of rest it asked for with R: Rest while the harness's rule wants it, else Not now. Null for any other question. */
+/** The offer of rest it asked for with R: Rest while the harness's rule wants it for the living, else Not now. Null for any other question. */
 function restOffer(g: Game, top: ChoiceScreen): Action | null {
   if (top.options.join() !== 'Rest,Not now' || !top.words.startsWith('Rest for eight hours?')) return null;
-  const why = mustRest(g.party);
-  return pick(top, why === 'hp' || why === 'sp' ? 0 : 1);
+  return pick(top, tired(g.party) ? 0 : 1);
 }
 
 /** The brain: the sheet, a business's menus and the offer of rest, and on the street what the company needs. */

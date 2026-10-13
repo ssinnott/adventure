@@ -28,9 +28,10 @@
 // preferred. The quartermaster (#719): what the company needs, by the harness's rule and the reserve; the
 // gear a shop betters it with for the gold over the reserve; rest where it stands; the inn's room
 // taken, at its door and walked to for want of rations, and the rations it could not pay for not sought
-// again; the dead raised at the temple, and a temple it cannot pay not gone back to; a sword bought and
-// taken up through the sheet; a level trained at a trainer whose levels it had not seen; and a well that
-// did nothing remembered, and one that restores drunk from.
+// again but bought at a shop whose wares it had not seen; the dead raised at the temple, and a temple
+// it cannot pay not gone back to, the living rested all the same; a sword bought at a shop whose wares
+// it went in to see and taken up through the sheet; a level trained at a trainer whose levels it had
+// not seen; and a well that did nothing remembered, and one that restores drunk from.
 import { GameMap } from '../../src/game/map.ts';
 import type { Exit, Feature, MapDef } from '../../src/game/map.ts';
 import { NORTH, EAST, WEST, SOUTH, FACING_DX, FACING_DY, turnLeft, turnRight } from '../../src/game/types.ts';
@@ -985,8 +986,10 @@ function explorer(): void {
 
   // Helmstow, at the helm from the start with the navigator and the explorer: 3000 ticks walk it out,
   // every passable square seen but those behind a lock, as the map is written (the test's privilege,
-  // not the pilot's), and it never leaves the town, nor goes into a business.
+  // not the pilot's), and it never leaves the town, nor goes into a business. The purse is at the
+  // quartermaster's reserve, so it has nothing to spend and no shop to look in.
   const h = headlessGame(4), hp = (h.pilot = new Pilot({ instant: true })), m = h.maps.harrow;
+  h.party.gold = reserve(h.party);
   hp.toggle(h);
   let inside = 0, out = 0, done = -1;
   for (let t = 0; t < 3000; t++) {
@@ -1133,8 +1136,9 @@ function quartermaster(): void {
   // What the company needs, on the harness's company of level 3, its reserve 300: whole and fed,
   // nothing while it knows no shop's wares; one of it at 10% hp, rest; one dead, the temple; short of
   // rations, rations; one with the xp for level 4, training, once the purse holds the price over the
-  // reserve and not a gold piece before; and Mottram's wares shown, gear, once it holds the cleric's
-  // Buckler over the reserve and not before.
+  // reserve and not a gold piece before; Mottram's seen and its wares not, gear, a look in, with a gold
+  // piece over the reserve and not at it; and its wares shown, gear, once it holds the cleric's Buckler
+  // over the reserve and not before.
   const q = headlessGame(4, companyAt(3, 1)), c = q.party.members[0], cleric = q.party.members.find((m) => m.cls === 'cleric')!;
   q.pilot = new Pilot({ instant: true });
   const whole = need(q);
@@ -1153,14 +1157,18 @@ function quartermaster(): void {
   const ready = need(q);
   c.xp = xpForLevel(3);
   see(q, 'harrow');
+  q.party.gold = reserve(q.party);
+  const unlooked = need(q);
+  q.party.gold++;
+  const look = need(q);
   q.interact(business(q, 'shop')); choose(q, 'Buy and sell'); choose(q, 'Buy');
   while (q.screens.length > 1) q.pop();
   q.party.gold = reserve(q.party) + item('buckler').price - 1;
   const dear = need(q);
   q.party.gold++;
   const geared = need(q);
-  ok(reserve(q.party) === 300 && whole === null && hurt === 'rest' && dead === 'temple' && hungry === 'food' && unpaid === null && ready === 'train' && dear === null && geared === 'gear' && !cleric.equipment.shield,
-    `the company of level 3 needs nothing whole and fed (${whole}), rest with one at 10% (${hurt}), the temple with one dead (${dead}), rations short of them (${hungry}), training with the price over the reserve of ${reserve(q.party)} and not a piece short (${ready}, ${unpaid}), and with Mottram's wares shown, gear with the cleric's Buckler over it and not a piece short (${geared}, ${dear})`);
+  ok(reserve(q.party) === 300 && whole === null && hurt === 'rest' && dead === 'temple' && hungry === 'food' && unpaid === null && ready === 'train' && unlooked === null && look === 'gear' && dear === null && geared === 'gear' && !cleric.equipment.shield,
+    `the company of level 3 needs nothing whole and fed (${whole}), rest with one at 10% (${hurt}), the temple with one dead (${dead}), rations short of them (${hungry}), training with the price over the reserve of ${reserve(q.party)} and not a piece short (${ready}, ${unpaid}), a look in at Mottram's, its wares unseen, with a piece over it and not at it (${look}, ${unlooked}), and with its wares shown, gear with the cleric's Buckler over it and not a piece short (${geared}, ${dear})`);
 
   // The fighter, a hand axe in his hand, at a stall stocking only the Long Sword at 120: with 420 gold
   // in the purse of a company whose highest level is 3, the reserve 300, it is the sword; with 400,
@@ -1195,7 +1203,7 @@ function quartermaster(): void {
   // it takes the room for 72 of its 180, the reserve 100, and is out on the street, whole, within 60
   // ticks. With no rations to rest on, from the street outside, the town well known to do nothing, it
   // walks in and takes the room, and the rations it then cannot pay for over the reserve it does not
-  // go back for.
+  // go back for, but buys at Mottram's, whose wares it had not seen: 10 for the 8 gold over it.
   const inn = (food: number, walk: boolean): string => {
     const i = headlessGame(4), ip = (i.pilot = new Pilot({ instant: true })), door = business(i, 'inn'), m = i.party.members[0];
     i.party.gold = 30 * i.party.members.length; i.party.food = food;
@@ -1205,19 +1213,20 @@ function quartermaster(): void {
     ip.toggle(i);
     i.world.travel('harrow', door.x, door.y + (walk ? 1 : 0), NORTH);
     if (!walk) i.enterCell();
-    let inside = i.screens.some((s) => s instanceof InteriorScreen), visits = inside ? 1 : 0, out = -1, taken = '';
+    const within = (): boolean => i.screens.some((s) => s instanceof InteriorScreen && s.at.x === door.x && s.at.y === door.y);
+    let inside = within(), visits = inside ? 1 : 0, out = -1, taken = '';
     for (let t = 0; t < 60; t++) {
       drive(i, [null]);
-      const now = i.screens.some((s) => s instanceof InteriorScreen);
+      const now = within();
       if (now && !inside) visits++;
       if (inside && !now && out < 0) { out = t; taken = `${i.world.state.x},${i.world.state.y} ${i.party.members.every((q) => q.hp === q.maxHp)} ${i.party.gold} ${i.party.food}`; }
       inside = now;
     }
-    return `${out >= 0 && out < 60} ${taken} ${visits} ${[...ip.short.keys()].join()}`;
+    return `${out >= 0 && out < 60} ${taken} ${visits} ${i.party.food} ${i.party.gold} ${[...ip.short.keys()].join()}`;
   };
   const stepped = inn(30, false), walked = inn(0, true);
-  ok(stepped === 'true 4,5 true 108 30 1 ' && walked === 'true 4,5 true 108 0 1 harrow:4,4:food',
-    `stepped into the Hearthlight with 30 gold a head and one at 10%, it takes the room and is out whole (${stepped}); walked to it with no rations, the same, and the rations it cannot pay for over the reserve it does not go back for (${walked})`);
+  ok(stepped === 'true 4,5 true 108 30 1 30 108 ' && walked === 'true 4,5 true 108 0 1 10 100 harrow:4,4:food',
+    `stepped into the Hearthlight with 30 gold a head and one at 10%, it takes the room and is out whole (${stepped}); walked to it with no rations, the same, and the rations it cannot pay for over the reserve it does not go back for but buys at Mottram's (${walked})`);
 
   // One of the company dead, the Chapel seen: the pilot walks there, says why, raises him for 100 of the
   // 200, and he stands within 400 ticks.
@@ -1236,46 +1245,51 @@ function quartermaster(): void {
     `with ${fallen.name} dead it walks to the Chapel (${bound}), raises him for ${200 - t.party.gold} gold, and he stands in ${stood} ticks`);
 
   // A temple it cannot pay: two dead at level 1 and 150 gold, it raises one for 100 and does not go
-  // back for the other; one dead at level 2 and 175 gold, it never goes in. Either way, over 600 ticks,
-  // the Chapel is not its goal at the end and the explorer has had its say.
-  const owing = (gold: number, dead: number[], level: number): string => {
-    const u = headlessGame(4), up = (u.pilot = new Pilot({ instant: true }));
+  // back for the other, and rests the one raised at 1 hp; one dead at level 2 and 175 gold, Bram at
+  // 10%, it never goes in, and rests where it stands. Either way, over 600 ticks, the Chapel is not its
+  // goal at the end, the living are whole, the clock is a night on and the explorer has had its say.
+  const owing = (gold: number, dead: number[], level: number, hurt: boolean): string => {
+    const u = headlessGame(4), up = (u.pilot = new Pilot({ instant: true })), from = u.world.state.minutes;
     see(u, 'harrow');
     u.party.gold = gold;
     for (const i of dead) Object.assign(u.party.members[i], { level, xp: xpForLevel(level), conditions: ['dead'], hp: -10 });
+    if (hurt) u.party.members[0].hp = Math.max(1, Math.round(u.party.members[0].maxHp / 10));
     up.toggle(u);
-    let inside = false, trips = 0, explored = false;
+    let inside = false, trips = 0, explored = false, resting = '';
     for (let n = 0; n < 600; n++) {
       drive(u, [null]);
       const now = u.screens.some((s) => s instanceof InteriorScreen);
       if (now && !inside) trips++;
       inside = now;
       if (up.why[0] === 'Helmstow is walked out.') explored = true;
+      if (up.why[0].startsWith('Resting')) resting = up.why[0];
     }
-    return `${trips} ${u.party.gold} ${dead.filter((i) => hasCondition(u.party.members[i], 'dead')).length} ${up.goal?.name ?? 'none'} ${explored}`;
+    const whole = u.party.members.every((m) => hasCondition(m, 'dead') || m.hp === m.maxHp), night = u.world.state.minutes - from >= 480;
+    return `${trips} ${u.party.gold} ${dead.filter((i) => hasCondition(u.party.members[i], 'dead')).length} ${up.goal?.name ?? 'none'} ${whole} ${night} ${explored} ${resting}`;
   };
-  const once = owing(150, [1, 2], 1), never = owing(175, [1], 2);
-  ok(once === '1 50 1 none true' && never === '0 175 1 none true',
-    `two dead at level 1 and 150 gold, it raises one and does not go back (${once}); one dead at level 2 and 175 gold, it never goes in (${never})`);
+  const once = owing(150, [1, 2], 1, false), never = owing(175, [1], 2, true), m1 = headlessGame(4).party.members;
+  ok(once === `1 50 1 none true true true Resting: ${m1[1].name} is under a quarter.` && never === `0 175 1 none true true true Resting: ${m1[0].name} is under a quarter.`,
+    `two dead at level 1 and 150 gold, it raises one, rests him and does not go back (${once}); one dead at level 2 and 175 gold and Bram at 10%, it never goes in and rests where it stands (${never})`);
 
-  // Mottram's wares shown and the Long Sword's 120 over the reserve: it walks to the stores, buys the
-  // paladin the sword that betters his mace, sells nothing, and takes it up through the sheet.
+  // Mottram's seen but its wares never shown, and the Long Sword's 120 over the reserve: it walks to the
+  // stores to see them, buys the paladin the sword that betters his mace, sells nothing, and takes it
+  // up through the sheet.
   const s = headlessGame(4), sp = (s.pilot = new Pilot({ instant: true })), paladin = s.party.members.find((m) => m.cls === 'paladin')!;
   see(s, 'harrow');
-  s.interact(business(s, 'shop')); choose(s, 'Buy and sell'); choose(s, 'Buy');
-  while (s.screens.length > 1) s.pop();
   s.party.gold = reserve(s.party) + item('longsword').price;
-  const was = paladin.equipment.weapon;
+  const was = paladin.equipment.weapon, wares = (): unknown => (knownOf(s).features('harrow').find((f) => f.kind === 'shop') as Record<string, unknown> | undefined)?.stock, unshown = wares();
   sp.toggle(s);
-  let sheet = false, buying = '';
+  let sheet = false, buying = '', looking = '';
   for (let n = 0; n < 200 && !(paladin.equipment.weapon === 'longsword' && s.top instanceof ExploreScreen); n++) {
     drive(s, [null]);
+    if (n === 0) looking = sp.why[0];
     if (s.top instanceof SheetScreen) sheet = true;
     if (sp.why[0].startsWith('Buying')) buying = sp.why[0];
   }
-  ok(was === 'mace' && paladin.equipment.weapon === 'longsword' && paladin.pack.includes('mace') && !s.party.bag.includes('longsword') && s.party.gold === reserve(s.party) && sheet
+  ok(unshown === undefined && looking === "To Mottram's Stores: to see its wares." && Array.isArray(wares())
+    && was === 'mace' && paladin.equipment.weapon === 'longsword' && paladin.pack.includes('mace') && !s.party.bag.includes('longsword') && s.party.gold === reserve(s.party) && sheet
     && buying === `Buying Long Sword for ${paladin.name}.` && !s.log.some((l) => l.startsWith('Sold ')) && s.top instanceof ExploreScreen,
-    `with Mottram's wares shown and 120 over the reserve, it buys ${paladin.name} the Long Sword (${buying}), sells nothing, and takes it up through the sheet, the ${was} to his pack (${JSON.stringify(paladin.equipment)})`);
+    `with Mottram's wares unseen (${unshown}) and 120 over the reserve, it walks there to see them (${looking}), buys ${paladin.name} the Long Sword (${buying}), sells nothing, and takes it up through the sheet, the ${was} to his pack (${JSON.stringify(paladin.equipment)})`);
 
   // Bram with the xp for level 2 and the Drillyard seen but never opened: it goes in to see what it
   // teaches, trains him for 25 gold, and comes out with its levels known.

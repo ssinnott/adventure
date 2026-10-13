@@ -1352,10 +1352,11 @@ const mark = await page.evaluate(async () => {
 // line and the pace, and the view leaves out its hint; P again takes the game back, and so does any
 // other key, which the screen then has. A wipe leaves its why over the title, darker than the title
 // alone, and P there starts a new game with a company at random, the why of the last gone. The
-// explorer (#718), which would walk the road, is held back throughout, and put back after.
+// explorer (#718), which would walk the road, and the quartermaster (#719), which would walk back to
+// Mottram's to see its wares, are held back throughout, and put back after.
 const hold = (back: boolean): Promise<void> => page.evaluate(async (back: boolean) => {
-  const P = await import('/src/game/pilot/pilot.ts' as string), E = await import('/src/game/pilot/explore.ts' as string);
-  if (back) P.BRAINS.push(E.explore); else P.BRAINS.splice(P.BRAINS.indexOf(E.explore), 1);
+  const P = await import('/src/game/pilot/pilot.ts' as string), E = await import('/src/game/pilot/explore.ts' as string), K = await import('/src/game/pilot/keep.ts' as string);
+  if (back) { P.BRAINS.unshift(K.keep); P.BRAINS.push(E.explore); } else for (const b of [K.keep, E.explore]) P.BRAINS.splice(P.BRAINS.indexOf(b), 1);
 }, back);
 await hold(false);
 const pilotBand = await (async () => {
