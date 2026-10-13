@@ -1896,15 +1896,46 @@ Decided by delegate for #764, each the owner's to overturn:
 6. **Vask's door is the Council's:** Wiglaf at 7,4 with the throne room, `after` the removal, two
    lines of mine. The doorway check wants a business that goes to have a twin, and the locks check
    wants its trade had (#157's form); otherwise it is a lock to sign in.
-7. **Owed: the inn at 12, the Chapel for the hold and Mottram's for Tallis.** Each is a third
-   presence on a doorway, and the doorway check (`tools/tests/maps.ts`, `doorwayFaults`) allows one
-   twin. This issue does not name that check, so it is left; #765's inn and Chapel need it too.
+7. **The inn at 12, the Chapel for the hold and Mottram's for Tallis are each the next link on its
+   doorway,** which #776's doorway chain allows (`doorwayFaults`, the block below): the dearer inn
+   `until` the removal and one at 12 `after` it; the Chapel's notice `until` the hold's verdict and the
+   Chapel back `after` it, written temple, word, temple; Mottram's dearer stores `until` Tallis's and a
+   twin `after` it. They came in a second pull request, stacked on #776, since #774 could not hold them.
 8. **The goal names the girl from Gullwick only to a company she led up;** to the rest it says *the
    cousin, the hold, Tallis or nobody*.
 9. **A piece may be one of several flags:** the treaty is one piece by either mark, and Wenna's case
    is `q_wenna_up` with one of her three. The pairs are a `When` list built from §6's table
    (`carried`, `keep.ts`). The tokens (#753), the signet (#759) and the walk home (#765) are owed in
    `UNSET`, as are the endings' flags (#759), read from `src/content/endings.ts`.
+10. **A port's prices are twice the old city's,** the Lantern Oil as before: dearer than the Regent's
+    half again, as §6's *dearer for Tallis* asks, and the oil's forty is Mottram's own word.
+
+Decided by delegate for #764 (the doorway check), each the owner's to overturn:
+
+1. **A chain, and nothing wider.** `doorwayFaults` (`tools/tests/maps.ts`) takes businesses with a room
+   each, in order on the square: the first only `until` X1, each next `after` the one before's `until`
+   and, but the last, `until` its own, none with a `when`, the last only `after`. A word or twin on
+   another condition, a gap, a `when` on a link, a link gone with nothing after it, a person before the
+   business, a second business and a doorway with no business fail as they did.
+2. **The Chapel's way is a word, then the business back.** A shut door's word (an event `after` X and
+   `until` Y, no `when`) may be followed at once by the business again `after` Y, as the next link. The
+   word must go on Y, or it would be said at an open door; a word that does not go leaves the business
+   behind it a second business, as before.
+3. **A chain may end in a word.** Any link that is gone may be followed by the shut door's word, as the
+   first always could, so the stores may shut after they go dearer. The word may stand anywhere after the
+   link, as it did; only a twin or the business back must follow at once.
+4. **Conditions compare as `same(...)` did,** to the letter: a `When` list on a word's `until` and on its
+   business's `after` is one constant (the hold's verdict with `ENDED`, in #765).
+5. **Checked against the old rule, not only on the maps:** over every list of up to four features on a
+   doorway (4.7 million; three flags, a `when`, events, people and keepers) nothing the old rule passed
+   fails, a list passes that did not only if it is a chain (a second recogniser, written from the issue,
+   agrees on every list), and every list outside a chain gets the same faults word for word. The run was
+   a scratch script; the fixtures in the maps check are what stays.
+6. **No doc line described the rule,** so none is changed: EXPANSION §8.2 is the zone-map recipe, and
+   the comment above `doorwayFaults` is where the rule is told.
+7. **This unblocks the twins owed in the Council block's 7 and in #765.** The inn at 12, the Chapel for the
+   hold and Mottram's for Tallis are each a link added to a chain; the Chapel is its word gone `until` the
+   hold's verdict and the endings, and its temple again `after` the same list. No map is touched here.
 
 Decided by delegate for #764 (the doorway check), each the owner's to overturn:
 
