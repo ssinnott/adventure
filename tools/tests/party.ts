@@ -63,6 +63,14 @@ export function party(): void {
   ten.xp = xpForLevel(14);
   ten.level = 13;
   ok(!canTrainAt(ten, saltmouth) && trainerCeiling(CURVE.sunderwood) === 17 && canTrainAt(ten, trainerCeiling(CURVE.sunderwood)), 'and Saltmouth teaches no 14th, where Lantern Watch, to 17, does');
+  // And at the cap (docs/areas/hearth_isle.md §9, call 4): a band topping at 32 gives a ceiling of 32,
+  // not its top plus one, and a member of 31 with the xp for 32 trains to it there, and no further.
+  const capped = trainerCeiling(CURVE.hearth), last = defaultParty(makeRng(7)).members[0];
+  last.xp = xpForLevel(31); levelUp(last, makeRng(7)); last.xp = xpForLevel(32);
+  const ready = last.level === 31 && canTrainAt(last, capped);
+  levelUp(last, makeRng(7), capped); last.xp = xpForLevel(33);
+  ok(CURVE.hearth.band[1] === 32 && capped === 32 && capped === MAX_LEVEL && trainerCeiling({ ...CURVE.hearth, band: [28, 31] }) === 32 && ready && last.level === 32 && !canTrainAt(last, capped),
+    `a band topping at the cap, 32, teaches to ${capped}, as one topping at 31 does: a member of 31 with the xp for 32 trains to it, and none past it`);
 
   // A kill pays each member by the monster's level against theirs (EXPANSION §5.2).
   ok([-4, -3, -2, -1, 0, 1, 2, 3, 5].map((d) => killPay(10 + d, 10)).join() === '0.1,0.1,0.4,0.7,1,1.15,1.3,1.5,1.5', `a kill pays ${[-3, -2, -1, 0, 1, 2, 3].map((d) => killPay(10 + d, 10)).join(', ')} from three under to three over`);
