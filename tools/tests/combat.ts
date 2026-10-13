@@ -1,14 +1,14 @@
 // The combat resolver: a seeded fight replays byte for byte, the cap, the rows, fleeing, the spells
 // that hit every foe, Ward and Revive; the ranks and morale (#160); elements, monsters that cast and
 // drain, and a hit that wakes a sleeper (#161); regeneration, curse and calls (#537); the light
-// that goes into a machine like a hand into a glove; and sweep (#545).
+// that goes into a machine like a hand into a glove; sweep (#545); and the Core's clock and those that obey (#748).
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { ITEMS, MONSTERS, SPELLS } from '../../src/content/index.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { World } from '../../src/game/world.ts';
 import { serialize, deserialize } from '../../src/game/save.ts';
 import { defaultParty, equip, addCondition, hasCondition, killPay, spellHeal, rankMult, resists, rest, attackBonus, armorClass, canAct, spellTierAt, isDown, lift, templePrice } from '../../src/game/party.ts';
-import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, castOnAlly, castOnParty, frontStands, monsterAc, monsterHit, canCall, WARD_AC, BLESS_HIT, BREAK_LINE, ROUT_LINE, MEND_LINE, SMOULDER_LINE, CALL_LINE, GLOVE_LINE, GLOVE_FLAG, MAX_MONSTERS, MAX_GROUPS, SWEEP_LINE, STONE_LINE } from '../../src/game/combat.ts';
+import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, castOnAlly, castOnParty, frontStands, monsterAc, monsterHit, canCall, WARD_AC, BLESS_HIT, BREAK_LINE, ROUT_LINE, MEND_LINE, SMOULDER_LINE, CALL_LINE, panelStands, DIM_LINE, THREAD_LINE, STAND_LINE, GLOVE_LINE, GLOVE_FLAG, MAX_MONSTERS, MAX_GROUPS, SWEEP_LINE, STONE_LINE } from '../../src/game/combat.ts';
 import type { CombatState, CombatGroup, PartyAction } from '../../src/game/combat.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import { elementMult, monsterSpells, monsterCanCast, KINDS } from '../../src/game/monsters.ts';
@@ -166,6 +166,7 @@ export function combat(): void {
   curse();
   stone();
   calls();
+  clock();
   glove();
   sweep();
 }
@@ -816,6 +817,73 @@ function calls(): void {
     partyAct(s, p, makeRng(108), { type: 'defend' });
     const paid = Math.round(tallyman.xp * killPay(tallyman.level, 1) + 3 * knocker.xp * killPay(knocker.level, 1));
     ok(s.outcome === 'victory' && s.loot?.xp === paid, `the knockers it called pay when they fall, as the rest do (${s.loot?.xp} xp, ${paid} asked)`);
+  }
+}
+
+/**
+ * The Core's clock (MONSTERS §9.3, #748): its leader calls on the beat while its panel stands and not
+ * after, never on its own chance, into one group past the cap of three and up to twelve; the light
+ * dims a step a round to a thread and ends nothing; and those that obey stand down at the lord's fall.
+ */
+function clock(): void {
+  const meek = { attack: -40, dice: 1, sides: 1, bonus: 0, gold: [0, 0] as [number, number] };
+  const sentry: MonsterDef = { ...MONSTERS.bandit, ...meek, id: 'test_sentry', name: 'Sentry', plural: 'Sentries', kind: 'machine', hp: 500, xp: 40, obeys: true };
+  const hand: MonsterDef = { ...MONSTERS.bandit, ...meek, id: 'test_hand', name: 'Hand', plural: 'Hands', hp: 500, steady: true };
+  const lord: MonsterDef = { ...MONSTERS.bandit, ...meek, id: 'test_lord', name: 'Lord', plural: 'Lords', hp: 500, steady: true, calls: { monsters: [sentry], chance: 0 } };
+  const heart = (more: Partial<CombatGroup> = {}): CombatGroup => ({ id: 'heart', monsters: [lord, hand, hand], leader: lord.id, clock: { calls: sentry, every: 2, dims: 8, panel: [hand.id] }, ...more });
+  /** Rounds played, the company bracing: the rounds that ended in a call. */
+  const rounds = (s: CombatState, p: Party, n: number, seed: number): number[] => {
+    const at: number[] = [];
+    for (let k = 0; k < n && s.outcome === 'ongoing'; k++) { const was = s.monsters.length; throughRound(s, p, seed + k); if (s.monsters.length > was) at.push(s.round - 1); }
+    return at;
+  };
+  {
+    const p = defaultParty(makeRng(120)), s = startCombat(p, [heart()], makeRng(120));
+    ok(markOf(s, aliveMonsters(s)) === 1, 'the bots aim at the panel first');
+    const at = rounds(s, p, 6, 120), come = s.monsters.slice(3);
+    ok(at.join() === '2,4,6' && come.every((m) => m.def === sentry && m.band === 1 && m.group === come[0].group && !m.back) && s.groupIds.length === 2 && s.log.filter((l) => l === CALL_LINE('Lord', 'Sentry', true)).length === 3,
+      `a lord whose own call has no chance calls a sentry every second round while his Hands stand, into one group (rounds ${at.join(', ')})`);
+    ANSWER.clock = 'called';
+    const called = markOf(s, aliveMonsters(s));
+    ANSWER.clock = 'leader';
+    const led = markOf(s, aliveMonsters(s));
+    ANSWER.clock = 'panel';
+    ok(called === 3 && led === 0, 'a tool may turn the bots to the sentries as they come, or to the lord');
+    for (const m of s.monsters) if (m.def === hand) m.hp = 0;
+    const dim = s.clock!.dim, after = rounds(s, p, 4, 126);
+    ok(dim === 6 && !after.length && s.clock!.dim === dim && !panelStands(s), `with the Hands down the calling stops and the light holds at ${dim} steps`);
+  }
+  {
+    const eager: MonsterDef = { ...lord, calls: { monsters: [sentry, sentry], chance: 1 } };
+    const p = defaultParty(makeRng(130)), s = startCombat(p, [heart({ monsters: [eager, hand, hand] })], makeRng(130));
+    ok(!rounds(s, p, 1, 130).length && s.monsters.length === 3, 'one whose own call is sure never calls on its own chance under the clock');
+  }
+  {
+    const p = defaultParty(makeRng(131)), s = startCombat(p, [heart(), { id: 'b', monsters: [hand] }, { id: 'c', monsters: [hand] }], makeRng(131));
+    rounds(s, p, 4, 131);
+    ok(s.groupIds.length === MAX_GROUPS + 1 && s.monsters.slice(5).length === 2 && s.monsters.slice(5).every((m) => m.band === MAX_GROUPS), `a fight of three groups still grows by the clock, its calls in one fourth group (${s.groupIds.length} groups)`);
+  }
+  {
+    const p = defaultParty(makeRng(132)), s = startCombat(p, [heart({ clock: { calls: sentry, every: 1, dims: 8, panel: [hand.id] } })], makeRng(132));
+    const at = rounds(s, p, 11, 132);
+    ok(s.monsters.length === MAX_MONSTERS && at.length === MAX_MONSTERS - 3, `a call every round stops at ${MAX_MONSTERS} monsters (${at.length} calls)`);
+    s.monsters[5].hp = 0;
+    ok(!rounds(s, p, 2, 143).length && s.monsters.length === MAX_MONSTERS, 'and a sentry down makes no room: the fallen count');
+  }
+  {
+    const p = defaultParty(makeRng(134)), s = startCombat(p, [heart()], makeRng(134)), steps: number[] = [];
+    for (let k = 0; k < 14 && s.outcome === 'ongoing'; k++) { throughRound(s, p, 134 + k); steps.push(s.clock!.dim); }
+    ok(steps.join() === '1,2,3,4,5,6,7,8,8,8,8,8,8,8' && s.outcome === 'ongoing', `the light dims a step a round to eight and holds there, and ends nothing (${steps.join(', ')}; ${s.outcome})`);
+    ok(s.log.filter((l) => l === DIM_LINE).length === 2 && s.log.filter((l) => l === THREAD_LINE).length === 1 && s.log.indexOf(THREAD_LINE) > s.log.lastIndexOf(DIM_LINE), 'and the log says it at the third step and the sixth, and holds at a thread at the last');
+  }
+  {
+    const engine: MonsterDef = { ...sentry, id: 'test_engine', name: 'Engine', plural: 'Engines', obeys: undefined };
+    const p = defaultParty(makeRng(136)), s = startCombat(p, [heart({ monsters: [lord, hand, sentry, sentry, engine], clock: undefined })], makeRng(136));
+    s.monsters[0].hp = 0;
+    throughRound(s, p, 136);
+    const fled = s.monsters.filter((m) => m.fled);
+    ok(fled.length === 2 && fled.every((m) => m.def === sentry) && s.log.includes(STAND_LINE('2 Sentries', false)), `at the lord's fall the sentries that obey stand down (${s.log.find((l) => l.endsWith('down.'))})`);
+    ok(KINDS.machine.breaks === 'never' && !s.monsters[4].fled && !s.monsters[1].fled && s.outcome === 'ongoing', 'and a machine that does not obey stands, as do his steady Hands');
   }
 }
 

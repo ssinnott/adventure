@@ -107,6 +107,11 @@ export interface MonsterDef {
   sweep?: { chance: number; element?: Element };
   /** Never breaks, whatever its kind: the Hand (docs/MONSTERS.md §2). */
   steady?: boolean;
+  /**
+   * Stands down and leaves the fight once every leader in it is down, though its kind never breaks
+   * (combat.ts `morale`, #748): the Core Sentries, which take their orders from the ring.
+   */
+  obeys?: boolean;
   /** Tint of the sprite. */
   tint: string;
   /** Sprite height relative to a wall (1 = a full cell). */

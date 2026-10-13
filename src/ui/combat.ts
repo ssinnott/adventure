@@ -187,6 +187,14 @@ export class CombatScreen implements Screen {
     // weather falls in front of the monsters, below.
     drawViewport(ctx, g.world, v, () => null, frame, false);
     ctx.fillStyle = 'rgba(10,8,12,0.28)'; ctx.fillRect(v.x, v.y, v.w, v.h);
+    // Under the Core's clock (`Clock`) the light through the roof goes out a step a round, the dark
+    // closing on a shaft of it that narrows to a thread at the last step, and holds.
+    const clock = s.clock;
+    if (clock?.dim) {
+      const k = clock.dim / clock.dims, w = Math.max(2, Math.round(v.w * 0.3 * (1 - k)));
+      ctx.fillStyle = `rgba(4,3,8,${(0.62 * k).toFixed(3)})`; ctx.fillRect(v.x, v.y, v.w, v.h);
+      ctx.fillStyle = `rgba(232,228,216,${(0.06 + 0.12 * k).toFixed(3)})`; ctx.fillRect(v.x + Math.round((v.w - w) / 2), v.y, w, v.h);
+    }
     // Monsters in a row, grouped, with a marker on the targeted one. A back rank has a row of its own,
     // behind the front and smaller, each of it between two of the front (ui/row.ts).
     const alive = aliveMonsters(s);

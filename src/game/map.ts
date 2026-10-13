@@ -10,6 +10,7 @@ import type { When } from './quests.ts';
 import type { Interior } from '../content/index.ts';
 import type { GuildId } from '../content/guilds.ts';
 import type { SkillId } from './skills.ts';
+import type { Clock } from './combat.ts';
 
 export type MapKind = 'town' | 'dungeon' | 'outdoor';
 
@@ -344,6 +345,12 @@ export interface EncounterDef extends Presence {
    * standing on the ice beside it and in the fight reaches only the front row over it.
    */
   under?: 'ice';
+  /**
+   * The Core's clock (combat.ts `Clock`, docs/MONSTERS.md §9.3, #748): while a monster the `panel`
+   * names stands, the group's `leader` calls one of `calls` every `every` rounds, past the cap of three
+   * groups and up to twelve monsters, and the light dims a step a round to `dims`, where it holds.
+   */
+  clock?: Clock & { calls: string };
 }
 
 /**
