@@ -380,11 +380,14 @@ function presence(): void {
   shut();
 }
 
-/** A business that shuts, and its twin after; and a gate shut to a company with a member of a race (#157). */
+/**
+ * A business that shuts, and its twin after; a gate shut to a company with a member of a race (#157)
+ * until its shut lifts (#749); and a door that is an exit only once the company has answered at it.
+ */
 function shut(): void {
   const def: MapDef = {
     id: 'fx_gate', name: 'Fixture', kind: 'town', start: { x: 1, y: 1, facing: NORTH }, rows: ['#####', '#,,,#', '#####'],
-    exits: [{ x: 3, y: 1, to: 'fx_gate', tx: 1, ty: 1, shut: { flag: 'fx_shut', member: { race: 'orcblood' } }, blockedText: 'No orcblood past the gate.' }],
+    exits: [{ x: 3, y: 1, to: 'fx_gate', tx: 1, ty: 1, shut: { flag: 'fx_shut', member: { race: 'orcblood' } }, lifts: [{ flag: 'fx_ended' }, { flag: 'fx_removed' }], blockedText: 'No orcblood past the gate.' }],
     features: [
       { kind: 'temple', x: 1, y: 1, name: 'The Chapel', interior: 'lantern_chapel', until: { flag: 'fx_shut' } },
       { kind: 'inn', x: 2, y: 1, name: 'The Inn', price: 12, interior: 'hearthlight_inn', until: { flag: 'fx_shut' } },
@@ -404,4 +407,19 @@ function shut(): void {
   ok(orc && before === 'The Chapel,The Inn,moved', `before the flag the business is open and the gate lets a company with an orcblood member through (${before})`);
   ok(after === ',The Inn, dearer,No orcblood past the gate.', `after it the shut business is gone, its twin stands on its square and the gate is shut to that company (${after})`);
   ok(without === 'moved', `the same gate lets a company with no orcblood member through (${without})`);
+  party.flags.fx_removed = 1;
+  const lifted = east();
+  delete party.flags.fx_removed;
+  const again = east();
+  ok(lifted === 'moved' && again === 'No orcblood past the gate.', `the shut is over while its lifts holds, and the gate shuts again once it stops (${lifted}, ${again})`);
+  const door: MapDef = {
+    id: 'fx_door', name: 'Fixture', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#...#', '#####'],
+    exits: [{ x: 3, y: 1, to: 'fx_gate', tx: 1, ty: 1, after: [{ flag: 'fx_open' }, { flag: 'fx_closed' }] }],
+  };
+  const deep = new World({ fx_door: new GameMap(door), fx_gate: new GameMap(def) }, party, rng);
+  const step = (): string => { deep.travel('fx_door', 2, 1, EAST); deep.move('forward'); return `${deep.state.mapId} ${deep.state.x},${deep.state.y} ${deep.there(door.exits![0]) ? 'there' : 'not'}`; };
+  const shy = step();
+  party.flags.fx_closed = 1;
+  const through = step();
+  ok(shy === 'fx_door 3,1 not' && through === 'fx_gate 1,1 there', `an exit whose after does not hold is no exit, its square a square, and once it holds it takes the party through (${shy}; ${through})`);
 }

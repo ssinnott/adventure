@@ -18,7 +18,7 @@ and checked again at `8cdf1e0a` (13 October 2026) in review (§9.1), with `tools
 cuts the atlas's terrain for a box (EXPANSION §8.2): land is what is not sea or shallow, and
 "walkable" what is not rock.
 
-Nothing is built. What exists: the atlas's rows (`src/content/atlas.ts`: the area `hearth` at
+Nothing is built but the pilgrims' camp's three rooms (§3). What exists: the atlas's rows (`src/content/atlas.ts`: the area `hearth` at
 28–32, the zone `hearthisle`, the places `underdeep` at 30–31 and `core` at 32, both planned, the
 sites The Hearth at 256,174 and Anchorhold at 268,176, the last crossing's sea link from Cinderport
 landing at 252,188 and the deep links on from the isle); the last crossing itself, sold at
@@ -29,7 +29,7 @@ third prestige at Anchorhold, placed on the map and nowhere else (#19); and #56'
 Act V's side quests, drafted. Its content will be `src/content/areas/hearth/` (maps, monsters,
 items, climate, its part of the world map, its chapter, The Heart, in `chapter.ts`, its side quests
 and the Cleric's third in `quests.ts`, its walkthrough) and its businesses' rooms
-`src/ui/interiors/hearth/`. Its ids, the plan's: the area `hearth`, its zone `hearthisle`, the boxes
+`src/ui/interiors/hearth/`, drawn ahead of it (#762). Its ids, the plan's: the area `hearth`, its zone `hearthisle`, the boxes
 `hearthisle_h6` and `hearthisle_i6`, the temple `hearthfane` and its crypt `hearthfane2`, the
 Underdeep's two levels `underdeep` and `underdeep2` and the Core `core`.
 
@@ -123,7 +123,12 @@ never snow, thunder far off over the mainland.
 
 ## 3. What is built
 
-Nothing. The atlas's rows and sites, the last crossing's Cinderport end and MONSTERS §9's roster
+The pilgrims' camp's three rooms, drawn ahead of the area (#762): `bowl_store` (the Pilgrims'
+Store), `bowl_yard` (the Sergeant's Tent) and `bowl_lantern` (the Lantern's Tent), a scene to each
+in `src/ui/interiors/hearth/`, listed in `ROOMS_AHEAD` (`src/content/index.ts`, from
+`src/content/areas/hearth/interiors.ts`) and owed to H6 (#753) in `UNPLACED` (`tools/tests/maps.ts`)
+until its three businesses open into them; H6's Area then takes the list as `interiors`, and both
+lines go. Nothing else. The atlas's rows and sites, the last crossing's Cinderport end and MONSTERS §9's roster
 exist (above). The drafts the scaffold cuts are in §1. This doc is the plan; §4 has the briefs,
 each with every line its place says, so that the box or level can be built from it by a session
 that has read DESIGN, STORY and EXPANSION and nothing else. The owner's calls are §9's.
@@ -1532,7 +1537,8 @@ Proposed, for the owner, each in the issue that would build it:
   scaffold reads them.
 - **The isle's climate** (§2): `{ summer: 22, winter: 14, daily: 4, damp: [0.05, 0.09], wettest: 60, fog: 0.1, lag: 14, fogText: 'A haze comes in off the Sound, and the light stands in it like a lamp in a sack.', thunderText: 'Thunder, far off over the mainland. The light does not waver.' }`.
 - **The rooms** (the interiors lane): `bowl_store`, `bowl_yard` and `bowl_lantern`, three tents,
-  as Akordu's trader's is a tent (`src/ui/interiors/glasswold/akordu_trader.ts`).
+  as Akordu's trader's is a tent (`src/ui/interiors/glasswold/akordu_trader.ts`). Drawn (#762, §3,
+  §9.2).
 - **The sheet**: `node tools/sheet.ts sheet.png --area hearth`, on every pull request that adds a
   map, a monster or a room, sent to the owner in the Claude app (CLAUDE.md).
 
@@ -1661,6 +1667,50 @@ Decided by delegate for #745, each the owner's to overturn:
    widening on the atlas with a stand-in box laid at 28–29.
 5. **`OVER_ROAD` is typed by the curve's keys,** so a planned row type-checks against it; the Hearth
    has no entry, its lead over the cap never being positive.
+
+Decided by delegate for #747, each the owner's to overturn:
+
+1. **The leave rule is `leaves: true` on a group, beside its `until`** (`EncounterDef`): the smallest
+   change, with `until` and `ended` untouched, so every group without it keeps today's rule (the
+   Kilns' strays). Not on `Presence`, since a person or an event goes by `until` alone, nor a form of
+   `until`, which the quest log reads.
+2. **One check, in `World.liveGroups`**, which every reader of a standing group goes through. The
+   group's record is left as it stood, so leaving is no kill (no `slainText`, none of its `sets`, no
+   `slain`) and nothing new is saved.
+3. **`gone` in `tools/walk.ts` plays a group leaving, and `fight` there fails on one that has left**,
+   so no walkthrough wins a fight with a group that is gone and sets its flags. The cases are
+   fixtures in Helmstow; no real group leaves until the boxes place one.
+4. **Read from the flags, as a person's going is:** a group whose `until` stopped holding would be
+   back where it stood. Each `until` the plan gives is a flag that stays set.
+
+Decided by delegate for #749, each the owner's to overturn:
+
+1. **An `after` at a seam is a gate.** There the exit's square is the way across, so its gate
+   refuses the party until `after` holds; anywhere else an exit not there leaves a plain square.
+2. **The overlay draws no padlock for either field.** `zoneEdges` gates only on `needFlag`: a `shut`,
+   and so its `lifts`, turns back some companies and not the way, and an `after` is no lock.
+3. **An exit not there yet is not drawn, followed or counted:** not on the automap, not by `homeMap`
+   (the Ways open onto the isle, not the Kilns), not as pillars' way beside a shut exit.
+4. **The maps check counts a person, a group and an event** (`groupFlags`, an event's `sets`); an
+   inn's nights and a guild's quests stay out, as the issue named only the two.
+5. **The weather exception names the door, both maps and both regions;** `hearth` is no region yet
+   (the area's first box adds it), so the fixtures name it as a word.
+
+Decided by delegate for #762, each the owner's to overturn:
+
+1. **Three shapes of tent.** The store is a ridge tent of undyed canvas pitched to the ground, the
+   sergeant's a wall tent of the Wardens' grey, the Lantern's a round pavilion of white linen on one
+   pole: shape and cloth tell them apart, and none is Akordu's felt on a lattice.
+2. **The column stands in the store's door only,** and lights it by night: the isle's one sight,
+   shown once; the other two keep to their trades.
+3. **The nine goods are seen on the store's trestle:** the six cures in flasks, bread and cheese
+   for the rations, a bundle of torches and the oil in stoppered jars, the meal in sacks beside.
+4. **The sergeant drills where he can:** his back wall rolled up on the grass, a pell of sacking
+   on a spare tent pole; his grey cloak with the old badge, his helm and sword are his only word.
+5. **The dead and the sick are things seen:** a shrouded form on a bier with the Lanterns' ring on
+   its breast and a candle at its head, and an empty pallet with its blanket turned back.
+6. **Ahead through `ROOMS_AHEAD`,** as Cinderport's went, and owed to #753 in `UNPLACED`: the check
+   that every business has a room fails on a room no business opens into, so H6 drops both.
 
 Decided by delegate for #751, each the owner's to overturn:
 

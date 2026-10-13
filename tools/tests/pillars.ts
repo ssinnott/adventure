@@ -425,6 +425,14 @@ const isService = (o: Record<string, unknown>): boolean => typeof o.interior ===
  * when it leads into another's map. A shut exit is no lock while another way from its map into the
  * same map stays open, and a shut business none while a twin takes its square or the same trade is sold
  * elsewhere; each is found with that way.
+ *
+ * An exit's `after` is not found, and that is a stance (#749): it is read as an appearance, as a
+ * presence is, and closes nothing. The door marked CREW ONLY is there once the company has answered
+ * at it, either way: it waits on nothing from anywhere else, only on that answer where it stands, and
+ * the Kilns are reached by their own road whichever way it goes, so it is no lock between the Hearth
+ * and the Kilns (docs/areas/hearth_isle.md §6, 60; §9.1, 44). The act's one lock stays the Core's
+ * door. An exit not there yet is no way beside a shut one either. A `lifts` only ends a shut, so the
+ * shut is found as before.
  */
 export function findLocks(areas: readonly Pick<Area, 'id' | 'maps'>[]): FoundLock[] {
   const areaOf = new Map(areas.flatMap((a) => a.maps.map((d) => [d.id, a.id] as const)));
@@ -436,7 +444,7 @@ export function findLocks(areas: readonly Pick<Area, 'id' | 'maps'>[]): FoundLoc
   });
   // The way into `to` that stays open beside a shut exit, from the map the company is turned back on.
   const openWay = (def: MapDef, to: string, not: object): string | undefined => {
-    const e = (def.exits ?? []).find((x) => x !== not && x.to === to && x.needFlag === undefined && x.shut === undefined);
+    const e = (def.exits ?? []).find((x) => x !== not && x.to === to && x.needFlag === undefined && x.shut === undefined && x.after === undefined);
     return e ? `${def.id} ${e.x},${e.y}` : undefined;
   };
   // Where a shut business's trade is still had: its twin on its square, or the same kind elsewhere.
@@ -810,6 +818,9 @@ export async function pillars(): Promise<void> {
     ok(lockFaults([], [0, 1, 2, 3, 4].map((i) => lock({ map: `m${i}` })), () => undefined).some((f) => f.text.startsWith('the road')), `more than ${MOST_ON_THE_ROAD} on the road fails`);
     const across = room([{ x: 3, y: 1, to: second.maps[0].id, tx: 1, ty: 1, needFlag: 'q_seal' }]);
     ok(lockFaults(within(across), [lock()], of).some((f) => f.text.includes('between')), 'a lock between areas fails, even signed in');
+    // An exit there `after` the company's answer is an appearance, no lock, between areas too (#749).
+    const answered = room([{ x: 3, y: 1, to: second.maps[0].id, tx: 1, ty: 1, after: [{ flag: 'q_open' }, { flag: 'q_shut' }] }]);
+    ok(!within(answered).length && !lockFaults(within(answered), [], of).length, 'an exit that is there after a flag is found as no lock, though it leads into another area');
     const door = room([], [{ kind: 'npc', x: 2, y: 1, name: 'Fixture', lines: ['Hm.'], quest: { item: 'rations', needFlag: 'q_hired', reward: 1, done: ['Ta.'], setFlag: 'q_fx', after: ['Ta.'] } }] as unknown as MapDef['features']);
     ok(within(door)[0]?.kind === 'hand-in' && lockFaults(within(door), [], of).length === 1, 'a hand-in that withholds its item on a flag fails');
     const listed = room([], [{ kind: 'npc', x: 2, y: 1, name: 'Fixture', lines: ['Hm.'], quest: [{ item: 'rations', reward: 1, done: ['Ta.'], setFlag: 'q_fx' }, { item: 'rations', needFlag: 'q_hired', reward: 1, done: ['Ta.'], setFlag: 'q_fx2' }] }] as unknown as MapDef['features']);
@@ -831,6 +842,8 @@ export async function pillars(): Promise<void> {
     const only = room([{ x: 3, y: 1, to, tx: 1, ty: 1, shut: { flag: 'q_seal' } }]);
     ok(lockFaults(within(only).filter((f) => f.key.endsWith('shut')), [], of).length === 1, 'and fails with no other way from its map into the map it leads to');
     ok(!!within(turned)[0]?.way && !lockFaults(within(turned), [], of).length, 'and passes while another way from its map into that one stays open');
+    const later = room([{ x: 3, y: 1, to, tx: 1, ty: 1, shut: { flag: 'q_seal' }, lifts: { flag: 'q_free' } }, { x: 1, y: 1, to, tx: 1, ty: 1, after: { flag: 'q_open' } }]);
+    ok(lockFaults(within(later).filter((f) => f.key.endsWith('shut')), [], of).length === 1, 'a shut that lifts is still found, and an exit not there yet is no way beside it');
     const shutUp = room([], [{ kind: 'temple', x: 2, y: 1, name: 'Fixture', interior: first.interiors[0], until: { flag: 'q_seal' } }] as unknown as MapDef['features']);
     const lonely = findLocks([{ id: first.id, maps: [shutUp] }]).filter((f) => f.kind === 'service');
     ok(lonely.length === 1 && lockFaults(lonely, [], of).length === 1, 'a business gone on a flag is found as a service shut, and fails with its trade had nowhere else');
