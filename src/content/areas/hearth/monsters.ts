@@ -25,8 +25,8 @@ export const MONSTERS: readonly MonsterDef[] = [
   { id: 'hand_rearguard', name: 'Ashen Rearguard', plural: 'Ashen Rearguards', sprite: 'hand_rearguard', kind: 'person', look: 'The last of the Hand still standing, and standing in the way.', steady: true, level: 30, hp: 529, ac: 28, attack: 17, dice: 6, sides: 8, bonus: 6, speed: 8, xp: 1591, gold: [0, 0], tint: '#3a3436', size: 1.05 },
   // the Heart, at the panel (#759), an elite on the line at 31: their grip
   { id: 'grey_hand', name: 'Grey Hand', plural: 'Grey Hands', sprite: 'grey_hand', kind: 'person', look: 'Hands the colour of ash, to the shoulder.', steady: true, level: 31, hp: 737, ac: 27, attack: 18, dice: 6, sides: 8, bonus: 9, speed: 15, xp: 2467, gold: [0, 0], inflict: { cond: 'paralysed', chance: 0.15 }, tint: '#262226', size: 1.05 },
-  // called by the ring (#759), a soldier on the line at 31: the heavy machines' frame, the core's own
-  { id: 'core_sentry', name: 'Core Sentry', plural: 'Core Sentries', sprite: 'core_sentry', kind: 'machine', look: 'The core\'s own, and it takes orders from the ring.', level: 31, hp: 436, ac: 27, attack: 17, dice: 5, sides: 8, bonus: 4, speed: 11, xp: 1233, gold: [0, 0], tint: '#c3c7cc', size: 1.45 },
+  // called by the ring (#759), a soldier on the line at 31: the heavy machines' frame, the core's own; it stands down when Vask falls
+  { id: 'core_sentry', name: 'Core Sentry', plural: 'Core Sentries', sprite: 'core_sentry', kind: 'machine', look: 'The core\'s own, and it takes orders from the ring.', level: 31, hp: 436, ac: 27, attack: 17, dice: 5, sides: 8, bonus: 4, speed: 11, xp: 1233, gold: [0, 0], obeys: true, tint: '#c3c7cc', size: 1.45 },
   // the Heart (#759), the boss on the line at 32: he calls the core's sentries with the Queen's ring, and never breaks
   { id: 'vask', name: 'Lord Vask', plural: 'Lord Vasks', sprite: 'vask', kind: 'person', look: 'A tall man with a quiet voice, and the Queen\'s ring on his finger.', steady: true, level: 32, hp: 1922, ac: 29, attack: 20, dice: 32, sides: 8, bonus: 33, speed: 13, xp: 20373, gold: [0, 0], calls: { monsters: ['core_sentry'], chance: 1 }, tint: '#6c7078', size: 1.6 },
 ];
