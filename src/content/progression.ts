@@ -9,10 +9,10 @@
 // (2,759 a sweep once the Warden of the Cut is dead and the Rift's groups stop).
 // Training six members from 5 to 10 costs 8,400 gold. Since #159 a kill pays by level: a clear of
 // Act I in road order is worth 15,292 a member, level 10, where the rows' ×1 sum gives 19,957. Act
-// II's areas had rows before their maps (#159), Act III's had them too (#535) and Act IV's have them
-// now (#542), owed to the issues that build them.
+// II's areas had rows before their maps (#159), Act III's had them too (#535), Act IV's too (#542) and
+// Act V's one has it now (#745), owed to the issues that build them.
 import type { RegionId } from './index.ts';
-import { xpForLevel, trainPrice } from '../game/party.ts';
+import { xpForLevel, trainPrice, MAX_LEVEL } from '../game/party.ts';
 
 /** What the curve says of an area. */
 export interface AreaCurve {
@@ -40,7 +40,7 @@ export const MEMBERS = 6;
  * The areas next on the road that have a row before they have a map, in road order. An area leaves
  * this list when its first map lists it in AREAS; the curve check fails while it is in both.
  */
-export const PLANNED = [] as const;
+export const PLANNED = ['hearth'] as const;
 
 /** Every area's row, and every planned area's: an area without one is a type error. */
 export const CURVE: Record<RegionId | (typeof PLANNED)[number], AreaCurve> = {
@@ -85,10 +85,20 @@ export const CURVE: Record<RegionId | (typeof PLANNED)[number], AreaCurve> = {
   glasswold: {
     band: [26, 28], next: 28, price: 6000,
   },
+  // Act V (#745), the road's last row, to the cap: no area comes after it, so its next floor is the
+  // cap, and its band is the atlas's with the Underdeep's and the Core's places inside it. Its gear is
+  // found, never sold, the dearest 7,000 (docs/areas/hearth_isle.md §8).
+  hearth: {
+    band: [28, 32], next: 32, price: 7000,
+    owed: { whose: '#744', why: 'Hearth Isle is not built yet', xp: 0, gold: 0 },
+  },
 };
 
-/** What a town's trainers teach to: its area's band's top plus one (EXPANSION §5.2). */
-export const trainerCeiling = (c: AreaCurve): number => c.band[1] + 1;
+/**
+ * What a town's trainers teach to: its area's band's top plus one (EXPANSION §5.2), and never past the
+ * cap, so the road's last row, topping at 32, teaches to 32 (docs/areas/hearth_isle.md §9, call 4).
+ */
+export const trainerCeiling = (c: AreaCurve): number => Math.min(c.band[1] + 1, MAX_LEVEL);
 
 /** The xp a member should have from a clear: the climb from the floor to the next floor, over 0.75. */
 export function xpBudget(c: AreaCurve): number {
