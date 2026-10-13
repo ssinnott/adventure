@@ -26,6 +26,7 @@ import { AREA as whitespine } from './areas/whitespine/index.ts';
 import { AREA as ashfall } from './areas/ashfall/index.ts';
 import { AREA as glasswold } from './areas/glasswold/index.ts';
 import * as hearth from './areas/hearth/monsters.ts';
+import * as hearthRooms from './areas/hearth/interiors.ts';
 import { ITEMS as CORE_ITEMS } from './items.ts';
 import { SPELLS as ALL_SPELLS } from './spells.ts';
 import { PLAN } from './atlas.ts';
@@ -48,7 +49,9 @@ export const AHEAD = [
  * area's is (src/ui/interior.ts paints every one); once the area is listed, its Area takes the
  * list as `interiors` and its line here goes.
  */
-export const ROOMS_AHEAD = [] as const;
+export const ROOMS_AHEAD = [
+  { id: 'hearth' as const, interiors: hearthRooms.INTERIORS },
+] as const;
 
 /**
  * Items made ahead of their area, as AHEAD's monsters are: the gear ladder's steps are priced, and

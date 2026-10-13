@@ -8,7 +8,8 @@ import { defaultParty } from '../../src/game/party.ts';
 import { dateAt, daylightAt, DAYS_PER_YEAR, EPOCH_DAY, MIDSUMMER } from '../../src/game/calendar.ts';
 import type { Season } from '../../src/game/calendar.ts';
 import { weatherAt, findWeather, classify, skyNews, fairStart, weatherSight, rangedPenalty, snowDrag, RANGED_PENALTY, SNOW_DRAG, isRainy, isSnowy } from '../../src/game/weather.ts';
-import type { Climate, Sky, Weather } from '../../src/game/weather.ts';
+import type { MapDef } from '../../src/game/map.ts';
+import type { Climate, RegionId, Sky, Weather } from '../../src/game/weather.ts';
 import { START_MINUTES } from '../../src/game/world.ts';
 import { GameMap, HILL_DRAG, DRAG } from '../../src/game/map.ts';
 import type { Terrain } from '../../src/game/map.ts';
@@ -127,8 +128,38 @@ export function weather(): void {
   world.state.minutes = (MIDSUMMER + DAYS_PER_YEAR / 2 - EPOCH_DAY) * 1440 + 22 * 60; world.sleepUntilMorning();
   ok(world.hour === 8 && world.daylight >= 0.5, `at midwinter it waits for the light (${world.hour}:${String(world.minute).padStart(2, '0')})`);
   // Towns and dungeons share their region's weather; only the open road crosses from one to the next.
-  for (const def of MAP_DEFS) for (const e of def.exits ?? []) {
-    const to = MAP_DEFS.find((d) => d.id === e.to)!;
-    if (def.kind !== 'outdoor' || to.kind !== 'outdoor') ok((def.region ?? 'shelf') === (to.region ?? 'shelf'), `${def.id} and ${to.id} share a region`);
+  const crossed = crossings(MAP_DEFS);
+  ok(!crossed.length, `every town and dungeon shares a region with the maps its exits lead to, but the one written exception${crossed.length ? ' -> ' + crossed.join('; ') : ''}`);
+  { // The exception on fixtures (#749): the door marked CREW ONLY passes, and no other way. The
+    // Hearth's region is the area's own to add, so the fixtures name it as a word.
+    const fx = (id: string, region: string, exits: MapDef['exits'] = []): MapDef => ({ id, name: 'Fixture', kind: 'dungeon', region: region as RegionId, start: { x: 1, y: 1, facing: SOUTH }, rows: ['#####', '#...#', '#####'], exits });
+    const mines = fx('deep_mines3', 'kilns');
+    const ways = (x: number, to = 'deep_mines3', region = 'hearth'): MapDef[] => [fx('underdeep', region, [{ x, y: 10, to, tx: 13, ty: 3 }]), mines, fx('deep_mines2', 'kilns')];
+    ok(!crossings(ways(2)).length, 'the door marked CREW ONLY, from the Ways under the Hearth into the Kilns\' deep mines, crosses by its written exception');
+    ok(crossings(ways(3)).length === 1 && crossings(ways(2, 'deep_mines2')).length === 1 && crossings(ways(2, 'deep_mines3', 'shelf')).length === 1, 'and an exit from another square, to another map or between other regions does not');
   }
+}
+
+/**
+ * The one way from a dungeon into another region (#749): the door marked CREW ONLY, from the Ways
+ * under the Hearth (`underdeep` 2,10) into the lowest level of the Kilns' deep mines (docs/areas/
+ * hearth_isle.md §6, 60). The Ways lie under the Hearth and the mines under the Kilns, and the door
+ * is where they meet; each side keeps its own region's weather. No other exit from a town or a
+ * dungeon may cross.
+ */
+const ONE_CROSSING = { from: 'underdeep', x: 2, y: 10, to: 'deep_mines3', regions: 'hearth kilns' };
+
+/** Every exit from or into a town or a dungeon that leaves its region, but the written exception. */
+export function crossings(defs: readonly MapDef[]): string[] {
+  const out: string[] = [];
+  for (const def of defs) for (const e of def.exits ?? []) {
+    const to = defs.find((d) => d.id === e.to);
+    if (!to) { out.push(`${def.id} ${e.x},${e.y} -> ${e.to}, no map`); continue; }
+    if (def.kind === 'outdoor' && to.kind === 'outdoor') continue;
+    const a = def.region ?? 'shelf', b = to.region ?? 'shelf';
+    const o = ONE_CROSSING;
+    if (a === b || (def.id === o.from && e.x === o.x && e.y === o.y && e.to === o.to && `${a} ${b}` === o.regions)) continue;
+    out.push(`${def.id} ${e.x},${e.y} (${a}) -> ${to.id} (${b})`);
+  }
+  return out;
 }
