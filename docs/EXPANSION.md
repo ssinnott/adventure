@@ -636,17 +636,17 @@ Hearth and the sentries after. Then the Whitespine (#445), Ashfall (#446) and th
 their calls (#443) and names (#444); Meridian Camp and the Dead-Drop (#22) and the eight third
 prestiges whose trainers live in the act's country (#448). 1.4 ends M2.
 
-**1.5, Act V and the subplots** (M3; docs/areas/hearth_isle.md, #739). First its systems, eight
-issues: the curve's last row, ending at the cap, and the trainers' ceiling with it; the gear's last
-rung at 28, found and never sold; a group that is gone once a flag holds, standing or not; the
-Core's clock and `obeys`; `Exit.lifts` and `Exit.after`; the endings, their screen and the Hearth's
-three states on the title, in the night sky and in the almanac; a save upgrade for the Peak Stone;
-the gate bot and the harness run to 32 with the clock played. Then Hearth Isle in road order, H6 to
-the Heart, with its chapter, its side quests (#56's 56 to 61 and 64) and the Cleric's third at
-Anchorhold, its calls and names written in. Then the Council of Helmstow, which ends the Empty
-Throne, and the road behind in one issue, as #449 was Act IV's. The act spends one story lock, the
-core's door (§2.3). Master trainers wait on the skill tiers (#18), and the Sorcerer's third goes
-with the reach. 1.5 ends M3.
+**1.5, Act V and the subplots** (#742; M3; docs/areas/hearth_isle.md, #739). First its systems
+(#743), eight issues: the curve's last row, ending at the cap, and the trainers' ceiling with it;
+the gear's last rung at 28, found and never sold; a group that is gone once a flag holds, standing
+or not; the Core's clock and `obeys`; `Exit.lifts` and `Exit.after`; the endings, their screen and
+the Hearth's three states on the title, in the night sky and in the almanac; a save upgrade for the
+Peak Stone; the gate bot and the harness run to 32 with the clock played. Then Hearth Isle in road
+order (#744), H6 to the Heart, with its chapter, its side quests (#56's 56 to 61 and 64) and the
+Cleric's third at Anchorhold (#763), its calls and names written in. Then the Council of Helmstow
+(#764), which ends the Empty Throne, and the road behind in one issue (#765), as #449 was Act IV's.
+The act spends one story lock, the core's door (§2.3). Master trainers wait on the skill tiers
+(#18), and the Sorcerer's third goes with the reach. 1.5 ends M3.
 
 **1.6, the reach** (DESIGN.md §9), with the Sorcerer's third prestige and #56's 62 and 63. Optional
 by design, so it comes last, and v1 can ship without it.
