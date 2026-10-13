@@ -1498,7 +1498,8 @@ Decided by delegate for #501, each the owner's to overturn:
    `restored: { seen: 'highspine_i11:i11_stone' }`, set by the once event at 28,0 and kept by the
    save already; `stonesRestored` reads it (`world.stones`, the title's horizon, the almanac).
    Act V's core door needs a flag, since a `seen` cannot be a `needFlag`: the same event sets
-   `q_peak_stood`, and a save upgrade sets it on the saves that already stood there (#739, call 1).
+   `q_peak_stood`, and a save upgrade sets it on the saves that already stood there (#739, call 1;
+   built in #751).
    §2 has the company stand beside the only whole Stone, and with no condition the Hearth's five
    could never all count. #505 may move it.
 6. **The ring** is a 3 by 3 of bare stone under the Stone (27 to 29, 1 to 3), its stones rocks
