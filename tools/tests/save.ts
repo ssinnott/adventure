@@ -1,7 +1,8 @@
 // Saves: a round trip, the outdoors kept small, a save from before the weather, a version 1 save
 // loaded onto the outdoors and onto a map that has since grown, a version 2 save's yes to Vask
-// brought to his no, a version 3 save given its members' blessings, none, the upgrades run by version, and what a save meets on content changed since:
-// a group added, a door moved off its square.
+// brought to his no, a version 3 save given its members' blessings, none, a version 4 save that
+// stood at the Peak Stone given the flag the Core's door asks, the upgrades run by version, and what
+// a save meets on content changed since: a group added, a door moved off its square.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { World, seen } from '../../src/game/world.ts';
@@ -112,6 +113,29 @@ export function save(): void {
     for (const m of v3.party.members) delete (m as { blessed?: unknown }).blessed;
     const up = deserialize(JSON.stringify(v3));
     ok(up.version === SAVE_VERSION && up.party.members.every((m) => Array.isArray(m.blessed) && m.blessed.length === 0), 'a version 3 save loads with no member blessed against anything');
+  }
+  { // A version 4 save that has seen the Peak Stone's once-event (#751) loads with the flag the Core's
+    // door asks, one that has not without it, and a version 5 save is left as it is.
+    const SPINE = 'highspine_i11', STONE = 'i11_stone', FLAG = 'q_peak_stood';
+    const at4 = (trod: boolean, stood: boolean): SaveData => {
+      const d = upgrade(JSON.parse(JSON.stringify(v1)) as SaveData, UPGRADES, 4);
+      d.party.flags = { q_vask_rain: 1 };
+      if (trod) d.world.zones!.push(SPINE);
+      if (stood) d.world.maps[OUTDOORS].used[STONE] = 1;
+      return d;
+    };
+    const load = (d: SaveData): SaveData => deserialize(JSON.stringify(d));
+    const stood = load(at4(true, true));
+    ok(stood.version === SAVE_VERSION && stood.party.flags[FLAG] === 1 && JSON.stringify(stood.party.flags) === `{"q_vask_rain":1,"${FLAG}":1}`, `a version 4 save that stood at the Peak Stone loads with ${FLAG} set, its other flags kept (${Object.keys(stood.party.flags).join(', ')})`);
+    ok(holds({ seen: `${SPINE}:${STONE}` }, stood.world, stood.party) && stood.world.maps[OUTDOORS].used[STONE] === 1, 'it is the save the quest log calls one that has seen the event, and the event stays seen');
+    for (const [what, d] of [['on the High Spine that never reached the Stone', at4(true, false)], ['that never climbed so far', at4(false, false)]] as const) {
+      const up = load(d);
+      ok(up.version === SAVE_VERSION && !(FLAG in up.party.flags) && JSON.stringify(up.party.flags) === '{"q_vask_rain":1}' && !holds({ seen: `${SPINE}:${STONE}` }, up.world, up.party), `a version 4 save ${what} loads without ${FLAG}`);
+    }
+    const five = load({ ...at4(true, true), version: 5 });
+    ok(JSON.stringify(five.party.flags) === '{"q_vask_rain":1}' && five.world.maps[OUTDOORS].used[STONE] === 1, 'a version 5 save is untouched: the flag is given once, by the upgrade to 5');
+    const flagged = { ...at4(true, true), version: 5 }; flagged.party.flags[FLAG] = 1;
+    ok(JSON.stringify(load(flagged).party.flags) === `{"q_vask_rain":1,"${FLAG}":1}`, 'and one that has the flag keeps it');
   }
   { // The upgrades run by version, each registered with the version it brings a save to.
     const to3 = (d: SaveData): SaveData => ({ ...d, world: { ...d.world, steps: d.world.steps + 1 } });

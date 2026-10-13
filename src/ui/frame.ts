@@ -154,7 +154,8 @@ export function drawAutomap(ctx: CanvasRenderingContext2D, world: World, frame: 
     ctx.fillStyle = f.kind === 'chest' || f.kind === 'cairn' ? '#c08a1a' : f.kind === 'sign' ? '#6a5a4a' : '#8a3a9a';
     ctx.fillRect(ox + f.x * cell + 1, oy + f.y * cell + 1, s, s);
   }
-  for (const e of m.exits) if (shown(e.x, e.y)) { ctx.fillStyle = GREEN; ctx.fillRect(ox + e.x * cell + 1, oy + e.y * cell + 1, Math.max(1, cell - 2), Math.max(1, cell - 2)); }
+  // An exit not there yet (`after`, #749) is no exit on the map either.
+  for (const e of m.exits) if (shown(e.x, e.y) && world.there(e)) { ctx.fillStyle = GREEN; ctx.fillRect(ox + e.x * cell + 1, oy + e.y * cell + 1, Math.max(1, cell - 2), Math.max(1, cell - 2)); }
   // Monsters in view.
   for (const g of world.liveGroups()) {
     const k = g.state.y * m.width + g.state.x;
