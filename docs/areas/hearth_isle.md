@@ -3,20 +3,20 @@
 The twelfth and last step of the road of levels (DESIGN §9, EXPANSION §2.2), band 28–32, and the
 whole of Act V, The Hearth: a rocky rim round a green bowl in the middle of the inland sea, the
 column of light standing up out of the bowl into the roof of the sky, a temple built round its foot
-by people who thought it a god and under the temple the world going down, through the hull's
-service ways to the heart of the Hearth. The Hand holds the temple; its dead lie on the stairs
-below; Vask is at the panel with the Queen's ring on his finger and Wenna's palm held to the glass.
-When the Hand is broken the voice speaks with one voice, Wenna puts the ring in the company's hand
-and the company chooses. This is its area doc (EXPANSION §4, §6 and §8.2): where the atlas puts it,
-what the atlas and the docs put in it, the plan for building it, box by box and level by level, the
-briefs with every line the isle says, the chapter and its ending, the side quests and the subplots'
-ends. Its work is to be filed under Phase 1.5, which is not filed yet (the issues' drafts are
-unfiled and with the owner): the doc (this file), the boxes as §4's table has them, the temple and
-its crypt, the Ways and the Stair, the Heart, its chapter (§5), its side quests and the Cleric's
-third (§6), its drawings, its rooms, the Council (§6) and the endings (§5, §9). Figures are
-measured on main at `e3e9833` (12 October 2026), and checked again at `8cdf1e0a` (13 October 2026)
-in review (§9.1), with `tools/scaffold.ts`, which cuts the atlas's terrain for a box (EXPANSION
-§8.2): land is what is not sea or shallow, and "walkable" what is not rock.
+by people who thought it a god and under the temple the world going down, through the hull's service
+ways to the heart of the Hearth. The Hand holds the temple; its dead lie on the stairs below; Vask
+is at the panel with the Queen's ring on his finger and Wenna's palm held to the glass. When the
+Hand is broken the voice speaks with one voice, Wenna puts the ring in the company's hand and the
+company chooses. This is its area doc (EXPANSION §4, §6 and §8.2): where the atlas puts it, what the
+atlas and the docs put in it, the plan for building it, box by box and level by level, the briefs
+with every line the isle says, the chapter and its ending, the side quests and the subplots' ends.
+Its work is filed under Phase 1.5 (#742, with the systems in #743 and the area in #744): the doc
+(this file), the boxes as §4's table has them, the temple and its crypt, the Ways and the Stair, the
+Heart, its chapter (§5), its side quests and the Cleric's third (§6), its drawings, its rooms, the
+Council (§6) and the endings (§5, §9). Figures are measured on main at `e3e9833` (12 October 2026),
+and checked again at `8cdf1e0a` (13 October 2026) in review (§9.1), with `tools/scaffold.ts`, which
+cuts the atlas's terrain for a box (EXPANSION §8.2): land is what is not sea or shallow, and
+"walkable" what is not rock.
 
 Nothing is built. What exists: the atlas's rows (`src/content/atlas.ts`: the area `hearth` at
 28–30, the zone `hearthisle`, the places `underdeep` at 30–31 and `core` at 32, both planned, the
@@ -132,13 +132,13 @@ that has read DESIGN, STORY and EXPANSION and nothing else. The owner's calls ar
 
 | Map | Name | Kind | Band | Land | What is there | Its step | Issue |
 |---|---|---|---|---|---|---|---|
-| H6 | The isle | zone box, core | 28–29 | 757 (rock 386, grass 266, hills 84, sand 21) | the strand at 20,30; the cleft up through the rim; the Bowl and the pilgrims' camp; the Hearth at 24,16; Hearthfane's door at 18,14 | the isle; the temple | 1.5's H6 |
-| I6 | The east rim | zone box, core | 28–29 | 270 (rock 155, grass 77, sand 35, hills 3) | Anchorhold at 4,18; the Hand's Steps at 3,27, where the causeway lands; the Hand's camp | none; the Cleric's third | 1.5's I6 |
-| | Hearthfane | dungeon, 16×16 | 28–29 | | the nave and its four lamps; the court open to the column; the Hand's best; the sacristan in the vestry; the treasury; the stair behind the altar | the temple | 1.5's temple |
-| | The crypt | dungeon, 16×16 | 29 | | the eleven niches; the Hand's first dead; the knot on the frame; the grey door down | the knots | 1.5's crypt |
-| | The Ways | dungeon, 32×32 | 30 | | the hull's service ways: clean, humming, lit from nowhere; keepers with no robe; rats; the knocker at the crack; the CREW ONLY door's other side; the frames she marked | the Ways | 1.5's Ways |
-| | The Stair | dungeon, 32×32 | 30–31 | | the long stair down; the claimant's people at its head; the Hand's rearguard and its dead; the crawlers; the Catcher at the foot; the last door and the Hand's own beside it | the dead; the Catcher; the door | 1.5's Stair |
-| | The Heart | dungeon, 16×16 | 32 | | the door with the creed; the panel; Vask, the Grey Hands and the sentries the ring calls; the voice; Wenna and the choice | the choice | 1.5's Heart |
+| H6 | The isle | zone box, core | 28–29 | 757 (rock 386, grass 266, hills 84, sand 21) | the strand at 20,30; the cleft up through the rim; the Bowl and the pilgrims' camp; the Hearth at 24,16; Hearthfane's door at 18,14 | the isle; the temple | #753 |
+| I6 | The east rim | zone box, core | 28–29 | 270 (rock 155, grass 77, sand 35, hills 3) | Anchorhold at 4,18; the Hand's Steps at 3,27, where the causeway lands; the Hand's camp | none; the Cleric's third | #754 |
+| | Hearthfane | dungeon, 16×16 | 28–29 | | the nave and its four lamps; the court open to the column; the Hand's best; the sacristan in the vestry; the treasury; the stair behind the altar | the temple | #755 |
+| | The crypt | dungeon, 16×16 | 29 | | the eleven niches; the Hand's first dead; the knot on the frame; the grey door down | the knots | #756 |
+| | The Ways | dungeon, 32×32 | 30 | | the hull's service ways: clean, humming, lit from nowhere; keepers with no robe; rats; the knocker at the crack; the CREW ONLY door's other side; the frames she marked | the Ways | #757 |
+| | The Stair | dungeon, 32×32 | 30–31 | | the long stair down; the claimant's people at its head; the Hand's rearguard and its dead; the crawlers; the Catcher at the foot; the last door and the Hand's own beside it | the dead; the Catcher; the door | #758 |
+| | The Heart | dungeon, 16×16 | 32 | | the door with the creed; the panel; Vask, the Grey Hands and the sentries the ring calls; the voice; Wenna and the choice | the choice | #759 |
 
 The core is everything: no map here is country. Build order is the road's: H6 (which lists the
 area, moves the isle's rows into the area's own atlas slice and lands the last crossing, §7), I6,
