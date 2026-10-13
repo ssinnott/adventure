@@ -2,10 +2,18 @@
 // Rang Twice (Osmund), The Rest of the Survey (Ebba and Ailith), The Clerk's Seal (Maud), The
 // Well Tastes of Iron (Mottram), A Boat With No Name-Board (Wat and Hamo, at Gullwick), Who
 // Lived at Ashcombe (Hob), Oil for the Lamp (Aldred at Crowness Light, Mottram and Vask) and
-// Riders in the Dark (Dunstan, at Coldharbour). Its chapter of the one quest is in ./chapter.ts.
+// Riders in the Dark (Dunstan, at Coldharbour), and the Empty Throne's end, The Council of Helmstow
+// (Wiglaf, in the keep's ward). Its chapter of the one quest is in ./chapter.ts.
 // How the words are keyed is in src/content/area.ts (`quests`); tools/tests/quests.ts checks
 // every key.
 import type { QuestDef } from '../../../game/quests.ts';
+import { CASES, CASE_COUSIN, CASE_FAILED, CASE_HOLD, CASE_NOBODY, CASE_TALLIS, CASE_WENNA, EARLY, LATE, SAT, THRONE_COUNCIL, THRONE_COUSIN, THRONE_HOLD, THRONE_TALLIS, THRONE_WENNA } from './maps/keep.ts';
+
+/** A verdict's entries: as the Council sat, or as its twin did after the relit or the finished ending. */
+const verdict = (id: string, flag: string, chair: string) => [
+  { id, when: { flag: [flag, EARLY] }, text: `The Council sat, and ${chair}. The Regent was not in the keep when they came for him.` },
+  { id: `${id}_irons`, when: { flag: [flag, LATE] }, text: `The Council sat, and ${chair}. Vask stood before it in irons.` },
+];
 
 export const QUESTS: readonly QuestDef[] = [
   {
@@ -251,6 +259,35 @@ export const QUESTS: readonly QuestDef[] = [
       { when: { item: 'dunstan_letter' }, text: 'Take Dunstan\'s letter to Captain Hale at the Scarth.' },
       { when: { flag: 'q_riders', seen: 'downs_e2:e2_riders' }, at: 'downs_f2', text: 'Tell Dunstan at Coldharbour what we saw at the ford.' },
       { when: { flag: 'q_riders' }, at: 'downs_e2', text: 'Wait by night at the Wend\'s ford, west of Coldharbour, for the riders.' },
+    ],
+  },
+  {
+    // The Empty Throne's end (#764; docs/areas/hearth_isle.md §6): Wiglaf, the Council's clerk, at the
+    // keep's chapel once the Hand has Wenna, puts the case once, and the Council sits on it once.
+    id: 'council',
+    title: 'The Council of Helmstow',
+    start: { flag: 'q_council_met' },
+    done: SAT,
+    entries: [
+      { id: 'met', when: { flag: 'q_council_met' },
+        text: 'The Council of Helmstow will sit once on a case a company brings it, and name the chair\'s claimant, or nobody.' },
+      { id: 'for_cousin', when: { flag: CASE_COUSIN }, text: 'We made the case for the cousin.' },
+      { id: 'for_hold', when: { flag: CASE_HOLD }, text: 'We made the case for the elves of Henlys.' },
+      { id: 'for_tallis', when: { flag: CASE_TALLIS }, text: 'We made the case for Jory Tallis.' },
+      { id: 'for_wenna', when: { flag: CASE_WENNA }, text: 'We made the case for Wenna of Gullwick.' },
+      { id: 'for_nobody', when: { flag: CASE_NOBODY }, text: 'We made the case for nobody.' },
+      ...verdict('cousin', THRONE_COUSIN, 'the cousin sits in the chair'),
+      ...verdict('hold', THRONE_HOLD, 'an elf of Henlys sits in the chair'),
+      ...verdict('tallis', THRONE_TALLIS, 'Jory Tallis sits in the chair'),
+      ...verdict('wenna', THRONE_WENNA, 'the chair is sealed for Wenna until she comes to it'),
+      ...verdict('nobody', THRONE_COUNCIL, 'the chair stays empty under its own seal'),
+      { id: 'failed', when: { flag: [CASE_FAILED, EARLY] }, text: 'The Council sat, and was not persuaded. Vask holds the keep.' },
+      { id: 'failed_ended', when: { flag: [CASE_FAILED, LATE] }, text: 'The Council sat, and was not persuaded. The chair stays empty.' },
+    ],
+    goals: [
+      { when: CASES, at: 'keep', text: 'Come back to the keep\'s chapel in the morning, when the Council has sat.' },
+      { when: { flag: ['q_council_met', 'q_wenna_up'] }, at: 'keep', text: 'Make the Council\'s case at the keep\'s chapel: the cousin, the hold, Tallis, the girl from Gullwick or nobody.' },
+      { when: { flag: 'q_council_met' }, at: 'keep', text: 'Make the Council\'s case at the keep\'s chapel: the cousin, the hold, Tallis or nobody.' },
     ],
   },
 ];

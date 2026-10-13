@@ -31,7 +31,14 @@ import { ok, owed } from './lib.ts';
  * reported as that issue's while nothing does, and failed once something does, so its entry is
  * dropped here.
  */
-export const UNSET: Record<string, string> = {};
+export const UNSET: Record<string, string> = {
+  // The Council of Helmstow's pieces and its twins (#764): the pilgrims' tokens (H6), the signet and
+  // the endings (the Heart) and the walk home (the road behind).
+  q_token_cousin: '#753', q_token_hold: '#753', q_token_tallis: '#753',
+  q_signet_cousin: '#759', q_signet_hold: '#759', q_signet_tallis: '#759',
+  q_end_reignite: '#759', q_end_arrive: '#759', q_end_finish: '#759',
+  q_wenna_home: '#765',
+};
 
 /** The flags a feature sets: a person's, met, and an event's, said (#156). */
 const featureFlags = (f: Feature): readonly string[] => f.kind === 'npc' ? personFlags(f) : f.kind === 'event' ? [f.sets ?? []].flat() : f.kind === 'inn' ? f.nights ?? [] : [];

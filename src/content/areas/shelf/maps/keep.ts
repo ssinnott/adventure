@@ -1,9 +1,65 @@
 // The keep's ward, behind Helmstow's north gatehouse: grey stone and the Queen's blue and gold, the
 // keep's great door at the head of the road, the chapel where she lay in state, a walled garden, a
 // rookery on the west tower. Vask holds court in the throne room behind the keep's door. Before the
-// shut armoury the keep's armourer teaches the Knight's first prestige (#19).
-import type { MapDef } from '../../../../game/map.ts';
+// shut armoury the keep's armourer teaches the Knight's first prestige (#19). Once the Hand has Wenna
+// the Council's clerk waits at the chapel's door, and the Council sits on the case once (#764).
+import type { Answer, MapDef, Words } from '../../../../game/map.ts';
+import type { QuestCond } from '../../../../game/quests.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { ENDED, ENDINGS } from '../../../endings.ts';
+
+// The Empty Throne's end, the Council of Helmstow (#764; docs/areas/hearth_isle.md §6): the case the
+// company makes to Wiglaf, and the verdicts. Every verdict but a failed case removes Vask.
+export const CASE_COUSIN = 'q_case_cousin', CASE_HOLD = 'q_case_hold', CASE_TALLIS = 'q_case_tallis', CASE_WENNA = 'q_case_wenna', CASE_NOBODY = 'q_case_nobody';
+export const THRONE_COUSIN = 'q_throne_cousin', THRONE_HOLD = 'q_throne_hold', THRONE_TALLIS = 'q_throne_tallis', THRONE_WENNA = 'q_throne_wenna', THRONE_COUNCIL = 'q_throne_council';
+export const CASE_FAILED = 'q_case_failed', THRONE_REMOVED = 'q_throne_removed';
+/** A case made: Wiglaf has written it down. */
+export const CASES: readonly QuestCond[] = [CASE_COUSIN, CASE_HOLD, CASE_TALLIS, CASE_WENNA, CASE_NOBODY].map((flag) => ({ flag }));
+/** The Council has sat: any of its six verdicts. */
+export const SAT: readonly QuestCond[] = [THRONE_COUSIN, THRONE_HOLD, THRONE_TALLIS, THRONE_WENNA, THRONE_COUNCIL, CASE_FAILED].map((flag) => ({ flag }));
+
+// Wenna's three answers at the Heart (#759 sets them): the relit and the finished bring Vask up the stair in irons.
+const IRONS: readonly QuestCond[] = [{ flag: ENDINGS.reignite.flag }, { flag: ENDINGS.finish.flag }];
+
+/** Each list of flags in `a` with each in `b`: a `When` that holds where both do. */
+const both = (a: readonly QuestCond[], b: readonly QuestCond[]): QuestCond[] =>
+  a.flatMap((x) => b.map((y) => ({ flag: [...[x.flag ?? []].flat(), ...[y.flag ?? []].flat()] })));
+
+/** A case carried: its flag and any two of the claimant's pieces (a piece may be one of several flags), or the signet given to the claimant. */
+function carried(made: string, pieces: readonly (readonly string[])[], signet?: string): QuestCond[] {
+  const pairs = pieces.flatMap((a, i) => pieces.slice(i + 1).flatMap((b) => a.flatMap((x) => b.map((y) => ({ flag: [made, x, y] })))));
+  return signet ? [...pairs, { flag: [made, signet] }] : pairs;
+}
+// The pieces (§6's table): letters, seals, records and rings found on the road, the pilgrims' tokens (57, #753) and the signet (64, #759).
+const COUSIN = carried(CASE_COUSIN, [['q_riders_hale'], ['q_seal_hale'], ['q_well_lanterns'], ['q_token_cousin']], 'q_signet_cousin');
+const HOLD = carried(CASE_HOLD, [['q_treaty', 'q_sylvane_treaty'], ['q_ring_elves'], ['q_orders_council'], ['q_token_hold']], 'q_signet_hold');
+const TALLIS = carried(CASE_TALLIS, [['q_star_tallis'], ['q_crown_sailed'], ['q_hermit_tallis'], ['q_ring_sold'], ['q_token_tallis']], 'q_signet_tallis');
+const WENNA = carried(CASE_WENNA, [['q_wenna_up'], ['q_wentback_witness', 'q_sleepers_seen', 'q_wenna_home']]);
+const NOBODY: readonly QuestCond[] = [{ flag: CASE_NOBODY }];
+/** A claimant's case that its pieces may not carry: it fails if no carried verdict comes first. */
+const CLAIMED = CASES.filter((c) => c.flag !== CASE_NOBODY);
+
+const WIGLAF = [
+  'A thin man at the chapel door with a book under his arm and ink on his cuff, who looks at the keep\'s great door the way a man looks at weather.',
+  '"Wiglaf. Clerk to the Council of Helmstow, which sits when the Regent lets it and counts on its fingers when he does not. The chair is empty. The Council would settle it tomorrow, if anyone brought it a case it could not refuse."',
+  '"A chartered company goes everywhere, and hears everything. Bring the Council what you have heard, and name a claimant, and it will sit on it. Once. It is not brave enough for twice."',
+];
+const ASK = '"Whose case does the company make?"';
+const FOR_COUSIN: Answer = { label: 'The Queen\'s cousin.', sets: CASE_COUSIN, says: ['"The Wardens\' candidate. Blood, which is what the Council likes and the Regent does not." He writes it. "It sits tonight."'] };
+const FOR_HOLD: Answer = { label: 'The elves of Henlys.', sets: CASE_HOLD, says: ['"The treaty. The Council has not read it in two hundred years, and the Lanterns have." He writes it. "It sits tonight."'] };
+const FOR_TALLIS: Answer = { label: 'Jory Tallis.', sets: CASE_TALLIS, says: ['"The dockmaster. A lineage in one shade of ink, and a hundred and forty hulls." He writes it. "It sits tonight."'] };
+const FOR_WENNA: Answer = { label: 'Wenna of Gullwick.', sets: CASE_WENNA, says: ['"A fisher\'s girl." He stops writing. "Whom the Council has heard of, lately, from people who came up out of the ground. It sits tonight, and I do not know what it will say."'] };
+const FOR_NOBODY: Answer = { label: 'Nobody.', sets: CASE_NOBODY, says: ['"Nobody. The chair stays empty, under the Council\'s own seal, and the Regent holds it for nobody." He writes that too. "It sits tonight. That is a case, of a kind."'] };
+
+const BY_DAY = { hours: 'day' } as const;
+/** Which words the sitting said: its first, or its twin's after an ending that changes them. The log reads them. */
+export const EARLY = 'q_council_early', LATE = 'q_council_late';
+
+/** A verdict carried: its first words, and its twin's after the relit or the finished ending. */
+const sat = (carry: readonly QuestCond[], verdict: string, text: string): Words[] => [
+  { after: carry, until: IRONS, sets: [verdict, THRONE_REMOVED, EARLY], lines: [`${text} The Regent is not in the keep when they come for him.`] },
+  { after: both(carry, IRONS), sets: [verdict, THRONE_REMOVED, LATE], lines: [`${text} Vask stands before the Council in irons.`] },
+];
 
 export const KEEP: MapDef = {
   id: 'keep',
@@ -33,7 +89,11 @@ export const KEEP: MapDef = {
   ],
   features: [
     { kind: 'sign', x: 9, y: 8, text: 'A proclamation on the gatehouse: the Regent-Warden holds Helmstow in the Crown\'s name until the succession is settled.' },
-    { kind: 'npc', x: 7, y: 4, name: 'Lord Aumery Vask, Regent-Warden', interior: 'throne_room', lines: [
+    // The Council's proclamation (#764): a sign takes no presence, so it is said after the Regent's on
+    // its square, every time, as a sign is.
+    { kind: 'event', x: 9, y: 8, id: 'proclaimed', after: { flag: THRONE_REMOVED }, text: 'Over it: the Council of Helmstow holds the city under its seal.' },
+    // Gone once the Council has removed him (#764), his guards with him; his door is the Council's.
+    { kind: 'npc', x: 7, y: 4, name: 'Lord Aumery Vask, Regent-Warden', interior: 'throne_room', until: { flag: THRONE_REMOVED }, lines: [
       'A tall man in Warden grey, his guards a step behind him. He does not wait for you to bow, and does not appear to notice that you did not.',
       '"The Crown has need of a chartered company; the Wardens are stretched thin. A farm past Gullwick, Ashcombe, off the Salt Road, has gone quiet. Find out why. Clear whatever is there."',
       '"Bring me anything you find that is not a rat. Especially anything that glows."',
@@ -66,6 +126,10 @@ export const KEEP: MapDef = {
         '"Tell the keeper the Crown remembers him." He smiles, briefly, the way a man does when a small account closes in his favour. "Was there anything else?"',
       ] },
     ] },
+    { kind: 'npc', x: 7, y: 4, name: 'Wiglaf, at the keep\'s door', interior: 'throne_room', after: { flag: THRONE_REMOVED }, lines: [
+      'The keep\'s great door stands open, and Wiglaf at it with his book, keeping the door for the Council as he kept the chapel\'s.',
+      '"The Council sat once, as it said it would. It finds it likes the chairs."',
+    ] },
     { kind: 'npc', x: 6, y: 5, name: 'Petitioners', lines: [
       'Petitioners wait on the keep\'s steps, caps in hand.',
       'A farmer\'s wife: "Ashcombe has gone quiet. No smoke, no carts. My sister is out there."',
@@ -88,5 +152,24 @@ export const KEEP: MapDef = {
       '"They come in off the Downs with barrow earth on their feet. The ones I send over the Scarth have stopped coming back."',
     ] },
     { kind: 'well', x: 13, y: 6, text: 'The garden well, walled in with the Queen\'s roses. The water tastes of iron, as the town\'s does.' },
+    // The Council's clerk at the chapel's door once the Hand has Wenna (#764), until the case is made:
+    // the case for Wenna only to a company she led up (Act III).
+    { kind: 'npc', x: 4, y: 6, name: 'Wiglaf, the Council\'s clerk', after: { flag: 'q_wenna_taken' }, until: CASES, flag: 'q_council_met', lines: WIGLAF,
+      choice: { ask: ASK, answers: [FOR_COUSIN, FOR_HOLD, FOR_TALLIS, FOR_NOBODY] }, says: [
+        { after: { flag: 'q_wenna_up' }, sets: 'q_council_met', lines: WIGLAF, choice: { ask: ASK, answers: [FOR_COUSIN, FOR_HOLD, FOR_TALLIS, FOR_WENNA, FOR_NOBODY] } },
+      ] },
+    // The Council sits on the case that night, and by day Wiglaf is at the chapel's door with what it
+    // found: the first verdict that holds is said and sets its flags, and he is gone with it. A Council
+    // that sits after the relit or the finished ending has Vask before it in irons; after any ending a
+    // failed case leaves the chair empty. The twin's words set LATE, the first words EARLY, for the log.
+    { kind: 'npc', x: 4, y: 5, name: 'Wiglaf, the Council\'s clerk', when: BY_DAY, after: CASES, until: SAT, lines: ['Wiglaf at the chapel door, his book shut, waiting on the Council.'], says: [
+      ...sat(COUSIN, THRONE_COUSIN, 'The Council sits in the chapel where she lay in state and reads what you brought. By noon the Wardens wear the old badge.'),
+      ...sat(HOLD, THRONE_HOLD, 'The Council reads the treaty aloud for the first time in two hundred years. By evening Sylvane\'s people are in the ward.'),
+      ...sat(TALLIS, THRONE_TALLIS, 'The Council counts hulls. Tallis comes up the Salt Road with a hundred Compact hands and his lineage in a case.'),
+      ...sat(WENNA, THRONE_WENNA, 'The Council sits a long time, then seals the chair for a girl from Gullwick until she comes to it.'),
+      ...sat(NOBODY, THRONE_COUNCIL, 'The Council seals the chair empty under its own seal and holds Helmstow itself.'),
+      { after: CLAIMED, until: ENDED, sets: [CASE_FAILED, EARLY], lines: ['The Council sits, and reads what you brought, and is not persuaded. The Regent holds the keep. Wiglaf says it was never brave enough for twice.'] },
+      { after: both(CLAIMED, ENDED), sets: [CASE_FAILED, LATE], lines: ['The Council sits, and reads what you brought, and is not persuaded. The chair stays empty. Wiglaf says it was never brave enough for twice.'] },
+    ] },
   ],
 };

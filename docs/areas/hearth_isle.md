@@ -1765,6 +1765,35 @@ Decided by delegate for #750, each the owner's to overturn:
    `ENDED` is exported from the table as a `When` list for #759 and #765 to import.
 7. **Nothing new is saved:** the state is read from the flags, so it needs no save upgrade.
 
+Decided by delegate for #764, each the owner's to overturn:
+
+1. **The sitting is Wiglaf's word, not twelve events.** By day after the case he stands at `keep`
+   4,5 and says the first verdict that holds, which sets its flags, and is gone with it (`until` the
+   six). Pillars' line check counts every event on a square together, and twelve verdicts on one
+   square run past the log's four lines. The words, the square, the flags and the once are §6's.
+2. **The morning after is the day's hours** (`when: { hours: 'day' }`): no condition counts a night
+   from a flag, so a case made by day is heard on the next step to the chapel by day.
+3. **Wenna's answer at the first meeting.** The five answers are words `after: { flag: 'q_wenna_up' }`
+   that set `q_council_met` themselves: a person's words are read before the meeting hires, so
+   `after: { flag: ['q_council_met', 'q_wenna_up'] }` would offer her only at a second meeting.
+4. **Which words were said is a flag** (`q_council_early`, `q_council_late`), so the log says the
+   Regent's absence or Vask in irons as the sitting did: an entry cannot ask that a flag is unset.
+5. **One proclamation with no name**, *Over it: the Council of Helmstow holds the city under its
+   seal.*, an event on the sign's square said after it at every step, since a sign takes no
+   presence. Five named ones there run past the log.
+6. **Vask's door is the Council's:** Wiglaf at 7,4 with the throne room, `after` the removal, two
+   lines of mine. The doorway check wants a business that goes to have a twin, and the locks check
+   wants its trade had (#157's form); otherwise it is a lock to sign in.
+7. **Owed: the inn at 12, the Chapel for the hold and Mottram's for Tallis.** Each is a third
+   presence on a doorway, and the doorway check (`tools/tests/maps.ts`, `doorwayFaults`) allows one
+   twin. This issue does not name that check, so it is left; #765's inn and Chapel need it too.
+8. **The goal names the girl from Gullwick only to a company she led up;** to the rest it says *the
+   cousin, the hold, Tallis or nobody*.
+9. **A piece may be one of several flags:** the treaty is one piece by either mark, and Wenna's case
+   is `q_wenna_up` with one of her three. The pairs are a `When` list built from §6's table
+   (`carried`, `keep.ts`). The tokens (#753), the signet (#759) and the walk home (#765) are owed in
+   `UNSET`, as are the endings' flags (#759), read from `src/content/endings.ts`.
+
 Decided by delegate for #764 (the doorway check), each the owner's to overturn:
 
 1. **A chain, and nothing wider.** `doorwayFaults` (`tools/tests/maps.ts`) takes businesses with a room
@@ -1788,6 +1817,9 @@ Decided by delegate for #764 (the doorway check), each the owner's to overturn:
    a scratch script; the fixtures in the maps check are what stays.
 6. **No doc line described the rule,** so none is changed: EXPANSION §8.2 is the zone-map recipe, and
    the comment above `doorwayFaults` is where the rule is told.
+7. **This unblocks the twins owed in the Council block's 7 and in #765.** The inn at 12, the Chapel for the
+   hold and Mottram's for Tallis are each a link added to a chain; the Chapel is its word gone `until` the
+   hold's verdict and the endings, and its temple again `after` the same list. No map is touched here.
 
 ## 10. Names
 
