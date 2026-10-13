@@ -8,7 +8,10 @@
 // Compact's runner or the Wardens' sergeant; and the box's groups won at 28. Then the temple, Hearthfane
 // (#755): in at the door and out again, the nave's moths, the pillar read, the sacristan's lamps put out
 // wrong and then in the pillar's order (56), the moths gone to the light, his key, the treasury that opens
-// to it and to nothing else, the Hand's best won at 28 and the court's second gone with Vask.
+// to it and to nothing else, the Hand's best won at 28 and the court's second gone with Vask. Then its crypt
+// (#756), walked at 29: down the stair behind the altar and up again, the chamber's champions, the eleven
+// niches and the eleven kept for a company that gave the log, the side vault's dead and rats, the keeper
+// at the passage and her knot on the grey door's frame.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen, walkThrough, gone as left } from '../../../../tools/walk.ts';
 import type { Walk } from '../../../../tools/walk.ts';
@@ -28,6 +31,7 @@ import { COMPACT_OVER, COMPACT_WARDENS } from '../saltreach/maps/saltmouth.ts';
 import { THRONE_REMOVED } from '../shelf/maps/keep.ts';
 import { STRAND, PILGRIMS, TOKEN_COUSIN, TOKEN_HOLD, TOKEN_TALLIS } from './maps/hearthisle_h6.ts';
 import { LAMPS, LAMPS_OUT, LAMPS_WRONG, LAMPS_KEY, FANE_KEY, LAMP_FLAGS, STAIR } from './maps/hearthfane.ts';
+import { ELEVEN_KEPT, GREY_DOOR } from './maps/hearthfane2.ts';
 
 const H6 = MAP_DEFS.find((d) => d.id === 'hearthisle_h6')!;
 const person = (name: string): Person => H6.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
@@ -247,7 +251,51 @@ export const walkthrough: Walkthrough = (ok) => {
   r.party.flags[THRONE_REMOVED] = 1;
   left(r, 'hearthfane:hf_second');
 
-  // Behind the altar the stair down waits on the crypt (#756), which lists it and opens its square.
-  ok(TEMPLE.rows[STAIR.y][STAIR.x] === '#' && TEMPLE.rows[2][8] === '.' && STAIR.to === 'hearthfane2' && !(TEMPLE.exits ?? []).some((e) => e.to === STAIR.to),
-    'behind the altar, the stair down is wall until the crypt is built');
+  // The crypt (#756): behind the altar the stair down onto its foot, 8,14, facing up the passage, and its
+  // way back up onto the altar's square, 8,2, facing away from the stair.
+  const CRYPT = MAP_DEFS.find((d) => d.id === 'hearthfane2')!;
+  ok(TEMPLE.rows[STAIR.y][STAIR.x] === '.' && (TEMPLE.exits ?? []).includes(STAIR) && CRYPT.kind === 'dungeon' && CRYPT.band?.join() === '29,29',
+    'behind the altar the stair goes down into the crypt, a dungeon of band 29');
+  walkThrough(w, 'hearthfane', 8, 2, NORTH, 'hearthfane2', 1);
+  ok(w.world.state.x === 8 && w.world.state.y === 14 && w.world.state.facing === NORTH, 'down the stair onto its foot, 8,14, facing up the passage');
+  walkThrough(w, 'hearthfane2', 8, 14, SOUTH, 'hearthfane', 1);
+  ok(w.world.state.x === 8 && w.world.state.y === 2 && w.world.state.facing === SOUTH, 'and up it again onto the altar\'s square, 8,2, facing away from the stair');
+
+  // At the crypt's floor, 29: the vaulted passage, and the Hand's best in the round chamber; its eleven
+  // niches, whose lamps only a company that gave Hereswith the keeper's log lights (#763); the cups.
+  w.level = 29;
+  for (const m of w.party.members) m.level = 29;
+  see(w, 'hearthfane2:hf2_vault');
+  fight(w, 'hearthfane2:hf2_champions');
+  see(w, 'hearthfane2:hf2_niches');
+  const eleven = CRYPT.features!.find((f) => f.kind === 'event' && f.id === 'hf2_eleven')!;
+  w.world.travel('hearthfane2', eleven.x, eleven.y);
+  w.world.eventsHere();
+  ok(!w.world.present(eleven) && !w.party.flags[ELEVEN_KEPT], 'the eleven are not lit without the keeper\'s log given at Anchorhold');
+  const c = newWalk(ok);
+  c.party.flags.q_eleven_log = 1;
+  see(c, 'hearthfane2:hf2_eleven');
+  ok(!!c.party.flags[ELEVEN_KEPT], 'with it given, the eleven lit as the log has them keep the hum');
+  const find = (id: string) => CRYPT.features!.find((f) => f.kind === 'chest' && f.id === id);
+  const cups = find('hf2_cups'), pack = find('hf2_pack');
+  ok(cups?.kind === 'chest' && cups.gold === 600 && !cups.items.length && cups.x === 10 && cups.y === 10,
+    'in the chamber the pilgrims\' cups, 600 gold');
+
+  // The side vault off the chamber's west: the Hand's dead, the rats come up for them, and a dead
+  // champion's pack with the Hand's robe in it.
+  see(w, 'hearthfane2:hf2_dead');
+  fight(w, 'hearthfane2:hf2_rats');
+  ok(pack?.kind === 'chest' && pack.gold === 200 && pack.items.join() === 'grey_robe' && pack.x === 1 && pack.y === 8,
+    'in the side vault the dead champion\'s pack, 200 gold and a Grey Robe');
+
+  // Through the chamber's north door the keeper, the first machine on the isle, with the Hand's last man
+  // beside it; her knot on the grey door's frame, the chapter's next step (#760); and the grey door,
+  // standing open, whose way down into the Ways is #757's.
+  see(w, 'hearthfane2:hf2_last');
+  fight(w, 'hearthfane2:hf2_keeper');
+  see(w, 'hearthfane2:hf2_knot');
+  w.world.travel('hearthfane2', GREY_DOOR.x, GREY_DOOR.y);
+  const grey = w.world.eventsHere().join(' ');
+  ok(grey.includes('A door of grey with no handle') && w.world.used('hf2_knot') && CRYPT.rows[GREY_DOOR.y][GREY_DOOR.x] === 'D' && GREY_DOOR.to === 'underdeep'
+    && !(CRYPT.exits ?? []).some((e) => e.to === GREY_DOOR.to), 'her knot on the grey door\'s frame, and the door standing open, its way down waiting on the Ways');
 };
