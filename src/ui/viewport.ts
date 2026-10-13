@@ -37,7 +37,8 @@ import { mixHash, weatherSight } from '../game/weather.ts';
 import { sunTimes, DAYS_PER_YEAR } from '../game/calendar.ts';
 import type { Tide } from '../game/calendar.ts';
 import { hash } from './brush.ts';
-import { hearthBearing } from '../game/stones.ts';
+import { hearthBearing, hearthLook } from '../game/stones.ts';
+import type { HearthLook } from '../game/stones.ts';
 
 export const VIEW_W = 400, VIEW_H = 268;
 const NEAR = 0.9;
@@ -208,7 +209,7 @@ export function drawViewport(
   monstersAt: (x: number, y: number) => readonly ViewMonster[] | null, frame: number, weather = true,
 ): void {
   // The minute and the weather seed pin down the weather, so they key the scene with the place.
-  const key = [world.state.mapId, world.state.x, world.state.y, world.state.facing, world.sight, world.state.minutes, world.state.weatherSeed, world.state.light > 0 ? 1 : 0, Object.keys(world.mapState.doors).length, Object.keys(world.party.flags).length, world.map.landmarks.map((l) => (l.lit && world.party.flags[l.lit] ? 1 : 0)).join(''), world.stones, r.w, r.h].join('|');
+  const key = [world.state.mapId, world.state.x, world.state.y, world.state.facing, world.sight, world.state.minutes, world.state.weatherSeed, world.state.light > 0 ? 1 : 0, Object.keys(world.mapState.doors).length, Object.keys(world.party.flags).length, world.map.landmarks.map((l) => (l.lit && world.party.flags[l.lit] ? 1 : 0)).join(''), world.stones, world.hearth.ending ?? '', r.w, r.h].join('|');
   if (!scene || scene.key !== key) {
     const canvas = scene?.canvas ?? document.createElement('canvas'), sky = scene?.sky ?? document.createElement('canvas');
     canvas.width = sky.width = r.w; canvas.height = sky.height = r.h;
@@ -303,7 +304,8 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
   // A dark day lights the lamps early.
   const gloom = daylight * (1 - 0.3 * cloud - 0.25 * (wx?.precip ?? 0));
   // Far things fade toward the sky's foot, greyed by cloud and by murk.
-  const skyBottom = mix(mix('#1a1428', '#c9d6e6', daylight), mix('#1c1f26', '#b8c0c8', daylight), Math.min(1, cloud * 0.6 + env.murk));
+  const look = hearthLook(world.hearth);
+  const skyBottom = cast(mix(mix('#1a1428', '#c9d6e6', daylight), mix('#1c1f26', '#b8c0c8', daylight), Math.min(1, cloud * 0.6 + env.murk)), look.cast?.foot, daylight);
   const haze = map.kind === 'dungeon' ? null : skyBottom;
 
   flames = [];
@@ -317,8 +319,8 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
     ctx.fillStyle = shade(pal.floor, 0.5); ctx.fillRect(r.x, horizon, r.w, r.h / 2);
   } else {
     const { dawn, dusk } = sunTimes(day);
-    const at = world.worldCell, hearth = at ? { bearing: hearthBearing(at.x, at.y), stones: world.stones } : undefined;
-    const sky: SkyOpts = { facing: f, hour: (world.state.minutes % 1440) / 60, daylight, dark, dawn, dusk, cloud, murk: env.murk, heavy: wx?.precip ?? 0, drift: world.state.minutes * 0.35, cover: env.cover, day, hearth };
+    const at = world.worldCell, hearth = at ? { bearing: hearthBearing(at.x, at.y), step: look.step } : undefined;
+    const sky: SkyOpts = { facing: f, hour: (world.state.minutes % 1440) / 60, daylight, dark, dawn, dusk, cloud, murk: env.murk, heavy: wx?.precip ?? 0, drift: world.state.minutes * 0.35, cover: env.cover, day, hearth, cast: look.cast };
     drawSkyBand(skyCtx, r, { ...sky, part: 'back' });
     drawSkyBand(ctx, r, { ...sky, part: 'hills' });
     // The ground runs on to the horizon in the terrain out past the last cell drawn; the void and
@@ -518,10 +520,18 @@ export interface SkyOpts {
   /** Paint only the sky behind everything, or only the hills in front of it; both when absent. */
   part?: 'back' | 'hills';
   /**
-   * The Hearth on the horizon by night: its compass bearing from the party, and the Stones restored,
-   * each a step brighter and wider (game/stones.ts, #168). Not drawn when absent.
+   * The Hearth on the horizon by night: its compass bearing from the party, and its step, a Stone
+   * restored a step brighter and wider (#168) and past full once the voyage is finished (game/stones.ts,
+   * #750). Not drawn when absent.
    */
-  hearth?: { bearing: number; stones: number };
+  hearth?: { bearing: number; step: number };
+  /** The sky's colours once the hull is opened (#750), by day the wrong colour: the sky's own when absent. */
+  cast?: HearthLook['cast'];
+}
+
+/** A colour of the sky under an ending's cast: most of the way to it by day, less at dusk and none by night. */
+function cast(c: string, to: string | undefined, daylight: number): string {
+  return to ? mix(c, to, 0.75 * Math.min(1, daylight / 0.5)) : c;
 }
 
 /** The sky, sun or moon, clouds, stars and distant hills for the top half of `r`. Also used by the title. */
@@ -531,9 +541,9 @@ export function drawSkyBand(ctx: CanvasRenderingContext2D, r: ViewRect, o: SkyOp
   const cx = r.x + r.w / 2, horizon = r.y + r.h / 2;
   // A clear sky's blues greyed toward an overcast lid, darkened by a downpour; murk pales the foot
   // of it, and fog washes the whole of it out.
-  const bottom = mix(mix('#1a1428', '#bcd8f0', daylight), mix('#181a20', '#b0b8c2', daylight), Math.min(1, cloud * 0.8 + murk * 0.6));
+  const bottom = cast(mix(mix('#1a1428', '#bcd8f0', daylight), mix('#181a20', '#b0b8c2', daylight), Math.min(1, cloud * 0.8 + murk * 0.6)), o.cast?.foot, daylight);
   if (o.part !== 'hills') {
-    const top = mix(mix(mix(mix('#07091a', '#2f7ad8', daylight), mix('#0c0e14', '#7a8490', daylight), cloud), mix('#06070a', '#3c424c', daylight), 0.55 * heavy), bottom, murk * 0.7);
+    const top = mix(cast(mix(mix(mix('#07091a', '#2f7ad8', daylight), mix('#0c0e14', '#7a8490', daylight), cloud), mix('#06070a', '#3c424c', daylight), 0.55 * heavy), o.cast?.top, daylight), bottom, murk * 0.7);
     const dusk = (daylight > 0.05 && daylight < 0.6 ? 1 - Math.abs(daylight - 0.3) / 0.3 : 0) * (1 - 0.8 * cloud);
     const g = ctx.createLinearGradient(0, r.y, 0, horizon);
     g.addColorStop(0, top); g.addColorStop(0.7, mix(bottom, '#e8905a', dusk * 0.35)); g.addColorStop(1, mix(bottom, '#f0b070', dusk * 0.6));
@@ -618,14 +628,54 @@ export function drawSkyBand(ctx: CanvasRenderingContext2D, r: ViewRect, o: SkyOp
       ctx.lineTo(r.x + r.w, horizon + 1); ctx.closePath();
       ctx.fillStyle = dark ? shade(col, 0.5) : col; ctx.fill();
     }
-    if (o.hearth) drawHearthLight(ctx, r, o.hearth.bearing - f * 90, o.hearth.stones, daylight, 1 - Math.min(1, cloud * 1.05 + murk * 0.5));
+    if (o.hearth) drawHearthLight(ctx, r, o.hearth.bearing - f * 90, o.hearth.step, daylight, 1 - Math.min(1, cloud * 1.05 + murk * 0.5));
   }
+}
+
+/** The view the title and the endings' pages (ui/title.ts, ui/ending.ts) share. */
+export const DUSK = { x: 8, y: 8, w: 624, h: 344 };
+
+/**
+ * Dusk over the inland sea, looking west at the Hearth: a column of light on the horizon that
+ * flickers, and its path on the water, as `look` draws it (game/stones.ts): steadier, taller and
+ * wider by a step for each Stone restored (#168), and as the ending left it once one is taken (#750).
+ */
+export function drawDusk(ctx: CanvasRenderingContext2D, frame: number, look: HearthLook): void {
+  const v = DUSK;
+  ctx.save(); ctx.beginPath(); ctx.rect(v.x, v.y, v.w, v.h); ctx.clip();
+  drawSkyBand(ctx, v, { facing: 3, hour: 18.6, daylight: 0.45, dark: false, cast: look.cast });
+  const horizon = v.y + v.h / 2;
+  const sea = ctx.createLinearGradient(0, horizon, 0, v.y + v.h);
+  sea.addColorStop(0, '#2a4a7a'); sea.addColorStop(1, '#101a30');
+  ctx.fillStyle = sea; ctx.fillRect(v.x, horizon, v.w, v.h / 2);
+  const n = look.step, amp = look.flicker;
+  const flick = 1 - amp + amp * Math.sin(frame / 7) * Math.sin(frame / 3);
+  const cx = v.x + v.w / 2, rad = 110 + 12 * n, peak = 0.45 + 0.05 * n, tall = Math.min(70 + 22 * n, horizon - v.y);
+  const glow = ctx.createRadialGradient(cx, horizon, 4, cx, horizon, rad);
+  glow.addColorStop(0, `rgba(255,220,150,${peak * flick})`); glow.addColorStop(1, 'rgba(255,200,120,0)');
+  ctx.fillStyle = glow; ctx.fillRect(cx - rad, horizon - rad, rad * 2, rad * 2);
+  // At full the column already meets the top of the view: past full it can stand no taller, so it stands wider.
+  const half = 5 + Math.max(0, n - 5);
+  const col = ctx.createLinearGradient(0, horizon - tall, 0, horizon);
+  col.addColorStop(0, `rgba(255,230,170,${0.05 * flick})`); col.addColorStop(1, `rgba(255,220,150,${0.85 * flick})`);
+  ctx.fillStyle = col; ctx.fillRect(cx - half, horizon - tall, half * 2, tall);
+  ctx.fillStyle = `rgba(255,235,190,${0.9 * flick})`; ctx.fillRect(cx - 2, horizon - tall + 30, 4, tall - 30);
+  for (let i = 0; i < 40; i++) {
+    const y = horizon + 4 + i * 4, w = 12 + i * 3.5 * (0.7 + 0.3 * Math.sin(frame / 9 + i));
+    ctx.fillStyle = `rgba(255,220,150,${(0.35 - i * 0.008) * flick})`; ctx.fillRect(cx - w / 2, y, w, 2);
+  }
+  // Far shore silhouette with Helmstow's towers.
+  ctx.fillStyle = '#0e1224';
+  ctx.fillRect(v.x, horizon - 6, v.w, 8);
+  for (const [tx, th, tw] of [[60, 26, 10], [110, 18, 8], [500, 30, 12], [560, 20, 8], [600, 14, 6]]) ctx.fillRect(v.x + tx, horizon - th, tw, th);
+  ctx.restore();
 }
 
 /**
  * The Hearth where it lies, `ahead` degrees right of the way the party faces, as the light goes: a column standing over the far hills and the glow
  * about its foot, faint from the first night and taller and brighter by a step for each Stone
- * restored (#168); lost in cloud and murk as the moon is. Not drawn when its bearing is out of view.
+ * restored (#168), and past full once the voyage is finished (#750); lost in cloud and murk as the
+ * moon is. Not drawn when its bearing is out of view.
  */
 function drawHearthLight(ctx: CanvasRenderingContext2D, r: ViewRect, ahead: number, n: number, daylight: number, seen: number): void {
   const light = Math.min(1, Math.max(0, (0.3 - daylight) / 0.3)) * seen;

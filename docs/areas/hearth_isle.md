@@ -1728,6 +1728,26 @@ Decided by delegate for #751, each the owner's to overturn:
    no save at version 5 has seen the event without the flag, and no window is left between them.
    The road behind has nothing of it to do.
 
+Decided by delegate for #750, each the owner's to overturn:
+
+1. **The real pages are in.** §5 gives all three whole, so `src/content/endings.ts` holds them with
+   their flags and names; #759 has only to set the flags. The machinery's cases run on a fixture.
+2. **The world map's Hearth follows the state too,** in a few lines: a map showing a column the
+   title no longer shows would read as a bug. It has no sky, so opened shows there as at five.
+3. **The looks** (`hearthLook`, `src/game/stones.ts`): relit is five Stones' column and still;
+   opened is five Stones' column under a violet sky with a rose foot, most of the way by day, less
+   at dusk and none by night; finished is two steps past full and still. On the title the column
+   meets the top of the view at five, so there finished stands wider rather than taller.
+4. **The screen** (`src/ui/ending.ts`): the ending's name over the title's dusk, the Hearth as the
+   ending leaves it, a page at a time at twice the log's size. The answer's own words come first in
+   their box; Space or Esc turns a page, and past the last the company stands where it stood.
+5. **The voice check's exception** sits beside `MOST_LINES`: three pages to an ending, each within
+   the screen's six lines (the Hull Opened's second takes four of the log). The pages go through the
+   glyph and spelling checks with every text, and an ending's answer is still held to three.
+6. **Two endings held**, which the Heart's question should not allow, read as the table's first.
+   `ENDED` is exported from the table as a `When` list for #759 and #765 to import.
+7. **Nothing new is saved:** the state is read from the flags, so it needs no save upgrade.
+
 ## 10. Names
 
 The Lanterns' English, kept, as the Whitespine's and Sunderwood's were (NAMES.md §2, §4): the isle
