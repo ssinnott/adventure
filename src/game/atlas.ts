@@ -767,19 +767,36 @@ export function worldPoint(atlas: Atlas, mapId: string, x: number, y: number): [
 
 /**
  * An area's level band: its built maps' bands and its planned zones', together. A zone with maps
- * built reads their bands; one with none built yet, its planned band.
+ * built reads their bands; one with none built yet, its planned band. The places of kind `deep` its
+ * deep ways lead down to, one from another, widen it (the Hearth's Underdeep and Core, 30 to 32): the
+ * road counts them steps of their own, but their levels are the area's, so its band stays the atlas's
+ * once its boxes are laid (docs/areas/hearth_isle.md §9, call 2). A deep place reads its own band, as
+ * its step on the road does, or its map's when it has none.
  */
 export function areaBand(atlas: Atlas, defs: readonly MapDef[], areaId: string): [number, number] | undefined {
   const area = atlas.areas.find((a) => a.id === areaId);
   let lo = Infinity, hi = -Infinity;
+  const widen = (b: readonly [number, number]): void => { lo = Math.min(lo, b[0]); hi = Math.max(hi, b[1]); };
+  const from = new Set([areaId]);
   for (const z of atlas.zones) {
     if (z.area !== areaId) continue;
     const built = (z.maps ?? []).map((m) => defs.find((d) => d.id === m.map)?.band).filter((b) => !!b);
     const bands = built.length ? built : [z.band ?? area?.band].filter((b) => !!b);
-    for (const b of bands) { lo = Math.min(lo, b[0]); hi = Math.max(hi, b[1]); }
+    for (const b of bands) widen(b);
+    for (const id of [z.id, ...(z.maps ?? []).map((m) => m.map)]) from.add(id);
   }
-  if (Number.isFinite(lo)) return [lo, hi];
-  return area?.band ? [area.band[0], area.band[1]] : undefined;
+  if (!Number.isFinite(lo) && area?.band) widen(area.band);
+  // A set walked while it grows visits what is added, so this follows the deep ways to the last.
+  for (const id of from) {
+    for (const l of atlas.links) {
+      const p = l.kind === 'deep' && l.from === id && !from.has(l.to) ? atlas.places.find((q) => q.id === l.to && q.kind === 'deep') : undefined;
+      if (!p) continue;
+      from.add(p.id);
+      const b = p.band ?? defs.find((d) => d.id === p.id)?.band;
+      if (b) widen(b);
+    }
+  }
+  return Number.isFinite(lo) ? [lo, hi] : undefined;
 }
 
 /** One arrow of the zone overlay. */

@@ -149,7 +149,7 @@ const LEAD = 1;
  * The areas that leave it further over, each held at the level it leaves as built, rounded up, as
  * a row's `owed` holds a floor, so that none grows unnoticed; once inside the line, it is dropped.
  */
-const OVER_ROAD: Partial<Record<RegionId, { level: number; why: string }>> = {
+const OVER_ROAD: Partial<Record<keyof typeof CURVE, { level: number; why: string }>> = {
   kilns: { level: 19.3, why: 'the bosses pay the line\'s (MONSTERS §4.3 and §4.4), and the country behind the road adds to it (#474)' },
   ashfall: { level: 27.4, why: 'the Stone, the rungs, the quests and the sentries, and the country behind the road adds to it (#522)' },
 };
@@ -166,6 +166,13 @@ export function leadFault(id: string, left: number, next: number, named?: { leve
   if (left > named.level) return `${leadSaid(id, left, next)}: past its named ${named.level}, so it grew`;
   return left - next > LEAD ? undefined : `${leadSaid(id, left, next)}: inside the line, so drop it from OVER_ROAD`;
 }
+
+/**
+ * The least a map's hardest group may stand at, its monsters' mean: within two of its band's top, and
+ * over its floor however narrow the band, save a floor at the cap, which no group can stand over: the
+ * Heart, at 32, asks 30, and its one group stands at 31.25 (#745).
+ */
+export const nearTop = (floor: number, top: number): number => (floor < MAX_LEVEL ? Math.max(floor + 1, top - 2) : top - 2);
 
 /**
  * The price window: no weapon, armour or shield in a clear's chests or its monsters' drops dearer
@@ -196,6 +203,14 @@ export function curve(): void {
   const named = { level: 19.2 };
   ok(!leadFault('fx', 19.2, 18, named) && !!leadFault('fx', 19.3, 18, named) && !!leadFault('fx', 19, 18, named),
     'a named area may leave it further over, up to its figure, and not past it, nor stay named once inside the line');
+  ok(nearTop(32, 32) === 30 && nearTop(31, 32) === 32 && nearTop(28, 29) === 29 && nearTop(20, 20) === 21,
+    'a hardest group stands within two of the top and over the floor, however narrow the band, save at the cap: 32 asks 30, where 31-32 asks 32 and 20 asks 21');
+  // The road's last area reads its deep places' bands with its zone's (docs/areas/hearth_isle.md §9,
+  // call 2): its isle laid at 28-29 reads 28-32 with the Underdeep and the Core, and 28-29 without.
+  const laid = { ...ATLAS, zones: ATLAS.zones.map((z) => (z.area === 'hearth' ? { ...z, maps: [{ map: 'fx_isle', at: [0, 0] as const }] } : z)) };
+  const strand = [{ ...MAP_DEFS[0], id: 'fx_isle', band: [28, 29] as [number, number] }];
+  ok(areaBand(laid, strand, 'hearth')?.join('-') === '28-32' && areaBand({ ...laid, links: laid.links.filter((l) => l.kind !== 'deep') }, strand, 'hearth')?.join('-') === '28-29',
+    'an area\'s band widens by the deep places its deep ways lead down to: Hearth Isle laid at 28-29 reads 28-32 with the Underdeep and the Core, 28-29 without');
   // The built areas and the planned ones, which have rows before they have maps, in the atlas's
   // order: an area may be listed before an earlier one is, and its row still follows that one's. A
   // planned area's clear gives nothing yet, and its row says who owes it.
@@ -221,8 +236,11 @@ export function curve(): void {
     for (const d of maps) ok(!!d.band && d.band[0] >= lo && d.band[1] <= hi, `${id}: ${d.id}'s band ${d.band?.join('-') ?? 'none'} sits in ${lo}-${hi}`);
     const later = road[i + 1];
     const at = order(id);
-    const next = later ? CURVE[later.id].band[0] : ATLAS.areas.find((a) => a.order === at + 1)?.band?.[0];
-    ok(row.next === next, `${id}: the next floor, ${row.next}, is the next area's (${next ?? 'none'})`);
+    // The road's last row has no area after it to take a floor from: its next floor is the cap, which
+    // three quarters of its clear must reach (Hearth Isle's, 32: docs/areas/hearth_isle.md §8).
+    const last = !later && Number.isFinite(at) && !ATLAS.areas.some((a) => a.order > at);
+    const next = later ? CURVE[later.id].band[0] : last ? MAX_LEVEL : ATLAS.areas.find((a) => a.order === at + 1)?.band?.[0];
+    ok(row.next === next, `${id}: the next floor, ${row.next}, is ${last ? 'the cap, no area coming after it' : 'the next area\'s'} (${next ?? 'none'})`);
     if (later) ok(order(later.id) === at + 1, `${id}: ${later.id}, its next row, is the atlas's next area`);
 
     // What a clear gives: every group once, a member's share of the xp summed; the gold in cash.
@@ -272,8 +290,8 @@ export function curve(): void {
       const nearest = walked.reduce((p, g) => (g.steps < p.steps ? g : p));
       ok(nearest.level <= a + 2, `${d.id}: the nearest group, ${nearest.id} at ${nearest.steps} steps, is near the floor ${a} (level ${nearest.level.toFixed(1)})`);
       const hardest = walked.reduce((p, g) => (g.level > p.level ? g : p));
-      // Near the top is within two of it, but above the floor however narrow the band.
-      const top = Math.max(a + 1, b - 2);
+      // Near the top is within two of it, but above the floor however narrow the band, save at the cap.
+      const top = nearTop(a, b);
       ok(hardest.level >= top, `${d.id}: the hardest group, ${hardest.id} at ${hardest.steps} steps, is near the top ${b} (level ${hardest.level.toFixed(1)}, at least ${top})`);
     }
 
