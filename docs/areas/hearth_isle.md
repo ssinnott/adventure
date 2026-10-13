@@ -19,7 +19,7 @@ cuts the atlas's terrain for a box (EXPANSION §8.2): land is what is not sea or
 "walkable" what is not rock.
 
 Nothing is built but the pilgrims' camp's three rooms (§3). What exists: the atlas's rows (`src/content/atlas.ts`: the area `hearth` at
-28–30, the zone `hearthisle`, the places `underdeep` at 30–31 and `core` at 32, both planned, the
+28–32, the zone `hearthisle`, the places `underdeep` at 30–31 and `core` at 32, both planned, the
 sites The Hearth at 256,174 and Anchorhold at 268,176, the last crossing's sea link from Cinderport
 landing at 252,188 and the deep links on from the isle); the last crossing itself, sold at
 Cinderport's quay since #547, whose isle end is owed to Phase 1.5 (`LAST_CROSSING`,
@@ -49,7 +49,7 @@ grass, the polygon 248,168, 262,166, 266,176, 254,180 and 246,176. One zone, `he
 
 The bands, once and plainly: the area is 28–32, to the cap. The isle's zone, its two boxes and the
 temple are 28–29; below them the crypt is 29, the Ways 30, the Stair 30–31 and the Heart 32 (§9,
-call 2). The atlas's area row says 28–30 today, and H6's issue widens it (§8).
+call 2). The atlas's area row says the same, and so does the curve's (#745, §8).
 
 **The grid** (EXPANSION §8.2; docs/areas/shelf.md §1). The isle lies in two boxes. H6, at 232,158,
 holds its body: the scaffold cuts it to 757 squares of land (rock 386, grass 266, hills 84, sand
@@ -1649,6 +1649,50 @@ overturn before the issue that builds each is approved.
     There is no ninth.
 
 ### 9.2 Decided while building
+
+Decided by delegate for #745, each the owner's to overturn:
+
+1. **The row's `owed` is the epic's, #744,** as Act IV's rows owed theirs (#445 to #447): a clear
+   falls short until the Heart is built, long after H6 takes the row out of `PLANNED`.
+2. **The deep places are found by the atlas's `deep` ways,** from the area, its zones and their
+   maps, place to place; each reads its own band, as its step on the road does, or its map's when
+   it has none. The box that builds the first deep map keeps its `deep` way on the atlas or teaches
+   `areaBand` its exits: the curve check fails if the band narrows.
+3. **The cap is the next floor only for the road's last row,** one with no row after it and no area
+   of a later order on the atlas; a row whose next area has no band fails as before.
+4. **The rise is waived only at a floor of the cap** (`nearTop`, `tools/tests/curve.ts`): the
+   Heart's 32 asks 30, where a band of 31–32 still asks 32. Fixtures hold both, and the deep places'
+   widening on the atlas with a stand-in box laid at 28–29.
+5. **`OVER_ROAD` is typed by the curve's keys,** so a planned row type-checks against it; the Hearth
+   has no entry, its lead over the cap never being positive.
+
+Decided by delegate for #747, each the owner's to overturn:
+
+1. **The leave rule is `leaves: true` on a group, beside its `until`** (`EncounterDef`): the smallest
+   change, with `until` and `ended` untouched, so every group without it keeps today's rule (the
+   Kilns' strays). Not on `Presence`, since a person or an event goes by `until` alone, nor a form of
+   `until`, which the quest log reads.
+2. **One check, in `World.liveGroups`**, which every reader of a standing group goes through. The
+   group's record is left as it stood, so leaving is no kill (no `slainText`, none of its `sets`, no
+   `slain`) and nothing new is saved.
+3. **`gone` in `tools/walk.ts` plays a group leaving, and `fight` there fails on one that has left**,
+   so no walkthrough wins a fight with a group that is gone and sets its flags. The cases are
+   fixtures in Helmstow; no real group leaves until the boxes place one.
+4. **Read from the flags, as a person's going is:** a group whose `until` stopped holding would be
+   back where it stood. Each `until` the plan gives is a flag that stays set.
+
+Decided by delegate for #749, each the owner's to overturn:
+
+1. **An `after` at a seam is a gate.** There the exit's square is the way across, so its gate
+   refuses the party until `after` holds; anywhere else an exit not there leaves a plain square.
+2. **The overlay draws no padlock for either field.** `zoneEdges` gates only on `needFlag`: a `shut`,
+   and so its `lifts`, turns back some companies and not the way, and an `after` is no lock.
+3. **An exit not there yet is not drawn, followed or counted:** not on the automap, not by `homeMap`
+   (the Ways open onto the isle, not the Kilns), not as pillars' way beside a shut exit.
+4. **The maps check counts a person, a group and an event** (`groupFlags`, an event's `sets`); an
+   inn's nights and a guild's quests stay out, as the issue named only the two.
+5. **The weather exception names the door, both maps and both regions;** `hearth` is no region yet
+   (the area's first box adds it), so the fixtures name it as a word.
 
 Decided by delegate for #762, each the owner's to overturn:
 

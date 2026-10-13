@@ -6,7 +6,7 @@ import { GameMap } from '../../src/game/map.ts';
 import type { MapDef } from '../../src/game/map.ts';
 import { layOutdoors, OUTDOORS } from '../../src/game/outdoors.ts';
 import { ATLAS } from '../../src/content/index.ts';
-import { mapAt } from '../../src/game/atlas.ts';
+import { mapAt, zoneEdges } from '../../src/game/atlas.ts';
 import type { AtlasZone } from '../../src/game/atlas.ts';
 import { World } from '../../src/game/world.ts';
 import { defaultParty } from '../../src/game/party.ts';
@@ -722,12 +722,12 @@ export function outdoors(): void {
       `the gate refuses the party with its words until every flag is set, then lets it through (${shut.kind}, ${half.kind}, ${open.kind})`);
   }
   { // An exit into the zone next door that is shut while a condition holds is laid as a gate that
-    // carries it, and refuses the party only while it holds (#157).
-    const defs = MAP_DEFS.map((d) => d.id !== 'shelf' ? d : { ...d, exits: d.exits!.map((e) => e.to !== 'thornmark' ? e : { ...e, shut: { flag: 'fixture_c', member: { race: 'orcblood' as const } }, blockedText: 'Fixture shut.' }) });
+    // carries it, and refuses the party only while it holds (#157) and its lifts does not (#749).
+    const defs = MAP_DEFS.map((d) => d.id !== 'shelf' ? d : { ...d, exits: d.exits!.map((e) => e.to !== 'thornmark' ? e : { ...e, shut: { flag: 'fixture_c', member: { race: 'orcblood' as const } }, lifts: { flag: 'fixture_d' }, blockedText: 'Fixture shut.' }) });
     const laid = layOutdoors(ATLAS, defs), fx = new GameMap(laid.find((d) => d.id === OUTDOORS)!);
     const g = fx.gates;
-    ok(g.length === 1 && g[0].x === sh.x + 31 && g[0].y === sh.y + 9 && g[0].needFlag === undefined && JSON.stringify(g[0].shut) === JSON.stringify({ flag: 'fixture_c', member: { race: 'orcblood' } }) && g[0].blockedText === 'Fixture shut.',
-      `an exit shut on a condition into the zone next door is laid as a gate on its square that carries it (${g.map((q) => `${q.x},${q.y}`).join(', ')})`);
+    ok(g.length === 1 && g[0].x === sh.x + 31 && g[0].y === sh.y + 9 && g[0].needFlag === undefined && JSON.stringify(g[0].shut) === JSON.stringify({ flag: 'fixture_c', member: { race: 'orcblood' } }) && JSON.stringify(g[0].lifts) === JSON.stringify({ flag: 'fixture_d' }) && g[0].blockedText === 'Fixture shut.',
+      `an exit shut on a condition into the zone next door is laid as a gate on its square that carries it and its lifts (${g.map((q) => `${q.x},${q.y}`).join(', ')})`);
     const rng = makeRng(3), party = defaultParty(rng);
     const world = new World(Object.fromEntries(laid.map((d) => [d.id, new GameMap(d)])), party, rng);
     const go = (): string => { world.travel('shelf', 30, 9, EAST); const r = world.move('forward'); return r.kind === 'blocked' ? r.reason : r.kind; };
@@ -738,6 +738,25 @@ export function outdoors(): void {
     const without = go();
     party.members.push(...orc);
     ok(before === 'moved' && shut === 'Fixture shut.' && without === 'moved', `the shut gate lets the party through until its condition holds, refuses it while it does, and opens once it stops (${before}, ${shut}, ${without})`);
+    party.flags.fixture_d = 1;
+    const lifted = go();
+    delete party.flags.fixture_d;
+    const again = go();
+    ok(lifted === 'moved' && again === 'Fixture shut.', `and opens while its lifts holds, shutting again once it stops (${lifted}, ${again})`);
+  }
+  { // An exit into the zone next door that is there only `after` a condition is no way across before
+    // it holds: its gate refuses the party until then (#749). On the overlay it is the way it is, with
+    // no padlock, since an appearance is no lock.
+    const defs = MAP_DEFS.map((d) => d.id !== 'shelf' ? d : { ...d, exits: d.exits!.map((e) => e.to !== 'thornmark' ? e : { ...e, after: { flag: 'fixture_e' }, blockedText: 'Fixture after.' }) });
+    const laid = layOutdoors(ATLAS, defs);
+    const rng = makeRng(3), party = defaultParty(rng);
+    const world = new World(Object.fromEntries(laid.map((d) => [d.id, new GameMap(d)])), party, rng);
+    const go = (): string => { world.travel('shelf', 30, 9, EAST); const r = world.move('forward'); return r.kind === 'blocked' ? r.reason : r.kind; };
+    const before = go();
+    party.flags.fixture_e = 1;
+    const after = go();
+    const road = zoneEdges(ATLAS, defs).find((e) => [e.from, e.to].sort().join() === 'shelf,thornmark');
+    ok(before === 'Fixture after.' && after === 'moved' && !!road && !road.gate.length, `an exit there only after a condition is no way across until it holds, and no gate on the overlay (${before}, ${after}, ${road?.gate.join() ?? 'no way'})`);
   }
   { // Helmstow's south gate, its bottom row, opens onto the road, and the harbour postern beside it
     // onto the Lodestone's track (#157); its north gate into the keep's ward.
