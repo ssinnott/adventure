@@ -21,7 +21,7 @@ import { ok, owed, stopsWalk } from './lib.ts';
  */
 const UNPLACED: Record<string, string> = {
   hearth_moth: '#753', deep_rat: '#753', ashen_champion: '#753', ashen_preacher: '#753', keeper: '#757', hand_rearguard: '#758',
-  grey_hand: '#759', core_sentry: '#759', vask: '#759',
+  grey_hand: '#759', core_sentry: '#759', vask: '#759', deep_crawler: '#757', catcher: '#758',
   bowl_store: '#753', bowl_yard: '#753', bowl_lantern: '#753',
 };
 
