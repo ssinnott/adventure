@@ -23,8 +23,9 @@
 // door out and nothing inside it; the suspects, a dead end's end wall and nothing on open floor;
 // Helmstow walked out, every square of it seen; a secret door at a dead end searched and found, a
 // wall that hides nothing searched once from each side; a lock and a gate shut to it and come back
-// to with a key and a flag; and the outdoors, the zone it stands in, and one beyond its strength
-// left alone until preferred.
+// to with a key and a flag; a group across the only way on gone at and fought, and under a truce
+// stepped over; and the outdoors, the zone it stands in, and one beyond its strength left alone until
+// preferred.
 import { GameMap } from '../../src/game/map.ts';
 import type { Exit, Feature, MapDef } from '../../src/game/map.ts';
 import { NORTH, EAST, WEST, SOUTH, FACING_DX, FACING_DY, turnLeft, turnRight } from '../../src/game/types.ts';
@@ -42,7 +43,7 @@ import { Pilot, BRAINS, IDLE, HEARD_MAX } from '../../src/game/pilot/pilot.ts';
 import { knownOf } from '../../src/game/pilot/known.ts';
 import type { Known, Sighted } from '../../src/game/pilot/known.ts';
 import { route, routeOn, walkOn, nearestOn, routeMaps, HELD } from '../../src/game/pilot/route.ts';
-import { explore, frontier, suspects, SEARCHING } from '../../src/game/pilot/explore.ts';
+import { explore, frontier, suspects, SEARCHING, CLEARING } from '../../src/game/pilot/explore.ts';
 import type { Action } from '../../src/input.ts';
 import { ok, headlessGame, drive } from './lib.ts';
 
@@ -1044,6 +1045,30 @@ function explorer(): void {
   ok(lock === `3 [{"map":"fx_way","x":2,"y":1,"why":"Locked. A key would open it.","flags":${flags}}] [] Passage is walked out.; 3 0 true Passage is walked out.`
     && gate === `3 [{"map":"fx_way","x":2,"y":1,"why":"The way is closed.","flags":${flags}}] [{"x":3,"y":1}] Passage is walked out.; 3 0 true Passage is walked out.`,
     `a lock and a gate, each refused three times, are shut, the lock no square of the frontier, and the passage walked out with no more refusals; a key, and a flag set since, and it goes back to each, opens it and walks on (${lock}; ${gate})`);
+
+  // Rats in sight across a corridor that runs on unseen past them, the only way on: it goes at them,
+  // the fight is won, and the corridor is walked out. Under a truce, as after a flight, it steps over
+  // them and walks it out with no fight.
+  const rats = (truce: number): string => {
+    const c = headlessGame(4), cp = (c.pilot = new Pilot({ instant: true }));
+    c.maps.fx_rats = new GameMap({ id: 'fx_rats', name: 'Corridor', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['##########', '#........#', '##########'],
+      encounters: [{ id: 'fx_rats', x: 3, y: 1, monsters: ['rat', 'rat'], roams: false }] });
+    c.world.travel('fx_rats', 1, 1, EAST);
+    c.world.state.truce = truce; c.world.state.truceGroups = truce ? ['fx_rats'] : [];
+    const ahead = `${JSON.stringify(knownOf(c).groups('fx_rats'))} ${JSON.stringify(frontier(knownOf(c), c, 'fx_rats'))}`;
+    cp.toggle(c);
+    let fight: CombatScreen | null = null, why = '';
+    for (let t = 0; t < 400; t++) {
+      drive(c, [null]);
+      if (c.top instanceof CombatScreen) fight = c.top;
+      if (cp.why[0] === CLEARING) why = CLEARING;
+    }
+    const walked = [...'........'].every((_, i) => knownOf(c).seen('fx_rats', i + 1, 1));
+    return `${ahead} ${fight?.state.outcome ?? 'none'} ${why} ${walked} ${cp.why[0]}`;
+  };
+  const fought = rats(0), passed = rats(10);
+  ok(fought === `[{"x":3,"y":1}] [{"x":3,"y":1}] victory ${CLEARING} true Corridor is walked out.` && passed === `[{"x":3,"y":1}] [{"x":3,"y":1}] none ${CLEARING} true Corridor is walked out.`,
+    `rats across the only way on, it goes at them, wins the fight and walks the corridor out (${fought}); under a truce it steps over them (${passed})`);
 
   // The outdoors: at the Foreland's east edge, facing Thornmark, the nearest square with one unseen
   // beside it is Thornmark's, but it looks about the Foreland it stands in; preferred, it looks about

@@ -3,7 +3,8 @@
 // has been set since it was shut. Then the nearest square it has seen with one unseen beside it, by
 // the brain's route and round the ways shut. With none left, the nearest wall the seen map suggests a
 // secret behind, a wall with seen floor either side, searched once from each side it is faced from;
-// a door found there is a door to Known, and the walk goes on through it. Outdoors it walks the zone
+// a door found there is a door to Known, and the walk goes on through it. With either left only past a
+// group in sight, it goes at the group, and the fight is the bot's. Outdoors it walks the zone
 // it stands in, or the one the strategist prefers (#720), and never a zone beyond the company's
 // strength that is not preferred. A way off, a business, a person and a den are not walked to, as
 // what opens there is another brain's. It reads the world only through Known (known.ts).
@@ -22,6 +23,8 @@ import type { Goal } from './route.ts';
 
 /** The why line while it walks to a wall, faces it and searches it. */
 export const SEARCHING = 'Searching the wall.';
+/** The why line while it goes at a group in sight across the way on. */
+export const CLEARING = 'Clearing the way.';
 
 /** Whether the company steps onto a seen square of `map`, as the navigator reads it. */
 function floor(k: Known, map: string, x: number, y: number): boolean {
@@ -98,7 +101,8 @@ export const explore: Brain = (g, k, p) => {
   if (beyond) { p.why = [`${upper(within(name))} is beyond us yet.`]; return null; }
   const at = g.world.locate(id, 0, 0), shut = p.shut.filter((s) => s.map === st.mapId);
   // The nearest square with one unseen beside it.
-  const near = nearestOn(k, st.mapId, st.x, st.y, st.facing, frontier(k, g, id).map((q) => ({ x: q.x + at.x, y: q.y + at.y })), shut);
+  const edge = frontier(k, g, id).map((q) => ({ x: q.x + at.x, y: q.y + at.y }));
+  const near = nearestOn(k, st.mapId, st.x, st.y, st.facing, edge, shut);
   const key = near && go(g, k, p, { map: st.mapId, x: near.x, y: near.y, name: 'the edge of the map', why: `Looking about ${within(name)}.` });
   if (key) return key;
   // The walls not yet searched from where they are faced, from a square it may stand on.
@@ -115,6 +119,16 @@ export const explore: Brain = (g, k, p) => {
   const next = nearestOn(k, st.mapId, st.x, st.y, st.facing, walls.map((s) => ({ x: s.bx, y: s.by })), shut);
   const step = next && go(g, k, p, { map: st.mapId, x: next.x, y: next.y, name: 'the wall', why: SEARCHING });
   if (step) return step;
+  // With what is left out of reach, it goes at the nearest group in sight on a square it may stand on,
+  // which the route goes round: the step beside it starts the fight, the bot's. One that does not
+  // fight as it is stood before, fled from or stood aside, it steps over.
+  if (edge.length || walls.length) {
+    const foes = k.groups(id).map((q) => ({ x: q.x + at.x, y: q.y + at.y })).filter((q) => floor(k, st.mapId, q.x, q.y) && !barred.has(`${q.x},${q.y}`));
+    if (foes.some((q) => q.x === st.x + FACING_DX[st.facing] && q.y === st.y + FACING_DY[st.facing])) { p.why = [CLEARING]; return 'forward'; }
+    const by = nearestOn(k, st.mapId, st.x, st.y, st.facing, foes.flatMap((q) => FACING_DX.map((dx, f) => ({ x: q.x + dx, y: q.y + FACING_DY[f] }))), shut);
+    const on = by && go(g, k, p, { map: st.mapId, x: by.x, y: by.y, name: 'the group', why: CLEARING });
+    if (on) return on;
+  }
   p.why = [`${upper(within(name))} is walked out.`];
   return null;
 };
