@@ -951,22 +951,27 @@ function explorer(): void {
     `of a seen room with a door out, the frontier is the door's square and nothing inside the room (${JSON.stringify(edge)})`);
 
   // A dead end each side of a secret door at the top of a U, all of it seen: the secret door, inked as
-  // a wall, is the dead ends' end wall and the one suspect, faced from either side; open floor has none.
+  // a wall, is the dead ends' end wall and the one suspect, faced from either side. A hall seen to its
+  // walls, the map unseen past every one of them, has none: open floor is no dead end.
   // A corridor seen to its dead end, the square past the end wall unseen: the end wall is the one suspect.
   const crypt: MapDef = { id: 'fx_crypt', name: 'Crypt', kind: 'dungeon', start: { x: 3, y: 4, facing: NORTH }, rows: ['#######', '#..S..#', '#.###.#', '#.###.#', '#.....#', '#######'] };
   const dead: MapDef = { id: 'fx_dead', name: 'Dead End', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['##########', '#....S...#', '##########'] };
   const s = headlessGame(4), ks = knownOf(s);
   s.maps.fx_crypt = new GameMap(crypt);
   s.maps.fx_dead = new GameMap(dead);
-  s.maps.fx_hall = new GameMap({ id: 'fx_hall', name: 'Hall', kind: 'dungeon', start: { x: 2, y: 2, facing: NORTH }, rows: ['#####', '#...#', '#...#', '#...#', '#####'] });
-  for (const id of ['fx_hall', 'fx_crypt']) { s.world.travel(id, 2, 2, NORTH); see(s, id); }
+  s.maps.fx_hall = new GameMap({ id: 'fx_hall', name: 'Hall', kind: 'dungeon', start: { x: 2, y: 2, facing: NORTH }, rows: ['#######', '#######', '##...##', '##...##', '##...##', '#######', '#######'] });
+  s.world.travel('fx_crypt', 2, 2, NORTH);
+  see(s, 'fx_crypt');
+  s.world.travel('fx_hall', 2, 2, NORTH);
+  unsee(s, 'fx_hall');
+  for (let sy = 1; sy < 6; sy++) for (let sx = 1; sx < 6; sx++) see(s, 'fx_hall', sx, sy);
   s.world.travel('fx_dead', 1, 1, EAST);
   unsee(s, 'fx_dead');
   for (let sy = 0; sy < 3; sy++) for (let sx = 0; sx < 6; sx++) see(s, 'fx_dead', sx, sy);
   const ends = suspects(ks, 'fx_crypt'), open = suspects(ks, 'fx_hall'), end = suspects(ks, 'fx_dead');
   ok(ks.cell('fx_crypt', 3, 1)?.solid === 'wall' && JSON.stringify(ends) === `[{"x":3,"y":1,"facing":${EAST}},{"x":3,"y":1,"facing":${WEST}}]` && !open.length
-    && !ks.seen('fx_dead', 6, 1) && JSON.stringify(end) === `[{"x":5,"y":1,"facing":${EAST}}]`,
-    `the end wall of a seen dead end, a secret door Known inks as a wall, is the one suspect, from each side (${JSON.stringify(ends)}), and seen open floor has none (${JSON.stringify(open)}); past it unseen, from its one side (${JSON.stringify(end)})`);
+    && [[3, 0], [6, 3], [3, 6], [0, 3]].every(([sx, sy]) => !ks.seen('fx_hall', sx, sy)) && !ks.seen('fx_dead', 6, 1) && JSON.stringify(end) === `[{"x":5,"y":1,"facing":${EAST}}]`,
+    `the end wall of a seen dead end, a secret door Known inks as a wall, is the one suspect, from each side (${JSON.stringify(ends)}), and seen open floor, unseen past its walls, has none (${JSON.stringify(open)}); past it unseen, from its one side (${JSON.stringify(end)})`);
 
   // Helmstow, at the helm from the start with the navigator and the explorer: 3000 ticks walk it out,
   // every passable square seen but those behind a lock, as the map is written (the test's privilege,
