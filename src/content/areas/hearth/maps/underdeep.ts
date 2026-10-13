@@ -17,9 +17,9 @@ export const CRACK_SEALED = 'q_crack_sealed';
 /** The crack widened onto the Lanterns' hall the Sunder swallowed (61). */
 export const CRACK_WIDE = 'q_crack_wide';
 
-/** The Stair's head (#758), through the door at 16,2; listed by the Stair, which opens 16,1. */
+/** The Stair's head (#758), through the door at 16,2. */
 export const STAIR_DOOR: Exit = { x: 16, y: 1, to: 'underdeep2', tx: 16, ty: 30, tf: NORTH, label: 'Through the door at the ways\' end, onto a stair that goes down further than your lamp.' };
-/** The crawl way's door onto the Stair's fourth landing, below its fights (59); listed by the Stair (#758). */
+/** The crawl way's door onto the Stair's fourth landing, below its fights (59, #758). */
 export const CRAWL_DOOR: Exit = { x: 24, y: 1, to: 'underdeep2', tx: 24, ty: 18, tf: SOUTH, label: 'Out of the crawl way onto the stair, well below its head. Nothing up here saw you.' };
 
 const many = (n: number, id: string): string[] => Array.from({ length: n }, () => id);
@@ -39,7 +39,7 @@ export const UNDERDEEP: MapDef = {
   bare: true,
   rows: [
     '################################',
-    '########################D#######',
+    '################.#######D#######',
     '################D#######.#######',
     '################.#######.#######',
     '################.#######.#######',
@@ -77,6 +77,10 @@ export const UNDERDEEP: MapDef = {
     // The CREW ONLY door, there once it is answered either way (60): onto the Clean Corridor's floor before
     // the mines' side of it, which stays a door drawn in a wall (deep_mines3 13,3).
     { x: 2, y: 10, to: 'deep_mines3', tx: 13, ty: 3, tf: WEST, after: [{ flag: CREW_OPEN }, { flag: CREW_SHUT }], label: 'Through the door marked CREW ONLY, from the inside, into the Tiefzeche\'s lowest level.' },
+    // Down onto the Stair (#758): through the last door at the ways' end onto its head, and out of the crawl
+    // way onto its fourth landing, below its fights.
+    STAIR_DOOR,
+    CRAWL_DOOR,
   ],
   features: [
     { kind: 'event', x: 16, y: 29, id: 'ud_in', once: true, text: 'Corridors, clean and humming and lit from nowhere. The walls are one face with no join, and they are warm.' },

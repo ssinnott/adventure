@@ -5,6 +5,7 @@ import { HEARTHISLE_H6 } from './maps/hearthisle_h6.ts';
 import { HEARTHFANE } from './maps/hearthfane.ts';
 import { HEARTHFANE2 } from './maps/hearthfane2.ts';
 import { UNDERDEEP } from './maps/underdeep.ts';
+import { UNDERDEEP2 } from './maps/underdeep2.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
@@ -14,8 +15,9 @@ import { QUESTS } from './quests.ts';
 export const AREA = {
   id: 'hearth' as const,
   // In road order: the isle, where the last crossing grounds (#753); the temple at the column's foot (#755);
-  // its crypt, down the stair behind the altar (#756); the Ways, through the crypt's grey door (#757).
-  maps: [HEARTHISLE_H6, HEARTHFANE, HEARTHFANE2, UNDERDEEP],
+  // its crypt, down the stair behind the altar (#756); the Ways, through the crypt's grey door (#757); the
+  // Stair, through the Ways' last door (#758).
+  maps: [HEARTHISLE_H6, HEARTHFANE, HEARTHFANE2, UNDERDEEP, UNDERDEEP2],
   // Drawn ahead of the area (#761), and placed from the isle on: the hearth moth, the ashen champion and
   // preacher and the deep rat first (#753).
   monsters: MONSTERS,

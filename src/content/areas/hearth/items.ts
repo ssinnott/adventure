@@ -3,7 +3,8 @@
 // cache under the north rim; and the pilgrims' three tokens (57). The temple's (#755): the Grey Blade and
 // the Grey Bow in its treasury, and the sacristan's key to it (56). The crypt's (#756): the Grey Robe in
 // the dead champion's pack. The Ways' (#757): the Grey Shield in the keepers' store, and the Old Lantern's
-// Staff behind the crack (61). The rest of the band's rung at 28,
+// Staff behind the crack (61). The Stair's (#758): the Grey Axe in the rearguard's chest, and Jowan's letter
+// home (58). The rest of the band's rung at 28,
 // found and never sold, is #746's (docs/areas/hearth_isle.md §8).
 import type { ItemDef } from '../../../game/items.ts';
 import { W, A, MARTIAL, MAIL } from '../../items.ts';
@@ -16,6 +17,8 @@ export const greyBlade = W('grey_blade', 'Grey Blade', 6600, 2, 12, { bonus: 6, 
 /** The Hand's robe, a point past Cinderport's Cinder Robe (ac 12): anyone's to wear, as that is. */
 export const greyRobe = A('grey_robe', 'Grey Robe', 6200, 13);
 export const greyBow = W('grey_bow', 'Grey Bow', 6800, 1, 12, { kind: 'bow', bonus: 13, ranged: true, twoHanded: true, classes: ['ranger'] });
+/** The rearguard's axe, a point past Cinderport's Flamberge (2d12+6): two-handed, the martial classes' (§8; §9.1, 41). */
+export const greyAxe = W('grey_axe', 'Grey Axe', 6800, 2, 12, { bonus: 7, twoHanded: true, classes: MARTIAL });
 /** The keepers' shield, a point past Cinderport's Basalt Shield (ac 7): the shield bearers'. */
 export const greyShield: ItemDef = { id: 'grey_shield', name: 'Grey Shield', slot: 'shield', price: 4000, ac: 8, classes: MAIL };
 /**
@@ -35,6 +38,8 @@ export const ITEMS: readonly ItemDef[] = [
   // In the keepers' store behind the Ways' first west frame, and behind the crack for a company that widens it (#757).
   greyShield,
   oldLanternsStaff,
+  // In the rearguard's chest on the Stair's first landing (#758).
+  greyAxe,
   // The sacristan's key to the treasury (56): it opens that door, and only it does.
   { id: 'fane_key', name: 'Sacristan\'s Key', slot: 'none', price: 0 },
   // Three in a pouch in the north rim's cache: each wakes one member from sleep or paralysis, used up
@@ -45,4 +50,10 @@ export const ITEMS: readonly ItemDef[] = [
   { id: 'wardens_badge', name: 'Wardens\' Badge', slot: 'none', price: 0 },
   { id: 'treaty_seal', name: 'Treaty Seal', slot: 'none', price: 0 },
   { id: 'tallis_tally', name: 'Tallis\'s Tally', slot: 'none', price: 0 },
+  // Under a dead champion's hands on the Stair (58): read from the pack, and taken home to Gullwick (#765).
+  { id: 'gullwick_letter', name: 'Letter for Gullwick', slot: 'none', price: 0, text: [
+    'A letter sealed with a knot of rope, the seal Gullwick\'s.',
+    '"To my mother, at the third house from the slip. We are on the isle. The grey men say the door opens tomorrow, and after that everything is different, and I will come home then and explain."',
+    '"I was never cargo. I chose this. Tell Wenna\'s mother I saw her girl, and she is well, and she is not afraid, which is more than I am. Your son, Jowan."',
+  ] },
 ];
