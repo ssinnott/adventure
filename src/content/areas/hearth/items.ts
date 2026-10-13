@@ -12,9 +12,9 @@ export const greyKnife = W('grey_knife', 'Grey Knife', 6400, 1, 8, { kind: 'ligh
 /** The Hand's blade, a point past Cinderport's Slag Mace (2d12+5): the martial classes' and the cleric's. */
 export const greyBlade = W('grey_blade', 'Grey Blade', 6600, 2, 12, { bonus: 6, classes: [...MARTIAL, 'cleric'] });
 /** The Hand's bow, a point past Cinderport's Ashwood Bow (1d12+12): the ranger's. */
+export const greyBow = W('grey_bow', 'Grey Bow', 6800, 1, 12, { kind: 'bow', bonus: 13, ranged: true, twoHanded: true, classes: ['ranger'] });
 /** The Hand's robe, a point past Cinderport's Cinder Robe (ac 12): anyone's to wear, as that is. */
 export const greyRobe = A('grey_robe', 'Grey Robe', 6200, 13);
-export const greyBow = W('grey_bow', 'Grey Bow', 6800, 1, 12, { kind: 'bow', bonus: 13, ranged: true, twoHanded: true, classes: ['ranger'] });
 
 export const ITEMS: readonly ItemDef[] = [
   greyKnife,
