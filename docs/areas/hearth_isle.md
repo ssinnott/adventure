@@ -1751,6 +1751,25 @@ Decided by delegate for #761, each the owner's to overturn:
 8. **The Wold's walkthrough reads AHEAD by name.** It asserted AHEAD empty, true only while it was;
    it now asserts the Glasswold out of it, which is what it meant.
 
+Decided by delegate for #761 (the crawlers), each the owner's to overturn:
+
+1. **The Deep Crawler comes head-first down the wall, front on:** seven plates upright with their legs
+   splayed to the sides and the front pair and the clamps on the floor, so it stands where a fight
+   seats it and still reads as coming down from above. The wall is not drawn.
+2. **The Catcher is a crawler built into a cage:** the crawler's plates, rods, brass knees and red
+   lamps over a hood and seven hooked arms closed to the floor, two pairs of long legs standing it
+   over them; one family at a glance, and the boss another shape.
+3. **One of the Hand is in the cage,** slumped in the champion's robe and steel, an arm hung out
+   through the bars: the look's line seen, never said. If the cage should be empty, it is one block
+   of the module.
+4. **Sizes:** the crawler 1.25, the test brute's; the Catcher 2, the Eldest's, drawn at 0.8 of its
+   frame so its crown stands at 0.801 under the markers (0.82): a head and more over the crawlers it
+   leads at the foot (`ud2_catcher`).
+5. **The lamps are a dull red,** against the core's white and gold, the keepers' gold and the
+   walker's green-white: the crawlers' own, things that work in the dark.
+6. **The chisel's mark is cut in a plate of each:** the makers' machines, as every knocker, keeper
+   and heavy machine is (`knockers.ts`).
+
 Decided by delegate for #751, each the owner's to overturn:
 
 1. **`toV5` reads what the game's own `seen` reads.** The event counts as seen when the High Spine
