@@ -138,7 +138,7 @@ export const HEARTHISLE_H6: MapDef = {
     // The Hearth on the Bowl's grass east of the mound: the column's foot, the warm ground between, and
     // the Grove's sliver humming again for a company that carries it (#56's 18).
     { kind: 'sign', x: 24, y: 16, text: 'The column of light. It stands out of the ground here as a tree stands, wider than the temple\'s door, and goes up until the sky stops it. Looking up at it hurts.' },
-    { kind: 'event', x: 23, y: 14, id: 'h6_warm', once: true, text: 'The ground here is warm as a hearthstone, and no grass grows on it within ten paces of the light.' },
+    { kind: 'event', x: 23, y: 14, id: 'h6_warm', once: true, text: 'The ground here is warm as a hearthstone.' },
     { kind: 'event', x: 23, y: 16, id: 'h6_sliver', once: true, after: { item: 'grove_sliver' }, text: 'The sliver from the Grove hums in your pack, the way it did under the roots.' },
     // The rim's lookouts: the west edge at the shelf's head, and the mound's head under the north face.
     { kind: 'event', x: 7, y: 22, id: 'h6_lookout', once: true, text: 'The rim\'s west edge. Over the Sound, under its smoke, Cinderport, and the mountain over it. The whole road is behind you.' },
