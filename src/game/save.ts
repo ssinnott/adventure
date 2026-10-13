@@ -7,12 +7,13 @@ import { UPGRADES } from './upgrades.ts';
 import type { Upgrade } from './upgrades.ts';
 
 /**
- * 4: a blessing may keep an element off a member (#555). 3: Vask is only refused (#452). 2: the outdoors is one map and exploration is kept in bits. An
- * older save still loads: deserialize
- * brings it up to date, one registered upgrade a version (game/upgrades.ts). A bump comes with its
- * upgrade, and with src/content/shipped.json regenerated (tools/shipped.ts).
+ * 5: a save that stood at the Peak Stone is given the flag the Core's door asks (#751). 4: a
+ * blessing may keep an element off a member (#555). 3: Vask is only refused (#452). 2: the outdoors
+ * is one map and exploration is kept in bits. An older save still loads: deserialize brings it up
+ * to date, one registered upgrade a version (game/upgrades.ts). A bump comes with its upgrade, and
+ * with src/content/shipped.json regenerated (tools/shipped.ts).
  */
-export const SAVE_VERSION = 4;
+export const SAVE_VERSION = 5;
 export const SAVE_KEY = 'hearth-of-caldera.save';
 
 export interface SaveData {

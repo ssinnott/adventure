@@ -1282,6 +1282,65 @@ const hearth = await page.evaluate(async () => {
   return { south, north, home, steadier, plain };
 });
 
+// The ending's pages (#750): a fixture question whose answer takes the Hull Opened shows its words, then its three pages
+// over the title's dusk, a Space to a page, and after the last the company stands where it stood and the game goes on.
+const endingStart = await page.evaluate(() => {
+  const g = (window as any).__game.game, w = g.world;
+  while (g.screens.length > 1) g.pop();
+  w.travel('shelf', 16, 6, 2);
+  g.ask({ ask: 'Fixture question.', answers: [{ label: 'Open it', says: ['Fixture words.'], sets: 'q_end_arrive' }] }, 'FIXTURE');
+  return { under: g.screens[0].constructor.name, at: `${w.state.mapId} ${w.state.x},${w.state.y}` };
+});
+const endingTops: string[] = [];
+for (let i = 0; i <= 5; i++) {
+  endingTops.push(await page.evaluate(() => { const t = (window as any).__game.game.top; return t.constructor.name + (t.ending ? ` ${t.ending.title} ${t.page + 1}` : ''); }));
+  if (i === 2 && process.env.ENDING_SHOT) await page.screenshot({ path: process.env.ENDING_SHOT });
+  if (i < 5) { await page.keyboard.press('Space'); await page.waitForTimeout(100); }
+}
+const endingAfter = await page.evaluate(() => { const g = (window as any).__game.game, w = g.world; return { held: w.party.flags.q_end_arrive === 1, at: `${w.state.mapId} ${w.state.x},${w.state.y}` }; });
+// The Hearth after each ending: on the title over the saved company (its column's light and swing, a patch of its sky), and
+// from the shelf looking south at it, the night's warm light over the hills and the noon sky's colour.
+const hearthAfter = await page.evaluate(async () => {
+  const T = await import('/src/ui/title.ts' as string), V = await import('/src/ui/viewport.ts' as string);
+  const g = (window as any).__game.game, w = g.world, flags = { ...w.party.flags }, minutes = w.state.minutes;
+  const avg = (d: Uint8ClampedArray): number[] => { const t = [0, 0, 0]; for (let i = 0; i < d.length; i += 4) for (let k = 0; k < 3; k++) t[k] += d[i + k]; return t.map((x) => Math.round(x / (d.length / 4))); };
+  const title = (): { light: number; swing: number; sky: number[] } => {
+    g.saveGame();
+    const t = new T.TitleScreen(true), cv = document.createElement('canvas');
+    cv.width = 640; cv.height = 360;
+    const tc = cv.getContext('2d', { willReadFrequently: true })!, sums: number[] = [];
+    for (let frame = 0; frame < 60; frame++) {
+      t.render(g, tc, frame);
+      const d = tc.getImageData(310, 130, 20, 48).data;
+      let sum = 0; for (let i = 0; i < d.length; i += 4) sum += d[i] + d[i + 1];
+      sums.push(sum);
+    }
+    return { light: sums.reduce((a, b) => a + b, 0) / sums.length, swing: Math.max(...sums) - Math.min(...sums), sky: avg(tc.getImageData(20, 20, 60, 40).data) };
+  };
+  const W = 400, H = 268, c = document.createElement('canvas'), sky = document.createElement('canvas');
+  c.width = sky.width = W; c.height = sky.height = H;
+  const ctx = c.getContext('2d', { willReadFrequently: true })!, skyCtx = sky.getContext('2d', { willReadFrequently: true })!;
+  const view = (minute: number): void => {
+    w.travel('shelf', 16, 6, 2);
+    w.state.minutes = Math.floor(minutes / 1440) * 1440 + 1440 + minute;
+    w.cached = { seed: w.state.weatherSeed, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: 12, cover: 0, wet: 0 } };
+    skyCtx.clearRect(0, 0, W, H); ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H });
+  };
+  const out: Record<string, { title: { light: number; swing: number; sky: number[] }; warm: number; noon: number[] }> = {};
+  for (const [k, f] of [['none', ''], ['relit', 'q_end_reignite'], ['opened', 'q_end_arrive'], ['finished', 'q_end_finish']]) {
+    for (const e of ['q_end_reignite', 'q_end_arrive', 'q_end_finish']) delete w.party.flags[e];
+    if (f) w.party.flags[f] = 1;
+    view(0);
+    const d = ctx.getImageData(0, 0, W, H / 2).data;
+    let warm = 0; for (let i = 0; i < d.length; i += 4) warm += Math.max(0, d[i] - d[i + 2] - 4);
+    view(720);
+    out[k] = { title: title(), warm, noon: avg(skyCtx.getImageData(0, 0, W, 40).data) };
+  }
+  g.store.removeItem('hearth-of-caldera.save');
+  w.party.flags = flags; w.state.minutes = minutes; w.cached = null; w.travel('shelf', 16, 6, 2);
+  return out;
+});
+
 // Lampglass in a fight: Cast, the spell, then the menu asks against what, and the pick is cast (#20).
 const glass = await page.evaluate(() => {
   const g = (window as any).__game.game;
@@ -1337,6 +1396,18 @@ let bad = 0;
 const ok = (cond: boolean, msg: string) => { console.log((cond ? '  ok:   ' : '  FAIL: ') + msg); if (!cond) bad++; };
 ok(hearth.south > 0 && hearth.north < hearth.south / 100 && hearth.home > hearth.south, `by night the Hearth stands over the hills where it lies, south of Helmstow and not north, and brighter with the Tide Stone home (${hearth.south} south, ${hearth.north} north, ${hearth.home} home)`);
 ok(hearth.steadier.light > hearth.plain.light && hearth.steadier.swing < hearth.plain.swing, `the title over a save with the Tide Stone home draws a brighter, steadier Hearth (light ${hearth.steadier.light.toFixed(0)} against ${hearth.plain.light.toFixed(0)}, swing ${hearth.steadier.swing} against ${hearth.plain.swing})`);
+{
+  const pages = [1, 2, 3].map((n) => `EndingScreen The Hull Opened ${n}`).join(' > ');
+  ok(endingTops.join(' > ') === `ChoiceScreen > MessageScreen > ${pages} > ${endingStart.under}` && endingAfter.held && endingAfter.at === endingStart.at,
+    `an answer that takes an ending shows its words, then its three pages, and after the last the company stands where it stood (${endingTops.join(' > ')}; ${endingAfter.at})`);
+  const h = hearthAfter, far = (a: number[], b: number[]): number => a.reduce((s, x, i) => s + Math.abs(x - b[i]), 0);
+  ok(h.relit.title.swing === 0 && h.relit.title.light > h.none.title.light && h.finished.title.swing === 0 && h.finished.title.light > h.relit.title.light && h.opened.title.swing > 0,
+    `the title over the saved company: relit at full and still, opened flickering as at five, finished harder (light ${[h.none, h.relit, h.opened, h.finished].map((x) => x.title.light.toFixed(0)).join(', ')}; swing ${[h.none, h.relit, h.opened, h.finished].map((x) => x.title.swing).join(', ')})`);
+  ok(far(h.opened.title.sky, h.none.title.sky) > 30 && far(h.opened.noon, h.none.noon) > 60 && far(h.relit.noon, h.none.noon) < 4 && far(h.finished.noon, h.none.noon) < 4 && far(h.relit.title.sky, h.none.title.sky) < 4,
+    `the sky is another colour after the Hull Opened, on the title and by day, and only then (noon ${h.none.noon.join('/')} against ${h.opened.noon.join('/')})`);
+  ok(h.relit.warm > h.none.warm && Math.abs(h.opened.warm - h.relit.warm) <= h.relit.warm / 100 && h.finished.warm > h.relit.warm,
+    `by night the Hearth stands at full once relit or opened, and harder once finished (${[h.none, h.relit, h.opened, h.finished].map((x) => x.warm).join(', ')})`);
+}
 ok(errors.length === 0, `no page errors${errors.length ? ' -> ' + errors.join(' | ') : ''}`);
 ok(titleColours > 6, `the title painted (${titleColours} colours)`);
 ok(screen0 === 'CreateScreen' && screen1 === 'ExploreScreen', `Space on the title opens creation, Space again takes the premade company (${screen0}, ${screen1})`);

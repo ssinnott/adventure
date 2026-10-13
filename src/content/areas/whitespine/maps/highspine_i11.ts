@@ -62,8 +62,10 @@ export const HIGHSPINE_I11: MapDef = {
   ],
   features: [
     // The Peak Stone at the atlas's site, whole: its words, not a drawing, as the Lodestone's are. It
-    // counts toward the Hearth once a company has stood at it (src/content/stones.ts).
-    { kind: 'event', x: 28, y: 0, id: 'i11_stone', once: true, text: 'The Peak Stone. Whole, and steady. The snow stops a yard short of it all the way round.' },
+    // counts toward the Hearth once a company has stood at it (src/content/stones.ts), and sets the flag
+    // the Core's door asks, since a `seen` cannot be a `needFlag`. A save that stood here before it was
+    // set is given the flag by the upgrade to version 5 (src/game/upgrades.ts).
+    { kind: 'event', x: 28, y: 0, id: 'i11_stone', once: true, text: 'The Peak Stone. Whole, and steady. The snow stops a yard short of it all the way round.', sets: 'q_peak_stood' },
     // The brothers who keep it, the monks' shrine at its foot, and the cairn under 27,0, where the
     // ridge trail leaves north beside the Stone (the atlas's trail crosses the edge at 291,317).
     { kind: 'event', x: 28, y: 1, id: 'i11_keeper', once: true, text: 'A brother stands at the Stone with its hood up. Snow settles on its shoulders and does not melt.' },

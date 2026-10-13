@@ -69,5 +69,24 @@ function toV4(data: OldSave): OldSave {
   return data;
 }
 
+/**
+ * The Peak Stone as version 4 had it: High Spine I11 is a zone of the outdoors, so the record that
+ * its once-event was seen is the outdoors' (`used`, by the event's id) once the party has trodden the
+ * zone, as the quest log's `seen` reads it. `flag` is the one the Core's door asks.
+ */
+const V5_PEAK = { zone: 'highspine_i11', event: 'i11_stone', flag: 'q_peak_stood' };
+
+/**
+ * 5: the Peak Stone's event sets `q_peak_stood` for new play (#751). A save that stood at the Stone
+ * has seen that once-event and will never get the flag from it, so it is given it here, and the
+ * Core's door is not shut to the company for good.
+ */
+function toV5(data: OldSave): OldSave {
+  const s = data.world;
+  const outdoors = s.zones?.includes(V5_PEAK.zone) ? s.maps[V2_OUTDOORS.id] : undefined;
+  if (outdoors?.used[V5_PEAK.event]) data.party.flags[V5_PEAK.flag] = 1;
+  return data;
+}
+
 /** Each upgrade by the version it brings a save to. A bump of SAVE_VERSION adds one here. */
-export const UPGRADES: Readonly<Record<number, Upgrade>> = { 2: toV2, 3: toV3, 4: toV4 };
+export const UPGRADES: Readonly<Record<number, Upgrade>> = { 2: toV2, 3: toV3, 4: toV4, 5: toV5 };
