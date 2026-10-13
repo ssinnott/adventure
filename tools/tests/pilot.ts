@@ -57,7 +57,7 @@ import type { Known, Sighted } from '../../src/game/pilot/known.ts';
 import { route, routeOn, walkOn, nearestOn, routeMaps, HELD } from '../../src/game/pilot/route.ts';
 import { explore, frontier, suspects, SEARCHING, CLEARING } from '../../src/game/pilot/explore.ts';
 import { keep, need, better, reserve, spare, WELL_STEPS } from '../../src/game/pilot/keep.ts';
-import { aims, chooseAim, LOST_AFTER, BACK } from '../../src/game/pilot/aims.ts';
+import { aims, chooseAim, LOST_AFTER, BACK, WAIT } from '../../src/game/pilot/aims.ts';
 import { questLog, goalMap } from '../../src/game/quests.ts';
 import { THE_QUEST } from '../../src/content/index.ts';
 import type { Action } from '../../src/input.ts';
@@ -1419,6 +1419,22 @@ function strategist(): void {
   drive(l, [null]);
   ok(aimed.startsWith('{"kind":"quest"') && lost && !next.includes(text) && bram.level === 2 && JSON.stringify(lp.aim) === aimed && lp.aimGoal === text,
     `three days on one goal, a tick says "${line}" and clears the aim (${lost}), the next walks on (${next}), and a level gained puts the goal back (${JSON.stringify(lp.aim)})`);
+
+  // No way on to the goal, and the clock left alone: hired and shut in a cell (world.travel, the
+  // test's privilege), it walks the cell out, then searches where it stands, ten minutes a press, and
+  // three days on says the goal is lost.
+  const s = headlessGame(4), sp = (s.pilot = new Pilot({ instant: true }));
+  s.party.flags.q_ashcombe = 1;
+  s.party.gold = reserve(s.party);
+  s.maps.fx_cell = new GameMap({ id: 'fx_cell', name: 'Cell', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#...#', '#####'] });
+  s.world.travel('fx_cell', 1, 1, EAST);
+  const since = s.world.state.minutes;
+  sp.toggle(s);
+  let waited = false;
+  for (let n = 0; n < 1000 && !sp.lost.size; n++) { drive(s, [null]); if (sp.why[1] === WAIT) waited = true; }
+  const searched = sp.heard.filter((q) => q === 'You search the wall ahead and find nothing.').length, days = (s.world.state.minutes - since) / 1440;
+  ok(waited && searched > 0 && days >= 3 && sp.heard.includes(line) && sp.aim === null && sp.lost.has(text),
+    `with no way on, it waits (${waited}), searching ${searched} times, and ${days.toFixed(1)} days on says "${line}" (${sp.lost.has(text)})`);
 
   // Over the line from the Foreland into Thornmark at level 1, not bound there: the band known, it
   // steps back onto the square before the line.

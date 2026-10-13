@@ -33,6 +33,8 @@ export type Aim =
 export const LOST_AFTER = 3 * 24 * 60;
 /** The why line stepping back out of a zone too strong for the company. */
 export const BACK = 'Too strong for us yet: back.';
+/** The why line's second, bound for a quest's goal with no way on: it searches where it stands, ten minutes a press, so the three days pass. */
+export const WAIT = 'No way on yet: waiting.';
 /** The most of a goal's words the why line gives. */
 const CUT = 48;
 /** The far squares of a zone a levelling company walks to and fro between, the nearest of them by the route. */
@@ -279,7 +281,7 @@ function chest(g: Game, k: Known, p: Pilot): Action | null {
  * goal and it is lost; a crossing into a zone too strong for the company that the aim is not in,
  * stepped back from; Space on a chest stood on. A walk under way goes on, the navigator's; once it is
  * done, or with none, the aim chosen anew where the walks give another, a chest on the map opened, and
- * the aim walked.
+ * the aim walked; a quest's with no way on, it searches where it stands, so the three days pass.
  */
 export const aims: Brain = (g, k, p) => {
   if (!(g.top instanceof ExploreScreen)) return null;
@@ -317,7 +319,12 @@ export const aims: Brain = (g, k, p) => {
   if (opened) return opened;
   const why = lines(g, aim)[0];
   switch (aim.kind) {
-    case 'quest': return walk(g, k, p, aim.map, why);
+    case 'quest': {
+      // No way on: the clock must move for the lost rule to come, so it searches where it stands.
+      const key = walk(g, k, p, aim.map, why);
+      if (!key) p.why = [why, WAIT];
+      return key ?? 'search';
+    }
     case 'level': return level(g, k, p, aim.zone, why);
     case 'explore':
       for (const map of maps) {

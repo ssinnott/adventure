@@ -227,7 +227,8 @@ const STILL_TICKS = 100;
  * A new game played by the pilot (#720, the first of #723's runs): `headlessGame(4)`, the pilot on
  * with every brain and no delays, ticked until the chapter's end holds, the company falls, it presses
  * no key on the street for STILL_TICKS, or PLAY_TICKS run out. The end must hold; while `whose` owes
- * what gets the pilot there, the check is owed to it.
+ * what gets the pilot there, the check is owed to it. The strategist's part is never owed: the play
+ * must not end with nothing more to press, nor out of ticks.
  */
 export function pilotPlays(ok: Ok, chapter: Chapter, whose?: string): void {
   const g = headlessGame(4), p = (g.pilot = new Pilot({ instant: true })), from = performance.now();
@@ -242,6 +243,7 @@ export function pilotPlays(ok: Ok, chapter: Chapter, whose?: string): void {
   const how = done() ? 'there' : !p.on ? `as it stops (${p.why.join(' ')})` : still >= STILL_TICKS ? `with nothing more to press (${p.why.join(' ')})` : 'out of ticks';
   const msg = `${chapter.title}: the pilot plays a new game to its end; it ends ${how} after ${ticks} ticks and ${((performance.now() - from) / 1000).toFixed(1)} s, on day ${g.world.day} at level ${companyLevel(g.party)}`;
   if (whose) owed(done(), msg, whose); else ok(done(), msg);
+  ok(done() || (still < STILL_TICKS && ticks < PLAY_TICKS), `${chapter.title}: the pilot never stands with nothing more to press, nor runs out of ticks; it ends ${how}`);
 }
 
 /** The quest's goal comes only from a chapter begun, or one before a chapter begun. */
