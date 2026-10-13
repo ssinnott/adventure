@@ -52,7 +52,7 @@ export const HEARTHISLE_H6: MapDef = {
     'WWW~~~rrrrrrrr,^^^^^^^^^,,,,,,,r',
     'WWW~~~rrrrrrr,,^^^^^,,^^,,,,,,,,',
     'WWW~~~rrrrrrr,,,,^^,,,,,,,,,,,,,',
-    'WWW~~~rrrrrrr,,,B,B,,,,,,,,,,,,,',
+    'WWW~~~rrrrrrr,,,B,D,,,,,,,,,,,,,',
     'WW~~~rrrrrrr,,,BDB,,,,,,,,,,,,,,',
     'WWW~~rrrrrrrr,,D,D,,,,,,,,,,,,,,',
     'WWW~~rrrrrrrr,,,,,,,,,,,,,,,,,,,',
@@ -70,6 +70,10 @@ export const HEARTHISLE_H6: MapDef = {
     'WWWWWWWWWWW~~~~,,,,r:rrrrrrr,,,,',
     'WWWWWWWWWWWW~~~,,,,,,,,,,,,,____',
     'WWWWWWWWWWWWWW~~~~~,,,,,,,__~~~~',
+  ],
+  exits: [
+    // Hearthfane's door in the mound's south face (#755): in at the nave's foot, facing up it.
+    { x: 18, y: 14, to: 'hearthfane', tx: 8, ty: 14, tf: NORTH, label: 'In at the temple\'s door, out of the light.' },
   ],
   features: [
     // The strand, where the last crossing grounds at 20,30 (LAST_CROSSING): its man in the stern, who
@@ -128,8 +132,8 @@ export const HEARTHISLE_H6: MapDef = {
       { label: 'Take it.', sets: TOKEN_TALLIS, gives: 'tallis_tally', says: ['He notches it once more, for you, and hands it over.', '"He remembers what he pays for. He\'ll remember this."'] },
       { label: 'Not ours to carry.', says: ['"Suit yourselves. He pays either way, and he\'ll know who didn\'t."'] },
     ] }, says: [{ after: { flag: TOKEN_TALLIS }, lines: ['Pasco is counting the moths over the Bowl, and losing count.', '"Keep the stick dry."'] }] },
-    // Hearthfane's door in the mound's south face, 18,14: a building until the temple is built (#755),
-    // which joins its exit to the nave at 8,14 facing north. Before it, the temple seen.
+    // Hearthfane's door in the mound's south face, 18,14, the way into its nave (#755). Before it, the
+    // temple seen.
     { kind: 'event', x: 18, y: 15, id: 'h6_front', once: true, text: 'A temple of the rim\'s own rock, built round the column\'s foot. Its door stands open, and the Hand\'s grey is on the men at it.' },
     // The Hearth on the Bowl's grass east of the mound: the column's foot, the warm ground between, and
     // the Grove's sliver humming again for a company that carries it (#56's 18).
