@@ -9,7 +9,7 @@ import { NORTH } from '../../src/game/types.ts';
 import { MAX_LEVEL } from '../../src/game/party.ts';
 import { CURVE, trainerCeiling } from '../../src/content/progression.ts';
 import { giftOf, spentId } from '../../src/game/wilds.ts';
-import { handIns, personFlags, personGives } from '../../src/game/people.ts';
+import { handIns, personFlags, personGives, groupFlags } from '../../src/game/people.ts';
 import { ok, owed, stopsWalk } from './lib.ts';
 
 /**
@@ -17,9 +17,11 @@ import { ok, owed, stopsWalk } from './lib.ts';
  * group yet, a room no business opens into yet. Each is reported as that issue's while it waits,
  * and fails once it is placed, so its entry is dropped here. Cairnmoor's part is empty: every monster
  * its map files draw is placed, the last of them, the Cairn King, by #480; and Rimewater's, the
- * keepers and the Matron by #490.
+ * keepers and the Matron by #490. Hearth Isle's three tents wait on the camp's businesses (H6, #753).
  */
-const UNPLACED: Record<string, string> = {};
+const UNPLACED: Record<string, string> = {
+  bowl_store: '#753', bowl_yard: '#753', bowl_lantern: '#753',
+};
 
 /** The monsters a company can meet on `defs`: those their groups place, and those a placed one calls (`calls`), and so on down. */
 export function placedMonsters(defs: readonly MapDef[], table: Readonly<Record<string, MonsterDef>> = MONSTERS): Set<string> {
@@ -126,6 +128,20 @@ export function tidalFaults(m: GameMap, defs: readonly MapDef[]): string[] {
   return out;
 }
 
+/**
+ * What a gated exit waits on that nothing on the maps sets. A person sets a flag, met; a group by its
+ * fall or its question, and an event, said, as tools/tests/quests.ts counts them for its conditions.
+ * The Core's door waits on `q_anvil_closed`, which a group's fall sets, and on `q_peak_stood`, which
+ * an event does (#749). A flag nothing sets still fails.
+ */
+export function unsetGates(defs: readonly MapDef[]): string[] {
+  const set = new Set(defs.flatMap((d) => [
+    ...(d.features ?? []).flatMap((f) => (f.kind === 'npc' ? personFlags(f) : f.kind === 'event' ? [f.sets ?? []].flat() : [])),
+    ...(d.encounters ?? []).flatMap(groupFlags),
+  ]));
+  return defs.flatMap((d) => (d.exits ?? []).flatMap((e) => [e.needFlag ?? []].flat().filter((k) => !set.has(k)).map((k) => `${d.id}: gated exit flag '${k}' at ${e.x},${e.y} is set by nothing`)));
+}
+
 export function maps(): void {
   // The maps as written, each on its own, the Foreland and Thornmark included (see `outdoors` for how they are played).
   const maps = Object.fromEntries(MAP_DEFS.map((d) => [d.id, new GameMap(d)]));
@@ -154,7 +170,14 @@ export function maps(): void {
       if (f.kind === 'shop') for (const id of f.stock) ok(id in ITEMS, `${def.id}: shop stock '${id}' exists`);
       if (f.kind === 'npc') for (const id of [...handIns(f).map((q) => q.item), ...personGives(f)]) ok(id in ITEMS, `${def.id}: ${f.name.split(',')[0]}'s item '${id}' exists`);
     }
-    for (const e of m.exits) for (const flag of [e.needFlag ?? []].flat()) ok(MAP_DEFS.some((d) => d.features?.some((f) => f.kind === 'npc' && personFlags(f).includes(flag))), `${def.id}: gated exit flag '${flag}' is set by some person`);
+  }
+  const unset = unsetGates(MAP_DEFS);
+  ok(!unset.length, `every gated exit's flag is set by some person, group or event${unset.length ? ' -> ' + unset.join('; ') : ''}`);
+  { // The rule on a fixture (#749): a flag a group's fall or an event sets counts, one nothing sets fails.
+    const fx = (more: Partial<MapDef>): MapDef => ({ id: 'fx_gated', name: 'Fixture', kind: 'dungeon', start: { x: 1, y: 1, facing: NORTH }, rows: ['#####', '#...#', '#####'], exits: [{ x: 3, y: 1, to: 'fx_gated', tx: 1, ty: 1, needFlag: 'fx_flag' }], ...more });
+    ok(!unsetGates([fx({ encounters: [{ id: 'fx_g', x: 2, y: 1, monsters: ['rat'], sets: 'fx_flag' }] })]).length, 'a gated exit whose flag a group\'s fall sets passes');
+    ok(!unsetGates([fx({ features: [{ kind: 'event', x: 2, y: 1, id: 'fx_e', text: 'Hm.', sets: 'fx_flag' }] })]).length, 'and so does one whose flag an event sets');
+    ok(unsetGates([fx({})]).length === 1, 'and one whose flag nothing sets fails');
   }
   // The Deepthorn's monsters are harder, not more: no group on its maps is above eight.
   const deep = new Set(ATLAS.zones.find((z) => z.id === 'deepthorn')?.maps?.map((m) => m.map));

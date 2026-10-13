@@ -109,11 +109,26 @@ export function fight(w: Walk, at: string): void {
   const [map, id] = ref(at);
   const g = def(map)?.encounters?.find((e) => e.id === id);
   if (!g) { w.ok(false, `there is a group ${at}`); return; }
+  if (g.leaves && w.world.ended(g)) { w.ok(false, `${at} is there to fight, not gone by the leave rule`); return; }
   const rate = winRate(w.level, g, 10, Infinity, gateOpts(g));
   w.ok(rate > 0, `${at} is won at level ${w.level} (${Math.round(rate * 100)}% of ten fights)`);
   w.world.travel(map, g.x, g.y);
   w.world.killGroups([id]);
   for (const m of g.monsters) for (const d of MONSTERS[m].drops ?? []) if (d.chance >= 1) w.party.bag.push(d.item);
+  listen(w);
+}
+
+/**
+ * A group gone by the leave rule, 'map:id' (#747): it leaves, its `until` holds, and on its map it is
+ * not drawn, met or fought, nor in the way of a rest. Found on the world's map first, so a fixture's
+ * group is found too.
+ */
+export function gone(w: Walk, at: string): void {
+  const [map, id] = ref(at);
+  const g = w.world.maps[map]?.encounters.find((e) => e.id === id) ?? def(map)?.encounters?.find((e) => e.id === id);
+  if (!g) { w.ok(false, `there is a group ${at}`); return; }
+  w.world.travel(map, g.x, g.y);
+  w.ok(!!g.leaves && w.world.ended(g) && !w.world.liveGroups().some((x) => x.def.id === id), `${at} is gone by the leave rule, not there to see, meet or fight`);
   listen(w);
 }
 
