@@ -365,8 +365,8 @@ type Business = Extract<Feature, { kind: 'inn' | 'temple' | 'shop' | 'guild' | '
 /** One line of a business's first menu, and the screen it opens. */
 export interface BusinessEntry { label: string; open: () => Screen }
 
-/** What each kind of business trades in, as its first menu names it. */
-const TRADE: Record<Exclude<Business['kind'], 'npc'>, string> = { inn: 'A room and rations', temple: 'The chapel', shop: 'Buy and sell', guild: 'Study spells', trainer: 'Train' };
+/** What each kind of business trades in, as its first menu names it: the label the pilot picks there (game/pilot/keep.ts). */
+export const TRADE: Record<Exclude<Business['kind'], 'npc'>, string> = { inn: 'A room and rations', temple: 'The chapel', shop: 'Buy and sell', guild: 'Study spells', trainer: 'Train' };
 /** A hall's first menu's line for its guild's skills. */
 const LEARN = 'Learn a skill';
 

@@ -53,10 +53,13 @@ export function item(id: string): ItemDef {
   return d;
 }
 
+/** A weapon's blow, as the harness and the quartermaster weigh it: its dice's mean and its bonus. */
+export const hits = (d: ItemDef): number => ((d.dice ?? 1) * ((d.sides ?? 4) + 1)) / 2 + (d.bonus ?? 0);
+
 type Shop = Extract<Feature, { kind: 'shop' }>;
 
-/** What a shop charges for an item: its own price for it, or else the item's. */
-export function priceIn(shop: Shop, id: string): number {
+/** What a shop charges for an item: its own price for it, or else the item's. A shop as the pilot knows it has its prices once it has shown them. */
+export function priceIn(shop: Pick<Shop, 'prices'>, id: string): number {
   return shop.prices?.[id] ?? item(id).price;
 }
 
