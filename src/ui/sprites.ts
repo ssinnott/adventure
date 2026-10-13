@@ -35,6 +35,7 @@ import * as giants from './monsters/giants.ts';
 import * as drakes from './monsters/drakes.ts';
 import * as machines from './monsters/machines.ts';
 import * as glasswalkers from './monsters/glasswalkers.ts';
+import * as crawlers from './monsters/crawlers.ts';
 
 export { groundShadow } from './monsters/common.ts';
 
@@ -421,6 +422,7 @@ export const FAMILY: Readonly<Record<MonsterSprite, MonsterDrawer>> = {
   drakeling: drakes.draw, brood_drake: drakes.draw, flue_walker: machines.draw, deep_knocker: knockers.draw, inspector: knockers.draw,
   vulture: birds.draw, wold_lion: cats.draw, grey_lion: cats.draw, glass_scorpion: spider.draw, basilisk: salamanders.draw,
   glass_walker: glasswalkers.draw,
+  deep_crawler: crawlers.draw, catcher: crawlers.draw,
 };
 
 /**
@@ -467,6 +469,7 @@ export const SPAN: Readonly<Record<MonsterSprite, readonly [number, number]>> = 
   drakeling: [0.37, 0.37], brood_drake: [0.6, 0.63], flue_walker: [0.37, 0.37], deep_knocker: [0.58, 0.78], inspector: [0.49, 0.54],
   vulture: [0.79, 0.7], wold_lion: [0.76, 0.69], grey_lion: [0.7, 0.62], glass_scorpion: [0.63, 0.63], basilisk: [0.74, 0.73],
   glass_walker: [0.39, 0.22],
+  deep_crawler: [0.41, 0.41], catcher: [0.45, 0.45],
 };
 /** How many pixels a drawing may reach past its span at any size, and so how far inside the view's edge a fight keeps the spans. */
 export const SPAN_SLACK = 2;
