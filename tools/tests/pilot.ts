@@ -1607,6 +1607,30 @@ function talker(): void {
   const sung = stone(true), unsung = stone(false), [, , tries] = sung.split(' ');
   ok(!!song && sung.startsWith('true 30 one,ten 1 0') && tries.split(',').length <= TRIES && unsung === `false 0  0 1 1` && NO_ANSWER === 'I have no answer for the stone.',
     `the Downs' stone, the song heard, is answered in ${tries.split(',').length} tries of ${TRIES}, ${tries}, and gives its 30 gold (${sung}); with nothing heard it says "${NO_ANSWER}" once and reads it no more (${unsung})`);
+  // What one game heard is no answer in the next: the song heard last of all it keeps, the stone is
+  // answered; a new game on the same Game, with as many lines heard and no song, it has no word for
+  // the stone, as a pilot that never heard the song has none.
+  const forgot = (): string => {
+    const s = headlessGame(4), sp = (s.pilot = new Pilot({ instant: true })), said: string[] = [];
+    const onStone = (): string => {
+      const at = s.world.locate('downs_e2', 10, 17), from = sp.heard.length;
+      s.party.gold = reserve(s.party);
+      s.world.travel('downs_e2', 10, 17, NORTH);
+      see(s, at.mapId, at.x, at.y);
+      for (let t = 0; t < 40 && !s.world.used('e2_stone') && !sp.heard.slice(from).includes(NO_ANSWER); t++) drive(s, [null]);
+      return [...(sp.tried.get(`${at.mapId}:${at.x},${at.y}`) ?? [])].join(',');
+    };
+    sp.toggle(s);
+    while (sp.heard.length < HEARD_MAX - 1) sp.hear(`A line of no matter, ${sp.heard.length}.`);
+    if (song?.kind === 'npc') sp.hear(song.lines.join('\n\n'));
+    said.push(onStone());
+    s.newGame(5);
+    while (sp.heard.length < HEARD_MAX) sp.hear(`A line of no matter, ${sp.heard.length}.`);
+    said.push(onStone(), String(s.world.used('e2_stone')), String(times(sp, NO_ANSWER)));
+    return said.join(' ');
+  };
+  const twoGames = forgot();
+  ok(twoGames === 'one,ten  false 1', `the song heard, the stone is answered; in a new game with as many lines heard and no song, no word is tried and it says it has none (${twoGames})`);
   const moths = answers('WHAT COMES TO ANY LIGHT?', ['What comes to the light by night? The moths.', 'The light is out.']);
   ok(moths.join() === 'night,moths,the' && !answers('WHAT COMES TO ANY LIGHT?', ['The light is out.']).length,
     `a riddle's words come from a heard line that shares two of its words, the rarer in all it has heard first (${moths.join(', ')}), and none from one that shares only one`);
@@ -1636,8 +1660,8 @@ function talker(): void {
     `a ferryman met, his boat is offered from his square and is a way to the isle; bound there with the fare over the reserve it sails and lands (${sailed}); a piece short it stays, the boat not taken again (${stayed})`);
 
   // People on a hall, with the strategist set on a goal elsewhere: the two near are met, the near one
-  // first, and met again once the company holds more, the far one, past 12 steps, never. A word that
-  // sets a flag sends it back once to the one met before.
+  // first, the far one, past 12 steps, never; and none is met again, though the reeve's word sets a
+  // flag, a flag is set or an item carried: where the goal is not, a word once is enough.
   const mg = headlessGame(4), mp = (mg.pilot = new Pilot({ instant: true }));
   mg.maps.fx_lane = hall('fx_lane', 28, { features: [
     { kind: 'npc', x: 3, y: 1, name: 'A fixture carter', lines: ['"Mind the ruts."'] },
@@ -1658,28 +1682,53 @@ function talker(): void {
   mg.party.bag.push('torch');
   drive(mg, [], 150);
   const carried = words();
-  ok(greeting === 'A word with a fixture carter.' && first === '2,1,0' && carter === held && flagged === '3,2,0' && carried === '4,3,0' && NEAR === 12,
-    `the carter and the reeve near are met, the carter first (${greeting}) and again once the reeve's word sets a flag, the hermit past ${NEAR} steps never (${first}); a flag set, each once more (${flagged}); an item carried, each once more (${carried})`);
+  ok(greeting === 'A word with a fixture carter.' && first === '1,1,0' && carter === held - 1 && flagged === '1,1,0' && carried === '1,1,0' && NEAR === 12,
+    `the carter and the reeve near are met, the carter first (${greeting}), the hermit past ${NEAR} steps never (${first}); with the goal elsewhere, neither again for the reeve's flag, a flag set (${flagged}) or an item carried (${carried})`);
 
   // Hired, on the Downs' road west of Gullwick, far from Hild: a person on the map the strategist is set
-  // on is met wherever she stands on it, and the company has her word.
-  const hg = headlessGame(4), hgp = (hg.pilot = new Pilot({ instant: true })), hild = (MAP_DEFS.find((d) => d.id === 'downs_f3')?.features ?? []).find((f) => f.kind === 'npc' && f.name.startsWith('Hild'));
-  hg.party.flags.q_ashcombe = 1;
-  for (const m of hg.party.members) m.level = 3;
-  hg.party.gold = reserve(hg.party);
-  const zone = hg.maps.caldera.zones.find((z) => z.id === 'downs_f3')!;
-  hg.world.travel('downs_f3', 26, 2, WEST);
-  for (let y = zone.y; y < zone.y + zone.h; y++) for (let x = zone.x; x < zone.x + zone.w; x++) see(hg, 'caldera', x, y);
-  // The rest of Gullwick met already and its chests opened, so it is Hild it goes to.
-  for (const id of ['f3_hoard_chest', 'f3_cave']) hg.world.markUsed(id);
-  for (const f of knownOf(hg).features('caldera')) if (f.kind === 'npc' && f.x >= zone.x && f.y >= zone.y && f.x < zone.x + zone.w && f.y < zone.y + zone.h && !f.name.startsWith('Hild')) hgp.meet('caldera', f, hg.party);
-  const far = !!hild && Math.abs(hild.x - 26) + Math.abs(hild.y - 2) > NEAR;
-  hgp.toggle(hg);
-  drive(hg, [null]);
-  const sought = hgp.why[0];
-  for (let t = 0; t < 300 && !hg.party.flags.q_wenna; t++) drive(hg, [null]);
-  ok(far && sought === 'A word with Hild.' && !!hg.party.flags.q_wenna && [...hgp.met.keys()].some((q) => q.endsWith(`:${hild?.kind === 'npc' ? hild.name : ''}`)),
-    `hired and on the Downs' road ${hild ? Math.abs(hild.x - 26) + Math.abs(hild.y - 2) : '?'} steps from Hild, on the map it is set on, it goes to her from the first beat (${sought}) and has her word (${!!hg.party.flags.q_wenna})`);
+  // on is met wherever she stands on it, and the company has her word; and so she is where the goal
+  // lies though met before, the company holding more since, ahead of the rest of Gullwick, met after.
+  const hild = (MAP_DEFS.find((d) => d.id === 'downs_f3')?.features ?? []).find((f) => f.kind === 'npc' && f.name.startsWith('Hild'));
+  const gullwick = (before: boolean): string => {
+    const hg = headlessGame(4), hgp = (hg.pilot = new Pilot({ instant: true }));
+    hg.party.flags.q_ashcombe = 1;
+    for (const m of hg.party.members) m.level = 3;
+    hg.party.gold = reserve(hg.party);
+    const zone = hg.maps.caldera.zones.find((z) => z.id === 'downs_f3')!;
+    hg.world.travel('downs_f3', 26, 2, WEST);
+    for (let y = zone.y; y < zone.y + zone.h; y++) for (let x = zone.x; x < zone.x + zone.w; x++) see(hg, 'caldera', x, y);
+    // The rest of Gullwick met already and its chests opened, so it is Hild it goes to.
+    for (const id of ['f3_hoard_chest', 'f3_cave']) hg.world.markUsed(id);
+    const people = knownOf(hg).features('caldera').filter((f): f is Extract<Sighted, { kind: 'npc' }> => f.kind === 'npc' && f.x >= zone.x && f.y >= zone.y && f.x < zone.x + zone.w && f.y < zone.y + zone.h);
+    if (before) for (const f of people.filter((q) => q.name.startsWith('Hild'))) hgp.meet('caldera', f, hg.party);
+    if (before) hg.party.flags.fx_more = 1;
+    for (const f of people.filter((q) => !q.name.startsWith('Hild'))) hgp.meet('caldera', f, hg.party);
+    hgp.toggle(hg);
+    drive(hg, [null]);
+    const sought = hgp.why[0];
+    for (let t = 0; t < 300 && !hg.party.flags.q_wenna; t++) drive(hg, [null]);
+    return `${sought} ${!!hg.party.flags.q_wenna && [...hgp.met.keys()].some((q) => q.endsWith(`:${hild?.kind === 'npc' ? hild.name : ''}`))}`;
+  };
+  const far = !!hild && Math.abs(hild.x - 26) + Math.abs(hild.y - 2) > NEAR, unmet = gullwick(false), again = gullwick(true);
+  ok(far && unmet === 'A word with Hild. true' && again === unmet,
+    `hired and on the Downs' road ${hild ? Math.abs(hild.x - 26) + Math.abs(hild.y - 2) : '?'} steps from Hild, on the map it is set on, it goes to her from the first beat and has her word (${unmet}); met before the company held more, so it does (${again})`);
+
+  // In the Gilded Eel, with the quest's goal set on Helmstow: the keeper heard coming in and each
+  // person there once, though their words set flags the others might wait on.
+  const tg = headlessGame(4), tp = (tg.pilot = new Pilot({ instant: true })), eel = tg.maps.harrow.features.find((f) => f.kind === 'npc' && f.name === 'The Gilded Eel' && tg.world.present(f));
+  const spoke = new Map<string, number>(), talkScreen = tg.talkScreen.bind(tg);
+  tg.talkScreen = (who) => { spoke.set(who.name, (spoke.get(who.name) ?? 0) + 1); return talkScreen(who); };
+  see(tg, 'harrow');
+  tg.world.travel('harrow', eel?.x ?? 0, eel?.y ?? 0, SOUTH);
+  tg.party.gold = reserve(tg.party);
+  tp.toggle(tg);
+  tp.aim = { kind: 'quest', quest: THE_QUEST.id, map: 'harrow', text: 'A fixture goal in Helmstow.' };
+  const flagsIn = Object.keys(tg.party.flags).length;
+  if (eel?.kind === 'npc') tg.talk(eel);
+  for (let t = 0; t < 200 && !(tg.top instanceof ExploreScreen); t++) drive(tg, [null]);
+  const tavern = [...spoke].map(([who, n]) => `${who.split(',')[0]} ${n}`).join(', '), set = Object.keys(tg.party.flags).length - flagsIn;
+  ok(spoke.size >= 3 && [...spoke.values()].every((n) => n === 1) && set >= 2 && tg.top instanceof ExploreScreen,
+    `in the Gilded Eel with the goal set on Helmstow, each there has a word once (${tavern}), though the words set ${set} flags`);
 
   // Bram, a knight of level 11, met by an armourer who teaches the first prestige: with its price over
   // the reserve he takes it; a piece short, he does not, and Leave.

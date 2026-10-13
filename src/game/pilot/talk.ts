@@ -1,6 +1,7 @@
 // Talk (#721): everything the pilot says to anyone. On the way, the strategist (#720) sends it
-// (meeting) to the people it has seen and not met, or not since the company came to hold more, near it
-// or on the map it is set on; to a guild; and to a statue with a riddle left to try. Every menu it
+// (meeting) to the people it has seen and not met, near it or on the map it is set on, and to those
+// where the quest's goal lies again once the company holds more; to a guild; and to a statue with a
+// riddle left to try. In a business it has a word with each there once a visit. Every menu it
 // answers by a fixed policy (pick), a key a beat: down to the line and Space, or Esc. A crossing it is
 // offered it keeps, and the navigator (#717) goes by it; it pays a guild's fee and buys its spells,
 // opens a hall's work on every visit and takes all of it, takes a prestige offered, answers a riddle
@@ -51,8 +52,17 @@ export const holdings = (party: Party): number => Object.keys(party.flags).lengt
 const metKey = (map: string, f: { x: number; y: number; name: string }): string => `${map}:${f.x},${f.y}:${f.name}`;
 /** A statue, as `Pilot.tried` keeps it. */
 const stoneKey = (map: string, f: { x: number; y: number }): string => `${map}:${f.x},${f.y}`;
-/** Whether a person is to be met: never met, or not since the company came to hold more. */
-const due = (g: Game, p: Pilot, key: string): boolean => (p.met.get(key) ?? -1) < holdings(g.party);
+/**
+ * Whether a person is to be met: never met; or, standing where the quest's goal the strategist is set
+ * on lies, not since the company came to hold more, as the goal may wait on their word.
+ */
+const due = (g: Game, p: Pilot, key: string, goal: boolean): boolean => !p.met.has(key) || (goal && p.met.get(key)! < holdings(g.party));
+/** Whether a square, on the map the party is on, lies in the map or the zone the strategist is set on; with `quest`, only one a quest's goal names. */
+function aimed(g: Game, k: Known, p: Pilot, quest = false): (f: { x: number; y: number }) => boolean {
+  const w = g.world, aim = p.aim?.kind === 'level' ? p.aim.zone : p.aim?.map;
+  const box = aim !== undefined && (!quest || p.aim?.kind === 'quest') && k.mapOf(aim) === w.state.mapId ? { ...w.locate(aim, 0, 0), ...k.size(aim) } : undefined;
+  return (f) => !!box && f.x >= box.x && f.y >= box.y && f.x < box.x + box.w && f.y < box.y + box.h;
+}
 /** Whether a guild is to be gone into: never, or not since the company had more gold. */
 const unpaid = (g: Game, p: Pilot, key: string): boolean => (p.met.get(key) ?? -1) < g.party.gold;
 
@@ -83,15 +93,15 @@ export function answers(riddle: string, heard: readonly string[]): string[] {
   return [...score.keys()].sort((a, b) => score.get(b)! - score.get(a)! || lines.get(a)! - lines.get(b)!);
 }
 
-/** The words for each riddle from what a pilot has heard, kept until it hears another line. */
-const ANSWERS = new WeakMap<readonly string[], Map<string, { n: number; last?: string; words: string[] }>>();
+/** The words for each riddle from what a pilot has heard, kept until it hears another line or forgets. */
+const ANSWERS = new WeakMap<Pilot, Map<string, { at: number; n: number; words: string[] }>>();
 function heardFor(p: Pilot, riddle: string): string[] {
-  let kept = ANSWERS.get(p.heard);
-  if (!kept) ANSWERS.set(p.heard, (kept = new Map()));
+  let kept = ANSWERS.get(p);
+  if (!kept) ANSWERS.set(p, (kept = new Map()));
   const was = kept.get(riddle);
-  if (was && was.n === p.heard.length && was.last === p.heard.at(-1)) return was.words;
+  if (was && was.at === p.hearings && was.n === p.heard.length) return was.words;
   const found = answers(riddle, p.heard);
-  kept.set(riddle, { n: p.heard.length, last: p.heard.at(-1), words: found });
+  kept.set(riddle, { at: p.hearings, n: p.heard.length, words: found });
   return found;
 }
 
@@ -154,11 +164,12 @@ const opened = (room: InteriorScreen): Set<string> => { let s = VISITS.get(room)
 const tradeOf = (f: Sighted): string | undefined => (f.kind === 'inn' || f.kind === 'temple' || f.kind === 'shop' || f.kind === 'guild' || f.kind === 'trainer' ? TRADE[f.kind] : undefined);
 
 /**
- * In a business: its first menu opens the hall's work once a visit, a word with each person there to
- * be met, the keeper's in a tavern, then the trade: a guild's once a visit with gold over the reserve,
- * any other the quartermaster's; then Leave. A guild's fee is paid where the purse over the reserve
- * allows, and for each of the company it teaches the dearest spell it can pay for is bought, one a
- * visit. The quartermaster's menus are its own, and any other is a person's question (rule 6).
+ * In a business: its first menu opens the hall's work once a visit, a word once a visit with each
+ * person there to be met (a tavern's keeper is heard coming in), then the trade: a guild's once a visit
+ * with gold over the reserve, any other the quartermaster's; then Leave. A guild's fee is paid where
+ * the purse over the reserve allows, and for each of the company it teaches the dearest spell it can
+ * pay for is bought, one a visit. The quartermaster's menus are its own, and any other is a person's
+ * question (rule 6).
  */
 function visit(g: Game, k: Known, p: Pilot, top: ChoiceScreen, room: InteriorScreen): number {
   const st = g.world.state, opts = top.options, gold = spare(g.party), done = opened(room), leave = opts.length - 1;
@@ -166,10 +177,12 @@ function visit(g: Game, k: Known, p: Pilot, top: ChoiceScreen, room: InteriorScr
   const trade = here.find((f) => tradeOf(f) === opts[0]);
   if (opts.at(-1) === 'Leave' && (trade || opts[0] === ROOM_TALK)) {
     const person = (name: string): Sighted | undefined => here.find((f) => f.kind === 'npc' && shortName(f.name) === name);
+    const goal = aimed(g, k, p, true)(room.at);
     const row = opts.findIndex((o) => {
-      if (o.startsWith('Work for ')) return !done.has(o);
-      const f = o === ROOM_TALK ? here.find((q) => q.kind === 'npc' && q.name === top.title) : o.startsWith('Talk to ') ? person(o.slice('Talk to '.length)) : undefined;
-      return !!f && 'name' in f && !!f.name && due(g, p, metKey(st.mapId, { x: f.x, y: f.y, name: f.name }));
+      if (done.has(o)) return false;
+      if (o.startsWith('Work for ')) return true;
+      const f = o.startsWith('Talk to ') ? person(o.slice('Talk to '.length)) : undefined;
+      return !!f && 'name' in f && !!f.name && due(g, p, metKey(st.mapId, { x: f.x, y: f.y, name: f.name }), goal);
     });
     if (row >= 0) return row;
     if (trade?.kind === 'guild') return !done.has(opts[0]) && gold > 0 ? 0 : leave;
@@ -218,12 +231,12 @@ export function pick(screen: ChoiceScreen, g: Game, p: Pilot): number {
   return answer(g, knownOf(g), p, screen);
 }
 
-/** Space pressed on a line: a hall's work and a guild's trade opened this visit, and a spell bought for that member. */
+/** Space pressed on a line: a hall's work, a guild's trade and a word with one there opened this visit, and a spell bought for that member. */
 function chosen(g: Game, k: Known, p: Pilot, top: ChoiceScreen, i: number): void {
   const room = g.screens.find((s): s is InteriorScreen => s instanceof InteriorScreen), o = top.options[i];
   if (!room) return;
   const done = opened(room), st = g.world.state;
-  if (o.startsWith('Work for ') || o === TRADE.guild) done.add(o);
+  if (o.startsWith('Work for ') || o === TRADE.guild || o.startsWith('Talk to ')) done.add(o);
   if (top.words.startsWith(LEARN)) done.add(`spell:${o.split(':')[0]}`);
   // A guild is gone into as its trade opens, with the gold the company has then.
   const guild = o === TRADE.guild && k.features(st.mapId).find((f): f is Extract<Sighted, { kind: 'guild' }> => f.kind === 'guild' && f.x === room.at.x && f.y === room.at.y);
@@ -254,22 +267,21 @@ const within = (s: string): string => s.replace(/^(The|An?) /, (w) => w.toLowerC
 
 /**
  * On the way, on the street (the strategist's, #720): Space on a statue stood on with a riddle left to
- * try; else to the nearest person seen and to be met, a guild to be met with gold over the reserve, or
- * a statue with a riddle left to try, within NEAR steps of the party or on the map, or the zone, the
- * strategist is set on: the navigator's first key there. None past a way shut to it; null with none.
+ * try; else to the nearest person seen and to be met (`due`), a guild to be met with gold over the
+ * reserve, or a statue with a riddle left to try, within NEAR steps of the party or on the map, or the
+ * zone, the strategist is set on: the navigator's first key there. None past a way shut to it; null
+ * with none.
  */
 export function meeting(g: Game, k: Known, p: Pilot): Action | null {
   if (!(g.top instanceof ExploreScreen)) return null;
   const w = g.world, st = w.state, all = k.features(st.mapId);
   const stone = all.find((f) => f.kind === 'statue' && f.x === st.x && f.y === st.y);
   if (stone && unsolved(p, stoneKey(st.mapId, stone))) { p.why = ['Reading the stone.']; return 'interact'; }
-  const aim = p.aim?.kind === 'level' ? p.aim.zone : p.aim?.map;
-  const box = aim !== undefined && k.mapOf(aim) === st.mapId ? { ...w.locate(aim, 0, 0), ...k.size(aim) } : undefined;
-  const set = (f: { x: number; y: number }): boolean => !!box && f.x >= box.x && f.y >= box.y && f.x < box.x + box.w && f.y < box.y + box.h;
-  const shut = p.shut.filter((s) => s.map === st.mapId), gold = spare(g.party), held = holdings(g.party);
+  const set = aimed(g, k, p), goal = aimed(g, k, p, true);
+  const shut = p.shut.filter((s) => s.map === st.mapId), gold = spare(g.party);
   const wanted = all.filter((f) => !(f.x === st.x && f.y === st.y) && !shut.some((s) => s.x === f.x && s.y === f.y)
     && (set(f) || Math.abs(f.x - st.x) + Math.abs(f.y - st.y) <= NEAR)
-    && ((f.kind === 'npc' && (p.met.get(metKey(st.mapId, f)) ?? -1) < held) || (f.kind === 'guild' && gold > 0 && unpaid(g, p, metKey(st.mapId, f))) || (f.kind === 'statue' && unsolved(p, stoneKey(st.mapId, f)))));
+    && ((f.kind === 'npc' && due(g, p, metKey(st.mapId, f), goal(f))) || (f.kind === 'guild' && gold > 0 && unpaid(g, p, metKey(st.mapId, f))) || (f.kind === 'statue' && unsolved(p, stoneKey(st.mapId, f)))));
   // Those never met first, so a word that sets a flag does not send it back to all it has met for another.
   const fresh = wanted.filter((f) => f.kind !== 'npc' || !p.met.has(metKey(st.mapId, f)));
   for (const group of [fresh, wanted, wanted.filter(set)]) {

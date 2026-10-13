@@ -55,6 +55,8 @@ export class Pilot {
   stopped = false;
   /** Every line said through Game.say, every message opened and every riddle put, the newest last. */
   readonly heard: string[] = [];
+  /** Lines heard since the pilot was made, and a forgetting counted as one: what talk has worked out from `heard` holds while this does not move. */
+  hearings = 0;
   /** What a menu has shown: a shop's wares, a trainer's levels, a person's crossings (Known.features). */
   told = new WeakSet<Feature>();
   /** Where the navigator is bound (route.ts): a square, on a map or a zone by its id, and what the why line calls it. */
@@ -91,7 +93,7 @@ export class Pilot {
   readonly walked = new Map<string, number>();
   /** The chests it has seen and found no way to, "map:x,y" on the map as played, with the company's flags then: not sought again until it has more (aims.ts). */
   readonly chests = new Map<string, number>();
-  /** The people it has met, "map:x,y:name" on the map as played, a tavern holding several on one square, and what the company held then (holdings): met again once it holds more; and the guilds gone into, with the gold it had then (talk.ts). */
+  /** The people it has met, "map:x,y:name" on the map as played, a tavern holding several on one square, and what the company held then (holdings): met again, where the quest's goal lies, once it holds more; and the guilds gone into, with the gold it had then (talk.ts). */
   readonly met = new Map<string, number>();
   /** The crossings it has been offered, each from the seller's square on the map as played, and the gold it had when it could not pay the fare over its reserve: not taken again until it has more (talk.ts). */
   readonly offers: { map: string; x: number; y: number; passage: Passage; short?: number }[] = [];
@@ -113,6 +115,7 @@ export class Pilot {
 
   hear(line: string): void {
     this.heard.push(line);
+    this.hearings++;
     if (this.heard.length > HEARD_MAX) this.heard.shift();
   }
 
@@ -129,7 +132,7 @@ export class Pilot {
 
   /** A new company, or one loaded: it has heard nothing, been shown nothing, searched nothing, tried no well, been short nowhere, is set on nothing, has lost no goal, met nobody, been offered no crossing, tried no riddle and is bound nowhere yet, and the last run's stop and its why are gone. */
   forget(): void {
-    this.heard.length = 0; this.told = new WeakSet<Feature>(); this.stopped = false; this.why = [IDLE];
+    this.heard.length = 0; this.hearings++; this.told = new WeakSet<Feature>(); this.stopped = false; this.why = [IDLE];
     this.goal = null; this.plan = []; this.trip = null; this.shut.length = 0; this.searched.clear(); this.prefer = null;
     this.wells.clear(); this.short.clear();
     this.aim = null; this.aimSince = 0; this.aimGoal = ''; this.lost.clear(); this.trail = []; this.walked.clear(); this.chests.clear();
