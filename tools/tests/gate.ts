@@ -153,6 +153,9 @@ export const ROADS: Record<string, readonly string[]> = {
   // edge to the glass walker at the far south-west, and north up the Riders' track past the north pride (#525).
   wold: ['wold_d10:d10_pride', 'wold_d10:d10_pride_south', 'wold_d10:d10_mesa', 'wold_d10:d10_scorpions', 'wold_d10:d10_basilisk',
     'wold_d9:d9_pride', 'wold_d9:d9_scorpions', 'wold_d9:d9_walker', 'wold_d9:d9_pride_north'],
+  // Up the cleft from the strand where the last crossing grounds, past the Hand's pickets in it and at
+  // its head, and over the Bowl to the preacher's group before the temple's door (#753).
+  hearthisle: ['hearthisle_h6:h6_picket1', 'hearthisle_h6:h6_picket2', 'hearthisle_h6:h6_sermon'],
   // Over the crest from the vale and up the path to the Peak Stone, past the brothers walking it (#501);
   // then up the ridge trail and west along the road to the Stair, past the giant and the troll in the
   // snow short of the head (#502).
@@ -164,7 +167,7 @@ export const ROADS: Record<string, readonly string[]> = {
 };
 
 /** What an area is called in the check, apart from the map it shares an id with. */
-const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Thornmark', saltreach: 'Saltreach', wrackholm: 'Wrackholm', sunderwood: 'Sunderwood', kilns: 'the Kilns', cairnmoor: 'Cairnmoor', rimewater: 'Rimewater', whitespine: 'the Whitespine', ashfall: 'Ashfall', glasswold: 'the Glasswold' };
+const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Thornmark', saltreach: 'Saltreach', wrackholm: 'Wrackholm', sunderwood: 'Sunderwood', kilns: 'the Kilns', cairnmoor: 'Cairnmoor', rimewater: 'Rimewater', whitespine: 'the Whitespine', ashfall: 'Ashfall', glasswold: 'the Glasswold', hearth: 'Hearth Isle' };
 
 /**
  * The figures past their limits someone owes, by check: who owes each, and the figure it stood at
@@ -276,6 +279,10 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'wold_e9: under': { whose: '#18', at: 1 },
   'wold_e8: under': { whose: '#18', at: 1 },
   'the Glasswold: under': { whose: '#18', at: 1 },
+  // And Hearth Isle's isle (#753), the same: two under, in the gear by 26, it wins every fight. The
+  // Hand's steel, the band's rung at 28, is #746's.
+  'hearthisle_h6: under': { whose: '#18', at: 1 },
+  'Hearth Isle: under': { whose: '#18', at: 1 },
   'highspine_i11: under': { whose: '#18', at: 1 },
   // And the ridge north (#503), banded from the area's floor as I11 is: its three groups are won every
   // time two under, and with them the area's pool passes its limit again.
