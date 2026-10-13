@@ -19,7 +19,8 @@ import { CLIMATES } from '../content/index.ts';
 import { holds } from './quests.ts';
 import { open, given } from './people.ts';
 import { pace, denLooks, densOf } from './dens.ts';
-import { stonesRestored, steadier } from './stones.ts';
+import { stonesRestored, endingOf, hearthWord } from './stones.ts';
+import type { Hearth } from './stones.ts';
 import { signLine, signSays } from './inscriptions.ts';
 
 export { MINUTES_PER_DAY };
@@ -291,6 +292,9 @@ export class World {
   /** The Stones the company has restored, by which the Hearth steadies (game/stones.ts). */
   get stones(): number { return stonesRestored(this.state, this.party); }
 
+  /** The Hearth as the company has left it: the Stones restored, and the ending once one is taken (#750). */
+  get hearth(): Hearth { return { stones: this.stones, ending: endingOf(this.party.flags) }; }
+
   /**
    * Where the party stands in world cells: its square on the outdoors, which is laid out as the world
    * map charts it; in a town, the square its way out leads to; undefined underground.
@@ -305,7 +309,7 @@ export class World {
   /** The M screen's almanac: the date and the season, the hours of light, the sky and what it is doing to the party. */
   almanac(): string {
     const d = this.date, sun = sunTimes(d.dayOfYear), date = longDate(d);
-    const steady = steadier(this.stones);
+    const steady = hearthWord(this.hearth);
     const lines = [`${date[0].toUpperCase()}${date.slice(1)}: ${seasonName(d)}. Day ${d.gameDay} since the Hearth flickered.${steady ? ' ' + steady : ''}`, `Dawn ${clock(sun.dawn)}, dusk ${clock(sun.dusk)}.`];
     if (!this.underSky) return [...lines, 'Underground, there is no telling the weather.'].join('\n');
     const wx = this.weather, sky = classify(wx, this.sky).sky, seen = weatherSight(wx);

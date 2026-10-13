@@ -26,6 +26,9 @@ import { logLines, logTail, LOG_LINES, COMBAT_LOG_LINES, LAYOUT } from '../../sr
 import { lookLine } from '../../src/game/wilds.ts';
 import { handIns, choices, answerNote } from '../../src/game/people.ts';
 import { hoardLine } from '../../src/game/dens.ts';
+import { ENDINGS } from '../../src/content/endings.ts';
+import type { Ending } from '../../src/content/endings.ts';
+import { PAGE, pageLines } from '../../src/ui/ending.ts';
 import { ok, owed, familyModules } from './lib.ts';
 
 /**
@@ -63,6 +66,25 @@ export function hintFaults(def: MapDef): string[] {
 
 /** The most lines of the log an event or sign may take: two is the aim, and four fill it. */
 export const MOST_LINES = 3;
+
+/**
+ * The endings' pages are the long-form exception (DESIGN §11; #750): they are not held to MOST_LINES
+ * but to three pages to an ending, each within the lines its own screen writes (ui/ending.ts). Every
+ * other text stays held to MOST_LINES, an ending's answer at the Heart among them.
+ */
+export const ENDING_PAGES = 3;
+
+/** The endings of other than three pages, with a page longer than its screen, or with another's flag. */
+export function endingFaults(endings: Readonly<Record<string, Ending>> = ENDINGS): string[] {
+  const out: string[] = [], flags = new Set<string>();
+  for (const [id, e] of Object.entries(endings)) {
+    if (e.pages.length !== ENDING_PAGES) out.push(`${id} has ${e.pages.length} pages`);
+    e.pages.forEach((p, i) => { const n = pageLines(p).length; if (n > PAGE.lines) out.push(`${id}'s page ${i + 1} takes ${n} lines`); });
+    if (flags.has(e.flag)) out.push(`${id} sets ${e.flag}, another's flag`);
+    flags.add(e.flag);
+  }
+  return out;
+}
 
 /** The longest name a member can have, in the font's widest letter: who reads an inscription, as the line check hears it. */
 const LONGEST_NAME = 'M'.repeat(NAME_MAX);
@@ -209,6 +231,7 @@ export function texts(defs: readonly MapDef[] = MAP_DEFS, crossings: readonly Cr
   for (const p of ATLAS.places) add(`atlas ${p.id}`, p.name, p.note);
   for (const s of ATLAS.sites) add(`atlas site`, s.name);
   for (const l of ATLAS.links) add(`atlas ${l.from}-${l.to}`, l.note);
+  for (const [id, e] of Object.entries(ENDINGS)) add(`ending ${id}`, e.title, e.pages);
   return out;
 }
 
@@ -556,6 +579,15 @@ export async function pillars(): Promise<void> {
       ok(!faults.length, `${area.id}/${def.id}: every event and sign fits ${MOST_LINES} lines of the log${faults.length ? ' -> ' + faults.join('; ') : ''}`);
     }
     console.log(`        ${area.id}: ${count.reduce((a, b) => a + b)} events and signs; by lines as shown, ${count.slice(1).map((n, i) => `${n} at ${i + 1}`).join(', ')}`);
+  }
+  // The endings' pages (#750): the long-form exception, three to an ending, each within its screen and none held to the log's lines.
+  {
+    const faults = endingFaults(), widest = Object.values(ENDINGS).flatMap((e) => e.pages).reduce((a, p) => Math.max(a, logLines(p).length), 0);
+    ok(!faults.length && widest > MOST_LINES, `each ending has ${ENDING_PAGES} pages, each within the ${PAGE.lines} lines of its screen (${Object.values(ENDINGS).map((e) => e.pages.map((p) => pageLines(p).length).join('+')).join(', ')}), though one takes ${widest} of the log${faults.length ? ' -> ' + faults.join('; ') : ''}`);
+    const page = 'A fixture page, and short.', long = Array(30).fill('and the page goes on').join(' ');
+    const fx = (pages: string[], flag = 'fx_end'): Record<string, Ending> => ({ fx: { flag, title: 'Fixture', pages }, ...(flag === 'fx_end' ? {} : { other: { flag, title: 'Other', pages } }) });
+    ok(!endingFaults(fx([page, page, page])).length && endingFaults(fx([page, page])).length === 1 && endingFaults(fx([page, page, long])).length === 1 && endingFaults(fx([page, page, page], 'fx_twice')).length === 1,
+      'a fixture ending of three short pages passes; of two, with a page longer than its screen, or setting another\'s flag, it fails');
   }
   // The log puts "A sign reads:" before a sign's words, so a sign's own text never says it again.
   const doubled = MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => (f.kind === 'sign' && /^\W*a sign reads/i.test(f.text) ? [`${d.id} ${f.x},${f.y}`] : [])));
