@@ -2,6 +2,7 @@
 // temple, its crypt, the Underdeep's Ways and Stair and the Heart. docs/areas/hearth_isle.md is its brief.
 import type { Area } from '../../area.ts';
 import { HEARTHISLE_H6 } from './maps/hearthisle_h6.ts';
+import { HEARTHFANE } from './maps/hearthfane.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
@@ -10,15 +11,15 @@ import { QUESTS } from './quests.ts';
 
 export const AREA = {
   id: 'hearth' as const,
-  // In road order: the isle, where the last crossing grounds (#753).
-  maps: [HEARTHISLE_H6],
+  // In road order: the isle, where the last crossing grounds (#753); the temple at the column's foot (#755).
+  maps: [HEARTHISLE_H6, HEARTHFANE],
   // Drawn ahead of the area (#761), and placed from the isle on: the hearth moth, the ashen champion and
   // preacher and the deep rat first (#753).
   monsters: MONSTERS,
   sprites: SPRITES,
   // The isle's finds and the pilgrims' tokens (#753); the band's rung at 28 is #746's.
   items: ITEMS,
-  // #56's 57, The Pilgrims in the Bowl, as far as the isle goes (#753).
+  // #56's 57, The Pilgrims in the Bowl, as far as the isle goes (#753); 56, The Sacristan's Lamps (#755).
   quests: QUESTS,
   // The Heart, the act's chapter and the road's last, is #760's.
   chapter: undefined,
