@@ -1617,6 +1617,20 @@ dims a step a round to a thread and the calls come past the cap of three groups,
 it holds, so nothing is lost; `obeys`, for the sentries that stand down when Vask falls (#739,
 call 7).
 
+Nine on frames that exist are drawn (#761); the crawlers are the second pull request. The Hearth
+Moth is the lantern moth's hands cut deeper, to flames, rust above and red beneath, its dust falling
+as embers; the Deep Rat the rat lean and up on its legs, pale, ribbed and red-eyed; the Keeper the
+bay keeper bare, dark-plated and gold-lit, both hands held up to touch; the Core Sentry the Sentry's
+legs and keel, pale and clean, a ring of plate for a head with the core's light in it. The Ashen
+Champion wears the overseer's hitched robe under a breastplate and pauldrons of the Hand's steel, a
+greatsword stood on its point; the Ashen Preacher has thrown his hood back from a shaven head grey
+with ash, the fire on his upflung palm; the Ashen Rearguard is a closed helm over a tall shield with
+the sigil burnt in, a cleaver low; the Grey Hand a dark robe and a plain grey mask, the arms bare
+and grey to the shoulder and held out to take hold. Lord Vask stands on the figure frame bare of a
+robe, in the Wardens' grey coat and red sash under a black cloak, the Queen's ring lit on his raised
+hand, size 1.6 inside the tall boss's crown. The boxes place them (#753, #757 to #759;
+docs/areas/hearth_isle.md §9.2).
+
 ---
 
 ## 10. The reach
