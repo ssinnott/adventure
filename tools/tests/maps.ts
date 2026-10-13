@@ -34,9 +34,18 @@ export function placedMonsters(defs: readonly MapDef[], table: Readonly<Record<s
 /**
  * What is wrong with a town's doorways: the business must come first on its square (the game
  * opens the first feature there, and the door's sign is drawn from it), and after it only people
- * with no room of their own and events. A business is always there, but for two ways it may change
- * (#157): gone `until` a condition with an event `after` it saying the door is shut, or so with a
- * twin after it on the same condition, which takes its square.
+ * with no room of their own and events. A business is always there, but for a chain of changes
+ * (#157 allowed one step; #764 and #765 need more): gone `until` a condition, with an event `after`
+ * it saying the door is shut, or with a twin `after` the same condition that takes its square, and
+ * the twin may itself go `until` another with a twin after it. A chain is businesses with a room
+ * each, in order on the square: the first only `until` X1, each next `after` the one before's
+ * `until` and, but the last, `until` its own, none with a `when`, the last only `after`. A shut
+ * door's word may follow a link that is gone, and the business may be back after it (the word
+ * `after` X and `until` Y, the business again `after` Y). The reason is Helmstow after the
+ * Council: the inn back at 12 gold, the Chapel open again for the hold and Mottram's stores dearer
+ * for Tallis are each a third presence on a doorway #157 had twinned, and an ending may add a
+ * fourth. All else fails as before: a word or twin on another condition, a gap in the chain, a
+ * `when` on a link, a link gone with nothing after it.
  */
 export function doorwayFaults(m: GameMap): string[] {
   if (m.kind !== 'town') return [];
@@ -44,13 +53,32 @@ export function doorwayFaults(m: GameMap): string[] {
   const squares = new Map<string, Feature[]>();
   for (const f of m.features) if (m.at(f.x, f.y).door !== 'none') squares.set(`${f.x},${f.y}`, [...(squares.get(`${f.x},${f.y}`) ?? []), f]);
   const same = (a: unknown, b: unknown): boolean => a !== undefined && JSON.stringify(a) === JSON.stringify(b);
-  const comes = (f: Feature): boolean => 'when' in f || 'after' in f || 'until' in f;
+  const has = (f: Feature, key: 'when' | 'after' | 'until'): boolean => key in f;
+  const room = (f: Feature): boolean => 'interior' in f && !!f.interior;
+  const afterOf = (f: Feature): unknown => 'after' in f ? f.after : undefined;
+  const untilOf = (f: Feature): unknown => 'until' in f ? f.until : undefined;
+  // A link holds its square by its `until` alone: no `when`, and no `after` unless it is a twin (the first is always there).
+  const sound = (f: Feature, twinned: boolean): boolean => !has(f, 'when') && (twinned || !has(f, 'after'));
   for (const [at, [first, ...more]] of squares) {
-    if (!('interior' in first && first.interior)) { out.push(`the doorway at ${at} opens on the ${first.kind} there, which has no room`); continue; }
-    const twin = more[0] && 'interior' in more[0] && more[0].interior && 'until' in first && same(first.until, 'after' in more[0] ? more[0].after : undefined) && !('when' in first) && !('after' in first) && !('when' in more[0]) && !('until' in more[0]) ? more[0] : undefined;
-    const rest = twin ? more.slice(1) : more;
-    // Gone, its doorway would open on the person after it: only a twin or a shut door's word may follow.
-    if (!twin && comes(first) && !('until' in first && !('when' in first) && !('after' in first) && rest.some((f) => f.kind === 'event' && same(first.until, f.after)))) out.push(`the business at ${at} comes and goes`);
+    if (!room(first)) { out.push(`the doorway at ${at} opens on the ${first.kind} there, which has no room`); continue; }
+    // The chain: `link` is the last business reached, `rest` what follows it.
+    let link = first, rest = more, twinned = false;
+    for (;;) {
+      // Only a link gone `until` a condition can be followed: with a `when`, or a first with an `after`, it is no link.
+      if (!sound(link, twinned) || !has(link, 'until')) break;
+      const a: Feature | undefined = rest[0], b: Feature | undefined = rest[1];
+      // Loosened (#764): the twin may have an `until` of its own and a twin after that, as the inn has: 12 gold, dearer once Act II is
+      // done, 12 again once the Council has sat. A twin with a `when`, or on another condition, is still a second business.
+      if (a && room(a) && !has(a, 'when') && same(untilOf(link), afterOf(a))) { link = a; rest = rest.slice(1); }
+      // Loosened (#764): a shut door's word that goes `until` another condition, then the business again `after` it, as the Chapel is
+      // open again for the hold's verdict. The word must go with the shut, or it would be said at an open door.
+      else if (a && b && a.kind === 'event' && !has(a, 'when') && same(untilOf(link), afterOf(a)) && same(untilOf(a), afterOf(b)) && room(b) && !has(b, 'when')) { link = b; rest = rest.slice(2); }
+      else break;
+      twinned = true;
+    }
+    // Gone, its doorway would open on the person after it: as before, only a twin or a shut door's word may follow. Loosened (#764):
+    // that holds for the last link of a chain, not only the first business, so a chain that goes on to nothing still fails.
+    if (!(sound(link, twinned) && (!has(link, 'until') || rest.some((f) => f.kind === 'event' && same(untilOf(link), afterOf(f)))))) out.push(`the business at ${at} comes and goes`);
     for (const f of rest) if (!(f.kind === 'event' || (f.kind === 'npc' && !f.interior))) out.push(`the doorway at ${at} holds the ${f.kind}${'interior' in f && f.interior ? ' with a room' : ''} after its business`);
   }
   return out;
@@ -223,6 +251,18 @@ export function maps(): void {
       'a business gone with a shut door\'s word after it passes, and so does one with a twin that takes its square on the same flag');
     ok(doorwayFaults(town([{ ...inn, until: shut }, { ...notice, after: { flag: 'fx_other' } }])).length === 1 && doorwayFaults(town([{ ...inn, until: shut }, { ...inn, after: { flag: 'fx_other' } }])).length === 2,
       'but not with the word or the twin on another flag');
+    // A chain (#764, #765): the twin goes in its turn, as the inn does back to 12 gold once the Council has
+    // sat; and a business may be back after a shut door's word, as the Chapel is for the hold's verdict.
+    const [one, two, three] = [{ flag: 'fx_one' }, { flag: 'fx_two' }, { flag: 'fx_three' }];
+    const b1 = { ...inn, until: one }, b2 = { ...inn, price: 2, after: one, until: two }, b3 = { ...inn, price: 3, after: two };
+    const b3goes = { ...b3, until: three }, b4 = { ...inn, price: 4, after: three }, word: Feature = { ...event, id: 'fx_word', text: 'Shut.', after: one, until: two };
+    ok(!doorwayFaults(town([b1, b2, b3, person])).length && !doorwayFaults(town([b1, b2, b3goes, b4, person])).length,
+      'a twin may go in its turn with a twin of its own after it: a chain of three businesses on a doorway passes, and one of four');
+    ok(!doorwayFaults(town([b1, word, b3, person])).length && !doorwayFaults(town([b1, word, b3goes, b4])).length && !doorwayFaults(town([b1, b2, { ...notice, after: two }])).length,
+      'a business may be back after a shut door\'s word that goes on its flag, and change again, and a chain may end in a word');
+    ok(doorwayFaults(town([b1, b2, { ...b3, after: three }])).length === 2 && doorwayFaults(town([b1, { ...b2, when: { hours: 'night' } }, b3])).length === 3
+      && doorwayFaults(town([b1, b2])).length === 1 && doorwayFaults(town([b1, b2, person])).length === 1 && doorwayFaults(town([b1, word, { ...b3, after: three }])).length === 1,
+      'but not a chain with a gap, one whose middle link has a `when`, one whose last link goes with nothing after it, or a business back on another flag than its word goes');
   }
   const opened = INTERIORS.filter((i) => !Object.hasOwn(UNPLACED, i));
   ok(interiors.length === opened.length && new Set(interiors).size === interiors.length && opened.every((i) => interiors.includes(i)), `every business has an interior of its own (${interiors.length}, ${new Set(interiors).size} distinct)`);
