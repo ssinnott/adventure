@@ -682,7 +682,7 @@ export class World {
   }
 
   groupDefs(ids: string[]): { id: string; monsters: string[]; back?: number; leader?: string; under?: 'ice' }[] {
-    return ids.map((id) => { const e = this.map.encounters.find((x) => x.id === id)!; return { id, monsters: e.monsters, back: e.back, leader: e.leader, under: e.under }; });
+    return ids.map((id) => { const e = this.map.encounters.find((x) => x.id === id)!; return { id, monsters: e.monsters, back: e.back, leader: e.leader, under: e.under, clock: e.clock }; });
   }
 
   /**
