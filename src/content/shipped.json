@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 5,
   "maps": {
     "anvil_stone": {
       "size": "16x16",
@@ -3590,6 +3590,7 @@
     "q_passage",
     "q_passage_freed",
     "q_passage_owed",
+    "q_peak_stood",
     "q_pilgrims",
     "q_pilgrims_back",
     "q_pilgrims_up",

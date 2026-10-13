@@ -10,7 +10,8 @@ import type { Game, Screen } from '../game/game.ts';
 import type { Action } from '../input.ts';
 import { is } from '../input.ts';
 import { drawText, drawTextOutlined, measureText } from '../lib/engine/text.ts';
-import { flickerOf } from '../game/stones.ts';
+import { hearthLook } from '../game/stones.ts';
+import type { HearthLook } from '../game/stones.ts';
 import { ATLAS, MAP_DEFS, QUESTS } from '../content/index.ts';
 import { worldGrid, zoneEdges, worldPoint, homeMap, zoneOfMap, mapAt, gridCuts, boxAt, areaOf, areaBand, spline, lattice, noise, fbm, TERRAINS, TI } from '../game/atlas.ts';
 import type { WorldTerrain, WorldGrid, AtlasSite, AtlasPlace, ZoneEdge, Pt } from '../game/atlas.ts';
@@ -1408,18 +1409,21 @@ function paintedNow(): Painted {
 /** The painted cloth alone, drawn once. */
 export function worldArt(): HTMLCanvasElement { return paintedNow().cloth; }
 
-/** The Hearth burns over the painted sea: a warm pool on the water and a column, flickering less for each Stone restored. Cloth coordinates. */
-function drawHearth(ctx: CanvasRenderingContext2D, frame: number, stones = 0): void {
+/**
+ * The Hearth burns over the painted sea: a warm pool on the water and a column, flickering less for
+ * each Stone restored, and as the ending left it once one is taken, as the title's (game/stones.ts). Cloth coordinates.
+ */
+function drawHearth(ctx: CanvasRenderingContext2D, frame: number, look: HearthLook = hearthLook({ stones: 0 })): void {
   const [x, hy] = hearthAt(), y = hy - 4;
-  // Steadier for each Stone restored, as the title's (#168).
-  const amp = flickerOf(stones), flick = 1 - amp + amp * Math.sin(frame / 7) * Math.sin(frame / 3.1);
+  // Steadier for each Stone restored, as the title's (#168), and taller past full (#750).
+  const amp = look.flicker, flick = 1 - amp + amp * Math.sin(frame / 7) * Math.sin(frame / 3.1), tall = 64 + 8 * Math.max(0, look.step - 5);
   ctx.save();
   ctx.globalCompositeOperation = 'lighter';
   glow(ctx, x, y + 2, 48, '#ffc070', 0.32 * flick);
-  const col = ctx.createLinearGradient(0, y - 64, 0, y);
+  const col = ctx.createLinearGradient(0, y - tall, 0, y);
   col.addColorStop(0, rgba('#fff0c0', 0)); col.addColorStop(1, rgba('#ffe0a0', 0.7 * flick));
-  ctx.fillStyle = col; ctx.fillRect(x - 2, y - 64, 4, 64);
-  ctx.fillStyle = rgba('#fff6dc', 0.8 * flick); ctx.fillRect(x - 0.5, y - 52, 1, 52);
+  ctx.fillStyle = col; ctx.fillRect(x - 2, y - tall, 4, tall);
+  ctx.fillStyle = rgba('#fff6dc', 0.8 * flick); ctx.fillRect(x - 0.5, y - tall + 12, 1, tall - 12);
   ctx.restore();
 }
 
@@ -1623,7 +1627,7 @@ export class WorldMapScreen implements Screen {
       ctx.save();
       ctx.beginPath(); ctx.rect(VIEW.x, VIEW.y, VIEW.w, VIEW.h); ctx.clip();
       ctx.translate(VIEW.x - vx, VIEW.y - vy);
-      drawHearth(ctx, frame, world?.stones ?? 0);
+      drawHearth(ctx, frame, hearthLook(world?.hearth ?? { stones: 0 }));
       if (this.mode === 'zones') {
         ctx.drawImage(art.overlay, vx, vy, VIEW.w, VIEW.h, vx, vy, VIEW.w, VIEW.h);
         for (const at of readOnCloth(world)) drawRead(ctx, at);
@@ -1701,7 +1705,7 @@ export function renderCloth(mode: WorldMapMode, world: World | null = null, fram
   const cv = canvas(CLOTH.w, CLOTH.h);
   const ctx = cv.getContext('2d')!;
   ctx.drawImage(art.cloth, 0, 0);
-  drawHearth(ctx, frame, world?.stones ?? 0);
+  drawHearth(ctx, frame, hearthLook(world?.hearth ?? { stones: 0 }));
   if (mode === 'art') drawNames(ctx, art.names, 0, 0, CLOTH.w, CLOTH.h);
   if (mode === 'zones') {
     ctx.drawImage(art.overlay, 0, 0);
