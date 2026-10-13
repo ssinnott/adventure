@@ -6,7 +6,7 @@
 // but what the automap and the hint show (its kind, its square and its name, the id it is known by,
 // and a den's ash) until a menu has shown what it lists.
 // What a feature says, holds, gives or wants is known once it is heard. A tear into a Rift is an exit
-// to it, as the game walks it.
+// to it, as the game walks it, and a crossing a person has offered is a way off from their square.
 // A zone map's id names its part of the outdoors, at the zone's own squares (World.locate).
 import type { Game } from '../game.ts';
 import type { Cell, Door, Exit, Feature, GameMap } from '../map.ts';
@@ -40,6 +40,8 @@ export interface Known {
   features(map: string): Sighted[];
   /** Exits and tears into a Rift on seen squares, without what opens them or the line said on arrival: the pilot learns a way by trying it. The outdoors' zone crossings are plain walking. */
   exits(map: string): Exit[];
+  /** The crossings people have offered (Pilot.offers), each from its seller's square as a way off is, to where it lands on the map as played; none it could not pay for over its reserve while it has no more gold. */
+  offers(map: string): Exit[];
   /** The size of a map, or of a zone's part of the outdoors, as the automap draws its grid; none for a map there is not. */
   size(map: string): { w: number; h: number };
   /** Maps visited: the keys of state.maps. */
@@ -114,6 +116,14 @@ export function knownOf(g: Game): Known {
       // A tear into a Rift is walked through as an exit is (GameMap.exitAt).
       const tears = fr.m.features.flatMap((f): Exit[] => (f.kind === 'rift' ? [{ x: f.x, y: f.y, to: f.to, tx: f.tx, ty: f.ty, tf: f.tf }] : []));
       return [...fr.m.exits, ...tears].filter((e) => seenIn(fr, e.x - fr.ox, e.y - fr.oy)).map(({ needFlag, shut, blockedText, label, ...e }) => ({ ...e, x: e.x - fr.ox, y: e.y - fr.oy }));
+    },
+    offers(map) {
+      const fr = frame(map);
+      if (!fr || !p) return [];
+      return p.offers.filter((o) => o.map === fr.m.id && (o.short === undefined || g.party.gold > o.short) && o.x - fr.ox >= 0 && o.y - fr.oy >= 0 && o.x - fr.ox < fr.w && o.y - fr.oy < fr.h).map((o) => {
+        const at = w.locate(o.passage.to, o.passage.x, o.passage.y);
+        return { x: o.x - fr.ox, y: o.y - fr.oy, to: at.mapId, tx: at.x, ty: at.y, ...(o.passage.facing === undefined ? {} : { tf: o.passage.facing }) };
+      });
     },
     size(map) { const fr = frame(map); return { w: fr?.w ?? 0, h: fr?.h ?? 0 }; },
     visited: () => Object.keys(w.state.maps),

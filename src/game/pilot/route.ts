@@ -1,5 +1,6 @@
 // The navigator (#717): the way from where the party stands to a square, over squares it has seen
-// and by ways off a map it has seen, pressed as a player would press it, a step or a turn a beat. It
+// and by ways off a map it has seen, or a crossing it has been offered (#721), taken from the seller's
+// square as talk answers the seller, pressed as a player would press it, a step or a turn a beat. It
 // never steps back or aside, so the viewer sees the party face where it goes. It reads the world only
 // through Known: a secret door is a wall to it until a search finds it, a lock a door until it is
 // tried, and a gate is learnt by trying it. A way refused three times on one goal is shut and told to
@@ -184,14 +185,17 @@ function offAndOn(k: Known, map: string, x: number, y: number, facing: Facing, a
   return off ? [...off[1], 'forward', 'turnLeft', 'turnLeft', 'forward'] : null;
 }
 
-/** The maps and exits from `from` to `to` over visited maps' seen exits, by none on a square of `skip` on its map; null when none. */
+/**
+ * The maps and exits from `from` to `to` over visited maps' seen exits and the crossings offered on
+ * them (Known.offers), an exit first, by none on a square of `skip` on its map; null when none.
+ */
 export function routeMaps(k: Known, from: string, to: string, skip: readonly { map: string; x: number; y: number }[] = []): { map: string; exit: Exit }[] | null {
   // A zone's id is the outdoors': from one zone to the next is walking, no exit.
   from = k.mapOf(from); to = k.mapOf(to);
   if (from === to) return [];
   const visited = new Set(k.visited()), came = new Map<string, { map: string; exit: Exit }>(), queue = [from];
   for (let i = 0; i < queue.length; i++) {
-    for (const exit of k.exits(queue[i])) {
+    for (const exit of [...k.exits(queue[i]), ...k.offers(queue[i])]) {
       const next = exit.to;
       if (next === from || came.has(next) || (next !== to && !visited.has(next)) || skip.some((q) => q.map === queue[i] && q.x === exit.x && q.y === exit.y)) continue;
       came.set(next, { map: queue[i], exit });

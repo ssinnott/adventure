@@ -3,12 +3,14 @@
 // and takes it back, T sets its pace, and any other key takes it back (press, from src/main.ts). A
 // fight it hands to the bot (ui/combat.ts auto, game/bot.ts) and a message it reads and closes; for
 // the rest it asks its brains in turn. Its why line, two at most, is drawn over the top of the view
-// (Game.render), and a wipe's stays up over the title. It lives on the Game and never in the save.
+// (Game.render), and a wipe's, or the ending's choice's, stays up over the screen. It lives on the
+// Game and never in the save.
 import type { Game } from '../game.ts';
 import { ExploreScreen } from '../game.ts';
 import type { Action } from '../../input.ts';
 import { is } from '../../input.ts';
-import type { Feature } from '../map.ts';
+import type { Feature, Passage } from '../map.ts';
+import type { Party } from '../party.ts';
 import { CombatScreen } from '../../ui/combat.ts';
 import { MessageScreen } from '../../ui/screens.ts';
 import { TitleScreen } from '../../ui/title.ts';
@@ -20,6 +22,7 @@ import { explore } from './explore.ts';
 import { keep } from './keep.ts';
 import { aims } from './aims.ts';
 import type { Aim } from './aims.ts';
+import { talk, holdings } from './talk.ts';
 
 export type Tempo = 1 | 2 | 4;
 export interface PilotOpts { instant?: boolean; omniscient?: boolean }
@@ -28,11 +31,11 @@ export interface PilotOpts { instant?: boolean; omniscient?: boolean }
 export type Brain = (g: Game, k: Known, p: Pilot) => Action | null;
 
 /**
- * The brains, asked in this order each beat until one gives a key: the fight's, the quartermaster's
- * (#719), the strategist's (#720), the navigator's (#717), the explorer's (#718) and talk (#721).
- * Each takes its place as its module lands.
+ * The brains, asked in this order each beat until one gives a key: the fight's, talk's (#721), which
+ * answers every menu and riddle, the quartermaster's (#719), the strategist's (#720), the
+ * navigator's (#717) and the explorer's (#718).
  */
-export const BRAINS: Brain[] = [keep, aims, route, explore];
+export const BRAINS: Brain[] = [talk, keep, aims, route, explore];
 
 /** The lines heard that the pilot keeps, the oldest dropped first. */
 export const HEARD_MAX = 2000;
@@ -88,6 +91,14 @@ export class Pilot {
   readonly walked = new Map<string, number>();
   /** The chests it has seen and found no way to, "map:x,y" on the map as played, with the company's flags then: not sought again until it has more (aims.ts). */
   readonly chests = new Map<string, number>();
+  /** The people it has met, "map:x,y:name" on the map as played, a tavern holding several on one square, and what the company held then (holdings): met again once it holds more; and the guilds gone into, with the gold it had then (talk.ts). */
+  readonly met = new Map<string, number>();
+  /** The crossings it has been offered, each from the seller's square on the map as played, and the gold it had when it could not pay the fare over its reserve: not taken again until it has more (talk.ts). */
+  readonly offers: { map: string; x: number; y: number; passage: Passage; short?: number }[] = [];
+  /** The words it has tried on each statue's riddle, "map:x,y" on the map as played, each once (talk.ts). */
+  readonly tried = new Map<string, Set<string>>();
+  /** The riddle each statue put, by its square as `tried` keeps it, as it was heard. */
+  readonly riddles = new Map<string, string>();
   /** The why a brain said as it gave no key (a goal given up): it stays up until a brain presses one. */
   private kept: [string, string?] | null = null;
   /** Ticks counted towards the next beat. */
@@ -108,12 +119,21 @@ export class Pilot {
   /** A menu has shown what a feature lists. */
   tell(f: Feature): void { this.told.add(f); }
 
-  /** A new company, or one loaded: it has heard nothing, been shown nothing, searched nothing, tried no well, been short nowhere, is set on nothing, has lost no goal and is bound nowhere yet, and the last run's stop and its why are gone. */
+  /** A person met (Game.talkScreen), on the map as played, and what the company holds after their words. */
+  meet(map: string, f: { x: number; y: number; name: string }, party: Party): void { this.met.set(`${map}:${f.x},${f.y}:${f.name}`, holdings(party)); }
+
+  /** A seller's crossings offered (Game.offer), from their square on the map as played: each kept once. */
+  offered(map: string, x: number, y: number, routes: readonly Passage[]): void {
+    for (const passage of routes) if (!this.offers.some((o) => o.map === map && o.x === x && o.y === y && o.passage === passage)) this.offers.push({ map, x, y, passage });
+  }
+
+  /** A new company, or one loaded: it has heard nothing, been shown nothing, searched nothing, tried no well, been short nowhere, is set on nothing, has lost no goal, met nobody, been offered no crossing, tried no riddle and is bound nowhere yet, and the last run's stop and its why are gone. */
   forget(): void {
     this.heard.length = 0; this.told = new WeakSet<Feature>(); this.stopped = false; this.why = [IDLE];
     this.goal = null; this.plan = []; this.trip = null; this.shut.length = 0; this.searched.clear(); this.prefer = null;
     this.wells.clear(); this.short.clear();
     this.aim = null; this.aimSince = 0; this.aimGoal = ''; this.lost.clear(); this.trail = []; this.walked.clear(); this.chests.clear();
+    this.met.clear(); this.offers.length = 0; this.tried.clear(); this.riddles.clear();
   }
 
   /** Turns itself off, and says why over every screen until a game starts (#713, Decided 4 and 10). */
@@ -158,9 +178,10 @@ export class Pilot {
       this.trail = [{ map: st.mapId, x: st.x, y: st.y, zone: g.world.zone?.id }, ...this.trail.slice(0, 1)];
     }
     const k = knownOf(g), was = this.why;
+    // A brain that turned it off (talk, at the ending's choice) ends the beat.
     for (const brain of BRAINS) {
       const a = brain(g, k, this);
-      if (a) return a;
+      if (a || !this.on) return a;
     }
     if (this.why !== was) this.kept = this.why;
     else if (this.why !== this.kept) this.why = [IDLE];

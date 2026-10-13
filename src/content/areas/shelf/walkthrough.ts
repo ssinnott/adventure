@@ -3,7 +3,7 @@
 // Then a new company walks out of Helmstow to the Lodestone, and Gytha gives it the lesson, and
 // her later words as Thornhold's news reaches her. Then its side quests, each choice both ways: the
 // log reads true and the people stand where it says. Then Helmstow before and after Act II (#157).
-// Last, the pilot plays the chapter from a new game, owed to talk (#721) until it meets people.
+// Last, the pilot plays the chapter from a new game, owed to talk (#721) until it gets there.
 import type { Walkthrough } from '../../area.ts';
 import { CHAPTER } from './chapter.ts';
 import { newWalk, meetWho, walkThrough, see, fight, playChapter, quest, listen, pilotPlays } from '../../../../tools/walk.ts';

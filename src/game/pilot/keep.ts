@@ -252,8 +252,8 @@ function street(g: Game, k: Known, p: Pilot): Action | null {
   return null;
 }
 
-/** The key that moves a menu's choice down to line `i`, or Space on it. */
-const pick = (top: { sel: number; options: string[] }, i: number): Action => (Math.min(top.sel, top.options.length - 1) === i ? 'interact' : 'down');
+/** The key that moves a menu's choice down to line `i`, or Space on it; Esc for -1. */
+export const press = (top: { sel: number; options: string[] }, i: number): Action => (i < 0 ? 'cancel' : Math.min(top.sel, top.options.length - 1) === i ? 'interact' : 'down');
 
 /** Whether a business's trade has something for the company now, so its first menu opens it rather than Leave. A shop or a trainer it has not seen the wares or levels of it looks in. */
 function errand(g: Game, p: Pilot, map: string, f: Trade, wants: Need[]): boolean {
@@ -267,23 +267,24 @@ function errand(g: Game, p: Pilot, map: string, f: Trade, wants: Need[]): boolea
 }
 
 /**
- * In a business of its own trade: the menu on top read by its labels. The first menu opens the trade
- * while it has something to do, else Leave. The inn: a room for rest, then rations while short; the
- * temple: each of the company it can pay for, the dead first, then the stoned, then the rest; the shop:
- * Buy, and never Sell, gear for each of the company and rations, then Esc; the trainer: each it can
- * pay for. Null in any other.
+ * In a business of its own trade: the line of the menu on top it takes, read by its labels, or -1 for
+ * Esc. The first menu opens the trade while it has something to do, else Leave. The inn: a room for
+ * rest, then rations while short; the temple: each of the company it can pay for, the dead first, then
+ * the stoned, then the rest; the shop: Buy, and never Sell, gear for each of the company and rations,
+ * then Esc; the trainer: each it can pay for. Null in any other.
  */
-function counter(g: Game, k: Known, p: Pilot, top: ChoiceScreen): Action | null {
+function counter(g: Game, k: Known, p: Pilot, top: ChoiceScreen): number | null {
   const room = g.screens.find((s): s is InteriorScreen => s instanceof InteriorScreen)!, st = g.world.state;
   const f = k.features(st.mapId).find((q): q is Trade => q.x === room.at.x && q.y === room.at.y && (q.kind === 'inn' || q.kind === 'temple' || q.kind === 'shop' || q.kind === 'trainer'));
-  if (!f) return null;
+  // Its own menus carry its name; a person's question there is not the quartermaster's.
+  if (!f || top.title !== f.name) return null;
   // In at the door, the trip there is over.
   if (p.goal && MINE.has(p.goal) && p.goal.map === st.mapId && p.goal.x === f.x && p.goal.y === f.y) { p.goal = null; p.trip = null; p.plan = []; }
   const party = g.party, opts = top.options, wants = needs(g, k), gold = spare(party), leave = opts.lastIndexOf('Leave');
   if (opts[0] === TRADE[f.kind] && leave === opts.length - 1) {
-    if (!errand(g, p, st.mapId, f, wants)) return pick(top, leave);
+    if (!errand(g, p, st.mapId, f, wants)) return leave;
     p.why = [`In ${named(f)}.`];
-    return pick(top, 0);
+    return 0;
   }
   switch (f.kind) {
     case 'inn': {
@@ -292,37 +293,37 @@ function counter(g: Game, k: Known, p: Pilot, top: ChoiceScreen): Action | null 
       // What each costs, as its line says: the inn's prices are known only once inside.
       const cost = (i: number): number => Number(/\((\d+) gold\)/.exec(opts[i])?.[1] ?? Infinity), owed = (want: Need): void => void p.short.set(`${st.mapId}:${f.x},${f.y}:${want}`, party.gold);
       if (wants.includes('rest') && !short(g, p, st.mapId, f, 'rest')) {
-        if (cost(stay) <= gold) { p.why = ['Taking a room.']; return pick(top, stay); }
+        if (cost(stay) <= gold) { p.why = ['Taking a room.']; return stay; }
         owed('rest');
       }
       if (hungry(party) && !short(g, p, st.mapId, f, 'food')) {
-        if (cost(buy) <= gold) { p.why = ['Buying rations.']; return pick(top, buy); }
+        if (cost(buy) <= gold) { p.why = ['Buying rations.']; return buy; }
         owed('food');
       }
-      return pick(top, leave);
+      return leave;
     }
     case 'temple': {
       if (!opts.includes('Donate 10 gold')) return null;
       const worst = (c: Character): number => (hasCondition(c, 'dead') ? 0 : hasCondition(c, 'stoned') ? 1 : 2);
       const due = party.members.map((c, i) => ({ c, i })).filter(({ c }) => templePrice(c) > 0 && templePrice(c) <= party.gold).sort((a, b) => worst(a.c) - worst(b.c))[0];
-      if (!due) return pick(top, leave);
+      if (!due) return leave;
       p.why = [`${hasCondition(due.c, 'dead') ? 'Raising' : 'Restoring'} ${due.c.name}.`];
-      return pick(top, due.i);
+      return due.i;
     }
     case 'shop': {
-      if (opts.join() === 'Buy,Sell,Leave') return pick(top, errand(g, p, st.mapId, f, wants) ? 0 : leave);
-      if (!top.words.startsWith('What will it be?')) return 'cancel';
+      if (opts.join() === 'Buy,Sell,Leave') return errand(g, p, st.mapId, f, wants) ? 0 : leave;
+      if (!top.words.startsWith('What will it be?')) return -1;
       const want = basket(party, f);
-      if (!want) return 'cancel';
+      if (!want) return -1;
       p.why = [want.who ? `Buying ${item(want.id).name} for ${want.who.name}.` : 'Buying rations.'];
-      return pick(top, f.stock!.indexOf(want.id));
+      return f.stock!.indexOf(want.id);
     }
     case 'trainer': {
       if (!top.words.startsWith(`"${f.name}. I train`)) return null;
       const i = trainee(party, f.maxLevel ?? 0);
-      if (i < 0) return pick(top, leave);
+      if (i < 0) return leave;
       p.why = [`Training ${party.members[i].name}.`];
-      return pick(top, i);
+      return i;
     }
   }
 }
@@ -334,20 +335,28 @@ function sheet(g: Game, p: Pilot, top: SheetScreen): Action {
   if (at !== who) return (who - at + n) % n <= (at - who + n) % n ? 'right' : 'left';
   const c = party.members[who];
   p.why = [`Fitting out ${c.name}.`];
-  return pick({ sel: top.sel, options: [...c.pack, ...party.bag] }, [...c.pack, ...party.bag].indexOf(carried(party, c)!));
+  return press({ sel: top.sel, options: [...c.pack, ...party.bag] }, [...c.pack, ...party.bag].indexOf(carried(party, c)!));
 }
 
 /** The offer of rest it asked for with R: Rest while the harness's rule wants it for the living, else Not now. Null for any other question. */
-function restOffer(g: Game, top: ChoiceScreen): Action | null {
+function restOffer(g: Game, top: ChoiceScreen): number | null {
   if (top.options.join() !== 'Rest,Not now' || !top.words.startsWith('Rest for eight hours?')) return null;
-  return pick(top, tired(g.party) ? 0 : 1);
+  return tired(g.party) ? 0 : 1;
+}
+
+/**
+ * The line the quartermaster answers a menu of its own with, -1 for Esc: a business's of its trade,
+ * and the offer of rest. Null for any other, which is talk's (#721).
+ */
+export function counsel(g: Game, k: Known, p: Pilot, top: ChoiceScreen): number | null {
+  return g.screens.some((s) => s instanceof InteriorScreen) ? counter(g, k, p, top) : restOffer(g, top);
 }
 
 /** The brain: the sheet, a business's menus and the offer of rest, and on the street what the company needs. */
 export const keep: Brain = (g, k, p) => {
   const top = g.top;
   if (top instanceof SheetScreen) return sheet(g, p, top);
-  if (top instanceof ChoiceScreen) return g.screens.some((s) => s instanceof InteriorScreen) ? counter(g, k, p, top) : restOffer(g, top);
+  if (top instanceof ChoiceScreen) { const i = counsel(g, k, p, top); return i === null ? null : press(top, i); }
   if (!(top instanceof ExploreScreen)) return null;
   const mine = p.goal && MINE.has(p.goal) ? p.goal : null, key = street(g, k, p);
   // A goal of its own it no longer wants it lets go, so another brain may make one.

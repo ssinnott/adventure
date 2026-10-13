@@ -29,6 +29,7 @@ import { CombatScreen } from '../ui/combat.ts';
 import { MessageScreen, ChoiceScreen, SheetScreen, serviceScreen, SpellScreen, InteriorScreen, skillMenu } from '../ui/screens.ts';
 import { QuestScreen } from '../ui/quests.ts';
 import { questLog, questMarks, questNews } from './quests.ts';
+import { THE_QUEST } from '../content/index.ts';
 import { TitleScreen } from '../ui/title.ts';
 import { randomParty } from '../ui/create.ts';
 import { WorldMapScreen } from '../ui/worldmap.ts';
@@ -251,6 +252,7 @@ export class Game {
    */
   talkScreen(p: Person): Screen {
     const m = meet(p, this.party, heard(this.world, p));
+    this.pilot?.meet(this.world.state.mapId, p, this.party);
     const then = m.choice ? (): void => this.ask(m.choice!, p.name) : p.passage?.length ? (): void => { this.pilot?.tell(p); this.offer(p.passage!, p.name); } : p.teaches ? (): void => this.train(p.teaches!, p.name)
       : p.skill ? (): void => this.push(skillMenu(this, [p.skill!], p.name)) : undefined;
     return new MessageScreen(m.text, then, p.name);
@@ -259,14 +261,17 @@ export class Game {
   /**
    * Put a question: its answers through the choice screen, each with its price where it has one and
    * barred to a company short of it, and the answer's words in a box titled `title`, or to `said`
-   * (words for the log). Esc answers nothing, and the question comes again.
+   * (words for the log). Esc answers nothing, and the question comes again. The ending's choice,
+   * every answer of which sets a flag the last chapter's end names, is marked so (the pilot's stop).
    */
   ask(c: Choice, title: string, said?: (text: string) => void): void {
-    this.push(new ChoiceScreen(asked(c, this.party), c.answers.map(answerLabel), (i) => {
+    const s = new ChoiceScreen(asked(c, this.party), c.answers.map(answerLabel), (i) => {
       if (i < 0) return;
       const text = answer(c.answers[i], this.party);
       if (said) said(text); else this.push(new MessageScreen(text, undefined, title));
-    }, title, c.answers.map((a) => barred(a, this.party))));
+    }, title, c.answers.map((a) => barred(a, this.party)));
+    s.ending = isEnding(c);
+    this.push(s);
   }
 
   /**
@@ -287,10 +292,12 @@ export class Game {
 
   /**
    * A seller's crossings (game/passage.ts): the menu of where to, then the terms and the fare, then
-   * the crossing taken. Esc at either backs out with nothing spent.
+   * the crossing taken. Esc at either backs out with nothing spent. The pilot is told them from the
+   * seller's square, where the company stands.
    */
   offer(routes: readonly Passage[], title: string): void {
     const w = this.world;
+    this.pilot?.offered(w.state.mapId, w.state.x, w.state.y, routes);
     this.push(new ChoiceScreen(passage.ask(this.party), [...routes.map((r) => passage.offerLine(r, w)), passage.NOT_NOW], (i) => {
       const r = routes[i];
       if (!r) return;
@@ -404,6 +411,12 @@ export class Game {
 
 import { item } from './items.ts';
 function itemName(id: string): string { return item(id).name; }
+
+/** Whether a question is the ending's choice: every answer sets a flag the last chapter's end names. */
+function isEnding(c: Choice): boolean {
+  const end = new Set([THE_QUEST.chapters.at(-1)?.done ?? []].flat().flatMap((q) => [q.flag ?? []].flat()));
+  return c.answers.length > 0 && c.answers.every((a) => [a.sets ?? []].flat().some((f) => end.has(f)));
+}
 
 /** Exploration: the spine of the game. */
 export class ExploreScreen implements Screen {

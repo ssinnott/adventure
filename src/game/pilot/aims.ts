@@ -23,6 +23,7 @@ import type { Brain, Pilot } from './pilot.ts';
 import { route, routeMaps, nearestOn, stops, wayTo } from './route.ts';
 import type { Goal } from './route.ts';
 import { explore, frontier } from './explore.ts';
+import { meeting } from './talk.ts';
 
 export type Aim =
   | { kind: 'quest'; quest: string; map: string; text: string }
@@ -282,8 +283,9 @@ function chest(g: Game, k: Known, p: Pilot): Action | null {
  * The brain, on the street: the aim chosen anew where the quests give another; three days on one
  * goal and it is lost; a crossing into a zone too strong for the company that the aim is not in,
  * stepped back from; Space on a chest stood on. A walk under way goes on, the navigator's; once it is
- * done, or with none, the aim chosen anew where the walks give another, a chest on the map opened, and
- * the aim walked; a quest's with no way on, it searches where it stands, so the three days pass.
+ * done, or with none, the aim chosen anew where the walks give another, a chest on the map opened, a
+ * person, a guild or a statue near or on the aim's map gone to (talk.ts, #721), and the aim walked; a
+ * quest's with no way on, it searches where it stands, so the three days pass.
  */
 export const aims: Brain = (g, k, p) => {
   if (!(g.top instanceof ExploreScreen)) return null;
@@ -316,8 +318,8 @@ export const aims: Brain = (g, k, p) => {
     if (JSON.stringify(want) !== JSON.stringify(p.aim)) set(g, p, want, '');
   }
   const aim = p.aim;
-  if (!aim) { p.prefer = null; return null; }
-  const opened = chest(g, k, p);
+  if (!aim) { p.prefer = null; return meeting(g, k, p); }
+  const opened = chest(g, k, p) ?? meeting(g, k, p);
   if (opened) return opened;
   const why = lines(g, aim)[0];
   switch (aim.kind) {

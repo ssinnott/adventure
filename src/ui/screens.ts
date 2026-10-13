@@ -147,7 +147,10 @@ export class ChoiceScreen implements Screen {
   private then: (i: number) => void;
   /** The name drawn over it, whose question it is: a person's, or a monster's for a parley. A den's has none. */
   readonly title: string;
-  private disabled: boolean[];
+  /** The options drawn barred, which Space does not take. */
+  readonly disabled: boolean[];
+  /** The ending's choice (DESIGN §9, Game.ask): the pilot leaves it to the player. */
+  ending = false;
   constructor(text: string | (() => string), choices: string[] | (() => string[]), then: (i: number) => void, title = '', disabled: boolean[] = []) {
     this.text = text;
     this.choices = choices;
@@ -369,6 +372,8 @@ export interface BusinessEntry { label: string; open: () => Screen }
 export const TRADE: Record<Exclude<Business['kind'], 'npc'>, string> = { inn: 'A room and rations', temple: 'The chapel', shop: 'Buy and sell', guild: 'Study spells', trainer: 'Train' };
 /** A hall's first menu's line for its guild's skills. */
 const LEARN = 'Learn a skill';
+/** A tavern's first menu's line for its keeper's words. */
+export const ROOM_TALK = 'The talk of the room';
 
 /** A person as a menu names them: to the first comma ("Hob", not "Hob, once tenant of Ashcombe"). */
 export const shortName = (name: string): string => name.split(',')[0];
@@ -381,7 +386,7 @@ export const shortName = (name: string): string => name.split(',')[0];
  * are those there now.
  */
 export function businessEntries(g: Game, f: Business): BusinessEntry[] {
-  const out: BusinessEntry[] = [f.kind === 'npc' ? { label: 'The talk of the room', open: () => g.talkScreen(f) } : { label: TRADE[f.kind], open: () => trade(g, f) }];
+  const out: BusinessEntry[] = [f.kind === 'npc' ? { label: ROOM_TALK, open: () => g.talkScreen(f) } : { label: TRADE[f.kind], open: () => trade(g, f) }];
   if (f.hall) { const hall = f.hall; out.push({ label: `Work for ${guildName(hall)}`, open: () => guildWork(g, hall, f.name) }); }
   // A hall teaches its guild's skills (game/skills.ts), once a skill of theirs is built.
   const taught = f.hall ? taughtBy(f.hall) : [];

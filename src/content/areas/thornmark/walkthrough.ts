@@ -5,12 +5,14 @@
 // Henlys seen before the Stone, where the chisel, found after, makes the match. Then its side
 // quests on the built maps (#219) and in the Deepthorn, each from its giver to its choice and both
 // ways: the log reads true and the people stand where it says; Act II's Hale's Sergeant both ways;
-// and the Eldest on Penspern. Last, the four prestige trainers here (#19), taught at 11 and 19.
+// and the Eldest on Penspern. Then the four prestige trainers here (#19), taught at 11 and 19. Last,
+// the pilot plays the chain from a new game, the Foreland's chapter and then this one, owed to talk
+// (#721) until it gets there.
 import type { Walkthrough } from '../../area.ts';
 import { CHAPTER } from './chapter.ts';
 import { CHAPTER as FORELAND } from '../shelf/chapter.ts';
 import { HIRE, STEPS as FORELAND_STEPS, FARM_FIRST, hired } from '../shelf/walkthrough.ts';
-import { newWalk, meetWho, walkThrough, see, fight, playChapter, goalFromBegun, ending, everyGoalWalked, quest, listen } from '../../../../tools/walk.ts';
+import { newWalk, meetWho, walkThrough, see, fight, playChapter, goalFromBegun, ending, everyGoalWalked, quest, listen, pilotPlays } from '../../../../tools/walk.ts';
 import type { Step, Walk } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH } from '../../../game/types.ts';
 import { MAP_DEFS } from '../../index.ts';
@@ -148,6 +150,7 @@ export const walkthrough: Walkthrough = (ok) => {
   everyGoalWalked(ok, [FORELAND, CHAPTER]);
   sideQuests(ok);
   trainers(ok);
+  pilotPlays(ok, CHAPTER, '#721');
 };
 
 /**

@@ -1351,14 +1351,14 @@ const mark = await page.evaluate(async () => {
 // lies over the top of the view, darker than the view was; T sets its pace, the band shows a second
 // line and the pace, and the view leaves out its hint; P again takes the game back, and so does any
 // other key, which the screen then has. A wipe leaves its why over the title, darker than the title
-// alone, and P there starts a new game with a company at random, the why of the last gone. The
-// explorer (#718), which would walk the road, the quartermaster (#719), which would walk back to
-// Mottram's to see its wares, and the strategist (#720), which would set off for the next map, are
-// held back throughout, and put back after.
+// alone, and P there starts a new game with a company at random, the why of the last gone. Talk
+// (#721), which would answer a menu, the explorer (#718), which would walk the road, the
+// quartermaster (#719), which would walk back to Mottram's to see its wares, and the strategist
+// (#720), which would set off for the next map, are held back throughout, and put back after.
 const hold = (back: boolean): Promise<void> => page.evaluate(async (back: boolean) => {
   const P = await import('/src/game/pilot/pilot.ts' as string), E = await import('/src/game/pilot/explore.ts' as string), K = await import('/src/game/pilot/keep.ts' as string);
-  const A = await import('/src/game/pilot/aims.ts' as string);
-  if (back) { P.BRAINS.unshift(K.keep, A.aims); P.BRAINS.push(E.explore); } else for (const b of [K.keep, A.aims, E.explore]) P.BRAINS.splice(P.BRAINS.indexOf(b), 1);
+  const A = await import('/src/game/pilot/aims.ts' as string), T = await import('/src/game/pilot/talk.ts' as string);
+  if (back) { P.BRAINS.unshift(T.talk, K.keep, A.aims); P.BRAINS.push(E.explore); } else for (const b of [T.talk, K.keep, A.aims, E.explore]) P.BRAINS.splice(P.BRAINS.indexOf(b), 1);
 }, back);
 await hold(false);
 const pilotBand = await (async () => {
