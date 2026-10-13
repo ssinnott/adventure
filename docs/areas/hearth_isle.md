@@ -747,8 +747,9 @@ hinder, at 7,13 inside the door, there when Tallis won the chair or, where no cl
 carried, when his tally came down (`after: [{ flag: [VASK_FALLEN, 'q_throne_tallis'] }, { flag: [VASK_FALLEN, TOKEN_TALLIS] }]`, `until: [{ flag: 'q_throne_cousin' }, { flag: 'q_throne_hold' }, ...ENDED]`):
 `{ kind: 'npc', x: 7, y: 13, name: 'Tallis\'s man', lines: ['A Compact man inside the door, the stair\'s dust on a good coat. He came down behind the fighting, not in it.', '"Tallis\'s. What comes up out of here is his, the ring most of all. If it goes anywhere else, he\'ll be told."'] }`.
 Beside him at 7,12, for a Partner (`after: { flag: [VASK_FALLEN, 'q_compact_over'] }`, `until: ENDED`),
-the Compact's runner with its one spy's word, a hint toward I6's hidden takings (the Ways' hatch is
-behind the company by now): `{ kind: 'npc', x: 7, y: 12, name: 'A Compact runner', lines: ['A Compact runner inside the door, a boy with a satchel and the stair\'s dust to the knee.', '"Partner. A word from the boats, since words are ours now: the Hand counted everything it took off the road, and none of it went home. Ask the rock behind its tally-house."'] }`.
+the Compact's runner, who has come to carry the news and says nothing the company could use (the
+spy's word is the strand runner's, §6, given where it can still be spent):
+`{ kind: 'npc', x: 7, y: 12, name: 'A Compact runner', lines: ['A Compact runner inside the door, a boy with a satchel and the stair\'s dust to the knee.', '"Partner. Whatever you decide down here, the Compact will carry the news over the Sound the same night, and ask no fee."'] }`.
 
 **Encounters.** The one group above; the sentries it calls are not placed, they are called
 (`core_sentry` in Vask's `calls`, on the clock's beat), up to the cap of twelve monsters over the
@@ -1214,13 +1215,17 @@ The pieces, all built on the road, each a flag the save holds:
 company chose shows on the isle: with the Compact taken over (`q_compact_over`) the last crossing
 costs it nothing (`free` on both ends, `src/content/crossings.ts`) and a Compact runner waits on
 the strand at 23,30, `after: { flag: 'q_compact_over' }`: *"Partner. The boat is yours, both ways,
-for as long as you need it. The Compact's orders come from you now, and the first one was that."*;
+for as long as you need it. The Compact's orders come from you now, and the first one was that."*
+and, as the Compact's one spy's word, a second line: *"A word from the boats, since words are ours
+now: the Hand counted everything it took off the road, and none of it went home. Ask the rock
+behind its tally-house."* (a hint toward I6's hidden takings, given where the company can still
+use it, as DESIGN §10.2 has it);
 with the Compact handed to the Wardens (`q_compact_wardens`), a Warden sergeant on the strand
 instead: *"The sea lanes are the Wardens' now, and the Hand's boats have stopped coming over. We
 counted eleven of theirs on the way. We'll count yours back."* For a Partner, a second runner
-stands at the Heart's door once Vask has fallen, with the Compact's one spy's word (§4.8). That is
-all the plan pays the Compact in Act V: the ferry, the runner's word and the sea lanes; the
-Wardens' siege, the Ashfall crossing made harder and the Compact as a fence are cut (§11).
+stands at the Heart's door once Vask has fallen (§4.8). That is all the plan pays the Compact in
+Act V: the ferry, the runner's word and the sea lanes; the Wardens' siege, the Ashfall crossing
+made harder and the Compact as a fence are cut (§11).
 
 **The Lost Expedition** (DESIGN §10.3), ended at Fane's fire (#22): the map given (`meridian_map`)
 is the third answer at the panel (§4.8), and nothing else. Fane's map has nothing a player can
@@ -1554,8 +1559,8 @@ overturn before the issue that builds each is approved.
 19. **The verdict decides who stands at the core.** The Council's verdict puts the winning
     claimant's people on the Stair's first landing and, for Tallis, his man at the Heart's door to
     hinder; the pilgrims' tokens decide where no claimant's verdict carried, and DESIGN §10.1
-    stands as written. A Partner's runner stands at that door too, with the Compact's one spy's word
-    (§4.8).
+    stands as written. A Partner's runner stands at that door too (§4.8), and the Compact's one
+    spy's word is the strand runner's (§6), where DESIGN §10.2 puts it.
 20. **The Hand's own door.** The Hand came in at the Steps by the service ways, opened the crypt's
     grey door from below for its garrison and went into the Heart by a door of its own at the
     Stair's foot, which opened for her hand and is shut behind them: an event and no exit (§4.7).
