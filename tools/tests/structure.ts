@@ -86,7 +86,8 @@ export function respawnsOutOfRange(def: MapDef): string[] {
 /**
  * What is wrong with a map's groups' times to walk: an `until` or an `after` that names nothing real
  * (or a group that respawns, which would flicker as it dies and returns), an `until` on a group that
- * never comes back anyway, and a sky asked of a group underground.
+ * never comes back anyway (save one that `leaves`, which its until takes off standing, #747), and a sky
+ * asked of a group underground.
  */
 export function presenceFaults(def: MapDef, maps: readonly MapDef[] = MAP_DEFS): string[] {
   const worn = (id: string, p: Presence): string[] => [
@@ -95,7 +96,7 @@ export function presenceFaults(def: MapDef, maps: readonly MapDef[] = MAP_DEFS):
     ...(def.kind === 'dungeon' && [p.when ?? []].flat().some((h) => h.sky) ? [`${id}: a sky underground`] : []),
   ];
   return [
-    ...(def.encounters ?? []).flatMap((e) => [...worn(e.id, e), ...(e.until && !e.respawn ? [`${e.id}: until, but it never comes back`] : [])]),
+    ...(def.encounters ?? []).flatMap((e) => [...worn(e.id, e), ...(e.until && !e.respawn && !e.leaves ? [`${e.id}: until, but it never comes back`] : [])]),
     // A person, an event, a shrine or a fountain wears the same: gone once its until holds, there once its after does.
     ...(def.features ?? []).flatMap((f) => (f.kind === 'npc' ? worn(`${f.name.split(',')[0]} at ${f.x},${f.y}`, f) : f.kind === 'event' || f.kind === 'shrine' || f.kind === 'fountain' ? worn(f.id, f) : [])),
   ];
@@ -192,6 +193,7 @@ export function structure(): void {
     ok(faults(group(map('mill'), 'm_rats', { respawn: 1440, until: { slain: 'shelf:road_rats' } })) === 'm_rats until: slain shelf:road_rats', 'an until naming a group that respawns is refused');
     ok(faults(group(map('mill'), 'm_rats', { respawn: 1440, after: { flag: 'no_such_flag' }, until: { slain: 'grove2:no_such_group' } })) === 'm_rats until: slain grove2:no_such_group,m_rats after: flag no_such_flag', 'and one naming nothing real, and an after');
     ok(faults(group(map('mill'), 'm_rats', { respawn: undefined, until: TEAR_CLOSED })) === 'm_rats: until, but it never comes back', 'an until on a group that never comes back is refused');
+    ok(faults(group(map('mill'), 'm_rats', { respawn: undefined, until: TEAR_CLOSED, leaves: true })) === '', 'but not on one that leaves on it, standing or not (#747)');
     ok(faults(group(map('mill'), 'm_rats', { when: [{ hours: 'night' }, { sky: 'fog' }] })) === 'm_rats: a sky underground', 'and fog asked of a group underground; night is not');
     const worn = (f: MapDef['features']): string => presenceFaults({ ...map('mill'), features: f }).join();
     ok(worn([{ kind: 'event', x: 1, y: 1, id: 'fx_lamp', text: 'Dark.', until: { flag: 'no_such_flag' } }, { kind: 'npc', x: 1, y: 1, name: 'Alwin, a fixture', lines: ['Hm.'], after: { seen: 'mill:no_such_event' }, when: { sky: 'fog' } }])
