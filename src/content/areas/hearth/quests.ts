@@ -38,7 +38,7 @@ export const QUESTS: readonly QuestDef[] = [
     entries: [
       { id: 'asked', when: { flag: LAMPS }, text: 'The temple\'s sacristan kept its lamps dark for forty years, for the moths. The Hand lit them. He wants them out, in the order the pillar gives.' },
       { id: 'pillar', when: { seen: PILLARS }, text: 'The pillar: FIRST THE SEA. THEN THE SHORE. THEN THE HOUSE. LAST OF ALL THE HEARTH.' },
-      { id: 'wrong', when: { flag: LAMPS_WRONG }, text: 'Wrong. The other three flared and the nave filled with wings.' },
+      { id: 'wrong', when: { flag: LAMPS_WRONG }, text: 'Wrong. The others flared and the nave filled with wings.' },
       { id: 'out', when: { flag: LAMPS_OUT }, text: 'The last wick out, the moths went, all together, out through the court to the light.' },
       { id: 'key', when: { flag: LAMPS_KEY }, text: 'He gave us the treasury\'s key. The grey men\'s gear in there is nobody\'s, he says.' },
     ],

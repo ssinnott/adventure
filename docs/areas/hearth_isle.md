@@ -528,12 +528,13 @@ included; every one is reached from the start, the treasury by its key. The plac
   `fane_key`), not `locked`: no iron key fits it, and his key is kept (#755's 1).
 - **The pillar** at 8,10 reads in two: its `text` is *Carved up the pillar in the oldest hand on the
   isle.* and its `read` the order, so a reader has the order and the log's pillar entry is a
-  reader's (#755's 2). The arch at 11,3 is a sign with no id, where the brief gave it `hf_arch`.
+  reader's (#755's 2). The arch at 11,3 is a sign with no id, where the brief gave it `hf_arch`:
+  an id is kept only for a sign with `read` (#755's 22).
 - **The banners** at 12,2 and 12,4 are the Hand's grey, `#6a6866`, not the palette's red (#755's 5).
 - **The lamps** at 6,13, 10,13, 6,7 and 10,7 are persons with no face, made by one `lamp()` as the
   Ember Stone's `socket()` is; the House and Hearth lamps' turn lines follow the Shore's (#755's 6).
-  The wrong lamp's line, *the other three flare*, is the brief's, and is said when fewer than three
-  still burn too.
+  The wrong lamp's line says *the rest flare*, where the brief had *the other three*, which was
+  false once a lamp is out (#755's 20).
 - **The groups** are the brief's five at its squares: the moths at 8,12, the champions at 8,8, the
   sermon at 8,5, the second group at 6,4 and the swarm at 8,9. The moths and the swarm respawn at
   720 and the rest at 2,880. The moths and the swarm leave on `q_lamps_out` and the second group on
@@ -1019,7 +1020,7 @@ treasury's key.
 
 - The sacristan, at 3,11 in the vestry, `flag: 'q_lamps'`:
   `lines: ['A small man under the vestry table with his knees drawn up and a lamp-trimmer\'s hook in both hands. He does not come out.', '"I kept them dark. Forty years I kept them dark, because of the moths. The light outside is lamp enough for anybody." A breath. "Then the grey men lit them, all four, and the sky came in."', '"Put them out. Not any way: the pillar says the way, if you can read a pillar. Do it wrong and you will see why I kept them dark."']`,
-  `says: [{ after: { flag: LAMPS_OUT }, until: { flag: 'q_lamps_key' }, lines: ['He is out from under the table, standing in the nave with his face turned up to the empty air.', '"Gone. Every one of them, to the big lamp outside, where they belong." He takes a key off his belt. "The treasury. The pilgrims\' offerings are the Hearth\'s, but the grey men left their gear in there, and that is nobody\'s. Take it."'], choice: { ask: 'He holds out the key.', answers: [{ label: 'Take the key.', sets: 'q_lamps_key', gives: 'fane_key', pay: { xp: 3000 }, says: ['An iron key, warm from his belt. He is already looking at the wicks.'] }] } }, { after: { flag: 'q_lamps_key' }, lines: ['The sacristan is trimming wicks in the vestry, and not lighting them.', '"Dark again. I can hear myself think."'] }, { after: { flag: LAMPS_WRONG }, until: { flag: LAMPS_OUT }, lines: ['From under the table: "I told you. The pillar. Read the pillar."'] }]`.
+  `says: [{ after: { flag: LAMPS_OUT }, until: { flag: 'q_lamps_key' }, sets: 'q_lamps', lines: ['He is out from under the table, standing with his face turned up to the empty air.', '"Gone. Every one of them, to the big lamp outside, where they belong." He takes a key off his belt. "The treasury. The pilgrims\' offerings are the Hearth\'s, but the grey men left their gear in there, and that is nobody\'s. Take it."'], choice: { ask: 'He holds out the key.', answers: [{ label: 'Take the key.', sets: 'q_lamps_key', gives: 'fane_key', pay: { xp: 3000 }, says: ['An iron key, warm from his belt. He is already looking at the wicks.'] }] } }, { after: { flag: 'q_lamps_key' }, lines: ['The sacristan is trimming wicks in the vestry, and not lighting them.', '"Dark again. I can hear myself think."'] }, { after: { flag: ['q_lamps', LAMPS_WRONG] }, until: { flag: LAMPS_OUT }, lines: ['From under the table: "I told you. The pillar. Read the pillar."'] }]`.
   His LAMPS_OUT words end in a choice of one answer, *Take the key.*, which sets `q_lamps_key` and
   pays the xp, as any answer can today. It gives `fane_key`, an iron key for the treasury's locked
   door (`src/game/map.ts`, `locked`), which the Ways' and the Stair's reachability flood reaches
@@ -1030,7 +1031,7 @@ treasury's key.
   `lamp_house`, `lamp_hearth`; the last sets `LAMPS_OUT` as well). The Sea lamp's right order is
   first, so it has no wrong one:
   - `{ kind: 'npc', x: 6, y: 13, name: 'The Sea lamp', until: { flag: 'lamp_sea' }, lines: ['A lamp on a stand of the rim\'s rock, burning high. The moths are thick on it.'], choice: { ask: 'Put it out?', answers: [{ label: 'Put it out.', sets: 'lamp_sea', says: ['You pinch the wick. The moths lift off it and go looking.'] }] } }`
-  - the Shore lamp: `until: { flag: 'lamp_shore' }`, `lines: ['A lamp on a stand, burning high.']`, `choice: { ask: 'Put it out?', answers: [{ label: 'Put it out.', sets: LAMPS_WRONG, says: ['You pinch the wick, and the other three flare. The nave fills with wings.'] }] }`, `says: [{ after: { flag: 'lamp_sea' }, lines: ['A lamp on a stand, burning high. The moths have left the Sea lamp for it.'], choice: { ask: 'Put it out?', answers: [{ label: 'Put it out.', sets: 'lamp_shore', says: ['You pinch the wick. Two lamps left, and the moths go to the nearer.'] }] } }]`
+  - the Shore lamp: `until: { flag: 'lamp_shore' }`, `lines: ['A lamp on a stand, burning high.']`, `choice: { ask: 'Put it out?', answers: [{ label: 'Put it out.', sets: LAMPS_WRONG, says: ['You pinch the wick, and the rest flare. The nave fills with wings.'] }] }`, `says: [{ after: { flag: 'lamp_sea' }, lines: ['A lamp on a stand, burning high. The moths have left the Sea lamp for it.'], choice: { ask: 'Put it out?', answers: [{ label: 'Put it out.', sets: 'lamp_shore', says: ['You pinch the wick. Two lamps left, and the moths go to the nearer.'] }] } }]`
   - the House lamp: the same shape, wrong until `lamp_shore`, right sets `lamp_house`: *You pinch
     the wick. One lamp left, and every moth in the nave is on it.*
   - the Hearth lamp: wrong until `lamp_house`, right sets `['lamp_hearth', LAMPS_OUT]`: *You pinch
@@ -1045,7 +1046,7 @@ treasury's key.
   THEN THE HOUSE. LAST OF ALL THE HEARTH.* (on `seen: 'hearthfane:hf_pillars'`: a sign with an id
   is kept by `seen` only when it has `read`; give the pillar `read` with the same text, so a reader
   and anyone else see one text and the id is kept, or key on the Sea lamp's flag instead); *Wrong.
-  The other three flared and the nave filled with wings.* (on `LAMPS_WRONG`); *The last wick out,
+  The others flared and the nave filled with wings.* (on `LAMPS_WRONG`); *The last wick out,
   the moths went, all together, out through the court to the light.* (on `LAMPS_OUT`); *He gave us
   the treasury's key. The grey men's gear in there is nobody's, he says.* (on `q_lamps_key`).
   Goals: *Go back to the sacristan under the vestry table.* (on `LAMPS_OUT`, at `hearthfane`);
@@ -1057,9 +1058,13 @@ treasury's key.
   no other, and the key is kept (#755's 1). `fane_key` is the *Sacristan's Key*, `slot: 'none'`,
   `price: 0`. The pillar's carving is a `text` and a `read` (§4.4), so the log's pillar entry, keyed
   on `seen`, is a reader's; any company has the order from the goal or by trial (#755's 2). The
-  House and Hearth lamps' turn lines follow the Shore's (#755's 6). The rest is as written: the
-  sacristan's words, the lamps' answers, the log's entries and goals and the 3,000 xp on *Take the
-  key.*
+  House and Hearth lamps' turn lines follow the Shore's (#755's 6). `meet()` says a matching `says`
+  entry without setting the person's `flag`, and the Sea and Shore lamps stand in the first room, so
+  a company may put one out before it meets him: the key's entry sets `q_lamps` and the wrong lamp's
+  waits on it, so his own words come first and the quest begins on every path (#755's 19). The wrong
+  lamp's line says *the rest flare* and the log *The others flared*, and he stands, not *in the
+  nave* (#755's 20 and 21). The rest is as written: the sacristan's words, the lamps' answers, the
+  log's entries and goals and the 3,000 xp on *Take the key.*
 
 **57. The Pilgrims in the Bowl** (`bowl_pilgrims`, H6, 28). Three pilgrims stranded by the Hand's
 landing, one of each claimant's, each with a token to carry down; the company takes one, or none.
@@ -2128,7 +2133,8 @@ Decided by delegate for #755, each the owner's to overturn:
     `fane_key` is named *Sacristan's Key* (`slot: 'none'`, `price: 0`).
 12. **The way in has a label of its own,** *In at the temple's door, out of the light.*, on H6's
     exit at 18,14; the plan's H6 brief (§4.2) had *Through the temple's door, into the nave. The
-    light comes down through the roof ahead.*
+    light comes down through the roof ahead.* The nave is roofed (the palette's `vault`) and only
+    the court at its head is open to the sky, so the plan's line would be false at the door.
 13. **The place is `{ id: 'hearthfane', kind: 'dungeon', at: [250, 172] }`,** with no band (a built
     place reads its map's), in the area's `PLACES`; the atlas's `deep` link `hearthisle ->
     underdeep` at 250,172 is kept.
@@ -2143,6 +2149,26 @@ Decided by delegate for #755, each the owner's to overturn:
     sides), and §11's *I6's meeting* names row 0. The review of #779 found it.
 18. **#764's doorway-check block stood in this section twice,** merged from main: one is kept. The
     review of #779 found it.
+19. **The sacristan's `says` waits on having met him.** `meet()` says a matching entry without
+    setting his `flag`, and the Sea and Shore lamps stand in the first room, so a company that put
+    one out before it met him heard only *I told you* and never began 56, and one that put all four
+    out in order was given the key with no quest begun. The wrong lamp's entry is now `after` both
+    `q_lamps` and `q_lamps_wrong` and the key's entry `sets` `q_lamps`: his own words come first,
+    then *I told you*, and the quest, its first entry and its goal begin on every path. §6's `says`
+    is changed to match and the walkthrough walks both. The review of #780 found it.
+20. **The wrong lamp's line says *the rest flare* and the log *The others flared*:** the plan's *the
+    other three* is false once a lamp is out. §6's lines are changed to match. The review of #780
+    found it.
+21. **He stands, not "in the nave":** he is met in the vestry at 3,11, so the plan's *standing in the
+    nave with his face turned up to the empty air* now ends *standing with his face turned up to the
+    empty air*. §6's line is changed to match. The review of #780 found it.
+22. **The arch's sign has no id,** where the brief gave it `hf_arch`: an id is kept in a map's `used`,
+    and so in `shipped.json`, only for a sign with `read` (`readId`, `src/game/inscriptions.ts`), so
+    it would be kept nowhere and nothing keys on it; H6's Hearth sign has none either. The review of
+    #780 found the reason missing.
+23. **The goal gives the order outright** (*Put out the four lamps in the pillar's order: the Sea, the
+    Shore, the House, the Hearth.*, §6's own line), so the pillar's carving is moot to a company that
+    has met him. It is the plan's, left as written: the owner's call (§11).
 
 ## 10. Names
 
@@ -2230,6 +2256,9 @@ Owed, from Hearthfane (#755):
 - **Fleeing at the treasury's door:** `World.flee` steps back without reading gates or exits, so a
   company that flees a fight at 10,10 facing west lands in the treasury's doorway without the key.
   It is so for every gate (Helmstow's) and a systems matter.
+- **The goal gives the order outright:** *Put out the four lamps in the pillar's order: the Sea, the
+  Shore, the House, the Hearth.* (§6's own line) tells a company that has met the sacristan what the
+  carving says, so the pillar is moot to it. The owner's call (§9.2, #755's 23).
 
 ## 12. The road behind: the lines
 
