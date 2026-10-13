@@ -96,6 +96,8 @@ export const BOSSES: Record<string, readonly string[]> = {
   emberwaste: ['old_cinder:oc1_drake', 'ember_stone:es_sentinel'],
   // The Grey Lion alone on his ground between the mesas, under the rim (#529).
   wold: ['wold_b8:b8_grey_lion'],
+  // The Catcher at the Stair's foot, down the Ways under the temple's crypt (#758).
+  hearthisle: ['underdeep2:ud2_catcher'],
 };
 
 /** Each zone's road: the groups met on it, in order, from its way in. Every zone with groups names one. */
