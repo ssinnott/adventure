@@ -2,11 +2,11 @@
 // navigator that the company can open now: a lock once it carries a key, anything else once a flag
 // has been set since it was shut. Then the nearest square it has seen with one unseen beside it, by
 // the brain's route and round the ways shut. With none left, the nearest wall the seen map suggests a
-// secret behind, a wall with seen floor either side, searched once from each side it is faced from;
-// a door found there is a door to Known, and the walk goes on through it. With either left only past a
-// group in sight, it goes at the group, and the fight is the bot's. Outdoors it walks the zone
-// it stands in, or the one the strategist prefers (#720), and never a zone beyond the company's
-// strength that is not preferred. A way off, a business, a person and a den are not walked to, as
+// secret behind, a wall with seen floor either side or a dead end's end wall with the square past it
+// unseen, searched once from each side it is faced from; a door found there is a door to Known, and
+// the walk goes on through it. With either left only past a group in sight, it goes at the group, and
+// the fight is the bot's. Outdoors it walks the zone it stands in, or the one the strategist prefers
+// (#720), and never a zone beyond the company's strength that is not preferred. A way off, a business, a person and a den are not walked to, as
 // what opens there is another brain's. It reads the world only through Known (known.ts).
 import type { Game } from '../game.ts';
 import { ExploreScreen } from '../game.ts';
@@ -14,7 +14,7 @@ import type { Action } from '../../input.ts';
 import { passCell } from '../map.ts';
 import { companyLevel } from '../party.ts';
 import { BLOCK_TEXT } from '../world.ts';
-import { FACING_DX, FACING_DY, NORTH, EAST, SOUTH, WEST, turnRight } from '../types.ts';
+import { FACING_DX, FACING_DY, NORTH, EAST, SOUTH, WEST, turnRight, turnBack } from '../types.ts';
 import type { Facing } from '../types.ts';
 import type { Known } from './known.ts';
 import type { Brain, Pilot } from './pilot.ts';
@@ -49,15 +49,21 @@ export function frontier(k: Known, g: Game, map: string): { x: number; y: number
 }
 
 /**
- * A suspect is a wall with seen floor on both sides of it. A visible secret door counts as a wall, as
- * Known draws it. Each is listed once for each side, facing it from the floor there.
+ * A suspect is a wall with seen floor on both sides of it, or a dead end's end wall with an unseen
+ * square of the map past it. A visible secret door counts as a wall, as Known draws it. Each is listed
+ * once for each side, facing it from the floor there.
  */
 export function suspects(k: Known, map: string): { x: number; y: number; facing: Facing }[] {
   const { w, h } = k.size(map), out: { x: number; y: number; facing: Facing }[] = [];
   for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
     if (k.cell(map, x, y)?.solid !== 'wall') continue;
     for (const f of [NORTH, EAST, SOUTH, WEST]) {
-      if (floor(k, map, x - FACING_DX[f], y - FACING_DY[f]) && floor(k, map, x + FACING_DX[f], y + FACING_DY[f])) out.push({ x, y, facing: f });
+      const bx = x - FACING_DX[f], by = y - FACING_DY[f], px = x + FACING_DX[f], py = y + FACING_DY[f];
+      if (!floor(k, map, bx, by)) continue;
+      // A dead end: the one way on from the square before the wall is the way back.
+      const end = px >= 0 && py >= 0 && px < w && py < h && !k.seen(map, px, py)
+        && FACING_DX.every((dx, g) => floor(k, map, bx + dx, by + FACING_DY[g]) === (g === turnBack(f)));
+      if (end || floor(k, map, px, py)) out.push({ x, y, facing: f });
     }
   }
   return out;

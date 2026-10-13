@@ -952,14 +952,21 @@ function explorer(): void {
 
   // A dead end each side of a secret door at the top of a U, all of it seen: the secret door, inked as
   // a wall, is the dead ends' end wall and the one suspect, faced from either side; open floor has none.
+  // A corridor seen to its dead end, the square past the end wall unseen: the end wall is the one suspect.
   const crypt: MapDef = { id: 'fx_crypt', name: 'Crypt', kind: 'dungeon', start: { x: 3, y: 4, facing: NORTH }, rows: ['#######', '#..S..#', '#.###.#', '#.###.#', '#.....#', '#######'] };
+  const dead: MapDef = { id: 'fx_dead', name: 'Dead End', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['##########', '#....S...#', '##########'] };
   const s = headlessGame(4), ks = knownOf(s);
   s.maps.fx_crypt = new GameMap(crypt);
+  s.maps.fx_dead = new GameMap(dead);
   s.maps.fx_hall = new GameMap({ id: 'fx_hall', name: 'Hall', kind: 'dungeon', start: { x: 2, y: 2, facing: NORTH }, rows: ['#####', '#...#', '#...#', '#...#', '#####'] });
   for (const id of ['fx_hall', 'fx_crypt']) { s.world.travel(id, 2, 2, NORTH); see(s, id); }
-  const ends = suspects(ks, 'fx_crypt'), open = suspects(ks, 'fx_hall');
-  ok(ks.cell('fx_crypt', 3, 1)?.solid === 'wall' && JSON.stringify(ends) === `[{"x":3,"y":1,"facing":${EAST}},{"x":3,"y":1,"facing":${WEST}}]` && !open.length,
-    `the end wall of a seen dead end, a secret door Known inks as a wall, is the one suspect, from each side (${JSON.stringify(ends)}), and seen open floor has none (${JSON.stringify(open)})`);
+  s.world.travel('fx_dead', 1, 1, EAST);
+  unsee(s, 'fx_dead');
+  for (let sy = 0; sy < 3; sy++) for (let sx = 0; sx < 6; sx++) see(s, 'fx_dead', sx, sy);
+  const ends = suspects(ks, 'fx_crypt'), open = suspects(ks, 'fx_hall'), end = suspects(ks, 'fx_dead');
+  ok(ks.cell('fx_crypt', 3, 1)?.solid === 'wall' && JSON.stringify(ends) === `[{"x":3,"y":1,"facing":${EAST}},{"x":3,"y":1,"facing":${WEST}}]` && !open.length
+    && !ks.seen('fx_dead', 6, 1) && JSON.stringify(end) === `[{"x":5,"y":1,"facing":${EAST}}]`,
+    `the end wall of a seen dead end, a secret door Known inks as a wall, is the one suspect, from each side (${JSON.stringify(ends)}), and seen open floor has none (${JSON.stringify(open)}); past it unseen, from its one side (${JSON.stringify(end)})`);
 
   // Helmstow, at the helm from the start with the navigator and the explorer: 3000 ticks walk it out,
   // every passable square seen but those behind a lock, as the map is written (the test's privilege,
@@ -985,28 +992,29 @@ function explorer(): void {
   ok(reach.size === passable.length && unseen === 0 && !inside && !out && done > 0 && hp.why[0] === 'Helmstow is walked out.',
     `3000 ticks with the explorer leave every one of Helmstow's ${passable.length} passable squares seen, none behind a lock (${unseen} unseen, ${passable.length - reach.size} behind), walked out in ${done} ticks, never out of the town (${out}) or inside (${inside}): ${hp.why.join(' / ')}`);
 
-  // The same U, its secret door unseen and the company at the bottom of it with the helm handed over:
-  // it walks the U out, and then, with nothing unseen beside a square it can reach, goes to the dead
-  // end's end wall, faces it and searches it, and the door is found within 400 ticks. A new game
-  // has searched nothing and prefers nowhere.
+  // A corridor to a secret door, the square past it never seen, and the company at the near end with
+  // the helm handed over: it walks the corridor out, and then, with nothing unseen beside a square it
+  // can reach, goes to the dead end's end wall, faces it and searches it, the door is found within 400
+  // ticks, and it walks on through. A new game has searched nothing and prefers nowhere.
   const v = headlessGame(4), vp = (v.pilot = new Pilot({ instant: true }));
-  v.maps.fx_crypt = new GameMap(crypt);
-  v.world.travel('fx_crypt', 3, 4, NORTH);
-  const hidden = v.maps.fx_crypt.at(3, 1).door;
+  v.maps.fx_dead = new GameMap(dead);
+  v.world.travel('fx_dead', 1, 1, EAST);
+  const hidden = v.maps.fx_dead.at(5, 1).door;
   vp.toggle(v);
   let found = -1, why = '', walked = false;
-  for (let t = 0; t < 400 && found < 0; t++) {
+  for (let t = 0; t < 400; t++) {
     const said = vp.heard.length;
     drive(v, [null]);
-    if (vp.heard.slice(said).includes('You find a hidden door!')) {
+    if (found < 0 && vp.heard.slice(said).includes('You find a hidden door!')) {
       found = t; why = vp.why.join(' / ');
-      walked = crypt.rows.every((row, sy) => [...row].every((ch, sx) => ch !== '.' || knownOf(v).seen('fx_crypt', sx, sy)));
+      walked = [1, 2, 3, 4].every((sx) => knownOf(v).seen('fx_dead', sx, 1)) && !knownOf(v).seen('fx_dead', 6, 1);
     }
   }
   const searches = vp.heard.filter((l) => l === 'You search the wall ahead and find nothing.').length, marks = [...vp.searched].join(' ');
-  ok(hidden === 'secret' && found >= 0 && v.maps.fx_crypt.at(3, 1).door === 'door' && walked && why === SEARCHING && !searches && /^fx_crypt:3,1,[13]$/.test(marks),
-    `the U walked out (${walked}), it searches the dead end's end wall and finds the door, now ${v.maps.fx_crypt.at(3, 1).door}, in ${found} ticks, with ${searches} searches for nothing (${why}; ${marks})`);
-  vp.prefer = 'fx_crypt';
+  const beyond = [6, 7, 8].every((sx) => knownOf(v).seen('fx_dead', sx, 1));
+  ok(hidden === 'secret' && found >= 0 && v.maps.fx_dead.at(5, 1).door === 'door' && walked && why === SEARCHING && !searches && marks === `fx_dead:5,1,${EAST}` && beyond,
+    `the corridor walked out to its dead end, the square past it unseen (${walked}), it searches the end wall and finds the door, now ${v.maps.fx_dead.at(5, 1).door}, in ${found} ticks, with ${searches} searches for nothing (${why}; ${marks}), and walks on past it (${beyond}): ${vp.why.join(' / ')}`);
+  vp.prefer = 'fx_dead';
   v.newGame(4);
   ok(!vp.searched.size && vp.prefer === null, `a new game, the pilot has searched no wall and prefers nowhere (${vp.searched.size}, ${vp.prefer})`);
 
