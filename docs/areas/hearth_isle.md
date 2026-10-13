@@ -1729,6 +1729,28 @@ Decided by delegate for #762, each the owner's to overturn:
 6. **Ahead through `ROOMS_AHEAD`,** as Cinderport's went, and owed to #753 in `UNPLACED`: the check
    that every business has a room fails on a room no business opens into, so H6 drops both.
 
+Decided by delegate for #761, each the owner's to overturn:
+
+1. **The Champion drops nothing yet.** §7 gives it `grey_knife` at 0.1, but the knife is #746's and
+   not on main, so the def leaves the drop out and #746 adds it with the item.
+2. **Vask is a tall boss.** Size 1.6, drawn at 0.78 of the frame, his crown at 0.801 under the
+   markers (0.82), as the Tallymaster's and the Sentinel's are: a tall man over Grey Hands at 1.05.
+3. **The core's light is white and gold:** the Core Sentry's ring and port, the Queen's ring on
+   Vask's hand and the Underdeep keeper's lights, against the furnaces' orange and the bay's blue,
+   so the core's machines and the ring that orders them read as one.
+4. **The keeper is told apart by its pose and its plate:** the bay keeper's frame bare, taller and
+   thinner, dark, seven fingers, both hands raised to touch (`raise` in the keepers' Build, 0 for
+   every keeper before it).
+5. **The Core Sentry has a body of its own,** `core`: the Sentry's legs and keel with a ring for a
+   head and two long arms alike. MONSTERS has it the frame's Build and a tint, but a tint alone
+   would be the Sentry again.
+6. **The deep rat is pale,** bred out of the sun: lean, up on its legs, ribbed and red-eyed, against
+   the rat's brown, the barn rat's fat and the bilge rat's slick black.
+7. **Nothing comes loose but the moth's dust.** The preacher's embers and the Grey Hands' ash broke
+   the silhouette at combat size, so they are not drawn: the fire on the palm carries the sermon.
+8. **The Wold's walkthrough reads AHEAD by name.** It asserted AHEAD empty, true only while it was;
+   it now asserts the Glasswold out of it, which is what it meant.
+
 Decided by delegate for #751, each the owner's to overturn:
 
 1. **`toV5` reads what the game's own `seen` reads.** The event counts as seen when the High Spine

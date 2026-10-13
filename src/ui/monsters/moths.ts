@@ -12,6 +12,11 @@
 // The Lantern Moth: wings like a pair of hands, and dust that glitters. Pale as ash, the fingers'
 // veins grey, a dusky smudge in each palm. Idle: the wings beat slowly, the body bobs with them, the
 // antennae sway, and the dust drifts down glittering.
+//
+// The Hearth Moth: the moths at their most, come to the biggest lamp of all. The biggest of the
+// three, its forewings cut deeper than the lantern moth's, into fingers like tongues of flame; rust
+// above and red beneath, where the Hearth lights it from below; the hindwings and the abdomen banded
+// in ember; and more dust off it than either, falling as embers.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
@@ -20,7 +25,7 @@ import type { Part } from './gloss.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['lantern_moth', 'deathshead'];
+export const KINDS: readonly MonsterSprite[] = ['lantern_moth', 'deathshead', 'hearth_moth'];
 
 /**
  * The frame's parts, as proportions of the lantern moth's (1 = the lantern moth, 0 = none), each
@@ -78,8 +83,18 @@ const DEATHSHEAD: Build = {
   underside: null, bandHex: '#b8862e', markHex: '#e6dcbc', dustHex: '#e8d8a8',
 };
 
+/**
+ * The Hearth Moth: the lantern moth's hands with the fingers cut deeper, to flames, the wings the
+ * biggest of the three and red underneath, the hindwings and the abdomen banded in ember, and the
+ * dust thick and falling as embers.
+ */
+const HEARTH: Build = {
+  fore: 1.04, fingers: 1.45, veins: 0.8, hind: 1.15, band: 0.7, body: 1.15, fur: 1.2, antenna: 1.1, smudge: 0.5, mark: 0, sweep: 0, scream: 0, dust: 1.5,
+  underside: '#ff4a14', bandHex: '#ff9a3c', markHex: '#e6dcbc', dustHex: '#ffb45a',
+};
+
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
-  moth(ctx, x, y, h, p, kind === 'deathshead' ? DEATHSHEAD : LANTERN);
+  moth(ctx, x, y, h, p, kind === 'deathshead' ? DEATHSHEAD : kind === 'hearth_moth' ? HEARTH : LANTERN);
 };
 
 /** A frame: x and y map hundredths of the height (x right, y up from the ground) to the canvas. */

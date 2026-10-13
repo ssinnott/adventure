@@ -20,6 +20,8 @@ import { ok, owed, stopsWalk } from './lib.ts';
  * keepers and the Matron by #490. Hearth Isle's three tents wait on the camp's businesses (H6, #753).
  */
 const UNPLACED: Record<string, string> = {
+  hearth_moth: '#753', deep_rat: '#753', ashen_champion: '#753', ashen_preacher: '#753', keeper: '#757', hand_rearguard: '#758',
+  grey_hand: '#759', core_sentry: '#759', vask: '#759',
   bowl_store: '#753', bowl_yard: '#753', bowl_lantern: '#753',
 };
 

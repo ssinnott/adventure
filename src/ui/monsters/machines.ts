@@ -40,6 +40,13 @@
 // fire shows through two round ports high in the hull, under the crate, where it looks out. Rust,
 // not soot: the hold is wet. Idle: the crate's weight settles, the arms give and the knees with
 // them, and it presses the crate back up.
+//
+// The Core Sentry: the core's own, and it takes orders from the ring. The Sentry's long legs and keel
+// of a chest, but clean: no soot on it, the plate pale and kept, and the fire in it the core's light,
+// white and gold, not the furnaces' orange. For a head a ring of plate held upright in a fork on the
+// neck, the light filling it, as the signet's ring is the captain's line it answers; and on its chest
+// a round port with the same light in it. Both arms long and alike, hanging past the knee to open
+// clamps, waiting for an order. Idle: the light in the ring and the port breathes, slowly.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, groundShadow } from './common.ts';
@@ -49,7 +56,7 @@ import type { Part } from './gloss.ts';
 import { chiselMark } from './knockers.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['stoker', 'sentry', 'sentinel', 'flue_walker', 'loader'];
+export const KINDS: readonly MonsterSprite[] = ['stoker', 'sentry', 'sentinel', 'flue_walker', 'loader', 'core_sentry'];
 
 /**
  * A heavy machine's make, as the Stoker's, the Sentry's and the Sentinel's numbers, so another is a
@@ -57,8 +64,8 @@ export const KINDS: readonly MonsterSprite[] = ['stoker', 'sentry', 'sentinel', 
  * breadth, the legs it stands on, the fire in it and the soot it has taken.
  */
 interface Build {
-  /** The body: a boiler, a watcher's keel of a chest, a keeper's block, a length of flue, or a loader's hull under its crate. */
-  body: 'boiler' | 'watcher' | 'keeper' | 'flue' | 'loader';
+  /** The body: a boiler, a watcher's keel of a chest, a keeper's block, a length of flue, a loader's hull under its crate, or the core's watcher with a ring for a head. */
+  body: 'boiler' | 'watcher' | 'keeper' | 'flue' | 'loader' | 'core';
   /** Drawn height, of the frame's; a tall one's crown inside TALL_REACH. */
   reach: number;
   /** Breadth, against the drawing's own (1 = as drawn). */
@@ -75,7 +82,8 @@ const SENTRY: Build = { body: 'watcher', reach: 0.97, wide: 1, leg: 0.04, knee: 
 const SENTINEL: Build = { body: 'keeper', reach: 0.86, wide: 1, leg: 0.068, knee: 0.78, fire: '#ff8a2a', heart: '#fff0c0', soot: 0.2 };
 const FLUE: Build = { body: 'flue', reach: 0.95, wide: 1, leg: 0.042, knee: 1, fire: '#ff8a2a', heart: '#fff0c0', soot: 1 };
 const LOADER: Build = { body: 'loader', reach: 0.97, wide: 1, leg: 0.06, knee: 1.05, fire: '#ff8a2a', heart: '#fff0c0', soot: 0.3 };
-const BUILDS: Partial<Record<MonsterSprite, Build>> = { stoker: STOKER, sentry: SENTRY, sentinel: SENTINEL, flue_walker: FLUE, loader: LOADER };
+const CORE: Build = { body: 'core', reach: 0.97, wide: 1, leg: 0.04, knee: 1, fire: '#ffe39a', heart: '#ffffff', soot: 0 };
+const BUILDS: Partial<Record<MonsterSprite, Build>> = { stoker: STOKER, sentry: SENTRY, sentinel: SENTINEL, flue_walker: FLUE, loader: LOADER, core_sentry: CORE };
 
 /** A machine's frame: X and Y take shares of its drawn height to the canvas, x toward the near side and y up from the ground. */
 interface Fr { H: number; X: (k: number) => number; Y: (k: number) => number }
@@ -84,7 +92,7 @@ type P = readonly [number, number];
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   const b = BUILDS[kind] ?? STOKER, H = h * b.reach;
   const f: Fr = { H, X: (k) => x + H * k * b.wide, Y: (k) => y - H * k };
-  (b.body === 'flue' ? walker : b.body === 'boiler' ? stoker : b.body === 'watcher' ? sentry : b.body === 'loader' ? loader : sentinel)(ctx, f, p, b);
+  (b.body === 'flue' ? walker : b.body === 'boiler' ? stoker : b.body === 'watcher' ? sentry : b.body === 'loader' ? loader : b.body === 'core' ? core : sentinel)(ctx, f, p, b);
 };
 
 const DEEP = '#9c2c0c', SOOT = '#0b0908', BLACK = '#07080a';
@@ -344,6 +352,55 @@ function sentry(ctx: CanvasRenderingContext2D, f: Fr, p: Paint, b: Build): void 
   clamp(ctx, g, [0.224, 0.255], 0.08, 0.35, 0.03, k.joint);
   drum(ctx, g.X(-0.125), g.Y(0.762), H * 0.038, k.farJoint);
   drum(ctx, g.X(0.125), g.Y(0.762), H * 0.042, k.joint);
+}
+
+/**
+ * The Core Sentry, in units of its drawn height: the Sentry's legs, hips at 0.46 and shoulders at
+ * 0.76, a fork on the neck to 0.92 and the ring in it to 0.97.
+ */
+function core(ctx: CanvasRenderingContext2D, f: Fr, p: Paint, b: Build): void {
+  const k = inks(p, b), H = f.H;
+  const c = p.breathe * 0.004, g = lifted(f, c);
+  const heat = 0.6 + 0.4 * Math.sin(p.frame / 19);
+  const w = Math.max(0.7, H * 0.008);
+  groundShadow(ctx, f.X(0), f.Y(0) + 1, H * 0.5);
+
+  // 1. The far arm, long, to an open clamp past the knee, a step darker.
+  arm(ctx, g, [-0.125, 0.762], [-0.178, 0.545], [-0.2, 0.27], 0.028, k.far, k.farJoint);
+  clamp(ctx, g, [-0.2, 0.27], -0.08, 0.3, 0.028, k.farJoint);
+  // 2. The legs, long and straight.
+  for (const sd of [-1, 1] as const) leg(ctx, f, [sd * 0.062, 0.46 + c], [sd * 0.084, 0.255 + c / 2], sd * 0.074, b, sd < 0 ? k.far : k.plate, sd < 0 ? k.farJoint : k.joint);
+  // 3. The hips' plate and the waist's drum, and the neck.
+  blob(ctx, B, k.plate, [{ k: 'poly', pts: at(g, -0.1, 0.505, 0.1, 0.505, 0.086, 0.425, -0.086, 0.425) }], { formK: 0.25, spread: 0.6 });
+  drum(ctx, g.X(0), g.Y(0.528), H * 0.04, k.joint);
+  rod(ctx, g, [0, 0.79], [0, 0.85], 0.022, k.joint);
+  // 4. The chest: the watcher's keel, clean, with the round port at its heart.
+  const chest = at(g, 0, 0.8, 0.1, 0.795, 0.126, 0.765, 0.116, 0.68, 0.088, 0.588, 0.062, 0.548, 0, 0.54, -0.062, 0.548, -0.088, 0.588, -0.116, 0.68, -0.126, 0.765, -0.1, 0.795);
+  blob(ctx, B, k.plate, [{ k: 'curve', pts: chest, wobble: 0, sub: 1 }], { h: H, formK: 0.3, spread: 0.7, gloss: 0.35 });
+  inside(ctx, chest, true, () => {
+    seam(ctx, at(g, 0, 0.8, 0, 0.735), k.plate, w);
+    seam(ctx, at(g, 0, 0.625, 0, 0.55), k.plate, w);
+    rivets(ctx, at(g, -0.09, 0.772, -0.05, 0.779, 0.05, 0.779, 0.09, 0.772), H * 0.0065, k.plate);
+  });
+  const px = g.X(0), py = g.Y(0.68), pr = H * 0.034;
+  if (!B.override) { ctx.fillStyle = k.joint; ctx.beginPath(); ctx.arc(px, py, pr * 1.35, 0, Math.PI * 2); ctx.fill(); }
+  fire(ctx, k, () => ctx.arc(px, py, pr, 0, Math.PI * 2), px, py, pr, heat, H * 0.09);
+  mark(ctx, g, -0.07, 0.6, 0.016, k.plate);
+  // 5. The head: a fork on the neck, and in it a ring of plate stood on edge, the light filling it.
+  blob(ctx, B, k.joint, [{ k: 'poly', pts: at(g, -0.012, 0.84, 0.012, 0.84, 0.07, 0.872, 0.074, 0.915, 0.058, 0.915, 0.052, 0.884, -0.052, 0.884, -0.058, 0.915, -0.074, 0.915, -0.07, 0.872) }], { formK: 0.3, spread: 0.6 });
+  const rx = g.X(0), ry = g.Y(0.915), ro = H * 0.058, ri = H * 0.04;
+  blob(ctx, B, k.plate, [{ k: 'ball', x: rx, y: ry, r: ro }], { formK: 0.45, spread: 0.75, gloss: 0.5 });
+  fire(ctx, k, () => ctx.arc(rx, ry, ri, 0, Math.PI * 2), rx, ry, ri, heat, H * 0.16);
+  if (!B.override && H >= 40) {
+    ctx.fillStyle = k.heart; ctx.beginPath(); ctx.arc(rx, ry, ri * 0.42, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = rgba(mix(k.plate, '#ffffff', 0.5), 0.6); ctx.lineWidth = Math.max(0.8, H * 0.006); ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.arc(rx, ry, ro * 0.86, Math.PI * 1.1, Math.PI * 1.5); ctx.stroke();
+  }
+  // 6. The near arm, long as the far, to an open clamp; and the shoulders' drums.
+  arm(ctx, g, [0.125, 0.762], [0.182, 0.545], [0.206, 0.27], 0.03, k.plate, k.joint);
+  clamp(ctx, g, [0.206, 0.27], 0.08, 0.3, 0.03, k.joint);
+  drum(ctx, g.X(-0.125), g.Y(0.762), H * 0.04, k.farJoint);
+  drum(ctx, g.X(0.125), g.Y(0.762), H * 0.044, k.joint);
 }
 
 /** The Sentinel, in units of its drawn height: the hips at 0.3, the shoulders at 0.856 and the head's dome to 0.934. */

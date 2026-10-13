@@ -9,19 +9,23 @@
 // head small on it and an ear of wheat still in its teeth. The Tide Ship's bilge rat is fat too,
 // but sleek with it: a round, full body rather than a sagging one, the fur dark and slicked flat
 // with bilge water, a wet shine along the back, a grey belly instead of a cream one, and drips
-// gathering under it.
+// gathering under it. The Underdeep's deep rat is the other way: lean, up on longer legs with the
+// belly drawn in under the ribs, the fur pale and ragged along the spine, the ribs showing down the
+// flank and the eye red, as a thing's is that has bred four hundred years out of the sun.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
-import { blob, glossBall, softLine, patch } from './gloss.ts';
+import { blob, glossBall, glow, softLine, patch } from './gloss.ts';
 import type { Part } from './gloss.ts';
 import { shade, mix, rgba } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['rat', 'barn_rat', 'bilge_rat'];
+export const KINDS: readonly MonsterSprite[] = ['rat', 'barn_rat', 'bilge_rat', 'deep_rat'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
-  rat(ctx, x, y, h, p, kind === 'barn_rat', kind === 'bilge_rat');
+  // The deep rat stands higher on its legs, so it is drawn a little smaller to keep its ears in the frame.
+  if (kind === 'deep_rat') rat(ctx, x, y, h * 0.93, p, false, false, true);
+  else rat(ctx, x, y, h, p, kind === 'barn_rat', kind === 'bilge_rat');
 };
 
 /** A lumpy ring of n points around (cx, cy), for skulls and ears. */
@@ -32,17 +36,20 @@ function ring(cx: number, cy: number, rx: number, ry: number, n: number, out: nu
 }
 const R1: number[] = [], R2: number[] = [], R3: number[] = [];
 
-function rat(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p: Paint, fat = false, wet = false): void {
+function rat(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p: Paint, fat = false, wet = false, deep = false): void {
   const br = p.breathe, tone = p.tone;
   const base = p.base, dark = p.dark, light = p.light;
   const fur = mix(base, light, 0.3);
-  const bellyHex = wet ? mix(light, shade('#8a8a86', tone), 0.6) : mix(light, shade('#efe9dc', tone), 0.7);
+  const bellyHex = wet ? mix(light, shade('#8a8a86', tone), 0.6) : deep ? mix(light, shade('#cfc9c0', tone), 0.4) : mix(light, shade('#efe9dc', tone), 0.7);
   const skin = shade('#d9a09a', tone), skinDim = shade('#a87a76', tone);
   const ivory = shade('#e6dcae', tone);
   // The body runs from the rump at -0.78 to the nose at +0.72; centre the whole animal on x0.
   const x = x0 + h * 0.03;
   const X = (u: number) => x + u * h;
-  const U = (u: number) => y - u * h;
+  // The deep rat stands higher: everything off the ground is lifted, and the legs grow to meet it.
+  const U = (u: number) => y - (u + (deep && u > 0.1 ? 0.075 : 0)) * h;
+  // and its belly is drawn up under the ribs, the body lean between the shoulder and the haunch.
+  const tuck = deep ? 0.05 : 0;
   const b = br * h * 0.006;
   const tf = p.frame % 96, twitch = tf < 12 ? Math.sin(tf / 12 * Math.PI) : 0;
   const sway = Math.sin(p.frame / 26) * h * 0.035;
@@ -76,10 +83,10 @@ function rat(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p:
     { k: 'curve', pts: [
       X(-0.78), U(0.50), X(-0.72), U(0.74) + b, X(-0.50), U(0.855) + b, X(-0.24), U(0.86) + b,
       X(0.02), U(0.80) + b, X(0.20), U(0.68), X(0.26), U(0.50),
-      X(0.10), U(0.22), X(-0.20), U(0.175), X(-0.50), U(0.19), X(-0.72), U(0.28),
-    ], wobble: 0.03, spiky: wet ? 0.01 : 0.05, seed: 1, sub: 3 },
-    { k: 'ell', x: X(-0.50), y: U(0.50), rx: h * 0.26, ry: h * 0.30, rot: -0.06 },   // the heavy hindquarters
-    { k: 'ell', x: X(-0.02), y: U(0.48), rx: h * 0.19, ry: h * 0.24 },               // the shoulder
+      X(0.10), U(0.22 + tuck * 0.6), X(-0.20), U(0.175 + tuck), X(-0.50), U(0.19), X(-0.72), U(0.28),
+    ], wobble: 0.03, spiky: wet ? 0.01 : deep ? 0.11 : 0.05, seed: 1, sub: 3 },
+    { k: 'ell', x: X(-0.50), y: U(0.50), rx: h * 0.26, ry: h * (deep ? 0.27 : 0.30), rot: -0.06 },   // the heavy hindquarters
+    { k: 'ell', x: X(-0.02), y: U(0.48), rx: h * 0.19, ry: h * (deep ? 0.22 : 0.24) },               // the shoulder
   ];
   // Fat on grain: the gut sags nearly to the floor and bulges the flanks out past the legs.
   if (fat) body.push({ k: 'ell', x: X(-0.26), y: U(0.37) + b, rx: h * 0.43, ry: h * 0.33, rot: 0.02 });
@@ -128,6 +135,12 @@ function rat(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p:
     { k: 'cap', x0: hx - rH * 0.6, y0: hy + rH * 0.6, x1: hx + rH * 1.1, y1: hy + rH * 0.3, r0: rH * 0.26, r1: rH * 0.18 },
   ], { alpha: 0.72, feather: 0.28 });
 
+  // Deep: the ribs down the flank, between the shoulder and the haunch.
+  if (deep && !B.override && h >= 26) for (let i = 0; i < 4; i++) {
+    const rx = -0.07 - i * 0.07;
+    softLine(ctx, B, [X(rx + 0.02), U(0.72 - i * 0.012), X(rx - 0.015), U(0.55), X(rx + 0.01), U(0.4)], shade(fur, 0.6), Math.max(1, h * 0.011), 0.55);
+  }
+
   // Wet: the fur slicked into dark runs down the flank, the light caught in a line along the back,
   // and drips gathering under the belly.
   if (wet && !B.override) {
@@ -168,7 +181,9 @@ function rat(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p:
   softLine(ctx, B, [hx + rH * 0.55, hy + rH * 0.44, hx + rH * 1.24, hy + rH * 0.26], fur, Math.max(1, rH * 0.1), 0.4);
   if (fat) wheat(ctx, nx, ny, rH, h, shade('#d8b460', tone), p.frame);
   const ex = hx + rH * 0.34, ey = hy - rH * 0.28;
-  eye(ctx, ex, ey, rH * 0.16, shade('#150f12', Math.max(0.7, tone)), false);
+  // The deep rat's eye is red, and catches what light there is.
+  if (deep) glow(ctx, B, ex, ey, rH * 0.42, '#ff3a3a', 0.35, '#ff9a8a');
+  eye(ctx, ex, ey, rH * 0.16, deep ? '#c4202e' : shade('#150f12', Math.max(0.7, tone)), false);
   if (h >= 30 && !B.override) { ctx.fillStyle = 'rgba(255,255,255,0.8)'; ctx.beginPath(); ctx.arc(ex - rH * 0.055, ey - rH * 0.055, Math.max(0.6, rH * 0.05), 0, Math.PI * 2); ctx.fill(); }
 
   // Bare pink feet with long toes, which the reference wears as its brightest small shapes.
