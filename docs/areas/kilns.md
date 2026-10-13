@@ -838,7 +838,8 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   the cargo dropped going down. The hint: the knockers' tracks in the dust run to a wall as often as
   through the corridor, and the dust before that wall is swept in arcs.
 - **The door.** CREW ONLY, a wall with words on it (#434's 4): no flag, no lock, nothing in
-  `content/locks.ts`. The company cannot pass it and never needs to.
+  `content/locks.ts`. The company cannot pass it from this side and never needs to; from the
+  Underdeep it opens (#739, #56's 60).
 - **Lines:**
   - the end of the tunnel: *The pick marks stop. Past them the wall is smooth, and the air hums.*
   - the knockers: *Something small and grey, knocking on the rock as it comes.* (MONSTERS §7.1)
