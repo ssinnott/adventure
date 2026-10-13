@@ -283,6 +283,8 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   // Hand's steel, the band's rung at 28, is #746's.
   'hearthisle_h6: under': { whose: '#18', at: 1 },
   'Hearth Isle: under': { whose: '#18', at: 1 },
+  // And the temple (#755), the same: its champions and preachers, two under, are won every time.
+  'hearthfane: under': { whose: '#18', at: 1 },
   'highspine_i11: under': { whose: '#18', at: 1 },
   // And the ridge north (#503), banded from the area's floor as I11 is: its three groups are won every
   // time two under, and with them the area's pool passes its limit again.
