@@ -31,7 +31,9 @@
 // again but bought at a shop whose wares it had not seen; the dead raised at the temple, and a temple
 // it cannot pay not gone back to, the living rested all the same; a sword bought at a shop whose wares
 // it went in to see and taken up through the sheet; a level trained at a trainer whose levels it had
-// not seen; and a well that did nothing remembered, and one that restores drunk from.
+// not seen; a well that did nothing remembered, and one that restores drunk from; and a trainer, a
+// well and a shop past a way shut with none round it, a lock in a cell and Helmstow's south gate by
+// night, not sought again and the way not tried again.
 import { GameMap } from '../../src/game/map.ts';
 import type { Exit, Feature, MapDef } from '../../src/game/map.ts';
 import { NORTH, EAST, WEST, SOUTH, FACING_DX, FACING_DY, turnLeft, turnRight } from '../../src/game/types.ts';
@@ -42,6 +44,7 @@ import { seen as seenBit } from '../../src/game/world.ts';
 import { defaultParty, equip, hasCondition, trainPrice, xpForLevel } from '../../src/game/party.ts';
 import { item } from '../../src/game/items.ts';
 import { restRefused } from '../../src/game/wilds.ts';
+import { daylightAt } from '../../src/game/calendar.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { companyAt } from '../harness.ts';
 import { CombatScreen } from '../../src/ui/combat.ts';
@@ -1321,4 +1324,42 @@ function quartermaster(): void {
   const two = wells('#.......#', [dry, sweet(6)]), far = wells('#.........#', [sweet(1 + WELL_STEPS + 1)]);
   ok(two === '2 3 4 5 6 true [["fx_wells:3,1",false]]' && far === '1 false []',
     `under half, it drinks at the near well, which does nothing, and remembers it, and goes on to the far one, which restores it (${two}); one ${WELL_STEPS + 1} steps off it leaves be (${far})`);
+
+  // A trainer, or a sweet well, behind a lock and no key: the lock refused three times is shut, and
+  // over 600 ticks it is never tried again, neither is its goal at the end, the clock moves and the
+  // explorer has its say.
+  const behind = (f: Feature, set: (m: Game['party']['members'][number]) => void): string => {
+    const b = headlessGame(4), bp = (b.pilot = new Pilot({ instant: true })), from = b.world.state.minutes;
+    b.maps.fx_behind = new GameMap({ id: 'fx_behind', name: 'Cell', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#######', '#..L..#', '#######'], features: [f] });
+    b.world.travel('fx_behind', 1, 1, EAST);
+    see(b, 'fx_behind');
+    set(b.party.members[0]);
+    bp.toggle(b);
+    let walked = false;
+    for (let n = 0; n < 600; n++) { drive(b, [null]); if (bp.why[0] === 'Cell is walked out.') walked = true; }
+    const refused = bp.heard.filter((l) => l === 'Locked. A key would open it.').length;
+    return `${refused} ${bp.goal?.name ?? 'none'} ${b.world.state.minutes > from} ${walked} ${JSON.stringify(bp.shut.map((s) => `${s.x},${s.y}`))}`;
+  };
+  const drill = behind({ kind: 'trainer', x: 5, y: 1, name: 'Drill Hall', maxLevel: 6, interior: 'warden_drillyard' }, (m) => { m.xp = xpForLevel(2); });
+  const spring = behind(sweet(5), (m) => { m.hp = Math.floor(m.maxHp * 0.4); });
+  ok(drill === '3 none true true ["3,1"]' && spring === '3 none true true ["3,1"]',
+    `a trainer behind a lock and no key, the lock refused three times is shut and never tried again, the clock moving and the cell walked out (${drill}); a sweet well there, the same (${spring})`);
+
+  // Outside Helmstow by night after Act II, the default company's orcblood with it, the gold to look
+  // in at Mottram's and the harbour postern unseen: the south gate turns it back three times and is
+  // shut, and over 300 ticks it is not tried again, the clock moves and it looks about the Foreland.
+  const sg = headlessGame(4), sgp = (sg.pilot = new Pilot({ instant: true }));
+  sg.party.flags.q_salt_done = 1;
+  sg.party.gold = 1000;
+  see(sg, 'harrow');
+  while (daylightAt(sg.world.state.minutes) >= 0.25) sg.world.state.minutes += 30;
+  sg.world.travel('shelf', 16, 4, NORTH);
+  const dark = sg.world.state.minutes, postern = sg.world.locate('shelf', 18, 3), hidden = !knownOf(sg).seen('caldera', postern.x, postern.y);
+  sgp.toggle(sg);
+  let looked = false;
+  for (let n = 0; n < 300; n++) { drive(sg, [null]); if (sgp.why[0] === 'Looking about the Foreland.') looked = true; }
+  const turned = sgp.heard.filter((l) => l.startsWith('A sergeant steps into the gate')).length;
+  const night = `${sg.party.members.some((m) => m.race === 'orcblood')} ${hidden} ${turned} ${sgp.shut.length} ${sgp.goal?.name !== "Mottram's Stores"} ${sg.world.state.minutes > dark} ${looked}`;
+  ok(night === 'true true 3 1 true true true',
+    `outside Helmstow by night after Act II, the postern unseen, the south gate turns it back three times and is shut, and it is not tried again, the clock moving as it looks about the Foreland (${night})`);
 }

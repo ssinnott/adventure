@@ -209,7 +209,7 @@ export function routeMaps(k: Known, from: string, to: string, skip: readonly { m
  * to it; off it, to the first way off on a route there with a way it has seen to each way off on it,
  * from where it stands and from where the one before lands; null when none.
  */
-function wayTo(k: Known, st: { mapId: string; x: number; y: number; facing: Facing }, at: { mapId: string; x: number; y: number }, aside: readonly { map: string; x: number; y: number }[]): Action[] | null {
+export function wayTo(k: Known, st: { mapId: string; x: number; y: number; facing: Facing }, at: { mapId: string; x: number; y: number }, aside: readonly { map: string; x: number; y: number }[]): Action[] | null {
   const here = (map: string): { x: number; y: number }[] => aside.filter((q) => q.map === map);
   // A route is sought only to a square in reach, as a search for one out of reach is long: where a walk
   // round every stop no step gets past, as walkOn goes at its widest, stands on it, or reaches beside it

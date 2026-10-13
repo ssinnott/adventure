@@ -3,7 +3,8 @@
 // rations; else it makes for the nearest place it has seen that meets the need, the temple for the
 // dead, a camp or an inn for rest, an inn or a shop for rations, a trainer for a level and a shop for
 // gear that betters what is worn, or to see the wares of one it has not looked in. A need it has no
-// way to meet, the temple it cannot pay or has not seen, gives way to the next.
+// way to meet, the temple it cannot pay or has not seen, or a place past a way shut to the navigator
+// with none round it, gives way to the next.
 // In a business it picks from the menus by their labels, as drawn, a key a beat: down to the line and
 // Space. What it carries that betters what is worn, bought or found, it takes up through the sheet. A
 // well near, it drinks there while any of the company is under half, and remembers one that did
@@ -24,7 +25,7 @@ import { ChoiceScreen, InteriorScreen, SheetScreen, TRADE } from '../../ui/scree
 import { knownOf } from './known.ts';
 import type { Known, Sighted } from './known.ts';
 import type { Brain, Pilot } from './pilot.ts';
-import { route, nearestOn, routeMaps } from './route.ts';
+import { route, nearestOn, routeMaps, wayTo } from './route.ts';
 import type { Goal } from './route.ts';
 
 /** What the company needs, in order of urgency. */
@@ -169,13 +170,16 @@ function spots(g: Game, k: Known, p: Pilot, n: Need): Spot[][] {
 const MINE = new WeakSet<Goal>();
 
 /**
- * Bound for `goal`: on by the trip it has where it is bound there already, else afresh. The navigator's
- * first key; or null, what another brain was bound for kept, where it has no way or the way is shut.
+ * Bound for `goal`: on by the trip it has where it is bound there already, else afresh where it has
+ * seen a way there round every way shut to the navigator, which a new goal would walk at again. The
+ * navigator's first key; or null, what another brain was bound for kept, where it has no way or the
+ * way is shut.
  */
 function go(g: Game, k: Known, p: Pilot, goal: Goal): Action | null {
   const at = g.world.locate(goal.map, goal.x, goal.y), was = p.goal;
   if (p.shut.some((s) => s.map === at.mapId && s.x === at.x && s.y === at.y)) return null;
   if (was && MINE.has(was) && was.map === goal.map && was.x === goal.x && was.y === goal.y) return route(g, k, p);
+  if (!wayTo(k, g.world.state, at, p.shut)) return null;
   const kept = { goal: p.goal, trip: p.trip, plan: p.plan, why: p.why };
   MINE.add(goal);
   p.goal = goal; p.trip = null; p.plan = [];
@@ -186,7 +190,8 @@ function go(g: Game, k: Known, p: Pilot, goal: Goal): Action | null {
 
 /**
  * The first key towards the nearest of `group` it has a way to: on the map it stands on by the brain's
- * route, else on another by the fewest ways off between. Space on a business it stands on, to go in.
+ * route round the ways shut, else on another by the fewest ways off between. Space on a business it
+ * stands on, to go in.
  */
 function toNearest(g: Game, k: Known, p: Pilot, group: Spot[]): Action | null {
   if (!group.length) return null;
@@ -195,7 +200,8 @@ function toNearest(g: Game, k: Known, p: Pilot, group: Spot[]): Action | null {
   const was = p.goal && MINE.has(p.goal) ? p.goal : null, bound = was && group.find((q) => q.map === was.map && q.f.x === was.x && q.f.y === was.y);
   const on = bound && go(g, k, p, goal(bound));
   if (on) return on;
-  const here = group.filter((q) => q.map === st.mapId), near = here.length ? nearestOn(k, st.mapId, st.x, st.y, st.facing, here.map((q) => q.f)) : null;
+  const here = group.filter((q) => q.map === st.mapId), shut = p.shut.filter((s) => s.map === st.mapId);
+  const near = here.length ? nearestOn(k, st.mapId, st.x, st.y, st.facing, here.map((q) => q.f), shut) : null;
   const first = near ? here.find((q) => q.f.x === near.x && q.f.y === near.y) : undefined;
   if (first && !near?.keys.length) { p.why = [goal(first).why!]; return 'interact'; }
   const hops = new Map<string, number>(), far = (map: string): number => {
@@ -228,7 +234,7 @@ function street(g: Game, k: Known, p: Pilot): Action | null {
   const hurt = party.members.find((m) => !isDown(m) && m.hp < m.maxHp / 2);
   if (hurt && !k.groups(st.mapId).length) {
     const wells = k.features(st.mapId).filter((f) => f.kind === 'well' && !(f.x === st.x && f.y === st.y) && p.wells.get(`${st.mapId}:${f.x},${f.y}`) !== false);
-    const near = wells.length ? nearestOn(k, st.mapId, st.x, st.y, st.facing, wells) : null;
+    const near = wells.length ? nearestOn(k, st.mapId, st.x, st.y, st.facing, wells, p.shut.filter((s) => s.map === st.mapId)) : null;
     const key = near && near.keys.filter((a) => a === 'forward').length <= WELL_STEPS && go(g, k, p, { map: st.mapId, x: near.x, y: near.y, name: 'the well', why: `To the well: ${hurt.name} is under half.` });
     if (key) return key;
   }
