@@ -230,6 +230,9 @@ export const walkthrough: Walkthrough = (ok) => {
   const lit = stonesRestored(w.world.state, w.party);
   see(w, 'highspine_i11:i11_stone');
   ok(stone.kind === 'event' && stone.text.includes('Whole, and steady') && stonesRestored(w.world.state, w.party) === lit + 1, 'the Peak Stone is whole and steady, and stood at it counts toward the Hearth');
+  // And it sets the flag the Core's door asks, which a `seen` cannot be: new play has it, and a save that
+  // stood here before gets it from the upgrade to version 5 (tools/tests/save.ts).
+  ok(stone.kind === 'event' && stone.sets === 'q_peak_stood' && w.party.flags.q_peak_stood === 1, 'and stood at it sets q_peak_stood, the flag the Core\'s door asks (#751)');
   // The brother who keeps it, the monks' shrine at its foot, and the cairn where the trail leaves.
   see(w, 'highspine_i11:i11_keeper');
   const foot = I11.features!.find((f) => f.kind === 'shrine' && f.id === 'i11_shrine');

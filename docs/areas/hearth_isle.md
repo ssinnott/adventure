@@ -569,7 +569,7 @@ opening onto the fourth landing at 24,18. The landings at rows 30, 26, 22, 18, 1
 each flight a run of eight squares between them, the map's walls the shaft's. The Catcher's
 landing is the last, 12–20,2–4, and the last door at 16,1, the exit into the Heart, with the lock:
 `{ x: 16, y: 1, to: 'core', tx: 8, ty: 14, tf: NORTH, needFlag: ['q_tide_home', 'q_grove_done', 'q_anvil_closed', 'q_peak_stood', 'q_ember_lit'], blockedText: 'A door of grey, no handle, the Hand's last words cut across it. Something in it listens, and does not open.', label: 'The door does not wait for anyone's palm. It opens as you come near, the way a door opens for someone it knows.' }`
-(`q_peak_stood` is the road behind's, §9; `q_grove_done` the Grove's closing, which the road's own
+(`q_peak_stood` is set by I11's event, #751, §9; `q_grove_done` the Grove's closing, which the road's own
 chapter sets: the Lanterns' mending is the Hearth's, not the door's, §9, call 1). The lock is
 signed in `src/content/locks.ts` on `q_ember_lit` at `underdeep2` 16,1 (§9). Beside it in the
 landing's wall at 13,1 is the Hand's own door into the Heart, which opened for her hand and is
@@ -841,7 +841,7 @@ one remove, so what the Custodian is stays found and never told.
 
 **The lock.** The last door (§4.7) needs the five flags the road sets at the Stones: the Tide
 Stone home (`q_tide_home`), the Grove closed (`q_grove_done`), the Anvil's tear closed
-(`q_anvil_closed`), the Peak Stone stood beside (`q_peak_stood`, which the road behind adds to I11's
+(`q_anvil_closed`), the Peak Stone stood beside (`q_peak_stood`, which #751 adds to I11's
 event, §9) and the Ember Stone lit (`q_ember_lit`). The door asks the road's five and no more: the
 Grove's mending (`q_mender_done`, #56's 18) brightens the Hearth's count and opens nothing. A
 company that comes early reads `ud2_shut` at the door and no goal names it: the goal still says the
@@ -1386,7 +1386,7 @@ are marked so.
    Hearth's count asks the mending (and `stones.ts` must read `q_mender_done` for it, which The
    Mender sets and `q_grove_mended`, owed to #56, does not: the road behind fixes it); the
    mending opens nothing (§5, the lock). The Peak Stone's flag is new, set by I11's `i11_stone`
-   event (the road behind), since a `seen` cannot be a `needFlag`. A save that stood at the Peak
+   event (#751), since a `seen` cannot be a `needFlag`. A save that stood at the Peak
    Stone before that lands has seen the once-event and will never get the flag from it, so the
    save upgrade brings it (call 9's seventh issue): `SAVE_VERSION` goes to 5
    (`src/game/save.ts`), and `toV5` (`src/game/upgrades.ts`) sets `q_peak_stood` wherever
@@ -1484,7 +1484,7 @@ are marked so.
       in the night sky and in the almanac (`src/ui/title.ts`, `src/ui/viewport.ts`,
       `src/game/stones.ts`), which are this issue's and not the road behind's (6; §12);
    7. the save upgrade: `SAVE_VERSION` 5 and `toV5`, which sets `q_peak_stood` wherever
-      `highspine_i11:i11_stone` was seen (1);
+      `highspine_i11:i11_stone` was seen, with I11's `i11_stone` setting it for new play (1);
    8. the gate bot and the harness run to 32 on the roster with the clock played (the Hands
       first), and `tools/testmonster.ts`'s `LEVELS` gaining 30.
 
@@ -1510,7 +1510,7 @@ are marked so.
     phase's: Act V, all endings, the three subplots' ends and the Cleric's third.
 12. **The road behind, in one issue** (as #449 was Act IV's): `stones.ts` reads `q_mender_done`
     (1), and the stale comment there that says `q_ember_lit` is owed in `UNSET` goes; I11's
-    `i11_stone` sets `q_peak_stood` (1), with the save upgrade beside it (call 9's seventh); the
+    `i11_stone` setting `q_peak_stood` is not here but the save upgrade's (call 9's seventh, #751); the
     sentries' `until` in Ashfall, by the leave rule (6); Helmstow's gate, the keep (Vask's
     presences `until` the verdict, an ending or `{ visited: 'hearthisle_h6' }`, and his steward's
     line), #449's gibbets `until` the verdict, the Eel, the inn, the stores and the Chapel for the
@@ -1562,6 +1562,8 @@ overturn before the issue that builds each is approved.
 18. **The Peak Stone's flag for old saves.** I11's event sets `q_peak_stood` for new play, and a
     save upgrade (`SAVE_VERSION` 5, `toV5`) sets it wherever `highspine_i11:i11_stone` was seen,
     recorded in `shipped.json` and tested in `tools/tests/save.ts` (call 1; call 9's seventh issue).
+    The event's `sets` and the upgrade ship together in that issue (#751), so no save at version 5
+    meets the event without the flag.
 19. **The verdict decides who stands at the core.** The Council's verdict puts the winning
     claimant's people on the Stair's first landing and, for Tallis, his man at the Heart's door to
     hinder; the pilgrims' tokens decide where no claimant's verdict carried, and DESIGN §10.1
@@ -1727,6 +1729,42 @@ Decided by delegate for #762, each the owner's to overturn:
 6. **Ahead through `ROOMS_AHEAD`,** as Cinderport's went, and owed to #753 in `UNPLACED`: the check
    that every business has a room fails on a room no business opens into, so H6 drops both.
 
+Decided by delegate for #751, each the owner's to overturn:
+
+1. **`toV5` reads what the game's own `seen` reads.** The event counts as seen when the High Spine
+   is among the save's `zones` and the outdoors' `used` holds `i11_stone`. The zone, the event and
+   the flag are kept frozen in the upgrade (`V5_PEAK`), so a later edit of the map or of
+   `stones.ts` cannot change which saves it reaches, and the upgrade and the Hearth's count agree
+   on who stood at the Stone.
+2. **The flag is set to 1,** as an event's `sets` sets it. A save that has it keeps it.
+3. **`shipped.json` records the version and the flag.** It is at 5, and `q_peak_stood` is new,
+   from the event's `sets` (5 below). Nothing in it goes or moves.
+4. **New play is checked in the Whitespine walkthrough,** whose step at the Stone already stands
+   on the event; `tools/tests/save.ts` holds the saves from before.
+5. **The event's `sets` lands in #751, not in #765.** The upgrade and the flag ship together, so
+   no save at version 5 has seen the event without the flag, and no window is left between them.
+   The road behind has nothing of it to do.
+
+Decided by delegate for #750, each the owner's to overturn:
+
+1. **The real pages are in.** §5 gives all three whole, so `src/content/endings.ts` holds them with
+   their flags and names; #759 has only to set the flags. The machinery's cases run on a fixture.
+2. **The world map's Hearth follows the state too,** in a few lines: a map showing a column the
+   title no longer shows would read as a bug. It has no sky, so opened shows there as at five.
+3. **The looks** (`hearthLook`, `src/game/stones.ts`): relit is five Stones' column and still;
+   opened is five Stones' column under a violet sky with a rose foot, most of the way by day, less
+   at dusk and none by night; finished is two steps past full and still. On the title the column
+   meets the top of the view at five, so there finished stands wider rather than taller.
+4. **The screen** (`src/ui/ending.ts`): the ending's name over the title's dusk, the Hearth as the
+   ending leaves it, a page at a time at twice the log's size. The answer's own words come first in
+   their box; Space or Esc turns a page, and past the last the company stands where it stood.
+5. **The voice check's exception** sits beside `MOST_LINES`: three pages to an ending, each within
+   the screen's six lines (the Hull Opened's second takes four of the log). The pages go through the
+   glyph and spelling checks with every text, and an ending's answer is still held to three.
+6. **Two endings held**, which the Heart's question should not allow, read as the table's first.
+   `ENDED` is exported from the table as a `When` list for #759 and #765 to import.
+7. **Nothing new is saved:** the state is read from the flags, so it needs no save upgrade.
+
 ## 10. Names
 
 The Lanterns' English, kept, as the Whitespine's and Sunderwood's were (NAMES.md §2, §4): the isle
@@ -1862,10 +1900,10 @@ yet. Whatever they were looking for, somebody found it."*
 level 16) `after: { flag: CREW_OPEN }`, a few or none, the company landing at 13,3 facing west
 (§6, 60); Anvilhall's thane gains his line (§6, 60). **Sunderwood** (its maps' Sunder groups, after
 61): `until: { flag: CRACK_SEALED }`, by the leave rule; the Watch's line, on its Reader (§6, 61).
-**The Whitespine** (`highspine_i11`, `i11_stone`): `sets: 'q_peak_stood'`, and for the saves that
-saw the event before it, the save upgrade, call 9's seventh issue: `SAVE_VERSION` 5 and `toV5`
-setting the flag wherever `highspine_i11:i11_stone` was seen, recorded in `shipped.json` and tested
-in `tools/tests/save.ts` (§9, call 1). **`src/content/stones.ts`**: the Grove Stone restored on
+**The Whitespine** (`highspine_i11`, `i11_stone`): nothing here. Its `sets: 'q_peak_stood'` and the
+save upgrade for the saves that saw the event before it (`SAVE_VERSION` 5 and `toV5`) are call 9's
+seventh issue's (#751; §9, call 1), recorded in `shipped.json` and tested in `tools/tests/save.ts`
+and the Whitespine walkthrough. **`src/content/stones.ts`**: the Grove Stone restored on
 `q_mender_done` with its `owed` dropped, and the Ember Stone's stale comment, which says `q_ember_lit`
 is owed in `UNSET` though `UNSET` is empty, put right. **`src/content/crossings.ts`**: the last
 crossing's isle end landed (§4.2) and its fare `free: { flag: 'q_compact_over' }` at both ends.
