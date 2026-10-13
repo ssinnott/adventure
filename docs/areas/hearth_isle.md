@@ -18,17 +18,20 @@ and checked again at `8cdf1e0a` (13 October 2026) in review (§9.1), with `tools
 cuts the atlas's terrain for a box (EXPANSION §8.2): land is what is not sea or shallow, and
 "walkable" what is not rock.
 
-Its first box is built, H6, the isle (#753, §4.2), and lists the area; the rest is to build. What
-exists: the isle's map, `hearthisle_h6`, which places four of the roster's monsters and opens the
-pilgrims' camp's three rooms (§3); the atlas's rows (`src/content/atlas.ts`: the area `hearth` at
-28–32, the last crossing's sea link from Cinderport landing at 252,188 and the deep links on from
-the isle; `src/content/areas/hearth/atlas.ts`, the area's own since H6: the zone `hearthisle`; the
-places `underdeep` at 30–31 and `core` at 32 (both planned); the sites The Hearth at 256,174 (built)
-and Anchorhold at 268,176 (planned)); the last crossing itself, sold at Cinderport's quay since
-#547, whose isle end lands on H6's strand since #753 (`LAST_CROSSING`, `src/content/crossings.ts`);
+Two places are built: H6, the isle (#753, §4.2), which lists the area, and Hearthfane, the temple
+(#755, §4.4). The rest is to build. What exists: the isle's map, `hearthisle_h6`, which places four
+of the roster's monsters, opens the pilgrims' camp's three rooms and gives onto the temple (§3); the
+temple's map, `hearthfane`, which places three of those four; the atlas's rows
+(`src/content/atlas.ts`: the area `hearth` at 28–32, the last crossing's sea link from Cinderport
+landing at 252,188 and the deep links on from the isle; `src/content/areas/hearth/atlas.ts`, the
+area's own since H6: the zone `hearthisle`; the places `hearthfane` at 250,172 (built), `underdeep`
+at 30–31 and `core` at 32 (the last two planned); the sites The Hearth at 256,174 (built) and
+Anchorhold at 268,176 (planned)); the last crossing itself, sold at Cinderport's quay since #547,
+whose isle end lands on H6's strand since #753 (`LAST_CROSSING`, `src/content/crossings.ts`);
 MONSTERS §9's roster (§7 fields it with one more, the Ashen Rearguard: twelve monsters, one new
 family); the Cleric's third prestige at Anchorhold, placed on the map and nowhere else (#19); and
-#56's 56 to 61 and 64, Act V's side quests, drafted, with 57 begun on the isle (§6). Its content is
+#56's 56 to 61 and 64, Act V's side quests, drafted, with 56 built in the temple and 57 begun on the
+isle (§6). Its content is
 `src/content/areas/hearth/` (maps, monsters, items, climate, its part of the world map and its
 walkthrough; its chapter, The Heart, in `chapter.ts`, and its other side quests and the Cleric's
 third in `quests.ts`, to come) and its businesses' rooms `src/ui/interiors/hearth/`, drawn ahead of
@@ -133,10 +136,11 @@ in `src/ui/interiors/hearth/`, listed in `src/content/areas/hearth/interiors.ts`
 `interiors` since H6 lists the area (`ROOMS_AHEAD`, `src/content/index.ts`, merged them until then);
 H6's three businesses open into them, so `UNPLACED` (`tools/tests/maps.ts`) owes them no more. The
 monsters drawn ahead (#761) are the Area's own too (`AHEAD`, `src/content/index.ts`, listed them
-until then): H6 places the moth, the champion, the preacher and the rat, and `UNPLACED` owes the
-keeper to #757; the rearguard to #758; the Grey Hand, the sentry and Vask to #759.
+until then): H6 places the moth, the champion, the preacher and the rat (the temple the first
+three), and `UNPLACED` owes the keeper and the deep crawler to #757; the rearguard and the catcher
+to #758; the Grey Hand, the sentry and Vask to #759.
 
-One box, the area's first, which lists the area (#753):
+Two places. The isle (#753) is the area's first and lists the area; the temple (#755) follows it:
 
 - **The isle** (H6, `hearthisle_h6`, core, band 28–29; #753): the strand on the south shore where
   the last crossing grounds, its boatman in the stern; the cleft carved one square wide up through
@@ -146,14 +150,22 @@ One box, the area's first, which lists the area (#753):
   built (#755); the Hearth east of it, the column's foot; the cache under the north rim; the west
   shelf to the lookout. Seven groups: moths by night, the pickets, the preacher with champions
   before the temple's door, champions on the west shelf and rats in the Bowl's south-east (§4.2).
+- **The temple** (Hearthfane, `hearthfane`, dungeon 16×16, band 28–29; #755): in at its door in the
+  mound on H6 (18,14), at the nave's foot; out by the door in its south wall. The nave runs north
+  with a lamp in each corner and the moths about them; the vestry off its west, where the sacristan
+  hides under the table (56); the treasury off its east, behind a door his key opens and nothing
+  else; the court at its head, open to the column, with the Hand's best in it; the altar, with the
+  stair down behind it walled until the crypt is built (#756). Five groups: the moths, the nave's
+  champions, the sermon, the court's second group and the swarm a wrong lamp brings (§4.4).
 
 Its atlas rows are charted in `src/content/areas/hearth/atlas.ts`, the area's own since H6 lists the
 area; they moved there from the plan (`src/content/atlas.ts`), which keeps the area's row and the
-links: the zone `hearthisle` with its crossing words; the places `underdeep` and `core` (planned);
-the sites The Hearth (built) and Anchorhold (planned). The last crossing's isle end, owed to Phase
-1.5 until H6, lands on the strand (`LAST_CROSSING`, `src/content/crossings.ts`), so Cinderport's
-harbourmaster sells it. The curve's row (#745, §8) has left `PLANNED`, owed to #744 for what the
-isle pays while the area is built box by box. The drafts the scaffold cuts are in §1. This doc is
+links: the zone `hearthisle` with its crossing words; the place `hearthfane` (built, #755) and the
+places `underdeep` and `core` (planned); the sites The Hearth (built) and Anchorhold (planned). The
+last crossing's isle end, owed to Phase 1.5 until H6, lands on the strand (`LAST_CROSSING`,
+`src/content/crossings.ts`), so Cinderport's harbourmaster sells it. The curve's row (#745, §8) has
+left `PLANNED`, owed to #744 for what the isle and the temple pay while the area is built box by box.
+The drafts the scaffold cuts are in §1. This doc is
 the plan; §4 has the briefs, each with every line its place says, so that the box or level can be
 built from it by a session that has read DESIGN, STORY and EXPANSION and nothing else. The owner's
 calls are §9's.
@@ -164,7 +176,7 @@ calls are §9's.
 |---|---|---|---|---|---|---|---|
 | H6 | The isle | zone box, core | 28–29 | 757 (rock 386, grass 266, hills 84, sand 21) | the strand at 20,30; the cleft up through the rim; the Bowl and the pilgrims' camp; the Hearth at 24,16; Hearthfane's door at 18,14 | the isle; the temple | #753, built |
 | I6 | The east rim | zone box, core | 28–29 | 270 (rock 155, grass 77, sand 35, hills 3) | Anchorhold at 4,18; the Hand's Steps at 3,27, where the causeway lands; the Hand's camp | none; the Cleric's third | #754 |
-| | Hearthfane | dungeon, 16×16 | 28–29 | | the nave and its four lamps; the court open to the column; the Hand's best; the sacristan in the vestry; the treasury; the stair behind the altar | the temple | #755 |
+| | Hearthfane | dungeon, 16×16 | 28–29 | | the nave and its four lamps; the court open to the column; the Hand's best; the sacristan in the vestry; the treasury; the stair behind the altar | the temple | #755, built |
 | | The crypt | dungeon, 16×16 | 29 | | the eleven niches; the Hand's first dead; the knot on the frame; the grey door down | the knots | #756 |
 | | The Ways | dungeon, 32×32 | 30 | | the hull's service ways: clean, humming, lit from nowhere; keepers with no robe; rats; the knocker at the crack; the CREW ONLY door's other side; the frames she marked | the Ways | #757 |
 | | The Stair | dungeon, 32×32 | 30–31 | | the long stair down; the claimant's people at its head; the Hand's rearguard and its dead; the crawlers; the Catcher at the foot; the last door and the Hand's own beside it | the dead; the Catcher; the door | #758 |
@@ -172,9 +184,10 @@ calls are §9's.
 
 The core is everything: no map here is country. Build order is the road's: H6 (built, #753; it lists
 the area, moves the isle's rows into the area's own atlas slice and lands the last crossing, §7),
-I6, the temple, the crypt, the Ways, the Stair, the Heart; the chapter and the walkthrough once the
-Heart is in; the side quests with their maps; the Council and the endings with the Heart. The
-drawings (§7) land before the maps that first place them, the crawlers' family before the Ways.
+I6, the temple (built, #755), the crypt, the Ways, the Stair, the Heart; the chapter and the
+walkthrough once the Heart is in; the side quests with their maps; the Council and the endings with
+the Heart. The drawings (§7) land before the maps that first place them, the crawlers' family before
+the Ways.
 
 ### 4.1 The briefs
 
@@ -237,9 +250,10 @@ it; the coast north of that and the north-west hills are not reached on foot, an
 there. The box is cut to the world at its west, south and north edges: the H5 box above is unlaid
 and the outdoors makes it void, so H6's row 0 is pinned as the world's end in
 `tools/tests/outdoors.ts`.
-Its east edge meets I6 square for square on rows 0 to 30, walkable on both sides only on rows 0, 12
-to 18 and 29 to 30 (rock on both sides on rows 1 to 11 and 21 to 28; on rows 19 and 20 H6's grass
-meets I6's rock), and is pinned so in `tools/tests/outdoors.ts`; I6's rows take it as it is.
+Its east edge meets I6 square for square on rows 0 to 30, walkable on both sides only on rows 12 to
+18 and 29 to 30 (on row 0 H6's 31,0 is rock since #753; rock on both sides on rows 1 to 11 and 21 to
+28; on rows 19 and 20 H6's grass meets I6's rock), and is pinned so in `tools/tests/outdoors.ts`;
+I6's rows take it as it is.
 
 **Landmarks and points of interest.**
 
@@ -335,8 +349,8 @@ Lantern's door). It departs from the brief in these squares and lines:
 - **The corner.** The grass at 29–31,0 in the north rim's corner is rock: walled off from every other
   square by the rim and the void, it failed the maps check's reach from the start, swimming included
   (#753's 5).
-- **The temple's door** at 18,14 is a building square with no feature until #755 joins its exit;
-  `h6_front` at 18,15 says the door (#753's 6).
+- **The temple's door** at 18,14 was a building square with no feature until #755 joined its exit
+  and made it a door (§4.4); `h6_front` at 18,15 says the door (#753's 6).
 - **The tents** are building squares at 16,14, 15,15 and 17,15 round a yard at 16,16, each business
   on a door square as the maps check asks: the Lantern's at 16,15, the store's at 15,16 and the
   sergeant's at 17,16, the brief's squares (#753's 7).
@@ -355,11 +369,14 @@ Lantern's door). It departs from the brief in these squares and lines:
   its own end of the Compact, so never together (#753's 15).
 - **The pilgrims** (57, §6): the quest is `bowl_pilgrims` and all three pilgrims set its met flag,
   `q_bowl_pilgrims` (#753's 1 and 2).
+- **`h6_warm`** (23,14) ends at *The ground here is warm as a hearthstone.* The brief's second
+  clause, that no grass grows within ten paces of the light, is false of the map, which has grass at
+  23,14 and all round the column (#755's 15).
 - **Measured.** A company at 28 wins every fight on the isle and walks its road, the two pickets and
   the sermon, every time. Two under, at 26, it wins every fight too, owed to #18 as every Act IV
   box's is (#753's 11). The seven groups as written give 12.19 fights to a rest, past the aim and
   inside the limit (#753's 12). Density 99.7% within 8 steps, the furthest 9, with one sign among its
-  31 points. The figures are in §8.
+  32 points (31 until the temple's door became a door, #755). The figures are in §8.
 
 ### 4.3 I6, the east rim (core, band 28–29)
 
@@ -375,9 +392,9 @@ the box's first eight or nine columns from row 2 to row 26; the Bowl's grass com
 into a pocket at 0–1,12–18; grass and hills on the rim's north, rows 0 to 3; a strip of grass, then
 sand and shallow, down the rim's east foot to the sea (about 5 to 11, rows 4 to 22); grass and sand
 at the south-west corner, 0–6,23–30, where the camp and the Steps are; shallow and sea everywhere
-else. The box's west edge meets H6's east on rows 0 to 30, walkable on rows 0, 12 to 18 and 29 to
-30 (§4.2). Its north edge meets I5's row 31, I5's rock against I6's grass and hills on the first
-three columns and water beyond, pinned against the rock (§1).
+else. The box's west edge meets H6's east on rows 0 to 30, walkable on rows 0 (rock on H6's side
+since #753), 12 to 18 and 29 to 30 (§4.2). Its north edge meets I5's row 31, I5's rock against I6's
+grass and hills on the first three columns and water beyond, pinned against the rock (§1).
 
 **Landmarks and points of interest.**
 
@@ -493,7 +510,44 @@ behind it at 8,1 the stair down, an exit to the crypt: `{ x: 8, y: 1, to: 'heart
 **Finds.** The treasury's chest `hf_offerings` (13,11): 2,000 gold, `grey_blade`, `grey_bow`
 (§8); the champions' drops (`grey_knife` at 0.1).
 
-**Share of the pay.** About a seventh of the area's.
+**Share of the pay.** About a seventh of the area's (§8).
+
+**As built** (#755, 13 October): the brief's rooms and its five groups, laid whole in a 16×16 box
+(`hearthfane`, region `hearth`, band 28–29), in at H6's temple door. The floor is 88 squares, doors
+included; every one is reached from the start, the treasury by its key. The place is
+`{ id: 'hearthfane', kind: 'dungeon', at: [250, 172] }` in the area's `PLACES`
+(`src/content/areas/hearth/atlas.ts`), with no band of its own: a built place reads its map's
+(§9.2, #755's 13). It departs from the brief in these squares and lines:
+
+- **The seams.** In: H6's 18,14, a door and the exit, onto 8,14 facing north, the nave's foot, with
+  a label of its own (#755's 12 and 14). Out: 8,15, a door in the south wall, onto H6's 18,15 facing
+  south, `h6_front`'s square. Down: 8,1 is wall until the crypt is built; the brief's exit to
+  `hearthfane2` (`STAIR`, 8,14 facing north) is exported and not listed, and 8,2, the altar's
+  square, is floor for the crypt's way up to land on, facing south (#755's 4).
+- **The treasury's door** at 11,10 is a door gated on the sacristan's key (`gates`, `after` the item
+  `fane_key`), not `locked`: no iron key fits it, and his key is kept (#755's 1).
+- **The pillar** at 8,10 reads in two: its `text` is *Carved up the pillar in the oldest hand on the
+  isle.* and its `read` the order, so a reader has the order and the log's pillar entry is a
+  reader's (#755's 2). The arch at 11,3 is a sign with no id, where the brief gave it `hf_arch`.
+- **The banners** at 12,2 and 12,4 are the Hand's grey, `#6a6866`, not the palette's red (#755's 5).
+- **The lamps** at 6,13, 10,13, 6,7 and 10,7 are persons with no face, made by one `lamp()` as the
+  Ember Stone's `socket()` is; the House and Hearth lamps' turn lines follow the Shore's (#755's 6).
+  The wrong lamp's line, *the other three flare*, is the brief's, and is said when fewer than three
+  still burn too.
+- **The groups** are the brief's five at its squares: the moths at 8,12, the champions at 8,8, the
+  sermon at 8,5, the second group at 6,4 and the swarm at 8,9. The moths and the swarm respawn at
+  720 and the rest at 2,880. The moths and the swarm leave on `q_lamps_out` and the second group on
+  `q_throne_removed`; the champions, the sermon and the second group stand. `aware` is 3 for the
+  moths, the swarm and the sermon and 2 for the champions and the second group (#755's 7 and 8). The
+  temple places the moth, the champion and the preacher, all the isle's: no new monster.
+- **The finds.** The chest `hf_offerings` at 13,11 holds 2,000 gold, the Grey Blade and the Grey
+  Bow (#755's 11); the champions' drop, the Grey Knife, is the isle's (#753's 14).
+- **The court** is open to the sky in `hf_court`'s words alone: a dungeon has one ceiling.
+- **Measured.** A company at 28 wins every fight in the temple, each group 100% of ten in the
+  walkthrough. Two under, at 26, it wins every fight too, owed to #18 as H6's is (#755's 10). The
+  five groups as written give 8.96 fights to a rest at 28, under the aim and inside the limit
+  (#755's 9). Density 100.0% within 7 steps, the furthest 3, with two signs among its 20 points. The
+  figures are in §8.
 
 ### 4.5 The crypt (dungeon, 16×16, band 29)
 
@@ -997,6 +1051,15 @@ treasury's key.
   Goals: *Go back to the sacristan under the vestry table.* (on `LAMPS_OUT`, at `hearthfane`);
   *Put out the four lamps in the pillar's order: the Sea, the Shore, the House, the Hearth.* (on
   `q_lamps`, at `hearthfane`).
+- **As built** (Hearthfane, #755): the quest is `lamps` and its ids the plan's: `q_lamps`,
+  `q_lamps_out`, `q_lamps_wrong`, `q_lamps_key`, `fane_key` and the lamps' four flags (#755's 3).
+  The treasury's door is gated on `fane_key`, not `locked`: it opens to the sacristan's key and to
+  no other, and the key is kept (#755's 1). `fane_key` is the *Sacristan's Key*, `slot: 'none'`,
+  `price: 0`. The pillar's carving is a `text` and a `read` (§4.4), so the log's pillar entry, keyed
+  on `seen`, is a reader's; any company has the order from the goal or by trial (#755's 2). The
+  House and Hearth lamps' turn lines follow the Shore's (#755's 6). The rest is as written: the
+  sacristan's words, the lamps' answers, the log's entries and goals and the 3,000 xp on *Take the
+  key.*
 
 **57. The Pilgrims in the Bowl** (`bowl_pilgrims`, H6, 28). Three pilgrims stranded by the Hand's
 landing, one of each claimant's, each with a token to carry down; the company takes one, or none.
@@ -1423,9 +1486,26 @@ box by box:
 | Gate, two under, at 26 | 100% won (at most: aim 25%, limit 90%): owed to #18 (§11) |
 | Gate, the road at 28 | the two pickets and the sermon walked 100% of the time (aim 80%, limit 65%) |
 | Fights to a rest, at 28 | 12.19 (aim 10 to 12, limit 8.5 to 14.5); 8% of days end in a fight broken off |
-| Density, core | 99.7% within 8 steps (317 of 318, 287 needed); the furthest 9 of 15; one sign in 31 points |
+| Density, core | 99.7% within 8 steps (318 of 319, 288 needed); the furthest 9 of 15; one sign in 32 points: the temple's door is a door since #755 |
 | Levels | 4 monsters in 28–29, give or take two; the nearest group, the moths at 2 steps, at 28.0; the hardest, the rats at 17 steps, at 30.0 |
-| Lines | 13 events and signs: 1 of one line, 8 of two and 4 of three |
+| Lines | 13 events and signs: 2 of one line, 7 of two and 4 of three: `h6_warm` is one line since #755 |
+
+**As built: Hearthfane** (#755). The row's `owed` is raised to what the isle and the temple pay,
+9,980 xp a member and 2,700 gold, still owed to #744 while the area is built box by box:
+
+| | Figure |
+|---|---|
+| Xp a member | 4,971 against the temple's seventh, 6,705: 0.74 (the groups 4,471; the sacristan's 3,000, split six ways, 500) |
+| The area so far | 9,980 of the 46,934, 21.3%: H6 5,009 and the temple 4,971 |
+| Gold | 2,700 of the 28,320 for the area: the temple's chest 2,000 and H6's 700 |
+| Paid by level | entering at 28 and clearing three quarters, a company leaves at 29.0, 3.0 under the next floor 32 |
+| Dearest find | the Grey Bow, 6,800, in the 7,000 window |
+| Gate, at the floor 28 | 100% of fights won (aim 90%, limit 80%); the area's 12 groups' too |
+| Gate, two under, at 26 | 100% won (at most: aim 25%, limit 90%): owed to #18 (§11) |
+| Fights to a rest, at 28 | 8.96 (aim 10 to 12, limit 8.5 to 14.5); 7% of days end in a fight broken off |
+| Density, dungeon | 100.0% within 7 steps (88 of 88, 80 needed); the furthest 3 of 10; 2 signs in 20 points |
+| Levels | 3 monsters in 28–29, give or take two; rising from the way in (rank correlation 0.87); the nearest group, the moths at 2 steps, at 28.0; the hardest, the champions at 6 steps, at 29.0 |
+| Lines | 8 events and signs: 4 of two lines and 4 of three; the area's 21: 2 of one, 11 of two and 8 of three |
 
 **The gear** (`GEAR`, `tools/harness.ts`), one more rung, the last, by 28 and found, never sold:
 the Hand's steel from below, in the temple's treasury, the camps' chests and the champions' drops
@@ -1956,33 +2036,6 @@ Decided by delegate for #764 (the doorway check), each the owner's to overturn:
    hold and Mottram's for Tallis are each a link added to a chain; the Chapel is its word gone `until` the
    hold's verdict and the endings, and its temple again `after` the same list. No map is touched here.
 
-Decided by delegate for #764 (the doorway check), each the owner's to overturn:
-
-1. **A chain, and nothing wider.** `doorwayFaults` (`tools/tests/maps.ts`) takes businesses with a room
-   each, in order on the square: the first only `until` X1, each next `after` the one before's `until`
-   and, but the last, `until` its own, none with a `when`, the last only `after`. A word or twin on
-   another condition, a gap, a `when` on a link, a link gone with nothing after it, a person before the
-   business, a second business and a doorway with no business fail as they did.
-2. **The Chapel's way is a word, then the business back.** A shut door's word (an event `after` X and
-   `until` Y, no `when`) may be followed at once by the business again `after` Y, as the next link. The
-   word must go on Y, or it would be said at an open door; a word that does not go leaves the business
-   behind it a second business, as before.
-3. **A chain may end in a word.** Any link that is gone may be followed by the shut door's word, as the
-   first always could, so the stores may shut after they go dearer. The word may stand anywhere after the
-   link, as it did; only a twin or the business back must follow at once.
-4. **Conditions compare as `same(...)` did,** to the letter: a `When` list on a word's `until` and on its
-   business's `after` is one constant (the hold's verdict with `ENDED`, in #765).
-5. **Checked against the old rule, not only on the maps:** over every list of up to four features on a
-   doorway (4.7 million; three flags, a `when`, events, people and keepers) nothing the old rule passed
-   fails, a list passes that did not only if it is a chain (a second recogniser, written from the issue,
-   agrees on every list), and every list outside a chain gets the same faults word for word. The run was
-   a scratch script; the fixtures in the maps check are what stays.
-6. **No doc line described the rule,** so none is changed: EXPANSION §8.2 is the zone-map recipe, and
-   the comment above `doorwayFaults` is where the rule is told.
-7. **This unblocks the twins owed in the Council block's 7 and in #765.** The inn at 12, the Chapel for the
-   hold and Mottram's for Tallis are each a link added to a chain; the Chapel is its word gone `until` the
-   hold's verdict and the endings, and its temple again `after` the same list. No map is touched here.
-
 Decided by delegate for #753, each the owner's to overturn:
 
 1. **57 is `bowl_pilgrims` and its met flag `q_bowl_pilgrims`.** The plan's `pilgrims` and
@@ -2027,6 +2080,69 @@ Decided by delegate for #753, each the owner's to overturn:
 16. **The walkthrough kneels with `useShrine` directly:** `kneel` in `tools/walk.ts` compares the
     outdoors' moved feature with the map's by identity and so fails on any zone map. Not this
     issue's to fix.
+
+Decided by delegate for #755, each the owner's to overturn:
+
+1. **The treasury's door is a door gated on the key, not a `locked` square.** The engine's `locked`
+   opens to any `key_iron` and uses it up, and iron keys lie in five chests and the dens. So 11,10
+   is a door with an authored gate, `gates: [{ x: 11, y: 10, after: { item: 'fane_key' }, blockedText }]`
+   (#749's `after`, read by `World.move` on any map): it opens to the sacristan's key and to nothing
+   else, and the key is kept. No system changed. It is the first authored gate on a door; a door's own
+   key would be a systems issue, if the owner prefers one.
+2. **The pillar's carving is split at its colon:** `text` *Carved up the pillar in the oldest hand on
+   the isle.*, `read` *FIRST THE SEA. THEN THE SHORE. THEN THE HOUSE. LAST OF ALL THE HEARTH.* A
+   sign's id is kept by `seen` only when it has `read`, and then only by a company with a reader; the
+   same text twice runs past the log (the pillars check holds words and reading together to its
+   lines). So a reader reads the order, as the sacristan's "if you can read a pillar" has it, and the
+   log's pillar entry is a reader's; any company has the order from the quest's goal or by trial (a
+   wrong lamp stays lit and the right order still works).
+3. **56's ids are the plan's** (`lamps`, `q_lamps`, `q_lamps_out`, `q_lamps_wrong`, `q_lamps_key`,
+   `fane_key`, the lamps' `lamp_sea`, `lamp_shore`, `lamp_house`, `lamp_hearth`): none clashes in
+   `src/content`.
+4. **The stair down is wall until the crypt:** 8,1 is `#`, and `STAIR` (the brief's exit to
+   `hearthfane2` 8,14 facing north, with its label) is exported and not listed, as `meridian_camp2`'s
+   `STAIR2` was: an exit to an unbuilt map fails `tools/tests/maps.ts`. 8,2, the altar's square, is
+   floor for the crypt's way up.
+5. **The banners are the Hand's grey, `#6a6866`,** not the palette's `#8a3a2a`: the brief and the
+   issue put the Hand's grey either side of the arch (12,2 and 12,4, `banners`), and a map hangs one
+   colour (`palette.banner`), so any it hangs by chance are the Hand's too. The rest of the palette
+   is the brief's.
+6. **The House and Hearth lamps' turn lines follow the Shore's:** the House lamp says *The moths have
+   left the Shore lamp for it.* and the Hearth lamp the same of the House lamp; the plan gives the
+   Shore's only. Built by one `lamp()` maker, as the Ember Stone's `socket()`.
+7. **The swarm respawns at 720, as the moths:** no quest names it and it has no `slainText`, so it is
+   no guardian, and the respawn check holds every other group to 720 to 2,880. It leaves with the
+   moths on `q_lamps_out`.
+8. **`aware`, which the brief leaves open:** 3 for the moths, the swarm and the sermon; 2 for the
+   champions and the second group. The champions, the sermon and the second group stand
+   (`roams: false`).
+9. **The brief's five groups are kept:** 8.96 fights to a rest at 28 (aim 10 to 12, limit 8.5 to
+   14.5), off the aim and inside the limit; the pay is 0.74 of the temple's seventh, so cutting a
+   group would only widen the shortfall.
+10. **Two under, the temple is won every time** (100% at 26), owed to #18 (`hearthfane: under`,
+    `OWED` in `tools/tests/gate.ts`) as H6's is; stronger monsters are barred. The issue's "one at
+    26 no more than one in four" is therefore not met: the owner's or #18's.
+11. **The Grey Blade and the Grey Bow are the area's items,** beside H6's knife: `greyBlade` 2d12+6,
+    6,600, for the martial classes and the cleric, one hand, a point past the Slag Mace; `greyBow`
+    1d12+13, 6,800, the ranger's, a point past the Ashwood Bow. #746 takes them into its rung.
+    `fane_key` is named *Sacristan's Key* (`slot: 'none'`, `price: 0`).
+12. **The way in has a label of its own,** *In at the temple's door, out of the light.*, on H6's
+    exit at 18,14; the plan's H6 brief (§4.2) had *Through the temple's door, into the nave. The
+    light comes down through the roof ahead.*
+13. **The place is `{ id: 'hearthfane', kind: 'dungeon', at: [250, 172] }`,** with no band (a built
+    place reads its map's), in the area's `PLACES`; the atlas's `deep` link `hearthisle ->
+    underdeep` at 250,172 is kept.
+14. **H6's 18,14 is now a door** (it was a building square) and the exit; H6's walkthrough line that
+    asserted a shut building moved into the temple's steps.
+15. **`h6_warm` ends at *The ground here is warm as a hearthstone.*** Its second clause, that no
+    grass grows within ten paces of the light, contradicts the map, which has grass at 23,14 and all
+    round the column. The review of #779 found it, and the temple edits H6's map for its exit anyway.
+16. **§3 owes the crawlers' two:** `UNPLACED` (`tools/tests/maps.ts`) holds `deep_crawler` for #757
+    and `catcher` for #758 since #778, and §3's sentence named neither. The review of #779 found it.
+17. **§4.2's head and §4.3 say H6's 31,0 is rock,** as #753's 5 has it (both said walkable on both
+    sides), and §11's *I6's meeting* names row 0. The review of #779 found it.
+18. **#764's doorway-check block stood in this section twice,** merged from main: one is kept. The
+    review of #779 found it.
 
 ## 10. Names
 
@@ -2082,20 +2198,38 @@ Owed, from H6 (#753):
   and `Hearth Isle: under`, `OWED` in `tools/tests/gate.ts`). The issue's "one at 26 no more than one
   in four" is not met: stronger monsters are barred and fewer groups would not lower it (§9.2,
   #753's 11). The owner's or #18's.
-- **The temple's door** stays a building square until #755 builds Hearthfane and joins its exit
-  (§9.2, #753's 6).
 - **Quest 57's end** is #758's: the rearguard slain, the "carried none" entry and the goal at
   `underdeep2`, `done` being `HELD` until then (§6; #753's 3). The chapter's first step and the
   strand's shard (`hearthisle_h6:h6_strand` and `h6_shard`) are #760's: `tools/tests/quests.ts` owes
   the chapter and lists the zone as planned.
 - **The free fare** for a Partner is #765's: the runner says the boat is the Partner's both ways,
   and the line runs ahead of the fare until then.
-- **I6's meeting** is #754's: it adds I6's west edge against H6's east pin and the hoard behind I6's
+- **I6's meeting** is #754's: it adds I6's west edge against H6's east pin, where row 0 is rock on
+  H6's side (31,0; the brief had both sides walkable, §9.2, #753's 5), and the hoard behind I6's
   tally-house, which the runner's word points at.
 - **The gear's rung** is #746's: the Grey Knife (`greyKnife`) and the Smelling Salts are built here
   (`src/content/areas/hearth/items.ts`), and #746 takes them into the rung.
 - **`kneel` in `tools/walk.ts`** fails on any zone map, comparing the outdoors' moved feature with
   the map's by identity; the isle's walkthrough kneels with `useShrine` directly (§9.2, #753's 16).
+
+Owed, from Hearthfane (#755):
+
+- **Two under, the temple is won every time:** 100% of fights at 26, where the gate wants no more
+  than a quarter (limit 90%). It is owed to #18 as H6's is (`hearthfane: under`, `OWED` in
+  `tools/tests/gate.ts`). The issue's "one at 26 no more than one in four" is not met: stronger
+  monsters are barred (§9.2, #755's 10). The owner's or #18's.
+- **The stair down** is #756's: 8,1 is wall until the crypt lists `STAIR` in the temple's exits,
+  turns 8,1 to floor and lands its way up on 8,2 facing south; the temple's walkthrough, whose last
+  line asserts the wall, turns with it (§9.2, #755's 4).
+- **The chapter's step** for the temple is #760's (`visited: 'hearthfane'`).
+- **The gear's rung** is #746's: the Grey Blade and the Grey Bow (`greyBlade`, `greyBow`) are built
+  here (`src/content/areas/hearth/items.ts`), and #746 takes them into the rung (§9.2, #755's 11).
+- **A door's own key** would be a systems change: the treasury's door is gated on the key, and the
+  comment on `MapDef.gates` (`src/game/map.ts`), which speaks of an exit, is the systems lane's to
+  reword (§9.2, #755's 1).
+- **Fleeing at the treasury's door:** `World.flee` steps back without reading gates or exits, so a
+  company that flees a fight at 10,10 facing west lands in the treasury's doorway without the key.
+  It is so for every gate (Helmstow's) and a systems matter.
 
 ## 12. The road behind: the lines
 
