@@ -247,7 +247,7 @@ made once in the systems lane and first spent by the area named, which waits for
 | Calls | a turn spent bringing a named group into the fight, within 12 and three groups | Rimewater | the tallymen; Vask |
 | Sweep | one attack at every member of a row, with an element if it has one | the Whitespine; with fire, Ashfall | the giants; the drakes' breath |
 | A light seen past the fog | a monster carrying a light is seen a square further than the weather allows (wanted, not needed) | the Downs | the lampmen |
-| The Core's clock | a panel marker, the Grey Hands: while they stand, the light dims a step a round to a thread and Vask calls a sentry every second round, which the cap of three groups does not stop; with them down it holds, and the sentries stand down when he falls (`obeys`) | the Core | STORY.md, Act Five |
+| The Core's clock | `clock` on a group, its panel the Grey Hands: while one stands, the light dims a step a round to a thread and Vask calls a sentry every second round, at no cost of a turn, into one called group that grows past the cap of three groups, up to twelve monsters; with them down it holds, and the sentries stand down when he falls (`obeys`) | the Core | STORY.md, Act Five |
 | A question first | `choice` on a group: a person's question, put before the fight; the refusal fights, and an answer of gold, an item or a flag stands the group aside | Thornmark's ogre (#56's 13); the Whitespine | the ogre's bargain; the giants' toll |
 | A flag on the fall | `sets` on a group: flags set as it falls, with its `slainText`, so what its death changes holds before the next step | the Kilns | the Warden of the Anvil, whose fall closes the tear |
 | The leave rule | `leaves` on a group: once its `until` holds it is gone, standing or killed, read from the flags so nothing new is saved. Leaving is no kill: no `slainText`, none of its `sets`. A group without it stays until it is killed | Hearth Isle | the Hand thinned once Vask is removed; the moths once the lamps are out; the knockers once the crack is sealed; Ashfall's sentries after an ending |
@@ -255,7 +255,8 @@ made once in the systems lane and first spent by the area named, which waits for
 Built: `level` (#31); `kind`, `look`, `when`, `until` and `after` (#41); ranks and morale (#160);
 elements, casting and drain (#161); regeneration, curse and calls (#537), sweep (#545) and stone and
 its cure (#546), each with the gate bot's answer, a drain of spell points' with #541; a question
-first (#544), the bot refusing it; a flag on the fall (#636); the leave rule (#747). Still to come: a light seen past the fog and the Core's clock.
+first (#544), the bot refusing it; a flag on the fall (#636); the leave rule (#747); the Core's clock
+and `obeys` (#748), the bots killing the panel first. Still to come: a light seen past the fog.
 
 Decided by delegate for #537, each the owner's to overturn:
 
@@ -790,8 +791,10 @@ lines with their dice, and `--calibrate --write` re-derives the tables when the 
 `--abilities` puts Act III's abilities on the test monsters, two trolls, four wights, a caller
 beside six fodder and three lights with a hound (§3.3, #537, #541), at 19 and 20 or the levels
 asked; Act IV's sweep, two giants and two drakes (#545), at 23 and 25; its stone, the mesa's
-basilisk behind three skirmishers (#546), at 27; its holds, four vines (#549), at 24; and its
-bosses as they stand, each won from two under beside the test boss of its level.
+basilisk behind three skirmishers (#546), at 27; its holds, four vines (#549), at 24; its
+bosses as they stand, each won from two under beside the test boss of its level; and Act V's
+clock, the Heart (#748), at 32, its Hands killed first, its lord first or its sentries fought as
+they come.
 `--spell-cap`, `--gear-grows`, `--level-bonus` and `--level-traits` run any of it as if damage
 spells stopped growing at another level than play's 10, or the company gained gear, a bonus or
 blows as it levelled past it; `--rank-step` as if a spell rank added another share than play's 15%.
@@ -1612,10 +1615,32 @@ Grey Hands at the panel fall.
 
 The Custodian does not fight. When the Hand is broken it speaks, with one voice.
 
-**Asks:** calls; the Core's clock, with a panel marker on the Grey Hands: while they stand the light
-dims a step a round to a thread and the calls come past the cap of three groups, and with them down
-it holds, so nothing is lost; `obeys`, for the sentries that stand down when Vask falls (#739,
-call 7).
+**Built** (#748; #739, call 7): the Core's clock, `clock: { calls, every, dims, panel }` on a group,
+carried into the fight as its leader is. While a monster the `panel` names stands, the group's leader
+calls one of `calls` at the end of every `every`th round, at no cost of a turn and never on his own
+`calls.chance`, up to twelve monsters with those down counted; the light dims a step at each round's
+end, to `dims`, and holds. The panel down, the calling stops and the light holds where it is. It ends
+nothing. The fight screen darkens over the backdrop, closing on a shaft of the roof's light that
+narrows to a thread, and the log says *Through the roof, the light goes out a little.* at every third
+step and *The light holds at a thread.* at the last. `obeys`: once every leader is down, a monster
+that obeys stands down and leaves the fight, paying nothing, though its kind never breaks
+(*2 Core Sentries stand down.*). A machine that does not obey stands, as before.
+
+The calls pass the cap of three groups by standing in **one called group that grows**, which the
+first call opens: the Heart holds two groups, so the fight screen seats and labels it as any other.
+Calls exempt from the cap, a group each, measured the same (below, within a point), and asked more
+of the screen, which seats each group a step lower. The call costs no turn because, as a turn, every
+second blow of Vask's became a sentry and the clock eased the fight: the harness's bot won 44% with
+the Hands first and 67% with Vask first, against 33% with no clock.
+
+Measured on the test monsters the plan sizes the Heart by (`clockEncounter`: the test boss at 32,
+the test elite and soldier at 31, line for line Vask, the Grey Hands and the Core Sentries), 400
+seeds at 32: the gate's bot wins 10% killing the Hands first, 16% going for Vask and 5% fighting
+the sentries as they come, against 23% with no clock; the harness's bot, its fights cut at fifteen
+rounds, 14%, 31% and 21% (`node tools/harness.ts --abilities --seeds 200`). The clock halves the odds as the
+plan has it, two in three to one in three, but the whole stands far under them: Vask's size is
+#761's and the run to 32 #752's. The bots find Vask first the better play, since his fall stops the
+calls and stands the sentries down.
 
 Nine on frames that exist are drawn (#761); the crawlers are the second pull request. The Hearth
 Moth is the lantern moth's hands cut deeper, to flames, rust above and red beneath, its dust falling

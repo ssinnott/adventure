@@ -60,6 +60,11 @@ export interface CombatState {
   groupIds: string[];
   /** Each group's leader, by monster id, as `groupIds` lists them (`Ranks`). */
   leaders: (string | undefined)[];
+  /**
+   * The fight's clock (`Clock`), from the group that carries it (`band`): the steps the light has
+   * dimmed and the one group its calls stand in.
+   */
+  clock?: Clock & { band: number; dim: number; into?: number };
   round: number;
   order: TurnRef[];
   turn: number;
@@ -109,9 +114,19 @@ export interface Edge { blows: number; damage: number; ac: number }
 /**
  * How a group stands (docs/MONSTERS.md §3.3): the last `back` of its monsters in the back rank, and
  * the monster id of its leader, whose fall breaks the fight's people (`morale`). `under` is a group
- * that fights from under the ice, reaching one square: the front row over it, never the back.
+ * that fights from under the ice, reaching one square: the front row over it, never the back. `clock`
+ * is the Core's (`Clock`).
  */
-export interface Ranks { back?: number; leader?: string; under?: 'ice' }
+export interface Ranks { back?: number; leader?: string; under?: 'ice'; clock?: Clock }
+
+/**
+ * The Core's clock (docs/MONSTERS.md §9.3, #748): while a monster the `panel` names stands, the
+ * group's leader calls one of `calls` every `every` rounds, on the beat at no cost of a turn and never
+ * on its own chance (`beat`), and the light dims a step a round to `dims`, where it holds at a thread
+ * (`dim`). The panel down, the calling stops and the light holds where it is. The light never ends a
+ * fight.
+ */
+export interface Clock { calls: string | MonsterDef; every: number; dims: number; panel: readonly string[] }
 
 /** A group as a fight takes it. Its monsters by id; a tool may hand in defs that no map places (tools/harness.ts). */
 export interface CombatGroup extends Ranks { id: string; monsters: readonly (string | MonsterDef)[] }
@@ -120,10 +135,13 @@ export interface CombatGroup extends Ranks { id: string; monsters: readonly (str
 export type Fighters = readonly (string | MonsterDef)[] | (Ranks & { monsters: readonly (string | MonsterDef)[] });
 
 /** The group a tool's fighters make, under `id`. */
-export const asGroup = (id: string, f: Fighters): CombatGroup => ('monsters' in f ? { id, monsters: f.monsters, back: f.back, leader: f.leader, under: f.under } : { id, monsters: f });
+export const asGroup = (id: string, f: Fighters): CombatGroup => ('monsters' in f ? { id, monsters: f.monsters, back: f.back, leader: f.leader, under: f.under, ...(f.clock ? { clock: f.clock } : {}) } : { id, monsters: f });
 
 export const FRONT_ROW = 3;
-/** The most a fight ever holds, those down counted: twelve monsters in three groups (DESIGN §6). A call keeps to it (`canCall`). */
+/**
+ * The most a fight ever holds, those down counted: twelve monsters in three groups (DESIGN §6). A call
+ * keeps to it (`canCall`); the clock's keep to twelve and pass the three, into one group (`beat`).
+ */
 export const MAX_MONSTERS = 12, MAX_GROUPS = 3;
 
 /** The log's line when people break at their leader's fall, and when beasts run; given who goes, and whether one. */
@@ -217,8 +235,10 @@ export function startCombat(party: Party, groups: readonly CombatGroup[], rng: R
       monsters.push({ def, hp: def.hp, group: rank, band, back: k >= front, fled: false, ...(g.under ? { under: g.under } : {}), conditions: [], flash: 0 });
     });
   });
+  const ticking = groups.findIndex((g) => g.clock);
   const s: CombatState = {
     monsters, groupIds: groups.map((g) => g.id), leaders: groups.map((g) => g.leader), round: 0, order: [], turn: 0, bless: 0, shield: 0, haste: 0,
+    ...(ticking >= 0 ? { clock: { ...groups[ticking].clock!, band: ticking, dim: 0 } } : {}),
     foeBless: groups.map(() => 0), foeShield: groups.map(() => 0), seen: {},
     defending: party.members.map(() => false), rangedPenalty: opts.rangedPenalty ?? 0, log: [], outcome: 'ongoing', loot: null,
     ...(opts.spellsGrowTo !== undefined ? { spellsGrowTo: opts.spellsGrowTo } : {}),
@@ -292,6 +312,8 @@ function endRound(s: CombatState, party: Party, rng: RngInstance): void {
   for (const m of freed) m.conditions = m.conditions.filter((k) => k !== 'paralysed');
   if (freed.length) s.log.push(`${describe(freed)} ${freed.length === 1 ? 'tears' : 'tear'} free.`);
   regenerate(s);
+  beat(s);
+  dim(s);
   for (const c of party.members) {
     if (hasCondition(c, 'poisoned') && !isDown(c)) { damage(c, 1); s.log.push(`${c.name} suffers from poison.`); }
     if (hasCondition(c, 'paralysed') && rng.chance(0.35)) { removeCondition(c, 'paralysed'); s.log.push(`${c.name} can move again.`); }
@@ -660,6 +682,10 @@ export const SLUMBER_CHANCE = 0.7;
 export const MEND_LINE = (names: string, one: boolean, n: number): string => `${names} ${one ? 'mends' : 'mend'} ${n}.`;
 export const SMOULDER_LINE = (names: string, one: boolean): string => one ? `${names} smoulders and does not mend.` : `${names} smoulder and do not mend.`;
 export const CALL_LINE = (caller: string, names: string, one: boolean): string => `${caller} calls, and ${names} ${one ? 'answers' : 'answer'}.`;
+/** The log's lines under the clock (`dim`): every third step of the light, and its last. */
+export const DIM_LINE = 'Through the roof, the light goes out a little.', THREAD_LINE = 'The light holds at a thread.';
+/** The log's line when those that obey stand down at the last leader's fall (`morale`). */
+export const STAND_LINE = (names: string, one: boolean): string => `${names} ${one ? 'stands' : 'stand'} down.`;
 /** The log's line for a sweep (`sweep`): an arm across a row or a breath of its element on one, and what it dealt, or its miss. */
 export const SWEEP_LINE = (who: string, el: Element | undefined, row: string, dealt?: number): string =>
   `${who} ${el ? `breathes ${GLASS_WORD[el]} on` : 'sweeps'} ${row}${dealt === undefined ? ' and misses.' : `: ${dealt} damage.`}`;
@@ -709,6 +735,18 @@ function regenerate(s: CombatState): void {
   if (burnt.length) s.log.push(SMOULDER_LINE(describe(burnt), burnt.length === 1));
 }
 
+/**
+ * The light under the clock (`Clock`) at a round's end: a step darker while the panel stands, to
+ * `dims`, where it holds at a thread. The log says it every third step and at the last.
+ */
+function dim(s: CombatState): void {
+  const c = s.clock;
+  if (!c || c.dim >= c.dims || !panelStands(s)) return;
+  c.dim++;
+  if (c.dim === c.dims) s.log.push(THREAD_LINE);
+  else if (c.dim % 3 === 0) s.log.push(DIM_LINE);
+}
+
 /** The group a caller brings (`MonsterDef.calls`), as defs; none for one that calls nobody. */
 const calledBy = (d: MonsterDef): MonsterDef[] => (d.calls?.monsters ?? []).map((q) => (typeof q === 'string' ? monster(q) : q));
 
@@ -722,16 +760,36 @@ export function canCall(s: CombatState, m: MonsterInst): boolean {
   return standing(m) && n > 0 && s.groupIds.length < MAX_GROUPS && s.monsters.length + n <= MAX_MONSTERS;
 }
 
+/** Whether a monster the clock's panel names stands (`Clock.panel`): while one does, the clock runs. */
+export const panelStands = (s: CombatState): boolean => !!s.clock && s.monsters.some((m) => standing(m) && s.clock!.panel.includes(m.def.id));
+
+/** Whether a monster calls on the clock and never on its own chance: a leader of the group that carries it. */
+const clocked = (s: CombatState, m: MonsterInst): boolean => !!s.clock && m.band === s.clock.band && isLeader(s, m);
+
 /**
- * A caller's turn spent on its call: its group comes into the fight whole, as a group of its own in
- * the front rank, with no leader, and acts from the next round.
+ * The clock's call at the end of a round on its beat (`Clock`): while its caller and the panel stand
+ * and the fight holds fewer than twelve, those down counted, the caller calls one more, costing it no
+ * turn. The calls ignore `calls.chance` and pass MAX_GROUPS, all standing in the one group the first
+ * opened, which grows.
  */
-function call(s: CombatState, m: MonsterInst): void {
-  const band = s.groupIds.length, rank = Math.max(-1, ...s.monsters.map((q) => q.group)) + 1;
-  const come = calledBy(m.def).map((def): MonsterInst => ({ def, hp: def.hp, group: rank, band, back: false, fled: false, conditions: [], flash: 0 }));
-  s.groupIds.push(`${s.groupIds[m.band]}:call${band}`); s.leaders.push(undefined); s.foeBless.push(0); s.foeShield.push(0);
+function beat(s: CombatState): void {
+  const c = s.clock;
+  if (!c || s.round % c.every !== 0 || !panelStands(s) || s.monsters.length >= MAX_MONSTERS) return;
+  const caller = s.monsters.find((m) => clocked(s, m) && standing(m));
+  if (caller) c.into = call(s, caller, [typeof c.calls === 'string' ? monster(c.calls) : c.calls], c.into);
+}
+
+/**
+ * A call: `defs` come into the fight whole and act from the next round, in the front rank, as a group
+ * of its own with no leader, or into the group `into` (the clock's). The group they stand in.
+ */
+function call(s: CombatState, m: MonsterInst, defs: readonly MonsterDef[], into?: number): number {
+  const band = into ?? s.groupIds.length, rank = into === undefined ? Math.max(-1, ...s.monsters.map((q) => q.group)) + 1 : s.monsters.find((q) => q.band === into)!.group;
+  const come = defs.map((def): MonsterInst => ({ def, hp: def.hp, group: rank, band, back: false, fled: false, conditions: [], flash: 0 }));
+  if (into === undefined) { s.groupIds.push(`${s.groupIds[m.band]}:call${band}`); s.leaders.push(undefined); s.foeBless.push(0); s.foeShield.push(0); }
   s.monsters.push(...come);
   s.log.push(CALL_LINE(m.def.name, describe(come), come.length === 1));
+  return band;
 }
 
 /** Resolve the acting monster's turn. */
@@ -739,8 +797,9 @@ export function monsterAct(s: CombatState, party: Party, rng: RngInstance): bool
   const t = currentTurn(s, party, rng);
   if (!t || t.side !== 'monster') return false;
   const m = s.monsters[t.i];
-  // A caller may spend its turn bringing its group in, while the fight has room for the whole of it.
-  if (m.def.calls && canCall(s, m) && rng.chance(m.def.calls.chance)) { call(s, m); s.turn++; checkOutcome(s, party, rng); return true; }
+  // A caller may spend its turn bringing its group in, while the fight has room for the whole of it;
+  // the clock's caller never does, calling on the clock's beat instead (`beat`).
+  if (m.def.calls && !clocked(s, m) && canCall(s, m) && rng.chance(m.def.calls.chance)) { call(s, m, calledBy(m.def)); s.turn++; checkOutcome(s, party, rng); return true; }
   // A caster may spend its turn on a spell; one in the back rank with nothing to cast or call and no bow holds.
   if (m.def.cast && rng.chance(m.def.cast.chance)) {
     const sp = monsterSpells(m.def).find((x) => castable(s, party, m, x));
@@ -798,16 +857,18 @@ export function victoryLine(loot: Loot): string {
 
 /**
  * Who breaks (docs/MONSTERS.md §2, §3.3): once every leader in the fight is down its people leave it,
- * and a group's beasts once three in four of them are down; a `steady` monster never does, nor a kind
- * that does not break. The fled pay nothing.
+ * and those that `obeys` stand down though their kind never breaks; and a group's beasts once three
+ * in four of them are down. A `steady` monster never breaks, nor a kind that does not. The fled pay
+ * nothing.
  */
 function morale(s: CombatState): void {
   const breaks = (m: MonsterInst, how: 'leader' | 'rout'): boolean => standing(m) && !m.def.steady && KINDS[m.def.kind].breaks === how;
   const leaders = s.monsters.filter((m) => isLeader(s, m));
   if (leaders.length && leaders.every((m) => !standing(m))) {
-    const gone = s.monsters.filter((m) => breaks(m, 'leader'));
-    for (const m of gone) m.fled = true;
+    const gone = s.monsters.filter((m) => breaks(m, 'leader')), stood = s.monsters.filter((m) => m.def.obeys && standing(m) && !gone.includes(m));
+    for (const m of [...gone, ...stood]) m.fled = true;
     if (gone.length) s.log.push(BREAK_LINE(describe(gone), gone.length === 1));
+    if (stood.length) s.log.push(STAND_LINE(describe(stood), stood.length === 1));
   }
   s.groupIds.forEach((_, band) => {
     const beasts = s.monsters.filter((m) => m.band === band && !m.def.steady && KINDS[m.def.kind].breaks === 'rout');

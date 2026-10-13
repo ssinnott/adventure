@@ -5,6 +5,7 @@
 // places a test monster, and none has a drawing of its own (each borrows an existing kind, so a
 // gallery can still show one).
 import type { MonsterDef, MonsterSprite } from '../src/game/monsters.ts';
+import type { Fighters } from '../src/game/combat.ts';
 import { xpForLevel } from '../src/game/party.ts';
 import { MEMBERS } from '../src/content/progression.ts';
 
@@ -233,3 +234,20 @@ export function testBasilisk(level: number): MonsterDef {
 }
 /** The mesa (§8.3's fight): a basilisk in a controller's one share behind three lions in a skirmisher's three, the test skirmisher. */
 export const basiliskEncounter = (level: number): MonsterDef[] => [...Array.from({ length: 3 }, () => testMonster('skirmisher', level)), testBasilisk(level)];
+
+// Act V's clock on the test monsters (docs/MONSTERS.md §9.3, #748), as the plan gives it.
+
+/** The Core's clock (docs/areas/hearth_isle.md §4.8): a call every CLOCK.every rounds, the light at a thread in CLOCK.dims. */
+export const CLOCK = { every: 2, dims: 8 };
+
+/**
+ * The Heart's fight (§9.3), whose Vask, Grey Hands and Core Sentries the plan sizes as the test boss,
+ * elite and soldier, the last two a level under: the test boss leading three of the test elite at the
+ * clock's panel, both steady, calling the test soldier, a machine that obeys, while one of them stands.
+ */
+export function clockEncounter(level: number): Fighters {
+  const lord: MonsterDef = { ...testMonster('boss', level), id: `test_lord_${level}`, name: 'Test Lord', plural: 'Test Lords', steady: true };
+  const hand: MonsterDef = { ...testMonster('elite', level - 1), id: `test_hand_${level - 1}`, name: 'Test Hand', plural: 'Test Hands', steady: true };
+  const sentry: MonsterDef = { ...testMonster('soldier', level - 1), id: `test_sentry_${level - 1}`, name: 'Test Sentry', plural: 'Test Sentries', kind: 'machine', obeys: true };
+  return { monsters: [lord, hand, hand, hand], leader: lord.id, clock: { calls: sentry, every: CLOCK.every, dims: CLOCK.dims, panel: [hand.id] } };
+}
