@@ -25,23 +25,20 @@ import { AREA as rimewater } from './areas/rimewater/index.ts';
 import { AREA as whitespine } from './areas/whitespine/index.ts';
 import { AREA as ashfall } from './areas/ashfall/index.ts';
 import { AREA as glasswold } from './areas/glasswold/index.ts';
-import * as hearth from './areas/hearth/monsters.ts';
-import * as hearthRooms from './areas/hearth/interiors.ts';
+import { AREA as hearth } from './areas/hearth/index.ts';
 import { ITEMS as CORE_ITEMS } from './items.ts';
 import { SPELLS as ALL_SPELLS } from './spells.ts';
 import { PLAN } from './atlas.ts';
 
 /** The areas in road order. The order is behaviour: a new game starts on the first area's first map. */
-export const AREAS = [shelf, thornmark, saltreach, wrackholm, sunderwood, kilns, cairnmoor, rimewater, whitespine, ashfall, glasswold] as const;
+export const AREAS = [shelf, thornmark, saltreach, wrackholm, sunderwood, kilns, cairnmoor, rimewater, whitespine, ashfall, glasswold, hearth] as const;
 
 /**
  * Monsters drawn ahead of their area: an area is listed in AREAS only once it has a map to start
  * on, and its monsters may be drawn before that. Each is merged into MONSTERS and MonsterSprite as
  * an area's are; once the area is listed, its Area takes the import and its line here goes.
  */
-export const AHEAD = [
-  { id: 'hearth' as const, sprites: hearth.SPRITES, monsters: hearth.MONSTERS },
-] as const;
+export const AHEAD = [] as const;
 
 /**
  * Rooms drawn ahead of their area, as AHEAD's monsters are: an area's businesses' rooms may be
@@ -49,9 +46,7 @@ export const AHEAD = [
  * area's is (src/ui/interior.ts paints every one); once the area is listed, its Area takes the
  * list as `interiors` and its line here goes.
  */
-export const ROOMS_AHEAD = [
-  { id: 'hearth' as const, interiors: hearthRooms.INTERIORS },
-] as const;
+export const ROOMS_AHEAD = [] as const;
 
 /**
  * Items made ahead of their area, as AHEAD's monsters are: the gear ladder's steps are priced, and

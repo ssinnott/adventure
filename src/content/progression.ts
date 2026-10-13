@@ -40,7 +40,7 @@ export const MEMBERS = 6;
  * The areas next on the road that have a row before they have a map, in road order. An area leaves
  * this list when its first map lists it in AREAS; the curve check fails while it is in both.
  */
-export const PLANNED = ['hearth'] as const;
+export const PLANNED = [] as const;
 
 /** Every area's row, and every planned area's: an area without one is a type error. */
 export const CURVE: Record<RegionId | (typeof PLANNED)[number], AreaCurve> = {
@@ -90,7 +90,7 @@ export const CURVE: Record<RegionId | (typeof PLANNED)[number], AreaCurve> = {
   // found, never sold, the dearest 7,000 (docs/areas/hearth_isle.md §8).
   hearth: {
     band: [28, 32], next: 32, price: 7000,
-    owed: { whose: '#744', why: 'Hearth Isle is not built yet', xp: 0, gold: 0 },
+    owed: { whose: '#744', why: 'Hearth Isle is built box by box', xp: 5009, gold: 700 },
   },
 };
 

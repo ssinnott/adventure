@@ -109,6 +109,15 @@ export function outdoors(): void {
   ok(southOf(l3) === 'T'.repeat(16) + 'ttt~~tt' + 'T'.repeat(9) && northOf(l4) === 'T'.repeat(19) + '~~tt' + 'T'.repeat(8) + 'M', `L3's south edge and L4's north edge are the wood, the river and the path on its east bank (${southOf(l3)}; ${northOf(l4)})`);
   ok(eastOf(k4) === 'M' + 'T'.repeat(28) + '_~W' && westOf(l4) === 'T'.repeat(29) + '_~~', `K4's east edge and L4's west edge are closed forest, but for the shingle along the bay (${eastOf(k4)}; ${westOf(l4)})`);
   ok(/^r+$/.test(westOf(k4)) && eastOf(j4) === 'T'.repeat(17) + '_~~' + 'W'.repeat(12), `K4's west edge is rock against the Deepthorn's J4, its shore and its sea, so no way opens between the two areas (${westOf(k4)})`);
+  // Hearth Isle's isle (H6, #753), reached by the last crossing's boat: its north edge is the shallows
+  // and the rim's rock against H5, which is unlaid, so row 0 is the world's end, and so are its west and
+  // south edges, the Sound. Its east edge meets I6 (#754) square for square on rows 0 to 30: the rim's
+  // rock on rows 0 to 11 and 21 to 28, the Bowl's grass on rows 12 to 20 and the strand on 29 and 30.
+  const h6 = out.zones.find((z) => z.id === 'hearthisle_h6')!;
+  ok(northOf(h6) === 'W'.repeat(10) + '~'.repeat(5) + 'r'.repeat(17) && [...Array(32).keys()].every((i) => [out.at(h6.x + i, h6.y - 1), out.at(h6.x - 1, h6.y + i), out.at(h6.x + i, h6.y + 32)].every((c) => c.ch === '%')),
+    `H6's north edge is the shallows and the rim's rock against H5, and past it, its west edge and its south edge the world ends (${northOf(h6)})`);
+  ok(/^W+$/.test(westOf(h6)) && southOf(h6) === 'W'.repeat(14) + '~'.repeat(5) + ','.repeat(7) + '__' + '~'.repeat(4) && eastOf(h6) === 'r'.repeat(12) + ','.repeat(9) + 'r'.repeat(8) + ',_~',
+    `H6's west edge is the Sound, its south edge the Sound and the strand's water's edge, and its east edge against I6 the rim's rock but for the Bowl's grass on rows 12 to 20 and the strand on 29 and 30 (${southOf(h6)}; ${eastOf(h6)})`);
   ok(/^T+$/.test(eastOf(l3)) && eastOf(l4) === 'M'.repeat(31) + '%' && southOf(l4) === '~~~~' + '%'.repeat(28) && southOf(k4) === 'r' + 'W'.repeat(31), `L3's east edge is closed forest against M3, L4's east edge the range against M4 (#474), and L4's south edge and K4's the world's end and the bay (${eastOf(l4)}; ${southOf(l4)})`);
   // The Iron Fells' way in (M3, #457): in from M2 by the road over the ridge, Lanternwood's trees
   // closed against L3 on its west, and open land east into N3 (#458) with the trail through it; its
