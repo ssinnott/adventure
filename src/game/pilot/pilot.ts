@@ -55,7 +55,7 @@ export class Pilot {
   plan: Action[] = [];
   /** The navigator's reckoning of its goal between beats (route.ts). */
   trip: Trip | null = null;
-  /** Ways refused the navigator three times, walls to it after: the square, on the map as played, and the line it was told there (#718 comes back to them). */
+  /** Ways refused the navigator three times on one goal, each once: the square, on the map as played, and the line it was told there, '' when the log has lost it (#718 comes back to them). */
   readonly shut: { map: string; x: number; y: number; why: string }[] = [];
   /** The why a brain said as it gave no key (a goal given up): it stays up until a brain presses one. */
   private kept: [string, string?] | null = null;

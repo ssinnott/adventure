@@ -2,16 +2,18 @@
 // and by ways off a map it has seen, pressed as a player would press it, a step or a turn a beat. It
 // never steps back or aside, so the viewer sees the party face where it goes. It reads the world only
 // through Known: a secret door is a wall to it until a search finds it, a lock a door until it is
-// tried, and a gate is learnt by trying it; a way shut to it is a wall to it on every goal after.
-// Bound off a map, it takes the first way off on a route there that it has seen a way to, so of two
-// into one map, one refused or out of reach, it takes the other. A person, a business, a den, a way
-// off and a tear into a Rift are stops: a route ends on one when bound there and goes round it else,
-// over a person or a den in the open only where it has seen no way round, and the step onto it, taken,
-// ends the trip, so what opens there is another brain's (#719, #721). A route is a plan, not a lock: a
-// fight or a message on the way plays out and the walk goes on, and wherever the party stands that the
-// plan did not put it, it plans again. It presses keys only on the street, but for Esc to the question
-// of a person or a den it passes over, as a player passing would: any other menu is another brain's,
-// or the screen's own, and it waits on it, bound still.
+// tried, and a gate is learnt by trying it. A way refused three times on one goal is shut and told to
+// the explorer (#718); the next goal tries it afresh, as a tide may have gone out. Bound off a map, it
+// takes the first way off on a route there with a way it has seen to each way off on it, from where it
+// stands and from where the one before lands, so of two into one map, one refused or out of reach on
+// any map between, it takes the other. A person, a business, a den, a way off and a tear into a Rift
+// are stops: the brain's route (walkOn) ends on one when bound there and goes round it else, over a
+// person or a den in the open only where it has seen no way round, and the step onto it, taken, ends
+// the trip, so what opens there is another brain's (#719, #721); routeOn, as #717 gives it, goes over
+// them. A route is a plan, not a lock: a fight or a message on the way plays out and the walk goes on,
+// and wherever the party stands that the plan did not put it, it plans again. It presses keys only on
+// the street, but for Esc to the question of a person or a den it passes over, as a player passing
+// would: any other menu is another brain's, or the screen's own, and it waits on it, bound still.
 import type { Game } from '../game.ts';
 import { ExploreScreen } from '../game.ts';
 import { ChoiceScreen } from '../../ui/screens.ts';
@@ -76,37 +78,47 @@ function opens(k: Known, map: string, held: readonly { x: number; y: number }[])
   };
 }
 
-/**
- * The keys from (x, y, facing) to (tx, ty) over seen, passable squares of one map, round a group in
- * sight and the squares in `aside`, and round every stop that is not (tx, ty) while it has seen a way
- * round, else over a person or a den in the open, as Saltmouth's quay is past its stevedore; none
- * from (tx, ty) itself, and null when there is no way. Turning costs 1, a step 1.
- */
-export function routeOn(k: Known, map: string, x: number, y: number, facing: Facing, tx: number, ty: number, aside: readonly { x: number; y: number }[] = []): Action[] | null {
+/** The keys from (x, y, facing) to (tx, ty) by the squares `walks` steps onto; none from (tx, ty) itself, and null when there is no way. Turning costs 1, a step 1. */
+function keysTo(walks: (x: number, y: number) => boolean, x: number, y: number, facing: Facing, tx: number, ty: number): Action[] | null {
   if (x === tx && y === ty) return [];
   const id = (cx: number, cy: number, f: Facing): number => (cy * SPAN + cx) * 4 + f, first = id(x, y, facing);
-  for (const all of [true, false]) {
-    const walks = opens(k, map, [...aside, ...stops(k, map, all).filter((q) => q.x !== tx || q.y !== ty)]);
-    // Breadth first over the square and the facing, each move a key.
-    const came = new Map<number, { from: number; key: Action }>([[first, { from: first, key: 'forward' }]]);
-    const queue: [number, number, Facing][] = [[x, y, facing]];
-    for (let i = 0; i < queue.length; i++) {
-      const [cx, cy, f] = queue[i], here = id(cx, cy, f);
-      const moves: [Action, number, number, Facing][] = [['forward', cx + FACING_DX[f], cy + FACING_DY[f], f], ['turnLeft', cx, cy, turnLeft(f)], ['turnRight', cx, cy, turnRight(f)]];
-      for (const [key, mx, my, mf] of moves) {
-        if (key === 'forward' && !walks(mx, my)) continue;
-        // Only a step onto it arrives: a turn on it is the party standing there still.
-        if (key === 'forward' && mx === tx && my === ty) {
-          const keys: Action[] = [key];
-          for (let s = here; s !== first; s = came.get(s)!.from) keys.unshift(came.get(s)!.key);
-          return keys;
-        }
-        const there = id(mx, my, mf);
-        if (came.has(there)) continue;
-        came.set(there, { from: here, key });
-        queue.push([mx, my, mf]);
+  // Breadth first over the square and the facing, each move a key.
+  const came = new Map<number, { from: number; key: Action }>([[first, { from: first, key: 'forward' }]]);
+  const queue: [number, number, Facing][] = [[x, y, facing]];
+  for (let i = 0; i < queue.length; i++) {
+    const [cx, cy, f] = queue[i], here = id(cx, cy, f);
+    const moves: [Action, number, number, Facing][] = [['forward', cx + FACING_DX[f], cy + FACING_DY[f], f], ['turnLeft', cx, cy, turnLeft(f)], ['turnRight', cx, cy, turnRight(f)]];
+    for (const [key, mx, my, mf] of moves) {
+      if (key === 'forward' && !walks(mx, my)) continue;
+      // Only a step onto it arrives: a turn on it is the party standing there still.
+      if (key === 'forward' && mx === tx && my === ty) {
+        const keys: Action[] = [key];
+        for (let s = here; s !== first; s = came.get(s)!.from) keys.unshift(came.get(s)!.key);
+        return keys;
       }
+      const there = id(mx, my, mf);
+      if (came.has(there)) continue;
+      came.set(there, { from: here, key });
+      queue.push([mx, my, mf]);
     }
+  }
+  return null;
+}
+
+/** The keys from (x, y, facing) to (tx, ty) over seen, passable squares of one map, round a group in sight; null when none. Turning costs 1, a step 1. */
+export function routeOn(k: Known, map: string, x: number, y: number, facing: Facing, tx: number, ty: number): Action[] | null {
+  return keysTo(opens(k, map, []), x, y, facing, tx, ty);
+}
+
+/**
+ * The route the brain walks: routeOn's, round the squares in `aside`, and round every stop that is
+ * not (tx, ty) while it has seen a way round, else over a person or a den in the open, as Saltmouth's
+ * quay is past its stevedore.
+ */
+export function walkOn(k: Known, map: string, x: number, y: number, facing: Facing, tx: number, ty: number, aside: readonly { x: number; y: number }[] = []): Action[] | null {
+  for (const all of [true, false]) {
+    const keys = keysTo(opens(k, map, [...aside, ...stops(k, map, all).filter((q) => q.x !== tx || q.y !== ty)]), x, y, facing, tx, ty);
+    if (keys) return keys;
   }
   return null;
 }
@@ -122,8 +134,8 @@ function offAndOn(k: Known, map: string, x: number, y: number, facing: Facing, a
   return off ? [...off[1], 'forward', 'turnLeft', 'turnLeft', 'forward'] : null;
 }
 
-/** The maps and exits from `from` to `to` over visited maps' seen exits, by none out of `from` on a square of `skip`; null when none. */
-export function routeMaps(k: Known, from: string, to: string, skip: readonly { x: number; y: number }[] = []): { map: string; exit: Exit }[] | null {
+/** The maps and exits from `from` to `to` over visited maps' seen exits, by none on a square of `skip` on its map; null when none. */
+export function routeMaps(k: Known, from: string, to: string, skip: readonly { map: string; x: number; y: number }[] = []): { map: string; exit: Exit }[] | null {
   // A zone's id is the outdoors': from one zone to the next is walking, no exit.
   from = k.mapOf(from); to = k.mapOf(to);
   if (from === to) return [];
@@ -131,7 +143,7 @@ export function routeMaps(k: Known, from: string, to: string, skip: readonly { x
   for (let i = 0; i < queue.length; i++) {
     for (const exit of k.exits(queue[i])) {
       const next = exit.to;
-      if (next === from || came.has(next) || (next !== to && !visited.has(next)) || (i === 0 && skip.some((q) => q.x === exit.x && q.y === exit.y))) continue;
+      if (next === from || came.has(next) || (next !== to && !visited.has(next)) || skip.some((q) => q.map === queue[i] && q.x === exit.x && q.y === exit.y)) continue;
       came.set(next, { map: queue[i], exit });
       if (next === to) {
         const hops: { map: string; exit: Exit }[] = [];
@@ -145,16 +157,21 @@ export function routeMaps(k: Known, from: string, to: string, skip: readonly { x
 }
 
 /**
- * The keys from where the party stands to `at`, round the squares in `aside`: on its map, to it; off
- * it, to the first way off on a route there that it has seen a way to; null when none.
+ * The keys from where the party stands to `at`, round the squares in `aside` on each map: on its map,
+ * to it; off it, to the first way off on a route there with a way it has seen to each way off on it,
+ * from where it stands and from where the one before lands; null when none.
  */
-function wayTo(k: Known, st: { mapId: string; x: number; y: number; facing: Facing }, at: { mapId: string; x: number; y: number }, aside: readonly { x: number; y: number }[]): Action[] | null {
-  if (at.mapId === st.mapId) return routeOn(k, st.mapId, st.x, st.y, st.facing, at.x, at.y, aside);
-  const skip: Exit[] = [];
-  for (let exit = routeMaps(k, st.mapId, at.mapId)?.[0]?.exit; exit; exit = routeMaps(k, st.mapId, at.mapId, skip)?.[0]?.exit) {
-    const keys = routeOn(k, st.mapId, st.x, st.y, st.facing, exit.x, exit.y, aside);
-    if (keys) return keys;
-    skip.push(exit);
+function wayTo(k: Known, st: { mapId: string; x: number; y: number; facing: Facing }, at: { mapId: string; x: number; y: number }, aside: readonly { map: string; x: number; y: number }[]): Action[] | null {
+  const on = (map: string, x: number, y: number, f: Facing, tx: number, ty: number): Action[] | null => walkOn(k, map, x, y, f, tx, ty, aside.filter((q) => q.map === map));
+  if (at.mapId === st.mapId) return on(st.mapId, st.x, st.y, st.facing, at.x, at.y);
+  const skip: { map: string; x: number; y: number }[] = [];
+  for (let hops = routeMaps(k, st.mapId, at.mapId); hops; hops = routeMaps(k, st.mapId, at.mapId, skip)) {
+    // The first way off on it with no way it has seen to it, from where it stands or where the way
+    // before lands it; where that way gives no facing, any will do, as the party can always turn.
+    const keys = on(st.mapId, st.x, st.y, st.facing, hops[0].exit.x, hops[0].exit.y), by = (i: number): Exit => hops[i - 1].exit;
+    const cut = keys ? hops.findIndex((h, i) => i > 0 && !on(h.map, by(i).tx, by(i).ty, by(i).tf ?? st.facing, h.exit.x, h.exit.y)) : 0;
+    if (cut < 0) return keys;
+    skip.push({ map: hops[cut].map, x: hops[cut].exit.x, y: hops[cut].exit.y });
   }
   return null;
 }
@@ -193,19 +210,18 @@ export const route: Brain = (g, k, p) => {
   if (last && (st.mapId !== last.map || st.x !== last.x || st.y !== last.y || st.facing !== last.facing)) {
     p.plan = [];
     if (last.step && st.mapId === last.map && st.steps === last.steps && trip.refused.push({ map: last.map, x: last.x, y: last.y }) >= BLOCKS) {
-      p.shut.push({ map: last.map, x: last.x, y: last.y, why: g.log[g.log.length - (g.said - last.said)] ?? '' });
+      // Told to the explorer once, with the line it was refused with, if the log has it still.
+      if (!p.shut.some((q) => q.map === last.map && q.x === last.x && q.y === last.y)) p.shut.push({ map: last.map, x: last.x, y: last.y, why: g.log[g.log.length - (g.said - last.said)] ?? '' });
       p.why = [`${upper(goal.name)} is shut to me.`];
       return done();
     }
   }
   if (!p.plan.length) {
-    // Round the ways shut to it, and the squares refused on the way while it has seen a way round;
-    // else at those again.
-    const shut = p.shut.filter((q) => q.map === st.mapId), aside = [...shut, ...trip.refused.filter((q) => q.map === st.mapId)];
-    let keys = wayTo(k, st, at, aside) ?? wayTo(k, st, at, shut);
+    // Round the squares refused on the way while it has seen a way round; else at them again.
+    let keys = wayTo(k, st, at, trip.refused) ?? wayTo(k, st, at, []);
     // Landed on the way off it must take, as Brandy Hole lands a company on the square it climbs out
     // by: it steps off onto an open square beside it and back on, round those refused while it can.
-    if (keys?.length === 0) keys = offAndOn(k, st.mapId, st.x, st.y, st.facing, aside) ?? offAndOn(k, st.mapId, st.x, st.y, st.facing, shut);
+    if (keys?.length === 0) keys = offAndOn(k, st.mapId, st.x, st.y, st.facing, trip.refused.filter((q) => q.map === st.mapId)) ?? offAndOn(k, st.mapId, st.x, st.y, st.facing);
     if (!keys?.length) { p.why = [`No way to ${goal.name} that I have seen.`]; return done(); }
     p.plan = keys;
   }
