@@ -812,6 +812,9 @@ export function zoneEdges(atlas: Atlas, defs: readonly MapDef[]): ZoneEdge[] {
   const kindOf = new Map(defs.map((d) => [d.id, d.kind]));
   const edges: ZoneEdge[] = [];
   for (const d of defs) for (const e of d.exits ?? []) {
+    // Only `needFlag` is a gate on the overlay. A `shut` turns back some companies, not the way, so
+    // its `lifts` has nothing here to lift; an `after` is an appearance, no lock (#749), so its way
+    // is drawn as the built way it is.
     const gate = [e.needFlag ?? []].flat();
     const back = edges.find((x) => x.from === e.to && x.to === d.id && !x.planned);
     if (back) { back.both = true; back.gate = [...new Set([...back.gate, ...gate])]; continue; }
@@ -913,7 +916,8 @@ export function homeMap(defs: readonly MapDef[], mapId: string): MapDef | undefi
   while (frontier.length) {
     const next: string[] = [];
     for (const id of frontier) for (const e of byId.get(id)?.exits ?? []) {
-      if (seen.has(e.to)) continue;
+      // An exit that is there only `after` something (#749) is no way the place opens onto.
+      if (seen.has(e.to) || e.after) continue;
       seen.add(e.to);
       const d = byId.get(e.to);
       if (d?.kind === 'outdoor') return d;
