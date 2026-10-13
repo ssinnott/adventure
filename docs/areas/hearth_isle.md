@@ -1642,6 +1642,23 @@ overturn before the issue that builds each is approved.
     the endings with the Hearth's three states; the save upgrade; the gate and the harness to 32.
     There is no ninth.
 
+### 9.2 Decided while building
+
+Decided by delegate for #747, each the owner's to overturn:
+
+1. **The leave rule is `leaves: true` on a group, beside its `until`** (`EncounterDef`): the smallest
+   change, with `until` and `ended` untouched, so every group without it keeps today's rule (the
+   Kilns' strays). Not on `Presence`, since a person or an event goes by `until` alone, nor a form of
+   `until`, which the quest log reads.
+2. **One check, in `World.liveGroups`**, which every reader of a standing group goes through. The
+   group's record is left as it stood, so leaving is no kill (no `slainText`, none of its `sets`, no
+   `slain`) and nothing new is saved.
+3. **`gone` in `tools/walk.ts` plays a group leaving, and `fight` there fails on one that has left**,
+   so no walkthrough wins a fight with a group that is gone and sets its flags. The cases are
+   fixtures in Helmstow; no real group leaves until the boxes place one.
+4. **Read from the flags, as a person's going is:** a group whose `until` stopped holding would be
+   back where it stood. Each `until` the plan gives is a flag that stays set.
+
 ## 10. Names
 
 The Lanterns' English, kept, as the Whitespine's and Sunderwood's were (NAMES.md §2, §4): the isle
