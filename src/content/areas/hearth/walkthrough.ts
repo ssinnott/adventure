@@ -6,11 +6,14 @@
 // each token another way; the Hearth, the warm ground and the Grove's sliver humming for a company that
 // carries it; the temple's door, a building until the temple is built (#755); the lookouts; the cache
 // found from the draught; the moths by night; the Compact's runner or the Wardens' sergeant; and the
-// box's groups won at 28.
+// box's groups won at 28. Then the east rim (I6, #754): the rim's path from the Bowl with the pocket's
+// fight, Anchorhold's yard and the cell, the east foot, the Hand's camp and its guard, the Steps, the grey
+// door read, the takings found from the tally-house and the smell, the moths by night and the guard gone
+// once Vask is gone from Helmstow.
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, see, fight, listen } from '../../../../tools/walk.ts';
+import { newWalk, see, fight, gone as left, listen } from '../../../../tools/walk.ts';
 import type { Walk } from '../../../../tools/walk.ts';
-import { NORTH } from '../../../game/types.ts';
+import { NORTH, WEST } from '../../../game/types.ts';
 import { ATLAS, MAP_DEFS } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
@@ -22,6 +25,7 @@ import { questLog } from '../../../game/quests.ts';
 import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
 import { LAST_CROSSING } from '../../crossings.ts';
 import { COMPACT_OVER, COMPACT_WARDENS } from '../saltreach/maps/saltmouth.ts';
+import { THRONE_REMOVED } from '../shelf/maps/keep.ts';
 import { STRAND, PILGRIMS, TOKEN_COUSIN, TOKEN_HOLD, TOKEN_TALLIS } from './maps/hearthisle_h6.ts';
 
 const H6 = MAP_DEFS.find((d) => d.id === 'hearthisle_h6')!;
@@ -38,8 +42,8 @@ export const walkthrough: Walkthrough = (ok) => {
 
   // The last crossing, bought at Cinderport's quay from the harbourmaster: it leaves at 20:00 and grounds
   // on the strand at the cleft's foot, 20,30, facing north, the afternoon after (#547; §4.2).
-  ok(ISLE.maps?.length === 1 && ISLE.maps[0].map === 'hearthisle_h6' && !!ISLE.crossing?.harder && !!ISLE.crossing?.warning && H6.density === 'core' && H6.band?.join() === '28,29',
-    'Hearth Isle holds H6, core, band 28-29, and has its crossing words');
+  ok(ISLE.maps?.map((m) => m.map).join() === 'hearthisle_h6,hearthisle_i6' && !!ISLE.crossing?.harder && !!ISLE.crossing?.warning && H6.density === 'core' && H6.band?.join() === '28,29',
+    'Hearth Isle holds H6 and I6, H6 core, band 28-29, and has its crossing words');
   const port = MAP_DEFS.find((d) => d.id === 'cinderport')!.features!.find((f): f is Person => f.kind === 'npc' && (f.passage ?? []).some((p) => p.to === 'hearthisle_h6'))!;
   const [over] = port?.passage?.filter((p) => p.to === 'hearthisle_h6') ?? [];
   const landing = LAST_CROSSING.ends.find((e) => e.at === 'hearthisle')!;
@@ -161,4 +165,59 @@ export const walkthrough: Walkthrough = (ok) => {
   for (const id of ['h6_moths1', 'h6_moths2', 'h6_rim', 'h6_rats']) fight(w, `hearthisle_h6:${id}`);
   ok(H6.encounters!.find((g) => g.id === 'h6_rim')?.roams === true && H6.encounters!.filter((g) => g.id === 'h6_picket1' || g.id === 'h6_sermon').every((g) => g.roams === false),
     'the champions on the west shelf roam; the cleft\'s picket and the preacher\'s group stand');
+
+  // The east rim (I6, #754), walked on from the Bowl by day: the champions in the Bowl's east pocket where
+  // the rim's path begins, and the path carved through the rim's rock into Anchorhold's yard under the
+  // cell and on out to the east foot, north under the rim to the Wyke.
+  delete w.party.flags[COMPACT_WARDENS];
+  at(w, 12);
+  const I6 = MAP_DEFS.find((d) => d.id === 'hearthisle_i6')!, i6 = out.zones.find((z) => z.id === 'hearthisle_i6')!;
+  const rim = (x: number, y: number): string => out.at(i6.x + x, i6.y + y).ch;
+  ok(I6.density === 'core' && I6.band?.join() === '28,29' && i6.x === 264 && i6.y === 158 && ISLE.maps![1].at.join() === '264,158', 'I6 is laid at 264,158, core, band 28-29');
+  fight(w, 'hearthisle_i6:i6_rim');
+  const yard = [2, 3, 4, 5].flatMap((x) => [19, 20].map((y) => rim(x, y)));
+  ok([[1, 18], [2, 18], [6, 19], [7, 19]].every(([x, y]) => rim(x, y) === ':') && yard.every((c) => c === ':') && rim(0, 18) === ',' && rim(8, 19) === ',' && rim(4, 18) === 'B',
+    'the rim\'s path is carved from the Bowl\'s grass at 0,18 through the rock into Anchorhold\'s yard, 2-5,19-20, and out to the east foot at 8,19; the cell at 4,18 is built into the rim');
+  const anchorhold = ATLAS.sites.find((s) => s.name === 'Anchorhold')!;
+  ok(!anchorhold.planned && anchorhold.at[0] === i6.x + 4 && anchorhold.at[1] === i6.y + 18 && !I6.features!.some((f) => f.x === 4 && f.y === 19),
+    'Anchorhold\'s site, built, is the cell at 4,18, and the square under its window, 4,19, is left for the anchoress (#763)');
+  for (const id of ['i6_wall', 'i6_cell', 'i6_path', 'i6_keel', 'i6_wyke']) see(w, `hearthisle_i6:${id}`);
+  ok(['i6_wall', 'i6_cell', 'i6_path', 'i6_keel', 'i6_wyke'].every((id) => w.world.used(id)), 'the hours scratched on the cell, its window, the causeway from the path, the keel and the Wyke');
+
+  // The Hand's camp at the stair's head: its guard, gone once Vask is gone from Helmstow (#747) and back
+  // where it stood if not, and the two at the stair's head; the camp, its crates and its chest; the Steps.
+  const guard = I6.encounters!.find((g) => g.id === 'i6_guard')!;
+  ok(guard.leaves === true && JSON.stringify(guard.until) === JSON.stringify({ flag: THRONE_REMOVED }) && guard.roams === false && guard.monsters.includes('ashen_preacher'), 'the camp\'s guard and its preacher stand, and leave once the Council has removed Vask');
+  w.party.flags[THRONE_REMOVED] = 1;
+  left(w, 'hearthisle_i6:i6_guard');
+  delete w.party.flags[THRONE_REMOVED];
+  fight(w, 'hearthisle_i6:i6_guard');
+  fight(w, 'hearthisle_i6:i6_guard2');
+  for (const id of ['i6_camp', 'i6_crates', 'i6_steps']) see(w, `hearthisle_i6:${id}`);
+  const staff = I6.features!.find((f) => f.kind === 'chest' && f.id === 'i6_camp_chest');
+  ok(staff?.kind === 'chest' && staff.gold === 500 && staff.items.join() === 'grey_staff' && w.world.used('i6_steps'), 'in the camp\'s chest, 500 gold and a Grey Staff; the causeway comes up out of the sea at the Steps');
+
+  // The grey door at the camp's back, read from the grass below it: no exit, and no lock.
+  see(w, 'hearthisle_i6:i6_door');
+  see(w, 'hearthisle_i6:i6_knot');
+  ok(rim(5, 22) === 'r' && !(I6.exits ?? []).length && w.world.used('i6_door') && w.world.used('i6_knot'), 'the grey door at 5,22 is the rim\'s rock, read and never opened');
+
+  // The secret: the tally-house against the rim and the smell at its foot, the rock behind it that opens
+  // on a search, and the Hand's takings in the pocket behind.
+  see(w, 'hearthisle_i6:i6_tally');
+  see(w, 'hearthisle_i6:i6_smell');
+  const [pocket] = I6.secrets!;
+  w.world.travel('hearthisle_i6', pocket.x + 1, pocket.y, WEST);
+  let found = false;
+  for (let i = 0; i < 20 && !found; i++) found = w.world.search();
+  const into = found ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(found && into.every((r) => r.kind === 'moved') && w.world.used('i6_takings'), 'searched behind the tally-house, the rock opens, and the pocket behind it is walked into');
+  listen(w);
+  const hoard = I6.features!.find((f) => f.kind === 'chest' && f.id === 'i6_hoard');
+  ok(hoard?.kind === 'chest' && hoard.gold === 1200 && hoard.items.join() === 'grey_mail' && hoard.x === pocket.x - 2 && hoard.y === pocket.y, 'in the Hand\'s hoard, 1,200 gold and the Grey Mail');
+
+  // The moths over Anchorhold's yard by night.
+  ok(JSON.stringify(I6.encounters!.find((g) => g.id === 'i6_moths')?.when) === JSON.stringify({ hours: 'night' }), 'the moths come over the yard by night');
+  at(w, 23);
+  fight(w, 'hearthisle_i6:i6_moths');
 };
