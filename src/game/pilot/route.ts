@@ -6,14 +6,16 @@
 // the explorer (#718); the next goal tries it afresh, as a tide may have gone out. Bound off a map, it
 // takes the first way off on a route there with a way it has seen to each way off on it, from where it
 // stands and from where the one before lands, so of two into one map, one refused or out of reach on
-// any map between, it takes the other. A person, a business, a den, a way off and a tear into a Rift
-// are stops: the brain's route (walkOn) ends on one when bound there and goes round it else, over a
-// person or a den in the open only where it has seen no way round, and the step onto it, taken, ends
-// the trip, so what opens there is another brain's (#719, #721); routeOn, as #717 gives it, goes over
-// them. A route is a plan, not a lock: a fight or a message on the way plays out and the walk goes on,
-// and wherever the party stands that the plan did not put it, it plans again. It presses keys only on
-// the street, but for Esc to the question of a person or a den it passes over, as a player passing
-// would: any other menu is another brain's, or the screen's own, and it waits on it, bound still.
+// any map between, it takes the other. A group seen on a map stands, to it, where it was last seen
+// there while it is elsewhere, so it never walks back to a way it turned from. A person, a business, a
+// den, a way off and a tear into a Rift are stops: the brain's route (walkOn) ends on one when bound
+// there and goes round it else, over a person or a den in the open only where it has seen no way
+// round, and the step onto it, taken, ends the trip, so what opens there is another brain's (#719,
+// #721); routeOn, as #717 gives it, goes over them. A route is a plan, not a lock: a fight or a message
+// on the way plays out and the walk goes on, and wherever the party stands that the plan did not put
+// it, it plans again. It presses keys only on the street, but for Esc to the question of a person or a
+// den it passes over, as a player passing would: any other menu is another brain's, or the screen's
+// own, and it waits on it, bound still.
 import type { Game } from '../game.ts';
 import { ExploreScreen } from '../game.ts';
 import { ChoiceScreen } from '../../ui/screens.ts';
@@ -29,14 +31,16 @@ export interface Goal { map: string; x: number; y: number; /** What the why line
 
 /**
  * The navigator's reckoning of its goal, kept between beats: the goal, the lines said before it was
- * set, the squares a step onto was refused on the way, on the map as played, and where the last key
- * should leave the party, with whether it was a step, and one onto the stop it is bound for, and the
- * steps walked and lines said as it was pressed.
+ * set, the squares a step onto was refused on the way, on the map as played, the groups in sight on
+ * each map as it last planned there, and where the last key should leave the party, with whether it
+ * was a step, and one onto the stop it is bound for, and the steps walked and lines said as it was
+ * pressed.
  */
 export interface Trip {
   goal: Goal;
   said: number;
   refused: { map: string; x: number; y: number }[];
+  groups: { map: string; x: number; y: number }[];
   last?: { map: string; x: number; y: number; facing: Facing; step: boolean; stop: boolean; steps: number; said: number };
 }
 
@@ -105,6 +109,28 @@ function keysTo(walks: (x: number, y: number) => boolean, x: number, y: number, 
   return null;
 }
 
+/**
+ * Whether a walk from (x, y), by the squares `walks` steps onto, reaches a square or one beside it, a
+ * square and every facing on it as one: it spreads no further than each answer needs, and is kept.
+ */
+function reaches(walks: (x: number, y: number) => boolean, x: number, y: number): (tx: number, ty: number) => boolean {
+  const near = new Set([y * SPAN + x]), queue: [number, number][] = [[x, y]];
+  let i = 0;
+  return (tx, ty) => {
+    if (near.has(ty * SPAN + tx) || FACING_DX.some((dx, d) => near.has((ty - FACING_DY[d]) * SPAN + tx - dx))) return true;
+    for (; i < queue.length; i++) {
+      for (let f = 0; f < 4; f++) {
+        const nx = queue[i][0] + FACING_DX[f], ny = queue[i][1] + FACING_DY[f];
+        if (near.has(ny * SPAN + nx) || !walks(nx, ny)) continue;
+        near.add(ny * SPAN + nx);
+        queue.push([nx, ny]);
+        if (Math.abs(nx - tx) + Math.abs(ny - ty) <= 1) return true;
+      }
+    }
+    return false;
+  };
+}
+
 /** The keys from (x, y, facing) to (tx, ty) over seen, passable squares of one map, round a group in sight; null when none. Turning costs 1, a step 1. */
 export function routeOn(k: Known, map: string, x: number, y: number, facing: Facing, tx: number, ty: number): Action[] | null {
   return keysTo(opens(k, map, []), x, y, facing, tx, ty);
@@ -162,7 +188,16 @@ export function routeMaps(k: Known, from: string, to: string, skip: readonly { m
  * from where it stands and from where the one before lands; null when none.
  */
 function wayTo(k: Known, st: { mapId: string; x: number; y: number; facing: Facing }, at: { mapId: string; x: number; y: number }, aside: readonly { map: string; x: number; y: number }[]): Action[] | null {
-  const on = (map: string, x: number, y: number, f: Facing, tx: number, ty: number): Action[] | null => walkOn(k, map, x, y, f, tx, ty, aside.filter((q) => q.map === map));
+  const here = (map: string): { x: number; y: number }[] => aside.filter((q) => q.map === map);
+  // A route is sought only to a square in reach, as a search for one out of reach is long: where a walk
+  // round every stop no step gets past, as walkOn goes at its widest, stands on it, or reaches beside it
+  // and it is open. The walk from each square is kept for every way off sought from there.
+  const walked = new Map<string, (tx: number, ty: number) => boolean>();
+  const on = (map: string, x: number, y: number, f: Facing, tx: number, ty: number): Action[] | null => {
+    const from = `${map} ${x} ${y}`, near = walked.get(from) ?? reaches(opens(k, map, [...here(map), ...stops(k, map, false)]), x, y);
+    walked.set(from, near);
+    return near(tx, ty) && ((tx === x && ty === y) || opens(k, map, here(map))(tx, ty)) ? walkOn(k, map, x, y, f, tx, ty, here(map)) : null;
+  };
   if (at.mapId === st.mapId) return on(st.mapId, st.x, st.y, st.facing, at.x, at.y);
   const skip: { map: string; x: number; y: number }[] = [];
   for (let hops = routeMaps(k, st.mapId, at.mapId); hops; hops = routeMaps(k, st.mapId, at.mapId, skip)) {
@@ -186,7 +221,7 @@ export const route: Brain = (g, k, p) => {
   const st = g.world.state, at = g.world.locate(goal.map, goal.x, goal.y);
   // A goal of its own: what was planned, refused and said on the way to another is not this one's.
   if (!p.trip || p.trip.goal.map !== goal.map || p.trip.goal.x !== goal.x || p.trip.goal.y !== goal.y) {
-    p.trip = { goal, said: g.said, refused: [] };
+    p.trip = { goal, said: g.said, refused: [], groups: [] };
     p.plan = [];
   }
   const trip = p.trip, last = trip.last, bound = `Bound for ${goal.name}.`, done = (): null => { p.goal = null; p.trip = null; p.plan = []; return null; };
@@ -217,8 +252,12 @@ export const route: Brain = (g, k, p) => {
     }
   }
   if (!p.plan.length) {
-    // Round the squares refused on the way while it has seen a way round; else at them again.
-    let keys = wayTo(k, st, at, trip.refused) ?? wayTo(k, st, at, []);
+    // The groups in sight here are those it saw here last: Known has none on another map, so a way it
+    // turned from for one stays out of reach from there, and it never walks back to it.
+    trip.groups = [...trip.groups.filter((q) => q.map !== st.mapId), ...k.groups(st.mapId).map((q) => ({ map: st.mapId, ...q }))];
+    // Round the squares refused on the way and the groups seen while it has seen a way round; else at
+    // those refused again.
+    let keys = wayTo(k, st, at, [...trip.refused, ...trip.groups]) ?? (trip.refused.length ? wayTo(k, st, at, trip.groups) : null);
     // Landed on the way off it must take, as Brandy Hole lands a company on the square it climbs out
     // by: it steps off onto an open square beside it and back on, round those refused while it can.
     if (keys?.length === 0) keys = offAndOn(k, st.mapId, st.x, st.y, st.facing, trip.refused.filter((q) => q.map === st.mapId)) ?? offAndOn(k, st.mapId, st.x, st.y, st.facing);

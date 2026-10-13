@@ -10,14 +10,16 @@
 // with a person in it driven past, a gated way off and a locked business bound for and shut, with the
 // line each was refused with, and tried afresh on the next goal, tidal ground shut at high water and
 // walked at low, of two ways into a map the open one, of two by a map between the one open the whole
-// way, Helmstow by its postern, a lock refused on one map and not on the next, water and a mountain as
-// the company can cross them, the ways between the maps it has been to and no others, the outdoors by a
-// zone's id, a Rift by its tear, a walk to a square, driven, and a key taking the helm back, a fight
-// and a message on the way, a parley on the way left up and said so, a way off as the goal, a goal fled
-// off and walked back onto, a new goal on the way planned for afresh, a route planned again after a
-// flight, the way out from the square landed on by each side, round a lock and at it when it is the
-// only way, and none when sealed in, a lock refused and walked round, a way shut after three refusals,
-// with no line once the log has lost it, its why lines, and a new game or a load bound nowhere.
+// way, and the other once a group is seen on the first, never back to it, Helmstow by its postern, a
+// lock refused on one map and not on the next, water and a mountain as the company can cross them, the
+// ways between the maps it has been to and no others, a map out of reach from the outdoors given up on
+// with each square read about once, the outdoors by a zone's id, a Rift by its tear, a walk to a
+// square, driven, and a key taking the helm back, a fight and a message on the way, a parley on the
+// way left up and said so, a way off as the goal, a goal fled off and walked back onto, a new goal on
+// the way planned for afresh, a route planned again after a flight, the way out from the square landed
+// on by each side, round a lock and at it when it is the only way, and none when sealed in, a lock
+// refused and walked round, a way shut after three refusals, with no line once the log has lost it,
+// its why lines, and a new game or a load bound nowhere.
 import { GameMap } from '../../src/game/map.ts';
 import type { Exit, Feature, MapDef } from '../../src/game/map.ts';
 import { NORTH, EAST, WEST, SOUTH, FACING_DX, FACING_DY, turnLeft, turnRight } from '../../src/game/types.ts';
@@ -32,8 +34,8 @@ import { RiddleScreen } from '../../src/ui/riddle.ts';
 import { TitleScreen } from '../../src/ui/title.ts';
 import { Pilot, BRAINS, IDLE, HEARD_MAX } from '../../src/game/pilot/pilot.ts';
 import { knownOf } from '../../src/game/pilot/known.ts';
-import type { Sighted } from '../../src/game/pilot/known.ts';
-import { routeOn, walkOn, routeMaps, HELD } from '../../src/game/pilot/route.ts';
+import type { Known, Sighted } from '../../src/game/pilot/known.ts';
+import { route, routeOn, walkOn, routeMaps, HELD } from '../../src/game/pilot/route.ts';
 import type { Action } from '../../src/input.ts';
 import { ok, headlessGame, drive } from './lib.ts';
 
@@ -515,6 +517,29 @@ function navigator(): void {
   ok(flooded === `fx_a>fx_d>fx_c 0 4,1 ${IDLE}` && once === `fx_a>fx_b>fx_a>fx_d>fx_c 1 4,1 ${IDLE}` && retried === `fx_a>fx_b 3 4,1 The far room is shut to me.; fx_a>fx_b>fx_a>fx_d>fx_c 1 4,1 ${IDLE}`,
     `of two ways to a room two maps off, it takes the one open the whole way, past water on the other (${flooded}) and back from a gate on it once refused (${once}); with the open way unwalked the gate is shut, and walked, it turns it back once on the next goal (${retried})`);
 
+  // The same, the first by a corridor a group stands in, in sight from the square it lands on: it
+  // turns back, and from the map before, where Known has no group on the corridor, it takes the other
+  // way and never goes back, with no fight.
+  const ward = headlessGame(4), wp = (ward.pilot = new Pilot({ instant: true }));
+  const hall = (id: string, exits: Exit[], more: Partial<MapDef> = {}): void => { ward.maps[id] = new GameMap({ id, name: 'Hall', kind: 'dungeon', start: { x: 2, y: 1, facing: EAST }, rows: ['#######', '#.....#', '#######'], exits, ...more }); };
+  hall('fx_e', [{ x: 1, y: 1, to: 'fx_f', tx: 2, ty: 1, tf: EAST }, { x: 5, y: 1, to: 'fx_g', tx: 2, ty: 1, tf: EAST }]);
+  hall('fx_f', [{ x: 1, y: 1, to: 'fx_e', tx: 3, ty: 1, tf: WEST }, { x: 5, y: 1, to: 'fx_h', tx: 2, ty: 1, tf: EAST }], { encounters: [{ id: 'fx_sentry', x: 4, y: 1, monsters: ['rat'], roams: false }] });
+  hall('fx_g', [{ x: 1, y: 1, to: 'fx_e', tx: 3, ty: 1, tf: WEST }, { x: 5, y: 1, to: 'fx_h', tx: 2, ty: 1, tf: EAST }]);
+  hall('fx_h', []);
+  for (const id of ['fx_h', 'fx_g', 'fx_f', 'fx_e']) { ward.world.travel(id, 3, 1, WEST); see(ward, id); }
+  wp.toggle(ward);
+  wp.goal = { map: 'fx_h', x: 4, y: 1, name: 'the far room' };
+  const warded = [ward.world.state.mapId];
+  let fought = 0;
+  for (let t = 0; t < 400 && wp.goal; t++) {
+    drive(ward, [null]);
+    if (ward.world.state.mapId !== warded.at(-1)) warded.push(ward.world.state.mapId);
+    if (ward.top instanceof CombatScreen) fought++;
+  }
+  const sentry = `${warded.length > 9 ? `${warded.length - 1} maps` : warded.join('>')} ${fought} ${ward.world.state.x},${ward.world.state.y} ${JSON.stringify(wp.goal)}`;
+  ok(sentry === 'fx_e>fx_f>fx_e>fx_g>fx_h 0 4,1 null',
+    `of two ways to a room two maps off, the first by a corridor with a group in sight from where it lands, it turns back and takes the other, never back to the group from the map before, unfought (${sentry})`);
+
   // Outside Helmstow after Act II with an orcblood in the company, both its gates seen: the south gate,
   // listed first, turns it back once, and it goes in by the harbour postern.
   const hg = headlessGame(4), hgp = (hg.pilot = new Pilot({ instant: true }));
@@ -608,6 +633,19 @@ function navigator(): void {
   const thornhold = routeMaps(ka, 'harrow', 'thornhold');
   ok(out?.length === 1 && unwalked === null && thornhold?.map((s) => `${s.map}>${s.exit.to}`).join() === 'harrow>caldera,caldera>thornhold',
     `with all seen, from Helmstow the outdoors is one exit, and Thornhold past it no way while the outdoors is unwalked, and two exits once it is (${thornhold?.map((s) => `${s.map}>${s.exit.to}`).join(', ')})`);
+
+  // With all seen, on the Foreland and bound for Meridian Camp, both its ways in across water the
+  // company cannot reach: it gives up on the plan having read each square it reaches about once, not
+  // once for each way in and each search, so a goal out of reach does not hold the game up.
+  const mc = headlessGame(4), mcp = (mc.pilot = new Pilot({ instant: true, omniscient: true })), kmc = knownOf(mc), squares = new Set<string>();
+  mc.world.travel('shelf', 16, 4, NORTH);
+  let reads = 0;
+  const counted: Known = { ...kmc, cell: (map, cx, cy) => { reads++; squares.add(`${map} ${cx},${cy}`); return kmc.cell(map, cx, cy); } };
+  const camp = mc.maps.meridian_camp.def.start, ins = kmc.exits('caldera').filter((e) => e.to === 'meridian_camp').length;
+  mcp.goal = { map: 'meridian_camp', x: camp.x, y: camp.y, name: 'the camp' };
+  const given = route(mc, counted, mcp);
+  ok(given === null && mcp.why[0] === 'No way to the camp that I have seen.' && ins === 2 && squares.size > 10000 && reads < 2 * squares.size,
+    `with all seen, bound from the Foreland for Meridian Camp by its ${ins} ways in, it has no way, and reads ${reads} squares to say so, ${squares.size} of them once or more (${mcp.why[0]})`);
 
   // Into the Anvil Stone's Rift by its tear on O5, walked through as an exit is: no way while the
   // tear is unseen, and the tear once it is. Driven from beside it, bound for the lanes inside, the
