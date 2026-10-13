@@ -101,7 +101,7 @@ export const UNDERDEEP: MapDef = {
       lines: ['The door\'s inner face: a bar across it, and a handle, and the dust of hundreds of feet before it. From this side it is only a door.'],
       choice: { ask: 'Open it?', answers: [
         { label: 'Open it, and leave it open.', sets: CREW_OPEN, pay: { xp: 2000 }, says: ['The bar comes up and the door swings out onto the Tiefzeche\'s lowest level, where the footprints began. The hum goes out through it into the mine.', 'You leave it standing open. Behind you, something knocks, and comes to look.'] },
-        { label: 'Open it, go through and shut it.', sets: CREW_SHUT, pay: { xp: 2000 }, says: ['The bar comes up and the door swings out onto the Tiefzeche\'s lowest level, where the footprints began.', 'You go through, and pull it to behind you, and it is a wall with a door drawn on it again. The hum stops at it.'] },
+        { label: 'Go through and shut it.', sets: CREW_SHUT, pay: { xp: 2000 }, says: ['The bar comes up and the door swings out onto the Tiefzeche\'s lowest level, where the footprints began.', 'You go through, and pull it to behind you, and it is a wall with a door drawn on it again. The hum stops at it.'] },
       ] },
     },
     // The crack the Sunder made (61), and the knocker that found it, a person.
