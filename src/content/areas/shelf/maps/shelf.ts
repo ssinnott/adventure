@@ -4,6 +4,7 @@
 // where a Warden checkpoint warns every company that goes through. Difficulty band 1-5.
 import type { MapDef, Answer } from '../../../../game/map.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../../game/types.ts';
+import { THRONE_REMOVED } from './keep.ts';
 
 // Ailith's first meeting and her Thornhold answer, the same before Act II and after (#157).
 const AILITH = [
@@ -58,8 +59,8 @@ export const SHELF: MapDef = {
   ],
   exits: [
     // After Act II the gate turns back a company with an orcblood member, and the harbour postern lets
-    // it in: no story lock (#151, call 1; #157).
-    { x: 16, y: 3, to: 'harrow', tx: 7, ty: 14, tf: NORTH, label: 'You enter Helmstow.', shut: { flag: 'q_salt_done', member: { race: 'orcblood' } }, blockedText: 'A sergeant steps into the gate: "No orcblood past the gate. Regent\'s orders."' },
+    // it in: no story lock (#151, call 1; #157). Every verdict of the Council's but a failed case lifts it (#764).
+    { x: 16, y: 3, to: 'harrow', tx: 7, ty: 14, tf: NORTH, label: 'You enter Helmstow.', shut: { flag: 'q_salt_done', member: { race: 'orcblood' } }, lifts: { flag: THRONE_REMOVED }, blockedText: 'A sergeant steps into the gate: "No orcblood past the gate. Regent\'s orders."' },
     { x: 18, y: 3, to: 'harrow', tx: 13, ty: 14, tf: NORTH, label: 'You come into Helmstow by the harbour postern, behind the fish carts.' },
     { x: 31, y: 9, to: 'thornmark', tx: 1, ty: 9, tf: EAST, label: 'The pass opens onto old forest. Thornmark.' },
     { x: 2, y: 28, to: 'greywater1', tx: 1, ty: 1, tf: SOUTH, label: 'A cave mouth in the cliff foot, half hidden by kelp. Brandy Hole.' },

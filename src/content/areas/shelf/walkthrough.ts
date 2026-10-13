@@ -103,6 +103,7 @@ export const walkthrough: Walkthrough = (ok) => {
   walkWorth(ok);
   homecoming(ok);
   underVask(ok);
+  council(ok);
   trainers(ok);
 };
 
@@ -751,6 +752,104 @@ function underVask(ok: (cond: boolean, msg: string) => void): void {
     const first = street(w, 8), again = [...street(w, 7), ...street(w, 8)], talk = hear(w, 'harrow', eel);
     w.ok(first.length === 1 && first[0].startsWith('A gibbet') && !again.length, `once the Hand has Wenna, a gibbet stands new in Helmstow's street, said once (${first.join(' / ')})`);
     w.ok(talk.startsWith('The tavern is near empty') && talk.includes('hanged nobody') && wrap(talk, SAY_W).length <= SAY_LINES, 'and the Eel is near empty, and talks of the gibbet and the oars locked in the keep');
+  }
+}
+
+/**
+ * The Council of Helmstow (#764): once the Hand has Wenna, Wiglaf at the chapel's door puts the case
+ * once, with four answers or, to a company Wenna led up, five; the Council sits that night, and by
+ * day Wiglaf says what it found, once. The six verdicts in turn, their pieces set by hand as the
+ * homecoming's flags are, and Helmstow after each: Vask gone and his door the Council's, the gibbets
+ * down, the Council's proclamation over his, the Eel's talk the verdict's and the gate open to Idris;
+ * a failed case leaves all of it as it was. Last, the twins of a Council that sits after an ending.
+ */
+function council(ok: (cond: boolean, msg: string) => void): void {
+  const CLERK = (): Person => who('keep', 4, 6, 'Wiglaf'), SITTING = (): Person => who('keep', 4, 5, 'Wiglaf');
+  const VASK = (): Person => who('keep', 7, 4, 'Lord Aumery Vask'), DOOR = (): Person => who('keep', 7, 4, 'Wiglaf');
+  const eel = MAP_DEFS.find((d) => d.id === 'harrow')!.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'The Gilded Eel' && JSON.stringify(f.after) === JSON.stringify({ flag: 'q_salt_done' }))!;
+  const company = (...flags: string[]): Walk => { const w = newWalk(ok); for (const f of ['q_salt_done', 'q_wenna_taken', ...flags]) w.party.flags[f] = 1; at(w, 12); return w; };
+  /** Make the case to Wiglaf at the chapel's door: the answers he puts. */
+  const put = (w: Walk, label: string): string[] => {
+    const p = CLERK();
+    w.world.travel('keep', p.x, p.y, NORTH);
+    const m = meet(p, w.party, heard(w.world, p)), a = m.choice?.answers.find((x) => x.label === label);
+    if (a) answer(a, w.party);
+    listen(w);
+    return m.choice?.answers.map((x) => x.label) ?? [];
+  };
+  /** What Wiglaf says at the chapel's door at the hour, the next day: nothing if he is not there. */
+  const sits = (w: Walk, hour: number): string => { at(w, hour); return there(w, SITTING(), 'keep') ? hear(w, 'keep', SITTING()) : ''; };
+  const gate = (w: Walk): boolean => { w.world.travel('shelf', 16, 4, NORTH); const r = w.world.move('forward'); return r.kind === 'moved' && w.world.state.mapId === 'harrow'; };
+  const street = (w: Walk): string[] => [7, 8].flatMap((x) => { w.world.travel('harrow', x, 9, NORTH); return w.world.eventsHere(); });
+  const proclaimed = (w: Walk): string[] => { w.world.travel('keep', 9, 8, NORTH); return w.world.eventsHere(); };
+  /** A case made and sat on: the morning's words. */
+  const sat = (w: Walk, label: string): string => { put(w, label); return sits(w, 12); };
+  /** Helmstow once a verdict has removed Vask. */
+  const removed = (w: Walk, talk: string, how: string): void => {
+    w.ok(!!w.party.flags.q_throne_removed && !w.party.flags.q_case_failed && !there(w, VASK(), 'keep') && there(w, DOOR(), 'keep'), `${how}: Vask and his guards are gone from the keep, and Wiglaf keeps its door for the Council`);
+    const said = proclaimed(w), hung = street(w), heardEel = hear(w, 'harrow', eel);
+    w.ok(said.length === 2 && said[1] === 'Over it: the Council of Helmstow holds the city under its seal.' && !hung.length, `${how}: the Council's proclamation is said over the Regent's, and the gibbets are down (${said.join(' / ')})`);
+    w.ok(heardEel === talk && wrap(heardEel, SAY_W).length <= SAY_LINES, `${how}: the Eel talks of the verdict, with no Warden at its door (${heardEel})`);
+    w.ok(gate(w), `${how}: the south gate lets a company with an orcblood member in`);
+  };
+  { // Nothing shows before the Hand has Wenna.
+    const w = newWalk(ok);
+    w.party.flags.q_salt_done = 1;
+    at(w, 12);
+    w.ok(!there(w, CLERK(), 'keep') && !there(w, SITTING(), 'keep') && !there(w, DOOR(), 'keep') && there(w, VASK(), 'keep') && !page(w, 'council'), 'before the Hand has Wenna there is no clerk at the chapel and no Council, and Vask holds the keep');
+  }
+  { // The cousin, carried by two of her pieces; four answers to a company Wenna did not lead up.
+    const w = company('q_riders_hale', 'q_seal_hale');
+    const offered = put(w, 'The Queen\'s cousin.'), goal = page(w, 'council')?.goal ?? '';
+    w.ok(offered.length === 4 && !offered.includes('Wenna of Gullwick.') && !!w.party.flags.q_case_cousin && !there(w, CLERK(), 'keep'), `once the Hand has Wenna, Wiglaf puts the case, four answers (${offered.join(' ')}), and is gone once it is made`);
+    w.ok(goal.startsWith('Come back to the keep\'s chapel in the morning'), `and the log says to come back in the morning (${goal})`);
+    const night = sits(w, 0), day = sits(w, 12), again = sits(w, 12);
+    w.ok(!night && day.startsWith('The Council sits in the chapel where she lay in state') && day.endsWith('The Regent is not in the keep when they come for him.') && !again && !!w.party.flags.q_throne_cousin,
+      `the Council sits that night, and by day Wiglaf says the cousin's verdict, once (${day})`);
+    removed(w, 'A Warden, loud, with the old badge on: "The cousin sits in the chair and the Regent sits in a cell, and I was on the wall for both."', 'the cousin');
+    reads(w, 'council', 'The Council of Helmstow', ['met', 'for_cousin', 'cousin'], ['cousin_irons', 'failed'], 'the cousin\'s case');
+  }
+  { // The hold, carried by the signet alone.
+    const w = company('q_signet_hold');
+    const day = sat(w, 'The elves of Henlys.');
+    w.ok(day.startsWith('The Council reads the treaty aloud') && !!w.party.flags.q_throne_hold, `the signet given to the hold carries its case alone (${day})`);
+    removed(w, 'A fisherman: "An elf on Helmstow\'s chair, and the treaty read out on the keep steps. My grandfather said it was so and we laughed at him."', 'the hold');
+  }
+  { // Tallis, carried by the crown sailed and the ring sold.
+    const w = company('q_crown_sailed', 'q_ring_sold');
+    const day = sat(w, 'Jory Tallis.');
+    w.ok(day.startsWith('The Council counts hulls.') && !!w.party.flags.q_throne_tallis, `two of Tallis's pieces carry his case (${day})`);
+    removed(w, 'A dockhand: "Tallis sailed in with his hulls and the Council counted them. Prices are a port\'s now. So is the gate."', 'Tallis');
+  }
+  { // Wenna: five answers to a company she led up, carried by the sleepers seen.
+    const w = company('q_wenna_up', 'q_sleepers_seen');
+    const offered = put(w, 'Wenna of Gullwick.'), day = sits(w, 12);
+    w.ok(offered.length === 5 && offered[3] === 'Wenna of Gullwick.' && day.startsWith('The Council sits a long time') && !!w.party.flags.q_throne_wenna, `to a company Wenna led up he puts five answers, and her case carries (${day})`);
+    removed(w, 'A fisherman, quiet: "The chair\'s kept for a girl from Gullwick nobody has seen. They say the doors know her. I don\'t know what that means and nor does the Council."', 'Wenna');
+  }
+  { // Nobody, which always carries.
+    const w = company();
+    const day = sat(w, 'Nobody.');
+    w.ok(day.startsWith('The Council seals the chair empty') && !!w.party.flags.q_throne_council, `a case for nobody carries with no pieces at all (${day})`);
+    removed(w, 'A Warden: "The Council holds the city under its own seal and nobody is in the chair. It is the quietest Helmstow has been in a year."', 'nobody');
+  }
+  { // A failed case: one piece of the cousin's. Vask keeps the keep, and Helmstow is as it was.
+    const w = company('q_riders_hale');
+    const day = sat(w, 'The Queen\'s cousin.');
+    w.ok(day.includes('is not persuaded. The Regent holds the keep.') && !!w.party.flags.q_case_failed && !w.party.flags.q_throne_removed && !w.party.flags.q_throne_cousin, `one piece does not carry: the case fails and removes nobody (${day})`);
+    const said = proclaimed(w), hung = street(w), talk = hear(w, 'harrow', eel);
+    w.ok(there(w, VASK(), 'keep') && !there(w, DOOR(), 'keep') && said.length === 1 && hung.length === 1 && talk.startsWith('The tavern is near empty') && !gate(w),
+      'and Vask holds the keep, the gibbet stands, the Eel is the gibbet\'s and the gate still turns Idris back');
+    w.ok(!there(w, CLERK(), 'keep') && !sits(w, 12), 'the Council does not sit twice');
+    reads(w, 'council', 'The Council of Helmstow', ['met', 'for_cousin', 'failed'], ['cousin', 'failed_ended'], 'a failed case');
+  }
+  { // After the endings (#759 sets them): Vask before the Council in irons, and a failed case's chair empty.
+    const w = company('q_riders_hale', 'q_seal_hale', 'q_end_reignite');
+    const day = sat(w, 'The Queen\'s cousin.');
+    w.ok(day.endsWith('Vask stands before the Council in irons.') && !!w.party.flags.q_throne_removed, `a Council that sits after the relit ending has Vask before it in irons (${day})`);
+    reads(w, 'council', 'The Council of Helmstow', ['met', 'for_cousin', 'cousin_irons'], ['cousin'], 'the cousin\'s case after the relit ending');
+    const late = company('q_end_arrive'), failed = sat(late, 'Jory Tallis.');
+    w.ok(failed.includes('is not persuaded. The chair stays empty.') && !!late.party.flags.q_case_failed, `and a failed case after the hull is opened leaves the chair empty (${failed})`);
   }
 }
 
