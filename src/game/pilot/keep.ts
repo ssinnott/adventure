@@ -231,9 +231,12 @@ function street(g: Game, k: Known, p: Pilot): Action | null {
   const rest = (): Action => { p.why = [`Resting: ${low(party)}`]; return 'rest'; };
   if (wants[0] === 'rest' && stay) return rest();
   // A well near while any of the company is under half and no group is in sight; none that did nothing.
-  const hurt = party.members.find((m) => !isDown(m) && m.hp < m.maxHp / 2);
+  // Bound for one, it goes on, as the turn towards it may bring a group into sight.
+  const hurt = party.members.find((m) => !isDown(m) && m.hp < m.maxHp / 2), mine = p.goal && MINE.has(p.goal) ? p.goal : null;
+  const wells = hurt ? k.features(st.mapId).filter((f) => f.kind === 'well' && !(f.x === st.x && f.y === st.y) && p.wells.get(`${st.mapId}:${f.x},${f.y}`) !== false) : [];
+  const on = mine?.map === st.mapId && wells.some((f) => f.x === mine.x && f.y === mine.y) ? route(g, k, p) : null;
+  if (on) return on;
   if (hurt && !k.groups(st.mapId).length) {
-    const wells = k.features(st.mapId).filter((f) => f.kind === 'well' && !(f.x === st.x && f.y === st.y) && p.wells.get(`${st.mapId}:${f.x},${f.y}`) !== false);
     const near = wells.length ? nearestOn(k, st.mapId, st.x, st.y, st.facing, wells, p.shut.filter((s) => s.map === st.mapId)) : null;
     const key = near && near.keys.filter((a) => a === 'forward').length <= WELL_STEPS && go(g, k, p, { map: st.mapId, x: near.x, y: near.y, name: 'the well', why: `To the well: ${hurt.name} is under half.` });
     if (key) return key;

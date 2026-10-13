@@ -31,7 +31,8 @@
 // again but bought at a shop whose wares it had not seen; the dead raised at the temple, and a temple
 // it cannot pay not gone back to, the living rested all the same; a sword bought at a shop whose wares
 // it went in to see and taken up through the sheet; a level trained at a trainer whose levels it had
-// not seen; a well that did nothing remembered, and one that restores drunk from; and a trainer, a
+// not seen; a well that did nothing remembered, and one that restores drunk from, and gone on to as
+// the turn towards it brings a group into sight; and a trainer, a
 // well and a shop past a way shut with none round it, a lock in a cell and Helmstow's south gate by
 // night, not sought again and the way not tried again.
 import { GameMap } from '../../src/game/map.ts';
@@ -1331,6 +1332,30 @@ function quartermaster(): void {
   ok(two === '2 3 4 5 6 true [["fx_wells:3,1",false]]' && far === '1 false []',
     `under half, it drinks at the near well, which does nothing, and remembers it, and goes on to the far one, which restores it (${two}); one ${WELL_STEPS + 1} steps off it leaves be (${far})`);
 
+  // Under half and out of rations, a farm ahead and a sweet well round the corner, as at Ellerby, and a
+  // group down the passage that the turn towards the well brings into sight and the turn back takes out
+  // of it: bound for the well, it goes on and drinks, and does not turn to and fro between the two.
+  const yd = headlessGame(4), ydp = (yd.pilot = new Pilot({ instant: true })), sore = yd.party.members[0];
+  yd.maps.fx_yard = new GameMap({ id: 'fx_yard', name: 'Yard', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['####', '#..#', '#.##', '#.##', '#.##', '#.##', '####'],
+    features: [{ kind: 'shop', x: 2, y: 1, name: 'A fixture farm', stock: ['rations'], interior: 'harrow_provisioner' }, { kind: 'well', x: 1, y: 3, text: 'A sweet well.', heal: true }],
+    encounters: [{ id: 'fx_watch', x: 1, y: 5, monsters: ['brigand'], roams: false }] });
+  yd.world.travel('fx_yard', 1, 1, EAST);
+  yd.world.state.light = 100;
+  see(yd, 'fx_yard');
+  sore.hp = Math.floor(sore.maxHp * 0.4);
+  yd.party.food = 0;
+  const unsighted = knownOf(yd).groups('fx_yard').length;
+  ydp.toggle(yd);
+  let turns = 0, sighted = 0;
+  for (let n = 0; n < 20 && sore.hp < sore.maxHp; n++) {
+    const f = yd.world.state.facing;
+    drive(yd, [null]);
+    if (yd.world.state.facing !== f) turns++;
+    sighted = Math.max(sighted, knownOf(yd).groups('fx_yard').length);
+  }
+  ok(unsighted === 0 && sighted === 1 && sore.hp === sore.maxHp && turns === 1 && yd.world.state.y === 3,
+    `under half and out of rations, the group in sight only as it turns for the well (${unsighted}, ${sighted}), it turns but once (${turns}) and drinks there (${sore.hp}/${sore.maxHp} at ${yd.world.state.x},${yd.world.state.y})`);
+
   // A trainer, or a sweet well, behind a lock and no key: the lock refused three times is shut, and
   // over 600 ticks it is never tried again, neither is its goal at the end, the clock moves and the
   // explorer has its say.
@@ -1435,6 +1460,27 @@ function strategist(): void {
   const searched = sp.heard.filter((q) => q === 'You search the wall ahead and find nothing.').length, days = (s.world.state.minutes - since) / 1440;
   ok(waited && searched > 0 && days >= 3 && sp.heard.includes(line) && sp.aim === null && sp.lost.has(text),
     `with no way on, it waits (${waited}), searching ${searched} times, and ${days.toFixed(1)} days on says "${line}" (${sp.lost.has(text)})`);
+
+  // Wenna's word had, the goal is the cellar under Ashcombe, with no way into it seen. At Gullwick at
+  // level 2, the Foreland, the road west and Gullwick seen and trodden (the test's privilege), and of
+  // Crowness over the Wend, the zone the cellar opens onto, no square seen it has a way to: it does
+  // not wait, but walks to the edge, looks across and goes over.
+  const gw = headlessGame(4), gwp = (gw.pilot = new Pilot({ instant: true })), cal = gw.maps.caldera;
+  gw.party.flags.q_ashcombe = 1; gw.party.flags.q_wenna = 1;
+  for (const m of gw.party.members) m.level = 2;
+  gw.party.gold = reserve(gw.party);
+  gw.world.travel('caldera', 169, 76, NORTH);
+  for (const z of cal.zones.filter((q) => ['shelf', 'downs_f2', 'downs_f3'].includes(q.id))) {
+    for (let y = z.y; y < z.y + z.h; y++) for (let x = z.x; x < z.x + z.w; x++) see(gw, 'caldera', x, y);
+    if (!gw.world.state.zones!.includes(z.id)) gw.world.state.zones!.push(z.id);
+  }
+  const shut = routeMaps(knownOf(gw), 'caldera', 'mill') === null;
+  gwp.toggle(gw);
+  let stood = false;
+  for (let n = 0; n < 40 && gw.world.zone?.id !== 'downs_e3'; n++) { drive(gw, [null]); if (gwp.why[1] === WAIT) stood = true; }
+  const bound = `${gwp.aim?.kind === 'quest' && gwp.aim.map} ${gw.world.zone?.id}`;
+  ok(shut && !stood && bound === 'mill downs_e3',
+    `bound for Ashcombe's cellar with no way into it seen (${shut}), it does not wait (${stood}) but crosses into the zone it opens onto (${bound})`);
 
   // Over the line from the Foreland into Thornmark at level 1, not bound there: the band known, it
   // steps back onto the square before the line.

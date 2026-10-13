@@ -154,7 +154,8 @@ function roam(g: Game, k: Known, p: Pilot, prefer: string): Action | null {
 
 /**
  * The first key towards a map or a zone of the outdoors, and over it. Off its game map: the way into
- * it, or into the zone it opens onto, on the first route there by ways seen; else the explorer walks
+ * it, or into the zone it opens onto, on the first route there by ways seen; else that zone, where it
+ * lies on the outdoors the party is on, walked to as below, and where it does not, the explorer walks
  * where the party stands. On it: the explorer walks it, and a zone stood in walked out, its edge where
  * it has seen nothing across the line. Outdoors, short of a zone with nothing to walk to in it: the
  * nearest square seen in it; a way seen into it; the zone nearest it it has trodden or seen into,
@@ -167,7 +168,8 @@ function walk(g: Game, k: Known, p: Pilot, map: string, why: string): Action | n
       const last = routeMaps(k, st.mapId, to, p.shut)?.at(-1), key = last && off(g, k, p, last.map, last.exit, why);
       if (key) return key;
     }
-    return roam(g, k, p, zone ?? map);
+    // No way seen into a town or a dungeon: the zone it opens onto, as any zone of these outdoors.
+    return zone && k.mapOf(zone) === st.mapId ? walk(g, k, p, zone, why) : roam(g, k, p, zone ?? map);
   }
   const key = roam(g, k, p, map);
   if (key || zone !== map) return key;
