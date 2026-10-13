@@ -1765,6 +1765,30 @@ Decided by delegate for #750, each the owner's to overturn:
    `ENDED` is exported from the table as a `When` list for #759 and #765 to import.
 7. **Nothing new is saved:** the state is read from the flags, so it needs no save upgrade.
 
+Decided by delegate for #764 (the doorway check), each the owner's to overturn:
+
+1. **A chain, and nothing wider.** `doorwayFaults` (`tools/tests/maps.ts`) takes businesses with a room
+   each, in order on the square: the first only `until` X1, each next `after` the one before's `until`
+   and, but the last, `until` its own, none with a `when`, the last only `after`. A word or twin on
+   another condition, a gap, a `when` on a link, a link gone with nothing after it, a person before the
+   business, a second business and a doorway with no business fail as they did.
+2. **The Chapel's way is a word, then the business back.** A shut door's word (an event `after` X and
+   `until` Y, no `when`) may be followed at once by the business again `after` Y, as the next link. The
+   word must go on Y, or it would be said at an open door; a word that does not go leaves the business
+   behind it a second business, as before.
+3. **A chain may end in a word.** Any link that is gone may be followed by the shut door's word, as the
+   first always could, so the stores may shut after they go dearer. The word may stand anywhere after the
+   link, as it did; only a twin or the business back must follow at once.
+4. **Conditions compare as `same(...)` did,** to the letter: a `When` list on a word's `until` and on its
+   business's `after` is one constant (the hold's verdict with `ENDED`, in #765).
+5. **Checked against the old rule, not only on the maps:** over every list of up to four features on a
+   doorway (4.7 million; three flags, a `when`, events, people and keepers) nothing the old rule passed
+   fails, a list passes that did not only if it is a chain (a second recogniser, written from the issue,
+   agrees on every list), and every list outside a chain gets the same faults word for word. The run was
+   a scratch script; the fixtures in the maps check are what stays.
+6. **No doc line described the rule,** so none is changed: EXPANSION §8.2 is the zone-map recipe, and
+   the comment above `doorwayFaults` is where the rule is told.
+
 ## 10. Names
 
 The Lanterns' English, kept, as the Whitespine's and Sunderwood's were (NAMES.md §2, §4): the isle
