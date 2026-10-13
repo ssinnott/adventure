@@ -121,8 +121,9 @@ const short = (g: Game, p: Pilot, map: string, f: { x: number; y: number }, n: N
  * The places that meet a need, seen on the maps visited, in groups by preference, each with what it is
  * for: for rest, where the company has the rations, a camp, but the one it stands on, before an inn;
  * for rations an inn or a shop it knows sells them for the gold over the reserve; a trainer it does not
- * know the levels of, or one that teaches one of it now. None that is shut to the navigator, nor an
- * inn's room or rations it could not pay for.
+ * know the levels of, or one that teaches one of it now; a temple only while the purse pays for one of
+ * the dead or the stoned. None that is shut to the navigator, nor an inn's room or rations it could not
+ * pay for.
  */
 function spots(g: Game, k: Known, p: Pilot, n: Need): Spot[][] {
   const party = g.party, st = g.world.state;
@@ -131,8 +132,9 @@ function spots(g: Game, k: Known, p: Pilot, n: Need): Spot[][] {
   const as = (why: string) => (q: { map: string; f: Sighted }): Spot => ({ ...q, why });
   switch (n) {
     case 'temple': {
-      const c = party.members.find((m) => hasCondition(m, 'dead')) ?? party.members.find((m) => hasCondition(m, 'stoned'))!;
-      return [all.filter(({ f }) => f.kind === 'temple').map(as(`${c.name} is ${hasCondition(c, 'dead') ? 'dead' : 'stone'}.`))];
+      const paid = (m: Character): boolean => templePrice(m) <= party.gold;
+      const c = party.members.find((m) => hasCondition(m, 'dead') && paid(m)) ?? party.members.find((m) => hasCondition(m, 'stoned') && paid(m));
+      return c ? [all.filter(({ f }) => f.kind === 'temple').map(as(`${c.name} is ${hasCondition(c, 'dead') ? 'dead' : 'stone'}.`))] : [];
     }
     case 'rest': {
       const fed = party.food >= party.members.length;

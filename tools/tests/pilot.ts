@@ -28,9 +28,9 @@
 // preferred. The quartermaster (#719): what the company needs, by the harness's rule and the reserve; the
 // gear a shop betters it with for the gold over the reserve; rest where it stands; the inn's room
 // taken, at its door and walked to for want of rations, and the rations it could not pay for not sought
-// again; the dead raised at the temple; a sword bought and taken up through the sheet; a level trained
-// at a trainer whose levels it had not seen; and a well that did nothing remembered, and one that
-// restores drunk from.
+// again; the dead raised at the temple, and a temple it cannot pay not gone back to; a sword bought and
+// taken up through the sheet; a level trained at a trainer whose levels it had not seen; and a well that
+// did nothing remembered, and one that restores drunk from.
 import { GameMap } from '../../src/game/map.ts';
 import type { Exit, Feature, MapDef } from '../../src/game/map.ts';
 import { NORTH, EAST, WEST, SOUTH, FACING_DX, FACING_DY, turnLeft, turnRight } from '../../src/game/types.ts';
@@ -1234,6 +1234,29 @@ function quartermaster(): void {
   }
   ok(stood >= 0 && within && t.party.gold === 100 && bound === `To Chapel of the Lanterns: ${fallen.name} is dead.`,
     `with ${fallen.name} dead it walks to the Chapel (${bound}), raises him for ${200 - t.party.gold} gold, and he stands in ${stood} ticks`);
+
+  // A temple it cannot pay: two dead at level 1 and 150 gold, it raises one for 100 and does not go
+  // back for the other; one dead at level 2 and 175 gold, it never goes in. Either way, over 600 ticks,
+  // the Chapel is not its goal at the end and the explorer has had its say.
+  const owing = (gold: number, dead: number[], level: number): string => {
+    const u = headlessGame(4), up = (u.pilot = new Pilot({ instant: true }));
+    see(u, 'harrow');
+    u.party.gold = gold;
+    for (const i of dead) Object.assign(u.party.members[i], { level, xp: xpForLevel(level), conditions: ['dead'], hp: -10 });
+    up.toggle(u);
+    let inside = false, trips = 0, explored = false;
+    for (let n = 0; n < 600; n++) {
+      drive(u, [null]);
+      const now = u.screens.some((s) => s instanceof InteriorScreen);
+      if (now && !inside) trips++;
+      inside = now;
+      if (up.why[0] === 'Helmstow is walked out.') explored = true;
+    }
+    return `${trips} ${u.party.gold} ${dead.filter((i) => hasCondition(u.party.members[i], 'dead')).length} ${up.goal?.name ?? 'none'} ${explored}`;
+  };
+  const once = owing(150, [1, 2], 1), never = owing(175, [1], 2);
+  ok(once === '1 50 1 none true' && never === '0 175 1 none true',
+    `two dead at level 1 and 150 gold, it raises one and does not go back (${once}); one dead at level 2 and 175 gold, it never goes in (${never})`);
 
   // Mottram's wares shown and the Long Sword's 120 over the reserve: it walks to the stores, buys the
   // paladin the sword that betters his mace, sells nothing, and takes it up through the sheet.
