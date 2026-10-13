@@ -145,7 +145,8 @@ export class ChoiceScreen implements Screen {
   private text: string | (() => string);
   private choices: string[] | (() => string[]);
   private then: (i: number) => void;
-  private title: string;
+  /** The name drawn over it, whose question it is: a person's, or a monster's for a parley. A den's has none. */
+  readonly title: string;
   private disabled: boolean[];
   constructor(text: string | (() => string), choices: string[] | (() => string[]), then: (i: number) => void, title = '', disabled: boolean[] = []) {
     this.text = text;
