@@ -8,6 +8,7 @@ import type { MonsterDef } from '../../../game/monsters.ts';
 /** The drawings the Hearth's monsters are drawn with, one kind to each. src/ui/sprites.ts must draw every one. */
 export const SPRITES = [
   'hearth_moth', 'ashen_champion', 'ashen_preacher', 'deep_rat', 'keeper', 'hand_rearguard', 'grey_hand', 'core_sentry', 'vask',
+  'deep_crawler', 'catcher',
 ] as const;
 
 export const MONSTERS: readonly MonsterDef[] = [
@@ -29,4 +30,10 @@ export const MONSTERS: readonly MonsterDef[] = [
   { id: 'core_sentry', name: 'Core Sentry', plural: 'Core Sentries', sprite: 'core_sentry', kind: 'machine', look: 'The core\'s own, and it takes orders from the ring.', level: 31, hp: 436, ac: 27, attack: 17, dice: 5, sides: 8, bonus: 4, speed: 11, xp: 1233, gold: [0, 0], obeys: true, tint: '#c3c7cc', size: 1.45 },
   // the Heart (#759), the boss on the line at 32: he calls the core's sentries with the Queen's ring, and never breaks
   { id: 'vask', name: 'Lord Vask', plural: 'Lord Vasks', sprite: 'vask', kind: 'person', look: 'A tall man with a quiet voice, and the Queen\'s ring on his finger.', steady: true, level: 32, hp: 1922, ac: 29, attack: 20, dice: 32, sides: 8, bonus: 33, speed: 13, xp: 20373, gold: [0, 0], calls: { monsters: ['core_sentry'], chance: 1 }, tint: '#6c7078', size: 1.6 },
+  // the Ways' last run and the Stair (#757, #758), a brute on the line at 31: a machine (§2), so it never breaks; it comes
+  // down from above and reaches the back row
+  { id: 'deep_crawler', name: 'Deep Crawler', plural: 'Deep Crawlers', sprite: 'deep_crawler', kind: 'machine', look: 'It comes down from above, on too many legs.', level: 31, hp: 1004, ac: 25, attack: 18, dice: 6, sides: 8, bonus: 8, speed: 8, xp: 2467, gold: [0, 0], ranged: true, tint: '#4a454d', size: 1.25 },
+  // the Stair's foot among the Hand's dead (#758), the boss on the line at 31: it reaches the back row, and what it
+  // holds is held
+  { id: 'catcher', name: 'The Catcher', plural: 'Catchers', sprite: 'catcher', kind: 'machine', look: 'It caught the Hand on these stairs.', level: 31, hp: 1826, ac: 28, attack: 19, dice: 30, sides: 8, bonus: 34, speed: 13, xp: 19733, gold: [0, 0], ranged: true, inflict: { cond: 'paralysed', chance: 0.2 }, tint: '#3a363c', size: 2 },
 ];

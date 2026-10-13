@@ -2434,6 +2434,27 @@
       "groups": [],
       "doors": []
     },
+    "hearthfane": {
+      "size": "16x16",
+      "used": [
+        "hf_altar",
+        "hf_court",
+        "hf_dead",
+        "hf_nave",
+        "hf_offerings",
+        "hf_pillars",
+        "hf_treasury",
+        "hf_vestry"
+      ],
+      "groups": [
+        "hf_champions",
+        "hf_moths",
+        "hf_second",
+        "hf_sermon",
+        "hf_swarm"
+      ],
+      "doors": []
+    },
     "k3_rift": {
       "size": "12x12",
       "used": [
@@ -3406,6 +3427,10 @@
     "kh_dwarf_met",
     "l3_keeper_lesson",
     "l3_keeper_met",
+    "lamp_hearth",
+    "lamp_house",
+    "lamp_sea",
+    "lamp_shore",
     "lanterns_split",
     "log_read",
     "manifests_read",
@@ -3567,6 +3592,10 @@
     "q_lamp_casks",
     "q_lamp_exposed",
     "q_lamp_kept",
+    "q_lamps",
+    "q_lamps_key",
+    "q_lamps_out",
+    "q_lamps_wrong",
     "q_lanterns_light",
     "q_lanterns_light_done",
     "q_lanterns_marker",
@@ -3847,6 +3876,7 @@
     "ember_part3",
     "etched_glass",
     "faceless_coin",
+    "fane_key",
     "fane_map",
     "fishers_spike",
     "flail",
@@ -3872,6 +3902,8 @@
     "greatsword",
     "greatsword+1",
     "greatsword+2",
+    "grey_blade",
+    "grey_bow",
     "grey_knife",
     "grey_mail",
     "grey_part",
@@ -4127,6 +4159,7 @@
     "cairn_king",
     "cairn_wight",
     "carrion_crow",
+    "catcher",
     "chalk_wolf",
     "choirmaster",
     "cinder_beetle",
@@ -4136,6 +4169,7 @@
     "cut_warden",
     "cutthroat",
     "deathshead",
+    "deep_crawler",
     "deep_knocker",
     "deep_rat",
     "devilfish",
