@@ -77,6 +77,13 @@ export interface Exit {
    * (Helmstow's gate to a company with an orcblood member, #157); `blockedText` says why.
    */
   shut?: When;
+  /** The `shut` is over while this holds, read afresh at every step as `shut` is (#749). */
+  lifts?: When;
+  /**
+   * There once this holds, as a presence is, and before that the square is no exit (#749). It is no
+   * lock: it waits on the company's own answer where it stands (tools/tests/pillars.ts, `findLocks`).
+   */
+  after?: When;
   blockedText?: string;
 }
 
@@ -173,8 +180,11 @@ export type Feature =
 export interface Gate {
   x: number; y: number;
   needFlag?: string | readonly string[];
-  /** Closed while this holds, as an exit's `shut` is. */
+  /** Closed while this holds, as an exit's `shut` is, unless `lifts` holds. */
   shut?: When;
+  lifts?: When;
+  /** Closed until this holds: the exit's `after` at a seam, where its square is the way across (#749). */
+  after?: When;
   blockedText?: string;
 }
 

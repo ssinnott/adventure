@@ -1675,6 +1675,19 @@ Decided by delegate for #747, each the owner's to overturn:
 4. **Read from the flags, as a person's going is:** a group whose `until` stopped holding would be
    back where it stood. Each `until` the plan gives is a flag that stays set.
 
+Decided by delegate for #749, each the owner's to overturn:
+
+1. **An `after` at a seam is a gate.** There the exit's square is the way across, so its gate
+   refuses the party until `after` holds; anywhere else an exit not there leaves a plain square.
+2. **The overlay draws no padlock for either field.** `zoneEdges` gates only on `needFlag`: a `shut`,
+   and so its `lifts`, turns back some companies and not the way, and an `after` is no lock.
+3. **An exit not there yet is not drawn, followed or counted:** not on the automap, not by `homeMap`
+   (the Ways open onto the isle, not the Kilns), not as pillars' way beside a shut exit.
+4. **The maps check counts a person, a group and an event** (`groupFlags`, an event's `sets`); an
+   inn's nights and a guild's quests stay out, as the issue named only the two.
+5. **The weather exception names the door, both maps and both regions;** `hearth` is no region yet
+   (the area's first box adds it), so the fixtures name it as a word.
+
 ## 10. Names
 
 The Lanterns' English, kept, as the Whitespine's and Sunderwood's were (NAMES.md §2, §4): the isle

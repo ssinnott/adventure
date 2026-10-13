@@ -5,7 +5,7 @@
 // the place. Pure with respect to rendering and input; the Game drives it and reads the results.
 import type { RngInstance } from '../lib/engine/rng.ts';
 import { GameMap, DRAG } from './map.ts';
-import type { Feature, Exit, EncounterDef, Door, MapZone, Cell, Hours, Presence, Choice } from './map.ts';
+import type { Feature, Exit, EncounterDef, Door, MapZone, Cell, Hours, Presence, Choice, Gate } from './map.ts';
 import type { Facing } from './types.ts';
 import { FACING_DX, FACING_DY, turnLeft, turnRight, turnBack, manhattan } from './types.ts';
 import { partyCan, takeItem, isDown, hasTrait, companyLevel } from './party.ts';
@@ -361,6 +361,28 @@ export class World {
     return { kind: 'turned' };
   }
 
+  /** Whether an exit is there now: one with an `after` is once it holds, as a presence is, and before that its square is no exit (#749). */
+  there(e: Exit): boolean {
+    return !e.after || holds(e.after, this.state, this.party);
+  }
+
+  /** The exit on a square now, if it is there. */
+  exitAt(x: number, y: number): Exit | undefined {
+    const e = this.map.exitAt(x, y);
+    return e && this.there(e) ? e : undefined;
+  }
+
+  /**
+   * Whether a way refuses the party: until every flag it needs is set; while its `shut` holds and
+   * its `lifts` does not (#157, #749); and a gate until its `after` holds, since at a seam the
+   * square is the way across. Each is read afresh at every step.
+   */
+  private closed(g: Gate | Exit): boolean {
+    const now = (w: Exit['shut']): boolean => !!w && holds(w, this.state, this.party);
+    if (g.needFlag && ![g.needFlag].flat().every((k) => this.party.flags[k])) return true;
+    return (now(g.shut) && !now(g.lifts)) || (!!g.after && !now(g.after));
+  }
+
   /** Step in a direction relative to the facing. */
   move(dir: 'forward' | 'back' | 'left' | 'right'): MoveResult {
     const f = this.state.facing;
@@ -370,9 +392,8 @@ export class World {
     if (pass !== 'ok' && pass !== 'unlock') return { kind: 'blocked', reason: BLOCK_TEXT[pass] };
     // Levitate never leaves the party over the drop when it fails.
     if (this.map.at(nx, ny).terrain === 'chasm' && (this.state.float ?? 0) <= 1) return { kind: 'blocked', reason: FLOAT_FAILS };
-    const gate = this.map.gateAt(nx, ny) ?? this.map.exitAt(nx, ny);
-    if (gate?.needFlag && ![gate.needFlag].flat().every((k) => this.party.flags[k])) return { kind: 'blocked', reason: gate.blockedText ?? 'The way is closed.' };
-    if (gate?.shut && holds(gate.shut, this.state, this.party)) return { kind: 'blocked', reason: gate.blockedText ?? 'The way is closed.' };
+    const gate = this.map.gateAt(nx, ny) ?? this.exitAt(nx, ny);
+    if (gate && this.closed(gate)) return { kind: 'blocked', reason: gate.blockedText ?? 'The way is closed.' };
     const left = this.zone;
     const messages: string[] = [];
     if (pass === 'unlock') {
@@ -397,7 +418,7 @@ export class World {
     if (this.state.float && --this.state.float === 0) messages.push(FLOAT_ENDS);
     this.reveal();
     const zone = this.tread();
-    const arrived = this.map.exitAt(nx, ny);
+    const arrived = this.exitAt(nx, ny);
     if (arrived) {
       this.travel(arrived.to, arrived.tx, arrived.ty, arrived.tf);
       if (arrived.label) messages.push(arrived.label);
