@@ -1784,15 +1784,19 @@ Decided by delegate for #764, each the owner's to overturn:
 6. **Vask's door is the Council's:** Wiglaf at 7,4 with the throne room, `after` the removal, two
    lines of mine. The doorway check wants a business that goes to have a twin, and the locks check
    wants its trade had (#157's form); otherwise it is a lock to sign in.
-7. **Owed: the inn at 12, the Chapel for the hold and Mottram's for Tallis.** Each is a third
-   presence on a doorway, and the doorway check (`tools/tests/maps.ts`, `doorwayFaults`) allows one
-   twin. This issue does not name that check, so it is left; #765's inn and Chapel need it too.
+7. **The inn at 12, the Chapel for the hold and Mottram's for Tallis are each the next link on its
+   doorway,** which #776's doorway chain allows (`doorwayFaults`, the block below): the dearer inn
+   `until` the removal and one at 12 `after` it; the Chapel's notice `until` the hold's verdict and the
+   Chapel back `after` it, written temple, word, temple; Mottram's dearer stores `until` Tallis's and a
+   twin `after` it. They came in a second pull request, stacked on #776, since #774 could not hold them.
 8. **The goal names the girl from Gullwick only to a company she led up;** to the rest it says *the
    cousin, the hold, Tallis or nobody*.
 9. **A piece may be one of several flags:** the treaty is one piece by either mark, and Wenna's case
    is `q_wenna_up` with one of her three. The pairs are a `When` list built from §6's table
    (`carried`, `keep.ts`). The tokens (#753), the signet (#759) and the walk home (#765) are owed in
    `UNSET`, as are the endings' flags (#759), read from `src/content/endings.ts`.
+10. **A port's prices are twice the old city's,** the Lantern Oil as before: dearer than the Regent's
+    half again, as §6's *dearer for Tallis* asks, and the oil's forty is Mottram's own word.
 
 Decided by delegate for #764 (the doorway check), each the owner's to overturn:
 
