@@ -226,13 +226,14 @@ export function maps(): void {
   ok(interiors.length === opened.length && new Set(interiors).size === interiors.length && opened.every((i) => interiors.includes(i)), `every business has an interior of its own (${interiors.length}, ${new Set(interiors).size} distinct)`);
   for (const i of INTERIORS.filter((i) => Object.hasOwn(UNPLACED, i))) owed(interiors.includes(i), `a business opens into ${i}`, UNPLACED[i]);
   // The trainer ladder: each town's trainers teach to its area's band's top plus one (EXPANSION
-  // §5.2), so the towns built set how far a company can train, and none past the cap.
+  // §5.2), so the towns built set how far a company can train, and none past the cap: a band topping
+  // at the cap teaches to it (`trainerCeiling`; docs/areas/hearth_isle.md §9, call 4).
   for (const area of AREAS) {
     for (const d of area.maps) {
       for (const f of d.features ?? []) {
         if (f.kind !== 'trainer') continue;
         const want = trainerCeiling(CURVE[area.id]);
-        ok(f.maxLevel === want && f.maxLevel <= MAX_LEVEL, `${d.id}: ${f.name} teaches to ${f.maxLevel}, its area's band's top plus one (${want})`);
+        ok(f.maxLevel === want && f.maxLevel <= MAX_LEVEL, `${d.id}: ${f.name} teaches to ${f.maxLevel}, its area's band's top plus one${want <= CURVE[area.id].band[1] ? ', held to the cap' : ''} (${want})`);
       }
     }
   }
