@@ -6,6 +6,7 @@
 import type { Answer, MapDef, Words } from '../../../../game/map.ts';
 import type { QuestCond } from '../../../../game/quests.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { ENDED, ENDINGS } from '../../../endings.ts';
 
 // The Empty Throne's end, the Council of Helmstow (#764; docs/areas/hearth_isle.md §6): the case the
 // company makes to Wiglaf, and the verdicts. Every verdict but a failed case removes Vask.
@@ -18,8 +19,7 @@ export const CASES: readonly QuestCond[] = [CASE_COUSIN, CASE_HOLD, CASE_TALLIS,
 export const SAT: readonly QuestCond[] = [THRONE_COUSIN, THRONE_HOLD, THRONE_TALLIS, THRONE_WENNA, THRONE_COUNCIL, CASE_FAILED].map((flag) => ({ flag }));
 
 // Wenna's three answers at the Heart (#759 sets them): the relit and the finished bring Vask up the stair in irons.
-const IRONS: readonly QuestCond[] = [{ flag: 'q_end_reignite' }, { flag: 'q_end_finish' }];
-const ENDED: readonly QuestCond[] = [...IRONS, { flag: 'q_end_arrive' }];
+const IRONS: readonly QuestCond[] = [{ flag: ENDINGS.reignite.flag }, { flag: ENDINGS.finish.flag }];
 
 /** Each list of flags in `a` with each in `b`: a `When` that holds where both do. */
 const both = (a: readonly QuestCond[], b: readonly QuestCond[]): QuestCond[] =>

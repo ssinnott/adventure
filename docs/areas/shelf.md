@@ -693,6 +693,25 @@ docs/areas/whitespine.md) the city is worse again (#449), on top of Act II's cha
 Nothing shuts and nothing is dearer. The walkthrough walks the changed city before the flag and
 after it, the flags set by hand (docs/areas/ashfall.md §9, #449's 6 and 7).
 
+The Empty Throne ends at the Council of Helmstow (#764; docs/areas/hearth_isle.md §6 and §9.2):
+
+- **Wiglaf, the Council's clerk,** stands at the chapel's door in the keep's ward (`keep` 4,6) once
+  the Hand has Wenna, until a case is made, and puts it once: the cousin, the elves of Henlys, Jory
+  Tallis or nobody, and Wenna of Gullwick to a company she led up (`q_wenna_up`). The Council sits
+  that night; by day he is at 4,5 with its verdict and gone with it. Two of a claimant's pieces or
+  the signet carry a case, and a case for nobody always carries: `q_throne_cousin`, `_hold`,
+  `_tallis`, `_wenna` or `_council`, each with `q_throne_removed`. A case that does not carry sets
+  `q_case_failed` alone. Each verdict has a twin after the endings: Vask before the Council in
+  irons, or a failed case's chair empty. The log is `council`.
+- **Vask removed:** gone from the keep with his guards, and Wiglaf keeps its door for the Council;
+  the gibbets are down; the Council's proclamation is said over the Regent's at 9,8; the Eel talks of
+  the verdict, with no Warden at its door; the south gate lifts its shut for orcblood (`lifts`).
+- **A failed case** leaves Vask in the keep and the city as it was.
+
+The inn at 12, the Chapel open for the hold and Mottram's dearer for Tallis are owed: each is a third
+presence on a doorway, which the doorway check does not allow (hearth_isle.md §9.2, #764's 7). The
+walkthrough plays the six verdicts and the twins, the pieces set by hand.
+
 ## 6. Side quests
 
 #56 drafts eight for the Foreland, levels 1 to 4. The owner asked for the ones that fit to be pulled
