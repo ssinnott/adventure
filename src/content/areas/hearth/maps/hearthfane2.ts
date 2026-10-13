@@ -13,8 +13,8 @@ export const ELEVEN_KEPT = 'q_eleven_kept';
 const LOG_GIVEN = 'q_eleven_log';
 
 /**
- * The grey door down into the Ways, `underdeep` (#757), which lists it here and lands its way back up
- * on the knot's square, 8,2, facing south. Until then the door is a sign on its square.
+ * The grey door down into the Ways, `underdeep` (#757), whose way back up lands on the knot's square,
+ * 8,2, facing south. The door's sign stays on its square.
  */
 export const GREY_DOOR: Exit = { x: 8, y: 1, to: 'underdeep', tx: 16, ty: 30, tf: NORTH, label: 'Through the grey door she opened, and the ice of the crypt gives way to the hum. Light comes from the walls, and no lamp.' };
 
@@ -52,6 +52,8 @@ export const HEARTHFANE2: MapDef = {
   exits: [
     // Up the stair onto the altar's square in the temple's court, facing away from the stair.
     { x: 8, y: 15, to: 'hearthfane', tx: 8, ty: 2, tf: SOUTH, label: 'Up the stair behind the altar into the court.' },
+    // Through the grey door down into the Ways (#757).
+    GREY_DOOR,
   ],
   features: [
     // The vaulted passage from the stair's foot.

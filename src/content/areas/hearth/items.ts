@@ -2,10 +2,11 @@
 // the picket's chest at the cleft's head and dropped by the Ashen Champions; the Smelling Salts in the
 // cache under the north rim; and the pilgrims' three tokens (57). The temple's (#755): the Grey Blade and
 // the Grey Bow in its treasury, and the sacristan's key to it (56). The crypt's (#756): the Grey Robe in
-// the dead champion's pack. The rest of the band's rung at 28,
+// the dead champion's pack. The Ways' (#757): the Grey Shield in the keepers' store, and the Old Lantern's
+// Staff behind the crack (61). The rest of the band's rung at 28,
 // found and never sold, is #746's (docs/areas/hearth_isle.md §8).
 import type { ItemDef } from '../../../game/items.ts';
-import { W, A, MARTIAL } from '../../items.ts';
+import { W, A, MARTIAL, MAIL } from '../../items.ts';
 
 /** The Hand's knife, a point past Cinderport's Marlinspike (1d8+13): light, the thief's (§8; §9.1, 41). */
 export const greyKnife = W('grey_knife', 'Grey Knife', 6400, 1, 8, { kind: 'light', bonus: 14 });
@@ -15,6 +16,14 @@ export const greyBlade = W('grey_blade', 'Grey Blade', 6600, 2, 12, { bonus: 6, 
 /** The Hand's robe, a point past Cinderport's Cinder Robe (ac 12): anyone's to wear, as that is. */
 export const greyRobe = A('grey_robe', 'Grey Robe', 6200, 13);
 export const greyBow = W('grey_bow', 'Grey Bow', 6800, 1, 12, { kind: 'bow', bonus: 13, ranged: true, twoHanded: true, classes: ['ranger'] });
+/** The keepers' shield, a point past Cinderport's Basalt Shield (ac 7): the shield bearers'. */
+export const greyShield: ItemDef = { id: 'grey_shield', name: 'Grey Shield', slot: 'shield', price: 4000, ac: 8, classes: MAIL };
+/**
+ * The staff from the Lanterns' hall the Sunder swallowed (61), a point past the Grey Staff (1d10+13): a
+ * staff anyone may carry, as the Battle Staff is. Its holiness is its lamp's, in its words: no weapon
+ * carries an element.
+ */
+export const oldLanternsStaff = W('old_lanterns_staff', 'Old Lantern\'s Staff', 7000, 1, 10, { kind: 'staff', bonus: 14, twoHanded: true, text: ['A staff of the old Lanterns, the lamp in its head still lit after four hundred years.'] });
 
 export const ITEMS: readonly ItemDef[] = [
   greyKnife,
@@ -23,6 +32,9 @@ export const ITEMS: readonly ItemDef[] = [
   greyBow,
   // In the dead champion's pack in the crypt's side vault (#756).
   greyRobe,
+  // In the keepers' store behind the Ways' first west frame, and behind the crack for a company that widens it (#757).
+  greyShield,
+  oldLanternsStaff,
   // The sacristan's key to the treasury (56): it opens that door, and only it does.
   { id: 'fane_key', name: 'Sacristan\'s Key', slot: 'none', price: 0 },
   // Three in a pouch in the north rim's cache: each wakes one member from sleep or paralysis, used up

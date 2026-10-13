@@ -4,6 +4,7 @@ import type { Area } from '../../area.ts';
 import { HEARTHISLE_H6 } from './maps/hearthisle_h6.ts';
 import { HEARTHFANE } from './maps/hearthfane.ts';
 import { HEARTHFANE2 } from './maps/hearthfane2.ts';
+import { UNDERDEEP } from './maps/underdeep.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
@@ -13,16 +14,18 @@ import { QUESTS } from './quests.ts';
 export const AREA = {
   id: 'hearth' as const,
   // In road order: the isle, where the last crossing grounds (#753); the temple at the column's foot (#755);
-  // its crypt, down the stair behind the altar (#756).
-  maps: [HEARTHISLE_H6, HEARTHFANE, HEARTHFANE2],
+  // its crypt, down the stair behind the altar (#756); the Ways, through the crypt's grey door (#757).
+  maps: [HEARTHISLE_H6, HEARTHFANE, HEARTHFANE2, UNDERDEEP],
   // Drawn ahead of the area (#761), and placed from the isle on: the hearth moth, the ashen champion and
   // preacher and the deep rat first (#753).
   monsters: MONSTERS,
   sprites: SPRITES,
-  // The isle's finds and the pilgrims' tokens (#753), the temple's (#755) and the crypt's (#756); the band's
+  // The isle's finds and the pilgrims' tokens (#753), the temple's (#755), the crypt's (#756) and the Ways' (#757); the band's
   // rung at 28 is #746's.
   items: ITEMS,
-  // #56's 57, The Pilgrims in the Bowl, as far as the isle goes (#753); 56, The Sacristan's Lamps (#755).
+  // #56's 57, The Pilgrims in the Bowl, as far as the isle goes (#753); 56, The Sacristan's Lamps (#755); 59,
+  // Every Frame She Marked, as far as the Ways go, 60, Crew Only, From the Inside, and 61, The Knocker That
+  // Stopped (#757).
   quests: QUESTS,
   // The Heart, the act's chapter and the road's last, is #760's.
   chapter: undefined,
@@ -32,8 +35,8 @@ export const AREA = {
     fogText: 'A haze comes in off the Sound, and the light stands in it like a lamp in a sack.', thunderText: 'Thunder, far off over the mainland. The light does not waver.' },
   // The pilgrims' camp's three tents in the Bowl (#762), drawn ahead and opened by the isle (#753).
   interiors: INTERIORS,
-  // The Hearth, the site planned on the atlas since the start, built with the isle (#753; §7). The
-  // crawlers and the Core's clock are claimed by the maps that first place them (#757, #759).
-  novel: { families: [], terrain: [], mechanics: [], landmarks: ['hearth'] },
+  // The Hearth, the site planned on the atlas since the start, built with the isle (#753; §7); the crawlers,
+  // first placed in the Ways (#757). The Core's clock is claimed by the map that first places it (#759).
+  novel: { families: ['crawlers'], terrain: [], mechanics: [], landmarks: ['hearth'] },
   atlas: { zones: ZONES, places: PLACES, sites: SITES },
 } satisfies Area;
