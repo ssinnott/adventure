@@ -705,12 +705,13 @@ The Empty Throne ends at the Council of Helmstow (#764; docs/areas/hearth_isle.m
   irons, or a failed case's chair empty. The log is `council`.
 - **Vask removed:** gone from the keep with his guards, and Wiglaf keeps its door for the Council;
   the gibbets are down; the Council's proclamation is said over the Regent's at 9,8; the Eel talks of
-  the verdict, with no Warden at its door; the south gate lifts its shut for orcblood (`lifts`).
-- **A failed case** leaves Vask in the keep and the city as it was.
+  the verdict, with no Warden at its door; the south gate lifts its shut for orcblood (`lifts`); the
+  inn is 12 again. The hold's verdict opens the Chapel, and Tallis's makes Mottram's a port's, twice
+  the old city's but the oil; each is the next link on its doorway (hearth_isle.md §9.2, #764's 7).
+- **A failed case** leaves Vask in the keep and the city as it was, the inn at 18.
 
-The inn at 12, the Chapel open for the hold and Mottram's dearer for Tallis are owed: each is a third
-presence on a doorway, which the doorway check does not allow (hearth_isle.md §9.2, #764's 7). The
-walkthrough plays the six verdicts and the twins, the pieces set by hand.
+The walkthrough plays the six verdicts and the twins, the pieces set by hand, and the inn, the Chapel
+and the stores after each.
 
 ## 6. Side quests
 
