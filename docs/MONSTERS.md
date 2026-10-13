@@ -250,11 +250,12 @@ made once in the systems lane and first spent by the area named, which waits for
 | The Core's clock | a panel marker, the Grey Hands: while they stand, the light dims a step a round to a thread and Vask calls a sentry every second round, which the cap of three groups does not stop; with them down it holds, and the sentries stand down when he falls (`obeys`) | the Core | STORY.md, Act Five |
 | A question first | `choice` on a group: a person's question, put before the fight; the refusal fights, and an answer of gold, an item or a flag stands the group aside | Thornmark's ogre (#56's 13); the Whitespine | the ogre's bargain; the giants' toll |
 | A flag on the fall | `sets` on a group: flags set as it falls, with its `slainText`, so what its death changes holds before the next step | the Kilns | the Warden of the Anvil, whose fall closes the tear |
+| The leave rule | `leaves` on a group: once its `until` holds it is gone, standing or killed, read from the flags so nothing new is saved. Leaving is no kill: no `slainText`, none of its `sets`. A group without it stays until it is killed | Hearth Isle | the Hand thinned once Vask is removed; the moths once the lamps are out; the knockers once the crack is sealed; Ashfall's sentries after an ending |
 
 Built: `level` (#31); `kind`, `look`, `when`, `until` and `after` (#41); ranks and morale (#160);
 elements, casting and drain (#161); regeneration, curse and calls (#537), sweep (#545) and stone and
 its cure (#546), each with the gate bot's answer, a drain of spell points' with #541; a question
-first (#544), the bot refusing it; a flag on the fall (#636). Still to come: a light seen past the fog and the Core's clock.
+first (#544), the bot refusing it; a flag on the fall (#636); the leave rule (#747). Still to come: a light seen past the fog and the Core's clock.
 
 Decided by delegate for #537, each the owner's to overturn:
 

@@ -1,7 +1,8 @@
 // Monster groups on the map: stepping toward the party, encounters, respawn, the truce after
 // fleeing, the Cut Stone's tear closing on the Warden's death and the Rift that stops coming back
 // with it, the groups that walk only in their hours or only after a step, the flags a group sets as
-// it falls, and a kind's look said the first time it is seen or fought, and never again.
+// it falls, the groups that leave once their `until` holds, standing or not, and a kind's look said
+// the first time it is seen or fought, and never again.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { World, FOG } from '../../src/game/world.ts';
@@ -14,6 +15,9 @@ import { findWeather } from '../../src/game/weather.ts';
 import { serialize, deserialize } from '../../src/game/save.ts';
 import { CLIMATES, MONSTERS } from '../../src/content/index.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
+import { restRefused } from '../../src/game/wilds.ts';
+import { NORTH } from '../../src/game/types.ts';
+import { newWalk, gone } from '../walk.ts';
 import { ok } from './lib.ts';
 
 export function monsters(): void {
@@ -122,6 +126,41 @@ export function monsters(): void {
     ok(w.killGroups(['test_list']).join() === 'The test falls.' && flags(w) === 'test_a,test_b,test_flag', 'a group with a list sets every flag on it, as its slainText is said');
     const saved = deserialize(serialize(w.state, w.party, 1)), again = new World(w.maps, saved.party, makeRng(1), saved.world);
     ok(flags(again) === 'test_a,test_b,test_flag' && live(again) === 'test_after,test_plain', `and the flags a fall sets are kept in a save and a load, as any flag is (${flags(again)}; ${live(again)})`);
+  }
+  // The leave rule (#747): a group that leaves is gone once its `until` holds, standing or killed,
+  // while one beside it that does not stays standing. Leaving is no kill, and nothing is saved.
+  {
+    const { w } = beside({ leaves: true, until: { flag: 'test_flag' }, sets: 'test_fell', slainText: 'The test falls.' }, {
+      test_stays: { until: { flag: 'test_flag' } },
+      test_back: { leaves: true, respawn: 60, until: { flag: 'test_flag' } },
+      test_swarm: { leaves: true, after: { flag: 'test_wrong' }, until: { flag: 'test_flag' } },
+    });
+    const live = (x: World): string => x.liveGroups().map((g) => g.def.id).filter((id) => id.startsWith('test_')).sort().join();
+    const seen = (): boolean => w.groupsInSight().some((g) => g.def.id === 'test_rats');
+    w.state.facing = NORTH; w.party.flags.test_wrong = 1;
+    ok(live(w) === 'test_back,test_rats,test_stays,test_swarm' && seen() && fights(w) && !!restRefused(w), `before its until holds a group that leaves stands as any: drawn, in the way, fought and in the way of a rest (${live(w)})`);
+    const record = JSON.stringify(w.mapState.groups.test_rats);
+    w.killGroups(['test_back']); w.party.flags.test_flag = 1; w.state.minutes += 60; // the killed one is due back
+    ok(live(w) === 'test_stays' && !seen() && !w.adjacentGroups().includes('test_rats'), `once it holds the groups that leave are gone, standing or killed, and the one that does not stays standing (${live(w)})`);
+    w.killGroups(['test_stays']);
+    ok(!live(w) && !w.groupAt(w.state.x, w.state.y - 1) && !restRefused(w), 'and with that one killed nothing is drawn, met, in the way or in the way of a rest');
+    ok(!w.party.flags.test_fell && JSON.stringify(w.mapState.groups.test_rats) === record, 'a group that has left was not killed: its flag is not set and its record is as it stood');
+    const saved = deserialize(serialize(w.state, w.party, 1)), again = new World(w.maps, saved.party, makeRng(1), saved.world);
+    ok(!live(again) && JSON.stringify(again.mapState.groups.test_rats) === record, `and after a save and a load it is gone still, with nothing new saved (${live(again)})`);
+  }
+  // The leave rule walked as tools/walk.ts walks the road: Helmstow as a fixture, a guard beside the
+  // company and, on the company's square, the word that sends it off.
+  {
+    const w = newWalk(ok), world = w.world, { x, y } = world.state, h = world.maps.harrow.def, rats = world.maps[OUTDOORS].encounters[0];
+    const word = 'Word comes up the street. The guard goes with it.';
+    world.maps.harrow = new GameMap({ ...h,
+      features: [...(h.features ?? []), { kind: 'event', id: 'test_word', x, y, once: true, text: word, sets: 'test_word' }],
+      encounters: [...(h.encounters ?? []), { ...rats, id: 'test_guard', x, y: y - 1, roams: false, respawn: undefined, leaves: true, until: { flag: 'test_word' }, sets: 'test_fell', slainText: 'The guard falls.' }] });
+    world.ensureMapState('harrow');
+    ok(world.adjacentGroups().includes('test_guard') && !!restRefused(world), 'the guard stands beside the company in Helmstow, in the way of a rest');
+    const said = world.eventsHere();
+    ok(said.includes(word) && !said.includes('The guard falls.') && !restRefused(world) && !w.party.flags.test_fell, `the word comes and the guard goes with no fight: its fall unsaid, its flag unset and nothing in the way of a rest (${said.join(' ')})`);
+    gone(w, 'harrow:test_guard');
   }
   // A look: said once, the first time a group of the kind comes into sight or into a fight. The
   // content has none yet, so the rat and the wolf are given one for the while.

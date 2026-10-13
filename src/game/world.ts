@@ -271,7 +271,7 @@ export class World {
     return hoursHold(p.when, this.state.minutes, m.kind === 'dungeon' ? null : this.weatherIn(region));
   }
 
-  /** Whether a thing's `until` holds: a group stops coming back, a person or an event is gone. */
+  /** Whether a thing's `until` holds: a group stops coming back (one that `leaves` is gone), a person or an event is gone. */
   ended(p: Presence): boolean {
     return !!p.until && holds(p.until, this.state, this.party);
   }
@@ -524,7 +524,9 @@ export class World {
   // ---- monsters ----
   /**
    * Live groups on the current map: a killed one back once its respawn is up and its `until` does
-   * not hold, and none out of its hours or before its `after`.
+   * not hold, none out of its hours or before its `after`, and none that leaves once its `until`
+   * holds (#747). Every reader of a standing group comes here: the viewport, the sight, the square,
+   * the steps, the fight and the rest.
    */
   liveGroups(): LiveGroup[] {
     const out: LiveGroup[] = [];
@@ -534,6 +536,8 @@ export class World {
     for (const def of this.map.encounters) {
       const st = ms.groups[def.id];
       if (!st) continue;
+      // The leave rule: gone, standing or killed, and its record left as it was, so not killed.
+      if (def.leaves && this.ended(def)) continue;
       if (st.dead >= 0) {
         if (def.respawn && this.state.minutes - st.dead >= def.respawn && !this.ended(def)) { st.dead = -1; st.x = def.x; st.y = def.y; }
         else continue;

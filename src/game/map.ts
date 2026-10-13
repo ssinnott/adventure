@@ -314,6 +314,11 @@ export interface EncounterDef extends Presence {
   roams?: boolean;
   /** In-game minutes before a killed group returns; 0 or absent = never. */
   respawn?: number;
+  /**
+   * The leave rule (#747): once its `until` holds the group is gone, standing or killed, as a person
+   * is. It was not killed: its `slainText` is not said and its `sets` are not set.
+   */
+  leaves?: boolean;
   /** Said in the log when the party beats the group: what its death changes. */
   slainText?: string;
   /** Flags set as the party beats the group, with its `slainText`: what its death changes holds before the next step (#636). */
@@ -353,8 +358,10 @@ export interface Presence {
   /** Only in these hours; out of them it is not there, and comes back where it was. */
   when?: Hours | readonly Hours[];
   /**
-   * Once this holds it is over. A group stops coming back: one standing stays until it is killed.
-   * A person or an event is gone.
+   * Once this holds it is over. A person or an event is gone. A group stops coming back: one
+   * standing stays until it is killed. A group that `leaves` (the leave rule, #747) is gone, standing
+   * or killed; that is no kill, so it says no `slainText` and sets none of its `sets`. Read from the
+   * flags, so nothing is saved: after a load it is gone still.
    */
   until?: When;
   /** Not there until this holds. */
