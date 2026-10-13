@@ -8,8 +8,8 @@ import type { CombatState, Fighters } from '../../src/game/combat.ts';
 import { spell, spellDice, SPELLS_GROW_TO } from '../../src/game/spells.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import { MONSTERS, MAP_DEFS } from '../../src/content/index.ts';
-import { gateCompany } from '../gate.ts';
-import { testMonster, standardEncounter, line, scaleAt, groupsPerLevel, xpFor, HP, DAMAGE, ROLES, ROLE_IDS, TROLL, SWEEP, testTroll, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, testDrake, giantEncounter, drakeEncounter, BASILISK_STONE, testBasilisk, basiliskEncounter } from '../testmonster.ts';
+import { gateCompany, winRate } from '../gate.ts';
+import { testMonster, standardEncounter, line, scaleAt, groupsPerLevel, xpFor, HP, DAMAGE, ROLES, ROLE_IDS, TROLL, SWEEP, testTroll, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, testDrake, giantEncounter, drakeEncounter, BASILISK_STONE, testBasilisk, basiliskEncounter, clockEncounter } from '../testmonster.ts';
 import type { Role } from '../testmonster.ts';
 import { measure, days, fight, play, outcomeOf, companyAt, edgeOf, spent, mustRest, mendBetween, day as oneDay, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP, RULES, GEAR_TOP, ANSWER, wakeWith, breathGuard } from '../harness.ts';
 import { ok } from './lib.ts';
@@ -319,4 +319,13 @@ function abilities(): void {
   breath.p.members[0].hp = 1; breath.p.members[0].conditions = breath.p.members[0].conditions.filter((k) => k !== 'unconscious');
   ok(turned && guarded === 0 && breathGuard(arm.s, arm.p) === undefined && sweptRow(breath.p, drake).every(({ i }) => i < FRONT_ROW) && breathGuard(breath.s, breath.p) === undefined,
     `while a drake stands the bots raise the front row's fallen first (slot ${guarded}): the breath it turned on the back row takes the front again, and a giant's arm asks nothing`);
+  // The Core's clock (#748): the Heart on the test monsters the plan sizes it by, at 32. Its calls
+  // stand in one group and stop at twelve; Vask's odds are the gate's bot's, as the plan judges them.
+  const heart = clockEncounter(32), fs = bout(32, heart, 40, 5001), still = { ...heart, clock: undefined };
+  const crowd = Math.max(...fs.fights.map(({ s }) => s.monsters.length)), bands = Math.max(...fs.fights.map(({ s }) => s.groupIds.length));
+  const odds = (['panel', 'leader', 'called'] as const).map((k) => { ANSWER.clock = k; return winRate(32, heart, 100); });
+  ANSWER.clock = 'panel';
+  const unclocked = winRate(32, still, 100);
+  ok(crowd <= MAX_MONSTERS && bands === 2 && odds.every((x) => x < unclocked),
+    `at the Heart the clock's calls stand in one group, ${crowd} monsters at most; the gate's bot wins ${pc(odds[0])} killing the Hands first, ${pc(odds[1])} going for the lord and ${pc(odds[2])} fighting the sentries as they come, against ${pc(unclocked)} with no clock (the plan asks two in three and one in three)`);
 }

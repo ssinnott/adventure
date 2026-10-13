@@ -45,7 +45,7 @@ import { ITEMS } from '../src/content/index.ts';
 import type { ItemDef } from '../src/game/items.ts';
 import type { MonsterDef } from '../src/game/monsters.ts';
 import { MAP_DEFS, MONSTERS } from '../src/content/index.ts';
-import { ROLES, ROLE_IDS, LEVELS, HP, DAMAGE, xpFor, line, standardEncounter, testMonster, TROLL, WIGHT_CURSE, CALL, LIGHT, SWEEP, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, giantEncounter, drakeEncounter, BASILISK_STONE, basiliskEncounter } from './testmonster.ts';
+import { ROLES, ROLE_IDS, LEVELS, HP, DAMAGE, xpFor, line, standardEncounter, testMonster, TROLL, WIGHT_CURSE, CALL, LIGHT, SWEEP, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, giantEncounter, drakeEncounter, BASILISK_STONE, basiliskEncounter, CLOCK, clockEncounter } from './testmonster.ts';
 import { quickening } from '../src/content/areas/ashfall/items.ts';
 import type { Role } from './testmonster.ts';
 
@@ -264,20 +264,25 @@ export function wakeWith(p: Party, c: Character): { spellId: string; target: num
 }
 
 /**
- * The foe the bots aim at first among `foes`: a leader, since the people break at its fall, else a
- * caller while the fight has room for its call, since its fall stops the fight growing (`canCall`),
- * else one whose touch takes spell points (`drain: 'sp'`, the lights), since its fall keeps the
- * casters' points.
+ * The foe the bots aim at first among `foes`: under the clock, one at its panel, since their fall
+ * stops the calls and holds the light (`Clock`, ANSWER.clock); then a leader, since the people break
+ * at its fall, else a caller while the fight has room for its call, since its fall stops the fight
+ * growing (`canCall`), else one whose touch takes spell points (`drain: 'sp'`, the lights), since its
+ * fall keeps the casters' points.
  */
 export function markOf(s: CombatState, foes: readonly number[]): number | undefined {
-  return foes.find((f) => isLeader(s, s.monsters[f])) ?? foes.find((f) => canCall(s, s.monsters[f])) ?? foes.find((f) => s.monsters[f].def.drain === 'sp');
+  const c = s.clock, called = c && (typeof c.calls === 'string' ? c.calls : c.calls.id);
+  const first = !c || ANSWER.clock === 'leader' ? undefined : foes.find((f) => (ANSWER.clock === 'panel' ? c.panel.includes(s.monsters[f].def.id) : s.monsters[f].def.id === called));
+  return first ?? foes.find((f) => isLeader(s, s.monsters[f])) ?? foes.find((f) => canCall(s, s.monsters[f])) ?? foes.find((f) => s.monsters[f].def.drain === 'sp');
 }
 
 /**
  * The bots' answers a tool may switch off to see a fight without one: the sweep's (`mendLines`,
- * #545), the hold's (`wakeWith`, #549) and the breath's (`breathGuard`, #549).
+ * #545), the hold's (`wakeWith`, #549) and the breath's (`breathGuard`, #549); and the clock's
+ * (`markOf`, #748), the panel first, which a tool may turn to the leader first or to what the clock
+ * calls as it comes, letting the clock run.
  */
-export const ANSWER = { sweep: true, hold: true, breath: true };
+export const ANSWER = { sweep: true, hold: true, breath: true, clock: 'panel' as 'panel' | 'leader' | 'called' };
 
 /**
  * The fallen member of the front row the bots raise first while a foe that breathes stands (#549): a
@@ -759,6 +764,18 @@ async function main(): Promise<void> {
       const enc = basiliskEncounter(l), held = enc.map((m): MonsterDef => (m.inflict?.cond === 'stoned' ? { ...m, inflict: { cond: 'paralysed', chance: BASILISK_STONE } } : m));
       const fs = fights(l, enc), cureless = Array.from({ length: seeds }, (_, n) => day(l, [enc], n + 1, 30, uncured)).reduce((t, d) => t + d.fights, 0) / seeds;
       console.log(`  ${l}: ${one(fs)}, ${glassed(fs)} of ${seeds} leaving someone glassed; ${rest(l, enc, ['its hold a paralysis', held])}, and ${cureless.toFixed(1)} with neither Absolve nor a draught`);
+    }
+    // Act V's clock (#748), where the road meets it: the Heart at 32, the company killing the Hands
+    // first, going for the lord, or fighting what the clock calls as it comes.
+    console.log(`The Heart: the test boss leading three of the test elite at a clock's panel, calling the test soldier, a machine that obeys, every ${CLOCK.every} rounds while one of them stands.`);
+    for (const l of opt('levels') ? levels : [32]) {
+      const plays = (['panel', 'leader', 'called'] as const).map((k) => {
+        ANSWER.clock = k;
+        const fs = fights(l, clockEncounter(l)), come = fs.reduce((t, { s }) => t + s.monsters.length - 4, 0) / seeds, dark = fs.reduce((t, { s }) => t + (s.clock?.dim ?? 0), 0) / seeds;
+        return `${{ panel: 'the Hands first', leader: 'the lord first', called: 'the sentries as they come' }[k]} ${one(fs)}, ${come.toFixed(1)} sentries called, the light ${dark.toFixed(1)} of ${CLOCK.dims} steps down`;
+      });
+      ANSWER.clock = 'panel';
+      console.log(`  ${l}: ${plays.join('; ')}`);
     }
     // Act IV's holds (#549): the bells, the vines and the machines' clamps, which the bots free.
     console.log(`Four vines: the test controller, its hold at 0.3 a hit as the Strangler Vine's, the held freed by the bots' cure (#549).`);
