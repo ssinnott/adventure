@@ -2,15 +2,14 @@
 // and by ways off a map it has seen, pressed as a player would press it, a step or a turn a beat. It
 // never steps back or aside, so the viewer sees the party face where it goes. It reads the world only
 // through Known: a secret door is a wall to it until a search finds it, a lock a door until it is
-// tried, and a gate is learnt by trying it. A way off or a business it steps onto only when bound
-// there, and a person or a den it walks round while it has seen a way round. A route is a plan, not a
-// lock: a fight or a message on the way plays out and the walk goes on, a question put as it passes
-// over a person or a den it answers with nothing, and wherever the party stands that the plan did not
-// put it, it plans again. Any other menu on the way is not its to answer: it waits for the brain whose
-// it is.
+// tried, and a gate is learnt by trying it. A person, a business, a den, a way off and a tear into a
+// Rift are stops: a route ends on one when bound there and is a wall to it else, and the key that
+// steps onto it ends the trip, so what opens there is another brain's (#719, #721). A route is a plan,
+// not a lock: a fight or a message on the way plays out and the walk goes on, and wherever the party
+// stands that the plan did not put it, it plans again. It presses keys only on the street: any menu
+// is another brain's, or the screen's own.
 import type { Game } from '../game.ts';
 import { ExploreScreen } from '../game.ts';
-import { ChoiceScreen } from '../../ui/screens.ts';
 import type { Action } from '../../input.ts';
 import { passCell } from '../map.ts';
 import type { Exit } from '../map.ts';
@@ -24,35 +23,36 @@ export interface Goal { map: string; x: number; y: number; /** What the why line
 /**
  * The navigator's reckoning of its goal, kept between beats: the goal, the lines said before it was
  * set, the squares a step onto was refused on the way, on the map as played, and where the last key
- * was pressed from.
+ * should leave the party, with whether it was a step and the steps walked and lines said as it was
+ * pressed.
  */
 export interface Trip {
   goal: Goal;
   said: number;
   refused: { map: string; x: number; y: number }[];
-  last?: { key: Action; map: string; x: number; y: number; facing: Facing; steps: number; said: number };
+  last?: { map: string; x: number; y: number; facing: Facing; step: boolean; steps: number; said: number };
 }
 
 /** The steps refused on one goal before it is given up as shut. */
 export const BLOCKS = 3;
 
-/** A business: a step onto it goes in, and out again is back onto the street it came from, so it is no way through. */
-const BUSINESS = new Set(['inn', 'temple', 'shop', 'guild', 'trainer']);
-/** What may put a question to a company that steps onto it, and stop the walk: a person, a den. */
-const ASKS = new Set(['npc', 'den']);
+/** What opens as a company steps onto it: a person, a den and a business. A way off and a tear carry it off (Known.exits). */
+const OPENS = new Set(['npc', 'den', 'inn', 'temple', 'shop', 'guild', 'trainer']);
 /** Wider than any map: a square and a facing as one number. */
 const SPAN = 4096;
 
+/** The stops on a map: a way off, a tear, a person, a den and a business. */
+function stops(k: Known, map: string): { x: number; y: number }[] {
+  return [...k.exits(map), ...k.features(map).filter((f) => OPENS.has(f.kind))];
+}
+
 /**
  * Whether a route on `map` steps onto a square: seen, passable as the company can cross it, no group
- * in sight on it and not in `aside`. A way off, an exit or a tear into a Rift, carries the party off
- * the map, and a business, or a person in a doorway, whose room it is, turns it back onto the street:
- * each is stepped onto only as `to`, never over.
+ * in sight on it and not in `aside`, and no stop on it but at `to`.
  */
 function opens(k: Known, map: string, to?: { x: number; y: number }, aside: readonly { x: number; y: number }[] = []): (x: number, y: number) => boolean {
   const can = k.can(), sq = (cx: number, cy: number): number => cy * SPAN + cx;
-  const ends = [...k.exits(map), ...k.features(map).filter((f) => BUSINESS.has(f.kind) || (f.kind === 'npc' && k.cell(map, f.x, f.y)?.door === 'door'))];
-  const held = new Set([...k.groups(map), ...aside, ...ends.filter((q) => q.x !== to?.x || q.y !== to?.y)].map((q) => sq(q.x, q.y)));
+  const held = new Set([...k.groups(map), ...aside, ...stops(k, map).filter((q) => q.x !== to?.x || q.y !== to?.y)].map((q) => sq(q.x, q.y)));
   const open = new Map<number, boolean>();
   return (cx, cy) => {
     const at = sq(cx, cy);
@@ -68,8 +68,8 @@ function opens(k: Known, map: string, to?: { x: number; y: number }, aside: read
 
 /**
  * The keys from (x, y, facing) to (tx, ty) over seen, passable squares of one map, round a group in
- * sight, a way off and a business that are not (tx, ty), and the squares in `aside`; null when none.
- * Turning costs 1, a step 1.
+ * sight, a stop that is not (tx, ty) and the squares in `aside`; none from (tx, ty) itself, and null
+ * when there is no way. Turning costs 1, a step 1.
  */
 export function routeOn(k: Known, map: string, x: number, y: number, facing: Facing, tx: number, ty: number, aside: readonly { x: number; y: number }[] = []): Action[] | null {
   if (x === tx && y === ty) return [];
@@ -138,56 +138,44 @@ const upper = (s: string): string => s.charAt(0).toUpperCase() + s.slice(1);
 export const route: Brain = (g, k, p) => {
   const goal = p.goal;
   if (!goal) return null;
-  const st = g.world.state;
-  let trip = p.trip;
-  if (!trip || trip.goal.map !== goal.map || trip.goal.x !== goal.x || trip.goal.y !== goal.y) {
-    trip = p.trip = { goal, said: g.said, refused: [] };
+  const st = g.world.state, at = g.world.locate(goal.map, goal.x, goal.y);
+  // A goal of its own: what was planned, refused and said on the way to another is not this one's.
+  if (!p.trip || p.trip.goal.map !== goal.map || p.trip.goal.x !== goal.x || p.trip.goal.y !== goal.y) {
+    p.trip = { goal, said: g.said, refused: [] };
     p.plan = [];
   }
-  trip.goal = goal;
-  // There, whatever its square opens: stood on, or a way off stepped onto, which carried the party on
-  // and is never stood on.
-  const at = g.world.locate(goal.map, goal.x, goal.y), last = trip.last;
-  const onto = (map: string, x: number, y: number): boolean => last?.key === 'forward' && st.steps !== last.steps && last.map === map && last.x + FACING_DX[last.facing] === x && last.y + FACING_DY[last.facing] === y;
-  const off = onto(at.mapId, at.x, at.y) && k.exits(at.mapId).some((e) => e.x === at.x && e.y === at.y);
-  if (off || (st.mapId === at.mapId && st.x === at.x && st.y === at.y)) { p.goal = null; p.trip = null; p.plan = []; return null; }
-  // A question put as its step passes over a person or a den, it answers with nothing, as a player
-  // passing would. Its other keys are the explorer's: anything else on top, a parley among them, is
-  // another brain's, or the screen's own.
-  if (g.top instanceof ChoiceScreen && onto(st.mapId, st.x, st.y) && k.features(st.mapId).some((f) => ASKS.has(f.kind) && f.x === st.x && f.y === st.y)) return 'cancel';
+  const trip = p.trip, done = (): null => { p.goal = null; p.trip = null; p.plan = []; return null; };
+  if (st.mapId === at.mapId && st.x === at.x && st.y === at.y) return done();
   if (!(g.top instanceof ExploreScreen)) return null;
-  // Where the last key left the party: a step that went nowhere was refused, and anywhere the plan
-  // did not put it (an exit taken, a flight), it plans again.
+  // Where the last key left the party: a step that went nowhere was refused, and anywhere else the
+  // plan did not put it (an exit taken, a flight), it plans again.
+  const last = trip.last;
   trip.last = undefined;
-  if (last?.key === 'forward' && st.mapId === last.map && st.steps === last.steps) {
+  if (last && (st.mapId !== last.map || st.x !== last.x || st.y !== last.y || st.facing !== last.facing)) {
     p.plan = [];
-    const ahead = { map: last.map, x: last.x + FACING_DX[last.facing], y: last.y + FACING_DY[last.facing] };
-    trip.refused.push(ahead);
-    if (trip.refused.length >= BLOCKS) {
-      const told = g.log[g.log.length - (g.said - last.said)] ?? '';
-      p.shut.push({ ...ahead, why: told });
+    if (last.step && st.mapId === last.map && st.steps === last.steps && trip.refused.push({ map: last.map, x: last.x, y: last.y }) >= BLOCKS) {
+      p.shut.push({ map: last.map, x: last.x, y: last.y, why: g.log[g.log.length - (g.said - last.said)] ?? '' });
       p.why = [`${upper(goal.name)} is shut to me.`];
-      p.goal = null; p.trip = null;
-      return null;
+      return done();
     }
-  } else if (last) {
-    const step = last.key === 'forward' ? 1 : 0, f = last.key === 'turnLeft' ? turnLeft(last.facing) : last.key === 'turnRight' ? turnRight(last.facing) : last.facing;
-    if (st.mapId !== last.map || st.x !== last.x + FACING_DX[f] * step || st.y !== last.y + FACING_DY[f] * step || st.facing !== f) p.plan = [];
   }
   if (!p.plan.length) {
     const to = at.mapId === st.mapId ? at : routeMaps(k, st.mapId, at.mapId)?.[0]?.exit;
-    // Round the squares refused on the way, and the people and dens whose words and questions stop a
-    // walk, while it has seen a way round; else at them and over them.
-    const aside = [...trip.refused.filter((q) => q.map === st.mapId), ...k.features(st.mapId).filter((f) => ASKS.has(f.kind) && (f.x !== to?.x || f.y !== to?.y))];
+    // Round the squares refused on the way while it has seen a way round; else at them again.
+    const aside = trip.refused.filter((q) => q.map === st.mapId);
     let keys = to && (routeOn(k, st.mapId, st.x, st.y, st.facing, to.x, to.y, aside) ?? routeOn(k, st.mapId, st.x, st.y, st.facing, to.x, to.y));
     // Landed on the way off it must take, as Brandy Hole lands a company on the square it climbs out
     // by: it steps off onto an open square beside it and back on.
     if (keys?.length === 0) keys = offAndOn(k, st.mapId, st.x, st.y, st.facing);
-    if (!keys?.length) { p.why = [`No way to ${goal.name} that I have seen.`]; p.goal = null; p.trip = null; return null; }
+    if (!keys?.length) { p.why = [`No way to ${goal.name} that I have seen.`]; return done(); }
     p.plan = keys;
   }
-  const key = p.plan.shift()!;
-  trip.last = { key, map: st.mapId, x: st.x, y: st.y, facing: st.facing, steps: st.steps, said: g.said };
+  const key = p.plan.shift()!, step = key === 'forward';
+  const facing = key === 'turnLeft' ? turnLeft(st.facing) : key === 'turnRight' ? turnRight(st.facing) : st.facing;
+  const x = step ? st.x + FACING_DX[facing] : st.x, y = step ? st.y + FACING_DY[facing] : st.y;
+  trip.last = { map: st.mapId, x, y, facing, step, steps: st.steps, said: g.said };
   p.why = g.said > trip.said ? [`Bound for ${goal.name}.`, g.log[g.log.length - 1]] : [`Bound for ${goal.name}.`];
+  // The step onto a stop it is bound for ends the trip: what opens there, or where it leads, is not the navigator's.
+  if (st.mapId === at.mapId && x === at.x && y === at.y && stops(k, st.mapId).some((q) => q.x === x && q.y === y)) done();
   return key;
 };
