@@ -256,8 +256,8 @@ for each area, its band, and the xp and gold a clear should give. Since the mons
 gate on the road (§2.2), the curve says how hard each area is as well as what it pays. Checked for
 each area:
 
-- three quarters of an area's xp reaches the next area's band floor: its budget is what the climb
-  from its floor to the next floor costs, divided by 0.75;
+- three quarters of an area's xp reaches the next area's band floor, the cap for the road's last
+  area: its budget is what the climb from its floor to the next floor costs, divided by 0.75;
 - a clear's gold pays for training the party through the band;
 - every monster's level (a new field on `MonsterDef`) sits in its map's band, give or take two,
   rising from the floor near the area's way in to the band's top at the far end;
