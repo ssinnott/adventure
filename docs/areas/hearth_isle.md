@@ -1642,6 +1642,23 @@ overturn before the issue that builds each is approved.
     the endings with the Hearth's three states; the save upgrade; the gate and the harness to 32.
     There is no ninth.
 
+### 9.2 Decided while building
+
+Decided by delegate for #751, each the owner's to overturn:
+
+1. **`toV5` reads what the game's own `seen` reads.** The event counts as seen when the High Spine
+   is among the save's `zones` and the outdoors' `used` holds `i11_stone`. The zone, the event and
+   the flag are kept frozen in the upgrade (`V5_PEAK`), so a later edit of the map or of
+   `stones.ts` cannot change which saves it reaches, and the upgrade and the Hearth's count agree
+   on who stood at the Stone.
+2. **The flag is set to 1,** as an event's `sets` sets it. A save that has it keeps it.
+3. **`shipped.json` changes only its version.** `q_peak_stood` is in no content until the road
+   behind gives `i11_stone` its `sets` (#765), and the list records it then.
+4. **The window between the two is left open.** A company that stands at the Stone after this
+   lands and before `i11_stone` sets the flag is saved at version 5, which the upgrade does not
+   meet, and the Core's door would stay shut to it. The road behind's pull request is to be merged
+   with this one or straight after.
+
 ## 10. Names
 
 The Lanterns' English, kept, as the Whitespine's and Sunderwood's were (NAMES.md §2, §4): the isle
