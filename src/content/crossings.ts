@@ -141,8 +141,8 @@ export const LAST_CROSSING: Crossing = {
     { at: 'cinderport', name: 'Cinderport', landing: { x: 13, y: 2, facing: SOUTH },
       label: 'The boat puts you back on Cinderport\'s steps, rested. The light stands behind you.',
       warning: 'The harbourmaster looks you over. "Folk go over strong and come back quiet. You are not strong."' },
-    // On the isle's shore under its rim, where Act V begins (Phase 1.5).
-    { at: 'hearthisle', name: 'Hearth Isle', owed: 'Phase 1.5',
+    // On the strand under the isle's rim, at the cleft's foot, where Act V begins (H6, #753).
+    { at: 'hearthisle', name: 'Hearth Isle', landing: { map: 'hearthisle_h6', x: 20, y: 30, facing: NORTH },
       label: 'The boat grounds on Hearth Isle under the rim, and you wade ashore, rested. Light rises from within.' },
   ],
 };

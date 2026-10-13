@@ -1,8 +1,8 @@
 // The Hearth's monsters, band 28-32: Hearth Isle, the Underdeep and the Core. `sprite` names the
 // drawing (src/ui/sprites.ts); the numbers are the test monster's line at each role and level
 // (tools/testmonster.ts), as the plan's section 7 has them. A group on a map is a list of these ids,
-// and any area's maps may place them. Drawn ahead of the area's first map, so src/content/index.ts
-// lists them in AHEAD until then.
+// and any area's maps may place them. Drawn ahead of the area's first map (#761), and the area's own
+// table since the isle listed it (H6, #753).
 import type { MonsterDef } from '../../../game/monsters.ts';
 
 /** The drawings the Hearth's monsters are drawn with, one kind to each. src/ui/sprites.ts must draw every one. */
@@ -13,8 +13,8 @@ export const SPRITES = [
 export const MONSTERS: readonly MonsterDef[] = [
   // the isle and the nave by night (#753, #755), fodder on the line at 28, twelve to a group: it flies, and its dust puts to sleep
   { id: 'hearth_moth', name: 'Hearth Moth', plural: 'Hearth Moths', sprite: 'hearth_moth', kind: 'beast', look: 'The sky over the isle is moving.', level: 28, hp: 276, ac: 24, attack: 15, dice: 3, sides: 8, bonus: 2, speed: 12, xp: 557, gold: [0, 0], ranged: true, inflict: { cond: 'asleep', chance: 0.2 }, tint: '#b4552e', size: 0.62 },
-  // the isle's pickets, the temple and the crypt (#753, #755, #756), a soldier on the line at 29: the Hand never breaks
-  { id: 'ashen_champion', name: 'Ashen Champion', plural: 'Ashen Champions', sprite: 'ashen_champion', kind: 'person', look: 'The Hand\'s best, in steel from below.', steady: true, level: 29, hp: 418, ac: 26, attack: 16, dice: 5, sides: 8, bonus: 5, speed: 11, xp: 1153, gold: [0, 0], tint: '#4a2c2c', size: 1 },
+  // the isle's pickets, the temple and the crypt (#753, #755, #756), a soldier on the line at 29: the Hand never breaks; its knife at one in ten
+  { id: 'ashen_champion', name: 'Ashen Champion', plural: 'Ashen Champions', sprite: 'ashen_champion', kind: 'person', look: 'The Hand\'s best, in steel from below.', steady: true, level: 29, hp: 418, ac: 26, attack: 16, dice: 5, sides: 8, bonus: 5, speed: 11, xp: 1153, gold: [0, 0], drops: [{ item: 'grey_knife', chance: 0.1 }], tint: '#4a2c2c', size: 1 },
   // behind the champions (#753, #755), a caster on the line at 29: Fire Bolt on a row and Ward on its group
   { id: 'ashen_preacher', name: 'Ashen Preacher', plural: 'Ashen Preachers', sprite: 'ashen_preacher', kind: 'person', look: 'Still preaching, and the fire is the sermon.', steady: true, level: 29, hp: 566, ac: 26, attack: 18, dice: 6, sides: 8, bonus: 7, speed: 12, xp: 1538, gold: [0, 0], ranged: true, cast: { spells: ['firebolt', 'ward'], chance: 0.5 }, tint: '#6a2e22', size: 0.98 },
   // everywhere below (#753, #757), fodder on the line at 30, twelve to a group: the first thing killed and the last animal met

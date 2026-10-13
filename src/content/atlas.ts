@@ -22,8 +22,8 @@
 import type { Atlas } from '../game/atlas.ts';
 // The planned areas chart their own rows in their folders, spread in here where the plan's were
 // until each area's first box lists it (as Saltreach's, Sunderwood's, the Kilns', Cairnmoor's,
-// Rimewater's, the Whitespine's, Ashfall's and the Glasswold's were, #169, #194, #457, #476, #486, #499,
-// #511, #525).
+// Rimewater's, the Whitespine's, Ashfall's, the Glasswold's and Hearth Isle's were, #169, #194, #457, #476,
+// #486, #499, #511, #525, #753).
 
 export const PLAN: Atlas = {
   width: 512,
@@ -266,17 +266,10 @@ export const PLAN: Atlas = {
     { id: 'glasswold', name: 'The Glasswold', order: 11, band: [26, 28], label: [84, 250], tint: '#c8bc7c', note: 'Steppe round a desert of fused glass' },
     { id: 'hearth', name: 'Hearth Isle', order: 12, band: [28, 32], label: [256, 196], note: 'The temple over the core' },
   ],
-  zones: [
-    { id: 'hearthisle', name: 'Hearth Isle', area: 'hearth', seeds: [[256, 172]] },
-  ],
-  places: [
-    { id: 'underdeep', name: 'The Underdeep', kind: 'deep', planned: true, order: 13, band: [30, 31], at: [216, 168] },
-    { id: 'core', name: 'The Core', kind: 'deep', planned: true, order: 14, band: [32, 32], at: [216, 176] },
-  ],
+  zones: [],
+  places: [],
   sites: [
     // XII. The middle of the world, and the names of waters and walls.
-    { name: 'The Hearth', icon: 'hearth', at: [256, 174], label: 'none', planned: true },
-    { name: 'Anchorhold', icon: 'tower', at: [268, 176], label: 'right', planned: true }, // on Hearth Isle: the Cleric's third prestige
     { name: 'The Inland Sea', icon: 'water', at: [214, 230], size: 2 },
     { name: 'The Wyke', icon: 'water', at: [216, 84] },
     { name: 'Sylmeer', icon: 'water', at: [124, 150] },
