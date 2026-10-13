@@ -118,7 +118,7 @@ with a **Wardstone**. In the road's order, as the atlas (`src/content/atlas.ts`)
 | **The Whitespine** | The great southern range and its monks. | 22–24 | The Peak Stone |
 | **Ashfall** | Fire Mountain, black sand and vines. | 24–26 | The Ember Stone |
 | **The Glasswold** | Steppe round a desert of fused glass. | 26–28 | |
-| **Hearth Isle** | The temple over the Core. | 28–30 | |
+| **Hearth Isle** | The temple over the Core. | 28–32 | |
 
 The bands are the atlas's (`areaBand` in `src/game/atlas.ts`), the Foreland's and Thornmark's from
 their maps. Two zones are not on the road: the Glass in the Glasswold and Glacier Foot in
@@ -249,7 +249,7 @@ while the quest goes down.
 | Knight | Knight-Errant, Knight Banneret, Knight Paramount | Helmstow: an armourer in the keep's ward (#17) | Coldharbour: a retired Warden captain's farm off the Downs | Stairwatch: a ledge above the Giants' Stair, its way up found off the Stair |
 | Paladin | Lightbearer, Justicar, Exemplar | Helmstow: the chandler who makes the Lantern Chapel's lamps | under the Eaves: a hermit's shrine by the clearing, kept by a knight of the Crown that was | Old Cinder, on Fire Mountain's west flank |
 | Ranger | Outrider, Deadeye, Unerring | Thornhold: the fletcher | Deepthorn Lodge, in the Deepthorn | the Eyrie: the Wold Rider scout who guided the Meridian Company, on the far-west mesa under the rim |
-| Cleric | Curate, Prelate, Exarch | Thornhold: the bone-setter at the Lantern Chapterhouse | Lanternwood: the keeper of the moth shrine, a Lantern who stayed when the wood split | Anchorhold: a hermit walled into a cell on Hearth Isle |
+| Cleric | Curate, Prelate, Exarch | Thornhold: the bone-setter at the Lantern Chapterhouse | Lanternwood: the keeper of the moth shrine, a Lantern who stayed when the wood split | Anchorhold: an anchoress walled into a cell on Hearth Isle's east rim |
 | Sorcerer | Arcanist, Thaumaturge, Magus | Saltmouth: an astrologer who draws star charts for the ships' pilots | Watcher's Hut, beside the Stone Ring on High Moor | the crown of the Buried Tower, where it breaks the Glass |
 | Thief | Tumbler, Nightjar, Faceless | Saltmouth: a locksmith | the Upper Water: an old barge smuggler at the willows' quay, out of the Compact, or so he says | Rook's Nest: a hide on the tip of Sheer Point, over the Hand's causeway |
 | Barbarian | Berserker, Ironhide, Warlord | Saltmouth: a stevedore on the docks | Iron Crag, in the Iron Fells | Warlord's Forge, by the mouth of Fire Mountain's vents |
@@ -271,8 +271,9 @@ quest's own fights are set at 26.
 - **Paladin:** go down into Old Cinder's undercroft, and relight the lamp at its bottom.
 - **Ranger:** follow the Meridian journals down Fire Mountain's vents to Meridian Camp, and bring
   Oriel Fane's map back to the scout at the Eyrie (§10.3).
-- **Cleric:** carry the Crowness Light keeper's log of the eleven over the sea to the hermit walled
-  into Anchorhold, and go down alone into the temple's first crypt while the hermit keeps the top.
+- **Cleric:** carry the Crowness Light keeper's log of the eleven over the sea to the anchoress
+  walled into Anchorhold, and go down into the temple's first crypt without her, to light its eleven
+  lamps in the keeper's gaps, while she keeps the top.
 - **Sorcerer:** go down the Buried Tower for the scholar at its crown, and read what is written at
   its foot. The walk and the floors the quest asks are held at 26–28, wherever the tower's own band
   settles (MONSTERS.md open question 3).
@@ -297,7 +298,9 @@ quest's own fights are set at 26.
   person who teaches it, by a company that is a Lantern; the dwarves are born to it, and a copybook
   carried does its work (§9, Act III). The other eleven come as their shortcuts and secrets do.
 - Weapon and magic skills have **Novice / Expert / Master** tiers. Trainers for Expert live in
-  regional towns; Master trainers are hidden, expensive, and often want a favour.
+  regional towns; Master trainers are hidden, expensive, and often want a favour. The tiers are not
+  built yet: Expert and Master trainers both wait on them (#18), and Master trainers are out of M3
+  until they are (#739, call 11).
 
 ---
 
@@ -506,9 +509,9 @@ ship lands there.
 - **Its skills,** three to a guild, taught to members for a price (§5) once the skills are built
   (#18). The Lanterns' Linguist reads Kiln-script, so it matters from the Kilns on; it is the first
   built (#538), and every hall of a guild teaches the guild's skills as each is built.
-- **Its line.** The Charters' storylines are the guilds' lines: the Wardens' siege, the Lanterns'
-  split at Lantern Watch (§9, Act II), the Compact's line with its ending kept (§10.2) and the
-  Cartographers' Lost Expedition (§10.3).
+- **Its line.** The Charters' storylines are the guilds' lines: the Lanterns' split at Lantern Watch
+  (§9, Act II), the Compact's line with its ending kept (§10.2) and the Cartographers' Lost
+  Expedition (§10.3). The Wardens' siege was named and never designed, and is cut (#739, call 10).
 
 ### The company's charter
 
@@ -621,7 +624,7 @@ is in the Cargo Ledger's CARGO BELOW column. The doors below open for her. She l
 up through the ice at Rime Lodge (Act III), is taken again at Sheer Point (Act IV), and at the core
 the Hand holds her palm to the panel that answers to the line. Freed, she hands the choice to the
 company:
-*You walked all of it. Every road. You choose.* She is the heir nobody claimed (§10.1), and she
+*You walked every road of it. You choose.* She is the heir nobody claimed (§10.1), and she
 walks the main road, not only the subplot.
 
 Helmstow changes between acts, under Vask's hand, and never for the better: Wardens on the walls, a
@@ -766,10 +769,14 @@ means.
 From Cinderport the party crosses to the Hearth Isle. The final dungeon descends from a temple,
 through the Underdeep, into the reactor core. There are two ways in. The Hand came by its causeway
 and the service ways, through doors that know a hand of the line, because it had Wenna's. The
-company comes through the core's door, which opens only for whoever restored the stones: the one
-story lock the road is sure to spend. Vask is there with the Ashen Hand, halfway through the
-shutdown sequence, the Queen's signet on his finger and Wenna's palm held flat to the panel. When
-the Hand is broken, the Custodian, whole for the first time, speaks with one voice:
+company comes through the core's door at the Stair's foot, which opens only for whoever set the
+five Stones right on the road (the Tide Stone home, the Grove closed, the Anvil's tear closed, the
+Peak Stone stood beside and the Ember Stone lit): the one story lock the road is sure to spend. The
+Hand went in by a door of its own beside it, which opened for Wenna's hand and is shut behind it.
+The Grove's mending brightens the Hearth and opens nothing. Vask is there with the Ashen Hand,
+halfway through the shutdown sequence, the Queen's signet on his finger and Wenna's palm held flat
+to the panel. When the Hand is broken, the Custodian, whole for the first time, speaks with one
+voice:
 
 *The voyage is over. It has been over for four hundred years. The vessel is in orbit around the
 world it was sent to. Arrival was never triggered because the crew who could trigger it forgot
@@ -791,6 +798,11 @@ Wenna takes the signet from Vask's hand, and gives the choice to the company.
 
 A clean three-way choice: nothing else on the road changes what is offered. The throne and the
 Compact change who stands with the party at the core, not what it may choose.
+
+The game goes on after it. The ending's pages are shown as the answer is taken. Then the world is
+changed: the Hearth on the title, in the night sky and in the almanac; Helmstow's gate open; each
+hall's word. Nothing closes, and in every ending the company walks Wenna home to Gullwick (#739,
+call 6).
 
 ### The reach
 
@@ -849,7 +861,9 @@ it was copied from a real crew record, the elf-hold's treaty carries the mainten
 cousin's claim is blood, which is what the doors below test. The Queen's missing signet is evidence
 all three sides want. And there is a fourth, who claims nothing: Wenna of Gullwick, whose hand the
 doors know (§9). The case before the Council can be made for her, for any of the three, or for
-nobody.
+nobody. The Council sits once, in the keep's chapel. A case is carried by two of the claimant's
+pieces, or by the signet, and a case for nobody always carries. The winner's people hold the stair
+to the core (#739, call 10).
 
 **Payoff:** the throne subplot is the only way to remove Vask from Helmstow *before* Act V, which
 weakens the Ashen Hand's presence in the final dungeon.
@@ -868,9 +882,9 @@ where its fragment has been counting.
 
 The Tallymaster's orders, stolen from its out-tray and carried up, open the guild's last rank, and
 Ruan puts the choice in the Keel at Saltmouth, not below (#22). It ends with a choice: take over
-the Compact and redirect it (it becomes your ferry, fence and spy
-network for Act V), or hand it to the Wardens (the Wardens siege becomes winnable, the sea lanes
-close, the Ashfall crossing gets harder).
+the Compact and redirect it (the last crossing is free for a Partner, both ways, and its runner on
+the strand has word of the isle), or hand it to the Wardens (the sea lanes are theirs, and the
+Hand's boats stop coming over) (#739; docs/areas/hearth_isle.md §6).
 
 ### 10.3 The Lost Expedition
 
@@ -900,8 +914,8 @@ map has nothing a player can read, so the hidden third is earned at the Core (#2
 - **Monsters:** cel-shaded, rigged, animated (idle / attack / hurt / die) using the shared
   paper-doll rig. A few dozen base rigs, recoloured and re-proportioned per variant.
 - **Audio:** synth music per region and time of day, procedural SFX. No recorded assets.
-- **Text:** terse. Two lines per event is the aim, three the most (docs/EXPANSION.md §5.4). Journals
-  and books are the long-form exception.
+- **Text:** terse. Two lines per event is the aim, three the most (docs/EXPANSION.md §5.4).
+  Journals, books and the endings' pages are the long-form exception.
 
 ---
 
@@ -912,8 +926,8 @@ map has nothing a player can read, so the hidden third is earned at the Core (#2
 | **M0 — Vertical slice** | Helmstow, one Foreland outdoor map, one dungeon, one Rift; full party creation; combat; four spells per class; save/load; automap. | Prove the feel. Ship nothing else until this is fun. |
 | **M1 — Act I** | The Foreland and Thornmark complete, the Downs and the Deepthorn with them; the first guilds and their quests; the Grove Stone dungeon. | First real playthrough. |
 | **M2 — Acts II to IV** | Saltreach to the Wold and their Wardstones; the rest of the guilds; the first and second prestiges, and the eight third prestiges whose trainers live in Acts II to IV's country (#448; #443, call 8); Meridian Camp and the Dead-Drop; the ship. | The open world. |
-| **M3 — Act V + subplots** | Hearth Isle, the Underdeep and the Core, all endings, all three subplots, the Cleric's and the Sorcerer's third prestiges, Master trainers. | Content complete. |
-| **The reach** | The Glass and Glacier Foot, with the Buried Tower and the Vault (§9). | Optional by design: the game is whole without it. |
+| **M3 — Act V + subplots** | Hearth Isle, the Underdeep and the Core, all endings, all three subplots' ends and the Cleric's third prestige. Master trainers wait on the skill tiers (#18). | Content complete. |
+| **The reach** | The Glass and Glacier Foot, with the Buried Tower and the Vault (§9), the Sorcerer's third prestige and #56's 62 and 63. | Optional by design: the game is whole without it. |
 | **Stretch** | New Game+, seeded Rift daily runs, second party mode, Arcomage-style tavern game. | Only after M3 ships. |
 
 From M1 on, each area is built as a core and country (§4, docs/EXPANSION.md §2.1): its core

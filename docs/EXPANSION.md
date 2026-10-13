@@ -162,8 +162,10 @@ service withheld, a way shut.
 - **Few, and spent on purpose.** No area has more than one, and the road about one to an act (four,
   to start). Each is declared with its reason, in the area's doc and in `content/locks.ts`, which the
   check reads (§5.4): a lock not in the list, or one over the count, fails until the owner signs it
-  in. The first one spent is the core's door, which opens for the company that has restored the
-  stones; Hearth Isle itself is reached like anywhere else.
+  in. The second one spent is the core's door at the Stair's foot, which opens for the company that
+  has set the five Stones right on the road (`q_tide_home`, `q_grove_done`, `q_anvil_closed`,
+  `q_peak_stood` and `q_ember_lit`; the Grove's mending is the Hearth's, not the door's); Hearth
+  Isle itself is reached like anywhere else.
 - **In the world.** Each lock is a thing in plain sight with its reason on it: a sealed door, a
   drowned stair, a captain who will not sail into the storm. Never an invisible wall, never "not
   yet".
@@ -177,7 +179,8 @@ The road had one lock, the flag on the pass, and it went (§2.2); Acts I and II 
 any place. Act III spends one, the Sleepers' Bay's door under Coldmere, which opens to Wenna's hand
 and nothing else (#434, call 4; #440); the Deep Mines' door marked CREW ONLY is not one, since
 nothing in the act opens it. Act IV spends none: the Ember Stone is finished by a hand-in of three
-parts, which shuts nothing before it (#443, call 2; #450).
+parts, which shuts nothing before it (#443, call 2; #450). Act V spends one, the core's door
+(docs/areas/hearth_isle.md, #739, call 1): the road's second of four.
 
 ---
 
@@ -202,7 +205,9 @@ parts, which shuts nothing before it (#443, call 2; #450).
 
 - Its zone maps, towns and dungeons pass the contract (§5).
 - Its towns sell and teach what its band needs (rest, cures, the band's gear, the band's spell
-  tier, training to the top of the band), each business with an interior of its own.
+  tier, training to the top of the band), each business with an interior of its own. Hearth Isle has
+  no town: its pilgrims' camp rests, cures, raises and trains to the cap, and its band's gear is
+  found, never sold (#739, call 4).
 - Its chapter of the one quest (§5.8) is walked end to end in a test, and its side quests are in the
   log, with every key real.
 - Its gate holds (§5.2): a company at each map's floor gets through, and one well under it turns
@@ -270,8 +275,9 @@ A kill pays each member by the monster's level against theirs: ×0.1 at three or
 at two under, ×0.7 at one under, ×1 at their level, ×1.15 at one over, ×1.3 at two over, and ×1.5
 at three or more over. Simulated from Saltreach on, that kept companies that clear anything from
 65% of each area to all of it within about a level of the road, where fixed xp left a full clear
-nearly four levels over by the Glasswold. Each town's trainers teach to its band's top plus one.
-Gold and loot stay fixed, so a full clear still pays, in gear, gold and secrets.
+nearly four levels over by the Glasswold. Each town's trainers teach to its band's top plus one, and
+never past the cap (Hearth Isle's camp teaches to 32, #739, call 4). Gold and loot stay fixed, so a
+full clear still pays, in gear, gold and secrets.
 
 So an area may give more than its ask (#634): paid by level, a lead does not build up, for the next
 area takes it back. What the curve holds is the lead itself: a company of six entering an area at
@@ -497,7 +503,7 @@ docs/areas/<area>.md                    the area's brief, and what was built
 | The Whitespine | 22–24 | cliffs and peaks, with the road through them, built (#543); a group that talks before it fights; sweep (#442) |
 | Ashfall | 24–26 | the crossing by ship, open from the start; volcano and lava fields, built (#543); sweep with fire (#442); the sentries after the Stone, built (#548) |
 | The Glasswold | 26–28 | steppe and dunes, built (#543); stone and its cure; the Rider's ride to Cinderport; a lava flow sealing the Glass, drawn by the Wold's doc (#442, #523) |
-| Hearth Isle, the Underdeep | 28–32 | the Underdeep's look; the endings |
+| Hearth Isle, the Underdeep | 28–32 | the Underdeep's look; eight systems (#739, call 9): the curve's last row, ending at the cap (its next floor, its band and the trainers' ceiling capped at the cap); the gear's last rung at 28, found and never sold; a group that is gone once a flag holds, standing or not; the Core's clock and `obeys`; `Exit.lifts` and `Exit.after`; the endings (their table, their long-form screen and the Hearth's three states on the title, in the night sky and in the almanac); a save upgrade for the Peak Stone; the gate bot and the harness run to 32 with the clock played |
 | The reach: the Glass, and Glacier Foot with the Vault (DESIGN.md §9) | the cap | glass and dunes; a lava flow sealing the Glass from the Ember Waste; the Vault's new kind of map, the inside of the sky; the atlas marking reach areas beside the road, not on it (its test holds the bands rising along the road, and a reach area's would not); super dungeons of many levels; artifacts |
 
 The skills that open the map (Swimmer, Mountaineer, Navigator and the rest) come when there are
@@ -630,10 +636,20 @@ Hearth and the sentries after. Then the Whitespine (#445), Ashfall (#446) and th
 their calls (#443) and names (#444); Meridian Camp and the Dead-Drop (#22) and the eight third
 prestiges whose trainers live in the act's country (#448). 1.4 ends M2.
 
-**1.5, Act V and the subplots** (M3).
+**1.5, Act V and the subplots** (M3; docs/areas/hearth_isle.md, #739). First its systems, eight
+issues: the curve's last row, ending at the cap, and the trainers' ceiling with it; the gear's last
+rung at 28, found and never sold; a group that is gone once a flag holds, standing or not; the
+Core's clock and `obeys`; `Exit.lifts` and `Exit.after`; the endings, their screen and the Hearth's
+three states on the title, in the night sky and in the almanac; a save upgrade for the Peak Stone;
+the gate bot and the harness run to 32 with the clock played. Then Hearth Isle in road order, H6 to
+the Heart, with its chapter, its side quests (#56's 56 to 61 and 64) and the Cleric's third at
+Anchorhold, its calls and names written in. Then the Council of Helmstow, which ends the Empty
+Throne, and the road behind in one issue, as #449 was Act IV's. The act spends one story lock, the
+core's door (§2.3). Master trainers wait on the skill tiers (#18), and the Sorcerer's third goes
+with the reach. 1.5 ends M3.
 
-**1.6, the reach** (DESIGN.md §9). Optional by design, so it comes last, and v1 can ship without
-it.
+**1.6, the reach** (DESIGN.md §9), with the Sorcerer's third prestige and #56's 62 and 63. Optional
+by design, so it comes last, and v1 can ship without it.
 
 ---
 
@@ -648,7 +664,7 @@ it.
 | Maps inside the density floor (§5.3) | unchecked | all |
 | Areas on the curve (§5.2) | the slice, pinned | all |
 | Areas whose gate holds (§5.2) | none: fights give way two to four levels under the band | all |
-| Story locks (§2.3) | none: the pass's went with #40 | within the count, each declared with its reason |
+| Story locks (§2.3) | one, the Sleepers' Bay's door (#440); the core's is planned (#739) | within the count, each declared with its reason |
 
 ---
 

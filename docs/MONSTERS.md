@@ -239,7 +239,7 @@ made once in the systems lane and first spent by the area named, which waits for
 | `until`, `after` | a group that stops coming back once a Stone is restored, or comes only after a step or a choice. Neither opens or shuts a way, so neither is a story lock (EXPANSION.md §2.3) | Thornmark | its Rifts closing with the Grove Stone; the old wood sleeping; the Anvil Guard; the Underdeep noticing |
 | Ranks | a group's front and back: melee reaches the back once the front is down, and bows, slings and spells reach anyone | Saltreach, or Thornmark's retune if it wants it first | DESIGN.md §6's caster behind a wall of shields, which cannot be built today |
 | Elements | fire, cold, lightning, nature and holy on the damage spells; `resist`, `immune` and `weak` on a monster | Saltreach, or the Deepthorn for fire on the wood | the first area past level 10, where one spell stops being every answer |
-| Morale | people break when their leader falls and beasts when three in four are down, and leave the fight; the Hand, the dead, the Rift and the machine never do | Saltreach | the Barge Master and his crews |
+| Morale | people break when their leader falls and beasts when three in four are down, and leave the fight; the Hand, the dead, the Rift and the machine never do, save a machine that `obeys` | Saltreach | the Barge Master and his crews |
 | Casting | a monster's turn spent on a spell from the tables: Mend or Bless on its group, Fire Bolt or Slumber on a row | Saltreach | the drowned chanters, the menders, the Hand's preachers |
 | Drain | its hits heal it, or take spell points instead of hit points | Saltreach; spell points on Cairnmoor | the leeches; the bog lights |
 | Regeneration | heals a set amount each round, except a round it took fire | Cairnmoor | the trolls |
@@ -247,7 +247,7 @@ made once in the systems lane and first spent by the area named, which waits for
 | Calls | a turn spent bringing a named group into the fight, within 12 and three groups | Rimewater | the tallymen; Vask |
 | Sweep | one attack at every member of a row, with an element if it has one | the Whitespine; with fire, Ashfall | the giants; the drakes' breath |
 | A light seen past the fog | a monster carrying a light is seen a square further than the weather allows (wanted, not needed) | the Downs | the lampmen |
-| The Core's clock | the last fight counts rounds to the light going out | the Core | STORY.md, Act Five |
+| The Core's clock | a panel marker, the Grey Hands: while they stand, the light dims a step a round to a thread and Vask calls a sentry every second round, which the cap of three groups does not stop; with them down it holds, and the sentries stand down when he falls (`obeys`) | the Core | STORY.md, Act Five |
 | A question first | `choice` on a group: a person's question, put before the fight; the refusal fights, and an answer of gold, an item or a flag stands the group aside | Thornmark's ogre (#56's 13); the Whitespine | the ogre's bargain; the giants' toll |
 | A flag on the fall | `sets` on a group: flags set as it falls, with its `slainText`, so what its death changes holds before the next step | the Kilns | the Warden of the Anvil, whose fall closes the tear |
 
@@ -1551,7 +1551,7 @@ deep knocker is Meridian Camp's, drawn with the inspector (§8.4, #657); the vau
 *What do we do?* The Hand's last stand, the machine at work and nothing else, and at the heart of
 it all, people.
 
-### 9.1 Hearth Isle (band 28–30)
+### 9.1 Hearth Isle (band 28–29)
 
 *A rocky rim round a green bowl, the temple built by people who thought the Hearth a god, and the
 column of light itself.*
@@ -1576,11 +1576,12 @@ Its boss is the Core's.
 *The hull's service layer, where geometry becomes too regular and materials too smooth. The final
 dungeon descends through it from the temple.*
 
-The Underdeep is the machine at work and nothing else: every machine family at its full size and on
-its own ground, the keepers with no robes, knockers still inspecting walls that have not cracked in
-four hundred years, and the vessel's defences, which caught the Hand on the stairs. And rats. They
-are the only animals below the world, and nobody brought them: they came aboard the way rats do. A
-company that met its first rat in a farm cellar meets its last one here.
+The Underdeep is the machine at work, with the last of the Hand still standing on its stairs: every
+machine family at its full size and on its own ground, the keepers with no robes, knockers still
+inspecting walls that have not cracked in four hundred years, and the vessel's defences, which
+caught the Hand on the stairs. And rats. They are the only animals below the world, and nobody
+brought them: they came aboard the way rats do. A company that met its first rat in a farm cellar
+meets its last one here.
 
 **New:** crawlers, the long-legged things that walk the walls and ceilings. **Back:** every machine
 family, at work, the deep knockers from Meridian Camp (§8.4); the rats.
@@ -1589,7 +1590,8 @@ family, at work, the deep knockers from Meridian Camp (§8.4); the rats.
 |---|---|---|---|---|
 | Deep Rat | rat | fodder, 30 | everywhere | *Rats. Even here.* Disease (0.2); twelve to a group |
 | Keeper | keepers | soldier, 30 | the service ways | *A keeper with no bay to keep, and no robe.* |
-| Deep Knocker | knockers | armoured, 30 | the corridors | *Still knocking, on a wall that has never cracked.* First met below Meridian Camp, at 28 (§8.4) |
+| Deep Knocker | knockers | armoured, 28, as built below Meridian Camp | the Ways and the Stair; the crack (#56's 61) | *Still knocking, on a wall that has never cracked.* First met below Meridian Camp, at 28 (§8.4) |
+| Ashen Rearguard | cultist | armoured, 30 | the stair's first landing, where the claimant's people are not | *The last of the Hand still standing, and standing in the way.* Never breaks |
 | Deep Crawler | crawlers, new | brute, 31 | walls and ceilings | *It comes down from above, on too many legs.* Reaches the back row |
 | The Catcher | crawlers, new | boss, 31 | the stairs down to the core, among the Hand's dead | *It caught the Hand on these stairs.* |
 
@@ -1609,7 +1611,10 @@ Grey Hands at the panel fall.
 
 The Custodian does not fight. When the Hand is broken it speaks, with one voice.
 
-**Asks:** calls; the Core's clock.
+**Asks:** calls; the Core's clock, with a panel marker on the Grey Hands: while they stand the light
+dims a step a round to a thread and the calls come past the cap of three groups, and with them down
+it holds, so nothing is lost; `obeys`, for the sentries that stand down when Vask falls (#739,
+call 7).
 
 ---
 

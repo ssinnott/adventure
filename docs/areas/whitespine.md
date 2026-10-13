@@ -1496,9 +1496,11 @@ Decided by delegate for #501, each the owner's to overturn:
    world ends.
 5. **The Peak Stone counts for the Hearth once stood at:** its row in `src/content/stones.ts` reads
    `restored: { seen: 'highspine_i11:i11_stone' }`, set by the once event at 28,0 and kept by the
-   save already, so no new flag; `stonesRestored` reads it (`world.stones`, the title's horizon, the
-   almanac). §2 has the company stand beside the only whole Stone, and with no condition the
-   Hearth's five could never all count. #505 may move it.
+   save already; `stonesRestored` reads it (`world.stones`, the title's horizon, the almanac).
+   Act V's core door needs a flag, since a `seen` cannot be a `needFlag`: the same event sets
+   `q_peak_stood`, and a save upgrade sets it on the saves that already stood there (#739, call 1).
+   §2 has the company stand beside the only whole Stone, and with no condition the Hearth's five
+   could never all count. #505 may move it.
 6. **The ring** is a 3 by 3 of bare stone under the Stone (27 to 29, 1 to 3), its stones rocks
    round it (26,1 to 2; 25 to 30, 4; 30, 1 to 3), entered from the snow line through the gap at
    26,3 (25,3 is snow). The Stone is on the north edge, so the ring is open to I10 there: #502 may
