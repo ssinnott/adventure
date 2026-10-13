@@ -1620,7 +1620,7 @@ call 7).
 Nine on frames that exist are drawn (#761); the crawlers are the second pull request. The Hearth
 Moth is the lantern moth's hands cut deeper, to flames, rust above and red beneath, its dust falling
 as embers; the Deep Rat the rat lean and up on its legs, pale, ribbed and red-eyed; the Keeper the
-bay keeper bare, dark-plated and gold-lit, both hands held up to touch; the Core Sentry the Sentry's
+bay keeper bare, dark-plated and gold-lit, both hands raised to touch; the Core Sentry the Sentry's
 legs and keel, pale and clean, a ring of plate for a head with the core's light in it. The Ashen
 Champion wears the overseer's hitched robe under a breastplate and pauldrons of the Hand's steel, a
 greatsword stood on its point; the Ashen Preacher has thrown his hood back from a shaven head grey

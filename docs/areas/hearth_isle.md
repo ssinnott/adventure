@@ -1720,7 +1720,7 @@ Decided by delegate for #761, each the owner's to overturn:
    Vask's hand and the Underdeep keeper's lights, against the furnaces' orange and the bay's blue,
    so the core's machines and the ring that orders them read as one.
 4. **The keeper is told apart by its pose and its plate:** the bay keeper's frame bare, taller and
-   thinner, dark, seven fingers, both hands held up to touch (`raise` in the keepers' Build, 0 for
+   thinner, dark, seven fingers, both hands raised to touch (`raise` in the keepers' Build, 0 for
    every keeper before it).
 5. **The Core Sentry has a body of its own,** `core`: the Sentry's legs and keel with a ring for a
    head and two long arms alike. MONSTERS has it the frame's Build and a tint, but a tint alone
