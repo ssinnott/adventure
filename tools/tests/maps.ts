@@ -19,7 +19,10 @@ import { ok, owed, stopsWalk } from './lib.ts';
  * its map files draw is placed, the last of them, the Cairn King, by #480; and Rimewater's, the
  * keepers and the Matron by #490.
  */
-const UNPLACED: Record<string, string> = {};
+const UNPLACED: Record<string, string> = {
+  hearth_moth: '#753', deep_rat: '#753', ashen_champion: '#753', ashen_preacher: '#753', keeper: '#757', hand_rearguard: '#758',
+  grey_hand: '#759', core_sentry: '#759', vask: '#759',
+};
 
 /** The monsters a company can meet on `defs`: those their groups place, and those a placed one calls (`calls`), and so on down. */
 export function placedMonsters(defs: readonly MapDef[], table: Readonly<Record<string, MonsterDef>> = MONSTERS): Set<string> {

@@ -40,6 +40,12 @@
 // brow a row of six lights counts as the tallyman's do. Size 1.6, drawn inside the tall boss's crown
 // (TALL_REACH, src/ui/grouplabels.ts). Idle: the pens go along the line together and back, and the
 // count runs on.
+//
+// The Underdeep's keeper wears nothing either, and has no bay to keep. The machine at work: taller
+// and thinner than the bay's, its plate gone dark and smooth below, its lights the Hearth's gold,
+// a finger more to each hand and both hands held up before it, the lit tips out to lay on whoever
+// comes, as the sleepers' keepers lay them. Idle: its weight goes from one leg to the other, its
+// head tips, and the near hand comes up higher now and then, as the bay keeper's does.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, groundShadow } from './common.ts';
@@ -49,7 +55,7 @@ import { chiselMark } from './knockers.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['bay_keeper', 'matron', 'brother', 'bell_ringer', 'abbot', 'hold_keeper', 'tallymaster'];
+export const KINDS: readonly MonsterSprite[] = ['bay_keeper', 'matron', 'brother', 'bell_ringer', 'abbot', 'hold_keeper', 'tallymaster', 'keeper'];
 
 /**
  * The frame's parts, as proportions of the bay keeper's where they are numbers (1 = the keeper, 0 =
@@ -76,6 +82,8 @@ interface Build {
   finger: number;
   /** How far out from the hips the hands are held: the Matron's reach the furthest. */
   offer: number;
+  /** How far both hands are held up before it, as the bay keeper's near one comes up to touch, 0 down: the Underdeep's keeper's. */
+  raise: number;
   /** The starched cap on the crown, 0 none: the Matron's. */
   cap: number;
   /** The apron of pale plate, a bib on the chest and a skirt to the knees, 0 none: the Matron's. */
@@ -113,7 +121,7 @@ interface Build {
   glowHex: string;
 }
 const KEEPER: Build = {
-  legs: 1, limb: 1, chest: 1, stoop: 0, tilt: 1, head: 1, arms: 1, fingers: 6, finger: 1, offer: 1, cap: 0, apron: 0, mark: 1,
+  legs: 1, limb: 1, chest: 1, stoop: 0, tilt: 1, head: 1, arms: 1, fingers: 6, finger: 1, offer: 1, raise: 0, cap: 0, apron: 0, mark: 1,
   hem: 0, hood: 0, peak: 0, open: 0, march: 0, bell: 0, crook: 0, cordHex: '#d2c6a2', yoke: 0, desk: 0, count: 0, neck: 0, stand: 97,
   lightHex: '#eefaff', glowHex: '#9ad6ff',
 };
@@ -125,7 +133,7 @@ const KEEPER: Build = {
  * straightens, and her hands stir over it.
  */
 const MATRON: Build = {
-  legs: 1.06, limb: 1.12, chest: 1.18, stoop: 1, tilt: 0.45, head: 1.1, arms: 2, fingers: 8, finger: 1.3, offer: 1.3, cap: 1, apron: 1, mark: 1.25,
+  legs: 1.06, limb: 1.12, chest: 1.18, stoop: 1, tilt: 0.45, head: 1.1, arms: 2, fingers: 8, finger: 1.3, offer: 1.3, raise: 0, cap: 1, apron: 1, mark: 1.25,
   hem: 0, hood: 0, peak: 0, open: 0, march: 0, bell: 0, crook: 0, cordHex: '#d2c6a2', yoke: 0, desk: 0, count: 0, neck: 0, stand: 97,
   lightHex: '#eefaff', glowHex: '#9ad6ff',
 };
@@ -139,7 +147,9 @@ const ABBOT: Build = { ...KEEPER, legs: 1.05, limb: 1.08, chest: 1.14, head: 1.0
 const HOLD_KEEPER: Build = { ...KEEPER, legs: 0.93, stoop: 0.3, tilt: 0.8, offer: 0.8, yoke: 1 };
 /** The Tallymaster: behind its desk among the ledgers, its neck grown long, a pen in each hand and the count across its brow. */
 const TALLYMASTER: Build = { ...KEEPER, legs: 1.1, limb: 1.1, chest: 1.2, head: 1.15, tilt: 0.35, fingers: 7, finger: 1.15, mark: 1.4, desk: 1, count: 6, neck: 5, stand: 80 };
-const BUILDS: Partial<Record<MonsterSprite, Build>> = { matron: MATRON, brother: BROTHER, bell_ringer: BELL_RINGER, abbot: ABBOT, hold_keeper: HOLD_KEEPER, tallymaster: TALLYMASTER };
+/** The Underdeep's keeper: taller and thinner, dark plate, the Hearth's gold in its lights, seven fingers to a hand and both hands held up. */
+const DEEP_KEEPER: Build = { ...KEEPER, legs: 1.08, limb: 0.92, chest: 0.92, stoop: 0.2, tilt: 1.25, fingers: 7, finger: 1.3, offer: 1.25, raise: 1, mark: 1.3, lightHex: '#fff3d6', glowHex: '#ffb44a' };
+const BUILDS: Partial<Record<MonsterSprite, Build>> = { matron: MATRON, brother: BROTHER, bell_ringer: BELL_RINGER, abbot: ABBOT, hold_keeper: HOLD_KEEPER, tallymaster: TALLYMASTER, keeper: DEEP_KEEPER };
 /** The plate under a robe, the Bay Keeper's grey: the def's tint is the robe's. */
 const PLATE = '#8d9399';
 
@@ -208,7 +218,7 @@ function keeper(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   for (const side of [-1, 1] as const) {
     if (side > 0 && b.bell > 0) bellArm(ctx, f, body, b, h, t, cloth, joint, plate, shade('#b08a3e', p.tone));
     else if (side < 0 && b.crook > 0) crookArm(ctx, f, body, b, h, t, hour, top, cloth, joint, plate, shade('#4b3b2c', p.tone), shade('#c39d4e', p.tone));
-    else arm(ctx, f, body, b, h, t, side, side > 0 ? reach : 0, limb, joint, plate, cloth);
+    else arm(ctx, f, body, b, h, t, side, side > 0 ? Math.max(reach, b.raise) : b.raise, limb, joint, plate, cloth);
   }
 }
 

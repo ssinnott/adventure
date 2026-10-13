@@ -66,6 +66,7 @@ const DETACHED: Partial<Record<MonsterSprite, { what: string; pieces: number; sh
   fire_beetle: { what: 'sparks', pieces: 2, share: 0.01 },
   lantern_moth: { what: 'dust', pieces: 3, share: 0.025 },
   deathshead: { what: 'dust', pieces: 3, share: 0.025 },
+  hearth_moth: { what: 'dust', pieces: 3, share: 0.025 },
   salamander: { what: 'embers', pieces: 3, share: 0.01 },
   great_salamander: { what: 'embers', pieces: 3, share: 0.01 },
   ember_salamander: { what: 'embers', pieces: 3, share: 0.01 },
