@@ -2,9 +2,11 @@
 // trainer and tavern, with the gate south onto the Foreland road, the harbour postern beside it and
 // the gatehouse north into the keep's ward (keep.ts), where the Regent-Warden holds court. After Act
 // II it is his city (#157), and once the Hand has Wenna it is worse (#449). Two first prestiges are taught here, in both cities: the Paladin's by
-// Mottram the chandler and the Bard's by a luthier under the Hearthlight's eaves (#19).
+// Mottram the chandler and the Bard's by a luthier under the Hearthlight's eaves (#19). Once the Council
+// has removed Vask (#764) the gibbets go and the Eel talks of the verdict.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { THRONE_COUNCIL, THRONE_COUSIN, THRONE_HOLD, THRONE_REMOVED, THRONE_TALLIS, THRONE_WENNA } from './keep.ts';
 
 const STOCK = ['club', 'dagger', 'staff', 'shortsword', 'mace', 'longsword', 'axe', 'spear', 'sling', 'shortbow', 'longbow', 'robe', 'leather', 'scale', 'chain', 'buckler', 'shield', 'potion_heal', 'antidote', 'lantern_oil', 'rations', 'torch'];
 const DEARER: Readonly<Record<string, number>> = {
@@ -91,6 +93,12 @@ export const HARROW: MapDef = {
       'A dockhand: "They boarded the Chapel on a Tuesday. Nobody carried anything out but the sexton, and he had a book under his coat, out of the rain. There was no rain."',
       'A Warden, into his cup: "Ask at the Drillyard if you want paying. Ask on the wall if you want telling. Don\'t ask either one about the other."',
     ], says: [
+      // Once the Council has sat for a claimant or for nobody (#764): its verdict, and no Warden at the door.
+      { after: { flag: THRONE_COUSIN }, lines: ['A Warden, loud, with the old badge on: "The cousin sits in the chair and the Regent sits in a cell, and I was on the wall for both."'] },
+      { after: { flag: THRONE_HOLD }, lines: ['A fisherman: "An elf on Helmstow\'s chair, and the treaty read out on the keep steps. My grandfather said it was so and we laughed at him."'] },
+      { after: { flag: THRONE_TALLIS }, lines: ['A dockhand: "Tallis sailed in with his hulls and the Council counted them. Prices are a port\'s now. So is the gate."'] },
+      { after: { flag: THRONE_WENNA }, lines: ['A fisherman, quiet: "The chair\'s kept for a girl from Gullwick nobody has seen. They say the doors know her. I don\'t know what that means and nor does the Council."'] },
+      { after: { flag: THRONE_COUNCIL }, lines: ['A Warden: "The Council holds the city under its own seal and nobody is in the chair. It is the quietest Helmstow has been in a year."'] },
       // After the Hand has Wenna (`q_wenna_taken`, #449): Vask's city again, and the Eel's talk is the gibbet's.
       { after: { flag: 'q_wenna_taken' }, lines: [
         'The tavern is near empty. A Warden sits by the door with his helm on, and drinks nothing.',
@@ -110,9 +118,9 @@ export const HARROW: MapDef = {
     { kind: 'event', x: 12, y: 14, id: 'postern_wardens', once: true, after: { flag: 'q_salt_done' }, until: { seen: 'harrow:postern_wardens2' }, text: POSTERN_WARDENS },
     { kind: 'event', x: 14, y: 14, id: 'postern_wardens2', once: true, after: { flag: 'q_salt_done' }, until: { seen: 'harrow:postern_wardens' }, text: POSTERN_WARDENS },
     // After the Hand has Wenna at Sheer Point (`q_wenna_taken`, #449): a gibbet in the middle street,
-    // said on whichever of its two squares is walked first, once.
-    { kind: 'event', x: 7, y: 9, id: 'gibbet', once: true, after: { flag: 'q_wenna_taken' }, until: { seen: 'harrow:gibbet2' }, text: GIBBET },
-    { kind: 'event', x: 8, y: 9, id: 'gibbet2', once: true, after: { flag: 'q_wenna_taken' }, until: { seen: 'harrow:gibbet' }, text: GIBBET },
+    // said on whichever of its two squares is walked first, once; gone with Vask (#764).
+    { kind: 'event', x: 7, y: 9, id: 'gibbet', once: true, after: { flag: 'q_wenna_taken' }, until: [{ seen: 'harrow:gibbet2' }, { flag: THRONE_REMOVED }], text: GIBBET },
+    { kind: 'event', x: 8, y: 9, id: 'gibbet2', once: true, after: { flag: 'q_wenna_taken' }, until: [{ seen: 'harrow:gibbet' }, { flag: THRONE_REMOVED }], text: GIBBET },
     { kind: 'sign', x: 13, y: 14, text: 'Chalked over the postern, in a dockhand\'s hand: CARTS DOWN BEFORE THE BELL. Under it, newer and smaller: AND THE REST OF YOU.' },
     // The Bell That Rang Twice and The Rest of the Survey (#77, from #56): Osmund in the Chapel, the
     // two who saw the bell rung (all three gone after Act II, #157), and Ebba, at the Eel from a new game or, her name kept, in the Chapel.
