@@ -41,7 +41,7 @@ import type { Facing } from '../../src/game/types.ts';
 import { Game, ExploreScreen } from '../../src/game/game.ts';
 import type { Store } from '../../src/game/save.ts';
 import { seen as seenBit } from '../../src/game/world.ts';
-import { defaultParty, equip, hasCondition, trainPrice, xpForLevel } from '../../src/game/party.ts';
+import { companyLevel, defaultParty, equip, hasCondition, levelUp, trainPrice, xpForLevel } from '../../src/game/party.ts';
 import { item } from '../../src/game/items.ts';
 import { restRefused } from '../../src/game/wilds.ts';
 import { daylightAt } from '../../src/game/calendar.ts';
@@ -57,6 +57,9 @@ import type { Known, Sighted } from '../../src/game/pilot/known.ts';
 import { route, routeOn, walkOn, nearestOn, routeMaps, HELD } from '../../src/game/pilot/route.ts';
 import { explore, frontier, suspects, SEARCHING, CLEARING } from '../../src/game/pilot/explore.ts';
 import { keep, need, better, reserve, spare, WELL_STEPS } from '../../src/game/pilot/keep.ts';
+import { aims, chooseAim, LOST_AFTER, BACK } from '../../src/game/pilot/aims.ts';
+import { questLog, goalMap } from '../../src/game/quests.ts';
+import { THE_QUEST } from '../../src/content/index.ts';
 import type { Action } from '../../src/input.ts';
 import { ok, headlessGame, drive } from './lib.ts';
 
@@ -71,9 +74,12 @@ export function pilot(): void {
   // back from them, and back after, whether they end or throw.
   const brains = BRAINS.splice(0, BRAINS.length, route);
   try { navigator(); } finally { BRAINS.splice(0, BRAINS.length, ...brains); }
-  ok(BRAINS.length === 3 && BRAINS[0] === keep && BRAINS[1] === route && BRAINS[2] === explore, 'the brains are asked in order: the quartermaster, the navigator, then the explorer');
-  explorer();
-  quartermaster();
+  ok(BRAINS.length === 4 && BRAINS[0] === keep && BRAINS[1] === aims && BRAINS[2] === route && BRAINS[3] === explore, 'the brains are asked in order: the quartermaster, the strategist, the navigator, then the explorer');
+  // The explorer's and the quartermaster's checks are their own too: the strategist, which would send
+  // the company on to the next map, is held back from them, and put back after.
+  BRAINS.splice(BRAINS.indexOf(aims), 1);
+  try { explorer(); quartermaster(); } finally { BRAINS.splice(0, BRAINS.length, ...brains); }
+  strategist();
 }
 
 function check(): void {
@@ -1362,4 +1368,84 @@ function quartermaster(): void {
   const night = `${sg.party.members.some((m) => m.race === 'orcblood')} ${hidden} ${turned} ${sgp.shut.length} ${sgp.goal?.name !== "Mottram's Stores"} ${sg.world.state.minutes > dark} ${looked}`;
   ok(night === 'true true 3 1 true true true',
     `outside Helmstow by night after Act II, the postern unseen, the south gate turns it back three times and is shut, and it is not tried again, the clock moving as it looks about the Foreland (${night})`);
+}
+
+function strategist(): void {
+  // A new game has no quest in the log, so it walks Helmstow, where it stands. Hired by Vask (his flag
+  // set, the test's privilege), the aim is the one quest's goal, on the map the first chapter's goal
+  // names: Gullwick's, in Callow Downs.
+  const n = headlessGame(4), np = (n.pilot = new Pilot({ instant: true })), first = THE_QUEST.chapters[0];
+  const fresh = chooseAim(n, knownOf(n), np);
+  n.party.flags.q_ashcombe = 1;
+  const view = questLog(n.world.state, n.party).find((v) => v.def === THE_QUEST), hired = chooseAim(n, knownOf(n), np);
+  const goal = first.goals.find((q) => q.text === view?.goal);
+  ok(JSON.stringify(fresh) === '{"kind":"explore","map":"harrow"}' && !!goal && hired?.kind === 'quest' && hired.quest === THE_QUEST.id && hired.map === goal.at && !!view && hired.map === goalMap(view) && hired.map === 'downs_f3' && hired.text === goal.text,
+    `a new game walks Helmstow (${JSON.stringify(fresh)}); hired, its aim is the one quest's goal on the first chapter's map (${JSON.stringify(hired)})`);
+
+  // The farm done at level 1, the goal is Thornmark's pass. In the Foreland, Thornmark not yet trodden,
+  // its band is unknown and the aim is the goal; walked into (world.travel, the test's privilege), its
+  // band, 5 to 10, is known, and it levels in the Foreland, whose band starts at 1, to 4. At level 4 the
+  // goal again, the Grove's now Thornmark is visited.
+  const t = headlessGame(4), tp = (t.pilot = new Pilot({ instant: true }));
+  t.party.flags.q_ashcombe_done = 1;
+  t.world.travel('shelf', 16, 4, SOUTH);
+  const before = chooseAim(t, knownOf(t), tp);
+  t.world.travel('thornmark', 2, 9, EAST);
+  const kt = knownOf(t), levelling = chooseAim(t, kt, tp), band = levelling?.kind === 'level' ? kt.band(levelling.zone) : undefined;
+  for (const m of t.party.members) m.level = 4;
+  const strong = chooseAim(t, knownOf(t), tp);
+  ok(companyLevel(headlessGame(4).party) === 1 && before?.kind === 'quest' && before.map === 'thornmark' && levelling?.kind === 'level' && levelling.zone === 'shelf' && levelling.to === 4 && !!band && band[0] <= 1
+    && strong?.kind === 'quest' && kt.zoneOf(strong.map) === 'thornmark',
+    `at level 1, bound for Thornmark unseen it goes (${JSON.stringify(before)}); in it, its band known, it levels in a zone it may (${JSON.stringify(levelling)}, band ${band?.join('-')}); at level 4 it goes on (${JSON.stringify(strong)})`);
+
+  // The lost rule: hired, its purse at the reserve so the quartermaster has no errand, the aim set; three
+  // days on with the goal unchanged, one tick says it is lost and clears the aim, and the next sets
+  // another; a level gained by one of the company, and a tick puts the goal back.
+  const l = headlessGame(4), lp = (l.pilot = new Pilot({ instant: true }));
+  l.party.flags.q_ashcombe = 1;
+  l.party.gold = reserve(l.party);
+  lp.toggle(l);
+  drive(l, [null]);
+  const aimed = JSON.stringify(lp.aim), text = lp.aimGoal, line = 'Lost in the Foreland: three days, and no way on.';
+  l.world.advance(LOST_AFTER);
+  const heard = lp.heard.length;
+  drive(l, [null]);
+  const lost = lp.heard.slice(heard).includes(line) && lp.aim === null && lp.lost.has(text);
+  drive(l, [null]);
+  const next = JSON.stringify(lp.aim);
+  const bram = l.party.members[0];
+  bram.xp = xpForLevel(2);
+  levelUp(bram, makeRng(1));
+  drive(l, [null]);
+  ok(aimed.startsWith('{"kind":"quest"') && lost && !next.includes(text) && bram.level === 2 && JSON.stringify(lp.aim) === aimed && lp.aimGoal === text,
+    `three days on one goal, a tick says "${line}" and clears the aim (${lost}), the next walks on (${next}), and a level gained puts the goal back (${JSON.stringify(lp.aim)})`);
+
+  // Over the line from the Foreland into Thornmark at level 1, not bound there: the band known, it
+  // steps back onto the square before the line.
+  const b = headlessGame(4), bp = (b.pilot = new Pilot({ instant: true }));
+  b.party.gold = reserve(b.party);
+  b.world.travel('shelf', 31, 9, EAST);
+  const from = { ...b.world.state };
+  bp.toggle(b);
+  bp.trail = [{ map: from.mapId, x: from.x, y: from.y, zone: 'shelf' }];
+  b.update('forward');
+  const crossed = b.world.zone?.id;
+  drive(b, [null]);
+  const turned = `${bp.why[0]} ${bp.goal?.x},${bp.goal?.y}`;
+  for (let i = 0; i < 6 && b.world.zone?.id !== 'shelf'; i++) drive(b, [null]);
+  ok(crossed === 'thornmark' && turned === `${BACK} ${from.x},${from.y}` && b.world.zone?.id === 'shelf' && b.world.state.x === from.x && b.world.state.y === from.y,
+    `crossed into Thornmark at level 1, not bound there, it says so and steps back to the Foreland (${crossed}; ${turned}; in ${b.world.zone?.id} at ${b.world.state.x},${b.world.state.y})`);
+
+  // A chest seen down a corridor: it walks to it and opens it, and it is gone from what it knows.
+  const c = headlessGame(4), cp = (c.pilot = new Pilot({ instant: true }));
+  c.party.gold = reserve(c.party);
+  c.maps.fx_vault = new GameMap({ id: 'fx_vault', name: 'Vault', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#######', '#.....#', '#######'],
+    features: [{ kind: 'chest', x: 5, y: 1, id: 'fx_chest', gold: 5, items: ['torch'] }] });
+  c.world.travel('fx_vault', 1, 1, EAST);
+  see(c, 'fx_vault');
+  cp.toggle(c);
+  const gold = c.party.gold;
+  for (let i = 0; i < 20 && !c.world.used('fx_chest'); i++) drive(c, [null]);
+  ok(c.world.used('fx_chest') && c.party.gold === gold + 5 && c.party.bag.includes('torch') && cp.heard.includes('You open the chest: 5 gold, Torch.') && !knownOf(c).features('fx_vault').some((f) => f.kind === 'chest'),
+    `a chest seen down a corridor, it walks to it and opens it (${c.world.used('fx_chest')}, ${c.party.gold - gold} gold), and knows it no more`);
 }

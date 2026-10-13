@@ -7,7 +7,8 @@
 // built map and named in its words; the company's level, the curve's for the step, sits in that
 // map's band; the play finishes it (every fight it needs is won at least once in ten by the gate's
 // bot at that level, and the goal moves on); and a person who takes an item stands at the step's
-// place. Every goal of every chapter has to come up in some run (`everyGoalWalked`).
+// place. Every goal of every chapter has to come up in some run (`everyGoalWalked`). And the pilot
+// plays a chapter from a new game with nothing scripted, as the game shows it (`pilotPlays`).
 import { makeRng } from '../src/lib/engine/rng.ts';
 import { buildMaps } from '../src/content/maps.ts';
 import { AREAS, ATLAS, MAP_DEFS, MONSTERS, THE_QUEST } from '../src/content/index.ts';
@@ -17,9 +18,13 @@ import { defaultParty } from '../src/game/party.ts';
 import type { Party } from '../src/game/party.ts';
 import { meet, heard, handIns, personFlags } from '../src/game/people.ts';
 import type { Person } from '../src/game/people.ts';
-import { questLog, questMarks, questNews } from '../src/game/quests.ts';
+import { holds, questLog, questMarks, questNews } from '../src/game/quests.ts';
 import type { Chapter, QuestCond, QuestView } from '../src/game/quests.ts';
 import { homeMap } from '../src/game/atlas.ts';
+import { companyLevel } from '../src/game/party.ts';
+import { ExploreScreen } from '../src/game/game.ts';
+import { Pilot } from '../src/game/pilot/pilot.ts';
+import { headlessGame, owed } from './tests/lib.ts';
 import { useShrine } from '../src/game/wilds.ts';
 import type { Feature } from '../src/game/map.ts';
 import type { Facing } from '../src/game/types.ts';
@@ -211,6 +216,32 @@ const WALKED = new Set<string>();
 export function everyGoalWalked(ok: Ok, chapters: readonly Chapter[] = THE_QUEST.chapters): void {
   const missed = chapters.flatMap((c) => c.goals.filter((g) => !WALKED.has(g.text)).map((g) => `${c.id}: "${g.text}"`));
   ok(!missed.length, `every goal of the one quest comes up in a run${missed.length ? ' -> ' + missed.join('; ') : ''}`);
+}
+
+/** The most ticks the pilot plays a chapter for. */
+export const PLAY_TICKS = 200_000;
+/** Ticks on the street with no key pressed that end a play: with none, nothing changes. */
+const STILL_TICKS = 100;
+
+/**
+ * A new game played by the pilot (#720, the first of #723's runs): `headlessGame(4)`, the pilot on
+ * with every brain and no delays, ticked until the chapter's end holds, the company falls, it presses
+ * no key on the street for STILL_TICKS, or PLAY_TICKS run out. The end must hold; while `whose` owes
+ * what gets the pilot there, the check is owed to it.
+ */
+export function pilotPlays(ok: Ok, chapter: Chapter, whose?: string): void {
+  const g = headlessGame(4), p = (g.pilot = new Pilot({ instant: true })), from = performance.now();
+  p.toggle(g);
+  let ticks = 0, still = 0;
+  const done = (): boolean => holds(chapter.done, g.world.state, g.party);
+  for (; ticks < PLAY_TICKS && p.on && still < STILL_TICKS && !done(); ticks++) {
+    const a = p.next(g);
+    g.update(a);
+    still = a || !(g.top instanceof ExploreScreen) ? 0 : still + 1;
+  }
+  const how = done() ? 'there' : !p.on ? `as it stops (${p.why.join(' ')})` : still >= STILL_TICKS ? `with nothing more to press (${p.why.join(' ')})` : 'out of ticks';
+  const msg = `${chapter.title}: the pilot plays a new game to its end; it ends ${how} after ${ticks} ticks and ${((performance.now() - from) / 1000).toFixed(1)} s, on day ${g.world.day} at level ${companyLevel(g.party)}`;
+  if (whose) owed(done(), msg, whose); else ok(done(), msg);
 }
 
 /** The quest's goal comes only from a chapter begun, or one before a chapter begun. */

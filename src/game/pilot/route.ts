@@ -156,6 +156,8 @@ export function walkOn(k: Known, map: string, x: number, y: number, facing: Faci
  * and the keys there, none when the party stands on one; null when it reaches none.
  */
 export function nearestOn(k: Known, map: string, x: number, y: number, facing: Facing, squares: readonly { x: number; y: number }[], aside: readonly { x: number; y: number }[] = []): { x: number; y: number; keys: Action[] } | null {
+  // None to reach is no walk at all, not a search of every square in reach for none.
+  if (!squares.length) return null;
   const wanted = new Set(squares.map((q) => q.y * SPAN + q.x)), at = (cx: number, cy: number): boolean => wanted.has(cy * SPAN + cx);
   for (const all of [true, false]) {
     const keys = keysTo(opens(k, map, [...aside, ...stops(k, map, all).filter((q) => !at(q.x, q.y))]), x, y, facing, at);

@@ -2,10 +2,11 @@
 // the game's own moves and checked a step at a time (tools/walk.ts); Thornmark's plays the chain.
 // Then a new company walks out of Helmstow to the Lodestone, and Gytha gives it the lesson, and
 // her later words as Thornhold's news reaches her. Then its side quests, each choice both ways: the
-// log reads true and the people stand where it says. Last, Helmstow before and after Act II (#157).
+// log reads true and the people stand where it says. Then Helmstow before and after Act II (#157).
+// Last, the pilot plays the chapter from a new game, owed to talk (#721) until it meets people.
 import type { Walkthrough } from '../../area.ts';
 import { CHAPTER } from './chapter.ts';
-import { newWalk, meetWho, walkThrough, see, fight, playChapter, quest, listen } from '../../../../tools/walk.ts';
+import { newWalk, meetWho, walkThrough, see, fight, playChapter, quest, listen, pilotPlays } from '../../../../tools/walk.ts';
 import type { Step, Walk } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import { wrap } from '../../../ui/draw.ts';
@@ -104,6 +105,7 @@ export const walkthrough: Walkthrough = (ok) => {
   homecoming(ok);
   underVask(ok);
   trainers(ok);
+  pilotPlays(ok, CHAPTER, '#721');
 };
 
 /**

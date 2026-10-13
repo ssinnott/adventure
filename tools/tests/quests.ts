@@ -12,7 +12,7 @@ import { World } from '../../src/game/world.ts';
 import { defaultParty, takeItem } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
 import { serialize, deserialize } from '../../src/game/save.ts';
-import { questLog, questMarks, questNews } from '../../src/game/quests.ts';
+import { questLog, questMarks, questNews, goalMap } from '../../src/game/quests.ts';
 import { handIns, personFlags, groupFlags } from '../../src/game/people.ts';
 import type { Chapter, LogQuest, PageView, QuestCond, QuestDef, QuestView, When } from '../../src/game/quests.ts';
 import { questSheets, chapterHeading, openingSheet, PAGE, LIST } from '../../src/ui/quests.ts';
@@ -172,6 +172,24 @@ export function quests(): void {
       && s.rows.slice(3).every((r) => !/^Chapter \d/.test(r.text) || r.text.startsWith(`Chapter ${s.page + 1},`)));
     ok(v.pages.length === 5 && pagesInOrder && headed && whole(v), `five chapters each read on their own pages, in road order, each headed by its numeral, title and own goal (${sheets.map((s) => ['I', 'II', 'III', 'IV', 'V'][s.page]).join(' ')})`);
     ok(sheets[open].page === 4 && open === sheets.length - 1 && sheets.filter((s) => s.page === 2).length > 1, `J opens on the newest chapter, V, the goal's (sheet ${open + 1} of ${sheets.length}); the long third goes on over its own pages, turned back to`);
+  }
+  { // The map a goal is done on (#720), read back from the goal shown: the Foreland's chapter, the first,
+    // at its first goal; a side quest's at its goal's, none at a goal that names no map, none once done.
+    const first = THE_QUEST.chapters[0], rng = makeRng(720), party = defaultParty(rng), world = new World(buildMaps(), party, rng);
+    for (const c of [conds(first.start)[0], conds(first.goals[0].when)[0]]) for (const f of [c.flag ?? []].flat()) party.flags[f] = 1;
+    const chapter = questLog(world.state, party, [{ ...THE_QUEST, chapters: [first] }])[0];
+    const side: QuestDef = { id: 'fx_side', title: 'Fixture', start: [{ flag: 'fx_side' }, { flag: 'fx_word' }], done: { flag: 'fx_side_done' }, entries: [],
+      goals: [{ when: { flag: 'fx_side' }, text: 'Go up to the keep.', at: 'keep' }, { when: {}, text: 'Ask about.' }] };
+    const map = (...flags: string[]): string | undefined => {
+      const p = defaultParty(makeRng(720));
+      for (const f of flags) p.flags[f] = 1;
+      const v = questLog(world.state, p, [side])[0];
+      return v ? goalMap(v) ?? 'none' : 'unlogged';
+    };
+    const sides = [map('fx_side'), map('fx_word'), map('fx_side', 'fx_side_done')].join(' ');
+    const at = chapter && goalMap(chapter);
+    ok(chapter?.goal === first.goals[0].text && at === first.goals[0].at && sides === 'keep none none',
+      `the goal's map: the Foreland's chapter at its first goal, ${at} (${first.goals[0].at}); a side quest at its goal's, at one that names none, and done (${sides})`);
   }
   // Each way in starts the quest with a goal; each entry can be written; each goal can be the one
   // shown (not hidden behind an earlier one); and an entry keyed to an item outlasts the hand-in.

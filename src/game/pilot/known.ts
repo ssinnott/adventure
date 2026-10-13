@@ -1,9 +1,10 @@
 // What the pilot may know of the world (#713, Decided 1): the automap's bits and its ink, the
 // features and exits on squares the party has seen, the maps it has visited, the world map as drawn,
-// what the company can cross, the groups in its sight and the lines it has heard. Nothing here reads
-// a map as written: not its secrets or its encounters, what opens a gate or an exit or what an exit
-// says on arrival, and of a feature nothing but what the automap and the hint show (its kind, its
-// square and its name, the id it is known by, and a den's ash) until a menu has shown what it lists.
+// the band of a zone or a map once it has set foot there, what the company can cross, the groups in
+// its sight and the lines it has heard. Nothing here reads a map as written: not its secrets or its
+// encounters, what opens a gate or an exit or what an exit says on arrival, and of a feature nothing
+// but what the automap and the hint show (its kind, its square and its name, the id it is known by,
+// and a den's ash) until a menu has shown what it lists.
 // What a feature says, holds, gives or wants is known once it is heard. A tear into a Rift is an exit
 // to it, as the game walks it.
 // A zone map's id names its part of the outdoors, at the zone's own squares (World.locate).
@@ -11,7 +12,7 @@ import type { Game } from '../game.ts';
 import type { Cell, Door, Exit, Feature, GameMap } from '../map.ts';
 import { seen as seenBit, drawnCell } from '../world.ts';
 import type { MapState } from '../world.ts';
-import { mapPlace } from '../atlas.ts';
+import { homeMap, mapPlace } from '../atlas.ts';
 import { partyCan } from '../party.ts';
 import { spentId } from '../wilds.ts';
 import { ATLAS, MAP_DEFS } from '../../content/index.ts';
@@ -47,6 +48,12 @@ export interface Known {
   mapOf(map: string): string;
   /** Where a map is on the world map, in world cells, as the world map places it (mapPlace). */
   placeOf(map: string): [number, number] | undefined;
+  /** The zone of the outdoors a map is, or for a town or a dungeon the one it opens onto, as the world map draws its plate's way out (homeMap); none for the outdoors as a whole. */
+  zoneOf(map: string): string | undefined;
+  /** The zones of the outdoors the party has set foot in, first first (WorldState.zones). */
+  zones(): readonly string[];
+  /** The levels a zone of the outdoors, a town or a dungeon is for, as the almanac shows it and the crossing line says it: once the party has set foot there, and none before. */
+  band(map: string): readonly [number, number] | undefined;
   /** What the company can cross, as it knows itself: a swimmer, a Mountaineer and the iron keys it carries (partyCan). */
   can(): { swim: boolean; climb: boolean; keys: number };
   /** The squares of the groups in the party's sight now, as the viewport draws them (World.groupsInSight); none on any other map. */
@@ -68,8 +75,15 @@ function sight(f: Feature, fr: Frame, told: boolean): Sighted {
 
 export function knownOf(g: Game): Known {
   const w = g.world, p = g.pilot, all = !!p?.omniscient;
+  // Where each id is played, as World.locate finds it: the zones never move, so it is kept.
+  const located = new Map<string, { mapId: string; x: number; y: number }>();
+  const locate = (map: string): { mapId: string; x: number; y: number } => {
+    let at = located.get(map);
+    if (!at) located.set(map, (at = w.locate(map, 0, 0)));
+    return at;
+  };
   const frame = (map: string): Frame | undefined => {
-    const at = w.locate(map, 0, 0), m = g.maps[at.mapId];
+    const at = locate(map), m = g.maps[at.mapId];
     if (!m) return undefined;
     const z = at.mapId === map ? undefined : m.zones.find((q) => q.id === map);
     return { m, ms: w.state.maps[m.id], ox: at.x, oy: at.y, w: z?.w ?? m.width, h: z?.h ?? m.height };
@@ -103,8 +117,18 @@ export function knownOf(g: Game): Known {
     },
     size(map) { const fr = frame(map); return { w: fr?.w ?? 0, h: fr?.h ?? 0 }; },
     visited: () => Object.keys(w.state.maps),
-    mapOf: (map) => w.locate(map, 0, 0).mapId,
+    mapOf: (map) => locate(map).mapId,
     placeOf: (map) => mapPlace(ATLAS, MAP_DEFS, map),
+    zoneOf(map) {
+      if (locate(map).mapId !== map) return map;
+      return g.maps[map]?.kind === 'outdoor' ? undefined : homeMap(MAP_DEFS, map)?.id;
+    },
+    zones: () => w.state.zones ?? [],
+    band(map) {
+      const at = locate(map);
+      if (at.mapId !== map) return w.state.zones?.includes(map) ? g.maps[at.mapId]?.zones.find((z) => z.id === map)?.band : undefined;
+      return w.state.maps[map] && g.maps[map]?.kind !== 'outdoor' ? g.maps[map].def.band : undefined;
+    },
     can: () => partyCan(g.party),
     groups(map) {
       const fr = frame(map);

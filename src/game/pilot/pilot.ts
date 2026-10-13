@@ -5,6 +5,7 @@
 // the rest it asks its brains in turn. Its why line, two at most, is drawn over the top of the view
 // (Game.render), and a wipe's stays up over the title. It lives on the Game and never in the save.
 import type { Game } from '../game.ts';
+import { ExploreScreen } from '../game.ts';
 import type { Action } from '../../input.ts';
 import { is } from '../../input.ts';
 import type { Feature } from '../map.ts';
@@ -17,6 +18,8 @@ import { route } from './route.ts';
 import type { Goal, Trip } from './route.ts';
 import { explore } from './explore.ts';
 import { keep } from './keep.ts';
+import { aims } from './aims.ts';
+import type { Aim } from './aims.ts';
 
 export type Tempo = 1 | 2 | 4;
 export interface PilotOpts { instant?: boolean; omniscient?: boolean }
@@ -29,7 +32,7 @@ export type Brain = (g: Game, k: Known, p: Pilot) => Action | null;
  * (#719), the strategist's (#720), the navigator's (#717), the explorer's (#718) and talk (#721).
  * Each takes its place as its module lands.
  */
-export const BRAINS: Brain[] = [keep, route, explore];
+export const BRAINS: Brain[] = [keep, aims, route, explore];
 
 /** The lines heard that the pilot keeps, the oldest dropped first. */
 export const HEARD_MAX = 2000;
@@ -71,6 +74,20 @@ export class Pilot {
   readonly wells = new Map<string, boolean>();
   /** An inn's room or rations the company could not pay for, "map:x,y:need", and the gold it had then: not sought there again until it has more (keep.ts). */
   readonly short = new Map<string, number>();
+  /** What the strategist is set on (aims.ts): a quest's goal on its map, a level in a zone, or a map to walk. */
+  aim: Aim | null = null;
+  /** The world's minutes when the aim was set: three days on one goal, and it is lost. */
+  aimSince = 0;
+  /** The goal's words when the aim was set: the quest's, or for a level the quest's it levels for; '' for a walk. */
+  aimGoal = '';
+  /** The goals given up as lost, by their words, with the company's levels, all its members' together, and its flags then: tried again once it has more of either. */
+  readonly lost = new Map<string, { levels: number; flags: number }>();
+  /** Where the party stood at the last beat on the street, then the beat before, and in which zone: the square before a crossing (aims.ts). */
+  trail: { map: string; x: number; y: number; zone?: string }[] = [];
+  /** The maps and zones the explorer had nothing more to walk in as the strategist sent it there, with the company's flags then: not walked again until it has more (aims.ts). */
+  readonly walked = new Map<string, number>();
+  /** The chests it has seen and found no way to, "map:x,y" on the map as played, with the company's flags then: not sought again until it has more (aims.ts). */
+  readonly chests = new Map<string, number>();
   /** The why a brain said as it gave no key (a goal given up): it stays up until a brain presses one. */
   private kept: [string, string?] | null = null;
   /** Ticks counted towards the next beat. */
@@ -91,11 +108,12 @@ export class Pilot {
   /** A menu has shown what a feature lists. */
   tell(f: Feature): void { this.told.add(f); }
 
-  /** A new company, or one loaded: it has heard nothing, been shown nothing, searched nothing, tried no well, been short nowhere and is bound nowhere yet, and the last run's stop and its why are gone. */
+  /** A new company, or one loaded: it has heard nothing, been shown nothing, searched nothing, tried no well, been short nowhere, is set on nothing, has lost no goal and is bound nowhere yet, and the last run's stop and its why are gone. */
   forget(): void {
     this.heard.length = 0; this.told = new WeakSet<Feature>(); this.stopped = false; this.why = [IDLE];
     this.goal = null; this.plan = []; this.trip = null; this.shut.length = 0; this.searched.clear(); this.prefer = null;
     this.wells.clear(); this.short.clear();
+    this.aim = null; this.aimSince = 0; this.aimGoal = ''; this.lost.clear(); this.trail = []; this.walked.clear(); this.chests.clear();
   }
 
   /** Turns itself off, and says why over every screen until a game starts (#713, Decided 4 and 10). */
@@ -135,6 +153,10 @@ export class Pilot {
     }
     if (top instanceof MessageScreen) return 'interact';
     if (top instanceof TitleScreen) return null;
+    if (top instanceof ExploreScreen) {
+      const st = g.world.state;
+      this.trail = [{ map: st.mapId, x: st.x, y: st.y, zone: g.world.zone?.id }, ...this.trail.slice(0, 1)];
+    }
     const k = knownOf(g), was = this.why;
     for (const brain of BRAINS) {
       const a = brain(g, k, this);
