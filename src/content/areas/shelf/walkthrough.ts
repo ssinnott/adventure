@@ -784,19 +784,29 @@ function council(ok: (cond: boolean, msg: string) => void): void {
   const proclaimed = (w: Walk): string[] => { w.world.travel('keep', 9, 8, NORTH); return w.world.eventsHere(); };
   /** A case made and sat on: the morning's words. */
   const sat = (w: Walk, label: string): string => { put(w, label); return sits(w, 12); };
-  /** Helmstow once a verdict has removed Vask. */
-  const removed = (w: Walk, talk: string, how: string): void => {
+  const business = (w: Walk, x: number, y: number) => { w.world.travel('harrow', x, y, NORTH); const f = w.world.featureHere(); return f && f.x === x && f.y === y ? f : undefined; };
+  /** The inn's price, the Chapel open or shut, and a long sword's, rations' and the oil's price at Mottram's. */
+  const shops = (w: Walk): string => {
+    const inn = business(w, 4, 4), chapel = business(w, 11, 4), stores = business(w, 4, 10);
+    return [inn?.kind === 'inn' ? inn.price : 0, chapel?.kind === 'temple' ? 'open' : 'shut', ...(stores?.kind === 'shop' ? ['longsword', 'rations', 'lantern_oil'].map((id) => priceIn(stores, id)) : [])].join(' ');
+  };
+  /** Helmstow once a verdict has removed Vask: the inn at 12 again, the Chapel open for the hold alone, the stores a port's for Tallis alone. */
+  const removed = (w: Walk, talk: string, how: string, trade = '12 shut 180 6 40'): void => {
     w.ok(!!w.party.flags.q_throne_removed && !w.party.flags.q_case_failed && !there(w, VASK(), 'keep') && there(w, DOOR(), 'keep'), `${how}: Vask and his guards are gone from the keep, and Wiglaf keeps its door for the Council`);
     const said = proclaimed(w), hung = street(w), heardEel = hear(w, 'harrow', eel);
     w.ok(said.length === 2 && said[1] === 'Over it: the Council of Helmstow holds the city under its seal.' && !hung.length, `${how}: the Council's proclamation is said over the Regent's, and the gibbets are down (${said.join(' / ')})`);
     w.ok(heardEel === talk && wrap(heardEel, SAY_W).length <= SAY_LINES, `${how}: the Eel talks of the verdict, with no Warden at its door (${heardEel})`);
     w.ok(gate(w), `${how}: the south gate lets a company with an orcblood member in`);
+    const now = shops(w);
+    w.ok(now === trade, `${how}: the inn, the Chapel and Mottram's long sword, rations and oil are ${now}`);
   };
   { // Nothing shows before the Hand has Wenna.
     const w = newWalk(ok);
     w.party.flags.q_salt_done = 1;
     at(w, 12);
     w.ok(!there(w, CLERK(), 'keep') && !there(w, SITTING(), 'keep') && !there(w, DOOR(), 'keep') && there(w, VASK(), 'keep') && !page(w, 'council'), 'before the Hand has Wenna there is no clerk at the chapel and no Council, and Vask holds the keep');
+    const trade = shops(w);
+    w.ok(trade === '18 shut 180 6 40', `and the inn, the Chapel and Mottram's are Vask's city's (${trade})`);
   }
   { // The cousin, carried by two of her pieces; four answers to a company Wenna did not lead up.
     const w = company('q_riders_hale', 'q_seal_hale');
@@ -813,13 +823,13 @@ function council(ok: (cond: boolean, msg: string) => void): void {
     const w = company('q_signet_hold');
     const day = sat(w, 'The elves of Henlys.');
     w.ok(day.startsWith('The Council reads the treaty aloud') && !!w.party.flags.q_throne_hold, `the signet given to the hold carries its case alone (${day})`);
-    removed(w, 'A fisherman: "An elf on Helmstow\'s chair, and the treaty read out on the keep steps. My grandfather said it was so and we laughed at him."', 'the hold');
+    removed(w, 'A fisherman: "An elf on Helmstow\'s chair, and the treaty read out on the keep steps. My grandfather said it was so and we laughed at him."', 'the hold', '12 open 180 6 40');
   }
   { // Tallis, carried by the crown sailed and the ring sold.
     const w = company('q_crown_sailed', 'q_ring_sold');
     const day = sat(w, 'Jory Tallis.');
     w.ok(day.startsWith('The Council counts hulls.') && !!w.party.flags.q_throne_tallis, `two of Tallis's pieces carry his case (${day})`);
-    removed(w, 'A dockhand: "Tallis sailed in with his hulls and the Council counted them. Prices are a port\'s now. So is the gate."', 'Tallis');
+    removed(w, 'A dockhand: "Tallis sailed in with his hulls and the Council counted them. Prices are a port\'s now. So is the gate."', 'Tallis', '12 shut 240 8 40');
   }
   { // Wenna: five answers to a company she led up, carried by the sleepers seen.
     const w = company('q_wenna_up', 'q_sleepers_seen');
@@ -840,6 +850,8 @@ function council(ok: (cond: boolean, msg: string) => void): void {
     const said = proclaimed(w), hung = street(w), talk = hear(w, 'harrow', eel);
     w.ok(there(w, VASK(), 'keep') && !there(w, DOOR(), 'keep') && said.length === 1 && hung.length === 1 && talk.startsWith('The tavern is near empty') && !gate(w),
       'and Vask holds the keep, the gibbet stands, the Eel is the gibbet\'s and the gate still turns Idris back');
+    const trade = shops(w);
+    w.ok(trade === '18 shut 180 6 40', `and the inn, the Chapel and Mottram's stay Vask's city's (${trade})`);
     w.ok(!there(w, CLERK(), 'keep') && !sits(w, 12), 'the Council does not sit twice');
     reads(w, 'council', 'The Council of Helmstow', ['met', 'for_cousin', 'failed'], ['cousin', 'failed_ended'], 'a failed case');
   }
@@ -868,7 +880,7 @@ function trainers(ok: (cond: boolean, msg: string) => void): void {
   ok(only('keep', [['knight', 1]]) && only('harrow', [['paladin', 1], ['bard', 1]]) && only('downs_f2', [['knight', 2]]), 'the keep teaches the Knight\'s first, Helmstow the Paladin\'s and the Bard\'s, and Coldharbour\'s box the Knight\'s second');
   const others = (map: string, p: Person) => (def(map).features ?? []).filter((f) => f.x === p.x && f.y === p.y && f !== p);
   const stores = others('harrow', MOTTRAM()).filter((f) => f.kind === 'shop');
-  ok(stores.length === 2 && stores.every((f) => f.kind === 'shop' && ['lantern_oil', 'torch'].every((id) => f.stock.includes(id))), 'Mottram the chandler stands in his stores, in both cities, and they sell Lantern Oil and torches');
+  ok(stores.length === 3 && stores.every((f) => f.kind === 'shop' && ['lantern_oil', 'torch'].every((id) => f.stock.includes(id))), 'Mottram the chandler stands in his stores, in the old city, Vask\'s and Tallis\'s, and they sell Lantern Oil and torches');
   ok(def('keep').rows[WULFRIC.y][WULFRIC.x] === '.' && !others('keep', WULFRIC).length, 'the armourer works at a bench in the ward, before the shut armoury, with no door');
   ok(def('harrow').rows[ALDITH.y][ALDITH.x] === ',' && !others('harrow', ALDITH).length, 'the luthier sits in the street, and keeps no shop');
   ok([WULFRIC, MOTTRAM(), ALDITH, SIWARD].every((p) => !!p.teaches?.seek?.includes(p.name.split(',')[0].split(' ')[0]) && p.teaches.seek.includes(PRESTIGES[p.teaches.cls].titles[p.teaches.prestige - 1])), 'each one\'s seeking names them and the title they give');

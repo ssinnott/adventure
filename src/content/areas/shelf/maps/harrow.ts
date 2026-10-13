@@ -3,7 +3,8 @@
 // the gatehouse north into the keep's ward (keep.ts), where the Regent-Warden holds court. After Act
 // II it is his city (#157), and once the Hand has Wenna it is worse (#449). Two first prestiges are taught here, in both cities: the Paladin's by
 // Mottram the chandler and the Bard's by a luthier under the Hearthlight's eaves (#19). Once the Council
-// has removed Vask (#764) the gibbets go and the Eel talks of the verdict.
+// has removed Vask (#764) the gibbets go, the inn is the old city's price and the Eel talks of the
+// verdict; the hold's opens the Chapel and Tallis's makes the stores a port's.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { THRONE_COUNCIL, THRONE_COUSIN, THRONE_HOLD, THRONE_REMOVED, THRONE_TALLIS, THRONE_WENNA } from './keep.ts';
@@ -13,7 +14,12 @@ const DEARER: Readonly<Record<string, number>> = {
   club: 8, dagger: 18, staff: 12, shortsword: 60, mace: 68, longsword: 180, axe: 135, spear: 90, sling: 23, shortbow: 120, longbow: 300,
   robe: 15, leather: 90, scale: 330, chain: 750, buckler: 60, shield: 225, potion_heal: 45, antidote: 38, rations: 6, torch: 3,
 };
-const CURFEW = 'The curfew bell, from the Chapel tower: whoever has the rope now hauls it like a bucket.';
+// A port's, once Tallis has the chair (#764): twice the old city's, but the Lantern Oil as before.
+const PORT: Readonly<Record<string, number>> = {
+  club: 10, dagger: 24, staff: 16, shortsword: 80, mace: 90, longsword: 240, axe: 180, spear: 120, sling: 30, shortbow: 160, longbow: 400,
+  robe: 20, leather: 120, scale: 440, chain: 1000, buckler: 80, shield: 300, potion_heal: 60, antidote: 50, rations: 8, torch: 4,
+};
+const CURFEW ='The curfew bell, from the Chapel tower: whoever has the rope now hauls it like a bucket.';
 const GATE_WARDENS = 'Wardens on the wall-walk and Wardens inside the gate, new faces all of them. They look you over slowly, the way men do who have nothing else to look at.';
 const POSTERN_WARDENS = 'Wardens on the wall above the postern, grey against the grey. None of them looks down; a fish cart is not their business, and nor, it seems, are you.';
 const GIBBET = 'A gibbet in the street, new, its timber still pale. The rope is tarred against the weather, and nothing hangs from it.';
@@ -55,7 +61,10 @@ export const HARROW: MapDef = {
     // After Act II (`q_salt_done`, #157) Helmstow is Vask's: the inn and the stores come back dearer on
     // their squares, the Chapel shuts with a notice on its door and the Eel's talk is the curfew's.
     { kind: 'inn', x: 4, y: 4, name: 'The Hearthlight Inn', price: 12, interior: 'hearthlight_inn', until: { flag: 'q_salt_done' } },
-    { kind: 'inn', x: 4, y: 4, name: 'The Hearthlight Inn', price: 18, interior: 'hearthlight_inn', after: { flag: 'q_salt_done' } },
+    // Once the Council has removed Vask (#764) the inn is the old city's price again, the Chapel opens
+    // for the hold and the stores are a port's for Tallis: each the next link on its doorway.
+    { kind: 'inn', x: 4, y: 4, name: 'The Hearthlight Inn', price: 18, interior: 'hearthlight_inn', after: { flag: 'q_salt_done' }, until: { flag: THRONE_REMOVED } },
+    { kind: 'inn', x: 4, y: 4, name: 'The Hearthlight Inn', price: 12, interior: 'hearthlight_inn', after: { flag: THRONE_REMOVED } },
     // The Bard's first prestige (#19; DESIGN §5): the luthier, who keeps no shop, under the inn's eaves.
     { kind: 'npc', x: 5, y: 5, name: 'Aldith the luthier', lines: [
       'An old woman on a bench under the Hearthlight\'s eaves, out of the drip, with a lute in pieces across her knees and a glue pot at her foot. She fits the neck to the body, holds it there, and talks past it.',
@@ -63,11 +72,13 @@ export const HARROW: MapDef = {
       '"Any Guildhall boy can sing a line into heart. A song with an edge in it goes in with the line and comes out the other side. One of you has the makings. Sit, and keep the neck straight while this sets."',
     ], teaches: { cls: 'bard', prestige: 1, seek: 'Aldith the luthier, on her bench under the Hearthlight\'s eaves in Helmstow, can make a Troubadour of a bard.' } },
     { kind: 'temple', x: 11, y: 4, name: 'Chapel of the Lanterns', interior: 'lantern_chapel', until: { flag: 'q_salt_done' } },
-    { kind: 'event', x: 11, y: 4, id: 'chapel_shut', once: true, after: { flag: 'q_salt_done' },
+    { kind: 'event', x: 11, y: 4, id: 'chapel_shut', once: true, after: { flag: 'q_salt_done' }, until: { flag: THRONE_HOLD },
       text: 'The Chapel, boarded, a notice under the Regent\'s seal across the boards. Low on the door, in chalk: GONE TO THE WATCH. THE BOOK WITH ME.' },
+    { kind: 'temple', x: 11, y: 4, name: 'Chapel of the Lanterns', interior: 'lantern_chapel', after: { flag: THRONE_HOLD } },
     { kind: 'shop', x: 4, y: 10, name: "Mottram's Stores", stock: STOCK, interior: 'harrow_provisioner', until: { flag: 'q_salt_done' } },
     // Half as much again, but the Lantern Oil, whose forty Mottram names in Oil for the Lamp.
-    { kind: 'shop', x: 4, y: 10, name: "Mottram's Stores", stock: STOCK, prices: DEARER, interior: 'harrow_provisioner', after: { flag: 'q_salt_done' } },
+    { kind: 'shop', x: 4, y: 10, name: "Mottram's Stores", stock: STOCK, prices: DEARER, interior: 'harrow_provisioner', after: { flag: 'q_salt_done' }, until: { flag: THRONE_TALLIS } },
+    { kind: 'shop', x: 4, y: 10, name: "Mottram's Stores", stock: STOCK, prices: PORT, interior: 'harrow_provisioner', after: { flag: THRONE_TALLIS } },
     { kind: 'guild', x: 11, y: 10, name: 'Lantern Guildhall', classes: ['cleric', 'sorcerer', 'paladin', 'ranger', 'bard', 'druid'], fee: 50, interior: 'lantern_guildhall', hall: 'lanterns' },
     { kind: 'trainer', x: 3, y: 13, name: 'Warden Drillyard', maxLevel: 6, interior: 'warden_drillyard', hall: 'wardens' },
     // The Wardens split quietly (#151, call 5): the captains who back the Queen's cousin keep the
