@@ -264,7 +264,7 @@ export const PLAN: Atlas = {
     { id: 'whitespine', name: 'The Whitespine', order: 9, band: [22, 24], stone: 'Peak Stone', label: [300, 368], note: 'The great southern range and its monks.' },
     { id: 'ashfall', name: 'Ashfall', order: 10, band: [24, 26], stone: 'Ember Stone', label: [210, 350], tint: '#a8a874', note: 'Fire Mountain, black sand and vines. By ship' },
     { id: 'glasswold', name: 'The Glasswold', order: 11, band: [26, 28], label: [84, 250], tint: '#c8bc7c', note: 'Steppe round a desert of fused glass' },
-    { id: 'hearth', name: 'Hearth Isle', order: 12, band: [28, 30], label: [256, 196], note: 'The temple over the core' },
+    { id: 'hearth', name: 'Hearth Isle', order: 12, band: [28, 32], label: [256, 196], note: 'The temple over the core' },
   ],
   zones: [
     { id: 'hearthisle', name: 'Hearth Isle', area: 'hearth', seeds: [[256, 172]] },
