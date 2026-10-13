@@ -204,7 +204,7 @@ export const walkthrough: Walkthrough = (ok) => {
   const swarm = (): boolean => w.world.liveGroups().some((g) => g.def.id === 'hf_swarm');
   const pinch = (p: Person): string => answer(talk(p).choice!.answers[0], w.party);
   const calm = !swarm();
-  ok(calm && pinch(shore).includes('the other three flare') && !!w.party.flags[LAMPS_WRONG] && !w.party.flags.lamp_shore && w.world.present(shore) && swarm(),
+  ok(calm && pinch(shore).includes('the rest flare') && !!w.party.flags[LAMPS_WRONG] && !w.party.flags.lamp_shore && w.world.present(shore) && swarm(),
     'the Shore lamp put out first is wrong: the others flare, the swarm comes, and the lamp burns on');
   ok(talk(sacristan).text.includes('Read the pillar'), 'and from under the table the sacristan says so');
   fight(w, 'hearthfane:hf_swarm');
@@ -213,6 +213,28 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(order.every((x) => x) && !!w.party.flags[LAMPS_OUT], 'then the Sea, the Shore, the House and the Hearth, in the pillar\'s order, each out in its turn and staying out');
   left(w, 'hearthfane:hf_moths');
   left(w, 'hearthfane:hf_swarm');
+
+  // The Sea and Shore lamps stand in the first room, so a company may put out lamps before it has met the
+  // sacristan. After one out of its turn his own words still come first and the quest begins, and then he
+  // says so; after all four in the pillar's order the key's offer begins it. Each on a walk of its own.
+  const apart = (n: Walk) => {
+    const say = (p: Person) => { n.world.travel('hearthfane', p.x, p.y); return meet(p, n.party, heard(n.world, p)); };
+    const log = () => questLog(n.world.state, n.party).find((v) => v.def.id === 'lamps');
+    return { n, say, pinch: (p: Person): string => answer(say(p).choice!.answers[0], n.party), log, asked: () => !!log()?.pages[0].entries.some((e) => e.id === 'asked') };
+  };
+  const first = apart(newWalk(ok));
+  first.pinch(shore);
+  const unmet = !first.log(), told = first.say(sacristan);
+  ok(unmet && !!first.n.party.flags[LAMPS_WRONG] && told.text.includes('the pillar says the way') && !!first.n.party.flags[LAMPS] && first.asked()
+    && first.log()?.goal?.startsWith('Put out the four lamps') === true, 'a lamp put out before he is met: his own words come first, and the quest, its entry and its goal begin');
+  ok(first.say(sacristan).text.includes('Read the pillar'), 'and the next time he says so');
+  const all = apart(newWalk(ok));
+  const turns = [sea, shore, house, hearthLamp].map((p) => all.pinch(p).length > 0);
+  const quiet = !all.log(), offer2 = all.say(sacristan);
+  ok(turns.every((x) => x) && !!all.n.party.flags[LAMPS_OUT] && quiet && offer2.text.includes('Gone. Every one of them') && !!all.n.party.flags[LAMPS] && all.asked()
+    && all.log()?.goal === 'Go back to the sacristan under the vestry table.', 'all four lamps out in the pillar\'s order before he is met: his offer begins the quest, with its entry and its goal');
+  answer(offer2.choice!.answers.find((a) => a.label === 'Take the key.')!, all.n.party);
+  ok(all.n.party.bag.includes(FANE_KEY) && all.log()?.done === true, 'and taking the key ends it');
 
   // The treasury's door: shut with no key and shut to an iron key, which it leaves whole; the sacristan's
   // key, 3,000 experience among the company and the quest done; and the door open to his key.

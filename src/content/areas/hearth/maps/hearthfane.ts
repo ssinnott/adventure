@@ -31,7 +31,7 @@ export const STAIR: Exit = { x: 8, y: 1, to: 'hearthfane2', tx: 8, ty: 14, tf: N
 
 const many = (n: number, id: string): string[] => Array.from({ length: n }, () => id);
 
-const WRONG = ['You pinch the wick, and the other three flare. The nave fills with wings.'];
+const WRONG = ['You pinch the wick, and the rest flare. The nave fills with wings.'];
 const BURNING = 'A lamp on a stand, burning high.';
 
 /**
@@ -105,13 +105,16 @@ export const HEARTHFANE: MapDef = {
         '"I kept them dark. Forty years I kept them dark, because of the moths. The light outside is lamp enough for anybody." A breath. "Then the grey men lit them, all four, and the sky came in."',
         '"Put them out. Not any way: the pillar says the way, if you can read a pillar. Do it wrong and you will see why I kept them dark."',
       ],
+      // A matching entry is said without his `flag` being set (meet(), game/people.ts), and the Sea and Shore
+      // lamps stand in the first room, so a company may put one out before it has met him: the entry that holds
+      // only once he is met waits on `LAMPS`, and the one a company can reach first sets it.
       says: [
-        { after: { flag: LAMPS_OUT }, until: { flag: LAMPS_KEY }, lines: [
-          'He is out from under the table, standing in the nave with his face turned up to the empty air.',
+        { after: { flag: LAMPS_OUT }, until: { flag: LAMPS_KEY }, sets: LAMPS, lines: [
+          'He is out from under the table, standing with his face turned up to the empty air.',
           '"Gone. Every one of them, to the big lamp outside, where they belong." He takes a key off his belt. "The treasury. The pilgrims\' offerings are the Hearth\'s, but the grey men left their gear in there, and that is nobody\'s. Take it."',
         ], choice: { ask: 'He holds out the key.', answers: [{ label: 'Take the key.', sets: LAMPS_KEY, gives: FANE_KEY, pay: { xp: 3000 }, says: ['An iron key, warm from his belt. He is already looking at the wicks.'] }] } },
         { after: { flag: LAMPS_KEY }, lines: ['The sacristan is trimming wicks in the vestry, and not lighting them.', '"Dark again. I can hear myself think."'] },
-        { after: { flag: LAMPS_WRONG }, until: { flag: LAMPS_OUT }, lines: ['From under the table: "I told you. The pillar. Read the pillar."'] },
+        { after: { flag: [LAMPS, LAMPS_WRONG] }, until: { flag: LAMPS_OUT }, lines: ['From under the table: "I told you. The pillar. Read the pillar."'] },
       ],
     },
     // The treasury, behind its door: the pilgrims' offerings, and the Hand's steel left among them.
