@@ -790,8 +790,10 @@ lines with their dice, and `--calibrate --write` re-derives the tables when the 
 `--abilities` puts Act III's abilities on the test monsters, two trolls, four wights, a caller
 beside six fodder and three lights with a hound (§3.3, #537, #541), at 19 and 20 or the levels
 asked; Act IV's sweep, two giants and two drakes (#545), at 23 and 25; its stone, the mesa's
-basilisk behind three skirmishers (#546), at 27; its holds, four vines (#549), at 24; and its
-bosses as they stand, each won from two under beside the test boss of its level.
+basilisk behind three skirmishers (#546), at 27; its holds, four vines (#549), at 24; its
+bosses as they stand, each won from two under beside the test boss of its level; and Act V's
+clock, the Heart (#748), at 32, its Hands killed first, its lord first or its sentries fought as
+they come.
 `--spell-cap`, `--gear-grows`, `--level-bonus` and `--level-traits` run any of it as if damage
 spells stopped growing at another level than play's 10, or the company gained gear, a bonus or
 blows as it levelled past it; `--rank-step` as if a spell rank added another share than play's 15%.

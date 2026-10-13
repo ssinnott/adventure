@@ -11,7 +11,7 @@
 //   node tools/harness.ts --stats                      the test monsters' stat lines, as markdown
 //   node tools/harness.ts --abilities [--levels 19,20] Act III's trolls, wights, caller and lights on the test monsters (#537, #541),
 //                                                      and Act IV's giants and drakes at 23 and 25 (#545), the mesa at 27 (#546),
-//                                                      the vines at 24 and its bosses as they stand (#549)
+//                                                      the vines at 24 and its bosses as they stand (#549), and Act V's Heart on its clock at 32 (#748)
 //   node tools/harness.ts --calibrate [--write]        re-derive HP and DAMAGE in tools/testmonster.ts
 //   node tools/harness.ts --spell-cap 32 [...]         any of the above as if spells stopped growing elsewhere than 10
 //   node tools/harness.ts --gear-grows [...]           ... or as if the company's gear kept growing past 25
