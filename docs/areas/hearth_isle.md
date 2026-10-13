@@ -228,7 +228,7 @@ Ids used across the briefs, exported from the maps that set them:
 | `STRAND` | `hearthisle_h6:h6_strand` | the once-event at the boat's grounding (§4.2) |
 | `TOKEN_COUSIN`, `TOKEN_HOLD`, `TOKEN_TALLIS` | `q_token_cousin`, `q_token_hold`, `q_token_tallis` | the pilgrims' answers (§4.2, §6) |
 | `LAMPS_OUT`, `LAMPS_WRONG` | `q_lamps_out`, `q_lamps_wrong` | the nave's lamps (§4.4, §6) |
-| `LOG_GIVEN`, `ELEVEN_KEPT` | `q_eleven_log`, `q_eleven_kept` | the anchoress's hand-in; the crypt's lamps (§4.3, §4.5, §6) |
+| `LOG_GIVEN`, `ELEVEN_KEPT` | `q_eleven_log`, `q_eleven_kept` | the anchoress's hand-in; the crypt's lamps (§4.3, §4.5, §6); both exported from the crypt (§9.2, #756's 6) |
 | `KNOT_LAST` | `underdeep2:ud2_word` | the last frame's word (§4.7, §6) |
 | `CREW_OPEN`, `CREW_SHUT` | `q_crew_open`, `q_crew_shut` | the door's other side (§4.6, §6) |
 | `CRACK_SEALED`, `CRACK_WIDE` | `q_crack_sealed`, `q_crack_wide` | the knocker at the wall (§4.6, §6) |
@@ -524,8 +524,9 @@ behind it at 8,1 the stair down, an exit to the crypt: `{ x: 8, y: 1, to: 'heart
 **Share of the pay.** About a seventh of the area's (§8).
 
 **As built** (#755, 13 October): the brief's rooms and its five groups, laid whole in a 16×16 box
-(`hearthfane`, region `hearth`, band 28–29), in at H6's temple door. The floor is 88 squares, doors
-included; every one is reached from the start, the treasury by its key. The place is
+(`hearthfane`, region `hearth`, band 28–29), in at H6's temple door. The floor is 89 squares, doors
+included (88 until #756 opened the stair); every one is reached from the start, the treasury by its
+key. The place is
 `{ id: 'hearthfane', kind: 'dungeon', at: [250, 172] }` in the area's `PLACES`
 (`src/content/areas/hearth/atlas.ts`), with no band of its own: a built place reads its map's
 (§9.2, #755's 13). It departs from the brief in these squares and lines:
@@ -534,7 +535,7 @@ included; every one is reached from the start, the treasury by its key. The plac
   a label of its own (#755's 12 and 14). Out: 8,15, a door in the south wall, onto H6's 18,15 facing
   south, `h6_front`'s square. Down: 8,1 was wall until the crypt and is floor since #756, with the
   brief's exit to `hearthfane2` (`STAIR`, 8,14 facing north) listed; 8,2, the altar's square, is
-  floor, and the crypt's way up lands on it, facing south (#755's 4; #756's 5).
+  floor and the crypt's way up lands on it, facing south (#755's 4; #756's 5).
 - **The treasury's door** at 11,10 is a door gated on the sacristan's key (`gates`, `after` the item
   `fane_key`), not `locked`: no iron key fits it, and his key is kept (#755's 1).
 - **The pillar** at 8,10 reads in two: its `text` is *Carved up the pillar in the oldest hand on the
@@ -558,7 +559,7 @@ included; every one is reached from the start, the treasury by its key. The plac
 - **Measured.** A company at 28 wins every fight in the temple, each group 100% of ten in the
   walkthrough. Two under, at 26, it wins every fight too, owed to #18 as H6's is (#755's 10). The
   five groups as written give 8.96 fights to a rest at 28, under the aim and inside the limit
-  (#755's 9). Density 100.0% within 7 steps, the furthest 3, with two signs among its 20 points. The
+  (#755's 9). Density 100.0% within 7 steps, the furthest 3, with two signs among its 21 points. The
   figures are in §8.
 
 ### 4.5 The crypt (dungeon, 16×16, band 29)
@@ -630,18 +631,20 @@ from the brief in these squares and lines:
   event's carving, *ONCE FOR EACH, AND THE GAPS BETWEEN.*, which any company sees, where the
   temple's pillar is a sign that needs a reader; the brief's form is kept.
 - **The Hand's last man** is told by an event of the builder's own, `hf2_last`, on the chamber's
-  north door (8,4): *A keeper in the passage, and beside it the Hand's last man up here, dead on his
-  feet.* An encounter has no `look`, which the brief's table leaves to say it, and the keeper's own
-  (§7, #761) is *A keeper with no bay to keep, and no robe.*; the game says the event, then the
-  look, then the fight (#756's 3). He fights as a champion: the idiom, not a corpse.
+  north door (8,4): *The passage, and in it the Hand's last man up here, dead on his feet.* An
+  encounter has no `look`, which the brief's table leaves to say it; the keeper's own (§7, #761) is
+  *A keeper with no bay to keep, and no robe.* The event gives the passage and the man in the form
+  of `hf_nave` and `hf_court`; the look names the keeper after it (#756's 3). He fights as a
+  champion: the idiom, not a corpse.
 - **The deed.** `hf2_eleven` (8,7) is the brief's, `after` `q_eleven_log`, which nothing sets until
-  Hereswith's hand-in (#763). `LOG_GIVEN` is a local constant here, for I6's map to export;
-  `ELEVEN_KEPT` (`q_eleven_kept`) is exported from the crypt, which sets it (#756's 6).
+  Hereswith's hand-in (#763). The crypt exports `LOG_GIVEN`, which it reads, with `ELEVEN_KEPT`
+  (`q_eleven_kept`), which it sets: I6's map reads `ELEVEN_KEPT` from here and may take `LOG_GIVEN`
+  from here too (#756's 6).
 - **The groups** are the brief's three at its squares: the champions at 8,10, the rats at 2,9 and
   the keeper's at 8,3. `aware` is 2 for the champions and the keeper's group and 3 for the rats;
   the champions and the keeper stand and the rats roam. The champions and the keeper's group
   respawn at 2,880 and the rats at 1,440; the keeper's group is no guardian, no quest naming it and
-  it having no `slainText` (#756's 8). The crypt places the champion and the rat, the isle's, and
+  it having no `slainText` (#756's 8). The crypt places the isle's champion and rat and
   the keeper drawn ahead (#761), the first placed.
 - **The finds.** The chest `hf2_cups` at 10,10 holds 600 gold; the dead champion's pack `hf2_pack`
   at 1,8 holds 200 gold and the Grey Robe, ac 13 at 6,200 (§8). It has no class list, as the Cinder
@@ -1307,7 +1310,7 @@ cleric of 27 with the second to bring her the Crowness keeper's log of the eleve
 down into the temple's first crypt alone, the company without her, and keep the eleven there in
 the gaps he wrote, while she keeps the hour at the top. The log is taken at the hand-in (the
 Bard's gathering reads the log's chest, not the item, so nothing breaks); the deed is `hf2_eleven`
-(§4.5; built with the crypt, #756, and waiting on the log, #763); back at the window she teaches.
+(§4.5; built with the crypt in #756, waiting on the log in #763); back at the window she teaches.
 
 - `{ kind: 'npc', x: 4, y: 19, name: 'Hereswith, the anchoress', lines: ['A voice from the window in the bricked-up door, and a face behind it, old, and lit from the side by the column. She says the hour before she says anything else.', '"Hereswith. I was walled in here at thirty to keep the hour against the light, and I have kept it fifty years, and the light has kept it with me, mostly." A pause. "Not the night the Queen died. That night it kept its own."', '"Eleven. I counted from here. I should like to know whether anyone else did."'], flag: 'i6_anchoress_met', quest: { item: 'keepers_log', reward: 0, setFlag: LOG_GIVEN, early: ['She reads it at the window, holding it to the light, and reads it again.', '"Crowness. A grace between each, the pairs even. Yes. He counted what I counted." She keeps it. "Now I know."'], done: ['She reads it at the window, holding it to the light, and reads it again.', '"Crowness. A grace between each, the pairs even. Yes. He counted what I counted." She keeps it. "Now there are two of us, and the gaps are written down."', '"Go down into the fane\'s crypt. Eleven lamps stand there for the eleven, cold since that night. Light them as he wrote them, the gaps and all, and I will keep the hour up here while you do. Not with you: I keep the top. That is what an anchorhold is for."'] }, says: [
     { after: { flag: ELEVEN_KEPT }, lines: ['The hour, from the window, and then: "The hum changed key an hour ago, and held. That was you."', '"Fifty years I thought the hour was mine to keep. It was the light\'s. Come to the window, Prelate, and I will show you what an Exarch keeps."'] },
@@ -1568,7 +1571,7 @@ box by box:
 | Gate, at the floor 28 | 100% of fights won (aim 90%, limit 80%); the area's 12 groups' too |
 | Gate, two under, at 26 | 100% won (at most: aim 25%, limit 90%): owed to #18 (§11) |
 | Fights to a rest, at 28 | 8.96 (aim 10 to 12, limit 8.5 to 14.5); 7% of days end in a fight broken off |
-| Density, dungeon | 100.0% within 7 steps (88 of 88, 80 needed); the furthest 3 of 10; 2 signs in 20 points |
+| Density, dungeon | 100.0% within 7 steps (89 of 89, 81 needed); the furthest 3 of 10; 2 signs in 21 points: the stair's top is floor since #756 |
 | Levels | 3 monsters in 28–29, give or take two; rising from the way in (rank correlation 0.87); the nearest group, the moths at 2 steps, at 28.0; the hardest, the champions at 6 steps, at 29.0 |
 | Lines | 8 events and signs: 4 of two lines and 4 of three; the area's 21: 2 of one, 11 of two and 8 of three |
 
@@ -2250,17 +2253,19 @@ Decided by delegate for #755, each the owner's to overturn:
 Decided by delegate for #756, each the owner's to overturn:
 
 1. **The eleven niches are told in `hf2_niches`, not carved.** Eleven one-square notches do not fit a
-   round chamber of 5–11 with three ways out, and `bare: true` hangs nothing on the wall.
+   round chamber of 5–11 with three ways out; `bare: true` hangs nothing on the wall.
 2. **The chamber is a disc** of rows 3, 5, 7, 7, 7, 5 and 3 at 5–11,5–11, the passages one wide; the
    side vault at 1–3,6–9 opens by a door at 4,8, the brief leaving its way in open. 58 open squares.
-3. **The Hand's last man is told by an event, `hf2_last`,** on the chamber's north door (8,4). An
-   encounter has no `look` and the keeper's is §7's and #761's, so the event says him, then the look.
+3. **The Hand's last man is told by an event, `hf2_last`,** on the chamber's north door (8,4): *The
+   passage, and in it the Hand's last man up here, dead on his feet.* An encounter has no `look`; the
+   keeper's own (§7, #761) comes after the event.
 4. **The grey door at 8,1 is a door square with the sign `hf2_door`,** which has no `read` and keeps no
    `seen`. `GREY_DOOR`, the exit to `underdeep` 16,30, is exported and not listed: #757 lists it.
-5. **The stair is floor at both ends:** the temple's 8,1 turned from `#` to `.` with `STAIR` listed,
-   and the crypt's 8,15 `.` with the way up, a stair and not a door.
-6. **`LOG_GIVEN` is a local constant, not exported:** §4.1 has the map that sets a flag export it, and
-   Hereswith's hand-in (#763) sets `q_eleven_log`, owed to #763 in `UNSET`. `ELEVEN_KEPT` is exported.
+5. **The stair is floor at both ends:** the temple's 8,1 turned from `#` to `.` with `STAIR` listed;
+   the crypt's 8,15 is `.` with the way up, a stair and not a door.
+6. **`LOG_GIVEN` is exported from the crypt, which reads it,** where §4.1 has the setting map export it:
+   I6 reads `ELEVEN_KEPT` from here, so one each way would be an import cycle. I6's map (#754, PR #782,
+   open) may import it; `q_eleven_log` is owed to #763 in `UNSET`.
 7. **The Grey Robe is ac 13 at 6,200 with no class list,** a point past the Cinder Robe (ac 12), which
    has none: §8's *the casters* is who wears it, not a bar. #746 takes it into its rung.
 8. **`aware`, which the brief leaves open:** 2 for the champions and the keeper's group, 3 for the
@@ -2268,7 +2273,7 @@ Decided by delegate for #756, each the owner's to overturn:
    the champions: no quest names it and it has no `slainText`, so it is no guardian.
 9. **The brief's three groups are kept:** 13.71 fights to a rest at 29 (aim 10.25 to 12.25, limit
    8.75 to 14.75), easier than the aim and inside the limit. The pay is 0.42 of the crypt's tenth, so
-   lighter or fewer groups would only widen the shortfall, and stronger monsters are barred.
+   lighter or fewer groups would only widen the shortfall; stronger monsters are barred.
 10. **No two-under row:** the gate reads the crypt's two under as n/a, its floor, 29, being above the
     area's, so its groups count in the area's pool at 26, owed to #18 already. `tools/tests/gate.ts`
     is not touched.
@@ -2375,7 +2380,7 @@ Owed, from the crypt (#756):
   14.75). The three groups are the brief's; lighter or fewer would widen the shortfall and stronger
   monsters are barred (§9.2, #756's 9). The owner's call.
 - **Two under, the area's pool is won every time:** the crypt's own row reads n/a, its floor being
-  above the area's, and its groups count in the pool at 26, 100% of 15 groups, owed to #18 already
+  above the area's, so its groups count in the pool at 26, 100% of 15 groups, owed to #18 already
   (`Hearth Isle: under`, `OWED` in `tools/tests/gate.ts`). The issue's "one at 27 no more than one in
   four" is not met as it reads (§9.2, #756's 10). The owner's or #18's.
 - **The eleven niches are told, not carved:** `hf2_niches` says them where the brief has eleven in
@@ -2384,14 +2389,14 @@ Owed, from the crypt (#756):
 - **`hf2_last` is the builder's own event:** the brief had the Hand's last man said by a `look`,
   which no encounter has (§9.2, #756's 3).
 - **`q_eleven_log` is #763's:** nothing sets it until Hereswith's hand-in, so `hf2_eleven` cannot be
-  said yet. It is owed in `UNSET` (`tools/tests/quests.ts`), and #763 exports `LOG_GIVEN` from I6's
-  map for the crypt to import (§9.2, #756's 6).
+  said yet. It is owed in `UNSET` (`tools/tests/quests.ts`); #763 takes `LOG_GIVEN` from the
+  crypt, which exports it (§9.2, #756's 6).
 - **The grey door** is #757's: it lists `GREY_DOOR` in the crypt's exits, lands the Ways' way up on
   8,2 facing south and turns the crypt's walkthrough's last line, which asserts no exit to
   `underdeep` (§9.2, #756's 4).
 - **The chapter's step** for the knot is #760's (`hearthfane2:hf2_knot`, seen).
-- **The gear's rung** is #746's: the Grey Robe (`greyRobe`) is built here, in the pack `hf2_pack`,
-  and #746 takes it into the rung (§9.2, #756's 7).
+- **The gear's rung** is #746's: the Grey Robe (`greyRobe`) is built here, in the pack `hf2_pack`;
+  #746 takes it into the rung (§9.2, #756's 7).
 
 ## 12. The road behind: the lines
 
