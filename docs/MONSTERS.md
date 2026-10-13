@@ -1642,7 +1642,7 @@ plan has it, two in three to one in three, but the whole stands far under them: 
 #761's and the run to 32 #752's. The bots find Vask first the better play, since his fall stops the
 calls and stands the sentries down.
 
-Nine on frames that exist are drawn (#761); the crawlers are the second pull request. The Hearth
+Nine on frames that exist are drawn (#761). The Hearth
 Moth is the lantern moth's hands cut deeper, to flames, rust above and red beneath, its dust falling
 as embers; the Deep Rat the rat lean and up on its legs, pale, ribbed and red-eyed; the Keeper the
 bay keeper bare, dark-plated and gold-lit, both hands raised to touch; the Core Sentry the Sentry's
@@ -1655,6 +1655,17 @@ and grey to the shoulder and held out to take hold. Lord Vask stands on the figu
 robe, in the Wardens' grey coat and red sash under a black cloak, the Queen's ring lit on his raised
 hand, size 1.6 inside the tall boss's crown. The boxes place them (#753, #757 to #759;
 docs/areas/hearth_isle.md §9.2).
+
+The crawlers are drawn too (#761), a family of their own (`src/ui/monsters/crawlers.ts`): machines
+that come down from above, a spine of blackened iron plates rimmed in worn steel on a dark rod, long
+legs of rod with brass knees held high and hooked feet, lamps of a dull red and the chisel's mark cut
+in a plate. The Deep Crawler comes head-first down the wall: seven plates, six pairs of legs splayed
+and the front pair on the floor, a shovel of a head with six lamps over a pair of clamps and the hook
+it hangs by at its tail; a wave of steps runs down its legs. The Catcher is a crawler built to hold
+what falls: three great plates under its hook, a hood with a band of five lamps and from its rim a
+cage of seven hooked arms closed to the floor, one of the Hand slumped inside with an arm hung out
+through the bars; two pairs of long legs stand it over the cage, size 2 inside the tall boss's crown.
+The brute and the boss on the line at 31; the Ways and the Stair place them (#757, #758).
 
 ---
 
