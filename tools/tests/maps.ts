@@ -17,9 +17,11 @@ import { ok, owed, stopsWalk } from './lib.ts';
  * group yet, a room no business opens into yet. Each is reported as that issue's while it waits,
  * and fails once it is placed, so its entry is dropped here. Cairnmoor's part is empty: every monster
  * its map files draw is placed, the last of them, the Cairn King, by #480; and Rimewater's, the
- * keepers and the Matron by #490.
+ * keepers and the Matron by #490. Hearth Isle's three tents wait on the camp's businesses (H6, #753).
  */
-const UNPLACED: Record<string, string> = {};
+const UNPLACED: Record<string, string> = {
+  bowl_store: '#753', bowl_yard: '#753', bowl_lantern: '#753',
+};
 
 /** The monsters a company can meet on `defs`: those their groups place, and those a placed one calls (`calls`), and so on down. */
 export function placedMonsters(defs: readonly MapDef[], table: Readonly<Record<string, MonsterDef>> = MONSTERS): Set<string> {
