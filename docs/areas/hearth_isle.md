@@ -1642,6 +1642,25 @@ overturn before the issue that builds each is approved.
     the endings with the Hearth's three states; the save upgrade; the gate and the harness to 32.
     There is no ninth.
 
+### 9.2 Decided while building
+
+Decided by delegate for #748, each the owner's to overturn:
+
+1. **One called group that grows.** The clock's first call opens a group and every later call joins
+   it, so the Heart holds two groups and the fight screen seats and labels it as any other. Calls
+   exempt from the cap, a group each, measured the same within a point and asked more of the screen.
+2. **The call costs Vask no turn.** It comes at the end of a round on the beat while he stands, asleep
+   or not. As his turn, every second blow became a sentry and the clock eased the fight (the
+   harness's bot: 44% with the Hands first, 67% with Vask first, 33% with no clock).
+3. **The beat.** The light steps at each round's end from the first, a thread at the end of the
+   eighth; the calls come at the end of the second, fourth and on, and act from the next round.
+4. **Standing down pays nothing,** as the fled do, and the log says *2 Core Sentries stand down.*
+5. **The bots kill the panel first** (`markOf`), as #752 asks; a tool may turn them to Vask first
+   or to the sentries as they come (`ANSWER.clock`).
+6. **Vask's odds wait on #761.** On the test monsters the plan sizes the Heart by, the gate's bot wins
+   10% with the Hands first, 16% with Vask first and 5% with the sentries fought as they come (23%
+   with no clock; MONSTERS §9.3): the clock halves the odds as §8 has it, the whole far under them.
+
 ## 10. Names
 
 The Lanterns' English, kept, as the Whitespine's and Sunderwood's were (NAMES.md §2, §4): the isle
