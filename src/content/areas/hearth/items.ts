@@ -56,4 +56,9 @@ export const ITEMS: readonly ItemDef[] = [
     '"To my mother, at the third house from the slip. We are on the isle. The grey men say the door opens tomorrow, and after that everything is different, and I will come home then and explain."',
     '"I was never cargo. I chose this. Tell Wenna\'s mother I saw her girl, and she is well, and she is not afraid, which is more than I am. Your son, Jowan."',
   ] },
+  // The Queen's signet, off Vask's finger at the Heart: every answer at the panel gives it (64, #759); the
+  // Council's clerk at Helmstow's gate or the sea off Gullwick takes it (#765). Read from the pack.
+  { id: 'queens_signet', name: 'Queen\'s Signet', slot: 'none', price: 0, text: [
+    'A heavy ring, gold, worn thin on the inside. The seal is the one on the treaty, and on the chisel, and on the north rim: the first people\'s mark.',
+  ] },
 ];

@@ -22,7 +22,7 @@ export const PLACES: readonly AtlasPlace[] = [
   { id: 'hearthfane2', kind: 'dungeon', at: [250, 178] }, // the crypt: down the stair behind the temple's altar, 8,1 (#756)
   { id: 'underdeep', name: 'The Underdeep', kind: 'deep', order: 13, band: [30, 30], at: [216, 168] }, // the Ways: through the crypt's grey door, 8,1 (#757)
   { id: 'underdeep2', kind: 'deep', band: [30, 31], at: [216, 172] }, // the Stair: through the Ways' last door, 16,1 (#758)
-  { id: 'core', name: 'The Core', kind: 'deep', planned: true, order: 14, band: [32, 32], at: [216, 176] },
+  { id: 'core', name: 'The Core', kind: 'deep', order: 14, band: [32, 32], at: [216, 176] }, // the Heart: through the Stair's last door, 16,1 (#759)
 ];
 
 export const SITES: readonly AtlasSite[] = [
