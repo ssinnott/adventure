@@ -18,25 +18,30 @@ and checked again at `8cdf1e0a` (13 October 2026) in review (§9.1), with `tools
 cuts the atlas's terrain for a box (EXPANSION §8.2): land is what is not sea or shallow, and
 "walkable" what is not rock.
 
-Four places are built: H6, the isle (#753, §4.2), which lists the area; Hearthfane, the temple
-(#755, §4.4); the crypt under it (#756, §4.5); and the Ways below the crypt (#757, §4.6). The rest
-is to build. What exists: the isle's map, `hearthisle_h6`, which places four of the roster's
+Five places are built: H6, the isle (#753, §4.2), which lists the area; Hearthfane, the temple
+(#755, §4.4); the crypt under it (#756, §4.5); the Ways below the crypt (#757, §4.6); and the
+Stair below the Ways (#758, §4.7). The rest is to build. What exists: the isle's map,
+`hearthisle_h6`, which places four of the roster's
 monsters, opens the pilgrims' camp's three rooms and gives onto the temple (§3); the temple's map,
 `hearthfane`, which places three of those four and gives down onto the crypt; the crypt's map,
 `hearthfane2`, which places two of the four and the first keeper and gives down onto the Ways; the
 Ways' map, `underdeep`, which places one of the four, the keeper, Ashfall's deep knocker and the
-first crawlers; the atlas's rows
+first crawlers; the Stair's map, `underdeep2`, which places the rearguard and the Catcher with the
+Ways' rats, keepers, knockers and crawlers again, and draws the last door in its wall, shut until
+the Heart is built (#759); the atlas's rows
 (`src/content/atlas.ts`: the area `hearth` at 28–32, the last crossing's sea link from Cinderport
 landing at 252,188 and the deep links on from the isle; `src/content/areas/hearth/atlas.ts`, the
 area's own since H6: the zone `hearthisle`; the places `hearthfane` at 250,172, `hearthfane2` at
-250,178 and `underdeep` at 216,168 (built) and `core` at 32 (planned); the sites The Hearth at
+250,178, `underdeep` at 216,168 and `underdeep2` at 216,172 (built) and `core` at 32 (planned); the
+sites The Hearth at
 256,174 (built) and Anchorhold at 268,176 (planned)); the last crossing itself, sold at
 Cinderport's quay since #547, whose isle end lands on H6's strand since #753 (`LAST_CROSSING`,
 `src/content/crossings.ts`); MONSTERS §9's roster (§7 fields it with one more, the Ashen Rearguard:
 twelve monsters, one new family); the Cleric's third prestige at Anchorhold, placed on the map and
 nowhere else (#19), its deed built in the crypt and waiting on the log (#763); and #56's 56 to 61
-and 64, Act V's side quests, drafted, with 56 built in the temple, 57 begun on the isle, 59 begun
-and 60 and 61 built in the Ways (§6).
+and 64, Act V's side quests, drafted, with 56 built in the temple, 60 and 61 built in the Ways, 57
+begun on the isle and ended on the Stair, 59 begun in the Ways and ended on the Stair and 58 begun
+on the Stair (§6).
 Its content is
 `src/content/areas/hearth/` (maps, monsters, items, climate, its part of the world map and its
 walkthrough; its chapter, The Heart, in `chapter.ts`, and its other side quests and the Cleric's
@@ -143,11 +148,12 @@ in `src/ui/interiors/hearth/`, listed in `src/content/areas/hearth/interiors.ts`
 H6's three businesses open into them, so `UNPLACED` (`tools/tests/maps.ts`) owes them no more. The
 monsters drawn ahead (#761) are the Area's own too (`AHEAD`, `src/content/index.ts`, listed them
 until then): H6 places the moth, the champion, the preacher and the rat (the temple the first
-three, the crypt the champion and the rat with the first keeper, the Ways the first crawlers), and
-`UNPLACED` owes the rearguard and the catcher to #758; the Grey Hand, the sentry and Vask to #759.
+three, the crypt the champion and the rat with the first keeper, the Ways the first crawlers, the
+Stair the rearguard and the catcher), and `UNPLACED` owes the Grey Hand, the sentry and Vask to
+#759.
 
-Four places. The isle (#753) is the area's first and lists the area; the temple (#755), the crypt
-(#756) and the Ways (#757) follow it:
+Five places. The isle (#753) is the area's first and lists the area; the temple (#755), the crypt
+(#756), the Ways (#757) and the Stair (#758) follow it:
 
 - **The isle** (H6, `hearthisle_h6`, core, band 28–29; #753): the strand on the south shore where
   the last crossing grounds, its boatman in the stern; the cleft carved one square wide up through
@@ -178,16 +184,26 @@ Four places. The isle (#753) is the area's first and lists the area; the temple 
   the room a way on to the crack the Sunder made and the knocker that found it (61); west along
   the row-10 way, the CREW ONLY door from the inside (60). Eleven groups: rats, keepers, knockers and, at the
   Stair's head, the first crawlers (§4.6). The Stair's head and the crawl way's door give onto
-  nothing until the Stair is built (#758).
+  the Stair (#758).
+- **The Stair** (`underdeep2`, dungeon 32×32, band 30–31; #758): down from the Ways by the door at
+  the main way's head, onto the stair's head, 16,30, with the way back up behind it; eight landings
+  and the seven flights between them, two wide, down to the last landing and the last door at 16,1,
+  a door drawn in the wall, with the Hand's own beside it at 13,1; the first landing held by the
+  claimant's people and their captain or fought for with the rearguard (57); the Hand's dead on
+  the flights below and Jowan's letter under a champion's hands (58); the last frame, which carries
+  Wenna's name (59); the crawl way's door in the fourth landing's wall, with no way back up it; the
+  Catcher on the last landing. Seven groups: the rearguard, the rats, the crawlers (two groups), the
+  keepers, the knockers and the Catcher's (§4.7).
 
 Its atlas rows are charted in `src/content/areas/hearth/atlas.ts`, the area's own since H6 lists the
 area; they moved there from the plan (`src/content/atlas.ts`), which keeps the area's row and the
 links: the zone `hearthisle` with its crossing words; the places `hearthfane` (built, #755),
-`hearthfane2` (built, #756) and `underdeep` (built, #757) and the place `core` (planned); the sites
-The Hearth (built) and Anchorhold (planned). The last crossing's isle end, owed to Phase 1.5 until
-H6, lands on the strand (`LAST_CROSSING`, `src/content/crossings.ts`), so Cinderport's harbourmaster
-sells it. The curve's row (#745, §8) has left `PLANNED`, owed to #744 for what the isle, the temple,
-the crypt and the Ways pay while the area is built box by box. The drafts the scaffold cuts are in
+`hearthfane2` (built, #756), `underdeep` (built, #757) and `underdeep2` (built, #758) and the place
+`core` (planned); the sites The Hearth (built) and Anchorhold (planned). The last crossing's isle
+end, owed to Phase 1.5 until H6, lands on the strand (`LAST_CROSSING`, `src/content/crossings.ts`),
+so Cinderport's harbourmaster sells it. The curve's row (#745, §8) has left `PLANNED`, owed to #744
+for what the isle, the temple, the crypt, the Ways and the Stair pay while the area is built box by
+box. The drafts the scaffold cuts are in
 §1. This doc is
 the plan; §4 has the briefs, each with every line its place says, so that the box or level can be
 built from it by a session that has read DESIGN, STORY and EXPANSION and nothing else. The owner's
@@ -202,15 +218,15 @@ calls are §9's.
 | | Hearthfane | dungeon, 16×16 | 28–29 | | the nave and its four lamps; the court open to the column; the Hand's best; the sacristan in the vestry; the treasury; the stair behind the altar | the temple | #755, built |
 | | The crypt | dungeon, 16×16 | 29 | | the eleven niches; the Hand's first dead; the knot on the frame; the grey door down | the knots | #756, built |
 | | The Ways | dungeon, 32×32 | 30 | | the hull's service ways: clean, humming, lit from nowhere; keepers with no robe; rats; the knocker at the crack; the CREW ONLY door's other side; the frames she marked | the Ways | #757, built |
-| | The Stair | dungeon, 32×32 | 30–31 | | the long stair down; the claimant's people at its head; the Hand's rearguard and its dead; the crawlers; the Catcher at the foot; the last door and the Hand's own beside it | the dead; the Catcher; the door | #758 |
+| | The Stair | dungeon, 32×32 | 30–31 | | the long stair down; the claimant's people at its head; the Hand's rearguard and its dead; the crawlers; the Catcher at the foot; the last door and the Hand's own beside it | the dead; the Catcher; the door | #758, built |
 | | The Heart | dungeon, 16×16 | 32 | | the door with the creed; the panel; Vask, the Grey Hands and the sentries the ring calls; the voice; Wenna and the choice | the choice | #759 |
 
 The core is everything: no map here is country. Build order is the road's: H6 (built, #753; it lists
 the area, moves the isle's rows into the area's own atlas slice and lands the last crossing, §7),
-I6, the temple (built, #755), the crypt (built, #756), the Ways (built, #757), the Stair, the Heart;
-the chapter and the walkthrough once the Heart is in; the side quests with their maps; the Council
-and the endings with the Heart. The drawings (§7) land before the maps that first place them, the
-crawlers' family before the Ways.
+I6, the temple (built, #755), the crypt (built, #756), the Ways (built, #757), the Stair (built,
+#758), the Heart; the chapter and the walkthrough once the Heart is in; the side quests with their
+maps; the Council and the endings with the Heart. The drawings (§7) land before the maps that first
+place them, the crawlers' family before the Ways.
 
 ### 4.1 The briefs
 
@@ -758,9 +774,9 @@ smooth and `bare` (#757's 14). It departs from the brief in these squares and li
   north, the start. Up: 16,31, floor with the exit, onto the crypt's 8,2 facing south. Across: the
   CREW ONLY door, 2,10, onto `deep_mines3` 13,3 facing west, the floor before `dm3_door`; the mines'
   `Z` at 14,3 stays, one way. Down: the Stair's head, 16,2, is a door with rock at 16,1; the
-  crawl way's, 24,1, is a door with rock beyond. Their exits to `underdeep2` are exported
+  crawl way's, 24,1, is a door with rock beyond. Their exits to `underdeep2` were exported
   (`STAIR_DOOR`, `CRAWL_DOOR`) and not listed, an exit to an unbuilt map failing
-  `tools/tests/maps.ts`; #758 turns 16,1 to floor and lists both (#757's 5).
+  `tools/tests/maps.ts`; #758 turned 16,1 to floor and listed both (#757's 5).
 - **The ways.** The main way is one wide, 16,3 to 16,31, with side ways at rows 26, 22, 18 and 14
   (three squares each way) and the row-10 way west, 3–15, to the CREW ONLY door (#757's 3). The
   frames are doors in the ways' walls, `ud_knot1` to `ud_knot8` at 12,26, 20,26, 12,22, 20,22,
@@ -864,6 +880,58 @@ second flight down; the Catcher at the foot.
 
 **Share of the pay.** About nine fortieths of the area's, the Catcher's 19,733 nearly a third of
 that (§8).
+
+**As built** (#758, 14 October): the brief's landings, flights and seven groups, laid in a 32×32 box
+(`underdeep2`, named The Stair, region `hearth`, band 30–31), down the Ways' door at the main way's
+head. The floor is 153 open squares. The place is
+`{ id: 'underdeep2', kind: 'deep', band: [30, 31], at: [216, 172] }` in the area's `PLACES`
+(`src/content/areas/hearth/atlas.ts`): it has no name or order, the Stair being the Underdeep's and
+no step of its own, and no `deep` way is added, the area's band, 28–32, holding without one (§9.2,
+#758's 10). The palette is the Ways' with the brief's floor and ceiling, smooth and vault, `bare`
+(#758's 11). It departs from the brief in these squares and lines:
+
+- **The seams.** In: the Ways' 16,1, floor now with `STAIR_DOOR` listed, beyond the door at 16,2,
+  onto 16,30 facing north, the start. Up: 16,31, floor with the exit, onto the Ways' 16,2 facing
+  south. Across: the crawl way's door, the Ways' 24,1, with `CRAWL_DOOR` listed, onto 24,18 facing
+  south. Down: the last door, 16,1, is drawn in the wall (below), and the Heart's way back up lands
+  on 16,2, the floor before it.
+- **The landings and flights.** Eight landings, two rows deep at the brief's rows (26–27, 22–23,
+  18–19, 14–15, 10–11 and 6–7, seven wide at 13–19), the head at 14–18,30 and the last at
+  12–20,2–4; seven flights between them, two wide down the middle, turning a column at each landing
+  (15–16, then 16–17), so every square the brief names stands on them. Eight landings four rows
+  apart leave seven flights, not eight of eight squares, and the table's "fifth landing" (16,16),
+  "sixth flight" (16,12) and "seventh landing" (16,8) fit no count of the rows: the squares are
+  kept and the words are not (#758's 1).
+- **The fourth landing** runs east, 13–24,18–19, so the company that comes out of the crawl way
+  lands on 24,18 facing south, under the door drawn in the wall at 24,17. The brief gives no way
+  back up it, and the head's way up is the way back to the camp (#758's 2).
+- **The last door and the Hand's own** are doors drawn in the wall, 16,1 and 13,1 (`legend: { Z: {
+  solid: 'wall', door: 'door' } }`, as the Deep Mines' and the Dead-Drop's): neither can be walked
+  into, so `ud2_shut` reads true. `LAST_DOOR` (the brief's exit to `core` 8,14 north, with its
+  `needFlag`, `blockedText` and `label`) and `FIVE` are exported and not listed: the Heart lists
+  the exit, turns 16,1 to a door and signs the lock (#758's 3).
+- **The first landing** holds the rearguard, three at 16,26, standing: a guardian with `until: HELD`
+  and `leaves` and no respawn, which the claimant's people take off the landing and which, slain,
+  stays slain (#758's 5). The captain is one person, *The captain on the landing* at 15,27,
+  `after: HELD`, with six `says` built from `HELD` in its order, the verdicts first (#758's 6).
+- **The groups** are the brief's seven but for one count: `ud2_rearguard` 16,26, `ud2_rats` 14,23,
+  `ud2_crawlers1` 16,20, `ud2_keepers` 16,16, `ud2_crawlers2` 16,12 (two crawlers, not three:
+  #758's 8), `ud2_knockers` 16,8 and `ud2_catcher` 16,4. Their `aware`, roaming and respawns are in
+  §9.2 (#758's 9).
+- **The Catcher** is set off the line by its gate (`OFF_LINE`): 1,100 hit points and 34d8+40 for
+  the line's 1,826 and 30d8+34. Its level, armour, attack, speed, xp, `ranged`, paralysis and look
+  are the brief's (§7, §8; #758's 7).
+- **The finds.** `ud2_rearguard_chest` (17,26) holds 900 gold and the Grey Axe, 2d12+7 at 6,800;
+  `ud2_letter_chest` (15,21), on `ud2_letter`'s square as the brief has it, Jowan's letter and no
+  gold; the dead's packs `ud2_packs` (15,13) 700 gold and four `potion_heal`. The Catcher drops
+  nothing.
+- **The sign** `ud2_creed` (16,10) has the brief's id and no `read`, chalk any company can read,
+  and keeps no `seen` (#758's 13).
+- **Measured.** A company at 30 wins every group but the Catcher's ten fights in ten in the
+  walkthrough, which walks the Stair: down the Ways' last door and up, out of the crawl way, the
+  first landing held, fought and outranked, the dead and the letter, the last frame and the Catcher
+  at the shut door. Density 98.0% within 7 steps, the furthest 9, with one sign among its 22
+  points. The figures are in §8.
 
 ### 4.8 The Heart (dungeon, 16×16, band 32)
 
@@ -1225,9 +1293,16 @@ at the Council, and the fallback for the Stair (§4.7) and the face at the core 
   none.* (on `q_bowl_pilgrims`, at `hearthisle_h6`).
 - **As built** (H6, #753): the quest is `bowl_pilgrims` and its met flag `q_bowl_pilgrims`, set by
   any of the three pilgrims; the plan's `pilgrims` and `q_pilgrims` are Rimewater's 44 (§9.2, #753's
-  1 and 2). Its `done` is `HELD` for now, the three claimants' verdicts and the three tokens, with
-  an entry for each token. The rearguard slain, the "carried none" entry and the goal at
-  `underdeep2` are #758's (#753's 3).
+  1 and 2). Its `done` was `HELD` until the Stair, the three claimants' verdicts and the three
+  tokens, with an entry for each token. The rearguard slain, the "carried none" entry and the goal
+  at `underdeep2` were #758's (#753's 3).
+- **As built** (the Stair, #758): `done` is the three verdicts, `seen: underdeep2:ud2_held` and
+  `slain: underdeep2:ud2_rearguard`, not `HELD`: with the tokens in `done`, the goal on a token,
+  *Carry the token down the stair under the temple.*, could never come up, and
+  `tools/tests/quests.ts` failed it. A token ends the quest when its people are seen holding the
+  first landing; a verdict ends it as before; with neither, the rearguard slain ends it on *We
+  carried none of them.* The captain's six `says` are in `HELD`'s order (#758's 4 and 6). H6's
+  walkthrough line that asserted a token alone did the quest now asserts the goal down the stair.
 
 **58. A Letter for Gullwick** (`letter`, the Stair and Gullwick, 29). Among the Hand's dead a
 champion with a letter home; it is an item read from the pack; on the walk home it is given to a
@@ -1246,6 +1321,11 @@ mother two doors from Hild's.
   boy, Jowan, and he chose it.* (on the item); *His mother read it at her door, twice, and went
   down to the shingle after.* (on `q_letter_given`). Goal: *Take Jowan's letter to his mother at
   Gullwick, the third house from the slip.* (at `downs_f3`).
+- **As built** (the Stair, #758): the quest is `letter` and the item `gullwick_letter`, *Letter for
+  Gullwick*, in `ud2_letter_chest` on `ud2_letter`'s square (15,21), as the brief has it. The
+  item's text is a line of what it is (*A letter sealed with a knot of rope, the seal Gullwick's.*)
+  and the brief's words in two quoted paragraphs (#758's 12). The hand-in is #765's:
+  `q_letter_given` is owed in `UNSET` (`tools/tests/quests.ts`) until it lands.
 
 **59. Every Frame She Marked** (`frames`, the Ways and the Stair, 30). No giver: a thing found.
 The eight frames' knots are once-events (§4.6); the eighth's words are the hatch's hint; the hatch
@@ -1261,11 +1341,13 @@ name (§4.7).
   foot of the stair.* (on `ud_knot8`, at `underdeep2`); *Follow her knots through the ways, frame
   by frame.* (at `underdeep`).
 - **As built** (the Ways, #757): the quest is `frames`, with the entries on `ud_knot1`, `ud_knot8`
-  and `ud_hatch` and the goal at `underdeep`. Its `done` is `[]`, so it is never done until the
-  Stair: `seen: KNOT_LAST` names `underdeep2`, which fails `tools/tests/quests.ts` until that is
-  built. The last frame's entry, the goal at `underdeep2` and the `done` are #758's (#757's 8). The
+  and `ud_hatch` and the goal at `underdeep`. Its `done` was `[]` until the Stair:
+  `seen: KNOT_LAST` names `underdeep2`, which failed `tools/tests/quests.ts` until that was built.
+  The last frame's entry, the goal at `underdeep2` and the `done` were #758's (#757's 8). The
   quest begins on `ud_knot1` only: a company that takes the east way first reads *Her knot again*
   on the second frame before the first.
+- **As built** (the Stair, #758): the entry on `KNOT_LAST` (`ud2_word`, 16,6), the goal at
+  `underdeep2` on `ud_knot8` and `done: { seen: KNOT_LAST }`, as the brief has them.
 
 **60. Crew Only, From the Inside** (`crew_only`, the Ways and the Deep Mines, 30). The door that
 would not open under the Kilns has another side, and opens from it: a way, not a lock (EXPANSION
@@ -1528,7 +1610,7 @@ issue tunes them on the gate (§8).
 | `deep_knocker` | Deep Knocker | knockers, `deep_knocker` (built, Ashfall's) | machine, armoured | 28 | as built (Ashfall's `monsters.ts`) | the Ways, the Stair; the crack |
 | `hand_rearguard` | Ashen Rearguard | cultist, `hand_rearguard` | person, armoured | 30 | hp 529, ac 28, attack 17, 6d8+6, speed 8, xp 1,591 | the Stair's first landing, where the claimant's people are not; `steady`; `look: 'The last of the Hand still standing, and standing in the way.'` |
 | `deep_crawler` | Deep Crawler | crawlers, `deep_crawler` (new) | machine, brute | 31 | hp 1,004, ac 25, attack 18, 6d8+8, speed 8, xp 2,467 | the Ways' last run, the Stair; `ranged` (it comes down from above and reaches the back row); `look: 'It comes down from above, on too many legs.'` |
-| `catcher` | The Catcher | crawlers, `catcher` (new) | machine, boss | 31 | hp 1,826, ac 28, attack 19, 30d8+34, speed 13, xp 19,733 | the Stair's foot, among the Hand's dead; `ranged`; `inflict: paralysed 0.2`; `look: 'It caught the Hand on these stairs.'`; sized on the gate to about half won at 31 |
+| `catcher` | The Catcher | crawlers, `catcher` (new) | machine, boss | 31 | hp 1,100, ac 28, attack 19, 34d8+40, speed 13, xp 19,733 (off the line, which gives 1,826 and 30d8+34: `OFF_LINE`, `tools/tests/harness.ts`) | the Stair's foot, among the Hand's dead; `ranged`; `inflict: paralysed 0.2`; `look: 'It caught the Hand on these stairs.'`; sized on the gate to 59% won at 30 and 84% at 32 (§8; §9.2, #758's 7) |
 | `grey_hand` | Grey Hand | cultist, `grey_hand` | person, elite | 31 | hp 737, ac 27, attack 18, 6d8+9, speed 15, xp 2,467 | the Heart, at the panel; `steady`; `inflict: paralysed 0.15`; `look: 'Hands the colour of ash, to the shoulder.'` |
 | `core_sentry` | Core Sentry | machines, `core_sentry` | machine, soldier | 31 | hp 436, ac 27, attack 17, 5d8+4, speed 11, xp 1,233 | called by the ring (Vask's `calls`, the clock); stands down when he falls (`obeys`, §9, call 7); `look: 'The core\'s own, and it takes orders from the ring.'` |
 | `vask` | Lord Vask | cultist, `vask` (the figure frame, his own) | person, boss | 32 | hp 1,922, ac 29, attack 20, 32d8+33, speed 13, xp 20,373 | the Heart; `steady`; `calls: { monsters: ['core_sentry'], chance: 1 }` on the clock's beat (the clock ignores the chance, §9, call 7); `look: 'A tall man with a quiet voice, and the Queen\'s ring on his finger.'`; sized on the gate to two in three won at 32 with the Hands down first |
@@ -1678,6 +1760,25 @@ box:
 | Density, dungeon | 100.0% within 7 steps (200 of 200, 180 needed); the furthest 6 of 10; 1 sign in 32 points |
 | Levels | 4 monsters in 30–30, give or take two; rising from the way in (rank correlation 0.13); the nearest group, the rats at 3 steps, at 30.0; the hardest, the crawlers at 25 steps, at 31.0 |
 | Lines | 16 events and signs: 5 of one line, 8 of two and 3 of three; the area's 44: 7 of one, 25 of two and 12 of three |
+
+**As built: the Stair** (#758). The row's `owed` is raised to what the isle, the temple, the crypt,
+the Ways and the Stair pay, 31,192 xp a member and 6,500 gold, still owed to #744 while the area is
+built box by box:
+
+| | Figure |
+|---|---|
+| Xp a member | 9,482 against the Stair's nine fortieths, about 10,560: 0.90 (the groups 56,892 split six ways; the Catcher's group 24,667 of it, the Catcher alone 3,289 a member) |
+| The area so far | 31,192 of the 46,934, 66.5%: H6 5,009, the temple 4,971, the crypt 1,962, the Ways 9,768 and the Stair 9,482 |
+| Gold | 6,500 of the 28,320 for the area: the Stair's 1,600 (the rearguard's chest 900, the packs 700, the letter 0), the Ways' 1,400, the crypt's 800, the temple's chest 2,000 and H6's 700 |
+| Paid by level | entering at 28 and clearing three quarters, a company leaves at 30.9, 1.1 under the next floor 32 |
+| Dearest find | the Grey Bow, 6,800, in the 7,000 window (the Grey Axe in the rearguard's chest is 6,800 too) |
+| Gate, at the floor 30 | 94.1% of the Stair's fights won, the Catcher counted (aim 90%, limit 80%); the area's 33 groups at their maps' floors 98.8% |
+| The Catcher | 59% won at 30 (aim 30% to 70%, limit 20% to 80%); 84% at 32 (aim 90%, limit 75%); 67% at 31 on the gate's seeds, which judge a dungeon's boss at its map's floor and two above, not at 31; the walkthrough's ten at 31, 5 won. The plan's half at 31 and nearly always at 32 cannot both hold (§9.2, #758's 7) |
+| Gate, two under | n/a for the Stair, its floor being above the area's; the area's pool at 26, 97.2% of 33 groups' fights won (aim 25%, limit 90%): owed to #18 (§11) |
+| Fights to a rest, at 30 | 10.14 (aim 10.5 to 12.5, limit 9 to 15); 8.7% of days end in a fight broken off, the Catcher left out as a boss |
+| Density, dungeon | 98.0% within 7 steps (150 of 153, 138 needed); the furthest 9 of 10; 1 sign in 22 points |
+| Levels | 6 monsters in 30–31, give or take two; rising from the way in (rank correlation 0.19); the nearest group, the rearguard at 4 steps, at 30.0; the hardest, the crawlers at 16,20 at 10 steps, at 31.0 |
+| Lines | 11 events and signs: 8 of two lines and 3 of three; the area's 55: 7 of one, 33 of two and 15 of three |
 
 **The gear** (`GEAR`, `tools/harness.ts`), one more rung, the last, by 28 and found, never sold:
 the Hand's steel from below, in the temple's treasury, the camps' chests and the champions' drops
@@ -2393,7 +2494,7 @@ Decided by delegate for #757, each the owner's to overturn:
 5. **The Stair's head and the crawl way's door wait on #758:** 16,2 is a door and 16,1 rock, as the
    temple's stair was (#755's 4); 24,1 is a door with rock beyond, as the crypt's grey door was.
    `STAIR_DOOR` and `CRAWL_DOOR` are exported and not listed: an exit to an unbuilt map fails
-   `tools/tests/maps.ts`.
+   `tools/tests/maps.ts`. #758 listed them.
 6. **The CREW ONLY door is a door square with the person on it,** and the exit is `after` either
    answer, as the weather check's exception has it. The second answer is *Go through and shut it.*:
    the brief's *Open it, go through and shut it.* runs past a line of the side panel
@@ -2403,7 +2504,7 @@ Decided by delegate for #757, each the owner's to overturn:
 8. **59's `done` is `[]`, never done, until #758:** its `seen: KNOT_LAST` names `underdeep2`, which
    fails `tools/tests/quests.ts` until built. 59 has the entries on `ud_knot1`, `ud_knot8` and
    `ud_hatch` and the goal at `underdeep`; the last frame's entry, the goal at `underdeep2` and the
-   `done` are #758's.
+   `done` are #758's. #758 built them.
 9. **The Old Lantern's Staff is a staff,** 1d10+14 at 7,000, two-handed, with no class list (as the
    Battle Staff has none), its holiness in its words: no weapon carries an element. **The Grey
    Shield** is ac 8 at 4,000 for `MAIL` (as the Basalt Shield is). Both are in
@@ -2422,6 +2523,67 @@ Decided by delegate for #757, each the owner's to overturn:
 14. **The palette is the Dead-Drop's colours** with `wallStyle: 'smooth'`, `ceilingStyle: 'vault'` and
     `bare: true`; the map is named The Ways, band `[30, 30]`, region `hearth`, start 16,30 facing
     north.
+
+Decided by delegate for #758, each the owner's to overturn:
+
+1. **Eight landings and the seven flights between them.** The landings are two rows deep at the
+   brief's rows and the flights two wide down the middle, turning a column at each landing, so every
+   square the brief names stands on them. Eight landings four rows apart leave seven flights, not
+   eight of eight squares; the table's "fifth landing" (16,16), "sixth flight" (16,12) and "seventh
+   landing" (16,8) fit no count of the rows, so the squares are kept and the words are not. 153 open
+   squares.
+2. **The fourth landing runs east to the crawl way's door,** 13–24,18–19: the company lands on 24,18
+   facing south under the door drawn in the wall at 24,17, with no way back up it. The brief gives
+   none, and the head's way up is the way back to the camp.
+3. **The last door (16,1) and the Hand's own door (13,1) are doors drawn in the wall,** as the Deep
+   Mines' and the Dead-Drop's are: neither can be walked into, so `ud2_shut` reads true. `LAST_DOOR`
+   (the brief's exit to `core` 8,14 north, its `needFlag`, `blockedText` and `label`) and `FIVE` are
+   exported and not listed: #759 lists the exit, turns 16,1 to a door and signs the lock.
+4. **57 ends on a verdict, on the first landing seen held (`underdeep2:ud2_held`) or on the
+   rearguard slain,** not on `HELD`: with the tokens in `done`, the brief's goal on a token (*Carry
+   the token down the stair under the temple.*, at `underdeep2`) could never come up and
+   `tools/tests/quests.ts` failed it. A token now ends the quest when its people are seen holding
+   the landing. H6's walkthrough line that asserted the token alone did the quest now asserts the
+   goal down the stair.
+5. **The rearguard is a guardian with `until: HELD`, `leaves: true` and no respawn:** 57 names it
+   slain, and the quests check refuses a slain key on a group that respawns.
+   `tools/tests/structure.ts` refused any `until` on a group that never comes back; under the leave
+   rule (#747) that `until` takes a standing group off, so the rule now passes a group that `leaves`
+   (one condition and a fixture). Outside the content lane: the owner's to overturn.
+6. **The captain is one person,** *The captain on the landing*, `after: HELD`, with six `says` built
+   from `HELD` in its order (the verdicts first, then the tokens), so a verdict that carried
+   outranks a token. His `lines`, said only if no `says` held, which his `after` rules out, are one
+   neutral line.
+7. **The Catcher is set off the line by its gate (`OFF_LINE`): 1,100 hit points and 34d8+40.** The
+   line's 1,826 and 30d8+34 are won 29% at 30, 35% at 31 and 41% at 32; the Catcher is won 59% at 30
+   (aim 30 to 70%), 67% at 31 and 84% at 32 (aim 90%, limit 75%) on the gate's hundred seeds. In ten
+   sizings tried the rise from 30 to 32 never passed about 25 points, so half at 31 and nearly
+   always at 32 cannot both hold: the gate's floor aim and its limit above are kept, and 31 sits at
+   two in three. Level, armour, attack, speed, xp 19,733, `ranged`, paralysis and look are kept.
+   The gate judges a dungeon's boss at its map's floor, 30, and two above, 32 (`BOSSES.hearthisle`),
+   not at 31.
+8. **The sixth flight's crawlers are two, not three:** with three a day at 30 broke off at 7.85
+   fights to a rest, past the gate's limit of 9 (57% of days ended on a fight that ran long); with
+   two, 10.14 (aim 10.5 to 12.5, limit 9 to 15). The smallest cut that passes: the rats at eight as
+   well would reach 11.32, in the aim, for another 398 xp a member, and the pay comes first. The
+   other six groups are the brief's.
+9. **`aware` and roaming, which the brief leaves open:** the rearguard 2 and the knockers 2,
+   standing (the brief); the rats and the crawlers 3 and the keepers 2, roaming; the Catcher 3,
+   standing (the brief). The rats respawn at 1,440 and the crawlers, the keepers and the knockers
+   at 2,880; the rearguard and the Catcher never (guardians).
+10. **The place is `{ id: 'underdeep2', kind: 'deep', band: [30, 31], at: [216, 172] }`,** with no
+    name or order (the Stair is the Underdeep's, not a step of its own) and no `deep` way added: the
+    area's band, 28–32, holds without one, and the atlas and curve checks pass.
+11. **The palette is the Ways'** with the brief's floor `#505258` and ceiling `#303236`, smooth and
+    vault, `bare: true`; the map is named The Stair (§10), band `[30, 31]`, region `hearth`, start
+    16,30 facing north.
+12. **The letter is `gullwick_letter`,** *Letter for Gullwick*, its text a line of what it is (*A
+    letter sealed with a knot of rope, the seal Gullwick's.*) and the brief's words in two quoted
+    paragraphs. **The Grey Axe** is `greyAxe`, 2d12+7 at 6,800, two-handed, `MARTIAL`, a point past
+    the Flamberge.
+13. **`ud2_creed` is a sign with the brief's id and no `read`** (chalk any company can read), as the
+    crypt's `hf2_door`; it keeps no `seen`. The letter's chest shares `ud2_letter`'s square (15,21),
+    as the brief has it; the pillars check passes.
 
 ## 10. Names
 
@@ -2477,10 +2639,8 @@ Owed, from H6 (#753):
   and `Hearth Isle: under`, `OWED` in `tools/tests/gate.ts`). The issue's "one at 26 no more than one
   in four" is not met: stronger monsters are barred and fewer groups would not lower it (§9.2,
   #753's 11). The owner's or #18's.
-- **Quest 57's end** is #758's: the rearguard slain, the "carried none" entry and the goal at
-  `underdeep2`, `done` being `HELD` until then (§6; #753's 3). The chapter's first step and the
-  strand's shard (`hearthisle_h6:h6_strand` and `h6_shard`) are #760's: `tools/tests/quests.ts` owes
-  the chapter and lists the zone as planned.
+- **The chapter's first step** and the strand's shard (`hearthisle_h6:h6_strand` and `h6_shard`) are
+  #760's: `tools/tests/quests.ts` owes the chapter and lists the zone as planned.
 - **The free fare** for a Partner is #765's: the runner says the boat is the Partner's both ways,
   and the line runs ahead of the fare until then.
 - **I6's meeting** is #754's: it adds I6's west edge against H6's east pin, where row 0 is rock on
@@ -2536,10 +2696,8 @@ Owed, from the Ways (#757):
 
 - **The Ways pay under their nine fortieths:** 0.93 of it (9,768 xp a member of about 10,560), with
   11.58 fights to a rest at 30, in the aim. The eleven groups are the brief's; lighter or fewer
-  would widen the shortfall (§9.2, #757's 12). The balance is the Stair's: with I6's 2,908 (#754)
-  and the Heart's eighth, about 5,870, it must pay about 16,400 a member, 1.56 times a
-  nine-fortieths share, for the area's clear to meet the 46,934 when the owed row goes. The owner's
-  call.
+  would widen the shortfall (§9.2, #757's 12). The balance was the Stair's, which pays 0.90
+  (below). The owner's call.
 - **The brief's crawl way and row-6 way cannot both stand:** the crawl way runs 24,2–13, and a way
   from the main way east to the crack at 29,6 crosses it and opens the hatch's secret to anyone. The
   crack is reached through the eighth frame's room instead (§9.2, #757's 2). The owner's call.
@@ -2553,16 +2711,53 @@ Owed, from the Ways (#757):
   says planned places only, but `progression()` reads it for a deep place's step on the road (§9.2,
   #757's 10). A note for the systems lane, not edited here.
 - **The issue's "`keeper` first placed here" is stale:** the crypt placed it (#756).
-- **The Stair's end is #758's:** it turns 16,1 to floor, lists `STAIR_DOOR` and `CRAWL_DOOR` (24,1 is
-  a door already) and lands its way up on the Ways (§9.1, 17). It gives 59 its last frame, its goal
-  at `underdeep2` and its `done`. It turns the walkthrough's line asserting that both doors wait on
-  it (§9.2, #757's 5 and 8).
 - **The road behind is #765's:** `CREW_OPEN` for the Kilns' knockers on `deep_mines3` 6,3 and
   Anvilhall's thane; `CRACK_SEALED` for the Sunder's groups (`leaves`) and the Watch's Reader.
 - **The chapter's step** for the Ways is #760's (`underdeep:ud_in`, seen, at `underdeep`).
 - **The gear's rung** is #746's: the Grey Shield (`greyShield`, in the keepers' store `ud_store`,
   where §8 has the keeper's) and the Old Lantern's Staff (`oldLanternsStaff`, the knocker's gift
   for *Widen it.*) are built here, and #746 takes them into the rung (§9.2, #757's 9).
+
+Owed, from the Stair (#758):
+
+- **The Stair pays under its nine fortieths:** 0.90 of it (9,482 xp a member of about 10,560), with
+  10.14 fights to a rest at 30, under the aim (10.5 to 12.5) and inside the limit (9 to 15). The
+  groups are the brief's but for the sixth flight's crawlers (below). The cap, 1.25 times its share,
+  is about 13,200; to reach it the Stair would need about 22,000 more xp of groups (some 3,700 a
+  member, say four more groups of four keepers), which the brief does not give and the day at 30
+  would bear only if they were light. With I6's 2,908 (#754) and the Heart's eighth, about 5,900,
+  the area reaches about 40,000 of the 46,934 (85%), about 6,900 a member short. The area's clear
+  will fall short: its owed row is set at the as-built floor at the end, as Act IV's Wold was. The
+  owner's call.
+- **The Catcher's sizing:** `OFF_LINE.catcher`, 1,100 hit points and 34d8+40, is won 59% at 30,
+  67% at 31 and 84% at 32 on the gate's seeds. In ten sizings the rise from 30 to 32 never passed
+  about 25 points, so half at 31 and nearly always at 32 cannot both hold: the gate's floor aim and
+  its limit above are kept (§9.2, #758's 7). #752 finalises it.
+- **The sixth flight's crawlers are two, not three:** with three the day at 30 breaks off at 7.85
+  fights to a rest, past the gate's limit of 9 (§9.2, #758's 8). The owner's call.
+- **`tools/tests/structure.ts` is loosened:** a group that `leaves` on its `until` needs no respawn,
+  where the check refused any `until` on a group that never comes back. It is outside the content
+  lane and the owner's to overturn (§9.2, #758's 5).
+- **The last door is the Heart's:** `LAST_DOOR` and `FIVE` are exported and not listed (§9.2, #758's
+  3). #759 lists the exit, turns 16,1 to a door, signs the lock in `src/content/locks.ts` on
+  `q_ember_lit` at `underdeep2` 16,1 with its reason, *the heart opens for whoever makes it whole.*,
+  lands the Heart's way up on 16,2 facing south and turns the walkthrough's last two lines, which
+  assert 16,1 a drawn door and no exit to `core`.
+- **Two under, the area's pool is won nearly every time:** the Stair's own row reads n/a, its floor
+  being above the area's, so its groups count in the pool at 26, 97.2% of 33 groups, owed to #18
+  already (`Hearth Isle: under`, `OWED` in `tools/tests/gate.ts`). The owner's or #18's.
+- **Eight flights of eight squares do not fit the landings,** four rows apart: seven flights, and
+  the table's ordinal words are not kept (§9.2, #758's 1). The owner's call.
+- **The first landing's words** (`ud2_held`, the captain) say the rearguard lies dead even where the
+  company killed it before taking a token: harmless and rare.
+- **The verdicts are #764's:** its flags put their people on the landing (`HELD`, 57's `done`).
+- **The road behind is #765's:** `q_letter_given`, Jowan's mother's hand-in of `gullwick_letter` at
+  `downs_f3` 10,13, which `UNSET` (`tools/tests/quests.ts`) owes until it lands.
+- **The chapter's steps** for the Stair are #760's: `underdeep2:ud2_dead` (seen),
+  `underdeep2:ud2_catcher` (slain; a guardian, no respawn), `underdeep2:ud2_foot` (seen) and
+  `KNOT_LAST`, at `underdeep2`.
+- **The gear's rung** is #746's: the Grey Axe (`greyAxe`, in `ud2_rearguard_chest`) is built here,
+  and #746 takes it into the rung (§9.2, #758's 12).
 
 ## 12. The road behind: the lines
 
