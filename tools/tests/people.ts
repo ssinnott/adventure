@@ -45,10 +45,11 @@ export function people(): void {
   for (const { map, p } of all) { const bad = boxFaults(p); ok(!bad.length, `${map} ${p.x},${p.y}: every text fits the box, and every question its answers${bad.length ? ' -> ' + bad.join('; ') : ''}`); }
   // Every group that asks before it fights (#544) can be refused, and only once: the refusal costs and
   // sets nothing, so it is put again, and every other answer sets a flag, so the walk past is
-  // remembered. Its question fits the box, as a person's does.
+  // remembered. A parley may be nothing but its refusal, as Vask's is at the Heart (#759): then there is no
+  // walk past to remember. Its question fits the box, as a person's does.
   for (const d of MAP_DEFS) for (const e of d.encounters ?? []) if (e.choice) {
     const no = e.choice.answers.filter((a) => a.fight), rest = e.choice.answers.filter((a) => !a.fight);
-    ok(no.length === 1 && !no[0].price && !no[0].takes && !no[0].sets && rest.length > 0 && rest.every((a) => [a.sets ?? []].flat().length > 0),
+    ok(no.length === 1 && !no[0].price && !no[0].takes && !no[0].sets && rest.every((a) => [a.sets ?? []].flat().length > 0),
       `${d.id}: ${e.id} asks before it fights, with one refusal that costs and sets nothing, and other answers that each set a flag`);
     const bad = boxFaults({ kind: 'npc', x: e.x, y: e.y, name: e.id, lines: [], choice: e.choice });
     ok(!bad.length, `${d.id}: ${e.id}'s question fits the box, and its answers the side panel${bad.length ? ' -> ' + bad.join('; ') : ''}`);
