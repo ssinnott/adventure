@@ -27,10 +27,12 @@ export const END_REIGNITE = ENDINGS.reignite.flag, END_ARRIVE = ENDINGS.arrive.f
 
 /**
  * Vask's parley, put as the company comes beside his group, as the giants' toll is: one answer, since
- * nothing he offers is the company's to take. He offered at the watchtower, and was told no.
+ * nothing he offers is the company's to take. He offered at the watchtower, and was told no. The plan's
+ * question has one clause more, ", and looks at whichever of you carries the maps", which took nine lines
+ * of the side panel's seven (tools/tests/people.ts).
  */
 export const VASK: Choice = {
-  ask: 'Vask does not turn from the glass. "Four hundred years in a jar. They painted the lid blue and called it heaven." Now he turns, and looks at whichever of you carries the maps. "And you have spent your lives mapping the inside of the jar. I am opening the door."',
+  ask: 'Vask does not turn from the glass. "Four hundred years in a jar. They painted the lid blue and called it heaven." Now he turns. "And you have spent your lives mapping the inside of the jar. I am opening the door."',
   answers: [
     { label: 'Stop him.', fight: true, says: ['"No," he says, quite gently, as if to a child, and the grey hands press her palm flatter to the glass. The light overhead goes down a step.'] },
   ],
