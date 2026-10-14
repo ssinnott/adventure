@@ -576,6 +576,8 @@ export const walkthrough: Walkthrough = (ok) => {
   const after = speakTo(w, wenna);
   ok(after.text.includes('"Home," she says. "In the spring. Walk me."') && !after.choice && !w.world.present(vaskAfter),
     'after it she waits to be walked home, the question not put again, and Vask gone from the room');
+  w.party.flags[THRONE_REMOVED] = 1;
+  left(w, 'core:core_vask_thinned');
   const ring = log('signet');
   ok(!!ring && !ring.done && ring.goal === 'Where the ring goes: the Council\'s clerk waits at Helmstow\'s gate, and the sea off Gullwick is where the boat went out.',
     'the ring in the pack begins The Signet, its end at Helmstow\'s gate or the sea off Gullwick (#765)');

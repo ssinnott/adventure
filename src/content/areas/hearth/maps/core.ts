@@ -150,8 +150,9 @@ export const CORE: MapDef = {
   encounters: [
     // Vask at the panel with three of the Grey Hands, on the clock: the parley as the company comes beside
     // him, and the fight. Gone by the leave rule once the Council has removed him from Helmstow (#747), the
-    // thinned group in its place. Both set his fall; neither comes back.
+    // thinned group in its place, which never stands once he has fallen: the Council may sit after the fight.
+    // Both set his fall; neither comes back.
     { id: 'core_vask', x: 8, y: 5, monsters: ['vask', 'grey_hand', 'grey_hand', 'grey_hand'], leader: 'vask', aware: 2, roams: false, clock: CLOCK, choice: VASK, sets: VASK_FALLEN, slainText: SLAIN, until: { flag: THRONE_REMOVED }, leaves: true },
-    { id: 'core_vask_thinned', x: 8, y: 5, monsters: ['vask', 'grey_hand', 'grey_hand'], leader: 'vask', aware: 2, roams: false, clock: CLOCK, choice: VASK, sets: VASK_FALLEN, slainText: SLAIN, after: { flag: THRONE_REMOVED } },
+    { id: 'core_vask_thinned', x: 8, y: 5, monsters: ['vask', 'grey_hand', 'grey_hand'], leader: 'vask', aware: 2, roams: false, clock: CLOCK, choice: VASK, sets: VASK_FALLEN, slainText: SLAIN, after: { flag: THRONE_REMOVED }, until: { flag: VASK_FALLEN }, leaves: true },
   ],
 };
