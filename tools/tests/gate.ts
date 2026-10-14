@@ -154,8 +154,11 @@ export const ROADS: Record<string, readonly string[]> = {
   wold: ['wold_d10:d10_pride', 'wold_d10:d10_pride_south', 'wold_d10:d10_mesa', 'wold_d10:d10_scorpions', 'wold_d10:d10_basilisk',
     'wold_d9:d9_pride', 'wold_d9:d9_scorpions', 'wold_d9:d9_walker', 'wold_d9:d9_pride_north'],
   // Up the cleft from the strand where the last crossing grounds, past the Hand's pickets in it and at
-  // its head, and over the Bowl to the preacher's group before the temple's door (#753).
-  hearthisle: ['hearthisle_h6:h6_picket1', 'hearthisle_h6:h6_picket2', 'hearthisle_h6:h6_sermon'],
+  // its head, and over the Bowl to the preacher's group before the temple's door (#753); then out of the
+  // Bowl's east pocket past the champions where the rim's path begins, by Anchorhold's yard and down the
+  // rim's east foot to the Hand's camp, its guard and the two at the stair's head (#754).
+  hearthisle: ['hearthisle_h6:h6_picket1', 'hearthisle_h6:h6_picket2', 'hearthisle_h6:h6_sermon',
+    'hearthisle_i6:i6_rim', 'hearthisle_i6:i6_guard', 'hearthisle_i6:i6_guard2'],
   // Over the crest from the vale and up the path to the Peak Stone, past the brothers walking it (#501);
   // then up the ridge trail and west along the road to the Stair, past the giant and the troll in the
   // snow short of the head (#502).
@@ -282,6 +285,8 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   // And Hearth Isle's isle (#753), the same: two under, in the gear by 26, it wins every fight. The
   // Hand's steel, the band's rung at 28, is #746's.
   'hearthisle_h6: under': { whose: '#18', at: 1 },
+  // And its east rim (#754), the same.
+  'hearthisle_i6: under': { whose: '#18', at: 1 },
   'Hearth Isle: under': { whose: '#18', at: 1 },
   // And the temple (#755), the same: its champions and preachers, two under, are won every time.
   'hearthfane: under': { whose: '#18', at: 1 },
