@@ -34,7 +34,7 @@ import { COMPACT_OVER, COMPACT_WARDENS } from '../saltreach/maps/saltmouth.ts';
 import { THRONE_REMOVED } from '../shelf/maps/keep.ts';
 import { STRAND, PILGRIMS, TOKEN_COUSIN, TOKEN_HOLD, TOKEN_TALLIS } from './maps/hearthisle_h6.ts';
 import { LAMPS, LAMPS_OUT, LAMPS_WRONG, LAMPS_KEY, FANE_KEY, LAMP_FLAGS, STAIR } from './maps/hearthfane.ts';
-import { ELEVEN_KEPT, GREY_DOOR } from './maps/hearthfane2.ts';
+import { ELEVEN_KEPT, GREY_DOOR, LOG_GIVEN } from './maps/hearthfane2.ts';
 import { CREW_OPEN, CREW_SHUT, CRACK_SEALED, CRACK_WIDE, STAIR_DOOR, CRAWL_DOOR } from './maps/underdeep.ts';
 
 const H6 = MAP_DEFS.find((d) => d.id === 'hearthisle_h6')!;
@@ -299,7 +299,7 @@ export const walkthrough: Walkthrough = (ok) => {
   w.world.eventsHere();
   ok(!w.world.present(eleven) && !w.party.flags[ELEVEN_KEPT], 'the eleven are not lit without the keeper\'s log given at Anchorhold');
   const c = newWalk(ok);
-  c.party.flags.q_eleven_log = 1;
+  c.party.flags[LOG_GIVEN] = 1;
   see(c, 'hearthfane2:hf2_eleven');
   ok(!!c.party.flags[ELEVEN_KEPT], 'with it given, the eleven lit as the log has them keep the hum');
   const find = (id: string) => CRYPT.features!.find((f) => f.kind === 'chest' && f.id === id);

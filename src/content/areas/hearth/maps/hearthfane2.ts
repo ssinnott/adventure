@@ -9,8 +9,12 @@ import { NORTH, SOUTH } from '../../../../game/types.ts';
 
 /** The eleven kept in the crypt's niches (the Cleric's third, §6): `hf2_eleven` sets it. */
 export const ELEVEN_KEPT = 'q_eleven_kept';
-/** The keeper's log given to Hereswith at Anchorhold (#763), which sets it and should export it. */
-const LOG_GIVEN = 'q_eleven_log';
+/**
+ * The keeper's log given to Hereswith at Anchorhold (#763), which sets it. The crypt reads it and owns the
+ * constant, and I6's map may import it: I6 reads `ELEVEN_KEPT` from here, so a constant exported from each
+ * map would be an import cycle.
+ */
+export const LOG_GIVEN = 'q_eleven_log';
 
 /**
  * The grey door down into the Ways, `underdeep` (#757), whose way back up lands on the knot's square,
@@ -66,10 +70,10 @@ export const HEARTHFANE2: MapDef = {
     { kind: 'event', x: 2, y: 7, id: 'hf2_dead', once: true, text: 'Three of the Hand dead in the side vault, laid in a row by their own. Whatever caught them did it below, and they were carried up to here, and no further.' },
     { kind: 'chest', x: 1, y: 8, id: 'hf2_pack', gold: 200, items: ['grey_robe'] },
     // The chamber's north door on the passage: the keeper, and the Hand's last man up here beside it.
-    { kind: 'event', x: 8, y: 4, id: 'hf2_last', once: true, text: 'A keeper in the passage, and beside it the Hand\'s last man up here, dead on his feet.' },
+    { kind: 'event', x: 8, y: 4, id: 'hf2_last', once: true, text: 'The passage, and in it the Hand\'s last man up here, dead on his feet.' },
     // The grey door down, and her knot on its frame.
     { kind: 'event', x: 8, y: 2, id: 'hf2_knot', once: true, text: 'On the grey door\'s frame, at a girl\'s shoulder: a loop inside a loop. She has left you a trail.' },
-    { kind: 'sign', x: 8, y: 1, id: 'hf2_door', text:'A door of grey with no handle, standing open. It opened for her, and nobody has shut it since.' },
+    { kind: 'sign', x: 8, y: 1, id: 'hf2_door', text: 'A door of grey with no handle, standing open. It opened for her, and nobody has shut it since.' },
   ],
   encounters: [
     // The Hand's best in the chamber, never roaming; the rats in the side vault, come up for the dead;
