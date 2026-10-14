@@ -1105,6 +1105,9 @@ in these squares and lines:
   the brief does not give: the Council can sit after the fight (`q_throne_removed` is set before an
   ending and after one), and it would raise Vask and two Hands at the panel for a second fight while
   he knelt by the wall (#759's 4).
+- **The parley's question** has one clause less than the brief's, *, and looks at whichever of you
+  carries the maps*: the brief's took nine lines of the side panel's seven (`tools/tests/people.ts`),
+  the cut one takes seven. The parley is still the one answer, *Stop him.* (#759's 13, 14).
 - **Wenna's words** for a company with Fane's map set `RING_GIVEN` themselves (`sets` on that `says`
   entry): a person's `flag` is set only on her own first lines (`meet`, `src/game/people.ts`), so
   those words would have given the ring and never the flag the chapter and its goals read
@@ -2750,6 +2753,15 @@ Decided by delegate for #759, each the owner's to overturn:
     `LAST_DOOR.blockedText`, `ud2_shut` is said and the way back up off the stair's head is open;
     on the five `ud2_shut` is not said and the company walks onto 8,14 facing north, and back
     through onto 16,2 facing south.
+13. **The parley's question is cut by one clause,** *, and looks at whichever of you carries the
+    maps*: the brief's took nine lines of the side panel's seven (`tools/tests/people.ts`). The rest
+    of it stands.
+14. **`tools/tests/people.ts` lets a parley be nothing but its refusal:** it wanted another answer
+    that sets a flag, and the Heart's one answer, *Stop him.*, is the brief's and the issue's, with
+    no walk past to remember. Outside the content lane: the owner's to overturn.
+15. **Rimewater's walkthrough counts Act III's lock on its own map,** not on the road: it asserted
+    `LOCKS.length === 1`, which the Heart's lock makes two (the issue's "two of four"). Outside the
+    content lane: the owner's to overturn.
 
 ## 10. Names
 
@@ -2944,6 +2956,9 @@ Owed, from the Heart (#759):
 - **The plan's one in three for the clock left to run measures 45%:** going for Vask first gains,
   and the lever the plan names, a heavier Vask with a lighter blow, runs the other way on the gate's
   bot (§7; §9.2, #759's 7). Two in three with the Hands first is kept. The owner's call.
+- **Two checks outside the content lane are loosened:** `tools/tests/people.ts` lets a parley be
+  nothing but its refusal, and Rimewater's walkthrough counts its lock on its own map and not on the
+  road (§9.2, #759's 14 and 15). Both are the owner's to overturn.
 - **Two under, the area's pool is won nearly every time:** 91.7% of 35 groups' fights at 26, owed to
   #18 as before (`Hearth Isle: under`, `OWED` in `tools/tests/gate.ts`). The Heart's own row reads
   n/a.
