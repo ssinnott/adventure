@@ -2455,6 +2455,25 @@
       ],
       "doors": []
     },
+    "hearthfane2": {
+      "size": "16x16",
+      "used": [
+        "hf2_cups",
+        "hf2_dead",
+        "hf2_eleven",
+        "hf2_knot",
+        "hf2_last",
+        "hf2_niches",
+        "hf2_pack",
+        "hf2_vault"
+      ],
+      "groups": [
+        "hf2_champions",
+        "hf2_keeper",
+        "hf2_rats"
+      ],
+      "doors": []
+    },
     "k3_rift": {
       "size": "12x12",
       "used": [
@@ -3526,6 +3545,7 @@
     "q_ebba_chapel",
     "q_eldest_heard",
     "q_eleven",
+    "q_eleven_kept",
     "q_eleven_sung",
     "q_ember_lit",
     "q_ember_socket1",
@@ -3907,6 +3927,7 @@
     "grey_knife",
     "grey_mail",
     "grey_part",
+    "grey_robe",
     "grey_shovel",
     "grey_staff",
     "greywater_ledger",

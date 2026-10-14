@@ -2,8 +2,9 @@
 // the picket's chest at the cleft's head and dropped by the Ashen Champions; the Smelling Salts in the
 // cache under the north rim; and the pilgrims' three tokens (57). The east rim (I6, #754) adds the Grey
 // Staff in the Hand's camp's chest and the Grey Mail in its hoard; the temple (#755), the Grey Blade and
-// the Grey Bow in its treasury and the sacristan's key to it (56). The rest of the band's rung at 28,
-// found and never sold, is #746's (docs/areas/hearth_isle.md §8).
+// the Grey Bow in its treasury and the sacristan's key to it (56); the crypt (#756), the Grey Robe in
+// the dead champion's pack. The rest of the band's rung at 28, found and never sold, is #746's
+// (docs/areas/hearth_isle.md §8).
 import type { ItemDef } from '../../../game/items.ts';
 import { W, A, MARTIAL, NO_CASTER_HEAVY } from '../../items.ts';
 
@@ -17,6 +18,8 @@ export const greyMail = A('grey_mail', 'Grey Mail', 7000, 14, { classes: NO_CAST
 export const greyBlade = W('grey_blade', 'Grey Blade', 6600, 2, 12, { bonus: 6, classes: [...MARTIAL, 'cleric'] });
 /** The Hand's bow, a point past Cinderport's Ashwood Bow (1d12+12): the ranger's. */
 export const greyBow = W('grey_bow', 'Grey Bow', 6800, 1, 12, { kind: 'bow', bonus: 13, ranged: true, twoHanded: true, classes: ['ranger'] });
+/** The Hand's robe, a point past Cinderport's Cinder Robe (ac 12): anyone's to wear, as that is. */
+export const greyRobe = A('grey_robe', 'Grey Robe', 6200, 13);
 
 export const ITEMS: readonly ItemDef[] = [
   greyKnife,
@@ -25,6 +28,8 @@ export const ITEMS: readonly ItemDef[] = [
   // In the temple's treasury (#755).
   greyBlade,
   greyBow,
+  // In the dead champion's pack in the crypt's side vault (#756).
+  greyRobe,
   // The sacristan's key to the treasury (56): it opens that door, and only it does.
   { id: 'fane_key', name: 'Sacristan\'s Key', slot: 'none', price: 0 },
   // Three in a pouch in the north rim's cache: each wakes one member from sleep or paralysis, used up
