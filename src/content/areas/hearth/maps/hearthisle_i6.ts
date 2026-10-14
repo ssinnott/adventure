@@ -68,7 +68,7 @@ export const HEARTHISLE_I6: MapDef = {
     // broken up, and the rim's north end over the Wyke.
     { kind: 'event', x: 8, y: 19, id: 'i6_path', once: true, text: 'The rim\'s path, and over the sea to the south-east the causeway, stone by stone, all the way to Sheer Point.' },
     { kind: 'event', x: 8, y: 10, id: 'i6_keel', once: true, text: 'A boat\'s keel on the grass under the rim, stripped to the ribs. Its planks went to the Hand\'s fires.' },
-    { kind: 'event', x: 5, y: 2, id: 'i6_wyke', once: true, text: 'The rim\'s north end. Across the Wyke, Thornmark\'s shore, near enough to count the pines and too far to reach.' },
+    { kind: 'event', x: 5, y: 2, id: 'i6_wyke', once: true, text: 'The rim\'s north end. Across the Wyke, Thornmark\'s shore, near enough to count the oaks and too far to reach.' },
     // The Hand's Steps, the causeway's end, and its camp at the stair's head (2-6,23-26).
     { kind: 'event', x: 3, y: 27, id: 'i6_steps', once: true, text: 'A stair of cut stone comes up out of the sea onto the sand. Every step glows the way the shards do. The road from Sheer Point ends here.' },
     { kind: 'event', x: 4, y: 25, id: 'i6_camp', once: true, text: 'The Hand\'s camp at the stair\'s head: grey tents, grey boats drawn up and the ashes of a fire nobody has tended for days.' },

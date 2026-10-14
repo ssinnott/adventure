@@ -221,7 +221,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(found && into.every((r) => r.kind === 'moved') && w.world.used('i6_takings'), 'searched behind the tally-house, the rock opens, and the pocket behind it is walked into');
   listen(w);
   const rimHoard = I6.features!.find((f) => f.kind === 'chest' && f.id === 'i6_hoard');
-  ok(rimHoard?.kind === 'chest' && rimHoard.gold === 1200 && rimHoard.items.join() === 'grey_mail' && rimHoard.x === pocket.x - 2 && rimHoard.y === pocket.y, 'in the Hand\'s rimHoard, 1,200 gold and the Grey Mail');
+  ok(rimHoard?.kind === 'chest' && rimHoard.gold === 1200 && rimHoard.items.join() === 'grey_mail' && rimHoard.x === pocket.x - 2 && rimHoard.y === pocket.y, 'in the Hand\'s hoard, 1,200 gold and the Grey Mail');
 
   // The moths over Anchorhold's yard by night.
   ok(JSON.stringify(I6.encounters!.find((g) => g.id === 'i6_moths')?.when) === JSON.stringify({ hours: 'night' }), 'the moths come over the yard by night');

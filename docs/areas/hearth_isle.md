@@ -156,7 +156,7 @@ Four places. The isle (#753) is the area's first and lists the area; the east ri
   shelf to the lookout. Seven groups: moths by night, the pickets, the preacher with champions
   before the temple's door, champions on the west shelf and rats in the Bowl's south-east (§4.2).
 - **The east rim** (I6, `hearthisle_i6`, core, band 28–29; #754): the rim's path carved from the
-  Bowl's east pocket through the rock to Anchorhold's yard, under the cell built into the rim, and
+  Bowl's east pocket through the rock to Anchorhold's yard, under the cell built into the rim and
   out to the east foot; the Hand's camp at the Steps, where the causeway lands, with its crates, its
   tally-house and its chest; the grey door in the rock, read and never opened; behind the
   tally-house the secret door, the Hand's takings and the hoard. Four groups: champions in the
@@ -2232,7 +2232,7 @@ Decided by delegate for #754, each the owner's to overturn:
 
 1. **Two points the brief does not name,** for density: `i6_keel` (8,10), *A boat's keel on the grass
    under the rim, stripped to the ribs. Its planks went to the Hand's fires.*, and `i6_wyke` (5,2),
-   *The rim's north end. Across the Wyke, Thornmark's shore, near enough to count the pines and too
+   *The rim's north end. Across the Wyke, Thornmark's shore, near enough to count the oaks and too
    far to reach.* Without them the east foot's north half and the north rim, some 45 squares, stood
    9 to 27 steps from any point (core asks 90% within 8 and none past 15). The land is kept as the
    plan has it, not made rock. The words are the builder's own.
@@ -2466,7 +2466,7 @@ Owed, from I6 (#754):
   `tools/tests/gate.ts`). The issue's "one at 26 no more than one in four" is not met: stronger
   monsters are barred and fewer groups would not lower it (§9.2, #754's 11). The owner's or #18's.
 - **The pay is behind its share:** the four groups pay 2,908 xp a member against a twelfth, 3,911:
-  0.74. The area's running total, 12,887 of the 46,934, is behind its shares. No floor on a box's
+  0.74. The area's running total, 14,850 of the 46,934, is behind its shares. No floor on a box's
   share is checked, and more or stronger groups were not the brief's (§8; §9.2, #754's 12). The
   owner's call.
 - **The builder's own:** `i6_keel` and `i6_wyke` are the builder's words, and the cell at 4,18 is a
@@ -2475,8 +2475,8 @@ Owed, from I6 (#754):
 - **The anchoress** is #763's: Hereswith goes at 4,19, in the yard under the cell's window, and
   nothing of hers is placed. I6's map reads neither of the crypt's flags (`ELEVEN_KEPT`, `LOG_GIVEN`)
   and exports none: her hand-in will set `q_eleven_log`, owed in `UNSET` (§9.2, #756's 6).
-- **`q_throne_removed`** is the Council's (#774): the camp's guard carries the leave rule, and the
-  walkthrough plays it with the flag set by hand (§9.2, #754's 6).
+- **`q_throne_removed`** is set on main by the Council (#774), so nothing is owed for it: the camp's
+  guard carries the leave rule, and the walkthrough plays it with the flag set by hand (§9.2, #754's 6).
 - **The gear's rung** is #746's: the Grey Staff and the Grey Mail (`greyStaff`, `greyMail`) are built
   here (`src/content/areas/hearth/items.ts`), and #746 takes them into the rung (§9.2, #754's 8).
 
