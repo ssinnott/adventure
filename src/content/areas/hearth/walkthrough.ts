@@ -19,6 +19,7 @@ import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen, walkThrough, gone as left } from '../../../../tools/walk.ts';
 import type { Walk } from '../../../../tools/walk.ts';
 import { NORTH, EAST, SOUTH, WEST } from '../../../game/types.ts';
+import type { Facing } from '../../../game/types.ts';
 import { ATLAS, MAP_DEFS } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
@@ -316,14 +317,20 @@ export const walkthrough: Walkthrough = (ok) => {
 
   // Through the chamber's north door the keeper, the first machine on the isle, with the Hand's last man
   // beside it; her knot on the grey door's frame, the chapter's next step (#760); and the grey door,
-  // standing open onto the Ways (#757).
+  // standing open onto the Ways (#757), its sign read on the passage, stepping from the north door onto 8,3
+  // where the keeper stood: an exit takes the company on arrival, before the square's texts are said, so a
+  // sign on the door's own square would never be read, and nothing stands on either of the crypt's exits.
   see(w, 'hearthfane2:hf2_last');
   fight(w, 'hearthfane2:hf2_keeper');
   see(w, 'hearthfane2:hf2_knot');
-  w.world.travel('hearthfane2', GREY_DOOR.x, GREY_DOOR.y);
-  const grey = w.world.eventsHere().join(' ');
-  ok(grey.includes('A door of grey with no handle') && w.world.used('hf2_knot') && CRYPT.rows[GREY_DOOR.y][GREY_DOOR.x] === 'D' && GREY_DOOR.to === 'underdeep'
-    && (CRYPT.exits ?? []).includes(GREY_DOOR), 'her knot on the grey door\'s frame, and the door standing open onto the Ways');
+  w.world.travel('hearthfane2', 8, 4, NORTH);
+  const onto = w.world.move('forward');
+  const grey = onto.kind === 'moved' ? onto.messages.join(' ') : '';
+  const sign = CRYPT.features!.find((f) => f.kind === 'sign' && f.id === 'hf2_door');
+  ok(onto.kind === 'moved' && !onto.arrived && w.world.state.x === 8 && w.world.state.y === 3 && grey.includes('A door of grey with no handle') && sign?.x === 8 && sign.y === 3
+    && w.world.used('hf2_knot') && CRYPT.rows[GREY_DOOR.y][GREY_DOOR.x] === 'D' && GREY_DOOR.to === 'underdeep' && (CRYPT.exits ?? []).includes(GREY_DOOR)
+    && (CRYPT.exits ?? []).length === 2 && !(CRYPT.features ?? []).some((f) => (CRYPT.exits ?? []).some((e) => e.x === f.x && e.y === f.y)),
+    'the grey door\'s sign read on the passage, her knot on its frame, and the door standing open onto the Ways with nothing on its square');
 
   // The Ways (#757): through the grey door onto its foot, 16,30, facing up the main way, and back up onto
   // the knot's square, 8,2, facing away from the door: the way to the camp to rest, and down again.
@@ -363,7 +370,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok([1, 2, 3, 4, 5, 6, 7, 8].every((n) => w.world.used(`ud_knot${n}`)) && log('frames')!.pages[0].entries.length === 2 && !log('frames')!.done,
     'every frame read, the eighth cut deeper over a thin wall, and the quest goes on down to the Stair\'s last frame (#758)');
 
-  // The hatch behind the eighth frame, found from it: searched at the thin wall in the knockers' room, it
+  // The hatch behind the eighth frame, found from it: searched at the wall in the room behind it, it
   // opens on the crawl way, its chest and its door onto the Stair, which the Stair lists (#758).
   const [hatch] = WAYS.secrets!;
   w.world.travel('underdeep', hatch.x, hatch.y + 1, NORTH);
@@ -385,9 +392,21 @@ export const walkthrough: Walkthrough = (ok) => {
   fight(w, 'underdeep:ud_knockers3');
   see(w, 'underdeep:ud_crack');
   const inWays = (name: string): Person => WAYS.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
-  const speak = (v: Walk, p: Person) => { v.world.travel('underdeep', p.x, p.y); return meet(p, v.party, heard(v.world, p)); };
+  // Spoken to as the game has it: from the square before the person, facing them, where an event may stand
+  // and no sign (the interactable on a company's own square comes before the one ahead).
+  const speak = (v: Walk, p: Person, x: number, y: number, facing: Facing) => {
+    v.world.travel('underdeep', x, y, facing);
+    const f = v.world.featureHere();
+    v.ok(f?.kind === 'npc' && f.name === p.name, `${p.name} is the one to talk to from ${x},${y}, facing them`);
+    return meet(p, v.party, heard(v.world, p));
+  };
   const knocker = inWays('The knocker at the crack'), crewDoor = inWays('The door marked CREW ONLY');
-  const pay = (v: Walk, p: Person, label: string): number => { const xp = v.party.members[0].xp; answer(speak(v, p).choice!.answers.find((a) => a.label === label)!, v.party); return v.party.members[0].xp - xp; };
+  const from = (p: Person): { x: number; y: number; f: Facing } => p === knocker ? { x: 28, y: 6, f: EAST } : { x: 3, y: 10, f: WEST };
+  const pay = (v: Walk, p: Person, label: string): number => {
+    const xp = v.party.members[0].xp, at = from(p);
+    answer(speak(v, p, at.x, at.y, at.f).choice!.answers.find((a) => a.label === label)!, v.party);
+    return v.party.members[0].xp - xp;
+  };
   ok(!!log('crack') && !log('crack')!.done, 'at the crack, The Knocker That Stopped begins');
   const sealed = pay(w, knocker, 'Seal it.');
   ok(Math.abs(sealed - 4000 / 6) < 1 && !!w.party.flags[CRACK_SEALED] && !w.world.present(knocker) && log('crack')!.done, 'sealed with its hammer: 4,000 experience among the company, the knocker finished and the quest done');
@@ -399,26 +418,31 @@ export const walkthrough: Walkthrough = (ok) => {
     && !!questLog(b.world.state, b.party).find((v) => v.def.id === 'crack' && v.done), 'or widened: the Old Lantern\'s Staff from the swallowed hall, 4,000 experience, and the knockers stay');
 
   // Up the main way to the row-10 way, its guard won at 30, and the CREW ONLY door from the inside (60):
-  // the feet before it, its marks read by a reader, and shut to the mines until it is answered. Opened and
-  // left open, it pays 2,000 among the company and its way through lands on the Clean Corridor's floor,
-  // 13,3, facing west; opened, gone through and shut, on another walk, the same.
+  // its marks on the way west, read by a reader, then the feet on the square before it, which begin the
+  // quest; from there, facing west, the door ahead is the one to talk to, shut to the mines until it is
+  // answered, and a step forward after either answer goes through. Opened and left open, it pays 2,000
+  // among the company and its way through lands on the Clean Corridor's floor, 13,3, facing west; opened,
+  // gone through and shut, on another walk, the same.
   fight(w, 'underdeep:ud_keepers3');
   fight(w, 'underdeep:ud_crew_guard');
-  see(w, 'underdeep:ud_feet');
-  w.world.travel('underdeep', 3, 10);
-  const lettered = !!readerOf(w.party), unread = w.world.eventsHere().join(' ');
+  const stepOn = (v: Walk): string => { const r = v.world.move('forward'); return r.kind === 'moved' ? r.messages.join(' ') : r.kind === 'blocked' ? `(${r.reason})` : ''; };
+  w.world.travel('underdeep', 5, 10, WEST);
+  const lettered = !!readerOf(w.party), unread = stepOn(w);
   w.party.bag.push('copybook');
   const marks = w.world.eventsHere().join(' ');
   w.party.bag.splice(w.party.bag.indexOf('copybook'), 1);
-  ok((lettered || !unread.includes('CREW ONLY.')) && marks.includes('CREW ONLY. THE MINES BEYOND.') && w.world.used('ud_crew_sign') && !!log('crew_only') && !log('crew_only')!.done,
-    `the marks over the door, read with a reader and kept read, and Crew Only, From the Inside begun (${marks})`);
-  w.world.travel('underdeep', 3, 10, WEST);
+  ok(w.world.state.x === 4 && w.world.state.y === 10 && (lettered || !unread.includes('CREW ONLY.')) && marks.includes('CREW ONLY. THE MINES BEYOND.') && w.world.used('ud_crew_sign'),
+    `the marks over the door, on the way to it, read with a reader and kept read (${marks})`);
+  const feet = stepOn(w);
+  ok(w.world.state.x === 3 && w.world.state.y === 10 && feet.includes('footprints') && w.world.used('ud_feet') && !!log('crew_only') && !log('crew_only')!.done,
+    'the feet on the square before the door, and Crew Only, From the Inside begun');
   w.world.move('forward');
-  ok(w.world.state.mapId === 'underdeep', 'the door stays shut on the mines until it is answered');
+  ok(w.world.state.mapId === 'underdeep' && w.world.state.x === 2, 'the door stays shut on the mines until it is answered');
   const opened = pay(w, crewDoor, 'Open it, and leave it open.');
   ok(Math.abs(opened - 2000 / 6) < 1 && !!w.party.flags[CREW_OPEN] && !w.world.present(crewDoor) && log('crew_only')!.done, 'opened and left open: 2,000 experience among the company, and the quest done');
-  walkThrough(w, 'underdeep', 3, 10, WEST, 'deep_mines3', 1);
-  ok(w.world.state.x === 13 && w.world.state.y === 3 && w.world.state.facing === WEST, 'through the door onto the Clean Corridor\'s floor before its other side, 13,3, facing west');
+  const through = w.world.move('forward');
+  ok(through.kind === 'moved' && !!through.arrived && w.world.state.mapId === 'deep_mines3' && w.world.state.x === 13 && w.world.state.y === 3 && w.world.state.facing === WEST,
+    'a step forward from the feet\'s square goes through onto the Clean Corridor\'s floor before its other side, 13,3, facing west');
   const c2 = newWalk(ok);
   see(c2, 'underdeep:ud_feet');
   const shut = pay(c2, crewDoor, 'Go through and shut it.');
