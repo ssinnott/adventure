@@ -18,30 +18,31 @@ and checked again at `8cdf1e0a` (13 October 2026) in review (§9.1), with `tools
 cuts the atlas's terrain for a box (EXPANSION §8.2): land is what is not sea or shallow, and
 "walkable" what is not rock.
 
-Five places are built: H6, the isle (#753, §4.2), which lists the area; Hearthfane, the temple
-(#755, §4.4); the crypt under it (#756, §4.5); the Ways below the crypt (#757, §4.6); and the
-Stair below the Ways (#758, §4.7). The rest is to build. What exists: the isle's map,
-`hearthisle_h6`, which places four of the roster's
-monsters, opens the pilgrims' camp's three rooms and gives onto the temple (§3); the temple's map,
-`hearthfane`, which places three of those four and gives down onto the crypt; the crypt's map,
-`hearthfane2`, which places two of the four and the first keeper and gives down onto the Ways; the
-Ways' map, `underdeep`, which places one of the four, the keeper, Ashfall's deep knocker and the
-first crawlers; the Stair's map, `underdeep2`, which places the rearguard and the Catcher with the
-Ways' rats, keepers, knockers and crawlers again, and draws the last door in its wall, shut until
-the Heart is built (#759); the atlas's rows
-(`src/content/atlas.ts`: the area `hearth` at 28–32, the last crossing's sea link from Cinderport
-landing at 252,188 and the deep links on from the isle; `src/content/areas/hearth/atlas.ts`, the
-area's own since H6: the zone `hearthisle`; the places `hearthfane` at 250,172, `hearthfane2` at
-250,178, `underdeep` at 216,168 and `underdeep2` at 216,172 (built) and `core` at 32 (planned); the
-sites The Hearth at
-256,174 (built) and Anchorhold at 268,176 (planned)); the last crossing itself, sold at
-Cinderport's quay since #547, whose isle end lands on H6's strand since #753 (`LAST_CROSSING`,
-`src/content/crossings.ts`); MONSTERS §9's roster (§7 fields it with one more, the Ashen Rearguard:
-twelve monsters, one new family); the Cleric's third prestige at Anchorhold, placed on the map and
-nowhere else (#19), its deed built in the crypt and waiting on the log (#763); and #56's 56 to 61
-and 64, Act V's side quests, drafted, with 56 built in the temple, 60 and 61 built in the Ways, 57
-begun on the isle and ended on the Stair, 59 begun in the Ways and ended on the Stair and 58 begun
-on the Stair (§6).
+Six places are built: H6, the isle (#753, §4.2), which lists the area; Hearthfane, the temple
+(#755, §4.4); the crypt under it (#756, §4.5); the Ways below the crypt (#757, §4.6); the Stair
+below the Ways (#758, §4.7); and the Heart below the Stair (#759, §4.8). The isle is built to the
+Heart; I6 (#754), the chapter (#760) and the road behind (#765) are to build. What exists: the
+isle's map, `hearthisle_h6`, which places four of the roster's monsters, opens the pilgrims'
+camp's three rooms and gives onto the temple (§3); the temple's map, `hearthfane`, which places
+three of those four and gives down onto the crypt; the crypt's map, `hearthfane2`, which places two
+of the four and the first keeper and gives down onto the Ways; the Ways' map, `underdeep`, which
+places one of the four, the keeper, Ashfall's deep knocker and the first crawlers; the Stair's map,
+`underdeep2`, which places the rearguard and the Catcher with the Ways' rats, keepers, knockers and
+crawlers again, and has the last door at its foot, shut until the road's five hold; the Heart's
+map, `core`, behind that door, which places Vask and the Grey Hands and calls the sentries: the
+round room under the glass roof, Vask at the panel on the clock, the voice, Wenna with her three
+answers and the ring; the atlas's rows (`src/content/atlas.ts`: the area `hearth` at 28–32, the
+last crossing's sea link from Cinderport landing at 252,188 and the deep links on from the isle;
+`src/content/areas/hearth/atlas.ts`, the area's own since H6: the zone `hearthisle`; the places
+`hearthfane` at 250,172, `hearthfane2` at 250,178, `underdeep` at 216,168, `underdeep2` at 216,172
+and `core` at 216,176 (built); the sites The Hearth at 256,174 (built) and Anchorhold at 268,176
+(planned)); the last crossing itself, sold at Cinderport's quay since #547, whose isle end lands on
+H6's strand since #753 (`LAST_CROSSING`, `src/content/crossings.ts`); MONSTERS §9's roster (§7
+fields it with one more, the Ashen Rearguard: twelve monsters, one new family); the Cleric's third
+prestige at Anchorhold, placed on the map and nowhere else (#19), its deed built in the crypt and
+waiting on the log (#763); and #56's 56 to 61 and 64, Act V's side quests, drafted, with 56 built in
+the temple, 60 and 61 built in the Ways, 57 begun on the isle and ended on the Stair, 59 begun in
+the Ways and ended on the Stair, 58 begun on the Stair and 64 begun at the Heart (§6).
 Its content is
 `src/content/areas/hearth/` (maps, monsters, items, climate, its part of the world map and its
 walkthrough; its chapter, The Heart, in `chapter.ts`, and its other side quests and the Cleric's
@@ -149,11 +150,11 @@ H6's three businesses open into them, so `UNPLACED` (`tools/tests/maps.ts`) owes
 monsters drawn ahead (#761) are the Area's own too (`AHEAD`, `src/content/index.ts`, listed them
 until then): H6 places the moth, the champion, the preacher and the rat (the temple the first
 three, the crypt the champion and the rat with the first keeper, the Ways the first crawlers, the
-Stair the rearguard and the catcher), and `UNPLACED` owes the Grey Hand, the sentry and Vask to
-#759.
+Stair the rearguard and the catcher, the Heart Vask and the Grey Hand with the sentry he calls),
+and `UNPLACED` owes nothing now.
 
-Five places. The isle (#753) is the area's first and lists the area; the temple (#755), the crypt
-(#756), the Ways (#757) and the Stair (#758) follow it:
+Six places. The isle (#753) is the area's first and lists the area; the temple (#755), the crypt
+(#756), the Ways (#757), the Stair (#758) and the Heart (#759) follow it:
 
 - **The isle** (H6, `hearthisle_h6`, core, band 28–29; #753): the strand on the south shore where
   the last crossing grounds, its boatman in the stern; the cleft carved one square wide up through
@@ -188,22 +189,30 @@ Five places. The isle (#753) is the area's first and lists the area; the temple 
 - **The Stair** (`underdeep2`, dungeon 32×32, band 30–31; #758): down from the Ways by the door at
   the main way's head, onto the stair's head, 16,30, with the way back up behind it; eight landings
   and the seven flights between them, two wide, down to the last landing and the last door at 16,1,
-  a door drawn in the wall, with the Hand's own beside it at 13,1; the first landing held by the
+  which opens into the Heart on the road's five, with the Hand's own drawn in the wall beside it at
+  13,1; the first landing held by the
   claimant's people and their captain or fought for with the rearguard (57); the Hand's dead on
   the flights below and Jowan's letter under a champion's hands (58); the last frame, which carries
   Wenna's name (59); the crawl way's door in the fourth landing's wall, with no way back up it; the
   Catcher on the last landing. Seven groups: the rearguard, the rats, the crawlers (two groups), the
   keepers, the knockers and the Catcher's (§4.7).
+- **The Heart** (`core`, dungeon 16×16, band 32; #759): in through the Stair's last door onto 8,14,
+  with the way back up behind it at 8,15; a passage three wide north into a round room under a glass
+  roof, the panel in its north wall at 8,3 and eight empty alcoves round the wall; Vask at the panel
+  with three of the Grey Hands holding Wenna's palm to the glass, on the clock that calls the core's
+  sentries and dims the roof; then the voice at 8,4, Wenna at 7,4 with the ring and her three
+  answers and Vask on his knees by the west wall at 3,9. Two groups, one of them fought: `core_vask`
+  and the thinned `core_vask_thinned` the Council swaps in (§4.8).
 
 Its atlas rows are charted in `src/content/areas/hearth/atlas.ts`, the area's own since H6 lists the
 area; they moved there from the plan (`src/content/atlas.ts`), which keeps the area's row and the
 links: the zone `hearthisle` with its crossing words; the places `hearthfane` (built, #755),
-`hearthfane2` (built, #756), `underdeep` (built, #757) and `underdeep2` (built, #758) and the place
-`core` (planned); the sites The Hearth (built) and Anchorhold (planned). The last crossing's isle
+`hearthfane2` (built, #756), `underdeep` (built, #757), `underdeep2` (built, #758) and `core`
+(built, #759); the sites The Hearth (built) and Anchorhold (planned). The last crossing's isle
 end, owed to Phase 1.5 until H6, lands on the strand (`LAST_CROSSING`, `src/content/crossings.ts`),
 so Cinderport's harbourmaster sells it. The curve's row (#745, §8) has left `PLANNED`, owed to #744
-for what the isle, the temple, the crypt, the Ways and the Stair pay while the area is built box by
-box. The drafts the scaffold cuts are in
+for what the isle, the temple, the crypt, the Ways, the Stair and the Heart pay, which falls short
+of the area's budget (§8, §11). The drafts the scaffold cuts are in
 §1. This doc is
 the plan; §4 has the briefs, each with every line its place says, so that the box or level can be
 built from it by a session that has read DESIGN, STORY and EXPANSION and nothing else. The owner's
@@ -219,14 +228,14 @@ calls are §9's.
 | | The crypt | dungeon, 16×16 | 29 | | the eleven niches; the Hand's first dead; the knot on the frame; the grey door down | the knots | #756, built |
 | | The Ways | dungeon, 32×32 | 30 | | the hull's service ways: clean, humming, lit from nowhere; keepers with no robe; rats; the knocker at the crack; the CREW ONLY door's other side; the frames she marked | the Ways | #757, built |
 | | The Stair | dungeon, 32×32 | 30–31 | | the long stair down; the claimant's people at its head; the Hand's rearguard and its dead; the crawlers; the Catcher at the foot; the last door and the Hand's own beside it | the dead; the Catcher; the door | #758, built |
-| | The Heart | dungeon, 16×16 | 32 | | the door with the creed; the panel; Vask, the Grey Hands and the sentries the ring calls; the voice; Wenna and the choice | the choice | #759 |
+| | The Heart | dungeon, 16×16 | 32 | | the door with the creed; the panel; Vask, the Grey Hands and the sentries the ring calls; the voice; Wenna and the choice | the choice | #759, built |
 
 The core is everything: no map here is country. Build order is the road's: H6 (built, #753; it lists
 the area, moves the isle's rows into the area's own atlas slice and lands the last crossing, §7),
 I6, the temple (built, #755), the crypt (built, #756), the Ways (built, #757), the Stair (built,
-#758), the Heart; the chapter and the walkthrough once the Heart is in; the side quests with their
-maps; the Council and the endings with the Heart. The drawings (§7) land before the maps that first
-place them, the crawlers' family before the Ways.
+#758), the Heart (built, #759); the chapter and the walkthrough once the Heart is in; the side
+quests with their maps; the Council and the endings with the Heart. The drawings (§7) land before
+the maps that first place them, the crawlers' family before the Ways.
 
 ### 4.1 The briefs
 
@@ -893,8 +902,8 @@ no step of its own, and no `deep` way is added, the area's band, 28–32, holdin
 - **The seams.** In: the Ways' 16,1, floor now with `STAIR_DOOR` listed, beyond the door at 16,2,
   onto 16,30 facing north, the start. Up: 16,31, floor with the exit, onto the Ways' 16,2 facing
   south. Across: the crawl way's door, the Ways' 24,1, with `CRAWL_DOOR` listed, onto 24,18 facing
-  south. Down: the last door, 16,1, is drawn in the wall (below), and the Heart's way back up lands
-  on 16,2, the floor before it.
+  south. Down: the last door, 16,1, is a door now (below), and the Heart's way back up lands on
+  16,2, the floor before it.
 - **The landings and flights.** Eight landings, two rows deep at the brief's rows (26–27, 22–23,
   18–19, 14–15, 10–11 and 6–7, seven wide at 13–19), the head at 14–18,30 and the last at
   12–20,2–4; seven flights between them, two wide down the middle, turning a column at each landing
@@ -905,11 +914,12 @@ no step of its own, and no `deep` way is added, the area's band, 28–32, holdin
 - **The fourth landing** runs east, 13–24,18–19, so the company that comes out of the crawl way
   lands on 24,18 facing south, under the door drawn in the wall at 24,17. The brief gives no way
   back up it, and the head's way up is the way back to the camp (#758's 2).
-- **The last door and the Hand's own** are doors drawn in the wall, 16,1 and 13,1 (`legend: { Z: {
-  solid: 'wall', door: 'door' } }`, as the Deep Mines' and the Dead-Drop's): neither can be walked
-  into, so `ud2_shut` reads true. `LAST_DOOR` (the brief's exit to `core` 8,14 north, with its
-  `needFlag`, `blockedText` and `label`) and `FIVE` are exported and not listed: the Heart lists
-  the exit, turns 16,1 to a door and signs the lock (#758's 3).
+- **The last door and the Hand's own** were doors drawn in the wall, 16,1 and 13,1 (`legend: { Z: {
+  solid: 'wall', door: 'door' } }`, as the Deep Mines' and the Dead-Drop's): neither could be walked
+  into, so `ud2_shut` read true. `LAST_DOOR` (the brief's exit to `core` 8,14 north, with its
+  `needFlag`, `blockedText` and `label`) and `FIVE` were exported and not listed: the Heart (#759)
+  listed the exit, turned 16,1 to a door and signed the lock; the Hand's own, 13,1, is still drawn
+  in the wall (#758's 3).
 - **The first landing** holds the rearguard, three at 16,26, standing: a guardian with `until: HELD`
   and `leaves` and no respawn, which the claimant's people take off the landing and which, slain,
   stays slain (#758's 5). The captain is one person, *The captain on the landing* at 15,27,
@@ -1067,6 +1077,49 @@ fight.
 
 **Finds.** None but the ring. The Heart pays its fight's xp and nothing else: Vask's and the Grey
 Hands', and the sentries' the clock calls (§8).
+
+**As built** (#759, 14 October): the brief's door, passage and round room, its five events, the
+voice, Wenna with her three answers, Vask after, the two who stand inside the door and the one
+fight on the clock, laid in a 16×16 box (`core`, named The Heart, region `hearth`, band 32). The
+floor is 90 open squares. The place is
+`{ id: 'core', name: 'The Core', kind: 'deep', order: 14, band: [32, 32], at: [216, 176] }` in the
+area's `PLACES` (`src/content/areas/hearth/atlas.ts`), `planned` dropped. It departs from the brief
+in these squares and lines:
+
+- **The seams.** In: the Stair's last door, 16,1 (`LAST_DOOR`, shut until the road's five hold),
+  onto 8,14 facing north, the start. Up: the door at 8,15, a door square carrying the exit, as the
+  Stair's 16,1 does, onto the Stair's 16,2 facing south, where `ud2_shut` is said until the five
+  hold (#759's 1).
+- **The room.** The floor is 3–13 by 4–11, rounded, under a north wall on row 3 with the panel at
+  8,3 a wall square; the passage is 7–9 by 12–14. Every named square holds: 3,9 by the west wall,
+  7,4 to 9,4 along the panel, 8,5 three squares in counting the panel (#759's 1).
+- **The alcoves** are eight and empty: either side of the panel in its row (6,3 and 10,3), two in
+  each side wall (2,6, 2,9, 14,6 and 14,9) and two in the south curve (4,11 and 12,11). The sentries
+  are called, not placed (#759's 2).
+- **The palette** is pale grey walls going to a white glass roof (`ceiling: '#e8e4d8'`, the brief's),
+  `smooth`, `vault`, `bare`. No other square is marked: the panel is a wall and the events say what
+  it is (#759's 3).
+- **The groups** are the one group's two defs, `core_vask` (Vask and three Grey Hands) and
+  `core_vask_thinned` (Vask and two), both at 8,5 and both carrying the clock, the parley and
+  `slainText` (#759's 5). The thinned has `until: { flag: VASK_FALLEN }` and `leaves: true`, which
+  the brief does not give: the Council can sit after the fight (`q_throne_removed` is set before an
+  ending and after one), and it would raise Vask and two Hands at the panel for a second fight while
+  he knelt by the wall (#759's 4).
+- **Wenna's words** for a company with Fane's map set `RING_GIVEN` themselves (`sets` on that `says`
+  entry): a person's `flag` is set only on her own first lines (`meet`, `src/game/people.ts`), so
+  those words would have given the ring and never the flag the chapter and its goals read
+  (#759's 6).
+- **Vask** is set off the line by the Heart's gate (`OFF_LINE`): 1,800 hit points and 22d8+23 for
+  the line's 1,922 and 32d8+33. His level, armour, attack, speed, xp, role, look, calls and sprite
+  are the brief's (§7, §8; #759's 7).
+- **The finds** are none but the ring: each answer gives it (`queens_signet`, 64, §6), and the Heart
+  adds no gold.
+- **Measured.** The walkthrough walks the last door shut on four of the road's five and open on the
+  five (#759's 12), then the Heart: the door, the room and its roof, the parley, the fight on the
+  clock won with the Hands killed first and with the clock left to run, the panel, Vask after, the
+  voice, Wenna and each of her three answers once; then the thinned group, with who stands inside
+  the door, for a Council that removed Vask. Density 100.0% within 7 steps, the furthest 7, with no
+  sign among its 12 points. The figures are in §8.
 
 ## 5. The one quest here
 
@@ -1437,6 +1490,13 @@ want it. The Council sits on it with everything else (below).
   off Gullwick, where the boat went out. Good, she said.* (on `q_signet_sea`). Goals: *Where the
   ring goes: the Council's clerk waits at Helmstow's gate, and the sea off Gullwick is where the
   boat went out.* (at `shelf`).
+- **As built** (the Heart, #759): the quest is `signet` and the item `queens_signet`, *Queen's
+  Signet*, with the text given in §8, read from the pack; every answer at the panel gives it. The
+  log is keyed on the item and the four `q_signet_*` flags, its "and the like" written *It went to
+  the hold, in a cloth.* and *It went to Tallis, in a cloth.* Its goal is at `shelf`. The clerk,
+  the sea and the hand-in are #765's: `UNSET` (`tools/tests/quests.ts`) owes it the four
+  flags (the three were #759's; the sea's is added) and no longer owes the endings' three, which
+  Wenna's answers set (#759's 10).
 
 **The Walk Home** (`walk_home`, after the ending). The chapter is done on the choice (§5), so the
 walk is a quest of its own, begun on any ending and done on Hild's words. `start: ENDED`, `done: { flag: WENNA_HOME }`;
@@ -1613,7 +1673,40 @@ issue tunes them on the gate (§8).
 | `catcher` | The Catcher | crawlers, `catcher` (new) | machine, boss | 31 | hp 1,100, ac 28, attack 19, 34d8+40, speed 13, xp 19,733 (off the line, which gives 1,826 and 30d8+34: `OFF_LINE`, `tools/tests/harness.ts`) | the Stair's foot, among the Hand's dead; `ranged`; `inflict: paralysed 0.2`; `look: 'It caught the Hand on these stairs.'`; sized on the gate to 59% won at 30 and 84% at 32 (§8; §9.2, #758's 7) |
 | `grey_hand` | Grey Hand | cultist, `grey_hand` | person, elite | 31 | hp 737, ac 27, attack 18, 6d8+9, speed 15, xp 2,467 | the Heart, at the panel; `steady`; `inflict: paralysed 0.15`; `look: 'Hands the colour of ash, to the shoulder.'` |
 | `core_sentry` | Core Sentry | machines, `core_sentry` | machine, soldier | 31 | hp 436, ac 27, attack 17, 5d8+4, speed 11, xp 1,233 | called by the ring (Vask's `calls`, the clock); stands down when he falls (`obeys`, §9, call 7); `look: 'The core\'s own, and it takes orders from the ring.'` |
-| `vask` | Lord Vask | cultist, `vask` (the figure frame, his own) | person, boss | 32 | hp 1,922, ac 29, attack 20, 32d8+33, speed 13, xp 20,373 | the Heart; `steady`; `calls: { monsters: ['core_sentry'], chance: 1 }` on the clock's beat (the clock ignores the chance, §9, call 7); `look: 'A tall man with a quiet voice, and the Queen\'s ring on his finger.'`; sized on the gate to two in three won at 32 with the Hands down first |
+| `vask` | Lord Vask | cultist, `vask` (the figure frame, his own) | person, boss | 32 | hp 1,800, ac 29, attack 20, 22d8+23, speed 13, xp 20,373 (off the line, which gives 1,922 and 32d8+33: `OFF_LINE`, `tools/tests/harness.ts`) | the Heart; `steady`; `calls: { monsters: ['core_sentry'], chance: 1 }` on the clock's beat (the clock ignores the chance, §9, call 7); `look: 'A tall man with a quiet voice, and the Queen\'s ring on his finger.'`; sized on the gate to 65% won at 32 with the Hands down first (below; §8; §9.2, #759's 7) |
+
+**Vask's sizing** (#759; §9.2, #759's 7). The line's Vask, 1,922 hit points and 32d8+33, is won 10%
+of 400 seeds at 32 with the Grey Hands killed first, 11% going for him first, 3% with the sentries
+fought as they come and 56% with no clock; his thinned group 16%. `OFF_LINE.vask` sets him at 1,800
+and 22d8+23, and the plays come to 65% with the Hands first (the gate's hundred seeds: 65%; aim 30%
+to 70%), 64% going for him first (61%), 45% as the sentries come (46%) and 91% with no clock (95%);
+the thinned group 74% (68%); with the Hands first at 31, 47%. The tries, in percent of 400 seeds:
+
+| Hit points | Blow | Hands first | Vask first | As they come | No clock | Thinned |
+|---|---|---|---|---|---|---|
+| 1,922 (the line) | 32d8+33 | 10 | 11 | 3 | 56 | 16 |
+| 1,700 | 22d8+23 | 68 | 68 | 50 | 94 | 77 |
+| **1,800 (kept)** | **22d8+23** | **65** | **64** | **45** | **91** | **74** |
+| 1,850 | 22d8+23 | 61 | 61 | 42 | 89 | 73 |
+| 1,922 | 21d8+22 | 69 | 67 | 45 | 89 | 83 |
+| 1,922 | 21d8+24 | 66 | 66 | 43 | 90 | 81 |
+| 1,922 | 21d8+26 | 61 | 66 | 43 | 89 | 76 |
+| 1,922 | 22d8+23 | 56 | 58 | 38 | 87 | 70 |
+| 1,922 | 23d8+24 | 49 | 54 | 33 | 79 | 69 |
+| 2,000 | 20d8+21 | 67 | 67 | 47 | 94 | 84 |
+| 2,100 | 19d8+20 | 66 | 77 | 54 | 90 | 86 |
+| 2,300 | 18d8+19 | 62 | 74 | 36 | 86 | 82 |
+| 2,500 | 17d8+18 | 51 | 75 | 26 | 88 | 73 |
+| 3,400 | 4d8+4 | 12 | 78 | 4 | | |
+
+The gate's hundred seeds won 1,922 and 21d8+22 73, 63, 43, 92 and 85%, the thinned group past the
+boss limit of 80%. **A heavier Vask with a lighter blow runs the wrong way:** going for him first
+gains, since his fall stops the calls and stands the sentries down, while with the Hands first the
+called sentries stand between the company and him to the end, under the gate's fifteen-round cap.
+The Hands first is the best play only at or under the line's hit points with about two thirds of
+its blow, and then by a point or a few. The plan's one in three with the clock left to run would
+bring the Hands-first odds to about a half (1,922 and 23d8+24: 49% against 33%): two in three with
+the Hands first, the binding line, is kept.
 
 The drawings (the creatures lane): `src/ui/monsters/crawlers.ts`, the new family, two kinds; the
 moths', the cultists', the rat's, the keepers' and the machines' modules gain their kinds, the
@@ -1631,8 +1724,8 @@ own atlas slice, so H6's issue moves The Hearth and Anchorhold, the zone `hearth
 places `underdeep` and `core` out of `src/content/atlas.ts` into `src/content/areas/hearth/atlas.ts`,
 as the Glasswold's are, and drops `planned` from each as it is built; `hearthfane`, `hearthfane2`
 and `underdeep2` take plates there (§4.4, §4.5, §4.7). The check (`tools/tests/pillars.ts`) proves
-each exists here and nowhere earlier on the road. H6 claims the Hearth (#753) and the Ways the
-crawlers (#757); the clock waits for the map that places it (#759).
+each exists here and nowhere earlier on the road. H6 claims the Hearth (#753), the Ways the
+crawlers (#757) and the Heart the clock (#759).
 
 **Asks of the systems** (MONSTERS §9.3, §12): the Core's clock, Vask's calls on its beat and the
 sentries that stand down when he falls, and nothing else. Calls, sweep, the sleeping touch, the
@@ -1779,6 +1872,28 @@ built box by box:
 | Density, dungeon | 98.0% within 7 steps (150 of 153, 138 needed); the furthest 9 of 10; 1 sign in 22 points |
 | Levels | 6 monsters in 30–31, give or take two; rising from the way in (rank correlation 0.19); the nearest group, the rearguard at 4 steps, at 30.0; the hardest, the crawlers at 16,20 at 10 steps, at 31.0 |
 | Lines | 11 events and signs: 8 of two lines and 3 of three; the area's 55: 7 of one, 33 of two and 15 of three |
+
+**As built: the Heart** (#759). The row's `owed` is raised to what the isle, the temple, the crypt,
+the Ways, the Stair and the Heart pay, 40,038 xp a member and 6,500 gold, still owed to #744: a
+clear falls short of the area's budget by 6,896 xp a member and 21,820 gold. The curve counts both
+of Vask's groups and none of the sentries, and a clear fights one group:
+
+| | Figure |
+|---|---|
+| Xp a member, as the curve counts it | 8,846 against the Heart's eighth, 5,867: 1.51 (both of Vask's groups, 53,081 split six ways: `core_vask` 27,774 and `core_vask_thinned` 25,307; no sentry) |
+| Xp a member, as played | 4,629 with `core_vask` (27,774) or 4,218 with the thinned group (25,307), and 206 more for each sentry the clock calls, eight at most (1,644): 4,629 to 6,273 against an eighth, 5,867 |
+| The area | 40,038 of the 46,934, 85.3%: H6 5,009, the temple 4,971, the crypt 1,962, the Ways 9,768, the Stair 9,482 and the Heart 8,846; I6's 2,908 (#754) is not built |
+| The area, as played | the curve's 40,038 less the thinned group's 4,218 is 35,820 (76.3%), with up to 1,644 of sentries; with I6's 2,908, 38,728 (82.5%) |
+| Gold | 6,500 of the 28,320 for the area, 21,820 short: the Heart adds none (its finds are the ring); the dearest find, the Grey Bow at 6,800, sits in the 7,000 window |
+| Paid by level | entering at 28 and clearing three quarters, a company leaves at 31.7, 0.3 under the next floor 32 |
+| Gate, at the floor 32 | the Heart is judged on its boss's odds alone, its every group being a boss (§9.2, #759's 8); the area's 35 groups at their maps' floors 96.9% of fights won (aim 90%, limit 80%) |
+| Vask | `core_vask` 65% won at 32 (aim 30% to 70%, limit 20% to 80%), `core_vask_thinned` 68%; two above the floor n/a, past the cap. His four plays on 400 seeds (the gate's hundred): the Hands first 65% (65%), Vask first 64% (61%), the sentries as they come 45% (46%), no clock 91% (95%); the tries are in §7 |
+| Gate, two under | n/a for the Heart, its floor being above the area's; the area's pool at 26, 91.7% of 35 groups' fights won (aim 25%, limit 90%): owed to #18 (§11) |
+| Fights to a rest | n/a in the gate, the Heart holding nothing but its boss; on the test monsters at 32 (`node tools/harness.ts --abilities`): the Hands first 11.8 rounds, won 14%, 2.1 sentries called, the light 4.7 of 8 steps down; the lord first 10.6 rounds, won 31%, 2.4 sentries, 5.3 of 8; the sentries as they come 11.6 rounds, won 21%, 2.4 sentries, 5.2 of 8 |
+| Walkthrough | `core:core_vask` won at 32 in 80% of its ten seeds, 50% with the clock left to run; the thinned group 80% |
+| Density, dungeon | 100.0% within 7 steps (90 of 90, 81 needed); the furthest 7 of 10; no sign in 12 points |
+| Levels | 2 monsters in 32, give or take two; the nearest group, `core_vask` at 9 steps, at 31.3; the hardest, `core_vask_thinned` at 9 steps, at 31.3 (at least 30) |
+| Lines | every event and sign of the Heart fits 3 lines of the log |
 
 **The gear** (`GEAR`, `tools/harness.ts`), one more rung, the last, by 28 and found, never sold:
 the Hand's steel from below, in the temple's treasury, the camps' chests and the champions' drops
@@ -2278,7 +2393,8 @@ Decided by delegate for #764, each the owner's to overturn:
 9. **A piece may be one of several flags:** the treaty is one piece by either mark, and Wenna's case
    is `q_wenna_up` with one of her three. The pairs are a `When` list built from §6's table
    (`carried`, `keep.ts`). The tokens (#753), the signet (#759) and the walk home (#765) are owed in
-   `UNSET`, as are the endings' flags (#759), read from `src/content/endings.ts`.
+   `UNSET`, as are the endings' flags (#759), read from `src/content/endings.ts`. #759 sets the
+   endings' in Wenna's answers; the signet's four flags are #765's (#759's 10).
 10. **A port's prices are twice the old city's,** the Lantern Oil as before: dearer than the Regent's
     half again, as §6's *dearer for Tallis* asks, and the oil's forty is Mottram's own word.
 
@@ -2538,7 +2654,7 @@ Decided by delegate for #758, each the owner's to overturn:
 3. **The last door (16,1) and the Hand's own door (13,1) are doors drawn in the wall,** as the Deep
    Mines' and the Dead-Drop's are: neither can be walked into, so `ud2_shut` reads true. `LAST_DOOR`
    (the brief's exit to `core` 8,14 north, its `needFlag`, `blockedText` and `label`) and `FIVE` are
-   exported and not listed: #759 lists the exit, turns 16,1 to a door and signs the lock.
+   exported and not listed: #759 lists the exit, turns 16,1 to a door and signs the lock. #759 did.
 4. **57 ends on a verdict, on the first landing seen held (`underdeep2:ud2_held`) or on the
    rearguard slain,** not on `HELD`: with the tokens in `done`, the brief's goal on a token (*Carry
    the token down the stair under the temple.*, at `underdeep2`) could never come up and
@@ -2584,6 +2700,56 @@ Decided by delegate for #758, each the owner's to overturn:
 13. **`ud2_creed` is a sign with the brief's id and no `read`** (chalk any company can read), as the
     crypt's `hf2_door`; it keeps no `seen`. The letter's chest shares `ud2_letter`'s square (15,21),
     as the brief has it; the pillars check passes.
+
+Decided by delegate for #759, each the owner's to overturn:
+
+1. **The room's floor is 3–13 by 4–11, rounded, under a north wall on row 3** with the panel at 8,3
+   a wall square; the passage 7–9 by 12–14 and the door at 8,15 a door square carrying the exit, as
+   the Stair's 16,1 does. Every named square holds: 3,9 by the west wall, 7,4 to 9,4 along the
+   panel, 8,5 three squares in counting the panel.
+2. **The eight alcoves are empty, round the wall:** either side of the panel in its row (6,3 and
+   10,3), two in each side wall (2,6, 2,9, 14,6 and 14,9) and two in the south curve (4,11 and
+   12,11). The sentries are called, not placed.
+3. **The palette is pale grey walls going to a white glass roof** (`ceiling: '#e8e4d8'`, the
+   brief's), `smooth`, `vault`, `bare`. No other square is marked: the panel is a wall and the
+   events say what it is.
+4. **The thinned group has `until: { flag: VASK_FALLEN }` and `leaves: true`,** which the brief does
+   not give: the Council can sit after the fight (`keep.ts` sets `q_throne_removed` before an ending
+   and after one), which would raise Vask and two Hands at the panel for a second fight while he
+   knelt by the wall. The walkthrough plays it.
+5. **Both groups carry the clock, the parley and `slainText`:** the thinned is a second def of the
+   one group (§4.8).
+6. **Wenna's words for a company with Fane's map set `RING_GIVEN` themselves** (`sets` on that
+   `says` entry): a person's `flag` is set only on her own first lines (`meet`,
+   `src/game/people.ts`), so those words would have given the ring and never the flag the chapter
+   and its goals read.
+7. **Vask is set off the line by the Heart's gate (`OFF_LINE.vask`): 1,800 hit points and 22d8+23,**
+   the line's 1,922 and 32d8+33. Level, armour, attack, speed, xp 20,373, role, look, calls and
+   sprite are kept. Won 65% with the Hands first, 64% going for him first, 45% with the sentries as
+   they come and 91% with no clock (400 seeds): a heavier Vask with a lighter blow runs the wrong
+   way, and the plan's one in three for the clock left to run measures 45% (§7).
+8. **The gate judges the Heart on its boss's odds** (`tools/tests/gate.ts`): `BOSSES.hearthisle`
+   gains `core:core_vask` and `core:core_vask_thinned`. A map whose every group is a boss has no
+   floor pool and no day (it printed 13% of fights won against nine in ten and 0.11 fights to a rest
+   against twelve, which no Vask sized to two in three could pass), and a boss at the cap is judged
+   at its floor alone, no company standing two above 32, as #745 waived the curve's rise at the cap.
+   No other map is touched. Outside the content lane: #752's to confirm.
+9. **The owed row stays at the curve's as-built floor,** `xp: 40038, gold: 6500`, `whose: '#744'`,
+   its `why` that the Heart is built and a clear falls short by 6,896 xp a member and 21,820 gold:
+   the curve counts both of Vask's groups where a clear fights one, and the Ways and the Stair fell
+   short of their shares under the brief's groups. No group added and no monster strengthened.
+10. **64:** the item `queens_signet`, *Queen's Signet*, with the plan's text, read from the pack;
+    the log keyed on the item and the four `q_signet_*` flags, "and the like" written *It went to
+    the hold, in a cloth.* and *It went to Tallis, in a cloth.*, its goal at `shelf`. `UNSET` owes
+    the four flags to #765 (the three were #759's; `q_signet_sea` is added) and drops the endings'
+    three, which Wenna's answers now set.
+11. **The lock is signed** in `src/content/locks.ts` on `q_ember_lit` at `underdeep2` 16,1, its
+    `what` the door and its `reason` the plan's words with the road's five; the list's comment gains
+    Act IV's none and Act V's one.
+12. **The Stair's walkthrough lines are turned:** on four of the five the door is blocked with
+    `LAST_DOOR.blockedText`, `ud2_shut` is said and the way back up off the stair's head is open;
+    on the five `ud2_shut` is not said and the company walks onto 8,14 facing north, and back
+    through onto 16,2 facing south.
 
 ## 10. Names
 
@@ -2738,11 +2904,11 @@ Owed, from the Stair (#758):
 - **`tools/tests/structure.ts` is loosened:** a group that `leaves` on its `until` needs no respawn,
   where the check refused any `until` on a group that never comes back. It is outside the content
   lane and the owner's to overturn (§9.2, #758's 5).
-- **The last door is the Heart's:** `LAST_DOOR` and `FIVE` are exported and not listed (§9.2, #758's
-  3). #759 lists the exit, turns 16,1 to a door, signs the lock in `src/content/locks.ts` on
-  `q_ember_lit` at `underdeep2` 16,1 with its reason, *the heart opens for whoever makes it whole.*,
-  lands the Heart's way up on 16,2 facing south and turns the walkthrough's last two lines, which
-  assert 16,1 a drawn door and no exit to `core`.
+- **The last door was the Heart's:** `LAST_DOOR` and `FIVE` were exported and not listed (§9.2,
+  #758's 3). #759 listed the exit, turned 16,1 to a door, signed the lock in `src/content/locks.ts`
+  on `q_ember_lit` at `underdeep2` 16,1 with its reason, *the heart opens for whoever makes it
+  whole.*, landed the Heart's way up on 16,2 facing south and turned the walkthrough's last two
+  lines, which asserted 16,1 a drawn door and no exit to `core` (§9.2, #759's 11 and 12).
 - **Two under, the area's pool is won nearly every time:** the Stair's own row reads n/a, its floor
   being above the area's, so its groups count in the pool at 26, 97.2% of 33 groups, owed to #18
   already (`Hearth Isle: under`, `OWED` in `tools/tests/gate.ts`). The owner's or #18's.
@@ -2758,6 +2924,38 @@ Owed, from the Stair (#758):
   `KNOT_LAST`, at `underdeep2`.
 - **The gear's rung** is #746's: the Grey Axe (`greyAxe`, in `ud2_rearguard_chest`) is built here,
   and #746 takes it into the rung (§9.2, #758's 12).
+
+Owed, from the Heart (#759):
+
+- **The area's clear falls short of its budget:** 40,038 xp a member of the 46,934 (85.3%), 6,896
+  short, and 6,500 gold of the 28,320, 21,820 short, with I6 (#754) not built. The curve counts both
+  of Vask's groups and none of the sentries, and a clear fights one group: as played it pays 35,820
+  (76.3%), with up to 1,644 of sentries, or 38,728 (82.5%) with I6's 2,908. The Ways and the Stair
+  fell short of their shares (0.93 and 0.90), and the Heart pays over its eighth in the curve (8,846
+  against 5,867) and, as played, 4,629 to 6,273. No group is added and no monster strengthened: the
+  row's `owed` stays at the as-built floor (§8; §9.2, #759's 9). The owner's call.
+- **Vask's `OFF_LINE` and the gate's two rules are #752's to finalise:** `OFF_LINE.vask`, 1,800 hit
+  points and 22d8+23, and `BOSSES.hearthisle` with `core:core_vask` and `core:core_vask_thinned`,
+  the rule that a map of nothing but its boss is judged on the boss's odds and the rule that a boss
+  at the cap is judged at its floor alone (§9.2, #759's 7 and 8). Both rules are outside the content
+  lane, touch no other map and are the owner's to overturn. `rate` in the gate keys its cache on the
+  monsters and not the clock, so a clockless group of Vask and three Hands elsewhere would share his
+  figure: none exists.
+- **The plan's one in three for the clock left to run measures 45%:** going for Vask first gains,
+  and the lever the plan names, a heavier Vask with a lighter blow, runs the other way on the gate's
+  bot (§7; §9.2, #759's 7). Two in three with the Hands first is kept. The owner's call.
+- **Two under, the area's pool is won nearly every time:** 91.7% of 35 groups' fights at 26, owed to
+  #18 as before (`Hearth Isle: under`, `OWED` in `tools/tests/gate.ts`). The Heart's own row reads
+  n/a.
+- **The road behind is #765's:** `q_wenna_home`, which ends Wenna's words at 7,4 (her `until`), and
+  the four `q_signet_*`, the clerk at `shelf` 15,4 and the sea at Gullwick each taking
+  `queens_signet`. `UNSET` (`tools/tests/quests.ts`) owes the five until they land.
+- **The chapter is #760's:** the Heart's steps are `core:core_door` and `core:core_heart` (seen),
+  the flags `VASK_FALLEN`, `VOICE_WHOLE`, `RING_GIVEN` and `ENDED`, at `core`; 64 is `signet` in the
+  area's `quests.ts`.
+- **The Council's and the Compact's flags are read here, not set (#764):** `q_throne_removed` swaps
+  Vask's groups, `q_throne_tallis` (or `q_token_tallis`, where no claimant's verdict carried) puts
+  Tallis's man at 7,13 and `q_compact_over` the runner at 7,12.
 
 ## 12. The road behind: the lines
 
