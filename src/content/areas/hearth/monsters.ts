@@ -28,8 +28,10 @@ export const MONSTERS: readonly MonsterDef[] = [
   { id: 'grey_hand', name: 'Grey Hand', plural: 'Grey Hands', sprite: 'grey_hand', kind: 'person', look: 'Hands the colour of ash, to the shoulder.', steady: true, level: 31, hp: 737, ac: 27, attack: 18, dice: 6, sides: 8, bonus: 9, speed: 15, xp: 2467, gold: [0, 0], inflict: { cond: 'paralysed', chance: 0.15 }, tint: '#262226', size: 1.05 },
   // called by the ring (#759), a soldier on the line at 31: the heavy machines' frame, the core's own; it stands down when Vask falls
   { id: 'core_sentry', name: 'Core Sentry', plural: 'Core Sentries', sprite: 'core_sentry', kind: 'machine', look: 'The core\'s own, and it takes orders from the ring.', level: 31, hp: 436, ac: 27, attack: 17, dice: 5, sides: 8, bonus: 4, speed: 11, xp: 1233, gold: [0, 0], obeys: true, tint: '#c3c7cc', size: 1.45 },
-  // the Heart (#759), the boss on the line at 32: he calls the core's sentries with the Queen's ring, and never breaks
-  { id: 'vask', name: 'Lord Vask', plural: 'Lord Vasks', sprite: 'vask', kind: 'person', look: 'A tall man with a quiet voice, and the Queen\'s ring on his finger.', steady: true, level: 32, hp: 1922, ac: 29, attack: 20, dice: 32, sides: 8, bonus: 33, speed: 13, xp: 20373, gold: [0, 0], calls: { monsters: ['core_sentry'], chance: 1 }, tint: '#6c7078', size: 1.6 },
+  // the Heart (#759), the boss at 32 with his hit points and blow set by the Heart's gate, the clock played and the
+  // Hands killed first (on the line, 1,922 and 32d8+33, he was won 10% so, 11% going for him first and 3% fighting
+  // the sentries as they come): he calls the core's sentries with the Queen's ring, and never breaks
+  { id: 'vask', name: 'Lord Vask', plural: 'Lord Vasks', sprite: 'vask', kind: 'person', look: 'A tall man with a quiet voice, and the Queen\'s ring on his finger.', steady: true, level: 32, hp: 1800, ac: 29, attack: 20, dice: 22, sides: 8, bonus: 23, speed: 13, xp: 20373, gold: [0, 0], calls: { monsters: ['core_sentry'], chance: 1 }, tint: '#6c7078', size: 1.6 },
   // the Ways' last run and the Stair (#757, #758), a brute on the line at 31: a machine (§2), so it never breaks; it comes
   // down from above and reaches the back row
   { id: 'deep_crawler', name: 'Deep Crawler', plural: 'Deep Crawlers', sprite: 'deep_crawler', kind: 'machine', look: 'It comes down from above, on too many legs.', level: 31, hp: 1004, ac: 25, attack: 18, dice: 6, sides: 8, bonus: 8, speed: 8, xp: 2467, gold: [0, 0], ranged: true, tint: '#4a454d', size: 1.25 },

@@ -16,7 +16,7 @@ import type { EncounterDef, Feature, MapDef, Choice } from '../../src/game/map.t
 import { GameMap } from '../../src/game/map.ts';
 import { World } from '../../src/game/world.ts';
 import { EAST } from '../../src/game/types.ts';
-import { rest, hasCondition, className, addCondition } from '../../src/game/party.ts';
+import { rest, hasCondition, className, addCondition, MAX_LEVEL } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { startCombat, currentTurn, monsterAct, asGroup, aliveMonsters } from '../../src/game/combat.ts';
@@ -72,7 +72,10 @@ const DAYS = 300;
 /**
  * The boss groups, by the zone they are met from (a dungeon's under the zone it opens from), as the
  * game names a group, 'map:id': each is judged at its own map's floor and two levels above it, and
- * left out of its map's day. An area's are all its zones' together.
+ * left out of its map's day. An area's are all its zones' together. A boss at the cap is judged at its
+ * floor alone, no company standing two above it; and a map that holds nothing but its boss (the Heart:
+ * Vask's group, or its twin the Council thins) is judged on the boss's odds, with no floor of fights to
+ * pool and no day (#759).
  */
 export const BOSSES: Record<string, readonly string[]> = {
   shelf: ['greywater1:gw1_captain', 'greywater2:gw2_deacon'],
@@ -96,8 +99,9 @@ export const BOSSES: Record<string, readonly string[]> = {
   emberwaste: ['old_cinder:oc1_drake', 'ember_stone:es_sentinel'],
   // The Grey Lion alone on his ground between the mesas, under the rim (#529).
   wold: ['wold_b8:b8_grey_lion'],
-  // The Catcher at the Stair's foot, down the Ways under the temple's crypt (#758).
-  hearthisle: ['underdeep2:ud2_catcher'],
+  // The Catcher at the Stair's foot, down the Ways under the temple's crypt (#758); Vask at the Heart's panel
+  // on the clock, the Hands killed first, below it, and his group as the Council thins it (#759).
+  hearthisle: ['underdeep2:ud2_catcher', 'core:core_vask', 'core:core_vask_thinned'],
 };
 
 /** Each zone's road: the groups met on it, in order, from its way in. Every zone with groups names one. */
@@ -639,12 +643,17 @@ export function gate(): void {
     const outside = new Set((area as Area).outside ?? []);
     for (const d of fought) {
       const groups = d.encounters!;
-      margins(d.id, groups, d.band, d.band[0] === band[0] || outside.has(d.id));
+      // A map of nothing but its boss is judged on the boss's odds below, not on a floor or a day (#759).
+      const bossOnly = groups.every((g) => bosses.includes(`${d.id}:${g.id}`));
+      if (bossOnly) console.log(`  n/a:  ${d.id} at its floor and its fights to a rest: its every group is a boss, judged on its odds`);
+      else margins(d.id, groups, d.band, d.band[0] === band[0] || outside.has(d.id));
       for (const b of bosses.filter((ref) => ref.startsWith(`${d.id}:`))) {
         const boss = groups.find((e) => `${d.id}:${e.id}` === b);
         if (!boss) continue;
-        const at = rate(boss, d.band[0]), above = rate(boss, d.band[0] + GATE.under);
+        const at = rate(boss, d.band[0]);
         check(`${b}: floor`, at, within(GATE.boss.aim), within(GATE.boss.limit), `${d.id}'s boss ${boss.id} at ${d.band[0]}: ${pc(at)} won (${aims(`${pc(GATE.boss.aim[0])} to ${pc(GATE.boss.aim[1])}`, `${pc(GATE.boss.limit[0])} to ${pc(GATE.boss.limit[1])}`)})`);
+        if (d.band[0] + GATE.under > MAX_LEVEL) { console.log(`  n/a:  ${d.id}'s boss ${boss.id} two above its floor: no company stands past the cap, ${MAX_LEVEL}`); continue; }
+        const above = rate(boss, d.band[0] + GATE.under);
         check(`${b}: above`, above, atLeast(GATE.bossAbove.aim), atLeast(GATE.bossAbove.limit), `${d.id}'s boss ${boss.id} at ${d.band[0] + GATE.under}: ${pc(above)} won (${aims(pc(GATE.bossAbove.aim), pc(GATE.bossAbove.limit))})`);
       }
       // Its dens: the keepers the camp's hardest fight, and its brood's number and pace.
@@ -652,6 +661,7 @@ export function gate(): void {
       // Fights to a rest are harness's measure: its thrifty bot, its outfitted company, its round cap.
       // A boss is judged on its odds above, not on the day (MONSTERS.md §4.4), so the day leaves it out
       // (the owner's decision on #40, 28 September).
+      if (bossOnly) continue;
       const day = days(d.band[0], groups.filter((g) => !bosses.includes(`${d.id}:${g.id}`)), DAYS, 1, true), want = fightsPerRest(d.band[0]);
       const around = (e: readonly [number, number]): [number, number] => [want - e[0], want + e[1]], range = ([lo, hi]: [number, number]): string => `${lo} to ${hi}`;
       check(`${d.id}: rest`, day.fights, within(around(GATE.perRest.aim)), within(around(GATE.perRest.limit)), `${d.id} at ${d.band[0]}: ${day.fights.toFixed(2)} fights to a rest (${aims(range(around(GATE.perRest.aim)), range(around(GATE.perRest.limit)))}); ${pc(day.why.long)} of days end in a fight broken off`, true);
