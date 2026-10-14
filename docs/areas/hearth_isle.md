@@ -2318,7 +2318,8 @@ Decided by delegate for #753, each the owner's to overturn:
    first and takes the token would never start the quest, since Aelfric goes with another's token.
 3. **57's `done` is `HELD` for now:** the three tokens and the three claimants' verdicts, with an
    entry for each token. The rearguard slain, the "carried none" entry and the goal at `underdeep2`
-   are #758's: a key naming a group or map not built fails `tools/tests/quests.ts`.
+   are #758's: a key naming a group or map not built fails `tools/tests/quests.ts`. #758 built them
+   (#758's 4).
 4. **The north-west coast and hills outside the rim are the rim's rock to the shallows** (rows 0–18,
    some 53 squares, the sand there made shallow; and 6,20–21). No way on foot reaches them and the
    brief places nothing there, but density walks only standable ground from its points, so they
@@ -2544,7 +2545,9 @@ Decided by delegate for #758, each the owner's to overturn:
    the token down the stair under the temple.*, at `underdeep2`) could never come up and
    `tools/tests/quests.ts` failed it. A token now ends the quest when its people are seen holding
    the landing. H6's walkthrough line that asserted the token alone did the quest now asserts the
-   goal down the stair.
+   goal down the stair. A company with a token that comes down the crawl way lands past the first
+   landing and meets neither the rearguard nor `ud2_held`: the goal stays up on the stair until a
+   verdict or the rearguard ends 57. Rare, and accepted.
 5. **The rearguard is a guardian with `until: HELD`, `leaves: true` and no respawn:** 57 names it
    slain, and the quests check refuses a slain key on a group that respawns.
    `tools/tests/structure.ts` refused any `until` on a group that never comes back; under the leave
@@ -2552,7 +2555,8 @@ Decided by delegate for #758, each the owner's to overturn:
    (one condition and a fixture). Outside the content lane: the owner's to overturn.
 6. **The captain is one person,** *The captain on the landing*, `after: HELD`, with six `says` built
    from `HELD` in its order (the verdicts first, then the tokens), so a verdict that carried
-   outranks a token. His `lines`, said only if no `says` held, which his `after` rules out, are one
+   outranks a token. The lines are keyed by flag in one table, so reordering `HELD` cannot misalign
+   them. The `lines`, said only if no `says` held, which the captain's `after` rules out, are one
    neutral line.
 7. **The Catcher is set off the line by its gate (`OFF_LINE`): 1,100 hit points and 34d8+40.** The
    line's 1,826 and 30d8+34 are won 29% at 30, 35% at 31 and 41% at 32; the Catcher is won 59% at 30
@@ -2732,7 +2736,8 @@ Owed, from the Stair (#758):
 - **The Catcher's sizing:** `OFF_LINE.catcher`, 1,100 hit points and 34d8+40, is won 59% at 30,
   67% at 31 and 84% at 32 on the gate's seeds. In ten sizings the rise from 30 to 32 never passed
   about 25 points, so half at 31 and nearly always at 32 cannot both hold: the gate's floor aim and
-  its limit above are kept (§9.2, #758's 7). #752 finalises it.
+  its limit above are kept (§9.2, #758's 7). Provisional until #746 puts the Hand's steel in the
+  company and #752 finalises it.
 - **The sixth flight's crawlers are two, not three:** with three the day at 30 breaks off at 7.85
   fights to a rest, past the gate's limit of 9 (§9.2, #758's 8). The owner's call.
 - **`tools/tests/structure.ts` is loosened:** a group that `leaves` on its `until` needs no respawn,
