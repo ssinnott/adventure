@@ -90,7 +90,7 @@ export const CURVE: Record<RegionId | (typeof PLANNED)[number], AreaCurve> = {
   // found, never sold, the dearest 7,000 (docs/areas/hearth_isle.md §8).
   hearth: {
     band: [28, 32], next: 32, price: 7000,
-    owed: { whose: '#744', why: 'Hearth Isle is built box by box', xp: 21710, gold: 4900 },
+    owed: { whose: '#744', why: 'Hearth Isle is built box by box', xp: 24618, gold: 6600 },
   },
 };
 

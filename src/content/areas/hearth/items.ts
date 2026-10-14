@@ -1,15 +1,20 @@
 // Hearth Isle's items, begun by the isle (H6, #753): the first of the Hand's steel, the Grey Knife, in
 // the picket's chest at the cleft's head and dropped by the Ashen Champions; the Smelling Salts in the
-// cache under the north rim; and the pilgrims' three tokens (57). The temple's (#755): the Grey Blade and
-// the Grey Bow in its treasury, and the sacristan's key to it (56). The crypt's (#756): the Grey Robe in
-// the dead champion's pack. The Ways' (#757): the Grey Shield in the keepers' store, and the Old Lantern's
-// Staff behind the crack (61). The rest of the band's rung at 28,
-// found and never sold, is #746's (docs/areas/hearth_isle.md §8).
+// cache under the north rim; and the pilgrims' three tokens (57). The east rim (I6, #754) adds the Grey
+// Staff in the Hand's camp's chest and the Grey Mail in its hoard; the temple (#755), the Grey Blade and
+// the Grey Bow in its treasury and the sacristan's key to it (56); the crypt (#756), the Grey Robe in
+// the dead champion's pack; the Ways (#757), the Grey Shield in the keepers' store and the Old Lantern's
+// Staff behind the crack (61). The rest of the band's rung at 28, found and never sold, is #746's
+// (docs/areas/hearth_isle.md §8).
 import type { ItemDef } from '../../../game/items.ts';
-import { W, A, MARTIAL, MAIL } from '../../items.ts';
+import { W, A, MARTIAL, MAIL, NO_CASTER_HEAVY } from '../../items.ts';
 
 /** The Hand's knife, a point past Cinderport's Marlinspike (1d8+13): light, the thief's (§8; §9.1, 41). */
 export const greyKnife = W('grey_knife', 'Grey Knife', 6400, 1, 8, { kind: 'light', bonus: 14 });
+/** The Hand's staff, a point past Cinderport's Battle Staff (1d10+12): the casters' (§8; §9.1, 41). */
+export const greyStaff = W('grey_staff', 'Grey Staff', 6200, 1, 10, { kind: 'staff', bonus: 13, twoHanded: true });
+/** The Hand's mail, a point past Cinderport's Drakeskin Coat (ac 13), for the same wearers (§8; §9.1, 41). */
+export const greyMail = A('grey_mail', 'Grey Mail', 7000, 14, { classes: NO_CASTER_HEAVY });
 /** The Hand's blade, a point past Cinderport's Slag Mace (2d12+5): the martial classes' and the cleric's. */
 export const greyBlade = W('grey_blade', 'Grey Blade', 6600, 2, 12, { bonus: 6, classes: [...MARTIAL, 'cleric'] });
 /** The Hand's bow, a point past Cinderport's Ashwood Bow (1d12+12): the ranger's. */
@@ -27,6 +32,8 @@ export const oldLanternsStaff = W('old_lanterns_staff', 'Old Lantern\'s Staff', 
 
 export const ITEMS: readonly ItemDef[] = [
   greyKnife,
+  greyStaff,
+  greyMail,
   // In the temple's treasury (#755).
   greyBlade,
   greyBow,
