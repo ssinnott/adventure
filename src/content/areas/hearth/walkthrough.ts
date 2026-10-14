@@ -18,7 +18,11 @@
 // the crawl way onto its fourth landing; the first landing held for the badge carried (57), and on other
 // walks the rearguard won where nobody holds it and a verdict that outranks a token; the dead and the
 // letter (58); her name on the last frame (59); the groups won at 30, and the Catcher at 31; the last door
-// shut until the road's five, its way into the Heart being #759's.
+// shut on four of the road's five and open on the five. Then the Heart (#759), at 32: the door, the heart and
+// its roof; Vask's parley and the fight on the clock, won with the Hands killed first and with the clock left
+// to run; the panel, Vask after, the voice, the girl and the ring; each of her three answers once, the third
+// with Fane's map, its pages and the ring, which begins The Signet (64); and for a Council that removed Vask
+// the thinned group, and who stands inside the door.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen, walkThrough, gone as left } from '../../../../tools/walk.ts';
 import type { Walk } from '../../../../tools/walk.ts';
@@ -29,18 +33,23 @@ import { OUTDOORS } from '../../../game/outdoors.ts';
 import { meet, heard, answer } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
 import { take as ride } from '../../../game/passage.ts';
+import { endingTaken } from '../../../game/stones.ts';
+import { ENDINGS } from '../../endings.ts';
+import { winRate, gateOpts } from '../../../../tools/gate.ts';
+import { ANSWER } from '../../../../tools/harness.ts';
 import { restRefused, useShrine } from '../../../game/wilds.ts';
 import { questLog } from '../../../game/quests.ts';
 import { readerOf } from '../../../game/inscriptions.ts';
 import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
 import { LAST_CROSSING } from '../../crossings.ts';
 import { COMPACT_OVER, COMPACT_WARDENS } from '../saltreach/maps/saltmouth.ts';
-import { THRONE_REMOVED, THRONE_HOLD } from '../shelf/maps/keep.ts';
+import { THRONE_REMOVED, THRONE_HOLD, THRONE_TALLIS } from '../shelf/maps/keep.ts';
 import { STRAND, PILGRIMS, TOKEN_COUSIN, TOKEN_HOLD, TOKEN_TALLIS } from './maps/hearthisle_h6.ts';
 import { LAMPS, LAMPS_OUT, LAMPS_WRONG, LAMPS_KEY, FANE_KEY, LAMP_FLAGS, STAIR } from './maps/hearthfane.ts';
 import { ELEVEN_KEPT, GREY_DOOR } from './maps/hearthfane2.ts';
 import { CREW_OPEN, CREW_SHUT, CRACK_SEALED, CRACK_WIDE, STAIR_DOOR, CRAWL_DOOR } from './maps/underdeep.ts';
 import { FIVE, LAST_DOOR } from './maps/underdeep2.ts';
+import { VASK, VASK_FALLEN, VOICE_WHOLE, RING_GIVEN, END_REIGNITE, END_ARRIVE, END_FINISH, SIGNET } from './maps/core.ts';
 
 const H6 = MAP_DEFS.find((d) => d.id === 'hearthisle_h6')!;
 const person = (name: string): Person => H6.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
@@ -501,21 +510,102 @@ export const walkthrough: Walkthrough = (ok) => {
   see(w, 'underdeep2:ud2_word');
   ok(log('frames')!.done && log('frames')!.pages[0].entries.some((e) => e.id === 'name'), 'on the last frame her name, not her knot: Every Frame She Marked is done');
 
-  // The foot at 31, where the Catcher is sized on its odds, and the last door: shut, listening for five
-  // voices until the road's five are held; the Hand's own door beside it, shut behind her. The door's way
-  // into the Heart, its lock and its signature are #759's, with the Heart's map.
+  // The foot at 31, where the Catcher is sized on its odds, and the last door (#759): on four of the road's
+  // five it stays shut, listening for five voices, and the way back up to the camp is open; the Hand's own
+  // door beside it, shut behind her. On the five it opens as the company comes near, into the Heart.
   w.level = 31;
   for (const m of w.party.members) m.level = 31;
   fight(w, 'underdeep2:ud2_catcher');
   see(w, 'underdeep2:ud2_foot');
   see(w, 'underdeep2:ud2_hand');
+  for (const f of FIVE.slice(0, 4)) w.party.flags[f] = 1;
   w.world.travel('underdeep2', 16, 2, NORTH);
   const listens = w.world.eventsHere().join(' ');
-  w.world.move('forward');
-  ok(listens.includes('listens for five voices, and hears fewer') && w.world.state.mapId === 'underdeep2' && w.world.state.y === 2 && UD2.rows[1][16] === 'Z' && UD2.rows[1][13] === 'Z'
-    && !(UD2.exits ?? []).some((e) => e.to === 'core') && LAST_DOOR.x === 16 && LAST_DOOR.y === 1 && LAST_DOOR.needFlag === FIVE,
-    'at the last door: it listens for five voices and does not open, the Hand\'s own door shut beside it');
-  for (const f of FIVE) w.party.flags[f] = 1;
-  w.world.travel('underdeep2', 16, 2);
-  ok(!w.world.eventsHere().join(' ').includes('five voices'), 'with the road\'s five held it listens no longer: its way into the Heart is #759\'s');
+  const early = w.world.move('forward');
+  ok(listens.includes('listens for five voices, and hears fewer') && early.kind === 'blocked' && early.reason === LAST_DOOR.blockedText && w.world.state.mapId === 'underdeep2'
+    && w.world.state.y === 2 && UD2.rows[1][16] === 'D' && UD2.rows[1][13] === 'Z' && (UD2.exits ?? []).includes(LAST_DOOR) && LAST_DOOR.needFlag === FIVE,
+    'at the last door on four of the road\'s five: it listens for five voices and does not open, the Hand\'s own door shut beside it');
+  walkThrough(w, 'underdeep2', 16, 30, SOUTH, 'underdeep', 2);
+  ok(w.world.state.x === 16 && w.world.state.y === 2, 'and the way back up off the stair\'s head is open, on up to the camp to rest');
+  w.party.flags[FIVE[4]] = 1;
+  w.world.travel('underdeep2', 16, 2, NORTH);
+  const hushed = !w.world.eventsHere().join(' ').includes('five voices');
+  walkThrough(w, 'underdeep2', 16, 2, NORTH, 'core', 1);
+  ok(hushed && w.world.state.x === 8 && w.world.state.y === 14 && w.world.state.facing === NORTH,
+    'on the road\'s five it listens no longer and opens as the company comes near: into the Heart, 8,14, facing up its passage');
+  walkThrough(w, 'core', 8, 14, SOUTH, 'underdeep2', 1);
+  ok(w.world.state.x === 16 && w.world.state.y === 2 && w.world.state.facing === SOUTH, 'and back through it onto the stair\'s last landing, 16,2, facing away: it stays open behind the company now');
+
+  // The Heart (#759), at the cap, 32: the door, the heart and its roof; Vask's parley, one answer, and the
+  // fight on the clock, won with the Grey Hands killed first and with the clock left to run; his fall a flag,
+  // the panel, Vask on his knees, the voice and the girl with the ring; and her first answer, its pages and
+  // the ring in the pack, which begins The Signet (64).
+  const HEART = MAP_DEFS.find((d) => d.id === 'core')!;
+  const inCore = (name: string): Person => HEART.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
+  const speakTo = (v: Walk, p: Person) => { v.world.travel('core', p.x, p.y); return meet(p, v.party, heard(v.world, p)); };
+  const [vaskAfter, voice, wenna, tallisMan, doorRunner] = ['Lord Vask', 'The voice in the walls', 'The girl out of the hole', 'Tallis\'s man', 'A Compact runner'].map(inCore);
+  const vask = HEART.encounters!.find((e) => e.id === 'core_vask')!;
+  w.level = 32;
+  for (const m of w.party.members) m.level = 32;
+  walkThrough(w, 'underdeep2', 16, 2, NORTH, 'core', 1);
+  see(w, 'core:core_door');
+  see(w, 'core:core_heart');
+  see(w, 'core:core_roof');
+  ok(vask.choice === VASK && VASK.answers.length === 1 && VASK.answers[0].label === 'Stop him.' && !!VASK.answers[0].fight && vask.x === 8 && vask.y === 5 && vask.aware === 2
+    && vask.leader === 'vask' && vask.clock?.calls === 'core_sentry' && vask.clock.every === 2 && vask.clock.dims === 8 && vask.clock.panel.join() === 'grey_hand',
+    'Vask at the panel, 8,5, puts his parley as the company comes beside him at 8,7: one answer, Stop him., and the fight on the clock');
+  const odds = (clock: 'panel' | 'called'): number => { ANSWER.clock = clock; const r = winRate(32, vask, 10, Infinity, gateOpts(vask)); ANSWER.clock = 'panel'; return r; };
+  const handsFirst = odds('panel'), letRun = odds('called');
+  ok(handsFirst > 0 && letRun > 0, `won at 32 with the Grey Hands killed first (${Math.round(handsFirst * 100)}% of ten fights) and with the clock left to run (${Math.round(letRun * 100)}%)`);
+  ok(!w.world.present(voice) && !w.world.present(wenna) && !w.world.present(vaskAfter), 'nobody speaks at the panel while Vask stands');
+  fight(w, 'core:core_vask');
+  ok(!!w.party.flags[VASK_FALLEN], 'Vask goes down on his knees: his fall is a flag, and everything after it keys on it');
+  see(w, 'core:core_after');
+  see(w, 'core:core_panel');
+  ok(speakTo(w, vaskAfter).text.includes('I was never once wrong about the facts') && !w.world.present(tallisMan) && !w.world.present(doorRunner) && !w.world.present(wenna),
+    'Vask on his knees by the wall says his one thing; nobody stands inside the door for a company with no verdict, tally or Partnership; the girl waits for the voice');
+  const spoken = speakTo(w, voice).text;
+  ok(spoken.includes('The voyage is over') && spoken.includes('"Captain. Give the order."') && !!w.party.flags[VOICE_WHOLE] && speakTo(w, voice).text === 'The hum, steady, and one voice in it, waiting. "Captain."',
+    'the voice in the walls, one voice at last: the voyage is over, and Captain, give the order; and after, only Captain');
+  const asked = speakTo(w, wenna);
+  ok(asked.text.includes('"I\'m not anyone\'s key."') && !!w.party.flags[RING_GIVEN] && asked.choice?.answers.map((a) => a.label).join() === 'Light it again.,Open the hull.',
+    'the girl takes the ring off his finger and puts it in the company\'s hand: two answers without Fane\'s map');
+  const relit = asked.choice!.answers[0], said = answer(relit, w.party);
+  ok(!!w.party.flags[END_REIGNITE] && said.includes('like a tide coming in') && endingTaken(relit, w.party.flags) === ENDINGS.reignite && ENDINGS.reignite.pages.length === 3 && w.party.bag.includes(SIGNET),
+    'Light it again.: its flag set, its three pages shown as it is taken, and the ring in the pack');
+  const after = speakTo(w, wenna);
+  ok(after.text.includes('"Home," she says. "In the spring. Walk me."') && !after.choice && !w.world.present(vaskAfter),
+    'after it she waits to be walked home, the question not put again, and Vask gone from the room');
+  const ring = log('signet');
+  ok(!!ring && !ring.done && ring.goal === 'Where the ring goes: the Council\'s clerk waits at Helmstow\'s gate, and the sea off Gullwick is where the boat went out.',
+    'the ring in the pack begins The Signet, its end at Helmstow\'s gate or the sea off Gullwick (#765)');
+
+  // Each other answer once, on a walk of its own from the voice: Open the hull.; and with Fane's map the
+  // third, Make it finish., which no company without the map is offered.
+  const fallen = (...flags: string[]): Walk => { const v = newWalk(ok); for (const f of [VASK_FALLEN, VOICE_WHOLE, ...flags]) v.party.flags[f] = 1; v.world.travel('core', 8, 9); return v; };
+  const hull = fallen(), hulled = speakTo(hull, wenna).choice!.answers.find((a) => a.label === 'Open the hull.')!, hullSaid = answer(hulled, hull.party);
+  ok(!!hull.party.flags[END_ARRIVE] && hullSaid.includes('you hear wind') && endingTaken(hulled, hull.party.flags) === ENDINGS.arrive && hull.party.bag.includes(SIGNET)
+    && speakTo(hull, wenna).text.includes('I want to see what it looks like from outside.'), 'Open the hull.: its flag, its pages and the ring, and her words after it');
+  const charted = fallen('meridian_map'), offered = speakTo(charted, wenna), finish = offered.choice?.answers.find((a) => a.label === 'Make it finish.');
+  ok(offered.text.includes('the oilcloth roll in your pack') && !!charted.party.flags[RING_GIVEN] && offered.choice?.answers.length === 3 && !!finish,
+    'with Fane\'s map she looks at the oilcloth roll in the pack, and the third answer is put; the ring is given all the same');
+  answer(finish!, charted.party);
+  ok(!!charted.party.flags[END_FINISH] && endingTaken(finish!, charted.party.flags) === ENDINGS.finish && charted.party.bag.includes(SIGNET) && speakTo(charted, wenna).text.includes('"It\'s moving," she says.'),
+    'Make it finish.: its flag, its pages and the ring, and her words after it');
+
+  // With Vask removed from Helmstow by the Council his group is gone by the leave rule and the thinned one
+  // stands in its place, its fall the same flag; for Tallis's chair his man inside the door, a Partner's
+  // runner beside him, until an ending; and where no claimant's verdict carried, Tallis's tally.
+  const thinned = newWalk(ok);
+  thinned.level = 32;
+  for (const m of thinned.party.members) m.level = 32;
+  for (const f of [THRONE_REMOVED, THRONE_TALLIS, COMPACT_OVER]) thinned.party.flags[f] = 1;
+  left(thinned, 'core:core_vask');
+  fight(thinned, 'core:core_vask_thinned');
+  ok(!!thinned.party.flags[VASK_FALLEN] && speakTo(thinned, tallisMan).text.includes('the ring most of all') && thinned.world.present(doorRunner) && speakTo(thinned, doorRunner).text.includes('ask no fee'),
+    'the thinned group won at 32 sets his fall as the first does; Tallis\'s man inside the door for Tallis\'s chair, and the Compact\'s runner beside him for a Partner');
+  thinned.party.flags[END_ARRIVE] = 1;
+  ok(!thinned.world.present(tallisMan) && !thinned.world.present(doorRunner), 'both gone once an ending is taken');
+  const tally = fallen(TOKEN_TALLIS), outranked = fallen(TOKEN_TALLIS, THRONE_HOLD);
+  ok(tally.world.present(tallisMan) && !outranked.world.present(tallisMan), 'where no claimant\'s verdict carried, Tallis\'s tally carried down puts his man there; the hold\'s verdict outranks it');
 };
