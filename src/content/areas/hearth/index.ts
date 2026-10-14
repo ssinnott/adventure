@@ -24,7 +24,8 @@ export const AREA = {
   // The isle's finds and the pilgrims' tokens (#753), the east rim's staff and mail (#754), the temple's
   // (#755) and the crypt's (#756); the band's rung at 28 is #746's.
   items: ITEMS,
-  // #56's 57, The Pilgrims in the Bowl, as far as the isle goes (#753); 56, The Sacristan's Lamps (#755).
+  // #56's 57, The Pilgrims in the Bowl, as far as the isle goes (#753); 56, The Sacristan's Lamps (#755);
+  // the Cleric's third, The Eleven Kept (#763).
   quests: QUESTS,
   // The Heart, the act's chapter and the road's last, is #760's.
   chapter: undefined,

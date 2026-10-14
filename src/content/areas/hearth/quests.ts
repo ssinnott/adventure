@@ -2,11 +2,14 @@
 // docs/areas/hearth_isle.md), as far as the isle goes (H6, #753): the three pilgrims met in the Bowl and
 // a token taken, or none. Its end on the Stair's first landing, the rearguard slain where no token or
 // verdict holds, and the goal under the temple, are #758's. #56's 56, The Sacristan's Lamps, in the
-// temple (#755): the lamps out in the pillar's order and the treasury's key. How the words are keyed is in
-// src/content/area.ts (`quests`); tools/tests/quests.ts checks every key.
+// temple (#755): the lamps out in the pillar's order and the treasury's key. The Cleric's third, The Eleven
+// Kept (#763): the Crowness keeper's log to the anchoress at Anchorhold and the eleven lamps lit in the crypt.
+// How the words are keyed is in src/content/area.ts (`quests`); tools/tests/quests.ts checks every key.
 import type { QuestDef } from '../../../game/quests.ts';
 import { PILGRIMS, TOKEN_COUSIN, TOKEN_HOLD, TOKEN_TALLIS, HELD } from './maps/hearthisle_h6.ts';
+import { KEPT_ASKED } from './maps/hearthisle_i6.ts';
 import { LAMPS, LAMPS_OUT, LAMPS_WRONG, LAMPS_KEY, PILLARS } from './maps/hearthfane.ts';
+import { ELEVEN_KEPT, LOG_GIVEN } from './maps/hearthfane2.ts';
 
 export const QUESTS: readonly QuestDef[] = [
   {
@@ -42,6 +45,25 @@ export const QUESTS: readonly QuestDef[] = [
     goals: [
       { when: { flag: LAMPS_OUT }, text: 'Go back to the sacristan under the vestry table.', at: 'hearthfane' },
       { when: { flag: LAMPS }, text: 'Put out the four lamps in the pillar\'s order: the Sea, the Shore, the House, the Hearth.', at: 'hearthfane' },
+    ],
+  },
+  {
+    // The Cleric's third, at 27 with the second: begun on the anchoress's ask, or on the log given to her
+    // before it (a hand-in takes its item at the first meeting, so either may come first); done once a
+    // cleric of the company is an Exarch. The deed is the eleven lamps in the crypt (ELEVEN_KEPT).
+    id: 'eleven_kept',
+    title: 'The Eleven Kept',
+    start: [{ flag: KEPT_ASKED }, { flag: LOG_GIVEN }],
+    done: { member: { cls: 'cleric', prestige: 3 } },
+    entries: [
+      { id: 'asked', when: { flag: KEPT_ASKED }, text: 'The anchoress walled into Anchorhold counted the eleven the night the Queen died, and wants the Crowness keeper\'s log, to see if he counted the same.' },
+      { id: 'given', when: { flag: LOG_GIVEN }, text: 'He did. She keeps the book now, and sent us down into the fane\'s crypt to light the eleven lamps there in his gaps, while she keeps the top.' },
+      { id: 'kept', when: { flag: ELEVEN_KEPT }, text: 'We lit the eleven in the crypt, a grace between each. On the eleventh the hum changed key, and held.' },
+    ],
+    goals: [
+      { when: { flag: ELEVEN_KEPT }, text: 'Back up to the anchoress\'s window at Anchorhold.', at: 'hearthisle_i6' },
+      { when: { flag: LOG_GIVEN }, text: 'Down into the crypt under Hearthfane, and light the eleven lamps as the log has them.', at: 'hearthfane2' },
+      { when: { flag: KEPT_ASKED }, text: 'Bring the Crowness keeper\'s log to Hereswith at Anchorhold.', at: 'hearthisle_i6' },
     ],
   },
 ];
