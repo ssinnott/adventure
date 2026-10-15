@@ -230,7 +230,7 @@ so Cinderport's harbourmaster sells it. The curve's row (#745, §8) has left `PL
 for what the isle, the rim, the temple, the crypt, the Ways, the Stair and the Heart pay, which falls
 short of the area's budget (§8, §11). The chapter, The Heart (#760, §5), is the area's `chapter`
 (`chapter.ts`), joined after the Wold's in `THE_QUEST`, the twelfth and last: begun on `q_road_east`
-or on the isle, done on any of the three endings' flags, and walked in the walkthrough to each of its
+or on the isle, done on any of the three endings' flags and walked in the walkthrough to each of its
 ends and once early; `tools/tests/quests.ts` owes neither it nor the zone's step now. The drafts the
 scaffold cuts are in §1. This doc is
 the plan; §4 has the briefs, each with every line its place says, so that the box or level can be
@@ -2994,7 +2994,8 @@ Decided by delegate for #760, each the owner's to overturn:
    `shipped.json` takes nothing new.
 5. **The walkthrough puts the road behind done by hand** (`roadDone`: each earlier chapter's end by
    its first way, as the quests check satisfies a condition), so the quest's own end is said once in
-   each play; Acts I to IV are their own walkthroughs'.
+   each play; Acts I to IV are their own walkthroughs'. The road's five (`FIVE`) are put by hand too:
+   `q_peak_stood` and `q_ember_lit` end no chapter of their own.
 6. **The verdict, the token and Fane's map are put by hand:** #764's own flags (`q_throne_removed`
    and `q_throne_tallis`), `q_token_cousin` with the badge and `meridian_map`, as the Heart's box play
    does. The Council's hearing is the shelf's to walk.

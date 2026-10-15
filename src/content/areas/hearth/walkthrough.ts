@@ -32,8 +32,8 @@
 // she takes from them begins no journal. Then the chapter, The Heart (#760), played to each of its three
 // ends from the road behind done, and once by a company over early on four of the road's five.
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, see, fight, listen, walkThrough, gone as left } from '../../../../tools/walk.ts';
-import type { Walk } from '../../../../tools/walk.ts';
+import { newWalk, see, fight, listen, walkThrough, gone as left, playChapter, everyGoalWalked, goalFromBegun, quest, ending } from '../../../../tools/walk.ts';
+import type { Walk, Step } from '../../../../tools/walk.ts';
 import { NORTH, EAST, SOUTH, WEST } from '../../../game/types.ts';
 import type { Facing } from '../../../game/types.ts';
 import { ATLAS, MAP_DEFS } from '../../index.ts';
@@ -62,17 +62,14 @@ import { KEPT_ASKED } from './maps/hearthisle_i6.ts';
 import { LAMPS, LAMPS_OUT, LAMPS_WRONG, LAMPS_KEY, FANE_KEY, LAMP_FLAGS, STAIR } from './maps/hearthfane.ts';
 import { ELEVEN_KEPT, GREY_DOOR, LOG_GIVEN } from './maps/hearthfane2.ts';
 import { CREW_OPEN, CREW_SHUT, CRACK_SEALED, CRACK_WIDE, STAIR_DOOR, CRAWL_DOOR } from './maps/underdeep.ts';
-import { FIVE, LAST_DOOR } from './maps/underdeep2.ts';
+import { FIVE, LAST_DOOR, KNOT_LAST } from './maps/underdeep2.ts';
 import { VASK, VASK_FALLEN, VOICE_WHOLE, RING_GIVEN, END_REIGNITE, END_ARRIVE, END_FINISH, SIGNET } from './maps/core.ts';
-import { playChapter, everyGoalWalked, goalFromBegun, quest, ending } from '../../../../tools/walk.ts';
-import type { Step } from '../../../../tools/walk.ts';
 import { owed } from '../../../../tools/tests/lib.ts';
 import { THE_QUEST } from '../../index.ts';
 import type { Chapter, QuestCond } from '../../../game/quests.ts';
 import { PAGE } from '../../../ui/quests.ts';
 import { wrap } from '../../../ui/draw.ts';
 import { ROAD_EAST } from '../glasswold/maps/wold_d8.ts';
-import { KNOT_LAST } from './maps/underdeep2.ts';
 import { CHAPTER } from './chapter.ts';
 
 const H6 = MAP_DEFS.find((d) => d.id === 'hearthisle_h6')!;
@@ -845,6 +842,7 @@ const written = (w: Walk): string[] => (quest(w)?.pages.find((p) => p.def === CH
 /** Meet a person in the Heart and go through the meeting as the game does. */
 function talk(w: Walk, p: Person): ReturnType<typeof meet> {
   w.world.travel('core', p.x, p.y);
+  w.ok(w.world.present(p), `${p.name} stands there to be met`);
   const said = meet(p, w.party, heard(w.world, p));
   listen(w);
   return said;
