@@ -3171,9 +3171,10 @@ Decided by delegate for #795, each the owner's to overturn:
 5. **The Reader's crack is a once-line** (`q_reader_crack`) after her introduction, before her reading and the
    endings' words, its text as it was (supersedes #765 half B's 4). The audit found her reading of the papers
    hidden below them, and her introduction, which the reading needs: both now come first while they stand open.
-6. **The rest of the audit changes nothing:** Ruan and Ysolde were put right by #765's 8, and what the endings'
-   words hide for Ordgar, the Eel, the priestess, Morwenna, Hild and the two clerks is talk that sets nothing
-   a log reads, or a hire the road already made (Hild's ask is answered by the ending itself).
+6. **The rest of the audit changes nothing:** Ruan and Ysolde were put right by #765's 8; what the endings'
+   words hide for Ordgar, the Eel, the priestess, Morwenna and Hild is talk that sets nothing a log reads, or
+   a hire the road already made (Hild's ask is answered by the ending itself); the Luminary, Jowan's mother
+   and the two clerks hide nothing.
 7. **Hereswith's early hand-in ends on the send-down:** a third paragraph in her voice, with the crypt, the
    eleven and the top she keeps, so that the entry `given` reads true of both roads; `done` is as it was.
 8. **The sacristan's goal points at the pillar** ("in the order the pillar gives", as the entry `asked` has it),
