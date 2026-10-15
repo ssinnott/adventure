@@ -29,7 +29,7 @@ export const AREA = {
   items: ITEMS,
   // #56's 57, The Pilgrims in the Bowl, as far as the isle goes (#753); 56, The Sacristan's Lamps (#755); 59,
   // Every Frame She Marked, as far as the Ways go, 60, Crew Only, From the Inside, and 61, The Knocker That
-  // Stopped (#757).
+  // Stopped (#757); the Cleric's third, The Eleven Kept (#763).
   quests: QUESTS,
   // The Heart, the act's chapter and the road's last, is #760's.
   chapter: undefined,
