@@ -7,11 +7,20 @@
 // it the Hand's Steps, where the causeway from Sheer Point comes up out of the sea. The Hand's takings
 // in a pocket carved into the rim behind the tally-house, found from the smell at its foot. The Hand's
 // champions where the rim's path begins, the moths over the yard by night, the camp's guard with its
-// preacher, gone once Vask is gone from Helmstow, and two more at the stair's head.
+// preacher, gone once Vask is gone from Helmstow, and two more at the stair's head. Hereswith, the
+// anchoress, at the cell's window, who teaches the Cleric's third (#763).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/hearth_isle.md §4.3 is its brief (#754).
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { THRONE_REMOVED } from '../../shelf/maps/keep.ts';
+import { ELEVEN_KEPT, LOG_GIVEN } from './hearthfane2.ts';
+
+/**
+ * The Cleric's third (#763), The Eleven Kept: Hereswith asks a cleric of 27 with the second for the Crowness
+ * keeper's log, and the ask begins the quest. The log given (`LOG_GIVEN`) and the eleven lit in the crypt
+ * (`ELEVEN_KEPT`) are the crypt's to export, which this map reads: one each way would be an import cycle.
+ */
+export const KEPT_ASKED = 'q_eleven_asked';
 
 const many = (n: number, id: string): string[] => Array.from({ length: n }, () => id);
 
@@ -61,7 +70,31 @@ export const HEARTHISLE_I6: MapDef = {
   features: [
     // Anchorhold, the cell built into the rim's rock at 4,18 (a building, not walked into), and its yard
     // carved below it, 2-5,19-20, where the pilgrims stood at the window. Hereswith, the anchoress, at the
-    // window at 4,19, is #763's.
+    // window at 4,19, teaches the Cleric's third (#763): she takes the Crowness keeper's log whenever it is
+    // first brought, asks it of a cleric of 27 with the second until it is given, and sends the company
+    // down to the crypt's eleven lamps (hf2_eleven), which her teaching waits on.
+    { kind: 'npc', x: 4, y: 19, name: 'Hereswith, the anchoress', lines: [
+      'A voice from the window in the bricked-up door, and a face behind it, old, and lit from the side by the column. She says the hour before she says anything else.',
+      '"Hereswith. I was walled in here at thirty to keep the hour against the light, and I have kept it fifty years, and the light has kept it with me, mostly." A pause. "Not the night the Queen died. That night it kept its own."',
+      '"Eleven. I counted from here. I should like to know whether anyone else did."',
+    ], flag: 'i6_anchoress_met', quest: { item: 'keepers_log', reward: 0, setFlag: LOG_GIVEN, early: [
+      'She reads it at the window, holding it to the light, and reads it again.',
+      '"Crowness. A grace between each, the pairs even. Yes. He counted what I counted." She keeps it. "Now I know."',
+    ], done: [
+      'She reads it at the window, holding it to the light, and reads it again.',
+      '"Crowness. A grace between each, the pairs even. Yes. He counted what I counted." She keeps it. "Now there are two of us, and the gaps are written down."',
+      '"Go down into the fane\'s crypt. Eleven lamps stand there for the eleven, cold since that night. Light them as he wrote them, the gaps and all, and I will keep the hour up here while you do. Not with you: I keep the top. That is what an anchorhold is for."',
+    ] }, says: [
+      { after: { flag: ELEVEN_KEPT }, lines: [
+        'The hour, from the window, and then: "The hum changed key an hour ago, and held. That was you."',
+        '"Fifty years I thought the hour was mine to keep. It was the light\'s. Come to the window, Prelate, and I will show you what an Exarch keeps."',
+      ] },
+      { after: { flag: LOG_GIVEN }, lines: ['The hour, from the window. "Eleven lamps, in the crypt under the fane. The gaps are in the book. Go on down; I have the top."'] },
+      { after: { flag: 'i6_anchoress_met', member: { cls: 'cleric', level: 27, prestige: 2 } }, until: { flag: LOG_GIVEN }, sets: KEPT_ASKED, lines: [
+        'She looks a long while at your cleric through the window.',
+        '"You have the Prelate\'s look. There is a keeper at Crowness Light, on the far shore of everything, who counted the eleven the night the Queen died and wrote the gaps down. Bring me his log, and we will see whether we counted the same."',
+      ] },
+    ], teaches: { cls: 'cleric', prestige: 3, asks: 'eleven_kept', done: { flag: ELEVEN_KEPT }, seek: 'Hereswith, the anchoress walled into Anchorhold on Hearth Isle\'s east rim, keeps the hour against the light, and can make an Exarch of a Prelate.' } },
     { kind: 'event', x: 5, y: 19, id: 'i6_cell', once: true, text: 'A cell built into the rim, its door bricked up with its own stone. One window, with a cup on its sill, and a voice behind it saying the hour.' },
     { kind: 'event', x: 3, y: 19, id: 'i6_wall', once: true, text: 'Scratched on the cell\'s outside, in years of different hands: the hours, as pilgrims kept them for her. Eleven, always eleven.' },
     // The rim's path out of the yard onto the east foot, the causeway seen; north under the rim, a boat

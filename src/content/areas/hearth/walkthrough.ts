@@ -23,6 +23,10 @@
 // rearguard won where nobody holds it and a verdict that outranks a token; the dead and the letter (58);
 // her name on the last frame (59); the groups won at 30, and the Catcher at 31; the last door shut until
 // the road's five, its way into the Heart being #759's.
+// Last, the Cleric's third (#763), The Eleven Kept, played twice by a cleric of 27 with the second: the
+// anchoress's ask and then the Crowness keeper's log, the eleven lit and the third taught; and the log
+// brought before the ask. Then three companies short of the ask: she never asks it of them, and the log
+// she takes from them begins no journal.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen, walkThrough, gone as left } from '../../../../tools/walk.ts';
 import type { Walk } from '../../../../tools/walk.ts';
@@ -31,17 +35,22 @@ import type { Facing } from '../../../game/types.ts';
 import { ATLAS, MAP_DEFS } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
-import { meet, heard, answer } from '../../../game/people.ts';
+import { meet, heard, answer, handIns } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
+import type { Feature } from '../../../game/map.ts';
+import { xpForLevel, takePrestige, className, PRESTIGES } from '../../../game/party.ts';
+import { teach, barOf } from '../../../game/prestige.ts';
+import { seekId, sought } from '../../../game/seeking.ts';
 import { take as ride } from '../../../game/passage.ts';
 import { restRefused, useShrine } from '../../../game/wilds.ts';
-import { questLog } from '../../../game/quests.ts';
+import { questLog, holds } from '../../../game/quests.ts';
 import { readerOf } from '../../../game/inscriptions.ts';
 import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
 import { LAST_CROSSING } from '../../crossings.ts';
 import { COMPACT_OVER, COMPACT_WARDENS } from '../saltreach/maps/saltmouth.ts';
 import { THRONE_REMOVED, THRONE_HOLD } from '../shelf/maps/keep.ts';
 import { STRAND, PILGRIMS, TOKEN_COUSIN, TOKEN_HOLD, TOKEN_TALLIS } from './maps/hearthisle_h6.ts';
+import { KEPT_ASKED } from './maps/hearthisle_i6.ts';
 import { LAMPS, LAMPS_OUT, LAMPS_WRONG, LAMPS_KEY, FANE_KEY, LAMP_FLAGS, STAIR } from './maps/hearthfane.ts';
 import { ELEVEN_KEPT, GREY_DOOR, LOG_GIVEN } from './maps/hearthfane2.ts';
 import { CREW_OPEN, CREW_SHUT, CRACK_SEALED, CRACK_WIDE, STAIR_DOOR, CRAWL_DOOR } from './maps/underdeep.ts';
@@ -198,8 +207,8 @@ export const walkthrough: Walkthrough = (ok) => {
   ok([[1, 18], [2, 18], [6, 19], [7, 19]].every(([x, y]) => rim(x, y) === ':') && yard.every((c) => c === ':') && rim(0, 18) === ',' && rim(8, 19) === ',' && rim(4, 18) === 'B',
     'the rim\'s path is carved from the Bowl\'s grass at 0,18 through the rock into Anchorhold\'s yard, 2-5,19-20, and out to the east foot at 8,19; the cell at 4,18 is built into the rim');
   const anchorhold = ATLAS.sites.find((s) => s.name === 'Anchorhold')!;
-  ok(!anchorhold.planned && anchorhold.at[0] === i6.x + 4 && anchorhold.at[1] === i6.y + 18 && !I6.features!.some((f) => f.x === 4 && f.y === 19),
-    'Anchorhold\'s site, built, is the cell at 4,18, and the square under its window, 4,19, is left for the anchoress (#763)');
+  ok(!anchorhold.planned && anchorhold.at[0] === i6.x + 4 && anchorhold.at[1] === i6.y + 18 && I6.features!.some((f) => f.kind === 'npc' && f.x === 4 && f.y === 19 && f.name === 'Hereswith, the anchoress'),
+    'Anchorhold\'s site, built, is the cell at 4,18, and the anchoress stands in the yard under its window, at 4,19 (#763)');
   for (const id of ['i6_wall', 'i6_cell', 'i6_path', 'i6_keel', 'i6_wyke']) see(w, `hearthisle_i6:${id}`);
   ok(['i6_wall', 'i6_cell', 'i6_path', 'i6_keel', 'i6_wyke'].every((id) => w.world.used(id)), 'the hours scratched on the cell, its window, the causeway from the path, the keel and the Wyke');
 
@@ -601,4 +610,112 @@ export const walkthrough: Walkthrough = (ok) => {
   for (const f of FIVE) w.party.flags[f] = 1;
   w.world.travel('underdeep2', 16, 2);
   ok(!w.world.eventsHere().join(' ').includes('five voices'), 'with the road\'s five held it listens no longer: its way into the Heart is #759\'s');
+
+  // The Cleric's third, The Eleven Kept (#763): Anchorhold's anchoress, the keeper's log and the crypt's eleven.
+  elevenKept(ok);
 };
+
+/**
+ * The Cleric's third (#763), The Eleven Kept, played twice by a company whose cleric is 27 with the second.
+ * The ask first: the seeking quest sends her to the anchoress at Anchorhold; her own words, then her ask,
+ * said at each meeting until the log is in, which begins the quest and ends the seeking; the third waits and
+ * the crypt's lamps stay dark; the Crowness keeper's log taken from the chest under the light (where the
+ * Bard's gathering still reads it), handed in, her word to go down; the chamber's champions won at 29 and the
+ * eleven lit; back at the window, her last words and the third taught, for the deed and no gold. The log
+ * first: taken at the first meeting and heard `early`, the ask never said, the quest begun on the log alone,
+ * and the deed and the teaching the same. Then three companies short of the ask (a cleric of 27 with the
+ * first only, one of 26 with the second, none): her own words again, never the ask, and the log she takes
+ * all the same begun for none of them until the cleric is 27 with the second.
+ */
+function elevenKept(ok: (cond: boolean, msg: string) => void): void {
+  const I6 = MAP_DEFS.find((d) => d.id === 'hearthisle_i6')!, CRYPT = MAP_DEFS.find((d) => d.id === 'hearthfane2')!, E3 = MAP_DEFS.find((d) => d.id === 'downs_e3')!;
+  const anchoress = I6.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'Hereswith, the anchoress')!;
+  const [hand] = handIns(anchoress), teaching = anchoress.teaches!;
+  const lamps = CRYPT.features!.find((f): f is Extract<Feature, { kind: 'event' }> => f.kind === 'event' && f.id === 'hf2_eleven')!;
+  const chest = E3.features!.find((f): f is Extract<Feature, { kind: 'chest' }> => f.kind === 'chest' && f.id === 'e3_log')!;
+  ok(anchoress.x === 4 && anchoress.y === 19 && teaching.cls === 'cleric' && teaching.prestige === 3 && teaching.asks === 'eleven_kept' && JSON.stringify(teaching.done) === JSON.stringify({ flag: ELEVEN_KEPT })
+    && hand.item === 'keepers_log' && hand.reward === 0 && hand.setFlag === LOG_GIVEN && chest.items.join() === 'keepers_log' && lamps.sets === ELEVEN_KEPT && JSON.stringify(lamps.after) === JSON.stringify({ flag: LOG_GIVEN }),
+    'the anchoress at 4,19 takes the keeper\'s log from the chest at Crowness Light for nothing and sets the flag the crypt\'s lamps wait on, and the lamps set the flag her teaching waits on');
+
+  const play = (early: boolean): void => {
+    const how = early ? 'the log before the ask' : 'the ask first';
+    const w = newWalk(ok);
+    const who = w.party.members.findIndex((m) => m.cls === 'cleric'), cleric = w.party.members[who];
+    cleric.xp = xpForLevel(27); cleric.level = 27; takePrestige(cleric); takePrestige(cleric);
+    w.level = 29;
+    const log = (id: string) => questLog(w.world.state, w.party).find((v) => v.def.id === id);
+    const written = (id: string): string => (log(id)?.pages.flatMap((p) => p.entries.map((e) => e.id)) ?? []).join();
+    const talk = (): string => { w.world.travel('hearthisle_i6', anchoress.x, anchoress.y); const said = meet(anchoress, w.party, heard(w.world, anchoress)).text; listen(w); return said; };
+    const bar = (): string => barOf(teaching, cleric, w.party, w.world.state);
+    const sent = sought(questLog(w.world.state, w.party));
+    ok(sent.find((s) => s.at === 'hearthisle_i6')?.who.includes(cleric.name) === true && teaching.seek?.includes(PRESTIGES.cleric.titles[2]) === true && log(seekId(who, 3))?.done === false && !log('eleven_kept'),
+      `${how}: at 27 with the second, ${cleric.name} is sent to the anchoress at Anchorhold, the seeking naming the third, and the quest is not in the log`);
+
+    if (!early) {
+      const [first, ask, again] = [talk(), talk(), talk()];
+      ok(first === anchoress.lines.join('\n\n') && !!w.party.flags['i6_anchoress_met'] && ask.includes('Bring me his log') && again === ask && !!w.party.flags[KEPT_ASKED]
+        && log(seekId(who, 3))?.done === true && written('eleven_kept') === 'asked' && log('eleven_kept')?.goal === 'Bring the Crowness keeper\'s log to Hereswith at Anchorhold.' && !!bar() && !teach(teaching, w.party, w.world.state, who).taught,
+        `${how}: her own words, then her ask, said again until the log is in (${ask.split('\n\n')[1]}), which begins the quest and ends the seeking; the third waits`);
+      w.world.travel('hearthfane2', lamps.x, lamps.y);
+      w.world.eventsHere();
+      ok(!w.world.present(lamps) && !w.party.flags[ELEVEN_KEPT], `${how}: the crypt's eleven stay dark to a company that has not given the log`);
+    }
+
+    // The log, from the chest under Crowness Light, carried to the window.
+    w.world.travel('downs_e3', chest.x, chest.y);
+    ok(!w.world.used(chest.id), `${how}: the chest at Crowness Light is there to open`);
+    w.world.markUsed(chest.id);
+    w.party.gold += chest.gold;
+    w.party.bag.push(...chest.items);
+    const gold = w.party.gold, said = talk();
+    ok(said === (early ? hand.early! : hand.done).join('\n\n') && !w.party.bag.includes('keepers_log') && !!w.party.flags[LOG_GIVEN] && w.party.gold === gold && !!w.party.flags['i6_anchoress_met'] === !early
+      && holds({ seen: 'downs_e3:e3_log' }, w.world.state, w.party), `${how}: the log taken at the window for no gold, ${early ? 'heard early: ' + hand.early!.at(-1) : 'her word to go down into the crypt'}, and the chest still seen for the Bard's gathering`);
+    ok(written('eleven_kept') === (early ? 'given' : 'asked,given') && log('eleven_kept')?.goal === 'Down into the crypt under Hearthfane, and light the eleven lamps as the log has them.' && log(seekId(who, 3))?.done === true
+      && log('eleven_kept')?.done === false && !!bar() && !teach(teaching, w.party, w.world.state, who).taught && (talk().includes('Go on down; I have the top.')) && !!w.party.flags[KEPT_ASKED] === !early,
+      `${how}: the log reads true ${early ? 'on the log alone' : 'in two entries'}, sends the company down, ${early ? 'the ask never said, ' : ''}and the third waits on the lamps`);
+
+    // The crypt: past the chamber's champions, the eleven lit.
+    fight(w, 'hearthfane2:hf2_champions');
+    w.world.travel('hearthfane2', lamps.x, lamps.y);
+    const lit = w.world.eventsHere();
+    listen(w);
+    ok(lit.join(' ') === lamps.text && !!w.party.flags[ELEVEN_KEPT] && written('eleven_kept').endsWith('kept') && log('eleven_kept')?.goal === 'Back up to the anchoress\'s window at Anchorhold.' && log('eleven_kept')?.done === false,
+      `${how}: the eleven lit as the log has them (${lit.join(' ')}), and the log sends the company back up`);
+
+    // Back at the window: her last words, and the third for the deed and no gold.
+    const purse = w.party.gold, last = talk();
+    ok(last.includes('The hum changed key an hour ago') && !bar() && teach(teaching, w.party, w.world.state, who).taught && className(cleric) === PRESTIGES.cleric.titles[2] && w.party.gold === purse && log('eleven_kept')?.done === true,
+      `${how}: ${last.split('\n\n')[1]} And ${cleric.name} is ${className(cleric)} for the deed and no gold, the quest done`);
+  };
+  play(false);
+  play(true);
+
+  // The ask's gate and the log's: a cleric of 27 with the second, and no less. A company short of it (a
+  // cleric of 27 with the first only, or of 26 with the second, or none) hears her own words again and never
+  // her ask; and the log, which she takes from any company, is not begun for one with no such cleric, which
+  // would be shown a goal no one in it can finish. It is there once the cleric is 27 with the second.
+  const clericOf = (w: Walk) => w.party.members.find((m) => m.cls === 'cleric')!;
+  const short = (how: string, make: (w: Walk) => void, rise?: (w: Walk) => void): void => {
+    const w = newWalk(ok);
+    make(w);
+    const log = (id: string) => questLog(w.world.state, w.party).find((v) => v.def.id === id);
+    const talk = (): string => { w.world.travel('hearthisle_i6', anchoress.x, anchoress.y); const said = meet(anchoress, w.party, heard(w.world, anchoress)).text; listen(w); return said; };
+    const [first, again] = [talk(), talk()];
+    ok(first === anchoress.lines.join('\n\n') && again === first && !w.party.flags[KEPT_ASKED] && !log('eleven_kept'),
+      `${how}: she says her own words and says them again, never her ask, and no journal is begun`);
+    w.world.travel('downs_e3', chest.x, chest.y);
+    w.world.markUsed(chest.id);
+    w.party.bag.push(...chest.items);
+    const said = talk();
+    ok(said === hand.done.join('\n\n') && !!w.party.flags[LOG_GIVEN] && !w.party.bag.includes('keepers_log') && !log('eleven_kept'),
+      `${how}: she takes the log all the same, and the journal shows no goal that no one in the company can finish`);
+    if (!rise) return;
+    rise(w);
+    const entries = (log('eleven_kept')?.pages.flatMap((p) => p.entries.map((e) => e.id)) ?? []).join();
+    ok(entries === 'given' && log('eleven_kept')?.goal === 'Down into the crypt under Hearthfane, and light the eleven lamps as the log has them.',
+      `${how}: and once its cleric is 27 with the second the log is there, reading from the log given`);
+  };
+  short('a cleric of 27 with the first only', (w) => { const c = clericOf(w); c.xp = xpForLevel(27); c.level = 27; takePrestige(c); }, (w) => takePrestige(clericOf(w)));
+  short('a cleric of 26 with the second', (w) => { const c = clericOf(w); c.xp = xpForLevel(26); c.level = 26; takePrestige(c); takePrestige(c); }, (w) => { const c = clericOf(w); c.xp = xpForLevel(27); c.level = 27; });
+  short('a company with no cleric', (w) => { w.party.members = w.party.members.filter((m) => m.cls !== 'cleric'); });
+}
