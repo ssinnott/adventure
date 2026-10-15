@@ -32,12 +32,10 @@ import { ok, owed } from './lib.ts';
  * dropped here.
  */
 export const UNSET: Record<string, string> = {
-  // The Council of Helmstow's pieces and its twins (#764): where the signet goes, to Helmstow's gate or the
-  // sea off Gullwick (64), and the walk home (the road behind; the ring and the endings are the Heart's, #759). The pilgrims' tokens are set on the isle (H6, #753). The keeper's log
-  // given at Anchorhold (the Cleric's third) is set by Hereswith's hand-in (#763). Jowan's letter, taken
-  // by his mother at Gullwick (58, the road behind), which the Stair's letter waits on (#758).
-  q_signet_cousin: '#765', q_signet_hold: '#765', q_signet_tallis: '#765', q_signet_sea: '#765',
-  q_wenna_home: '#765', q_letter_given: '#765',
+  // The Council of Helmstow's pieces (#764): where the signet goes to a claimant, by the Council's clerk at
+  // Helmstow's gate (64, the road behind's Helmstow half). The sea off Gullwick, the walk home and Jowan's
+  // letter are set at Gullwick (the road behind, #765).
+  q_signet_cousin: '#765', q_signet_hold: '#765', q_signet_tallis: '#765',
 };
 
 /** The flags a feature sets: a person's, met, and an event's, said (#156). */

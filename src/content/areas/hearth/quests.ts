@@ -8,6 +8,7 @@
 // the Inside; and 61, The Knocker That Stopped, each answered either way. The Cleric's third, The Eleven
 // Kept (#763): the Crowness keeper's log to the anchoress at Anchorhold and the eleven lamps lit in the
 // crypt. At the Heart (#759): 64, The Signet, the ring every answer at the panel gives, to where it goes.
+// After it, The Walk Home (the road behind, #765): begun on any ending, done on Hild's words at Gullwick.
 // How the words are keyed is in src/content/area.ts (`quests`); tools/tests/quests.ts checks every key.
 import type { QuestDef } from '../../../game/quests.ts';
 import { PILGRIMS, TOKEN_COUSIN, TOKEN_HOLD, TOKEN_TALLIS } from './maps/hearthisle_h6.ts';
@@ -16,7 +17,8 @@ import { LAMPS, LAMPS_OUT, LAMPS_WRONG, LAMPS_KEY, PILLARS } from './maps/hearth
 import { ELEVEN_KEPT, LOG_GIVEN } from './maps/hearthfane2.ts';
 import { CREW_OPEN, CREW_SHUT, CRACK_SEALED, CRACK_WIDE } from './maps/underdeep.ts';
 import { KNOT_LAST } from './maps/underdeep2.ts';
-import { SIGNET } from './maps/core.ts';
+import { SIGNET, WENNA_HOME } from './maps/core.ts';
+import { ENDED } from '../../endings.ts';
 import { THRONE_COUSIN, THRONE_HOLD, THRONE_TALLIS } from '../shelf/maps/keep.ts';
 
 /** The rearguard on the Stair's first landing, slain: 57's end where no claimant's people hold it (#758). */
@@ -162,6 +164,22 @@ export const QUESTS: readonly QuestDef[] = [
     ],
     goals: [
       { when: { item: SIGNET }, text: 'Where the ring goes: the Council\'s clerk waits at Helmstow\'s gate, and the sea off Gullwick is where the boat went out.', at: 'shelf' },
+    ],
+  },
+  {
+    // The Walk Home, at 32: the chapter is done on the choice (§5), so the walk is a quest of its own, begun
+    // on any ending and done on Hild's words on Gullwick's shore (`WENNA_HOME`, the road behind's, #765).
+    // Its entry at Helmstow's open gate waits on the gate's once-event, the road behind's Helmstow half.
+    id: 'walk_home',
+    title: 'The Walk Home',
+    start: ENDED,
+    done: { flag: WENNA_HOME },
+    entries: [
+      { id: 'spring', when: ENDED, text: 'In the spring we walk her home to Gullwick, along the coast road.' },
+      { id: 'home', when: { flag: WENNA_HOME }, text: 'Her mother was on the shore where we left her, as if she had never moved. This time, she cried.' },
+    ],
+    goals: [
+      { when: ENDED, text: 'Along the coast road to Gullwick, to the shore where her mother stands.', at: 'downs_f3' },
     ],
   },
 ];

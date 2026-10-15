@@ -5,6 +5,8 @@
 // docs/areas/shelf.md §4.3 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
+import { ENDED } from '../../../endings.ts';
+import { WENNA_HOME, SIGNET } from '../../hearth/maps/core.ts';
 
 export const DOWNS_F3: MapDef = {
   id: 'downs_f3',
@@ -66,6 +68,16 @@ export const DOWNS_F3: MapDef = {
       '"My man and my girl went out the night the light failed, and the boat never came in. Not a plank of her, not an oar. A boat that sinks gives something back. This one gave nothing, so she didn\'t sink. Somebody has her, and somebody has my girl."',
       '"Her name is Wenna. I can\'t pay what a company costs, so I\'ll give you that instead. Say it wherever you go, and watch whose face changes."',
     ], flag: 'q_wenna', says: [
+      // The Walk Home (Hearth Isle's §6, #765): after any ending the company walks her girl home, and
+      // her words end it; after them she unties the knots with Wenna beside her.
+      { after: ENDED, until: { flag: WENNA_HOME }, sets: WENNA_HOME, lines: [
+        'Hild is standing on the shore where you left her, as if she had never moved. She sees who is walking behind you, and does not move then either, not for a long moment.',
+        'This time, she cries.',
+      ] },
+      { after: { flag: WENNA_HOME }, lines: [
+        'Hild on the shingle with the rope in her hands and her girl beside her, untying the knots one at a time, and telling her what each day was.',
+        '"It is going to take till summer. Sit down."',
+      ] },
       { after: { flag: ['q_greywater', 'q_greywater_done'] }, until: { flag: 'q_wenna' }, sets: 'q_wenna', lines: [
         'A woman stands at the tideline with her skirts wet to the knee. The rope at her belt is tied in a knot, a loop inside a loop: the mark painted on every bow along the shingle.',
         '"You\'re a company. Companies find things. My man and my girl went out the night the light failed and the boat never came in, and her name is Wenna." She stops. "You\'ve heard it. Don\'t tell me you haven\'t; I watched it land."',
@@ -141,6 +153,29 @@ export const DOWNS_F3: MapDef = {
       '"Hale sent me. You know; you carried the word. Ann\'s people have put me to the fish. I\'m no good at it, and they know, and they\'ve not said so, which is worse."',
       '"There\'s no singing here. There\'s the sea, and that\'s loud enough to sleep by. Tell Hale I stayed. He\'ll not believe it. Tell him anyway."',
     ], after: { flag: 'q_paper_hale' } },
+    // The road behind (Hearth Isle's §12, #765), after any ending: Jowan's mother at her door, two doors
+    // from Hild, takes his letter (#56's 58); the sea off Gullwick, a person with no face as the Ember
+    // Stone's sockets are, takes the ring (64); and once Hild has said hers, Wenna on the shingle.
+    { kind: 'npc', x: 10, y: 13, name: 'Jowan\'s mother', after: ENDED, lines: [
+      'A woman at her door in the third house from the slip, her arms folded, watching Hild on the shingle and not going down.',
+      '"Mine went too. Not taken. Went. There\'s no knot for that."',
+    ], quest: { item: 'gullwick_letter', reward: 0, setFlag: 'q_letter_given', done: [
+      'She reads it standing, twice, and folds it into her apron.',
+      '"He chose it. Well. He never could stand to be fetched." She looks at the shingle, where Hild is. "I\'ll go down, then. In a bit."',
+    ] } },
+    { kind: 'npc', x: 9, y: 15, name: 'The sea off Gullwick', after: ENDED, until: { flag: 'q_signet_sea' }, lines: [
+      'The sea off Gullwick, where the boat went out the night the light failed. It gives nothing back.',
+    ], choice: { ask: 'Throw the ring in?', answers: [
+      { label: 'Throw it in.', takes: SIGNET, sets: 'q_signet_sea', says: [
+        'It goes in without a sound. Hild, on the shingle, does not look round, and the girl beside her does.',
+        '"Good," she says.',
+      ] },
+      { label: 'Keep it.', says: ['The sea goes on giving nothing back.'] },
+    ] } },
+    { kind: 'npc', x: 11, y: 15, name: 'Wenna', after: { flag: WENNA_HOME }, lines: [
+      'Wenna on Gullwick\'s shingle with her mother\'s rope across her knees, a knot undone for every day, and the nail still in her fist.',
+      '"Don\'t give it to me. I\'m not anyone\'s key. I said." She looks at the sea. "Thank you for walking me."',
+    ] },
   ],
   secrets: [{ x: 1, y: 16, hint: 'f3_soot' }],
   encounters: [
