@@ -55,7 +55,7 @@
 // a company of 27:
 // the Paladin's lamp, the Barbarian's nest and the Druid's seedling.
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, see, fight, listen, walkThrough, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
+import { newWalk, see, fight, gone, listen, walkThrough, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
 import type { Walk, Step } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import type { Facing } from '../../../game/types.ts';
@@ -99,6 +99,7 @@ import { CRATER, STONE } from './maps/emberwaste_f11.ts';
 import { LIT, LIGHTS, SOCKETS, SEEDLING, SEEDLING_ASKED, SEEDLING_TAKEN, SEEDLING_PLANTED } from './maps/ember_stone.ts';
 import { LAMP_ASKED, LAMP_LIT } from './maps/old_cinder2.ts';
 import { SLEEPERS_SEEN } from '../rimewater/chapter.ts';
+import { ENDINGS, ENDED } from '../../endings.ts';
 
 const G10 = MAP_DEFS.find((d) => d.id === 'cindercoast_g10')!, G11 = MAP_DEFS.find((d) => d.id === 'firemount_g11')!;
 const person = (name: string, d = G10): Person => d.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
@@ -761,6 +762,7 @@ export const walkthrough: Walkthrough = (ok) => {
   coastBehind(w, ok);
   mountainBehind(w, ok);
   wasteBehind(w, ok);
+  heartBehind(w, ok);
   sideQuests(ok);
   thirdPrestiges(ok);
   theWindow(ok);
@@ -1133,6 +1135,42 @@ function roadBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   fight(w, 'emberwaste_e10:e10_sentries');
   const now = says(w);
   ok(now.includes('iron walking the road') && now.includes('yesterday there was none'), `and the Rider at the gate says the road is not what it was (${now.replace(/\n+/g, ' ')})`);
+}
+
+/**
+ * After the Heart (#765): any ending stands Ashfall's seven sentries' groups down by the leave rule,
+ * standing or killed, and none comes back; Cinderport's harbourmaster says the road has stopped. Before
+ * it they stand as the Stone left them, and she says only the boats. The endings' flags are set by hand.
+ */
+function heartBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void {
+  const SENTRIES = ['emberwaste_e10:e10_sentries', 'emberwaste_f10:f10_sentries', 'emberwaste_f11:f11_sentries', 'firemount_g11:g11_sentry', 'meridian_camp:mc1_sentry', 'meridian_camp2:mc2_sentry', 'meridian_camp3:mc3_sentry'];
+  const group = (at: string) => { const [map, id] = at.split(':'); return MAP_DEFS.find((d) => d.id === map)!.encounters!.find((g) => g.id === id)!; };
+  const live = (v: Walk, at: string): boolean => { const g = group(at); v.world.travel(at.split(':')[0], g.x, g.y); return v.world.liveGroups().some((x) => x.def.id === g.id); };
+  const harbour = MAP_DEFS.find((d) => d.id === 'cinderport')!.features!.find((f): f is Person => f.kind === 'npc' && f.name.startsWith('Morwenna'))!;
+  const says = (v: Walk): string => { v.world.travel('cinderport', harbour.x, harbour.y); const t = meet(harbour, v.party, heard(v.world, harbour)).text; listen(v); return t; };
+  const stood = '"The things on the road have stopped. Stood where they were, the drovers say, and are standing yet. Whatever they were looking for, somebody found it."';
+  const fresh = newWalk(ok);
+  fresh.party.flags[LIT] = 1;
+  ok(SENTRIES.every((at) => { const g = group(at); return !!g.leaves && JSON.stringify(g.until) === JSON.stringify(ENDED) && JSON.stringify(g.after) === JSON.stringify({ flag: LIT }); })
+    && SENTRIES.every((at) => live(fresh, at)) && says(fresh) === harbour.lines.join('\n\n'),
+    'before any ending the seven sentries\' groups stand on Ashfall\'s roads as the Stone left them, and the harbourmaster says only the boats');
+  for (const e of Object.values(ENDINGS)) {
+    const v = newWalk(ok);
+    v.party.flags[LIT] = 1;
+    v.party.flags[e.flag] = 1;
+    for (const at of SENTRIES) gone(v, at);
+    ok(says(v) === stood, `after ${e.flag} the seven are gone where they stood, and the harbourmaster says the road has stopped`);
+  }
+  // The walk's own company, two of the seven killed and the rest standing or back: after an ending none
+  // is there, and two days on, past their respawn, none has come back.
+  fight(w, 'emberwaste_f11:f11_sentries');
+  fight(w, 'meridian_camp:mc1_sentry');
+  const killed = SENTRIES.filter((at) => !live(w, at));
+  w.party.flags[ENDINGS.reignite.flag] = 1;
+  for (const at of SENTRIES) gone(w, at);
+  w.world.advance(2 * MINUTES_PER_DAY + 1);
+  const back = SENTRIES.filter((at) => live(w, at));
+  ok(killed.length >= 2 && !back.length, `standing or killed (${killed.length} of 7 killed), none comes back after an ending${back.length ? ' -> ' + back.join(', ') : ''}`);
 }
 
 /**

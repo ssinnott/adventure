@@ -16,6 +16,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/ashfall.md §4.5 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { ENDED } from '../../../endings.ts';
 
 /** The Barbarian's third (#448): the warlord's heir has asked for what nests down the vents killed. */
 export const BROOD_ASKED = 'q_brood';
@@ -160,6 +161,6 @@ export const FIREMOUNT_G11: MapDef = {
     { id: 'g11_slope', x: 16, y: 11, monsters: ['ember_salamander', 'ember_salamander', 'ember_salamander'], aware: 3, respawn: 1440 },
     { id: 'g11_stokers', x: 28, y: 19, monsters: ['stoker', 'ember_salamander', 'stoker', 'ember_salamander'], aware: 3, respawn: 1440 },
     { id: 'g11_drake', x: 28, y: 22, monsters: ['cinder_drake'], aware: 5, respawn: 2880 },
-    { id: 'g11_sentry', x: 4, y: 24, monsters: ['sentry'], aware: 4, respawn: 2880, after: { flag: 'q_ember_lit' } },
+    { id: 'g11_sentry', x: 4, y: 24, monsters: ['sentry'], aware: 4, respawn: 2880, after: { flag: 'q_ember_lit' }, until: ENDED, leaves: true },
   ],
 };

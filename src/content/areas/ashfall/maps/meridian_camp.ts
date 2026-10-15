@@ -10,6 +10,7 @@
 // own; docs/areas/meridian_camp.md §4.1 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { EAST, SOUTH, WEST } from '../../../../game/types.ts';
+import { ENDED } from '../../../endings.ts';
 
 /**
  * The way down to the iron corridors (meridian_camp2, #22's second level): the stair at the far end,
@@ -107,6 +108,6 @@ export const MERIDIAN_CAMP: MapDef = {
     { id: 'mc1_round', x: 19, y: 10, monsters: ['stoker', 'ember_salamander'], aware: 3, respawn: 1440 },
     { id: 'mc1_flue', x: 28, y: 8, monsters: ['stoker'], aware: 3, respawn: 1440 },
     { id: 'mc1_stokers', x: 23, y: 23, monsters: ['stoker', 'ember_salamander', 'stoker', 'ember_salamander'], aware: 2, respawn: 2880, roams: false },
-    { id: 'mc1_sentry', x: 6, y: 27, monsters: ['sentry'], aware: 4, respawn: 2880, after: { flag: 'q_ember_lit' } },
+    { id: 'mc1_sentry', x: 6, y: 27, monsters: ['sentry'], aware: 4, respawn: 2880, after: { flag: 'q_ember_lit' }, until: ENDED, leaves: true },
   ],
 };
