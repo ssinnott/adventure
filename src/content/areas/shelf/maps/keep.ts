@@ -20,6 +20,9 @@ export const SAT: readonly QuestCond[] = [THRONE_COUSIN, THRONE_HOLD, THRONE_TAL
 
 // Wenna's three answers at the Heart (#759 sets them): the relit and the finished bring Vask up the stair in irons.
 const IRONS: readonly QuestCond[] = [{ flag: ENDINGS.reignite.flag }, { flag: ENDINGS.finish.flag }];
+// Once the company is on the isle Vask is at the panel (#765; hearth_isle.md §12): gone from the keep
+// with his guards, and his door the empty throne room's until the Council has removed him.
+const AWAY: readonly QuestCond[] = [{ flag: THRONE_REMOVED }, { visited: 'hearthisle_h6' }, ...ENDED];
 
 /** Each list of flags in `a` with each in `b`: a `When` that holds where both do. */
 const both = (a: readonly QuestCond[], b: readonly QuestCond[]): QuestCond[] =>
@@ -92,8 +95,13 @@ export const KEEP: MapDef = {
     // The Council's proclamation (#764): a sign takes no presence, so it is said after the Regent's on
     // its square, every time, as a sign is.
     { kind: 'event', x: 9, y: 8, id: 'proclaimed', after: { flag: THRONE_REMOVED }, text: 'Over it: the Council of Helmstow holds the city under its seal.' },
-    // Gone once the Council has removed him (#764), his guards with him; his door is the Council's.
-    { kind: 'npc', x: 7, y: 4, name: 'Lord Aumery Vask, Regent-Warden', interior: 'throne_room', until: { flag: THRONE_REMOVED }, lines: [
+    // After an ending its twins (#765), on the gatehouse the other side of the gate, since the Regent's sign
+    // fills the log there: the opened written as any ending but the other two, so the pair are seen apart.
+    { kind: 'event', x: 6, y: 8, id: 'proclaimed_irons', after: IRONS, text: 'A proclamation on the gatehouse: the Council of Helmstow sits in judgement on Aumery Vask, once Regent-Warden, this day and every day until it is done.' },
+    { kind: 'event', x: 6, y: 8, id: 'proclaimed_open', after: ENDED, until: IRONS, text: 'A proclamation on the gatehouse, the ink run in the strange light: the Council holds the city, and the gates stand open, since there is nothing now to shut them against.' },
+    // Gone once the Council has removed him (#764), his guards with him, or once the company is on the
+    // isle or after an ending (#765); his door is the empty throne room's, then the Council's.
+    { kind: 'npc', x: 7, y: 4, name: 'Lord Aumery Vask, Regent-Warden', interior: 'throne_room', until: AWAY, lines: [
       'A tall man in Warden grey, his guards a step behind him. He does not wait for you to bow, and does not appear to notice that you did not.',
       '"The Crown has need of a chartered company; the Wardens are stretched thin. A farm past Gullwick, Ashcombe, off the Salt Road, has gone quiet. Find out why. Clear whatever is there."',
       '"Bring me anything you find that is not a rat. Especially anything that glows."',
@@ -126,9 +134,22 @@ export const KEEP: MapDef = {
         '"Tell the keeper the Crown remembers him." He smiles, briefly, the way a man does when a small account closes in his favour. "Was there anything else?"',
       ] },
     ] },
+    { kind: 'npc', x: 7, y: 4, name: 'The throne room', interior: 'throne_room', after: AWAY, until: { flag: THRONE_REMOVED }, lines: [
+      'The throne room, and the Queen\'s throne at the end of it under its black cloth, with nobody before it.',
+    ] },
     { kind: 'npc', x: 7, y: 4, name: 'Wiglaf, at the keep\'s door', interior: 'throne_room', after: { flag: THRONE_REMOVED }, lines: [
       'The keep\'s great door stands open, and Wiglaf at it with his book, keeping the door for the Council as he kept the chapel\'s.',
       '"The Council sat once, as it said it would. It finds it likes the chairs."',
+    ] },
+    // After the relit and the finished endings Vask is in irons before the Council (#765), in the room
+    // behind his door, whoever keeps it; and before the door once he is on the isle, his steward.
+    { kind: 'npc', x: 7, y: 4, name: 'Aumery Vask, before the Council', after: IRONS, lines: [
+      'Through the keep\'s door the hall, and the Council in the Queen\'s chairs, and Vask standing before them in irons with his hands folded. He is answering a question, quietly, and he never once looks up.',
+      'A councillor, to the clerk: "Write that he was not wrong about the facts. He will want that written."',
+    ] },
+    { kind: 'npc', x: 7, y: 5, name: 'The Regent\'s steward', after: { visited: 'hearthisle_h6' }, until: [{ flag: THRONE_REMOVED }, ...ENDED], lines: [
+      'The Regent\'s steward before the throne room\'s door, a ring of keys at his belt and nobody to open anything for.',
+      '"His lordship is not in the keep. He went over to the isle with the grey men and left me the keys, and no orders."',
     ] },
     { kind: 'npc', x: 6, y: 5, name: 'Petitioners', lines: [
       'Petitioners wait on the keep\'s steps, caps in hand.',

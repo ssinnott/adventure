@@ -859,4 +859,43 @@ export const walkthrough: Walkthrough = (ok) => {
 
   // The Star That Moved (#56's 24), played every way.
   theStar(w);
+
+  afterTheHeart(ok);
 };
+
+/**
+ * The halls' words after the Heart (#765): the Keel's Ruan, the Map Room's Ysolde Carrow and the priestess
+ * at the Drowned Temples' dry door each have a word for the relit, the opened and the finished ending,
+ * said before anything else of theirs but a business still open: Ruan's question until it is answered and
+ * Ysolde's reading of the journal until it is read. Before an ending, none of it.
+ */
+function afterTheHeart(ok: (cond: boolean, msg: string) => void): void {
+  const at = (map: string, x: number, y: number, name: string): Person => MAP_DEFS.find((d) => d.id === map)!.features!.find((f): f is Person => f.kind === 'npc' && f.x === x && f.y === y && f.name.startsWith(name))!;
+  const people: readonly [string, Person][] = [['saltmouth', at('saltmouth', 12, 4, 'Ruan')], ['saltmouth', at('saltmouth', 3, 12, 'Ysolde')], ['delta_b6', at('delta_b6', 15, 12, 'a priestess')]];
+  const hear = (w: Walk, map: string, p: Person): string => { w.world.travel(map, p.x, p.y); const said = meet(p, w.party, heard(w.world, p)).text; listen(w); return said; };
+  // Each ending's first words from Ruan, Ysolde and the priestess, and the flags of everything they had to say before.
+  const WORDS: Record<string, readonly string[]> = {
+    q_end_reignite: ['"Steady light, quiet sea', '"The map is finished, then', '"It sings. Not the count'],
+    q_end_arrive: ['"Wind. Real wind', '"Beyond. There is a beyond', '"It stopped. The count stopped'],
+    q_end_finish: ['"The sea hums.', '"The Guild has a map with nothing past its edge', '"It sings a song I have not heard'],
+  };
+  const DONE = ['q_compact_over', 'meridian_read', 'q_tide_bell_done', 'q_tide_home'];
+  const company = (...flags: string[]): Walk => { const w = newWalk(ok); for (const f of [...DONE, ...flags]) w.party.flags[f] = 1; return w; };
+  const before = company(), said = people.map(([map, p]) => hear(before, map, p));
+  ok(said.every((s) => !Object.values(WORDS).flat().some((x) => s.startsWith(x))), `before an ending Ruan, Ysolde and the priestess say what they said (${said.map((s) => s.slice(0, 24)).join(' / ')})`);
+  for (const flag of Object.keys(WORDS)) {
+    const w = company(flag), now = people.map(([map, p]) => hear(w, map, p));
+    ok(now.every((s, i) => s.startsWith(WORDS[flag][i])), `after ${flag}, first of all, each has the ending's word (${now.map((s) => s.slice(0, 24)).join(' / ')})`);
+  }
+  { // A business still open comes first: after an ending the Compact's question is put and answered and the journal read, then the words.
+    const w = newWalk(ok), [ruan, ysolde] = [people[0][1], people[1][1]];
+    for (const f of ['q_compact_factor_done', 'q_end_arrive']) w.party.flags[f] = 1;
+    w.party.bag.push('meridian_journal');
+    w.world.travel('saltmouth', ruan.x, ruan.y);
+    const over = meet(ruan, w.party, heard(w.world, ruan)).choice?.answers.find((a) => a.label === 'Take the Compact over.');
+    if (over) answer(over, w.party);
+    const read = hear(w, 'saltmouth', ysolde), now = [hear(w, 'saltmouth', ruan), hear(w, 'saltmouth', ysolde)];
+    ok(!!over && !!w.party.flags.q_compact_over && read.includes('Fane\'s hand. Volume one.') && !!w.party.flags.meridian_read && now[0].startsWith(WORDS.q_end_arrive[0]) && now[1].startsWith(WORDS.q_end_arrive[1]),
+      `after an ending Ruan still puts the Compact's question and Ysolde still reads the journal, and then each has the ending's word (${now.map((s) => s.slice(0, 24)).join(' / ')})`);
+  }
+}

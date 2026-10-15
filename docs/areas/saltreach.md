@@ -635,6 +635,10 @@ settled in its issue, and what the pilot teaches changes them.
   the smugglers' stair and its cache are still had only through C6's own secret. The walkthrough joins the Compact by the run, pays the half fare both ways, walks the
   crate in the log and goes down through the cellar. The hermit's letter (#56's 26) is #192's to
   build end to end, Ruan's hand-in with it.
+- **After the Heart** (#765; docs/areas/hearth_isle.md §12): Ysolde, Ruan and the priestess at the
+  Drowned Temples' dry door (`delta_b6` 15,12) each have a word for the relit, the opened and the
+  finished ending, said before anything else of theirs but Ruan's question and Ysolde's reading of the
+  journal while they stand open. The walkthrough hears each after each ending, and before one, none.
 
 ### 4.10 C7, the salt pans (#178): country, band 12
 

@@ -713,6 +713,23 @@ The Empty Throne ends at the Council of Helmstow (#764; docs/areas/hearth_isle.m
 The walkthrough plays the six verdicts and the twins, the pieces set by hand, and the inn, the Chapel
 and the stores after each.
 
+After the Heart (#765; docs/areas/hearth_isle.md §12 and §9.2), on top of the Council's:
+
+- **On the isle** (`visited: 'hearthisle_h6'`) Vask is at the panel: gone from the keep with his
+  guards, and the throne room empty behind his door until the Council removes him. His steward stands
+  before it at 7,5 with the keys and no orders, until the Council or an ending.
+- **After an ending** (`ENDED`) the south gate lifts its shut for orcblood, and *The gate stands open*
+  is said once on the road before it at 16,5. Wiglaf waits by it at 15,4 to ask where the Queen's
+  signet goes (the cousin, the hold, Tallis or kept) until it has gone; once the Council has sat it
+  goes into the chair's keeping. The inn is 12 and the Chapel open, and the gatehouse's other side
+  (6,8) has the ending's proclamation. After the relit and the finished Vask stands in irons before
+  the Council, a person in the room behind his door.
+- **The words,** first of all: the Eel's talk, Ordgar's at the Drillyard and the Guildhall's
+  Luminary's, beside its step at 12,11, each the ending's.
+
+The walkthrough walks the city before the isle, on it and after each ending, then after a verdict
+and the finished. It puts the clerk's question with the ring and without it.
+
 ## 6. Side quests
 
 #56 drafts eight for the Foreland, levels 1 to 4. The owner asked for the ones that fit to be pulled
