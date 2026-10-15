@@ -72,8 +72,8 @@ const DAYS = 300;
 /**
  * The boss groups, by the zone they are met from (a dungeon's under the zone it opens from), as the
  * game names a group, 'map:id': each is judged at its own map's floor and two levels above it, and
- * left out of its map's day. An area's are all its zones' together. A boss at the cap is judged at its
- * floor alone, no company standing two above it; and a map that holds nothing but its boss (the Heart:
+ * left out of its map's day. An area's are all its zones' together. A boss whose floor leaves fewer than
+ * two levels to the cap is judged at the cap (at its floor alone where the floor is the cap); and a map that holds nothing but its boss (the Heart:
  * Vask's group, or its twin the Council thins) is judged on the boss's odds, with no floor of fights to
  * pool and no day (#759).
  */
@@ -657,9 +657,12 @@ export function gate(): void {
         if (!boss) continue;
         const at = rate(boss, d.band[0]);
         check(`${b}: floor`, at, within(GATE.boss.aim), within(GATE.boss.limit), `${d.id}'s boss ${boss.id} at ${d.band[0]}: ${pc(at)} won (${aims(`${pc(GATE.boss.aim[0])} to ${pc(GATE.boss.aim[1])}`, `${pc(GATE.boss.limit[0])} to ${pc(GATE.boss.limit[1])}`)})`);
-        if (d.band[0] + GATE.under > MAX_LEVEL) { console.log(`  n/a:  ${d.id}'s boss ${boss.id} two above its floor: no company stands past the cap, ${MAX_LEVEL}`); continue; }
-        const above = rate(boss, d.band[0] + GATE.under);
-        check(`${b}: above`, above, atLeast(GATE.bossAbove.aim), atLeast(GATE.bossAbove.limit), `${d.id}'s boss ${boss.id} at ${d.band[0] + GATE.under}: ${pc(above)} won (${aims(pc(GATE.bossAbove.aim), pc(GATE.bossAbove.limit))})`);
+        // The company two above the floor, or at the cap where that is as high as it goes (a boss at 31 meets 32);
+        // a boss at the cap itself is judged at its floor alone (#759).
+        const top = Math.min(d.band[0] + GATE.under, MAX_LEVEL);
+        if (top === d.band[0]) { console.log(`  n/a:  ${d.id}'s boss ${boss.id} above its floor: no company stands past the cap, ${MAX_LEVEL}`); continue; }
+        const above = rate(boss, top);
+        check(`${b}: above`, above, atLeast(GATE.bossAbove.aim), atLeast(GATE.bossAbove.limit), `${d.id}'s boss ${boss.id} at ${top}: ${pc(above)} won (${aims(pc(GATE.bossAbove.aim), pc(GATE.bossAbove.limit))})`);
       }
       // Its dens: the keepers the camp's hardest fight, and its brood's number and pace.
       for (const f of d.features ?? []) if (f.kind === 'den') { const r = denReading(d, f, d.band[0]); ok(!r.fault, `${r.line}${r.fault ? ` (${r.fault})` : ''}`); }
