@@ -1555,7 +1555,7 @@ want it. The Council sits on it with everything else (below).
   Signet*, with the text given in §8, read from the pack; every answer at the panel gives it. The
   log is keyed on the item and the four `q_signet_*` flags, its "and the like" written *It went to
   the hold, in a cloth.* and *It went to Tallis, in a cloth.* Its goal is at `shelf`. The clerk,
-  the sea and the hand-in are #765's: `UNSET` (`tools/tests/quests.ts`) owes it the four
+  the sea and the hand-in are #765's (the clerk is built: #765, half A): `UNSET` (`tools/tests/quests.ts`) owes it the four
   flags (the three were #759's; the sea's is added) and no longer owes the endings' three, which
   Wenna's answers set (#759's 10).
 
@@ -2970,32 +2970,24 @@ Decided by delegate for #759, each the owner's to overturn:
 
 Decided by delegate for #765 (half A: Helmstow and the halls), each the owner's to overturn:
 
-1. **The throne room is the extra link on Vask's door** (`keep` 7,4): a person with its room, `after`
-   Vask's `until` and `until` the removal, before Wiglaf, with one line of mine (*The throne room, and
-   the Regent's chair at the end of it with nobody in it.*). The doorway and locks checks want a
-   business that goes to have a twin on its square (#764's 6); a shut door's word has none.
-2. **Aumery Vask, before the Council, stands on the door after the chain,** a person in whichever room
-   keeps it: the empty throne room, or Wiglaf's once the Council has removed him, so the door never
-   opens on him alone. The steward is at 7,5, as §12 has him.
-3. **The endings' proclamations are on the gatehouse the other side of the gate** (`keep` 6,8), in
-   §12's words, as events: a sign takes no presence, and the Regent's at 9,8 takes three of the log's
-   four lines as a sign is read, so no twin fits beside it. The opened is written `after: ENDED,
-   until: IRONS` so the line check sees the pair apart. The Council's word at 9,8 stays as #764 built
-   it, since the Council holds the city after every ending.
-4. **The Guildhall's Luminary stands at `harrow` 12,11,** beside the step before its door at 11,10, as
-   Aldith sits by the inn's, `after: ENDED`. The relit words are its lines and the opened and the
-   finished its `says`, so every line is heard.
-5. **The clerk at the gate (64) is built here** with §6's words: `after: ENDED`, `until` the four
-   `q_signet_*`, and once the Council has sat (`SAT`) the same four answers, the three that give the
-   ring with the second line *"The Council has sat, and does not sit twice. It goes into the chair's
-   keeping."* `UNSET`
-   drops the three flags it sets; `q_signet_sea` stays owed to the other half.
-6. **First of all is taken as written:** on Ruan and Ysolde the endings' words come before the
-   Compact's question and the journal's reading, so a company that ends with either unasked has lost
-   it.
-7. **The density counts a new feature whatever its presence:** Helmstow's points go 26 to 27, the
-   keep's 12 to 14 and the Foreland's 29 to 31 (97.1% to 97.4% within 8). The gate and the curve are
-   unmoved.
+1. **The empty throne room is the extra link on Vask's door** (`keep` 7,4), `after` his `until` and
+   `until` the removal, with one line: the doorway and locks checks want a twin there (#764's 6).
+2. **Aumery Vask, before the Council, stands after the chain,** a person in whichever room keeps the
+   door, so it never opens on him alone; the steward is at 7,5, as §12 has him.
+3. **The endings' proclamations are events at `keep` 6,8 in §12's words:** the Regent's sign fills the
+   log at 9,8; the opened is `after: ENDED, until: IRONS`, so the line check sees the pair apart.
+4. **The Guildhall's Luminary is at `harrow` 12,11,** beside its step as Aldith sits by the inn's,
+   `after: ENDED`: the relit words are its lines and the other two its `says`.
+5. **The clerk at the gate (64) is built here** with §6's words, `until` the four `q_signet_*`, a `says`
+   after `SAT`; `UNSET` drops the three flags it sets and owes `q_signet_sea` to the other half.
+6. **First of all is taken as written** on Ruan and Ysolde, so an ending hides the Compact's question
+   and the journal's reading for good. Superseded by 8.
+7. **The density counts a new feature whatever its presence:** Helmstow 26 to 27 points, the keep 12
+   to 14 and the Foreland 29 to 31 (97.4% within 8); the gate and the curve are unmoved.
+8. **An ending's words wait on a business still open** (supersedes 6): Ruan's question and Ysolde's
+   journal come first until done. Ordgar's and the priestess's first words change nothing, so stay behind.
+9. **Vask's `until` ends his hand-ins at the first step on the isle:** the survey wand (300 gold,
+   `q_ashcombe_done`), the tenant's paper (50) and the oil order; §12 and 9.1's 23 require it.
 
 ## 10. Names
 
@@ -3234,6 +3226,8 @@ Owed, from the Heart (#759):
   the four `q_signet_*`. The clerk at `shelf` 15,4 is built and sets three of them (#765, Helmstow
   and the halls); `q_wenna_home` and `q_signet_sea`, the sea at Gullwick taking `queens_signet`, are
   the rest of it, and `UNSET` (`tools/tests/quests.ts`) owes the two until they land.
+- **First of all, but for a business still open (#765, half A):** Ruan's Compact question and
+  Ysolde's reading of the journal come before an ending's words until done (§9.2, #765's 8).
 - **The chapter is #760's:** the Heart's steps are `core:core_door` and `core:core_heart` (seen),
   the flags `VASK_FALLEN`, `VOICE_WHOLE`, `RING_GIVEN` and `ENDED`, at `core`; 64 is `signet` in the
   area's `quests.ts`.
@@ -3320,12 +3314,13 @@ The count stopped, and the song never came back, and in the dark the Tidefolk be
 themselves. We know the words, it turns out."*; finished, *"It sings a song I have not heard: a
 travelling song, the old women say, for a long way. The tide is the same tide. The song is not."*
 
-**As built (#765, Helmstow and the halls):** the lines above stand as given but for three. The
+**As built (#765, Helmstow and the halls):** the lines above stand as given but for four. The
 endings' proclamations are events on the gatehouse at `keep` 6,8, the other side of the gate from
 the Regent's sign, and the Council's word at 9,8 is as #764 built it; the throne room, empty
 (`after` Vask's `until`, `until` the removal), is the link on Vask's door before Wiglaf, and Vask in
-irons a person in the room; the Luminary, *The Guildhall's Luminary*, stands at `harrow` 12,11. The
-clerk at the gate is built with 64 (§6; §9.2, #765's 1 to 5).
+irons a person in the room; the Luminary, *The Guildhall's Luminary*, stands at `harrow` 12,11; and
+Ruan's question and Ysolde's reading come before the endings' words while they stand open. The clerk
+at the gate is built with 64 (§6; §9.2, #765's 1 to 5 and 8).
 
 **Ashfall** (every box, the sentries' groups): `until: ENDED`, by the leave rule, so they stand
 down standing or not; Cinderport's harbourmaster, `after: ENDED`:

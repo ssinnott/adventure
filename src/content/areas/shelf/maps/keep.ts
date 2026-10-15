@@ -135,7 +135,7 @@ export const KEEP: MapDef = {
       ] },
     ] },
     { kind: 'npc', x: 7, y: 4, name: 'The throne room', interior: 'throne_room', after: AWAY, until: { flag: THRONE_REMOVED }, lines: [
-      'The throne room, and the Regent\'s chair at the end of it with nobody in it.',
+      'The throne room, and the Queen\'s throne at the end of it under its black cloth, with nobody before it.',
     ] },
     { kind: 'npc', x: 7, y: 4, name: 'Wiglaf, at the keep\'s door', interior: 'throne_room', after: { flag: THRONE_REMOVED }, lines: [
       'The keep\'s great door stands open, and Wiglaf at it with his book, keeping the door for the Council as he kept the chapel\'s.',

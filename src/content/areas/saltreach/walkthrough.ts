@@ -866,7 +866,8 @@ export const walkthrough: Walkthrough = (ok) => {
 /**
  * The halls' words after the Heart (#765): the Keel's Ruan, the Map Room's Ysolde Carrow and the priestess
  * at the Drowned Temples' dry door each have a word for the relit, the opened and the finished ending,
- * said before anything else of theirs; before an ending, none of it.
+ * said before anything else of theirs but a business still open: Ruan's question until it is answered and
+ * Ysolde's reading of the journal until it is read. Before an ending, none of it.
  */
 function afterTheHeart(ok: (cond: boolean, msg: string) => void): void {
   const at = (map: string, x: number, y: number, name: string): Person => MAP_DEFS.find((d) => d.id === map)!.features!.find((f): f is Person => f.kind === 'npc' && f.x === x && f.y === y && f.name.startsWith(name))!;
@@ -885,5 +886,16 @@ function afterTheHeart(ok: (cond: boolean, msg: string) => void): void {
   for (const flag of Object.keys(WORDS)) {
     const w = company(flag), now = people.map(([map, p]) => hear(w, map, p));
     ok(now.every((s, i) => s.startsWith(WORDS[flag][i])), `after ${flag}, first of all, each has the ending's word (${now.map((s) => s.slice(0, 24)).join(' / ')})`);
+  }
+  { // A business still open comes first: after an ending the Compact's question is put and answered and the journal read, then the words.
+    const w = newWalk(ok), [ruan, ysolde] = [people[0][1], people[1][1]];
+    for (const f of ['q_compact_factor_done', 'q_end_arrive']) w.party.flags[f] = 1;
+    w.party.bag.push('meridian_journal');
+    w.world.travel('saltmouth', ruan.x, ruan.y);
+    const over = meet(ruan, w.party, heard(w.world, ruan)).choice?.answers.find((a) => a.label === 'Take the Compact over.');
+    if (over) answer(over, w.party);
+    const read = hear(w, 'saltmouth', ysolde), now = [hear(w, 'saltmouth', ruan), hear(w, 'saltmouth', ysolde)];
+    ok(!!over && !!w.party.flags.q_compact_over && read.includes('Fane\'s hand. Volume one.') && !!w.party.flags.meridian_read && now[0].startsWith(WORDS.q_end_arrive[0]) && now[1].startsWith(WORDS.q_end_arrive[1]),
+      `after an ending Ruan still puts the Compact's question and Ysolde still reads the journal, and then each has the ending's word (${now.map((s) => s.slice(0, 24)).join(' / ')})`);
   }
 }

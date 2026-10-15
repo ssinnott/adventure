@@ -868,11 +868,12 @@ function council(ok: (cond: boolean, msg: string) => void): void {
 
 /**
  * The road behind after the Heart (#765, Helmstow's half): once the company is on the isle Vask is gone
- * from his keep, the throne room empty behind his door and his steward before it; after an ending the
- * gate stands open, said once on the road before it, and takes Idris, the Council's clerk by it asks
- * where the ring goes, the inn is at 12 and the Chapel open, the gatehouse has the ending's
- * proclamation, Vask stands in irons for the relit and the finished, and the Eel, Ordgar and the
- * Guildhall's Luminary have each ending's word, first of all. Before the isle and the endings, none.
+ * from his keep, the throne room empty behind his door and his steward before it. After an ending the
+ * gate stands open, said once on the road before it, and the gate lets Idris (the orcblood paladin) in;
+ * the Council's clerk by it asks where the ring goes; the inn is at 12 and the Chapel open; the
+ * gatehouse has the ending's proclamation; Vask stands in irons for the relit and the finished; and the
+ * Eel, Ordgar and the Guildhall's Luminary have each ending's word, first of all. Before the isle and
+ * the endings, none of it.
  */
 function roadBehind(ok: (cond: boolean, msg: string) => void): void {
   const H6 = MAP_DEFS.find((d) => d.id === 'hearthisle_h6')!;
