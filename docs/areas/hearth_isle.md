@@ -992,9 +992,9 @@ no step of its own, and no `deep` way is added, the area's band, 28–32, holdin
   `ud2_crawlers1` 16,20, `ud2_keepers` 16,16, `ud2_crawlers2` 16,12 (two crawlers, not three:
   #758's 8), `ud2_knockers` 16,8 and `ud2_catcher` 16,4. Their `aware`, roaming and respawns are in
   §9.2 (#758's 9).
-- **The Catcher** is set off the line by its gate (`OFF_LINE`): 1,100 hit points and 34d8+40 for
-  the line's 1,826 and 30d8+34. Its level, armour, attack, speed, xp, `ranged`, paralysis and look
-  are the brief's (§7, §8; #758's 7).
+- **The Catcher** is set off the line on its odds (`OFF_LINE`): 1,300 hit points and 32d8+37 for
+  the line's 2,096 and 35d7+54 (#752; its gate set 1,100 and 34d8+40). Its level, armour, attack,
+  speed, xp, `ranged`, paralysis and look are the brief's (§7, §8; #758's 7; #752's 4).
 - **The finds.** `ud2_rearguard_chest` (17,26) holds 900 gold and the Grey Axe, 2d12+7 at 6,800;
   `ud2_letter_chest` (15,21), on `ud2_letter`'s square as the brief has it, Jowan's letter and no
   gold; the dead's packs `ud2_packs` (15,13) 700 gold and four `potion_heal`. The Catcher drops
@@ -1177,9 +1177,10 @@ in these squares and lines:
   entry): a person's `flag` is set only on her own first lines (`meet`, `src/game/people.ts`), so
   those words would have given the ring and never the flag the chapter and its goals read
   (#759's 6).
-- **Vask** is set off the line by the Heart's gate (`OFF_LINE`): 1,800 hit points and 22d8+23 for
-  the line's 1,922 and 32d8+33. His level, armour, attack, speed, xp, role, look, calls and sprite
-  are the brief's (§7, §8; #759's 7).
+- **Vask** is set off the line on his odds (`OFF_LINE`): 1,850 hit points and 22d8+23 for the line's
+  2,100 and 34d8+41 (#752; the Heart's gate set 1,800), and the sentries he calls carry twice the
+  soldier line's hit points, 890, with its blow. His level, armour, attack, speed, xp, role, look,
+  calls and sprite are the brief's (§7, §8; #759's 7; #752's 5).
 - **The finds** are none but the ring: each answer gives it (`queens_signet`, 64, §6), and the Heart
   adds no gold.
 - **Measured.** The walkthrough walks the last door shut on four of the road's five and open on the
@@ -1742,18 +1743,18 @@ issue tunes them on the gate (§8).
 
 | Id | Name | Family, drawing | Kind, role | Level | Numbers on the line | Where; what it does |
 |---|---|---|---|---|---|---|
-| `hearth_moth` | Hearth Moth | moths, `hearth_moth` | beast, fodder | 28 | hp 276, ac 24, attack 15, 3d8+2, speed 12, xp 557 | the isle and the nave by night, twelve to a group; flies (`ranged`); its dust puts to sleep (`inflict: asleep 0.2`); `look: 'The sky over the isle is moving.'` |
-| `ashen_champion` | Ashen Champion | cultist, `ashen_champion` | person, soldier | 29 | hp 418, ac 26, attack 16, 5d8+5, speed 11, xp 1,153 | the isle's pickets, the temple, the crypt; `steady` (the Hand never breaks); drops `grey_knife` at 0.1; `look: 'The Hand\'s best, in steel from below.'` |
-| `ashen_preacher` | Ashen Preacher | cultist, `ashen_preacher` | person, caster | 29 | hp 566, ac 26, attack 18, 6d8+7, speed 12, xp 1,538 | behind the champions; `cast: { spells: ['firebolt', 'ward'], chance: 0.5 }`, `ranged`, `steady`; `look: 'Still preaching, and the fire is the sermon.'` |
-| `deep_rat` | Deep Rat | rat, `deep_rat` | beast, fodder | 30 | hp 282, ac 25, attack 16, 3d8+2, speed 12, xp 597 | everywhere below, twelve to a group; `inflict: diseased 0.2`; `look: 'Rats. Even here.'` |
-| `keeper` | Keeper | keepers, `keeper` | machine, soldier | 30 | hp 427, ac 26, attack 17, 5d7+7, speed 11, xp 1,193 | the Ways; `inflict: asleep 0.15` (the sleepers' touch, Rimewater's); `look: 'A keeper with no bay to keep, and no robe.'` |
+| `hearth_moth` | Hearth Moth | moths, `hearth_moth` | beast, fodder | 28 | hp 280, ac 24, attack 15, 3d8+4, speed 12, xp 557 | the isle and the nave by night, twelve to a group; flies (`ranged`); its dust puts to sleep (`inflict: asleep 0.2`); `look: 'The sky over the isle is moving.'` |
+| `ashen_champion` | Ashen Champion | cultist, `ashen_champion` | person, soldier | 29 | hp 428, ac 26, attack 16, 5d8+8, speed 11, xp 1,153 | the isle's pickets, the temple, the crypt; `steady` (the Hand never breaks); drops `grey_knife` at 0.1; `look: 'The Hand\'s best, in steel from below.'` |
+| `ashen_preacher` | Ashen Preacher | cultist, `ashen_preacher` | person, caster | 29 | hp 644, ac 26, attack 18, 6d8+6, speed 12, xp 1,538 | behind the champions; `cast: { spells: ['firebolt', 'ward'], chance: 0.5 }`, `ranged`, `steady`; `look: 'Still preaching, and the fire is the sermon.'` |
+| `deep_rat` | Deep Rat | rat, `deep_rat` | beast, fodder | 30 | hp 281, ac 25, attack 16, 3d8+5, speed 12, xp 597 | everywhere below, twelve to a group; `inflict: diseased 0.2`; `look: 'Rats. Even here.'` |
+| `keeper` | Keeper | keepers, `keeper` | machine, soldier | 30 | hp 435, ac 26, attack 17, 5d8+8, speed 11, xp 1,193 | the Ways; `inflict: asleep 0.15` (the sleepers' touch, Rimewater's); `look: 'A keeper with no bay to keep, and no robe.'` |
 | `deep_knocker` | Deep Knocker | knockers, `deep_knocker` (built, Ashfall's) | machine, armoured | 28 | as built (Ashfall's `monsters.ts`) | the Ways, the Stair; the crack |
-| `hand_rearguard` | Ashen Rearguard | cultist, `hand_rearguard` | person, armoured | 30 | hp 529, ac 28, attack 17, 6d8+6, speed 8, xp 1,591 | the Stair's first landing, where the claimant's people are not; `steady`; `look: 'The last of the Hand still standing, and standing in the way.'` |
-| `deep_crawler` | Deep Crawler | crawlers, `deep_crawler` (new) | machine, brute | 31 | hp 1,004, ac 25, attack 18, 6d8+8, speed 8, xp 2,467 | the Ways' last run, the Stair; `ranged` (it comes down from above and reaches the back row); `look: 'It comes down from above, on too many legs.'` |
-| `catcher` | The Catcher | crawlers, `catcher` (new) | machine, boss | 31 | hp 1,100, ac 28, attack 19, 34d8+40, speed 13, xp 19,733 (off the line, which gives 1,826 and 30d8+34: `OFF_LINE`, `tools/tests/harness.ts`) | the Stair's foot, among the Hand's dead; `ranged`; `inflict: paralysed 0.2`; `look: 'It caught the Hand on these stairs.'`; sized on the gate to 59% won at 30 and 84% at 32 (§8; §9.2, #758's 7) |
-| `grey_hand` | Grey Hand | cultist, `grey_hand` | person, elite | 31 | hp 737, ac 27, attack 18, 6d8+9, speed 15, xp 2,467 | the Heart, at the panel; `steady`; `inflict: paralysed 0.15`; `look: 'Hands the colour of ash, to the shoulder.'` |
-| `core_sentry` | Core Sentry | machines, `core_sentry` | machine, soldier | 31 | hp 436, ac 27, attack 17, 5d8+4, speed 11, xp 1,233 | called by the ring (Vask's `calls`, the clock); stands down when he falls (`obeys`, §9, call 7); `look: 'The core\'s own, and it takes orders from the ring.'` |
-| `vask` | Lord Vask | cultist, `vask` (the figure frame, his own) | person, boss | 32 | hp 1,800, ac 29, attack 20, 22d8+23, speed 13, xp 20,373 (off the line, which gives 1,922 and 32d8+33: `OFF_LINE`, `tools/tests/harness.ts`) | the Heart; `steady`; `calls: { monsters: ['core_sentry'], chance: 1 }` on the clock's beat (the clock ignores the chance, §9, call 7); `look: 'A tall man with a quiet voice, and the Queen\'s ring on his finger.'`; sized on the gate to 65% won at 32 with the Hands down first (below; §8; §9.2, #759's 7) |
+| `hand_rearguard` | Ashen Rearguard | cultist, `hand_rearguard` | person, armoured | 30 | hp 640, ac 28, attack 17, 5d8+7, speed 8, xp 1,591 | the Stair's first landing, where the claimant's people are not; `steady`; `look: 'The last of the Hand still standing, and standing in the way.'` |
+| `deep_crawler` | Deep Crawler | crawlers, `deep_crawler` (new) | machine, brute | 31 | hp 1,061, ac 25, attack 18, 7d8+6, speed 8, xp 2,467 | the Ways' last run, the Stair; `ranged` (it comes down from above and reaches the back row); `look: 'It comes down from above, on too many legs.'` |
+| `catcher` | The Catcher | crawlers, `catcher` (new) | machine, boss | 31 | hp 1,300, ac 28, attack 19, 32d8+37, speed 13, xp 19,733 (off the line, which gives 2,096 and 35d7+54: `OFF_LINE`, `tools/tests/harness.ts`) | the Stair's foot, among the Hand's dead; `ranged`; `inflict: paralysed 0.2`; `look: 'It caught the Hand on these stairs.'`; sized on its odds to 56% won at 30 and 79% at 32 on the gate's hundred seeds (below; §8; §9.2, #752's 4) |
+| `grey_hand` | Grey Hand | cultist, `grey_hand` | person, elite | 31 | hp 786, ac 27, attack 18, 7d8+7, speed 15, xp 2,467 | the Heart, at the panel; `steady`; `inflict: paralysed 0.15`; `look: 'Hands the colour of ash, to the shoulder.'` |
+| `core_sentry` | Core Sentry | machines, `core_sentry` | machine, soldier | 31 | hp 890, ac 27, attack 17, 5d7+10, speed 11, xp 1,233 (off the line: twice the soldier's 445 hit points with its blow, `OFF_LINE`; §9.2, #752's 5) | called by the ring (Vask's `calls`, the clock); stands down when he falls (`obeys`, §9, call 7); `look: 'The core\'s own, and it takes orders from the ring.'` |
+| `vask` | Lord Vask | cultist, `vask` (the figure frame, his own) | person, boss | 32 | hp 1,850, ac 29, attack 20, 22d8+23, speed 13, xp 20,373 (off the line, which gives 2,100 and 34d8+41: `OFF_LINE`, `tools/tests/harness.ts`) | the Heart; `steady`; `calls: { monsters: ['core_sentry'], chance: 1 }` on the clock's beat (the clock ignores the chance, §9, call 7); `look: 'A tall man with a quiet voice, and the Queen\'s ring on his finger.'`; sized on his odds to 64% won at 32 with the Hands down first on the gate's hundred seeds (below; §8; §9.2, #752's 5) |
 
 **Vask's sizing** (#759; §9.2, #759's 7). The line's Vask, 1,922 hit points and 32d8+33, is won 10%
 of 400 seeds at 32 with the Grey Hands killed first, 11% going for him first, 3% with the sentries
@@ -1793,6 +1794,51 @@ as they come 62, no clock 97. Going for the lord first breaks the boss limit of 
 judges only the Hands-first play (68% on its hundred seeds). No sizing of Vask's hit points and blow
 puts the Hands first more than 2 points ahead of going for him first (69 against 67 at best), so the
 plan's lever lies in the clock or in the Hands and not in his hit points and blow (§11).
+
+**The bosses as built, on the line made again** (#752; §9.2, #752's 4 and 5). The Hand's steel and
+the line made again in it at 28, 30 and 32 raise the Hands (786 and 7d8+7), the sentries (445 and
+5d7+10) and the crawlers (1,061 and 7d8+6). With the sentries on the line no sizing of Vask gives
+both of the plan's figures: two in three with the Hands first leaves 45% to a clock let run and the
+thinned group past its limit of 80%. The sentries carry twice the soldier line's hit points, 890,
+its blow kept, so a room the clock fills holds: Vask at 1,850 and 22d8+23 is won 66% with the
+Hands first (the gate's hundred seeds: 64%), 72% going for him first (69%), 28% with the sentries
+as they come (28%) and 87% with no clock (83%); the thinned group 80% (77%); the Hands first at 31,
+56%. As they come, a company loses 39% outright and breaks off 33% at the fifteenth round. The
+tries, in percent of 400 seeds:
+
+| Hit points | Blow | Sentries | Hands first | Vask first | As they come | No clock | Thinned |
+|---|---|---|---|---|---|---|---|
+| 2,100 (the line) | 34d8+41 | 445 (the line) | 9 | 21 | 5 | 51 | 18 |
+| 1,800 | 22d8+23 | 445 | 78 | 79 | 57 | 95 | 88 |
+| 1,750 | 24d8+25 | 445 | 66 | 70 | 45 | 93 | 85 |
+| 1,700 | 25d8+26 | 445 | 59 | 75 | 40 | 93 | 75 |
+| 1,800 | 26d8+27 | 445 | 51 | 62 | 38 | 88 | 66 |
+| 1,800 | 22d8+23 | 668 | 71 | 76 | 42 | 90 | 86 |
+| 1,800 | 23d8+24 | 780 | 63 | 75 | 33 | 90 | 80 |
+| 1,800 | 22d8+23 | 890 | 67 | 75 | 32 | 87 | 82 |
+| **1,850 (kept)** | **22d8+23** | **890** | **66** | **72** | **28** | **87** | **80** |
+| 1,900 | 22d8+23 | 890 | 65 | 69 | 23 | 85 | 78 |
+| 1,800 | 22d8+23 | 1,000 | 68 | 75 | 27 | 87 | 83 |
+
+The Catcher, with its two crawlers, in percent of 400 seeds (the gate's hundred where it judges):
+
+| Hit points | Blow | At 30 | At 31 | At 32 |
+|---|---|---|---|---|
+| 2,096 (the line) | 35d7+54 | 14 | 18 | 28 |
+| 1,100 (its gate's) | 34d8+40 | 73 (63) | 79 | 85 (81) |
+| 1,200 | 34d8+40 | 67 (57) | 72 | 81 (76) |
+| 1,250 | 32d8+37 | 68 (63) | 71 | 83 (83) |
+| **1,300 (kept)** | **32d8+37** | **63 (56)** | **68** | **80 (79)** |
+| 1,300 | 33d8+38 | 61 (66) | 66 | 75 (76) |
+| 1,600 | 28d8+32 | 63 (63) | 69 | 79 (76) |
+| 3,200 | 12d8+14 | 73 (67) | 78 | 90 (88) |
+| 3,300 | 12d8+13 | 57 (55) | 69 | 84 (82) |
+| 3,600 | 11d8+12 | 19 (19) | 23 | 56 (60) |
+
+The rise from 30 to 32 is 12 to 18 points wherever the fight ends inside fifteen rounds; past about
+3,000 hit points the round cap takes it and the odds fall away, a slog at the floor. Half at 31 and
+nearly always at the cap cannot both hold: the floor, the binding figure, is brought as near half
+as the gate's limit two above allows.
 
 The drawings (the creatures lane): `src/ui/monsters/crawlers.ts`, the new family, two kinds; the
 moths', the cultists', the rat's, the keepers' and the machines' modules gain their kinds, the
@@ -1992,10 +2038,10 @@ of Vask's groups and none of the sentries, and a clear fights one group:
 | Gold | 8,200 of the 28,320 for the area, 20,120 short: the Stair's 1,600, the Ways' 1,400, the rim's 1,700, the temple's 2,000, the crypt's 800 and H6's 700; the Heart adds none (its finds are the ring). The dearest find, the Grey Mail at 7,000, sits in the 7,000 window |
 | Paid by level | entering at 28 and clearing three quarters, a company leaves at 31.9, 0.1 under the next floor 32 |
 | Gate, at the floor 32 | the Heart is judged on its boss's odds alone, its every group being a boss (§9.2, #759's 8); the area's 39 groups at their maps' floors 97.2% of fights won (aim 90%, limit 80%) |
-| Vask | `core_vask` 65% won at 32 (aim 30% to 70%, limit 20% to 80%), `core_vask_thinned` 68%; two above the floor n/a, past the cap. His four plays on 400 seeds (the gate's hundred): the Hands first 65% (65%), Vask first 64% (61%), the sentries as they come 45% (46%), no clock 91% (95%); the tries are in §7 |
+| Vask | `core_vask` 64% won at 32 (aim 30% to 70%, limit 20% to 80%), `core_vask_thinned` 77%; two above the floor n/a, past the cap. His four plays on 400 seeds (the gate's hundred), on the line made again with the sentries at 890 hit points (#752): the Hands first 66% (64%), Vask first 72% (69%), the sentries as they come 28% (28%), no clock 87% (83%); the tries are in §7 |
 | Gate, two under | n/a for the Heart, its floor being above the area's; the area's pool at 26, 92.5% of 39 groups' fights won (aim 25%, limit 90%): owed to #18 (§11) |
-| Fights to a rest | n/a in the gate, the Heart holding nothing but its boss; on the test monsters at 32 (`node tools/harness.ts --abilities`): the Hands first 11.8 rounds, won 14%, 2.1 sentries called, the light 4.7 of 8 steps down; the lord first 10.6 rounds, won 31%, 2.4 sentries, 5.3 of 8; the sentries as they come 11.6 rounds, won 21%, 2.4 sentries, 5.2 of 8 |
-| Walkthrough | `core:core_vask` won at 32 in 80% of its ten seeds, 50% with the clock left to run; the thinned group 80% |
+| Fights to a rest | n/a in the gate, the Heart holding nothing but its boss; on the test monsters at 32 (`node tools/harness.ts --abilities`, the line made again by #752): the Hands first 12.1 rounds, won 14%, 2.3 sentries called, the light 5.1 of 8 steps down; the lord first 10.6 rounds, won 28%, 2.5 sentries, 5.5 of 8; the sentries as they come 11.6 rounds, won 17%, 2.5 sentries, 5.5 of 8; Vask's own group, on the gate's bot, 64%, 69%, 28% and 83% with no clock |
+| Walkthrough | `core:core_vask` won at 32 in 60% of its ten seeds, 70% with the clock left to run (with no round cap) |
 | Density, dungeon | 100.0% within 7 steps (90 of 90, 81 needed); the furthest 7 of 10; no sign in 12 points |
 | Levels | 2 monsters in 32, give or take two; the nearest group, `core_vask` at 9 steps, at 31.3; the hardest, `core_vask_thinned` at 9 steps, at 31.3 (at least 30) |
 | Lines | every event and sign of the Heart fits 3 lines of the log |
@@ -2027,22 +2073,25 @@ Basalt Shield ac 7. The harness and the gate dress their companies from the rung
 Oil is (`lantern_oil`, which the store sells for poison, disease and paralysis), and named apart from
 it.
 
-The boxes' tables above keep the figures they were built with, before the rung. In it the gate reads
-(#746; the line is made again with the rung in by #752):
+The boxes' tables above keep the figures they were built with, before the rung, but for the Heart's
+Vask, fights to a rest and walkthrough rows, which #752 brings up to date. In it the gate reads
+(#746), and on the line made again with it at 28, 30 and 32, the isle's monsters restated on it and
+its two bosses set on their odds (#752):
 
-| Figure | Before the rung | In it |
-|---|---|---|
-| H6 at 28, fights to a rest | 12.19 | 13.43 |
-| I6 at 28, fights to a rest | 11.32 | 12.67 |
-| Hearthfane at 28, fights to a rest | 8.96 | 9.61 |
-| The crypt at 29, fights to a rest | 13.71 | 15.74, past the limit of 14.75: owed to #752 |
-| The Ways at 30, fights to a rest | 11.58 | 12.91 |
-| The Stair at its floor, 30, won | 94.1% | 95.6% |
-| The Stair at 30, fights to a rest | 10.14 | 11.43 |
-| The Catcher, won at 30 and at 32 | 59% and 84% | 69% and 82% |
-| Vask (`core_vask`), won at 32 | 65% | 79% |
-| Vask's thinned group, won at 32 | 68% | 89%, past the limit of 80%: owed to #752 |
-| Hearth Isle at its maps' floors, its 39 groups won | 97.2% | 98.4% |
+| Figure | Before the rung | In it | The line made again |
+|---|---|---|---|
+| H6 at 28, fights to a rest | 12.19 | 13.43 | 12.41 |
+| I6 at 28, fights to a rest | 11.32 | 12.67 | 11.68 |
+| Hearthfane at 28, fights to a rest | 8.96 | 9.61 | 8.90 |
+| The crypt at 29, fights to a rest | 13.71 | 15.74, past the limit of 14.75 | 14.16 |
+| The Ways at 30, fights to a rest | 11.58 | 12.91 | 12.06 |
+| The Stair at its floor, 30, won | 94.1% | 95.6% | 93.7% |
+| The Stair at 30, fights to a rest | 10.14 | 11.43 | 10.25 |
+| The Catcher, won at 30 and at 32 | 59% and 84% | 69% and 82% | 56% and 79% |
+| Vask (`core_vask`), won at 32 | 65% | 79% | 64% |
+| Vask's thinned group, won at 32 | 68% | 89%, past the limit of 80% | 77% |
+| Hearth Isle at its maps' floors, its 39 groups won | 97.2% | 98.4% | 97.4% |
+| Hearth Isle two under, the area's pool at 26 | 92.5% | 92.5% | 92.4%, owed to #18 |
 
 **Quest items** (`price: 0`, `slot: 'none'`): `wardens_badge`, `treaty_seal`, `tallis_tally`
 (57); `gullwick_letter`, with its text (58); `fane_key` (an iron key, 56); `queens_signet`, with a
@@ -3067,6 +3116,26 @@ Decided by delegate for #765 (half A: Helmstow and the halls), each the owner's 
 9. **Vask's `until` ends his hand-ins at the first step on the isle:** the survey wand (300 gold,
    `q_ashcombe_done`), the tenant's paper (50) and the oil order; §12 and 9.1's 23 require it.
 
+Decided by delegate for #752, each the owner's to overturn:
+
+1. **The line is made again at 28, 30 and 32 in the Hand's steel, and `LEVELS` gains 30:** `node
+   tools/harness.ts --calibrate --write --levels 28,30,32`, 200 seeds a point (seeds 1 to 200, as the
+   tool seeds them), about 25 minutes on four cores. Every factor under 28 is as it was.
+2. **The harness's company fights 10.6 to a rest at 28, rising to 11.7 at 32,** where 28 was owed at
+   12.8. `OWED` loses #752's two: the crypt fights 14.16 at 29 and Vask's thinned group is won 77%.
+3. **The isle's monsters on the line are restated on it,** keeping id, look, sprite, level and xp.
+   Act IV's Deep Knocker and Inspector, placed at 28 (#22), are held as they stood (`OFF_LINE`).
+4. **The Catcher: 1,300 hit points and 32d8+37,** won 56% at 30 and 79% at 32 on the gate's seeds.
+   Half at 31 and nearly always at the cap cannot both hold: the floor, binding, is kept.
+5. **Vask: 1,850 and 22d8+23, and his sentries on twice the soldier line's hit points (890):** the
+   Hands first win 66% and the clock let run 28%, both of the plan's figures; on the line, 45% let run.
+6. **The Heart's two gate rules are kept and written down** (EXPANSION §5.2, MONSTERS §1); `rate`
+   keys its cache on a group's clock too, which moves no figure.
+7. **`--abilities` reports the Heart as built on the gate's bot,** which the plan sizes Vask by: 64,
+   69, 28 and 83% with no clock. The thrifty bot keeps its spells, and lets the clock run at 66%.
+8. **The armoured at 29 and 31, read between, run long** (47 and 52% of days end badly) where the
+   line's armour rounds up; no armoured monster stands there, and the line is not nudged.
+
 ## 10. Names
 
 The Lanterns' English, kept, as the Whitespine's and Sunderwood's were (NAMES.md §2, §4): the isle
@@ -3190,8 +3259,8 @@ Owed, from the crypt (#756):
   exports it (§9.2, #756's 6; #763's 5).
 - **The chapter's step** for the knot is #760's (`hearthfane2:hf2_knot`, seen), written.
 - **The gear's rung** is built (#746): the Grey Robe (`greyRobe`), built here in the pack `hf2_pack`,
-  is on the ladder at 28 (§9.2, #756's 7). In it the crypt's company fights 15.74 to a rest at 29,
-  past the limit of 14.75: owed to #752 (§8; §9.2, #746's 6).
+  is on the ladder at 28 (§9.2, #756's 7). In it the crypt's company fought 15.74 to a rest at 29,
+  past the limit of 14.75; on the line made again with it, 14.16, inside it (§8; §9.2, #752's 2).
 
 Owed, from the Ways (#757):
 
@@ -3230,11 +3299,11 @@ Owed, from the Stair (#758):
   the area reaches about 40,000 of the 46,934 (85%), about 6,900 a member short. The area's clear
   will fall short: its owed row is set at the as-built floor at the end, as Act IV's Wold was. The
   owner's call.
-- **The Catcher's sizing:** `OFF_LINE.catcher`, 1,100 hit points and 34d8+40, is won 59% at 30,
-  67% at 31 and 84% at 32 on the gate's seeds. In ten sizings the rise from 30 to 32 never passed
-  about 25 points, so half at 31 and nearly always at 32 cannot both hold: the gate's floor aim and
-  its limit above are kept (§9.2, #758's 7). In the Hand's steel (#746) the gate's seeds give 69% at
-  30 and 82% at 32; provisional until #752 finalises it.
+- **The Catcher's sizing is final** (#752): `OFF_LINE.catcher`, 1,300 hit points and 32d8+37, is won
+  56% at 30 and 79% at 32 on the gate's seeds (63%, 68% at 31 and 80% on 400). Half at 31 and nearly
+  always at the cap cannot both hold, the rise from 30 to 32 being 12 to 18 points: the floor is kept
+  and the cap sits over the gate's limit of 75%, under its aim of 90% (§7; §9.2, #752's 4). The
+  owner's call.
 - **The sixth flight's crawlers are two, not three:** with three the day at 30 breaks off at 7.85
   fights to a rest, past the gate's limit of 9 (§9.2, #758's 8). The owner's call.
 - **`tools/tests/structure.ts` is loosened:** a group that `leaves` on its `until` needs no respawn,
@@ -3278,23 +3347,16 @@ Owed, from the Heart (#759):
   sentries more, the Heart 4,629 to 6,273. The gold gap is not the shares' doing: the Heart adds
   none. No group is added and no monster strengthened: the row's `owed` stays at the as-built floor
   (§8; §9.2, #759's 9). The owner's call.
-- **Vask's `OFF_LINE` and the gate's two rules are #752's to finalise:** `OFF_LINE.vask`, 1,800 hit
-  points and 22d8+23, and `BOSSES.hearthisle` with `core:core_vask` and `core:core_vask_thinned`,
-  the rule that a map of nothing but its boss is judged on the boss's odds and the rule that a boss
-  is judged two above its floor or at the cap (at its floor alone where that is the cap) (§9.2,
-  #759's 7 and 8). Both rules are outside the content lane, move no other map's figure and are the
-  owner's to overturn. `rate` in the gate keys its cache on the monsters and not the clock, so a
-  clockless group of Vask and three Hands elsewhere would share his figure: none exists.
-  `docs/EXPANSION.md` (the limits paragraph and *The boss asks*, in §5.2) and `docs/MONSTERS.md` (the
-  boss paragraph, near its line 50) still state the gate's boss rule without these two exceptions:
-  #752's to update.
-- **In the Hand's steel (#746)** Vask is won 79% at 32 and his thinned group 89%, past the limit of
-  80%: owed to #752, who measures his odds in the rung (§8; §9.2, #746's 6).
-- **The plan's one in three for the clock left to run measures 45%:** going for Vask first gains,
-  and the lever the plan names, a heavier Vask with a lighter blow, runs the other way on the gate's
-  bot (§7; §9.2, #759's 7). The twelve sizings tried put the Hands first at most 2 points ahead of
-  going for him first, so the lever lies in the clock or in the Hands and not in Vask's hit points
-  and blow: #752's to look at. Two in three with the Hands first is kept. The owner's call.
+- **Vask's sizing is final and the gate's two rules are kept** (#752): `OFF_LINE.vask`, 1,850 hit
+  points and 22d8+23, and the rules that a map of nothing but its boss is judged on the boss's odds
+  and a boss at the cap at its floor alone, now written in `docs/EXPANSION.md` §5.2 and
+  `docs/MONSTERS.md` §1; `rate` keys its cache on the clock too (§9.2, #752's 5 and 6). Outside the
+  content lane and the owner's to overturn.
+- **The sentries carry twice the soldier line's hit points** (890, its blow kept), the lever the
+  Heart's builder named: the Hands first win 66% and the clock let run 28%, both of the plan's
+  figures, and the thinned group 80% (77% on the gate's seeds, inside its limit). Going for Vask
+  first wins 72%, more than the Hands first; on the harness's thrifty bot, which keeps its spells,
+  the clock let run wins 66% (§7; §9.2, #752's 5 and 7). The owner's call.
 - **Two checks outside the content lane are loosened:** `tools/tests/people.ts` lets a parley be
   nothing but its refusal where the group has a slain text of its own (the Heart's two) and holds a
   group's question to the box's lines alone, the side panel's being a person's; and Rimewater's

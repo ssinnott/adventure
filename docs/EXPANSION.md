@@ -316,8 +316,8 @@ The gate, checked with the bot of `tools/gate.ts`. Each figure below is its **ai
 and the check lists it as off its aim; past its limit it fails, and only then is it owed. The
 limits, weighed by the pilot on every box of the Downs and left as they were until the owner's own
 play says otherwise (#47, docs/areas/shelf.md §8): 80% won at the floor, 90% two under, the road
-walked 65% of the time, a boss 20% to 80% at its floor and 75% two above, 4 to 10 fights to a rest
-and the warning's nearest groups ten points under the median.
+walked 65% of the time, a boss 20% to 80% at its floor and 75% two above or at the cap, 4 to 10
+fights to a rest and the warning's nearest groups ten points under the median.
 
 - **At the floor, through.** A company at each map's own floor wins nine in ten of that map's
   fights, and of the area's, each fought at its map's floor; each zone's road is walked at the
@@ -326,7 +326,11 @@ and the warning's nearest groups ten points under the median.
   each map whose floor is the area's, and over the area, where a zone map's groups count two under
   its own floor and a town's or dungeon's two under the area's (the owner, on #40 and #209).
 - **The boss asks.** The area's boss is won about half the time at the floor, and nearly always two
-  levels above it.
+  levels above it, or at the cap where that is as high as it goes. Two exceptions came with the
+  Heart (#759, kept by #752): a boss whose floor is the cap is judged at its floor alone, since no
+  company stands above it; and a map of nothing but its boss is judged on the boss's odds, with no
+  floor of fights to pool and no day. A boss set off the line is sized on these odds against the
+  gate's bot, by its box's gate (`OFF_LINE`, `tools/tests/harness.ts`).
 - **Six or seven fights to a rest.** A company can fight six or seven standard encounters at its own
   level between rests to level 10, and a fight more every four levels after as its power grows
   (twelve at 32, never fifteen). Its spell points count as much as its hit points: it rests once it

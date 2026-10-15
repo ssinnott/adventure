@@ -47,7 +47,9 @@ The rules that follow from them:
 - **Every boss is a guardian.** It ends something or yields something, and never comes back
   (EXPANSION.md §5.1): the Hand of Ash yields the chisel, the Warden of the Cut the first Meridian
   journal, and each region's deepest boss can carry the next (DESIGN.md §10.3). It asks, too: won
-  about half the time at the band's floor, nearly always two levels over (EXPANSION.md §5.2).
+  about half the time at the band's floor, nearly always two levels over or at the cap; one whose
+  floor is the cap is judged at its floor alone, and one alone on its map on its odds alone, with no
+  day (EXPANSION.md §5.2).
 - **Found, never told.** No monster explains itself, and no fight's text names the machine. What a
   thing does and what it carries are the clue.
 - **Plain names.** English words a listener could spell, as STORY.md is written for the ear, in
@@ -543,18 +545,17 @@ calibration:
   boss held so takes the raised factor for its blow as well (#541).
 - The boss, one monster acting once a round against six, has both raised together until a company
   two levels under it wins half the time (EXPANSION.md §5.2).
-- It is made at every level to 10, every fourth level to 32, every level of Act III and every level
-  of Act IV from 24, 300 seeds a point (200 for the levels past 10, made again with #20, #541 and
-  #549), with the levels between interpolated. Past 10 the company runs on play's rules: its spells
+- It is made at every level to 10, every fourth level to 32, every level of Act III, every level
+  of Act IV from 24 and Act V's 28, 30 and 32, 300 seeds a point (200 for the levels past 10, made
+  again with #20, #541, #549 and #752), with the levels between interpolated. Past 10 the company runs on play's rules: its spells
   stop growing at 10 (#159), it takes its prestiges at 11, 19 and 27 with their hit points, spell
   points and perks (#19), and with them its spell ranks, and it learns tiers 6 and 7 at 15 and 23
   (#20). It wears the ladder's gear: Act II's steps were in when the levels past 10 were made again
   (#399, #18), Act III's when the levels past 16 were (#535, #541), each of 17 to 22 on its own,
   since the company steps at 17, 19, 21 and 22, and Act IV's one, Cinderport's armourer at 25
-  (#542), when 25 to 28 and 32 were (#549), each of 25 to 28 on its own, since the company steps at
-  25 and at 27, its third prestige. 22 to 24 are #541's still: their company has not changed. Act
-  V's rung, the Hand's steel at 28 (#746), came after: 28 and 32 were made without it, and making
-  them again with it is #752's.
+  (#542), when 25 to 27 were (#549), each on its own, since the company steps at 25 and at 27, its
+  third prestige, and Act V's rung, the Hand's steel at 28 (#746), when 28, 30 and 32 were (#752).
+  22 to 24 are #541's still: their company has not changed.
 
 Hit points / average damage a hit, by role and level:
 
@@ -582,8 +583,9 @@ Hit points / average damage a hit, by role and level:
 | 25 | 188 / 17 | 331 / 18.5 | 320 / 20 | 328 / 19 | 444 / 23 | 289 / 20 | 398 / 21 | 596 / 26 | 665 / 30.5 | 1496 / 142.5 |
 | 26 | 191 / 17.5 | 332 / 19.5 | 321 / 21 | 328 / 21 | 479 / 23 | 290 / 22 | 399 / 25 | 597 / 26.5 | 692 / 30 | 1498 / 142 |
 | 27 | 260 / 16 | 383 / 26 | 378 / 28.5 | 402 / 26.5 | 533 / 31 | 376 / 27 | 522 / 31 | 670 / 38.5 | 988 / 34 | 1550 / 146 |
-| 28 | 276 / 15.5 | 411 / 25.5 | 408 / 28 | 429 / 27 | 563 / 33 | 400 / 25 | 523 / 32 | 689 / 37.5 | 990 / 35 | 1552 / 146 |
-| 32 | 286 / 15.5 | 451 / 25 | 445 / 26 | 483 / 27 | 571 / 36.5 | 442 / 23 | 531 / 34 | 753 / 36 | 1005 / 34 | 1922 / 177 |
+| 28 | 280 / 17.5 | 466 / 26 | 420 / 31 | 437 / 29.5 | 642 / 32 | 411 / 29.5 | 637 / 29.5 | 780 / 39 | 1052 / 37 | 1552 / 146 |
+| 30 | 281 / 18.5 | 468 / 26 | 435 / 30.5 | 454 / 29.5 | 645 / 33 | 430 / 28.5 | 640 / 29.5 | 784 / 38.5 | 1057 / 37 | 2089 / 194.5 |
+| 32 | 298 / 17 | 470 / 26 | 455 / 30 | 480 / 29 | 648 / 36 | 449 / 27 | 644 / 29 | 787 / 38.5 | 1062 / 38.5 | 2100 / 194 |
 
 Armour and to-hit are the line's, rounded, plus the role's offsets in §4.2: armour 12 and to-hit 2
 at level 1, 16 and 7 at 10, 27 and 18 at 32. Speeds are the roles': fodder, archers, casters and
@@ -784,6 +786,26 @@ What it shows:
   24's hit points and their fights run long: the armoured end 53% of their days badly, in fights
   broken off, as at 21, and the casters, brutes and skirmishers about a fifth. Freeing the held
   takes the controllers' bad days at 22 to 24 from 21, 35 and 19% to 14, 13 and 7%.
+- **Made again with Act V's rung at 28, 30 and 32 (#752).** In the Hand's steel (#746) on the line
+  #549 made, a company fought 12.2 to 13.1 standard encounters to a rest at 28, where 11 are asked,
+  and 12.9 to 14.2 at 32, where 12 are. `LEVELS` gains 30, so the Ways' and the Stair's level is
+  made and not read between 28 and 32, and 28, 30 and 32 are made again (200 seeds a point; `node
+  tools/harness.ts --calibrate --write --levels 28,30,32`, about 25 minutes on four cores); every
+  factor under 28 is as it was. Monsters carry 4.5 to 7.7 times the line's hit points from 28 to 32
+  and hit 1.4 to 2.2 times as hard; hit points are held at the level under's for 12 of the 30
+  points, the boss's at 28 and 32 among them. Fights to a rest, the least and the most of the nine
+  regular roles, and the boss won from two under:
+
+  | Level | 28 | 29 | 30 | 31 | 32 |
+  |---|---|---|---|---|---|
+  | Asked | 11 | 11.25 | 11.5 | 11.75 | 12 |
+  | On #549's line, in the rung | 12.2–13.1 | | | | 12.9–14.2 |
+  | Made again | 10.9–11.3 | 9.2–11.8 | 11.3–11.7 | 9.6–12.1 | 11.5–12.3 |
+  | The boss, made again | 47% | 59% | 50% | 47% | 49% |
+
+  At 29 and 31, read between, the line's armour rounds up and the armoured end 47 and 52% of their
+  days badly, in fights broken off, as at 25; no armoured monster stands at 29 or 31, and it is not
+  nudged here. Every other role ends 16% of its days badly or fewer, most a tenth or fewer.
 
 `node tools/harness.ts` reports every role's standard encounter at every calibrated level: the
 fights before a rest, what ended the day, the rounds a fight took, what one fight from a fresh start
@@ -796,7 +818,7 @@ asked; Act IV's sweep, two giants and two drakes (#545), at 23 and 25; its stone
 basilisk behind three skirmishers (#546), at 27; its holds, four vines (#549), at 24; its
 bosses as they stand, each won from two under beside the test boss of its level; and Act V's
 clock, the Heart (#748), at 32, its Hands killed first, its lord first or its sentries fought as
-they come.
+they come, on the test monsters and as built: Vask's own group on the gate's bot (#752).
 `--spell-cap`, `--gear-grows`, `--level-bonus` and `--level-traits` run any of it as if damage
 spells stopped growing at another level than play's 10, or the company gained gear, a bonus or
 blows as it levelled past it; `--rank-step` as if a spell rank added another share than play's 15%.
