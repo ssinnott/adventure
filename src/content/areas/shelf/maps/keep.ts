@@ -174,8 +174,10 @@ export const KEEP: MapDef = {
     ] },
     // He takes Vask's three hand-ins from the first step onto the isle (#795), the same items, pay and flags, in his
     // own words: the wand and the tenant's paper as hand-ins, the keeper's oil as Vask's order. He hires nobody, so
-    // the wand has no `early` words; they would never be said. He stands on after an ending, since the opened
-    // leaves nobody else at the door, and goes when the Council has sat, to Wiglaf.
+    // the wand has no `early` words; they would never be said. Nor has it `after` words: a hand-in's are said to
+    // any company whose flag is set, whoever took the item, and would hide his first words from every company
+    // that gave the wand to Vask. He stands on after an ending, since the opened leaves nobody else at the door,
+    // and goes when the Council has sat, to Wiglaf.
     { kind: 'npc', x: 7, y: 5, name: 'The Regent\'s steward', after: ISLE, until: { flag: THRONE_REMOVED }, lines: [
       'The Regent\'s steward before the throne room\'s door, a ring of keys at his belt and nobody to open anything for.',
       '"His lordship is not in the keep. He went over to the isle with the grey men and left me the keys, and no orders."',
@@ -186,7 +188,6 @@ export const KEEP: MapDef = {
         '"A Lantern tool, by the look of it. His lordship will want it entered." The Crown\'s strongbox opens on its key, and the gold comes out of it, counted twice.',
         '"He left a line with the keys. The Grove Stone in Thornmark has gone quiet, and he wants to know why. That is all the line says."',
       ],
-      after: ['"The wand is in the strongbox, entered. If his lordship asks, it was counted."'],
     }, {
       item: 'tenant_paper', reward: 50, setFlag: 'q_paper_vask',
       done: [

@@ -1083,7 +1083,13 @@ function keepHandIns(ok: (cond: boolean, msg: string) => void): void {
     w.ok(!door && steward && r.said[0].startsWith('The steward takes the cracked survey wand') && r.said[1].startsWith('The steward reads the paper') && r.said[2].startsWith('The steward hears you out') && r.paid && r.gold === 350,
       `on the isle first, Vask's steward takes the wand (300 gold), the tenant's paper (50) and the oil order, with their flags (${r.said.map((s) => s.slice(0, 24)).join(' / ')})`);
     reads(w, 'oil', 'Oil for the Lamp', ['aldred', 'vask', 'order', 'lit'], ['buy'], 'put to Vask, said to the steward');
-    w.ok(lamp(w) === 'e3_lamp_lit' && hear(w, 'keep', STEWARD()).startsWith('"The wand is in the strongbox, entered.'), `the lamp is lit by his order (${lamp(w)}), and the steward's next words are the wand's receipt`);
+    w.ok(lamp(w) === 'e3_lamp_lit' && hear(w, 'keep', STEWARD()).startsWith('The Regent\'s steward before the throne room\'s door'), `the lamp is lit by his order (${lamp(w)}), and the steward's next words are his first`);
+  }
+  { // The wand given to Vask in Act I: on the isle the steward still says his first words, and no receipt for a wand he never took.
+    const w = newWalk(ok);
+    w.party.flags.q_ashcombe_done = 1;
+    w.world.travel(H6.id, H6.start.x, H6.start.y);
+    w.ok(there(w, STEWARD(), 'keep') && hear(w, 'keep', STEWARD()).startsWith('The Regent\'s steward before the throne room\'s door'), 'a company that gave the wand to Vask in Act I hears the steward\'s first words on the isle, not a receipt');
   }
   { // The Council has sat: Wiglaf at the door takes the same three, and the steward is gone.
     const w = company(true, ...SAT);
