@@ -60,7 +60,7 @@ export const QUESTS: readonly QuestDef[] = [
     ],
     goals: [
       { when: { flag: LAMPS_OUT }, text: 'Go back to the sacristan under the vestry table.', at: 'hearthfane' },
-      { when: { flag: LAMPS }, text: 'Put out the four lamps in the pillar\'s order: the Sea, the Shore, the House, the Hearth.', at: 'hearthfane' },
+      { when: { flag: LAMPS }, text: 'Put out the four lamps in the order the pillar gives.', at: 'hearthfane' },
     ],
   },
   {
