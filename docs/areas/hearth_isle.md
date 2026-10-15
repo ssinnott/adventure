@@ -228,8 +228,7 @@ so Cinderport's harbourmaster sells it. The curve's row (#745, §8) has left `PL
 for what the isle, the rim, the temple, the crypt, the Ways, the Stair and the Heart pay, which falls
 short of the area's budget (§8, §11). The gear's last rung, the Hand's steel at 28 (#746, §8), is on
 the ladder (`GEAR`, `tools/harness.ts`), every piece placed by its box. The drafts the scaffold cuts
-are in §1. This doc is
-the plan; §4 has the briefs, each with every line its place says, so that the box or level can be
+are in §1. This doc is the plan; §4 has the briefs, each with every line its place says, so that the box or level can be
 built from it by a session that has read DESIGN, STORY and EXPANSION and nothing else. The owner's
 calls are §9's.
 
@@ -2004,7 +2003,7 @@ Cinderport's armourer for every class. *Takes it* is the ladder test's (`ACT_V`,
 | `grey_knife` | Grey Knife | anyone (light, 1d8+14) | the sorcerer, the thief and the bard | 6,400 | the picket's chest; the champions' drop |
 | `grey_bow` | Grey Bow | the ranger (1d12+13) | the ranger | 6,800 | the treasury |
 | `grey_staff` | Grey Staff | anyone (a staff, two-handed, 1d10+13) | the monk and the druid | 6,200 | the Hand's camp's chest |
-| `old_lanterns_staff` | Old Lantern's Staff | anyone (a staff, two-handed, 1d10+14), holy in its words | every class but the knight and the paladin, who bear shields | 7,000 | the knocker's gift for *Widen it.* (61) |
+| `old_lanterns_staff` | Old Lantern's Staff | anyone (a staff, two-handed, 1d10+14), holy in its words | the cleric, the sorcerer, the thief, the bard, the monk and the druid (the knight and the paladin bear shields; the ranger and the barbarian have a better piece of their own) | 7,000 | the knocker's gift for *Widen it.* (61) |
 | `grey_mail` | Grey Mail | the Drakeskin Coat's wearers (ac 14; §9.2, #754's 8) | all seven, the knight and the paladin over their plate | 7,000 | the Hand's hoard (I6) |
 | `grey_robe` | Grey Robe | anyone (ac 13) | the cleric and the sorcerer | 6,200 | the crypt's pack |
 | `grey_shield` | Grey Shield | the shield bearers (ac 8) | the knight and the paladin | 4,000 | the keepers' store |
@@ -2994,7 +2993,8 @@ Decided by delegate for #746, each the owner's to overturn:
 1. **The rung is all nine, at 28, and `GEAR_TOP` follows to 28.** The `--gear-grows` what-if now
    names its top (*past level 28*), where it said 10, stale since the ladder passed 10.
 2. **Who takes what (`ACT_V`):** each class the piece bettering the one it took at 25, plate's
-   wearers the mail too; the blade and the Old Lantern's Staff go to every class they better (§8).
+   wearers the mail too; the blade and the Old Lantern's Staff go to every class they better and that has
+   no better piece of its own (§8).
 3. **A rung can be `found`:** its pieces carry no plus, so the test read them as wares; a found
    rung's are held to a find's place and to one more rule, that no shop sells them.
 4. **A found piece may be a person's gift:** the Old Lantern's Staff is the knocker's for *Widen

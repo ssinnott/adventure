@@ -247,8 +247,8 @@ export const ACT_V: readonly Rung<'hearth'>[] = [
       grey_axe: ['hearth', ''], // the Stair (#758): the rearguard's chest
     },
     classes: {
-      knight: ['grey_blade', 'grey_mail', 'grey_shield'], paladin: ['grey_blade', 'grey_mail', 'grey_shield'], ranger: ['grey_bow', 'old_lanterns_staff', 'grey_mail'],
-      barbarian: ['grey_axe', 'old_lanterns_staff', 'grey_mail'], cleric: ['grey_blade', 'old_lanterns_staff', 'grey_robe'], sorcerer: ['grey_knife', 'old_lanterns_staff', 'grey_robe'],
+      knight: ['grey_blade', 'grey_mail', 'grey_shield'], paladin: ['grey_blade', 'grey_mail', 'grey_shield'], ranger: ['grey_bow', 'grey_mail'],
+      barbarian: ['grey_axe', 'grey_mail'], cleric: ['grey_blade', 'old_lanterns_staff', 'grey_robe'], sorcerer: ['grey_knife', 'old_lanterns_staff', 'grey_robe'],
       thief: ['grey_knife', 'old_lanterns_staff', 'grey_mail'], bard: ['grey_knife', 'old_lanterns_staff', 'grey_mail'],
       monk: ['grey_staff', 'old_lanterns_staff'], druid: ['grey_staff', 'old_lanterns_staff', 'grey_mail'],
     },

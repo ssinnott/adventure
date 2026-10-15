@@ -5,8 +5,8 @@
 // the Grey Bow in its treasury and the sacristan's key to it (56); the crypt (#756), the Grey Robe in
 // the dead champion's pack. The Ways' (#757): the Grey Shield in the keepers' store, and the Old Lantern's
 // Staff behind the crack (61). The Stair's (#758): the Grey Axe in the rearguard's chest, and Jowan's letter
-// home (58). The Heart's (#759): the Queen's signet, off Vask's finger. The rest of the band's rung at 28,
-// found and never sold, is #746's (docs/areas/hearth_isle.md §8).
+// home (58). The Heart's (#759): the Queen's signet, off Vask's finger. The band's rung at 28, found and
+// never sold, is these nine pieces (#746, docs/areas/hearth_isle.md §8).
 import type { ItemDef } from '../../../game/items.ts';
 import { W, A, MARTIAL, MAIL, NO_CASTER_HEAVY } from '../../items.ts';
 

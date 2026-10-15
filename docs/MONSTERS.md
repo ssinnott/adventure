@@ -659,7 +659,7 @@ What it shows:
   whom weapons barely scratch.
 - **Weaker spells, and something else that grows.** Past 10 the balance can come from the monsters,
   the spells or the company, and the harness tries each. `--spell-cap 10` stopped damage spells
-  growing at 10, which play has done since #159 (`--spell-cap 32` now tries the old rule). `--gear-grows` enchants Thornmark's gear past 10, so that a weapon's blow grows as
+  growing at 10, which play has done since #159 (`--spell-cap 32` now tries the old rule). `--gear-grows` grows the company's gear past the ladder's top (28), so that a weapon's blow grows as
   the line's hit points do and armour gains a point every two levels, as the line's to-hit does.
   `--level-bonus` gives every member a point of weapon damage and of armour every two levels
   instead. `--level-traits` gives the fighters (in the premade six the knight, paladin, ranger and

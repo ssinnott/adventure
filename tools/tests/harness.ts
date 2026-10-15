@@ -129,6 +129,8 @@ export function harness(): void {
   const near = ({ l, d }: (typeof four)[number]): boolean => Math.abs(d.fights - fightsPerRest(l)) <= 1.5;
   ok(four.slice(0, -1).every(near), `through Act IV a company fights about its own of 4 Test Soldiers between rests: ${four.slice(0, -1).map(({ l, d }) => `${d.fights.toFixed(1)} at ${l} (${fightsPerRest(l)})`).join(', ')}`);
   owed(near(four[5]), `in the Hand's steel at 28 a company fights about its own of 4 Test Soldiers between rests: ${four[5].d.fights.toFixed(1)} (${fightsPerRest(28)})`, '#752');
+  // The owed figure is held where it was recorded (12.8): it may not drift further until #752 makes the line again, and then drops this bound.
+  ok(four[5].d.fights <= 13, `and the owed figure at 28 stays within 13 until the line is made again (${four[5].d.fights.toFixed(1)})`);
   // A test monster's encounter pays what the curve gives a group at the built areas' pinned pace (docs/MONSTERS.md §4.4).
   const pays = [1, 10, 32].map((l) => Math.round((6 * (xpForLevel(l + 1) - xpForLevel(l))) / (0.75 * groupsPerLevel(l))));
   ok(pays.join() === '99,1573,5093' && xpFor('boss', 10) === 6293, `an encounter pays ${pays.join(', ')} at 1, 10 and 32, as MONSTERS §4.4 says, and a boss four`);
@@ -164,7 +166,7 @@ export const OFF_LINE: Record<string, string> = {
   sentinel: "the Ember Stone's boss, the boss line made again by #549 with its hit points set by its gate and its blow the line's (#516)",
   grey_lion: "the Wold's boss, its hit points and its blow set by B8's gate (#529)",
   tallymaster: "the counting house's boss, the boss line made again by #549 with its hit points the line's and its blow set by its gate (#22)",
-  catcher: "the Stair's boss, its hit points and its blow set by its gate (#758): provisional until #746 and #752, then re-derive or retire",
+  catcher: "the Stair's boss, its hit points and its blow set by its gate (#758): provisional until #752, then re-derive or retire",
   vask: "the Heart's boss, his hit points and his blow set by its gate with the clock played and the Hands killed first (#759)",
 };
 /** The monsters past 10 on a role's line come down whole, hit points and blow together (MONSTERS §4.4): the role, the share and why. */
