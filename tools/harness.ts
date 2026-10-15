@@ -827,17 +827,19 @@ async function main(): Promise<void> {
     // between: where a point's factor falls so fast from the one before that the hit points drawn
     // between them would dip, it is raised until they would not, and its damage is solved again. A
     // boss's one factor is both, so held it hits a little harder as well, and is not solved again.
-    // And where the level made over a point is not made now, but stands as it was, the point's hit
-    // points never pass those drawn at the level over it: its factor comes down until they would not,
-    // and is solved again as a held one is (#793, 29 made between 28 and 30).
+    // And where the next level made is one up and is not made now, but stands as it was, the point's
+    // hit points never pass that level's: its factor comes down until they would not, and is solved
+    // again as a held one is (#793, 29 between 28 and 30). Where the next level made is two or more
+    // up, a bound on the point alone would not keep the levels drawn between from dipping, so none is
+    // set there.
     const held: Job[] = [], bosses: string[] = [];
     for (const r of roles) {
       LEVELS.forEach((b, k) => {
         if (k === 0 || !levels.includes(b)) return;
         const a = LEVELS[k - 1], grow = line(b).hp - line(b - 1).hp;
         const least = (next.hp[r][k - 1] * line(b).hp) / (line(b).hp + grow * (b - a));
-        const c = LEVELS[k + 1], rise = line(b + 1).hp - line(b).hp;
-        const most = c === undefined || levels.includes(c) ? Infinity : (next.hp[r][k + 1] * line(b + 1).hp) / (line(b + 1).hp - rise * (c - b));
+        const c = LEVELS[k + 1];
+        const most = c !== b + 1 || levels.includes(c) ? Infinity : (next.hp[r][k + 1] * line(c).hp) / line(b).hp;
         const h = next.hp[r][k] < least - 1e-9 ? Math.ceil(least * 100) / 100 : next.hp[r][k] > most + 1e-9 ? Math.floor(most * 100) / 100 : undefined;
         if (h === undefined) return;
         next.hp[r][k] = h;

@@ -1840,12 +1840,6 @@ The rise from 30 to 32 is 12 to 18 points wherever the fight ends inside fifteen
 nearly always at the cap cannot both hold: the floor, the binding figure, is brought as near half
 as the gate's limit two above allows.
 
-**On the line made at 29 and 31** (#793; §9.2, #793's 4 and 5). The champions (435 and 5d8+8), the
-preachers (643 and 5d8+8), the Hands (785 and 7d7+12) and the crawlers (1,060 and 7d7+10) are
-restated on it. The sentries stay at 890 and 5d7+10, sized on Vask's odds, though the soldier at 31
-is 437 now. On the gate's hundred seeds Vask is won 60% with the Hands first and 33% with the clock
-let run, the thinned group 78%; the Catcher 57% at 30 and 80% at 32.
-
 The drawings (the creatures lane): `src/ui/monsters/crawlers.ts`, the new family, two kinds; the
 moths', the cultists', the rat's, the keepers' and the machines' modules gain their kinds, the
 Hand's greying hands at the shoulder for the Grey Hands (`cultist.ts` already greys with rank);
@@ -2650,7 +2644,7 @@ Decided by delegate for #753, each the owner's to overturn:
     (`q_compact_over`, `q_compact_wardens`), so they never stand together.
 16. **The walkthrough kneels with `useShrine` directly:** `kneel` in `tools/walk.ts` compares the
     outdoors' moved feature with the map's by identity and so fails on any zone map. Not this
-    issue's to fix.
+    issue's to fix. Since #793 `kneel` works on a zone map and the walkthrough kneels with it.
 
 Decided by delegate for #754, each the owner's to overturn:
 
@@ -3165,35 +3159,24 @@ Decided by delegate for #752, each the owner's to overturn:
 
 Decided by delegate for #793, each the owner's to overturn:
 
-1. **`LEVELS` gains 29 and 31 and the line is made at them in the Hand's steel:** `node
-   tools/harness.ts --calibrate --write --levels 29,31`, 200 seeds a point (1 to 200), 1,281 seconds
-   on four cores shared with another build. A diff of the tables against main: the 500 factors at
-   the levels made before are as they were, and the 40 new ones are all at 29 and 31.
-2. **A level made between two that stand is held under the one over it:** the soldier, the elite and
-   the brute at 29 came out with more hit points than at 30 (451 against 435 for the soldier), so the
-   harness holds such a point under the level over's and solves its blow again (`--levels 29 --roles
-   soldier,elite,brute`, 260 seconds; each point is made on its own, so the full command gives the
-   same). The harness test checks that no test monster has fewer hit points than the one under it.
-3. **The armoured at 29 and 31 still run long:** 38 and 49% of their days end badly (47 and 52% read
-   between), held at 28's and 30's hit points while their armour rounds up a point; free of the hold,
-   13%. 28 and 30 stand, so they are not nudged. The other eight end 2 to 11%, as at the levels made.
+1. **`LEVELS` gains 29 and 31, the rest as they stood, since the armoured ran long read between:**
+   `node tools/harness.ts --calibrate --write --levels 29,31`, 200 seeds, 1,281 s on four cores.
+2. **A point made under a level one up that stands is held under its hit points, its blow solved
+   again:** the soldier, the elite and the brute at 29 passed 30's and failed the gain check.
+3. **The armoured at 29 and 31 are not nudged:** held at 28's and 30's hit points they end 38 and 49%
+   of their days badly (13% free of the hold), and 28 and 30 must stand; none stands at 29 or 31.
 4. **The isle's four at 29 and 31 are restated on the line,** keeping id, look, sprite, level, role
-   and xp: the champion (435 and 5d8+8), the preacher (643 and 5d8+8), the Grey Hand (785 and 7d7+12)
-   and the crawler (1,060 and 7d7+10).
-5. **The sentries stay at 890 and 5d7+10,** twice the soldier at 31 as #752's line read him: they are
-   set off the line on Vask's odds, and a restating is not a tuning (twice the made soldier is 874).
-6. **`kneel` kneels at the feature the world holds,** found by its id where the company stands: on a
-   zone map that is a copy moved to the outdoors' cells, so the old test of identity failed. The
-   isle's walkthrough kneels at the pilgrims' shrine with it; Saltreach's still kneels on a dungeon.
-7. **The inscriptions check reads `shut`, `lifts` and `after`, each in its own words** (shut by, opened
-   by and no way until a reading), with an exit's fixture for each and a gate's three together; on
-   main the `lifts` and `after` fixtures pass unseen.
-8. **The gate moves only on Hearth Isle,** 615 ok, 90 owed and 64 n/a before and after: Vask 60% with
-   the Hands first and 33% with the clock let run (64 and 28%), the crypt 14.24 to a rest (14.16), all
-   inside their limits, and nothing new is owed. The Act IV bosses judged at 29 read 95 and 96%, as on
-   main.
-9. **The passage check's comment gives the Hearth's band as 28-32;** no other statement of 28-30 stands
-   in the tools, the source or this plan.
+   and xp: the champion, the preacher, the Grey Hand and the crawler (§7's table).
+5. **The sentries stay at 890 and 5d7+10,** twice the soldier as #752's line read him: they are set off
+   the line on Vask's odds, and a restating is not a tuning (twice the made soldier is 874).
+6. **`kneel` kneels at the feature the world holds, found by its id where the company stands:** on a
+   zone map the world holds a copy in the outdoors' cells, so a test of identity failed there.
+7. **The inscriptions check reads `shut`, `lifts` and `after`, each in its own words,** with a fixture
+   for each, so a way that waits on a reading is seen however it waits.
+8. **No limit, aim or owed figure of the gate is changed:** every line that moves is Hearth Isle's and
+   inside its limit (Vask 60% with the Hands first, 33% let run), so nothing is newly owed.
+9. **A stale statement of the Hearth's band is put right where found:** the passage check's comment
+   says 28-32 now, the only one in the tools, the source and this plan.
 
 Decided by delegate for #792, each the owner's to overturn:
 

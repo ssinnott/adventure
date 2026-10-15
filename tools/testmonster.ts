@@ -46,15 +46,17 @@ export function line(level: number): { hp: number; ac: number; hit: number; dmg:
 /**
  * The levels the calibration is made at: each one to 10, then every fourth to the road's cap, each
  * of Act III's, 16 to 22, where the company steps at 17, 19, 21 and 22 (#541), Act IV's from 24,
- * where it steps at 25 and 27 (#549), and each of Act V's, 28 to 32, where it steps at 28 (#752, and
- * #793 for 29 and 31, where the armoured read between ran long as the line's armour rounds up). Past 10
- * the company runs on play's rules: its spells stopped growing, its prestiges taken at 11, 19 and 27
- * with their spell ranks (#19, #20) and tiers 6 and 7 at 15 and 23 (#20), dressed by the ladder:
- * Act II's steps were in when the levels past 10 were made again (#399, #18), Act III's when the
- * levels past 16 were (#535, #541), Act IV's one, at 25 (#542), when 25 to 27 were (#549), and Act
- * V's, the Hand's steel at 28 (#746), when 28, 30 and 32 were (#752), and 29 and 31 after them,
- * the others as they stood (#793); 22 to 24 are #541's still,
- * since their company has not changed. Levels between are interpolated.
+ * where it steps at 25 and 27 (#549), and each of Act V's, 28 to 32, where it steps at 28 (#752,
+ * and #793 for 29 and 31). Past 10 the company runs on play's rules: its spells stopped growing, its
+ * prestiges taken at 11, 19 and 27 with their spell ranks (#19, #20) and tiers 6 and 7 at 15 and 23
+ * (#20), dressed by the ladder: Act II's steps were in when the levels past 10 were made again
+ * (#399, #18), Act III's when the levels past 16 were (#535, #541), Act IV's one, at 25 (#542), when
+ * 25 to 27 were (#549), and Act V's, the Hand's steel at 28 (#746), when 28, 30 and 32 were (#752)
+ * and 29 and 31 after them, the rest as they stood (#793); 22 to 24 are #541's still, since their
+ * company has not changed. Levels between are interpolated. The armoured at 29 and 31 are held at
+ * 28's and 30's hit points, since no monster has fewer than the one a level under it, while their
+ * armour rounds up a point, so they end 38 and 49% of their days badly there (13% free of the hold);
+ * no armoured monster stands at either.
  */
 export const LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 16, 17, 18, 19, 20, 21, 22, 24, 25, 26, 27, 28, 29, 30, 31, 32] as const;
 

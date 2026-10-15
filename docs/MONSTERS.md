@@ -542,8 +542,8 @@ calibration:
 - Where a role on the line already leaves the company short of its fights, it comes down whole, hit
   points and damage together.
 - No monster has fewer hit points than the one a level under it, at the levels made or between; a
-  boss held so takes the raised factor for its blow as well (#541). A level made between two that
-  stand as they were is held under the one over it too, and its blow solved again (#793).
+  boss held so takes the raised factor for its blow as well (#541). A level made under one that
+  stands as it was, one level up, is held under it too, and its blow solved again (#793).
 - The boss, one monster acting once a round against six, has both raised together until a company
   two levels under it wins half the time (EXPANSION.md §5.2).
 - It is made at every level to 10, every fourth level to 32, every level of Act III, every level
@@ -586,10 +586,14 @@ Hit points / average damage a hit, by role and level:
 | 26 | 191 / 17.5 | 332 / 19.5 | 321 / 21 | 328 / 21 | 479 / 23 | 290 / 22 | 399 / 25 | 597 / 26.5 | 692 / 30 | 1498 / 142 |
 | 27 | 260 / 16 | 383 / 26 | 378 / 28.5 | 402 / 26.5 | 533 / 31 | 376 / 27 | 522 / 31 | 670 / 38.5 | 988 / 34 | 1550 / 146 |
 | 28 | 280 / 17.5 | 466 / 26 | 420 / 31 | 437 / 29.5 | 642 / 32 | 411 / 29.5 | 637 / 29.5 | 780 / 39 | 1052 / 37 | 1552 / 146 |
-| 29 | 281 / 17.5 | 467 / 26 | 435 / 30.5 | 438 / 28.5 | 643 / 30.5 | 412 / 28.5 | 638 / 25.5 | 782 / 40.5 | 1056 / 38.5 | 1933 / 181 |
+| 29 | 281 / 17.5 | 467 / 26 | 435 / 30.5 | 438 / 28.5 | 643 / 30.5 | 412 / 28.5 | 638 / 25.5, held | 782 / 40.5 | 1056 / 38.5 | 1933 / 181 |
 | 30 | 281 / 18.5 | 468 / 26 | 435 / 30.5 | 454 / 29.5 | 645 / 33 | 430 / 28.5 | 640 / 29.5 | 784 / 38.5 | 1057 / 37 | 2089 / 194.5 |
-| 31 | 282 / 18 | 469 / 25 | 437 / 30 | 458 / 28.5 | 646 / 31 | 431 / 27 | 641 / 24 | 785 / 40 | 1060 / 38 | 2095 / 194 |
+| 31 | 282 / 18 | 469 / 25 | 437 / 30 | 458 / 28.5 | 646 / 31 | 431 / 27 | 641 / 24, held | 785 / 40 | 1060 / 38 | 2095 / 194 |
 | 32 | 298 / 17 | 470 / 26 | 455 / 30 | 480 / 29 | 648 / 36 | 449 / 27 | 644 / 29 | 787 / 38.5 | 1062 / 38.5 | 2100 / 194 |
+
+Held: the armoured at 29 and 31 hit for 25.5 and 24 against 29.5 at 28 and 30, as their hit points
+are held at the level under's (no monster has fewer than the one a level under it), so they end 38
+and 49% of their days badly there, 13% free of the hold (#793); no armoured monster stands at either.
 
 Armour and to-hit are the line's, rounded, plus the role's offsets in §4.2: armour 12 and to-hit 2
 at level 1, 16 and 7 at 10, 27 and 18 at 32. Speeds are the roles': fodder, archers, casters and
@@ -814,8 +818,9 @@ What it shows:
   seeds a point; `node tools/harness.ts --calibrate --write --levels 29,31`, 1,281 seconds on four
   cores shared with another build); the 500 factors at the levels made before are as they were.
   Hit points are held at the level under's for 14 of the 20 points, and under the level over's for
-  the soldier, the elite and the brute at 29, which came out with more than at 30, which stands
-  (the harness's new hold; `--levels 29 --roles soldier,elite,brute`, 260 seconds). Fights to a
+  the soldier, the elite and the brute at 29, which came out with more than at 30, which stands, and
+  so failed the harness test's check that a test monster gains hit points with every level (the
+  harness's new hold; `--levels 29 --roles soldier,elite,brute`, 260 seconds). Fights to a
   rest are 10.8 to 11.4 at 29 (11.25 asked) and 11.5 to 12.2 at 31 (11.75), where the line read
   between gave 9.2 to 11.8 and 9.6 to 12.1, and the boss is won 48 and 53% from two under. Eight
   of the nine regular roles end 4 to 11% of their days badly at 29 and 2 to 10% at 31, as at the

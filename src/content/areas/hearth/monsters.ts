@@ -26,8 +26,9 @@ export const MONSTERS: readonly MonsterDef[] = [
   { id: 'hand_rearguard', name: 'Ashen Rearguard', plural: 'Ashen Rearguards', sprite: 'hand_rearguard', kind: 'person', look: 'The last of the Hand still standing, and standing in the way.', steady: true, level: 30, hp: 640, ac: 28, attack: 17, dice: 5, sides: 8, bonus: 7, speed: 8, xp: 1591, gold: [0, 0], tint: '#3a3436', size: 1.05 },
   // the Heart, at the panel (#759), an elite on the line at 31: their grip
   { id: 'grey_hand', name: 'Grey Hand', plural: 'Grey Hands', sprite: 'grey_hand', kind: 'person', look: 'Hands the colour of ash, to the shoulder.', steady: true, level: 31, hp: 785, ac: 27, attack: 18, dice: 7, sides: 7, bonus: 12, speed: 15, xp: 2467, gold: [0, 0], inflict: { cond: 'paralysed', chance: 0.15 }, tint: '#262226', size: 1.05 },
-  // called by the ring (#759), a soldier at 31 on twice the line's hit points with its blow, so a clock let run costs a
-  // company what the plan says (#752): the heavy machines' frame, the core's own; it stands down when Vask falls
+  // called by the ring (#759), a soldier at 31 on twice the line's hit points as #752 read them (445) with its blow, so a
+  // clock let run costs a company what the plan says (#752); the line made at 31 since is 437 (#793), twice that 874, and
+  // the sentry stays at 890: the heavy machines' frame, the core's own; it stands down when Vask falls
   { id: 'core_sentry', name: 'Core Sentry', plural: 'Core Sentries', sprite: 'core_sentry', kind: 'machine', look: 'The core\'s own, and it takes orders from the ring.', level: 31, hp: 890, ac: 27, attack: 17, dice: 5, sides: 7, bonus: 10, speed: 11, xp: 1233, gold: [0, 0], obeys: true, tint: '#c3c7cc', size: 1.45 },
   // the Heart (#759), the boss at 32 with his hit points and blow set on his odds, the clock played and the Hands
   // killed first (#752; on the line, 2,100 and 34d8+41, he is won 9% so, 21% going for him first and 5% fighting
@@ -37,7 +38,8 @@ export const MONSTERS: readonly MonsterDef[] = [
   // down from above and reaches the back row
   { id: 'deep_crawler', name: 'Deep Crawler', plural: 'Deep Crawlers', sprite: 'deep_crawler', kind: 'machine', look: 'It comes down from above, on too many legs.', level: 31, hp: 1060, ac: 25, attack: 18, dice: 7, sides: 7, bonus: 10, speed: 8, xp: 2467, gold: [0, 0], ranged: true, tint: '#4a454d', size: 1.25 },
   // the Stair's foot among the Hand's dead (#758), the boss at 31 with its hit points and blow set on its odds (#752;
-  // on the line, 2,096 and 35d7+54, it is won 14% at 30 and 28% at 32): it reaches the back row, and what it
+  // on the line as it was then, 2,096 and 35d7+54, it is won 14% at 30 and 28% at 32; the line made at 31 since is 2,095
+  // and 34d8+41, #793): it reaches the back row, and what it
   // holds is held
   { id: 'catcher', name: 'The Catcher', plural: 'Catchers', sprite: 'catcher', kind: 'machine', look: 'It caught the Hand on these stairs.', level: 31, hp: 1300, ac: 28, attack: 19, dice: 32, sides: 8, bonus: 37, speed: 13, xp: 19733, gold: [0, 0], ranged: true, inflict: { cond: 'paralysed', chance: 0.2 }, tint: '#3a363c', size: 2 },
 ];
