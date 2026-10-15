@@ -2024,19 +2024,20 @@ area is built box by box:
 | Levels | 6 monsters in 30–31, give or take two; rising from the way in (rank correlation 0.19); the nearest group, the rearguard at 4 steps, at 30.0; the hardest, the crawlers at 16,20 at 10 steps, at 31.0 |
 | Lines | 11 events and signs: 8 of two lines and 3 of three; the area's 55: 7 of one, 33 of two and 15 of three |
 
-**As built: the Heart** (#759). The row's `owed` is raised to what the isle, the rim, the temple, the
-crypt, the Ways, the Stair and the Heart pay, 42,946 xp a member and 8,200 gold, still owed to #744:
-a clear falls short of the area's budget by 3,988 xp a member and 20,120 gold. The curve counts both
-of Vask's groups and none of the sentries, and a clear fights one group:
+**As built: the Heart** (#759). The row's `owed` stands at what the isle, the rim, the temple, the
+crypt, the Ways, the Stair and the Heart pay, 38,317 xp a member and 8,200 gold, still owed to #744
+(#759 raised it to 42,946, the curve then counting both of Vask's groups; #792 set it again):
+a clear falls short of the area's budget by 8,617 xp a member and 20,120 gold. The curve counts the
+lesser of Vask's groups and none of the sentries, as a clear fights one group:
 
 | | Figure |
 |---|---|
-| Xp a member, as the curve counts it | 8,846 against the Heart's eighth, 5,867: 1.51 (both of Vask's groups, 53,081 split six ways: `core_vask` 27,774 and `core_vask_thinned` 25,307; no sentry) |
+| Xp a member, as the curve counts it | 4,217 against the Heart's eighth, 5,867: 0.72 (the lesser of Vask's two groups, `core_vask_thinned` 25,307 split six ways; `core_vask`, 27,774, is its twin on the square and is left out; no sentry) |
 | Xp a member, as played | 4,629 with `core_vask` (27,774) or 4,218 with the thinned group (25,307), and 206 more for each sentry the clock calls, eight at most (1,644): 4,629 to 6,273 against an eighth, 5,867 |
-| The area | 42,946 of the 46,934, 91.5%: H6 5,009, the rim 2,908, the temple 4,971, the crypt 1,962, the Ways 9,768, the Stair 9,482 and the Heart 8,846 |
-| The area, as played | the curve's 42,946 less the thinned group's 4,218 is 38,728 (82.5%), with up to 1,644 of sentries |
+| The area | 38,317 of the 46,934, 81.6%: H6 5,009, the rim 2,908, the temple 4,971, the crypt 1,962, the Ways 9,768, the Stair 9,482 and the Heart 4,217 |
+| The area, as played | the curve's 38,317 with the thinned group, or 38,728 (82.5%) with `core_vask`, and up to 1,644 of sentries more |
 | Gold | 8,200 of the 28,320 for the area, 20,120 short: the Stair's 1,600, the Ways' 1,400, the rim's 1,700, the temple's 2,000, the crypt's 800 and H6's 700; the Heart adds none (its finds are the ring). The dearest find, the Grey Mail at 7,000, sits in the 7,000 window |
-| Paid by level | entering at 28 and clearing three quarters, a company leaves at 31.9, 0.1 under the next floor 32 |
+| Paid by level | entering at 28 and clearing three quarters, a company leaves at 31.4, 0.6 under the next floor 32 |
 | Gate, at the floor 32 | the Heart is judged on its boss's odds alone, its every group being a boss (§9.2, #759's 8); the area's 39 groups at their maps' floors 97.2% of fights won (aim 90%, limit 80%) |
 | Vask | `core_vask` 64% won at 32 (aim 30% to 70%, limit 20% to 80%), `core_vask_thinned` 77%; two above the floor n/a, past the cap. His four plays on 400 seeds (the gate's hundred), on the line made again with the sentries at 890 hit points (#752): the Hands first 66% (64%), Vask first 72% (69%), the sentries as they come 28% (28%), no clock 87% (83%); the tries are in §7 |
 | Gate, two under | n/a for the Heart, its floor being above the area's; the area's pool at 26, 92.5% of 39 groups' fights won (aim 25%, limit 90%): owed to #18 (§11) |
@@ -3155,6 +3156,17 @@ Decided by delegate for #752, each the owner's to overturn:
 8. **The armoured at 29 and 31, read between, run long** (47 and 52% of days end badly) where the
    line's armour rounds up; no armoured monster stands there, and the line is not nudged.
 
+Decided by delegate for #792, each the owner's to overturn:
+
+1. **A twin is read as the maps and pillars checks read one:** two groups of a map on a square, one
+   `until` a condition and the other `after` it, by structure. Only the Heart's pair is caught.
+2. **The lesser by xp counts, the whole group,** so its xp and gold are one clear's; a tie keeps the
+   `until` group. A chain of three is not met: no map has one.
+3. **The owed row's floor is set again from the print,** `xp: 38317` for 42946; its `why` names the
+   Heart among the shares short (0.72). `whose` and the gold stay; #759's 9 stands as it was.
+4. **The Heart's figures in §8 and §11 are read again from the print,** the lead among them (31.4 for
+   31.9, moved with the clear). The gate, the density and the harness are as they were.
+
 ## 10. Names
 
 The Lanterns' English, kept, as the Whitespine's and Sunderwood's were (NAMES.md §2, §4): the isle
@@ -3359,14 +3371,14 @@ Owed, from the Cleric's third (#763):
 
 Owed, from the Heart (#759):
 
-- **The area's clear falls short of its budget:** 42,946 xp a member of the 46,934 (91.5%), 3,988
-  short, and 8,200 gold of the 28,320, 20,120 short. The crypt, the temple, the rim, the Stair and the
-  Ways fell short of their xp shares (0.42, 0.74, 0.74, 0.90 and 0.93), which the Heart's count
-  hides: the curve counts both of Vask's groups and none of the sentries (8,846 against its eighth,
-  5,867) and a clear fights one group, so as played it pays 38,728 (82.5%), with up to 1,644 of
-  sentries more, the Heart 4,629 to 6,273. The gold gap is not the shares' doing: the Heart adds
-  none. No group is added and no monster strengthened: the row's `owed` stays at the as-built floor
-  (§8; §9.2, #759's 9). The owner's call.
+- **The area's clear falls short of its budget:** 38,317 xp a member of the 46,934 (81.6%), 8,617
+  short, and 8,200 gold of the 28,320, 20,120 short. The crypt, the temple, the rim, the Stair, the
+  Ways and the Heart fell short of their xp shares (0.42, 0.74, 0.74, 0.90, 0.93 and 0.72): the curve
+  counts the lesser of Vask's groups and none of the sentries (4,217 against its eighth, 5,867), as a
+  clear fights one group; a company that meets `core_vask` is paid 38,728 (82.5%), with up to 1,644
+  of sentries more, the Heart 4,629 to 6,273. The gold gap is not the shares' doing: the Heart adds
+  none. No group is added and no monster strengthened: the row's `owed` stands at the floor the
+  curve prints (§8; §9.2, #759's 9 and #792's 3). The owner's call.
 - **Vask's sizing is final and the gate's two rules are kept** (#752): `OFF_LINE.vask`, 1,850 hit
   points and 22d8+23, and the rules that a map of nothing but its boss is judged on the boss's odds
   and a boss at the cap at its floor alone, now written in `docs/EXPANSION.md` §5.2 and
