@@ -13,6 +13,7 @@ import { ITEMS } from './items.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
 import { INTERIORS } from './interiors.ts';
 import { QUESTS } from './quests.ts';
+import { CHAPTER } from './chapter.ts';
 
 export const AREA = {
   id: 'hearth' as const,
@@ -27,14 +28,13 @@ export const AREA = {
   sprites: SPRITES,
   // The isle's finds and the pilgrims' tokens (#753), the east rim's staff and mail (#754), the temple's
   // (#755), the crypt's (#756), the Ways' (#757), the Stair's (#758) and the Heart's ring (#759); the band's
-  // rung at 28 is #746's.
+  // rung at 28 is the nine grey pieces among them (#746).
   items: ITEMS,
   // #56's 57, The Pilgrims in the Bowl, as far as the isle goes (#753); 56, The Sacristan's Lamps (#755); 59,
   // Every Frame She Marked, as far as the Ways go, 60, Crew Only, From the Inside, and 61, The Knocker That
   // Stopped (#757); the Cleric's third, The Eleven Kept (#763); 64, The Signet, from the ring at the Heart (#759).
   quests: QUESTS,
-  // The Heart, the act's chapter and the road's last, is #760's.
-  chapter: undefined,
+  chapter: CHAPTER,
   // The isle in the Sound: mild and damp, little between summer and winter or day and night, the haze
   // off the water standing in the column's light (§9, proposed).
   climate: { summer: 22, winter: 14, daily: 4, damp: [0.05, 0.09], wettest: 60, fog: 0.1, lag: 14,

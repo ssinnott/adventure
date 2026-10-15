@@ -21,8 +21,8 @@ cuts the atlas's terrain for a box (EXPANSION §8.2): land is what is not sea or
 Seven places are built: H6, the isle (#753, §4.2), which lists the area; I6, the east rim (#754,
 §4.3); Hearthfane, the temple (#755, §4.4); the crypt under it (#756, §4.5); the Ways below the
 crypt (#757, §4.6); the Stair below the Ways (#758, §4.7); and the Heart below the Stair (#759,
-§4.8). The isle is built to the Heart; the chapter (#760) is to build, and of the road behind (#765) Gullwick,
-Ashfall, the Kilns and Sunderwood are built (§12).
+§4.8). The isle is built to the Heart and its chapter is written (#760, §5); of the road behind (#765)
+Gullwick, Ashfall, the Kilns and Sunderwood are built (§12).
 What exists: the isle's map, `hearthisle_h6`, which places four of the roster's monsters, opens the
 pilgrims' camp's three rooms and gives onto the temple (§3); the rim's map, `hearthisle_i6`, which
 places three of those four; the temple's map, `hearthfane`, which places three of those four and
@@ -45,11 +45,12 @@ family); the Cleric's third prestige at Anchorhold, built (#19, #763): the ancho
 hand-in of the keeper's log, the lamps in the crypt and the log; and #56's 56 to 61 and 64, Act V's side
 quests, drafted, with 56 built in the temple, 60 and 61 built in the Ways, 57 begun on the isle and
 ended on the Stair, 59 begun in the Ways and ended on the Stair, 58 begun on the Stair and 64 begun
-at the Heart (§6).
+at the Heart (§6); and the chapter, The Heart (#760, §5), the one quest's twelfth and last, walked to
+each of its three ends and once early.
 Its content is
 `src/content/areas/hearth/` (maps, monsters, items, climate, its part of the world map and its
 walkthrough; its side quests and the Cleric's third in `quests.ts`, as far as built; its chapter,
-The Heart, in `chapter.ts`, to come) and its businesses' rooms `src/ui/interiors/hearth/`, drawn ahead of
+The Heart, in `chapter.ts`) and its businesses' rooms `src/ui/interiors/hearth/`, drawn ahead of
 it (#762). Its ids, the plan's: the area `hearth`, its zone `hearthisle`, the boxes `hearthisle_h6`
 and `hearthisle_i6`, the temple `hearthfane` and its crypt `hearthfane2`, the Underdeep's two levels
 `underdeep` and `underdeep2` and the Core `core`.
@@ -227,8 +228,13 @@ links: the zone `hearthisle` with its crossing words; the places `hearthfane` (b
 end, owed to Phase 1.5 until H6, lands on the strand (`LAST_CROSSING`, `src/content/crossings.ts`),
 so Cinderport's harbourmaster sells it. The curve's row (#745, §8) has left `PLANNED`, owed to #744
 for what the isle, the rim, the temple, the crypt, the Ways, the Stair and the Heart pay, which falls
-short of the area's budget (§8, §11). The drafts the scaffold cuts are in §1. This doc is
-the plan; §4 has the briefs, each with every line its place says, so that the box or level can be
+short of the area's budget (§8, §11). The chapter, The Heart (#760, §5), is the area's `chapter`
+(`chapter.ts`), joined after the Wold's in `THE_QUEST`, the twelfth and last: begun on `q_road_east`
+or on the isle, done on any of the three endings' flags and walked in the walkthrough to each of its
+ends and once early; `tools/tests/quests.ts` owes neither it nor the zone's step now. The gear's last
+rung, the Hand's steel at 28 (#746, §8), is on the ladder (`GEAR`, `tools/harness.ts`), every piece
+placed by its box. The drafts the scaffold cuts are in §1. This doc is the plan; §4 has the briefs,
+each with every line its place says, so that the box or level can be
 built from it by a session that has read DESIGN, STORY and EXPANSION and nothing else. The owner's
 calls are §9's.
 
@@ -247,7 +253,8 @@ calls are §9's.
 The core is everything: no map here is country. Build order is the road's: H6 (built, #753; it lists
 the area, moves the isle's rows into the area's own atlas slice and lands the last crossing, §7),
 I6 (built, #754), the temple (built, #755), the crypt (built, #756), the Ways (built, #757), the
-Stair (built, #758), the Heart (built, #759); the chapter and the walkthrough once the Heart is in;
+Stair (built, #758), the Heart (built, #759); the chapter and the walkthrough once the Heart is in
+(written, #760);
 the side quests with their maps; the Council and the endings with the Heart. The drawings (§7) land
 before the maps that first place them, the crawlers' family before the Ways.
 
@@ -1237,16 +1244,16 @@ export const CHAPTER: Chapter = {
       text: 'We made it finish. The Hearth burns harder than it ever has, and far below, engines woke. Our grandchildren will see it land.' },
   ],
   goals: [
-    { when: { flag: RING_GIVEN }, at: 'core', text: 'The ring is in our hands, and the panel waits under hers. Choose.' },
-    { when: { flag: VOICE_WHOLE }, at: 'core', text: 'The girl out of the hole, at the panel, with the ring.' },
+    { when: { flag: RING_GIVEN }, at: 'core', text: 'The ring is in our hands, and the panel at the heart waits under hers. Choose.' },
+    { when: { flag: VOICE_WHOLE }, at: 'core', text: 'The girl out of the hole, at the heart\'s panel, with the ring.' },
     { when: { flag: VASK_FALLEN }, at: 'core', text: 'The panel at the heart, and whatever speaks now the Hand is broken.' },
     { when: { seen: 'core:core_door' }, at: 'core', text: 'Into the heart of the Hearth, to Vask at the panel, and stop him.' },
-    { when: { slain: 'underdeep2:ud2_catcher' }, at: 'core', text: 'Through the last door at the stair\'s foot, which opens for whoever made the Stones whole.' },
+    { when: { slain: 'underdeep2:ud2_catcher' }, at: 'underdeep2', text: 'Through the last door at the stair\'s foot, which opens for whoever made the Stones whole.' },
     { when: { seen: 'underdeep2:ud2_dead' }, at: 'underdeep2', text: 'Down the rest of the stair past the Hand\'s dead, to whatever caught them, and the door at the foot.' },
     { when: { seen: 'underdeep:ud_in' }, at: 'underdeep2', text: 'Through the service ways under the world, following her knots, to the stair that goes down to the heart.' },
     { when: { seen: 'hearthfane2:hf2_knot' }, at: 'underdeep', text: 'Through the grey door she marked, down into the ways below the world.' },
     { when: { visited: 'hearthfane' }, at: 'hearthfane2', text: 'Through the nave past the Hand\'s best, and down the stair behind the altar into the crypt.' },
-    { when: { seen: STRAND }, at: 'hearthfane', text: 'Up the cleft through the rim into the Bowl, to the temple at the column\'s foot.' },
+    { when: { visited: 'hearthisle_h6' }, at: 'hearthfane', text: 'Up the cleft through the rim into the Bowl, to Hearthfane, the temple at the column\'s foot.' },
     { when: { flag: ROAD_EAST }, at: 'hearthisle_h6', text: 'East to Cinderport\'s quay, and the last crossing over the Sound to Hearth Isle, where the light stands.' },
   ],
 };
@@ -1256,7 +1263,9 @@ Entries are kept under two lines of the journal's page, as Act IV's are; the wal
 holds them. Nobody is named: she is the girl out of the hole in the goals and her in the entries,
 as every chapter has her, and the word on the last frame is the one time the journal writes her
 name, which is the point of it. The entries are the company's: the voice's words are quoted at
-one remove, so what the Custodian is stays found and never told.
+one remove, so what the Custodian is stays found and never told. Written so (#760): the code above is
+the chapter as built, with three goals' words naming their place, one goal's key on the isle and one
+goal's place on the Stair (§9.2, #760's 1 to 3).
 
 **The lock.** The last door (§4.7) needs the five flags the road sets at the Stones: the Tide
 Stone home (`q_tide_home`), the Grove closed (`q_grove_done`), the Anvil's tear closed
@@ -1303,7 +1312,8 @@ below the fights; opened. Then with Fane's map held, a token carried and no verd
 three answers put and the third taken; finished. And once more at 27, early by the boat, the door
 shut on four flags, the walk back up to the camp to rest and the journal reading true to the
 Catcher with the ending unreached. It checks the quest ends once, the pages fit, every goal names a
-map in band and each ending's flag reaches Gullwick's shore.
+map in band and each ending's flag reaches Gullwick's shore (owed to #765 until the road behind
+writes it).
 
 ## 6. Side quests
 
@@ -1990,29 +2000,49 @@ of Vask's groups and none of the sentries, and a clear fights one group:
 | Levels | 2 monsters in 32, give or take two; the nearest group, `core_vask` at 9 steps, at 31.3; the hardest, `core_vask_thinned` at 9 steps, at 31.3 (at least 30) |
 | Lines | every event and sign of the Heart fits 3 lines of the log |
 
-**The gear** (`GEAR`, `tools/harness.ts`), one more rung, the last, by 28 and found, never sold:
-the Hand's steel from below, in the temple's treasury, the camps' chests and the champions' drops
-(§4.4 to §4.7), each inside the window and each a point past Cinderport's armourer for every class:
+**The gear** (`GEAR`, `tools/harness.ts`), the last rung, at 28 (built, #746), found and never
+sold: the Hand's steel from below, in the temple's treasury, the camps' chests, the champions'
+drops and the knocker's gift (§4.2 to §4.7), each inside the window and each a point past
+Cinderport's armourer for every class. *Takes it* is the ladder test's (`ACT_V`,
+`tools/tests/ladder.ts`; §9.2, #746's 2):
 
-| Id | Name | For | Price | Where |
-|---|---|---|---|---|
-| `grey_blade` | Grey Blade | the martial classes and the cleric (a sword, 2d12+6) | 6,600 | the treasury |
-| `grey_axe` | Grey Axe | the martial classes (two-handed, 2d12+7) | 6,800 | the rearguard's chest |
-| `grey_knife` | Grey Knife | light, the thief's (1d8+14) | 6,400 | the picket's chest; the champions' drop |
-| `grey_bow` | Grey Bow | the ranger (1d12+13) | 6,800 | the treasury |
-| `grey_staff` | Grey Staff | staves, the casters' (1d10+13) | 6,200 | the Hand's camp |
-| `old_lanterns_staff` | Old Lantern's Staff | staves, the casters' (1d10+14), holy | 7,000 | the swallowed hall (61) |
-| `grey_mail` | Grey Mail | the Drakeskin Coat's wearers (ac 14; §9.2, #754's 8) | 7,000 | the Hand's hoard (I6) |
-| `grey_robe` | Grey Robe | the casters (ac 13) | 6,200 | the crypt's pack |
-| `grey_shield` | Grey Shield | the shield bearers (ac 8) | 4,000 | the keeper's store |
-| `smelling_salts` | Smelling Salts | anyone, a plain consumable: `use: { cure: ['asleep', 'paralysed'] }` on one member, used up | 0 | the north rim's cache, three in a pouch |
+| Id | Name | For | Takes it at 28 | Price | Where |
+|---|---|---|---|---|---|
+| `grey_blade` | Grey Blade | the martial classes and the cleric (one hand, 2d12+6) | the knight, the paladin and the cleric | 6,600 | the treasury |
+| `grey_axe` | Grey Axe | the martial classes (two-handed, 2d12+7) | the barbarian | 6,800 | the rearguard's chest |
+| `grey_knife` | Grey Knife | anyone (light, 1d8+14) | the sorcerer, the thief and the bard | 6,400 | the picket's chest; the champions' drop |
+| `grey_bow` | Grey Bow | the ranger (1d12+13) | the ranger | 6,800 | the treasury |
+| `grey_staff` | Grey Staff | anyone (a staff, two-handed, 1d10+13) | the monk and the druid | 6,200 | the Hand's camp's chest |
+| `old_lanterns_staff` | Old Lantern's Staff | anyone (a staff, two-handed, 1d10+14), holy in its words | the cleric, the sorcerer, the thief, the bard, the monk and the druid (the knight and the paladin bear shields; the ranger and the barbarian have a better piece of their own) | 7,000 | the knocker's gift for *Widen it.* (61) |
+| `grey_mail` | Grey Mail | the Drakeskin Coat's wearers (ac 14; §9.2, #754's 8) | all seven, the knight and the paladin over their plate | 7,000 | the Hand's hoard (I6) |
+| `grey_robe` | Grey Robe | anyone (ac 13) | the cleric and the sorcerer | 6,200 | the crypt's pack |
+| `grey_shield` | Grey Shield | the shield bearers (ac 8) | the knight and the paladin | 4,000 | the keepers' store |
+| `smelling_salts` | Smelling Salts | anyone, a plain consumable: `use: { cure: ['asleep', 'paralysed'] }` on one member, used up | no one: no gear, not on the ladder | 0 | the north rim's cache, three in a pouch |
 
 The dice are a point past the armourer's at Cinderport (`src/content/areas/ashfall/items.ts`), one
 rung for one rung: the Slag Mace 2d12+5, the Flamberge 2d12+6, the Marlinspike 1d8+13, the Ashwood
 Bow 1d12+12, the Battle Staff 1d10+12, the Drakeskin Coat ac 13, the Cinder Robe ac 12 and the
 Basalt Shield ac 7. The harness and the gate dress their companies from the rung at 28 and measure
-30 and 32 in it. The salts are no system: a consumable for one member, as Lantern Oil is
-(`lantern_oil`, which the store sells for poison, disease and paralysis), and named apart from it.
+30 and 32 in it; `GEAR_TOP` is 28. The salts are no system: a consumable for one member, as Lantern
+Oil is (`lantern_oil`, which the store sells for poison, disease and paralysis), and named apart from
+it.
+
+The boxes' tables above keep the figures they were built with, before the rung. In it the gate reads
+(#746; the line is made again with the rung in by #752):
+
+| Figure | Before the rung | In it |
+|---|---|---|
+| H6 at 28, fights to a rest | 12.19 | 13.43 |
+| I6 at 28, fights to a rest | 11.32 | 12.67 |
+| Hearthfane at 28, fights to a rest | 8.96 | 9.61 |
+| The crypt at 29, fights to a rest | 13.71 | 15.74, past the limit of 14.75: owed to #752 |
+| The Ways at 30, fights to a rest | 11.58 | 12.91 |
+| The Stair at its floor, 30, won | 94.1% | 95.6% |
+| The Stair at 30, fights to a rest | 10.14 | 11.43 |
+| The Catcher, won at 30 and at 32 | 59% and 84% | 69% and 82% |
+| Vask (`core_vask`), won at 32 | 65% | 79% |
+| Vask's thinned group, won at 32 | 68% | 89%, past the limit of 80%: owed to #752 |
+| Hearth Isle at its maps' floors, its 39 groups won | 97.2% | 98.4% |
 
 **Quest items** (`price: 0`, `slot: 'none'`): `wardens_badge`, `treaty_seal`, `tallis_tally`
 (57); `gullwick_letter`, with its text (58); `fane_key` (an iron key, 56); `queens_signet`, with a
@@ -2968,6 +2998,54 @@ Decided by delegate for #759, each the owner's to overturn:
     `InteriorScreen`). `boxFaults` holds a group to the box and a person to both, as before, and a
     fixture proves each. Outside the content lane: the owner's to overturn.
 
+Decided by delegate for #760, each the owner's to overturn:
+
+1. **The goal up the cleft keys on the isle visited, not the strand seen** (`visited: 'hearthisle_h6'`):
+   the start's second way, the isle for a company over early, must begin with a goal
+   (`tools/tests/quests.ts`), and none held before the strand. It holds as the boat grounds; the
+   entry `isle` keeps the strand.
+2. **The door's goal, on the Catcher slain, is at `underdeep2`, not `core`:** a goal's words name its
+   place (`namesPlace`, `tools/walk.ts`), and *Through the last door at the stair's foot* names the
+   Stair, where the door stands. Its words are §5's.
+3. **Three goals' words gain their place's name for the same check:** *to Hearthfane, the temple at
+   the column's foot*, *at the heart's panel* and *the panel at the heart waits under hers*. Every
+   entry is §5's word for word, and each entry and goal fits two lines of the page.
+4. **Every key is a built one and none is added:** `core_door` on 8,13 and `ud_in` on 16,29, one step
+   in off their landings (#759's 16), `ud2_word` as `KNOT_LAST` and the Catcher a guardian.
+   `shipped.json` takes nothing new.
+5. **The walkthrough puts the road behind done by hand** (`roadDone`: each earlier chapter's end by
+   its first way, as the quests check satisfies a condition), so the quest's own end is said once in
+   each play; Acts I to IV are their own walkthroughs'. The road's five (`FIVE`) are put by hand too:
+   `q_peak_stood` and `q_ember_lit` end no chapter of their own.
+6. **The verdict, the token and Fane's map are put by hand:** #764's own flags (`q_throne_removed`
+   and `q_throne_tallis`), `q_token_cousin` with the badge and `meridian_map`, as the Heart's box play
+   does. The Council's hearing is the shelf's to walk.
+7. **Only the fights on the chapter's line are fought:** the Hand's best, the crypt's keeper, the
+   rearguard, the Catcher at 31 and Vask or his thinned group at 32. The rest are the box plays'.
+8. **The early company crosses at 27 without the Peak Stone** (`q_peak_stood`), The Window done and
+   The Warning not; from the temple on its steps take the curve's levels (28 to 31), as the walk's
+   band check sets them.
+9. **Gullwick's shore is owed to #765** (`owed` in the walkthrough): no line there reads an ending's
+   flag yet. Whichever of the two lands second makes the check.
+
+Decided by delegate for #746, each the owner's to overturn:
+
+1. **The rung is all nine, at 28, and `GEAR_TOP` follows to 28.** The `--gear-grows` what-if now
+   names its top (*past level 28*), where it said 10, stale since the ladder passed 10.
+2. **Who takes what (`ACT_V`):** each class the piece bettering the one it took at 25, plate's
+   wearers the mail too; the blade and the Old Lantern's Staff go to every class they better and that has
+   no better piece of its own (§8).
+3. **A rung can be `found`:** its pieces carry no plus, so the test read them as wares; a found
+   rung's are held to a find's place and to one more rule, that no shop sells them.
+4. **A found piece may be a person's gift:** the Old Lantern's Staff is the knocker's for *Widen
+   it.* (61), so a found rung counts an answer that gives it; earlier rungs keep chests and drops.
+5. **None is owed:** every piece is placed, so each `from` is `['hearth', '']`, with the box's issue
+   (#753 to #758) beside it.
+6. **What the rung moves past a limit is owed to #752, no monster retuned:** in `OWED` the crypt's
+   15.74 fights to a rest at 29 and Vask's thinned group's 89%; the harness's 12.8 at 28.
+7. **The staff's holiness is its words:** the issue's table has it *holy*; the item carries no
+   element (#757's 9), and the rung takes it as built. Every other figure is the table's.
+
 Decided by delegate for #765 (half B: Gullwick and the rest), each the owner's to overturn:
 
 1. **The Walk Home's entry at the open gate is the Helmstow half's:** its `seen: 'shelf:gate_open'`
@@ -3040,11 +3118,11 @@ Owed, from H6 (#753):
   in four" is not met: stronger monsters are barred and fewer groups would not lower it (§9.2,
   #753's 11). The owner's or #18's.
 - **The chapter's first step** and the strand's shard (`hearthisle_h6:h6_strand` and `h6_shard`) are
-  #760's: `tools/tests/quests.ts` owes the chapter and lists the zone as planned.
+  #760's, written: `tools/tests/quests.ts` owes neither the chapter nor the zone's step now.
 - **The free fare** for a Partner is built (#765): the last crossing's fare is `free` at both ends on
   `q_compact_over`, so the runner's word that the boat is the Partner's both ways holds.
-- **The gear's rung** is #746's: the Grey Knife (`greyKnife`) and the Smelling Salts are built here
-  (`src/content/areas/hearth/items.ts`), and #746 takes them into the rung.
+- **The gear's rung** is built (#746): the Grey Knife (`greyKnife`), built here
+  (`src/content/areas/hearth/items.ts`), is on the ladder at 28; the Smelling Salts are no gear.
 - **`kneel` in `tools/walk.ts`** fails on any zone map, comparing the outdoors' moved feature with
   the map's by identity; the isle's walkthrough kneels with `useShrine` directly (§9.2, #753's 16).
 
@@ -3066,8 +3144,8 @@ Owed, from I6 (#754):
   (`KEPT_ASKED`); her hand-in sets `q_eleven_log`, no longer owed in `UNSET` (§9.2, #763's 1 and 5).
 - **`q_throne_removed`** is set on main by the Council (#774), so nothing is owed for it: the camp's
   guard carries the leave rule, and the walkthrough plays it with the flag set by hand (§9.2, #754's 6).
-- **The gear's rung** is #746's: the Grey Staff and the Grey Mail (`greyStaff`, `greyMail`) are built
-  here (`src/content/areas/hearth/items.ts`), and #746 takes them into the rung (§9.2, #754's 8).
+- **The gear's rung** is built (#746): the Grey Staff and the Grey Mail (`greyStaff`, `greyMail`),
+  built here (`src/content/areas/hearth/items.ts`), are on the ladder at 28 (§9.2, #754's 8).
 
 Owed, from Hearthfane (#755):
 
@@ -3075,9 +3153,9 @@ Owed, from Hearthfane (#755):
   than a quarter (limit 90%). It is owed to #18 as H6's is (`hearthfane: under`, `OWED` in
   `tools/tests/gate.ts`). The issue's "one at 26 no more than one in four" is not met: stronger
   monsters are barred (§9.2, #755's 10). The owner's or #18's.
-- **The chapter's step** for the temple is #760's (`visited: 'hearthfane'`).
-- **The gear's rung** is #746's: the Grey Blade and the Grey Bow (`greyBlade`, `greyBow`) are built
-  here (`src/content/areas/hearth/items.ts`), and #746 takes them into the rung (§9.2, #755's 11).
+- **The chapter's step** for the temple is #760's (`visited: 'hearthfane'`), written.
+- **The gear's rung** is built (#746): the Grey Blade and the Grey Bow (`greyBlade`, `greyBow`),
+  built here (`src/content/areas/hearth/items.ts`), are on the ladder at 28 (§9.2, #755's 11).
 - **A door's own key** would be a systems change: the treasury's door is gated on the key, and the
   comment on `MapDef.gates` (`src/game/map.ts`), which speaks of an exit, is the systems lane's to
   reword (§9.2, #755's 1).
@@ -3106,9 +3184,10 @@ Owed, from the crypt (#756):
 - **`q_eleven_log`** is set by Hereswith's hand-in (#763), so `hf2_eleven` is said once the log is
   given. It has left `UNSET` (`tools/tests/quests.ts`); I6 takes `LOG_GIVEN` from the crypt, which
   exports it (§9.2, #756's 6; #763's 5).
-- **The chapter's step** for the knot is #760's (`hearthfane2:hf2_knot`, seen).
-- **The gear's rung** is #746's: the Grey Robe (`greyRobe`) is built here, in the pack `hf2_pack`;
-  #746 takes it into the rung (§9.2, #756's 7).
+- **The chapter's step** for the knot is #760's (`hearthfane2:hf2_knot`, seen), written.
+- **The gear's rung** is built (#746): the Grey Robe (`greyRobe`), built here in the pack `hf2_pack`,
+  is on the ladder at 28 (§9.2, #756's 7). In it the crypt's company fights 15.74 to a rest at 29,
+  past the limit of 14.75: owed to #752 (§8; §9.2, #746's 6).
 
 Owed, from the Ways (#757):
 
@@ -3132,10 +3211,10 @@ Owed, from the Ways (#757):
 - **The road behind is built (#765):** `CREW_OPEN` brings the Kilns' knockers (`ud_mines`) onto
   `deep_mines3` 6,3 and gives Anvilhall's thane his line; `CRACK_SEALED` stills the Sunder's groups
   (`leaves`) and gives the Watch's Reader hers (§12).
-- **The chapter's step** for the Ways is #760's (`underdeep:ud_in`, seen, at `underdeep`).
-- **The gear's rung** is #746's: the Grey Shield (`greyShield`, in the keepers' store `ud_store`,
-  where §8 has the keeper's) and the Old Lantern's Staff (`oldLanternsStaff`, the knocker's gift
-  for *Widen it.*) are built here, and #746 takes them into the rung (§9.2, #757's 9).
+- **The chapter's step** for the Ways is #760's (`underdeep:ud_in`, seen, at `underdeep`), written.
+- **The gear's rung** is built (#746): the Grey Shield (`greyShield`, in the keepers' store
+  `ud_store`) and the Old Lantern's Staff (`oldLanternsStaff`, the knocker's gift for *Widen it.*),
+  built here, are on the ladder at 28 (§9.2, #757's 9).
 
 Owed, from the Stair (#758):
 
@@ -3151,8 +3230,8 @@ Owed, from the Stair (#758):
 - **The Catcher's sizing:** `OFF_LINE.catcher`, 1,100 hit points and 34d8+40, is won 59% at 30,
   67% at 31 and 84% at 32 on the gate's seeds. In ten sizings the rise from 30 to 32 never passed
   about 25 points, so half at 31 and nearly always at 32 cannot both hold: the gate's floor aim and
-  its limit above are kept (§9.2, #758's 7). Provisional until #746 puts the Hand's steel in the
-  company and #752 finalises it.
+  its limit above are kept (§9.2, #758's 7). In the Hand's steel (#746) the gate's seeds give 69% at
+  30 and 82% at 32; provisional until #752 finalises it.
 - **The sixth flight's crawlers are two, not three:** with three the day at 30 breaks off at 7.85
   fights to a rest, past the gate's limit of 9 (§9.2, #758's 8). The owner's call.
 - **`tools/tests/structure.ts` is loosened:** a group that `leaves` on its `until` needs no respawn,
@@ -3175,9 +3254,9 @@ Owed, from the Stair (#758):
   `gullwick_letter` at `downs_f3` 10,13, and `UNSET` no longer owes it.
 - **The chapter's steps** for the Stair are #760's: `underdeep2:ud2_dead` (seen),
   `underdeep2:ud2_catcher` (slain; a guardian, no respawn), `underdeep2:ud2_foot` (seen) and
-  `KNOT_LAST`, at `underdeep2`.
-- **The gear's rung** is #746's: the Grey Axe (`greyAxe`, in `ud2_rearguard_chest`) is built here,
-  and #746 takes it into the rung (§9.2, #758's 12).
+  `KNOT_LAST`, at `underdeep2`, written.
+- **The gear's rung** is built (#746): the Grey Axe (`greyAxe`, in `ud2_rearguard_chest`), built
+  here, is on the ladder at 28 (§9.2, #758's 12).
 
 Owed, from the Cleric's third (#763):
 
@@ -3206,6 +3285,8 @@ Owed, from the Heart (#759):
   `docs/EXPANSION.md` (the limits paragraph and *The boss asks*, in §5.2) and `docs/MONSTERS.md` (the
   boss paragraph, near its line 50) still state the gate's boss rule without these two exceptions:
   #752's to update.
+- **In the Hand's steel (#746)** Vask is won 79% at 32 and his thinned group 89%, past the limit of
+  80%: owed to #752, who measures his odds in the rung (§8; §9.2, #746's 6).
 - **The plan's one in three for the clock left to run measures 45%:** going for Vask first gains,
   and the lever the plan names, a heavier Vask with a lighter blow, runs the other way on the gate's
   bot (§7; §9.2, #759's 7). The twelve sizings tried put the Hands first at most 2 points ahead of
@@ -3224,7 +3305,7 @@ Owed, from the Heart (#759):
   at `shelf` 15,4 and his three `q_signet_*` are Helmstow's half, which `UNSET`
   (`tools/tests/quests.ts`) owes until they land. The Walk Home's `gate` entry, on that half's
   `gate_open`, waits on #788 too, and #765 is done only with both: whichever lands second adds it.
-- **The chapter is #760's:** the Heart's steps are `core:core_door` and `core:core_heart` (seen),
+- **The chapter is #760's, written:** the Heart's steps are `core:core_door` and `core:core_heart` (seen),
   the flags `VASK_FALLEN`, `VOICE_WHOLE`, `RING_GIVEN` and `ENDED`, at `core`; 64 is `signet` in the
   area's `quests.ts`.
 - **The Council's and the Compact's flags are read here, not set (#764):** `q_throne_removed` swaps
