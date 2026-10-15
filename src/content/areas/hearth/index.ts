@@ -13,6 +13,7 @@ import { ITEMS } from './items.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
 import { INTERIORS } from './interiors.ts';
 import { QUESTS } from './quests.ts';
+import { CHAPTER } from './chapter.ts';
 
 export const AREA = {
   id: 'hearth' as const,
@@ -33,8 +34,7 @@ export const AREA = {
   // Every Frame She Marked, as far as the Ways go, 60, Crew Only, From the Inside, and 61, The Knocker That
   // Stopped (#757); the Cleric's third, The Eleven Kept (#763); 64, The Signet, from the ring at the Heart (#759).
   quests: QUESTS,
-  // The Heart, the act's chapter and the road's last, is #760's.
-  chapter: undefined,
+  chapter: CHAPTER,
   // The isle in the Sound: mild and damp, little between summer and winter or day and night, the haze
   // off the water standing in the column's light (§9, proposed).
   climate: { summer: 22, winter: 14, daily: 4, damp: [0.05, 0.09], wettest: 60, fog: 0.1, lag: 14,
