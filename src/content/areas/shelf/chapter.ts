@@ -31,11 +31,11 @@ export const CHAPTER: Chapter = {
     { id: 'berth', when: { seen: 'berth:berth_bier' },
       text: 'In the Berth, the Queen\'s barrow, opened: Queen Isaure on her bier under blue and gold, her grave goods untouched, and the wrappings on her right hand cut.' },
     { id: 'paid', when: { flag: 'q_ashcombe_done' },
-      text: 'Vask turned the wand over in his fingers and pocketed it. If he knew what he held, nothing in his face admitted it. He paid 300 gold.' },
-    // His lead, here and not in Thornmark's chapter, so it is written when he gives it, whichever
-    // chapter the company did first.
+      text: 'The wand was handed in at the keep and paid for: 300 gold.' },
+    // The lead, here and not in Thornmark's chapter, so it is written when the wand is handed in, whichever
+    // chapter the company did first. The entries say no name: Vask, his steward or Wiglaf may have taken it (#795).
     { id: 'lead', when: { flag: 'q_ashcombe_done' },
-      text: 'He spoke of the Grove Stone in Thornmark: gone quiet too, he said, and he wants to know why.' },
+      text: 'The Grove Stone in Thornmark has gone quiet too, and someone should ask why.' },
   ],
   goals: [
     // A company that did the farm first: Gullwick and Crowness are still to come.

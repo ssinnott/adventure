@@ -36,7 +36,8 @@ const READINGS = [
 ];
 const reading = (knoll: boolean): Words[] => READINGS.map((r) => ({
   after: { flag: MET, item: r.has, ...(knoll ? { seen: 'lanternwood_l2:l2_letter' } : {}) },
-  ...(r.not ? { until: { item: r.not } } : {}),
+  // Over once it is read (#795), as it was when her words for it came after the midpoint's (`papers_read`).
+  until: [...(r.not ? [{ item: r.not }] : []), { flag: 'papers_read' }],
   sets: r.sets, lines: [knoll ? r.knoll : r.plain, ...r.read],
 }));
 
@@ -159,20 +160,24 @@ export const LANTERN_WATCH: MapDef = {
         '"The surveyor\'s six words are in the hall\'s book. They are in mine too, and mine says who carried them." She keeps her hand on it, shut.',
         '"Below the last ledge Brink ruled a line. The hall is arguing what to call what\'s under it. I\'d sooner it had a measure than a name. Measures can be checked."',
       ] },
-      // After the Heart (#765), before all her words but the badge's question and the wall's word (those
-      // two are said once; these at every meeting): each ending's word, the split's her own and the other
-      // two the Lantern Guildhall's; and once the crack is sealed below (#56's 61), the Sunder's beasts
-      // stopped, heard before an ending only, since an ending's word comes first.
-      { after: { flag: ENDINGS.reignite.flag }, lines: ['"Every lamp in the house burns steadier than it did. Whatever the Hearth is, we kept it, and I will say so from the step."'] },
-      { after: { flag: ENDINGS.arrive.flag }, lines: ['"The prior says we were the jailers. The sister says we were the keepers. They have stopped speaking, and so has the house, and the great lamp burns whichever it was."'] },
-      { after: { flag: ENDINGS.finish.flag }, lines: ['"The Hearth burns harder, and the house argues what for. I have told them to light the lamps and wait, which is what Lanterns are for."'] },
-      { after: { flag: CRACK_SEALED }, lines: ['"The Sunder\'s beasts have stopped. The wall at the bottom is warm in one place, the surveyor says, and nothing comes out of it now."'] },
+      // The crack sealed below (#56's 61), the Sunder's beasts stopped (#765): said once, at the next meeting
+      // whichever came first, this or an ending (#795), and then the ending's word as before.
+      { after: { flag: [MET, CRACK_SEALED] }, until: { flag: 'q_reader_crack' }, sets: 'q_reader_crack', lines: ['"The Sunder\'s beasts have stopped. The wall at the bottom is warm in one place, the surveyor says, and nothing comes out of it now."'] },
+      // What she reads is the chapter's midpoint (`papers_read`), so while it is still to do no ending's word comes
+      // before it (#795); once read, her words are the endings' and the rest.
+      ...reading(true),
+      ...reading(false),
+      // After the Heart (#765), before all her words but the badge's question, the wall's word, the crack's
+      // and the reading (those are said once, or while they stand open; these at every meeting): each
+      // ending's word, the split's her own and the other two the Lantern Guildhall's. They wait on her
+      // introduction, which the reading needs (#795).
+      { after: { flag: [MET, ENDINGS.reignite.flag] }, lines: ['"Every lamp in the house burns steadier than it did. Whatever the Hearth is, we kept it, and I will say so from the step."'] },
+      { after: { flag: [MET, ENDINGS.arrive.flag] }, lines: ['"The prior says we were the jailers. The sister says we were the keepers. They have stopped speaking, and so has the house, and the great lamp burns whichever it was."'] },
+      { after: { flag: [MET, ENDINGS.finish.flag] }, lines: ['"The Hearth burns harder, and the house argues what for. I have told them to light the lamps and wait, which is what Lanterns are for."'] },
       { after: { flag: 'papers_read' }, lines: [
         'She has the wick in its dish lit now, the door still shut. "They came to me. They are yours. Keep them close, and keep them dry."',
         '"Nothing I read leaves this room by me." She looks at the door. "What goes down the stair is yours to carry."',
       ] },
-      ...reading(true),
-      ...reading(false),
     ] },
     // The Watch's Lamp (#205): the prior in his room once the company has told on him.
     { kind: 'npc', x: 5, y: 5, name: 'Prior Osric', after: { flag: 'q_lamp_exposed' }, lines: [

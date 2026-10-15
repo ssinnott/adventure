@@ -80,6 +80,7 @@ export const HEARTHISLE_I6: MapDef = {
     ], flag: 'i6_anchoress_met', quest: { item: 'keepers_log', reward: 0, setFlag: LOG_GIVEN, early: [
       'She reads it at the window, holding it to the light, and reads it again.',
       '"Crowness. A grace between each, the pairs even. Yes. He counted what I counted." She keeps it. "Now I know."',
+      '"You came a long way for an old woman\'s hour. Go down into the fane\'s crypt: eleven lamps stand there, cold since that night. Light them as he wrote them, and I will keep the top."',
     ], done: [
       'She reads it at the window, holding it to the light, and reads it again.',
       '"Crowness. A grace between each, the pairs even. Yes. He counted what I counted." She keeps it. "Now there are two of us, and the gaps are written down."',
