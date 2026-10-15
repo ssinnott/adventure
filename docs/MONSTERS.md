@@ -1681,14 +1681,15 @@ the Hands first and 67% with Vask first, against 33% with no clock.
 
 Measured on the test monsters the plan sizes the Heart by (`clockEncounter`: the test boss at 32,
 the test elite and soldier at 31, line for line Vask, the Grey Hands and the Core Sentries), 400
-seeds at 32: the gate's bot wins 10% killing the Hands first, 16% going for Vask and 5% fighting
-the sentries as they come, against 23% with no clock; the harness's bot, its fights cut at fifteen
-rounds, 14%, 31% and 21% (`node tools/harness.ts --abilities --seeds 200`). The clock halves the odds as the
-plan has it, two in three then a quarter to a third, but the whole stood far under them on the test monsters: Vask's size was
-set by the Heart's gate (#759) and the run to 32 settled by #752 (§4.4). The bots find Vask first the better play, since his fall stops the
-calls and stands the sentries down. As built, with the sentries on twice the soldier line's hit points, 890, both of the plan's
-figures hold on 400 seeds, 66% with the Hands first and 28% with the clock let run; Vask first wins
-72% (docs/areas/hearth_isle.md §7).
+seeds at 32 when the clock was built (#748): the gate's bot won 10% killing the Hands first, 16% going
+for Vask and 5% fighting the sentries as they come, against 23% with no clock; the harness's bot, its
+fights cut at fifteen rounds, won 14%, 31% and 21%, and wins 11%, 26% and 18% since #793 made the line
+at 31 (`node tools/harness.ts --abilities --seeds 200`). The clock halves the odds as the plan has it,
+two in three then a quarter to a third, but the whole stood far under them on the test monsters:
+Vask's size was set by the Heart's gate (#759) and the run to 32 settled by #752 (§4.4). The bots find
+Vask first the better play, since his fall stops the calls and stands the sentries down. As built, with
+the sentries at 890 hit points, the clock let run holds, 28% on 400 seeds; the Hands first wins 62%,
+three in five where the plan said two in three, and Vask first 72% (docs/areas/hearth_isle.md §7).
 
 Nine on frames that exist are drawn (#761). The Hearth
 Moth is the lantern moth's hands cut deeper, to flames, rust above and red beneath, its dust falling

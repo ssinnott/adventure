@@ -331,7 +331,7 @@ fights to a rest and the warning's nearest groups ten points under the median.
   company stands above it; and a map of nothing but its boss is judged on the boss's odds, with no
   floor of fights to pool and no day. Where the rise from the floor to two above is too short for
   both odds, the floor binds and the second stands inside its limit, short of its aim: the Stair's
-  Catcher, 56% at 30 and 79% at 32 on the gate's seeds, against an aim of 90% and a limit of 75%
+  Catcher, 57% at 30 and 80% at 32 on the gate's seeds, against an aim of 90% and a limit of 75%
   (#752, #796; docs/areas/hearth_isle.md §8).
   A boss set off the line is sized on these odds against the gate's bot, by its box's gate
   (`OFF_LINE`, `tools/tests/harness.ts`).
