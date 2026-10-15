@@ -3563,9 +3563,9 @@ thane's line waits on his answer as well. The Sunder's groups given `until: { fl
 and `leaves`: `j2_hounds`, `k2_hounds`, `k2_bears`, `k3_bears`, `l2_hounds`, `l2_bears`,
 `l3_bank`, `l4_night`, `m2_hounds`, `m2_bears`, `su1_spiders`, `su2_wood`, `su2_bears` and the K3 Rift's
 `k3_rift_g1` and `k3_rift_g2`. The Reader's ending words come at every meeting, after her reading while it
-is open and after the badge's question, the wall's word and the crack's, which are said once (#795, below). `i11_stone` sets
-`q_peak_stood` already (#751). The Grove Stone counts on `q_mender_done`, and the last crossing, whose isle end H6 landed
-(#753), is free at both ends.
+is open and after the badge's question, the wall's word and the crack's, which are said once (#795, below).
+`i11_stone` sets `q_peak_stood` already (#751). The Grove Stone counts on `q_mender_done`, and the last
+crossing, whose isle end H6 landed (#753), is free at both ends.
 
 **As built (#795, the road behind's business kept reachable).** The keep's door and the three hand-ins
 Vask took: the survey wand (300 gold, `q_ashcombe_done`), the tenant's paper (50, `q_paper_vask`) and
