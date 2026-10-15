@@ -11,7 +11,7 @@ import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import { wrap } from '../../../ui/draw.ts';
 import { SAY_W, SAY_LINES, logLines } from '../../../ui/frame.ts';
 import { MAP_DEFS, MONSTERS } from '../../index.ts';
-import { xpForLevel, prestigeOf, takePrestige, createCharacter, PRESTIGES } from '../../../game/party.ts';
+import { xpForLevel, prestigeOf, takePrestige, createCharacter, PRESTIGES, countItem } from '../../../game/party.ts';
 import type { Party } from '../../../game/party.ts';
 import { teach } from '../../../game/prestige.ts';
 import { sought, seekId } from '../../../game/seeking.ts';
@@ -104,6 +104,7 @@ export const walkthrough: Walkthrough = (ok) => {
   homecoming(ok);
   underVask(ok);
   council(ok);
+  roadBehind(ok);
   trainers(ok);
 };
 
@@ -862,6 +863,112 @@ function council(ok: (cond: boolean, msg: string) => void): void {
     reads(w, 'council', 'The Council of Helmstow', ['met', 'for_cousin', 'cousin_irons'], ['cousin'], 'the cousin\'s case after the relit ending');
     const late = company('q_end_arrive'), failed = sat(late, 'Jory Tallis.');
     w.ok(failed.includes('is not persuaded. The chair stays empty.') && !!late.party.flags.q_case_failed, `and a failed case after the hull is opened leaves the chair empty (${failed})`);
+  }
+}
+
+/**
+ * The road behind after the Heart (#765, Helmstow's half): once the company is on the isle Vask is gone
+ * from his keep, the throne room empty behind his door and his steward before it. After an ending the
+ * gate stands open, said once on the road before it, and the gate lets Idris (the orcblood paladin) in;
+ * the Council's clerk by it asks where the ring goes; the inn is at 12 and the Chapel open; the
+ * gatehouse has the ending's proclamation; Vask stands in irons for the relit and the finished; and the
+ * Eel, Ordgar and the Guildhall's Luminary have each ending's word, first of all. Before the isle and
+ * the endings, none of it.
+ */
+function roadBehind(ok: (cond: boolean, msg: string) => void): void {
+  const H6 = MAP_DEFS.find((d) => d.id === 'hearthisle_h6')!;
+  const STEWARD = (): Person => who('keep', 7, 5, 'The Regent\'s steward'), CLERK = (): Person => who('shelf', 15, 4, 'Wiglaf');
+  const ORDGAR = (): Person => who('harrow', 3, 13, 'Captain Ordgar'), LUMINARY = (): Person => who('harrow', 12, 11, 'The Guildhall\'s Luminary');
+  const eel = MAP_DEFS.find((d) => d.id === 'harrow')!.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'The Gilded Eel' && JSON.stringify(f.after) === JSON.stringify({ flag: 'q_salt_done' }))!;
+  /** A company after Act II, on the isle once if `isle`, with the flags given. */
+  const company = (isle: boolean, ...flags: string[]): Walk => {
+    const w = newWalk(ok);
+    for (const f of ['q_salt_done', ...flags]) w.party.flags[f] = 1;
+    if (isle) w.world.travel(H6.id, H6.start.x, H6.start.y);
+    return w;
+  };
+  /** Up the road from 16,6 to the gate and through it: what is said on the way, and whether the company, Idris with it, is let in. */
+  const road = (w: Walk): { said: string[]; inside: boolean } => {
+    w.world.travel('shelf', 16, 6, NORTH);
+    const said: string[] = [];
+    for (let i = 0; i < 3 && w.world.state.mapId !== 'harrow'; i++) { const r = w.world.move('forward'); if (r.kind === 'moved') said.push(...r.messages); }
+    return { said, inside: w.world.state.mapId === 'harrow' };
+  };
+  const open = (said: readonly string[]): number => said.filter((m) => m.startsWith('The gate stands open')).length;
+  /** The business at the keep's door now, and the people in it. */
+  const door = (w: Walk): string => {
+    w.world.travel('keep', 7, 4, NORTH);
+    const f = w.world.featureHere();
+    return [f?.kind === 'npc' ? f.name : 'nothing', ...w.world.peopleAt(7, 4).map((p) => p.name)].join(' / ');
+  };
+  /** What the gatehouse says, either side of the gate. */
+  const gatehouse = (w: Walk): string[] => [9, 6].flatMap((x) => { w.world.travel('keep', x, 8, NORTH); return w.world.eventsHere(); });
+  /** The inn's price and the Chapel open or shut. */
+  const trade = (w: Walk): string => {
+    const at = (x: number, y: number) => { w.world.travel('harrow', x, y, NORTH); const f = w.world.featureHere(); return f && f.x === x && f.y === y ? f : undefined; };
+    const inn = at(4, 4), chapel = at(11, 4);
+    return `${inn?.kind === 'inn' ? inn.price : 0} ${chapel?.kind === 'temple' ? 'open' : 'shut'}`;
+  };
+  // Each ending's first words from the Eel, Ordgar and the Luminary.
+  const WORDS: Record<string, readonly string[]> = {
+    q_end_reignite: ['A fisherman, from the door: "Steady as a post', '"The light\'s steady', '"Every lamp in the house'],
+    q_end_arrive: ['The tavern\'s door stands open', '"Wind on the walls.', '"Half the house says'],
+    q_end_finish: ['A fisherman, with his hand flat on the table', '"The ground hums.', '"The Hearth burns harder'],
+  };
+  const ending = (said: string): boolean => Object.values(WORDS).flat().some((s) => said.startsWith(s));
+  { // Before the isle and the endings: Vask at his door and nobody before it, the gate shut to Idris, and none of the words.
+    const w = company(false);
+    const r = road(w), keep = door(w), posted = gatehouse(w), talk = [hear(w, 'harrow', eel), hear(w, 'harrow', ORDGAR())];
+    w.ok(!open(r.said) && !r.inside && !there(w, CLERK(), 'shelf'), 'before an ending the road to Helmstow\'s gate is as it was, with no clerk by it, and the gate turns Idris back');
+    w.ok(keep === 'Lord Aumery Vask, Regent-Warden' && !there(w, STEWARD(), 'keep') && posted.length === 1, `and Vask holds his door with nobody before it, and the gatehouse has the Regent's proclamation alone (${keep})`);
+    w.ok(talk[0] === eel.lines.join('\n\n') && !talk.some(ending) && !there(w, LUMINARY(), 'harrow') && trade(w) === '18 shut', 'and Helmstow is Vask\'s city: the Eel and Ordgar as they were, no Luminary on the Guildhall\'s step, the inn at 18 and the Chapel shut');
+  }
+  { // On the isle, before an ending: Vask at the panel, the throne room empty and his steward before its door.
+    const w = company(true);
+    const keep = door(w), said = there(w, STEWARD(), 'keep') ? hear(w, 'keep', STEWARD()) : '';
+    w.ok(keep === 'The throne room' && said.includes('He went over to the isle with the grey men'), `once the company is on the isle, Vask is gone from his door, the throne room behind it empty and his steward before it (${keep})`);
+    w.ok(trade(w) === '18 shut' && !road(w).inside && !there(w, CLERK(), 'shelf'), 'and the rest of Helmstow waits on an ending');
+  }
+  for (const [flag, how] of [['q_end_reignite', 'relit'], ['q_end_arrive', 'opened'], ['q_end_finish', 'finished']] as const) {
+    const w = company(true, flag);
+    const first = road(w), again = road(w), irons = flag !== 'q_end_arrive', keep = door(w), posted = gatehouse(w);
+    w.ok(open(first.said) === 1 && !open(again.said) && first.inside && again.inside, `${how}: the gate stands open, said once on the road before it, and lets Idris in`);
+    w.ok(trade(w) === '12 open' && !there(w, STEWARD(), 'keep'), `${how}: the inn is at 12 again and the Chapel open, and the steward is gone`);
+    w.ok(keep === (irons ? 'The throne room / Aumery Vask, before the Council' : 'The throne room') && posted.length === 2
+      && posted[1].startsWith(irons ? 'A proclamation on the gatehouse: the Council of Helmstow sits in judgement' : 'A proclamation on the gatehouse, the ink run'),
+    `${how}: ${irons ? 'Vask stands in irons before the Council' : 'the throne room stands empty'}, and the gatehouse has the ending's proclamation (${keep}; ${posted[1]})`);
+    const talk = [hear(w, 'harrow', eel), hear(w, 'harrow', ORDGAR()), there(w, LUMINARY(), 'harrow') ? hear(w, 'harrow', LUMINARY()) : ''];
+    w.ok(talk.every((t, i) => t.startsWith(WORDS[flag][i])) && wrap(talk[0], SAY_W).length <= SAY_LINES, `${how}: the Eel, Ordgar and the Guildhall's Luminary on its step each have the ending's word (${talk.map((t) => t.slice(0, 24)).join(' / ')})`);
+  }
+  { // First of all: after a verdict and the finished ending the Eel talks of the hum, and Wiglaf keeps the door with Vask in irons inside.
+    const w = company(true, 'q_end_finish', 'q_throne_cousin', 'q_throne_removed');
+    const keep = door(w), posted = gatehouse(w), talk = hear(w, 'harrow', eel);
+    w.ok(talk.startsWith(WORDS.q_end_finish[0]) && keep === 'Wiglaf, at the keep\'s door / Aumery Vask, before the Council' && posted.length === 3,
+      `after the Council's verdict and an ending, the ending's word comes first, and Wiglaf keeps the door with Vask in irons inside (${keep})`);
+  }
+  { // The clerk by the gate: not without the ring's answers, then the ring given to the cousin, and he is gone.
+    const w = company(true, 'q_end_reignite');
+    const clerk = CLERK(), seen = there(w, clerk, 'shelf');
+    const bare = meet(clerk, w.party, heard(w.world, clerk)).choice!.answers.find((x) => x.label === 'To the cousin.')!;
+    const refused = answer(bare, w.party), unset = !w.party.flags.q_signet_cousin;
+    w.party.bag.push('queens_signet');
+    const m = meet(clerk, w.party, heard(w.world, clerk)), cousin = m.choice!.answers.find((x) => x.label === 'To the cousin.')!;
+    const said = answer(cousin, w.party);
+    listen(w);
+    w.ok(seen && refused === 'You have none to give.' && unset && m.choice!.answers.length === 4, 'after an ending the Council\'s clerk waits by the gate, and asks where the ring goes, four answers, the ring\'s three barred without it');
+    w.ok(said.includes('The Council will sit on it within the week.') && !!w.party.flags.q_signet_cousin && countItem(w.party, 'queens_signet') === 0 && !there(w, clerk, 'shelf'), `given to the cousin, the ring goes in a cloth and the clerk with it (${said})`);
+  }
+  { // Once the Council has sat, the ring goes into the chair's keeping; kept, the clerk waits on.
+    const w = company(true, 'q_end_arrive', 'q_throne_council', 'q_throne_removed');
+    w.party.bag.push('queens_signet');
+    const clerk = CLERK();
+    w.world.travel('shelf', clerk.x, clerk.y);
+    const m = meet(clerk, w.party, heard(w.world, clerk)), pick = (label: string) => m.choice!.answers.find((x) => x.label === label)!;
+    const kept = answer(pick('We keep it.'), w.party), stays = there(w, clerk, 'shelf') && countItem(w.party, 'queens_signet') === 1;
+    const said = answer(pick('To the hold.'), w.party);
+    listen(w);
+    w.ok(kept.includes('counts without it') && stays && said.includes('It goes into the chair\'s keeping.') && !said.includes('within the week') && !!w.party.flags.q_signet_hold && !there(w, clerk, 'shelf'),
+      `once the Council has sat, the ring kept leaves the clerk waiting, and given goes into the chair's keeping (${said})`);
   }
 }
 
