@@ -16,6 +16,7 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
 import { LIT } from './ember_stone.ts';
+import { ENDED } from '../../../endings.ts';
 
 /**
  * The road west taken once the Stone is lit: `e10_west` sets it on the Hills' last shoulder, the once,
@@ -124,6 +125,6 @@ export const EMBERWASTE_E10: MapDef = {
     { id: 'e10_vultures', x: 21, y: 18, monsters: ['vulture', 'vulture', 'vulture', 'vulture', 'vulture', 'vulture'], aware: 5, respawn: 1440 },
     { id: 'e10_lions', x: 7, y: 23, monsters: ['wold_lion', 'wold_lion', 'wold_lion'], aware: 4, respawn: 2880 },
     // Once the Stone is lit (#449), two sentries by the road up into the Hills, the box's top at 26.
-    { id: 'e10_sentries', x: 10, y: 16, monsters: ['sentry', 'sentry'], aware: 4, respawn: 2880, after: { flag: 'q_ember_lit' } },
+    { id: 'e10_sentries', x: 10, y: 16, monsters: ['sentry', 'sentry'], aware: 4, respawn: 2880, after: { flag: 'q_ember_lit' }, until: ENDED, leaves: true },
   ],
 };

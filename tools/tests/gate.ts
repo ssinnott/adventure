@@ -364,6 +364,15 @@ export function rate(g: Pick<EncounterDef, 'monsters' | 'back' | 'leader' | 'whe
   if (r === undefined) { r = winRate(level, g, SEEDS, ROUND_CAP, opts); rates.set(key, r); }
   return r;
 }
+/**
+ * The road behind's groups on an earlier act's maps, as the game names a group, 'map:id': each waits on
+ * an answer given an act later on the road, so no company at its map's floor meets it, and the gate
+ * leaves it out of its map and its area (#765). The curve counts it, in the clear and the lead.
+ */
+const BEHIND: readonly string[] = ['deep_mines3:ud_mines'];
+/** A map as a company at its floor finds it: the road behind's groups left out (BEHIND). */
+const beforeBehind = (d: MapDef): MapDef =>
+  d.encounters?.some((g) => BEHIND.includes(`${d.id}:${g.id}`)) ? { ...d, encounters: d.encounters.filter((g) => !BEHIND.includes(`${d.id}:${g.id}`)) } : d;
 /** The two groups nearest a zone's way in, as a company first finds it: none that waits on an `after`. */
 export const nearestWayIn = (groups: readonly EncounterDef[], steps: (x: number, y: number) => number): EncounterDef[] =>
   groups.filter((g) => !g.after).sort((a, b) => steps(a.x, a.y) - steps(b.x, b.y)).slice(0, 2);
@@ -641,7 +650,7 @@ export function gate(): void {
 
   for (const area of AREAS) {
     const id: RegionId = area.id, band = CURVE[id].band;
-    const fought = area.maps.filter((d): d is MapDef & { band: [number, number] } => !!d.encounters?.length && !!d.band);
+    const fought = area.maps.map(beforeBehind).filter((d): d is MapDef & { band: [number, number] } => !!d.encounters?.length && !!d.band);
     const zones = area.atlas.zones.filter((z) => z.maps?.length);
     const bosses = area.atlas.zones.flatMap((z) => BOSSES[z.id] ?? []);
     /** A group by the game's name for it, 'map:id'. */
@@ -723,6 +732,15 @@ export function gate(): void {
   }
   const zoneIds = new Set(ATLAS.zones.map((z) => z.id)), astray = [...Object.keys(ROADS), ...Object.keys(BOSSES)].filter((k) => !zoneIds.has(k));
   ok(!astray.length, `every key of ROADS and BOSSES is a zone${astray.length ? ` (not: ${astray.join(', ')})` : ''}`);
+  // The road behind's groups (BEHIND): each names a group of a built map that waits on an `after`, so no
+  // group a company at its floor can meet is left out; and leaving them out drops that group alone.
+  const unbehind = BEHIND.filter((ref) => { const [map, id] = ref.split(':'); return !MAP_DEFS.find((d) => d.id === map)?.encounters?.find((e) => e.id === id)?.after; });
+  ok(!unbehind.length, `every group BEHIND leaves out is a built map's and waits on an after${unbehind.length ? ` (not: ${unbehind.join(', ')})` : ''}`);
+  const fx: MapDef = { id: 'deep_mines3', name: '', kind: 'dungeon', start: { x: 0, y: 0, facing: 0 }, rows: [], encounters: [
+    { id: 'ud_mines', x: 1, y: 1, monsters: ['knocker'], after: { flag: 'fx_open' } }, { id: 'fx_kept', x: 2, y: 1, monsters: ['knocker'] }] };
+  const ids = (d: MapDef): string => (d.encounters ?? []).map((g) => g.id).join();
+  ok(ids(beforeBehind(fx)) === 'fx_kept' && ids(beforeBehind({ ...fx, id: 'fx_elsewhere' })) === 'ud_mines,fx_kept' && beforeBehind({ ...fx, encounters: [fx.encounters![1]] }).encounters!.length === 1,
+    'leaving the road behind out drops the group BEHIND names from its map and no other: not its neighbour, nor the same id on another map');
   if (offAim.length) console.log(`\n  Off their aim, inside their limits (${offAim.length}):\n${offAim.map((l) => `    ${l}`).join('\n')}`);
   const stale = Object.keys(OWED).filter((k) => !used.has(k));
   ok(!stale.length, `every owed entry names a check that ran${stale.length ? ` (not: ${stale.join(', ')})` : ''}`);

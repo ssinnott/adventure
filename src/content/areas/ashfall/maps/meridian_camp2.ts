@@ -9,6 +9,7 @@
 // its elite at 27; docs/areas/meridian_camp.md §4.2 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { ENDED } from '../../../endings.ts';
 
 /**
  * The way down to the camp (meridian_camp3, #22's third level): the stair at the corridors' end, 4,30,
@@ -104,6 +105,6 @@ export const MERIDIAN_CAMP2: MapDef = {
     { id: 'mc2_walker', x: 16, y: 11, monsters: ['flue_walker', 'stoker', 'cinder_drake'], aware: 3, respawn: 1440 },
     { id: 'mc2_drakelings', x: 14, y: 23, monsters: ['drakeling', 'drakeling'], aware: 2, respawn: 2880, roams: false },
     { id: 'mc2_brood', x: 14, y: 21, monsters: ['brood_drake'], aware: 2, roams: false, slainText: 'The Brood Drake dies over its eggs, its wings still spread round them. The clinker under it goes grey.' },
-    { id: 'mc2_sentry', x: 5, y: 28, monsters: ['sentry'], aware: 4, respawn: 2880, after: { flag: 'q_ember_lit' } },
+    { id: 'mc2_sentry', x: 5, y: 28, monsters: ['sentry'], aware: 4, respawn: 2880, after: { flag: 'q_ember_lit' }, until: ENDED, leaves: true },
   ],
 };

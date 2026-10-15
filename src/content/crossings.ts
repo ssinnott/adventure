@@ -133,17 +133,20 @@ export const RIDERS_RIDE: Crossing = {
   ],
 };
 
-/** The last crossing, over the Sound from Cinderport to Hearth Isle, Act V's, and back: some 110 squares of sea. */
+/**
+ * The last crossing, over the Sound from Cinderport to Hearth Isle, Act V's, and back: some 110 squares of sea.
+ * A Partner, who took the Compact over at Saltmouth (`q_compact_over`), crosses free either way (#765).
+ */
 export const LAST_CROSSING: Crossing = {
   name: 'the last crossing', by: 'boat', fare: 350, departs: 20, days: 1, arrives: 16,
   ends: [
     // On the steps the Compact's ship uses, at Cinderport's quay (#512).
     { at: 'cinderport', name: 'Cinderport', landing: { x: 13, y: 2, facing: SOUTH },
       label: 'The boat puts you back on Cinderport\'s steps, rested. The light stands behind you.',
-      warning: 'The harbourmaster looks you over. "Folk go over strong and come back quiet. You are not strong."' },
+      warning: 'The harbourmaster looks you over. "Folk go over strong and come back quiet. You are not strong."', free: { flag: 'q_compact_over' } },
     // On the strand under the isle's rim, at the cleft's foot, where Act V begins (H6, #753).
     { at: 'hearthisle', name: 'Hearth Isle', landing: { map: 'hearthisle_h6', x: 20, y: 30, facing: NORTH },
-      label: 'The boat grounds on Hearth Isle under the rim, and you wade ashore, rested. Light rises from within.' },
+      label: 'The boat grounds on Hearth Isle under the rim, and you wade ashore, rested. Light rises from within.', free: { flag: 'q_compact_over' } },
   ],
 };
 

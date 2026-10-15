@@ -24,8 +24,9 @@ export const STONES: readonly Wardstone[] = [
   // Set back on its plinth at the end of Act II's second chapter: the Hearth's first step.
   // Its flag is set by the plinth at Stienwierde when it takes the Stone (#191), and ends the Tide Stone too.
   { name: 'Tide Stone', area: 'saltreach', restored: { flag: 'q_tide_home' } },
-  // Not the Grove's end (q_grove_done): it counts once a Lantern has mended it (#56's 18).
-  { name: 'Grove Stone', area: 'thornmark', restored: { flag: 'q_grove_mended' }, owed: '#56' },
+  // Not the Grove's end (q_grove_done): it counts once a Lantern has mended it (#56's 18), on the flag Edith
+  // sets at the Stone, met with the kit once its warden is slain (grove2.ts, #765).
+  { name: 'Grove Stone', area: 'thornmark', restored: { flag: 'q_mender_done' } },
   // Counts once the Warden of the Anvil has fallen and the tear is closed, bought back or taken alike: the thane's
   // choice is how the Stone came to the company, not what restores it (docs/areas/kilns.md §9, #540). The Rift sets its
   // flag on the first step after the Warden falls (#465), and the Kilns' chapter reads it (#470).
@@ -35,6 +36,6 @@ export const STONES: readonly Wardstone[] = [
   { name: 'Peak Stone', area: 'whitespine', restored: { seen: 'highspine_i11:i11_stone' } },
   // Counts once the Stone is lit: its three parts set in the sockets, a hand-in that shuts nothing before it (docs/areas/ashfall.md §9,
   // #548). The Stone's dungeon sets its flag the moment it lights (#516), the Window's chapter reads it (#518) and the sentries stand
-  // `after` it on every box of Ashfall (#449). Its flag is owed to #518 in tools/tests/quests.ts's UNSET.
+  // `after` it on every box of Ashfall (#449), until any ending (#765).
   { name: 'Ember Stone', area: 'ashfall', restored: { flag: 'q_ember_lit' } },
 ];

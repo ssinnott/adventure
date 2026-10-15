@@ -2218,6 +2218,7 @@
         "dm3_far",
         "dm3_ledge",
         "dm3_mouth",
+        "dm3_open",
         "dm3_parts",
         "dm3_parts_chest",
         "dm3_rungs",
@@ -2226,7 +2227,8 @@
       "groups": [
         "dm3_foreman",
         "dm3_knockers1",
-        "dm3_knockers2"
+        "dm3_knockers2",
+        "ud_mines"
       ],
       "doors": [
         "5,10"
@@ -3722,6 +3724,7 @@
     "q_lanterns_stair_done",
     "q_ledge",
     "q_ledge_held",
+    "q_letter_given",
     "q_light",
     "q_light_kept",
     "q_light_out",
@@ -3831,6 +3834,7 @@
     "q_shovel_wardens",
     "q_signet_cousin",
     "q_signet_hold",
+    "q_signet_sea",
     "q_signet_tallis",
     "q_sky",
     "q_sky_in",
@@ -3906,6 +3910,7 @@
     "q_well_lanterns",
     "q_well_wardens",
     "q_wenna",
+    "q_wenna_home",
     "q_wenna_lodge",
     "q_wenna_taken",
     "q_wenna_up",

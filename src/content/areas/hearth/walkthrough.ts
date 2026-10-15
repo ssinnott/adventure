@@ -64,7 +64,6 @@ import { ELEVEN_KEPT, GREY_DOOR, LOG_GIVEN } from './maps/hearthfane2.ts';
 import { CREW_OPEN, CREW_SHUT, CRACK_SEALED, CRACK_WIDE, STAIR_DOOR, CRAWL_DOOR } from './maps/underdeep.ts';
 import { FIVE, LAST_DOOR, KNOT_LAST } from './maps/underdeep2.ts';
 import { VASK, VASK_FALLEN, VOICE_WHOLE, RING_GIVEN, END_REIGNITE, END_ARRIVE, END_FINISH, SIGNET } from './maps/core.ts';
-import { owed } from '../../../../tools/tests/lib.ts';
 import { THE_QUEST } from '../../index.ts';
 import type { Chapter, QuestCond } from '../../../game/quests.ts';
 import { PAGE } from '../../../ui/quests.ts';
@@ -1021,7 +1020,7 @@ function theHeart(ok: (cond: boolean, msg: string) => void): void {
   }
   ok(CHAPTER.entries.every((e) => read.has(e.id)), `every entry of the chapter is written in some run (${CHAPTER.entries.filter((e) => !read.has(e.id)).map((e) => e.id).join(', ') || 'all'})`);
   const shore = JSON.stringify(MAP_DEFS.find((d) => d.id === 'downs_f3')?.features ?? []);
-  owed(Object.values(ENDINGS).every((e) => shore.includes(e.flag)), 'each ending\'s flag reaches Gullwick\'s shore, by the lines the road behind writes there', '#765');
+  ok(Object.values(ENDINGS).every((e) => shore.includes(e.flag)), 'each ending\'s flag reaches Gullwick\'s shore, by the lines the road behind writes there (#765)');
 
   // Early: over at 27 with The Window done and The Warning not, the Peak Stone never stood beside.
   const how = 'early, over at 27 on four of the five', early = newWalk(ok);

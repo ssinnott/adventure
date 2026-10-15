@@ -9,6 +9,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { FORGE, ANVIL_STONE_PRICE } from '../items.ts';
 import { NOVICE_TOLD, NOVICE_KEPT } from '../../whitespine/maps/monastery.ts';
+import { CREW_OPEN } from '../../hearth/maps/underdeep.ts';
 
 /** The verse read the old way, by the Lantern reader or after the company's own reader: the chapter's step (#470). */
 export const VERSE_READ = 'anvil_verse_read';
@@ -78,6 +79,8 @@ export const ANVILHALL: MapDef = {
         '"Then my iron goes to the Stone ahead of you, and my forge is shut to you for good. Go on."',
       ] },
     ] }, says: [
+      // The door marked CREW ONLY left open from the Ways (#56's 60, #765), to a company that has answered him.
+      { after: [{ flag: [CREW_OPEN, BOUGHT] }, { flag: [CREW_OPEN, TAKEN] }], lines: ['"Knockers in the Tiefzeche\'s lowest level, up through the door that never opened. My miners say it stands open now. I do not ask who opened it."'] },
       { after: { flag: BOUGHT }, lines: ['He does not look away from the forge.', MOUNTAIN] },
       { after: { flag: TAKEN }, lines: ['He looks at you a long while, and then at the door.', MOUNTAIN] },
     ] },
