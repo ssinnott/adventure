@@ -670,8 +670,10 @@ The Ways' way back up lands at 8,2 facing south (§4.6).
   Whatever caught them did it below, and they were carried up to here, and no further.*
 - `hf2_knot` (8,2), once: *On the grey door's frame, at a girl's shoulder: a loop inside a loop.
   She has left you a trail.*
-- `hf2_door` (8,1), the grey door, a `sign` on its square before the exit takes the company:
-  *A door of grey with no handle, standing open. It opened for her, and nobody has shut it since.*
+- `hf2_door` (8,3), the grey door seen from the passage, a `sign` two squares before it: an exit
+  takes the company on arrival, before the square's texts are said, so a sign on the door's own
+  square (8,1, where the brief had it) is never read (§9.2, #757's 15): *A door of grey with no
+  handle, standing open. It opened for her, and nobody has shut it since.*
 
 **Encounters.**
 
@@ -696,10 +698,11 @@ from the brief in these squares and lines:
 
 - **The seams.** In: the temple's 8,1, floor now with `STAIR` listed, onto 8,14 facing north, the
   stair's foot and the start. Up: 8,15, floor with the exit, a stair and not a door, onto the
-  temple's 8,2 facing south (#756's 5). Down: 8,1 is a door with the sign `hf2_door` on it; the
-  brief's exit to `underdeep` 16,30 facing north (`GREY_DOOR`) is listed since #757, which landed
-  the Ways' way up on 8,2 facing south (the knot's square) and turned the walkthrough's last line,
-  which asserted no exit to `underdeep` (#756's 4).
+  temple's 8,2 facing south (#756's 5). Down: 8,1 is a door; the brief's exit to `underdeep` 16,30
+  facing north (`GREY_DOOR`) is listed since #757, which landed the Ways' way up on 8,2 facing south
+  (the knot's square) and turned the walkthrough's last line, which asserted no exit to `underdeep`
+  (#756's 4). The sign `hf2_door` stands at 8,3, two squares before the door: an exit takes the
+  company on arrival, so a sign on 8,1 is never read (#757's 15).
 - **The rooms.** The chamber is a disc, rows 3, 5, 7, 7, 7, 5 and 3 wide at 5–11,5–11; the passages
   from the stair's foot (8,12–14) and to the grey door (8,1–3) are one wide. The side vault at
   1–3,6–9 opens on the chamber by a door at 4,8, the brief leaving its way in open; the chamber's
@@ -772,11 +775,11 @@ the unwatched way, which lands below the Stair's first fights and above the Catc
   the grey comes off a hand that bled.*; the eighth (20,14): *Her knot, cut deeper than the others,
   as if she pressed harder here. Behind this frame the wall is thinner: you can hear the stair.*
   (The hint for the hatch at 24,14.)
-- `ud_crew_sign` (3,10), a `sign` with `read` (an inscription, #538): text *A door in the ways'
-  west wall, shut, and over it marks like the Kilns'.*, read *CREW ONLY. THE MINES BEYOND.* Its
-  door (60) is at 2,10: a person in the engine's terms (§6).
-- `ud_feet` (4,10), once: *Hundreds of footprints in the dust before the door, walking in. On the
-  door's inner face, a bar, and a handle. It opens from this side.*
+- `ud_crew_sign` (4,10, built there; §9.2, #757's 16), a `sign` with `read` (an inscription, #538):
+  text *A door in the ways' west wall, shut, and over it marks like the Kilns'.*, read *CREW ONLY.
+  THE MINES BEYOND.* Its door (60) is at 2,10: a person in the engine's terms (§6).
+- `ud_feet` (3,10, built there), once: *Hundreds of footprints in the dust before the door, walking
+  in. On the door's inner face, a bar, and a handle. It opens from this side.*
 - `ud_crack` (28,6), once: *A deep knocker standing still at the wall, its hammer raised and not
   falling. Before it, a crack the width of a hand, and through it daylight the colour of glass.*
   The knocker (61) is a person at 29,6 (§6).
@@ -850,6 +853,11 @@ smooth and `bare` (#757's 14). It departs from the brief in these squares and li
   The Old Lantern's Staff, 1d10+14 at 7,000, is the knocker's gift for *Widen it.* (#757's 9).
 - **The people** are *The door marked CREW ONLY* at 2,10 and *The knocker at the crack* at 29,6, both
   with no face (#757's 6 and 7). Their words are the brief's, save the shut answer's label (§6).
+- **The door's approach.** The sign `ud_crew_sign` stands at 4,10 and the feet `ud_feet` at 3,10, the
+  brief's two squares swapped: a sign on a company's own square comes before the person ahead, so
+  with the sign at 3,10 the door could be spoken to only from its own square, and its way was a wall
+  after either answer until the company stepped back and forward. The feet are an event, so from
+  3,10 facing west the door ahead is the one to talk to and a step forward goes through (#757's 16).
 - **Measured.** A company at 30 wins every fight in the Ways, each group 100% of ten in the
   walkthrough, which walks the Ways at 30: down the grey door and up again, every frame, the hatch
   found from the eighth, the crack sealed and widened on another walk and the CREW ONLY door
@@ -1919,20 +1927,20 @@ box:
 | Levels | 4 monsters in 30–30, give or take two; rising from the way in (rank correlation 0.13); the nearest group, the rats at 3 steps, at 30.0; the hardest, the crawlers at 25 steps, at 31.0 |
 | Lines | 16 events and signs: 5 of one line, 8 of two and 3 of three; the area's 44: 7 of one, 25 of two and 12 of three |
 
-**As built: the Stair** (#758). The row's `owed` is raised to what the isle, the temple, the crypt,
-the Ways and the Stair pay, 31,192 xp a member and 6,500 gold, still owed to #744 while the area is
-built box by box:
+**As built: the Stair** (#758). The row's `owed` is raised to what the isle, the rim, the temple, the
+crypt, the Ways and the Stair pay, 34,099 xp a member and 8,200 gold, still owed to #744 while the
+area is built box by box:
 
 | | Figure |
 |---|---|
 | Xp a member | 9,482 against the Stair's nine fortieths, about 10,560: 0.90 (the groups 56,892 split six ways; the Catcher's group 24,667 of it, the Catcher alone 3,289 a member) |
-| The area so far | 31,192 of the 46,934, 66.5%: H6 5,009, the temple 4,971, the crypt 1,962, the Ways 9,768 and the Stair 9,482 |
-| Gold | 6,500 of the 28,320 for the area: the Stair's 1,600 (the rearguard's chest 900, the packs 700, the letter 0), the Ways' 1,400, the crypt's 800, the temple's chest 2,000 and H6's 700 |
-| Paid by level | entering at 28 and clearing three quarters, a company leaves at 30.9, 1.1 under the next floor 32 |
+| The area so far | 34,099 of the 46,934, 72.7%: H6 5,009, the rim 2,908, the temple 4,971, the crypt 1,962, the Ways 9,768 and the Stair 9,482 |
+| Gold | 8,200 of the 28,320 for the area: the Stair's 1,600 (the rearguard's chest 900, the packs 700, the letter 0), the Ways' 1,400, the rim's camp chest 500 and hoard 1,200, the crypt's 800, the temple's chest 2,000 and H6's 700 |
+| Paid by level | entering at 28 and clearing three quarters, a company leaves at 31.1, 0.9 under the next floor 32 |
 | Dearest find | the Grey Bow, 6,800, in the 7,000 window (the Grey Axe in the rearguard's chest is 6,800 too) |
-| Gate, at the floor 30 | 94.1% of the Stair's fights won, the Catcher counted (aim 90%, limit 80%); the area's 33 groups at their maps' floors 98.8% |
+| Gate, at the floor 30 | 94.1% of the Stair's fights won, the Catcher counted (aim 90%, limit 80%); the area's 37 groups at their maps' floors 98.9% |
 | The Catcher | 59% won at 30 (aim 30% to 70%, limit 20% to 80%); 84% at 32 (aim 90%, limit 75%); 67% at 31 on the gate's seeds, which judge a dungeon's boss at its map's floor and two above, not at 31; the walkthrough's ten at 31, 5 won. The plan's half at 31 and nearly always at 32 cannot both hold (§9.2, #758's 7) |
-| Gate, two under | n/a for the Stair, its floor being above the area's; the area's pool at 26, 97.2% of 33 groups' fights won (aim 25%, limit 90%): owed to #18 (§11) |
+| Gate, two under | n/a for the Stair, its floor being above the area's; the area's pool at 26, 97.5% of 37 groups' fights won (aim 25%, limit 90%): owed to #18 (§11) |
 | Fights to a rest, at 30 | 10.14 (aim 10.5 to 12.5, limit 9 to 15); 8.7% of days end in a fight broken off, the Catcher left out as a boss |
 | Density, dungeon | 98.0% within 7 steps (150 of 153, 138 needed); the furthest 9 of 10; 1 sign in 22 points |
 | Levels | 6 monsters in 30–31, give or take two; rising from the way in (rank correlation 0.19); the nearest group, the rearguard at 4 steps, at 30.0; the hardest, the crawlers at 16,20 at 10 steps, at 31.0 |
@@ -2499,7 +2507,8 @@ Decided by delegate for #753, each the owner's to overturn:
    first and takes the token would never start the quest, since Aelfric goes with another's token.
 3. **57's `done` is `HELD` for now:** the three tokens and the three claimants' verdicts, with an
    entry for each token. The rearguard slain, the "carried none" entry and the goal at `underdeep2`
-   are #758's: a key naming a group or map not built fails `tools/tests/quests.ts`.
+   are #758's: a key naming a group or map not built fails `tools/tests/quests.ts`. #758 built them
+   (#758's 4).
 4. **The north-west coast and hills outside the rim are the rim's rock to the shallows** (rows 0–18,
    some 53 squares, the sand there made shallow; and 6,20–21). No way on foot reaches them and the
    brief places nothing there, but density walks only standable ground from its points, so they
@@ -2675,7 +2684,9 @@ Decided by delegate for #756, each the owner's to overturn:
    passage, and in it the Hand's last man up here, dead on his feet.* An encounter has no `look`; the
    keeper's own (§7, #761) comes after the event.
 4. **The grey door at 8,1 is a door square with the sign `hf2_door`,** which has no `read` and keeps no
-   `seen`. `GREY_DOOR`, the exit to `underdeep` 16,30, is exported and not listed. #757 listed it.
+   `seen`. `GREY_DOOR`, the exit to `underdeep` 16,30, is exported and not listed. #757 listed it and
+   moved the sign to 8,3, since an exit takes the company on arrival and a sign on its square is never
+   read (its 15).
 5. **The stair is floor at both ends:** the temple's 8,1 turned from `#` to `.` with `STAIR` listed;
    the crypt's 8,15 is `.` with the way up, a stair and not a door.
 6. **`LOG_GIVEN` is exported from the crypt, which reads it,** where §4.1 has the setting map export it:
@@ -2750,6 +2761,16 @@ Decided by delegate for #757, each the owner's to overturn:
 14. **The palette is the Dead-Drop's colours** with `wallStyle: 'smooth'`, `ceilingStyle: 'vault'` and
     `bare: true`; the map is named The Ways, band `[30, 30]`, region `hearth`, start 16,30 facing
     north.
+15. **The crypt's sign `hf2_door` moves from 8,1 to 8,3,** its id and words as they were. An exit
+    takes the company on arrival and `World.move` returns before the square's texts are said, so a
+    sign on the exit's square is never read. 8,3 is the passage's square two before the door, where
+    the keeper's group stood; 8,2 holds the knot, and two texts on one square break the 3-line rule.
+    The crypt's walkthrough steps onto it from 8,4, and nothing stands on either of the crypt's exits.
+16. **The CREW ONLY sign and the feet swap squares:** `ud_crew_sign` to 4,10 and `ud_feet`, an event,
+    to 3,10. The interactable on a company's own square is a sign's, so with the sign at 3,10 the door
+    ahead could not be spoken to and the company had to walk onto 2,10, where its way is a wall after
+    either answer until it steps back and forward (a company that steps onto 2,10 first still does).
+    From 3,10 facing west the door is the one ahead, and a step forward after either answer goes through.
 
 Decided by delegate for #758, each the owner's to overturn:
 
@@ -2771,7 +2792,9 @@ Decided by delegate for #758, each the owner's to overturn:
    the token down the stair under the temple.*, at `underdeep2`) could never come up and
    `tools/tests/quests.ts` failed it. A token now ends the quest when its people are seen holding
    the landing. H6's walkthrough line that asserted the token alone did the quest now asserts the
-   goal down the stair.
+   goal down the stair. A company with a token that comes down the crawl way lands past the first
+   landing and meets neither the rearguard nor `ud2_held`: the goal stays up on the stair until a
+   verdict or the rearguard ends 57. Rare, and accepted.
 5. **The rearguard is a guardian with `until: HELD`, `leaves: true` and no respawn:** 57 names it
    slain, and the quests check refuses a slain key on a group that respawns.
    `tools/tests/structure.ts` refused any `until` on a group that never comes back; under the leave
@@ -2779,7 +2802,8 @@ Decided by delegate for #758, each the owner's to overturn:
    (one condition and a fixture). Outside the content lane: the owner's to overturn.
 6. **The captain is one person,** *The captain on the landing*, `after: HELD`, with six `says` built
    from `HELD` in its order (the verdicts first, then the tokens), so a verdict that carried
-   outranks a token. His `lines`, said only if no `says` held, which his `after` rules out, are one
+   outranks a token. The lines are keyed by flag in one table, so reordering `HELD` cannot misalign
+   them. The `lines`, said only if no `says` held, which the captain's `after` rules out, are one
    neutral line.
 7. **The Catcher is set off the line by its gate (`OFF_LINE`): 1,100 hit points and 34d8+40.** The
    line's 1,826 and 30d8+34 are won 29% at 30, 35% at 31 and 41% at 32; the Catcher is won 59% at 30
@@ -3009,7 +3033,7 @@ Owed, from the Ways (#757):
   stand furthest and the curve's rise fails. The crack's knockers (28) and the crew guard (29.3)
   are furthest whatever is done (§9.2, #757's 4). The owner's call.
 - **Two under, the area's pool is won every time:** the Ways' own row reads n/a, its floor being
-  above the area's, so its groups count in the pool at 26, 100% of 26 groups, owed to #18 already
+  above the area's, so its groups count in the pool at 26, 100% of 30 groups, owed to #18 already
   (`Hearth Isle: under`, `OWED` in `tools/tests/gate.ts`). The owner's or #18's.
 - **`underdeep` keeps its name and order 13:** the comment on `AtlasPlace.name` (`src/game/atlas.ts`)
   says planned places only, but `progression()` reads it for a deep place's step on the road (§9.2,
@@ -3036,7 +3060,8 @@ Owed, from the Stair (#758):
 - **The Catcher's sizing:** `OFF_LINE.catcher`, 1,100 hit points and 34d8+40, is won 59% at 30,
   67% at 31 and 84% at 32 on the gate's seeds. In ten sizings the rise from 30 to 32 never passed
   about 25 points, so half at 31 and nearly always at 32 cannot both hold: the gate's floor aim and
-  its limit above are kept (§9.2, #758's 7). #752 finalises it.
+  its limit above are kept (§9.2, #758's 7). Provisional until #746 puts the Hand's steel in the
+  company and #752 finalises it.
 - **The sixth flight's crawlers are two, not three:** with three the day at 30 breaks off at 7.85
   fights to a rest, past the gate's limit of 9 (§9.2, #758's 8). The owner's call.
 - **`tools/tests/structure.ts` is loosened:** a group that `leaves` on its `until` needs no respawn,

@@ -1,7 +1,7 @@
 // The Ways, the Underdeep's first level: the hull's service ways under the crypt. From the grey door's
 // foot, 16,30, a main way runs north up the middle to the Stair's head, a door at 16,2 (#758). Off it
 // every four rows side ways east and west, each ending in a door with her knot on its frame (59); behind
-// the eighth (20,14) a room where the knockers listen at a thin wall, the hatch in it (24,14) onto a crawl
+// the eighth (20,14) a room with the hatch in its north wall (24,14), onto a crawl
 // way north to the Stair below its fights, and the way on east and north to the crack the Sunder made
 // (29,6, 61). West along the row-10 way, the CREW ONLY door from the inside (2,10, 60). Band 30;
 // docs/areas/hearth_isle.md §4.6 is its brief.
@@ -97,9 +97,12 @@ export const UNDERDEEP: MapDef = {
     // The crawl way behind the frames, through the hatch: the unwatched way onto the Stair (59).
     { kind: 'event', x: 24, y: 13, id: 'ud_hatch', once: true, text: 'A crawl way a knocker\'s height, running north behind the frames. The dust in it is undisturbed.' },
     { kind: 'chest', x: 24, y: 4, id: 'ud_crawl_chest', gold: 600, items: ['potion_sp_great', 'potion_sp_great', 'potion_sp_great'] },
-    // The CREW ONLY door from the inside (60): its marks, the feet before it, and the door, a person with no face.
-    { kind: 'event', x: 4, y: 10, id: 'ud_feet', once: true, text: 'Hundreds of footprints in the dust before the door, walking in. On the door\'s inner face, a bar, and a handle. It opens from this side.' },
-    { kind: 'sign', x: 3, y: 10, id: 'ud_crew_sign', text: 'A door in the ways\' west wall, shut, and over it marks like the Kilns\'.', read: 'CREW ONLY. THE MINES BEYOND.' },
+    // The CREW ONLY door from the inside (60): its marks on the way, the feet on the square before it, and the
+    // door, a person with no face. The feet are an event, which the interactable skips, so a company on 3,10
+    // facing west talks to the door ahead and steps forward through; a sign there would be the interactable on
+    // its own square, and the door could be spoken to only from its own square, its way a wall after.
+    { kind: 'sign', x: 4, y: 10, id: 'ud_crew_sign', text: 'A door in the ways\' west wall, shut, and over it marks like the Kilns\'.', read: 'CREW ONLY. THE MINES BEYOND.' },
+    { kind: 'event', x: 3, y: 10, id: 'ud_feet', once: true, text: 'Hundreds of footprints in the dust before the door, walking in. On the door\'s inner face, a bar, and a handle. It opens from this side.' },
     {
       kind: 'npc', x: 2, y: 10, name: 'The door marked CREW ONLY', until: [{ flag: CREW_OPEN }, { flag: CREW_SHUT }],
       lines: ['The door\'s inner face: a bar across it, and a handle, and the dust of hundreds of feet before it. From this side it is only a door.'],

@@ -7,7 +7,8 @@
 // (13,1). Band 30-31; docs/areas/hearth_isle.md §4.7 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
-import { HELD } from './hearthisle_h6.ts';
+import { THRONE_COUSIN, THRONE_HOLD, THRONE_TALLIS } from '../../shelf/maps/keep.ts';
+import { HELD, TOKEN_COUSIN, TOKEN_HOLD, TOKEN_TALLIS } from './hearthisle_h6.ts';
 
 /** The last frame's word (59), the end of her knots: `ud2_word`, once. */
 export const KNOT_LAST = 'underdeep2:ud2_word';
@@ -26,14 +27,14 @@ export const LAST_DOOR: Exit = {
 
 const many = (n: number, id: string): string[] => Array.from({ length: n }, () => id);
 
-/** The claimant's captain's words (57), in HELD's order: the three verdicts first, then the three tokens. */
-const CAPTAIN: readonly (readonly string[])[] = [
-  ['A Warden captain on the landing with six of the Drillyard\'s behind her, the Hand\'s rearguard dead at their feet.', '"The Council\'s word came over with us: the cousin\'s people hold the stair for the company. We came in by the door that opened, and we\'ll hold it till you\'re back up."'],
-  ['Elves of Henlys on the landing, their bows strung, and the Hand\'s rearguard dead at their feet.', '"The hold sent us when the Council read the treaty. We hold this landing, and we do not go down: what is at the bottom was never ours."'],
-  ['Compact hands on the landing, a dozen, the Hand\'s rearguard dead at their feet and their packs already open.', '"Tallis has the chair, and we\'ve been paid to hold this for you. What comes up out of that door with you is his, mind: the ring most of all."'],
-  ['A Warden captain on the landing with six of the Drillyard\'s behind her, the Hand\'s rearguard dead at their feet.', '"Sergeant Aelfric\'s badge. Then you\'re the ones. We came in by the door that opened and held this landing for you; we\'ll hold it till you\'re back up. The captains will want it said in Helmstow that the Wardens were here."'],
-  ['Elves of Henlys on the landing, their bows strung, and the Hand\'s rearguard dead at their feet. Their leader looks at the seal on your chest.', '"Talwyn\'s. Then say it at the bottom for all of us. We hold this landing, and we do not go down: what is at the bottom was never ours."'],
-  ['Compact hands on the landing, a dozen, the Hand\'s rearguard dead at their feet and their packs already open. Their master looks at the tally-stick.', '"Tallis\'s. Then we\'ve been paid to hold this for you, and we have. What comes up out of that door with you is his, mind: the ring most of all. He said so. He said you\'d know what he meant."'],
+/** The claimant's captain's words (57), each under the flag that holds the landing: the three verdicts first, then the three tokens, so a verdict that carried outranks a token (HELD's order). */
+const CAPTAIN: readonly (readonly [string, readonly string[]])[] = [
+  [THRONE_COUSIN, ['A Warden captain on the landing with six of the Drillyard\'s behind her, the Hand\'s rearguard dead at their feet.', '"The Council\'s word came over with us: the cousin\'s people hold the stair for the company. We came in by the door that opened, and we\'ll hold it till you\'re back up."']],
+  [THRONE_HOLD, ['Elves of Henlys on the landing, their bows strung, and the Hand\'s rearguard dead at their feet.', '"The hold sent us when the Council read the treaty. We hold this landing, and we do not go down: what is at the bottom was never ours."']],
+  [THRONE_TALLIS, ['Compact hands on the landing, a dozen, the Hand\'s rearguard dead at their feet and their packs already open.', '"Tallis has the chair, and we\'ve been paid to hold this for you. What comes up out of that door with you is his, mind: the ring most of all."']],
+  [TOKEN_COUSIN, ['A Warden captain on the landing with six of the Drillyard\'s behind her, the Hand\'s rearguard dead at their feet.', '"Sergeant Aelfric\'s badge. Then you\'re the ones. We came in by the door that opened and held this landing for you; we\'ll hold it till you\'re back up. The captains will want it said in Helmstow that the Wardens were here."']],
+  [TOKEN_HOLD, ['Elves of Henlys on the landing, their bows strung, and the Hand\'s rearguard dead at their feet. Their leader looks at the seal on your chest.', '"Talwyn\'s. Then say it at the bottom for all of us. We hold this landing, and we do not go down: what is at the bottom was never ours."']],
+  [TOKEN_TALLIS, ['Compact hands on the landing, a dozen, the Hand\'s rearguard dead at their feet and their packs already open. Their master looks at the tally-stick.', '"Tallis\'s. Then we\'ve been paid to hold this for you, and we have. What comes up out of that door with you is his, mind: the ring most of all. He said so. He said you\'d know what he meant."']],
 ];
 
 export const UNDERDEEP2: MapDef = {
@@ -96,7 +97,7 @@ export const UNDERDEEP2: MapDef = {
     {
       kind: 'npc', x: 15, y: 27, name: 'The captain on the landing', after: HELD,
       lines: ['The claimant\'s people on the landing, the Hand\'s rearguard dead at their feet.'],
-      says: HELD.map((after, i) => ({ after, lines: CAPTAIN[i] })),
+      says: CAPTAIN.map(([flag, lines]) => ({ after: { flag }, lines })),
     },
     { kind: 'chest', x: 17, y: 26, id: 'ud2_rearguard_chest', gold: 900, items: ['grey_axe'] },
     // The Hand's dead on the flights, where the crawlers caught them (58).
