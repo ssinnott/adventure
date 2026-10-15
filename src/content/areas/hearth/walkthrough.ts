@@ -5,24 +5,29 @@
 // three tents and the shrine; the three pilgrims' questions, a token taken and the other two gone, and
 // each token another way; the Hearth, the warm ground and the Grove's sliver humming for a company that
 // carries it; the temple's door; the lookouts; the cache found from the draught; the moths by night; the
-// Compact's runner or the Wardens' sergeant; and the box's groups won at 28. Then the temple, Hearthfane
-// (#755): in at the door and out again, the nave's moths, the pillar read, the sacristan's lamps put out
-// wrong and then in the pillar's order (56), the moths gone to the light, his key, the treasury that opens
-// to it and to nothing else, the Hand's best won at 28 and the court's second gone with Vask. Then its crypt
-// (#756), walked at 29: down the stair behind the altar and up again, the chamber's champions, the eleven
-// niches and the eleven kept for a company that gave the log, the side vault's dead and rats, the keeper
-// at the passage and her knot on the grey door's frame. Then the Ways (#757), walked at 30: down through
-// the grey door and up again, every frame read and the hatch found from the eighth, the crawl way, the
-// crack sealed and widened (61), the CREW ONLY door answered both ways and walked through (60), and the
-// groups won at 30. Then the Stair (#758), walked at 30: down the ways' last door and up again, and out of
-// the crawl way onto its fourth landing; the first landing held for the badge carried (57), and on other
-// walks the rearguard won where nobody holds it and a verdict that outranks a token; the dead and the
-// letter (58); her name on the last frame (59); the groups won at 30, and the Catcher at 31; the last door
-// shut until the road's five, its way into the Heart being #759's.
+// Compact's runner or the Wardens' sergeant; and the box's groups won at 28. Then the east rim (I6, #754):
+// the rim's path from the Bowl with the pocket's fight, Anchorhold's yard and the cell, the east foot,
+// the Hand's camp and its guard, the Steps, the grey door read, the takings found from the tally-house and
+// the smell, the moths by night and the guard gone once Vask is gone from Helmstow. Then the temple,
+// Hearthfane (#755): in at the door and out again, the nave's moths, the pillar read, the sacristan's lamps
+// put out wrong and then in the pillar's order (56), the moths gone to the light, his key, the treasury
+// that opens to it and to nothing else, the Hand's best won at 28 and the court's second gone with Vask.
+// Then its crypt (#756), walked at 29: down the stair behind the altar and up again, the chamber's
+// champions, the eleven niches and the eleven kept for a company that gave the log, the side vault's dead
+// and rats, the keeper at the passage and her knot on the grey door's frame. Then the Ways (#757), walked
+// at 30: down through the grey door and up again, every frame read and the hatch found from the eighth,
+// the crawl way, the crack sealed and widened (61), the CREW ONLY door answered both ways and walked
+// through (60), and the groups won at 30.
+// Then the Stair (#758), walked at 30: down the ways' last door and up again, and out of the crawl way
+// onto its fourth landing; the first landing held for the badge carried (57), and on other walks the
+// rearguard won where nobody holds it and a verdict that outranks a token; the dead and the letter (58);
+// her name on the last frame (59); the groups won at 30, and the Catcher at 31; the last door shut until
+// the road's five, its way into the Heart being #759's.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen, walkThrough, gone as left } from '../../../../tools/walk.ts';
 import type { Walk } from '../../../../tools/walk.ts';
 import { NORTH, EAST, SOUTH, WEST } from '../../../game/types.ts';
+import type { Facing } from '../../../game/types.ts';
 import { ATLAS, MAP_DEFS } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
@@ -56,8 +61,8 @@ export const walkthrough: Walkthrough = (ok) => {
 
   // The last crossing, bought at Cinderport's quay from the harbourmaster: it leaves at 20:00 and grounds
   // on the strand at the cleft's foot, 20,30, facing north, the afternoon after (#547; §4.2).
-  ok(ISLE.maps?.length === 1 && ISLE.maps[0].map === 'hearthisle_h6' && !!ISLE.crossing?.harder && !!ISLE.crossing?.warning && H6.density === 'core' && H6.band?.join() === '28,29',
-    'Hearth Isle holds H6, core, band 28-29, and has its crossing words');
+  ok(ISLE.maps?.map((m) => m.map).join() === 'hearthisle_h6,hearthisle_i6' && !!ISLE.crossing?.harder && !!ISLE.crossing?.warning && H6.density === 'core' && H6.band?.join() === '28,29',
+    'Hearth Isle holds H6 and I6, H6 core, band 28-29, and has its crossing words');
   const port = MAP_DEFS.find((d) => d.id === 'cinderport')!.features!.find((f): f is Person => f.kind === 'npc' && (f.passage ?? []).some((p) => p.to === 'hearthisle_h6'))!;
   const [over] = port?.passage?.filter((p) => p.to === 'hearthisle_h6') ?? [];
   const landing = LAST_CROSSING.ends.find((e) => e.at === 'hearthisle')!;
@@ -179,6 +184,61 @@ export const walkthrough: Walkthrough = (ok) => {
   for (const id of ['h6_moths1', 'h6_moths2', 'h6_rim', 'h6_rats']) fight(w, `hearthisle_h6:${id}`);
   ok(H6.encounters!.find((g) => g.id === 'h6_rim')?.roams === true && H6.encounters!.filter((g) => g.id === 'h6_picket1' || g.id === 'h6_sermon').every((g) => g.roams === false),
     'the champions on the west shelf roam; the cleft\'s picket and the preacher\'s group stand');
+
+  // The east rim (I6, #754), walked on from the Bowl by day: the champions in the Bowl's east pocket where
+  // the rim's path begins, and the path carved through the rim's rock into Anchorhold's yard under the
+  // cell and on out to the east foot, north under the rim to the Wyke.
+  delete w.party.flags[COMPACT_WARDENS];
+  at(w, 12);
+  const I6 = MAP_DEFS.find((d) => d.id === 'hearthisle_i6')!, i6 = out.zones.find((z) => z.id === 'hearthisle_i6')!;
+  const rim = (x: number, y: number): string => out.at(i6.x + x, i6.y + y).ch;
+  ok(I6.density === 'core' && I6.band?.join() === '28,29' && i6.x === 264 && i6.y === 158 && ISLE.maps![1].at.join() === '264,158', 'I6 is laid at 264,158, core, band 28-29');
+  fight(w, 'hearthisle_i6:i6_rim');
+  const yard = [2, 3, 4, 5].flatMap((x) => [19, 20].map((y) => rim(x, y)));
+  ok([[1, 18], [2, 18], [6, 19], [7, 19]].every(([x, y]) => rim(x, y) === ':') && yard.every((c) => c === ':') && rim(0, 18) === ',' && rim(8, 19) === ',' && rim(4, 18) === 'B',
+    'the rim\'s path is carved from the Bowl\'s grass at 0,18 through the rock into Anchorhold\'s yard, 2-5,19-20, and out to the east foot at 8,19; the cell at 4,18 is built into the rim');
+  const anchorhold = ATLAS.sites.find((s) => s.name === 'Anchorhold')!;
+  ok(!anchorhold.planned && anchorhold.at[0] === i6.x + 4 && anchorhold.at[1] === i6.y + 18 && !I6.features!.some((f) => f.x === 4 && f.y === 19),
+    'Anchorhold\'s site, built, is the cell at 4,18, and the square under its window, 4,19, is left for the anchoress (#763)');
+  for (const id of ['i6_wall', 'i6_cell', 'i6_path', 'i6_keel', 'i6_wyke']) see(w, `hearthisle_i6:${id}`);
+  ok(['i6_wall', 'i6_cell', 'i6_path', 'i6_keel', 'i6_wyke'].every((id) => w.world.used(id)), 'the hours scratched on the cell, its window, the causeway from the path, the keel and the Wyke');
+
+  // The Hand's camp at the stair's head: its guard, gone once Vask is gone from Helmstow (#747) and back
+  // where it stood if not, and the two at the stair's head; the camp, its crates and its chest; the Steps.
+  const guard = I6.encounters!.find((g) => g.id === 'i6_guard')!;
+  ok(guard.leaves === true && JSON.stringify(guard.until) === JSON.stringify({ flag: THRONE_REMOVED }) && guard.roams === false && guard.monsters.includes('ashen_preacher'), 'the camp\'s guard and its preacher stand, and leave once the Council has removed Vask');
+  w.party.flags[THRONE_REMOVED] = 1;
+  left(w, 'hearthisle_i6:i6_guard');
+  delete w.party.flags[THRONE_REMOVED];
+  fight(w, 'hearthisle_i6:i6_guard');
+  fight(w, 'hearthisle_i6:i6_guard2');
+  for (const id of ['i6_camp', 'i6_crates', 'i6_steps']) see(w, `hearthisle_i6:${id}`);
+  const staff = I6.features!.find((f) => f.kind === 'chest' && f.id === 'i6_camp_chest');
+  ok(staff?.kind === 'chest' && staff.gold === 500 && staff.items.join() === 'grey_staff' && w.world.used('i6_steps'), 'in the camp\'s chest, 500 gold and a Grey Staff; the causeway comes up out of the sea at the Steps');
+
+  // The grey door at the camp's back, read from the grass below it: no exit, and no lock.
+  see(w, 'hearthisle_i6:i6_door');
+  see(w, 'hearthisle_i6:i6_knot');
+  ok(rim(5, 22) === 'r' && !(I6.exits ?? []).length && w.world.used('i6_door') && w.world.used('i6_knot'), 'the grey door at 5,22 is the rim\'s rock, read and never opened');
+
+  // The secret: the tally-house against the rim and the smell at its foot, the rock behind it that opens
+  // on a search, and the Hand's takings in the pocket behind.
+  see(w, 'hearthisle_i6:i6_tally');
+  see(w, 'hearthisle_i6:i6_smell');
+  const [pocket] = I6.secrets!;
+  w.world.travel('hearthisle_i6', pocket.x + 1, pocket.y, WEST);
+  let found = false;
+  for (let i = 0; i < 20 && !found; i++) found = w.world.search();
+  const into = found ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(found && into.every((r) => r.kind === 'moved') && w.world.used('i6_takings'), 'searched behind the tally-house, the rock opens, and the pocket behind it is walked into');
+  listen(w);
+  const rimHoard = I6.features!.find((f) => f.kind === 'chest' && f.id === 'i6_hoard');
+  ok(rimHoard?.kind === 'chest' && rimHoard.gold === 1200 && rimHoard.items.join() === 'grey_mail' && rimHoard.x === pocket.x - 2 && rimHoard.y === pocket.y, 'in the Hand\'s hoard, 1,200 gold and the Grey Mail');
+
+  // The moths over Anchorhold's yard by night.
+  ok(JSON.stringify(I6.encounters!.find((g) => g.id === 'i6_moths')?.when) === JSON.stringify({ hours: 'night' }), 'the moths come over the yard by night');
+  at(w, 23);
+  fight(w, 'hearthisle_i6:i6_moths');
 
   // Hearthfane (#755): in at the door in the mound, 18,14, onto the nave's foot facing up it, and out
   // again onto the Bowl before the door.
@@ -322,14 +382,20 @@ export const walkthrough: Walkthrough = (ok) => {
 
   // Through the chamber's north door the keeper, the first machine on the isle, with the Hand's last man
   // beside it; her knot on the grey door's frame, the chapter's next step (#760); and the grey door,
-  // standing open onto the Ways (#757).
+  // standing open onto the Ways (#757), its sign read on the passage, stepping from the north door onto 8,3
+  // where the keeper stood: an exit takes the company on arrival, before the square's texts are said, so a
+  // sign on the door's own square would never be read, and nothing stands on either of the crypt's exits.
   see(w, 'hearthfane2:hf2_last');
   fight(w, 'hearthfane2:hf2_keeper');
   see(w, 'hearthfane2:hf2_knot');
-  w.world.travel('hearthfane2', GREY_DOOR.x, GREY_DOOR.y);
-  const grey = w.world.eventsHere().join(' ');
-  ok(grey.includes('A door of grey with no handle') && w.world.used('hf2_knot') && CRYPT.rows[GREY_DOOR.y][GREY_DOOR.x] === 'D' && GREY_DOOR.to === 'underdeep'
-    && (CRYPT.exits ?? []).includes(GREY_DOOR), 'her knot on the grey door\'s frame, and the door standing open onto the Ways');
+  w.world.travel('hearthfane2', 8, 4, NORTH);
+  const onto = w.world.move('forward');
+  const grey = onto.kind === 'moved' ? onto.messages.join(' ') : '';
+  const sign = CRYPT.features!.find((f) => f.kind === 'sign' && f.id === 'hf2_door');
+  ok(onto.kind === 'moved' && !onto.arrived && w.world.state.x === 8 && w.world.state.y === 3 && grey.includes('A door of grey with no handle') && sign?.x === 8 && sign.y === 3
+    && w.world.used('hf2_knot') && CRYPT.rows[GREY_DOOR.y][GREY_DOOR.x] === 'D' && GREY_DOOR.to === 'underdeep' && (CRYPT.exits ?? []).includes(GREY_DOOR)
+    && (CRYPT.exits ?? []).length === 2 && !(CRYPT.features ?? []).some((f) => (CRYPT.exits ?? []).some((e) => e.x === f.x && e.y === f.y)),
+    'the grey door\'s sign read on the passage, her knot on its frame, and the door standing open onto the Ways with nothing on its square');
 
   // The Ways (#757): through the grey door onto its foot, 16,30, facing up the main way, and back up onto
   // the knot's square, 8,2, facing away from the door: the way to the camp to rest, and down again.
@@ -369,14 +435,14 @@ export const walkthrough: Walkthrough = (ok) => {
   ok([1, 2, 3, 4, 5, 6, 7, 8].every((n) => w.world.used(`ud_knot${n}`)) && log('frames')!.pages[0].entries.length === 2 && !log('frames')!.done,
     'every frame read, the eighth cut deeper over a thin wall, and the quest goes on down to the Stair\'s last frame (#758)');
 
-  // The hatch behind the eighth frame, found from it: searched at the thin wall in the knockers' room, it
+  // The hatch behind the eighth frame, found from it: searched at the wall in the room behind it, it
   // opens on the crawl way, its chest and its door onto the Stair, which the Stair lists (#758).
   const [hatch] = WAYS.secrets!;
   w.world.travel('underdeep', hatch.x, hatch.y + 1, NORTH);
-  let found = false;
-  for (let i = 0; i < 20 && !found; i++) found = w.world.search();
-  const crawled = found ? [w.world.move('forward'), w.world.move('forward')] : [];
-  ok(hatch.hint === 'ud_knot8' && found && crawled.every((r) => r.kind === 'moved') && w.world.used('ud_hatch') && log('frames')!.pages[0].entries.length === 3,
+  let hatchFound = false;
+  for (let i = 0; i < 20 && !hatchFound; i++) hatchFound = w.world.search();
+  const crawled = hatchFound ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(hatch.hint === 'ud_knot8' && hatchFound && crawled.every((r) => r.kind === 'moved') && w.world.used('ud_hatch') && log('frames')!.pages[0].entries.length === 3,
     'searched at the wall behind the eighth frame, the hatch opens on the crawl way, and the log keeps it');
   listen(w);
   ok(crawl?.kind === 'chest' && crawl.gold === 600 && crawl.items.join() === 'potion_sp_great,potion_sp_great,potion_sp_great' && crawl.x === 24 && crawl.y === 4,
@@ -396,9 +462,21 @@ export const walkthrough: Walkthrough = (ok) => {
   fight(w, 'underdeep:ud_knockers3');
   see(w, 'underdeep:ud_crack');
   const inWays = (name: string): Person => WAYS.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
-  const speak = (v: Walk, p: Person) => { v.world.travel('underdeep', p.x, p.y); return meet(p, v.party, heard(v.world, p)); };
+  // Spoken to as the game has it: from the square before the person, facing them, where an event may stand
+  // and no sign (the interactable on a company's own square comes before the one ahead).
+  const speak = (v: Walk, p: Person, x: number, y: number, facing: Facing) => {
+    v.world.travel('underdeep', x, y, facing);
+    const f = v.world.featureHere();
+    v.ok(f?.kind === 'npc' && f.name === p.name, `${p.name} is the one to talk to from ${x},${y}, facing them`);
+    return meet(p, v.party, heard(v.world, p));
+  };
   const knocker = inWays('The knocker at the crack'), crewDoor = inWays('The door marked CREW ONLY');
-  const pay = (v: Walk, p: Person, label: string): number => { const xp = v.party.members[0].xp; answer(speak(v, p).choice!.answers.find((a) => a.label === label)!, v.party); return v.party.members[0].xp - xp; };
+  const from = (p: Person): { x: number; y: number; f: Facing } => p === knocker ? { x: 28, y: 6, f: EAST } : { x: 3, y: 10, f: WEST };
+  const pay = (v: Walk, p: Person, label: string): number => {
+    const xp = v.party.members[0].xp, at = from(p);
+    answer(speak(v, p, at.x, at.y, at.f).choice!.answers.find((a) => a.label === label)!, v.party);
+    return v.party.members[0].xp - xp;
+  };
   ok(!!log('crack') && !log('crack')!.done, 'at the crack, The Knocker That Stopped begins');
   const sealed = pay(w, knocker, 'Seal it.');
   ok(Math.abs(sealed - 4000 / 6) < 1 && !!w.party.flags[CRACK_SEALED] && !w.world.present(knocker) && log('crack')!.done, 'sealed with its hammer: 4,000 experience among the company, the knocker finished and the quest done');
@@ -410,26 +488,31 @@ export const walkthrough: Walkthrough = (ok) => {
     && !!questLog(b.world.state, b.party).find((v) => v.def.id === 'crack' && v.done), 'or widened: the Old Lantern\'s Staff from the swallowed hall, 4,000 experience, and the knockers stay');
 
   // Up the main way to the row-10 way, its guard won at 30, and the CREW ONLY door from the inside (60):
-  // the feet before it, its marks read by a reader, and shut to the mines until it is answered. Opened and
-  // left open, it pays 2,000 among the company and its way through lands on the Clean Corridor's floor,
-  // 13,3, facing west; opened, gone through and shut, on another walk, the same.
+  // its marks on the way west, read by a reader, then the feet on the square before it, which begin the
+  // quest; from there, facing west, the door ahead is the one to talk to, shut to the mines until it is
+  // answered, and a step forward after either answer goes through. Opened and left open, it pays 2,000
+  // among the company and its way through lands on the Clean Corridor's floor, 13,3, facing west; opened,
+  // gone through and shut, on another walk, the same.
   fight(w, 'underdeep:ud_keepers3');
   fight(w, 'underdeep:ud_crew_guard');
-  see(w, 'underdeep:ud_feet');
-  w.world.travel('underdeep', 3, 10);
-  const lettered = !!readerOf(w.party), unread = w.world.eventsHere().join(' ');
+  const stepOn = (v: Walk): string => { const r = v.world.move('forward'); return r.kind === 'moved' ? r.messages.join(' ') : r.kind === 'blocked' ? `(${r.reason})` : ''; };
+  w.world.travel('underdeep', 5, 10, WEST);
+  const lettered = !!readerOf(w.party), unread = stepOn(w);
   w.party.bag.push('copybook');
   const marks = w.world.eventsHere().join(' ');
   w.party.bag.splice(w.party.bag.indexOf('copybook'), 1);
-  ok((lettered || !unread.includes('CREW ONLY.')) && marks.includes('CREW ONLY. THE MINES BEYOND.') && w.world.used('ud_crew_sign') && !!log('crew_only') && !log('crew_only')!.done,
-    `the marks over the door, read with a reader and kept read, and Crew Only, From the Inside begun (${marks})`);
-  w.world.travel('underdeep', 3, 10, WEST);
+  ok(w.world.state.x === 4 && w.world.state.y === 10 && (lettered || !unread.includes('CREW ONLY.')) && marks.includes('CREW ONLY. THE MINES BEYOND.') && w.world.used('ud_crew_sign'),
+    `the marks over the door, on the way to it, read with a reader and kept read (${marks})`);
+  const feet = stepOn(w);
+  ok(w.world.state.x === 3 && w.world.state.y === 10 && feet.includes('footprints') && w.world.used('ud_feet') && !!log('crew_only') && !log('crew_only')!.done,
+    'the feet on the square before the door, and Crew Only, From the Inside begun');
   w.world.move('forward');
-  ok(w.world.state.mapId === 'underdeep', 'the door stays shut on the mines until it is answered');
+  ok(w.world.state.mapId === 'underdeep' && w.world.state.x === 2, 'the door stays shut on the mines until it is answered');
   const opened = pay(w, crewDoor, 'Open it, and leave it open.');
   ok(Math.abs(opened - 2000 / 6) < 1 && !!w.party.flags[CREW_OPEN] && !w.world.present(crewDoor) && log('crew_only')!.done, 'opened and left open: 2,000 experience among the company, and the quest done');
-  walkThrough(w, 'underdeep', 3, 10, WEST, 'deep_mines3', 1);
-  ok(w.world.state.x === 13 && w.world.state.y === 3 && w.world.state.facing === WEST, 'through the door onto the Clean Corridor\'s floor before its other side, 13,3, facing west');
+  const through = w.world.move('forward');
+  ok(through.kind === 'moved' && !!through.arrived && w.world.state.mapId === 'deep_mines3' && w.world.state.x === 13 && w.world.state.y === 3 && w.world.state.facing === WEST,
+    'a step forward from the feet\'s square goes through onto the Clean Corridor\'s floor before its other side, 13,3, facing west');
   const c2 = newWalk(ok);
   see(c2, 'underdeep:ud_feet');
   const shut = pay(c2, crewDoor, 'Go through and shut it.');
@@ -460,8 +543,8 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(meet(captain, w.party, heard(w.world, captain)).text.includes('Sergeant Aelfric\'s badge') && log('bowl_pilgrims')!.done,
     'the cousin\'s people hold the first landing for the badge, their captain says so, and The Pilgrims in the Bowl is done');
   const ud2 = (id: string) => UD2.features!.find((f) => f.kind === 'chest' && f.id === id);
-  const [guard, letter, packs] = ['ud2_rearguard_chest', 'ud2_letter_chest', 'ud2_packs'].map(ud2);
-  ok(guard?.kind === 'chest' && guard.gold === 900 && guard.items.join() === 'grey_axe' && packs?.kind === 'chest' && packs.gold === 700
+  const [rearguardChest, letter, packs] = ['ud2_rearguard_chest', 'ud2_letter_chest', 'ud2_packs'].map(ud2);
+  ok(rearguardChest?.kind === 'chest' && rearguardChest.gold === 900 && rearguardChest.items.join() === 'grey_axe' && packs?.kind === 'chest' && packs.gold === 700
     && packs.items.join() === 'potion_heal,potion_heal,potion_heal,potion_heal', 'the rearguard\'s chest, 900 gold and a Grey Axe; the dead\'s packs, 700 gold and four healing potions');
   // On another walk, nobody holds it: the rearguard won at 30, and the quest done on it, carrying unheld.
   const unheld = newWalk(ok);
