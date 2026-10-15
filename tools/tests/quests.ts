@@ -9,7 +9,7 @@ import { homeMap, zoneOfMap } from '../../src/game/atlas.ts';
 import { existsSync, readFileSync } from 'node:fs';
 import { takenFlag, doneFlag } from '../../src/content/guilds.ts';
 import { World } from '../../src/game/world.ts';
-import { defaultParty, takeItem } from '../../src/game/party.ts';
+import { defaultParty, takeItem, takePrestige, prestigeOf } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
 import { serialize, deserialize } from '../../src/game/save.ts';
 import { questLog, questMarks, questNews } from '../../src/game/quests.ts';
@@ -34,11 +34,10 @@ import { ok, owed } from './lib.ts';
 export const UNSET: Record<string, string> = {
   // The Council of Helmstow's pieces and its twins (#764): where the signet goes, to Helmstow's gate or the
   // sea off Gullwick (64), and the walk home (the road behind; the ring and the endings are the Heart's, #759). The pilgrims' tokens are set on the isle (H6, #753). The keeper's log
-  // given at Anchorhold (the Cleric's third), which the crypt's eleven wait on (#756). Jowan's letter, taken
+  // given at Anchorhold (the Cleric's third) is set by Hereswith's hand-in (#763). Jowan's letter, taken
   // by his mother at Gullwick (58, the road behind), which the Stair's letter waits on (#758).
   q_signet_cousin: '#765', q_signet_hold: '#765', q_signet_tallis: '#765', q_signet_sea: '#765',
   q_wenna_home: '#765', q_letter_given: '#765',
-  q_eleven_log: '#763',
 };
 
 /** The flags a feature sets: a person's, met, and an event's, said (#156). */
@@ -196,6 +195,13 @@ export function quests(): void {
     if (c.seen) { const [m, id] = c.seen.split(':'); stateFor(s.world, m).used[id] = 1; }
     for (const ref of [c.slain ?? []].flat()) { const [m, id] = ref.split(':'); stateFor(s.world, m).groups[id].dead = s.world.state.minutes; }
     if (c.visited) stateFor(s.world, c.visited);
+    // A start may ask a member (the Cleric's third begins on the log given only for a cleric of 27 with the
+    // second, #763): raise the first member that fits the class and race to the level and the prestige, so
+    // the way in can hold. Every other condition is satisfied as it was, and a member nobody fits is left.
+    if (c.member) {
+      const m = c.member, who = m.who === undefined ? s.party.members.find((x) => (m.cls === undefined || x.cls === m.cls) && (m.race === undefined || x.race === m.race)) : s.party.members[m.who];
+      if (who) { who.level = Math.max(who.level, m.level ?? 0); while (prestigeOf(who) < (m.prestige ?? 0)) takePrestige(who); }
+    }
   };
   const view = (s: { party: Party; world: World }, id: string): QuestView | undefined => questLog(s.world.state, s.party).find((v) => v.def.id === id);
   const page = (s: { party: Party; world: World }, q: LogQuest, c: QuestDef): PageView | undefined => view(s, q.id)?.pages.find((p) => p.def === c);

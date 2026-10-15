@@ -40,15 +40,15 @@ it; the places `hearthfane` at 250,172, `hearthfane2` at 250,178, `underdeep` at
 Anchorhold at 268,176 (both built)); the last crossing itself, sold at Cinderport's quay since #547,
 whose isle end lands on H6's strand since #753 (`LAST_CROSSING`, `src/content/crossings.ts`);
 MONSTERS §9's roster (§7 fields it with one more, the Ashen Rearguard: twelve monsters, one new
-family); the Cleric's third prestige at Anchorhold, placed on the map and nowhere else (#19), its
-deed built in the crypt and waiting on the log (#763); and #56's 56 to 61 and 64, Act V's side
+family); the Cleric's third prestige at Anchorhold, built (#19, #763): the anchoress at her window, her
+hand-in of the keeper's log, the lamps in the crypt and the log; and #56's 56 to 61 and 64, Act V's side
 quests, drafted, with 56 built in the temple, 60 and 61 built in the Ways, 57 begun on the isle and
 ended on the Stair, 59 begun in the Ways and ended on the Stair, 58 begun on the Stair and 64 begun
 at the Heart (§6).
 Its content is
 `src/content/areas/hearth/` (maps, monsters, items, climate, its part of the world map and its
-walkthrough; its chapter, The Heart, in `chapter.ts`, and its other side quests and the Cleric's
-third in `quests.ts`, to come) and its businesses' rooms `src/ui/interiors/hearth/`, drawn ahead of
+walkthrough; its side quests and the Cleric's third in `quests.ts`, as far as built; its chapter,
+The Heart, in `chapter.ts`, to come) and its businesses' rooms `src/ui/interiors/hearth/`, drawn ahead of
 it (#762). Its ids, the plan's: the area `hearth`, its zone `hearthisle`, the boxes `hearthisle_h6`
 and `hearthisle_i6`, the temple `hearthfane` and its crypt `hearthfane2`, the Underdeep's two levels
 `underdeep` and `underdeep2` and the Core `core`.
@@ -213,6 +213,11 @@ Seven places. The isle (#753) is the area's first and lists the area; the east r
   answers and Vask on his knees by the west wall at 3,9. Two groups, one of them fought: `core_vask`
   and the thinned `core_vask_thinned` the Council swaps in (§4.8).
 
+The Cleric's third, The Eleven Kept (#763), is built on the rim and in the crypt: Hereswith at the
+cell's window (I6, 4,19) with her hand-in, her three `says` and her teaching; the lamps at the
+chamber's 8,7, which #756 built and the hand-in now lights; and the log `eleven_kept` in `quests.ts`
+(§6).
+
 Its atlas rows are charted in `src/content/areas/hearth/atlas.ts`, the area's own since H6 lists the
 area; they moved there from the plan (`src/content/atlas.ts`), which keeps the area's row and the
 links: the zone `hearthisle` with its crossing words; the places `hearthfane` (built, #755),
@@ -274,6 +279,7 @@ Ids used across the briefs, exported from the maps that set them:
 | `TOKEN_COUSIN`, `TOKEN_HOLD`, `TOKEN_TALLIS` | `q_token_cousin`, `q_token_hold`, `q_token_tallis` | the pilgrims' answers (§4.2, §6) |
 | `LAMPS_OUT`, `LAMPS_WRONG` | `q_lamps_out`, `q_lamps_wrong` | the nave's lamps (§4.4, §6) |
 | `LOG_GIVEN`, `ELEVEN_KEPT` | `q_eleven_log`, `q_eleven_kept` | the anchoress's hand-in; the crypt's lamps (§4.3, §4.5, §6); both exported from the crypt (§9.2, #756's 6) |
+| `KEPT_ASKED` | `q_eleven_asked` | the anchoress's ask, to a cleric of 27 with the second (§6); exported from I6 (§9.2, #763's 1) |
 | `KNOT_LAST` | `underdeep2:ud2_word` | the last frame's word (§4.7, §6) |
 | `CREW_OPEN`, `CREW_SHUT` | `q_crew_open`, `q_crew_shut` | the door's other side (§4.6, §6) |
 | `CRACK_SEALED`, `CRACK_WIDE` | `q_crack_sealed`, `q_crack_wide` | the knocker at the wall (§4.6, §6) |
@@ -522,7 +528,7 @@ and lines:
 - **Anchorhold's cell** at 4,18 is a building square, not the plan's rock: not walkable, and it
   shows on the map (#754's 2). The site is built, at 268,176. The yard 2–5,19–20, the path (1–2,18
   and 6–7,19) and the pocket (0–1,24) are carved as dirt (#754's 5). The anchoress's square, 4,19
-  under the window, is free: nothing of hers is placed (#763).
+  under the window, holds Hereswith (#763, §6).
 - **Two points the brief does not name,** `i6_keel` at 8,10 and `i6_wyke` at 5,2, stand for density.
   Their words are the builder's own (#754's 1).
 - **The secret** is the door at 2,24 (world 266,182), its hint `i6_smell` at 2,25 with the
@@ -537,8 +543,8 @@ and lines:
 - **Measured.** A company at 28 wins every fight on the rim and walks the isle's road on to the camp
   every time (#754's 10). Two under, at 26, it wins every fight too, owed to #18 as H6's is
   (#754's 11). The four groups as written give 11.32 fights to a rest, inside the aim, and pay 0.74
-  of the share (#754's 12). Density 100.0% within 8 steps, the furthest 7, with no sign among its 19
-  points. The figures are in §8.
+  of the share (#754's 12). Density 100.0% within 8 steps, the furthest 7, with no sign among its 20
+  points (19 before Hereswith, #763). The figures are in §8.
 
 ### 4.4 Hearthfane, the temple (dungeon, 16×16, band 28–29)
 
@@ -718,10 +724,9 @@ from the brief in these squares and lines:
   *A keeper with no bay to keep, and no robe.* The event gives the passage and the man in the form
   of `hf_nave` and `hf_court`; the look names the keeper after it (#756's 3). He fights as a
   champion: the idiom, not a corpse.
-- **The deed.** `hf2_eleven` (8,7) is the brief's, `after` `q_eleven_log`, which nothing sets until
-  Hereswith's hand-in (#763). The crypt exports `LOG_GIVEN`, which it reads, with `ELEVEN_KEPT`
-  (`q_eleven_kept`), which it sets: I6's map reads `ELEVEN_KEPT` from here and may take `LOG_GIVEN`
-  from here too (#756's 6).
+- **The deed.** `hf2_eleven` (8,7) is the brief's, `after` `q_eleven_log`, which Hereswith's
+  hand-in sets (#763). The crypt exports `LOG_GIVEN`, which it reads, with `ELEVEN_KEPT`
+  (`q_eleven_kept`), which it sets: I6's map reads both from here (#756's 6; #763's 5).
 - **The groups** are the brief's three at its squares: the champions at 8,10, the rats at 2,9 and
   the keeper's at 8,3. `aware` is 2 for the champions and the keeper's group and 3 for the rats;
   the champions and the keeper stand and the rats roam. The champions and the keeper's group
@@ -1576,7 +1581,7 @@ cleric of 27 with the second to bring her the Crowness keeper's log of the eleve
 down into the temple's first crypt alone, the company without her, and keep the eleven there in
 the gaps he wrote, while she keeps the hour at the top. The log is taken at the hand-in (the
 Bard's gathering reads the log's chest, not the item, so nothing breaks); the deed is `hf2_eleven`
-(§4.5; built with the crypt in #756, waiting on the log in #763); back at the window she teaches.
+(§4.5; built with the crypt in #756); back at the window she teaches. Built in #763.
 
 - `{ kind: 'npc', x: 4, y: 19, name: 'Hereswith, the anchoress', lines: ['A voice from the window in the bricked-up door, and a face behind it, old, and lit from the side by the column. She says the hour before she says anything else.', '"Hereswith. I was walled in here at thirty to keep the hour against the light, and I have kept it fifty years, and the light has kept it with me, mostly." A pause. "Not the night the Queen died. That night it kept its own."', '"Eleven. I counted from here. I should like to know whether anyone else did."'], flag: 'i6_anchoress_met', quest: { item: 'keepers_log', reward: 0, setFlag: LOG_GIVEN, early: ['She reads it at the window, holding it to the light, and reads it again.', '"Crowness. A grace between each, the pairs even. Yes. He counted what I counted." She keeps it. "Now I know."'], done: ['She reads it at the window, holding it to the light, and reads it again.', '"Crowness. A grace between each, the pairs even. Yes. He counted what I counted." She keeps it. "Now there are two of us, and the gaps are written down."', '"Go down into the fane\'s crypt. Eleven lamps stand there for the eleven, cold since that night. Light them as he wrote them, the gaps and all, and I will keep the hour up here while you do. Not with you: I keep the top. That is what an anchorhold is for."'] }, says: [
     { after: { flag: ELEVEN_KEPT }, lines: ['The hour, from the window, and then: "The hum changed key an hour ago, and held. That was you."', '"Fifty years I thought the hour was mine to keep. It was the light\'s. Come to the window, Prelate, and I will show you what an Exarch keeps."'] },
@@ -1586,8 +1591,9 @@ Bard's gathering reads the log's chest, not the item, so nothing breaks); the de
   A hand-in takes its item at the first meeting (EXPANSION §2.3): a company that brings the log
   before the ask hears `early`, and the ask is then never said, since it is `until` the hand-in's
   flag; the deed and the teaching key on the flags whichever came first, and the log starts on
-  either.
-- The log: `start: [{ flag: 'q_eleven_asked' }, { flag: LOG_GIVEN }]`, `done: { member: { cls: 'cleric', prestige: 3 } }`;
+  either, the log given only for a cleric of 27 with the second (the hand-in takes it from any
+  company, §9.2, #763's 9).
+- The log: `start: [{ flag: 'q_eleven_asked' }, { flag: LOG_GIVEN, member: { cls: 'cleric', level: 27, prestige: 2 } }]`, `done: { member: { cls: 'cleric', prestige: 3 } }`;
   entries: *The anchoress walled into Anchorhold counted the eleven the night the Queen died, and
   wants the Crowness keeper's log, to see if he counted the same.* (on `q_eleven_asked`); *He did.
   She keeps the book now, and sent us down into the fane's crypt to light the eleven lamps there in
@@ -1598,6 +1604,14 @@ Bard's gathering reads the log's chest, not the item, so nothing breaks); the de
   `hearthfane2`); *Bring the Crowness keeper's log to Hereswith at Anchorhold.* (on
   `q_eleven_asked`, at `hearthisle_i6`, and the log is in E3's chest under Crowness Light,
   `downs_e3:e3_log`).
+- **As built** (the rim and the crypt, #763): Hereswith is in `hearthisle_i6.ts` and the log in
+  `quests.ts`, her lines and the log's words §6's; `hf2_eleven` stands as #756 built it. I6 imports
+  `LOG_GIVEN` and `ELEVEN_KEPT` from the crypt (#756's 6) and exports the ask's flag as `KEPT_ASKED`
+  (#763's 1). The ask is said until the log is in (#763's 3), and the log brought first begins the
+  journal on `LOG_GIVEN` for a cleric of 27 with the second and for no other company (#763's 4 and
+  9). The Hearth's walkthrough plays both roads (`elevenKept`): the ask first, and the log before
+  the ask, which is heard `early` and never asked; then a cleric of 27 with the first only, one of 26
+  with the second and none, who hear her words again and are shown no journal.
 
 ### The subplots' ends
 
@@ -1911,7 +1925,7 @@ crypt pay, 14,850 xp a member and 5,200 gold, still owed to #744 while the area 
 | Gate, two under, at 26 | 100% won (at most: aim 25%, limit 90%): owed to #18 (§11) |
 | Gate, the road at 28 | the isle's two pickets and the sermon, then the rim's champions and the camp's two guards, walked 100% of the time (aim 80%, limit 65%) |
 | Fights to a rest, at 28 | 11.32 (aim 10 to 12, limit 8.5 to 14.5); 9.3% of days end in a fight broken off |
-| Density, core | 100.0% within 8 steps (130 of 130, 117 needed); the furthest 7 of 15; no sign in 19 points |
+| Density, core | 100.0% within 8 steps (130 of 130, 117 needed); the furthest 7 of 15; no sign in 20 points (19 before Hereswith, #763) |
 | Levels | 3 monsters in 28–29, give or take two; rising from the way in (rank correlation 0.77); the nearest group, the moths at 4 steps, at 28.0; the hardest, the champions at 10 steps, at 29.0 |
 | Lines | 13 events and signs: 10 of two lines and 3 of three; the area's 41: 2 of one, 27 of two and 12 of three |
 | Art | 50.0% of its 8 wall faces dressed (the cap is 50% under 100 faces): the cell is undressed (§9.2, #754's 2) |
@@ -2843,6 +2857,41 @@ Decided by delegate for #758, each the owner's to overturn:
     crypt's `hf2_door`; it keeps no `seen`. The letter's chest shares `ud2_letter`'s square (15,21),
     as the brief has it; the pillars check passes.
 
+Decided by delegate for #763, each the owner's to overturn:
+
+1. **The ask's flag is `KEPT_ASKED`** (`q_eleven_asked`), exported from I6 beside the person who sets
+   it, for the log and the walkthrough to read. The Bard's `ELEVEN_ASKED` is `q_eleven`, another flag.
+2. **Her lines, the log's three entries and its goals are §6's, as written;** the title is *The
+   Eleven Kept*, the entries' ids `asked`, `given` and `kept`. `hf2_eleven` stands as #756 built it.
+3. **The ask is said at every meeting until the log is in** (`until` the hand-in's flag, as §6 has
+   it), where Act IV's thirds ask once. A company without the log is told again.
+4. **The early road's journal shows two of its three entries,** `given` and then `kept`: `asked` never
+   does, so the log begins *He did.* with nothing before it. §6's words, kept; see 10.
+5. **I6 imports the crypt's `LOG_GIVEN` and `ELEVEN_KEPT`** (#756's 6); the crypt imports nothing of
+   I6, so the maps stay acyclic. `q_eleven_log` leaves `UNSET`, and nothing is owed for it.
+6. **The Bard's gathering is untouched:** it reads the log's chest (`seen: downs_e3:e3_log`), not the
+   item, and the walkthrough asserts the chest still seen once the log is handed in.
+7. **The walkthrough's cleric is Maren at 27 with the second,** moved between Anchorhold, Crowness
+   Light and the crypt by `travel` as the isle's walk does; the one fight is the chamber's champions at
+   29. The old assertion that 4,19 was left for her now says she stands there.
+8. **I6 holds its density** (100.0% within 8, the furthest 7) with 20 points where it had 19: a
+   person is a point. No other figure of the gate, density and curve moves.
+9. **The log begins on the log given only for a cleric of 27 with the second** (`start: [{ flag:
+   KEPT_ASKED }, { flag: LOG_GIVEN, member: { cls: 'cleric', level: 27, prestige: 2 } }]`), not on
+   the flag alone as §6 has it: the hand-in takes the Crowness log from any company, and the Shelf's
+   road carries it, so a company with no such cleric was shown a goal no one in it can finish. Once
+   its cleric is 27 with the second the log is there, reading from the log given. The quests check
+   (`satisfy`, `tools/tests/quests.ts`), which the issue does not name, learns a `member` condition on
+   a start: it raises a fitting member to the level and the prestige, and every other condition is as
+   strict as before. The walkthrough plays a cleric of 27 with the first only, one of 26 with the
+   second and none: her words again, never the ask, and no journal (the same three fail on the old
+   `start`, and on an ask gated by `{ cls: 'cleric' }` alone).
+10. **The early road reads a meeting ahead of her, accepted:** the hand-in's `early` lines end on *Now
+    I know.* and send nobody, yet the log's `given` entry says she sent us and its goal sends the
+    company to the crypt; her next words (the log given) do send it. A hand-in sets no met flag, so
+    her introduction is never said on that road. The plan's words are the owner's and are kept; the
+    owner may prefer `early` to end on the send-down line (§11).
+
 Decided by delegate for #759, each the owner's to overturn:
 
 1. **The room's floor is 3–13 by 4–11, rounded, under a north wall on row 3** with the panel at 8,3
@@ -2994,9 +3043,9 @@ Owed, from I6 (#754):
 - **The builder's own:** `i6_keel` and `i6_wyke` are the builder's words, and the cell at 4,18 is a
   building square, not rock. The art check holds I6 at its cap of 50%, so dressing one more wall
   face or taking the cell out fails it (§9.2, #754's 1 and 2).
-- **The anchoress** is #763's: Hereswith goes at 4,19, in the yard under the cell's window, and
-  nothing of hers is placed. I6's map reads neither of the crypt's flags (`ELEVEN_KEPT`, `LOG_GIVEN`)
-  and exports none: her hand-in will set `q_eleven_log`, owed in `UNSET` (§9.2, #756's 6).
+- **The anchoress** is built (#763): Hereswith stands at 4,19, in the yard under the cell's window.
+  I6's map reads the crypt's flags (`ELEVEN_KEPT`, `LOG_GIVEN`) and exports the ask's alone
+  (`KEPT_ASKED`); her hand-in sets `q_eleven_log`, no longer owed in `UNSET` (§9.2, #763's 1 and 5).
 - **`q_throne_removed`** is set on main by the Council (#774), so nothing is owed for it: the camp's
   guard carries the leave rule, and the walkthrough plays it with the flag set by hand (§9.2, #754's 6).
 - **The gear's rung** is #746's: the Grey Staff and the Grey Mail (`greyStaff`, `greyMail`) are built
@@ -3036,9 +3085,9 @@ Owed, from the crypt (#756):
   1). The owner's call.
 - **`hf2_last` is the builder's own event:** the brief had the Hand's last man said by a `look`,
   which no encounter has (§9.2, #756's 3).
-- **`q_eleven_log` is #763's:** nothing sets it until Hereswith's hand-in, so `hf2_eleven` cannot be
-  said yet. It is owed in `UNSET` (`tools/tests/quests.ts`); #763 takes `LOG_GIVEN` from the
-  crypt, which exports it (§9.2, #756's 6).
+- **`q_eleven_log`** is set by Hereswith's hand-in (#763), so `hf2_eleven` is said once the log is
+  given. It has left `UNSET` (`tools/tests/quests.ts`); I6 takes `LOG_GIVEN` from the crypt, which
+  exports it (§9.2, #756's 6; #763's 5).
 - **The chapter's step** for the knot is #760's (`hearthfane2:hf2_knot`, seen).
 - **The gear's rung** is #746's: the Grey Robe (`greyRobe`) is built here, in the pack `hf2_pack`;
   #746 takes it into the rung (§9.2, #756's 7).
@@ -3110,6 +3159,13 @@ Owed, from the Stair (#758):
   `KNOT_LAST`, at `underdeep2`.
 - **The gear's rung** is #746's: the Grey Axe (`greyAxe`, in `ud2_rearguard_chest`) is built here,
   and #746 takes it into the rung (§9.2, #758's 12).
+
+Owed, from the Cleric's third (#763):
+
+- **The early road reads a meeting ahead of her:** `early` ends on *Now I know.* and sends nobody, the
+  log's `given` entry says she sent us, and her next words do send the company down. A hand-in sets
+  no met flag, so her introduction is never said on that road. The plan's words, kept and accepted
+  (§9.2, #763's 4 and 10). The owner's call: end `early` on the send-down line, or word the entry so.
 
 Owed, from the Heart (#759):
 

@@ -5,12 +5,15 @@
 // Gullwick's shore (#765). #56's 56, The Sacristan's Lamps, in the
 // temple (#755): the lamps out in the pillar's order and the treasury's key. In the Ways (#757): 59, Every
 // Frame She Marked, to the last frame's word on the Stair (#758); 60, Crew Only, From
-// the Inside; and 61, The Knocker That Stopped, each answered either way. At the Heart (#759): 64, The
-// Signet, the ring every answer at the panel gives, to where it goes. How the words are keyed is in
-// src/content/area.ts (`quests`); tools/tests/quests.ts checks every key.
+// the Inside; and 61, The Knocker That Stopped, each answered either way. The Cleric's third, The Eleven
+// Kept (#763): the Crowness keeper's log to the anchoress at Anchorhold and the eleven lamps lit in the
+// crypt. At the Heart (#759): 64, The Signet, the ring every answer at the panel gives, to where it goes.
+// How the words are keyed is in src/content/area.ts (`quests`); tools/tests/quests.ts checks every key.
 import type { QuestDef } from '../../../game/quests.ts';
 import { PILGRIMS, TOKEN_COUSIN, TOKEN_HOLD, TOKEN_TALLIS } from './maps/hearthisle_h6.ts';
+import { KEPT_ASKED } from './maps/hearthisle_i6.ts';
 import { LAMPS, LAMPS_OUT, LAMPS_WRONG, LAMPS_KEY, PILLARS } from './maps/hearthfane.ts';
+import { ELEVEN_KEPT, LOG_GIVEN } from './maps/hearthfane2.ts';
 import { CREW_OPEN, CREW_SHUT, CRACK_SEALED, CRACK_WIDE } from './maps/underdeep.ts';
 import { KNOT_LAST } from './maps/underdeep2.ts';
 import { SIGNET } from './maps/core.ts';
@@ -119,6 +122,27 @@ export const QUESTS: readonly QuestDef[] = [
     ],
     goals: [
       { when: { seen: 'underdeep:ud_crack' }, text: 'The knocker\'s hammer waits at the crack: seal it, or widen it.', at: 'underdeep' },
+    ],
+  },
+  {
+    // The Cleric's third, at 27 with the second: begun on the anchoress's ask, or on the log given to her
+    // before it (a hand-in takes its item at the first meeting, so either may come first); done once a
+    // cleric of the company is an Exarch. The deed is the eleven lamps in the crypt (ELEVEN_KEPT). The
+    // log given begins it only for a company with a cleric of 27 with the second, as the ask is said:
+    // the hand-in takes the Crowness log from any company, and a goal no one can finish is not shown.
+    id: 'eleven_kept',
+    title: 'The Eleven Kept',
+    start: [{ flag: KEPT_ASKED }, { flag: LOG_GIVEN, member: { cls: 'cleric', level: 27, prestige: 2 } }],
+    done: { member: { cls: 'cleric', prestige: 3 } },
+    entries: [
+      { id: 'asked', when: { flag: KEPT_ASKED }, text: 'The anchoress walled into Anchorhold counted the eleven the night the Queen died, and wants the Crowness keeper\'s log, to see if he counted the same.' },
+      { id: 'given', when: { flag: LOG_GIVEN }, text: 'He did. She keeps the book now, and sent us down into the fane\'s crypt to light the eleven lamps there in his gaps, while she keeps the top.' },
+      { id: 'kept', when: { flag: ELEVEN_KEPT }, text: 'We lit the eleven in the crypt, a grace between each. On the eleventh the hum changed key, and held.' },
+    ],
+    goals: [
+      { when: { flag: ELEVEN_KEPT }, text: 'Back up to the anchoress\'s window at Anchorhold.', at: 'hearthisle_i6' },
+      { when: { flag: LOG_GIVEN }, text: 'Down into the crypt under Hearthfane, and light the eleven lamps as the log has them.', at: 'hearthfane2' },
+      { when: { flag: KEPT_ASKED }, text: 'Bring the Crowness keeper\'s log to Hereswith at Anchorhold.', at: 'hearthisle_i6' },
     ],
   },
   {
