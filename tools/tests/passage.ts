@@ -272,7 +272,7 @@ export function passage(): void {
   ok(!unrun.length, `every crossing way the atlas charts between two towns runs a crossing${unrun.length ? `: ${unrun.join('; ')}` : ''}`);
   // And the check catches what it should.
   const fx: Pick<Atlas, 'areas' | 'zones' | 'places' | 'links'> = {
-    // Two zones: Wrackholm with its built boxes, and a shore with no band of its own, its area's (Hearth Isle's, 28-30).
+    // Two zones: Wrackholm with its built boxes, and a shore with no band of its own, its area's (Hearth Isle's, 28-32).
     areas: ATLAS.areas, zones: [...ATLAS.zones.filter((z) => z.id === 'wrackholm'), { id: 'fx_shore', name: 'Shore', area: 'hearth' }],
     places: [{ id: 'fx_haven', kind: 'town', at: [0, 0] }, { id: 'fx_lodge', kind: 'town', at: [0, 0] }, { id: 'fx_far', kind: 'town', planned: true, band: [24, 26], at: [0, 0] }, { id: 'fx_deep', kind: 'dungeon', planned: true, band: [24, 26], at: [0, 0] }],
     links: [{ from: 'fx_haven', to: 'fx_lodge', kind: 'coach' }, { from: 'fx_haven', to: 'fx_far', kind: 'sea' }, { from: 'fx_lodge', to: 'fx_far', kind: 'sea' }, { from: 'fx_haven', to: 'fx_deep', kind: 'sea' },

@@ -15,9 +15,9 @@ export const MONSTERS: readonly MonsterDef[] = [
   // the isle and the nave by night (#753, #755), fodder on the line at 28, twelve to a group: it flies, and its dust puts to sleep
   { id: 'hearth_moth', name: 'Hearth Moth', plural: 'Hearth Moths', sprite: 'hearth_moth', kind: 'beast', look: 'The sky over the isle is moving.', level: 28, hp: 280, ac: 24, attack: 15, dice: 3, sides: 8, bonus: 4, speed: 12, xp: 557, gold: [0, 0], ranged: true, inflict: { cond: 'asleep', chance: 0.2 }, tint: '#b4552e', size: 0.62 },
   // the isle's pickets, the temple and the crypt (#753, #755, #756), a soldier on the line at 29: the Hand never breaks; its knife at one in ten
-  { id: 'ashen_champion', name: 'Ashen Champion', plural: 'Ashen Champions', sprite: 'ashen_champion', kind: 'person', look: 'The Hand\'s best, in steel from below.', steady: true, level: 29, hp: 428, ac: 26, attack: 16, dice: 5, sides: 8, bonus: 8, speed: 11, xp: 1153, gold: [0, 0], drops: [{ item: 'grey_knife', chance: 0.1 }], tint: '#4a2c2c', size: 1 },
+  { id: 'ashen_champion', name: 'Ashen Champion', plural: 'Ashen Champions', sprite: 'ashen_champion', kind: 'person', look: 'The Hand\'s best, in steel from below.', steady: true, level: 29, hp: 435, ac: 26, attack: 16, dice: 5, sides: 8, bonus: 8, speed: 11, xp: 1153, gold: [0, 0], drops: [{ item: 'grey_knife', chance: 0.1 }], tint: '#4a2c2c', size: 1 },
   // behind the champions (#753, #755), a caster on the line at 29: Fire Bolt on a row and Ward on its group
-  { id: 'ashen_preacher', name: 'Ashen Preacher', plural: 'Ashen Preachers', sprite: 'ashen_preacher', kind: 'person', look: 'Still preaching, and the fire is the sermon.', steady: true, level: 29, hp: 644, ac: 26, attack: 18, dice: 6, sides: 8, bonus: 6, speed: 12, xp: 1538, gold: [0, 0], ranged: true, cast: { spells: ['firebolt', 'ward'], chance: 0.5 }, tint: '#6a2e22', size: 0.98 },
+  { id: 'ashen_preacher', name: 'Ashen Preacher', plural: 'Ashen Preachers', sprite: 'ashen_preacher', kind: 'person', look: 'Still preaching, and the fire is the sermon.', steady: true, level: 29, hp: 643, ac: 26, attack: 18, dice: 5, sides: 8, bonus: 8, speed: 12, xp: 1538, gold: [0, 0], ranged: true, cast: { spells: ['firebolt', 'ward'], chance: 0.5 }, tint: '#6a2e22', size: 0.98 },
   // everywhere below (#753, #757), fodder on the line at 30, twelve to a group: the first thing killed and the last animal met
   { id: 'deep_rat', name: 'Deep Rat', plural: 'Deep Rats', sprite: 'deep_rat', kind: 'beast', look: 'Rats. Even here.', level: 30, hp: 281, ac: 25, attack: 16, dice: 3, sides: 8, bonus: 5, speed: 12, xp: 597, gold: [0, 0], inflict: { cond: 'diseased', chance: 0.2 }, tint: '#8e8a84', size: 0.42 },
   // the Ways (#757), a soldier on the line at 30: the sleepers' touch, Rimewater's
@@ -25,9 +25,10 @@ export const MONSTERS: readonly MonsterDef[] = [
   // the Stair's first landing (#758), armoured on the line at 30, where the claimant's people are not
   { id: 'hand_rearguard', name: 'Ashen Rearguard', plural: 'Ashen Rearguards', sprite: 'hand_rearguard', kind: 'person', look: 'The last of the Hand still standing, and standing in the way.', steady: true, level: 30, hp: 640, ac: 28, attack: 17, dice: 5, sides: 8, bonus: 7, speed: 8, xp: 1591, gold: [0, 0], tint: '#3a3436', size: 1.05 },
   // the Heart, at the panel (#759), an elite on the line at 31: their grip
-  { id: 'grey_hand', name: 'Grey Hand', plural: 'Grey Hands', sprite: 'grey_hand', kind: 'person', look: 'Hands the colour of ash, to the shoulder.', steady: true, level: 31, hp: 786, ac: 27, attack: 18, dice: 7, sides: 8, bonus: 7, speed: 15, xp: 2467, gold: [0, 0], inflict: { cond: 'paralysed', chance: 0.15 }, tint: '#262226', size: 1.05 },
-  // called by the ring (#759), a soldier at 31 on twice the line's hit points with its blow, so a clock let run costs a
-  // company what the plan says (#752): the heavy machines' frame, the core's own; it stands down when Vask falls
+  { id: 'grey_hand', name: 'Grey Hand', plural: 'Grey Hands', sprite: 'grey_hand', kind: 'person', look: 'Hands the colour of ash, to the shoulder.', steady: true, level: 31, hp: 785, ac: 27, attack: 18, dice: 7, sides: 7, bonus: 12, speed: 15, xp: 2467, gold: [0, 0], inflict: { cond: 'paralysed', chance: 0.15 }, tint: '#262226', size: 1.05 },
+  // called by the ring (#759), a soldier at 31 on twice the line's hit points as #752 read them (445) with its blow, so a
+  // clock let run costs a company what the plan says (#752); the line made at 31 since is 437 (#793), twice that 874, and
+  // the sentry stays at 890: the heavy machines' frame, the core's own; it stands down when Vask falls
   { id: 'core_sentry', name: 'Core Sentry', plural: 'Core Sentries', sprite: 'core_sentry', kind: 'machine', look: 'The core\'s own, and it takes orders from the ring.', level: 31, hp: 890, ac: 27, attack: 17, dice: 5, sides: 7, bonus: 10, speed: 11, xp: 1233, gold: [0, 0], obeys: true, tint: '#c3c7cc', size: 1.45 },
   // the Heart (#759), the boss at 32 with his hit points and blow set on his odds, the clock played and the Hands
   // killed first (#752; on the line, 2,100 and 34d8+41, he is won 9% so, 21% going for him first and 5% fighting
@@ -35,9 +36,10 @@ export const MONSTERS: readonly MonsterDef[] = [
   { id: 'vask', name: 'Lord Vask', plural: 'Lord Vasks', sprite: 'vask', kind: 'person', look: 'A tall man with a quiet voice, and the Queen\'s ring on his finger.', steady: true, level: 32, hp: 1850, ac: 29, attack: 20, dice: 22, sides: 8, bonus: 23, speed: 13, xp: 20373, gold: [0, 0], calls: { monsters: ['core_sentry'], chance: 1 }, tint: '#6c7078', size: 1.6 },
   // the Ways' last run and the Stair (#757, #758), a brute on the line at 31: a machine (§2), so it never breaks; it comes
   // down from above and reaches the back row
-  { id: 'deep_crawler', name: 'Deep Crawler', plural: 'Deep Crawlers', sprite: 'deep_crawler', kind: 'machine', look: 'It comes down from above, on too many legs.', level: 31, hp: 1061, ac: 25, attack: 18, dice: 7, sides: 8, bonus: 6, speed: 8, xp: 2467, gold: [0, 0], ranged: true, tint: '#4a454d', size: 1.25 },
+  { id: 'deep_crawler', name: 'Deep Crawler', plural: 'Deep Crawlers', sprite: 'deep_crawler', kind: 'machine', look: 'It comes down from above, on too many legs.', level: 31, hp: 1060, ac: 25, attack: 18, dice: 7, sides: 7, bonus: 10, speed: 8, xp: 2467, gold: [0, 0], ranged: true, tint: '#4a454d', size: 1.25 },
   // the Stair's foot among the Hand's dead (#758), the boss at 31 with its hit points and blow set on its odds (#752;
-  // on the line, 2,096 and 35d7+54, it is won 14% at 30 and 28% at 32): it reaches the back row, and what it
+  // on the line as it was then, 2,096 and 35d7+54, it is won 14% at 30 and 28% at 32; the line made at 31 since is 2,095
+  // and 34d8+41, #793): it reaches the back row, and what it
   // holds is held
   { id: 'catcher', name: 'The Catcher', plural: 'Catchers', sprite: 'catcher', kind: 'machine', look: 'It caught the Hand on these stairs.', level: 31, hp: 1300, ac: 28, attack: 19, dice: 32, sides: 8, bonus: 37, speed: 13, xp: 19733, gold: [0, 0], ranged: true, inflict: { cond: 'paralysed', chance: 0.2 }, tint: '#3a363c', size: 2 },
 ];

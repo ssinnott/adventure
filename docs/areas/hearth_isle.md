@@ -1745,15 +1745,15 @@ issue tunes them on the gate (§8).
 | Id | Name | Family, drawing | Kind, role | Level | Numbers on the line | Where; what it does |
 |---|---|---|---|---|---|---|
 | `hearth_moth` | Hearth Moth | moths, `hearth_moth` | beast, fodder | 28 | hp 280, ac 24, attack 15, 3d8+4, speed 12, xp 557 | the isle and the nave by night, twelve to a group; flies (`ranged`); its dust puts to sleep (`inflict: asleep 0.2`); `look: 'The sky over the isle is moving.'` |
-| `ashen_champion` | Ashen Champion | cultist, `ashen_champion` | person, soldier | 29 | hp 428, ac 26, attack 16, 5d8+8, speed 11, xp 1,153 | the isle's pickets, the temple, the crypt; `steady` (the Hand never breaks); drops `grey_knife` at 0.1; `look: 'The Hand\'s best, in steel from below.'` |
-| `ashen_preacher` | Ashen Preacher | cultist, `ashen_preacher` | person, caster | 29 | hp 644, ac 26, attack 18, 6d8+6, speed 12, xp 1,538 | behind the champions; `cast: { spells: ['firebolt', 'ward'], chance: 0.5 }`, `ranged`, `steady`; `look: 'Still preaching, and the fire is the sermon.'` |
+| `ashen_champion` | Ashen Champion | cultist, `ashen_champion` | person, soldier | 29 | hp 435, ac 26, attack 16, 5d8+8, speed 11, xp 1,153 | the isle's pickets, the temple, the crypt; `steady` (the Hand never breaks); drops `grey_knife` at 0.1; `look: 'The Hand\'s best, in steel from below.'` |
+| `ashen_preacher` | Ashen Preacher | cultist, `ashen_preacher` | person, caster | 29 | hp 643, ac 26, attack 18, 5d8+8, speed 12, xp 1,538 | behind the champions; `cast: { spells: ['firebolt', 'ward'], chance: 0.5 }`, `ranged`, `steady`; `look: 'Still preaching, and the fire is the sermon.'` |
 | `deep_rat` | Deep Rat | rat, `deep_rat` | beast, fodder | 30 | hp 281, ac 25, attack 16, 3d8+5, speed 12, xp 597 | everywhere below, twelve to a group; `inflict: diseased 0.2`; `look: 'Rats. Even here.'` |
 | `keeper` | Keeper | keepers, `keeper` | machine, soldier | 30 | hp 435, ac 26, attack 17, 5d8+8, speed 11, xp 1,193 | the Ways; `inflict: asleep 0.15` (the sleepers' touch, Rimewater's); `look: 'A keeper with no bay to keep, and no robe.'` |
 | `deep_knocker` | Deep Knocker | knockers, `deep_knocker` (built, Ashfall's) | machine, armoured | 28 | as built (Ashfall's `monsters.ts`) | the Ways, the Stair; the crack |
 | `hand_rearguard` | Ashen Rearguard | cultist, `hand_rearguard` | person, armoured | 30 | hp 640, ac 28, attack 17, 5d8+7, speed 8, xp 1,591 | the Stair's first landing, where the claimant's people are not; `steady`; `look: 'The last of the Hand still standing, and standing in the way.'` |
-| `deep_crawler` | Deep Crawler | crawlers, `deep_crawler` (new) | machine, brute | 31 | hp 1,061, ac 25, attack 18, 7d8+6, speed 8, xp 2,467 | the Ways' last run, the Stair; `ranged` (it comes down from above and reaches the back row); `look: 'It comes down from above, on too many legs.'` |
+| `deep_crawler` | Deep Crawler | crawlers, `deep_crawler` (new) | machine, brute | 31 | hp 1,060, ac 25, attack 18, 7d7+10, speed 8, xp 2,467 | the Ways' last run, the Stair; `ranged` (it comes down from above and reaches the back row); `look: 'It comes down from above, on too many legs.'` |
 | `catcher` | The Catcher | crawlers, `catcher` (new) | machine, boss | 31 | hp 1,300, ac 28, attack 19, 32d8+37, speed 13, xp 19,733 (off the line, which gives 2,096 and 35d7+54: `OFF_LINE`, `tools/tests/harness.ts`) | the Stair's foot, among the Hand's dead; `ranged`; `inflict: paralysed 0.2`; `look: 'It caught the Hand on these stairs.'`; sized on its odds to 56% won at 30 and 79% at 32 on the gate's hundred seeds (below; §8; §9.2, #752's 4) |
-| `grey_hand` | Grey Hand | cultist, `grey_hand` | person, elite | 31 | hp 786, ac 27, attack 18, 7d8+7, speed 15, xp 2,467 | the Heart, at the panel; `steady`; `inflict: paralysed 0.15`; `look: 'Hands the colour of ash, to the shoulder.'` |
+| `grey_hand` | Grey Hand | cultist, `grey_hand` | person, elite | 31 | hp 785, ac 27, attack 18, 7d7+12, speed 15, xp 2,467 | the Heart, at the panel; `steady`; `inflict: paralysed 0.15`; `look: 'Hands the colour of ash, to the shoulder.'` |
 | `core_sentry` | Core Sentry | machines, `core_sentry` | machine, soldier | 31 | hp 890, ac 27, attack 17, 5d7+10, speed 11, xp 1,233 (off the line: twice the soldier's 445 hit points with its blow, `OFF_LINE`; §9.2, #752's 5) | called by the ring (Vask's `calls`, the clock); stands down when he falls (`obeys`, §9, call 7); `look: 'The core\'s own, and it takes orders from the ring.'` |
 | `vask` | Lord Vask | cultist, `vask` (the figure frame, his own) | person, boss | 32 | hp 1,850, ac 29, attack 20, 22d8+23, speed 13, xp 20,373 (off the line, which gives 2,100 and 34d8+41: `OFF_LINE`, `tools/tests/harness.ts`) | the Heart; `steady`; `calls: { monsters: ['core_sentry'], chance: 1 }` on the clock's beat (the clock ignores the chance, §9, call 7); `look: 'A tall man with a quiet voice, and the Queen\'s ring on his finger.'`; sized on his odds to 64% won at 32 with the Hands down first on the gate's hundred seeds (below; §8; §9.2, #752's 5) |
 
@@ -2645,7 +2645,7 @@ Decided by delegate for #753, each the owner's to overturn:
     (`q_compact_over`, `q_compact_wardens`), so they never stand together.
 16. **The walkthrough kneels with `useShrine` directly:** `kneel` in `tools/walk.ts` compares the
     outdoors' moved feature with the map's by identity and so fails on any zone map. Not this
-    issue's to fix.
+    issue's to fix. Since #793 `kneel` works on a zone map and the walkthrough kneels with it.
 
 Decided by delegate for #754, each the owner's to overturn:
 
@@ -3155,7 +3155,29 @@ Decided by delegate for #752, each the owner's to overturn:
    69, 28 and 83% with no clock (`--seeds 100`, the gate's hundred; the default 200 prints 70, 71, 29
    and 87). The thrifty bot keeps its spells, and lets the clock run at 66%.
 8. **The armoured at 29 and 31, read between, run long** (47 and 52% of days end badly) where the
-   line's armour rounds up; no armoured monster stands there, and the line is not nudged.
+   line's armour rounds up; no armoured monster stands there, and the line is not nudged. Made at
+   29 and 31 since (#793), they end 38 and 49%, held at 28's and 30's hit points (#793's 3).
+
+Decided by delegate for #793, each the owner's to overturn:
+
+1. **`LEVELS` gains 29 and 31, the rest as they stood, since the armoured ran long read between:**
+   `node tools/harness.ts --calibrate --write --levels 29,31`, 200 seeds, 1,281 s on four cores.
+2. **A point made under a level one up that stands is held under its hit points, its blow solved
+   again:** the soldier, the elite and the brute at 29 passed 30's and failed the gain check.
+3. **The armoured at 29 and 31 are not nudged:** held at 28's and 30's hit points they end 38 and 49%
+   of their days badly (13% free of the hold), and 28 and 30 must stand; none stands at 29 or 31.
+4. **The isle's four at 29 and 31 are restated on the line,** keeping id, look, sprite, level, role
+   and xp: the champion, the preacher, the Grey Hand and the crawler (§7's table).
+5. **The sentries stay at 890 and 5d7+10,** twice the soldier as #752's line read him: they are set off
+   the line on Vask's odds, and a restating is not a tuning (twice the made soldier is 874).
+6. **`kneel` kneels at the feature the world holds, found by its id where the company stands:** on a
+   zone map the world holds a copy in the outdoors' cells, so a test of identity failed there.
+7. **The inscriptions check reads `shut`, `lifts` and `after`, each in its own words,** with a fixture
+   for each, so a way that waits on a reading is seen however it waits.
+8. **No limit, aim or owed figure of the gate is changed:** every line that moves is Hearth Isle's and
+   inside its limit (Vask 60% with the Hands first, 33% let run), so nothing is newly owed.
+9. **A stale statement of the Hearth's band is put right where found:** the passage check's comment
+   says 28-32 now, the only one in the tools, the source and this plan.
 
 Decided by delegate for #792, each the owner's to overturn:
 
@@ -3253,8 +3275,9 @@ Owed, from H6 (#753):
   `q_compact_over`, so the runner's word that the boat is the Partner's both ways holds.
 - **The gear's rung** is built (#746): the Grey Knife (`greyKnife`), built here
   (`src/content/areas/hearth/items.ts`), is on the ladder at 28; the Smelling Salts are no gear.
-- **`kneel` in `tools/walk.ts`** fails on any zone map, comparing the outdoors' moved feature with
-  the map's by identity; the isle's walkthrough kneels with `useShrine` directly (§9.2, #753's 16).
+- **`kneel` in `tools/walk.ts`** works on a zone map now: it kneels at the feature the world holds,
+  found by its id where the company stands, and the isle's walkthrough kneels at the pilgrims' shrine
+  with it (§9.2, #753's 16 and #793's 6).
 
 Owed, from I6 (#754):
 

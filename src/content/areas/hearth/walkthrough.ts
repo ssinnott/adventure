@@ -32,7 +32,7 @@
 // she takes from them begins no journal. Then the chapter, The Heart (#760), played to each of its three
 // ends from the road behind done, and once by a company over early on four of the road's five.
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, see, fight, listen, walkThrough, gone as left, playChapter, everyGoalWalked, goalFromBegun, quest, ending } from '../../../../tools/walk.ts';
+import { newWalk, see, kneel, fight, listen, walkThrough, gone as left, playChapter, everyGoalWalked, goalFromBegun, quest, ending } from '../../../../tools/walk.ts';
 import type { Walk, Step } from '../../../../tools/walk.ts';
 import { NORTH, EAST, SOUTH, WEST } from '../../../game/types.ts';
 import type { Facing } from '../../../game/types.ts';
@@ -50,7 +50,7 @@ import { endingTaken } from '../../../game/stones.ts';
 import { ENDINGS } from '../../endings.ts';
 import { winRate, gateOpts } from '../../../../tools/gate.ts';
 import { ANSWER } from '../../../../tools/harness.ts';
-import { restRefused, useShrine } from '../../../game/wilds.ts';
+import { restRefused } from '../../../game/wilds.ts';
 import { questLog, holds } from '../../../game/quests.ts';
 import { readerOf } from '../../../game/inscriptions.ts';
 import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
@@ -129,10 +129,9 @@ export const walkthrough: Walkthrough = (ok) => {
   const tents = H6.features!.filter((f) => f.kind === 'shop' || f.kind === 'trainer' || f.kind === 'temple');
   ok(tents.length === 3 && tents.every((f) => ch(f.x, f.y) === 'D' && Math.abs(f.x - 16) + Math.abs(f.y - 16) === 1) && tents.some((f) => f.kind === 'trainer' && f.maxLevel === 32),
     'the store, the sergeant\'s tent and the Lantern\'s open round the yard at 16,16, and the sergeant teaches to the cap');
-  const shrine = H6.features!.find((f): f is Extract<typeof f, { kind: 'shrine' }> => f.kind === 'shrine' && f.id === 'h6_shrine')!;
-  w.world.travel('hearthisle_h6', shrine.x, shrine.y);
-  const here = w.world.featureHere();
-  ok(here?.kind === 'shrine' && here.id === 'h6_shrine' && useShrine(w.world, w.party, here)[0] === shrine.text, 'kneeling at the pilgrims\' shrine, the hum settles in the chest');
+  const personality = w.party.members.map((m) => m.stats.personality);
+  kneel(w, 'hearthisle_h6:h6_shrine');
+  ok(w.party.members.every((m, i) => m.stats.personality === personality[i] + 1), 'kneeling at the pilgrims\' shrine, the hum settles in the chest: a point of Personality to each of the company');
 
   // The three pilgrims: each asks, and met begins the quest; one token taken, the other two keep theirs
   // and are gone, and the one who gave it speaks of it after.
