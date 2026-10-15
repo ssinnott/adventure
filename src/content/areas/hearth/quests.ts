@@ -169,13 +169,14 @@ export const QUESTS: readonly QuestDef[] = [
   {
     // The Walk Home, at 32: the chapter is done on the choice (§5), so the walk is a quest of its own, begun
     // on any ending and done on Hild's words on Gullwick's shore (`WENNA_HOME`, the road behind's, #765).
-    // Its entry at Helmstow's open gate waits on the gate's once-event, the road behind's Helmstow half.
+    // Its entry at Helmstow's open gate is on the gate's once-event, `gate_open`, the road behind's Helmstow half's.
     id: 'walk_home',
     title: 'The Walk Home',
     start: ENDED,
     done: { flag: WENNA_HOME },
     entries: [
       { id: 'spring', when: ENDED, text: 'In the spring we walk her home to Gullwick, along the coast road.' },
+      { id: 'gate', when: { seen: 'shelf:gate_open' }, text: 'Helmstow\'s gate stood open as we passed, and nobody at it said a word about who went through.' },
       { id: 'home', when: { flag: WENNA_HOME }, text: 'Her mother was on the shore where we left her, as if she had never moved. This time, she cried.' },
     ],
     goals: [

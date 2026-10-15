@@ -21,8 +21,8 @@ cuts the atlas's terrain for a box (EXPANSION §8.2): land is what is not sea or
 Seven places are built: H6, the isle (#753, §4.2), which lists the area; I6, the east rim (#754,
 §4.3); Hearthfane, the temple (#755, §4.4); the crypt under it (#756, §4.5); the Ways below the
 crypt (#757, §4.6); the Stair below the Ways (#758, §4.7); and the Heart below the Stair (#759,
-§4.8). The isle is built to the Heart and its chapter is written (#760, §5); of the road behind (#765)
-Gullwick, Ashfall, the Kilns and Sunderwood are built (§12).
+§4.8). The isle is built to the Heart and its chapter is written (#760, §5), and the road behind is
+built (#765, §12): Helmstow and its halls, Gullwick, Ashfall, the Kilns and Sunderwood.
 What exists: the isle's map, `hearthisle_h6`, which places four of the roster's monsters, opens the
 pilgrims' camp's three rooms and gives onto the temple (§3); the rim's map, `hearthisle_i6`, which
 places three of those four; the temple's map, `hearthfane`, which places three of those four and
@@ -1565,9 +1565,9 @@ want it. The Council sits on it with everything else (below).
   Signet*, with the text given in §8, read from the pack; every answer at the panel gives it. The
   log is keyed on the item and the four `q_signet_*` flags, its "and the like" written *It went to
   the hold, in a cloth.* and *It went to Tallis, in a cloth.* Its goal is at `shelf`. The clerk
-  and the sea are #765's: the sea sets `q_signet_sea` at Gullwick once Wenna is home (built), and
-  `UNSET` (`tools/tests/quests.ts`) owes the clerk's three to its Helmstow half; it no longer owes
-  the endings' three, which Wenna's answers set (#759's 10).
+  and the sea are #765's, both built: the clerk at Helmstow's gate sets three of the four flags (half
+  A) and the sea at Gullwick `q_signet_sea`, once Wenna is home; `UNSET` (`tools/tests/quests.ts`)
+  owes none of them, nor the endings' three, which Wenna's answers set (#759's 10).
 
 **The Walk Home** (`walk_home`, after the ending). The chapter is done on the choice (§5), so the
 walk is a quest of its own, begun on any ending and done on Hild's words. `start: ENDED`, `done: { flag: WENNA_HOME }`;
@@ -3046,10 +3046,31 @@ Decided by delegate for #746, each the owner's to overturn:
 7. **The staff's holiness is its words:** the issue's table has it *holy*; the item carries no
    element (#757's 9), and the rung takes it as built. Every other figure is the table's.
 
+Decided by delegate for #765 (half A: Helmstow and the halls), each the owner's to overturn:
+
+1. **The empty throne room is the extra link on Vask's door** (`keep` 7,4), `after` his `until` and
+   `until` the removal, with one line: the doorway and locks checks want a twin there (#764's 6).
+2. **Aumery Vask, before the Council, stands after the chain,** a person in whichever room keeps the
+   door, so it never opens on him alone; the steward is at 7,5, as §12 has him.
+3. **The endings' proclamations are events at `keep` 6,8 in §12's words:** the Regent's sign fills the
+   log at 9,8; the opened is `after: ENDED, until: IRONS`, so the line check sees the pair apart.
+4. **The Guildhall's Luminary is at `harrow` 12,11,** beside its step as Aldith sits by the inn's,
+   `after: ENDED`: the relit words are its lines and the other two its `says`.
+5. **The clerk at the gate (64) is built here** with §6's words, `until` the four `q_signet_*`, a `says`
+   after `SAT`; `UNSET` drops the three flags it sets and owes `q_signet_sea` to the other half.
+6. **First of all is taken as written** on Ruan and Ysolde, so an ending hides the Compact's question
+   and the journal's reading for good. Superseded by 8.
+7. **The density counts a new feature whatever its presence:** Helmstow 26 to 27 points, the keep 12
+   to 14 and the Foreland 29 to 31 (97.4% within 8); the gate and the curve are unmoved.
+8. **An ending's words wait on a business still open** (supersedes 6): Ruan's question and Ysolde's
+   journal come first until done. Ordgar's and the priestess's first words change nothing, so stay behind.
+9. **Vask's `until` ends his hand-ins at the first step on the isle:** the survey wand (300 gold,
+   `q_ashcombe_done`), the tenant's paper (50) and the oil order; §12 and 9.1's 23 require it.
+
 Decided by delegate for #765 (half B: Gullwick and the rest), each the owner's to overturn:
 
-1. **The Walk Home's entry at the open gate is the Helmstow half's:** its `seen: 'shelf:gate_open'`
-   names that half's event, and `tools/tests/quests.ts` fails a `seen` on nothing.
+1. **The Walk Home's entry at the open gate came in with the Helmstow half** (#788): its
+   `seen: 'shelf:gate_open'` names that half's event, and `tools/tests/quests.ts` fails a `seen` on nothing.
 2. **The knockers are `ud_mines`,** §4.6's id, standing at 6,3 as the corridor's others do and told by
    a once-event, `dm3_open` at 7,3, with the brief's look: a group has no `look` (as #756's 3).
 3. **The gate leaves `ud_mines` out** (`BEHIND`, `tools/tests/gate.ts`, outside the lane): no company at
@@ -3300,11 +3321,12 @@ Owed, from the Heart (#759):
 - **Two under, the area's pool is won nearly every time:** 92.5% of 39 groups' fights at 26, owed to
   #18 as before (`Hearth Isle: under`, `OWED` in `tools/tests/gate.ts`). The Heart's own row reads
   n/a.
-- **The road behind is #765's:** `q_wenna_home`, which ends Wenna's words at 7,4 (her `until`), is set
-  by Hild at Gullwick and `q_signet_sea` by the sea there, taking `queens_signet` (built); the clerk
-  at `shelf` 15,4 and his three `q_signet_*` are Helmstow's half, which `UNSET`
-  (`tools/tests/quests.ts`) owes until they land. The Walk Home's `gate` entry, on that half's
-  `gate_open`, waits on #788 too, and #765 is done only with both: whichever lands second adds it.
+- **The road behind is built (#765):** `q_wenna_home`, which ends Wenna's words at 7,4 (her `until`), is
+  set by Hild at Gullwick and `q_signet_sea` by the sea there, taking `queens_signet`; the clerk at
+  `shelf` 15,4 sets the other three (Helmstow and the halls). The Walk Home's `gate` entry, on
+  `gate_open`, is in, and `UNSET` owes nothing.
+- **First of all, but for a business still open (#765, half A):** Ruan's Compact question and
+  Ysolde's reading of the journal come before an ending's words until done (§9.2, #765's 8).
 - **The chapter is #760's, written:** the Heart's steps are `core:core_door` and `core:core_heart` (seen),
   the flags `VASK_FALLEN`, `VOICE_WHOLE`, `RING_GIVEN` and `ENDED`, at `core`; 64 is `signet` in the
   area's `quests.ts`.
@@ -3391,6 +3413,14 @@ The count stopped, and the song never came back, and in the dark the Tidefolk be
 themselves. We know the words, it turns out."*; finished, *"It sings a song I have not heard: a
 travelling song, the old women say, for a long way. The tide is the same tide. The song is not."*
 
+**As built (#765, Helmstow and the halls):** the lines above stand as given but for four. The
+endings' proclamations are events on the gatehouse at `keep` 6,8, the other side of the gate from
+the Regent's sign, and the Council's word at 9,8 is as #764 built it; the throne room, empty
+(`after` Vask's `until`, `until` the removal), is the link on Vask's door before Wiglaf, and Vask in
+irons a person in the room; the Luminary, *The Guildhall's Luminary*, stands at `harrow` 12,11; and
+Ruan's question and Ysolde's reading come before the endings' words while they stand open. The clerk
+at the gate is built with 64 (§6; §9.2, #765's 1 to 5 and 8).
+
 **Ashfall** (every box, the sentries' groups): `until: ENDED`, by the leave rule, so they stand
 down standing or not; Cinderport's harbourmaster, `after: ENDED`:
 *"The things on the road have stopped. Stood where they were, the drovers say, and are standing
@@ -3422,7 +3452,7 @@ cast; taller than full for finished. The night sky's Hearth (`src/ui/viewport.ts
 other half's). On `downs_f3`, Hild's two `says` first and Jowan's mother and Wenna as written; the sea
 once Wenna is home (`after: { flag: WENNA_HOME }`, not `ENDED`), so its words hold;
 The Walk Home (`walk_home`, with the Hearth's quests) has its entries on `ENDED` and
-`WENNA_HOME` and its goal at `downs_f3`; its entry at the open gate waits on `gate_open`, the other
+`WENNA_HOME` and its goal at `downs_f3`; its entry at the open gate is on `gate_open`, the other
 half's. Ashfall's seven groups go `until: ENDED` with `leaves`, and the harbourmaster's line is a
 `says`. The knockers are `ud_mines`, told by a once-event, `dm3_open` at 7,3, since a group has no
 `look`; the gate leaves them out of the Kilns' figures (`BEHIND`) and the curve counts them; the

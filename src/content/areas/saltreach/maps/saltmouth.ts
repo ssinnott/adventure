@@ -13,6 +13,10 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { FERRY, sells } from '../../../crossings.ts';
+import { ENDINGS } from '../../../endings.ts';
+
+// The Heart's three endings (#765; docs/areas/hearth_isle.md §12): the halls' words after each, first of all.
+const RELIT = { flag: ENDINGS.reignite.flag }, OPENED = { flag: ENDINGS.arrive.flag }, FINISHED = { flag: ENDINGS.finish.flag };
 
 /**
  * Ruan's choice at the Keel (#635), put once the Factor's rung is paid: the orders handed to the Wardens
@@ -75,20 +79,25 @@ export const SALTMOUTH: MapDef = {
     ] }, says: [
     // The rank that reveals (#635, docs/areas/dead_drop.md §5): once the Factor's rung is paid she puts the
     // Compact's choice, the orders to the Wardens or the Compact taken over, and says what follows each.
-    // These come first, since the first words that hold are said.
+    // The first words that hold are said: the question while it stands open, then an ending's (#765),
+    // then what follows each answer.
+    { after: { flag: 'q_compact_factor_done' }, until: [{ flag: COMPACT_WARDENS }, { flag: COMPACT_OVER }], lines: [
+      '"Partner. From below, in his hand." Ruan has stopped drying the glass. "Ten years under a cairn, and every quarter-day I read his orders aloud and the Compact does them."',
+      '"Somebody writes them. I do not ask who." She sets the glass down, and for once she looks at you and not the mirror. "I ask what we do now."',
+    ], choice: { ask: '"The Wardens would have them gladly. Or the Compact is yours. Which?"', answers: [
+      { label: 'Hand the orders to the Wardens.', sets: COMPACT_WARDENS, says: ['"Then they go to the Wardens, and the Keel takes no more of them." She says it to the mirror. "I will miss the reading."'] },
+      { label: 'Take the Compact over.', sets: COMPACT_OVER, says: ['"Then it is yours, Partner, and it takes no one\'s orders but yours." She sets the back room\'s key on the bar. "The reading stops."'] },
+    ] } },
+    { after: RELIT, lines: ['"Steady light, quiet sea and nothing coming over it that pays in grey. The Compact will have to learn an honest trade. It has been a while."'] },
+    { after: OPENED, lines: ['"Wind. Real wind, off a sea that goes somewhere. Every hull in the roads wants to find out where, and the Compact will carry the first ones, for a fee."'] },
+    { after: FINISHED, lines: ['"The sea hums. The pilots say the stars have moved, all of them, a hair, and are still moving. Tallis has bought a telescope."'] },
     { after: { flag: COMPACT_WARDENS }, lines: [
       'Ruan dries a glass that was dry when she picked it up.',
       '"The Wardens have his orders. The back room is quiet on quarter-day. I find I listen for it."',
     ] }, { after: { flag: COMPACT_OVER }, lines: [
       'Ruan sets a glass before you without being asked.',
       '"The Compact is yours, Partner. Quarter-day came and nobody read a word aloud. The back room has not got used to it."',
-    ] }, { after: { flag: 'q_compact_factor_done' }, lines: [
-      '"Partner. From below, in his hand." Ruan has stopped drying the glass. "Ten years under a cairn, and every quarter-day I read his orders aloud and the Compact does them."',
-      '"Somebody writes them. I do not ask who." She sets the glass down, and for once she looks at you and not the mirror. "I ask what we do now."',
-    ], choice: { ask: '"The Wardens would have them gladly. Or the Compact is yours. Which?"', answers: [
-      { label: 'Hand the orders to the Wardens.', sets: COMPACT_WARDENS, says: ['"Then they go to the Wardens, and the Keel takes no more of them." She says it to the mirror. "I will miss the reading."'] },
-      { label: 'Take the Compact over.', sets: COMPACT_OVER, says: ['"Then it is yours, Partner, and it takes no one\'s orders but yours." She sets the back room\'s key on the bar. "The reading stops."'] },
-    ] } }, { after: { flag: 'q_compact_run_done' }, lines: [
+    ] }, { after: { flag: 'q_compact_run_done' }, lines: [
       '"Runner." A glass is set down before you ask. "The river crews have found somebody who pays in grey. We pay in coin and we are still here. Sit."',
       'She goes back to the door in the mirror. "Work comes when it comes."',
     ] }] },
@@ -111,13 +120,17 @@ export const SALTMOUTH: MapDef = {
       '"The Cartographers\' Guild. We go where the chart is blank and come back, mostly." She does not look up from her rule. "Look, if you like. Touch nothing under glass."',
       '"The Meridian route book. They left it with us the morning they went out, thirty years since; the journals went down with them." A pause. "The empty boxes are not empty. We have not been yet."',
     ], says: [
-      { after: { flag: 'meridian_read' }, lines: [
-        '"Volume one, in Fane\'s hand, thirty years late." She has gone back to her rule, but the rule does not move. "The rest went down with them. Somewhere."',
-      ] },
-      { after: { item: 'meridian_journal' }, sets: 'meridian_read', lines: [
+      // The journal is read while it is carried and unread, before an ending's words (#765).
+      { after: { item: 'meridian_journal' }, until: { flag: 'meridian_read' }, sets: 'meridian_read', lines: [
         'She sees the book before she sees you, and her rule stops. "Fane\'s hand. Volume one." She opens it on the plotting table and reads standing, and for a while says nothing.',
         '"Day two." She reads it out. "\'Lay dry under the arch where the causeway crosses the channel, in off the stones beside it. The tide did not reach us. A place to know again.\'"',
         'She shuts it and holds it a moment longer than she needs to, then puts it in your hands. "Keep it. It came up out of the dark in yours, not ours. Bring the next and I will read that too."',
+      ] },
+      { after: RELIT, lines: ['"The map is finished, then, and the edge of it is the edge. The Guild will draw it fair. I had hoped the edge was not the edge."'] },
+      { after: OPENED, lines: ['"Beyond. There is a beyond, and the Guild has the first page of it blank on the table, and every surveyor we have is arguing over who holds the pen."'] },
+      { after: FINISHED, lines: ['"The Guild has a map with nothing past its edge and a note in Fane\'s hand that there will be. Our grandchildren\'s work. I have told them to start."'] },
+      { after: { flag: 'meridian_read' }, lines: [
+        '"Volume one, in Fane\'s hand, thirty years late." She has gone back to her rule, but the rule does not move. "The rest went down with them. Somewhere."',
       ] },
     ] },
     // The other three first prestiges, taught in the street by people who keep no shop. The

@@ -32,10 +32,8 @@ import { ok, owed } from './lib.ts';
  * dropped here.
  */
 export const UNSET: Record<string, string> = {
-  // The Council of Helmstow's pieces (#764): where the signet goes to a claimant, by the Council's clerk at
-  // Helmstow's gate (64, the road behind's Helmstow half). The sea off Gullwick, the walk home and Jowan's
-  // letter are set at Gullwick (the road behind, #765).
-  q_signet_cousin: '#765', q_signet_hold: '#765', q_signet_tallis: '#765',
+  // None owed: the road behind (#765) sets the last of Act V's, the signet's four (the Council's clerk at
+  // Helmstow's gate and the sea off Gullwick), the walk home and Jowan's letter.
 };
 
 /** The flags a feature sets: a person's, met, and an event's, said (#156). */
