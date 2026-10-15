@@ -14,14 +14,18 @@
 // that opens to it and to nothing else, the Hand's best won at 28 and the court's second gone with Vask.
 // Then its crypt (#756), walked at 29: down the stair behind the altar and up again, the chamber's
 // champions, the eleven niches and the eleven kept for a company that gave the log, the side vault's dead
-// and rats, the keeper at the passage and her knot on the grey door's frame. Last, the Cleric's third
-// (#763), The Eleven Kept, played twice by a cleric of 27 with the second: the anchoress's ask and then the
-// Crowness keeper's log, the eleven lit and the third taught; and the log brought before the ask. Then three
-// companies short of the ask: she never asks it of them, and the log she takes from them begins no journal.
+// and rats, the keeper at the passage and her knot on the grey door's frame. Then the Ways (#757), walked
+// at 30: down through the grey door and up again, every frame read and the hatch found from the eighth,
+// the crawl way, the crack sealed and widened (61), the CREW ONLY door answered both ways and walked
+// through (60), and the groups won at 30. Last, the Cleric's third (#763), The Eleven Kept, played twice by
+// a cleric of 27 with the second: the anchoress's ask and then the Crowness keeper's log, the eleven lit and
+// the third taught; and the log brought before the ask. Then three companies short of the ask: she never
+// asks it of them, and the log she takes from them begins no journal.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen, walkThrough, gone as left } from '../../../../tools/walk.ts';
 import type { Walk } from '../../../../tools/walk.ts';
 import { NORTH, EAST, SOUTH, WEST } from '../../../game/types.ts';
+import type { Facing } from '../../../game/types.ts';
 import { ATLAS, MAP_DEFS } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
@@ -43,6 +47,7 @@ import { STRAND, PILGRIMS, TOKEN_COUSIN, TOKEN_HOLD, TOKEN_TALLIS } from './maps
 import { KEPT_ASKED } from './maps/hearthisle_i6.ts';
 import { LAMPS, LAMPS_OUT, LAMPS_WRONG, LAMPS_KEY, FANE_KEY, LAMP_FLAGS, STAIR } from './maps/hearthfane.ts';
 import { ELEVEN_KEPT, GREY_DOOR, LOG_GIVEN } from './maps/hearthfane2.ts';
+import { CREW_OPEN, CREW_SHUT, CRACK_SEALED, CRACK_WIDE, STAIR_DOOR, CRAWL_DOOR } from './maps/underdeep.ts';
 
 const H6 = MAP_DEFS.find((d) => d.id === 'hearthisle_h6')!;
 const person = (name: string): Person => H6.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
@@ -378,14 +383,144 @@ export const walkthrough: Walkthrough = (ok) => {
 
   // Through the chamber's north door the keeper, the first machine on the isle, with the Hand's last man
   // beside it; her knot on the grey door's frame, the chapter's next step (#760); and the grey door,
-  // standing open, whose way down into the Ways is #757's.
+  // standing open onto the Ways (#757), its sign read on the passage, stepping from the north door onto 8,3
+  // where the keeper stood: an exit takes the company on arrival, before the square's texts are said, so a
+  // sign on the door's own square would never be read, and nothing stands on either of the crypt's exits.
   see(w, 'hearthfane2:hf2_last');
   fight(w, 'hearthfane2:hf2_keeper');
   see(w, 'hearthfane2:hf2_knot');
-  w.world.travel('hearthfane2', GREY_DOOR.x, GREY_DOOR.y);
-  const grey = w.world.eventsHere().join(' ');
-  ok(grey.includes('A door of grey with no handle') && w.world.used('hf2_knot') && CRYPT.rows[GREY_DOOR.y][GREY_DOOR.x] === 'D' && GREY_DOOR.to === 'underdeep'
-    && !(CRYPT.exits ?? []).some((e) => e.to === GREY_DOOR.to), 'her knot on the grey door\'s frame, and the door standing open, its way down waiting on the Ways');
+  w.world.travel('hearthfane2', 8, 4, NORTH);
+  const onto = w.world.move('forward');
+  const grey = onto.kind === 'moved' ? onto.messages.join(' ') : '';
+  const sign = CRYPT.features!.find((f) => f.kind === 'sign' && f.id === 'hf2_door');
+  ok(onto.kind === 'moved' && !onto.arrived && w.world.state.x === 8 && w.world.state.y === 3 && grey.includes('A door of grey with no handle') && sign?.x === 8 && sign.y === 3
+    && w.world.used('hf2_knot') && CRYPT.rows[GREY_DOOR.y][GREY_DOOR.x] === 'D' && GREY_DOOR.to === 'underdeep' && (CRYPT.exits ?? []).includes(GREY_DOOR)
+    && (CRYPT.exits ?? []).length === 2 && !(CRYPT.features ?? []).some((f) => (CRYPT.exits ?? []).some((e) => e.x === f.x && e.y === f.y)),
+    'the grey door\'s sign read on the passage, her knot on its frame, and the door standing open onto the Ways with nothing on its square');
+
+  // The Ways (#757): through the grey door onto its foot, 16,30, facing up the main way, and back up onto
+  // the knot's square, 8,2, facing away from the door: the way to the camp to rest, and down again.
+  const WAYS = MAP_DEFS.find((d) => d.id === 'underdeep')!;
+  ok(WAYS.kind === 'dungeon' && WAYS.band?.join() === '30,30' && WAYS.region === 'hearth', 'below the grey door the Ways, a dungeon of band 30');
+  walkThrough(w, 'hearthfane2', 8, 2, NORTH, 'underdeep', 1);
+  ok(w.world.state.x === 16 && w.world.state.y === 30 && w.world.state.facing === NORTH, 'down through the grey door onto its foot, 16,30, facing up the main way');
+  walkThrough(w, 'underdeep', 16, 30, SOUTH, 'hearthfane2', 1);
+  ok(w.world.state.x === 8 && w.world.state.y === 2 && w.world.state.facing === SOUTH, 'and back up through it onto the knot\'s square in the crypt, 8,2, facing away from the door');
+
+  // At the Ways' floor, 30: the hum, the rats at the way in, and her knot on every frame (59), the side
+  // ways' groups won as they come; behind the first west frame the keepers' store.
+  w.level = 30;
+  for (const m of w.party.members) m.level = 30;
+  const log = (id: string) => questLog(w.world.state, w.party).find((v) => v.def.id === id);
+  see(w, 'underdeep:ud_in');
+  fight(w, 'underdeep:ud_rats1');
+  see(w, 'underdeep:ud_knot1');
+  ok(!!log('frames') && !log('frames')!.done && log('frames')!.goal === 'Follow her knots through the ways, frame by frame.', 'her knot on the first frame begins Every Frame She Marked');
+  fight(w, 'underdeep:ud_knockers1');
+  const ways = (id: string) => WAYS.features!.find((f) => f.kind === 'chest' && f.id === id);
+  const store = ways('ud_store'), crawl = ways('ud_crawl_chest');
+  ok(store?.kind === 'chest' && store.gold === 800 && store.items.join() === 'grey_shield', 'in the keepers\' store behind the first west frame, 800 gold and a Grey Shield');
+  see(w, 'underdeep:ud_knot2');
+  fight(w, 'underdeep:ud_knockers2');
+  see(w, 'underdeep:ud_voice');
+  see(w, 'underdeep:ud_knot3');
+  see(w, 'underdeep:ud_rats');
+  see(w, 'underdeep:ud_knot4');
+  fight(w, 'underdeep:ud_keepers2');
+  see(w, 'underdeep:ud_knot5');
+  fight(w, 'underdeep:ud_keepers1');
+  see(w, 'underdeep:ud_knot6');
+  see(w, 'underdeep:ud_knot7');
+  fight(w, 'underdeep:ud_rats2');
+  see(w, 'underdeep:ud_knot8');
+  ok([1, 2, 3, 4, 5, 6, 7, 8].every((n) => w.world.used(`ud_knot${n}`)) && log('frames')!.pages[0].entries.length === 2 && !log('frames')!.done,
+    'every frame read, the eighth cut deeper over a thin wall, and the quest goes on down to the Stair\'s last frame (#758)');
+
+  // The hatch behind the eighth frame, found from it: searched at the wall in the room behind it, it
+  // opens on the crawl way, its chest and its door onto the Stair, which the Stair lists (#758).
+  const [hatch] = WAYS.secrets!;
+  w.world.travel('underdeep', hatch.x, hatch.y + 1, NORTH);
+  let hatchFound = false;
+  for (let i = 0; i < 20 && !hatchFound; i++) hatchFound = w.world.search();
+  const crawled = hatchFound ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(hatch.hint === 'ud_knot8' && hatchFound && crawled.every((r) => r.kind === 'moved') && w.world.used('ud_hatch') && log('frames')!.pages[0].entries.length === 3,
+    'searched at the wall behind the eighth frame, the hatch opens on the crawl way, and the log keeps it');
+  listen(w);
+  ok(crawl?.kind === 'chest' && crawl.gold === 600 && crawl.items.join() === 'potion_sp_great,potion_sp_great,potion_sp_great' && crawl.x === 24 && crawl.y === 4,
+    'in the crawl way 600 gold and three Great Spell Draughts');
+  ok(WAYS.rows[CRAWL_DOOR.y][CRAWL_DOOR.x] === 'D' && WAYS.rows[STAIR_DOOR.y][STAIR_DOOR.x] === '#' && WAYS.rows[STAIR_DOOR.y + 1][STAIR_DOOR.x] === 'D'
+    && CRAWL_DOOR.to === 'underdeep2' && STAIR_DOOR.to === 'underdeep2' && !(WAYS.exits ?? []).some((e) => e.to === 'underdeep2'),
+    'the crawl way\'s door and the Stair\'s head wait on the Stair, which lists their ways down (#758)');
+
+  // The crack (61): the knockers by it won at 30, then the knocker that stopped. Sealed, it pays 4,000
+  // among the company, the knockers go to the crack and are gone, and the quest is done; widened, on
+  // another walk, it gives the Old Lantern's Staff and the knockers stand.
+  fight(w, 'underdeep:ud_knockers3');
+  see(w, 'underdeep:ud_crack');
+  const inWays = (name: string): Person => WAYS.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
+  // Spoken to as the game has it: from the square before the person, facing them, where an event may stand
+  // and no sign (the interactable on a company's own square comes before the one ahead).
+  const speak = (v: Walk, p: Person, x: number, y: number, facing: Facing) => {
+    v.world.travel('underdeep', x, y, facing);
+    const f = v.world.featureHere();
+    v.ok(f?.kind === 'npc' && f.name === p.name, `${p.name} is the one to talk to from ${x},${y}, facing them`);
+    return meet(p, v.party, heard(v.world, p));
+  };
+  const knocker = inWays('The knocker at the crack'), crewDoor = inWays('The door marked CREW ONLY');
+  const from = (p: Person): { x: number; y: number; f: Facing } => p === knocker ? { x: 28, y: 6, f: EAST } : { x: 3, y: 10, f: WEST };
+  const pay = (v: Walk, p: Person, label: string): number => {
+    const xp = v.party.members[0].xp, at = from(p);
+    answer(speak(v, p, at.x, at.y, at.f).choice!.answers.find((a) => a.label === label)!, v.party);
+    return v.party.members[0].xp - xp;
+  };
+  ok(!!log('crack') && !log('crack')!.done, 'at the crack, The Knocker That Stopped begins');
+  const sealed = pay(w, knocker, 'Seal it.');
+  ok(Math.abs(sealed - 4000 / 6) < 1 && !!w.party.flags[CRACK_SEALED] && !w.world.present(knocker) && log('crack')!.done, 'sealed with its hammer: 4,000 experience among the company, the knocker finished and the quest done');
+  left(w, 'underdeep:ud_knockers3');
+  const b = newWalk(ok);
+  see(b, 'underdeep:ud_crack');
+  const widened = pay(b, knocker, 'Widen it.');
+  ok(Math.abs(widened - 4000 / 6) < 1 && !!b.party.flags[CRACK_WIDE] && b.party.bag.includes('old_lanterns_staff') && b.world.liveGroups().some((g) => g.def.id === 'ud_knockers3')
+    && !!questLog(b.world.state, b.party).find((v) => v.def.id === 'crack' && v.done), 'or widened: the Old Lantern\'s Staff from the swallowed hall, 4,000 experience, and the knockers stay');
+
+  // Up the main way to the row-10 way, its guard won at 30, and the CREW ONLY door from the inside (60):
+  // its marks on the way west, read by a reader, then the feet on the square before it, which begin the
+  // quest; from there, facing west, the door ahead is the one to talk to, shut to the mines until it is
+  // answered, and a step forward after either answer goes through. Opened and left open, it pays 2,000
+  // among the company and its way through lands on the Clean Corridor's floor, 13,3, facing west; opened,
+  // gone through and shut, on another walk, the same.
+  fight(w, 'underdeep:ud_keepers3');
+  fight(w, 'underdeep:ud_crew_guard');
+  const stepOn = (v: Walk): string => { const r = v.world.move('forward'); return r.kind === 'moved' ? r.messages.join(' ') : r.kind === 'blocked' ? `(${r.reason})` : ''; };
+  w.world.travel('underdeep', 5, 10, WEST);
+  const lettered = !!readerOf(w.party), unread = stepOn(w);
+  w.party.bag.push('copybook');
+  const marks = w.world.eventsHere().join(' ');
+  w.party.bag.splice(w.party.bag.indexOf('copybook'), 1);
+  ok(w.world.state.x === 4 && w.world.state.y === 10 && (lettered || !unread.includes('CREW ONLY.')) && marks.includes('CREW ONLY. THE MINES BEYOND.') && w.world.used('ud_crew_sign'),
+    `the marks over the door, on the way to it, read with a reader and kept read (${marks})`);
+  const feet = stepOn(w);
+  ok(w.world.state.x === 3 && w.world.state.y === 10 && feet.includes('footprints') && w.world.used('ud_feet') && !!log('crew_only') && !log('crew_only')!.done,
+    'the feet on the square before the door, and Crew Only, From the Inside begun');
+  w.world.move('forward');
+  ok(w.world.state.mapId === 'underdeep' && w.world.state.x === 2, 'the door stays shut on the mines until it is answered');
+  const opened = pay(w, crewDoor, 'Open it, and leave it open.');
+  ok(Math.abs(opened - 2000 / 6) < 1 && !!w.party.flags[CREW_OPEN] && !w.world.present(crewDoor) && log('crew_only')!.done, 'opened and left open: 2,000 experience among the company, and the quest done');
+  const through = w.world.move('forward');
+  ok(through.kind === 'moved' && !!through.arrived && w.world.state.mapId === 'deep_mines3' && w.world.state.x === 13 && w.world.state.y === 3 && w.world.state.facing === WEST,
+    'a step forward from the feet\'s square goes through onto the Clean Corridor\'s floor before its other side, 13,3, facing west');
+  const c2 = newWalk(ok);
+  see(c2, 'underdeep:ud_feet');
+  const shut = pay(c2, crewDoor, 'Go through and shut it.');
+  ok(Math.abs(shut - 2000 / 6) < 1 && !!c2.party.flags[CREW_SHUT] && !c2.party.flags[CREW_OPEN] && !!questLog(c2.world.state, c2.party).find((v) => v.def.id === 'crew_only' && v.done),
+    'or opened, gone through and shut: the same 2,000, and the quest done');
+  walkThrough(c2, 'underdeep', 3, 10, WEST, 'deep_mines3', 1);
+
+  // The main way's last run: the keepers, and at the Stair's head the first crawlers, down off the
+  // ceiling, won at 30; the ways' end at the Stair's door, whose way down is the Stair's (#758).
+  fight(w, 'underdeep:ud_keepers4');
+  fight(w, 'underdeep:ud_crawlers');
+  see(w, 'underdeep:ud_end');
 
   // The Cleric's third, The Eleven Kept (#763): Anchorhold's anchoress, the keeper's log and the crypt's eleven.
   elevenKept(ok);

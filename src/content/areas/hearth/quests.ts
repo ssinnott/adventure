@@ -2,14 +2,17 @@
 // docs/areas/hearth_isle.md), as far as the isle goes (H6, #753): the three pilgrims met in the Bowl and
 // a token taken, or none. Its end on the Stair's first landing, the rearguard slain where no token or
 // verdict holds, and the goal under the temple, are #758's. #56's 56, The Sacristan's Lamps, in the
-// temple (#755): the lamps out in the pillar's order and the treasury's key. The Cleric's third, The Eleven
-// Kept (#763): the Crowness keeper's log to the anchoress at Anchorhold and the eleven lamps lit in the crypt.
-// How the words are keyed is in src/content/area.ts (`quests`); tools/tests/quests.ts checks every key.
+// temple (#755): the lamps out in the pillar's order and the treasury's key. In the Ways (#757): 59, Every
+// Frame She Marked, as far as the Ways go (its last frame's word is the Stair's, #758); 60, Crew Only, From
+// the Inside; and 61, The Knocker That Stopped, each answered either way. The Cleric's third, The Eleven
+// Kept (#763): the Crowness keeper's log to the anchoress at Anchorhold and the eleven lamps lit in the
+// crypt. How the words are keyed is in src/content/area.ts (`quests`); tools/tests/quests.ts checks every key.
 import type { QuestDef } from '../../../game/quests.ts';
 import { PILGRIMS, TOKEN_COUSIN, TOKEN_HOLD, TOKEN_TALLIS, HELD } from './maps/hearthisle_h6.ts';
 import { KEPT_ASKED } from './maps/hearthisle_i6.ts';
 import { LAMPS, LAMPS_OUT, LAMPS_WRONG, LAMPS_KEY, PILLARS } from './maps/hearthfane.ts';
 import { ELEVEN_KEPT, LOG_GIVEN } from './maps/hearthfane2.ts';
+import { CREW_OPEN, CREW_SHUT, CRACK_SEALED, CRACK_WIDE } from './maps/underdeep.ts';
 
 export const QUESTS: readonly QuestDef[] = [
   {
@@ -45,6 +48,53 @@ export const QUESTS: readonly QuestDef[] = [
     goals: [
       { when: { flag: LAMPS_OUT }, text: 'Go back to the sacristan under the vestry table.', at: 'hearthfane' },
       { when: { flag: LAMPS }, text: 'Put out the four lamps in the pillar\'s order: the Sea, the Shore, the House, the Hearth.', at: 'hearthfane' },
+    ],
+  },
+  {
+    // #56's 59, at 30: no giver, her knots found frame by frame. Done on the last frame's word on the Stair
+    // (KNOT_LAST, `underdeep2:ud2_word`), which #758 adds with its entry and the goal at the Stair; until
+    // then the quest is never done.
+    id: 'frames',
+    title: 'Every Frame She Marked',
+    start: { seen: 'underdeep:ud_knot1' },
+    done: [],
+    entries: [
+      { id: 'first', when: { seen: 'underdeep:ud_knot1' }, text: 'Her knot on the first frame below the crypt, at a girl\'s shoulder. We can follow every one.' },
+      { id: 'eighth', when: { seen: 'underdeep:ud_knot8' }, text: 'On the eighth frame the knot is cut deeper, and the wall behind it is thin. We can hear the stair through it.' },
+      { id: 'hatch', when: { seen: 'underdeep:ud_hatch' }, text: 'A crawl way behind the frames, a knocker\'s height, down onto the stair below its fights.' },
+    ],
+    goals: [
+      { when: { seen: 'underdeep:ud_knot1' }, text: 'Follow her knots through the ways, frame by frame.', at: 'underdeep' },
+    ],
+  },
+  {
+    // #56's 60, at 30: begun at the feet before the door; done on either answer at it, 2,000 experience.
+    id: 'crew_only',
+    title: 'Crew Only, From the Inside',
+    start: { seen: 'underdeep:ud_feet' },
+    done: [{ flag: CREW_OPEN }, { flag: CREW_SHUT }],
+    entries: [
+      { id: 'door', when: { seen: 'underdeep:ud_feet' }, text: 'The door marked CREW ONLY has another side. From here it is only a door, with a bar and a handle.' },
+      { id: 'open', when: { flag: CREW_OPEN }, text: 'We opened it onto the Tiefzeche\'s lowest level and left it open. Something came to look.' },
+      { id: 'shut', when: { flag: CREW_SHUT }, text: 'We opened it, went through and shut it behind us. A wall with a door drawn on it again.' },
+    ],
+    goals: [
+      { when: { seen: 'underdeep:ud_feet' }, text: 'Open the door marked CREW ONLY from the inside, and decide whether to shut it.', at: 'underdeep' },
+    ],
+  },
+  {
+    // #56's 61, at 30: begun at the crack; done on either answer at the knocker, 4,000 experience.
+    id: 'crack',
+    title: 'The Knocker That Stopped',
+    start: { seen: 'underdeep:ud_crack' },
+    done: [{ flag: CRACK_SEALED }, { flag: CRACK_WIDE }],
+    entries: [
+      { id: 'crack', when: { seen: 'underdeep:ud_crack' }, text: 'A deep knocker stands still at a crack in the wall, the first it has found in four hundred years. Through the crack, daylight the colour of glass: the Sunder, from below.' },
+      { id: 'sealed', when: { flag: CRACK_SEALED }, text: 'We sealed it with its hammer. Its light went dim, and far above, something stopped coming.' },
+      { id: 'wide', when: { flag: CRACK_WIDE }, text: 'We widened it. Behind the wall, a hall the Sunder swallowed, and on its lectern a lamp on a staff, still lit.' },
+    ],
+    goals: [
+      { when: { seen: 'underdeep:ud_crack' }, text: 'The knocker\'s hammer waits at the crack: seal it, or widen it.', at: 'underdeep' },
     ],
   },
   {
