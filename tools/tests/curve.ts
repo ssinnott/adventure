@@ -13,7 +13,7 @@ import type { Area } from '../../src/content/area.ts';
 import { CURVE, PLANNED, MEMBERS, xpBudget, goldBudget } from '../../src/content/progression.ts';
 import type { AreaCurve } from '../../src/content/progression.ts';
 import { GameMap } from '../../src/game/map.ts';
-import type { MapDef, Feature } from '../../src/game/map.ts';
+import type { MapDef, Feature, EncounterDef } from '../../src/game/map.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import { areaBand } from '../../src/game/atlas.ts';
 import { giftOf, spentId } from '../../src/game/wilds.ts';
@@ -102,14 +102,42 @@ export function outsideFaults(area: { id: string; maps: readonly Pick<MapDef, 'i
 
 /**
  * What a clear of some maps gives: a member's share of the xp, the gold in cash, the monsters it
- * places in their groups' order, its features and a member's share of its quests' xp.
+ * places in their groups' order, every monster any group of the maps places (the price window holds
+ * them all, whichever twin a company meets), its features and a member's share of its quests' xp.
  */
-interface Clear { xp: number; gold: number; placed: MonsterDef[]; features: Feature[]; quest: number }
+interface Clear { xp: number; gold: number; placed: MonsterDef[]; every: MonsterDef[]; features: Feature[]; quest: number }
 
-/** A clear of these maps: every group once, a member's share of the xp summed; the gold in cash. */
+/** Two conditions are one when they read the same, as the maps' and pillars' checks read a twin's; a missing one matches nothing. */
+const same = (a: unknown, b: unknown): boolean => a !== undefined && JSON.stringify(a) === JSON.stringify(b);
+
+/**
+ * The groups a clear fights: every group once, a twin pair once, at the lesser (#792). Twins are two groups
+ * alone on a square of a map, one `until` a condition and `leaves` when it holds, the other `after` it, as the
+ * Heart's Vask is, whole before the Council has sat and thinned after: the square holds the one or the other,
+ * and a clear meets one. The lesser by xp counts, its monsters for xp and gold alike, so that every company's
+ * clear meets the budget and not only the lighter's. Else each group counts: ones that merely share a square,
+ * or whose conditions differ, or that both stand `after`; an `until` group that stays till it is killed, which
+ * a company may meet beside its twin; a third on the square, which makes the clears other sums (an `until` of
+ * 2 beside two `after` of 1 and 3 is met as 2 or 4, never 1).
+ */
+export function clearGroups(maps: readonly Pick<MapDef, 'encounters'>[]): EncounterDef[] {
+  const xp = (e: EncounterDef): number => e.monsters.reduce((t, m) => t + MONSTERS[m].xp, 0);
+  return maps.flatMap((d) => {
+    const groups = d.encounters ?? [];
+    // Of each pair the dearer stands aside; on a tie, the `after` one.
+    const aside = new Set(groups.flatMap((a) => {
+      const square = groups.filter((g) => g.x === a.x && g.y === a.y), b = square.find((g) => g !== a);
+      return a.leaves && square.length === 2 && b && same(a.until, b.after) ? [xp(b) < xp(a) ? a : b] : [];
+    }));
+    return groups.filter((e) => !aside.has(e));
+  });
+}
+
+/** A clear of these maps: every group once, a twin pair once; a member's share of the xp summed; the gold in cash. */
 function clearOf(maps: readonly MapDef[], guild: NonNullable<Area['guilds']> = []): Clear {
-  const groups = maps.flatMap((d) => d.encounters ?? []);
+  const groups = clearGroups(maps);
   const placed = groups.flatMap((e) => e.monsters.map((m) => MONSTERS[m]));
+  const every = maps.flatMap((d) => d.encounters ?? []).flatMap((e) => e.monsters.map((m) => MONSTERS[m]));
   const features = maps.flatMap((d) => d.features ?? []);
   // A question's pay, whichever way it is answered: of its answers, the least, for each of xp and gold.
   // A question two people share (one person in two places) is counted once.
@@ -123,7 +151,7 @@ function clearOf(maps: readonly MapDef[], guild: NonNullable<Area['guilds']> = [
   const gold = placed.reduce((t, m) => t + (m.gold[0] + m.gold[1]) / 2, 0)
     + features.reduce((t, f) => t + (giftOf(f)?.gold ?? 0), 0) + [...rewards.values()].reduce((t, r) => t + r, 0)
     + guild.reduce((t, q) => t + (q.pay.gold ?? 0), 0) + sure('gold');
-  return { xp, gold, placed, features, quest: quest / MEMBERS };
+  return { xp, gold, placed, every, features, quest: quest / MEMBERS };
 }
 
 /**
@@ -176,12 +204,13 @@ export const nearTop = (floor: number, top: number): number => (floor < MAX_LEVE
 
 /**
  * The price window: no weapon, armour or shield in a clear's chests or its monsters' drops dearer
- * than `price`. Keys, quest items and consumables are exempt.
+ * than `price`, the monsters of every group, whichever twin a company meets. Keys, quest items and
+ * consumables are exempt.
  */
-function priceWindow(who: string, { placed, features }: Clear, price: number): void {
+function priceWindow(who: string, { every, features }: Clear, price: number): void {
   const found = [
     ...features.flatMap((f) => (giftOf(f)?.items ?? []).map((it) => ({ it, from: `${f.kind} ${spentId(f)}` }))),
-    ...[...new Set(placed)].flatMap((m) => (m.drops ?? []).map((x) => ({ it: x.item, from: `${m.id}'s drop` }))),
+    ...[...new Set(every)].flatMap((m) => (m.drops ?? []).map((x) => ({ it: x.item, from: `${m.id}'s drop` }))),
   ].filter(({ it }) => ITEMS[it].slot !== 'none' && ITEMS[it].price > 0);
   const dearer = found.filter((x) => ITEMS[x.it].price > price);
   for (const x of dearer) ok(false, `${who}: ${x.it} (${ITEMS[x.it].price} gold, ${x.from}) is dearer than its window's ${price}`);
@@ -205,6 +234,28 @@ export function curve(): void {
     'a named area may leave it further over, up to its figure, and not past it, nor stay named once inside the line');
   ok(nearTop(32, 32) === 30 && nearTop(31, 32) === 32 && nearTop(28, 29) === 29 && nearTop(20, 20) === 21,
     'a hardest group stands within two of the top and over the floor, however narrow the band, save at the cap: 32 asks 30, where 31-32 asks 32 and 20 asks 21');
+  // A twin pair counts once, at the lesser (#792), as the Heart's Vask does, whole before the Council has sat and
+  // thinned after. Else each group counts: ones that merely share a square, or whose conditions differ, or that both
+  // stand `after`; an `until` group that stays till it is killed; a third on the square.
+  const [fxc, fxd] = [{ flag: 'fx_c' }, { flag: 'fx_d' }];
+  const gone = { until: fxc, leaves: true }, later = { after: fxc };
+  const hands = (id: string, n: number, when: Pick<EncounterDef, 'until' | 'after' | 'leaves'> = {}, at: [number, number] = [1, 1]): EncounterDef =>
+    ({ id, x: at[0], y: at[1], monsters: Array<string>(n).fill('grey_hand'), ...when });
+  const fought = (...groups: EncounterDef[]): string => clearGroups([{ encounters: groups }]).map((g) => g.id).join();
+  const twins = (until: number, after: number): EncounterDef[] => [hands('a', until, gone), hands('b', after, later)];
+  ok(fought(...twins(3, 2)) === 'b' && fought(...twins(2, 3)) === 'a' && fought(...twins(3, 2).reverse()) === 'b' && fought(...twins(2, 3).reverse()) === 'a',
+    'a twin pair is counted once, at the lesser, whether that is the group `until` the condition or the one `after` it, and in whichever order they stand');
+  ok(fought(...twins(2, 2)) === 'a' && fought(...twins(2, 2).reverse()) === 'a', 'and a tie keeps the `until` group');
+  ok(fought(hands('a', 3), hands('b', 2)) === 'a,b' && fought(hands('a', 3, gone), hands('b', 2, { after: fxd })) === 'a,b'
+    && fought(hands('a', 3, later), hands('b', 2, later)) === 'a,b' && fought(hands('a', 3, gone), hands('b', 2, gone)) === 'a,b',
+    'two groups that merely share a square are counted both, and so are an `until` beside an `after` another condition, two `after` the same and two `until` it');
+  ok(fought(hands('a', 3, gone), hands('b', 2, later, [2, 1])) === 'a,b' && fought(hands('a', 3, gone), hands('b', 2, later, [1, 2])) === 'a,b'
+    && clearGroups([{ encounters: [hands('a', 3, gone)] }, { encounters: [hands('b', 2, later)] }]).length === 2,
+    'and twins on two squares, one x with two ys among them, or on two maps, are counted both');
+  ok(fought(hands('a', 3, { until: fxc }), hands('b', 2, later)) === 'a,b',
+    'and so is the pair whose `until` group does not leave, which stays till it is killed and may be met beside its twin');
+  ok(fought(hands('a', 2, gone), hands('b', 1, later), hands('c', 3, later)) === 'a,b,c',
+    'and three groups on a square, an `until` of 2 beside two `after` of 1 and 3, met as 2 or 4 and never 1, are counted all');
   // The road's last area reads its deep places' bands with its zone's (docs/areas/hearth_isle.md §9,
   // call 2): its isle laid at 28-29 reads 28-32 with the Underdeep and the Core, and 28-29 without.
   const laid = { ...ATLAS, zones: ATLAS.zones.map((z) => (z.area === 'hearth' ? { ...z, maps: [{ map: 'fx_isle', at: [0, 0] as const }] } : z)) };
@@ -243,8 +294,8 @@ export function curve(): void {
     ok(row.next === next, `${id}: the next floor, ${row.next}, is ${last ? 'the cap, no area coming after it' : 'the next area\'s'} (${next ?? 'none'})`);
     if (later) ok(order(later.id) === at + 1, `${id}: ${later.id}, its next row, is the atlas's next area`);
 
-    // What a clear gives: every group once, a member's share of the xp summed; the gold in cash.
-    // The area's guild quests pay too, counted with the area whose file holds them.
+    // What a clear gives: every group once (a twin pair at the lesser), a member's share of the xp summed; the
+    // gold in cash. The area's guild quests pay too, counted with the area whose file holds them.
     const clear = clearOf(maps, area?.guilds ?? []);
     budget(id, 'xp a member', clear.xp, xpBudget(row), row.owed, row.owed?.xp);
     budget(id, 'gold', Math.floor(clear.gold), goldBudget(row), row.owed, row.owed?.gold);
