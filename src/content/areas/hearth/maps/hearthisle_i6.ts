@@ -108,7 +108,7 @@ export const HEARTHISLE_I6: MapDef = {
     { kind: 'event', x: 4, y: 25, id: 'i6_camp', once: true, text: 'The Hand\'s camp at the stair\'s head: grey tents, grey boats drawn up and the ashes of a fire nobody has tended for days.' },
     { kind: 'event', x: 6, y: 24, id: 'i6_crates', once: true, text: 'Crates under the Hand\'s seal, every one open and empty. The straw is grey with the dust of the stones.' },
     { kind: 'event', x: 3, y: 24, id: 'i6_tally', once: true, text: 'A tally-house of planks, and on its slate the count, finished: the last row crossed through, and under it, ELEVEN. DONE.' },
-    { kind: 'chest', x: 6, y: 25, id: 'i6_camp_chest', gold: 500, items: ['grey_staff'] },
+    { kind: 'chest', x: 6, y: 25, id: 'i6_camp_chest', gold: 700, items: ['grey_staff'] },
     // The grey door in the rock at 5,22, at the camp's back: an event and no exit, no lock (§9, call 3).
     { kind: 'event', x: 5, y: 23, id: 'i6_door', once: true, text: 'A door of grey in the rock, no handle, no seam, at the camp\'s back. The ground before it is trodden flat by two hundred feet going in. It does not open for you, and it never will.' },
     { kind: 'event', x: 6, y: 23, id: 'i6_knot', once: true, text: 'On the frame, at the height of a girl\'s shoulder, a loop inside a loop, and under it a second mark, newer, scratched in a hurry.' },
@@ -116,16 +116,19 @@ export const HEARTHISLE_I6: MapDef = {
     // search, and the Hand's takings in the pocket behind it, carved: the heaps seen, the hoard taken.
     { kind: 'event', x: 2, y: 25, id: 'i6_smell', once: true, text: 'Lamp oil, and under it the smell of the sea cave under Rook\'s Nest.' },
     { kind: 'event', x: 1, y: 24, id: 'i6_takings', once: true, text: 'The Hand\'s takings, cut into the rock: coin from every town on the road, and grey parts sorted into heaps by size.' },
-    { kind: 'chest', x: 0, y: 24, id: 'i6_hoard', gold: 1200, items: ['grey_mail'] },
+    { kind: 'chest', x: 0, y: 24, id: 'i6_hoard', gold: 1700, items: ['grey_mail'] },
   ],
   secrets: [{ x: 2, y: 24, hint: 'i6_smell' }],
   encounters: [
     // The Hand's champions in the Bowl's pocket where the rim's path begins, so Anchorhold is reached with
     // a fight; the moths over the yard by night; the camp's guard, the box's hardest, never roaming and
-    // gone by the leave rule once Vask is gone from Helmstow (#747); and two at the stair's head.
+    // gone by the leave rule once Vask is gone from Helmstow (#747); and two at the stair's head. Off the
+    // road (#794): champions on the east foot under the keel, and the Hand's watch over the Wyke.
     { id: 'i6_rim', x: 0, y: 17, monsters: many(3, 'ashen_champion'), aware: 3, respawn: 2880 },
     { id: 'i6_moths', x: 5, y: 20, monsters: many(12, 'hearth_moth'), aware: 3, respawn: 1440, when: { hours: 'night' } },
     { id: 'i6_guard', x: 4, y: 24, monsters: [...many(3, 'ashen_champion'), 'ashen_preacher'], back: 1, aware: 3, roams: false, respawn: 2880, until: { flag: THRONE_REMOVED }, leaves: true },
     { id: 'i6_guard2', x: 3, y: 26, monsters: many(2, 'ashen_champion'), aware: 2, roams: false, respawn: 2880 },
+    { id: 'i6_foot', x: 10, y: 14, monsters: many(3, 'ashen_champion'), aware: 3, respawn: 2880 },
+    { id: 'i6_watch', x: 2, y: 1, monsters: many(4, 'ashen_champion'), aware: 2, roams: false, respawn: 2880 },
   ],
 };

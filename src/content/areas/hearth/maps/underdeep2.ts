@@ -120,10 +120,10 @@ export const UNDERDEEP2: MapDef = {
     { kind: 'chest', x: 20, y: 2, id: 'ud2_takings', gold: 2600, items: [] },
   ],
   encounters: [
-    // The Hand's rearguard on the first landing, where the claimant's people are not: gone once a verdict or
-    // a token holds it, standing or not (#747). 57 is done on it slain, so it never comes back.
     // Knockers at the head's wall, standing: the first group past the way in, the gentlest (#794).
     { id: 'ud2_knockers2', x: 18, y: 30, monsters: many(3, 'deep_knocker'), aware: 2, roams: false, respawn: 2880 },
+    // The Hand's rearguard on the first landing, where the claimant's people are not: gone once a verdict or
+    // a token holds it, standing or not (#747). 57 is done on it slain, so it never comes back.
     { id: 'ud2_rearguard', x: 16, y: 26, monsters: many(3, 'hand_rearguard'), aware: 2, roams: false, until: HELD, leaves: true },
     { id: 'ud2_rats', x: 14, y: 23, monsters: many(12, 'deep_rat'), aware: 3, respawn: 1440 },
     // And at the second landing's east wall, standing (#794).
