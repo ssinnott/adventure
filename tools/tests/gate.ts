@@ -357,6 +357,15 @@ export function rate(g: Pick<EncounterDef, 'monsters' | 'back' | 'leader' | 'whe
   if (r === undefined) { r = winRate(level, g, SEEDS, ROUND_CAP, opts); rates.set(key, r); }
   return r;
 }
+/**
+ * The road behind's groups on an earlier act's maps, as the game names a group, 'map:id': each waits on
+ * an answer given an act later on the road, so no company at its map's floor meets it, and the gate
+ * leaves it out of its map and its area (#765). The curve counts it, in the clear and the lead.
+ */
+export const BEHIND: readonly string[] = ['deep_mines3:dm3_knockers3'];
+/** A map as a company at its floor finds it: the road behind's groups left out (BEHIND). */
+const beforeBehind = (d: MapDef): MapDef =>
+  d.encounters?.some((g) => BEHIND.includes(`${d.id}:${g.id}`)) ? { ...d, encounters: d.encounters.filter((g) => !BEHIND.includes(`${d.id}:${g.id}`)) } : d;
 /** The two groups nearest a zone's way in, as a company first finds it: none that waits on an `after`. */
 export const nearestWayIn = (groups: readonly EncounterDef[], steps: (x: number, y: number) => number): EncounterDef[] =>
   groups.filter((g) => !g.after).sort((a, b) => steps(a.x, a.y) - steps(b.x, b.y)).slice(0, 2);
@@ -634,7 +643,7 @@ export function gate(): void {
 
   for (const area of AREAS) {
     const id: RegionId = area.id, band = CURVE[id].band;
-    const fought = area.maps.filter((d): d is MapDef & { band: [number, number] } => !!d.encounters?.length && !!d.band);
+    const fought = area.maps.map(beforeBehind).filter((d): d is MapDef & { band: [number, number] } => !!d.encounters?.length && !!d.band);
     const zones = area.atlas.zones.filter((z) => z.maps?.length);
     const bosses = area.atlas.zones.flatMap((z) => BOSSES[z.id] ?? []);
     /** A group by the game's name for it, 'map:id'. */
