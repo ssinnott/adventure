@@ -1013,7 +1013,7 @@ sentries' alcoves, empty: where the Core Sentries come from when the ring calls.
 
 **Events and signs.**
 
-- `core_door` (8,14), once: *Through the door, and the hum is everything. The walls here are glass
+- `core_door` (8,13), once: *Through the door, and the hum is everything. The walls here are glass
   over grey, and the light comes down through the roof like weather.*
 - `core_heart` (8,8), once: *Two grey-handed men holding her palm to a panel of glass at the
   room's end, and Vask, the Queen's ring on his finger. Overhead, the light is going out.*
@@ -1140,7 +1140,8 @@ in these squares and lines:
 - **The seams.** In: the Stair's last door, 16,1 (`LAST_DOOR`, shut until the road's five hold),
   onto 8,14 facing north, the start. Up: the door at 8,15, a door square carrying the exit, as the
   Stair's 16,1 does, onto the Stair's 16,2 facing south, where `ud2_shut` is said until the five
-  hold (#759's 1).
+  hold (#759's 1). An exit fires no event on the square it lands on, so the first line, `core_door`,
+  is on 8,13, one step in (#759's 16).
 - **The room.** The floor is 3–13 by 4–11, rounded, under a north wall on row 3 with the panel at
   8,3 a wall square; the passage is 7–9 by 12–14. Every named square holds: 3,9 by the west wall,
   7,4 to 9,4 along the panel, 8,5 three squares in counting the panel (#759's 1).
@@ -1156,9 +1157,9 @@ in these squares and lines:
   the brief does not give: the Council can sit after the fight (`q_throne_removed` is set before an
   ending and after one), and it would raise Vask and two Hands at the panel for a second fight while
   he knelt by the wall (#759's 4).
-- **The parley's question** has one clause less than the brief's, *, and looks at whichever of you
-  carries the maps*: the brief's took nine lines of the side panel's seven (`tools/tests/people.ts`),
-  the cut one takes seven. The parley is still the one answer, *Stop him.* (#759's 13, 14).
+- **The parley** is the brief's: one answer, *Stop him.*, and the brief's whole question, which takes
+  3 of the box's 5 lines, a group's parley being asked in the box (the side panel's seven lines are a
+  business's: #759's 14 and 17).
 - **Wenna's words** for a company with Fane's map set `RING_GIVEN` themselves (`sets` on that `says`
   entry): a person's `flag` is set only on her own first lines (`meet`, `src/game/people.ts`), so
   those words would have given the ring and never the flag the chapter and its goals read
@@ -1761,6 +1762,12 @@ The Hands first is the best play only at or under the line's hit points with abo
 its blow, and then by a point or a few. The plan's one in three with the clock left to run would
 bring the Hands-first odds to about a half (1,922 and 23d8+24: 49% against 33%): two in three with
 the Hands first, the binding line, is kept.
+
+The thinned group's four plays, measured in review on 400 seeds: the Hands first 74, Vask first 84,
+as they come 62, no clock 97. Going for the lord first breaks the boss limit of 80, and the gate
+judges only the Hands-first play (68% on its hundred seeds). No sizing of Vask's hit points and blow
+puts the Hands first more than 2 points ahead of going for him first (69 against 67 at best), so the
+plan's lever lies in the clock or in the Hands and not in his hit points and blow (§11).
 
 The drawings (the creatures lane): `src/ui/monsters/crawlers.ts`, the new family, two kinds; the
 moths', the cultists', the rat's, the keepers' and the machines' modules gain their kinds, the
@@ -2866,13 +2873,17 @@ Decided by delegate for #759, each the owner's to overturn:
 8. **The gate judges the Heart on its boss's odds** (`tools/tests/gate.ts`): `BOSSES.hearthisle`
    gains `core:core_vask` and `core:core_vask_thinned`. A map whose every group is a boss has no
    floor pool and no day (it printed 13% of fights won against nine in ten and 0.11 fights to a rest
-   against twelve, which no Vask sized to two in three could pass), and a boss at the cap is judged
-   at its floor alone, no company standing two above 32, as #745 waived the curve's rise at the cap.
-   No other map is touched. Outside the content lane: #752's to confirm.
+   against twelve, which no Vask sized to two in three could pass), and a boss is judged two above
+   its floor or at the cap where that is as high as it goes: at its floor alone where the floor is
+   the cap, as #745 waived the curve's rise at the cap. The gate reprinted before and after moves no
+   figure (only the Heart's two n/a lines read *above its floor* now). Outside the content lane:
+   #752's to confirm.
 9. **The owed row stays at the curve's as-built floor,** `xp: 42946, gold: 8200`, `whose: '#744'`,
    its `why` that the Heart is built and a clear falls short by 3,988 xp a member and 20,120 gold:
-   the curve counts both of Vask's groups where a clear fights one, and the Ways and the Stair fell
-   short of their shares under the brief's groups. No group added and no monster strengthened.
+   the crypt, the temple, the rim, the Stair and the Ways fell short of their xp shares (0.42, 0.74,
+   0.74, 0.90 and 0.93), which the Heart's count hides (the curve counts both of Vask's groups where
+   a clear fights one); the gold gap is not the shares' doing, and the Heart adds none. No group
+   added and no monster strengthened.
 10. **64:** the item `queens_signet`, *Queen's Signet*, with the plan's text, read from the pack;
     the log keyed on the item and the four `q_signet_*` flags, "and the like" written *It went to
     the hold, in a cloth.* and *It went to Tallis, in a cloth.*, its goal at `shelf`. `UNSET` owes
@@ -2885,15 +2896,27 @@ Decided by delegate for #759, each the owner's to overturn:
     `LAST_DOOR.blockedText`, `ud2_shut` is said and the way back up off the stair's head is open;
     on the five `ud2_shut` is not said and the company walks onto 8,14 facing north, and back
     through onto 16,2 facing south.
-13. **The parley's question is cut by one clause,** *, and looks at whichever of you carries the
-    maps*: the brief's took nine lines of the side panel's seven (`tools/tests/people.ts`). The rest
-    of it stands.
-14. **`tools/tests/people.ts` lets a parley be nothing but its refusal:** it wanted another answer
-    that sets a flag, and the Heart's one answer, *Stop him.*, is the brief's and the issue's, with
-    no walk past to remember. Outside the content lane: the owner's to overturn.
+13. **The parley's question was cut by one clause,** *, and looks at whichever of you carries the
+    maps*, for the side panel's seven lines (`tools/tests/people.ts`). Superseded by 17: the brief's
+    whole question stands.
+14. **`tools/tests/people.ts` lets a parley be nothing but its refusal where the group has a slain
+    text of its own** (`refusable`: another answer or `slainText`): it wanted another answer that
+    sets a flag, and the Heart's one answer, *Stop him.*, is the brief's and the issue's, with no
+    walk past to remember. Only the Heart's two groups are admitted, and a fixture proves each case.
+    Outside the content lane: the owner's to overturn.
 15. **Rimewater's walkthrough counts Act III's lock on its own map,** not on the road: it asserted
     `LOCKS.length === 1`, which the Heart's lock makes two (the issue's "two of four"). Outside the
     content lane: the owner's to overturn.
+16. **The Heart's first line, `core_door`, is on 8,13,** one step in from the landing square 8,14: an
+    exit takes the company on arrival and fires no event on the landing square (`World.move` returns
+    from the exit branch before `eventsHere`; docs/areas/kilns.md §9, decision 10, records the same).
+    Same id and same words; the walkthrough takes the step for real, which `see()` had hidden by
+    teleporting onto the square.
+17. **The brief's whole parley question stands, and the side panel's lines are a person's alone**
+    (supersedes 13): a group's parley is a `ChoiceScreen` asked in the box (`Game.parley`), where the
+    question takes 3 of its 5 lines; the side panel's seven are a business's (`visiting`, under an
+    `InteriorScreen`). `boxFaults` holds a group to the box and a person to both, as before, and a
+    fixture proves each. Outside the content lane: the owner's to overturn.
 
 ## 10. Names
 
@@ -3091,25 +3114,33 @@ Owed, from the Stair (#758):
 Owed, from the Heart (#759):
 
 - **The area's clear falls short of its budget:** 42,946 xp a member of the 46,934 (91.5%), 3,988
-  short, and 8,200 gold of the 28,320, 20,120 short. The curve counts both of Vask's groups and none
-  of the sentries, and a clear fights one group: as played it pays 38,728 (82.5%), with up to 1,644
-  of sentries. The rim, the Ways and the Stair fell short of their shares (0.74, 0.93 and 0.90), and
-  the Heart pays over its eighth in the curve (8,846 against 5,867) and, as played, 4,629 to 6,273.
-  No group is added and no monster strengthened: the row's `owed` stays at the as-built floor (§8;
-  §9.2, #759's 9). The owner's call.
+  short, and 8,200 gold of the 28,320, 20,120 short. The crypt, the temple, the rim, the Stair and the
+  Ways fell short of their xp shares (0.42, 0.74, 0.74, 0.90 and 0.93), which the Heart's count
+  hides: the curve counts both of Vask's groups and none of the sentries (8,846 against its eighth,
+  5,867) and a clear fights one group, so as played it pays 38,728 (82.5%), with up to 1,644 of
+  sentries more, the Heart 4,629 to 6,273. The gold gap is not the shares' doing: the Heart adds
+  none. No group is added and no monster strengthened: the row's `owed` stays at the as-built floor
+  (§8; §9.2, #759's 9). The owner's call.
 - **Vask's `OFF_LINE` and the gate's two rules are #752's to finalise:** `OFF_LINE.vask`, 1,800 hit
   points and 22d8+23, and `BOSSES.hearthisle` with `core:core_vask` and `core:core_vask_thinned`,
   the rule that a map of nothing but its boss is judged on the boss's odds and the rule that a boss
-  at the cap is judged at its floor alone (§9.2, #759's 7 and 8). Both rules are outside the content
-  lane, touch no other map and are the owner's to overturn. `rate` in the gate keys its cache on the
-  monsters and not the clock, so a clockless group of Vask and three Hands elsewhere would share his
-  figure: none exists.
+  is judged two above its floor or at the cap (at its floor alone where that is the cap) (§9.2,
+  #759's 7 and 8). Both rules are outside the content lane, move no other map's figure and are the
+  owner's to overturn. `rate` in the gate keys its cache on the monsters and not the clock, so a
+  clockless group of Vask and three Hands elsewhere would share his figure: none exists.
+  `docs/EXPANSION.md` (the limits paragraph and *The boss asks*, in §5.2) and `docs/MONSTERS.md` (the
+  boss paragraph, near its line 50) still state the gate's boss rule without these two exceptions:
+  #752's to update.
 - **The plan's one in three for the clock left to run measures 45%:** going for Vask first gains,
   and the lever the plan names, a heavier Vask with a lighter blow, runs the other way on the gate's
-  bot (§7; §9.2, #759's 7). Two in three with the Hands first is kept. The owner's call.
+  bot (§7; §9.2, #759's 7). The twelve sizings tried put the Hands first at most 2 points ahead of
+  going for him first, so the lever lies in the clock or in the Hands and not in Vask's hit points
+  and blow: #752's to look at. Two in three with the Hands first is kept. The owner's call.
 - **Two checks outside the content lane are loosened:** `tools/tests/people.ts` lets a parley be
-  nothing but its refusal, and Rimewater's walkthrough counts its lock on its own map and not on the
-  road (§9.2, #759's 14 and 15). Both are the owner's to overturn.
+  nothing but its refusal where the group has a slain text of its own (the Heart's two) and holds a
+  group's question to the box's lines alone, the side panel's being a person's; and Rimewater's
+  walkthrough counts its lock on its own map and not on the road (§9.2, #759's 14, 15 and 17). Both
+  are the owner's to overturn.
 - **Two under, the area's pool is won nearly every time:** 92.5% of 39 groups' fights at 26, owed to
   #18 as before (`Hearth Isle: under`, `OWED` in `tools/tests/gate.ts`). The Heart's own row reads
   n/a.
