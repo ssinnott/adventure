@@ -296,13 +296,6 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'Hearth Isle: under': { whose: '#18', at: 1 },
   // And the temple (#755), the same: its champions and preachers, two under, are won every time.
   'hearthfane: under': { whose: '#18', at: 1 },
-  // The crypt (#756) at its floor, 29, in the Hand's steel (#746): its company fights 15.74 to a rest
-  // where it fought 13.71 in Cinderport's armourer's gear, past the limit of 14.75. The line was made
-  // in that gear; making it again with the rung in is #752's.
-  'hearthfane2: rest': { whose: '#752', at: 15.74 },
-  // And the Heart (#759) at 32 in it: Vask's thinned group is won 89% where it was 68%, past the limit
-  // of 80% (`core_vask` 65% to 79%, inside it). Vask's odds in the rung are #752's to measure and set.
-  'core:core_vask_thinned: floor': { whose: '#752', at: 0.89 },
   'highspine_i11: under': { whose: '#18', at: 1 },
   // And the ridge north (#503), banded from the area's floor as I11 is: its three groups are won every
   // time two under, and with them the area's pool passes its limit again.
@@ -355,11 +348,11 @@ const aims = (aim: string, limit: string): string => `aim ${aim}, limit ${limit}
 
 const rates = new Map<string, number>();
 /**
- * A group's win rate at a level, in the weather its time to walk brings, keyed on its monsters and
- * that weather, each computed once: the maps and their areas share them.
+ * A group's win rate at a level, in the weather its time to walk brings, keyed on its monsters, its
+ * clock and that weather, each computed once: the maps and their areas share them.
  */
-export function rate(g: Pick<EncounterDef, 'monsters' | 'back' | 'leader' | 'when' | 'under'>, level: number): number {
-  const opts = gateOpts(g), key = `${g.monsters.join(',')}/${g.back ?? 0}/${g.leader ?? ''}/${g.under ?? ''}@${level}~${opts.rangedPenalty ?? 0}`;
+export function rate(g: Pick<EncounterDef, 'monsters' | 'back' | 'leader' | 'when' | 'under' | 'clock'>, level: number): number {
+  const opts = gateOpts(g), key = `${g.monsters.join(',')}/${g.back ?? 0}/${g.leader ?? ''}/${g.under ?? ''}/${g.clock ? 'clock' : ''}@${level}~${opts.rangedPenalty ?? 0}`;
   let r = rates.get(key);
   if (r === undefined) { r = winRate(level, g, SEEDS, ROUND_CAP, opts); rates.set(key, r); }
   return r;
