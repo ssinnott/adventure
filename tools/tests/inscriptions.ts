@@ -8,7 +8,7 @@
 // waits on a reading.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { GameMap } from '../../src/game/map.ts';
-import type { MapDef } from '../../src/game/map.ts';
+import type { MapDef, Exit } from '../../src/game/map.ts';
 import { World } from '../../src/game/world.ts';
 import { defaultParty, addCondition } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
@@ -48,8 +48,9 @@ const stand = (world: World, x: number, y: number): string[] => { world.travel(F
 /**
  * What is wrong with the content's inscriptions: one with nothing to read, one whose id another
  * feature of its map has (its reading would be kept under the other's), a mark that names no atlas
- * place, and a way that waits on a reading (an exit's or a gate's `shut` naming one, which a reading
- * would close). What a reading opens is a hint, the shortcut a hint finds and the marks, never a way.
+ * place, and a way that waits on a reading: an exit's or a gate's `shut` naming one (a reading would
+ * close it), its `lifts` (a reading would open it) or its `after` (no way until a reading, #749). What
+ * a reading opens is a hint, the shortcut a hint finds and the marks, never a way.
  */
 export function inscriptionFaults(defs: readonly MapDef[], atlas: Atlas = ATLAS): string[] {
   const out: string[] = [], places = new Set(atlas.places.map((p) => p.id)), reads = new Set<string>();
@@ -62,8 +63,9 @@ export function inscriptionFaults(defs: readonly MapDef[], atlas: Atlas = ATLAS)
     for (const p of marksOf(f)) if (!places.has(p)) out.push(`${at} marks '${p}', which is no place on the atlas`);
   }
   const named = (w: unknown): string[] => [w ?? []].flat().flatMap((c) => { const s = (c as QuestCond).seen; return s && reads.has(s) ? [s] : []; });
+  const says = { shut: 'is shut by the reading of', lifts: 'is opened by the reading of', after: 'is no way until the reading of' } as const;
   for (const d of defs) for (const e of [...(d.exits ?? []), ...(d.gates ?? [])]) {
-    for (const s of named(e.shut)) out.push(`${d.id}: the way at ${e.x},${e.y} waits on the reading of ${s}`);
+    for (const k of ['shut', 'lifts', 'after'] as const) for (const s of named(e[k])) out.push(`${d.id}: the way at ${e.x},${e.y} ${says[k]} ${s}`);
   }
   return out;
 }
@@ -144,6 +146,14 @@ export function inscriptions(): void {
     ok(broken({ features: [{ kind: 'sign', x: 2, y: 1, id: 'fx_store', text: STORE, read: ' ' }] }).length === 1, 'an inscription with nothing to read fails');
     ok(broken({ features: [sign, { kind: 'event', x: 4, y: 1, id: 'fx_store', text: 'A draught.' }] }).length === 1, 'and one whose id another feature has');
     ok(broken({ features: [{ kind: 'sign', x: 2, y: 1, id: 'fx_store', text: STORE, read: 'STORE.', marks: 'nowhere' }] }).length === 1, 'and a mark that names no atlas place');
-    ok(broken({ exits: [{ x: 5, y: 3, to: 'fixture_kiln', tx: 1, ty: 1, shut: { seen: 'fixture_kiln:fx_store' } }] }).length === 1, 'and a way that waits on a reading');
+    // A way that waits on a reading, in each of the three ways it can: an exit's `shut`, its `lifts`
+    // and its `after`, then a gate's three together, each said in its own words.
+    const read = { seen: 'fixture_kiln:fx_store' }, way = 'fixture_kiln: the way at 5,3';
+    const exit = (e: Partial<Exit>): string[] => broken({ exits: [{ x: 5, y: 3, to: 'fixture_kiln', tx: 1, ty: 1, ...e }] });
+    ok(exit({ shut: read }).join() === `${way} is shut by the reading of fixture_kiln:fx_store`, 'and a way that a reading shuts');
+    ok(exit({ shut: { flag: 'fx_bar' }, lifts: read }).join() === `${way} is opened by the reading of fixture_kiln:fx_store`, 'and one that a reading opens (its `lifts`)');
+    ok(exit({ after: [{ flag: 'fx_bar' }, read] }).join() === `${way} is no way until the reading of fixture_kiln:fx_store`, 'and one that is no way until a reading (its `after`)');
+    const gate = broken({ gates: [{ x: 5, y: 3, shut: read, lifts: read, after: read }] });
+    ok(gate.length === 3 && ['shut by', 'opened by', 'no way until'].every((s, i) => gate[i].includes(s)), `and a gate's three, each in its own words (${gate.length})`);
   }
 }
