@@ -5,6 +5,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/sunderwood.md §4.3 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST } from '../../../../game/types.ts';
+import { CRACK_SEALED } from '../../hearth/maps/underdeep.ts';
 
 export const EAVES_J2: MapDef = {
   id: 'eaves_j2',
@@ -101,6 +102,6 @@ export const EAVES_J2: MapDef = {
     { id: 'j2_bears', x: 4, y: 7, monsters: ['pine_bear', 'pine_bear'], aware: 4, respawn: 2880 },
     { id: 'j2_cave_bears', x: 17, y: 4, monsters: ['pine_bear', 'pine_bear'], aware: 3, respawn: 2880, roams: false },
     { id: 'j2_moths', x: 22, y: 10, monsters: ['lantern_moth', 'lantern_moth', 'lantern_moth'], aware: 5, respawn: 1440, when: { hours: 'night' } },
-    { id: 'j2_hounds', x: 29, y: 17, monsters: ['sunder_hound', 'sunder_hound', 'sunder_hound', 'sunder_hound', 'sunder_hound'], aware: 5, respawn: 2880 },
+    { id: 'j2_hounds', x: 29, y: 17, monsters: ['sunder_hound', 'sunder_hound', 'sunder_hound', 'sunder_hound', 'sunder_hound'], aware: 5, respawn: 2880, until: { flag: CRACK_SEALED }, leaves: true },
   ],
 };

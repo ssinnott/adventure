@@ -45,7 +45,7 @@
 // clearing (#19): heard after his hint, and taught at 19; and the Cleric's second, taught by the sister
 // at L3's moth shrine (#203): her lesson after her own words, and taught at 19.
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, walkThrough, see, fight, listen, meetWho, playChapter, ending, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
+import { newWalk, walkThrough, see, fight, gone, listen, meetWho, playChapter, ending, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
 import type { Step, Walk } from '../../../../tools/walk.ts';
 import { CHAPTER } from './chapter.ts';
 import { CHAPTER as FORELAND } from '../shelf/chapter.ts';
@@ -76,6 +76,8 @@ import { approach, burn, burnt } from '../../../game/dens.ts';
 import { answerRiddle, useShrine } from '../../../game/wilds.ts';
 import type { Den } from '../../../game/dens.ts';
 import type { Person } from '../../../game/people.ts';
+import { CRACK_SEALED, CRACK_WIDE } from '../hearth/maps/underdeep.ts';
+import { ENDINGS } from '../../endings.ts';
 
 const I2 = MAP_DEFS.find((d) => d.id === 'eaves_i2')!;
 const WOODCUTTER = I2.features!.find((f) => f.kind === 'npc' && f.name === 'A woodcutter') as Person;
@@ -713,6 +715,7 @@ export const walkthrough: Walkthrough = (ok) => {
   walkThrough(w, 'lanternwood_k4', 23, 1, NORTH, 'eaves_k3', 3);
   trainers(ok);
   keeper(ok);
+  stilled(ok);
 };
 
 /**
@@ -1007,5 +1010,46 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     w.ok(road[0].includes('I burnt it on the knoll') && road[1].startsWith('"The surveyor\'s wall.') && road[2].includes('I burnt it on the knoll'), 'Averil on the road says the wall once, after her own lines, and goes back to them');
     w.party.flags.watch_reader_met = 1;
     w.ok(hear(w, 'lantern_watch', READER).startsWith('"The surveyor\'s six words') && !hear(w, 'lantern_watch', READER).startsWith('"The surveyor\'s six words'), 'the Reader says the wall once');
+  }
+}
+
+/** The Sunder's own kinds: its Rift's sunderlings, Warden and hounds, and the glass beasts. */
+const SUNDER_KINDS = ['sunderling', 'sunder_warden', 'sunder_hound', 'glass_spider', 'glass_bear'];
+/** The Sunder's groups (#765): those the most of whose monsters are its own, but its dens' keepers and its Warden. */
+const STILLED = ['eaves_j2:j2_hounds', 'eaves_k2:k2_hounds', 'eaves_k2:k2_bears', 'eaves_k3:k3_bears', 'lanternwood_l2:l2_hounds', 'lanternwood_l2:l2_bears', 'lanternwood_l3:l3_bank',
+  'lanternwood_l4:l4_night', 'lanternwood_m2:m2_hounds', 'lanternwood_m2:m2_bears', 'the_sunder:su1_spiders', 'the_sunder2:su2_wood', 'the_sunder2:su2_bears'];
+
+/**
+ * The road behind (#765): once the crack is sealed below (#56's 61, the Ways), the Sunder's groups stand
+ * down by the leave rule, standing or killed, and none comes back; widened, or never found, they stand as
+ * they did. The Watch's Reader says the beasts have stopped, and each ending's word is hers first of all.
+ * The flags are set by hand.
+ */
+function stilled(ok: (cond: boolean, msg: string) => void): void {
+  const group = (at: string): EncounterDef => { const [map, id] = at.split(':'); return MAP_DEFS.find((d) => d.id === map)!.encounters!.find((g) => g.id === id)!; };
+  const live = (v: Walk, at: string): boolean => { const g = group(at); v.world.travel(at.split(':')[0], g.x, g.y); return v.world.liveGroups().some((x) => x.def.id === g.id); };
+  const HESTER = MAP_DEFS.find((d) => d.id === 'lantern_watch')!.features!.find((f): f is Person => f.kind === 'npc' && f.name.startsWith('Hester Dunmore'))!;
+  const ready = (...flags: string[]): Walk => { const v = newWalk(ok); for (const f of ['watch_reader_met', 'papers_read', ...flags]) v.party.flags[f] = 1; return v; };
+  const says = (v: Walk): string => { v.world.travel('lantern_watch', HESTER.x, HESTER.y); const t = meet(HESTER, v.party, heard(v.world, HESTER)).text; listen(v); return t; };
+  const others = MAP_DEFS.flatMap((d) => (d.encounters ?? []).filter((g) => g.monsters.some((m) => SUNDER_KINDS.includes(m))).map((g) => `${d.id}:${g.id}`)).filter((at) => !STILLED.includes(at));
+  ok(STILLED.every((at) => { const g = group(at); return !!g.leaves && JSON.stringify(g.until) === JSON.stringify({ flag: CRACK_SEALED }) && g.monsters.filter((m) => SUNDER_KINDS.includes(m)).length * 2 > g.monsters.length; }),
+    `the Sunder's ${STILLED.length} groups leave once the crack is sealed; the rest with its kinds in them stay (${others.join(', ')})`);
+  for (const wide of [false, true]) {
+    const v = ready(...(wide ? [CRACK_WIDE] : []));
+    ok(STILLED.every((at) => !v.world.ended(group(at))) && says(v).startsWith('She has the wick in its dish lit now'),
+      `the crack ${wide ? 'widened' : 'not sealed'}: the Sunder's groups stand as they did, and the Reader says what she did`);
+  }
+  const v = ready();
+  for (const at of STILLED.slice(0, 3)) { const g = group(at); v.world.travel(at.split(':')[0], g.x, g.y); v.world.killGroups([g.id]); }
+  v.party.flags[CRACK_SEALED] = 1;
+  for (const at of STILLED) gone(v, at);
+  v.world.advance(2 * 1440 + 1);
+  const back = STILLED.filter((at) => live(v, at)), word = says(v);
+  ok(!back.length && word === '"The Sunder\'s beasts have stopped. The wall at the bottom is warm in one place, the surveyor says, and nothing comes out of it now."',
+    `the crack sealed, standing or killed none comes back two days on${back.length ? ' -> ' + back.join(', ') : ''}, and the Reader says the beasts have stopped`);
+  const WORDS: Record<string, string> = { reignite: '"Every lamp in the house burns steadier', arrive: '"The prior says we were the jailers.', finish: '"The Hearth burns harder' };
+  for (const [id, e] of Object.entries(ENDINGS)) {
+    const t = says(ready(CRACK_SEALED, e.flag));
+    ok(t.startsWith(WORDS[id]), `after ${e.flag} the Reader's word comes first of all (${t})`);
   }
 }

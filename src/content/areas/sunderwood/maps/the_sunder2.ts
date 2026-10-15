@@ -7,6 +7,7 @@
 // Band 14-16; docs/areas/sunderwood.md §4.6 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { CRACK_SEALED } from '../../hearth/maps/underdeep.ts';
 
 export const THE_SUNDER2: MapDef = {
   id: 'the_sunder2',
@@ -80,8 +81,8 @@ export const THE_SUNDER2: MapDef = {
   encounters: [
     // In the dead wood by the ledges' foot, a glass bear and spiders come down off the threads; further
     // on, toward the narrows, two glass bears. Both come back, whatever becomes of the Warden.
-    { id: 'su2_wood', x: 10, y: 5, monsters: ['glass_spider', 'glass_spider', 'glass_bear'], aware: 4, respawn: 2880, roams: false },
-    { id: 'su2_bears', x: 16, y: 11, monsters: ['glass_bear', 'glass_bear'], aware: 4, respawn: 2880, roams: false },
+    { id: 'su2_wood', x: 10, y: 5, monsters: ['glass_spider', 'glass_spider', 'glass_bear'], aware: 4, respawn: 2880, roams: false, until: { flag: CRACK_SEALED }, leaves: true },
+    { id: 'su2_bears', x: 16, y: 11, monsters: ['glass_bear', 'glass_bear'], aware: 4, respawn: 2880, roams: false, until: { flag: CRACK_SEALED }, leaves: true },
     // The Warden of the Sunder, in the gorge's narrowest place: it never comes back, and its fall closes nothing.
     { id: 'su2_warden', x: 15, y: 16, monsters: ['sunder_warden'], aware: 2, roams: false, slainText: 'It breaks into black glass at your feet, and the white light in the glass goes on burning. Nothing closes.' },
   ],
