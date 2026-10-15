@@ -4,7 +4,25 @@
 // where a Warden checkpoint warns every company that goes through. Difficulty band 1-5.
 import type { MapDef, Answer } from '../../../../game/map.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../../game/types.ts';
-import { THRONE_REMOVED } from './keep.ts';
+import { SAT, THRONE_REMOVED } from './keep.ts';
+import { ENDED } from '../../../endings.ts';
+
+// The Signet (64, #765; docs/areas/hearth_isle.md §6): after an ending the Council's clerk waits by the
+// gate to ask where the ring goes, until it has gone; once the Council has sat, into the chair's keeping.
+const RING = 'queens_signet';
+const RING_GONE = ['q_signet_cousin', 'q_signet_hold', 'q_signet_tallis', 'q_signet_sea'].map((flag) => ({ flag }));
+const CLERK = [
+  'The Council\'s clerk at the gate, with his book, as if he had been waiting there since the light came back.',
+  '"The Queen\'s signet. The Council is told you have it. The Council would like, very much, to know where it goes."',
+];
+const WHERE = '"Three claimants, and a Council that counts on its fingers. Or you keep it, and we count without it."';
+const GIVEN: Answer[] = [
+  { label: 'To the cousin.', takes: RING, sets: 'q_signet_cousin', says: ['He takes it in a cloth, as if it were hot.', '"The Wardens\' candidate. The Council will sit on it within the week."'] },
+  { label: 'To the hold.', takes: RING, sets: 'q_signet_hold', says: ['He takes it in a cloth, and looks at the seal on it, and at the mark on the seal.', '"The elves\' claim. The treaty\'s mark, and this one. The Council will sit on it within the week."'] },
+  { label: 'To Tallis.', takes: RING, sets: 'q_signet_tallis', says: ['He takes it in a cloth, and does not look at it at all.', '"The dockmaster. He has a hundred and forty hulls and now this. The Council will sit on it within the week, if it can find a week."'] },
+];
+const KEPT: Answer = { label: 'We keep it.', says: ['"Then the Council counts without it." He shuts the book. "It has done so before."'] };
+const KEEPING = '"The Council has sat, and does not sit twice. It goes into the chair\'s keeping."';
 
 // Ailith's first meeting and her Thornhold answer, the same before Act II and after (#157).
 const AILITH = [
@@ -59,8 +77,9 @@ export const SHELF: MapDef = {
   ],
   exits: [
     // After Act II the gate turns back a company with an orcblood member, and the harbour postern lets
-    // it in: no story lock (#151, call 1; #157). Every verdict of the Council's but a failed case lifts it (#764).
-    { x: 16, y: 3, to: 'harrow', tx: 7, ty: 14, tf: NORTH, label: 'You enter Helmstow.', shut: { flag: 'q_salt_done', member: { race: 'orcblood' } }, lifts: { flag: THRONE_REMOVED }, blockedText: 'A sergeant steps into the gate: "No orcblood past the gate. Regent\'s orders."' },
+    // it in: no story lock (#151, call 1; #157). Every verdict of the Council's but a failed case lifts it (#764),
+    // and so does any ending (#765).
+    { x: 16, y: 3, to: 'harrow', tx: 7, ty: 14, tf: NORTH, label: 'You enter Helmstow.', shut: { flag: 'q_salt_done', member: { race: 'orcblood' } }, lifts: [...ENDED, { flag: THRONE_REMOVED }], blockedText: 'A sergeant steps into the gate: "No orcblood past the gate. Regent\'s orders."' },
     { x: 18, y: 3, to: 'harrow', tx: 13, ty: 14, tf: NORTH, label: 'You come into Helmstow by the harbour postern, behind the fish carts.' },
     { x: 31, y: 9, to: 'thornmark', tx: 1, ty: 9, tf: EAST, label: 'The pass opens onto old forest. Thornmark.' },
     { x: 2, y: 28, to: 'greywater1', tx: 1, ty: 1, tf: SOUTH, label: 'A cave mouth in the cliff foot, half hidden by kelp. Brandy Hole.' },
@@ -68,6 +87,11 @@ export const SHELF: MapDef = {
   ],
   features: [
     { kind: 'sign', x: 16, y: 4, text: 'North: Helmstow. South and east along the road: Ellerby farm.' },
+    // After an ending (#765): the gate open, said once on the road before it, and the clerk on the grass.
+    { kind: 'event', x: 16, y: 5, id: 'gate_open', once: true, after: ENDED, text: 'The gate stands open, and the sergeant at it looks at every one of you and says nothing at all.' },
+    { kind: 'npc', x: 15, y: 4, name: 'Wiglaf, the Council\'s clerk', after: ENDED, until: RING_GONE, lines: CLERK, choice: { ask: WHERE, answers: [...GIVEN, KEPT] }, says: [
+      { after: SAT, lines: CLERK, choice: { ask: WHERE, answers: [...GIVEN.map((a) => ({ ...a, says: [a.says[0], KEEPING] })), KEPT] } },
+    ] },
     { kind: 'sign', x: 13, y: 9, text: 'South: the coast and Ellerby. West along the beach: Brandy Hole. East: the pass to Thornmark, Warden road.' },
     { kind: 'sign', x: 30, y: 9, text: 'Warden checkpoint. The road east is open. Past it lies Thornmark, and the Wardens will not come in after you.' },
     { kind: 'sign', x: 18, y: 16, text: 'East: Ellerby.' },

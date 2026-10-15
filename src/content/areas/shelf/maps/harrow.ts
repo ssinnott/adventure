@@ -7,7 +7,9 @@
 // verdict; the hold's opens the Chapel and Tallis's makes the stores a port's.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
+import type { QuestCond } from '../../../../game/quests.ts';
 import { THRONE_COUNCIL, THRONE_COUSIN, THRONE_HOLD, THRONE_REMOVED, THRONE_TALLIS, THRONE_WENNA } from './keep.ts';
+import { ENDED, ENDINGS } from '../../../endings.ts';
 
 const STOCK = ['club', 'dagger', 'staff', 'shortsword', 'mace', 'longsword', 'axe', 'spear', 'sling', 'shortbow', 'longbow', 'robe', 'leather', 'scale', 'chain', 'buckler', 'shield', 'potion_heal', 'antidote', 'lantern_oil', 'rations', 'torch'];
 const DEARER: Readonly<Record<string, number>> = {
@@ -19,7 +21,12 @@ const PORT: Readonly<Record<string, number>> = {
   club: 10, dagger: 24, staff: 16, shortsword: 80, mace: 90, longsword: 240, axe: 180, spear: 120, sling: 30, shortbow: 160, longbow: 400,
   robe: 20, leather: 120, scale: 440, chain: 1000, buckler: 80, shield: 300, potion_heal: 60, antidote: 50, rations: 8, torch: 4,
 };
-const CURFEW ='The curfew bell, from the Chapel tower: whoever has the rope now hauls it like a bucket.';
+// The Heart's three endings (#765; hearth_isle.md §12): the inn at 12 again after the Council's verdict or
+// any of them, and the Chapel open for the hold's verdict or any of them; each a link on its doorway.
+const RELIT = { flag: ENDINGS.reignite.flag }, OPENED = { flag: ENDINGS.arrive.flag }, FINISHED = { flag: ENDINGS.finish.flag };
+const CHEAP_AGAIN: readonly QuestCond[] = [{ flag: THRONE_REMOVED }, ...ENDED];
+const CHAPEL_OPEN: readonly QuestCond[] = [{ flag: THRONE_HOLD }, ...ENDED];
+const CURFEW = 'The curfew bell, from the Chapel tower: whoever has the rope now hauls it like a bucket.';
 const GATE_WARDENS = 'Wardens on the wall-walk and Wardens inside the gate, new faces all of them. They look you over slowly, the way men do who have nothing else to look at.';
 const POSTERN_WARDENS = 'Wardens on the wall above the postern, grey against the grey. None of them looks down; a fish cart is not their business, and nor, it seems, are you.';
 const GIBBET = 'A gibbet in the street, new, its timber still pale. The rope is tarred against the weather, and nothing hangs from it.';
@@ -63,8 +70,8 @@ export const HARROW: MapDef = {
     { kind: 'inn', x: 4, y: 4, name: 'The Hearthlight Inn', price: 12, interior: 'hearthlight_inn', until: { flag: 'q_salt_done' } },
     // Once the Council has removed Vask (#764) the inn is the old city's price again, the Chapel opens
     // for the hold and the stores are a port's for Tallis: each the next link on its doorway.
-    { kind: 'inn', x: 4, y: 4, name: 'The Hearthlight Inn', price: 18, interior: 'hearthlight_inn', after: { flag: 'q_salt_done' }, until: { flag: THRONE_REMOVED } },
-    { kind: 'inn', x: 4, y: 4, name: 'The Hearthlight Inn', price: 12, interior: 'hearthlight_inn', after: { flag: THRONE_REMOVED } },
+    { kind: 'inn', x: 4, y: 4, name: 'The Hearthlight Inn', price: 18, interior: 'hearthlight_inn', after: { flag: 'q_salt_done' }, until: CHEAP_AGAIN },
+    { kind: 'inn', x: 4, y: 4, name: 'The Hearthlight Inn', price: 12, interior: 'hearthlight_inn', after: CHEAP_AGAIN },
     // The Bard's first prestige (#19; DESIGN §5): the luthier, who keeps no shop, under the inn's eaves.
     { kind: 'npc', x: 5, y: 5, name: 'Aldith the luthier', lines: [
       'An old woman on a bench under the Hearthlight\'s eaves, out of the drip, with a lute in pieces across her knees and a glue pot at her foot. She fits the neck to the body, holds it there, and talks past it.',
@@ -72,14 +79,21 @@ export const HARROW: MapDef = {
       '"Any Guildhall boy can sing a line into heart. A song with an edge in it goes in with the line and comes out the other side. One of you has the makings. Sit, and keep the neck straight while this sets."',
     ], teaches: { cls: 'bard', prestige: 1, seek: 'Aldith the luthier, on her bench under the Hearthlight\'s eaves in Helmstow, can make a Troubadour of a bard.' } },
     { kind: 'temple', x: 11, y: 4, name: 'Chapel of the Lanterns', interior: 'lantern_chapel', until: { flag: 'q_salt_done' } },
-    { kind: 'event', x: 11, y: 4, id: 'chapel_shut', once: true, after: { flag: 'q_salt_done' }, until: { flag: THRONE_HOLD },
+    { kind: 'event', x: 11, y: 4, id: 'chapel_shut', once: true, after: { flag: 'q_salt_done' }, until: CHAPEL_OPEN,
       text: 'The Chapel, boarded, a notice under the Regent\'s seal across the boards. Low on the door, in chalk: GONE TO THE WATCH. THE BOOK WITH ME.' },
-    { kind: 'temple', x: 11, y: 4, name: 'Chapel of the Lanterns', interior: 'lantern_chapel', after: { flag: THRONE_HOLD } },
+    { kind: 'temple', x: 11, y: 4, name: 'Chapel of the Lanterns', interior: 'lantern_chapel', after: CHAPEL_OPEN },
     { kind: 'shop', x: 4, y: 10, name: "Mottram's Stores", stock: STOCK, interior: 'harrow_provisioner', until: { flag: 'q_salt_done' } },
     // Half as much again, but the Lantern Oil, whose forty Mottram names in Oil for the Lamp.
     { kind: 'shop', x: 4, y: 10, name: "Mottram's Stores", stock: STOCK, prices: DEARER, interior: 'harrow_provisioner', after: { flag: 'q_salt_done' }, until: { flag: THRONE_TALLIS } },
     { kind: 'shop', x: 4, y: 10, name: "Mottram's Stores", stock: STOCK, prices: PORT, interior: 'harrow_provisioner', after: { flag: THRONE_TALLIS } },
     { kind: 'guild', x: 11, y: 10, name: 'Lantern Guildhall', classes: ['cleric', 'sorcerer', 'paladin', 'ranger', 'bard', 'druid'], fee: 50, interior: 'lantern_guildhall', hall: 'lanterns' },
+    // The house's Luminary on the step by its door after an ending (#765), with the hall's word on it.
+    { kind: 'npc', x: 12, y: 11, name: 'The Guildhall\'s Luminary', after: ENDED, lines: [
+      '"Every lamp in the house burns steadier than it did. Whatever the Hearth is, we kept it, and I will say so from the step."',
+    ], says: [
+      { after: OPENED, lines: ['"Half the house says we were the lamp\'s keepers and have put it out, and half says we were its jailers and have let it go, and I am to say which from the step. I have not decided."'] },
+      { after: FINISHED, lines: ['"The Hearth burns harder, and the house argues what for. I have told them to light the lamps and wait, which is what Lanterns are for."'] },
+    ] },
     { kind: 'trainer', x: 3, y: 13, name: 'Warden Drillyard', maxLevel: 6, interior: 'warden_drillyard', hall: 'wardens' },
     // The Wardens split quietly (#151, call 5): the captains who back the Queen's cousin keep the
     // Drillyard and give its work, and the walls are Vask's.
@@ -87,6 +101,10 @@ export const HARROW: MapDef = {
       'A captain in Warden grey sits on the drillmaster\'s bench with his sword across his knees. The Crown badge on his sleeve is the old one, and he has not had it cut off.',
       '"The Drillyard\'s open; the captains give its work. The walls are Vask\'s." He lets the yard\'s noise lower his voice for him. "Same grey, both. Learn the faces."',
     ], says: [
+      // The hall's word after an ending (#765), first of all.
+      { after: RELIT, lines: ['"The light\'s steady and the Regent\'s in irons, and the Wardens are one grey again. I\'d have settled for one of the three."'] },
+      { after: OPENED, lines: ['"Wind on the walls. The men keep looking up. I tell them it\'s the Wardens\' sky as much as anyone\'s, and I don\'t know if it\'s true."'] },
+      { after: FINISHED, lines: ['"The ground hums. The sergeants say they can\'t sleep for it. I say good: nobody should sleep through this."'] },
       { after: { flag: 'q_ordgar' }, lines: [
         '"The board\'s there. Take what\'s on it and be back by the bell; I\'ll not have the walls say the Drillyard breaks curfew."',
       ] },
@@ -104,6 +122,13 @@ export const HARROW: MapDef = {
       'A dockhand: "They boarded the Chapel on a Tuesday. Nobody carried anything out but the sexton, and he had a book under his coat, out of the rain. There was no rain."',
       'A Warden, into his cup: "Ask at the Drillyard if you want paying. Ask on the wall if you want telling. Don\'t ask either one about the other."',
     ], says: [
+      // After an ending (#765), first of all: the light, or the wind, or the hum.
+      { after: RELIT, lines: ['A fisherman, from the door: "Steady as a post, all night, every night. I\'d forgotten what it was for. It\'s for steering by."'] },
+      { after: OPENED, lines: [
+        'The tavern\'s door stands open on a street in the wrong-coloured light, and nobody has shut it in a week.',
+        'A dockhand: "There\'s wind. Did you know there was wind?"',
+      ] },
+      { after: FINISHED, lines: ['A fisherman, with his hand flat on the table: "Feel that. The table. The floor. It\'s been doing it since the light stood up. My grandfather\'s going to say he told us so, and he never said a word."'] },
       // Once the Council has sat for a claimant or for nobody (#764): its verdict, and no Warden at the door.
       { after: { flag: THRONE_COUSIN }, lines: ['A Warden, loud, with the old badge on: "The cousin sits in the chair and the Regent sits in a cell, and I was on the wall for both."'] },
       { after: { flag: THRONE_HOLD }, lines: ['A fisherman: "An elf on Helmstow\'s chair, and the treaty read out on the keep steps. My grandfather said it was so and we laughed at him."'] },
