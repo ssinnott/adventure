@@ -16,7 +16,8 @@
 // champions, the eleven niches and the eleven kept for a company that gave the log, the side vault's dead
 // and rats, the keeper at the passage and her knot on the grey door's frame. Last, the Cleric's third
 // (#763), The Eleven Kept, played twice by a cleric of 27 with the second: the anchoress's ask and then the
-// Crowness keeper's log, the eleven lit and the third taught; and the log brought before the ask.
+// Crowness keeper's log, the eleven lit and the third taught; and the log brought before the ask. Then three
+// companies short of the ask: she never asks it of them, and the log she takes from them begins no journal.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen, walkThrough, gone as left } from '../../../../tools/walk.ts';
 import type { Walk } from '../../../../tools/walk.ts';
@@ -398,7 +399,9 @@ export const walkthrough: Walkthrough = (ok) => {
  * Bard's gathering still reads it), handed in, her word to go down; the chamber's champions won at 29 and the
  * eleven lit; back at the window, her last words and the third taught, for the deed and no gold. The log
  * first: taken at the first meeting and heard `early`, the ask never said, the quest begun on the log alone,
- * and the deed and the teaching the same.
+ * and the deed and the teaching the same. Then three companies short of the ask (a cleric of 27 with the
+ * first only, one of 26 with the second, none): her own words again, never the ask, and the log she takes
+ * all the same begun for none of them until the cleric is 27 with the second.
  */
 function elevenKept(ok: (cond: boolean, msg: string) => void): void {
   const I6 = MAP_DEFS.find((d) => d.id === 'hearthisle_i6')!, CRYPT = MAP_DEFS.find((d) => d.id === 'hearthfane2')!, E3 = MAP_DEFS.find((d) => d.id === 'downs_e3')!;
@@ -462,4 +465,33 @@ function elevenKept(ok: (cond: boolean, msg: string) => void): void {
   };
   play(false);
   play(true);
+
+  // The ask's gate and the log's: a cleric of 27 with the second, and no less. A company short of it (a
+  // cleric of 27 with the first only, or of 26 with the second, or none) hears her own words again and never
+  // her ask; and the log, which she takes from any company, is not begun for one with no such cleric, which
+  // would be shown a goal no one in it can finish. It is there once the cleric is 27 with the second.
+  const clericOf = (w: Walk) => w.party.members.find((m) => m.cls === 'cleric')!;
+  const short = (how: string, make: (w: Walk) => void, rise?: (w: Walk) => void): void => {
+    const w = newWalk(ok);
+    make(w);
+    const log = (id: string) => questLog(w.world.state, w.party).find((v) => v.def.id === id);
+    const talk = (): string => { w.world.travel('hearthisle_i6', anchoress.x, anchoress.y); const said = meet(anchoress, w.party, heard(w.world, anchoress)).text; listen(w); return said; };
+    const [first, again] = [talk(), talk()];
+    ok(first === anchoress.lines.join('\n\n') && again === first && !w.party.flags[KEPT_ASKED] && !log('eleven_kept'),
+      `${how}: she says her own words and says them again, never her ask, and no journal is begun`);
+    w.world.travel('downs_e3', chest.x, chest.y);
+    w.world.markUsed(chest.id);
+    w.party.bag.push(...chest.items);
+    const said = talk();
+    ok(said === hand.done.join('\n\n') && !!w.party.flags[LOG_GIVEN] && !w.party.bag.includes('keepers_log') && !log('eleven_kept'),
+      `${how}: she takes the log all the same, and the journal shows no goal that no one in the company can finish`);
+    if (!rise) return;
+    rise(w);
+    const entries = (log('eleven_kept')?.pages.flatMap((p) => p.entries.map((e) => e.id)) ?? []).join();
+    ok(entries === 'given' && log('eleven_kept')?.goal === 'Down into the crypt under Hearthfane, and light the eleven lamps as the log has them.',
+      `${how}: and once its cleric is 27 with the second the log is there, reading from the log given`);
+  };
+  short('a cleric of 27 with the first only', (w) => { const c = clericOf(w); c.xp = xpForLevel(27); c.level = 27; takePrestige(c); }, (w) => takePrestige(clericOf(w)));
+  short('a cleric of 26 with the second', (w) => { const c = clericOf(w); c.xp = xpForLevel(26); c.level = 26; takePrestige(c); takePrestige(c); }, (w) => { const c = clericOf(w); c.xp = xpForLevel(27); c.level = 27; });
+  short('a company with no cleric', (w) => { w.party.members = w.party.members.filter((m) => m.cls !== 'cleric'); });
 }

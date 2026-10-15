@@ -50,10 +50,12 @@ export const QUESTS: readonly QuestDef[] = [
   {
     // The Cleric's third, at 27 with the second: begun on the anchoress's ask, or on the log given to her
     // before it (a hand-in takes its item at the first meeting, so either may come first); done once a
-    // cleric of the company is an Exarch. The deed is the eleven lamps in the crypt (ELEVEN_KEPT).
+    // cleric of the company is an Exarch. The deed is the eleven lamps in the crypt (ELEVEN_KEPT). The
+    // log given begins it only for a company with a cleric of 27 with the second, as the ask is said:
+    // the hand-in takes the Crowness log from any company, and a goal no one can finish is not shown.
     id: 'eleven_kept',
     title: 'The Eleven Kept',
-    start: [{ flag: KEPT_ASKED }, { flag: LOG_GIVEN }],
+    start: [{ flag: KEPT_ASKED }, { flag: LOG_GIVEN, member: { cls: 'cleric', level: 27, prestige: 2 } }],
     done: { member: { cls: 'cleric', prestige: 3 } },
     entries: [
       { id: 'asked', when: { flag: KEPT_ASKED }, text: 'The anchoress walled into Anchorhold counted the eleven the night the Queen died, and wants the Crowness keeper\'s log, to see if he counted the same.' },

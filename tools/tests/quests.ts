@@ -9,7 +9,7 @@ import { homeMap, zoneOfMap } from '../../src/game/atlas.ts';
 import { existsSync, readFileSync } from 'node:fs';
 import { takenFlag, doneFlag } from '../../src/content/guilds.ts';
 import { World } from '../../src/game/world.ts';
-import { defaultParty, takeItem } from '../../src/game/party.ts';
+import { defaultParty, takeItem, takePrestige, prestigeOf } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
 import { serialize, deserialize } from '../../src/game/save.ts';
 import { questLog, questMarks, questNews } from '../../src/game/quests.ts';
@@ -195,6 +195,13 @@ export function quests(): void {
     if (c.seen) { const [m, id] = c.seen.split(':'); stateFor(s.world, m).used[id] = 1; }
     for (const ref of [c.slain ?? []].flat()) { const [m, id] = ref.split(':'); stateFor(s.world, m).groups[id].dead = s.world.state.minutes; }
     if (c.visited) stateFor(s.world, c.visited);
+    // A start may ask a member (the Cleric's third begins on the log given only for a cleric of 27 with the
+    // second, #763): raise the first member that fits the class and race to the level and the prestige, so
+    // the way in can hold. Every other condition is satisfied as it was, and a member nobody fits is left.
+    if (c.member) {
+      const m = c.member, who = m.who === undefined ? s.party.members.find((x) => (m.cls === undefined || x.cls === m.cls) && (m.race === undefined || x.race === m.race)) : s.party.members[m.who];
+      if (who) { who.level = Math.max(who.level, m.level ?? 0); while (prestigeOf(who) < (m.prestige ?? 0)) takePrestige(who); }
+    }
   };
   const view = (s: { party: Party; world: World }, id: string): QuestView | undefined => questLog(s.world.state, s.party).find((v) => v.def.id === id);
   const page = (s: { party: Party; world: World }, q: LogQuest, c: QuestDef): PageView | undefined => view(s, q.id)?.pages.find((p) => p.def === c);
