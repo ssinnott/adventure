@@ -495,13 +495,14 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(shard?.kind === 'chest' && shard.items.includes('sunder_shard') && shard.x === 18 && shard.y === 15, 'in the rock at the bed\'s end, the Sunder Shard');
 
   // The bears at the far end, at 16, the box's top; then the Rift in the crystal, walked into from its
-  // lane, and its groups won at its floor. Nothing closes it: its groups keep coming back, and its tear
-  // has no quiet word.
+  // lane, and its groups won at its floor. Nothing on the road closes it: its groups keep coming back
+  // until the crack is sealed far below (#765), and its tear has no quiet word.
   fight(w, 'eaves_k3:k3_bears');
   w.level = 14;
   walkThrough(w, 'eaves_k3', 15, 26, EAST, 'k3_rift', 2);
   for (const g of K3_RIFT.encounters!) fight(w, `k3_rift:${g.id}`);
-  ok(K3_RIFT.encounters!.every((e) => !!e.respawn && !e.until) && !K3_RIFT.features!.some((f) => 'after' in f && f.after), 'the Rift stays open: its groups come back, and its tear never goes quiet');
+  ok(K3_RIFT.encounters!.every((e) => !!e.respawn && !!e.leaves && JSON.stringify(e.until) === JSON.stringify({ flag: CRACK_SEALED })) && !K3_RIFT.features!.some((f) => 'after' in f && f.after),
+    'the Rift stays open: its groups come back until the crack below is sealed, and its tear never goes quiet');
 
   // The Sunder: in at the door on K3's first landing, from the ledge, and down the stair in the rock.
   walkThrough(w, 'eaves_k3', 9, 8, EAST, 'the_sunder', 1);
@@ -1015,9 +1016,10 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
 
 /** The Sunder's own kinds: its Rift's sunderlings, Warden and hounds, and the glass beasts. */
 const SUNDER_KINDS = ['sunderling', 'sunder_warden', 'sunder_hound', 'glass_spider', 'glass_bear'];
-/** The Sunder's groups (#765): those the most of whose monsters are its own, but its dens' keepers and its Warden. */
+/** The Sunder's groups (#765): those the most of whose monsters are its own, the K3 Rift's two with them, but a den's keepers and brood and its Warden. */
 const STILLED = ['eaves_j2:j2_hounds', 'eaves_k2:k2_hounds', 'eaves_k2:k2_bears', 'eaves_k3:k3_bears', 'lanternwood_l2:l2_hounds', 'lanternwood_l2:l2_bears', 'lanternwood_l3:l3_bank',
-  'lanternwood_l4:l4_night', 'lanternwood_m2:m2_hounds', 'lanternwood_m2:m2_bears', 'the_sunder:su1_spiders', 'the_sunder2:su2_wood', 'the_sunder2:su2_bears'];
+  'lanternwood_l4:l4_night', 'lanternwood_m2:m2_hounds', 'lanternwood_m2:m2_bears', 'the_sunder:su1_spiders', 'the_sunder2:su2_wood', 'the_sunder2:su2_bears',
+  'k3_rift:k3_rift_g1', 'k3_rift:k3_rift_g2'];
 
 /**
  * The road behind (#765): once the crack is sealed below (#56's 61, the Ways), the Sunder's groups stand

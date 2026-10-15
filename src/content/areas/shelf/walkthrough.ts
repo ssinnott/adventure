@@ -736,9 +736,10 @@ function homecoming(ok: (cond: boolean, msg: string) => void): void {
 /**
  * The Walk Home (Hearth Isle's §6 and §12, #765): any ending walks Wenna home to Gullwick. Before one,
  * Hild ties her knots and nobody stands at the third house's door, on the tideline or beside her. After
- * each, Jowan's mother takes his letter, the sea takes the ring, Hild's words end the walk and Wenna sits
- * on the shingle beside her, gone from the Core. The sea asks a company with no ring too, its throw
- * barred. The flags and the finds are set by hand, as the homecoming's are.
+ * each, Jowan's mother takes his letter, Hild's words end the walk and Wenna sits on the shingle beside
+ * her, gone from the Core; only then does the sea ask for the ring, with the girl there to look round.
+ * It asks a company with no ring too, its throw barred. The flags and the finds are set by hand, as the
+ * homecoming's are.
  */
 function walkHome(ok: (cond: boolean, msg: string) => void): void {
   const HILD = who('downs_f3', 10, 15, 'Hild'), MOTHER = who('downs_f3', 10, 13, 'Jowan'), SEA = who('downs_f3', 9, 15, 'The sea'), WENNA = who('downs_f3', 11, 15, 'Wenna');
@@ -757,25 +758,26 @@ function walkHome(ok: (cond: boolean, msg: string) => void): void {
   }
   for (const end of Object.values(ENDINGS)) {
     const w = ready(end.flag), how = `after ${end.flag}`;
-    w.ok(w.news.includes('New quest: The Walk Home.') && page(w, 'walk_home')?.goal === 'Along the coast road to Gullwick, to the shore where her mother stands.' && there(w, GIRL, 'core') && !there(w, WENNA, 'downs_f3'),
-      `${how} the walk home begins, its goal Gullwick's shore, and Wenna is at the Core and not yet on the shingle`);
+    w.ok(w.news.includes('New quest: The Walk Home.') && page(w, 'walk_home')?.goal === 'Along the coast road to Gullwick, to the shore where her mother stands.' && there(w, GIRL, 'core') && !there(w, WENNA, 'downs_f3') && !there(w, SEA, 'downs_f3'),
+      `${how} the walk home begins, its goal Gullwick's shore; Wenna is at the Core and not yet on the shingle, and the sea does not ask yet`);
     const read = hear(w, 'downs_f3', MOTHER);
     w.ok(read.startsWith('She reads it standing, twice') && !w.party.bag.includes('gullwick_letter') && !!w.party.flags.q_letter_given && !!page(w, 'letter')?.done,
       `${how} Jowan's mother at her door takes his letter, and A Letter for Gullwick is done`);
-    w.world.travel('downs_f3', SEA.x, SEA.y);
-    const sea = meet(SEA, w.party, heard(w.world, SEA)), toss = sea.choice?.answers.find((a) => a.label === 'Throw it in.');
-    const thrown = toss ? answer(toss, w.party) : '';
-    listen(w);
-    w.ok(sea.text === SEA.lines.join('\n\n') && sea.choice?.ask === 'Throw the ring in?' && thrown.includes('"Good," she says.') && !w.party.bag.includes('queens_signet') && !there(w, SEA, 'downs_f3') && !!page(w, 'signet')?.done,
-      `${how} the sea off Gullwick takes the ring and is gone, and The Signet is done`);
     const home = hear(w, 'downs_f3', HILD), after = hear(w, 'downs_f3', HILD), wenna = hear(w, 'downs_f3', WENNA);
     w.ok(home.endsWith('This time, she cries.') && !!w.party.flags[WENNA_HOME] && !!page(w, 'walk_home')?.done && after.endsWith('"It is going to take till summer. Sit down."'),
       `${how} Hild cries this time and the walk home is done, and after it she unties the knots with her girl`);
     w.ok(there(w, WENNA, 'downs_f3') && !there(w, GIRL, 'core') && wenna.includes('I\'m not anyone\'s key.'),
       `${how} Wenna sits on the shingle beside her mother, gone from the Core, and will not take the ring`);
+    w.world.travel('downs_f3', SEA.x, SEA.y);
+    const sea = meet(SEA, w.party, heard(w.world, SEA)), toss = sea.choice?.answers.find((a) => a.label === 'Throw it in.');
+    const thrown = toss ? answer(toss, w.party) : '';
+    listen(w);
+    w.ok(sea.text === SEA.lines.join('\n\n') && sea.choice?.ask === 'Throw the ring in?' && thrown.includes('the girl beside her does.') && !w.party.bag.includes('queens_signet') && !there(w, SEA, 'downs_f3') && !!page(w, 'signet')?.done,
+      `${how}, Wenna home, the sea off Gullwick takes the ring and is gone, and The Signet is done`);
   }
   {
     const w = ready(ENDINGS.finish.flag, false);
+    w.party.flags[WENNA_HOME] = 1;
     w.world.travel('downs_f3', SEA.x, SEA.y);
     const c = meet(SEA, w.party, heard(w.world, SEA)).choice, toss = c?.answers.find((a) => a.label === 'Throw it in.'), keep = c?.answers.find((a) => a.label === 'Keep it.');
     w.ok(!!toss && barred(toss, w.party) && !!keep && answer(keep, w.party) === 'The sea goes on giving nothing back.' && there(w, SEA, 'downs_f3'),

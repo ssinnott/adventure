@@ -1438,8 +1438,8 @@ mother two doors from Hild's.
 - **As built** (the Stair, #758): the quest is `letter` and the item `gullwick_letter`, *Letter for
   Gullwick*, in `ud2_letter_chest` on `ud2_letter`'s square (15,21), as the brief has it. The
   item's text is a line of what it is (*A letter sealed with a knot of rope, the seal Gullwick's.*)
-  and the brief's words in two quoted paragraphs (#758's 12). The hand-in is #765's:
-  `q_letter_given` is owed in `UNSET` (`tools/tests/quests.ts`) until it lands.
+  and the brief's words in two quoted paragraphs (#758's 12). The hand-in is #765's, built:
+  Jowan's mother at Gullwick takes the letter and sets `q_letter_given`.
 
 **59. Every Frame She Marked** (`frames`, the Ways and the Stair, 30). No giver: a thing found.
 The eight frames' knots are once-events (§4.6); the eighth's words are the hatch's hint; the hatch
@@ -1554,10 +1554,10 @@ want it. The Council sits on it with everything else (below).
 - **As built** (the Heart, #759): the quest is `signet` and the item `queens_signet`, *Queen's
   Signet*, with the text given in §8, read from the pack; every answer at the panel gives it. The
   log is keyed on the item and the four `q_signet_*` flags, its "and the like" written *It went to
-  the hold, in a cloth.* and *It went to Tallis, in a cloth.* Its goal is at `shelf`. The clerk,
-  the sea and the hand-in are #765's: `UNSET` (`tools/tests/quests.ts`) owes it the four
-  flags (the three were #759's; the sea's is added) and no longer owes the endings' three, which
-  Wenna's answers set (#759's 10).
+  the hold, in a cloth.* and *It went to Tallis, in a cloth.* Its goal is at `shelf`. The clerk
+  and the sea are #765's: the sea sets `q_signet_sea` at Gullwick once Wenna is home (built), and
+  `UNSET` (`tools/tests/quests.ts`) owes the clerk's three to its Helmstow half; it no longer owes
+  the endings' three, which Wenna's answers set (#759's 10).
 
 **The Walk Home** (`walk_home`, after the ending). The chapter is done on the choice (§5), so the
 walk is a quest of its own, begun on any ending and done on Hild's words. `start: ENDED`, `done: { flag: WENNA_HOME }`;
@@ -2974,17 +2974,16 @@ Decided by delegate for #765 (half B: Gullwick and the rest), each the owner's t
    names that half's event, and `tools/tests/quests.ts` fails a `seen` on nothing.
 2. **The knockers are `ud_mines`,** §4.6's id, standing at 6,3 as the corridor's others do and told by
    a once-event, `dm3_open` at 7,3, with the brief's look: a group has no `look` (as #756's 3).
-3. **The gate leaves the road behind's groups out** (`BEHIND`, `tools/tests/gate.ts`): the knockers put
-   the corridor's day at 12.57 fights to a rest, past its limit, though no company at its floor meets
-   them. The curve counts them and the Kilns' lead holds at 19.3. Outside the content lane.
-4. **The thane's line waits on his answer too** (`CREW_OPEN` with `BOUGHT` or `TAKEN`), and the
-   Reader's four stand after the badge's question and the wall's word: first of all, they would hide
-   those for good.
-5. **The Sunder's groups are the thirteen the most of whose monsters are its own;** its dens' keepers,
-   its Warden, `k3_door` and `l4_brood` (an `until` of their own, which `leaves` would change before
-   the crack) and the three the wood or the Hand lead stand.
+3. **The gate leaves `ud_mines` out** (`BEHIND`, `tools/tests/gate.ts`, outside the lane): no company at
+   the corridor's floor meets it. The curve counts it, as its pay is real; the Kilns' lead holds at 19.3.
+4. **Wolfram's line waits on his answer too;** Hester's four come at every meeting before all her words
+   but two said once, and an ending's word comes first, so the crack's is heard before an ending only.
+5. **The Sunder's groups are the fifteen the most of whose monsters are its own,** the K3 Rift's two with
+   them; its dens' keepers, its Warden, `k3_door`, `l4_brood` and the three the wood or the Hand lead stand.
 6. **The harbourmaster's and the Reader's lines are the brief's words alone,** with no line of
    narration before them, as the brief gives none.
+7. **The sea stands `after: { flag: WENNA_HOME }`, not the plan's `ENDED`:** its *Throw it in.* has the
+   girl beside Hild look round, untrue while Wenna is still at the Core.
 
 ## 10. Names
 
@@ -3223,7 +3222,8 @@ Owed, from the Heart (#759):
 - **The road behind is #765's:** `q_wenna_home`, which ends Wenna's words at 7,4 (her `until`), is set
   by Hild at Gullwick and `q_signet_sea` by the sea there, taking `queens_signet` (built); the clerk
   at `shelf` 15,4 and his three `q_signet_*` are Helmstow's half, which `UNSET`
-  (`tools/tests/quests.ts`) owes until they land.
+  (`tools/tests/quests.ts`) owes until they land. The Walk Home's `gate` entry, on that half's
+  `gate_open`, waits on #788 too, and #765 is done only with both: whichever lands second adds it.
 - **The chapter is #760's:** the Heart's steps are `core:core_door` and `core:core_heart` (seen),
   the flags `VASK_FALLEN`, `VOICE_WHOLE`, `RING_GIVEN` and `ENDED`, at `core`; 64 is `signet` in the
   area's `quests.ts`.
@@ -3338,7 +3338,8 @@ cast; taller than full for finished. The night sky's Hearth (`src/ui/viewport.ts
 (§6, The Walk Home); Jowan's mother at 10,13 (58); the sea at 9,15 (64).
 
 **As built, Gullwick and the rest** (#765; Helmstow, its halls, Saltmouth's and the priestess are its
-other half's). On `downs_f3`, Hild's two `says` first, Jowan's mother, the sea and Wenna as written;
+other half's). On `downs_f3`, Hild's two `says` first and Jowan's mother and Wenna as written; the sea
+once Wenna is home (`after: { flag: WENNA_HOME }`, not `ENDED`), so its words hold;
 The Walk Home (`walk_home`, with the Hearth's quests) has its entries on `ENDED` and
 `WENNA_HOME` and its goal at `downs_f3`; its entry at the open gate waits on `gate_open`, the other
 half's. Ashfall's seven groups go `until: ENDED` with `leaves`, and the harbourmaster's line is a
@@ -3346,7 +3347,8 @@ half's. Ashfall's seven groups go `until: ENDED` with `leaves`, and the harbourm
 `look`; the gate leaves them out of the Kilns' figures (`BEHIND`) and the curve counts them; the
 thane's line waits on his answer as well. The Sunder's groups given `until: { flag: CRACK_SEALED }`
 and `leaves`: `j2_hounds`, `k2_hounds`, `k2_bears`, `k3_bears`, `l2_hounds`, `l2_bears`,
-`l3_bank`, `l4_night`, `m2_hounds`, `m2_bears`, `su1_spiders`, `su2_wood` and `su2_bears`. The
-Reader's four lines stand after the badge's question and the wall's word, each said once. `i11_stone` sets `q_peak_stood` already
-(#751). The Grove Stone counts on `q_mender_done`, and the last crossing, whose isle end H6 landed
+`l3_bank`, `l4_night`, `m2_hounds`, `m2_bears`, `su1_spiders`, `su2_wood`, `su2_bears` and the K3 Rift's
+`k3_rift_g1` and `k3_rift_g2`. The Reader's four lines come at every meeting, after the badge's question
+and the wall's word, which are said once; the crack's is heard before an ending only. `i11_stone` sets
+`q_peak_stood` already (#751). The Grove Stone counts on `q_mender_done`, and the last crossing, whose isle end H6 landed
 (#753), is free at both ends.

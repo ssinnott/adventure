@@ -154,8 +154,9 @@ export const DOWNS_F3: MapDef = {
       '"There\'s no singing here. There\'s the sea, and that\'s loud enough to sleep by. Tell Hale I stayed. He\'ll not believe it. Tell him anyway."',
     ], after: { flag: 'q_paper_hale' } },
     // The road behind (Hearth Isle's §12, #765), after any ending: Jowan's mother at her door, two doors
-    // from Hild, takes his letter (#56's 58); the sea off Gullwick, a person with no face as the Ember
-    // Stone's sockets are, takes the ring (64); and once Hild has said hers, Wenna on the shingle.
+    // from Hild, takes his letter (#56's 58). Once Hild has said hers, Wenna on the shingle, and the sea
+    // off Gullwick, a person with no face as the Ember Stone's sockets are, takes the ring (64) with the
+    // girl there to look round (after `WENNA_HOME`, not the plan's `ENDED`: §9.2, #765's B7).
     { kind: 'npc', x: 10, y: 13, name: 'Jowan\'s mother', after: ENDED, lines: [
       'A woman at her door in the third house from the slip, her arms folded, watching Hild on the shingle and not going down.',
       '"Mine went too. Not taken. Went. There\'s no knot for that."',
@@ -163,7 +164,7 @@ export const DOWNS_F3: MapDef = {
       'She reads it standing, twice, and folds it into her apron.',
       '"He chose it. Well. He never could stand to be fetched." She looks at the shingle, where Hild is. "I\'ll go down, then. In a bit."',
     ] } },
-    { kind: 'npc', x: 9, y: 15, name: 'The sea off Gullwick', after: ENDED, until: { flag: 'q_signet_sea' }, lines: [
+    { kind: 'npc', x: 9, y: 15, name: 'The sea off Gullwick', after: { flag: WENNA_HOME }, until: { flag: 'q_signet_sea' }, lines: [
       'The sea off Gullwick, where the boat went out the night the light failed. It gives nothing back.',
     ], choice: { ask: 'Throw the ring in?', answers: [
       { label: 'Throw it in.', takes: SIGNET, sets: 'q_signet_sea', says: [

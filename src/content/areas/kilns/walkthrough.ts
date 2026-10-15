@@ -1510,8 +1510,9 @@ function tiefzeche(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   const machines = MAP_DEFS.filter((d) => !later.has(d.id) && (d.encounters ?? []).some((g) => g.monsters.some((m) => MONSTERS[m].kind === 'machine'))).map((d) => d.id);
   ok(machines.join() === 'deep_mines3', `the first machines on the road stand at the bottom of the deepest mine, and nowhere else (${machines.join(', ')})`);
   // The clean corridor: six knockers and a mender, twice, won at the bottom's floor; the menders drop their spools.
-  // The knockers up through the door left open from the Ways wait on its answer (#765), and are walked there.
-  for (const g of L3.encounters!.filter((e) => e.id !== 'dm3_foreman' && !e.after)) {
+  // The knockers up through the door left open from the Ways, `ud_mines`, wait on its answer (#765) and are
+  // walked there (`crewOpen`).
+  for (const g of L3.encounters!.filter((e) => e.id !== 'dm3_foreman' && e.id !== 'ud_mines')) {
     ok(g.monsters.filter((m) => m === 'knocker').length === 6 && g.monsters.filter((m) => m === 'mender').length === 1 && g.monsters.length === 7, `${g.id}: six knockers and a mender`);
     fight(w, `deep_mines3:${g.id}`);
   }

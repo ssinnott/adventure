@@ -2,7 +2,8 @@
 // wood along both lips and the glass grown thick to the east; the ledges cut into the east face, a
 // square wide, the way down, with the way cut into the rock on the first landing; the gleaners
 // quarrying the Rift on them with their hounds; the river's old bed on the east lip, from before the Sunder took the river;
-// and a black-glass Rift in the crystal at the box's south end, open whatever the company does.
+// and a black-glass Rift in the crystal at the box's south end, open whatever the company does, though
+// what comes out of it stops once the crack is sealed far below (#765).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/sunderwood.md §4.5 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH, WEST } from '../../../../game/types.ts';
@@ -12,14 +13,16 @@ import { CRACK_SEALED } from '../../hearth/maps/underdeep.ts';
 /**
  * The black-glass Rift in the crystal (#165): sunderlings nearer the way in and glass spiders by the
  * tear. It has no until and no warden: the Sunder's Stone is long gone, so its groups come back and
- * its tear never goes quiet, whatever the company does.
+ * its tear stays open. Only the crack sealed far below (#56's 61, #765) quiets what comes out of it:
+ * its two groups leave then, standing or killed, by the leave rule.
  */
-export const K3_RIFT = rift({
+const TEAR = rift({
   id: 'k3_rift', template: 'spiral', material: 'glass', seed: 2, band: [14, 15], region: 'sunderwood',
   out: { to: 'eaves_k3', tx: 15, ty: 26, tf: WEST },
   table: { groups: [['sunderling', 'sunderling', 'sunderling', 'sunderling'], ['glass_spider', 'glass_spider', 'glass_spider', 'glass_spider']] },
   hoard: { gold: 150, items: ['potion_heal'] },
 });
+export const K3_RIFT: typeof TEAR = { ...TEAR, map: { ...TEAR.map, encounters: TEAR.map.encounters!.map((g) => ({ ...g, until: { flag: CRACK_SEALED }, leaves: true })) } };
 
 export const EAVES_K3: MapDef = {
   id: 'eaves_k3',
