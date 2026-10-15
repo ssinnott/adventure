@@ -120,6 +120,8 @@ export const walkthrough: Walkthrough = (ok) => {
   see(w, 'hearthisle_h6:h6_bowl');
   const chest = H6.features!.find((f) => f.kind === 'chest' && f.id === 'h6_picket_chest');
   ok(chest?.kind === 'chest' && chest.items.includes('grey_knife') && chest.gold === 700, 'in the picket\'s chest at the cleft\'s head, 700 gold and a Grey Knife');
+  const toll = H6.features!.find((f) => f.kind === 'chest' && f.id === 'h6_toll');
+  ok(toll?.kind === 'chest' && toll.gold === 1200 && !toll.items.length && toll.x === 20 && toll.y === 13, 'behind the preacher at the temple\'s door the Hand\'s toll, 1,200 gold');
 
   // The camp in the lee of the rim: its fires, the isle's rest; its three tents round a yard, each a door
   // into its room; and the pilgrims' shrine.
@@ -357,6 +359,8 @@ export const walkthrough: Walkthrough = (ok) => {
   const hoard = TEMPLE.features!.find((f) => f.kind === 'chest' && f.id === 'hf_offerings');
   ok(hoard?.kind === 'chest' && hoard.gold === 3000 && hoard.items.join() === 'grey_blade,grey_bow' && hoard.x === 13 && hoard.y === 11,
     'in the treasury the pilgrims\' offerings, 3,000 gold, and the Hand\'s steel: a Grey Blade and a Grey Bow');
+  const tithe = TEMPLE.features!.find((f) => f.kind === 'chest' && f.id === 'hf_tithe');
+  ok(tithe?.kind === 'chest' && tithe.gold === 1100 && !tithe.items.length && tithe.x === 11 && tithe.y === 2, 'under the arch the Hand\'s tithe to the light, 1,100 gold');
 
   // Up the nave past the Hand's best to the court and the altar, each group won at 28; the court's second
   // group gone once the Council has removed Vask from Helmstow, standing or not.
@@ -407,7 +411,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(pack?.kind === 'chest' && pack.gold === 1100 && pack.items.join() === 'grey_robe' && pack.x === 1 && pack.y === 8,
     'in the side vault the dead champion\'s pack, 1,100 gold and a Grey Robe');
 
-  // Through the chamber's north door the keeper, the first machine on the isle, with the Hand's last man
+  // Through the chamber's north door the keeper, with the Hand's last man
   // beside it; her knot on the grey door's frame, the chapter's next step (#760); and the grey door,
   // standing open onto the Ways (#757), its sign read on the passage, stepping from the north door onto 8,3
   // where the keeper stood: an exit takes the company on arrival, before the square's texts are said, so a

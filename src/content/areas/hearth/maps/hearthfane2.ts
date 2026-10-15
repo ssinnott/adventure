@@ -79,8 +79,8 @@ export const HEARTHFANE2: MapDef = {
   ],
   encounters: [
     // The Hand's best in the chamber, never roaming; the rats in the side vault, come up for the dead;
-    // and the keeper at the grey door, the first machine met on the isle, the Hand's last man beside it.
-    // Up through the door she left open (#794): more rats, at the chamber's dead and the Hand's, and keepers.
+    // and the keeper at the grey door, the Hand's last man beside it. Up through the door she left open
+    // (#794): rats at the chamber's dead and at the Hand's; four keepers, the first machines met on the isle.
     { id: 'hf2_champions', x: 8, y: 10, monsters: many(3, 'ashen_champion'), aware: 2, roams: false, respawn: 2880 },
     { id: 'hf2_rats', x: 2, y: 9, monsters: many(10, 'deep_rat'), aware: 3, respawn: 1440 },
     { id: 'hf2_keeper', x: 8, y: 3, monsters: ['keeper', 'ashen_champion'], aware: 2, roams: false, respawn: 2880 },
