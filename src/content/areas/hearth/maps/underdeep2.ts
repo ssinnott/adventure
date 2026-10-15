@@ -99,14 +99,16 @@ export const UNDERDEEP2: MapDef = {
       lines: ['The claimant\'s people on the landing, the Hand\'s rearguard dead at their feet.'],
       says: CAPTAIN.map(([flag, lines]) => ({ after: { flag }, lines })),
     },
-    { kind: 'chest', x: 17, y: 26, id: 'ud2_rearguard_chest', gold: 900, items: ['grey_axe'] },
+    { kind: 'chest', x: 17, y: 26, id: 'ud2_rearguard_chest', gold: 2000, items: ['grey_axe'] },
     // The Hand's dead on the flights, where the crawlers caught them (58).
     { kind: 'event', x: 16, y: 22, id: 'ud2_dead', once: true, text: 'The Hand\'s dead on the stairs, a dozen on this flight alone, where what lives below caught up with them. They were running up.' },
+    // Their packs at the landing's end, where the rats are at them (#794).
+    { kind: 'chest', x: 13, y: 22, id: 'ud2_packs2', gold: 1800, items: [] },
     { kind: 'event', x: 15, y: 21, id: 'ud2_letter', once: true, text: 'A champion dead against the wall with his grey hands folded over a letter, sealed with a knot of rope. The seal is Gullwick\'s.' },
     { kind: 'chest', x: 15, y: 21, id: 'ud2_letter_chest', gold: 0, items: ['gullwick_letter'] },
     { kind: 'event', x: 16, y: 18, id: 'ud2_marks', once: true, text: 'Claw-marks on the ceiling, deep, and running down the walls to the steps. Whatever made them walks where you cannot.' },
     { kind: 'event', x: 16, y: 14, id: 'ud2_more', once: true, text: 'More of the Hand\'s dead, and these did not run. They stood here and were taken from above.' },
-    { kind: 'chest', x: 15, y: 13, id: 'ud2_packs', gold: 700, items: many(4, 'potion_heal') },
+    { kind: 'chest', x: 15, y: 13, id: 'ud2_packs', gold: 1800, items: many(4, 'potion_heal') },
     { kind: 'sign', x: 16, y: 10, id: 'ud2_creed', text: 'Chalked on the wall by a hand that was shaking: THE DOOR IS CLOSE. KEEP GOING.' },
     // Her name on the last frame before the foot (59).
     { kind: 'event', x: 16, y: 6, id: 'ud2_word', once: true, text: 'On the last frame before the foot, not the knot. A word, scratched hard and deep, letter by letter: WENNA.' },
@@ -114,12 +116,18 @@ export const UNDERDEEP2: MapDef = {
     { kind: 'event', x: 16, y: 3, id: 'ud2_foot', once: true, text: 'The foot of the stair, and the last door. Across it, cut deep, the Hand\'s last words: PUT OUT THE LIGHT, AND THE DOOR WILL OPEN.' },
     { kind: 'event', x: 13, y: 2, id: 'ud2_hand', once: true, text: 'Beside the last door, a second, grey, shut behind whoever went in. On its frame at a girl\'s shoulder, a loop inside a loop.' },
     { kind: 'event', x: 16, y: 2, id: 'ud2_shut', until: { flag: FIVE }, text: 'The door does not open. Something in it listens for five voices, and hears fewer.' },
+    // The Hand's takings, carried to the last door and left there when she went in (#794).
+    { kind: 'chest', x: 20, y: 2, id: 'ud2_takings', gold: 2600, items: [] },
   ],
   encounters: [
     // The Hand's rearguard on the first landing, where the claimant's people are not: gone once a verdict or
     // a token holds it, standing or not (#747). 57 is done on it slain, so it never comes back.
+    // Knockers at the head's wall, standing: the first group past the way in, the gentlest (#794).
+    { id: 'ud2_knockers2', x: 18, y: 30, monsters: many(3, 'deep_knocker'), aware: 2, roams: false, respawn: 2880 },
     { id: 'ud2_rearguard', x: 16, y: 26, monsters: many(3, 'hand_rearguard'), aware: 2, roams: false, until: HELD, leaves: true },
     { id: 'ud2_rats', x: 14, y: 23, monsters: many(12, 'deep_rat'), aware: 3, respawn: 1440 },
+    // And at the second landing's east wall, standing (#794).
+    { id: 'ud2_knockers3', x: 19, y: 22, monsters: [...many(3, 'deep_knocker'), 'keeper'], aware: 2, roams: false, respawn: 2880 },
     // The crawlers from the third flight down, off the ceiling.
     { id: 'ud2_crawlers1', x: 16, y: 20, monsters: many(2, 'deep_crawler'), aware: 3, respawn: 2880 },
     { id: 'ud2_keepers', x: 16, y: 16, monsters: many(4, 'keeper'), aware: 2, respawn: 2880 },

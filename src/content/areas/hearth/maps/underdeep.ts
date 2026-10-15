@@ -92,11 +92,15 @@ export const UNDERDEEP: MapDef = {
     // The eighth is the hatch's hint.
     knot(8, 20, 14, 'Her knot, cut deeper than the others, as if she pressed harder here. Behind this frame the wall is thinner: you can hear the stair.'),
     // A keeper's store behind the first west frame.
-    { kind: 'chest', x: 11, y: 27, id: 'ud_store', gold: 800, items: ['grey_shield'] },
+    { kind: 'chest', x: 11, y: 27, id: 'ud_store', gold: 1800, items: ['grey_shield'] },
+    // The crew's stores behind the third west frame, and the rats in them (#794).
     { kind: 'event', x: 8, y: 22, id: 'ud_rats', once: true, text: 'Rats. Even here. Nobody brought them; they came aboard the way rats do.' },
+    { kind: 'chest', x: 7, y: 21, id: 'ud_crew_store', gold: 2000, items: [] },
+    // A second keeper's store, behind the third east frame (#794).
+    { kind: 'chest', x: 24, y: 17, id: 'ud_store2', gold: 2200, items: [] },
     // The crawl way behind the frames, through the hatch: the unwatched way onto the Stair (59).
     { kind: 'event', x: 24, y: 13, id: 'ud_hatch', once: true, text: 'A crawl way a knocker\'s height, running north behind the frames. The dust in it is undisturbed.' },
-    { kind: 'chest', x: 24, y: 4, id: 'ud_crawl_chest', gold: 600, items: ['potion_sp_great', 'potion_sp_great', 'potion_sp_great'] },
+    { kind: 'chest', x: 24, y: 4, id: 'ud_crawl_chest', gold: 2200, items: ['potion_sp_great', 'potion_sp_great', 'potion_sp_great'] },
     // The CREW ONLY door from the inside (60): its marks on the way, the feet on the square before it, and the
     // door, a person with no face. The feet are an event, which the interactable skips, so a company on 3,10
     // facing west talks to the door ahead and steps forward through; a sign there would be the interactable on
@@ -132,6 +136,8 @@ export const UNDERDEEP: MapDef = {
     { id: 'ud_knockers1', x: 9, y: 26, monsters: ['deep_knocker', 'deep_knocker', 'keeper'], aware: 2, respawn: 2880 },
     { id: 'ud_knockers2', x: 22, y: 26, monsters: many(3, 'deep_knocker'), aware: 2, roams: false, respawn: 2880 },
     { id: 'ud_keepers2', x: 21, y: 21, monsters: many(4, 'keeper'), aware: 2, respawn: 2880 },
+    // The rats in the crew's stores behind the third west frame (#794): the box's pay.
+    { id: 'ud_rats3', x: 10, y: 22, monsters: many(12, 'deep_rat'), aware: 3, respawn: 1440 },
     { id: 'ud_keepers1', x: 11, y: 17, monsters: many(3, 'keeper'), aware: 2, respawn: 2880 },
     { id: 'ud_rats2', x: 8, y: 13, monsters: many(12, 'deep_rat'), aware: 3, respawn: 1440 },
     { id: 'ud_keepers3', x: 16, y: 12, monsters: many(4, 'keeper'), aware: 2, respawn: 2880 },

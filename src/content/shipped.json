@@ -3057,6 +3057,7 @@
         "ud_crack",
         "ud_crawl_chest",
         "ud_crew_sign",
+        "ud_crew_store",
         "ud_end",
         "ud_feet",
         "ud_hatch",
@@ -3071,6 +3072,7 @@
         "ud_knot8",
         "ud_rats",
         "ud_store",
+        "ud_store2",
         "ud_voice"
       ],
       "groups": [
@@ -3084,7 +3086,8 @@
         "ud_knockers2",
         "ud_knockers3",
         "ud_rats1",
-        "ud_rats2"
+        "ud_rats2",
+        "ud_rats3"
       ],
       "doors": [
         "24,14"
@@ -3103,7 +3106,9 @@
         "ud2_marks",
         "ud2_more",
         "ud2_packs",
+        "ud2_packs2",
         "ud2_rearguard_chest",
+        "ud2_takings",
         "ud2_word"
       ],
       "groups": [
@@ -3112,6 +3117,8 @@
         "ud2_crawlers2",
         "ud2_keepers",
         "ud2_knockers",
+        "ud2_knockers2",
+        "ud2_knockers3",
         "ud2_rats",
         "ud2_rearguard"
       ],
