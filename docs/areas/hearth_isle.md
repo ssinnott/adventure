@@ -2972,7 +2972,7 @@ Decided by delegate for #765 (half B: Gullwick and the rest), each the owner's t
 
 1. **The Walk Home's entry at the open gate is the Helmstow half's:** its `seen: 'shelf:gate_open'`
    names that half's event, and `tools/tests/quests.ts` fails a `seen` on nothing.
-2. **The knockers are `ud_mines`,** §4.6's id, standing at 6,3 as the corridor's others do, and told by
+2. **The knockers are `ud_mines`,** §4.6's id, standing at 6,3 as the corridor's others do and told by
    a once-event, `dm3_open` at 7,3, with the brief's look: a group has no `look` (as #756's 3).
 3. **The gate leaves the road behind's groups out** (`BEHIND`, `tools/tests/gate.ts`): the knockers put
    the corridor's day at 12.57 fights to a rest, past its limit, though no company at its floor meets
@@ -3338,12 +3338,12 @@ cast; taller than full for finished. The night sky's Hearth (`src/ui/viewport.ts
 (§6, The Walk Home); Jowan's mother at 10,13 (58); the sea at 9,15 (64).
 
 **As built, Gullwick and the rest** (#765; Helmstow, its halls, Saltmouth's and the priestess are its
-other half's). On `downs_f3`, Hild's two `says` first, Jowan's mother, the sea and Wenna as written,
-and The Walk Home (`walk_home`, with the Hearth's quests) with its entries on `ENDED` and
+other half's). On `downs_f3`, Hild's two `says` first, Jowan's mother, the sea and Wenna as written;
+The Walk Home (`walk_home`, with the Hearth's quests) has its entries on `ENDED` and
 `WENNA_HOME` and its goal at `downs_f3`; its entry at the open gate waits on `gate_open`, the other
 half's. Ashfall's seven groups go `until: ENDED` with `leaves`, and the harbourmaster's line is a
 `says`. The knockers are `ud_mines`, told by a once-event, `dm3_open` at 7,3, since a group has no
-`look`; the gate leaves them out of the Kilns' figures (`BEHIND`), the curve counts them, and the
+`look`; the gate leaves them out of the Kilns' figures (`BEHIND`) and the curve counts them; the
 thane's line waits on his answer as well. The Sunder's groups given `until: { flag: CRACK_SEALED }`
 and `leaves`: `j2_hounds`, `k2_hounds`, `k2_bears`, `k3_bears`, `l2_hounds`, `l2_bears`,
 `l3_bank`, `l4_night`, `m2_hounds`, `m2_bears`, `su1_spiders`, `su2_wood` and `su2_bears`. The
