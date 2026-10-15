@@ -11,7 +11,7 @@ import { meet, answer, answerNote, answerLabel, asked, barred, SHORT, NONE, hear
 import type { Person } from '../../src/game/people.ts';
 import { questLog } from '../../src/game/quests.ts';
 import type { PageView, QuestCond, QuestDef } from '../../src/game/quests.ts';
-import type { MapDef, Words, Answer, Choice } from '../../src/game/map.ts';
+import type { MapDef, Words, Answer, Choice, EncounterDef } from '../../src/game/map.ts';
 import { NORTH, EAST } from '../../src/game/types.ts';
 import { GameMap } from '../../src/game/map.ts';
 import { CONTENT, collect } from '../shipped.ts';
@@ -45,13 +45,11 @@ export function people(): void {
   for (const { map, p } of all) { const bad = boxFaults(p); ok(!bad.length, `${map} ${p.x},${p.y}: every text fits the box, and every question its answers${bad.length ? ' -> ' + bad.join('; ') : ''}`); }
   // Every group that asks before it fights (#544) can be refused, and only once: the refusal costs and
   // sets nothing, so it is put again, and every other answer sets a flag, so the walk past is
-  // remembered. A parley may be nothing but its refusal, as Vask's is at the Heart (#759): then there is no
-  // walk past to remember. Its question fits the box, as a person's does.
+  // remembered. Its question fits the box, where a group's parley is asked (`Game.parley`); the side panel's
+  // lines are a business's, for a person's question.
   for (const d of MAP_DEFS) for (const e of d.encounters ?? []) if (e.choice) {
-    const no = e.choice.answers.filter((a) => a.fight), rest = e.choice.answers.filter((a) => !a.fight);
-    ok(no.length === 1 && !no[0].price && !no[0].takes && !no[0].sets && rest.every((a) => [a.sets ?? []].flat().length > 0),
-      `${d.id}: ${e.id} asks before it fights, with one refusal that costs and sets nothing, and other answers that each set a flag`);
-    const bad = boxFaults({ kind: 'npc', x: e.x, y: e.y, name: e.id, lines: [], choice: e.choice });
+    ok(refusable(e), `${d.id}: ${e.id} asks before it fights, with one refusal that costs and sets nothing, and other answers that each set a flag`);
+    const bad = boxFaults({ kind: 'npc', x: e.x, y: e.y, name: e.id, lines: [], choice: e.choice }, false);
     ok(!bad.length, `${d.id}: ${e.id}'s question fits the box, and its answers the side panel${bad.length ? ' -> ' + bad.join('; ') : ''}`);
   }
   for (const i of Object.values(ITEMS)) if (i.text) ok(wrap(i.text.join('\n\n'), SAY_W).length <= SAY_LINES, `${i.id}: the letter fits the box's ${SAY_LINES} lines`);
@@ -122,12 +120,24 @@ function doneSeen(flag: string): string[] {
 }
 
 /**
- * What a person says that would not fit: a text past the box's lines (a hand-in's with its gold
- * line, an answer's with its item's and pay's), a question past its lines in the box or the side panel
- * (with the purse after it, where an answer has a price), an answer longer than a line of the side
- * panel's column beside its price.
+ * Whether a group's question can be refused once and passed otherwise (#544): exactly one refusal, which
+ * costs and sets nothing, and every other answer sets a flag, so the walk past is remembered. There must
+ * be another answer but for a group with a slain text of its own: Vask's two at the Heart are asked one
+ * answer, *Stop him.*, since nothing he offers is the company's to take (#759).
  */
-export function boxFaults(p: Person): string[] {
+export function refusable(e: Pick<EncounterDef, 'choice' | 'slainText'>): boolean {
+  const answers = e.choice?.answers ?? [], no = answers.filter((a) => a.fight), rest = answers.filter((a) => !a.fight);
+  return no.length === 1 && !no[0].price && !no[0].takes && !no[0].sets && (rest.length > 0 || !!e.slainText) && rest.every((a) => [a.sets ?? []].flat().length > 0);
+}
+
+/**
+ * What a person says that would not fit: a text past the box's lines (a hand-in's with its gold
+ * line, an answer's with its item's and pay's), a question past its lines in the box or, where it is put
+ * in a business (`inBusiness`, a person's), the side panel (with the purse after it, where an answer has
+ * a price), an answer longer than a line of the side panel's column beside its price. A group's parley
+ * is asked in the box alone, so its question is held to the box's lines.
+ */
+export function boxFaults(p: Person, inBusiness = true): string[] {
   const gold = (q: { reward: number }): string[] => (q.reward ? [`(${q.reward} gold.)`] : []);
   const texts = [p.lines, ...handIns(p).flatMap((q) => [[...q.done, ...gold(q)], ...(q.early ? [[...q.early, ...gold(q)]] : []), q.after ?? []]), ...(p.says ?? []).map((w) => w.lines),
     ...choices(p).flatMap((c) => c.answers.map((a) => [...a.says, ...answerNote(a)]))];
@@ -136,7 +146,7 @@ export function boxFaults(p: Person): string[] {
     // The purse as the richest company could hold it.
     const ask = asked(c, { gold: 999999 });
     const box = wrap(ask, SAY_W).length, side = wrap(ask, SIDE_W).length;
-    if (box > ASK_LINES || side > ASK_SIDE_LINES) out.push(`'${c.ask.slice(0, 24)}..' takes ${box} lines of ${ASK_LINES} in the box and ${side} of ${ASK_SIDE_LINES} in the side panel`);
+    if (box > ASK_LINES || (inBusiness && side > ASK_SIDE_LINES)) out.push(`'${c.ask.slice(0, 24)}..' takes ${box} lines of ${ASK_LINES} in the box${inBusiness ? ` and ${side} of ${ASK_SIDE_LINES} in the side panel` : ''}`);
     for (const a of c.answers) if (measure(a.label) > columnLabelWidth(SIDE_W, a.price ? `${a.price}g` : '', false)) out.push(`the answer '${a.label}' is past a line of the side panel`);
   }
   return out;
@@ -230,6 +240,18 @@ function fixtures(fresh: () => { party: Party; world: World }, all: readonly { m
     const wordy = { ...captain, choice: { ask: Array(12).fill('Shall I write to Hale about the riders?').join(' '), answers: [{ label: 'Write to him at once, and seal it with the ford', sets: 'fx_write', says: Array(8).fill(captain.lines[0]) }] } };
     const wordyBad = boxFaults(wordy);
     ok(wordyBad.length === 3, `a long question, a long answer and long words fail (${wordyBad.length} of 3)`);
+    // A group's parley is asked in the box, a person's question may be put in a business's side panel (#759): three lines of the box
+    // and eight of the side panel fit a group and fail a person; a question past the box's lines fails both.
+    const nine = { ...captain, choice: { ask: Array(6).fill('Shall I write to Hale about the riders?').join(' '), answers: [{ label: 'Write', sets: 'fx_write', says: ['"Done."'] }] } };
+    const tall = { ...nine, choice: { ...nine.choice, ask: Array(13).fill('Shall I write to Hale about the riders?').join(' ') } };
+    ok(boxFaults(nine).length === 1 && boxFaults(nine, false).length === 0, 'a question of 3 lines in the box and 8 in the side panel fails a person and fits a group');
+    ok(boxFaults(tall).length === 1 && boxFaults(tall, false).length === 1, 'a question past the box\'s lines fails a group and a person alike');
+    // Which parleys may be asked (#544, #759): a refusal and a walk past; a refusal alone only in a group with a slain text of its own.
+    const refuse: Answer = { label: 'Stop him.', fight: true, says: ['"No."'] }, pass: Answer = { label: 'Pass.', sets: 'fx_passed', says: ['He lets you by.'] };
+    ok(refusable({ choice: { ask: 'Well?', answers: [refuse, pass] } }) && refusable({ choice: { ask: 'Well?', answers: [refuse] }, slainText: 'He falls.' }),
+      'a refusal and a walk past may be asked, and so may a refusal alone in a group with a slain text of its own');
+    ok(!refusable({ choice: { ask: 'Well?', answers: [refuse] } }) && !refusable({ choice: { ask: 'Well?', answers: [pass] }, slainText: 'He falls.' })
+      && !refusable({ choice: { ask: 'Well?', answers: [refuse, { ...pass, sets: undefined }] } }), 'a refusal alone with no slain text (the walk past lost), no refusal at all and a walk past that sets nothing may not');
 
     // A letter read from the pack.
     ok(readText(LETTER.id) === LETTER.text && readText('rations') === undefined, 'a letter has words to read, and rations none');
