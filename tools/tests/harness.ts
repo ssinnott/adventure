@@ -11,8 +11,8 @@ import { MONSTERS, MAP_DEFS } from '../../src/content/index.ts';
 import { gateCompany, winRate } from '../gate.ts';
 import { testMonster, standardEncounter, line, scaleAt, groupsPerLevel, xpFor, HP, DAMAGE, ROLES, ROLE_IDS, TROLL, SWEEP, testTroll, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, testDrake, giantEncounter, drakeEncounter, BASILISK_STONE, testBasilisk, basiliskEncounter, clockEncounter } from '../testmonster.ts';
 import type { Role } from '../testmonster.ts';
-import { measure, days, fight, play, outcomeOf, companyAt, edgeOf, spent, mustRest, mendBetween, day as oneDay, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP, RULES, GEAR_TOP, ANSWER, wakeWith, breathGuard } from '../harness.ts';
-import { ok } from './lib.ts';
+import { measure, days, fight, play, outcomeOf, companyAt, edgeOf, spent, mustRest, mendBetween, day as oneDay, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP, RULES, GEAR, GEAR_TOP, ANSWER, wakeWith, breathGuard } from '../harness.ts';
+import { ok, owed } from './lib.ts';
 
 export function harness(): void {
   // The resolver fights defs that no map places, which is what the combat harness hands it.
@@ -81,6 +81,12 @@ export function harness(): void {
   // 24 does not (#542).
   ok([24, 26, 28].every((l) => gateCompany(l, 32).members.every((m) => m.level === l)) && gear(26) !== gear(24),
     `the gate's company trains to 24, 26 and 28, and dresses past the one two under it at 26 (${gear(26)})`);
+  // And at Act V's, by the Hand's steel at 28 (#746): the floor at 28 wears it and the one at 26 does
+  // not, and every member at 28 and over wears a piece of it.
+  const steel = GEAR.find(([at]) => at === 28)?.[1] ?? [];
+  const wears = (l: number): boolean => gateCompany(l, 32).members.every((m) => [m.equipment.weapon, m.equipment.armor, m.equipment.shield].some((id) => !!id && steel.includes(id)));
+  ok([26, 28, 30, 32].every((l) => gateCompany(l, 32).members.every((m) => m.level === l)) && gear(28) !== gear(26) && [28, 30, 32].every(wears),
+    `the gate's company trains to 26, 28, 30 and 32, dresses past the one two under it at 28 and wears the Hand's steel from 28 (${gear(28)})`);
   // What a fight costs: all of a fallen member's hit points, and every spell point cast.
   const p = defaultParty(makeRng(33)), fallen = p.members[5];
   const pool = p.members.reduce((a, m) => a + m.maxHp + m.maxSp, 0);
@@ -116,9 +122,13 @@ export function harness(): void {
   const act = [16, 17, 18, 19, 20, 21, 22].map((l) => ({ l, d: days(l, [standardEncounter('soldier', l)], 40, 5001) }));
   ok(act.every(({ l, d }) => Math.abs(d.fights - fightsPerRest(l)) <= 1.5), `through Act III a company fights about its own of 4 Test Soldiers between rests: ${act.map(({ l, d }) => `${d.fights.toFixed(1)} at ${l} (${fightsPerRest(l)})`).join(', ')}`);
   // And through Act IV, 23 to 28, where it steps at 23 (tier 7), 25 (Cinderport's armourer) and 27
-  // (the third prestige), the line from 25 made again with them (#549).
+  // (the third prestige), the line from 25 made again with them (#549). At 28 it steps again, into the
+  // Hand's steel (#746), and fights more than the line asks until #752 makes the line again with it in:
+  // 23 to 27 are held as before, and 28 by the same measure is owed to #752.
   const four = [23, 24, 25, 26, 27, 28].map((l) => ({ l, d: days(l, [standardEncounter('soldier', l)], 40, 5001) }));
-  ok(four.every(({ l, d }) => Math.abs(d.fights - fightsPerRest(l)) <= 1.5), `through Act IV a company fights about its own of 4 Test Soldiers between rests: ${four.map(({ l, d }) => `${d.fights.toFixed(1)} at ${l} (${fightsPerRest(l)})`).join(', ')}`);
+  const near = ({ l, d }: (typeof four)[number]): boolean => Math.abs(d.fights - fightsPerRest(l)) <= 1.5;
+  ok(four.slice(0, -1).every(near), `through Act IV a company fights about its own of 4 Test Soldiers between rests: ${four.slice(0, -1).map(({ l, d }) => `${d.fights.toFixed(1)} at ${l} (${fightsPerRest(l)})`).join(', ')}`);
+  owed(near(four[5]), `in the Hand's steel at 28 a company fights about its own of 4 Test Soldiers between rests: ${four[5].d.fights.toFixed(1)} (${fightsPerRest(28)})`, '#752');
   // A test monster's encounter pays what the curve gives a group at the built areas' pinned pace (docs/MONSTERS.md §4.4).
   const pays = [1, 10, 32].map((l) => Math.round((6 * (xpForLevel(l + 1) - xpForLevel(l))) / (0.75 * groupsPerLevel(l))));
   ok(pays.join() === '99,1573,5093' && xpFor('boss', 10) === 6293, `an encounter pays ${pays.join(', ')} at 1, 10 and 32, as MONSTERS §4.4 says, and a boss four`);

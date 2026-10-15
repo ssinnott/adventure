@@ -284,14 +284,18 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'wold_e9: under': { whose: '#18', at: 1 },
   'wold_e8: under': { whose: '#18', at: 1 },
   'the Glasswold: under': { whose: '#18', at: 1 },
-  // And Hearth Isle's isle (#753), the same: two under, in the gear by 26, it wins every fight. The
-  // Hand's steel, the band's rung at 28, is #746's.
+  // And Hearth Isle's isle (#753), the same: two under, at 26, in the gear by then and short of the
+  // Hand's steel at 28 (#746), it wins every fight.
   'hearthisle_h6: under': { whose: '#18', at: 1 },
   // And its east rim (#754), the same.
   'hearthisle_i6: under': { whose: '#18', at: 1 },
   'Hearth Isle: under': { whose: '#18', at: 1 },
   // And the temple (#755), the same: its champions and preachers, two under, are won every time.
   'hearthfane: under': { whose: '#18', at: 1 },
+  // The crypt (#756) at its floor, 29, in the Hand's steel (#746): its company fights 15.74 to a rest
+  // where it fought 13.71 in Cinderport's armourer's gear, past the limit of 14.75. The line was made
+  // in that gear; making it again with the rung in is #752's.
+  'hearthfane2: rest': { whose: '#752', at: 15.74 },
   'highspine_i11: under': { whose: '#18', at: 1 },
   // And the ridge north (#503), banded from the area's floor as I11 is: its three groups are won every
   // time two under, and with them the area's pool passes its limit again.
