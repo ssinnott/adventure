@@ -11,7 +11,7 @@
 //   node tools/harness.ts --stats                      the test monsters' stat lines, as markdown
 //   node tools/harness.ts --abilities [--levels 19,20] Act III's trolls, wights, caller and lights on the test monsters (#537, #541),
 //                                                      and Act IV's giants and drakes at 23 and 25 (#545), the mesa at 27 (#546),
-//                                                      the vines at 24 and its bosses as they stand (#549), and Act V's Heart on its clock at 32 (#748)
+//                                                      the vines at 24 and its bosses as they stand (#549), and Act V's Heart on its clock at 32 (#748), and as built (#752)
 //   node tools/harness.ts --calibrate [--write]        re-derive HP and DAMAGE in tools/testmonster.ts
 //   node tools/harness.ts --spell-cap 32 [...]         any of the above as if spells stopped growing elsewhere than 10
 //   node tools/harness.ts --gear-grows [...]           ... or as if the company's gear kept growing past 28
@@ -779,6 +779,16 @@ async function main(): Promise<void> {
       });
       ANSWER.clock = 'panel';
       console.log(`  ${l}: ${plays.join('; ')}`);
+    }
+    // And the Heart as built (#759): Vask, his three Hands at the panel and his sentries, on the gate's bot,
+    // which the plan sizes him by (#752); the gate judges the Hands first on its own (tools/tests/gate.ts).
+    const heart = MAP_DEFS.find((d) => d.id === 'core')?.encounters?.find((e) => e.id === 'core_vask');
+    if (heart) {
+      const { winRate, gateOpts } = await import('./gate.ts');
+      const won = (enc: Encounter): string => `${pct(winRate(32, enc, seeds, ROUND_CAP, gateOpts(heart)))}%`;
+      const plays = (['panel', 'leader', 'called'] as const).map((k) => { ANSWER.clock = k; return `${{ panel: 'the Hands first', leader: 'Vask first', called: 'the sentries as they come' }[k]} ${won(heart)}`; });
+      ANSWER.clock = 'panel';
+      console.log(`  Vask's own group at 32, won: ${plays.join(', ')}, and ${won({ ...heart, clock: undefined })} with no clock`);
     }
     // Act IV's holds (#549): the bells, the vines and the machines' clamps, which the bots free.
     console.log(`Four vines: the test controller, its hold at 0.3 a hit as the Strangler Vine's, the held freed by the bots' cure (#549).`);

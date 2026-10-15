@@ -296,13 +296,6 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'Hearth Isle: under': { whose: '#18', at: 1 },
   // And the temple (#755), the same: its champions and preachers, two under, are won every time.
   'hearthfane: under': { whose: '#18', at: 1 },
-  // The crypt (#756) at its floor, 29, in the Hand's steel (#746): its company fights 15.74 to a rest
-  // where it fought 13.71 in Cinderport's armourer's gear, past the limit of 14.75. The line was made
-  // in that gear; making it again with the rung in is #752's.
-  'hearthfane2: rest': { whose: '#752', at: 15.74 },
-  // And the Heart (#759) at 32 in it: Vask's thinned group is won 89% where it was 68%, past the limit
-  // of 80% (`core_vask` 65% to 79%, inside it). Vask's odds in the rung are #752's to measure and set.
-  'core:core_vask_thinned: floor': { whose: '#752', at: 0.89 },
   'highspine_i11: under': { whose: '#18', at: 1 },
   // And the ridge north (#503), banded from the area's floor as I11 is: its three groups are won every
   // time two under, and with them the area's pool passes its limit again.
@@ -355,11 +348,11 @@ const aims = (aim: string, limit: string): string => `aim ${aim}, limit ${limit}
 
 const rates = new Map<string, number>();
 /**
- * A group's win rate at a level, in the weather its time to walk brings, keyed on its monsters and
- * that weather, each computed once: the maps and their areas share them.
+ * A group's win rate at a level, in the weather its time to walk brings, keyed on its monsters, its
+ * clock and that weather, each computed once: the maps and their areas share them.
  */
-export function rate(g: Pick<EncounterDef, 'monsters' | 'back' | 'leader' | 'when' | 'under'>, level: number): number {
-  const opts = gateOpts(g), key = `${g.monsters.join(',')}/${g.back ?? 0}/${g.leader ?? ''}/${g.under ?? ''}@${level}~${opts.rangedPenalty ?? 0}`;
+export function rate(g: Pick<EncounterDef, 'monsters' | 'back' | 'leader' | 'when' | 'under' | 'clock'>, level: number): number {
+  const opts = gateOpts(g), key = `${g.monsters.join(',')}/${g.back ?? 0}/${g.leader ?? ''}/${g.under ?? ''}/${g.clock ? JSON.stringify(g.clock) : ''}@${level}~${opts.rangedPenalty ?? 0}`;
   let r = rates.get(key);
   if (r === undefined) { r = winRate(level, g, SEEDS, ROUND_CAP, opts); rates.set(key, r); }
   return r;
@@ -672,6 +665,14 @@ export function gate(): void {
         const boss = groups.find((e) => `${d.id}:${e.id}` === b);
         if (!boss) continue;
         const at = rate(boss, d.band[0]);
+        // The sentries' lever (#752): Vask's own group with the clock let run (the bots take the called first) is
+        // won about one in three, the plan's figure, which holds only on sentries of twice the soldier line's hit points.
+        if (b === 'core:core_vask') {
+          ANSWER.clock = 'called';
+          const run = winRate(d.band[0], boss, SEEDS, ROUND_CAP, gateOpts(boss));
+          ANSWER.clock = 'panel';
+          ok(run >= 0.2 && run <= 0.45, `${b}: the clock let run at ${d.band[0]}: ${pc(run)} won (the plan's one in three: 20% to 45%)`);
+        }
         check(`${b}: floor`, at, within(GATE.boss.aim), within(GATE.boss.limit), `${d.id}'s boss ${boss.id} at ${d.band[0]}: ${pc(at)} won (${aims(`${pc(GATE.boss.aim[0])} to ${pc(GATE.boss.aim[1])}`, `${pc(GATE.boss.limit[0])} to ${pc(GATE.boss.limit[1])}`)})`);
         // The company two above the floor, or at the cap where that is as high as it goes (a boss at 31 meets 32);
         // a boss at the cap itself is judged at its floor alone (#759).
