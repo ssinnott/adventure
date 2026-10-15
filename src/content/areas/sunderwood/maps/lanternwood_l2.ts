@@ -13,6 +13,7 @@ import { LAMP_LIT } from '../quests.ts';
 const GATE_DAY = 'The gate stands open. Over it the tower goes up into the rain, one lamp at the top lit in broad day.';
 const GATE_NIGHT = 'The gate stands open. Over it the tower goes up into the night, one lamp lit and the moths round it.';
 import { EAST, NORTH } from '../../../../game/types.ts';
+import { CRACK_SEALED } from '../../hearth/maps/underdeep.ts';
 
 export const LANTERNWOOD_L2: MapDef = {
   id: 'lanternwood_l2',
@@ -100,8 +101,8 @@ export const LANTERNWOOD_L2: MapDef = {
     // deathsheads at the tower's lamp by night, the box's group at 16; and two glass bears on the road
     // on by the river, where it leaves for M2.
     { id: 'l2_lamp_moths', x: 4, y: 23, monsters: ['lantern_moth', 'lantern_moth', 'deathshead'], aware: 5, respawn: 1440, when: { hours: 'night' } },
-    { id: 'l2_hounds', x: 5, y: 15, monsters: ['sunder_hound', 'sunder_hound', 'sunder_hound'], aware: 4, respawn: 2880 },
+    { id: 'l2_hounds', x: 5, y: 15, monsters: ['sunder_hound', 'sunder_hound', 'sunder_hound'], aware: 4, respawn: 2880, until: { flag: CRACK_SEALED }, leaves: true },
     { id: 'l2_tower_moths', x: 16, y: 11, monsters: ['deathshead', 'deathshead'], aware: 5, respawn: 1440, when: { hours: 'night' } },
-    { id: 'l2_bears', x: 29, y: 29, monsters: ['glass_bear', 'glass_bear'], aware: 5, respawn: 2880, roams: false },
+    { id: 'l2_bears', x: 29, y: 29, monsters: ['glass_bear', 'glass_bear'], aware: 5, respawn: 2880, roams: false, until: { flag: CRACK_SEALED }, leaves: true },
   ],
 };

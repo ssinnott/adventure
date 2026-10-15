@@ -111,7 +111,7 @@ DESIGN.md first for the why.
 - **The Hearth's measure** (`game/stones.ts`, #168; DESIGN §9): the Stones restored, counted from
   the save's flags against `content/stones.ts`, so nothing new is saved: the Tide Stone once
   `q_tide_home` holds, which the plinth at Stienwierde sets as it takes the Stone (#191); the Grove
-  once a Lantern has mended it, `q_grove_mended`, which nothing sets yet (#56); the Anvil Stone once
+  once a Lantern has mended it, `q_mender_done`, which the Mender sets at the Stone (#56's 18); the Anvil Stone once
   the Warden of the Anvil has fallen and its tear is closed, bought back or taken alike,
   `q_anvil_closed` (#540), which the Rift sets once its Warden falls (#465); the Ember Stone once it
   is lit, its three parts set, `q_ember_lit` (#548), which its dungeon will set (#516, not built

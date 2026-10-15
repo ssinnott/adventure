@@ -10,6 +10,7 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
 import { LIT, SEEDLING_ASKED, SEEDLING_PLANTED } from './ember_stone.ts';
+import { ENDED } from '../../../endings.ts';
 
 export const EMBERWASTE_F10: MapDef = {
   id: 'emberwaste_f10',
@@ -95,6 +96,6 @@ export const EMBERWASTE_F10: MapDef = {
     { id: 'f10_drake', x: 9, y: 26, monsters: ['cinder_drake'], aware: 5, respawn: 2880 },
     // Once the Stone is lit (#449), two sentries by the road back from F11's corner toward Cinderport, the
     // box's top at 26, where nothing stood the day before.
-    { id: 'f10_sentries', x: 18, y: 29, monsters: ['sentry', 'sentry'], aware: 4, respawn: 2880, after: { flag: 'q_ember_lit' } },
+    { id: 'f10_sentries', x: 18, y: 29, monsters: ['sentry', 'sentry'], aware: 4, respawn: 2880, after: { flag: 'q_ember_lit' }, until: ENDED, leaves: true },
   ],
 };

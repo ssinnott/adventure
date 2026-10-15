@@ -10,6 +10,7 @@
 // §4.3 is its brief.
 import type { Choice, Exit, MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { ENDED } from '../../../endings.ts';
 
 /**
  * Fane's rope (#22; meridian_camp.md §8, 3): from its foot up the cold flue off the hall, 19,2, onto Fire
@@ -124,7 +125,7 @@ export const MERIDIAN_CAMP3: MapDef = {
     // which calls them; by night two come up the steps to the camp and leave Fane be (MONSTERS §2), never reaching
     // the fire; and, once the Ember Stone is lit, a sentry at the stair's foot, going up. Six groups: at the floor
     // 27 the eight small ones of floor 26 gave 19.56 fights to a rest, and these, the same ten knockers, 10.64.
-    { id: 'mc3_sentry', x: 4, y: 5, monsters: ['sentry'], aware: 4, respawn: 2880, after: { flag: 'q_ember_lit' } },
+    { id: 'mc3_sentry', x: 4, y: 5, monsters: ['sentry'], aware: 4, respawn: 2880, after: { flag: 'q_ember_lit' }, until: ENDED, leaves: true },
     { id: 'mc3_night', x: 15, y: 17, monsters: ['deep_knocker', 'deep_knocker'], aware: 2, respawn: 1440, roams: false, when: { hours: 'night' } },
     { id: 'mc3_west', x: 6, y: 27, monsters: ['deep_knocker', 'deep_knocker', 'deep_knocker'], aware: 2, respawn: 2880 },
     { id: 'mc3_knocker', x: 10, y: 26, monsters: ['deep_knocker'], aware: 2, respawn: 2880 },

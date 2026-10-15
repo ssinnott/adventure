@@ -15,6 +15,7 @@ import { COMPACT_SHIP, RIDERS_RIDE, LAST_CROSSING, sells } from '../../../crossi
 import { MASON_PASSAGE } from '../../whitespine/maps/sheerpoint_i8.ts';
 import { HORSE_ASKED, HORSE_BROKEN, HORSE_WHOLE, GARDEN_BROUGHT, GARDEN_LIFTED, GARDEN_DRAUGHT } from '../../glasswold/maps/wold_d8.ts';
 import { ORDERS_ASKED, ORDERS_SEALED, ORDERS_TOLD, ORDERS_BURNED } from '../../glasswold/maps/wold_c8.ts';
+import { ENDED } from '../../../endings.ts';
 
 /**
  * The Founding Stone (#56's 50, #519): the stone carried up from Old Cinder's undercroft and handed to
@@ -228,6 +229,9 @@ export const CINDERPORT: MapDef = {
       'A woman in an oilskin on the quay, a slate under her arm and chalk in her fist.',
       '"Morwenna. Harbourmaster. The Compact\'s ship I chalk in and out, and the boat over the Sound."',
       '"The other boat goes over the Sound to Hearth Isle, from the same steps, and comes back. That is all I write."',
+    ], says: [
+      // After any ending (#765): the sentries on the roads have stood down where they were.
+      { after: ENDED, lines: ['"The things on the road have stopped. Stood where they were, the drovers say, and are standing yet. Whatever they were looking for, somebody found it."'] },
     ], passage: sells('cinderport', LAST_CROSSING) },
     { kind: 'npc', x: 14, y: 3, name: 'Jago, master of the Compact ship', lines: [
       'The broad man in the Compact coat by the steps, watching his crew unload more than he watches you.',

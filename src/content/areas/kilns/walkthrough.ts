@@ -121,6 +121,7 @@ import { serialize, deserialize } from '../../../game/save.ts';
 import { World } from '../../../game/world.ts';
 import { CHAPTER } from './chapter.ts';
 import { CHAPTER as RING } from '../cairnmoor/chapter.ts';
+import { CREW_OPEN, CREW_SHUT } from '../hearth/maps/underdeep.ts';
 
 const M3 = MAP_DEFS.find((d) => d.id === 'ironfells_m3')!, N3 = MAP_DEFS.find((d) => d.id === 'ironfells_n3')!, N4 = MAP_DEFS.find((d) => d.id === 'kilnsheart_n4')!;
 const N2 = MAP_DEFS.find((d) => d.id === 'ironfells_n2')!;
@@ -914,6 +915,7 @@ export const walkthrough: Walkthrough = (ok) => {
   feuerstollen(w, ok);
   sideQuests(ok);
   theAnvilStone(ok);
+  crewOpen(ok);
 };
 
 /**
@@ -1508,7 +1510,9 @@ function tiefzeche(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   const machines = MAP_DEFS.filter((d) => !later.has(d.id) && (d.encounters ?? []).some((g) => g.monsters.some((m) => MONSTERS[m].kind === 'machine'))).map((d) => d.id);
   ok(machines.join() === 'deep_mines3', `the first machines on the road stand at the bottom of the deepest mine, and nowhere else (${machines.join(', ')})`);
   // The clean corridor: six knockers and a mender, twice, won at the bottom's floor; the menders drop their spools.
-  for (const g of L3.encounters!.filter((e) => e.id !== 'dm3_foreman')) {
+  // The knockers up through the door left open from the Ways, `ud_mines`, wait on its answer (#765) and are
+  // walked there (`crewOpen`).
+  for (const g of L3.encounters!.filter((e) => e.id !== 'dm3_foreman' && e.id !== 'ud_mines')) {
     ok(g.monsters.filter((m) => m === 'knocker').length === 6 && g.monsters.filter((m) => m === 'mender').length === 1 && g.monsters.length === 7, `${g.id}: six knockers and a mender`);
     fight(w, `deep_mines3:${g.id}`);
   }
@@ -1914,4 +1918,44 @@ function theAnvilStone(ok: (cond: boolean, msg: string) => void): void {
   ok(JSON.stringify(read) === JSON.stringify([all, taken, all.replace('road, ', ''), taken.replace('road, ', '')]),
     `the chapter reads the same in order and with Kilnhaven first, but for the way in from Lanternwood the ferry's company never walked (${read.join(' / ')})`);
   everyGoalWalked(ok, [CHAPTER]);
+}
+
+/**
+ * The road behind (#765): the door marked CREW ONLY opened from the Ways and left open (#56's 60), three of
+ * the corridor's own knockers stand at 6,3, said before them, and come back; never opened, or shut behind
+ * the company, nothing stands there. The thane has heard, once the company has answered him; one that
+ * never did is still asked. The flags are set by hand.
+ */
+function crewOpen(ok: (cond: boolean, msg: string) => void): void {
+  const L3 = MAP_DEFS.find((d) => d.id === 'deep_mines3')!, up = L3.encounters!.find((g) => g.id === 'ud_mines')!;
+  const live = (v: Walk): boolean => { v.world.travel('deep_mines3', up.x, up.y); return v.world.liveGroups().some((g) => g.def.id === up.id); };
+  const said = (v: Walk): string[] => { v.world.travel('deep_mines3', up.x + 1, up.y, WEST); const t = v.world.eventsHere(); listen(v); return t; };
+  const thane = (v: Walk): string => { v.world.travel('anvilhall', THANE.x, THANE.y); const t = meet(THANE, v.party, heard(v.world, THANE)).text; listen(v); return t; };
+  for (const shut of [false, true]) {
+    const v = newWalk(ok);
+    v.party.flags[BOUGHT] = 1;
+    if (shut) v.party.flags[CREW_SHUT] = 1;
+    ok(!live(v) && !said(v).length && thane(v).startsWith('He does not look away from the forge.'),
+      `the door ${shut ? 'shut behind the company' : 'never opened'}: nothing stands at 6,3 or is said before it, and the thane says what he did`);
+  }
+  for (const way of [BOUGHT, TAKEN]) {
+    const v = newWalk(ok);
+    v.party.flags[way] = 1;
+    v.party.flags[CREW_OPEN] = 1;
+    v.level = L3.band![0];
+    const look = said(v);
+    ok(up.monsters.join() === 'knocker,knocker,knocker' && MONSTERS.knocker.level === 16 && up.respawn === 2880 && live(v) && look.join() === 'They came up through the door you left open.',
+      `the door left open, three of the corridor's own knockers at 6,3, level 16, and before them: ${look.join(' ')}`);
+    fight(v, 'deep_mines3:ud_mines');
+    const dead = !live(v);
+    v.world.advance(2 * MINUTES_PER_DAY + 1);
+    const word = thane(v);
+    ok(dead && live(v) && word.includes('up through the door that never opened') && word.includes('I do not ask who opened it.'),
+      `won, they come back two days on, and the thane, ${named(way)}, has heard (${word})`);
+  }
+  const asked = newWalk(ok);
+  asked.party.flags[CREW_OPEN] = 1;
+  asked.world.travel('anvilhall', THANE.x, THANE.y);
+  const m = meet(THANE, asked.party, heard(asked.world, THANE));
+  ok(m.text === THANE.lines.join('\n\n') && !!m.choice, 'a company that never answered the thane still hears his first words and his question, the door open or not');
 }
