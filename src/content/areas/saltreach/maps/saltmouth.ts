@@ -13,6 +13,10 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { FERRY, sells } from '../../../crossings.ts';
+import { ENDINGS } from '../../../endings.ts';
+
+// The Heart's three endings (#765; docs/areas/hearth_isle.md §12): the halls' words after each, first of all.
+const RELIT = { flag: ENDINGS.reignite.flag }, OPENED = { flag: ENDINGS.arrive.flag }, FINISHED = { flag: ENDINGS.finish.flag };
 
 /**
  * Ruan's choice at the Keel (#635), put once the Factor's rung is paid: the orders handed to the Wardens
@@ -75,7 +79,10 @@ export const SALTMOUTH: MapDef = {
     ] }, says: [
     // The rank that reveals (#635, docs/areas/dead_drop.md §5): once the Factor's rung is paid she puts the
     // Compact's choice, the orders to the Wardens or the Compact taken over, and says what follows each.
-    // These come first, since the first words that hold are said.
+    // These come first, since the first words that hold are said, but for an ending's (#765).
+    { after: RELIT, lines: ['"Steady light, quiet sea and nothing coming over it that pays in grey. The Compact will have to learn an honest trade. It has been a while."'] },
+    { after: OPENED, lines: ['"Wind. Real wind, off a sea that goes somewhere. Every hull in the roads wants to find out where, and the Compact will carry the first ones, for a fee."'] },
+    { after: FINISHED, lines: ['"The sea hums. The pilots say the stars have moved, all of them, a hair, and are still moving. Tallis has bought a telescope."'] },
     { after: { flag: COMPACT_WARDENS }, lines: [
       'Ruan dries a glass that was dry when she picked it up.',
       '"The Wardens have his orders. The back room is quiet on quarter-day. I find I listen for it."',
@@ -111,6 +118,9 @@ export const SALTMOUTH: MapDef = {
       '"The Cartographers\' Guild. We go where the chart is blank and come back, mostly." She does not look up from her rule. "Look, if you like. Touch nothing under glass."',
       '"The Meridian route book. They left it with us the morning they went out, thirty years since; the journals went down with them." A pause. "The empty boxes are not empty. We have not been yet."',
     ], says: [
+      { after: RELIT, lines: ['"The map is finished, then, and the edge of it is the edge. The Guild will draw it fair. I had hoped the edge was not the edge."'] },
+      { after: OPENED, lines: ['"Beyond. There is a beyond, and the Guild has the first page of it blank on the table, and every surveyor we have is arguing over who holds the pen."'] },
+      { after: FINISHED, lines: ['"The Guild has a map with nothing past its edge and a note in Fane\'s hand that there will be. Our grandchildren\'s work. I have told them to start."'] },
       { after: { flag: 'meridian_read' }, lines: [
         '"Volume one, in Fane\'s hand, thirty years late." She has gone back to her rule, but the rule does not move. "The rest went down with them. Somewhere."',
       ] },

@@ -9,6 +9,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import type { When } from '../../../../game/quests.ts';
 import { BELL_HUNG, COUNT_STOPPED, STONE_HOME } from './drowned_temples.ts';
+import { ENDINGS } from '../../../endings.ts';
 
 /** Both of Stienwierde's Rifts gone quiet (B5), or the Tide Stone home (#191): their spill stops coming down the channel. */
 export const RIFTS_CLOSED: When = [{ slain: ['b5_rift_n:b5_rift_n_warden', 'b5_rift_s:b5_rift_s_warden'] }, STONE_HOME];
@@ -74,6 +75,10 @@ export const DELTA_B6: MapDef = {
       '"It hangs, and it rings the number." Her hand goes up again. "Eleven."',
       '"It\'s not singing. But it\'s not only counting either, now. There\'s a place in it where something\'s missing, and a bell that knows what\'s missing is nearer a song than a number is. Bring the Stone home. I\'ve stopped asking the god for things. I\'m asking you."',
     ] }, says: [
+      // After the Heart's endings (#765), first of all: the god's song as each left it.
+      { after: { flag: ENDINGS.reignite.flag }, lines: ['"It sings. Not the count: the tides, as it did. I had the number by heart and I have lost it, and I am glad."'] },
+      { after: { flag: ENDINGS.arrive.flag }, lines: ['"It stopped. The count stopped, and the song never came back, and in the dark the Tidefolk began to sing it themselves. We know the words, it turns out."'] },
+      { after: { flag: ENDINGS.finish.flag }, lines: ['"It sings a song I have not heard: a travelling song, the old women say, for a long way. The tide is the same tide. The song is not."'] },
       // The Tide Bell (#56's 23) with the Stone home (#191): the god sings, and she is done counting.
       { after: { flag: ['q_tide_bell_done', 'q_tide_home'] }, lines: [
         'The temples\' steps are dry to the door, and from inside comes a sound the whole fen seems to lean towards: the god, singing the tide down.',
