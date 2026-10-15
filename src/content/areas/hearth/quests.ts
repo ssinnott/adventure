@@ -1,31 +1,40 @@
 // Hearth Isle's quests in the journal's words. #56's 57, The Pilgrims in the Bowl (§6 of
 // docs/areas/hearth_isle.md), as far as the isle goes (H6, #753): the three pilgrims met in the Bowl and
-// a token taken, or none. Its end on the Stair's first landing, the rearguard slain where no token or
-// verdict holds, and the goal under the temple, are #758's. #56's 56, The Sacristan's Lamps, in the
+// a token taken, or none, and its end on the Stair's first landing (#758): a claimant's people there, or the
+// rearguard slain where none hold it. #56's 58, A Letter for Gullwick, from the Stair's dead (#758) to
+// Gullwick's shore (#765). #56's 56, The Sacristan's Lamps, in the
 // temple (#755): the lamps out in the pillar's order and the treasury's key. In the Ways (#757): 59, Every
-// Frame She Marked, as far as the Ways go (its last frame's word is the Stair's, #758); 60, Crew Only, From
+// Frame She Marked, to the last frame's word on the Stair (#758); 60, Crew Only, From
 // the Inside; and 61, The Knocker That Stopped, each answered either way. How the words are keyed is in
 // src/content/area.ts (`quests`); tools/tests/quests.ts checks every key.
 import type { QuestDef } from '../../../game/quests.ts';
-import { PILGRIMS, TOKEN_COUSIN, TOKEN_HOLD, TOKEN_TALLIS, HELD } from './maps/hearthisle_h6.ts';
+import { PILGRIMS, TOKEN_COUSIN, TOKEN_HOLD, TOKEN_TALLIS } from './maps/hearthisle_h6.ts';
 import { LAMPS, LAMPS_OUT, LAMPS_WRONG, LAMPS_KEY, PILLARS } from './maps/hearthfane.ts';
 import { CREW_OPEN, CREW_SHUT, CRACK_SEALED, CRACK_WIDE } from './maps/underdeep.ts';
+import { KNOT_LAST } from './maps/underdeep2.ts';
+import { THRONE_COUSIN, THRONE_HOLD, THRONE_TALLIS } from '../shelf/maps/keep.ts';
+
+/** The rearguard on the Stair's first landing, slain: 57's end where no claimant's people hold it (#758). */
+const REARGUARD = 'underdeep2:ud2_rearguard';
 
 export const QUESTS: readonly QuestDef[] = [
   {
-    // #56's 57, at 28: begun on meeting any of the three; done once a claimant holds the bottom, by a
-    // token carried or the Council's verdict (HELD).
+    // #56's 57, at 28: begun on meeting any of the three; done once a claimant holds the bottom, by the
+    // Council's verdict, or by a token carried down to the first landing and its people seen holding it
+    // (`ud2_held`, after HELD), or once the company kills the rearguard there itself.
     id: 'bowl_pilgrims',
     title: 'The Pilgrims in the Bowl',
     start: { flag: PILGRIMS },
-    done: HELD,
+    done: [{ flag: THRONE_COUSIN }, { flag: THRONE_HOLD }, { flag: THRONE_TALLIS }, { seen: 'underdeep2:ud2_held' }, { slain: REARGUARD }],
     entries: [
       { id: 'met', when: { flag: PILGRIMS }, text: 'Three pilgrims in the Bowl, stranded by the Hand\'s landing: a Warden of the cousin\'s, an elf of the hold\'s, a hand of Tallis\'s. Each wants their token carried down.' },
       { id: 'badge', when: { flag: TOKEN_COUSIN }, text: 'We carry the Wardens\' badge. The cousin\'s people will stand at the bottom.' },
       { id: 'seal', when: { flag: TOKEN_HOLD }, text: 'We carry the hold\'s seal. The hold\'s people will stand at the bottom.' },
       { id: 'tally', when: { flag: TOKEN_TALLIS }, text: 'We carry Tallis\'s tally. Tallis\'s people will stand at the bottom.' },
+      { id: 'none', when: { slain: REARGUARD }, text: 'We carried none of them. Whoever stands at the bottom, it is us.' },
     ],
     goals: [
+      { when: [{ flag: TOKEN_COUSIN }, { flag: TOKEN_HOLD }, { flag: TOKEN_TALLIS }], text: 'Carry the token down the stair under the temple.', at: 'underdeep2' },
       { when: { flag: PILGRIMS }, text: 'Choose whose token to carry down, or none.', at: 'hearthisle_h6' },
     ],
   },
@@ -48,19 +57,35 @@ export const QUESTS: readonly QuestDef[] = [
     ],
   },
   {
+    // #56's 58, at 29: begun on the letter found under a dead champion's hands on the Stair; done when his
+    // mother at Gullwick takes it (`q_letter_given`, the road behind's, #765).
+    id: 'letter',
+    title: 'A Letter for Gullwick',
+    start: { item: 'gullwick_letter' },
+    done: { flag: 'q_letter_given' },
+    entries: [
+      { id: 'letter', when: { item: 'gullwick_letter' }, text: 'A champion of the Hand died on the stair with a letter home under his hands. He was a Gullwick boy, Jowan, and he chose it.' },
+      { id: 'given', when: { flag: 'q_letter_given' }, text: 'His mother read it at her door, twice, and went down to the shingle after.' },
+    ],
+    goals: [
+      { when: { item: 'gullwick_letter' }, text: 'Take Jowan\'s letter to his mother at Gullwick, the third house from the slip.', at: 'downs_f3' },
+    ],
+  },
+  {
     // #56's 59, at 30: no giver, her knots found frame by frame. Done on the last frame's word on the Stair
-    // (KNOT_LAST, `underdeep2:ud2_word`), which #758 adds with its entry and the goal at the Stair; until
-    // then the quest is never done.
+    // (KNOT_LAST, `underdeep2:ud2_word`, #758).
     id: 'frames',
     title: 'Every Frame She Marked',
     start: { seen: 'underdeep:ud_knot1' },
-    done: [],
+    done: { seen: KNOT_LAST },
     entries: [
       { id: 'first', when: { seen: 'underdeep:ud_knot1' }, text: 'Her knot on the first frame below the crypt, at a girl\'s shoulder. We can follow every one.' },
       { id: 'eighth', when: { seen: 'underdeep:ud_knot8' }, text: 'On the eighth frame the knot is cut deeper, and the wall behind it is thin. We can hear the stair through it.' },
       { id: 'hatch', when: { seen: 'underdeep:ud_hatch' }, text: 'A crawl way behind the frames, a knocker\'s height, down onto the stair below its fights.' },
+      { id: 'name', when: { seen: KNOT_LAST }, text: 'On the last frame, not the knot. Her name.' },
     ],
     goals: [
+      { when: { seen: 'underdeep:ud_knot8' }, text: 'Follow her knots down to the last frame before the foot of the stair.', at: 'underdeep2' },
       { when: { seen: 'underdeep:ud_knot1' }, text: 'Follow her knots through the ways, frame by frame.', at: 'underdeep' },
     ],
   },

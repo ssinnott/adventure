@@ -33,7 +33,8 @@ export const MONSTERS: readonly MonsterDef[] = [
   // the Ways' last run and the Stair (#757, #758), a brute on the line at 31: a machine (§2), so it never breaks; it comes
   // down from above and reaches the back row
   { id: 'deep_crawler', name: 'Deep Crawler', plural: 'Deep Crawlers', sprite: 'deep_crawler', kind: 'machine', look: 'It comes down from above, on too many legs.', level: 31, hp: 1004, ac: 25, attack: 18, dice: 6, sides: 8, bonus: 8, speed: 8, xp: 2467, gold: [0, 0], ranged: true, tint: '#4a454d', size: 1.25 },
-  // the Stair's foot among the Hand's dead (#758), the boss on the line at 31: it reaches the back row, and what it
+  // the Stair's foot among the Hand's dead (#758), the boss at 31 with its hit points and blow set by the Stair's
+  // gate (on the line, 1,826 and 30d8+34, it was won 29% at 30 and 41% at 32): it reaches the back row, and what it
   // holds is held
-  { id: 'catcher', name: 'The Catcher', plural: 'Catchers', sprite: 'catcher', kind: 'machine', look: 'It caught the Hand on these stairs.', level: 31, hp: 1826, ac: 28, attack: 19, dice: 30, sides: 8, bonus: 34, speed: 13, xp: 19733, gold: [0, 0], ranged: true, inflict: { cond: 'paralysed', chance: 0.2 }, tint: '#3a363c', size: 2 },
+  { id: 'catcher', name: 'The Catcher', plural: 'Catchers', sprite: 'catcher', kind: 'machine', look: 'It caught the Hand on these stairs.', level: 31, hp: 1100, ac: 28, attack: 19, dice: 34, sides: 8, bonus: 40, speed: 13, xp: 19733, gold: [0, 0], ranged: true, inflict: { cond: 'paralysed', chance: 0.2 }, tint: '#3a363c', size: 2 },
 ];

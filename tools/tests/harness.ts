@@ -154,6 +154,7 @@ export const OFF_LINE: Record<string, string> = {
   sentinel: "the Ember Stone's boss, the boss line made again by #549 with its hit points set by its gate and its blow the line's (#516)",
   grey_lion: "the Wold's boss, its hit points and its blow set by B8's gate (#529)",
   tallymaster: "the counting house's boss, the boss line made again by #549 with its hit points the line's and its blow set by its gate (#22)",
+  catcher: "the Stair's boss, its hit points and its blow set by its gate (#758): provisional until #746 and #752, then re-derive or retire",
 };
 /** The monsters past 10 on a role's line come down whole, hit points and blow together (MONSTERS §4.4): the role, the share and why. */
 export const WHOLE: Record<string, { role: Role; share: number; why: string }> = {

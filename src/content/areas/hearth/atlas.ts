@@ -1,9 +1,9 @@
 // Hearth Isle's part of the world map: the isle, its deep places under it and the Hearth's site.
 // docs/areas/hearth_isle.md is its brief (#739). Listed with the area by its first box, the isle (H6,
 // #753), which took these rows out of the plan (src/content/atlas.ts) so the Hearth counts as new here
-// (§7; §9.1, 43). The Hearth and Anchorhold (I6, #754) are built and drop `planned`, and so is the
-// Underdeep with the Ways (#757), the Stair taking a plate of its own (#758); the Core (#759) keeps it
-// until its map. The bands are the plan's (§8): the isle 28-29,
+// (§7; §9.1, 43). The Hearth and Anchorhold (I6, #754) are built and drop `planned`, and so are the
+// Underdeep with the Ways (#757) and the Stair, which has a plate of its own (#758); the Core (#759) keeps
+// it until its map. The bands are the plan's (§8): the isle 28-29,
 // the Ways 30, the Stair 30-31, the Heart 32, so the area's row is the curve's, 28-32.
 import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
 
@@ -22,6 +22,7 @@ export const PLACES: readonly AtlasPlace[] = [
   { id: 'hearthfane', kind: 'dungeon', at: [250, 172] }, // Hearthfane, the temple: in at its door in the mound on H6, 18,14 (#755)
   { id: 'hearthfane2', kind: 'dungeon', at: [250, 178] }, // the crypt: down the stair behind the temple's altar, 8,1 (#756)
   { id: 'underdeep', name: 'The Underdeep', kind: 'deep', order: 13, band: [30, 30], at: [216, 168] }, // the Ways: through the crypt's grey door, 8,1 (#757)
+  { id: 'underdeep2', kind: 'deep', band: [30, 31], at: [216, 172] }, // the Stair: through the Ways' last door, 16,1 (#758)
   { id: 'core', name: 'The Core', kind: 'deep', planned: true, order: 14, band: [32, 32], at: [216, 176] },
 ];
 

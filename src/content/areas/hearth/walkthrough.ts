@@ -18,6 +18,11 @@
 // at 30: down through the grey door and up again, every frame read and the hatch found from the eighth,
 // the crawl way, the crack sealed and widened (61), the CREW ONLY door answered both ways and walked
 // through (60), and the groups won at 30.
+// Then the Stair (#758), walked at 30: down the ways' last door and up again, and out of the crawl way
+// onto its fourth landing; the first landing held for the badge carried (57), and on other walks the
+// rearguard won where nobody holds it and a verdict that outranks a token; the dead and the letter (58);
+// her name on the last frame (59); the groups won at 30, and the Catcher at 31; the last door shut until
+// the road's five, its way into the Heart being #759's.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen, walkThrough, gone as left } from '../../../../tools/walk.ts';
 import type { Walk } from '../../../../tools/walk.ts';
@@ -35,11 +40,12 @@ import { readerOf } from '../../../game/inscriptions.ts';
 import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
 import { LAST_CROSSING } from '../../crossings.ts';
 import { COMPACT_OVER, COMPACT_WARDENS } from '../saltreach/maps/saltmouth.ts';
-import { THRONE_REMOVED } from '../shelf/maps/keep.ts';
+import { THRONE_REMOVED, THRONE_HOLD } from '../shelf/maps/keep.ts';
 import { STRAND, PILGRIMS, TOKEN_COUSIN, TOKEN_HOLD, TOKEN_TALLIS } from './maps/hearthisle_h6.ts';
 import { LAMPS, LAMPS_OUT, LAMPS_WRONG, LAMPS_KEY, FANE_KEY, LAMP_FLAGS, STAIR } from './maps/hearthfane.ts';
 import { ELEVEN_KEPT, GREY_DOOR, LOG_GIVEN } from './maps/hearthfane2.ts';
 import { CREW_OPEN, CREW_SHUT, CRACK_SEALED, CRACK_WIDE, STAIR_DOOR, CRAWL_DOOR } from './maps/underdeep.ts';
+import { FIVE, LAST_DOOR } from './maps/underdeep2.ts';
 
 const H6 = MAP_DEFS.find((d) => d.id === 'hearthisle_h6')!;
 const person = (name: string): Person => H6.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
@@ -112,8 +118,9 @@ export const walkthrough: Walkthrough = (ok) => {
     'Aelfric, Talwyn and Pasco each ask their token carried down, and the quest begins');
   const take = (p: Person, w: Walk): string => answer(p.choice!.answers.find((a) => a.label === 'Take it.')!, w.party);
   ok(take(aelfric, w).includes('pins it to your sleeve') && !!w.party.flags[TOKEN_COUSIN] && w.party.bag.includes('wardens_badge')
-    && !w.world.present(talwyn) && !w.world.present(pasco) && w.world.present(aelfric) && !!questLog(w.world.state, w.party).find((v) => v.def.id === 'bowl_pilgrims' && v.done),
-    'the Wardens\' badge taken, Talwyn and Pasco keep theirs and are gone, and the token carried does the quest');
+    && !w.world.present(talwyn) && !w.world.present(pasco) && w.world.present(aelfric)
+    && !!questLog(w.world.state, w.party).find((v) => v.def.id === 'bowl_pilgrims' && !v.done && v.goal === 'Carry the token down the stair under the temple.'),
+    'the Wardens\' badge taken, Talwyn and Pasco keep theirs and are gone, and the quest goes on down the stair with the badge');
   w.world.travel('hearthisle_h6', aelfric.x, aelfric.y);
   ok(meet(aelfric, w.party, heard(w.world, aelfric)).text.includes('Keep it on your sleeve'), 'Aelfric speaks of the badge after');
   for (const [p, flag, item] of [[talwyn, TOKEN_HOLD, 'treaty_seal'], [pasco, TOKEN_TALLIS, 'tallis_tally']] as const) {
@@ -440,9 +447,14 @@ export const walkthrough: Walkthrough = (ok) => {
   listen(w);
   ok(crawl?.kind === 'chest' && crawl.gold === 600 && crawl.items.join() === 'potion_sp_great,potion_sp_great,potion_sp_great' && crawl.x === 24 && crawl.y === 4,
     'in the crawl way 600 gold and three Great Spell Draughts');
-  ok(WAYS.rows[CRAWL_DOOR.y][CRAWL_DOOR.x] === 'D' && WAYS.rows[STAIR_DOOR.y][STAIR_DOOR.x] === '#' && WAYS.rows[STAIR_DOOR.y + 1][STAIR_DOOR.x] === 'D'
-    && CRAWL_DOOR.to === 'underdeep2' && STAIR_DOOR.to === 'underdeep2' && !(WAYS.exits ?? []).some((e) => e.to === 'underdeep2'),
-    'the crawl way\'s door and the Stair\'s head wait on the Stair, which lists their ways down (#758)');
+  ok(WAYS.rows[CRAWL_DOOR.y][CRAWL_DOOR.x] === 'D' && WAYS.rows[STAIR_DOOR.y][STAIR_DOOR.x] === '.' && WAYS.rows[STAIR_DOOR.y + 1][STAIR_DOOR.x] === 'D'
+    && [STAIR_DOOR, CRAWL_DOOR].every((d) => d.to === 'underdeep2' && (WAYS.exits ?? []).includes(d)),
+    'the crawl way\'s door and the Stair\'s head are listed, their ways down onto the Stair (#758)');
+  // Out of the crawl way's door onto the Stair's fourth landing, below its fights, on another walk (59).
+  const crawler = newWalk(ok);
+  walkThrough(crawler, 'underdeep', CRAWL_DOOR.x, CRAWL_DOOR.y + 1, NORTH, 'underdeep2', 2);
+  ok(crawler.world.state.x === 24 && crawler.world.state.y === 18 && crawler.world.state.facing === SOUTH,
+    'through the crawl way\'s door onto the Stair\'s fourth landing, 24,18, facing south');
 
   // The crack (61): the knockers by it won at 30, then the knocker that stopped. Sealed, it pays 4,000
   // among the company, the knockers go to the crack and are gone, and the quest is done; widened, on
@@ -513,4 +525,80 @@ export const walkthrough: Walkthrough = (ok) => {
   fight(w, 'underdeep:ud_keepers4');
   fight(w, 'underdeep:ud_crawlers');
   see(w, 'underdeep:ud_end');
+
+  // The Stair (#758), at its floor, 30: through the ways' last door onto its head, and back up again.
+  const UD2 = MAP_DEFS.find((d) => d.id === 'underdeep2')!;
+  walkThrough(w, 'underdeep', STAIR_DOOR.x, STAIR_DOOR.y + 1, NORTH, 'underdeep2', 2);
+  ok(w.world.state.x === 16 && w.world.state.y === 30 && w.world.state.facing === NORTH, 'through the ways\' last door onto the stair\'s head, 16,30, facing down it');
+  walkThrough(w, 'underdeep2', 16, 30, SOUTH, 'underdeep', 2);
+  ok(w.world.state.x === 16 && w.world.state.y === 2 && w.world.state.facing === SOUTH, 'and back up off its head into the ways before their last door, 16,2, facing away from it: on up to the camp');
+  see(w, 'underdeep2:ud2_head');
+
+  // The first landing (57): the company carries the Wardens' badge, so the cousin's people hold it, the
+  // rearguard gone (#747), their captain says so, and the quest is done. Their chest is the rearguard's.
+  const captain = UD2.features!.find((f) => f.kind === 'npc') as Person;
+  see(w, 'underdeep2:ud2_held');
+  left(w, 'underdeep2:ud2_rearguard');
+  w.world.travel('underdeep2', captain.x, captain.y);
+  ok(meet(captain, w.party, heard(w.world, captain)).text.includes('Sergeant Aelfric\'s badge') && log('bowl_pilgrims')!.done,
+    'the cousin\'s people hold the first landing for the badge, their captain says so, and The Pilgrims in the Bowl is done');
+  const ud2 = (id: string) => UD2.features!.find((f) => f.kind === 'chest' && f.id === id);
+  const [rearguardChest, letter, packs] = ['ud2_rearguard_chest', 'ud2_letter_chest', 'ud2_packs'].map(ud2);
+  ok(rearguardChest?.kind === 'chest' && rearguardChest.gold === 900 && rearguardChest.items.join() === 'grey_axe' && packs?.kind === 'chest' && packs.gold === 700
+    && packs.items.join() === 'potion_heal,potion_heal,potion_heal,potion_heal', 'the rearguard\'s chest, 900 gold and a Grey Axe; the dead\'s packs, 700 gold and four healing potions');
+  // On another walk, nobody holds it: the rearguard won at 30, and the quest done on it, carrying unheld.
+  const unheld = newWalk(ok);
+  unheld.level = 30;
+  for (const m of unheld.party.members) m.level = 30;
+  unheld.party.flags[PILGRIMS] = 1;
+  fight(unheld, 'underdeep2:ud2_rearguard');
+  const carried = questLog(unheld.world.state, unheld.party).find((v) => v.def.id === 'bowl_pilgrims');
+  ok(!!carried?.done && carried.pages[0].entries.some((e) => e.id === 'none') && !unheld.world.present(captain), 'with no token and no verdict the rearguard holds the landing; won at 30, the quest is done: we carried none');
+  // And a verdict that carried outranks a token: the hold's elves hold it though the company wears the badge.
+  const held = newWalk(ok);
+  held.party.flags[THRONE_HOLD] = 1;
+  held.party.flags[TOKEN_COUSIN] = 1;
+  left(held, 'underdeep2:ud2_rearguard');
+  held.world.travel('underdeep2', captain.x, captain.y);
+  ok(meet(captain, held.party, heard(held.world, captain)).text.includes('The hold sent us when the Council read the treaty'), 'the Council\'s verdict for the hold outranks the Wardens\' badge on the landing');
+
+  // Down the flights: the rats at the dead, the letter under a champion's hands (58), the crawlers off the
+  // ceiling, the keepers, the dead who stood, the chalked creed, the knockers, and her name on the last
+  // frame (59).
+  fight(w, 'underdeep2:ud2_rats');
+  see(w, 'underdeep2:ud2_dead');
+  see(w, 'underdeep2:ud2_letter');
+  ok(letter?.kind === 'chest' && letter.x === 15 && letter.y === 21 && letter.gold === 0 && letter.items.join() === 'gullwick_letter', 'under the champion\'s hands, the letter for Gullwick');
+  w.party.bag.push('gullwick_letter');
+  ok(log('letter')?.goal === 'Take Jowan\'s letter to his mother at Gullwick, the third house from the slip.' && !log('letter')!.done,
+    'the letter taken begins A Letter for Gullwick, its end at his mother\'s door (#765)');
+  fight(w, 'underdeep2:ud2_crawlers1');
+  see(w, 'underdeep2:ud2_marks');
+  fight(w, 'underdeep2:ud2_keepers');
+  see(w, 'underdeep2:ud2_more');
+  fight(w, 'underdeep2:ud2_crawlers2');
+  w.world.travel('underdeep2', 16, 10);
+  ok(w.world.eventsHere().join(' ').includes('THE DOOR IS CLOSE. KEEP GOING.'), 'chalked on the shaft\'s wall by a shaking hand: THE DOOR IS CLOSE. KEEP GOING.');
+  fight(w, 'underdeep2:ud2_knockers');
+  ok(log('frames')!.goal === 'Follow her knots down to the last frame before the foot of the stair.', 'the knots followed down the stair to the last frame');
+  see(w, 'underdeep2:ud2_word');
+  ok(log('frames')!.done && log('frames')!.pages[0].entries.some((e) => e.id === 'name'), 'on the last frame her name, not her knot: Every Frame She Marked is done');
+
+  // The foot at 31, where the Catcher is sized on its odds, and the last door: shut, listening for five
+  // voices until the road's five are held; the Hand's own door beside it, shut behind her. The door's way
+  // into the Heart, its lock and its signature are #759's, with the Heart's map.
+  w.level = 31;
+  for (const m of w.party.members) m.level = 31;
+  fight(w, 'underdeep2:ud2_catcher');
+  see(w, 'underdeep2:ud2_foot');
+  see(w, 'underdeep2:ud2_hand');
+  w.world.travel('underdeep2', 16, 2, NORTH);
+  const listens = w.world.eventsHere().join(' ');
+  w.world.move('forward');
+  ok(listens.includes('listens for five voices, and hears fewer') && w.world.state.mapId === 'underdeep2' && w.world.state.y === 2 && UD2.rows[1][16] === 'Z' && UD2.rows[1][13] === 'Z'
+    && !(UD2.exits ?? []).some((e) => e.to === 'core') && LAST_DOOR.x === 16 && LAST_DOOR.y === 1 && LAST_DOOR.needFlag === FIVE,
+    'at the last door: it listens for five voices and does not open, the Hand\'s own door shut beside it');
+  for (const f of FIVE) w.party.flags[f] = 1;
+  w.world.travel('underdeep2', 16, 2);
+  ok(!w.world.eventsHere().join(' ').includes('five voices'), 'with the road\'s five held it listens no longer: its way into the Heart is #759\'s');
 };

@@ -19,11 +19,10 @@ import { ok, owed, stopsWalk } from './lib.ts';
  * its map files draw is placed, the last of them, the Cairn King, by #480; and Rimewater's, the
  * keepers and the Matron by #490. Hearth Isle's isle (H6, #753) places its moths, champions, preacher
  * and rats and opens the camp's three tents; its crypt (#756) the first keeper; its Ways (#757) the first
- * crawlers.
+ * crawlers; its Stair (#758) the rearguard and the Catcher.
  */
 const UNPLACED: Record<string, string> = {
-  hand_rearguard: '#758', grey_hand: '#759', core_sentry: '#759', vask: '#759',
-  catcher: '#758',
+  grey_hand: '#759', core_sentry: '#759', vask: '#759',
 };
 
 /** The monsters a company can meet on `defs`: those their groups place, and those a placed one calls (`calls`), and so on down. */
