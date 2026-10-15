@@ -14,7 +14,7 @@
 //                                                      the vines at 24 and its bosses as they stand (#549), and Act V's Heart on its clock at 32 (#748)
 //   node tools/harness.ts --calibrate [--write]        re-derive HP and DAMAGE in tools/testmonster.ts
 //   node tools/harness.ts --spell-cap 32 [...]         any of the above as if spells stopped growing elsewhere than 10
-//   node tools/harness.ts --gear-grows [...]           ... or as if the company's gear kept growing past 25
+//   node tools/harness.ts --gear-grows [...]           ... or as if the company's gear kept growing past 28
 //   node tools/harness.ts --level-traits [...]         ... or its fighters gained a blow a promotion (--level-bonus: a bonus)
 //   node tools/harness.ts --rank-step 0.25 [...]       ... or a spell rank added another share than play's 15%
 // The company is the premade six, trained to the level (to the road's cap, 32), with the prestiges
@@ -114,9 +114,11 @@ export function edgeOf(c: Character, round: number): Edge {
  * boxes by 13, Lantern Watch's stores from 14 and theirs with a plus from the Sunder by 16. Then
  * Act III's (#535): Anvilhall's forge from 17, the same with a plus from the Kilns' and Cairnmoor's
  * boxes by 19, Rime Lodge's furrier from 21 and theirs with a plus from Rimewater by 22. Then Act
- * IV's one (#542): Cinderport's armourer from 25. Each member takes the best its class can use of
- * the kind it already carries, which flatters the company a little. The harness and the gate check
- * both dress their company from it.
+ * IV's one (#542): Cinderport's armourer from 25. And Act V's, the last (#746): the Hand's steel from
+ * 28, found on Hearth Isle and never sold, each piece a point past the armourer's. Each member takes
+ * the best its class can use of the kind it already carries, which flatters the company a little
+ * (the Old Lantern's Staff is one staff, and every member it is the best for takes it). The
+ * harness and the gate check both dress their company from it.
  */
 export const GEAR: readonly (readonly [number, readonly string[]])[] = [
   [3, ['longsword', 'axe', 'longbow', 'shield', 'scale', 'chain', 'dagger+1', 'mace+1', 'shortsword+1', 'staff+1']],
@@ -133,6 +135,7 @@ export const GEAR: readonly (readonly [number, readonly string[]])[] = [
   [21, ['ice_axe', 'skinning_knife', 'hunters_bow', 'bear_spear', 'guides_staff', 'bearskin', 'fur_robe']],
   [22, ['ice_axe+1', 'skinning_knife+1', 'bear_spear+1', 'guides_staff+1', 'hunters_bow+1', 'plate+4']],
   [25, ['slag_mace', 'marlinspike', 'ashwood_bow', 'flamberge', 'battle_staff', 'drakeskin', 'cinder_robe', 'basalt_shield']],
+  [28, ['grey_blade', 'grey_axe', 'grey_knife', 'grey_bow', 'grey_staff', 'old_lanterns_staff', 'grey_mail', 'grey_robe', 'grey_shield']],
 ];
 /** The ladder's top: past it, gear grows only in a what-if (`RULES.gearGrows`). */
 export const GEAR_TOP = GEAR[GEAR.length - 1][0];
@@ -658,7 +661,7 @@ async function main(): Promise<void> {
   }
   if (args.includes('--gear-grows')) {
     RULES.gearGrows = true;
-    console.log(`What if: past level 10 the company's weapons hit harder as the line's hit points grow, and its armour gains a point every two levels.`);
+    console.log(`What if: past level ${GEAR_TOP}, the ladder's top, the company's weapons hit harder as the line's hit points grow, and its armour gains a point every two levels.`);
   }
   if (args.includes('--level-traits')) {
     RULES.levelTraits = true;
