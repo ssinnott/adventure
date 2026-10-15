@@ -630,7 +630,13 @@ export const walkthrough: Walkthrough = (ok) => {
   w.level = 32;
   for (const m of w.party.members) m.level = 32;
   walkThrough(w, 'underdeep2', 16, 2, NORTH, 'core', 1);
-  see(w, 'core:core_door');
+  // The first line is read on the first step in, 8,13: an exit's arrival fires no event on the landing square,
+  // 8,14 (§9.2, #759's 16). The step is taken, not seen.
+  const doorLine = HEART.features!.find((f) => f.kind === 'event' && f.id === 'core_door');
+  const firstStep = w.world.move('forward');
+  ok(doorLine?.kind === 'event' && doorLine.x === 8 && doorLine.y === 13 && w.world.state.x === 8 && w.world.state.y === 13 && firstStep.kind === 'moved'
+    && firstStep.messages.includes(doorLine.text), 'the first step in from the door, 8,14 to 8,13, reads the Heart\'s first line, which the landing did not');
+  listen(w);
   see(w, 'core:core_heart');
   see(w, 'core:core_roof');
   ok(vask.choice === VASK && VASK.answers.length === 1 && VASK.answers[0].label === 'Stop him.' && !!VASK.answers[0].fight && vask.x === 8 && vask.y === 5 && vask.aware === 2

@@ -27,12 +27,12 @@ export const END_REIGNITE = ENDINGS.reignite.flag, END_ARRIVE = ENDINGS.arrive.f
 
 /**
  * Vask's parley, put as the company comes beside his group, as the giants' toll is: one answer, since
- * nothing he offers is the company's to take. He offered at the watchtower, and was told no. The plan's
- * question has one clause more, ", and looks at whichever of you carries the maps", which took nine lines
- * of the side panel's seven (tools/tests/people.ts).
+ * nothing he offers is the company's to take. He offered at the watchtower, and was told no. A group's
+ * parley is asked in the box (`Game.parley`), where this takes 3 of its 5 lines; the side panel's seven
+ * lines are a business's, where a person's question is put (tools/tests/people.ts).
  */
 export const VASK: Choice = {
-  ask: 'Vask does not turn from the glass. "Four hundred years in a jar. They painted the lid blue and called it heaven." Now he turns. "And you have spent your lives mapping the inside of the jar. I am opening the door."',
+  ask: 'Vask does not turn from the glass. "Four hundred years in a jar. They painted the lid blue and called it heaven." Now he turns, and looks at whichever of you carries the maps. "And you have spent your lives mapping the inside of the jar. I am opening the door."',
   answers: [
     { label: 'Stop him.', fight: true, says: ['"No," he says, quite gently, as if to a child, and the grey hands press her palm flatter to the glass. The light overhead goes down a step.'] },
   ],
@@ -96,7 +96,9 @@ export const CORE: MapDef = {
     { x: 8, y: 15, to: 'underdeep2', tx: 16, ty: 2, tf: SOUTH, label: 'Back through the door at the stair\'s foot. It stays open behind you now.' },
   ],
   features: [
-    { kind: 'event', x: 8, y: 14, id: 'core_door', once: true, text: 'Through the door, and the hum is everything. The walls here are glass over grey, and the light comes down through the roof like weather.' },
+    // One step in from the landing square, 8,14: an exit takes the company on arrival and fires no event
+    // there, so the first line is read on the first step north (§9.2, #759's 16).
+    { kind: 'event', x: 8, y: 13, id: 'core_door', once: true, text: 'Through the door, and the hum is everything. The walls here are glass over grey, and the light comes down through the roof like weather.' },
     // Inside the door once Vask has fallen, until an ending (§9.1, 19): Tallis's man where Tallis has the
     // chair, or where no claimant's verdict carried and his tally came down; beside him a Partner's runner.
     {
