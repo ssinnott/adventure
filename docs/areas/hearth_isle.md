@@ -195,8 +195,8 @@ Seven places. The isle (#753) is the area's first and lists the area; the east r
   Wenna's knot on its frame (59), eight in all; the keepers' store behind the first west frame;
   behind the eighth a small room with the hatch in its wall onto a crawl way and its chest, and from
   the room a way on to the crack the Sunder made and the knocker that found it (61); west along
-  the row-10 way, the CREW ONLY door from the inside (60). Eleven groups: rats, keepers, knockers and, at the
-  Stair's head, the first crawlers (§4.6). The Stair's head and the crawl way's door give onto
+  the row-10 way, the CREW ONLY door from the inside (60). Twelve groups since #794: rats, keepers,
+  knockers and, at the Stair's head, the first crawlers (§4.6). The Stair's head and the crawl way's door give onto
   the Stair (#758).
 - **The Stair** (`underdeep2`, dungeon 32×32, band 30–31; #758): down from the Ways by the door at
   the main way's head, onto the stair's head, 16,30, with the way back up behind it; eight landings
@@ -206,8 +206,8 @@ Seven places. The isle (#753) is the area's first and lists the area; the east r
   claimant's people and their captain or fought for with the rearguard (57); the Hand's dead on
   the flights below and Jowan's letter under a champion's hands (58); the last frame, which carries
   Wenna's name (59); the crawl way's door in the fourth landing's wall, with no way back up it; the
-  Catcher on the last landing. Seven groups: the rearguard, the rats, the crawlers (two groups), the
-  keepers, the knockers and the Catcher's (§4.7).
+  Catcher on the last landing. Nine groups since #794: the rearguard, the rats, the crawlers (two
+  groups), the keepers, the knockers (three groups) and the Catcher's (§4.7).
 - **The Heart** (`core`, dungeon 16×16, band 32; #759): in through the Stair's last door onto 8,14,
   with the way back up behind it at 8,15; a passage three wide north into a round room under a glass
   roof, the panel in its north wall at 8,3 and eight empty alcoves round the wall; Vask at the panel
@@ -807,8 +807,9 @@ the unwatched way, which lands below the Stair's first fights and above the Catc
 **People.** The CREW ONLY door at 2,10 and the knocker at 29,6: §6.
 
 **Encounters.** The machine at work and nothing else, and rats; the keepers are the Ways' soldiers,
-the knockers their armour. Eleven groups, the budget's balance and a rest's worth at 30 (§8); the
-table's twelfth row stands on the Deep Mines' side (60).
+the knockers their armour. Eleven groups, the budget's balance and a rest's worth at 30 (§8), and
+since #794 a twelfth for the pay, the rats in the crew's stores; the table's last row stands on the
+Deep Mines' side (60).
 
 | Id | Where | Group | Notes |
 |---|---|---|---|
@@ -823,13 +824,17 @@ table's twelfth row stands on the Deep Mines' side (60).
 | `ud_crawlers` | 16,8 | 2 deep crawlers | the first crawlers, on the ceiling of the main way's last run: the level's hardest |
 | `ud_knockers3` | 26,6 | 2 deep knockers | by the crack, `roams: false`, `until: { flag: CRACK_SEALED }` by the leave rule (they go to the crack once it is sealed, and are gone, standing or not) |
 | `ud_keepers4` | 16,5 | 4 keepers | before the Stair's door |
+| `ud_rats3` | 10,22 | 12 deep rats | in the crew's stores behind the third west frame, by `ud_rats`, `respawn: 1440` (#794) |
 | `ud_mines` | `deep_mines3` 6,3 | 3 knockers, the Kilns' own (`knocker`, level 16) | `after: { flag: CREW_OPEN }`, on the Deep Mines' side (the road behind, §12), not here: the Clean Corridor is band 17–18, so no Act V monster stands on it (`tools/tests/curve.ts`) |
 
-**Finds.** A keeper's store `ud_store` (12,27), a chest: 800 gold, `grey_shield`; the crawl way's
-`ud_crawl_chest` (24,4): 600 gold and three Great Spell Draughts (`potion_sp_great`).
+**Finds.** A keeper's store `ud_store` (12,27), a chest: 1,800 gold, `grey_shield`; the crawl way's
+`ud_crawl_chest` (24,4): 2,200 gold and three Great Spell Draughts (`potion_sp_great`); the crew's
+stores `ud_crew_store` (7,21): 2,000 gold; a second keeper's store `ud_store2` (24,17): 2,200 gold.
+8,200 in all, the box's share of the area's gold and half the Heart's (#794; the brief had the
+first two, at 800 and 600).
 
 **Share of the pay.** About nine fortieths of the area's, a little under a quarter: the Ways and
-the Stair are the balance (§8).
+the Stair are the balance (§8), and since #794 they carry the Heart's shortfall too (§4.8).
 
 **As built** (#757, 14 October): the brief's ways and its eleven groups, laid in a 32×32 box
 (`underdeep`, named The Ways, region `hearth`, band 30), down the crypt's grey door. The floor is
@@ -861,10 +866,15 @@ smooth and `bare` (#757's 14). It departs from the brief in these squares and li
   are moved (`ud_knockers1` to 9,26, `ud_knockers2` to 22,26, `ud_keepers1` to 11,17, `ud_keepers2`
   to 21,21, `ud_crew_guard` to 12,10, `ud_crawlers` to 16,5 and `ud_keepers4` to 16,8) and four
   stand where the brief has them (`ud_rats1` 16,27, `ud_rats2` 8,13, `ud_keepers3` 16,12 and
-  `ud_knockers3` 26,6). Their `aware`, roaming and respawns are in §9.2 (#757's 4 and 11).
-- **The finds.** The keepers' store `ud_store` at 11,27 holds 800 gold and the Grey Shield, ac 8 at
-  4,000; the crawl way's `ud_crawl_chest` at 24,4 holds 600 gold and three Great Spell Draughts.
-  The Old Lantern's Staff, 1d10+14 at 7,000, is the knocker's gift for *Widen it.* (#757's 9).
+  `ud_knockers3` 26,6). Their `aware`, roaming and respawns are in §9.2 (#757's 4 and 11). #794
+  adds a twelfth for the pay, `ud_rats3`, twelve deep rats at 10,22 in the bay behind the third
+  west frame, by `ud_rats` (§9.2, #794's 1).
+- **The finds.** The keepers' store `ud_store` at 11,27 holds 1,800 gold and the Grey Shield, ac 8
+  at 4,000; the crawl way's `ud_crawl_chest` at 24,4 holds 2,200 gold and three Great Spell
+  Draughts; the crew's stores `ud_crew_store` at 7,21 hold 2,000 and the second keeper's store
+  `ud_store2` at 24,17 2,200: 8,200 in all, the two raised from 800 and 600 and the two added by
+  #794 (§9.2, #794's 4 and 5). The Old Lantern's Staff, 1d10+14 at 7,000, is the knocker's gift
+  for *Widen it.* (#757's 9).
 - **The people** are *The door marked CREW ONLY* at 2,10 and *The knocker at the crack* at 29,6, both
   with no face (#757's 6 and 7). Their words are the brief's, save the shut answer's label (§6).
 - **The door's approach.** The sign `ud_crew_sign` stands at 4,10 and the feet `ud_feet` at 3,10, the
@@ -875,8 +885,8 @@ smooth and `bare` (#757's 14). It departs from the brief in these squares and li
 - **Measured.** A company at 30 wins every fight in the Ways, each group 100% of ten in the
   walkthrough, which walks the Ways at 30: down the grey door and up again, every frame, the hatch
   found from the eighth, the crack sealed and widened on another walk and the CREW ONLY door
-  answered both ways. Density 100.0% within 7 steps, the furthest 6, with one sign among its 32
-  points. The figures are in §8.
+  answered both ways. Density 100.0% within 7 steps, the furthest 6, with one sign among its 37
+  points since #794 (32 before). The figures are in §8.
 
 ### 4.7 The Stair (dungeon, 32×32, band 30–31)
 
@@ -936,24 +946,30 @@ shut behind them: an event and no exit, as I6's grey door is (`ud2_hand`, below)
 **People.** The claimant's captain on the first landing (57), §6.
 
 **Encounters.** The Hand's rearguard where the claimant's people are not; the crawlers from the
-second flight down; the Catcher at the foot.
+second flight down; the Catcher at the foot; and since #794, for the pay, knockers at the walls of
+the head and the second landing.
 
 | Id | Where | Group | Notes |
 |---|---|---|---|
+| `ud2_knockers2` | 18,30 | 3 deep knockers | the head's east end, `roams: false`: the first group past the way in, the gentlest (#794) |
 | `ud2_rearguard` | 16,26 | 3 hand rearguard (armoured, 30) | `roams: false`, `until: HELD` by the leave rule (the claimant's people fought it; §9, call 9) |
 | `ud2_rats` | 14,23 | 12 deep rats | at the dead, `respawn: 1440` |
+| `ud2_knockers3` | 19,22 | 3 deep knockers, 1 keeper | the second landing's east end, `roams: false` (#794) |
 | `ud2_crawlers1` | 16,20 | 2 deep crawlers | the third flight, from the ceiling |
 | `ud2_keepers` | 16,16 | 4 keepers | the fifth landing |
 | `ud2_crawlers2` | 16,12 | 3 deep crawlers | the sixth flight, the level's hardest group |
 | `ud2_knockers` | 16,8 | 3 deep knockers, 1 keeper | the seventh landing, `roams: false` |
 | `ud2_catcher` | 16,4 | the Catcher, 2 deep crawlers, `leader: 'catcher'` | the foot, `roams: false`, `aware: 3`; `slainText: 'It comes off the ceiling all at once, and lies on the steps among the ones it caught. Nothing is moving above you now.'` |
 
-**Finds.** The rearguard's chest `ud2_rearguard_chest` (17,26): 900 gold and `grey_axe`
+**Finds.** The rearguard's chest `ud2_rearguard_chest` (17,26): 2,000 gold and `grey_axe`
 (§8); the Catcher drops nothing; the dead's packs
-`ud2_packs` (15,13): 700 gold, `potion_heal` ×4.
+`ud2_packs` (15,13): 1,800 gold, `potion_heal` ×4; more of their packs `ud2_packs2` (13,22), at
+the second landing's west end by `ud2_dead`: 1,800 gold; the Hand's takings `ud2_takings` (20,2),
+left at the last door: 2,600 gold. 8,200 in all, the box's share of the area's gold and half the
+Heart's (#794; the brief had the first two, at 900 and 700).
 
 **Share of the pay.** About nine fortieths of the area's, the Catcher's 19,733 nearly a third of
-that (§8).
+that (§8), and since #794 half the Heart's shortfall too (§4.8).
 
 **As built** (#758, 14 October): the brief's landings, flights and seven groups, laid in a 32×32 box
 (`underdeep2`, named The Stair, region `hearth`, band 30–31), down the Ways' door at the main way's
@@ -992,23 +1008,27 @@ no step of its own, and no `deep` way is added, the area's band, 28–32, holdin
 - **The groups** are the brief's seven but for one count: `ud2_rearguard` 16,26, `ud2_rats` 14,23,
   `ud2_crawlers1` 16,20, `ud2_keepers` 16,16, `ud2_crawlers2` 16,12 (two crawlers, not three:
   #758's 8), `ud2_knockers` 16,8 and `ud2_catcher` 16,4. Their `aware`, roaming and respawns are in
-  §9.2 (#758's 9).
+  §9.2 (#758's 9). #794 adds two for the pay, standing as `ud2_knockers` does: `ud2_knockers2`,
+  three deep knockers at 18,30 on the head's east end, and `ud2_knockers3`, three and a keeper at
+  19,22 on the second landing's east end (§9.2, #794's 2 and 3).
 - **The Catcher** is set off the line on its odds (`OFF_LINE`): 1,300 hit points and 32d8+37 for
   the line's 2,095 and 34d8+41 (#752 read 2,096 and 35d7+54; its gate set 1,100 and 34d8+40). It is
   won 57% at 30 and 80% at 32 on the gate's hundred seeds (63%, 67% at 31 and 81% on 400): the
   floor's aim, which binds (§8). Its level, armour, attack, speed, xp, `ranged`, paralysis and look
   are the brief's (§7, §8; #758's 7; #752's 4; #796's 1).
-- **The finds.** `ud2_rearguard_chest` (17,26) holds 900 gold and the Grey Axe, 2d12+7 at 6,800;
+- **The finds.** `ud2_rearguard_chest` (17,26) holds 2,000 gold and the Grey Axe, 2d12+7 at 6,800;
   `ud2_letter_chest` (15,21), on `ud2_letter`'s square as the brief has it, Jowan's letter and no
-  gold; the dead's packs `ud2_packs` (15,13) 700 gold and four `potion_heal`. The Catcher drops
-  nothing.
+  gold; the dead's packs `ud2_packs` (15,13) 1,800 gold and four `potion_heal`; more of the dead's
+  packs `ud2_packs2` (13,22) 1,800 and the Hand's takings `ud2_takings` (20,2) 2,600: 8,200 in all,
+  the two raised from 900 and 700 and the two added by #794 (§9.2, #794's 4 and 5). The Catcher
+  drops nothing.
 - **The sign** `ud2_creed` (16,10) has the brief's id and no `read`, chalk any company can read,
   and keeps no `seen` (#758's 13).
 - **Measured.** A company at 30 wins every group but the Catcher's ten fights in ten in the
   walkthrough, which walks the Stair: down the Ways' last door and up, out of the crawl way, the
   first landing held, fought and outranked, the dead and the letter, the last frame and the Catcher
-  at the shut door. Density 98.0% within 7 steps, the furthest 9, with one sign among its 22
-  points. The figures are in §8.
+  at the shut door. Density 98.1% within 7 steps, the furthest 9, with one sign among its 27
+  points since #794 (22 before). The figures are in §8.
 
 ### 4.8 The Heart (dungeon, 16×16, band 32)
 
@@ -1143,7 +1163,9 @@ spy's word is the strand runner's, §6, given where it can still be spent):
 fight.
 
 **Finds.** None but the ring. The Heart pays its fight's xp and nothing else: Vask's and the Grey
-Hands', and the sentries' the clock calls (§8).
+Hands', and the sentries' the clock calls (§8). It holds one fight and cannot add a group, so the
+shortfall of its eighth, about 1,650 xp a member, and its share of the gold, 3,540, are carried by
+the Ways and the Stair (#794; §4.6, §4.7).
 
 **As built** (#759, 14 October): the brief's door, passage and round room, its five events, the
 voice, Wenna with her three answers, Vask after, the two who stand inside the door and the one
@@ -1931,8 +1953,8 @@ fights in ten; two under, no more than one in four, which the champions
 and the keepers must hold against a company of 26 and 28 in Cinderport's gear. Eleven fights to a
 rest at 28, rising to twelve at 32 (MONSTERS §3.3; EXPANSION §5.2), against a company that rests at
 the pilgrims' camp and nowhere below: the temple and the crypt, eight groups at 28 and 29, are one
-run from the camp; the Ways, eleven at 30, another; the Stair, seven at 30 and 31 with the
-Catcher, a third; and the Heart, one group and its sentries, the last. The ways up from the Ways
+run from the camp; the Ways, eleven at 30 (twelve since #794), another; the Stair, seven at 30 and
+31 with the Catcher (nine since #794), a third; and the Heart, one group and its sentries, the last. The ways up from the Ways
 and the Stair (§4.6, §4.7) take a company back to the camp between runs, so the counts stand as
 written. The groups of twelve (the moths and the rats, half again the fodder's group of eight) are
 a risk at the gate, which may bring them to eight. The two bosses are judged on their odds, as the
@@ -2026,39 +2048,40 @@ crypt pay, 14,850 xp a member and 5,200 gold, still owed to #744 while the area 
 
 **As built: the Ways** (#757). The row's `owed` is raised to what the isle, the temple, the crypt and
 the Ways pay, 21,710 xp a member and 4,900 gold, still owed to #744 while the area is built box by
-box:
+box; #794 raised the Ways' own pay and finds, and the rows that name it say what is true since:
 
 | | Figure |
 |---|---|
-| Xp a member | 9,768 against the Ways' nine fortieths, about 10,560: 0.93 (the groups 52,608 split six ways, 8,768; 60's 2,000, 333; 61's 4,000, 667) |
+| Xp a member | 10,962 since #794 against the Ways' nine fortieths, about 10,560: 1.04 (the groups 59,772 split six ways, 9,962, `ud_rats3`'s 7,164 among them; 60's 2,000, 333; 61's 4,000, 667); 9,768 as built, 0.93 |
 | The area so far | 21,710 of the 46,934, 46.3%: H6 5,009, the temple 4,971, the crypt 1,962 and the Ways 9,768 |
-| Gold | 4,900 of the 28,320 for the area: the Ways' 1,400 (the store 800, the crawl way 600), the crypt's 800, the temple's chest 2,000 and H6's 700 |
+| Gold | the Ways' 8,200 since #794 (the store 1,800, the crew's stores 2,000, the second store 2,200, the crawl way 2,200); as built, 4,900 of the 28,320 for the area: the Ways' 1,400 (the store 800, the crawl way 600), the crypt's 800, the temple's chest 2,000 and H6's 700 |
 | Paid by level | entering at 28 and clearing three quarters, a company leaves at 30.0, 2.0 under the next floor 32 |
 | Dearest find | the Grey Bow, 6,800, in the 7,000 window (the Old Lantern's Staff, 7,000, is an answer's gift, not a find) |
-| Gate, at the floor 30 | 100% of fights won (aim 90%, limit 80%); the area's 26 groups' too |
+| Gate, at the floor 30 | 100% of fights won (aim 90%, limit 80%), the twelve groups since #794 as the eleven; the area's 26 groups' too as built |
 | Gate, two under | n/a for the Ways, its floor being above the area's; the area's pool at 26, 100% of 26 groups' fights won: owed to #18 (§11) |
-| Fights to a rest, at 30 | 11.58 (aim 10.5 to 12.5, limit 9 to 15); 5.7% of days end in a fight broken off |
-| Density, dungeon | 100.0% within 7 steps (200 of 200, 180 needed); the furthest 6 of 10; 1 sign in 32 points |
+| Fights to a rest, at 30 | 11.27 since #794 (aim 10.5 to 12.5, limit 9 to 15), 7% of days ending in a fight broken off; 11.58 as built and 12.00 on main before it |
+| Density, dungeon | 100.0% within 7 steps (201 of 201, 181 needed, 16,1 floor since #758); the furthest 6 of 10; 1 sign in 37 points since #794 (32 as built) |
 | Levels | 4 monsters in 30–30, give or take two; rising from the way in (rank correlation 0.13); the nearest group, the rats at 3 steps, at 30.0; the hardest, the crawlers at 25 steps, at 31.0 |
 | Lines | 16 events and signs: 5 of one line, 8 of two and 3 of three; the area's 44: 7 of one, 25 of two and 12 of three |
 
 **As built: the Stair** (#758). The row's `owed` is raised to what the isle, the rim, the temple, the
 crypt, the Ways and the Stair pay, 34,099 xp a member and 8,200 gold, still owed to #744 while the
-area is built box by box:
+area is built box by box; #794 raised the Stair's own pay and finds, and the rows that name it say
+what is true since:
 
 | | Figure |
 |---|---|
-| Xp a member | 9,482 against the Stair's nine fortieths, about 10,560: 0.90 (the groups 56,892 split six ways; the Catcher's group 24,667 of it, the Catcher alone 3,289 a member) |
+| Xp a member | 11,164 since #794 against the Stair's nine fortieths, about 10,560: 1.06 (the groups 66,989 split six ways, the two groups of knockers' 10,097 among them; the Catcher's group 24,667 of it, the Catcher alone 3,289 a member); 9,482 as built, 0.90 |
 | The area so far | 34,099 of the 46,934, 72.7%: H6 5,009, the rim 2,908, the temple 4,971, the crypt 1,962, the Ways 9,768 and the Stair 9,482 |
-| Gold | 8,200 of the 28,320 for the area: the Stair's 1,600 (the rearguard's chest 900, the packs 700, the letter 0), the Ways' 1,400, the rim's camp chest 500 and hoard 1,200, the crypt's 800, the temple's chest 2,000 and H6's 700 |
+| Gold | the Stair's 8,200 since #794 (the rearguard's chest 2,000, the packs 1,800, the second landing's packs 1,800, the Hand's takings 2,600, the letter 0); as built, 8,200 of the 28,320 for the area: the Stair's 1,600 (the rearguard's chest 900, the packs 700, the letter 0), the Ways' 1,400, the rim's camp chest 500 and hoard 1,200, the crypt's 800, the temple's chest 2,000 and H6's 700 |
 | Paid by level | entering at 28 and clearing three quarters, a company leaves at 31.1, 0.9 under the next floor 32 |
 | Dearest find | the Grey Bow, 6,800, in the 7,000 window (the Grey Axe in the rearguard's chest is 6,800 too) |
-| Gate, at the floor 30 | 94.1% of the Stair's fights won, the Catcher counted (aim 90%, limit 80%); the area's 37 groups at their maps' floors 98.9% |
+| Gate, at the floor 30 | 95.2% of the Stair's fights won since #794, the Catcher counted (aim 90%, limit 80%); 94.1% as built and 93.9% on main before it; the area's 37 groups at their maps' floors 98.9% as built |
 | The Catcher | 57% won at 30 (aim 30% to 70%, limit 20% to 80%) and 80% at 32 (aim 90%, limit 75%) on the gate's hundred seeds, which judge a dungeon's boss at its map's floor and two above, not at 31 (63%, 67% at 31 and 81% on 400); the walkthrough's ten at 31, 5 won. As sized by #752, 1,300 hit points and 32d8+37, and read again after #793 (56% and 79% before it); the first sizing, 1,100 and 34d8+40, gave 59%, 67% at 31 and 84%. The floor's aim binds and "nearly always at the cap" cannot hold beside it but in a slog (§7, §8; §9.2, #758's 7, #752's 4 and #796's 1) |
 | Gate, two under | n/a for the Stair, its floor being above the area's; the area's pool at 26, 97.5% of 37 groups' fights won (aim 25%, limit 90%): owed to #18 (§11) |
-| Fights to a rest, at 30 | 10.14 (aim 10.5 to 12.5, limit 9 to 15); 8.7% of days end in a fight broken off, the Catcher left out as a boss |
-| Density, dungeon | 98.0% within 7 steps (150 of 153, 138 needed); the furthest 9 of 10; 1 sign in 22 points |
-| Levels | 6 monsters in 30–31, give or take two; rising from the way in (rank correlation 0.19); the nearest group, the rearguard at 4 steps, at 30.0; the hardest, the crawlers at 16,20 at 10 steps, at 31.0 |
+| Fights to a rest, at 30 | 10.71 since #794 (aim 10.5 to 12.5, limit 9 to 15), in the aim, 10% of days ending in a fight broken off, the Catcher left out as a boss; 10.14 as built and 10.34 on main before it, under the aim |
+| Density, dungeon | 98.1% within 7 steps (151 of 154, 139 needed, 16,1 a door since #759); the furthest 9 of 10; 1 sign in 27 points since #794 (22 as built) |
+| Levels | 6 monsters in 30–31, give or take two; rising from the way in (rank correlation 0.41 since #794, 0.19 as built); the nearest group, `ud2_knockers2` at 2 steps, at 28.0 (as built the rearguard at 4 steps, at 30.0); the hardest, the crawlers at 16,20 at 10 steps, at 31.0 |
 | Lines | 11 events and signs: 8 of two lines and 3 of three; the area's 55: 7 of one, 33 of two and 15 of three |
 
 **As built: the Heart** (#759). The row's `owed` stands at what the isle, the rim, the temple, the
@@ -2131,6 +2154,24 @@ the last column is as #793 left it, read again by #796:
 | Vask's thinned group, won at 32 | 68% | 89%, past the limit of 80% | 78% |
 | Hearth Isle at its maps' floors, its 39 groups won | 97.2% | 98.4% | 97.3% |
 | Hearth Isle two under, the area's pool at 26 | 92.5% | 92.5% | 92.4%, owed to #18 |
+
+**The depths' pay** (#794, the Ways and the Stair; the isle's four are the other half's). More
+groups (never stronger monsters) and more finds (nothing sold): the Heart holds one fight and no
+find, so its shortfall, about 1,650 xp a member, and its share of the gold, 3,540, are the Ways'
+and the Stair's. On main before and since, the gate's figures on its own seeds:
+
+| Box | Groups | Xp a member, against its share | Gold | Won at the floor | Fights to a rest |
+|---|---|---|---|---|---|
+| The Ways, at 30 | 11, now 12 | 9,768 (0.92), now 10,962 (1.04), of 10,560 | 1,400, now 8,200 | 100%, now 100% | 12.00, now 11.27 |
+| The Stair, at 30 | 7, now 9 | 9,481 (0.90), now 11,164 (1.06), of 10,560 | 1,600, now 8,200 | 93.9%, now 95.2% | 10.34, now 10.71 |
+| The Heart, at 32 | 1 and its twin, as it was | 4,217 (0.72) of 5,867, as it was | none | on Vask's odds, as it was | n/a |
+
+The two pay 22,126 xp a member and 16,400 gold, against the 21,400 and 16,200 left to them once the
+isle's half brings its four to about 21,400 and 12,300. With the isle as it stood the curve prints
+41,194 xp a member and 21,600 gold for a clear, and the row's `owed` stands until both halves are
+in. The area's 42 groups are won 97.5% at their maps' floors and 92.9% two under at 26 (owed to #18
+at 100%, as before); the Catcher 57% at 30 and 80% at 32 and Vask's groups 60% and 78%, untouched;
+the dearest find is still the Grey Mail at 7,000.
 
 **Quest items** (`price: 0`, `slot: 'none'`): `wardens_badge`, `treaty_seal`, `tallis_tally`
 (57); `gullwick_letter`, with its text (58); `fane_key` (an iron key, 56); `queens_signet`, with a
@@ -3266,6 +3307,29 @@ Decided by delegate for #796, each the owner's to overturn:
 4. **EXPANSION §5.2 and MONSTERS §1 and §9.3 take a clause each;** #758's 7 and #752's 4, 5 and 7 gain
    a cross-reference to this block and no more.
 
+Decided by delegate for #794 (the depths), each the owner's to overturn:
+
+1. **The Ways take one group, `ud_rats3`, twelve deep rats at 10,22 in the bay behind the third west
+   frame,** where `ud_rats` tells of rats and none stood: 10,962 xp a member, 1.04 of the share, in
+   one group where keepers or knockers would take two. `aware: 3`, roaming, `respawn: 1440`.
+2. **The Stair takes two standing groups of knockers,** `ud2_knockers2` (three, 18,30) and
+   `ud2_knockers3` (three and a keeper, 19,22): 11,164, 1.06. Knockers (28) are the mix's gentlest:
+   the day at 30 goes from 10.34 to 10.71 fights, into the aim, where twelve rats took it to 9.5.
+3. **They stand nearest the head,** the first groups past the way in and the gentlest: the Stair's
+   rise goes from 0.19 to 0.41. The head's stand off the way down, so a company may pass them by.
+4. **Each box's finds come to 8,200 gold,** its 6,372 and half the Heart's 3,540, rounded up to the
+   hundred: the depths' 16,400 and the isle's half meet the 28,320. The brief's chests are raised
+   (the letter's left at none) and four are added, gold alone.
+5. **The new chests stand where a box keeps one:** the crew's stores (7,21) in the rats' bay, a second
+   keeper's store (24,17) in the one bay with nothing in it, more of the dead's packs (13,22) by
+   `ud2_dead` and the Hand's takings (20,2) at the last door, past the Catcher. No line is added: the
+   boxes' chests have none, and the events beside them say what they are.
+6. **The runs from the camp grow to twelve and nine,** each inside twelve fights; §4.6, §4.7 and §8
+   say so, and the ways up still take a company back to the camp between them.
+7. **The walkthrough asserts the raised and the new chests' gold,** and fights no new group: none
+   stands on the story's way. The Heart, the Catcher's and Vask's groups, the gate's owed figures
+   and the row's `owed` (the last pull request's) are not touched.
+
 ## 10. Names
 
 The Lanterns' English, kept, as the Whitespine's and Sunderwood's were (NAMES.md §2, §4): the isle
@@ -3396,10 +3460,10 @@ Owed, from the crypt (#756):
 
 Owed, from the Ways (#757):
 
-- **The Ways pay under their nine fortieths:** 0.93 of it (9,768 xp a member of about 10,560), with
-  11.58 fights to a rest at 30, in the aim. The eleven groups are the brief's; lighter or fewer
-  would widen the shortfall (§9.2, #757's 12). The balance was the Stair's, which pays 0.90
-  (below). The owner's call.
+- **The Ways paid under their nine fortieths,** 0.93 of it (9,768 xp a member of about 10,560),
+  with the brief's eleven groups (§9.2, #757's 12). #794 added a twelfth (the rats in the crew's
+  stores) and two chests: 10,962 a member (1.04 of the share), 11.27 fights to a rest at 30 (in the
+  aim) and 8,200 gold (§8). Nothing is owed for it.
 - **The brief's crawl way and row-6 way cannot both stand:** the crawl way runs 24,2–13, and a way
   from the main way east to the crack at 29,6 crosses it and opens the hatch's secret to anyone. The
   crack is reached through the eighth frame's room instead (§9.2, #757's 2). The owner's call.
@@ -3423,15 +3487,11 @@ Owed, from the Ways (#757):
 
 Owed, from the Stair (#758):
 
-- **The Stair pays under its nine fortieths:** 0.90 of it (9,482 xp a member of about 10,560), with
-  10.14 fights to a rest at 30, under the aim (10.5 to 12.5) and inside the limit (9 to 15). The
-  groups are the brief's but for the sixth flight's crawlers (below). The cap, 1.25 times its share,
-  is about 13,200; to reach it the Stair would need about 22,000 more xp of groups (some 3,700 a
-  member, say four more groups of four keepers), which the brief does not give and the day at 30
-  would bear only if they were light. With I6's 2,908 (#754) and the Heart's eighth, about 5,900,
-  the area reaches about 40,000 of the 46,934 (85%), about 6,900 a member short. The area's clear
-  will fall short: its owed row is set at the as-built floor at the end, as Act IV's Wold was. The
-  owner's call.
+- **The Stair paid under its nine fortieths,** 0.90 of it (9,482 xp a member of about 10,560), with
+  10.14 fights to a rest at 30, under the aim (10.5 to 12.5) and inside the limit (9 to 15). #794
+  added two light groups (knockers at the head and on the second landing) and two chests: 11,164 a
+  member (1.06 of the share), 10.71 fights to a rest at 30 (in the aim) and 8,200 gold (§8).
+  Nothing is owed for it.
 - **The Catcher's sizing is final** (#752): `OFF_LINE.catcher`, 1,300 hit points and 32d8+37, is won
   57% at 30 and 80% at 32 on the gate's hundred seeds (63%, 67% at 31 and 81% on 400). The aim is
   the floor's, as the gate states it (§8): "nearly always at the cap" cannot hold beside it but in a
@@ -3513,6 +3573,18 @@ Owed, from the Heart (#759):
 - **The Council's and the Compact's flags are read here, not set (#764):** `q_throne_removed` swaps
   Vask's groups, `q_throne_tallis` (or `q_token_tallis`, where no claimant's verdict carried) puts
   Tallis's man at 7,13 and `q_compact_over` the runner at 7,12.
+
+Owed, from the depths' pay (#794, the Ways and the Stair):
+
+- **The area's clear waits on the isle's half:** with the isle as it stood the curve prints 41,194
+  xp a member of the 46,934 and 21,600 gold of the 28,320. The depths pay 22,126 and 16,400 of it,
+  the Heart's shortfall and its share of the gold among it; the isle's four are the other half's,
+  and the row's `owed` stands until both are in (§8).
+- **The runs from the camp grow,** the Ways' to twelve groups and the Stair's to nine with the
+  Catcher; the ways up take a company back to the camp between runs, and each run is inside twelve
+  fights (§8).
+- **Two under, the area's pool** is won 92.9% of 42 groups' fights at 26, owed to #18 at 100% as
+  before (`Hearth Isle: under`, `OWED` in `tools/tests/gate.ts`); it is not re-recorded.
 
 ## 12. The road behind: the lines
 

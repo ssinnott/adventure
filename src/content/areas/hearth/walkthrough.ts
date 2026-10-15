@@ -444,8 +444,10 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(!!log('frames') && !log('frames')!.done && log('frames')!.goal === 'Follow her knots through the ways, frame by frame.', 'her knot on the first frame begins Every Frame She Marked');
   fight(w, 'underdeep:ud_knockers1');
   const ways = (id: string) => WAYS.features!.find((f) => f.kind === 'chest' && f.id === id);
-  const store = ways('ud_store'), crawl = ways('ud_crawl_chest');
-  ok(store?.kind === 'chest' && store.gold === 800 && store.items.join() === 'grey_shield', 'in the keepers\' store behind the first west frame, 800 gold and a Grey Shield');
+  const store = ways('ud_store'), crawl = ways('ud_crawl_chest'), crew = ways('ud_crew_store'), store2 = ways('ud_store2');
+  ok(store?.kind === 'chest' && store.gold === 1800 && store.items.join() === 'grey_shield', 'in the keepers\' store behind the first west frame, 1,800 gold and a Grey Shield');
+  ok(crew?.kind === 'chest' && crew.gold === 2000 && crew.x === 7 && crew.y === 21 && store2?.kind === 'chest' && store2.gold === 2200 && store2.x === 24 && store2.y === 17,
+    'in the crew\'s stores behind the third west frame 2,000 gold, and in a second store behind the third east frame 2,200 (#794)');
   see(w, 'underdeep:ud_knot2');
   fight(w, 'underdeep:ud_knockers2');
   see(w, 'underdeep:ud_voice');
@@ -472,8 +474,8 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(hatch.hint === 'ud_knot8' && hatchFound && crawled.every((r) => r.kind === 'moved') && w.world.used('ud_hatch') && log('frames')!.pages[0].entries.length === 3,
     'searched at the wall behind the eighth frame, the hatch opens on the crawl way, and the log keeps it');
   listen(w);
-  ok(crawl?.kind === 'chest' && crawl.gold === 600 && crawl.items.join() === 'potion_sp_great,potion_sp_great,potion_sp_great' && crawl.x === 24 && crawl.y === 4,
-    'in the crawl way 600 gold and three Great Spell Draughts');
+  ok(crawl?.kind === 'chest' && crawl.gold === 2200 && crawl.items.join() === 'potion_sp_great,potion_sp_great,potion_sp_great' && crawl.x === 24 && crawl.y === 4,
+    'in the crawl way 2,200 gold and three Great Spell Draughts');
   ok(WAYS.rows[CRAWL_DOOR.y][CRAWL_DOOR.x] === 'D' && WAYS.rows[STAIR_DOOR.y][STAIR_DOOR.x] === '.' && WAYS.rows[STAIR_DOOR.y + 1][STAIR_DOOR.x] === 'D'
     && [STAIR_DOOR, CRAWL_DOOR].every((d) => d.to === 'underdeep2' && (WAYS.exits ?? []).includes(d)),
     'the crawl way\'s door and the Stair\'s head are listed, their ways down onto the Stair (#758)');
@@ -570,9 +572,11 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(meet(captain, w.party, heard(w.world, captain)).text.includes('Sergeant Aelfric\'s badge') && log('bowl_pilgrims')!.done,
     'the cousin\'s people hold the first landing for the badge, their captain says so, and The Pilgrims in the Bowl is done');
   const ud2 = (id: string) => UD2.features!.find((f) => f.kind === 'chest' && f.id === id);
-  const [rearguardChest, letter, packs] = ['ud2_rearguard_chest', 'ud2_letter_chest', 'ud2_packs'].map(ud2);
-  ok(rearguardChest?.kind === 'chest' && rearguardChest.gold === 900 && rearguardChest.items.join() === 'grey_axe' && packs?.kind === 'chest' && packs.gold === 700
-    && packs.items.join() === 'potion_heal,potion_heal,potion_heal,potion_heal', 'the rearguard\'s chest, 900 gold and a Grey Axe; the dead\'s packs, 700 gold and four healing potions');
+  const [rearguardChest, letter, packs, packs2, takings] = ['ud2_rearguard_chest', 'ud2_letter_chest', 'ud2_packs', 'ud2_packs2', 'ud2_takings'].map(ud2);
+  ok(rearguardChest?.kind === 'chest' && rearguardChest.gold === 2000 && rearguardChest.items.join() === 'grey_axe' && packs?.kind === 'chest' && packs.gold === 1800
+    && packs.items.join() === 'potion_heal,potion_heal,potion_heal,potion_heal', 'the rearguard\'s chest, 2,000 gold and a Grey Axe; the dead\'s packs, 1,800 gold and four healing potions');
+  ok(packs2?.kind === 'chest' && packs2.gold === 1800 && packs2.x === 13 && packs2.y === 22 && takings?.kind === 'chest' && takings.gold === 2600 && takings.x === 20 && takings.y === 2,
+    'more of the dead\'s packs on the second landing, 1,800 gold, and the Hand\'s takings at the last door, 2,600 (#794)');
   // On another walk, nobody holds it: the rearguard won at 30, and the quest done on it, carrying unheld.
   const unheld = newWalk(ok);
   unheld.level = 30;
