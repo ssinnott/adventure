@@ -827,20 +827,25 @@ async function main(): Promise<void> {
     // between: where a point's factor falls so fast from the one before that the hit points drawn
     // between them would dip, it is raised until they would not, and its damage is solved again. A
     // boss's one factor is both, so held it hits a little harder as well, and is not solved again.
+    // And where the level made over a point is not made now, but stands as it was, the point's hit
+    // points never pass those drawn at the level over it: its factor comes down until they would not,
+    // and is solved again as a held one is (#793, 29 made between 28 and 30).
     const held: Job[] = [], bosses: string[] = [];
     for (const r of roles) {
       LEVELS.forEach((b, k) => {
-        if (k === 0) return;
+        if (k === 0 || !levels.includes(b)) return;
         const a = LEVELS[k - 1], grow = line(b).hp - line(b - 1).hp;
         const least = (next.hp[r][k - 1] * line(b).hp) / (line(b).hp + grow * (b - a));
-        if (next.hp[r][k] < least - 1e-9 && levels.includes(b)) {
-          next.hp[r][k] = Math.ceil(least * 100) / 100;
-          if (r === 'boss') { next.dmg[r][k] = next.hp[r][k]; bosses.push(`boss ${b}`); }
-          else held.push({ kind: 'refit', role: r, level: b, seeds, under: 0, hp: next.hp[r][k], rules });
-        }
+        const c = LEVELS[k + 1], rise = line(b + 1).hp - line(b).hp;
+        const most = c === undefined || levels.includes(c) ? Infinity : (next.hp[r][k + 1] * line(b + 1).hp) / (line(b + 1).hp - rise * (c - b));
+        const h = next.hp[r][k] < least - 1e-9 ? Math.ceil(least * 100) / 100 : next.hp[r][k] > most + 1e-9 ? Math.floor(most * 100) / 100 : undefined;
+        if (h === undefined) return;
+        next.hp[r][k] = h;
+        if (r === 'boss') { next.dmg[r][k] = h; bosses.push(`boss ${b}`); }
+        else held.push({ kind: 'refit', role: r, level: b, seeds, under: 0, hp: h, rules });
       });
     }
-    if (held.length || bosses.length) console.log(`  holding hit points at the level under's: ${[...held.map((j) => `${j.role} ${j.level}`), ...bosses].join(', ')}`);
+    if (held.length || bosses.length) console.log(`  holding hit points at the level under's, or the level over's where it stands: ${[...held.map((j) => `${j.role} ${j.level}`), ...bosses].join(', ')}`);
     if (held.length) {
       const again = await onCores<Point>(held, say);
       held.forEach((j, k) => put(j, again[k]));

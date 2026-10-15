@@ -124,13 +124,17 @@ export function harness(): void {
   // And through Act IV, 23 to 27, where it steps at 23 (tier 7), 25 (Cinderport's armourer) and 27
   // (the third prestige), the line from 25 made again with them (#549); and through Act V, 28 to 32,
   // where it steps at 28 into the Hand's steel (#746), the line made again with it at 28, 30 and 32
-  // and read between them at 29 and 31 (#752): eleven at 28, rising to twelve at 32.
+  // (#752) and at 29 and 31 between them (#793): eleven at 28, rising to twelve at 32.
   const fought = (ls: number[]) => ls.map((l) => ({ l, d: days(l, [standardEncounter('soldier', l)], 40, 5001) }));
   const four = fought([23, 24, 25, 26, 27]), five = fought([28, 29, 30, 31, 32]);
   const near = ({ l, d }: (typeof four)[number]): boolean => Math.abs(d.fights - fightsPerRest(l)) <= 1.5;
   const say = (rows: typeof four): string => rows.map(({ l, d }) => `${d.fights.toFixed(1)} at ${l} (${fightsPerRest(l)})`).join(', ');
   ok(four.every(near), `through Act IV a company fights about its own of 4 Test Soldiers between rests: ${say(four)}`);
   ok(five.every(near), `and through Act V, in the Hand's steel, about its own: ${say(five)}`);
+  // And no test monster has fewer hit points than the one a level under it (MONSTERS §4.4): 29, made
+  // between 28 and 30, which stand as they were, is held under 30 where it would pass it (#793).
+  const dips = ROLE_IDS.flatMap((r) => Array.from({ length: MAX_LEVEL - 1 }, (_, k) => k + 2).filter((l) => testMonster(r, l).hp < testMonster(r, l - 1).hp).map((l) => `${r} at ${l}`));
+  ok(!dips.length, `no test monster has fewer hit points than the one a level under it, 1 to ${MAX_LEVEL}${dips.length ? ` (not: ${dips.join(', ')})` : ''}`);
   // A test monster's encounter pays what the curve gives a group at the built areas' pinned pace (docs/MONSTERS.md §4.4).
   const pays = [1, 10, 32].map((l) => Math.round((6 * (xpForLevel(l + 1) - xpForLevel(l))) / (0.75 * groupsPerLevel(l))));
   ok(pays.join() === '99,1573,5093' && xpFor('boss', 10) === 6293, `an encounter pays ${pays.join(', ')} at 1, 10 and 32, as MONSTERS §4.4 says, and a boss four`);
@@ -168,7 +172,7 @@ export const OFF_LINE: Record<string, string> = {
   tallymaster: "the counting house's boss, the boss line made again by #549 with its hit points the line's and its blow set by its gate (#22)",
   catcher: "the Stair's boss, its hit points and its blow set by its gate (#758) and set again on its odds on the line made with the Hand's steel (#752)",
   vask: "the Heart's boss, his hit points and his blow set by its gate with the clock played and the Hands killed first (#759), and set again on his odds on the line made with the Hand's steel (#752)",
-  core_sentry: "the Heart's sentries, called by its clock: the soldier's blow on twice its hit points, so a company that lets the clock run wins about one in three (#752)",
+  core_sentry: "the Heart's sentries, called by its clock: the soldier's blow on twice its hit points as the line read them at 31 between 30 and 32, so a company that lets the clock run wins about one in three (#752), and held there when #793 made 31",
   deep_knocker: "Meridian Camp's knocker (#22), placed there and in the Dead-Drop on the armoured line at 28 as #549 made it, and held there when #752 made 28 again in the Hand's steel, so Act IV's figures stand; the Ways and the Stair take it as built",
   inspector: "Meridian Camp's inspector (#22), placed there on the soldier line at 28 as #549 made it, and held there when #752 made 28 again in the Hand's steel, so Act IV's figures stand",
 };
