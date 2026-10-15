@@ -28,7 +28,7 @@ export const AREA = {
   sprites: SPRITES,
   // The isle's finds and the pilgrims' tokens (#753), the east rim's staff and mail (#754), the temple's
   // (#755), the crypt's (#756), the Ways' (#757), the Stair's (#758) and the Heart's ring (#759); the band's
-  // rung at 28 is #746's.
+  // rung at 28 is the nine grey pieces among them (#746).
   items: ITEMS,
   // #56's 57, The Pilgrims in the Bowl, as far as the isle goes (#753); 56, The Sacristan's Lamps (#755); 59,
   // Every Frame She Marked, as far as the Ways go, 60, Crew Only, From the Inside, and 61, The Knocker That

@@ -13,7 +13,9 @@
 // the forge's wares sits inside the Kilns' window too. Then Act IV (#542), one step: Cinderport's
 // armourer at 25, bettering the furrier's and Rimewater's finds for every class, owed to the town's
 // box while Ashfall is planned; and the stone cure (#546), a consumable inside the window, which the
-// company carries from 25, owed to Cinderport's chandler and the Riders' trader.
+// company carries from 25, owed to Cinderport's chandler and the Riders' trader. And Act V (#746), the
+// last: the Hand's steel at 28, found on Hearth Isle and sold nowhere, a point past the armourer's for
+// every class, each piece inside the isle's window and placed by its box.
 import { AREAS, MAP_DEFS, MONSTERS, ITEMS } from '../../src/content/index.ts';
 import type { Area } from '../../src/content/area.ts';
 import { CURVE } from '../../src/content/progression.ts';
@@ -26,6 +28,7 @@ import type { ItemDef } from '../../src/game/items.ts';
 import { GEAR, KIT, companyAt } from '../harness.ts';
 import { gateCompany } from '../gate.ts';
 import { giftOf, spentId } from '../../src/game/wilds.ts';
+import { personGives } from '../../src/game/people.ts';
 import { ok, owed } from './lib.ts';
 
 /** The issue's table: what each class betters its kit with, by level 3 and by level 5. */
@@ -147,8 +150,11 @@ export const ACT_II: readonly { level: number; name: string; from: Record<string
   },
 ];
 
-/** A rung past Act I's: its level and name, where each of its items comes from, and what each class takes. */
-type Rung<Where extends string> = { level: number; name: string; from: Record<string, readonly [area: Where, whose: string]>; classes: Record<ClassId, readonly string[]> };
+/**
+ * A rung past Act I's: its level and name, where each of its items comes from, and what each class
+ * takes. `found`: every piece of it is a find though it carries no plus, and no shop sells it (#746).
+ */
+type Rung<Where extends string> = { level: number; name: string; found?: true; from: Record<string, readonly [area: Where, whose: string]>; classes: Record<ClassId, readonly string[]> };
 
 /**
  * Act III's rungs (#535, docs/areas/kilns.md §9), as Act II's: a ware's area and the shop's issue
@@ -222,6 +228,34 @@ export const ACT_IV: readonly Rung<'ashfall'>[] = [
 ];
 
 /**
+ * Act V's rung (#746, docs/areas/hearth_isle.md §8), the last: the Hand's steel at 28, found and never
+ * sold, each piece a point past Cinderport's armourer's. The isle has no town: each piece lies in a
+ * chest, a hoard or a drop of the box named beside it, every one placed. Each class takes the piece
+ * that betters the one it took at 25, and plate's wearers the mail, which betters their plate; the
+ * two pieces §8 gives across its groups go to every class they better: the Grey Blade to the cleric
+ * beside the knight and the paladin, the Old Lantern's Staff to every class but the shield bearers.
+ */
+export const ACT_V: readonly Rung<'hearth'>[] = [
+  {
+    level: 28, name: "the Hand's steel", found: true,
+    from: {
+      grey_knife: ['hearth', ''], // the isle, H6 (#753): the picket's chest and the champions' drop
+      grey_staff: ['hearth', ''], grey_mail: ['hearth', ''], // the east rim, I6 (#754): the Hand's camp's chest and its hoard
+      grey_blade: ['hearth', ''], grey_bow: ['hearth', ''], // the temple (#755): its treasury
+      grey_robe: ['hearth', ''], // the crypt (#756): the dead champion's pack
+      grey_shield: ['hearth', ''], old_lanterns_staff: ['hearth', ''], // the Ways (#757): the keepers' store and the hall behind the crack
+      grey_axe: ['hearth', ''], // the Stair (#758): the rearguard's chest
+    },
+    classes: {
+      knight: ['grey_blade', 'grey_mail', 'grey_shield'], paladin: ['grey_blade', 'grey_mail', 'grey_shield'], ranger: ['grey_bow', 'grey_mail'],
+      barbarian: ['grey_axe', 'grey_mail'], cleric: ['grey_blade', 'old_lanterns_staff', 'grey_robe'], sorcerer: ['grey_knife', 'old_lanterns_staff', 'grey_robe'],
+      thief: ['grey_knife', 'old_lanterns_staff', 'grey_mail'], bard: ['grey_knife', 'old_lanterns_staff', 'grey_mail'],
+      monk: ['grey_staff', 'old_lanterns_staff'], druid: ['grey_staff', 'old_lanterns_staff', 'grey_mail'],
+    },
+  },
+];
+
+/**
  * Who sells the stone cure (#546): Cinderport's chandler (#512) and the Riders' trader at Akordu
  * (#526), the Wold having no temple nearer; each owed it while its area is planned, '' once sold.
  */
@@ -277,10 +311,10 @@ export function ladder(): void {
   const unlisted = by(10).filter((id) => !by(9).includes(id) && !(id in DEEP_FINDS));
   ok(!unlisted.length, `every rung at 10 is a Deepthorn find with its box${unlisted.length ? ` (not: ${unlisted.join(', ')})` : ''}`);
 
-  // Acts II to IV, rung by rung, as the Deepthorn's: each item is in the ladder at its rung and
+  // Acts II to V, rung by rung, as the Deepthorn's: each item is in the ladder at its rung and
   // no sooner, the class can use it, and it betters the best of its kind the class had on the rung
   // before.
-  const rungs: readonly Rung<keyof typeof CURVE>[] = [...ACT_II, ...ACT_III, ...ACT_IV];
+  const rungs: readonly Rung<keyof typeof CURVE>[] = [...ACT_II, ...ACT_III, ...ACT_IV, ...ACT_V];
   rungs.forEach((rung, k) => {
     const before = k ? rungs[k - 1].level : 10;
     for (const [cls, ids] of Object.entries(rung.classes) as [ClassId, readonly string[]][]) {
@@ -326,16 +360,23 @@ export function ladder(): void {
     if (whose) owed(found.has(id), msg, whose); else ok(found.has(id), msg);
   }
 
-  // Acts II's to IV's wares are sold in their area and their finds placed there, each inside the
-  // area's window; each owed to its shop or box until it is, as all is in an area not yet listed.
+  // Acts II's to V's wares are sold in their area and their finds placed there, each inside the
+  // area's window; each owed to its shop or box until it is, as all is in an area not yet listed. A
+  // found rung's pieces carry no plus and are finds all the same (#746): held to a find's rule, not a
+  // ware's, and to one more, that no shop anywhere sells them.
   const areaOf = (id: string): Area | undefined => (AREAS as readonly Area[]).find((a) => a.id === id);
+  const stocked = new Set(MAP_DEFS.flatMap((m) => (m.features ?? []).flatMap((f) => (f.kind === 'shop' ? f.stock : []))));
   for (const rung of rungs) for (const [id, [area, whose]] of Object.entries(rung.from)) {
-    const d = ITEMS[id], a = areaOf(area), plus = !!d?.plus;
+    const d = ITEMS[id], a = areaOf(area), plus = !!rung.found || !!d?.plus;
     ok(!!d && d.price > 0 && d.price <= CURVE[area].price, `${plus ? 'find' : 'ware'} ${id} is an item within ${area}'s window (${d?.price} of ${CURVE[area].price} gold)`);
+    if (rung.found) ok(!stocked.has(id), `find ${id}, of ${rung.name}, is sold nowhere`);
+    // A found rung's piece may be handed over by a person's answer too, as the Old Lantern's Staff is at
+    // the crack (61, #757): a find all the same. The earlier rungs' finds keep to chests and drops.
+    const handed = !!rung.found && !!a && a.maps.some((m) => (m.features ?? []).some((f) => f.kind === 'npc' && personGives(f).includes(id)));
     const there = !!a && (plus
-      ? a.maps.some((m) => (m.features ?? []).some((f) => giftOf(f)?.items?.includes(id))) || a.monsters.some((m) => (m.drops ?? []).some((x) => x.item === id))
+      ? a.maps.some((m) => (m.features ?? []).some((f) => giftOf(f)?.items?.includes(id))) || a.monsters.some((m) => (m.drops ?? []).some((x) => x.item === id)) || handed
       : a.maps.some((m) => (m.features ?? []).some((f) => f.kind === 'shop' && f.stock.includes(id))));
-    const msg = plus ? `find ${id} lies in a chest, a cairn, a statue's gift or a hoard in ${area}` : `ware ${id} is sold in ${area}`;
+    const msg = plus ? `find ${id} lies in a chest, a cairn, a statue's gift or a hoard${rung.found ? ", or a person's answer gives it," : ''} in ${area}` : `ware ${id} is sold in ${area}`;
     if (whose) owed(there, msg, whose); else ok(there, msg);
   }
 

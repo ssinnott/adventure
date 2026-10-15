@@ -231,9 +231,10 @@ for what the isle, the rim, the temple, the crypt, the Ways, the Stair and the H
 short of the area's budget (§8, §11). The chapter, The Heart (#760, §5), is the area's `chapter`
 (`chapter.ts`), joined after the Wold's in `THE_QUEST`, the twelfth and last: begun on `q_road_east`
 or on the isle, done on any of the three endings' flags and walked in the walkthrough to each of its
-ends and once early; `tools/tests/quests.ts` owes neither it nor the zone's step now. The drafts the
-scaffold cuts are in §1. This doc is
-the plan; §4 has the briefs, each with every line its place says, so that the box or level can be
+ends and once early; `tools/tests/quests.ts` owes neither it nor the zone's step now. The gear's last
+rung, the Hand's steel at 28 (#746, §8), is on the ladder (`GEAR`, `tools/harness.ts`), every piece
+placed by its box. The drafts the scaffold cuts are in §1. This doc is the plan; §4 has the briefs,
+each with every line its place says, so that the box or level can be
 built from it by a session that has read DESIGN, STORY and EXPANSION and nothing else. The owner's
 calls are §9's.
 
@@ -1999,29 +2000,49 @@ of Vask's groups and none of the sentries, and a clear fights one group:
 | Levels | 2 monsters in 32, give or take two; the nearest group, `core_vask` at 9 steps, at 31.3; the hardest, `core_vask_thinned` at 9 steps, at 31.3 (at least 30) |
 | Lines | every event and sign of the Heart fits 3 lines of the log |
 
-**The gear** (`GEAR`, `tools/harness.ts`), one more rung, the last, by 28 and found, never sold:
-the Hand's steel from below, in the temple's treasury, the camps' chests and the champions' drops
-(§4.4 to §4.7), each inside the window and each a point past Cinderport's armourer for every class:
+**The gear** (`GEAR`, `tools/harness.ts`), the last rung, at 28 (built, #746), found and never
+sold: the Hand's steel from below, in the temple's treasury, the camps' chests, the champions'
+drops and the knocker's gift (§4.2 to §4.7), each inside the window and each a point past
+Cinderport's armourer for every class. *Takes it* is the ladder test's (`ACT_V`,
+`tools/tests/ladder.ts`; §9.2, #746's 2):
 
-| Id | Name | For | Price | Where |
-|---|---|---|---|---|
-| `grey_blade` | Grey Blade | the martial classes and the cleric (a sword, 2d12+6) | 6,600 | the treasury |
-| `grey_axe` | Grey Axe | the martial classes (two-handed, 2d12+7) | 6,800 | the rearguard's chest |
-| `grey_knife` | Grey Knife | light, the thief's (1d8+14) | 6,400 | the picket's chest; the champions' drop |
-| `grey_bow` | Grey Bow | the ranger (1d12+13) | 6,800 | the treasury |
-| `grey_staff` | Grey Staff | staves, the casters' (1d10+13) | 6,200 | the Hand's camp |
-| `old_lanterns_staff` | Old Lantern's Staff | staves, the casters' (1d10+14), holy | 7,000 | the swallowed hall (61) |
-| `grey_mail` | Grey Mail | the Drakeskin Coat's wearers (ac 14; §9.2, #754's 8) | 7,000 | the Hand's hoard (I6) |
-| `grey_robe` | Grey Robe | the casters (ac 13) | 6,200 | the crypt's pack |
-| `grey_shield` | Grey Shield | the shield bearers (ac 8) | 4,000 | the keeper's store |
-| `smelling_salts` | Smelling Salts | anyone, a plain consumable: `use: { cure: ['asleep', 'paralysed'] }` on one member, used up | 0 | the north rim's cache, three in a pouch |
+| Id | Name | For | Takes it at 28 | Price | Where |
+|---|---|---|---|---|---|
+| `grey_blade` | Grey Blade | the martial classes and the cleric (one hand, 2d12+6) | the knight, the paladin and the cleric | 6,600 | the treasury |
+| `grey_axe` | Grey Axe | the martial classes (two-handed, 2d12+7) | the barbarian | 6,800 | the rearguard's chest |
+| `grey_knife` | Grey Knife | anyone (light, 1d8+14) | the sorcerer, the thief and the bard | 6,400 | the picket's chest; the champions' drop |
+| `grey_bow` | Grey Bow | the ranger (1d12+13) | the ranger | 6,800 | the treasury |
+| `grey_staff` | Grey Staff | anyone (a staff, two-handed, 1d10+13) | the monk and the druid | 6,200 | the Hand's camp's chest |
+| `old_lanterns_staff` | Old Lantern's Staff | anyone (a staff, two-handed, 1d10+14), holy in its words | the cleric, the sorcerer, the thief, the bard, the monk and the druid (the knight and the paladin bear shields; the ranger and the barbarian have a better piece of their own) | 7,000 | the knocker's gift for *Widen it.* (61) |
+| `grey_mail` | Grey Mail | the Drakeskin Coat's wearers (ac 14; §9.2, #754's 8) | all seven, the knight and the paladin over their plate | 7,000 | the Hand's hoard (I6) |
+| `grey_robe` | Grey Robe | anyone (ac 13) | the cleric and the sorcerer | 6,200 | the crypt's pack |
+| `grey_shield` | Grey Shield | the shield bearers (ac 8) | the knight and the paladin | 4,000 | the keepers' store |
+| `smelling_salts` | Smelling Salts | anyone, a plain consumable: `use: { cure: ['asleep', 'paralysed'] }` on one member, used up | no one: no gear, not on the ladder | 0 | the north rim's cache, three in a pouch |
 
 The dice are a point past the armourer's at Cinderport (`src/content/areas/ashfall/items.ts`), one
 rung for one rung: the Slag Mace 2d12+5, the Flamberge 2d12+6, the Marlinspike 1d8+13, the Ashwood
 Bow 1d12+12, the Battle Staff 1d10+12, the Drakeskin Coat ac 13, the Cinder Robe ac 12 and the
 Basalt Shield ac 7. The harness and the gate dress their companies from the rung at 28 and measure
-30 and 32 in it. The salts are no system: a consumable for one member, as Lantern Oil is
-(`lantern_oil`, which the store sells for poison, disease and paralysis), and named apart from it.
+30 and 32 in it; `GEAR_TOP` is 28. The salts are no system: a consumable for one member, as Lantern
+Oil is (`lantern_oil`, which the store sells for poison, disease and paralysis), and named apart from
+it.
+
+The boxes' tables above keep the figures they were built with, before the rung. In it the gate reads
+(#746; the line is made again with the rung in by #752):
+
+| Figure | Before the rung | In it |
+|---|---|---|
+| H6 at 28, fights to a rest | 12.19 | 13.43 |
+| I6 at 28, fights to a rest | 11.32 | 12.67 |
+| Hearthfane at 28, fights to a rest | 8.96 | 9.61 |
+| The crypt at 29, fights to a rest | 13.71 | 15.74, past the limit of 14.75: owed to #752 |
+| The Ways at 30, fights to a rest | 11.58 | 12.91 |
+| The Stair at its floor, 30, won | 94.1% | 95.6% |
+| The Stair at 30, fights to a rest | 10.14 | 11.43 |
+| The Catcher, won at 30 and at 32 | 59% and 84% | 69% and 82% |
+| Vask (`core_vask`), won at 32 | 65% | 79% |
+| Vask's thinned group, won at 32 | 68% | 89%, past the limit of 80%: owed to #752 |
+| Hearth Isle at its maps' floors, its 39 groups won | 97.2% | 98.4% |
 
 **Quest items** (`price: 0`, `slot: 'none'`): `wardens_badge`, `treaty_seal`, `tallis_tally`
 (57); `gullwick_letter`, with its text (58); `fane_key` (an iron key, 56); `queens_signet`, with a
@@ -3007,6 +3028,24 @@ Decided by delegate for #760, each the owner's to overturn:
 9. **Gullwick's shore is owed to #765** (`owed` in the walkthrough): no line there reads an ending's
    flag yet. Whichever of the two lands second makes the check.
 
+Decided by delegate for #746, each the owner's to overturn:
+
+1. **The rung is all nine, at 28, and `GEAR_TOP` follows to 28.** The `--gear-grows` what-if now
+   names its top (*past level 28*), where it said 10, stale since the ladder passed 10.
+2. **Who takes what (`ACT_V`):** each class the piece bettering the one it took at 25, plate's
+   wearers the mail too; the blade and the Old Lantern's Staff go to every class they better and that has
+   no better piece of its own (§8).
+3. **A rung can be `found`:** its pieces carry no plus, so the test read them as wares; a found
+   rung's are held to a find's place and to one more rule, that no shop sells them.
+4. **A found piece may be a person's gift:** the Old Lantern's Staff is the knocker's for *Widen
+   it.* (61), so a found rung counts an answer that gives it; earlier rungs keep chests and drops.
+5. **None is owed:** every piece is placed, so each `from` is `['hearth', '']`, with the box's issue
+   (#753 to #758) beside it.
+6. **What the rung moves past a limit is owed to #752, no monster retuned:** in `OWED` the crypt's
+   15.74 fights to a rest at 29 and Vask's thinned group's 89%; the harness's 12.8 at 28.
+7. **The staff's holiness is its words:** the issue's table has it *holy*; the item carries no
+   element (#757's 9), and the rung takes it as built. Every other figure is the table's.
+
 ## 10. Names
 
 The Lanterns' English, kept, as the Whitespine's and Sunderwood's were (NAMES.md §2, §4): the isle
@@ -3065,8 +3104,8 @@ Owed, from H6 (#753):
   #760's, written: `tools/tests/quests.ts` owes neither the chapter nor the zone's step now.
 - **The free fare** for a Partner is #765's: the runner says the boat is the Partner's both ways,
   and the line runs ahead of the fare until then.
-- **The gear's rung** is #746's: the Grey Knife (`greyKnife`) and the Smelling Salts are built here
-  (`src/content/areas/hearth/items.ts`), and #746 takes them into the rung.
+- **The gear's rung** is built (#746): the Grey Knife (`greyKnife`), built here
+  (`src/content/areas/hearth/items.ts`), is on the ladder at 28; the Smelling Salts are no gear.
 - **`kneel` in `tools/walk.ts`** fails on any zone map, comparing the outdoors' moved feature with
   the map's by identity; the isle's walkthrough kneels with `useShrine` directly (§9.2, #753's 16).
 
@@ -3088,8 +3127,8 @@ Owed, from I6 (#754):
   (`KEPT_ASKED`); her hand-in sets `q_eleven_log`, no longer owed in `UNSET` (§9.2, #763's 1 and 5).
 - **`q_throne_removed`** is set on main by the Council (#774), so nothing is owed for it: the camp's
   guard carries the leave rule, and the walkthrough plays it with the flag set by hand (§9.2, #754's 6).
-- **The gear's rung** is #746's: the Grey Staff and the Grey Mail (`greyStaff`, `greyMail`) are built
-  here (`src/content/areas/hearth/items.ts`), and #746 takes them into the rung (§9.2, #754's 8).
+- **The gear's rung** is built (#746): the Grey Staff and the Grey Mail (`greyStaff`, `greyMail`),
+  built here (`src/content/areas/hearth/items.ts`), are on the ladder at 28 (§9.2, #754's 8).
 
 Owed, from Hearthfane (#755):
 
@@ -3098,8 +3137,8 @@ Owed, from Hearthfane (#755):
   `tools/tests/gate.ts`). The issue's "one at 26 no more than one in four" is not met: stronger
   monsters are barred (§9.2, #755's 10). The owner's or #18's.
 - **The chapter's step** for the temple is #760's (`visited: 'hearthfane'`), written.
-- **The gear's rung** is #746's: the Grey Blade and the Grey Bow (`greyBlade`, `greyBow`) are built
-  here (`src/content/areas/hearth/items.ts`), and #746 takes them into the rung (§9.2, #755's 11).
+- **The gear's rung** is built (#746): the Grey Blade and the Grey Bow (`greyBlade`, `greyBow`),
+  built here (`src/content/areas/hearth/items.ts`), are on the ladder at 28 (§9.2, #755's 11).
 - **A door's own key** would be a systems change: the treasury's door is gated on the key, and the
   comment on `MapDef.gates` (`src/game/map.ts`), which speaks of an exit, is the systems lane's to
   reword (§9.2, #755's 1).
@@ -3129,8 +3168,9 @@ Owed, from the crypt (#756):
   given. It has left `UNSET` (`tools/tests/quests.ts`); I6 takes `LOG_GIVEN` from the crypt, which
   exports it (§9.2, #756's 6; #763's 5).
 - **The chapter's step** for the knot is #760's (`hearthfane2:hf2_knot`, seen), written.
-- **The gear's rung** is #746's: the Grey Robe (`greyRobe`) is built here, in the pack `hf2_pack`;
-  #746 takes it into the rung (§9.2, #756's 7).
+- **The gear's rung** is built (#746): the Grey Robe (`greyRobe`), built here in the pack `hf2_pack`,
+  is on the ladder at 28 (§9.2, #756's 7). In it the crypt's company fights 15.74 to a rest at 29,
+  past the limit of 14.75: owed to #752 (§8; §9.2, #746's 6).
 
 Owed, from the Ways (#757):
 
@@ -3154,9 +3194,9 @@ Owed, from the Ways (#757):
 - **The road behind is #765's:** `CREW_OPEN` for the Kilns' knockers on `deep_mines3` 6,3 and
   Anvilhall's thane; `CRACK_SEALED` for the Sunder's groups (`leaves`) and the Watch's Reader.
 - **The chapter's step** for the Ways is #760's (`underdeep:ud_in`, seen, at `underdeep`), written.
-- **The gear's rung** is #746's: the Grey Shield (`greyShield`, in the keepers' store `ud_store`,
-  where §8 has the keeper's) and the Old Lantern's Staff (`oldLanternsStaff`, the knocker's gift
-  for *Widen it.*) are built here, and #746 takes them into the rung (§9.2, #757's 9).
+- **The gear's rung** is built (#746): the Grey Shield (`greyShield`, in the keepers' store
+  `ud_store`) and the Old Lantern's Staff (`oldLanternsStaff`, the knocker's gift for *Widen it.*),
+  built here, are on the ladder at 28 (§9.2, #757's 9).
 
 Owed, from the Stair (#758):
 
@@ -3172,8 +3212,8 @@ Owed, from the Stair (#758):
 - **The Catcher's sizing:** `OFF_LINE.catcher`, 1,100 hit points and 34d8+40, is won 59% at 30,
   67% at 31 and 84% at 32 on the gate's seeds. In ten sizings the rise from 30 to 32 never passed
   about 25 points, so half at 31 and nearly always at 32 cannot both hold: the gate's floor aim and
-  its limit above are kept (§9.2, #758's 7). Provisional until #746 puts the Hand's steel in the
-  company and #752 finalises it.
+  its limit above are kept (§9.2, #758's 7). In the Hand's steel (#746) the gate's seeds give 69% at
+  30 and 82% at 32; provisional until #752 finalises it.
 - **The sixth flight's crawlers are two, not three:** with three the day at 30 breaks off at 7.85
   fights to a rest, past the gate's limit of 9 (§9.2, #758's 8). The owner's call.
 - **`tools/tests/structure.ts` is loosened:** a group that `leaves` on its `until` needs no respawn,
@@ -3197,8 +3237,8 @@ Owed, from the Stair (#758):
 - **The chapter's steps** for the Stair are #760's: `underdeep2:ud2_dead` (seen),
   `underdeep2:ud2_catcher` (slain; a guardian, no respawn), `underdeep2:ud2_foot` (seen) and
   `KNOT_LAST`, at `underdeep2`, written.
-- **The gear's rung** is #746's: the Grey Axe (`greyAxe`, in `ud2_rearguard_chest`) is built here,
-  and #746 takes it into the rung (§9.2, #758's 12).
+- **The gear's rung** is built (#746): the Grey Axe (`greyAxe`, in `ud2_rearguard_chest`), built
+  here, is on the ladder at 28 (§9.2, #758's 12).
 
 Owed, from the Cleric's third (#763):
 
@@ -3227,6 +3267,8 @@ Owed, from the Heart (#759):
   `docs/EXPANSION.md` (the limits paragraph and *The boss asks*, in §5.2) and `docs/MONSTERS.md` (the
   boss paragraph, near its line 50) still state the gate's boss rule without these two exceptions:
   #752's to update.
+- **In the Hand's steel (#746)** Vask is won 79% at 32 and his thinned group 89%, past the limit of
+  80%: owed to #752, who measures his odds in the rung (§8; §9.2, #746's 6).
 - **The plan's one in three for the clock left to run measures 45%:** going for Vask first gains,
   and the lever the plan names, a heavier Vask with a lighter blow, runs the other way on the gate's
   bot (§7; §9.2, #759's 7). The twelve sizings tried put the Hands first at most 2 points ahead of
