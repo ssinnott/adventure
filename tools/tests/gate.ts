@@ -300,6 +300,9 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   // where it fought 13.71 in Cinderport's armourer's gear, past the limit of 14.75. The line was made
   // in that gear; making it again with the rung in is #752's.
   'hearthfane2: rest': { whose: '#752', at: 15.74 },
+  // And the Heart (#759) at 32 in it: Vask's thinned group is won 89% where it was 68%, past the limit
+  // of 80% (`core_vask` 65% to 79%, inside it). Vask's odds in the rung are #752's to measure and set.
+  'core:core_vask_thinned: floor': { whose: '#752', at: 0.89 },
   'highspine_i11: under': { whose: '#18', at: 1 },
   // And the ridge north (#503), banded from the area's floor as I11 is: its three groups are won every
   // time two under, and with them the area's pool passes its limit again.

@@ -2031,7 +2031,9 @@ The boxes' tables above keep the figures they were built with, before the rung. 
 | The Stair at its floor, 30, won | 94.1% | 95.6% |
 | The Stair at 30, fights to a rest | 10.14 | 11.43 |
 | The Catcher, won at 30 and at 32 | 59% and 84% | 69% and 82% |
-| Hearth Isle at its maps' floors, won | 98.9% | 99.2% |
+| Vask (`core_vask`), won at 32 | 65% | 79% |
+| Vask's thinned group, won at 32 | 68% | 89%, past the limit of 80%: owed to #752 |
+| Hearth Isle at its maps' floors, its 39 groups won | 97.2% | 98.4% |
 
 **Quest items** (`price: 0`, `slot: 'none'`): `wardens_badge`, `treaty_seal`, `tallis_tally`
 (57); `gullwick_letter`, with its text (58); `fane_key` (an iron key, 56); `queens_signet`, with a
@@ -2999,8 +3001,8 @@ Decided by delegate for #746, each the owner's to overturn:
    it.* (61), so a found rung counts an answer that gives it; earlier rungs keep chests and drops.
 5. **None is owed:** every piece is placed, so each `from` is `['hearth', '']`, with the box's issue
    (#753 to #758) beside it.
-6. **What the rung moves past a limit is owed to #752; no monster is retuned:** the crypt's 15.74
-   fights to a rest at 29 (limit 14.75) in `OWED` and the harness's 12.8 at 28 (11 asked).
+6. **What the rung moves past a limit is owed to #752, no monster retuned:** in `OWED` the crypt's
+   15.74 fights to a rest at 29 and Vask's thinned group's 89%; the harness's 12.8 at 28.
 7. **The staff's holiness is its words:** the issue's table has it *holy*; the item carries no
    element (#757's 9), and the rung takes it as built. Every other figure is the table's.
 
@@ -3225,6 +3227,8 @@ Owed, from the Heart (#759):
   `docs/EXPANSION.md` (the limits paragraph and *The boss asks*, in §5.2) and `docs/MONSTERS.md` (the
   boss paragraph, near its line 50) still state the gate's boss rule without these two exceptions:
   #752's to update.
+- **In the Hand's steel (#746)** Vask is won 79% at 32 and his thinned group 89%, past the limit of
+  80%: owed to #752, who measures his odds in the rung (§8; §9.2, #746's 6).
 - **The plan's one in three for the clock left to run measures 45%:** going for Vask first gains,
   and the lever the plan names, a heavier Vask with a lighter blow, runs the other way on the gate's
   bot (§7; §9.2, #759's 7). The twelve sizings tried put the Hands first at most 2 points ahead of
