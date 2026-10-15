@@ -21,7 +21,8 @@ cuts the atlas's terrain for a box (EXPANSION §8.2): land is what is not sea or
 Seven places are built: H6, the isle (#753, §4.2), which lists the area; I6, the east rim (#754,
 §4.3); Hearthfane, the temple (#755, §4.4); the crypt under it (#756, §4.5); the Ways below the
 crypt (#757, §4.6); the Stair below the Ways (#758, §4.7); and the Heart below the Stair (#759,
-§4.8). The isle is built to the Heart; the chapter (#760) and the road behind (#765) are to build.
+§4.8). The isle is built to the Heart; the chapter (#760) is to build, and of the road behind (#765) Gullwick,
+Ashfall, the Kilns and Sunderwood are built (§12).
 What exists: the isle's map, `hearthisle_h6`, which places four of the roster's monsters, opens the
 pilgrims' camp's three rooms and gives onto the temple (§3); the rim's map, `hearthisle_i6`, which
 places three of those four; the temple's map, `hearthfane`, which places three of those four and
@@ -2967,6 +2968,23 @@ Decided by delegate for #759, each the owner's to overturn:
     `InteriorScreen`). `boxFaults` holds a group to the box and a person to both, as before, and a
     fixture proves each. Outside the content lane: the owner's to overturn.
 
+Decided by delegate for #765 (half B: Gullwick and the rest), each the owner's to overturn:
+
+1. **The Walk Home's entry at the open gate is the Helmstow half's:** its `seen: 'shelf:gate_open'`
+   names that half's event, and `tools/tests/quests.ts` fails a `seen` on nothing.
+2. **The knockers are `ud_mines`,** §4.6's id, standing at 6,3 as the corridor's others do, and told by
+   a once-event, `dm3_open` at 7,3, with the brief's look: a group has no `look` (as #756's 3).
+3. **The gate leaves the road behind's groups out** (`BEHIND`, `tools/tests/gate.ts`): the knockers put
+   the corridor's day at 12.57 fights to a rest, past its limit, though no company at its floor meets
+   them. The curve counts them and the Kilns' lead holds at 19.3. Outside the content lane.
+4. **The thane's line waits on his answer too** (`CREW_OPEN` with `BOUGHT` or `TAKEN`), and the
+   Reader's four stand after her two questions said once: first of all, they would hide those for good.
+5. **The Sunder's groups are the thirteen the most of whose monsters are its own;** its dens' keepers,
+   its Warden, `k3_door` and `l4_brood` (an `until` of their own, which `leaves` would change before
+   the crack) and the three the wood or the Hand lead stand.
+6. **The harbourmaster's and the Reader's lines are the brief's words alone,** with no line of
+   narration before them, as the brief gives none.
+
 ## 10. Names
 
 The Lanterns' English, kept, as the Whitespine's and Sunderwood's were (NAMES.md §2, §4): the isle
@@ -3023,8 +3041,8 @@ Owed, from H6 (#753):
   #753's 11). The owner's or #18's.
 - **The chapter's first step** and the strand's shard (`hearthisle_h6:h6_strand` and `h6_shard`) are
   #760's: `tools/tests/quests.ts` owes the chapter and lists the zone as planned.
-- **The free fare** for a Partner is #765's: the runner says the boat is the Partner's both ways,
-  and the line runs ahead of the fare until then.
+- **The free fare** for a Partner is built (#765): the last crossing's fare is `free` at both ends on
+  `q_compact_over`, so the runner's word that the boat is the Partner's both ways holds.
 - **The gear's rung** is #746's: the Grey Knife (`greyKnife`) and the Smelling Salts are built here
   (`src/content/areas/hearth/items.ts`), and #746 takes them into the rung.
 - **`kneel` in `tools/walk.ts`** fails on any zone map, comparing the outdoors' moved feature with
@@ -3111,8 +3129,9 @@ Owed, from the Ways (#757):
   says planned places only, but `progression()` reads it for a deep place's step on the road (§9.2,
   #757's 10). A note for the systems lane, not edited here.
 - **The issue's "`keeper` first placed here" is stale:** the crypt placed it (#756).
-- **The road behind is #765's:** `CREW_OPEN` for the Kilns' knockers on `deep_mines3` 6,3 and
-  Anvilhall's thane; `CRACK_SEALED` for the Sunder's groups (`leaves`) and the Watch's Reader.
+- **The road behind is built (#765):** `CREW_OPEN` brings the Kilns' knockers (`ud_mines`) onto
+  `deep_mines3` 6,3 and gives Anvilhall's thane his line; `CRACK_SEALED` stills the Sunder's groups
+  (`leaves`) and gives the Watch's Reader hers (§12).
 - **The chapter's step** for the Ways is #760's (`underdeep:ud_in`, seen, at `underdeep`).
 - **The gear's rung** is #746's: the Grey Shield (`greyShield`, in the keepers' store `ud_store`,
   where §8 has the keeper's) and the Old Lantern's Staff (`oldLanternsStaff`, the knocker's gift
@@ -3152,8 +3171,8 @@ Owed, from the Stair (#758):
 - **The first landing's words** (`ud2_held`, the captain) say the rearguard lies dead even where the
   company killed it before taking a token: harmless and rare.
 - **The verdicts are #764's:** its flags put their people on the landing (`HELD`, 57's `done`).
-- **The road behind is #765's:** `q_letter_given`, Jowan's mother's hand-in of `gullwick_letter` at
-  `downs_f3` 10,13, which `UNSET` (`tools/tests/quests.ts`) owes until it lands.
+- **The road behind is built (#765):** `q_letter_given` is set by Jowan's mother's hand-in of
+  `gullwick_letter` at `downs_f3` 10,13, and `UNSET` no longer owes it.
 - **The chapter's steps** for the Stair are #760's: `underdeep2:ud2_dead` (seen),
   `underdeep2:ud2_catcher` (slain; a guardian, no respawn), `underdeep2:ud2_foot` (seen) and
   `KNOT_LAST`, at `underdeep2`.
@@ -3200,9 +3219,10 @@ Owed, from the Heart (#759):
 - **Two under, the area's pool is won nearly every time:** 92.5% of 39 groups' fights at 26, owed to
   #18 as before (`Hearth Isle: under`, `OWED` in `tools/tests/gate.ts`). The Heart's own row reads
   n/a.
-- **The road behind is #765's:** `q_wenna_home`, which ends Wenna's words at 7,4 (her `until`), and
-  the four `q_signet_*`, the clerk at `shelf` 15,4 and the sea at Gullwick each taking
-  `queens_signet`. `UNSET` (`tools/tests/quests.ts`) owes the five until they land.
+- **The road behind is #765's:** `q_wenna_home`, which ends Wenna's words at 7,4 (her `until`), is set
+  by Hild at Gullwick and `q_signet_sea` by the sea there, taking `queens_signet` (built); the clerk
+  at `shelf` 15,4 and his three `q_signet_*` are Helmstow's half, which `UNSET`
+  (`tools/tests/quests.ts`) owes until they land.
 - **The chapter is #760's:** the Heart's steps are `core:core_door` and `core:core_heart` (seen),
   the flags `VASK_FALLEN`, `VOICE_WHOLE`, `RING_GIVEN` and `ENDED`, at `core`; 64 is `signet` in the
   area's `quests.ts`.
@@ -3315,3 +3335,17 @@ cast; taller than full for finished. The night sky's Hearth (`src/ui/viewport.ts
 
 **Gullwick** (`downs_f3`): Hild's two new `says` and Wenna on the shingle at 11,15, `after: { flag: WENNA_HOME }`
 (§6, The Walk Home); Jowan's mother at 10,13 (58); the sea at 9,15 (64).
+
+**As built, Gullwick and the rest** (#765; Helmstow, its halls, Saltmouth's and the priestess are its
+other half's). On `downs_f3`, Hild's two `says` first, Jowan's mother, the sea and Wenna as written,
+and The Walk Home (`walk_home`, with the Hearth's quests) with its entries on `ENDED` and
+`WENNA_HOME` and its goal at `downs_f3`; its entry at the open gate waits on `gate_open`, the other
+half's. Ashfall's seven groups go `until: ENDED` with `leaves`, and the harbourmaster's line is a
+`says`. The knockers are `ud_mines`, told by a once-event, `dm3_open` at 7,3, since a group has no
+`look`; the gate leaves them out of the Kilns' figures (`BEHIND`), the curve counts them, and the
+thane's line waits on his answer as well. The Sunder's groups given `until: { flag: CRACK_SEALED }`
+and `leaves`: `j2_hounds`, `k2_hounds`, `k2_bears`, `k3_bears`, `l2_hounds`, `l2_bears`,
+`l3_bank`, `l4_night`, `m2_hounds`, `m2_bears`, `su1_spiders`, `su2_wood` and `su2_bears`. The
+Reader's four lines stand after her two questions said once. `i11_stone` sets `q_peak_stood` already
+(#751). The Grove Stone counts on `q_mender_done`, and the last crossing, whose isle end H6 landed
+(#753), is free at both ends.
