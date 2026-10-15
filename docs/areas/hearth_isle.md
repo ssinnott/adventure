@@ -22,7 +22,8 @@ Seven places are built: H6, the isle (#753, §4.2), which lists the area; I6, th
 §4.3); Hearthfane, the temple (#755, §4.4); the crypt under it (#756, §4.5); the Ways below the
 crypt (#757, §4.6); the Stair below the Ways (#758, §4.7); and the Heart below the Stair (#759,
 §4.8). The isle is built to the Heart and its chapter is written (#760, §5), and the road behind is
-built (#765, §12): Helmstow and its halls, Gullwick, Ashfall, the Kilns and Sunderwood.
+built (#765, §12): Helmstow and its halls, Gullwick, Ashfall, the Kilns and Sunderwood, with its business
+kept reachable (#795).
 What exists: the isle's map, `hearthisle_h6`, which places four of the roster's monsters, opens the
 pilgrims' camp's three rooms and gives onto the temple (§3); the rim's map, `hearthisle_i6`, which
 places three of those four; the temple's map, `hearthfane`, which places three of those four and
@@ -3155,6 +3156,32 @@ Decided by delegate for #752, each the owner's to overturn:
 8. **The armoured at 29 and 31, read between, run long** (47 and 52% of days end badly) where the
    line's armour rounds up; no armoured monster stands there, and the line is not nudged.
 
+Decided by delegate for #795, each the owner's to overturn:
+
+1. **Vask's hand-ins pass to three persons in turn** (supersedes #765 half A's 9): Vask until the company is
+   on the isle, his steward from its first step and after an ending until the Council has sat, and Wiglaf at
+   the door then. The items, pay and flags are Vask's; `until` and `after` leave one standing in each of 16 states.
+2. **The steward stands on after an ending** (his `until` is the removal alone): the opened leaves nobody at
+   the door but the empty room, and Vask in irons is no one to hand a wand to. A `says` after any ending
+   comes before his first words, which are not true then.
+3. **The steward and Wiglaf hire nobody, so the wand has no `early` for them:** it is for a company the
+   person never hired (`NpcQuest`) and would never be said. The steward's wand has an `after`; Wiglaf keeps his own.
+4. **`tools/tests/people.ts` counts the wand's takers at three** (outside the lane; the ledger and the chisel
+   stay at one), and the Foreland's walkthrough finds Vask by his hire (`toVask`), as `meetWho` finds one person only.
+5. **The Reader's crack is a once-line** (`q_reader_crack`) after her introduction, before her reading and the
+   endings' words, its text as it was (supersedes #765 half B's 4). The audit found her reading of the papers
+   hidden below them, and her introduction, which the reading needs: both now come first while they stand open.
+6. **The rest of the audit changes nothing:** Ruan and Ysolde were put right by #765's 8, and what the endings'
+   words hide for Ordgar, the Eel, the priestess, Morwenna, Hild and the two clerks is talk that sets nothing
+   a log reads, or a hire the road already made (Hild's ask is answered by the ending itself).
+7. **Hereswith's early hand-in ends on the send-down:** a third paragraph in her voice, with the crypt, the
+   eleven and the top she keeps, so that the entry `given` reads true of both roads; `done` is as it was.
+8. **The sacristan's goal points at the pillar** ("in the order the pillar gives", as the entry `asked` has it),
+   and the Hearth's walkthrough asserts that no goal of any quest names the four lamps in sequence.
+9. **The log's entries for the three still read as Vask's** (`paid`, `lead`, `vask`, `order`): the steward's and
+   Wiglaf's words keep their beats, the wand taken and paid, the lead on the Grove Stone, the matter seen to and
+   the order lifted, and no text moves.
+
 ## 10. Names
 
 The Lanterns' English, kept, as the Whitespine's and Sunderwood's were (NAMES.md §2, §4): the isle
@@ -3390,7 +3417,8 @@ Owed, from the Heart (#759):
   `shelf` 15,4 sets the other three (Helmstow and the halls). The Walk Home's `gate` entry, on
   `gate_open`, is in, and `UNSET` owes nothing.
 - **First of all, but for a business still open (#765, half A):** Ruan's Compact question and
-  Ysolde's reading of the journal come before an ending's words until done (§9.2, #765's 8).
+  Ysolde's reading of the journal come before an ending's words until done (§9.2, #765's 8), and the
+  Reader's reading of the papers and her introduction too (#795's 5).
 - **The chapter is #760's, written:** the Heart's steps are `core:core_door` and `core:core_heart` (seen),
   the flags `VASK_FALLEN`, `VOICE_WHOLE`, `RING_GIVEN` and `ENDED`, at `core`; 64 is `signet` in the
   area's `quests.ts`.
@@ -3523,7 +3551,31 @@ half's. Ashfall's seven groups go `until: ENDED` with `leaves`, and the harbourm
 thane's line waits on his answer as well. The Sunder's groups given `until: { flag: CRACK_SEALED }`
 and `leaves`: `j2_hounds`, `k2_hounds`, `k2_bears`, `k3_bears`, `l2_hounds`, `l2_bears`,
 `l3_bank`, `l4_night`, `m2_hounds`, `m2_bears`, `su1_spiders`, `su2_wood`, `su2_bears` and the K3 Rift's
-`k3_rift_g1` and `k3_rift_g2`. The Reader's four lines come at every meeting, after the badge's question
-and the wall's word, which are said once; the crack's is heard before an ending only. `i11_stone` sets
+`k3_rift_g1` and `k3_rift_g2`. The Reader's ending words come at every meeting, after the badge's question,
+the wall's word and the crack's, which are said once, and her reading while it is open (#795, below). `i11_stone` sets
 `q_peak_stood` already (#751). The Grove Stone counts on `q_mender_done`, and the last crossing, whose isle end H6 landed
 (#753), is free at both ends.
+
+**As built (#795, the road behind's business kept reachable).** The keep's door and the three hand-ins
+Vask took: the survey wand (300 gold, `q_ashcombe_done`), the tenant's paper (50, `q_paper_vask`) and
+the keeper's oil put to him (`q_oil_order` and `q_oil_lit`, a `says`). Three persons take them in turn,
+each in his own words and with the same items, pay and flags, so that no hand-in and no `q_oil_*` flag is
+lost by the isle, the Council or an ending, and in every state exactly one of the three stands:
+
+| State of the keep | At 7,4 | At 7,5 | Takes the three |
+|---|---|---|---|
+| Before the isle, no verdict, no ending | Vask | nobody | Vask |
+| On the isle, or after an ending; the Council not sat | the empty throne room (Vask in irons within, after the relit and the finished) | the steward | the steward |
+| The Council has sat, whatever else | Wiglaf at the keep's door (Vask in irons within, after the relit and the finished) | nobody | Wiglaf |
+
+The steward is `after` the isle or any ending and `until` the removal, so he stands on after an ending: the
+opened leaves nobody else at the door, and a man in irons is no one to hand a wand to. A `says` after an ending
+replaces his first words, which are not true then. He hires nobody, so his wand has `done` and an `after` and no
+`early`; Wiglaf's has `done` alone. The Foreland's `keepHandIns` plays the sixteen states (the isle, the Council
+and the three endings). **The Reader** (`lantern_watch` 5,5): the crack's line is said once (`q_reader_crack`),
+at the next meeting whichever came first and after her introduction, as the wall's word is; her reading of
+the Tide Ship's papers and log (`papers_read`, `seal_read`, `log_read`) comes before the endings' words while it
+is still to do, and those words wait on her introduction (`watch_reader_met`), which the reading needs.
+**The audit of the endings' words** found that business hidden nowhere else (§9.2, #795's 5 and 6).
+**Hereswith's** early hand-in ends on the send-down, as `done` does, and **the sacristan's** goal points at the
+pillar without its order (§9.2, #795's 7 and 8).
