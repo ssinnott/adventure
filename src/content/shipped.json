@@ -3060,6 +3060,33 @@
       "doors": [
         "24,14"
       ]
+    },
+    "underdeep2": {
+      "size": "32x32",
+      "used": [
+        "ud2_dead",
+        "ud2_foot",
+        "ud2_hand",
+        "ud2_head",
+        "ud2_held",
+        "ud2_letter",
+        "ud2_letter_chest",
+        "ud2_marks",
+        "ud2_more",
+        "ud2_packs",
+        "ud2_rearguard_chest",
+        "ud2_word"
+      ],
+      "groups": [
+        "ud2_catcher",
+        "ud2_crawlers1",
+        "ud2_crawlers2",
+        "ud2_keepers",
+        "ud2_knockers",
+        "ud2_rats",
+        "ud2_rearguard"
+      ],
+      "doors": []
     }
   },
   "zones": {
@@ -3968,6 +3995,7 @@
     "greatsword",
     "greatsword+1",
     "greatsword+2",
+    "grey_axe",
     "grey_blade",
     "grey_bow",
     "grey_knife",
@@ -3984,6 +4012,7 @@
     "grove_staff+1",
     "guides_staff",
     "guides_staff+1",
+    "gullwick_letter",
     "halberd",
     "halberd+1",
     "hale_token",
