@@ -1,4 +1,4 @@
-// Hearth Isle's walkthrough. Its chapter, The Heart, is #760's, which plays it here; until then, the
+// Hearth Isle's walkthrough. The boxes first, as each was built, and its chapter last: the
 // isle (H6, #753) walked at 28: the last crossing bought at Cinderport's quay and landed on the strand at
 // 20,30, and its boatman selling it back; the light close at the cleft's foot and the hum on the strand;
 // the cleft carved up through the rim and its pickets; the Bowl, the pilgrims' camp and its rest, its
@@ -29,10 +29,11 @@
 // Last, the Cleric's third (#763), The Eleven Kept, played twice by a cleric of 27 with the second: the
 // anchoress's ask and then the Crowness keeper's log, the eleven lit and the third taught; and the log
 // brought before the ask. Then three companies short of the ask: she never asks it of them, and the log
-// she takes from them begins no journal.
+// she takes from them begins no journal. Then the chapter, The Heart (#760), played to each of its three
+// ends from the road behind done, and once by a company over early on four of the road's five.
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, see, fight, listen, walkThrough, gone as left } from '../../../../tools/walk.ts';
-import type { Walk } from '../../../../tools/walk.ts';
+import { newWalk, see, fight, listen, walkThrough, gone as left, playChapter, everyGoalWalked, goalFromBegun, quest, ending } from '../../../../tools/walk.ts';
+import type { Walk, Step } from '../../../../tools/walk.ts';
 import { NORTH, EAST, SOUTH, WEST } from '../../../game/types.ts';
 import type { Facing } from '../../../game/types.ts';
 import { ATLAS, MAP_DEFS } from '../../index.ts';
@@ -61,8 +62,15 @@ import { KEPT_ASKED } from './maps/hearthisle_i6.ts';
 import { LAMPS, LAMPS_OUT, LAMPS_WRONG, LAMPS_KEY, FANE_KEY, LAMP_FLAGS, STAIR } from './maps/hearthfane.ts';
 import { ELEVEN_KEPT, GREY_DOOR, LOG_GIVEN } from './maps/hearthfane2.ts';
 import { CREW_OPEN, CREW_SHUT, CRACK_SEALED, CRACK_WIDE, STAIR_DOOR, CRAWL_DOOR } from './maps/underdeep.ts';
-import { FIVE, LAST_DOOR } from './maps/underdeep2.ts';
+import { FIVE, LAST_DOOR, KNOT_LAST } from './maps/underdeep2.ts';
 import { VASK, VASK_FALLEN, VOICE_WHOLE, RING_GIVEN, END_REIGNITE, END_ARRIVE, END_FINISH, SIGNET } from './maps/core.ts';
+import { owed } from '../../../../tools/tests/lib.ts';
+import { THE_QUEST } from '../../index.ts';
+import type { Chapter, QuestCond } from '../../../game/quests.ts';
+import { PAGE } from '../../../ui/quests.ts';
+import { wrap } from '../../../ui/draw.ts';
+import { ROAD_EAST } from '../glasswold/maps/wold_d8.ts';
+import { CHAPTER } from './chapter.ts';
 
 const H6 = MAP_DEFS.find((d) => d.id === 'hearthisle_h6')!;
 const person = (name: string): Person => H6.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
@@ -710,6 +718,9 @@ export const walkthrough: Walkthrough = (ok) => {
 
   // The Cleric's third, The Eleven Kept (#763): Anchorhold's anchoress, the keeper's log and the crypt's eleven.
   elevenKept(ok);
+
+  // The chapter, The Heart (#760): three ways to its three ends, and once early.
+  theHeart(ok);
 };
 
 /**
@@ -815,4 +826,230 @@ function elevenKept(ok: (cond: boolean, msg: string) => void): void {
   short('a cleric of 27 with the first only', (w) => { const c = clericOf(w); c.xp = xpForLevel(27); c.level = 27; takePrestige(c); }, (w) => takePrestige(clericOf(w)));
   short('a cleric of 26 with the second', (w) => { const c = clericOf(w); c.xp = xpForLevel(26); c.level = 26; takePrestige(c); takePrestige(c); }, (w) => { const c = clericOf(w); c.xp = xpForLevel(27); c.level = 27; });
   short('a company with no cleric', (w) => { w.party.members = w.party.members.filter((m) => m.cls !== 'cleric'); });
+}
+
+// ---- the chapter (#760) ----
+
+const WAYS_DEF = MAP_DEFS.find((d) => d.id === 'underdeep')!;
+const STAIR_DEF = MAP_DEFS.find((d) => d.id === 'underdeep2')!;
+const CORE_DEF = MAP_DEFS.find((d) => d.id === 'core')!;
+const inCore = (name: string): Person => CORE_DEF.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
+const goalOf = (start: string): string => CHAPTER.goals.find((g) => g.text.startsWith(start))!.text;
+
+/** The entries written on the chapter's page. */
+const written = (w: Walk): string[] => (quest(w)?.pages.find((p) => p.def === CHAPTER)?.entries ?? []).map((e) => e.id);
+
+/** Meet a person in the Heart and go through the meeting as the game does. */
+function talk(w: Walk, p: Person): ReturnType<typeof meet> {
+  w.world.travel('core', p.x, p.y);
+  w.ok(w.world.present(p), `${p.name} stands there to be met`);
+  const said = meet(p, w.party, heard(w.world, p));
+  listen(w);
+  return said;
+}
+
+/**
+ * The road behind put done before `upTo`, each chapter's end by its first way, as the quests check satisfies
+ * a condition: its flags set, its event spent and its map walked into. It is the other chapters' to play.
+ */
+function roadDone(w: Walk, upTo: Chapter): void {
+  const stateOf = (map: string) => {
+    const on = w.world.locate(map, 0, 0).mapId;
+    if (on !== map && !w.world.state.zones!.includes(map)) w.world.state.zones!.push(map);
+    return w.world.ensureMapState(on);
+  };
+  for (const c of THE_QUEST.chapters.slice(0, THE_QUEST.chapters.indexOf(upTo))) {
+    const end = ([c.done ?? []].flat() as QuestCond[])[0];
+    for (const f of [end?.flag ?? []].flat()) w.party.flags[f] = 1;
+    if (end?.seen) { const [m, id] = end.seen.split(':'); stateOf(m).used[id] = 1; }
+    if (end?.visited) stateOf(end.visited);
+  }
+}
+
+/** The last crossing bought at Cinderport's quay at noon, and one step up off the landing onto the strand. */
+const CROSSING: Step = { name: 'the last crossing', play: (w) => {
+  const port = MAP_DEFS.find((d) => d.id === 'cinderport')!.features!.find((f): f is Person => f.kind === 'npc' && (f.passage ?? []).some((p) => p.to === 'hearthisle_h6'))!;
+  w.world.travel('cinderport', port.x, port.y);
+  at(w, 12);
+  w.party.gold = LAST_CROSSING.fare;
+  const boat = ride(port.passage!.find((p) => p.to === 'hearthisle_h6')!, w.world, w.party);
+  listen(w);
+  const up = w.world.move('forward');
+  w.ok(boat.taken && up.kind === 'moved' && w.world.zone?.id === 'hearthisle_h6' && w.world.used('h6_strand'), 'over the Sound by the last crossing, and one step up off the landing the column close');
+  listen(w);
+  see(w, 'hearthisle_h6:h6_shard');
+} };
+
+/** Up the cleft through the rim into the Bowl, and in at the temple's door onto the nave's foot. */
+const CLEFT: Step = { name: 'up the cleft to the temple', play: (w) => {
+  for (const id of ['h6_cleft', 'h6_bowl']) see(w, `hearthisle_h6:${id}`);
+  walkThrough(w, 'hearthisle_h6', 18, 15, NORTH, 'hearthfane', 1);
+} };
+
+/** The nave past the Hand's best and the altar, down the stair behind it, and the crypt's keeper before her knot. */
+const NAVE: Step = { name: 'the nave and the crypt', play: (w) => {
+  see(w, 'hearthfane:hf_nave');
+  fight(w, 'hearthfane:hf_champions');
+  see(w, 'hearthfane:hf_altar');
+  walkThrough(w, 'hearthfane', 8, 2, NORTH, 'hearthfane2', 1);
+  fight(w, 'hearthfane2:hf2_keeper');
+  see(w, 'hearthfane2:hf2_knot');
+} };
+
+/** Through the grey door onto the ways' foot and one step in: an exit's landing reads nothing. */
+const THROUGH_GREY: Step = { name: 'through the grey door', play: (w) => {
+  walkThrough(w, 'hearthfane2', 8, 2, NORTH, 'underdeep', 1);
+  const step = w.world.move('forward');
+  w.ok(step.kind === 'moved' && w.world.used('ud_in'), 'one step in off the grey door\'s landing, the ways\' first line read');
+  listen(w);
+} };
+
+/** The eighth frame read, and the hatch behind it found, searched at the wall. */
+function hatch(w: Walk): void {
+  see(w, 'underdeep:ud_knot8');
+  const [h] = WAYS_DEF.secrets!;
+  w.world.travel('underdeep', h.x, h.y + 1, NORTH);
+  let found = false;
+  for (let i = 0; i < 20 && !found; i++) found = w.world.search();
+  w.ok(found && h.hint === 'ud_knot8', 'from the eighth frame, searched at the wall behind it, the hatch is found');
+}
+
+/** Down the flights to the last frame, her name on it, and the Catcher at the foot, at 31. */
+const DOWN: Step = { name: 'down the stair to the Catcher at 31', play: (w) => {
+  see(w, KNOT_LAST);
+  w.level = 31;
+  fight(w, 'underdeep2:ud2_catcher');
+} };
+
+/** Every frame of the Ways read and the hatch found; the ways' last door, the stair's head, the first landing fought for or held, and the dead. */
+const WAYS = (held: boolean): Step => ({ name: `the ways, every frame read, and the first landing ${held ? 'held' : 'fought for'}`, play: (w) => {
+  for (let i = 1; i <= 7; i++) see(w, `underdeep:ud_knot${i}`);
+  hatch(w);
+  walkThrough(w, 'underdeep', STAIR_DOOR.x, STAIR_DOOR.y + 1, NORTH, 'underdeep2', 2);
+  see(w, 'underdeep2:ud2_head');
+  if (held) { see(w, 'underdeep2:ud2_held'); left(w, 'underdeep2:ud2_rearguard'); } else fight(w, 'underdeep2:ud2_rearguard');
+  see(w, 'underdeep2:ud2_dead');
+} });
+
+/** The hatch's crawl way to its door, onto the stair's fourth landing below the first landing's fights and the dead; the landing above held; then down. */
+const CRAWL: Step = { name: 'the hatch\'s way onto the stair below the fights, and down to the Catcher at 31', play: (w) => {
+  hatch(w);
+  const [h] = WAYS_DEF.secrets!;
+  walkThrough(w, 'underdeep', h.x, h.y + 1, NORTH, 'underdeep2', 16);
+  const above = ['ud2_rearguard', 'ud2_rats', 'ud2_crawlers1'].map((id) => STAIR_DEF.encounters!.find((e) => e.id === id)!);
+  w.ok(w.world.state.x === CRAWL_DOOR.tx && w.world.state.y === CRAWL_DOOR.ty && above.every((g) => g.y > CRAWL_DOOR.ty) && !w.world.used('ud2_dead'),
+    'out of the crawl way onto the fourth landing, 24,18, below the rearguard, the rats, the first crawlers and the dead');
+  const captain = STAIR_DEF.features!.find((f) => f.kind === 'npc') as Person;
+  w.ok(w.world.present(captain), 'the claimant\'s people hold the first landing above, by the Council\'s verdict');
+  left(w, 'underdeep2:ud2_rearguard');
+  DOWN.play(w);
+} };
+
+/** The creed at the foot, and on the road's five the last door opens as the company comes near: one step in, the Heart's first line. */
+const DOOR: Step = { name: 'the last door, on the road\'s five', play: (w) => {
+  see(w, 'underdeep2:ud2_foot');
+  walkThrough(w, 'underdeep2', 16, 2, NORTH, 'core', 1);
+  const step = w.world.move('forward');
+  w.ok(step.kind === 'moved' && w.world.used('core_door'), 'through the last door on the road\'s five, and the first step in reads the Heart\'s first line');
+  listen(w);
+} };
+
+/** Vask at the panel, fought on the clock with the Grey Hands killed first; for a Council that removed him, his thinned group. */
+const PANEL = (thinned: boolean): Step => ({ name: thinned ? 'Vask\'s thinned group at the panel' : 'Vask at the panel, on the clock, the Hands first', play: (w) => {
+  see(w, 'core:core_heart');
+  w.ok(ANSWER.clock === 'panel', 'the clock ticking, and the Grey Hands at the panel killed first');
+  if (thinned) { left(w, 'core:core_vask'); fight(w, 'core:core_vask_thinned'); } else fight(w, 'core:core_vask');
+} });
+
+const VOICE: Step = { name: 'the voice in the walls', play: (w) => { talk(w, inCore('The voice in the walls')); } };
+const GIRL: Step = { name: 'the girl and the ring', play: (w) => { talk(w, inCore('The girl out of the hole')); } };
+
+/** Her question put again, `put` answers to it, and `label` taken: its flag and its three pages. */
+const CHOOSE = (label: string, put: number): Step => ({ name: `the choice, ${label}`, play: (w) => {
+  const asked = talk(w, inCore('The girl out of the hole'));
+  const a = asked.choice?.answers.find((x) => x.label === label);
+  w.ok(!!a && asked.choice!.answers.length === put, `she puts the question again, ${put} answers to it (${asked.choice?.answers.map((x) => x.label).join(' ')})`);
+  if (!a) return;
+  answer(a, w.party);
+  w.ok(endingTaken(a, w.party.flags)?.pages.length === 3, `${label} taken, its three pages shown`);
+  listen(w);
+} });
+
+/**
+ * The Heart (#760), begun where The Warning ends and played at 28, 30 and 32 three ways, each to one of its
+ * ends: by the boat, every frame read, the rearguard fought, the Catcher at 31 and Vask fought with the Hands
+ * first, then Light it again.; with the Council sat for Tallis and Vask removed, the thinned temple and heart,
+ * the hatch's way onto the stair below the fights and Tallis's man inside the door, then Open the hull.; and
+ * with Fane's map and the Wardens' badge carried and no verdict, the three answers put and Make it finish.
+ * taken. Each ends the quest once. Then once early, over at 27 before The Warning is done, the door shut on
+ * four of the road's five, the walk back up to the camp to rest, and the journal true to the Catcher.
+ */
+function theHeart(ok: (cond: boolean, msg: string) => void): void {
+  const texts = [...CHAPTER.entries.map((e) => e.text), ...CHAPTER.goals.map((g) => g.text)];
+  const long = texts.filter((t) => wrap(t, PAGE.w).length > 2);
+  ok(!long.length, `every entry and goal of the chapter fits two lines of the journal's page${long.length ? ' -> ' + long.join(' | ') : ''}`);
+  ok(texts.filter((t) => /wenna/i.test(t)).length === 1 && CHAPTER.entries.find((e) => e.id === 'word')!.text.endsWith('WENNA.') && texts.every((t) => !/custodian|"/i.test(t)),
+    'nobody is named but her, the once, on the last frame; and the voice is never quoted, nor what it is said');
+  const read = new Set<string>();
+  const plays = [
+    { how: 'by the boat, the rearguard fought, Light it again.', flags: [] as string[], items: [] as string[], end: 'relit',
+      steps: [CROSSING, CLEFT, NAVE, THROUGH_GREY, WAYS(false), DOWN, DOOR, PANEL(false), VOICE, GIRL, CHOOSE('Light it again.', 2)] },
+    { how: 'with the Council sat for Tallis, Open the hull.', flags: [THRONE_REMOVED, THRONE_TALLIS], items: [], end: 'opened',
+      steps: [CROSSING, CLEFT, { name: 'the thinned temple, the nave and the crypt', play: (w: Walk) => { left(w, 'hearthfane:hf_second'); NAVE.play(w); } }, THROUGH_GREY, CRAWL, DOOR,
+        { name: 'Vask\'s thinned group, Tallis\'s man inside the door', play: (w: Walk) => {
+          const man = inCore('Tallis\'s man');
+          PANEL(true).play(w);
+          w.ok(w.world.present(man) && talk(w, man).text.includes('the ring most of all'), 'for Tallis\'s chair his man stands inside the Heart\'s door');
+        } }, VOICE, GIRL, CHOOSE('Open the hull.', 2)] },
+    { how: 'with Fane\'s map and the Wardens\' badge, Make it finish.', flags: ['meridian_map', TOKEN_COUSIN], items: ['wardens_badge'], end: 'finished',
+      steps: [CROSSING, CLEFT, NAVE, THROUGH_GREY, WAYS(true), DOWN, DOOR, PANEL(false), VOICE, GIRL, CHOOSE('Make it finish.', 3)] },
+  ];
+  for (const p of plays) {
+    const w = newWalk(ok);
+    roadDone(w, CHAPTER);
+    for (const f of [...FIVE, ...p.flags]) w.party.flags[f] = 1;
+    w.party.bag.push(...p.items);
+    listen(w);
+    ok(!!w.party.flags[ROAD_EAST] && quest(w)?.goal === CHAPTER.goals.at(-1)!.text && !written(w).length,
+      `${p.how}: the road behind done and turned east at Akordu, the chapter begins, its goal the last crossing (${quest(w)?.goal})`);
+    playChapter(w, CHAPTER, p.steps, p.how);
+    goalFromBegun(w, p.how);
+    const ids = ending(w, p.how);
+    const ends = ['relit', 'opened', 'finished'].filter((e) => ids.includes(`heart.${e}`));
+    ok(ends.join() === p.end && ids.includes('heart.ring'), `${p.how}: the journal ends on ${p.end}, and on no other end (${written(w).join(', ')})`);
+    for (const e of written(w)) read.add(e);
+  }
+  ok(CHAPTER.entries.every((e) => read.has(e.id)), `every entry of the chapter is written in some run (${CHAPTER.entries.filter((e) => !read.has(e.id)).map((e) => e.id).join(', ') || 'all'})`);
+  const shore = JSON.stringify(MAP_DEFS.find((d) => d.id === 'downs_f3')?.features ?? []);
+  owed(Object.values(ENDINGS).every((e) => shore.includes(e.flag)), 'each ending\'s flag reaches Gullwick\'s shore, by the lines the road behind writes there', '#765');
+
+  // Early: over at 27 with The Window done and The Warning not, the Peak Stone never stood beside.
+  const how = 'early, over at 27 on four of the five', early = newWalk(ok);
+  roadDone(early, THE_QUEST.chapters.find((c) => c.id === 'warning')!);
+  early.party.flags.q_ember_lit = 1;
+  listen(early);
+  early.level = 27;
+  for (const m of early.party.members) { m.level = 27; m.xp = xpForLevel(27); }
+  CROSSING.play(early);
+  ok(!early.party.flags[ROAD_EAST] && FIVE.filter((f) => early.party.flags[f]).length === 4 && quest(early)?.goal === goalOf('Up the cleft') && written(early).join(', ') === 'isle, shard',
+    `${how}: the boat grounds and the chapter begins on the isle, its goal up the cleft (${quest(early)?.goal})`);
+  playChapter(early, CHAPTER, [CLEFT, NAVE, THROUGH_GREY, WAYS(false), DOWN], how);
+  see(early, 'underdeep2:ud2_foot');
+  early.world.travel('underdeep2', 16, 2, NORTH);
+  const shut = early.world.eventsHere().join(' '), tried = early.world.move('forward');
+  listen(early);
+  ok(shut.includes('hears fewer') && tried.kind === 'blocked' && tried.reason === LAST_DOOR.blockedText && quest(early)?.goal === goalOf('Through the last door'),
+    `${how}: the last door listens for five voices and stays shut, and the goal is the door still (${quest(early)?.goal})`);
+  walkThrough(early, 'underdeep2', 16, 30, SOUTH, 'underdeep', 2);
+  walkThrough(early, 'underdeep', 16, 30, SOUTH, 'hearthfane2', 1);
+  walkThrough(early, 'hearthfane2', 8, 14, SOUTH, 'hearthfane', 1);
+  walkThrough(early, 'hearthfane', 8, 14, SOUTH, 'hearthisle_h6', 1);
+  const camp = H6.features!.find((f) => f.kind === 'camp')!;
+  early.world.travel('hearthisle_h6', camp.x, camp.y);
+  ok(restRefused(early.world) === '', `${how}: back up by the stair's head, the ways' grey door, the crypt and the temple to the pilgrims' camp, and a rest there`);
+  goalFromBegun(early, how);
+  ok(written(early).join(', ') === 'isle, shard, temple, knot, ways, dead, word, catcher, creed' && quest(early)?.goal === goalOf('Through the last door') && !quest(early)?.done
+    && !early.news.some((n) => n === `Chapter complete: ${CHAPTER.title}.` || n === `Quest complete: ${THE_QUEST.title}.`),
+    `${how}: the journal reads true to the Catcher and the creed, and the end is unreached (${written(early).join(', ')})`);
+  everyGoalWalked(ok, [CHAPTER]);
 }
