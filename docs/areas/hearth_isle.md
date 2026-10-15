@@ -1360,8 +1360,8 @@ treasury's key.
   the moths went, all together, out through the court to the light.* (on `LAMPS_OUT`); *He gave us
   the treasury's key. The grey men's gear in there is nobody's, he says.* (on `q_lamps_key`).
   Goals: *Go back to the sacristan under the vestry table.* (on `LAMPS_OUT`, at `hearthfane`);
-  *Put out the four lamps in the pillar's order: the Sea, the Shore, the House, the Hearth.* (on
-  `q_lamps`, at `hearthfane`).
+  *Put out the four lamps in the pillar's order: the Sea, the Shore, the House, the Hearth.* (changed
+  by #795's 8; on `q_lamps`, at `hearthfane`).
 - **As built** (Hearthfane, #755): the quest is `lamps` and its ids the plan's: `q_lamps`,
   `q_lamps_out`, `q_lamps_wrong`, `q_lamps_key`, `fane_key` and the lamps' four flags (#755's 3).
   The treasury's door is gated on `fane_key`, not `locked`: it opens to the sacristan's key and to
@@ -2774,7 +2774,7 @@ Decided by delegate for #755, each the owner's to overturn:
     #780 found the reason missing.
 23. **The goal gives the order outright** (*Put out the four lamps in the pillar's order: the Sea, the
     Shore, the House, the Hearth.*, §6's own line), so the pillar's carving is moot to a company that
-    has met him. It is the plan's, left as written: the owner's call (§11).
+    has met him. It is the plan's, left as written: the owner's call (§11). Changed by #795's 8.
 
 Decided by delegate for #756, each the owner's to overturn:
 
@@ -3158,30 +3158,24 @@ Decided by delegate for #752, each the owner's to overturn:
 
 Decided by delegate for #795, each the owner's to overturn:
 
-1. **Vask's hand-ins pass to three persons in turn** (supersedes #765 half A's 9): Vask until the company is
-   on the isle, his steward from its first step and after an ending until the Council has sat, and Wiglaf at
-   the door then. The items, pay and flags are Vask's; `until` and `after` leave one standing in each of 16 states.
-2. **The steward stands on after an ending** (his `until` is the removal alone): the opened leaves nobody at
-   the door but the empty room, and Vask in irons is no one to hand a wand to. A `says` after any ending
-   comes before his first words, which are not true then.
-3. **The steward and Wiglaf hire nobody, so the wand has no `early` for them:** it is for a company the
-   person never hired (`NpcQuest`) and would never be said. The steward's wand has an `after`; Wiglaf keeps his own.
-4. **`tools/tests/people.ts` counts the wand's takers at three** (outside the lane; the ledger and the chisel
-   stay at one), and the Foreland's walkthrough finds Vask by his hire (`toVask`), as `meetWho` finds one person only.
-5. **The Reader's crack is a once-line** (`q_reader_crack`) after her introduction, before her reading and the
-   endings' words, its text as it was (supersedes #765 half B's 4). The audit found her reading of the papers
-   hidden below them, and her introduction, which the reading needs: both now come first while they stand open.
-6. **The rest of the audit changes nothing:** Ruan and Ysolde were put right by #765's 8; what the endings'
-   words hide for Ordgar, the Eel, the priestess, Morwenna and Hild is talk that sets nothing a log reads, or
-   a hire the road already made (Hild's ask is answered by the ending itself); the Luminary, Jowan's mother
-   and the two clerks hide nothing.
-7. **Hereswith's early hand-in ends on the send-down:** a third paragraph in her voice, with the crypt, the
-   eleven and the top she keeps, so that the entry `given` reads true of both roads; `done` is as it was.
-8. **The sacristan's goal points at the pillar** ("in the order the pillar gives", as the entry `asked` has it),
-   and the Hearth's walkthrough asserts that no goal of any quest names the four lamps in sequence.
-9. **The log's entries for the three still read as Vask's** (`paid`, `lead`, `vask`, `order`): the steward's and
-   Wiglaf's words keep their beats, the wand taken and paid, the lead on the Grove Stone, the matter seen to and
-   the order lifted, and no text moves.
+1. **Vask's hand-ins go to three persons in turn** (supersedes #765 half A's 9): Vask, then his steward
+   from the first step onto the isle, then Wiglaf once the Council has sat; one stands in each state.
+2. **The steward stands on after an ending,** since the opened leaves nobody else at the door; a `says`
+   after any ending comes before his first words, which are not true then.
+3. **The steward and Wiglaf hire nobody, so no `early` for them, nor an `after`:** an `after` is said to
+   any company whose flag is set, so it would hide his first words from those who gave Vask the wand.
+4. **`tools/tests/people.ts` counts the wand's takers at three** (outside the lane); the walkthrough meets
+   Vask by his hire (`toVask`), as `meetWho` finds one person only.
+5. **The Reader's crack is a once-line** (`q_reader_crack`) after her introduction and before the endings'
+   words (supersedes #765 half B's 4); her reading and introduction, hidden below them, come first too.
+6. **The rest of the audit leaves the words first:** what they hide is talk; Hild's Greywater line stays
+   below, as first it would send the company for a girl who walks behind it (Ruan, Ysolde: #765's 8).
+7. **Hereswith's early hand-in ends on the send-down:** a third paragraph in her voice, so that the entry
+   `given` reads true of both roads; `done` is as it was.
+8. **The sacristan's goal points at the pillar** ("in the order the pillar gives", as `asked` has it);
+   the Hearth's walkthrough asserts that no goal of any quest names the four lamps in sequence.
+9. **The four log entries that named Vask are true of whoever took the hand-in** (`paid`, `lead`, `vask`,
+   `order`): their ids and conditions stay, and the goals that name him still point at the keep.
 
 ## 10. Names
 
@@ -3282,9 +3276,10 @@ Owed, from Hearthfane (#755):
 - **Fleeing at the treasury's door:** `World.flee` steps back without reading gates or exits, so a
   company that flees a fight at 10,10 facing west lands in the treasury's doorway without the key.
   It is so for every gate (Helmstow's) and a systems matter.
-- **The goal gives the order outright:** *Put out the four lamps in the pillar's order: the Sea, the
-  Shore, the House, the Hearth.* (§6's own line) tells a company that has met the sacristan what the
-  carving says, so the pillar is moot to it. The owner's call (§9.2, #755's 23).
+- **The goal gave the order outright (done, #795's 8):** *Put out the four lamps in the pillar's order:
+  the Sea, the Shore, the House, the Hearth.* (§6's own line) told a company that had met the sacristan
+  what the carving says. It now points at the pillar: *Put out the four lamps in the order the pillar
+  gives.* (§9.2, #755's 23).
 
 Owed, from the crypt (#756):
 
@@ -3380,10 +3375,9 @@ Owed, from the Stair (#758):
 
 Owed, from the Cleric's third (#763):
 
-- **The early road reads a meeting ahead of her:** `early` ends on *Now I know.* and sends nobody, the
-  log's `given` entry says she sent us, and her next words do send the company down. A hand-in sets
-  no met flag, so her introduction is never said on that road. The plan's words, kept and accepted
-  (§9.2, #763's 4 and 10). The owner's call: end `early` on the send-down line, or word the entry so.
+- **The early road read a meeting ahead of her (done, #795's 7):** `early` ended on *Now I know.* and sent
+  nobody, while the log's `given` entry says she sent us. It now ends on the send-down line too. A hand-in
+  sets no met flag, so her introduction is still never said on that road (§9.2, #763's 4 and 10).
 
 Owed, from the Heart (#759):
 
@@ -3418,8 +3412,8 @@ Owed, from the Heart (#759):
   `shelf` 15,4 sets the other three (Helmstow and the halls). The Walk Home's `gate` entry, on
   `gate_open`, is in, and `UNSET` owes nothing.
 - **First of all, but for a business still open (#765, half A):** Ruan's Compact question and
-  Ysolde's reading of the journal come before an ending's words until done (§9.2, #765's 8), and the
-  Reader's reading of the papers and her introduction too (#795's 5).
+  Ysolde's reading of the journal come before an ending's words until done (§9.2, #765's 8); so do the
+  Reader's reading of the papers and her introduction (#795's 5).
 - **The chapter is #760's, written:** the Heart's steps are `core:core_door` and `core:core_heart` (seen),
   the flags `VASK_FALLEN`, `VOICE_WHOLE`, `RING_GIVEN` and `ENDED`, at `core`; 64 is `signet` in the
   area's `quests.ts`.
@@ -3552,8 +3546,8 @@ half's. Ashfall's seven groups go `until: ENDED` with `leaves`, and the harbourm
 thane's line waits on his answer as well. The Sunder's groups given `until: { flag: CRACK_SEALED }`
 and `leaves`: `j2_hounds`, `k2_hounds`, `k2_bears`, `k3_bears`, `l2_hounds`, `l2_bears`,
 `l3_bank`, `l4_night`, `m2_hounds`, `m2_bears`, `su1_spiders`, `su2_wood`, `su2_bears` and the K3 Rift's
-`k3_rift_g1` and `k3_rift_g2`. The Reader's ending words come at every meeting, after the badge's question,
-the wall's word and the crack's, which are said once, and her reading while it is open (#795, below). `i11_stone` sets
+`k3_rift_g1` and `k3_rift_g2`. The Reader's ending words come at every meeting, after her reading while it
+is open and after the badge's question, the wall's word and the crack's, which are said once (#795, below). `i11_stone` sets
 `q_peak_stood` already (#751). The Grove Stone counts on `q_mender_done`, and the last crossing, whose isle end H6 landed
 (#753), is free at both ends.
 
@@ -3569,14 +3563,17 @@ lost by the isle, the Council or an ending, and in every state exactly one of th
 | On the isle, or after an ending; the Council not sat | the empty throne room (Vask in irons within, after the relit and the finished) | the steward | the steward |
 | The Council has sat, whatever else | Wiglaf at the keep's door (Vask in irons within, after the relit and the finished) | nobody | Wiglaf |
 
-The steward is `after` the isle or any ending and `until` the removal, so he stands on after an ending: the
-opened leaves nobody else at the door, and a man in irons is no one to hand a wand to. A `says` after an ending
-replaces his first words, which are not true then. He hires nobody, so his wand has `done` and an `after` and no
-`early`; Wiglaf's has `done` alone. The Foreland's `keepHandIns` plays the sixteen states (the isle, the Council
-and the three endings). **The Reader** (`lantern_watch` 5,5): the crack's line is said once (`q_reader_crack`),
-at the next meeting whichever came first and after her introduction, as the wall's word is; her reading of
-the Tide Ship's papers and log (`papers_read`, `seal_read`, `log_read`) comes before the endings' words while it
-is still to do, and those words wait on her introduction (`watch_reader_met`), which the reading needs.
-**The audit of the endings' words** found that business hidden nowhere else (§9.2, #795's 5 and 6).
-**Hereswith's** early hand-in ends on the send-down, as `done` does, and **the sacristan's** goal points at the
-pillar without its order (§9.2, #795's 7 and 8).
+The steward is `after` the isle or any ending and `until` the removal, so he stands on after an ending:
+the opened leaves nobody else at the door, and a man in irons is no one to hand a wand to. A `says` after
+an ending replaces his first words, which are not true then. Neither he nor Wiglaf hires anybody, so the
+wand has no `early` for them, nor an `after`: a hand-in's is said to any company whose flag is set, and
+would hide the steward's first words from every company that gave the wand to Vask. The Foreland's
+`keepHandIns` plays the sixteen states (the isle, the Council and the three endings). **The Reader**
+(`lantern_watch` 5,5): the crack's line is said once (`q_reader_crack`), at the next meeting whichever came
+first and after her introduction, as the wall's word is; her reading of the Tide Ship's papers and log
+(`papers_read`, `seal_read`, `log_read`) comes before the endings' words while it is still to do, and those
+words wait on her introduction (`watch_reader_met`), which the reading needs. **The audit of the endings'
+words** found business hidden nowhere else, and left Hild's Greywater line below her ending word, as first
+it would send the company for a girl who walks behind it (§9.2, #795's 5 and 6). **Hereswith's** early
+hand-in ends on the send-down, as `done` does, and **the sacristan's** goal points at the pillar without
+its order (§9.2, #795's 7 and 8).
