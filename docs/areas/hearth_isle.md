@@ -1744,15 +1744,15 @@ issue tunes them on the gate (§8).
 | Id | Name | Family, drawing | Kind, role | Level | Numbers on the line | Where; what it does |
 |---|---|---|---|---|---|---|
 | `hearth_moth` | Hearth Moth | moths, `hearth_moth` | beast, fodder | 28 | hp 280, ac 24, attack 15, 3d8+4, speed 12, xp 557 | the isle and the nave by night, twelve to a group; flies (`ranged`); its dust puts to sleep (`inflict: asleep 0.2`); `look: 'The sky over the isle is moving.'` |
-| `ashen_champion` | Ashen Champion | cultist, `ashen_champion` | person, soldier | 29 | hp 428, ac 26, attack 16, 5d8+8, speed 11, xp 1,153 | the isle's pickets, the temple, the crypt; `steady` (the Hand never breaks); drops `grey_knife` at 0.1; `look: 'The Hand\'s best, in steel from below.'` |
-| `ashen_preacher` | Ashen Preacher | cultist, `ashen_preacher` | person, caster | 29 | hp 644, ac 26, attack 18, 6d8+6, speed 12, xp 1,538 | behind the champions; `cast: { spells: ['firebolt', 'ward'], chance: 0.5 }`, `ranged`, `steady`; `look: 'Still preaching, and the fire is the sermon.'` |
+| `ashen_champion` | Ashen Champion | cultist, `ashen_champion` | person, soldier | 29 | hp 435, ac 26, attack 16, 5d8+8, speed 11, xp 1,153 | the isle's pickets, the temple, the crypt; `steady` (the Hand never breaks); drops `grey_knife` at 0.1; `look: 'The Hand\'s best, in steel from below.'` |
+| `ashen_preacher` | Ashen Preacher | cultist, `ashen_preacher` | person, caster | 29 | hp 643, ac 26, attack 18, 5d8+8, speed 12, xp 1,538 | behind the champions; `cast: { spells: ['firebolt', 'ward'], chance: 0.5 }`, `ranged`, `steady`; `look: 'Still preaching, and the fire is the sermon.'` |
 | `deep_rat` | Deep Rat | rat, `deep_rat` | beast, fodder | 30 | hp 281, ac 25, attack 16, 3d8+5, speed 12, xp 597 | everywhere below, twelve to a group; `inflict: diseased 0.2`; `look: 'Rats. Even here.'` |
 | `keeper` | Keeper | keepers, `keeper` | machine, soldier | 30 | hp 435, ac 26, attack 17, 5d8+8, speed 11, xp 1,193 | the Ways; `inflict: asleep 0.15` (the sleepers' touch, Rimewater's); `look: 'A keeper with no bay to keep, and no robe.'` |
 | `deep_knocker` | Deep Knocker | knockers, `deep_knocker` (built, Ashfall's) | machine, armoured | 28 | as built (Ashfall's `monsters.ts`) | the Ways, the Stair; the crack |
 | `hand_rearguard` | Ashen Rearguard | cultist, `hand_rearguard` | person, armoured | 30 | hp 640, ac 28, attack 17, 5d8+7, speed 8, xp 1,591 | the Stair's first landing, where the claimant's people are not; `steady`; `look: 'The last of the Hand still standing, and standing in the way.'` |
-| `deep_crawler` | Deep Crawler | crawlers, `deep_crawler` (new) | machine, brute | 31 | hp 1,061, ac 25, attack 18, 7d8+6, speed 8, xp 2,467 | the Ways' last run, the Stair; `ranged` (it comes down from above and reaches the back row); `look: 'It comes down from above, on too many legs.'` |
+| `deep_crawler` | Deep Crawler | crawlers, `deep_crawler` (new) | machine, brute | 31 | hp 1,060, ac 25, attack 18, 7d7+10, speed 8, xp 2,467 | the Ways' last run, the Stair; `ranged` (it comes down from above and reaches the back row); `look: 'It comes down from above, on too many legs.'` |
 | `catcher` | The Catcher | crawlers, `catcher` (new) | machine, boss | 31 | hp 1,300, ac 28, attack 19, 32d8+37, speed 13, xp 19,733 (off the line, which gives 2,096 and 35d7+54: `OFF_LINE`, `tools/tests/harness.ts`) | the Stair's foot, among the Hand's dead; `ranged`; `inflict: paralysed 0.2`; `look: 'It caught the Hand on these stairs.'`; sized on its odds to 56% won at 30 and 79% at 32 on the gate's hundred seeds (below; §8; §9.2, #752's 4) |
-| `grey_hand` | Grey Hand | cultist, `grey_hand` | person, elite | 31 | hp 786, ac 27, attack 18, 7d8+7, speed 15, xp 2,467 | the Heart, at the panel; `steady`; `inflict: paralysed 0.15`; `look: 'Hands the colour of ash, to the shoulder.'` |
+| `grey_hand` | Grey Hand | cultist, `grey_hand` | person, elite | 31 | hp 785, ac 27, attack 18, 7d7+12, speed 15, xp 2,467 | the Heart, at the panel; `steady`; `inflict: paralysed 0.15`; `look: 'Hands the colour of ash, to the shoulder.'` |
 | `core_sentry` | Core Sentry | machines, `core_sentry` | machine, soldier | 31 | hp 890, ac 27, attack 17, 5d7+10, speed 11, xp 1,233 (off the line: twice the soldier's 445 hit points with its blow, `OFF_LINE`; §9.2, #752's 5) | called by the ring (Vask's `calls`, the clock); stands down when he falls (`obeys`, §9, call 7); `look: 'The core\'s own, and it takes orders from the ring.'` |
 | `vask` | Lord Vask | cultist, `vask` (the figure frame, his own) | person, boss | 32 | hp 1,850, ac 29, attack 20, 22d8+23, speed 13, xp 20,373 (off the line, which gives 2,100 and 34d8+41: `OFF_LINE`, `tools/tests/harness.ts`) | the Heart; `steady`; `calls: { monsters: ['core_sentry'], chance: 1 }` on the clock's beat (the clock ignores the chance, §9, call 7); `look: 'A tall man with a quiet voice, and the Queen\'s ring on his finger.'`; sized on his odds to 64% won at 32 with the Hands down first on the gate's hundred seeds (below; §8; §9.2, #752's 5) |
 
@@ -1839,6 +1839,12 @@ The rise from 30 to 32 is 12 to 18 points wherever the fight ends inside fifteen
 3,000 hit points the round cap takes it and the odds fall away, a slog at the floor. Half at 31 and
 nearly always at the cap cannot both hold: the floor, the binding figure, is brought as near half
 as the gate's limit two above allows.
+
+**On the line made at 29 and 31** (#793; §9.2, #793's 4 and 5). The champions (435 and 5d8+8), the
+preachers (643 and 5d8+8), the Hands (785 and 7d7+12) and the crawlers (1,060 and 7d7+10) are
+restated on it. The sentries stay at 890 and 5d7+10, sized on Vask's odds, though the soldier at 31
+is 437 now. On the gate's hundred seeds Vask is won 60% with the Hands first and 33% with the clock
+let run, the thinned group 78%; the Catcher 57% at 30 and 80% at 32.
 
 The drawings (the creatures lane): `src/ui/monsters/crawlers.ts`, the new family, two kinds; the
 moths', the cultists', the rat's, the keepers' and the machines' modules gain their kinds, the
@@ -3153,7 +3159,40 @@ Decided by delegate for #752, each the owner's to overturn:
    69, 28 and 83% with no clock (`--seeds 100`, the gate's hundred; the default 200 prints 70, 71, 29
    and 87). The thrifty bot keeps its spells, and lets the clock run at 66%.
 8. **The armoured at 29 and 31, read between, run long** (47 and 52% of days end badly) where the
-   line's armour rounds up; no armoured monster stands there, and the line is not nudged.
+   line's armour rounds up; no armoured monster stands there, and the line is not nudged. Made at
+   29 and 31 since (#793), they end 38 and 49%, held at 28's and 30's hit points (#793's 3).
+
+Decided by delegate for #793, each the owner's to overturn:
+
+1. **`LEVELS` gains 29 and 31 and the line is made at them in the Hand's steel:** `node
+   tools/harness.ts --calibrate --write --levels 29,31`, 200 seeds a point (1 to 200), 1,281 seconds
+   on four cores shared with another build. A diff of the tables against main: the 500 factors at
+   the levels made before are as they were, and the 40 new ones are all at 29 and 31.
+2. **A level made between two that stand is held under the one over it:** the soldier, the elite and
+   the brute at 29 came out with more hit points than at 30 (451 against 435 for the soldier), so the
+   harness holds such a point under the level over's and solves its blow again (`--levels 29 --roles
+   soldier,elite,brute`, 260 seconds; each point is made on its own, so the full command gives the
+   same). The harness test checks that no test monster has fewer hit points than the one under it.
+3. **The armoured at 29 and 31 still run long:** 38 and 49% of their days end badly (47 and 52% read
+   between), held at 28's and 30's hit points while their armour rounds up a point; free of the hold,
+   13%. 28 and 30 stand, so they are not nudged. The other eight end 2 to 11%, as at the levels made.
+4. **The isle's four at 29 and 31 are restated on the line,** keeping id, look, sprite, level, role
+   and xp: the champion (435 and 5d8+8), the preacher (643 and 5d8+8), the Grey Hand (785 and 7d7+12)
+   and the crawler (1,060 and 7d7+10).
+5. **The sentries stay at 890 and 5d7+10,** twice the soldier at 31 as #752's line read him: they are
+   set off the line on Vask's odds, and a restating is not a tuning (twice the made soldier is 874).
+6. **`kneel` kneels at the feature the world holds,** found by its id where the company stands: on a
+   zone map that is a copy moved to the outdoors' cells, so the old test of identity failed. The
+   isle's walkthrough kneels at the pilgrims' shrine with it; Saltreach's still kneels on a dungeon.
+7. **The inscriptions check reads `shut`, `lifts` and `after`, each in its own words** (shut by, opened
+   by and no way until a reading), with an exit's fixture for each and a gate's three together; on
+   main the `lifts` and `after` fixtures pass unseen.
+8. **The gate moves only on Hearth Isle,** 615 ok, 90 owed and 64 n/a before and after: Vask 60% with
+   the Hands first and 33% with the clock let run (64 and 28%), the crypt 14.24 to a rest (14.16), all
+   inside their limits, and nothing new is owed. The Act IV bosses judged at 29 read 95 and 96%, as on
+   main.
+9. **The passage check's comment gives the Hearth's band as 28-32;** no other statement of 28-30 stands
+   in the tools, the source or this plan.
 
 ## 10. Names
 
@@ -3215,8 +3254,9 @@ Owed, from H6 (#753):
   `q_compact_over`, so the runner's word that the boat is the Partner's both ways holds.
 - **The gear's rung** is built (#746): the Grey Knife (`greyKnife`), built here
   (`src/content/areas/hearth/items.ts`), is on the ladder at 28; the Smelling Salts are no gear.
-- **`kneel` in `tools/walk.ts`** fails on any zone map, comparing the outdoors' moved feature with
-  the map's by identity; the isle's walkthrough kneels with `useShrine` directly (§9.2, #753's 16).
+- **`kneel` in `tools/walk.ts`** works on a zone map now: it kneels at the feature the world holds,
+  found by its id where the company stands, and the isle's walkthrough kneels at the pilgrims' shrine
+  with it (§9.2, #753's 16 and #793's 6).
 
 Owed, from I6 (#754):
 
