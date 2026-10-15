@@ -1049,9 +1049,32 @@ function stilled(ok: (cond: boolean, msg: string) => void): void {
   const back = STILLED.filter((at) => live(v, at)), word = says(v);
   ok(!back.length && word === '"The Sunder\'s beasts have stopped. The wall at the bottom is warm in one place, the surveyor says, and nothing comes out of it now."',
     `the crack sealed, standing or killed none comes back two days on${back.length ? ' -> ' + back.join(', ') : ''}, and the Reader says the beasts have stopped`);
+  ok(says(v).startsWith('She has the wick in its dish lit now') && !!v.party.flags.q_reader_crack, 'the crack is said once: at the next meeting she is on to the papers');
+  // The crack's word is said once, at the next meeting whichever came first, an ending or the seal (#795); the
+  // ending's word is hers at every meeting, and comes before every other of her words but the once-said ones.
   const WORDS: Record<string, string> = { reignite: '"Every lamp in the house burns steadier', arrive: '"The prior says we were the jailers.', finish: '"The Hearth burns harder' };
+  const CRACK = '"The Sunder\'s beasts have stopped.';
   for (const [id, e] of Object.entries(ENDINGS)) {
-    const t = says(ready(CRACK_SEALED, e.flag));
-    ok(t.startsWith(WORDS[id]), `after ${e.flag} the Reader's word comes first of all (${t})`);
+    const sealed = ready(CRACK_SEALED, e.flag), told = [says(sealed), says(sealed), says(sealed)];
+    ok(told[0].startsWith(CRACK) && told[1].startsWith(WORDS[id]) && told[2].startsWith(WORDS[id]),
+      `the crack sealed and then ${e.flag}: the Reader says the beasts have stopped once, and the ending's word after it at every meeting (${told.map((t) => t.slice(0, 22)).join(' / ')})`);
+    const later = ready(e.flag), first = [says(later), says(later)];
+    later.party.flags[CRACK_SEALED] = 1;
+    const then = [says(later), says(later), says(later)];
+    ok(first.every((t) => t.startsWith(WORDS[id])) && then[0].startsWith(CRACK) && then[1].startsWith(WORDS[id]) && then[2].startsWith(WORDS[id]) && !!later.party.flags.q_reader_crack,
+      `${e.flag} and then the crack sealed: the ending's word at every meeting, the crack's once at the next after the seal, and not twice (${then.map((t) => t.slice(0, 22)).join(' / ')})`);
+  }
+  { // An ending before the papers are read, or before she has met the company: the reading and the introduction wait for no ending's word (#795).
+    const read = newWalk(ok);
+    for (const f of ['watch_reader_met', ENDINGS.finish.flag]) read.party.flags[f] = 1;
+    read.party.bag.push('ships_papers');
+    const t = [says(read), says(read)];
+    ok(t[0].startsWith('She sees the papers before she sees you') && !!read.party.flags.papers_read && !!read.party.flags.seal_read && t[1].startsWith(WORDS.finish),
+      `after an ending, the papers carried to her are read first, once, and then the ending's word (${t.map((x) => x.slice(0, 22)).join(' / ')})`);
+    const met = newWalk(ok);
+    met.party.flags[ENDINGS.reignite.flag] = 1;
+    const u = [says(met), says(met)];
+    ok(u[0].startsWith('A woman at the desk') && !!met.party.flags.watch_reader_met && u[1].startsWith(WORDS.reignite),
+      `after an ending, a company she has not met hears her introduction first, which the reading needs, and then the ending's word (${u.map((x) => x.slice(0, 22)).join(' / ')})`);
   }
 }

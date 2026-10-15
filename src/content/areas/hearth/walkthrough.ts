@@ -32,11 +32,11 @@
 // she takes from them begins no journal. Then the chapter, The Heart (#760), played to each of its three
 // ends from the road behind done, and once by a company over early on four of the road's five.
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, see, fight, listen, walkThrough, gone as left, playChapter, everyGoalWalked, goalFromBegun, quest, ending } from '../../../../tools/walk.ts';
+import { newWalk, see, kneel, fight, listen, walkThrough, gone as left, playChapter, everyGoalWalked, goalFromBegun, quest, ending } from '../../../../tools/walk.ts';
 import type { Walk, Step } from '../../../../tools/walk.ts';
 import { NORTH, EAST, SOUTH, WEST } from '../../../game/types.ts';
 import type { Facing } from '../../../game/types.ts';
-import { ATLAS, MAP_DEFS } from '../../index.ts';
+import { ATLAS, MAP_DEFS, QUESTS } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { meet, heard, answer, handIns } from '../../../game/people.ts';
@@ -50,7 +50,7 @@ import { endingTaken } from '../../../game/stones.ts';
 import { ENDINGS } from '../../endings.ts';
 import { winRate, gateOpts } from '../../../../tools/gate.ts';
 import { ANSWER } from '../../../../tools/harness.ts';
-import { restRefused, useShrine } from '../../../game/wilds.ts';
+import { restRefused } from '../../../game/wilds.ts';
 import { questLog, holds } from '../../../game/quests.ts';
 import { readerOf } from '../../../game/inscriptions.ts';
 import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
@@ -65,7 +65,7 @@ import { CREW_OPEN, CREW_SHUT, CRACK_SEALED, CRACK_WIDE, STAIR_DOOR, CRAWL_DOOR 
 import { FIVE, LAST_DOOR, KNOT_LAST } from './maps/underdeep2.ts';
 import { VASK, VASK_FALLEN, VOICE_WHOLE, RING_GIVEN, END_REIGNITE, END_ARRIVE, END_FINISH, SIGNET } from './maps/core.ts';
 import { THE_QUEST } from '../../index.ts';
-import type { Chapter, QuestCond } from '../../../game/quests.ts';
+import type { Chapter, QuestCond, QuestDef } from '../../../game/quests.ts';
 import { PAGE } from '../../../ui/quests.ts';
 import { wrap } from '../../../ui/draw.ts';
 import { ROAD_EAST } from '../glasswold/maps/wold_d8.ts';
@@ -129,10 +129,9 @@ export const walkthrough: Walkthrough = (ok) => {
   const tents = H6.features!.filter((f) => f.kind === 'shop' || f.kind === 'trainer' || f.kind === 'temple');
   ok(tents.length === 3 && tents.every((f) => ch(f.x, f.y) === 'D' && Math.abs(f.x - 16) + Math.abs(f.y - 16) === 1) && tents.some((f) => f.kind === 'trainer' && f.maxLevel === 32),
     'the store, the sergeant\'s tent and the Lantern\'s open round the yard at 16,16, and the sergeant teaches to the cap');
-  const shrine = H6.features!.find((f): f is Extract<typeof f, { kind: 'shrine' }> => f.kind === 'shrine' && f.id === 'h6_shrine')!;
-  w.world.travel('hearthisle_h6', shrine.x, shrine.y);
-  const here = w.world.featureHere();
-  ok(here?.kind === 'shrine' && here.id === 'h6_shrine' && useShrine(w.world, w.party, here)[0] === shrine.text, 'kneeling at the pilgrims\' shrine, the hum settles in the chest');
+  const personality = w.party.members.map((m) => m.stats.personality);
+  kneel(w, 'hearthisle_h6:h6_shrine');
+  ok(w.party.members.every((m, i) => m.stats.personality === personality[i] + 1), 'kneeling at the pilgrims\' shrine, the hum settles in the chest: a point of Personality to each of the company');
 
   // The three pilgrims: each asks, and met begins the quest; one token taken, the other two keep theirs
   // and are gone, and the one who gave it speaks of it after.
@@ -295,6 +294,10 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(!lamps.some((v) => v.def.id === 'lamps') && talk(sacristan).text.includes('the pillar says the way') && !!w.party.flags[LAMPS]
     && !!questLog(w.world.state, w.party).find((v) => v.def.id === 'lamps' && !v.done), 'the sacristan under the vestry table wants the lamps out in the pillar\'s order, and the quest begins');
   listen(w);
+  // The goal points at the pillar and does not tell its order: no goal of any quest names the four lamps in sequence (#795).
+  const orderTold = QUESTS.flatMap((x): readonly QuestDef[] => x.chapters ?? [x]).flatMap((d) => d.goals).filter((g) => /\bSea\b.*\bShore\b.*\bHouse\b.*\bHearth\b/i.test(g.text));
+  ok(!orderTold.length && questLog(w.world.state, w.party).find((v) => v.def.id === 'lamps')?.goal === 'Put out the four lamps in the order the pillar gives.',
+    `the sacristan's goal points at the pillar, and no goal names the four lamps in their order${orderTold.length ? ' -> ' + orderTold.map((g) => g.text).join('; ') : ''}`);
 
   // A lamp out of its turn, the Shore first: the others flare, the swarm comes and the lamp burns on; the
   // swarm won at 28. Then the pillar's order, which still works: each lamp out in its turn, and stays out.
@@ -743,6 +746,9 @@ function elevenKept(ok: (cond: boolean, msg: string) => void): void {
   ok(anchoress.x === 4 && anchoress.y === 19 && teaching.cls === 'cleric' && teaching.prestige === 3 && teaching.asks === 'eleven_kept' && JSON.stringify(teaching.done) === JSON.stringify({ flag: ELEVEN_KEPT })
     && hand.item === 'keepers_log' && hand.reward === 0 && hand.setFlag === LOG_GIVEN && chest.items.join() === 'keepers_log' && lamps.sets === ELEVEN_KEPT && JSON.stringify(lamps.after) === JSON.stringify({ flag: LOG_GIVEN }),
     'the anchoress at 4,19 takes the keeper\'s log from the chest at Crowness Light for nothing and sets the flag the crypt\'s lamps wait on, and the lamps set the flag her teaching waits on');
+  // Her hand-in ends on the send-down early or not, so the entry `given`, which says she sent them down, reads true of both (#795).
+  ok([hand.early!, hand.done].every((t) => /fane's crypt/.test(t.at(-1)!) && /eleven/i.test(t.at(-1)!) && /keep the top/.test(t.at(-1)!)),
+    'her hand-in ends on the send-down whether the log is brought before her ask or after it: the fane\'s crypt, the eleven lamps and the top she keeps');
 
   const play = (early: boolean): void => {
     const how = early ? 'the log before the ask' : 'the ask first';

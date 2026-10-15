@@ -22,7 +22,8 @@ Seven places are built: H6, the isle (#753, §4.2), which lists the area; I6, th
 §4.3); Hearthfane, the temple (#755, §4.4); the crypt under it (#756, §4.5); the Ways below the
 crypt (#757, §4.6); the Stair below the Ways (#758, §4.7); and the Heart below the Stair (#759,
 §4.8). The isle is built to the Heart and its chapter is written (#760, §5), and the road behind is
-built (#765, §12): Helmstow and its halls, Gullwick, Ashfall, the Kilns and Sunderwood.
+built (#765, §12): Helmstow and its halls, Gullwick, Ashfall, the Kilns and Sunderwood, with its business
+kept reachable (#795).
 What exists: the isle's map, `hearthisle_h6`, which places four of the roster's monsters, opens the
 pilgrims' camp's three rooms and gives onto the temple (§3); the rim's map, `hearthisle_i6`, which
 places three of those four; the temple's map, `hearthfane`, which places three of those four and
@@ -226,7 +227,7 @@ links: the zone `hearthisle` with its crossing words; the places `hearthfane` (b
 `hearthfane2` (built, #756), `underdeep` (built, #757), `underdeep2` (built, #758) and `core`
 (built, #759); the sites The Hearth and Anchorhold (both built, #754). The last crossing's isle
 end, owed to Phase 1.5 until H6, lands on the strand (`LAST_CROSSING`, `src/content/crossings.ts`),
-so Cinderport's harbourmaster sells it. The curve's row (#745, §8) has left `PLANNED`, owed to #744
+so Cinderport's harbourmaster sells it. The curve's row (#745, §8) has left `PLANNED`, owed to #794
 for what the isle, the rim, the temple, the crypt, the Ways, the Stair and the Heart pay, which falls
 short of the area's budget (§8, §11). The chapter, The Heart (#760, §5), is the area's `chapter`
 (`chapter.ts`), joined after the Wold's in `THE_QUEST`, the twelfth and last: begun on `q_road_east`
@@ -1363,8 +1364,8 @@ treasury's key.
   the moths went, all together, out through the court to the light.* (on `LAMPS_OUT`); *He gave us
   the treasury's key. The grey men's gear in there is nobody's, he says.* (on `q_lamps_key`).
   Goals: *Go back to the sacristan under the vestry table.* (on `LAMPS_OUT`, at `hearthfane`);
-  *Put out the four lamps in the pillar's order: the Sea, the Shore, the House, the Hearth.* (on
-  `q_lamps`, at `hearthfane`).
+  *Put out the four lamps in the pillar's order: the Sea, the Shore, the House, the Hearth.* (changed
+  by #795's 8; on `q_lamps`, at `hearthfane`).
 - **As built** (Hearthfane, #755): the quest is `lamps` and its ids the plan's: `q_lamps`,
   `q_lamps_out`, `q_lamps_wrong`, `q_lamps_key`, `fane_key` and the lamps' four flags (#755's 3).
   The treasury's door is gated on `fane_key`, not `locked`: it opens to the sacristan's key and to
@@ -1748,15 +1749,15 @@ issue tunes them on the gate (§8).
 | Id | Name | Family, drawing | Kind, role | Level | Numbers on the line | Where; what it does |
 |---|---|---|---|---|---|---|
 | `hearth_moth` | Hearth Moth | moths, `hearth_moth` | beast, fodder | 28 | hp 280, ac 24, attack 15, 3d8+4, speed 12, xp 557 | the isle and the nave by night, twelve to a group; flies (`ranged`); its dust puts to sleep (`inflict: asleep 0.2`); `look: 'The sky over the isle is moving.'` |
-| `ashen_champion` | Ashen Champion | cultist, `ashen_champion` | person, soldier | 29 | hp 428, ac 26, attack 16, 5d8+8, speed 11, xp 1,153 | the isle's pickets, the temple, the crypt; `steady` (the Hand never breaks); drops `grey_knife` at 0.1; `look: 'The Hand\'s best, in steel from below.'` |
-| `ashen_preacher` | Ashen Preacher | cultist, `ashen_preacher` | person, caster | 29 | hp 644, ac 26, attack 18, 6d8+6, speed 12, xp 1,538 | behind the champions; `cast: { spells: ['firebolt', 'ward'], chance: 0.5 }`, `ranged`, `steady`; `look: 'Still preaching, and the fire is the sermon.'` |
+| `ashen_champion` | Ashen Champion | cultist, `ashen_champion` | person, soldier | 29 | hp 435, ac 26, attack 16, 5d8+8, speed 11, xp 1,153 | the isle's pickets, the temple, the crypt; `steady` (the Hand never breaks); drops `grey_knife` at 0.1; `look: 'The Hand\'s best, in steel from below.'` |
+| `ashen_preacher` | Ashen Preacher | cultist, `ashen_preacher` | person, caster | 29 | hp 643, ac 26, attack 18, 5d8+8, speed 12, xp 1,538 | behind the champions; `cast: { spells: ['firebolt', 'ward'], chance: 0.5 }`, `ranged`, `steady`; `look: 'Still preaching, and the fire is the sermon.'` |
 | `deep_rat` | Deep Rat | rat, `deep_rat` | beast, fodder | 30 | hp 281, ac 25, attack 16, 3d8+5, speed 12, xp 597 | everywhere below, twelve to a group; `inflict: diseased 0.2`; `look: 'Rats. Even here.'` |
 | `keeper` | Keeper | keepers, `keeper` | machine, soldier | 30 | hp 435, ac 26, attack 17, 5d8+8, speed 11, xp 1,193 | the Ways; `inflict: asleep 0.15` (the sleepers' touch, Rimewater's); `look: 'A keeper with no bay to keep, and no robe.'` |
 | `deep_knocker` | Deep Knocker | knockers, `deep_knocker` (built, Ashfall's) | machine, armoured | 28 | as built (Ashfall's `monsters.ts`) | the Ways, the Stair; the crack |
 | `hand_rearguard` | Ashen Rearguard | cultist, `hand_rearguard` | person, armoured | 30 | hp 640, ac 28, attack 17, 5d8+7, speed 8, xp 1,591 | the Stair's first landing, where the claimant's people are not; `steady`; `look: 'The last of the Hand still standing, and standing in the way.'` |
-| `deep_crawler` | Deep Crawler | crawlers, `deep_crawler` (new) | machine, brute | 31 | hp 1,061, ac 25, attack 18, 7d8+6, speed 8, xp 2,467 | the Ways' last run, the Stair; `ranged` (it comes down from above and reaches the back row); `look: 'It comes down from above, on too many legs.'` |
+| `deep_crawler` | Deep Crawler | crawlers, `deep_crawler` (new) | machine, brute | 31 | hp 1,060, ac 25, attack 18, 7d7+10, speed 8, xp 2,467 | the Ways' last run, the Stair; `ranged` (it comes down from above and reaches the back row); `look: 'It comes down from above, on too many legs.'` |
 | `catcher` | The Catcher | crawlers, `catcher` (new) | machine, boss | 31 | hp 1,300, ac 28, attack 19, 32d8+37, speed 13, xp 19,733 (off the line, which gives 2,096 and 35d7+54: `OFF_LINE`, `tools/tests/harness.ts`) | the Stair's foot, among the Hand's dead; `ranged`; `inflict: paralysed 0.2`; `look: 'It caught the Hand on these stairs.'`; sized on its odds to 56% won at 30 and 79% at 32 on the gate's hundred seeds (below; §8; §9.2, #752's 4) |
-| `grey_hand` | Grey Hand | cultist, `grey_hand` | person, elite | 31 | hp 786, ac 27, attack 18, 7d8+7, speed 15, xp 2,467 | the Heart, at the panel; `steady`; `inflict: paralysed 0.15`; `look: 'Hands the colour of ash, to the shoulder.'` |
+| `grey_hand` | Grey Hand | cultist, `grey_hand` | person, elite | 31 | hp 785, ac 27, attack 18, 7d7+12, speed 15, xp 2,467 | the Heart, at the panel; `steady`; `inflict: paralysed 0.15`; `look: 'Hands the colour of ash, to the shoulder.'` |
 | `core_sentry` | Core Sentry | machines, `core_sentry` | machine, soldier | 31 | hp 890, ac 27, attack 17, 5d7+10, speed 11, xp 1,233 (off the line: twice the soldier's 445 hit points with its blow, `OFF_LINE`; §9.2, #752's 5) | called by the ring (Vask's `calls`, the clock); stands down when he falls (`obeys`, §9, call 7); `look: 'The core\'s own, and it takes orders from the ring.'` |
 | `vask` | Lord Vask | cultist, `vask` (the figure frame, his own) | person, boss | 32 | hp 1,850, ac 29, attack 20, 22d8+23, speed 13, xp 20,373 (off the line, which gives 2,100 and 34d8+41: `OFF_LINE`, `tools/tests/harness.ts`) | the Heart; `steady`; `calls: { monsters: ['core_sentry'], chance: 1 }` on the clock's beat (the clock ignores the chance, §9, call 7); `look: 'A tall man with a quiet voice, and the Queen\'s ring on his finger.'`; sized on his odds to 64% won at 32 with the Hands first and 28% with the clock let run on the gate's hundred seeds (66% and 28% on 400; below; §8; §9.2, #752's 5) |
 
@@ -2050,19 +2051,20 @@ area is built box by box:
 | Levels | 6 monsters in 30–31, give or take two; rising from the way in (rank correlation 0.19); the nearest group, the rearguard at 4 steps, at 30.0; the hardest, the crawlers at 16,20 at 10 steps, at 31.0 |
 | Lines | 11 events and signs: 8 of two lines and 3 of three; the area's 55: 7 of one, 33 of two and 15 of three |
 
-**As built: the Heart** (#759). The row's `owed` is raised to what the isle, the rim, the temple, the
-crypt, the Ways, the Stair and the Heart pay, 42,946 xp a member and 8,200 gold, still owed to #744:
-a clear falls short of the area's budget by 3,988 xp a member and 20,120 gold. The curve counts both
-of Vask's groups and none of the sentries, and a clear fights one group:
+**As built: the Heart** (#759). The row's `owed` stands at what the isle, the rim, the temple, the
+crypt, the Ways, the Stair and the Heart pay, 38,317 xp a member and 8,200 gold, now owed to #794
+(#759 raised it to 42,946 under #744, the curve then counting both of Vask's groups; #792 set it
+again): a clear falls short of the area's budget by 8,617 xp a member and 20,120 gold. The curve
+counts the lesser of Vask's groups and none of the sentries, as a clear fights one group:
 
 | | Figure |
 |---|---|
-| Xp a member, as the curve counts it | 8,846 against the Heart's eighth, 5,867: 1.51 (both of Vask's groups, 53,081 split six ways: `core_vask` 27,774 and `core_vask_thinned` 25,307; no sentry) |
-| Xp a member, as played | 4,629 with `core_vask` (27,774) or 4,218 with the thinned group (25,307), and 206 more for each sentry the clock calls, eight at most (1,644): 4,629 to 6,273 against an eighth, 5,867 |
-| The area | 42,946 of the 46,934, 91.5%: H6 5,009, the rim 2,908, the temple 4,971, the crypt 1,962, the Ways 9,768, the Stair 9,482 and the Heart 8,846 |
-| The area, as played | the curve's 42,946 less the thinned group's 4,218 is 38,728 (82.5%), with up to 1,644 of sentries |
+| Xp a member, as the curve counts it | 4,217 against the Heart's eighth, 5,867: 0.72 (the lesser of Vask's two groups, `core_vask_thinned` 25,307 split six ways, 4,217.8, floored as the curve's sum is; `core_vask`, 27,774, is its twin on the square and is left out; no sentry) |
+| Xp a member, as played | 4,629 with `core_vask` (27,774) or 4,217 with the thinned group (25,307), and 206 more for each sentry the clock calls, eight at most (1,644): 4,629 to 6,273 against an eighth, 5,867 |
+| The area | 38,317 of the 46,934, 81.6%: H6 5,009, the rim 2,908, the temple 4,971, the crypt 1,962, the Ways 9,768, the Stair 9,482 and the Heart 4,217 |
+| The area, as played | the curve's 38,317 with the thinned group, or 38,728 (82.5%) with `core_vask`, and up to 1,644 of sentries more |
 | Gold | 8,200 of the 28,320 for the area, 20,120 short: the Stair's 1,600, the Ways' 1,400, the rim's 1,700, the temple's 2,000, the crypt's 800 and H6's 700; the Heart adds none (its finds are the ring). The dearest find, the Grey Mail at 7,000, sits in the 7,000 window |
-| Paid by level | entering at 28 and clearing three quarters, a company leaves at 31.9, 0.1 under the next floor 32 |
+| Paid by level | entering at 28 and clearing three quarters, a company leaves at 31.4, 0.6 under the next floor 32 |
 | Gate, at the floor 32 | the Heart is judged on its boss's odds alone, its every group being a boss (§9.2, #759's 8); the area's 39 groups at their maps' floors 97.2% of fights won (aim 90%, limit 80%) |
 | Vask | `core_vask` 64% won at 32 (aim 30% to 70%, limit 20% to 80%), `core_vask_thinned` 77%; two above the floor n/a, past the cap. His four plays on 400 seeds (the gate's hundred), on the line made again with the sentries at 890 hit points (#752): the Hands first 66% (64%), Vask first 72% (69%), the sentries as they come 28% (28%), no clock 87% (83%); the gate judges the Hands first and holds the clock let run to 20% to 45%, and leaves Vask first, the better play, unjudged; the tries are in §7 |
 | Gate, two under | n/a for the Heart, its floor being above the area's; the area's pool at 26, 92.5% of 39 groups' fights won (aim 25%, limit 90%): owed to #18 (§11) |
@@ -2669,7 +2671,7 @@ Decided by delegate for #753, each the owner's to overturn:
     (`q_compact_over`, `q_compact_wardens`), so they never stand together.
 16. **The walkthrough kneels with `useShrine` directly:** `kneel` in `tools/walk.ts` compares the
     outdoors' moved feature with the map's by identity and so fails on any zone map. Not this
-    issue's to fix.
+    issue's to fix. Since #793 `kneel` works on a zone map and the walkthrough kneels with it.
 
 Decided by delegate for #754, each the owner's to overturn:
 
@@ -2799,7 +2801,7 @@ Decided by delegate for #755, each the owner's to overturn:
     #780 found the reason missing.
 23. **The goal gives the order outright** (*Put out the four lamps in the pillar's order: the Sea, the
     Shore, the House, the Hearth.*, §6's own line), so the pillar's carving is moot to a company that
-    has met him. It is the plan's, left as written: the owner's call (§11).
+    has met him. It is the plan's, left as written: the owner's call (§11). Changed by #795's 8.
 
 Decided by delegate for #756, each the owner's to overturn:
 
@@ -3038,7 +3040,7 @@ Decided by delegate for #759, each the owner's to overturn:
    the crypt, the temple, the rim, the Stair and the Ways fell short of their xp shares (0.42, 0.74,
    0.74, 0.90 and 0.93), which the Heart's count hides (the curve counts both of Vask's groups where
    a clear fights one); the gold gap is not the shares' doing, and the Heart adds none. No group
-   added and no monster strengthened.
+   added and no monster strengthened. (#792's 3 sets the floor again, and its 6 the issue.)
 10. **64:** the item `queens_signet`, *Queen's Signet*, with the plan's text, read from the pack;
     the log keyed on the item and the four `q_signet_*` flags, "and the like" written *It went to
     the hold, in a cloth.* and *It went to Tallis, in a cloth.*, its goal at `shelf`. `UNSET` owes
@@ -3179,7 +3181,65 @@ Decided by delegate for #752, each the owner's to overturn:
    69, 28 and 83% with no clock (`--seeds 100`, the gate's hundred; the default 200 prints 70, 71, 29
    and 87). The thrifty bot keeps its spells, and lets the clock run at 66%.
 8. **The armoured at 29 and 31, read between, run long** (47 and 52% of days end badly) where the
-   line's armour rounds up; no armoured monster stands there, and the line is not nudged.
+   line's armour rounds up; no armoured monster stands there, and the line is not nudged. Made at
+   29 and 31 since (#793), they end 38 and 49%, held at 28's and 30's hit points (#793's 3).
+
+Decided by delegate for #793, each the owner's to overturn:
+
+1. **`LEVELS` gains 29 and 31, the rest as they stood, since the armoured ran long read between:**
+   `node tools/harness.ts --calibrate --write --levels 29,31`, 200 seeds, 1,281 s on four cores.
+2. **A point made under a level one up that stands is held under its hit points, its blow solved
+   again:** the soldier, the elite and the brute at 29 passed 30's and failed the gain check.
+3. **The armoured at 29 and 31 are not nudged:** held at 28's and 30's hit points they end 38 and 49%
+   of their days badly (13% free of the hold), and 28 and 30 must stand; none stands at 29 or 31.
+4. **The isle's four at 29 and 31 are restated on the line,** keeping id, look, sprite, level, role
+   and xp: the champion, the preacher, the Grey Hand and the crawler (§7's table).
+5. **The sentries stay at 890 and 5d7+10,** twice the soldier as #752's line read him: they are set off
+   the line on Vask's odds, and a restating is not a tuning (twice the made soldier is 874).
+6. **`kneel` kneels at the feature the world holds, found by its id where the company stands:** on a
+   zone map the world holds a copy in the outdoors' cells, so a test of identity failed there.
+7. **The inscriptions check reads `shut`, `lifts` and `after`, each in its own words,** with a fixture
+   for each, so a way that waits on a reading is seen however it waits.
+8. **No limit, aim or owed figure of the gate is changed:** every line that moves is Hearth Isle's and
+   inside its limit (Vask 60% with the Hands first, 33% let run), so nothing is newly owed.
+9. **A stale statement of the Hearth's band is put right where found:** the passage check's comment
+   says 28-32 now, the only one in the tools, the source and this plan.
+
+Decided by delegate for #792, each the owner's to overturn:
+
+1. **A twin is read as the maps and pillars checks read one:** two groups of a map on a square, one
+   `until` a condition and the other `after` it, by structure. Only the Heart's pair is caught.
+2. **The lesser by xp counts, the whole group,** so its xp, gold and lead are one clear's; a tie keeps
+   the `until` group. The price window still reads every group's monsters, the dearer twin's too.
+3. **The owed row's floor is set again from the print,** `xp: 38317` for 42946; its `why` names the
+   Heart among the shares short (0.72). The gold stays; #759's 9 stands as it was.
+4. **The Heart's figures in §8 and §11 are read again from the print,** the lead among them (31.4 for
+   31.9, moved with the clear). The gate, the density and the harness are as they were.
+5. **Only a leaving `until` group on a square of exactly two has a twin:** one that stays till it
+   is killed may be met beside its twin, and a third group makes the clears 2 or 4, not the lightest.
+6. **The row's `owed.whose` moves from '#744' (#745's 1) to '#794',** the open pay issue that brings
+   the area up; the plan's present-tense owed sentences say #794, and the old blocks stay as history.
+
+Decided by delegate for #795, each the owner's to overturn:
+
+1. **Vask's hand-ins go to three persons in turn** (supersedes #765 half A's 9): Vask, then his steward
+   from the first step onto the isle, then Wiglaf once the Council has sat; one stands in each state.
+2. **The steward stands on after an ending,** since the opened leaves nobody else at the door; a `says`
+   after any ending comes before his first words, which are not true then.
+3. **The steward and Wiglaf hire nobody, so no `early` for them, nor an `after`:** an `after` is said to
+   any company whose flag is set, so it would hide his first words from those who gave Vask the wand.
+4. **`tools/tests/people.ts` counts the wand's takers at three** (outside the lane); the walkthrough meets
+   Vask by his hire (`toVask`), as `meetWho` finds one person only.
+5. **The Reader's crack is a once-line** (`q_reader_crack`) after her introduction and before the endings'
+   words (supersedes #765 half B's 4); her reading and introduction, hidden below them, come first too.
+6. **The rest of the audit leaves the words first:** what they hide is talk; Hild's Greywater line stays
+   below, as first it would send the company for a girl who walks behind it (Ruan, Ysolde: #765's 8).
+7. **Hereswith's early hand-in ends on the send-down:** a third paragraph in her voice, so that the entry
+   `given` reads true of both roads; `done` is as it was.
+8. **The sacristan's goal points at the pillar** ("in the order the pillar gives", as `asked` has it);
+   the Hearth's walkthrough asserts that no goal of any quest names the four lamps in sequence.
+9. **The four log entries that named Vask are true of whoever took the hand-in** (`paid`, `lead`, `vask`,
+   `order`): their ids and conditions stay, and the goals that name him still point at the keep.
 
 Decided by delegate for #796, each the owner's to overturn:
 
@@ -3261,8 +3321,9 @@ Owed, from H6 (#753):
   `q_compact_over`, so the runner's word that the boat is the Partner's both ways holds.
 - **The gear's rung** is built (#746): the Grey Knife (`greyKnife`), built here
   (`src/content/areas/hearth/items.ts`), is on the ladder at 28; the Smelling Salts are no gear.
-- **`kneel` in `tools/walk.ts`** fails on any zone map, comparing the outdoors' moved feature with
-  the map's by identity; the isle's walkthrough kneels with `useShrine` directly (§9.2, #753's 16).
+- **`kneel` in `tools/walk.ts`** works on a zone map now: it kneels at the feature the world holds,
+  found by its id where the company stands, and the isle's walkthrough kneels at the pilgrims' shrine
+  with it (§9.2, #753's 16 and #793's 6).
 
 Owed, from I6 (#754):
 
@@ -3300,9 +3361,10 @@ Owed, from Hearthfane (#755):
 - **Fleeing at the treasury's door:** `World.flee` steps back without reading gates or exits, so a
   company that flees a fight at 10,10 facing west lands in the treasury's doorway without the key.
   It is so for every gate (Helmstow's) and a systems matter.
-- **The goal gives the order outright:** *Put out the four lamps in the pillar's order: the Sea, the
-  Shore, the House, the Hearth.* (§6's own line) tells a company that has met the sacristan what the
-  carving says, so the pillar is moot to it. The owner's call (§9.2, #755's 23).
+- **The goal gave the order outright (done, #795's 8):** *Put out the four lamps in the pillar's order:
+  the Sea, the Shore, the House, the Hearth.* (§6's own line) told a company that had met the sacristan
+  what the carving says. It now points at the pillar: *Put out the four lamps in the order the pillar
+  gives.* (§9.2, #755's 23).
 
 Owed, from the crypt (#756):
 
@@ -3398,21 +3460,20 @@ Owed, from the Stair (#758):
 
 Owed, from the Cleric's third (#763):
 
-- **The early road reads a meeting ahead of her:** `early` ends on *Now I know.* and sends nobody, the
-  log's `given` entry says she sent us, and her next words do send the company down. A hand-in sets
-  no met flag, so her introduction is never said on that road. The plan's words, kept and accepted
-  (§9.2, #763's 4 and 10). The owner's call: end `early` on the send-down line, or word the entry so.
+- **The early road read a meeting ahead of her (done, #795's 7):** `early` ended on *Now I know.* and sent
+  nobody, while the log's `given` entry says she sent us. It now ends on the send-down line too. A hand-in
+  sets no met flag, so her introduction is still never said on that road (§9.2, #763's 4 and 10).
 
 Owed, from the Heart (#759):
 
-- **The area's clear falls short of its budget:** 42,946 xp a member of the 46,934 (91.5%), 3,988
-  short, and 8,200 gold of the 28,320, 20,120 short. The crypt, the temple, the rim, the Stair and the
-  Ways fell short of their xp shares (0.42, 0.74, 0.74, 0.90 and 0.93), which the Heart's count
-  hides: the curve counts both of Vask's groups and none of the sentries (8,846 against its eighth,
-  5,867) and a clear fights one group, so as played it pays 38,728 (82.5%), with up to 1,644 of
-  sentries more, the Heart 4,629 to 6,273. The gold gap is not the shares' doing: the Heart adds
-  none. No group is added and no monster strengthened: the row's `owed` stays at the as-built floor
-  (§8; §9.2, #759's 9). The owner's call.
+- **The area's clear falls short of its budget:** 38,317 xp a member of the 46,934 (81.6%), 8,617
+  short, and 8,200 gold of the 28,320, 20,120 short. The crypt, the temple, the rim, the Stair, the
+  Ways and the Heart fell short of their xp shares (0.42, 0.74, 0.74, 0.90, 0.93 and 0.72): the curve
+  counts the lesser of Vask's groups and none of the sentries (4,217 against its eighth, 5,867), as a
+  clear fights one group; a company that meets `core_vask` is paid 38,728 (82.5%), with up to 1,644
+  of sentries more, the Heart 4,629 to 6,273. The gold gap is not the shares' doing: the Heart adds
+  none. No group is added and no monster strengthened: the row's `owed` stands at the floor the
+  curve prints, owed to #794 now (§8; §9.2, #759's 9 and #792's 3 and 6). The owner's call.
 - **Vask's sizing is final and the gate's two rules are kept** (#752): `OFF_LINE.vask`, 1,850 hit
   points and 22d8+23, and the rules that a map of nothing but its boss is judged on the boss's odds
   and a boss at the cap at its floor alone, now written in `docs/EXPANSION.md` §5.2 and
@@ -3438,7 +3499,8 @@ Owed, from the Heart (#759):
   `shelf` 15,4 sets the other three (Helmstow and the halls). The Walk Home's `gate` entry, on
   `gate_open`, is in, and `UNSET` owes nothing.
 - **First of all, but for a business still open (#765, half A):** Ruan's Compact question and
-  Ysolde's reading of the journal come before an ending's words until done (§9.2, #765's 8).
+  Ysolde's reading of the journal come before an ending's words until done (§9.2, #765's 8); so do the
+  Reader's reading of the papers and her introduction (#795's 5).
 - **The chapter is #760's, written:** the Heart's steps are `core:core_door` and `core:core_heart` (seen),
   the flags `VASK_FALLEN`, `VOICE_WHOLE`, `RING_GIVEN` and `ENDED`, at `core`; 64 is `signet` in the
   area's `quests.ts`.
@@ -3571,7 +3633,34 @@ half's. Ashfall's seven groups go `until: ENDED` with `leaves`, and the harbourm
 thane's line waits on his answer as well. The Sunder's groups given `until: { flag: CRACK_SEALED }`
 and `leaves`: `j2_hounds`, `k2_hounds`, `k2_bears`, `k3_bears`, `l2_hounds`, `l2_bears`,
 `l3_bank`, `l4_night`, `m2_hounds`, `m2_bears`, `su1_spiders`, `su2_wood`, `su2_bears` and the K3 Rift's
-`k3_rift_g1` and `k3_rift_g2`. The Reader's four lines come at every meeting, after the badge's question
-and the wall's word, which are said once; the crack's is heard before an ending only. `i11_stone` sets
-`q_peak_stood` already (#751). The Grove Stone counts on `q_mender_done`, and the last crossing, whose isle end H6 landed
-(#753), is free at both ends.
+`k3_rift_g1` and `k3_rift_g2`. The Reader's ending words come at every meeting, after her reading while it
+is open and after the badge's question, the wall's word and the crack's, which are said once (#795, below).
+`i11_stone` sets `q_peak_stood` already (#751). The Grove Stone counts on `q_mender_done`, and the last
+crossing, whose isle end H6 landed (#753), is free at both ends.
+
+**As built (#795, the road behind's business kept reachable).** The keep's door and the three hand-ins
+Vask took: the survey wand (300 gold, `q_ashcombe_done`), the tenant's paper (50, `q_paper_vask`) and
+the keeper's oil put to him (`q_oil_order` and `q_oil_lit`, a `says`). Three persons take them in turn,
+each in his own words and with the same items, pay and flags, so that no hand-in and no `q_oil_*` flag is
+lost by the isle, the Council or an ending, and in every state exactly one of the three stands:
+
+| State of the keep | At 7,4 | At 7,5 | Takes the three |
+|---|---|---|---|
+| Before the isle, no verdict, no ending | Vask | nobody | Vask |
+| On the isle, or after an ending; the Council not sat | the empty throne room (Vask in irons within, after the relit and the finished) | the steward | the steward |
+| The Council has sat, whatever else | Wiglaf at the keep's door (Vask in irons within, after the relit and the finished) | nobody | Wiglaf |
+
+The steward is `after` the isle or any ending and `until` the removal, so he stands on after an ending:
+the opened leaves nobody else at the door, and a man in irons is no one to hand a wand to. A `says` after
+an ending replaces his first words, which are not true then. Neither he nor Wiglaf hires anybody, so the
+wand has no `early` for them, nor an `after`: a hand-in's is said to any company whose flag is set, and
+would hide the steward's first words from every company that gave the wand to Vask. The Foreland's
+`keepHandIns` plays the sixteen states (the isle, the Council and the three endings). **The Reader**
+(`lantern_watch` 5,5): the crack's line is said once (`q_reader_crack`), at the next meeting whichever came
+first and after her introduction, as the wall's word is; her reading of the Tide Ship's papers and log
+(`papers_read`, `seal_read`, `log_read`) comes before the endings' words while it is still to do, and those
+words wait on her introduction (`watch_reader_met`), which the reading needs. **The audit of the endings'
+words** found business hidden nowhere else, and left Hild's Greywater line below her ending word, as first
+it would send the company for a girl who walks behind it (§9.2, #795's 5 and 6). **Hereswith's** early
+hand-in ends on the send-down, as `done` does, and **the sacristan's** goal points at the pillar without
+its order (§9.2, #795's 7 and 8).

@@ -717,7 +717,8 @@ After the Heart (#765; docs/areas/hearth_isle.md §12 and §9.2), on top of the 
 
 - **On the isle** (`visited: 'hearthisle_h6'`) Vask is at the panel: gone from the keep with his
   guards, and the throne room empty behind his door until the Council removes him. His steward stands
-  before it at 7,5 with the keys and no orders, until the Council or an ending.
+  before it at 7,5 with the keys and no orders, until the Council has sat. He takes what Vask took, the
+  survey wand, the tenant's paper and the oil order, and Wiglaf at the door takes them then (#795).
 - **After an ending** (`ENDED`) the south gate lifts its shut for orcblood, and *The gate stands open*
   is said once on the road before it at 16,5. Wiglaf waits by it at 15,4 to ask where the Queen's
   signet goes (the cousin, the hold, Tallis or kept) until it has gone; once the Council has sat it
