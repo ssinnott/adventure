@@ -2978,7 +2978,8 @@ Decided by delegate for #765 (half B: Gullwick and the rest), each the owner's t
    the corridor's day at 12.57 fights to a rest, past its limit, though no company at its floor meets
    them. The curve counts them and the Kilns' lead holds at 19.3. Outside the content lane.
 4. **The thane's line waits on his answer too** (`CREW_OPEN` with `BOUGHT` or `TAKEN`), and the
-   Reader's four stand after her two questions said once: first of all, they would hide those for good.
+   Reader's four stand after the badge's question and the wall's word: first of all, they would hide
+   those for good.
 5. **The Sunder's groups are the thirteen the most of whose monsters are its own;** its dens' keepers,
    its Warden, `k3_door` and `l4_brood` (an `until` of their own, which `leaves` would change before
    the crack) and the three the wood or the Hand lead stand.
@@ -3346,6 +3347,6 @@ half's. Ashfall's seven groups go `until: ENDED` with `leaves`, and the harbourm
 thane's line waits on his answer as well. The Sunder's groups given `until: { flag: CRACK_SEALED }`
 and `leaves`: `j2_hounds`, `k2_hounds`, `k2_bears`, `k3_bears`, `l2_hounds`, `l2_bears`,
 `l3_bank`, `l4_night`, `m2_hounds`, `m2_bears`, `su1_spiders`, `su2_wood` and `su2_bears`. The
-Reader's four lines stand after her two questions said once. `i11_stone` sets `q_peak_stood` already
+Reader's four lines stand after the badge's question and the wall's word, each said once. `i11_stone` sets `q_peak_stood` already
 (#751). The Grove Stone counts on `q_mender_done`, and the last crossing, whose isle end H6 landed
 (#753), is free at both ends.

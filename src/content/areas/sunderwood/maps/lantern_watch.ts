@@ -159,9 +159,9 @@ export const LANTERN_WATCH: MapDef = {
         '"The surveyor\'s six words are in the hall\'s book. They are in mine too, and mine says who carried them." She keeps her hand on it, shut.',
         '"Below the last ledge Brink ruled a line. The hall is arguing what to call what\'s under it. I\'d sooner it had a measure than a name. Measures can be checked."',
       ] },
-      // After the Heart (#765), first of all but her two questions said once: each ending's word, the
-      // split's her own and the other two the Lantern Guildhall's; and once the crack is sealed below
-      // (#56's 61), the Sunder's beasts stopped.
+      // After the Heart (#765), first of all but the badge's question and the wall's word, each said
+      // once: each ending's word, the split's her own and the other two the Lantern Guildhall's; and once
+      // the crack is sealed below (#56's 61), the Sunder's beasts stopped.
       { after: { flag: ENDINGS.reignite.flag }, lines: ['"Every lamp in the house burns steadier than it did. Whatever the Hearth is, we kept it, and I will say so from the step."'] },
       { after: { flag: ENDINGS.arrive.flag }, lines: ['"The prior says we were the jailers. The sister says we were the keepers. They have stopped speaking, and so has the house, and the great lamp burns whichever it was."'] },
       { after: { flag: ENDINGS.finish.flag }, lines: ['"The Hearth burns harder, and the house argues what for. I have told them to light the lamps and wait, which is what Lanterns are for."'] },
