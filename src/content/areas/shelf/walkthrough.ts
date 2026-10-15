@@ -35,6 +35,22 @@ function crowness(w: Walk): void {
   w.ok(w.party.bag.includes('keepers_log') && (readText('keepers_log') ?? []).length === 5, "the keeper's log is on the cottage table, and reads from the pack");
 }
 
+/**
+ * The wand taken to Vask at his door: found by his hire and never by the wand, which his steward and
+ * Wiglaf at the door take as well, once he is gone (#795; `keepHandIns` plays them).
+ */
+function toVask(w: Walk): void {
+  const vask = MAP_DEFS.find((d) => d.id === 'keep')?.features?.find((f): f is Person => f.kind === 'npc' && [f.flag ?? []].flat().includes('q_ashcombe'));
+  w.ok(!!vask, 'Vask keeps the door of the keep');
+  if (!vask) return;
+  w.world.travel('keep', vask.x, vask.y);
+  w.ok(w.world.present(vask), 'Vask is there to meet');
+  const bag = w.party.bag.length;
+  meet(vask, w.party, heard(w.world, vask));
+  if (w.party.bag.length < bag) w.handedIn = 'keep';
+  listen(w);
+}
+
 /** The chapter once hired: Gullwick, the farm and its cellar, Crowness on along the road, and the wand taken back. */
 export const STEPS: readonly Step[] = [
   { name: 'to Gullwick', play: (w) => meetWho(w, 'q_wenna') },
@@ -45,7 +61,7 @@ export const STEPS: readonly Step[] = [
     see(w, 'mill:mill_lantern'); fight(w, 'mill:m_warden'); see(w, 'mill:mill_core');
   } },
   { name: 'to Crowness', play: crowness },
-  { name: 'the wand', play: (w) => meetWho(w, 'survey_wand') },
+  { name: 'the wand', play: toVask },
 ];
 
 /**
@@ -108,6 +124,7 @@ export const walkthrough: Walkthrough = (ok) => {
   underVask(ok);
   council(ok);
   roadBehind(ok);
+  keepHandIns(ok);
   trainers(ok);
 };
 
@@ -550,7 +567,7 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     w.ok(!there(w, HOB_GULLWICK(), 'downs_f3'), 'before the paper is given, Hob is not at Gullwick');
     tenantAsked(w);
     const gold = w.party.gold;
-    meetWho(w, 'q_paper_vask');
+    toVask(w);
     w.ok(w.party.gold === gold + 50 && !w.party.bag.includes('tenant_paper') && !w.party.flags.q_ashcombe_done, 'Vask takes the paper, without the wand, and pays 50');
     reads(w, 'tenant', 'Who Lived at Ashcombe', ['hob', 'kitchen', 'key', 'paper', 'vask'], ['hale'], 'the paper to Vask');
     w.ok(!there(w, HOB(), 'harrow') && !there(w, HOB_GULLWICK(), 'downs_f3'), 'the paper to Vask, Hob is gone from the inn and not at Gullwick');
@@ -573,7 +590,7 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
   { // The crock alone, the paper to Vask: nothing on the way names Hob, and the kitchen after writes nothing.
     const w = newWalk(ok);
     paperFound(w);
-    meetWho(w, 'q_paper_vask');
+    toVask(w);
     reads(w, 'tenant', 'Who Lived at Ashcombe', ['paper', 'vask'], ['hob', 'kitchen', 'key', 'hale'], 'the crock alone, the paper to Vask');
     w.ok(!page(w, 'tenant')?.entries.some((e) => e.text.includes('Hob')), 'and its journal does not name Hob, whom the company never met');
     see(w, 'downs_e3:ash_kitchen');
@@ -586,7 +603,7 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     w.ok(told.startsWith('Hob looks at the hearth-key') && w.news.at(-1) === 'New quest: Who Lived at Ashcombe.' && !!page(w, 'tenant')?.goal, `Hob given his key unasked takes it and begins Who Lived at Ashcombe, with a goal (${w.news.at(-1)})`);
     w.ok(hear(w, 'harrow', HOB()).startsWith('"Still here.'), 'met again, he is still here');
     paperFound(w);
-    meetWho(w, 'q_paper_vask');
+    toVask(w);
     reads(w, 'tenant', 'Who Lived at Ashcombe', ['kitchen', 'key', 'paper', 'vask'], ['hob', 'hale'], 'the paper to Vask, Hob never hired');
   }
   { // Ailith met first, with no word from anyone: her meeting begins the quest; Esc puts her question again.
@@ -990,7 +1007,8 @@ function roadBehind(ok: (cond: boolean, msg: string) => void): void {
     const w = company(true, flag);
     const first = road(w), again = road(w), irons = flag !== 'q_end_arrive', keep = door(w), posted = gatehouse(w);
     w.ok(open(first.said) === 1 && !open(again.said) && first.inside && again.inside, `${how}: the gate stands open, said once on the road before it, and lets Idris in`);
-    w.ok(trade(w) === '12 open' && !there(w, STEWARD(), 'keep'), `${how}: the inn is at 12 again and the Chapel open, and the steward is gone`);
+    w.ok(trade(w) === '12 open' && there(w, STEWARD(), 'keep') && hear(w, 'keep', STEWARD()).startsWith('The Regent\'s steward at the throne room\'s door, the keys still at his belt'),
+      `${how}: the inn is at 12 again and the Chapel open, and the steward stands on at the door with the Council's word, since the Council has not sat (#795)`);
     w.ok(keep === (irons ? 'The throne room / Aumery Vask, before the Council' : 'The throne room') && posted.length === 2
       && posted[1].startsWith(irons ? 'A proclamation on the gatehouse: the Council of Helmstow sits in judgement' : 'A proclamation on the gatehouse, the ink run'),
     `${how}: ${irons ? 'Vask stands in irons before the Council' : 'the throne room stands empty'}, and the gatehouse has the ending's proclamation (${keep}; ${posted[1]})`);
@@ -1000,8 +1018,8 @@ function roadBehind(ok: (cond: boolean, msg: string) => void): void {
   { // First of all: after a verdict and the finished ending the Eel talks of the hum, and Wiglaf keeps the door with Vask in irons inside.
     const w = company(true, 'q_end_finish', 'q_throne_cousin', 'q_throne_removed');
     const keep = door(w), posted = gatehouse(w), talk = hear(w, 'harrow', eel);
-    w.ok(talk.startsWith(WORDS.q_end_finish[0]) && keep === 'Wiglaf, at the keep\'s door / Aumery Vask, before the Council' && posted.length === 3,
-      `after the Council's verdict and an ending, the ending's word comes first, and Wiglaf keeps the door with Vask in irons inside (${keep})`);
+    w.ok(talk.startsWith(WORDS.q_end_finish[0]) && keep === 'Wiglaf, at the keep\'s door / Aumery Vask, before the Council' && posted.length === 3 && !there(w, STEWARD(), 'keep'),
+      `after the Council's verdict and an ending, the ending's word comes first, and Wiglaf keeps the door with Vask in irons inside, the steward gone to him (${keep})`);
   }
   { // The clerk by the gate: not without the ring's answers, then the ring given to the cousin, and he is gone.
     const w = company(true, 'q_end_reignite');
@@ -1026,6 +1044,72 @@ function roadBehind(ok: (cond: boolean, msg: string) => void): void {
     listen(w);
     w.ok(kept.includes('counts without it') && stays && said.includes('It goes into the chair\'s keeping.') && !said.includes('within the week') && !!w.party.flags.q_signet_hold && !there(w, clerk, 'shelf'),
       `once the Council has sat, the ring kept leaves the clerk waiting, and given goes into the chair's keeping (${said})`);
+  }
+}
+
+/**
+ * Vask's hand-ins after he is gone (#795): the survey wand (300 gold, `q_ashcombe_done`), the tenant's paper (50,
+ * `q_paper_vask`) and the keeper's oil put to him (his order, `q_oil_order` and `q_oil_lit`). In every state of the
+ * keep exactly one of Vask, his steward and Wiglaf at the door stands to take them: Vask until the company is on the
+ * isle, the steward from its first step onto it, and after an ending, until the Council has sat, and Wiglaf then.
+ * Each takes all three with the same pay and flags, and so none is lost by the isle, the Council or an ending.
+ */
+function keepHandIns(ok: (cond: boolean, msg: string) => void): void {
+  const H6 = MAP_DEFS.find((d) => d.id === 'hearthisle_h6')!;
+  const VASK_ = (): Person => who('keep', 7, 4, 'Lord Aumery Vask'), STEWARD = (): Person => who('keep', 7, 5, 'The Regent\'s steward'), DOOR = (): Person => who('keep', 7, 4, 'Wiglaf');
+  const SAT = ['q_throne_cousin', 'q_throne_removed'];
+  /** A company after Act II, on the isle once if `isle`, with the flags given, the wand and the paper in the pack and the oil put to Vask. */
+  const company = (isle: boolean, ...flags: string[]): Walk => {
+    const w = newWalk(ok);
+    for (const f of ['q_salt_done', 'q_oil_vask', ...flags]) w.party.flags[f] = 1;
+    w.party.bag.push('survey_wand', 'tenant_paper');
+    if (isle) w.world.travel(H6.id, H6.start.x, H6.start.y);
+    return w;
+  };
+  /** Three meetings with `p`: the wand, then the paper, then the oil order, and what each paid and set. */
+  const handIn = (w: Walk, p: Person): { said: string[]; gold: number; paid: boolean } => {
+    const gold = w.party.gold, said = [hear(w, 'keep', p), hear(w, 'keep', p), hear(w, 'keep', p)];
+    const paid = w.party.gold === gold + 350 && !w.party.bag.includes('survey_wand') && !w.party.bag.includes('tenant_paper')
+      && ['q_ashcombe_done', 'q_paper_vask', 'q_oil_order', 'q_oil_lit'].every((f) => !!w.party.flags[f]);
+    return { said, gold: w.party.gold - gold, paid };
+  };
+  { // On the isle first, the oil put to Vask by the keeper's own road: the steward takes the wand, the paper and the order, and is Vask's for the log.
+    const w = newWalk(ok);
+    oilAsked(w);
+    answerWho(w, 'q_well', 'We\'ll put it to Vask.');
+    w.party.bag.push('survey_wand', 'tenant_paper');
+    w.world.travel(H6.id, H6.start.x, H6.start.y);
+    const door = there(w, VASK_(), 'keep'), steward = there(w, STEWARD(), 'keep'), r = handIn(w, STEWARD());
+    w.ok(!door && steward && r.said[0].startsWith('The steward takes the cracked survey wand') && r.said[1].startsWith('The steward reads the paper') && r.said[2].startsWith('The steward hears you out') && r.paid && r.gold === 350,
+      `on the isle first, Vask's steward takes the wand (300 gold), the tenant's paper (50) and the oil order, with their flags (${r.said.map((s) => s.slice(0, 24)).join(' / ')})`);
+    reads(w, 'oil', 'Oil for the Lamp', ['aldred', 'vask', 'order', 'lit'], ['buy'], 'put to Vask, said to the steward');
+    w.ok(lamp(w) === 'e3_lamp_lit' && hear(w, 'keep', STEWARD()).startsWith('"The wand is in the strongbox, entered.'), `the lamp is lit by his order (${lamp(w)}), and the steward's next words are the wand's receipt`);
+  }
+  { // The Council has sat: Wiglaf at the door takes the same three, and the steward is gone.
+    const w = company(true, ...SAT);
+    const r = handIn(w, DOOR());
+    w.ok(!there(w, STEWARD(), 'keep') && !there(w, VASK_(), 'keep') && there(w, DOOR(), 'keep') && r.said[0].startsWith('Wiglaf holds the cracked survey wand') && r.said[1].startsWith('Wiglaf reads the paper') && r.said[2].startsWith('Wiglaf hears you out') && r.paid,
+      `once the Council has sat, Wiglaf at the door takes the wand, the paper and the order, and the steward is gone (${r.said.map((s) => s.slice(0, 18)).join(' / ')})`);
+  }
+  { // An ending, the Council not sat: the steward stands on, and takes them; sat, Wiglaf.
+    const open = company(true, 'q_end_arrive'), r = handIn(open, STEWARD());
+    open.ok(there(open, STEWARD(), 'keep') && !there(open, DOOR(), 'keep') && r.paid && r.said[2].startsWith('The steward hears you out'), `after an ending, the Council not yet sat, the steward takes the wand, the paper and the order (${r.said[0].slice(0, 24)})`);
+    const relit = company(true, 'q_end_reignite', ...SAT), s = handIn(relit, DOOR());
+    relit.ok(!there(relit, STEWARD(), 'keep') && s.paid && s.said[2].startsWith('Wiglaf hears you out'), `after an ending and the Council's verdict, Wiglaf takes them (${s.said[0].slice(0, 24)})`);
+  }
+  { // Every state of the keep: exactly one of the three stands, the right one, and takes all three.
+    const bad: string[] = [];
+    let n = 0;
+    for (const isle of [false, true]) for (const sat of [false, true]) for (const end of ['', 'q_end_reignite', 'q_end_arrive', 'q_end_finish']) {
+      const name = `${isle ? 'isle' : 'no isle'}, ${sat ? 'sat' : 'not sat'}, ${end || 'no ending'}`, w = company(isle, ...(sat ? SAT : []), ...(end ? [end] : []));
+      const stands = [['Vask', VASK_()], ['the steward', STEWARD()], ['Wiglaf', DOOR()]] as const;
+      const here = stands.filter(([, p]) => there(w, p, 'keep')), want = sat ? 'Wiglaf' : isle || end ? 'the steward' : 'Vask';
+      n++;
+      if (here.length !== 1 || here[0][0] !== want) { bad.push(`${name}: ${here.map(([k]) => k).join(' and ') || 'nobody'}`); continue; }
+      const r = handIn(w, here[0][1]);
+      if (!r.paid) bad.push(`${name}: ${want} does not take all three`);
+    }
+    ok(!bad.length, `in each of the keep's ${n} states exactly one of Vask, his steward and Wiglaf stands, and takes the wand, the paper and the oil order${bad.length ? ' -> ' + bad.join('; ') : ''}`);
   }
 }
 

@@ -23,6 +23,10 @@ const IRONS: readonly QuestCond[] = [{ flag: ENDINGS.reignite.flag }, { flag: EN
 // Once the company is on the isle Vask is at the panel (#765; hearth_isle.md §12): gone from the keep
 // with his guards, and his door the empty throne room's until the Council has removed him.
 const AWAY: readonly QuestCond[] = [{ flag: THRONE_REMOVED }, { visited: 'hearthisle_h6' }, ...ENDED];
+// Once the company has stepped onto the isle, and after an ending: while Vask's steward stands before the door and takes
+// the hand-ins Vask took (#795), until the Council has sat and Wiglaf keeps the door. With Vask (`until: AWAY`) and
+// Wiglaf (`after: THRONE_REMOVED`) exactly one of the three stands in every state.
+const ISLE: readonly QuestCond[] = [{ visited: 'hearthisle_h6' }, ...ENDED];
 
 /** Each list of flags in `a` with each in `b`: a `When` that holds where both do. */
 const both = (a: readonly QuestCond[], b: readonly QuestCond[]): QuestCond[] =>
@@ -137,9 +141,30 @@ export const KEEP: MapDef = {
     { kind: 'npc', x: 7, y: 4, name: 'The throne room', interior: 'throne_room', after: AWAY, until: { flag: THRONE_REMOVED }, lines: [
       'The throne room, and the Queen\'s throne at the end of it under its black cloth, with nobody before it.',
     ] },
+    // Once the Council has sat he keeps the door, and takes what Vask took (#795), in the Council's name: the wand and the
+    // tenant's paper as hand-ins, the keeper's oil as Vask's order, with the same pay and flags.
     { kind: 'npc', x: 7, y: 4, name: 'Wiglaf, at the keep\'s door', interior: 'throne_room', after: { flag: THRONE_REMOVED }, lines: [
       'The keep\'s great door stands open, and Wiglaf at it with his book, keeping the door for the Council as he kept the chapel\'s.',
       '"The Council sat once, as it said it would. It finds it likes the chairs."',
+    ], quest: [{
+      item: 'survey_wand', reward: 300, setFlag: 'q_ashcombe_done',
+      done: [
+        'Wiglaf holds the cracked survey wand at arm\'s length, then close, and looks along the crack as along a line of ink.',
+        '"A Lantern tool, and a debt in the Regent\'s book against the Crown. The Council keeps the book now." He pays it out of the strongbox, and has it written down before the last coin is on the table.',
+        '"There is a line in the book about the Grove Stone in Thornmark. Gone quiet. Someone should ask why." He does not say who.',
+      ],
+    }, {
+      item: 'tenant_paper', reward: 50, setFlag: 'q_paper_vask',
+      done: [
+        'Wiglaf reads the paper and the back of it, and writes a line in his book before he has finished.',
+        '"A tenant who let his cellar and did not ask. The Council will see the matter closed, and Ashcombe will have a new tenant by spring." He looks at what he has written. "It wrote itself."',
+      ],
+    }], says: [
+      { after: { flag: 'q_oil_vask' }, until: { flag: 'q_oil_lit' }, sets: ['q_oil_order', 'q_oil_lit'], lines: [
+        'Wiglaf hears you out, and finds the week in the Regent\'s book, and a sergeant\'s paper in it.',
+        '"An order given in the confusion of that week. The Council lifts it. The cart goes down on the first of the month, as it always has."',
+        '"Tell the keeper the Council remembers him. It has written it down, which for the Council is the same."',
+      ] },
     ] },
     // After the relit and the finished endings Vask is in irons before the Council (#765), in the room
     // behind his door, whoever keeps it; and before the door once he is on the isle, his steward.
@@ -147,9 +172,38 @@ export const KEEP: MapDef = {
       'Through the keep\'s door the hall, and the Council in the Queen\'s chairs, and Vask standing before them in irons with his hands folded. He is answering a question, quietly, and he never once looks up.',
       'A councillor, to the clerk: "Write that he was not wrong about the facts. He will want that written."',
     ] },
-    { kind: 'npc', x: 7, y: 5, name: 'The Regent\'s steward', after: { visited: 'hearthisle_h6' }, until: [{ flag: THRONE_REMOVED }, ...ENDED], lines: [
+    // He takes Vask's three hand-ins from the first step onto the isle (#795), the same items, pay and flags, in his
+    // own words: the wand and the tenant's paper as hand-ins, the keeper's oil as Vask's order. He hires nobody, so
+    // the wand has no `early` words; they would never be said. He stands on after an ending, since the opened
+    // leaves nobody else at the door, and goes when the Council has sat, to Wiglaf.
+    { kind: 'npc', x: 7, y: 5, name: 'The Regent\'s steward', after: ISLE, until: { flag: THRONE_REMOVED }, lines: [
       'The Regent\'s steward before the throne room\'s door, a ring of keys at his belt and nobody to open anything for.',
       '"His lordship is not in the keep. He went over to the isle with the grey men and left me the keys, and no orders."',
+    ], quest: [{
+      item: 'survey_wand', reward: 300, setFlag: 'q_ashcombe_done',
+      done: [
+        'The steward takes the cracked survey wand by the wrong end, and turns it round.',
+        '"A Lantern tool, by the look of it. His lordship will want it entered." The Crown\'s strongbox opens on its key, and the gold comes out of it, counted twice.',
+        '"He left a line with the keys. The Grove Stone in Thornmark has gone quiet, and he wants to know why. That is all the line says."',
+      ],
+      after: ['"The wand is in the strongbox, entered. If his lordship asks, it was counted."'],
+    }, {
+      item: 'tenant_paper', reward: 50, setFlag: 'q_paper_vask',
+      done: [
+        'The steward reads the paper, turns it over, and reads the back for longer than the front.',
+        '"I am not to know what this is." The strongbox opens and shuts. "The Crown pays for this, and will see the matter closed. Ashcombe will have a new tenant by spring."',
+      ],
+    }], says: [
+      { after: { flag: 'q_oil_vask' }, until: { flag: 'q_oil_lit' }, sets: ['q_oil_order', 'q_oil_lit'], lines: [
+        'The steward hears you out with the keys shut in his fist, so that they say nothing.',
+        '"Crowness Light. An order of that week, a sergeant\'s, on a paper I have seen. Lifted. The cart goes down on the first of the month, as it always has."',
+        '"Tell the keeper the Crown remembers him. That is no order. It is only what I would say."',
+      ] },
+      // After an ending the hall behind him is the Council's, and his first words (the Regent is on the isle) are not true.
+      { after: ENDED, lines: [
+        'The Regent\'s steward at the throne room\'s door, the keys still at his belt. He has stopped looking up at the windows.',
+        '"The Council has the city, they say. Nobody has come for the keys, and nobody has said what they open."',
+      ] },
     ] },
     { kind: 'npc', x: 6, y: 5, name: 'Petitioners', lines: [
       'Petitioners wait on the keep\'s steps, caps in hand.',
