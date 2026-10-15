@@ -362,7 +362,7 @@ export function rate(g: Pick<EncounterDef, 'monsters' | 'back' | 'leader' | 'whe
  * an answer given an act later on the road, so no company at its map's floor meets it, and the gate
  * leaves it out of its map and its area (#765). The curve counts it, in the clear and the lead.
  */
-export const BEHIND: readonly string[] = ['deep_mines3:dm3_knockers3'];
+export const BEHIND: readonly string[] = ['deep_mines3:ud_mines'];
 /** A map as a company at its floor finds it: the road behind's groups left out (BEHIND). */
 const beforeBehind = (d: MapDef): MapDef =>
   d.encounters?.some((g) => BEHIND.includes(`${d.id}:${g.id}`)) ? { ...d, encounters: d.encounters.filter((g) => !BEHIND.includes(`${d.id}:${g.id}`)) } : d;

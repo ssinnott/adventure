@@ -1926,7 +1926,7 @@ function theAnvilStone(ok: (cond: boolean, msg: string) => void): void {
  * never did is still asked. The flags are set by hand.
  */
 function crewOpen(ok: (cond: boolean, msg: string) => void): void {
-  const L3 = MAP_DEFS.find((d) => d.id === 'deep_mines3')!, up = L3.encounters!.find((g) => g.id === 'dm3_knockers3')!;
+  const L3 = MAP_DEFS.find((d) => d.id === 'deep_mines3')!, up = L3.encounters!.find((g) => g.id === 'ud_mines')!;
   const live = (v: Walk): boolean => { v.world.travel('deep_mines3', up.x, up.y); return v.world.liveGroups().some((g) => g.def.id === up.id); };
   const said = (v: Walk): string[] => { v.world.travel('deep_mines3', up.x + 1, up.y, WEST); const t = v.world.eventsHere(); listen(v); return t; };
   const thane = (v: Walk): string => { v.world.travel('anvilhall', THANE.x, THANE.y); const t = meet(THANE, v.party, heard(v.world, THANE)).text; listen(v); return t; };
@@ -1945,7 +1945,7 @@ function crewOpen(ok: (cond: boolean, msg: string) => void): void {
     const look = said(v);
     ok(up.monsters.join() === 'knocker,knocker,knocker' && MONSTERS.knocker.level === 16 && up.respawn === 2880 && live(v) && look.join() === 'They came up through the door you left open.',
       `the door left open, three of the corridor's own knockers at 6,3, level 16, and before them: ${look.join(' ')}`);
-    fight(v, 'deep_mines3:dm3_knockers3');
+    fight(v, 'deep_mines3:ud_mines');
     const dead = !live(v);
     v.world.advance(2 * MINUTES_PER_DAY + 1);
     const word = thane(v);
