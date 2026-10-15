@@ -90,7 +90,7 @@ export const CURVE: Record<RegionId | (typeof PLANNED)[number], AreaCurve> = {
   // found, never sold, the dearest 7,000 (docs/areas/hearth_isle.md §8).
   hearth: {
     band: [28, 32], next: 32, price: 7000,
-    owed: { whose: '#744', why: 'the Heart is built, and a clear falls short by 3,988 xp a member and 20,120 gold: the crypt, the temple, the rim, the Stair and the Ways fell short of their xp shares (0.42, 0.74, 0.74, 0.90 and 0.93) under the brief\'s groups, which the Heart\'s count hides, the curve counting both of Vask\'s groups where a clear fights one and so paying less than it counts; the gold gap is not the shares\' doing, and the Heart adds none', xp: 42946, gold: 8200 },
+    owed: { whose: '#744', why: 'the Heart is built, and a clear falls short by 8,617 xp a member and 20,120 gold: the crypt, the temple, the rim, the Stair, the Ways and the Heart fell short of their xp shares (0.42, 0.74, 0.74, 0.90, 0.93 and 0.72) under the brief\'s groups, the curve counting the lesser of Vask\'s two where a clear fights one; the gold gap is not the shares\' doing, and the Heart adds none', xp: 38317, gold: 8200 },
   },
 };
 
