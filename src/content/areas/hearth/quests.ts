@@ -7,7 +7,8 @@
 // Frame She Marked, to the last frame's word on the Stair (#758); 60, Crew Only, From
 // the Inside; and 61, The Knocker That Stopped, each answered either way. The Cleric's third, The Eleven
 // Kept (#763): the Crowness keeper's log to the anchoress at Anchorhold and the eleven lamps lit in the
-// crypt. How the words are keyed is in src/content/area.ts (`quests`); tools/tests/quests.ts checks every key.
+// crypt. At the Heart (#759): 64, The Signet, the ring every answer at the panel gives, to where it goes.
+// How the words are keyed is in src/content/area.ts (`quests`); tools/tests/quests.ts checks every key.
 import type { QuestDef } from '../../../game/quests.ts';
 import { PILGRIMS, TOKEN_COUSIN, TOKEN_HOLD, TOKEN_TALLIS } from './maps/hearthisle_h6.ts';
 import { KEPT_ASKED } from './maps/hearthisle_i6.ts';
@@ -15,6 +16,7 @@ import { LAMPS, LAMPS_OUT, LAMPS_WRONG, LAMPS_KEY, PILLARS } from './maps/hearth
 import { ELEVEN_KEPT, LOG_GIVEN } from './maps/hearthfane2.ts';
 import { CREW_OPEN, CREW_SHUT, CRACK_SEALED, CRACK_WIDE } from './maps/underdeep.ts';
 import { KNOT_LAST } from './maps/underdeep2.ts';
+import { SIGNET } from './maps/core.ts';
 import { THRONE_COUSIN, THRONE_HOLD, THRONE_TALLIS } from '../shelf/maps/keep.ts';
 
 /** The rearguard on the Stair's first landing, slain: 57's end where no claimant's people hold it (#758). */
@@ -141,6 +143,25 @@ export const QUESTS: readonly QuestDef[] = [
       { when: { flag: ELEVEN_KEPT }, text: 'Back up to the anchoress\'s window at Anchorhold.', at: 'hearthisle_i6' },
       { when: { flag: LOG_GIVEN }, text: 'Down into the crypt under Hearthfane, and light the eleven lamps as the log has them.', at: 'hearthfane2' },
       { when: { flag: KEPT_ASKED }, text: 'Bring the Crowness keeper\'s log to Hereswith at Anchorhold.', at: 'hearthisle_i6' },
+    ],
+  },
+  {
+    // #56's 64, at 32: begun on the ring in the pack, which every answer at the Heart's panel gives (#759);
+    // done where it goes, to a claimant by the Council's clerk at Helmstow's gate or into the sea off
+    // Gullwick, both the road behind's (#765). The Council's verdicts read the same flags (keep.ts).
+    id: 'signet',
+    title: 'The Signet',
+    start: { item: SIGNET },
+    done: [{ flag: 'q_signet_cousin' }, { flag: 'q_signet_hold' }, { flag: 'q_signet_tallis' }, { flag: 'q_signet_sea' }],
+    entries: [
+      { id: 'ring', when: { item: SIGNET }, text: 'The Queen\'s signet, in our hands. Everyone on the road wanted it, and the one it opened doors for does not.' },
+      { id: 'cousin', when: { flag: 'q_signet_cousin' }, text: 'It went to the cousin, in a cloth.' },
+      { id: 'hold', when: { flag: 'q_signet_hold' }, text: 'It went to the hold, in a cloth.' },
+      { id: 'tallis', when: { flag: 'q_signet_tallis' }, text: 'It went to Tallis, in a cloth.' },
+      { id: 'sea', when: { flag: 'q_signet_sea' }, text: 'It went into the sea off Gullwick, where the boat went out. Good, she said.' },
+    ],
+    goals: [
+      { when: { item: SIGNET }, text: 'Where the ring goes: the Council\'s clerk waits at Helmstow\'s gate, and the sea off Gullwick is where the boat went out.', at: 'shelf' },
     ],
   },
 ];

@@ -477,7 +477,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(through.kind === 'blocked' && through.reason === DOOR.blockedText && w.world.state.y === k9.y + DOOR.y - 1 && out.at(k9.x + DOOR.x, k9.y + DOOR.y).ch === 'D',
     `at the crack's foot the wall of grey and its door, shut with its reason on it before the girl out of the hole is met (${through.kind === 'blocked' ? through.reason : through.kind})`);
   const lock = LOCKS.find((l) => l.map === K9.id);
-  ok((K9.exits ?? []).includes(DOOR) && DOOR.to === 'sleepers_bay' && [DOOR.needFlag].flat().includes(WENNA_UP) && LOCKS.length === 1 && lock?.flag === WENNA_UP && lock.x === DOOR.x && lock.y === DOOR.y,
+  ok((K9.exits ?? []).includes(DOOR) && DOOR.to === 'sleepers_bay' && [DOOR.needFlag].flat().includes(WENNA_UP) && LOCKS.filter((l) => l.map === K9.id).length === 1 && lock?.flag === WENNA_UP && lock.x === DOOR.x && lock.y === DOOR.y,
     'the door leads to the Sleepers\' Bay, and is Act III\'s one story lock, signed in on its square and its flag');
   // The girl out of the hole, gone back down from M9's ice once met, waits at the door with her palm on
   // it, and the voice in the wall says its word (§5). Before her flag nobody waits there.
