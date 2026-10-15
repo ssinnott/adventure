@@ -61,7 +61,11 @@ export function people(): void {
   const unsaid = all.flatMap(({ map, p }) => afterFaults(p).map((bad) => `${map} ${p.x},${p.y}: ${bad}`)), answers = all.reduce((n, { p }) => n + answered(p), 0);
   ok(answers > 0 && !unsaid.length, `an answered question's after-words are said at the meetings after (${answers} answers)${unsaid.length ? ' -> ' + unsaid.join('; ') : ''}`);
 
-  ok(THREE.every((item) => givers.filter((x) => handIns(x.p).some((q) => q.item === item)).length === 1), `the three hand-ins are found: ${THREE.join(', ')}`);
+  // One person takes each, but for the wand, which Vask's steward and Wiglaf at the keep's door take as well once he is gone
+  // (#795), turn and turn about. This counts names only: that exactly one of the three stands in each of the keep's 16 states
+  // is proved by the loop in `keepHandIns` (src/content/areas/shelf/walkthrough.ts), which also has each take all three.
+  const TAKERS: Record<string, number> = { survey_wand: 3 };
+  ok(THREE.every((item) => givers.filter((x) => handIns(x.p).some((q) => q.item === item)).length === (TAKERS[item] ?? 1)), `the three hand-ins are found: ${THREE.join(', ')}`);
   for (const item of THREE) {
     const found = givers.find((x) => handIns(x.p).some((q) => q.item === item));
     if (!found) continue;
