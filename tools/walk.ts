@@ -88,15 +88,20 @@ export function see(w: Walk, at: string): void {
 
 /**
  * Kneel at a shrine or drink at a fountain, 'map:id': it has to be there, its `after` held, and bless
- * the company the once.
+ * the company the once. It is knelt at as the world holds it, found by its id where the company
+ * stands: on a zone map that is a copy moved to the outdoors' cells (see `locate`), not the box's own.
  */
 export function kneel(w: Walk, at: string): void {
   const [map, id] = ref(at);
-  const f = def(map)?.features?.find((x): x is Extract<Feature, { kind: 'shrine' | 'fountain' }> => (x.kind === 'shrine' || x.kind === 'fountain') && x.id === id);
+  type Wild = Extract<Feature, { kind: 'shrine' | 'fountain' }>;
+  const isIt = (x: Feature | undefined): x is Wild => (x?.kind === 'shrine' || x?.kind === 'fountain') && x.id === id;
+  const f = def(map)?.features?.find(isIt);
   if (!f) { w.ok(false, `there is a shrine or a fountain ${at}`); return; }
   w.world.travel(map, f.x, f.y);
-  w.ok(w.world.present(f) && w.world.featureHere() === f, `${at} is there to kneel at`);
-  const lines = useShrine(w.world, w.party, f);
+  const here = w.world.featureHere();
+  w.ok(isIt(here) && w.world.present(here), `${at} is there to kneel at`);
+  if (!isIt(here)) return;
+  const lines = useShrine(w.world, w.party, here);
   w.ok(lines[0] === f.text, `${at} blesses the company${lines.length ? ` (${lines.join(' ')})` : ''}`);
   listen(w);
 }
