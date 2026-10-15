@@ -49,7 +49,8 @@ The rules that follow from them:
   journal, and each region's deepest boss can carry the next (DESIGN.md §10.3). It asks, too: won
   about half the time at the band's floor, nearly always two levels over or at the cap; one whose
   floor is the cap is judged at its floor alone, and one alone on its map on its odds alone, with no
-  day (EXPANSION.md §5.2).
+  day; and one whose odds rise too little from the floor to the cap for both is held to the floor,
+  the second left inside its limit (EXPANSION.md §5.2; the Catcher, docs/areas/hearth_isle.md §8).
 - **Found, never told.** No monster explains itself, and no fight's text names the machine. What a
   thing does and what it carries are the clue.
 - **Plain names.** English words a listener could spell, as STORY.md is written for the ear, in
@@ -1680,12 +1681,15 @@ the Hands first and 67% with Vask first, against 33% with no clock.
 
 Measured on the test monsters the plan sizes the Heart by (`clockEncounter`: the test boss at 32,
 the test elite and soldier at 31, line for line Vask, the Grey Hands and the Core Sentries), 400
-seeds at 32: the gate's bot wins 10% killing the Hands first, 16% going for Vask and 5% fighting
-the sentries as they come, against 23% with no clock; the harness's bot, its fights cut at fifteen
-rounds, 14%, 31% and 21% (`node tools/harness.ts --abilities --seeds 200`). The clock halves the odds as the
-plan has it, two in three to one in three, but the whole stood far under them on the test monsters: Vask's size was
-set by the Heart's gate (#759) and the run to 32 settled by #752 (§4.4). The bots find Vask first the better play, since his fall stops the
-calls and stands the sentries down.
+seeds at 32 when the clock was built (#748): the gate's bot won 10% killing the Hands first, 16% going
+for Vask and 5% fighting the sentries as they come, against 23% with no clock; the harness's bot, its
+fights cut at fifteen rounds, won 14%, 31% and 21%, and wins 11%, 26% and 18% since #793 made the line
+at 31 (`node tools/harness.ts --abilities --seeds 200`). The clock halves the odds as the plan has it,
+two in three then a quarter to a third, but the whole stood far under them on the test monsters:
+Vask's size was set by the Heart's gate (#759) and the run to 32 settled by #752 (§4.4). The bots find
+Vask first the better play, since his fall stops the calls and stands the sentries down. As built, with
+the sentries at 890 hit points, the clock let run holds, 28% on 400 seeds; the Hands first wins 62%,
+three in five where the plan said two in three, and Vask first 72% (docs/areas/hearth_isle.md §7).
 
 Nine on frames that exist are drawn (#761). The Hearth
 Moth is the lantern moth's hands cut deeper, to flames, rust above and red beneath, its dust falling
