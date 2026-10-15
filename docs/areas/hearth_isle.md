@@ -226,7 +226,7 @@ links: the zone `hearthisle` with its crossing words; the places `hearthfane` (b
 `hearthfane2` (built, #756), `underdeep` (built, #757), `underdeep2` (built, #758) and `core`
 (built, #759); the sites The Hearth and Anchorhold (both built, #754). The last crossing's isle
 end, owed to Phase 1.5 until H6, lands on the strand (`LAST_CROSSING`, `src/content/crossings.ts`),
-so Cinderport's harbourmaster sells it. The curve's row (#745, §8) has left `PLANNED`, owed to #744
+so Cinderport's harbourmaster sells it. The curve's row (#745, §8) has left `PLANNED`, owed to #794
 for what the isle, the rim, the temple, the crypt, the Ways, the Stair and the Heart pay, which falls
 short of the area's budget (§8, §11). The chapter, The Heart (#760, §5), is the area's `chapter`
 (`chapter.ts`), joined after the Wold's in `THE_QUEST`, the twelfth and last: begun on `q_road_east`
@@ -2025,15 +2025,15 @@ area is built box by box:
 | Lines | 11 events and signs: 8 of two lines and 3 of three; the area's 55: 7 of one, 33 of two and 15 of three |
 
 **As built: the Heart** (#759). The row's `owed` stands at what the isle, the rim, the temple, the
-crypt, the Ways, the Stair and the Heart pay, 38,317 xp a member and 8,200 gold, still owed to #744
-(#759 raised it to 42,946, the curve then counting both of Vask's groups; #792 set it again):
-a clear falls short of the area's budget by 8,617 xp a member and 20,120 gold. The curve counts the
-lesser of Vask's groups and none of the sentries, as a clear fights one group:
+crypt, the Ways, the Stair and the Heart pay, 38,317 xp a member and 8,200 gold, now owed to #794
+(#759 raised it to 42,946 under #744, the curve then counting both of Vask's groups; #792 set it
+again): a clear falls short of the area's budget by 8,617 xp a member and 20,120 gold. The curve
+counts the lesser of Vask's groups and none of the sentries, as a clear fights one group:
 
 | | Figure |
 |---|---|
-| Xp a member, as the curve counts it | 4,217 against the Heart's eighth, 5,867: 0.72 (the lesser of Vask's two groups, `core_vask_thinned` 25,307 split six ways; `core_vask`, 27,774, is its twin on the square and is left out; no sentry) |
-| Xp a member, as played | 4,629 with `core_vask` (27,774) or 4,218 with the thinned group (25,307), and 206 more for each sentry the clock calls, eight at most (1,644): 4,629 to 6,273 against an eighth, 5,867 |
+| Xp a member, as the curve counts it | 4,217 against the Heart's eighth, 5,867: 0.72 (the lesser of Vask's two groups, `core_vask_thinned` 25,307 split six ways, 4,217.8, floored as the curve's sum is; `core_vask`, 27,774, is its twin on the square and is left out; no sentry) |
+| Xp a member, as played | 4,629 with `core_vask` (27,774) or 4,217 with the thinned group (25,307), and 206 more for each sentry the clock calls, eight at most (1,644): 4,629 to 6,273 against an eighth, 5,867 |
 | The area | 38,317 of the 46,934, 81.6%: H6 5,009, the rim 2,908, the temple 4,971, the crypt 1,962, the Ways 9,768, the Stair 9,482 and the Heart 4,217 |
 | The area, as played | the curve's 38,317 with the thinned group, or 38,728 (82.5%) with `core_vask`, and up to 1,644 of sentries more |
 | Gold | 8,200 of the 28,320 for the area, 20,120 short: the Stair's 1,600, the Ways' 1,400, the rim's 1,700, the temple's 2,000, the crypt's 800 and H6's 700; the Heart adds none (its finds are the ring). The dearest find, the Grey Mail at 7,000, sits in the 7,000 window |
@@ -3013,7 +3013,7 @@ Decided by delegate for #759, each the owner's to overturn:
    the crypt, the temple, the rim, the Stair and the Ways fell short of their xp shares (0.42, 0.74,
    0.74, 0.90 and 0.93), which the Heart's count hides (the curve counts both of Vask's groups where
    a clear fights one); the gold gap is not the shares' doing, and the Heart adds none. No group
-   added and no monster strengthened.
+   added and no monster strengthened. (#792's 3 sets the floor again, and its 6 the issue.)
 10. **64:** the item `queens_signet`, *Queen's Signet*, with the plan's text, read from the pack;
     the log keyed on the item and the four `q_signet_*` flags, "and the like" written *It went to
     the hold, in a cloth.* and *It went to Tallis, in a cloth.*, its goal at `shelf`. `UNSET` owes
@@ -3160,12 +3160,16 @@ Decided by delegate for #792, each the owner's to overturn:
 
 1. **A twin is read as the maps and pillars checks read one:** two groups of a map on a square, one
    `until` a condition and the other `after` it, by structure. Only the Heart's pair is caught.
-2. **The lesser by xp counts, the whole group,** so its xp and gold are one clear's; a tie keeps the
-   `until` group. A chain of three is not met: no map has one.
+2. **The lesser by xp counts, the whole group,** so its xp, gold and lead are one clear's; a tie keeps
+   the `until` group. The price window still reads every group's monsters, the dearer twin's too.
 3. **The owed row's floor is set again from the print,** `xp: 38317` for 42946; its `why` names the
-   Heart among the shares short (0.72). `whose` and the gold stay; #759's 9 stands as it was.
+   Heart among the shares short (0.72). The gold stays; #759's 9 stands as it was.
 4. **The Heart's figures in §8 and §11 are read again from the print,** the lead among them (31.4 for
    31.9, moved with the clear). The gate, the density and the harness are as they were.
+5. **Only a leaving `until` group on a square of exactly two has a twin:** one that stays till it
+   is killed may be met beside its twin, and a third group makes the clears 2 or 4, not the lightest.
+6. **The row's `owed.whose` moves from '#744' (#745's 1) to '#794',** the open pay issue that brings
+   the area up; the plan's present-tense owed sentences say #794, and the old blocks stay as history.
 
 ## 10. Names
 
@@ -3378,7 +3382,7 @@ Owed, from the Heart (#759):
   clear fights one group; a company that meets `core_vask` is paid 38,728 (82.5%), with up to 1,644
   of sentries more, the Heart 4,629 to 6,273. The gold gap is not the shares' doing: the Heart adds
   none. No group is added and no monster strengthened: the row's `owed` stands at the floor the
-  curve prints (§8; §9.2, #759's 9 and #792's 3). The owner's call.
+  curve prints, owed to #794 now (§8; §9.2, #759's 9 and #792's 3 and 6). The owner's call.
 - **Vask's sizing is final and the gate's two rules are kept** (#752): `OFF_LINE.vask`, 1,850 hit
   points and 22d8+23, and the rules that a map of nothing but its boss is judged on the boss's odds
   and a boss at the cap at its floor alone, now written in `docs/EXPANSION.md` §5.2 and
