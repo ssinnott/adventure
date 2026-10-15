@@ -18,31 +18,33 @@ and checked again at `8cdf1e0a` (13 October 2026) in review (§9.1), with `tools
 cuts the atlas's terrain for a box (EXPANSION §8.2): land is what is not sea or shallow, and
 "walkable" what is not rock.
 
-Six places are built: H6, the isle (#753, §4.2), which lists the area; Hearthfane, the temple
-(#755, §4.4); the crypt under it (#756, §4.5); the Ways below the crypt (#757, §4.6); the Stair
-below the Ways (#758, §4.7); and the Heart below the Stair (#759, §4.8). The isle is built to the
-Heart; I6 (#754), the chapter (#760) and the road behind (#765) are to build. What exists: the
-isle's map, `hearthisle_h6`, which places four of the roster's monsters, opens the pilgrims'
-camp's three rooms and gives onto the temple (§3); the temple's map, `hearthfane`, which places
-three of those four and gives down onto the crypt; the crypt's map, `hearthfane2`, which places two
-of the four and the first keeper and gives down onto the Ways; the Ways' map, `underdeep`, which
-places one of the four, the keeper, Ashfall's deep knocker and the first crawlers; the Stair's map,
-`underdeep2`, which places the rearguard and the Catcher with the Ways' rats, keepers, knockers and
-crawlers again, and has the last door at its foot, shut until the road's five hold; the Heart's
-map, `core`, behind that door, which places Vask and the Grey Hands and calls the sentries: the
-round room under the glass roof, Vask at the panel on the clock, the voice, Wenna with her three
-answers and the ring; the atlas's rows (`src/content/atlas.ts`: the area `hearth` at 28–32, the
-last crossing's sea link from Cinderport landing at 252,188 and the deep links on from the isle;
-`src/content/areas/hearth/atlas.ts`, the area's own since H6: the zone `hearthisle`; the places
-`hearthfane` at 250,172, `hearthfane2` at 250,178, `underdeep` at 216,168, `underdeep2` at 216,172
-and `core` at 216,176 (built); the sites The Hearth at 256,174 (built) and Anchorhold at 268,176
-(planned)); the last crossing itself, sold at Cinderport's quay since #547, whose isle end lands on
-H6's strand since #753 (`LAST_CROSSING`, `src/content/crossings.ts`); MONSTERS §9's roster (§7
-fields it with one more, the Ashen Rearguard: twelve monsters, one new family); the Cleric's third
-prestige at Anchorhold, placed on the map and nowhere else (#19), its deed built in the crypt and
-waiting on the log (#763); and #56's 56 to 61 and 64, Act V's side quests, drafted, with 56 built in
-the temple, 60 and 61 built in the Ways, 57 begun on the isle and ended on the Stair, 59 begun in
-the Ways and ended on the Stair, 58 begun on the Stair and 64 begun at the Heart (§6).
+Seven places are built: H6, the isle (#753, §4.2), which lists the area; I6, the east rim (#754,
+§4.3); Hearthfane, the temple (#755, §4.4); the crypt under it (#756, §4.5); the Ways below the
+crypt (#757, §4.6); the Stair below the Ways (#758, §4.7); and the Heart below the Stair (#759,
+§4.8). The isle is built to the Heart; the chapter (#760) and the road behind (#765) are to build.
+What exists: the isle's map, `hearthisle_h6`, which places four of the roster's monsters, opens the
+pilgrims' camp's three rooms and gives onto the temple (§3); the rim's map, `hearthisle_i6`, which
+places three of those four; the temple's map, `hearthfane`, which places three of those four and
+gives down onto the crypt; the crypt's map, `hearthfane2`, which places two of the four and the
+first keeper and gives down onto the Ways; the Ways' map, `underdeep`, which places one of the four,
+the keeper, Ashfall's deep knocker and the first crawlers; the Stair's map, `underdeep2`, which
+places the rearguard and the Catcher with the Ways' rats, keepers, knockers and crawlers again, and
+has the last door at its foot, shut until the road's five hold; the Heart's map, `core`, behind that
+door, which places Vask and the Grey Hands and calls the sentries: the round room under the glass
+roof, Vask at the panel on the clock, the voice, Wenna with her three answers and the ring; the
+atlas's rows (`src/content/atlas.ts`: the area `hearth` at 28–32, the last crossing's sea link from
+Cinderport landing at 252,188 and the deep links on from the isle;
+`src/content/areas/hearth/atlas.ts`, the area's own since H6: the zone `hearthisle`, with I6 laid in
+it; the places `hearthfane` at 250,172, `hearthfane2` at 250,178, `underdeep` at 216,168,
+`underdeep2` at 216,172 and `core` at 216,176 (built); the sites The Hearth at 256,174 and
+Anchorhold at 268,176 (both built)); the last crossing itself, sold at Cinderport's quay since #547,
+whose isle end lands on H6's strand since #753 (`LAST_CROSSING`, `src/content/crossings.ts`);
+MONSTERS §9's roster (§7 fields it with one more, the Ashen Rearguard: twelve monsters, one new
+family); the Cleric's third prestige at Anchorhold, placed on the map and nowhere else (#19), its
+deed built in the crypt and waiting on the log (#763); and #56's 56 to 61 and 64, Act V's side
+quests, drafted, with 56 built in the temple, 60 and 61 built in the Ways, 57 begun on the isle and
+ended on the Stair, 59 begun in the Ways and ended on the Stair, 58 begun on the Stair and 64 begun
+at the Heart (§6).
 Its content is
 `src/content/areas/hearth/` (maps, monsters, items, climate, its part of the world map and its
 walkthrough; its chapter, The Heart, in `chapter.ts`, and its other side quests and the Cleric's
@@ -62,7 +64,7 @@ grass, the polygon 248,168, 262,166, 266,176, 254,180 and 246,176. One zone, `he
 
 | Zone | Band | Squares | Boxes |
 |---|---|---|---|
-| Hearth Isle | 28–29 | 1,027 land, 757 of them in H6 and 270 in I6; the shallows apart (76 in H6, 77 in I6) | H6 (built), I6 |
+| Hearth Isle | 28–29 | 1,027 land, 757 of them in H6 and 270 in I6; the shallows apart (76 in H6, 77 in I6) | H6 (built), I6 (built) |
 | The area | 28–32 (§9, call 2) | the isle, and the temple, the Ways, the Stair and the Heart below it | |
 
 The bands, once and plainly: the area is 28–32, to the cap. The isle's zone, its two boxes and the
@@ -148,13 +150,13 @@ in `src/ui/interiors/hearth/`, listed in `src/content/areas/hearth/interiors.ts`
 `interiors` since H6 lists the area (`ROOMS_AHEAD`, `src/content/index.ts`, merged them until then);
 H6's three businesses open into them, so `UNPLACED` (`tools/tests/maps.ts`) owes them no more. The
 monsters drawn ahead (#761) are the Area's own too (`AHEAD`, `src/content/index.ts`, listed them
-until then): H6 places the moth, the champion, the preacher and the rat (the temple the first
-three, the crypt the champion and the rat with the first keeper, the Ways the first crawlers, the
-Stair the rearguard and the catcher, the Heart Vask and the Grey Hand with the sentry he calls),
-and `UNPLACED` owes nothing now.
+until then): H6 places the moth, the champion, the preacher and the rat (the rim and the temple the
+first three, the crypt the champion and the rat with the first keeper, the Ways the first crawlers, the
+Stair the rearguard and the catcher, the Heart Vask and the Grey Hand with the sentry he calls), and
+`UNPLACED` owes nothing now.
 
-Six places. The isle (#753) is the area's first and lists the area; the temple (#755), the crypt
-(#756), the Ways (#757), the Stair (#758) and the Heart (#759) follow it:
+Seven places. The isle (#753) is the area's first and lists the area; the east rim (#754), the temple
+(#755), the crypt (#756), the Ways (#757), the Stair (#758) and the Heart (#759) follow it:
 
 - **The isle** (H6, `hearthisle_h6`, core, band 28–29; #753): the strand on the south shore where
   the last crossing grounds, its boatman in the stern; the cleft carved one square wide up through
@@ -164,6 +166,13 @@ Six places. The isle (#753) is the area's first and lists the area; the temple (
   (#755); the Hearth east of it, the column's foot; the cache under the north rim; the west
   shelf to the lookout. Seven groups: moths by night, the pickets, the preacher with champions
   before the temple's door, champions on the west shelf and rats in the Bowl's south-east (§4.2).
+- **The east rim** (I6, `hearthisle_i6`, core, band 28–29; #754): the rim's path carved from the
+  Bowl's east pocket through the rock to Anchorhold's yard, under the cell built into the rim and
+  out to the east foot; the Hand's camp at the Steps, where the causeway lands, with its crates, its
+  tally-house and its chest; the grey door in the rock, read and never opened; behind the
+  tally-house the secret door, the Hand's takings and the hoard. Four groups: champions in the
+  pocket where the path begins, moths over the yard by night, the camp's guard and two champions at
+  the stair's head (§4.3).
 - **The temple** (Hearthfane, `hearthfane`, dungeon 16×16, band 28–29; #755): in at its door in the
   mound on H6 (18,14), at the nave's foot; out by the door in its south wall. The nave runs north
   with a lamp in each corner and the moths about them; the vestry off its west, where the sacristan
@@ -208,12 +217,11 @@ Its atlas rows are charted in `src/content/areas/hearth/atlas.ts`, the area's ow
 area; they moved there from the plan (`src/content/atlas.ts`), which keeps the area's row and the
 links: the zone `hearthisle` with its crossing words; the places `hearthfane` (built, #755),
 `hearthfane2` (built, #756), `underdeep` (built, #757), `underdeep2` (built, #758) and `core`
-(built, #759); the sites The Hearth (built) and Anchorhold (planned). The last crossing's isle
+(built, #759); the sites The Hearth and Anchorhold (both built, #754). The last crossing's isle
 end, owed to Phase 1.5 until H6, lands on the strand (`LAST_CROSSING`, `src/content/crossings.ts`),
 so Cinderport's harbourmaster sells it. The curve's row (#745, §8) has left `PLANNED`, owed to #744
-for what the isle, the temple, the crypt, the Ways, the Stair and the Heart pay, which falls short
-of the area's budget (§8, §11). The drafts the scaffold cuts are in
-§1. This doc is
+for what the isle, the rim, the temple, the crypt, the Ways, the Stair and the Heart pay, which falls
+short of the area's budget (§8, §11). The drafts the scaffold cuts are in §1. This doc is
 the plan; §4 has the briefs, each with every line its place says, so that the box or level can be
 built from it by a session that has read DESIGN, STORY and EXPANSION and nothing else. The owner's
 calls are §9's.
@@ -223,7 +231,7 @@ calls are §9's.
 | Map | Name | Kind | Band | Land | What is there | Its step | Issue |
 |---|---|---|---|---|---|---|---|
 | H6 | The isle | zone box, core | 28–29 | 757 (rock 386, grass 266, hills 84, sand 21) | the strand at 20,30; the cleft up through the rim; the Bowl and the pilgrims' camp; the Hearth at 24,16; Hearthfane's door at 18,14 | the isle; the temple | #753, built |
-| I6 | The east rim | zone box, core | 28–29 | 270 (rock 155, grass 77, sand 35, hills 3) | Anchorhold at 4,18; the Hand's Steps at 3,27, where the causeway lands; the Hand's camp | none; the Cleric's third | #754 |
+| I6 | The east rim | zone box, core | 28–29 | 270 (rock 155, grass 77, sand 35, hills 3) | Anchorhold at 4,18; the Hand's Steps at 3,27, where the causeway lands; the Hand's camp | none; the Cleric's third | #754, built |
 | | Hearthfane | dungeon, 16×16 | 28–29 | | the nave and its four lamps; the court open to the column; the Hand's best; the sacristan in the vestry; the treasury; the stair behind the altar | the temple | #755, built |
 | | The crypt | dungeon, 16×16 | 29 | | the eleven niches; the Hand's first dead; the knot on the frame; the grey door down | the knots | #756, built |
 | | The Ways | dungeon, 32×32 | 30 | | the hull's service ways: clean, humming, lit from nowhere; keepers with no robe; rats; the knocker at the crack; the CREW ONLY door's other side; the frames she marked | the Ways | #757, built |
@@ -232,10 +240,10 @@ calls are §9's.
 
 The core is everything: no map here is country. Build order is the road's: H6 (built, #753; it lists
 the area, moves the isle's rows into the area's own atlas slice and lands the last crossing, §7),
-I6, the temple (built, #755), the crypt (built, #756), the Ways (built, #757), the Stair (built,
-#758), the Heart (built, #759); the chapter and the walkthrough once the Heart is in; the side
-quests with their maps; the Council and the endings with the Heart. The drawings (§7) land before
-the maps that first place them, the crawlers' family before the Ways.
+I6 (built, #754), the temple (built, #755), the crypt (built, #756), the Ways (built, #757), the
+Stair (built, #758), the Heart (built, #759); the chapter and the walkthrough once the Heart is in;
+the side quests with their maps; the Council and the endings with the Heart. The drawings (§7) land
+before the maps that first place them, the crawlers' family before the Ways.
 
 ### 4.1 The briefs
 
@@ -409,8 +417,8 @@ Lantern's door). It departs from the brief in these squares and lines:
   boxes beside them (H5, G6 and H7) being unlaid. The east edge is pinned as a string: rows 0–11
   rock, 12–20 grass, 21–28 rock, row 29 grass, row 30 sand, row 31 shallow. It is walkable on H6's
   side on rows 12–20 and 29–30; on rows 19 and 20 H6's grass meets I6's rock as the brief has it,
-  and row 0 is rock on H6's side where the brief had it walkable on both sides (#753's 5). #754 adds
-  I6's west edge against it.
+  and row 0 is rock on H6's side where the brief had it walkable on both sides (#753's 5). I6's west
+  edge is laid against it (§4.3).
 - **The finds and the strand.** The picket's chest, `h6_picket_chest` at 21,22, holds 300 gold and the
   Grey Knife; the cache's chest 400 gold and three Smelling Salts; the champions drop the knife at
   one in ten (#753's 14). The Compact's runner or the Warden sergeant stands at 23,30, each `after`
@@ -495,7 +503,42 @@ has one group so that Anchorhold is reached by a company at 28 with a fight.
 
 **Finds.** The hoard (above); the camp's chest `i6_camp_chest` (6,25): 500 gold, `grey_staff`.
 
-**Share of the pay.** About a twelfth of the area's.
+**Share of the pay.** About a twelfth of the area's (§8).
+
+**As built** (#754, 13 October): the brief's places and its four groups, laid whole in the box at
+264,158 (`hearthisle_i6`, region `hearth`, band 28–29), in the zone `hearthisle` beside H6. The land
+is rock 139, grass 77, sand 35, hills 3, dirt 14 and a building square 1 (the cell), with the secret
+door 1, shallow 77 and sea 677, where the draft had rock 155. The map starts at 8,19 facing south,
+where the path comes out over the sea (§9.2, #754's 9; the scaffold's start, 12,17, is shore sand).
+No company lands on I6: the zone's way in is H6's boat. It departs from the brief in these squares
+and lines:
+
+- **The seams.** West, x 0 against H6's x 31: open on both sides on rows 12 to 18, the Bowl into the
+  pocket, and 29 to 31, the strand, where row 31 is shallow on both. Rows 0–1 and 27–28 are I6's
+  grass against H6's rock; rows 19 and 20 are H6's grass against I6's rock; row 24, the pocket's
+  dirt, is against H6's rock. North, row 0 meets `deepthorn_i5`'s row 31 as the brief has it; east and
+  south are sea against J6 and I7, unlaid: the void. All are pinned in `tools/tests/outdoors.ts`
+  after H6's.
+- **Anchorhold's cell** at 4,18 is a building square, not the plan's rock: not walkable, and it
+  shows on the map (#754's 2). The site is built, at 268,176. The yard 2–5,19–20, the path (1–2,18
+  and 6–7,19) and the pocket (0–1,24) are carved as dirt (#754's 5). The anchoress's square, 4,19
+  under the window, is free: nothing of hers is placed (#763).
+- **Two points the brief does not name,** `i6_keel` at 8,10 and `i6_wyke` at 5,2, stand for density.
+  Their words are the builder's own (#754's 1).
+- **The secret** is the door at 2,24 (world 266,182), its hint `i6_smell` at 2,25 with the
+  tally-house (3,24) beside it. The pocket behind holds the takings' line `i6_takings` at 1,24 and
+  the chest `i6_hoard` at 0,24 (#754's 3 and 4).
+- **The groups** are the brief's four at its squares: the champions at 0,17, the moths by night at
+  5,20, the camp's guard at 4,24 and the stair's two at 3,26. The rim's group, the guard and the
+  stair's two respawn at 2,880 and the moths at 1,440; none is a guardian. The guard is three
+  champions then the preacher, `back: 1`, and leaves on `q_throne_removed` (#754's 6 and 7).
+- **The finds.** The camp's chest `i6_camp_chest` at 6,25 holds 500 gold and the Grey Staff; the
+  hoard 1,200 gold and the Grey Mail, which is the Drakeskin Coat's wearers' (#754's 8).
+- **Measured.** A company at 28 wins every fight on the rim and walks the isle's road on to the camp
+  every time (#754's 10). Two under, at 26, it wins every fight too, owed to #18 as H6's is
+  (#754's 11). The four groups as written give 11.32 fights to a rest, inside the aim, and pay 0.74
+  of the share (#754's 12). Density 100.0% within 8 steps, the furthest 7, with no sign among its 19
+  points. The figures are in §8.
 
 ### 4.4 Hearthfane, the temple (dungeon, 16×16, band 28–29)
 
@@ -1839,6 +1882,25 @@ crypt pay, 11,942 xp a member and 3,500 gold, still owed to #744 while the area 
 | Levels | 3 monsters in 29–29, give or take two; rising from the way in (rank correlation 1.00); the nearest group, the champions at 4 steps, at 29.0; the hardest, the rats at 13 steps, at 30.0 |
 | Lines | 7 events and signs: 6 of two lines and 1 of three; the area's 28: 2 of one, 17 of two and 9 of three |
 
+**As built: I6** (#754). The row's `owed` is raised to what the isle, the rim, the temple and the
+crypt pay, 14,850 xp a member and 5,200 gold, still owed to #744 while the area is built box by box:
+
+| | Figure |
+|---|---|
+| Xp a member | 2,908 against the rim's twelfth, 3,911: 0.74 (17,446 split six ways) |
+| The area so far | 14,850 of the 46,934, 31.6%: H6 5,009, the temple 4,971, the crypt 1,962 and the rim 2,908 |
+| Gold | 5,200 of the 28,320 for the area: the rim's camp chest 500 and hoard 1,200, the crypt's 800, the temple's 2,000 and H6's 700 |
+| Paid by level | entering at 28 and clearing three quarters, a company leaves at 29.4, 2.6 under the next floor 32 |
+| Dearest find | the Grey Mail, 7,000, in the 7,000 window |
+| Gate, at the floor 28 | 100% of fights won (aim 90%, limit 80%); the area's 19 groups' too |
+| Gate, two under, at 26 | 100% won (at most: aim 25%, limit 90%): owed to #18 (§11) |
+| Gate, the road at 28 | the isle's two pickets and the sermon, then the rim's champions and the camp's two guards, walked 100% of the time (aim 80%, limit 65%) |
+| Fights to a rest, at 28 | 11.32 (aim 10 to 12, limit 8.5 to 14.5); 9.3% of days end in a fight broken off |
+| Density, core | 100.0% within 8 steps (130 of 130, 117 needed); the furthest 7 of 15; no sign in 19 points |
+| Levels | 3 monsters in 28–29, give or take two; rising from the way in (rank correlation 0.77); the nearest group, the moths at 4 steps, at 28.0; the hardest, the champions at 10 steps, at 29.0 |
+| Lines | 13 events and signs: 10 of two lines and 3 of three; the area's 41: 2 of one, 27 of two and 12 of three |
+| Art | 50.0% of its 8 wall faces dressed (the cap is 50% under 100 faces): the cell is undressed (§9.2, #754's 2) |
+
 **As built: the Ways** (#757). The row's `owed` is raised to what the isle, the temple, the crypt and
 the Ways pay, 21,710 xp a member and 4,900 gold, still owed to #744 while the area is built box by
 box:
@@ -1876,22 +1938,22 @@ built box by box:
 | Levels | 6 monsters in 30–31, give or take two; rising from the way in (rank correlation 0.19); the nearest group, the rearguard at 4 steps, at 30.0; the hardest, the crawlers at 16,20 at 10 steps, at 31.0 |
 | Lines | 11 events and signs: 8 of two lines and 3 of three; the area's 55: 7 of one, 33 of two and 15 of three |
 
-**As built: the Heart** (#759). The row's `owed` is raised to what the isle, the temple, the crypt,
-the Ways, the Stair and the Heart pay, 40,038 xp a member and 6,500 gold, still owed to #744: a
-clear falls short of the area's budget by 6,896 xp a member and 21,820 gold. The curve counts both
+**As built: the Heart** (#759). The row's `owed` is raised to what the isle, the rim, the temple, the
+crypt, the Ways, the Stair and the Heart pay, 42,946 xp a member and 8,200 gold, still owed to #744:
+a clear falls short of the area's budget by 3,988 xp a member and 20,120 gold. The curve counts both
 of Vask's groups and none of the sentries, and a clear fights one group:
 
 | | Figure |
 |---|---|
 | Xp a member, as the curve counts it | 8,846 against the Heart's eighth, 5,867: 1.51 (both of Vask's groups, 53,081 split six ways: `core_vask` 27,774 and `core_vask_thinned` 25,307; no sentry) |
 | Xp a member, as played | 4,629 with `core_vask` (27,774) or 4,218 with the thinned group (25,307), and 206 more for each sentry the clock calls, eight at most (1,644): 4,629 to 6,273 against an eighth, 5,867 |
-| The area | 40,038 of the 46,934, 85.3%: H6 5,009, the temple 4,971, the crypt 1,962, the Ways 9,768, the Stair 9,482 and the Heart 8,846; I6's 2,908 (#754) is not built |
-| The area, as played | the curve's 40,038 less the thinned group's 4,218 is 35,820 (76.3%), with up to 1,644 of sentries; with I6's 2,908, 38,728 (82.5%) |
-| Gold | 6,500 of the 28,320 for the area, 21,820 short: the Heart adds none (its finds are the ring); the dearest find, the Grey Bow at 6,800, sits in the 7,000 window |
-| Paid by level | entering at 28 and clearing three quarters, a company leaves at 31.7, 0.3 under the next floor 32 |
-| Gate, at the floor 32 | the Heart is judged on its boss's odds alone, its every group being a boss (§9.2, #759's 8); the area's 35 groups at their maps' floors 96.9% of fights won (aim 90%, limit 80%) |
+| The area | 42,946 of the 46,934, 91.5%: H6 5,009, the rim 2,908, the temple 4,971, the crypt 1,962, the Ways 9,768, the Stair 9,482 and the Heart 8,846 |
+| The area, as played | the curve's 42,946 less the thinned group's 4,218 is 38,728 (82.5%), with up to 1,644 of sentries |
+| Gold | 8,200 of the 28,320 for the area, 20,120 short: the Stair's 1,600, the Ways' 1,400, the rim's 1,700, the temple's 2,000, the crypt's 800 and H6's 700; the Heart adds none (its finds are the ring). The dearest find, the Grey Mail at 7,000, sits in the 7,000 window |
+| Paid by level | entering at 28 and clearing three quarters, a company leaves at 31.9, 0.1 under the next floor 32 |
+| Gate, at the floor 32 | the Heart is judged on its boss's odds alone, its every group being a boss (§9.2, #759's 8); the area's 39 groups at their maps' floors 97.2% of fights won (aim 90%, limit 80%) |
 | Vask | `core_vask` 65% won at 32 (aim 30% to 70%, limit 20% to 80%), `core_vask_thinned` 68%; two above the floor n/a, past the cap. His four plays on 400 seeds (the gate's hundred): the Hands first 65% (65%), Vask first 64% (61%), the sentries as they come 45% (46%), no clock 91% (95%); the tries are in §7 |
-| Gate, two under | n/a for the Heart, its floor being above the area's; the area's pool at 26, 91.7% of 35 groups' fights won (aim 25%, limit 90%): owed to #18 (§11) |
+| Gate, two under | n/a for the Heart, its floor being above the area's; the area's pool at 26, 92.5% of 39 groups' fights won (aim 25%, limit 90%): owed to #18 (§11) |
 | Fights to a rest | n/a in the gate, the Heart holding nothing but its boss; on the test monsters at 32 (`node tools/harness.ts --abilities`): the Hands first 11.8 rounds, won 14%, 2.1 sentries called, the light 4.7 of 8 steps down; the lord first 10.6 rounds, won 31%, 2.4 sentries, 5.3 of 8; the sentries as they come 11.6 rounds, won 21%, 2.4 sentries, 5.2 of 8 |
 | Walkthrough | `core:core_vask` won at 32 in 80% of its ten seeds, 50% with the clock left to run; the thinned group 80% |
 | Density, dungeon | 100.0% within 7 steps (90 of 90, 81 needed); the furthest 7 of 10; no sign in 12 points |
@@ -1910,7 +1972,7 @@ the Hand's steel from below, in the temple's treasury, the camps' chests and the
 | `grey_bow` | Grey Bow | the ranger (1d12+13) | 6,800 | the treasury |
 | `grey_staff` | Grey Staff | staves, the casters' (1d10+13) | 6,200 | the Hand's camp |
 | `old_lanterns_staff` | Old Lantern's Staff | staves, the casters' (1d10+14), holy | 7,000 | the swallowed hall (61) |
-| `grey_mail` | Grey Mail | the mail wearers (ac 14) | 7,000 | the Hand's hoard (I6) |
+| `grey_mail` | Grey Mail | the Drakeskin Coat's wearers (ac 14; §9.2, #754's 8) | 7,000 | the Hand's hoard (I6) |
 | `grey_robe` | Grey Robe | the casters (ac 13) | 6,200 | the crypt's pack |
 | `grey_shield` | Grey Shield | the shield bearers (ac 8) | 4,000 | the keeper's store |
 | `smelling_salts` | Smelling Salts | anyone, a plain consumable: `use: { cure: ['asleep', 'paralysed'] }` on one member, used up | 0 | the north rim's cache, three in a pouch |
@@ -2473,6 +2535,52 @@ Decided by delegate for #753, each the owner's to overturn:
     outdoors' moved feature with the map's by identity and so fails on any zone map. Not this
     issue's to fix.
 
+Decided by delegate for #754, each the owner's to overturn:
+
+1. **Two points the brief does not name,** for density: `i6_keel` (8,10), *A boat's keel on the grass
+   under the rim, stripped to the ribs. Its planks went to the Hand's fires.*, and `i6_wyke` (5,2),
+   *The rim's north end. Across the Wyke, Thornmark's shore, near enough to count the oaks and too
+   far to reach.* Without them the east foot's north half and the north rim, some 45 squares, stood
+   9 to 27 steps from any point (core asks 90% within 8 and none past 15). The land is kept as the
+   plan has it, not made rock. The words are the builder's own.
+2. **Anchorhold's cell at 4,18 is a building square (`B`),** not plain rock. The art check holds a
+   small map to half its wall faces dressed: the secret door, I6's only wall, draws damp on its four
+   faces (100%, failing), and the cell, undressed, brings it to 4 of 8 (50%, the cap). Not walkable,
+   as the rock was, and the cell shows on the map.
+3. **The secret's `hint` is `i6_smell`** (2,25): the field takes one event id, the smell stands beside
+   the door, and the tally-house (3,24, east of the door) is the runner's word's mark. The
+   walkthrough searches from the tally's square facing west.
+4. **The hoard `i6_hoard` is at 0,24,** the pocket's west square, and the takings' line `i6_takings`
+   at 1,24, so the line and the chest do not share a square (as H6's cache, #753's 8).
+5. **The carved squares are dirt (`:`):** the yard 2–5,19–20, the path 1–2,18 and 6–7,19 and the
+   pocket 0–1,24, as H6's cleft and cache are.
+6. **`i6_guard` is three champions then the preacher, `back: 1`** (`back` counts from the end),
+   `roams: false`, `until: { flag: THRONE_REMOVED }` (from `shelf/maps/keep.ts`) and `leaves: true`.
+   There is no `UNSET` entry for `q_throne_removed`: the Council sets it (#774). `encounter:leaves`
+   is not claimed in `novel`.
+7. **The plan gives a respawn to `i6_rim` alone** (2,880). `i6_guard` and `i6_guard2` take 2,880 too
+   (the Hand's, as H6's champions) and `i6_moths` 1,440 (as H6's moths); none is a guardian. `aware`
+   is 3, the stair's two 2.
+8. **The Grey Mail is for the Drakeskin Coat's wearers** (`NO_CASTER_HEAVY`), not `MAIL` (knight,
+   paladin, ranger): §8 has each piece a point past Cinderport's armourer for every class, and the
+   coat's rung is those seven. It is `A('grey_mail', 'Grey Mail', 7000, 14)`; the Grey Staff is in
+   the Battle Staff's form, `W('grey_staff', 'Grey Staff', 6200, 1, 10, { kind: 'staff', bonus: 13,
+   twoHanded: true })`.
+9. **The start is 8,19 facing south,** where the path comes out over the sea; the scaffold's 12,17 is
+   shore sand. No company lands on I6: the zone's way in is H6's boat.
+10. **The isle's road at the gate gains `i6_rim`, `i6_guard` and `i6_guard2`** after H6's three: out of
+    the Bowl's east pocket by the rim's path and down the east foot to the camp. The moths by night
+    are off it, as H6's are.
+11. **Two under, I6 is won every time** (100% at 26), owed to #18 (`hearthisle_i6: under`, `OWED` in
+    `tools/tests/gate.ts`) as H6's is. Stronger monsters are barred and fewer groups would not lower
+    it. The issue's "one at 26 no more than one in four" is therefore not met: the owner's or #18's.
+12. **The brief's four groups are kept as written:** 11.32 fights to a rest at 28 (aim 10 to 12).
+    They pay 2,908 xp a member against a twelfth, 3,911: 0.74 of the share. No floor on a box's
+    share is checked, and more or stronger groups were not the brief's.
+13. **The walkthrough's first line holds the zone's two maps,** where H6's asserted one, and plays the
+    leave rule: the guard gone with `q_throne_removed` set, then back with the flag deleted and
+    fought.
+
 Decided by delegate for #755, each the owner's to overturn:
 
 1. **The treasury's door is a door gated on the key, not a `locked` square.** The engine's `locked`
@@ -2737,8 +2845,8 @@ Decided by delegate for #759, each the owner's to overturn:
    against twelve, which no Vask sized to two in three could pass), and a boss at the cap is judged
    at its floor alone, no company standing two above 32, as #745 waived the curve's rise at the cap.
    No other map is touched. Outside the content lane: #752's to confirm.
-9. **The owed row stays at the curve's as-built floor,** `xp: 40038, gold: 6500`, `whose: '#744'`,
-   its `why` that the Heart is built and a clear falls short by 6,896 xp a member and 21,820 gold:
+9. **The owed row stays at the curve's as-built floor,** `xp: 42946, gold: 8200`, `whose: '#744'`,
+   its `why` that the Heart is built and a clear falls short by 3,988 xp a member and 20,120 gold:
    the curve counts both of Vask's groups where a clear fights one, and the Ways and the Stair fell
    short of their shares under the brief's groups. No group added and no monster strengthened.
 10. **64:** the item `queens_signet`, *Queen's Signet*, with the plan's text, read from the pack;
@@ -2821,13 +2929,31 @@ Owed, from H6 (#753):
   #760's: `tools/tests/quests.ts` owes the chapter and lists the zone as planned.
 - **The free fare** for a Partner is #765's: the runner says the boat is the Partner's both ways,
   and the line runs ahead of the fare until then.
-- **I6's meeting** is #754's: it adds I6's west edge against H6's east pin, where row 0 is rock on
-  H6's side (31,0; the brief had both sides walkable, §9.2, #753's 5), and the hoard behind I6's
-  tally-house, which the runner's word points at.
 - **The gear's rung** is #746's: the Grey Knife (`greyKnife`) and the Smelling Salts are built here
   (`src/content/areas/hearth/items.ts`), and #746 takes them into the rung.
 - **`kneel` in `tools/walk.ts`** fails on any zone map, comparing the outdoors' moved feature with
   the map's by identity; the isle's walkthrough kneels with `useShrine` directly (§9.2, #753's 16).
+
+Owed, from I6 (#754):
+
+- **Two under, the east rim is won every time:** 100% of fights at 26, where the gate wants no more
+  than a quarter (limit 90%). It is owed to #18 as H6's is (`hearthisle_i6: under`, `OWED` in
+  `tools/tests/gate.ts`). The issue's "one at 26 no more than one in four" is not met: stronger
+  monsters are barred and fewer groups would not lower it (§9.2, #754's 11). The owner's or #18's.
+- **The pay is behind its share:** the four groups pay 2,908 xp a member against a twelfth, 3,911:
+  0.74. The area's running total, 14,850 of the 46,934, is behind its shares. No floor on a box's
+  share is checked, and more or stronger groups were not the brief's (§8; §9.2, #754's 12). The
+  owner's call.
+- **The builder's own:** `i6_keel` and `i6_wyke` are the builder's words, and the cell at 4,18 is a
+  building square, not rock. The art check holds I6 at its cap of 50%, so dressing one more wall
+  face or taking the cell out fails it (§9.2, #754's 1 and 2).
+- **The anchoress** is #763's: Hereswith goes at 4,19, in the yard under the cell's window, and
+  nothing of hers is placed. I6's map reads neither of the crypt's flags (`ELEVEN_KEPT`, `LOG_GIVEN`)
+  and exports none: her hand-in will set `q_eleven_log`, owed in `UNSET` (§9.2, #756's 6).
+- **`q_throne_removed`** is set on main by the Council (#774), so nothing is owed for it: the camp's
+  guard carries the leave rule, and the walkthrough plays it with the flag set by hand (§9.2, #754's 6).
+- **The gear's rung** is #746's: the Grey Staff and the Grey Mail (`greyStaff`, `greyMail`) are built
+  here (`src/content/areas/hearth/items.ts`), and #746 takes them into the rung (§9.2, #754's 8).
 
 Owed, from Hearthfane (#755):
 
@@ -2939,13 +3065,13 @@ Owed, from the Stair (#758):
 
 Owed, from the Heart (#759):
 
-- **The area's clear falls short of its budget:** 40,038 xp a member of the 46,934 (85.3%), 6,896
-  short, and 6,500 gold of the 28,320, 21,820 short, with I6 (#754) not built. The curve counts both
-  of Vask's groups and none of the sentries, and a clear fights one group: as played it pays 35,820
-  (76.3%), with up to 1,644 of sentries, or 38,728 (82.5%) with I6's 2,908. The Ways and the Stair
-  fell short of their shares (0.93 and 0.90), and the Heart pays over its eighth in the curve (8,846
-  against 5,867) and, as played, 4,629 to 6,273. No group is added and no monster strengthened: the
-  row's `owed` stays at the as-built floor (§8; §9.2, #759's 9). The owner's call.
+- **The area's clear falls short of its budget:** 42,946 xp a member of the 46,934 (91.5%), 3,988
+  short, and 8,200 gold of the 28,320, 20,120 short. The curve counts both of Vask's groups and none
+  of the sentries, and a clear fights one group: as played it pays 38,728 (82.5%), with up to 1,644
+  of sentries. The rim, the Ways and the Stair fell short of their shares (0.74, 0.93 and 0.90), and
+  the Heart pays over its eighth in the curve (8,846 against 5,867) and, as played, 4,629 to 6,273.
+  No group is added and no monster strengthened: the row's `owed` stays at the as-built floor (§8;
+  §9.2, #759's 9). The owner's call.
 - **Vask's `OFF_LINE` and the gate's two rules are #752's to finalise:** `OFF_LINE.vask`, 1,800 hit
   points and 22d8+23, and `BOSSES.hearthisle` with `core:core_vask` and `core:core_vask_thinned`,
   the rule that a map of nothing but its boss is judged on the boss's odds and the rule that a boss
@@ -2959,7 +3085,7 @@ Owed, from the Heart (#759):
 - **Two checks outside the content lane are loosened:** `tools/tests/people.ts` lets a parley be
   nothing but its refusal, and Rimewater's walkthrough counts its lock on its own map and not on the
   road (§9.2, #759's 14 and 15). Both are the owner's to overturn.
-- **Two under, the area's pool is won nearly every time:** 91.7% of 35 groups' fights at 26, owed to
+- **Two under, the area's pool is won nearly every time:** 92.5% of 39 groups' fights at 26, owed to
   #18 as before (`Hearth Isle: under`, `OWED` in `tools/tests/gate.ts`). The Heart's own row reads
   n/a.
 - **The road behind is #765's:** `q_wenna_home`, which ends Wenna's words at 7,4 (her `until`), and
