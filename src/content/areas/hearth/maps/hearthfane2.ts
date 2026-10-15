@@ -66,10 +66,10 @@ export const HEARTHFANE2: MapDef = {
     // The round chamber and its eleven niches, each a lamp in the wall; the Cleric's third keeps them.
     { kind: 'event', x: 8, y: 8, id: 'hf2_niches', once: true, text: 'Eleven niches round the chamber, and in each a lamp, cold. Over them, cut in the old hand: ONCE FOR EACH, AND THE GAPS BETWEEN.' },
     { kind: 'event', x: 8, y: 7, id: 'hf2_eleven', once: true, after: { flag: LOG_GIVEN }, sets: ELEVEN_KEPT, text: 'You light the eleven as the log has them, a grace between each, the pairs even. On the eleventh the hum changes key, and holds.' },
-    { kind: 'chest', x: 10, y: 10, id: 'hf2_cups', gold: 600, items: [] },
+    { kind: 'chest', x: 10, y: 10, id: 'hf2_cups', gold: 1800, items: [] },
     // The side vault, where the Hand laid its dead, and the pack of one of them.
     { kind: 'event', x: 2, y: 7, id: 'hf2_dead', once: true, text: 'Three of the Hand dead in the side vault, laid in a row by their own. Whatever caught them did it below, and they were carried up to here, and no further.' },
-    { kind: 'chest', x: 1, y: 8, id: 'hf2_pack', gold: 200, items: ['grey_robe'] },
+    { kind: 'chest', x: 1, y: 8, id: 'hf2_pack', gold: 1100, items: ['grey_robe'] },
     // The chamber's north door on the passage: the keeper, and the Hand's last man up here beside it.
     { kind: 'event', x: 8, y: 4, id: 'hf2_last', once: true, text: 'The passage, and in it the Hand\'s last man up here, dead on his feet.' },
     // The grey door down, and her knot on its frame.
@@ -80,8 +80,12 @@ export const HEARTHFANE2: MapDef = {
   encounters: [
     // The Hand's best in the chamber, never roaming; the rats in the side vault, come up for the dead;
     // and the keeper at the grey door, the first machine met on the isle, the Hand's last man beside it.
+    // Up through the door she left open (#794): more rats, at the chamber's dead and the Hand's, and keepers.
     { id: 'hf2_champions', x: 8, y: 10, monsters: many(3, 'ashen_champion'), aware: 2, roams: false, respawn: 2880 },
     { id: 'hf2_rats', x: 2, y: 9, monsters: many(10, 'deep_rat'), aware: 3, respawn: 1440 },
     { id: 'hf2_keeper', x: 8, y: 3, monsters: ['keeper', 'ashen_champion'], aware: 2, roams: false, respawn: 2880 },
+    { id: 'hf2_rats2', x: 11, y: 8, monsters: many(12, 'deep_rat'), aware: 3, respawn: 1440 },
+    { id: 'hf2_keepers', x: 6, y: 6, monsters: many(4, 'keeper'), aware: 2, roams: false, respawn: 2880 },
+    { id: 'hf2_rats3', x: 3, y: 6, monsters: many(12, 'deep_rat'), aware: 3, respawn: 1440 },
   ],
 };

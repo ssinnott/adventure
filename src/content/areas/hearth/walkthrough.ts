@@ -119,7 +119,7 @@ export const walkthrough: Walkthrough = (ok) => {
   fight(w, 'hearthisle_h6:h6_picket2');
   see(w, 'hearthisle_h6:h6_bowl');
   const chest = H6.features!.find((f) => f.kind === 'chest' && f.id === 'h6_picket_chest');
-  ok(chest?.kind === 'chest' && chest.items.includes('grey_knife') && chest.gold === 300, 'in the picket\'s chest at the cleft\'s head, 300 gold and a Grey Knife');
+  ok(chest?.kind === 'chest' && chest.items.includes('grey_knife') && chest.gold === 700, 'in the picket\'s chest at the cleft\'s head, 700 gold and a Grey Knife');
 
   // The camp in the lee of the rim: its fires, the isle's rest; its three tents round a yard, each a door
   // into its room; and the pilgrims' shrine.
@@ -183,8 +183,8 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(opens && inside.every((r) => r.kind === 'moved') && w.world.used('h6_cache'), 'searched at the draught, the rock opens, and the hollow behind it is walked into');
   listen(w);
   const lamp = H6.features!.find((f) => f.kind === 'chest' && f.id === 'h6_lamp');
-  ok(lamp?.kind === 'chest' && lamp.gold === 400 && lamp.items.filter((i) => i === 'smelling_salts').length === 3 && lamp.x === door.x && lamp.y === door.y - 2,
-    'in the cache, 400 gold and three Smelling Salts');
+  ok(lamp?.kind === 'chest' && lamp.gold === 1000 && lamp.items.filter((i) => i === 'smelling_salts').length === 3 && lamp.x === door.x && lamp.y === door.y - 2,
+    'in the cache, 1,000 gold and three Smelling Salts');
 
   // The moths by night: over the Bowl, and on the strand and the Bowl's north, gone by day.
   const moths = H6.encounters!.filter((g) => g.monsters.includes('hearth_moth'));
@@ -237,7 +237,7 @@ export const walkthrough: Walkthrough = (ok) => {
   fight(w, 'hearthisle_i6:i6_guard2');
   for (const id of ['i6_camp', 'i6_crates', 'i6_steps']) see(w, `hearthisle_i6:${id}`);
   const staff = I6.features!.find((f) => f.kind === 'chest' && f.id === 'i6_camp_chest');
-  ok(staff?.kind === 'chest' && staff.gold === 500 && staff.items.join() === 'grey_staff' && w.world.used('i6_steps'), 'in the camp\'s chest, 500 gold and a Grey Staff; the causeway comes up out of the sea at the Steps');
+  ok(staff?.kind === 'chest' && staff.gold === 700 && staff.items.join() === 'grey_staff' && w.world.used('i6_steps'), 'in the camp\'s chest, 700 gold and a Grey Staff; the causeway comes up out of the sea at the Steps');
 
   // The grey door at the camp's back, read from the grass below it: no exit, and no lock.
   see(w, 'hearthisle_i6:i6_door');
@@ -256,7 +256,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(found && into.every((r) => r.kind === 'moved') && w.world.used('i6_takings'), 'searched behind the tally-house, the rock opens, and the pocket behind it is walked into');
   listen(w);
   const rimHoard = I6.features!.find((f) => f.kind === 'chest' && f.id === 'i6_hoard');
-  ok(rimHoard?.kind === 'chest' && rimHoard.gold === 1200 && rimHoard.items.join() === 'grey_mail' && rimHoard.x === pocket.x - 2 && rimHoard.y === pocket.y, 'in the Hand\'s hoard, 1,200 gold and the Grey Mail');
+  ok(rimHoard?.kind === 'chest' && rimHoard.gold === 1700 && rimHoard.items.join() === 'grey_mail' && rimHoard.x === pocket.x - 2 && rimHoard.y === pocket.y, 'in the Hand\'s hoard, 1,700 gold and the Grey Mail');
 
   // The moths over Anchorhold's yard by night.
   ok(JSON.stringify(I6.encounters!.find((g) => g.id === 'i6_moths')?.when) === JSON.stringify({ hours: 'night' }), 'the moths come over the yard by night');
@@ -351,8 +351,8 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(treasury() === 'moved' && w.world.state.x === 11 && w.world.state.y === 10, 'the treasury\'s door opens to the sacristan\'s key');
   see(w, 'hearthfane:hf_treasury');
   const hoard = TEMPLE.features!.find((f) => f.kind === 'chest' && f.id === 'hf_offerings');
-  ok(hoard?.kind === 'chest' && hoard.gold === 2000 && hoard.items.join() === 'grey_blade,grey_bow' && hoard.x === 13 && hoard.y === 11,
-    'in the treasury the pilgrims\' offerings, 2,000 gold, and the Hand\'s steel: a Grey Blade and a Grey Bow');
+  ok(hoard?.kind === 'chest' && hoard.gold === 3000 && hoard.items.join() === 'grey_blade,grey_bow' && hoard.x === 13 && hoard.y === 11,
+    'in the treasury the pilgrims\' offerings, 3,000 gold, and the Hand\'s steel: a Grey Blade and a Grey Bow');
 
   // Up the nave past the Hand's best to the court and the altar, each group won at 28; the court's second
   // group gone once the Council has removed Vask from Helmstow, standing or not.
@@ -393,15 +393,15 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(!!c.party.flags[ELEVEN_KEPT], 'with it given, the eleven lit as the log has them keep the hum');
   const find = (id: string) => CRYPT.features!.find((f) => f.kind === 'chest' && f.id === id);
   const cups = find('hf2_cups'), pack = find('hf2_pack');
-  ok(cups?.kind === 'chest' && cups.gold === 600 && !cups.items.length && cups.x === 10 && cups.y === 10,
-    'in the chamber the pilgrims\' cups, 600 gold');
+  ok(cups?.kind === 'chest' && cups.gold === 1800 && !cups.items.length && cups.x === 10 && cups.y === 10,
+    'in the chamber the pilgrims\' cups, 1,800 gold');
 
   // The side vault off the chamber's west: the Hand's dead, the rats come up for them, and a dead
   // champion's pack with the Hand's robe in it.
   see(w, 'hearthfane2:hf2_dead');
   fight(w, 'hearthfane2:hf2_rats');
-  ok(pack?.kind === 'chest' && pack.gold === 200 && pack.items.join() === 'grey_robe' && pack.x === 1 && pack.y === 8,
-    'in the side vault the dead champion\'s pack, 200 gold and a Grey Robe');
+  ok(pack?.kind === 'chest' && pack.gold === 1100 && pack.items.join() === 'grey_robe' && pack.x === 1 && pack.y === 8,
+    'in the side vault the dead champion\'s pack, 1,100 gold and a Grey Robe');
 
   // Through the chamber's north door the keeper, the first machine on the isle, with the Hand's last man
   // beside it; her knot on the grey door's frame, the chapter's next step (#760); and the grey door,

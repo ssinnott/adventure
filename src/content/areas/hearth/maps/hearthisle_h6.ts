@@ -96,8 +96,8 @@ export const HEARTHISLE_H6: MapDef = {
     // The cleft, the one way up through the rim: its mouth, and its head at the Bowl's edge.
     { kind: 'event', x: 20, y: 27, id: 'h6_cleft', once: true, text: 'A path worn into the rim\'s rock, one person wide, by four hundred years of feet. Shoes stand at its foot in pairs, left for the walk up.' },
     { kind: 'event', x: 20, y: 22, id: 'h6_bowl', once: true, text: 'The Bowl: a green cup inside the rim, and the column standing out of its north end. The grass is warm.' },
-    // In the cleft's head, the Hand's picket's chest: the knife it was issued.
-    { kind: 'chest', x: 21, y: 22, id: 'h6_picket_chest', gold: 300, items: ['grey_knife'] },
+    // In the cleft's head, the Hand's picket's chest: the knife it was issued, and its pay.
+    { kind: 'chest', x: 21, y: 22, id: 'h6_picket_chest', gold: 700, items: ['grey_knife'] },
     // The pilgrims' camp, the isle's rest (§9, call 4): its fires, its three tents round a yard, each a
     // business with a room of its own (#762), and the pilgrims' shrine at the yard's east side.
     { kind: 'camp', x: 16, y: 17, name: 'The pilgrims\' camp', text: 'The pilgrims\' fires in the lee of the rim, banked low. Nobody here has slept since the Hand landed, and they make room without a word.' },
@@ -135,6 +135,8 @@ export const HEARTHISLE_H6: MapDef = {
     // Hearthfane's door in the mound's south face, 18,14, the way into its nave (#755). Before it, the
     // temple seen.
     { kind: 'event', x: 18, y: 15, id: 'h6_front', once: true, text: 'A temple of the rim\'s own rock, built round the column\'s foot. Its door stands open, and the Hand\'s grey is on the men at it.' },
+    // Behind the preacher at the door, the Hand's toll: what it took off the pilgrims going up (#794).
+    { kind: 'chest', x: 20, y: 13, id: 'h6_toll', gold: 1200, items: [] },
     // The Hearth on the Bowl's grass east of the mound: the column's foot, the warm ground between, and
     // the Grove's sliver humming again for a company that carries it (#56's 18).
     { kind: 'sign', x: 24, y: 16, text: 'The column of light. It stands out of the ground here as a tree stands, wider than the temple\'s door, and goes up until the sky stops it. Looking up at it hurts.' },
@@ -148,7 +150,7 @@ export const HEARTHISLE_H6: MapDef = {
     // cache in the hollow behind it, carved: the old lamp seen, and the salts and the gold taken.
     { kind: 'event', x: 26, y: 8, id: 'h6_draught', once: true, text: 'A draught comes out of the rock here, warm, and smelling of oil.' },
     { kind: 'event', x: 26, y: 6, id: 'h6_cache', once: true, text: 'A hollow the size of a cupboard, and in it a lamp of grey metal that burns without oil, four hundred years lit.' },
-    { kind: 'chest', x: 26, y: 5, id: 'h6_lamp', gold: 400, items: ['smelling_salts', 'smelling_salts', 'smelling_salts'] },
+    { kind: 'chest', x: 26, y: 5, id: 'h6_lamp', gold: 1000, items: ['smelling_salts', 'smelling_salts', 'smelling_salts'] },
   ],
   secrets: [{ x: 26, y: 7, hint: 'h6_draught' }],
   encounters: [

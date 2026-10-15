@@ -121,21 +121,28 @@ export const HEARTHFANE: MapDef = {
     },
     // The treasury, behind its door: the pilgrims' offerings, and the Hand's steel left among them.
     { kind: 'event', x: 13, y: 10, id: 'hf_treasury', once: true, text: 'The pilgrims\' offerings of four hundred years, in heaps. Among them, the Hand\'s own gear, laid down here and not taken up again: steel from below.' },
-    { kind: 'chest', x: 13, y: 11, id: 'hf_offerings', gold: 2000, items: ['grey_blade', 'grey_bow'] },
+    { kind: 'chest', x: 13, y: 11, id: 'hf_offerings', gold: 3000, items: ['grey_blade', 'grey_bow'] },
     // The court at the nave's head, open to the column; its arch, and the altar with the stair behind it.
     { kind: 'event', x: 8, y: 4, id: 'hf_court', once: true, text: 'The court, open to the sky, and the column coming down into it through the east arch. It is too bright to look at and too close to look away from.' },
     { kind: 'sign', x: 11, y: 3, text: 'The arch gives on the column\'s foot. The stone of the arch is glassed where the light has touched it, four hundred years of mornings.' },
+    // Under the arch, where the light comes in, the Hand's own offering to it, left with a guard on it (#794).
+    { kind: 'chest', x: 11, y: 2, id: 'hf_tithe', gold: 1100, items: [] },
     { kind: 'event', x: 8, y: 3, id: 'hf_altar', once: true, text: 'An altar of the rim\'s rock, worn hollow where hands have lain on it. Behind it, a stair goes down, and the Hand\'s boot-marks go down it.' },
   ],
   encounters: [
     // The moths at the nave's foot while the lamps burn, and the swarm a wrong lamp brings: both go to the
     // light once the last is out, standing or not (the leave rule, #747). The Hand's best up the nave and
     // in the court, its hardest, never roaming; the court's second group goes once Vask is gone from
-    // Helmstow by the Council's verdict.
+    // Helmstow by the Council's verdict. The garrison's rest (#794): two at the treasury's door, waiting on a
+    // key, and three in each of the court's corners but the altar's.
     { id: 'hf_moths', x: 8, y: 12, monsters: many(12, 'hearth_moth'), aware: 3, respawn: 720, until: { flag: LAMPS_OUT }, leaves: true },
     { id: 'hf_champions', x: 8, y: 8, monsters: many(4, 'ashen_champion'), aware: 2, roams: false, respawn: 2880 },
     { id: 'hf_sermon', x: 8, y: 5, monsters: [...many(3, 'ashen_champion'), 'ashen_preacher'], back: 1, aware: 3, roams: false, respawn: 2880 },
     { id: 'hf_second', x: 6, y: 4, monsters: [...many(2, 'ashen_champion'), 'ashen_preacher'], back: 1, aware: 2, roams: false, respawn: 2880, until: { flag: THRONE_REMOVED }, leaves: true },
+    { id: 'hf_nave2', x: 9, y: 11, monsters: many(2, 'ashen_champion'), aware: 2, roams: false, respawn: 2880 },
+    { id: 'hf_court1', x: 5, y: 2, monsters: many(3, 'ashen_champion'), aware: 2, roams: false, respawn: 2880 },
+    { id: 'hf_court2', x: 10, y: 2, monsters: many(3, 'ashen_champion'), aware: 2, roams: false, respawn: 2880 },
+    { id: 'hf_court3', x: 11, y: 5, monsters: many(3, 'ashen_champion'), aware: 2, roams: false, respawn: 2880 },
     { id: 'hf_swarm', x: 8, y: 9, monsters: many(12, 'hearth_moth'), aware: 3, respawn: 720, after: { flag: LAMPS_WRONG }, until: { flag: LAMPS_OUT }, leaves: true },
   ],
 };

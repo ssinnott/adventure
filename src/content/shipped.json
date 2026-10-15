@@ -755,6 +755,7 @@
         "h6_shrine",
         "h6_sliver",
         "h6_strand",
+        "h6_toll",
         "h6_warm",
         "h9_cairn",
         "h9_chest",
@@ -1747,10 +1748,12 @@
         "i5_brood2",
         "i5_keepers",
         "i5_rootwalkers",
+        "i6_foot",
         "i6_guard",
         "i6_guard2",
         "i6_moths",
         "i6_rim",
+        "i6_watch",
         "i8_eagles",
         "i8_foreman",
         "i8_masons",
@@ -2461,12 +2464,17 @@
         "hf_nave",
         "hf_offerings",
         "hf_pillars",
+        "hf_tithe",
         "hf_treasury",
         "hf_vestry"
       ],
       "groups": [
         "hf_champions",
+        "hf_court1",
+        "hf_court2",
+        "hf_court3",
         "hf_moths",
+        "hf_nave2",
         "hf_second",
         "hf_sermon",
         "hf_swarm"
@@ -2488,7 +2496,10 @@
       "groups": [
         "hf2_champions",
         "hf2_keeper",
-        "hf2_rats"
+        "hf2_keepers",
+        "hf2_rats",
+        "hf2_rats2",
+        "hf2_rats3"
       ],
       "doors": []
     },
