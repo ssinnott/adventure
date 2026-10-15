@@ -128,7 +128,7 @@ export function harness(): void {
   const fought = (ls: number[]) => ls.map((l) => ({ l, d: days(l, [standardEncounter('soldier', l)], 40, 5001) }));
   const four = fought([23, 24, 25, 26, 27]), five = fought([28, 29, 30, 31, 32]);
   const near = ({ l, d }: (typeof four)[number]): boolean => Math.abs(d.fights - fightsPerRest(l)) <= 1.5;
-  const say = (act: typeof four): string => act.map(({ l, d }) => `${d.fights.toFixed(1)} at ${l} (${fightsPerRest(l)})`).join(', ');
+  const say = (rows: typeof four): string => rows.map(({ l, d }) => `${d.fights.toFixed(1)} at ${l} (${fightsPerRest(l)})`).join(', ');
   ok(four.every(near), `through Act IV a company fights about its own of 4 Test Soldiers between rests: ${say(four)}`);
   ok(five.every(near), `and through Act V, in the Hand's steel, about its own: ${say(five)}`);
   // A test monster's encounter pays what the curve gives a group at the built areas' pinned pace (docs/MONSTERS.md §4.4).

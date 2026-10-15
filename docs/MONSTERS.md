@@ -547,8 +547,8 @@ calibration:
   two levels under it wins half the time (EXPANSION.md §5.2).
 - It is made at every level to 10, every fourth level to 32, every level of Act III, every level
   of Act IV from 24 and Act V's 28, 30 and 32, 300 seeds a point (200 for the levels past 10, made
-  again with #20, #541, #549 and #752), with the levels between interpolated. Past 10 the company runs on play's rules: its spells
-  stop growing at 10 (#159), it takes its prestiges at 11, 19 and 27 with their hit points, spell
+  again with #20, #541, #549 and #752), with the levels between interpolated. Past 10 the company
+  runs on play's rules: its spells stop growing at 10 (#159), it takes its prestiges at 11, 19 and 27 with their hit points, spell
   points and perks (#19), and with them its spell ranks, and it learns tiers 6 and 7 at 15 and 23
   (#20). It wears the ladder's gear: Act II's steps were in when the levels past 10 were made again
   (#399, #18), Act III's when the levels past 16 were (#535, #541), each of 17 to 22 on its own,
@@ -1662,8 +1662,8 @@ the test elite and soldier at 31, line for line Vask, the Grey Hands and the Cor
 seeds at 32: the gate's bot wins 10% killing the Hands first, 16% going for Vask and 5% fighting
 the sentries as they come, against 23% with no clock; the harness's bot, its fights cut at fifteen
 rounds, 14%, 31% and 21% (`node tools/harness.ts --abilities --seeds 200`). The clock halves the odds as the
-plan has it, two in three to one in three, but the whole stands far under them: Vask's size is
-#761's and the run to 32 #752's. The bots find Vask first the better play, since his fall stops the
+plan has it, two in three to one in three, but the whole stood far under them on the test monsters: Vask's size was
+set by the Heart's gate (#759) and the run to 32 settled by #752 (§4.4). The bots find Vask first the better play, since his fall stops the
 calls and stands the sentries down.
 
 Nine on frames that exist are drawn (#761). The Hearth

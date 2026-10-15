@@ -1758,7 +1758,7 @@ issue tunes them on the gate (§8).
 
 **Vask's sizing** (#759; §9.2, #759's 7). The line's Vask, 1,922 hit points and 32d8+33, is won 10%
 of 400 seeds at 32 with the Grey Hands killed first, 11% going for him first, 3% with the sentries
-fought as they come and 56% with no clock; his thinned group 16%. `OFF_LINE.vask` sets him at 1,800
+fought as they come and 56% with no clock; his thinned group 16%. `OFF_LINE.vask` then set him at 1,800
 and 22d8+23, and the plays come to 65% with the Hands first (the gate's hundred seeds: 65%; aim 30%
 to 70%), 64% going for him first (61%), 45% as the sentries come (46%) and 91% with no clock (95%);
 the thinned group 74% (68%); with the Hands first at 31, 47%. The tries, in percent of 400 seeds:
@@ -2040,7 +2040,7 @@ of Vask's groups and none of the sentries, and a clear fights one group:
 | Gate, at the floor 32 | the Heart is judged on its boss's odds alone, its every group being a boss (§9.2, #759's 8); the area's 39 groups at their maps' floors 97.2% of fights won (aim 90%, limit 80%) |
 | Vask | `core_vask` 64% won at 32 (aim 30% to 70%, limit 20% to 80%), `core_vask_thinned` 77%; two above the floor n/a, past the cap. His four plays on 400 seeds (the gate's hundred), on the line made again with the sentries at 890 hit points (#752): the Hands first 66% (64%), Vask first 72% (69%), the sentries as they come 28% (28%), no clock 87% (83%); the tries are in §7 |
 | Gate, two under | n/a for the Heart, its floor being above the area's; the area's pool at 26, 92.5% of 39 groups' fights won (aim 25%, limit 90%): owed to #18 (§11) |
-| Fights to a rest | n/a in the gate, the Heart holding nothing but its boss; on the test monsters at 32 (`node tools/harness.ts --abilities`, the line made again by #752): the Hands first 12.1 rounds, won 14%, 2.3 sentries called, the light 5.1 of 8 steps down; the lord first 10.6 rounds, won 28%, 2.5 sentries, 5.5 of 8; the sentries as they come 11.6 rounds, won 17%, 2.5 sentries, 5.5 of 8; Vask's own group, on the gate's bot, 64%, 69%, 28% and 83% with no clock |
+| Fights to a rest | n/a in the gate, the Heart holding nothing but its boss; on the test monsters at 32 (`node tools/harness.ts --abilities`, the line made again by #752): the Hands first 12.1 rounds, won 14%, 2.3 sentries called, the light 5.1 of 8 steps down; the lord first 10.6 rounds, won 28%, 2.5 sentries, 5.5 of 8; the sentries as they come 11.6 rounds, won 17%, 2.5 sentries, 5.5 of 8; Vask's own group, on the gate's bot (`--abilities --seeds 100`, the gate's hundred: the default 200 prints 70, 71, 29 and 87), 64%, 69%, 28% and 83% with no clock |
 | Walkthrough | `core:core_vask` won at 32 in 60% of its ten seeds, 70% with the clock left to run (with no round cap) |
 | Density, dungeon | 100.0% within 7 steps (90 of 90, 81 needed); the furthest 7 of 10; no sign in 12 points |
 | Levels | 2 monsters in 32, give or take two; the nearest group, `core_vask` at 9 steps, at 31.3; the hardest, `core_vask_thinned` at 9 steps, at 31.3 (at least 30) |
@@ -3006,7 +3006,7 @@ Decided by delegate for #759, each the owner's to overturn:
    its floor or at the cap where that is as high as it goes: at its floor alone where the floor is
    the cap, as #745 waived the curve's rise at the cap. The gate reprinted before and after moves no
    figure (only the Heart's two n/a lines read *above its floor* now). Outside the content lane:
-   #752's to confirm.
+   confirmed by #752's 6.
 9. **The owed row stays at the curve's as-built floor,** `xp: 42946, gold: 8200`, `whose: '#744'`,
    its `why` that the Heart is built and a clear falls short by 3,988 xp a member and 20,120 gold:
    the crypt, the temple, the rim, the Stair and the Ways fell short of their xp shares (0.42, 0.74,
@@ -3090,8 +3090,9 @@ Decided by delegate for #746, each the owner's to overturn:
    it.* (61), so a found rung counts an answer that gives it; earlier rungs keep chests and drops.
 5. **None is owed:** every piece is placed, so each `from` is `['hearth', '']`, with the box's issue
    (#753 to #758) beside it.
-6. **What the rung moves past a limit is owed to #752, no monster retuned:** in `OWED` the crypt's
-   15.74 fights to a rest at 29 and Vask's thinned group's 89%; the harness's 12.8 at 28.
+6. **What the rung moved past a limit was owed to #752, no monster retuned:** in `OWED` the crypt's
+   15.74 fights to a rest at 29 and Vask's thinned group's 89%; the harness's 12.8 at 28. Settled
+   by #752's 2.
 7. **The staff's holiness is its words:** the issue's table has it *holy*; the item carries no
    element (#757's 9), and the rung takes it as built. Every other figure is the table's.
 
@@ -3136,8 +3137,8 @@ Decided by delegate for #765 (half B: Gullwick and the rest), each the owner's t
 Decided by delegate for #752, each the owner's to overturn:
 
 1. **The line is made again at 28, 30 and 32 in the Hand's steel, and `LEVELS` gains 30:** `node
-   tools/harness.ts --calibrate --write --levels 28,30,32`, 200 seeds a point (seeds 1 to 200, as the
-   tool seeds them), about 25 minutes on four cores. Every factor under 28 is as it was.
+   tools/harness.ts --calibrate --write --levels 28,30,32`, 200 seeds a point, about 25 minutes on
+   four cores; every factor under 28 is as it was.
 2. **The harness's company fights 10.6 to a rest at 28, rising to 11.7 at 32,** where 28 was owed at
    12.8. `OWED` loses #752's two: the crypt fights 14.16 at 29 and Vask's thinned group is won 77%.
 3. **The isle's monsters on the line are restated on it,** keeping id, look, sprite, level and xp.
@@ -3149,7 +3150,8 @@ Decided by delegate for #752, each the owner's to overturn:
 6. **The Heart's two gate rules are kept and written down** (EXPANSION §5.2, MONSTERS §1); `rate`
    keys its cache on a group's clock too, which moves no figure.
 7. **`--abilities` reports the Heart as built on the gate's bot,** which the plan sizes Vask by: 64,
-   69, 28 and 83% with no clock. The thrifty bot keeps its spells, and lets the clock run at 66%.
+   69, 28 and 83% with no clock (`--seeds 100`, the gate's hundred; the default 200 prints 70, 71, 29
+   and 87). The thrifty bot keeps its spells, and lets the clock run at 66%.
 8. **The armoured at 29 and 31, read between, run long** (47 and 52% of days end badly) where the
    line's armour rounds up; no armoured monster stands there, and the line is not nudged.
 

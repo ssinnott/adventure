@@ -352,7 +352,7 @@ const rates = new Map<string, number>();
  * clock and that weather, each computed once: the maps and their areas share them.
  */
 export function rate(g: Pick<EncounterDef, 'monsters' | 'back' | 'leader' | 'when' | 'under' | 'clock'>, level: number): number {
-  const opts = gateOpts(g), key = `${g.monsters.join(',')}/${g.back ?? 0}/${g.leader ?? ''}/${g.under ?? ''}/${g.clock ? 'clock' : ''}@${level}~${opts.rangedPenalty ?? 0}`;
+  const opts = gateOpts(g), key = `${g.monsters.join(',')}/${g.back ?? 0}/${g.leader ?? ''}/${g.under ?? ''}/${g.clock ? JSON.stringify(g.clock) : ''}@${level}~${opts.rangedPenalty ?? 0}`;
   let r = rates.get(key);
   if (r === undefined) { r = winRate(level, g, SEEDS, ROUND_CAP, opts); rates.set(key, r); }
   return r;
@@ -665,6 +665,14 @@ export function gate(): void {
         const boss = groups.find((e) => `${d.id}:${e.id}` === b);
         if (!boss) continue;
         const at = rate(boss, d.band[0]);
+        // The sentries' lever (#752): Vask's own group with the clock let run (the bots take the called first) is
+        // won about one in three, the plan's figure, which holds only on sentries of twice the soldier line's hit points.
+        if (b === 'core:core_vask') {
+          ANSWER.clock = 'called';
+          const run = winRate(d.band[0], boss, SEEDS, ROUND_CAP, gateOpts(boss));
+          ANSWER.clock = 'panel';
+          ok(run >= 0.2 && run <= 0.45, `${b}: the clock let run at ${d.band[0]}: ${pc(run)} won (the plan's one in three: 20% to 45%)`);
+        }
         check(`${b}: floor`, at, within(GATE.boss.aim), within(GATE.boss.limit), `${d.id}'s boss ${boss.id} at ${d.band[0]}: ${pc(at)} won (${aims(`${pc(GATE.boss.aim[0])} to ${pc(GATE.boss.aim[1])}`, `${pc(GATE.boss.limit[0])} to ${pc(GATE.boss.limit[1])}`)})`);
         // The company two above the floor, or at the cap where that is as high as it goes (a boss at 31 meets 32);
         // a boss at the cap itself is judged at its floor alone (#759).
