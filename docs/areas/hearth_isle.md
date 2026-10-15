@@ -173,22 +173,25 @@ Seven places. The isle (#753) is the area's first and lists the area; the east r
   Bowl's east pocket through the rock to Anchorhold's yard, under the cell built into the rim and
   out to the east foot; the Hand's camp at the Steps, where the causeway lands, with its crates, its
   tally-house and its chest; the grey door in the rock, read and never opened; behind the
-  tally-house the secret door, the Hand's takings and the hoard. Four groups: champions in the
+  tally-house the secret door, the Hand's takings and the hoard. Six groups: champions in the
   pocket where the path begins, moths over the yard by night, the camp's guard and two champions at
-  the stair's head (§4.3).
+  the stair's head, and off the road champions on the east foot and the Hand's watch over the Wyke
+  (§4.3; #794).
 - **The temple** (Hearthfane, `hearthfane`, dungeon 16×16, band 28–29; #755): in at its door in the
   mound on H6 (18,14), at the nave's foot; out by the door in its south wall. The nave runs north
   with a lamp in each corner and the moths about them; the vestry off its west, where the sacristan
   hides under the table (56); the treasury off its east, behind a door his key opens and nothing
   else; the court at its head, open to the column, with the Hand's best in it; the altar, with the
-  stair down behind it to the crypt (#756). Five groups: the moths, the nave's champions, the
-  sermon, the court's second group and the swarm a wrong lamp brings (§4.4).
+  stair down behind it to the crypt (#756). Nine groups: the moths, the nave's champions, the
+  sermon, the court's second group, the swarm a wrong lamp brings and the garrison's rest, three
+  more threes in the court and two on the nave's treasury side (§4.4; #794).
 - **The crypt** (`hearthfane2`, dungeon 16×16, band 29; #756): down the stair behind the altar, to
   its foot at 8,14; a passage north to a round chamber, its eleven niches told in `hf2_niches` and
   the champions at its mouth; the side vault off its west, where the Hand's dead lie and the rats
   come up for them; the chamber's north door and a short passage with a keeper in it and the Hand's
   last man beside it; the grey door at its head, with Wenna's knot on the frame, which gives down
-  onto the Ways (#757). Three groups: the chamber's champions, the rats and the keeper's (§4.5).
+  onto the Ways (#757). Six groups: the chamber's champions, the rats and the keeper's, and what
+  came up through the grey door, rats twice and four keepers (§4.5; #794).
 - **The Ways** (`underdeep`, dungeon 32×32, band 30; #757): in through the crypt's grey door, at the
   main way's foot, 16,30, with the way back up behind it; the main way north, one wide, to the
   Stair's head, and off it every four rows side ways east and west, each ending in a door with
@@ -434,10 +437,11 @@ Lantern's door). It departs from the brief in these squares and lines:
   side on rows 12–20 and 29–30; on rows 19 and 20 H6's grass meets I6's rock as the brief has it,
   and row 0 is rock on H6's side where the brief had it walkable on both sides (#753's 5). I6's west
   edge is laid against it (§4.3).
-- **The finds and the strand.** The picket's chest, `h6_picket_chest` at 21,22, holds 300 gold and the
-  Grey Knife; the cache's chest 400 gold and three Smelling Salts; the champions drop the knife at
-  one in ten (#753's 14). The Compact's runner or the Warden sergeant stands at 23,30, each `after`
-  its own end of the Compact, so never together (#753's 15).
+- **The finds and the strand.** The picket's chest, `h6_picket_chest` at 21,22, holds 700 gold and
+  the Grey Knife; the cache's chest 1,000 gold and three Smelling Salts; the Hand's toll, `h6_toll`
+  at 20,13 behind the preacher at the temple's door, 1,200 gold (#794: 300 and 400 before, and no
+  toll); the champions drop the knife at one in ten (#753's 14). The Compact's runner or the Warden
+  sergeant stands at 23,30, each `after` its own end of the Compact, so never together (#753's 15).
 - **The pilgrims** (57, §6): the quest is `bowl_pilgrims` and all three pilgrims set its met flag,
   `q_bowl_pilgrims` (#753's 1 and 2).
 - **`h6_warm`** (23,14) ends at *The ground here is warm as a hearthstone.* The brief's second
@@ -445,9 +449,10 @@ Lantern's door). It departs from the brief in these squares and lines:
   23,14 and all round the column (#755's 15).
 - **Measured.** A company at 28 wins every fight on the isle and walks its road, the two pickets and
   the sermon, every time. Two under, at 26, it wins every fight too, owed to #18 as every Act IV
-  box's is (#753's 11). The seven groups as written give 12.19 fights to a rest, past the aim and
-  inside the limit (#753's 12). Density 99.7% within 8 steps, the furthest 9, with one sign among its
-  32 points (31 until the temple's door became a door, #755). The figures are in §8.
+  box's is (#753's 11). The seven groups as written give 12.34 fights to a rest (12.19 when built),
+  past the aim and inside the limit (#753's 12). Density 99.7% within 8 steps, the furthest 9, with
+  one sign among its 33 points (31 until the temple's door became a door, #755, and 32 until the
+  toll, #794). The figures are in §8.
 
 ### 4.3 I6, the east rim (core, band 28–29)
 
@@ -546,14 +551,19 @@ and lines:
 - **The groups** are the brief's four at its squares: the champions at 0,17, the moths by night at
   5,20, the camp's guard at 4,24 and the stair's two at 3,26. The rim's group, the guard and the
   stair's two respawn at 2,880 and the moths at 1,440; none is a guardian. The guard is three
-  champions then the preacher, `back: 1`, and leaves on `q_throne_removed` (#754's 6 and 7).
-- **The finds.** The camp's chest `i6_camp_chest` at 6,25 holds 500 gold and the Grey Staff; the
-  hoard 1,200 gold and the Grey Mail, which is the Drakeskin Coat's wearers' (#754's 8).
+  champions then the preacher, `back: 1`, and leaves on `q_throne_removed` (#754's 6 and 7). Two
+  more since #794, off the road: three champions on the east foot under the keel at 10,14
+  (`i6_foot`, roaming, `aware` 3) and four, the Hand's watch over the Wyke, at 2,1 on the rim's
+  north end (`i6_watch`, standing, `aware` 2), both at 2,880 (§9.2, #794's 1).
+- **The finds.** The camp's chest `i6_camp_chest` at 6,25 holds 700 gold and the Grey Staff; the
+  hoard 1,700 gold and the Grey Mail, which is the Drakeskin Coat's wearers' (#754's 8; the gold 500
+  and 1,200 before #794).
 - **Measured.** A company at 28 wins every fight on the rim and walks the isle's road on to the camp
-  every time (#754's 10). Two under, at 26, it wins every fight too, owed to #18 as H6's is
-  (#754's 11). The four groups as written give 11.32 fights to a rest, inside the aim, and pay 0.74
-  of the share (#754's 12). Density 100.0% within 8 steps, the furthest 7, with no sign among its 20
-  points (19 before Hereswith, #763). The figures are in §8.
+  every time (#754's 10). Two under, at 26, it wins every fight too, owed to #18 as H6's is (#754's
+  11). The six groups give 11.63 fights to a rest, inside the aim, and pay 1.09 of the share (the
+  brief's four 11.32 and 0.74, #754's 12; #794). Density 100.0% within 8 steps, the furthest 6, with
+  no sign among its 22 points (19 before Hereswith, #763, and 20 before #794). The figures are in
+  §8.
 
 ### 4.4 Hearthfane, the temple (dungeon, 16×16, band 28–29)
 
@@ -646,15 +656,21 @@ key. The place is
   sermon at 8,5, the second group at 6,4 and the swarm at 8,9. The moths and the swarm respawn at
   720 and the rest at 2,880. The moths and the swarm leave on `q_lamps_out` and the second group on
   `q_throne_removed`; the champions, the sermon and the second group stand. `aware` is 3 for the
-  moths, the swarm and the sermon and 2 for the champions and the second group (#755's 7 and 8). The
-  temple places the moth, the champion and the preacher, all the isle's: no new monster.
-- **The finds.** The chest `hf_offerings` at 13,11 holds 2,000 gold, the Grey Blade and the Grey
-  Bow (#755's 11); the champions' drop, the Grey Knife, is the isle's (#753's 14).
+  moths, the swarm and the sermon and 2 for the champions and the second group (#755's 7 and 8).
+  Four more since #794, the garrison's rest, each standing, `aware` 2, at 2,880: two champions on
+  the nave's treasury side, 9,11 (`hf_nave2`), and three each at 5,2, 10,2 and 11,5 in the court
+  (`hf_court1` to `hf_court3`). The temple places the moth, the champion and the preacher, all the
+  isle's: no new monster.
+- **The finds.** The chest `hf_offerings` at 13,11 holds 3,000 gold, the Grey Blade and the Grey Bow
+  (#755's 11; 2,000 gold before #794); the Hand's tithe `hf_tithe` at 11,2, under the arch with a
+  group of the court beside it, 1,100 gold (#794); the champions' drop, the Grey Knife, is the
+  isle's (#753's 14).
 - **The court** is open to the sky in `hf_court`'s words alone: a dungeon has one ceiling.
 - **Measured.** A company at 28 wins every fight in the temple, each group 100% of ten in the
   walkthrough. Two under, at 26, it wins every fight too, owed to #18 as H6's is (#755's 10). The
-  five groups as written give 8.96 fights to a rest at 28, under the aim and inside the limit
-  (#755's 9). Density 100.0% within 7 steps, the furthest 3, with two signs among its 21 points. The
+  nine groups give 11.27 fights to a rest at 28, inside the aim, where the brief's five gave 8.96,
+  under it (#755's 9; #794). Density 100.0% within 7 steps, the furthest 2, with two signs among its
+  26 points. The
   figures are in §8.
 
 ### 4.5 The crypt (dungeon, 16×16, band 29)
@@ -740,18 +756,22 @@ from the brief in these squares and lines:
   the keeper's at 8,3. `aware` is 2 for the champions and the keeper's group and 3 for the rats;
   the champions and the keeper stand and the rats roam. The champions and the keeper's group
   respawn at 2,880 and the rats at 1,440; the keeper's group is no guardian, no quest naming it and
-  it having no `slainText` (#756's 8). The crypt places the isle's champion and rat and
+  it having no `slainText` (#756's 8). Three more since #794, up through the grey door she left
+  open: twelve rats at the chamber's east, 11,8 (`hf2_rats2`), and in the side vault's north, 3,6
+  (`hf2_rats3`), roaming, `aware` 3, at 1,440; and four keepers at the chamber's north-west, 6,6
+  (`hf2_keepers`), standing, `aware` 2, at 2,880. The crypt places the isle's champion and rat and
   the keeper drawn ahead (#761), the first placed.
-- **The finds.** The chest `hf2_cups` at 10,10 holds 600 gold; the dead champion's pack `hf2_pack`
-  at 1,8 holds 200 gold and the Grey Robe, ac 13 at 6,200 (§8). It has no class list, as the Cinder
-  Robe (ac 12) has none: §8's *the casters* is who wears it, not a bar (#756's 7).
+- **The finds.** The chest `hf2_cups` at 10,10 holds 1,800 gold; the dead champion's pack `hf2_pack`
+  at 1,8 holds 1,100 gold and the Grey Robe, ac 13 at 6,200 (§8; 600 and 200 gold before #794). It
+  has no class list, as the Cinder Robe (ac 12) has none: §8's *the casters* is who wears it, not a
+  bar (#756's 7).
 - **Measured.** A company at 29 wins every fight in the crypt, each group 100% of ten in the
   walkthrough, which walks the eleven twice, shut without the log and kept with it set by hand
   (#756's 13). Two under the gate reads n/a for the crypt: its floor, 29, is above the area's, so
   its groups count in the area's pool at 26, which wins every fight too and is owed to #18 already
-  (#756's 10). The three groups as written give 13.71 fights to a rest at 29, easier than the aim
-  and inside the limit (#756's 9). Density 100.0% within 7 steps, the furthest 4, with one sign
-  among its 13 points. The figures are in §8.
+  (#756's 10). The six groups give 10.46 fights to a rest at 29, inside the aim, where the brief's
+  three gave 13.71, easier than it (#756's 9; #794). Density 100.0% within 7 steps, the furthest 4,
+  with one sign among its 16 points. The figures are in §8.
 
 ### 4.6 The Ways (dungeon, 32×32, band 30)
 
@@ -1924,14 +1944,14 @@ box by box:
 | | Figure |
 |---|---|
 | Xp a member | 5,009 of the 46,934, 10.7%: 1.07 times a tenth, 4,693 (the cap is 1.25, 5,867) |
-| Gold | 700 of the 28,320: the picket's chest 300 and the cache 400; the Hand carries none |
+| Gold | 2,900 of the 28,320, its tenth's 2,832 and more: the picket's chest 700, the cache 1,000 and the toll 1,200 (700 before #794); the Hand carries none |
 | Paid by level | entering at 28 and clearing three quarters, a company leaves at 28.5, 3.5 under the next floor 32 |
 | Dearest find | the Grey Knife, 6,400, in the 7,000 window |
 | Gate, at the floor 28 | 100% of fights won (aim 90%, limit 80%); the seven groups' too |
 | Gate, two under, at 26 | 100% won (at most: aim 25%, limit 90%): owed to #18 (§11) |
 | Gate, the road at 28 | the two pickets and the sermon walked 100% of the time (aim 80%, limit 65%) |
-| Fights to a rest, at 28 | 12.19 (aim 10 to 12, limit 8.5 to 14.5); 8% of days end in a fight broken off |
-| Density, core | 99.7% within 8 steps (318 of 319, 288 needed); the furthest 9 of 15; one sign in 32 points: the temple's door is a door since #755 |
+| Fights to a rest, at 28 | 12.34 (aim 10 to 12, limit 8.5 to 14.5); 8.7% of days end in a fight broken off (12.19 and 8% when built) |
+| Density, core | 99.7% within 8 steps (318 of 319, 288 needed); the furthest 9 of 15; one sign in 33 points: the temple's door is a door since #755 and the toll a chest since #794 |
 | Levels | 4 monsters in 28–29, give or take two; the nearest group, the moths at 2 steps, at 28.0; the hardest, the rats at 17 steps, at 30.0 |
 | Lines | 13 events and signs: 2 of one line, 7 of two and 4 of three: `h6_warm` is one line since #755 |
 
@@ -1940,16 +1960,16 @@ box by box:
 
 | | Figure |
 |---|---|
-| Xp a member | 4,971 against the temple's seventh, 6,705: 0.74 (the groups 4,471; the sacristan's 3,000, split six ways, 500) |
+| Xp a member | 7,084 against the temple's seventh, 6,705: 1.06 (the nine groups 6,584; the sacristan's 3,000, split six ways, 500); 4,971, 0.74, with the brief's five, before #794 |
 | The area so far | 9,980 of the 46,934, 21.3%: H6 5,009 and the temple 4,971 |
-| Gold | 2,700 of the 28,320 for the area: the temple's chest 2,000 and H6's 700 |
+| Gold | the temple's 4,100 of the 28,320, its seventh's 4,046 and more: the treasury's chest 3,000 and the tithe 1,100 (2,000 before #794) |
 | Paid by level | entering at 28 and clearing three quarters, a company leaves at 29.0, 3.0 under the next floor 32 |
 | Dearest find | the Grey Bow, 6,800, in the 7,000 window |
-| Gate, at the floor 28 | 100% of fights won (aim 90%, limit 80%); the area's 12 groups' too |
+| Gate, at the floor 28 | 100% of fights won (aim 90%, limit 80%); the nine groups' too |
 | Gate, two under, at 26 | 100% won (at most: aim 25%, limit 90%): owed to #18 (§11) |
-| Fights to a rest, at 28 | 8.96 (aim 10 to 12, limit 8.5 to 14.5); 7% of days end in a fight broken off |
-| Density, dungeon | 100.0% within 7 steps (89 of 89, 81 needed); the furthest 3 of 10; 2 signs in 21 points: the stair's top is floor since #756 |
-| Levels | 3 monsters in 28–29, give or take two; rising from the way in (rank correlation 0.87); the nearest group, the moths at 2 steps, at 28.0; the hardest, the champions at 6 steps, at 29.0 |
+| Fights to a rest, at 28 | 11.27 (aim 10 to 12, limit 8.5 to 14.5), in the aim since #794 (8.96 when built, under it); 7.7% of days end in a fight broken off |
+| Density, dungeon | 100.0% within 7 steps (89 of 89, 81 needed); the furthest 2 of 10; 2 signs in 26 points: the stair's top is floor since #756, and four groups and the tithe are points since #794 |
+| Levels | 3 monsters in 28–29, give or take two; rising from the way in (rank correlation 0.62; 0.87 before #794); the nearest group, the moths at 2 steps, at 28.0; the hardest, the champions at 6 steps, at 29.0 |
 | Lines | 8 events and signs: 4 of two lines and 4 of three; the area's 21: 2 of one, 11 of two and 8 of three |
 
 **As built: the crypt** (#756). The row's `owed` is raised to what the isle, the temple and the
@@ -1957,16 +1977,16 @@ crypt pay, 11,942 xp a member and 3,500 gold, still owed to #744 while the area 
 
 | | Figure |
 |---|---|
-| Xp a member | 1,962 against the crypt's tenth, 4,693: 0.42 (the champions 3,459, the rats 5,970, the keeper and his champion 2,346; 11,775 split six ways) |
+| Xp a member | 5,146 against the crypt's tenth, 4,693: 1.10 (the champions 3,459, the rats 5,970, the keeper and his champion 2,346 and, since #794, twelve rats twice 14,328 and four keepers 4,772; 30,875 split six ways); 1,962, 0.42, before |
 | The area so far | 11,942 of the 46,934, 25.4%: H6 5,009, the temple 4,971 and the crypt 1,962 |
-| Gold | 3,500 of the 28,320 for the area: the crypt's 800 (the cups 600, the pack 200), the temple's chest 2,000 and H6's 700 |
+| Gold | the crypt's 2,900 of the 28,320, its tenth's 2,832 and more: the cups 1,800 and the pack 1,100 (800 before #794) |
 | Paid by level | entering at 28 and clearing three quarters, a company leaves at 29.2, 2.8 under the next floor 32 |
 | Dearest find | the Grey Bow, 6,800, in the 7,000 window (the Grey Robe, 6,200) |
-| Gate, at the floor 29 | 100% of fights won (aim 90%, limit 80%); the area's 15 groups' too |
-| Gate, two under | n/a for the crypt, its floor being above the area's; the area's pool at 26, 100% of 15 groups' fights won: owed to #18 (§11) |
-| Fights to a rest, at 29 | 13.71 (aim 10.25 to 12.25, limit 8.75 to 14.75); 10% of days end in a fight broken off |
-| Density, dungeon | 100.0% within 7 steps (58 of 58, 53 needed); the furthest 4 of 10; 1 sign in 13 points |
-| Levels | 3 monsters in 29–29, give or take two; rising from the way in (rank correlation 1.00); the nearest group, the champions at 4 steps, at 29.0; the hardest, the rats at 13 steps, at 30.0 |
+| Gate, at the floor 29 | 100% of fights won (aim 90%, limit 80%); the six groups' too |
+| Gate, two under | n/a for the crypt, its floor being above the area's; the area's pool at 26, 93.8% of 48 groups' fights won (100% of 15 when built): owed to #18 (§11) |
+| Fights to a rest, at 29 | 10.46 (aim 10.25 to 12.25, limit 8.75 to 14.75), in the aim since #794 (13.71 when built, easier than it); 5.3% of days end in a fight broken off |
+| Density, dungeon | 100.0% within 7 steps (58 of 58, 53 needed); the furthest 4 of 10; 1 sign in 16 points, the three groups of #794 among them |
+| Levels | 3 monsters in 29–29, give or take two; rising from the way in (rank correlation 0.51; 1.00 before #794); the nearest group, the champions at 4 steps, at 29.0; the hardest, the rats at 13 steps, at 30.0 |
 | Lines | 7 events and signs: 6 of two lines and 1 of three; the area's 28: 2 of one, 17 of two and 9 of three |
 
 **As built: I6** (#754). The row's `owed` is raised to what the isle, the rim, the temple and the
@@ -1974,17 +1994,17 @@ crypt pay, 14,850 xp a member and 5,200 gold, still owed to #744 while the area 
 
 | | Figure |
 |---|---|
-| Xp a member | 2,908 against the rim's twelfth, 3,911: 0.74 (17,446 split six ways) |
+| Xp a member | 4,253 against the rim's twelfth, 3,911: 1.09 (25,517 split six ways, six groups since #794); 2,908, 0.74, with the brief's four |
 | The area so far | 14,850 of the 46,934, 31.6%: H6 5,009, the temple 4,971, the crypt 1,962 and the rim 2,908 |
-| Gold | 5,200 of the 28,320 for the area: the rim's camp chest 500 and hoard 1,200, the crypt's 800, the temple's 2,000 and H6's 700 |
+| Gold | the rim's 2,400 of the 28,320, its twelfth's 2,360 and more: the camp's chest 700 and the hoard 1,700 (1,700 before #794) |
 | Paid by level | entering at 28 and clearing three quarters, a company leaves at 29.4, 2.6 under the next floor 32 |
 | Dearest find | the Grey Mail, 7,000, in the 7,000 window |
-| Gate, at the floor 28 | 100% of fights won (aim 90%, limit 80%); the area's 19 groups' too |
+| Gate, at the floor 28 | 100% of fights won (aim 90%, limit 80%); the six groups' too |
 | Gate, two under, at 26 | 100% won (at most: aim 25%, limit 90%): owed to #18 (§11) |
 | Gate, the road at 28 | the isle's two pickets and the sermon, then the rim's champions and the camp's two guards, walked 100% of the time (aim 80%, limit 65%) |
-| Fights to a rest, at 28 | 11.32 (aim 10 to 12, limit 8.5 to 14.5); 9.3% of days end in a fight broken off |
-| Density, core | 100.0% within 8 steps (130 of 130, 117 needed); the furthest 7 of 15; no sign in 20 points (19 before Hereswith, #763) |
-| Levels | 3 monsters in 28–29, give or take two; rising from the way in (rank correlation 0.77); the nearest group, the moths at 4 steps, at 28.0; the hardest, the champions at 10 steps, at 29.0 |
+| Fights to a rest, at 28 | 11.63 (aim 10 to 12, limit 8.5 to 14.5) with six groups since #794 (11.32 with four); 4.7% of days end in a fight broken off |
+| Density, core | 100.0% within 8 steps (130 of 130, 117 needed); the furthest 6 of 15; no sign in 22 points (19 before Hereswith, #763, and 20 before #794) |
+| Levels | 3 monsters in 28–29, give or take two; rising from the way in (rank correlation 0.65; 0.77 before #794); the nearest group, the moths at 4 steps, at 28.0; the hardest, the champions at 10 steps, at 29.0 |
 | Lines | 13 events and signs: 10 of two lines and 3 of three; the area's 41: 2 of one, 27 of two and 12 of three |
 | Art | 50.0% of its 8 wall faces dressed (the cap is 50% under 100 faces): the cell is undressed (§9.2, #754's 2) |
 
@@ -3215,6 +3235,32 @@ Decided by delegate for #795, each the owner's to overturn:
 9. **The four log entries that named Vask are true of whoever took the hand-in** (`paid`, `lead`, `vask`,
    `order`): their ids and conditions stay, and the goals that name him still point at the keep.
 
+Decided by delegate for #794 (the isle), each the owner's to overturn:
+
+1. **Nine groups more, of each box's own kinds, so each box pays 1.06 to 1.10 of its share:** I6 two
+   (three and four champions), the temple four (three champions thrice, two once) and the crypt
+   three (twelve rats twice, four keepers); H6, at 1.07, none. The isle's four pay 21,492 a member.
+2. **No new group stands within two squares of another it could join:** a company beside two groups
+   of twelve or fewer fights both at once (`adjacentGroups`), a fight the gate never weighs.
+3. **The temple's stand clear of the vestry, the treasury's door, the lamps and the stair's
+   landing:** three in the court and two on the nave's treasury side; none in the vestry, where the
+   sacristan hides.
+4. **The crypt's came up through the grey door she left open:** rats at the chamber's dead and the
+   Hand's, keepers with no bay; the passages, one wide, take none.
+5. **The temple's gentler groups bring it into its aim,** 11.27 fights to a rest at 28 (8.91 on
+   main); the crypt's dearer ones bring it in too, 10.46 at 29 (14.24); I6 reads 11.63 (11.56).
+6. **The gold follows the xp shares, rounded up to the hundred:** H6 2,900, I6 2,400, the temple
+   4,100 and the crypt 2,900, 12,300 in all. Every chest the boxes had is raised.
+7. **A new chest only where a group guards a place for one:** behind the preacher at the temple's
+   door (`h6_toll`) and under the arch (`hf_tithe`). The rim's gold stays in its takings; the crypt,
+   six groups in 58 squares, takes no chest more, so its cups and pack hold its share.
+8. **The new chests take no line:** a chest has no text, and each stands by a line that says its
+   place (`h6_front`, the arch's sign), so the boxes' lines and their counts are as they were.
+9. **No owed figure is re-recorded:** each box's two-under row stands at the 100% owed to #18 and
+   the pool's falls to 93.8% of 48 groups; the curve row's `owed` is left for #794's second half.
+10. **The walkthrough's chest lines say the new sums;** it fights none of the new groups, which
+    stand off the squares it walks.
+
 ## 10. Names
 
 The Lanterns' English, kept, as the Whitespine's and Sunderwood's were (NAMES.md §2, §4): the isle
@@ -3285,10 +3331,8 @@ Owed, from I6 (#754):
   than a quarter (limit 90%). It is owed to #18 as H6's is (`hearthisle_i6: under`, `OWED` in
   `tools/tests/gate.ts`). The issue's "one at 26 no more than one in four" is not met: stronger
   monsters are barred and fewer groups would not lower it (§9.2, #754's 11). The owner's or #18's.
-- **The pay is behind its share:** the four groups pay 2,908 xp a member against a twelfth, 3,911:
-  0.74. The area's running total, 14,850 of the 46,934, is behind its shares. No floor on a box's
-  share is checked, and more or stronger groups were not the brief's (§8; §9.2, #754's 12). The
-  owner's call.
+- **The pay is met** (#794): six groups pay 4,253 xp a member against a twelfth, 3,911, 1.09, and
+  the finds 2,400 gold against its share, 2,360 (§8; §9.2, #794's 1 and 6). Nothing is owed for it.
 - **The builder's own:** `i6_keel` and `i6_wyke` are the builder's words, and the cell at 4,18 is a
   building square, not rock. The art check holds I6 at its cap of 50%, so dressing one more wall
   face or taking the cell out fails it (§9.2, #754's 1 and 2).
@@ -3322,10 +3366,9 @@ Owed, from Hearthfane (#755):
 
 Owed, from the crypt (#756):
 
-- **The crypt pays under its tenth and runs easy:** 0.42 of it (1,962 xp a member of 4,693) and
-  13.71 fights to a rest at 29, easier than the aim (10.25 to 12.25) and inside the limit (8.75 to
-  14.75). The three groups are the brief's; lighter or fewer would widen the shortfall and stronger
-  monsters are barred (§9.2, #756's 9). The owner's call.
+- **The crypt's pay and pace are met** (#794): six groups pay 5,146 xp a member of its tenth, 4,693,
+  1.10, at 10.46 fights to a rest at 29, in the aim (10.25 to 12.25), and its finds 2,900 gold
+  against its share, 2,832 (§8; §9.2, #794's 1, 5 and 6). Nothing is owed for it.
 - **Two under, the area's pool is won every time:** the crypt's own row reads n/a, its floor being
   above the area's, so its groups count in the pool at 26, 100% of 15 groups, owed to #18 already
   (`Hearth Isle: under`, `OWED` in `tools/tests/gate.ts`). The issue's "one at 27 no more than one in
@@ -3420,14 +3463,15 @@ Owed, from the Cleric's third (#763):
 
 Owed, from the Heart (#759):
 
-- **The area's clear falls short of its budget:** 38,317 xp a member of the 46,934 (81.6%), 8,617
-  short, and 8,200 gold of the 28,320, 20,120 short. The crypt, the temple, the rim, the Stair, the
-  Ways and the Heart fell short of their xp shares (0.42, 0.74, 0.74, 0.90, 0.93 and 0.72): the curve
-  counts the lesser of Vask's groups and none of the sentries (4,217 against its eighth, 5,867), as a
-  clear fights one group; a company that meets `core_vask` is paid 38,728 (82.5%), with up to 1,644
-  of sentries more, the Heart 4,629 to 6,273. The gold gap is not the shares' doing: the Heart adds
-  none. No group is added and no monster strengthened: the row's `owed` stands at the floor the
-  curve prints, owed to #794 now (§8; §9.2, #759's 9 and #792's 3 and 6). The owner's call.
+- **The area's clear falls short of its budget:** 44,959 xp a member of the 46,934 (95.8%), 1,975
+  short, and 15,300 gold of the 28,320, 13,020 short. The isle's four boxes pay their xp shares
+  since #794's first half (H6 1.07, the rim 1.09, the temple 1.06 and the crypt 1.10) and 12,300
+  gold, each its share of the gold and more; the Stair, the Ways and the Heart fall short of theirs
+  (0.90, 0.93 and 0.72) and give 3,000 gold of their 16,284, which is #794's second half. The curve
+  counts the lesser of Vask's groups and none of the sentries (4,217 against its eighth, 5,867), as
+  a clear fights one group; a company that meets `core_vask` is paid 45,371 (96.7%), with up to
+  1,644 of sentries more, the Heart 4,629 to 6,273. The row's `owed` stands at the floor it was set
+  at, 38,317 xp and 8,200 gold, owed to #794 (§8; §9.2, #759's 9, #792's 3 and 6 and #794's 9).
 - **Vask's sizing is final and the gate's two rules are kept** (#752): `OFF_LINE.vask`, 1,850 hit
   points and 22d8+23, and the rules that a map of nothing but its boss is judged on the boss's odds
   and a boss at the cap at its floor alone, now written in `docs/EXPANSION.md` §5.2 and
@@ -3443,9 +3487,9 @@ Owed, from the Heart (#759):
   group's question to the box's lines alone, the side panel's being a person's; and Rimewater's
   walkthrough counts its lock on its own map and not on the road (§9.2, #759's 14, 15 and 17). Both
   are the owner's to overturn.
-- **Two under, the area's pool is won nearly every time:** 92.5% of 39 groups' fights at 26, owed to
-  #18 as before (`Hearth Isle: under`, `OWED` in `tools/tests/gate.ts`). The Heart's own row reads
-  n/a.
+- **Two under, the area's pool is won nearly every time:** 93.8% of 48 groups' fights at 26 (92.5%
+  of 39 before #794's isle), owed to #18 as before (`Hearth Isle: under`, `OWED` in
+  `tools/tests/gate.ts`). The Heart's own row reads n/a.
 - **The road behind is built (#765):** `q_wenna_home`, which ends Wenna's words at 7,4 (her `until`), is
   set by Hild at Gullwick and `q_signet_sea` by the sea there, taking `queens_signet`; the clerk at
   `shelf` 15,4 sets the other three (Helmstow and the halls). The Walk Home's `gate` entry, on

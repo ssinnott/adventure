@@ -133,8 +133,8 @@ export const HEARTHFANE: MapDef = {
     // The moths at the nave's foot while the lamps burn, and the swarm a wrong lamp brings: both go to the
     // light once the last is out, standing or not (the leave rule, #747). The Hand's best up the nave and
     // in the court, its hardest, never roaming; the court's second group goes once Vask is gone from
-    // Helmstow by the Council's verdict. The garrison's rest (#794): two at the treasury's door, waiting on a
-    // key, and three in each of the court's corners but the altar's.
+    // Helmstow by the Council's verdict. The garrison's rest (#794): two on the nave's treasury side, below
+    // the crossing, and three more threes in the court, one beside the Hand's tithe under the arch.
     { id: 'hf_moths', x: 8, y: 12, monsters: many(12, 'hearth_moth'), aware: 3, respawn: 720, until: { flag: LAMPS_OUT }, leaves: true },
     { id: 'hf_champions', x: 8, y: 8, monsters: many(4, 'ashen_champion'), aware: 2, roams: false, respawn: 2880 },
     { id: 'hf_sermon', x: 8, y: 5, monsters: [...many(3, 'ashen_champion'), 'ashen_preacher'], back: 1, aware: 3, roams: false, respawn: 2880 },
