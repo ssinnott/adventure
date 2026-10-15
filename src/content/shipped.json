@@ -2046,6 +2046,21 @@
       "groups": [],
       "doors": []
     },
+    "core": {
+      "size": "16x16",
+      "used": [
+        "core_after",
+        "core_door",
+        "core_heart",
+        "core_panel",
+        "core_roof"
+      ],
+      "groups": [
+        "core_vask",
+        "core_vask_thinned"
+      ],
+      "doors": []
+    },
     "dead_drop": {
       "size": "32x32",
       "used": [
@@ -3624,6 +3639,9 @@
     "q_ember_socket1",
     "q_ember_socket2",
     "q_ember_socket3",
+    "q_end_arrive",
+    "q_end_finish",
+    "q_end_reignite",
     "q_faces",
     "q_faces_finished",
     "q_faces_home",
@@ -3778,6 +3796,7 @@
     "q_riders_letter",
     "q_ring_back",
     "q_ring_elves",
+    "q_ring_given",
     "q_ring_sold",
     "q_ring_spoke",
     "q_road_east",
@@ -3854,10 +3873,12 @@
     "q_trees_home",
     "q_trees_sylvane",
     "q_trees_ulf",
+    "q_vask_fallen",
     "q_vask_no",
     "q_vask_rain",
     "q_vigil",
     "q_vigil_kept",
+    "q_voice_whole",
     "q_wall",
     "q_wall_averil",
     "q_wall_east",
@@ -4088,6 +4109,7 @@
     "potion_heal",
     "potion_sp",
     "potion_sp_great",
+    "queens_signet",
     "queens_sword",
     "quickening",
     "rations",

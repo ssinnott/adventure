@@ -15,10 +15,9 @@ export const KNOT_LAST = 'underdeep2:ud2_word';
 /** The road's five, set at the Stones: what the last door listens for (§9, call 1). The Grove's mending opens nothing. */
 export const FIVE = ['q_tide_home', 'q_grove_done', 'q_anvil_closed', 'q_peak_stood', 'q_ember_lit'];
 /**
- * The last door, into the Heart (#759): the act's one lock, the road's second. Listed with the Heart's map
- * (an exit to a map not built fails the maps check), and signed then in src/content/locks.ts on
- * `q_ember_lit` at underdeep2 16,1, its reason: "the heart opens for whoever makes it whole." Until then
- * 16,1 is a door drawn in the wall, and `ud2_shut` says it.
+ * The last door, into the Heart (#759): the act's one lock, the road's second, signed in
+ * src/content/locks.ts on `q_ember_lit` at underdeep2 16,1, its reason: "the heart opens for whoever makes
+ * it whole." Until the road's five hold, `ud2_shut` says so on the square before it.
  */
 export const LAST_DOOR: Exit = {
   x: 16, y: 1, to: 'core', tx: 8, ty: 14, tf: NORTH, needFlag: FIVE,
@@ -49,11 +48,11 @@ export const UNDERDEEP2: MapDef = {
   // The Ways' grey, darker the further down.
   palette: { wall: '#8a8c90', wallDark: '#5e6064', floor: '#505258', ceiling: '#303236', door: '#5a5c60', wallStyle: 'smooth', ceilingStyle: 'vault', banner: '#3a3c40' },
   bare: true,
-  // Z: a door drawn in the wall that does not open (the Hand's own door; the last door until the Heart).
+  // Z: a door drawn in the wall that does not open (the Hand's own door).
   legend: { Z: { solid: 'wall', door: 'door' } },
   rows: [
     '################################',
-    '#############Z##Z###############',
+    '#############Z##D###############',
     '############.........###########',
     '############.........###########',
     '############.........###########',
@@ -88,6 +87,8 @@ export const UNDERDEEP2: MapDef = {
   exits: [
     // Back up off the head into the Ways, before its last door, facing away from it (§9.1, 17).
     { x: 16, y: 31, to: 'underdeep', tx: 16, ty: 2, tf: SOUTH, label: 'Back up off the stair\'s head into the ways.' },
+    // The last door, into the Heart, on the road's five (§9, call 1; #759).
+    LAST_DOOR,
   ],
   features: [
     { kind: 'event', x: 16, y: 29, id: 'ud2_head', once: true, text: 'The stair\'s head. Below, flight under flight, the steps go down out of the lamp\'s reach, and the hum comes up them like heat.' },

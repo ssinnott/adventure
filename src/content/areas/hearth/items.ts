@@ -3,10 +3,10 @@
 // cache under the north rim; and the pilgrims' three tokens (57). The east rim (I6, #754) adds the Grey
 // Staff in the Hand's camp's chest and the Grey Mail in its hoard; the temple (#755), the Grey Blade and
 // the Grey Bow in its treasury and the sacristan's key to it (56); the crypt (#756), the Grey Robe in
-// the dead champion's pack; the Ways (#757), the Grey Shield in the keepers' store and the Old Lantern's
-// Staff behind the crack (61); the Stair (#758), the Grey Axe in the rearguard's chest and Jowan's letter
-// home (58). The rest of the band's rung at 28, found and never sold, is #746's
-// (docs/areas/hearth_isle.md §8).
+// the dead champion's pack. The Ways' (#757): the Grey Shield in the keepers' store, and the Old Lantern's
+// Staff behind the crack (61). The Stair's (#758): the Grey Axe in the rearguard's chest, and Jowan's letter
+// home (58). The Heart's (#759): the Queen's signet, off Vask's finger. The rest of the band's rung at 28,
+// found and never sold, is #746's (docs/areas/hearth_isle.md §8).
 import type { ItemDef } from '../../../game/items.ts';
 import { W, A, MARTIAL, MAIL, NO_CASTER_HEAVY } from '../../items.ts';
 
@@ -62,5 +62,10 @@ export const ITEMS: readonly ItemDef[] = [
     'A letter sealed with a knot of rope, the seal Gullwick\'s.',
     '"To my mother, at the third house from the slip. We are on the isle. The grey men say the door opens tomorrow, and after that everything is different, and I will come home then and explain."',
     '"I was never cargo. I chose this. Tell Wenna\'s mother I saw her girl, and she is well, and she is not afraid, which is more than I am. Your son, Jowan."',
+  ] },
+  // The Queen's signet, off Vask's finger at the Heart: every answer at the panel gives it (64, #759); the
+  // Council's clerk at Helmstow's gate or the sea off Gullwick takes it (#765). Read from the pack.
+  { id: 'queens_signet', name: 'Queen\'s Signet', slot: 'none', price: 0, text: [
+    'A heavy ring, gold, worn thin on the inside. The seal is the one on the treaty, and on the chisel, and on the north rim: the first people\'s mark.',
   ] },
 ];
