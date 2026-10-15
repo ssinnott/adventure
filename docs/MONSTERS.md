@@ -552,7 +552,9 @@ calibration:
   (#399, #18), Act III's when the levels past 16 were (#535, #541), each of 17 to 22 on its own,
   since the company steps at 17, 19, 21 and 22, and Act IV's one, Cinderport's armourer at 25
   (#542), when 25 to 28 and 32 were (#549), each of 25 to 28 on its own, since the company steps at
-  25 and at 27, its third prestige. 22 to 24 are #541's still: their company has not changed.
+  25 and at 27, its third prestige. 22 to 24 are #541's still: their company has not changed. Act
+  V's rung, the Hand's steel at 28 (#746), came after: 28 and 32 were made without it, and making
+  them again with it is #752's.
 
 Hit points / average damage a hit, by role and level:
 

@@ -307,8 +307,9 @@ Thornmark's Armoury by 8, its chests' plus by 9 and the Deepthorn's +2s by 10. A
 Saltmouth's armourer by 11, Saltreach's and Wrackholm's boxes' plus by 13, Lantern Watch's stores
 by 14 and the Sunder's plus by 16. Act III's (#535): Anvilhall's forge by 17, the Kilns' and
 Cairnmoor's boxes' plus by 19, Rime Lodge's furrier by 21 and Rimewater's plus by 22. Act IV's, one
-step (#542): Cinderport's armourer by 25. Each rung betters the last for every class, each find and
-ware inside its area's window; past the top, gear grows only in the harness's what-if.
+step (#542): Cinderport's armourer by 25. Act V's, the last (#746): the Hand's steel by 28, found on
+Hearth Isle and never sold. Each rung betters the last for every class, each find and ware inside its
+area's window; past the top, gear grows only in the harness's what-if.
 
 The gate, checked with the bot of `tools/gate.ts`. Each figure below is its **aim**, and each has a
 **limit** beyond it (#273): inside its aim a figure passes; between its aim and its limit it passes,
