@@ -934,14 +934,22 @@ Decided by delegate for #549, each the owner's to overturn:
    mending, fire's nothing and the salamander's cold ask nothing new, read as the bots read any.
 5. **The line is made again at 25, 26, 27, 28 and 32,** each of Act IV's steps on its own; 22 to 24
    stay #541's, since their company has not changed and the Whitespine's placed monsters stand on them.
-6. **Twelve drawn on the old line from 25 are owed a restating** (`RESTATE`), each by the box that
-   places it: Ashfall's Ash Husk, Stoker, Sentry and Sentinel, and Meridian Camp's and the
-   Dead-Drop's eight (#22). The Cinder Drake, placed at G10 (#660), is set off the line for its gate.
+6. **Twelve drawn on the old line from 25 were owed a restating** (`RESTATE`), and all are done:
+   Ashfall's Ash Husk, Stoker, Sentry and Sentinel, and Meridian Camp's and the Dead-Drop's eight
+   (#22), each re-derived or set off the line by the box that placed it.
+   `RESTATE` in `tools/tests/harness.ts` is empty and the harness suite is green: 69 monsters past
+   10 on the line and 22 set off it (`OFF_LINE`). The Cinder Drake, placed at G10 (#660), is set
+   off the line for its gate.
 7. **The harness's company needed nothing new:** tier 7 from 23, the step and a draught from 25 and
    the third prestige at 27, its last rite and third blow, were in; the line's points lagged.
-8. **Act IV's bosses are reported, not set** (`--abilities`): from two under, the Stair-king is won
-   38% at 24, the Old Drake 35% and the Sentinel 54% at 26, the Brood Drake 15% at 27 and the
-   Tallymaster 57% at 28, the test boss 38 to 53%; the Abbot, which #500's gate set, 68%.
+8. **Act IV's bosses are set by their gates,** each in `OFF_LINE` (`tools/tests/harness.ts`) with
+   its gate named: the Stair-king (#502), the Old Drake (#515), the Sentinel (#516), the Brood
+   Drake and the Tallymaster (#22), the Grey Lion (#529) and the Cinder Drake (#660), the Abbot
+   being #500's. Won, as the gates print them at the box's floor and two over it: the Stair-king
+   58% at 22 and 79% at 24, the Old Drake 65% at 25 and 99% at 27, the Sentinel 65% at 25 and 97%
+   at 27, the Brood Drake 61% at 26 and 100% at 28, the Tallymaster 70% at 27 and 95% at 29, the
+   Grey Lion 75% at 27 and 96% at 29 and the Abbot 66% at 23 and 93% at 25; the test boss, two
+   under, 65%.
 9. **The mesa is held to about its aim, not over it:** on the line made again at 27 it is fought
    10.6 to a rest (10.75 asked), 11.6 where the hold paralyses.
 
@@ -1594,7 +1602,7 @@ lines are the building session's.
 |---|---|---|---|---|
 | Loader | heavy machines, a new def | brute, 26 | the drop and the vaults | *It carries a crate the size of a cart, and does not set it down.* Size 1.4 |
 | Tally Clerk | knockers, a new def | caller, 26 | the drop | *It counts the crates, then turns and counts you.* Calls two loaders |
-| Hold Keeper | keepers, a new def | controller, 27 | the people's vault | *It carries water to the pens, and nobody is in them.* Puts to sleep (0.3); mends its group |
+| Hold Keeper | keepers, a new def | controller, 27 | the drop's far end (`dd_keeper`: one) and the people's vault (`dd2_keepers`: three; `dd2_keepers2`: four) | *It carries water to the pens, and nobody is in them.* Puts to sleep (0.3); mends its group |
 | Deep Knocker | knockers | armoured, 28 | at the rails' sealed door | §9.2's |
 | The Tallymaster | keepers, a new def | boss, 28 | the counting house | *It writes, and does not look up.* Fights only when the company steps to its desk; calls two tally clerks; size 1.6 |
 

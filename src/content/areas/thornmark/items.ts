@@ -47,7 +47,10 @@ export const ITEMS: readonly ItemDef[] = [
   { id: 'potion_sp_great', name: 'Sapphire Vial', slot: 'none', price: 120, use: { sp: 25 } },
   { id: 'lantern_oil', name: 'Lantern Oil', slot: 'none', price: 40, use: { cure: ['poisoned', 'diseased', 'paralysed'] } },
   { id: 'ashen_chisel', name: 'Underdeep Chisel', slot: 'none', price: 0 },
-  { id: 'meridian_journal', name: 'Meridian Journal, vol. I', slot: 'none', price: 0 },
+  { id: 'meridian_journal', name: 'Meridian Journal, vol. I', slot: 'none', price: 0, text: [
+    'Green boards with the Guild\'s mark, water-stained; the first pages in Fane\'s hand.',
+    '"Day one. Eleven of us out of Saltmouth by the shore road, the route book left with the Guild." On the last page, alone: The heart opens for whoever makes it whole.',
+  ] },
   // The side quests' (#219): no shop buys them. The coin stays in the pack whichever way A Coin Not
   // From Caldera goes; the Reader takes the glass, and Edith the kit; the sliver is Edith's gift.
   { id: 'faceless_coin', name: 'Faceless Coin', slot: 'none', price: 0 },
