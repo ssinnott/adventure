@@ -25,6 +25,8 @@ dependencies, and nothing compiled to disk during development.
   is built.
 - [docs/NAMES.md](docs/NAMES.md) — how places are named: each people's tongue, the few old names
   the first crew left, and the rules a rename follows.
+- [docs/PILOT.md](docs/PILOT.md) — the pilot that plays the game for watching: P and T, the why
+  line, the fair view it plays by (`Known`), its files and the calls made building it.
 
 ## Running
 
