@@ -1939,9 +1939,10 @@ About 900 squares in all cut, to come back as country only if the act plays shor
 
 Owed, from J11 (#499):
 
-- **The monastery drawn tall** over one square, as the brief asks, needs a `Landmark` kind besides
-  the lighthouse's (`src/game/map.ts`, `src/ui`): a systems change the owner may ask for. J11 draws
-  it as a block of building squares on its shelf (§9, #499's 5).
+- **The monastery drawn tall** over one square, as the brief asks: the second `Landmark` kind it
+  needed, `'monastery'`, bell towers over a wall with no lamp, is built (#736). J11 lists it over
+  Highcell, on 26,25 inside the block behind the gate, in #736's area pull request that follows;
+  until then J11 draws Highcell as a block of building squares on its shelf (§9, #499's 5).
 - **The pilgrims' hostel's cellar,** the issue's secret, is not built: the doc's store behind the
   wall is (§4.2, §9, #499's 14).
 
