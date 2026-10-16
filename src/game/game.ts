@@ -35,7 +35,7 @@ import { endingTaken } from './stones.ts';
 import { WorldMapScreen } from '../ui/worldmap.ts';
 import { drawText } from '../lib/engine/text.ts';
 import { RiddleScreen } from '../ui/riddle.ts';
-import { stepLine, useShrine, openCairn, answerRiddle, restRefused, restParty } from './wilds.ts';
+import { stepLine, useShrine, openCairn, answerRiddle, restRefused, restAndWake } from './wilds.ts';
 import { approach, burn } from './dens.ts';
 
 export interface Screen {
@@ -205,14 +205,16 @@ export class Game {
     }
   }
 
-  /** Offer eight hours' rest, unless monsters are too near (game/wilds.ts: a camp lets them nearer). */
+  /**
+   * Offer eight hours' rest, unless monsters are too near (game/wilds.ts: a camp lets them nearer). A
+   * camp that counts its nights (#730) says the night's own waking in place of the usual one.
+   */
   offerRest(): void {
     const refused = restRefused(this.world);
     if (refused) { this.say(refused); return; }
     this.push(new ChoiceScreen('Rest for eight hours? The party eats one ration each.', ['Rest', 'Not now'], (i) => {
       if (i !== 0) return;
-      if (!restParty(this.world, this.party)) { this.say('There is not enough food to rest.'); return; }
-      this.say('The party rests. Morning comes.');
+      this.say(restAndWake(this.world, this.party) ?? 'There is not enough food to rest.');
     }));
   }
 

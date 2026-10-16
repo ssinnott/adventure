@@ -125,6 +125,11 @@ export function lineFaults(def: MapDef): string[] {
         const n = t === undefined ? 0 : logLines(t).length;
         if (n > MOST_LINES) out.push(`the ${f.kind}'s ${what} at ${f.x},${f.y} takes ${n} lines`);
       }
+      // A camp's night is said on waking as one entry, as a group's answer is (game/wilds.ts `restAndWake`, #730).
+      if (f.kind === 'camp') for (const night of f.nights ?? []) {
+        const k = logLines((night.says ?? []).join(' ')).length;
+        if (k > MOST_LINES) out.push(`the camp's night ${night.sets} at ${f.x},${f.y} takes ${k} lines`);
+      }
       continue;
     }
     // A den's look is said as a monster's is, held to its lines; its burning and its hoard together, and its ruin, to the most.
@@ -202,6 +207,7 @@ export function texts(defs: readonly MapDef[] = MAP_DEFS, crossings: readonly Cr
       if (f.kind === 'shrine' || f.kind === 'fountain' || f.kind === 'statue') add(where, f.done);
       if (f.kind === 'statue') add(where, f.riddle, f.answer);
       if (f.kind === 'den') add(where, f.ask, f.burn, f.leave, f.burnt, f.ruin);
+      if (f.kind === 'camp') for (const n of f.nights ?? []) add(`${where} night ${n.sets}`, n.says);
       if (f.kind === 'npc') {
         add(where, f.lines, ...handIns(f).flatMap((q) => [q.early, q.done, q.after]), ...(f.says ?? []).map((w) => w.lines));
         for (const c of choices(f)) add(where, c.ask, ...c.answers.flatMap((a) => [a.label, a.says]));

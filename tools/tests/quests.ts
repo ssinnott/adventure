@@ -36,8 +36,8 @@ export const UNSET: Record<string, string> = {
   // Helmstow's gate and the sea off Gullwick), the walk home and Jowan's letter.
 };
 
-/** The flags a feature sets: a person's, met, and an event's, said (#156). */
-const featureFlags = (f: Feature): readonly string[] => f.kind === 'npc' ? personFlags(f) : f.kind === 'event' ? [f.sets ?? []].flat() : f.kind === 'inn' ? f.nights ?? [] : [];
+/** The flags a feature sets: a person's, met, an event's, said (#156), an inn's, stayed at and a camp's, rested at (#730). */
+const featureFlags = (f: Feature): readonly string[] => f.kind === 'npc' ? personFlags(f) : f.kind === 'event' ? [f.sets ?? []].flat() : f.kind === 'inn' ? f.nights ?? [] : f.kind === 'camp' ? (f.nights ?? []).map((n) => n.sets) : [];
 
 /**
  * What in a condition names nothing real: a flag no NPC, event or guild quest sets (nor one UNSET owes), an item, something spent once and kept
