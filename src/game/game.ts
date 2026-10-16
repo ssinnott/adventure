@@ -37,6 +37,7 @@ import { drawText } from '../lib/engine/text.ts';
 import { RiddleScreen } from '../ui/riddle.ts';
 import { stepLine, useShrine, openCairn, answerRiddle, restRefused, restParty } from './wilds.ts';
 import { approach, burn } from './dens.ts';
+import type { Pilot } from './pilot/pilot.ts';
 
 export interface Screen {
   /** Called once per fixed step with the next queued action (or null). */
@@ -67,6 +68,8 @@ export class Game {
   /** What the quest log held at the last look, so each change to it is announced once. */
   private questMarked = new Set<string>();
   maps: Record<string, GameMap> = buildMaps();
+  /** The pilot (epic #713, docs/PILOT.md): src/main.ts builds one, as a test may; none otherwise. Never saved. */
+  pilot: Pilot | null = null;
 
   constructor(store: Store | null = browserStore()) {
     this.store = store;
@@ -80,6 +83,7 @@ export class Game {
     this.party = party ?? defaultParty(this.rng);
     this.world = new World(this.maps, this.party, this.rng);
     this.log = [];
+    this.pilot?.forget();
     this.screens = [new ExploreScreen()];
     this.say('Arrows move. Space acts. R rests, F searches, C casts, I inventory, J quests, F5/F9 save/load.');
     for (const m of this.world.eventsHere()) this.say(m);
@@ -96,6 +100,7 @@ export class Game {
     this.rng.seed(data.rng);
     this.world = new World(this.maps, this.party, this.rng, data.world as WorldState);
     this.log = [];
+    this.pilot?.forget();
     this.screens = [new ExploreScreen()];
     this.say('Loaded.');
     // A save carries its quest log implicitly; take it as read rather than announcing it all again.
@@ -110,9 +115,10 @@ export class Game {
 
   // ---- screens ----
   get top(): Screen { return this.screens[this.screens.length - 1]; }
-  push(s: Screen): void { this.screens.push(s); }
+  /** Puts a screen on top; a message box's words are heard by the pilot as it opens. */
+  push(s: Screen): void { this.screens.push(s); if (s instanceof MessageScreen) this.pilot?.hear(s.text); }
   pop(): void { if (this.screens.length > 1) this.screens.pop(); }
-  say(line: string): void { this.log.push(line); this.said++; if (this.log.length > 60) this.log.shift(); }
+  say(line: string): void { this.log.push(line); this.said++; if (this.log.length > 60) this.log.shift(); this.pilot?.hear(line); }
   message(text: string, then?: () => void): void { this.push(new MessageScreen(text, then)); }
 
   update(a: Action | null): void {
@@ -137,6 +143,14 @@ export class Game {
     // Draw the exploration frame under any overlay screen.
     const base = this.screens.findIndex((s) => !s.overlay);
     for (let i = Math.max(0, base); i < this.screens.length; i++) this.screens[i].render(this, ctx, this.frame);
+    // While the pilot drives, its why line in a band over the top of the view, over every screen.
+    const p = this.pilot, v = LAYOUT.view;
+    if (!p?.on) return;
+    ctx.fillStyle = 'rgba(0,0,0,0.6)';
+    ctx.fillRect(v.x, v.y, v.w, 24);
+    drawText(ctx, p.why[0], v.x + 6, v.y + 4, { size: 1, color: '#ffe08a' });
+    if (p.why[1]) drawText(ctx, p.why[1], v.x + 6, v.y + 14, { size: 1, color: '#d8d0c0' });
+    drawText(ctx, `PILOT ${p.tempo}X`, v.x + v.w - 6, v.y + 4, { size: 1, color: '#ffe08a', align: 'right' });
   }
 
   // ---- quests ----
@@ -344,6 +358,8 @@ export class Game {
   }
 
   gameOver(): void {
+    // A wipe ends the pilot's run: it gives the helm back, and says why (epic #713, Decided 10).
+    if (this.pilot?.on) { this.pilot.toggle(this); this.pilot.why = ['The company has fallen.']; }
     this.screens = [new TitleScreen(hasSave(this.store), 'The party has fallen. Caldera goes on without them.')];
   }
 
@@ -433,7 +449,8 @@ export class ExploreScreen implements Screen {
     const f = g.world.featureHere();
     const grp = g.world.groupAt(ahead.x, ahead.y);
     const hint = grp ? `${monster(grp.def.monsters[0]).plural}: Space to attack` : f ? `${featureLabel(f)}: Space` : '';
-    if (hint) drawText(ctx, hint, LAYOUT.view.x + LAYOUT.view.w / 2, LAYOUT.view.y + 6, { size: 1, color: '#ffe08a', align: 'center' });
+    // The pilot's band takes the top of the view while it drives.
+    if (hint && !g.pilot?.on) drawText(ctx, hint, LAYOUT.view.x + LAYOUT.view.w / 2, LAYOUT.view.y + 6, { size: 1, color: '#ffe08a', align: 'center' });
     drawStatus(ctx, g.world);
     drawAutomap(ctx, g.world, frame);
     drawPartyCards(ctx, g.party, -1, frame);

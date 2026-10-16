@@ -86,7 +86,8 @@ export class MessageScreen implements Screen {
   readonly overlay = true;
   /** In the side panel a long message is read a page at a time. */
   private page = 0;
-  private text: string;
+  /** Its words: the pilot hears them as the box opens (Game.push). */
+  readonly text: string;
   private then?: () => void;
   private title: string;
   constructor(text: string, then?: () => void, title = '') {

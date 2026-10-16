@@ -13,7 +13,7 @@ import { drawText, drawTextOutlined, measureText } from '../lib/engine/text.ts';
 import { hearthLook } from '../game/stones.ts';
 import type { HearthLook } from '../game/stones.ts';
 import { ATLAS, MAP_DEFS, QUESTS } from '../content/index.ts';
-import { worldGrid, zoneEdges, worldPoint, homeMap, zoneOfMap, mapAt, gridCuts, boxAt, areaOf, areaBand, spline, lattice, noise, fbm, TERRAINS, TI } from '../game/atlas.ts';
+import { worldGrid, zoneEdges, worldPoint, homeMap, zoneOfMap, mapAt, mapPlace, gridCuts, boxAt, areaOf, areaBand, spline, lattice, noise, fbm, TERRAINS, TI } from '../game/atlas.ts';
 import type { WorldTerrain, WorldGrid, AtlasSite, AtlasPlace, ZoneEdge, Pt } from '../game/atlas.ts';
 import type { World } from '../game/world.ts';
 import type { QuestDef } from '../game/quests.ts';
@@ -1489,13 +1489,12 @@ function drawLocator(ctx: CanvasRenderingContext2D, thumb: HTMLCanvasElement, vx
 
 export type WorldMapMode = 'art' | 'zones';
 
-/** Where a map is on the cloth: its plate, else its middle if the atlas lays it, else its home map's middle. */
+/** Where a map is on the cloth: its plate, else its middle if the atlas lays it, else its home map's middle (`mapPlace`). */
 function mapOnCloth(mapId: string): [number, number] | undefined {
+  const at = mapPlace(ATLAS, MAP_DEFS, mapId);
+  if (!at) return undefined;
   // Over a place's plate, where the overlay would hide it.
-  const pl = ATLAS.places.find((q) => q.id === mapId);
-  if (pl) return [px(pl.at[0]), py(pl.at[1]) - 13];
-  const home = mapMiddle(mapId) ? undefined : homeMap(MAP_DEFS, mapId);
-  return mapMiddle(mapId) ?? (home && mapMiddle(home.id));
+  return ATLAS.places.some((q) => q.id === mapId) ? [px(at[0]), py(at[1]) - 13] : [px(at[0]), py(at[1])];
 }
 
 /** The places a seeking quest sends a member to (game/seeking.ts), on the cloth, with who is sought there. */

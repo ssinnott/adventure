@@ -1052,7 +1052,7 @@ await page.evaluate(async (defs: any[]) => {
 const sweeps = [...GROUND_SAMPLES.map((d) => ({ id: d.id, all: false })), ...FLOOR.filter((id) => !SWEEP.includes(id)).map((id) => ({ id, all: false })), ...SWEEP.map((id) => ({ id, all: true }))];
 const cracks = await page.evaluate(async (maps: { id: string; all: boolean }[]) => {
   const load = (p: string): Promise<any> => import(p);
-  const V = await load('/src/ui/viewport.ts'), T = await load('/src/game/types.ts');
+  const V = await load('/src/ui/viewport.ts'), T = await load('/src/game/types.ts'), I = await load('/src/game/ink.ts');
   const w = (window as any).__game.game.world;
   const W = 400, H = 268, band = 16, bad: string[] = [];
   let views = 0;
@@ -1082,7 +1082,7 @@ const cracks = await page.evaluate(async (maps: { id: string; all: boolean }[]) 
         views++;
         const shows = (px: number, py: number) => { const i = (py * W + px) * 4; return Math.abs(a[i] - b[i]) > 8 || Math.abs(a[i + 1] - b[i + 1]) > 8; };
         // Beside the party a wall, as it is drawn: a secret door among the peaks is a peak, not a wall.
-        const walled = (s: number) => V.isSolidWall(V.drawnCell(m, ax + s * T.FACING_DX[rf], ay + s * T.FACING_DY[rf]));
+        const walled = (s: number) => V.isSolidWall(I.drawnCell(m, ax + s * T.FACING_DX[rf], ay + s * T.FACING_DY[rf]));
         let spot = '', level: ((px: number, py: number) => boolean) | undefined;
         for (let py = 0; py < band * 2 && !spot; py++) for (let px = 0; px < W && !spot; px++) {
           if (!shows(px, py)) continue;

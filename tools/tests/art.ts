@@ -5,7 +5,8 @@
 // from the man who holds it (#57).
 import { MONSTERS, MAP_DEFS } from '../../src/content/index.ts';
 import { buildMaps } from '../../src/content/maps.ts';
-import { wallDressing, isSolidWall, isHouse, drawnCell, DRESSINGS, DRESSING_RATES } from '../../src/ui/viewport.ts';
+import { wallDressing, isSolidWall, isHouse, DRESSINGS, DRESSING_RATES } from '../../src/ui/viewport.ts';
+import { drawnCell } from '../../src/game/ink.ts';
 import { hash } from '../../src/ui/brush.ts';
 import { FACING_DX, FACING_DY } from '../../src/game/types.ts';
 import { GameMap } from '../../src/game/map.ts';
