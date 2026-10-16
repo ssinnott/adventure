@@ -3,15 +3,16 @@
 // by a company that is a member of that guild ("taught to its members"). A people may be born to one,
 // as the dwarves are to Linguist, and an item carried may do one's work (`ItemDef.skill`: a scholar's
 // copybook reads as a Linguist does). Linguist is the first built, and reads Kiln-script
-// (game/inscriptions.ts); the other eleven come as their shortcuts and secrets do. Pure apart from the
-// party handed in, so the tests teach as the game does, without a Game.
+// (game/inscriptions.ts); Mountaineer and Swimmer climb and swim (`partyCan`, game/party.ts; #805); the
+// other nine come as their shortcuts and secrets do. Pure apart from the party handed in, so the tests
+// teach as the game does, without a Game.
 import type { GuildId } from '../content/guilds.ts';
 import type { Character, Party, RaceId } from './party.ts';
 import { isDown, countItem } from './party.ts';
 import { rankOf } from './guilds.ts';
 import { ITEMS } from '../content/index.ts';
 
-export type SkillId = 'linguist';
+export type SkillId = 'linguist' | 'mountaineer' | 'swimmer';
 
 export interface SkillDef {
   id: SkillId;
@@ -35,6 +36,9 @@ export const SKILL_PRICE = 1000;
 
 export const SKILLS: Readonly<Record<SkillId, SkillDef>> = {
   linguist: { id: 'linguist', name: 'Linguist', text: 'Reads Kiln-script.', guild: 'lanterns', price: SKILL_PRICE, race: 'dwarf' },
+  // No people is born to these two: the Tidefolk swim by their people (`RACES`), not by the skill.
+  mountaineer: { id: 'mountaineer', name: 'Mountaineer', text: 'Climbs mountain and cliff.', guild: 'wardens', price: SKILL_PRICE },
+  swimmer: { id: 'swimmer', name: 'Swimmer', text: 'Swims deep water.', guild: 'cartographers', price: SKILL_PRICE },
 };
 
 /** The skills a member has learnt: none in a save from before them. */

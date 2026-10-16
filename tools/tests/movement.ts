@@ -1,6 +1,7 @@
 // Moving about: steps and the clock, doors, keys and secrets, water and mountains, the end of the
 // world, the open pass walked into Thornmark and back, Town Portal, the stairs, Helmstow's two
-// gates, a group under the ice, the road cut through cliffs and peaks and the far side's ground.
+// gates, a group under the ice, the road cut through cliffs and peaks, the far side's ground and the
+// skills that open the map.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { World, WALK_STEPS, WALK_ENDS, FLOAT_ENDS, FLOAT_FAILS } from '../../src/game/world.ts';
@@ -12,6 +13,7 @@ import type { Facing } from '../../src/game/types.ts';
 import { MINUTES_PER_DAY } from '../../src/game/calendar.ts';
 import { logLines } from '../../src/ui/frame.ts';
 import { defaultParty, partyCan } from '../../src/game/party.ts';
+import type { Party } from '../../src/game/party.ts';
 import { ok, local } from './lib.ts';
 
 export function movement(): void {
@@ -248,6 +250,7 @@ export function movement(): void {
   underIce();
   range();
   farSide();
+  opened();
 }
 
 /**
@@ -304,4 +307,37 @@ function farSide(): void {
   delete party.flags.skill_mountaineer;
   ok(walked.join(' / ') === 'moved 2,1 / moved 1,2 / moved 2,2', `the steppe, the dunes and the vines are walked (${walked.join(' / ')})`);
   ok(refused.every((r) => r === 'Too steep to climb without a Mountaineer.') && climbed.join(' / ') === 'moved 1,1 / moved 3,1', `a step into the volcano or a vent is refused as one into the mountain is, and a Mountaineer climbs onto either (${refused.join(' / ')}; ${climbed.join(' / ')})`);
+}
+
+/**
+ * The skills that open the map (#805), on a strip with a mountain to its west, water to its east and
+ * the sea to its north: a company with a Mountaineer standing climbs the mountain and one with him
+ * down does not; one with a Swimmer standing swims the water and one with her down does not; neither
+ * does the other's work and nobody crosses the sea; a Tidefolk swims by their people, with no skill;
+ * and the flags that grant each still do.
+ */
+function opened(): void {
+  const def: MapDef = { id: 'fx_skills', name: 'Skills', kind: 'outdoor', start: { x: 2, y: 1, facing: NORTH }, rows: ['WWWWW', 'WM.~W', 'WWWWW'] };
+  // The company of six without its one Tidefolk (Maren), raised as `setup` has it; then a step west, east and north from the middle.
+  const steps = (setup: (p: Party) => void): string => {
+    const rng = makeRng(19), party = defaultParty(rng), w = new World({ fx_skills: new GameMap(def) }, party, rng);
+    party.members[4].race = 'human';
+    setup(party);
+    return [WEST, EAST, NORTH].map((f) => { w.travel('fx_skills', 2, 1, f); return w.move('forward').kind; }).join();
+  };
+  const cases: [string, (p: Party) => void, string][] = [
+    ['no skill and no Tidefolk', () => undefined, 'blocked,blocked,blocked'],
+    ['a Mountaineer standing', (p) => { p.members[0].skills = ['mountaineer']; }, 'moved,blocked,blocked'],
+    ['the Mountaineer down, the other five standing', (p) => { p.members[0].skills = ['mountaineer']; p.members[0].conditions.push('unconscious'); }, 'blocked,blocked,blocked'],
+    ['a Swimmer standing', (p) => { p.members[3].skills = ['swimmer']; }, 'blocked,moved,blocked'],
+    ['the Swimmer down, the other five standing', (p) => { p.members[3].skills = ['swimmer']; p.members[3].conditions.push('dead'); }, 'blocked,blocked,blocked'],
+    ['a Mountaineer and a Swimmer standing', (p) => { p.members[0].skills = ['mountaineer']; p.members[3].skills = ['swimmer']; }, 'moved,moved,blocked'],
+    ['a Tidefolk standing, with no skill', (p) => { p.members[4].race = 'tidefolk'; }, 'blocked,moved,blocked'],
+    ['the Tidefolk down, with no skill', (p) => { p.members[4].race = 'tidefolk'; p.members[4].conditions.push('stoned'); }, 'blocked,blocked,blocked'],
+    ['the flags set, and nobody with a skill', (p) => { p.flags.skill_mountaineer = 1; p.flags.skill_swim = 1; }, 'moved,moved,blocked'],
+  ];
+  for (const [who, setup, want] of cases) {
+    const got = steps(setup);
+    ok(got === want, `${who}: a step west into the mountain, east into the water and north into the sea comes to ${got}${got === want ? '' : ` (wanted ${want})`}`);
+  }
 }
