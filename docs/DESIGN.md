@@ -302,7 +302,7 @@ which #807 places on the Wold.
   at the Wardens' Drillyard and at the Cartographers' halls in Saltmouth and Cinderport. A company
   with a Mountaineer standing climbs mountain and cliff; one with a Swimmer standing swims deep water.
   No people is born to either: the Tidefolk swim by theirs. Linguist, Mountaineer and Swimmer built;
-  the other nine come as theirs do. Decided by the owner's delegate, 16 October 2026.
+  the other nine come as theirs do. Decided by the owner's delegate, 16 October 2026 (#805).
 - Weapon and magic skills have **Novice / Expert / Master** tiers. Trainers for Expert live in
   regional towns; Master trainers are hidden, expensive, and often want a favour. The tiers are not
   built yet: Expert and Master trainers both wait on them (#18), and Master trainers are out of M3
