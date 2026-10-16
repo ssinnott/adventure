@@ -12,13 +12,16 @@
 // each round before it casts anything else. It reads the fight as it stands each turn, the groups
 // called into it too. It wakes a sleeper or frees one held (#549) of the front row, or a caster,
 // before it strikes. It never sleeps, blesses, drinks or flees, nor cures anything but sleep and a
-// hold, so it is weaker than a player. The rest rule is here too (`mustRest`), the harness's and the
-// pilot's. Nothing here reads tools/ or node: the game is built with it.
+// hold, so it is weaker than a player. The gate's knows every monster as written (`asWritten`); the
+// game's knows a sweep, a breath, a drain, a call or a leader only once the fight has shown it
+// (`asSeen`), as both know an element's work and a mending only once seen. The rest rule is here too
+// (`mustRest`), the harness's and the pilot's. Nothing here reads tools/ or node: the game is built
+// with it.
 import type { RngInstance } from '../lib/engine/rng.ts';
 import { isDown, hasCondition } from './party.ts';
 import type { Party, Character } from './party.ts';
 import { partyAct, aliveMonsters, canAttackFromRow, canReach, isLeader, canCall, sweptRow, seenMult, FRONT_ROW } from './combat.ts';
-import type { CombatState, PartyAction } from './combat.ts';
+import type { CombatState, MonsterInst, PartyAction } from './combat.ts';
 import { spell } from './spells.ts';
 import type { SpellDef, SpellTarget } from './spells.ts';
 
@@ -48,6 +51,30 @@ export function mustRest(p: Party): 'dead' | 'hp' | 'sp' | null {
   return null;
 }
 
+/** What a monster does that a bot answers, and that a player learns only by seeing it done. */
+export type Trait = 'sweep' | 'breath' | 'drain' | 'calls' | 'leader';
+
+/**
+ * What a bot knows of a monster: whether it may count on the trait. Where it may not, it plays as if
+ * the monster had none. An element's work (`seenMult`) and a mending (`CombatState.mends`) are known
+ * only once seen in either reading, since the fight records them.
+ */
+export type Sees = (s: CombatState, m: MonsterInst, trait: Trait) => boolean;
+
+/** The gate's reading: every monster as written, each trait known before it shows. */
+export const asWritten: Sees = () => true;
+
+/**
+ * The game's reading, the auto-fight's: a trait once this fight's log shows one of the monster's name
+ * at it, as the player reads it (a sweep, a breath, a blow that drinks or takes spell points, a call).
+ * A leader shows only in its fall, the people breaking at the last one's, so it is never known first.
+ */
+export const asSeen: Sees = (s, m, trait) => {
+  if (trait === 'leader') return false;
+  const n = m.def.name, head = { sweep: `${n} sweeps `, breath: `${n} breathes `, calls: `${n} calls, `, drain: `${n} hits ` }[trait];
+  return s.log.some((l) => l.startsWith(head) && (trait !== 'drain' || l.includes(' and drinks') || l.includes(' spell points')));
+};
+
 /**
  * The bots' answer to sleep and to a hold (#549: the bells, the vines and the machines' clamps): the
  * sleeper to wake or the held to free, a member of the front row first and then a caster, and the
@@ -67,12 +94,13 @@ export function wakeWith(p: Party, c: Character): { spellId: string; target: num
  * stops the calls and holds the light (`Clock`, ANSWER.clock); then a leader, since the people break
  * at its fall, else a caller while the fight has room for its call, since its fall stops the fight
  * growing (`canCall`), else one whose touch takes spell points (`drain: 'sp'`, the lights), since its
- * fall keeps the casters' points.
+ * fall keeps the casters' points. A leader, a caller and a light only where `sees` knows them so.
  */
-export function markOf(s: CombatState, foes: readonly number[]): number | undefined {
+export function markOf(s: CombatState, foes: readonly number[], sees: Sees = asWritten): number | undefined {
   const c = s.clock, called = c && (typeof c.calls === 'string' ? c.calls : c.calls.id);
   const first = !c || ANSWER.clock === 'leader' ? undefined : foes.find((f) => (ANSWER.clock === 'panel' ? c.panel.includes(s.monsters[f].def.id) : s.monsters[f].def.id === called));
-  return first ?? foes.find((f) => isLeader(s, s.monsters[f])) ?? foes.find((f) => canCall(s, s.monsters[f])) ?? foes.find((f) => s.monsters[f].def.drain === 'sp');
+  const knows = (f: number, t: Trait): boolean => sees(s, s.monsters[f], t);
+  return first ?? foes.find((f) => isLeader(s, s.monsters[f]) && knows(f, 'leader')) ?? foes.find((f) => canCall(s, s.monsters[f]) && knows(f, 'calls')) ?? foes.find((f) => s.monsters[f].def.drain === 'sp' && knows(f, 'drain'));
 }
 
 /**
@@ -87,10 +115,10 @@ export const ANSWER = { sweep: true, hold: true, breath: true, clock: 'panel' as
  * The fallen member of the front row the bots raise first while a foe that breathes stands (#549): a
  * breath falls on the row with more standing in it, so one of the front row down turns it on the
  * casters, and raised it takes the front again. None where the front row has as many standing as the
- * back, or none of it is only fallen.
+ * back, or none of it is only fallen. A breather only where `sees` knows it breathes.
  */
-export function breathGuard(s: CombatState, p: Party): number | undefined {
-  if (!ANSWER.breath || !aliveMonsters(s).some((f) => s.monsters[f].def.sweep?.element && !s.monsters[f].under)) return undefined;
+export function breathGuard(s: CombatState, p: Party, sees: Sees = asWritten): number | undefined {
+  if (!ANSWER.breath || !aliveMonsters(s).some((f) => s.monsters[f].def.sweep?.element && !s.monsters[f].under && sees(s, s.monsters[f], 'breath'))) return undefined;
   const up = (back: boolean): number => p.members.filter((m, j) => (j >= FRONT_ROW) === back && !isDown(m)).length;
   if (up(true) <= up(false)) return undefined;
   const j = p.members.findIndex((m, k) => k < FRONT_ROW && hasCondition(m, 'unconscious') && !hasCondition(m, 'dead') && !hasCondition(m, 'stoned'));
@@ -101,13 +129,13 @@ export function breathGuard(s: CombatState, p: Party): number | undefined {
  * The hit points under which the bots mend each member, by their slot: 40% of their own, or, in the
  * row a foe that sweeps would take (`sweptRow`, #545), the most one sweep of it could deal them where
  * that is more. So the front row's hit points are spread, none of it falls to one sweep, and the
- * sweep never turns on the back row.
+ * sweep never turns on the back row. A sweep or a breath only where `sees` knows it.
  */
-export function mendLines(s: CombatState, p: Party): number[] {
+export function mendLines(s: CombatState, p: Party, sees: Sees = asWritten): number[] {
   const at = p.members.map((m) => m.maxHp * 0.4);
   for (const f of ANSWER.sweep ? aliveMonsters(s) : []) {
     const m = s.monsters[f], d = m.def;
-    if (d.sweep) for (const { i } of sweptRow(p, m)) at[i] = Math.max(at[i], d.dice * d.sides + d.bonus);
+    if (d.sweep && sees(s, m, d.sweep.element ? 'breath' : 'sweep')) for (const { i } of sweptRow(p, m)) at[i] = Math.max(at[i], d.dice * d.sides + d.bonus);
   }
   return at;
 }
@@ -115,9 +143,9 @@ export function mendLines(s: CombatState, p: Party): number[] {
 /** How far a damage spell reaches; the bot casts the widest it can afford. */
 const REACH: Partial<Record<SpellTarget, number>> = { all: 3, group: 2, enemy: 1 };
 
-/** The damage spell the bot would cast at the fight's first foe, or its mark: none if it can afford none worth casting. */
-export function gateBlast(s: CombatState, c: Character): SpellDef | undefined {
-  const foes = aliveMonsters(s), foe = markOf(s, foes) ?? foes[0];
+/** The damage spell the bot would cast at the fight's first foe, or its mark (by `sees`): none if it can afford none worth casting. */
+export function gateBlast(s: CombatState, c: Character, sees: Sees = asWritten): SpellDef | undefined {
+  const foes = aliveMonsters(s), foe = markOf(s, foes, sees) ?? foes[0];
   if (foe === undefined) return undefined;
   const mult = (x: SpellDef): number => seenMult(s, s.monsters[foe], x.element);
   return c.spells.map(spell).filter((x) => x.context !== 'explore' && x.sp <= c.sp && x.dice && REACH[x.target] && foes.some((f) => seenMult(s, s.monsters[f], x.element) > 0))
@@ -140,16 +168,17 @@ export function gateBurn(s: CombatState, c: Character): { spellId: string; targe
 /**
  * The bot's turn for member `i`: the action it took, in gateTurn's order (mend, wake, burn, blast,
  * strike, brace). Each is tried on the resolver in turn and the first it takes is the turn; bracing
- * it always takes.
+ * it always takes. `sees` is what it knows of the monsters: the gate's every trait as written, the
+ * game's auto-fight only what the fight has shown (`asSeen`).
  */
-export function botTurn(s: CombatState, p: Party, rng: RngInstance, i: number): PartyAction {
-  const c = p.members[i], foes = aliveMonsters(s), lead = markOf(s, foes), foe = lead ?? foes[0];
+export function botTurn(s: CombatState, p: Party, rng: RngInstance, i: number, sees: Sees = asWritten): PartyAction {
+  const c = p.members[i], foes = aliveMonsters(s), lead = markOf(s, foes, sees), foe = lead ?? foes[0];
   const blade = lead !== undefined && canReach(s, c, lead) ? lead : foes.find((f) => canReach(s, c, f)) ?? foe;
   const known = c.spells.map(spell).filter((x) => x.context !== 'explore' && x.sp <= c.sp);
-  const lines = mendLines(s, p), guard = breathGuard(s, p);
+  const lines = mendLines(s, p, sees), guard = breathGuard(s, p, sees);
   const low = guard !== undefined ? { m: p.members[guard], j: guard } : p.members.map((m, j) => ({ m, j })).filter(({ m, j }) => !isDown(m) && m.hp < lines[j]).sort((a, b) => a.m.hp - b.m.hp)[0];
   const mend = known.filter((x) => x.heal && !x.raise).sort((a, b) => (b.heal ?? 0) - (a.heal ?? 0))[0];
-  const blast = gateBlast(s, c);
+  const blast = gateBlast(s, c, sees);
   const took = (a: PartyAction): PartyAction | undefined => (partyAct(s, p, rng, a) ? a : undefined);
   let a: PartyAction | undefined;
   if (low && mend && (a = took({ type: 'cast', spellId: mend.id, target: low.j }))) return a;
