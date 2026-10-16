@@ -1,8 +1,8 @@
 # The pilot
 
 An autoplay mode for watching (epic #713). The pilot plays the one quest from the title to the
-ending's choice: it fights, explores, rests, buys, trains and talks at a walking pace, saying under
-the viewport what it is about. It plays **fair**: it knows only what the party knows, never a
+ending's choice: it fights, explores, rests, buys, trains and talks at a walking pace, saying over
+the view what it is about. It plays **fair**: it knows only what the party knows, never a
 map as written, so where it gets lost the finding is against the area's hint chain, not the pilot.
 It is opt-in and changes nothing for the player (DESIGN §1, pillar 1).
 

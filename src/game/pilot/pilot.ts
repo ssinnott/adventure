@@ -36,7 +36,7 @@ export class Pilot {
   readonly instant: boolean;
   /** The headless run only (#723): Known answers seen() true everywhere. Never set in the game. */
   readonly omniscient: boolean;
-  /** The two why lines drawn under the viewport. */
+  /** The two why lines, drawn in the band over the top of the view (Game.render). */
   why: [string, string?] = ['Nothing to do.'];
   /** The brains this pilot asks: `BRAINS`, unless a test names its own. */
   brains: readonly Brain[] = BRAINS;
