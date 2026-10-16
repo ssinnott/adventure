@@ -759,6 +759,22 @@ export function areaOf(atlas: Atlas, id: string): AtlasArea | undefined {
   return z ? atlas.areas.find((a) => a.id === z.area) : undefined;
 }
 
+/**
+ * Where a map is on the world map, in world cells: over a place's plate, else a built outdoor map's
+ * middle where the atlas lays it, else the middle of the outdoor map it opens onto (`homeMap`). The
+ * world map pins a quest's place and a reading's mark here, and the pilot's fair view reads it.
+ */
+export function mapPlace(atlas: Atlas, defs: readonly MapDef[], mapId: string): [number, number] | undefined {
+  const pl = atlas.places.find((q) => q.id === mapId);
+  if (pl) return [pl.at[0], pl.at[1]];
+  const middle = (id: string): [number, number] | undefined => {
+    const at = mapAt(atlas, id), def = defs.find((q) => q.id === id);
+    return at && def ? [at[0] + Math.max(...def.rows.map((s) => s.length)) / 2, at[1] + def.rows.length / 2] : undefined;
+  };
+  const home = middle(mapId) ? undefined : homeMap(defs, mapId);
+  return middle(mapId) ?? (home && middle(home.id));
+}
+
 /** A map cell's centre on the world grid, for maps the atlas places. */
 export function worldPoint(atlas: Atlas, mapId: string, x: number, y: number): [number, number] | null {
   const at = mapAt(atlas, mapId);

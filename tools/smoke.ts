@@ -12,6 +12,7 @@ import { GROUND_SAMPLES } from './grounds.ts';
 import { MAP_DEFS } from '../src/content/index.ts';
 import type { MonsterSprite } from '../src/content/index.ts';
 import { SPAN, SPAN_SLACK } from '../src/ui/sprites.ts';
+import { LAYOUT } from '../src/ui/frame.ts';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const require = createRequire(import.meta.url);
@@ -1120,7 +1121,7 @@ await page.evaluate(async (defs: any[]) => {
 const sweeps = [...GROUND_SAMPLES.map((d) => ({ id: d.id, all: false })), ...FLOOR.filter((id) => !SWEEP.includes(id)).map((id) => ({ id, all: false })), ...SWEEP.map((id) => ({ id, all: true }))];
 const cracks = await page.evaluate(async (maps: { id: string; all: boolean }[]) => {
   const load = (p: string): Promise<any> => import(p);
-  const V = await load('/src/ui/viewport.ts'), T = await load('/src/game/types.ts');
+  const V = await load('/src/ui/viewport.ts'), T = await load('/src/game/types.ts'), I = await load('/src/game/ink.ts');
   const w = (window as any).__game.game.world;
   const W = 400, H = 268, band = 16, bad: string[] = [];
   let views = 0;
@@ -1150,7 +1151,7 @@ const cracks = await page.evaluate(async (maps: { id: string; all: boolean }[]) 
         views++;
         const shows = (px: number, py: number) => { const i = (py * W + px) * 4; return Math.abs(a[i] - b[i]) > 8 || Math.abs(a[i + 1] - b[i + 1]) > 8; };
         // Beside the party a wall, as it is drawn: a secret door among the peaks is a peak, not a wall.
-        const walled = (s: number) => V.isSolidWall(V.drawnCell(m, ax + s * T.FACING_DX[rf], ay + s * T.FACING_DY[rf]));
+        const walled = (s: number) => V.isSolidWall(I.drawnCell(m, ax + s * T.FACING_DX[rf], ay + s * T.FACING_DY[rf]));
         let spot = '', level: ((px: number, py: number) => boolean) | undefined;
         for (let py = 0; py < band * 2 && !spot; py++) for (let px = 0; px < W && !spot; px++) {
           if (!shows(px, py)) continue;
@@ -1457,6 +1458,26 @@ const mark = await page.evaluate(async () => {
   return { set, asked, back };
 });
 
+// The pilot (#716), last, so nothing above sees its lines in the log: P on the exploration screen
+// hands it the game and its band darkens the top of the view for the why line; T steps its tempo;
+// P again takes the game back, and once P has handed it over again, an arrow takes it back too.
+const pilotAt = { x: LAYOUT.view.x + 2, y: LAYOUT.view.y + 2 };
+const pilotPixel = (): Promise<number[]> => page.evaluate((p: { x: number; y: number }) => [...(document.getElementById('stage') as HTMLCanvasElement).getContext('2d')!.getImageData(p.x, p.y, 1, 1).data].slice(0, 3), pilotAt);
+const pilotBefore = await pilotPixel();
+const pilotFrom: number = await page.evaluate(() => (window as any).__game.game.frame);
+await page.keyboard.press('KeyP');
+await page.waitForFunction((f: number) => (window as any).__game.game.frame >= f + 60, pilotFrom, { timeout: 15000 });
+const pilotBand = { on: await page.evaluate(() => (window as any).__game.game.pilot.on === true), at: await pilotPixel() };
+const pilotState = (): Promise<{ on: boolean; tempo: number }> => page.evaluate(() => { const p = (window as any).__game.game.pilot; return { on: p.on, tempo: p.tempo }; });
+await page.keyboard.press('KeyT'); await page.waitForTimeout(100);
+const pilotTempo = await pilotState();
+await page.keyboard.press('KeyP'); await page.waitForTimeout(100);
+const pilotOff = (await pilotState()).on === false;
+await page.keyboard.press('KeyP'); await page.waitForTimeout(100);
+const pilotAgain = (await pilotState()).on;
+await page.keyboard.press('ArrowLeft'); await page.waitForTimeout(100);
+const pilotArrow = (await pilotState()).on === false;
+
 await browser.close();
 server.close();
 
@@ -1483,6 +1504,12 @@ ok(gameSeed === SEED, `the new game starts from the pinned seed (${gameSeed}, we
 ok(state.map === 'caldera' && state.zone === 'shelf' && state.steps === 3, `three steps back through the gate reach the Foreland, outdoors (${JSON.stringify(state)})`);
 ok(exploreColours > 20, `the viewport, automap and party cards painted (${exploreColours} colours)`);
 ok(screen2 === 'CombatScreen' && combatColours > 20, `a fight opens and paints (${screen2}, ${combatColours} colours)`);
+{
+  const light = (c: number[]): number => (c[0] + c[1] + c[2]) / 3;
+  ok(pilotBand.on && Math.max(...pilotBand.at) < 100 && light(pilotBand.at) <= light(pilotBefore) * 0.6 + 4 && pilotOff,
+    `P hands the game to the pilot, whose band darkens the top of the view 60 frames on (${pilotBefore.join(',')} to ${pilotBand.at.join(',')} at ${pilotAt.x},${pilotAt.y}), and P again takes it back (${pilotOff ? 'off' : 'still on'})`);
+  ok(pilotTempo.on && pilotTempo.tempo === 2 && pilotAgain && pilotArrow, `T steps the pilot's tempo while it drives (${pilotTempo.tempo}×), and an arrow takes the game back as P does (${pilotArrow ? 'off' : 'still on'})`);
+}
 ok(mark.set && mark.asked.screen === 'ChoiceScreen' && mark.asked.options.join('|') === 'Return to the mark|Set it here' && mark.back, `with a mark set, Waymark asks whether to return or set it here, and returns (${JSON.stringify(mark)})`);
 ok(glass.asked === 'element' && glass.element === 'cold' && glass.line === 'Maren casts Lampglass. The glass dims the cold.', `Lampglass asks against what before it is cast, and casts the pick (${JSON.stringify(glass)})`);
 ok(thornColours > 20, `Thornmark's forest paints (${thornColours} colours)`);
