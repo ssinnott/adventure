@@ -40,6 +40,8 @@ export const MONKSVALE_J11: MapDef = {
   region: 'whitespine',
   start: { x: 20, y: 1, facing: SOUTH },
   exits: [GATE],
+  // Highcell drawn tall: its bell towers over the wall, on the square behind the gate the road ends at.
+  landmarks: [{ x: 26, y: 25, kind: 'monastery' }],
   rows: [
     'MMMMAAAAMMMMM^^^^^,,=ppMAAAAAAMM',
     'MMMAAAAAMMMMM^^^^^^==^^MMAAAAAAM',
