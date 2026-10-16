@@ -123,19 +123,21 @@ export const QUESTS: readonly QuestDef[] = [
     // glasses two walkers carried. The etched one, from the fallen walker's hollow on the steppe (D9), he
     // takes at the first meeting that holds it, from any company; the one with a light, from the half-buried
     // walker's cache in the dunes (B9), at his question once the etching is his, and by it he reads the one.
-    // Begun by his ask, or by the etching given by a company with a sorcerer of 27 with the second, as the
-    // Cleric's third is begun by the log (#763): a goal nobody in the company can finish is not shown. Done
-    // on the etching read by such a company; one with none hears it read, and has no quest of it.
+    // Begun by his ask, or by the etching given by a company with a sorcerer of 27 with the second, and done
+    // once a sorcerer of the company is a Magus, as the Cleric's third is (#763): a company may bring both
+    // glasses and hear the etching read before its sorcerer is 27, and its quest, begun then, still sends it
+    // back to him. A company with no sorcerer hears it read, and has no quest of it.
     id: 'walkers_carried',
     title: 'What the Walkers Carried',
     start: [{ flag: SCHOLAR_ASKED }, { flag: ETCHING_GIVEN, member: { cls: 'sorcerer', level: 27, prestige: 2 } }],
-    done: { flag: ETCHING_READ, member: { cls: 'sorcerer', level: 27, prestige: 2 } },
+    done: { member: { cls: 'sorcerer', prestige: 3 } },
     entries: [
       { id: 'asked', when: { flag: SCHOLAR_ASKED }, text: 'At the Glass\'s edge Eadmer, a scholar the Riders let sit and no further, asked for the glasses two walkers carried, one on the steppe and one in the dunes.' },
       { id: 'etching', when: { flag: ETCHING_GIVEN }, text: 'He took the etched glass. It is cut finer than hair, and he had nothing to read it by.' },
       { id: 'read', when: { flag: ETCHING_READ }, text: 'By the other walker\'s light he read it: the land and the sea, a wall at either end, and a lid on it.' },
     ],
     goals: [
+      { when: { flag: ETCHING_READ }, text: 'Go back to Eadmer at the Glass\'s edge, and learn how a Magus reads.', at: 'wold_b9' },
       { when: { flag: ETCHING_GIVEN }, text: 'Bring Eadmer what the walker in the dunes at the Glass\'s edge carried.', at: 'wold_b9' },
       { when: { item: 'etched_glass' }, text: 'Take the etched glass to Eadmer at the Glass\'s edge.', at: 'wold_b9' },
       { when: { flag: SCHOLAR_ASKED }, text: 'Find what the walker fallen on the steppe carried.', at: 'wold_d9' },

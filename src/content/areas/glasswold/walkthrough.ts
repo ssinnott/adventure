@@ -1007,8 +1007,8 @@ function fanesMap(ok: (cond: boolean, msg: string) => void): void {
  * glasses first: Cassian, a Thaumaturge, is sent to Eadmer and the world map marks the gap's box; the etched
  * glass from the fallen walker's hollow on the steppe and the light from the half-buried walker's cache in
  * the dunes carried to him, at his first meeting he takes the etching, which begins the quest and ends the
- * seeking, the third waiting; at the next he asks for the light and reads the one by it, which ends the
- * quest; his menu teaches the Magus for it and no gold, and after, his own words. The ask first: his own
+ * seeking, the third waiting; at the next he asks for the light and reads the one by it, the deed; his menu
+ * teaches the Magus for it and no gold, which ends the quest, and after, his own words. The ask first: his own
  * words, then his ask, once, which begins it; the light brought before the etching is not asked for. With
  * no sorcerer: his own words and never the ask, the glasses taken and the etching read all the same, no
  * quest begun and nobody to teach.
@@ -1062,12 +1062,13 @@ function walkersCarried(ok: (cond: boolean, msg: string) => void): void {
       && barOf(teaching, cassian, w.party, w.world.state) === 'the quest first' && !teach(teaching, w.party, w.world.state, 5).taught,
       `the glasses first: at his first meeting he takes the etched glass for nothing (${hand.done[1]}), which begins ${log('walkers_carried')?.def.title} and ends the seeking; the light stays in the pack, and the third waits`);
     const { ask, said, give } = giveLight(w);
-    ok(!!give && said.startsWith(give.says.join('\n\n')) && !w.party.bag.includes('glass_light') && !!w.party.flags[ETCHING_READ] && log('walkers_carried')?.done === true && log('walkers_carried')?.goal === null
-      && log('walkers_carried')?.pages[0].entries.map((e) => e.id).join() === 'etching,read',
-      `the glasses first: at the next, the light in the pack, his question (${ask}); given, he reads the one by the other's light (${give?.says[1]}), and the quest is done`);
+    ok(!!give && said.startsWith(give.says.join('\n\n')) && !w.party.bag.includes('glass_light') && !!w.party.flags[ETCHING_READ] && log('walkers_carried')?.done === false
+      && log('walkers_carried')?.goal === 'Go back to Eadmer at the Glass\'s edge, and learn how a Magus reads.' && log('walkers_carried')?.pages[0].entries.map((e) => e.id).join() === 'etching,read',
+      `the glasses first: at the next, the light in the pack, his question (${ask}); given, he reads the one by the other's light (${give?.says[1]}), the deed his teaching waits on`);
     const [offer] = offers(teaching, w.party, w.world.state), r = teach(teaching, w.party, w.world.state, 5);
-    ok(offer?.who === 5 && offer.bar === '' && offer.price === 0 && r.taught && className(cassian) === 'Magus' && w.party.gold === gold,
-      `the glasses first: his menu teaches the third, earned, for no gold (${r.line})`);
+    listen(w);
+    ok(offer?.who === 5 && offer.bar === '' && offer.price === 0 && r.taught && className(cassian) === 'Magus' && w.party.gold === gold && log('walkers_carried')?.done === true && log('walkers_carried')?.goal === null,
+      `the glasses first: his menu teaches the third, earned, for no gold (${r.line}), and that ends the quest`);
     const after = [talk(w), talk(w)];
     ok(after.every((m) => m.text === own && !m.choice) && !w.party.flags[SCHOLAR_ASKED], 'after, his own words, and never the ask');
   }
