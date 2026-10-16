@@ -527,8 +527,10 @@ settled in its issue, and what the pilot teaches changes them.
   (§6), and the Tidefolk's blessing waits on its frame once it hangs (§9). The god's name is on its silver alone (§10). The gate
   holds at 11: the upper level wins every fight at 7.2 fights to a rest; the choir wins 83% of its
   fights with the boss among them, every fight but the boss's, at 7.5 to a rest; the Choirmaster
-  is won 48% of the time at 11 and 98% at 13 (98% of the choir's fights and 94% of the Choirmaster's
-  at 11 once the gate's company takes its first prestige, #541, past the limit and owed to #18). As
+  is won 48% of the time at 11 and 98% at 13 (once the gate's company took its first prestige, #541,
+  98% of the choir's fights and 94% of the Choirmaster's at 11, the second past its limit and owed to
+  #18, until #806 set its hit points again at 825: 48% at 11 and 100% at 13, and 82.7% of the choir's
+  fights with it among them, off the aim of 90% and inside the limit of 80%; §9). As
   measured, a clear pays about 1,580 xp a member at
   11 and about 1,130 gold (§8). Once the Tide Stone is home (#191) the god sings, very faintly, across
   the nave's head before the apse's stair and before the far roof's porch, whether or not the count has stopped,
@@ -1339,8 +1341,8 @@ Decided by delegate for #175, each the owner's to overturn:
    crosses, so the god's silver is had only down the far roof's wet stair, and a company that comes
    in that way leaves the same way. From the sacristy it sees the Choirmaster's back across the
    water. Neither level has a secret door of its own: B6's is the secret.
-3. **The Choirmaster stands alone,** level 12, past MONSTERS §4.4's boss line in its blows as the
-   Great Devilfish is: 680 hit points, armour 20, +11, 11d8+15, speed 13, and paid as 6 says.
+3. **The Choirmaster stands alone,** level 12, past MONSTERS §4.4's boss line in its hit points and
+   its blows: 825 hit points (680 until #806), armour 20, +11, 11d8+15, speed 13, and paid as 6 says.
    It casts Bless whenever its group is not blessed, so alone it blesses itself; with two chanters
    behind it, the group's mean level was 11.3 and the curve asks the hardest group of a band 11–12
    map to stand at 12. It is won 48% of the time at 11 and 98% at 13.
@@ -1523,6 +1525,41 @@ Decided by delegate for #582, each the owner's to overturn:
    stood at the Grove Stone and the short line to one that has not, since those runs play it with no
    Grove Stone stood at. In order the company reads the cut; with Saltmouth first and in the area
    walk, the short line; `thePlinth` plays the late company and the early one.
+
+Decided by delegate for #806, each the owner's to overturn:
+
+1. **The Choirmaster is set again at 825 hit points, its blow kept at 11d8+15** (680 hit points
+   before), by hearth_isle.md §7's method: tries of hit points and blow on the gate's seeds. #175's
+   gate set it against a company without its first prestige, 48% at 11 and 98% at 13; the gate's
+   company has taken the prestige since #541, and won it 94% at 11, past the limit of 80% and owed to
+   #18. The aim is about half at the floor (30% to 70%) and nearly always two above (90%). The tries,
+   in percent of the gate's 400 seeds and of its own hundred, a fight broken off being one still
+   running at the fifteenth round, which the gate does not count won:
+
+   | Hit points | Blow | At 11 | Broken off | At 13 | The gate's hundred, 11 and 13 |
+   |---|---|---|---|---|---|
+   | 680 (before) | 11d8+15 | 94 | 0 | 100 | 94 and 100 |
+   | 760 | 11d8+15 | 79 | 1 | 100 | 74 and 100 |
+   | 800 | 11d8+15 | 65 | 1 | 100 | 58 and 100 |
+   | **825 (kept)** | **11d8+15** | **54** | **3** | **99** | **48 and 100** |
+   | 860 | 11d8+15 | 41 | 4 | 98 | 37 and 98 |
+   | 900 | 11d8+15 | 31 | 6 | 95 | 26 and 96 |
+   | 760 | 14d8+20 | 61 | 1 | 98 | 66 and 99 |
+
+   825 is inside the aim at both levels, on the hundred and on the 400.
+2. **Hit points alone,** since 3 fights in 100 are broken off at 825: a company that loses to the
+   Choirmaster is beaten by it and not by the clock. The rule for the four Act II bosses (wrackholm.md
+   and sunderwood.md §9 hold the others): raise the hit points till the floor reads about half, and
+   where more than one fight in ten is then broken off, raise the blow and lower the hit points till
+   it is not. A boss that the clock beats asks a company for time and not for lives.
+3. **The temples' floor is 82.7% with the boss among its three groups,** 98% before: the verger and
+   the choir are won every time and the boss 48%, so the map's fights pool at (100 + 100 + 48) / 3.
+   That is off the aim of 90% and inside the limit of 80%, as the choir's 83% was when #175 set the
+   boss, and the check lists it. The map's limit binds the boss from below: it must be won 40% or
+   more at 11 for the map to hold it.
+4. **The `OWED` line for the Choirmaster goes,** and the reason `OFF_LINE` gives for it
+   (`tools/tests/harness.ts`) names this issue. Level, xp, gold, drops, id and the group stay, so the
+   curve and `src/content/shipped.json` do not move.
 
 ## 10. Names
 
