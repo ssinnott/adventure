@@ -808,10 +808,11 @@ Decided by delegate for #806, each the owner's to overturn:
 
 2. **The blow rises with the hit points.** Hit points alone read half at 1,000, but 38 fights in 100
    are then broken off at the fifteenth round: the beast is not beating the company, the clock is,
-   and a company that waits it out may well win. The rule for the four Act II bosses (saltreach.md holds the
-   Choirmaster's, sunderwood.md the Warden of the Sunder's): raise the hit points till the floor
-   reads about half, and where more than one fight in ten is then broken off, raise the blow and
-   lower the hit points till it is not. The blow stays under the line's at 14 (13d8+15, 73.5): 63.
+   and a company that waits it out may well win. The rule for the four Act II bosses (saltreach.md
+   holds the Choirmaster's, sunderwood.md the Warden of the Sunder's): raise the hit points till the
+   floor reads about half, and where more than one fight in ten is then broken off, raise the blow
+   and lower the hit points till it is not. Both Wrackholm blows stay under the line's at 14
+   (13d8+15, 73.5): 63 and 66.
 3. **It is won two in three at 12, not a half, so that its cave holds its aim.** The cave's four
    groups pool at the floor, the crew and the two devilfish groups won every time: (300 + 66) / 4 is
    91.5%, inside the aim of 90%, as #188 left it. At 700 hit points the beast reads 56% and the cave

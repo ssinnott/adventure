@@ -528,9 +528,9 @@ settled in its issue, and what the pilot teaches changes them.
   holds at 11: the upper level wins every fight at 7.2 fights to a rest; the choir wins 83% of its
   fights with the boss among them, every fight but the boss's, at 7.5 to a rest; the Choirmaster
   is won 48% of the time at 11 and 98% at 13 (once the gate's company took its first prestige, #541,
-  98% of the choir's fights and 94% of the Choirmaster's at 11, past the limit and owed to #18, until
-  #806 set its hit points again at 825: 48% at 11 and 100% at 13, and 82.7% of the choir's fights with
-  it among them, off the aim of 90% and inside the limit of 80%; §9). As
+  98% of the choir's fights and 94% of the Choirmaster's at 11, the second past its limit and owed to
+  #18, until #806 set its hit points again at 825: 48% at 11 and 100% at 13, and 82.7% of the choir's
+  fights with it among them, off the aim of 90% and inside the limit of 80%; §9). As
   measured, a clear pays about 1,580 xp a member at
   11 and about 1,130 gold (§8). Once the Tide Stone is home (#191) the god sings, very faintly, across
   the nave's head before the apse's stair and before the far roof's porch, whether or not the count has stopped,
@@ -1531,7 +1531,7 @@ Decided by delegate for #806, each the owner's to overturn:
 1. **The Choirmaster is set again at 825 hit points, its blow kept at 11d8+15** (680 hit points
    before), by hearth_isle.md §7's method: tries of hit points and blow on the gate's seeds. #175's
    gate set it against a company without its first prestige, 48% at 11 and 98% at 13; the gate's
-   company has taken the prestige since #541, and won 94% at 11, past the limit of 80% and owed to
+   company has taken the prestige since #541, and won it 94% at 11, past the limit of 80% and owed to
    #18. The aim is about half at the floor (30% to 70%) and nearly always two above (90%). The tries,
    in percent of the gate's 400 seeds and of its own hundred, a fight broken off being one still
    running at the fifteenth round, which the gate does not count won:
