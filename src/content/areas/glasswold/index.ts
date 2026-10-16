@@ -31,8 +31,9 @@ export const AREA = {
   // the ladder (#542).
   items: ITEMS,
   // #56's four side quests (#532): The Horse That Came Back and Orders on the Scarp Stair, given from
-  // Cinderport's halls, The Lion's Share and The Garden of Glass, from Akordu; and the Ranger's third
-  // prestige's quest, Oriel Fane's Map, from Aysu on Kushtash (#448).
+  // Cinderport's halls, The Lion's Share and The Garden of Glass, from Akordu; and the third prestiges'
+  // quests, the Ranger's Oriel Fane's Map, from Aysu on Kushtash (#448), and the Sorcerer's What the
+  // Walkers Carried, from Eadmer at the Glass's edge (#807).
   quests: QUESTS,
   chapter: CHAPTER,
   // The steppe: hot summers and hard winters, the days warm and the nights cold, little rain and that

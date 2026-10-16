@@ -5,8 +5,10 @@
 // middle. In the south-east the mesa at the dunes' end and the gap between it and the rim's foot, where
 // the sand gives way to glass: the Riders' watch on the last grass at its mouth, three of them at a fire
 // before a yurt, two walkers under the mesa's face, and past the gap's last square the Glass, the reach,
-// and the Tower's crown standing out of it. A walker that stopped long ago lies half-buried in the one
-// dune that does not shift. The rim down the west and along the south; C9, east, is not built.
+// and the Tower's crown standing out of it. On the gap's last sand Eadmer, a scholar the Riders let sit
+// there and no further, who teaches the Sorcerer's third for the glasses two walkers carried (#807). A
+// walker that stopped long ago lies half-buried in the one dune that does not shift. The rim down the west
+// and along the south; C9, east, is not built.
 // The atlas's glass inside the box is the mesa and the rim's foot: the Glass is past the box's edge.
 // Cut from the atlas by hand (tools/scaffold.ts refuses its glass); docs/areas/glasswold.md §4.8 is its brief (#530).
 import type { MapDef } from '../../../../game/map.ts';
@@ -14,6 +16,15 @@ import { SOUTH } from '../../../../game/types.ts';
 
 /** The flag the watch's words set, said once: The Warning's last step on the Wold keys on it, or on `b9_glass` (#531). */
 export const WATCH = 'gap_watch';
+
+/**
+ * The Sorcerer's third (#807), What the Walkers Carried: Eadmer has asked a sorcerer of 27 with the second
+ * for the glasses two walkers carried (`SCHOLAR_ASKED`); been given the etched one, from the fallen walker's
+ * hollow on D9, which he takes at the first meeting that holds it (`ETCHING_GIVEN`); and been given the one
+ * with a light, from the half-buried walker's cache here, at his question once he has the etching, and read
+ * the one by the other's light (`ETCHING_READ`), which his teaching waits on.
+ */
+export const SCHOLAR_ASKED = 'q_scholar_asked', ETCHING_GIVEN = 'q_etching_given', ETCHING_READ = 'q_etching_read';
 
 export const WOLD_B9: MapDef = {
   id: 'wold_b9',
@@ -99,6 +110,33 @@ export const WOLD_B9: MapDef = {
     { kind: 'event', x: 27, y: 27, id: 'b9_line', once: true, text: 'Two stones stand either side of the way, taller than a horse. A Rider calls from the fire: "That is the Glass. What walks there would not spare you."' },
     { kind: 'event', x: 29, y: 27, id: 'b9_tracks', once: true, text: 'One set of prints comes up off the glass onto the sand, a long stride apart, going out. On the glass there is no mark.' },
     { kind: 'event', x: 31, y: 27, id: 'b9_glass', once: true, text: 'The sand ends, and underfoot is glass. The Glass runs white to the sky, and far off a dark crown stands up out of it.' },
+    // On the gap's last sand, a square short of the glass: Eadmer, the scholar, the Sorcerer's third (#807).
+    // His own words first; to a sorcerer of 27 with the second, once, his ask for the glasses two walkers
+    // carried. The etched one he takes at the first meeting that holds it, from any company; with the etching
+    // his and the light in the pack, his question, and given, he reads the one by the other's light and his
+    // menu teaches the Magus for it and no gold. After, his own words again.
+    { kind: 'npc', x: 30, y: 27, name: 'Eadmer, the scholar', lines: [
+      'A man sits on the last of the sand with a board across his knees and his back to the Riders, looking out over the Glass.',
+      '"Eadmer. They let me sit here, and no further. Nine years now."',
+      '"What is written out there, I cannot walk to. So I read what walks out."',
+    ], flag: 'b9_scholar_met', quest: { item: 'etched_glass', reward: 0, setFlag: ETCHING_GIVEN, done: [
+      'He has the etched glass out of your hand before you offer it, and turns it to the glare, close to his eye.',
+      '"Cut, and finer than hair. Not by daylight, nor by any lamp I own."',
+    ] }, says: [
+      { after: { flag: ETCHING_GIVEN, item: 'glass_light' }, until: { flag: ETCHING_READ }, lines: [
+        'A green-white light shows through your pack. He is on his feet before you have it out.',
+      ], choice: { ask: 'Give him the glass with a light?', answers: [
+        { label: 'Give it', takes: 'glass_light', sets: ETCHING_READ, says: [
+          'He holds the light behind the etching, and its lines fall on his board a hand high: the land and the sea, a wall at either end, and a line across the top of it all.',
+          '"Every map I ever saw stops at the rim," he says, copying it. "This one has a lid."',
+        ] },
+        { label: 'Not yet', says: ['He sits down again, and turns the etching to the glare.'] },
+      ] } },
+      { after: { flag: 'b9_scholar_met', member: { cls: 'sorcerer', level: 27, prestige: 2 } }, until: [{ flag: SCHOLAR_ASKED }, { flag: ETCHING_GIVEN }], sets: SCHOLAR_ASKED, lines: [
+        'He looks round at your sorcerer at last, and sets the board down.',
+        '"Two walkers lie where they stopped, one on the steppe and one in the dunes behind you. Each carried a glass. Bring me both, and I will show you how a Magus reads."',
+      ] },
+    ], teaches: { cls: 'sorcerer', prestige: 3, asks: 'walkers_carried', done: { flag: ETCHING_READ }, seek: 'Eadmer, the scholar camped at the Glass\'s edge where the Riders turn everyone back, can make a Magus of a Thaumaturge.' } },
   ],
   secrets: [{ x: 16, y: 18, hint: 'b9_still' }],
   encounters: [

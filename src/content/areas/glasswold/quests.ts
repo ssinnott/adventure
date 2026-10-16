@@ -7,9 +7,12 @@
 // the priest at Cinderport's Harbour Temple). Then the Ranger's third prestige's quest (#448), its
 // trainer's `asks`, paying nothing but the prestige: Oriel Fane's Map (Aysu, the scout on Kushtash, B8,
 // and the map Fane gives at the last of the Meridian Company's camps, under Fire Mountain, taken from the
-// pack). How the words are keyed is in src/content/area.ts (`quests`); tools/tests/quests.ts checks every key.
+// pack). Last the Sorcerer's third's (#807), the same: What the Walkers Carried (Eadmer, the scholar at the
+// Glass's edge, B9, and the glasses from the fallen walker on D9 and the half-buried walker on B9). How the
+// words are keyed is in src/content/area.ts (`quests`); tools/tests/quests.ts checks every key.
 import type { QuestDef } from '../../../game/quests.ts';
 import { SCOUT_ASKED, MAP_GIVEN, LION_ASKED, LION_HUNT, LION_LEFT, LION_BLOW, LION_TOLD, LION_TAKEN, LION_DOWN } from './maps/wold_b8.ts';
+import { SCHOLAR_ASKED, ETCHING_GIVEN, ETCHING_READ } from './maps/wold_b9.ts';
 import { HORSE_ASKED, HORSE_BROKEN, HORSE_CARRIED, HORSE_WHOLE, GARDEN_ASKED, GARDEN_CARRIED, GARDEN_BROUGHT, GARDEN_LIFTED, GARDEN_DRAUGHT } from './maps/wold_d8.ts';
 import { ORDERS_ASKED, ORDERS_CARRIED, ORDERS_SEALED, ORDERS_TOLD, ORDERS_BURNED } from './maps/wold_c8.ts';
 
@@ -113,6 +116,29 @@ export const QUESTS: readonly QuestDef[] = [
     goals: [
       { when: { flag: [SCOUT_ASKED, 'meridian_map'] }, text: 'Take Fane\'s map up Kushtash to Aysu.', at: 'wold_b8' },
       { when: { flag: SCOUT_ASKED }, text: 'Follow the Meridian journals down Fire Mountain\'s vents to Meridian Camp, and find Fane\'s map.', at: 'meridian_camp3' },
+    ],
+  },
+  {
+    // #807, the Sorcerer's third: Eadmer at the Glass's edge asks a company with a Thaumaturge of 27 for the
+    // glasses two walkers carried. The etched one, from the fallen walker's hollow on the steppe (D9), he
+    // takes at the first meeting that holds it, from any company; the one with a light, from the half-buried
+    // walker's cache in the dunes (B9), at his question once the etching is his, and by it he reads the one.
+    // Begun by his ask, or by the etching given by a company with a sorcerer of 27 with the second, as the
+    // Cleric's third is begun by the log (#763): a goal nobody in the company can finish is not shown. Done
+    // on the etching read by such a company; one with none hears it read, and has no quest of it.
+    id: 'walkers_carried',
+    title: 'What the Walkers Carried',
+    start: [{ flag: SCHOLAR_ASKED }, { flag: ETCHING_GIVEN, member: { cls: 'sorcerer', level: 27, prestige: 2 } }],
+    done: { flag: ETCHING_READ, member: { cls: 'sorcerer', level: 27, prestige: 2 } },
+    entries: [
+      { id: 'asked', when: { flag: SCHOLAR_ASKED }, text: 'At the Glass\'s edge Eadmer, a scholar the Riders let sit and no further, asked for the glasses two walkers carried, one on the steppe and one in the dunes.' },
+      { id: 'etching', when: { flag: ETCHING_GIVEN }, text: 'He took the etched glass. It is cut finer than hair, and he had nothing to read it by.' },
+      { id: 'read', when: { flag: ETCHING_READ }, text: 'By the other walker\'s light he read it: the land and the sea, a wall at either end, and a lid on it.' },
+    ],
+    goals: [
+      { when: { flag: ETCHING_GIVEN }, text: 'Bring Eadmer what the walker in the dunes at the Glass\'s edge carried.', at: 'wold_b9' },
+      { when: { item: 'etched_glass' }, text: 'Take the etched glass to Eadmer at the Glass\'s edge.', at: 'wold_b9' },
+      { when: { flag: SCHOLAR_ASKED }, text: 'Find what the walker fallen on the steppe carried.', at: 'wold_d9' },
     ],
   },
 ];

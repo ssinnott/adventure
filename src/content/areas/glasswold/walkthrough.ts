@@ -43,16 +43,19 @@
 // gap is walked to without them: the stones and the Riders' word, the walker's tracks and the Glass seen
 // from the last square, no exit; and the walker half-buried in the dune that does not shift, its cache
 // and the glass with a light in it. Then the Ranger's third (#448), Oriel Fane's Map, played by a company
-// of 27 to the teaching (`fanesMap`); #56's four side quests (#532), each at its level and every way
-// it goes (`woldQuests`). Last the chapter, three ways in (`theWarning`).
+// of 27 to the teaching (`fanesMap`); the Sorcerer's third (#807), What the Walkers Carried, the same, the
+// glasses brought first and the ask first, and to a company with no sorcerer (`walkersCarried`); #56's four
+// side quests (#532), each at its level and every way it goes (`woldQuests`). Last the chapter, three ways
+// in (`theWarning`).
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen, walkThrough, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
 import type { Walk, Step } from '../../../../tools/walk.ts';
 import { NORTH, EAST, SOUTH, WEST } from '../../../game/types.ts';
 import type { Facing } from '../../../game/types.ts';
-import { addCondition, hasCondition, lift, templePrice, xpForLevel, takePrestige, className } from '../../../game/party.ts';
-import { offers, teach, barOf } from '../../../game/prestige.ts';
-import { seekId } from '../../../game/seeking.ts';
+import { addCondition, hasCondition, lift, templePrice, xpForLevel, takePrestige, className, createCharacter } from '../../../game/party.ts';
+import { offers, teach, barOf, noneHere } from '../../../game/prestige.ts';
+import { seekId, sought } from '../../../game/seeking.ts';
+import { makeRng } from '../../../lib/engine/rng.ts';
 import { questLog } from '../../../game/quests.ts';
 import { VENTS } from '../ashfall/maps/firemount_g11.ts';
 import { STAIR } from '../ashfall/maps/meridian_camp.ts';
@@ -70,7 +73,7 @@ import { restRefused, useShrine } from '../../../game/wilds.ts';
 import { meet, heard, answer } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
 import { buy, item } from '../../../game/items.ts';
-import type { Feature, MapDef } from '../../../game/map.ts';
+import type { Feature, MapDef, Answer } from '../../../game/map.ts';
 import { take as ride } from '../../../game/passage.ts';
 import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
 import { RIDERS_RIDE } from '../../crossings.ts';
@@ -80,7 +83,7 @@ import { CHAPTER } from './chapter.ts';
 import { CHAPTER as WINDOW } from '../ashfall/chapter.ts';
 import { LIT } from '../ashfall/maps/ember_stone.ts';
 import { ROAD_WEST } from '../ashfall/maps/emberwaste_e10.ts';
-import { WATCH } from './maps/wold_b9.ts';
+import { WATCH, SCHOLAR_ASKED, ETCHING_GIVEN, ETCHING_READ } from './maps/wold_b9.ts';
 
 export const walkthrough: Walkthrough = (ok) => {
   const w = newWalk(ok);
@@ -707,7 +710,7 @@ export const walkthrough: Walkthrough = (ok) => {
   const ridersB9 = ['An old Rider at the fire', 'A Rider with a strung bow', 'The youngest of the watch'].map(saysB9);
   ok(unheard && !!w.party.flags[WATCH] && ridersB9.every((r) => r.p.flag === WATCH && chB9(r.p.x, r.p.y) === 's' && Math.abs(r.p.x - fireB9.x) + Math.abs(r.p.y - fireB9.y) <= 2)
     && ridersB9[0].text.includes('keep the gap') && ridersB9[1].text.includes('going somewhere') && ridersB9[2].text.includes('light')
-    && !B9.features!.some((f) => f.kind === 'npc' && (f.quest || f.choice || f.says || f.teaches || f.skill || f.hall || f.interior || f.passage)),
+    && ridersB9.every(({ p: f }) => !(f.quest || f.choice || f.says || f.teaches || f.skill || f.hall || f.interior || f.passage)),
     'three Riders at the fire keep the gap and say what walks out of it, words only, and their words set the watch\'s flag (#531)');
 
   // The groups: glass scorpions in the dunes by the grass and under the rim, the vultures at the hills'
@@ -756,12 +759,16 @@ export const walkthrough: Walkthrough = (ok) => {
   const cache = featureB9('b9_cache'), light = item('glass_light');
   ok(cache.kind === 'chest' && cache.gold > 0 && cache.items.join() === 'glass_light' && cache.x === dune.x - 2 && cache.y === dune.y
     && light.slot === 'none' && !light.price && light.text?.length === 2 && !light.use && !light.skill && !light.resist,
-    `in the walker's chest ${cache.kind === 'chest' ? cache.gold : 0} gold and a piece of glass with a light in it, which no shop buys and which does nothing yet`);
-  const toldB9 = [...B9.features!.flatMap((f) => [...('text' in f && f.text ? [f.text] : []), ...(f.kind === 'npc' ? f.lines : [])]), ...light.text!].join(' ');
-  ok(!/hull|ship|orbit|voyage|custodian|tower/i.test(toldB9), 'nothing in the box\'s words, or the glass\'s, of what the crown is');
+    `in the walker's chest ${cache.kind === 'chest' ? cache.gold : 0} gold and a piece of glass with a light in it, which no shop buys and which does nothing in the hand: the scholar in the gap asks for it (#807)`);
+  // Everything a person here says: their words, a hand-in's, their words by flag and their answers'.
+  const saidB9 = (f: Feature): readonly string[] => (f.kind === 'npc' ? [...f.lines, ...[f.quest ?? []].flat().flatMap((q) => [...q.done, ...(q.early ?? []), ...(q.after ?? [])]),
+    ...(f.says ?? []).flatMap((v) => [...v.lines, ...(v.choice?.answers.flatMap((a) => a.says) ?? [])])] : []);
+  const toldB9 = [...B9.features!.flatMap((f) => [...('text' in f && f.text ? [f.text] : []), ...saidB9(f)]), ...light.text!].join(' ');
+  ok(!/hull|ship|orbit|voyage|custodian|tower/i.test(toldB9), 'nothing in the box\'s words, the scholar\'s reading among them, or the glass\'s, of what the crown is');
 
   woldBehind(w, ok);
   fanesMap(ok);
+  walkersCarried(ok);
   woldQuests(ok);
   theWarning(ok);
 };
@@ -993,6 +1000,110 @@ function fanesMap(ok: (cond: boolean, msg: string) => void): void {
     `and her menu teaches the third, earned, for no gold (${r.line})`);
   const after = talk();
   ok(after.text === aysu.lines.join('\n\n') && !after.choice, 'after, her own words again, and nothing asked');
+}
+
+/**
+ * The Sorcerer's third (#807), What the Walkers Carried, played by companies of 27 at the Glass's edge. The
+ * glasses first: Cassian, a Thaumaturge, is sent to Eadmer and the world map marks the gap's box; the etched
+ * glass from the fallen walker's hollow on the steppe and the light from the half-buried walker's cache in
+ * the dunes carried to him, at his first meeting he takes the etching, which begins the quest and ends the
+ * seeking, the third waiting; at the next he asks for the light and reads the one by it, which ends the
+ * quest; his menu teaches the Magus for it and no gold, and after, his own words. The ask first: his own
+ * words, then his ask, once, which begins it; the light brought before the etching is not asked for. With
+ * no sorcerer: his own words and never the ask, the glasses taken and the etching read all the same, no
+ * quest begun and nobody to teach.
+ */
+function walkersCarried(ok: (cond: boolean, msg: string) => void): void {
+  const [B9, D9] = ['wold_b9', 'wold_d9'].map((id) => MAP_DEFS.find((d) => d.id === id)!);
+  const scholar = B9.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'Eadmer, the scholar')!;
+  const teaching = scholar.teaches!, [hand] = [scholar.quest!].flat(), own = scholar.lines.join('\n\n');
+  const chest = (d: MapDef, id: string) => d.features!.find((f): f is Extract<Feature, { kind: 'chest' }> => f.kind === 'chest' && f.id === id)!;
+  const hollow = chest(D9, 'd9_hollow'), cache = chest(B9, 'b9_cache');
+  ok(scholar.x === 30 && scholar.y === 27 && teaching.cls === 'sorcerer' && teaching.prestige === 3 && teaching.asks === 'walkers_carried' && JSON.stringify(teaching.done) === JSON.stringify({ flag: ETCHING_READ })
+    && hand.item === 'etched_glass' && hand.reward === 0 && hand.setFlag === ETCHING_GIVEN && hollow.items.includes('etched_glass') && cache.items.join() === 'glass_light',
+    'Eadmer sits on the gap\'s last sand, a square short of the glass: he takes the fallen walker\'s etched glass for nothing, and his teaching waits on the etching read by the half-buried walker\'s light');
+
+  /** A company of 27 whose sorcerer has the second, or, `none`, with a druid in the sorcerer's place. */
+  const company = (none = false): { w: Walk; log: (id: string) => ReturnType<typeof questLog>[number] | undefined } => {
+    const w = newWalk(ok), LEVEL = 27;
+    if (none) w.party.members[5] = createCharacter('Cassian', 'human', 'druid', {}, makeRng(807));
+    w.level = LEVEL;
+    for (const m of w.party.members) { m.level = LEVEL; m.xp = xpForLevel(LEVEL); }
+    if (!none) { takePrestige(w.party.members[5]); takePrestige(w.party.members[5]); }
+    listen(w);
+    return { w, log: (id) => questLog(w.world.state, w.party).find((v) => v.def.id === id) };
+  };
+  const talk = (w: Walk): ReturnType<typeof meet> => { w.world.travel('wold_b9', scholar.x, scholar.y); const m = meet(scholar, w.party, heard(w.world, scholar)); listen(w); return m; };
+  /** A walker's chest opened where it lies, as the box's walk reaches it. */
+  const open = (w: Walk, map: string, c: typeof hollow): void => {
+    w.world.travel(map, c.x, c.y);
+    ok(!w.world.used(c.id), `${map}'s ${c.id} is there to open`);
+    w.world.markUsed(c.id); w.party.gold += c.gold; w.party.bag.push(...c.items);
+    listen(w);
+  };
+  /** His question with the light in the pack, and the light given. */
+  const giveLight = (w: Walk): { ask?: string; said: string; give?: Answer } => {
+    const m = talk(w), give = m.choice?.answers.find((a) => a.takes === 'glass_light'), said = give ? answer(give, w.party) : '';
+    listen(w);
+    return { ask: m.choice?.ask, said, give };
+  };
+
+  { // The glasses first.
+    const { w, log } = company(), cassian = w.party.members[5];
+    const sent = log(seekId(5, 3)), marked = sought(questLog(w.world.state, w.party)).find((s) => s.at === 'wold_b9');
+    ok(cassian.cls === 'sorcerer' && className(cassian) === 'Thaumaturge' && sent?.goal === 'Find Eadmer, the scholar in The Wold.' && sent.pages[0].entries[0]?.text === teaching.seek
+      && marked?.who.includes(cassian.name) === true && !log('walkers_carried'),
+      `the glasses first: at 27 with the second, Cassian is sent to Eadmer (${sent?.goal}), the world map marks the gap's box for him, and the quest is not in the log`);
+    open(w, 'wold_d9', hollow);
+    open(w, 'wold_b9', cache);
+    const gold = w.party.gold, first = talk(w);
+    ok(first.text === hand.done.join('\n\n') && !first.choice && !w.party.bag.includes('etched_glass') && w.party.bag.includes('glass_light') && !!w.party.flags[ETCHING_GIVEN] && w.party.gold === gold
+      && log(seekId(5, 3))?.done === true && log('walkers_carried')?.done === false && log('walkers_carried')?.goal === 'Bring Eadmer what the walker in the dunes at the Glass\'s edge carried.'
+      && barOf(teaching, cassian, w.party, w.world.state) === 'the quest first' && !teach(teaching, w.party, w.world.state, 5).taught,
+      `the glasses first: at his first meeting he takes the etched glass for nothing (${hand.done[1]}), which begins ${log('walkers_carried')?.def.title} and ends the seeking; the light stays in the pack, and the third waits`);
+    const { ask, said, give } = giveLight(w);
+    ok(!!give && said.startsWith(give.says.join('\n\n')) && !w.party.bag.includes('glass_light') && !!w.party.flags[ETCHING_READ] && log('walkers_carried')?.done === true && log('walkers_carried')?.goal === null
+      && log('walkers_carried')?.pages[0].entries.map((e) => e.id).join() === 'etching,read',
+      `the glasses first: at the next, the light in the pack, his question (${ask}); given, he reads the one by the other's light (${give?.says[1]}), and the quest is done`);
+    const [offer] = offers(teaching, w.party, w.world.state), r = teach(teaching, w.party, w.world.state, 5);
+    ok(offer?.who === 5 && offer.bar === '' && offer.price === 0 && r.taught && className(cassian) === 'Magus' && w.party.gold === gold,
+      `the glasses first: his menu teaches the third, earned, for no gold (${r.line})`);
+    const after = [talk(w), talk(w)];
+    ok(after.every((m) => m.text === own && !m.choice) && !w.party.flags[SCHOLAR_ASKED], 'after, his own words, and never the ask');
+  }
+
+  { // The ask first; the light found before the etching.
+    const { w, log } = company(), cassian = w.party.members[5];
+    const [first, asked, again] = [talk(w), talk(w), talk(w)].map((m) => m.text);
+    ok(first === own && !!w.party.flags['b9_scholar_met'] && asked.includes('Bring me both') && again === own && !!w.party.flags[SCHOLAR_ASKED] && log(seekId(5, 3))?.done === true
+      && log('walkers_carried')?.goal === 'Find what the walker fallen on the steppe carried.' && barOf(teaching, cassian, w.party, w.world.state) === 'the quest first',
+      `the ask first: his own words, then his ask, once (${asked.split('\n\n')[1]}), which begins the quest and ends the seeking; the log sends the company to the steppe`);
+    open(w, 'wold_b9', cache);
+    const early = talk(w);
+    ok(early.text === own && !early.choice && w.party.bag.includes('glass_light') && log('walkers_carried')?.goal === 'Find what the walker fallen on the steppe carried.',
+      'the ask first: the light brought before the etching is not asked for, and the log still sends the company to the steppe');
+    open(w, 'wold_d9', hollow);
+    ok(log('walkers_carried')?.goal === 'Take the etched glass to Eadmer at the Glass\'s edge.', `the ask first: the etching in the pack, the log sends it to him (${log('walkers_carried')?.goal})`);
+    const took = talk(w), { give } = giveLight(w);
+    const r = teach(teaching, w.party, w.world.state, 5);
+    ok(took.text === hand.done.join('\n\n') && !!give && !!w.party.flags[ETCHING_READ] && log('walkers_carried')?.done === true && log('walkers_carried')?.pages[0].entries.map((e) => e.id).join() === 'asked,etching,read'
+      && r.taught && className(cassian) === 'Magus',
+      'the ask first: the etching taken, then the light at his question, the quest done in three entries and the Magus taught');
+  }
+
+  { // No sorcerer.
+    const { w, log } = company(true);
+    const first = talk(w), asked = talk(w);
+    ok(first.text === own && asked.text === own && !w.party.flags[SCHOLAR_ASKED] && !w.party.members.some((m) => m.cls === 'sorcerer') && !offers(teaching, w.party, w.world.state).length
+      && noneHere(teaching) === '"I teach sorcerers. I see none here."',
+      'no sorcerer: his own words, never the ask, and nobody for his menu to teach');
+    open(w, 'wold_d9', hollow);
+    open(w, 'wold_b9', cache);
+    const took = talk(w), { give, said } = giveLight(w);
+    ok(took.text === hand.done.join('\n\n') && !!give && said.startsWith(give.says.join('\n\n')) && !w.party.bag.includes('etched_glass') && !w.party.bag.includes('glass_light') && !!w.party.flags[ETCHING_READ]
+      && !log('walkers_carried') && !questLog(w.world.state, w.party).some((v) => v.def.id.startsWith('seek:') && v.def.id.endsWith(':3')),
+      'no sorcerer: the glasses taken and the etching read all the same, and no quest begun for it');
+  }
 }
 
 /**
