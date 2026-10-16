@@ -710,8 +710,8 @@ export const walkthrough: Walkthrough = (ok) => {
   const ridersB9 = ['An old Rider at the fire', 'A Rider with a strung bow', 'The youngest of the watch'].map(saysB9);
   ok(unheard && !!w.party.flags[WATCH] && ridersB9.every((r) => r.p.flag === WATCH && chB9(r.p.x, r.p.y) === 's' && Math.abs(r.p.x - fireB9.x) + Math.abs(r.p.y - fireB9.y) <= 2)
     && ridersB9[0].text.includes('keep the gap') && ridersB9[1].text.includes('going somewhere') && ridersB9[2].text.includes('light')
-    && ridersB9.every(({ p: f }) => !(f.quest || f.choice || f.says || f.teaches || f.skill || f.hall || f.interior || f.passage)),
-    'three Riders at the fire keep the gap and say what walks out of it, words only, and their words set the watch\'s flag (#531)');
+    && !B9.features!.some((f) => f.kind === 'npc' && f.name !== 'Eadmer, the scholar' && (f.quest || f.choice || f.says || f.teaches || f.skill || f.hall || f.interior || f.passage)),
+    'three Riders at the fire keep the gap and say what walks out of it, words only, and their words set the watch\'s flag (#531); nobody on the box but the scholar in the gap (#807) asks, takes or teaches');
 
   // The groups: glass scorpions in the dunes by the grass and under the rim, the vultures at the hills'
   // foot and a walker alone at the dunes' middle, each won at 27; the two walkers at the gap after.
@@ -742,7 +742,7 @@ export const walkthrough: Walkthrough = (ok) => {
 
   // The secret: the one dune that does not shift, searched where the sand slides off it; under its crust a
   // walker that stopped long ago, its chest open to the sand and a cache in it: gold, and a piece of glass
-  // with a light in it, plain until the reach. Walked, waded, climbed or floated, the cache is never
+  // with a light in it, which the scholar in the gap reads by (#807). Walked, waded, climbed or floated, the cache is never
   // reached but through the dune's side.
   const [dune] = B9.secrets!;
   ok(dune.hint === 'b9_still' && featureB9('b9_still').x === dune.x + 1 && featureB9('b9_still').y === dune.y, 'the dune the wind does not shift lies at the walker\'s side');
@@ -1011,7 +1011,9 @@ function fanesMap(ok: (cond: boolean, msg: string) => void): void {
  * teaches the Magus for it and no gold, which ends the quest, and after, his own words. The ask first: his own
  * words, then his ask, once, which begins it; the light brought before the etching is not asked for. With
  * no sorcerer: his own words and never the ask, the glasses taken and the etching read all the same, no
- * quest begun and nobody to teach.
+ * quest begun and nobody to teach. The glasses at 26, the sorcerer short of the level: the etching taken,
+ * "Not yet" answered and the question put again, the light given and the etching read, and no quest; at 27
+ * the quest opens on the way back to him, the seeking done and the map marking nothing, and he teaches.
  */
 function walkersCarried(ok: (cond: boolean, msg: string) => void): void {
   const [B9, D9] = ['wold_b9', 'wold_d9'].map((id) => MAP_DEFS.find((d) => d.id === id)!);
@@ -1023,9 +1025,9 @@ function walkersCarried(ok: (cond: boolean, msg: string) => void): void {
     && hand.item === 'etched_glass' && hand.reward === 0 && hand.setFlag === ETCHING_GIVEN && hollow.items.includes('etched_glass') && cache.items.join() === 'glass_light',
     'Eadmer sits on the gap\'s last sand, a square short of the glass: he takes the fallen walker\'s etched glass for nothing, and his teaching waits on the etching read by the half-buried walker\'s light');
 
-  /** A company of 27 whose sorcerer has the second, or, `none`, with a druid in the sorcerer's place. */
-  const company = (none = false): { w: Walk; log: (id: string) => ReturnType<typeof questLog>[number] | undefined } => {
-    const w = newWalk(ok), LEVEL = 27;
+  /** A company of 27, or `LEVEL`, whose sorcerer has the second, or, `none`, with a druid in the sorcerer's place. */
+  const company = (none = false, LEVEL = 27): { w: Walk; log: (id: string) => ReturnType<typeof questLog>[number] | undefined } => {
+    const w = newWalk(ok);
     if (none) w.party.members[5] = createCharacter('Cassian', 'human', 'druid', {}, makeRng(807));
     w.level = LEVEL;
     for (const m of w.party.members) { m.level = LEVEL; m.xp = xpForLevel(LEVEL); }
@@ -1104,6 +1106,26 @@ function walkersCarried(ok: (cond: boolean, msg: string) => void): void {
     ok(took.text === hand.done.join('\n\n') && !!give && said.startsWith(give.says.join('\n\n')) && !w.party.bag.includes('etched_glass') && !w.party.bag.includes('glass_light') && !!w.party.flags[ETCHING_READ]
       && !log('walkers_carried') && !questLog(w.world.state, w.party).some((v) => v.def.id.startsWith('seek:') && v.def.id.endsWith(':3')),
       'no sorcerer: the glasses taken and the etching read all the same, and no quest begun for it');
+  }
+
+  { // The glasses at 26, before the sorcerer is 27: what the quest's end on the Magus is for.
+    const { w, log } = company(false, 26), cassian = w.party.members[5];
+    open(w, 'wold_d9', hollow);
+    open(w, 'wold_b9', cache);
+    const took = talk(w), wait = talk(w), no = wait.choice?.answers.find((a) => !a.takes), kept = no ? answer(no, w.party) : '';
+    const { give } = giveLight(w);
+    ok(took.text === hand.done.join('\n\n') && wait.choice?.ask === 'Give him the glass with a light?' && !!no && kept === no.says.join('\n\n') && !!give && !!w.party.flags[ETCHING_READ]
+      && !log('walkers_carried') && !log(seekId(5, 3)) && !!barOf(teaching, cassian, w.party, w.world.state),
+      'the glasses at 26: he takes the etching, "Not yet" keeps the question, and given the light he reads; no quest opens, no seeking, and the third waits on the level');
+    cassian.level = 27; cassian.xp = xpForLevel(27);
+    const news = listen(w), marked = sought(questLog(w.world.state, w.party)).some((s) => s.at === 'wold_b9');
+    ok(news.includes('New quest: What the Walkers Carried.') && log('walkers_carried')?.done === false && log('walkers_carried')?.goal === 'Go back to Eadmer at the Glass\'s edge, and learn how a Magus reads.'
+      && log(seekId(5, 3))?.done === true && !marked,
+      `the glasses at 26: at 27 the quest opens on the way back to him (${log('walkers_carried')?.goal}), the seeking done and the map marking nothing, as for the other thirds`);
+    const gold = w.party.gold, r = teach(teaching, w.party, w.world.state, 5);
+    listen(w);
+    ok(r.taught && className(cassian) === 'Magus' && w.party.gold === gold && log('walkers_carried')?.done === true,
+      `the glasses at 26: back at the gap the Magus is taught for no gold (${r.line}), which ends the quest`);
   }
 }
 

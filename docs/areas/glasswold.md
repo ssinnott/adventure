@@ -1215,8 +1215,9 @@ what falls on his board: the land and the sea, a wall at either end and a line a
 map with a lid. What it is he never says. The log sends the company back to him, and his menu
 teaches the Magus for the reading and no gold, which ends the quest; after, his own words again. A
 company that brings the etching first begins the quest by it, as a cleric's does by the Crowness
-log (#763); one with no sorcerer hears his words and the reading, gives up both glasses and has no
-quest of it. The quest's fights are the walkers that stand: no group is placed (§9, #807's 1 to 6).
+log (#763); one whose sorcerer is short of 27 hears it read all the same, and at 27 the quest opens
+on the way back to him; one with no sorcerer hears his words and the reading, gives up both glasses
+and has no quest of it. The quest's fights are the walkers that stand: no group is placed (§9, #807's 1 to 6).
 
 ## 7. Encounters, and what is new
 

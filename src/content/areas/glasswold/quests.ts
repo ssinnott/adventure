@@ -133,7 +133,7 @@ export const QUESTS: readonly QuestDef[] = [
     done: { member: { cls: 'sorcerer', prestige: 3 } },
     entries: [
       { id: 'asked', when: { flag: SCHOLAR_ASKED }, text: 'At the Glass\'s edge Eadmer, a scholar the Riders let sit and no further, asked for the glasses two walkers carried, one on the steppe and one in the dunes.' },
-      { id: 'etching', when: { flag: ETCHING_GIVEN }, text: 'He took the etched glass. It is cut finer than hair, and he had nothing to read it by.' },
+      { id: 'etching', when: { flag: ETCHING_GIVEN }, text: 'At the Glass\'s edge Eadmer took the etched glass. It is cut finer than hair, and he had nothing to read it by.' },
       { id: 'read', when: { flag: ETCHING_READ }, text: 'By the other walker\'s light he read it: the land and the sea, a wall at either end and a lid on it.' },
     ],
     goals: [

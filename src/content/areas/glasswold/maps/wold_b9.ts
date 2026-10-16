@@ -82,7 +82,7 @@ export const WOLD_B9: MapDef = {
     { kind: 'event', x: 7, y: 16, id: 'b9_stung', once: true, text: 'A lion lies dead in a hollow of the dunes, swollen, three small wounds in its flank glittering.' },
     { kind: 'event', x: 24, y: 17, id: 'b9_mesa', once: true, text: 'A mesa stands at the dunes\' east end, sheer on the windward side. Past its foot the light is white.' },
     // The secret: the one dune that does not shift, and in it a walker that stopped long ago, its chest open
-    // to the sand and a cache in it: gold, and a piece of glass with a light in it (Phase 1.6's to wake).
+    // to the sand and a cache in it: gold, and a piece of glass with a light in it (the scholar in the gap reads by it, #807).
     { kind: 'event', x: 17, y: 18, id: 'b9_still', once: true, text: 'Every dune round about smokes in the wind and creeps. This one does not, and the sand that lands on it slides off.' },
     { kind: 'event', x: 15, y: 18, id: 'b9_walker', once: true, text: 'Under the crust a walker lies where it stopped, half in the sand, its lamp dark. Its chest stands open to the sand.' },
     { kind: 'chest', x: 14, y: 18, id: 'b9_cache', gold: 1600, items: ['glass_light'] },
