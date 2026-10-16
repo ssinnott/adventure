@@ -349,7 +349,8 @@ function opened(): void {
  * The Archdruid's perk (#809, DESIGN §5): a group of beasts alone, each of a level under a standing
  * druid of the third prestige in the company, does not step toward it, and is fought as any group
  * is where the company steps up to it. Laid on a strip of open ground with the group five squares
- * off; its beasts are rats made over to the level asked, so no retune of the content moves this.
+ * off; its beasts, its person and its caller are rats made over to the kind and level asked, so no
+ * retune of the content moves this.
  */
 function archdruid(): void {
   const rng = makeRng(23);
@@ -358,10 +359,10 @@ function archdruid(): void {
     rows: ['MMMMMMMMM', 'M,,,,,,,M', 'MMMMMMMMM'],
     encounters: [{ id: 'beasts', x: 6, y: 1, monsters: ['fx_beast20', 'fx_beast20'], aware: 8, ...group }],
   });
-  /** A member at 27 with its three prestiges taken. */
-  const raised = (c: Character): Character => { c.xp = xpForLevel(27); levelUp(c, rng); for (let n = 0; n < 3; n++) takePrestige(c); return c; };
-  /** The premade six, an Archdruid of 27 for its sorcerer. */
-  const withDruid = (): Party => { const p = defaultParty(rng); p.members[5] = raised(createCharacter('Kenver', 'human', 'druid', {}, rng)); return p; };
+  /** A member at 27 with the first `took` of its prestiges taken. */
+  const raised = (c: Character, took = 3): Character => { c.xp = xpForLevel(27); levelUp(c, rng); for (let n = 0; n < took; n++) takePrestige(c); return c; };
+  /** The premade six, a druid of 27 for its sorcerer: an Archdruid with all three prestiges, a Thornspeaker with two. */
+  const withDruid = (took = 3): Party => { const p = defaultParty(rng); p.members[5] = raised(createCharacter('Kenver', 'human', 'druid', {}, rng), took); return p; };
   /** The premade six with no druid, its cleric an Exarch of 27: a third prestige, but not the druid's. */
   const withExarch = (): Party => { const p = defaultParty(rng); raised(p.members[4]); return p; };
   /** How many squares of three steps the group makes toward the company. */
@@ -372,8 +373,12 @@ function archdruid(): void {
     for (let k = 0; k < 3; k++) w.moveMonsters();
     return from - g.state.x;
   };
-  const beasts: MonsterDef[] = [20, 28].map((level) => ({ ...MONSTERS.rat, id: `fx_beast${level}`, level }));
-  for (const b of beasts) MONSTERS[b.id] = b;
+  const laid: MonsterDef[] = [
+    ...[20, 28].map((level) => ({ ...MONSTERS.rat, id: `fx_beast${level}`, level })),
+    { ...MONSTERS.rat, id: 'fx_person20', kind: 'person', level: 20 },
+    { ...MONSTERS.rat, id: 'fx_caller20', level: 20, calls: { monsters: ['fx_beast20'], chance: 0.5 } },
+  ];
+  for (const d of laid) MONSTERS[d.id] = d;
   try {
     // The company walks up to the group that stayed put: nothing beside it for three steps, then the fight.
     const w = new World({ fx_strip: new GameMap(strip({})) }, withDruid(), rng);
@@ -391,7 +396,13 @@ function archdruid(): void {
     ok(led === 3, `a group with a leader comes on (${led} squares of 3)`);
     const none = closes(withExarch());
     ok(none === 3, `for a company with no druid, its cleric an Exarch of 27, the level 20 group comes on (${none} squares of 3)`);
+    const second = closes(withDruid(2));
+    ok(second === 3, `a Thornspeaker of 27, a druid of the second prestige only, does not keep the level 20 group off (${second} squares of 3)`);
+    const people = closes(withDruid(), { monsters: ['fx_person20', 'fx_person20'] }), mixed = closes(withDruid(), { monsters: ['fx_beast20', 'fx_person20'] });
+    ok(people === 3 && mixed === 3, `a group of people, or of a beast and a person, comes on though the Archdruid stands (${people} and ${mixed} squares of 3)`);
+    const called = closes(withDruid(), { monsters: ['fx_caller20'] });
+    ok(called === 3, `a beast that calls comes on though the Archdruid stands (${called} squares of 3)`);
   } finally {
-    for (const b of beasts) delete MONSTERS[b.id];
+    for (const d of laid) delete MONSTERS[d.id];
   }
 }
