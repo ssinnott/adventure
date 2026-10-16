@@ -2754,6 +2754,10 @@ Decided by delegate for #448 (Ashfall's three), each the owner's to overturn:
    places', so the gate, density and curve figures do not move.
 4. **The Paladin's fights are the husks' at 25,** the street's and the cellars', not 26: a fight of
    the dead at 26 needs a monster at 26, which is new, and the brief places none (§11).
+   Decided by the owner's delegate, 16 October 2026 (#733): the husks stay and no monster is drawn.
+   The deed is the lamp lit at the bottom of the walk, and the husks are the gate's and the
+   walkthrough's fight already; a group `after` the ask would raise Ashfall's clear and its lead
+   (#738) for a fight only a company of 27 meets, at ×0.7 pay.
 5. **The lamp is lit by a once event** (`oc2_relit`, `after` the ask) with the old man's oil and flint,
    given in his words, not as items; the cold line goes `until` it is lit, the burning `after`.
 6. **The Barbarian's kill is the Brood Drake** (`mc2_brood`): it nests there, on its eggs, and never
@@ -2766,6 +2770,10 @@ Decided by delegate for #448 (Ashfall's three), each the owner's to overturn:
    once asked and once: a chest would give it unasked, and an event cannot give an item.
 10. **Nothing withers the seedling:** the engine keeps no clock on an item or a flag and a quest no
     time, so 'alive until' is the planting and `q_ember_lit` read after it, in either order (§11).
+    Decided by the owner's delegate, 16 October 2026 (#732, cut, not planned): it stays so. A clock
+    on an item wants a timestamped bag and a save bump, for a fail state that either never bites
+    (the days from the Grove to the Waste are coaches and a ride) or punishes a company for
+    exploring.
 11. **The trainers are named,** as the Whitespine's are (#684), since the seeking goal reads "Find
     <name> in <place>.": Wystan, an old Lightbearer; Petroc, the warlord's heir; Kenver, the Archdruid.
 12. **The walkthrough plays the three on a company of 27** with its seconds taken, a barbarian and a
@@ -2853,6 +2861,12 @@ Decided by delegate for #634, each the owner's to overturn:
    and E11, added about 0.1, 27.13 to 27.2, and raised Ashfall's figure in `OVER_ROAD` to 27.3 by
    name (#522's 15). The seven built leave a company at 27.4, and H11, H12 and G12 raise it again to
    that (#522's 28).
+4. **27.4 is accepted as built.** Decided by the owner's delegate, 16 October 2026 (#738, where the
+   question was asked): paid by level the lead does not build up, for the Wold takes it back and
+   leaves a company at 27.9, a tenth under the Hearth's floor. The other ways out cost more than
+   the half level at the exit is worth: a trim is call 2's 26% of kill xp with every box redone,
+   and a Wold floor or monsters moved up would move its boxes and MONSTERS §8.3 for a lead the next
+   area already absorbs. #734 lightens no box, so the figure holds.
 
 Decided by delegate for #522, each the owner's to overturn:
 
@@ -3153,11 +3167,14 @@ Cut and owed, from the Ember Stone (#516):
   and DESIGN §8's table of Act IV's guild quests still reads *the Ember Stone (#516)* for the
   Surveyor's rung, not built. A pull request of its own, if the owner wants either.
 
-Owed, from #448's Ashfall three:
-- **The Paladin's fights are at 25,** not the 26 DESIGN §5 asks of a third's quest in country under
-  27: a monster of the dead at 26 is a new monster, #18's or the roster's to draw (§9, #448's 4).
+Cut, from #448's Ashfall three:
+- **The Paladin's fights are at 25,** not the 26 DESIGN §5 once asked of a third's quest in country
+  under 27: a monster of the dead at 26 is not drawn.
+  Decided by the owner's delegate, 16 October 2026 (#733): the thirds' fights are the places'
+  (§9, #448's 3 and 4).
 - **Nothing withers the Druid's seedling:** one that dies by the days wants a clock on a flag, which
-  the engine does not keep; a system's pull request, if the owner wants it (§9, #448's 10).
+  the engine does not keep. Decided by the owner's delegate, 16 October 2026 (#732, cut, not
+  planned): none is built (§9, #448's 10).
 
 Owed, from the chapter (#518):
 - **The explorers' line,** *The heart opens for whoever makes it whole*, is written by The Bells and
