@@ -1,5 +1,7 @@
 // The combat screen: draws the fight over the viewport and turns menu input into PartyActions for
-// the resolver in game/combat.ts. Monster turns play out on a short timer so the log can be read.
+// the resolver in game/combat.ts. Monster turns play out on a short timer so the log can be read. With
+// `auto` on, the game's bot (game/bot.ts) plays the company's turns on a timer of its own, by what the
+// fight has shown it, and presses Space at the end; any key takes the fight back.
 import type { Game, Screen } from '../game/game.ts';
 import type { Action } from '../input.ts';
 import { is } from '../input.ts';
@@ -11,6 +13,7 @@ import { drawViewport, drawWeather } from './viewport.ts';
 import { BRASS, TEXT, TEXT_DIM, RED, YELLOW, GREEN } from './palette.ts';
 import { currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, shareRange } from '../game/combat.ts';
 import type { CombatState, PartyAction } from '../game/combat.ts';
+import { botTurn, asSeen } from '../game/bot.ts';
 import { spell, ELEMENTS } from '../game/spells.ts';
 import { item } from '../game/items.ts';
 import { weaponOf } from '../game/party.ts';
@@ -20,8 +23,15 @@ import { seatRow } from './row.ts';
 
 type Mode = 'menu' | 'target' | 'spell' | 'spellTarget' | 'element' | 'item' | 'itemTarget' | 'done';
 const MONSTER_DELAY = 22;
+/** The frames the bot waits on a company's turn, or on the finished fight, before it acts (`auto`). */
+const BOT_DELAY = 22;
 
 export class CombatScreen implements Screen {
+  /** Both delays count as none: set by the tests, until #716 gives the Game a pilot that says so. */
+  static instant = false;
+  /** The bot plays the company's turns and leaves the fight at its end, until a key takes it back (#713). */
+  auto = false;
+  private botTimer = 0;
   private mode: Mode = 'menu';
   private sel = 0;
   private sub = 0;
@@ -84,8 +94,19 @@ export class CombatScreen implements Screen {
     return [...new Set([...c.pack, ...g.party.bag].filter((id) => item(id).use && !item(id).use!.food))];
   }
 
+  /** The frames a delay counts: none while fights are played at once (`instant`). */
+  private wait(n: number): number { return CombatScreen.instant ? 0 : n; }
+
   update(g: Game, a: Action | null): void {
     const s = this.state;
+    // A key while the bot fights takes the fight back, and is then handled as usual. Else the bot
+    // presses Space on the finished fight itself, so it never waits there.
+    if (this.auto && a) this.auto = false;
+    if (this.auto && s.outcome !== 'ongoing') {
+      this.mode = 'done';
+      if (++this.botTimer >= this.wait(BOT_DELAY)) { this.botTimer = 0; g.afterCombat(this.groupIds, s.outcome); }
+      return;
+    }
     if (s.outcome !== 'ongoing') {
       this.mode = 'done';
       if (is(a, 'interact', 'cancel')) g.afterCombat(this.groupIds, s.outcome);
@@ -94,7 +115,11 @@ export class CombatScreen implements Screen {
     const t = currentTurn(s, g.party, g.rng);
     if (!t) { this.mode = 'done'; return; }
     if (t.side === 'monster') {
-      if (++this.timer >= MONSTER_DELAY || is(a, 'interact')) { this.timer = 0; monsterAct(s, g.party, g.rng); this.meetCalled(g); }
+      if (++this.timer >= this.wait(MONSTER_DELAY) || is(a, 'interact')) { this.timer = 0; monsterAct(s, g.party, g.rng); this.meetCalled(g); }
+      return;
+    }
+    if (this.auto) {
+      if (++this.botTimer >= this.wait(BOT_DELAY)) { this.botTimer = 0; botTurn(s, g.party, g.rng, t.i, asSeen); this.mode = 'menu'; this.sel = 0; }
       return;
     }
     if (!a) return;
@@ -247,6 +272,9 @@ export class CombatScreen implements Screen {
     const r = LAYOUT.map;
     panel(ctx, r.x, r.y, r.w, r.h);
     drawText(ctx, `ROUND ${s.round}`, r.x + 8, r.y + 8, { size: 1, color: TEXT_DIM });
+    if (this.auto) drawText(ctx, 'AUTO', r.x + r.w - 8, r.y + 8, { size: 1, color: TEXT_DIM, align: 'right' });
+    // The keys' hint at the panel's foot; while the bot fights, the one that takes the fight back.
+    const hint = (keys: string): void => { drawText(ctx, this.auto ? 'P TAKES THE FIGHT BACK' : keys, r.x + r.w - 8, r.y + r.h - 12, { size: 1, color: TEXT_DIM, align: 'right' }); };
     if (s.outcome !== 'ongoing') {
       drawText(ctx, s.outcome === 'victory' ? 'VICTORY' : s.outcome === 'fled' ? 'ESCAPED' : 'DEFEAT', r.x + 8, r.y + 24, { size: 2, color: s.outcome === 'defeat' ? RED : BRASS });
       if (s.loot) {
@@ -255,7 +283,7 @@ export class CombatScreen implements Screen {
         s.loot.items.slice(0, 6).forEach((id, i) => drawText(ctx, item(id).name, r.x + 8, r.y + 62 + i * 10, { size: 1, color: TEXT }));
         if (s.loot.ready.length) drawText(ctx, `READY TO TRAIN: ${s.loot.ready.join(', ')}`, r.x + 8, r.y + 130, { size: 1, color: YELLOW });
       }
-      drawText(ctx, 'SPACE', r.x + r.w - 8, r.y + r.h - 12, { size: 1, color: TEXT_DIM, align: 'right' });
+      hint('SPACE');
     } else if (t && t.side === 'party') {
       const c = g.party.members[t.i];
       drawText(ctx, `${c.name.toUpperCase()}'S TURN`, r.x + 8, r.y + 22, { size: 1, color: BRASS });
@@ -282,9 +310,10 @@ export class CombatScreen implements Screen {
         drawText(ctx, 'ON WHOM', r.x + 8, y, { size: 1, color: TEXT_DIM }); y += 12;
         menu(ctx, g.party.members.map((m) => `${m.name} ${m.hp}/${m.maxHp}`), r.x + 8, y, this.sub);
       }
-      drawText(ctx, 'ESC BACK', r.x + r.w - 8, r.y + r.h - 12, { size: 1, color: TEXT_DIM, align: 'right' });
+      hint('ESC BACK');
     } else {
       drawText(ctx, 'THE ENEMY MOVES...', r.x + 8, r.y + 22, { size: 1, color: RED });
+      if (this.auto) hint('');
     }
     const who = t && t.side === 'party' ? t.i : this.mode === 'itemTarget' ? this.sub : -1;
     drawPartyCards(ctx, g.party, this.mode === 'itemTarget' ? this.sub : who, frame);
