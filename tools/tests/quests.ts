@@ -312,6 +312,6 @@ export function quests(): void {
     ok(end.startsWith('Chapter complete: The Grove Stone.') && chapter('grove').done && quest('greywater').done && quest(THE_QUEST.id).done === last && end.includes(`Quest complete: ${THE_QUEST.title}.`) === last,
       `the seal seen ends the Grove's chapter, and the one quest only if no chapter follows; the Cargo Ledger is done (${end})`);
     const expedition = quest('meridian');
-    ok(!expedition.done && /Meridian/.test(expedition.goal ?? '') && expedition.pages[0].entries.length === 1, `and the Lost Expedition stays open with a goal, its trail not built yet (${expedition.goal})`);
+    ok(!expedition.done && /Meridian/.test(expedition.goal ?? '') && expedition.pages[0].entries.length === 1, `and the Lost Expedition stays open with a goal, its trail not walked yet (${expedition.goal})`);
   }
 }
