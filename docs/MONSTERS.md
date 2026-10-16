@@ -849,6 +849,41 @@ What it shows:
   levels made. The armoured end 38 and 49%, in fights broken off: their hit points are held at
   28's and 30's, and their armour rounds up a point at 29 and 31, to 30's and 32's. Free of the
   hold they would end 13% at both; 28 and 30 stand, so they are not nudged.
+- **Checked at 12, 24 and 28, with the prestiges and the spell tiers in (#584).** #338 left the
+  brutes' bad days at 12 and the controllers' at 24 and 28 to them, and no run had weighed the
+  three together since the bots learnt to free the held (#549). `node tools/harness.ts --levels
+  12,24,28 --seeds 200` (15 seconds on four cores), on the answers and the rest rule that live in
+  `src/game/bot.ts` (#714). Days that end in a death, a lost fight or one broken off, in %:
+
+  | Level | Fodder | Skirmisher | Soldier | Archer | Caster | Controller | Armoured | Elite | Brute |
+  |---|---|---|---|---|---|---|---|---|---|
+  | 12 | 8 | 4 | 4 | 1 | 7 | 5 | 19 | 8 | 12 |
+  | 24 | 5 | 6 | 8 | 4 | 16 | 7 | 13 | 13 | 17 |
+  | 28 | 2 | 3 | 9 | 7 | 8 | 8 | 10 | 9 | 7 |
+
+  Every role fights within a fight of its aim at the three: 6.6 to 7.5 to a rest at 12 (7 asked),
+  9.2 to 10.3 at 24 (10) and 10.9 to 11.3 at 28 (11). The controllers end 7% of their days badly at
+  24 and 8% at 28, in the middle of the nine at both, and no role ends more than 10% at 28. The 13%
+  given for the controllers at 24 is the figure for 23 (#549: 14, 13 and 7% at 22 to 24), and the
+  harness gives those three again. The brutes end 17% at 24, as they did, and 7% at 28, where #549
+  had 4% before 28 was made again for the Hand's steel (#752).
+
+  The brutes at 12 end 12% of their days badly (15% on 1,000 seeds; 17% when #20 measured them),
+  more than any role there but the armoured, who end 19%, and over the 10% aimed at. All are
+  deaths, none a fight lost or broken off, and in 1,000 days 132 of 154 are the Outrider's and the
+  rest the Lightbearer's: the premade ranger stands third in the front row, with 51 hit points and
+  armour 20 at 12 on average, where the Knight-Errant has 89 and 25 and the Lightbearer 61 and 23.
+  The armoured's are the Outrider's in 154 of 182. The test brute's line at 12 made again
+  (`--calibrate --write --levels 12 --roles brute`, 70 seconds) comes to the same point: 3.66 times
+  the line's hit points and 1.39 times its blow, 7.0 fights to a rest in 7.4 rounds a fight.
+  Nothing is written and no gate figure moves. A step softer and longer would end fewer days badly,
+  10% at 4.03 times the hit points and a blow of about 1.2 and 7% at 4.43 and about 1.1, but in 8.3
+  and 9.1 rounds a fight, where the calibration lets one run half as long again as the 5.4 rounds it
+  asks at 12, 8.1; it takes neither.
+  Decided by the owner's delegate, 16 October 2026, the owner's to overturn: if the brutes at 12
+  end more days badly than the other roles, the fix is bounded to the test brute's line at 12 made
+  again, and no monster of the game is retuned for it unless its own gate figure fails: the gate, not
+  the harness, judges built groups.
 
 `node tools/harness.ts` reports every role's standard encounter at every calibrated level: the
 fights before a rest, what ended the day, the rounds a fight took, what one fight from a fresh start
@@ -953,6 +988,25 @@ Decided by delegate for #549, each the owner's to overturn:
    under, 65%.
 9. **The mesa is held to about its aim, not over it:** on the line made again at 27 it is fought
    10.6 to a rest (10.75 asked), 11.6 where the hold paralyses.
+
+Decided by delegate for #584, each the owner's to overturn:
+
+1. **The controllers need nothing at 24 or 28, nor the brutes at 28.** The controllers end 7% and
+   8%, in the middle of the nine; the 13% at 24 is read as 23's (above). The brutes' 17% at 24 is as
+   it was and, like the casters' 16% and the armoured's and elites' 13%, over the 10% aimed at: not
+   this issue's.
+2. **"More days badly than the other roles" is read as more than most of them, not more than the
+   worst.** The brutes at 12 end 12% against 1 to 8% for seven roles, so the ruling's remedy is
+   made; the armoured's 19% does not excuse them.
+3. **The calibration's length is not widened to take the softer step.** It ends 10% of days badly
+   at 8.3 rounds, 0.2 past the 8.1 allowed; a bound moved to green a figure is the owner's to move,
+   for every role and level, and the gate would then say which of Wrackholm's figures move.
+4. **The company is left as it is.** Most of the brutes' bad days at 12, and of the armoured's, are
+   the premade ranger's death: a thin third of the front row, which the gear ladder or the class
+   answers and the monsters do not. It is outside the quality lane and the ruling's bound, and the
+   owner's to weigh.
+5. **No check is added.** The report is the measurement, and the calibration already steps towards
+   the 10% it aims at.
 
 ---
 
