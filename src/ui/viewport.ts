@@ -1868,6 +1868,8 @@ function drawSideFace(ctx: CanvasRenderingContext2D, map: GameMap, cell: Cell, m
   // wall's are, with its ropes and the band round its foot.
   if (!house && pal.wallStyle === 'tent') {
     const t0 = tent ? (1 + TENT_WALL) / 2 : 0, kN = Math.max(0, d - 0.5), kF = d + 0.5, h = 1 - t0, strips = 6;
+    // One face under the strips first, as a smooth wall's, so no seam between two strips shows what is behind.
+    quad(ctx, P(0, t0), P(1, t0), P(1, 1), P(0, 1), fog(shade(pal.wall, shadeSide * 0.92), d, dark, haze));
     for (let j = 0; j < strips; j++) {
       const s0 = j / strips, s1 = Math.min(1, (j + 1.2) / strips), fd = kN + (kF - kN) * (s0 + s1) / 2;
       quad(ctx, P(s0, t0), P(s1, t0), P(s1, 1), P(s0, 1), fog(shade(pal.wall, shadeSide * 0.92), fd, dark, haze));
