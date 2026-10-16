@@ -671,7 +671,8 @@ settled in its issue.
   hollow of his hoard: at 2,19 *Coin of Helmstow on top. Under it, coin with no face. Under that,
   nothing.*, and at 2,18 the chest `i10_hoard`, 1,200 gold and a Bear Spear +1, Rimewater's rung at
   2,050, the area's dearest find. Its one mouth is the king's square, so a company that paid walks
-  through it and can rob the hoard (§9, #502's 6). South of the head, Stairwatch: rock at 3 to 8,24
+  through it and can take the hoard, the king keeping no watch on his seat (§9, #502's 6). South of
+  the head, Stairwatch: rock at 3 to 8,24
   to 25, 4,26, 7 to 8,26 and 4 to 7,27, and in it a chimney, a secret door at 6,24 off the pines,
   its shaft at 6,25 and the ledge at 5,26 and 6,26, where Edric, the old champion, stands (5,26),
   the Knight's third's trainer (§6, #448), and the
@@ -1576,8 +1577,10 @@ Decided by delegate for #502, each the owner's to overturn:
    doc's hoard line, `i10_hoard_seen`), walled in rock (the Sheer's cliff at 1,18 and 1,19 made
    rock, so no climb reaches it), its one mouth the king's square. A company that paid walks through
    his square (a group answered stands aside and is walked through, MONSTERS #544's 4), so it can
-   rob the hoard: the game has no chest kept shut while its group stands. For the owner: accept it,
-   or a systems call.
+   take the hoard: the game has no chest kept shut while its group stands. Decided by the owner's
+   delegate, 16 October 2026 (#735, struck): accepted. The king stands aside for a company that
+   paid and keeps no watch on his seat; the hoard is a find for the company that looks behind him
+   (DESIGN §1, pillar 1), and a systems change for one chest is not worth it.
 7. **The Stair and the head:** the road leaves the trail at 23,20 and runs west to 8,20, the
    atlas's link end (272,306); the head is cut stone at 2 to 7,20, 3 to 7,21 and 5 to 7,19, the
    Stair road at 1,20 and 0,20 through the Sheer to the west edge. The atlas draws no road for the
@@ -1754,7 +1757,8 @@ Decided by delegate for #505, each the owner's to overturn:
 3. **She is unnamed in the journal:** the girl out of the hole in the goal and her in the entries,
    as Rimewater's journal and every line have her; Wenna is the docs' name.
 4. **Nobody is named reading the explorers' line:** the doc's Cassian is a member a company may not
-   have, so one of us reads it; the line is in no text before this (§11).
+   have, so one of us reads it; the line was in no text before this, and the Meridian journal,
+   vol. I, now ends on it (#735, §11).
 5. **The bells are the same eleven and the same gaps,** the issue's words, not the doc's night the
    Queen died: the keeper's log holds that, and the company finds it (DESIGN §7).
 6. **Highcell is three entries:** the cells for every company; the board for a reader alone (its id
@@ -1969,9 +1973,10 @@ Cut and owed, from I10 (#502):
 
 - **Three groups for the brief's seven,** the pay at 1.20 times its share already: a fourth eagle
   would take the box to 4,343, 1.24 times, near the 4,375 cap (§9, #502's 9).
-- **The hoard can be robbed once the toll is paid.** The game has no chest kept shut while its group
-  stands, and a company that paid walks through the king's square to the hollow: the owner may
-  accept it or ask for a systems change (§9, #502's 6).
+- **The hoard can be taken once the toll is paid,** and stands so. The game has no chest kept shut
+  while its group stands, and a company that paid walks through the king's square to the hollow.
+  Decided by the owner's delegate, 16 October 2026 (#735, struck): the king keeps no watch on his
+  seat, and one chest is no reason for a systems change (§9, #502's 6).
 - **The issue's own secret,** the maintenance mark, is a thing seen on the toll-stone and not a
   door: the chimney to the ledge is the secret, as §4.5 has it (§9, #502's 13).
 - **The Stair's foot** was owed to #510 with the rest of H10, and is built: its 31,20 is road against
@@ -1992,10 +1997,9 @@ Cut and owed, from I9 (#503):
   #18, as the Whitespine's was before I10 dropped it (§9, #503's 11).
 - **I9's west edge is shut:** H9 is built (#522) and the Sheer shuts its east edge, so the Stair stays
   the only way over; north the trail goes on into I8 (#504) (§9, #503's 18).
-- **The shrine's kneel.** The walkthrough checks the lamp at 1,19 by place: `kneel` in
-  `tools/walk.ts` compares the map def's shrine with the outdoors' placed copy, so it fails on any
-  zone map's shrine, which only a dungeon's had used; a systems change, the owner's to ask for
-  (§9, #503's 12).
+- **The shrine's kneel** is built (#793, #800): `kneel` in `tools/walk.ts` finds a zone map's shrine
+  as the world holds it, the outdoors' placed copy, so it works on I9's lamp at 1,19 as on a
+  dungeon's; the walkthrough still checks the lamp by place (§9, #503's 12).
 
 Cut and owed, from I8 (#504):
 
@@ -2015,14 +2019,14 @@ Cut and owed, from I8 (#504):
   (§9, #504's 15).
 - **The world ends past I8,** in the sea to the north and west and against J8, not built, to the
   east (§4.7).
-- **The shrine's kneel,** as I9's: the drowned god's shrine at 27,5 is checked by place (§9, #503's
-  12).
+- **The shrine's kneel,** as I9's, is built (#793, #800): it works on the drowned god's shrine at
+  27,5, which the walkthrough still checks by place (§9, #503's 12).
 
 Owed, from the chapter (#505):
 
-- **The explorers' line** is first written in the journal: the Meridian Journal, vol. I
-  (Thornmark's item) has no text, so *The heart opens for whoever makes it whole* is nowhere else in
-  the game. Its last page is Thornmark's to write, the owner's to ask for (§9, #505's 4).
+- **The explorers' line** is first written in the journal, and is built (#735): the Meridian
+  Journal, vol. I (Thornmark's item) has its text, two lines, and on its last page, alone, *The
+  heart opens for whoever makes it whole*, as The Bells quotes it (§9, #505's 4).
 
 Cut, from the side quests (#506):
 

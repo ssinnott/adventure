@@ -69,7 +69,7 @@ export const CINDERCOAST_F9: MapDef = {
     // The hills: the Wold to the west, the cairn on the west hill, the fish stone on the grass between.
     { kind: 'event', x: 2, y: 10, id: 'f9_wold', once: true, text: 'West, the grass rolls on over low hills to the Wold. Horses on it, far off.' },
     { kind: 'cairn', x: 2, y: 19, id: 'f9_cairn', text: 'A cairn on the hill\'s crown, a whale\'s rib stood up in the top of it.', gold: 100, items: ['potion_sp_great'] },
-    { kind: 'shrine', x: 14, y: 22, id: 'f9_shrine', text: 'A standing stone with a fish cut in it, and salt crusted white in the cut.', stat: 'might', done: 'The fish stone. Salt in the cut, and now on your hand.' },
+    { kind: 'shrine', x: 14, y: 22, id: 'f9_shrine', text: 'A standing stone with a fish cut in it, and salt crusted white in the cut.', stat: 'accuracy', done: 'The fish stone. Salt in the cut, and now on your hand.' },
     // The ridge over the east shore, and the town along it.
     { kind: 'event', x: 22, y: 19, id: 'f9_ridge', once: true, text: 'From the ridge, east along the shore, the masts of Cinderport over its wall.' },
     // The secret: a path up the ridge from the shore, fish scales in it, stopping at a rock; the fishers'
