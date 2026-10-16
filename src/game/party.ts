@@ -458,12 +458,21 @@ export function companyLevel(p: Party): number {
   return Math.floor(p.members.reduce((t, m) => t + m.level, 0) / Math.max(1, p.members.length));
 }
 
-/** Whether anyone standing can do the thing. */
+/**
+ * Whether anyone standing can do the thing: swim, if one is of a people that swims or has learnt
+ * Swimmer; climb, if one has learnt Mountaineer (game/skills.ts; #805). The flags `skill_swim` and
+ * `skill_mountaineer` grant it as well, for the tests and for anything else that sets them. The
+ * skills are read off the member's list here and not through `hasSkill`: skills.ts reaches the
+ * guilds and the quests, and this file sits under the content index, so importing it makes a cycle
+ * that breaks loading the index first. No people is born to either skill, so the list is all
+ * `hasSkill` would read; the skills test holds the two to one answer for every people.
+ */
 export function partyCan(p: Party): { swim: boolean; climb: boolean; keys: number } {
   const up = p.members.filter((m) => !isDown(m));
+  const learnt = (m: Character, id: SkillId): boolean => m.skills?.includes(id) ?? false;
   return {
-    swim: up.some((m) => RACES[m.race].swim) || (p.flags.skill_swim ?? 0) > 0,
-    climb: (p.flags.skill_mountaineer ?? 0) > 0,
+    swim: up.some((m) => RACES[m.race].swim || learnt(m, 'swimmer')) || (p.flags.skill_swim ?? 0) > 0,
+    climb: up.some((m) => learnt(m, 'mountaineer')) || (p.flags.skill_mountaineer ?? 0) > 0,
     keys: countItem(p, 'key_iron'),
   };
 }
