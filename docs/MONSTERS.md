@@ -928,9 +928,9 @@ Decided by delegate for #549, each the owner's to overturn:
    mending, fire's nothing and the salamander's cold ask nothing new, read as the bots read any.
 5. **The line is made again at 25, 26, 27, 28 and 32,** each of Act IV's steps on its own; 22 to 24
    stay #541's, since their company has not changed and the Whitespine's placed monsters stand on them.
-6. **Twelve drawn on the old line from 25 were owed a restating** (`RESTATE`), each by the box that
-   placed it, and all are done: Ashfall's Ash Husk, Stoker, Sentry and Sentinel, and Meridian Camp's
-   and the Dead-Drop's eight (#22), each re-derived or set off the line by the box that placed it.
+6. **Twelve drawn on the old line from 25 were owed a restating** (`RESTATE`), and all are done:
+   Ashfall's Ash Husk, Stoker, Sentry and Sentinel, and Meridian Camp's and the Dead-Drop's eight
+   (#22), each re-derived or set off the line by the box that placed it.
    `RESTATE` in `tools/tests/harness.ts` is empty and the harness suite is green: 69 monsters past
    10 on the line and 22 set off it (`OFF_LINE`). The Cinder Drake, placed at G10 (#660), is set
    off the line for its gate.
@@ -939,7 +939,7 @@ Decided by delegate for #549, each the owner's to overturn:
 8. **Act IV's bosses are set by their gates,** each in `OFF_LINE` (`tools/tests/harness.ts`) with
    its gate named: the Stair-king (#502), the Old Drake (#515), the Sentinel (#516), the Brood
    Drake and the Tallymaster (#22), the Grey Lion (#529) and the Cinder Drake (#660), the Abbot
-   being #500's. Won, as the gates print them two under the box's top and at it: the Stair-king
+   being #500's. Won, as the gates print them at the box's floor and two over it: the Stair-king
    58% at 22 and 79% at 24, the Old Drake 65% at 25 and 99% at 27, the Sentinel 65% at 25 and 97%
    at 27, the Brood Drake 61% at 26 and 100% at 28, the Tallymaster 70% at 27 and 95% at 29, the
    Grey Lion 75% at 27 and 96% at 29 and the Abbot 66% at 23 and 93% at 25; the test boss, two

@@ -2175,7 +2175,8 @@ Owed, from D9 (#525):
   meets E9's (#534, §4.9), its north edge D8's, the track at 16,0 (#526, §4.4), and its south edge
   D10's, and `CUT_OFF` is empty (#527; §1, §9, #525's 3 to 6).
 - **The step and the chapter** on `d9_glass` are built (#531, §5); **quest 51** is built (#532),
-  and the Etched Glass keeps no buyer: the Chart House takes the walker (§6, §9, #525's 11, #532's 4).
+  and the Etched Glass keeps no buyer, its taker owed (the Sorcerer's third's scholar, #807): the Chart
+  House takes the walker (§6, §9, #525's 11, #532's 4).
 - **The Wold's crossing words** are walked at D10 (#527) and at the Scarp stair's head (#528)
   (§9, #525's 14, #528's 2).
 - **The figures two under the floor** are owed to #18 and **the area's pay and gold** to #447: 2,940
@@ -2267,8 +2268,9 @@ Owed, from B9 (#530):
 
 Owed, from the chapter (#531):
 
-- **E10's `e10_west`** still writes The Window's road over the Hills for a company come up the stair
-  that later walks east over the last shoulder: an `until` on it is Ashfall's (#518; §9, #531's 3).
+- **E10's `e10_west`** writes The Window's road over the Hills for a company come up the stair that
+  later walks east over the last shoulder, and it stands. Decided by the owner's delegate, 16 October
+  2026 (#735, struck): no `until` on it (docs/areas/ashfall.md §5; §9, #531's 3).
 - **The last crossing** is Phase 1.5's: The Warning is done at Akordu's horse-lines on `q_road_east`,
   and the next chapter starts on it (§5).
 

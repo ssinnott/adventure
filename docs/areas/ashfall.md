@@ -329,7 +329,8 @@ half's, the corridors', the Ember Stone's, the Surveyor's and the Mapmaker's run
 quests', the road behind's sentries' (#449) and the country behind's seven boxes' (§8); the 200 over
 the gold is Hendra's, for the Letter in Cipher (#735). Its xp was
 met since E10's Wold half (#524) and its gold alone was owed, which Cinderport leaves as it is, a
-town paying nothing, and which F9, G9, H9 and E11 (#522) brought to 11,300 of the 11,760 and H11,
+town paying nothing but Hendra's 200 (#735), and which F9, G9, H9 and E11 (#522) brought to 11,300 of
+the 11,760 and H11,
 H12 and G12 to the whole (§8); the camp's 3,003 xp and 1,200 gold are outside it, the area listing
 the camp `outside` (§9, #22's 5);
 and the step in
@@ -1523,8 +1524,8 @@ entries and goals, in the journal's voice, keyed to flags, events and maps the s
   where `d8_east`, `after` `q_ember_lit`, sets the same flag. One that comes up the Scarp stair from
   the Saltings with the Stone lit is done at the stair's head, C8's `c8_line`, with no road west
   written, and `d8_east` is gone for it (glasswold.md §5, #531). That company can still walk E10's
-  shoulder afterwards, hear its Hills line and set `q_road_west`, and it stands. Decided by the
-  owner's delegate, 16 October 2026 (#735, struck): the line is true where it is said and the
+  shoulder afterwards, hear its Hills line and set `q_road_west`; that stands (decided by the
+  owner's delegate, 16 October 2026, #735, struck): the line is true where it is said and the
   chapter's `west` entry is true of any company that has walked the Hills' shoulder; an `until` on
   `c8_line` would silence it for a company that looked over the Scarp before the Stone was lit.
 
