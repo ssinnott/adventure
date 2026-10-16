@@ -1,9 +1,10 @@
 // Moving about: steps and the clock, doors, keys and secrets, water and mountains, the end of the
 // world, the open pass walked into Thornmark and back, Town Portal, the stairs, Helmstow's two
-// gates, a group under the ice, the road cut through cliffs and peaks, the far side's ground and the
-// skills that open the map.
+// gates, a group under the ice, the road cut through cliffs and peaks, the far side's ground, the
+// skills that open the map and the beasts an Archdruid is left alone by.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
+import { MONSTERS } from '../../src/content/index.ts';
 import { World, WALK_STEPS, WALK_ENDS, FLOAT_ENDS, FLOAT_FAILS } from '../../src/game/world.ts';
 import { OUTDOORS } from '../../src/game/outdoors.ts';
 import { GameMap, LEGEND } from '../../src/game/map.ts';
@@ -12,8 +13,9 @@ import { NORTH, EAST, WEST } from '../../src/game/types.ts';
 import type { Facing } from '../../src/game/types.ts';
 import { MINUTES_PER_DAY } from '../../src/game/calendar.ts';
 import { logLines } from '../../src/ui/frame.ts';
-import { defaultParty, partyCan } from '../../src/game/party.ts';
-import type { Party } from '../../src/game/party.ts';
+import { defaultParty, createCharacter, xpForLevel, levelUp, takePrestige, partyCan } from '../../src/game/party.ts';
+import type { Character, Party } from '../../src/game/party.ts';
+import type { MonsterDef } from '../../src/game/monsters.ts';
 import { ok, local } from './lib.ts';
 
 export function movement(): void {
@@ -251,6 +253,7 @@ export function movement(): void {
   range();
   farSide();
   opened();
+  archdruid();
 }
 
 /**
@@ -339,5 +342,67 @@ function opened(): void {
   for (const [who, setup, want] of cases) {
     const got = steps(setup);
     ok(got === want, `${who}: a step west into the mountain, east into the water and north into the sea comes to ${got}${got === want ? '' : ` (wanted ${want})`}`);
+  }
+}
+
+/**
+ * The Archdruid's perk (#809, DESIGN §5): a group of beasts alone, each of a level under a standing
+ * druid of the third prestige in the company, does not step toward it, and is fought as any group
+ * is where the company steps up to it. Laid on a strip of open ground with the group five squares
+ * off; its beasts, its person and its caller are rats made over to the kind and level asked, so no
+ * retune of the content moves this.
+ */
+function archdruid(): void {
+  const rng = makeRng(23);
+  const strip = (group: Partial<EncounterDef>): MapDef => ({
+    id: 'fx_strip', name: 'Strip', kind: 'outdoor', start: { x: 1, y: 1, facing: EAST },
+    rows: ['MMMMMMMMM', 'M,,,,,,,M', 'MMMMMMMMM'],
+    encounters: [{ id: 'beasts', x: 6, y: 1, monsters: ['fx_beast20', 'fx_beast20'], aware: 8, ...group }],
+  });
+  /** A member at 27 with the first `took` of its prestiges taken. */
+  const raised = (c: Character, took = 3): Character => { c.xp = xpForLevel(27); levelUp(c, rng); for (let n = 0; n < took; n++) takePrestige(c); return c; };
+  /** The premade six, a druid of 27 for its sorcerer: an Archdruid with all three prestiges, a Thornspeaker with two. */
+  const withDruid = (took = 3): Party => { const p = defaultParty(rng); p.members[5] = raised(createCharacter('Kenver', 'human', 'druid', {}, rng), took); return p; };
+  /** The premade six with no druid, its cleric an Exarch of 27: a third prestige, but not the druid's. */
+  const withExarch = (): Party => { const p = defaultParty(rng); raised(p.members[4]); return p; };
+  /** How many squares of three steps the group makes toward the company. */
+  const closes = (party: Party, group: Partial<EncounterDef> = {}): number => {
+    const w = new World({ fx_strip: new GameMap(strip(group)) }, party, rng);
+    w.travel('fx_strip', 1, 1, EAST);
+    const g = w.liveGroups()[0], from = g.state.x;
+    for (let k = 0; k < 3; k++) w.moveMonsters();
+    return from - g.state.x;
+  };
+  const laid: MonsterDef[] = [
+    ...[20, 28].map((level) => ({ ...MONSTERS.rat, id: `fx_beast${level}`, level })),
+    { ...MONSTERS.rat, id: 'fx_person20', kind: 'person', level: 20 },
+    { ...MONSTERS.rat, id: 'fx_caller20', level: 20, calls: { monsters: ['fx_beast20'], chance: 0.5 } },
+  ];
+  for (const d of laid) MONSTERS[d.id] = d;
+  try {
+    // The company walks up to the group that stayed put: nothing beside it for three steps, then the fight.
+    const w = new World({ fx_strip: new GameMap(strip({})) }, withDruid(), rng);
+    w.travel('fx_strip', 1, 1, EAST);
+    const walked = [1, 2, 3, 4].map(() => { const r = w.move('forward'); return r.kind === 'moved' ? r.encounter?.join() ?? '' : r.kind; });
+    const held = closes(withDruid()), down = withDruid();
+    ok(held === 0 && walked.join('|') === '|||beasts' && w.liveGroups()[0].state.x === 6,
+      `a group of level 20 beasts does not close in on an Archdruid of 27, and is fought where the company steps up to it (${held} squares of 3; fight on step ${walked.indexOf('beasts') + 1})`);
+    const higher = closes(withDruid(), { monsters: ['fx_beast28', 'fx_beast28'] });
+    ok(higher === 3, `a group of level 28 beasts comes on (${higher} squares of 3)`);
+    down.members[5].conditions = ['unconscious'];
+    const fallen = closes(down);
+    ok(fallen === 3, `with the druid down the level 20 group comes on (${fallen} squares of 3)`);
+    const led = closes(withDruid(), { leader: 'fx_beast20' });
+    ok(led === 3, `a group with a leader comes on (${led} squares of 3)`);
+    const none = closes(withExarch());
+    ok(none === 3, `for a company with no druid, its cleric an Exarch of 27, the level 20 group comes on (${none} squares of 3)`);
+    const second = closes(withDruid(2));
+    ok(second === 3, `a Thornspeaker of 27, a druid of the second prestige only, does not keep the level 20 group off (${second} squares of 3)`);
+    const people = closes(withDruid(), { monsters: ['fx_person20', 'fx_person20'] }), mixed = closes(withDruid(), { monsters: ['fx_beast20', 'fx_person20'] });
+    ok(people === 3 && mixed === 3, `a group of people, or of a beast and a person, comes on though the Archdruid stands (${people} and ${mixed} squares of 3)`);
+    const called = closes(withDruid(), { monsters: ['fx_caller20'] });
+    ok(called === 3, `a beast that calls comes on though the Archdruid stands (${called} squares of 3)`);
+  } finally {
+    for (const d of laid) delete MONSTERS[d.id];
   }
 }
