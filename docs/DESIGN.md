@@ -263,8 +263,10 @@ fletcher bows, the bone-setter draughts and cures. The locksmith's lock picks, t
 lanterns and the beekeeper's honey and salves wait on the items past Thornmark (#18). The astrologer,
 the luthier, the stevedore and the ferryman keep no shop.
 
-**The quests for the third prestige,** in sketch. Where a third sits in country under 27, the
-quest's own fights are set at 26.
+**The quests for the third prestige,** in sketch. A third's fights are the places' own, not set at
+26 for the quest (#448's 3). Decided by the owner's delegate, 16 October 2026 (#733): the
+Paladin's are the husks of Old Cinder, at 25. The hold at 26 to 28 stands for the Sorcerer's third,
+which #807 places on the Wold.
 
 - **Knight:** hold the ledge above the Giants' Stair with the old champion through a night of the
   giants' toll-takers (MONSTERS.md §12).

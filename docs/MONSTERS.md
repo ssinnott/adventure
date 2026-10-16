@@ -799,6 +799,23 @@ What it shows:
   24's hit points and their fights run long: the armoured end 53% of their days badly, in fights
   broken off, as at 21, and the casters, brutes and skirmishers about a fifth. Freeing the held
   takes the controllers' bad days at 22 to 24 from 21, 35 and 19% to 14, 13 and 7%.
+
+  Re-measured on 16 October 2026 (#734), the harness gives the same: the armoured end 53% of their
+  days badly at 25, 38% at 29 and 49% at 31, for the same cause, the company's to-hit a point down
+  at 25 while the line's armour rounds up, and six roles held at 24's hit points. By box (`--map`,
+  200 seeds) every group is won 100% from fresh, in 2.9 to 5.9 rounds at G11, 3.4 to 4.4 at I8 and
+  4.4 to 5.9 at Meridian Camp's first level, and the day sits inside its aim, 10.1 fights to a rest
+  of 10.25 asked, 8.9 of 9.5 and 10.9 of 10.25; yet 95%, 68% and 88% of the days end in a fight
+  broken off (the gate, on its own seeds, prints 94.7, 64.7 and 87.7).
+  Decided by the owner's delegate, 16 October 2026, the owner's to overturn: the share of days that
+  end in a fight broken off is a figure, with no aim and no limit (docs/EXPANSION.md §5.2), and no
+  box is lightened for it. The owner's delegate reads it as how a thrifty bot's long day ends: it
+  spends spell points only where they save more hit points than they cost, so late in the day,
+  against foes a spell does little to (fire does not hurt a stoker or a salamander, holy light and
+  nature pass through a machine, a troll mends), its blows cannot close a fight in fifteen rounds,
+  where a player rests or casts. Neither the step nor the line is changed: remaking the line at 25
+  to 28 would restate every monster placed there and move all of Act IV's figures, at the end of
+  the build.
 - **Made again with Act V's rung at 28, 30 and 32 (#752).** In the Hand's steel (#746) on the line
   #549 made, a company fought 12.2 to 13.1 standard encounters to a rest at 28, where 11 are asked,
   and 12.9 to 14.2 at 32, where 12 are. `LEVELS` gains 30, so the Ways' and the Stair's level is

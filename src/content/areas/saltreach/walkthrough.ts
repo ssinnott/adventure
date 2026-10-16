@@ -18,7 +18,8 @@
 // the Stone go by, the step, and the priest's word on a pole's mark; the old smuggler's cache found
 // from the clean stone in the quay and reached no other way; the two second prestiges taught off the
 // road; the box's groups won at 10; and The Night-Light (#183) played every way.
-// Then west over the fen to Stienwierde (B5, #173): the duckboards to the plinth, empty; the hermit
+// Then west over the fen to Stienwierde (B5, #173): the duckboards to the plinth, empty, and told two
+// ways (#582: the cut seen under the roots, or the socket and no more); the hermit
 // who counts the Rifts' lights; the hollow under the landing found from its pole-marks; and the
 // box's groups and its two Rifts' won at 11. Then south to the Drowned Temples' approach (B6, #174):
 // the priestess at the dry door and her count; the far roof's door found from the count's pause;
@@ -53,7 +54,7 @@ import type { Feature } from '../../../game/map.ts';
 import { buy, item } from '../../../game/items.ts';
 import { canTrainAt, xpForLevel, prestigeOf, takePrestige, createCharacter, PRESTIGES, resists, rest } from '../../../game/party.ts';
 import { teach } from '../../../game/prestige.ts';
-import { questLog } from '../../../game/quests.ts';
+import { questLog, holds } from '../../../game/quests.ts';
 import type { QuestView } from '../../../game/quests.ts';
 import { sought, seekId } from '../../../game/seeking.ts';
 import { take, fareOf } from '../../../game/passage.ts';
@@ -115,7 +116,37 @@ function theBoat(w: Walk): void {
     `the boat lands the company on Wrackholm, which begins the Stone Carried Home, and the Tide Stone stays open (${w.news.at(-1)})`);
 }
 
-const PLINTH: Step = { name: 'the plinth', play: (w) => { walkThrough(w, 'delta_c5', 0, 13, WEST, 'delta_b5', 2); see(w, 'delta_b5:b5_plinth'); } };
+/**
+ * The plinth's words (#582), held here as they are told so that a change to either fails a walk: the
+ * socket cut clean, and to a company that has stood at the Grove Stone the cut it has seen before.
+ */
+const PLINTH_SHORT = 'Stienwierde. The plinth, and nothing on it: a socket cut clean, a man\'s width.';
+const PLINTH_CUT = `${PLINTH_SHORT} You have seen that cut before, a hand-span of it, under the roots.`;
+
+/** Whether the company has stood at the Grove Stone, which the plinth reads it by. */
+const atGroveStone = (w: Walk): boolean => holds({ seen: 'grove2:g2_stone' }, w.world.state, w.party);
+
+/** Whether one of the plinth's two events has been read, wherever the company stands now (`used` reads the map it is on). */
+const plinthRead = (w: Walk, id: 'b5_plinth' | 'b5_plinth_first'): boolean => holds({ seen: `delta_b5:${id}` }, w.world.state, w.party);
+
+/** Onto the plinth's square, as `see` does, and what is said there: `see` does not give the words back. */
+function atPlinth(w: Walk): string[] {
+  const plinth = B5.features!.find((f) => f.kind === 'event' && f.id === 'b5_plinth')!;
+  w.world.travel('delta_b5', plinth.x, plinth.y);
+  const said = w.world.eventsHere();
+  listen(w);
+  return said;
+}
+
+/** The plinth stepped on, its words held to what this company has seen: the cut to one that has stood at the Grove Stone, the socket and no more to one that has not. */
+function readPlinth(w: Walk): string[] {
+  const grove = atGroveStone(w), said = atPlinth(w);
+  w.ok(said.join(' ') === (grove ? PLINTH_CUT : PLINTH_SHORT), `the plinth tells a company that has ${grove ? '' : 'not '}stood at the Grove Stone ${grove ? 'the cut it has seen' : 'the socket and no more'} (${said.join(' ') || 'nothing'})`);
+  return said;
+}
+
+/** Shared by the runs that come to the plinth by the Grove and by Saltmouth: each reads it as its own company is told it. */
+const PLINTH: Step = { name: 'the plinth', play: (w) => { walkThrough(w, 'delta_c5', 0, 13, WEST, 'delta_b5', 2); readPlinth(w); } };
 const BOAT: Step = { name: 'the boat', play: theBoat };
 
 /** The chapter in order: into the Delta, Rietum, the plinth, the temples, Saltmouth and the boat. */
@@ -165,6 +196,8 @@ export function inOrder(ok: (cond: boolean, msg: string) => void): Walk {
   ledgerGiven(chain);
   playChapter(chain, CHAPTER, STEPS, 'in order');
   ok(['saw', 'plinth', 'count', 'stair', 'hale', 'ship'].every((e) => written(chain).includes(e)), `in order, the whole chapter is written to the boat (${written(chain).join(', ')})`);
+  // The Grove played first, the company has stood at its Stone, so the plinth told it the cut it had seen (#582).
+  ok(plinthRead(chain, 'b5_plinth') && !plinthRead(chain, 'b5_plinth_first'), 'in order, the plinth told the company the cut it had seen under the roots, and the short line was never said to it');
   return chain;
 }
 
@@ -187,6 +220,8 @@ export function saltmouthFirst(ok: (cond: boolean, msg: string) => void): Walk {
   playChapter(first, CHAPTER, [at12(PLINTH), at12(BOAT)], 'Saltmouth first');
   goalFromBegun(first, 'Saltmouth first, on the isle');
   ok(JSON.stringify(written(first)) === JSON.stringify(['plinth', 'ship']), `Saltmouth first, the Tide Stone holds only what was seen and said (${written(first).join(', ')})`);
+  // The Grove not begun, the company has not stood at its Stone, so the plinth told it the socket and no more (#582), and the step is written all the same.
+  ok(plinthRead(first, 'b5_plinth_first') && !plinthRead(first, 'b5_plinth') && !atGroveStone(first), 'Saltmouth first, the plinth told the company the socket cut clean and no more');
   return first;
 }
 
@@ -194,6 +229,32 @@ function theTideStone(ok: (cond: boolean, msg: string) => void): void {
   inOrder(ok);
   saltmouthFirst(ok);
   everyGoalWalked(ok, [CHAPTER]);
+  thePlinth(ok);
+}
+
+/**
+ * The plinth read both ways (#582), each on a company of its own, the words held to the letter. One
+ * that has not stood at the Grove Stone is told the socket cut clean and no more, and told the cut
+ * it has seen under the roots on the next step onto the plinth once it has; one that stood there
+ * first is told the cut at once, and never the short line. Each reading is said the once.
+ */
+function thePlinth(ok: (cond: boolean, msg: string) => void): void {
+  const late = newWalk(ok);
+  walkThrough(late, 'delta_c5', 0, 13, WEST, 'delta_b5', 2);
+  const before = atGroveStone(late), short = readPlinth(late).join(' ');
+  ok(!before && short === PLINTH_SHORT, 'the plinth, to a company that has not stood at the Grove Stone, is the socket cut clean and no more');
+  ok(plinthRead(late, 'b5_plinth_first') && !plinthRead(late, 'b5_plinth') && atPlinth(late).length === 0, 'and the short line is said the once');
+  see(late, 'grove2:g2_stone');
+  const after = atGroveStone(late), cut = readPlinth(late).join(' ');
+  ok(after && cut === PLINTH_CUT, 'once the company has stood at the Grove Stone, the plinth, stepped on again, tells it the cut it has seen under the roots');
+  ok(plinthRead(late, 'b5_plinth') && atPlinth(late).length === 0, 'and the cut is said the once');
+
+  const early = newWalk(ok);
+  see(early, 'grove2:g2_stone');
+  walkThrough(early, 'delta_c5', 0, 13, WEST, 'delta_b5', 2);
+  const already = atGroveStone(early), told = readPlinth(early).join(' ');
+  ok(already && told === PLINTH_CUT, 'the plinth, to a company that has stood at the Grove Stone, is the cut it has seen under the roots');
+  ok(plinthRead(early, 'b5_plinth') && !plinthRead(early, 'b5_plinth_first') && atPlinth(early).length === 0, 'and the short line is never said to it');
 }
 
 /**
@@ -537,9 +598,10 @@ export const walkthrough: Walkthrough = (ok) => {
   w.level = 11;
   walkThrough(w, 'delta_c5', 0, 13, WEST, 'delta_b5', 2);
 
-  // The step: the plinth on Stienwierde, empty, its socket cut clean.
-  see(w, 'delta_b5:b5_plinth');
-  ok(w.world.used('b5_plinth'), 'on Stienwierde the plinth stands empty');
+  // The step: the plinth on Stienwierde, empty, its socket cut clean. This company has not stood at
+  // the Grove Stone, so it is told no more (#582).
+  const stood = atGroveStone(w), plinthSaid = readPlinth(w).join(' ');
+  ok(!stood && plinthSaid === PLINTH_SHORT && w.world.used('b5_plinth_first') && !w.world.used('b5_plinth'), 'on Stienwierde the plinth stands empty, and tells a company that has not stood at the Grove Stone the socket and no more');
 
   // The hermit on the hummock counts the Rifts' lights.
   w.world.travel('delta_b5', B5_COUNTER.x, B5_COUNTER.y);
