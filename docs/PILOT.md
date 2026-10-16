@@ -11,8 +11,9 @@ It lives on the `Game` (`g.pilot`), outside the save: nothing of it goes into `W
 until the test gives it one. It presses the keys a player would: every move is an `Action` through
 `Game.update`, and nothing teleports or is bought off screen.
 
-Built so far: the frame (#716) over the bot's fights (#714). Until the brains land (#717 to #721),
-the pilot hands each fight to the bot, closes each message box and says "Nothing to do."
+Built so far: the frame (#716) over the bot's fights (#714), and the navigator (#717). Until the
+other brains land (#718 to #721) nothing sets a goal, so the pilot hands each fight to the bot,
+closes each message box and says "Nothing to do."
 
 ## Using it
 
@@ -44,6 +45,9 @@ through `g.world`, `g.maps` or a `MapDef`:
   holds do not come through: words are '', lists [], a number NaN;
 - the exits on seen squares that are there now, with where each leads and no gate's terms: a gate's
   `needFlag`, `shut`, `lifts` or `after` is never read, and the pilot learns a gate by trying it;
+- the squares of the groups the automap marks (`groups`, #717): in view, or on a seen square within
+  two steps, on the party's own map, and nothing of what a group is;
+- the company (`party`, #717): who stands, what each has learnt and what it carries;
 - the maps visited, the world map as it is painted (`placeOf`) and every line heard: what `Game.say`
   says and every message box opened, the last 2000. A new game or a load empties it.
 
@@ -66,12 +70,25 @@ whatever screen is on top, and the first key given is pressed. A brain returns n
 screen it works on is on top: route and explore only on the ExploreScreen; talk and keep also on the
 screens they answer.
 
+## The navigator
+
+`route` (#717) walks `Pilot.goal`, a square and the name the why line gives it ("Bound for the
+lane."), one key a call with the map on top: `forward` and the turns, never `back` or a strafe, so
+the party faces where it goes. Its routes go breadth-first over the squares Known has a cell for that
+the company can cross, round the groups the automap marks and onto an exit only at the end; from map
+to map they go by the exits seen. A secret door is a wall to it until a search finds it; a gate is
+learnt by trying it. A step that leaves the party where it stood is a block: the plan is made
+afresh, and at the third block the goal goes ("The lane is shut to me."), its square left in
+`Pilot.shut` for the explorer (#718). With no way seen it says "No way to the lane that I have
+seen." and drops the goal.
+
 ## The files
 
 | File | Owns |
 |---|---|
-| `src/game/pilot/pilot.ts` | `Pilot`: on and off (`toggle`), a stop of its own (`stop`), the tempo and the pace, the why line and what the band shows (`band`), the corpus heard (`hear`, `forget`), the next key (`next`) and `BRAINS`: the brains in the order asked (fight, keep, aims, route, explore, talk), each slot absent until its module lands |
+| `src/game/pilot/pilot.ts` | `Pilot`: on and off (`toggle`), a stop of its own (`stop`), the tempo and the pace, the why line and what the band shows (`band`), the corpus heard (`hear`, `forget`), the next key (`next`), the navigator's goal, plan and squares found shut (`goal`, `plan`, `shut`) and `BRAINS`: the brains in the order asked (fight, keep, aims, route, explore, talk), each slot absent until its module lands |
 | `src/game/pilot/known.ts` | `Known` and `knownOf`, the fair view; `fair`, a feature as the party knows it |
+| `src/game/pilot/route.ts` | the navigator (#717): `Goal`, `routeOn` (the keys over one map), `routeMaps` (the exits from map to map) and the brain `route`; it reads a cell by `passableCell` (`src/game/map.ts`) and the groups as the automap marks them (`markedGroups`, `src/ui/frame.ts`) |
 | `src/game/ink.ts` | `drawnCell`: what a cell is drawn as, which the view, the automap and Known share |
 | `src/game/bot.ts` | the fight and the rest rule (`botTurn`, `asSeen`, `mustRest`, #714) |
 | `src/ui/create.ts` | `randomParty`: the company drawn from a seed |
@@ -117,3 +134,19 @@ Decided by delegate for #716, each the owner's to overturn:
 13. **A known simplification: features and exits of seen squares are as the world has them now** (`World.present`, `World.there`), not as last seen: a person with an `after`, or a door a flag opens, shows from afar the moment its flag is set, though nobody has looked since.
 14. **A zone's band and a goal's map are read once seen; built by the first issue that uses them** (the zone's band by #718's explorer bound, the goal's map by #720's strategist), each with its own fairness test: a zone's band is read once the party has been in the zone or the world map's almanac shows it. `Known` has no member for either yet.
 15. **A brain returns null unless the screen it works on is on top**: route and explore only on the ExploreScreen; talk and keep also on the screens they answer. The frame asks every brain whatever is on top, so #717's route, asked before talk, never presses its plan into a choice or a business opened on the way.
+
+Decided by delegate for #717, each the owner's to overturn:
+
+1. **A block is a step that leaves the party where it stood**, whatever line says why. The issue reads the log's last line against `BLOCK_TEXT` and "The way is closed.", but a gate's own words (`blockedText`) and a failing float say other lines, and a test on the line would miss them and press the rest of the plan out of step. The line said is kept as the shut square's `why`; `BLOCK_TEXT` stays private.
+2. **The plan is made afresh whenever the party is not where the last key should have left it**: on another map, as the issue says, and after a push or a flight on the same map, which a test of the map alone would miss.
+3. **Known gives the groups the automap marks** (`Known.groups`): `world.groupAt` reads every live group, seen or not, which the fair rule bars. The automap's own rule moves into `markedGroups` (`src/ui/frame.ts`) and the automap draws by it, so the two cannot drift. A group out of sight is walked into, as a player would.
+4. **Known gives the company** (`Known.party`, in the epic's Decided 1): `routeOn` takes no party, and `partyCan(k.party)` says what the company can cross with its keys and its swimmers and mountaineers, learnt ones among them (#805).
+5. **`passableCell` is `GameMap.passable` for a cell given**, so the navigator reads passable's rule on the cell Known inks, never on the map's own, where a secret door is floor. `GameMap.passable` calls it, so nothing in play moves.
+6. **A route steps onto an exit or a rift only at its end**: a step onto one leaves the map, and the next plan would come straight back.
+7. **To another map, the nearest seen exit to the first map of `routeMaps`'s way**, not only the first exit found: Harrow's road has its exits in pairs, and an exit out of reach would give "No way" while its twin is open.
+8. **`routeMaps` takes maps as played**, as `Known.visited` and an exit's `to` give them; the brain places a goal written in a zone's reckoning with `World.locate` (decision 6 for #716) before it compares or routes.
+9. **The tide and Walk on Water are not read**: `partyCan` alone, as the issue says. Tidal ground is read at low water, `passable`'s own default, and a step the tide refuses is a block like any other.
+10. **The why line's second line is the log's last line since the goal was set, cut at a word with '...'** to the band's width: the band does not wrap, and a line of the log may run to three.
+11. **Taking the helm back drops the goal and its plan; a new game or a load drops them and the squares found shut too**: the viewer may walk anywhere, and a new company is bound nowhere.
+12. **`drive` gives a tick of nothing to the pilot**, as `src/main.ts` does (`tools/tests/lib.ts`): the issue's walk drives sixty nulls with the pilot on, which pressed nothing before. A game with no pilot ticks as it did.
+13. **What the navigator keeps between keys lives in `route.ts`** (the blocks on a goal, the lines said since it was set and the last key, in a `WeakMap` by pilot), so `Pilot` gains only the issue's `goal`, `plan` and `shut`.
