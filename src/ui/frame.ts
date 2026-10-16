@@ -1,7 +1,7 @@
 // The frame around the viewport: the status strip, the automap, the party cards and the message
 // log. Layout for the 640x360 canvas is fixed here in LAYOUT so every screen agrees on it.
 import { drawText } from '../lib/engine/text.ts';
-import type { World } from '../game/world.ts';
+import type { World, LiveGroup } from '../game/world.ts';
 import type { Feature } from '../game/map.ts';
 import type { Party, Character } from '../game/party.ts';
 import { worstCondition, isDown, CLASSES, xpForLevel } from '../game/party.ts';
@@ -120,7 +120,6 @@ export function drawAutomap(ctx: CanvasRenderingContext2D, world: World, frame: 
   const ox = r.x + Math.floor((r.w - cell * cols) / 2) - x0 * cell, oy = r.y + Math.floor((r.h - cell * rows) / 2) - y0 * cell;
   const within = (x: number, y: number): boolean => x >= x0 && y >= y0 && x < x0 + cols && y < y0 + rows;
   const shown = (x: number, y: number): boolean => within(x, y) && world.explored(x, y);
-  const inView = new Set(viewCells(m, world.state.x, world.state.y, world.state.facing, world.sight).map((c) => c.y * m.width + c.x));
   for (let y = y0; y < y0 + rows; y++) for (let x = x0; x < x0 + cols; x++) {
     if (!world.explored(x, y)) continue;
     // A secret door outdoors among mountain, rock or trees is inked as they are, as it is drawn.
@@ -157,11 +156,9 @@ export function drawAutomap(ctx: CanvasRenderingContext2D, world: World, frame: 
   }
   // An exit not there yet (`after`, #749) is no exit on the map either.
   for (const e of m.exits) if (shown(e.x, e.y) && world.there(e)) { ctx.fillStyle = GREEN; ctx.fillRect(ox + e.x * cell + 1, oy + e.y * cell + 1, Math.max(1, cell - 2), Math.max(1, cell - 2)); }
-  // Monsters in view.
-  for (const g of world.liveGroups()) {
-    const k = g.state.y * m.width + g.state.x;
+  // Monsters in view, or seen and near.
+  for (const g of markedGroups(world)) {
     if (!within(g.state.x, g.state.y)) continue;
-    if (!inView.has(k) && !(world.explored(g.state.x, g.state.y) && Math.abs(g.state.x - world.state.x) + Math.abs(g.state.y - world.state.y) <= 2)) continue;
     ctx.fillStyle = (frame >> 4) & 1 ? RED : '#ff8a7a';
     ctx.fillRect(ox + g.state.x * cell + 1, oy + g.state.y * cell + 1, Math.max(1, cell - 2), Math.max(1, cell - 2));
   }
@@ -217,6 +214,13 @@ import { armorClass as armorClassOf } from '../game/party.ts';
 
 /** Whether the automap marks a feature: not an event, and not a person who is not there now. */
 export const onAutomap = (world: Pick<World, 'present'>, f: Feature): boolean => f.kind !== 'event' && world.present(f);
+
+/** The live groups the automap marks: in view, or on a seen square within two steps of the party. */
+export function markedGroups(world: World): LiveGroup[] {
+  const m = world.map, { x, y, facing } = world.state;
+  const inView = new Set(viewCells(m, x, y, facing, world.sight).map((c) => c.y * m.width + c.x));
+  return world.liveGroups().filter(({ state: s }) => inView.has(s.y * m.width + s.x) || (world.explored(s.x, s.y) && Math.abs(s.x - x) + Math.abs(s.y - y) <= 2));
+}
 
 /** How many lines the log shows. */
 export const LOG_LINES = 4;

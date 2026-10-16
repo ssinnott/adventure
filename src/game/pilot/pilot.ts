@@ -12,6 +12,8 @@ import { CreateScreen, randomParty } from '../../ui/create.ts';
 import { freshSeed } from '../../lib/engine/rng.ts';
 import { knownOf } from './known.ts';
 import type { Known } from './known.ts';
+import { route } from './route.ts';
+import type { Goal } from './route.ts';
 
 export type Tempo = 1 | 2 | 4;
 export interface PilotOpts { instant?: boolean; omniscient?: boolean }
@@ -26,7 +28,7 @@ export type Brain = (g: Game, k: Known, p: Pilot) => Action | null;
  * The brains, asked in this order and the first key given pressed: fight, keep (#719), aims (#720),
  * route (#717), explore (#718), talk (#721). Each slot is absent until its module lands.
  */
-export const BRAINS: readonly Brain[] = [];
+export const BRAINS: readonly Brain[] = [route];
 
 /** The lines the heard corpus keeps, the oldest dropped first. */
 export const HEARD_MAX = 2000;
@@ -48,6 +50,12 @@ export class Pilot {
   readonly heard: string[] = [];
   /** The why line of a stop it made itself (a wipe, the ending's choice), kept up in the band until the next key. */
   stopped: [string, string?] | null = null;
+  /** Where the navigator is bound (route.ts, #717): set by a brain or a test, null on arrival or when no way is seen. */
+  goal: Goal | null = null;
+  /** The keys left of the navigator's route to `goal`, the next first: emptied to plan afresh. */
+  plan: Action[] = [];
+  /** The squares a goal was found shut at (three blocks on it), each with the line said there: the explorer's to read (#718). */
+  readonly shut: { map: string; x: number; y: number; why: string }[] = [];
   /** Ticks counted since it took the helm, for the pace. */
   private ticks = 0;
   /** The fight last handed to the bot: each is handed once. */
@@ -63,8 +71,11 @@ export class Pilot {
     if (this.heard.length > HEARD_MAX) this.heard.splice(0, this.heard.length - HEARD_MAX);
   }
 
-  /** A new company has heard nothing: a new game or a load empties the corpus (Game.newGame, Game.loadGame). */
-  forget(): void { this.heard.length = 0; }
+  /**
+   * A new company has heard nothing and is bound nowhere: a new game or a load empties the corpus, the
+   * goal, its plan and the squares found shut (Game.newGame, Game.loadGame).
+   */
+  forget(): void { this.heard.length = 0; this.goal = null; this.plan = []; this.shut.length = 0; }
 
   /**
    * Turns on or off; says the line. Off, a fight on top goes back to its keys. On with no game under
@@ -75,6 +86,9 @@ export class Pilot {
     this.stopped = null;
     if (this.on) {
       this.on = false;
+      // The viewer may walk anywhere: the goal and its plan go with the helm.
+      this.goal = null;
+      this.plan = [];
       if (g.top instanceof CombatScreen) g.top.auto = false;
       g.say('You take the helm.');
       return;

@@ -70,8 +70,10 @@ export function headlessGame(seed = 4): Game {
   return g;
 }
 
-/** Presses `actions` into the game one per tick (a null is a tick of nothing), then `settle` ticks of nothing. */
+/**
+ * Presses `actions` into the game one per tick (a null is a tick of nothing), then `settle` ticks of
+ * nothing. A tick of nothing is the pilot's, if the game has one, as in src/main.ts: its key, if any.
+ */
 export function drive(g: Game, actions: readonly (Action | null)[], settle = 0): void {
-  for (const a of actions) g.update(a);
-  for (let i = 0; i < settle; i++) g.update(null);
+  for (const a of [...actions, ...Array<null>(settle).fill(null)]) g.update(a ?? g.pilot?.next(g) ?? null);
 }

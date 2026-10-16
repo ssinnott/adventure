@@ -603,19 +603,8 @@ export class GameMap {
    * Whether walking is possible, given the party's terrain abilities and the tide; with no tide
    * given, tidal ground is read at low water, at its most open. A party afloat (Levitate) crosses the chasm.
    */
-  passable(x: number, y: number, can: { swim?: boolean; climb?: boolean; keys?: number; tide?: Tide; float?: boolean } = {}): PassResult {
-    const c = this.at(x, y);
-    if (c.solid === 'void') return 'void';
-    if (c.solid === 'wall' || c.solid === 'building' || c.solid === 'pillar') return 'wall';
-    if (c.solid === 'tree' || c.solid === 'rock') return 'blocked';
-    if (c.solid === 'mountain') return can.climb ? 'ok' : 'mountain';
-    if (c.terrain === 'deep') return 'deep';
-    if (c.terrain === 'chasm') return can.float ? 'ok' : 'chasm';
-    if (c.terrain === 'water') return can.swim ? 'ok' : 'water';
-    // At high water tidal ground is water: a swimmer wades it, and nobody else.
-    if (c.terrain === 'tidal' && can.tide === 'high') return can.swim ? 'ok' : 'tide';
-    if (c.door === 'locked') return can.keys ? 'unlock' : 'locked';
-    return 'ok';
+  passable(x: number, y: number, can: Can = {}): PassResult {
+    return passableCell(this.at(x, y), can);
   }
 
   /** The way off the map on a square: an exit, or a tear into a Rift, which is walked through as one. */
@@ -632,5 +621,25 @@ export class GameMap {
 }
 
 export type PassResult = 'ok' | 'wall' | 'blocked' | 'mountain' | 'water' | 'deep' | 'chasm' | 'tide' | 'locked' | 'unlock' | 'void';
+/** What a party can cross: a swimmer, a mountaineer, iron keys, the tide and a float (`passable`). */
+export interface Can { swim?: boolean; climb?: boolean; keys?: number; tide?: Tide; float?: boolean }
+
+/**
+ * `GameMap.passable` for a cell given, not read off a map: the map's own, or one as the automap
+ * inks it, which is how the pilot's navigator reads it (game/pilot/route.ts).
+ */
+export function passableCell(c: Pick<Cell, 'terrain' | 'solid' | 'door'>, can: Can = {}): PassResult {
+  if (c.solid === 'void') return 'void';
+  if (c.solid === 'wall' || c.solid === 'building' || c.solid === 'pillar') return 'wall';
+  if (c.solid === 'tree' || c.solid === 'rock') return 'blocked';
+  if (c.solid === 'mountain') return can.climb ? 'ok' : 'mountain';
+  if (c.terrain === 'deep') return 'deep';
+  if (c.terrain === 'chasm') return can.float ? 'ok' : 'chasm';
+  if (c.terrain === 'water') return can.swim ? 'ok' : 'water';
+  // At high water tidal ground is water: a swimmer wades it, and nobody else.
+  if (c.terrain === 'tidal' && can.tide === 'high') return can.swim ? 'ok' : 'tide';
+  if (c.door === 'locked') return can.keys ? 'unlock' : 'locked';
+  return 'ok';
+}
 
 const OUT_OF_BOUNDS: Cell = Object.freeze({ terrain: 'floor', solid: 'wall', door: 'none', ch: '#' }) as Cell;

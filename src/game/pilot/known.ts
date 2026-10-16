@@ -1,15 +1,17 @@
 // The pilot's fair view of the world (epic #713, Decided 1; docs/PILOT.md): what the party has seen
 // and heard, and nothing more. Every brain reads the world through it and never through `g.world`,
-// `g.maps` or a map as written: the automap's bits, its cells as the automap inks them, the features
-// and exits it marks, the maps walked, the world map as it is painted and the lines said. Nothing
-// here reads a map's secrets or encounters, a gate's terms or what a person, a statue or a shop holds.
+// `g.maps` or a map as written: the automap's bits, its cells as the automap inks them, the features,
+// exits and groups it marks, the maps walked, the world map as it is painted, the lines said and the
+// company. Nothing here gives a map's secrets or encounters as written, a gate's terms or what a
+// person, a statue or a shop holds: a group is a square the automap marks, and no more.
 import type { Game } from '../game.ts';
 import type { Cell, Exit, Feature, GameMap, MapZone } from '../map.ts';
+import type { Party } from '../party.ts';
 import { seen as lit } from '../world.ts';
 import { drawnCell } from '../ink.ts';
 import { mapPlace } from '../atlas.ts';
 import { spentId } from '../wilds.ts';
-import { onAutomap } from '../../ui/frame.ts';
+import { onAutomap, markedGroups } from '../../ui/frame.ts';
 import { ATLAS, MAP_DEFS } from '../../content/index.ts';
 
 /** A cell as the automap inks it, its legend letter gone: a secret door is a wall and no more. */
@@ -27,6 +29,13 @@ export interface Known {
   features(map: string): Feature[];
   /** The exits on seen squares that are there now, as the automap marks them: where each leads, and no gate's terms. */
   exits(map: string): Exit[];
+  /**
+   * The squares of the groups the automap marks now (`markedGroups`): on the party's own map, in view
+   * or on a seen square within two steps; none on any other map. Nothing of what a group is.
+   */
+  groups(map: string): { x: number; y: number }[];
+  /** The company, as its sheets show it: who stands, what each has learnt and what it carries. */
+  readonly party: Party;
   /** The maps visited: the keys of `WorldState.maps`. */
   visited(): string[];
   /** Where a map is on the world map, in world cells, as the world map places it (`mapPlace`). */
@@ -82,6 +91,11 @@ export function knownOf(g: Game): Known {
       return p.m.exits.filter((e) => inBox(p.box, e.x, e.y) && seenOn(p.m, e.x, e.y) && w.there(e))
         .map(({ x, y, to, tx, ty, tf }) => (tf === undefined ? { x, y, to, tx, ty } : { x, y, to, tx, ty, tf }));
     },
+    groups(map) {
+      const p = played(map);
+      return p && p.m.id === w.state.mapId ? markedGroups(w).map(({ state: s }) => ({ x: s.x, y: s.y })) : [];
+    },
+    get party() { return g.party; },
     visited: () => Object.keys(w.state.maps),
     placeOf: (map) => mapPlace(ATLAS, MAP_DEFS, map),
     heard: g.pilot?.heard ?? [],
