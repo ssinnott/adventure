@@ -2037,6 +2037,9 @@ Decided by delegate for #532, each the owner's to overturn:
 6. **The rite's fight is B8's Grey Lion as built, and the boy's last blow is told:** a fight has no
    ally to strike in it, so once the lion is down the boy says the last blow was his, at the
    hunters' fire, and his question sets `q_lion_blow` and pays. It is the nearest honest means.
+   Decided by the owner's delegate, 16 October 2026 (#729, cut, not planned): it stays told. An
+   ally is a third side in the combat resolver, which the gate, the harness and the walkthroughs
+   test, for one blow in one side quest, and no other quest wants one.
 7. **Let die, the eldest tells the rest once, after her first telling** (`q_lion_told`): what fell
    stands in the glass on its end, as it stood to climb, the crown the watch sees from the gap; no
    word of what it is. The Grey Lion is not gated (a group's `until` leaves a standing one, and the
@@ -2097,7 +2100,10 @@ Decided by delegate for #534, each the owner's to overturn:
 12. **No exits in either box;** no new monster, item or art.
 13. **E7's 132 squares of the Wold's island are cut, not built:** no issue covers them and the
     issue's Done when says the land left void in the Glasswold is only what is cut and the Glass, so
-    they are cut (§11). The owner may give them a box.
+    they are cut (§11). Decided by the owner's delegate, 16 October 2026 (#737): left cut. They are
+    a swimmer's island with no quest and no reason in the story, and a box would need a real fight
+    for the pace check, a curve re-read and E8's north edge re-pinned, for land the road never
+    needs.
 
 ## 10. Names
 
@@ -2145,7 +2151,9 @@ for #444.
   only as what the Wold keeps out. Its doc decides Tashkum, the Tower's floors and the cap's gate.
 - **E7's island,** 132 squares of the Wold's zone: the north of the island whose south end stands in
   E8's north edge. No issue covers it and #534's Done when leaves void in the Glasswold only what is
-  cut and the Glass, so it is cut, not built (§9, #534's 13); the owner may give it a box.
+  cut and the Glass, so it is cut, not built (§9, #534's 13).
+  Decided by the owner's delegate, 16 October 2026 (#737): left cut, no box owed; more land is the
+  reach's.
 
 About 1,300 squares cut in all, E7's island with them, and 3,000 left for the reach; the cut land
 comes back as country only if the act plays short.
@@ -2254,6 +2262,13 @@ Owed, from the chapter (#531):
   that later walks east over the last shoulder: an `until` on it is Ashfall's (#518; §9, #531's 3).
 - **The last crossing** is Phase 1.5's: The Warning is done at Akordu's horse-lines on `q_road_east`,
   and the next chapter starts on it (§5).
+
+Cut, from the side quests (#532):
+
+- **The young Rider's last blow is told, not fought** (§6, §9, #532's 6): once the Grey Lion is
+  down the boy says it at the hunters' fire, a fight having no ally to strike in it.
+  Decided by the owner's delegate, 16 October 2026 (#729, cut, not planned): a third side in the
+  combat resolver is not worth one blow in one side quest. Nothing is owed.
 
 Owed, from E9 and E8 (#534):
 

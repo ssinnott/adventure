@@ -1819,6 +1819,10 @@ Decided by delegate for #448 (the Whitespine's three), each the owner's to overt
 4. **A night is the hours, not the whole of one.** No engine counts a night through; the groups
    walk only by night (`hours: 'night'`) and the trainer's words after the last is down are the
    dawn. A company may fight the two pairs on two nights (§11).
+   Decided by the owner's delegate, 16 October 2026 (#731, cut, not planned): it stays so. A vigil
+   kept in the world's clock and the save, with its breaking and its restarting, costs more than
+   two fights whose feel is already a hold, wave after wave; a rest between the pairs is a
+   player's choice.
 5. **The trainers are named,** since the seeking quest's goal reads "Find <name> in <place>.":
    Edric, the old champion; Oswin, the summit's hermit; Brother Lark, whose name keeps him among
    the brothers until he is met.
@@ -1828,8 +1832,10 @@ Decided by delegate for #448 (the Whitespine's three), each the owner's to overt
    built (#471) is the hymn, its flag `q_hymn_sung` written for this quest, so the Bard keys on it.
 8. **The keeper's log is the chest taken** (`downs_e3:e3_log`), not the item carried, so it holds
    once the log is found whatever later leaves the pack (the Cleric's crossing to Anchorhold).
-9. **The vigil's brothers at 5,10, beside the camp,** where a company resting there keeps the
-   vigil; the toll-takers at the shaft's 6,25, the ledge's one way up.
+9. **The vigil's brothers at 5,10, beside the camp,** where they come by night once Oswin is
+   answered; the toll-takers at the shaft's 6,25, the ledge's one way up. Decided by the owner's
+   delegate, 16 October 2026 (#731, cut, not planned): a rest at a camp (#730) does not keep the
+   vigil, which is the brothers fought and Oswin's dawn, as built.
 10. **Quest ids `ledge`, `vigil` and `eleven`;** flags `q_ledge`, `q_ledge_held`, `q_vigil`,
     `q_vigil_kept`, `q_eleven` and `q_eleven_sung`.
 
@@ -2023,11 +2029,12 @@ Cut, from the side quests (#506):
 - **The issue's Rime Lodge** for The Novice, its `after` on the masons' number for The Mason's
   Tally and a passage ticket carried: §6 has none of them (§9, #506's 2, 10 and 12).
 
-Owed, from the third prestiges (#448):
+Cut and owed, from the third prestiges (#448):
 
-- **A night held through** needs the engine to count one: the nights are groups that walk only by
-  night, so a company may fight the ledge's two pairs on two nights, and nothing stops it resting
-  between them. A systems change the owner may ask for (§9, #448's 4).
+- **A night held through is cut:** the nights are groups that walk only by night, so a company may
+  fight the ledge's two pairs on two nights, and nothing stops it resting between them.
+  Decided by the owner's delegate, 16 October 2026 (#731, cut, not planned): the engine counts no
+  night, and a rest between the pairs is a player's choice (§9, #448's 4 and 9).
 - **The orders kept to the end:** nothing takes them from the pack today. Were a later hand-in to
   (the Factor's rung, #635, if it took them), a company that gave them up before Hereward read them
   could not finish the Thief's (§9, the Ranger's and the Thief's 2).

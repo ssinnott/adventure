@@ -26,7 +26,9 @@ export const CHAPTER: Chapter = {
   entries: [
     { id: 'saw', when: { flag: 'c3_saw_stone' },
       text: 'At Rietum, Wytske saw the Stone go downriver at midsummer on a barge with no lamp lit, the hold green through the sacking like a lantern in a sack. It came from Stienwierde, west over the fen.' },
-    { id: 'plinth', when: { seen: 'delta_b5:b5_plinth' },
+    // The plinth reads two ways (#582): `b5_plinth` to a company that has stood at the Grove Stone and
+    // `b5_plinth_first` to one that has not. Either is the plinth seen, here and in the goals below.
+    { id: 'plinth', when: [{ seen: 'delta_b5:b5_plinth' }, { seen: 'delta_b5:b5_plinth_first' }],
       text: 'At Stienwierde the plinth stands empty, its socket cut clean, a man\'s width. Nothing fell from it.' },
     { id: 'count', when: [{ flag: 'q_tide_bell' }, { flag: 'q_tide_bell_done' }],
       text: 'At the Drowned Temples\' dry door a priestess counts, and says the god sang the tides once and now only counts, one to ten and eleven a beat late. She says the number again and again, and it means nothing to us yet.' },
@@ -41,11 +43,11 @@ export const CHAPTER: Chapter = {
   // The boat is the last goal and stays the goal until the Stone is home: Wrackholm's chapter takes
   // the company on from the landing.
   goals: [
-    { when: { flag: 'sm_ship_word', seen: 'delta_b5:b5_plinth' }, at: 'saltmouth', text: 'Take Kitto\'s boat from the end of Saltmouth\'s quay out to the ship off the smugglers\' isle.' },
+    { when: [{ flag: 'sm_ship_word', seen: 'delta_b5:b5_plinth' }, { flag: 'sm_ship_word', seen: 'delta_b5:b5_plinth_first' }], at: 'saltmouth', text: 'Take Kitto\'s boat from the end of Saltmouth\'s quay out to the ship off the smugglers\' isle.' },
     // Saltmouth taken first: the plinth before the boat, not a lock, as the Wall's Sunder before its Watch.
     { when: { flag: 'sm_ship_word' }, at: 'delta_b5', text: 'Before the boat, the Tide Stone\'s empty plinth: up from Saltmouth and west over the fen to Stienwierde.' },
     { when: [{ flag: 'q_tide_bell' }, { flag: 'q_tide_bell_done' }, { seen: 'drowned_temples:dt1_in' }], at: 'saltmouth', text: 'Go south through the Saltings to Saltmouth, where the barges end, and ask on its quay where the Stone\'s barge went.' },
-    { when: { seen: 'delta_b5:b5_plinth' }, at: 'delta_b6', text: 'Go south from the plinth to the Drowned Temples, dark since the Stone went, where a priestess keeps the dry door.' },
+    { when: [{ seen: 'delta_b5:b5_plinth' }, { seen: 'delta_b5:b5_plinth_first' }], at: 'delta_b6', text: 'Go south from the plinth to the Drowned Temples, dark since the Stone went, where a priestess keeps the dry door.' },
     { when: { flag: 'c3_saw_stone' }, at: 'delta_b5', text: 'Go west over the fen from Rietum to Stienwierde, where the Tide Stone stood.' },
     { when: { visited: 'delta_d5' }, at: 'upperwater_c3', text: 'Go up the spur to Rietum on the Upper Water, where the barges tie up.' },
     { when: [FARM_DONE, { flag: ['q_ashcombe_done', 'q_wenna', 'q_keeper', 'q_grove_done'], seen: 'deepthorn_i4:i4_treaty' }], at: 'delta_d5', text: 'Go down off Kestrel Edge by the Salt Road into the Delta, the Tide Stone\'s country.' },
