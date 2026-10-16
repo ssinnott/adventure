@@ -160,7 +160,11 @@ DESIGN.md first for the why.
   sheet shows. Linguist is the first built: the Lanterns', 1,000 gold a member, taught at every hall
   of theirs ("Learn a skill" on its first menu) and by a person who teaches it (`skill`), to a
   company that is of the guild. The Kilns' maps place both: inscriptions from N3's niche to O6's
-  adit, and Anvilhall's Lantern reader to teach it (docs/areas/kilns.md §4.1, §4.4).
+  adit, and Anvilhall's Lantern reader to teach it (docs/areas/kilns.md §4.1, §4.4). Mountaineer and
+  Swimmer are built as it is (#805): the Wardens', taught at the Drillyard, and the Cartographers',
+  taught at the Map Room in Saltmouth and the Chart House in Cinderport. `partyCan` lets a company
+  climb with a Mountaineer standing and swim with a Swimmer standing; the flags `skill_mountaineer`
+  and `skill_swim` still grant the same.
 - **A monster's look.** The first time a company sees a kind, as the viewport draws it (each kind
   of the group to three, in line of sight), or meets one in a fight unseen, the log says its `look`,
   once. A group is drawn as up to three figures: each of its kinds once, in the order they stand,
@@ -581,9 +585,9 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 ## Stubbed or absent
 
 - No hall sells tier 7 yet (the Watch's Lantern Hall sells 6, #201); no Master trainers; of the
-  secondary skills only Linguist (#538), with the race-innate ones. The Meridian journal opens The
-  Lost Expedition in the quest log, and the Cartographers' Geographer in Saltmouth reads it (#181),
-  but no second volume exists.
+  secondary skills only Linguist (#538), Mountaineer and Swimmer (#805), with the race-innate ones.
+  The Meridian journal opens The Lost Expedition in the quest log, and the Cartographers' Geographer
+  in Saltmouth reads it (#181), but no second volume exists.
 - No audio. The engine's synth stack is vendored, unused.
 - Prestiges, the Compact's hall, the succession, the Salt Compact, the Lost Expedition past its
   first journal: design only. The Cartographers' hall is built in Saltmouth (#181).
@@ -699,10 +703,12 @@ over content broken on purpose too, and two tools to theirs:
   marks pinned once read and said once; no flag set and no door changed. Every inscription of the
   content has an id of its own on its map and a reading, its marks name atlas places, and no way
   waits on a reading.
-- `skills` (#538): each skill built one of DESIGN §5's twelve, its guild's by DESIGN §8; every hall of
-  the Lanterns teaches Linguist and no other hall a skill yet; a stranger to the guild learns
-  nothing, a member learns once for the price, a dwarf is born to it; a save keeps a member's skills
-  and one from before them has none.
+- `skills` (#538, #805): each skill built one of DESIGN §5's twelve, its guild's by DESIGN §8; every
+  hall teaches what its guild has built (the Lanterns' Linguist, the Wardens' Mountaineer, the
+  Cartographers' Swimmer, the Compact's nothing yet), each walked through its own menu in a Game; a
+  stranger to the guild learns nothing, a member learns once for the price, a dwarf is born to
+  Linguist; Mountaineer and Swimmer bought at their halls climb and swim; a save keeps a member's
+  skills and one from before them has none.
 - `glyphs`: every symbol `src/ui/` draws past plain ASCII (arrows, stars, hearts) is in the pixel
   font, so none is painted as nothing.
 - `drawn`: every group on the maps is drawn while exploring as each of its kinds, to three, and a
@@ -804,6 +810,7 @@ does.
 | `game/items.ts`, `game/monsters.ts`, `game/spells.ts` | what an item, a monster and a spell are (`ItemDef`, with a letter's `text`; `MonsterDef`, `SpellDef`) and their lookups; a monster's kind and what each kind sets (`KINDS`: sleep, Holy Strike); the tables are content's |
 | `game/save.ts`, `game/upgrades.ts` | the save and `SAVE_VERSION`; the upgrades, each registered by the version it brings a save to and run in turn on load, with what they need of the world as it was kept frozen |
 | `game/combat.ts` | `CombatState`, `startCombat`, `currentTurn`, `partyAct`, `monsterAct`, and the log's lines, the glove's once a game (`GLOVE_FLAG`); pure and seeded |
+| `game/bot.ts` | the bot that plays a fight, the gate's and the game's: `botTurn` (the action the resolver took; `gateTurn` the same with the action dropped), its two readings of the monsters (`asWritten`, every trait as written, the gate's; `asSeen`, only what the fight's log has shown, the auto-fight's), the answers a tool may switch off (`ANSWER`) and the rest rule (`mustRest`); pure |
 | `game/quests.ts` | `QuestDef`, `Chapter` and `ChapteredQuest`; `questLog` (the quests known, their pages, entries and goal, worked out from the world state and party), `questNews` (what changed between two looks) |
 | `game/game.ts` | `Game` (screen stack, save/load, interactions, the offer of rest, a den's choice to burn) and `ExploreScreen` |
 | `game/wilds.ts` | the wilderness features: what a feature gives (`giftOf`) and the id it is spent by (`spentId`), the shrine, the cairn, the statue's answer and when the party may rest; pure |
@@ -815,7 +822,7 @@ does.
 | `ui/worldmap.ts` | the world map (M): the cloth painted from the atlas and the built maps, the zone overlay (Tab) and the almanac (Space), and the pins of a place sought and of one a reading marked |
 | `ui/screens.ts` | message (a person's box, `SAY_W` by `SAY_LINES` from `ui/frame.ts`), choice, character sheet (a letter read from it, the skills a member has), spell picker, inn/temple/shop/guild/trainer, a business's first menu (`businessEntries`), a guild's work at its hall and its skills there or from a person (`skillMenu`), and the visit that frames them (`InteriorScreen`) |
 | `ui/interior.ts`, `ui/interiors/` | the businesses' interiors: the painting kit and the props, a scene to a file in `<area>/`, and the helpers a trade's scenes share |
-| `ui/combat.ts` | the combat screen (menus over the resolver), its monsters where `ui/row.ts` seats them |
+| `ui/combat.ts` | the combat screen (menus over the resolver), its monsters where `ui/row.ts` seats them; the auto-fight (`auto`: `game/bot.ts` plays the company's turns by what the fight has shown and leaves the finished fight, until a key takes it back) |
 | `ui/row.ts` | the fight's row: each monster's place across the view and the height it is drawn, spaced by the drawings' spans, every one whole inside the view and none over more than a third of the next (`seatRow`, `OVERLAP`); pure |
 | `ui/grouplabels.ts` | the labels over a fight: each group's kinds, each with its count of the living (a lone proper name none), laid out inside the view; pure |
 | `ui/quests.ts` | the quest log screen, and `questSheets`, its pure page layout, a chapter to a page or more |
