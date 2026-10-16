@@ -203,6 +203,7 @@
         "b5_mound",
         "b5_north",
         "b5_plinth",
+        "b5_plinth_first",
         "b5_post",
         "b5_punt",
         "b5_shrine",
@@ -4449,6 +4450,8 @@
     "unconscious"
   ],
   "skills": [
-    "linguist"
+    "linguist",
+    "mountaineer",
+    "swimmer"
   ]
 }

@@ -9,6 +9,9 @@ import { WEST, NORTH, SOUTH } from '../../../../game/types.ts';
 import { rift } from '../../../rifts/index.ts';
 import { STONE_HOME } from './drowned_temples.ts';
 
+/** The Grove Stone stood at (the Grove's `g2_stone`), a hand-span of it cut away: what the plinth's socket is read against (#582). */
+const GROVE_STONE_SEEN: When = { seen: 'grove2:g2_stone' };
+
 /** The north Rift gone quiet: its warden fallen, or the Tide Stone home (#191). */
 export const RIFT_N_CLOSED: When = [{ slain: 'b5_rift_n:b5_rift_n_warden' }, STONE_HOME];
 /** The south Rift gone quiet, likewise. */
@@ -83,7 +86,10 @@ export const DELTA_B5: MapDef = {
     { kind: 'event', x: 13, y: 13, id: 'b5_landing', text: 'The plinth\'s landing, grey planks scored by barge-poles, every mark dragging south. One plank is unscored, and its nails are new.' },
     { kind: 'event', x: 13, y: 15, id: 'b5_under', once: true, text: 'Dry mud under the landing, and in it what was dropped in haste: a shield face down, and beside it a green glow through the dark.' },
     { kind: 'chest', x: 13, y: 16, id: 'b5_under_cache', gold: 80, items: ['brine_shard', 'shield+1'] },
-    { kind: 'event', x: 8, y: 14, id: 'b5_plinth', once: true, text: 'Stienwierde. The plinth, and nothing on it: a socket cut clean, a man\'s width. You have seen that cut before, a hand-span of it, under the roots.' },
+    // The plinth reads two ways (#582): the cut it has seen before is told only to a company that has
+    // stood at the Grove Stone. The old id keeps the old line, now `after` it; the short line is new.
+    { kind: 'event', x: 8, y: 14, id: 'b5_plinth_first', once: true, until: GROVE_STONE_SEEN, text: 'Stienwierde. The plinth, and nothing on it: a socket cut clean, a man\'s width.' },
+    { kind: 'event', x: 8, y: 14, id: 'b5_plinth', once: true, after: GROVE_STONE_SEEN, text: 'Stienwierde. The plinth, and nothing on it: a socket cut clean, a man\'s width. You have seen that cut before, a hand-span of it, under the roots.' },
     // The plinth takes the Stone home (#191): met as a feature, never as a person, and there only with
     // the Stone carried or set back. Its hand-in sets q_tide_home, which ends the Tide Stone, closes
     // the fen's Rifts and sets the temples singing.

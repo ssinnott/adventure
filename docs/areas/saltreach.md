@@ -415,7 +415,7 @@ settled in its issue, and what the pilot teaches changes them.
   48,140, its socket clean-cut and the same size as the Grove Stone's cut, scaled up; two brine
   Rifts; brine glass glittering in the fen.
 - **Points of interest,** about eight features and eight groups:
-  - the plinth, the step (§5), which takes the Stone when it comes home (#191);
+  - the plinth, the step (§5), which reads two ways (#582) and takes the Stone when it comes home (#191);
   - the duckboards' landings, and the barge-pole marks on the plinth's;
   - the two Rifts, from #165's templates, closed `until` the Stone is home;
   - a cairn on the island (#45), a shrine at the duckboards' start (#45);
@@ -439,6 +439,16 @@ settled in its issue, and what the pilot teaches changes them.
   a pole's mark is #172's. The shard under the landing is a Brine Shard, as C5's is. No camp. As
   measured, the box and its Rifts pay about 1,650 xp a member and 410 gold, the company at about 10
   in the road's order until C4 and C3 are listed ahead of it; at 11 the figure is about 1,700.
+- **The plinth's two readings** (#582, 16 October). The plinth told every company it had seen that
+  cut before, under the roots, though only one that has stood at the Grove Stone has: the secret
+  was told, not found. It is now two `once` events on the square, 8,14, and a company reads one of
+  them. One that has stood at the Grove Stone (`grove2:g2_stone`) reads
+  `b5_plinth`, held `after` it, with its line as it was: "Stienwierde. The plinth, and nothing on
+  it: a socket cut clean, a man's width. You have seen that cut before, a hand-span of it, under
+  the roots." One that has not reads `b5_plinth_first`, a new id, held `until` it: the same words
+  without the last sentence. A company that read the short line and later stands at the Grove
+  Stone is told the cut the next time it steps on the plinth. Either reading is the plinth seen to
+  the chapter (§5). No tile, group or door moves.
 
 ### 4.6 B6, the Drowned Temples' approach (#174): core, band 11–12
 
@@ -723,7 +733,8 @@ keyed to flags, events and maps the save holds:
 - **Rietum.** The folk on the quay saw the Stone go downriver one night, glowing through its
   sacking like a lantern in a sack, on a Compact barge; the goal turns west to the plinth.
 - **The plinth.** Stienwierde stands empty, its socket cut clean, and the fen round it glitters;
-  the goal goes on to the temples.
+  the goal goes on to the temples. The plinth reads two ways (§4.5, #582), and either is the
+  step done.
 - **The temples.** The priestess at the dry door says the number, again and again, and it means
   nothing yet; the god used to sing the tides. The goal goes south to the port.
 - **Saltmouth.** Word has come down the coast road: Hale's copy of the ledger reached the Regent,
@@ -750,7 +761,9 @@ greetings, and a Warden off the coast road sits by the gate at 9,1 once #156 has
 the Scarth (`q_hale_taken`), until Hale is freed. The walkthrough plays it in order at 10 and 11
 from a new game, the Foreland and the Grove first, and with Saltmouth taken first at 12, before the
 Grove; it sets `q_hale_taken` by hand, owed to #156 (§9). Both runs stop on Wrackholm's landing,
-and Wrackholm's walkthrough plays them on to the Stone home (#191).
+and Wrackholm's walkthrough plays them on to the Stone home (#191). The plinth entry and the two
+goals that wait on the plinth hold either of its readings (#582): in order the company reads the
+cut it has seen, with Saltmouth first the socket and no more.
 
 ## 6. Side quests
 
@@ -1486,6 +1499,30 @@ Decided by delegate for #179, each the owner's to overturn:
     Cartographers' quests of ranks 2 and 3 are the owner's to file, and may point here.
 16. **The flood-store is faced in stone, drawn as building squares round its door,** so B4 has wall
     faces enough to dress no more than half of them.
+
+Decided by delegate for #582, each the owner's to overturn:
+
+1. **The plinth is two `once` events on 8,14, held apart by the Grove Stone.** `b5_plinth` keeps its
+   line as it was and is held `after` `{ seen: 'grove2:g2_stone' }`; a new `b5_plinth_first` is held
+   `until` it, with the same words without the last sentence. The ruling is the issue's own. Ids are
+   added and never renamed (EXPANSION §5.5), so the old id keeps the old line.
+2. **The condition is one constant in the map, written the same in both events,** which is how the
+   pillars check knows the two texts are never said together (`until` X against `after` X).
+3. **The chapter takes either reading as the plinth seen,** which the issue does not name. Its
+   `plinth` entry and the two goals that wait on the plinth were keyed on `b5_plinth` alone, so a
+   company that read the short line would have had the step unwritten and the goal stuck. It is
+   Saltreach's own quest, in the lane; the change cannot stand without it.
+4. **A company that read the short line and later stands at the Grove Stone is told the cut the next
+   time it steps on the plinth,** since `b5_plinth` is `once` and unspent for it. That is the shape
+   the issue gives, and the one place the two meet for a company that came by Saltmouth first. A
+   second `until` on `b5_plinth` would leave it never told.
+5. **A save that read the plinth before this reads the short line on its next step there,** if it
+   has not stood at the Grove Stone: `b5_plinth_first` is new to it. Said once, and nothing moves.
+6. **The walkthrough holds the words to the letter,** as strings of its own, not read back from the
+   map. The plinth step it shares with Sunderwood's seeded runs reads the cut to a company that has
+   stood at the Grove Stone and the short line to one that has not, since those runs play it with no
+   Grove Stone stood at. In order the company reads the cut; with Saltmouth first and in the area
+   walk, the short line; `thePlinth` plays the late company and the early one.
 
 ## 10. Names
 
