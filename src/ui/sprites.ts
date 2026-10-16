@@ -236,6 +236,53 @@ export function drawLighthouseSprite(ctx: CanvasRenderingContext2D, x: number, y
   return { x, y: ly + lh / 2, r: Math.max(2, lw * 1.2) };
 }
 
+/**
+ * A monastery standing on its square, its foot at y: a long wall of grey stone with its gate's arch
+ * and a row of slits, the chapel's roof over it, and two bell towers standing up over it all, each
+ * with its bell in an open belfry under a steep slate cap. No lamp: by night it is as dark as the
+ * hills. Snow lies along the wall's top and on the caps when `snow` lies. Wider than its square, as
+ * it is seen from far off; near to, the block of building squares it stands in hides its foot.
+ */
+export function drawMonasterySprite(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, tone: number, snow = 0): void {
+  const stone = shade('#a8a090', tone), shadow = shade('#7e776a', tone), coping = shade('#5e584e', tone);
+  const slate = shade('#555660', tone), slateShadow = shade('#393a42', tone), dark = shade('#221e1a', tone);
+  const bronze = shade('#b08a42', tone), white = shade('#eef2f7', tone), snowy = snow > 0.2;
+  const R = Math.round, px = (v: number): number => Math.max(1, Math.round(v));
+  const tri = (a: number, b: number, c: number, d: number, e: number, f: number, fill: string): void => {
+    ctx.fillStyle = fill; ctx.beginPath(); ctx.moveTo(a, b); ctx.lineTo(c, d); ctx.lineTo(e, f); ctx.closePath(); ctx.fill();
+  };
+  // The wall, lit from the left and its right-hand end in shade, its coping, and snow along the top.
+  const ww = u * 1.7, top = y - u * 1.25;
+  ctx.fillStyle = stone; ctx.fillRect(R(x - ww), R(top), R(ww * 2), R(y - top));
+  ctx.fillStyle = shadow; ctx.fillRect(R(x + ww * 0.7), R(top), R(ww * 0.3), R(y - top));
+  ctx.fillStyle = coping; ctx.fillRect(R(x - ww), R(top), R(ww * 2), px(u * 0.08));
+  if (snowy) { ctx.fillStyle = white; ctx.fillRect(R(x - ww), R(top - u * 0.05), R(ww * 2), px(u * 0.06)); }
+  // The gate's arch in the middle of the wall's foot, and a row of slits.
+  const gw = u * 0.22, gh = u * 0.62;
+  ctx.fillStyle = dark; ctx.beginPath(); ctx.moveTo(x - gw, y); ctx.lineTo(x - gw, y - gh + gw); ctx.arc(x, y - gh + gw, gw, Math.PI, 0); ctx.lineTo(x + gw, y); ctx.closePath(); ctx.fill();
+  for (const f of [-0.82, -0.5, 0.5, 0.82]) ctx.fillRect(R(x + f * ww - u * 0.03), R(top + u * 0.3), px(u * 0.06), px(u * 0.26));
+  // The chapel's roof over the wall between the towers, a ridge of slate.
+  tri(x - u * 0.62, top, x, top - u * 0.62, x, top, slate);
+  tri(x, top, x, top - u * 0.62, x + u * 0.62, top, slateShadow);
+  // The towers: each lit on its left, its belfry open with the bell hung in it, its cap steep slate
+  // with a finial, and snow along the cap's foot.
+  const tw = u * 0.3, tt = y - u * 3.55, cap = u * 1.05;
+  for (const tx of [x - u * 0.9, x + u * 0.9]) {
+    ctx.fillStyle = stone; ctx.fillRect(R(tx - tw), R(tt), R(tw), R(y - tt));
+    ctx.fillStyle = shadow; ctx.fillRect(R(tx), R(tt), R(tw), R(y - tt));
+    ctx.fillStyle = coping; ctx.fillRect(R(tx - tw * 1.15), R(tt + u * 0.82), R(tw * 2.3), px(u * 0.07));
+    const bw = tw * 0.62, b0 = tt + u * 0.16, b1 = tt + u * 0.74;
+    ctx.fillStyle = dark; ctx.beginPath(); ctx.moveTo(tx - bw, b1); ctx.lineTo(tx - bw, b0 + bw); ctx.arc(tx, b0 + bw, bw, Math.PI, 0); ctx.lineTo(tx + bw, b1); ctx.closePath(); ctx.fill();
+    const bh = u * 0.24, bt = b0 + bw * 0.9;
+    ctx.fillStyle = bronze; ctx.beginPath(); ctx.moveTo(tx - bw * 0.3, bt); ctx.lineTo(tx + bw * 0.3, bt); ctx.lineTo(tx + bw * 0.62, bt + bh); ctx.lineTo(tx - bw * 0.62, bt + bh); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = dark; ctx.fillRect(R(tx - tw * 0.04), R(tt + u * 1.3), px(u * 0.05), px(u * 0.22));
+    tri(tx - tw * 1.25, tt, tx, tt - cap, tx, tt, slate);
+    tri(tx, tt, tx, tt - cap, tx + tw * 1.25, tt, slateShadow);
+    if (snowy) { ctx.fillStyle = white; ctx.fillRect(R(tx - tw * 1.25), R(tt - u * 0.05), R(tw * 2.5), px(u * 0.06)); }
+    ctx.strokeStyle = dark; ctx.lineWidth = Math.max(1, u * 0.03); ctx.beginPath(); ctx.moveTo(tx, tt - cap); ctx.lineTo(tx, tt - cap - u * 0.3); ctx.stroke();
+  }
+}
+
 export function drawRockSprite(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, tone: number, snow = 0): void {
   const w = u * 1.3, h = u * 0.8;
   const c = shade('#7a7468', tone);
