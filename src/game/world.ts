@@ -8,8 +8,8 @@ import { GameMap, DRAG } from './map.ts';
 import type { Feature, Exit, EncounterDef, Door, MapZone, Cell, Hours, Presence, Choice, Gate } from './map.ts';
 import type { Facing } from './types.ts';
 import { FACING_DX, FACING_DY, turnLeft, turnRight, turnBack, manhattan } from './types.ts';
-import { partyCan, takeItem, isDown, hasTrait, companyLevel } from './party.ts';
-import { monster } from './monsters.ts';
+import { partyCan, takeItem, isDown, hasTrait, companyLevel, prestigeOf } from './party.ts';
+import { monster, KINDS } from './monsters.ts';
 import type { Party } from './party.ts';
 import { MINUTES_PER_DAY, dateAt, daylightAt, sunTimes, longDate, seasonName, clock, tideAt } from './calendar.ts';
 import type { CalendarDate, Tide } from './calendar.ts';
@@ -630,15 +630,36 @@ export class World {
     return this.map.passable(x, y, { tide: this.tide }) === 'ok' && !this.groupAt(x, y);
   }
 
-  /** Each aware, roaming group steps one cell toward the party. */
+  /**
+   * The level of the highest druid of the third prestige standing in the company, or 0 with none:
+   * the Archdruid's perk keeps the beasts under that level off the company (DESIGN §5, #809).
+   */
+  private archdruidLevel(): number {
+    return Math.max(0, ...this.party.members.filter((m) => m.cls === 'druid' && prestigeOf(m) >= 3 && !isDown(m)).map((m) => m.level));
+  }
+
+  /**
+   * Whether a group is beasts all (a kind that routs, `KINDS`), each of a level under `level`, with
+   * no leader and no caller among them: the one an Archdruid's company is left alone by. Any other
+   * group comes on as it always did.
+   */
+  private beastsUnder(def: EncounterDef, level: number): boolean {
+    return !def.leader && def.monsters.every((id) => { const m = monster(id); return KINDS[m.kind].breaks === 'rout' && !m.calls && m.level < level; });
+  }
+
+  /**
+   * Each aware, roaming group steps one cell toward the party, but for the beasts an Archdruid
+   * leaves alone (`beastsUnder`): they stay where they are, and are fought as any group is where the
+   * company steps up to them or strikes them. With the druid down they come on.
+   */
   moveMonsters(): void {
     if (this.state.truce > 0) return;
-    const { x: px, y: py } = this.state;
+    const { x: px, y: py } = this.state, archdruid = this.archdruidLevel();
     for (const g of this.liveGroups()) {
       if (g.def.roams === false || this.standsAside(g.def)) continue;
       const aware = g.def.aware ?? 5;
       const d = manhattan(g.state.x, g.state.y, px, py);
-      if (d > aware || d <= 1) continue;
+      if (d > aware || d <= 1 || (archdruid > 0 && this.beastsUnder(g.def, archdruid))) continue;
       const dx = px - g.state.x, dy = py - g.state.y;
       const tries: [number, number][] = Math.abs(dx) >= Math.abs(dy)
         ? [[Math.sign(dx), 0], [0, Math.sign(dy)]]
