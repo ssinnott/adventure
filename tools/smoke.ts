@@ -785,15 +785,16 @@ const lighthouse = await page.evaluate(async () => {
 const drawn736 = await page.evaluate(async () => {
   const V = await import('/src/ui/viewport.ts' as string);
   const w = (window as any).__game.game.world;
-  const W = 400, H = 268, c = document.createElement('canvas');
-  c.width = W; c.height = H;
-  const ctx = c.getContext('2d', { willReadFrequently: true })!;
+  const W = 400, H = 268, c = document.createElement('canvas'), sky = document.createElement('canvas');
+  c.width = sky.width = W; c.height = sky.height = H;
+  const ctx = c.getContext('2d', { willReadFrequently: true })!, skyCtx = sky.getContext('2d')!;
   const from = { id: w.state.mapId, x: w.state.x, y: w.state.y, f: w.state.facing }, minutes = w.state.minutes, flags = { ...w.party.flags };
   const clear = (hour: number): void => {
     w.state.minutes = Math.floor(minutes / 1440) * 1440 + hour * 60;
     w.cached = { seed: w.state.weatherSeed, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: 12, cover: 0, wet: 0 } };
   };
-  const view = (): Uint8ClampedArray => { ctx.clearRect(0, 0, W, H); V.drawViewport(ctx, w, { x: 0, y: 0, w: W, h: H }, () => null, 71, false); return ctx.getImageData(0, 0, W, H).data; };
+  // Painted afresh each time: the view's own cache keys on neither a landmark's kind, the cells nor the palette.
+  const view = (): Uint8ClampedArray => { ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H }); return ctx.getImageData(0, 0, W, H).data; };
   const lamps = (): number => V.paintedFlames().filter((f: any) => f.lamp).length;
   const differ = (a: Uint8ClampedArray, b: Uint8ClampedArray, x: number, y: number): boolean => { const i = (y * W + x) * 4; return Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2]) > 30; };
   const count = (a: Uint8ClampedArray, b: Uint8ClampedArray, y1: number): number => { let n = 0; for (let y = 0; y < y1; y++) for (let x = 0; x < W; x++) if (differ(a, b, x, y)) n++; return n; };
