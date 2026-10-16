@@ -283,10 +283,12 @@ So an area may give more than its ask (#634): paid by level, a lead does not bui
 area takes it back. What the curve holds is the lead itself: a company of six entering an area at
 its floor and clearing three quarters of it, paid by level, leaves it no more than a level over the
 next floor. Two built areas pass that line and are named in `OVER_ROAD` (`tools/tests/curve.ts`),
-each held at the level it leaves as built so that neither grows unnoticed: the Kilns at 19.2, their
-bosses paying the line's, and Ashfall at 27.2, for the Stone, the rungs, the quests and the
-sentries. Walked in road order, Act III ends 0.8 over the road at three quarters cleared and 1.4 at
-a full clear; Act IV ends 0.6 and 1.3 over, Act II's own areas 0.5 to 0.8 and 1.2 to 1.6.
+each held at the level it leaves as built so that neither grows unnoticed: the Kilns at 19.3, their
+bosses paying the line's, and Ashfall at 27.4, for the Stone, the rungs, the quests, the sentries
+and the country behind the road. Decided by the owner's delegate, 16 October 2026 (#738): accepted
+as built, the Wold taking the lead back and leaving a company at 27.9, a tenth under the Hearth's
+floor. Walked in road order, Act III ends 0.8 over the road at three quarters cleared and 1.4 at a
+full clear; Act IV ends 0.6 and 1.3 over, Act II's own areas 0.5 to 0.8 and 1.2 to 1.6.
 
 Its first rows are the slice's own figures from SLICE.md: level 2 from the Foreland and the cellar,
 level 4 with Brandy Hole, level 9 from one clear of everything, about two fifths of one more sweep
@@ -339,10 +341,15 @@ fights to a rest and the warning's nearest groups ten points under the median.
   level between rests to level 10, and a fight more every four levels after as its power grows
   (twelve at 32, never fifteen). Its spell points count as much as its hit points: it rests once it
   has lost someone, once anyone is still under a quarter of their hit points after mending, or once
-  it is under a quarter of its spell points. No fight runs past fifteen rounds. A boss is judged on
-  its odds, not in the day (the owner, on #40). `tools/harness.ts`
-  measures any encounter or map against it, with a test monster for every role and level to build
-  from (docs/MONSTERS.md §4.4).
+  it is under a quarter of its spell points. No fight runs past fifteen rounds. The share of days
+  that end in a fight broken off is printed and not judged.
+  Decided by the owner's delegate, 16 October 2026 (#734), the owner's to overturn: it is how a
+  thrifty bot's long day ends, not how a box's fights play, and a player rests or casts; the
+  fights to a rest are the judged figure. An aim for it could be met only by lightening boxes
+  inside every other aim or by remaking the line (docs/MONSTERS.md §4.4). A boss is judged on its
+  odds, not in the day (the owner, on #40).
+  `tools/harness.ts` measures any encounter or map against it, with a test monster for every role
+  and level to build from (docs/MONSTERS.md §4.4).
 - **A warning, not a wall.** The first groups past a border are the zone's gentlest, and the
   crossing line tells a company under the band how the land feels to it, so the party learns it is
   early from a fight it can survive or run from, not from a wipe.
@@ -661,6 +668,16 @@ The act spends one story lock, the core's door (§2.3). Master trainers wait on 
 
 **1.6, the reach** (DESIGN.md §9), with the Sorcerer's third prestige and #56's 62 and 63. Optional
 by design, so it comes last, and v1 can ship without it.
+
+**The finishing touches** (#54) run from 16 October 2026, unparked by the owner's delegate: the
+phases are built, and the reach is no part of what they wait on. They hold the touches that make
+the built game better and that nothing else waits on: line of sight (#53), the Tide Stone's plinth
+(#582), the guilds' and temples' quest pay booked where it is paid (#728), a camp-rest hook (#730),
+Act IV's stale and unfinished lines (#735) and the monastery drawn tall and the tents as tents
+(#736). The calls that settled the rest are written into the docs: the husks stay (#733), the days
+that end in a fight broken off are a figure (#734), E7 is left cut (#737) and Ashfall's 27.4 stands
+(#738); an ally in a fight, a vigil held through a night and a withering seedling are cut (#729,
+#731, #732).
 
 ---
 
