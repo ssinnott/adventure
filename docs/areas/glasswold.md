@@ -2205,8 +2205,8 @@ Owed, from D8 (#526):
   **quests 51, 53, 54 and 55** have their Akordu ends built (#532), the rest of the eldest's story
   53's: the young Rider, the Rider with a hammer and the woman among the figures put their
   questions, and the eldest takes the Compact's orders (§6, §9, #526's 12 and 13).
-- **The tents draw as white felt boxes:** the renderer gives buildings one shape, and its only
-  landmark kind is the lighthouse, so a tent shape is a renderer change, not made.
+- **The tents draw as white felt boxes** until D8's palette takes `'tent'`, the felt look built in
+  #736, in #736's area pull request.
 - **D8's north edge ends in the void** against a box not built; its east edge meets E8's (#534,
   §4.9) and its west edge C8's (#528, §4.6) (§4.4, §9, #526's 20).
 - **The figures two under the floor** are owed to #18 and **the area's pay and gold** to #447:
