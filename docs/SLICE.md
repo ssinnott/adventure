@@ -514,8 +514,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   is an arched doorway in the wall, with neither; outdoors, a secret door set among mountain, rock or
   trees is drawn and inked on the automap as most of its neighbours are, so a sett or a cave is found
   and never seen, and once found it is a door); a town or a dungeon may place its banners
-  (`MapDef.banners`), which hang whatever the hash says; map palettes choose `wallStyle` (stone or
-  brick) and `ceilingStyle` (vault or timber beams); cobbled roads, flowers in the grass, cracks and
+  (`MapDef.banners`), which hang whatever the hash says; map palettes choose `wallStyle` (stone,
+  brick, smooth or tent) and `ceilingStyle` (vault or timber beams); cobbled roads, flowers in the grass, cracks and
   puddles on flagstones; a carved plank frame with brass fittings and rivets; a painted title
   looking west over the sea at the Hearth. The dressing is restrained (`wallDressing()` in
   `ui/viewport.ts`): a wall is dressed only where its hash beats the four round it, so about one in
@@ -818,7 +818,7 @@ does.
 | `game/wilds.ts` | the wilderness features: what a feature gives (`giftOf`) and the id it is spent by (`spentId`), the shrine, the cairn, the statue's answer and when the party may rest; pure |
 | `game/dens.ts` | dens: the brood's `until` (`denBurnt`), the pace, the approach, the burning and its hoard, the look on first sight; pure |
 | `game/rifts.ts` | the Rift generator: a 12 by 12 Rift from a template, a Stone's material, an area's table and a seed (turned one of eight ways, its groups in its slots, its looks on their squares), its groups stopping and its tear going quiet once `until` holds; `riftWay`, the tear on a zone map that leads in, walked through as an exit is; pure |
-| `ui/viewport.ts` | the depth-layered first-person compositor, the hills, the farmland's fields and hedges and the trees about the woods, the dead wood and the pinewoods, the glass trees and the chasm's drop, the ash and the ice through the year, a group drawn under the ice, the peaks and cliffs, the steppe, the dunes, the vines' hung trees and the volcano and its vents, a landmark drawn tall over its building's square and seen out to `LANDMARK_REACH` (Crowness Light, its lamp lit by night once its flag is held), the wall dressing and its rates (`DRESSING_RATES`, held by `tools/tests/art.ts`), the sky, the end of the world in pink and the weather drawn over it |
+| `ui/viewport.ts` | the depth-layered first-person compositor, the hills, the farmland's fields and hedges and the trees about the woods, the dead wood and the pinewoods, the glass trees and the chasm's drop, the ash and the ice through the year, a group drawn under the ice, the peaks and cliffs, the steppe, the dunes, the vines' hung trees and the volcano and its vents, a landmark drawn tall over its building's square and seen out to `LANDMARK_REACH` (Crowness Light, its lamp lit by night once its flag is held; a monastery, its bell towers over a wall and no lamp), the tents of a felt palette ('tent': a low felt wall under a pitched felt roof to a crown, its door a flap), the wall dressing and its rates (`DRESSING_RATES`, held by `tools/tests/art.ts`), the sky, the end of the world in pink and the weather drawn over it |
 | `ui/frame.ts` | layout constants, status strip (time, date, the sky and its glyph), automap (whole, or a window round the party on the outdoors; a spent feature gone from it, a den standing or burnt), party cards, log, purse |
 | `ui/riddle.ts` | a statue's riddle, the answer typed in the text mode |
 | `ui/worldmap.ts` | the world map (M): the cloth painted from the atlas and the built maps, the zone overlay (Tab) and the almanac (Space), and the pins of a place sought and of one a reading marked |

@@ -776,6 +776,74 @@ const lighthouse = await page.evaluate(async () => {
   w.party.flags = flags; w.state.minutes = minutes; w.cached = undefined;
   return out;
 });
+// The second landmark kind and the tent (#736). On the Foreland, the land about cleared to grass, a
+// building square six ahead (past the squares drawn) and then three ahead (among them) taken for a
+// monastery, for a lighthouse and for no landmark: by noon the monastery stands over the land and is
+// painted otherwise than the lighthouse; by night it lights no lamp where the lighthouse lights one.
+// Then the square three ahead under felt ('tent') and under smooth: where the smooth wall's block
+// stands, the tent's corners over its low wall show what is behind, and its crown stands over the
+// block's top in the middle; a door in it is a flap, the doorway's dark showing under its turned-back
+// corner, where in smooth it is its seam and in stone its planks.
+const drawn736 = await page.evaluate(async () => {
+  const V = await import('/src/ui/viewport.ts' as string);
+  const w = (window as any).__game.game.world;
+  const W = 400, H = 268, c = document.createElement('canvas'), sky = document.createElement('canvas');
+  c.width = sky.width = W; c.height = sky.height = H;
+  const ctx = c.getContext('2d', { willReadFrequently: true })!, skyCtx = sky.getContext('2d')!;
+  const from = { id: w.state.mapId, x: w.state.x, y: w.state.y, f: w.state.facing }, minutes = w.state.minutes, flags = { ...w.party.flags };
+  const clear = (hour: number): void => {
+    w.state.minutes = Math.floor(minutes / 1440) * 1440 + hour * 60;
+    w.cached = { seed: w.state.weatherSeed, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: 12, cover: 0, wet: 0 } };
+  };
+  // Painted afresh each time: the view's own cache keys on neither a landmark's kind, the cells nor the palette.
+  const view = (): Uint8ClampedArray => { ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H }); return ctx.getImageData(0, 0, W, H).data; };
+  const lamps = (): number => V.paintedFlames().filter((f: any) => f.lamp).length;
+  const differ = (a: Uint8ClampedArray, b: Uint8ClampedArray, x: number, y: number): boolean => { const i = (y * W + x) * 4; return Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2]) > 30; };
+  const count = (a: Uint8ClampedArray, b: Uint8ClampedArray, y1: number): number => { let n = 0; for (let y = 0; y < y1; y++) for (let x = 0; x < W; x++) if (differ(a, b, x, y)) n++; return n; };
+  w.travel('shelf', 16, 16, 0);
+  const m = w.map, px = w.state.x, py = w.state.y, cells = m.cells.slice(), kept = m.landmarks;
+  const grass = { terrain: 'grass', solid: 'none', door: 'none', ch: ',' }, building = { terrain: 'floor', solid: 'building', door: 'none', ch: 'B' };
+  for (let yy = py - 8; yy <= py + 1; yy++) for (let xx = px - 4; xx <= px + 4; xx++) m.cells[yy * m.width + xx] = grass;
+  const out: Record<string, any> = {};
+  for (const [name, ahead] of [['far', 6], ['near', 3]] as const) {
+    m.cells[(py - ahead) * m.width + px] = building;
+    const as = (kind: string | null): Uint8ClampedArray => { m.landmarks = kind ? [{ x: px, y: py - ahead, kind }] : []; return view(); };
+    clear(12);
+    const monastery = as('monastery'), lighthouse = as('lighthouse'), none = as(null);
+    clear(23);
+    as('monastery'); const dark = lamps(); as('lighthouse'); const lit = lamps();
+    out[name] = { stands: count(monastery, none, H / 2), unlike: count(monastery, lighthouse, H), dark, lit };
+    m.cells[(py - ahead) * m.width + px] = grass;
+  }
+  m.landmarks = [];
+  // The tent three ahead, against the smooth wall's block and against open grass.
+  clear(12);
+  const at = (py - 3) * m.width + px, pal = m.paletteAt(px, py - 3), style = pal.wallStyle;
+  const as = (wallStyle: string): Uint8ClampedArray => { pal.wallStyle = wallStyle; return view(); };
+  const none = view();
+  m.cells[at] = building;
+  const smooth = as('smooth'), tent = as('tent');
+  // The block's top, up the middle column from the horizon, and its sides along the row under it.
+  let top = H / 2, left = W / 2, right = W / 2;
+  while (top > 0 && differ(smooth, none, W / 2, top - 1)) top--;
+  while (left > 0 && differ(smooth, none, left - 1, top + 3)) left--;
+  while (right < W - 1 && differ(smooth, none, right + 1, top + 3)) right++;
+  const corners = [left + 3, right - 3].filter((x) => !differ(tent, none, x, top + 3)).length;
+  let crown = 0;
+  for (let y = 0; y < top; y++) for (let x = W / 2 - 2; x <= W / 2 + 2; x++) if (differ(tent, none, x, y)) crown++;
+  // A door, with the building beside it whose door it is: the near-black pixels low on the doorway's
+  // right, where a flap's corner is turned back.
+  m.cells[at] = { terrain: 'floor', solid: 'none', door: 'door', ch: 'D' }; m.cells[at + 1] = building;
+  const corner = (a: Uint8ClampedArray): number => { let n = 0; for (let y = H / 2 + 30; y < H / 2 + 38; y++) for (let x = W / 2 + 5; x < W / 2 + 15; x++) { const i = (y * W + x) * 4; if (a[i] + a[i + 1] + a[i + 2] < 60) n++; } return n; };
+  const door = { tent: corner(as('tent')), smooth: corner(as('smooth')), stone: corner(as('stone')) };
+  out.tent = { block: right - left, top, corners, crown, door };
+  pal.wallStyle = style;
+  for (let i = 0; i < cells.length; i++) m.cells[i] = cells[i];
+  m.landmarks = kept;
+  w.travel(from.id, from.x, from.y, from.f);
+  w.party.flags = flags; w.state.minutes = minutes; w.cached = undefined;
+  return out;
+});
 // A group placed on ice (#536): on the Foreland at noon, ice laid all about, two fen eels two squares
 // ahead drawn as the view draws a group. Under the ice they paint its floor and nothing over the
 // horizon; the same pair not under it stands up over it.
@@ -1507,6 +1575,12 @@ ok(smooth.door > 2 && smooth.seam === 1, `a door in a smooth wall is its seam al
   ok(weather.thin > 100 && weather.fog === 0 && weather.rain === 0 && weather.lamp === 0, `the weather that takes the fourth square takes Crowness Light, its lamp with it (fog 0.3: ${weather.thin} pixels of tower; fog 0.35: ${weather.fog}; a downpour: ${weather.rain}; a lit lamp in fog by night: ${weather.lamp})`);
   for (const [name, v] of Object.entries(views)) ok(v.tower > 100 && v.day === 0 && v.dark === 0 && v.lit === 1 && v.drawn === 1, `Crowness Light stands over the land from ${name === 'road' ? "E3's road" : "Gullwick's beach"}, its lamp unlit by day, dark by night before the oil and lit after, and the frame after the oil goes in shows it (${v.tower} pixels of tower at noon; lamps ${v.day} by day, ${v.dark} then ${v.lit} by night, ${v.drawn} drawn)`);
   ok(beam.lamp && beam.overWall === 0 && beam.overSky > 0, `a lighthouse's beam shows over the open sky but never over a wall nearer than it (${beam.overSky} pixels of beam over the sky, ${beam.overWall} over the wall${beam.lamp ? '' : '; no lamp lit'})`);
+}
+{
+  const { far, near, tent } = drawn736;
+  for (const [name, v] of [['past the squares drawn', far], ['among them', near]] as const) ok(v.stands > 100 && v.unlike > 100 && v.dark === 0 && v.lit === 1, `a monastery stands over the land ${name}, painted otherwise than a lighthouse, and by night lights no lamp where a lighthouse lights one (${v.stands} pixels of it at noon, ${v.unlike} unlike the lighthouse; by night ${v.dark} lamps, the lighthouse ${v.lit})`);
+  ok(tent.corners === 2 && tent.crown > 10, `a tent is no block: where the smooth wall's block stands (${tent.block} pixels across, its top at ${tent.top}), the corners over the tent's low wall are open (${tent.corners} of 2) and its crown stands over the block's top (${tent.crown} pixels)`);
+  ok(tent.door.tent >= 20 && tent.door.smooth === 0 && tent.door.stone === 0, `a door in a tent is a flap, the doorway's dark showing under its turned-back corner, where a smooth wall's door is its seam and a stone wall's its planks (${tent.door.tent} dark pixels in the corner; smooth ${tent.door.smooth}, stone ${tent.door.stone})`);
 }
 ok(!terrains.missing, `a view over the fields is found for the hills and farmland checks${terrains.missing ? ' -> ' + terrains.missing : ''}`);
 if (!terrains.missing) {
