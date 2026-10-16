@@ -664,9 +664,9 @@ order (#744), H6 to the Heart, with its chapter, its side quests (#56's 56 to 61
 Cleric's third at Anchorhold (#763), its calls and names written in. Then the Council of Helmstow
 (#764), which ends the Empty Throne, and the road behind in one issue (#765), as #449 was Act IV's.
 The act spends one story lock, the core's door (§2.3). Master trainers wait on the skill tiers
-(#18), and the Sorcerer's third goes with the reach. 1.5 ends M3.
+(#18); the Sorcerer's third comes into it, at the Glass's edge on the Wold (#807). 1.5 ends M3.
 
-**1.6, the reach** (DESIGN.md §9), with the Sorcerer's third prestige and #56's 62 and 63. Optional
+**1.6, the reach** (DESIGN.md §9), with #56's 62 and 63. Optional
 by design, so it comes last, and v1 can ship without it.
 
 **The finishing touches** (#54) run from 16 October 2026, unparked by the owner's delegate: the

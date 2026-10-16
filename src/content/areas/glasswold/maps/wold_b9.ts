@@ -127,7 +127,7 @@ export const WOLD_B9: MapDef = {
         'A green-white light shows through your pack. He is on his feet before you have it out.',
       ], choice: { ask: 'Give him the glass with a light?', answers: [
         { label: 'Give it', takes: 'glass_light', sets: ETCHING_READ, says: [
-          'He holds the light behind the etching, and its lines fall on his board a hand high: the land and the sea, a wall at either end, and a line across the top of it all.',
+          'He holds the light behind the etching, and its lines fall on his board a hand high: the land and the sea, a wall at either end and a line across the top of it all.',
           '"Every map I ever saw stops at the rim," he says, copying it. "This one has a lid."',
         ] },
         { label: 'Not yet', says: ['He sits down again, and turns the etching to the glare.'] },

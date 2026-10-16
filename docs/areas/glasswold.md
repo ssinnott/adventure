@@ -128,7 +128,7 @@ the glass tried to leave. The sky opened for it. Remember what that cost, if any
 open it for you.* It is the last ground before Hearth Isle's 28, with no Stone to mend, so what it
 gives the quest is the words and the land they are said over. Two third prestiges are taught in the
 Glasswold (DESIGN §5, #448): the Ranger's at Kushtash, the Eyrie, on the Wold; the Sorcerer's at
-the Buried Tower's crown, the reach's. Akordu, the Riders' camp, is the Wold's rest, and a Rider
+the Glass's edge, by the gap the Riders keep (#807). Akordu, the Riders' camp, is the Wold's rest, and a Rider
 rides a company to Cinderport and back (call 5), so the Wold trains there, to 27. There are no
 Rifts in Act IV (MONSTERS §8), and the glass walker is a machine on open ground, bare, as MONSTERS
 §2.2 allows past the Mines.
@@ -190,7 +190,9 @@ Eight boxes of its own, the first of which lists the area (#525):
   and the gap lies between it and the rim's foot, where the sand gives way to glass: the Riders'
   watch keeps its fire on the last grass at its mouth, three Riders and a yurt of white felt, and
   from the gap's last square the Glass is seen with the Tower's crown standing out of it, with no
-  way on. In the one dune that does not shift a walker lies half-buried, its chest open and a cache
+  way on; on the sand a square short of it Eadmer, a scholar the Riders let sit there and no
+  further, teaches the Sorcerer's third for the glasses two walkers carried (§6, #807). In the one
+  dune that does not shift a walker lies half-buried, its chest open and a cache
   in it. Five groups: two of four glass scorpions, six vultures, a glass walker alone and two
   walkers standing at the gap (§4.8).
 - **The hills behind the road** (E9, `wold_e9`, country, band 26–27; #534): the hills between the
@@ -252,7 +254,8 @@ cross into the Glass while it is void (§4.8, §9, #530's 9). The ride's crossin
 in D8 (§4.4). E10's Wold half is built on the Waste's map (§4.2). C8 is cut through the Saltings'
 C7, nine squares of its column 8 and its notch's words, with the owner's leave (#412, #528; §4.6).
 Its chapter of the one quest, The Warning, is `chapter.ts`, walked three ways in (§5, #531); its
-quests are `quests.ts`, Oriel Fane's Map (§6, #448) and #56's four side quests (§6, #532), with
+quests are `quests.ts`, Oriel Fane's Map (§6, #448), What the Walkers Carried (§6, #807) and #56's
+four side quests (§6, #532), with
 small edits to Cinderport's Chart House, factor's house and temple door (§9). Every brief below is
 a draft.
 
@@ -312,7 +315,7 @@ The places, as the atlas and the docs have them:
 | The Scarp stair | C8, and C7 | Act IV's way down into Saltreach; the Compact runner on it (#56's 54) | a road link at 80,206 → 80,216, "the Scarp stair" |
 | The Cinder Hills | E10 | the border with Ashfall's Waste (#517) | a hills ridge at x 146 to 152 |
 | The Glass (Tashkum) | C9, C10 and round them | the reach: what the day the sky opened left; the only way in kept by the Riders (DESIGN §9; EXPANSION §5.8; MONSTERS §10.1) | glass, 602 squares in C9, lettered at 96,304 |
-| The Buried Tower | C9, and below | the mast of a lander sunk in the glass it made, its decks running down; the Sorcerer's third at its crown (DESIGN §5, §9; MONSTERS §10.1) | a planned dungeon at 84,286, its way in at 84,280; band 30–32 (call 5) |
+| The Buried Tower | C9, and below | the mast of a lander sunk in the glass it made, its decks running down (DESIGN §9; MONSTERS §10.1); the Sorcerer's third is taught at the Glass's edge instead (B9, #807) | a planned dungeon at 84,286, its way in at 84,280; band 30–32 (call 5) |
 | The lava flow | E11, D12 | seals the Glass from the Ember Waste (DESIGN §9; EXPANSION §7) | new: a `lava` ridge from 160,318 to the rim at 130,376 (call 5) |
 
 ### 4.1 The briefs
@@ -862,11 +865,11 @@ settled in its issue, and what Ashfall teaches changes them.
 - **Quests.** The step. The Horse That Came Back's horse came this way (§6).
 - **The secret and its hint.** A walker that stopped half-buried in a dune long ago, its chest
   open to the sand and a cache in it: gold, and the first thing of the Tower's a company can hold,
-  a piece of glass with a light in it that does nothing yet (Phase 1.6's to make do something). The
+  a piece of glass with a light in it, by which the scholar in the gap reads (#807). The
   hint: the dunes shift, and one does not.
 - **New here.** Dunes underfoot (#543); the reach seen from the road, and its band said; a machine
   that walks in a pair.
-- **Finds.** Gold, and the glass with a light in it, a plain item until the reach.
+- **Finds.** Gold, and the glass with a light in it, the scholar's to read by (#807).
 - **Pay.** About 1,600 xp a member.
 - **Built** (#530, 9 October): the brief's places, with twenty features and the five groups, laid
   whole in the Wold at 40,254, band 26–28 and not 28: the curve's rise rule holds the hardest group
@@ -927,8 +930,8 @@ settled in its issue, and what Ashfall teaches changes them.
   do. Inside lie the walker (`b9_walker`, 15,18), its lamp dark and its chest open to the sand, and
   the chest `b9_cache` (14,18): 1,600 gold and the Glass with a Light (`glass_light`, §9, #530's
   12), a piece of glass the size of a fist with a cold green-white light in it that does not
-  flicker, no warmer for it nor for your hand. It has no use, skill or resist and no shop buys it: a
-  plain item until the reach. The walkthrough checks that none of the box's 890 squares walked,
+  flicker, no warmer for it nor for your hand. It has no use, skill or resist and no shop buys it:
+  the scholar in the gap reads by it (#807). The walkthrough checks that none of the box's 890 squares walked,
   waded, climbed or floated reaches the chest but through the dune's side.
   Five groups, the brief's (§9, #530's 2): four glass scorpions in the dunes by the grass
   (`b9_scorpions`, 22,8), 14 steps from the way in and the nearest, at level 26.0; six vultures at
@@ -952,6 +955,14 @@ settled in its issue, and what Ashfall teaches changes them.
   has the Riders' store; the landmark, the lava flow's end against the rim, which is not in the box,
   the flow ending at 130,376; and the gate, held at 26 where the issue has it hold at 28 (§9, #530's
   21).
+- **Built** (#807, 16 October): Eadmer, the scholar, the Sorcerer's third, on the gap's last sand at
+  30,27 (70,281), between the walker's tracks and the last square: a dune square that held nothing,
+  walked through on the way to the Glass, past the Riders' stones and a square short of the glass,
+  where the Riders let him sit and no further. His own words, then to a sorcerer of 27 with the
+  second his ask, once; he takes the Etched Glass at the first meeting that holds it, and with the
+  Glass with a Light in the pack puts his question, given which he reads the one by the other's light
+  and his menu teaches the Magus (§6, §9, #807's 1 to 6). No square, id or door moves and no group is
+  placed; the box gains a point of interest, its twenty-sixth, and its density and its gate stand.
 
 ### 4.9 E9 and E8, the country behind (#534): country, band 26–27
 
@@ -1173,12 +1184,13 @@ price, 2,240 at 28 (`q_garden_lifted`), or a Quickening Draught of the company's
 
 ### The third prestiges
 
-Two of DESIGN §5's thirds sit in the Glasswold (#448, call 8). The Ranger's is built (#448), its
-quest in `quests.ts`, paying nothing but the prestige:
+Two of DESIGN §5's thirds sit in the Glasswold (#448, call 8; #807). Both are built, the Ranger's
+(#448) and the Sorcerer's (#807), their quests in `quests.ts`, paying nothing but the prestige:
 
 | Quest | Trainer | Asked of | The deed | Flags |
 |---|---|---|---|---|
 | Oriel Fane's Map (`scout_map`) | Aysu, the scout, at her fire on Kushtash (B8, 8,16) | a ranger of 27 with the second | Fane's map from his fire at the last of the Meridian Company's camps (meridian_camp3), given to her from the pack | `q_scout_asked`, `q_scout_map` |
+| What the Walkers Carried (`walkers_carried`) | Eadmer, the scholar, on the gap's last sand (B9, 30,27) | a sorcerer of 27 with the second | the Etched Glass from the fallen walker's hollow (D9) and the Glass with a Light from the half-buried walker's cache (B9), the one read by the other's light | `b9_scholar_met`, `q_scholar_asked`, `q_etching_given`, `q_etching_read` |
 
 **Oriel Fane's Map.** Met first, Aysu says her own words, as #529 built them. To a ranger of 27 with
 the second she asks, once: their mapmaker drew every step they took; follow their journals down the
@@ -1189,9 +1201,22 @@ pack, she puts a question; given (her answer takes it), she does not open it, an
 Unerring for it and no gold. After, her own words again. The fights are Meridian Camp's own, as built
 (§9, the Ranger's and the Thief's 3).
 
-The Sorcerer's, at the Buried
-Tower's crown, is the reach's and waits for Phase 1.6; until then the seeking quest names the place
-(DESIGN §5) and the gap's Riders say what stands between.
+**What the Walkers Carried.** A scholar who wants what is written in the Glass sits on the gap's
+last sand, past the Riders' stones and a square short of the glass, where they let him sit and no
+further; DESIGN §5 had him at the Buried Tower's crown, the reach's, and #807 brings him to its
+edge. Met first, Eadmer says his own words: nine years there, and he reads what walks out. To a
+sorcerer of 27 with the second he asks, once: two walkers lie where they stopped, one on the steppe
+and one in the dunes, and each carried a glass; bring him both, and he will show a Magus how to read.
+That begins the quest and ends the sorcerer's seeking, and the log sends the company to the fallen
+walker's hollow on D9. He takes the Etched Glass at the first meeting that holds it, from any
+company (#43), too fine to read by daylight or any lamp of his; with it his and the Glass with a
+Light in the pack, he puts a question, and given the light he holds it behind the etching and reads
+what falls on his board: the land and the sea, a wall at either end and a line across the top, a
+map with a lid. What it is he never says. The log sends the company back to him, and his menu
+teaches the Magus for the reading and no gold, which ends the quest; after, his own words again. A
+company that brings the etching first begins the quest by it, as a cleric's does by the Crowness
+log (#763); one with no sorcerer hears his words and the reading, gives up both glasses and has no
+quest of it. The quest's fights are the walkers that stand: no group is placed (§9, #807's 1 to 6).
 
 ## 7. Encounters, and what is new
 
@@ -1358,7 +1383,7 @@ seen, a cliff from its top.
   19.7, which is why the band starts at 26 (§9, #530's 1). In the harness 19% of the days at 26 end
   in a death, the pair costing 14% a fight; the gate holds. The walkthrough wins each group ten
   times in ten at 27. Density 100.0% within 12 steps (691 of its 691 open squares) and the furthest
-  9 of 20, with no sign among its 25 points. The area's dearest find stays the Leather Coat +2,
+  9 of 20, with no sign among its 26 points, the scholar the twenty-sixth (#807). The area's dearest find stays the Leather Coat +2,
   2,700 gold of the window's 6,000; B9's are an Elixir and the Glass with a Light, which has no
   price.
 - **As built, the side quests** (#532). They pay §8's 1,000 xp a member whichever way each goes,
@@ -1407,6 +1432,8 @@ Decided by the owner's delegate on 2 October 2026 (#443), and followed here:
 6. **The third prestiges built in Act IV are the Eyrie's** (call 8, #448): the Ranger's, the
    Meridian journals followed down Fire Mountain's vents to Meridian Camp and Oriel Fane's map
    brought back to the scout. The Sorcerer's at the Buried Tower's crown is the reach's (Phase 1.6).
+   Decided by the owner's delegate, 16 October 2026 (#807): the Sorcerer's comes into v1 at the
+   Glass's edge, B9, by the gap the Riders keep (§6).
 7. **The cuts stand, the country behind is parked and all four side quests stand** (call 9): §11,
    #534, §6. E9 and E8 are built since, at the owner's word to build Act IV (§4.9).
 
@@ -1975,7 +2002,8 @@ Decided by delegate for #530, each the owner's to overturn:
     door there.
 12. **The item `glass_light`, "Glass with a Light",** slot none, price 0, two lines of `text` (read
     from the pack), no use, skill or resist: a plain item until the reach. Its light is the walkers'
-    lamps' cold green-white, a thing seen.
+    lamps' cold green-white, a thing seen. Since #807 the scholar in the gap asks for it, and reads
+    the Etched Glass by it.
 13. **Finds, 2,000 gold:** the Riders' cairn at the dunes' head (`b9_cairn`, 13,4), 400 gold and an
     Elixir; the cache, 1,600 and the glass.
 14. **The camp** is the watch's fire (21,25) on trodden earth in the last grass, a patch of steppe
@@ -2113,6 +2141,32 @@ Decided by delegate for #534, each the owner's to overturn:
     for the pace check, a curve re-read and E8's north edge re-pinned, for land the road never
     needs.
 
+Decided by delegate for #807, each the owner's to overturn:
+
+1. **Two steps, not one hand-in for both.** A hand-in holds one item (`NpcQuest.item`) and a meeting
+   makes one, so no map can take both glasses at one meeting; a hand-in of two items is a systems
+   change, outside the area's lane. The Etched Glass is a hand-in, taken at the first meeting that
+   holds it from any company (#43); the Glass with a Light is taken at his question once the etching
+   is his, so the reading comes with the second glass whichever is found first.
+2. **The etching first, the light second:** he wants what is written, and takes it on sight; the
+   light is what he reads it by. Brought alone the light is not taken; the etching is, unread, by
+   the hand-in rule, so "only if both are held" holds for the light alone.
+3. **Eadmer, the scholar** (§10), at 30,27, between the walker's tracks and the last square: the one
+   free square in the gap a square or two in from 31,27, past the Riders' stones. A person stands on
+   a square the party walks onto, so the way to the Glass stays open; no square, id or door moves.
+4. **Begun by his ask or by the etching, done on the Magus,** as the Cleric's third is (#763): the
+   quest begins on the ask, or on the etching given by a company with a sorcerer of 27 with the
+   second. Both glasses can be given and read before the sorcerer is 27, and a quest done on the
+   reading would then come up begun and done at once with no goal back to him, so it ends on the
+   Magus and its last goal sends the company back. His teaching waits on `q_etching_read`, no gold.
+5. **His reading says what was cut and never what it is:** the land and the sea, a wall at either
+   end and a line across the top. His "lid" is the Hand's word on the causeway (DESIGN §9). The
+   walkthrough holds every word he says to the box's ban on what the crown is.
+6. **No words after the reading but his own,** as Aysu's (#448's 4): the people check plays a
+   question's after-words without the item its answer takes. No group and no pay; `shipped.json`
+   adds four flags. B9 gains a point of interest, 26, and its density, its curve and the gate's
+   10.41 fights to a rest at 26 stand.
+
 ## 10. Names
 
 The Glasswold's naming pass, by the rules of `docs/NAMES.md`: the Wold Riders' tongue was left to
@@ -2136,6 +2190,9 @@ for #444.
 
 - **A person:** Aysu, the scout on Kushtash, the Ranger's third (#448): *ay* the moon and *su*
   water, a Rider's name in the Riders' tongue. She was "The scout" while she had words only.
+- **A person:** Eadmer, the scholar at the Glass's edge, the Sorcerer's third (#807): *ead* wealth
+  and *maere* famous, an old name of the Crown's English, as Hereswith's and Edric's are; he is no
+  Rider, and the Riders let him sit and no further.
 - **Kept:** the Glasswold and the Wold, the Crown's names for the area and its steppe, which the
   road leans on; the Scarp and the Scarp stair, the Foreland folk's, Saltreach's border
   (docs/areas/saltreach.md §10); the Cinder Hills, Ashfall's; the Glass and the Buried Tower, plain
@@ -2175,7 +2232,7 @@ Owed, from D9 (#525):
   meets E9's (#534, §4.9), its north edge D8's, the track at 16,0 (#526, §4.4), and its south edge
   D10's, and `CUT_OFF` is empty (#527; §1, §9, #525's 3 to 6).
 - **The step and the chapter** on `d9_glass` are built (#531, §5); **quest 51** is built (#532),
-  and the Etched Glass keeps no buyer, its taker owed (the Sorcerer's third's scholar, #807): the Chart
+  and the Etched Glass keeps no buyer, its taker the Sorcerer's third's scholar at the Glass's edge (#807): the Chart
   House takes the walker (§6, §9, #525's 11, #532's 4).
 - **The Wold's crossing words** are walked at D10 (#527) and at the Scarp stair's head (#528)
   (§9, #525's 14, #528's 2).
@@ -2254,7 +2311,7 @@ Owed, from B9 (#530):
   dunes and the gap's last square, and B10 meets the rim's foot along the south, in Phase 1.6. The
   south edge is closed where the atlas has dunes and glass, columns 20 to 31, so that the gap is the
   box's one way on to the Glass (§4.8, §9, #530's 4 to 6).
-- **The Glass with a Light does nothing,** its use being the reach's (Phase 1.6), and **the Glass's
+- **The Glass with a Light does nothing in the hand,** the scholar in the gap reading by it (#807), and **the Glass's
   zone row has no band and no crossing words:** the Riders' word at the stones is the line (§4.8,
   §9, #530's 9 and 12).
 - **The horse that came back** is seen as prints going north, read into its quest's log; the quest
