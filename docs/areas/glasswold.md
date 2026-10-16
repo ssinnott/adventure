@@ -705,8 +705,9 @@ settled in its issue, and what Ashfall teaches changes them.
   the cleft behind it, at 22 to 23,1, is stone, shut by rock on every side, rock and not cliff, since
   a Mountaineer climbs cliff and mountain and not rock. In it are three bundles in oilcloth sealed in
   black wax (`c8_cleft`, 22,1) and the chest `c8_drops` (23,1): 900 gold and a Letter in Cipher,
-  the Compact's last three drops. Nobody on the Wold reads the letter and no shop buys it (§9,
-  #528's 13; §11). The edges: north, C7's row 31, mountain but for the flight at its column 8
+  the Compact's last three drops. Nobody on the Wold reads the letter and no shop buys it; Hendra,
+  the Compact's factor at Cinderport, takes it unread for 200 gold (§9, #528's 13; §11). The edges:
+  north, C7's row 31, mountain but for the flight at its column 8
   (80,221) and void at its corners, against C8's row 0, cliff at 0 to 7, the last flight at 8, cliff
   at 9 to 20, the cleft's rock at 21 to 24, cliff at 25 to 27 and steppe at 28 to 31, open only at
   column 8; east, D8's west edge square for square (x 103 against x 104), steppe at rows 0 to 17,
@@ -1362,9 +1363,10 @@ seen, a cliff from its top.
   price.
 - **As built, the side quests** (#532). They pay §8's 1,000 xp a member whichever way each goes,
   51 200, 53 250, 54 250 and 55 300, and add no gold, group or chest. The curve counts 700 of it
-  here, 55's 300 being paid at Cinderport's temple and so counted in Ashfall's clear: a clear of the
-  Glasswold gives 18,313 xp a member of the 21,067 asked, 0.87 times, and 9,650 gold of the 12,720,
-  the owed row's floor (§9, #532's 1 and 14), which E9 and E8 close (next).
+  here, 55's 300 being paid at Cinderport's temple and so counted in Ashfall's clear (pay is booked
+  where it is paid, and the curve test prints it; decided by the owner's delegate, 16 October 2026,
+  #728): a clear of the Glasswold gives 18,313 xp a member of the 21,067 asked, 0.87 times, and
+  9,650 gold of the 12,720, the owed row's floor (§9, #532's 1 and 14), which E9 and E8 close (next).
 - **As built, E9 and E8** (#534). Each pays 1,563 xp a member, 1.12 times the 1,400 asked of a box
   (a pride 5,683, three vultures 1,551 and a pair of basilisks 2,146, over six: 9,380; §9, #534's
   7). E9 pays 1,600 gold, the strongbox's 1,200 and 400 and an Elixir in the cairn, and E8 1,500,
@@ -1563,7 +1565,9 @@ Decided by delegate for #525, each the owner's to overturn:
     words, the fallen walker and the chest inside (§4.3).
 11. **The thing of glass is `etched_glass`, "Etched Glass"** (slot none, price 0: no shop buys it),
     in the area's new `items.ts`: lines in glass a cartographer would want, nothing explained. Its
-    buyer at Cinderport is #532's and #512's.
+    buyer at Cinderport was #532's and #512's, and is not: its taker is the scholar of the
+    Sorcerer's third at the Glass's edge (#807), since an item with two takers could be taken by
+    the wrong one (#735). Hendra at Cinderport takes the Letter in Cipher, and not the glass.
 12. **The horse that came back is seen and no more:** `d9_horse` at 8,17, coming in off the dunes
     toward the herd, glass in its hooves, something still in its saddle. No flag or quest: 51 is
     #532's, with #526.
@@ -1800,9 +1804,10 @@ Decided by delegate for #528, each the owner's to overturn:
     that nothing reaches it but its mouth. Inside are `c8_cleft` (22,1) and the chest `c8_drops`
     (23,1).
 13. **The letter** is `cipher_letter`, "Letter in Cipher" (slot none, price 0), in the area's
-    `items.ts`. Nobody on the Wold reads it and no shop buys it. What takes it is owed: Lantern
-    Watch's reader (#204) or the Compact's hall at Cinderport (#512, #532); neither is edited here
-    (§11).
+    `items.ts`. Nobody on the Wold reads it and no shop buys it. What takes it was owed: Lantern
+    Watch's reader (#204) or the Compact's hall at Cinderport (#512, #532); neither was edited here
+    (§11). Hendra, the Compact's factor at Cinderport, takes it since #735: a hand-in at her first
+    meeting, hired or not, unread, for 200 gold (`q_cipher_taken`).
 14. **Novelty claims nothing new:** C8's ground (steppe, hills, cliff, stone, rock and earth), its
     features and its kinds are all on the road before, cliff and stone being Ashfall's and the
     Whitespine's. The brief's "a way into an area from two acts back" has no token.
@@ -2051,7 +2056,7 @@ Decided by delegate for #532, each the owner's to overturn:
 10. **54's three answers are §6's,** put by the eldest at Akordu, where the watch sends a climber:
     given sealed (`q_scarp_sealed`), told (`q_scarp_told`) or burned (`q_scarp_burned`). The
     letter is the runner's orders (`riders_orders`, read from the pack); the cleft's Letter in
-    Cipher keeps no reader (§11).
+    Cipher is Hendra's to take, unread (#735, §11).
 11. **Hendra asks (`q_scarp`), and the runner gives up the orders only to a company Hendra sent**
     (`q_scarp_carried`); burned, her next climb finds the company, in her words.
 12. **55's son is the garden's boy** (`d8_figure`, gone once carried): the mother gives him
@@ -2078,7 +2083,10 @@ Decided by delegate for #534, each the owner's to overturn:
 4. **A bar of shallows runs from E8's strand to each of its two islands** (row 13, x 8 to 20; row 2,
    x 5 to 12; deep sea to shallow): the atlas rings them in deep sea, and the density check fails a
    square nothing reaches. They are a swimmer's now, with a point on each and a cairn on the mares'
-   island; the Rider and the boy say why the mares are out there, not how to get there.
+   island; the Rider and the boy say why the mares are out there, not how to get there. The world
+   map, painted from the grid, shows them: `worldGrid` takes a built map's cells last, and all 21
+   squares of both bars read shallow there. Decided by the owner's delegate, 16 October 2026 (#735,
+   struck): there is nothing to paint.
 5. **E8's 13,0 is laid as sand,** not the atlas's shallow, so that its water does not run into E7's
    sand (the pillars check).
 6. **Each box has a pride, a flock and a basilisk pair:** the pride is the Wold's shape (four lions,
@@ -2167,7 +2175,8 @@ Owed, from D9 (#525):
   meets E9's (#534, §4.9), its north edge D8's, the track at 16,0 (#526, §4.4), and its south edge
   D10's, and `CUT_OFF` is empty (#527; §1, §9, #525's 3 to 6).
 - **The step and the chapter** on `d9_glass` are built (#531, §5); **quest 51** is built (#532),
-  and the Etched Glass keeps no buyer: the Chart House takes the walker (§6, §9, #525's 11, #532's 4).
+  and the Etched Glass keeps no buyer, its taker owed (the Sorcerer's third's scholar, #807): the Chart
+  House takes the walker (§6, §9, #525's 11, #532's 4).
 - **The Wold's crossing words** are walked at D10 (#527) and at the Scarp stair's head (#528)
   (§9, #525's 14, #528's 2).
 - **The figures two under the floor** are owed to #18 and **the area's pay and gold** to #447: 2,940
@@ -2205,9 +2214,10 @@ Owed, from D8 (#526):
 
 Owed, from C8 (#528):
 
-- **The letter in the cleft has no reader:** nobody on the Wold reads the Letter in Cipher and no
-  shop buys it. What takes it is owed: Lantern Watch's reader (#204); #532's letter is the runner's
-  orders, and the Compact's hall does not take it (§4.6, §9, #528's 13, #532's 10).
+- **The letter in the cleft has a taker** (#735): nobody on the Wold reads the Letter in Cipher and
+  no shop buys it, and Hendra, the Compact's factor at Cinderport, takes it unread at her first
+  meeting for 200 gold, which Ashfall's clear counts (docs/areas/ashfall.md §6 and §8). #532's letter is
+  the runner's orders (§4.6, §9, #528's 13, #532's 10).
 - **The Riders at the watch are words only;** the runner gives up her orders for Orders on the
   Scarp Stair (#56's 54, #532), with its Akordu end (§6, §4.6, §9, #528's 7).
 - **The Scarp's mass stays closed:** 292 of C7's 301 Glasswold squares are mountain still, the
@@ -2258,8 +2268,9 @@ Owed, from B9 (#530):
 
 Owed, from the chapter (#531):
 
-- **E10's `e10_west`** still writes The Window's road over the Hills for a company come up the stair
-  that later walks east over the last shoulder: an `until` on it is Ashfall's (#518; §9, #531's 3).
+- **E10's `e10_west`** writes The Window's road over the Hills for a company come up the stair that
+  later walks east over the last shoulder, and it stands. Decided by the owner's delegate, 16 October
+  2026 (#735, struck): no `until` on it (docs/areas/ashfall.md §5; §9, #531's 3).
 - **The last crossing** is Phase 1.5's: The Warning is done at Akordu's horse-lines on `q_road_east`,
   and the next chapter starts on it (§5).
 
@@ -2277,7 +2288,9 @@ Owed, from E9 and E8 (#534):
   the crossing line, "Cindercoast.", being another zone (§4.9).
 - **E8's north edge ends in the void** against E7, cut, and its east edge against F8, the sea (§4.9,
   §9, #534's 13).
-- **The world map paints E8's two islands in deep sea:** the bars of shallows out to them are the
-  zone map's only (§9, #534's 4).
+- **The world map shows E8's bars of shallows** out to the two islands, though the atlas rings the
+  islands in deep sea: it is painted from the grid, which takes a built map's cells last, and every
+  square of both bars reads shallow there. Decided by the owner's delegate, 16 October 2026 (#735,
+  struck): nothing is owed (§9, #534's 4).
 - **The figures two under the floor** are owed to #18; the area's pay and gold are met and nothing
   is owed to #447 (§8, §9, #534's 9).
