@@ -27,7 +27,7 @@ const MONSTER_DELAY = 22;
 const BOT_DELAY = 22;
 
 export class CombatScreen implements Screen {
-  /** Both delays count as none: set by the tests, until #716 gives the Game a pilot that says so. */
+  /** Both delays count as none: the combat tests set it, as a pilot's `instant` does (game/pilot/pilot.ts). */
   static instant = false;
   /** The bot plays the company's turns and leaves the fight at its end, until a key takes it back (#713). */
   auto = false;
@@ -94,8 +94,8 @@ export class CombatScreen implements Screen {
     return [...new Set([...c.pack, ...g.party.bag].filter((id) => item(id).use && !item(id).use!.food))];
   }
 
-  /** The frames a delay counts: none while fights are played at once (`instant`). */
-  private wait(n: number): number { return CombatScreen.instant ? 0 : n; }
+  /** The frames a delay counts: none while fights are played at once (`instant`, or the pilot's). */
+  private wait(g: Game, n: number): number { return CombatScreen.instant || g.pilot?.instant ? 0 : n; }
 
   update(g: Game, a: Action | null): void {
     const s = this.state;
@@ -104,7 +104,7 @@ export class CombatScreen implements Screen {
     if (this.auto && a) { this.auto = false; this.botTimer = 0; }
     if (this.auto && s.outcome !== 'ongoing') {
       this.mode = 'done';
-      if (++this.botTimer >= this.wait(BOT_DELAY)) { this.botTimer = 0; g.afterCombat(this.groupIds, s.outcome); }
+      if (++this.botTimer >= this.wait(g, BOT_DELAY)) { this.botTimer = 0; g.afterCombat(this.groupIds, s.outcome); }
       return;
     }
     if (s.outcome !== 'ongoing') {
@@ -115,11 +115,11 @@ export class CombatScreen implements Screen {
     const t = currentTurn(s, g.party, g.rng);
     if (!t) { this.mode = 'done'; return; }
     if (t.side === 'monster') {
-      if (++this.timer >= this.wait(MONSTER_DELAY) || is(a, 'interact')) { this.timer = 0; monsterAct(s, g.party, g.rng); this.meetCalled(g); }
+      if (++this.timer >= this.wait(g, MONSTER_DELAY) || is(a, 'interact')) { this.timer = 0; monsterAct(s, g.party, g.rng); this.meetCalled(g); }
       return;
     }
     if (this.auto) {
-      if (++this.botTimer >= this.wait(BOT_DELAY)) { this.botTimer = 0; botTurn(s, g.party, g.rng, t.i, asSeen); this.mode = 'menu'; this.sel = 0; }
+      if (++this.botTimer >= this.wait(g, BOT_DELAY)) { this.botTimer = 0; botTurn(s, g.party, g.rng, t.i, asSeen); this.mode = 'menu'; this.sel = 0; }
       return;
     }
     if (!a) return;

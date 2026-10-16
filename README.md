@@ -25,6 +25,8 @@ dependencies, and nothing compiled to disk during development.
   is built.
 - [docs/NAMES.md](docs/NAMES.md) — how places are named: each people's tongue, the few old names
   the first crew left, and the rules a rename follows.
+- [docs/PILOT.md](docs/PILOT.md) — the pilot that plays the game for watching: P and T, the why
+  line, the fair view it plays by (`Known`), its files and the calls made building it.
 
 ## Running
 
@@ -39,7 +41,8 @@ npm run check      # typecheck + Node tests + headless Chromium smoke test
 Keys: arrows or WASD move and turn, Q/E strafe, Space acts, F searches the wall ahead, R rests,
 C casts, I opens the character sheet (1–6 jump to a member), J the quest log, M the world map (arrows
 scroll it, Tab shows the areas and zones, Z the whole map at once, Space the almanac: date, season and
-weather), F5/F9 save and load.
+weather), F5/F9 save and load. P hands the game to the pilot and takes it back; T sets its tempo
+(docs/PILOT.md).
 
 The outdoors is one map, laid out square for square as the world map charts it: the Foreland and
 Thornmark are zones of it, walked between without a seam. Where nothing is built yet the world ends,

@@ -49,7 +49,7 @@ export const WOLD_D8: MapDef = {
   region: 'glasswold',
   start: { x: 16, y: 31, facing: NORTH },
   // The tents are white felt.
-  palette: { wall: '#e4dac8', wallDark: '#a89c86', door: '#5a3a24', wallStyle: 'smooth' },
+  palette: { wall: '#e4dac8', wallDark: '#a89c86', door: '#5a3a24', wallStyle: 'tent' },
   rows: [
     'sssssss^^sssssssssssssssssssssss',
     'ssssssssssssssssssssssssssssssss',

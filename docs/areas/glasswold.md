@@ -1692,7 +1692,7 @@ Decided by delegate for #526, each the owner's to overturn:
    both ways in, as the curve's rise and the gate's landing check want. §4.4 is corrected.
 3. **The camp is trodden earth,** 67 squares in an oval round the fires, its rest the camp feature
    `Akordu` at 16,27. Nine squares of white felt make the ring of tents, in the map's `palette`
-   (wall #e4dac8, smooth): the eldest's against the mesa at 16,23, five round the ring (13,24;
+   (wall #e4dac8, `'tent'` since #736): the eldest's against the mesa at 16,23, five round the ring (13,24;
    19,24; 11,27; 13,30; 19,30) and the trader's, three squares and a door facing in.
 4. **Two ways in:** the map's `start` is the end of D9's Riders' track on the south edge, 16,31
    facing north, its earth going on into the ring; the ride's landing at the horse-lines, 9,27
@@ -1776,6 +1776,23 @@ Decided by delegate for #526, each the owner's to overturn:
     steppe 657, rock 85, hills 68", are not today's cut: the scaffold gives steppe 845, hills 94
     and rock 85, its zones in the cut the Wold 845 and the Saltings 179. A map is one land, so all
     of it is the Wold's.
+
+Decided by delegate for #736, each the owner's to overturn:
+
+1. **A tent is a low felt wall under a felt pyramid to a crown,** not a whole block with a roof set
+   on it: a block with a hat still reads as a box. Its walls are square, as the grid's squares are,
+   not round as a yurt's.
+2. **Tent squares that fill a rectangle are one tent,** sixteen at most: the trader's two by two at
+   Akordu, its door with it, is one tent with one crown. An L of them, or any other shape, is a tent
+   to each square.
+3. **The band round a tent's foot takes the palette's banner colour,** with ochre lozenges as inside:
+   D8 sets no banner, so it is the outdoors' red, near the trader's felt. The flap takes the
+   palette's door colour, D8's dark brown.
+4. **In a town a house stays a house whatever the palette;** `'tent'` there is felt walls with no
+   roof. Felt carries no wall dressing.
+5. **C8's yurt takes `'tent'` too,** though the issue names D8 only: it is C8's one building square,
+   standing clear at 6,2, white felt as Akordu's tents are, and C8 has no other building or door
+   for the felt to turn.
 
 Decided by delegate for #528, each the owner's to overturn:
 
@@ -2262,8 +2279,8 @@ Owed, from D8 (#526):
   **quests 51, 53, 54 and 55** have their Akordu ends built (#532), the rest of the eldest's story
   53's: the young Rider, the Rider with a hammer and the woman among the figures put their
   questions, and the eldest takes the Compact's orders (§6, §9, #526's 12 and 13).
-- **The tents draw as white felt boxes** until D8's palette takes `'tent'`, the felt look built in
-  #736, in #736's area pull request.
+- **The tents draw as tents:** D8's palette takes `'tent'`, the felt look, and C8's yurt with it
+  (#736; §9, #736's 5).
 - **D8's north edge ends in the void** against a box not built; its east edge meets E8's (#534,
   §4.9) and its west edge C8's (#528, §4.6) (§4.4, §9, #526's 20).
 - **The figures two under the floor** are owed to #18 and **the area's pay and gold** to #447:
