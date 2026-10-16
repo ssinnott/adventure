@@ -29,7 +29,7 @@ export const WOLD_C8: MapDef = {
   region: 'glasswold',
   start: { x: 8, y: 1, facing: SOUTH },
   // The watch's yurt is white felt, as Akordu's tents are.
-  palette: { wall: '#e4dac8', wallDark: '#a89c86', door: '#5a3a24', wallStyle: 'smooth' },
+  palette: { wall: '#e4dac8', wallDark: '#a89c86', door: '#5a3a24', wallStyle: 'tent' },
   rows: [
     '||||||||"||||||||||||rrrr|||ssss',
     'sssssss::::ssssssssssr""rsssssss',

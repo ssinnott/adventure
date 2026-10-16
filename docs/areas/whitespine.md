@@ -123,8 +123,8 @@ J10, I12 and J12 (#508):
   blankets under the beds and a bowl of snow by each. On the west the crest under its snow and a
   path up it in steps to Spine Summit, a camp, with Oswin the hermit beside it, who teaches the
   Monk's third for a night's vigil (§6, #448); at the vale's east edge
-  the herder at his fold. The monastery is a block of building squares on its shelf, with two bell
-  towers over its wall and a camp in the shelf's lee; behind the wall the snow is trodden in one
+  the herder at his fold. The monastery is a block of building squares on its shelf, drawn tall,
+  with two bell towers over its wall (#736) and a camp in the shelf's lee; behind the wall the snow is trodden in one
   line west to the rock, a brother walking it by night; in the rock, the store (§4.2). Five groups:
   brothers at the pass's foot and on the road to the gate, spine eagles either side of the road and
   snow trolls at the far end of the summit's path; and a sixth, the vigil's brothers, up the path by
@@ -423,7 +423,7 @@ settled in its issue.
   along the crest's foot, a path up it into the snow at 13,12 and Spine Summit at 4,10, a camp, with
   Oswin, the summit's hermit, at 3,10, the Monk's third's trainer (§6, #448); at the vale's east edge the herder at 27,19, who
   gives The Eagles' Nest (§6, #506), and his fold, a ring of rock at 28 to 30, 18 to 20 (§9, #499's 13). The monastery fills rows
-  24 to 28 and columns 20 to 29 of its shelf, with two bell towers over its wall (29,22) and the
+  24 to 28 and columns 20 to 29 of its shelf, drawn tall over 26,25 (#736), with two bell towers over its wall (29,22) and the
   camp in the shelf's lee at 21,23; its gate at 26,24, the brother standing in it as the brief's
   line has it, was barred until #500 and is the way into Highcell now (§4.3; §9, #499's 5 to 7,
   #500's 8). Five groups: brothers, 3, at the
@@ -437,9 +437,8 @@ settled in its issue.
   by the dozen and the chest, 400 gold and a second Guide's Staff +1 (`guides_staff+1`, Rimewater's
   rung). The hint is the trodden line, row 29's snow from 29,29 west to the rock (`j11_trodden`),
   and by night a brother walking it (`j11_walker`) (§9, #499's 10 and 11). The cairn and the store
-  hold 700 gold between them. It departs from the brief in the monastery, a block of building
-  squares and not drawn tall over one square (§11); in the gate, barred until #500 opened it; and
-  in the hostel, which is only kept wrongly where the issue made its cellar the secret (§11). The
+  hold 700 gold between them. It departs from the brief in the gate, barred until #500 opened it,
+  and in the hostel, which is only kept wrongly where the issue made its cellar the secret (§11). The
   step is the chapter's (§5, #505); the Eagles' Nest is built (§6, #506) and so is the hermit's
   vigil (§6, #448; §9, #499's 16).
   - **Measured.** A company at 22 wins every fight, the vigil's counted, and manages 8.69 fights to
@@ -1382,8 +1381,8 @@ Decided by delegate for #499, each the owner's to overturn:
    and 22 (the name alone). Since #508 it is said where K10 meets J10 (#508's 2 and 8).
 5. **The monastery is a block of building squares on its shelf,** rows 24 to 28, columns 20 to 29,
    joined to the mountain by rock (columns 17 to 19). Drawn tall over one square, as the brief asks,
-   it needs a `Landmark` kind besides the lighthouse's (`src/game/map.ts`, `src/ui`): a systems
-   change for the owner to ask for (§11).
+   it needed a `Landmark` kind besides the lighthouse's (`src/game/map.ts`, `src/ui`): a systems
+   change, built by #736, which draws it tall over 26,25 (#736's 1).
 6. **The gate at 26,24 is barred, as N8's door was before #617:** `GATE` is exported and not in
    `exits`, its square a building, and the event `j11_gate` (not `once`) stands at its front, 26,23.
    #500 lists it, makes the square a door, drops the event and sets the landing (asked: 7,1 facing
@@ -1422,6 +1421,18 @@ Decided by delegate for #499, each the owner's to overturn:
     figures under the floor are owed to #18, as Rimewater's are.
 17. **The climate is the range's:** summer 8, winter -12, daily 7, damp 0.03 to 0.08, wettest 330,
     fog 0.4, lag 12; cloud comes down off the crest and thunder rolls along the range.
+
+Decided by delegate for #736, each the owner's to overturn:
+
+1. **Highcell is drawn tall from 26,25,** the square behind the gate, inside the block and in line
+   with the road's end: coming down the road the towers stand over the gate, and from the pass's
+   foot they stand over the vale. A monastery stands inside its block, all eight squares round it
+   building or door squares: its drawing is wider than its square, so that from the road it reads as
+   Highcell and not as one tower, and near to only the block's walls hide its foot (`monasteryFault`,
+   tools/tests/maps.ts).
+2. **A known limit of the tents #736 draws:** a tent's eave stands out past its wall and is painted
+   after a wall beside it, so a tent hard against a wall would lay its eave over a few pixels of that
+   wall's side near to. No map puts a tent against a wall (the Wold's stand clear).
 
 Decided by delegate for #500, each the owner's to overturn:
 
@@ -1943,10 +1954,9 @@ About 900 squares in all cut, to come back as country only if the act plays shor
 
 Owed, from J11 (#499):
 
-- **The monastery drawn tall** over one square, as the brief asks: the second `Landmark` kind it
-  needed, `'monastery'`, bell towers over a wall with no lamp, is built (#736). J11 lists it over
-  Highcell, on 26,25 inside the block behind the gate, in #736's area pull request that follows;
-  until then J11 draws Highcell as a block of building squares on its shelf (§9, #499's 5).
+- **The monastery drawn tall** over one square, as the brief asks, is built: the second `Landmark`
+  kind, `'monastery'`, bell towers over a wall with no lamp, and J11 lists it over Highcell on
+  26,25, inside the block behind the gate (#736; §9, #499's 5 and #736's 1).
 - **The pilgrims' hostel's cellar,** the issue's secret, is not built: the doc's store behind the
   wall is (§4.2, §9, #499's 14).
 
