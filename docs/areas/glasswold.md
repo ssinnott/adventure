@@ -1362,9 +1362,10 @@ seen, a cliff from its top.
   price.
 - **As built, the side quests** (#532). They pay §8's 1,000 xp a member whichever way each goes,
   51 200, 53 250, 54 250 and 55 300, and add no gold, group or chest. The curve counts 700 of it
-  here, 55's 300 being paid at Cinderport's temple and so counted in Ashfall's clear: a clear of the
-  Glasswold gives 18,313 xp a member of the 21,067 asked, 0.87 times, and 9,650 gold of the 12,720,
-  the owed row's floor (§9, #532's 1 and 14), which E9 and E8 close (next).
+  here, 55's 300 being paid at Cinderport's temple and so counted in Ashfall's clear (pay is booked
+  where it is paid, and the curve test prints it; decided by the owner's delegate, 16 October 2026,
+  #728): a clear of the Glasswold gives 18,313 xp a member of the 21,067 asked, 0.87 times, and
+  9,650 gold of the 12,720, the owed row's floor (§9, #532's 1 and 14), which E9 and E8 close (next).
 - **As built, E9 and E8** (#534). Each pays 1,563 xp a member, 1.12 times the 1,400 asked of a box
   (a pride 5,683, three vultures 1,551 and a pair of basilisks 2,146, over six: 9,380; §9, #534's
   7). E9 pays 1,600 gold, the strongbox's 1,200 and 400 and an Elixir in the cairn, and E8 1,500,

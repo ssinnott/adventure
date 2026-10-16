@@ -6,15 +6,19 @@
 // its floor and three quarters cleared, paid by level, an area leaves a company no more than a
 // level over the next floor, unless it is named as passing that. What a row says is owed is
 // reported, not failed, until it holds. A map an area lists `outside` is held to its own band and
-// its country's window, and what it pays is a figure, counted in no clear.
+// its country's window, and what it pays is a figure, counted in no clear. Pay is booked where it
+// is paid, and each quest a clear counts that belongs to another area is a figure too, printed.
 import { AREAS, ATLAS, MAP_DEFS, MONSTERS, ITEMS } from '../../src/content/index.ts';
 import type { RegionId } from '../../src/content/index.ts';
 import type { Area } from '../../src/content/area.ts';
 import { CURVE, PLANNED, MEMBERS, xpBudget, goldBudget } from '../../src/content/progression.ts';
 import type { AreaCurve } from '../../src/content/progression.ts';
 import { GameMap } from '../../src/game/map.ts';
-import type { MapDef, Feature, EncounterDef } from '../../src/game/map.ts';
+import type { MapDef, Feature, EncounterDef, Choice } from '../../src/game/map.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
+import type { QuestDef } from '../../src/game/quests.ts';
+import type { GuildQuest } from '../../src/game/guilds.ts';
+import { guildName } from '../../src/game/guilds.ts';
 import { areaBand } from '../../src/game/atlas.ts';
 import { giftOf, spentId } from '../../src/game/wilds.ts';
 import { handIns, choices } from '../../src/game/people.ts';
@@ -133,25 +137,101 @@ export function clearGroups(maps: readonly Pick<MapDef, 'encounters'>[]): Encoun
   });
 }
 
-/** A clear of these maps: every group once, a twin pair once; a member's share of the xp summed; the gold in cash. */
+/** A question a clear asks: the question, the person who puts it and the map they stand on. */
+interface Asked { choice: Choice; who: string; at: Pick<MapDef, 'id' | 'name'> }
+
+/** The questions a clear of these maps asks, each once: one two people share (one person in two places) is counted once, at the first. */
+function questionsOf(maps: readonly Pick<MapDef, 'id' | 'name' | 'features'>[]): Asked[] {
+  const first = new Map<Choice, Asked>();
+  for (const d of maps) for (const f of d.features ?? []) if (f.kind === 'npc') for (const choice of choices(f)) if (!first.has(choice)) first.set(choice, { choice, who: f.name, at: d });
+  return [...first.values()];
+}
+
+/** A question's pay, whichever way it is answered: of its answers, the least, for each of xp and gold. */
+const sureOf = (c: Choice, k: 'xp' | 'gold'): number => Math.min(...c.answers.map((a) => a.pay?.[k] ?? 0));
+
+/** A hand-in a clear counts: its reward, the flag it sets, the person who takes the item and the map they stand on. */
+interface Taken { reward: number; setFlag: string; who: string; at: Pick<MapDef, 'id' | 'name'> }
+
+/** The hand-ins a clear of these maps counts, one for each item: of two people who take it, the larger (the first, on a tie). */
+function handInsOf(maps: readonly Pick<MapDef, 'id' | 'name' | 'features'>[]): Taken[] {
+  const best = new Map<string, Taken>();
+  for (const d of maps) for (const f of d.features ?? []) if (f.kind === 'npc') for (const q of handIns(f)) {
+    if (q.reward > (best.get(q.item)?.reward ?? -1)) best.set(q.item, { reward: q.reward, setFlag: q.setFlag, who: f.name, at: d });
+  }
+  return [...best.values()];
+}
+
+/**
+ * A clear of these maps: every group once, a twin pair once; a member's share of the xp summed; the gold in cash.
+ *
+ * Pay is booked where it is paid (#728): a question's or a hand-in's in the clear of the area whose map holds the
+ * person who pays it, and a guild quest's in the clear of the area whose file holds it, whichever hall pays it. It
+ * is never moved to the area whose quest log the quest is in, or whose country its deed lies in, so a quest done
+ * in one country and paid in another is counted in the second's clear: the Garden of Glass, the Glasswold's, is
+ * paid by the priest at Cinderport's temple and counted in Ashfall's. `crossBooked` reads each such quest from the
+ * data and the road prints it.
+ */
 function clearOf(maps: readonly MapDef[], guild: NonNullable<Area['guilds']> = []): Clear {
   const groups = clearGroups(maps);
   const placed = groups.flatMap((e) => e.monsters.map((m) => MONSTERS[m]));
   const every = maps.flatMap((d) => d.encounters ?? []).flatMap((e) => e.monsters.map((m) => MONSTERS[m]));
   const features = maps.flatMap((d) => d.features ?? []);
-  // A question's pay, whichever way it is answered: of its answers, the least, for each of xp and gold.
-  // A question two people share (one person in two places) is counted once.
-  const asked = [...new Set(features.flatMap((f) => f.kind === 'npc' ? choices(f) : []))];
-  const sure = (k: 'xp' | 'gold'): number => asked.reduce((t, c) => t + Math.min(...c.answers.map((a) => a.pay?.[k] ?? 0)), 0);
+  const asked = questionsOf(maps).map((a) => a.choice);
+  const sure = (k: 'xp' | 'gold'): number => asked.reduce((t, c) => t + sureOf(c, k), 0);
   const quest = guild.reduce((t, q) => t + (q.pay.xp ?? 0), 0) + sure('xp');
   const xp = Math.floor((placed.reduce((t, m) => t + m.xp, 0) + quest) / MEMBERS);
-  // A hand-in's reward, once an item: of two people who take it, the larger.
-  const rewards = new Map<string, number>();
-  for (const f of features) if (f.kind === 'npc') for (const q of handIns(f)) rewards.set(q.item, Math.max(rewards.get(q.item) ?? 0, q.reward));
   const gold = placed.reduce((t, m) => t + (m.gold[0] + m.gold[1]) / 2, 0)
-    + features.reduce((t, f) => t + (giftOf(f)?.gold ?? 0), 0) + [...rewards.values()].reduce((t, r) => t + r, 0)
+    + features.reduce((t, f) => t + (giftOf(f)?.gold ?? 0), 0) + handInsOf(maps).reduce((t, h) => t + h.reward, 0)
     + guild.reduce((t, q) => t + (q.pay.gold ?? 0), 0) + sure('gold');
   return { xp, gold, placed, every, features, quest: quest / MEMBERS };
+}
+
+/** An area as the booking reads it: its maps, its side quests and its chapter of the one quest. */
+interface Country { id: string; maps: readonly Pick<MapDef, 'id'>[]; quests: readonly Pick<QuestDef, 'title' | 'done'>[]; chapter?: Pick<QuestDef, 'title' | 'done'> }
+
+/** A name said mid-sentence: "the Glasswold", "a priest of the Harbour Temple". */
+const said = (name: string): string => name.replace(/^(The|An?) /, (w) => w.toLowerCase());
+/** An area's name, as the atlas has it. */
+const areaName = (id: string): string => ATLAS.areas.find((a) => a.id === id)?.name ?? id;
+/** The flags a quest is done on. */
+const doneOn = (q: Pick<QuestDef, 'done'>): string[] => [q.done ?? []].flat().flatMap((c) => [c.flag ?? []].flat());
+/** What a quest books, in the road's words: a member's share of the xp, the gold in cash. */
+const pays = (xp: number, gold: number): string => [xp ? `${fmt(xp / MEMBERS)} xp a member` : '', gold ? `${fmt(gold)} gold` : ''].filter(Boolean).join(' and ');
+
+/**
+ * What a clear counts of a quest that belongs to another area (#728), one message each: a figure, never a failure.
+ * Pay is booked where it is paid (`clearOf`), so these are the quests done in one area's country and paid in
+ * another's, read from the data:
+ * - a question the clear counts (one that pays whichever way it is answered, as the clear reads it) whose answers
+ *   set a flag that another area's quest log, its side quests and its chapter, reads as the quest's `done`: the
+ *   Garden of Glass, the Glasswold's, paid by the priest at Cinderport's temple; and a hand-in's reward, which
+ *   sets such a flag, in the same way;
+ * - a guild quest of the area's file, paid at any hall, whose deed names (`seen`, `slain` or `visited`) a map of
+ *   another area. A deed that is a flag or an item names no map and is counted with its file.
+ */
+function crossBooked(id: string, maps: readonly Pick<MapDef, 'id' | 'name' | 'features'>[], guild: readonly GuildQuest[], world: readonly Country[]): string[] {
+  const areaOf = new Map(world.flatMap((a) => a.maps.map((d) => [d.id, a.id] as const)));
+  const logs = world.flatMap((a) => [...a.quests, ...(a.chapter ? [a.chapter] : [])].map((quest) => ({ area: a.id, quest })));
+  const out: string[] = [];
+  const paid = [
+    ...questionsOf(maps).map(({ choice, who, at }) => ({ xp: sureOf(choice, 'xp'), gold: sureOf(choice, 'gold'), sets: choice.answers.flatMap((a) => [a.sets ?? []].flat()), who, at })),
+    ...handInsOf(maps).map(({ reward, setFlag, who, at }) => ({ xp: 0, gold: reward, sets: [setFlag], who, at })),
+  ];
+  for (const { xp, gold, sets, who, at } of paid) {
+    if (!xp && !gold) continue;
+    for (const { area, quest } of logs.filter((l) => l.area !== id && doneOn(l.quest).some((f) => sets.includes(f)))) {
+      out.push(`${id}: its clear counts ${said(quest.title)}'s ${pays(xp, gold)}, ${said(areaName(area))}'s quest paid at ${at.name} by ${said(who)}`);
+    }
+  }
+  for (const q of guild) {
+    const deeds = [q.goal ?? []].flat().flatMap((c) => [c.seen ?? [], c.slain ?? [], c.visited ?? []].flat().map((ref) => ref.split(':')[0]));
+    const away = [...new Set(deeds.flatMap((m) => areaOf.get(m) ?? []))].filter((a) => a !== id);
+    if (away.length && (q.pay.xp || q.pay.gold)) {
+      out.push(`${id}: its clear counts ${said(q.title)}'s ${pays(q.pay.xp ?? 0, q.pay.gold ?? 0)}, ${guildName(q.guild)}'s quest paid at any hall, its deed in ${away.map((a) => said(areaName(a))).join(' and ')}`);
+    }
+  }
+  return out;
 }
 
 /**
@@ -179,7 +259,7 @@ const LEAD = 1;
  */
 const OVER_ROAD: Partial<Record<keyof typeof CURVE, { level: number; why: string }>> = {
   kilns: { level: 19.3, why: 'the bosses pay the line\'s (MONSTERS §4.3 and §4.4), and the country behind the road adds to it (#474)' },
-  ashfall: { level: 27.4, why: 'the Stone, the rungs, the quests and the sentries, and the country behind the road adds to it (#522)' },
+  ashfall: { level: 27.4, why: 'the Stone, the rungs, the quests and the sentries, and the country behind the road adds to it (#522); accepted as built (#738)' },
 };
 
 const leadSaid = (id: string, left: number, next: number): string =>
@@ -256,6 +336,33 @@ export function curve(): void {
     'and so is the pair whose `until` group does not leave, which stays till it is killed and may be met beside its twin');
   ok(fought(hands('a', 2, gone), hands('b', 1, later), hands('c', 3, later)) === 'a,b,c',
     'and three groups on a square, an `until` of 2 beside two `after` of 1 and 3, met as 2 or 4 and never 1, are counted all');
+  // Pay is booked where it is paid, and the quests a clear counts that belong to another area are read from the data
+  // (#728): a question that pays, whose answers set the flag another area's quest is done on, and a guild quest whose
+  // deed names a map of another area. Not a quest of the area's own, a question that pays nothing in some answer (the
+  // clear counts the least), nor a guild quest whose deed is a flag, an item or on the area's own maps.
+  const ask = (...answers: [xp: number, sets: string][]): Feature => ({ kind: 'npc', x: 1, y: 1, name: 'A priest', lines: ['.'],
+    choice: { ask: '?', answers: answers.map(([xp, sets], i) => ({ label: `${i}`, sets, pay: { xp }, says: ['.'] })) } });
+  const quest = (title: string, flag: string): Pick<QuestDef, 'title' | 'done'> => ({ title, done: { flag } });
+  const lands: Country[] = [{ id: 'fx_a', maps: [{ id: 'fx_a1' }], quests: [quest('The Home', 'fx_home')] },
+    { id: 'fx_b', maps: [{ id: 'fx_b1' }], quests: [quest('The Away', 'fx_away')], chapter: quest('The Road', 'fx_road') }];
+  const booked = (...features: Feature[]): string => crossBooked('fx_a', [{ id: 'fx_a1', name: 'Fx Home', features }], [], lands).join('|');
+  ok(booked(ask([600, 'fx_away'])) === 'fx_a: its clear counts the Away\'s 100 xp a member, fx_b\'s quest paid at Fx Home by a priest'
+    && booked(ask([600, 'fx_road'])).includes('the Road\'s 100 xp a member') && booked(ask([600, 'fx_away'], [900, 'fx_nowhere'])).includes('the Away\'s 100 xp a member'),
+    'a question that pays, whose answer sets the flag another area\'s quest (or its chapter) is done on, is counted in the clear of the area whose map holds the person, at the least of its answers');
+  const shared = ask([600, 'fx_away']);
+  ok(!booked(ask([600, 'fx_home'])) && !booked(ask([0, 'fx_away'])) && !booked(ask([600, 'fx_away'], [0, 'fx_nowhere'])) && booked(shared, shared) === booked(shared),
+    'and one for the area\'s own quest, one that pays nothing in some answer, or none at all, is not printed, and one two people share is printed once');
+  const take = (reward: number, setFlag: string): Feature => ({ kind: 'npc', x: 1, y: 1, name: 'A priest', lines: ['.'], quest: { item: 'fx_letter', reward, done: ['.'], setFlag } });
+  ok(booked(take(500, 'fx_away')) === 'fx_a: its clear counts the Away\'s 500 gold, fx_b\'s quest paid at Fx Home by a priest' && booked(take(300, 'fx_home'), take(500, 'fx_away')) === booked(take(500, 'fx_away'))
+    && !booked(take(300, 'fx_away'), take(500, 'fx_home')) && !booked(take(0, 'fx_away')),
+    'and so is a hand-in\'s reward, at the larger of two people who take the item, and not a reward of nothing');
+  const deed = (goal: GuildQuest['goal'], pay: GuildQuest['pay'] = { xp: 600, gold: 40 }): string =>
+    crossBooked('fx_a', [], [{ id: 'fx_q', guild: 'compact', rank: 0, offer: [], goal, paid: [], pay, title: 'The Errand', entries: [], goals: [] }], lands).join('|');
+  ok(deed({ seen: 'fx_b1:x' }) === 'fx_a: its clear counts the Errand\'s 100 xp a member and 40 gold, the Salt Compact\'s quest paid at any hall, its deed in fx_b'
+    && !!deed({ slain: ['fx_a1:g', 'fx_b1:h'] }) && !!deed({ visited: 'fx_b1' }) && !!deed([{ flag: 'fx_f' }, { seen: 'fx_b1:x' }]),
+    'a guild quest whose deed is seen, slain or visited on a map of another area is counted in the clear of the area whose file holds it, with its xp a member and its gold');
+  ok(!deed({ seen: 'fx_a1:x' }) && !deed({ flag: 'fx_f' }) && !deed({ item: 'fx_i' }) && !deed(undefined) && !deed({ seen: 'fx_nowhere:x' }) && !deed({ seen: 'fx_b1:x' }, { items: ['fx_i'] }),
+    'and one whose deed is on the area\'s own maps, a flag, an item, none or no map at all, or that pays no xp or gold, is not printed');
   // The road's last area reads its deep places' bands with its zone's (docs/areas/hearth_isle.md §9,
   // call 2): its isle laid at 28-29 reads 28-32 with the Underdeep and the Core, and 28-29 without.
   const laid = { ...ATLAS, zones: ATLAS.zones.map((z) => (z.area === 'hearth' ? { ...z, maps: [{ map: 'fx_isle', at: [0, 0] as const }] } : z)) };
@@ -304,6 +411,9 @@ export function curve(): void {
     if (area) {
       const left = leaves(lo, clear.placed, clear.quest), held = OVER_ROAD[id], fault = leadFault(id, left, row.next, held);
       ok(!fault, fault ?? `${leadSaid(id, left, row.next)}${held ? `, a named exception held at ${held.level}: ${held.why}` : ''}`);
+      // Pay is booked where it is paid (#728): what this clear counts of a quest that belongs to another area, by its
+      // quest log or its deed, is a figure, printed and never a failure.
+      for (const line of crossBooked(id, maps, area.guilds ?? [], AREAS)) ok(true, line);
     }
     // What the maps outside give is a figure, never a failure: no clear counts it, and no one owes
     // it, for they are the deepest levels, which the road never needs.
