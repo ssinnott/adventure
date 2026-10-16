@@ -1391,7 +1391,8 @@ const mark = await page.evaluate(async () => {
 });
 
 // The pilot (#716), last, so nothing above sees its lines in the log: P on the exploration screen
-// hands it the game and its band darkens the top of the view for the why line; P again takes it back.
+// hands it the game and its band darkens the top of the view for the why line; T steps its tempo;
+// P again takes the game back, and once P has handed it over again, an arrow takes it back too.
 const pilotAt = { x: LAYOUT.view.x + 2, y: LAYOUT.view.y + 2 };
 const pilotPixel = (): Promise<number[]> => page.evaluate((p: { x: number; y: number }) => [...(document.getElementById('stage') as HTMLCanvasElement).getContext('2d')!.getImageData(p.x, p.y, 1, 1).data].slice(0, 3), pilotAt);
 const pilotBefore = await pilotPixel();
@@ -1399,8 +1400,15 @@ const pilotFrom: number = await page.evaluate(() => (window as any).__game.game.
 await page.keyboard.press('KeyP');
 await page.waitForFunction((f: number) => (window as any).__game.game.frame >= f + 60, pilotFrom, { timeout: 15000 });
 const pilotBand = { on: await page.evaluate(() => (window as any).__game.game.pilot.on === true), at: await pilotPixel() };
+const pilotState = (): Promise<{ on: boolean; tempo: number }> => page.evaluate(() => { const p = (window as any).__game.game.pilot; return { on: p.on, tempo: p.tempo }; });
+await page.keyboard.press('KeyT'); await page.waitForTimeout(100);
+const pilotTempo = await pilotState();
 await page.keyboard.press('KeyP'); await page.waitForTimeout(100);
-const pilotOff = await page.evaluate(() => (window as any).__game.game.pilot.on === false);
+const pilotOff = (await pilotState()).on === false;
+await page.keyboard.press('KeyP'); await page.waitForTimeout(100);
+const pilotAgain = (await pilotState()).on;
+await page.keyboard.press('ArrowLeft'); await page.waitForTimeout(100);
+const pilotArrow = (await pilotState()).on === false;
 
 await browser.close();
 server.close();
@@ -1432,6 +1440,7 @@ ok(screen2 === 'CombatScreen' && combatColours > 20, `a fight opens and paints (
   const light = (c: number[]): number => (c[0] + c[1] + c[2]) / 3;
   ok(pilotBand.on && Math.max(...pilotBand.at) < 100 && light(pilotBand.at) <= light(pilotBefore) * 0.6 + 4 && pilotOff,
     `P hands the game to the pilot, whose band darkens the top of the view 60 frames on (${pilotBefore.join(',')} to ${pilotBand.at.join(',')} at ${pilotAt.x},${pilotAt.y}), and P again takes it back (${pilotOff ? 'off' : 'still on'})`);
+  ok(pilotTempo.on && pilotTempo.tempo === 2 && pilotAgain && pilotArrow, `T steps the pilot's tempo while it drives (${pilotTempo.tempo}×), and an arrow takes the game back as P does (${pilotArrow ? 'off' : 'still on'})`);
 }
 ok(mark.set && mark.asked.screen === 'ChoiceScreen' && mark.asked.options.join('|') === 'Return to the mark|Set it here' && mark.back, `with a mark set, Waymark asks whether to return or set it here, and returns (${JSON.stringify(mark)})`);
 ok(glass.asked === 'element' && glass.element === 'cold' && glass.line === 'Maren casts Lampglass. The glass dims the cold.', `Lampglass asks against what before it is cast, and casts the pick (${JSON.stringify(glass)})`);

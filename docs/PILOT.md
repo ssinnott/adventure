@@ -28,7 +28,8 @@ the pilot hands each fight to the bot, closes each message box and says "Nothing
   game's voice and `PILOT 1X` at its right; the hint that would stand there is not drawn. With no
   brain to ask it says "Nothing to do."
 - It stops by itself at a party wipe, saying "The company has fallen.", and at the ending's choice
-  (#721). Nothing else is the viewer's to say.
+  (#721). Nothing else is the viewer's to say. A stop of its own keeps the band up with its why line
+  until the next key; when the viewer takes the helm, the band goes at once.
 
 ## Fair: Known
 
@@ -46,14 +47,30 @@ through `g.world`, `g.maps` or a `MapDef`:
 - the maps visited, the world map as it is painted (`placeOf`) and every line heard: what `Game.say`
   says and every message box opened, the last 2000. A new game or a load empties it.
 
-A zone map's id (a goal's map may be one) reads as the outdoors it lies in. The headless run's
-`omniscient` pilot (#723) has every square seen; the game never sets it.
+A zone map's id (a goal's map may be one) names the outdoors it lies in, in one reckoning: every
+reader takes and gives the outdoors' squares, as `g.world.state` has them while the party is there,
+and its features and exits are those in the zone's box. A goal's square written in the zone's own
+reckoning goes through `World.locate` first. Features and exits of seen squares are as the world has
+them now, not as last seen. The headless run's `omniscient` pilot (#723) has every square seen; the
+game never sets it.
+
+Not in `Known` yet, each built by the first issue that uses it, with its own fairness test: what a
+menu has shown, such as a shop's stock and a trainer's top level (#719); a zone's band, read once the
+party has been in the zone or the world map's almanac shows it (#718); and a goal's map, read once
+seen (#720).
+
+## Brains
+
+The brains (`BRAINS`, each `(g, k, p) => Action | null`) are asked in order on every paced tick,
+whatever screen is on top, and the first key given is pressed. A brain returns null unless the
+screen it works on is on top: route and explore only on the ExploreScreen; talk and keep also on the
+screens they answer.
 
 ## The files
 
 | File | Owns |
 |---|---|
-| `src/game/pilot/pilot.ts` | `Pilot`: on and off (`toggle`), the tempo and the pace, the why line, the corpus heard (`hear`, `forget`), the next key (`next`) and `BRAINS`: the brains in the order asked (fight, keep, aims, route, explore, talk), each slot absent until its module lands |
+| `src/game/pilot/pilot.ts` | `Pilot`: on and off (`toggle`), a stop of its own (`stop`), the tempo and the pace, the why line and what the band shows (`band`), the corpus heard (`hear`, `forget`), the next key (`next`) and `BRAINS`: the brains in the order asked (fight, keep, aims, route, explore, talk), each slot absent until its module lands |
 | `src/game/pilot/known.ts` | `Known` and `knownOf`, the fair view; `fair`, a feature as the party knows it |
 | `src/game/ink.ts` | `drawnCell`: what a cell is drawn as, which the view, the automap and Known share |
 | `src/game/bot.ts` | the fight and the rest rule (`botTurn`, `asSeen`, `mustRest`, #714) |
@@ -87,13 +104,16 @@ Decided by delegate for #716, each the owner's to overturn:
 
 1. **P on the company screen is P on the title.** No game is under way on either, so both start one on a fresh seed with a drawn company (the epic's Decided 11), and the pilot asks no brain on them.
 2. **The drawn company** (`randomParty(seed)`, beside the company screen and rolled from the seed as it rolls): six of the ten classes with a mender among them (a cleric, a paladin, a bard or a druid), so the bot's mending and the rest rule have someone to lean on; the hardiest by hit die in the front row, as a player would stand them; a people and one of the screen's twelve names each. The seed alone makes it, so a seed replays (DESIGN §13).
-3. **A feature through Known is a fair copy of a `Feature`**, not a type of its own, since #719 reads `k.features` by kind: what only a meeting, a menu or a use shows is blank ('' for words, [] for lists, NaN for a number, {} for a gift) and the rest is gone. A shop's stock and prices, a trainer's top level, an inn's price and a guild's classes, fee and tiers are withheld outright for now: they are on screen in the menu, and #719 adds the memory of what a menu has shown when the quartermaster first needs it.
+3. **A feature through Known is a fair copy of a `Feature`**, not a type of its own, since #719 reads `k.features` by kind: what only a meeting, a menu or a use shows is blank ('' for words, [] for lists, NaN for a number, {} for a gift) and the rest is gone. A shop's stock and prices, a trainer's top level, an inn's price and a guild's classes, fee and tiers are blanked outright for now, though #719 needs the stock and the top level: #719 adds the memory of what a menu has shown, in `known.ts`, with its own fairness test.
 4. **`Known.cell` gives `Inked`, a `Cell` without `ch`**: stripping the legend letter changes the type, so the type says so and no brain can read it.
 5. **Known's exits are the automap's**: on seen squares and there now (`World.there`, so an exit not there yet is floor, as it looks), with where each leads and nothing of a gate or its label. A rift keeps where it leads, as an exit does.
-6. **A zone map's id** reads through `World.locate` as the outdoors it lies in, in the zone's own squares; its features and exits are those in its box.
+6. **A zone map's id names the outdoors it lies in, in one reckoning**: `seen`, `cell`, `features` and `exits` all take and give the outdoors' squares, as `g.world.state` has them while the party stands in the zone, which is what the navigator compares with; its features and exits are those in its box. A goal's square written in the zone's own reckoning goes through `World.locate` before it is compared.
 7. **`CombatScreen.instant` stays** beside the pilot's `instant`: the combat tests turn it on and off in the middle of a fight, which a pilot's readonly `instant` cannot do. Either makes the screen's delays count as none.
-8. **The corpus is forgotten on a new game or a load** (`Pilot.forget`, called by `Game.newGame` and `Game.loadGame`): a new company has heard nothing, and a loaded one only what came before its save.
-9. **A wipe**: `Game.gameOver` turns the pilot off through `toggle` ("You take the helm.") and sets the why line to "The company has fallen."; the band goes with it, so the viewer reads the title's own note.
+8. **The corpus is forgotten on a new game or a load** (`Pilot.forget`, called by `Game.newGame` and `Game.loadGame`): a new company has heard nothing, and a loaded one has heard nothing either, as the corpus is never saved.
+9. **A stop of its own keeps the band up.** A wipe (`Game.gameOver`) calls `Pilot.stop`, which gives the helm back through `toggle` ("You take the helm.") and keeps "The company has fallen." in the band over the title until the next key (`Pilot.stopped`, cleared by `Game.update` and by P and T in `src/main.ts`); #721's stop at the ending's choice can do the same. When the viewer takes the helm, the band goes at once.
 10. **`PILOT 2X`, not `2×`**: the font has no ×.
 11. **`Pilot.brains`**, the brains a pilot asks: `BRAINS`, unless a test names its own (#718's asks for route and explore alone).
 12. **`drawnCell` moves to `src/game/ink.ts`**, a file of its own rather than `map.ts`, which every content builder shares; `tools/tests/art.ts` and the smoke test's crack sweep import it from there.
+13. **A known simplification: features and exits of seen squares are as the world has them now** (`World.present`, `World.there`), not as last seen: a person with an `after`, or a door a flag opens, shows from afar the moment its flag is set, though nobody has looked since.
+14. **A zone's band and a goal's map are read once seen; built by the first issue that uses them** (the zone's band by #718's explorer bound, the goal's map by #720's strategist), each with its own fairness test: a zone's band is read once the party has been in the zone or the world map's almanac shows it. `Known` has no member for either yet.
+15. **A brain returns null unless the screen it works on is on top**: route and explore only on the ExploreScreen; talk and keep also on the screens they answer. The frame asks every brain whatever is on top, so #717's route, asked before talk, never presses its plan into a choice or a business opened on the way.

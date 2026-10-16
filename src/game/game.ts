@@ -123,6 +123,8 @@ export class Game {
 
   update(a: Action | null): void {
     this.frame++;
+    // Any key takes down the band a stop of the pilot's left up (P and T do in src/main.ts).
+    if (a && this.pilot) this.pilot.stopped = null;
     this.top.update(this, a);
     // A visit ends the moment the last of its menus closes, so no frame shows the room without one,
     // and leaving a business is a return to exploring like any other.
@@ -143,14 +145,15 @@ export class Game {
     // Draw the exploration frame under any overlay screen.
     const base = this.screens.findIndex((s) => !s.overlay);
     for (let i = Math.max(0, base); i < this.screens.length; i++) this.screens[i].render(this, ctx, this.frame);
-    // While the pilot drives, its why line in a band over the top of the view, over every screen.
-    const p = this.pilot, v = LAYOUT.view;
-    if (!p?.on) return;
+    // While the pilot drives, and after it stops itself until the next key, its why line in a band
+    // over the top of the view, over every screen.
+    const band = this.pilot?.band(), v = LAYOUT.view;
+    if (!band) return;
     ctx.fillStyle = 'rgba(0,0,0,0.6)';
     ctx.fillRect(v.x, v.y, v.w, 24);
-    drawText(ctx, p.why[0], v.x + 6, v.y + 4, { size: 1, color: '#ffe08a' });
-    if (p.why[1]) drawText(ctx, p.why[1], v.x + 6, v.y + 14, { size: 1, color: '#d8d0c0' });
-    drawText(ctx, `PILOT ${p.tempo}X`, v.x + v.w - 6, v.y + 4, { size: 1, color: '#ffe08a', align: 'right' });
+    drawText(ctx, band.lines[0], v.x + 6, v.y + 4, { size: 1, color: '#ffe08a' });
+    if (band.lines[1]) drawText(ctx, band.lines[1], v.x + 6, v.y + 14, { size: 1, color: '#d8d0c0' });
+    if (band.tag) drawText(ctx, band.tag, v.x + v.w - 6, v.y + 4, { size: 1, color: '#ffe08a', align: 'right' });
   }
 
   // ---- quests ----
@@ -359,7 +362,7 @@ export class Game {
 
   gameOver(): void {
     // A wipe ends the pilot's run: it gives the helm back, and says why (epic #713, Decided 10).
-    if (this.pilot?.on) { this.pilot.toggle(this); this.pilot.why = ['The company has fallen.']; }
+    if (this.pilot?.on) this.pilot.stop(this, ['The company has fallen.']);
     this.screens = [new TitleScreen(hasSave(this.store), 'The party has fallen. Caldera goes on without them.')];
   }
 
@@ -449,8 +452,8 @@ export class ExploreScreen implements Screen {
     const f = g.world.featureHere();
     const grp = g.world.groupAt(ahead.x, ahead.y);
     const hint = grp ? `${monster(grp.def.monsters[0]).plural}: Space to attack` : f ? `${featureLabel(f)}: Space` : '';
-    // The pilot's band takes the top of the view while it drives.
-    if (hint && !g.pilot?.on) drawText(ctx, hint, LAYOUT.view.x + LAYOUT.view.w / 2, LAYOUT.view.y + 6, { size: 1, color: '#ffe08a', align: 'center' });
+    // The pilot's band takes the top of the view while it is up.
+    if (hint && !g.pilot?.band()) drawText(ctx, hint, LAYOUT.view.x + LAYOUT.view.w / 2, LAYOUT.view.y + 6, { size: 1, color: '#ffe08a', align: 'center' });
     drawStatus(ctx, g.world);
     drawAutomap(ctx, g.world, frame);
     drawPartyCards(ctx, g.party, -1, frame);

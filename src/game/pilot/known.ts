@@ -36,9 +36,13 @@ export interface Known {
 }
 
 /**
- * The fair view of `g`. A zone map's id (a goal's map may be one) reads as the outdoors it lies in,
- * through `World.locate`, its squares in the zone's own reckoning; its features and exits are those
- * in its box. A pilot's `omniscient` (the headless run, #723) has every square seen.
+ * The fair view of `g`. A zone map's id (a goal's map may be one) names the outdoors it lies in
+ * (`World.locate`), and every reader takes and gives the outdoors' squares, as `g.world.state` has
+ * them while the party is there: `seen` and `cell` answer for any of them, and the features and exits
+ * are those in the zone's box. A goal's square written in the zone's own reckoning goes through
+ * `World.locate` before it is compared. Features and exits of seen squares are as the world has them
+ * now, not as last seen (a known simplification). A pilot's `omniscient` (the headless run, #723)
+ * has every square seen.
  */
 export function knownOf(g: Game): Known {
   const w = g.world, all = g.pilot?.omniscient ?? false;
@@ -47,7 +51,7 @@ export function knownOf(g: Game): Known {
     const ms = w.state.maps[m.id];
     return all || (!!ms && lit(ms.explored, y * m.width + x));
   };
-  /** The map as played that an id names, and the zone's box where a zone map's id named it. */
+  /** The map as played that an id names (a zone map's is the outdoors), and the zone's box where a zone map's id named it. */
   const played = (map: string): { m: GameMap; box?: MapZone } | undefined => {
     const id = w.locate(map, 0, 0).mapId, m = g.maps[id];
     return m && { m, box: id === map ? undefined : m.zones.find((z) => z.id === map) };
@@ -55,13 +59,13 @@ export function knownOf(g: Game): Known {
   const inBox = (box: MapZone | undefined, x: number, y: number): boolean => !box || (x >= box.x && y >= box.y && x < box.x + box.w && y < box.y + box.h);
   return {
     seen(map, x, y) {
-      const at = w.locate(map, x, y), m = g.maps[at.mapId];
-      return !!m && seenOn(m, at.x, at.y);
+      const p = played(map);
+      return !!p && seenOn(p.m, x, y);
     },
     cell(map, x, y) {
-      const at = w.locate(map, x, y), m = g.maps[at.mapId];
-      if (!m || !seenOn(m, at.x, at.y)) return undefined;
-      const { terrain, solid, door } = drawnCell(m, at.x, at.y);
+      const p = played(map);
+      if (!p || !seenOn(p.m, x, y)) return undefined;
+      const { terrain, solid, door } = drawnCell(p.m, x, y);
       return door === 'secret' ? { terrain, solid: 'wall', door: 'none' } : { terrain, solid, door };
     },
     features(map) {

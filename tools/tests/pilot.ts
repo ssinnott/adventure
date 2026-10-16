@@ -2,7 +2,8 @@
 // on and off, keeps the pace, hands a fight to the bot, closes a box and says why. Its brains (#717 to
 // #721) bring tests of their own. Every game here is headless, with an instant pilot unless the pace
 // is the point.
-import { Game } from '../../src/game/game.ts';
+import { Game, ExploreScreen } from '../../src/game/game.ts';
+import type { Store } from '../../src/game/save.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { MapDef, Feature } from '../../src/game/map.ts';
 import { EAST } from '../../src/game/types.ts';
@@ -10,6 +11,7 @@ import { Pilot, HEARD_MAX } from '../../src/game/pilot/pilot.ts';
 import type { Brain } from '../../src/game/pilot/pilot.ts';
 import { knownOf } from '../../src/game/pilot/known.ts';
 import { CombatScreen } from '../../src/ui/combat.ts';
+import { ChoiceScreen } from '../../src/ui/screens.ts';
 import { randomParty } from '../../src/ui/create.ts';
 import { CLASSES } from '../../src/game/party.ts';
 import { ok, headlessGame, drive } from './lib.ts';
@@ -32,7 +34,7 @@ export function pilot(): void {
 
 /** What Known gives of the squares, the cells, the features, the maps and the world map. */
 function known(): void {
-  const g = piloted(), k = knownOf(g), s = g.world.state, m = g.maps.harrow, list = m.features as Feature[];
+  const g = piloted(), k = knownOf(g), s = { ...g.world.state }, m = g.maps.harrow, list = m.features as Feature[];
   const corners = [[0, 0], [m.width - 1, 0], [0, m.height - 1], [m.width - 1, m.height - 1]];
   const [fx, fy] = corners.sort(([ax, ay], [bx, by]) => Math.hypot(bx - s.x, by - s.y) - Math.hypot(ax - s.x, ay - s.y))[0];
   ok(s.mapId === 'harrow' && k.seen('harrow', s.x, s.y) && !k.seen('harrow', fx, fy), `Known has the start square seen and the far corner of Harrow not (${s.x},${s.y} and ${fx},${fy})`);
@@ -47,6 +49,15 @@ function known(): void {
   ok(g.maps.fx_secret.at(2, 1).door === 'secret' && door?.solid === 'wall' && door.door === 'none' && !('ch' in door) && floor?.solid === 'none' && !('ch' in floor),
     `a secret door seen reads as a wall, its legend letter gone (${JSON.stringify(door)})`);
   ok(k.cell('harrow', fx, fy) === undefined && all.cell('harrow', fx, fy) !== undefined, 'an unseen square has no cell');
+  // An exit not there yet (`after`, #749) is floor to the eye, and an exit once it is.
+  const late: MapDef = { id: 'fx_after', name: 'After', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#...#', '#####'], exits: [{ x: 3, y: 1, to: 'harrow', tx: 1, ty: 1, after: { flag: 'fx_ready' } }] };
+  g.maps.fx_after = new GameMap(late);
+  g.world.travel('fx_after', 1, 1, EAST);
+  const none = k.exits('fx_after').length, ground = k.cell('fx_after', 3, 1);
+  g.party.flags.fx_ready = 1;
+  const there = k.exits('fx_after').map((e) => `${e.x},${e.y} to ${e.to}`).join();
+  delete g.party.flags.fx_ready;
+  ok(none === 0 && ground?.solid === 'none' && ground.door === 'none' && there === '3,1 to harrow', `an exit not there yet reads as floor, and as an exit once it is (${none} exits, ${JSON.stringify(ground)}; then ${there})`);
   ok(k.visited().includes('harrow') && k.visited().includes('fx_secret') && !k.visited().includes('mill'), `the maps visited are the maps walked (${k.visited().join(', ')})`);
 
   // Features as the automap marks them: an event never, a spent chest no more.
@@ -67,13 +78,19 @@ function known(): void {
   ok(before.join() === 'sign,chest' && after.join() === 'sign', `features leave out an event, and a chest once it is spent (${before.join()}; then ${after.join()})`);
 
   ok(!!k.placeOf('thornmark') && !!k.placeOf('harrow') && k.placeOf('no_such_map') === undefined, `placeOf finds Thornmark and Harrow on the world map and no map that is not (${k.placeOf('thornmark')}; ${k.placeOf('harrow')})`);
-  // A zone map's id reads as the outdoors it lies in.
+  // A zone map's id names the outdoors it lies in: every reader takes and gives the outdoors' squares,
+  // as the party's own square is reckoned while it stands in the zone.
   g.world.travel('thornmark', 6, 8, 3);
-  const z = g.world.zone!;
-  const squares = [[6, 8], [6, 7], [0, 0], [z.w - 1, z.h - 1]];
-  ok(z.id === 'thornmark' && k.seen('thornmark', 6, 8) && squares.every(([x, y]) => k.seen('thornmark', x, y) === k.seen(g.world.state.mapId, x + z.x, y + z.y)),
-    `a zone's squares are the outdoors' where the zone lies (${g.world.state.mapId} ${6 + z.x},${8 + z.y})`);
-  ok(k.features('thornmark').every((f) => f.x >= z.x && f.y >= z.y && f.x < z.x + z.w && f.y < z.y + z.h), 'a zone\'s features are those in its box');
+  const z = g.world.zone!, out = g.world.state.mapId, st = g.world.state;
+  const squares = [[st.x, st.y], [st.x, st.y - 1], [z.x, z.y], [z.x + z.w - 1, z.y + z.h - 1]];
+  ok(z.id === 'thornmark' && out !== z.id && k.seen(z.id, st.x, st.y) && squares.every(([x, y]) => k.seen(z.id, x, y) === k.seen(out, x, y) && JSON.stringify(k.cell(z.id, x, y)) === JSON.stringify(k.cell(out, x, y))),
+    `a zone's id reads the outdoors' squares, the party's own among them (${out} ${st.x},${st.y})`);
+  // The zone's whole box seen (the test's privilege), so that every feature in it is read back.
+  const lit = g.world.ensureMapState(out).explored, width = g.maps[out].width;
+  for (let y = z.y; y < z.y + z.h; y++) for (let x = z.x; x < z.x + z.w; x++) { const i = y * width + x; lit[i >> 5] |= 1 << (i & 31); }
+  const marks = k.features(z.id);
+  ok(marks.length > 0 && marks.every((f) => f.x >= z.x && f.y >= z.y && f.x < z.x + z.w && f.y < z.y + z.h && k.seen(z.id, f.x, f.y) && k.cell(z.id, f.x, f.y)?.terrain === g.maps[out].at(f.x, f.y).terrain),
+    `a zone's features are those in its box, each read back on its own square through seen and cell (${marks.map((f) => `${f.kind} ${f.x},${f.y}`).join(', ')})`);
 }
 
 /**
@@ -101,19 +118,32 @@ function fair(): void {
   const exits = Object.keys(g.maps).flatMap((id) => k.exits(id)), gated = Object.values(g.maps).flatMap((m) => m.exits).filter(gate);
   ok(gated.length > 0 && exits.length > 0 && !exits.some(gate) && gated.some((e) => exits.some((q) => q.x === e.x && q.y === e.y)),
     `an exit comes through with where it leads and no gate's terms (${exits.length} exits; ${gated.length} gated as written)`);
+  const doors = Object.values(g.maps).flatMap((m) => m.cells.flatMap((c, i) => (c.door === 'secret' ? [k.cell(m.id, i % m.width, Math.floor(i / m.width))] : [])));
+  ok(doors.length > 0 && doors.every((c) => !!c && c.door === 'none' && c.solid !== 'none'), `every secret door of every map reads as a wall or as what it is hidden among, never a door (${doors.length})`);
+
+  // On a new game, nothing Known gives of Harrow stands on a square the party has not seen.
+  const h = piloted(), hk = knownOf(h), dark = (x: number, y: number): boolean => !h.world.explored(x, y), hm = h.maps.harrow;
+  const unseen = { features: hm.features.filter((f) => dark(f.x, f.y)).length, exits: hm.exits.filter((e) => dark(e.x, e.y)).length };
+  ok(h.world.state.mapId === 'harrow' && unseen.features > 0 && unseen.exits > 0 && !hk.features('harrow').some((f) => dark(f.x, f.y)) && !hk.exits('harrow').some((e) => dark(e.x, e.y)),
+    `on a new game no feature or exit Known gives of Harrow stands on an unseen square (${unseen.features} of ${hm.features.length} features and ${unseen.exits} of ${hm.exits.length} exits unseen)`);
 }
 
 /** On and off, the fight handed to the bot, the box closed, the brains asked, a wipe. */
 function helm(): void {
   const g = piloted(), p = g.pilot!;
   p.toggle(g);
-  ok(p.on && p.heard.includes('The pilot takes the helm.') && g.log.at(-1) === 'The pilot takes the helm.', 'toggle takes the helm and says so, and the corpus has heard it');
+  ok(p.on && p.heard.includes('The pilot takes the helm.') && g.log.at(-1) === 'The pilot takes the helm.' && p.band()?.tag === 'PILOT 1X', 'toggle takes the helm and says so, the corpus has heard it and the band is up');
+  p.why = ['Bound elsewhere.'];
   ok(p.next(g) === null && p.why[0] === 'Nothing to do.', `with no brains, nothing to do (${p.why.join(' / ')})`);
-  const brains: Brain[] = [() => null, () => 'turnLeft', () => 'forward'];
-  p.brains = brains;
-  const asked = p.next(g);
+  // The brains are asked in order whatever is on top, and each answers only on its own screen.
+  const onMap: Brain = (q) => (q.top instanceof ExploreScreen ? 'forward' : null), onAsk: Brain = (q) => (q.top instanceof ChoiceScreen ? 'cancel' : null);
+  p.brains = [onMap, onAsk, () => 'turnLeft'];
+  const exploring = p.next(g);
+  g.push(new ChoiceScreen('A test?', ['Yes', 'No'], () => undefined));
+  const asking = p.next(g);
+  g.pop();
   p.brains = [];
-  ok(asked === 'turnLeft', `the brains are asked in order, and the first key given is pressed (${asked})`);
+  ok(exploring === 'forward' && asking === 'cancel', `the brains are asked in order and the first key given is pressed: on the map the map's brain, on a question the next (${exploring}, ${asking})`);
 
   g.message('A test of the box.');
   ok(p.heard.at(-1) === 'A test of the box.' && p.next(g) === 'interact', 'a message box is heard as it opens, and closed with Space');
@@ -144,7 +174,27 @@ function helm(): void {
 
   for (const c of g.party.members) c.conditions.push('dead');
   drive(g, ['forward']);
-  ok(top(g) === 'TitleScreen' && !p.on && p.why[0] === 'The company has fallen.', `a wipe gives the helm back, and says why (${top(g)}: ${p.why.join(' / ')})`);
+  const fallen = p.band();
+  ok(top(g) === 'TitleScreen' && !p.on && p.why[0] === 'The company has fallen.' && fallen?.lines[0] === 'The company has fallen.' && fallen.tag === '',
+    `a wipe gives the helm back, and the band says why over the title (${top(g)}: ${fallen?.lines.join(' / ')})`);
+  drive(g, ['down']);
+  ok(p.band() === null, 'the next key takes that band down');
+  const manual = piloted(), m = manual.pilot!;
+  m.toggle(manual);
+  m.toggle(manual);
+  ok(!m.on && m.band() === null, 'P taking the helm back leaves no band up');
+
+  // A load empties the corpus too: a loaded company has heard nothing but its own "Loaded."
+  const disk = new Map<string, string>();
+  const store: Store = { getItem: (key) => disk.get(key) ?? null, setItem: (key, v) => { disk.set(key, v); }, removeItem: (key) => { disk.delete(key); } };
+  const lg = new Game(store);
+  lg.input = { textMode: false, drainText: (c) => c };
+  lg.pilot = new Pilot({ instant: true });
+  lg.newGame(4);
+  lg.saveGame();
+  lg.pilot.hear('A line from before the load.');
+  const loaded = lg.loadGame();
+  ok(loaded && lg.pilot.heard.join(' / ') === 'Loaded.', `a load empties the corpus: the company loaded has heard "${lg.pilot.heard.join(' / ')}"`);
 }
 
 /** The tempo: an action every 15th tick at 1×, every 8th at 2× and every 4th at 4×; instant, every tick. */

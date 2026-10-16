@@ -15,7 +15,11 @@ import type { Known } from './known.ts';
 
 export type Tempo = 1 | 2 | 4;
 export interface PilotOpts { instant?: boolean; omniscient?: boolean }
-/** A brain: the key it would press now, or null to leave the turn to the next. */
+/**
+ * A brain: the key it would press now, or null to leave the turn to the next. A brain returns null
+ * unless the screen it works on is on top: route and explore only on the ExploreScreen; talk and keep
+ * also on the screens they answer. The frame asks every brain whatever is on top.
+ */
 export type Brain = (g: Game, k: Known, p: Pilot) => Action | null;
 
 /**
@@ -42,6 +46,8 @@ export class Pilot {
   brains: readonly Brain[] = BRAINS;
   /** What it has heard (Known.heard): through `hear`, the last `HEARD_MAX` lines. */
   readonly heard: string[] = [];
+  /** The why line of a stop it made itself (a wipe, the ending's choice), kept up in the band until the next key. */
+  stopped: [string, string?] | null = null;
   /** Ticks counted since it took the helm, for the pace. */
   private ticks = 0;
   /** The fight last handed to the bot: each is handed once. */
@@ -66,6 +72,7 @@ export class Pilot {
    * that seed (epic #713, Decided 11); on in a fight, the bot takes it.
    */
   toggle(g: Game): void {
+    this.stopped = null;
     if (this.on) {
       this.on = false;
       if (g.top instanceof CombatScreen) g.top.auto = false;
@@ -79,6 +86,19 @@ export class Pilot {
     this.why = ['Nothing to do.'];
     if (g.top instanceof CombatScreen) { g.top.auto = true; this.handed = g.top; }
     g.say('The pilot takes the helm.');
+  }
+
+  /** Gives the helm back by itself, saying why: the band keeps `why` up until the next key (Game.update, src/main.ts). */
+  stop(g: Game, why: [string, string?]): void {
+    if (this.on) this.toggle(g);
+    this.why = why;
+    this.stopped = why;
+  }
+
+  /** What the band over the view shows: the why line and the tempo while it drives, a stop's why line until the next key, else nothing. */
+  band(): { lines: [string, string?]; tag: string } | null {
+    if (this.on) return { lines: this.why, tag: `PILOT ${this.tempo}X` };
+    return this.stopped ? { lines: this.stopped, tag: '' } : null;
   }
 
   /** The next key to press, or null for a tick of nothing. Called once per tick from main.ts and tests. */

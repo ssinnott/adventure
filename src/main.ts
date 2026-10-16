@@ -27,7 +27,7 @@ const loop = createLoop({
     const a = input.next();
     if (a && game.pilot) {
       if (is(a, 'pilot')) { game.pilot.toggle(game); return; }
-      if (is(a, 'tempo')) { game.pilot.tempo = game.pilot.tempo === 4 ? 1 : (game.pilot.tempo * 2 as Tempo); return; }
+      if (is(a, 'tempo')) { game.pilot.stopped = null; game.pilot.tempo = game.pilot.tempo === 4 ? 1 : (game.pilot.tempo * 2 as Tempo); return; }
       if (game.pilot.on) game.pilot.toggle(game);
     }
     game.update(a ?? game.pilot?.next(game) ?? null);
