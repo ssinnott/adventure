@@ -781,7 +781,8 @@ const lighthouse = await page.evaluate(async () => {
 // painted otherwise than the lighthouse; by night it lights no lamp where the lighthouse lights one.
 // Then the square three ahead under felt ('tent') and under smooth: where the smooth wall's block
 // stands, the tent's corners over its low wall show what is behind, and its crown stands over the
-// block's top in the middle; a door in it is a flap, where in smooth it is its seam.
+// block's top in the middle; a door in it is a flap, the doorway's dark showing under its turned-back
+// corner, where in smooth it is its seam and in stone its planks.
 const drawn736 = await page.evaluate(async () => {
   const V = await import('/src/ui/viewport.ts' as string);
   const w = (window as any).__game.game.world;
@@ -798,7 +799,6 @@ const drawn736 = await page.evaluate(async () => {
   const lamps = (): number => V.paintedFlames().filter((f: any) => f.lamp).length;
   const differ = (a: Uint8ClampedArray, b: Uint8ClampedArray, x: number, y: number): boolean => { const i = (y * W + x) * 4; return Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2]) > 30; };
   const count = (a: Uint8ClampedArray, b: Uint8ClampedArray, y1: number): number => { let n = 0; for (let y = 0; y < y1; y++) for (let x = 0; x < W; x++) if (differ(a, b, x, y)) n++; return n; };
-  const colours = (a: Uint8ClampedArray, x0: number, y0: number, x1: number, y1: number): number => { const seen = new Set<number>(); for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) { const i = (y * W + x) * 4; seen.add((a[i] << 16) | (a[i + 1] << 8) | a[i + 2]); } return seen.size; };
   w.travel('shelf', 16, 16, 0);
   const m = w.map, px = w.state.x, py = w.state.y, cells = m.cells.slice(), kept = m.landmarks;
   const grass = { terrain: 'grass', solid: 'none', door: 'none', ch: ',' }, building = { terrain: 'floor', solid: 'building', door: 'none', ch: 'B' };
@@ -830,9 +830,11 @@ const drawn736 = await page.evaluate(async () => {
   const corners = [left + 3, right - 3].filter((x) => !differ(tent, none, x, top + 3)).length;
   let crown = 0;
   for (let y = 0; y < top; y++) for (let x = W / 2 - 2; x <= W / 2 + 2; x++) if (differ(tent, none, x, y)) crown++;
-  // A door, with the building beside it whose door it is.
+  // A door, with the building beside it whose door it is: the near-black pixels low on the doorway's
+  // right, where a flap's corner is turned back.
   m.cells[at] = { terrain: 'floor', solid: 'none', door: 'door', ch: 'D' }; m.cells[at + 1] = building;
-  const door = { tent: colours(as('tent'), W / 2 - 12, H / 2 + 4, W / 2 + 12, H / 2 + 38), smooth: colours(as('smooth'), W / 2 - 12, H / 2 + 4, W / 2 + 12, H / 2 + 38) };
+  const corner = (a: Uint8ClampedArray): number => { let n = 0; for (let y = H / 2 + 30; y < H / 2 + 38; y++) for (let x = W / 2 + 5; x < W / 2 + 15; x++) { const i = (y * W + x) * 4; if (a[i] + a[i + 1] + a[i + 2] < 60) n++; } return n; };
+  const door = { tent: corner(as('tent')), smooth: corner(as('smooth')), stone: corner(as('stone')) };
   out.tent = { block: right - left, top, corners, crown, door };
   pal.wallStyle = style;
   for (let i = 0; i < cells.length; i++) m.cells[i] = cells[i];
@@ -1551,7 +1553,7 @@ ok(smooth.door > 2 && smooth.seam === 1, `a door in a smooth wall is its seam al
   const { far, near, tent } = drawn736;
   for (const [name, v] of [['past the squares drawn', far], ['among them', near]] as const) ok(v.stands > 100 && v.unlike > 100 && v.dark === 0 && v.lit === 1, `a monastery stands over the land ${name}, painted otherwise than a lighthouse, and by night lights no lamp where a lighthouse lights one (${v.stands} pixels of it at noon, ${v.unlike} unlike the lighthouse; by night ${v.dark} lamps, the lighthouse ${v.lit})`);
   ok(tent.corners === 2 && tent.crown > 10, `a tent is no block: where the smooth wall's block stands (${tent.block} pixels across, its top at ${tent.top}), the corners over the tent's low wall are open (${tent.corners} of 2) and its crown stands over the block's top (${tent.crown} pixels)`);
-  ok(tent.door.tent >= 3 && tent.door.tent > tent.door.smooth, `a door in a tent is a flap over the dark, where in a smooth wall it is a seam (${tent.door.tent} colours in its doorway; smooth, ${tent.door.smooth})`);
+  ok(tent.door.tent >= 20 && tent.door.smooth === 0 && tent.door.stone === 0, `a door in a tent is a flap, the doorway's dark showing under its turned-back corner, where a smooth wall's door is its seam and a stone wall's its planks (${tent.door.tent} dark pixels in the corner; smooth ${tent.door.smooth}, stone ${tent.door.stone})`);
 }
 ok(!terrains.missing, `a view over the fields is found for the hills and farmland checks${terrains.missing ? ' -> ' + terrains.missing : ''}`);
 if (!terrains.missing) {

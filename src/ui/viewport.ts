@@ -2100,6 +2100,9 @@ function drawTentRoof(ctx: CanvasRenderingContext2D, at: At, v: TentView, d: num
       const sX = a[0] + (b[0] - a[0]) * i / seams, sk = a[1] + (b[1] - a[1]) * i / seams;
       if (sk >= 0.05) line(ctx, at(sX, sk, Ye), crown(sX, sk));
     }
+    // The hem along the eave. The eave stands TENT_EAVE out past the wall and goes down after any wall
+    // beside the tent, so a tent hard against a wall would lay it over a few pixels of that wall's side
+    // near to (8 to 13 at a square's distance); no map puts a tent against a wall.
     ctx.strokeStyle = fog(shade(pal.wall, 0.55), d, dark, haze); ctx.lineWidth = Math.max(1.5, len * 0.012);
     line(ctx, ea, eb);
     ctx.restore();

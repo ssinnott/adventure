@@ -173,14 +173,15 @@ export function unsetGates(defs: readonly MapDef[]): string[] {
 
 /**
  * What is wrong with a monastery, the second kind of landmark (#736): it stands inside its block of
- * building squares, its four neighbours building or door squares, so that near to the block's walls
- * hide the foot of a drawing wider than its square; and it has no lamp, so no `lit` flag. Null if
- * nothing is, and for a lighthouse.
+ * building squares, all eight squares round it building or door squares, so that near to the block's
+ * walls hide the foot of a drawing wider than its square (its wall reaches 1.7 half squares each
+ * side); and it has no lamp, so no `lit` flag. Null if nothing is, and for a lighthouse.
  */
 export function monasteryFault(m: GameMap, l: Landmark): string | null {
   if (l.kind !== 'monastery') return null;
   if (l.lit) return `it has a lamp's flag, '${l.lit}'`;
-  const open = [[l.x - 1, l.y], [l.x + 1, l.y], [l.x, l.y - 1], [l.x, l.y + 1]].filter(([x, y]) => m.at(x, y).solid !== 'building' && m.at(x, y).door === 'none');
+  const round = [-1, 0, 1].flatMap((dy) => [-1, 0, 1].map((dx) => [l.x + dx, l.y + dy])).filter(([x, y]) => x !== l.x || y !== l.y);
+  const open = round.filter(([x, y]) => m.at(x, y).solid !== 'building' && m.at(x, y).door === 'none');
   return open.length ? `it is on its block's edge, open at ${open.map(([x, y]) => `${x},${y}`).join(' and ')}` : null;
 }
 
@@ -335,14 +336,15 @@ export function maps(): void {
     ok(round.length === 0 && stair.length === 0 && only.join() === 'the exit to fx_cellar at 3,1 is cut off at high water', `a dry way round passes, and so does a stair over the flats whose place this map reaches at high water through a town, but not one whose place only some other map reaches (${[...round, ...stair, ...only].join('; ') || 'nothing'})`);
   }
   // The second landmark kind (#736): a monastery inside its block passes, and its map gives it back by
-  // its square; one on the block's edge, or given a lamp's flag, is caught. Its drawing is the smoke
-  // test's (tools/smoke.ts).
+  // its square; one on the block's edge, one whose block is ragged at a corner square, and one given
+  // a lamp's flag are caught. Its drawing is the smoke test's (tools/smoke.ts).
   {
     const cloister = new GameMap({ id: 'fx_cloister', name: 'Cloister', kind: 'outdoor', start: { x: 0, y: 0, facing: NORTH },
       rows: [',,,,,', ',BBB,', ',BBB,', ',BDB,', ',,,,,'], landmarks: [{ x: 2, y: 2, kind: 'monastery' }] });
-    const edge = monasteryFault(cloister, { x: 2, y: 1, kind: 'monastery' }), lamp = monasteryFault(cloister, { x: 2, y: 2, kind: 'monastery', lit: 'q_lamp' });
-    ok(cloister.landmarkAt(2, 2)?.kind === 'monastery' && monasteryFault(cloister, cloister.landmarks[0]) === null && edge === 'it is on its block\'s edge, open at 2,0' && lamp === 'it has a lamp\'s flag, \'q_lamp\'' && monasteryFault(cloister, { x: 2, y: 1, kind: 'lighthouse' }) === null,
-      `a monastery inside its block passes, its door a side of the block; on the block's edge or with a lamp's flag it fails (${edge}; ${lamp})`);
+    const ragged = new GameMap({ ...cloister.def, id: 'fx_ragged', rows: [',,,,,', ',,BB,', ',BBB,', ',BDB,', ',,,,,'] });
+    const edge = monasteryFault(cloister, { x: 2, y: 1, kind: 'monastery' }), corner = monasteryFault(ragged, ragged.landmarks[0]), lamp = monasteryFault(cloister, { x: 2, y: 2, kind: 'monastery', lit: 'q_lamp' });
+    ok(cloister.landmarkAt(2, 2)?.kind === 'monastery' && monasteryFault(cloister, cloister.landmarks[0]) === null && edge === 'it is on its block\'s edge, open at 1,0 and 2,0 and 3,0' && corner === 'it is on its block\'s edge, open at 1,1' && lamp === 'it has a lamp\'s flag, \'q_lamp\'' && monasteryFault(cloister, { x: 2, y: 1, kind: 'lighthouse' }) === null,
+      `a monastery inside its block passes, its door a side of the block; on the block's edge, with a corner square open or with a lamp's flag it fails (${edge}; ${corner}; ${lamp})`);
   }
   // Each area lists what is its own, and the lists are true: its maps share its weather, its monsters
   // are drawn with the sprite kinds it lists, and its businesses paint the rooms it lists.

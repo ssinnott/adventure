@@ -190,6 +190,9 @@ export async function art(): Promise<void> {
     'outside a town, a building\'s square under felt is a tent, and the door beside it; a wall, open ground, a town\'s house and a building under stone are not');
   ok(one.x0 === 1 && one.y0 === 1 && one.x1 === 2 && one.y1 === 2 && ell.every((t, i) => t.x0 === t.x1 && t.y0 === t.y1 && t.x0 === [4, 5][i]),
     `tent squares that fill a rectangle are one tent, door and all; an L of them is a tent to each square (${one.x0},${one.y0} to ${one.x1},${one.y1})`);
+  const four = tentOf(camp('outdoor', 'tent', Array(4).fill('BBBB')), 1, 1), five = tentOf(camp('outdoor', 'tent', Array(4).fill('BBBBB')), 1, 1);
+  ok(four.x0 === 0 && four.y0 === 0 && four.x1 === 3 && four.y1 === 3 && five.x0 === 1 && five.x1 === 1 && five.y0 === 1 && five.y1 === 1,
+    'a tent is sixteen squares at most: four by four is one tent, five by four a tent to each square');
   const block = (wallStyle: 'stone' | 'tent'): GameMap => camp('outdoor', wallStyle, Array(8).fill('########'));
   const dressedIn = (m: GameMap): number => m.cells.filter((_, i) => wallDressing(m, i % m.width, Math.floor(i / m.width)) !== null).length;
   ok(dressedIn(block('stone')) > 0 && dressedIn(block('tent')) === 0, `felt carries no dressing, where the same walls in stone do (${dressedIn(block('stone'))} of 64 dressed in stone, ${dressedIn(block('tent'))} in felt)`);

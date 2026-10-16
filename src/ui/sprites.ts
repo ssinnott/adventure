@@ -236,9 +236,6 @@ export function drawLighthouseSprite(ctx: CanvasRenderingContext2D, x: number, y
   return { x, y: ly + lh / 2, r: Math.max(2, lw * 1.2) };
 }
 
-/** A monastery's towers' height over its foot, to the tips of their finials, in squares' half widths. */
-export const MONASTERY_HEIGHT = 4.9;
-
 /**
  * A monastery standing on its square, its foot at y: a long wall of grey stone with its gate's arch
  * and a row of slits, the chapel's roof over it, and two bell towers standing up over it all, each
