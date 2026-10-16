@@ -182,7 +182,7 @@ J10, I12 and J12 (#508):
   little, and stops over deep water, as far as the Hand has built it, the Hearth's light beyond.
   Masons work at its root and, with their foreman, on its end; eagles hunt over the tip, and by
   night a snow troll comes down to the east shore. On the shingle west of the root a camp, where
-  Wenna waits and asks whether the company will sleep by her fire; if it does, it wakes to her
+  Wenna waits; if the company rests at her fire, it wakes to her
   blanket cold, a boat going out along the stones and, on the first stone, her knot. In the tip's
   rock Rook's Nest, a hollow where Hereward watches and counts the stones, the Thief's third's
   trainer (§6, #448); its back wall is wet and by night
@@ -828,14 +828,14 @@ settled in its issue.
   step is the first stone's, in the doc's line, and after the night the doc's other line shows on it
   as the knot (§9, #504's 13). Wenna goes on ahead: by the lodge's fire until the company is in
   Monks' Vale, at J11's gate, 27,23, until it is on the Point, and then at the camp, The shingle
-  fire, 14,8, standing at 13,8 until she is taken (§9, #504's 8). The game has no hook for a rest at
-  a camp, so the night is her question: her first words end in *Sleep by her fire?* and Sleep sets
-  `q_wenna_taken` (`WENNA_TAKEN`, exported from `maps/sheerpoint_i8.ts`), with *One of you is
+  fire, 14,8, standing at 13,8 until she is taken (§9, #504's 8). She asks nothing: her first words
+  end in *Sleep. I'll keep the first watch.*, and a rest at the fire once she is there is the night.
+  The camp's night (`nights`, #730) sets `q_wenna_taken` (`WENNA_TAKEN`, exported from
+  `maps/sheerpoint_i8.ts`) and says its waking in place of the usual morning: *One of you is
   shouting at the water. Her blanket by the fire is cold.* and *Out along the stones a boat is
-  going, rowed hard, and none of you saw where it put out from.*; Not yet sets nothing and she asks
-  again. The camp's own rest does not take her: that wants a camp `nights` like the inn's, a systems
-  change, the owner's to ask for, and the chapter's step (#505) reads `q_wenna_taken`, which only
-  this choice sets (§9, #504's 7; §11). Rook's Nest is a hollow high in the tip's rock at the
+  going, rowed hard, and none of you saw where it put out from.* A rest at the fire before she is
+  there is the usual rest and sets nothing. The chapter's step (#505) reads `q_wenna_taken`, which
+  only this night sets (§9, #504's 7 and #730). Rook's Nest is a hollow high in the tip's rock at the
   atlas's site, 22,8 (286,230), its mouth onto the hills at 22,9, and the watcher in it, at 21,7, is
   Hereward, who teaches the Thief's third for a set of the Compact's orders and whose hand writes
   them (§6; §9, #504's 11; the Ranger's and the Thief's 1 to 4). At the hollow's
@@ -994,7 +994,7 @@ and goals, in the journal's voice, keyed to flags, events and maps the save hold
 - **The causeway.** The finger of land toward the Hearth, so close its heat is felt; the Hand's
   road of cut stone, every stone a stolen shard. Every shard is a step. Wenna is at the camp.
 - **The night.** Wenna gone, a boat going out along the stones, her knot on the first one
-  (`q_wenna_taken`, which only her question at the camp sets, not a rest: §4.7). Cassian reads the
+  (`q_wenna_taken`, which only a rest at the camp's fire sets, with her there: §4.7). Cassian reads the
   Meridian journal's last line, *The heart opens for whoever makes it whole*: one Stone left, on the
   far side, never finished. The goal turns south to the Stair.
 - **The Stair.** The giants and their toll, over the range and down. Paid or fought, the chapter's
@@ -1238,8 +1238,8 @@ Decided by the owner's delegate on 2 October 2026 (#443), and followed here:
    open from the start, with the causeway's camp on the Point's shore. Wenna is a person who moves
    (#76): after the bay at Rime Lodge, by the yard's fire until the company is in Monks' Vale, then
    at Highcell's gate, J11's 27,23, until it is on the Point, then at the camp, never in a fight.
-   At the camp her question sets `q_wenna_taken`, not a rest: one once-event, no counter (§4.7; §9,
-   #504's 7 and 8).
+   A rest at the camp's fire, with her there, sets `q_wenna_taken`: one once-event, no counter
+   (§4.7; §9, #504's 7 and 8, #730).
 3. **Road order holds** (call 6): the Whitespine is Act IV's first area, the Stair its way on.
 4. **Cinderport holds the halls** (call 7): Highcell sells and teaches nothing, its brothers being
    machines, and the Bard's trainer in the bell tower is a living Laureate hiding among them.
@@ -1729,11 +1729,11 @@ Decided by delegate for #504, each the owner's to overturn:
    1,500): eagles 4 × 873, masons 3 × 913, the foreman's 5 × 913 and the troll 1,827, 12,623 between
    six. It holds 980 gold, the cave's 400 and eight masons' purses. The area stands at 17,429 of
    17,867, about 18,729 with the side quests' scaled 1,300, 1.05 times the ask (§8).
-7. **The night is Wenna's question, not the camp's rest:** the game has no hook for a rest at a camp
-   (an inn's `nights` set a flag on a stay, and the Whitespine has no inn room). Sleep sets
-   `q_wenna_taken` (`WENNA_TAKEN`, exported from `maps/sheerpoint_i8.ts`) and says the waking; Not
-   yet sets nothing. A camp `nights` is a systems change, the owner's to ask for; #505's step reads
-   the flag, which only that choice sets.
+7. **The night is the camp's rest, not Wenna's question (#730):** it was her question while the game
+   had no hook for a rest at a camp (an inn's `nights` set a flag on a stay). The camp's `nights`
+   now set `q_wenna_taken` (`WENNA_TAKEN`, exported from `maps/sheerpoint_i8.ts`) and say the
+   waking, once she is there; she asks nothing. #505's step reads the flag, which only that night
+   sets.
 8. **Wenna moves** (#76), named The girl out of the hole as at M9, K9 and the lodge: the lodge's
    fire gains an `until`, the first visit to J11 (a one-line edit to `rime_lodge.ts`); then J11's
    gate, 27,23, until the first visit to the Point; then the camp, 13,8, until the flag. One place
@@ -1912,6 +1912,42 @@ Decided by delegate for #508, each the owner's to overturn:
 15. **The people are unnamed** ("A goatherd", "A charcoal-burner"), as I9's hermit and L10's
     trapper.
 
+Decided by the owner's delegate on 16 October 2026 (#730), and followed here: a camp's `nights` are
+`{ after?, sets, says? }`, the first night counts at any hour (the rest is the night, eight hours as
+ever) and its `says` are said on waking in place of the usual line; Wenna keeps her first lines and
+her `until` and loses the question.
+
+Decided by delegate for #730, each the owner's to overturn:
+
+1. **The camp counts its nights in order:** a rest on its square sets the first night not yet set,
+   and only if that night's `after` holds, so a night not yet due keeps the later ones back, as an
+   inn's nights come in order (`campNight`, game/wilds.ts). Sheer Point's camp has the one night.
+2. **The inn keeps its list of flags:** a camp's night is its own type (`Night`, game/map.ts), so
+   Rime Lodge, its walkthrough and `stayNight` are as they were.
+3. **A night counts only on the camp's square,** the party standing on it, where Space and R already
+   rest at a camp. A rest beside the fire is a rest like any other.
+4. **The waking is said as one log entry,** the night's lines joined by a space, as a group's answer
+   is: Wenna's two lines, as written, take three lines of the log and not four.
+5. **A night's `after` is read through `World.walks`,** as a person's words' is, so it waits as every
+   other presence waits.
+6. **The camp's night waits on what Wenna waits on** (`WENNA_THERE`, one constant in
+   `maps/sheerpoint_i8.ts`): the lodge's flag and the Point reached. A rest at the fire before she is
+   there is the usual rest and sets nothing; with her there it is the night, and she asks nothing.
+7. **She keeps her two first lines, her `after` and her `until`, and loses the question:** *Sleep.
+   I'll keep the first watch.* stays as the invitation, the camp's look says *R rests here* as every
+   camp's does, and nothing else is told. Not yet went with the question: a company that does not
+   rest at her fire has not taken the night.
+8. **The night costs a rest:** eight hours and a ration each, at any hour. A company with no rations
+   is told so and the night waits, where the question cost nothing.
+9. **`q_wenna_taken` is the same flag:** the chapter, Harrow's gibbet, the Eel's talk and Wiglaf read
+   it as before, and the shipped list keeps it (`tools/shipped.ts` reads a camp's nights). No layout,
+   monster or drawing changes, so no gate, density or curve figure moves.
+10. **The walkthrough plays both halves:** a fresh company's rest at the fire before the lodge says
+    the usual morning and sets nothing; the company with her there rests, wakes to her blanket cold
+    and the boat, and is asked nothing.
+11. **§11 no longer lists the camp's rest,** it being built; §4.7, §5 and calls 2 and 7 above say
+    what is built.
+
 ## 10. Names
 
 The Whitespine's naming pass, by the rules of `docs/NAMES.md`: the range keeps the Crown's and the
@@ -2014,10 +2050,6 @@ Cut and owed, from I9 (#503):
 
 Cut and owed, from I8 (#504):
 
-- **The camp's rest.** The game has no hook for a rest at a camp, so the night is Wenna's question
-  and the camp's own rest does not take her; a camp `nights` like the inn's is a systems change, the
-  owner's to ask for. The chapter's step (#505) reads `q_wenna_taken`, which only her question sets
-  (§4.7; §9, #504's 7).
 - **The shard from the cave,** the doc's quest item for #548's Stone, is not placed: Act IV has no
   Rift to take one to. The cave holds the Hand's boats, crates of uncut shards under its seal, seen
   and not taken, and a chest of 400 gold; #548 places the item if it wants one (§9, #504's 10).

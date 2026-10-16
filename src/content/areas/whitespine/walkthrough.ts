@@ -55,6 +55,7 @@ import { meet, heard, answer, barred, SHORT, NONE } from '../../../game/people.t
 import type { Person } from '../../../game/people.ts';
 import { GameMap } from '../../../game/map.ts';
 import type { MapDef } from '../../../game/map.ts';
+import { restAndWake } from '../../../game/wilds.ts';
 import { readLine } from '../../../game/inscriptions.ts';
 import { MONSTERS } from './monsters.ts';
 import { GATE, VIGIL_ASKED, VIGIL_KEPT } from './maps/monksvale_j11.ts';
@@ -603,16 +604,20 @@ export const walkthrough: Walkthrough = (ok) => {
   const camp8 = I8.features!.find((f) => f.kind === 'camp' && f.name === 'The shingle fire');
   ok(!!camp8 && walked8.has(at8(camp8)) && Math.abs(camp8.x - byCamp.x) + Math.abs(camp8.y - byCamp.y) === 1 && water(byCamp.x, byCamp.y - 1),
     'the camp on the shingle, Wenna beside it');
-  // The night: she puts it, and slept, she is gone; one of the company shouting, the boat going out
-  // along the stones from nowhere seen, and her knot on the first stone. Never before she is met.
+  // The night (#730): the fire's rest counts it with her there and not before. Rested at, she is gone;
+  // one of the company shouting, the boat going out along the stones from nowhere seen, and her knot on
+  // the first stone. A rest at the fire before the lodge is the usual rest and sets nothing.
   const knot = I8.features!.find((f) => f.kind === 'event' && f.id === 'i8_knot')!;
+  const early = newWalk(ok);
+  early.world.travel('sheerpoint_i8', camp8!.x, camp8!.y);
+  const usual = restAndWake(early.world, early.party);
+  ok(usual === 'The party rests. Morning comes.' && !early.party.flags[WENNA_TAKEN], 'a rest at the fire before she is there is the usual rest and sets nothing');
   const unslept = !v.party.flags[WENNA_TAKEN] && !v.world.present(knot);
   const met = meet(byCamp, v.party, heard(v.world, byCamp));
-  const sleep = met.choice?.answers.find((a) => a.label === 'Sleep');
-  const woke = sleep ? answer(sleep, v.party) : '';
-  ok(unslept && met.text.includes('Sleep. I\'ll keep the first watch.') && woke.includes('Her blanket by the fire is cold.') && woke.includes('none of you saw where it put out from')
+  const woke = restAndWake(v.world, v.party) ?? '';
+  ok(unslept && met.text.includes('Sleep. I\'ll keep the first watch.') && !met.choice && woke.includes('Her blanket by the fire is cold.') && woke.includes('none of you saw where it put out from')
     && !!v.party.flags[WENNA_TAKEN] && !v.world.present(byCamp) && v.world.present(knot),
-    'met at the camp, she keeps the first watch; slept, she is gone, a boat going out along the stones, and the flag is set');
+    'met at the camp, she keeps the first watch and asks nothing; rested at, she is gone, a boat going out along the stones, and the flag is set');
   v.world.travel('sheerpoint_i8', knot.x, knot.y);
   ok(v.world.eventsHere().includes('Scratched fresh, at the height of a girl\'s shoulder, a loop inside a loop.'), 'and on the first stone her knot, scratched fresh');
 
@@ -1122,17 +1127,16 @@ const POINT: Step = { name: 'the Point', play: (w) => {
   see(w, 'sheerpoint_i8:i8_causeway');
 } };
 
-/** The night: met at her fire on the shingle and slept by, she is gone, and on the first stone her knot. */
+/** The night (#730): rested at her fire on the shingle, she is gone, and on the first stone her knot. */
 const NIGHT: Step = { name: 'the night', play: (w) => {
   const her = mapOf('sheerpoint_i8').features!.find((f) => f.kind === 'npc' && f.name === 'The girl out of the hole') as Person;
   w.world.travel('sheerpoint_i8', her.x + 1, her.y, WEST);
   const there = w.world.present(her);
-  const sleep = meet(her, w.party, heard(w.world, her)).choice?.answers.find((a) => a.label === 'Sleep');
-  const woke = sleep ? answer(sleep, w.party) : '';
+  const woke = restAndWake(w.world, w.party) ?? '';
   listen(w);
   see(w, 'sheerpoint_i8:i8_knot');
   w.ok(there && woke.includes('Her blanket by the fire is cold.') && !!w.party.flags[WENNA_TAKEN] && w.level === 24 && ['night', 'knot', 'heart', 'far'].every((e) => written(w).includes(e)),
-    `at ${w.level} she is met at her fire and slept by, and taken: the night, her knot and the line read again are written (${written(w).join(', ')})`);
+    `at ${w.level} she is met at her fire and rested by, and taken: the night, her knot and the line read again are written (${written(w).join(', ')})`);
 } };
 
 /** South along the ridge to the Stair's head, where the king holds out his hand. */

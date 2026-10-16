@@ -806,7 +806,7 @@ function walkHome(ok: (cond: boolean, msg: string) => void): void {
 }
 
 /**
- * Helmstow once the Hand has Wenna (#449): `q_wenna_taken`, set by her question at the camp's fire on
+ * Helmstow once the Hand has Wenna (#449): `q_wenna_taken`, set by a rest at the camp's fire on
  * Sheer Point, makes Vask's city worse again. After Act II and before it, the middle street is bare and
  * the Eel talks of the curfew; after it, a gibbet stands in the street, said once on either of its two
  * squares, and the Eel talks of that and of the oars locked in the keep. The flags are set by hand, as
