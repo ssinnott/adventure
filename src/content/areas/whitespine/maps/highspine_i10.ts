@@ -8,8 +8,8 @@
 // the old champion on it; the eagles and the drovers' fire in the pines.
 // In from I11 (#501) walked, up the ridge trail: I11's 27,0 is this map's 27,31's neighbour, and
 // nothing is said crossing between them, the same land at the same floor (#166). The trail leaves
-// north at 18,0 into I9 (#503), Sheer Point's, and the Stair west at 0,20 for Ashfall's H10 (#510);
-// until H10 is built the world ends past the west edge; the east edge is the range against J10's (#508).
+// north at 18,0 into I9 (#503), Sheer Point's. The Stair west at 0,20 runs on into Ashfall's H10 (#510,
+// built); the east edge is the range against J10's (#508).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/whitespine.md §4.5 is its brief.
 import type { MapDef, Choice } from '../../../../game/map.ts';
 import type { When } from '../../../../game/quests.ts';

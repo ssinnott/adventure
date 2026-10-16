@@ -633,8 +633,9 @@ Decided by delegate for #22 (the counting house), each the owner's to overturn:
   counting house's 15).
 - **The Factor's rung** (`In the Founder's Hand`, which asks for `compact_orders`) with **Ruan's
   choice at the Keel,** left to a pull request of their own (PR D of #635): built there (§5).
-- **MONSTERS §4.4's 6 and 8** still owe the Dead-Drop's monsters a restating and report the
+- **MONSTERS §4.4's 6 and 8** owed the Dead-Drop's monsters a restating and reported the
   Tallymaster at 57% at 28; the counting house sets it off the line and its gate wins it 70% at 27
-  (the counting house's 4). Left as they stand, a shared doc.
-- **MONSTERS §8.5's Where for the hold keeper** still names the people's vault alone; the drop's far
-  end is a second place (the drop's 4). Left as it stands, a shared doc.
+  (the counting house's 4). Brought in step by #735: `RESTATE` is empty and §4.4's 8 gives the
+  Tallymaster by its gate.
+- **MONSTERS §8.5's Where for the hold keeper** named the people's vault alone; the drop's far
+  end is a second place (the drop's 4). Brought in step by #735: the table gives both.

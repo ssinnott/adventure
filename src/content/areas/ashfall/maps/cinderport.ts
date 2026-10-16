@@ -30,6 +30,11 @@ export const FOUNDING_LEFT = 'q_founding_left';
 export const SHOVEL_THANE = 'q_shovel_thane';
 export const SHOVEL_WARDENS = 'q_shovel_wardens';
 export const SHOVEL_KEPT = 'q_shovel_kept';
+/**
+ * The Letter in Cipher (#735): the Compact's own, from its last drops in the cleft on the Wold's C8, which
+ * nobody on the Wold reads. The factor takes it at the first meeting, unread, and pays 200 gold.
+ */
+export const CIPHER_TAKEN = 'q_cipher_taken';
 
 export const CINDERPORT: MapDef = {
   id: 'cinderport',
@@ -214,7 +219,10 @@ export const CINDERPORT: MapDef = {
       '"Hendra. I keep the Compact\'s house on this side. The ship comes in and I write it down. She goes out and I write that down."',
       '"Ruan reads it, in time. Ruan reads everything, in time."',
       '"My runner is on the Scarp stair with orders for the Riders, and slow. Carry them the rest of the way."',
-    ], says: [
+    ], quest: { item: 'cipher_letter', reward: 200, setFlag: CIPHER_TAKEN, done: [
+      'Hendra turns the letter to the light and does not read it. "Ours, from before my time."',
+      'She pays, and puts it in the stove. "Ruan reads everything, in time. Not this."',
+    ] }, says: [
       { after: [{ flag: ORDERS_SEALED }, { flag: ORDERS_TOLD }, { flag: ORDERS_BURNED }], lines: ['Hendra writes, and does not look up.', '"My runner is down the stair again. What the Riders did with my orders, Ruan will read, in time."'] },
     ] },
 

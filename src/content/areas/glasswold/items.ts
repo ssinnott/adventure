@@ -20,7 +20,7 @@ export const ITEMS: readonly ItemDef[] = [
   // In the Riders' hoard behind the dry well at Akordu (D8, #526): the Riders' own make, with a plus.
   P(leatherCoat, 2),
   // With the Compact's last three drops in the cleft under the Scarp's lip on C8 (#528): nobody on the
-  // Wold reads it; Lantern Watch's reader (#204) or the Compact's hall at Cinderport is owed it.
+  // Wold reads it; Hendra, the Compact's factor at Cinderport, takes it unread for 200 gold (#735).
   { id: 'cipher_letter', name: 'Letter in Cipher', slot: 'none', price: 0 },
   // In the cache in the half-buried walker's chest at the Glass's edge, B9 (#530): no shop buys it, and it
   // does nothing until the reach (Phase 1.6) gives it something to do.
