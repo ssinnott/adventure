@@ -4,11 +4,11 @@
 // trainer's quest begins; the world map's marks; one trainer a class and prestige; nothing saved.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
-import { MAP_DEFS } from '../../src/content/index.ts';
+import { MAP_DEFS, QUESTS } from '../../src/content/index.ts';
 import { World } from '../../src/game/world.ts';
-import { defaultParty, createCharacter, takePrestige } from '../../src/game/party.ts';
+import { defaultParty, createCharacter, takePrestige, PRESTIGES } from '../../src/game/party.ts';
 import { holds, questLog, questMarks, questNews, TRAINERS } from '../../src/game/quests.ts';
-import type { QuestDef } from '../../src/game/quests.ts';
+import type { QuestDef, QuestCond } from '../../src/game/quests.ts';
 import { seekingQuests, trainersIn, sought, seekId } from '../../src/game/seeking.ts';
 import type { Trainer } from '../../src/game/seeking.ts';
 import { serialize, deserialize } from '../../src/game/save.ts';
@@ -30,6 +30,26 @@ export function seeking(): void {
   for (const t of TRAINERS) perClass.set(`${t.teaches.cls}:${t.teaches.prestige}`, (perClass.get(`${t.teaches.cls}:${t.teaches.prestige}`) ?? 0) + 1);
   const twice = [...perClass].filter(([, n]) => n > 1).map(([k]) => k);
   ok(!twice.length, `no class's prestige is taught by two trainers${twice.length ? ` (${twice.join(', ')})` : ''}`);
+  const untaught = Object.keys(PRESTIGES).flatMap((cls) => [1, 2, 3].filter((n) => !perClass.has(`${cls}:${n}`)).map((n) => `${cls}:${n}`));
+  ok(!untaught.length && perClass.size === 30, `every class's three prestiges have a trainer placed, thirty, the Sorcerer's third last (#807)${untaught.length ? ` (none for ${untaught.join(', ')})` : ''}`);
+
+  // The Sorcerer's third as placed (#807): a sorcerer of 27 with the second is sent to the scholar at the
+  // Glass's edge, the world map marks his box, and once his quest begins, seeking him is done.
+  {
+    const r = makeRng(807), p = defaultParty(r), w = new World(buildMaps(), p, r), cassian = p.members[5];
+    const magus = TRAINERS.find((t) => t.teaches.cls === 'sorcerer' && t.teaches.prestige === 3);
+    const view = (): ReturnType<typeof questLog>[number] | undefined => questLog(w.state, p).find((v) => v.def.id === seekId(5, 3));
+    cassian.level = 26; takePrestige(cassian); takePrestige(cassian);
+    const under = view();
+    cassian.level = 27;
+    ok(!!magus && magus.map === 'wold_b9' && cassian.cls === 'sorcerer' && !under && view()?.goal === `Find ${magus.name} in ${magus.place}.` && view()?.pages[0].entries[0]?.text === magus.teaches.seek
+      && sought(questLog(w.state, p)).some((s) => s.at === 'wold_b9' && s.who.includes(cassian.name)),
+      `at 26 nothing, and at 27 with the second Cassian is sent to the scholar (${view()?.goal}), the world map marking his box`);
+    const asks = QUESTS.flatMap((q): readonly QuestDef[] => q.chapters ?? [q]).find((q) => q.id === magus?.teaches.asks);
+    const first = [asks?.start ?? []].flat()[0] as QuestCond | undefined;
+    for (const f of [first?.flag ?? []].flat()) p.flags[f] = 1;
+    ok(!!first?.flag && view()?.done === true, `and once his quest, ${magus?.teaches.asks}, begins on his ask, seeking him is done`);
+  }
 
   const fletcher: Trainer = { map: 'thornhold', place: 'Thornhold', name: 'Aldric the fletcher', teaches: { cls: 'ranger', prestige: 1 } };
   const eyrie: Trainer = { map: 'fx_eyrie', place: 'the Wold', name: 'the scout', teaches: { cls: 'ranger', prestige: 3, asks: 'fx_fane_map', done: { flag: 'fx_map_home' } } };

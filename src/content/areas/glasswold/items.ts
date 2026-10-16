@@ -13,7 +13,8 @@ export const hoardShield = P(basaltShield, 2);
 export const leatherCoat = A('leather_coat', 'Leather Coat', 2400, 12, { classes: NO_CASTER_HEAVY });
 
 export const ITEMS: readonly ItemDef[] = [
-  // In the hollow of the fallen walker's chest on D9 (#525): no shop buys it.
+  // In the hollow of the fallen walker's chest on D9 (#525): no shop buys it. Eadmer, the scholar at the
+  // Glass's edge (B9), takes it at the first meeting that holds it, for the Sorcerer's third (#807).
   { id: 'etched_glass', name: 'Etched Glass', slot: 'none', price: 0 },
   hoardShield,
   leatherCoat,
@@ -22,8 +23,8 @@ export const ITEMS: readonly ItemDef[] = [
   // With the Compact's last three drops in the cleft under the Scarp's lip on C8 (#528): nobody on the
   // Wold reads it; Hendra, the Compact's factor at Cinderport, takes it unread for 200 gold (#735).
   { id: 'cipher_letter', name: 'Letter in Cipher', slot: 'none', price: 0 },
-  // In the cache in the half-buried walker's chest at the Glass's edge, B9 (#530): no shop buys it, and it
-  // does nothing until the reach (Phase 1.6) gives it something to do.
+  // In the cache in the half-buried walker's chest at the Glass's edge, B9 (#530): no shop buys it. Eadmer,
+  // the scholar in the gap, asks for it once the etched glass is his, and reads the one by it (#807).
   { id: 'glass_light', name: 'Glass with a Light', slot: 'none', price: 0, text: [
     'A piece of glass the size of a fist, smooth on every side, and in it a light, cold green-white, that does not flicker.',
     'It is no warmer for the light, nor for your hand. Turned, shaken or covered, it is the same.',

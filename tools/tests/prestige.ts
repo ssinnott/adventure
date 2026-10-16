@@ -14,6 +14,7 @@ import { World } from '../../src/game/world.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { serialize, deserialize } from '../../src/game/save.ts';
 import { item } from '../../src/game/items.ts';
+import { TRAINERS } from '../../src/game/quests.ts';
 import { ok } from './lib.ts';
 
 /** A member of a class trained to a level, its prestiges taken as far as the level allows, or `took`. */
@@ -70,6 +71,18 @@ export function prestige(): void {
   const third = teach(paramount, party, world.state, 0);
   ok(third.taught && party.gold === 4000 && className(bram) === 'Knight Paramount', 'its quest done, the third costs no gold');
   ok(offers({ cls: 'monk', prestige: 1 }, party, world.state).length === 0, 'a trainer of a class the company lacks has no one to teach');
+  {
+    // The Sorcerer's third as placed (#807): the scholar at the Glass's edge teaches a Thaumaturge of 27 the
+    // Magus once his quest's deed is done, and for no gold.
+    const magus = TRAINERS.find((t) => t.teaches.cls === 'sorcerer' && t.teaches.prestige === 3)?.teaches;
+    const r = makeRng(807), p = defaultParty(r), w = new World(buildMaps(), p, r), cassian = p.members[5];
+    cassian.xp = xpForLevel(27); levelUp(cassian, r); takePrestige(cassian); takePrestige(cassian);
+    const purse = p.gold, waits = !!magus && barOf(magus, cassian, p, w.state) === 'the quest first' && !teach(magus, p, w.state, 5).taught;
+    for (const c of [magus?.done ?? []].flat()) for (const f of [c.flag ?? []].flat()) p.flags[f] = 1;
+    const made = magus ? teach(magus, p, w.state, 5) : { taught: false, line: '' };
+    ok(waits && !!magus?.asks && made.taught && className(cassian) === 'Magus' && p.gold === purse,
+      `the scholar at the Glass's edge waits on his quest, and then makes a Thaumaturge of 27 a Magus for no gold ("${made.line}")`);
+  }
 
   // A save with prestiges taken keeps them: the count, the hit points they added and a spent rite.
   {

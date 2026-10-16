@@ -250,7 +250,7 @@ while the quest goes down.
 | Paladin | Lightbearer, Justicar, Exemplar | Helmstow: the chandler who makes the Lantern Chapel's lamps | under the Eaves: a hermit's shrine by the clearing, kept by a knight of the Crown that was | Old Cinder, on Fire Mountain's west flank |
 | Ranger | Outrider, Deadeye, Unerring | Thornhold: the fletcher | Deepthorn Lodge, in the Deepthorn | the Eyrie: the Wold Rider scout who guided the Meridian Company, on the far-west mesa under the rim |
 | Cleric | Curate, Prelate, Exarch | Thornhold: the bone-setter at the Lantern Chapterhouse | Lanternwood: the keeper of the moth shrine, a Lantern who stayed when the wood split | Anchorhold: an anchoress walled into a cell on Hearth Isle's east rim |
-| Sorcerer | Arcanist, Thaumaturge, Magus | Saltmouth: an astrologer who draws star charts for the ships' pilots | Watcher's Hut, beside the Stone Ring on High Moor | the crown of the Buried Tower, where it breaks the Glass |
+| Sorcerer | Arcanist, Thaumaturge, Magus | Saltmouth: an astrologer who draws star charts for the ships' pilots | Watcher's Hut, beside the Stone Ring on High Moor | the Glass's edge, by the gap the Riders keep, where the Tower's crown stands out of the Glass |
 | Thief | Tumbler, Nightjar, Faceless | Saltmouth: a locksmith | the Upper Water: an old barge smuggler at the willows' quay, out of the Compact, or so he says | Rook's Nest: a hide on the tip of Sheer Point, over the Hand's causeway |
 | Barbarian | Berserker, Ironhide, Warlord | Saltmouth: a stevedore on the docks | Iron Crag, in the Iron Fells | Warlord's Forge, by the mouth of Fire Mountain's vents |
 | Monk | Stillwater, Windwalker, Ascendant | Saltmouth: the harbour ferryman | Sjonghol, in Kestrel Edge's cliffs above the Upper Water | Spine Summit, above the Peak Stone and its monastery |
@@ -276,9 +276,8 @@ which #807 places on the Wold.
 - **Cleric:** carry the Crowness Light keeper's log of the eleven over the sea to the anchoress
   walled into Anchorhold, and go down into the temple's first crypt without her, to light its eleven
   lamps in the keeper's gaps, while she keeps the top.
-- **Sorcerer:** go down the Buried Tower for the scholar at its crown, and read what is written at
-  its foot. The walk and the floors the quest asks are held at 26–28, wherever the tower's own band
-  settles (MONSTERS.md open question 3).
+- **Sorcerer:** bring the scholar at the Glass's edge the two glasses the walkers carried, and let
+  him read the one by the other's light.
 - **Thief:** steal the Compact's orders from the Dead-Drop, below the Tide Ship, and learn who writes
   them (§10.2).
 - **Barbarian:** go down Fire Mountain's vents from the old warlord's forge to Meridian Camp, and
@@ -932,8 +931,8 @@ map has nothing a player can read, so the hidden third is earned at the Core (#2
 | **M0 — Vertical slice** | Helmstow, one Foreland outdoor map, one dungeon, one Rift; full party creation; combat; four spells per class; save/load; automap. | Prove the feel. Ship nothing else until this is fun. |
 | **M1 — Act I** | The Foreland and Thornmark complete, the Downs and the Deepthorn with them; the first guilds and their quests; the Grove Stone dungeon. | First real playthrough. |
 | **M2 — Acts II to IV** | Saltreach to the Wold and their Wardstones; the rest of the guilds; the first and second prestiges, and the eight third prestiges whose trainers live in Acts II to IV's country (#448; #443, call 8); Meridian Camp and the Dead-Drop; the ship. | The open world. |
-| **M3 — Act V + subplots** | Hearth Isle, the Underdeep and the Core, all endings, all three subplots' ends and the Cleric's third prestige. Master trainers wait on the skill tiers (#18). | Content complete. |
-| **The reach** | The Glass and Glacier Foot, with the Buried Tower and the Vault (§9), the Sorcerer's third prestige and #56's 62 and 63. | Optional by design: the game is whole without it. |
+| **M3 — Act V + subplots** | Hearth Isle, the Underdeep and the Core, all endings, all three subplots' ends and the Cleric's and the Sorcerer's third prestiges. Master trainers wait on the skill tiers (#18). | Content complete. |
+| **The reach** | The Glass and Glacier Foot, with the Buried Tower and the Vault (§9); #56's 62 and 63. | Optional by design: the game is whole without it. |
 | **Stretch** | New Game+, seeded Rift daily runs, second party mode, Arcomage-style tavern game. | Only after M3 ships. |
 
 From M1 on, each area is built as a core and country (§4, docs/EXPANSION.md §2.1): its core

@@ -2345,7 +2345,9 @@ are marked so.
     Novice, Expert and Master tiers of the weapon and magic skills are not built, so there is
     nothing for a Master to teach; they are a line of words in the Phase's epic, parked, and not in
     its Done when. The Sorcerer's third is the reach's (#448, Phase 1.6). M3 is otherwise the
-    phase's: Act V, all endings, the three subplots' ends and the Cleric's third.
+    phase's: Act V, all endings, the three subplots' ends and the Cleric's third. Decided by the
+    owner's delegate, 16 October 2026 (#807): the Sorcerer's third comes into M3, at the Glass's
+    edge on the Wold (docs/areas/glasswold.md §6).
 12. **The road behind, in one issue** (as #449 was Act IV's): `stones.ts` reads `q_mender_done`
     (1), and the stale comment there that says `q_ember_lit` is owed in `UNSET` goes; I11's
     `i11_stone` setting `q_peak_stood` is not here but the save upgrade's (call 9's seventh, #751); the
@@ -2448,7 +2450,8 @@ overturn before the issue that builds each is approved.
     carries the Mender's sliver, pays #56's 18: the sliver hums again under the Hearth.
 34. **Three calls accepted as declared.** The band's gear is found, never sold (call 4); Master
     trainers wait on the skill tiers and the Sorcerer's third is the reach's (call 11); the siege
-    is cut (call 10).
+    is cut (call 10). Decided by the owner's delegate, 16 October 2026 (#807): the Sorcerer's third
+    comes into M3, at the Glass's edge on the Wold (docs/areas/glasswold.md §6).
 35. **The Deep Mines' end of 60.** The company lands on the Clean Corridor's floor at 13,3 facing
     west, before the door drawn in the wall. The map is band 17–18, so no Act V monster stands
     there: the knockers that come up are the Kilns' own (§6, 60).
