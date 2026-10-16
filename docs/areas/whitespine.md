@@ -2025,7 +2025,7 @@ Cut and owed, from I8 (#504):
 Owed, from the chapter (#505):
 
 - **The explorers' line** is first written in the journal, and is built (#735): the Meridian
-  Journal, vol. I (Thornmark's item) has its text, two lines, and on its last page, alone, *The
+  Journal, vol. I (Thornmark's item) has its text (two lines) and, on its last page, alone, *The
   heart opens for whoever makes it whole*, as The Bells quotes it (§9, #505's 4).
 
 Cut, from the side quests (#506):

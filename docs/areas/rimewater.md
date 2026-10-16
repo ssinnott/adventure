@@ -951,8 +951,8 @@ what is new, with points of interest and a first share of the pay.
     test (`tools/tests/atlas.ts`) no longer lets L9 and K10 lie apart on the world map. West, J10 (#508, built): K10's 0,0 to 0,31
     is pines, hills and the road in the outdoors, the pass's walls at the edge (0,13 to 0,17 and 0,20
     to 0,22) being the map's ring: mountain and shut, no longer void now that J10 is laid beside it,
-    and the atlas's pine under them on the world map (`worldGrid` keeps the atlas's land where a
-    built map's edge cell is mountain), with the road out at 0,19 (328,305) against the atlas's at
+    with the atlas's pine under them on the world map (`worldGrid` keeps the atlas's land where a
+    built map's edge cell is mountain); the road out is at 0,19 (328,305) against the atlas's at
     327,305, which goes
     on over J10's corner to the link's 318,318 in J11 (#499); the road is walked, J10's 31,19
     against K10's 0,19, and the saddle is gone (#508). South, K11 (#497, built): K10's 0,31 to 31,31 is 27 pines and `iiWWW`, and K11's

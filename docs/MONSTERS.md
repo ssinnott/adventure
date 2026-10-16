@@ -1596,7 +1596,7 @@ lines are the building session's.
 |---|---|---|---|---|
 | Loader | heavy machines, a new def | brute, 26 | the drop and the vaults | *It carries a crate the size of a cart, and does not set it down.* Size 1.4 |
 | Tally Clerk | knockers, a new def | caller, 26 | the drop | *It counts the crates, then turns and counts you.* Calls two loaders |
-| Hold Keeper | keepers, a new def | controller, 27 | the drop's far end (`dd_keeper`, one) and the people's vault (`dd2_keepers`, three, and `dd2_keepers2`, four) | *It carries water to the pens, and nobody is in them.* Puts to sleep (0.3); mends its group |
+| Hold Keeper | keepers, a new def | controller, 27 | the drop's far end (`dd_keeper`: one) and the people's vault (`dd2_keepers`: three; `dd2_keepers2`: four) | *It carries water to the pens, and nobody is in them.* Puts to sleep (0.3); mends its group |
 | Deep Knocker | knockers | armoured, 28 | at the rails' sealed door | §9.2's |
 | The Tallymaster | keepers, a new def | boss, 28 | the counting house | *It writes, and does not look up.* Fights only when the company steps to its desk; calls two tally clerks; size 1.6 |
 

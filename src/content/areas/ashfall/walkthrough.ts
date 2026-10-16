@@ -11,7 +11,8 @@
 // milestone; the chandler's racks under the wall; the stream forded on its stones and the knoll over it;
 // the hermit and the clay pit under the vines; the box's groups won at its floor, the vines never
 // roaming; and the factor's hide, found from the cut vines at its mouth. Then Cinderport (#512), in at
-// the gate and out again, its businesses, its two halls and its crossings. Then Fire Mountain's flank
+// the gate and out again, its businesses, its two halls and its crossings, and the Letter in Cipher out
+// of the Wold's chest to the factor (#735). Then Fire Mountain's flank
 // (G11, #513), walked onto over G10's south edge: the crossing line both ways; the track past the shrine
 // at its head to Grimsforge, the warlord's heir at the anvil, the camp in its lee and the scavenger by
 // the fire; the vents, the middle mouth the way down into Meridian Camp, and the furnace-draught that is
@@ -1762,7 +1763,8 @@ function stairFoot(ok: (cond: boolean, msg: string) => void): void {
  * ride, sold by the Rider by the gate to Akordu's horse-lines, its far end built (#526), and the last
  * crossing, whose far end is not built, sold by nobody yet, its seller only talking; both landings
  * written here; the smith, the potter, the guildsman and the factor with words
- * only, their quests others' (#519, #635, #448).
+ * only, their quests others' (#519, #635, #448), but for the factor's hand-in of the Wold's Letter in
+ * Cipher, taken out of its chest on C8 and carried to her, early and hired (#735).
  */
 function cinderport(ok: (cond: boolean, msg: string) => void): void {
   const PORT = MAP_DEFS.find((d) => d.id === 'cinderport')!;

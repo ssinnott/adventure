@@ -2214,7 +2214,7 @@ Owed, from C8 (#528):
 
 - **The letter in the cleft has a taker** (#735): nobody on the Wold reads the Letter in Cipher and
   no shop buys it, and Hendra, the Compact's factor at Cinderport, takes it unread at her first
-  meeting for 200 gold, which Ashfall's clear counts (docs/areas/ashfall.md §6). #532's letter is
+  meeting for 200 gold, which Ashfall's clear counts (docs/areas/ashfall.md §6 and §8). #532's letter is
   the runner's orders (§4.6, §9, #528's 13, #532's 10).
 - **The Riders at the watch are words only;** the runner gives up her orders for Orders on the
   Scarp Stair (#56's 54, #532), with its Akordu end (§6, §4.6, §9, #528's 7).

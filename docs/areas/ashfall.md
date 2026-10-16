@@ -1524,10 +1524,9 @@ entries and goals, in the journal's voice, keyed to flags, events and maps the s
   the Saltings with the Stone lit is done at the stair's head, C8's `c8_line`, with no road west
   written, and `d8_east` is gone for it (glasswold.md §5, #531). That company can still walk E10's
   shoulder afterwards, hear its Hills line and set `q_road_west`, and it stands. Decided by the
-  owner's delegate, 16 October 2026 (#735, struck): the line is true where it is said, the
-  chapter's `west` entry is true of any company that has walked the Hills' shoulder, and an
-  `until` on `c8_line` would silence it for a company that looked over the Scarp before the Stone
-  was lit.
+  owner's delegate, 16 October 2026 (#735, struck): the line is true where it is said and the
+  chapter's `west` entry is true of any company that has walked the Hills' shoulder; an `until` on
+  `c8_line` would silence it for a company that looked over the Scarp before the Stone was lit.
 
 While the parts are fetched, a part carried sends the company up to the Stone to set it; with none
 carried, what is set picks the next place: Old Cinder once the vents' and the corridors' parts are in,
@@ -2916,8 +2915,8 @@ Decided by delegate for #522, each the owner's to overturn:
 10. **The shrines:** F9's and E11's give might and H9's intellect, none of which Ashfall's gave
     before (accuracy, endurance three times, personality, speed); the two builders each took might as
     new, so it is given twice. G9, a small box, has none. Decided by the owner's delegate, 16 October
-    2026 (#735): F9's gives accuracy, the fish stone's, a fisher's eye, its text unchanged, and E11's
-    keeps might; by a count of the Whitespine's, Ashfall's and the Wold's shrines accuracy had the
+    2026 (#735): F9's gives accuracy (the fish stone, a fisher's eye) with its text unchanged, and
+    E11's keeps might; by a count of the Whitespine's, Ashfall's and the Wold's shrines accuracy had the
     one, E10's.
 11. **E11's secret is a cold lava tube under the flow,** its hint a draught of cold air out of a
     crack beside the fire, found and not told; the door stands at 18,12, moved from 18,13 because the
