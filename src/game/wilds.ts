@@ -2,10 +2,10 @@
 // with a cache, a statue that gives for its riddle's answer, typed, and a camp to rest at. A spent
 // one is its id in the map's `used`, as an opened chest is, so nothing new is saved. Pure, so the
 // tests load it; game.ts calls it and says what it returns.
-import type { Feature, Gift } from './map.ts';
+import type { Feature, Gift, Night } from './map.ts';
 import type { World } from './world.ts';
 import type { Party, Stat } from './party.ts';
-import { rest as restMember } from './party.ts';
+import { rest as restMember, stayNight } from './party.ts';
 import { manhattan } from './types.ts';
 import { item } from './items.ts';
 
@@ -126,4 +126,32 @@ export function restParty(world: World, party: Party): boolean {
   if (!world.rest()) return false;
   for (const m of party.members) restMember(m);
   return true;
+}
+
+/** What is said on waking from a rest that counts no night. */
+const MORNING = 'The party rests. Morning comes.';
+
+/**
+ * The night a rest where the party stands counts (#730), set, if it counts one: at a camp with `nights`,
+ * the first not yet set, once its `after` holds, as an inn's stay sets its own (`stayNight`). A night not
+ * yet due keeps the later ones back, so they come in order. None at a camp that counts none, with every
+ * night set or with the next not yet due, nor off a camp.
+ */
+export function campNight(world: World, party: Party): Night | undefined {
+  const camp = world.map.featuresAt(world.state.x, world.state.y).find((f): f is Extract<Feature, { kind: 'camp' }> => f.kind === 'camp' && !!f.nights);
+  const night = camp?.nights?.find((n) => !party.flags[n.sets]);
+  if (!camp || !night || !world.walks(night, camp.x, camp.y)) return undefined;
+  stayNight(party, [night.sets]);
+  return night;
+}
+
+/**
+ * Eight hours' rest where the party stands (`restParty`) and the words said on waking: the night's own
+ * (`campNight`), as one entry, as a group's answer is said, else the usual morning. Undefined, and
+ * nothing changes, without the food.
+ */
+export function restAndWake(world: World, party: Party): string | undefined {
+  if (!restParty(world, party)) return undefined;
+  const says = campNight(world, party)?.says;
+  return says?.length ? says.join(' ') : MORNING;
 }

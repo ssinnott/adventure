@@ -116,6 +116,13 @@ interface Blessing extends Presence { x: number; y: number; id: string; name?: s
  */
 interface Business extends Presence { x: number; y: number; name: string; interior: Interior; hall?: GuildId }
 
+/**
+ * A night a camp counts (#730), as an inn counts the flags of its `nights`: a rest there sets `sets`,
+ * once `after` holds, and its `says` are said on waking in place of the usual line (game/wilds.ts
+ * `campNight`, `restAndWake`).
+ */
+export interface Night { after?: When; sets: string; says?: readonly string[] }
+
 /** A thing in a cell the party can interact with by stepping on it or pressing the action key. */
 export type Feature =
   /**
@@ -160,8 +167,15 @@ export type Feature =
   | { kind: 'cairn'; x: number; y: number; id: string; name?: string; text?: string; gold: number; items: string[] }
   /** `text` is its look; the word `answer`, typed to its `riddle`, gives `gift` once, and `done` is said then and after. */
   | { kind: 'statue'; x: number; y: number; id: string; name?: string; text: string; riddle: string; answer: string; gift: Gift; done: string }
-  /** Where the party may rest though monsters are about, as often as it likes. */
-  | { kind: 'camp'; x: number; y: number; name?: string; text: string }
+  /**
+   * Where the party may rest though monsters are about, as often as it likes. `nights` makes it count
+   * them, as an inn's do (#730): a rest there sets the first night not yet set, if its `after` holds,
+   * so the nights come in order, a flag a night, and a night not yet due keeps the later ones back. The
+   * rest is the night, eight hours at whatever hour, and the night's `says` are said on waking in place
+   * of "The party rests. Morning comes."; a night with none says that. A rest where no night is due, and
+   * a camp with no `nights`, are as they were.
+   */
+  | { kind: 'camp'; x: number; y: number; name?: string; text: string; nights?: readonly Night[] }
   /**
    * A den (game/dens.ts): it breeds `breeds`, its `brood` groups, back one a pace while it stands;
    * `keepers`, a group beside it that never leaves, guard it. `text` is its look, said when it is

@@ -2,16 +2,18 @@
 // shrine, a fountain, a cairn, a statue, a camp and a hermit. Each counts towards the density floor
 // and none as a sign; the first four give once and are saved as used, the camp rests the party as
 // often as it likes, and the statue takes its answer typed, through the real keyboard, and only the
-// right word. Then the hint chain: every statue's answer is said somewhere else in the game.
+// right word. Then the hint chain: every statue's answer is said somewhere else in the game. And a
+// camp's nights (#730), on a fixture of camps: a rest there counts the first night not yet set, once
+// its after holds, and says the night's own words on waking in place of the usual.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { Feature, MapDef } from '../../src/game/map.ts';
 import { World } from '../../src/game/world.ts';
-import { defaultParty, resists } from '../../src/game/party.ts';
+import { defaultParty, resists, stayNight } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
 import { serialize, deserialize, SAVE_VERSION } from '../../src/game/save.ts';
 import { NORTH } from '../../src/game/types.ts';
-import { useShrine, openCairn, answerRiddle, restRefused, restParty, stepLine, normalWord, spentId, ANSWER_MAX } from '../../src/game/wilds.ts';
+import { useShrine, openCairn, answerRiddle, restRefused, restParty, restAndWake, stepLine, normalWord, spentId, ANSWER_MAX } from '../../src/game/wilds.ts';
 import { Input } from '../../src/input.ts';
 import { RiddleScreen } from '../../src/ui/riddle.ts';
 import type { Game } from '../../src/game/game.ts';
@@ -20,7 +22,7 @@ import { CONTENT, collect, compare } from '../shipped.ts';
 import { judge, measure } from './density.ts';
 import { texts, lineFaults } from './pillars.ts';
 import { condFaults } from './quests.ts';
-import { ok } from './lib.ts';
+import { ok, headlessGame, drive } from './lib.ts';
 
 const FIXTURE: MapDef = {
   id: 'wilds', name: 'Wilds', kind: 'outdoor', density: 'country',
@@ -35,6 +37,24 @@ const FIXTURE: MapDef = {
     { kind: 'npc', x: 11, y: 1, name: 'A hermit', lines: ['They say the old word was saltmarrow.'] },
   ],
   encounters: [{ id: 'w_rats', x: 9, y: 3, monsters: ['rat'], roams: false }],
+};
+
+/**
+ * Camps that count nights (#730): a fire whose first night waits on a flag and whose second waits on
+ * nothing, a camp that counts none, and a hollow whose one night has no words of its own.
+ */
+const CAMPS: MapDef = {
+  id: 'camps', name: 'Camps', kind: 'outdoor',
+  start: { x: 0, y: 0, facing: NORTH },
+  rows: Array.from({ length: 3 }, () => ','.repeat(9)),
+  features: [
+    { kind: 'camp', x: 1, y: 1, name: 'The fire', text: 'A fire-ring on the shingle.', nights: [
+      { after: { flag: 'fx_come' }, sets: 'fx_night1', says: ['She is gone.', 'A boat is out.'] },
+      { sets: 'fx_night2', says: ['Rain on the stones.'] },
+    ] },
+    { kind: 'camp', x: 3, y: 1, text: 'A ring of cold ashes.' },
+    { kind: 'camp', x: 5, y: 1, text: 'A hollow in the rock.', nights: [{ sets: 'fx_quiet' }] },
+  ],
 };
 
 function pick<K extends Feature['kind']>(def: MapDef, kind: K): Extract<Feature, { kind: K }> {
@@ -226,4 +246,95 @@ export function wilds(): void {
   const statues = MAP_DEFS.flatMap((d) => (d.features ?? []).filter((f) => f.kind === 'statue'));
   const lost = hintless(MAP_DEFS);
   ok(!lost.length, `every statue in the content has its answer said elsewhere (${statues.length} placed)${lost.map((l) => '; ' + l).join('')}`);
+  campNights();
+}
+
+/**
+ * A camp's nights (#730): a rest where the party stands counts the first night not yet set, once its
+ * after holds, as an inn's stay does; the night's own words are said on waking in place of the usual
+ * line; a camp with none, a rest off a camp and an inn are as they were.
+ */
+function campNights(): void {
+  const USUAL = 'The party rests. Morning comes.', WORDS = 'She is gone. A boat is out.';
+  const [fire, plain, hollow] = CAMPS.features as Extract<Feature, { kind: 'camp' }>[];
+  const set = (p: Party): string => ['fx_night1', 'fx_night2', 'fx_quiet'].filter((k) => p.flags[k]).join();
+  const camped = (minutes?: number): { world: World; party: Party; at: (f: { x: number; y: number }) => void } => {
+    const rng = makeRng(5), party = defaultParty(rng);
+    party.food = 99;
+    const world = new World({ camps: new GameMap(CAMPS) }, party, rng);
+    if (minutes !== undefined) world.state.minutes = minutes;
+    return { world, party, at: (f) => { world.state.x = f.x; world.state.y = f.y; } };
+  };
+
+  // A night whose after has not come: the usual rest, nothing set, and not the second night, which
+  // waits on nothing, before the first.
+  const c = camped();
+  c.at(fire);
+  for (const m of c.party.members) m.hp = 1;
+  let at = c.world.state.minutes, food = c.party.food, woke = restAndWake(c.world, c.party);
+  ok(woke === USUAL && set(c.party) === '' && c.world.state.minutes === at + 480 && food > c.party.food && c.party.members.every((m) => m.hp === m.maxHp),
+    `a rest at a fire whose first night is not yet due is the usual rest, eight hours and a ration each, and sets no night, the second not before the first (${woke}; set: ${set(c.party) || 'none'})`);
+  // Due: the rest is the night.
+  c.party.flags.fx_come = 1;
+  at = c.world.state.minutes; food = c.party.food;
+  woke = restAndWake(c.world, c.party);
+  ok(woke === WORDS && set(c.party) === 'fx_night1' && c.world.state.minutes === at + 480 && food > c.party.food,
+    `once it is due the rest sets the night and says its lines as one, in place of the usual, eight hours and a ration each as ever (${woke}; set: ${set(c.party)})`);
+  woke = restAndWake(c.world, c.party);
+  ok(woke === 'Rain on the stones.' && set(c.party) === 'fx_night1,fx_night2', `the next rest counts the second night and not the first again (${woke}; set: ${set(c.party)})`);
+  woke = restAndWake(c.world, c.party);
+  ok(woke === USUAL && set(c.party) === 'fx_night1,fx_night2', `and with every night set a rest is the usual rest (${woke})`);
+
+  // As it was: a camp with no nights, and a rest off the fire's square, though its first night is due.
+  const d = camped();
+  d.party.flags.fx_come = 1;
+  d.at(plain);
+  ok(restAndWake(d.world, d.party) === USUAL && set(d.party) === '', 'a camp with no nights says the usual line and sets nothing, though another camp\'s first night would be due');
+  d.at({ x: fire.x + 1, y: fire.y });
+  ok(restAndWake(d.world, d.party) === USUAL && set(d.party) === '', 'nor does a rest beside the fire count its night');
+  d.at(hollow);
+  ok(restAndWake(d.world, d.party) === USUAL && set(d.party) === 'fx_quiet', 'a night with no words of its own is set and says the usual line');
+
+  // Whatever the hour, and not without the food.
+  for (const [hour, minutes] of [['noon', 12 * 60], ['midnight', 0], ['dusk', 18 * 60]] as const) {
+    const h = camped(minutes);
+    h.party.flags.fx_come = 1; h.at(fire);
+    ok(restAndWake(h.world, h.party) === WORDS && set(h.party) === 'fx_night1', `the first night counts at ${hour}`);
+  }
+  const s = camped();
+  s.party.flags.fx_come = 1; s.party.food = 0; s.at(fire);
+  at = s.world.state.minutes;
+  ok(restAndWake(s.world, s.party) === undefined && set(s.party) === '' && s.world.state.minutes === at, 'without the food nothing is rested and no night is set');
+
+  // Through the game: the offer, declined and taken.
+  const g = headlessGame(4);
+  g.world = new World({ camps: new GameMap(CAMPS) }, g.party, g.rng);
+  g.party.food = 99; g.party.flags.fx_come = 1;
+  g.world.state.x = fire.x; g.world.state.y = fire.y;
+  const start = g.world.state.minutes;
+  g.offerRest();
+  drive(g, ['down', 'interact']);
+  ok(set(g.party) === '' && g.world.state.minutes === start, 'Not now rests nothing and sets nothing');
+  const said = g.said;
+  g.offerRest();
+  drive(g, ['interact']);
+  const lines = g.log.slice(g.log.length - (g.said - said));
+  ok(lines.includes(WORDS) && !lines.includes(USUAL) && set(g.party) === 'fx_night1' && g.world.state.minutes === start + 480, `Rest at the fire says the night's lines and not the usual (${lines.join(' / ')})`);
+
+  // Kept and recorded: the flag is the party's, saved as any is; the shipped list records it.
+  const kept = deserialize(serialize(c.world.state, c.party, 0)).party;
+  ok(kept.flags.fx_night1 === 1 && kept.flags.fx_night2 === 1, 'a save keeps the nights as flags');
+  const shipped = collect({ ...CONTENT, defs: [CAMPS] }).flags;
+  ok(['fx_night1', 'fx_night2', 'fx_quiet'].every((k) => shipped.includes(k)), 'the shipped list records the flags a camp\'s nights set');
+  ok(!condFaults({ flag: 'fx_night1' }, [CAMPS]).length && condFaults({ flag: 'fx_night9' }, [CAMPS]).length === 1, 'a night\'s flag is one something sets, for a quest or a presence to wait on');
+  const wordy = { ...fire, nights: [{ sets: 'fx_long', says: ['A night of a great many words, said slowly, with a long breath drawn between each.', 'And another, and a third, until the fire has burnt down to nothing at all.', 'Then the grey comes up over the water and the company wakes, one by one.'] }] };
+  ok(!lineFaults(CAMPS).length && lineFaults({ ...CAMPS, features: [wordy] }).length === 1, 'a night whose lines, said as one, take more than three of the log is caught');
+  ok(texts([CAMPS]).some((t) => t.text === 'She is gone.' && t.where.includes('fx_night1')), 'and its lines are read with every text, for the font, the spelling and the voice');
+
+  // An inn is as it was: its nights a list of flags, each stay setting the next in order.
+  const nights = ['fx_a', 'fx_b'], guests = defaultParty(makeRng(1));
+  ok(stayNight(guests, nights) === 'fx_a' && stayNight(guests, nights) === 'fx_b' && stayNight(guests, nights) === undefined && stayNight(guests) === undefined && guests.flags.fx_a === 1 && guests.flags.fx_b === 1,
+    'an inn\'s stays set its flags one at a time, in order, and a spent list sets none');
+  const lodge = MAP_DEFS.find((d) => d.id === 'rime_lodge')?.features?.find((f) => f.kind === 'inn');
+  ok(lodge?.kind === 'inn' && !!lodge.nights?.length && lodge.nights.every((n) => typeof n === 'string'), 'and Rime Lodge\'s inn still counts its nights as a list of flags');
 }

@@ -99,6 +99,7 @@ export function collect(c: Content): Ids {
       if (f.kind === 'npc') for (const x of personFlags(f)) flags.add(x);
       if (f.kind === 'event') for (const x of [f.sets ?? []].flat()) flags.add(x);
       if (f.kind === 'inn') for (const x of f.nights ?? []) flags.add(x);
+      if (f.kind === 'camp') for (const n of f.nights ?? []) flags.add(n.sets);
     }
     for (const e of m.encounters) for (const x of groupFlags(e)) flags.add(x);
     maps[m.id] = { size: `${m.width}x${m.height}`, used: sorted(used), groups: sorted(m.encounters.map((e) => e.id)), doors: sorted(doors) };

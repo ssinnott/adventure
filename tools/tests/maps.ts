@@ -159,16 +159,34 @@ export function tidalFaults(m: GameMap, defs: readonly MapDef[]): string[] {
 
 /**
  * What a gated exit waits on that nothing on the maps sets. A person sets a flag, met; a group by its
- * fall or its question, and an event, said, as tools/tests/quests.ts counts them for its conditions.
- * The Core's door waits on `q_anvil_closed`, which a group's fall sets, and on `q_peak_stood`, which
- * an event does (#749). A flag nothing sets still fails.
+ * fall or its question, an event, said, and a camp's night, rested at (#730), as tools/tests/quests.ts
+ * counts them for its conditions. The Core's door waits on `q_anvil_closed`, which a group's fall sets,
+ * and on `q_peak_stood`, which an event does (#749). A flag nothing sets still fails.
  */
 export function unsetGates(defs: readonly MapDef[]): string[] {
   const set = new Set(defs.flatMap((d) => [
-    ...(d.features ?? []).flatMap((f) => (f.kind === 'npc' ? personFlags(f) : f.kind === 'event' ? [f.sets ?? []].flat() : [])),
+    ...(d.features ?? []).flatMap((f) => (f.kind === 'npc' ? personFlags(f) : f.kind === 'event' ? [f.sets ?? []].flat() : f.kind === 'camp' ? (f.nights ?? []).map((n) => n.sets) : [])),
     ...(d.encounters ?? []).flatMap(groupFlags),
   ]));
   return defs.flatMap((d) => (d.exits ?? []).flatMap((e) => [e.needFlag ?? []].flat().filter((k) => !set.has(k)).map((k) => `${d.id}: gated exit flag '${k}' at ${e.x},${e.y} is set by nothing`)));
+}
+
+/**
+ * What is wrong with the nights a map's camps count (#730): a night that sets no flag, two that set
+ * the same (the second is never counted, its flag being set already) and a night that says a blank line.
+ */
+export function nightFaults(def: MapDef): string[] {
+  return (def.features ?? []).flatMap((f) => {
+    if (f.kind !== 'camp') return [];
+    const at = `${def.id}: camp at ${f.x},${f.y}`, nights = f.nights ?? [], flags = nights.map((n) => n.sets);
+    return [
+      ...nights.flatMap((n) => [
+        ...(n.sets.trim() ? [] : [`${at}: a night sets no flag`]),
+        ...((n.says ?? []).some((l) => !l.trim()) ? [`${at}: night ${n.sets} says a blank line`] : []),
+      ]),
+      ...flags.filter((s, i) => flags.indexOf(s) !== i).map((s) => `${at}: two nights set ${s}, so the second is never counted`),
+    ];
+  });
 }
 
 export function maps(): void {
@@ -207,6 +225,14 @@ export function maps(): void {
     ok(!unsetGates([fx({ encounters: [{ id: 'fx_g', x: 2, y: 1, monsters: ['rat'], sets: 'fx_flag' }] })]).length, 'a gated exit whose flag a group\'s fall sets passes');
     ok(!unsetGates([fx({ features: [{ kind: 'event', x: 2, y: 1, id: 'fx_e', text: 'Hm.', sets: 'fx_flag' }] })]).length, 'and so does one whose flag an event sets');
     ok(unsetGates([fx({})]).length === 1, 'and one whose flag nothing sets fails');
+    ok(!unsetGates([fx({ features: [{ kind: 'camp', x: 2, y: 1, text: 'Ashes.', nights: [{ sets: 'fx_flag' }] }] })]).length, 'and so does one whose flag a camp\'s night sets (#730)');
+  }
+  { // The nights a camp counts (#730): each sets a flag of its own and says no blank line.
+    const camp = (nights: Extract<Feature, { kind: 'camp' }>['nights']): MapDef => ({ id: 'fx_camp', name: 'Fixture', kind: 'outdoor', start: { x: 0, y: 0, facing: NORTH }, rows: [',,'], features: [{ kind: 'camp', x: 1, y: 0, text: 'Ashes.', nights }] });
+    const faults = MAP_DEFS.flatMap(nightFaults), counting = MAP_DEFS.flatMap((d) => (d.features ?? []).filter((f) => f.kind === 'camp' && f.nights?.length)).length;
+    ok(!faults.length, `every night a camp counts sets a flag of its own and says no blank line (${counting} camps count nights)${faults.length ? ' -> ' + faults.join('; ') : ''}`);
+    ok(!nightFaults(camp(undefined)).length && !nightFaults(camp([])).length && !nightFaults(camp([{ sets: 'fx_one', says: ['Rain.'] }, { sets: 'fx_two', after: { flag: 'fx_one' } }])).length, 'a camp with no nights, none or two of its own passes');
+    ok(nightFaults(camp([{ sets: ' ' }])).length === 1 && nightFaults(camp([{ sets: 'fx_one' }, { sets: 'fx_one' }])).length === 1 && nightFaults(camp([{ sets: 'fx_one', says: ['Rain.', ' '] }])).length === 1, 'and a night that sets no flag, two that set the same and one that says a blank line each fail');
   }
   // The Deepthorn's monsters are harder, not more: no group on its maps is above eight.
   const deep = new Set(ATLAS.zones.find((z) => z.id === 'deepthorn')?.maps?.map((m) => m.map));
