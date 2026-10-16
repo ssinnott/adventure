@@ -241,7 +241,7 @@ west, E11, and Fire Mountain's east flank, south-east foot and south foot, H11, 
   the Compact takes its tenth at the quay and calls it harbour dues, and that the drakes come down
   for the seals. West, the hills roll on to the Wold, which joins the box by its west edge with no
   road; east, the ridge shows Cinderport's masts over its wall. A cairn on the west hill, a fish
-  stone that gives might and, behind a rock where a path up the ridge stops, the fishers' store with
+  stone that gives accuracy and, behind a rock where a path up the ridge stops, the fishers' store with
   a box the Compact never saw. One group: two cinder drakes on the ash at the slope's foot (§4.10).
 - **Cinderport's harbour side** (G9, `cindercoast_g9`, country, band 24–25; #522): the harbour north
   of the town's wall, between the sea wall's two moles and open to the Sound by its mouth on the
@@ -324,11 +324,13 @@ second row, `meridian_camp2` at 226,346, six squares south of the first (docs/ar
 Its row on the curve and its step on the gear ladder are in (#542): the row in
 `src/content/progression.ts` (band 24–26, next 26, window 5,500), owed to #446 while the area was
 built box by box and with no owed entry now (§9, #522's 20): a clear gives 35,919 xp a member of the
-19,467 asked and 11,760 gold of the 11,760, the six boxes', the vents', Old Cinder's, E10's Wold
+19,467 asked and 11,960 gold of the 11,760, the six boxes', the vents', Old Cinder's, E10's Wold
 half's, the corridors', the Ember Stone's, the Surveyor's and the Mapmaker's rungs', the side
-quests', the road behind's sentries' (#449) and the country behind's seven boxes' (§8). Its xp was
+quests', the road behind's sentries' (#449) and the country behind's seven boxes' (§8); the 200 over
+the gold is Hendra's, for the Letter in Cipher (#735). Its xp was
 met since E10's Wold half (#524) and its gold alone was owed, which Cinderport leaves as it is, a
-town paying nothing, and which F9, G9, H9 and E11 (#522) brought to 11,300 of the 11,760 and H11,
+town paying nothing but Hendra's 200 (#735), and which F9, G9, H9 and E11 (#522) brought to 11,300 of
+the 11,760 and H11,
 H12 and G12 to the whole (§8); the camp's 3,003 xp and 1,200 gold are outside it, the area listing
 the camp `outside` (§9, #22's 5);
 and the step in
@@ -643,8 +645,8 @@ half, with the wilderness features (#45); no more than one point in four is a si
   the Helmstow customs seal wait for a boat that comes by night: shards for the causeway (DESIGN
   §9), a Long Sword +2 among them. The hint: the vines there are cut back, and the cut ends are
   fresh.
-- **Lines:** the ground, the step: *Horses on the ash outside the gate, and fires. The Riders come
-  down to trade, the gate-ward says, and their eldest talks.*
+- **Lines:** the ground, the step: *Horses on the grass outside the gate, and fires. Riders, come
+  down to trade, and an old one among them who talks.* (§9, #511's 11; #735.)
 - **New here.** A port on the far side; the Riders seen.
 - **Finds.** The Long Sword +2 in the hide.
 - **Pay.** About 1,500 xp a member.
@@ -715,9 +717,10 @@ half, with the wilderness features (#45); no more than one point in four is a si
   - The Compact's house, the factor's. Interior: `cinderport_factor`.
   - The potter's. Interior: `cinderport_potter`.
 - **People.** The harbourmaster and the ship's master (#547); the Cartographers' guildsman, whose
-  line ends at Meridian Camp (#56's 51); the Compact's factor, whose runner is #56's 54's; the
-  potter (#56's 50) and the smith (#56's 52); the Riders' eldest on trading days, at the ground
-  outside the gate (§5); the mason of #56's 48, who wants passage.
+  line ends at Meridian Camp (#56's 51); the Compact's factor, whose runner is #56's 54's and who
+  takes the Wold's Letter in Cipher unread (#735); the potter (#56's 50) and the smith (#56's 52);
+  the Riders' eldest on trading days, at the ground outside the gate (§5); the mason of #56's 48,
+  who wants passage.
 - **Quests.** The chapter's goals (§5); The Founding Stone and The Shovel That Does Not Blunt given
   here (§6); the two halls' quests (§6); the seeking quests for the third prestiges (#448).
 - **The ship** (#547): from Kilnhaven's quay to Cinderport's and back, 600 gold and two days, a
@@ -753,7 +756,8 @@ half, with the wilderness features (#45); no more than one point in four is a si
   no ware (§9, #512's 7). Gorran the smith and Jenifer the potter give The Shovel That Does Not
   Blunt and The Founding Stone, and the scavenger off the mountain stands at Gorran's once his story
   is told (#519, §6); Cador Lusk of the Cartographers' Guild and Hendra the factor speak with words
-  only, for #635 and #448 to give theirs (§9, #512's 8). The inn takes 55 a head, the armourer's
+  only, for #635 and #448 to give theirs (§9, #512's 8); Hendra has since taken the Letter in Cipher
+  (#735, §6). The inn takes 55 a head, the armourer's
   and the chandler's sell at list, the temple charges the engine's and the yard trains to 27 (§9, #512's 10); the chandler's stock is
   the Act III provisioners' set and the Quickening Draught (§9, #512's 11). Thirteen events carry the
   rest along the street, the lanes and the quay, the quay's line among them, where the street meets
@@ -1214,7 +1218,7 @@ half, with the wilderness features (#45); no more than one point in four is a si
     down for the seals. Words only.
     **The landmarks of #45.** A cairn on the west hill, a whale's rib stood in its top, 100 gold and
     a Sapphire Vial (`f9_cairn`, 2,19); and a standing stone with a fish cut in it, salt crusted in
-    the cut, which gives might (`f9_shrine`, 14,22).
+    the cut, which gives accuracy (`f9_shrine`, 14,22; §9, #522's 10).
     **The secret.** The hint is a path trodden up the ridge from the shore, fish scales in it, that
     stops at a rock (`f9_track`, 24,26). Searched from 24,25 facing north, the rock gives at 24,24
     on the fishers' store (`f9_store`, 24,23): casks of salt fish and under them a box the Compact
@@ -1519,7 +1523,11 @@ entries and goals, in the journal's voice, keyed to flags, events and maps the s
   that rides west from Cinderport's gate instead is set down at Akordu's horse-lines (D8's 9,27),
   where `d8_east`, `after` `q_ember_lit`, sets the same flag. One that comes up the Scarp stair from
   the Saltings with the Stone lit is done at the stair's head, C8's `c8_line`, with no road west
-  written, and `d8_east` is gone for it (glasswold.md §5, #531).
+  written, and `d8_east` is gone for it (glasswold.md §5, #531). That company can still walk E10's
+  shoulder afterwards, hear its Hills line and set `q_road_west`; that stands (decided by the
+  owner's delegate, 16 October 2026, #735, struck): the line is true where it is said and the
+  chapter's `west` entry is true of any company that has walked the Hills' shoulder; an `until` on
+  `c8_line` would silence it for a company that looked over the Scarp before the Stone was lit.
 
 While the parts are fetched, a part carried sends the company up to the Stone to set it; with none
 carried, what is set picks the next place: Old Cinder once the vents' and the corridors' parts are in,
@@ -1598,8 +1606,10 @@ Two halls open here (DESIGN §8; #443, call 7), on the rules and the hall menu b
   paid, the company are Geographers, the top rank, and Cador Lusk has a pin in the map past the
   vents (§9, #635's 1 to 7).
 - **The Compact's factor's house** at Cinderport (#512): the Compact's ship lands here (#547), the
-  fare halved for a member; #56's 54's runner is theirs. What the factor's hide in G10's vines
-  holds (§4.3) is seen and never said.
+  fare halved for a member; #56's 54's runner is theirs. Hendra takes the Wold's Letter in Cipher
+  (`cipher_letter`, in the chest `c8_drops` on C8) at her first meeting, hired or not: she turns it
+  to the light and does not read it, pays 200 gold and puts it in the stove (#735,
+  `q_cipher_taken`). What the factor's hide in G10's vines holds (§4.3) is seen and never said.
 
 ### The third prestiges' quests
 
@@ -1762,13 +1772,15 @@ behind claim nothing more (#522).
   50 and the tube's 100 with a Sapphire Vial each, no gear among them: 11,300 of the 11,760, 460
   short (§9, #522's 9). H11, H12 and G12 hold 150 a box, a cairn's 100 and a Sapphire Vial and a
   chest's 50 with an Elixir, H11's cairn at 110 for the last 10 (§9, #522's 20): the clear gives
-  11,760 of the 11,760, and the curve's owed row is gone. The camp's
+  11,760 of the 11,760, and the curve's owed row is gone; Hendra's 200 for the Letter in Cipher
+  (#735) makes it 11,960, over a floor that fails nothing. The camp's
   1,200 gold and its Meridian Staff +4 at 2,600, in
   the kit chest, are
   outside the area's budget and held to the Glasswold's window of 6,000 (§9, #22's 5).
   Cinderport holds no gold, a town paying
-  nothing; the dearest ware at its armourer's is the Drakeskin Coat at 3,100 and the Quickening
-  Draught at its chandler's, the company's kit from 25, is 2,000, both inside the window (#512).
+  nothing but that hand-in; the dearest ware at its armourer's is the Drakeskin Coat at 3,100 and
+  the Quickening Draught at its chandler's, the company's kit from 25, is 2,000, both inside the
+  window (#512).
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
   (docs/areas/thornmark.md §9, 17): a company at 24 wins nine in ten of H10's fights and walks the
   shore resting at its camp; one at 22 wins no more than one in four, which is how the Stair's foot
@@ -2159,7 +2171,9 @@ Decided by delegate for #511, each the owner's to overturn:
     shard item would count against its Rift.
 11. **The step is a person and an event:** `g10_ground` carries the brief's line with "on the grass"
     for "on the ash", the ground being the atlas's grass, and the eldest tells the story in three
-    lines, the doc's words last. The quest and its goal are #518's.
+    lines, the doc's words last. The quest and its goal are #518's. The gate-ward the line named is
+    first met a step inside Cinderport's gate, so on the ground nobody said it: the line says the
+    Riders and their eldest without him (#735).
 12. **The brief's places are each a feature,** and the ash has features for density besides: the
     Riders' fire-ring and tracks, a drake turning over by day (`g10_overhead`, `when: day`: the
     issue's warning of the slopes), a boulder the mountain threw, the ash warming, the stream and
@@ -2205,7 +2219,8 @@ Decided by delegate for #512, each the owner's to overturn:
 8. **People with words only,** none with a flag, a choice or a quest, so #519, #635 and #448 add
    theirs: Gorran the smith in the armourer's (#521's 6; his shovel-head "will not take a burr"),
    Jenifer the potter (the cups the first folk's shape), Cador Lusk the guildsman (the shelf's gap
-   and the hint §4.8 names for #516) and Hendra the factor (Ruan reads her book). Names are the
+   and the hint §4.8 names for #516) and Hendra the factor (Ruan reads her book; the Letter in
+   Cipher has been hers to take since #735). Names are the
    coast's trade-English, as Saltreach's and Kilnhaven's are (§10), checked against the content for
    clashes.
 9. **Not placed: the Riders' eldest and the mason.** The eldest is G10's, on the trading ground
@@ -2811,8 +2826,9 @@ Decided by delegate for #449, each the owner's to overturn:
    the chapter's causeway goal): the Whitespine sets no flag that the Hand has built, and I8 lays
    the causeway from the start, so the company's first sight of it is the honest moment.
 2. **Events say it, not the almanac or the sky:** the almanac reads the Stones' count and the
-   weather and takes no map's words, so a line there is a systems change (`src/game/world.ts`,
-   §11). A once event on the Saltings' shore (C6 31,17) and the Tide Ship's starboard rail (11,6).
+   weather and takes no map's words, so a line there is a systems change (`src/game/world.ts`),
+   and none is wanted (§11, struck by #735). A once event on the Saltings' shore (C6 31,17) and the
+   Tide Ship's starboard rail (11,6).
 3. **The sentries are two pairs, F10's and E10's,** F11's form: a lone sentry is a cheap fight and
    lifted F10 to 13.19 fights to a rest and E10 to 12.48, out of the aim; pairs hold 9.19 and 10.49.
 4. **E10's pair stands by the road up into the Hills** (10,16), past the vultures: by the way in
@@ -2850,6 +2866,7 @@ Decided by delegate for #518, each the owner's to overturn:
     would fit no socket.
 11. **The Hearth's line is placed** in `hearth`, on `q_ember_lit` (#548's 5 left it to the chapter).
     *The heart opens for whoever makes it whole* is not said again: The Bells writes it (`heart`).
+    Its first writing is the last page of the Meridian journal, vol. I, Thornmark's (#735).
 12. **The crossing is the road west onto the grass:** the last crossing waits at Cinderport's quay,
     the Wold's chapter's end (docs/areas/glasswold.md §5).
 13. **The chapter pays nothing,** as no chapter does: §8 budgets nothing for it.
@@ -2916,7 +2933,10 @@ Decided by delegate for #522, each the owner's to overturn:
    as it is: the last box's pull request removes it (#522's 20).
 10. **The shrines:** F9's and E11's give might and H9's intellect, none of which Ashfall's gave
     before (accuracy, endurance three times, personality, speed); the two builders each took might as
-    new, so it is given twice. G9, a small box, has none.
+    new, so it is given twice. G9, a small box, has none. Decided by the owner's delegate, 16 October
+    2026 (#735): F9's gives accuracy (the fish stone, a fisher's eye) with its text unchanged, and
+    E11's keeps might; by a count of the Whitespine's, Ashfall's and the Wold's shrines accuracy had the
+    one, E10's.
 11. **E11's secret is a cold lava tube under the flow,** its hint a draught of cold air out of a
     crack beside the fire, found and not told; the door stands at 18,12, moved from 18,13 because the
     art check's roll for a lone door failed there.
@@ -2979,6 +2999,26 @@ Decided by delegate for #522, each the owner's to overturn:
     G11's east and south and H10's south, with the headers of H10 and G11 and the Whitespine's
     comments and doc (they said the world ended there). I12's west reads mountain at rows 20 to 30
     and void at 31 now H12 is laid; an edge mountain facing nothing read void.
+
+Decided by delegate for #735, each the owner's to overturn:
+
+1. **The Letter in Cipher's flag is `q_cipher_taken`,** set by the hand-in, since every hand-in
+   sets one (the people check) and the area's flags run `q_<thing>_<verb>`. Nothing reads it: the
+   letter is no quest, and the log writes nothing for it.
+2. **The hand-in has its `done` words alone,** no `early` and no `after`: the delegate's two lines
+   read true to a company Hendra has hired and to one she has not met, and the meeting after is
+   her own words again. A hand-in at the first meeting does not hire, so a company that brings the
+   letter first is asked for her runner's orders at the next.
+3. **Hendra is the letter's one taker.** The `TAKERS` count in the people check is the three Act I
+   items' only, so it needs no line; the Etched Glass is not hers, its taker being the Sorcerer's
+   third's scholar at the Glass's edge (#807, docs/areas/glasswold.md §9, #525's 11).
+4. **The pay is 200 gold:** Ashfall's clear is 11,960 of the 11,760 the curve asks (it was 11,760),
+   and a gold budget is a floor, so no check fails; the dearest ware and the window do not move.
+5. **The walkthrough takes the letter out of its chest,** `wold_c8:c8_drops`, as the game opens one
+   (its gold and its items, the chest spent), and carries it to Hendra, early and hired, rather than
+   putting it in the pack; the cleft is searched open in the Glasswold's walkthrough (#528).
+6. **G10's line drops the gate-ward** and says the Riders and their eldest in the delegate's
+   words (§4.3, which carries the built line now, with the grass #511 gave it).
 
 ## 10. Names
 
@@ -3044,7 +3084,7 @@ Owed, from Cinderport (#512):
 - **No quest and no pay:** the halls offer and pay their Guilds' ladders and add none; the smith and
   the potter give #519's quests (§6), and the guildsman and the factor leave theirs to #635 and #448
   (§9, #512's 6 and 8); a town pays nothing, so the 600 the plan gave the halls' quests is unpaid
-  (§8).
+  (§8); the factor's 200 for the Letter in Cipher is a hand-in's, not a quest's (#735, §6).
 
 Owed, from G11 (#513):
 
@@ -3093,8 +3133,10 @@ Owed, from F10 and E10 (#517):
   outcrop's lee at F10's 6,3 (§9, #517's 4).
 - **The sentries** `after` the Stone, one group on each box's road at the band's top, 26, were
   #449's: built, two by each box's road (§4.9; §9, #449's 3 and 4).
-- **The almanac's or the sky's word on the causeway** (#449) is not said: the almanac takes no
-  map's words, and giving it some is a systems change, owed to the owner's call (§9, #449's 2).
+- **The almanac's or the sky's word on the causeway** (#449) is not said, and is no longer owed.
+  Decided by the owner's delegate, 16 October 2026 (#735, struck): `World.almanac()` reads the
+  date, the Stones and the weather, and the events say the causeway, by design (§9, #449's 2: the
+  Saltings' C6 shore and the Tide Ship's rail).
 - **The Wold's line is said where D10 is crossed** (#527): E10, the Waste's land, says the Waste's
   (docs/areas/glasswold.md §9, #524's 4). E10's Wold half is built (#524).
 - **Steppe is unclaimed.** E10 lays steppe first, so the Wold's "New here: steppe underfoot"
@@ -3196,8 +3238,8 @@ Cut, from #448's Ashfall three:
 
 Owed, from the chapter (#518):
 - **The explorers' line,** *The heart opens for whoever makes it whole*, is written by The Bells and
-  not again here; its first writing in the Meridian journal stays Thornmark's (docs/areas/whitespine.md
-  §11).
+  not again here; its first writing, the last page of the Meridian journal, vol. I, Thornmark's, is
+  built (#735; docs/areas/whitespine.md §11).
 
 Owed by the country behind as built (#522, §4.10, §8):
 
@@ -3205,5 +3247,5 @@ Owed by the country behind as built (#522, §4.10, §8):
   and H8, not built, E11's west and south edges end against D11 and E12, G12's west edge against
   F12, cut, and the south edges of H12 and G12 are the rim, each pinned with void past it. H9's east
   edge is the Sheer, shut to I9 (§9, #522's 14).
-- **Two might shrines,** F9's and E11's, the builders having worked apart (§9, #522's 10). One may
-  take another stat if the owner wants each once.
+- **Two might shrines,** F9's and E11's, the builders having worked apart (§9, #522's 10), are one
+  since #735: F9's gives accuracy and E11's keeps might.

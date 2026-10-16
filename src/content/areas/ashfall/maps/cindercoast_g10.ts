@@ -80,7 +80,7 @@ export const CINDERCOAST_G10: MapDef = {
     // The milestone where the road leaves the ground. The gate's own words are its label, said going in (GATE).
     { kind: 'event', x: 3, y: 4, id: 'g10_milestone', once: true, text: 'A milestone where the road leaves the ground: OLD CINDER 4, THE WOLD 6. Ash lies in the letters.' },
     // The trading ground: the Riders' horses and fires, their shrine, and their eldest, the step (§5).
-    { kind: 'event', x: 8, y: 4, id: 'g10_ground', once: true, text: 'Horses on the grass outside the gate, and fires. The Riders come down to trade, the gate-ward says, and their eldest talks.' },
+    { kind: 'event', x: 8, y: 4, id: 'g10_ground', once: true, text: 'Horses on the grass outside the gate, and fires. Riders, come down to trade, and an old one among them who talks.' },
     { kind: 'shrine', x: 10, y: 3, id: 'g10_shrine', text: 'A shrine of the Riders\' on the ground: a horse\'s skull on a post, its brow painted red.', stat: 'speed', done: 'The Riders\' shrine, the red on the skull worn to the bone.' },
     { kind: 'npc', x: 11, y: 5, name: 'The eldest', flag: ELDEST_HEARD, lines: [
       'The Riders\' eldest sits by the fire in a horse-blanket, her braid white to the waist.',
