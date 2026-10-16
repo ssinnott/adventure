@@ -2805,6 +2805,13 @@ Decided by delegate for #635 (PR C), each the owner's to overturn:
 4. **It pays 800 gold and 4,800 xp, 800 a member.** The curve counts a guild quest with the area whose
    file holds it and cannot hold one outside, as it holds the camp's levels: Ashfall's clear is
    30,186 xp a member (1.55 times the 19,467) and 10,700 gold, the row's owed gold.
+   Decided by the owner's delegate, 16 October 2026 (#728): pay is booked where it is paid. A
+   question's or a hand-in's is counted with the area whose map holds the person who pays it, a guild
+   quest's with the area whose file holds it, whichever hall pays it, and the curve test prints each
+   that belongs to another area by its quest log or its deed: the Wold's Garden of Glass, 300 a
+   member, paid by the priest at Cinderport's temple, is Ashfall's. The two rungs stay Ashfall's, by
+   file and by deed (the Ember Stone and the camp's third level are Ashfall's maps), whichever hall
+   pays them, and the test has no line for them. No figure moves.
 5. **The texts name no giver and explain nothing:** one serves both halls. The offer is Cador Lusk's
    "as far as the vents" put as a charge; the clerk inks a flame past where the ink stopped.
 6. **Cador Lusk has one added line,** first in his `says` (the first that holds is said), since his
@@ -2883,6 +2890,17 @@ Decided by delegate for #634, each the owner's to overturn:
    the half level at the exit is worth: a trim is call 2's 26% of kill xp with every box redone,
    and a Wold floor or monsters moved up would move its boxes and MONSTERS §8.3 for a lead the next
    area already absorbs. #734 lightens no box, so the figure holds.
+
+Decided by delegate for #728, each the owner's to overturn:
+
+1. **The booking is read from the data, not kept in a table:** `crossBooked` (`tools/tests/curve.ts`)
+   takes a question or a hand-in that pays, whose flag another area's quest log (its side quests and
+   its chapter) is done on, and a guild quest whose deed, a `seen`, `slain` or `visited`, is a map of
+   another area. A table would not see the next one, and the check is made-up areas, so no listed id
+   can go stale.
+2. **A line is what the clear counts, and a figure, never a failure:** a question at the least of its
+   answers, a hand-in at the larger reward of its item, a guild quest at its pay. A deed that is a
+   flag or an item names no map and goes unread, counted with its file.
 
 Decided by delegate for #522, each the owner's to overturn:
 
