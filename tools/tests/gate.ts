@@ -309,14 +309,6 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'highspine_i12: under': { whose: '#18', at: 1 },
   'monksvale_j12: under': { whose: '#18', at: 1 },
   'the Whitespine: under': { whose: '#18', at: 1 },
-  // Act II's bosses were set by their gates against a company without its first prestige, which the
-  // gate's company never took until #541 made it harness's. With it, at 11, four of the six strike
-  // twice a turn and the casters cast at their first rank, and each boss is won nearly always at its
-  // floor: setting them again against the company with it is #18's.
-  'drowned_temples2:dt2_choirmaster: floor': { whose: '#18', at: 0.94 },
-  'smugglers_cove2:kh2_great_devilfish: floor': { whose: '#18', at: 0.96 },
-  'tide_ship_rift:tide_ship_rift_warden: floor': { whose: '#18', at: 0.94 },
-  'the_sunder2:su2_warden: floor': { whose: '#18', at: 0.98 },
 };
 
 const pc = (x: number): string => `${(x * 100).toFixed(1).replace(/\.0$/, '')}%`;

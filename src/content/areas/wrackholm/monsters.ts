@@ -19,8 +19,9 @@ export const MONSTERS: readonly MonsterDef[] = [
   // the cove's pools and under the ship (#188, #190), a controller on MONSTERS §4.4's line at 13: it reaches the back row, and holds
   { id: 'devilfish', name: 'Devilfish', plural: 'Devilfish', sprite: 'devilfish', kind: 'beast', look: 'Arms, coming up over the side.', level: 13, hp: 142, ac: 18, attack: 8, dice: 2, sides: 8, bonus: 4, speed: 12, xp: 513, gold: [0, 0], ranged: true, inflict: { cond: 'paralysed', chance: 0.2 }, tint: '#7a3a30', size: 1.0 },
   // the sea cave at Kelp Hole's back (#188), the area's boss at 14; it keeps the family's reach and hold. Off MONSTERS §4.4's
-  // boss line (674 hp, 13d7+19, won 11% at 12), it is set for #188's gate: about half at its floor, 12, and nearly always at 14
-  { id: 'great_devilfish', name: 'Great Devilfish', plural: 'Great Devilfish', sprite: 'great_devilfish', kind: 'beast', look: 'What the smugglers feed.', level: 14, hp: 600, ac: 20, attack: 11, dice: 8, sides: 7, bonus: 10, speed: 13, xp: 8853, gold: [0, 0], ranged: true, inflict: { cond: 'paralysed', chance: 0.2 }, immune: ['asleep'], tint: '#a8928a', size: 1.9 },
+  // boss line (674 hp, 13d7+19, won 11% at 12), it is set for #188's gate: about half at its floor, 12, and nearly always at 14;
+  // set again by #806 against the company with its first prestige, at two in three at 12 so the cave's fights pool inside their aim
+  { id: 'great_devilfish', name: 'Great Devilfish', plural: 'Great Devilfish', sprite: 'great_devilfish', kind: 'beast', look: 'What the smugglers feed.', level: 14, hp: 650, ac: 20, attack: 11, dice: 12, sides: 7, bonus: 15, speed: 13, xp: 8853, gold: [0, 0], ranged: true, inflict: { cond: 'paralysed', chance: 0.2 }, immune: ['asleep'], tint: '#a8928a', size: 1.9 },
   // the cove's chained and the hold's rows (#188, #190), a controller on MONSTERS §4.4's line at 13: the chain holds
   { id: 'ashen_overseer', name: 'Ashen Overseer', plural: 'Ashen Overseers', sprite: 'overseer', kind: 'person', steady: true, look: 'Grey to the wrist, and a chain in each hand.', level: 13, hp: 142, ac: 18, attack: 8, dice: 2, sides: 8, bonus: 4, speed: 12, xp: 513, gold: [20, 50], inflict: { cond: 'paralysed', chance: 0.25 }, tint: '#4a4248', size: 0.95 },
   // the cove and the Tide Ship's deck (#187, #188, #190), a soldier on MONSTERS §4.4's line at 12
@@ -35,8 +36,9 @@ export const MONSTERS: readonly MonsterDef[] = [
   { id: 'tide_elder', name: 'Tide Elder', plural: 'Tide Elders', sprite: 'tide_elder', kind: 'rift', look: 'A shard of the sea, stood up.', level: 13, hp: 270, ac: 18, attack: 9, dice: 3, sides: 8, bonus: 3, speed: 15, xp: 1027, gold: [0, 0], tint: '#2e8a78', size: 0.95, inflict: { cond: 'paralysed', chance: 0.15 } },
   // over the Stone at its Rift's heart in the forward hold (#190), the area's boss at 14, alone. On MONSTERS §4.4's boss line
   // (13d7+19) it was won 38% at 12 and 76% at 14, and at the escorted boss's 7d7+11 97% at 12; it is set for #190's gate,
-  // about two in three at its Rift's floor, 12, so the Rift's fights are won as its other maps' are, and nearly always at 14
-  { id: 'tide_warden', name: 'Warden of the Tide', plural: 'Wardens of the Tide', sprite: 'tide_warden', kind: 'rift', look: "The Stone's own light, standing guard over it.", level: 14, hp: 674, ac: 20, attack: 11, dice: 10, sides: 7, bonus: 15, speed: 13, xp: 8853, gold: [0, 0], immune: ['asleep'], tint: '#2a7a6c', size: 1.25 },
+  // about two in three at its Rift's floor, 12, so the Rift's fights are won as its other maps' are, and nearly always at 14;
+  // set again by #806 against the company with its first prestige, which holds the Rift's two groups to their limit at 12
+  { id: 'tide_warden', name: 'Warden of the Tide', plural: 'Wardens of the Tide', sprite: 'tide_warden', kind: 'rift', look: "The Stone's own light, standing guard over it.", level: 14, hp: 780, ac: 20, attack: 11, dice: 12, sides: 7, bonus: 18, speed: 13, xp: 8853, gold: [0, 0], immune: ['asleep'], tint: '#2a7a6c', size: 1.25 },
   // The Dead-Drop's (#22; MONSTERS §8.5), down the stair from the Tide Ship's hold and placed by its band, 26 to 28,
   // not Wrackholm's (§2.2): machines, every one (§2), drawn ahead of the levels that place them.
   // the drop and the shards' vault, a brute on MONSTERS §4.4's line at 26 as #549 made it, restated by the drop (#22):

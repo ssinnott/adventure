@@ -149,10 +149,10 @@ export function harness(): void {
  * it.
  */
 export const OFF_LINE: Record<string, string> = {
-  choirmaster: "the Drowned Temples' boss, set by their gate (#175)",
-  great_devilfish: "Kelp Hole's boss, set by its gate (#188)",
-  tide_warden: "the Tide Ship's boss, set by its gate (#190)",
-  sunder_warden: "the Sunder's boss, on the boss line's hit points with its blow set by its gate (#199)",
+  choirmaster: "the Drowned Temples' boss, set by their gate (#175) and its hit points set again against the company with its first prestige (#806)",
+  great_devilfish: "Kelp Hole's boss, set by its gate (#188) and set again against the company with its first prestige (#806)",
+  tide_warden: "the Tide Ship's boss, set by its gate (#190) and set again against the company with its first prestige (#806)",
+  sunder_warden: "the Sunder's boss, its hit points and its blow set by its gate (#199) and set again against the company with its first prestige (#806)",
   foreman: "the Tiefzeche's boss, its hit points and its blow set by its gate (#462)",
   anvil_warden: "the Anvil Stone's Rift's boss, its hit points and its blow set by its gate (#465)",
   great_salamander: "Feuerstollen's boss, its hit points and its blow set by its gate (#466)",
