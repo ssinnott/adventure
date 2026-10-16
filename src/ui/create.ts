@@ -33,7 +33,9 @@ export class CreateScreen implements Screen {
   private stats: Stats;
   private members: Character[] = [];
   private rng: RngInstance;
-  constructor(private seed: number) {
+  private seed: number;
+  constructor(seed: number) {
+    this.seed = seed;
     this.rng = makeRng(seed);
     this.stats = rollStats(this.rng);
   }
