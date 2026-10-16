@@ -876,8 +876,10 @@ Decided by delegate for #541, each the owner's to overturn:
    the prestiges play "in the harness and the gate", but the gate's company never took them, so the
    gate judged Act II without the first prestige and would have judged Act III without either. With
    them Act II's four bosses, set by their gates against the company without, are won 94 to 98% at
-   their floors, past the limit: owed to #18 in `OWED` with those figures, for their boxes to set
-   again. On the boss line at its level the Great Devilfish would be won about 51% at 12, the Warden
+   their floors, past the limit: owed to #18 in `OWED` with those figures, until #806 set them again
+   against the company with it (each area's doc, §9): the Choirmaster at 825 hit points, the Great
+   Devilfish at 650 and 12d7+15, the Warden of the Tide at 780 and 12d7+18 and the Warden of the
+   Sunder at 1,020 and 13d8+13, each inside its aim at its floor and two above. On the boss line at its level the Great Devilfish would be won about 51% at 12, the Warden
    of the Tide 72% and the Warden of the Sunder 64% at 14; the Choirmaster nearly always, since the
    line at 12 is made against a company of 10, before its first prestige.
 3. **The bots mark a light whose touch takes spell points, after a leader and a caller** (`markOf`),

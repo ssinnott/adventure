@@ -237,14 +237,16 @@ Foreland map's density.
   hermit's point, as the brief has it (#189 moved it from E6's south shore): nothing on that side
   leads back in. The brief's encounters and the boss do not fit 2,180: the boss alone pays about
   1,475 a member, and the six groups and the boss come to about 3,450 a member, and 1,676 gold,
-  1,230 of it in the chests. The Great Devilfish is set off the boss line for the gate, at 600 hit
-  points and 8d7+10: the bot wins it 66% at 12 and 91% at 14, where the line's 674 and 13d7+19 won
+  1,230 of it in the chests. The Great Devilfish is set off the boss line for the gate, at 650 hit
+  points and 12d7+15 (600 and 8d7+10 until #806): the bot wins it 66% at 12 and 99% at 14. At 600 and
+  8d7+10 it won 66% at 12 and 91% at 14, where the line's 674 and 13d7+19 won
   11% and 28% (69% and 96% after the re-stat to #409's line, #18, which leaves it as set; 96% and
-  100% with the first prestige, #541, past the limit at 12 and owed to #18). The
+  100% with the first prestige, #541, past the limit at 12 and owed to #18, until #806 set it again,
+  §9). The
   crews' cave at 12 wins every fight, at 6.8 fights to a rest (7.0 after the re-stat), and two
   under, at 10, wins every fight too, which is owed to #18 with E6's; the sea cave at 12 wins 91.5%
   of its fights with the boss, at 6.5 to a rest (92.3% and 6.6 after the re-stat, 99% with the
-  first prestige), and 83% at 10,
+  first prestige, 91.5% again since #806), and 83% at 10,
   inside the limit. The walkthrough plays both levels, the boss at 14, and leaves by the passage.
   What the owner finds by hand goes here when it has been played.
 
@@ -355,14 +357,16 @@ Foreland map's density.
   gold in the hoard beside him; his fall quiets the tear. Aft, the hatch in the floor opens on the
   stair, and its foot is one room of clean cold stone, its sign the Dead-Drop's band, a way on into
   the dark at its far end, now an exit down to the drop (4,1, with `dd_door` one in from it at 4,2;
-  docs/areas/dead_drop.md §4.1), and the stair back up. The Warden is set off the boss line, at 674 hit
-  points and 10d7+15 against the line's 13d7+19 (38% at 12) and the escorted boss's 7d7+11 (97%):
-  the gate wins him 63% at 12 and 96% at 14, dressed by #399's ladder and measured after #414's
-  re-stat (94% and 100% once the gate's company takes its first prestige, #541, past the limit at
-  12 and owed to #18). As measured the ship pays about 3,500 xp a member, 1,843
+  docs/areas/dead_drop.md §4.1), and the stair back up. The Warden is set off the boss line, at 780 hit
+  points and 12d7+18 (674 and 10d7+15 until #806) against the line's 13d7+19 (38% at 12) and the
+  escorted boss's 7d7+11 (97%): the gate wins him 66% at 12 and 100% at 14. At 674 and 10d7+15 it
+  won 63% at 12 and 96% at 14, dressed by #399's ladder and measured after #414's
+  re-stat (94% and 100% once the gate's company took its first prestige, #541, past the limit at
+  12 and owed to #18, until #806 set him again, §9). As measured the ship pays about 3,500 xp a member, 1,843
   of it the Rift's, and 3,532 gold, which brings the area's gold to the 6,000 its
   training costs. Each deck at 12 wins every fight, at 6.1, 7.6 and 7.0 fights to a rest, inside the
-  aim of 6 to 8, the Rift 81.5% with its boss (97% with the first prestige) and 7.6 to a rest;
+  aim of 6 to 8, the Rift 83% with its boss (81.5% before the first prestige, 97% with it and the
+  Warden as it was; off the aim of 90% and inside the limit of 80%) and 7.6 to a rest;
   two under, at 10,
   the decks win every fight too, owed to #18 with E6's, the Rift 55.5%. Every square of every deck is within 5 steps
   of a point. The walkthrough rows out by night, plays the three decks at 12, finds the shard-cut,
@@ -522,8 +526,9 @@ besides the devilfish and the heather (#190): the wreck, the Tide Ship's site.
   boat back. As built a clear gives 6,079 (#190): the ship's chests carry 3,200 of it. The curve
   test counts 7,279 now, with the Fence's rung's 200 and the Factor's 800 (§9, #635's 6, PR D's 8).
 - **The gate.** Each map at its own floor (docs/areas/thornmark.md §9, 17): a company at 12 wins nine
-  in ten on E6 and one at 10 no more than one in four; the Great Devilfish is won about half the time
-  at 12 and nearly always at 14, the Warden of the Tide the same.
+  in ten on E6 and one at 10 no more than one in four; the Great Devilfish is won two in three at
+  12 and nearly always at 14, the Warden of the Tide the same (§9, #806: their two maps hold their
+  limits at no less).
 - **Density.** Both boxes at the Foreland's floor (EXPANSION §5.3).
 
 ## 9. Decisions
@@ -740,8 +745,8 @@ Decided by delegate for #188, each the owner's to overturn:
 3. **The brief's encounters, at about 3,450 a member,** not the share's 2,180, which the boss alone
    nearly fills: two crews and four overseers above, a crew and two devilfish groups below, and the
    boss. F6 and the Tide Ship keep their shares, and the area runs about 1,270 over (§8).
-4. **The Great Devilfish is set at 600 hit points, 8d7+10 and armour 20,** the one set measured
-   inside both of the gate's aims; the narrow rise from 12 to 14 is the gear past 10, #18's.
+4. **The Great Devilfish is set at 650 hit points, 12d7+15 and armour 20** (600 and 8d7+10 until
+   #806, below), the one set measured inside both of the gate's aims.
 5. **Colan and Tam are placed with #192's first lines and no flags:** Colan by the rows once the
    overseers are down, Tam at the pool's edge until the beast is dead. Their choices, letters and
    after-lines are #192's. The brother keeps the rows; he is no overseer group.
@@ -781,6 +786,60 @@ Decided by delegate for #186, each the owner's to overturn:
    only the hatch and one room. The three levels are built since (docs/areas/dead_drop.md).
 5. **The pay is scaled to 9,867,** the side quests inside and the Dead-Drop outside, as Sunderwood
    counts Wrackholm's: 100 more each to E6, F6 and the Tide Ship.
+
+Decided by delegate for #806, each the owner's to overturn:
+
+1. **The Great Devilfish is set again at 650 hit points and 12d7+15** (600 and 8d7+10 before), by
+   hearth_isle.md §7's method: tries of hit points and blow on the gate's seeds. #188's gate set it
+   against a company without its first prestige, 66% at 12 and 91% at 14; the gate's company has
+   taken the prestige since #541, and won it 96% at 12, past the limit of 80% and owed to #18. The
+   aim is about half at the floor (30% to 70%) and nearly always two above (90%). The tries, in
+   percent of the gate's 400 seeds and of its own hundred, a fight broken off being one still running
+   at the fifteenth round, which the gate does not count won:
+
+   | Hit points | Blow | At 12 | Broken off | At 14 | The gate's hundred, 12 and 14 |
+   |---|---|---|---|---|---|
+   | 600 (before) | 8d7+10 | 98 | 1 | 100 | 96 and 100 |
+   | 1,000 | 8d7+10 | 55 | 38 | 93 | 58 and 92 |
+   | 800 | 10d7+12 | 63 | 15 | 97 | 63 and 96 |
+   | 700 | 12d7+15 | 55 | 4 | 94 | 56 and 97 |
+   | **650 (kept)** | **12d7+15** | **62** | **4** | **98** | **66 and 99** |
+   | 600 | 14d7+18 | 61 | 1 | 92 | 58 and 94 |
+
+2. **The blow rises with the hit points.** Hit points alone read half at 1,000, but 38 fights in 100
+   are then broken off at the fifteenth round: the beast is not beating the company, the clock is,
+   and a company that waits it out may well win. The rule for the four Act II bosses (saltreach.md holds the
+   Choirmaster's, sunderwood.md the Warden of the Sunder's): raise the hit points till the floor
+   reads about half, and where more than one fight in ten is then broken off, raise the blow and
+   lower the hit points till it is not. The blow stays under the line's at 14 (13d8+15, 73.5): 63.
+3. **It is won two in three at 12, not a half, so that its cave holds its aim.** The cave's four
+   groups pool at the floor, the crew and the two devilfish groups won every time: (300 + 66) / 4 is
+   91.5%, inside the aim of 90%, as #188 left it. At 700 hit points the beast reads 56% and the cave
+   89%, off its aim. The boss stays inside its own aim at both levels, so it is not listed.
+4. **The Warden of the Tide is set again at 780 hit points and 12d7+18** (674 and 10d7+15 before), by
+   the same method. #190's gate set him 63% at 12 and 96% at 14; the gate's company, with its first
+   prestige, won him 94% at 12, past the limit and owed to #18. The tries:
+
+   | Hit points | Blow | At 12 | Broken off | At 14 | The gate's hundred, 12 and 14 |
+   |---|---|---|---|---|---|
+   | 674 (before) | 10d7+15 | 96 | 0 | 100 | 94 and 100 |
+   | 900 | 10d7+15 | 52 | 12 | 98 | 52 and 98 |
+   | 850 | 12d7+17 | 49 | 4 | 98 | 49 and 99 |
+   | 800 | 12d7+18 | 62 | 4 | 99 | 59 and 100 |
+   | **780 (kept)** | **12d7+18** | **67** | **3** | **99** | **66 and 100** |
+   | 750 | 13d7+20 | 58 | 0 | 97 | 58 and 97 |
+   | 725 | 13d7+20 | 64 | 0 | 98 | 63 and 97 |
+
+5. **Two in three binds the Warden, from below.** The Rift has two groups, the Tide Elder's and the
+   Warden, so its fights pool at (100 + the Warden) / 2, and the Rift holds its limit of 80% only if
+   the Warden is won 60% or more at 12. At 850 and 12d7+17 he reads 49% and the Rift 74.5%, past its
+   limit; at 780 and 12d7+18 he reads 66% and the Rift 83%, off its aim of 90% and inside its limit,
+   as #190 left it (81.5%). The check lists the Rift as off its aim; the Warden is inside his own
+   aim at both levels.
+6. **The `OWED` lines for both go,** and the reasons `OFF_LINE` gives for them
+   (`tools/tests/harness.ts`) name this issue. Level, xp, gold, drops, id and the groups stay, so the
+   curve and `src/content/shipped.json` do not move. The area's pool two under its floors falls with
+   the two bosses, from 93.7% to 92.2%, still past its limit of 90% and owed to #18 with the rest.
 
 ## 10. Names
 

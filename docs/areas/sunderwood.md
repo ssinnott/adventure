@@ -526,10 +526,12 @@ features; the pay shared out over the area (§8).
   events, so the density check passes it with no exception. Density: the ledges 100% within 7, the
   furthest 6; the floor 99.6%, the furthest 8. At 14 the ledges give 7.14 fights to a rest and the
   floor 7.85; the floor's groups are won 84.3% at its floor with the Warden pooled, off the aim and
-  inside the limit. The Warden is won 53% at 14 and 95% at 16. Once the gate's company takes its
-  first prestige (#541) they are won 99.3%, the Warden 98% and 100%, past the limit at 14 and owed to
-  #18. Two under, the ledges are owed to #18; the floor is inside its limit (67.7%, 82.3% with the
-  prestige). As measured the two levels pay 2,704 xp a member and 750
+  inside the limit. The Warden is won 53% at 14 and 95% at 16. Once the gate's company took its
+  first prestige (#541) they were won 99.3%, the Warden 98% and 100%, past the limit at 14 and owed to
+  #18, until #806 set the Warden again at 1,020 hit points and 13d8+13 (872 and 10d8+10 before): the
+  floor's groups 85.3%, off the aim and inside the limit, the Warden 56% at 14 and 95% at 16 (§9).
+  Two under, the ledges are owed to #18; the floor is inside its limit (67.7%, 82.3% with the
+  prestige, 67.3% since #806). As measured the two levels pay 2,704 xp a member and 750
   gold. What the owner finds by hand goes here when it has been played.
 
 ### 4.7 L2, Lantern Watch's box (#200): core, band 15–16
@@ -1155,6 +1157,48 @@ Decided by delegate for #205, each the owner's to overturn:
     question's answers, once a question, so the xp owed goes and the gold floor stays at 4,242.
 21. **Levels are not enforced:** no person turns away a company under 15 (#56's rules, no story lock).
 
+Decided by delegate for #806, each the owner's to overturn:
+
+1. **The Warden of the Sunder is set again at 1,020 hit points and 13d8+13** (872 and 10d8+10
+   before), by hearth_isle.md §7's method: tries of hit points and blow on the gate's seeds. #199's
+   gate set it against a company without its first prestige, 53% at 14 and 95% at 16; the gate's
+   company has taken the prestige since #541, and won it 98% at 14, past the limit of 80% and owed
+   to #18. The aim is about half at the floor (30% to 70%) and nearly always two above (90%). The
+   tries, in percent of the gate's 400 seeds and of its own hundred, a fight broken off being one
+   still running at the fifteenth round, which the gate does not count won:
+
+   | Hit points | Blow | At 14 | Broken off | At 16 | The gate's hundred, 14 and 16 |
+   |---|---|---|---|---|---|
+   | 872 (before) | 10d8+10 | 97 | 1 | 100 | 98 and 100 |
+   | 1,200 | 10d8+10 | 55 | 35 | 98 | 59 and 98 |
+   | 1,100 | 12d8+14 | 44 | 21 | 90 | 42 and 89 |
+   | 1,000 | 13d8+13 | 61 | 7 | 96 | 58 and 98 |
+   | **1,020 (kept)** | **13d8+13** | **56** | **8** | **94** | **56 and 95** |
+   | 972 | 14d8+14 | 61 | 4 | 93 | 57 and 94 |
+   | 872 (the line's) | 16d8+18 | 65 | 0 | 88 | 64 and 89 |
+
+2. **The blow rises with the hit points.** Hit points alone read half at 1,200, but 35 fights in 100
+   are then broken off at the fifteenth round: the Warden is not beating the company, the clock is,
+   and a company that waits it out may well win. The rule for the four Act II bosses (saltreach.md
+   holds the Choirmaster's, wrackholm.md the Wrackholm pair's): raise the hit points till the floor
+   reads about half, and where more than one fight in ten is then broken off, raise the blow and
+   lower the hit points till it is not. The blow stays under the line's at 16 (16d8+18, 90): 71.5.
+3. **The Warden's second figure is the tightest of the four:** 95% at 16 on the gate's hundred (94%
+   on the 400) against an aim of 90%, where the others read 99% or 100%. A heavier Warden with a
+   lighter blow reads higher at 16 and is lost to the clock: 1,147 hit points and 11d8+11 read 51%
+   and 97% on the 400, with 31 fights in 100 broken off. The line itself, 872 and 16d8+18, would
+   read 64% and 89%, a point short of the aim at 16.
+4. **The floor is 85.3% with the Warden among its three groups,** 99.3% before: the spiders and the
+   bears are won every time and the Warden 56%, so the map's fights pool at (100 + 100 + 56) / 3.
+   That is off the aim of 90% and inside the limit of 80%, as #199 left it (84.3%), and the check
+   lists it. The map's limit binds the Warden from below: it must be won 40% or more at 14 for the
+   map to hold it. Two under its floor the map is 67.3%, 82.3% before, inside its limit.
+5. **The `OWED` line for the Warden goes,** and the reason `OFF_LINE` gives for it
+   (`tools/tests/harness.ts`) names this issue and no longer says its hit points are the line's.
+   Level, xp, gold, drops, id and the group stay, so the curve and `src/content/shipped.json` do not
+   move. The area's pool two under its floors falls with the Warden, from 98.5% to 97.2%, still past
+   its limit of 90% and owed to #18 with the rest.
+
 ## 10. Names
 
 Sunderwood's names are English already, the Crown's and the Lanterns', and stay: the Sunder, the
@@ -1328,7 +1372,8 @@ Decided by delegate for #199, each the owner's to overturn:
    and nearly always at 16, as #199 asks; and a level banded 15–16 would want a group at 16, which the
    spiders on the ledges are not. Two under, the ledges are owed to #18 as every Act II box is.
 3. **The Warden's blow is cut by hand,** its hit points kept on MONSTERS §4.4's line (872): 16d8+18
-   won 13% at 14 and 47% at 16; 10d8+10 wins 53% and 95%, as Kelp Hole's Great Devilfish was set.
+   won 13% at 14 and 47% at 16; 10d8+10 won 53% and 95%, as Kelp Hole's Great Devilfish was set.
+   #806 set it again, at 1,020 hit points and 13d8+13 (below).
 4. **The wall is drawn smooth, a systems pull request first (#424):** `wallStyle: 'smooth'`, one face
    with no join, and a door in it its seam alone. Drawn in courses the wall would be false on the
    step's own square. The floor's gorge sides are rock and mountain, so the wall is its only wall face.
