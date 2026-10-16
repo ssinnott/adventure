@@ -515,8 +515,10 @@ docs/areas/<area>.md                    the area's brief, and what was built
 | Hearth Isle, the Underdeep | 28–32 | the Underdeep's look; eight systems (#739, call 9): the curve's last row, ending at the cap (its next floor, its band and the trainers' ceiling capped at the cap); the gear's last rung at 28, found and never sold; a group that is gone once a flag holds, standing or not; the Core's clock and `obeys`; `Exit.lifts` and `Exit.after`; the endings (their table, their long-form screen and the Hearth's three states on the title, in the night sky and in the almanac); a save upgrade for the Peak Stone; the gate bot and the harness run to 32 with the clock played |
 | The reach: the Glass, and Glacier Foot with the Vault (DESIGN.md §9) | the cap | glass and dunes; a lava flow sealing the Glass from the Ember Waste; the Vault's new kind of map, the inside of the sky; the atlas marking reach areas beside the road, not on it (its test holds the bands rising along the road, and a reach area's would not); super dungeons of many levels; artifacts |
 
-The skills that open the map (Swimmer, Mountaineer, Navigator and the rest) come when there are
-shortcuts and secrets for them; none is needed to follow the road. Along the whole road the systems
+The skills that open the map come when there are shortcuts and secrets for them; none is needed to
+follow the road. Mountaineer and Swimmer are built (#805), the Wardens' at their Drillyard and the
+Cartographers' at their halls in Saltmouth and Cinderport; Navigator and the rest come as theirs do.
+Decided by the owner's delegate, 16 October 2026. Along the whole road the systems
 lane also owes the danger made legible (the band said on crossing, and in how a group is
 described), the log paging the one quest by chapter, hand-ins that take their item at the first
 meeting (§2.3), and a bot that plays as well as the party can (§5.2).

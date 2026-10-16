@@ -296,7 +296,11 @@ quest's own fights are set at 26.
   Perception, Arms Master, Spirit Sense, Navigator.* Built with #538: Linguist, the first, a list on
   each member that the sheet shows, learnt for 1,000 gold at any hall of the Lanterns or from a
   person who teaches it, by a company that is a Lantern; the dwarves are born to it, and a copybook
-  carried does its work (§9, Act III). The other eleven come as their shortcuts and secrets do.
+  carried does its work (§9, Act III). Built with #805: Mountaineer and Swimmer, learnt as Linguist is,
+  at the Wardens' Drillyard and at the Cartographers' halls in Saltmouth and Cinderport. A company
+  with a Mountaineer standing climbs mountain and cliff; one with a Swimmer standing swims deep water.
+  No people is born to either: the Tidefolk swim by theirs. Linguist, Mountaineer and Swimmer built;
+  the other nine come as theirs do. Decided by the owner's delegate, 16 October 2026.
 - Weapon and magic skills have **Novice / Expert / Master** tiers. Trainers for Expert live in
   regional towns; Master trainers are hidden, expensive, and often want a favour. The tiers are not
   built yet: Expert and Master trainers both wait on them (#18), and Master trainers are out of M3
