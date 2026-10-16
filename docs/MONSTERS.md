@@ -196,6 +196,10 @@ And for the Hearth's light through a machine (§2). The first time Smite or Wrat
 passes through one and does nothing, the log says so after the spell's line, once a game: *The light
 goes into it like a hand into a glove.*, or into them, through several.
 
+And for the Archdruid (#809, DESIGN.md §5). A group of beasts alone, each of a level under a standing
+Archdruid's, does not step toward the company; it is fought where the company steps up to it or
+strikes it, and a group with a leader or a caller, or of any other kind, comes on as before.
+
 ### 3.2 What the numbers show
 
 **Holy Strike lands on the wrong things.** The paladin's +3 is keyed to `mindless` (`traitDamage`),
