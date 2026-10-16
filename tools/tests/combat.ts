@@ -13,12 +13,15 @@ import type { CombatState, CombatGroup, PartyAction } from '../../src/game/comba
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import { elementMult, monsterSpells, monsterCanCast, KINDS } from '../../src/game/monsters.ts';
 import { gateBlast, gateBurn, gateTurn } from '../gate.ts';
-import { wakeWith, markOf, mendLines, ANSWER } from '../harness.ts';
+import { wakeWith, markOf, mendLines, ANSWER, companyAt } from '../harness.ts';
+import { botTurn, asSeen, breathGuard } from '../../src/game/bot.ts';
+import { CombatScreen } from '../../src/ui/combat.ts';
+import type { Game } from '../../src/game/game.ts';
 import { logLines } from '../../src/ui/frame.ts';
 import type { Party } from '../../src/game/party.ts';
 import { spell } from '../../src/game/spells.ts';
 import { RANGED_PENALTY } from '../../src/game/weather.ts';
-import { ok } from './lib.ts';
+import { ok, headlessGame, drive } from './lib.ts';
 
 export function combat(): void {
   // A scripted policy: everyone attacks the first living monster, casters cast when they can.
@@ -169,6 +172,8 @@ export function combat(): void {
   clock();
   glove();
   sweep();
+  bot();
+  autoFight();
 }
 
 /** A fight played out: each member strikes `aim`'s pick where it can and braces where it cannot. */
@@ -989,4 +994,170 @@ function sweep(): void {
     return q.members[1].hp;
   };
   ok(mended(true) > 90 && mended(false) === 90, `so the gate's cleric mends Idris at 90 of 200 before a giant's sweep of 100 (${mended(true)}), and with no answer leaves him (${mended(false)})`);
+}
+
+/**
+ * The bot's turn as the game takes it (#714): `botTurn` gives the action the resolver took. And its
+ * two readings: the gate's knows every monster as written; the game's auto-fight knows a sweep, a
+ * breath, a call or a drain only once the fight's log has shown it, and a leader never before its fall.
+ */
+function bot(): void {
+  const dummy: MonsterDef = { ...MONSTERS.rat, id: 'test_dummy', name: 'Dummy', plural: 'Dummies', hp: 999, attack: -99 };
+  /** The party braces against a dummy until each member in `who` has had a turn from botTurn: what it gave each. */
+  const turnOf = (q: Party, seed: number, who: number[]): Map<number, PartyAction> => {
+    const rng = makeRng(seed), s = startCombat(q, [{ id: 'g', monsters: [dummy] }], rng), took = new Map<number, PartyAction>();
+    for (let n = 0; n < 40 && took.size < who.length; n++) {
+      const t = currentTurn(s, q, rng);
+      if (!t) break;
+      if (t.side === 'monster') monsterAct(s, q, rng);
+      else if (who.includes(t.i) && !took.has(t.i)) took.set(t.i, botTurn(s, q, rng, t.i));
+      else partyAct(s, q, rng, { type: 'defend' });
+    }
+    return took;
+  };
+  {
+    const q = defaultParty(makeRng(130));
+    for (const c of q.members) c.hp = c.maxHp = 200;
+    q.members[1].hp = 70;
+    const a = turnOf(q, 130, [4]).get(4);
+    ok(a?.type === 'cast' && a.target === 1 && !!spell(a.spellId).heal && q.members[1].hp > 70, `botTurn gives the cleric's mend on Idris at 70 of 200, under 40%, and the resolver took it (${JSON.stringify(a)}; ${q.members[1].hp} hp)`);
+  }
+  {
+    // Bram the knight to the back row, with his sword and no spell; Ottilie to the front.
+    const q = defaultParty(makeRng(131));
+    [q.members[0], q.members[3]] = [q.members[3], q.members[0]];
+    const bram = q.members[3], took = turnOf(q, 131, [0, 3]);
+    ok(bram.name === 'Bram' && !bram.spells.length && !canAttackFromRow(bram, 3) && JSON.stringify(took.get(3)) === '{"type":"defend"}' && took.get(0)?.type === 'attack',
+      `botTurn gives a back-row fighter with no spell and no bow a brace (${JSON.stringify(took.get(3))}), and the front row a blow (${JSON.stringify(took.get(0))})`);
+  }
+  // A sweep and a breath: the mend lines and the breath's guard.
+  const giant: MonsterDef = { ...MONSTERS.ogre, id: 'test_giant', name: 'Giant', plural: 'Giants', hp: 999, attack: 99, dice: 1, sides: 1, bonus: 99, speed: 99, sweep: { chance: 1 } };
+  const drake: MonsterDef = { ...giant, id: 'test_drake', name: 'Drake', plural: 'Drakes', sweep: { chance: 1, element: 'fire' } };
+  const facing = (m: MonsterDef, seed: number, dress: (q: Party) => void = () => {}): { q: Party; s: CombatState } => {
+    const q = defaultParty(makeRng(seed));
+    for (const c of q.members) { c.hp = c.maxHp = 200; c.sp = c.maxSp = 50; }
+    dress(q);
+    return { q, s: startCombat(q, [{ id: 'g', monsters: [m] }], makeRng(seed)) };
+  };
+  {
+    const { q, s } = facing(giant, 132), written = mendLines(s, q).join(), unseen = mendLines(s, q, asSeen).join();
+    untilActs(s, q, 132, 0);
+    const seen = mendLines(s, q, asSeen).join();
+    ok(written === '100,100,100,80,80,80' && unseen === '80,80,80,80,80,80' && s.log.some((l) => l.startsWith('Giant sweeps the front row')) && seen === written,
+      `the gate's bot mends against a giant's sweep before it sweeps; the game's at 40% until the log shows the sweep, then as the gate's (${unseen} to ${seen})`);
+  }
+  {
+    const { q, s } = facing(drake, 133, (r) => { r.members[0].hp = 0; addCondition(r.members[0], 'unconscious'); });
+    const written = breathGuard(s, q), unseen = breathGuard(s, q, asSeen);
+    untilActs(s, q, 133, 0);
+    ok(written === 0 && unseen === undefined && s.log.some((l) => l.startsWith('Drake breathes fire on the back row')) && breathGuard(s, q, asSeen) === 0,
+      `the gate's bot raises Bram first while a drake could breathe on the back; the game's once it has breathed (${unseen} to ${breathGuard(s, q, asSeen)})`);
+  }
+  // A caller, a light that takes spell points, a leech that drinks and a leader: what the bots aim at.
+  {
+    const knocker: MonsterDef = { ...MONSTERS.rat, id: 'test_knocker', name: 'Knocker', plural: 'Knockers', kind: 'machine', hp: 50 };
+    const tallyman: MonsterDef = { ...MONSTERS.bandit, id: 'test_tallyman', name: 'Tallyman', plural: 'Tallymen', kind: 'machine', hp: 80, speed: 99, calls: { monsters: [knocker, knocker, knocker], chance: 1 } };
+    const { q, s } = facing(tallyman, 134);
+    const unseen = markOf(s, aliveMonsters(s), asSeen);
+    untilActs(s, q, 134, 0);
+    ok(markOf(s, aliveMonsters(s)) === 0 && unseen === undefined && s.log.some((l) => l.startsWith('Tallyman calls, and')) && canCall(s, s.monsters[0]) && markOf(s, aliveMonsters(s), asSeen) === 0,
+      `the gate's bot aims at a caller first; the game's once it has called (${unseen} to ${markOf(s, aliveMonsters(s), asSeen)})`);
+  }
+  {
+    const light: MonsterDef = { ...MONSTERS.rat, id: 'test_light', name: 'Pale Light', plural: 'Pale Lights', hp: 999, attack: 99, speed: 99, drain: 'sp' };
+    const { q, s } = facing(light, 135), written = markOf(s, aliveMonsters(s)), unseen = markOf(s, aliveMonsters(s), asSeen);
+    untilActs(s, q, 135, 0);
+    ok(written === 0 && unseen === undefined && s.log.some((l) => /^Pale Light hits \w+ for \d+ spell points/.test(l)) && markOf(s, aliveMonsters(s), asSeen) === 0,
+      `the gate's bot aims at a light whose touch takes spell points; the game's once a touch has taken some (${s.log.find((l) => l.startsWith('Pale Light hits'))})`);
+    const leech: MonsterDef = { ...light, id: 'test_leech', name: 'Leech', plural: 'Leeches', drain: 'hp' }, l = facing(leech, 136);
+    l.s.monsters[0].hp = 40;
+    const before = asSeen(l.s, l.s.monsters[0], 'drain');
+    untilActs(l.s, l.q, 136, 0);
+    ok(!before && l.s.log.some((x) => x.startsWith('Leech hits') && x.includes('and drinks')) && asSeen(l.s, l.s.monsters[0], 'drain'), "and the game's knows a leech drains once one has drunk");
+  }
+  {
+    const master: MonsterDef = { ...MONSTERS.bandit, id: 'test_master', name: 'Barge Master', plural: 'Barge Masters' };
+    const q = defaultParty(makeRng(137)), s = startCombat(q, [{ id: 'barge', monsters: [MONSTERS.bandit, master, MONSTERS.bandit], leader: master.id }], makeRng(137));
+    ok(markOf(s, aliveMonsters(s)) === 1 && markOf(s, aliveMonsters(s), asSeen) === undefined, "the gate's bot aims at a leader first; the game's never, since a leader shows only in its fall");
+  }
+}
+
+/**
+ * Auto-fight (#714): with `auto` on, the combat screen's bot plays the company's turns and leaves the
+ * fight by its own Space, so it never waits on the finished screen; any key takes the fight back.
+ */
+function autoFight(): void {
+  /** A game at the road rats with the level-3 company, the combat screen on top. */
+  const atRats = (seed: number, auto: boolean): { g: Game; screen: CombatScreen } => {
+    const g = headlessGame(seed);
+    Object.assign(g.party, companyAt(3, seed));
+    g.world.travel('shelf', 16, 4);
+    g.fight(['road_rats']);
+    const screen = g.top as CombatScreen;
+    screen.auto = auto;
+    return { g, screen };
+  };
+  CombatScreen.instant = true;
+  {
+    const { g, screen } = atRats(4, true);
+    let ticks = 0;
+    for (; screen.state.outcome === 'ongoing' && ticks < 4000; ticks++) g.update(null);
+    const finished = g.top === screen && screen.auto;
+    g.update(null);
+    ok(screen.state.outcome === 'victory' && g.party.members.every((c) => c.level === 3), `auto plays the level-3 company through the road rats with no key pressed, in ${ticks} ticks (${screen.state.outcome}, ${screen.state.round} rounds)`);
+    ok(finished && g.top.constructor.name === 'ExploreScreen', `auto stays on to the end and leaves the finished fight by its own Space the next tick, the explore screen on top (${g.top.constructor.name})`);
+    g.fight(['road_rats']);
+    ok(g.top !== screen && !(g.top as CombatScreen).auto, 'a new fight starts with auto off');
+  }
+  {
+    const { g, screen } = atRats(5, true), s = screen.state;
+    g.update('forward');
+    drive(g, [], 50);
+    const stood = s.log.length, t = currentTurn(s, g.party, g.rng);
+    drive(g, [], 200);
+    ok(!screen.auto && t?.side === 'party' && s.log.length === stood && s.outcome === 'ongoing', `a press of forward takes the fight back: the company's turn then waits on a key, 200 ticks on (${s.log.length - stood} lines)`);
+  }
+  {
+    // Auto off, the monsters act at once and the company's turn waits; then auto, at the game's pace.
+    const { g, screen } = atRats(6, false), s = screen.state;
+    drive(g, [], 50);
+    const t = currentTurn(s, g.party, g.rng), start = s.log.length;
+    CombatScreen.instant = false;
+    screen.auto = true;
+    drive(g, [], 21);
+    const waited = s.log.length === start;
+    drive(g, [null]);
+    ok(t?.side === 'party' && waited && s.log.length > start, `without instant the bot waits 22 frames on the company's turn, as a monster does, and acts on the 22nd (${s.log.at(-1)})`);
+  }
+  {
+    // A key mid-count takes the count back with the fight: turned on again, the bot waits the whole 22.
+    CombatScreen.instant = true;
+    const { g, screen } = atRats(7, false), s = screen.state;
+    drive(g, [], 50);
+    const t = currentTurn(s, g.party, g.rng), start = s.log.length;
+    CombatScreen.instant = false;
+    screen.auto = true;
+    drive(g, [], 15);
+    g.update('down');
+    screen.auto = true;
+    drive(g, [], 21);
+    const waited = s.log.length === start;
+    drive(g, [null]);
+    ok(t?.side === 'party' && waited && s.log.length > start, `a key 15 frames into the bot's count takes the count back too: turned on again, it waits the whole 22 (${s.log.at(-1)})`);
+  }
+  {
+    // The screen plays the game's reading: a leader second in its group, in reach, it cannot know leads.
+    CombatScreen.instant = true;
+    const g = headlessGame(8);
+    Object.assign(g.party, companyAt(3, 8));
+    const master: MonsterDef = { ...MONSTERS.bandit, id: 'test_master', name: 'Barge Master', plural: 'Barge Masters' };
+    const s = startCombat(g.party, [{ id: 'barge', monsters: [MONSTERS.bandit, master, MONSTERS.bandit], leader: master.id }], g.rng), screen = new CombatScreen(s, ['barge']);
+    g.push(screen);
+    screen.auto = true;
+    const names = g.party.members.map((c) => c.name);
+    const first = (): string | undefined => s.log.find((l) => names.some((n) => l.startsWith(`${n} `)) && / (hits|misses|casts) /.test(l));
+    for (let n = 0; n < 200 && !first() && s.outcome === 'ongoing'; n++) g.update(null);
+    ok(!!first() && first()!.includes('Bandit') && !first()!.includes('Barge Master'), `the screen's bot plays the game's reading: its first blow or spell is at a bandit, not at the Barge Master it cannot know leads (${first()})`);
+  }
+  CombatScreen.instant = false;
 }

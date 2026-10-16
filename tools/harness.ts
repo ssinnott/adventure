@@ -18,8 +18,8 @@
 //   node tools/harness.ts --level-traits [...]         ... or its fighters gained a blow a promotion (--level-bonus: a bonus)
 //   node tools/harness.ts --rank-step 0.25 [...]       ... or a spell rank added another share than play's 15%
 // The company is the premade six, trained to the level (to the road's cap, 32), with the prestiges
-// that level brings (game/party.ts), and dressed in what the item tables give it by then (GEAR). A thrifty bot plays it (see `thrifty`), where tools/gate.ts's
-// bot spends: it mends whoever is in danger, strikes, and casts a damage spell only when the hit points
+// that level brings (game/party.ts), and dressed in what the item tables give it by then (GEAR). A thrifty bot plays it (see `thrifty`), where the gate's
+// bot (src/game/bot.ts) spends: it mends whoever is in danger, strikes, and casts a damage spell only when the hit points
 // the spell saves outweigh its spell points, each weighed by what the company has left of that pool,
 // and counts a spell's element for what it has seen it do to each foe, and fire for the mending it
 // stops in what it has seen mend. It aims at a leader, else a caller while its call has room, else
@@ -36,7 +36,7 @@ import { makeRng } from '../src/lib/engine/rng.ts';
 import type { RngInstance } from '../src/lib/engine/rng.ts';
 import { CLASSES, defaultParty, xpForLevel, levelUp, isDown, hasCondition, removeCondition, lift, heal, equip, weaponOf, attackBonus, armorClass, bonus, hasTrait, spellHeal, rankMult, RANK_STEP, SPELLFIRE_DMG, SNEAK_ATTACK_DMG, MAX_LEVEL, PRESTIGE_LEVELS, prestigeOf, takePrestige } from '../src/game/party.ts';
 import type { Character, Party } from '../src/game/party.ts';
-import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, isLeader, canCall, sweptRow, asGroup, castOnAlly, castOnParty, toHit, buffHit, traitDamage, monsterAc, monsterHit, seenMult, blowsOf, songDamage, FRONT_ROW } from '../src/game/combat.ts';
+import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, sweptRow, asGroup, castOnAlly, castOnParty, toHit, buffHit, traitDamage, monsterAc, monsterHit, seenMult, blowsOf, songDamage, FRONT_ROW } from '../src/game/combat.ts';
 import type { CombatState, MonsterInst, PartyAction, Edge, Fighters } from '../src/game/combat.ts';
 import { spell, spellDice, SPELLS_GROW_TO } from '../src/game/spells.ts';
 import type { SpellDef } from '../src/game/spells.ts';
@@ -48,6 +48,10 @@ import { MAP_DEFS, MONSTERS } from '../src/content/index.ts';
 import { ROLES, ROLE_IDS, LEVELS, HP, DAMAGE, xpFor, line, standardEncounter, testMonster, TROLL, WIGHT_CURSE, CALL, LIGHT, SWEEP, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, giantEncounter, drakeEncounter, BASILISK_STONE, basiliskEncounter, CLOCK, clockEncounter } from './testmonster.ts';
 import { quickening } from '../src/content/areas/ashfall/items.ts';
 import type { Role } from './testmonster.ts';
+import { wakeWith, markOf, ANSWER, breathGuard, mendLines, REST_AT, pools, mustRest } from '../src/game/bot.ts';
+
+// The bots' answers, the rest rule and the pools it reads are the game's (src/game/bot.ts), and found here still.
+export { wakeWith, markOf, ANSWER, breathGuard, mendLines, REST_AT, pools, mustRest } from '../src/game/bot.ts';
 
 /**
  * How many standard encounters at its own level a company should manage between rests: six or seven
@@ -57,11 +61,6 @@ import type { Role } from './testmonster.ts';
 export const fightsPerRest = (level: number): number => Math.min(14, 6.5 + Math.max(0, level - 10) / 4);
 /** No fight goes on for ever: one still running after this many rounds is broken off, and the company must rest. */
 export const ROUND_CAP = 15;
-/**
- * A company must rest once anyone in it is under this share of their hit points after mending, or it
- * is under this share of its spell points.
- */
-export const REST_AT = 0.25;
 /** How far the harness will train a company: the road's cap, as play has it. */
 export const CAP = MAX_LEVEL;
 
@@ -217,13 +216,6 @@ export function companyAt(level: number, seed: number): Party {
   return structuredClone(p);
 }
 
-/** What a company has left of its hit points (a fallen member's counting none) and spell points, and what it has whole. */
-export function pools(p: Party): { hp: number; maxHp: number; sp: number; maxSp: number } {
-  const t = { hp: 0, maxHp: 0, sp: 0, maxSp: 0 };
-  for (const c of p.members) { t.maxHp += c.maxHp; t.maxSp += c.maxSp; t.sp += c.sp; if (!isDown(c)) t.hp += Math.min(c.maxHp, c.hp); }
-  return t;
-}
-
 const spellDamage = (c: Character, sp: SpellDef): number =>
   ((spellDice(sp, c.level, RULES.spellsGrowTo) * ((sp.sides ?? 4) + 1)) / 2) * rankMult(c, RULES.rankStep) + (hasTrait(c, 'spellfire') ? SPELLFIRE_DMG : 0);
 
@@ -251,70 +243,6 @@ function incoming(s: CombatState, p: Party): number {
 }
 
 export type Bot = (s: CombatState, p: Party, rng: RngInstance, i: number) => void;
-
-/**
- * The bots' answer to sleep and to a hold (#549: the bells, the vines and the machines' clamps): the
- * sleeper to wake or the held to free, a member of the front row first and then a caster, and the
- * cheapest spell the member can afford that lifts it; none if no one need be freed. One of the back
- * row with no spells is left to wake or break free of itself.
- */
-export function wakeWith(p: Party, c: Character): { spellId: string; target: number } | undefined {
-  const cures = c.spells.map(spell).filter((x) => x.context !== 'explore' && x.target === 'ally' && x.sp <= c.sp).sort((a, b) => a.sp - b.sp);
-  const lifts = (m: Character): SpellDef | undefined => cures.find((x) => x.cure?.some((k) => (k === 'asleep' || (k === 'paralysed' && ANSWER.hold)) && hasCondition(m, k)));
-  const bound = p.members.map((m, j) => ({ m, j, x: lifts(m) })).filter(({ m, x }) => x && !isDown(m));
-  const who = bound.find(({ j }) => j < FRONT_ROW) ?? bound.find(({ m }) => m.maxSp > 0);
-  return who && { spellId: who.x!.id, target: who.j };
-}
-
-/**
- * The foe the bots aim at first among `foes`: under the clock, one at its panel, since their fall
- * stops the calls and holds the light (`Clock`, ANSWER.clock); then a leader, since the people break
- * at its fall, else a caller while the fight has room for its call, since its fall stops the fight
- * growing (`canCall`), else one whose touch takes spell points (`drain: 'sp'`, the lights), since its
- * fall keeps the casters' points.
- */
-export function markOf(s: CombatState, foes: readonly number[]): number | undefined {
-  const c = s.clock, called = c && (typeof c.calls === 'string' ? c.calls : c.calls.id);
-  const first = !c || ANSWER.clock === 'leader' ? undefined : foes.find((f) => (ANSWER.clock === 'panel' ? c.panel.includes(s.monsters[f].def.id) : s.monsters[f].def.id === called));
-  return first ?? foes.find((f) => isLeader(s, s.monsters[f])) ?? foes.find((f) => canCall(s, s.monsters[f])) ?? foes.find((f) => s.monsters[f].def.drain === 'sp');
-}
-
-/**
- * The bots' answers a tool may switch off to see a fight without one: the sweep's (`mendLines`,
- * #545), the hold's (`wakeWith`, #549) and the breath's (`breathGuard`, #549); and the clock's
- * (`markOf`, #748), the panel first, which a tool may turn to the leader first or to what the clock
- * calls as it comes, letting the clock run.
- */
-export const ANSWER = { sweep: true, hold: true, breath: true, clock: 'panel' as 'panel' | 'leader' | 'called' };
-
-/**
- * The fallen member of the front row the bots raise first while a foe that breathes stands (#549): a
- * breath falls on the row with more standing in it, so one of the front row down turns it on the
- * casters, and raised it takes the front again. None where the front row has as many standing as the
- * back, or none of it is only fallen.
- */
-export function breathGuard(s: CombatState, p: Party): number | undefined {
-  if (!ANSWER.breath || !aliveMonsters(s).some((f) => s.monsters[f].def.sweep?.element && !s.monsters[f].under)) return undefined;
-  const up = (back: boolean): number => p.members.filter((m, j) => (j >= FRONT_ROW) === back && !isDown(m)).length;
-  if (up(true) <= up(false)) return undefined;
-  const j = p.members.findIndex((m, k) => k < FRONT_ROW && hasCondition(m, 'unconscious') && !hasCondition(m, 'dead') && !hasCondition(m, 'stoned'));
-  return j < 0 ? undefined : j;
-}
-
-/**
- * The hit points under which the bots mend each member, by their slot: 40% of their own, or, in the
- * row a foe that sweeps would take (`sweptRow`, #545), the most one sweep of it could deal them where
- * that is more. So the front row's hit points are spread, none of it falls to one sweep, and the
- * sweep never turns on the back row.
- */
-export function mendLines(s: CombatState, p: Party): number[] {
-  const at = p.members.map((m) => m.maxHp * 0.4);
-  for (const f of ANSWER.sweep ? aliveMonsters(s) : []) {
-    const m = s.monsters[f], d = m.def;
-    if (d.sweep) for (const { i } of sweptRow(p, m)) at[i] = Math.max(at[i], d.dice * d.sides + d.bonus);
-  }
-  return at;
-}
 
 /** What a caster's spell point is worth in hit points: what its best mend gives for one, or one if it has none. */
 function mendRate(c: Character): number {
@@ -474,19 +402,6 @@ export function mendBetween(p: Party): void {
  * spell points, or no end in sight.
  */
 export type Why = 'lost' | 'long' | 'dead' | 'hp' | 'sp' | 'none';
-
-/**
- * Whether the company must rest before its next fight, and why: someone is dead, someone is still
- * under REST_AT of their hit points once it has mended what it can, or it is under REST_AT of its
- * spell points.
- */
-export function mustRest(p: Party): 'dead' | 'hp' | 'sp' | null {
-  if (p.members.some((m) => hasCondition(m, 'dead') || hasCondition(m, 'stoned'))) return 'dead';
-  if (p.members.some((m) => m.hp < m.maxHp * REST_AT)) return 'hp';
-  const t = pools(p);
-  if (t.maxSp && t.sp < t.maxSp * REST_AT) return 'sp';
-  return null;
-}
 
 export interface Day { fights: number; rounds: number; why: Why }
 
