@@ -5,7 +5,7 @@
 // from the man who holds it (#57).
 import { MONSTERS, MAP_DEFS } from '../../src/content/index.ts';
 import { buildMaps } from '../../src/content/maps.ts';
-import { wallDressing, isSolidWall, isHouse, drawnCell, DRESSINGS, DRESSING_RATES } from '../../src/ui/viewport.ts';
+import { wallDressing, isSolidWall, isHouse, isTent, tentOf, drawnCell, DRESSINGS, DRESSING_RATES } from '../../src/ui/viewport.ts';
 import { hash } from '../../src/ui/brush.ts';
 import { FACING_DX, FACING_DY } from '../../src/game/types.ts';
 import { GameMap } from '../../src/game/map.ts';
@@ -178,6 +178,21 @@ export async function art(): Promise<void> {
   ok(astray.length === 0, `every placed banner hangs on stone wall (${placed.length})${astray.length ? ' -> not hung: ' + astray.join(', ') : ''}`);
   const outdoors = MAP_DEFS.filter((d) => d.kind === 'outdoor' && d.banners?.length).map((d) => d.id);
   ok(outdoors.length === 0, `no outdoor map places a banner: the outdoors is laid without them${outdoors.length ? ' -> ' + outdoors.join(', ') : ''}`);
+
+  // A felt palette (#736): outside a town a building's square and the door beside it are a tent, and
+  // tent squares that fill a rectangle are one tent, as the trader's at Akordu; an L of them is three
+  // tents; a wall is no tent, nor is a house in a town. Felt carries no dressing. The tents' drawing
+  // is the smoke test's (tools/smoke.ts).
+  const camp = (kind: 'outdoor' | 'town', wallStyle: 'stone' | 'tent', rows: readonly string[]): GameMap => new GameMap({ id: 'fx_camp', name: 'Camp', kind, start: { x: 0, y: 0, facing: 0 }, rows, palette: { wallStyle } });
+  const ring = camp('outdoor', 'tent', [',,,,,,,', ',BB,B,,', ',DB,BB,', ',,,,,#,', ',,,,,,,']);
+  const one = tentOf(ring, 1, 2), ell = [tentOf(ring, 4, 1), tentOf(ring, 5, 2)];
+  ok(isTent(ring, 1, 2) && isTent(ring, 2, 1) && !isTent(ring, 5, 3) && !isTent(ring, 3, 1) && !isTent(camp('town', 'tent', ring.def.rows), 2, 1) && !isTent(camp('outdoor', 'stone', ring.def.rows), 2, 1),
+    'outside a town, a building\'s square under felt is a tent, and the door beside it; a wall, open ground, a town\'s house and a building under stone are not');
+  ok(one.x0 === 1 && one.y0 === 1 && one.x1 === 2 && one.y1 === 2 && ell.every((t, i) => t.x0 === t.x1 && t.y0 === t.y1 && t.x0 === [4, 5][i]),
+    `tent squares that fill a rectangle are one tent, door and all; an L of them is a tent to each square (${one.x0},${one.y0} to ${one.x1},${one.y1})`);
+  const block = (wallStyle: 'stone' | 'tent'): GameMap => camp('outdoor', wallStyle, Array(8).fill('########'));
+  const dressedIn = (m: GameMap): number => m.cells.filter((_, i) => wallDressing(m, i % m.width, Math.floor(i / m.width)) !== null).length;
+  ok(dressedIn(block('stone')) > 0 && dressedIn(block('tent')) === 0, `felt carries no dressing, where the same walls in stone do (${dressedIn(block('stone'))} of 64 dressed in stone, ${dressedIn(block('tent'))} in felt)`);
 
   // A secret door outdoors or underground set among mountain, rock or trees is drawn as they are, so a sett or a
   // cave is found and never seen; in a wall, or in a town, it stays a door, and a door the map shows

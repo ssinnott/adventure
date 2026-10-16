@@ -28,7 +28,7 @@ import { FACING_DX, FACING_DY } from '../game/types.ts';
 import type { Facing } from '../game/types.ts';
 import { shade, mix, rgba } from '../lib/art/palettes.ts';
 import { TERRAIN_COLORS, VOID_PINK } from './palette.ts';
-import { drawMonsterSprite, drawTreeSprite, drawDeadTreeSprite, drawCrystalSprite, drawLighthouseSprite, LIGHTHOUSE_HEIGHT, LIGHTHOUSE_BANDS, drawRockSprite, drawMountainSprite, drawPeakSprite, drawCliffSprite, drawPillarSprite, treeSeason, HIGH_SUMMER } from './sprites.ts';
+import { drawMonsterSprite, drawTreeSprite, drawDeadTreeSprite, drawCrystalSprite, drawLighthouseSprite, drawMonasterySprite, LIGHTHOUSE_HEIGHT, LIGHTHOUSE_BANDS, drawRockSprite, drawMountainSprite, drawPeakSprite, drawCliffSprite, drawPillarSprite, treeSeason, HIGH_SUMMER } from './sprites.ts';
 import type { TreeSeason } from './sprites.ts';
 import { drawVolcanoSprite, drawVineSprite } from './sprites.ts';
 import type { MonsterSprite } from '../game/monsters.ts';
@@ -341,6 +341,10 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
   const solidAt = (d: number, l: number): boolean => isSolidWall(drawn(...toPair(cellAt(px, py, f, d, l))));
   const houseAt = (d: number, l: number): boolean => isHouse(map, ...toPair(cellAt(px, py, f, d, l)));
   const voidAt = (d: number, l: number): boolean => map.at(...toPair(cellAt(px, py, f, d, l))).solid === 'void';
+  // A tent stands lower than a wall, so it hides no face of a wall or of another tent. Over the smoke
+  // test's backdrop it is the wall it stands in for, as a landmark is: the crack sweep looks at walls.
+  const tentAt = (d: number, l: number): boolean => !backdrop && isTent(map, ...toPair(cellAt(px, py, f, d, l)));
+  const boxAt = (d: number, l: number): boolean => solidAt(d, l) && !tentAt(d, l);
   const voids = new Path2D();
   // What a cell's seed steps by to the next cell across and ahead, so a block shared by two faces
   // can take one colour from both sides.
@@ -352,8 +356,10 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
   // A landmark drawn tall, its lamp lit by night once the party holds its flag; the lamp is drawn
   // every frame, and goes out as a torch does wherever anything nearer is painted over it.
   // One tone near and far, so the tower does not darken as it comes into the squares drawn.
+  // The lamp and its flame are a lighthouse's: a monastery's towers stand dark by night.
   const landmarkTone = (dark ? 0.3 : 0.95) * (1 - env.murk * 0.5);
   const drawLandmark = (lm: Landmark, bx: number, by: number, u: number, tone = landmarkTone): void => {
+    if (lm.kind === 'monastery') { drawMonasterySprite(ctx, bx, by, u, tone, env.cover); return; }
     const lit = (!lm.lit || !!world.party.flags[lm.lit]) && daylight < 0.35;
     const lamp = drawLighthouseSprite(ctx, bx, by, u, tone, lit ? 1 : 0, env.cover);
     if (!lit) return;
@@ -416,8 +422,9 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
         const s = Math.sign(l);
         if (d > 0 && !voidAt(d - 1, l)) drawVoidFront(ctx, voids, xl(uN), xr(uN), r.y, horizon + uN);
         if (l !== 0 && !voidAt(d, l - s)) { const xIn = l > 0 ? xl : xr; drawVoidSide(ctx, voids, xIn(uN), horizon + uN, xIn(uF), horizon + uF, r.y); }
-      } else if (d === 0 && l !== 0 && isSolidWall(cell) && map.landmarkAt(c.x, c.y) && !backdrop) {
-        // At its foot, beside the party: the tower's flank, white and banded red, up past the view.
+      } else if (d === 0 && l !== 0 && isSolidWall(cell) && map.landmarkAt(c.x, c.y)?.kind === 'lighthouse' && !backdrop) {
+        // At its foot, beside the party: the tower's flank, white and banded red, up past the view. A
+        // monastery's square there is the wall of the block it stands in.
         const xIn = l > 0 ? xl : xr;
         drawLighthouseFlank(ctx, xIn(uN), horizon + uN, xIn(uF), horizon + uF, uN, uF, landmarkTone);
       } else if (d > 0 && isSolidWall(cell) && map.landmarkAt(c.x, c.y) && !backdrop) {
@@ -430,19 +437,25 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
         const b = map.kind === 'town' && isHouse(map, c.x, c.y) ? building(map, c.x, c.y) : null;
         if (b && d > 0 && b.chimney === c.y * map.width + c.x) drawChimney(ctx, at, d, l, dark, haze);
         if (b) drawRoof(ctx, at, d, l, houseAt, b.seed, dark, haze, true);
+        // A wall's faces are hidden by the wall beside them and join its faces; a tent's by its own
+        // squares and by a wall, and they join only its own.
+        const tent = tentAt(d, l) ? tentOf(map, c.x, c.y) : null;
+        const own = tent ? (dd: number, ll: number): boolean => inTent(tent, cellAt(px, py, f, dd, ll)) && tentAt(dd, ll) : boxAt;
+        const hid = tent ? (dd: number, ll: number): boolean => own(dd, ll) || boxAt(dd, ll) : boxAt;
         // Where a face runs on into the next face of the same wall, the two join with no seam and
         // no outline between them; outlines are for corners and for where a wall ends.
-        if (d > 0 && !solidAt(d - 1, l)) {
-          const joinL = solidAt(d, l - 1) && !solidAt(d - 1, l - 1), joinR = solidAt(d, l + 1) && !solidAt(d - 1, l + 1);
-          drawFrontFace(ctx, map, cell, c.x, c.y, xl(uN), xr(uN), horizon, uN, d, seed, dark, haze, gloom, joinL, joinR, across);
+        if (d > 0 && !hid(d - 1, l)) {
+          const joinL = own(d, l - 1) && !hid(d - 1, l - 1), joinR = own(d, l + 1) && !hid(d - 1, l + 1);
+          drawFrontFace(ctx, map, cell, c.x, c.y, xl(uN), xr(uN), horizon, uN, d, seed, dark, haze, gloom, joinL, joinR, across, !!tent);
         }
         const s = Math.sign(l);
-        if (l !== 0 && !solidAt(d, l - s)) {
-          const joinNear = d === 0 || (solidAt(d - 1, l) && !solidAt(d - 1, l - s)), joinFar = solidAt(d + 1, l) && !solidAt(d + 1, l - s);
+        if (l !== 0 && !hid(d, l - s)) {
+          const joinNear = d === 0 || (own(d - 1, l) && !hid(d - 1, l - s)), joinFar = own(d + 1, l) && !hid(d + 1, l - s);
           const xIn = l > 0 ? xl : xr;
-          drawSideFace(ctx, map, cell, c.x, c.y, xIn(uN), uN, xIn(uF), uF, horizon, d, seed, dark, haze, l > 0, joinNear, joinFar, !solidAt(d + 1, l), ahead);
+          drawSideFace(ctx, map, cell, c.x, c.y, xIn(uN), uN, xIn(uF), uF, horizon, d, seed, dark, haze, l > 0, joinNear, joinFar, !own(d + 1, l), ahead, !!tent);
         }
         if (b) drawRoof(ctx, at, d, l, houseAt, b.seed, dark, haze, false);
+        if (tent) drawTentRoof(ctx, at, tentView(tent, px, py, f), d, l, map.paletteAt(c.x, c.y), dark, haze);
         for (const fl of flames) fl.under ??= pixel(ctx, fl.x, fl.y);
       } else if (d > 0 && cell.solid !== 'none' && !backdrop) {
         // Over the smoke test's backdrop the billboards stay out: their gaps are not cracks.
@@ -1327,13 +1340,16 @@ function cutVoid(ctx: CanvasRenderingContext2D, voids: Path2D, pts: [number, num
   flames = flames.filter((fl) => !ctx.isPointInPath(face, fl.x, fl.y));
 }
 
-function drawFrontFace(ctx: CanvasRenderingContext2D, map: GameMap, cell: Cell, mx: number, my: number, x0: number, x1: number, horizon: number, u: number, d: number, seed: number, dark: boolean, haze: string | null, daylight: number, joinL: boolean, joinR: boolean, across: number): void {
-  const top = horizon - u, bottom = horizon + u;
+/** A wall's front face; a tent's (`tent`) is its low felt wall, from TENT_WALL down. */
+function drawFrontFace(ctx: CanvasRenderingContext2D, map: GameMap, cell: Cell, mx: number, my: number, x0: number, x1: number, horizon: number, u: number, d: number, seed: number, dark: boolean, haze: string | null, daylight: number, joinL: boolean, joinR: boolean, across: number, tent = false): void {
+  const top = tent ? horizon + TENT_WALL * u : horizon - u, bottom = horizon + u;
   const isDoor = cell.door === 'door' || cell.door === 'locked';
-  const house = map.kind === 'town' && isHouse(map, mx, my), pal = map.paletteAt(mx, my);
+  const house = map.kind === 'town' && isHouse(map, mx, my), pal = map.paletteAt(mx, my), felt = !house && pal.wallStyle === 'tent';
   if (house) drawHouseFront(ctx, x0, x1, top, bottom, d, seed, building(map, mx, my).seed, dark, haze, daylight, joinL, joinR);
+  else if (felt) drawFeltFront(ctx, pal, x0, x1, top, bottom, d, dark, haze, joinL, joinR);
   else drawStoneFront(ctx, pal, x0, x1, top, bottom, d, seed, dark, haze, map.kind === 'outdoor', joinL, joinR, across);
   if (isDoor && pal.wallStyle === 'smooth') drawSeam(ctx, x0, x1, horizon, u, pal.wall, d, dark);
+  else if (isDoor && felt) drawFlap(ctx, x0, x1, top, bottom, pal, d, dark, haze);
   else if (isDoor) drawDoor(ctx, x0, x1, horizon, u, pal.door, d, dark, cell.door === 'locked', map.kind === 'town');
   drawWallDecor(ctx, map, cell, mx, my, x0, x1, top, bottom, d, seed, dark, haze, daylight, house, isDoor);
 }
@@ -1382,6 +1398,8 @@ export function wallDressing(map: GameMap, x: number, y: number): Dressing | nul
   const house = map.kind === 'town' && isHouse(map, x, y);
   if (!house && map.bannerAt(x, y)) return 'banner';
   if (!isDressed(map, x, y)) return null;
+  // Felt carries nothing: no sconce, crack or carving on a tent.
+  if (!house && map.paletteAt(x, y).wallStyle === 'tent') return null;
   const roll = hash(x * 131 + y * 17 + map.id.length * 7, 77);
   let top = 0;
   for (const kind of DRESSINGS[house ? 'house' : 'stone']) {
@@ -1833,7 +1851,7 @@ function drawChimney(ctx: CanvasRenderingContext2D, at: At, d: number, l: number
  * side face along without a seam. Where the wall runs on into the next face (joinNear, joinFar) the
  * half blocks at the join are halves of one block (`ahead` is what a seed steps by one cell on).
  */
-function drawSideFace(ctx: CanvasRenderingContext2D, map: GameMap, cell: Cell, mx: number, my: number, xN: number, uN: number, xF: number, uF: number, horizon: number, d: number, seed: number, dark: boolean, haze: string | null, onRight: boolean, joinNear: boolean, joinFar: boolean, openFar: boolean, ahead: number): void {
+function drawSideFace(ctx: CanvasRenderingContext2D, map: GameMap, cell: Cell, mx: number, my: number, xN: number, uN: number, xF: number, uF: number, horizon: number, d: number, seed: number, dark: boolean, haze: string | null, onRight: boolean, joinNear: boolean, joinFar: boolean, openFar: boolean, ahead: number, tent = false): void {
   const house = map.kind === 'town' && isHouse(map, mx, my), pal = map.paletteAt(mx, my);
   const bseed = house ? building(map, mx, my).seed : 0;
   const baseCol = house ? shade('#d8c8a8', 0.8 * (1 + (hash(bseed, 1) - 0.5) * 0.15)) : pal.wallDark;
@@ -1846,6 +1864,24 @@ function drawSideFace(ctx: CanvasRenderingContext2D, map: GameMap, cell: Cell, m
     const x = xN + (xF - xN) * (u - uN) / (uF - uN);
     return [x, horizon - u + 2 * u * t];
   };
+  // Felt, the whole height of a wall or a tent's low wall, in strips fogged by their depth as a smooth
+  // wall's are, with its ropes and the band round its foot.
+  if (!house && pal.wallStyle === 'tent') {
+    const t0 = tent ? (1 + TENT_WALL) / 2 : 0, kN = Math.max(0, d - 0.5), kF = d + 0.5, h = 1 - t0, strips = 6;
+    for (let j = 0; j < strips; j++) {
+      const s0 = j / strips, s1 = Math.min(1, (j + 1.2) / strips), fd = kN + (kF - kN) * (s0 + s1) / 2;
+      quad(ctx, P(s0, t0), P(s1, t0), P(s1, 1), P(s0, 1), fog(shade(pal.wall, shadeSide * 0.92), fd, dark, haze));
+    }
+    quad(ctx, P(0, 1 - h * 0.2), P(1, 1 - h * 0.2), P(1, 1 - h * 0.07), P(0, 1 - h * 0.07), fog(shade(pal.banner, shadeSide), d, dark, haze));
+    ctx.strokeStyle = fog(shade(pal.wall, shadeSide * 0.6), d, dark, haze); ctx.lineWidth = Math.max(1, uN * 0.02); ctx.lineCap = 'butt';
+    for (const t of [0.3, 0.58]) line(ctx, P(0, t0 + h * t), P(1, t0 + h * t));
+    ctx.strokeStyle = 'rgba(0,0,0,0.5)'; ctx.lineWidth = 1;
+    ctx.beginPath(); const a = P(0, t0), b = P(1, t0), c = P(1, 1), e = P(0, 1);
+    ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.moveTo(e[0], e[1]); ctx.lineTo(c[0], c[1]);
+    if (openFar) { const i = xF > xN ? -0.5 : 0.5; ctx.moveTo(b[0] + i, b[1]); ctx.lineTo(c[0] + i, c[1]); }
+    ctx.stroke();
+    return;
+  }
   // A house wall runs a pixel or two up under its eaves, which close over its top with no sky between.
   const up = house ? -1 / uF : 0;
   quad(ctx, P(0, up), P(1, up), P(1, 1), P(0, 1), fog(shade(baseCol, shadeSide), d, dark, haze));
@@ -1909,6 +1945,175 @@ function drawSeam(ctx: CanvasRenderingContext2D, xl: number, xr: number, horizon
   const x = Math.round(xl + (w - dw) / 2) + 0.5, y = Math.round(horizon + u - u * 1.55) + 0.5;
   ctx.strokeStyle = fog(shade(wall, 0.7), d, dark); ctx.lineWidth = 1; ctx.lineCap = 'butt';
   ctx.beginPath(); ctx.moveTo(x, foot); ctx.lineTo(x, y); ctx.lineTo(x + dw, y); ctx.lineTo(x + dw, foot); ctx.stroke();
+}
+
+// A tent (a building's square, or its door, under a felt palette, outside a town) stands lower than a
+// wall: its felt wall comes up a little over the eye, and its roof of felt over poles runs from an eave
+// round the wall up to a crown over the tent's middle, as the trader's at Akordu is seen from inside
+// (ui/interiors/glasswold/akordu_trader.ts). Tent squares that fill a rectangle are one tent.
+
+/** A tent's felt wall's top, in view space (Y, down, in half squares): a little over the eye. */
+const TENT_WALL = -0.12;
+/** How far a tent's roof stands out past its wall, in half squares, and how far its eave hangs under the wall's top. */
+const TENT_EAVE = 0.16, TENT_DROOP = 0.07;
+/** How high a tent's crown stands over its wall, in half squares, for a tent one square across; a wider one's stands higher. */
+const TENT_RISE = 1.35;
+/** The band of felt round a tent's foot, as the trader's is inside, and its lozenges. */
+const OCHRE = '#c8902e';
+
+/** A tent's squares, a filled rectangle of them: its bounds, inclusive. */
+interface Tent { x0: number; y0: number; x1: number; y1: number }
+/** A tent's walls in view space: X across in half squares, k ahead in squares, as `At` takes them. */
+interface TentView { X0: number; X1: number; K0: number; K1: number }
+
+/**
+ * A tent's square: a building's square, or a door beside one, under a felt palette ('tent'), outside a
+ * town, where a house is a house whatever the palette.
+ */
+export function isTent(map: GameMap, x: number, y: number): boolean {
+  return map.kind !== 'town' && isHouse(map, x, y) && map.paletteAt(x, y).wallStyle === 'tent';
+}
+
+/**
+ * The tent a square is part of: the tent squares it touches, flooded out, where they fill the
+ * rectangle they span (sixteen squares at most); otherwise the square is a tent alone.
+ */
+export function tentOf(map: GameMap, mx: number, my: number): Tent {
+  const alone = { x0: mx, y0: my, x1: mx, y1: my }, cells = new Set([my * map.width + mx]);
+  for (const c of cells) {
+    if (cells.size > 16) return alone;
+    const x = c % map.width, y = Math.floor(c / map.width);
+    for (const [nx, ny] of [[x - 1, y], [x + 1, y], [x, y - 1], [x, y + 1]]) if (map.inBounds(nx, ny) && isTent(map, nx, ny)) cells.add(ny * map.width + nx);
+  }
+  const t = { ...alone };
+  for (const c of cells) { const x = c % map.width, y = Math.floor(c / map.width); t.x0 = Math.min(t.x0, x); t.x1 = Math.max(t.x1, x); t.y0 = Math.min(t.y0, y); t.y1 = Math.max(t.y1, y); }
+  return cells.size === (t.x1 - t.x0 + 1) * (t.y1 - t.y0 + 1) ? t : alone;
+}
+
+const inTent = (t: Tent, p: { x: number; y: number }): boolean => p.x >= t.x0 && p.x <= t.x1 && p.y >= t.y0 && p.y <= t.y1;
+
+function tentView(t: Tent, px: number, py: number, f: Facing): TentView {
+  const rf = ((f + 1) & 3) as Facing, ks: number[] = [], xs: number[] = [];
+  for (const [mx, my] of [[t.x0 - 0.5, t.y0 - 0.5], [t.x1 + 0.5, t.y1 + 0.5]]) {
+    ks.push((mx - px) * FACING_DX[f] + (my - py) * FACING_DY[f]);
+    xs.push(2 * ((mx - px) * FACING_DX[rf] + (my - py) * FACING_DY[rf]));
+  }
+  return { X0: Math.min(...xs), X1: Math.max(...xs), K0: Math.min(...ks), K1: Math.max(...ks) };
+}
+
+/** A felt wall's front: the felt, the eave's shadow on it, two girth ropes and the band round its foot. */
+function drawFeltFront(ctx: CanvasRenderingContext2D, pal: MapPalette, x0: number, x1: number, top: number, bottom: number, d: number, dark: boolean, haze: string | null, joinL: boolean, joinR: boolean): void {
+  const X0 = Math.round(x0), X1 = Math.round(x1), T = Math.round(top), B = Math.round(bottom), w = x1 - x0, h = bottom - top;
+  ctx.fillStyle = fog(pal.wall, d, dark, haze); ctx.fillRect(X0, T, X1 - X0, B - T);
+  const sh = ctx.createLinearGradient(0, T, 0, T + h * 0.22);
+  sh.addColorStop(0, 'rgba(0,0,0,0.28)'); sh.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = sh; ctx.fillRect(X0, T, X1 - X0, Math.round(h * 0.22));
+  ctx.fillStyle = fog(shade(pal.wall, 0.6), d, dark, haze);
+  for (const t of [0.3, 0.58]) ctx.fillRect(X0, Math.round(top + h * t), X1 - X0, Math.max(1, Math.round(h * 0.03)));
+  const b0 = Math.round(bottom - h * 0.2), b1 = Math.round(bottom - h * 0.07);
+  ctx.fillStyle = fog(pal.banner, d, dark, haze); ctx.fillRect(X0, b0, X1 - X0, b1 - b0);
+  if (b1 - b0 >= 4) {
+    const n = Math.max(3, Math.round(w / 14)), lw = w / n / 2, mid = (b0 + b1) / 2, lh = (b1 - b0) * 0.36;
+    ctx.fillStyle = fog(OCHRE, d, dark, haze);
+    for (let i = 0; i < n; i++) { const lx = x0 + (i + 0.5) * w / n; ctx.beginPath(); ctx.moveTo(lx - lw * 0.5, mid); ctx.lineTo(lx, mid - lh); ctx.lineTo(lx + lw * 0.5, mid); ctx.lineTo(lx, mid + lh); ctx.closePath(); ctx.fill(); }
+  }
+  ctx.strokeStyle = 'rgba(0,0,0,0.5)'; ctx.lineWidth = 1; outlineRect(ctx, X0, T, X1, B, !joinL, !joinR);
+}
+
+/**
+ * A door in felt: the doorway's dark under a flap of the door's colour hung from a rolled head, its
+ * lower corner turned back.
+ */
+function drawFlap(ctx: CanvasRenderingContext2D, x0: number, x1: number, top: number, bottom: number, pal: MapPalette, d: number, dark: boolean, haze: string | null): void {
+  const w = x1 - x0, h = bottom - top, dw = w * 0.38, x = x0 + (w - dw) / 2, y = bottom - h * 0.8;
+  ctx.fillStyle = '#120d0a'; ctx.fillRect(Math.round(x), Math.round(y), Math.round(dw), Math.round(bottom - y));
+  const fx = x + dw, fy = y + (bottom - y) * 0.5, tx = x + dw * 0.42;
+  ctx.fillStyle = fog(pal.door, d, dark, haze);
+  ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(fx, y); ctx.lineTo(fx, fy); ctx.lineTo(tx, bottom); ctx.lineTo(x, bottom); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = 'rgba(0,0,0,0.55)'; ctx.lineWidth = 1; ctx.stroke();
+  // The corner turned back: its lining, lighter, folded up over the flap.
+  ctx.fillStyle = fog(shade(pal.door, 1.45), d, dark, haze);
+  ctx.beginPath(); ctx.moveTo(fx, fy); ctx.lineTo(tx, bottom); ctx.lineTo(x + dw * 0.6, fy + (bottom - fy) * 0.15); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = fog(shade(pal.door, 0.7), d, dark, haze);
+  ctx.fillRect(Math.round(x - dw * 0.08), Math.round(y - h * 0.05), Math.round(dw * 1.16), Math.max(2, Math.round(h * 0.08)));
+}
+
+/** A polygon in view space (X, k) cut to the rectangle, as Sutherland and Hodgman cut it; its winding is kept. */
+function clipRect(poly: [number, number][], x0: number, x1: number, k0: number, k1: number): [number, number][] {
+  const cut = (pts: [number, number][], i: 0 | 1, v: number, keep: 1 | -1): [number, number][] => {
+    const out: [number, number][] = [];
+    for (let n = 0; n < pts.length; n++) {
+      const a = pts[n], b = pts[(n + 1) % pts.length], ia = (a[i] - v) * keep >= 0, ib = (b[i] - v) * keep >= 0;
+      if (ia) out.push(a);
+      if (ia !== ib) { const t = (v - a[i]) / (b[i] - a[i]); out.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]); }
+    }
+    return out;
+  };
+  return cut(cut(cut(cut(poly, 0, x0, 1), 0, x1, -1), 1, k0, 1), 1, k1, -1);
+}
+
+/** Twice a screen polygon's area: negative where its points run anticlockwise as the eye sees them. */
+function area2(pts: [number, number][]): number {
+  let a = 0;
+  for (let n = 0; n < pts.length; n++) { const p = pts[n], q = pts[(n + 1) % pts.length]; a += p[0] * q[1] - q[0] * p[1]; }
+  return a;
+}
+
+/**
+ * The part of a tent's roof over one of its squares (d, l). The roof is a pyramid of felt from its
+ * eave round the walls up to the crown over the tent's middle; each face that looks toward the eye is
+ * cut to the square (out to the eave where the square is on the tent's edge, and never behind k = 0)
+ * and shaded as it faces, its seams running up to the crown and its hem dark along the eave. The
+ * crown's ring goes on last, by every square it stands on, so the one painted last has it over all.
+ */
+function drawTentRoof(ctx: CanvasRenderingContext2D, at: At, v: TentView, d: number, l: number, pal: MapPalette, dark: boolean, haze: string | null): void {
+  const E = TENT_EAVE, e = E / 2, ax0 = v.X0 - E, ax1 = v.X1 + E, ak0 = v.K0 - e, ak1 = v.K1 + e;
+  const Xc = (v.X0 + v.X1) / 2, Kc = (v.K0 + v.K1) / 2, across = Math.min(v.X1 - v.X0, 2 * (v.K1 - v.K0)) / 2;
+  const Ye = TENT_WALL + TENT_DROOP, Ya = TENT_WALL - TENT_RISE * (2 + across) / 3;
+  const sx0 = 2 * l - 1 <= v.X0 + 1e-6 ? ax0 : 2 * l - 1, sx1 = 2 * l + 1 >= v.X1 - 1e-6 ? ax1 : 2 * l + 1;
+  const sk0 = Math.max(0, d - 0.5 <= v.K0 + 1e-6 ? ak0 : d - 0.5), sk1 = d + 0.5 >= v.K1 - 1e-6 ? ak1 : d + 0.5;
+  // Toward the crown along a seam, stopping short of k = 0 where the crown is behind the eye.
+  const crown = (X: number, k: number): [number, number] => {
+    if (Kc >= 0.05) return at(Xc, Kc, Ya);
+    const t = (k - 0.05) / (k - Kc);
+    return at(X + (Xc - X) * t, 0.05, Ye + (Ya - Ye) * t);
+  };
+  // Each face: its eave's ends, left then right as seen from outside it; how far up it a point is; its shade.
+  const faces: [[number, number], [number, number], (X: number, k: number) => number, number][] = [
+    [[ax0, ak0], [ax1, ak0], (_X, k) => (k - ak0) / (Kc - ak0), 1],
+    [[ax1, ak1], [ax0, ak1], (_X, k) => (ak1 - k) / (ak1 - Kc), 0.7],
+    [[ax0, ak1], [ax0, ak0], (X) => (X - ax0) / (Xc - ax0), 0.88],
+    [[ax1, ak0], [ax1, ak1], (X) => (ax1 - X) / (ax1 - Xc), 0.76],
+  ];
+  for (const [a, b, up, tone] of faces) {
+    const ground = clipRect([a, b, [Xc, Kc]], sx0, sx1, sk0, sk1);
+    if (ground.length < 3) continue;
+    const pts = ground.map(([X, k]) => at(X, k, Ye + (Ya - Ye) * up(X, k)));
+    if (area2(pts) > -1) continue;
+    ctx.beginPath(); addPoly(ctx, pts);
+    ctx.fillStyle = fog(shade(pal.wall, tone), d, dark, haze); ctx.fill();
+    ctx.save(); ctx.clip();
+    const ea = at(a[0], Math.max(a[1], 0.05), Ye), eb = at(b[0], Math.max(b[1], 0.05), Ye), len = Math.hypot(eb[0] - ea[0], eb[1] - ea[1]);
+    ctx.strokeStyle = fog(shade(pal.wall, tone * 0.8), d, dark, haze); ctx.lineWidth = 1;
+    const seams = Math.max(2, Math.min(8, Math.round(len / 12)));
+    for (let i = 1; i < seams; i++) {
+      const sX = a[0] + (b[0] - a[0]) * i / seams, sk = a[1] + (b[1] - a[1]) * i / seams;
+      if (sk >= 0.05) line(ctx, at(sX, sk, Ye), crown(sX, sk));
+    }
+    ctx.strokeStyle = fog(shade(pal.wall, 0.55), d, dark, haze); ctx.lineWidth = Math.max(1.5, len * 0.012);
+    line(ctx, ea, eb);
+    ctx.restore();
+    ctx.strokeStyle = 'rgba(0,0,0,0.45)'; ctx.lineWidth = 1; ctx.stroke();
+  }
+  if (Kc < 0.05 || Xc < 2 * l - 1 - 1e-6 || Xc > 2 * l + 1 + 1e-6 || Kc < d - 0.5 - 1e-6 || Kc > d + 0.5 + 1e-6) return;
+  // The crown: the ring the poles run up to, standing a little proud of the felt, and the felt cover
+  // over its smoke hole.
+  const [cx, cy] = at(Xc, Kc, Ya), r = Math.abs(at(Xc + 0.3, Kc, Ya)[0] - cx), ry = Math.max(1, r * 0.32), rise = r * 0.45;
+  ctx.fillStyle = fog('#7a5430', d, dark, haze);
+  ctx.beginPath(); ctx.moveTo(cx - r, cy - rise); ctx.lineTo(cx + r, cy - rise); ctx.lineTo(cx + r, cy); ctx.ellipse(cx, cy, r, ry, 0, 0, Math.PI); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = 'rgba(0,0,0,0.5)'; ctx.lineWidth = 1; ctx.stroke();
+  ctx.fillStyle = fog(shade(pal.wall, 0.94), d, dark, haze);
+  ctx.beginPath(); ctx.ellipse(cx, cy - rise, r * 1.05, Math.max(1, r * 0.6), 0, Math.PI, Math.PI * 2); ctx.closePath(); ctx.fill(); ctx.stroke();
 }
 
 function drawDoor(ctx: CanvasRenderingContext2D, xl: number, xr: number, horizon: number, u: number, color: string, d: number, dark: boolean, locked: boolean, arched: boolean): void {

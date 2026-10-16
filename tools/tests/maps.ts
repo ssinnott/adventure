@@ -3,7 +3,7 @@
 // reachable. What a clear of them is worth is the curve's (tools/tests/curve.ts).
 import { AREAS, ATLAS, MAP_DEFS, ITEMS, MONSTERS, INTERIORS } from '../../src/content/index.ts';
 import { GameMap } from '../../src/game/map.ts';
-import type { Feature, MapDef } from '../../src/game/map.ts';
+import type { Feature, Landmark, MapDef } from '../../src/game/map.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import { NORTH } from '../../src/game/types.ts';
 import { MAX_LEVEL } from '../../src/game/party.ts';
@@ -171,6 +171,19 @@ export function unsetGates(defs: readonly MapDef[]): string[] {
   return defs.flatMap((d) => (d.exits ?? []).flatMap((e) => [e.needFlag ?? []].flat().filter((k) => !set.has(k)).map((k) => `${d.id}: gated exit flag '${k}' at ${e.x},${e.y} is set by nothing`)));
 }
 
+/**
+ * What is wrong with a monastery, the second kind of landmark (#736): it stands inside its block of
+ * building squares, its four neighbours building or door squares, so that near to the block's walls
+ * hide the foot of a drawing wider than its square; and it has no lamp, so no `lit` flag. Null if
+ * nothing is, and for a lighthouse.
+ */
+export function monasteryFault(m: GameMap, l: Landmark): string | null {
+  if (l.kind !== 'monastery') return null;
+  if (l.lit) return `it has a lamp's flag, '${l.lit}'`;
+  const open = [[l.x - 1, l.y], [l.x + 1, l.y], [l.x, l.y - 1], [l.x, l.y + 1]].filter(([x, y]) => m.at(x, y).solid !== 'building' && m.at(x, y).door === 'none');
+  return open.length ? `it is on its block's edge, open at ${open.map(([x, y]) => `${x},${y}`).join(' and ')}` : null;
+}
+
 export function maps(): void {
   // The maps as written, each on its own, the Foreland and Thornmark included (see `outdoors` for how they are played).
   const maps = Object.fromEntries(MAP_DEFS.map((d) => [d.id, new GameMap(d)]));
@@ -187,6 +200,7 @@ export function maps(): void {
     for (const f of m.features) ok(m.passable(f.x, f.y, { swim: true, climb: true, keys: 1 }) !== 'wall', `${def.id}: feature ${f.kind} at ${f.x},${f.y} is not inside a wall`);
     // A landmark is a building drawn as what it is (#312): it stands on a building's square.
     for (const l of m.landmarks) ok(m.at(l.x, l.y).solid === 'building', `${def.id}: the ${l.kind} at ${l.x},${l.y} stands on a building's square`);
+    for (const l of m.landmarks) if (l.kind === 'monastery') { const f = monasteryFault(m, l); ok(!f, `${def.id}: the monastery at ${l.x},${l.y} stands inside its block, with no lamp${f ? ' -> ' + f : ''}`); }
     for (const e of m.encounters) {
       ok(m.passable(e.x, e.y) === 'ok', `${def.id}: encounter ${e.id} at ${e.x},${e.y} is passable`);
       for (const id of e.monsters) ok(id in MONSTERS, `${def.id}: encounter ${e.id} monster '${id}' exists`);
@@ -319,6 +333,16 @@ export function maps(): void {
     const stair = faultsOf(shore([...stairOnly, gate]), [town, cellar]);
     const only = faultsOf(shore(stairOnly), [cellar, def('fx_far', ['MMM', 'M,M', 'MMM'], { exits: [{ x: 1, y: 1, to: 'fx_cellar', tx: 1, ty: 1 }] })]);
     ok(round.length === 0 && stair.length === 0 && only.join() === 'the exit to fx_cellar at 3,1 is cut off at high water', `a dry way round passes, and so does a stair over the flats whose place this map reaches at high water through a town, but not one whose place only some other map reaches (${[...round, ...stair, ...only].join('; ') || 'nothing'})`);
+  }
+  // The second landmark kind (#736): a monastery inside its block passes, and its map gives it back by
+  // its square; one on the block's edge, or given a lamp's flag, is caught. Its drawing is the smoke
+  // test's (tools/smoke.ts).
+  {
+    const cloister = new GameMap({ id: 'fx_cloister', name: 'Cloister', kind: 'outdoor', start: { x: 0, y: 0, facing: NORTH },
+      rows: [',,,,,', ',BBB,', ',BBB,', ',BDB,', ',,,,,'], landmarks: [{ x: 2, y: 2, kind: 'monastery' }] });
+    const edge = monasteryFault(cloister, { x: 2, y: 1, kind: 'monastery' }), lamp = monasteryFault(cloister, { x: 2, y: 2, kind: 'monastery', lit: 'q_lamp' });
+    ok(cloister.landmarkAt(2, 2)?.kind === 'monastery' && monasteryFault(cloister, cloister.landmarks[0]) === null && edge === 'it is on its block\'s edge, open at 2,0' && lamp === 'it has a lamp\'s flag, \'q_lamp\'' && monasteryFault(cloister, { x: 2, y: 1, kind: 'lighthouse' }) === null,
+      `a monastery inside its block passes, its door a side of the block; on the block's edge or with a lamp's flag it fails (${edge}; ${lamp})`);
   }
   // Each area lists what is its own, and the lists are true: its maps share its weather, its monsters
   // are drawn with the sprite kinds it lists, and its businesses paint the rooms it lists.
