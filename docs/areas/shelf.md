@@ -682,7 +682,7 @@ The Foreland's walkthrough walks both cities: the old one, then the changed one 
 company, whose paladin Idris is orcblood, and to one without him. The flag is set by hand, since
 the road's band refuses Helmstow to a company of 16.
 
-Once the Hand has Wenna (`q_wenna_taken`, set by her question at the camp's fire on Sheer Point,
+Once the Hand has Wenna (`q_wenna_taken`, set by a rest at the camp's fire on Sheer Point,
 docs/areas/whitespine.md) the city is worse again (#449), on top of Act II's changes:
 
 - **A gibbet** in the middle street, new and empty: a once-event on the first step onto either of

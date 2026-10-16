@@ -16,8 +16,11 @@ import type { MapDef } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
 import { WENNA_LODGE } from '../../rimewater/maps/rime_lodge.ts';
 
-/** Wenna taken from the camp on the night the company sleeps by her fire (§5, §9's 2; #505 reads it). */
+/** Wenna taken from the camp on the night the company rests at her fire (§5, §9's 2; #505 reads it). */
 export const WENNA_TAKEN = 'q_wenna_taken';
+
+/** Wenna at the camp: after the lodge, once the company has reached the Point. The camp's night waits on the same. */
+const WENNA_THERE = { flag: WENNA_LODGE, visited: 'sheerpoint_i8' };
 
 /**
  * The Mason's Tally (#56's 48, #506): the deserter's passage to Cinderport bought, the Compact's fare
@@ -91,20 +94,20 @@ export const SHEERPOINT_I8: MapDef = {
     { kind: 'event', x: 17, y: 1, id: 'i8_end', once: true, text: 'The stones stop here, over deep water. Beyond them the Hearth\'s light lies on the sea.' },
     { kind: 'event', x: 18, y: 7, id: 'i8_tallyhouse', once: true, text: 'A hut of the same cut stone at the causeway\'s root. Inside, slates to the roof, each chalked with a count.' },
     // The camp on the shingle, and Wenna at it, a person who moves (#76; §9's 2): there once the company
-    // has reached the Point, after the lodge (Rimewater's `WENNA_LODGE`) and Highcell's gate (J11). The
-    // engine has no rest hook at a camp, so the night is hers to put, as a stay at the Lodge's inn sets
-    // its night: slept, she is taken, and the knot is on the first stone.
-    { kind: 'camp', x: 14, y: 8, name: 'The shingle fire', text: 'A fire-ring on the shingle above the tide, driftwood stacked by it, the causeway in sight.' },
-    { kind: 'npc', x: 13, y: 8, name: 'The girl out of the hole', after: { flag: WENNA_LODGE, visited: 'sheerpoint_i8' }, until: { flag: WENNA_TAKEN }, lines: [
-      'The girl out of the hole, at a fire on the shingle in her lodge blanket, watching the stones go out over the water.',
-      '"You came." She makes room by the fire. "Sleep. I\'ll keep the first watch."',
-    ], choice: { ask: 'Sleep by her fire?', answers: [
-      { label: 'Sleep', sets: WENNA_TAKEN, says: [
+    // has reached the Point, after the lodge (Rimewater's `WENNA_LODGE`) and Highcell's gate (J11). A rest
+    // at the fire is the night once she is there (#730), as a stay at the Lodge's inn sets its night: the
+    // camp's first night sets `WENNA_TAKEN` and says her waking, she is gone, and the knot is on the first
+    // stone. A rest before she is there is a rest and no more.
+    { kind: 'camp', x: 14, y: 8, name: 'The shingle fire', text: 'A fire-ring on the shingle above the tide, driftwood stacked by it, the causeway in sight.', nights: [
+      { after: WENNA_THERE, sets: WENNA_TAKEN, says: [
         'One of you is shouting at the water. Her blanket by the fire is cold.',
         'Out along the stones a boat is going, rowed hard, and none of you saw where it put out from.',
       ] },
-      { label: 'Not yet', says: ['"Then I\'ll keep it alone."'] },
-    ] } },
+    ] },
+    { kind: 'npc', x: 13, y: 8, name: 'The girl out of the hole', after: WENNA_THERE, until: { flag: WENNA_TAKEN }, lines: [
+      'The girl out of the hole, at a fire on the shingle in her lodge blanket, watching the stones go out over the water.',
+      '"You came." She makes room by the fire. "Sleep. I\'ll keep the first watch."',
+    ] },
     // Rook's Nest, a hollow high in the tip's rock at the atlas's site, and Hereward, who watches from it,
     // the Thief's third prestige (#448): his own words first, then, to a thief of 27 with the second, his
     // ask, once, for a set of the Compact's orders out of the Dead-Drop and whose hand writes them; with the
