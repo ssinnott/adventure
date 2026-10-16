@@ -160,7 +160,11 @@ DESIGN.md first for the why.
   sheet shows. Linguist is the first built: the Lanterns', 1,000 gold a member, taught at every hall
   of theirs ("Learn a skill" on its first menu) and by a person who teaches it (`skill`), to a
   company that is of the guild. The Kilns' maps place both: inscriptions from N3's niche to O6's
-  adit, and Anvilhall's Lantern reader to teach it (docs/areas/kilns.md §4.1, §4.4).
+  adit, and Anvilhall's Lantern reader to teach it (docs/areas/kilns.md §4.1, §4.4). Mountaineer and
+  Swimmer are built as it is (#805): the Wardens', taught at the Drillyard, and the Cartographers',
+  taught at the Map Room in Saltmouth and the Chart House in Cinderport. `partyCan` lets a company
+  climb with a Mountaineer standing and swim with a Swimmer standing; the flags `skill_mountaineer`
+  and `skill_swim` still grant the same.
 - **A monster's look.** The first time a company sees a kind, as the viewport draws it (each kind
   of the group to three, in line of sight), or meets one in a fight unseen, the log says its `look`,
   once. A group is drawn as up to three figures: each of its kinds once, in the order they stand,
@@ -581,9 +585,9 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 ## Stubbed or absent
 
 - No hall sells tier 7 yet (the Watch's Lantern Hall sells 6, #201); no Master trainers; of the
-  secondary skills only Linguist (#538), with the race-innate ones. The Meridian journal opens The
-  Lost Expedition in the quest log, and the Cartographers' Geographer in Saltmouth reads it (#181),
-  but no second volume exists.
+  secondary skills only Linguist (#538), Mountaineer and Swimmer (#805), with the race-innate ones.
+  The Meridian journal opens The Lost Expedition in the quest log, and the Cartographers' Geographer
+  in Saltmouth reads it (#181), but no second volume exists.
 - No audio. The engine's synth stack is vendored, unused.
 - Prestiges, the Compact's hall, the succession, the Salt Compact, the Lost Expedition past its
   first journal: design only. The Cartographers' hall is built in Saltmouth (#181).
@@ -699,10 +703,12 @@ over content broken on purpose too, and two tools to theirs:
   marks pinned once read and said once; no flag set and no door changed. Every inscription of the
   content has an id of its own on its map and a reading, its marks name atlas places, and no way
   waits on a reading.
-- `skills` (#538): each skill built one of DESIGN §5's twelve, its guild's by DESIGN §8; every hall of
-  the Lanterns teaches Linguist and no other hall a skill yet; a stranger to the guild learns
-  nothing, a member learns once for the price, a dwarf is born to it; a save keeps a member's skills
-  and one from before them has none.
+- `skills` (#538, #805): each skill built one of DESIGN §5's twelve, its guild's by DESIGN §8; every
+  hall teaches what its guild has built (the Lanterns' Linguist, the Wardens' Mountaineer, the
+  Cartographers' Swimmer, the Compact's nothing yet), each walked through its own menu in a Game; a
+  stranger to the guild learns nothing, a member learns once for the price, a dwarf is born to
+  Linguist; Mountaineer and Swimmer bought at their halls climb and swim; a save keeps a member's
+  skills and one from before them has none.
 - `glyphs`: every symbol `src/ui/` draws past plain ASCII (arrows, stars, hearts) is in the pixel
   font, so none is painted as nothing.
 - `drawn`: every group on the maps is drawn while exploring as each of its kinds, to three, and a
