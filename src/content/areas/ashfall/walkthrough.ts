@@ -11,7 +11,8 @@
 // milestone; the chandler's racks under the wall; the stream forded on its stones and the knoll over it;
 // the hermit and the clay pit under the vines; the box's groups won at its floor, the vines never
 // roaming; and the factor's hide, found from the cut vines at its mouth. Then Cinderport (#512), in at
-// the gate and out again, its businesses, its two halls and its crossings. Then Fire Mountain's flank
+// the gate and out again, its businesses, its two halls and its crossings, and the Letter in Cipher out
+// of the Wold's chest to the factor (#735). Then Fire Mountain's flank
 // (G11, #513), walked onto over G10's south edge: the crossing line both ways; the track past the shrine
 // at its head to Grimsforge, the warlord's heir at the anvil, the camp in its lee and the scavenger by
 // the fire; the vents, the middle mouth the way down into Meridian Camp, and the furnace-draught that is
@@ -65,7 +66,7 @@ import { OUTDOORS } from '../../../game/outdoors.ts';
 import { GameMap } from '../../../game/map.ts';
 import type { Feature, MapDef } from '../../../game/map.ts';
 import { restRefused } from '../../../game/wilds.ts';
-import { meet, heard, answer, barred } from '../../../game/people.ts';
+import { meet, heard, answer, barred, handIns } from '../../../game/people.ts';
 import { questLog, holds } from '../../../game/quests.ts';
 import type { Person } from '../../../game/people.ts';
 import { buy, item } from '../../../game/items.ts';
@@ -91,7 +92,8 @@ import { STAIR_TOP } from '../whitespine/maps/highspine_i10.ts';
 import { stonesRestored } from '../../../game/stones.ts';
 import { VENTS, HOLE, SHOVEL_STORY, BROOD_ASKED, BROOD } from './maps/firemount_g11.ts';
 import { SPRINGS_BREAK, SPRINGS_LEFT, SPRINGS_COLD } from './maps/cindercoast_h10.ts';
-import { FOUNDING_UP, FOUNDING_LEFT, SHOVEL_THANE, SHOVEL_WARDENS, SHOVEL_KEPT } from './maps/cinderport.ts';
+import { FOUNDING_UP, FOUNDING_LEFT, SHOVEL_THANE, SHOVEL_WARDENS, SHOVEL_KEPT, CIPHER_TAKEN } from './maps/cinderport.ts';
+import { ORDERS_ASKED } from '../glasswold/maps/wold_c8.ts';
 import { STAIR } from './maps/meridian_camp.ts';
 import { STAIR2 } from './maps/meridian_camp2.ts';
 import { ROPE } from './maps/meridian_camp3.ts';
@@ -1761,7 +1763,8 @@ function stairFoot(ok: (cond: boolean, msg: string) => void): void {
  * ride, sold by the Rider by the gate to Akordu's horse-lines, its far end built (#526), and the last
  * crossing, whose far end is not built, sold by nobody yet, its seller only talking; both landings
  * written here; the smith, the potter, the guildsman and the factor with words
- * only, their quests others' (#519, #635, #448).
+ * only, their quests others' (#519, #635, #448), but for the factor's hand-in of the Wold's Letter in
+ * Cipher, taken out of its chest on C8 and carried to her, early and hired (#735).
  */
 function cinderport(ok: (cond: boolean, msg: string) => void): void {
   const PORT = MAP_DEFS.find((d) => d.id === 'cinderport')!;
@@ -1902,9 +1905,25 @@ function cinderport(ok: (cond: boolean, msg: string) => void): void {
   // smith and the potter give their quests (#519, `sideQuests`), and the guildsman and the factor the
   // Wold's, The Horse That Came Back and Orders on the Scarp Stair (#532, played in the Glasswold's walkthrough).
   const shovel = says(w, GORRAN), cups = says(w, JENIFER), shelf = says(w, CADOR);
-  ok([GORRAN, JENIFER, CADOR, HENDRA].every((p) => !!p.flag && !p.choice && !p.interior) && !!CADOR.quest && !HENDRA.quest
+  ok([GORRAN, JENIFER, CADOR, HENDRA].every((p) => !!p.flag && !p.choice && !p.interior) && !!CADOR.quest && handIns(HENDRA).map((q) => q.item).join() === 'cipher_letter'
     && shovel.includes('will not take a burr') && cups.includes('came down off the mountain') && shelf.includes('they stopped at the Stone') && shelf.includes('I want it whole'),
-    'the smith\'s shovel-head will not take a burr, the potter\'s cups are the first folk\'s shape, and the guildsman says Fane wrote at the Stone; the smith and the potter give their quests, and the guildsman and the factor the Wold\'s');
+    'the smith\'s shovel-head will not take a burr, the potter\'s cups are the first folk\'s shape, and the guildsman says Fane wrote at the Stone; the smith and the potter give their quests, the guildsman and the factor the Wold\'s, and the factor takes the Letter in Cipher');
+
+  // The Letter in Cipher (#735): the Compact's own, out of its last drops in the Wold's C8 cleft (the chest c8_drops,
+  // whose cleft the Glasswold's walk searches open), carried to the factor. She takes it unread at the first meeting,
+  // hired or not, pays 200 gold once, and hires nobody by it.
+  for (const how of ['early', 'hired'] as const) {
+    const l = newWalk(ok), hired = how === 'hired';
+    if (hired) says(l, HENDRA);
+    ok(!l.party.bag.includes('cipher_letter') && !!l.party.flags[ORDERS_ASKED] === hired, `${how}: no letter before the chest, and the factor ${hired ? 'has hired the company' : 'has not met it'}`);
+    openChest(l, 'wold_c8:c8_drops');
+    const carried = l.party.bag.filter((i) => i === 'cipher_letter').length, purse = l.party.gold, took = says(l, HENDRA);
+    ok(carried === 1 && !l.party.bag.includes('cipher_letter') && l.party.gold - purse === 200 && !!l.party.flags[CIPHER_TAKEN] && !!l.party.flags[ORDERS_ASKED] === hired
+      && took.startsWith('Hendra turns the letter to the light and does not read it.') && took.includes('Not this.') && took.endsWith('(200 gold.)'),
+      `${how}: out of the C8 chest, the letter is taken at the first word and paid 200 gold, unread, and ${hired ? 'she hires no one again' : 'hires nobody by it'} (${took.split('\n\n')[0]})`);
+    const again = says(l, HENDRA);
+    ok(l.party.gold === purse + 200 && !again.includes('gold.)') && !!l.party.flags[ORDERS_ASKED], `${how}: the next meeting pays nothing more, and is her own words (${again.split('\n\n')[0].slice(0, 40)}..)`);
+  }
 }
 
 /**
