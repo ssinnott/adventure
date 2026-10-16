@@ -445,8 +445,12 @@ export interface MapPalette {
   floor: string;
   ceiling: string;
   door: string;
-  /** 'stone' is large rough blocks; 'brick' is small fired courses; 'smooth' is one face with no join in it. */
-  wallStyle: 'stone' | 'brick' | 'smooth';
+  /**
+   * 'stone' is large rough blocks; 'brick' is small fired courses; 'smooth' is one face with no join in
+   * it; 'tent' is felt, and outside a town a building's square and its door are a tent: a low felt
+   * wall under a pitched cloth roof up to a crown, its door a flap (ui/viewport.ts).
+   */
+  wallStyle: 'stone' | 'brick' | 'smooth' | 'tent';
   /** 'vault' is stone overhead; 'beams' is a timbered ceiling (cellars, inns). */
   ceilingStyle: 'vault' | 'beams';
   /** Colour of hung banners on this map. */
@@ -510,9 +514,11 @@ const VOID_CELL: Cell = Object.freeze({ ...LEGEND[VOID_CH], ch: VOID_CH });
 
 /**
  * A landmark: a building square drawn as what it is, tall, over the land and from far off. A
- * lighthouse's lamp is lit by night once the party holds its `lit` flag.
+ * lighthouse's lamp is lit by night once the party holds its `lit` flag. A monastery is bell towers
+ * over a wall, with no lamp and no `lit`; it stands inside its block of building squares, whose walls
+ * hide its foot near to.
  */
-export interface Landmark { x: number; y: number; kind: 'lighthouse'; lit?: string }
+export interface Landmark { x: number; y: number; kind: 'lighthouse' | 'monastery'; lit?: string }
 
 export class GameMap {
   readonly id: string;
