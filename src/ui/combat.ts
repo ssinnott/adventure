@@ -101,7 +101,7 @@ export class CombatScreen implements Screen {
     const s = this.state;
     // A key while the bot fights takes the fight back, and is then handled as usual. Else the bot
     // presses Space on the finished fight itself, so it never waits there.
-    if (this.auto && a) this.auto = false;
+    if (this.auto && a) { this.auto = false; this.botTimer = 0; }
     if (this.auto && s.outcome !== 'ongoing') {
       this.mode = 'done';
       if (++this.botTimer >= this.wait(BOT_DELAY)) { this.botTimer = 0; g.afterCombat(this.groupIds, s.outcome); }

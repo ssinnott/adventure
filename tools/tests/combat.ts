@@ -1129,5 +1129,35 @@ function autoFight(): void {
     drive(g, [null]);
     ok(t?.side === 'party' && waited && s.log.length > start, `without instant the bot waits 22 frames on the company's turn, as a monster does, and acts on the 22nd (${s.log.at(-1)})`);
   }
+  {
+    // A key mid-count takes the count back with the fight: turned on again, the bot waits the whole 22.
+    CombatScreen.instant = true;
+    const { g, screen } = atRats(7, false), s = screen.state;
+    drive(g, [], 50);
+    const t = currentTurn(s, g.party, g.rng), start = s.log.length;
+    CombatScreen.instant = false;
+    screen.auto = true;
+    drive(g, [], 15);
+    g.update('down');
+    screen.auto = true;
+    drive(g, [], 21);
+    const waited = s.log.length === start;
+    drive(g, [null]);
+    ok(t?.side === 'party' && waited && s.log.length > start, `a key 15 frames into the bot's count takes the count back too: turned on again, it waits the whole 22 (${s.log.at(-1)})`);
+  }
+  {
+    // The screen plays the game's reading: a leader second in its group, in reach, it cannot know leads.
+    CombatScreen.instant = true;
+    const g = headlessGame(8);
+    Object.assign(g.party, companyAt(3, 8));
+    const master: MonsterDef = { ...MONSTERS.bandit, id: 'test_master', name: 'Barge Master', plural: 'Barge Masters' };
+    const s = startCombat(g.party, [{ id: 'barge', monsters: [MONSTERS.bandit, master, MONSTERS.bandit], leader: master.id }], g.rng), screen = new CombatScreen(s, ['barge']);
+    g.push(screen);
+    screen.auto = true;
+    const names = g.party.members.map((c) => c.name);
+    const first = (): string | undefined => s.log.find((l) => names.some((n) => l.startsWith(`${n} `)) && / (hits|misses|casts) /.test(l));
+    for (let n = 0; n < 200 && !first() && s.outcome === 'ongoing'; n++) g.update(null);
+    ok(!!first() && first()!.includes('Bandit') && !first()!.includes('Barge Master'), `the screen's bot plays the game's reading: its first blow or spell is at a bandit, not at the Barge Master it cannot know leads (${first()})`);
+  }
   CombatScreen.instant = false;
 }
