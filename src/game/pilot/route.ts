@@ -36,15 +36,23 @@ const BLOCKS = 3;
  */
 export function routeOn(k: Known, map: string, x: number, y: number, facing: Facing, tx: number, ty: number): Action[] | null {
   if (!k.cell(map, tx, ty)) return null;
-  const can = partyCan(k.party), sq = (q: { x: number; y: number }): string => `${q.x},${q.y}`;
+  // A square is y * 65536 + x, a state that times 4 plus the facing; each square is read once.
+  const can = partyCan(k.party), sq = (q: { x: number; y: number }): number => q.y * 65536 + q.x;
   const held = new Set(k.groups(map).map(sq));
   const leaves = new Set([...k.exits(map), ...k.features(map).filter((f) => f.kind === 'rift')].map(sq));
+  const read = new Map<number, boolean>();
   const open = (q: { x: number; y: number }): boolean => {
-    const c = k.cell(map, q.x, q.y), pass = c && passableCell(c, can), s = sq(q);
-    return (pass === 'ok' || pass === 'unlock') && !held.has(s) && (!leaves.has(s) || (q.x === tx && q.y === ty));
+    const s = sq(q);
+    let o = read.get(s);
+    if (o === undefined) {
+      const c = k.cell(map, q.x, q.y), pass = c && passableCell(c, can);
+      o = (pass === 'ok' || pass === 'unlock') && !held.has(s) && (!leaves.has(s) || (q.x === tx && q.y === ty));
+      read.set(s, o);
+    }
+    return o;
   };
-  // A state is (y * 65536 + x) * 4 + facing; `from` keeps the state each was reached from, and the key.
-  const id = (q: { x: number; y: number; f: Facing }): number => (q.y * 65536 + q.x) * 4 + q.f;
+  // `from` keeps the state each was reached from, and the key.
+  const id = (q: { x: number; y: number; f: Facing }): number => sq(q) * 4 + q.f;
   const start = { x, y, f: facing }, from = new Map<number, [number, Action]>([[id(start), [-1, 'forward']]]);
   const queue = [start];
   for (let i = 0; i < queue.length; i++) {
@@ -122,7 +130,7 @@ export const route: Brain = (g, k, p) => {
       p.plan = [];
       if (++t.blocks >= BLOCKS) {
         p.shut.push({ map: last.map, ...ahead, why: saidSince(g, last.said)[0] ?? '' });
-        p.why = [`${goal.name[0].toUpperCase()}${goal.name.slice(1)} is shut to me.`];
+        p.why = [`${goal.name.charAt(0).toUpperCase()}${goal.name.slice(1)} is shut to me.`];
         p.goal = null;
         return null;
       }
@@ -153,7 +161,7 @@ function toExit(k: Known, st: { mapId: string; x: number; y: number; facing: Fac
 /** The lines the log has had since it had said `said` (`Game.said`), oldest first. */
 const saidSince = (g: Game, said: number): string[] => (g.said > said ? g.log.slice(-(g.said - said)) : []);
 
-/** The band's width for a line, as the log's (`logLines`). */
+/** The width a line of the band has: the view's, less a margin each side, as a line of the log has. */
 const BAND = LAYOUT.view.w - 12;
 /** A line as the band's one line can hold it: whole where it fits, else cut at a word with '...'. */
 function fit(line: string): string {
