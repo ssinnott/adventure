@@ -707,10 +707,10 @@ all (#833), the owner's call over #737's. The reach stays closed for 1.6.
 
 | | Now (17 October 2026) | Aim |
 |---|---|---|
-| Defects the owner finds by hand | not recounted since the slice's 4; the owner's own playthrough of M3 is what remains (README.md) | fewer each area; each one a check |
+| Defects the owner finds by hand | 4 over the slice, not recounted since; the owner's own playthrough of M3 is what remains (README.md) | fewer each area; each one a check |
 | Checks that pass or fail by chance | none known: the smoke test plays one seeded world (#23) | none |
-| Pull requests that needed main merged in | not recounted since the 4 of the last 6 | rare |
-| `npm run check` | about 15 minutes on a four-core container | under 3 minutes: full sweeps of what a pull request touches, the rest sampled or on release |
+| Pull requests that needed main merged in | 4 of the last 6 in September, not recounted since | rare |
+| `npm run check` | about 14 minutes on a four-core container | under 3 minutes: full sweeps of what a pull request touches, the rest sampled or on release |
 | Maps inside the density floor (§5.3) | all (`node tools/test.ts density`) | all |
 | Areas on the curve (§5.2) | all twelve (`node tools/test.ts curve`); the Kilns and Ashfall pass the lead line and are held where they are built | all |
 | Areas whose gate holds (§5.2) | all twelve at their floors; two under is owed to #18, 86 figures reported and not failed | all |
