@@ -126,10 +126,9 @@ export const walkthrough: Walkthrough = (ok) => {
   roadBehind(ok);
   keepHandIns(ok);
   trainers(ok);
-  // The pilot from a new game, every key its own (#720, #721): the chapter to its end, Vask's hire,
-  // Hild's ask, the cellar, the keeper's log and the wand handed in. On #720's seed, 4, the company
-  // falls on the Foreland at level 1 before the keep; seed 10's plays it through (docs/PILOT.md).
-  pilotPlays(ok, CHAPTER, { seed: 10 });
+  // The pilot from a new game, every key its own (#720, #721, #723): the chapter to its end, Vask's
+  // hire, Hild's ask, the cellar, the keeper's log and the wand handed in.
+  pilotPlays(ok, CHAPTER);
 };
 
 /**

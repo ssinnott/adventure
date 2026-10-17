@@ -13,7 +13,7 @@ import { buildMaps } from '../src/content/maps.ts';
 import { AREAS, ATLAS, MAP_DEFS, MONSTERS, THE_QUEST } from '../src/content/index.ts';
 import { CURVE } from '../src/content/progression.ts';
 import { World } from '../src/game/world.ts';
-import { defaultParty } from '../src/game/party.ts';
+import { companyLevel, defaultParty } from '../src/game/party.ts';
 import type { Party } from '../src/game/party.ts';
 import { meet, heard, handIns, personFlags } from '../src/game/people.ts';
 import type { Person } from '../src/game/people.ts';
@@ -230,16 +230,35 @@ export function playChapter(w: Walk, chapter: Chapter, steps: readonly Step[], h
  * pilot's, through `Game.update`; it must hold the helm all the way (no wipe, no stop of its own).
  * The ok line gives the seed, the ticks and the seconds it took, and the company's fall if it fell.
  */
-export function pilotPlays(ok: Ok, chapter: Chapter, { until = chapter.done, cap = 200_000, seed = 4 }: { until?: When; cap?: number; seed?: number } = {}): void {
-  const g = headlessGame(seed), p = new Pilot({ instant: true });
+export function pilotPlays(ok: Ok, chapter: Chapter, opts: PilotOpts = {}): void {
+  const r = pilotRun(chapter, { budget: PLAY_BUDGET, ...opts });
+  const capped = r.capped ? `CAPPED (${r.capped === 'budget' ? 'the budget' : 'the ticks'}) at tick ${r.ticks}, ` : '';
+  ok(r.reached && r.on, `the pilot plays ${chapter.title} from a new game on seed ${r.seed} ${r.done ? 'to its end' : 'as far as the play is bounded'}, ${capped}in ${r.ticks} ticks, ${r.secs} s (${r.goal}; "${r.why}")`);
+}
+
+/** The wall-clock budget of a walkthrough's play (#723): five minutes, so that no run burns an hour. */
+export const PLAY_BUDGET = 5 * 60_000;
+/** A pilot's play: where it stops, its tick cap and wall-clock budget in milliseconds, the seed and the company (the premade one unless named, #723). */
+export interface PilotOpts { until?: When; cap?: number; budget?: number; seed?: number; party?: Party }
+/**
+ * What a pilot's play came to: the point reached, the helm still held, the chapter done, the cap that
+ * ended it if one did ('ticks' or 'budget'), the time, and where the company stood at the end, at what
+ * level, with the journal's goal and the why line.
+ */
+export interface PilotRun { seed: number; reached: boolean; on: boolean; done: boolean; capped: '' | 'ticks' | 'budget'; ticks: number; secs: string; where: string; level: number; goal: string; why: string }
+
+/** The play `pilotPlays` checks, given back rather than checked: the survival sweep reads it seed by seed (#723). */
+export function pilotRun(chapter: Chapter, { until = chapter.done, cap = 200_000, budget = Infinity, seed = 4, party }: PilotOpts = {}): PilotRun {
+  const g = headlessGame(seed, party), p = new Pilot({ instant: true });
   g.pilot = p;
   p.toggle(g);
   const t0 = performance.now(), at = (): boolean => holds(until, g.world.state, g.party);
-  let ticks = 0;
-  for (; ticks < cap && p.on && !at(); ticks++) drive(g, [null]);
-  const secs = ((performance.now() - t0) / 1000).toFixed(1), done = holds(chapter.done, g.world.state, g.party);
-  const goal = questLog(g.world.state, g.party).find((v) => v.def === THE_QUEST)?.goal ?? 'no goal shown';
-  ok(at() && p.on, `the pilot plays ${chapter.title} from a new game on seed ${seed} ${done ? 'to its end' : 'as far as the play is bounded'}, in ${ticks} ticks, ${secs} s (${goal}; "${p.why[0]}")`);
+  let ticks = 0, over = false;
+  for (; ticks < cap && p.on && !at() && !over; ticks++) { drive(g, [null]); if (ticks % 100 === 0) over = performance.now() - t0 > budget; }
+  const st = g.world.state, goal = questLog(st, g.party).find((v) => v.def === THE_QUEST)?.goal ?? 'no goal shown', reached = at();
+  const capped = reached || !p.on ? '' : over ? 'budget' : ticks >= cap ? 'ticks' : '';
+  return { seed, reached, on: p.on, done: holds(chapter.done, st, g.party), capped, ticks, secs: ((performance.now() - t0) / 1000).toFixed(1),
+    where: `${g.world.zone?.name ?? g.maps[st.mapId]?.name ?? st.mapId} ${st.x},${st.y}`, level: companyLevel(g.party), goal, why: p.why[0] };
 }
 
 /** Every goal a run of `playChapter` has come to, in this process. */

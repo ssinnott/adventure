@@ -45,10 +45,11 @@ const id = (q: State): number => sq(q) * 4 + q.f;
  * leaves the map. Each state is reached once, by its fewest keys; of two ways as short, the one that
  * steps first, then the one that turns left. It stops at the first square `end` holds for, if given;
  * `from` keeps the state each was reached from, and the key. A square in `shut` (`Pilot.shut`, #718)
- * is closed to it, as a group's is, until the explorer takes it back to try it again.
+ * is closed to it, as a group's is, until the explorer takes it back to try it again. `through`
+ * opens the groups' squares: `routeOn` and `routeNearest` search so only when no way round is seen (#723).
  */
-function search(k: Known, map: string, x: number, y: number, facing: Facing, end?: (q: State) => boolean, shut: readonly { x: number; y: number }[] = []): { queue: State[]; from: Map<number, [number, Action]>; found?: State } {
-  const can = partyCan(k.party), held = new Set([...k.groups(map), ...shut].map(sq));
+function search(k: Known, map: string, x: number, y: number, facing: Facing, end?: (q: State) => boolean, shut: readonly { x: number; y: number }[] = [], through = false): { queue: State[]; from: Map<number, [number, Action]>; found?: State } {
+  const can = partyCan(k.party), held = new Set([...(through ? [] : k.groups(map)), ...shut].map(sq));
   // A business's door takes the party in and puts it back before the door: a route ends on one, and
   // goes on from none, or every plan through it would visit again (#720).
   const leaves = new Set([...k.exits(map), ...k.features(map).filter((f) => f.kind === 'rift' || ('interior' in f && !!f.interior))].map(sq));
@@ -88,12 +89,18 @@ function search(k: Known, map: string, x: number, y: number, facing: Facing, end
  */
 export function routeOn(k: Known, map: string, x: number, y: number, facing: Facing, tx: number, ty: number, shut: readonly { x: number; y: number }[] = []): Action[] | null {
   if (!k.cell(map, tx, ty)) return null;
-  const { from, found } = search(k, map, x, y, facing, (q) => q.x === tx && q.y === ty, shut);
+  const at = (q: State): boolean => q.x === tx && q.y === ty;
+  let { from, found } = search(k, map, x, y, facing, at, shut);
+  // Where a group stands in the only way, through it: the fight is the bot's (#723).
+  if (!found) ({ from, found } = search(k, map, x, y, facing, at, shut, true));
   if (!found) return null;
   const keys: Action[] = [];
   for (let s = id(found); from.get(s)![0] !== -1; s = from.get(s)![0]) keys.push(from.get(s)![1]);
   return keys.reverse();
 }
+
+/** The whole-map searches made (`routeLengths`), counted for the check that a steady tick makes none (#723). */
+export const searches = { lengths: 0 };
 
 /**
  * The length of `routeOn`'s route from (x, y, facing) to every square it reaches, in one search: by
@@ -102,6 +109,7 @@ export function routeOn(k: Known, map: string, x: number, y: number, facing: Fac
  * search the map once a square. A square in `shut` is closed, as it is to `routeOn`.
  */
 export function routeLengths(k: Known, map: string, x: number, y: number, facing: Facing, shut: readonly { x: number; y: number }[] = []): Map<string, number> {
+  searches.lengths++;
   const out = new Map<string, number>();
   for (const q of search(k, map, x, y, facing, undefined, shut).queue) if (!out.has(`${q.x},${q.y}`)) out.set(`${q.x},${q.y}`, q.n);
   return out;
@@ -113,7 +121,8 @@ export function routeLengths(k: Known, map: string, x: number, y: number, facing
  * shut). A square in `shut` is barred, as it is to `routeOn`.
  */
 export function routeNearest(k: Known, map: string, x: number, y: number, facing: Facing, goals: ReadonlySet<string>, shut: readonly { x: number; y: number }[] = []): { x: number; y: number } | undefined {
-  const { found } = search(k, map, x, y, facing, (q) => goals.has(`${q.x},${q.y}`), shut);
+  const at = (q: State): boolean => goals.has(`${q.x},${q.y}`);
+  const found = search(k, map, x, y, facing, at, shut).found ?? search(k, map, x, y, facing, at, shut, true).found;
   return found && { x: found.x, y: found.y };
 }
 
@@ -209,7 +218,8 @@ export const route: Brain = (g, k, p) => {
   } else if (last && (st.mapId !== last.map || st.x !== ahead.x || st.y !== ahead.y || st.facing !== f)) p.plan = [];
   if (!p.plan.length) {
     // A square found shut is gone round until the explorer tries it again (#718).
-    const shut = p.shut.filter((s) => s.map === st.mapId);
+    // The squares found shut, and those a fight was fled from (#723), are gone round.
+    const shut = [...p.shut, ...p.fled].filter((s) => s.map === st.mapId);
     const plan = st.mapId === at.mapId ? routeOn(k, st.mapId, st.x, st.y, st.facing, at.x, at.y, shut) : toExit(k, st, at.mapId, shut);
     if (!plan?.length) { p.why = [`No way to ${goal.name} that I have seen.`]; p.goal = null; trails.delete(p); return null; }
     p.plan = plan;

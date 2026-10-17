@@ -68,6 +68,8 @@ export interface CombatState {
   round: number;
   order: TurnRef[];
   turn: number;
+  /** The company's members down as the fight began: the game's bot flees only once another falls (#723). */
+  downAtStart?: number;
   /** Rounds left on each party buff: Bless (+to-hit), Ward (+AC), Haste (+speed and +to-hit). */
   bless: number;
   shield: number;
@@ -237,7 +239,7 @@ export function startCombat(party: Party, groups: readonly CombatGroup[], rng: R
   });
   const ticking = groups.findIndex((g) => g.clock);
   const s: CombatState = {
-    monsters, groupIds: groups.map((g) => g.id), leaders: groups.map((g) => g.leader), round: 0, order: [], turn: 0, bless: 0, shield: 0, haste: 0,
+    monsters, groupIds: groups.map((g) => g.id), leaders: groups.map((g) => g.leader), round: 0, order: [], turn: 0, downAtStart: party.members.filter(isDown).length, bless: 0, shield: 0, haste: 0,
     ...(ticking >= 0 ? { clock: { ...groups[ticking].clock!, band: ticking, dim: 0 } } : {}),
     foeBless: groups.map(() => 0), foeShield: groups.map(() => 0), seen: {},
     defending: party.members.map(() => false), rangedPenalty: opts.rangedPenalty ?? 0, log: [], outcome: 'ongoing', loot: null,

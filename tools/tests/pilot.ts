@@ -15,7 +15,7 @@ import type { MapDef, Feature, MapZone } from '../../src/game/map.ts';
 import { NORTH, EAST, SOUTH, WEST, FACING_DX, FACING_DY, turnLeft, turnRight } from '../../src/game/types.ts';
 import type { Facing } from '../../src/game/types.ts';
 import type { Action } from '../../src/input.ts';
-import { Pilot, HEARD_MAX, BRAINS } from '../../src/game/pilot/pilot.ts';
+import { Pilot, HEARD_MAX, BRAINS, STUCK_TICKS, wait } from '../../src/game/pilot/pilot.ts';
 import type { Brain } from '../../src/game/pilot/pilot.ts';
 import { knownOf } from '../../src/game/pilot/known.ts';
 import type { Known } from '../../src/game/pilot/known.ts';
@@ -46,6 +46,13 @@ import { makeRng } from '../../src/lib/engine/rng.ts';
 import { talk, pick, NEAR } from '../../src/game/pilot/talk.ts';
 import { ENDINGS } from '../../src/content/endings.ts';
 import { PRESTIGE_LEVELS, guildFlag } from '../../src/game/party.ts';
+import { mustRest, botTurn, asSeen, asWritten } from '../../src/game/bot.ts';
+import type { Sees } from '../../src/game/bot.ts';
+import { weary, caster, FOOD_RESTS } from '../../src/game/pilot/keep.ts';
+import { searches } from '../../src/game/pilot/route.ts';
+import { holds } from '../../src/game/quests.ts';
+import { pilotRun } from '../walk.ts';
+import { startCombat, currentTurn, monsterAct } from '../../src/game/combat.ts';
 import { answers, TRIES, NO_ANSWER } from '../../src/game/pilot/talk.ts';
 import { EndingScreen } from '../../src/ui/ending.ts';
 import { MessageScreen } from '../../src/ui/screens.ts';
@@ -75,6 +82,7 @@ export function pilot(): void {
   together();
   strategist();
   talking();
+  survives();
   riddles();
 }
 
@@ -1117,6 +1125,7 @@ function quartermaster(): void {
   const n = piloted(), np = n.pilot!, door = n.maps.harrow.features.find((f) => f.kind === 'inn' && n.world.present(f))!;
   n.world.travel('harrow', door.x, door.y, NORTH);
   n.party.gold = 30 * n.party.members.length;
+  n.party.food = 6 * n.party.members.length;
   n.party.members[0].hp = Math.max(1, Math.round(n.party.members[0].maxHp / 10));
   np.toggle(n);
   let slept = false, nt = 0;
@@ -1192,6 +1201,9 @@ function quartermaster(): void {
     const w = piloted(), wp = w.pilot!, c = w.party.members[0];
     fixture(w, { id: `fx_well_${heal}`, name: 'Well', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#######', '#.....#', '#######'], features: [{ kind: 'well', x: 4, y: 1, text: 'A well.', heal }] }, [1, 1, EAST]);
     c.hp = Math.floor(c.maxHp * 0.4);
+    // No rations to rest on and no spell points to mend with (#723): the well is the one want it can meet.
+    w.party.food = 0;
+    for (const m of w.party.members) m.sp = 0;
     wp.toggle(w);
     drive(w, Array(10).fill(null));
     const healed = c.hp === c.maxHp && w.world.state.x === 4;
@@ -1356,6 +1368,191 @@ function talking(): void {
   const whys = new Set<string>();
   for (let t = 0; t < 40 && qg.world.state.mapId === 'fx_quay'; t++) { drive(qg, [null]); whys.add(qp.why[0]); }
   ok(qg.world.state.mapId === 'harrow' && whys.has('Passage to Helmstow.'), `bound for Helmstow, the navigator goes by the crossing told: to the boatman, the route chosen and boarded (${qg.world.state.mapId}; ${[...whys].join(' / ')})`);
+}
+
+/**
+ * Survival (#723's first part): the pilot's own rest rule, by member; a mending between fights through
+ * the spell menu; the flight from a fight lost; and a town's own door before the land's gate.
+ */
+function survives(): void {
+  // Rest by member: the company whole and the sorcerer empty, which the harness's rule, pooling the spell points, does not rest for.
+  const r = piloted(), rp = r.pilot!, sorc = r.party.members.find((c) => c.cls === 'sorcerer')!;
+  r.world.travel('harrow', 7, 10, NORTH);
+  r.world.ensureMapState('harrow').explored.fill(-1);
+  sorc.sp = 0;
+  r.party.food = 12;
+  const pooled = mustRest(r.party), t0 = r.world.state.minutes;
+  rp.brains = [keep];
+  rp.toggle(r);
+  drive(r, [null]);
+  const said = rp.why[0];
+  drive(r, Array(5).fill(null));
+  ok(pooled === null && caster(sorc) && sorc.sp === sorc.maxSp && r.world.state.minutes - t0 === 480 && said === `Resting: ${sorc.name} is short of spells.`,
+    `the pilot rests for one caster without spell points, where the harness's pooled rule does not (${pooled}; "${said}"; ${sorc.sp}/${sorc.maxSp}, ${r.world.state.minutes - t0} minutes)`);
+
+  // The thresholds, by member: one at 60% of their hit points rests the company and one at 80% does
+  // not (REST_HP), nor a paladin's few spell points spent; a caster at 40% of theirs does (REST_SP).
+  const w = structuredClone(r.party), front = w.members[0], pal = w.members.find((c) => c.cls === 'paladin')!, cleric = w.members.find((c) => c.cls === 'cleric')!;
+  pal.sp = 0;
+  front.hp = Math.floor(front.maxHp * 0.8);
+  const whole = weary(w);
+  front.hp = Math.floor(front.maxHp * 0.6);
+  const hurt = weary(w);
+  front.hp = front.maxHp;
+  cleric.sp = Math.floor(cleric.maxSp * 0.4);
+  const dry = weary(w);
+  ok(whole === undefined && hurt?.c === front && hurt.why === 'hp' && dry?.c === cleric && dry.why === 'sp' && !caster(pal),
+    `weary: ${front.name} at ${Math.floor(front.maxHp * 0.8)} of ${front.maxHp} and the paladin empty, no rest; at ${Math.floor(front.maxHp * 0.6)}, ${hurt?.why}; the cleric at ${cleric.sp} of ${cleric.maxSp}, ${dry?.why}`);
+
+  // Mending between fights: one at half, no rations to rest on: the mender with the most spell points casts by the spell menu's keys.
+  const m = piloted(), mp = m.pilot!, bram = m.party.members[0], keys: Action[] = [], was = Math.floor(bram.maxHp / 2);
+  bram.hp = was;
+  m.party.food = 0;
+  mp.brains = [(a, b, c) => { const key = keep(a, b, c); if (key) keys.push(key); return key; }];
+  mp.toggle(m);
+  drive(m, Array(8).fill(null));
+  const mender = m.party.members.find((c) => m.log.some((l) => l.startsWith(`${c.name} casts Mend: ${bram.name} recovers`)));
+  ok(!!mender && mender.cls === 'cleric' && bram.hp > was && keys.slice(0, 3).join() === `cast,n${m.party.members.indexOf(mender) + 1},interact` && top(m) === 'ExploreScreen',
+    `one at half is mended between fights by ${mender?.name}, through the spell menu (${keys.join(' ')}; ${was} to ${bram.hp} of ${bram.maxHp})`);
+
+  // A fight lost (two of the front fallen in it, six wolves standing): the game's bot flees it; the gate's fights on.
+  const fight = (sees: Sees, before = 0, monsters: string[] = Array(6).fill('wolf'), after = 2): string[] => {
+    const f = piloted(), q = f.party, down = (c: Party['members'][number]): void => { c.hp = 0; c.conditions = ['unconscious']; };
+    q.members.slice(0, before).forEach(down);
+    const s = startCombat(q, [{ id: 'fx_pack', monsters }], f.rng);
+    q.members.slice(before, before + after).forEach(down);
+    for (let n = 0; n < 80 && s.outcome === 'ongoing'; n++) {
+      const t = currentTurn(s, q, f.rng);
+      if (!t) break;
+      if (t.side === 'monster') monsterAct(s, q, f.rng); else botTurn(s, q, f.rng, t.i, sees);
+    }
+    return s.log;
+  };
+  const flight = (log: string[]): boolean => log.some((l) => l === 'The party flees!' || l === 'The party fails to get away.');
+  const seenLog = fight(asSeen), writtenLog = fight(asWritten);
+  ok(flight(seenLog) && !flight(writtenLog), `a fight lost: the game's bot tries to flee, the gate's never (${seenLog.find((l) => l.startsWith('The party'))}; the gate's ${writtenLog.length} lines without one)`);
+  // One who came into the fight down is no sign: against five barn rats the company strikes before any flight.
+  const names = piloted().party.members.map((c) => c.name), rats = fight(asSeen, 1, Array(5).fill('barn_rat'), 0);
+  const first = rats.find((l) => l.startsWith('The party') || names.some((n) => l.startsWith(`${n} `)));
+  ok(!!first && !first.startsWith('The party'), `one down from before the fight and five barn rats: a blow before any flight (${first})`);
+
+  // A town's own door before the land's gate: the town walked out, its gate to the keep is walked to, though the land's is nearer.
+  const kg = piloted(), kp = kg.pilot!;
+  kg.maps.fx_keep = new GameMap({ id: 'fx_keep', name: 'Keep', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#...#', '#####'] });
+  fixture(kg, { id: 'fx_town', name: 'Town', kind: 'town', start: { x: 2, y: 1, facing: WEST }, rows: ['#########', '#.......#', '#########'],
+    exits: [{ x: 1, y: 1, to: OUTDOORS, tx: 216, ty: 34 }, { x: 7, y: 1, to: 'fx_keep', tx: 1, ty: 1 }] }, [2, 1, WEST]);
+  kp.brains = [aims];
+  kp.toggle(kg);
+  const chosen: string[] = [];
+  for (let t = 0; t < 4 && !(kp.aim && kp.aim.kind === 'explore' && kp.aim.map !== 'fx_town'); t++) { drive(kg, [null]); chosen.push(kp.aim ? JSON.stringify(kp.aim) : 'none'); }
+  const land = routeLengths(knownOf(kg), 'fx_town', 2, 1, WEST).get('1,1')!, gate = routeLengths(knownOf(kg), 'fx_town', 2, 1, WEST).get('7,1')!;
+  ok(companyLevel(kg.party) === 1 && land < gate && kp.aim?.kind === 'explore' && kp.aim.map === 'fx_keep' && kp.goal?.x === 7 && kp.goal.y === 1,
+    `walked out, the town's own gate to a map not visited comes before the land's, ${land} keys to ${gate} (${chosen.join(' then ')})`);
+
+  // Lost for good: the one map visited walked out, no way off it, the goal given up and nothing gained
+  // since: the pilot stops, saying so; with a thing gained since, the goal is tried again.
+  const cell = (gain: boolean): Game => {
+    const ng = hiredGame(), np = ng.pilot!, given = knownOf(ng).goals()[0];
+    fixture(ng, { id: 'fx_cell', name: 'Cell', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#...#', '#####'] }, [1, 1, EAST]);
+    for (const id of Object.keys(ng.world.state.maps)) if (id !== 'fx_cell') delete ng.world.state.maps[id];
+    np.brains = [aims];
+    np.toggle(ng);
+    np.aim = { kind: 'quest', quest: THE_QUEST.id, map: given.map!, text: given.text };
+    np.aimGoal = given.text;
+    np.aimSince = ng.world.state.minutes - LOST_MINUTES;
+    drive(ng, [null]);
+    if (gain) ng.party.bag.push('rations');
+    for (let t = 0; t < 3 && np.on; t++) drive(ng, [null]);
+    return ng;
+  };
+  const stuck = cell(false), gained = cell(true);
+  ok(!stuck.pilot!.on && stuck.pilot!.stopped?.[0] === 'Lost: no way on that I can see.' && gained.pilot!.on && gained.pilot!.aim?.kind === 'quest',
+    `every aim given up and nothing gained: the pilot stops ("${stuck.pilot!.stopped?.[0]}"); a thing gained, the goal is tried again (${JSON.stringify(gained.pilot!.aim)})`);
+
+  // A fight fled: its square is gone round until the company stands whole again.
+  const fg = piloted(), fp = fg.pilot!;
+  fixture(fg, { id: 'fx_fled', name: 'Fled', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['######', '#....#', '#.##.#', '#....#', '######'] }, [2, 1, EAST]);
+  fp.brains = [route];
+  fp.toggle(fg);
+  const fs = startCombat(fg.party, [{ id: 'fx_fled_g', monsters: ['rat'] }], fg.rng), fscreen = new CombatScreen(fs, ['fx_fled_g']);
+  fg.push(fscreen);
+  drive(fg, [null]);
+  fs.outcome = 'fled';
+  fg.pop();
+  fg.world.travel('fx_fled', 1, 1, EAST);
+  fg.party.members[0].hp = Math.floor(fg.party.members[0].maxHp / 2);
+  fp.goal = { map: 'fx_fled', x: 4, y: 1, name: 'the far corner' };
+  const kept: string[] = [];
+  for (let t = 0; t < 12 && fp.goal; t++) { drive(fg, [null]); kept.push(`${fg.world.state.x},${fg.world.state.y}`); }
+  const remembered = fp.fled.map((q) => `${q.map}:${q.x},${q.y}`).join();
+  fg.party.members[0].hp = fg.party.members[0].maxHp;
+  drive(fg, [null]);
+  ok(remembered === 'fx_fled:2,1' && !kept.includes('2,1') && kept.at(-1) === '4,1' && fp.fled.length === 0,
+    `the square a fight was fled from is gone round while one is hurt (${remembered}; ${kept.join(' ')}), and forgotten once the company is whole`);
+
+  // Rations: the pilot's own rest wants two a head, so the next rest is not walked for; buying, it buys for six rests.
+  const lean = piloted(), lp2 = lean.pilot!, lsorc = lean.party.members.find((c) => c.cls === 'sorcerer')!;
+  lean.world.travel('harrow', 7, 10, NORTH);
+  lean.world.ensureMapState('harrow').explored.fill(-1);
+  lsorc.sp = 0;
+  lean.party.food = 2 * lean.party.members.length - 1;
+  const lt0 = lean.world.state.minutes;
+  lp2.brains = [keep];
+  lp2.toggle(lean);
+  drive(lean, Array(6).fill(null));
+  const inn = piloted(), ip = inn.pilot!, innDoor = inn.maps.harrow.features.find((f) => f.kind === 'inn' && inn.world.present(f))!;
+  inn.world.travel('harrow', innDoor.x, innDoor.y, NORTH);
+  inn.party.food = 0;
+  inn.party.gold = 500;
+  ip.brains = [keep];
+  ip.toggle(inn);
+  drive(inn, Array(40).fill(null));
+  ok(lean.world.state.minutes === lt0 && lsorc.sp === 0 && inn.party.food >= FOOD_RESTS * inn.party.members.length,
+    `with under two rations a head the pilot's own rule does not rest (${lean.world.state.minutes - lt0} minutes); at the inn it buys for ${FOOD_RESTS} rests (${inn.party.food} rations)`);
+
+  // The journal's pages: the wand handed in before Crowness, Thornmark's chapter begun and the shelf's not done: its goal comes first.
+  const jg = piloted(), jk = knownOf(jg);
+  for (const f of ['q_ashcombe', 'q_wenna', 'q_ashcombe_done']) jg.party.flags[f] = 1;
+  const pages = jk.goals().filter((q) => q.quest === THE_QUEST.id), shelfGoal = THE_QUEST.chapters[0].goals.find((q) => q.at === 'downs_e3' && holds(q.when, jg.world.state, jg.party));
+  const jaim = chooseAim(jg, jk, jg.pilot!);
+  ok(pages.length >= 2 && pages[0].map === 'downs_e3' && pages[0].text === shelfGoal?.text && jaim?.kind === 'quest' && jaim.map === 'downs_e3',
+    `Thornmark's chapter begun with the shelf's unfinished: the journal's pages give ${pages.length} goals, the shelf's first, and the aim is it (${pages.map((q) => q.map).join(', ')}; ${JSON.stringify(jaim)})`);
+
+  // A steady walk costs no whole-map search a tick: bound for an inn down a long lane, seen, the quartermaster's want held.
+  const wg = piloted(), wp2 = wg.pilot!;
+  fixture(wg, { id: 'fx_long', name: 'Long', kind: 'town', start: { x: 1, y: 1, facing: EAST }, rows: ['#'.repeat(122), `#${'.'.repeat(120)}#`, '#'.repeat(122)],
+    features: [{ kind: 'inn', x: 120, y: 1, name: 'A Far Inn', price: 12, interior: 'hearthlight_inn' }] }, [1, 1, EAST]);
+  wg.party.members[0].hp = 1;
+  wg.party.food = 0;
+  wp2.brains = [keep, route];
+  wp2.toggle(wg);
+  drive(wg, Array(5).fill(null));
+  const before = searches.lengths, x0 = wg.world.state.x;
+  drive(wg, Array(100).fill(null));
+  ok(wg.world.state.x - x0 >= 90 && searches.lengths - before <= 3, `100 ticks of a walk to an inn make ${searches.lengths - before} whole-map searches, walking ${wg.world.state.x - x0} squares`);
+
+  // A run's wall-clock budget: with none, a play ends after its first tick, capped by the budget, not done.
+  const spent = pilotRun(THE_QUEST.chapters[0], { budget: 0 });
+  ok(spent.capped === 'budget' && spent.on && !spent.done && spent.ticks === 1, `a play with no budget left ends capped by the budget (${spent.capped || 'not capped'}, ${spent.ticks} ticks)`);
+
+  // The watchdog, asked last: every other brain silent on the map, the clock stands STUCK_TICKS, then a search passes ten minutes a press.
+  const sg = piloted(), sgp = sg.pilot!, m0 = sg.world.state.minutes;
+  sgp.brains = [() => null, wait];
+  sgp.toggle(sg);
+  drive(sg, Array(STUCK_TICKS).fill(null));
+  const stood = sg.world.state.minutes;
+  drive(sg, Array(3).fill(null));
+  ok(BRAINS.at(-1) === wait && stood === m0 && sg.world.state.minutes === m0 + 30 && sgp.why[0] === 'Stuck: waiting a while.',
+    `no key for ${STUCK_TICKS} ticks and the clock stands; then a search a tick passes the time (${sg.world.state.minutes - m0} minutes; "${sgp.why[0]}")`);
+
+  // A group in the only way is gone through, the fight the bot's; with a way round, it is gone round.
+  const rg = piloted(), held = (): Known => ({ ...knownOf(rg), groups: () => [{ x: 3, y: 1 }] });
+  fixture(rg, { id: 'fx_lane', name: 'Lane', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['######', '#....#', '######'] }, [1, 1, EAST]);
+  const through = routeOn(held(), 'fx_lane', 1, 1, EAST, 4, 1);
+  fixture(rg, { id: 'fx_ring', name: 'Ring', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['######', '#....#', '#.##.#', '#....#', '######'] }, [1, 1, EAST]);
+  const round = routeOn(held(), 'fx_ring', 1, 1, EAST, 4, 1);
+  ok(!!through && walk(1, 1, EAST, through).includes('3,1') && !!round && !walk(1, 1, EAST, round).includes('3,1') && walk(1, 1, EAST, round).at(-1) === '4,1',
+    `a group in the only way is routed through (${through && walk(1, 1, EAST, through).join(' ')}), and round where a way round is seen (${round && walk(1, 1, EAST, round).join(' ')})`);
 }
 
 /**

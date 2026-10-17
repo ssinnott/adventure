@@ -11,8 +11,9 @@
 // has seen do nothing to any foe still standing; once it has seen a foe mend, it burns it with fire
 // each round before it casts anything else. It reads the fight as it stands each turn, the groups
 // called into it too. It wakes a sleeper or frees one held (#549) of the front row, or a caster,
-// before it strikes. It never sleeps, blesses, drinks or flees, nor cures anything but sleep and a
-// hold, so it is weaker than a player. The gate's knows every monster as written (`asWritten`); the
+// before it strikes. It never sleeps, blesses or drinks, nor cures anything but sleep and a hold, so
+// it is weaker than a player; the gate's never flees, the game's flees a fight lost (`beaten`, #723).
+// The gate's knows every monster as written (`asWritten`); the
 // game's knows a sweep, a breath, a drain, a call or a leader only once the fight has shown it
 // (`asSeen`), as both know an element's work and a mending only once seen. The rest rule is here too
 // (`mustRest`), the harness's and the pilot's. Nothing here reads tools/ or node: the game is built
@@ -172,6 +173,8 @@ export function gateBurn(s: CombatState, c: Character): { spellId: string; targe
  * game's auto-fight only what the fight has shown (`asSeen`).
  */
 export function botTurn(s: CombatState, p: Party, rng: RngInstance, i: number, sees: Sees = asWritten): PartyAction {
+  // The game's bot flees a fight it has lost (#723); the gate's never does, so its figures stand.
+  if (sees !== asWritten && beaten(s, p) && partyAct(s, p, rng, { type: 'flee' })) return { type: 'flee' };
   const c = p.members[i], foes = aliveMonsters(s), lead = markOf(s, foes, sees), foe = lead ?? foes[0];
   const blade = lead !== undefined && canReach(s, c, lead) ? lead : foes.find((f) => canReach(s, c, f)) ?? foe;
   const known = c.spells.map(spell).filter((x) => x.context !== 'explore' && x.sp <= c.sp);
@@ -191,6 +194,16 @@ export function botTurn(s: CombatState, p: Party, rng: RngInstance, i: number, s
   const brace: PartyAction = { type: 'defend' };
   partyAct(s, p, rng, brace);
   return brace;
+}
+
+/**
+ * Whether a fight is lost, as the screen shows it (#723): one of the company fallen in this fight (one
+ * who came into it down is no sign), and as many foes standing as members. The game's bot then flees
+ * (`botTurn` with any reading but `asWritten`).
+ */
+export function beaten(s: CombatState, p: Party): boolean {
+  const down = p.members.filter(isDown).length;
+  return down > (s.downAtStart ?? 0) && aliveMonsters(s).length >= p.members.length - down;
 }
 
 /** The bot's turn for member `i`, as the gate plays it: `botTurn`, the action not wanted. */
