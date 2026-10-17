@@ -11,6 +11,7 @@
 // one group is one fight. A plain bot plays the party, the game's own (src/game/bot.ts, its
 // auto-fight's as well): it mends, wakes, burns, casts, strikes or braces, and never sleeps, blesses,
 // drinks or flees, so it is weaker than a player; single fights at full health are kinder than play.
+// Harness's what-ifs reach it: `--tiers` its company, `--bot` its options (#853), off until #865.
 // A group that asks before it fights (#544) it refuses, and fights; the walk past it is `gatePass`.
 // Between fights, where the gate check mends, it lifts stone first, by Absolve or the draught it
 // carries from 25 (#546), as harness's company does.
@@ -22,16 +23,23 @@ import { makeRng } from '../src/lib/engine/rng.ts';
 import { MAX_LEVEL } from '../src/game/party.ts';
 import type { Party } from '../src/game/party.ts';
 import { startCombat, currentTurn, monsterAct, asGroup } from '../src/game/combat.ts';
-import type { CombatOpts, Fighters } from '../src/game/combat.ts';
+import type { CombatOpts, CombatState, Fighters } from '../src/game/combat.ts';
 import { RANGED_PENALTY } from '../src/game/weather.ts';
-import { gateTurn } from '../src/game/bot.ts';
+import { botTurn, asWritten } from '../src/game/bot.ts';
+import type { RngInstance } from '../src/lib/engine/rng.ts';
 import { MAP_DEFS } from '../src/content/index.ts';
-import { companyAt } from './harness.ts';
+import { companyAt, RULES } from './harness.ts';
 import type { EncounterDef, Answer } from '../src/game/map.ts';
 import { answer, barred } from '../src/game/people.ts';
 
 // The bot's turn, its blast and its burn are the game's (src/game/bot.ts); the gate's callers find them here still.
-export { gateBlast, gateBurn, gateTurn, botTurn } from '../src/game/bot.ts';
+export { gateBlast, gateBurn, botTurn } from '../src/game/bot.ts';
+
+/**
+ * The bot's turn for member `i`, as the gate plays it: the game's `botTurn` knowing every monster as
+ * written, with the options harness's `RULES.bot` asks (#853, `--bot`), none until #865 switches them on.
+ */
+export function gateTurn(s: CombatState, p: Party, rng: RngInstance, i: number): void { botTurn(s, p, rng, i, asWritten, RULES.bot); }
 
 /**
  * The premade company, every member trained to `level`, dressed by the ladder and with the prestiges
