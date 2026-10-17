@@ -19,7 +19,8 @@ statues' riddles.
 The first part of #723 makes the pilot live through the first chapter: a rest by member, a mending
 between fights, a flight from a fight lost, a town's own doors before the land's, the journal's pages
 read the earliest first, rations bought for six rests, a watchdog and a way through a group in the
-only way (Survival, below).
+only way (Survival, below). Its second part plays the one quest's chapters headlessly as a check,
+with an omniscient run beside the fair one (Full runs, below).
 
 ## Using it
 
@@ -110,8 +111,9 @@ A zone map's id (a goal's map may be one) names the outdoors it lies in, in one 
 reader takes and gives the outdoors' squares, as `g.world.state` has them while the party is there,
 and its features and exits are those in the zone's box. A goal's square written in the zone's own
 reckoning goes through `World.locate` first. Features and exits of seen squares are as the world has
-them now, not as last seen. The headless run's `omniscient` pilot (#723) has every square seen; the
-game never sets it.
+them now, not as last seen. The headless run's `omniscient` pilot (#723) has every square seen, each
+cell as it is (a secret door a door) and, through a reader of its own, the secret doors as written
+(`secrets`); the game never sets it (Full runs, below).
 
 Each reader came with the first issue that used it, and its own fairness test: a goal's map is
 read once the journal shows the goal (#720); a crossing once its seller has offered it (#721). A
@@ -270,8 +272,87 @@ while."), so the clock runs and the lost rule can come. The survival sweep (`nod
 survival`, run only when named) plays the chapter on seeds 1 to 12 with both companies, a run within
 ten minutes of the wall clock, and prints a line a seed.
 
+## Full runs
+
+#723's second part. `node tools/test.ts fullrun` (`tools/tests/fullrun.ts`) plays a new game on seed 4
+with the premade company, an instant pilot at the helm asking every brain, and the one quest's
+chapters in AREAS order on the one Game, so that each area starts as the pilot left the last (the one
+road). A chapter's play ends when the chapter is done, the company is wiped, the pilot stops itself,
+or at a cap: ten minutes of the wall clock (`BUDGET`) or 2,000,000 ticks (`TICK_CAP`). Each chapter
+gets a line: "shelf: the pilot finishes The Quiet Farm in 10,875 ticks, 33.1 days, level 5", the days
+being the world's while it played; or where it stopped: fell, stopped itself with its why line, or
+capped, by the budget or by the ticks. The last chapter ends at an ending taken, which the pilot never
+takes: its stop under the question ("The choice is yours.") counts, and the test, as its privilege,
+presses the first answer. Every line heard that starts "Lost in" or "I have no answer" is printed as a
+note, once with its count ("note: thornmark: Lost in Thornmark: three days, and no way on. (x30)"),
+and fails nothing.
+
+Before each chapter the run takes a save point (`serialize`) with the map on top, where a player can
+save. A chapter the fair pilot does not finish is played again from that point by a fresh pilot with
+`omniscient` set, the save loaded as F9 loads one (`headlessLoad`, `tools/tests/lib.ts`), so no memory
+crosses it. A second line says which kind of failure it is: "thornmark: fair pilot lost; omniscient
+also fails (fell in The Delta 98,155, ...)". The omniscient Known has every square seen, each cell as
+it is (a secret door a door) and every exit and feature there now. The explorer suspects the secret
+doors as written and not yet found (`Known.secrets`: `MapDef.secrets`, a zone's placed where its box
+lies) and no other wall. Nothing else changes: the brains are the fair pilot's. Where the omniscient
+pilot finishes, the road goes on from its end with a fresh fair pilot. A chapter neither finishes ends
+the road, and each later area's line says that it was not reached.
+
+FULLRUN names the areas, as ids with commas between or `all`, and `shelf` when unset. The run plays
+the road up to the last area named and checks every chapter on it, as a chapter is reached only
+through those before it. `FULLRUN=shelf` repeats the shelf's walkthrough play tick for tick in about
+twenty seconds. The suite runs only when named (`ASKED`, `tools/test.ts`, held so by the runner's own
+check): a bare `node tools/test.ts` does not run it.
+
+In CI the tests job runs `FULLRUN=shelf node tools/test.ts fullrun` after the tests, as a gate. The
+`fullrun` job runs only when the workflow is started by hand (`workflow_dispatch`), never on a pull
+request: its `fullrun` input is the FULLRUN (`all` unless changed), it has sixty minutes, and its lines
+go into the run's summary. It is a report, not a gate, until the pilot finishes those chapters. The
+smoke test hands the browser's pilot the game for thirty seconds at 1x (1,800 frames) after its other
+pilot checks: the company walks, no page error comes, and P takes the game back. That pins the show,
+not the finish.
+
 ## Known limits
 
+- **The full run, all areas** (`FULLRUN=all node tools/test.ts fullrun` on 4473dac1, seed 4, the
+  premade company: 8 minutes 45 seconds, 12 failures). The road ends at Thornmark's chapter:
+
+  | Area | Chapter | The fair pilot | The omniscient pilot, from the save point |
+  |---|---|---|---|
+  | shelf | The Quiet Farm | finishes: 10,875 ticks, 33.1 days, level 5 (20.8 s) | not run |
+  | thornmark | The Grove Stone | falls in the Foreland at 225,39, level 6, after 36,579 ticks, 127.3 days (137.8 s) | also fails: falls in the Delta at 98,155, level 6, after 19,147 ticks, 39.8 days (365.2 s) |
+  | saltreach | The Tide Stone | not reached | |
+  | wrackholm | The Stone Carried Home | not reached | |
+  | sunderwood | The Wall | not reached | |
+  | kilns | The Anvil Stone | not reached | |
+  | cairnmoor | The Ring | not reached | |
+  | rimewater | The Sleepers | not reached | |
+  | whitespine | The Bells | not reached | |
+  | ashfall | The Window | not reached | |
+  | glasswold | The Warning | not reached | |
+  | hearth | The Heart | not reached | |
+
+  The notes: shelf, "Lost in the Foreland: three days, and no way on." 6 times; thornmark, "Lost in
+  Thornmark: three days, and no way on." 30 times and "Lost in the Foreland: ..." 5 times; thornmark
+  (omniscient), "Lost in Thornmark: ..." 6 times and "Lost in the Foreland: ..." 6 times. No "I have no
+  answer" line.
+- **Thornmark's chapter, fair** (the full run). The aim is grove2, two maps in, and the fair pilot never
+  sets foot in grove1 or Thornhold (Two maps in, below): lost in Thornmark thirty times, it walks the
+  Foreland, Thornmark, Helmstow and the mill until a walk ends in a wipe, with no key carried. Past that lies a
+  second wall: in grove1 the stairs down to grove2 (11,10) are past a locked door (7,11), and the key
+  is in a chest (3,10) in a room whose one way in is a secret door (5,11). The far side of that door is
+  never seen, so the explorer never suspects it (decision 17 for #718).
+- **Thornmark's chapter, omniscient.** It walks into grove1 again and again and loops there: the explorer
+  sets the secret door's wall as its goal, and on the square before it the strategist, asked first,
+  finds no way to grove2 (the door at 7,11 is locked) and walks the company to the far side again, so
+  the search never comes. Lost, it wanders west and falls in the Delta. A route over every square seen
+  is slow, too: about 19 ms a tick against the fair run's 4.
+- **The omniscient pilot has no frontier.** Every square is seen, so the explorer has nothing to walk
+  to: it searches the secret doors as written, then calls the map walked out, and only the walk again
+  rule walks it. Chests are gone to only on the aim's map. "Omniscient also fails" therefore does not
+  yet mean that nobody could finish the chapter. The issue's flag was built as written ("nothing else
+  changes"); a frontier of the squares not walked, or the explorer asked before the walk again, is the
+  owner's call.
 - **Survival.** The sweep's figures are in the table over the decisions for #723: 11 of 12 finish
   with each company. A finished run takes 7,655 to 18,558 ticks, played as the survival sweep plays
   it (#842's second review). The lost rule fires 3 to 17 times a finished run, a median of about 9
@@ -284,8 +365,9 @@ ten minutes of the wall clock, and prints a line a seed.
 - **Two maps in.** A goal's map behind a map not visited is not reached by `toward`: `routeMaps`
   goes only to maps visited and the goal's own, and the explorer never takes an exit, so on seed 10
   Thornhold's gate and the Grove's steps were seen and never stepped on (#841's review). A seen exit
-  to a map not visited, chosen by where the world map draws its place, would be the hop; left to
-  #723's second part.
+  to a map not visited, chosen by where the world map draws its place, would be the hop. Not built in
+  #723's second part: the full run shows it on seed 4 too, but grove1's locked way down stands behind
+  it (Thornmark's chapter, fair, above), so the hop alone would not finish the chapter.
 - **Meetings in a town.** Every flag set or item gained sends the pilot back round the people near it
   (talk's rule, as the issue has it): at review, on seed 4 it spent ticks 167 to 617 in Helmstow on 24 meetings
   with nine people, Aldith and Hob five times each.
@@ -322,14 +404,14 @@ ten minutes of the wall clock, and prints a line a seed.
   (Thornmark) the eighth, the stone Lantern's "moths" (Sunderwood) the 162nd and the drowned god's
   name (Saltreach) none: it is said nowhere in a line, but in the Holy Symbol of the Tide's text,
   which is read on the sheet and never heard. The pilot hears far less than every line; what it
-  answers in a play is the full run's to show (#723).
+  answers in a play is the full run's to show (#723); on seed 4 it says "I have no answer" nowhere before its road ends.
 
 ## The files
 
 | File | Owns |
 |---|---|
-| `src/game/pilot/pilot.ts` | `Pilot`: on and off (`toggle`), a stop of its own (`stop`), the tempo and the pace, the why line and what the band shows (`band`), the corpus heard (`hear`, `forget`), the next key (`next`), the navigator's goal, plan and squares found shut (`goal`, `plan`, `shut`), the explorer's walls searched and the map preferred (`searched`, `prefer`), the strategist's aim, since when, its goal's words and the goals given up (`aim`, `aimSince`, `aimGoal`, `lost`, #720), the people met and the crossings told (`met`, `offers`, `told`, #721), the words tried at each statue (`tried`, #721), whether it asks talk (`talks`), the watchdog's count (`stuck`, `STUCK_TICKS`, #723) and `BRAINS`: the brains in the order asked (fight, keep, talk, aims, route, explore, `wait`) |
-| `src/game/pilot/known.ts` | `Known` and `knownOf`, the fair view; `fair`, a feature as the party knows it; what a menu has shown (`wares`, a Buy list's; `trainsTo`, a trainer's top level; #719); a map's or a zone's bounds, a place's band and the squares seen, counted (`box`, `band`, `seenCount`, #718); the journal's goals with their maps and the zones set foot in (`goals`, `zones`, #720); the crossings told (`offers`, #721) |
+| `src/game/pilot/pilot.ts` | `Pilot`: on and off (`toggle`), a stop of its own (`stop`), the tempo and the pace, the why line and what the band shows (`band`), the corpus heard (`hear`, `forget`), the next key (`next`), the navigator's goal, plan and squares found shut (`goal`, `plan`, `shut`), the explorer's walls searched and the map preferred (`searched`, `prefer`), the strategist's aim, since when, its goal's words and the goals given up (`aim`, `aimSince`, `aimGoal`, `lost`, #720), the people met and the crossings told (`met`, `offers`, `told`, #721), the words tried at each statue (`tried`, #721), whether it asks talk (`talks`), the watchdog's count (`stuck`, `STUCK_TICKS`, #723) and `BRAINS`: the brains in the order asked (fight, keep, talk, aims, route, explore, `wait`), a stop of a brain's ending the tick (#723); `omniscient`, the headless run's, never the game's (#723) |
+| `src/game/pilot/known.ts` | `Known` and `knownOf`, the fair view; `fair`, a feature as the party knows it; what a menu has shown (`wares`, a Buy list's; `trainsTo`, a trainer's top level; #719); a map's or a zone's bounds, a place's band and the squares seen, counted (`box`, `band`, `seenCount`, #718); the journal's goals with their maps and the zones set foot in (`goals`, `zones`, #720); the crossings told (`offers`, #721); the headless run's omniscient view (`omniscient`, every square seen and each cell as it is) and its reader `secrets`, the secret doors as written, empty for a fair pilot (#723) |
 | `src/game/pilot/keep.ts` | the quartermaster (#719): `needs` and `need` (what the company needs, the most urgent first), `better` (the best a member can wear for the gold), `restWanted` (the rest offered taken, talk's rule 2 too), `reserve` and `spare` (from `purse.ts`) and the brain `keep`; the rest by member and the mending (#723): `weary`, `caster`, `REST_HP`, `REST_SP`, `MEND_AT` and `mendable`, the spell menu answered by its keys |
 | `src/game/pilot/purse.ts` | `reserve` and `spare` (#719): what the quartermaster keeps back and the gold over it, read by the quartermaster, talk and the navigator (#721) |
 | `src/game/pilot/talk.ts` | talk (#721): `pick` (the row to answer a menu with, or -1 for Esc), `NEAR` (the keys a person or a statue may be off), `answers` (the words heard that may answer a riddle, the likeliest first), `TRIES` and `NO_ANSWER` (five words a statue and the line when none is left) and the brain `talk`, with the meetings and the riddles; what it keeps between ticks (its goal, the stamps of the people met, the crossing chosen, the riddles read, the word being typed, the stones given up) it keeps by pilot (`untalk` forgets it), and what it opened in a visit by the visit |
@@ -339,9 +421,12 @@ ten minutes of the wall clock, and prints a line a seed.
 | `tools/tests/survival.ts` | the suite `survival` (#723): the shelf's first chapter on `SEEDS` with the premade company and the drawn ones, a line a seed, each held to its `FLOOR`; run only when named (`ASKED`, `tools/test.ts`) |
 | `src/ui/riddle.ts` | `RiddleScreen`'s `riddle`, the question as its box shows it, which talk reads (#721) |
 | `src/input.ts` | `drainTyped`: typed keys applied to a word, `Input`'s text mode and a headless game's alike (#721); `Game.input.typed` is where they are typed, by the keyboard or the pilot |
-| `tools/tests/lib.ts` | `headlessGame(seed, party)`: a new game under Node, with the premade company or the one given (#723); its input drains its typed keys as `Input` does, so the pilot types under Node as in the browser (#721) |
+| `tools/tests/lib.ts` | `headlessGame(seed, party)`: a new game under Node, with the premade company or the one given (#723); `headlessLoad(save)`: a game under Node loaded from a save's text as F9 loads one (#723); its input drains its typed keys as `Input` does, so the pilot types under Node as in the browser (#721) |
+| `tools/tests/fullrun.ts` | the suite `fullrun` (#723): the one quest's chapters played on one Game by the pilot, the omniscient run from the save point beside a chapter the fair pilot loses, the notes; `reach` (the road FULLRUN reaches), `SEED`, `TICK_CAP` and `BUDGET`; run only when named (`ASKED`, `tools/test.ts`) |
+| `.github/workflows/checks.yml` | the tests job's `FULLRUN=shelf` step and the `fullrun` job, run by hand with its `fullrun` input (#723) |
+| `tools/smoke.ts` | the pilot in the browser: P, T, an arrow and the band (#716), and thirty seconds of its play at 1x (#723) |
 | `src/game/pilot/route.ts` | the navigator (#717): `Goal` (with the reason or the why line its brain gives it), `routeOn` (the keys over one map), `routeLengths` (the length of the route to every square, in one search), `routeNearest` (the nearest of a set of squares, the search stopped there), each round the squares found shut it is given and through a group only where no way round is seen (#723), `routeMaps` (the exits from map to map, and the crossings told whose fare the gold over the reserve pays, `edges`, #721), the brain `route` and `unroute` (what it kept of a goal, forgotten); it reads a cell by `passableCell` (`src/game/map.ts`) and the groups as the automap marks them (`markedGroups`, `src/ui/frame.ts`) |
-| `src/game/pilot/explore.ts` | the explorer (#718): `frontier` (seen squares with an unseen one beside them), `suspects` (walls with seen floor on both sides) and the brain `explore`; a zone's box and band it reads through `Known.box` and `Known.band`, and the zone a square lies in by `zoneAt` (`src/game/map.ts`), as the world map draws the boxes |
+| `src/game/pilot/explore.ts` | the explorer (#718): `frontier` (seen squares with an unseen one beside them), `suspects` (walls with seen floor on both sides; for the omniscient pilot the secret doors `Known.secrets` gives, #723) and the brain `explore`; a zone's box and band it reads through `Known.box` and `Known.band`, and the zone a square lies in by `zoneAt` (`src/game/map.ts`), as the world map draws the boxes |
 | `src/game/ink.ts` | `drawnCell`: what a cell is drawn as, which the view, the automap and Known share |
 | `src/game/bot.ts` | the fight and the rest rule (`botTurn`, `asSeen`, `mustRest`, #714); `beaten`, a fight lost, which the game's reading flees (#723) |
 | `src/game/items.ts` | `hits`, a weapon's mean blow: the harness's measure, moved here for `better` (#719) |
@@ -554,3 +639,19 @@ The figures: The Quiet Farm played from a new game by every brain on seeds 1 to 
 14. **The survival sweep** (`tools/tests/survival.ts`): run only when named (`ASKED`, `tools/test.ts`, checked by the runner's own check; #723's second part may add `fullrun`); the floors, 9 of 12 with the premade company and 8 of 12 with the drawn ones, are the delegate's, as #723 names no figure; a run within ten minutes of the wall clock (`RUN_BUDGET`), over which it counts as not finished, and the 200,000-tick cap stands. `headlessGame` takes a company (`randomParty(seed)`, as P on the title draws it), its default as it was.
 15. **The shelf's play is back on seed 4, to the chapter's end** (the seed pin gone), within five minutes of the wall clock (`PLAY_BUDGET`, `pilotPlays`): 10,875 ticks, 21.0 s, where main's play on seed 10 took 14,538 ticks, 29.8 s. The play is chaotic: a change to anything it meets may move it.
 16. **Not built:** caution outdoors by level (the flight answered the level-1 fights it was for), the armour first, the reach two maps in (Known limits) and `Game.fight`'s taking every group beside the party, which is the game's. Talk's meetings in Helmstow are talk's, left as they were.
+
+Decided by delegate for #723 (the suite), each the owner's to overturn:
+
+1. **FULLRUN reaches the road up to the last area it names**, and every chapter on the road is checked, as a chapter is reached only through those before it: `FULLRUN=thornmark` plays and checks the shelf's chapter first. Unset is `shelf`; a name that is no area with a chapter fails.
+2. **Ten minutes of the wall clock a chapter's play** (`BUDGET`), fair and omniscient each their own, as the survival sweep's run has; the issue's 2,000,000 ticks (`TICK_CAP`) stays as a cap. Either cap fails and says which. With the road as it stands the whole run takes about ten minutes.
+3. **Seed 4 and the premade company**, the walkthroughs', so the default run repeats the shelf's walkthrough play tick for tick (10,875) and the two can be compared.
+4. **The save point is taken with the map on top**, as F5 saves: a chapter may end in a visit, and the pilot plays on until it is back on the map, those ticks counted in the next chapter. At the first sweep the save was taken in the throne room's visit, the party on its door, and a game loaded from it stood there with no way out: the navigator does not turn on a square it leaves from.
+5. **The omniscient run loads the save as F9 does** (`headlessLoad`) with a fresh pilot, so nothing of the fair pilot's memory crosses; its line is a second failure beside the fair one's, worded as the issue words it, with where it stopped.
+6. **Where the omniscient pilot finishes a chapter the fair one lost, the road goes on from its end with a fresh fair pilot** (its corpus empty), so each later chapter still has a fair line; a chapter neither finishes ends the road, and each later area fails as not reached.
+7. **Each note once, with its count**: the fair pilot said "Lost in Thornmark" thirty times in one chapter. The omniscient run's notes are marked as its.
+8. **The last chapter** is the delegate's first call: the stop under the ending's question counts, and the test presses the first answer, so the ending holds.
+9. **The omniscient view reads a cell as it is** (a secret door a door) and gains `Known.secrets`, the secret doors as written and not yet found (a zone's placed where its box lies), with `Known.omniscient` so the explorer suspects those and nothing else; a fair pilot's `secrets` is empty, checked. The issue's "nothing else changes" is kept: the brains are the fair pilot's, and so its frontier is empty (Known limits).
+10. **A brain's stop ends the tick** (`Pilot.next`), found by the first sweep: with every aim lost the strategist stopped the pilot and the watchdog after it pressed a search in the same tick, so the band lost the stop's line, which the suite reads. Checked.
+11. **CI**: the tests job's step runs the shelf (about twenty seconds); the `fullrun` job runs by hand only, with sixty minutes and its lines in the run's summary, and goes red when a chapter fails: a report, as nothing requires it.
+12. **The smoke's thirty seconds** follow #716's pilot checks: T twice back to 1x, P, 1,800 frames counted from the frame the pilot took the helm, the steps grown and no page error in them, then P. Every earlier frame is as it was.
+13. **No fix for a chapter's blocker.** The sweep's road ends at Thornmark's chapter, where the fair and the omniscient pilot fall for different reasons (Known limits): no single cheap blocker repeats across chapters, so both are left to the owner. The two fixes the sweep did bring (10, 4) are the suite's own footing.

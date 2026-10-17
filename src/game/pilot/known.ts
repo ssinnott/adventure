@@ -100,8 +100,8 @@ export interface Known {
  * `World.locate` before it is compared. Features and exits of seen squares are as the world has them
  * now, not as last seen (a known simplification). A pilot's `omniscient` (the headless run, #723)
  * has every square seen, each cell as it is (a secret door a door) and the secret doors as written
- * (`secrets`); the game never sets it. Each look notes what the menu on top shows (`look`), so a shop's wares and
- * a trainer's top level are known from the first time their menus are seen.
+ * (`secrets`); the game never sets it. Each look notes what the menu on top shows (`look`), so a
+ * shop's wares and a trainer's top level are known from the first time their menus are seen.
  */
 export function knownOf(g: Game): Known {
   const w = g.world, all = g.pilot?.omniscient ?? false;

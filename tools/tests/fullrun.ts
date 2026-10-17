@@ -4,11 +4,12 @@
 // line a chapter: finished, with its ticks, days and the company's level, or where the pilot stopped.
 // A chapter the fair pilot does not finish is played again from the save point taken before it, with
 // the map on top as a player saves, by a fresh omniscient pilot (`Pilot.omniscient`), whose line says
-// which kind of failure it is; the road goes on from where that one finished it. Every line
-// heard that starts "Lost in" or "I have no answer" is a note, and fails nothing. It takes minutes, so
-// it runs only when named (`ASKED`, tools/test.ts), on the areas FULLRUN names (area ids, or all):
-//   FULLRUN=shelf node tools/test.ts fullrun     the default when FULLRUN is unset
-//   FULLRUN=all node tools/test.ts fullrun       every chapter, an hour or more
+// which kind of failure it is; the road goes on from where that one finished it, and ends at a
+// chapter neither finishes. Every line heard that starts "Lost in" or "I have no answer" is a note,
+// and fails nothing. It takes minutes, so it runs only when named (`ASKED`, tools/test.ts), on the
+// road up to the last area FULLRUN names (area ids, or all):
+//   FULLRUN=shelf node tools/test.ts fullrun     the default when FULLRUN is unset: about 20 s
+//   FULLRUN=all node tools/test.ts fullrun       every chapter on the road: ten minutes a chapter at most, fair and omniscient each
 import { ok, headlessGame, headlessLoad, drive } from './lib.ts';
 import { ExploreScreen } from '../../src/game/game.ts';
 import type { Game } from '../../src/game/game.ts';

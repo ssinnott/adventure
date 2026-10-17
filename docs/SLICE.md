@@ -611,7 +611,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   traits, calendar, terrain, weather, atlas, outdoors, save, quests, then any other in name order),
   then each area's walkthrough (the Foreland's and Thornmark's), in road order. Every check prints a
   line saying what it holds, so the output is the list; `node tools/test.ts maps combat` runs a few
-  suites, `walkthrough:<area>` one walkthrough. A check someone owes is reported, not failed:
+  suites, `walkthrough:<area>` one walkthrough. The pilot's survival sweep and full run (`survival`,
+  `fullrun`, docs/PILOT.md) take minutes and run only when named. A check someone owes is reported, not failed:
   `owed()` in `tools/tests/lib.ts` prints `owed: <what> (#40's)`, and fails once the check holds,
   so the entry is dropped. The last line counts them by whose, as `ALL OK (3 owed: #40 ×2, #43 ×1)`.
   The curve, the gate and the pillars owe today, and the curve and the gate fail a miss that grows
@@ -629,8 +630,10 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   CI keeps when the smoke test fails.
 
 CI (`.github/workflows/checks.yml`) runs the three as jobs of their own on every pull request, and
-a fourth, `sheet`, which attaches the contact sheet and gates nothing. A run started by hand skips
-the sheet and sweeps every map for cracks.
+a fourth, `sheet`, which attaches the contact sheet and gates nothing. The tests job ends with the
+pilot's full run on the shelf (`FULLRUN=shelf node tools/test.ts fullrun`). A run started by hand
+skips the sheet, sweeps every map for cracks and adds a fifth job, `fullrun`: the pilot's full run on
+the areas its `fullrun` input names (all unless changed), a report that gates nothing.
 
 The suites after `quests` hold the content to its contract (EXPANSION §5), over every area and most
 over content broken on purpose too, and two tools to theirs:
