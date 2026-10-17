@@ -25,9 +25,10 @@
 // stops in what it has seen mend. It aims at a leader, else a caller while its call has room, else
 // a light that takes spell points, and reads the fight as it stands each turn, called groups and all.
 // It wakes a sleeper or frees one held of the front row, or a caster, where it can (#549), raises
-// the front row's fallen first while a foe breathes, and never blesses, sleeps, cures anything else,
-// drinks or flees. Between fights it lifts stone and mends as a player would. The
-// report and the calibration run on every core.
+// the front row's fallen first while a foe breathes, cures nothing else and never flees. Behind
+// `BotOpts` (#853), off until #865, it blesses and sleeps where the cast pays, weighed as a damage
+// spell is, and drinks where no spell pays and no mender can. Between fights it lifts stone and
+// mends as a player would. The report and the calibration run on every core.
 import { pathToFileURL } from 'node:url';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -36,7 +37,7 @@ import { makeRng } from '../src/lib/engine/rng.ts';
 import type { RngInstance } from '../src/lib/engine/rng.ts';
 import { CLASSES, defaultParty, xpForLevel, levelUp, isDown, hasCondition, removeCondition, lift, heal, equip, weaponOf, attackBonus, armorClass, bonus, hasTrait, spellHeal, rankMult, RANK_STEP, SPELLFIRE_DMG, SNEAK_ATTACK_DMG, MAX_LEVEL, PRESTIGE_LEVELS, prestigeOf, takePrestige } from '../src/game/party.ts';
 import type { Character, Party } from '../src/game/party.ts';
-import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, sweptRow, asGroup, castOnAlly, castOnParty, toHit, buffHit, traitDamage, monsterAc, monsterHit, seenMult, blowsOf, songDamage, FRONT_ROW } from '../src/game/combat.ts';
+import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, sweptRow, asGroup, castOnAlly, castOnParty, toHit, buffHit, traitDamage, monsterAc, monsterHit, seenMult, blowsOf, songDamage, FRONT_ROW, SLUMBER_CHANCE, ROOTS_CHANCE, HOLD_BREAKS } from '../src/game/combat.ts';
 import type { CombatState, MonsterInst, PartyAction, Edge, Fighters } from '../src/game/combat.ts';
 import { spell, spellDice, SPELLS_GROW_TO } from '../src/game/spells.ts';
 import type { SpellDef } from '../src/game/spells.ts';
@@ -48,10 +49,12 @@ import { MAP_DEFS, MONSTERS } from '../src/content/index.ts';
 import { ROLES, ROLE_IDS, LEVELS, HP, DAMAGE, xpFor, line, standardEncounter, testMonster, TROLL, WIGHT_CURSE, CALL, LIGHT, SWEEP, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, giantEncounter, drakeEncounter, BASILISK_STONE, basiliskEncounter, CLOCK, clockEncounter } from './testmonster.ts';
 import { quickening } from '../src/content/areas/ashfall/items.ts';
 import type { Role } from './testmonster.ts';
-import { wakeWith, markOf, ANSWER, breathGuard, mendLines, REST_AT, pools, mustRest } from '../src/game/bot.ts';
+import { wakeWith, markOf, ANSWER, breathGuard, mendLines, REST_AT, pools, mustRest, blessWith, sleepWith, drinkFor } from '../src/game/bot.ts';
+import type { BotOpts } from '../src/game/bot.ts';
 
 // The bots' answers, the rest rule and the pools it reads are the game's (src/game/bot.ts), and found here still.
 export { wakeWith, markOf, ANSWER, breathGuard, mendLines, REST_AT, pools, mustRest } from '../src/game/bot.ts';
+export type { BotOpts } from '../src/game/bot.ts';
 
 /**
  * How many standard encounters at its own level a company should manage between rests: six or seven
@@ -225,11 +228,11 @@ function weaponDamage(s: CombatState, p: Party, c: Character, m: MonsterInst, ca
   return (blowsOf(c) + e.blows - 1) * chance * (capped ? Math.min(m.hp, blow) : blow);
 }
 
-/** What the monsters still standing deal the company in a round, on average. */
-function incoming(s: CombatState, p: Party): number {
+/** What the monsters still standing deal the company in a round, on average: all of them, or those of `only`. */
+function incoming(s: CombatState, p: Party, only?: readonly number[]): number {
   const up = p.members.map((c, i) => ({ c, i })).filter(({ c }) => !isDown(c)), front = up.filter(({ i }) => i < FRONT_ROW);
   let total = 0;
-  for (const f of aliveMonsters(s)) {
+  for (const f of only ?? aliveMonsters(s)) {
     const d = s.monsters[f].def, reach = d.ranged || !front.length ? up : front;
     if (!reach.length) continue;
     const ac = reach.reduce((a, { c }) => a + armorClass(c) + edgeOf(c, s.round).ac, 0) / reach.length;
@@ -258,8 +261,14 @@ function mendRate(c: Character): number {
  * what hurts and not on what does not, keeps a healer's points for mending, and casts less as its
  * spell points run down. Under the rest line spell points cost nothing: the company rests after this
  * fight whatever it casts. While a foe that sweeps stands it mends the row it would take sooner (#545).
+ * Where `opts` asks (#853) it weighs Bless (`blessWith`) and sleep (`sleepWith`) as it weighs a damage
+ * spell, the saving in hit points against the points: Bless saves what the company's blows would land
+ * more for its rounds were worth, sleep the blows the foes it could put down would strike, at the
+ * spell's chance, for the rounds a sleeper sleeps (SLEEPS_FOR) or a hold holds, either for no more
+ * rounds than the fight has left by the company's weapons; the caster's own blow is lost as for a
+ * damage spell. And it drinks (`drinkFor`) where no spell pays, before its blow.
  */
-export const thrifty: Bot = (s, p, rng, i) => {
+export const thrifty = (s: CombatState, p: Party, rng: RngInstance, i: number, opts: BotOpts = {}): void => {
   const c = p.members[i];
   const known = c.spells.map(spell).filter((x) => x.context !== 'explore' && x.sp <= c.sp);
   // Mending reaches the fallen as well as the standing; only the dead are past it.
@@ -290,6 +299,22 @@ export const thrifty: Bot = (s, p, rng, i) => {
   const t = pools(p), spare = (left: number, whole: number): number => (left - whole * REST_AT) / (whole * (1 - REST_AT));
   const hpSpare = Math.max(0.05, spare(t.hp, t.maxHp)), spSpare = spare(t.sp, t.maxSp), price = mendRate(c);
   let best: PartyAction = armed ? { type: 'attack', target: weakest } : { type: 'defend' }, worth = 0;
+  // Bless and sleep, where `opts` asks: the hit points the cast saves, weighed as a damage spell's.
+  const pays = (x: SpellDef, saved: number): number => (saved - blow * rate) / hpSpare - (spSpare > 0 ? (x.sp * price) / spSpare : 0);
+  const left = (): number => foes.reduce((a, f) => a + s.monsters[f].hp, 0) / Math.max(1, weapons);
+  const bless = opts.bless ? blessWith(s, c) : undefined;
+  if (bless) {
+    const runs = { ...s, bless: bless.turns ?? 1 }, target = s.monsters[weakest];
+    const more = p.members.reduce((a, m, j) => a + (!isDown(m) && canAttackFromRow(m, j) ? weaponDamage(runs, p, m, target, false) - weaponDamage(s, p, m, target, false) : 0), 0);
+    const v = pays(bless, more * Math.min(bless.turns ?? 1, left()) * rate);
+    if (v > worth) { worth = v; best = { type: 'cast', spellId: bless.id, target: i }; }
+  }
+  const sleep = opts.sleep ? sleepWith(s, c) : undefined;
+  if (sleep) {
+    const held = sleep.spell.inflict === 'paralysed';
+    const v = pays(sleep.spell, incoming(s, p, sleep.foes) * (held ? ROOTS_CHANCE : SLUMBER_CHANCE) * Math.min(held ? 1 / HOLD_BREAKS : SLEEPS_FOR, left()));
+    if (v > worth) { worth = v; best = { type: 'cast', spellId: sleep.spell.id, target: sleep.target }; }
+  }
   for (const x of known) {
     if (!x.dice || (x.target !== 'enemy' && x.target !== 'group' && x.target !== 'all')) continue;
     // What the spell would do, by what the company has seen its element do to each, no target counted
@@ -309,8 +334,14 @@ export const thrifty: Bot = (s, p, rng, i) => {
     const value = ((dmg - blow) * rate) / hpSpare - (spSpare > 0 ? (x.sp * price) / spSpare : 0);
     if (value > worth) { worth = value; best = { type: 'cast', spellId: x.id, target }; }
   }
+  // A draught, where `opts` asks: where no spell pays, before a blow.
+  const drink = opts.drink && best.type !== 'cast' ? drinkFor(s, p, c) : undefined;
+  if (drink && partyAct(s, p, rng, drink)) return;
   if (!partyAct(s, p, rng, best)) partyAct(s, p, rng, { type: 'defend' });
 };
+
+/** The rounds a foe Slumber takes sleeps, on average: it wakes at a quarter of its turns (`currentTurn`), unless struck. */
+const SLEEPS_FOR = 4;
 
 /**
  * What a company has spent of itself, as shares of what it has when whole: hit points (all of a
