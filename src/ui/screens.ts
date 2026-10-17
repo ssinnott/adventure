@@ -15,9 +15,9 @@ import { item, priceIn, buy, sellPrice } from '../game/items.ts';
 import { readText } from '../game/people.ts';
 import { ITEMS } from '../content/index.ts';
 import { spell, spellsFor } from '../game/spells.ts';
-import { CLASSES, RACES, TRAITS, STATS, armorClass, attackBonus, equip, heal, lift, templePrice, isDown, hasCondition, xpForLevel, levelUp, rest, stayNight, canTrain, canTrainAt, trainPrice, MAX_LEVEL, guildFlag, className, resists } from '../game/party.ts';
+import { CLASSES, RACES, TRAITS, STATS, armorClass, attackBonus, equip, heal, lift, templePrice, isDown, hasCondition, xpForLevel, levelUp, rest, stayNight, canTrain, canTrainAt, trainPrice, MAX_LEVEL, guildFlag, className, resists, statOf } from '../game/party.ts';
 import { castOnAlly } from '../game/combat.ts';
-import type { Character } from '../game/party.ts';
+import type { Character, Stat } from '../game/party.ts';
 import type { GuildId } from '../content/guilds.ts';
 import { rankOf, rankName, offered, inHand, report, take, guildName } from '../game/guilds.ts';
 import { taughtBy, mayLearn, skillOffers, skillLine, learn, askSkill, skillNames, LEAVE_SKILLS, STRANGER } from '../game/skills.ts';
@@ -279,7 +279,14 @@ export class SheetScreen implements Screen {
     drawText(ctx, c.level >= MAX_LEVEL ? `XP ${c.xp}  (AT THE CAP)` : `XP ${c.xp} / ${xpForLevel(c.level + 1)}`, 620, 18, { size: 1, color: canTrain(c) ? YELLOW : TEXT_DIM, align: 'right' });
     drawPortraitLarge(ctx, c, 20, 34);
     let y = 36;
-    for (const s of STATS) { drawText(ctx, s.toUpperCase().slice(0, 3), 100, y, { size: 1, color: TEXT_DIM }); drawText(ctx, String(c.stats[s]), 140, y, { size: 1, color: TEXT, align: 'right' }); y += 10; }
+    for (const s of STATS) {
+      const [total, raise] = statText(c, s);
+      drawText(ctx, s.toUpperCase().slice(0, 3), 100, y, { size: 1, color: TEXT_DIM });
+      drawText(ctx, total, 140, y, { size: 1, color: TEXT, align: 'right' });
+      // The raise follows the total a glyph's gap on, as one word: "16+3".
+      if (raise) drawText(ctx, raise, 141, y, { size: 1, color: YELLOW });
+      y += 10;
+    }
     y = 134;
     drawText(ctx, `HP ${c.hp}/${c.maxHp}   SP ${c.sp}/${c.maxSp}`, 20, y, { size: 1, color: TEXT }); y += 10;
     drawText(ctx, `AC ${armorClass(c)}   TO-HIT +${attackBonus(c)}`, 20, y, { size: 1, color: TEXT }); y += 10;
@@ -303,10 +310,20 @@ export class SheetScreen implements Screen {
   }
 }
 
-/** The sheet's WEAPON line: what is in hand, then the member's tier at arms ("WEAPON Longsword, EXPERT"). */
+/** A whole number as a raise is written: "+3", "-1". */
+const signed = (n: number): string => (n > 0 ? `+${n}` : String(n));
+/** A stat as the sheet prints it: the total a fight reads (`statOf`), and the raise of what is borne, if any ("16", "+3"). */
+export function statText(c: Character, s: Stat): [string, string] {
+  const total = statOf(c, s), raise = total - c.stats[s];
+  return [String(total), raise ? signed(raise) : ''];
+}
+/**
+ * The sheet's WEAPON line: what is in hand and the element its blows carry, then the member's tier at
+ * arms ("WEAPON Longsword, EXPERT", "WEAPON Grey Blade, LIGHTNING").
+ */
 export function weaponLine(c: Character): string {
-  const t = tierOf(c, 'arms');
-  return 'WEAPON ' + (c.equipment.weapon ? item(c.equipment.weapon).name : 'none') + (t ? `, ${TIER_NAMES[t].toUpperCase()}` : '');
+  const t = tierOf(c, 'arms'), w = c.equipment.weapon ? item(c.equipment.weapon) : null;
+  return 'WEAPON ' + (w ? w.name + (w.element ? `, ${w.element.toUpperCase()}` : '') : 'none') + (t ? `, ${TIER_NAMES[t].toUpperCase()}` : '');
 }
 /** The sheet's SPELLS line: the member's tier in magic, then the spells it knows ("SPELLS (MASTER) Spark, Frost"). */
 export function spellsLine(c: Character): string {
@@ -611,14 +628,16 @@ function sellScreen(g: Game, f: Extract<Feature, { kind: 'shop' }>): Screen {
   }, f.name);
 }
 
-function describe(id: string): string {
+/** A ware as a shop shows it: a weapon's dice and the element its blows carry, armour's AC, a draught's use; then the stats it raises. */
+export function describe(id: string): string {
   const d = ITEMS[id];
-  if (d.slot === 'weapon') return `${d.dice}d${d.sides}${d.bonus ? '+' + d.bonus : ''}${d.ranged ? ' ranged' : ''}${d.twoHanded ? ' 2h' : ''}`;
-  if (d.ac) return `AC+${d.ac}`;
+  const raises = STATS.filter((s) => d.stat?.[s]).map((s) => ` ${s}${signed(d.stat?.[s] ?? 0)}`).join('');
+  if (d.slot === 'weapon') return `${d.dice}d${d.sides}${d.bonus ? '+' + d.bonus : ''}${d.ranged ? ' ranged' : ''}${d.twoHanded ? ' 2h' : ''}${d.element ? ' ' + d.element : ''}${raises}`;
+  if (d.ac) return `AC+${d.ac}${raises}`;
   if (d.use?.heal) return `heals ${d.use.heal}`;
   if (d.use?.sp) return `${d.use.sp} SP`;
   if (d.use?.food) return `${d.use.food} food`;
-  return '';
+  return raises.trim();
 }
 
 function guild(g: Game, f: Extract<Feature, { kind: 'guild' }>): Screen {
