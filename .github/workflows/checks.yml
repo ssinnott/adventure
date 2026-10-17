@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
     inputs:
       fullrun:
-        description: "The pilot's full run: the areas whose chapters it plays (FULLRUN: area ids, comma-separated, or all)"
+        description: "The pilot's full run: the areas whose chapters it plays (FULLRUN: area ids with commas between, or all)"
         default: all
 
 permissions:

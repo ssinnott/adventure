@@ -275,13 +275,13 @@ ten minutes of the wall clock, and prints a line a seed.
 ## Full runs
 
 #723's second part. `node tools/test.ts fullrun` (`tools/tests/fullrun.ts`) plays a new game on seed 4
-with the premade company, an instant pilot at the helm asking every brain, and the one quest's
+with the premade company and an instant pilot at the helm asking every brain: the one quest's
 chapters in AREAS order on the one Game, so that each area starts as the pilot left the last (the one
-road). A chapter's play ends when the chapter is done, the company is wiped, the pilot stops itself,
-or at a cap: ten minutes of the wall clock (`BUDGET`) or 2,000,000 ticks (`TICK_CAP`). Each chapter
+road). A chapter's play ends when the chapter is done, the company is wiped, the pilot stops itself
+or a cap is met: ten minutes of the wall clock (`BUDGET`) or 2,000,000 ticks (`TICK_CAP`). Each chapter
 gets a line: "shelf: the pilot finishes The Quiet Farm in 10,875 ticks, 33.1 days, level 5", the days
-being the world's while it played; or where it stopped: fell, stopped itself with its why line, or
-capped, by the budget or by the ticks. The last chapter ends at an ending taken, which the pilot never
+being the world's while it played; or where it stopped: fell, stopped itself with its why line or
+capped (by the budget or by the ticks). The last chapter ends at an ending taken, which the pilot never
 takes: its stop under the question ("The choice is yours.") counts, and the test, as its privilege,
 presses the first answer. Every line heard that starts "Lost in" or "I have no answer" is printed as a
 note, once with its count ("note: thornmark: Lost in Thornmark: three days, and no way on. (x30)"),
@@ -306,10 +306,10 @@ check): a bare `node tools/test.ts` does not run it.
 
 In CI the tests job runs `FULLRUN=shelf node tools/test.ts fullrun` after the tests, as a gate. The
 `fullrun` job runs only when the workflow is started by hand (`workflow_dispatch`), never on a pull
-request: its `fullrun` input is the FULLRUN (`all` unless changed), it has sixty minutes, and its lines
+request: its `fullrun` input is the FULLRUN (`all` unless changed) and it has sixty minutes; its lines
 go into the run's summary. It is a report, not a gate, until the pilot finishes those chapters. The
 smoke test hands the browser's pilot the game for thirty seconds at 1x (1,800 frames) after its other
-pilot checks: the company walks, no page error comes, and P takes the game back. That pins the show,
+pilot checks: the company walks, no page error comes and P takes the game back. That pins the show,
 not the finish.
 
 ## Known limits
@@ -348,7 +348,7 @@ not the finish.
   the search never comes. Lost, it wanders west and falls in the Delta. A route over every square seen
   is slow, too: about 19 ms a tick against the fair run's 4.
 - **The omniscient pilot has no frontier.** Every square is seen, so the explorer has nothing to walk
-  to: it searches the secret doors as written, then calls the map walked out, and only the walk again
+  to: it searches the secret doors as written and then calls the map walked out; only the walk again
   rule walks it. Chests are gone to only on the aim's map. "Omniscient also fails" therefore does not
   yet mean that nobody could finish the chapter. The issue's flag was built as written ("nothing else
   changes"); a frontier of the squares not walked, or the explorer asked before the walk again, is the

@@ -49,12 +49,12 @@ export function reach(env = process.env.FULLRUN): { road: Area[]; unknown: strin
   return { road: ROAD.slice(0, last + 1), unknown: names.filter((n) => !ROAD.some((a) => a.id === n)) };
 }
 
-/** A chapter's play: done or not, how long, the company's level at the end, and where and why it stopped if it did. */
+/** A chapter's play: done or not, how long, the company's level at the end and where and why it stopped if it did. */
 interface Play { done: boolean; ticks: number; days: string; secs: string; level: number; stop: string; notes: string[] }
 
 /**
  * Plays `chapter` on `g` with its pilot at the helm until it is done, the company is wiped, the pilot
- * stops itself, or `TICK_CAP` or `BUDGET` is met. The last chapter's end is an ending taken, which the
+ * stops itself or a cap (`TICK_CAP`, `BUDGET`) is met. The last chapter's end is an ending taken, which the
  * pilot never takes (it stops under the question): that stop counts, and the test, its privilege,
  * presses the first answer, so the ending holds and the road is done.
  */
@@ -99,7 +99,7 @@ function note(who: string, lines: readonly string[]): void {
 
 export function fullrun(): void {
   const { road, unknown } = reach();
-  if (unknown.length) ok(false, `FULLRUN names no area with a chapter: ${unknown.join(', ')} (of ${ROAD.map((a) => a.id).join(', ')}, or all)`);
+  if (unknown.length) ok(false, `FULLRUN names no area with a chapter: ${unknown.join(', ')} (of ${ROAD.map((a) => a.id).join(', ')} or all)`);
   let g = helm(headlessGame(SEED)), from = '';
   for (const area of road) {
     const chapter = area.chapter!;
