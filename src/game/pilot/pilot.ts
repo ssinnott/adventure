@@ -8,8 +8,7 @@ import type { Action } from '../../input.ts';
 import { CombatScreen } from '../../ui/combat.ts';
 import { MessageScreen } from '../../ui/screens.ts';
 import { TitleScreen } from '../../ui/title.ts';
-import { CreateScreen, randomParty } from '../../ui/create.ts';
-import { freshSeed } from '../../lib/engine/rng.ts';
+import { CreateScreen } from '../../ui/create.ts';
 import { knownOf } from './known.ts';
 import type { Known } from './known.ts';
 import { route, unroute } from './route.ts';
@@ -112,7 +111,7 @@ export class Pilot {
       g.say('You take the helm.');
       return;
     }
-    if (g.top instanceof TitleScreen || g.top instanceof CreateScreen) { const seed = freshSeed(); g.newGame(seed, randomParty(seed)); }
+    if (g.top instanceof TitleScreen || g.top instanceof CreateScreen) g.newRandomGame();
     this.on = true;
     this.ticks = 0;
     this.handed = null;

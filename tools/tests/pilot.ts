@@ -3,8 +3,12 @@
 // each with tests of its own: the navigator (#717), the explorer (#718) and the quartermaster (#719),
 // with the memory of what a menu has shown. Every game here is headless, with an instant pilot unless
 // the pace is the point.
-import { Game, ExploreScreen } from '../../src/game/game.ts';
+import { readdirSync, readFileSync } from 'node:fs';
+import { Game, ExploreScreen, ATTRACT_HOLD } from '../../src/game/game.ts';
+import { hasSave } from '../../src/game/save.ts';
 import type { Store } from '../../src/game/save.ts';
+import { freshSeed } from '../../src/lib/engine/rng.ts';
+import { TitleScreen, IDLE_TICKS } from '../../src/ui/title.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { MapDef, Feature, MapZone } from '../../src/game/map.ts';
 import { NORTH, EAST, SOUTH, WEST, FACING_DX, FACING_DY, turnLeft, turnRight } from '../../src/game/types.ts';
@@ -47,6 +51,7 @@ export function pilot(): void {
   helm();
   pace();
   company();
+  attract();
   navigator();
   walking();
   explorer();
@@ -280,6 +285,143 @@ function company(): void {
   ok(new Set(classes).size === 6 && classes.some((k) => ['cleric', 'paladin', 'bard', 'druid'].includes(k)) && hardy.every((h, i) => i === 0 || hardy[i - 1] >= h),
     `six classes, a mender among them, the hardiest in front (${classes.join(' ')})`);
   ok([...Array(40).keys()].every((s) => randomParty(s + 1).members.some((m) => ['cleric', 'paladin', 'bard', 'druid'].includes(m.cls))), 'forty seeds draw forty companies, each with a mender');
+}
+
+/**
+ * Attract mode (#722): a title left untouched plays a new game on the pilot, with nothing saved, until a
+ * key of the viewer's brings the title back; a wipe starts another on a new seed. A viewer's key reaches
+ * the game as src/main.ts sends it: the pilot, if it drives, gives the helm back first.
+ */
+function attract(): void {
+  const nothing = (n: number): null[] => Array<null>(n).fill(null);
+  const press = (g: Game, a: Action): void => { if (g.pilot?.on) g.pilot.toggle(g); g.update(a); };
+  /** The one brain these games' pilots have: a turn on the map. What the brains play is theirs to test; attract mode is the game's. */
+  let turned = 0;
+  const turning: Brain = (q, _k, p) => { if (!(q.top instanceof ExploreScreen)) return null; p.why = ['Turning about.']; turned++; return 'turnLeft'; };
+  /** A game on a new title, over a store if given, with an instant pilot that is off. */
+  const onTitle = (store?: Store): Game => {
+    const g = store ? new Game(store) : headlessGame();
+    g.input = { textMode: false, drainText: (c) => c };
+    g.pilot = new Pilot({ instant: true });
+    g.pilot.brains = [turning];
+    g.newGame(4);
+    g.screens = [new TitleScreen(hasSave(g.store))];
+    return g;
+  };
+  const attracted = (): Game => { const g = onTitle(); drive(g, nothing(IDLE_TICKS)); return g; };
+  const woke = (g: Game): boolean => top(g) === 'TitleScreen' && g.screens.length === 1 && !g.attracting && !g.pilot!.on && g.pilot!.band() === null && g.band() === null;
+
+  // The title: untouched for IDLE_TICKS it plays; a key takes the count back; with no pilot it never does.
+  const idle = onTitle();
+  drive(idle, nothing(IDLE_TICKS - 1));
+  const waiting = top(idle) === 'TitleScreen' && !idle.attracting && !idle.pilot!.on;
+  drive(idle, nothing(2));
+  ok(waiting && top(idle) === 'ExploreScreen' && idle.screens.length === 1 && idle.pilot!.on && idle.attracting,
+    `a title untouched plays a new game on the pilot: the title after ${IDLE_TICKS - 1} ticks, the map with the pilot at the helm after ${IDLE_TICKS + 1}`);
+  const touched = onTitle();
+  drive(touched, nothing(IDLE_TICKS - 1));
+  drive(touched, ['down']);
+  drive(touched, nothing(IDLE_TICKS - 1));
+  const kept = top(touched) === 'TitleScreen' && !touched.attracting;
+  drive(touched, nothing(1));
+  ok(kept && top(touched) === 'ExploreScreen' && touched.attracting, `a key on the title takes the count back to 0: ${IDLE_TICKS - 1} ticks after it the title stays, the next plays`);
+  const bare = headlessGame();
+  bare.screens = [new TitleScreen(false)];
+  drive(bare, nothing(IDLE_TICKS + 5));
+  bare.attract();
+  ok(top(bare) === 'TitleScreen' && !bare.attracting && bare.pilot === null, 'a game with no pilot idles on the title, and attract does nothing');
+
+  // A fresh seed, the company drawn from it, the start it plays and the lines over it. freshSeed (the engine's one draw of chance) is given its numbers here, so that the seeds are known.
+  const real = Math.random;
+  try {
+    Math.random = () => 0.3;
+    const s1 = freshSeed();
+    const d = onTitle();
+    drive(d, nothing(IDLE_TICKS));
+    const first = JSON.stringify(d.party), state = d.rng.state, world = JSON.stringify(d.world.state), band = d.band(), why = 'The pilot plays. / Any key for the title.';
+    const ref = onTitle();
+    ref.newGame(s1, randomParty(s1));
+    ok(d.attracting && first === JSON.stringify(randomParty(s1)) && first === JSON.stringify(ref.party) && state === ref.rng.state && world === JSON.stringify(ref.world.state),
+      `attract starts on a fresh seed (${s1}) with the company drawn from that seed, seeded first: the seed plays the same start again (${d.party.members.map((c) => c.cls).join(' ')})`);
+    ok(d.pilot!.why.join(' / ') === why && band?.lines.join(' / ') === why && band.tag === 'PILOT 1X', `the band opens with "${why}" and the pilot's tempo`);
+
+    // The opening stands ATTRACT_HOLD ticks, then the pilot's own lines; its own keys go through the same door and do not wake it.
+    let held = 0;
+    turned = 0;
+    while (d.band()?.lines[0] === 'The pilot plays.' && held < 2 * ATTRACT_HOLD) { drive(d, nothing(1)); held++; }
+    ok(held === ATTRACT_HOLD && d.band()?.lines.join() === d.pilot!.why.join() && d.attracting && d.pilot!.on && turned >= held,
+      `the opening stands ${ATTRACT_HOLD} ticks, then the pilot's own lines (${d.pilot!.why.join(' / ')}); the ${turned} keys it pressed in them did not wake it`);
+    const paced = onTitle();
+    paced.pilot = new Pilot();
+    drive(paced, nothing(IDLE_TICKS));
+    const at = JSON.stringify(paced.world.state);
+    drive(paced, nothing(90));
+    ok(paced.attracting && paced.pilot.on && JSON.stringify(paced.world.state) !== at, `as the game has it, paced and with the brains it has, its first actions (${paced.pilot.why.join(' / ')}) do not wake it either`);
+
+    // A wipe: another game on a new seed at once, the title never between, the opening lines again.
+    Math.random = () => 0.6;
+    const s2 = freshSeed(), old = d.party;
+    for (const c of old.members) c.conditions.push('dead');
+    let n = 0;
+    for (; n < 60 && d.party === old; n++) drive(d, nothing(1));
+    ok(s1 !== s2 && d.party !== old && JSON.stringify(d.party) === JSON.stringify(randomParty(s2)) && d.attracting && d.pilot!.on && d.screens.length === 1 && top(d) === 'ExploreScreen' && d.pilot!.stopped === null && d.band()?.lines.join(' / ') === why,
+      `a wipe while attracting starts another game at once, on a new seed (${s1} then ${s2}), with no title between (${n} ticks)`);
+
+    // The viewer's key: the title, the key dropped; and the title counts again from 0.
+    press(d, 'forward');
+    const back = woke(d);
+    drive(d, nothing(IDLE_TICKS - 1));
+    const again = top(d) === 'TitleScreen' && !d.attracting;
+    drive(d, nothing(1));
+    ok(back && again && d.attracting, 'one key brings the title back, with attracting off and the pilot off, and the new title idles into the next game in its turn');
+  } finally {
+    Math.random = real;
+  }
+  const dropped = attracted();
+  press(dropped, 'interact');
+  const space = top(dropped) === 'TitleScreen';
+  press(dropped, 'interact');
+  ok(space && top(dropped) === 'CreateScreen', `the key that brings the title back is dropped: Space does not open the charter (${top(dropped)}), and the title answers the next`);
+
+  // A stop of the pilot's own keeps its band up in attract mode too, and the next key wakes it.
+  const stopped = attracted();
+  stopped.pilot!.stop(stopped, ['The choice is theirs.']);
+  const stands = !stopped.pilot!.on && stopped.attracting && top(stopped) === 'ExploreScreen' && stopped.band()?.lines[0] === 'The choice is theirs.' && stopped.band()?.tag === '';
+  press(stopped, 'forward');
+  ok(stands && woke(stopped), 'a stop of its own keeps its band up over the game, still attracting, and the next key brings the title back and takes the band down');
+
+  // P is the pilot's, and main.ts takes it before the game sees it: it pauses the show and starts it again; any other key leaves.
+  const paused = attracted();
+  paused.pilot!.toggle(paused);
+  const stood = !paused.pilot!.on && paused.attracting && top(paused) === 'ExploreScreen' && paused.band() === null;
+  paused.pilot!.toggle(paused);
+  const went = paused.pilot!.on && paused.attracting;
+  press(paused, 'interact');
+  ok(stood && went && woke(paused), 'P in attract mode pauses the show and starts it again; another key brings the title back');
+
+  // Nothing is saved: over an empty store, and over a save already there.
+  const disk = new Map<string, string>();
+  const store: Store = { getItem: (key) => disk.get(key) ?? null, setItem: (key, v) => { disk.set(key, v); }, removeItem: (key) => { disk.delete(key); } };
+  const w = onTitle(store);
+  drive(w, nothing(IDLE_TICKS));
+  w.saveGame();
+  const empty = w.attracting && !hasSave(store) && disk.size === 0;
+  press(w, 'save');
+  const unsaved = woke(w) && !hasSave(store);
+  w.saveGame();
+  ok(empty && unsaved && hasSave(store), 'saveGame while attracting leaves hasSave false, and F5 as a viewer presses it only brings the title back; once it is a game again it saves');
+  const text = JSON.stringify([...disk]), x = onTitle(store);
+  drive(x, nothing(IDLE_TICKS));
+  x.saveGame();
+  press(x, 'save');
+  press(x, 'interact');
+  ok(text.length > 2 && JSON.stringify([...disk]) === text && top(x) === 'ExploreScreen' && !x.attracting && x.log.includes('Loaded.'),
+    'over a save already there, attract mode leaves it as it was, and the title it wakes to still offers it: Continue loads it');
+
+  // The game has no sound, so attract mode has none to mute; a sound added to it must be muted while attracting.
+  const src = new URL('../../src/', import.meta.url);
+  const loud = (readdirSync(src, { recursive: true }) as string[]).filter((f) => f.endsWith('.ts') && !f.startsWith('lib/') && /lib\/audio|AudioContext|new Audio\(/.test(readFileSync(new URL(f, src), 'utf8')));
+  ok(loud.length === 0, `nothing in the game imports the engine's audio, so attract mode has none to mute${loud.length ? `; mute it while Game.attracting: ${loud.join(', ')}` : ''}`);
 }
 
 /** A fixture map on the game with the party on it, and only `seen` of it seen (the test's privilege): all of it unless named. */
