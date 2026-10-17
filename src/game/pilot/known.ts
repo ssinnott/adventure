@@ -4,7 +4,8 @@
 // exits and groups it marks, the maps walked, the world map as it is painted, the lines said and the
 // company. Nothing here gives a map's secrets or encounters as written, a gate's terms or what a
 // person or a statue holds, nor a shop's wares before its menu has shown them: a group is a square
-// the automap marks, and no more.
+// the automap marks, and no more. The headless run's omniscient view (#723), which the game never
+// sets, has every square seen, each cell as it is and the secret doors as written (`secrets`).
 import type { Game } from '../game.ts';
 import type { Cell, Exit, Feature, GameMap, MapZone } from '../map.ts';
 import type { Party } from '../party.ts';
@@ -80,6 +81,15 @@ export interface Known {
    * a person's crossings before they are offered.
    */
   offers(): { map: string; x: number; y: number; name: string; fare: number; to: string; tx: number; ty: number }[];
+
+  // The omniscient run's (#723): the headless run alone, never the game (`Pilot.omniscient`).
+  /** Whether this is the omniscient view: every square seen, a cell as it is, a secret door a door. */
+  readonly omniscient: boolean;
+  /**
+   * The secret doors of a map not yet found, as written (`MapDef.secrets`, a zone's in the outdoors'
+   * squares): the omniscient view's alone. A fair pilot is told of none, as a secret is found.
+   */
+  secrets(map: string): { x: number; y: number }[];
 }
 
 /**
@@ -89,8 +99,9 @@ export interface Known {
  * are those in the zone's box. A goal's square written in the zone's own reckoning goes through
  * `World.locate` before it is compared. Features and exits of seen squares are as the world has them
  * now, not as last seen (a known simplification). A pilot's `omniscient` (the headless run, #723)
- * has every square seen. Each look notes what the menu on top shows (`look`), so a shop's wares and
- * a trainer's top level are known from the first time their menus are seen.
+ * has every square seen, each cell as it is (a secret door a door) and the secret doors as written
+ * (`secrets`); the game never sets it. Each look notes what the menu on top shows (`look`), so a
+ * shop's wares and a trainer's top level are known from the first time their menus are seen.
  */
 export function knownOf(g: Game): Known {
   const w = g.world, all = g.pilot?.omniscient ?? false;
@@ -114,6 +125,8 @@ export function knownOf(g: Game): Known {
     cell(map, x, y) {
       const p = played(map);
       if (!p || !seenOn(p.m, x, y)) return undefined;
+      // The omniscient view reads the cell as it is, not as drawn: a secret door is a door.
+      if (all) { const { terrain, solid, door } = p.m.at(x, y); return { terrain, solid, door: door === 'secret' ? 'door' : door }; }
       const { terrain, solid, door } = drawnCell(p.m, x, y);
       return door === 'secret' ? { terrain, solid: 'wall', door: 'none' } : { terrain, solid, door };
     },
@@ -182,6 +195,14 @@ export function knownOf(g: Game): Known {
       const at = w.locate(r.to, r.x, r.y);
       return { map, x, y, name: r.name, fare, to: at.mapId, tx: at.x, ty: at.y };
     }),
+    omniscient: all,
+    secrets(map) {
+      const p = played(map);
+      if (!all || !p) return [];
+      // A dungeon's or a town's as written; the outdoors' from each zone's map, placed where its box lies.
+      const from = p.m.kind === 'outdoor' ? p.m.zones.filter((z) => !p.box || z.id === p.box.id).map((z) => ({ def: MAP_DEFS.find((d) => d.id === z.id), x: z.x, y: z.y })) : [{ def: p.m.def, x: 0, y: 0 }];
+      return from.flatMap(({ def, x, y }) => (def?.secrets ?? []).map((s) => ({ x: s.x + x, y: s.y + y }))).filter((s) => p.m.at(s.x, s.y).door === 'secret');
+    },
   };
 }
 

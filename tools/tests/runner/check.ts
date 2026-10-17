@@ -30,6 +30,9 @@ ok(all.out.trimEnd().endsWith('4 FAILURE(S) (3 owed: #40 ×2, #43 ×1)'), 'the s
 ok(!all.out.includes('the suite run only when named ran'), 'a bare run passes over a suite run only when named (ASKED)');
 const asked = run('survival');
 ok(asked.status === 0 && asked.out.includes('the suite run only when named ran'), 'a suite run only when named runs when it is named');
+ok(!all.out.includes('the full run ran'), 'a bare run passes over the full run, run only when named (ASKED)');
+const full = run('fullrun');
+ok(full.status === 0 && full.out.includes('the full run ran'), 'the full run runs when it is named');
 
 console.log('\n' + summary(failureCount(), new Map()));
 process.exit(failureCount() ? 1 : 0);
