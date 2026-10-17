@@ -52,6 +52,7 @@ import { weary, caster, FOOD_RESTS } from '../../src/game/pilot/keep.ts';
 import { searches } from '../../src/game/pilot/route.ts';
 import { holds } from '../../src/game/quests.ts';
 import { pilotRun } from '../walk.ts';
+import { play } from './fullrun.ts';
 import { startCombat, currentTurn, monsterAct } from '../../src/game/combat.ts';
 import { answers, TRIES, NO_ANSWER } from '../../src/game/pilot/talk.ts';
 import { EndingScreen } from '../../src/ui/ending.ts';
@@ -69,6 +70,7 @@ const top = (g: Game): string => g.top.constructor.name;
 export function pilot(): void {
   known();
   fair();
+  omniscient();
   helm();
   pace();
   company();
@@ -84,6 +86,7 @@ export function pilot(): void {
   talking();
   survives();
   riddles();
+  lastChapter();
 }
 
 /** A headless game whose company Vask has hired: walked onto his door by the test (its privilege) and his words closed. */
@@ -340,6 +343,35 @@ function fair(): void {
     `on a new game no feature or exit Known gives of Harrow stands on an unseen square (${unseen.features} of ${hm.features.length} features and ${unseen.exits} of ${hm.exits.length} exits unseen)`);
 }
 
+/**
+ * The headless run's omniscient flag (#723): off by default and never set by the game; on, a secret
+ * door is a door to Known, the secret doors as written come through (`secrets`, a zone's in the
+ * outdoors' squares) and the explorer suspects them and nothing else. A fair pilot is told of none.
+ */
+function omniscient(): void {
+  const main = readFileSync(new URL('../../src/main.ts', import.meta.url), 'utf8');
+  const setters = (readdirSync(new URL('../../src/', import.meta.url), { recursive: true }) as string[]).filter((f) => f.endsWith('.ts') && /omniscient: *true/.test(readFileSync(new URL(`../../src/${f}`, import.meta.url), 'utf8')));
+  ok(!new Pilot().omniscient && !new Pilot({ instant: true }).omniscient && !knownOf(piloted()).omniscient && /game\.pilot = new Pilot\(\);/.test(main) && !setters.length,
+    `the omniscient flag is off by default, and the game never sets it: src/main.ts builds new Pilot()${setters.length ? `; set in ${setters.join(', ')}` : ''}`);
+  // A dead end whose secret door leads on: fair, a wall the explorer suspects among others; omniscient, a door and the one suspect.
+  const def: MapDef = { id: 'fx_seer', name: 'Seer', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#######', '#...S.#', '#.#####', '#.#.#.#', '#######'], secrets: [{ x: 4, y: 1, hint: 'fx_none' }] };
+  const fair = piloted(), seer = Object.assign(piloted(), { pilot: new Pilot({ instant: true, omniscient: true }) });
+  for (const g of [fair, seer]) fixture(g, def, [1, 1, EAST]);
+  const fk = knownOf(fair), sk = knownOf(seer), sides = (k: Known): string => suspects(k, 'fx_seer').map((s) => `${s.x},${s.y} ${s.facing}`).sort().join('; ');
+  ok(fk.cell('fx_seer', 4, 1)?.solid === 'wall' && fk.cell('fx_seer', 4, 1)?.door === 'none' && sk.cell('fx_seer', 4, 1)?.door === 'door' && sk.cell('fx_seer', 4, 1)?.solid === 'none' && seer.maps.fx_seer.at(4, 1).door === 'secret',
+    `on, a secret door reads as a door, and off as a wall (${JSON.stringify(sk.cell('fx_seer', 4, 1))} against ${JSON.stringify(fk.cell('fx_seer', 4, 1))})`);
+  ok(!fk.secrets('fx_seer').length && sk.secrets('fx_seer').map((s) => `${s.x},${s.y}`).join() === '4,1' && sides(sk) === `4,1 ${EAST}; 4,1 ${WEST}` && sides(fk) !== sides(sk) && sides(fk).split('; ').length > 2,
+    `on, the explorer's suspects are the secret doors as written, from each side (${sides(sk)}); off, the walls with floor both sides (${sides(fk)}), and Known tells of no secret`);
+  seer.maps.fx_seer.at(4, 1).door = 'door';
+  ok(!knownOf(seer).secrets('fx_seer').length && !suspects(knownOf(seer), 'fx_seer').length, 'a secret door found is no longer told, nor suspected');
+  // The outdoors: each zone's secrets, placed where its box lies, are the outdoors' secret doors; a zone's id gives its own.
+  const o = Object.assign(headlessGame(), { pilot: new Pilot({ omniscient: true }) }), ok_ = knownOf(o), out = o.maps[OUTDOORS];
+  const writtenIn = (id: string): number => MAP_DEFS.find((d) => d.id === id)?.secrets?.length ?? 0;
+  const written = out.zones.reduce((n, z) => n + writtenIn(z.id), 0), told = ok_.secrets(OUTDOORS), zone = out.zones.find((z) => writtenIn(z.id) > 0), mine = zone ? ok_.secrets(zone.id) : [];
+  ok(written > 0 && told.length === written && told.every((s) => out.at(s.x, s.y).door === 'secret') && !!zone && mine.length === writtenIn(zone.id) && mine.length < told.length && mine.every((s) => out.zoneAt(s.x, s.y)?.id === zone.id) && !knownOf(Object.assign(headlessGame(), { pilot: new Pilot() })).secrets(OUTDOORS).length,
+    `on the outdoors the secrets told are every zone's, each a secret door where its zone lies (${told.length} of ${written}; ${zone?.id}'s ${mine.length}, as written), and none to a fair pilot`);
+}
+
 /** On and off, the fight handed to the bot, the box closed, the brains asked, a wipe. */
 function helm(): void {
   const g = piloted(), p = g.pilot!;
@@ -357,6 +389,12 @@ function helm(): void {
   g.pop();
   p.brains = [];
   ok(exploring === 'forward' && asking === 'cancel', `the brains are asked in order and the first key given is pressed: on the map the map's brain, on a question the next (${exploring}, ${asking})`);
+  // A brain that stops the pilot ends the tick (#723): the watchdog after it pressed a search, and its line over the stop's.
+  const halts = piloted(), hp = halts.pilot!;
+  hp.toggle(halts);
+  hp.brains = [(q, _k, me) => { me.stop(q, ['Halt here.']); return null; }, (_q, _k, me) => { me.why = ['Stuck: waiting a while.']; return 'search'; }];
+  const after = hp.next(halts);
+  ok(after === null && !hp.on && hp.why[0] === 'Halt here.' && hp.stopped?.[0] === 'Halt here.', `a brain that stops the pilot ends the tick: no brain after it presses a key, and its why line stands (${after}; "${hp.why[0]}")`);
 
   g.message('A test of the box.');
   ok(p.heard.at(-1) === 'A test of the box.' && p.next(g) === 'interact', 'a message box is heard as it opens, and closed with Space');
@@ -1649,4 +1687,33 @@ function riddles(): void {
       && !ep.on && band === 'The choice is yours.' && !ended && !Object.values(ENDINGS).some((e) => eg.party.flags[e.flag]) && ep.band() === null,
       `Wenna's question at the Heart${map ? ', Fane\'s map held' : ''}, each answer the Hearth chapter's end, is marked and stops the pilot: nothing answered, the band up and gone at the next key (${q?.options.join(' / ')}; "${band}")`);
   }
+}
+
+/**
+ * The full run's last chapter (#723, the delegate's first call): its end is an ending taken, which the
+ * pilot never takes. Played by the suite's own `play` under Wenna's question, the pilot's stop there
+ * counts and the first answer is pressed, so the ending holds; a stop with another why line is no finish.
+ */
+function lastChapter(): void {
+  const last = THE_QUEST.chapters.at(-1)!, wenna = (MAP_DEFS.find((d) => d.id === 'core')?.features ?? []).find((f) => f.kind === 'npc' && f.choice === CHOICE_TWO)!;
+  const heart = (): Game => {
+    const g = piloted();
+    Object.assign(g.party.flags, { [VASK_FALLEN]: 1, [VOICE_WHOLE]: 1 });
+    g.world.travel('core', wenna.x, wenna.y + 1, NORTH);
+    for (const s of Object.values(g.world.mapState.groups)) s.dead = g.world.state.minutes;
+    drive(g, ['forward']);
+    g.pilot!.brains = [talk];
+    return g;
+  };
+  const g = heart();
+  g.pilot!.toggle(g);
+  const run = play(g, last), taken = Object.values(ENDINGS).filter((e) => g.party.flags[e.flag]).map((e) => e.flag);
+  // The same question up, the pilot stopped under it with another line: not counted, nothing pressed.
+  const h = heart(), hp = h.pilot!;
+  hp.toggle(h);
+  for (let t = 0; t < 30 && hp.on; t++) drive(h, [null]);
+  hp.stop(h, ['The company has fallen.']);
+  const other = play(h, last), asked = h.top instanceof ChoiceScreen && h.top.ends;
+  ok(run.done && holds(last.done, g.world.state, g.party) && taken.length === 1 && !other.done && asked && !Object.values(ENDINGS).some((e) => h.party.flags[e.flag]),
+    `the full run's last chapter: the stop under the ending's question counts and the first answer is pressed, so the ending holds (${taken.join()}, in ${run.ticks} ticks); a stop with another why line does not count (${other.stop})`);
 }

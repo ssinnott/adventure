@@ -1477,6 +1477,16 @@ await page.keyboard.press('KeyP'); await page.waitForTimeout(100);
 const pilotAgain = (await pilotState()).on;
 await page.keyboard.press('ArrowLeft'); await page.waitForTimeout(100);
 const pilotArrow = (await pilotState()).on === false;
+// Then thirty seconds of its own play (#723): T twice back to 1x, P, and 1,800 frames, as many as 60 Hz
+// draws in thirty seconds; the company walks and no page error comes. P takes it back. The show, not the finish.
+const showStart = await page.evaluate(() => ({ steps: (window as any).__game.game.world.state.steps as number }));
+const showErrors = errors.length;
+await page.keyboard.press('KeyT'); await page.keyboard.press('KeyT'); await page.keyboard.press('KeyP');
+const showFrom = await (await page.waitForFunction(() => { const g = (window as any).__game.game; return g.pilot.on && g.frame; }, undefined, { timeout: 15000 })).jsonValue() as number;
+await page.waitForFunction((f: number) => (window as any).__game.game.frame >= f + 1800, showFrom, { timeout: 90000 });
+const show = await page.evaluate(() => { const g = (window as any).__game.game; return { on: g.pilot.on as boolean, tempo: g.pilot.tempo as number, steps: g.world.state.steps as number, why: g.pilot.why[0] as string }; });
+await page.keyboard.press('KeyP'); await page.waitForTimeout(100);
+const showOff = (await pilotState()).on === false, showNewErrors = errors.slice(showErrors);
 
 // Attract mode (#722), after the pilot. The title's forty-five seconds are the Node suite's (too long here), so
 // `attract()` starts it: a click on the canvas (the page's only touch: a tap is a pointerdown) brings the title back,
@@ -1521,6 +1531,8 @@ ok(screen2 === 'CombatScreen' && combatColours > 20, `a fight opens and paints (
   ok(pilotBand.on && Math.max(...pilotBand.at) < 100 && light(pilotBand.at) <= light(pilotBefore) * 0.6 + 4 && pilotOff,
     `P hands the game to the pilot, whose band darkens the top of the view 60 frames on (${pilotBefore.join(',')} to ${pilotBand.at.join(',')} at ${pilotAt.x},${pilotAt.y}), and P again takes it back (${pilotOff ? 'off' : 'still on'})`);
   ok(pilotTempo.on && pilotTempo.tempo === 2 && pilotAgain && pilotArrow, `T steps the pilot's tempo while it drives (${pilotTempo.tempo}×), and an arrow takes the game back as P does (${pilotArrow ? 'off' : 'still on'})`);
+  ok(show.on && show.tempo === 1 && show.steps > showStart.steps && showOff && showNewErrors.length === 0,
+    `the pilot plays thirty seconds at 1x, 1,800 frames, with no page error, the company walking (${showStart.steps} to ${show.steps} steps; "${show.why}"), and P takes it back (${showOff ? 'off' : 'still on'})${showNewErrors.length ? ' -> ' + showNewErrors.join(' | ') : ''}`);
   ok(attractStarted.top === 'ExploreScreen' && attractStarted.attracting && attractStarted.on && attractTapped.top === 'TitleScreen' && !attractTapped.attracting && !attractTapped.on && attractKeyed.top === 'TitleScreen' && !attractKeyed.attracting && !attractKeyed.on,
     `attract mode plays a game on the pilot (${attractStarted.top}), and a click on the canvas, as a tap sends one, brings the title back (${attractTapped.top}), as a key does (${attractKeyed.top})`);
 }
