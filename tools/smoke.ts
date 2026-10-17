@@ -1478,6 +1478,18 @@ const pilotAgain = (await pilotState()).on;
 await page.keyboard.press('ArrowLeft'); await page.waitForTimeout(100);
 const pilotArrow = (await pilotState()).on === false;
 
+// Attract mode (#722), after the pilot. The title's forty-five seconds are the Node suite's (too long here), so
+// `attract()` starts it: a click on the canvas (the page's only touch: a tap is a pointerdown) brings the title back,
+// and so does a key, through the real Input.
+const attractNow = (): Promise<{ top: string; attracting: boolean; on: boolean }> => page.evaluate(() => { const g = (window as any).__game.game; return { top: g.top.constructor.name, attracting: g.attracting, on: g.pilot.on }; });
+await page.evaluate(() => (window as any).__game.game.attract()); await page.waitForTimeout(150);
+const attractStarted = await attractNow();
+await page.click('#stage'); await page.waitForTimeout(150);
+const attractTapped = await attractNow();
+await page.evaluate(() => (window as any).__game.game.attract()); await page.waitForTimeout(150);
+await page.keyboard.press('ArrowLeft'); await page.waitForTimeout(150);
+const attractKeyed = await attractNow();
+
 await browser.close();
 server.close();
 
@@ -1509,6 +1521,8 @@ ok(screen2 === 'CombatScreen' && combatColours > 20, `a fight opens and paints (
   ok(pilotBand.on && Math.max(...pilotBand.at) < 100 && light(pilotBand.at) <= light(pilotBefore) * 0.6 + 4 && pilotOff,
     `P hands the game to the pilot, whose band darkens the top of the view 60 frames on (${pilotBefore.join(',')} to ${pilotBand.at.join(',')} at ${pilotAt.x},${pilotAt.y}), and P again takes it back (${pilotOff ? 'off' : 'still on'})`);
   ok(pilotTempo.on && pilotTempo.tempo === 2 && pilotAgain && pilotArrow, `T steps the pilot's tempo while it drives (${pilotTempo.tempo}×), and an arrow takes the game back as P does (${pilotArrow ? 'off' : 'still on'})`);
+  ok(attractStarted.top === 'ExploreScreen' && attractStarted.attracting && attractStarted.on && attractTapped.top === 'TitleScreen' && !attractTapped.attracting && !attractTapped.on && attractKeyed.top === 'TitleScreen' && !attractKeyed.attracting && !attractKeyed.on,
+    `attract mode plays a game on the pilot (${attractStarted.top}), and a click on the canvas, as a tap sends one, brings the title back (${attractTapped.top}), as a key does (${attractKeyed.top})`);
 }
 ok(mark.set && mark.asked.screen === 'ChoiceScreen' && mark.asked.options.join('|') === 'Return to the mark|Set it here' && mark.back, `with a mark set, Waymark asks whether to return or set it here, and returns (${JSON.stringify(mark)})`);
 ok(glass.asked === 'element' && glass.element === 'cold' && glass.line === 'Maren casts Lampglass. The glass dims the cold.', `Lampglass asks against what before it is cast, and casts the pick (${JSON.stringify(glass)})`);

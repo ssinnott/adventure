@@ -1,7 +1,7 @@
 // The Game: owns the world, the party, the rng and a stack of screens, and dispatches one input
 // action per fixed step to the top screen. Screens are small objects with update/render; the
 // exploration screen is here because it is the game's spine, the others live in ui/.
-import { rng } from '../lib/engine/rng.ts';
+import { rng, freshSeed } from '../lib/engine/rng.ts';
 import type { Rng } from '../lib/engine/rng.ts';
 import { World } from './world.ts';
 import { signSays } from './inscriptions.ts';
@@ -30,6 +30,7 @@ import { MessageScreen, ChoiceScreen, SheetScreen, serviceScreen, SpellScreen, I
 import { QuestScreen } from '../ui/quests.ts';
 import { questLog, questMarks, questNews } from './quests.ts';
 import { TitleScreen } from '../ui/title.ts';
+import { randomParty } from '../ui/create.ts';
 import { EndingScreen } from '../ui/ending.ts';
 import { endingTaken, endsIn } from './stones.ts';
 import { WorldMapScreen } from '../ui/worldmap.ts';
@@ -38,6 +39,13 @@ import { RiddleScreen } from '../ui/riddle.ts';
 import { stepLine, useShrine, openCairn, answerRiddle, restRefused, restAndWake } from './wilds.ts';
 import { approach, burn } from './dens.ts';
 import type { Pilot } from './pilot/pilot.ts';
+
+/**
+ * Attract mode's lines (#722): the band holds both over the pilot's own for the first three seconds,
+ * then the second stands under the pilot's first line for as long as the game plays.
+ */
+const ATTRACT_WHY: readonly [string, string] = ['The pilot plays.', 'Any key for the title.'];
+export const ATTRACT_HOLD = 60 * 3;
 
 export interface Screen {
   /** Called once per fixed step with the next queued action (or null). */
@@ -72,6 +80,13 @@ export class Game {
   maps: Record<string, GameMap> = buildMaps();
   /** The pilot (epic #713, docs/PILOT.md): src/main.ts builds one, as a test may; none otherwise. Never saved. */
   pilot: Pilot | null = null;
+  /**
+   * Attract mode (#722): the title sat idle and the pilot is playing a new game for watching, which
+   * saves nothing (`saveGame`) and gives way to a key (`update`). Outside the save, like the pilot.
+   */
+  attracting = false;
+  /** The frame attract mode began on, for its opening lines in the band. */
+  private attractFrom = 0;
 
   constructor(store: Store | null = browserStore()) {
     this.store = store;
@@ -93,6 +108,43 @@ export class Game {
     this.markQuests();
   }
 
+  /**
+   * A new game on a fresh seed with a company drawn from that seed alone (epic #713, Decided 11): the
+   * seed is picked first and the company built from it, so the seed replays the game (DESIGN §13). P
+   * on the title (`Pilot.toggle`) and attract mode start one so.
+   */
+  newRandomGame(): void { const seed = freshSeed(); this.newGame(seed, randomParty(seed)); }
+
+  /**
+   * Attract mode (DESIGN §1; #722): the title sat untouched, so a new game on a fresh seed plays itself
+   * with the pilot at the helm, as P on the title starts one. It saves nothing (`saveGame`), a wipe
+   * starts another on a new seed (`gameOver`) and a key of the viewer's brings the title back (`update`).
+   * The game has no sound to mute. A Game with no pilot has none to start.
+   */
+  attract(): void {
+    const p = this.pilot;
+    if (!p) return;
+    // The game before it is dropped whole, a riddle's text mode with it if one was open.
+    if (this.input) this.input.textMode = false;
+    this.newRandomGame();
+    this.attracting = true;
+    this.attractFrom = this.frame;
+    p.on = true;
+    p.why = [...ATTRACT_WHY];
+  }
+
+  /**
+   * The end of attract mode: the title again, with the pilot off and the game that played let go; nothing
+   * of it was saved. Its screens go without a word, so a riddle's text mode, which only the riddle
+   * turns off, is turned off here, or the keys that move the party would go on being typed.
+   */
+  private wake(): void {
+    if (this.input) this.input.textMode = false;
+    this.screens = [new TitleScreen(hasSave(this.store))];
+    this.attracting = false;
+    if (this.pilot) this.pilot.on = false;
+  }
+
   loadGame(): boolean {
     if (!this.store) return false;
     const data = loadFrom(this.store);
@@ -111,6 +163,8 @@ export class Game {
   }
 
   saveGame(): void {
+    // The game for watching is nobody's: attract mode writes no save.
+    if (this.attracting) return;
     if (!this.store) { this.say('No storage to save to.'); return; }
     this.say(saveTo(this.store, this.world.state, this.party, this.rng.state) ? 'Saved.' : 'Save failed.');
   }
@@ -127,6 +181,9 @@ export class Game {
     this.frame++;
     // Any key takes down the band a stop of the pilot's left up (P and T do in src/main.ts).
     if (a && this.pilot) this.pilot.stopped = null;
+    // Attract mode ends at a key of the viewer's, and the key is dropped. src/main.ts takes the helm
+    // before a viewer's key reaches the game, so a key that finds the pilot at it is the pilot's own.
+    if (a && this.attracting && !this.pilot?.on) { this.wake(); return; }
     this.top.update(this, a);
     // A visit ends the moment the last of its menus closes, so no frame shows the room without one,
     // and leaving a business is a return to exploring like any other.
@@ -142,6 +199,17 @@ export class Game {
     if (a) this.checkQuests();
   }
 
+  /**
+   * What the band over the view carries: the pilot's (`Pilot.band`). While attract mode plays it says so
+   * and how to leave: the opening lines for the first seconds, which the pilot's first action (a quarter
+   * of a second at 1×) would replace, then the pilot's own first line over the way out.
+   */
+  band(): ReturnType<Pilot['band']> {
+    const band = this.pilot?.band() ?? null;
+    if (!band || !this.attracting || !this.pilot?.on) return band;
+    return { ...band, lines: this.frame - this.attractFrom < ATTRACT_HOLD ? [...ATTRACT_WHY] : [band.lines[0], ATTRACT_WHY[1]] };
+  }
+
   render(ctx: CanvasRenderingContext2D): void {
     drawFrameBackground(ctx);
     // Draw the exploration frame under any overlay screen.
@@ -149,7 +217,7 @@ export class Game {
     for (let i = Math.max(0, base); i < this.screens.length; i++) this.screens[i].render(this, ctx, this.frame);
     // While the pilot drives, and after it stops itself until the next key, its why line in a band
     // over the top of the view, over every screen.
-    const band = this.pilot?.band(), v = LAYOUT.view;
+    const band = this.band(), v = LAYOUT.view;
     if (!band) return;
     ctx.fillStyle = 'rgba(0,0,0,0.6)';
     ctx.fillRect(v.x, v.y, v.w, 24);
@@ -368,6 +436,8 @@ export class Game {
   }
 
   gameOver(): void {
+    // A wipe in attract mode starts another game on a new seed at once: nobody is there to read the title.
+    if (this.attracting && this.pilot) { this.attract(); return; }
     // A wipe ends the pilot's run: it gives the helm back, and says why (epic #713, Decided 10).
     if (this.pilot?.on) this.pilot.stop(this, ['The company has fallen.']);
     this.screens = [new TitleScreen(hasSave(this.store), 'The party has fallen. Caldera goes on without them.')];
