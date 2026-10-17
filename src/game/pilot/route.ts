@@ -16,6 +16,7 @@ import { wrap } from '../../ui/draw.ts';
 import { measureText } from '../../lib/engine/text.ts';
 import type { Known } from './known.ts';
 import type { Brain, Pilot } from './pilot.ts';
+import { spare } from './purse.ts';
 
 export interface Goal {
   /** A map's id and one of its squares, or a zone map's id and a square in the zone's own reckoning (`World.locate` places it). */
@@ -116,22 +117,37 @@ export function routeNearest(k: Known, map: string, x: number, y: number, facing
   return found && { x: found.x, y: found.y };
 }
 
+/** A way from a map to another: an exit seen, or a crossing told (#721), whose square is its seller's and whose `crossing` is the route's name. */
+export interface Edge { exit: Exit; crossing?: string }
+
 /**
- * The maps and exits from `from` to `to` over the exits seen; null when none, [] when the two are one
- * map. Both are maps as played (a zone map's is the outdoors', `World.locate`), as `Known.visited` and
- * an exit's `to` give them: breadth-first, an edge for each exit Known gives. A map not walked has no
- * square seen, so the way goes over visited maps alone, as the issue has it; an omniscient pilot's
+ * A map's ways out as the navigator knows them: the exits Known gives, then the crossings told on it
+ * whose fare, as its menu showed it, the gold over the reserve pays (`spare`, #721), each from its
+ * seller's square to where it lands.
+ */
+export function edges(k: Known, map: string): Edge[] {
+  const cash = spare(k.party), told = k.offers().filter((o) => o.map === map && o.fare <= cash);
+  return [...k.exits(map).map((exit) => ({ exit })), ...told.map((o) => ({ exit: { x: o.x, y: o.y, to: o.to, tx: o.tx, ty: o.ty }, crossing: o.name }))];
+}
+
+/**
+ * The maps and exits from `from` to `to` over the exits seen and the crossings told (`edges`); null
+ * when none, [] when the two are one map. Both are maps as played (a zone map's is the outdoors',
+ * `World.locate`), as `Known.visited` and an exit's `to` give them: breadth-first, an edge for each
+ * exit Known gives and each crossing it pays for. A map not walked has no square seen, so the way goes
+ * over visited maps alone, as the issue has it, and the maps a crossing lands on; an omniscient pilot's
  * (#723) goes over any.
  */
-export function routeMaps(k: Known, from: string, to: string): { map: string; exit: Exit }[] | null {
+export function routeMaps(k: Known, from: string, to: string): ({ map: string } & Edge)[] | null {
   if (from === to) return [];
-  const back = new Map<string, { map: string; exit: Exit }>(), queue = [from];
+  const back = new Map<string, { map: string } & Edge>(), queue = [from];
   for (let i = 0; i < queue.length; i++) {
-    for (const exit of k.exits(queue[i])) {
-      if (exit.to === from || back.has(exit.to)) continue;
-      back.set(exit.to, { map: queue[i], exit });
-      if (exit.to !== to) { queue.push(exit.to); continue; }
-      const hops: { map: string; exit: Exit }[] = [];
+    for (const edge of edges(k, queue[i])) {
+      const next = edge.exit.to;
+      if (next === from || back.has(next)) continue;
+      back.set(next, { map: queue[i], ...edge });
+      if (next !== to) { queue.push(next); continue; }
+      const hops: ({ map: string } & Edge)[] = [];
       for (let at = to; at !== from; at = back.get(at)!.map) hops.push(back.get(at)!);
       return hops.reverse();
     }
@@ -205,11 +221,14 @@ export const route: Brain = (g, k, p) => {
   return key;
 };
 
-/** The keys to the nearest seen exit of this map that is the first of `routeMaps`'s way to `to`, or null; none over a square in `shut`. */
+/**
+ * The keys to the nearest way out of this map to the first map of `routeMaps`'s way to `to`, an exit
+ * seen or a crossing's seller (`edges`), or null; none over a square in `shut`.
+ */
 function toExit(k: Known, st: { mapId: string; x: number; y: number; facing: Facing }, to: string, shut: readonly { x: number; y: number }[]): Action[] | null {
   const next = routeMaps(k, st.mapId, to)?.[0]?.exit.to;
   let best: Action[] | null = null;
-  for (const e of next === undefined ? [] : k.exits(st.mapId)) {
+  for (const { exit: e } of next === undefined ? [] : edges(k, st.mapId)) {
     const keys = e.to === next ? routeOn(k, st.mapId, st.x, st.y, st.facing, e.x, e.y, shut) : null;
     if (keys && (!best || keys.length < best.length)) best = keys;
   }

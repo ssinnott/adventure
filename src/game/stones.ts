@@ -29,6 +29,12 @@ export function endingOf(flags: Readonly<Record<string, number>>): EndingId | un
   return (Object.keys(ENDINGS) as EndingId[]).find((id) => flags[ENDINGS[id].flag]);
 }
 
+/** The ending an answer would take, whatever the company holds: one whose flag it sets. No pilot answers such a question (#721). */
+export function endsIn(a: Pick<Answer, 'sets'>): Ending | undefined {
+  const sets = a.sets === undefined ? [] : typeof a.sets === 'string' ? [a.sets] : a.sets;
+  return Object.values(ENDINGS).find((e) => sets.includes(e.flag));
+}
+
 /** The ending an answer takes: one whose flag it sets, once the company holds it (an answer it could not pay for takes none). */
 export function endingTaken(a: Pick<Answer, 'sets'>, flags: Readonly<Record<string, number>>): Ending | undefined {
   const sets = a.sets === undefined ? [] : typeof a.sets === 'string' ? [a.sets] : a.sets;
