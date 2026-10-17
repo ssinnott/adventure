@@ -2,12 +2,17 @@
 # test, each its own job so the pull request shows each. Branch protection on main requires all three
 # and a branch up to date with main. No path filters: a pull request that touches only docs must
 # still report, or it waits on checks that never come. The contact sheet's job, last, is not one of
-# the three: it attaches pictures for the owner and is not required.
+# the three: it attaches pictures for the owner and is not required. Nor is the pilot's full run
+# (`fullrun`, docs/PILOT.md), which runs only when started by hand: a report, not a gate.
 name: Checks
 
 on:
   pull_request:
   workflow_dispatch:
+    inputs:
+      fullrun:
+        description: "The pilot's full run: the areas whose chapters it plays (FULLRUN: area ids, comma-separated, or all)"
+        default: all
 
 permissions:
   contents: read
@@ -41,6 +46,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+      # The pilot plays the shelf's chapter from a new game (tools/tests/fullrun.ts): about twenty seconds.
+      - run: FULLRUN=shelf node tools/test.ts fullrun
 
   smoke:
     runs-on: ubuntu-latest
@@ -74,6 +81,33 @@ jobs:
           name: smoke-screenshot
           path: smoke.png
           if-no-files-found: ignore
+
+  # The pilot's full run (tools/tests/fullrun.ts; docs/PILOT.md, Full runs): a new game played by the
+  # pilot alone, chapter after chapter, on the areas the run's `fullrun` input names (all unless
+  # changed). Started by hand only, never on a pull request: its result is a report, not a gate, until
+  # the pilot finishes those chapters. Its lines go into the run's summary; each chapter's play has ten
+  # minutes of the wall clock, fair and omniscient alike.
+  fullrun:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - shell: bash
+        run: node tools/test.ts fullrun 2>&1 | tee fullrun.txt
+        env:
+          FULLRUN: ${{ inputs.fullrun }}
+      - if: always()
+        shell: bash
+        run: |
+          { echo "### The pilot's full run (FULLRUN=${FULLRUN})"; echo; echo '```'; grep -E '^  (ok|FAIL|note)' fullrun.txt || echo 'no lines: the run did not start'; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+        env:
+          FULLRUN: ${{ inputs.fullrun }}
 
   # The contact sheet (tools/sheet.ts): the maps, monsters and interiors the pull request changed, on
   # one page for the owner to judge. Attached to the run, not a required check; a pull request that
