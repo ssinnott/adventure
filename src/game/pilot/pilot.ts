@@ -15,6 +15,8 @@ import { route, unroute } from './route.ts';
 import type { Goal } from './route.ts';
 import { keep } from './keep.ts';
 import { explore } from './explore.ts';
+import { aims, unaim } from './aims.ts';
+import type { Aim } from './aims.ts';
 
 export type Tempo = 1 | 2 | 4;
 export interface PilotOpts { instant?: boolean; omniscient?: boolean }
@@ -32,6 +34,7 @@ export type Brain = (g: Game, k: Known, p: Pilot) => Action | null;
  */
 export const BRAINS: readonly Brain[] = [
   keep,
+  aims,
   route,
   explore,
 ];
@@ -69,6 +72,16 @@ export class Pilot {
   /** A map or a zone the strategist would have explored (#720 sets it; the explorer only reads it). */
   prefer: string | null = null;
 
+  // The strategist's (#720).
+  /** What the pilot is for now (aims.ts): a quest's goal, a level to reach or a map to walk; null to choose anew. */
+  aim: Aim | null = null;
+  /** The world's minutes (`WorldState.minutes`) when the aim was set. */
+  aimSince = 0;
+  /** The goal's words when the aim was set: a quest aim is chosen anew once the log shows other words. */
+  aimGoal = '';
+  /** The goals given up (their words): three days on one with no way on (the lost rule). */
+  readonly lost = new Set<string>();
+
   /** Ticks counted since it took the helm, for the pace. */
   private ticks = 0;
   /** The fight last handed to the bot: each is handed once. */
@@ -86,12 +99,13 @@ export class Pilot {
 
   /**
    * A new company has heard nothing and is bound nowhere: a new game or a load empties the corpus, the
-   * goal, its plan and the squares found shut, the walls searched and the map preferred (Game.newGame,
-   * Game.loadGame).
+   * goal, its plan and the squares found shut, the walls searched and the map preferred, the aim and
+   * the goals given up (Game.newGame, Game.loadGame).
    */
   forget(): void {
     this.heard.length = 0; this.goal = null; this.plan = []; this.shut.length = 0; unroute(this);
     this.searched.clear(); this.prefer = null;
+    this.aim = null; this.lost.clear(); unaim(this);
   }
 
   /**
@@ -103,10 +117,11 @@ export class Pilot {
     this.stopped = null;
     if (this.on) {
       this.on = false;
-      // The viewer may walk anywhere: the goal and its plan go with the helm.
+      // The viewer may walk anywhere: the goal and its plan go with the helm, and the aim is chosen anew.
       this.goal = null;
       this.plan = [];
       unroute(this);
+      this.aim = null;
       if (g.top instanceof CombatScreen) g.top.auto = false;
       g.say('You take the helm.');
       return;

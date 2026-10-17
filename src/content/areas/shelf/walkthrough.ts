@@ -5,7 +5,7 @@
 // log reads true and the people stand where it says. Last, Helmstow before and after Act II (#157).
 import type { Walkthrough } from '../../area.ts';
 import { CHAPTER } from './chapter.ts';
-import { newWalk, meetWho, walkThrough, see, fight, playChapter, quest, listen } from '../../../../tools/walk.ts';
+import { newWalk, meetWho, walkThrough, see, fight, playChapter, quest, listen, pilotPlays } from '../../../../tools/walk.ts';
 import type { Step, Walk } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import { wrap } from '../../../ui/draw.ts';
@@ -126,6 +126,9 @@ export const walkthrough: Walkthrough = (ok) => {
   roadBehind(ok);
   keepHandIns(ok);
   trainers(ok);
+  // The pilot from a new game, every key its own (#720): to the keep, where the chapter begins with
+  // a word with Vask that only talk has; the chapter's end is talk's to reach (#721).
+  pilotPlays(ok, CHAPTER, { visited: 'keep' });
 };
 
 /**

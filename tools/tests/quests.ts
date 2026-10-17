@@ -12,7 +12,7 @@ import { World } from '../../src/game/world.ts';
 import { defaultParty, takeItem, takePrestige, prestigeOf } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
 import { serialize, deserialize } from '../../src/game/save.ts';
-import { questLog, questMarks, questNews } from '../../src/game/quests.ts';
+import { questLog, questMarks, questNews, goalMap } from '../../src/game/quests.ts';
 import { handIns, personFlags, groupFlags } from '../../src/game/people.ts';
 import type { Chapter, LogQuest, PageView, QuestCond, QuestDef, QuestView, When } from '../../src/game/quests.ts';
 import { questSheets, chapterHeading, openingSheet, PAGE, LIST } from '../../src/ui/quests.ts';
@@ -83,6 +83,17 @@ export function quests(): void {
     features: [{ kind: 'event', x: 0, y: 0, id: 'fx_crossing', text: 'Riders.', once: true, sets: 'fx_crossed' }] };
   ok(!condFaults({ flag: 'fx_crossed' }, [crossing]).length && condFaults({ flag: 'fx_crossed' }, []).join() === 'flag fx_crossed',
     'a flag an event sets names something real, as one a person sets does');
+  // goalMap (#720): the map the shown goal is done on, read back from the goal, as the chapter moves.
+  const shelf = AREAS.find((a) => a.id === 'shelf')!.chapter!, gp = defaultParty(makeRng(4)), gw = new World(buildMaps(), gp, makeRng(4));
+  // The chapter as the one quest's only chapter, and as a quest of its own, as the log shows a side quest.
+  const asOne: LogQuest = { id: 'fx_one', title: 'One', chapters: [shelf] }, views = (): QuestView[] => questLog(gw.state, gp, [asOne, shelf], []);
+  gp.flags.q_ashcombe = 1;
+  const hired = views(), hiredAt = hired.map(goalMap);
+  gp.flags.q_ashcombe_done = 1;
+  gp.flags.q_wenna = 1;
+  const firstGoal = views(), firstAt = firstGoal.map(goalMap), named = shelf.goals.find((q) => q.text === hired[0].goal)?.at;
+  ok(hired.length === 2 && firstGoal.length === 2 && firstGoal.every((v) => v.goal === shelf.goals[0].text) && firstAt.every((m) => m === shelf.goals[0].at) && hiredAt.every((m) => m === named) && named !== shelf.goals[0].at,
+    `goalMap gives the map the shown goal names, in the one quest and in a quest of its own: ${hiredAt.join(' and ')} once hired, then ${firstAt.join(' and ')} for the chapter's first goal (${shelf.goals[0].at})`);
   // A reading is kept by its inscription's id (#538), so `seen` names it; a plain sign is kept by nothing.
   const lintel: MapDef = { ...crossing, features: [{ kind: 'sign', x: 0, y: 0, id: 'fx_lintel', text: 'Marks.', read: 'STORE.' }, { kind: 'sign', x: 1, y: 0, text: 'A post.' }] };
   ok(!condFaults({ seen: 'fx_shore:fx_lintel' }, [lintel]).length && condFaults({ seen: 'fx_shore:fx_post' }, [lintel]).join() === 'seen fx_shore:fx_post',

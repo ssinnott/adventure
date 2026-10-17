@@ -12,9 +12,9 @@ until the test gives it one. It presses the keys a player would: every move is a
 `Game.update`, and nothing teleports or is bought off screen.
 
 Built so far: the frame (#716) over the bot's fights (#714), the navigator (#717), the explorer
-(#718) and the quartermaster (#719). Until the other brains land (#720, #721) the quartermaster sets
-a goal for what the company needs and the explorer every other: the pilot walks the map it is on,
-outdoors its zone, until it is walked out, hands each fight to the bot and closes each message box.
+(#718), the quartermaster (#719) and the strategist (#720). Until talk lands (#721) the pilot meets
+nobody on purpose and answers no question: it walks to the one quest's goal and the land around it,
+hands each fight to the bot and closes each message box, and a person's question on top stops it.
 
 ## Using it
 
@@ -37,7 +37,8 @@ outdoors its zone, until it is walked out, hands each fight to the bot and close
 ## Fair: Known
 
 Every brain reads the world through `Known` (`knownOf(g)`, `src/game/pilot/known.ts`) and never
-through `g.world`, `g.maps` or a `MapDef`:
+through `g.world`, `g.maps` or a `MapDef`, but the world map's own data as the world map shows it
+(a place's zone, names, a zone's box; #720, decision 20):
 
 - the automap's bits (`seen`) and the cells of seen squares as the automap inks them (`cell`): a
   secret door is a wall, and no cell carries its legend letter;
@@ -60,7 +61,10 @@ through `g.world`, `g.maps` or a `MapDef`:
 - a map's bounds and a zone's box on the outdoors (`box`, #718), as the automap and the world map
   draw them, and nothing else of either; a place's band as the almanac gives it (`band`, #718): a
   zone's once the party has set foot in it, a town's or a dungeon's once visited; and how many
-  squares of a map are seen (`seenCount`, #718).
+  squares of a map are seen (`seenCount`, #718);
+- the journal's goals (`goals`, #720): each open quest's goal as its page shows it and the map that
+  goal is done on (`goalMap`, `src/game/quests.ts`), and no goal or map the log has not shown; and
+  the zones set foot in (`zones`), as the almanac has said them.
 
 A zone map's id (a goal's map may be one) names the outdoors it lies in, in one reckoning: every
 reader takes and gives the outdoors' squares, as `g.world.state` has them while the party is there,
@@ -69,8 +73,8 @@ reckoning goes through `World.locate` first. Features and exits of seen squares 
 them now, not as last seen. The headless run's `omniscient` pilot (#723) has every square seen; the
 game never sets it.
 
-Not in `Known` yet, built by the first issue that uses it, with its own fairness test: a goal's map,
-read once seen (#720).
+Each reader came with the first issue that used it, and its own fairness test: a goal's map is
+read once the journal shows the goal (#720).
 
 ## Brains
 
@@ -87,7 +91,7 @@ goal is walked, and a goal it sets it walks at once, asking `route` for the firs
 `route` (#717) walks `Pilot.goal`, a square and the name the why line gives it ("Bound for the
 lane."), one key a call with the map on top: `forward` and the turns, never `back` or a strafe, so
 the party faces where it goes. Its routes go breadth-first over the squares Known has a cell for that
-the company can cross, round the groups the automap marks and onto an exit only at the end; from map
+the company can cross, round the groups the automap marks and onto an exit, a rift or a business's door only at the end (#720); from map
 to map they go by the exits seen. A secret door is a wall to it until a search finds it; a gate is
 learnt by trying it. A step that leaves the party where it stood with no screen shown since is a
 block: the plan is made afresh, and at the third block the goal goes ("The lane is shut to me."),
@@ -141,13 +145,32 @@ gold over it (`spare`). A shop whose wares it has not seen is looked at when the
 is as much again as the reserve. A place gone to for a need that took no gold is not gone to again
 for it until the gold moves or the need goes.
 
+## The strategist
+
+`aims` (#720) says what the pilot is for (`Pilot.aim`, chosen by `chooseAim`): the one quest's goal;
+else a side or seeking quest's, the nearest first; levelling in the nearest zone it can, to the level
+under the goal's zone's floor, where that zone's band as Known gives it starts above the company's
+level and one ("Levelling in the Foreland to 4."); else walking the land ("Walking the Keep."). To a
+goal's map it goes by the exits seen ("Bound for Callow Downs: Ashcombe is past Gullwick..."), else
+by the zones between, and there it hands the map to the explorer (`Pilot.prefer`); it opens a chest
+it stands on and goes to one seen there; walked out, it walks the place again end to end, so that the
+days pass. Three days of the world's on one goal with no change in its words, it says "Lost in the
+Foreland: three days, and no way on.", gives the goal up (`Pilot.lost`) and turns to the next aim;
+three days levelling with no level gained, "Three days in the Foreland, and no stronger."; either is
+tried again once anyone gains a level or a flag is set. Over a line into a zone too hard for the
+company that its aim is not in, it turns back to the square before the line, once a crossing ("Too
+strong for us yet: back."). It meets nobody: a chapter begins and moves on by words that are talk's (#721).
+
 ## The files
 
 | File | Owns |
 |---|---|
-| `src/game/pilot/pilot.ts` | `Pilot`: on and off (`toggle`), a stop of its own (`stop`), the tempo and the pace, the why line and what the band shows (`band`), the corpus heard (`hear`, `forget`), the next key (`next`), the navigator's goal, plan and squares found shut (`goal`, `plan`, `shut`), the explorer's walls searched and the map preferred (`searched`, `prefer`) and `BRAINS`: the brains in the order asked (fight, keep, aims, route, explore, talk), each slot absent until its module lands |
-| `src/game/pilot/known.ts` | `Known` and `knownOf`, the fair view; `fair`, a feature as the party knows it; what a menu has shown (`wares`, a Buy list's; `trainsTo`, a trainer's top level; #719); a map's or a zone's bounds, a place's band and the squares seen, counted (`box`, `band`, `seenCount`, #718) |
+| `src/game/pilot/pilot.ts` | `Pilot`: on and off (`toggle`), a stop of its own (`stop`), the tempo and the pace, the why line and what the band shows (`band`), the corpus heard (`hear`, `forget`), the next key (`next`), the navigator's goal, plan and squares found shut (`goal`, `plan`, `shut`), the explorer's walls searched and the map preferred (`searched`, `prefer`), the strategist's aim, since when, its goal's words and the goals given up (`aim`, `aimSince`, `aimGoal`, `lost`, #720) and `BRAINS`: the brains in the order asked (fight, keep, aims, route, explore, talk), each slot absent until its module lands |
+| `src/game/pilot/known.ts` | `Known` and `knownOf`, the fair view; `fair`, a feature as the party knows it; what a menu has shown (`wares`, a Buy list's; `trainsTo`, a trainer's top level; #719); a map's or a zone's bounds, a place's band and the squares seen, counted (`box`, `band`, `seenCount`, #718); the journal's goals with their maps and the zones set foot in (`goals`, `zones`, #720) |
 | `src/game/pilot/keep.ts` | the quartermaster (#719): `needs` and `need` (what the company needs, the most urgent first), `better` (the best a member can wear for the gold), `reserve`, `spare` and the brain `keep` |
+| `src/game/pilot/aims.ts` | the strategist (#720): `Aim`, `chooseAim` (what the pilot is for), `LOST_MINUTES` (the lost rule's three days) and the brain `aims`, with the lost rule, the band rule, the chests and the walk again; what it keeps between ticks (the zone and square of its last look, the goals lost at what level, the places walked out) it keeps by pilot (`unaim` forgets it) |
+| `src/game/quests.ts` | `goalMap` (#720): the map a quest's shown goal is done on, read back from the goal |
+| `tools/walk.ts` | `pilotPlays` (#720): a chapter played from a new game by the pilot alone, every brain asked, until its end or the point a play names |
 | `src/game/pilot/route.ts` | the navigator (#717): `Goal` (with the reason or the why line its brain gives it), `routeOn` (the keys over one map), `routeLengths` (the length of the route to every square, in one search), `routeNearest` (the nearest of a set of squares, the search stopped there), each round the squares found shut it is given, `routeMaps` (the exits from map to map), the brain `route` and `unroute` (what it kept of a goal, forgotten); it reads a cell by `passableCell` (`src/game/map.ts`) and the groups as the automap marks them (`markedGroups`, `src/ui/frame.ts`) |
 | `src/game/pilot/explore.ts` | the explorer (#718): `frontier` (seen squares with an unseen one beside them), `suspects` (walls with seen floor on both sides) and the brain `explore`; a zone's box and band it reads through `Known.box` and `Known.band`, and the zone a square lies in by `zoneAt` (`src/game/map.ts`), as the world map draws the boxes |
 | `src/game/ink.ts` | `drawnCell`: what a cell is drawn as, which the view, the automap and Known share |
@@ -253,3 +276,28 @@ Decided by delegate for #719, each the owner's to overturn:
 13. **The first menu's trade is opened again only after the last opening spent gold**, so a trade that can do nothing (a room the company cannot pay for) is not opened twice; then the quartermaster picks Leave. Talk (#721) may want the `Talk to` rows before it.
 14. **Training wants one standing**, as the trainer's own rows do; a shop's rations are bought only while under two a head, at the price shown; nothing is sold and what a chest gives is not worn (only what was bought), a want left for later.
 15. **The frame keeps a line a brain said with no key** (`Pilot.next`): "Nothing to do." only when no brain said why that tick. So the quartermaster's want stands, the most urgent need it cannot meet and why not ("Hurt, and no gold for a room."), where it stood "Nothing to do." for as long as the want lasted; and the navigator's "No way to ..." and "... is shut to me." show for the tick they are said.
+
+
+Decided by delegate for #720, each the owner's to overturn:
+
+1. **The chapter waits on talk from its first word, so the shelf's play stops at the keep.** The Quiet Farm begins with Vask's hire, a word at the keep's door (a business's door, which the explorer never steps on), before the journal shows any goal; then Hild at Gullwick and the wand handed in at the keep are words too. So `pilotPlays(ok, CHAPTER, { visited: 'keep' })` plays a new game with every brain to the keep, where Vask's door is seen (1,124 ticks, about 2 seconds), and `holds(CHAPTER.done)`, `pilotPlays`'s own default, is #721's to meet: it drops the third argument. The goal that needs #721 is the hire ("The Regent-Warden is hiring", the opening's line), and with it every goal of the chapter.
+2. **A question on top stops the pilot until talk lands.** No brain yet answers a person's or a den's choice, and the strategist acts only with the map on top (#716's review): a new game's pilot steps onto Wulfric, the keep's armourer, at about tick 1,160 and stands under his menu of prestiges; a company hired by hand walked from the keep through Helmstow and the Foreland into Callow Downs, and stood under a choice there within 10,000 ticks.
+3. **`chooseAim` on `headlessGame(4)` is the quest aim once the company is hired.** A new game's log shows no quest (the one quest is in it once a chapter is begun), so the test walks the company onto Vask's door, the test's privilege as `world.travel` is the issue's, and checks that before the hire the aim is to walk Helmstow.
+4. **Known gains `goals` and `zones` but no second band.** A goal's map comes only from the goal the journal shows (`goalMap`), and its test fails if any other goal's map comes through; a zone's band is #718's `band`. The log is worked out afresh only when something it reads has moved (`logKey`), as the strategist asks for it every tick: `questLog` was the run's largest cost.
+5. **"A level gained" is anyone's.** The issue's test levels one member, which moves the company's level (the mean, rounded down) not at all, so a lost goal keeps the members' levels summed and the flags counted when it was given up.
+6. **The aim is chosen anew on more than its goal's words**: also when its zone's band is learnt too high (on the crossing) and a zone to level in is known, when the level is reached, when a quest's goal comes to a company walking the land and when the place walked is walked out. On the words alone a zone learnt too hard would never turn to levelling.
+7. **A map's zone is the built zone map**: a zone map's own id, or a town's or a dungeon's home map (`homeMap`), whose band the crossing line and the almanac give (`Known.band`); the atlas's zone has a planned band no screen shows. The lost line names the world map's area (`areaOf`): "Lost in the Foreland".
+8. **Walking the land (the issue's rule 4) goes on past the maps visited**: the party's map or zone until walked out; then a town's or a dungeon's own doors to a map not visited (the keep's gate from Helmstow); then the nearest map visited or zone set foot in not walked out; then a zone not set foot in beside one that was; then any exit seen to a map not visited. "The nearest visited map with a frontier" alone never leaves Helmstow, as the explorer's frontier leaves exits out (#718, decision 1).
+9. **Towards a zone nothing seen leads into, the zones between**: where the explorer says "No way to Callow Downs that I have seen.", the strategist has it walk the zone beside the party's that lies nearest the goal's, then the party's own (#718 left bringing the party nearer to #720).
+10. **Walked out, the place is walked again**, to its farthest square seen and back ("Searching Callow Downs again."); where the party is neither on the aim's map nor in its zone, where it stands. A pilot that gives no key stops the world's clock, and the lost rule's three days would never come. It never ends on a person: a meeting is talk's, with a goal to them (#721).
+11. **Chests: one stood on is opened, one seen in the aim's place is gone to** ("To the chest."). The issue counts on the chests on the way to move the goal and no brain opened one; the keeper's log at Crowness, in The Quiet Farm's end, is one. Space is pressed once a chest, so one under another feature is not pressed for ever.
+12. **The band rule reads the zone changing between two looks, not the crossing's words**: a crossing says nothing where the floor does not rise, and the zone's band is known from the step that set foot in it. The square before the line is the party's at the strategist's last look.
+13. **The navigator goes round a business's door and ends on one** (`route.ts`, #717): on the Foreland a plan through the Ellerby Farm's door went into the shop, the visit put the party back before the door, and the plan went through it again, for ever.
+14. **The helm taken back drops the aim**, chosen anew when the pilot takes it again; the goals given up stay given up; a new game or a load forgets both, with what the strategist kept.
+15. **The quartermaster's test of a need it cannot meet names its brains** (keep, route, explore), as #718 had the frame's and the navigator's tests do (its decision 15): with the strategist asked too, a company with nothing it can meet walks on, so the want does not stand. Its checks are as they were.
+16. **The why line**: "Bound for Callow Downs: Ashcombe is past Gullwick: west on the Salt..." (the goal cut at a word by 48 characters), "Levelling in the Foreland to 4." and "Walking the Keep." on the tick the aim is chosen; on the way the navigator's and the explorer's lines take the band, as before.
+17. **The play is in the default run**: about 2 seconds of the shelf's walkthrough, so nothing waits on the `fullrun` suite or `FULLRUN` (#723).
+18. **A level aim has the lost rule's three days too**: three days of the world's with the company's level unchanged (each level gained starts them afresh), it says "Three days in the Foreland, and no stronger.", puts `level:shelf` in `lost` and clears the aim; tried again once anyone gains a level or a flag is set, as a goal is. Only training raises a level, and a company that has seen no trainer would level for ever (the review's probe fought 25 fights in six days at level 1 and fell). A goal whose zone is too hard with no zone left to level in is passed over, as a goal lost is, so the land is walked and a trainer found.
+19. **The band rule turns back once a crossing**: over the same line again with no level or flag gained since, the party goes on, so a route that clips a corner of a hard zone (#718, decision 12) does not go to and fro for ever. A crossing that leads on into the hard zone is then ended only by a quest's or a level aim's lost rule.
+20. **`aims.ts` reads the world map's own data (the atlas: a place's home zone, names, a zone's box) directly**: it is what the world map shows; it never reads a map's cells, groups, secrets or gates.
+21. **`goalMap` matches a goal by its words**, as `sought` does: no quest today has two goals with the same words on different maps (237 goal lists scanned: every quest, every chapter and the seeking quests at seven levels), so the match is safe.

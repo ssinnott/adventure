@@ -48,7 +48,9 @@ const id = (q: State): number => sq(q) * 4 + q.f;
  */
 function search(k: Known, map: string, x: number, y: number, facing: Facing, end?: (q: State) => boolean, shut: readonly { x: number; y: number }[] = []): { queue: State[]; from: Map<number, [number, Action]>; found?: State } {
   const can = partyCan(k.party), held = new Set([...k.groups(map), ...shut].map(sq));
-  const leaves = new Set([...k.exits(map), ...k.features(map).filter((f) => f.kind === 'rift')].map(sq));
+  // A business's door takes the party in and puts it back before the door: a route ends on one, and
+  // goes on from none, or every plan through it would visit again (#720).
+  const leaves = new Set([...k.exits(map), ...k.features(map).filter((f) => f.kind === 'rift' || ('interior' in f && !!f.interior))].map(sq));
   const read = new Map<number, boolean>();
   const open = (q: State): boolean => {
     let o = read.get(sq(q));
