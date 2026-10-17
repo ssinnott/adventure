@@ -50,8 +50,8 @@ with the Ice Caves and the Vault, #56's 62 and 63 and the artifacts they hold), 
 the Master trainers, nine of the twelve secondary skills and the Stretch tier (docs/DESIGN.md §12).
 None is filed, and v1 ships without them.
 
-The gate reports 86 figures owed to #18, each a company two levels under a floor winning more of its
-fights than the aim allows. They are reported, not failed (docs/EXPANSION.md §5.2).
+The gate reports 86 figures owed to #18: in each, a company two levels under a floor wins more of
+its fights than the aim allows. They are reported, not failed (docs/EXPANSION.md §5.2).
 
 The world's end is drawn as the atlas paints it, the sea running on and the rim standing (#829). The
 owner has filed the land under it as an epic, #828, with eight area issues (#830 to #837), approved
