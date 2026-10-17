@@ -382,10 +382,10 @@ Cairnmoor's. One map is past its limit, owed to #865: `cairnfield_m8`, whose two
 
 Decided by the owner's delegate for #18, each the owner's to overturn:
 
-1. **From 10, "well under, back" is the day, not the fight.** The aim was written for Act I's slope;
-   past it the gate lives in attrition, and no tier, item or counter could bring a fight two under
-   to nine in ten without the cliff DESIGN.md §1 forbids. The limits of #273 are not moved: a figure
-   is named anew, with its reason.
+1. **Past 10, "well under, back" is the day, not the fight** (read as from 10: the builder's 1).
+   The aim was written for Act I's slope; past it the gate lives in attrition, and no tier, item or
+   counter could bring a fight two under to nine in ten without the cliff DESIGN.md §1 forbids. The
+   limits of #273 are not moved: a figure is named anew, with its reason.
 2. **Judged per map and per area, on 100 seeds, dealt.** A share wants fewer seeds than the floor's
    day, judged to a tenth of a fight on 300. A boss is left out of the day, as at the floor.
 3. **Act I keeps its figure:** two under, a quarter, limit nine in ten. There two levels are a cliff
@@ -406,7 +406,7 @@ Decided by the builder for #851, each the owner's to overturn:
    two under past Act I, the 76 owed among them, each have a day.
 3. **`cairnfield_m8`'s day is owed to #865 by name** at its figure (109.3%, and 106.3% on 300 seeds), not
    re-sized here: a group re-sized is the area lane's, and #865 re-sizes every group past its limit
-   past 10 on the company it makes. One map past the limit does not stop the gate.
+   past 10 on the company it makes. One map is not the more than five of the delegate's 6.
 4. **The key is `<map or area>: under day`,** a new one, since the figure is not the one the rows held.
 
 ### 5.3 Density: the map is the reward
