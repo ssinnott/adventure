@@ -26,7 +26,8 @@ dependencies, and nothing compiled to disk during development.
 - [docs/NAMES.md](docs/NAMES.md) — how places are named: each people's tongue, the few old names
   the first crew left, and the rules a rename follows.
 - [docs/PILOT.md](docs/PILOT.md) — the pilot that plays the game for watching: P and T, the why
-  line, the fair view it plays by (`Known`), its files and the calls made building it.
+  line, the fair view it plays by (`Known`), how far it gets, its files and the calls made building
+  it.
 
 ## Where it stands
 
@@ -42,8 +43,9 @@ from the Foreland to the Heart. v1 holds:
   behind it, a group included; woods hide nothing (docs/SLICE.md);
 - the pilot (docs/PILOT.md), which plays for watching. It finishes The Quiet Farm, the shelf's first
   chapter, from a new game on most seeds and companies. It goes on into Thornmark's, where the fair
-  pilot does not finish and the omniscient one fails too. `npm test` runs the shelf's full run
-  (`node tools/test.ts fullrun`); a CI job, `fullrun`, started by hand, reports the rest.
+  pilot does not finish and the omniscient one fails too; the ten chapters after are not reached.
+  `npm test` runs the shelf's full run (`node tools/test.ts fullrun`); a CI job, `fullrun`, started
+  by hand, reports the rest.
 
 Post-v1, by decision on 16 October 2026: the reach (the Glass and the Buried Tower, Glacier Foot
 with the Ice Caves and the Vault, #56's 62 and 63 and the artifacts they hold), the skill tiers with
