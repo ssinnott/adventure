@@ -3,7 +3,8 @@
 // `g.maps` or a map as written: the automap's bits, its cells as the automap inks them, the features,
 // exits and groups it marks, the maps walked, the world map as it is painted, the lines said and the
 // company. Nothing here gives a map's secrets or encounters as written, a gate's terms or what a
-// person, a statue or a shop holds: a group is a square the automap marks, and no more.
+// person or a statue holds, nor a shop's wares before its menu has shown them: a group is a square
+// the automap marks, and no more.
 import type { Game } from '../game.ts';
 import type { Cell, Exit, Feature, GameMap, MapZone } from '../map.ts';
 import type { Party } from '../party.ts';
@@ -12,7 +13,9 @@ import { drawnCell } from '../ink.ts';
 import { mapPlace } from '../atlas.ts';
 import { spentId } from '../wilds.ts';
 import { onAutomap, markedGroups } from '../../ui/frame.ts';
-import { ATLAS, MAP_DEFS } from '../../content/index.ts';
+import { ChoiceScreen, InteriorScreen } from '../../ui/screens.ts';
+import { optionParts } from '../../ui/draw.ts';
+import { ATLAS, ITEMS, MAP_DEFS } from '../../content/index.ts';
 
 /** A cell as the automap inks it, its legend letter gone: a secret door is a wall and no more. */
 export type Inked = Omit<Cell, 'ch'>;
@@ -24,7 +27,8 @@ export interface Known {
   cell(map: string, x: number, y: number): Inked | undefined;
   /**
    * The features the automap marks on seen squares (`onAutomap`: no event, there now, not spent),
-   * each a fair copy (`fair`): what only a meeting, a menu or a use shows is blank or gone.
+   * each a fair copy (`fair`): what only a meeting, a menu or a use shows is blank or gone, but a
+   * shop's wares and prices and a trainer's top level once its menu has shown them (#719).
    */
   features(map: string): Feature[];
   /** The exits on seen squares that are there now, as the automap marks them: where each leads, and no gate's terms. */
@@ -51,10 +55,12 @@ export interface Known {
  * are those in the zone's box. A goal's square written in the zone's own reckoning goes through
  * `World.locate` before it is compared. Features and exits of seen squares are as the world has them
  * now, not as last seen (a known simplification). A pilot's `omniscient` (the headless run, #723)
- * has every square seen.
+ * has every square seen. Each look notes what the menu on top shows (`look`), so a shop's wares and
+ * a trainer's top level are known from the first time their menus are seen.
  */
 export function knownOf(g: Game): Known {
   const w = g.world, all = g.pilot?.omniscient ?? false;
+  look(g, shownTo(g.party));
   const seenOn = (m: GameMap, x: number, y: number): boolean => {
     if (!m.inBounds(x, y)) return false;
     const ms = w.state.maps[m.id];
@@ -83,7 +89,8 @@ export function knownOf(g: Game): Known {
       const used = w.state.maps[p.m.id]?.used ?? {};
       // As the automap marks them: a den standing or burnt, any other spent thing gone.
       const spent = (f: Feature): boolean => { const id = spentId(f); return f.kind !== 'den' && !!id && !!used[id]; };
-      return p.m.features.filter((f) => inBox(p.box, f.x, f.y) && seenOn(p.m, f.x, f.y) && onAutomap(w, f) && !spent(f)).map(fair);
+      const menus = shownTo(g.party);
+      return p.m.features.filter((f) => inBox(p.box, f.x, f.y) && seenOn(p.m, f.x, f.y) && onAutomap(w, f) && !spent(f)).map((f) => fair(f, menus.get(`${p.m.id}:${f.x},${f.y}`)));
     },
     exits(map) {
       const p = played(map);
@@ -106,17 +113,18 @@ export function knownOf(g: Game): Known {
  * A feature as the party knows it before it is met, used or bought from: its kind, its square, its
  * id and the name its hint shows. Words are '' and lists [] until said or shown, a number is NaN and
  * a gift {}; what it would say, ask, sell, teach or give, and when it is there, is gone. A rift keeps
- * where it leads, as an exit does.
+ * where it leads, as an exit does. A shop's wares and their prices and a trainer's top level are
+ * what its menu has shown, if it has (`seen`), and blank till then.
  */
-function fair(f: Feature): Feature {
+function fair(f: Feature, seen?: Shown): Feature {
   const { x, y } = f, named = 'name' in f && f.name ? { name: f.name } : {};
   switch (f.kind) {
     case 'sign': return { kind: 'sign', x, y, text: '' };
     case 'inn': return { kind: 'inn', x, y, name: f.name, interior: f.interior, price: NaN };
     case 'temple': return { kind: 'temple', x, y, name: f.name, interior: f.interior };
-    case 'shop': return { kind: 'shop', x, y, name: f.name, interior: f.interior, stock: [] };
+    case 'shop': return { kind: 'shop', x, y, name: f.name, interior: f.interior, stock: [...seen?.stock ?? []], ...(seen?.prices ? { prices: { ...seen.prices } } : {}) };
     case 'guild': return { kind: 'guild', x, y, name: f.name, interior: f.interior, classes: [], fee: NaN };
-    case 'trainer': return { kind: 'trainer', x, y, name: f.name, interior: f.interior, maxLevel: NaN };
+    case 'trainer': return { kind: 'trainer', x, y, name: f.name, interior: f.interior, maxLevel: seen?.maxLevel ?? NaN };
     case 'chest': return { kind: 'chest', x, y, id: f.id, gold: NaN, items: [] };
     case 'npc': return { kind: 'npc', x, y, name: f.name, lines: [], ...(f.interior ? { interior: f.interior } : {}) };
     case 'rift': return { kind: 'rift', x, y, id: f.id, to: f.to, tx: f.tx, ty: f.ty, ...(f.tf === undefined ? {} : { tf: f.tf }) };
@@ -129,4 +137,51 @@ function fair(f: Feature): Feature {
     case 'well': return { kind: 'well', x, y, text: '' };
     case 'event': return { kind: 'event', x, y, id: f.id, text: '' };
   }
+}
+
+/** What a business's menu has shown (#719): a shop's wares and their prices, in its Buy list, and a trainer's top level, in its words. */
+interface Shown { stock?: string[]; prices?: Record<string, number>; maxLevel?: number }
+/**
+ * What the menus have shown each company, by the business's square ('map:x,y', the map as played):
+ * kept outside the save, as the corpus is, and a new game's or a load's company has seen none.
+ */
+const SHOWN = new WeakMap<Party, Map<string, Shown>>();
+function shownTo(p: Party): Map<string, Shown> {
+  let m = SHOWN.get(p);
+  if (!m) SHOWN.set(p, (m = new Map()));
+  return m;
+}
+
+/**
+ * Notes what the menu on top shows of the business the party is in (the visit's square): a Buy
+ * list's wares and prices (`wares`), a trainer's top level (`trainsTo`). Nothing else is read: the
+ * screen's own rows and words, as a player reads them.
+ */
+function look(g: Game, shown: Map<string, Shown>): void {
+  const top = g.top, at = g.screens.find((s): s is InteriorScreen => s instanceof InteriorScreen)?.at;
+  if (!(top instanceof ChoiceScreen) || !at) return;
+  const key = `${g.world.state.mapId}:${at.x},${at.y}`, rows = wares(top), level = trainsTo(top);
+  if (rows) shown.set(key, { ...shown.get(key), stock: rows.map((r) => r.id), prices: Object.fromEntries(rows.map((r) => [r.id, r.price])) });
+  if (level !== undefined) shown.set(key, { ...shown.get(key), maxLevel: level });
+}
+
+/**
+ * The wares a shop's Buy list shows, in its order, each with the price it shows: undefined when the
+ * menu is not a Buy list (every row but the last an item's name and a price, the last 'Done').
+ */
+export function wares(c: ChoiceScreen): { id: string; price: number }[] | undefined {
+  const rows = c.options, out: { id: string; price: number }[] = [];
+  if (rows.length < 2 || rows.at(-1) !== 'Done') return undefined;
+  for (const row of rows.slice(0, -1)) {
+    const { label, value } = optionParts(row), price = /^(\d+)g$/.exec(value), d = Object.values(ITEMS).find((q) => q.name === label);
+    if (!price || !d) return undefined;
+    out.push({ id: d.id, price: Number(price[1]) });
+  }
+  return out;
+}
+
+/** The level a trainer's menu says it trains to ("I train to level 6."), or undefined for any other menu. */
+export function trainsTo(c: ChoiceScreen): number | undefined {
+  const m = /I train to level (\d+)\./.exec(c.words);
+  return m ? Number(m[1]) : undefined;
 }

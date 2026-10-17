@@ -53,6 +53,9 @@ export function item(id: string): ItemDef {
   return d;
 }
 
+/** A weapon's mean blow, its bonus counted: the harness's measure of a weapon, and the pilot's (`better`, #719). */
+export const hits = (d: ItemDef): number => ((d.dice ?? 1) * ((d.sides ?? 4) + 1)) / 2 + (d.bonus ?? 0);
+
 type Shop = Extract<Feature, { kind: 'shop' }>;
 
 /** What a shop charges for an item: its own price for it, or else the item's. */

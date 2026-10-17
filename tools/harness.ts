@@ -40,7 +40,7 @@ import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttac
 import type { CombatState, MonsterInst, PartyAction, Edge, Fighters } from '../src/game/combat.ts';
 import { spell, spellDice, SPELLS_GROW_TO } from '../src/game/spells.ts';
 import type { SpellDef } from '../src/game/spells.ts';
-import { item } from '../src/game/items.ts';
+import { item, hits } from '../src/game/items.ts';
 import { ITEMS } from '../src/content/index.ts';
 import type { ItemDef } from '../src/game/items.ts';
 import type { MonsterDef } from '../src/game/monsters.ts';
@@ -138,8 +138,6 @@ export const GEAR: readonly (readonly [number, readonly string[]])[] = [
 ];
 /** The ladder's top: past it, gear grows only in a what-if (`RULES.gearGrows`). */
 export const GEAR_TOP = GEAR[GEAR.length - 1][0];
-
-const hits = (d: ItemDef): number => ((d.dice ?? 1) * ((d.sides ?? 4) + 1)) / 2 + (d.bonus ?? 0);
 
 /** A copy of an item with more to it, for a what-if: kept in the item table under its own id. */
 function forge(base: ItemDef, more: { bonus?: number; ac?: number; hit?: number }, plus: number): string {
