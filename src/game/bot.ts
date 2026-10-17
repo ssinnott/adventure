@@ -11,18 +11,27 @@
 // has seen do nothing to any foe still standing; once it has seen a foe mend, it burns it with fire
 // each round before it casts anything else. It reads the fight as it stands each turn, the groups
 // called into it too. It wakes a sleeper or frees one held (#549) of the front row, or a caster,
-// before it strikes. It never sleeps, blesses or drinks, nor cures anything but sleep and a hold, so
-// it is weaker than a player; the gate's never flees, the game's flees a fight lost (`beaten`, #723).
-// The gate's knows every monster as written (`asWritten`); the
-// game's knows a sweep, a breath, a drain, a call or a leader only once the fight has shown it
-// (`asSeen`), as both know an element's work and a mending only once seen. The rest rule is here too
-// (`mustRest`), the harness's and the pilot's. Nothing here reads tools/ or node: the game is built
-// with it.
+// before it strikes. Behind an option each (`BotOpts`, #853), off until the calibration switches them
+// on (#865), it blesses in a fight's first round against three foes or more, by the knower whose turn
+// is worth least, sleeps the group with the most it could put down (a sorcerer's Slumber, a druid's
+// Grasping Roots) and lets the sleepers lie, and gives a draught to the lowest where no one can mend
+// them, or to a sleeper or one held no one can free; so its turn is mend, wake, burn, bless, sleep,
+// blast, drink, strike, brace. It cures nothing but sleep and a hold,
+// so it is weaker than a player. Flee is built (#723): the game's flees a fight lost (`beaten`); the gate's
+// never flees, since a flight only turns a win into a loss and the gate measures whether a fight is
+// winnable. The gate's knows every monster as written (`asWritten`); the game's knows a sweep, a
+// breath, a drain, a call or a leader only once the fight has shown it, and a foe Slumber cannot take
+// once a Slumber has taken none of its kind (`asSeen`), as both know an element's work and a mending
+// only once seen. The rest rule is here too (`mustRest`), the harness's and the pilot's. Nothing here
+// reads tools/ or node: the game is built with it.
 import type { RngInstance } from '../lib/engine/rng.ts';
-import { isDown, hasCondition } from './party.ts';
-import type { Party, Character } from './party.ts';
+import { isDown, canAct, hasCondition } from './party.ts';
+import type { Party, Character, ClassId } from './party.ts';
 import { partyAct, aliveMonsters, canAttackFromRow, canReach, isLeader, canCall, sweptRow, seenMult, FRONT_ROW } from './combat.ts';
 import type { CombatState, MonsterInst, PartyAction } from './combat.ts';
+import { monsterImmune } from './monsters.ts';
+import { item } from './items.ts';
+import type { ItemDef } from './items.ts';
 import { spell } from './spells.ts';
 import type { SpellDef, SpellTarget } from './spells.ts';
 
@@ -52,8 +61,11 @@ export function mustRest(p: Party): 'dead' | 'hp' | 'sp' | null {
   return null;
 }
 
-/** What a monster does that a bot answers, and that a player learns only by seeing it done. */
-export type Trait = 'sweep' | 'breath' | 'drain' | 'calls' | 'leader';
+/**
+ * What a monster does that a bot answers, and that a player learns only by seeing it done; and what
+ * it is proof against of the company's sleep (#853): Slumber (`sleepless`) or the roots (`unheld`).
+ */
+export type Trait = 'sweep' | 'breath' | 'drain' | 'calls' | 'leader' | 'sleepless' | 'unheld';
 
 /**
  * What a bot knows of a monster: whether it may count on the trait. Where it may not, it plays as if
@@ -69,9 +81,12 @@ export const asWritten: Sees = () => true;
  * The game's reading, the auto-fight's: a trait once this fight's log shows one of the monster's name
  * at it, as the player reads it (a sweep, a breath, a blow that drinks or takes spell points, a call).
  * A leader shows only in its fall, the people breaking at the last one's, so it is never known first.
+ * One Slumber cannot take shows once a Slumber has put none of its kind to sleep; one the roots cannot
+ * hold never does, since their failure names no one (none is so, as built).
  */
 export const asSeen: Sees = (s, m, trait) => {
-  if (trait === 'leader') return false;
+  if (trait === 'leader' || trait === 'unheld') return false;
+  if (trait === 'sleepless') return s.log.some((l) => l.endsWith(`: 0 of the ${m.def.plural} fall asleep.`));
   const n = m.def.name, head = { sweep: `${n} sweeps `, breath: `${n} breathes `, calls: `${n} calls, `, drain: `${n} hits ` }[trait];
   return s.log.some((l) => l.startsWith(head) && (trait !== 'drain' || l.includes(' and drinks') || l.includes(' spell points')));
 };
@@ -84,10 +99,18 @@ export const asSeen: Sees = (s, m, trait) => {
  */
 export function wakeWith(p: Party, c: Character): { spellId: string; target: number } | undefined {
   const cures = c.spells.map(spell).filter((x) => x.context !== 'explore' && x.target === 'ally' && x.sp <= c.sp).sort((a, b) => a.sp - b.sp);
-  const lifts = (m: Character): SpellDef | undefined => cures.find((x) => x.cure?.some((k) => (k === 'asleep' || (k === 'paralysed' && ANSWER.hold)) && hasCondition(m, k)));
-  const bound = p.members.map((m, j) => ({ m, j, x: lifts(m) })).filter(({ m, x }) => x && !isDown(m));
+  const who = freeFirst(p, (m) => cures.find((x) => x.cure?.some((k) => frees(m, k))));
+  return who && { spellId: who.x.id, target: who.j };
+}
+
+/** Whether `m` lies under what a cure of `k` lifts that the bots free: sleep, and a hold while ANSWER.hold. */
+const frees = (m: Character, k: string): boolean => (k === 'asleep' || (k === 'paralysed' && ANSWER.hold)) && hasCondition(m, k);
+
+/** Of the members not down that `lift` frees, the one the bots free first (`wakeWith`), and with what. */
+function freeFirst<T>(p: Party, lift: (m: Character) => T | undefined): { x: T; j: number } | undefined {
+  const bound = p.members.map((m, j) => ({ m, j, x: lift(m) })).filter(({ m, x }) => x !== undefined && !isDown(m));
   const who = bound.find(({ j }) => j < FRONT_ROW) ?? bound.find(({ m }) => m.maxSp > 0);
-  return who && { spellId: who.x!.id, target: who.j };
+  return who && { x: who.x!, j: who.j };
 }
 
 /**
@@ -144,52 +167,141 @@ export function mendLines(s: CombatState, p: Party, sees: Sees = asWritten): num
 /** How far a damage spell reaches; the bot casts the widest it can afford. */
 const REACH: Partial<Record<SpellTarget, number>> = { all: 3, group: 2, enemy: 1 };
 
-/** The damage spell the bot would cast at the fight's first foe, or its mark (by `sees`): none if it can afford none worth casting. */
-export function gateBlast(s: CombatState, c: Character, sees: Sees = asWritten): SpellDef | undefined {
-  const foes = aliveMonsters(s), foe = markOf(s, foes, sees) ?? foes[0];
+/** Whether a foe sleeps, so that a blow or a spell that reaches it wakes it. */
+export const sleeps = (m: MonsterInst): boolean => m.conditions.includes('asleep');
+
+/** Whether a spell over many cast at foe `f` would wake a sleeper (#853): one of its group asleep, or of every foe for a spell at all. */
+export function wakesMany(s: CombatState, x: SpellDef, f: number): boolean {
+  return x.target !== 'enemy' && aliveMonsters(s).some((g) => sleeps(s.monsters[g]) && (x.target === 'all' || s.monsters[g].group === s.monsters[f].group));
+}
+
+/**
+ * The damage spell the bot would cast at the fight's first foe, or its mark (by `sees`): none if it
+ * can afford none worth casting. Given `at`, the foe it is cast at, it lets sleepers lie (#853): no
+ * spell over many that would wake one (`wakesMany`).
+ */
+export function gateBlast(s: CombatState, c: Character, sees: Sees = asWritten, at?: number): SpellDef | undefined {
+  const foes = aliveMonsters(s), foe = at ?? markOf(s, foes, sees) ?? foes[0];
   if (foe === undefined) return undefined;
   const mult = (x: SpellDef): number => seenMult(s, s.monsters[foe], x.element);
-  return c.spells.map(spell).filter((x) => x.context !== 'explore' && x.sp <= c.sp && x.dice && REACH[x.target] && foes.some((f) => seenMult(s, s.monsters[f], x.element) > 0))
+  return c.spells.map(spell).filter((x) => x.context !== 'explore' && x.sp <= c.sp && x.dice && REACH[x.target] && foes.some((f) => seenMult(s, s.monsters[f], x.element) > 0) && (at === undefined || !wakesMany(s, x, at)))
     .sort((a, b) => mult(b) - mult(a) || REACH[b.target]! - REACH[a.target]! || b.dice! * b.sides! - a.dice! * a.sides!)[0];
 }
 
 /**
  * The bots' answer to what mends (`MonsterDef.regen`): once the company has seen a foe mend, the
  * member's widest, strongest fire spell at the first such foe not yet burnt this round, where it can
- * afford one and has not seen fire do nothing to it; none else.
+ * afford one and has not seen fire do nothing to it; none else. With `lie`, none over many that would
+ * wake a sleeper (#853).
  */
-export function gateBurn(s: CombatState, c: Character): { spellId: string; target: number } | undefined {
+export function gateBurn(s: CombatState, c: Character, lie = false): { spellId: string; target: number } | undefined {
   const target = aliveMonsters(s).find((f) => { const m = s.monsters[f]; return !!s.mends?.[m.def.id] && !m.burnt && seenMult(s, m, 'fire') > 0; });
   if (target === undefined) return undefined;
-  const fire = c.spells.map(spell).filter((x) => x.context !== 'explore' && x.sp <= c.sp && x.element === 'fire' && REACH[x.target])
+  const fire = c.spells.map(spell).filter((x) => x.context !== 'explore' && x.sp <= c.sp && x.element === 'fire' && REACH[x.target] && !(lie && wakesMany(s, x, target)))
     .sort((a, b) => REACH[b.target]! - REACH[a.target]! || b.dice! * b.sides! - a.dice! * a.sides!)[0];
   return fire && { spellId: fire.id, target };
 }
 
 /**
- * The bot's turn for member `i`: the action it took, in gateTurn's order (mend, wake, burn, blast,
- * strike, brace). Each is tried on the resolver in turn and the first it takes is the turn; bracing
- * it always takes. `sees` is what it knows of the monsters: the gate's every trait as written, the
- * game's auto-fight only what the fight has shown (`asSeen`).
+ * What the bots do beyond the turn they have always played, each off unless set (#853): Bless in the
+ * first round (`blessWith`), sleep a group (`sleepWith`) and drink a draught (`drinkFor`). Off, a
+ * bot plays as it did before them; nothing in play or in a check sets them until #865.
  */
-export function botTurn(s: CombatState, p: Party, rng: RngInstance, i: number, sees: Sees = asWritten): PartyAction {
-  // The game's bot flees a fight it has lost (#723); the gate's never does, so its figures stand.
+export interface BotOpts { bless?: boolean; sleep?: boolean; drink?: boolean }
+
+/**
+ * The bots' Bless (#853): in a fight's first round, three foes or more standing and no Bless running
+ * (`s.bless`), member `i`'s Bless where it keeps its share of the rest line after it (REST_AT of its
+ * own spell points). A knower whose turn is a blow leaves it to one yet to act this round whose turn
+ * is not, one that cannot strike from its row. None else.
+ */
+export function blessWith(s: CombatState, p: Party, i: number): SpellDef | undefined {
+  if (s.round !== 1 || s.bless > 0 || aliveMonsters(s).length < 3) return undefined;
+  const bless = (m: Character): SpellDef | undefined => m.spells.map(spell).find((x) => x.buff === 'bless' && x.context !== 'explore' && m.sp - x.sp >= m.maxSp * REST_AT);
+  const idle = (j: number): boolean => !canAttackFromRow(p.members[j], j);
+  const later = s.order.slice(s.turn + 1).some((t) => t.side === 'party' && idle(t.i) && canAct(p.members[t.i]) && !!bless(p.members[t.i]));
+  return idle(i) || !later ? bless(p.members[i]) : undefined;
+}
+
+/** Who sleeps a group, and with what (#853): a sorcerer with Slumber, a druid with Grasping Roots. */
+const SLEEPS: Partial<Record<ClassId, string>> = { sorcerer: 'sleep', druid: 'roots' };
+
+/**
+ * The bots' sleep (#853): a sorcerer's Slumber or a druid's Grasping Roots, where the member knows
+ * and can afford it, at the group with the most foes standing, awake and held by nothing and not
+ * proof against it as `sees` knows, where that is two or more: the spell, the foe to cast it at and
+ * the foes it could put down. None else.
+ */
+export function sleepWith(s: CombatState, c: Character, sees: Sees = asWritten): { spell: SpellDef; target: number; foes: number[] } | undefined {
+  const id = SLEEPS[c.cls], x = id && c.spells.includes(id) ? spell(id) : undefined, k = x?.inflict;
+  if (!x || !k || x.sp > c.sp) return undefined;
+  const groups = new Map<number, number[]>();
+  for (const f of aliveMonsters(s)) {
+    const m = s.monsters[f];
+    if (!m.conditions.length && !(monsterImmune(m.def, k) && sees(s, m, k === 'asleep' ? 'sleepless' : 'unheld'))) groups.set(m.group, [...(groups.get(m.group) ?? []), f]);
+  }
+  const foes = [...groups.values()].sort((a, b) => b.length - a.length)[0];
+  return foes && foes.length >= 2 ? { spell: x, target: foes[0], foes } : undefined;
+}
+
+/** What a member can drink or give in a fight: its pack's draughts, then the company's bag's, as the resolver takes them. */
+const draughts = (p: Party, c: Character): ItemDef[] => [...c.pack, ...p.bag].map(item).filter((d) => d.use);
+
+/**
+ * The bots' drink (#853): where no member who can act could mend them, a healing draught for the
+ * lowest standing under their mend line (`mendLines`), the least that lifts them to it, else the
+ * most; else, where no member who can act could free them by a spell, a cure draught for the one
+ * `wakeWith` would free first. From the member's pack or the company's bag; none else.
+ */
+export function drinkFor(s: CombatState, p: Party, c: Character, sees: Sees = asWritten): PartyAction | undefined {
+  const can = (does: (x: SpellDef) => boolean): boolean => p.members.some((o) => canAct(o) && o.spells.map(spell).some((x) => x.context !== 'explore' && x.sp <= o.sp && does(x)));
+  const lines = mendLines(s, p, sees), held = draughts(p, c);
+  const low = p.members.map((m, j) => ({ m, j })).filter(({ m, j }) => !isDown(m) && m.hp < lines[j]).sort((a, b) => a.m.hp - b.m.hp)[0];
+  if (low && !can((x) => !!x.heal && !x.raise)) {
+    const heals = held.filter((d) => d.use?.heal).sort((a, b) => a.use!.heal! - b.use!.heal!);
+    const d = heals.find((h) => low.m.hp + h.use!.heal! >= lines[low.j]) ?? heals.at(-1);
+    if (d) return { type: 'use', itemId: d.id, target: low.j };
+  }
+  const who = freeFirst(p, (m) => (can((x) => x.target === 'ally' && !!x.cure?.some((k) => frees(m, k))) ? undefined : held.find((d) => d.use?.cure?.some((k) => frees(m, k)))));
+  return who && { type: 'use', itemId: who.x.id, target: who.j };
+}
+
+/**
+ * The bot's turn for member `i`: the action it took, in gateTurn's order (mend, wake, burn, bless,
+ * sleep, blast, drink, strike, brace), bless, sleep and drink only where `opts` asks (#853). Each is
+ * tried on the resolver in turn and the first it takes is the turn; bracing it always takes. `sees`
+ * is what it knows of the monsters: the gate's every trait as written, the game's auto-fight only
+ * what the fight has shown (`asSeen`).
+ */
+export function botTurn(s: CombatState, p: Party, rng: RngInstance, i: number, sees: Sees = asWritten, opts: BotOpts = {}): PartyAction {
+  // The game's bot flees a fight it has lost (#723); the gate's never does, since a flight only turns
+  // a win into a loss and the gate measures whether a fight is winnable.
   if (sees !== asWritten && beaten(s, p) && partyAct(s, p, rng, { type: 'flee' })) return { type: 'flee' };
   const c = p.members[i], foes = aliveMonsters(s), lead = markOf(s, foes, sees), foe = lead ?? foes[0];
-  const blade = lead !== undefined && canReach(s, c, lead) ? lead : foes.find((f) => canReach(s, c, f)) ?? foe;
+  // With sleep on, sleepers are let lie (#853): a blade at an awake foe it reaches where there is one,
+  // a spell at an awake foe where one stands, and none over many that would wake a sleeper.
+  const lie = !!opts.sleep, up = lie ? foes.filter((f) => !sleeps(s.monsters[f])) : [], near = up.filter((f) => canReach(s, c, f));
+  const aim = up.length ? (lead !== undefined && up.includes(lead) ? lead : up[0]) : foe;
+  const blade = near.length ? (lead !== undefined && near.includes(lead) ? lead : near[0]) : lead !== undefined && canReach(s, c, lead) ? lead : foes.find((f) => canReach(s, c, f)) ?? foe;
   const known = c.spells.map(spell).filter((x) => x.context !== 'explore' && x.sp <= c.sp);
   const lines = mendLines(s, p, sees), guard = breathGuard(s, p, sees);
   const low = guard !== undefined ? { m: p.members[guard], j: guard } : p.members.map((m, j) => ({ m, j })).filter(({ m, j }) => !isDown(m) && m.hp < lines[j]).sort((a, b) => a.m.hp - b.m.hp)[0];
   const mend = known.filter((x) => x.heal && !x.raise).sort((a, b) => (b.heal ?? 0) - (a.heal ?? 0))[0];
-  const blast = gateBlast(s, c, sees);
+  const blast = gateBlast(s, c, sees, lie ? aim : undefined);
   const took = (a: PartyAction): PartyAction | undefined => (partyAct(s, p, rng, a) ? a : undefined);
   let a: PartyAction | undefined;
   if (low && mend && (a = took({ type: 'cast', spellId: mend.id, target: low.j }))) return a;
   const sleeper = wakeWith(p, c);
   if (sleeper && (a = took({ type: 'cast', ...sleeper }))) return a;
-  const burn = gateBurn(s, c);
+  const burn = gateBurn(s, c, lie);
   if (burn && (a = took({ type: 'cast', ...burn }))) return a;
-  if (blast && (a = took({ type: 'cast', spellId: blast.id, target: foe }))) return a;
+  const bless = opts.bless ? blessWith(s, p, i) : undefined;
+  if (bless && (a = took({ type: 'cast', spellId: bless.id, target: i }))) return a;
+  const sleep = opts.sleep ? sleepWith(s, c, sees) : undefined;
+  if (sleep && (a = took({ type: 'cast', spellId: sleep.spell.id, target: sleep.target }))) return a;
+  if (blast && (a = took({ type: 'cast', spellId: blast.id, target: aim }))) return a;
+  const drink = opts.drink ? drinkFor(s, p, c, sees) : undefined;
+  if (drink && (a = took(drink))) return a;
   if (canAttackFromRow(c, i) && (a = took({ type: 'attack', target: blade }))) return a;
   const brace: PartyAction = { type: 'defend' };
   partyAct(s, p, rng, brace);
