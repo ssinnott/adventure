@@ -93,6 +93,8 @@ export class Pilot {
   readonly met = new Set<string>();
   /** The crossings told (`Game.offer`, as its menu opened), each with its seller's square and the fare the menu showed: the navigator's edges (`routeMaps`). */
   readonly offers: { map: string; x: number; y: number; passage: Passage; fare: number }[] = [];
+  /** The words tried at each statue's riddle, by square ("map:x,y", the map as played): each once, five at most (talk.ts). */
+  readonly tried = new Map<string, Set<string>>();
 
   /** Ticks counted since it took the helm, for the pace. */
   private ticks = 0;
@@ -122,13 +124,14 @@ export class Pilot {
   /**
    * A new company has heard nothing and is bound nowhere: a new game or a load empties the corpus, the
    * goal, its plan and the squares found shut, the walls searched and the map preferred, the aim and
-   * the goals given up, the people met and the crossings told (Game.newGame, Game.loadGame).
+   * the goals given up, the people met, the crossings told and the words tried at the statues
+   * (Game.newGame, Game.loadGame).
    */
   forget(): void {
     this.heard.length = 0; this.goal = null; this.plan = []; this.shut.length = 0; unroute(this);
     this.searched.clear(); this.prefer = null;
     this.aim = null; this.lost.clear(); unaim(this);
-    this.met.clear(); this.offers.length = 0; untalk(this);
+    this.met.clear(); this.offers.length = 0; this.tried.clear(); untalk(this);
   }
 
   /**
