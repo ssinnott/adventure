@@ -148,19 +148,19 @@ export class ChoiceScreen implements Screen {
   /** Of a group's question (`Game.parley`), the row that fights, its refusal; -1 on any other. The pilot (#721) reads it, as the group's own words say it. */
   readonly fight: number;
   /** Of a person's question (`Game.ask`), whether an answer takes an ending (DESIGN §9): no pilot answers it (#721). */
-  readonly ending: boolean;
+  readonly ends: boolean;
   /**
    * `text` and `choices` may be made when drawn, for words and options that change while the menu
    * waits under another (a person an answer sends away is gone from a business's menu).
    */
-  constructor(text: string | (() => string), choices: string[] | (() => string[]), then: (i: number) => void, title = '', disabled: boolean[] = [], marks: { fight?: number; ending?: boolean } = {}) {
+  constructor(text: string | (() => string), choices: string[] | (() => string[]), then: (i: number) => void, title = '', disabled: boolean[] = [], marks: { fight?: number; ends?: boolean } = {}) {
     this.text = text;
     this.choices = choices;
     this.then = then;
     this.title = title;
     this.disabled = disabled;
     this.fight = marks.fight ?? -1;
-    this.ending = marks.ending ?? false;
+    this.ends = marks.ends ?? false;
   }
   /** The prompt as it reads now. */
   get words(): string { return typeof this.text === 'function' ? this.text() : this.text; }

@@ -263,7 +263,7 @@ export class Game {
    * barred to a company short of it, and the answer's words in a box titled `title`, or to `said`
    * (words for the log). An answer that takes an ending has its pages after its words (ui/ending.ts,
    * #750), and the company is where it stood. Esc answers nothing, and the question comes again. A
-   * question with an answer that would take an ending is marked so (`ChoiceScreen.ending`): no pilot answers it.
+   * question with an answer that would take an ending is marked so (`ChoiceScreen.ends`): no pilot answers it.
    */
   ask(c: Choice, title: string, said?: (text: string) => void): void {
     this.push(new ChoiceScreen(asked(c, this.party), c.answers.map(answerLabel), (i) => {
@@ -271,7 +271,7 @@ export class Game {
       const text = answer(c.answers[i], this.party), end = endingTaken(c.answers[i], this.party.flags);
       const pages = end ? (): void => this.push(new EndingScreen(end)) : undefined;
       if (said) { said(text); pages?.(); } else if (text || !pages) this.push(new MessageScreen(text, pages, title)); else pages();
-    }, title, c.answers.map((a) => barred(a, this.party)), { ending: c.answers.some((a) => !!endsIn(a)) }));
+    }, title, c.answers.map((a) => barred(a, this.party)), { ends: c.answers.some((a) => !!endsIn(a)) }));
   }
 
   /**

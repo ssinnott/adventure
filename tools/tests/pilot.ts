@@ -1115,7 +1115,7 @@ function talking(): void {
   ep.toggle(eg);
   const end = eg.top as ChoiceScreen, answered = pick(end, eg, ep), key = talk(eg, knownOf(eg), ep);
   drive(eg, Array(10).fill(null));
-  ok(end.ending && answered === -1 && key === null && eg.top === end && !eg.party.flags[ENDINGS.reignite.flag], `the ending's question is marked, and neither picked nor answered (${end.ending}, ${answered}, ${key})`);
+  ok(end.ends && answered === -1 && key === null && eg.top === end && !eg.party.flags[ENDINGS.reignite.flag], `the ending's question is marked, and neither picked nor answered (${end.ends}, ${answered}, ${key})`);
 
   // A guild's hall: the fee over the reserve, then for each of its classes the costliest spell over it, one each.
   const hall = (gold: number): { g: Game; learnt: number[] } => {

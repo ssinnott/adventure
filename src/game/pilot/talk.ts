@@ -155,7 +155,7 @@ const ESC: Answer = { i: -1 };
 export const talk: Brain = (g, k, p) => {
   const top = g.top, mem = memOf(p);
   if (top instanceof ChoiceScreen) {
-    if (top.ending) return null;
+    if (top.ends) return null;
     const c = choose(top, g, k, p, mem);
     const a: Action = c.i < 0 || top.disabled[c.i] ? 'cancel' : Math.min(top.sel, top.options.length - 1) === c.i ? 'interact' : 'down';
     if (c.why) p.why = [c.why];
@@ -192,7 +192,7 @@ function priceOf(row: string): number | undefined {
 function choose(c: ChoiceScreen, g: Game, k: Known, p: Pilot, mem: Talk): Answer {
   const rows = c.options, party = k.party, labels = rows.map((r) => optionParts(r).label), st = g.world.state;
   const out = (): Answer => ({ i: labels.findIndex((l) => OUTS.includes(l)) });
-  if (c.ending) return ESC;
+  if (c.ends) return ESC;
   // 1. A crossing: the seller's menu, then the terms.
   if (c.words === passage.ask(party)) return crossing(c, g, k, p, mem);
   if (rows.length === 2 && rows[1] === passage.NOT_NOW && (rows[0] === 'Board' || /^Pay the fare \(\d+ gold\)$/.test(rows[0]))) {
