@@ -431,7 +431,7 @@ export class World {
     const mf: Facing = dir === 'forward' ? f : dir === 'back' ? turnBack(f) : dir === 'left' ? turnLeft(f) : turnRight(f);
     const nx = this.state.x + FACING_DX[mf], ny = this.state.y + FACING_DY[mf];
     const pass = this.map.passable(nx, ny, this.can);
-    if (pass !== 'ok' && pass !== 'unlock') return { kind: 'blocked', reason: BLOCK_TEXT[pass] };
+    if (pass !== 'ok' && pass !== 'unlock') return { kind: 'blocked', reason: pass === 'void' ? worldsEnd(this.map.at(nx, ny)) : BLOCK_TEXT[pass] };
     // Levitate never leaves the party over the drop when it fails.
     if (this.map.at(nx, ny).terrain === 'chasm' && (this.state.float ?? 0) <= 1) return { kind: 'blocked', reason: FLOAT_FAILS };
     const gate = this.map.gateAt(nx, ny) ?? this.exitAt(nx, ny);
@@ -882,3 +882,15 @@ const BLOCK_TEXT: Record<string, string> = {
   tide: 'The tide is in. The sands will show again.',
   locked: 'Locked. A key would open it.',
 };
+
+/**
+ * What the log says at the world's end, by what it is drawn as (#829): the sea, a mountain no one
+ * climbs, or land with no way on. The bare void says the world ends.
+ */
+export function worldsEnd(c: Cell): string {
+  const look = c.look;
+  if (!look) return BLOCK_TEXT.void;
+  if (look.terrain === 'deep' || look.terrain === 'water') return BLOCK_TEXT.deep;
+  if (look.solid === 'mountain') return 'Too steep for anyone to climb.';
+  return 'There is no way on from here.';
+}

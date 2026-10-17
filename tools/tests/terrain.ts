@@ -171,6 +171,14 @@ function sight(): void {
   const tall = look(VALLEY.map((r, y) => (y === 1 ? 'M,,%,B,,M' : r)), 4, 5, NORTH, DAY, { landmarks: [{ x: 5, y: 1, kind: 'lighthouse' }] }), view = standsAt(tall.map, 4, 5, NORTH);
   const ends = [tall.explored(3, 1), tall.explored(5, 1), tall.explored(4, 1), !!view.behind(4, -1), !!view.behind(4, 1), !!view.behind(4, 0)];
   ok(ends.join() === 'true,true,false,false,false,true', `so are the end of the world and a landmark past it, marked and drawn, the ground between them not (${ends.join()})`);
+  // The world's end drawn as the atlas paints it (#829): past the ridge a void drawn as the sea or as a hill lies
+  // as low as they do and is hidden, one drawn as a mountain is seen over it; and for sight a void is the void,
+  // whatever it is drawn as, so one drawn as a hill stops the view from the ridge where a hill would not.
+  const sea = VALLEY.map((r, y) => (y === 1 ? 'M,,%%%,,M' : r)), brink = VALLEY.map((r, y) => (y === 2 ? 'M,,,%,,,M' : r));
+  const rim = look(sea, 4, 5, NORTH, DAY, { looks: sea.map((r, y) => (y === 1 ? 'M,,~M^,,M' : r)) }), rimView = standsAt(rim.map, 4, 5, NORTH);
+  const rimTop = look(sea, 4, 3, NORTH, DAY, { looks: sea.map((r, y) => (y === 1 ? 'M,,~M^,,M' : r)) }), edge = look(brink, 4, 3, NORTH, DAY, { looks: brink.map((r, y) => (y === 2 ? 'M,,,^,,,M' : r)) });
+  const worlds = [rim.explored(3, 1), rim.explored(4, 1), rim.explored(5, 1), !!rimView.behind(4, -1), !!rimView.behind(4, 0), !!rimView.behind(4, 1), [3, 4, 5].every((x) => rimTop.explored(x, 1)), edge.explored(4, 2), edge.sees(4, 1)];
+  ok(worlds.join() === 'false,true,false,true,false,true,true,true,false', `past the ridge the world's end drawn as the sea or a hill is hidden and as a mountain seen, all three from the ridge; drawn as a hill it still stops the view (${worlds.join()})`);
   // A house past the hill is no wall, house or tent to the scene from below, so nothing beside it is drawn to meet it.
   const HOUSE = ['MMMMMMM', 'M,BBB,M', 'M,,,,,M', 'M,,^,,M', 'M,,,,,M', 'M,,,,,M', 'MMMMMMM'], felt: Partial<MapDef> = { palette: { wallStyle: 'tent' } };
   const under = standsAt(new GameMap(def(HOUSE, 3, 5, NORTH, felt)), 3, 5, NORTH), onto = standsAt(new GameMap(def(HOUSE, 3, 3, NORTH, felt)), 3, 3, NORTH);

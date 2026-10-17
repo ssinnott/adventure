@@ -60,6 +60,11 @@ export interface Cell {
   door: Door;
   /** Legend char, kept for content tools and the automap glyph. */
   ch: string;
+  /**
+   * A void cell's: the ground the world map paints there, which the view draws and the automap inks.
+   * For every rule the cell is still the void: nothing crosses it or sees through it (#829).
+   */
+  look?: Cell;
 }
 
 /** Where a map hands the party to another map. */
@@ -437,6 +442,12 @@ export interface MapDef {
   gates?: Gate[];
   /** The outdoors only: the zone maps laid into it. Its cells take their name, band, region and palette from these. */
   zones?: MapZone[];
+  /**
+   * The outdoors only: what each square is drawn as, row for row with `rows`, in characters of the
+   * shared legend. A void square is drawn as its look (`Cell.look`), or as the void where it is
+   * `VOID_CH`; any other square's character is its own and not read. Written by game/outdoors.ts.
+   */
+  looks?: readonly string[];
 }
 
 export interface MapPalette {
@@ -509,8 +520,17 @@ export const LEGEND: Record<string, Cell> = {
   [VOID_CH]: cell('floor', 'void'),
 };
 
-/** Every void cell of a map is this one: nothing in the void ever changes. */
+/** Every void cell of a map is this one, or one of these to each look: nothing in the void ever changes. */
 const VOID_CELL: Cell = Object.freeze({ ...LEGEND[VOID_CH], ch: VOID_CH });
+const VOID_LOOKS = new Map<string, Cell>();
+
+/** The void drawn as a character of the shared legend (`MapDef.looks`), or the bare void for none. */
+function voidCell(look: string | undefined): Cell {
+  if (look === undefined || look === VOID_CH) return VOID_CELL;
+  let c = VOID_LOOKS.get(look);
+  if (!c) VOID_LOOKS.set(look, (c = Object.freeze({ ...VOID_CELL, look: Object.freeze({ ...LEGEND[look], ch: look }) })));
+  return c;
+}
 
 /**
  * A landmark: a building square drawn as what it is, tall, over the land and from far off. A
@@ -554,8 +574,10 @@ export class GameMap {
         const ch = x < row.length ? row[x] : '#';
         const base = legend[ch];
         if (!base) throw new Error(`map ${def.id}: unknown legend char '${ch}' at ${x},${y}`);
-        // Most of the outdoors is void, so its cells share one rather than taking one apiece.
-        this.cells[y * this.width + x] = ch === VOID_CH && base.solid === 'void' ? VOID_CELL : { ...base, ch };
+        // Most of the outdoors is void, so its cells share one to each look rather than taking one apiece.
+        const look = ch === VOID_CH ? def.looks?.[y]?.[x] : undefined;
+        if (look !== undefined && look !== VOID_CH && !LEGEND[look]) throw new Error(`map ${def.id}: unknown look '${look}' at ${x},${y}`);
+        this.cells[y * this.width + x] = ch === VOID_CH && base.solid === 'void' ? voidCell(look) : { ...base, ch };
       }
     }
     this.exits = def.exits ?? [];
@@ -607,10 +629,14 @@ export class GameMap {
     return e.terrain !== 'hills' && e.solid !== 'mountain';
   }
 
-  /** Whether the cell stands taller than a hill, and is seen over one from below it: the mountain, the void and a landmark (#53). */
+  /**
+   * Whether the cell stands taller than a hill, and is seen over one from below it: the mountain, a
+   * landmark and the void as it is drawn (#53): the bare void, and a void whose look is a mountain;
+   * one drawn as the sea or as land lies as low as they do (#829's looks).
+   */
   overtops(x: number, y: number): boolean {
-    const c = this.at(x, y);
-    return c.solid === 'mountain' || c.solid === 'void' || !!this.landmarkAt(x, y);
+    const c = this.at(x, y), drawn = c.look ?? c;
+    return drawn.solid === 'mountain' || drawn.solid === 'void' || !!this.landmarkAt(x, y);
   }
 
   /**

@@ -31,6 +31,8 @@ export const TERRAIN_COLORS: Record<Terrain, string> = {
 };
 /** How far the automap washes a terrain's colour toward the parchment. */
 export const AUTOMAP_WASH = 0.55;
+/** How far the void's look fades into the parchment on the automap: land no one walks, drawn and shut (#829). */
+export const AUTOMAP_FADE = 0.5;
 /** The wood the frame is carved from, and its brass fittings. */
 export const WOOD = '#4a2e1c';
 export const WOOD_LIGHT = '#6a4430';

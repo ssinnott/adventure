@@ -679,6 +679,14 @@ that end in a fight broken off are a figure (#734), E7 is left cut (#737) and As
 (#738); an ally in a fight, a vigil held through a night and a withering seedling are cut (#729,
 #731, #732).
 
+**The bounds** (#828) run from 17 October 2026, at the owner's word: no company meets the pink.
+First the world's end drawn as the atlas paints it, shut as before (#829); then the systems the
+bounds' content waits on, an enclave held to its own band beside the road (#845) and the artifacts'
+powers (#847), with the eight artifacts designed alongside (#846); then the land the maps lie open
+to, built as country off the quest, area by area, two in flight (#830 to #837). Each area takes an
+enclave or two a band or two over its zone's and an artifact in a lair at the cap. E7 is built after
+all (#833), the owner's call over #737's. The reach stays closed for 1.6.
+
 ---
 
 ## 10. What to watch

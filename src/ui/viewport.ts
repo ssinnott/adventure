@@ -18,9 +18,10 @@
 // leaves puddles, snow lies on the ground, the roofs and the trees, the grass goes from spring
 // green to tawny, and the leaves turn and fall (see game/weather.ts and game/calendar.ts).
 //
-// Where the outdoors is not built yet the world ends in void, and the void is painted as what it
-// is, nothing: flat pink, unlit and untextured, standing up past the top of the view so that it
-// hides the sky behind it as well as the ground.
+// Where the outdoors is not built yet the world ends in void, and the void is drawn as its look, the
+// ground the world map paints there: the sea to the horizon, the rim's mountains (#829). A void with
+// no look is painted as what it is, nothing: flat pink, unlit and untextured, standing up past the
+// top of the view so that it hides the sky behind it as well as the ground.
 import type { World } from '../game/world.ts';
 import { VIEW_DEPTH, VIEW_LATERAL, viewCell as cellAt, isSolidWall, lineOfSight, hillOver, hillHiding } from '../game/world.ts';
 import { drawnCell } from '../game/ink.ts';
@@ -324,10 +325,10 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
     const sky: SkyOpts = { facing: f, hour: (world.state.minutes % 1440) / 60, daylight, dark, dawn, dusk, cloud, murk: env.murk, heavy: wx?.precip ?? 0, drift: world.state.minutes * 0.35, cover: env.cover, day, hearth, cast: look.cast };
     drawSkyBand(skyCtx, r, { ...sky, part: 'back' });
     drawSkyBand(ctx, r, { ...sky, part: 'hills' });
-    // The ground runs on to the horizon in the terrain out past the last cell drawn; the void and
-    // the chasm have none, so short of them the ground is the party's own, and past a hill seen from
-    // below it the hill's (#53).
-    const far = map.at(px + FACING_DX[f] * (DEPTH + 1), py + FACING_DY[f] * (DEPTH + 1)), brow = hillOver(map, px, py, f, DEPTH + 1, 0);
+    // The ground runs on to the horizon in the terrain out past the last cell drawn, the void's as
+    // its look; the bare void and the chasm have none, so short of them the ground is the party's own,
+    // and past a hill seen from below it the hill's (#53).
+    const out = map.at(px + FACING_DX[f] * (DEPTH + 1), py + FACING_DY[f] * (DEPTH + 1)), far = out.look ?? out, brow = hillOver(map, px, py, f, DEPTH + 1, 0);
     const farCell = brow ? map.at(brow.x, brow.y) : far.solid === 'void' || far.terrain === 'chasm' ? map.at(px, py) : far;
     const ground = shade(groundColor(farCell.terrain, map.kind, pal.floor), dark ? 0.2 : 0.55);
     const gg = ctx.createLinearGradient(0, horizon, 0, horizon + unit(DEPTH + 0.5, r.h));
@@ -338,10 +339,11 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
   const order: number[] = [];
   for (let l = -LATERAL; l <= LATERAL; l++) order.push(l);
   order.sort((a, b) => Math.abs(b) - Math.abs(a));
-  // A door outdoors among mountain, rock or trees is drawn as they are (drawnCell).
-  const drawn = (x: number, y: number): Cell => drawnCell(map, x, y);
+  // A door outdoors among mountain, rock or trees is drawn as they are (drawnCell), and the void as
+  // its look, the ground the world map paints there (#829).
+  const drawn = (x: number, y: number): Cell => drawnAt(map, x, y);
   const { behind, solidAt, houseAt, tentAt } = standsAt(map, px, py, f, backdrop);
-  const voidAt = (d: number, l: number): boolean => map.at(...toPair(cellAt(px, py, f, d, l))).solid === 'void';
+  const voidAt = (d: number, l: number): boolean => drawn(...toPair(cellAt(px, py, f, d, l))).solid === 'void';
   const boxAt = (d: number, l: number): boolean => solidAt(d, l) && !tentAt(d, l);
   const voids = new Path2D();
   // What a cell's seed steps by to the next cell across and ahead, so a block shared by two faces
@@ -518,9 +520,12 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
 
 function toPair(p: { x: number; y: number }): [number, number] { return [p.x, p.y]; }
 
+/** A cell as the scene draws it: a door outdoors among mountain, rock or trees as they are, the void as its look (#829). */
+function drawnAt(map: GameMap, x: number, y: number): Cell { const c = drawnCell(map, x, y); return c.look ?? c; }
+
 /**
- * What the scene takes to stand on the cell at (d, l) from the eye: a wall (a door outdoors among
- * mountain, rock or trees drawn as they are), a house, a tent. Seen from below a hill, what lies
+ * What the scene takes to stand on the cell at (d, l) from the eye: a wall (as `drawnAt` has it), a
+ * house, a tent. Seen from below a hill, what lies
  * behind it is not drawn (#53): the hill's own ground runs on in its place with nothing standing on
  * it, so nothing beside it takes it for a wall, a house or a tent; `behind` gives the hill. A tent
  * stands lower than a wall, so it hides no face of a wall or of another tent. Over the smoke test's
@@ -534,7 +539,7 @@ export function standsAt(map: GameMap, px: number, py: number, f: Facing, backdr
   const behind = (d: number, l: number): { x: number; y: number } | undefined => hillOver(map, px, py, f, d, l);
   return {
     behind,
-    solidAt: (d, l) => !behind(d, l) && isSolidWall(drawnCell(map, ...sq(d, l))),
+    solidAt: (d, l) => !behind(d, l) && isSolidWall(drawnAt(map, ...sq(d, l))),
     houseAt: (d, l) => !behind(d, l) && isHouse(map, ...sq(d, l)),
     tentAt: (d, l) => !backdrop && !behind(d, l) && isTent(map, ...sq(d, l)),
   };
