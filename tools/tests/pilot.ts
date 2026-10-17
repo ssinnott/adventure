@@ -436,8 +436,9 @@ function company(): void {
 function attract(): void {
   const nothing = (n: number): null[] => Array<null>(n).fill(null);
   const press = (g: Game, a: Action): void => { if (g.pilot?.on) g.pilot.toggle(g); g.update(a); };
-  /** The one brain these games' pilots have: a turn on the map. What the brains play is theirs to test; attract mode is the game's. */
+  /** The keys the pilots below press, counted. */
   let turned = 0;
+  /** The one brain these games' pilots have: a turn on the map. What the brains play is theirs to test; attract mode is the game's. */
   const turning: Brain = (q, _k, p) => { if (!(q.top instanceof ExploreScreen)) return null; p.why = ['Turning about.']; turned++; return 'turnLeft'; };
   /** A game on a new title, over a store if given, with an instant pilot that is off. */
   const onTitle = (store?: Store): Game => {
