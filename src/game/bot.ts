@@ -12,10 +12,11 @@
 // each round before it casts anything else. It reads the fight as it stands each turn, the groups
 // called into it too. It wakes a sleeper or frees one held (#549) of the front row, or a caster,
 // before it strikes. Behind an option each (`BotOpts`, #853), off until the calibration switches them
-// on (#865), it blesses in a fight's first round against three foes or more, sleeps the group with
-// the most it could put down (a sorcerer's Slumber, a druid's Grasping Roots), and gives a draught to
-// the lowest where no one can mend them, or to a sleeper or one held no one can free; so its turn is
-// mend, wake, burn, bless, sleep, blast, drink, strike, brace. It cures nothing but sleep and a hold,
+// on (#865), it blesses in a fight's first round against three foes or more, by the knower whose turn
+// is worth least, sleeps the group with the most it could put down (a sorcerer's Slumber, a druid's
+// Grasping Roots) and lets the sleepers lie, and gives a draught to the lowest where no one can mend
+// them, or to a sleeper or one held no one can free; so its turn is mend, wake, burn, bless, sleep,
+// blast, drink, strike, brace. It cures nothing but sleep and a hold,
 // so it is weaker than a player. Flee is built (#723): the game's flees a fight lost (`beaten`); the gate's
 // never flees, since a flight only turns a win into a loss and the gate measures whether a fight is
 // winnable. The gate's knows every monster as written (`asWritten`); the game's knows a sweep, a
@@ -166,24 +167,37 @@ export function mendLines(s: CombatState, p: Party, sees: Sees = asWritten): num
 /** How far a damage spell reaches; the bot casts the widest it can afford. */
 const REACH: Partial<Record<SpellTarget, number>> = { all: 3, group: 2, enemy: 1 };
 
-/** The damage spell the bot would cast at the fight's first foe, or its mark (by `sees`): none if it can afford none worth casting. */
-export function gateBlast(s: CombatState, c: Character, sees: Sees = asWritten): SpellDef | undefined {
-  const foes = aliveMonsters(s), foe = markOf(s, foes, sees) ?? foes[0];
+/** Whether a foe sleeps, so that a blow or a spell that reaches it wakes it. */
+export const sleeps = (m: MonsterInst): boolean => m.conditions.includes('asleep');
+
+/** Whether a spell over many cast at foe `f` would wake a sleeper (#853): one of its group asleep, or of every foe for a spell at all. */
+export function wakesMany(s: CombatState, x: SpellDef, f: number): boolean {
+  return x.target !== 'enemy' && aliveMonsters(s).some((g) => sleeps(s.monsters[g]) && (x.target === 'all' || s.monsters[g].group === s.monsters[f].group));
+}
+
+/**
+ * The damage spell the bot would cast at the fight's first foe, or its mark (by `sees`): none if it
+ * can afford none worth casting. Given `at`, the foe it is cast at, it lets sleepers lie (#853): no
+ * spell over many that would wake one (`wakesMany`).
+ */
+export function gateBlast(s: CombatState, c: Character, sees: Sees = asWritten, at?: number): SpellDef | undefined {
+  const foes = aliveMonsters(s), foe = at ?? markOf(s, foes, sees) ?? foes[0];
   if (foe === undefined) return undefined;
   const mult = (x: SpellDef): number => seenMult(s, s.monsters[foe], x.element);
-  return c.spells.map(spell).filter((x) => x.context !== 'explore' && x.sp <= c.sp && x.dice && REACH[x.target] && foes.some((f) => seenMult(s, s.monsters[f], x.element) > 0))
+  return c.spells.map(spell).filter((x) => x.context !== 'explore' && x.sp <= c.sp && x.dice && REACH[x.target] && foes.some((f) => seenMult(s, s.monsters[f], x.element) > 0) && (at === undefined || !wakesMany(s, x, at)))
     .sort((a, b) => mult(b) - mult(a) || REACH[b.target]! - REACH[a.target]! || b.dice! * b.sides! - a.dice! * a.sides!)[0];
 }
 
 /**
  * The bots' answer to what mends (`MonsterDef.regen`): once the company has seen a foe mend, the
  * member's widest, strongest fire spell at the first such foe not yet burnt this round, where it can
- * afford one and has not seen fire do nothing to it; none else.
+ * afford one and has not seen fire do nothing to it; none else. With `lie`, none over many that would
+ * wake a sleeper (#853).
  */
-export function gateBurn(s: CombatState, c: Character): { spellId: string; target: number } | undefined {
+export function gateBurn(s: CombatState, c: Character, lie = false): { spellId: string; target: number } | undefined {
   const target = aliveMonsters(s).find((f) => { const m = s.monsters[f]; return !!s.mends?.[m.def.id] && !m.burnt && seenMult(s, m, 'fire') > 0; });
   if (target === undefined) return undefined;
-  const fire = c.spells.map(spell).filter((x) => x.context !== 'explore' && x.sp <= c.sp && x.element === 'fire' && REACH[x.target])
+  const fire = c.spells.map(spell).filter((x) => x.context !== 'explore' && x.sp <= c.sp && x.element === 'fire' && REACH[x.target] && !(lie && wakesMany(s, x, target)))
     .sort((a, b) => REACH[b.target]! - REACH[a.target]! || b.dice! * b.sides! - a.dice! * a.sides!)[0];
   return fire && { spellId: fire.id, target };
 }
@@ -197,12 +211,16 @@ export interface BotOpts { bless?: boolean; sleep?: boolean; drink?: boolean }
 
 /**
  * The bots' Bless (#853): in a fight's first round, three foes or more standing and no Bless running
- * (`s.bless`), the member's Bless where it keeps its share of the rest line after it (REST_AT of its
- * own spell points). None else.
+ * (`s.bless`), member `i`'s Bless where it keeps its share of the rest line after it (REST_AT of its
+ * own spell points). A knower whose turn is a blow leaves it to one yet to act this round whose turn
+ * is not, one that cannot strike from its row. None else.
  */
-export function blessWith(s: CombatState, c: Character): SpellDef | undefined {
+export function blessWith(s: CombatState, p: Party, i: number): SpellDef | undefined {
   if (s.round !== 1 || s.bless > 0 || aliveMonsters(s).length < 3) return undefined;
-  return c.spells.map(spell).find((x) => x.buff === 'bless' && x.context !== 'explore' && c.sp - x.sp >= c.maxSp * REST_AT);
+  const bless = (m: Character): SpellDef | undefined => m.spells.map(spell).find((x) => x.buff === 'bless' && x.context !== 'explore' && m.sp - x.sp >= m.maxSp * REST_AT);
+  const idle = (j: number): boolean => !canAttackFromRow(p.members[j], j);
+  const later = s.order.slice(s.turn + 1).some((t) => t.side === 'party' && idle(t.i) && canAct(p.members[t.i]) && !!bless(p.members[t.i]));
+  return idle(i) || !later ? bless(p.members[i]) : undefined;
 }
 
 /** Who sleeps a group, and with what (#853): a sorcerer with Slumber, a druid with Grasping Roots. */
@@ -260,24 +278,28 @@ export function botTurn(s: CombatState, p: Party, rng: RngInstance, i: number, s
   // a win into a loss and the gate measures whether a fight is winnable.
   if (sees !== asWritten && beaten(s, p) && partyAct(s, p, rng, { type: 'flee' })) return { type: 'flee' };
   const c = p.members[i], foes = aliveMonsters(s), lead = markOf(s, foes, sees), foe = lead ?? foes[0];
-  const blade = lead !== undefined && canReach(s, c, lead) ? lead : foes.find((f) => canReach(s, c, f)) ?? foe;
+  // With sleep on, sleepers are let lie (#853): a blade at an awake foe it reaches where there is one,
+  // a spell at an awake foe where one stands, and none over many that would wake a sleeper.
+  const lie = !!opts.sleep, up = lie ? foes.filter((f) => !sleeps(s.monsters[f])) : [], near = up.filter((f) => canReach(s, c, f));
+  const aim = up.length ? (lead !== undefined && up.includes(lead) ? lead : up[0]) : foe;
+  const blade = near.length ? (lead !== undefined && near.includes(lead) ? lead : near[0]) : lead !== undefined && canReach(s, c, lead) ? lead : foes.find((f) => canReach(s, c, f)) ?? foe;
   const known = c.spells.map(spell).filter((x) => x.context !== 'explore' && x.sp <= c.sp);
   const lines = mendLines(s, p, sees), guard = breathGuard(s, p, sees);
   const low = guard !== undefined ? { m: p.members[guard], j: guard } : p.members.map((m, j) => ({ m, j })).filter(({ m, j }) => !isDown(m) && m.hp < lines[j]).sort((a, b) => a.m.hp - b.m.hp)[0];
   const mend = known.filter((x) => x.heal && !x.raise).sort((a, b) => (b.heal ?? 0) - (a.heal ?? 0))[0];
-  const blast = gateBlast(s, c, sees);
+  const blast = gateBlast(s, c, sees, lie ? aim : undefined);
   const took = (a: PartyAction): PartyAction | undefined => (partyAct(s, p, rng, a) ? a : undefined);
   let a: PartyAction | undefined;
   if (low && mend && (a = took({ type: 'cast', spellId: mend.id, target: low.j }))) return a;
   const sleeper = wakeWith(p, c);
   if (sleeper && (a = took({ type: 'cast', ...sleeper }))) return a;
-  const burn = gateBurn(s, c);
+  const burn = gateBurn(s, c, lie);
   if (burn && (a = took({ type: 'cast', ...burn }))) return a;
-  const bless = opts.bless ? blessWith(s, c) : undefined;
+  const bless = opts.bless ? blessWith(s, p, i) : undefined;
   if (bless && (a = took({ type: 'cast', spellId: bless.id, target: i }))) return a;
   const sleep = opts.sleep ? sleepWith(s, c, sees) : undefined;
   if (sleep && (a = took({ type: 'cast', spellId: sleep.spell.id, target: sleep.target }))) return a;
-  if (blast && (a = took({ type: 'cast', spellId: blast.id, target: foe }))) return a;
+  if (blast && (a = took({ type: 'cast', spellId: blast.id, target: aim }))) return a;
   const drink = opts.drink ? drinkFor(s, p, c, sees) : undefined;
   if (drink && (a = took(drink))) return a;
   if (canAttackFromRow(c, i) && (a = took({ type: 'attack', target: blade }))) return a;

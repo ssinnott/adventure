@@ -2,6 +2,7 @@
 // that hit every foe, Ward and Revive; the ranks and morale (#160); elements, monsters that cast and
 // drain, and a hit that wakes a sleeper (#161); regeneration, curse and calls (#537); the light
 // that goes into a machine like a hand into a glove; sweep (#545); and the Core's clock and those that obey (#748).
+import { createHash } from 'node:crypto';
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { ITEMS, MONSTERS, SPELLS } from '../../src/content/index.ts';
 import { buildMaps } from '../../src/content/maps.ts';
@@ -1119,8 +1120,8 @@ function botOpts(): void {
     ok(cast(three, 'bless') && !cast(two, 'bless') && !cast(off, 'bless'),
       `with the option on, Maren blesses in the first round against three foes (${JSON.stringify(three)}) and not against two (${JSON.stringify(two)}); off, not at all (${JSON.stringify(off)})`);
     const both = botFight(one(dummy, dummy, dummy), [1, 4], ON), poor = botFight(one(dummy, dummy, dummy), [4], ON, (q) => { q.members[4].sp = Math.floor(q.members[4].maxSp * REST_AT) + 2; }).took[0];
-    ok(both.took.filter((a) => cast(a, 'bless')).length === 1 && both.s.round === 1 && !cast(poor, 'bless'),
-      `and one Bless at a time: of Idris and Maren in the first round, one blesses (${both.took.map((a) => JSON.stringify(a)).join(', ')}); and none that would fall under its share of the rest line (${JSON.stringify(poor)})`);
+    ok(both.took.filter((a) => cast(a, 'bless')).length === 1 && both.s.round === 1 && both.s.log.some((l) => l.startsWith('Maren casts Bless')) && !cast(poor, 'bless'),
+      `and one Bless at a time: of Idris and Maren in the first round, Maren blesses, whose turn is no blow, though Idris acts first (${both.took.map((a) => JSON.stringify(a)).join(', ')}); and none that would fall under its share of the rest line (${JSON.stringify(poor)})`);
   }
   {
     const r = botFight([{ id: 'a', monsters: [dummy, dummy] }, { id: 'b', monsters: [dummy, dummy, dummy] }], [5], ON), a = r.took[0];
@@ -1134,6 +1135,16 @@ function botOpts(): void {
     const at = (x: { s: CombatState; took: PartyAction[] }, n: number): string => { const t = x.took[n]; return t?.type === 'cast' ? `${t.spellId} at ${x.s.monsters[t.target].def.plural}` : JSON.stringify(t); };
     ok(at(written, 0) === 'sleep at Dummies' && at(seen, 0) === 'sleep at Bones' && seen.s.log.includes('Cassian casts Slumber: 0 of the Bones fall asleep.') && at(seen, 1) === 'sleep at Dummies',
       `the gate's sorcerer sleeps two dummies past three bones it knows the dead do not sleep (${at(written, 0)}); the game's tries the bones first and the dummies once it has seen (${at(seen, 0)}, then ${at(seen, 1)})`);
+    // Awake is held by nothing: the group Slumber has taken is not slept again; his next turn sleeps the other.
+    const twice = botFight([{ id: 'a', monsters: [dummy, dummy] }, { id: 'b', monsters: [dummy, dummy, dummy] }], [5], ON, () => {}, asWritten, 2);
+    const groupOf = (t: PartyAction | undefined): number => (t?.type === 'cast' ? twice.s.monsters[t.target].group : -1);
+    ok(cast(twice.took[0], 'sleep') && cast(twice.took[1], 'sleep') && groupOf(twice.took[0]) !== groupOf(twice.took[1]),
+      `and his next turn sleeps the other group, not the one Slumber has taken (${twice.s.log.filter((l) => l.startsWith('Cassian casts')).join(' ')})`);
+    // Slumber's line counts the kind it names: in a mixed group the bones it cannot take show, and the game's reading learns them.
+    const mixed = botFight([{ id: 'g', monsters: [bones, dummy, dummy, dummy] }], [], undefined), q = mixed.q, s = mixed.s, rng = makeRng(85);
+    for (let n = 0; n < 40; n++) { const t = currentTurn(s, q, rng); if (!t) break; if (t.side === 'monster') monsterAct(s, q, rng); else if (t.i !== 5) partyAct(s, q, rng, { type: 'defend' }); else { partyAct(s, q, rng, { type: 'cast', spellId: 'sleep', target: 0 }); break; } }
+    ok(s.log.includes('Cassian casts Slumber: 0 of the Bones fall asleep.') && s.monsters.some((m) => m.conditions.includes('asleep')) && asSeen(s, s.monsters[0], 'sleepless'),
+      `Slumber's line counts the kind it names: at a bone among dummies, "0 of the Bones" while ${s.monsters.filter((m) => m.conditions.includes('asleep')).length} dummies sleep, and the game's reading learns the bones (${s.log.find((l) => l.startsWith('Cassian casts'))})`);
   }
   {
     // Wren at a tenth of her hit points, a draught in the bag: Bram gives it her when no one standing can mend her, and strikes while Maren can.
@@ -1148,6 +1159,11 @@ function botOpts(): void {
     const salts = botFight(one(dummy), [1], ON, held(true)), cleric = botFight(one(dummy), [1], ON, held(false));
     ok(JSON.stringify(salts.took[0]) === '{"type":"use","itemId":"smelling_salts","target":0}' && canAct(salts.q.members[0]) && cleric.took[0]?.type !== 'use' && hasCondition(cleric.q.members[0], 'paralysed'),
       `and Idris frees Bram, held fast, with his salts when no one can by a spell (${JSON.stringify(salts.took[0])}), not while Maren can (${JSON.stringify(cleric.took[0])})`);
+    // An Elixir beside the Healing Draughts: Ottilie gives the least that lifts the lowest to her line, a draught ten short, the Elixir twenty.
+    const short = (j: number, by: number) => (q: Party): void => { q.members[j].hp = Math.floor(q.members[j].maxHp * 0.4) - by; q.bag.push('elixir'); for (const m of q.members) m.sp = 0; };
+    const ten = botFight(one(dummy), [3], ON, short(2, 10)).took[0], twenty = botFight(one(dummy), [3], ON, short(0, 20)).took[0];
+    ok(JSON.stringify(ten) === '{"type":"use","itemId":"potion_heal","target":2}' && JSON.stringify(twenty) === '{"type":"use","itemId":"elixir","target":0}',
+      `and the least draught that lifts the lowest to her line: a Healing Draught for Wren ten short (${JSON.stringify(ten)}), the Elixir for Bram twenty short (${JSON.stringify(twenty)})`);
   }
   {
     // The thrifty bot weighs them: Bless and sleep where the brutes' blows make them pay, not against dummies that cannot hurt.
@@ -1180,11 +1196,34 @@ function botOpts(): void {
       }
       return [...out, s.outcome].join('\n');
     };
+    // Main's fight, pinned: each bot's turns, outcome and digest with the options absent, as main played
+    // it at e74bffb0 before the options came. #865 renews these when it switches the default on.
+    const MAIN = {
+      written: [46, '3e52eed053fa132689b29bb5288762395a2a481ff145edfea3baf3f580c08120'],
+      seen: [46, '3e52eed053fa132689b29bb5288762395a2a481ff145edfea3baf3f580c08120'],
+      thrifty: [52, '06399b5beb1712ab1609de73231bb8172a74473ff4188343203af1de8a927709'],
+    } as const;
     for (const bot of ['written', 'seen', 'thrifty'] as const) {
-      const absent = turns(bot), off = turns(bot, OFF), on = turns(bot, ON);
-      ok(absent === off && absent !== on && absent.split('\n').length > 6,
-        `off, the ${bot === 'thrifty' ? "thrifty bot's" : bot === 'seen' ? "game's bot's" : "gate's bot's"} seeded fight is the same turn for turn with the options absent and present but false (${absent.split('\n').length - 1} turns, ${absent.split('\n').at(-1)}); on, it is another`);
+      const absent = turns(bot), off = turns(bot, OFF), on = turns(bot, ON), lines = absent.split('\n'), digest = createHash('sha256').update(absent).digest('hex');
+      ok(absent === off && absent !== on && lines.length - 1 === MAIN[bot][0] && lines.at(-1) === 'victory' && digest === MAIN[bot][1],
+        `off, the ${bot === 'thrifty' ? "thrifty bot's" : bot === 'seen' ? "game's bot's" : "gate's bot's"} seeded fight is main's turn for turn, absent and present but false (${lines.length - 1} turns, ${lines.at(-1)}, ${digest.slice(0, 12)}); on, it is another`);
     }
+  }
+  {
+    // On, the sleepers are let lie: three ogres slept in the first round stay so, not woken by a swarm
+    // and slept again in the second and third; and Maren, whose turn is no blow, blesses, not Idris.
+    const three = (bot: 'gate' | 'thrifty'): CombatState => {
+      const q = companyAt(4, 870), rng = makeRng(870), s = startCombat(q, [{ id: 'g', monsters: ['ogre', 'ogre', 'ogre'] }], rng);
+      for (let n = 0; n < 400 && s.outcome === 'ongoing'; n++) {
+        const t = currentTurn(s, q, rng);
+        if (!t || s.round > 3) break;
+        if (t.side === 'monster') monsterAct(s, q, rng); else if (bot === 'thrifty') thrifty(s, q, rng, t.i, ON); else botTurn(s, q, rng, t.i, asWritten, ON);
+      }
+      return s;
+    };
+    const gate = three('gate'), thrift = three('thrifty'), slumbers = (s: CombatState): number => s.log.filter((l) => l.startsWith('Cassian casts Slumber')).length;
+    ok(slumbers(gate) === 1 && slumbers(thrift) === 1 && gate.log.some((l) => l.startsWith('Maren casts Bless')) && !gate.log.some((l) => l.startsWith('Idris casts Bless')),
+      `on, the sleepers are let lie: one Slumber in three rounds against three ogres, by the gate's bot and the thrifty one (${slumbers(gate)}, ${slumbers(thrift)}), and Maren blesses, not Idris (${gate.log.filter((l) => / casts /.test(l) && !l.startsWith('Ogre')).slice(0, 4).join(' ')})`);
   }
 }
 

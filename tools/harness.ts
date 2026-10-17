@@ -27,7 +27,7 @@
 // It wakes a sleeper or frees one held of the front row, or a caster, where it can (#549), raises
 // the front row's fallen first while a foe breathes, cures nothing else and never flees. Behind
 // `BotOpts` (#853), off until #865, it blesses and sleeps where the cast pays, weighed as a damage
-// spell is, and drinks where no spell pays and no mender can. Between fights it lifts stone and
+// spell is, lets the sleepers lie, and drinks where no spell pays and no mender can. Between fights it lifts stone and
 // mends as a player would. The report and the calibration run on every core.
 import { pathToFileURL } from 'node:url';
 import fs from 'node:fs';
@@ -49,7 +49,7 @@ import { MAP_DEFS, MONSTERS } from '../src/content/index.ts';
 import { ROLES, ROLE_IDS, LEVELS, HP, DAMAGE, xpFor, line, standardEncounter, testMonster, TROLL, WIGHT_CURSE, CALL, LIGHT, SWEEP, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, giantEncounter, drakeEncounter, BASILISK_STONE, basiliskEncounter, CLOCK, clockEncounter } from './testmonster.ts';
 import { quickening } from '../src/content/areas/ashfall/items.ts';
 import type { Role } from './testmonster.ts';
-import { wakeWith, markOf, ANSWER, breathGuard, mendLines, REST_AT, pools, mustRest, blessWith, sleepWith, drinkFor } from '../src/game/bot.ts';
+import { wakeWith, markOf, ANSWER, breathGuard, mendLines, REST_AT, pools, mustRest, blessWith, sleepWith, drinkFor, sleeps, wakesMany } from '../src/game/bot.ts';
 import type { BotOpts } from '../src/game/bot.ts';
 
 // The bots' answers, the rest rule and the pools it reads are the game's (src/game/bot.ts), and found here still.
@@ -289,8 +289,12 @@ export const thrifty = (s: CombatState, p: Party, rng: RngInstance, i: number, o
   if (sleeper && partyAct(s, p, rng, { type: 'cast', ...sleeper })) return;
   const foes = aliveMonsters(s);
   if (!foes.length) { partyAct(s, p, rng, { type: 'defend' }); return; }
-  // A blade at a leader or a caller it reaches (`markOf`), else at the weakest it reaches.
-  const lead = markOf(s, foes), near = foes.filter((f) => canReach(s, c, f));
+  // A blade at a leader or a caller it reaches (`markOf`), else at the weakest it reaches. With sleep
+  // on, sleepers are let lie (#853): a blade and a spell at an awake foe where there is one, and no
+  // spell over many that would wake one (`wakesMany`).
+  const lie = !!opts.sleep, up = lie ? foes.filter((f) => !sleeps(s.monsters[f])) : [];
+  const reach = foes.filter((f) => canReach(s, c, f)), awake = reach.filter((f) => up.includes(f)), near = awake.length ? awake : reach;
+  const lead = markOf(s, foes), pick = up.length ? up : foes, mark = lead !== undefined && pick.includes(lead) ? lead : undefined;
   const weakest = lead !== undefined && near.includes(lead) ? lead : (near.length ? near : foes).reduce((a, b) => (s.monsters[b].hp < s.monsters[a].hp ? b : a));
   const armed = canAttackFromRow(c, i), blow = armed ? weaponDamage(s, p, c, s.monsters[weakest]) : 0;
   const weapons = p.members.reduce((a, m, j) => a + (!isDown(m) && canAttackFromRow(m, j) ? weaponDamage(s, p, m, s.monsters[weakest], false) : 0), 0);
@@ -302,7 +306,7 @@ export const thrifty = (s: CombatState, p: Party, rng: RngInstance, i: number, o
   // Bless and sleep, where `opts` asks: the hit points the cast saves, weighed as a damage spell's.
   const pays = (x: SpellDef, saved: number): number => (saved - blow * rate) / hpSpare - (spSpare > 0 ? (x.sp * price) / spSpare : 0);
   const left = (): number => foes.reduce((a, f) => a + s.monsters[f].hp, 0) / Math.max(1, weapons);
-  const bless = opts.bless ? blessWith(s, c) : undefined;
+  const bless = opts.bless ? blessWith(s, p, i) : undefined;
   if (bless) {
     const runs = { ...s, bless: bless.turns ?? 1 }, target = s.monsters[weakest];
     const more = p.members.reduce((a, m, j) => a + (!isDown(m) && canAttackFromRow(m, j) ? weaponDamage(runs, p, m, target, false) - weaponDamage(s, p, m, target, false) : 0), 0);
@@ -324,12 +328,13 @@ export const thrifty = (s: CombatState, p: Party, rng: RngInstance, i: number, o
     const stops = (f: number): number => { const m = s.monsters[f]; return x.element === 'fire' && !m.burnt && dealt(f) > 0 && dealt(f) < m.hp ? s.mends?.[m.def.id] ?? 0 : 0; };
     const take = (f: number): number => dealt(f) + stops(f);
     let dmg = 0, target = weakest;
+    if (lie && x.target === 'all' && wakesMany(s, x, foes[0])) continue;
     if (x.target === 'all') dmg = foes.reduce((a, f) => a + take(f), 0);
-    else if (x.target === 'enemy') { if (lead !== undefined) { dmg = take(lead); target = lead; } else for (const f of foes) if (take(f) > dmg) { dmg = take(f); target = f; } }
+    else if (x.target === 'enemy') { if (mark !== undefined) { dmg = take(mark); target = mark; } else for (const f of pick) if (take(f) > dmg) { dmg = take(f); target = f; } }
     else {
       const byGroup = new Map<number, number>();
       for (const f of foes) byGroup.set(s.monsters[f].group, (byGroup.get(s.monsters[f].group) ?? 0) + take(f));
-      for (const f of foes) { const g = byGroup.get(s.monsters[f].group) ?? 0; if (g > dmg) { dmg = g; target = f; } }
+      for (const f of foes) { const g = byGroup.get(s.monsters[f].group) ?? 0; if (g > dmg && !(lie && wakesMany(s, x, f))) { dmg = g; target = f; } }
     }
     const value = ((dmg - blow) * rate) / hpSpare - (spSpare > 0 ? (x.sp * price) / spSpare : 0);
     if (value > worth) { worth = value; best = { type: 'cast', spellId: x.id, target }; }
@@ -340,7 +345,10 @@ export const thrifty = (s: CombatState, p: Party, rng: RngInstance, i: number, o
   if (!partyAct(s, p, rng, best)) partyAct(s, p, rng, { type: 'defend' });
 };
 
-/** The rounds a foe Slumber takes sleeps, on average: it wakes at a quarter of its turns (`currentTurn`), unless struck. */
+/**
+ * The rounds a foe Slumber takes sleeps, on average: the bots let it lie while a foe stands awake
+ * (#853), so it wakes by its own rolls, at a quarter of its turns (`currentTurn`).
+ */
 const SLEEPS_FOR = 4;
 
 /**

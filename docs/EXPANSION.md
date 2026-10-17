@@ -367,8 +367,9 @@ fights to a rest and the warning's nearest groups ten points under the median.
   a loss and the gate measures whether a fight is winnable. Bless, sleep and drink are built behind
   an option (`BotOpts`, #853), in the gate's bot and the harness's thrifty one, off in every default
   until #865 switches them on and makes the line again. The gate's bot blesses in a fight's first
-  round against three foes or more, sleeps the group with the most it could put down and gives a
-  draught to the lowest no one can mend, or to one asleep or held no one can free. The thrifty bot
+  round against three foes or more, sleeps the group with the most it could put down and lets the
+  sleepers lie, and gives a draught to the lowest no one can mend, or to one asleep or held no one
+  can free. The thrifty bot
   weighs Bless and sleep as it weighs a damage spell, the hit points the cast saves against what its
   points are worth, its blow lost: Bless saves what the company's blows land more in its rounds, sleep
   the blows the foes it puts down would strike, at the spell's chance, while they sleep or are held;
@@ -395,19 +396,26 @@ Decided by the builder for #853, each the owner's to overturn:
 
 1. **"No mender can" is read as no member who can act** (not down, asleep or held) knowing a mend it
    can afford, and so for a cure: a cleric asleep mends no one this turn.
-2. **The weighing kept simple:** a foe Slumber takes sleeps four rounds (it wakes at a quarter of its
-   turns, `SLEEPS_FOR`), one the roots take is held about three (it tears free at 35% of round ends,
-   `HOLD_BREAKS`); Bless and sleep are weighed before the damage spells, so a tie goes to them.
+2. **The weighing kept simple:** a foe Slumber takes sleeps four rounds, since the bots let it lie and
+   it wakes at a quarter of its turns (`SLEEPS_FOR`); one the roots take is held about three (it tears
+   free at 35% of round ends, `HOLD_BREAKS`). Bless and sleep are weighed before the damage spells, so
+   a tie goes to them.
 3. **The game's reading knows a foe Slumber cannot take once a Slumber has put none of its kind to
-   sleep** (the log's "0 of the ... fall asleep"). The roots' failure names no kind, so it never knows
-   one the roots cannot hold; none is so as built. The gate's reads both as written.
+   sleep** (the log's "0 of the ... fall asleep", which now counts the kind it names, the target's, so
+   that a mixed group shows it). The roots' failure names no kind, so it never knows one the roots
+   cannot hold; none is so as built. The gate's reads both as written.
 4. **Awake is held by nothing:** a foe asleep or rooted is not counted, so none is slept twice.
 5. **The draught given is the least that lifts the lowest to its line, else the most,** the
    member's own before the bag's.
 6. **Sleep stays with the classes named:** a ranger that knows Grasping Roots (the premade Wren from
    17) keeps to its bow and its few points.
-7. **A blow is not turned from a sleeper:** struck, it wakes, as now. #865's measure shows whether
-   that wants a rule.
+7. **With sleep on, the sleepers are let lie:** a blade falls on an awake foe it reaches where there
+   is one, a spell on an awake foe where one stands, and no spell over many is cast where it would wake
+   a sleeper. Without it a swarm woke three ogres asleep and Slumber was cast again, and the thrifty
+   bot's day at 4 fell a tenth; with it, its day against the standard soldier and skirmisher rises at
+   4, 12 and 20 (6.25 to 6.55, 6.72 to 7.05, 8.68 to 10.95 for the soldier, 40 seeds).
+8. **Bless goes to the knower whose turn is worth least:** one that can strike from its row leaves it
+   to one yet to act this round that cannot, so Idris strikes and Maren blesses.
 
 From 10 two under is judged by the day, not the fight. From 10 the damage spells roll their full
 dice and every group is sized for the day (docs/MONSTERS.md §4.4), so a fight from full health
