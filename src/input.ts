@@ -56,14 +56,20 @@ export class Input {
   /** Inject an action (tests, on-screen buttons). */
   push(a: Action): void { this.queue.push(a); }
   /** Apply the typed characters to a string and clear them. */
-  drainText(current: string, max = 12): string {
-    for (const ch of this.typed) current = ch === '\b' ? current.slice(0, -1) : current.length < max ? current + ch : current;
-    this.typed.length = 0;
-    return current;
-  }
+  drainText(current: string, max = 12): string { return drainTyped(this.typed, current, max); }
   /** Next queued press, or null. */
   next(): Action | null { return this.queue.shift() ?? null; }
   clear(): void { this.queue.length = 0; }
+}
+
+/**
+ * Apply typed characters to a string, each to at most `max` long ('\b' a backspace), and clear them:
+ * the keyboard's text mode, and a headless game's (tools/tests/lib.ts), where the pilot types (#721).
+ */
+export function drainTyped(typed: string[], current: string, max = 12): string {
+  for (const ch of typed) current = ch === '\b' ? current.slice(0, -1) : current.length < max ? current + ch : current;
+  typed.length = 0;
+  return current;
 }
 
 /** The alias table, so screens can ask "was this press an 'up'?" for a key that is also 'forward'. */

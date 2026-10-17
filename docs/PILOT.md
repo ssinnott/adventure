@@ -12,16 +12,17 @@ until the test gives it one. It presses the keys a player would: every move is a
 `Game.update`, and nothing teleports or is bought off screen.
 
 Built so far: the frame (#716) over the bot's fights (#714), the navigator (#717), the explorer
-(#718), the quartermaster (#719), the strategist (#720) and the first part of talk (#721): people,
-choices, crossings, guilds, spells and prestige trainers, and the stop at the ending's choice. Its
-second part takes the riddles: until it lands the pilot stands under a statue's riddle.
+(#718), the quartermaster (#719), the strategist (#720) and talk (#721): people, choices, crossings,
+guilds, spells and prestige trainers, the stop at the ending's choice and, in its second part, the
+statues' riddles.
 
 ## Using it
 
 - **P** hands the game to the pilot and takes it back. Any other key while it drives takes it back
   too, and is then handled as usual. `src/main.ts` takes P and T before any screen sees them, so
   they work on the map, in a town and in a fight alike; no screen has a pilot key of its own. While a
-  name or a riddle's word is typed, P and T are letters.
+  name or a riddle's word is typed, P and T are letters; the pilot types a riddle's word letter by
+  letter, as the keyboard does (#721).
 - **P on the title** (or the company screen) starts a new game on a fresh seed with a company drawn
   from that seed, the pilot at the helm.
 - **T** cycles the tempo: 1×, 2× and 4×, an action every 15, 8 and 4 ticks (4, 7.5 and 15 a second).
@@ -78,7 +79,9 @@ them now, not as last seen. The headless run's `omniscient` pilot (#723) has eve
 game never sets it.
 
 Each reader came with the first issue that used it, and its own fairness test: a goal's map is
-read once the journal shows the goal (#720); a crossing once its seller has offered it (#721).
+read once the journal shows the goal (#720); a crossing once its seller has offered it (#721). A
+statue's riddle is no reader of Known's: talk reads it off the box once the plinth is read
+(`RiddleScreen.riddle`), as a menu is read off its rows, and its answer never (#721).
 
 ## Brains
 
@@ -184,7 +187,21 @@ person's question, the first answer open that is no way out and shows no price, 
 priced within the gold over the reserve; any other menu, its way out. A seller's crossings, once
 offered, are the navigator's edges (`routeMaps`), from the seller's square to where it lands. The
 ending's question is marked (`ChoiceScreen.ends`): talk neither picks nor answers it, but stops the
-pilot under it ("The choice is yours."). Riddles are its second part.
+pilot under it ("The choice is yours.").
+
+A statue is gone to as a person is ("To the statue.") and its plinth read with Space ("Reading the
+plinth."). Its riddle is read off the box as the player reads it, never the statue's answer, and
+tried with the words heard alone (`answers`): a HOW MANY riddle with the number words one to twelve
+heard in a line that shares a word of four letters or more with the rest of the question, in
+ascending order; any other with the words of three letters or more, the riddle's own left out, of
+every line heard that shares two or more words of four letters or more with it, ranked by that
+overlap, then the longer first, then as first heard. Each word is typed a key a tick into the box as
+the keyboard types in the text mode ("Trying TEN."), then Enter; a wrong one costs nothing, and Space
+on the stone tries the next. Five at most a statue, each once (`Pilot.tried`); none left, it says "I
+have no answer for the stone.", presses Esc and gives the stone up until a line heard gives a word it
+has not tried. The Downs' stone, HOW MANY FOR THE HEARTH?, is answered by "ten" on its second try
+once the old man's song at Gullwick is heard ("Ten for the Hearth and one for the Queen..."), after
+"one".
 
 ## Known limits
 
@@ -199,19 +216,38 @@ pilot under it ("The choice is yours."). Riddles are its second part.
 - **Meetings in a town.** Every flag set or item gained sends the pilot back round the people near it
   (talk's rule, as the issue has it): at review, on seed 4 it spent ticks 167 to 617 in Helmstow on 24 meetings
   with nine people, Aldith and Hob five times each.
+- **Thornmark's chapter.** On seed 10 the play goes on from The Quiet Farm's end (tick 14,539) over the
+  pass into Thornmark (14,667) and no further: it looks about Thornmark between the quartermaster's
+  walks back to Helmstow (training to 6 at the Drillyard, rations at the inn), says "Lost in
+  Thornmark: three days, and no way on." at tick 15,763 and "Lost in the Foreland" at 18,157, walks
+  Helmstow again, and from about tick 34,000 stands in the Ashcombe cellar giving no key ("Bram is
+  ready to train, and no trainer seen to teach them."; the cellar walked out, both goals lost), so the
+  world's clock stops and nothing is tried again. It never reaches Thornhold or the Grove. These are
+  the quartermaster's, the strategist's and the explorer's rules (#723's survival part), not a word
+  unsaid; Thornmark's play is bounded at the company in Thornmark (#721, decision 23) and the chain to
+  the chapter's end is #723's to assert.
+- **Riddles.** By §6's rule, with every line of the game's people, signs, events and statues heard
+  (the worst case), the Downs' stone's "ten" is the fourth word tried, the first elder's "standing"
+  (Thornmark) the eighth, the stone Lantern's "moths" (Sunderwood) the 162nd, and the drowned god's
+  name (Saltreach) none: it is said nowhere in a line, but in the Holy Symbol of the Tide's text,
+  which is read on the sheet and never heard. The pilot hears far less than every line; what it
+  answers in a play is the full run's to show (#723).
 
 ## The files
 
 | File | Owns |
 |---|---|
-| `src/game/pilot/pilot.ts` | `Pilot`: on and off (`toggle`), a stop of its own (`stop`), the tempo and the pace, the why line and what the band shows (`band`), the corpus heard (`hear`, `forget`), the next key (`next`), the navigator's goal, plan and squares found shut (`goal`, `plan`, `shut`), the explorer's walls searched and the map preferred (`searched`, `prefer`), the strategist's aim, since when, its goal's words and the goals given up (`aim`, `aimSince`, `aimGoal`, `lost`, #720), the people met and the crossings told (`met`, `offers`, `told`, #721), whether it asks talk (`talks`) and `BRAINS`: the brains in the order asked (fight, keep, talk, aims, route, explore) |
+| `src/game/pilot/pilot.ts` | `Pilot`: on and off (`toggle`), a stop of its own (`stop`), the tempo and the pace, the why line and what the band shows (`band`), the corpus heard (`hear`, `forget`), the next key (`next`), the navigator's goal, plan and squares found shut (`goal`, `plan`, `shut`), the explorer's walls searched and the map preferred (`searched`, `prefer`), the strategist's aim, since when, its goal's words and the goals given up (`aim`, `aimSince`, `aimGoal`, `lost`, #720), the people met and the crossings told (`met`, `offers`, `told`, #721), the words tried at each statue (`tried`, #721), whether it asks talk (`talks`) and `BRAINS`: the brains in the order asked (fight, keep, talk, aims, route, explore) |
 | `src/game/pilot/known.ts` | `Known` and `knownOf`, the fair view; `fair`, a feature as the party knows it; what a menu has shown (`wares`, a Buy list's; `trainsTo`, a trainer's top level; #719); a map's or a zone's bounds, a place's band and the squares seen, counted (`box`, `band`, `seenCount`, #718); the journal's goals with their maps and the zones set foot in (`goals`, `zones`, #720); the crossings told (`offers`, #721) |
 | `src/game/pilot/keep.ts` | the quartermaster (#719): `needs` and `need` (what the company needs, the most urgent first), `better` (the best a member can wear for the gold), `restWanted` (the rest offered taken, talk's rule 2 too), `reserve` and `spare` (from `purse.ts`) and the brain `keep` |
 | `src/game/pilot/purse.ts` | `reserve` and `spare` (#719): what the quartermaster keeps back and the gold over it, read by the quartermaster, talk and the navigator (#721) |
-| `src/game/pilot/talk.ts` | talk (#721): `pick` (the row to answer a menu with, or -1 for Esc), `NEAR` (the keys a person may be off) and the brain `talk`, with the meetings; what it keeps between ticks (its goal, the stamps of the people met, the crossing chosen) it keeps by pilot (`untalk` forgets it), and what it opened in a visit by the visit |
+| `src/game/pilot/talk.ts` | talk (#721): `pick` (the row to answer a menu with, or -1 for Esc), `NEAR` (the keys a person or a statue may be off), `answers` (the words heard that may answer a riddle, the likeliest first), `TRIES` and `NO_ANSWER` (five words a statue, and the line when none is left) and the brain `talk`, with the meetings and the riddles; what it keeps between ticks (its goal, the stamps of the people met, the crossing chosen, the riddles read, the word being typed, the stones given up) it keeps by pilot (`untalk` forgets it), and what it opened in a visit by the visit |
 | `src/game/pilot/aims.ts` | the strategist (#720): `Aim`, `chooseAim` (what the pilot is for), `LOST_MINUTES` (the lost rule's three days) and the brain `aims`, with the lost rule, the band rule, the chests and the walk again; what it keeps between ticks (the zone and square of its last look, the goals lost at what level, the places walked out) it keeps by pilot (`unaim` forgets it) |
 | `src/game/quests.ts` | `goalMap` (#720): the map a quest's shown goal is done on, read back from the goal |
-| `tools/walk.ts` | `pilotPlays` (#720): a chapter played from a new game by the pilot alone, every brain asked, until its end or the point a play names, on a seed it may name (#721) |
+| `tools/walk.ts` | `pilotPlays` (#720): a chapter played from a new game by the pilot alone, every brain asked, until its end or the point a play names, on a seed it may name (#721); the shelf's walkthrough plays The Quiet Farm with it, and Thornmark's plays on into The Grove Stone with `FULLRUN` set (#721) |
+| `src/ui/riddle.ts` | `RiddleScreen`'s `riddle`, the question as its box shows it, which talk reads (#721) |
+| `src/input.ts` | `drainTyped`: typed keys applied to a word, `Input`'s text mode and a headless game's alike (#721); `Game.input.typed` is where they are typed, by the keyboard or the pilot |
+| `tools/tests/lib.ts` | `headlessGame`'s input drains its typed keys as `Input` does, so the pilot types under Node as in the browser (#721) |
 | `src/game/pilot/route.ts` | the navigator (#717): `Goal` (with the reason or the why line its brain gives it), `routeOn` (the keys over one map), `routeLengths` (the length of the route to every square, in one search), `routeNearest` (the nearest of a set of squares, the search stopped there), each round the squares found shut it is given, `routeMaps` (the exits from map to map, and the crossings told whose fare the gold over the reserve pays, `edges`, #721), the brain `route` and `unroute` (what it kept of a goal, forgotten); it reads a cell by `passableCell` (`src/game/map.ts`) and the groups as the automap marks them (`markedGroups`, `src/ui/frame.ts`) |
 | `src/game/pilot/explore.ts` | the explorer (#718): `frontier` (seen squares with an unseen one beside them), `suspects` (walls with seen floor on both sides) and the brain `explore`; a zone's box and band it reads through `Known.box` and `Known.band`, and the zone a square lies in by `zoneAt` (`src/game/map.ts`), as the world map draws the boxes |
 | `src/game/ink.ts` | `drawnCell`: what a cell is drawn as, which the view, the automap and Known share |
@@ -361,3 +397,15 @@ Decided by delegate for #721, each the owner's to overturn:
 13. **The well is looked for only within six squares** (`drink`, #719): a route is no shorter than the squares between, and the quartermaster searched the whole map every tick while one was under half, a third of a long play's time (30.5 s to 21.2 s on seed 3, as the code then stood). Nothing it chooses moves.
 14. **The why lines**: "A word with Hild.", "A word with an old man mending nets.", "To the Lantern Guildhall.", "Taking the work.", "Paying the guild's fee.", "Maren learns Bless.", "Bram rises.", "Passage to Helmstow.", "Burning the den." and, for a person's question, the answer given: "To Ailith: The Chapel, in Helmstow."
 15. **The pilot stops itself at the ending's choice now** (§7's stop, at the review's asking): under a question marked `ends` talk presses nothing and calls `Pilot.stop` with "The choice is yours.", the stop of its own that keeps the band up until the next key (#716, decision 9). Standing under it pressing nothing, the band said "Nothing to do."; Esc would have looped, the strategist walking the company back to the person. #721's second part keeps the stop and the mark and builds the riddles; `EndingScreen` is never reached while the pilot drives.
+
+The second part (§6 and §7, with Thornmark's play):
+
+16. **A HOW MANY riddle is tried with the number words heard.** The issue tries one to twelve in order, the Downs' stone on the tenth try; but five tries a statue and the epic's Decided 1 (answers from what is heard alone) bind, and the Done when wants the stone answered within five with its hint heard and no answer with nothing heard. So the number words one to twelve tried are those in a line heard that shares a word of four letters or more with the rest of the question (the Downs': "hearth"), in ascending order: the old man's song gives "one", then "ten", the second try.
+17. **A line's words are cut at anything not a letter**, so "Thornhold's" is "thornhold" and "s" and Thornmark's sign shares "thornhold" with the first elder's riddle; each is `normalWord`ed, and none longer than the box takes (16 letters) is tried.
+18. **A tie in the overlap goes to the longer word, then to the first heard.** The issue ranks by the overlap alone, and most hint lines share the same two words: an answer is seldom a short word, and the first elder's "standing" is the longest of its sign's words. A word in several lines is ranked by its best.
+19. **The word is typed, a key a tick, as the keyboard types in the text mode**: into `Game.input.typed`, where `Input` puts a letter, and the box takes it as it takes a player's (a backspace first where it holds other letters), then Enter. The issue's "set `word`" would write the screen's field past its keys. `Game.input` names `typed`, which `Input` has; a headless game's input drains it as `Input` does (`drainTyped`, `tools/tests/lib.ts`), so the tests and the full run type as the browser does. The band says the word: "Trying TEN."
+20. **A statue is gone to as a person is**: within twelve keys or on the aim's map, while it is due a reading ("To the statue."), and its plinth read with Space ("Reading the plinth."). Nothing else would take the pilot to one. Due: never read; or not yet given up (the reading tries the next word, or says there is none); or given up with fewer than five tried and a word heard since that it has not tried. The riddle is known once read (talk keeps it by square), so its words heard are weighed from afar, afresh only when something new is heard.
+21. **"I have no answer for the stone." is said under the box**, when the words run out or five are tried, and Esc: the stone is given up until a line heard gives a word not tried while it has tries left. No quest's goal is a riddle (the four statues give gold, a point and gear and set no flag), so the strategist's `lost` takes no riddle.
+22. **The real ending's question is tested through the game**: Wenna's at the Heart, met with the flags before her set and the Heart's groups put down (the test's privilege), both her question of two answers and, Fane's map held, of three; each answer's flag is one of the Hearth chapter's `done`. The stop is the first part's (15), kept. The band's test reads `Pilot.band()`, which `Game.render` draws: a Node test has no canvas.
+23. **Thornmark's play is bounded, and runs with `FULLRUN` set.** The issue asks the chain from the Foreland to The Grove Stone's end in one run; on seed 10, the shelf's, the pilot gets over the pass into Thornmark with The Quiet Farm done and no further (Known limits), and seed 4 falls on the Foreland (12). The play, in Thornmark's walkthrough, holds to `{ flag: 'q_ashcombe_done', visited: 'thornmark' }`: 14,668 ticks, 30.6 s on one core, the walkthrough 34.7 s where it was 4.4 s. In the default run, about 8 minutes 42 seconds of CI's 10, that would pass 9, so it runs with `FULLRUN` set; #723 owns the full run's shape and asserts the chain to the chapter's end. It is not met by another seed (12).
+24. **A why line's name that begins with "A" or "An" keeps it**: "To a stone Lantern.", where `whyTo` said "To the a stone Lantern.", as it would have of a hall so named.

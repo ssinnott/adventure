@@ -52,8 +52,8 @@ export class Game {
   party!: Party;
   readonly rng: Rng = rng;
   readonly store: Store | null;
-  /** Set by main.ts; screens that take typed text need it. */
-  input: { textMode: boolean; drainText(current: string, max?: number): string } | null = null;
+  /** Set by main.ts; screens that take typed text need it. `typed` is the keys typed in the text mode, where the pilot types a riddle's word too (#721). */
+  input: { textMode: boolean; typed?: string[]; drainText(current: string, max?: number): string } | null = null;
   log: string[] = [];
   /** Lines ever said. The log keeps only the last 60, so a screen that wants what was said since it opened counts from this. */
   said = 0;
