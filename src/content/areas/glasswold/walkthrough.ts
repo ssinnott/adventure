@@ -45,10 +45,13 @@
 // and the glass with a light in it. Then the Ranger's third (#448), Oriel Fane's Map, played by a company
 // of 27 to the teaching (`fanesMap`); the Sorcerer's third (#807), What the Walkers Carried, the same, the
 // glasses brought first and the ask first, and to a company with no sorcerer (`walkersCarried`); #56's four
-// side quests (#532), each at its level and every way it goes (`woldQuests`). Last the chapter, three ways
-// in (`theWarning`).
+// side quests (#532), each at its level and every way it goes (`woldQuests`). The Master of arms (#858),
+// found and never told: the rumour at Akordu's trader's tent, the door in the small mesa's face that the
+// arrows point at, the hollow and Mergen in it, the bow in the herders' store on E9, and the lesson (`masterOfArms`).
+// Last the chapter, three ways in (`theWarning`).
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen, walkThrough, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
+import { headlessGame } from '../../../../tools/tests/lib.ts';
 import type { Walk, Step } from '../../../../tools/walk.ts';
 import { NORTH, EAST, SOUTH, WEST } from '../../../game/types.ts';
 import type { Facing } from '../../../game/types.ts';
@@ -56,7 +59,8 @@ import { addCondition, hasCondition, lift, templePrice, xpForLevel, takePrestige
 import { offers, teach, barOf, noneHere } from '../../../game/prestige.ts';
 import { seekId, sought } from '../../../game/seeking.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
-import { questLog } from '../../../game/quests.ts';
+import { questLog, questMarks, TRAINERS } from '../../../game/quests.ts';
+import type { QuestCond } from '../../../game/quests.ts';
 import { VENTS } from '../ashfall/maps/firemount_g11.ts';
 import { STAIR } from '../ashfall/maps/meridian_camp.ts';
 import { STAIR2 } from '../ashfall/maps/meridian_camp2.ts';
@@ -70,7 +74,8 @@ import { PLANNED, CURVE } from '../../progression.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { restRefused, useShrine } from '../../../game/wilds.ts';
-import { meet, heard, answer } from '../../../game/people.ts';
+import { meet, heard, answer, personFlags, handIns } from '../../../game/people.ts';
+import { masterOffers, teachTier, favourDone, linesOf, TIER_PRICES } from '../../../game/mastery.ts';
 import type { Person } from '../../../game/people.ts';
 import { buy, item } from '../../../game/items.ts';
 import type { Feature, MapDef, Answer } from '../../../game/map.ts';
@@ -84,6 +89,7 @@ import { CHAPTER as WINDOW } from '../ashfall/chapter.ts';
 import { LIT } from '../ashfall/maps/ember_stone.ts';
 import { ROAD_WEST } from '../ashfall/maps/emberwaste_e10.ts';
 import { WATCH, SCHOLAR_ASKED, ETCHING_GIVEN, ETCHING_READ } from './maps/wold_b9.ts';
+import { MASTER_MET, MASTER_FAVOUR } from './maps/wold_d10.ts';
 
 export const walkthrough: Walkthrough = (ok) => {
   const w = newWalk(ok);
@@ -770,6 +776,7 @@ export const walkthrough: Walkthrough = (ok) => {
   fanesMap(ok);
   walkersCarried(ok);
   woldQuests(ok);
+  masterOfArms(ok);
   theWarning(ok);
 };
 
@@ -1289,9 +1296,184 @@ function woldQuests(ok: (cond: boolean, msg: string) => void): void {
   }
 }
 
+/**
+ * The Master of arms (#858), found and never told, played by a company of 26 whose fighters are given Expert
+ * at arms and the gold directly: Expert is bought at a town trainer elsewhere on the road (#852), and what
+ * is played here is the Master. The rumour at Akordu's trader's tent, in the Riders' words, of the mesas; the
+ * small mesa's door, found from the arrows in its foot, shut to every walker, wader, climber and floater but
+ * through it, and the hollow behind it with Mergen in it; his words, which hint at the bow the herders keep,
+ * and his menu, which refuses every member before the favour; the herders' store on E9, found from the path
+ * that stops at the slab, and the bow at the back of it; the bow handed in, which sets the flag his
+ * teaching waits on; and the Master taught to the member Expert at arms of 25 and over, for 5,000. He is
+ * off the road and off the chapter's path by more than ten squares, and so is the bow, and no quest, seeking
+ * or mark names him.
+ */
+function masterOfArms(ok: (cond: boolean, msg: string) => void): void {
+  const g = headlessGame(4), p = g.party, LEVEL = 26;
+  const w: Walk = { world: g.world, party: p, news: [], level: LEVEL, ok, marks: questMarks(questLog(g.world.state, p)) };
+  for (const m of p.members) { m.level = LEVEL; m.xp = xpForLevel(LEVEL); }
+  const out = buildMaps()[OUTDOORS];
+  const [D8, D10, E9] = ['wold_d8', 'wold_d10', 'wold_e9'].map((id) => MAP_DEFS.find((d) => d.id === id)!);
+  const zone = (id: string) => out.zones.find((z) => z.id === id)!;
+  const [d10, e9] = [zone(D10.id), zone(E9.id)];
+  const feature = (d: MapDef, id: string) => d.features!.find((f) => 'id' in f && f.id === id)!;
+  const who = (d: MapDef, name: string): Person => d.features!.find((f): f is Person => f.kind === 'npc' && f.name === name)!;
+  const rider = who(D8, 'A Rider by the trader\'s tent'), mergen = who(D10, 'Mergen, the drillmaster'), herder = who(E9, 'A herder at the yurts');
+  const shop = D8.features!.find((f) => f.kind === 'shop')!, mastery = mergen.mastery!;
+  const [, door] = D10.secrets!, [slab] = E9.secrets!, chest = feature(E9, 'e9_drill_bow'), hint = feature(D10, door.hint), path9 = feature(E9, slab.hint);
+  const chebyshev = (a: readonly [number, number], b: readonly [number, number]): number => Math.max(Math.abs(a[0] - b[0]), Math.abs(a[1] - b[1]));
+
+  // What he is: a Master of arms for 5,000 at 25 who waits on the hand-in of the bow and on nothing else, a
+  // person whose words close onto his menu; the flag his teaching tests is set by that hand-in alone.
+  const setters = MAP_DEFS.flatMap((d) => (d.features ?? []).filter((f): f is Person => f.kind === 'npc' && personFlags(f).includes(MASTER_FAVOUR)).map((f) => `${d.id}:${f.name}`));
+  const [hand] = handIns(mergen);
+  ok(mastery.line === 'arms' && mastery.tier === 'master' && mastery.price === TIER_PRICES.master && mastery.price === 5000 && JSON.stringify(mastery.done) === JSON.stringify({ flag: MASTER_FAVOUR })
+    && handIns(mergen).length === 1 && hand.item === 'drill_bow' && hand.setFlag === MASTER_FAVOUR && hand.reward === 0 && setters.join() === `wold_d10:${mergen.name}`
+    && !mergen.choice && !mergen.passage && !mergen.teaches && !mergen.skill && !mergen.interior && !mergen.hall,
+    `Mergen teaches Master at arms for ${mastery.price} gold, once the bow is handed in (${hand.setFlag}), and nothing else: his words close onto his menu`);
+
+  // Found, never told: no seeking quest or mark, no atlas place, and nothing the journal says names him or his
+  // door; the world map marks nothing on D10.
+  const quests = AREAS.flatMap((a) => [...(a.quests ?? []), ...(a.chapter ? [a.chapter] : [])]);
+  const told = quests.flatMap((q) => [q.title, ...q.entries.map((e) => e.text), ...q.goals.map((x) => x.text)]).filter((t) => /Mergen|drillmaster|Drill Bow|small mesa/i.test(t));
+  const marked = quests.filter((q) => q.mark && q.goals.some((x) => x.at === D10.id));
+  ok(!told.length && !marked.length && !TRAINERS.some((t) => t.name === mergen.name) && !sought(questLog(g.world.state, p)).some((s) => s.at === D10.id)
+    && !ATLAS.sites.some((s) => /Mergen|drillmaster/i.test(s.name)) && !ATLAS.places.some((s) => /Mergen|drillmaster/i.test(s.name ?? '')),
+    'found and never told: no quest, seeking, goal or world-map mark names Mergen or his door, and he is no site of the atlas');
+
+  // The rumour at Akordu's trader's tent: a Rider by it, words only, two paragraphs in the Riders' voice that
+  // say the kind of place, the mesas, and neither his name nor a square.
+  w.world.travel(D8.id, rider.x, rider.y);
+  const rumour = meet(rider, p, heard(w.world, rider)).text;
+  ok(Math.abs(rider.x - shop.x) + Math.abs(rider.y - shop.y) <= 2 && rider.lines.length === 2 && rumour.includes('mesas') && rumour.includes('nobody has seen him eat')
+    && !/Mergen|\d/.test(rumour) && !rider.flag && !rider.quest && !rider.choice && !rider.says && !rider.teaches && !rider.mastery && !rider.interior && !rider.passage,
+    'at the trader\'s tent in Akordu a Rider says a man who drilled the Riders went into the mesas and has not been seen to eat, words only and two paragraphs, and never a name or a square');
+
+  // The hide: off the road and off the chapter's path by more than ten squares, on the world's grid.
+  const road = (X: number, Y: number): number => {
+    let best = Infinity;
+    for (let y = Y - 40; y <= Y + 40; y++) for (let x = X - 40; x <= X + 40; x++) if (out.inBounds(x, y) && out.at(x, y).ch === '=') best = Math.min(best, chebyshev([x, y], [X, Y]));
+    return best;
+  };
+  const chapterConds = [CHAPTER.start, CHAPTER.done, ...CHAPTER.entries.map((e) => e.when), ...CHAPTER.goals.map((x) => x.when)].flatMap((c) => [c].flat() as QuestCond[]);
+  const onPath: { what: string; at: [number, number] }[] = [];
+  const step = (what: string, map: string, x: number, y: number): void => { const z = out.zones.find((q) => q.id === map); if (z) onPath.push({ what, at: [z.x + x, z.y + y] }); };
+  for (const c of chapterConds) {
+    if (c.seen) { const [map, id] = c.seen.split(':'), f = MAP_DEFS.find((d) => d.id === map)?.features?.find((q) => 'id' in q && q.id === id); if (f) step(c.seen, map, f.x, f.y); }
+    if (c.visited) { const d = MAP_DEFS.find((q) => q.id === c.visited); if (d) step(`${d.id} entered`, d.id, d.start.x, d.start.y); }
+    for (const flag of [c.flag ?? []].flat()) for (const d of MAP_DEFS) for (const f of d.features ?? []) {
+      if ((f.kind === 'npc' && personFlags(f).includes(flag)) || (f.kind === 'event' && [f.sets ?? []].flat().includes(flag))) step(flag, d.id, f.x, f.y);
+    }
+  }
+  const apart = (at: [number, number]): { road: number; path: number; what: string } => {
+    const near = onPath.map((q) => ({ what: q.what, d: chebyshev(q.at, at) })).sort((a, b) => a.d - b.d)[0];
+    return { road: road(at[0], at[1]), path: near.d, what: near.what };
+  };
+  const hideAt = apart([d10.x + mergen.x, d10.y + mergen.y]), bowAt = apart([e9.x + chest.x, e9.y + chest.y]);
+  ok(onPath.length >= 8 && hideAt.road > 10 && hideAt.path > 10 && bowAt.road > 10 && bowAt.path > 10,
+    `the hide is ${hideAt.road} squares from the nearest road square and ${hideAt.path} from the chapter's nearest step (${hideAt.what}), and the bow's chest ${bowAt.road} and ${bowAt.path} (${bowAt.what}), of ${onPath.length} squares the chapter keys on`);
+
+  // The door: shut to every walker, wader, climber and floater but through it, with the hint on the near side.
+  const reach = (z: typeof d10, from: readonly [number, number], shut: readonly [number, number]): Set<number> => {
+    const seen = new Set<number>(), todo = [[z.x + from[0], z.y + from[1]]];
+    while (todo.length) {
+      const [x, y] = todo.pop()!, k = y * out.width + x;
+      if (seen.has(k) || (x === z.x + shut[0] && y === z.y + shut[1]) || x < z.x || x >= z.x + z.w || y < z.y || y >= z.y + z.h || out.passable(x, y, { swim: true, climb: true, float: true }) !== 'ok') continue;
+      seen.add(k);
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+    }
+    return seen;
+  };
+  const sealed = reach(d10, [hint.x, hint.y], [door.x, door.y]), at10 = (x: number, y: number): number => (d10.y + y) * out.width + d10.x + x;
+  ok(door.x === 3 && door.y === 20 && hint.kind === 'event' && hint.x === door.x + 1 && hint.y === door.y && sealed.size > 600 && !sealed.has(at10(2, 20)) && !sealed.has(at10(1, 20))
+    && mergen.x === door.x - 2 && mergen.y === door.y && D10.rows[door.y][door.x] === 'S' && D10.rows[door.y - 1][door.x] === 'r' && D10.rows[door.y + 1][door.x] === 'r',
+    `the hollow is shut but for the door in the small mesa's face: none of D10's ${sealed.size} squares walked, waded, climbed or floated reaches it, and the arrows stand at its side`);
+  see(w, `${D10.id}:${door.hint}`);
+  ok(w.world.used('d10_butts') && hint.kind === 'event' && hint.text.includes('Arrows') && !/door|Mergen|hide|secret/i.test(hint.text), 'the arrows in the small mesa\'s foot are seen, and the text explains nothing');
+
+  // Search where the arrows stand, and go in: the lone basilisk that holds the mesa's foot is dead (its group
+  // is won in the box's own walk above), and the hollow is walked into.
+  w.world.travel(D10.id, hint.x, hint.y, WEST);
+  w.world.killGroups(['d10_basilisk']);
+  let found = false;
+  for (let i = 0; i < 20 && !found; i++) found = w.world.search();
+  const into = found ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(found && into.every((r) => r.kind === 'moved') && w.world.used('d10_hollow') && w.world.state.x === d10.x + 2 && w.world.state.y === d10.y + 20,
+    'searched where the arrows stand, the rock gives, and the hollow behind it can be walked into');
+  listen(w);
+
+  // His words, the first time: the bow the herders keep, behind the stone where their path ends, which
+  // hints at E9's store and tells nobody the door. The fighters are given Expert and the gold; every member of
+  // the line is refused before the favour, each for its own reason.
+  const fighters = p.members.flatMap((c, i) => (linesOf(c.cls).includes('arms') ? [i] : []));
+  const [first, second, third, fourth] = fighters;
+  // Expert at arms as a town trainer's menu teaches it (`teachTier`, 2,000 gold each), and the gold for the lesson.
+  p.gold = 20000;
+  for (const i of [first, second]) ok(teachTier('arms', 'expert', TIER_PRICES.expert, p, i).taught, `${p.members[i].name} is given Expert at arms, as the towns' trainers teach it`);
+  p.members[second].level = 24;
+  p.gold = 6000;
+  const opening = meet(mergen, p, heard(w.world, mergen)).text;
+  const bars = (): string[] => masterOffers(mastery, p, w.world.state).map((o) => `${o.who}:${o.bar || `${o.price}g`}`);
+  const before = bars();
+  ok(opening === mergen.lines.join('\n\n') && mergen.lines.length === 3 && opening.includes('herders') && opening.includes('bow') && opening.includes('where their path ends')
+    && !/slab|store|[0-9]/i.test(opening) && !!p.flags[MASTER_MET] && !p.flags[MASTER_FAVOUR],
+    'Mergen\'s own words first: his bow is with the herders, behind the stone where their path ends, and he will teach for it; no square, and nothing of the store or its door');
+  ok(fighters.length === 4 && before.join() === [`${first}:favour first`, `${second}:level 25`, `${third}:Expert first`, `${fourth}:Expert first`].join()
+    && !teachTier('arms', 'master', mastery.price, p, first, favourDone(mastery, w.world.state, p)).taught && p.gold === 6000,
+    `before the favour his menu refuses every member of the line, each for its reason (${before.join(' ')}), and nothing is taught or paid`);
+  ok(meet(mergen, p, heard(w.world, mergen)).text === mergen.says![1].lines.join('\n\n'), 'and at the next meeting he holds out his empty hands, and says only where the bow is');
+
+  // The favour: the herders' hills, E9's west edge from D9's east, the path that stops at the slab, searched; the
+  // store behind it, a square dug further than the strongbox's, and the bow in the chest at the back.
+  ok(herder.lines.join(' ').includes('hills') && path9.kind === 'event' && path9.text.includes('path') && path9.text.includes('slab') && chest.kind === 'chest' && chest.gold === 0 && chest.items.join() === 'drill_bow'
+    && chest.x === slab.x - 3 && chest.y === slab.y && E9.rows[chest.y][chest.x] === ':' && E9.rows[chest.y][chest.x - 1] === 'r' && E9.rows[chest.y - 1][chest.x] === 'r' && E9.rows[chest.y + 1][chest.x] === 'r',
+    'the herders live on the hills, and the path that stops at the slab leads to a store dug in the hill with a chest at the back of it holding the bow');
+  const store = reach(e9, [path9.x, path9.y], [slab.x, slab.y]), at9 = (x: number, y: number): number => (e9.y + y) * out.width + e9.x + x;
+  ok(store.size > 800 && [0, 1, 2, 3].every((i) => !store.has(at9(slab.x - i, slab.y))), `the bow is shut but for the slab: none of E9's ${store.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${E9.id}:${slab.hint}`);
+  w.world.travel(E9.id, slab.x + 1, slab.y, WEST);
+  let dug = false;
+  for (let i = 0; i < 20 && !dug; i++) dug = w.world.search();
+  const deep = dug ? [1, 2, 3, 4].map(() => w.world.move('forward')) : [];
+  ok(dug && deep.every((r) => r.kind === 'moved') && w.world.state.x === e9.x + chest.x && w.world.state.y === e9.y + chest.y && w.world.used('e9_store'),
+    'searched where the path stops, the slab gives, and the store can be walked through to the chest at the back');
+  listen(w);
+  const there = w.world.featureHere();
+  const gold = p.gold;
+  if (there?.kind === 'chest') g.interact(there);
+  ok(there?.kind === 'chest' && there.id === 'e9_drill_bow' && p.bag.includes('drill_bow') && p.gold === gold && w.world.used('e9_drill_bow') && item('drill_bow').slot === 'none' && !item('drill_bow').price
+    && !MAP_DEFS.some((d) => (d.features ?? []).some((f) => (f.kind === 'shop' && f.stock.includes('drill_bow')) || ((f.kind === 'chest' || f.kind === 'cairn') && f.id !== 'e9_drill_bow' && f.items.includes('drill_bow'))))
+    && !Object.values(MONSTERS).some((m) => m.drops?.some((d) => d.item === 'drill_bow')),
+    'the chest gives the bow and no gold; no shop sells it, no other chest holds it and no monster drops it');
+
+  // The hand-in: back at the hollow, Mergen takes the bow at the meeting, and the menu opens to the member who is
+  // Expert at 25 and over, for 5,000; the one of 24 is told the level, the ones without Expert are told so.
+  w.world.travel(D10.id, mergen.x + 1, mergen.y, WEST);
+  const handed = meet(mergen, p, heard(w.world, mergen)).text;
+  const after = bars();
+  ok(handed === hand.done.join('\n\n') && !p.bag.includes('drill_bow') && !!p.flags[MASTER_FAVOUR] && favourDone(mastery, w.world.state, p)
+    && after.join() === [`${first}:5000g`, `${second}:level 25`, `${third}:Expert first`, `${fourth}:Expert first`].join(),
+    `the bow handed in at the meeting (${handed.split('\n\n')[0].slice(0, 40)}..), his menu opens: ${after.join(' ')}`);
+  const purse = p.gold, lesson = teachTier('arms', 'master', mastery.price, p, first, favourDone(mastery, w.world.state, p));
+  ok(lesson.taught && p.gold === purse - 5000 && lesson.said === `${p.members[first].name} is Master at arms now.` && bars()[0] === `${first}:taken`
+    && !teachTier('arms', 'master', mastery.price, p, second, true).taught && p.gold === purse - 5000,
+    `the member Expert at 26 is taught for 5,000 gold ("${lesson.said}"), and the one of 24 and the ones without Expert are still refused`);
+  ok(meet(mergen, p, heard(w.world, mergen)).text === mergen.says![0].lines.join('\n\n'), 'after, he sits with the bow across his knees, and asks who comes to him');
+
+  // A company that finds the bow first and never met him: he takes it at the first meeting, in the words for a
+  // stranger, and the favour is done though he was never met.
+  const early = newWalk(ok);
+  early.party.bag.push('drill_bow');
+  early.world.travel(D10.id, mergen.x, mergen.y);
+  const stranger = meet(mergen, early.party, heard(early.world, mergen)).text;
+  ok(stranger === hand.early!.join('\n\n') && !!early.party.flags[MASTER_FAVOUR] && !early.party.flags[MASTER_MET] && !early.party.bag.includes('drill_bow')
+    && meet(mergen, early.party, heard(early.world, mergen)).text === mergen.says![0].lines.join('\n\n'),
+    'a company that finds the bow first takes it to him unmet, and he takes it in the words for a stranger, and then is as he is to any who have done the favour');
+}
+
 // ---- the chapter (#531) ----
 
-const npcOn = (map: string, name: string): Person => MAP_DEFS.find((d) => d.id === map)!.features!.find((f): f is Person => f.kind === 'npc' && f.name === name)!;
+const npcOn =(map: string, name: string): Person => MAP_DEFS.find((d) => d.id === map)!.features!.find((f): f is Person => f.kind === 'npc' && f.name === name)!;
 const goalOf = (start: string): string => CHAPTER.goals.find((g) => g.text.startsWith(start))!.text;
 
 /** A step played at a level, the company levelled to it. */
