@@ -11,7 +11,7 @@ import { drawPortraitLarge } from './portraits.ts';
 import { drawInterior } from './interior.ts';
 import { BRASS, BRASS_DARK, TEXT, TEXT_DIM, YELLOW, RED } from './palette.ts';
 import type { Feature, Interior } from '../game/map.ts';
-import { item, priceIn, buy } from '../game/items.ts';
+import { item, priceIn, buy, sellPrice } from '../game/items.ts';
 import { readText } from '../game/people.ts';
 import { ITEMS } from '../content/index.ts';
 import { spell, spellsFor } from '../game/spells.ts';
@@ -596,21 +596,20 @@ function buyScreen(g: Game, f: Extract<Feature, { kind: 'shop' }>): Screen {
 
 function sellScreen(g: Game, f: Extract<Feature, { kind: 'shop' }>): Screen {
   const entries: { id: string; owner: string[]; label: string }[] = [];
-  for (const id of g.party.bag) entries.push({ id, owner: g.party.bag, label: `${item(id).name} (bag)\t${sellPrice(id)}g` });
-  for (const m of g.party.members) for (const id of m.pack) entries.push({ id, owner: m.pack, label: `${item(id).name} (${m.name})\t${sellPrice(id)}g` });
+  const pays = (id: string): number => sellPrice(g.party, item(id).price);
+  for (const id of g.party.bag) entries.push({ id, owner: g.party.bag, label: `${item(id).name} (bag)\t${pays(id)}g` });
+  for (const m of g.party.members) for (const id of m.pack) entries.push({ id, owner: m.pack, label: `${item(id).name} (${m.name})\t${pays(id)}g` });
   if (!entries.length) return new MessageScreen('"You have nothing I want."', undefined, f.name);
   return new ChoiceScreen('"Let me see it."', [...entries.map((e) => e.label), 'Done'], (i) => {
     if (i < 0 || i === entries.length) return;
-    const e = entries[i];
-    if (sellPrice(e.id) === 0) { g.say(`"I will not buy that."`); g.push(sellScreen(g, f)); return; }
+    const e = entries[i], paid = pays(e.id);
+    if (paid === 0) { g.say(`"I will not buy that."`); g.push(sellScreen(g, f)); return; }
     e.owner.splice(e.owner.indexOf(e.id), 1);
-    g.party.gold += sellPrice(e.id);
-    g.say(`Sold ${item(e.id).name} for ${sellPrice(e.id)} gold.`);
+    g.party.gold += paid;
+    g.say(`Sold ${item(e.id).name} for ${paid} gold.`);
     g.push(sellScreen(g, f));
   }, f.name);
 }
-
-function sellPrice(id: string): number { return Math.floor(item(id).price / 2); }
 
 function describe(id: string): string {
   const d = ITEMS[id];

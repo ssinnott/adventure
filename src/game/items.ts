@@ -78,6 +78,12 @@ export function priceIn(shop: Shop, id: string): number {
   return shop.prices?.[id] ?? item(id).price;
 }
 
+/**
+ * What a shop pays the company for an item of this price: half, rounded down, so one priced at
+ * nothing is never bought. The company is asked so that a clause of its own may change the share.
+ */
+export function sellPrice(party: Party, price: number): number { return Math.floor(price / 2); }
+
 /** Buy an item from a shop: null when the party is short of gold; food goes to the stores, the rest to the bag. */
 export function buy(party: Party, shop: Shop, id: string): ItemDef | null {
   const d = item(id), price = priceIn(shop, id);
