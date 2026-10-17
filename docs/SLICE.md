@@ -606,13 +606,15 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   or a map in a region no area has fails it.
 - `test`: `node tools/test.ts`, then `node tools/tests/runner/check.ts`, the runner's own check,
   which runs it on `tools/tests/runner/fixture/` so the fixture's failures stay out of the real
-  run. The suites are in `tools/tests/`, one file each exporting a function of its name (`lib.ts`
+  run, then `node tools/test.ts fullrun`, the pilot's full run on the shelf (about 10 to 25 s; it
+  repeats walkthrough:shelf's play). The suites are in `tools/tests/`, one file each exporting a function of its name (`lib.ts`
   is what they share), which the runner finds (maps, movement, monsters, combat, harness, party,
   traits, calendar, terrain, weather, atlas, outdoors, save, quests, then any other in name order),
   then each area's walkthrough (the Foreland's and Thornmark's), in road order. Every check prints a
   line saying what it holds, so the output is the list; `node tools/test.ts maps combat` runs a few
   suites, `walkthrough:<area>` one walkthrough. The pilot's survival sweep and full run (`survival`,
-  `fullrun`, docs/PILOT.md) take minutes and run only when named. A check someone owes is reported, not failed:
+  `fullrun`, docs/PILOT.md) run only when named; `npm test` names the full run, on the shelf alone.
+  A check someone owes is reported, not failed:
   `owed()` in `tools/tests/lib.ts` prints `owed: <what> (#40's)`, and fails once the check holds,
   so the entry is dropped. The last line counts them by whose, as `ALL OK (3 owed: #40 ×2, #43 ×1)`.
   The curve, the gate and the pillars owe today, and the curve and the gate fail a miss that grows
@@ -630,8 +632,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   CI keeps when the smoke test fails.
 
 CI (`.github/workflows/checks.yml`) runs the three as jobs of their own on every pull request, and
-a fourth, `sheet`, which attaches the contact sheet and gates nothing. The tests job ends with the
-pilot's full run on the shelf (`FULLRUN=shelf node tools/test.ts fullrun`). A run started by hand
+a fourth, `sheet`, which attaches the contact sheet and gates nothing. `npm test` runs the shelf's
+full run, and so does the tests job (10 s on CI). A run started by hand
 skips the sheet, sweeps every map for cracks and adds a fifth job, `fullrun`: the pilot's full run on
 the areas its `fullrun` input names (all unless changed), a report that gates nothing.
 

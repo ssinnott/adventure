@@ -52,6 +52,7 @@ import { weary, caster, FOOD_RESTS } from '../../src/game/pilot/keep.ts';
 import { searches } from '../../src/game/pilot/route.ts';
 import { holds } from '../../src/game/quests.ts';
 import { pilotRun } from '../walk.ts';
+import { play } from './fullrun.ts';
 import { startCombat, currentTurn, monsterAct } from '../../src/game/combat.ts';
 import { answers, TRIES, NO_ANSWER } from '../../src/game/pilot/talk.ts';
 import { EndingScreen } from '../../src/ui/ending.ts';
@@ -85,6 +86,7 @@ export function pilot(): void {
   talking();
   survives();
   riddles();
+  lastChapter();
 }
 
 /** A headless game whose company Vask has hired: walked onto his door by the test (its privilege) and his words closed. */
@@ -364,9 +366,10 @@ function omniscient(): void {
   ok(!knownOf(seer).secrets('fx_seer').length && !suspects(knownOf(seer), 'fx_seer').length, 'a secret door found is no longer told, nor suspected');
   // The outdoors: each zone's secrets, placed where its box lies, are the outdoors' secret doors; a zone's id gives its own.
   const o = Object.assign(headlessGame(), { pilot: new Pilot({ omniscient: true }) }), ok_ = knownOf(o), out = o.maps[OUTDOORS];
-  const written = out.zones.reduce((n, z) => n + (MAP_DEFS.find((d) => d.id === z.id)?.secrets?.length ?? 0), 0), told = ok_.secrets(OUTDOORS), downs = ok_.secrets('downs_d2');
-  ok(written > 0 && told.length === written && told.every((s) => out.at(s.x, s.y).door === 'secret') && downs.length === 1 && downs.length < told.length && downs.every((s) => out.zoneAt(s.x, s.y)?.id === 'downs_d2') && !knownOf(Object.assign(headlessGame(), { pilot: new Pilot() })).secrets(OUTDOORS).length,
-    `on the outdoors the secrets told are every zone's, each a secret door where its zone lies (${told.length} of ${written}; downs_d2's ${downs.length}), and none to a fair pilot`);
+  const writtenIn = (id: string): number => MAP_DEFS.find((d) => d.id === id)?.secrets?.length ?? 0;
+  const written = out.zones.reduce((n, z) => n + writtenIn(z.id), 0), told = ok_.secrets(OUTDOORS), zone = out.zones.find((z) => writtenIn(z.id) > 0), mine = zone ? ok_.secrets(zone.id) : [];
+  ok(written > 0 && told.length === written && told.every((s) => out.at(s.x, s.y).door === 'secret') && !!zone && mine.length === writtenIn(zone.id) && mine.length < told.length && mine.every((s) => out.zoneAt(s.x, s.y)?.id === zone.id) && !knownOf(Object.assign(headlessGame(), { pilot: new Pilot() })).secrets(OUTDOORS).length,
+    `on the outdoors the secrets told are every zone's, each a secret door where its zone lies (${told.length} of ${written}; ${zone?.id}'s ${mine.length}, as written), and none to a fair pilot`);
 }
 
 /** On and off, the fight handed to the bot, the box closed, the brains asked, a wipe. */
@@ -1684,4 +1687,33 @@ function riddles(): void {
       && !ep.on && band === 'The choice is yours.' && !ended && !Object.values(ENDINGS).some((e) => eg.party.flags[e.flag]) && ep.band() === null,
       `Wenna's question at the Heart${map ? ', Fane\'s map held' : ''}, each answer the Hearth chapter's end, is marked and stops the pilot: nothing answered, the band up and gone at the next key (${q?.options.join(' / ')}; "${band}")`);
   }
+}
+
+/**
+ * The full run's last chapter (#723, the delegate's first call): its end is an ending taken, which the
+ * pilot never takes. Played by the suite's own `play` under Wenna's question, the pilot's stop there
+ * counts and the first answer is pressed, so the ending holds; a stop with another why line is no finish.
+ */
+function lastChapter(): void {
+  const last = THE_QUEST.chapters.at(-1)!, wenna = (MAP_DEFS.find((d) => d.id === 'core')?.features ?? []).find((f) => f.kind === 'npc' && f.choice === CHOICE_TWO)!;
+  const heart = (): Game => {
+    const g = piloted();
+    Object.assign(g.party.flags, { [VASK_FALLEN]: 1, [VOICE_WHOLE]: 1 });
+    g.world.travel('core', wenna.x, wenna.y + 1, NORTH);
+    for (const s of Object.values(g.world.mapState.groups)) s.dead = g.world.state.minutes;
+    drive(g, ['forward']);
+    g.pilot!.brains = [talk];
+    return g;
+  };
+  const g = heart();
+  g.pilot!.toggle(g);
+  const run = play(g, last), taken = Object.values(ENDINGS).filter((e) => g.party.flags[e.flag]).map((e) => e.flag);
+  // The same question up, the pilot stopped under it with another line: not counted, nothing pressed.
+  const h = heart(), hp = h.pilot!;
+  hp.toggle(h);
+  for (let t = 0; t < 30 && hp.on; t++) drive(h, [null]);
+  hp.stop(h, ['The company has fallen.']);
+  const other = play(h, last), asked = h.top instanceof ChoiceScreen && h.top.ends;
+  ok(run.done && holds(last.done, g.world.state, g.party) && taken.length === 1 && !other.done && asked && !Object.values(ENDINGS).some((e) => h.party.flags[e.flag]),
+    `the full run's last chapter: the stop under the ending's question counts and the first answer is pressed, so the ending holds (${taken.join()}, in ${run.ticks} ticks); a stop with another why line does not count (${other.stop})`);
 }

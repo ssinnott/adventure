@@ -130,6 +130,7 @@ company's needs outrank its meetings, and those its wandering; a brain either pr
 `Pilot.goal` and returns null, so that route presses it. The explorer, asked after the navigator,
 speaks only when no goal is walked, and a goal it sets it walks at once, asking `route` for the first
 key itself. Talk walks its goal to a person so, every key of it, or the strategist would set its own.
+A brain that stops the pilot ends the tick (#723).
 
 ## The navigator
 
@@ -292,19 +293,20 @@ save. A chapter the fair pilot does not finish is played again from that point b
 `omniscient` set, the save loaded as F9 loads one (`headlessLoad`, `tools/tests/lib.ts`), so no memory
 crosses it. A second line says which kind of failure it is: "thornmark: fair pilot lost; omniscient
 also fails (fell in The Delta 98,155, ...)". The omniscient Known has every square seen, each cell as
-it is (a secret door a door) and every exit and feature there now. The explorer suspects the secret
-doors as written and not yet found (`Known.secrets`: `MapDef.secrets`, a zone's placed where its box
-lies) and no other wall. Nothing else changes: the brains are the fair pilot's. Where the omniscient
-pilot finishes, the road goes on from its end with a fresh fair pilot. A chapter neither finishes ends
-the road, and each later area's line says that it was not reached.
+it is (a secret door a door), every exit there now and every feature the automap marks. The
+explorer suspects the secret doors as written and not yet found (`Known.secrets`: `MapDef.secrets`,
+a zone's placed where its box lies) and no other wall. Nothing else changes: the brains are the fair
+pilot's. Where the omniscient pilot finishes, the road goes on from its end with a fresh fair pilot.
+A chapter neither finishes ends the road, and each later area's line says that it was not reached.
 
 FULLRUN names the areas, as ids with commas between or `all`, and `shelf` when unset. The run plays
 the road up to the last area named and checks every chapter on it, as a chapter is reached only
-through those before it. `FULLRUN=shelf` repeats the shelf's walkthrough play tick for tick in about
-twenty seconds. The suite runs only when named (`ASKED`, `tools/test.ts`, held so by the runner's own
-check): a bare `node tools/test.ts` does not run it.
+through those before it. `FULLRUN=shelf` repeats the shelf's walkthrough play tick for tick. The
+suite runs only when named (`ASKED`, `tools/test.ts`, held so by the runner's own check): a bare
+`node tools/test.ts` does not run it, but `npm test` names it last, so `npm test` runs the shelf's full
+run (about 10 to 25 s; it repeats walkthrough:shelf's play) and so does the tests job.
 
-In CI the tests job runs `FULLRUN=shelf node tools/test.ts fullrun` after the tests, as a gate. The
+In CI the tests job's `npm test` is the shelf's gate, with no step of its own (10 s on CI). The
 `fullrun` job runs only when the workflow is started by hand (`workflow_dispatch`), never on a pull
 request: its `fullrun` input is the FULLRUN (`all` unless changed) and it has sixty minutes; its lines
 go into the run's summary. It is a report, not a gate, until the pilot finishes those chapters. The
@@ -423,7 +425,8 @@ not the finish.
 | `src/input.ts` | `drainTyped`: typed keys applied to a word, `Input`'s text mode and a headless game's alike (#721); `Game.input.typed` is where they are typed, by the keyboard or the pilot |
 | `tools/tests/lib.ts` | `headlessGame(seed, party)`: a new game under Node, with the premade company or the one given (#723); `headlessLoad(save)`: a game under Node loaded from a save's text as F9 loads one (#723); its input drains its typed keys as `Input` does, so the pilot types under Node as in the browser (#721) |
 | `tools/tests/fullrun.ts` | the suite `fullrun` (#723): the one quest's chapters played on one Game by the pilot, the omniscient run from the save point beside a chapter the fair pilot loses, the notes; `reach` (the road FULLRUN reaches), `SEED`, `TICK_CAP` and `BUDGET`; run only when named (`ASKED`, `tools/test.ts`) |
-| `.github/workflows/checks.yml` | the tests job's `FULLRUN=shelf` step and the `fullrun` job, run by hand with its `fullrun` input (#723) |
+| `.github/workflows/checks.yml` | the `fullrun` job, run by hand with its `fullrun` input; the tests job runs the shelf's full run through `npm test` (#723) |
+| `package.json` | `npm test`: the suites, the runner's own check, then the shelf's full run (#723) |
 | `tools/smoke.ts` | the pilot in the browser: P, T, an arrow and the band (#716), and thirty seconds of its play at 1x (#723) |
 | `src/game/pilot/route.ts` | the navigator (#717): `Goal` (with the reason or the why line its brain gives it), `routeOn` (the keys over one map), `routeLengths` (the length of the route to every square, in one search), `routeNearest` (the nearest of a set of squares, the search stopped there), each round the squares found shut it is given and through a group only where no way round is seen (#723), `routeMaps` (the exits from map to map, and the crossings told whose fare the gold over the reserve pays, `edges`, #721), the brain `route` and `unroute` (what it kept of a goal, forgotten); it reads a cell by `passableCell` (`src/game/map.ts`) and the groups as the automap marks them (`markedGroups`, `src/ui/frame.ts`) |
 | `src/game/pilot/explore.ts` | the explorer (#718): `frontier` (seen squares with an unseen one beside them), `suspects` (walls with seen floor on both sides; for the omniscient pilot the secret doors `Known.secrets` gives, #723) and the brain `explore`; a zone's box and band it reads through `Known.box` and `Known.band`, and the zone a square lies in by `zoneAt` (`src/game/map.ts`), as the world map draws the boxes |
@@ -643,15 +646,15 @@ The figures: The Quiet Farm played from a new game by every brain on seeds 1 to 
 Decided by delegate for #723 (the suite), each the owner's to overturn:
 
 1. **FULLRUN reaches the road up to the last area it names**, and every chapter on the road is checked, as a chapter is reached only through those before it: `FULLRUN=thornmark` plays and checks the shelf's chapter first. Unset is `shelf`; a name that is no area with a chapter fails.
-2. **Ten minutes of the wall clock a chapter's play** (`BUDGET`), fair and omniscient each their own, as the survival sweep's run has; the issue's 2,000,000 ticks (`TICK_CAP`) stays as a cap. Either cap fails and says which. With the road as it stands the whole run takes about ten minutes.
+2. **Ten minutes of the wall clock a chapter's play** (`BUDGET`), fair and omniscient each their own, as the survival sweep's run has; the issue's 2,000,000 ticks (`TICK_CAP`) stays as a cap. Either cap fails and says which. With the road as it stands the whole run takes about nine minutes.
 3. **Seed 4 and the premade company**, the walkthroughs', so the default run repeats the shelf's walkthrough play tick for tick (10,875) and the two can be compared.
 4. **The save point is taken with the map on top**, as F5 saves: a chapter may end in a visit, and the pilot plays on until it is back on the map, those ticks counted in the next chapter. At the first sweep the save was taken in the throne room's visit, the party on its door, and a game loaded from it stood there with no way out: the navigator does not turn on a square it leaves from.
 5. **The omniscient run loads the save as F9 does** (`headlessLoad`) with a fresh pilot, so nothing of the fair pilot's memory crosses; its line is a second failure beside the fair one's, worded as the issue words it, with where it stopped.
 6. **Where the omniscient pilot finishes a chapter the fair one lost, the road goes on from its end with a fresh fair pilot** (its corpus empty), so each later chapter still has a fair line; a chapter neither finishes ends the road, and each later area fails as not reached.
 7. **Each note once, with its count**: the fair pilot said "Lost in Thornmark" thirty times in one chapter. The omniscient run's notes are marked as its.
-8. **The last chapter** is the delegate's first call: the stop under the ending's question counts, and the test presses the first answer, so the ending holds.
+8. **The last chapter** is the delegate's first call: the stop under the ending's question counts, and the test presses the first answer, so the ending holds (`takeEnding`). The road ends before it, so the `pilot` suite checks it under Wenna's question through the suite's own `play`: the ending holds, and a stop with another why line does not count.
 9. **The omniscient view reads a cell as it is** (a secret door a door) and gains `Known.secrets`, the secret doors as written and not yet found (a zone's placed where its box lies), with `Known.omniscient` so the explorer suspects those and nothing else; a fair pilot's `secrets` is empty, checked. The issue's "nothing else changes" is kept: the brains are the fair pilot's, and so its frontier is empty (Known limits).
 10. **A brain's stop ends the tick** (`Pilot.next`), found by the first sweep: with every aim lost the strategist stopped the pilot and the watchdog after it pressed a search in the same tick, so the band lost the stop's line, which the suite reads. Checked.
-11. **CI**: the tests job's step runs the shelf (about twenty seconds); the `fullrun` job runs by hand only, with sixty minutes and its lines in the run's summary, and goes red when a chapter fails: a report, as nothing requires it.
+11. **`npm test` and CI**: `npm test` runs the shelf's full run (about 10 to 25 s; it repeats walkthrough:shelf's play) and so does the tests job, as the issue's Done when asks, with no step of its own (10 s on CI); the `fullrun` job runs by hand only, with sixty minutes and its lines in the run's summary, and goes red when a chapter fails: a report, as nothing requires it.
 12. **The smoke's thirty seconds** follow #716's pilot checks: T twice back to 1x, P, 1,800 frames counted from the frame the pilot took the helm, the steps grown and no page error in them, then P. Every earlier frame is as it was.
 13. **No fix for a chapter's blocker.** The sweep's road ends at Thornmark's chapter, where the fair and the omniscient pilot fall for different reasons (Known limits): no single cheap blocker repeats across chapters, so both are left to the owner. The two fixes the sweep did bring (10, 4) are the suite's own footing.

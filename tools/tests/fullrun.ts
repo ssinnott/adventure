@@ -7,8 +7,8 @@
 // which kind of failure it is; the road goes on from where that one finished it, and ends at a
 // chapter neither finishes. Every line heard that starts "Lost in" or "I have no answer" is a note,
 // and fails nothing. It takes minutes, so it runs only when named (`ASKED`, tools/test.ts), on the
-// road up to the last area FULLRUN names (area ids, or all):
-//   FULLRUN=shelf node tools/test.ts fullrun     the default when FULLRUN is unset: about 20 s
+// road up to the last area FULLRUN names (area ids, or all); `npm test` names it, on the shelf:
+//   FULLRUN=shelf node tools/test.ts fullrun     the default when FULLRUN is unset: 10 to 25 s
 //   FULLRUN=all node tools/test.ts fullrun       every chapter on the road: ten minutes a chapter at most, fair and omniscient each
 import { ok, headlessGame, headlessLoad, drive } from './lib.ts';
 import { ExploreScreen } from '../../src/game/game.ts';
@@ -50,21 +50,33 @@ export function reach(env = process.env.FULLRUN): { road: Area[]; unknown: strin
 }
 
 /** A chapter's play: done or not, how long, the company's level at the end and where and why it stopped if it did. */
-interface Play { done: boolean; ticks: number; days: string; secs: string; level: number; stop: string; notes: string[] }
+export interface Play { done: boolean; ticks: number; days: string; secs: string; level: number; stop: string; notes: string[] }
+
+/**
+ * The last chapter's end is an ending taken, which the pilot never takes (the epic's Decided 4): its
+ * stop under the ending's question counts, and the test, its privilege, presses the first answer so
+ * the ending holds (the delegate's first call for #723). A stop with any other why line is no finish.
+ * Whether it pressed.
+ */
+export function takeEnding(g: Game): boolean {
+  const p = g.pilot!;
+  if (p.on || p.why[0] !== CHOICE || !(g.top instanceof ChoiceScreen) || !g.top.ends) return false;
+  drive(g, ['interact']);
+  return true;
+  return true;
+}
 
 /**
  * Plays `chapter` on `g` with its pilot at the helm until it is done, the company is wiped, the pilot
- * stops itself or a cap (`TICK_CAP`, `BUDGET`) is met. The last chapter's end is an ending taken, which the
- * pilot never takes (it stops under the question): that stop counts, and the test, its privilege,
- * presses the first answer, so the ending holds and the road is done.
+ * stops itself or a cap (`TICK_CAP`, `BUDGET`) is met; at the ending's question, `takeEnding`.
  */
-function play(g: Game, chapter: Chapter, settled = 0, from = g.world.state.minutes): Play {
+export function play(g: Game, chapter: Chapter, settled = 0, from = g.world.state.minutes): Play {
   const p = g.pilot!, notes: string[] = [], hear = p.hear;
   p.hear = (line) => { hear.call(p, line); if (NOTE.test(line)) notes.push(line); };
   const t0 = performance.now(), done = (): boolean => holds(chapter.done, g.world.state, g.party);
   let ticks = settled, over = false;
   for (; ticks < TICK_CAP && p.on && !done() && !over; ticks++) { drive(g, [null]); if (ticks % 100 === 0) over = performance.now() - t0 > BUDGET; }
-  if (!p.on && p.why[0] === CHOICE && g.top instanceof ChoiceScreen && g.top.ends) drive(g, ['interact']);
+  takeEnding(g);
   p.hear = hear;
   const st = g.world.state, where = `${g.world.zone?.name ?? g.maps[st.mapId]?.name ?? st.mapId} ${st.x},${st.y}`, finished = done();
   const stop = finished ? '' : p.on ? `capped by ${over ? `the budget (${BUDGET / 60_000} minutes)` : `the ticks (${TICK_CAP.toLocaleString('en-GB')})`} in ${where} ("${p.why[0]}")`

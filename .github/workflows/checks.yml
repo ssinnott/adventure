@@ -45,9 +45,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # npm test ends with the pilot's full run on the shelf (tools/tests/fullrun.ts, FULLRUN unset): about ten seconds.
       - run: npm test
-      # The pilot plays the shelf's chapter from a new game (tools/tests/fullrun.ts): about twenty seconds.
-      - run: FULLRUN=shelf node tools/test.ts fullrun
 
   smoke:
     runs-on: ubuntu-latest
