@@ -201,7 +201,8 @@ on the stone tries the next. Five at most a statue, each once (`Pilot.tried`); n
 have no answer for the stone.", presses Esc and gives the stone up until a line heard gives a word it
 has not tried. The Downs' stone, HOW MANY FOR THE HEARTH?, is answered by "ten" on its second try
 once the old man's song at Gullwick is heard ("Ten for the Hearth and one for the Queen..."), after
-"one".
+"one"; in the shelf's play on seed 10, with more heard of the Hearth by then, on its fourth ("one",
+"two", "seven", "ten").
 
 ## Known limits
 
