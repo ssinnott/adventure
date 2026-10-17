@@ -365,7 +365,7 @@ type Business = Extract<Feature, { kind: 'inn' | 'temple' | 'shop' | 'guild' | '
 export interface BusinessEntry { label: string; open: () => Screen }
 
 /** What each kind of business trades in, as its first menu names it (the pilot's quartermaster picks it there, #719). */
-export const TRADE:Record<Exclude<Business['kind'], 'npc'>, string> = { inn: 'A room and rations', temple: 'The chapel', shop: 'Buy and sell', guild: 'Study spells', trainer: 'Train' };
+export const TRADE: Record<Exclude<Business['kind'], 'npc'>, string> = { inn: 'A room and rations', temple: 'The chapel', shop: 'Buy and sell', guild: 'Study spells', trainer: 'Train' };
 /** A hall's first menu's line for its guild's skills. */
 const LEARN = 'Learn a skill';
 

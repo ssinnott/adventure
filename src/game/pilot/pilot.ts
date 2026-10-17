@@ -132,12 +132,13 @@ export class Pilot {
     }
     if (top instanceof MessageScreen) return 'interact';
     if (top instanceof TitleScreen || top instanceof CreateScreen) return null;
-    const k = knownOf(g);
+    const k = knownOf(g), said = this.why;
     for (const brain of this.brains) {
       const a = brain(g, k, this);
       if (a) return a;
     }
-    this.why = ['Nothing to do.'];
+    // A brain that gave no key may still have said why (a need it cannot meet, #719); else nothing to do.
+    if (this.why === said) this.why = ['Nothing to do.'];
     return null;
   }
 }

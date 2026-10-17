@@ -24,8 +24,8 @@ import type { Brain, Pilot } from './pilot.ts';
 
 /** What the company may need, the most urgent first. */
 export type Need = 'temple' | 'rest' | 'food' | 'train' | 'gear';
-/** The order the quartermaster's aims give way in: a well near first, being a short way off, then the needs. */
-const URGENCY: readonly (Need | 'well')[] = ['well', 'temple', 'rest', 'food', 'train', 'gear'];
+/** The order the quartermaster's aims give way in: the needs, the most urgent first, then a well near. */
+const URGENCY: readonly (Need | 'well')[] = ['temple', 'rest', 'food', 'train', 'gear', 'well'];
 type Shop = Extract<Feature, { kind: 'shop' }>;
 /** The businesses the quartermaster answers in: a guild's spell hall is talk's (#721). */
 type Business = Extract<Feature, { kind: 'inn' | 'temple' | 'shop' | 'trainer' }>;
@@ -204,15 +204,17 @@ function onMap(g: Game, k: Known, p: Pilot, mem: Keep): Action | null {
   }
   const plan = choose(g, k, mem, list), own = mem.aim?.goal !== undefined && p.goal === mem.aim.goal;
   // A goal of its own holds while its need does, unless a rest where it stands or a more urgent need
-  // can be met now: a well at the edge of its six keys, or a group come into view, does not turn it.
+  // can be met now: a place of the same need found nearer on the way does not turn it.
   const holds = own && (mem.aim!.need === 'well' ? party.members.some(low) : list.includes(mem.aim!.need));
   if (holds && (!plan || (!('rest' in plan) && URGENCY.indexOf(plan.need) >= URGENCY.indexOf(mem.aim!.need)))) return null;
   if (!plan || 'rest' in plan) {
     if (own) p.goal = null;
     mem.aim = undefined;
-    if (!plan) return null;
-    p.why = [plan.rest];
-    return 'rest';
+    if (plan) { p.why = [plan.rest]; return 'rest'; }
+    // Needs it can meet none of: the band says the most urgent, and why not.
+    const want = wanting(k, list);
+    if (want) p.why = [want];
+    return null;
   }
   const key = spotKey(plan.s), name = place(plan.s.f);
   if (own) p.goal = null;
@@ -236,15 +238,13 @@ function settle(mem: Keep, p: Party): void {
 type Plan = { rest: string } | { need: Need | 'well'; s: Spot; d: number };
 
 /**
- * What to do now: a well within `WELL_KEYS` first; then for each need in turn the first it can meet:
- * for rest, the inn it stands at, else a rest where it stands (no group too near, `restRefused`, and
- * a ration each), else the nearest camp (with the rations), else inn; for any other, the nearest
- * place that meets it and has not been tried for it. Undefined when it can meet none.
+ * What to do now, in the issue's order: for each need in turn the first it can meet (for rest, the
+ * inn it stands at, else a rest where it stands, with no group too near (`restRefused`) and a ration
+ * each, else the nearest camp (with the rations), else inn; for any other, the nearest place that
+ * meets it and has not been tried for it); else a well within `WELL_KEYS`. Undefined when none.
  */
 function choose(g: Game, k: Known, mem: Keep, list: readonly Need[]): Plan | undefined {
   const p = k.party, st = g.world.state, here = (s: Spot): boolean => s.map === st.mapId && s.f.x === st.x && s.f.y === st.y;
-  const well = drink(g, k, mem);
-  if (well) return { need: 'well', ...well };
   for (const n of list) {
     const free = (s: Spot): boolean => !mem.tried.has(`${n}|${spotKey(s)}`), groups = spots(k, n);
     if (n === 'rest') {
@@ -258,6 +258,32 @@ function choose(g: Game, k: Known, mem: Keep, list: readonly Need[]): Plan | und
     for (const group of groups) {
       const best = nearest(g, k, group.filter((s) => free(s) && !(here(s) && s.f.kind === 'camp')));
       if (best) return { need: n, ...best };
+    }
+  }
+  const well = drink(g, k, mem);
+  return well ? { need: 'well', ...well } : undefined;
+}
+
+/**
+ * The band's line when the company has needs and can meet none of them: the most urgent, and why
+ * not, in the game's voice ("Hurt, and no gold for a room."). Undefined when gear is the only want.
+ */
+function wanting(k: Known, list: readonly Need[]): string | undefined {
+  const p = k.party, any = (ok: (f: Feature) => boolean): boolean => seen(k, ok, '').length > 0;
+  for (const n of list) {
+    switch (n) {
+      case 'temple': {
+        const c = p.members.find((m) => hasCondition(m, 'dead')) ?? p.members.find(fallen)!;
+        return `${c.name} is ${hasCondition(c, 'dead') ? 'dead' : 'stone'}, and ${raise(p) ? 'no temple seen' : 'no gold for the temple'}.`;
+      }
+      case 'rest': {
+        const hurt = tired(p) === 'hp' ? 'Hurt' : 'Low on spell points';
+        if (p.food >= p.members.length) return `${hurt}, and too dangerous to rest here.`;
+        return `${hurt}, and ${any((f) => f.kind === 'inn') ? 'no gold for a room' : 'no rations and no inn seen'}.`;
+      }
+      case 'food': return `Short of rations, and ${any((f) => f.kind === 'inn' || (f.kind === 'shop' && f.stock.includes('rations'))) ? 'no gold for them' : 'none seen for sale'}.`;
+      case 'train': return `${ready(p)!.name} is ready to train, and no trainer seen to teach them.`;
+      case 'gear': break;
     }
   }
   return undefined;

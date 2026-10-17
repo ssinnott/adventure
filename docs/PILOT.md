@@ -27,8 +27,9 @@ box and says "Nothing to do."
 - **T** cycles the tempo: 1×, 2× and 4×, an action every 15, 8 and 4 ticks (4, 7.5 and 15 a second).
   A fight goes at the game's own pace whatever the tempo: the pilot hands it to the bot (`auto`).
 - **The why line**: while the pilot drives, a band over the top of the view carries two lines in the
-  game's voice and `PILOT 1X` at its right; the hint that would stand there is not drawn. With no
-  brain to ask it says "Nothing to do."
+  game's voice and `PILOT 1X` at its right; the hint that would stand there is not drawn. When no
+  brain gives a key or says why, it says "Nothing to do."; a brain that gives no key may still say
+  why ("Hurt, and no gold for a room.", #719).
 - It stops by itself at a party wipe, saying "The company has fallen.", and at the ending's choice
   (#721). Nothing else is the viewer's to say. A stop of its own keeps the band up with its why line
   until the next key; when the viewer takes the helm, the band goes at once.
@@ -102,8 +103,10 @@ pay for; and gear while a shop seen holds something better. It takes the needs i
 the first it can meet. Tired, it rests where it stands when no group is too near (`restRefused`, the
 game's own refusal) and there is a ration each, or takes the room when it stands at an inn's door;
 else, for any need, it sets the navigator's goal on the nearest place seen that meets it (a camp
-before an inn for rest) and goes in. A well within six keys is drunk from when one standing is under
-half and no group is marked near; one that restores nobody is not gone back to.
+before an inn for rest) and goes in. With no need it can meet, a well within six keys is drunk from
+when one standing is under half and no group is marked near; one that restores nobody is not gone
+back to. With needs it can meet none of, the band says the most urgent and why not: "Hurt, and no
+gold for a room."
 
 In a business it answers the menus by their rows as they show, `down` to a row and Space: the trade
 on the first menu, then Leave; at an inn the night while tired and rations while short; at a temple
@@ -123,7 +126,7 @@ for it until the gold moves or the need goes.
 |---|---|
 | `src/game/pilot/pilot.ts` | `Pilot`: on and off (`toggle`), a stop of its own (`stop`), the tempo and the pace, the why line and what the band shows (`band`), the corpus heard (`hear`, `forget`), the next key (`next`), the navigator's goal, plan and squares found shut (`goal`, `plan`, `shut`) and `BRAINS`: the brains in the order asked (fight, keep, aims, route, explore, talk), each slot absent until its module lands |
 | `src/game/pilot/known.ts` | `Known` and `knownOf`, the fair view; `fair`, a feature as the party knows it; what a menu has shown (`wares`, a Buy list's; `trainsTo`, a trainer's top level; #719) |
-| `src/game/pilot/keep.ts` | the quartermaster (#719): `needs` and `need` (what the company needs, the most urgent first), `better` (the best a member can wear for the gold), `reserve` and `spare`, and the brain `keep` |
+| `src/game/pilot/keep.ts` | the quartermaster (#719): `needs` and `need` (what the company needs, the most urgent first), `better` (the best a member can wear for the gold), `reserve`, `spare` and the brain `keep` |
 | `src/game/pilot/route.ts` | the navigator (#717): `Goal`, `routeOn` (the keys over one map), `routeLengths` (the length of the route to every square, in one search), `routeMaps` (the exits from map to map), the brain `route` and `unroute` (what it kept of a goal, forgotten); it reads a cell by `passableCell` (`src/game/map.ts`) and the groups as the automap marks them (`markedGroups`, `src/ui/frame.ts`) |
 | `src/game/ink.ts` | `drawnCell`: what a cell is drawn as, which the view, the automap and Known share |
 | `src/game/bot.ts` | the fight and the rest rule (`botTurn`, `asSeen`, `mustRest`, #714) |
@@ -194,15 +197,16 @@ Decided by delegate for #719, each the owner's to overturn:
 
 1. **The needs are taken in turn and the first that can be met is acted on** (`needs`, whose first is `need`): a dead member the company cannot pay to raise, or no temple seen, does not keep the living from resting, eating or training.
 2. **The reserve is kept back from gear alone.** The issue's own rules spend the whole purse at the temple (which the reserve is for), at the inn ("gold allows") and at the trainer (`party.gold >= trainPrice(c)`). `better`'s `gold` is the net gold, the gold over the reserve (`spare`): its signature has no company to reckon the reserve from, and the issue's figures hold (420 gold buys the 120-gold long sword over a reserve of 300; 400 does not).
-3. **A shop whose wares are unseen is looked at when the gold over the reserve is as much again as the reserve**, 100 gold a level of the highest, the threshold the review suggested; `better` judges only wares a menu has shown.
-4. **`better` weighs a weapon by `hits` and armour or a shield by the armour class it gives worn (`armorClass`), the larger gain first, then the cheaper**: the issue gives no rate between a point of blow and a point of AC. A weapon keeps the kind held, ranged or not, as the harness's `outfit` does; none two-handed goes to one with a shield on; and a monk's AC is reckoned with the robe's bonus that armour loses, so armour is bought for one only where it betters that.
+3. **A shop whose wares are unseen is looked at when the gold over the reserve is as much again as the reserve**, 100 gold a level of the highest, the threshold the review suggested; `better` judges only wares a menu has shown. In the same way a trainer whose top level is unseen is gone to, to read it, where the issue says `maxLevel >= c.level + 1`: Known blanks it till its menu shows it, so by that rule alone nobody would ever train.
+4. **`better` weighs a weapon by `hits` and armour or a shield by the armour class it gives worn (`armorClass`), the larger gain first, then the cheaper**: the issue gives no rate between a point of blow and a point of AC. A weapon keeps the kind held, ranged or not, as the harness's `outfit` does; none two-handed goes to one with a shield on; a monk's AC is reckoned with the robe's bonus that armour loses, so armour is bought for one only where it betters that.
 5. **What a menu has shown is kept by company** (a `WeakMap` by the `Party` in `known.ts`), not on `Pilot`, which gains no field: a new game's or a load's company has seen nothing, as with the corpus. It is noted at each look from the screen alone: a Buy list's rows (an item's name, unique in the item table, and the price shown) and a trainer's words, which name its top level outright where its rows say only who is ready.
 6. **At an inn's door the room is taken, not a rest in the street**: the issue's test stands the company there with its rations, and a night at an inn counts its nights (`stayNight`). Elsewhere a rest where it stands comes first, as the issue has it.
 7. **A camp is gone to for rest only with a ration each**, which a camp's rest eats as any rest does; without them, the inn.
 8. **The why line on the way is the navigator's, with the reason**: `Goal` gains `reason`, so route says "Bound for the Chapel of the Lanterns: Idris is dead." (the epic's Decided 3 form). The issue's "To the <feature name>: <need>." stands where it goes in on the spot; where route walks, route's line takes its place in the same tick. The need is said in the game's voice ("a night's rest", "Idris is dead", "a look at the stock"), not by its name, and route cuts the line to the band's width, as the second.
-9. **A place gone to that took no gold is not gone to again for that need until the gold moves or the need goes** (#717's review: no same goal until the need returns). A goal of its own holds while its need does, unless a rest where it stands or a more urgent need can be met; without that a well at the edge of its six keys turned the walk to the inn back and forth.
-10. **A well is for one standing under half, six keys of route off at most** (turns count, as in `routeLengths`), **with no group marked near.** Most wells restore nothing and the fair copy has no `heal`, so a well gone to that left one under half is dry, and not gone back to.
+9. **A place gone to that took no gold is not gone to again for that need until the gold moves or the need goes** (#717's review: no same goal until the need returns). A goal of its own holds while its need does, unless a rest where it stands or a more urgent need can be met, so a place of the same need found nearer on the way does not turn the walk.
+10. **A well is for one standing under half, six keys of route off at most** (turns count, as in `routeLengths`), **with no group marked near**, and only when no need can be met: after a rest where it stands, as the issue orders its rules (a well asked first walked eight keys to Harrow's well, which restores nothing, before the rest). Most wells restore nothing and the fair copy has no `heal`, so a well gone to that left one under half is dry, and not gone back to.
 11. **`restRefused` is read as the issue says.** It is the game's refusal, the one thing a press of R would learn ("Too dangerous to rest here."), though it counts every live group near, seen or not; pressing R and reading the log would be as fair and cost a line in the log.
 12. **No skill is learnt.** The delegate's ruling let Mountaineer and Swimmer be bought over the reserve and need not be; the simpler is taken and the business menu's `Learn a skill` row is left. These tests cross nothing; whether the one quest asks either is the strategist's and the full run's to show (#720, #723).
 13. **The first menu's trade is opened again only after the last opening spent gold**, so a trade that can do nothing (a room the company cannot pay for) is not opened twice; then the quartermaster picks Leave. Talk (#721) may want the `Talk to` rows before it.
-14. **Training wants one standing**, as the trainer's own rows do; a shop's rations are bought only while under two a head, at the price shown; nothing is sold, and what a chest gives is not worn (only what was bought), a want left for later.
+14. **Training wants one standing**, as the trainer's own rows do; a shop's rations are bought only while under two a head, at the price shown; nothing is sold and what a chest gives is not worn (only what was bought), a want left for later.
+15. **The frame keeps a line a brain said with no key** (`Pilot.next`): "Nothing to do." only when no brain said why that tick. So the quartermaster's want stands, the most urgent need it cannot meet and why not ("Hurt, and no gold for a room."), where it stood "Nothing to do." for as long as the want lasted; and the navigator's "No way to ..." and "... is shut to me." show for the tick they are said.

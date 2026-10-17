@@ -1,6 +1,7 @@
 // The pilot's frame (#716): its fair view of the world (Known), and the object on the Game that turns
 // on and off, keeps the pace, hands a fight to the bot, closes a box and says why; then its brains,
-// each with tests of its own: the navigator (#717). Every game here is headless, with an instant
+// each with tests of its own: the navigator (#717) and the quartermaster (#719), with the memory of
+// what a menu has shown. Every game here is headless, with an instant
 // pilot unless the pace is the point.
 import { Game, ExploreScreen } from '../../src/game/game.ts';
 import type { Store } from '../../src/game/save.ts';
@@ -19,11 +20,11 @@ import { randomParty } from '../../src/ui/create.ts';
 import { CLASSES, RACES } from '../../src/game/party.ts';
 import type { RaceId } from '../../src/game/party.ts';
 import { ok, headlessGame, drive } from './lib.ts';
-import { keep, need, better, reserve, spare } from '../../src/game/pilot/keep.ts';
+import { keep, need, needs, better, reserve, spare } from '../../src/game/pilot/keep.ts';
 import type { Need } from '../../src/game/pilot/keep.ts';
 import { companyAt } from '../harness.ts';
 import { restRefused } from '../../src/game/wilds.ts';
-import { hasCondition, xpForLevel, weaponOf, armorClass } from '../../src/game/party.ts';
+import { hasCondition, xpForLevel, weaponOf, armorClass, templePrice } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
 import { item, hits } from '../../src/game/items.ts';
 import { ITEMS } from '../../src/content/index.ts';
@@ -537,6 +538,10 @@ function quartermaster(): void {
   dead.members[4].hp = 0;
   const whole = as(structuredClone(base));
   ok(as(hurt) === 'rest' && as(dead) === 'temple' && (whole === null || whole === 'gear'), `need: one at a tenth of their hit points, rest; one dead, the temple; whole and fed, ${whole}`);
+  const both = structuredClone(dead);
+  both.members[2].hp = Math.max(1, Math.round(both.members[2].maxHp / 10));
+  const first = as(both), order = needs(g).join();
+  ok(first === 'temple' && order === 'temple,rest', `with one dead and one at a tenth, the temple comes before rest (${order})`);
   // companyAt(3)'s knight wields a long sword already: here he holds a short sword.
   const company = structuredClone(base), fighter = company.members.find((c) => c.cls === 'knight')!, mottram = g.maps.harrow.features.find((f): f is Shop => f.kind === 'shop')!;
   fighter.equipment.weapon = 'shortsword';
@@ -548,16 +553,19 @@ function quartermaster(): void {
   ok(reserve(company) === 300 && item('longsword').price === 120 && rich === 'longsword' && poor === undefined,
     `better: the long sword (120 gold) for the fighter with 420 gold and not with 400, the reserve 300 (${rich}, ${poor})`);
 
-  // A rest where it stands: everyone at a tenth, food for two nights.
+  // A rest where it stands: everyone at a tenth, food for two nights, four steps short of the town
+  // well, which a rest comes before (the issue's order).
   const r = piloted(), rp = r.pilot!;
+  r.world.travel('harrow', 7, 10, NORTH);
+  r.world.ensureMapState('harrow').explored.fill(-1);
   for (const c of r.party.members) c.hp = Math.max(1, Math.round(c.maxHp / 10));
   r.party.food = 12;
-  const refused = restRefused(r.world), t0 = r.world.state.minutes, whys: string[] = [];
+  const refused = restRefused(r.world), t0 = r.world.state.minutes, whys: string[] = [], well = r.maps.harrow.features.some((f) => f.kind === 'well' && f.x === 7 && f.y === 6);
   rp.toggle(r);
   let ticks = 0;
   for (; ticks < 40 && !r.party.members.every((c) => c.hp === c.maxHp); ticks++) { drive(r, [null]); whys.push(rp.why[0]); }
-  ok(refused === '' && r.party.members.every((c) => c.hp === c.maxHp) && r.world.state.minutes - t0 === 480 && whys[0] === `Resting: ${r.party.members[0].name} is under a quarter.`,
-    `a rest where it stands: in ${ticks} ticks everyone is whole and the clock has moved ${r.world.state.minutes - t0} minutes (${whys[0]})`);
+  ok(refused === '' && well && r.party.members.every((c) => c.hp === c.maxHp) && r.world.state.minutes - t0 === 480 && r.world.state.y === 10 && whys[0] === `Resting: ${r.party.members[0].name} is under a quarter.`,
+    `a rest where it stands: in ${ticks} ticks everyone is whole and the clock has moved ${r.world.state.minutes - t0} minutes, the party at ${r.world.state.x},${r.world.state.y} (${whys[0]})`);
 
   // The inn's door: a room taken, and back on the street.
   const n = piloted(), np = n.pilot!, door = n.maps.harrow.features.find((f) => f.kind === 'inn' && n.world.present(f))!;
@@ -581,6 +589,32 @@ function quartermaster(): void {
   for (; tt < 400 && hasCondition(gone, 'dead'); tt++) { drive(t, [null]); bound.push(tp.why[0]); }
   ok(!hasCondition(gone, 'dead') && t.log.includes(`${gone.name} is restored.`) && bound.includes(`Bound for the Chapel of the Lanterns: ${gone.name} is dead.`),
     `with one dead and the temple seen, the pilot walks there and they stand, in ${tt} ticks (${bound.find((w) => w.startsWith('Bound'))})`);
+
+  // At the temple's door with one dead, one stone and the gold for one fee: the dead is raised first.
+  const tm = piloted(), tmp = tm.pilot!, [lost, stone] = [tm.party.members[1], tm.party.members[2]], chapel = tm.maps.harrow.features.find((f) => f.kind === 'temple' && tm.world.present(f))!;
+  lost.conditions = ['dead'];
+  lost.hp = 0;
+  stone.conditions = ['stoned'];
+  tm.party.gold = templePrice(lost);
+  const fees = [templePrice(lost), templePrice(stone)];
+  tm.world.travel('harrow', chapel.x, chapel.y, NORTH);
+  tmp.toggle(tm);
+  drive(tm, Array(30).fill(null));
+  ok(fees[1] <= fees[0] && !hasCondition(lost, 'dead') && hasCondition(stone, 'stoned') && tm.party.gold === 0,
+    `with gold for one fee (${fees.join(' or ')}), the dead is raised before the stone (${lost.conditions.join() || 'well'}; ${stone.conditions.join()})`);
+
+  // Needs it can meet none of are said: hurt, no rations and no gold, the inn seen and gone to once.
+  const u = piloted(), upi = u.pilot!;
+  u.world.ensureMapState('harrow').explored.fill(-1);
+  u.party.gold = 0;
+  u.party.food = 0;
+  for (const c of u.party.members) c.hp = Math.max(1, Math.round(c.maxHp / 10));
+  upi.toggle(u);
+  drive(u, Array(200).fill(null));
+  const wants = upi.why.join(' / ');
+  drive(u, Array(20).fill(null));
+  ok(wants === 'Hurt, and no gold for a room.' && upi.why.join(' / ') === wants && u.top instanceof ExploreScreen && u.log.includes('You cannot afford a room.') === false,
+    `a need it cannot meet is said, and stands (${wants})`);
 
   // A shop: with gold over the reserve, it looks at the wares, buys what betters each and wears it by the sheet's keys.
   const s = piloted(), sp = s.pilot!, keys: Action[] = [], worn = s.party.members.map((c) => ({ ...c.equipment }));
