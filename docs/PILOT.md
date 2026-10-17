@@ -1,10 +1,12 @@
 # The pilot
 
-An autoplay mode for watching (epic #713). The pilot plays the one quest from the title to the
-ending's choice: it fights, explores, rests, buys, trains and talks at a walking pace, saying over
-the view what it is about. It plays **fair**: it knows only what the party knows, never a
-map as written, so where it gets lost the finding is against the area's hint chain, not the pilot.
-It is opt-in and changes nothing for the player (DESIGN §1, pillar 1).
+An autoplay mode for watching (epic #713). The pilot is built to play the one quest from the title
+to the ending's choice: it fights, explores, rests, buys, trains and talks at a walking pace, saying
+over the view what it is about. Today it finishes The Quiet Farm on most seeds and stops lost in
+Thornmark's chapter; the ten chapters after are not reached (Known limits). It plays **fair**: it
+knows only what the party knows, never a map as written, so where it gets lost the finding is
+against the area's hint chain, not the pilot. It is opt-in and changes nothing for the player
+(DESIGN §1, pillar 1).
 
 It lives on the `Game` (`g.pilot`), outside the save: nothing of it goes into `WorldState` or
 `party.flags`, and `SAVE_VERSION` stays 5. `src/main.ts` builds it; a `Game` a test builds has none

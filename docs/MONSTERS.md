@@ -506,11 +506,11 @@ The yardstick: **a company can fight six or seven standard encounters at its own
 rests**, to level 10, and a fight more every four levels after as its power grows: eight at 16,
 twelve at 32, never fifteen. Its spell points count as much as its hit points. It must rest once it
 has lost someone, once anyone is still under a quarter of their hit points after it has mended what
-it can, or once it is under a quarter of its spell points. No fight goes on for ever: one still
-running after fifteen rounds is broken off, and the company rests. A standard encounter is eight
-fodder; four skirmishers, soldiers, archers or controllers; three casters or armoured; two elites or
-brutes; or the boss alone. A mix is one encounter when its shares add to one: two soldiers and four
-fodder, say.
+it can or once it is under a quarter of its spell points. In the harness no fight goes on for
+ever: one still running after fifteen rounds (`ROUND_CAP`) is broken off, and the company rests;
+the game has no round limit (DESIGN.md §6). A standard encounter is eight fodder; four skirmishers,
+soldiers, archers or controllers; three casters or armoured; two elites or brutes; or the boss
+alone. A mix is one encounter when its shares add to one: two soldiers and four fodder, say.
 
 Where a map's floor sits within about three levels of its area's two under, as the Grove Roots' 6
 does Thornmark's 3, its groups may be many and thin to hold the gate: ten or twelve thin fodder
@@ -638,10 +638,11 @@ What it shows:
   to 3.6 times the line's hit points and hit up to 1.8 times as hard, the armoured up to 2.1. A
   company that husbands its spells through the day kills slowly, and a fight that must end in four
   or five rounds has to take its share of the day in them.
-- **Some fights cannot be finished.** A fight still going at fifteen rounds is broken off, and it
-  happens when the spells are spent and the monsters have more hit points than weapons get through.
-  At 9–12, where fodder need a lot of hit points to live through a spell that takes the whole group,
-  eight of them would stall one day in two; so there they carry fewer and hit twice as hard.
+- **Some fights cannot be finished.** In the harness a fight still going at fifteen rounds
+  (`ROUND_CAP`) is broken off, and it happens when the spells are spent and the monsters have more
+  hit points than weapons get through. At 9–12, where fodder need a lot of hit points to live
+  through a spell that takes the whole group, eight of them would stall one day in two; so there
+  they carry fewer and hit twice as hard.
 - **The heavy hitters are slower.** Held to four rounds, brutes, elites and the armoured hit hard
   enough to take a member from standing to −10 in one blow, and a death ended up to half their days
   at 4–12 (two brutes at 4, nearly half). Given half as long again, a death or a lost fight ends

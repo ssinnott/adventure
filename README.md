@@ -26,7 +26,44 @@ dependencies, and nothing compiled to disk during development.
 - [docs/NAMES.md](docs/NAMES.md) — how places are named: each people's tongue, the few old names
   the first crew left, and the rules a rename follows.
 - [docs/PILOT.md](docs/PILOT.md) — the pilot that plays the game for watching: P and T, the why
-  line, the fair view it plays by (`Known`), its files and the calls made building it.
+  line, the fair view it plays by (`Known`), how far it gets, its files and the calls made building
+  it.
+
+## Where it stands
+
+On 17 October 2026 M3 is content-complete on main: Act V merged on 15 October, so the one quest runs
+from the Foreland to the Heart. v1 holds:
+
+- Acts I to V on the road of twelve areas, the Council of Helmstow and the three endings;
+- the quests: sixty-two side quests (#56's count: its sixty-four, less the reach's two), the Cargo
+  Ledger, the three subplots, the Walk Home and twenty-two guild quests;
+- thirty prestiges, three to each of the ten classes, each with its trainer in the world (the ten
+  thirds each ask a quest);
+- three of the twelve secondary skills, taught: Linguist, Mountaineer and Swimmer;
+- the finishing touches (#54), line of sight among them: from lower ground a hill hides what lies
+  behind it, a group included; woods hide nothing (docs/SLICE.md);
+- the pilot (docs/PILOT.md), which plays for watching. It finishes The Quiet Farm, the Foreland's
+  chapter, from a new game on most seeds and companies. It goes on into Thornmark's, where the fair
+  pilot does not finish and the omniscient one fails too; the ten chapters after are not reached.
+  `npm test` runs the Foreland's full run (`node tools/test.ts fullrun`); a CI job, `fullrun`,
+  started by hand, reports the rest.
+
+Post-v1, by decision on 16 October 2026: the reach (the Glass and the Buried Tower, Glacier Foot
+with the Ice Caves and the Vault, #56's 62 and 63 and the artifacts they hold), the skill tiers with
+the Master trainers, nine of the twelve secondary skills and the Stretch tier (docs/DESIGN.md §12).
+None is filed, and v1 ships without them.
+
+The gate reports 86 figures owed to #18: in each, a company two levels under a floor wins more of
+its fights than the aim allows. They are reported, not failed (docs/EXPANSION.md §5.2).
+
+The world's end is drawn as the atlas paints it, the sea running on and the rim standing (#829,
+built in #849). The owner has filed the land the maps lie open to as an epic, #828, with eight area
+issues (#830 to #837), approved and labelled parked: nothing in them is built. The owner has also
+filed #845 to #847 (the bounds' enclave and artifacts) and #848 (the code's reorganisation); none is
+yet approved.
+
+The owner's own playthrough of M3 is what remains before v1 is called done; the tracker holds no
+issue for it.
 
 ## Running
 

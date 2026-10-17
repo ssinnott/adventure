@@ -147,8 +147,10 @@ v1 is **cores and country** (docs/EXPANSION.md §2.1). In each area, a core of h
 at full density: its towns, its Stone, its dungeons' approaches. The rest of the area is country,
 built to a looser floor (docs/EXPANSION.md §5.3) from the atlas's terrain, the wilderness features
 and per-zone encounter tables. The outdoors is one map, laid out by the atlas and built from 32×32
-zone maps; land not built yet stays void. Coaches and boats come later: travel between towns that
-costs gold and days, so an area's core can be played before the country behind it is built.
+zone maps; land not built yet stays void. Coaches and boats are built (#164, `src/game/passage.ts`):
+a person sells a crossing between two places that costs gold and days, five of them so far (the
+ferry, the Compact's ship, the drove road's coach, the Rider's ride and the last crossing), so an
+area's core can be played before the country behind it is built.
 
 | Thing | Count | Grid |
 |---|---|---|
@@ -160,8 +162,8 @@ costs gold and days, so an area's core can be played before the country behind i
 | Rift templates | 8 | 12×12, seeded |
 
 The towns and dungeons are the atlas's places, built and planned. The reach's dungeons among them
-(the Ice Caves and the Buried Tower; the Vault is not placed yet) are the first thing v1 can leave
-for later.
+(the Ice Caves and the Buried Tower; the Vault is not placed yet) are left for later, post-v1 with
+the rest of the reach (§12).
 
 ---
 
@@ -205,10 +207,11 @@ quest reveals where the trainer is. The trainer who teaches a character their 11
 level names who to seek and where, and the quest log and the world map mark the place: one quest for
 each member. For the third, the quest names the place; the way there, and the quest that trainer then
 asks, are the hard part. The cap passed 10 with #159. Built with #19: the titles, the hit points and
-spell points, every perk below but the sorcerer's and the druid's third, and a trainer, a person who
-teaches one class one prestige (`teaches`), and the seeking quests, made from the trainers placed,
-with the world map's marks. Still to build: the trainers in their places (Saltmouth's four are
-placed, #177), the third prestiges' quests and the ranks' effect on spells (#20).
+spell points, every perk below (the sorcerer's third is `pierces` in `src/game/combat.ts`, the
+druid's `World.moveMonsters`, #809), a trainer (a person who teaches one class one prestige,
+`teaches`) and the seeking quests, made from the trainers placed, with the world map's marks. All
+thirty trainers are placed, three to a class; the ten thirds each ask a quest. The ranks' effect on
+spells is built (#20, §7).
 
 **Levels.** The first at 11, the second at 19 and the third at 27, eight levels apart, with the new
 spell tiers between them at 15 and 23 (§7), so something new comes every four levels. Every
@@ -223,8 +226,9 @@ Thornhold to 11, Saltmouth to 13, the Kilns' towns to 19 and Cinderport to 27.
 | Hybrids (Paladin, Ranger, Bard) | +1 | +1 | +42 and +42 |
 | The rest (Knight, Thief, Barbarian, Monk) | +2 | none | +84 |
 
-**Prices.** The first about 1,000 gold, a little under the 1,200 Plate Mail costs in Thornhold's
-Armoury, and the second about 4,000, until #19 adds them to the curve's gold. The third asks a quest.
+**Prices.** The first 1,000 gold, a little under the 1,200 Plate Mail costs in Thornhold's Armoury,
+and the second 4,000 (`PRESTIGE_PRICES`, `src/game/party.ts`); the curve's gold does not count them.
+The third asks a quest.
 
 **Perks.** A rank is a spell rank (§7). They lean on offence and on work outside combat, and none
 adds armour: in the harness, armour that keeps up makes monsters hit harder, and harder hits kill
@@ -269,8 +273,9 @@ the luthier, the stevedore and the ferryman keep no shop.
 
 **The quests for the third prestige,** in sketch. A third's fights are the places' own, not set at
 26 for the quest (#448's 3). Decided by the owner's delegate, 16 October 2026 (#733): the
-Paladin's are the husks of Old Cinder, at 25. The hold at 26 to 28 stands for the Sorcerer's third,
-which #807 places on the Wold.
+Paladin's are the husks of Old Cinder, at 25. Decided by the owner's delegate, 16 October 2026
+(#807): the Sorcerer's third is taught at the Glass's edge on the Wold and walks the Wold's own
+country, band 26 to 28.
 
 - **Knight:** hold the ledge above the Giants' Stair with the old champion through a night of the
   giants' toll-takers (MONSTERS.md §12).
@@ -308,8 +313,9 @@ which #807 places on the Wold.
   the other nine come as theirs do. Decided by the owner's delegate, 16 October 2026 (#805).
 - Weapon and magic skills have **Novice / Expert / Master** tiers. Trainers for Expert live in
   regional towns; Master trainers are hidden, expensive, and often want a favour. The tiers are not
-  built yet: Expert and Master trainers both wait on them (#18), and Master trainers are out of M3
-  until they are (#739, call 11).
+  built: they are post-v1, with the reach (§12), so Expert and Master trainers wait on them (#18)
+  and Master trainers are out of M3 (#739, call 11). Decided by the owner's delegate, 16 October
+  2026 (#18).
 
 ---
 
@@ -325,8 +331,16 @@ which #807 places on the Wold.
   are bigger monsters, not more of them.
 - **Conditions:** Asleep, Poisoned, Diseased, Paralysed, Cursed, Stoned, Unconscious, Dead.
   Cured by spells, temples, or time. Death is reversible in temples at a cost that scales.
-- **Flee** is always an option and always works if the party is faster; the cost is where you end
-  up.
+- **The death line** is −10 hit points at every level: a member at 0 or below is unconscious and
+  dies at −10. Die Hard dies at −20 and an Ironhide at −30 (`deathAt`, `src/game/party.ts`).
+  Decided by the owner's delegate, 16 October 2026 (#18, #808).
+- **Flee** is always an option and a chance, not a promise: the faster the party is than what it
+  flees, the likelier, from 15% to 90%; a failed flight costs the round (`flee`,
+  `src/game/combat.ts`). The cost is where you end up.
+- **No round limit:** a fight runs until one side is down or gone or the party flees; no count of
+  rounds ends it in play. The harness's fifteen (`ROUND_CAP`, `tools/harness.ts`) is its own measure
+  of a slog: a fight still going at fifteen is broken off there, not won. Decided by the owner's
+  delegate, 16 October 2026 (#18, #808).
 - **Respawn:** cleared areas repopulate on a long timer with weaker groups, and never repopulate
   bosses or keyed rooms.
 
@@ -935,9 +949,9 @@ map has nothing a player can read, so the hidden third is earned at the Core (#2
 | **M0 — Vertical slice** | Helmstow, one Foreland outdoor map, one dungeon, one Rift; full party creation; combat; four spells per class; save/load; automap. | Prove the feel. Ship nothing else until this is fun. |
 | **M1 — Act I** | The Foreland and Thornmark complete, the Downs and the Deepthorn with them; the first guilds and their quests; the Grove Stone dungeon. | First real playthrough. |
 | **M2 — Acts II to IV** | Saltreach to the Wold and their Wardstones; the rest of the guilds; the first and second prestiges, and the eight third prestiges whose trainers live in Acts II to IV's country (#448; #443, call 8); Meridian Camp and the Dead-Drop; the ship. | The open world. |
-| **M3 — Act V + subplots** | Hearth Isle, the Underdeep and the Core, all endings, all three subplots' ends and the Cleric's and the Sorcerer's third prestiges. Master trainers wait on the skill tiers (#18). | Content complete. |
-| **M3 — The pilot** | The autoplay mode (#713, docs/PILOT.md): a fair pilot that plays the one quest from the title to the ending's choice, taking the player's own game only when asked; left alone, the title plays one of its own and saves nothing. | Watch the game play itself. Pillar 1 stands for the player (§1). |
-| **The reach** | The Glass and Glacier Foot, with the Buried Tower and the Vault (§9); #56's 62 and 63. | Optional by design: the game is whole without it. |
+| **M3 — Act V + subplots** | Hearth Isle, the Underdeep and the Core, all endings, all three subplots' ends and the Cleric's and the Sorcerer's third prestiges. Master trainers are post-v1, with the skill tiers (#18). | Content complete: built on main (Act V merged on 15 October 2026). The owner's own playthrough is what remains before v1 is called done (README.md). |
+| **M3 — The pilot** | The autoplay mode (#713, docs/PILOT.md): a fair pilot, built to play the one quest from the title to the ending's choice, taking the player's own game only when asked; left alone, the title plays one of its own and saves nothing. On main it finishes the Foreland's chapter (The Quiet Farm) on most seeds and stops lost in Thornmark's; the ten chapters after are not reached (docs/PILOT.md, Known limits). | Watch the game play itself. Pillar 1 stands for the player (§1). |
+| **The reach** | The Glass and Glacier Foot, with the Buried Tower and the Vault (§9), their artifacts, the skill tiers and the Master trainers (§5); #56's 62 and 63. | Optional by design: the game is whole without it. Post-v1, not filed: v1 ships without it. Decided by the owner's delegate, 16 October 2026 (#18). |
 | **Stretch** | New Game+, seeded Rift daily runs, second party mode, Arcomage-style tavern game. | Only after M3 ships. |
 
 From M1 on, each area is built as a core and country (§4, docs/EXPANSION.md §2.1): its core
