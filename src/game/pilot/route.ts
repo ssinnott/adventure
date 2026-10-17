@@ -22,6 +22,8 @@ export interface Goal {
   map: string; x: number; y: number;
   /** What the why line says: "Bound for <here>". */
   name: string;
+  /** The why line's first line while the goal is walked, where "Bound for <name>." is not it (the explorer's, #718). */
+  why?: string;
 }
 
 /** The blocks on one goal that make it shut to the navigator: at the third it drops the goal. */
@@ -39,10 +41,11 @@ const id = (q: State): number => sq(q) * 4 + q.f;
  * marks no group on. A route may end on an exit or a rift but goes on from none, as a step onto one
  * leaves the map. Each state is reached once, by its fewest keys; of two ways as short, the one that
  * steps first, then the one that turns left. It stops at the first square `end` holds for, if given;
- * `from` keeps the state each was reached from, and the key.
+ * `from` keeps the state each was reached from, and the key. A square in `shut` (`Pilot.shut`, #718)
+ * is closed to it, as a group's is, until the explorer takes it back to try it again.
  */
-function search(k: Known, map: string, x: number, y: number, facing: Facing, end?: (q: State) => boolean): { queue: State[]; from: Map<number, [number, Action]>; found?: State } {
-  const can = partyCan(k.party), held = new Set(k.groups(map).map(sq));
+function search(k: Known, map: string, x: number, y: number, facing: Facing, end?: (q: State) => boolean, shut: readonly { x: number; y: number }[] = []): { queue: State[]; from: Map<number, [number, Action]>; found?: State } {
+  const can = partyCan(k.party), held = new Set([...k.groups(map), ...shut].map(sq));
   const leaves = new Set([...k.exits(map), ...k.features(map).filter((f) => f.kind === 'rift')].map(sq));
   const read = new Map<number, boolean>();
   const open = (q: State): boolean => {
@@ -76,11 +79,11 @@ function search(k: Known, map: string, x: number, y: number, facing: Facing, end
 /**
  * The keys from (x, y, facing) to (tx, ty) over seen, passable squares of one map; null when none.
  * Turning costs 1, a step 1 (`search`): round the groups the automap marks, and onto an exit or a
- * rift only at the end.
+ * rift only at the end, and never over a square in `shut`.
  */
-export function routeOn(k: Known, map: string, x: number, y: number, facing: Facing, tx: number, ty: number): Action[] | null {
+export function routeOn(k: Known, map: string, x: number, y: number, facing: Facing, tx: number, ty: number, shut: readonly { x: number; y: number }[] = []): Action[] | null {
   if (!k.cell(map, tx, ty)) return null;
-  const { from, found } = search(k, map, x, y, facing, (q) => q.x === tx && q.y === ty);
+  const { from, found } = search(k, map, x, y, facing, (q) => q.x === tx && q.y === ty, shut);
   if (!found) return null;
   const keys: Action[] = [];
   for (let s = id(found); from.get(s)![0] !== -1; s = from.get(s)![0]) keys.push(from.get(s)![1]);
@@ -91,11 +94,11 @@ export function routeOn(k: Known, map: string, x: number, y: number, facing: Fac
  * The length of `routeOn`'s route from (x, y, facing) to every square it reaches, in one search: by
  * square ("x,y"), the fewest keys over the facings it may stand there in. For a brain that wants the
  * nearest of many squares (#718's frontier, #719's businesses), where a `routeOn` for each would
- * search the map once a square.
+ * search the map once a square. A square in `shut` is closed, as it is to `routeOn`.
  */
-export function routeLengths(k: Known, map: string, x: number, y: number, facing: Facing): Map<string, number> {
+export function routeLengths(k: Known, map: string, x: number, y: number, facing: Facing, shut: readonly { x: number; y: number }[] = []): Map<string, number> {
   const out = new Map<string, number>();
-  for (const q of search(k, map, x, y, facing).queue) if (!out.has(`${q.x},${q.y}`)) out.set(`${q.x},${q.y}`, q.n);
+  for (const q of search(k, map, x, y, facing, undefined, shut).queue) if (!out.has(`${q.x},${q.y}`)) out.set(`${q.x},${q.y}`, q.n);
   return out;
 }
 
@@ -144,7 +147,7 @@ export function unroute(p: Pilot): void { trails.delete(p); }
  * whenever the party is not where the last key should have left it (an exit taken, a flight, a
  * push). A step that left the party where it stood, with no screen shown since, was refused: the
  * plan goes, and at the third on one goal the goal goes too, its square told to the explorer
- * (`Pilot.shut`, #718).
+ * (`Pilot.shut`, #718), and gone round from then on until the explorer takes it back to try again.
  */
 export const route: Brain = (g, k, p) => {
   const goal = p.goal;
@@ -175,22 +178,25 @@ export const route: Brain = (g, k, p) => {
     }
   } else if (last && (st.mapId !== last.map || st.x !== ahead.x || st.y !== ahead.y || st.facing !== f)) p.plan = [];
   if (!p.plan.length) {
-    const plan = st.mapId === at.mapId ? routeOn(k, st.mapId, st.x, st.y, st.facing, at.x, at.y) : toExit(k, st, at.mapId);
+    // A square found shut is gone round until the explorer tries it again (#718).
+    const shut = p.shut.filter((s) => s.map === st.mapId);
+    const plan = st.mapId === at.mapId ? routeOn(k, st.mapId, st.x, st.y, st.facing, at.x, at.y, shut) : toExit(k, st, at.mapId, shut);
     if (!plan?.length) { p.why = [`No way to ${goal.name} that I have seen.`]; p.goal = null; trails.delete(p); return null; }
     p.plan = plan;
   }
   const key = p.plan.shift()!, heard = saidSince(g, t.said).at(-1);
   t.last = { map: st.mapId, x: st.x, y: st.y, facing: st.facing, key, said: g.said, shown: g.shown };
-  p.why = heard === undefined ? [`Bound for ${goal.name}.`] : [`Bound for ${goal.name}.`, fit(heard)];
+  const say = goal.why ?? `Bound for ${goal.name}.`;
+  p.why = heard === undefined ? [say] : [say, fit(heard)];
   return key;
 };
 
-/** The keys to the nearest seen exit of this map that is the first of `routeMaps`'s way to `to`, or null. */
-function toExit(k: Known, st: { mapId: string; x: number; y: number; facing: Facing }, to: string): Action[] | null {
+/** The keys to the nearest seen exit of this map that is the first of `routeMaps`'s way to `to`, or null; none over a square in `shut`. */
+function toExit(k: Known, st: { mapId: string; x: number; y: number; facing: Facing }, to: string, shut: readonly { x: number; y: number }[]): Action[] | null {
   const next = routeMaps(k, st.mapId, to)?.[0]?.exit.to;
   let best: Action[] | null = null;
   for (const e of next === undefined ? [] : k.exits(st.mapId)) {
-    const keys = e.to === next ? routeOn(k, st.mapId, st.x, st.y, st.facing, e.x, e.y) : null;
+    const keys = e.to === next ? routeOn(k, st.mapId, st.x, st.y, st.facing, e.x, e.y, shut) : null;
     if (keys && (!best || keys.length < best.length)) best = keys;
   }
   return best;
