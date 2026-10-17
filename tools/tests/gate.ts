@@ -36,8 +36,13 @@ import { ok, owed } from './lib.ts';
 export const GATE = {
   /** At the floor, the share of the fights won: through. At least. */
   through: { aim: 0.9, limit: 0.8 },
-  /** Two levels under the floor, the share won: back. At most. */
+  /** Two levels under the floor, the share won: back. At most. Under `dayFrom` alone: Act I's floors. */
   back: { aim: 0.25, limit: 0.9 },
+  /**
+   * From `dayFrom`, two levels under the floor, its fights to a rest as a share of the floor's
+   * (harness's fightsPerRest): back by the day (#851). At most: two thirds, and never the floor's own.
+   */
+  backDay: { aim: 2 / 3, limit: 1 },
   /** At the floor, the share of companies that walk the zone's road. At least. */
   road: { aim: 0.8, limit: 0.65 },
   /** The boss at its map's floor: about half. Within. */
@@ -50,6 +55,8 @@ export const GATE = {
   warning: { aim: 0.01, limit: 0.1 },
   /** How far below its floor a company is held back. */
   under: 2,
+  /** The floor from which two under is judged by the day (backDay), not the fight (back): Saltreach's, Act II's first. */
+  dayFrom: 10,
 };
 
 /** Which side of a line a figure is: inside its aim ('aim'), off it but inside its limit ('off'), past its limit ('past'). */
@@ -68,6 +75,8 @@ const SEEDS = 100;
  * a fifth of a fight with the seeds alone.
  */
 const DAYS = 300;
+/** Seeds for the day two under (backDay): a share of the floor's fights wants fewer than a day judged to a tenth. */
+const BACK_DAYS = 100;
 
 /**
  * The boss groups, by the zone they are met from (a dungeon's under the zone it opens from), as the
@@ -181,134 +190,20 @@ const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Tho
 /**
  * The figures past their limits someone owes, by check: who owes each, and the figure it stood at
  * when it was owed. It is reported, not failed, and fails once it is inside its limit; it fails too if
- * it moves further from its limit than that figure, by more than a point (a tenth of a fight to a rest).
+ * it moves further from its limit than that figure, by more than a point (a tenth of a fight to a rest),
+ * or if its check no longer runs.
+ *
+ * The 86 two-under figures owed to #18, 76 maps' and 10 areas', went with #851: from 10 every group is
+ * sized for the day (docs/MONSTERS.md §4.4), and a company two under a floor won every fight of it from
+ * full health, eight under from 18, so the fight measured nothing there; its day still fell to 43% to
+ * 87% of the floor's. So from Saltreach's floor two under is judged by the day (`GATE.backDay`), and
+ * Act I's, where two levels are a cliff by design, by the fight as before.
  */
 export const OWED: Record<string, { whose: string; at: number }> = {
-  // A company two under an Act II box wins every fight. The ladder past 10 (#399) dresses a company
-  // at a floor past one two under it, but at the line's standard size (tools/testmonster.ts) a group
-  // a company at the floor fights six or seven of to a rest is one a company two under still beats:
-  // the to-a-rest aim and the two-under aim pull against each other past 10, which is #18's.
-  'wrackholm_e6: under': { whose: '#18', at: 1 },
-  'smugglers_cove: under': { whose: '#18', at: 1 },
-  'tide_ship: under': { whose: '#18', at: 1 },
-  'tide_ship2: under': { whose: '#18', at: 1 },
-  'tide_ship3: under': { whose: '#18', at: 1 },
-  'Wrackholm: under': { whose: '#18', at: 1 },
-  // And the Dead-Drop's drop (#22), past Wrackholm's band and outside its budget, judged two under its own floor.
-  'dead_drop: under': { whose: '#18', at: 1 },
-  'dead_drop2: under': { whose: '#18', at: 1 },
-  'eaves_i2: under': { whose: '#18', at: 1 },
-  'eaves_j2: under': { whose: '#18', at: 1 },
-  'Sunderwood: under': { whose: '#18', at: 1 },
-  'delta_c5: under': { whose: '#18', at: 1 },
-  'c5_rift: under': { whose: '#18', at: 1 },
-  'k3_rift: under': { whose: '#18', at: 1 },
-  'the_sunder: under': { whose: '#18', at: 1 },
-  'delta_c4: under': { whose: '#18', at: 1 },
-  'upperwater_c3: under': { whose: '#18', at: 1 },
-  'upperwater_b3: under': { whose: '#18', at: 1 },
-  'delta_b4: under': { whose: '#18', at: 1 },
-  'Saltreach: under': { whose: '#18', at: 1 },
-  // And Act III's first box (#457): a company two under M3, in the Watch's gear, still beats every
-  // group that a company at its floor fights eight of to a rest, as Act II's did.
-  'ironfells_m3: under': { whose: '#18', at: 1 },
-  'ironfells_n3: under': { whose: '#18', at: 1 },
-  'kilnsheart_n4: under': { whose: '#18', at: 1 },
-  'ironfells_n2: under': { whose: '#18', at: 1 },
-  // And the Tiefzeche's two upper levels (#462), banded from the area's floor as Kelp Hole's are.
-  'deep_mines: under': { whose: '#18', at: 1 },
-  'deep_mines2: under': { whose: '#18', at: 1 },
-  // And Feuerstollen's first level (#466), banded from the area's floor as the Tiefzeche's upper two are.
-  'lava_tubes: under': { whose: '#18', at: 1 },
-  'kilnsheart_n6: under': { whose: '#18', at: 1 },
-  'kilnmouth_m6: under': { whose: '#18', at: 1 },
-  'ironfells_o3: under': { whose: '#18', at: 1 },
-  'kilnsheart_o4: under': { whose: '#18', at: 1 },
-  'kilnmouth_l6: under': { whose: '#18', at: 1 },
-  'kilnmouth_m4: under': { whose: '#18', at: 1 },
-  'kilnmouth_m5: under': { whose: '#18', at: 1 },
-  'the Kilns: under': { whose: '#18', at: 1 },
-  // And Cairnmoor's boxes (#476, #477, #479), in the Kilns' gear and its finds by 19, as the Kilns' are.
-  'highmoor_n7: under': { whose: '#18', at: 1 },
-  'cairnfield_n8: under': { whose: '#18', at: 1 },
-  // And Carn Dubh's cairn (#480), banded from the area's floor as the Tiefzeche's upper levels are.
-  'cairns: under': { whose: '#18', at: 1 },
-  'highmoor_o7: under': { whose: '#18', at: 1 },
-  'highmoor_o8: under': { whose: '#18', at: 1 },
-  'cairnfield_m7: under': { whose: '#18', at: 1 },
-  'cairnfield_m8: under': { whose: '#18', at: 1 },
-  'Cairnmoor: under': { whose: '#18', at: 1 },
-  // And Rimewater's boxes (#486, #488, #489, #491, #497), in Cairnmoor's gear and the finds by 21, as Cairnmoor's are.
-  'longmere_m9: under': { whose: '#18', at: 1 },
-  'longmere_l9: under': { whose: '#18', at: 1 },
-  'longmere_l10: under': { whose: '#18', at: 1 },
-  'longmere_l11: under': { whose: '#18', at: 1 },
-  'coldmere_k9: under': { whose: '#18', at: 1 },
-  'coldmere_k10: under': { whose: '#18', at: 1 },
-  'longmere_m10: under': { whose: '#18', at: 1 },
-  'longmere_m11: under': { whose: '#18', at: 1 },
-  'longmere_n9: under': { whose: '#18', at: 1 },
-  'coldmere_j9: under': { whose: '#18', at: 1 },
-  'coldmere_k11: under': { whose: '#18', at: 1 },
-  // And the Sleepers' Bay's stair (#490), banded from the area's floor as Carn Dubh's cairn is.
-  'sleepers_bay: under': { whose: '#18', at: 1 },
-  'Rimewater: under': { whose: '#18', at: 1 },
-  // And the Whitespine's first box (#499), in Rimewater's gear and the finds by 22, as Rimewater's are.
-  'monksvale_j11: under': { whose: '#18', at: 1 },
-  // And Highcell's upper house (#500), banded from the area's floor as Carn Dubh's cairn is.
-  'monastery: under': { whose: '#18', at: 1 },
-  // And Ashfall's first box (#511), in Rimewater's gear and the finds by 24, as the Whitespine's are.
-  'cindercoast_g10: under': { whose: '#18', at: 1 },
-  // And the Stair's foot (#510): the box that turns a Whitespine company back, at 22, wins every fight.
-  'cindercoast_h10: under': { whose: '#18', at: 1 },
-  // And the Ember Waste's road (#517), F10; E10's floor is over the area's since #524, so its groups
-  // count two under in Ashfall's pool.
-  'emberwaste_f10: under': { whose: '#18', at: 1 },
-  // And Old Cinder's undercroft (#515), banded from the area's floor as Highcell's upper house is.
-  'old_cinder2: under': { whose: '#18', at: 1 },
-  // And the Sound's shore behind the road (#522), F9, G9 and H9, two under, as the coast's other boxes do.
-  'cindercoast_f9: under': { whose: '#18', at: 1 },
-  'cindercoast_g9: under': { whose: '#18', at: 1 },
-  'cindercoast_h9: under': { whose: '#18', at: 1 },
-  'Ashfall: under': { whose: '#18', at: 1 },
-  // And the camp (#22), Meridian Camp's third level, which pays outside the area's budget and is judged two under its
-  // own floor: a company at 25 beats its groups every time, as the other boxes' are.
-  'meridian_camp3: under': { whose: '#18', at: 1 },
-  // And the Glasswold's first box (#525): the steppe, two under, wins every fight, as Ashfall's boxes do.
-  'wold_d9: under': { whose: '#18', at: 1 },
-  // Akordu's box (#526) the same.
-  'wold_d8: under': { whose: '#18', at: 1 },
-  // And the mesas (#527), the same.
-  'wold_d10: under': { whose: '#18', at: 1 },
-  // And the Scarp's edge (#528), the same.
-  'wold_c8: under': { whose: '#18', at: 1 },
-  // And the Glass's edge (#530), banded from the area's floor: two under, it wins every fight.
-  'wold_b9: under': { whose: '#18', at: 1 },
-  // And the country behind the road (#534), the same.
-  'wold_e9: under': { whose: '#18', at: 1 },
-  'wold_e8: under': { whose: '#18', at: 1 },
-  'the Glasswold: under': { whose: '#18', at: 1 },
-  // And Hearth Isle's isle (#753), the same: two under, at 26, in the gear by then and short of the
-  // Hand's steel at 28 (#746), it wins every fight.
-  'hearthisle_h6: under': { whose: '#18', at: 1 },
-  // And its east rim (#754), the same.
-  'hearthisle_i6: under': { whose: '#18', at: 1 },
-  'Hearth Isle: under': { whose: '#18', at: 1 },
-  // And the temple (#755), the same: its champions and preachers, two under, are won every time.
-  'hearthfane: under': { whose: '#18', at: 1 },
-  'highspine_i11: under': { whose: '#18', at: 1 },
-  // And the ridge north (#503), banded from the area's floor as I11 is: its three groups are won every
-  // time two under, and with them the area's pool passes its limit again.
-  'sheerpoint_i9: under': { whose: '#18', at: 1 },
-  // And the Point (#504), banded from the area's floor as I9 is: its four groups are won every time two
-  // under.
-  'sheerpoint_i8: under': { whose: '#18', at: 1 },
-  // And the country behind (#508), banded from the area's floor as I9 is: each box's one group is won
-  // every time two under.
-  'monksvale_j10: under': { whose: '#18', at: 1 },
-  'highspine_i12: under': { whose: '#18', at: 1 },
-  'monksvale_j12: under': { whose: '#18', at: 1 },
-  'the Whitespine: under': { whose: '#18', at: 1 },
+  // The one day past its limit when the figure came in (#851): Cairnfield's two groups, eight ravens and
+  // a tor troll, are fought 9.29 to a rest two under its floor, past the floor's own 8.5. #865 re-sizes
+  // a group past its limit past 10 inside the floor's own aims.
+  'cairnfield_m8: under day': { whose: '#865', at: 1.093 },
 };
 
 const pc = (x: number): string => `${(x * 100).toFixed(1).replace(/\.0$/, '')}%`;
@@ -400,14 +295,15 @@ const mean = (v: readonly number[]): number => v.reduce((t, x) => t + x, 0) / v.
  * An area's pools: every group of its maps fought at its own map's floor (through), and two levels
  * under a floor (back): a zone map's own, and for a town or dungeon the area's, as the owner ruled
  * on #209 and #40. The through is null where the area has no groups, and the back where no group has
- * a company two under (under level 1).
+ * a company two under (under level 1), or where `back` is not asked for: from `GATE.dayFrom` the area
+ * two under is its day.
  */
-export function areaPools(maps: readonly MapDef[], areaFloor: number, r: (g: EncounterDef, level: number) => number = rate): { through: number | null; back: number | null; groups: number; under: number } {
+export function areaPools(maps: readonly MapDef[], areaFloor: number, r: (g: EncounterDef, level: number) => number = rate, back = true): { through: number | null; back: number | null; groups: number; under: number } {
   const at: number[] = [], low: number[] = [];
   for (const d of maps) {
     if (!d.encounters?.length || !d.band) continue;
     const under = (d.kind === 'outdoor' ? d.band[0] : areaFloor) - GATE.under;
-    for (const g of d.encounters) { at.push(r(g, d.band[0])); if (under >= 1) low.push(r(g, under)); }
+    for (const g of d.encounters) { at.push(r(g, d.band[0])); if (back && under >= 1) low.push(r(g, under)); }
   }
   return { through: at.length ? mean(at) : null, back: low.length ? mean(low) : null, groups: at.length, under: low.length };
 }
@@ -420,17 +316,33 @@ const median = (v: readonly number[]): number => { const s = [...v].sort((a, b) 
  * under is asked of a map alone only where `judgeUnder` says: where its floor is its area's, or where
  * it pays outside the area's budget (`Area.outside`), out of the area's pools. A map with
  * a higher floor is held at its floor alone, and its groups count two under in the area's pool
- * (`areaPools`; the owner's decisions on #40, 28 September, and #209, 29 September).
+ * (`areaPools`; the owner's decisions on #40, 28 September, and #209, 29 September). From
+ * `GATE.dayFrom` the map two under is judged by its day instead (`underDay`), and its fights are not.
  */
-function margins(id: string, groups: readonly EncounterDef[], [floor]: readonly [number, number], judgeUnder = true): void {
+function margins(id: string, groups: readonly EncounterDef[], [floor]: readonly [number, number], judgeUnder = true, areaByDay = false): void {
   if (!groups.length) { console.log(`  n/a:  ${id} has no groups yet`); return; }
   const at = pooled(groups, floor);
   check(`${id}: floor`, at, atLeast(GATE.through.aim), atLeast(GATE.through.limit), `${id} at its floor, ${floor}: ${pc(at)} of fights won (${aims(pc(GATE.through.aim), pc(GATE.through.limit))})`);
+  if (!judgeUnder && areaByDay) { console.log(`  n/a:  ${id} ${GATE.under} under its floor: its floor is above its area's, so its groups count in the area's day, two under the area's floor`); return; }
   if (!judgeUnder) { console.log(`  n/a:  ${id} ${GATE.under} under its floor: its floor is above its area's, so its groups count two under in the area's pool (a zone map's under its own floor, a town's or dungeon's under the area's), where they have a company`); return; }
   const low = floor - GATE.under;
   if (low < 1) { console.log(`  n/a:  ${id} ${GATE.under} under its floor: level ${low} is no company`); return; }
+  if (floor >= GATE.dayFrom) return;
   const under = pooled(groups, low);
   check(`${id}: under`, under, atMost(GATE.back.aim), atMost(GATE.back.limit), `${id} ${GATE.under} under its floor, at ${low}: ${pc(under)} won (at most: ${aims(pc(GATE.back.aim), pc(GATE.back.limit))})`);
+}
+
+/** A day two under a floor as a share of the floor's fights to a rest (harness's fightsPerRest). */
+export const dayShare = (fights: number, floor: number): number => fights / fightsPerRest(floor);
+/**
+ * Two under a floor from `GATE.dayFrom`, by the day (#851): a company two levels under it fights the
+ * groups, dealt, to a rest, as harness's day does, and its fights are judged as a share of the floor's.
+ * There a fight from full health is won from well under the floor; the day still slopes.
+ */
+function underDay(key: string, groups: readonly EncounterDef[], floor: number, what: string): void {
+  const low = floor - GATE.under, day = days(low, groups, BACK_DAYS, 1, true), share = dayShare(day.fights, floor);
+  check(`${key}: under day`, share, atMost(GATE.backDay.aim), atMost(GATE.backDay.limit),
+    `${what}, at ${low}: ${day.fights.toFixed(2)} fights to a rest, ${pc(share)} of the floor's ${fightsPerRest(floor)} (at most: ${aims(pc(GATE.backDay.aim), pc(GATE.backDay.limit))})`);
 }
 
 /** The road from the way in: every fight won, mending between and resting whole where the company must. */
@@ -556,6 +468,16 @@ export function gate(): void {
     check(key, (a + 1) / 2, atLeast(a), atLeast(l), 'the fixture at its floor, inside its aim');
     ok(offAim.length === before + 1 && offAim[before] === off, 'a figure off its aim is listed, and one inside it is not');
     offAim.splice(before);
+    // And two under a floor from dayFrom, by the day, probed at a floor past it: a day a tenth of a fight
+    // past two thirds of the floor's is listed and passes, and one a tenth past the floor's own fails.
+    const { aim: da, limit: dl } = GATE.backDay, floor = GATE.dayFrom + 10, perRest = fightsPerRest(floor);
+    const share = (fights: number): Judged => judge(atMost(da)(dayShare(fights, floor)), atMost(dl)(dayShare(fights, floor)));
+    const pastAim = perRest * da + 0.1, pastLimit = perRest * dl + 0.1;
+    const listed = `the fixture ${GATE.under} under its floor, ${floor}: ${pastAim.toFixed(2)} fights to a rest of the floor's ${perRest} (off its aim)`;
+    check('fixture: under day', dayShare(pastAim, floor), atMost(da), atMost(dl), listed);
+    ok(share((perRest * da) / 2) === 'aim' && share(pastAim) === 'off' && offAim.length === before + 1 && offAim[before] === listed && share(pastLimit) === 'past',
+      `a day two under a floor is judged as a share of the floor's fights to a rest: ${pc(dayShare(pastAim, floor))} is off its aim of ${pc(da)}, listed and passed; ${pc(dayShare(pastLimit, floor))} is past its limit of ${pc(dl)}`);
+    offAim.splice(before);
   }
   // A fight nobody finishes in fifteen rounds is broken off, and counted as not won.
   const slow = [testMonster('soldier', 1, 400, 0.01)];
@@ -652,7 +574,9 @@ export function gate(): void {
       // A map of nothing but its boss is judged on the boss's odds below, not on a floor or a day (#759).
       const bossOnly = groups.every((g) => bosses.includes(`${d.id}:${g.id}`));
       if (bossOnly) console.log(`  n/a:  ${d.id} at its floor and its fights to a rest: its every group is a boss, judged on its odds`);
-      else margins(d.id, groups, d.band, d.band[0] === band[0] || outside.has(d.id));
+      // Two under is asked of the map alone where its floor is its area's, or where it is outside the budget.
+      const alone = d.band[0] === band[0] || outside.has(d.id);
+      if (!bossOnly) margins(d.id, groups, d.band, alone, band[0] >= GATE.dayFrom);
       for (const b of bosses.filter((ref) => ref.startsWith(`${d.id}:`))) {
         const boss = groups.find((e) => `${d.id}:${e.id}` === b);
         if (!boss) continue;
@@ -679,19 +603,28 @@ export function gate(): void {
       // A boss is judged on its odds above, not on the day (MONSTERS.md §4.4), so the day leaves it out
       // (the owner's decision on #40, 28 September).
       if (bossOnly) continue;
-      const day = days(d.band[0], groups.filter((g) => !bosses.includes(`${d.id}:${g.id}`)), DAYS, 1, true), want = fightsPerRest(d.band[0]);
+      const daily = groups.filter((g) => !bosses.includes(`${d.id}:${g.id}`));
+      const day = days(d.band[0], daily, DAYS, 1, true), want = fightsPerRest(d.band[0]);
       const around = (e: readonly [number, number]): [number, number] => [want - e[0], want + e[1]], range = ([lo, hi]: [number, number]): string => `${lo} to ${hi}`;
       check(`${d.id}: rest`, day.fights, within(around(GATE.perRest.aim)), within(around(GATE.perRest.limit)), `${d.id} at ${d.band[0]}: ${day.fights.toFixed(2)} fights to a rest (${aims(range(around(GATE.perRest.aim)), range(around(GATE.perRest.limit)))}); ${pc(day.why.long)} of days end in a fight broken off`, true);
+      // From dayFrom, two under the floor by the day, where two under is asked of the map alone.
+      if (alone && d.band[0] >= GATE.dayFrom) underDay(d.id, daily, d.band[0], `${d.id} ${GATE.under} under its floor`);
     }
 
     // The area against the curve: each group at its own map's floor, and two under a floor.
     const name = NAMES[id];
     const lost = [...bosses, ...zones.flatMap((z) => ROADS[z.id] ?? [])].filter((ref) => !find(ref));
     ok(!lost.length, `${name}: its bosses and its roads are groups of its maps${lost.length ? ` (not: ${lost.join(', ')})` : ''}`);
-    const pools = areaPools(fought.filter((d) => !outside.has(d.id)), band[0]);
+    const pools = areaPools(fought.filter((d) => !outside.has(d.id)), band[0], rate, band[0] < GATE.dayFrom);
     if (pools.through === null) console.log(`  n/a:  ${name} has no groups yet`);
     else check(`${name}: floor`, pools.through, atLeast(GATE.through.aim), atLeast(GATE.through.limit), `${name} at its maps' floors: ${pc(pools.through)} of its ${pools.groups} groups' fights won (${aims(pc(GATE.through.aim), pc(GATE.through.limit))})`);
-    if (pools.back === null) console.log(`  n/a:  ${name} ${GATE.under} under its maps' floors: no group has a company there`);
+    // From dayFrom, two under the area by the day: every group of its maps but a boss, dealt to a company
+    // two under the area's floor.
+    if (band[0] >= GATE.dayFrom) {
+      const daily = fought.filter((d) => !outside.has(d.id)).flatMap((d) => d.encounters!.filter((g) => !bosses.includes(`${d.id}:${g.id}`)));
+      if (!daily.length) console.log(`  n/a:  ${name} ${GATE.under} under its floor: it has no group but its bosses`);
+      else underDay(name, daily, band[0], `${name} ${GATE.under} under its floor, its maps' groups pooled`);
+    } else if (pools.back === null) console.log(`  n/a:  ${name} ${GATE.under} under its maps' floors: no group has a company there`);
     else check(`${name}: under`, pools.back, atMost(GATE.back.aim), atMost(GATE.back.limit), `${name} ${GATE.under} under its maps' floors (a town's or dungeon's, the area's ${band[0]}): ${pc(pools.back)} of ${pools.under} groups' fights won (at most: ${aims(pc(GATE.back.aim), pc(GATE.back.limit))})`);
 
     // Each zone: its road walked at its floor, and a warning, not a wall, at its way in.
