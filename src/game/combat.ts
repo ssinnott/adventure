@@ -10,7 +10,7 @@ import { item } from './items.ts';
 import {
   armorClass, attackBonus, weaponOf, isDown, canAct, damage, heal, addCondition, removeCondition, hasCondition, bonus, canTrain, killPay,
   hasTrait, spellHeal, rankMult, spellRank, armsBonus, WEAPON_MASTER_DMG, HOLY_STRIKE_DMG, MARKSMAN_DMG, SPELLFIRE_DMG, SNEAK_ATTACK_DMG, RAGE_DMG, INSPIRE_HIT,
-  prestigeOf, deathAt, resists, lift,
+  prestigeOf, deathAt, resists, lift, statOf,
 } from './party.ts';
 import type { ClassId } from './party.ts';
 import type { ItemDef } from './items.ts';
@@ -269,7 +269,7 @@ function newRound(s: CombatState, party: Party, rng: RngInstance): void {
   s.defending = party.members.map(() => false);
   const refs: { ref: TurnRef; speed: number }[] = [];
   const haste = s.haste > 0 ? HASTE_SPEED : 0;
-  party.members.forEach((c, i) => { if (!isDown(c)) refs.push({ ref: { side: 'party', i }, speed: c.stats.speed + haste + rng.range(0, 4) }); });
+  party.members.forEach((c, i) => { if (!isDown(c)) refs.push({ ref: { side: 'party', i }, speed: statOf(c, 'speed') + haste + rng.range(0, 4) }); });
   s.monsters.forEach((m, i) => { if (standing(m)) refs.push({ ref: { side: 'monster', i }, speed: m.def.speed + rng.range(0, 4) }); });
   // A monk of the second prestige always acts first in a round.
   const first = (r: TurnRef): number => (r.side === 'party' && party.members[r.i].cls === 'monk' && prestigeOf(party.members[r.i]) >= 2 ? 1 : 0);
@@ -387,7 +387,7 @@ export function partyAct(s: CombatState, party: Party, rng: RngInstance, action:
         if (!standing(m)) { const left = aliveMonsters(s).filter((i) => canReach(s, c, i)); if (!left.length) break; m = s.monsters[left.reduce((a, b) => (s.monsters[b].hp < s.monsters[a].hp ? b : a))]; }
         const hit = rng.chance(toHit(attackBonus(c) + buffHit(s, party, t.i) - (w.ranged && !weatherproof(c) ? s.rangedPenalty : 0), monsterAc(s, m)));
         if (hit) {
-          const dmg = roll(rng, w.dice ?? 1, w.sides ?? 4, (w.bonus ?? 0) + (w.ranged ? 0 : bonus(c.stats.might)) + traitDamage(s, c, w, m) + armsBonus(c) + song + (edge?.damage ?? 0));
+          const dmg = roll(rng, w.dice ?? 1, w.sides ?? 4, (w.bonus ?? 0) + (w.ranged ? 0 : bonus(statOf(c, 'might'))) + traitDamage(s, c, w, m) + armsBonus(c) + song + (edge?.damage ?? 0));
           hurtMonster(s, m, dmg);
           s.log.push(`${c.name} hits ${m.def.name} for ${dmg}.` + (m.hp <= 0 ? ` ${m.def.name} dies.` : ''));
         } else s.log.push(`${c.name} misses ${m.def.name}.`);
@@ -420,7 +420,7 @@ export function partyAct(s: CombatState, party: Party, rng: RngInstance, action:
     }
     case 'flee': {
       const up = party.members.filter((m) => !isDown(m));
-      const ps = up.reduce((a, m) => a + m.stats.speed, 0) / Math.max(1, up.length);
+      const ps = up.reduce((a, m) => a + statOf(m, 'speed'), 0) / Math.max(1, up.length);
       const alive = aliveMonsters(s).map((i) => s.monsters[i]);
       const ms = alive.reduce((a, m) => a + m.def.speed, 0) / Math.max(1, alive.length);
       const p = Math.max(0.15, Math.min(0.9, 0.5 + (ps - ms) * 0.03));

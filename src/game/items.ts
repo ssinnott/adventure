@@ -1,10 +1,11 @@
 // What an item is. Content, not state: a character's inventory holds item ids and the tables say
 // what those ids do (src/content/items.ts, and each area's items.ts). Weapons roll `dice` d`sides` +
 // `bonus`; armour adds `ac`. A +N item's plus is counted in its `bonus` or `ac` already; a weapon's
-// adds to to-hit too (`attackBonus`).
+// adds to to-hit too (`attackBonus`). Past a plus, an item may raise a stat while it is borne
+// (`statOf`) and a weapon's blows may carry an element (an added die, `ELEMENT_DIE`).
 import { ITEMS } from '../content/index.ts';
 import type { Feature } from './map.ts';
-import type { Party } from './party.ts';
+import type { Party, Stat } from './party.ts';
 import type { Element } from './spells.ts';
 import type { SkillId } from './skills.ts';
 
@@ -38,6 +39,14 @@ export interface ItemDef {
   use?: { heal?: number; sp?: number; cure?: readonly string[]; food?: number };
   /** Elements its bearer takes half from: worn where it has a slot, carried in the pack where it has none. */
   resist?: readonly Element[];
+  /**
+   * Stats it raises while it is borne, by the rule of `resist` (`statOf`). Might, accuracy, speed and
+   * personality are read in a fight; endurance, intellect and luck have no live effect (DESIGN §5). It
+   * never touches `Character.stats`, so a save holds no raise.
+   */
+  stat?: Partial<Record<Stat, number>>;
+  /** The element a weapon's blows carry: an added die of it on each blow that lands (`ELEMENT_DIE`, DESIGN §6). */
+  element?: Element;
   /** Words to read: a letter, read from the pack. */
   text?: readonly string[];
   /**

@@ -316,7 +316,7 @@ export function equip(c: Character, id: string): boolean {
 }
 
 export function armorClass(c: Character): number {
-  let ac = 10 + bonus(c.stats.speed);
+  let ac = 10 + bonus(statOf(c, 'speed'));
   for (const slot of ['armor', 'shield'] as const) { const id = c.equipment[slot]; if (id) ac += ITEMS[id].ac ?? 0; }
   if (hasTrait(c, 'stalwart')) ac += STALWART_AC;
   if (hasTrait(c, 'unarmoured') && !c.equipment.shield && robeLike(ITEMS[c.equipment.armor ?? ''])) ac += 1 + Math.floor(c.level / 2);
@@ -329,7 +329,7 @@ export const robeLike = (d: ItemDef | undefined): boolean => (d?.ac ?? 0) - (d?.
 export function weaponOf(c: Character): ItemDef { return c.equipment.weapon ? item(c.equipment.weapon) : ITEMS.club; }
 
 export function attackBonus(c: Character): number {
-  return CLASSES[c.cls].attack + Math.floor(c.level / 2) + bonus(c.stats.accuracy) + (weaponOf(c).plus ?? 0) + armsBonus(c);
+  return CLASSES[c.cls].attack + Math.floor(c.level / 2) + bonus(statOf(c, 'accuracy')) + (weaponOf(c).plus ?? 0) + armsBonus(c);
 }
 
 export function isDown(c: Character): boolean {
@@ -345,14 +345,27 @@ export function immuneTo(c: Character, k: Condition): boolean {
   return !!RACES[c.race].resist?.includes(k) || CLASSES[c.cls].traits.some((t) => TRAITS[t].immune?.includes(k));
 }
 /**
- * The elements a member takes half from (#555): those of what they wear, of a slotless item in
- * their own pack and of a blessing. Armour in the pack is not worn, and the bag is nobody's. In
- * ELEMENTS' order.
+ * What a member bears: what they wear, and the slotless items in their own pack. Armour in the pack
+ * is not worn, and the bag is nobody's. A resistance and a stat's raise are borne so.
+ */
+export function borne(c: Character): string[] {
+  const worn = [c.equipment.weapon, c.equipment.armor, c.equipment.shield].filter((id): id is string => !!id);
+  return [...worn, ...c.pack.filter((id) => item(id).slot === 'none')];
+}
+/**
+ * The elements a member takes half from (#555): those of what they bear (`borne`) and of a
+ * blessing. In ELEMENTS' order.
  */
 export function resists(c: Character): Element[] {
-  const worn = [c.equipment.weapon, c.equipment.armor, c.equipment.shield].filter((id): id is string => !!id);
-  const ids = [...worn, ...c.pack.filter((id) => item(id).slot === 'none')];
+  const ids = borne(c);
   return ELEMENTS.filter((el) => ids.some((id) => item(id).resist?.includes(el)) || c.blessed.some((b) => b.element === el));
+}
+/**
+ * A stat as a member stands: their own, raised by what they bear (`borne`, `ItemDef.stat`). Every
+ * read in play takes it; `c.stats` stays their own, so a save holds no raise.
+ */
+export function statOf(c: Character, s: Stat): number {
+  return borne(c).reduce((n, id) => n + (item(id).stat?.[s] ?? 0), c.stats[s]);
 }
 export function addCondition(c: Character, k: Condition): void {
   if (immuneTo(c, k)) return;
@@ -402,7 +415,7 @@ export function damage(c: Character, n: number): void {
 
 /** What a healing spell of `base` restores when this caster casts it: its ranks lift the base (`rankMult`), and not the flat bonuses. */
 export function spellHeal(caster: Character, base: number, step = RANK_STEP): number {
-  return Math.round(base * rankMult(caster, step)) + bonus(caster.stats.personality) + (hasTrait(caster, 'healing_hands') ? HEALING_HANDS : 0);
+  return Math.round(base * rankMult(caster, step)) + bonus(statOf(caster, 'personality')) + (hasTrait(caster, 'healing_hands') ? HEALING_HANDS : 0);
 }
 
 export function heal(c: Character, n: number): number {
