@@ -62,8 +62,14 @@ export function item(id: string): ItemDef {
   return d;
 }
 
-/** A weapon's mean blow, its bonus counted: the harness's measure of a weapon, and the pilot's (`better`, #719). */
-export const hits = (d: ItemDef): number => ((d.dice ?? 1) * ((d.sides ?? 4) + 1)) / 2 + (d.bonus ?? 0);
+/** The added die of an elemental weapon's blow (`ItemDef.element`): 1d6 of its element, through `elementDamage`. */
+export const ELEMENT_DIE = 6;
+
+/**
+ * A weapon's mean blow, its bonus counted and an element's die at its mean: the harness's measure of
+ * a weapon, the ladder's and the pilot's (`better`, #719).
+ */
+export const hits = (d: ItemDef): number => ((d.dice ?? 1) * ((d.sides ?? 4) + 1)) / 2 + (d.bonus ?? 0) + (d.element ? (ELEMENT_DIE + 1) / 2 : 0);
 
 type Shop = Extract<Feature, { kind: 'shop' }>;
 
