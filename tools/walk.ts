@@ -224,14 +224,14 @@ export function playChapter(w: Walk, chapter: Chapter, steps: readonly Step[], h
 }
 
 /**
- * The pilot plays a chapter from a new game (#720, the first of #723's runs): `headlessGame(4)` with
+ * The pilot plays a chapter from a new game (#720, the first of #723's runs): `headlessGame(seed)` with
  * an instant pilot at the helm asking every brain (`BRAINS`), ticked up to `cap` times until `until`
  * holds: the chapter's end, unless a play names where the pilot stops for now. Every key is the
  * pilot's, through `Game.update`; it must hold the helm all the way (no wipe, no stop of its own).
- * The ok line gives the ticks and the seconds it took.
+ * The ok line gives the seed, the ticks and the seconds it took, and the company's fall if it fell.
  */
-export function pilotPlays(ok: Ok, chapter: Chapter, until: When = chapter.done, cap = 200_000): void {
-  const g = headlessGame(4), p = new Pilot({ instant: true });
+export function pilotPlays(ok: Ok, chapter: Chapter, { until = chapter.done, cap = 200_000, seed = 4 }: { until?: When; cap?: number; seed?: number } = {}): void {
+  const g = headlessGame(seed), p = new Pilot({ instant: true });
   g.pilot = p;
   p.toggle(g);
   const t0 = performance.now(), at = (): boolean => holds(until, g.world.state, g.party);
@@ -239,7 +239,7 @@ export function pilotPlays(ok: Ok, chapter: Chapter, until: When = chapter.done,
   for (; ticks < cap && p.on && !at(); ticks++) drive(g, [null]);
   const secs = ((performance.now() - t0) / 1000).toFixed(1), done = holds(chapter.done, g.world.state, g.party);
   const goal = questLog(g.world.state, g.party).find((v) => v.def === THE_QUEST)?.goal ?? 'no goal shown';
-  ok(at() && p.on, `the pilot plays ${chapter.title} from a new game ${done ? 'to its end' : 'as far as it can before talk (#721)'}, in ${ticks} ticks, ${secs} s (${goal}; "${p.why[0]}")`);
+  ok(at() && p.on, `the pilot plays ${chapter.title} from a new game on seed ${seed} ${done ? 'to its end' : 'as far as the play is bounded'}, in ${ticks} ticks, ${secs} s (${goal}; "${p.why[0]}")`);
 }
 
 /** Every goal a run of `playChapter` has come to, in this process. */

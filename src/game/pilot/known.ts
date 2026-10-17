@@ -72,6 +72,14 @@ export interface Known {
   goals(): { quest: string; text: string; map?: string }[];
   /** The zones of the outdoors the party has set foot in (`WorldState.zones`), first first: what the almanac has said. */
   zones(): readonly string[];
+
+  // Talk's reader (#721).
+  /**
+   * The crossings told (`Pilot.offers`, as `Game.offer` opened its menu): each seller's map and square,
+   * the route's name, the fare its menu showed and where it lands, as played (`World.locate`). Nothing of
+   * a person's crossings before they are offered.
+   */
+  offers(): { map: string; x: number; y: number; name: string; fare: number; to: string; tx: number; ty: number }[];
 }
 
 /**
@@ -167,6 +175,10 @@ export function knownOf(g: Game): Known {
       return goals.map((q) => ({ ...q }));
     },
     zones: () => [...w.state.zones ?? []],
+    offers: () => (g.pilot?.offers ?? []).map(({ map, x, y, passage: r, fare }) => {
+      const at = w.locate(r.to, r.x, r.y);
+      return { map, x, y, name: r.name, fare, to: at.mapId, tx: at.x, ty: at.y };
+    }),
   };
 }
 

@@ -31,7 +31,7 @@ import { QuestScreen } from '../ui/quests.ts';
 import { questLog, questMarks, questNews } from './quests.ts';
 import { TitleScreen } from '../ui/title.ts';
 import { EndingScreen } from '../ui/ending.ts';
-import { endingTaken } from './stones.ts';
+import { endingTaken, endsIn } from './stones.ts';
 import { WorldMapScreen } from '../ui/worldmap.ts';
 import { drawText } from '../lib/engine/text.ts';
 import { RiddleScreen } from '../ui/riddle.ts';
@@ -253,7 +253,7 @@ export class Game {
    */
   talkScreen(p: Person): Screen {
     const m = meet(p, this.party, heard(this.world, p));
-    const then = m.choice ? (): void => this.ask(m.choice!, p.name) : p.passage?.length ? (): void => this.offer(p.passage!, p.name) : p.teaches ? (): void => this.train(p.teaches!, p.name)
+    const then = m.choice ? (): void => this.ask(m.choice!, p.name) : p.passage?.length ? (): void => this.offer(p.passage!, p.name, p) : p.teaches ? (): void => this.train(p.teaches!, p.name)
       : p.skill ? (): void => this.push(skillMenu(this, [p.skill!], p.name)) : undefined;
     return new MessageScreen(m.text, then, p.name);
   }
@@ -262,7 +262,8 @@ export class Game {
    * Put a question: its answers through the choice screen, each with its price where it has one and
    * barred to a company short of it, and the answer's words in a box titled `title`, or to `said`
    * (words for the log). An answer that takes an ending has its pages after its words (ui/ending.ts,
-   * #750), and the company is where it stood. Esc answers nothing, and the question comes again.
+   * #750), and the company is where it stood. Esc answers nothing, and the question comes again. A
+   * question with an answer that would take an ending is marked so (`ChoiceScreen.ending`): no pilot answers it.
    */
   ask(c: Choice, title: string, said?: (text: string) => void): void {
     this.push(new ChoiceScreen(asked(c, this.party), c.answers.map(answerLabel), (i) => {
@@ -270,7 +271,7 @@ export class Game {
       const text = answer(c.answers[i], this.party), end = endingTaken(c.answers[i], this.party.flags);
       const pages = end ? (): void => this.push(new EndingScreen(end)) : undefined;
       if (said) { said(text); pages?.(); } else if (text || !pages) this.push(new MessageScreen(text, pages, title)); else pages();
-    }, title, c.answers.map((a) => barred(a, this.party))));
+    }, title, c.answers.map((a) => barred(a, this.party)), { ending: c.answers.some((a) => !!endsIn(a)) }));
   }
 
   /**
@@ -291,10 +292,12 @@ export class Game {
 
   /**
    * A seller's crossings (game/passage.ts): the menu of where to, then the terms and the fare, then
-   * the crossing taken. Esc at either backs out with nothing spent.
+   * the crossing taken. Esc at either backs out with nothing spent. As the menu opens the pilot is
+   * told the routes, with the seller's square and the fares the menu shows (#721).
    */
-  offer(routes: readonly Passage[], title: string): void {
+  offer(routes: readonly Passage[], title: string, seller?: { x: number; y: number }): void {
     const w = this.world;
+    if (seller) this.pilot?.told(w.state.mapId, seller.x, seller.y, routes.map((r) => ({ passage: r, fare: passage.fareOf(r, w) })));
     this.push(new ChoiceScreen(passage.ask(this.party), [...routes.map((r) => passage.offerLine(r, w)), passage.NOT_NOW], (i) => {
       const r = routes[i];
       if (!r) return;
@@ -347,7 +350,7 @@ export class Game {
       if (a && !a.fight) { this.engage(); return; }
       const ids = this.world.adjacentGroups();
       this.fight(ids.length ? ids : [id]);
-    }, monster(def.leader ?? def.monsters[0]).name, c.answers.map((a) => barred(a, this.party))));
+    }, monster(def.leader ?? def.monsters[0]).name, c.answers.map((a) => barred(a, this.party)), { fight: c.answers.findIndex((a) => !!a.fight) }));
   }
 
   /** The groups beside the party: the first that talks puts its question, else they fight. */

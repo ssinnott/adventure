@@ -21,19 +21,18 @@ import type { Known } from './known.ts';
 import { routeLengths, routeMaps } from './route.ts';
 import type { Goal } from './route.ts';
 import type { Brain, Pilot } from './pilot.ts';
+import { reserve, spare } from './purse.ts';
+
+export { reserve, spare };
 
 /** What the company may need, the most urgent first. */
 export type Need = 'temple' | 'rest' | 'food' | 'train' | 'gear';
 /** The order the quartermaster's aims give way in: the needs, the most urgent first, then a well near. */
 const URGENCY: readonly (Need | 'well')[] = ['temple', 'rest', 'food', 'train', 'gear', 'well'];
 type Shop = Extract<Feature, { kind: 'shop' }>;
-/** The businesses the quartermaster answers in: a guild's spell hall is talk's (#721). */
+/** The businesses the quartermaster answers in: a guild's spell hall is talk's (#721), as are a guild's work and the people in any. */
 type Business = Extract<Feature, { kind: 'inn' | 'temple' | 'shop' | 'trainer' }>;
 
-/** What the quartermaster keeps back: 100 gold a level of the highest in the company, the most a temple asks to raise one of it (`templePrice`). */
-export const reserve = (p: Party): number => 100 * Math.max(0, ...p.members.map((c) => c.level));
-/** The gold over the reserve: what gear may cost (`better`). */
-export const spare = (p: Party): number => Math.max(0, p.gold - reserve(p));
 /** The keys of route a well may be off for the company to go and drink. */
 const WELL_KEYS = 6;
 /** What ten rations cost at an inn, as its menu says ("Buy 10 rations (20 gold)"). */
@@ -52,6 +51,8 @@ function tired(p: Party): 'hp' | 'sp' | null {
   const up = p.members.filter((c) => !fallen(c)), why = up.length ? mustRest({ ...p, members: up }) : null;
   return why === 'dead' ? null : why;
 }
+/** Whether the rest offered is taken (the rest key's, a camp's): those standing must rest, and there is a ration each. Talk's rule 2 is this one (#721). */
+export const restWanted = (p: Party): boolean => !!tired(p) && p.food >= p.members.length;
 /** The first member ready to train whom the company can pay for (`canTrain`, `trainPrice`). */
 const ready = (p: Party): Character | undefined => p.members.find((c) => canTrain(c) && !isDown(c) && p.gold >= trainPrice(c));
 /** The first of the dead, then of the stone, whom the company can pay a temple to raise (`templePrice`). */
@@ -293,7 +294,8 @@ function wanting(k: Known, list: readonly Need[]): string | undefined {
 function drink(g: Game, k: Known, mem: Keep): { s: Spot; d: number } | undefined {
   const p = k.party, st = g.world.state;
   if (!p.members.some(low) || k.groups(st.mapId).length) return undefined;
-  const wells = k.features(st.mapId).filter((f) => f.kind === 'well' && !(f.x === st.x && f.y === st.y))
+  // A route is no shorter than the squares between, so a well farther than WELL_KEYS is not searched for.
+  const wells = k.features(st.mapId).filter((f) => f.kind === 'well' && !(f.x === st.x && f.y === st.y) && Math.abs(f.x - st.x) + Math.abs(f.y - st.y) <= WELL_KEYS)
     .map((f) => ({ map: st.mapId, f, reason: 'a drink' })).filter((s) => !mem.dry.has(spotKey(s)));
   const best = wells.length ? nearest(g, k, wells) : undefined;
   return best && best.d <= WELL_KEYS ? best : undefined;
@@ -305,7 +307,7 @@ function drink(g: Game, k: Known, mem: Keep): { s: Spot; d: number } | undefined
  */
 function answer(g: Game, k: Known, p: Pilot, c: ChoiceScreen, mem: Keep): Action | null {
   const party = k.party, rows = c.options;
-  if (rows.join() === 'Rest,Not now') return pick(c, tired(party) && party.food >= party.members.length ? 'Rest' : 'Not now');
+  if (rows.join() === 'Rest,Not now') return pick(c, restWanted(party) ? 'Rest' : 'Not now');
   const visit = g.screens.find((s): s is InteriorScreen => s instanceof InteriorScreen);
   if (!visit) return null;
   const { x, y } = visit.at, f = k.features(g.world.state.mapId).find((q): q is Business => q.x === x && q.y === y && (q.kind === 'inn' || q.kind === 'temple' || q.kind === 'shop' || q.kind === 'trainer'));
@@ -313,9 +315,10 @@ function answer(g: Game, k: Known, p: Pilot, c: ChoiceScreen, mem: Keep): Action
   let v = VISITS.get(visit);
   if (!v) VISITS.set(visit, (v = { looked: false, served: new Set() }));
   // The business's first menu: its trade while there is something to do there and the last opening
-  // spent something (so a trade that can do nothing is not opened twice), else Leave.
+  // spent something (so a trade that can do nothing is not opened twice), else Leave; but a guild's
+  // work and the people in the room are talk's, where the pilot asks it, which leaves once done (#721).
   if (rows.at(-1) === 'Leave' && rows.includes(TRADE[f.kind])) {
-    if (v.traded === party.gold || !wants(f, party, v)) return pick(c, 'Leave');
+    if (v.traded === party.gold || !wants(f, party, v)) return p.talks && rows.some((r) => r.startsWith('Work for ') || r.startsWith('Talk to ')) ? null : pick(c, 'Leave');
     const a = pick(c, TRADE[f.kind]);
     if (a === 'interact') v.traded = party.gold;
     return a;
