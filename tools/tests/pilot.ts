@@ -497,15 +497,12 @@ function explorer(): void {
   const door = squares(frontier(k, g, 'fx_cell'));
   ok(door === '4,2', `the frontier of one seen room with a door out is the door's square, and nothing inside the room (${door})`);
 
-  // The nearest by the route's length, turns and all: two squares ahead rather than two behind; and no key with a choice on top.
+  // The nearest by the route's length, turns and all: two squares ahead rather than two behind.
   fixture(g, { id: 'fx_reach', name: 'Reach', kind: 'dungeon', start: { x: 4, y: 1, facing: EAST }, rows: ['#########', '#.......#', '#########'] }, [4, 1, EAST], grid(9, 3, (x) => x >= 2 && x <= 6));
-  const ends = squares(frontier(k, g, 'fx_reach')), first = explore(g, k, p), aim = p.goal;
-  g.push(new ChoiceScreen('A test?', ['Yes', 'No'], () => undefined));
-  const asked = explore(g, k, p);
-  g.pop();
+  const ends = squares(frontier(k, g, 'fx_reach')), first = explore(g, k, p), aim = goalOf(p);
   p.goal = null;
-  ok(ends === '2,1 6,1' && first === 'forward' && aim?.x === 6 && aim.y === 1 && aim.why === 'Looking about Reach.' && asked === null,
-    `the explorer goes to the frontier square nearest by the route, two steps ahead before two behind, and gives no key with a choice on top (${ends}: ${first} for ${aim?.x},${aim?.y}; ${asked})`);
+  ok(ends === '2,1 6,1' && first === 'forward' && aim?.x === 6 && aim.y === 1 && aim.why === 'Looking about Reach.',
+    `the explorer goes to the frontier square nearest by the route, two steps ahead before two behind, and looks about (${ends}: ${first} for ${aim?.x},${aim?.y}, "${aim?.why}")`);
 
   // Water and a chasm at the edge of what is seen: the water with a swimmer in the company, a learnt one among them; the chasm never.
   fixture(g, { id: 'fx_brink', name: 'Brink', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['######', '#.~..#', '#.v..#', '######'] }, [1, 1, EAST], grid(3, 4));
@@ -526,6 +523,14 @@ function explorer(): void {
   fixture(g, { id: 'fx_floor', name: 'Floor', kind: 'dungeon', start: { x: 2, y: 2, facing: NORTH }, rows: ['#####', '#...#', '#...#', '#...#', '#####'] }, [2, 2, NORTH]);
   const open = suspects(k, 'fx_floor').length;
   ok(walls === `4,1 ${EAST}, 4,1 ${WEST}` && blind === 0 && open === 0, `the end wall of a seen dead end is suspected from each side, nothing with its far side unseen nor on an open floor (${walls}; ${blind}; ${open})`);
+  // Before a suspect and facing it, a search, written down; with a choice on top, no key and nothing searched (#716's contract).
+  fixture(g, dead, [3, 1, EAST]);
+  g.push(new ChoiceScreen('A test?', ['Yes', 'No'], () => undefined));
+  const asked = explore(g, k, p), unsearched = p.searched.size;
+  g.pop();
+  const pressed = explore(g, k, p);
+  ok(asked === null && unsearched === 0 && pressed === 'search' && p.searched.has(`fx_dead:4,1,${EAST}`) && p.why[0] === 'Searching the wall.',
+    `facing a suspect the explorer searches it and writes it down, and with a choice on top gives no key (${asked}; then ${pressed}: ${[...p.searched].join(' ')})`);
 
   // Known's box: a zone's box on the outdoors as the world map draws it, and a map's extent; nothing else of either.
   const downs = g.maps[OUTDOORS].zones.find((z) => z.id === 'downs_e3')!, box = JSON.stringify(k.box('downs_e3')), whole = JSON.stringify(k.box('harrow'));
@@ -595,9 +600,9 @@ function exploring(): void {
       queue.push([nx, ny]);
     }
   }
-  const passable = grid(m.width, m.height, (x, y) => m.passable(x, y) !== 'wall' && m.passable(x, y) !== 'blocked' && m.passable(x, y) !== 'void');
+  const passable = grid(m.width, m.height, (x, y) => m.passable(x, y) === 'ok' || m.passable(x, y) === 'locked'), door = (x: number, y: number): string => m.at(x, y).door;
   const unseen = passable.filter(([x, y]) => reached.has(`${x},${y}`) && !g.world.explored(x, y)).map(([x, y]) => `${x},${y}`);
-  const behind = passable.filter(([x, y]) => !reached.has(`${x},${y}`)).map(([x, y]) => `${x},${y} (${m.at(x, y).door === 'locked' ? 'a locked door' : 'behind a locked or a secret door'})`);
+  const behind = passable.filter(([x, y]) => !reached.has(`${x},${y}`)).map(([x, y]) => `${x},${y} (${door(x, y) === 'locked' || door(x, y) === 'secret' ? `a ${door(x, y)} door` : 'behind a locked or a secret door'})`);
   ok(g.world.state.mapId === 'harrow' && reached.size > 100 && unseen.length === 0,
     `3000 ticks of the navigator and the explorer leave every passable square of Helmstow seen (${reached.size} reached as written; ${unseen.length} unseen: ${unseen.join(' ') || 'none'}; expected unseen: ${behind.join(', ') || 'none'})`);
   ok(p.on && whys.has('Looking about Helmstow.') && p.why[0] === 'Helmstow is walked out.', `the why line looks about Helmstow, and then says it is walked out (${[...whys].join(' / ')})`);

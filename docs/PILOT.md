@@ -11,9 +11,10 @@ It lives on the `Game` (`g.pilot`), outside the save: nothing of it goes into `W
 until the test gives it one. It presses the keys a player would: every move is an `Action` through
 `Game.update`, and nothing teleports or is bought off screen.
 
-Built so far: the frame (#716) over the bot's fights (#714), and the navigator (#717). Until the
-other brains land (#718 to #721) nothing sets a goal, so the pilot hands each fight to the bot,
-closes each message box and says "Nothing to do."
+Built so far: the frame (#716) over the bot's fights (#714), the navigator (#717) and the explorer
+(#718). Until the other brains land (#719 to #721) the explorer sets the only goals: the pilot walks
+the map it is on, outdoors its zone, until it is walked out, hands each fight to the bot and closes
+each message box.
 
 ## Using it
 
@@ -26,8 +27,8 @@ closes each message box and says "Nothing to do."
 - **T** cycles the tempo: 1×, 2× and 4×, an action every 15, 8 and 4 ticks (4, 7.5 and 15 a second).
   A fight goes at the game's own pace whatever the tempo: the pilot hands it to the bot (`auto`).
 - **The why line**: while the pilot drives, a band over the top of the view carries two lines in the
-  game's voice and `PILOT 1X` at its right; the hint that would stand there is not drawn. With no
-  brain to ask it says "Nothing to do."
+  game's voice and `PILOT 1X` at its right; the hint that would stand there is not drawn. When no
+  brain has a key or a word, it says "Nothing to do."
 - It stops by itself at a party wipe, saying "The company has fallen.", and at the ending's choice
   (#721). Nothing else is the viewer's to say. A stop of its own keeps the band up with its why line
   until the next key; when the viewer takes the helm, the band goes at once.
@@ -49,7 +50,10 @@ through `g.world`, `g.maps` or a `MapDef`:
   on a seen square within two steps: where a group stands and nothing of what it is;
 - the company (`party`, #717): who stands, what each has learnt and what it carries;
 - the maps visited, the world map as it is painted (`placeOf`) and every line heard: what `Game.say`
-  says and every message box opened, the last 2000. A new game or a load empties it.
+  says and every message box opened, the last 2000. A new game or a load empties it;
+- a map's bounds and a zone's box on the outdoors (`box`, #718), as the automap and the world map
+  draw them, and nothing else of either; and a place's band as the almanac gives it (`band`, #718):
+  a zone's once the party has set foot in it, a town's or a dungeon's once visited.
 
 A zone map's id (a goal's map may be one) names the outdoors it lies in, in one reckoning: every
 reader takes and gives the outdoors' squares, as `g.world.state` has them while the party is there,
@@ -59,8 +63,7 @@ them now, not as last seen. The headless run's `omniscient` pilot (#723) has eve
 game never sets it.
 
 Not in `Known` yet, each built by the first issue that uses it, with its own fairness test: what a
-menu has shown, such as a shop's stock and a trainer's top level (#719); a zone's band, read once the
-party has been in the zone or the world map's almanac shows it (#718); and a goal's map, read once
+menu has shown, such as a shop's stock and a trainer's top level (#719); and a goal's map, read once
 seen (#720).
 
 ## Brains
@@ -68,7 +71,10 @@ seen (#720).
 The brains (`BRAINS`, each `(g, k, p) => Action | null`) are asked in order on every paced tick,
 whatever screen is on top, and the first key given is pressed. A brain returns null unless the
 screen it works on is on top: route and explore only on the ExploreScreen; talk and keep also on the
-screens they answer.
+screens they answer. The explorer is asked after the navigator, so it speaks only when no goal is
+walked; a goal it sets it walks at once, asking `route` for the first key itself. When no brain
+gives a key, a why line one of them said that tick stands ("Helmstow is walked out."); else the
+frame says "Nothing to do."
 
 ## The navigator
 
@@ -82,15 +88,32 @@ block: the plan is made afresh, and at the third block the goal goes ("The lane 
 its square left in `Pilot.shut` for the explorer (#718). With no way seen it says "No way to the
 lane that I have seen." and drops the goal. A goal is reached by standing on it or by the step onto
 it, when that step takes an exit or opens a visit. A brain that wants the nearest of many squares
-asks `routeLengths` once, for the length of the route to every square it can reach.
+asks `routeLengths` once, for the length of the route to every square it can reach. A square left
+in `Pilot.shut` is gone round until the explorer takes it back to try it again.
+
+## The explorer
+
+`explore` (#718) makes a way where the navigator has none seen. With no goal walked it takes, in
+order: a way found shut that the company may open now, a locked door once a key is carried or a gate
+once a flag has been set since it was found shut ("Trying a shut way again."); the nearest square of
+the frontier by the route's length, a seen square the company can stand on with an unseen square
+beside it ("Looking about Helmstow."); and, the frontier spent, the nearest wall it suspects, a wall
+with seen floor on both sides, searched once from each side (`Pilot.searched`) from the square
+before it ("Searching the wall."). Then it says "Helmstow is walked out." and gives no key. It
+explores the map it is on, or `Pilot.prefer` (the strategist's, #720) where that is this map or a
+zone of it. Outdoors it keeps to one zone's box, the party's or the zone preferred, and never goes
+into a zone whose band, as Known gives it, starts above the company's level and one, unless that zone
+is preferred ("Callow Downs is too hard for us yet." in such a zone). Of a zone preferred with nothing
+seen near it, it says "No way to Thornmark that I have seen.": bringing the party nearer is #720's.
 
 ## The files
 
 | File | Owns |
 |---|---|
-| `src/game/pilot/pilot.ts` | `Pilot`: on and off (`toggle`), a stop of its own (`stop`), the tempo and the pace, the why line and what the band shows (`band`), the corpus heard (`hear`, `forget`), the next key (`next`), the navigator's goal, plan and squares found shut (`goal`, `plan`, `shut`) and `BRAINS`: the brains in the order asked (fight, keep, aims, route, explore, talk), each slot absent until its module lands |
+| `src/game/pilot/pilot.ts` | `Pilot`: on and off (`toggle`), a stop of its own (`stop`), the tempo and the pace, the why line and what the band shows (`band`), the corpus heard (`hear`, `forget`), the next key (`next`), the navigator's goal, plan and squares found shut (`goal`, `plan`, `shut`), the explorer's walls searched and the map preferred (`searched`, `prefer`) and `BRAINS`: the brains in the order asked (fight, keep, aims, route, explore, talk), each slot absent until its module lands |
 | `src/game/pilot/known.ts` | `Known` and `knownOf`, the fair view; `fair`, a feature as the party knows it |
-| `src/game/pilot/route.ts` | the navigator (#717): `Goal`, `routeOn` (the keys over one map), `routeLengths` (the length of the route to every square, in one search), `routeMaps` (the exits from map to map), the brain `route` and `unroute` (what it kept of a goal, forgotten); it reads a cell by `passableCell` (`src/game/map.ts`) and the groups as the automap marks them (`markedGroups`, `src/ui/frame.ts`) |
+| `src/game/pilot/route.ts` | the navigator (#717): `Goal` (with the why line its brain gives it), `routeOn` (the keys over one map), `routeLengths` (the length of the route to every square, in one search), each round the squares found shut it is given, `routeMaps` (the exits from map to map), the brain `route` and `unroute` (what it kept of a goal, forgotten); it reads a cell by `passableCell` (`src/game/map.ts`) and the groups as the automap marks them (`markedGroups`, `src/ui/frame.ts`) |
+| `src/game/pilot/explore.ts` | the explorer (#718): `frontier` (seen squares with an unseen one beside them), `suspects` (walls with seen floor on both sides) and the brain `explore`; a zone's box and band it reads through `Known.box` and `Known.band`, and the zone a square lies in by `zoneAt` (`src/game/map.ts`), as the world map draws the boxes |
 | `src/game/ink.ts` | `drawnCell`: what a cell is drawn as, which the view, the automap and Known share |
 | `src/game/bot.ts` | the fight and the rest rule (`botTurn`, `asSeen`, `mustRest`, #714) |
 | `src/ui/create.ts` | `randomParty`: the company drawn from a seed |
@@ -154,3 +177,22 @@ Decided by delegate for #717, each the owner's to overturn:
 13. **What the navigator keeps between keys lives in `route.ts`, by the goal's square and not the goal**, as a brain asked before it may set an equal goal afresh each tick: the blocks on it, the lines said since it was set and the last key, in a `WeakMap` by pilot, so `Pilot` gains only the issue's `goal`, `plan` and `shut`. It goes with the goal, and with the helm, a new game or a load (`unroute`).
 14. **A goal is reached by standing on it or by a step onto it that went through**: one that left the party's square (an exit's square, which takes the party away) or opened a screen there (a business's door, whose visit puts the party back before the door). It is looked for before the screen test, so a visit opened on the goal ends the goal under its menu.
 15. **`routeLengths`, the length of `routeOn`'s route to every square in one search**, for the brains that want the nearest of many squares (#718's frontier, #719's businesses), where a `routeOn` for each would search the map once a candidate.
+
+Decided by delegate for #718, each the owner's to overturn:
+
+1. **The frontier leaves out the squares a step never stands on**: an exit's, a rift's and a business's door (a feature with an `interior`). A step onto one takes the party away or puts it back before the door, so what lies beyond is never seen from it and the explorer would go back to it for ever. A square off the map is no unseen neighbour.
+2. **Outdoors the unseen square lies in the zone's box, and the frontier square may stand just outside it**, as the way in: so a zone preferred is looked into from the seen squares beside it, and the party's own zone keeps to its box.
+3. **"The frontier is empty" is read as "no frontier square the route reaches"**: a square seen across a wall or beyond a gate found shut is frontier but cannot be reached, and would keep the explorer from the walls for ever.
+4. **A suspect is a cell Known inks a wall** (`solid: 'wall'`, a secret door among them), never a building, a tree, rock or a mountain: outdoors a line of trees or rock one thick between two seen floors is everywhere, and a door hidden there is drawn as what it hides among, so it is the hint chain's to find (#720, #723).
+5. **One search a side**, as the issue keys `searched` ("map:x,y,f"). A company with no elf, gnome or keen eyes finds a door one search in two (`World.search`), so it may miss one after its two; searching again would cost ten minutes for every wall that hides nothing.
+6. **The explorer presses the navigator's first key itself.** Asked after `route`, a goal set and null returned would lose a tick and show "Nothing to do." between; a goal carries its own why line (`Goal.why`, new), "Looking about Helmstow." or "Searching the wall." in place of "Bound for <name>.".
+7. **A why line a brain said stands when no brain gives a key** (`Pilot.next`): the frame said "Nothing to do." over it, so "Helmstow is walked out." would never have shown. "Nothing to do." is said when no brain spoke that tick.
+8. **A square found shut is gone round by the navigator until the explorer takes it back** (`routeOn`'s and `routeLengths`' new last argument, which `route` fills from `Pilot.shut`): else a frontier square seen beyond a gate is routed through the gate again and again, three blocks a time, and filed in `shut` each time.
+9. **A gate is tried again once a flag has been set since the explorer first saw it shut**: the flags counted then are kept in `explore.ts` by entry, so `Pilot.shut` keeps #717's shape. Any line but a locked door's is read as a gate's, the tide's and a failing float's among them.
+10. **A locked door is a frontier square once a key is carried** (`passableCell` reads `unlock`), so the frontier takes the company to it unasked. The navigator files no locked door in `shut`, as it routes into none without a key; the first rule's locked clause serves an entry filed otherwise, as the test files one.
+11. **A zone's band is read once the party has set foot in it** (`Known.band`: `WorldState.zones`, as the almanac and the world map's foot show it there), a town's or a dungeon's once visited. A zone not yet set foot in has no band known, so nothing bars it; the world map's plates show a town's or a dungeon's band from the start, a reading #720 may add.
+12. **"Never entered" is read as "never the explorer's goal"**: no frontier square or wall in a zone too hard is goaled unless the zone is `prefer`, and in such a zone itself the explorer says "<Zone> is too hard for us yet." and gives no key, for #720 to take the party out. The navigator's way to a goal may still cross a corner of another zone; it knows no bands.
+13. **`prefer` counts where it is this map or a zone of it**; elsewhere the explorer explores here, and bringing the party to it is #720's. Of a zone preferred with nothing seen near it, the explorer says "No way to <zone> that I have seen." rather than that it is walked out.
+14. **`Known.box`, new**: a map's bounds, as the automap draws a map whole, and a zone's box, as the world map draws it, and nothing else of either. `suspects(k, map)` takes no `g`, so its bounds come through Known; the box's test fails if the zone itself, with its secrets and encounters, comes back.
+15. **The frame's and the navigator's tests that turn the pilot on and lean on `BRAINS` now name their brains** (none, or `[route]`): with the explorer among them, a walked goal's test would see it walk on after arrival. Their checks are as they were.
+16. **A new game or a load forgets the walls searched and the map preferred** (`Pilot.forget`); the helm taken back keeps both, as a wall searched stays searched.
