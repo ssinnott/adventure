@@ -41,7 +41,7 @@ interface Mem {
   /** The zone the party stood in at the last look, and its square then: the square before a crossing. */
   zone?: string; before?: Square;
   /** By a lost goal's words: the members' levels and the flags set when it was given up. */
-  lostAt: Map<string, { levels: number; flags: number }>;
+  lostAt: Map<string, Gains>;
   /** The maps and zones found walked out, each with what that rested on (the squares seen and the flags). */
   out: Map<string, string>;
   /** The chests the route did not reach, by "map:x,y", with the squares seen then. */
@@ -114,7 +114,7 @@ const walkedOut = (g: Game, k: Known, mem: Mem, map: string): boolean => mem.out
  */
 export function chooseAim(g: Game, k: Known, p: Pilot): Aim | null {
   const mem = memOf(p);
-  retry(p, mem, k.party);
+  retry(p, mem, k);
   const quest = questAim(g, k, p);
   if (quest) return quest;
   const from = pointOf(g, k), far = (map: string): number => distance(k.placeOf(map), from);
@@ -134,17 +134,17 @@ export function chooseAim(g: Game, k: Known, p: Pilot): Aim | null {
   const beside = zones.filter((z) => !trod.has(z.id) && zones.some((t) => trod.has(t.id) && touches(t, z))).map((z) => z.id).filter(fresh).sort((a, b) => far(a) - far(b));
   if (beside.length) return { kind: 'explore', map: beside[0] };
   const any = door ?? doors.sort((a, b) => far(a.m) - far(b.m))[0];
-  if (any) return { kind: 'explore', map: any.e.to };
-  // Nothing left to walk: the goals given up are tried again (#723), else the pilot stands and the clock with it.
-  if (!p.lost.size) return null;
-  p.lost.clear();
-  mem.lostAt.clear();
-  return chooseAim(g, k, p);
+  return any ? { kind: 'explore', map: any.e.to } : null;
 }
 
+/** What a goal given up waits on (#723): the members' levels, the flags set, the things carried and the maps visited. */
+interface Gains { levels: number; flags: number; items: number; maps: number }
+const gainsOf = (k: Known): Gains => ({ levels: levels(k.party), flags: flagCount(k.party), items: k.party.bag.length + k.party.members.reduce((t, m) => t + m.pack.length, 0), maps: k.visited().length });
+
 /** The goals given up whose company has since gained a level (anyone's) or set a flag: tried again. */
-function retry(p: Pilot, mem: Mem, party: Party): void {
-  for (const [text, then] of mem.lostAt) if (levels(party) > then.levels || flagCount(party) > then.flags) { p.lost.delete(text); mem.lostAt.delete(text); }
+function retry(p: Pilot, mem: Mem, k: Known): void {
+  const now = gainsOf(k);
+  for (const [text, then] of mem.lostAt) if (now.levels > then.levels || now.flags > then.flags || now.items > then.items || now.maps > then.maps) { p.lost.delete(text); mem.lostAt.delete(text); }
 }
 
 /**
@@ -213,7 +213,7 @@ export const aims: Brain = (g, k, p) => {
   if (zone !== undefined) mem.before = { x: st.x, y: st.y };
 
   // 2. The aim, chosen anew when it is spent.
-  retry(p, mem, party);
+  retry(p, mem, k);
   const goals = k.goals(), aim = p.aim;
   const shown = aim?.kind === 'quest' ? goals.find((q) => q.quest === aim.quest)?.text ?? '' : '';
   const spent = !aim
@@ -230,6 +230,8 @@ export const aims: Brain = (g, k, p) => {
     p.aimGoal = next?.kind === 'quest' ? next.text : '';
     p.prefer = null;
     mem.levelAt = companyLevel(party);
+    // Every aim given up and nothing gained since: lost for good, the pilot stops (#723), not loops.
+    if (!next && p.lost.size) { p.stop(g, ['Lost: no way on that I can see.']); return null; }
     if (!next) return null;
     p.why = [whyOf(g, next)];
   }
@@ -246,7 +248,7 @@ export const aims: Brain = (g, k, p) => {
     const given = now.kind === 'quest' ? now.text : `level:${now.zone}`;
     g.say(line);
     p.lost.add(given);
-    mem.lostAt.set(given, { levels: levels(party), flags: flagCount(party) });
+    mem.lostAt.set(given, gainsOf(k));
     p.aim = null;
     p.prefer = null;
     if (p.goal && !p.goal.reason) { p.goal = null; p.plan = []; }

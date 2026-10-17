@@ -27,6 +27,9 @@ ok(all.out.includes('  FAIL: a check after an await'), 'an async suite that fail
 ok(all.out.includes('Error: rejected after an await'), 'an async suite that rejects fails');
 ok(all.out.includes('unnamed.ts exports no function named unnamed'), 'a file that exports no suite fails');
 ok(all.out.trimEnd().endsWith('4 FAILURE(S) (3 owed: #40 ×2, #43 ×1)'), 'the summary gives the failures and the owed count together');
+ok(!all.out.includes('the suite run only when named ran'), 'a bare run passes over a suite run only when named (ASKED)');
+const asked = run('survival');
+ok(asked.status === 0 && asked.out.includes('the suite run only when named ran'), 'a suite run only when named runs when it is named');
 
 console.log('\n' + summary(failureCount(), new Map()));
 process.exit(failureCount() ? 1 : 0);

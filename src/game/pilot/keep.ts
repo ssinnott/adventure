@@ -45,6 +45,10 @@ const SHEET_ROUND = 6;
 
 const fallen = (c: Character): boolean => hasCondition(c, 'dead') || hasCondition(c, 'stoned');
 const hungry = (p: Party): boolean => p.food < 2 * p.members.length;
+/** The rests' worth of rations bought once buying (#723), the gold allowing: under two a head is the need. */
+export const FOOD_RESTS = 6;
+/** Whether more rations are bought where they are sold: under FOOD_RESTS a head. */
+const stocking = (p: Party): boolean => p.food < FOOD_RESTS * p.members.length;
 /** Standing and under half its hit points: whom a well is for. */
 const low = (c: Character): boolean => !isDown(c) && c.hp < c.maxHp / 2;
 /** Why those standing must rest, or null: the rest rule (`mustRest`) over the company, the dead and the stone left out. */
@@ -95,8 +99,10 @@ export function mendable(p: Party): Mend | undefined {
 }
 /** Whether those standing want a rest: the harness's rule (`tired`) or the pilot's own (`weary`). */
 const restless = (p: Party): boolean => !!tired(p) || !!weary(p);
-/** Whether the rest offered is taken (the rest key's, a camp's): those standing want rest, and there is a ration each. Talk's rule 2 is this one (#721). */
-export const restWanted = (p: Party): boolean => restless(p) && p.food >= p.members.length;
+/** Whether there are the rations for this rest: a ration each for the harness's rule, two each for the pilot's own, so the next is not walked for (#723). */
+const fed = (p: Party): boolean => p.food >= (tired(p) ? 1 : 2) * p.members.length;
+/** Whether the rest offered is taken (the rest key's, a camp's): those standing want rest, and there are the rations for it (`fed`). Talk's rule 2 is this one (#721). */
+export const restWanted = (p: Party): boolean => restless(p) && fed(p);
 /** The first member ready to train whom the company can pay for (`canTrain`, `trainPrice`). */
 const ready = (p: Party): Character | undefined => p.members.find((c) => canTrain(c) && !isDown(c) && p.gold >= trainPrice(c));
 /** The first of the dead, then of the stone, whom the company can pay a temple to raise (`templePrice`). */
@@ -193,7 +199,21 @@ function spots(k: Known, n: Need): Spot[][] {
  * `routeLengths` (one search for all), on another by the maps between (`routeMaps`), `FAR` keys each.
  * Undefined when the route reaches none.
  */
-function nearest(g: Game, k: Known, list: readonly Spot[]): { s: Spot; d: number } | undefined {
+function nearest(g: Game, k: Known, list: readonly Spot[], memo?: Map<string, { s: Spot; d: number } | undefined>): { s: Spot; d: number } | undefined {
+  const st = g.world.state;
+  // Kept while nothing it rests on moves but the party's square (#723): a search of the map a tick was most of a long run's time.
+  const key = memo && `${st.mapId}|${k.seenCount(st.mapId)}|${Object.keys(k.party.flags).length}|${k.groups(st.mapId).map((q) => `${q.x},${q.y}`).join(';')}|${list.map(spotKey).join(';')}`;
+  if (key && memo!.has(key)) {
+    const was = memo!.get(key);
+    return was && { s: was.s, d: was.s.map === st.mapId && was.s.f.x === st.x && was.s.f.y === st.y ? 0 : Math.max(1, was.d) };
+  }
+  const found = search(g, k, list);
+  if (key) { if (memo!.size > 64) memo!.clear(); memo!.set(key, found); }
+  return found;
+}
+
+/** `nearest`'s search, made afresh. */
+function search(g: Game, k: Known, list: readonly Spot[]): { s: Spot; d: number } | undefined {
   const st = g.world.state;
   let here: Map<string, number> | undefined, best: { s: Spot; d: number } | undefined;
   for (const s of list) {
@@ -216,6 +236,8 @@ interface Keep {
   bought: { who: number; id: string }[];
   /** The mending being cast through the spell menu (#723), from the cast key to the member's row. */
   mend?: Mend;
+  /** The nearest of each list of places, by what it rests on (`nearest`, #723). */
+  near: Map<string, { s: Spot; d: number } | undefined>;
 }
 /** What the spell menu has been pressed so far, by the menu: the caster chosen, and the rows gone down. */
 const BOOKS = new WeakMap<SpellScreen, { chosen: boolean; downs: number }>();
@@ -223,7 +245,7 @@ const BOOKS = new WeakMap<SpellScreen, { chosen: boolean; downs: number }>();
 const KEEPS = new WeakMap<Party, Keep>();
 function memo(p: Party): Keep {
   let m = KEEPS.get(p);
-  if (!m) KEEPS.set(p, (m = { tried: new Map(), dry: new Set(), bought: [] }));
+  if (!m) KEEPS.set(p, (m = { tried: new Map(), dry: new Set(), bought: [], near: new Map() }));
   return m;
 }
 /** One visit's: the gold its trade was last opened at, whether the Buy list was seen and whom it bought for (one thing each). */
@@ -310,7 +332,7 @@ function choose(g: Game, k: Known, mem: Keep, list: readonly Need[]): Plan | und
     if (n === 'rest') {
       const door = groups[1].find((s) => here(s) && free(s));
       if (door) return { need: n, s: door, d: 0 };
-      if (restRefused(g.world) === '' && p.food >= p.members.length) {
+      if (restRefused(g.world) === '' && fed(p)) {
         const who = p.members.find((c) => !fallen(c) && c.hp < c.maxHp * REST_AT), w = weary(p);
         if (tired(p)) return { rest: tired(p) === 'hp' && who ? `Resting: ${who.name} is under a quarter.` : 'Resting: the spell points are low.' };
         return { rest: w!.why === 'hp' ? `Resting: ${w!.c.name} is hurt.` : `Resting: ${w!.c.name} is short of spells.` };
@@ -319,7 +341,7 @@ function choose(g: Game, k: Known, mem: Keep, list: readonly Need[]): Plan | und
       if (!tired(p)) continue;
     }
     for (const group of groups) {
-      const best = nearest(g, k, group.filter((s) => free(s) && !(here(s) && s.f.kind === 'camp')));
+      const best = nearest(g, k, group.filter((s) => free(s) && !(here(s) && s.f.kind === 'camp')), mem.near);
       if (best) return { need: n, ...best };
     }
   }
@@ -402,7 +424,7 @@ function answer(g: Game, k: Known, p: Pilot, c: ChoiceScreen, mem: Keep): Action
 /** Whether the company has something to do at `f` now: a night or rations at an inn, a fee it can pay at a temple, one look at a shop's wares a visit, one ready to train at a trainer. */
 function wants(f: Business, p: Party, v: Visit): boolean {
   switch (f.kind) {
-    case 'inn': return restless(p) || hungry(p);
+    case 'inn': return restless(p) || stocking(p);
     case 'temple': return p.members.some((c) => templePrice(c) > 0 && templePrice(c) <= p.gold);
     case 'shop': return !v.looked;
     case 'trainer': return !!ready(p);
@@ -417,7 +439,7 @@ function inn(c: ChoiceScreen, p: Party, pilot: Pilot): Action | null {
   const stay = c.options.findIndex((o) => o.startsWith('Stay the night')), buy = c.options.findIndex((o) => o.startsWith('Buy 10 rations'));
   if (stay < 0 || buy < 0) return null;
   if (restless(p) && p.gold >= asks(c.options[stay])) { pilot.why = ['A room for the night.']; return go(c, stay); }
-  if (hungry(p) && p.gold >= asks(c.options[buy])) { pilot.why = ['Rations for the road.']; return go(c, buy); }
+  if (stocking(p) && p.gold >= asks(c.options[buy])) { pilot.why = ['Rations for the road.']; return go(c, buy); }
   return pick(c, 'Leave');
 }
 
@@ -447,7 +469,7 @@ function shop(c: ChoiceScreen, p: Party, pilot: Pilot, f: Shop, v: Visit, mem: K
   const ws = wares(c);
   if (!ws) return c.options.at(-1) === 'Done' ? 'cancel' : null;
   v.looked = true;
-  if (hungry(p)) {
+  if (stocking(p)) {
     const r = ws.findIndex((w) => w.id === 'rations' && w.price <= p.gold);
     if (r >= 0) { pilot.why = ['Rations for the road.']; return go(c, r); }
   }

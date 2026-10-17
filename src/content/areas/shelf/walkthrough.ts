@@ -126,10 +126,9 @@ export const walkthrough: Walkthrough = (ok) => {
   roadBehind(ok);
   keepHandIns(ok);
   trainers(ok);
-  // The pilot from a new game, every key its own (#720, #721): Vask's hire, Hild's ask and the cellar,
-  // to the wand found. The play to the chapter's end runs a third longer than the play this run had
-  // room for, so the end, the keeper's log and the wand handed in, is the survival sweep's (#723).
-  pilotPlays(ok, CHAPTER, { until: { item: 'survey_wand' } });
+  // The pilot from a new game, every key its own (#720, #721, #723): the chapter to its end, Vask's
+  // hire, Hild's ask, the cellar, the keeper's log and the wand handed in.
+  pilotPlays(ok, CHAPTER);
 };
 
 /**

@@ -48,7 +48,9 @@ import { ENDINGS } from '../../src/content/endings.ts';
 import { PRESTIGE_LEVELS, guildFlag } from '../../src/game/party.ts';
 import { mustRest, botTurn, asSeen, asWritten } from '../../src/game/bot.ts';
 import type { Sees } from '../../src/game/bot.ts';
-import { weary, caster } from '../../src/game/pilot/keep.ts';
+import { weary, caster, FOOD_RESTS } from '../../src/game/pilot/keep.ts';
+import { searches } from '../../src/game/pilot/route.ts';
+import { holds } from '../../src/game/quests.ts';
 import { startCombat, currentTurn, monsterAct } from '../../src/game/combat.ts';
 import { answers, TRIES, NO_ANSWER } from '../../src/game/pilot/talk.ts';
 import { EndingScreen } from '../../src/ui/ending.ts';
@@ -1122,6 +1124,7 @@ function quartermaster(): void {
   const n = piloted(), np = n.pilot!, door = n.maps.harrow.features.find((f) => f.kind === 'inn' && n.world.present(f))!;
   n.world.travel('harrow', door.x, door.y, NORTH);
   n.party.gold = 30 * n.party.members.length;
+  n.party.food = 6 * n.party.members.length;
   n.party.members[0].hp = Math.max(1, Math.round(n.party.members[0].maxHp / 10));
   np.toggle(n);
   let slept = false, nt = 0;
@@ -1411,11 +1414,12 @@ function survives(): void {
   ok(!!mender && mender.cls === 'cleric' && bram.hp > was && keys.slice(0, 3).join() === `cast,n${m.party.members.indexOf(mender) + 1},interact` && top(m) === 'ExploreScreen',
     `one at half is mended between fights by ${mender?.name}, through the spell menu (${keys.join(' ')}; ${was} to ${bram.hp} of ${bram.maxHp})`);
 
-  // A fight lost (two of the front down, six wolves standing): the game's bot flees it; the gate's fights on.
-  const fight = (sees: Sees): string[] => {
-    const f = piloted(), q = f.party;
-    for (const c of q.members.slice(0, 2)) { c.hp = 0; c.conditions = ['unconscious']; }
-    const s = startCombat(q, [{ id: 'fx_pack', monsters: Array(6).fill('wolf') }], f.rng);
+  // A fight lost (two of the front fallen in it, six wolves standing): the game's bot flees it; the gate's fights on.
+  const fight = (sees: Sees, before = 0, monsters: string[] = Array(6).fill('wolf'), after = 2): string[] => {
+    const f = piloted(), q = f.party, down = (c: Party['members'][number]): void => { c.hp = 0; c.conditions = ['unconscious']; };
+    q.members.slice(0, before).forEach(down);
+    const s = startCombat(q, [{ id: 'fx_pack', monsters }], f.rng);
+    q.members.slice(before, before + after).forEach(down);
     for (let n = 0; n < 80 && s.outcome === 'ongoing'; n++) {
       const t = currentTurn(s, q, f.rng);
       if (!t) break;
@@ -1426,6 +1430,10 @@ function survives(): void {
   const flight = (log: string[]): boolean => log.some((l) => l === 'The party flees!' || l === 'The party fails to get away.');
   const seenLog = fight(asSeen), writtenLog = fight(asWritten);
   ok(flight(seenLog) && !flight(writtenLog), `a fight lost: the game's bot tries to flee, the gate's never (${seenLog.find((l) => l.startsWith('The party'))}; the gate's ${writtenLog.length} lines without one)`);
+  // One who came into the fight down is no sign: against five barn rats the company strikes before any flight.
+  const names = piloted().party.members.map((c) => c.name), rats = fight(asSeen, 1, Array(5).fill('barn_rat'), 0);
+  const first = rats.find((l) => l.startsWith('The party') || names.some((n) => l.startsWith(`${n} `)));
+  ok(!!first && !first.startsWith('The party'), `one down from before the fight and five barn rats: a blow before any flight (${first})`);
 
   // A town's own door before the land's gate: the town walked out, its gate to the keep is walked to, though the land's is nearer.
   const kg = piloted(), kp = kg.pilot!;
@@ -1440,17 +1448,87 @@ function survives(): void {
   ok(companyLevel(kg.party) === 1 && land < gate && kp.aim?.kind === 'explore' && kp.aim.map === 'fx_keep' && kp.goal?.x === 7 && kp.goal.y === 1,
     `walked out, the town's own gate to a map not visited comes before the land's, ${land} keys to ${gate} (${chosen.join(' then ')})`);
 
-  // Nothing left to walk (the one map visited walked out, no way off it): the goal given up is tried
-  // again, where the strategist would choose nothing and the clock would stand with the pilot.
-  const ng = hiredGame(), np = ng.pilot!, given = knownOf(ng).goals()[0];
-  fixture(ng, { id: 'fx_cell', name: 'Cell', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#...#', '#####'] }, [1, 1, EAST]);
-  for (const id of Object.keys(ng.world.state.maps)) if (id !== 'fx_cell') delete ng.world.state.maps[id];
-  np.lost.add(given.text);
-  np.brains = [aims];
-  np.toggle(ng);
-  const picked: string[] = [];
-  for (let t = 0; t < 3; t++) { drive(ng, [null]); picked.push(np.aim?.kind ?? 'none'); }
-  ok(np.aim?.kind === 'quest' && np.aim.text === given.text && np.lost.size === 0, `nothing left to walk, the goal given up is tried again (${picked.join(' then ')}: ${given.text.slice(0, 40)}...)`);
+  // Lost for good: the one map visited walked out, no way off it, the goal given up and nothing gained
+  // since: the pilot stops, saying so; with a thing gained since, the goal is tried again.
+  const cell = (gain: boolean): Game => {
+    const ng = hiredGame(), np = ng.pilot!, given = knownOf(ng).goals()[0];
+    fixture(ng, { id: 'fx_cell', name: 'Cell', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#...#', '#####'] }, [1, 1, EAST]);
+    for (const id of Object.keys(ng.world.state.maps)) if (id !== 'fx_cell') delete ng.world.state.maps[id];
+    np.brains = [aims];
+    np.toggle(ng);
+    np.aim = { kind: 'quest', quest: THE_QUEST.id, map: given.map!, text: given.text };
+    np.aimGoal = given.text;
+    np.aimSince = ng.world.state.minutes - LOST_MINUTES;
+    drive(ng, [null]);
+    if (gain) ng.party.bag.push('rations');
+    for (let t = 0; t < 3 && np.on; t++) drive(ng, [null]);
+    return ng;
+  };
+  const stuck = cell(false), gained = cell(true);
+  ok(!stuck.pilot!.on && stuck.pilot!.stopped?.[0] === 'Lost: no way on that I can see.' && gained.pilot!.on && gained.pilot!.aim?.kind === 'quest',
+    `every aim given up and nothing gained: the pilot stops ("${stuck.pilot!.stopped?.[0]}"); a thing gained, the goal is tried again (${JSON.stringify(gained.pilot!.aim)})`);
+
+  // A fight fled: its square is gone round until the company stands whole again.
+  const fg = piloted(), fp = fg.pilot!;
+  fixture(fg, { id: 'fx_fled', name: 'Fled', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['######', '#....#', '#.##.#', '#....#', '######'] }, [2, 1, EAST]);
+  fp.brains = [route];
+  fp.toggle(fg);
+  const fs = startCombat(fg.party, [{ id: 'fx_fled_g', monsters: ['rat'] }], fg.rng), fscreen = new CombatScreen(fs, ['fx_fled_g']);
+  fg.push(fscreen);
+  drive(fg, [null]);
+  fs.outcome = 'fled';
+  fg.pop();
+  fg.world.travel('fx_fled', 1, 1, EAST);
+  fg.party.members[0].hp = Math.floor(fg.party.members[0].maxHp / 2);
+  fp.goal = { map: 'fx_fled', x: 4, y: 1, name: 'the far corner' };
+  const kept: string[] = [];
+  for (let t = 0; t < 12 && fp.goal; t++) { drive(fg, [null]); kept.push(`${fg.world.state.x},${fg.world.state.y}`); }
+  const remembered = fp.fled.map((q) => `${q.map}:${q.x},${q.y}`).join();
+  fg.party.members[0].hp = fg.party.members[0].maxHp;
+  drive(fg, [null]);
+  ok(remembered === 'fx_fled:2,1' && !kept.includes('2,1') && kept.at(-1) === '4,1' && fp.fled.length === 0,
+    `the square a fight was fled from is gone round while one is hurt (${remembered}; ${kept.join(' ')}), and forgotten once the company is whole`);
+
+  // Rations: the pilot's own rest wants two a head, so the next rest is not walked for; buying, it buys for six rests.
+  const lean = piloted(), lp2 = lean.pilot!, lsorc = lean.party.members.find((c) => c.cls === 'sorcerer')!;
+  lean.world.travel('harrow', 7, 10, NORTH);
+  lean.world.ensureMapState('harrow').explored.fill(-1);
+  lsorc.sp = 0;
+  lean.party.food = 2 * lean.party.members.length - 1;
+  const lt0 = lean.world.state.minutes;
+  lp2.brains = [keep];
+  lp2.toggle(lean);
+  drive(lean, Array(6).fill(null));
+  const inn = piloted(), ip = inn.pilot!, innDoor = inn.maps.harrow.features.find((f) => f.kind === 'inn' && inn.world.present(f))!;
+  inn.world.travel('harrow', innDoor.x, innDoor.y, NORTH);
+  inn.party.food = 0;
+  inn.party.gold = 500;
+  ip.brains = [keep];
+  ip.toggle(inn);
+  drive(inn, Array(40).fill(null));
+  ok(lean.world.state.minutes === lt0 && lsorc.sp === 0 && inn.party.food >= FOOD_RESTS * inn.party.members.length,
+    `with under two rations a head the pilot's own rule does not rest (${lean.world.state.minutes - lt0} minutes); at the inn it buys for ${FOOD_RESTS} rests (${inn.party.food} rations)`);
+
+  // The journal's pages: the wand handed in before Crowness, Thornmark's chapter begun and the shelf's not done: its goal comes first.
+  const jg = piloted(), jk = knownOf(jg);
+  for (const f of ['q_ashcombe', 'q_wenna', 'q_ashcombe_done']) jg.party.flags[f] = 1;
+  const pages = jk.goals().filter((q) => q.quest === THE_QUEST.id), shelfGoal = THE_QUEST.chapters[0].goals.find((q) => q.at === 'downs_e3' && holds(q.when, jg.world.state, jg.party));
+  const jaim = chooseAim(jg, jk, jg.pilot!);
+  ok(pages.length >= 2 && pages[0].map === 'downs_e3' && pages[0].text === shelfGoal?.text && jaim?.kind === 'quest' && jaim.map === 'downs_e3',
+    `Thornmark's chapter begun with the shelf's unfinished: the journal's pages give ${pages.length} goals, the shelf's first, and the aim is it (${pages.map((q) => q.map).join(', ')}; ${JSON.stringify(jaim)})`);
+
+  // A steady walk costs no whole-map search a tick: bound for an inn down a long lane, seen, the quartermaster's want held.
+  const wg = piloted(), wp2 = wg.pilot!;
+  fixture(wg, { id: 'fx_long', name: 'Long', kind: 'town', start: { x: 1, y: 1, facing: EAST }, rows: ['#'.repeat(122), `#${'.'.repeat(120)}#`, '#'.repeat(122)],
+    features: [{ kind: 'inn', x: 120, y: 1, name: 'A Far Inn', price: 12, interior: 'hearthlight_inn' }] }, [1, 1, EAST]);
+  wg.party.members[0].hp = 1;
+  wg.party.food = 0;
+  wp2.brains = [keep, route];
+  wp2.toggle(wg);
+  drive(wg, Array(5).fill(null));
+  const before = searches.lengths, x0 = wg.world.state.x;
+  drive(wg, Array(100).fill(null));
+  ok(wg.world.state.x - x0 >= 90 && searches.lengths - before <= 3, `100 ticks of a walk to an inn make ${searches.lengths - before} whole-map searches, walking ${wg.world.state.x - x0} squares`);
 
   // The watchdog, asked last: every other brain silent on the map, the clock stands STUCK_TICKS, then a search passes ten minutes a press.
   const sg = piloted(), sgp = sg.pilot!, m0 = sg.world.state.minutes;

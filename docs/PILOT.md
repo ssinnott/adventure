@@ -14,10 +14,12 @@ until the test gives it one. It presses the keys a player would: every move is a
 Built so far: the frame (#716) over the bot's fights (#714), the navigator (#717), the explorer
 (#718), the quartermaster (#719), the strategist (#720) and talk (#721): people, choices, crossings,
 guilds, spells and prestige trainers, the stop at the ending's choice and, in its second part, the
-statues' riddles. The first
-part of #723 makes it live through the first chapter: a rest by member, a mending between fights,
-the flight from a fight lost, a town's own doors before the land's and the goals given up tried again
-when nothing is left (Survival, below).
+statues' riddles.
+
+The first part of #723 makes the pilot live through the first chapter: a rest by member, a mending
+between fights, a flight from a fight lost, a town's own doors before the land's, the journal's pages
+read the earliest first, rations bought for six rests, a watchdog and a way through a group in the
+only way (Survival, below).
 
 ## Using it
 
@@ -165,7 +167,8 @@ seen near it, it says "No way to Thornmark that I have seen.": bringing the part
 
 `keep` (#719) keeps the company fit to fight. `need` names the most urgent of its needs (`needs`
 gives them all, in order): the temple with one dead or stone; rest when the harness's rule trips
-(`mustRest`) over those standing; food under two rations a head; training for one ready whom it can
+(`mustRest`) over those standing, or the pilot's own by member (`weary`, #723); food under two
+rations a head, bought for six rests (`FOOD_RESTS`, #723); training for one ready whom it can
 pay for; and gear while a shop seen holds something better. It takes the needs in turn and acts on
 the first it can meet. Tired, it rests where it stands when no group is too near (`restRefused`, the
 game's own refusal) and there is a ration each, or takes the room when it stands at an inn's door;
@@ -236,7 +239,7 @@ once (`Pilot.tried`); none left, it says "I have no answer for the stone." into 
 strategist says it is lost, presses Esc and gives the stone up until a line heard gives a word it
 has not tried. The Downs' stone, HOW MANY FOR THE HEARTH?, is answered by "ten" on its second try
 once the old man's song at Gullwick is heard ("Ten for the Hearth and one for the Queen..."), after
-"one"; in the shelf's play on seed 10, with more heard of the Hearth by then, on its fourth ("one",
+"one"; in the shelf's play on seed 10 as it ran at #841's review, with more heard of the Hearth by then, on its fourth ("one",
 "two", "seven", "ten").
 
 ## Survival
@@ -292,8 +295,18 @@ companies and prints a line a seed.
   square to the door; the navigator goes round the groups the automap shows, so only 5 squares are
   reachable. `chooseAim` sees the doors to Thornhold, grove1 and greywater1 and `routeMaps` finds each,
   but `toward` gets no key and marks each walked out (`aims.ts`); with no key there is no clock, so
-  the group never moves: a deadlock. #723's to mend, with a watchdog and a way through a group that
-  stands in the only way.
+  the group never moves: a deadlock. Mended by #723's first part: the navigator goes through a
+  group that stands in the only way, and the watchdog searches after 600 ticks with no key, so the
+  clock runs.
+- **The rations shuttle** (#842's review). The rule by member rested a company for a druid or a
+  sorcerer with few points after nearly every fight, and the quartermaster bought only to two rations
+  a head, so every second rest was a walk back for food: a drawn company on seed 4 said "Resting: Rook
+  is short of spells." 2,237 times and walked to the Ellerby Farm for rations 1,570 times, with 39,675
+  gold unspent. Mended: rations are bought for six rests, and the rule by member rests only with two
+  a head in hand.
+- **The journal moved on** (#842's review). With the wand handed in before Crowness Light, Thornmark's
+  chapter began and the log showed its goal alone, so the keeper's log was never sought. Mended: Known
+  gives each begun page's goal, the earliest first, as the journal's pages turn.
 - **Riddles.** By §6's rule, with every line of the game's people, signs, events and statues heard
   (the worst case), the Downs' stone's "ten" is the fourth word tried, the first elder's "standing"
   (Thornmark) the eighth, the stone Lantern's "moths" (Sunderwood) the 162nd and the drowned god's
@@ -312,7 +325,7 @@ companies and prints a line a seed.
 | `src/game/pilot/talk.ts` | talk (#721): `pick` (the row to answer a menu with, or -1 for Esc), `NEAR` (the keys a person or a statue may be off), `answers` (the words heard that may answer a riddle, the likeliest first), `TRIES` and `NO_ANSWER` (five words a statue and the line when none is left) and the brain `talk`, with the meetings and the riddles; what it keeps between ticks (its goal, the stamps of the people met, the crossing chosen, the riddles read, the word being typed, the stones given up) it keeps by pilot (`untalk` forgets it), and what it opened in a visit by the visit |
 | `src/game/pilot/aims.ts` | the strategist (#720): `Aim`, `chooseAim` (what the pilot is for), `LOST_MINUTES` (the lost rule's three days) and the brain `aims`, with the lost rule, the band rule, the chests and the walk again; what it keeps between ticks (the zone and square of its last look, the goals lost at what level, the places walked out) it keeps by pilot (`unaim` forgets it) |
 | `src/game/quests.ts` | `goalMap` (#720): the map a quest's shown goal is done on, read back from the goal |
-| `tools/walk.ts` | `pilotPlays` (#720): a chapter played from a new game by the pilot alone, every brain asked, until its end or the point a play names, on a seed it may name (#721) and with a company it may name, the play given back by `pilotRun` (#723); the shelf's walkthrough plays The Quiet Farm with it; the Thornmark chain is asserted by #723's `fullrun` suite, not by a walkthrough |
+| `tools/walk.ts` | `pilotPlays` (#720): a chapter played from a new game by the pilot alone, every brain asked, until its end or the point a play names, on a seed it may name (#721) and with a company it may name, the play given back by `pilotRun` (#723); the shelf's walkthrough plays The Quiet Farm to its end on seed 4 with it, within a five-minute budget (#723); the Thornmark chain is asserted by #723's `fullrun` suite, not by a walkthrough |
 | `tools/tests/survival.ts` | the suite `survival` (#723): the shelf's first chapter on `SEEDS` with the premade company and the drawn ones, a line a seed, each held to its `FLOOR`; run only when named (`ASKED`, `tools/test.ts`) |
 | `src/ui/riddle.ts` | `RiddleScreen`'s `riddle`, the question as its box shows it, which talk reads (#721) |
 | `src/input.ts` | `drainTyped`: typed keys applied to a word, `Input`'s text mode and a headless game's alike (#721); `Game.input.typed` is where they are typed, by the keyboard or the pilot |

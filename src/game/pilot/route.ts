@@ -99,6 +99,9 @@ export function routeOn(k: Known, map: string, x: number, y: number, facing: Fac
   return keys.reverse();
 }
 
+/** The whole-map searches made (`routeLengths`), counted for the check that a steady tick makes none (#723). */
+export const searches = { lengths: 0 };
+
 /**
  * The length of `routeOn`'s route from (x, y, facing) to every square it reaches, in one search: by
  * square ("x,y"), the fewest keys over the facings it may stand there in. For a brain that wants the
@@ -106,6 +109,7 @@ export function routeOn(k: Known, map: string, x: number, y: number, facing: Fac
  * search the map once a square. A square in `shut` is closed, as it is to `routeOn`.
  */
 export function routeLengths(k: Known, map: string, x: number, y: number, facing: Facing, shut: readonly { x: number; y: number }[] = []): Map<string, number> {
+  searches.lengths++;
   const out = new Map<string, number>();
   for (const q of search(k, map, x, y, facing, undefined, shut).queue) if (!out.has(`${q.x},${q.y}`)) out.set(`${q.x},${q.y}`, q.n);
   return out;
@@ -214,7 +218,8 @@ export const route: Brain = (g, k, p) => {
   } else if (last && (st.mapId !== last.map || st.x !== ahead.x || st.y !== ahead.y || st.facing !== f)) p.plan = [];
   if (!p.plan.length) {
     // A square found shut is gone round until the explorer tries it again (#718).
-    const shut = p.shut.filter((s) => s.map === st.mapId);
+    // The squares found shut, and those a fight was fled from (#723), are gone round.
+    const shut = [...p.shut, ...p.fled].filter((s) => s.map === st.mapId);
     const plan = st.mapId === at.mapId ? routeOn(k, st.mapId, st.x, st.y, st.facing, at.x, at.y, shut) : toExit(k, st, at.mapId, shut);
     if (!plan?.length) { p.why = [`No way to ${goal.name} that I have seen.`]; p.goal = null; trails.delete(p); return null; }
     p.plan = plan;

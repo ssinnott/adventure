@@ -197,12 +197,13 @@ export function botTurn(s: CombatState, p: Party, rng: RngInstance, i: number, s
 }
 
 /**
- * Whether a fight is lost, as the screen shows it (#723): one of the company down, and as many foes
- * standing as members. The game's bot then flees (`botTurn` with any reading but `asWritten`).
+ * Whether a fight is lost, as the screen shows it (#723): one of the company fallen in this fight (one
+ * who came into it down is no sign), and as many foes standing as members. The game's bot then flees
+ * (`botTurn` with any reading but `asWritten`).
  */
 export function beaten(s: CombatState, p: Party): boolean {
-  const up = p.members.filter((m) => !isDown(m)).length;
-  return up < p.members.length && aliveMonsters(s).length >= up;
+  const down = p.members.filter(isDown).length;
+  return down > (s.downAtStart ?? 0) && aliveMonsters(s).length >= p.members.length - down;
 }
 
 /** The bot's turn for member `i`, as the gate plays it: `botTurn`, the action not wanted. */

@@ -10,17 +10,19 @@ import { THE_QUEST } from '../../src/content/index.ts';
 
 /** The seeds swept. */
 export const SEEDS: readonly number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-/** How many of SEEDS must finish the chapter: with the premade company, and with the drawn ones. */
+/** How many of SEEDS must finish the chapter: with the premade company, and with the drawn ones (the delegate's). */
 export const FLOOR = { premade: 9, drawn: 8 } as const;
+/** The wall-clock budget of a run: ten minutes, over which it counts as not finished. */
+export const RUN_BUDGET = 10 * 60_000;
 
 export function survival(): void {
   const chapter = THE_QUEST.chapters[0];
   for (const kind of ['premade', 'drawn'] as const) {
     const done: number[] = [];
     for (const seed of SEEDS) {
-      const r = pilotRun(chapter, { seed, party: kind === 'drawn' ? randomParty(seed) : undefined });
+      const r = pilotRun(chapter, { seed, budget: RUN_BUDGET, party: kind === 'drawn' ? randomParty(seed) : undefined });
       if (r.done) done.push(seed);
-      const how = r.done ? 'finished' : r.on ? `still going at the cap in ${r.where} ("${r.why}")` : `fell in ${r.where}`;
+      const how = r.done ? 'finished' : r.on ? `CAPPED (${r.capped === 'budget' ? 'the budget' : 'the ticks'}) in ${r.where} ("${r.why}")` : `${r.why === 'The company has fallen.' ? 'fell' : 'stopped'} in ${r.where} ("${r.why}")`;
       console.log(`  ${kind} seed ${seed}: ${how}, level ${r.level}, ${r.ticks.toLocaleString('en-GB')} ticks, ${r.secs} s`);
     }
     ok(done.length >= FLOOR[kind], `with the ${kind} company the pilot finishes ${chapter.title} on ${done.length} of ${SEEDS.length} seeds, the floor ${FLOOR[kind]} (${done.join(' ') || 'none'})`);
