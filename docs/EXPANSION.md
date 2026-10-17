@@ -102,7 +102,7 @@ it and the last area is built, they are Might and Magic VI's stables, and they s
 (pillar 4).
 
 **Decided: (b), cores and country**, not (a) or (c). Coaches and boats as well, later: to be filed,
-with the owner's agreement, when the second area's core comes up (#164).
+with the owner's agreement, when the second area's core comes up (built, #164).
 
 DESIGN.md §4's scale table was rewritten to say so, and §12 says so under its tiers. The reach (DESIGN.md §9) is
 optional by design, so it is the first thing v1 can leave for later.
@@ -345,8 +345,9 @@ fights to a rest and the warning's nearest groups ten points under the median.
   level between rests to level 10, and a fight more every four levels after as its power grows
   (twelve at 32, never fifteen). Its spell points count as much as its hit points: it rests once it
   has lost someone, once anyone is still under a quarter of their hit points after mending, or once
-  it is under a quarter of its spell points. No fight runs past fifteen rounds. The share of days
-  that end in a fight broken off is printed and not judged.
+  it is under a quarter of its spell points. The harness runs no fight past fifteen rounds
+  (`ROUND_CAP`); the game has no round limit (DESIGN.md §6). The share of days that end in a fight
+  broken off is printed and not judged.
   Decided by the owner's delegate, 16 October 2026 (#734), the owner's to overturn: it is how a
   thrifty bot's long day ends, not how a box's fights play, and a player rests or casts; the
   fights to a rest are the judged figure. An aim for it could be met only by lightening boxes
@@ -540,7 +541,7 @@ the Wardens' at their Drillyard and the Cartographers' at their halls in Saltmou
 The other nine come as theirs do. Decided by the owner's delegate, 16 October 2026 (#805). Along the
 whole road the systems lane also owes the danger made legible (the band said on crossing, and in how
 a group is described), the log paging the one quest by chapter, hand-ins that take their item at the
-first meeting (§2.3), and a bot that plays as well as the party can (§5.2).
+first meeting (§2.3) and a bot that plays as well as the party can (§5.2).
 
 Rifts are where DESIGN.md itself asks for generated content: eight 12×12 templates, seeded, a pure
 function of state and seed. Build the generator early, in the systems lane, and let generation scale
@@ -710,11 +711,44 @@ all (#833), the owner's call over #737's. The reach stays closed for 1.6.
 | Defects the owner finds by hand | 4 over the slice, not recounted since; the owner's own playthrough of M3 is what remains (README.md) | fewer each area; each one a check |
 | Checks that pass or fail by chance | none known: the smoke test plays one seeded world (#23) | none |
 | Pull requests that needed main merged in | 4 of the last 6 in September, not recounted since | rare |
-| `npm run check` | about 14 minutes on a four-core container | under 3 minutes: full sweeps of what a pull request touches, the rest sampled or on release |
+| `npm run check` | about 14 minutes on a four-core container; in CI on a docs-only change the tests take 4 min 31 s, the smoke 2 min 17 s and the typecheck 19 s; a change to the viewport or the smoke sweeps every map, the smoke job taking about 21 minutes (#844) | under 3 minutes: full sweeps of what a pull request touches, the rest sampled or on release |
 | Maps inside the density floor (§5.3) | all (`node tools/test.ts density`) | all |
 | Areas on the curve (§5.2) | all twelve (`node tools/test.ts curve`); the Kilns and Ashfall pass the lead line and are held where they are built | all |
 | Areas whose gate holds (§5.2) | all twelve at their floors; two under is owed to #18, 86 figures reported and not failed | all |
 | Story locks (§2.3) | two of the four: the Sleepers' Bay's door (#440) and the core's (#759) | within the count, each declared with its reason |
+
+Decided by delegate for #808, each the owner's to overturn:
+
+1. **EXPANSION §1 is kept as the record of 25 September**, headed "then" and dated, with a line
+   saying where main stands now: the issue's second option. Its figures (1,717 land squares, 33
+   monsters) would each need a new definition to be measured again; the README and §10 say where
+   main stands.
+2. **"Sixty-two side quests" is #56's count** (its sixty-four, less the reach's two), and the README
+   says so. The areas' `quests.ts` hold 77 quests: the 62, the ten thirds' quests and five more (the
+   Cargo Ledger, the Council of Helmstow, the Empty Throne, the Lost Expedition and the Walk Home).
+   The guilds give 22 more, the Salt Compact's among them. The README's list names them.
+3. **The pilot is said to do what main does, in four places.** docs/PILOT.md's opening paragraph
+   said it plays the one quest from the title to the ending's choice; it now says what it is built
+   to do and what it does today (it finishes The Quiet Farm on most seeds and stops lost in
+   Thornmark's chapter; the ten chapters after are not reached), and nothing else in that doc is
+   touched. DESIGN §12's pilot row and the README's section say the same, and the README's docs list
+   adds "how far it gets". No other sentence in the README, DESIGN or EXPANSION says or implies that
+   the pilot plays the whole quest (EXPANSION's "pilot" is Phase 1.1's).
+4. **DESIGN §6's flee line is corrected** while the delegate's no-round-limit line is added beside
+   it: it said flee "always works if the party is faster", and the code gives a chance from 15% to
+   90% by speed. The three lines that said no fight runs past fifteen rounds (EXPANSION §5.2 and
+   MONSTERS §4.4, twice) now say it is the harness's (`ROUND_CAP`).
+5. **The finishing touches' block in EXPANSION §9 gains one sentence**, "The six touches are built
+   on main": #53 (#844) was the last.
+6. **The owner's "bounds" paragraph in EXPANSION §9 (#849) is not touched.** It says the bounds
+   "run from 17 October 2026", names an order and says E7 is built after all (#833); the epic and
+   its area issues are labelled parked. The README says what the labels say: approved and labelled
+   parked, #845 to #848 not yet approved. The paragraph may want "parked" in it.
+7. **Three lines the issue did not name were stale and are put right or left on record.**
+   EXPANSION §2.1's "Coaches and boats as well, later: to be filed" now says built (#164); DESIGN
+   §5's price line no longer says "until #19 adds them to the curve's gold": the prices are 1,000
+   and 4,000 (`PRESTIGE_PRICES`, `src/game/party.ts`) and the curve does not count them; DESIGN
+   §8's "once the skills are built (#18)" is left as it is.
 
 ---
 
