@@ -17,6 +17,7 @@ import { SAVE_VERSION } from '../src/game/save.ts';
 import { spentId } from '../src/game/wilds.ts';
 import { readId } from '../src/game/inscriptions.ts';
 import { SKILLS } from '../src/game/skills.ts';
+import { TIERS } from '../src/game/mastery.ts';
 import { personFlags, groupFlags } from '../src/game/people.ts';
 import { GLOVE_FLAG } from '../src/game/combat.ts';
 import { UPGRADES } from '../src/game/upgrades.ts';
@@ -47,6 +48,8 @@ export interface Content {
   guildQuests: readonly string[];
   /** The secondary skills, which a member's `skills` names (game/skills.ts). */
   skills: readonly string[];
+  /** The tiers, which a member's `tiers` names on each line (game/mastery.ts). */
+  tiers: readonly string[];
 }
 
 /** A played map's size (explored bits are indexed by it), and the ids and door squares its state is kept by. */
@@ -65,6 +68,7 @@ export interface Ids {
   races: string[];
   conditions: string[];
   skills: string[];
+  tiers: string[];
 }
 
 export interface Shipped extends Ids { version: number }
@@ -76,7 +80,7 @@ export const CONTENT: Content = {
   items: [...ITEMS, ...AREAS.flatMap((a) => a.items)].map((i) => i.id), spells: SPELLS.map((s) => s.id),
   monsters: AREAS.flatMap((a) => a.monsters).map((m) => m.id),
   classes: Object.keys(CLASSES), races: Object.keys(RACES), conditions: [...CONDITION_ORDER],
-  guildQuests: GUILD_QUESTS.map((q) => q.id), skills: Object.keys(SKILLS),
+  guildQuests: GUILD_QUESTS.map((q) => q.id), skills: Object.keys(SKILLS), tiers: [...TIERS],
 };
 
 const sorted = (xs: Iterable<string>): string[] => [...new Set(xs)].sort();
@@ -110,7 +114,7 @@ export function collect(c: Content): Ids {
   return {
     maps: byKey(maps), zones: byKey(zones), flags: sorted(flags),
     items: sorted(c.items), spells: sorted(c.spells), monsters: sorted(c.monsters), classes: sorted(c.classes), races: sorted(c.races), conditions: sorted(c.conditions),
-    skills: sorted(c.skills),
+    skills: sorted(c.skills), tiers: sorted(c.tiers),
   };
 }
 
@@ -122,7 +126,7 @@ export interface Comparison {
 }
 
 /** Each list, by the word for one of it. */
-const LISTS = { flags: 'flag', items: 'item', spells: 'spell', monsters: 'monster', classes: 'class', races: 'race', conditions: 'condition', skills: 'skill' } as const;
+const LISTS = { flags: 'flag', items: 'item', spells: 'spell', monsters: 'monster', classes: 'class', races: 'race', conditions: 'condition', skills: 'skill', tiers: 'tier' } as const;
 
 /**
  * The content now against the list as shipped. Something gone or moved is a problem at the same

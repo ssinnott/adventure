@@ -10,6 +10,7 @@ import type { When } from './quests.ts';
 import type { Interior } from '../content/index.ts';
 import type { GuildId } from '../content/guilds.ts';
 import type { SkillId } from './skills.ts';
+import type { Mastery } from './mastery.ts';
 import type { Clock } from './combat.ts';
 
 export type MapKind = 'town' | 'dungeon' | 'outdoor';
@@ -159,10 +160,11 @@ export type Feature =
    * listed (game/passage.ts). `teaches` makes them a prestige's trainer: once their words are said
    * they offer it (game/prestige.ts). `skill` makes them a teacher of a secondary skill, as its
    * guild's halls are: once their words are said they offer it to the company's members
-   * (game/skills.ts). `hall`, on a person with a room, makes the tavern a guild's hall, as a
-   * business's does: a hall that does not look like one.
+   * (game/skills.ts). `mastery` makes them a Master's: once their words are said they offer their
+   * line's Master to the company's members of it (game/mastery.ts). `hall`, on a person with a room,
+   * makes the tavern a guild's hall, as a business's does: a hall that does not look like one.
    */
-  | ({ kind: 'npc'; x: number; y: number; name: string; lines: string[]; flag?: string | readonly string[]; quest?: NpcQuest | readonly NpcQuest[]; says?: readonly Words[]; choice?: Choice; interior?: Interior; hall?: GuildId; passage?: readonly Passage[]; teaches?: Teaching; skill?: SkillId } & Presence)
+  | ({ kind: 'npc'; x: number; y: number; name: string; lines: string[]; flag?: string | readonly string[]; quest?: NpcQuest | readonly NpcQuest[]; says?: readonly Words[]; choice?: Choice; interior?: Interior; hall?: GuildId; passage?: readonly Passage[]; teaches?: Teaching; skill?: SkillId; mastery?: Mastery } & Presence)
   /** A tear into a Rift (game/rifts.ts): stepped on, it takes the party through, as an exit does. */
   | { kind: 'rift'; x: number; y: number; id: string; to: string; tx: number; ty: number; tf?: Facing; label?: string }
   /** The wilderness features (game/wilds.ts). A shrine and a fountain are one shape, told apart by their words. */
