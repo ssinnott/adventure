@@ -379,7 +379,8 @@ Decided by the builder for #852, each the owner's to overturn:
 
 Decided by the builder for #855, each the owner's to overturn:
 
-1. A raise is borne as a resistance is, by one rule (`borne`, which `resists` now reads too).
+1. A raise is borne as a resistance is: `borne` states the rule and `resists` reads it; `statOf`
+   counts by it without making the list, since every blow and every AC reads it.
 2. A level gained reads the bare stat, Endurance's hit points and the spell stat's points alike: a
    raise lasts while it is borne, and a gain made with it would outlast it.
 3. A blow's die never pierces: a sorcerer's piercing is its spells' (§7 Ranks).

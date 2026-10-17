@@ -371,8 +371,11 @@ export function resists(c: Character): Element[] {
  */
 export function statOf(c: Character, s: Stat): number {
   const { weapon, armor, shield } = c.equipment;
-  let n = c.stats[s] + (weapon ? item(weapon).stat?.[s] ?? 0 : 0) + (armor ? item(armor).stat?.[s] ?? 0 : 0) + (shield ? item(shield).stat?.[s] ?? 0 : 0);
-  for (const id of c.pack) { const d = item(id); if (d.slot === 'none') n += d.stat?.[s] ?? 0; }
+  let n = c.stats[s];
+  if (weapon) n += ITEMS[weapon].stat?.[s] ?? 0;
+  if (armor) n += ITEMS[armor].stat?.[s] ?? 0;
+  if (shield) n += ITEMS[shield].stat?.[s] ?? 0;
+  for (const id of c.pack) { const d = ITEMS[id]; if (d.slot === 'none' && d.stat) n += d.stat[s] ?? 0; }
   return n;
 }
 export function addCondition(c: Character, k: Condition): void {
