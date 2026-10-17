@@ -39,6 +39,10 @@ and the scope tiers. Systems get their own docs once the vertical slice exists.
 - No puzzle whose answer lives outside the game. Every riddle has an in-world hint chain.
 - No dead engine reuse. If a region has nothing new to do or see, it does not ship.
 
+An autoplay mode exists for watching: the pilot plays fair, knowing only what the party knows, and
+takes the player's own game only when asked; left alone, the title plays one of its own and saves
+nothing. It does not loosen pillar 1 for the player.
+
 ---
 
 ## 2. Inspirations
@@ -932,6 +936,7 @@ map has nothing a player can read, so the hidden third is earned at the Core (#2
 | **M1 — Act I** | The Foreland and Thornmark complete, the Downs and the Deepthorn with them; the first guilds and their quests; the Grove Stone dungeon. | First real playthrough. |
 | **M2 — Acts II to IV** | Saltreach to the Wold and their Wardstones; the rest of the guilds; the first and second prestiges, and the eight third prestiges whose trainers live in Acts II to IV's country (#448; #443, call 8); Meridian Camp and the Dead-Drop; the ship. | The open world. |
 | **M3 — Act V + subplots** | Hearth Isle, the Underdeep and the Core, all endings, all three subplots' ends and the Cleric's and the Sorcerer's third prestiges. Master trainers wait on the skill tiers (#18). | Content complete. |
+| **M3 — The pilot** | The autoplay mode (#713, docs/PILOT.md): a fair pilot that plays the one quest from the title to the ending's choice, taking the player's own game only when asked; left alone, the title plays one of its own and saves nothing. | Watch the game play itself. Pillar 1 stands for the player (§1). |
 | **The reach** | The Glass and Glacier Foot, with the Buried Tower and the Vault (§9); #56's 62 and 63. | Optional by design: the game is whole without it. |
 | **Stretch** | New Game+, seeded Rift daily runs, second party mode, Arcomage-style tavern game. | Only after M3 ships. |
 

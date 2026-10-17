@@ -13,11 +13,16 @@ import { panel } from './draw.ts';
 import { savedHearth, hearthLook } from '../game/stones.ts';
 import type { Hearth } from '../game/stones.ts';
 
+/** Ticks of nothing on the title before the pilot plays a game for watching (attract mode, #722): forty-five seconds at 60 a second. */
+export const IDLE_TICKS = 60 * 45;
+
 export class TitleScreen implements Screen {
   private sel = 0;
   private items: string[];
   private canContinue: boolean;
   private note: string;
+  /** Ticks of nothing since the title was last touched: any key takes it back to 0. */
+  private idle = 0;
   /** The Hearth as the saved company left it, read once from storage. */
   private saved: Hearth | null = null;
   private hearth(g: Game): Hearth { return (this.saved ??= this.canContinue ? savedHearth(g.store) : { stones: 0 }); }
@@ -27,7 +32,12 @@ export class TitleScreen implements Screen {
     this.items = canContinue ? ['Continue', 'New Game'] : ['New Game'];
   }
   update(g: Game, a: Action | null): void {
-    if (!a) return;
+    if (!a) {
+      // Untouched for IDLE_TICKS, the pilot plays a new game (Game.attract); a Game with no pilot never does.
+      if (++this.idle >= IDLE_TICKS) { this.idle = 0; g.attract(); }
+      return;
+    }
+    this.idle = 0;
     if (is(a, 'up')) this.sel = (this.sel + this.items.length - 1) % this.items.length;
     else if (is(a, 'down')) this.sel = (this.sel + 1) % this.items.length;
     else if (is(a, 'interact')) {

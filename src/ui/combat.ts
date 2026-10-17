@@ -273,8 +273,9 @@ export class CombatScreen implements Screen {
     panel(ctx, r.x, r.y, r.w, r.h);
     drawText(ctx, `ROUND ${s.round}`, r.x + 8, r.y + 8, { size: 1, color: TEXT_DIM });
     if (this.auto) drawText(ctx, 'AUTO', r.x + r.w - 8, r.y + 8, { size: 1, color: TEXT_DIM, align: 'right' });
-    // The keys' hint at the panel's foot; while the bot fights, the one that takes the fight back.
-    const hint = (keys: string): void => { drawText(ctx, this.auto ? 'P TAKES THE FIGHT BACK' : keys, r.x + r.w - 8, r.y + r.h - 12, { size: 1, color: TEXT_DIM, align: 'right' }); };
+    // The keys' hint at the panel's foot; while the bot fights, the one that takes the fight back, and in
+    // attract mode (#722) the one that leaves it, as no key but P and T is the fight's.
+    const hint = (keys: string): void => { drawText(ctx, g.attracting ? 'ANY KEY FOR THE TITLE' : this.auto ? 'P TAKES THE FIGHT BACK' : keys, r.x + r.w - 8, r.y + r.h - 12, { size: 1, color: TEXT_DIM, align: 'right' }); };
     if (s.outcome !== 'ongoing') {
       drawText(ctx, s.outcome === 'victory' ? 'VICTORY' : s.outcome === 'fled' ? 'ESCAPED' : 'DEFEAT', r.x + 8, r.y + 24, { size: 2, color: s.outcome === 'defeat' ? RED : BRASS });
       if (s.loot) {

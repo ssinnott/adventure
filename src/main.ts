@@ -12,7 +12,8 @@ setTextDefaults({ shadowColor: INK, outline: INK });
 
 const { ctx, canvas } = createCanvas('stage', { width: 640, height: 360 });
 canvas.focus();
-canvas.addEventListener('pointerdown', () => canvas.focus());
+// A tap or a click focuses the canvas, and in attract mode ends it as a key does: a phone has no key to press (#722).
+canvas.addEventListener('pointerdown', () => { canvas.focus(); if (game.attracting) input.push('cancel'); });
 
 const input = new Input(window);
 const game = new Game();
