@@ -570,8 +570,8 @@ function explorer(): void {
   op.goal = null;
   op.prefer = 'downs_f2';
   const lean = explore(o, ko, op), away = goalOf(op);
-  ok(plain !== null && lean !== null && !!home && !!away && into(shelf)(home) && into(f2)(away) && !into(f2)(home) && away.map === OUTDOORS,
-    `on the Foreland's edge the explorer looks into the Foreland, and into the Downs once they are preferred (${home?.x},${home?.y}; then ${away?.x},${away?.y}, on ${away?.map})`);
+  ok(plain !== null && lean !== null && !!home && !!away && into(shelf)(home) && into(f2)(away) && !into(f2)(home) && away.map === OUTDOORS && home.why === 'Looking about the Foreland.',
+    `on the Foreland's edge the explorer looks into the Foreland, and into the Downs once they are preferred (${home?.x},${home?.y}, "${home?.why}"; then ${away?.x},${away?.y}, on ${away?.map})`);
   op.goal = null;
   op.prefer = 'thornmark';
   const none = explore(o, ko, op);

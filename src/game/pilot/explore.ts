@@ -89,6 +89,8 @@ export const explore: Brain = (g, k, p) => {
   for (const s of p.shut) if (!flagsAt.has(s)) flagsAt.set(s, flags);
   const pref = p.prefer && g.world.locate(p.prefer, 0, 0).mapId === here ? p.prefer : null;
   const area = pref ?? zone ?? here, name = nameOf(g, area), level = companyLevel(k.party) + 1;
+  // Within a line the world map's "The Foreland" is "the Foreland".
+  const within = name.replace(/^The /, 'the ');
   // A zone's box as the world map draws it (`zoneAt`), and its band as Known gives it.
   const hard = (z: string | undefined): boolean => { const b = z && z !== pref ? k.band(z) : undefined; return !!b && b[0] > level; };
   const fits = (q: Square): boolean => !hard(g.maps[here]?.zoneAt(q.x, q.y)?.id);
@@ -106,7 +108,7 @@ export const explore: Brain = (g, k, p) => {
   // 2. The frontier, by the length of the route to it.
   const lengths = routeLengths(k, here, st.x, st.y, st.facing, shut);
   const next = nearest(frontier(k, g, area).filter(fits), lengths);
-  if (next) return walk(g, k, p, { map: here, x: next.x, y: next.y, name: 'the unseen', why: `Looking about ${name}.` });
+  if (next) return walk(g, k, p, { map: here, x: next.x, y: next.y, name: 'the unseen', why: `Looking about ${within}.` });
 
   // 3. The walls: from the square before one, faced, a search; else that square as the goal.
   const before = (s: Suspect): Square => ({ x: s.x - FACING_DX[s.facing], y: s.y - FACING_DY[s.facing] });
@@ -124,7 +126,7 @@ export const explore: Brain = (g, k, p) => {
   if (wall) return walk(g, k, p, { map: here, ...before(wall), name: 'the wall', why: 'Searching the wall.' });
 
   // 5. Nothing left to look at; or, of a zone preferred, nothing seen to start from (#720's to bring the party nearer).
-  p.why = [seenIn(k, area) ? `${name} is walked out.` : `No way to ${name} that I have seen.`];
+  p.why = [seenIn(k, area) ? `${name} is walked out.` : `No way to ${within} that I have seen.`];
   return null;
 };
 
