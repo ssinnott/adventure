@@ -316,8 +316,8 @@ function attract(): void {
   drive(idle, nothing(IDLE_TICKS - 1));
   const waiting = top(idle) === 'TitleScreen' && !idle.attracting && !idle.pilot!.on;
   drive(idle, nothing(2));
-  ok(waiting && top(idle) === 'ExploreScreen' && idle.screens.length === 1 && idle.pilot!.on && idle.attracting,
-    `a title untouched plays a new game on the pilot: the title after ${IDLE_TICKS - 1} ticks, the map with the pilot at the helm after ${IDLE_TICKS + 1}`);
+  ok(IDLE_TICKS === 60 * 45 && waiting && top(idle) === 'ExploreScreen' && idle.screens.length === 1 && idle.pilot!.on && idle.attracting,
+    `a title untouched for forty-five seconds plays a new game on the pilot: the title after ${IDLE_TICKS - 1} ticks, the map with the pilot at the helm after ${IDLE_TICKS + 1}`);
   const touched = onTitle();
   drive(touched, nothing(IDLE_TICKS - 1));
   drive(touched, ['down']);

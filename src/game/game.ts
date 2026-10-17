@@ -125,7 +125,6 @@ export class Game {
     this.attracting = true;
     this.attractFrom = this.frame;
     p.on = true;
-    p.stopped = null;
     p.why = [...ATTRACT_WHY];
   }
 
