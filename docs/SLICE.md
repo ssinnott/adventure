@@ -383,9 +383,9 @@ Decided by delegate for #53, each the owner's to overturn:
    frontier square and sees what lies behind.
 8. **The world's end drawn as the atlas paints it (#829) is the void for sight:** `blocksView` reads
    the cell and not its look, so a void drawn as a hill stops the view as the void always did, from a
-   hill too, and no hill rule reads a look. Whether a hill hides it reads the look: bare or drawn as a
+   hill too, and no look is read as a hill. Whether a hill hides it reads the look: bare or drawn as a
    mountain it stands over a hill; drawn as the sea or as land it lies as low as they do and is hidden
-   with them. Past and beside a hill the view draws the look as #829 draws it, and the ground to the
+   with them. Where no hill hides it the view draws the look as #829 draws it, and the ground to the
    horizon is the look's but where a hill on the centre line hides it.
 
 ## The calendar and the weather
