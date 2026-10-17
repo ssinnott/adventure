@@ -56,13 +56,12 @@ export interface Play { done: boolean; ticks: number; days: string; secs: string
  * The last chapter's end is an ending taken, which the pilot never takes (the epic's Decided 4): its
  * stop under the ending's question counts, and the test, its privilege, presses the first answer so
  * the ending holds (the delegate's first call for #723). A stop with any other why line is no finish.
- * Whether it pressed.
+ * Returns whether it pressed.
  */
 export function takeEnding(g: Game): boolean {
   const p = g.pilot!;
   if (p.on || p.why[0] !== CHOICE || !(g.top instanceof ChoiceScreen) || !g.top.ends) return false;
   drive(g, ['interact']);
-  return true;
   return true;
 }
 
