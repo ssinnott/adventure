@@ -222,17 +222,23 @@ for square with the painted map (`game/outdoors.ts`, which `content/maps.ts` run
   land's name to the line. Each zone map is its listed atlas zone's for now: a box that straddles
   two (C4, B5, B6) waits on its own build to draw the line inside it.
 - **The end of the world.** Wherever no zone map is laid yet, the outdoors is void (`%`, the `void`
-  solid): nothing crosses it ("The world ends here.") and nothing sees through it. The ring of
+  solid): nothing crosses it, whatever a company can do, and nothing sees through it. The ring of
   mountains that closed each zone map in is, where it faces nothing built, the end of the world as
   well: the Foreland's north and south edges, F2's, E2's and D2's north (the rim, cut for good),
   D2's west until C2 is built, E3's south, D3's west, beyond the cliff and the Upper Water's void,
   D4's west and south, where the Delta begins, and Thornmark's north, east and south. Between the
   Foreland and Thornmark the ridge stands as it was, two squares thick with the pass through it;
   between the Foreland and F2 it is the Foreland's ring alone, with the Salt Road through a gap at
-  0,29. The viewport paints the void as pink empty space, flat, unlit and untextured, standing up
-  past the top of the view so it hides the sky as well as the ground; no weather greys it (it is cut
-  out of the scene as it is painted, so anything nearer still covers it, and filled pink from behind
-  at the end). The automap marks it the same pink.
+  0,29. The void is drawn as its look, the ground the world map paints there (#829, `MapDef.looks`,
+  laid by `game/outdoors.ts` from the atlas's grid, which the world map's paint shares): the sea and
+  the lakes run on to the horizon, the rim's mountains stand, the cut country lies as the atlas has
+  it. A zone map's ring, and the void its author wrote into it, are drawn as the mountain it closes
+  with, but a ring's square where the atlas has water, so the coast runs on; past the rim, mountain.
+  A step into it says what stands there: "The water is far too deep.", "Too steep for anyone to
+  climb." or "There is no way on from here.". The automap inks it in its look's colour, faded into
+  the parchment. A void with no look is painted as before, pink empty space standing up past the top
+  of the view, and says "The world ends here."; no walkable square has one in view
+  (`tools/tests/outdoors.ts`).
 - **Building more.** A new box is a map in its area's `maps/` and `index.ts`, marked `density`
   core or country, and a line in its zone's `maps` in its area's `atlas.ts`, the map at its box's
   corner; `node tools/scaffold.ts` cuts its first draft from the atlas and names its box. Laid in, it
@@ -797,8 +803,8 @@ does.
 
 | File | Owns |
 |---|---|
-| `game/map.ts` | the terrains (hills, farmland, woods, dead wood, crystal, the chasm, salt, heather, tidal ground, ash, pine, ice, peaks, cliffs, steppe, dunes, vines and the volcano named as the atlas names them, and `DRAG`, the slow ones), `MapDef` (rows + legend + features + encounters, a sign's reading and marks, `secrets` with each secret door's hint, a town's or a dungeon's placed `banners`, its `landmarks`, an outdoor map's `density` and, on the outdoors, its gates and zones; the wilderness features and a statue's `Gift`, the den; a person's hand-ins, `Words`, `Choice`, `Answer` and the crossings they sell, `Passage`), `GameMap` queries (passable, `exitAt` (an exit or a tear into a Rift), blocksView, the zone and palette at a cell, `bannerAt`); the void; `Presence`, when a thing is in the world (`when` as `Hours`, `until`, `after`), which a group and a person's words wear |
-| `game/outdoors.ts` | `layOutdoors`: the maps as played, the placed zone maps laid into one outdoors the size of the world, void where nothing is built, their ways between them walked and gated |
+| `game/map.ts` | the terrains (hills, farmland, woods, dead wood, crystal, the chasm, salt, heather, tidal ground, ash, pine, ice, peaks, cliffs, steppe, dunes, vines and the volcano named as the atlas names them, and `DRAG`, the slow ones), `MapDef` (rows + legend + features + encounters, a sign's reading and marks, `secrets` with each secret door's hint, a town's or a dungeon's placed `banners`, its `landmarks`, an outdoor map's `density` and, on the outdoors, its gates, zones and `looks`; the wilderness features and a statue's `Gift`, the den; a person's hand-ins, `Words`, `Choice`, `Answer` and the crossings they sell, `Passage`), `GameMap` queries (passable, `exitAt` (an exit or a tear into a Rift), blocksView, the zone and palette at a cell, `bannerAt`); the void and its looks; `Presence`, when a thing is in the world (`when` as `Hours`, `until`, `after`), which a group and a person's words wear |
+| `game/outdoors.ts` | `layOutdoors`: the maps as played, the placed zone maps laid into one outdoors the size of the world, void where nothing is built and drawn as the atlas paints it (`LOOK`), their ways between them walked and gated |
 | `game/atlas.ts` | the world map's model: `Atlas`, the land drawn in strokes, `worldGrid` (a cell a square, the built outdoor maps stamped in 1:1, each cell's zone), the ways between areas (the exits, the crossings people sell and the planned links, a crossing link sold both ways drawn as built) and the road's steps |
 | `game/world.ts` | `WorldState` (position, clock, weather seed, per-map state with cells seen in bits, zones set foot in, the kinds met; a group a map has gained since a save, and a saved door only where the map still has one), the zone the party is in and what it is called, movement across zones and gates, reveal, the weather's reach into play (sight, snow, the log, the almanac, fights), roaming groups and when they walk (`walks`, `ended`, `hoursHold`), whether a person or an event is there (`present`), what is in sight (the viewport's rule: `VIEW_DEPTH`, `lineOfSight`) and the looks said on first meeting (`sightings`, `meet`, a den's too), a den's brood paced as they come back, encounter triggers (a group under the ice keeping to it and striking only a company on it), rest, search |
 | `game/calendar.ts` | the months and seasons, dates, dawn and dusk through the year, and the tide |
@@ -823,7 +829,7 @@ does.
 | `game/wilds.ts` | the wilderness features: what a feature gives (`giftOf`) and the id it is spent by (`spentId`), the shrine, the cairn, the statue's answer and when the party may rest; pure |
 | `game/dens.ts` | dens: the brood's `until` (`denBurnt`), the pace, the approach, the burning and its hoard, the look on first sight; pure |
 | `game/rifts.ts` | the Rift generator: a 12 by 12 Rift from a template, a Stone's material, an area's table and a seed (turned one of eight ways, its groups in its slots, its looks on their squares), its groups stopping and its tear going quiet once `until` holds; `riftWay`, the tear on a zone map that leads in, walked through as an exit is; pure |
-| `ui/viewport.ts` | the depth-layered first-person compositor, the hills, the farmland's fields and hedges and the trees about the woods, the dead wood and the pinewoods, the glass trees and the chasm's drop, the ash and the ice through the year, a group drawn under the ice, the peaks and cliffs, the steppe, the dunes, the vines' hung trees and the volcano and its vents, a landmark drawn tall over its building's square and seen out to `LANDMARK_REACH` (Crowness Light, its lamp lit by night once its flag is held; a monastery, its bell towers over a wall and no lamp), the tents of a felt palette ('tent': a low felt wall under a pitched felt roof to a crown, its door a flap), the wall dressing and its rates (`DRESSING_RATES`, held by `tools/tests/art.ts`), the sky, the end of the world in pink and the weather drawn over it |
+| `ui/viewport.ts` | the depth-layered first-person compositor, the hills, the farmland's fields and hedges and the trees about the woods, the dead wood and the pinewoods, the glass trees and the chasm's drop, the ash and the ice through the year, a group drawn under the ice, the peaks and cliffs, the steppe, the dunes, the vines' hung trees and the volcano and its vents, a landmark drawn tall over its building's square and seen out to `LANDMARK_REACH` (Crowness Light, its lamp lit by night once its flag is held; a monastery, its bell towers over a wall and no lamp), the tents of a felt palette ('tent': a low felt wall under a pitched felt roof to a crown, its door a flap), the wall dressing and its rates (`DRESSING_RATES`, held by `tools/tests/art.ts`), the sky, the end of the world drawn as its look (pink where it has none) and the weather drawn over it |
 | `ui/frame.ts` | layout constants, status strip (time, date, the sky and its glyph), automap (whole, or a window round the party on the outdoors; a spent feature gone from it, a den standing or burnt), party cards, log, purse |
 | `ui/riddle.ts` | a statue's riddle, the answer typed in the text mode |
 | `ui/worldmap.ts` | the world map (M): the cloth painted from the atlas and the built maps, the zone overlay (Tab) and the almanac (Space), and the pins of a place sought and of one a reading marked |

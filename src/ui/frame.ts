@@ -10,7 +10,7 @@ import { panel, bar, wrap } from './draw.ts';
 import { viewCells } from './viewport.ts';
 import { drawnCell } from '../game/ink.ts';
 import { drawPortrait } from './portraits.ts';
-import { INK, PANEL, PANEL_LIGHT, BRASS, BRASS_DARK, TEXT, TEXT_DIM, RED, BLUE, GREEN, YELLOW, PURPLE, TERRAIN_COLORS, AUTOMAP_WASH, PARCHMENT, WOOD, WOOD_DARK, VOID_PINK } from './palette.ts';
+import { INK, PANEL, PANEL_LIGHT, BRASS, BRASS_DARK, TEXT, TEXT_DIM, RED, BLUE, GREEN, YELLOW, PURPLE, TERRAIN_COLORS, AUTOMAP_WASH, AUTOMAP_FADE, PARCHMENT, WOOD, WOOD_DARK, VOID_PINK } from './palette.ts';
 import { shade, rgba, mix } from '../lib/art/palettes.ts';
 const PARCHMENT_DARK = '#d8c8a0';
 import { hash } from './brush.ts';
@@ -122,10 +122,11 @@ export function drawAutomap(ctx: CanvasRenderingContext2D, world: World, frame: 
   const shown = (x: number, y: number): boolean => within(x, y) && world.explored(x, y);
   for (let y = y0; y < y0 + rows; y++) for (let x = x0; x < x0 + cols; x++) {
     if (!world.explored(x, y)) continue;
-    // A secret door outdoors among mountain, rock or trees is inked as they are, as it is drawn.
-    const c = drawnCell(m, x, y);
+    // A secret door outdoors among mountain, rock or trees is inked as they are, as it is drawn, and
+    // the void as its look (#829).
+    const at = drawnCell(m, x, y), c = at.look ?? at;
     // Inked onto parchment: walls dark, open ground a light wash in the terrain's hue, and where
-    // the world ends, the same pink as in the view.
+    // the world ends with no look, the same pink as in the view.
     let col: string;
     if (c.solid === 'void') col = VOID_PINK;
     else if (c.solid === 'wall' || c.solid === 'building') col = '#4a3a30';
@@ -138,6 +139,8 @@ export function drawAutomap(ctx: CanvasRenderingContext2D, world: World, frame: 
     // The chasm is inked as the drop it is, unwashed: nothing on the parchment is darker.
     else if (c.terrain === 'chasm') col = '#16121e';
     else col = mix(TERRAIN_COLORS[c.terrain] ?? '#3c3a40', PARCHMENT, AUTOMAP_WASH);
+    // The void's look fades into the parchment, so land no one walks reads apart from land one does.
+    if (at.look) col = mix(col, PARCHMENT, AUTOMAP_FADE);
     ctx.fillStyle = col;
     ctx.fillRect(ox + x * cell, oy + y * cell, cell, cell);
     if ((c.solid === 'wall' || c.solid === 'building') && cell >= 6) { ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.fillRect(ox + x * cell, oy + y * cell + cell - 1, cell, 1); }
