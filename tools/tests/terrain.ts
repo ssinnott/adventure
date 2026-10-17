@@ -1,14 +1,23 @@
 // Hills, farmland, woods, dead wood, crystal, the chasm, salt, heather, tidal ground, ash, pine, ice,
 // peaks and cliffs, steppe, dunes, vines and the volcano: their legend characters, snow and the crops through the year, the fields'
-// patchwork, the tide, the ice through the year and every terrain's own colour on the automap.
+// patchwork, the tide, the ice through the year and every terrain's own colour on the automap; and
+// what a hill hides from lower ground (#53).
 import { GameMap } from '../../src/game/map.ts';
-import { NORTH } from '../../src/game/types.ts';
+import type { MapDef } from '../../src/game/map.ts';
+import { NORTH, EAST, SOUTH } from '../../src/game/types.ts';
+import type { Facing } from '../../src/game/types.ts';
 import { SNOW_HOLD, cropColor, fieldAt, hedgeColor, heatherBloom, iceColor, viewCells } from '../../src/ui/viewport.ts';
-import { tideAt, TIDE_PERIOD, HIGH_WATER, MINUTES_PER_DAY } from '../../src/game/calendar.ts';
-import { hoursHold, VIEW_DEPTH } from '../../src/game/world.ts';
+import { markedGroups } from '../../src/ui/frame.ts';
+import { tideAt, TIDE_PERIOD, HIGH_WATER, MINUTES_PER_DAY, daylightAt } from '../../src/game/calendar.ts';
+import { hoursHold, VIEW_DEPTH, World, seen } from '../../src/game/world.ts';
+import { findWeather, weatherSight } from '../../src/game/weather.ts';
+import type { Weather } from '../../src/game/weather.ts';
+import { defaultParty } from '../../src/game/party.ts';
+import { serialize, deserialize, SAVE_VERSION } from '../../src/game/save.ts';
+import { makeRng } from '../../src/lib/engine/rng.ts';
 import { MAP_TERRAIN } from '../../src/game/atlas.ts';
 import { TERRAIN_COLORS, PARCHMENT, AUTOMAP_WASH } from '../../src/ui/palette.ts';
-import { MAP_DEFS } from '../../src/content/index.ts';
+import { MAP_DEFS, CLIMATES } from '../../src/content/index.ts';
 import { GROUND_SAMPLES } from '../grounds.ts';
 import { mix, hexToRgb } from '../../src/lib/art/palettes.ts';
 import { ok } from './lib.ts';
@@ -17,10 +26,13 @@ export function terrain(): void {
   // Hills and farmland: their legend characters, open ground both.
   const m = new GameMap({ id: 'fixture_fields', name: 'Fields fixture', kind: 'outdoor', start: { x: 1, y: 1, facing: NORTH }, rows: ['MMMM', 'M^fM', 'MMMM'] });
   ok(m.at(1, 1).terrain === 'hills' && m.at(2, 1).terrain === 'farm', `'^' is hills and 'f' farmland (${m.at(1, 1).terrain}, ${m.at(2, 1).terrain})`);
-  ok(m.passable(1, 1) === 'ok' && m.passable(2, 1) === 'ok' && !m.blocksView(1, 1) && !m.blocksView(2, 1), 'both can be walked, and neither hides what lies behind it');
+  // A hill hides what lies behind it from lower ground, and not from another hill or a mountain's top (#53).
+  const from = (x: number): { x: number; y: number } => ({ x, y: 1 });
+  ok(m.passable(1, 1) === 'ok' && m.passable(2, 1) === 'ok' && !m.blocksView(2, 1) && !m.blocksView(2, 1, from(1)) && !m.blocksView(1, 1), 'both can be walked; farmland hides nothing, and nothing hides from nowhere in particular');
+  ok(m.blocksView(1, 1, from(2)) && !m.blocksView(1, 1, from(1)) && !m.blocksView(1, 1, from(0)), 'a hill stops the view from the farmland below it, and not from a hill or the mountain');
   // Woods: light woodland, walked through and seen past, unlike the forest's wall of trees ('T').
   const w = new GameMap({ id: 'fixture_woods', name: 'Woods fixture', kind: 'outdoor', start: { x: 1, y: 1, facing: NORTH }, rows: ['MMMM', 'MtTM', 'MMMM'] });
-  ok(w.at(1, 1).terrain === 'woods' && w.passable(1, 1) === 'ok' && !w.blocksView(1, 1) && w.passable(2, 1) !== 'ok', `'t' is woods, walked through and seen past, where 'T' is a tree that blocks (${w.at(1, 1).terrain}, ${w.passable(2, 1)})`);
+  ok(w.at(1, 1).terrain === 'woods' && w.passable(1, 1) === 'ok' && !w.blocksView(1, 1) && !w.blocksView(1, 1, from(2)) && w.passable(2, 1) !== 'ok', `'t' is woods, walked through and seen past, where 'T' is a tree that blocks (${w.at(1, 1).terrain}, ${w.passable(2, 1)})`);
   ok(SNOW_HOLD.woods > 0.5 && SNOW_HOLD.woods < SNOW_HOLD.grass, `snow lies on the woods' floor, thinner under the trees than on open grass (${SNOW_HOLD.woods})`);
   // Dead wood: walked through and seen past as the woods are, and grey, with no green in it.
   const dw = new GameMap({ id: 'fixture_dead', name: 'Dead wood fixture', kind: 'outdoor', start: { x: 1, y: 1, facing: NORTH }, rows: ['MMMM', 'MdtM', 'MMMM'] });
@@ -113,4 +125,69 @@ export function terrain(): void {
   }
   ok(closest.d >= 15, `every terrain's automap colour stands apart from every other (closest ${closest.pair}, ${closest.d.toFixed(1)})`);
   ok(spans >= 60 && crops.size >= 3, `the fields lie in patchwork, each over several squares (${spans} of 144 run on east, ${crops.size} crops)`);
+  sight();
+}
+
+/** A valley behind a ridge, the ridge across the row y = 3, with room to stand four squares off it. */
+const VALLEY = ['MMMMMMMMM', 'M,,,,,,,M', 'M,,,,,,,M', 'M^^^^^^^M', 'M,,,,,,,M', 'M,,,,,,,M', 'M,,,,,,,M', 'M,,,,,,,M', 'M,,,,,,,M', 'MMMMMMMMM'];
+/** One hill on open ground, at 3,3. */
+const LONE = ['MMMMMMM', 'M,,,,,M', 'M,,,,,M', 'M,,^,,M', 'M,,,,,M', 'M,,,,,M', 'MMMMMMM'];
+type When = (wx: Weather, minutes: number) => boolean;
+const DAY: When = (wx, m) => weatherSight(wx) === 4 && daylightAt(m) >= 0.6;
+const NIGHT: When = (wx, m) => weatherSight(wx) === 4 && daylightAt(m) < 0.1;
+const FOG: When = (wx, m) => weatherSight(wx) === 2 && daylightAt(m) >= 0.6;
+
+/**
+ * Line of sight over the hills (#53, the delegate's calls): a hill hides what lies behind it from
+ * lower ground, from the viewport and the automap, and not from another hill, so a ridge hides the
+ * valley until it is climbed and a run of hills is not a wall each square; a company beside a hill
+ * sees past it; a wood hides nothing; what stands taller than a hill is seen over it; a group behind
+ * the brow is neither drawn nor marked until the company climbs; night, light and fog cut how far and
+ * the nearer stop wins; and a save made before shows what it showed.
+ */
+function sight(): void {
+  const def = (rows: readonly string[], x: number, y: number, f: Facing, more: Partial<MapDef> = {}): MapDef => ({ id: 'fx_sight', name: 'Sight', kind: 'outdoor', start: { x, y, facing: f }, rows: [...rows], ...more });
+  /** A company on (x, y) facing f, at the first hour `when` holds, with nothing marked but what it sees there. */
+  const look = (rows: readonly string[], x: number, y: number, f: Facing, when: When = DAY, more: Partial<MapDef> = {}): World => {
+    const rng = makeRng(29), w = new World({ fx_sight: new GameMap(def(rows, x, y, f, more)) }, defaultParty(rng), rng);
+    w.state.minutes = findWeather(w.state.weatherSeed!, w.state.minutes, CLIMATES.shelf, when);
+    w.mapState.explored.fill(0);
+    w.travel('fx_sight', x, y, f);
+    return w;
+  };
+  // Each square: m where the automap marks it, s where the viewport draws it.
+  const marks = (w: World, sq: [number, number][]): string => sq.map(([x, y]) => `${w.explored(x, y) ? 'm' : '-'}${w.sees(x, y) ? 's' : '-'}`).join(' ');
+  const low = look(VALLEY, 4, 5, NORTH), ridge = look(VALLEY, 4, 3, NORTH);
+  const below = marks(low, [[4, 3], [4, 2], [4, 1], [3, 2], [5, 2]]), above = marks(ridge, [[4, 2], [4, 1], [3, 1], [5, 1]]);
+  ok(below === 'ms -- -- -- --' && above === 'ms ms ms ms', `from the low ground the ridge is seen and the valley past it neither drawn nor marked; from the ridge it is both (${below}; ${above})`);
+  const run = marks(look(VALLEY, 1, 3, EAST), [[2, 3], [3, 3], [4, 3], [5, 3]]);
+  ok(run === 'ms ms ms ms', `on the ridge the hills along it are seen to the day's four squares: a run of hills is no wall each square (${run})`);
+  const woods = marks(look(VALLEY.map((r) => r.replace(/\^/g, 't')), 4, 5, NORTH), [[4, 2], [4, 1], [3, 2], [5, 2]]);
+  ok(woods === 'ms ms ms ms', `a wood in the ridge's place hides nothing: the view passes between its trees (${woods})`);
+  const peaks = marks(look(VALLEY.map((r, y) => (y === 1 ? 'MMMMMMMMM' : r)), 4, 5, NORTH), [[4, 1], [4, 2]]);
+  ok(peaks === 'ms --', `the mountain past the ridge stands taller and is seen over it, the ground between not (${peaks})`);
+  // One hill: hidden behind from below, seen past from beside it, in the view and in the squares round the company.
+  const lone = [marks(look(LONE, 3, 5, NORTH), [[3, 3], [3, 2], [3, 1]]), marks(look(LONE, 4, 4, NORTH), [[3, 2]]), marks(look(LONE, 4, 3, NORTH), [[3, 2], [3, 1]]), marks(look(LONE, 3, 3, NORTH), [[3, 2], [3, 1]])];
+  ok(lone.join(' / ') === 'ms -- -- / ms / ms ms / ms ms', `a lone hill hides what is behind it from below, and from beside it or on it that is seen (${lone.join(' / ')})`);
+  const round = [look(LONE, 3, 4, SOUTH).explored(3, 2), look(LONE.map((r) => r.replace('^', ',')), 3, 4, SOUTH).explored(3, 2)];
+  ok(round.join() === 'false,true', `the squares round the company are marked as before, but not the one behind a hill at its back (${round.join()})`);
+  // A group behind the brow: not drawn, not marked, not met; from the ridge, all three.
+  const brow: Partial<MapDef> = { encounters: [{ id: 'fx_brow', x: 4, y: 2, monsters: ['fen_eel'], roams: false }] };
+  const foot = look(VALLEY, 4, 4, NORTH, DAY, brow), top = look(VALLEY, 4, 3, NORTH, DAY, brow);
+  // As though it had been seen there before: the automap's near rule still leaves it out behind the hill.
+  foot.mapState.explored[(2 * 9 + 4) >> 5] |= 1 << ((2 * 9 + 4) & 31);
+  foot.sightings(); top.sightings();
+  const hid = [foot.groupsInSight().length, markedGroups(foot).length, foot.state.met?.length ?? 0], shown = [top.groupsInSight().length, markedGroups(top).length, top.state.met?.length ?? 0];
+  ok(hid.join() === '0,0,0' && shown.join() === '1,1,1', `a group behind the brow is neither drawn, marked nor met from the ridge's foot, and is from the ridge (${hid.join()}; ${shown.join()})`);
+  // Night, light and fog cut how far; the hill cuts the line; the nearer stop wins. Four squares off the ridge:
+  const lit = look(VALLEY, 4, 6, NORTH, NIGHT);
+  lit.state.light = 20; lit.mapState.explored.fill(0); lit.reveal();
+  const cut = [look(VALLEY, 4, 6, NORTH, DAY), look(VALLEY, 4, 6, NORTH, NIGHT), lit, look(VALLEY, 4, 6, NORTH, FOG)].map((w) => `${w.sight}: ${marks(w, [[4, 4], [4, 3], [4, 2]])}`);
+  ok(cut.join(' / ') === '4: ms ms -- / 2: ms -- -- / 4: ms ms -- / 2: ms -- --', `by day and by a light the hill stops the view at its brow, and the night and the fog short of it (${cut.join(' / ')})`);
+  // A save made before #53 holds what the company marked then, the valley past the ridge among it: it loads and shows it.
+  const old = look(VALLEY, 4, 5, NORTH);
+  old.mapState.explored[(2 * 9 + 4) >> 5] |= 1 << ((2 * 9 + 4) & 31);
+  const data = deserialize(serialize(old.state, old.party, 1));
+  const back = new World({ fx_sight: new GameMap(def(VALLEY, 4, 5, NORTH)) }, data.party, makeRng(1), data.world);
+  ok(SAVE_VERSION === 5 && back.explored(4, 2) && !back.sees(4, 2) && seen(data.world.maps.fx_sight.explored, 2 * 9 + 4), `a save made before loads with what it marked, the valley past the ridge among it, though from there it is not seen now (version ${SAVE_VERSION})`);
 }

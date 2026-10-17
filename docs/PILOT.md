@@ -91,7 +91,8 @@ through `g.world`, `g.maps` or a `MapDef`, but the world map's own data as the w
 - the exits on seen squares that are there now, with where each leads and no gate's terms: a gate's
   `needFlag`, `shut`, `lifts` or `after` is never read, and the pilot learns a gate by trying it;
 - the squares of the groups the automap marks on the party's own map (`groups`, #717), in view or
-  on a seen square within two steps: where a group stands and nothing of what it is;
+  on a seen square within two steps, and none a hill hides (#53): where a group stands and nothing
+  of what it is;
 - the company (`party`, #717): who stands, what each has learnt and what it carries;
 - the maps visited, the world map as it is painted (`placeOf`) and every line heard: what `Game.say`
   says and every message box opened, the last 2000. A new game or a load empties it;

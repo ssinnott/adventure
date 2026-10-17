@@ -22,7 +22,7 @@
 // is, nothing: flat pink, unlit and untextured, standing up past the top of the view so that it
 // hides the sky behind it as well as the ground.
 import type { World } from '../game/world.ts';
-import { VIEW_DEPTH, VIEW_LATERAL, viewCell as cellAt, isSolidWall, lineOfSight } from '../game/world.ts';
+import { VIEW_DEPTH, VIEW_LATERAL, viewCell as cellAt, isSolidWall, lineOfSight, hillOver, hillHiding } from '../game/world.ts';
 import { drawnCell } from '../game/ink.ts';
 import type { GameMap, Cell, Terrain, MapPalette, Landmark, Feature } from '../game/map.ts';
 import { FACING_DX, FACING_DY } from '../game/types.ts';
@@ -325,9 +325,10 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
     drawSkyBand(skyCtx, r, { ...sky, part: 'back' });
     drawSkyBand(ctx, r, { ...sky, part: 'hills' });
     // The ground runs on to the horizon in the terrain out past the last cell drawn; the void and
-    // the chasm have none, so short of them the ground is the party's own.
-    const far = map.at(px + FACING_DX[f] * (DEPTH + 1), py + FACING_DY[f] * (DEPTH + 1));
-    const farCell = far.solid === 'void' || far.terrain === 'chasm' ? map.at(px, py) : far;
+    // the chasm have none, so short of them the ground is the party's own, and past a hill seen from
+    // below it the hill's (#53).
+    const far = map.at(px + FACING_DX[f] * (DEPTH + 1), py + FACING_DY[f] * (DEPTH + 1)), brow = hillOver(map, px, py, f, DEPTH + 1, 0);
+    const farCell = brow ? map.at(brow.x, brow.y) : far.solid === 'void' || far.terrain === 'chasm' ? map.at(px, py) : far;
     const ground = shade(groundColor(farCell.terrain, map.kind, pal.floor), dark ? 0.2 : 0.55);
     const gg = ctx.createLinearGradient(0, horizon, 0, horizon + unit(DEPTH + 0.5, r.h));
     gg.addColorStop(0, mix(ground, skyBottom, dark ? 0.1 : 0.5)); gg.addColorStop(1, ground);
@@ -339,7 +340,10 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
   order.sort((a, b) => Math.abs(b) - Math.abs(a));
   // A door outdoors among mountain, rock or trees is drawn as they are (drawnCell).
   const drawn = (x: number, y: number): Cell => drawnCell(map, x, y);
-  const solidAt = (d: number, l: number): boolean => isSolidWall(drawn(...toPair(cellAt(px, py, f, d, l))));
+  // Seen from below a hill, what lies behind it is not drawn (#53): the hill's own ground runs on in
+  // its place with nothing standing on it, and nothing beside it takes it for a wall.
+  const behind = (d: number, l: number): { x: number; y: number } | undefined => hillOver(map, px, py, f, d, l);
+  const solidAt = (d: number, l: number): boolean => !behind(d, l) && isSolidWall(drawn(...toPair(cellAt(px, py, f, d, l))));
   const houseAt = (d: number, l: number): boolean => isHouse(map, ...toPair(cellAt(px, py, f, d, l)));
   const voidAt = (d: number, l: number): boolean => map.at(...toPair(cellAt(px, py, f, d, l))).solid === 'void';
   // A tent stands lower than a wall, so it hides no face of a wall or of another tent. Over the smoke
@@ -389,7 +393,8 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
     // next square's floor into the next hill; walls and sprites follow.
     for (const l of order) {
       const c = cellAt(px, py, f, d, l);
-      const cell = drawn(c.x, c.y);
+      const cell = drawn(c.x, c.y), brow = behind(d, l);
+      if (brow) { drawFloor(ctx, 'hills', map.kind, cx, horizon, r.h, d, l, c.x * 131 + c.y * 17 + (map.id.length * 7), dark, haze, map.paletteAt(brow.x, brow.y).floor); continue; }
       if (isSolidWall(cell)) continue;
       const seed = c.x * 131 + c.y * 17 + (map.id.length * 7);
       const cellPal = map.paletteAt(c.x, c.y);
@@ -401,11 +406,12 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
     }
     if (d > 0) for (const l of order) {
       const c = cellAt(px, py, f, d, l);
-      if (drawn(c.x, c.y).terrain !== 'hills' || isSolidWall(drawn(c.x, c.y))) continue;
-      const hillAt = (dl: number): boolean => { const n = drawn(...toPair(cellAt(px, py, f, d, l + dl))); return n.terrain === 'hills' && !isSolidWall(n); };
+      if (drawn(c.x, c.y).terrain !== 'hills' || isSolidWall(drawn(c.x, c.y)) || behind(d, l)) continue;
+      const hillAt = (dl: number): boolean => { const n = drawn(...toPair(cellAt(px, py, f, d, l + dl))); return n.terrain === 'hills' && !isSolidWall(n) && !behind(d, l + dl); };
       drawHill(ctx, groundColor('hills', map.kind, map.paletteAt(c.x, c.y).floor), cx, horizon, r.h, d, l, c.x * 131 + c.y * 17, dark, haze, hillAt(-1), hillAt(1));
     }
     for (const l of order) {
+      if (behind(d, l)) continue;
       const c = cellAt(px, py, f, d, l);
       const cell = drawn(c.x, c.y);
       // The party's own cell starts at k = -0.5, where u is infinite and the walls beside the party
@@ -954,7 +960,7 @@ export function hillBody(ctx: CanvasRenderingContext2D, base: string, cx: number
 
 /**
  * Rising ground: a round-shouldered mound on the square, lit on its crest, running on into the next
- * hill beside it. It is drawn only: it hides nothing from the party (line of sight is its own work).
+ * hill beside it. What it hides from lower ground (`hillOver`, game/world.ts) the scene leaves undrawn.
  */
 function drawHill(ctx: CanvasRenderingContext2D, base: string, cx: number, horizon: number, h: number, d: number, l: number, seed: number, dark: boolean, haze: string | null, hillL: boolean, hillR: boolean): void {
   const { lx, ly, rx, top, c1, c2 } = hillBody(ctx, base, cx, horizon, h, d, l, seed, dark, haze, hillL, hillR);
@@ -2141,12 +2147,12 @@ function addPoly(ctx: CanvasPath, pts: [number, number][]): void {
   ctx.moveTo(o[0][0], o[0][1]); for (let i = 1; i < o.length; i++) ctx.lineTo(o[i][0], o[i][1]); ctx.closePath();
 }
 
-/** Which cells the viewport can show, for the automap's field-of-view highlight. */
+/** Which cells the viewport can show, for the automap's field-of-view highlight: none a hill hides (#53). */
 export function viewCells(map: GameMap, px: number, py: number, f: Facing, sight: number): { x: number; y: number }[] {
   const out: { x: number; y: number }[] = [];
   for (let d = 0; d <= Math.min(DEPTH, sight); d++) for (let l = -LATERAL; l <= LATERAL; l++) {
     const c = cellAt(px, py, f, d, l);
-    if (map.inBounds(c.x, c.y)) out.push(c);
+    if (map.inBounds(c.x, c.y) && !hillHiding(map, px, py, f, c.x, c.y)) out.push(c);
   }
   return out;
 }

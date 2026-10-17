@@ -215,11 +215,11 @@ import { armorClass as armorClassOf } from '../game/party.ts';
 /** Whether the automap marks a feature: not an event, and not a person who is not there now. */
 export const onAutomap = (world: Pick<World, 'present'>, f: Feature): boolean => f.kind !== 'event' && world.present(f);
 
-/** The live groups the automap marks: in view, or on a seen square within two steps of the party. */
+/** The live groups the automap marks: in view, or on a seen square within two steps of the party; none a hill hides (#53). */
 export function markedGroups(world: World): LiveGroup[] {
   const m = world.map, { x, y, facing } = world.state;
   const inView = new Set(viewCells(m, x, y, facing, world.sight).map((c) => c.y * m.width + c.x));
-  return world.liveGroups().filter(({ state: s }) => inView.has(s.y * m.width + s.x) || (world.explored(s.x, s.y) && Math.abs(s.x - x) + Math.abs(s.y - y) <= 2));
+  return world.liveGroups().filter(({ state: s }) => inView.has(s.y * m.width + s.x) || (world.explored(s.x, s.y) && Math.abs(s.x - x) + Math.abs(s.y - y) <= 2 && !world.hidden(s.x, s.y)));
 }
 
 /** How many lines the log shows. */

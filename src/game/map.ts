@@ -593,10 +593,24 @@ export class GameMap {
     return z ? this.zonePalettes[this.zones.indexOf(z)] : this.palette;
   }
 
-  /** Whether sight passes through the cell (billboards like trees do not stop the view). */
-  blocksView(x: number, y: number): boolean {
+  /**
+   * Whether the cell stops the view of an eye standing on `eye`: a wall, a building, the mountain,
+   * the void and a door from anywhere, and a hill from lower ground, not from another hill or a
+   * mountain's top (#53). Billboards like trees, and the woods, never do. With no eye given, only
+   * what stops the view from anywhere.
+   */
+  blocksView(x: number, y: number, eye?: { x: number; y: number }): boolean {
     const c = this.at(x, y);
-    return c.solid === 'wall' || c.solid === 'building' || c.solid === 'mountain' || c.solid === 'void' || c.door !== 'none';
+    if (c.solid === 'wall' || c.solid === 'building' || c.solid === 'mountain' || c.solid === 'void' || c.door !== 'none') return true;
+    if (!eye || c.terrain !== 'hills') return false;
+    const e = this.at(eye.x, eye.y);
+    return e.terrain !== 'hills' && e.solid !== 'mountain';
+  }
+
+  /** Whether the cell stands taller than a hill, and is seen over one from below it: the mountain, the void and a landmark (#53). */
+  overtops(x: number, y: number): boolean {
+    const c = this.at(x, y);
+    return c.solid === 'mountain' || c.solid === 'void' || !!this.landmarkAt(x, y);
   }
 
   /**
