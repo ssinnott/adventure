@@ -43,7 +43,7 @@ C casts, I opens the character sheet (1–6 jump to a member), J the quest log, 
 scroll it, Tab shows the areas and zones, Z the whole map at once, Space the almanac: date, season and
 weather), F5/F9 save and load. P hands the game to the pilot and takes it back; T sets its tempo
 (docs/PILOT.md). Left alone on the title for 45 seconds, the game plays a new one by itself, saving
-nothing; any key brings the title back.
+nothing; any key, or a tap, brings the title back.
 
 The outdoors is one map, laid out square for square as the world map charts it: the Foreland and
 Thornmark are zones of it, walked between without a seam. Where nothing is built yet the world ends,
