@@ -1622,7 +1622,7 @@ function thirdPrestiges(ok: (cond: boolean, msg: string) => void): void {
 }
 
 /**
- * The Master of magic (#859; DESIGN §5, EXPANSION §8), found and never told, played by a company of 25. The
+ * The Master of magic (#859; DESIGN §5 and §9), found and never told, played by a company of 25. The
  * hermit in F11's rock says his own words at the first meeting and adds two at the next, the one chimney in
  * the crater that no stoker feeds: the kind of place, never the square. Down off the lip, in Old Cinder's
  * lane, a cup set down clean at the south end of the broken kiln's room, the ash swept from round it; searched
@@ -1632,7 +1632,7 @@ function thirdPrestiges(ok: (cond: boolean, msg: string) => void): void {
  * of E11's cold tube, behind the crack that breathes cold air, more than ten squares off any road and nowhere
  * in the chapter. Before it she refuses; the roll handed in, she teaches Master for 5,000 to a member with
  * Expert in magic at 25. The company is given its Expert (taught at a town's trainer elsewhere on the road,
- * from the Sail Loft on) and its gold directly, as the walkthrough has no purse of its own to fill.
+ * from the Sail Loft on) and its gold directly: this walkthrough does not play the trainers' menus.
  */
 function masterOfMagic(ok: (cond: boolean, msg: string) => void): void {
   const w = newWalk(ok);
@@ -1702,7 +1702,7 @@ function masterOfMagic(ok: (cond: boolean, msg: string) => void): void {
     `her first words ask for the roll the clerk took west (${asked.split('\n\n')[2]})`);
   const refused = teachTier('magic', 'master', m.price, w.party, 4, favourDone(m, w.world.state, w.party));
   ok(turned.map((o) => o.who).join() === '1,2,4,5' && bar(4) === 'favour first' && bar(5) === 'Expert first' && bar(0) === 'not listed' && !refused.taught && w.party.gold === gold && tierOf(maren, 'magic') === 'expert',
-    `before the favour she refuses the Expert at 25 (${maren.name}: ${bar(4)}), and offers the others nothing but why not (${cassian.name}: ${bar(5)}; ${idris.name}: ${bar(1)}; ${wren.name}: ${bar(2)}), taking nothing`);
+    `before the favour she refuses ${maren.name}, given her Expert in magic and the 5,000 (bought elsewhere on the road) at 25 (${bar(4)}), and offers the others nothing but why not (${cassian.name}: ${bar(5)}; ${idris.name}: ${bar(1)}; ${wren.name}: ${bar(2)}), taking nothing`);
 
   // The favour: E11's crack that breathes cold air, searched; the tube behind it, the man's bones and his pack,
   // and at its end the roll. The tube is shut but for the crack, ten squares and more off any road, and off the chapter.

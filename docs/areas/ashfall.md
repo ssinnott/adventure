@@ -1660,7 +1660,7 @@ The Ranger's is the Wold's to place and #22's to end; it is here because its roa
 
 ### The Master of magic
 
-Built with #859 (DESIGN §5, EXPANSION §8): the second Master on the road, found and never told. It
+Built with #859 (DESIGN §5 and §9): the second Master on the road, found and never told. It
 is no quest: nothing in the log, the chapter or the atlas names her, her room or her roll, and no
 seeking sends a company to her. The hermit in F11's rock says his own words at the first meeting
 and, at the next, two more, the rumour: the crater's one chimney smokes some mornings, and no
