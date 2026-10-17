@@ -172,6 +172,8 @@ export function gateBurn(s: CombatState, c: Character): { spellId: string; targe
  * game's auto-fight only what the fight has shown (`asSeen`).
  */
 export function botTurn(s: CombatState, p: Party, rng: RngInstance, i: number, sees: Sees = asWritten): PartyAction {
+  // The game's bot flees a fight it has lost (#723); the gate's never does, so its figures stand.
+  if (sees !== asWritten && beaten(s, p) && partyAct(s, p, rng, { type: 'flee' })) return { type: 'flee' };
   const c = p.members[i], foes = aliveMonsters(s), lead = markOf(s, foes, sees), foe = lead ?? foes[0];
   const blade = lead !== undefined && canReach(s, c, lead) ? lead : foes.find((f) => canReach(s, c, f)) ?? foe;
   const known = c.spells.map(spell).filter((x) => x.context !== 'explore' && x.sp <= c.sp);
@@ -191,6 +193,15 @@ export function botTurn(s: CombatState, p: Party, rng: RngInstance, i: number, s
   const brace: PartyAction = { type: 'defend' };
   partyAct(s, p, rng, brace);
   return brace;
+}
+
+/**
+ * Whether a fight is lost, as the screen shows it (#723): one of the company down, and as many foes
+ * standing as members. The game's bot then flees (`botTurn` with any reading but `asWritten`).
+ */
+export function beaten(s: CombatState, p: Party): boolean {
+  const up = p.members.filter((m) => !isDown(m)).length;
+  return up < p.members.length && aliveMonsters(s).length >= up;
 }
 
 /** The bot's turn for member `i`, as the gate plays it: `botTurn`, the action not wanted. */

@@ -10,11 +10,12 @@ import { ExploreScreen } from '../game.ts';
 import type { Action } from '../../input.ts';
 import type { Feature } from '../map.ts';
 import type { Character, Party } from '../party.ts';
-import { armorClass, canTrain, canTrainAt, hasCondition, isDown, templePrice, trainPrice, weaponOf } from '../party.ts';
+import { armorClass, canTrain, canTrainAt, hasCondition, isDown, PRESTIGES, templePrice, trainPrice, weaponOf } from '../party.ts';
 import { hits, item, priceIn } from '../items.ts';
 import { mustRest, REST_AT } from '../bot.ts';
 import { restRefused } from '../wilds.ts';
-import { ChoiceScreen, InteriorScreen, SheetScreen, TRADE } from '../../ui/screens.ts';
+import { ChoiceScreen, InteriorScreen, SheetScreen, SpellScreen, TRADE } from '../../ui/screens.ts';
+import { spell } from '../spells.ts';
 import { optionParts } from '../../ui/draw.ts';
 import { knownOf, trainsTo, wares } from './known.ts';
 import type { Known } from './known.ts';
@@ -51,8 +52,52 @@ function tired(p: Party): 'hp' | 'sp' | null {
   const up = p.members.filter((c) => !fallen(c)), why = up.length ? mustRest({ ...p, members: up }) : null;
   return why === 'dead' ? null : why;
 }
-/** Whether the rest offered is taken (the rest key's, a camp's): those standing must rest, and there is a ration each. Talk's rule 2 is this one (#721). */
-export const restWanted = (p: Party): boolean => !!tired(p) && p.food >= p.members.length;
+
+/** Under this share of their hit points, one standing makes the pilot rest where it may (#723), where the harness's rule waits for a quarter (`REST_AT`). */
+export const REST_HP = Number(((globalThis as { process?: { env: Record<string, string | undefined> } }).process?.env ?? {}).RH ?? 0.75);
+/** Under this share of their spell points, a caster makes the pilot rest where it may (#723), where the harness's rule pools the company's. */
+export const REST_SP = Number(((globalThis as { process?: { env: Record<string, string | undefined> } }).process?.env ?? {}).RS ?? 0.5);
+/** A member whose spells are its fight: a calling of 'caster' (a cleric, a sorcerer, a druid), as the prestiges have it. */
+export const caster = (c: Character): boolean => PRESTIGES[c.cls].calling === 'caster' && c.maxSp > 0;
+const EXP = ((globalThis as { process?: { env: Record<string, string | undefined> } }).process?.env ?? {}) as Record<string, string | undefined>;
+/**
+ * The member the pilot's own rest rule (#723) rests for, and why: one standing under REST_HP of its hit
+ * points, else a caster under REST_SP of its spell points; by member, as the harness's rule is not.
+ */
+export function weary(p: Party): { c: Character; why: 'hp' | 'sp' } | undefined {
+  const up = p.members.filter((c) => !fallen(c));
+  const hurt = up.filter((c) => c.hp < c.maxHp * REST_HP).sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp)[0];
+  if (hurt) return { c: hurt, why: 'hp' };
+  const dry = up.find((c) => caster(c) && c.sp < c.maxSp * REST_SP);
+  return dry ? { c: dry, why: 'sp' } : undefined;
+}
+/** Under this share of their hit points, one not dead is mended between fights by a spell, where a member has it and the spell points (#723). */
+export const MEND_AT = 0.7;
+/** A mending spell to cast off the fight: who casts it, its row in their list off the fight, and on whom (a member's row; -1 for the whole company). */
+export interface Mend { who: number; spell: string; row: number; target: number }
+/**
+ * The mending to cast now, or undefined: the one not dead or stone with the least share of their hit
+ * points, under MEND_AT, mended by the first member standing and awake who has a mending spell off the
+ * fight and its spell points, one for a member before one for the company (#723).
+ */
+export function mendable(p: Party): Mend | undefined {
+  if (EXP.NOH) return undefined;
+  const target = p.members.map((c, i) => ({ c, i })).filter(({ c }) => !fallen(c) && c.hp < c.maxHp * MEND_AT).sort((a, b) => a.c.hp / a.c.maxHp - b.c.hp / b.c.maxHp)[0];
+  if (!target) return undefined;
+  let best: Mend | undefined, most = -1;
+  for (const [who, c] of p.members.entries()) {
+    if (isDown(c) || hasCondition(c, 'asleep') || c.sp <= most) continue;
+    const list = c.spells.filter((s) => spell(s).context !== 'combat');
+    const heals = list.filter((s) => { const d = spell(s); return !!d.heal && !d.raise && d.sp <= c.sp && (d.target === 'ally' || d.target === 'party'); });
+    const id = heals.find((s) => spell(s).target === 'ally') ?? heals[0];
+    if (id) { best = { who, spell: id, row: list.indexOf(id), target: spell(id).target === 'ally' ? target.i : -1 }; most = c.sp; }
+  }
+  return best;
+}
+/** Whether those standing want a rest: the harness's rule (`tired`) or the pilot's own (`weary`). */
+const restless = (p: Party): boolean => !!tired(p) || !!weary(p);
+/** Whether the rest offered is taken (the rest key's, a camp's): those standing want rest, and there is a ration each. Talk's rule 2 is this one (#721). */
+export const restWanted = (p: Party): boolean => restless(p) && p.food >= p.members.length;
 /** The first member ready to train whom the company can pay for (`canTrain`, `trainPrice`). */
 const ready = (p: Party): Character | undefined => p.members.find((c) => canTrain(c) && !isDown(c) && p.gold >= trainPrice(c));
 /** The first of the dead, then of the stone, whom the company can pay a temple to raise (`templePrice`). */
@@ -87,7 +132,7 @@ export function better(c: Character, stock: readonly string[], shop: Shop, gold:
 export function needs(g: Game, k: Known = knownOf(g)): Need[] {
   const p = k.party, out: Need[] = [];
   if (mustRest(p) === 'dead') out.push('temple');
-  if (tired(p)) out.push('rest');
+  if (restless(p)) out.push('rest');
   if (hungry(p)) out.push('food');
   if (ready(p)) out.push('train');
   if (shops(k).length) out.push('gear');
@@ -170,7 +215,11 @@ interface Keep {
   dry: Set<string>;
   /** What was bought and for whom, to be worn through the sheet. */
   bought: { who: number; id: string }[];
+  /** The mending being cast through the spell menu (#723), from the cast key to the member's row. */
+  mend?: Mend;
 }
+/** What the spell menu has been pressed so far, by the menu: the caster chosen, and the rows gone down. */
+const BOOKS = new WeakMap<SpellScreen, { chosen: boolean; downs: number }>();
 /** Each company's: a new game's or a load's starts afresh. */
 const KEEPS = new WeakMap<Party, Keep>();
 function memo(p: Party): Keep {
@@ -190,6 +239,7 @@ const VISITS = new WeakMap<InteriorScreen, Visit>();
 export const keep: Brain = (g, k, p) => {
   const top = g.top, mem = memo(k.party);
   if (top instanceof SheetScreen) return wear(g, k, p, top, mem);
+  if (top instanceof SpellScreen) return spellbook(top, mem);
   if (top instanceof ChoiceScreen) return answer(g, k, p, top, mem);
   return top instanceof ExploreScreen ? onMap(g, k, p, mem) : null;
 };
@@ -202,6 +252,13 @@ function onMap(g: Game, k: Known, p: Pilot, mem: Keep): Action | null {
   if (mem.bought.length) {
     p.why = [`${party.members[mem.bought[0].who].name} takes the ${item(mem.bought[0].id).name}.`];
     return 'inventory';
+  }
+  // Between fights, one hurt is mended by a spell before any rest or walk (#723): the cast key, then the menus.
+  const mend = mendable(party);
+  if (mend) {
+    mem.mend = mend;
+    p.why = [mend.target < 0 ? 'Mending the company.' : `Mending ${party.members[mend.target].name}.`];
+    return 'cast';
   }
   const plan = choose(g, k, mem, list), own = mem.aim?.goal !== undefined && p.goal === mem.aim.goal;
   // A goal of its own holds while its need does, unless a rest where it stands or a more urgent need
@@ -252,9 +309,12 @@ function choose(g: Game, k: Known, mem: Keep, list: readonly Need[]): Plan | und
       const door = groups[1].find((s) => here(s) && free(s));
       if (door) return { need: n, s: door, d: 0 };
       if (restRefused(g.world) === '' && p.food >= p.members.length) {
-        const who = p.members.find((c) => !fallen(c) && c.hp < c.maxHp * REST_AT);
-        return { rest: tired(p) === 'hp' && who ? `Resting: ${who.name} is under a quarter.` : 'Resting: the spell points are low.' };
+        const who = p.members.find((c) => !fallen(c) && c.hp < c.maxHp * REST_AT), w = weary(p);
+        if (tired(p)) return { rest: tired(p) === 'hp' && who ? `Resting: ${who.name} is under a quarter.` : 'Resting: the spell points are low.' };
+        return { rest: w!.why === 'hp' ? `Resting: ${w!.c.name} is hurt.` : `Resting: ${w!.c.name} is short of spells.` };
       }
+      // Weary only, by the pilot's own rule: a rest where it stands, or none (#723).
+      if (EXP.B && !tired(p)) continue;
     }
     for (const group of groups) {
       const best = nearest(g, k, group.filter((s) => free(s) && !(here(s) && s.f.kind === 'camp')));
@@ -278,7 +338,7 @@ function wanting(k: Known, list: readonly Need[]): string | undefined {
         return `${c.name} is ${hasCondition(c, 'dead') ? 'dead' : 'stone'}, and ${raise(p) ? 'no temple seen' : 'no gold for the temple'}.`;
       }
       case 'rest': {
-        const hurt = tired(p) === 'hp' ? 'Hurt' : 'Low on spell points';
+        const hurt = (tired(p) ?? weary(p)?.why) === 'hp' ? 'Hurt' : 'Low on spell points';
         if (p.food >= p.members.length) return `${hurt}, and too dangerous to rest here.`;
         return `${hurt}, and ${any((f) => f.kind === 'inn') ? 'no gold for a room' : 'no rations and no inn seen'}.`;
       }
@@ -308,6 +368,12 @@ function drink(g: Game, k: Known, mem: Keep): { s: Spot; d: number } | undefined
 function answer(g: Game, k: Known, p: Pilot, c: ChoiceScreen, mem: Keep): Action | null {
   const party = k.party, rows = c.options;
   if (rows.join() === 'Rest,Not now') return pick(c, restWanted(party) ? 'Rest' : 'Not now');
+  // The member a mending is cast on (#723): the spell menu's "on whom?", a row a member.
+  if (mem.mend && rows.length === party.members.length && rows.every((r, i) => r.startsWith(`${i + 1}. ${party.members[i].name}  `))) {
+    const a = go(c, mem.mend.target);
+    if (a === 'interact') mem.mend = undefined;
+    return a;
+  }
   const visit = g.screens.find((s): s is InteriorScreen => s instanceof InteriorScreen);
   if (!visit) return null;
   const { x, y } = visit.at, f = k.features(g.world.state.mapId).find((q): q is Business => q.x === x && q.y === y && (q.kind === 'inn' || q.kind === 'temple' || q.kind === 'shop' || q.kind === 'trainer'));
@@ -334,7 +400,7 @@ function answer(g: Game, k: Known, p: Pilot, c: ChoiceScreen, mem: Keep): Action
 /** Whether the company has something to do at `f` now: a night or rations at an inn, a fee it can pay at a temple, one look at a shop's wares a visit, one ready to train at a trainer. */
 function wants(f: Business, p: Party, v: Visit): boolean {
   switch (f.kind) {
-    case 'inn': return !!tired(p) || hungry(p);
+    case 'inn': return restless(p) || hungry(p);
     case 'temple': return p.members.some((c) => templePrice(c) > 0 && templePrice(c) <= p.gold);
     case 'shop': return !v.looked;
     case 'trainer': return !!ready(p);
@@ -348,7 +414,7 @@ const asks = (row: string): number => Number(/\((\d+) gold\)/.exec(row)?.[1] ?? 
 function inn(c: ChoiceScreen, p: Party, pilot: Pilot): Action | null {
   const stay = c.options.findIndex((o) => o.startsWith('Stay the night')), buy = c.options.findIndex((o) => o.startsWith('Buy 10 rations'));
   if (stay < 0 || buy < 0) return null;
-  if (tired(p) && p.gold >= asks(c.options[stay])) { pilot.why = ['A room for the night.']; return go(c, stay); }
+  if (restless(p) && p.gold >= asks(c.options[stay])) { pilot.why = ['A room for the night.']; return go(c, stay); }
   if (hungry(p) && p.gold >= asks(c.options[buy])) { pilot.why = ['Rations for the road.']; return go(c, buy); }
   return pick(c, 'Leave');
 }
@@ -420,6 +486,21 @@ function wear(g: Game, k: Known, p: Pilot, s: SheetScreen, mem: Keep): Action {
     return 'interact';
   }
   return 'cancel';
+}
+
+/**
+ * The spell menu, for a mending (#723): the caster by their number, `down` to the spell's row, Space;
+ * a spell for one member then asks on whom (`answer`). Esc on a spell menu not its own.
+ */
+function spellbook(s: SpellScreen, mem: Keep): Action {
+  const m = mem.mend;
+  if (!m) return 'cancel';
+  let b = BOOKS.get(s);
+  if (!b) BOOKS.set(s, (b = { chosen: false, downs: 0 }));
+  if (!b.chosen) { b.chosen = true; return `n${m.who + 1}` as Action; }
+  if (b.downs < m.row) { b.downs++; return 'down'; }
+  if (m.target < 0) mem.mend = undefined;
+  return 'interact';
 }
 
 /** The key toward row `i`: Space when it is the row chosen, else down (a menu wraps, so down reaches any row). */

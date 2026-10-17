@@ -4,7 +4,7 @@
 // then any other in name order, then each area's walkthrough
 // (src/content/areas/<area>/walkthrough.ts) where it has one, in road order. A suite is added by
 // its file alone.
-//   node tools/test.ts                  run everything
+//   node tools/test.ts                  run everything but the suites run only when named (ASKED)
 //   node tools/test.ts maps combat      run selected suites
 //   node tools/test.ts walkthrough:shelf  run one area's walkthrough
 //   node tools/test.ts --dir <folder>   run the suites in another folder, and no walkthroughs (the
@@ -16,6 +16,8 @@ import type { Walkthrough } from '../src/content/area.ts';
 
 /** The suites as they ran before the runner found them, kept in that order. */
 const FIRST = ['maps', 'movement', 'monsters', 'combat', 'harness', 'party', 'traits', 'calendar', 'terrain', 'weather', 'atlas', 'outdoors', 'save', 'quests', 'game', 'pilot'];
+/** The suites that run only when named, each taking minutes: the pilot's survival sweep (#723). */
+const ASKED = ['survival'];
 
 type Suite = () => void | Promise<void>;
 /**
@@ -67,7 +69,7 @@ if (at < 0) {
 process.on('unhandledRejection', (e) => fail('rejected ' + (e instanceof Error ? e.stack : String(e))));
 
 for (const [name, load] of suites) {
-  if (wanted.length && !wanted.includes(name)) continue;
+  if (wanted.length ? !wanted.includes(name) : ASKED.includes(name)) continue;
   console.log(`\n${name}`);
   try { await (await load())(); } catch (e) { fail('threw ' + (e instanceof Error ? e.stack : String(e))); }
 }

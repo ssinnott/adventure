@@ -124,7 +124,8 @@ export function chooseAim(g: Game, k: Known, p: Pilot): Aim | null {
   // A way seen into a map not walked: a town's or a dungeon's own doors first (the keep's gate from
   // Helmstow, a dungeon's stair), the land's after the land.
   const seen = new Set(k.visited()), doors = k.visited().flatMap((m) => k.exits(m).filter((e) => !seen.has(e.to) && fresh(e.to)).map((e) => ({ m, e })));
-  const ours = doors.filter((d) => d.m === st.mapId), near = ours.length ? routeNearest(k, st.mapId, st.x, st.y, st.facing, new Set(ours.map((d) => at(d.e)))) : undefined;
+  // The land's own gate out of a town is no door of the town's: the keep before the Foreland (#723).
+  const ours = doors.filter((d) => d.m === st.mapId && d.e.to !== OUTDOORS), near = ours.length ? routeNearest(k, st.mapId, st.x, st.y, st.facing, new Set(ours.map((d) => at(d.e)))) : undefined;
   const door = near && ours.find((d) => d.e.x === near.x && d.e.y === near.y);
   if (door && st.mapId !== OUTDOORS) return { kind: 'explore', map: door.e.to };
   const walked = [...k.visited().filter((m) => m !== OUTDOORS), ...k.zones()].filter(fresh).sort((a, b) => far(a) - far(b));
@@ -133,7 +134,12 @@ export function chooseAim(g: Game, k: Known, p: Pilot): Aim | null {
   const beside = zones.filter((z) => !trod.has(z.id) && zones.some((t) => trod.has(t.id) && touches(t, z))).map((z) => z.id).filter(fresh).sort((a, b) => far(a) - far(b));
   if (beside.length) return { kind: 'explore', map: beside[0] };
   const any = door ?? doors.sort((a, b) => far(a.m) - far(b.m))[0];
-  return any ? { kind: 'explore', map: any.e.to } : null;
+  if (any) return { kind: 'explore', map: any.e.to };
+  // Nothing left to walk: the goals given up are tried again (#723), else the pilot stands and the clock with it.
+  if (!p.lost.size) return null;
+  p.lost.clear();
+  mem.lostAt.clear();
+  return chooseAim(g, k, p);
 }
 
 /** The goals given up whose company has since gained a level (anyone's) or set a flag: tried again. */

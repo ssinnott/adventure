@@ -41,6 +41,10 @@ import { makeRng } from '../../src/lib/engine/rng.ts';
 import { talk, pick, NEAR } from '../../src/game/pilot/talk.ts';
 import { ENDINGS } from '../../src/content/endings.ts';
 import { PRESTIGE_LEVELS, guildFlag } from '../../src/game/party.ts';
+import { mustRest, botTurn, asSeen, asWritten } from '../../src/game/bot.ts';
+import type { Sees } from '../../src/game/bot.ts';
+import { weary, caster, REST_HP, REST_SP } from '../../src/game/pilot/keep.ts';
+import { startCombat, currentTurn, monsterAct } from '../../src/game/combat.ts';
 
 /** A headless game with an instant pilot, off. */
 const piloted = (seed = 4): Game => {
@@ -65,6 +69,7 @@ export function pilot(): void {
   together();
   strategist();
   talking();
+  survives();
 }
 
 /** A headless game whose company Vask has hired: walked onto his door by the test (its privilege) and his words closed. */
@@ -1185,4 +1190,78 @@ function talking(): void {
   const whys = new Set<string>();
   for (let t = 0; t < 40 && qg.world.state.mapId === 'fx_quay'; t++) { drive(qg, [null]); whys.add(qp.why[0]); }
   ok(qg.world.state.mapId === 'harrow' && whys.has('Passage to Helmstow.'), `bound for Helmstow, the navigator goes by the crossing told: to the boatman, the route chosen and boarded (${qg.world.state.mapId}; ${[...whys].join(' / ')})`);
+}
+
+/**
+ * Survival (#723's first part): the pilot's own rest rule, by member; a mending between fights through
+ * the spell menu; the flight from a fight lost; and a town's own door before the land's gate.
+ */
+function survives(): void {
+  // Rest by member: the company whole and the sorcerer empty, which the harness's rule, pooling the spell points, does not rest for.
+  const r = piloted(), rp = r.pilot!, sorc = r.party.members.find((c) => c.cls === 'sorcerer')!;
+  r.world.travel('harrow', 7, 10, NORTH);
+  r.world.ensureMapState('harrow').explored.fill(-1);
+  sorc.sp = 0;
+  r.party.food = 12;
+  const pooled = mustRest(r.party), t0 = r.world.state.minutes;
+  rp.brains = [keep];
+  rp.toggle(r);
+  drive(r, [null]);
+  const said = rp.why[0];
+  drive(r, Array(5).fill(null));
+  ok(pooled === null && caster(sorc) && sorc.sp === sorc.maxSp && r.world.state.minutes - t0 === 480 && said === `Resting: ${sorc.name} is short of spells.`,
+    `the pilot rests for one caster without spell points, where the harness's pooled rule does not (${pooled}; "${said}"; ${sorc.sp}/${sorc.maxSp}, ${r.world.state.minutes - t0} minutes)`);
+
+  // The thresholds, by member: under REST_HP of the hit points, or a caster under REST_SP of the spell points; a paladin's few are no caster's.
+  const w = structuredClone(r.party), front = w.members[0], pal = w.members.find((c) => c.cls === 'paladin')!, cleric = w.members.find((c) => c.cls === 'cleric')!;
+  pal.sp = 0;
+  front.hp = Math.ceil(front.maxHp * REST_HP);
+  const whole = weary(w);
+  front.hp--;
+  const hurt = weary(w);
+  front.hp = front.maxHp;
+  cleric.sp = Math.ceil(cleric.maxSp * REST_SP) - 1;
+  const dry = weary(w);
+  ok(whole === undefined && hurt?.c === front && hurt.why === 'hp' && dry?.c === cleric && dry.why === 'sp' && !caster(pal),
+    `weary: ${front.name} at ${Math.ceil(front.maxHp * REST_HP)} of ${front.maxHp} and the paladin empty, no rest; a point under, ${hurt?.why}; the cleric under half, ${dry?.why}`);
+
+  // Mending between fights: one at half, no rations to rest on: the mender with the most spell points casts by the spell menu's keys.
+  const m = piloted(), mp = m.pilot!, bram = m.party.members[0], keys: Action[] = [], was = Math.floor(bram.maxHp / 2);
+  bram.hp = was;
+  m.party.food = 0;
+  mp.brains = [(a, b, c) => { const key = keep(a, b, c); if (key) keys.push(key); return key; }];
+  mp.toggle(m);
+  drive(m, Array(8).fill(null));
+  const mender = m.party.members.find((c) => m.log.some((l) => l.startsWith(`${c.name} casts Mend: ${bram.name} recovers`)));
+  ok(!!mender && mender.cls === 'cleric' && bram.hp > was && keys.slice(0, 3).join() === `cast,n${m.party.members.indexOf(mender) + 1},interact` && top(m) === 'ExploreScreen',
+    `one at half is mended between fights by ${mender?.name}, through the spell menu (${keys.join(' ')}; ${was} to ${bram.hp} of ${bram.maxHp})`);
+
+  // A fight lost (two of the front down, six wolves standing): the game's bot flees it; the gate's fights on.
+  const fight = (sees: Sees): string[] => {
+    const f = piloted(), q = f.party;
+    for (const c of q.members.slice(0, 2)) { c.hp = 0; c.conditions = ['unconscious']; }
+    const s = startCombat(q, [{ id: 'fx_pack', monsters: Array(6).fill('wolf') }], f.rng);
+    for (let n = 0; n < 80 && s.outcome === 'ongoing'; n++) {
+      const t = currentTurn(s, q, f.rng);
+      if (!t) break;
+      if (t.side === 'monster') monsterAct(s, q, f.rng); else botTurn(s, q, f.rng, t.i, sees);
+    }
+    return s.log;
+  };
+  const flight = (log: string[]): boolean => log.some((l) => l === 'The party flees!' || l === 'The party fails to get away.');
+  const seenLog = fight(asSeen), writtenLog = fight(asWritten);
+  ok(flight(seenLog) && !flight(writtenLog), `a fight lost: the game's bot tries to flee, the gate's never (${seenLog.find((l) => l.startsWith('The party'))}; the gate's ${writtenLog.length} lines without one)`);
+
+  // A town's own door before the land's gate: the town walked out, its gate to the keep is walked to, though the land's is nearer.
+  const kg = piloted(), kp = kg.pilot!;
+  kg.maps.fx_keep = new GameMap({ id: 'fx_keep', name: 'Keep', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#...#', '#####'] });
+  fixture(kg, { id: 'fx_town', name: 'Town', kind: 'town', start: { x: 2, y: 1, facing: WEST }, rows: ['#########', '#.......#', '#########'],
+    exits: [{ x: 1, y: 1, to: OUTDOORS, tx: 216, ty: 34 }, { x: 7, y: 1, to: 'fx_keep', tx: 1, ty: 1 }] }, [2, 1, WEST]);
+  kp.brains = [aims];
+  kp.toggle(kg);
+  const chosen: string[] = [];
+  for (let t = 0; t < 4 && !(kp.aim && kp.aim.kind === 'explore' && kp.aim.map !== 'fx_town'); t++) { drive(kg, [null]); chosen.push(kp.aim ? JSON.stringify(kp.aim) : 'none'); }
+  const land = routeLengths(knownOf(kg), 'fx_town', 2, 1, WEST).get('1,1')!, gate = routeLengths(knownOf(kg), 'fx_town', 2, 1, WEST).get('7,1')!;
+  ok(companyLevel(kg.party) === 1 && land < gate && kp.aim?.kind === 'explore' && kp.aim.map === 'fx_keep' && kp.goal?.x === 7 && kp.goal.y === 1,
+    `walked out, the town's own gate to a map not visited comes before the land's, ${land} keys to ${gate} (${chosen.join(' then ')})`);
 }
