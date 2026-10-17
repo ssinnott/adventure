@@ -69,7 +69,12 @@ DESIGN.md first for the why.
   moves only under the ice, strikes only a company standing on the ice beside it and in the fight
   reaches only the front row over it, never the back, bow or none.
   Gear may carry a plus: a point is +1 to hit and damage on a weapon, +1 armour class on armour or
-  a shield (`P`, `src/content/items.ts`).
+  a shield (`P`, `src/content/items.ts`). Past a plus, an item may raise a stat while it is borne
+  (`ItemDef.stat`, read through `statOf` by the blow, to-hit, armour, the turn's order, a flight and
+  a heal, never written into a member's stats) and a weapon's blows may carry an element, an added
+  1d6 of it through `elementDamage` that burns a mender and is seen as a spell's is
+  (`ItemDef.element`, #855; DESIGN §5, §6). The sheet prints the total and its raise ("SPE 16+3") and
+  the weapon's element, and a shop says both. No item of the content carries either yet.
 - **Save/load:** F5/F9 to localStorage; door changes, explored cells, group state and the rng all
   survive a reload. Saves are version 2 (the outdoors as one map, cells seen kept a bit apiece); a
   version 1 save loads, its Foreland and Thornmark state folded into the outdoors where they now lie.
@@ -774,6 +779,12 @@ over content broken on purpose too, and two tools to theirs:
   Loft walked in a Game; a Master's person, built in the test; the sheet's lines; no spell's cost or
   rounds moved and nothing else under `src/` reading a tier; saves; the words in the font; the
   pilot's keep at the Sail Loft, which trains there and never opens the tier menu.
+- `items` (#855), on fixtures: a +3 speed coat moves armour and the turn's order worn, and nothing
+  in the pack or the bag; a charm of each stat a fight reads moves its read from the pack; a save
+  holds the coat and no raise; a lightning blade's die, nothing to the immune, half to the
+  resistant, half again to the weak, the steel as ever, seen as a spell's; a fire blade burns a
+  mender; `hits` counts the die at 3.5; the sheet's and a shop's words, in the font and inside the
+  column; what the sell screen pays (`sellPrice`). The content is held to the shape alone.
 - `glyphs`: every symbol `src/ui/` draws past plain ASCII (arrows, stars, hearts) is in the pixel
   font, so none is painted as nothing.
 - `drawn`: every group on the maps is drawn while exploring as each of its kinds, to three, and a
@@ -863,7 +874,7 @@ does.
 | `game/world.ts` | `WorldState` (position, clock, weather seed, per-map state with cells seen in bits, zones set foot in, the kinds met; a group a map has gained since a save, and a saved door only where the map still has one), the zone the party is in and what it is called, movement across zones and gates, reveal, the weather's reach into play (sight, snow, the log, the almanac, fights), roaming groups and when they walk (`walks`, `ended`, `hoursHold`), whether a person or an event is there (`present`), what is in sight (the viewport's rule: `VIEW_DEPTH`, `lineOfSight`, and what a hill hides from below it, `hillOver`, `hidden`) and the looks said on first meeting (`sightings`, `meet`, a den's too), a den's brood paced as they come back, encounter triggers (a group under the ice keeping to it and striking only a company on it), rest, search |
 | `game/calendar.ts` | the months and seasons, dates, dawn and dusk through the year, and the tide |
 | `game/weather.ts` | the `Climate` shape (each area has its own, merged as `CLIMATES` in `content/index.ts`), `weatherAt` (the sky, the temperature, snow lying, wet ground), naming the sky and its log lines, and what it does to sight, steps and bows |
-| `game/party.ts` | races, classes, `Character` (its secondary skills learnt among it), `Party`, conditions, equip, levelling and the trainer's price, the prestiges (titles, pools, `takePrestige`, `spellRank`), the premade party |
+| `game/party.ts` | races, classes, `Character` (its secondary skills learnt among it), `Party`, conditions, equip, what a member bears (`borne`) and a stat as they stand (`statOf`), levelling and the trainer's price, the prestiges (titles, pools, `takePrestige`, `spellRank`), the premade party |
 | `game/people.ts` | `meet`: what a person says and asks, in order (a hand-in the company can make, their words that hold, a done hand-in's after-lines, the first meeting); a hand-in taking its item at the first meeting and paying, with the `early` words to a company never hired; `answer`, with an answer's price as the choice screen lists and bars it (`answerLabel`, `asked`, `barred`); `readText`; `handIns`, `personFlags` and `personGives`, what the checks and the save list read |
 | `game/seeking.ts` | the seeking quests: the trainers placed (`trainersIn`), a quest for each member and prestige (`seekingQuests`), and the places the world map marks (`sought`); pure |
 | `game/prestige.ts` | a prestige's trainer: who the company has of the class, each one's bar (the level, the prestige before, the third's quest, the gold), and teaching it; pure |
@@ -873,7 +884,7 @@ does.
 | `game/stones.ts` | the Hearth's measure: the Stones restored (`stonesRestored`, `savedStones` for the title), the Hearth's bearing from a world cell, its flicker and the almanac's word by the count; pure |
 | `game/passage.ts` | crossings: a passage's fare (nothing once its `free` holds), its next departure and its landing, the floor at the far end, the menu's line and the terms with their warning, and taking it (the fare, the clock, the landing, the company rested); pure |
 | `game/guilds.ts` | a guild quest (`GuildQuest`); a company's rank, worked out from its done flags and kept once reached (`rank_<guild>`); what a hall offers (a quest may wait for a flag, `after`), taking a quest and the report that pays it (gold, items, xp split among the living), an item taken at the first meeting whatever the rank; pure |
-| `game/items.ts`, `game/monsters.ts`, `game/spells.ts` | what an item, a monster and a spell are (`ItemDef`, with a letter's `text`; `MonsterDef`, `SpellDef`) and their lookups; a monster's kind and what each kind sets (`KINDS`: sleep, Holy Strike); the tables are content's |
+| `game/items.ts`, `game/monsters.ts`, `game/spells.ts` | what an item, a monster and a spell are (`ItemDef`, with a letter's `text`, a raise borne and a blow's element; `MonsterDef`, `SpellDef`) and their lookups; a weapon's measure (`hits`) and what a shop pays (`sellPrice`); a monster's kind and what each kind sets (`KINDS`: sleep, Holy Strike); the tables are content's |
 | `game/save.ts`, `game/upgrades.ts` | the save and `SAVE_VERSION`; the upgrades, each registered by the version it brings a save to and run in turn on load, with what they need of the world as it was kept frozen |
 | `game/combat.ts` | `CombatState`, `startCombat`, `currentTurn`, `partyAct`, `monsterAct`, and the log's lines, the glove's once a game (`GLOVE_FLAG`); pure and seeded |
 | `game/bot.ts` | the bot that plays a fight, the gate's and the game's: `botTurn` (the action the resolver took; `gateTurn` the same with the action dropped), its two readings of the monsters (`asWritten`, every trait as written, the gate's; `asSeen`, only what the fight's log has shown, the auto-fight's), the answers a tool may switch off (`ANSWER`) and the rest rule (`mustRest`); pure |
