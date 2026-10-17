@@ -9,7 +9,7 @@ import type { SpellDef, Element } from './spells.ts';
 import { item } from './items.ts';
 import {
   armorClass, attackBonus, weaponOf, isDown, canAct, damage, heal, addCondition, removeCondition, hasCondition, bonus, canTrain, killPay,
-  hasTrait, spellHeal, rankMult, spellRank, WEAPON_MASTER_DMG, HOLY_STRIKE_DMG, MARKSMAN_DMG, SPELLFIRE_DMG, SNEAK_ATTACK_DMG, RAGE_DMG, INSPIRE_HIT,
+  hasTrait, spellHeal, rankMult, spellRank, armsBonus, WEAPON_MASTER_DMG, HOLY_STRIKE_DMG, MARKSMAN_DMG, SPELLFIRE_DMG, SNEAK_ATTACK_DMG, RAGE_DMG, INSPIRE_HIT,
   prestigeOf, deathAt, resists, lift,
 } from './party.ts';
 import type { ClassId } from './party.ts';
@@ -387,7 +387,7 @@ export function partyAct(s: CombatState, party: Party, rng: RngInstance, action:
         if (!standing(m)) { const left = aliveMonsters(s).filter((i) => canReach(s, c, i)); if (!left.length) break; m = s.monsters[left.reduce((a, b) => (s.monsters[b].hp < s.monsters[a].hp ? b : a))]; }
         const hit = rng.chance(toHit(attackBonus(c) + buffHit(s, party, t.i) - (w.ranged && !weatherproof(c) ? s.rangedPenalty : 0), monsterAc(s, m)));
         if (hit) {
-          const dmg = roll(rng, w.dice ?? 1, w.sides ?? 4, (w.bonus ?? 0) + (w.ranged ? 0 : bonus(c.stats.might)) + traitDamage(s, c, w, m) + song + (edge?.damage ?? 0));
+          const dmg = roll(rng, w.dice ?? 1, w.sides ?? 4, (w.bonus ?? 0) + (w.ranged ? 0 : bonus(c.stats.might)) + traitDamage(s, c, w, m) + armsBonus(c) + song + (edge?.damage ?? 0));
           hurtMonster(s, m, dmg);
           s.log.push(`${c.name} hits ${m.def.name} for ${dmg}.` + (m.hp <= 0 ? ` ${m.def.name} dies.` : ''));
         } else s.log.push(`${c.name} misses ${m.def.name}.`);

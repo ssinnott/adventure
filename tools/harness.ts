@@ -34,7 +34,7 @@ import os from 'node:os';
 import { Worker, isMainThread, parentPort } from 'node:worker_threads';
 import { makeRng } from '../src/lib/engine/rng.ts';
 import type { RngInstance } from '../src/lib/engine/rng.ts';
-import { CLASSES, defaultParty, xpForLevel, levelUp, isDown, hasCondition, removeCondition, lift, heal, equip, weaponOf, attackBonus, armorClass, bonus, hasTrait, spellHeal, rankMult, RANK_STEP, SPELLFIRE_DMG, SNEAK_ATTACK_DMG, MAX_LEVEL, PRESTIGE_LEVELS, prestigeOf, takePrestige } from '../src/game/party.ts';
+import { CLASSES, defaultParty, xpForLevel, levelUp, isDown, hasCondition, removeCondition, lift, heal, equip, weaponOf, attackBonus, armsBonus, armorClass, bonus, hasTrait, spellHeal, rankMult, RANK_STEP, SPELLFIRE_DMG, SNEAK_ATTACK_DMG, MAX_LEVEL, PRESTIGE_LEVELS, prestigeOf, takePrestige } from '../src/game/party.ts';
 import type { Character, Party } from '../src/game/party.ts';
 import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, sweptRow, asGroup, castOnAlly, castOnParty, toHit, buffHit, traitDamage, monsterAc, monsterHit, seenMult, blowsOf, songDamage, FRONT_ROW } from '../src/game/combat.ts';
 import type { CombatState, MonsterInst, PartyAction, Edge, Fighters } from '../src/game/combat.ts';
@@ -221,7 +221,7 @@ const spellDamage = (c: Character, sp: SpellDef): number =>
 function weaponDamage(s: CombatState, p: Party, c: Character, m: MonsterInst, capped = true): number {
   const w = weaponOf(c), e = edgeOf(c, s.round), at = p.members.indexOf(c);
   const chance = toHit(attackBonus(c) + buffHit(s, p, at) - (w.ranged && !(c.cls === 'ranger' && prestigeOf(c) >= 2) ? s.rangedPenalty : 0), monsterAc(s, m));
-  const blow = Math.max(0, hits(w) + (w.ranged ? 0 : bonus(c.stats.might)) + traitDamage(s, c, w, m) + songDamage(p) + e.damage);
+  const blow = Math.max(0, hits(w) + (w.ranged ? 0 : bonus(c.stats.might)) + traitDamage(s, c, w, m) + armsBonus(c) + songDamage(p) + e.damage);
   return (blowsOf(c) + e.blows - 1) * chance * (capped ? Math.min(m.hp, blow) : blow);
 }
 
