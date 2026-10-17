@@ -367,8 +367,8 @@ Decided by delegate for #53, each the owner's to overturn:
    one hill straight ahead would hide 4, 6 and 7 of the 7 squares at depths 2 to 4, more on one side
    than the other, ground the view shows plainly beside it.
 3. **What stands taller than a hill is seen over it** (`GameMap.overtops`): the mountain, the end of
-   the world and a landmark (Crowness Light, Highcell) are drawn and marked past a hill as before; a
-   building, a tree, a rock and a group are not.
+   the world as it is drawn tall (decision 8) and a landmark (Crowness Light, Highcell) are drawn and
+   marked past a hill as before; a building, a tree, a rock and a group are not.
 4. **Behind a hill the hill's own ground runs on,** flat, in its colour and with nothing on it, and the
    ground out to the horizon past a hill ahead is the hill's: a hole would draw a seam, and the far
    ground's own colour would tell what lies there.
@@ -381,6 +381,12 @@ Decided by delegate for #53, each the owner's to overturn:
 7. **The pilot is left as it was:** it reads the automap's seen squares and groups through `Known`,
    so it sees what a player sees; a hill's square is seen and stood on, so its explorer climbs it as a
    frontier square and sees what lies behind.
+8. **The world's end drawn as the atlas paints it (#829) is the void for sight:** `blocksView` reads
+   the cell and not its look, so a void drawn as a hill stops the view as the void always did, from a
+   hill too, and no hill rule reads a look. Whether a hill hides it reads the look: bare or drawn as a
+   mountain it stands over a hill; drawn as the sea or as land it lies as low as they do and is hidden
+   with them. Past and beside a hill the view draws the look as #829 draws it, and the ground to the
+   horizon is the look's but where a hill on the centre line hides it.
 
 ## The calendar and the weather
 
