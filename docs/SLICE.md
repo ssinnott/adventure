@@ -772,7 +772,7 @@ over content broken on purpose too, and two tools to theirs:
 - `mastery` (#852): each tier's effect through the blow and the cast for a fighter, a caster and a
   hybrid; the bars; the seven trainers of 13 and over teach Expert and the two under do not; the Sail
   Loft walked in a Game; a Master's person, built in the test; the sheet's lines; no spell's cost or
-  rounds moved and nothing else under `src/` reading a tier; saves; the words in the font; and the
+  rounds moved and nothing else under `src/` reading a tier; saves; the words in the font; the
   pilot's keep at the Sail Loft, which trains there and never opens the tier menu.
 - `glyphs`: every symbol `src/ui/` draws past plain ASCII (arrows, stars, hearts) is in the pixel
   font, so none is painted as nothing.
