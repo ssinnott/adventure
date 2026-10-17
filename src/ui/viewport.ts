@@ -340,15 +340,8 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
   order.sort((a, b) => Math.abs(b) - Math.abs(a));
   // A door outdoors among mountain, rock or trees is drawn as they are (drawnCell).
   const drawn = (x: number, y: number): Cell => drawnCell(map, x, y);
-  // Seen from below a hill, what lies behind it is not drawn (#53): the hill's own ground runs on in
-  // its place with nothing standing on it, and nothing beside it takes it for a wall.
-  const behind = (d: number, l: number): { x: number; y: number } | undefined => hillOver(map, px, py, f, d, l);
-  const solidAt = (d: number, l: number): boolean => !behind(d, l) && isSolidWall(drawn(...toPair(cellAt(px, py, f, d, l))));
-  const houseAt = (d: number, l: number): boolean => isHouse(map, ...toPair(cellAt(px, py, f, d, l)));
+  const { behind, solidAt, houseAt, tentAt } = standsAt(map, px, py, f, backdrop);
   const voidAt = (d: number, l: number): boolean => map.at(...toPair(cellAt(px, py, f, d, l))).solid === 'void';
-  // A tent stands lower than a wall, so it hides no face of a wall or of another tent. Over the smoke
-  // test's backdrop it is the wall it stands in for, as a landmark is: the crack sweep looks at walls.
-  const tentAt = (d: number, l: number): boolean => !backdrop && isTent(map, ...toPair(cellAt(px, py, f, d, l)));
   const boxAt = (d: number, l: number): boolean => solidAt(d, l) && !tentAt(d, l);
   const voids = new Path2D();
   // What a cell's seed steps by to the next cell across and ahead, so a block shared by two faces
@@ -524,6 +517,28 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
 }
 
 function toPair(p: { x: number; y: number }): [number, number] { return [p.x, p.y]; }
+
+/**
+ * What the scene takes to stand on the cell at (d, l) from the eye: a wall (a door outdoors among
+ * mountain, rock or trees drawn as they are), a house, a tent. Seen from below a hill, what lies
+ * behind it is not drawn (#53): the hill's own ground runs on in its place with nothing standing on
+ * it, so nothing beside it takes it for a wall, a house or a tent; `behind` gives the hill. A tent
+ * stands lower than a wall, so it hides no face of a wall or of another tent. Over the smoke test's
+ * backdrop it is the wall it stands in for, as a landmark is: the crack sweep looks at walls.
+ */
+export function standsAt(map: GameMap, px: number, py: number, f: Facing, backdrop?: string): {
+  behind: (d: number, l: number) => { x: number; y: number } | undefined; solidAt: (d: number, l: number) => boolean;
+  houseAt: (d: number, l: number) => boolean; tentAt: (d: number, l: number) => boolean;
+} {
+  const sq = (d: number, l: number): [number, number] => toPair(cellAt(px, py, f, d, l));
+  const behind = (d: number, l: number): { x: number; y: number } | undefined => hillOver(map, px, py, f, d, l);
+  return {
+    behind,
+    solidAt: (d, l) => !behind(d, l) && isSolidWall(drawnCell(map, ...sq(d, l))),
+    houseAt: (d, l) => !behind(d, l) && isHouse(map, ...sq(d, l)),
+    tentAt: (d, l) => !backdrop && !behind(d, l) && isTent(map, ...sq(d, l)),
+  };
+}
 
 // ------------------------------------------------------------------ sky ----
 

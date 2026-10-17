@@ -6,7 +6,7 @@ import { GameMap } from '../../src/game/map.ts';
 import type { MapDef } from '../../src/game/map.ts';
 import { NORTH, EAST, SOUTH } from '../../src/game/types.ts';
 import type { Facing } from '../../src/game/types.ts';
-import { SNOW_HOLD, cropColor, fieldAt, hedgeColor, heatherBloom, iceColor, viewCells } from '../../src/ui/viewport.ts';
+import { SNOW_HOLD, cropColor, fieldAt, hedgeColor, heatherBloom, iceColor, viewCells, standsAt } from '../../src/ui/viewport.ts';
 import { markedGroups } from '../../src/ui/frame.ts';
 import { tideAt, TIDE_PERIOD, HIGH_WATER, MINUTES_PER_DAY, daylightAt } from '../../src/game/calendar.ts';
 import { hoursHold, VIEW_DEPTH, World, seen } from '../../src/game/world.ts';
@@ -160,17 +160,29 @@ function sight(): void {
   const low = look(VALLEY, 4, 5, NORTH), ridge = look(VALLEY, 4, 3, NORTH);
   const below = marks(low, [[4, 3], [4, 2], [4, 1], [3, 2], [5, 2]]), above = marks(ridge, [[4, 2], [4, 1], [3, 1], [5, 1]]);
   ok(below === 'ms -- -- -- --' && above === 'ms ms ms ms', `from the low ground the ridge is seen and the valley past it neither drawn nor marked; from the ridge it is both (${below}; ${above})`);
+  const seam = marks(look(VALLEY, 4, 4, NORTH), [[3, 2], [5, 2]]);
+  ok(seam === '-- --', `at the ridge's foot the line on the seam of two of its hills is hidden, where one hill's edge hides nothing (below) (${seam})`);
   const run = marks(look(VALLEY, 1, 3, EAST), [[2, 3], [3, 3], [4, 3], [5, 3]]);
   ok(run === 'ms ms ms ms', `on the ridge the hills along it are seen to the day's four squares: a run of hills is no wall each square (${run})`);
   const woods = marks(look(VALLEY.map((r) => r.replace(/\^/g, 't')), 4, 5, NORTH), [[4, 2], [4, 1], [3, 2], [5, 2]]);
   ok(woods === 'ms ms ms ms', `a wood in the ridge's place hides nothing: the view passes between its trees (${woods})`);
   const peaks = marks(look(VALLEY.map((r, y) => (y === 1 ? 'MMMMMMMMM' : r)), 4, 5, NORTH), [[4, 1], [4, 2]]);
   ok(peaks === 'ms --', `the mountain past the ridge stands taller and is seen over it, the ground between not (${peaks})`);
+  const tall = look(VALLEY.map((r, y) => (y === 1 ? 'M,,%,B,,M' : r)), 4, 5, NORTH, DAY, { landmarks: [{ x: 5, y: 1, kind: 'lighthouse' }] }), view = standsAt(tall.map, 4, 5, NORTH);
+  const ends = [tall.explored(3, 1), tall.explored(5, 1), tall.explored(4, 1), !!view.behind(4, -1), !!view.behind(4, 1), !!view.behind(4, 0)];
+  ok(ends.join() === 'true,true,false,false,false,true', `so are the end of the world and a landmark past it, marked and drawn, the ground between them not (${ends.join()})`);
+  // A house past the hill is no wall, house or tent to the scene from below, so nothing beside it is drawn to meet it.
+  const HOUSE = ['MMMMMMM', 'M,BBB,M', 'M,,,,,M', 'M,,^,,M', 'M,,,,,M', 'M,,,,,M', 'MMMMMMM'], felt: Partial<MapDef> = { palette: { wallStyle: 'tent' } };
+  const under = standsAt(new GameMap(def(HOUSE, 3, 5, NORTH, felt)), 3, 5, NORTH), onto = standsAt(new GameMap(def(HOUSE, 3, 3, NORTH, felt)), 3, 3, NORTH);
+  const stand = [under.solidAt(4, 0), under.houseAt(4, 0), under.tentAt(4, 0), under.houseAt(4, 1), under.tentAt(4, 1), onto.solidAt(2, 0), onto.houseAt(2, 0), onto.tentAt(2, 0)];
+  ok(stand.join() === 'false,false,false,true,true,true,true,true', `a felt house past a hill is no wall, house or tent to the scene from below, the one beside it is, and from the hill it is all three (${stand.join()})`);
   // One hill: hidden behind from below, seen past from beside it, in the view and in the squares round the company.
   const lone = [marks(look(LONE, 3, 5, NORTH), [[3, 3], [3, 2], [3, 1]]), marks(look(LONE, 4, 4, NORTH), [[3, 2]]), marks(look(LONE, 4, 3, NORTH), [[3, 2], [3, 1]]), marks(look(LONE, 3, 3, NORTH), [[3, 2], [3, 1]])];
   ok(lone.join(' / ') === 'ms -- -- / ms / ms ms / ms ms', `a lone hill hides what is behind it from below, and from beside it or on it that is seen (${lone.join(' / ')})`);
   const round = [look(LONE, 3, 4, SOUTH).explored(3, 2), look(LONE.map((r) => r.replace('^', ',')), 3, 4, SOUTH).explored(3, 2)];
   ok(round.join() === 'false,true', `the squares round the company are marked as before, but not the one behind a hill at its back (${round.join()})`);
+  const beside = [look(LONE, 2, 3, NORTH).explored(4, 3), look(LONE, 4, 3, NORTH).explored(2, 3), look(LONE, 3, 2, NORTH).explored(3, 4)];
+  ok(beside.join() === 'false,false,false', `nor the one past a hill beside it, on its right or its left, or at its back facing away (${beside.join()})`);
   // A group behind the brow: not drawn, not marked, not met; from the ridge, all three.
   const brow: Partial<MapDef> = { encounters: [{ id: 'fx_brow', x: 4, y: 2, monsters: ['fen_eel'], roams: false }] };
   const foot = look(VALLEY, 4, 4, NORTH, DAY, brow), top = look(VALLEY, 4, 3, NORTH, DAY, brow);

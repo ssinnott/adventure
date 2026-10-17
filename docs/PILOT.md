@@ -356,15 +356,17 @@ not the finish.
   yet mean that nobody could finish the chapter. The issue's flag was built as written ("nothing else
   changes"); a frontier of the squares not walked, or the explorer asked before the walk again, is the
   owner's call.
-- **Survival.** The sweep's figures are in the table over the decisions for #723: 11 of 12 finish
-  with each company. A finished run takes 7,655 to 18,558 ticks, played as the survival sweep plays
-  it (#842's second review). The lost rule fires 3 to 17 times a finished run, a median of about 9
-  (counted from the log), on the world's minutes, sleep among them (decision 13 for #723).
-  `Game.fight` still takes every group beside the party at once; the two falls left are walks to a
-  rest with members down (premade seed 8 on Callow Downs, drawn seed 11 on the Foreland).
+- **Survival.** The sweep's figures are in the table over the decisions for #723. Since a hill hides
+  what lies behind it (#53, #844), 12 of 12 finish with the premade company and 11 of 12 with the
+  companies the seeds draw; a finished run takes 7,189 to 34,845 ticks, played as the survival sweep
+  plays it. At #842's second review the lost rule fired 3 to 17 times a finished run, a median of
+  about 9 (counted from the log), on the world's minutes, sleep among them (decision 13 for #723).
+  `Game.fight` still takes every group beside the party at once; the one fall left is drawn seed 10,
+  on the Foreland at 216,42, at level 2 (the road bandits).
 - **The last one standing does not flee.** A fight is lost only once one of the company falls in it
   (`beaten`), so a company with one member standing, the rest down before it began, fights on to the
-  end, as in the two falls left. A follow-up, if the owner wants it (the delegate's call for #723).
+  end, as in both of the falls at #842's merge. A follow-up, if the owner wants it (the delegate's
+  call for #723).
 - **Two maps in.** A goal's map behind a map not visited is not reached by `toward`: `routeMaps`
   goes only to maps visited and the goal's own, and the explorer never takes an exit, so on seed 10
   Thornhold's gate and the Grove's steps were seen and never stepped on (#841's review). A seen exit
@@ -623,8 +625,10 @@ The figures: The Quiet Farm played from a new game by every brain on seeds 1 to 
 | the same with the rest at 50% and 25% | 8 of 11 run | two fell, one stood |
 | head aff655d9, at #842's review | 10 | all but 7 (still running) and 9 (fell: the flight's loop) |
 | head aff655d9, the companies the seeds draw, at #842's review | 6 | 1, 2, 5, 6, 8, 10 |
-| this pull request | 11 | all but 8 (fell on Callow Downs at level 3, tick 4,720) |
-| this pull request, the companies the seeds draw (`randomParty`) | 11 | all but 11 (fell on the Foreland at level 2, tick 5,300) |
+| #842 as merged | 11 | all but 8 (fell on Callow Downs at level 3, tick 4,720) |
+| #842 as merged, the companies the seeds draw (`randomParty`) | 11 | all but 11 (fell on the Foreland at level 2, tick 5,300) |
+| #844, a hill hiding what lies behind it from lower ground (#53; 73c49d4a) | 12 | all |
+| #844, the companies the seeds draw | 11 | all but 10 (fell on the Foreland at 216,42 at level 2, tick 4,502: the road bandits) |
 | main, the companies the seeds draw | 3 | 3, 4, 6 |
 
 1. **A town's own doors come before the land's gate** (`chooseAim`'s walk). The gate out of Helmstow onto the Foreland counted as one of the town's doors to a map not visited, and from where the meetings left the company it was nearer than the keep's: on seed 4 the company walked out at level 1 at tick 617, never entered the keep, and fell at 1,440. #720's decision 8 meant the keep first. 2 finished before, 5 with it.
