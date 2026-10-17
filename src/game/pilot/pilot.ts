@@ -12,7 +12,7 @@ import { CreateScreen, randomParty } from '../../ui/create.ts';
 import { freshSeed } from '../../lib/engine/rng.ts';
 import { knownOf } from './known.ts';
 import type { Known } from './known.ts';
-import { route } from './route.ts';
+import { route, unroute } from './route.ts';
 import type { Goal } from './route.ts';
 
 export type Tempo = 1 | 2 | 4;
@@ -75,7 +75,7 @@ export class Pilot {
    * A new company has heard nothing and is bound nowhere: a new game or a load empties the corpus, the
    * goal, its plan and the squares found shut (Game.newGame, Game.loadGame).
    */
-  forget(): void { this.heard.length = 0; this.goal = null; this.plan = []; this.shut.length = 0; }
+  forget(): void { this.heard.length = 0; this.goal = null; this.plan = []; this.shut.length = 0; unroute(this); }
 
   /**
    * Turns on or off; says the line. Off, a fight on top goes back to its keys. On with no game under
@@ -89,6 +89,7 @@ export class Pilot {
       // The viewer may walk anywhere: the goal and its plan go with the helm.
       this.goal = null;
       this.plan = [];
+      unroute(this);
       if (g.top instanceof CombatScreen) g.top.auto = false;
       g.say('You take the helm.');
       return;

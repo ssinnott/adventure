@@ -27,67 +27,91 @@ export interface Goal {
 /** The blocks on one goal that make it shut to the navigator: at the third it drops the goal. */
 const BLOCKS = 3;
 
+/** A state of the search: a square, a facing and the keys it took to stand there so. */
+interface State { x: number; y: number; f: Facing; n: number }
+/** A square as the search keys it, and a state: y * 65536 + x, and that times 4 plus the facing. */
+const sq = (q: { x: number; y: number }): number => q.y * 65536 + q.x;
+const id = (q: State): number => sq(q) * 4 + q.f;
+
 /**
- * The keys from (x, y, facing) to (tx, ty) over seen, passable squares of one map; null when none.
- * Turning costs 1, a step 1: breadth-first over (x, y, facing), a step going onto a square Known has a
- * cell for that `passableCell` reads 'ok' or 'unlock' for the company (`partyCan`), where the automap
- * marks no group, and that holds no exit or rift short of the end (a step onto one leaves the map).
- * Of two routes as short, the one that steps first, then the one that turns left.
+ * Breadth-first from (x, y, facing), a step or a turn costing 1: a step goes onto a square Known has a
+ * cell for that `passableCell` reads 'ok' or 'unlock' for the company (`partyCan`) and the automap
+ * marks no group on. A route may end on an exit or a rift but goes on from none, as a step onto one
+ * leaves the map. Each state is reached once, by its fewest keys; of two ways as short, the one that
+ * steps first, then the one that turns left. It stops at the first square `end` holds for, if given;
+ * `from` keeps the state each was reached from, and the key.
  */
-export function routeOn(k: Known, map: string, x: number, y: number, facing: Facing, tx: number, ty: number): Action[] | null {
-  if (!k.cell(map, tx, ty)) return null;
-  // A square is y * 65536 + x, a state that times 4 plus the facing; each square is read once.
-  const can = partyCan(k.party), sq = (q: { x: number; y: number }): number => q.y * 65536 + q.x;
-  const held = new Set(k.groups(map).map(sq));
+function search(k: Known, map: string, x: number, y: number, facing: Facing, end?: (q: State) => boolean): { queue: State[]; from: Map<number, [number, Action]>; found?: State } {
+  const can = partyCan(k.party), held = new Set(k.groups(map).map(sq));
   const leaves = new Set([...k.exits(map), ...k.features(map).filter((f) => f.kind === 'rift')].map(sq));
   const read = new Map<number, boolean>();
-  const open = (q: { x: number; y: number }): boolean => {
-    const s = sq(q);
-    let o = read.get(s);
+  const open = (q: State): boolean => {
+    let o = read.get(sq(q));
     if (o === undefined) {
       const c = k.cell(map, q.x, q.y), pass = c && passableCell(c, can);
-      o = (pass === 'ok' || pass === 'unlock') && !held.has(s) && (!leaves.has(s) || (q.x === tx && q.y === ty));
-      read.set(s, o);
+      o = (pass === 'ok' || pass === 'unlock') && !held.has(sq(q));
+      read.set(sq(q), o);
     }
     return o;
   };
-  // `from` keeps the state each was reached from, and the key.
-  const id = (q: { x: number; y: number; f: Facing }): number => sq(q) * 4 + q.f;
-  const start = { x, y, f: facing }, from = new Map<number, [number, Action]>([[id(start), [-1, 'forward']]]);
-  const queue = [start];
+  const start: State = { x, y, f: facing, n: 0 }, from = new Map<number, [number, Action]>([[id(start), [-1, 'forward']]]), queue = [start];
   for (let i = 0; i < queue.length; i++) {
     const q = queue[i];
-    if (q.x === tx && q.y === ty) {
-      const keys: Action[] = [];
-      for (let s = id(q); s !== id(start); s = from.get(s)![0]) keys.push(from.get(s)![1]);
-      return keys.reverse();
-    }
-    const moves: [Action, { x: number; y: number; f: Facing }][] = [
-      ['forward', { x: q.x + FACING_DX[q.f], y: q.y + FACING_DY[q.f], f: q.f }],
-      ['turnLeft', { x: q.x, y: q.y, f: turnLeft(q.f) }],
-      ['turnRight', { x: q.x, y: q.y, f: turnRight(q.f) }],
+    if (end?.(q)) return { queue, from, found: q };
+    if (i > 0 && leaves.has(sq(q))) continue;
+    const moves: [Action, State][] = [
+      ['forward', { x: q.x + FACING_DX[q.f], y: q.y + FACING_DY[q.f], f: q.f, n: q.n + 1 }],
+      ['turnLeft', { x: q.x, y: q.y, f: turnLeft(q.f), n: q.n + 1 }],
+      ['turnRight', { x: q.x, y: q.y, f: turnRight(q.f), n: q.n + 1 }],
     ];
-    for (const [a, n] of moves) {
-      if ((a === 'forward' && !open(n)) || from.has(id(n))) continue;
-      from.set(id(n), [id(q), a]);
-      queue.push(n);
+    for (const [a, s] of moves) {
+      if ((a === 'forward' && !open(s)) || from.has(id(s))) continue;
+      from.set(id(s), [id(q), a]);
+      queue.push(s);
     }
   }
-  return null;
+  return { queue, from };
 }
 
 /**
- * The maps and exits from `from` to `to` over visited maps' seen exits; null when none, [] when the
- * two are one map. Both are maps as played (a zone map's is the outdoors', `World.locate`), as
- * `Known.visited` and an exit's `to` give them: breadth-first, an edge for each exit Known gives on a
- * map whose `to` is visited or is `to`.
+ * The keys from (x, y, facing) to (tx, ty) over seen, passable squares of one map; null when none.
+ * Turning costs 1, a step 1 (`search`): round the groups the automap marks, and onto an exit or a
+ * rift only at the end.
+ */
+export function routeOn(k: Known, map: string, x: number, y: number, facing: Facing, tx: number, ty: number): Action[] | null {
+  if (!k.cell(map, tx, ty)) return null;
+  const { from, found } = search(k, map, x, y, facing, (q) => q.x === tx && q.y === ty);
+  if (!found) return null;
+  const keys: Action[] = [];
+  for (let s = id(found); from.get(s)![0] !== -1; s = from.get(s)![0]) keys.push(from.get(s)![1]);
+  return keys.reverse();
+}
+
+/**
+ * The length of `routeOn`'s route from (x, y, facing) to every square it reaches, in one search: by
+ * square ("x,y"), the fewest keys over the facings it may stand there in. For a brain that wants the
+ * nearest of many squares (#718's frontier, #719's businesses), where a `routeOn` for each would
+ * search the map once a square.
+ */
+export function routeLengths(k: Known, map: string, x: number, y: number, facing: Facing): Map<string, number> {
+  const out = new Map<string, number>();
+  for (const q of search(k, map, x, y, facing).queue) if (!out.has(`${q.x},${q.y}`)) out.set(`${q.x},${q.y}`, q.n);
+  return out;
+}
+
+/**
+ * The maps and exits from `from` to `to` over the exits seen; null when none, [] when the two are one
+ * map. Both are maps as played (a zone map's is the outdoors', `World.locate`), as `Known.visited` and
+ * an exit's `to` give them: breadth-first, an edge for each exit Known gives. A map not walked has no
+ * square seen, so the way goes over visited maps alone, as the issue has it; an omniscient pilot's
+ * (#723) goes over any.
  */
 export function routeMaps(k: Known, from: string, to: string): { map: string; exit: Exit }[] | null {
   if (from === to) return [];
-  const visited = new Set(k.visited()), back = new Map<string, { map: string; exit: Exit }>(), queue = [from];
+  const back = new Map<string, { map: string; exit: Exit }>(), queue = [from];
   for (let i = 0; i < queue.length; i++) {
     for (const exit of k.exits(queue[i])) {
-      if (exit.to === from || back.has(exit.to) || (!visited.has(exit.to) && exit.to !== to)) continue;
+      if (exit.to === from || back.has(exit.to)) continue;
       back.set(exit.to, { map: queue[i], exit });
       if (exit.to !== to) { queue.push(exit.to); continue; }
       const hops: { map: string; exit: Exit }[] = [];
@@ -98,51 +122,65 @@ export function routeMaps(k: Known, from: string, to: string): { map: string; ex
   return null;
 }
 
-/** What the navigator keeps of a goal between its keys: its blocks, the lines said when it was set, and the last key pressed and from where. */
+/**
+ * What the navigator keeps of a goal between its keys, by the goal's square (a brain may set an equal
+ * goal afresh each tick): its blocks, the lines said when it was set and the last key pressed, from
+ * where, with the lines said and the screens shown by then.
+ */
 interface Trail {
-  goal: Goal; blocks: number; said: number;
-  last?: { map: string; x: number; y: number; facing: Facing; key: Action; said: number };
+  map: string; x: number; y: number; blocks: number; said: number;
+  last?: { map: string; x: number; y: number; facing: Facing; key: Action; said: number; shown: number };
 }
 const trails = new WeakMap<Pilot, Trail>();
 
+/** Forgets what the navigator kept of its goal: the helm taken back, a new game or a load (`Pilot`). */
+export function unroute(p: Pilot): void { trails.delete(p); }
+
 /**
  * The brain: walks `p.goal`, pressing one key a call, and only with the map on top (a menu, a box or
- * a fight opened on the way is another brain's or the frame's, and the plan waits for it). It plans
- * afresh when the plan is spent and whenever the party is not where the last key should have left
- * it (an exit taken, a flight, a push). A step that left the party where it stood was blocked: the
- * plan goes, and at the third block on one goal the goal goes too, its square told to the explorer
+ * a fight opened on the way is another brain's or the frame's, and the plan waits for it). The goal
+ * is reached by standing on it or by a step onto it that went through (it took an exit, or opened a
+ * visit or a fight), looked for first whatever is on top. It plans afresh when the plan is spent and
+ * whenever the party is not where the last key should have left it (an exit taken, a flight, a
+ * push). A step that left the party where it stood, with no screen shown since, was refused: the
+ * plan goes, and at the third on one goal the goal goes too, its square told to the explorer
  * (`Pilot.shut`, #718).
  */
 export const route: Brain = (g, k, p) => {
   const goal = p.goal;
-  if (!goal || !(g.top instanceof ExploreScreen)) return null;
+  if (!goal) return null;
   const st = g.world.state, at = g.world.locate(goal.map, goal.x, goal.y);
   let t = trails.get(p);
-  if (!t || t.goal !== goal) { t = { goal, blocks: 0, said: g.said }; trails.set(p, t); p.plan = []; }
-  if (st.mapId === at.mapId && st.x === at.x && st.y === at.y) { p.goal = null; p.plan = []; return null; }
-  const last = t.last;
-  t.last = undefined;
-  if (last) {
-    const f = last.key === 'turnLeft' ? turnLeft(last.facing) : last.key === 'turnRight' ? turnRight(last.facing) : last.facing;
-    const ahead = last.key === 'forward' ? { x: last.x + FACING_DX[f], y: last.y + FACING_DY[f] } : { x: last.x, y: last.y };
-    const stood = st.mapId === last.map && st.x === last.x && st.y === last.y && st.facing === last.facing;
-    if (last.key === 'forward' && stood) {
-      p.plan = [];
-      if (++t.blocks >= BLOCKS) {
-        p.shut.push({ map: last.map, ...ahead, why: saidSince(g, last.said)[0] ?? '' });
-        p.why = [`${goal.name.charAt(0).toUpperCase()}${goal.name.slice(1)} is shut to me.`];
-        p.goal = null;
-        return null;
-      }
-    } else if (st.mapId !== last.map || st.x !== ahead.x || st.y !== ahead.y || st.facing !== f) p.plan = [];
+  if (!t || t.map !== goal.map || t.x !== goal.x || t.y !== goal.y) {
+    t = { map: goal.map, x: goal.x, y: goal.y, blocks: 0, said: g.said };
+    trails.set(p, t);
+    p.plan = [];
   }
+  const last = t.last, f = !last ? st.facing : last.key === 'turnLeft' ? turnLeft(last.facing) : last.key === 'turnRight' ? turnRight(last.facing) : last.facing;
+  const ahead = !last ? st : last.key === 'forward' ? { x: last.x + FACING_DX[f], y: last.y + FACING_DY[f] } : { x: last.x, y: last.y };
+  const stood = !!last && st.mapId === last.map && st.x === last.x && st.y === last.y && st.facing === last.facing;
+  const shown = !!last && g.shown !== last.shown;
+  const onto = !!last && last.key === 'forward' && last.map === at.mapId && ahead.x === at.x && ahead.y === at.y && (!stood || shown);
+  if ((st.mapId === at.mapId && st.x === at.x && st.y === at.y) || onto) { p.goal = null; p.plan = []; trails.delete(p); return null; }
+  if (!(g.top instanceof ExploreScreen)) return null;
+  t.last = undefined;
+  if (last && last.key === 'forward' && stood && !shown) {
+    p.plan = [];
+    if (++t.blocks >= BLOCKS) {
+      p.shut.push({ map: last.map, x: ahead.x, y: ahead.y, why: saidSince(g, last.said)[0] ?? '' });
+      p.why = [`${goal.name.charAt(0).toUpperCase()}${goal.name.slice(1)} is shut to me.`];
+      p.goal = null;
+      trails.delete(p);
+      return null;
+    }
+  } else if (last && (st.mapId !== last.map || st.x !== ahead.x || st.y !== ahead.y || st.facing !== f)) p.plan = [];
   if (!p.plan.length) {
     const plan = st.mapId === at.mapId ? routeOn(k, st.mapId, st.x, st.y, st.facing, at.x, at.y) : toExit(k, st, at.mapId);
-    if (!plan?.length) { p.why = [`No way to ${goal.name} that I have seen.`]; p.goal = null; return null; }
+    if (!plan?.length) { p.why = [`No way to ${goal.name} that I have seen.`]; p.goal = null; trails.delete(p); return null; }
     p.plan = plan;
   }
   const key = p.plan.shift()!, heard = saidSince(g, t.said).at(-1);
-  t.last = { map: st.mapId, x: st.x, y: st.y, facing: st.facing, key, said: g.said };
+  t.last = { map: st.mapId, x: st.x, y: st.y, facing: st.facing, key, said: g.said, shown: g.shown };
   p.why = heard === undefined ? [`Bound for ${goal.name}.`] : [`Bound for ${goal.name}.`, fit(heard)];
   return key;
 };

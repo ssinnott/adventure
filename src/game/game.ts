@@ -60,6 +60,8 @@ export class Game {
   /** What had been said when the party's last action began: a visit that action opens shows the lines it said, a doorway's event among them. */
   actionFrom = 0;
   screens: Screen[] = [];
+  /** Screens ever put on top (`push`): the pilot's navigator tells a refused step from one a fight or a visit put back. */
+  shown = 0;
   frame = 0;
   /** The party member the sheet opens on. */
   selected = 0;
@@ -116,7 +118,7 @@ export class Game {
   // ---- screens ----
   get top(): Screen { return this.screens[this.screens.length - 1]; }
   /** Puts a screen on top; a message box's words are heard by the pilot as it opens. */
-  push(s: Screen): void { this.screens.push(s); if (s instanceof MessageScreen) this.pilot?.hear(s.text); }
+  push(s: Screen): void { this.screens.push(s); this.shown++; if (s instanceof MessageScreen) this.pilot?.hear(s.text); }
   pop(): void { if (this.screens.length > 1) this.screens.pop(); }
   say(line: string): void { this.log.push(line); this.said++; if (this.log.length > 60) this.log.shift(); this.pilot?.hear(line); }
   message(text: string, then?: () => void): void { this.push(new MessageScreen(text, then)); }

@@ -6,15 +6,15 @@ import { Game, ExploreScreen } from '../../src/game/game.ts';
 import type { Store } from '../../src/game/save.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { MapDef, Feature } from '../../src/game/map.ts';
-import { EAST, SOUTH, WEST, FACING_DX, FACING_DY, turnLeft, turnRight } from '../../src/game/types.ts';
+import { NORTH, EAST, SOUTH, WEST, FACING_DX, FACING_DY, turnLeft, turnRight } from '../../src/game/types.ts';
 import type { Facing } from '../../src/game/types.ts';
 import type { Action } from '../../src/input.ts';
 import { Pilot, HEARD_MAX, BRAINS } from '../../src/game/pilot/pilot.ts';
 import type { Brain } from '../../src/game/pilot/pilot.ts';
 import { knownOf } from '../../src/game/pilot/known.ts';
-import { routeOn, routeMaps, route } from '../../src/game/pilot/route.ts';
+import { routeOn, routeMaps, routeLengths, route } from '../../src/game/pilot/route.ts';
 import { CombatScreen } from '../../src/ui/combat.ts';
-import { ChoiceScreen } from '../../src/ui/screens.ts';
+import { ChoiceScreen, InteriorScreen } from '../../src/ui/screens.ts';
 import { randomParty } from '../../src/ui/create.ts';
 import { CLASSES, RACES } from '../../src/game/party.ts';
 import type { RaceId } from '../../src/game/party.ts';
@@ -270,8 +270,13 @@ function navigator(): void {
 
   // A corridor with a turn, as tools/tests/movement.ts builds one: from its end, facing away.
   const bend: MapDef = { id: 'fx_bend', name: 'Bend', kind: 'dungeon', start: { x: 1, y: 1, facing: WEST }, rows: ['#####', '#...#', '###.#', '###.#', '#####'] };
+  // How many squares of a map `routeLengths` and `routeOn` disagree on, from one square and facing.
+  const disagree = (id: string, x: number, y: number, f: Facing): number => {
+    const m = g.maps[id], lengths = routeLengths(k, id, x, y, f);
+    return m.cells.filter((_, i) => (lengths.get(`${i % m.width},${Math.floor(i / m.width)}`) ?? null) !== (routeOn(k, id, x, y, f, i % m.width, Math.floor(i / m.width))?.length ?? null)).length;
+  };
   fixture(g, bend, [1, 1, WEST]);
-  const keys = routeOn(k, 'fx_bend', 1, 1, WEST, 3, 3);
+  const keys = routeOn(k, 'fx_bend', 1, 1, WEST, 3, 3), bendLengths = routeLengths(k, 'fx_bend', 1, 1, WEST), bendOff = disagree('fx_bend', 1, 1, WEST);
   fixture(g, bend, [1, 1, WEST], [[1, 1], [2, 1], [3, 1], [3, 2]]);
   const dark = routeOn(k, 'fx_bend', 1, 1, WEST, 3, 3);
   fixture(g, bend, [1, 1, WEST], [[1, 1], [2, 1], [3, 1], [3, 3]]);
@@ -311,6 +316,9 @@ function navigator(): void {
   fixture(g, porch, [1, 1, EAST]);
   const past = walk(1, 1, EAST, routeOn(k, 'fx_porch', 1, 1, EAST, 5, 1) ?? []), onto = routeOn(k, 'fx_porch', 1, 1, EAST, 3, 1);
   ok(past.at(-1) === '5,1' && !past.includes('3,1') && onto?.join() === 'forward,forward', `a route steps onto an exit only at its end (by ${past.join(' ')}; onto it ${onto?.join(' ')})`);
+  const porchOff = disagree('fx_porch', 1, 1, EAST), porchLengths = routeLengths(k, 'fx_porch', 1, 1, EAST);
+  ok(bendOff === 0 && porchOff === 0 && bendLengths.get('3,3') === 7 && bendLengths.get('1,1') === 0 && porchLengths.get('3,1') === 2 && porchLengths.get('5,1') === 11 && !porchLengths.has('0,0'),
+    `routeLengths gives routeOn's length to every square in one search, an exit's square among them, and none to a wall (${bendOff} and ${porchOff} squares differ; the bend's end ${bendLengths.get('3,3')}, the porch's far end ${porchLengths.get('5,1')})`);
 
   // Water: crossed only by a company with a swimmer, one who has learnt it as well as one born to it (#805).
   const ford: MapDef = { id: 'fx_ford', name: 'Ford', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#.~.#', '#####'] };
@@ -379,8 +387,9 @@ function walking(): void {
   ok(zp.goal === null && z.world.state.x === zx && z.world.state.y === zy && z.world.zone?.id === 'thornmark', `a goal in Thornmark's own squares is walked to on the outdoors (${z.world.state.mapId} ${z.world.state.x},${z.world.state.y})`);
 
   // A gate it cannot know is learnt by trying it: three blocks and the goal is shut, its square told to the explorer.
+  const bar: MapDef = { id: 'fx_bar', name: 'Bar', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['######', '#....#', '####.#', '####.#', '######'], gates: [{ x: 3, y: 1, needFlag: 'fx_never', blockedText: 'The bar is down.' }] };
   const q = piloted(), qp = q.pilot!, pressed: Action[] = [], said: [string, string?][] = [];
-  fixture(q, { id: 'fx_bar', name: 'Bar', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['######', '#....#', '####.#', '####.#', '######'], gates: [{ x: 3, y: 1, needFlag: 'fx_never', blockedText: 'The bar is down.' }] }, [1, 1, EAST]);
+  fixture(q, bar, [1, 1, EAST]);
   qp.toggle(q);
   let shut: [string, string?] | null = null;
   const asks = recorded(pressed, said);
@@ -399,4 +408,63 @@ function walking(): void {
   const dropped = qp.goal === null && qp.plan.length === 0;
   q.newGame(5);
   ok(dropped && qp.shut.length === 0, 'taking the helm back drops the goal and its plan, and a new game forgets the squares found shut');
+
+  // A brain asked first that sets an equal goal afresh each tick (#719's and #720's may): the blocks still count to three.
+  const r = piloted(), rp = r.pilot!, again: Action[] = [];
+  fixture(r, bar, [1, 1, EAST]);
+  rp.toggle(r);
+  rp.brains = [(_a, _b, s) => { if (!s.shut.length) s.goal = { map: 'fx_bar', x: 4, y: 3, name: 'the far door' }; return null; }, recorded(again, [])];
+  drive(r, Array(12).fill(null));
+  ok(rp.shut.length === 1 && rp.goal === null && again.join() === 'forward,forward,forward,forward', `an equal goal set afresh each tick is the same goal: three blocks still shut it (${again.join(' ')}; ${rp.shut.length} shut)`);
+
+  // The helm taken back forgets the blocks on a goal: set again, it takes three more to shut.
+  const hb = piloted(), hbp = hb.pilot!, door = (): typeof hbp.goal => ({ map: 'fx_bar', x: 4, y: 3, name: 'the far door' });
+  fixture(hb, bar, [2, 1, EAST]);
+  hbp.toggle(hb);
+  hbp.goal = door();
+  drive(hb, [null, null, null]);
+  hbp.toggle(hb);
+  hbp.toggle(hb);
+  hbp.goal = door();
+  drive(hb, [null]);
+  const afresh = hbp.goal !== null && hbp.shut.length === 0;
+  drive(hb, [null, null, null]);
+  ok(afresh && hbp.goal === null && hbp.shut.length === 1, `the helm taken back forgets the blocks on a goal: set again, it takes three more to shut (${hbp.shut.length} shut)`);
+
+  // A step a fight put back (a flight: World.flee) is no block, as a screen came up since the key and a refused step opens none.
+  const fl = piloted(), flp = fl.pilot!, flk = knownOf(fl);
+  fixture(fl, { id: 'fx_run', name: 'Run', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#######', '#.....#', '#######'] }, [1, 1, EAST]);
+  flp.goal = { map: 'fx_run', x: 5, y: 1, name: 'the end' };
+  for (let i = 0; i < 3; i++) {
+    fl.update(route(fl, flk, flp));
+    fl.push(new ChoiceScreen('A fight?', ['Flee'], () => undefined));
+    fl.pop();
+    fl.world.state.x = 1;
+  }
+  const onward = route(fl, flk, flp);
+  ok(onward === 'forward' && flp.goal !== null && flp.shut.length === 0, `three steps a fight put back are no blocks: the goal stands and the next key is planned afresh (${onward}; ${flp.shut.length} shut)`);
+
+  // A goal on an exit's square (#720's may be): the step that takes the exit reaches it, and the way back is left alone.
+  const e = piloted(), ep = e.pilot!;
+  e.maps.fx_room = new GameMap({ id: 'fx_room', name: 'Room', kind: 'dungeon', start: { x: 2, y: 1, facing: EAST }, rows: ['#####', '#...#', '#####'], exits: [{ x: 1, y: 1, to: 'fx_hall', tx: 2, ty: 1, tf: WEST }] });
+  e.world.ensureMapState('fx_room').explored.fill(-1);
+  fixture(e, { id: 'fx_hall', name: 'Hall', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#...#', '#####'], exits: [{ x: 3, y: 1, to: 'fx_room', tx: 2, ty: 1, tf: EAST }] }, [1, 1, EAST]);
+  ep.toggle(e);
+  ep.goal = { map: 'fx_hall', x: 3, y: 1, name: 'the far door' };
+  let crossings = 0;
+  for (let i = 0, was = e.world.state.mapId; i < 40; i++) { drive(e, [null]); if (e.world.state.mapId !== was) { crossings++; was = e.world.state.mapId; } }
+  ok(ep.goal === null && crossings === 1 && e.world.state.mapId === 'fx_room', `a goal on an exit's square is reached by the step that takes the exit, and the way back is left alone (${crossings} crossings, in ${e.world.state.mapId})`);
+
+  // A business's door (#719's goals): the visit it opens reaches it, and nothing is shut when the party steps back out.
+  const v = piloted(), vp = v.pilot!;
+  v.world.travel('harrow', 4, 5, NORTH);
+  vp.toggle(v);
+  vp.goal = { map: 'harrow', x: 4, y: 4, name: 'the inn' };
+  drive(v, Array(10).fill(null));
+  const visiting = v.screens.some((s) => s instanceof InteriorScreen) && vp.goal === null;
+  drive(v, ['cancel', 'cancel', 'cancel']);
+  drive(v, Array(20).fill(null));
+  const vs = v.world.state;
+  ok(visiting && vp.goal === null && vp.shut.length === 0 && v.top instanceof ExploreScreen && vs.x === 4 && vs.y === 5,
+    `a goal on a business's door is reached by the visit it opens, and nothing is shut when the party steps back out (${top(v)} at ${vs.x},${vs.y}; ${vp.shut.length} shut)`);
 }
