@@ -273,10 +273,14 @@ ten minutes of the wall clock, and prints a line a seed.
 ## Known limits
 
 - **Survival.** The sweep's figures are in the table over the decisions for #723: 11 of 12 finish
-  with each company. A run takes 7,655 to 42,739 ticks. The lost rule fires 0 to 17 times a run (a
-  median of 3), on the world's minutes, sleep among them (decision 13 for #723). `Game.fight` still
-  takes every group beside the party at once; the two falls left are walks to a rest with members
-  down (premade seed 8 on Callow Downs, drawn seed 11 on the Foreland).
+  with each company. A finished run takes 7,655 to 18,558 ticks, played as the survival sweep plays
+  it (#842's second review). The lost rule fires 3 to 17 times a finished run, a median of about 9
+  (counted from the log), on the world's minutes, sleep among them (decision 13 for #723).
+  `Game.fight` still takes every group beside the party at once; the two falls left are walks to a
+  rest with members down (premade seed 8 on Callow Downs, drawn seed 11 on the Foreland).
+- **The last one standing does not flee.** A fight is lost only once one of the company falls in it
+  (`beaten`), so a company with one member standing, the rest down before it began, fights on to the
+  end, as in the two falls left. A follow-up, if the owner wants it (the delegate's call for #723).
 - **Two maps in.** A goal's map behind a map not visited is not reached by `toward`: `routeMaps`
   goes only to maps visited and the goal's own, and the explorer never takes an exit, so on seed 10
   Thornhold's gate and the Grove's steps were seen and never stepped on (#841's review). A seen exit
@@ -546,7 +550,7 @@ The figures: The Quiet Farm played from a new game by every brain on seeds 1 to 
 10. **A goal given up is tried again once a level, a flag, a thing carried or a map visited is gained** (`retry`); **with every aim given up and nothing gained, the pilot stops** ("Lost: no way on that I can see.", the band kept up), rather than walk a lost chapter to the cap.
 11. **A watchdog, the brain `wait`, asked last** (the review of #841): after 600 ticks on the map with no key from any brain (`STUCK_TICKS`, counted in ticks at every tempo), a search where it stands, ten minutes a press, until a brain has a key again ("Stuck: waiting a while."). A search rather than a rest, as the rest's menu is the quartermaster's to answer and a search needs none. A brain, not the frame, so that a test naming its own brains (#718's decision 15) is not searched under. **Through a group where it stands in the only way** (`routeOn`, `routeNearest`): the search runs again with the groups' squares open only when no way round is seen; `routeLengths` keeps them shut.
 12. **The quartermaster's nearest place is kept while nothing it rests on moves but the party's square** (`nearest`: the map, its squares seen, the flags, the groups the automap marks and the places): at #842's review a stuck tick cost 13 ms, 44% of it a search of the whole map a tick; now 100 ticks of a walk make no such search (the check counts them, `searches`).
-13. **The lost rule counts the world's minutes, sleep among them**: a company that rests nine times on one goal is lost on it. Counting waking hours only would need the rest and the inn's night told apart from a test's clock; left as it is, and counted: 0 to 17 fires a run in this pull request's sweep, a median of 3.
+13. **The lost rule counts the world's minutes, sleep among them**: a company that rests nine times on one goal is lost on it. Counting waking hours only would need the rest and the inn's night told apart from a test's clock; left as it is, and counted: it fires 3 to 17 times a finished run, a median of about 9 (counted from the log).
 14. **The survival sweep** (`tools/tests/survival.ts`): run only when named (`ASKED`, `tools/test.ts`, checked by the runner's own check; #723's second part may add `fullrun`); the floors, 9 of 12 with the premade company and 8 of 12 with the drawn ones, are the delegate's, as #723 names no figure; a run within ten minutes of the wall clock (`RUN_BUDGET`), over which it counts as not finished, and the 200,000-tick cap stands. `headlessGame` takes a company (`randomParty(seed)`, as P on the title draws it), its default as it was.
 15. **The shelf's play is back on seed 4, to the chapter's end** (the seed pin gone), within five minutes of the wall clock (`PLAY_BUDGET`, `pilotPlays`): 10,875 ticks, 21.0 s, where main's play on seed 10 took 14,538 ticks, 29.8 s. The play is chaotic: a change to anything it meets may move it.
 16. **Not built:** caution outdoors by level (the flight answered the level-1 fights it was for), the armour first, the reach two maps in (Known limits) and `Game.fight`'s taking every group beside the party, which is the game's. Talk's meetings in Helmstow are talk's, left as they were.

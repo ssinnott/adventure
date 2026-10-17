@@ -51,6 +51,7 @@ import type { Sees } from '../../src/game/bot.ts';
 import { weary, caster, FOOD_RESTS } from '../../src/game/pilot/keep.ts';
 import { searches } from '../../src/game/pilot/route.ts';
 import { holds } from '../../src/game/quests.ts';
+import { pilotRun } from '../walk.ts';
 import { startCombat, currentTurn, monsterAct } from '../../src/game/combat.ts';
 import { answers, TRIES, NO_ANSWER } from '../../src/game/pilot/talk.ts';
 import { EndingScreen } from '../../src/ui/ending.ts';
@@ -1529,6 +1530,10 @@ function survives(): void {
   const before = searches.lengths, x0 = wg.world.state.x;
   drive(wg, Array(100).fill(null));
   ok(wg.world.state.x - x0 >= 90 && searches.lengths - before <= 3, `100 ticks of a walk to an inn make ${searches.lengths - before} whole-map searches, walking ${wg.world.state.x - x0} squares`);
+
+  // A run's wall-clock budget: with none, a play ends after its first tick, capped by the budget, not done.
+  const spent = pilotRun(THE_QUEST.chapters[0], { budget: 0 });
+  ok(spent.capped === 'budget' && spent.on && !spent.done && spent.ticks === 1, `a play with no budget left ends capped by the budget (${spent.capped || 'not capped'}, ${spent.ticks} ticks)`);
 
   // The watchdog, asked last: every other brain silent on the map, the clock stands STUCK_TICKS, then a search passes ten minutes a press.
   const sg = piloted(), sgp = sg.pilot!, m0 = sg.world.state.minutes;
