@@ -12,7 +12,7 @@ import { NORTH, EAST, SOUTH, WEST, FACING_DX, FACING_DY, turnRight } from '../ty
 import type { Facing } from '../types.ts';
 import type { Known } from './known.ts';
 import type { Brain, Pilot } from './pilot.ts';
-import { route, routeLengths } from './route.ts';
+import { route, routeNearest } from './route.ts';
 import type { Goal } from './route.ts';
 
 interface Square { x: number; y: number }
@@ -71,6 +71,8 @@ export function suspects(k: Known, map: string): Suspect[] {
 
 /** The flags the company had set when the explorer first saw a way found shut: it is tried again once there are more. */
 const flagsAt = new WeakMap<object, number>();
+/** What the explorer last found walked out, by pilot: what it said, and what that rested on. */
+const walkedOut = new WeakMap<Pilot, { rests: string; why: [string, string?] }>();
 
 /**
  * The brain, with the map on top and no goal walked: (1) a way found shut that the company may open
@@ -95,19 +97,25 @@ export const explore: Brain = (g, k, p) => {
   const hard = (z: string | undefined): boolean => { const b = z && z !== pref ? k.band(z) : undefined; return !!b && b[0] > level; };
   const fits = (q: Square): boolean => !hard(g.maps[here]?.zoneAt(q.x, q.y)?.id);
   if (area === zone && hard(zone)) { p.why = [`${name} is too hard for us yet.`]; return null; }
+  // Walked out it stays, saying so with no search, until a square is seen, a flag set, a way found
+  // shut, or the party moves, turns, levels or can cross more.
+  const can = partyCan(k.party);
+  const rests = [here, area, k.seenCount(here), flags, p.shut.length, st.x, st.y, st.facing, level, can.swim, can.climb, can.keys].join();
+  const out = walkedOut.get(p);
+  if (out?.rests === rests) { p.why = [...out.why]; return null; }
 
   // 1. A way found shut, now to be opened: retried from the nearest, its square no longer gone round.
-  const keys = partyCan(k.party).keys, locked = (s: Square): boolean => k.cell(here, s.x, s.y)?.door === 'locked';
-  const open = shut.filter((s) => fits(s) && (locked(s) ? keys > 0 : flags > flagsAt.get(s)!));
-  const way = open.length ? nearest(open, routeLengths(k, here, st.x, st.y, st.facing, shut.filter((s) => !open.includes(s)))) : undefined;
+  const locked = (s: Square): boolean => k.cell(here, s.x, s.y)?.door === 'locked';
+  const open = shut.filter((s) => fits(s) && (locked(s) ? can.keys > 0 : flags > flagsAt.get(s)!));
+  const reach = open.length ? routeNearest(k, here, st.x, st.y, st.facing, new Set(open.map(at)), shut.filter((s) => !open.includes(s))) : undefined;
+  const way = reach && open.find((s) => s.x === reach.x && s.y === reach.y);
   if (way) {
     p.shut.splice(p.shut.indexOf(way), 1);
     return walk(g, k, p, locked(way) ? { map: here, x: way.x, y: way.y, name: 'the locked door' } : { map: here, x: way.x, y: way.y, name: 'the way', why: 'Trying a shut way again.' });
   }
 
-  // 2. The frontier, by the length of the route to it.
-  const lengths = routeLengths(k, here, st.x, st.y, st.facing, shut);
-  const next = nearest(frontier(k, g, area).filter(fits), lengths);
+  // 2. The frontier, the nearest by the route: the search stops at the first it reaches.
+  const next = routeNearest(k, here, st.x, st.y, st.facing, new Set(frontier(k, g, area).filter(fits).map(at)), shut);
   if (next) return walk(g, k, p, { map: here, x: next.x, y: next.y, name: 'the unseen', why: `Looking about ${within}.` });
 
   // 3. The walls: from the square before one, faced, a search; else that square as the goal.
@@ -122,11 +130,13 @@ export const explore: Brain = (g, k, p) => {
     p.searched.add(key(faced));
     return 'search';
   }
-  const wall = nearest(walls, lengths, before);
-  if (wall) return walk(g, k, p, { map: here, ...before(wall), name: 'the wall', why: 'Searching the wall.' });
+  const floor = walls.length ? routeNearest(k, here, st.x, st.y, st.facing, new Set(walls.map((s) => at(before(s)))), shut) : undefined;
+  if (floor) return walk(g, k, p, { map: here, x: floor.x, y: floor.y, name: 'the wall', why: 'Searching the wall.' });
 
   // 5. Nothing left to look at; or, of a zone preferred, nothing seen to start from (#720's to bring the party nearer).
-  p.why = [seenIn(k, area) ? `${name} is walked out.` : `No way to ${within} that I have seen.`];
+  const why: [string, string?] = [seenIn(k, area) ? `${name} is walked out.` : `No way to ${within} that I have seen.`];
+  walkedOut.set(p, { rests, why });
+  p.why = [...why];
   return null;
 };
 
@@ -141,16 +151,6 @@ function seenIn(k: Known, map: string): boolean {
 function walk(g: Game, k: Known, p: Pilot, goal: Goal): Action | null {
   p.goal = goal;
   return route(g, k, p);
-}
-
-/** The first of `xs` whose square the route reaches in the fewest keys (`routeLengths`), or undefined where it reaches none. */
-function nearest<T>(xs: readonly T[], lengths: ReadonlyMap<string, number>, square: (t: T) => Square = (t) => t as Square): T | undefined {
-  let best: T | undefined, fewest = Infinity;
-  for (const t of xs) {
-    const n = lengths.get(at(square(t)));
-    if (n !== undefined && n < fewest) { best = t; fewest = n; }
-  }
-  return best;
 }
 
 /** What the map's sign or the world map calls a map or a zone. */

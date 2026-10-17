@@ -12,6 +12,7 @@ import type { Action } from '../../src/input.ts';
 import { Pilot, HEARD_MAX, BRAINS } from '../../src/game/pilot/pilot.ts';
 import type { Brain } from '../../src/game/pilot/pilot.ts';
 import { knownOf } from '../../src/game/pilot/known.ts';
+import type { Known } from '../../src/game/pilot/known.ts';
 import { routeOn, routeMaps, routeLengths, route } from '../../src/game/pilot/route.ts';
 import { frontier, suspects, explore } from '../../src/game/pilot/explore.ts';
 import { OUTDOORS } from '../../src/game/outdoors.ts';
@@ -536,6 +537,14 @@ function explorer(): void {
   const downs = g.maps[OUTDOORS].zones.find((z) => z.id === 'downs_e3')!, box = JSON.stringify(k.box('downs_e3')), whole = JSON.stringify(k.box('harrow'));
   ok(box === JSON.stringify({ x: downs.x, y: downs.y, w: downs.w, h: downs.h }) && whole === '{"x":0,"y":0,"w":16,"h":16}' && k.box('no_such_map') === undefined,
     `Known.box gives a zone's box in the outdoors' squares and a map's extent, its bounds alone (${box}; ${whole})`);
+  // Known.seenCount: the squares `seen` holds for, the last word's bits beyond the map left out; every square for an omniscient pilot.
+  const counts = (q: Known, id: string, w: number, h: number): number => grid(w, h).filter(([x, y]) => q.seen(id, x, y)).length;
+  fixture(g, dead, [1, 1, EAST], grid(5, 3));
+  const part = [k.seenCount('fx_dead'), counts(k, 'fx_dead', 7, 3)];
+  g.world.ensureMapState('fx_dead').explored.fill(-1);
+  const full = k.seenCount('fx_dead'), omni = knownOf(Object.assign(piloted(), { pilot: new Pilot({ omniscient: true }) }));
+  ok(part[0] === 15 && part[1] === 15 && full === 21 && k.seenCount('harrow') === counts(k, 'harrow', 16, 16) && omni.seenCount('harrow') === 256 && k.seenCount('no_such_map') === 0,
+    `Known.seenCount counts the squares seen, none beyond the map's own (${part.join(' and ')}; ${full} of 21; Helmstow ${k.seenCount('harrow')}; all ${omni.seenCount('harrow')})`);
   // Known's band: a zone's once the party has set foot in it, as the almanac shows it there; a map's once visited.
   const unwalked = Object.values(g.maps).find((m) => m.def.band && !k.visited().includes(m.id))!;
   const before = k.band('downs_e3'), town = k.band('harrow'), far = k.band(unwalked.id);
@@ -603,9 +612,21 @@ function exploring(): void {
   const passable = grid(m.width, m.height, (x, y) => m.passable(x, y) === 'ok' || m.passable(x, y) === 'locked'), door = (x: number, y: number): string => m.at(x, y).door;
   const unseen = passable.filter(([x, y]) => reached.has(`${x},${y}`) && !g.world.explored(x, y)).map(([x, y]) => `${x},${y}`);
   const behind = passable.filter(([x, y]) => !reached.has(`${x},${y}`)).map(([x, y]) => `${x},${y} (${door(x, y) === 'locked' || door(x, y) === 'secret' ? `a ${door(x, y)} door` : 'behind a locked or a secret door'})`);
-  ok(g.world.state.mapId === 'harrow' && reached.size > 100 && unseen.length === 0,
+  ok(g.world.state.mapId === 'harrow' && reached.size > 100 && unseen.length === 0 && behind.length === 0,
     `3000 ticks of the navigator and the explorer leave every passable square of Helmstow seen (${reached.size} reached as written; ${unseen.length} unseen: ${unseen.join(' ') || 'none'}; expected unseen: ${behind.join(', ') || 'none'})`);
   ok(p.on && whys.has('Looking about Helmstow.') && p.why[0] === 'Helmstow is walked out.', `the why line looks about Helmstow, and then says it is walked out (${[...whys].join(' / ')})`);
+  // Walked out, it says so again with no search, until a square is seen or a flag is set: Known's cells read through a counter.
+  let reads = 0;
+  const real = knownOf(g), counted: Known = { ...real, cell: (id, x, y) => { reads++; return real.cell(id, x, y); } };
+  const cost = (): number => { reads = 0; explore(g, counted, p); return reads; };
+  const idle = cost(), [dx, dy] = grid(m.width, m.height).find(([x, y]) => !g.world.explored(x, y))!, bit = dy * m.width + dx;
+  g.world.mapState.explored[bit >> 5] |= 1 << (bit & 31);
+  const lit = cost(), after = cost();
+  g.party.flags.fx_new = 1;
+  const flagged = cost(), settled = cost();
+  delete g.party.flags.fx_new;
+  ok(idle === 0 && lit > 0 && after === 0 && flagged > 0 && settled === 0 && p.why[0] === 'Helmstow is walked out.',
+    `walked out, the explorer reads no cell the next tick, and searches again once a square is seen or a flag set (${idle}; ${lit}, then ${after}; ${flagged}, then ${settled} reads)`);
 
   // A secret door at the end of a dead end, the far side walked to the long way round: searched and found within 400 ticks.
   const ring: MapDef = { id: 'fx_hidden', name: 'Hidden', kind: 'dungeon', start: { x: 5, y: 3, facing: WEST }, rows: ['#######', '#..S..#', '#.###.#', '#.....#', '#######'] };

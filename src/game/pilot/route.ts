@@ -103,6 +103,16 @@ export function routeLengths(k: Known, map: string, x: number, y: number, facing
 }
 
 /**
+ * The square of `goals` ("x,y") that `routeOn`'s route reaches in the fewest keys, or undefined where
+ * it reaches none: one search, stopped at the first it reaches (#718's frontier, walls and ways found
+ * shut). A square in `shut` is barred, as it is to `routeOn`.
+ */
+export function routeNearest(k: Known, map: string, x: number, y: number, facing: Facing, goals: ReadonlySet<string>, shut: readonly { x: number; y: number }[] = []): { x: number; y: number } | undefined {
+  const { found } = search(k, map, x, y, facing, (q) => goals.has(`${q.x},${q.y}`), shut);
+  return found && { x: found.x, y: found.y };
+}
+
+/**
  * The maps and exits from `from` to `to` over the exits seen; null when none, [] when the two are one
  * map. Both are maps as played (a zone map's is the outdoors', `World.locate`), as `Known.visited` and
  * an exit's `to` give them: breadth-first, an edge for each exit Known gives. A map not walked has no

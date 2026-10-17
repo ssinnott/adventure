@@ -55,6 +55,8 @@ export interface Known {
    * undefined before then, or where none is set.
    */
   band(map: string): readonly [number, number] | undefined;
+  /** How many squares of a map the party has seen: the automap's bits counted, so a brain can tell that nothing new is seen. */
+  seenCount(map: string): number;
 }
 
 /**
@@ -120,6 +122,19 @@ export function knownOf(g: Game): Known {
       const p = played(map);
       if (!p) return undefined;
       return p.box ? ((w.state.zones ?? []).includes(p.box.id) ? p.box.band : undefined) : w.state.maps[p.m.id] ? p.m.def.band : undefined;
+    },
+    seenCount(map) {
+      const p = played(map), n = p ? p.m.width * p.m.height : 0, bits = p && w.state.maps[p.m.id]?.explored;
+      if (all || !bits) return all ? n : 0;
+      let c = 0;
+      for (let i = 0, words = Math.min(bits.length, Math.ceil(n / 32)); i < words; i++) {
+        // A word's bits counted; the last word's beyond the map's squares are left out.
+        let v = i === words - 1 && n % 32 ? bits[i] & ((1 << (n % 32)) - 1) : bits[i];
+        v -= (v >>> 1) & 0x55555555;
+        v = (v & 0x33333333) + ((v >>> 2) & 0x33333333);
+        c += Math.imul((v + (v >>> 4)) & 0x0f0f0f0f, 0x01010101) >>> 24;
+      }
+      return c;
     },
   };
 }

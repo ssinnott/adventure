@@ -52,8 +52,9 @@ through `g.world`, `g.maps` or a `MapDef`:
 - the maps visited, the world map as it is painted (`placeOf`) and every line heard: what `Game.say`
   says and every message box opened, the last 2000. A new game or a load empties it;
 - a map's bounds and a zone's box on the outdoors (`box`, #718), as the automap and the world map
-  draw them, and nothing else of either; and a place's band as the almanac gives it (`band`, #718):
-  a zone's once the party has set foot in it, a town's or a dungeon's once visited.
+  draw them, and nothing else of either; a place's band as the almanac gives it (`band`, #718): a
+  zone's once the party has set foot in it, a town's or a dungeon's once visited; and how many
+  squares of a map are seen (`seenCount`, #718).
 
 A zone map's id (a goal's map may be one) names the outdoors it lies in, in one reckoning: every
 reader takes and gives the outdoors' squares, as `g.world.state` has them while the party is there,
@@ -99,7 +100,9 @@ once a flag has been set since it was found shut ("Trying a shut way again."); t
 the frontier by the route's length, a seen square the company can stand on with an unseen square
 beside it ("Looking about Helmstow."); and, the frontier spent, the nearest wall it suspects, a wall
 with seen floor on both sides, searched once from each side (`Pilot.searched`) from the square
-before it ("Searching the wall."). Then it says "Helmstow is walked out." and gives no key. It
+before it ("Searching the wall."), so a secret door whose far side is unseen is not found (decision
+17). Then it says "Helmstow is walked out." and gives no key, and says it again with no search
+until something it rests on changes. It
 explores the map it is on, or `Pilot.prefer` (the strategist's, #720) where that is this map or a
 zone of it. Outdoors it keeps to one zone's box, the party's or the zone preferred, and never goes
 into a zone whose band, as Known gives it, starts above the company's level and one, unless that zone
@@ -112,7 +115,7 @@ seen near it, it says "No way to Thornmark that I have seen.": bringing the part
 |---|---|
 | `src/game/pilot/pilot.ts` | `Pilot`: on and off (`toggle`), a stop of its own (`stop`), the tempo and the pace, the why line and what the band shows (`band`), the corpus heard (`hear`, `forget`), the next key (`next`), the navigator's goal, plan and squares found shut (`goal`, `plan`, `shut`), the explorer's walls searched and the map preferred (`searched`, `prefer`) and `BRAINS`: the brains in the order asked (fight, keep, aims, route, explore, talk), each slot absent until its module lands |
 | `src/game/pilot/known.ts` | `Known` and `knownOf`, the fair view; `fair`, a feature as the party knows it |
-| `src/game/pilot/route.ts` | the navigator (#717): `Goal` (with the why line its brain gives it), `routeOn` (the keys over one map), `routeLengths` (the length of the route to every square, in one search), each round the squares found shut it is given, `routeMaps` (the exits from map to map), the brain `route` and `unroute` (what it kept of a goal, forgotten); it reads a cell by `passableCell` (`src/game/map.ts`) and the groups as the automap marks them (`markedGroups`, `src/ui/frame.ts`) |
+| `src/game/pilot/route.ts` | the navigator (#717): `Goal` (with the why line its brain gives it), `routeOn` (the keys over one map), `routeLengths` (the length of the route to every square, in one search), `routeNearest` (the nearest of a set of squares, the search stopped there), each round the squares found shut it is given, `routeMaps` (the exits from map to map), the brain `route` and `unroute` (what it kept of a goal, forgotten); it reads a cell by `passableCell` (`src/game/map.ts`) and the groups as the automap marks them (`markedGroups`, `src/ui/frame.ts`) |
 | `src/game/pilot/explore.ts` | the explorer (#718): `frontier` (seen squares with an unseen one beside them), `suspects` (walls with seen floor on both sides) and the brain `explore`; a zone's box and band it reads through `Known.box` and `Known.band`, and the zone a square lies in by `zoneAt` (`src/game/map.ts`), as the world map draws the boxes |
 | `src/game/ink.ts` | `drawnCell`: what a cell is drawn as, which the view, the automap and Known share |
 | `src/game/bot.ts` | the fight and the rest rule (`botTurn`, `asSeen`, `mustRest`, #714) |
@@ -196,3 +199,5 @@ Decided by delegate for #718, each the owner's to overturn:
 14. **`Known.box`, new**: a map's bounds, as the automap draws a map whole, and a zone's box, as the world map draws it, and nothing else of either. `suspects(k, map)` takes no `g`, so its bounds come through Known; the box's test fails if the zone itself, with its secrets and encounters, comes back.
 15. **The frame's and the navigator's tests that turn the pilot on and lean on `BRAINS` now name their brains** (none, or `[route]`): with the explorer among them, a walked goal's test would see it walk on after arrival. Their checks are as they were.
 16. **A new game or a load forgets the walls searched and the map preferred** (`Pilot.forget`); the helm taken back keeps both, as a wall searched stays searched.
+17. **A suspect is a wall with seen floor on both sides, as the issue says, so a dungeon's secret door whose far side is unseen is not found by this explorer.** Of the 21 dungeons with a secret door, 8 were walked out at review (`[route, explore]`, their groups put down): the door was a suspect on 1 of the 8 (tide_ship3); on mill, greywater1, greywater2, berth, grove1, grove2 and smugglers_cove2 its far side was never seen, 3 to 63 squares staying unseen behind it, while 9 to 78 walls hiding nothing were searched (mill's 78, thirteen hours of the game's time). Only 7 of the 21 stand at a corridor's dead end. Not widened here: left for #720 and #723.
+18. **A map walked out stays walked out until what that rests on changes**: the squares seen (`Known.seenCount`, new: the automap's bits counted), the flags, the squares found shut, the party's square and facing, its map, the zone looked at, the company's level and what it can cross. Till then the explorer says so again with no search: with the whole outdoors seen a search took a quarter of a second, and it ran every paced tick. Each search stops at the first square it wants (`routeNearest`, new), where `routeLengths` searched every square seen.
