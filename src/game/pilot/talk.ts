@@ -2,8 +2,10 @@
 // or on the aim's map, by stepping onto them (the game talks on the step), and again once the company
 // has set a flag or gained an item since; it answers a question by a fixed policy (`pick`), takes a
 // crossing it has been told of where the navigator's way goes by it, joins a guild's hall and works
-// its ladder, buys spells and takes a prestige offered. It reads the world through Known and a menu by
-// its rows as they show, and presses the keys a player would: `down` to a row and Space, or Esc.
+// its ladder, buys spells and takes a prestige offered; it reads a statue's plinth and tries the words
+// it has heard that may answer it (`answers`), and stops itself at the ending's question. It reads the
+// world through Known and a menu or a riddle as the screen shows it, and presses the keys a player
+// would: `down` to a row and Space, or Esc; a word's letters as the keyboard types them, then Enter.
 import type { Game } from '../game.ts';
 import { ExploreScreen } from '../game.ts';
 import type { Action } from '../../input.ts';
@@ -13,7 +15,9 @@ import { FACING_DX, FACING_DY } from '../types.ts';
 import * as passage from '../passage.ts';
 import * as prestige from '../prestige.ts';
 import { askSkill } from '../skills.ts';
+import { ANSWER_MAX, normalWord } from '../wilds.ts';
 import { ChoiceScreen, InteriorScreen, TRADE, shortName } from '../../ui/screens.ts';
+import { RiddleScreen } from '../../ui/riddle.ts';
 import { optionParts } from '../../ui/draw.ts';
 import { knownOf } from './known.ts';
 import type { Known } from './known.ts';
@@ -22,8 +26,14 @@ import type { Goal } from './route.ts';
 import { restWanted, spare } from './keep.ts';
 import type { Brain, Pilot } from './pilot.ts';
 
-/** The keys of route a person may be off for the pilot to go and meet them, off the aim's map. */
+/** The keys of route a person or a statue may be off for the pilot to go to them, off the aim's map. */
 export const NEAR = 12;
+/** The words a statue's riddle is tried with at most, each once (§6). */
+export const TRIES = 5;
+/** What the pilot says at a riddle it has no word left to try for. */
+export const NO_ANSWER = 'I have no answer for the stone.';
+/** The number words a HOW MANY riddle is tried with, in order. */
+const NUMBERS: readonly string[] = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'];
 /** The rows that leave a menu, which rule 6 never takes. */
 const OUTS: readonly string[] = ['Leave', 'Not now', 'Done', 'Back'];
 /** A tavern's first row: its keeper's words. */
@@ -47,11 +57,19 @@ interface Talk {
   after: Set<string>;
   /** The crossing chosen on a seller's menu, for its terms. */
   boarding?: string;
+  /** By a statue's square, its riddle as its box showed it: read once, so its words heard can be weighed from afar. */
+  riddles: Map<string, string>;
+  /** By a riddle, the words that may answer it and what was heard when they were weighed (`answersOf`). */
+  answers: Map<string, { stamp: string; words: string[] }>;
+  /** The word being typed into a riddle's box, and the box. */
+  typing?: { screen: RiddleScreen; word: string };
+  /** The statues it has said it has no answer for, by square: left until a line heard gives a word not tried. */
+  given: Set<string>;
 }
 const TALKS = new WeakMap<Pilot, Talk>();
 function memOf(p: Pilot): Talk {
   let m = TALKS.get(p);
-  if (!m) TALKS.set(p, (m = { when: new Map(), after: new Set() }));
+  if (!m) TALKS.set(p, (m = { when: new Map(), after: new Set(), riddles: new Map(), answers: new Map(), given: new Set() }));
   return m;
 }
 /** Forgets what talk kept: a new game or a load (`Pilot.forget`). */
@@ -86,10 +104,10 @@ function aimMap(g: Game, p: Pilot): string | undefined {
   return map === undefined ? undefined : g.world.locate(map, 0, 0).mapId;
 }
 
-/** What a feature is called in the why line: "A word with Hild.", "A word with an old man mending nets.", "To the Lantern Guildhall." */
+/** What a feature is called in the why line: "A word with Hild.", "A word with an old man mending nets.", "To the Lantern Guildhall.", "To the statue." */
 function whyTo(f: Feature): string {
   const name = ('name' in f && f.name ? shortName(f.name) : f.kind).replace(/^(The|An|A) /, (a) => a.toLowerCase());
-  return f.kind === 'npc' ? `A word with ${name}.` : `To ${/^the /.test(name) ? name : `the ${name}`}.`;
+  return f.kind === 'npc' ? `A word with ${name}.` : `To ${/^(the|an?) /.test(name) ? name : `the ${name}`}.`;
 }
 
 /**
@@ -100,7 +118,8 @@ function whyTo(f: Feature): string {
  * the step). With no goal walked: one stood on who is due a meeting is spoken to (Space); else the
  * nearest seen who is due, within `NEAR` keys of route or anywhere on the aim's map, or a guild's hall
  * so, is gone to ("A word with Hild."). Due: never met, or met before the company last set a flag or
- * gained an item.
+ * gained an item. A statue is gone to so ("To the statue.") and its plinth read (Space) while it is
+ * due a reading (`stoneDue`).
  */
 function meeting(g: Game, k: Known, p: Pilot, mem: Talk): Action | null {
   const st = g.world.state, now = stampOf(k.party), at = keyOf(st.mapId, st);
@@ -112,17 +131,20 @@ function meeting(g: Game, k: Known, p: Pilot, mem: Talk): Action | null {
       if (a) return a;
     }
     // Over: met where the party stands on the person's square or faces it (a visit puts it back before
-    // a door, facing it), the meeting shown; given up, or taken by another brain, still due.
+    // a door, facing it), the meeting shown; given up, or taken by another brain, still due. A statue
+    // is never met: it is read once stood on (below).
     const to = mem.goal, ahead = { x: st.x + FACING_DX[st.facing], y: st.y + FACING_DY[st.facing] };
-    if (g.shown !== mem.shown && st.mapId === to.map && ((st.x === to.x && st.y === to.y) || (ahead.x === to.x && ahead.y === to.y))) meet(p, mem, mem.key!, now);
+    if (mem.key !== undefined && g.shown !== mem.shown && st.mapId === to.map && ((st.x === to.x && st.y === to.y) || (ahead.x === to.x && ahead.y === to.y))) meet(p, mem, mem.key, now);
     mem.goal = undefined;
   }
-  const people = k.features(st.mapId).filter((f) => f.kind === 'npc' || f.kind === 'guild'), stood = people.filter((f) => keyOf(st.mapId, f) === at);
+  const seen = k.features(st.mapId), people = seen.filter((f) => f.kind === 'npc' || f.kind === 'guild'), stood = people.filter((f) => keyOf(st.mapId, f) === at);
   if (mem.at !== at) for (const f of stood) meet(p, mem, at, now);
   mem.at = at;
   if (p.goal) return null;
-  const want = people.filter((f) => due(p, mem, keyOf(st.mapId, f), now));
+  const stones = seen.filter((f) => f.kind === 'statue' && stoneDue(p, mem, keyOf(st.mapId, f), k.heard));
+  const want = [...people.filter((f) => due(p, mem, keyOf(st.mapId, f), now)), ...stones];
   const on = want.find((f) => keyOf(st.mapId, f) === at);
+  if (on?.kind === 'statue') { p.why = ['Reading the plinth.']; return 'interact'; }
   if (on) { meet(p, mem, at, now); mem.after.add(at); p.why = [whyTo(on)]; return 'interact'; }
   const aim = p.aim, there = aim && aimMap(g, p) === st.mapId ? new Set(k.features(aim.kind === 'level' ? aim.zone : aim.map).map((f) => `${f.x},${f.y}`)) : new Set<string>();
   // A route is no shorter than the squares between: one farther than NEAR off the aim's map is not searched for.
@@ -137,12 +159,86 @@ function meeting(g: Game, k: Known, p: Pilot, mem: Talk): Action | null {
   }
   if (!best) return null;
   // Met once the step has gone through: a business's people, met with its door, are due as its visit begins.
-  const f = best.f, key = keyOf(st.mapId, f), why = whyTo(f);
+  const f = best.f, key = f.kind === 'statue' ? undefined : keyOf(st.mapId, f), why = whyTo(f);
   const goal: Goal = { map: st.mapId, x: f.x, y: f.y, name: 'name' in f && f.name ? shortName(f.name) : f.kind, why };
   p.goal = goal;
   p.why = [why];
   Object.assign(mem, { goal, key, shown: g.shown });
   return route(g, k, p);
+}
+
+/**
+ * Whether a statue Known shows (there, and not yet answered) is due a reading: its riddle never read;
+ * or not yet given up, so that a reading tries the next word or says there is none; or given up with
+ * fewer than `TRIES` words tried, and a word heard since that may answer it and is not tried.
+ */
+function stoneDue(p: Pilot, mem: Talk, key: string, heard: readonly string[]): boolean {
+  const tried = p.tried.get(key), riddle = mem.riddles.get(key);
+  if (riddle === undefined || !mem.given.has(key)) return true;
+  return (tried?.size ?? 0) < TRIES && answersOf(mem, riddle, heard).some((w) => !tried?.has(w));
+}
+
+/** A line's words as typed: lower case, cut at anything not a letter ("Thornhold's" is "thornhold" and "s"). */
+const wordsOf = (line: string): string[] => line.toLowerCase().split(/[^a-z]+/).filter(Boolean);
+
+/**
+ * The words to try at a riddle, the likeliest first, from the lines heard alone (§6): never the
+ * statue's answer, nor anything but the question as its box shows it. A HOW MANY riddle: the number
+ * words one to twelve in a line heard that shares a word of four letters or more with the rest of
+ * its question, in ascending order. Any other: the words of three letters or more, but the riddle's
+ * own, in every line heard that shares two or more words of four letters or more with the question,
+ * ranked by that overlap (a word in several lines by its best), then the longer first, then as first
+ * heard. Each is `normalWord`ed, and none longer than the box takes.
+ */
+export function answers(riddle: string, heard: readonly string[]): string[] {
+  const own = wordsOf(riddle), many = normalWord(riddle).startsWith('how many ');
+  const asks = new Set((many ? own.slice(2) : own).filter((w) => w.length >= 4)), at = new Map<string, number>();
+  for (const line of heard) {
+    const words = wordsOf(line), shared = new Set(words.filter((w) => asks.has(w))).size;
+    if (shared < (many ? 1 : 2)) continue;
+    for (const w of words.map(normalWord)) {
+      if (many ? !NUMBERS.includes(w) : w.length < 3 || w.length > ANSWER_MAX || own.includes(w)) continue;
+      if ((at.get(w) ?? 0) < shared) at.set(w, shared);
+    }
+  }
+  const order = [...at.keys()];
+  return many ? order.sort((a, b) => NUMBERS.indexOf(a) - NUMBERS.indexOf(b))
+    : order.map((w, i) => ({ w, i })).sort((a, b) => at.get(b.w)! - at.get(a.w)! || b.w.length - a.w.length || a.i - b.i).map((q) => q.w);
+}
+
+/** `answers`, weighed again only once something new is heard. */
+function answersOf(mem: Talk, riddle: string, heard: readonly string[]): string[] {
+  const stamp = `${heard.length}:${heard[0]}:${heard.at(-1)}`, last = mem.answers.get(riddle);
+  if (last?.stamp === stamp) return last.words;
+  const words = answers(riddle, heard);
+  mem.answers.set(riddle, { stamp, words });
+  return words;
+}
+
+/**
+ * A statue's riddle, read off its box (§6): the next word `answers` gives that this statue has not
+ * been tried with (`Pilot.tried`, five at most), typed a key a tick into the box as the keyboard types
+ * in the text mode (a backspace first where the box holds other letters), then Enter, and only then
+ * counted as tried: a word the viewer cuts off is no try. A wrong word costs nothing; Space on the
+ * statue again tries the next. None left, or five tried: "I have no answer for the stone." is said
+ * (`Game.say`, into the log, as the strategist says it is lost) and Esc pressed, and the statue is
+ * given up, not read again until a line heard gives a word not tried while it has tries left.
+ */
+function riddle(s: RiddleScreen, g: Game, k: Known, p: Pilot, mem: Talk): Action | null {
+  const st = g.world.state, ahead = { x: st.x + FACING_DX[st.facing], y: st.y + FACING_DY[st.facing] };
+  const stone = k.features(st.mapId).find((f) => f.kind === 'statue' && ((f.x === st.x && f.y === st.y) || (f.x === ahead.x && f.y === ahead.y)));
+  const key = keyOf(st.mapId, stone ?? st), keys = g.input?.typed, tried = p.tried.get(key) ?? new Set<string>();
+  mem.riddles.set(key, s.riddle);
+  if (mem.typing?.screen !== s) {
+    const word = keys && tried.size < TRIES ? answersOf(mem, s.riddle, k.heard).find((w) => !tried.has(w)) : undefined;
+    if (word === undefined) { mem.typing = undefined; mem.given.add(key); g.say(NO_ANSWER); p.why = [NO_ANSWER]; return 'cancel'; }
+    mem.typing = { screen: s, word };
+  }
+  const word = mem.typing.word;
+  p.why = [`Trying ${word.toUpperCase()}.`];
+  if (s.word === word) { p.tried.set(key, tried.add(word)); mem.given.delete(key); mem.typing = undefined; return 'interact'; }
+  keys?.push(word.startsWith(s.word) ? word[s.word.length] : '\b');
+  return null;
 }
 
 /** An answer to a menu: the row (-1 for Esc), the why line it is said with and what is kept once the key that answers is pressed. */
@@ -152,8 +248,8 @@ const ESC: Answer = { i: -1 };
 /**
  * The brain. On a menu it answers by `pick`'s rules, `down` to the row and Space, or Esc; under the
  * ending's question it presses nothing and stops itself, the band kept up ("The choice is yours.", the
- * epic's Decided 4). On the map it meets people (`meeting`). On any other screen, nothing: a riddle is
- * #721's second part (§6).
+ * epic's Decided 4). On a statue's riddle it types a word heard and Enter, or Esc (`riddle`). On the
+ * map it meets people and reads statues (`meeting`). On any other screen, nothing.
  */
 export const talk: Brain = (g, k, p) => {
   const top = g.top, mem = memOf(p);
@@ -165,6 +261,7 @@ export const talk: Brain = (g, k, p) => {
     if (a !== 'down') c.then?.();
     return a;
   }
+  if (top instanceof RiddleScreen) return riddle(top, g, k, p, mem);
   return top instanceof ExploreScreen ? meeting(g, k, p, mem) : null;
 };
 

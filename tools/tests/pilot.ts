@@ -50,6 +50,10 @@ import { mustRest, botTurn, asSeen, asWritten } from '../../src/game/bot.ts';
 import type { Sees } from '../../src/game/bot.ts';
 import { weary, caster } from '../../src/game/pilot/keep.ts';
 import { startCombat, currentTurn, monsterAct } from '../../src/game/combat.ts';
+import { answers, TRIES, NO_ANSWER } from '../../src/game/pilot/talk.ts';
+import { EndingScreen } from '../../src/ui/ending.ts';
+import { MessageScreen } from '../../src/ui/screens.ts';
+import { CHOICE_TWO, CHOICE_THREE, VASK_FALLEN, VOICE_WHOLE } from '../../src/content/areas/hearth/maps/core.ts';
 
 /** A headless game with an instant pilot, off. */
 const piloted = (seed = 4): Game => {
@@ -76,6 +80,7 @@ export function pilot(): void {
   strategist();
   talking();
   survives();
+  riddles();
 }
 
 /** A headless game whose company Vask has hired: walked onto his door by the test (its privilege) and his words closed. */
@@ -1465,4 +1470,100 @@ function survives(): void {
   const round = routeOn(held(), 'fx_ring', 1, 1, EAST, 4, 1);
   ok(!!through && walk(1, 1, EAST, through).includes('3,1') && !!round && !walk(1, 1, EAST, round).includes('3,1') && walk(1, 1, EAST, round).at(-1) === '4,1',
     `a group in the only way is routed through (${through && walk(1, 1, EAST, through).join(' ')}), and round where a way round is seen (${round && walk(1, 1, EAST, round).join(' ')})`);
+}
+
+/**
+ * Riddles (#721, §6) and the ending's real question (§7). A statue is read off its box and tried
+ * with the words heard alone, typed a key a tick into the box as the keyboard types them: the Downs'
+ * stone, its hint heard as the game says it (the old man's song, by Space on him), is answered within
+ * five tries, a HOW MANY riddle by its number words in ascending order; with nothing heard there is
+ * no answer. Five tries at most, each word once, the riddle's own words never. Wenna's question at
+ * the Heart, the Hearth chapter's, asked through the game, stops the pilot with its band up.
+ */
+function riddles(): void {
+  const features = (id: string): Feature[] => MAP_DEFS.find((d) => d.id === id)?.features ?? [];
+  const stone = features('downs_e2').find((f) => f.kind === 'statue')!;
+  const song = features('downs_f3').find((f) => f.kind === 'npc' && f.name === 'An old man mending nets')!;
+  /** The pilot, talk alone, stood on a statue for `ticks`: the words tried there, the box's word each tick it is up, the boxes opened and the why lines. */
+  const read = (g: Game, map: string, x: number, y: number, ticks = 60): { tried: string[]; typed: string[]; opened: number; whys: string[] } => {
+    const p = g.pilot!, at = g.world.locate(map, x, y), typed: string[] = [], whys: string[] = [];
+    g.world.travel(map, x, y, NORTH);
+    for (const s of Object.values(g.world.mapState.groups)) s.dead = g.world.state.minutes;
+    p.brains = [talk];
+    p.toggle(g);
+    let opened = 0;
+    for (let t = 0; t < ticks; t++) {
+      const was = g.top instanceof RiddleScreen;
+      drive(g, [null]);
+      if (g.top instanceof RiddleScreen) { typed.push(g.top.word); if (!was) opened++; }
+      if (whys.at(-1) !== p.why[0]) whys.push(p.why[0]);
+    }
+    return { tried: [...p.tried.get(`${at.mapId}:${at.x},${at.y}`) ?? []], typed, opened, whys };
+  };
+
+  // The Downs' stone with the old man's song heard: "one", then "ten", each typed a key a tick; the gift given.
+  const hg = piloted();
+  hg.world.travel('downs_f3', song.x, song.y, EAST);
+  drive(hg, ['interact']);
+  while (hg.top instanceof MessageScreen) drive(hg, ['interact']);
+  const sung = hg.pilot!.heard.some((l) => l.includes('Ten for the Hearth')), gold = hg.party.gold;
+  const heard = read(hg, 'downs_e2', stone.x, stone.y);
+  ok(sung && hg.world.used(stone.id) && hg.party.gold === gold + 30 && heard.tried.join() === 'one,ten' && heard.tried.length <= TRIES && heard.opened === 2
+    && heard.typed.join(' ') === ' o on one  t te ten' && heard.whys.includes('Trying TEN.') && !hg.input!.textMode && hg.top instanceof ExploreScreen,
+    `the Downs' stone, the song heard: answered within ${TRIES} tries, its number words in ascending order, typed a key a tick (${heard.tried.join(', ')}; "${heard.typed.join('|')}"; ${hg.party.gold - gold} gold)`);
+
+  // With nothing heard: the box read once, no word tried, "I have no answer for the stone." said into the log, and the stone left.
+  const ng = piloted(), none = read(ng, 'downs_e2', stone.x, stone.y);
+  ok(!ng.world.used(stone.id) && none.tried.length === 0 && none.opened === 1 && ng.log.includes(NO_ANSWER) && !ng.input!.textMode && ng.top instanceof ExploreScreen,
+    `the Downs' stone with nothing heard: read once, nothing tried, "${NO_ANSWER}" in the log (${none.opened} opened; ${ng.log.slice(-2).join(' / ')})`);
+
+  // A miller's stone (a fixture), its hint said: the overlap's words, the longer first, never the riddle's own; five at most, each once.
+  const millGame = (answer: string): Game => {
+    const g = piloted();
+    fixture(g, row('fx_mill', 3, [{ kind: 'statue', x: 2, y: 1, id: 'fx_mill_stone', text: 'A millstone on its edge.', riddle: 'WHAT DOES THE MILLER GRIND AT DAWN?', answer, gift: { gold: 5 }, done: 'The stone is quiet.' }]), [2, 1, NORTH]);
+    g.say('"The miller grinds at dawn: oats, barley, rye, beans, peas and chaff. Oats again at dusk."');
+    return g;
+  };
+  const mill = (answer: string): { g: Game; r: ReturnType<typeof read> } => { const g = millGame(answer); return { g, r: read(g, 'fx_mill', 2, 1, 80) }; };
+  const right = mill('barley'), wrong = mill('peas'), tries = wrong.r.whys.filter((w) => w.startsWith('Trying '));
+  ok(right.g.world.used('fx_mill_stone') && right.r.tried.join() === 'grinds,barley' && answers('WHAT DOES THE MILLER GRIND AT DAWN?', right.g.pilot!.heard).slice(0, 2).join() === 'grinds,barley',
+    `a riddle's words from a line heard that shares two with it, the longer first: answered on the second try (${right.r.tried.join(', ')})`);
+  ok(!wrong.g.world.used('fx_mill_stone') && wrong.r.tried.join() === 'grinds,barley,beans,chaff,again' && tries.length === TRIES && new Set(tries).size === TRIES
+    && wrong.r.opened === TRIES + 1 && wrong.g.log.includes(NO_ANSWER) && wrong.g.top instanceof ExploreScreen,
+    `five tries at most, each once and none the riddle's own, then "${NO_ANSWER}" in the log and the stone left (${tries.join(' ')}; ${wrong.r.opened} opened)`);
+
+  // A word the viewer cuts off (the helm taken and Esc, as main.ts sends a key) is no try: at the helm again, the pilot types it afresh.
+  const cg = millGame('barley'), cp = cg.pilot!;
+  cp.brains = [talk];
+  cp.toggle(cg);
+  drive(cg, [null, null, null]);
+  const cut = cg.top instanceof RiddleScreen ? cg.top.word : '';
+  cp.toggle(cg);
+  drive(cg, ['cancel']);
+  const untried = (cp.tried.get('fx_mill:2,1')?.size ?? 0) === 0 && cg.top instanceof ExploreScreen;
+  cp.toggle(cg);
+  drive(cg, Array(30).fill(null));
+  ok(cut === 'gr' && untried && cg.world.used('fx_mill_stone') && [...cp.tried.get('fx_mill:2,1') ?? []].join() === 'grinds,barley',
+    `a word cut off by the viewer's Esc is no try: typed again from its start, then the next (${cut}, ${untried}; ${[...cp.tried.get('fx_mill:2,1') ?? []].join(', ')})`);
+
+  // The ending's real question: Wenna's at the Heart (the Hearth chapter's, each answer an ending), asked through
+  // the game as she is met, with the third answer too where Fane's map is held. The pilot closes her words, then
+  // stops under the question with its band up; nothing is answered and no ending is reached; a key takes the band down.
+  const last = THE_QUEST.chapters.at(-1)!, ends = new Set([last.done].flat().flatMap((c) => [c.flag ?? []].flat()));
+  for (const [map, choice] of [[false, CHOICE_TWO], [true, CHOICE_THREE]] as const) {
+    const eg = piloted(), ep = eg.pilot!, wenna = features('core').find((f) => f.kind === 'npc' && f.choice === CHOICE_TWO)!;
+    Object.assign(eg.party.flags, { [VASK_FALLEN]: 1, [VOICE_WHOLE]: 1 }, map ? { meridian_map: 1 } : {});
+    eg.world.travel('core', wenna.x, wenna.y + 1, NORTH);
+    for (const s of Object.values(eg.world.mapState.groups)) s.dead = eg.world.state.minutes;
+    drive(eg, ['forward']);
+    ep.brains = [talk];
+    ep.toggle(eg);
+    let ended = false;
+    for (let t = 0; t < 30; t++) { drive(eg, [null]); ended ||= eg.top instanceof EndingScreen; }
+    const q = eg.top instanceof ChoiceScreen ? eg.top : undefined, band = ep.band()?.lines[0];
+    drive(eg, ['down']);
+    ok(!!q && q.ends && q.options.join() === choice.answers.map((a) => a.label).join() && choice.answers.every((a) => [a.sets ?? []].flat().some((s) => ends.has(s)))
+      && !ep.on && band === 'The choice is yours.' && !ended && !Object.values(ENDINGS).some((e) => eg.party.flags[e.flag]) && ep.band() === null,
+      `Wenna's question at the Heart${map ? ', Fane\'s map held' : ''}, each answer the Hearth chapter's end, is marked and stops the pilot: nothing answered, the band up and gone at the next key (${q?.options.join(' / ')}; "${band}")`);
+  }
 }

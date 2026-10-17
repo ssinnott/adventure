@@ -8,6 +8,7 @@ import type { World } from '../../src/game/world.ts';
 import type { GameMap } from '../../src/game/map.ts';
 import type { Party } from '../../src/game/party.ts';
 import type { Action } from '../../src/input.ts';
+import { drainTyped } from '../../src/input.ts';
 
 let failures = 0;
 export const ok = (cond: boolean, msg: string): void => { console.log((cond ? '  ok:   ' : '  FAIL: ') + msg); if (!cond) failures++; };
@@ -69,7 +70,9 @@ export async function familyModules(): Promise<Family[]> {
  */
 export function headlessGame(seed = 4, party?: Party): Game {
   const g = new Game(null);
-  g.input = { textMode: false, drainText: (c) => c };
+  // The keyboard's text mode without a keyboard: what is typed (the pilot's riddle words, #721) is drained as Input drains it.
+  const typed: string[] = [];
+  g.input = { textMode: false, typed, drainText: (c, max) => drainTyped(typed, c, max) };
   g.newGame(seed, party);
   return g;
 }
