@@ -522,6 +522,36 @@ The gate holds each of these figures to an aim and a limit beyond it (EXPANSION.
 or seven fights to a rest is the aim; a map outside it but between four and ten passes, and is listed
 as off its aim; only past its limit does it fail. Tune to the aim, not to the decimal.
 
+Two under a floor the gate judges Act I's fights and, from 10, the day (EXPANSION.md §5.2, #851).
+From 10 the damage spells roll their full dice and every group is sized for the day, so a company
+two under a floor wins every fight of it from full health: a company at 12 beats Rimewater's four
+snow lynxes at 20, of 288 hit points each, in three rounds, Tempest and Meteor Swarm dealing 201 and
+320 to every foe. The day still slopes. Fights to a rest, measured on main at `dbb9d247` with harness's
+`days` and the gate's company, 100 seeds dealt, a boss and a group that waits on an `after` left out:
+
+| Maps | Floor | Aim | At the floor | Two under | Four under |
+|---|---|---|---|---|---|
+| thornmark | 5 | 6.5 | 5.8 | 0.3 | 0.0 |
+| delta_c5 / c5_rift | 10 | 6.5 | 7.0 / 6.5 | 4.2 / 3.2 | 1.8 / 1.6 |
+| wrackholm_e6 / smugglers_cove | 12 | 7.0 | 7.2 / 6.8 | 3.6 / 3.2 | 2.1 / 1.9 |
+| eaves_i2 / k3_rift | 14 | 7.5 | 7.7 / 7.4 | 4.5 / 4.6 | 1.6 / 2.2 |
+| ironfells_m3 / deep_mines | 16 | 8.0 | 8.8 / 7.5 | 4.9 / 5.0 | 3.0 / 2.9 |
+| highmoor_n7 / cairns | 18 | 8.5 | 8.5 / 11.0 | 6.6 / 7.9 | 4.8 / 5.4 |
+| longmere_m9 / sleepers_bay | 20 | 9.0 | 9.8 / 9.6 | 5.1 / 6.8 | 3.7 / 5.4 |
+| monksvale_j11 / monastery | 22 | 9.5 | 10.9 / 11.4 | 6.6 / 7.7 | 3.9 / 5.0 |
+| cindercoast_h10 / old_cinder2 | 24 | 10.0 | 10.3 / 9.8 | 7.3 / 8.5 | 4.7 / 5.6 |
+| wold_d10 / dead_drop | 26 | 10.5 | 10.8 / 11.2 | 7.4 / 8.0 | 5.4 / 6.9 |
+| hearthisle_h6 / hearthfane | 28 | 11.0 | 12.3 / 12.2 | 6.8 / 5.2 | 5.4 / 4.1 |
+
+Decided by the owner's delegate for #18, each the owner's to overturn:
+
+1. **From 10 a company two under a floor is held by its day,** not its fights: it rests after at most
+   two thirds of the floor's aim (the aim) and never gets as many as the aim (the limit), the gate's
+   `GATE.backDay`. No tier, item or counter could make a tenth of fights two under lost without the
+   cliff DESIGN.md §1 forbids, and Act I keeps its fights, where two levels are a cliff by design.
+2. **The line is not moved for it.** A group stays sized for its floor's day; a map past the limit is
+   re-sized inside its floor's own aims, a role up or a group thinner and never more monsters (#865).
+
 `tools/testmonster.ts` stats a generic monster for every role at every level, and `tools/harness.ts`
 measures it. The company is the premade six at the level, in the gear the tables give it by then
 (the gear ladder, `GEAR`: the kits, the Foreland's band gear and its finds with a plus by 3 and 5,
