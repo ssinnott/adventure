@@ -5,7 +5,7 @@ import { ITEMS, MAP_DEFS, MONSTERS } from '../../src/content/index.ts';
 import type { Feature } from '../../src/game/map.ts';
 import { hits, sellPrice, ELEMENT_DIE } from '../../src/game/items.ts';
 import type { ItemDef } from '../../src/game/items.ts';
-import { defaultParty, equip, armorClass, attackBonus, spellHeal, statOf, STATS } from '../../src/game/party.ts';
+import { defaultParty, equip, armorClass, attackBonus, spellHeal, statOf, itemsChanged, STATS } from '../../src/game/party.ts';
 import type { Party, Stat } from '../../src/game/party.ts';
 import { ELEMENTS } from '../../src/game/spells.ts';
 import type { Element } from '../../src/game/spells.ts';
@@ -24,7 +24,7 @@ import { ok, headlessGame, drive } from './lib.ts';
 /** The stats a fight reads; endurance, intellect and luck have no live effect (DESIGN §5). */
 const LIVE: readonly Stat[] = ['might', 'accuracy', 'speed', 'personality'];
 
-/** What is wrong with an item's raise or element: no stat, a raise not whole, a stat nothing reads, no element, or one on what strikes no blow. */
+/** What is wrong with an item's raise or element: no stat, a raise not whole, a stat nothing reads, no element or one on what strikes no blow. */
 function faults(d: ItemDef): string[] {
   const out: string[] = [];
   for (const [s, n] of Object.entries(d.stat ?? {})) {
@@ -42,9 +42,11 @@ const TWIN: ItemDef = { id: 'test_plain_coat', name: 'Plain Coat', slot: 'armor'
 const PLAIN: ItemDef = { id: 'test_plain_blade', name: 'Plain Blade', slot: 'weapon', price: 0, dice: 1, sides: 6 };
 const STORM: ItemDef = { ...PLAIN, id: 'test_storm_blade', name: 'Storm Blade', element: 'lightning' };
 const BRAND: ItemDef = { ...PLAIN, id: 'test_fire_blade', name: 'Fire Blade', element: 'fire' };
+const SHIELD: ItemDef = { id: 'test_quick_shield', name: 'Quick Shield', slot: 'shield', price: 0, stat: { speed: 3 } };
+const TRUE: ItemDef = { ...PLAIN, id: 'test_true_blade', name: 'True Blade', stat: { accuracy: 3 } };
 /** A slotless charm of each stat a fight reads, borne from the pack. */
 const CHARMS = Object.fromEntries(LIVE.map((s) => [s, { id: `test_${s}_charm`, name: 'Charm', slot: 'none', price: 0, stat: { [s]: 3 } } satisfies ItemDef])) as Record<Stat, ItemDef>;
-const FIXTURES = [COAT, TWIN, PLAIN, STORM, BRAND, ...Object.values(CHARMS)];
+const FIXTURES = [COAT, TWIN, PLAIN, STORM, BRAND, SHIELD, TRUE, ...Object.values(CHARMS)];
 
 /** A sturdy target that every blow can reach, and its kin that lightning does nothing to, half to and half again to; and one that mends. */
 const target = (id: string, more: Partial<MonsterDef> = {}): MonsterDef => ({ ...MONSTERS.bandit, id, name: 'Target', plural: 'Targets', hp: 999, ac: -10, ...more });
@@ -80,7 +82,11 @@ export function items(): void {
   caught({ ...STORM, element: 'wind' as Element }, `${STORM.id}: 'wind' is no element`);
   ok(faults(COAT).length + faults(STORM).length + faults(CHARMS.might).length === 0, 'and the fixtures are of the shape');
 
+  // The raisers are worked out before the fixtures come, as in a run of every suite: the fixtures'
+  // raises count only once `itemsChanged` says the table has changed, and again once they go.
+  statOf(defaultParty(makeRng(1)).members[0], 'speed');
   for (const d of FIXTURES) ITEMS[d.id] = d;
+  itemsChanged();
   try {
     raised();
     blows();
@@ -88,6 +94,7 @@ export function items(): void {
     sold();
   } finally {
     for (const d of FIXTURES) delete ITEMS[d.id];
+    itemsChanged();
   }
 }
 
@@ -103,7 +110,16 @@ function raised(): void {
     `a +3 speed coat worn adds a step of AC to its own (${ac} bare, ${twin} in a plain coat, ${worn} in the quick one); in the pack or the bag, nothing (${packed}, ${bagged})`);
   ok(JSON.stringify(c.stats) === JSON.stringify(own), 'and the member\'s own stats are as they were');
 
-  // The turn's order: Bram three slower than Idris goes first now and then bare, about half the time in the coat, and in the bag as bare.
+  // Worn on any slot: a +3 speed shield adds a step of AC, a +3 accuracy blade in hand a step of to-hit.
+  const q0 = bare(), b = q0.members[0];
+  b.equipment.weapon = null; b.equipment.shield = null;
+  const acBare = armorClass(b), shielded = equip(b, SHIELD.id), acShield = armorClass(b);
+  equip(b, PLAIN.id); const hitPlain = attackBonus(b);
+  equip(b, TRUE.id); const hitTrue = attackBonus(b);
+  ok(shielded && acShield === acBare + 1 && hitTrue === hitPlain + 1 && statOf(b, 'speed') === b.stats.speed + 3 && statOf(b, 'accuracy') === b.stats.accuracy + 3,
+    `a +3 speed shield worn adds a step of AC (${acBare} -> ${acShield}), a +3 accuracy blade in hand a step of to-hit (${hitPlain} -> ${hitTrue})`);
+
+  // The turn's order: Bram, three slower than Idris, goes first now and then bare, about half the time in the coat and as bare with it in the bag.
   const order = (seed: number, dress: (q: Party) => void): number[] => {
     const q = bare(); q.members[0].stats.speed = 10; q.members[1].stats.speed = 13; dress(q);
     const rng = makeRng(seed), s = startCombat(q, [{ id: 'a', monsters: [NEUTRAL] }], rng);
@@ -184,7 +200,7 @@ function shown(): void {
   const w0 = weaponLine(c);
   c.tiers = { arms: 'expert' };
   const w1 = weaponLine(c);
-  ok(plain[1] === '' && quick[0] === String(c.stats.speed + 3) && quick[1] === '+3' && other[1] === '' && other[0] === String(c.stats.might),
+  ok(plain[1] === '' && quick[0] === String(c.stats.speed + 3) && quick[1] === '(+3)' && other[1] === '' && other[0] === String(c.stats.might),
     `the sheet prints the total a fight reads and the raise, SPE ${quick.join('')} (bare ${plain.join('')}), and a stat not raised as ever (MIG ${other.join('')})`);
   ok(w0 === 'WEAPON Storm Blade, LIGHTNING' && w1 === 'WEAPON Storm Blade, LIGHTNING, EXPERT', `the WEAPON line says the element, before the tier: "${w1}"`);
   ok(describe(STORM.id) === '1d6 lightning' && describe(COAT.id) === 'AC+2 speed+3' && describe(CHARMS.might.id) === 'might+3' && describe(PLAIN.id) === '1d6' && describe(TWIN.id) === 'AC+2',
@@ -201,13 +217,21 @@ function shown(): void {
   const endOf = (d: ItemDef): number => { const m = defaultParty(makeRng(1)).members[0]; m.equipment.weapon = d.id; m.tiers = { arms: tier }; return 20 + measureText(weaponLine(m)); };
   const elemental = Object.values(ITEMS).filter((d) => d.slot === 'weapon' && d.element), over = elemental.filter((d) => endOf(d) > LEFT_END);
   ok(elemental.length >= 2 && !over.length, `every elemental weapon's WEAPON line, ${TIER_NAMES[tier]} at arms, ends by ${LEFT_END} (the widest at ${Math.max(...elemental.map(endOf))})${over.length ? ' -> ' + over.map((d) => `${d.name} at ${endOf(d)}`).join(', ') : ''}`);
-  ITEMS.test_long_blade = { ...STORM, id: 'test_long_blade', name: 'Blade Of A Name Too Long For It' };
-  const long = endOf(ITEMS.test_long_blade);
-  delete ITEMS.test_long_blade;
-  ok(long > LEFT_END, `and one past it is caught: a lightning blade of 31 letters would end at ${long}`);
+  // The cap on an elemental weapon's name, exact: with lightning, the widest element, and the widest tier.
+  const named = (n: number): number => {
+    ITEMS.test_long_blade = { ...STORM, id: 'test_long_blade', name: 'A'.repeat(n) };
+    const e = endOf(ITEMS.test_long_blade);
+    delete ITEMS.test_long_blade;
+    return e;
+  };
+  const widest = ELEMENTS.reduce((a, e) => (measureText(e) > measureText(a) ? e : a));
+  ok(widest === STORM.element && named(NAME_CAP) <= LEFT_END && named(NAME_CAP + 1) > LEFT_END,
+    `an elemental weapon's name fits to ${NAME_CAP} characters: its line ends at ${named(NAME_CAP)} with ${NAME_CAP} and at ${named(NAME_CAP + 1)} with ${NAME_CAP + 1}, of ${LEFT_END}`);
 }
 /** Where the sheet's left column must end: a glyph short of its items column at 340. */
 const LEFT_END = 340 - 6;
+/** The most characters an elemental weapon's name may have, for its WEAPON line to end by `LEFT_END` (DESIGN §5). */
+const NAME_CAP = 26;
 
 /** What a shop pays: half the price, rounded down, nothing for what is priced at nothing; and the sell screen pays just that. */
 function sold(): void {

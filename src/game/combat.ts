@@ -360,7 +360,7 @@ const waits = (s: CombatState, m: MonsterInst): boolean => m.back && !m.def.rang
 export const monsterAc = (s: CombatState, m: MonsterInst): number => m.def.ac + (s.foeShield[m.band] > 0 ? WARD_AC : 0);
 /** A monster's to-hit, with a Bless over its group and the weather's toll on its bow. */
 export const monsterHit = (s: CombatState, m: MonsterInst): number => m.def.attack + (s.foeBless[m.band] > 0 ? BLESS_HIT : 0) - (m.def.missile ? s.rangedPenalty : 0);
-/** What the company has seen the element do to the monster: the share of a spell's damage, or 1 where it has not seen it. */
+/** What the company has seen the element do to the monster: the share of a spell's damage or a blow's die, or 1 where it has not seen it. */
 export const seenMult = (s: CombatState, m: MonsterInst, el: Element | undefined): number => (el ? s.seen[m.def.id]?.[el] ?? 1 : 1);
 
 /** Whether the monster leads its group (`Ranks`). */

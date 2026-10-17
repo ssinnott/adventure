@@ -73,7 +73,7 @@ DESIGN.md first for the why.
   (`ItemDef.stat`, read through `statOf` by the blow, to-hit, armour, the turn's order, a flight and
   a heal, never written into a member's stats) and a weapon's blows may carry an element, an added
   1d6 of it through `elementDamage` that burns a mender and is seen as a spell's is
-  (`ItemDef.element`, #855; DESIGN §5, §6). The sheet prints the total and its raise ("SPE 16+3") and
+  (`ItemDef.element`, #855; DESIGN §5, §6). The sheet prints the total and its raise ("SPE 13(+3)") and
   the weapon's element, and a shop says both. No item of the content carries either yet.
 - **Save/load:** F5/F9 to localStorage; door changes, explored cells, group state and the rng all
   survive a reload. Saves are version 2 (the outdoors as one map, cells seen kept a bit apiece); a

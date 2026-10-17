@@ -380,7 +380,9 @@ Decided by the builder for #852, each the owner's to overturn:
 Decided by the builder for #855, each the owner's to overturn:
 
 1. A raise is borne as a resistance is: `borne` states the rule and `resists` reads it; `statOf`
-   counts by it without making the list, since every blow and every AC reads it.
+   counts by it without making the list, since every blow and every AC reads it, and looks nothing
+   up while no slotted or no slotless item raises a stat (`itemsChanged` resets that after a change
+   to the table, as a test's fixture makes). Reading every slot cost the gate 15% more time.
 2. A level gained reads the bare stat, Endurance's hit points and the spell stat's points alike: a
    raise lasts while it is borne, and a gain made with it would outlast it.
 3. A blow's die never pierces: a sorcerer's piercing is its spells' (§7 Ranks).
@@ -388,8 +390,9 @@ Decided by the builder for #855, each the owner's to overturn:
    what it drew before and no figure moves.
 5. The log's line is as it was, the die in the sum ("Bram hits Target for 9."): what an element did
    is learnt from the numbers, as a spell's is.
-6. The sheet's number is the total a fight reads, and the raise follows it in yellow ("SPE 16+3": 16,
-   of which 3 is borne); the labels stay the first three letters, SPE and not SPD.
+6. The sheet prints the total a fight reads and the raise after it in brackets, in yellow ("SPE
+   13(+3)": 13, of which 3 is borne). The ruling's "SPD 16+3" read either way, and "16+3" reads as
+   19. The labels stay the first three letters, SPE and not SPD.
 7. The WEAPON line puts the element before the tier ("WEAPON Grey Blade, LIGHTNING, EXPERT"): the
    element is the weapon's, the tier the member's.
 8. A shop says the element after the dice and a raise last ("2d6 lightning", "AC+2 speed+3").
@@ -399,8 +402,8 @@ Decided by the builder for #855, each the owner's to overturn:
     their own copies: the same numbers today, one measure after.
 11. The `items` suite holds the content to the shape alone and counts what carries either, so the
     areas may add. An elemental weapon's name stays to 26 characters, for its WEAPON line with
-    lightning and a tier to fit beside the items column: the road's longest, Auke's Count, Short
-    Sword +2, would not.
+    lightning and a tier to end by 334 px beside the items column (331 at 26, 337 at 27): the
+    road's longest, Auke's Count, Short Sword +2, would not.
 
 ---
 

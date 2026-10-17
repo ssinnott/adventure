@@ -283,7 +283,7 @@ export class SheetScreen implements Screen {
       const [total, raise] = statText(c, s);
       drawText(ctx, s.toUpperCase().slice(0, 3), 100, y, { size: 1, color: TEXT_DIM });
       drawText(ctx, total, 140, y, { size: 1, color: TEXT, align: 'right' });
-      // The raise follows the total a glyph's gap on, as one word: "16+3".
+      // The raise follows the total a glyph's gap on, in brackets: "13(+3)", 13 of which 3 is borne.
       if (raise) drawText(ctx, raise, 141, y, { size: 1, color: YELLOW });
       y += 10;
     }
@@ -312,10 +312,10 @@ export class SheetScreen implements Screen {
 
 /** A whole number as a raise is written: "+3", "-1". */
 const signed = (n: number): string => (n > 0 ? `+${n}` : String(n));
-/** A stat as the sheet prints it: the total a fight reads (`statOf`), and the raise of what is borne, if any ("16", "+3"). */
+/** A stat as the sheet prints it: the total a fight reads (`statOf`), and in brackets the raise of what is borne, if any ("13", "(+3)"). */
 export function statText(c: Character, s: Stat): [string, string] {
   const total = statOf(c, s), raise = total - c.stats[s];
-  return [String(total), raise ? signed(raise) : ''];
+  return [String(total), raise ? `(${signed(raise)})` : ''];
 }
 /**
  * The sheet's WEAPON line: what is in hand and the element its blows carry, then the member's tier at

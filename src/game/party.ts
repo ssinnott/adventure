@@ -365,17 +365,35 @@ export function resists(c: Character): Element[] {
   return ELEMENTS.filter((el) => ids.some((id) => item(id).resist?.includes(el)) || c.blessed.some((b) => b.element === el));
 }
 /**
+ * Whether any slotted item raises a stat, and any slotless one: worked out from `ITEMS` the first
+ * time a stat is read, so that `statOf` looks nothing up where nothing could raise it. The tables
+ * are fixed once loaded, so in play this is exact. Anything that puts an item with a `stat` into
+ * `ITEMS` later, or takes one out (a test's fixture), calls `itemsChanged()` after it does.
+ */
+let raisers: { slotted: boolean; slotless: boolean } | null = null;
+export function itemsChanged(): void { raisers = null; }
+function raisersNow(): { slotted: boolean; slotless: boolean } {
+  if (!raisers) {
+    const all = Object.values(ITEMS);
+    raisers = { slotted: all.some((d) => !!d.stat && d.slot !== 'none'), slotless: all.some((d) => !!d.stat && d.slot === 'none') };
+  }
+  return raisers;
+}
+/**
  * A stat as a member stands: their own, raised by what they bear (`ItemDef.stat`), counted by
  * `borne`'s rule without making its list, since every blow and every AC reads it. `c.stats` stays
  * their own, so a save holds no raise.
  */
 export function statOf(c: Character, s: Stat): number {
-  const { weapon, armor, shield } = c.equipment;
+  const r = raisersNow();
   let n = c.stats[s];
-  if (weapon) n += ITEMS[weapon].stat?.[s] ?? 0;
-  if (armor) n += ITEMS[armor].stat?.[s] ?? 0;
-  if (shield) n += ITEMS[shield].stat?.[s] ?? 0;
-  for (const id of c.pack) { const d = ITEMS[id]; if (d.slot === 'none' && d.stat) n += d.stat[s] ?? 0; }
+  if (r.slotted) {
+    const { weapon, armor, shield } = c.equipment;
+    if (weapon) n += ITEMS[weapon].stat?.[s] ?? 0;
+    if (armor) n += ITEMS[armor].stat?.[s] ?? 0;
+    if (shield) n += ITEMS[shield].stat?.[s] ?? 0;
+  }
+  if (r.slotless) for (const id of c.pack) { const d = ITEMS[id]; if (d.slot === 'none' && d.stat) n += d.stat[s] ?? 0; }
   return n;
 }
 export function addCondition(c: Character, k: Condition): void {
