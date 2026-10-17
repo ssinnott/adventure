@@ -48,11 +48,15 @@ interface Mem {
   far: Map<string, number>;
   /** The chests Space was pressed on, by "map:x,y": one still there after is not pressed on again. */
   opened: Set<string>;
+  /** The company's level at the last look on a level aim: a level gained starts its three days afresh. */
+  levelAt?: number;
+  /** The crossings turned back at ("zone:x,y"), with the levels and flags then: once each until one moves. */
+  turned: Map<string, string>;
 }
 const MEMS = new WeakMap<Pilot, Mem>();
 function memOf(p: Pilot): Mem {
   let m = MEMS.get(p);
-  if (!m) MEMS.set(p, (m = { lostAt: new Map(), out: new Map(), far: new Map(), opened: new Set() }));
+  if (!m) MEMS.set(p, (m = { lostAt: new Map(), out: new Map(), far: new Map(), opened: new Set(), turned: new Map() }));
   return m;
 }
 /** Forgets what the strategist kept: a new game or a load (`Pilot.forget`). */
@@ -67,8 +71,10 @@ function zoneOf(g: Game, map: string): string | undefined {
 const zoneBand = (g: Game, k: Known, map: string): readonly [number, number] | undefined => { const z = zoneOf(g, map); return z ? k.band(z) : undefined; };
 /** Whether Known gives a place a band that starts above the company's level and one. */
 const tooHard = (k: Known, place: string): boolean => { const b = k.band(place); return !!b && b[0] > companyLevel(k.party) + 1; };
-/** The zones set foot in whose band starts at the company's level or under: where it can level. */
-const easyZones = (k: Known): string[] => k.zones().filter((z) => { const b = k.band(z); return !!b && b[0] <= companyLevel(k.party); });
+/** The zones set foot in whose band starts at the company's level or under, and not given up: where it can level. */
+const easyZones = (k: Known, p: Pilot): string[] => k.zones().filter((z) => { const b = k.band(z); return !!b && b[0] <= companyLevel(k.party) && !p.lost.has(`level:${z}`); });
+/** Whether the zone a map lies in has a band, as Known gives it, that starts above the company's level and one. */
+const zoneTooHard = (g: Game, k: Known, map: string): boolean => (zoneBand(g, k, map)?.[0] ?? 0) > companyLevel(k.party) + 1;
 
 /** What the map's sign or the world map calls a map or a zone. */
 function nameOf(g: Game, id: string): string {
@@ -100,25 +106,18 @@ const walkedOut = (g: Game, k: Known, mem: Mem, map: string): boolean => mem.out
  * (`Pilot.lost`); (2) else a side or seeking quest's, the nearest first by where the world map places
  * its map; (3) either, where its zone's band as Known gives it starts above the company's level and
  * one, gives way to levelling in the nearest zone known whose band starts at the company's level or
- * under, to the level under the goal's zone's floor; (4) else walking: the party's map (outdoors its
+ * under and is not given up, to the level under the goal's zone's floor, or with none is passed
+ * over; (4) else walking: the party's map (outdoors its
  * zone) until walked out, then the nearest map visited or zone set foot in not walked out, then the
  * nearest zone not yet set foot in beside one that was, then a map not visited through the nearest
  * exit seen to it. A goal given up is tried again once anyone has gained a level or a flag is set.
  */
 export function chooseAim(g: Game, k: Known, p: Pilot): Aim | null {
-  const mem = memOf(p), party = k.party, level = companyLevel(party);
-  for (const [text, then] of mem.lostAt) if (levels(party) > then.levels || flagCount(party) > then.flags) { p.lost.delete(text); mem.lostAt.delete(text); }
+  const mem = memOf(p);
+  retry(p, mem, k.party);
+  const quest = questAim(g, k, p);
+  if (quest) return quest;
   const from = pointOf(g, k), far = (map: string): number => distance(k.placeOf(map), from);
-  const open = k.goals().filter((q): q is { quest: string; text: string; map: string } => q.map !== undefined && !p.lost.has(q.text));
-  const q = open.find((v) => v.quest === THE_QUEST.id) ?? open.filter((v) => v.quest !== THE_QUEST.id).sort((a, b) => far(a.map) - far(b.map))[0];
-  if (q) {
-    const band = zoneBand(g, k, q.map);
-    if (band && band[0] > level + 1) {
-      const easy = easyZones(k).sort((a, b) => far(a) - far(b));
-      if (easy.length) return { kind: 'level', zone: easy[0], to: band[0] - 1 };
-    }
-    return { kind: 'quest', quest: q.quest, map: q.map, text: q.text };
-  }
   const st = g.world.state, mine = g.world.zone?.id ?? st.mapId;
   const fresh = (m: string): boolean => !walkedOut(g, k, mem, m) && !tooHard(k, m);
   if (fresh(mine)) return { kind: 'explore', map: mine };
@@ -135,6 +134,29 @@ export function chooseAim(g: Game, k: Known, p: Pilot): Aim | null {
   if (beside.length) return { kind: 'explore', map: beside[0] };
   const any = door ?? doors.sort((a, b) => far(a.m) - far(b.m))[0];
   return any ? { kind: 'explore', map: any.e.to } : null;
+}
+
+/** The goals given up whose company has since gained a level (anyone's) or set a flag: tried again. */
+function retry(p: Pilot, mem: Mem, party: Party): void {
+  for (const [text, then] of mem.lostAt) if (levels(party) > then.levels || flagCount(party) > then.flags) { p.lost.delete(text); mem.lostAt.delete(text); }
+}
+
+/**
+ * Rules 1 to 3: the one quest's goal, else the nearest side or seeking quest's, each with its map
+ * known and its words not given up; a goal whose zone is too hard gives way to levelling in the
+ * nearest zone it can, and with none left to level in it is passed over, as a goal lost is.
+ */
+function questAim(g: Game, k: Known, p: Pilot): Aim | undefined {
+  const from = pointOf(g, k), far = (map: string): number => distance(k.placeOf(map), from);
+  const open = k.goals().filter((q): q is { quest: string; text: string; map: string } => q.map !== undefined && !p.lost.has(q.text));
+  const one = open.filter((v) => v.quest === THE_QUEST.id), side = open.filter((v) => v.quest !== THE_QUEST.id).sort((a, b) => far(a.map) - far(b.map));
+  for (const q of [...one, ...side]) {
+    const band = zoneBand(g, k, q.map);
+    if (!band || band[0] <= companyLevel(k.party) + 1) return { kind: 'quest', quest: q.quest, map: q.map, text: q.text };
+    const easy = easyZones(k, p).sort((a, b) => far(a) - far(b));
+    if (easy.length) return { kind: 'level', zone: easy[0], to: band[0] - 1 };
+  }
+  return undefined;
 }
 
 /** Whether two boxes share a stretch of edge. */
@@ -160,8 +182,8 @@ const aimIn = (g: Game, aim: Aim | null, zone: string): boolean =>
  * is not in: back to the square before the line ("Too strong for us yet: back."). (2) The aim chosen
  * anew when there is none, when its quest's goal shows other words, when its zone's band is learnt too
  * high, when the level is reached or the map walked out, or when a quest's goal comes to a walk. (3)
- * The lost rule: three days of the world's on a goal whose words have not changed, it says so, gives
- * the goal up and clears the aim. (4) A goal walked is the navigator's. (5) A chest stood on is
+ * The lost rule: three days of the world's on a goal whose words have not changed, or levelling with
+ * no level gained, it says so, gives the goal (or `level:<zone>`) up and clears the aim. (4) A goal walked is the navigator's. (5) A chest stood on is
  * opened, one seen where the aim is is gone to. (6) The aim: to its map by the exits seen, else
  * nearer by the zones between, and there the explorer walks it (`Pilot.prefer`); walked out, the
  * party walks it again end to end, as a lost company would, while the days pass.
@@ -174,7 +196,10 @@ export const aims: Brain = (g, k, p) => {
     const back = mem.zone !== undefined && zone !== undefined ? mem.before : undefined;
     mem.zone = zone;
     mem.before = undefined;
-    if (back && zone && tooHard(k, zone) && !aimIn(g, p.aim, zone)) {
+    const line = `${zone}:${back?.x},${back?.y}`, then = `${levels(party)}|${flagCount(party)}`;
+    // Once a crossing, until a level or a flag is gained: a route that clips a hard zone's corner goes on.
+    if (back && zone && tooHard(k, zone) && !aimIn(g, p.aim, zone) && mem.turned.get(line) !== then) {
+      mem.turned.set(line, then);
       p.plan = [];
       return walk(g, k, p, { map: st.mapId, x: back.x, y: back.y, name: 'the road behind', why: 'Too strong for us yet: back.' });
     }
@@ -182,14 +207,14 @@ export const aims: Brain = (g, k, p) => {
   if (zone !== undefined) mem.before = { x: st.x, y: st.y };
 
   // 2. The aim, chosen anew when it is spent.
+  retry(p, mem, party);
   const goals = k.goals(), aim = p.aim;
   const shown = aim?.kind === 'quest' ? goals.find((q) => q.quest === aim.quest)?.text ?? '' : '';
-  const quested = goals.some((q) => q.map !== undefined && !p.lost.has(q.text));
   const spent = !aim
-    // A quest's zone learnt too hard turns it to levelling, where a zone to level in is known.
-    || (aim.kind === 'quest' && (shown !== p.aimGoal || ((zoneBand(g, k, aim.map)?.[0] ?? 0) > companyLevel(party) + 1 && easyZones(k).length > 0)))
+    // A quest's zone learnt too hard turns it to levelling, or past it where there is nowhere to level.
+    || (aim.kind === 'quest' && (shown !== p.aimGoal || zoneTooHard(g, k, aim.map)))
     || (aim.kind === 'level' && companyLevel(party) >= aim.to)
-    || (aim.kind === 'explore' && (quested || tooHard(k, aim.map)));
+    || (aim.kind === 'explore' && (questAim(g, k, p) !== undefined || tooHard(k, aim.map)));
   if (spent) {
     const next = chooseAim(g, k, p);
     // A goal of the old aim's goes with it; one the quartermaster set for a need (its reason) stays.
@@ -198,17 +223,24 @@ export const aims: Brain = (g, k, p) => {
     p.aimSince = st.minutes;
     p.aimGoal = next?.kind === 'quest' ? next.text : '';
     p.prefer = null;
+    mem.levelAt = companyLevel(party);
     if (!next) return null;
     p.why = [whyOf(g, next)];
   }
   const now = p.aim!;
 
-  // 3. The lost rule.
-  if (now.kind === 'quest' && st.minutes - p.aimSince >= LOST_MINUTES) {
-    const line = `Lost in ${within(areaName(g, now.map))}: three days, and no way on.`;
+  // 3. The lost rule: a quest's goal, or a level aim's three days with no level gained (each one starts them afresh).
+  if (now.kind === 'level') {
+    const lvl = companyLevel(party);
+    if (mem.levelAt !== undefined && lvl > mem.levelAt) p.aimSince = st.minutes;
+    mem.levelAt = lvl;
+  }
+  if (now.kind !== 'explore' && st.minutes - p.aimSince >= LOST_MINUTES) {
+    const line = now.kind === 'quest' ? `Lost in ${within(areaName(g, now.map))}: three days, and no way on.` : `Three days in ${within(nameOf(g, now.zone))}, and no stronger.`;
+    const given = now.kind === 'quest' ? now.text : `level:${now.zone}`;
     g.say(line);
-    p.lost.add(now.text);
-    mem.lostAt.set(now.text, { levels: levels(party), flags: flagCount(party) });
+    p.lost.add(given);
+    mem.lostAt.set(given, { levels: levels(party), flags: flagCount(party) });
     p.aim = null;
     p.prefer = null;
     if (p.goal && !p.goal.reason) { p.goal = null; p.plan = []; }
@@ -286,14 +318,15 @@ function toward(g: Game, k: Known, p: Pilot, map: string, why: string): Action |
  * The place walked again, to its farthest square seen and back, as a company with no way on would:
  * the days pass, the groups move, and the lost rule comes at three. The aim's map where the party is
  * on it, else the zone it lies in where the party is there, else where the party stands; never onto
- * an exit, a rift or a business's door, which would take the party away.
+ * an exit, a rift or a business's door, which would take the party away, nor onto a person, whom
+ * talk meets with a goal of its own (#721).
  */
 function walkAgain(g: Game, k: Known, p: Pilot, map: string): Action | null {
   const st = g.world.state, zone = zoneOf(g, map);
   // Where the party stands is walked when it is not on the aim's map or in its zone: the clock must run.
   const area = g.world.locate(map, 0, 0).mapId === st.mapId && (st.mapId !== OUTDOORS || g.world.zone?.id === map) ? map : zone && g.world.zone?.id === zone ? zone : g.world.zone?.id ?? st.mapId;
   const box = k.box(area), can = partyCan(k.party), shut = p.shut.filter((s) => s.map === st.mapId);
-  const away = new Set([...k.exits(st.mapId), ...k.features(st.mapId).filter((f) => f.kind === 'rift' || ('interior' in f && !!f.interior))].map(at));
+  const away = new Set([...k.exits(st.mapId), ...k.features(st.mapId).filter((f) => f.kind === 'rift' || f.kind === 'npc' || ('interior' in f && !!f.interior))].map(at));
   let best: Square | undefined, most = 1;
   for (const [sq, n] of routeLengths(k, st.mapId, st.x, st.y, st.facing, shut)) {
     const [x, y] = sq.split(',').map(Number), c = k.cell(st.mapId, x, y);

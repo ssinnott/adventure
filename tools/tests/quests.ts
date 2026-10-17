@@ -92,7 +92,7 @@ export function quests(): void {
   gp.flags.q_ashcombe_done = 1;
   gp.flags.q_wenna = 1;
   const firstGoal = views(), firstAt = firstGoal.map(goalMap), named = shelf.goals.find((q) => q.text === hired[0].goal)?.at;
-  ok(firstGoal.every((v) => v.goal === shelf.goals[0].text) && firstAt.every((m) => m === shelf.goals[0].at) && hiredAt.every((m) => m === named) && named !== shelf.goals[0].at,
+  ok(hired.length === 2 && firstGoal.length === 2 && firstGoal.every((v) => v.goal === shelf.goals[0].text) && firstAt.every((m) => m === shelf.goals[0].at) && hiredAt.every((m) => m === named) && named !== shelf.goals[0].at,
     `goalMap gives the map the shown goal names, in the one quest and in a quest of its own: ${hiredAt.join(' and ')} once hired, then ${firstAt.join(' and ')} for the chapter's first goal (${shelf.goals[0].at})`);
   // A reading is kept by its inscription's id (#538), so `seen` names it; a plain sign is kept by nothing.
   const lintel: MapDef = { ...crossing, features: [{ kind: 'sign', x: 0, y: 0, id: 'fx_lintel', text: 'Marks.', read: 'STORE.' }, { kind: 'sign', x: 1, y: 0, text: 'A post.' }] };
