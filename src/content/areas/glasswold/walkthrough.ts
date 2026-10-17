@@ -47,7 +47,7 @@
 // glasses brought first and the ask first, and to a company with no sorcerer (`walkersCarried`); #56's four
 // side quests (#532), each at its level and every way it goes (`woldQuests`). The Master of arms (#858),
 // found and never told: the rumour at Akordu's trader's tent, the door in the small mesa's face that the
-// arrows point at, the hollow and Mergen in it, the bow in the herders' store on E9, and the lesson (`masterOfArms`).
+// arrows point at, the hollow and Mergen in it, the bow in the herders' store on E9 and the lesson (`masterOfArms`).
 // Last the chapter, three ways in (`theWarning`).
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen, walkThrough, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
@@ -60,7 +60,7 @@ import { offers, teach, barOf, noneHere } from '../../../game/prestige.ts';
 import { seekId, sought } from '../../../game/seeking.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
 import { questLog, questMarks, TRAINERS } from '../../../game/quests.ts';
-import type { QuestCond } from '../../../game/quests.ts';
+import type { QuestCond, When } from '../../../game/quests.ts';
 import { VENTS } from '../ashfall/maps/firemount_g11.ts';
 import { STAIR } from '../ashfall/maps/meridian_camp.ts';
 import { STAIR2 } from '../ashfall/maps/meridian_camp2.ts';
@@ -1297,16 +1297,16 @@ function woldQuests(ok: (cond: boolean, msg: string) => void): void {
 }
 
 /**
- * The Master of arms (#858), found and never told, played by a company of 26 whose fighters are given Expert
- * at arms and the gold directly: Expert is bought at a town trainer elsewhere on the road (#852), and what
- * is played here is the Master. The rumour at Akordu's trader's tent, in the Riders' words, of the mesas; the
+ * The Master of arms (#858), found and never told, played by a company at the Wold's floor, 26, whose fighters
+ * are given Expert at arms and the gold directly: Expert is bought at a town trainer elsewhere on the road
+ * (#852), and what is played here is the Master. The rumour at Akordu's trader's tent, in the Riders' words, of the mesas; the
  * small mesa's door, found from the arrows in its foot, shut to every walker, wader, climber and floater but
  * through it, and the hollow behind it with Mergen in it; his words, which hint at the bow the herders keep,
  * and his menu, which refuses every member before the favour; the herders' store on E9, found from the path
  * that stops at the slab, and the bow at the back of it; the bow handed in, which sets the flag his
- * teaching waits on; and the Master taught to the member Expert at arms of 25 and over, for 5,000. He is
- * off the road and off the chapter's path by more than ten squares, and so is the bow, and no quest, seeking
- * or mark names him.
+ * teaching waits on; and the Master taught to the member Expert at arms of 25, the level he asks, for 5,000,
+ * where the one of 24 is refused. He is off the road and off the chapter's path by more than ten squares, and so
+ * is the bow, and no quest, seeking or mark names him.
  */
 function masterOfArms(ok: (cond: boolean, msg: string) => void): void {
   const g = headlessGame(4), p = g.party, LEVEL = 26;
@@ -1349,29 +1349,41 @@ function masterOfArms(ok: (cond: boolean, msg: string) => void): void {
     && !/Mergen|\d/.test(rumour) && !rider.flag && !rider.quest && !rider.choice && !rider.says && !rider.teaches && !rider.mastery && !rider.interior && !rider.passage,
     'at the trader\'s tent in Akordu a Rider says a man who drilled the Riders went into the mesas and has not been seen to eat, words only and two paragraphs, and never a name or a square');
 
-  // The hide: off the road and off the chapter's path by more than ten squares, on the world's grid.
+  // The hide: off the road and off the chapter's path by more than ten squares, on the world's grid. The path is
+  // the squares the chapter keys on, in its story order (its start, each entry, its end; any one of a condition's
+  // alternatives will do), and the walks between one step and the next, each the rectangle every shortest walk
+  // from a step to the next lies in: a hide set between two steps fails it as one set beside a step does.
   const road = (X: number, Y: number): number => {
     let best = Infinity;
     for (let y = Y - 40; y <= Y + 40; y++) for (let x = X - 40; x <= X + 40; x++) if (out.inBounds(x, y) && out.at(x, y).ch === '=') best = Math.min(best, chebyshev([x, y], [X, Y]));
     return best;
   };
-  const chapterConds = [CHAPTER.start, CHAPTER.done, ...CHAPTER.entries.map((e) => e.when), ...CHAPTER.goals.map((x) => x.when)].flatMap((c) => [c].flat() as QuestCond[]);
-  const onPath: { what: string; at: [number, number] }[] = [];
-  const step = (what: string, map: string, x: number, y: number): void => { const z = out.zones.find((q) => q.id === map); if (z) onPath.push({ what, at: [z.x + x, z.y + y] }); };
-  for (const c of chapterConds) {
-    if (c.seen) { const [map, id] = c.seen.split(':'), f = MAP_DEFS.find((d) => d.id === map)?.features?.find((q) => 'id' in q && q.id === id); if (f) step(c.seen, map, f.x, f.y); }
-    if (c.visited) { const d = MAP_DEFS.find((q) => q.id === c.visited); if (d) step(`${d.id} entered`, d.id, d.start.x, d.start.y); }
-    for (const flag of [c.flag ?? []].flat()) for (const d of MAP_DEFS) for (const f of d.features ?? []) {
-      if ((f.kind === 'npc' && personFlags(f).includes(flag)) || (f.kind === 'event' && [f.sets ?? []].flat().includes(flag))) step(flag, d.id, f.x, f.y);
+  const stageOf = (when: When): { what: string; at: [number, number][] } => {
+    const at: [number, number][] = [], what: string[] = [];
+    const step = (name: string, map: string, x: number, y: number): void => { const z = out.zones.find((q) => q.id === map); if (z) { what.push(name); at.push([z.x + x, z.y + y]); } };
+    for (const c of [when].flat() as QuestCond[]) {
+      if (c.seen) { const [map, id] = c.seen.split(':'), f = MAP_DEFS.find((d) => d.id === map)?.features?.find((q) => 'id' in q && q.id === id); if (f) step(c.seen, map, f.x, f.y); }
+      if (c.visited) { const d = MAP_DEFS.find((q) => q.id === c.visited); if (d) step(`${d.id} entered`, d.id, d.start.x, d.start.y); }
+      for (const flag of [c.flag ?? []].flat()) for (const d of MAP_DEFS) for (const f of d.features ?? []) {
+        if ((f.kind === 'npc' && personFlags(f).includes(flag)) || (f.kind === 'event' && [f.sets ?? []].flat().includes(flag))) step(flag, d.id, f.x, f.y);
+      }
     }
+    return { what: [...new Set(what)].join(' or '), at };
+  };
+  const stages = [CHAPTER.start, ...CHAPTER.entries.map((e) => e.when), CHAPTER.done].map(stageOf).filter((s) => s.at.length);
+  const onPath = stages.flatMap((s) => s.at.map((at) => ({ what: s.what, at })));
+  const walks: { from: string; to: string; box: [number, number, number, number] }[] = [];
+  for (let i = 0; i + 1 < stages.length; i++) for (const a of stages[i].at) for (const b of stages[i + 1].at) {
+    walks.push({ from: stages[i].what, to: stages[i + 1].what, box: [Math.min(a[0], b[0]), Math.min(a[1], b[1]), Math.max(a[0], b[0]), Math.max(a[1], b[1])] });
   }
-  const apart = (at: [number, number]): { road: number; path: number; what: string } => {
+  const apart = (at: [number, number]): { road: number; path: number; walk: number; what: string; between: string } => {
     const near = onPath.map((q) => ({ what: q.what, d: chebyshev(q.at, at) })).sort((a, b) => a.d - b.d)[0];
-    return { road: road(at[0], at[1]), path: near.d, what: near.what };
+    const walk = walks.map((q) => ({ q, d: Math.max(q.box[0] - at[0], at[0] - q.box[2], q.box[1] - at[1], at[1] - q.box[3], 0) })).sort((a, b) => a.d - b.d)[0];
+    return { road: road(at[0], at[1]), path: near.d, walk: walk.d, what: near.what, between: `${walk.q.from} to ${walk.q.to}` };
   };
   const hideAt = apart([d10.x + mergen.x, d10.y + mergen.y]), bowAt = apart([e9.x + chest.x, e9.y + chest.y]);
-  ok(onPath.length >= 8 && hideAt.road > 10 && hideAt.path > 10 && bowAt.road > 10 && bowAt.path > 10,
-    `the hide is ${hideAt.road} squares from the nearest road square and ${hideAt.path} from the chapter's nearest step (${hideAt.what}), and the bow's chest ${bowAt.road} and ${bowAt.path} (${bowAt.what}), of ${onPath.length} squares the chapter keys on`);
+  ok(onPath.length >= 8 && walks.length >= 8 && [hideAt, bowAt].every((a) => a.road > 10 && a.path > 10 && a.walk > 10),
+    `the hide is ${hideAt.road} squares from the nearest road square, ${hideAt.path} from the chapter's nearest step (${hideAt.what}) and ${hideAt.walk} from the nearest walk between two steps (${hideAt.between}), and the bow's chest ${bowAt.road}, ${bowAt.path} and ${bowAt.walk} (${bowAt.between}), of ${onPath.length} squares the chapter keys on and ${walks.length} walks between them`);
 
   // The door: shut to every walker, wader, climber and floater but through it, with the hint on the near side.
   const reach = (z: typeof d10, from: readonly [number, number], shut: readonly [number, number]): Set<number> => {
@@ -1402,7 +1414,7 @@ function masterOfArms(ok: (cond: boolean, msg: string) => void): void {
     'searched where the arrows stand, the rock gives, and the hollow behind it can be walked into');
   listen(w);
 
-  // His words, the first time: the bow the herders keep, behind the stone where their path ends, which
+  // His words, the first time: the bow the herders keep, where their path ends, which
   // hints at E9's store and tells nobody the door. The fighters are given Expert and the gold; every member of
   // the line is refused before the favour, each for its own reason.
   const fighters = p.members.flatMap((c, i) => (linesOf(c.cls).includes('arms') ? [i] : []));
@@ -1410,6 +1422,7 @@ function masterOfArms(ok: (cond: boolean, msg: string) => void): void {
   // Expert at arms as a town trainer's menu teaches it (`teachTier`, 2,000 gold each), and the gold for the lesson.
   p.gold = 20000;
   for (const i of [first, second]) ok(teachTier('arms', 'expert', TIER_PRICES.expert, p, i).taught, `${p.members[i].name} is given Expert at arms, as the towns' trainers teach it`);
+  p.members[first].level = 25; p.members[first].xp = xpForLevel(25);
   p.members[second].level = 24;
   p.gold = 6000;
   const opening = meet(mergen, p, heard(w.world, mergen)).text;
@@ -1417,7 +1430,7 @@ function masterOfArms(ok: (cond: boolean, msg: string) => void): void {
   const before = bars();
   ok(opening === mergen.lines.join('\n\n') && mergen.lines.length === 3 && opening.includes('herders') && opening.includes('bow') && opening.includes('where their path ends')
     && !/slab|store|[0-9]/i.test(opening) && !!p.flags[MASTER_MET] && !p.flags[MASTER_FAVOUR],
-    'Mergen\'s own words first: his bow is with the herders, behind the stone where their path ends, and he will teach for it; no square, and nothing of the store or its door');
+    'Mergen\'s own words first: his bow is with the herders, where their path ends, and he will teach for it; no square, and nothing of the store or its door');
   ok(fighters.length === 4 && before.join() === [`${first}:favour first`, `${second}:level 25`, `${third}:Expert first`, `${fourth}:Expert first`].join()
     && !teachTier('arms', 'master', mastery.price, p, first, favourDone(mastery, w.world.state, p)).taught && p.gold === 6000,
     `before the favour his menu refuses every member of the line, each for its reason (${before.join(' ')}), and nothing is taught or paid`);
@@ -1457,7 +1470,7 @@ function masterOfArms(ok: (cond: boolean, msg: string) => void): void {
   const purse = p.gold, lesson = teachTier('arms', 'master', mastery.price, p, first, favourDone(mastery, w.world.state, p));
   ok(lesson.taught && p.gold === purse - 5000 && lesson.said === `${p.members[first].name} is Master at arms now.` && bars()[0] === `${first}:taken`
     && !teachTier('arms', 'master', mastery.price, p, second, true).taught && p.gold === purse - 5000,
-    `the member Expert at 26 is taught for 5,000 gold ("${lesson.said}"), and the one of 24 and the ones without Expert are still refused`);
+    `the member Expert at 25 is taught for 5,000 gold ("${lesson.said}"), and the one of 24 and the ones without Expert are still refused`);
   ok(meet(mergen, p, heard(w.world, mergen)).text === mergen.says![0].lines.join('\n\n'), 'after, he sits with the bow across his knees, and asks who comes to him');
 
   // A company that finds the bow first and never met him: he takes it at the first meeting, in the words for a
@@ -1473,7 +1486,7 @@ function masterOfArms(ok: (cond: boolean, msg: string) => void): void {
 
 // ---- the chapter (#531) ----
 
-const npcOn =(map: string, name: string): Person => MAP_DEFS.find((d) => d.id === map)!.features!.find((f): f is Person => f.kind === 'npc' && f.name === name)!;
+const npcOn = (map: string, name: string): Person => MAP_DEFS.find((d) => d.id === map)!.features!.find((f): f is Person => f.kind === 'npc' && f.name === name)!;
 const goalOf = (start: string): string => CHAPTER.goals.find((g) => g.text.startsWith(start))!.text;
 
 /** A step played at a level, the company levelled to it. */

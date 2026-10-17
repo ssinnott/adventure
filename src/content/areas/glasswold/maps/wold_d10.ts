@@ -101,7 +101,7 @@ export const WOLD_D10: MapDef = {
     { kind: 'npc', x: 1, y: 20, name: 'Mergen, the drillmaster', flag: MASTER_MET, lines: [
       'An old man sits on a pallet in the hollow, his hands in his lap like two roots. The bow-rack by his head is empty.',
       '"Mergen. I taught the Riders to loose at the gallop, and their fathers before them. The last of them rode into the Glass, and I came up here."',
-      '"My bow is with the herders, since my hands went. They keep it behind the stone where their path ends. Bring it, and I will teach you what I have left."',
+      '"My bow is with the herders, since my hands went. They keep it where their path ends. Bring it, and I will teach you what I have left."',
     ], quest: { item: 'drill_bow', reward: 0, setFlag: MASTER_FAVOUR, early: [
       'The old man looks at the bow in your hands a long while, and then at you.',
       '"Give it here." His hands close on it as they have not closed in years.',
@@ -110,7 +110,7 @@ export const WOLD_D10: MapDef = {
       '"The herders kept it dry. Sit down."',
     ] }, says: [
       { after: { flag: MASTER_FAVOUR }, lines: ['Mergen sits with the bow across his knees, his hands closed on it.', '"Steel answers steel. Who comes to me?"'] },
-      { after: { flag: MASTER_MET }, lines: ['Mergen holds out his empty hands.', '"My bow. The herders keep it behind the stone where their path ends."'] },
+      { after: { flag: MASTER_MET }, lines: ['Mergen holds out his empty hands.', '"My bow. The herders keep it where their path ends."'] },
     ], mastery: { line: 'arms', tier: 'master', done: { flag: MASTER_FAVOUR }, price: 5000 } },
     // The hills in the south: the Riders' camp out of sight of the mesas, their sky-stone, and the grass's dead.
     { kind: 'camp', x: 10, y: 29, text: 'A Riders\' camp in the lee of the hills, a stone-lined fire-pit, out of sight of the mesas.' },
