@@ -54,7 +54,9 @@
 // the flow's edge, the drakelings on its warm bank and the tube under it behind the crack that breathes cold
 // air. Then the three third prestiges taught here (#448), each its trainer's quest played to the teaching by
 // a company of 27:
-// the Paladin's lamp, the Barbarian's nest and the Druid's seedling.
+// the Paladin's lamp, the Barbarian's nest and the Druid's seedling. Then the Master of magic, found and
+// never told (#859): the hermit's rumour, the hide in Old Cinder, the favour in E11's cold tube, and the
+// teaching by a company of 25.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, gone, listen, walkThrough, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
 import type { Walk, Step } from '../../../../tools/walk.ts';
@@ -66,11 +68,11 @@ import { OUTDOORS } from '../../../game/outdoors.ts';
 import { GameMap } from '../../../game/map.ts';
 import type { Feature, MapDef } from '../../../game/map.ts';
 import { restRefused } from '../../../game/wilds.ts';
-import { meet, heard, answer, barred, handIns } from '../../../game/people.ts';
+import { meet, heard, answer, barred, handIns, personFlags } from '../../../game/people.ts';
 import { questLog, holds } from '../../../game/quests.ts';
 import type { Person } from '../../../game/people.ts';
 import { buy, item } from '../../../game/items.ts';
-import { canTrainAt, xpForLevel, rest, trainPrice, levelUp, templePrice, addCondition, createCharacter, takePrestige, className, PRESTIGES } from '../../../game/party.ts';
+import { canTrainAt, xpForLevel, rest, trainPrice, levelUp, templePrice, addCondition, createCharacter, takePrestige, className, rankMult, tierSteps, RANK_STEP, PRESTIGES } from '../../../game/party.ts';
 import { teach, barOf } from '../../../game/prestige.ts';
 import { seekId, sought } from '../../../game/seeking.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
@@ -100,6 +102,9 @@ import { ROPE } from './maps/meridian_camp3.ts';
 import { CRATER, STONE } from './maps/emberwaste_f11.ts';
 import { LIT, LIGHTS, SOCKETS, SEEDLING, SEEDLING_ASKED, SEEDLING_TAKEN, SEEDLING_PLANTED } from './maps/ember_stone.ts';
 import { LAMP_ASKED, LAMP_LIT } from './maps/old_cinder2.ts';
+import { ROLL_GIVEN } from './maps/old_cinder.ts';
+import { QUESTS } from './quests.ts';
+import { linesOf, masterOffers, favourDone, teachTier, tierOf, TIER_PRICES } from '../../../game/mastery.ts';
 import { SLEEPERS_SEEN } from '../rimewater/chapter.ts';
 import { ENDINGS, ENDED } from '../../endings.ts';
 
@@ -767,6 +772,7 @@ export const walkthrough: Walkthrough = (ok) => {
   heartBehind(w, ok);
   sideQuests(ok);
   thirdPrestiges(ok);
+  masterOfMagic(ok);
   theWindow(ok);
 };
 
@@ -815,7 +821,7 @@ function oldCinder(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   ok(up.kind === 'moved' && waste?.id === 'emberwaste_f11' && w.world.state.x - waste.x === CRATER.x - 1 && w.world.state.y - waste.y === CRATER.y && w.world.state.facing === WEST,
     `and back up over the lip onto its front on F11, facing away from the pit (${at()})`);
   ok([L1, L2].every((d) => (d.exits ?? []).every((e) => !e.shut && !e.needFlag) && !d.features!.some((f) => ['inn', 'temple', 'shop', 'guild', 'trainer'].includes(f.kind)) && d.features!.filter((f) => f.kind === 'camp').length === 1),
-    'nothing shuts a way in Old Cinder, nothing in it sells or teaches, and each level has one place to rest');
+    'nothing shuts a way in Old Cinder, no business or hall stands in it (the scholar behind the wall is a person, #859), and each level has one place to rest');
 
   // The town (25): the houses either side of the street, their people as they were, every one with a
   // cup; the well at the crossing; the potters' kilns and the broken one beside them; the man in his
@@ -1613,6 +1619,139 @@ function thirdPrestiges(ok: (cond: boolean, msg: string) => void): void {
   const greened = w.world.eventsHere();
   ok(!!w.party.flags[LIT] && greened.join(' ') === green.text && written('seedling').includes('green'), `the three parts set and the Stone lit, the seedling stands green in its bed (${greened.join(' ')})`);
   taught(F10, druid, 3, 'seedling', 'Green, out here');
+}
+
+/**
+ * The Master of magic (#859; DESIGN §5, EXPANSION §8), found and never told, played by a company of 25. The
+ * hermit in F11's rock says his own words at the first meeting and adds two at the next, the one chimney in
+ * the crater that no stoker feeds: the kind of place, never the square. Down off the lip, in Old Cinder's
+ * lane, a cup set down clean at the south end of the broken kiln's room, the ash swept from round it; searched
+ * there, the wall gives on a room the ash never filled and Eseld in it. The room is shut but for that door,
+ * off the street and the straight way to the hall's stair, and nothing in the log, the quests or the atlas
+ * names her. She asks for the town's roll, which the clerk took west on the carts' road: it lies at the end
+ * of E11's cold tube, behind the crack that breathes cold air, more than ten squares off any road and nowhere
+ * in the chapter. Before it she refuses; the roll handed in, she teaches Master for 5,000 to a member with
+ * Expert in magic at 25. The company is given its Expert (taught at a town's trainer elsewhere on the road,
+ * from the Sail Loft on) and its gold directly, as the walkthrough has no purse of its own to fill.
+ */
+function masterOfMagic(ok: (cond: boolean, msg: string) => void): void {
+  const w = newWalk(ok);
+  const out = buildMaps()[OUTDOORS];
+  const [F11, L1, E11] = ['emberwaste_f11', 'old_cinder', 'emberwaste_e11'].map(mapOf);
+  const e11 = out.zones.find((z) => z.id === E11.id)!;
+  const eseld = L1.features!.find((f): f is Person => f.kind === 'npc' && f.name.startsWith('Eseld'))!;
+  const m = eseld.mastery!, [hand] = handIns(eseld);
+  const say = (p: Person): string => meet(p, w.party, heard(w.world, p)).text;
+  const search = (): boolean => { let found = false; for (let i = 0; i < 20 && !found; i++) found = w.world.search(); return found; };
+  w.level = 25;
+  for (const c of w.party.members) { c.xp = xpForLevel(25); c.level = 25; }
+  const [idris, wren, maren, cassian] = [1, 2, 4, 5].map((i) => w.party.members[i]);
+  maren.tiers = { magic: 'expert' };
+  w.party.gold = 5000;
+
+  // The rumour: the hermit's own three lines at the first meeting, and at the next the two he adds.
+  const hermit = person('A hermit', F11);
+  w.world.travel(F11.id, hermit.x, hermit.y);
+  const [first, second] = [say(hermit), say(hermit)], added = (hermit.says ?? []).flatMap((s) => s.lines);
+  ok(hermit.lines.length === 3 && first === hermit.lines.join('\n\n') && !first.includes('chimney') && added.length === 2 && second === added.join('\n\n') && say(hermit) === second,
+    `the hermit says his own words at the first meeting and, after it, two more (${second.replace(/\n+/g, ' ')})`);
+  ok(/chimney/.test(second) && !/\d|door|wall|secret|room|kiln|cup|scholar|eseld|roll|clerk|study|house/i.test(second),
+    'and the rumour says the kind of place, a fire in the buried town no stoker feeds, and never the square');
+
+  // Found, never told: she has no seeking, and nothing in the log, Ashfall's quests, the chapter or the atlas names her or her roll.
+  const mark = /eseld|town roll|scholar|clerk/i;
+  ok(!eseld.teaches && !sought(questLog(w.world.state, w.party)).some((s) => s.at === L1.id) && !mark.test(JSON.stringify([QUESTS, CHAPTER])) && !/eseld|town roll/i.test(JSON.stringify(ATLAS)),
+    'nothing seeks her and nothing in the log, the quests, the chapter or the atlas names her, her room or her roll');
+
+  // The hide: the room and its door are the only part of the town the street does not reach, and it stands
+  // off the straight way from the lip to the hall's stair, which the Paladin's lamp walks.
+  const gm = new GameMap(L1), key = (x: number, y: number): number => y * gm.width + x, free = (x: number, y: number): boolean => gm.passable(x, y, { swim: true, climb: true, float: true }) === 'ok';
+  const reached = new Set<number>(), todo: [number, number][] = [[L1.start.x, L1.start.y]];
+  while (todo.length) {
+    const [x, y] = todo.pop()!;
+    if (reached.has(key(x, y)) || !gm.inBounds(x, y) || gm.at(x, y).door === 'secret' || !free(x, y)) continue;
+    reached.add(key(x, y));
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+  }
+  const [door] = L1.secrets!, cut: string[] = [];
+  for (let y = 0; y < gm.height; y++) for (let x = 0; x < gm.width; x++) if (free(x, y) && !reached.has(key(x, y))) cut.push(`${x},${y}`);
+  const stair = L1.exits!.find((e) => e.to === 'old_cinder2')!, lamp = Array.from({ length: stair.y - L1.start.y + 1 }, (_, i) => [L1.start.x, L1.start.y + i]);
+  const nearest0 = Math.min(...lamp.map(([x, y]) => Math.abs(x - door.x) + Math.abs(y - door.y)));
+  ok(L1.secrets!.length === 1 && door.hint === 'oc1_cup' && gm.at(door.x, door.y).door === 'secret' && cut.join(' ') === '2,9 1,10 2,10 1,11 2,11 1,12 2,12 1,13 2,13' && reached.size > 60 && eseld.x === 2 && eseld.y === 12,
+    `the room is shut but for its door: of the town's squares only 2,9 and the eight behind it, where she sits, are not reached on foot (${cut.length} cut off, ${reached.size} reached)`);
+  ok(stair.x === L1.start.x && lamp.every(([x, y]) => reached.has(key(x, y))) && nearest0 >= 6 && cut.every((s) => !lamp.some(([x, y]) => s === `${x},${y}`)),
+    `and off the street's straight way from the lip to the hall's stair, ${lamp.length - 1} squares down x ${stair.x}, which the Paladin's lamp walks: the door is ${nearest0} squares from it at the nearest`);
+
+  // Down off the lip: the cup in the lane (seen without the door), the wall searched there, the room, her.
+  w.world.travel(F11.id, CRATER.x - 1, CRATER.y, EAST);
+  const down = w.world.move('forward');
+  ok(down.kind === 'moved' && w.world.state.mapId === L1.id, 'down off the crater\'s lip into the buried town');
+  see(w, `${L1.id}:oc1_cup`);
+  const cup = L1.features!.find((f) => f.kind === 'event' && f.id === 'oc1_cup')!;
+  ok(cup.kind === 'event' && !cup.when && !cup.after && !cup.until && cup.x === door.x && cup.y === door.y - 1 && reached.has(key(cup.x, cup.y)) && w.world.used('oc1_cup'),
+    'a cup set down clean, the ash swept round it in a curve, on the square before the wall, always there');
+  w.world.travel(L1.id, door.x, door.y - 1, SOUTH);
+  const found = search(), into = found ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(found && into.every((r) => r.kind === 'moved') && w.world.used('oc1_study') && w.world.state.x === door.x && w.world.state.y === door.y + 1, 'searched there, the wall gives on a room the ash never filled');
+
+  // Before the favour she refuses: her words ask for the roll, and every member of the line is turned away.
+  w.world.travel(L1.id, eseld.x, eseld.y);
+  const asked = say(eseld), turned = masterOffers(m, w.party, w.world.state), gold = w.party.gold;
+  const bar = (who: number): string => turned.find((o) => o.who === who)?.bar ?? 'not listed';
+  ok(asked === eseld.lines.join('\n\n') && eseld.lines.length === 3 && /roll/.test(asked) && /clerk/.test(asked) && /west/.test(asked) && !favourDone(m, w.world.state, w.party),
+    `her first words ask for the roll the clerk took west (${asked.split('\n\n')[2]})`);
+  const refused = teachTier('magic', 'master', m.price, w.party, 4, favourDone(m, w.world.state, w.party));
+  ok(turned.map((o) => o.who).join() === '1,2,4,5' && bar(4) === 'favour first' && bar(5) === 'Expert first' && bar(0) === 'not listed' && !refused.taught && w.party.gold === gold && tierOf(maren, 'magic') === 'expert',
+    `before the favour she refuses the Expert at 25 (${maren.name}: ${bar(4)}), and offers the others nothing but why not (${cassian.name}: ${bar(5)}; ${idris.name}: ${bar(1)}; ${wren.name}: ${bar(2)}), taking nothing`);
+
+  // The favour: E11's crack that breathes cold air, searched; the tube behind it, the man's bones and his pack,
+  // and at its end the roll. The tube is shut but for the crack, ten squares and more off any road, and off the chapter.
+  const tube = new Set<number>(), seen: [number, number][] = [[e11.x + 18, e11.y + 11]];
+  while (seen.length) {
+    const [x, y] = seen.pop()!, k = y * out.width + x;
+    if (tube.has(k) || (x === e11.x + 18 && y === e11.y + 12) || x < e11.x || x >= e11.x + e11.w || y < e11.y || y >= e11.y + e11.h || out.passable(x, y, { swim: true, climb: true, float: true }) !== 'ok') continue;
+    tube.add(k);
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) seen.push([x + dx, y + dy]);
+  }
+  let nearest = Infinity;
+  for (const z of out.zones) for (let y = z.y; y < z.y + z.h; y++) for (let x = z.x; x < z.x + z.w; x++) if (out.at(x, y).ch === '=') nearest = Math.min(nearest, Math.max(Math.abs(x - (e11.x + 18)), Math.abs(y - (e11.y + 14))));
+  const roll = E11.features!.find((f) => f.kind === 'chest' && f.id === 'e11_roll');
+  ok(tube.size > 500 && [13, 14].every((y) => !tube.has((e11.y + y) * out.width + e11.x + 18)) && out.passable(e11.x + 18, e11.y + 14) === 'ok' && roll?.kind === 'chest' && roll.x === 18 && roll.y === 14,
+    `the tube's far end is shut but for the crack: none of E11's ${tube.size} squares walked, waded, climbed or floated reaches it`);
+  ok(nearest > 10 && !/emberwaste_e11|e11_/.test(JSON.stringify(CHAPTER)), `and it lies ${nearest} squares from the nearest road and nowhere in the chapter`);
+  see(w, `${E11.id}:e11_draught`);
+  w.world.travel(E11.id, 18, 11, SOUTH);
+  const cracked = search(), deep = cracked ? [w.world.move('forward'), w.world.move('forward'), w.world.move('forward')] : [];
+  listen(w);
+  ok(cracked && deep.every((r) => r.kind === 'moved') && w.world.used('e11_tube') && w.world.used('e11_clerk') && w.world.state.x === e11.x + 18 && w.world.state.y === e11.y + 14,
+    'searched at the crack, the rock gives, and the tube runs on past the man\'s bones and his pack to a roll of hide at its end');
+  openChest(w, `${E11.id}:e11_roll`);
+  const holders = MAP_DEFS.flatMap((d) => (d.features ?? []).filter((f) => f.kind === 'chest' && f.items.includes('town_roll')));
+  const sold = JSON.stringify([MAP_DEFS.flatMap((d) => (d.features ?? []).filter((f) => f.kind === 'shop')), INTERIORS, ARMOURER, CURES]);
+  ok(w.party.bag.includes('town_roll') && holders.length === 1 && !sold.includes('town_roll') && !Object.values(MONSTERS).some((mo) => mo.drops?.some((d) => d.item === 'town_roll')) && item('town_roll').price === 0 && item('town_roll').slot === 'none',
+    'in the chest at its end, the town\'s roll: the one place it is found, a quest item that no shop sells and no monster drops');
+
+  // Back to her: the roll taken and the flag set, her words, nothing paid either way; then Master for 5,000,
+  // refused short of the gold or the level, once, and taken.
+  w.world.travel(L1.id, eseld.x, eseld.y);
+  const done = say(eseld), after = say(eseld);
+  ok(done === hand.done.join('\n\n') && hand.done.length === 2 && hand.reward === 0 && !w.party.bag.includes('town_roll') && !!w.party.flags[ROLL_GIVEN] && hand.setFlag === ROLL_GIVEN && w.party.gold === gold
+    && favourDone(m, w.world.state, w.party) && after === hand.after!.join('\n\n') && hand.after!.length === 2 && personFlags(eseld).includes(ROLL_GIVEN) && JSON.stringify(m.done) === JSON.stringify({ flag: ROLL_GIVEN }),
+    `handed the roll, she takes it, reads the first names and sets ${ROLL_GIVEN}, which her Master tests: "${done.split('\n\n')[1]}"`);
+  w.party.gold = 4999;
+  const short = masterOffers(m, w.party, w.world.state).find((o) => o.who === 4)!.bar;
+  cassian.tiers = { magic: 'expert' }; cassian.level = 24;
+  const young = masterOffers(m, w.party, w.world.state).find((o) => o.who === 5)!.bar;
+  cassian.level = 25;
+  ok(short === 'no gold' && young === 'level 25' && m.price === 5000 && m.price === TIER_PRICES.master && m.line === 'magic' && m.tier === 'master',
+    `the price is 5,000 (${maren.name}: ${short} at 4,999) and the level 25 (${cassian.name} at 24: ${young})`);
+  w.party.gold = 5000;
+  const before = rankMult(maren), taught = teachTier('magic', 'master', m.price, w.party, 4, favourDone(m, w.world.state, w.party));
+  const again = teachTier('magic', 'master', m.price, w.party, 4, true);
+  ok(taught.taught && taught.said === `${maren.name} is Master in magic now.` && w.party.gold === 0 && tierOf(maren, 'magic') === 'master' && tierSteps(maren) === 2 && Math.abs(rankMult(maren) - before - RANK_STEP) < 1e-9 && !again.taught && w.party.gold === 0
+    && tierOf(cassian, 'magic') === 'expert' && masterOffers(m, w.party, w.world.state).find((o) => o.who === 4)!.bar === 'taken',
+    `the favour done, ${maren.name} Expert at 25 is taught Master in magic for 5,000, and casts a rank's step higher than at Expert (${taught.said})`);
+  listen(w);
 }
 
 /**
