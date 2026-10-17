@@ -22,6 +22,8 @@ export interface Goal {
   map: string; x: number; y: number;
   /** What the why line says: "Bound for <here>". */
   name: string;
+  /** Why, where the brain that set it says: "Bound for <here>: <reason>." (the quartermaster's, #719). */
+  reason?: string;
 }
 
 /** The blocks on one goal that make it shut to the navigator: at the third it drops the goal. */
@@ -181,7 +183,8 @@ export const route: Brain = (g, k, p) => {
   }
   const key = p.plan.shift()!, heard = saidSince(g, t.said).at(-1);
   t.last = { map: st.mapId, x: st.x, y: st.y, facing: st.facing, key, said: g.said, shown: g.shown };
-  p.why = heard === undefined ? [`Bound for ${goal.name}.`] : [`Bound for ${goal.name}.`, fit(heard)];
+  const bound = fit(`Bound for ${goal.name}${goal.reason ? `: ${goal.reason}` : ''}.`);
+  p.why = heard === undefined ? [bound] : [bound, fit(heard)];
   return key;
 };
 

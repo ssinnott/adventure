@@ -14,6 +14,7 @@ import { knownOf } from './known.ts';
 import type { Known } from './known.ts';
 import { route, unroute } from './route.ts';
 import type { Goal } from './route.ts';
+import { keep } from './keep.ts';
 
 export type Tempo = 1 | 2 | 4;
 export interface PilotOpts { instant?: boolean; omniscient?: boolean }
@@ -28,7 +29,10 @@ export type Brain = (g: Game, k: Known, p: Pilot) => Action | null;
  * The brains, asked in this order and the first key given pressed: fight, keep (#719), aims (#720),
  * route (#717), explore (#718), talk (#721). Each slot is absent until its module lands.
  */
-export const BRAINS: readonly Brain[] = [route];
+export const BRAINS: readonly Brain[] = [
+  keep,
+  route,
+];
 
 /** The lines the heard corpus keeps, the oldest dropped first. */
 export const HEARD_MAX = 2000;
