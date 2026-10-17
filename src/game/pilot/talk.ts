@@ -95,7 +95,8 @@ function whyTo(f: Feature): string {
 /**
  * On the map. The goal to a person it set is walked, every key of it asked of the navigator here (the
  * strategist, asked after, would set its own); once it is over with the meeting shown, the person is
- * met, their stamp taken then. A person stepped onto, whoever walked there, is met (the game talks on
+ * met, their stamp taken then, and not before, so the people of a business it goes to are due as its
+ * visit begins. A person stepped onto, whoever walked there, is met (the game talks on
  * the step). With no goal walked: one stood on who is due a meeting is spoken to (Space); else the
  * nearest seen who is due, within `NEAR` keys of route or anywhere on the aim's map, or a guild's hall
  * so, is gone to ("A word with Hild."). Due: never met, or met before the company last set a flag or
@@ -110,8 +111,8 @@ function meeting(g: Game, k: Known, p: Pilot, mem: Talk): Action | null {
       const a = route(g, k, p);
       if (a) return a;
     }
+    // Over: reached, the meeting shown, the person is met now; given up or taken by another brain, still due.
     if (g.shown !== mem.shown) meet(p, mem, mem.key!, now);
-    else { p.met.delete(mem.key!); mem.when.delete(mem.key!); }
     mem.goal = undefined;
   }
   const people = k.features(st.mapId).filter((f) => f.kind === 'npc' || f.kind === 'guild'), stood = people.filter((f) => keyOf(st.mapId, f) === at);
@@ -133,8 +134,8 @@ function meeting(g: Game, k: Known, p: Pilot, mem: Talk): Action | null {
     if (!best || d < best.d) best = { f, d };
   }
   if (!best) return null;
+  // Met once the step has gone through: a business's people, met with its door, are due as its visit begins.
   const f = best.f, key = keyOf(st.mapId, f), why = whyTo(f);
-  meet(p, mem, key, now);
   const goal: Goal = { map: st.mapId, x: f.x, y: f.y, name: 'name' in f && f.name ? shortName(f.name) : f.kind, why };
   p.goal = goal;
   p.why = [why];

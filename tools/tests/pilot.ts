@@ -1089,6 +1089,15 @@ function talking(): void {
   ok(once && idle && hg.party.flags.fx_handed === 1 && !hg.party.bag.includes('survey_wand'),
     `a person met is not met again until the company gains an item; then the hand-in is made (${once}, ${idle}, ${hg.party.flags.fx_handed})`);
 
+  // A person in a business, gone to: the door is due as the visit begins, so they are talked to before Leave.
+  const sg = piloted(), sp = sg.pilot!;
+  fixture(sg, row('fx_stall', 3, [{ kind: 'shop', x: 3, y: 1, name: 'A Fixture Stall', interior: 'harrow_provisioner', stock: [] }, { kind: 'npc', x: 3, y: 1, name: 'A stallholder', lines: ['"Fine day."'] }]), [1, 1, EAST]);
+  sp.brains = [talk];
+  sp.toggle(sg);
+  drive(sg, Array(20).fill(null));
+  ok(sp.heard.includes('"Fine day."') && sp.met.has('fx_stall:3,1') && sg.top instanceof ExploreScreen,
+    `a person in a business talk goes to is talked to there, by the menu's Talk to row, and the business left (${sp.heard.includes('"Fine day."')}, ${top(sg)})`);
+
   // A person's question, from one at hand: the first answer open that is no way out and has no price.
   const cg = piloted(), cp = cg.pilot!;
   fixture(cg, row('fx_clerk', 3, [{ kind: 'npc', x: 2, y: 1, name: 'A clerk', lines: ['"A case?"'], choice: { ask: '"Whose case?"', answers: [
