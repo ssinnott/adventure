@@ -330,7 +330,8 @@ fights to a rest and the warning's nearest groups ten points under the median.
   zone's floor, resting where the road lets it (an inn, a camp), eight times in ten.
 - **Well under, back.** Two levels under the floor, it wins no more than one fight in four: over
   each map whose floor is the area's, and over the area, where a zone map's groups count two under
-  its own floor and a town's or dungeon's two under the area's (the owner, on #40 and #209).
+  its own floor and a town's or dungeon's two under the area's (the owner, on #40 and #209). That is
+  Act I's figure: from Saltreach's floor, 10, two under is judged by the day (below, #851).
 - **The boss asks.** The area's boss is won about half the time at the floor, and nearly always two
   levels above it, or at the cap where that is as high as it goes. Two exceptions came with the
   Heart (#759, kept by #752): a boss whose floor is the cap is judged at its floor alone, since no
@@ -408,13 +409,49 @@ Decided by the builder for #853, each the owner's to overturn:
 7. **A blow is not turned from a sleeper:** struck, it wakes, as now. #865's measure shows whether
    that wants a rule.
 
-Past 10 the two-under aim is owed. At the line's standard size a group that a company at the floor
-fights six or seven of to a rest is one a company two levels under still beats, so the to-a-rest aim
-and the two-under aim pull against each other (the comment over `OWED` in `tools/tests/gate.ts`). On
-17 October 2026 the gate reports 86 two-under figures, 76 maps' and 10 areas', at 92% to 100% won
-against an aim of a quarter and a limit of nine in ten. They are owed to #18 and reported, not
-failed. The limits are the owner's to move on their own play (#273). Decided by the owner's
-delegate, 16 October 2026 (#18, #808).
+From 10 two under is judged by the day, not the fight. From 10 the damage spells roll their full
+dice and every group is sized for the day (docs/MONSTERS.md §4.4), so a fight from full health
+measures nothing there: on main at `dbb9d247` the gate's company won every fight two under every
+sampled floor from 10, and nearly every fight eight under from 18, while Thornmark's cliff stood
+(100% at 5, 24% at 3). The day still slopes: two under, a company got 43% to 87% of the fights to a
+rest it got at the floor, about 62% the median. So a company two under a floor rests after at most
+two thirds of the fights the floor's aim gives (the aim), and never gets as many as the aim itself
+(the limit): `GATE.backDay` in `tools/tests/gate.ts`. It is judged over each map two under is asked
+of alone, at its own floor less two, and over the area, its groups pooled at the area's floor less
+two: 100 seeds, dealt, a boss left out as from the floor's day. On 17 October 2026 the gate judges
+81 maps' days and 10 areas', at 29% to 109% of their floors' aims (the median 62%). It lists 29 maps
+and three areas off their aim, the soft ones: seven each of Ashfall's and the Glasswold's, six of
+Cairnmoor's. One map is past its limit, owed to #865: `cairnfield_m8`, whose two groups are fought
+9.29 to a rest two under against the floor's 8.5. The 86 two-under figures owed to #18 went (#851).
+
+Decided by the owner's delegate for #18, each the owner's to overturn:
+
+1. **Past 10, "well under, back" is the day, not the fight** (read as from 10: the builder's 1).
+   The aim was written for Act I's slope; past it the gate lives in attrition, and no tier, item or
+   counter could bring a fight two under to nine in ten without the cliff DESIGN.md §1 forbids. The
+   limits of #273 are not moved: a figure is named anew, with its reason.
+2. **Judged per map and per area, on 100 seeds, dealt.** A share wants fewer seeds than the floor's
+   day, judged to a tenth of a fight on 300. A boss is left out of the day, as at the floor.
+3. **Act I keeps its figure:** two under, a quarter, limit nine in ten. There two levels are a cliff
+   by design, and the figure measures it.
+4. **The two-under win rate is not judged past Act I.** The warning keeps reading its rates two under.
+5. **The 86 owed rows went,** each because the check it held no longer runs. None is re-recorded.
+6. **More than five maps past the limit would make the share wrong for the game as built:** the
+   builder stops and reports to the owner, and the share is not widened.
+
+Decided by the builder for #851, each the owner's to overturn:
+
+1. **"Past 10" is read as from Saltreach's floor, 10.** The issue's work keeps the fight where the
+   floor is 10 or under, but Saltreach's floor is 10 and its seven rows go by the issue's own fifth
+   decision; the measurement counted 10 among the plain (`delta_c5` and `c5_rift` won every fight two
+   under). Act I's floors run 1 to 8, so Act I is judged as before (`GATE.dayFrom`).
+2. **A map's day is asked where its fights two under were:** a map whose floor is its area's, or one
+   outside the area's budget; one with a higher floor counts in the area's day. So the 81 maps judged
+   two under past Act I, the 76 owed among them, each have a day.
+3. **`cairnfield_m8`'s day is owed to #865 by name** at its figure (109.3%, and 106.3% on 300 seeds), not
+   re-sized here: a group re-sized is the area lane's, and #865 re-sizes every group past its limit
+   past 10 on the company it makes. One map is not the more than five of the delegate's 6.
+4. **The key is `<map or area>: under day`,** a new one, since the figure is not the one the rows held.
 
 ### 5.3 Density: the map is the reward
 
@@ -758,7 +795,7 @@ all (#833), the owner's call over #737's. The reach stays closed for 1.6.
 | `npm run check` | about 14 minutes on a four-core container; in CI on a docs-only change the tests take 4 min 31 s, the smoke 2 min 17 s and the typecheck 19 s; a change to the viewport or the smoke sweeps every map, the smoke job taking about 21 minutes (#844) | under 3 minutes: full sweeps of what a pull request touches, the rest sampled or on release |
 | Maps inside the density floor (§5.3) | all (`node tools/test.ts density`) | all |
 | Areas on the curve (§5.2) | all twelve (`node tools/test.ts curve`); the Kilns and Ashfall pass the lead line and are held where they are built | all |
-| Areas whose gate holds (§5.2) | all twelve at their floors; two under is owed to #18, 86 figures reported and not failed | all |
+| Areas whose gate holds (§5.2) | all twelve at their floors and two under, Act I's by the fight and from Saltreach's floor by the day (#851); one map's day, `cairnfield_m8`'s, is past its limit and owed to #865 | all |
 | Story locks (§2.3) | two of the four: the Sleepers' Bay's door (#440) and the core's (#759) | within the count, each declared with its reason |
 
 Decided by delegate for #808, each the owner's to overturn:
