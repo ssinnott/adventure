@@ -231,6 +231,8 @@ export class Pilot {
     for (const brain of this.brains) {
       const a = brain(g, k, this);
       if (a) { if (brain !== wait) this.idle = 0; return a; }
+      // A brain that stopped the pilot (every aim lost, the ending's choice) ends the tick: no brain after it presses a key, and its why line stands (#723).
+      if (!this.on) return null;
       if (!first && this.why !== said) first = this.why;
     }
     // A brain that gave no key may still have said why (a need it cannot meet, #719; "Helmstow is

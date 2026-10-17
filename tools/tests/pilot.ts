@@ -386,6 +386,12 @@ function helm(): void {
   g.pop();
   p.brains = [];
   ok(exploring === 'forward' && asking === 'cancel', `the brains are asked in order and the first key given is pressed: on the map the map's brain, on a question the next (${exploring}, ${asking})`);
+  // A brain that stops the pilot ends the tick (#723): the watchdog after it pressed a search, and its line over the stop's.
+  const halts = piloted(), hp = halts.pilot!;
+  hp.toggle(halts);
+  hp.brains = [(q, _k, me) => { me.stop(q, ['Halt here.']); return null; }, (_q, _k, me) => { me.why = ['Stuck: waiting a while.']; return 'search'; }];
+  const after = hp.next(halts);
+  ok(after === null && !hp.on && hp.why[0] === 'Halt here.' && hp.stopped?.[0] === 'Halt here.', `a brain that stops the pilot ends the tick: no brain after it presses a key, and its why line stands (${after}; "${hp.why[0]}")`);
 
   g.message('A test of the box.');
   ok(p.heard.at(-1) === 'A test of the box.' && p.next(g) === 'interact', 'a message box is heard as it opens, and closed with Space');

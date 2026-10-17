@@ -2,13 +2,15 @@
 // brain asked and every key pressed through `Game.update`, the one quest's chapters in AREAS order on
 // the one Game, so that each area starts as the pilot left the last (the one road, EXPANSION §2.2). A
 // line a chapter: finished, with its ticks, days and the company's level, or where the pilot stopped.
-// A chapter the fair pilot does not finish is played again from the save point taken before it by a
-// fresh omniscient pilot (`Pilot.omniscient`), whose line says which kind of failure it is. Every line
+// A chapter the fair pilot does not finish is played again from the save point taken before it, with
+// the map on top as a player saves, by a fresh omniscient pilot (`Pilot.omniscient`), whose line says
+// which kind of failure it is; the road goes on from where that one finished it. Every line
 // heard that starts "Lost in" or "I have no answer" is a note, and fails nothing. It takes minutes, so
 // it runs only when named (`ASKED`, tools/test.ts), on the areas FULLRUN names (area ids, or all):
 //   FULLRUN=shelf node tools/test.ts fullrun     the default when FULLRUN is unset
 //   FULLRUN=all node tools/test.ts fullrun       every chapter, an hour or more
 import { ok, headlessGame, headlessLoad, drive } from './lib.ts';
+import { ExploreScreen } from '../../src/game/game.ts';
 import type { Game } from '../../src/game/game.ts';
 import { AREAS } from '../../src/content/index.ts';
 import type { Chapter } from '../../src/game/quests.ts';
@@ -24,6 +26,8 @@ export const SEED = 4;
 export const TICK_CAP = 2_000_000;
 /** The wall-clock budget of a chapter's play, fair or omniscient: ten minutes, over which it is capped and not finished. */
 export const BUDGET = 10 * 60_000;
+/** The ticks the pilot may take to come back to the map before a save point (`settle`). */
+const SETTLE = 10_000;
 /** The pilot's stop under the ending's question (talk.ts; the epic's Decided 4). */
 const CHOICE = 'The choice is yours.';
 /** The lines heard that are findings against an area: a goal lost, a riddle not answered. */
@@ -53,11 +57,11 @@ interface Play { done: boolean; ticks: number; days: string; secs: string; level
  * pilot never takes (it stops under the question): that stop counts, and the test, its privilege,
  * presses the first answer, so the ending holds and the road is done.
  */
-function play(g: Game, chapter: Chapter): Play {
+function play(g: Game, chapter: Chapter, settled = 0, from = g.world.state.minutes): Play {
   const p = g.pilot!, notes: string[] = [], hear = p.hear;
   p.hear = (line) => { hear.call(p, line); if (NOTE.test(line)) notes.push(line); };
-  const t0 = performance.now(), from = g.world.state.minutes, done = (): boolean => holds(chapter.done, g.world.state, g.party);
-  let ticks = 0, over = false;
+  const t0 = performance.now(), done = (): boolean => holds(chapter.done, g.world.state, g.party);
+  let ticks = settled, over = false;
   for (; ticks < TICK_CAP && p.on && !done() && !over; ticks++) { drive(g, [null]); if (ticks % 100 === 0) over = performance.now() - t0 > BUDGET; }
   if (!p.on && p.why[0] === CHOICE && g.top instanceof ChoiceScreen && g.top.ends) drive(g, ['interact']);
   p.hear = hear;
@@ -65,6 +69,16 @@ function play(g: Game, chapter: Chapter): Play {
   const stop = finished ? '' : p.on ? `capped by ${over ? `the budget (${BUDGET / 60_000} minutes)` : `the ticks (${TICK_CAP.toLocaleString('en-GB')})`} in ${where} ("${p.why[0]}")`
     : p.why[0] === 'The company has fallen.' ? `fell in ${where}` : `stopped itself in ${where} ("${p.why[0]}")`;
   return { done: finished, ticks, days: ((st.minutes - from) / 1440).toFixed(1), secs: ((performance.now() - t0) / 1000).toFixed(1), level: companyLevel(g.party), stop, notes };
+}
+
+/**
+ * The pilot plays on until the map is on top, where a player can save (F5 is the map's key): a
+ * chapter may end in a visit, whose save would stand the party on the business's door. The ticks it took.
+ */
+function settle(g: Game): number {
+  let ticks = 0;
+  for (; ticks < SETTLE && g.pilot!.on && !(g.top instanceof ExploreScreen); ticks++) drive(g, [null]);
+  return ticks;
 }
 
 /** The pilot at the helm of `g`: instant, every brain asked, omniscient only for the second look. */
@@ -89,8 +103,8 @@ export function fullrun(): void {
   for (const area of road) {
     const chapter = area.chapter!;
     if (from) { ok(false, `${area.id}: not reached, as nobody finished ${from}`); continue; }
-    // The save point, before the chapter: an omniscient look plays it again from here.
-    const save = serialize(g.world.state, g.party, g.rng.state), fair = play(g, chapter);
+    // The save point, before the chapter and with the map on top, as a player saves: an omniscient look plays it again from here.
+    const minutes = g.world.state.minutes, settled = settle(g), save = serialize(g.world.state, g.party, g.rng.state), fair = play(g, chapter, settled, minutes);
     note(area.id, fair.notes);
     const run = `in ${fair.ticks.toLocaleString('en-GB')} ticks, ${fair.days} days, level ${fair.level} (${fair.secs} s)`;
     ok(fair.done, fair.done ? `${area.id}: the pilot finishes ${chapter.title} ${run}` : `${area.id}: the pilot does not finish ${chapter.title}: ${fair.stop}, ${run}`);
