@@ -347,6 +347,47 @@ Decided by delegate for #543 (steppe, dunes, vines and the volcano), each the ow
     test paints the three grounds through the year with the others, and the cone and a vent beside the
     mountain, a vent's fire by night and its smoke over the cone.
 
+**Line of sight over the hills** (#53, the last of the finishing touches). A hill hides what lies
+behind it from lower ground: the viewport does not draw it, the automap does not mark it and a group
+standing there is neither drawn, marked nor met, so a fight can come from over the brow (`hillOver`
+and `World.hidden` in `game/world.ts`; `GameMap.blocksView` given the eye's square). A company on a
+hill sees over hills and no farther; one beside a hill sees past it. Night, a light and the weather
+say how far a company sees, as before; a hill cuts the line, and the nearer stop wins. Woods hide
+nothing: a wood is trees the view passes between.
+
+Decided by delegate for #53, each the owner's to overturn:
+
+1. **The rule is relative** (the delegate's call 3): `blocksView` takes the eye's square, and a hill
+   stops the view of an eye on lower ground and not of one on a hill or on a mountain's top, where a
+   Mountaineer may stand. With no eye it answers what stops the view from anywhere, as it did, so one
+   function still decides and a later change (the world's end, #829) can extend it.
+2. **A hill hides by its row, not by its corners:** the line from the eye is read where it crosses
+   the middle of each row between, and on the seam of two squares it takes two hills to hide. The
+   walk that walls stop is kept for walls, so nothing moves where there is no hill; read that way,
+   one hill straight ahead would hide 4, 6 and 7 of the 7 squares at depths 2 to 4, more on one side
+   than the other, ground the view shows plainly beside it.
+3. **What stands taller than a hill is seen over it** (`GameMap.overtops`): the mountain, the end of
+   the world as it is drawn tall (decision 8) and a landmark (Crowness Light, Highcell) are drawn and
+   marked past a hill as before; a building, a tree, a rock and a group are not.
+4. **Behind a hill the hill's own ground runs on,** flat, in its colour and with nothing on it, and the
+   ground out to the horizon past a hill ahead is the hill's: a hole would draw a seam, and the far
+   ground's own colour would tell what lies there.
+5. **The squares round the company are marked as before, but for one a hill hides** (two off, past a
+   hill beside or behind the company), read in the way it lies; and the automap's near rule (a group on
+   a seen square within two steps) leaves out a group a hill hides (the delegate's call 4). A wall
+   still hides neither, as before: that is no part of this issue.
+6. **A save keeps what it marked:** explored bits only ever add, so a save made before loads with the
+   valleys it marked from below, and hiding applies from then on. `SAVE_VERSION` stays 5.
+7. **The pilot is left as it was:** it reads the automap's seen squares and groups through `Known`,
+   so it sees what a player sees; a hill's square is seen and stood on, so its explorer climbs it as a
+   frontier square and sees what lies behind.
+8. **The world's end drawn as the atlas paints it (#829) is the void for sight:** `blocksView` reads
+   the cell and not its look, so a void drawn as a hill stops the view as the void always did, from a
+   hill too, and no look is read as a hill. Whether a hill hides it reads the look: bare or drawn as a
+   mountain it stands over a hill; drawn as the sea or as land it lies as low as they do and is hidden
+   with them. Where no hill hides it the view draws the look as #829 draws it, and the ground to the
+   horizon is the look's but where a hill on the centre line hides it.
+
 ## The calendar and the weather
 
 Pillar 4 says the world has a clock. It now has a year and a sky as well.
@@ -544,7 +585,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   and leaves puddles holding the sky on the roads, and lying snow whitens the ground, the cobbles,
   the roofs, the hills, the rocks and the conifers' boughs. The grass runs from spring green to
   tawny through the year. Hills rise as round-shouldered mounds of drier grass that run on into one
-  another (slow going; they hide nothing yet); farmland lies in fields three squares long in bands
+  another (slow going; from below, one hides what lies past it: the outdoors' line of sight, #53);
+  farmland lies in fields three squares long in bands
   two deep, each with its crop (wheat, barley, pasture, roots) green in Sowing, gold or cut by
   Harvest and ploughed through the winter, its rows or furrows and the hedges between fields showing
   under snow. Light woods (`t`, the atlas's woods) are walked through at a plain step: a shaded
@@ -803,10 +845,10 @@ does.
 
 | File | Owns |
 |---|---|
-| `game/map.ts` | the terrains (hills, farmland, woods, dead wood, crystal, the chasm, salt, heather, tidal ground, ash, pine, ice, peaks, cliffs, steppe, dunes, vines and the volcano named as the atlas names them, and `DRAG`, the slow ones), `MapDef` (rows + legend + features + encounters, a sign's reading and marks, `secrets` with each secret door's hint, a town's or a dungeon's placed `banners`, its `landmarks`, an outdoor map's `density` and, on the outdoors, its gates, zones and `looks`; the wilderness features and a statue's `Gift`, the den; a person's hand-ins, `Words`, `Choice`, `Answer` and the crossings they sell, `Passage`), `GameMap` queries (passable, `exitAt` (an exit or a tear into a Rift), blocksView, the zone and palette at a cell, `bannerAt`); the void and its looks; `Presence`, when a thing is in the world (`when` as `Hours`, `until`, `after`), which a group and a person's words wear |
+| `game/map.ts` | the terrains (hills, farmland, woods, dead wood, crystal, the chasm, salt, heather, tidal ground, ash, pine, ice, peaks, cliffs, steppe, dunes, vines and the volcano named as the atlas names them, and `DRAG`, the slow ones), `MapDef` (rows + legend + features + encounters, a sign's reading and marks, `secrets` with each secret door's hint, a town's or a dungeon's placed `banners`, its `landmarks`, an outdoor map's `density` and, on the outdoors, its gates, zones and `looks`; the wilderness features and a statue's `Gift`, the den; a person's hand-ins, `Words`, `Choice`, `Answer` and the crossings they sell, `Passage`), `GameMap` queries (passable, `exitAt` (an exit or a tear into a Rift), blocksView (a hill only from lower ground, given the eye's square) and `overtops`, the zone and palette at a cell, `bannerAt`); the void and its looks; `Presence`, when a thing is in the world (`when` as `Hours`, `until`, `after`), which a group and a person's words wear |
 | `game/outdoors.ts` | `layOutdoors`: the maps as played, the placed zone maps laid into one outdoors the size of the world, void where nothing is built and drawn as the atlas paints it (`LOOK`), their ways between them walked and gated |
 | `game/atlas.ts` | the world map's model: `Atlas`, the land drawn in strokes, `worldGrid` (a cell a square, the built outdoor maps stamped in 1:1, each cell's zone), the ways between areas (the exits, the crossings people sell and the planned links, a crossing link sold both ways drawn as built) and the road's steps |
-| `game/world.ts` | `WorldState` (position, clock, weather seed, per-map state with cells seen in bits, zones set foot in, the kinds met; a group a map has gained since a save, and a saved door only where the map still has one), the zone the party is in and what it is called, movement across zones and gates, reveal, the weather's reach into play (sight, snow, the log, the almanac, fights), roaming groups and when they walk (`walks`, `ended`, `hoursHold`), whether a person or an event is there (`present`), what is in sight (the viewport's rule: `VIEW_DEPTH`, `lineOfSight`) and the looks said on first meeting (`sightings`, `meet`, a den's too), a den's brood paced as they come back, encounter triggers (a group under the ice keeping to it and striking only a company on it), rest, search |
+| `game/world.ts` | `WorldState` (position, clock, weather seed, per-map state with cells seen in bits, zones set foot in, the kinds met; a group a map has gained since a save, and a saved door only where the map still has one), the zone the party is in and what it is called, movement across zones and gates, reveal, the weather's reach into play (sight, snow, the log, the almanac, fights), roaming groups and when they walk (`walks`, `ended`, `hoursHold`), whether a person or an event is there (`present`), what is in sight (the viewport's rule: `VIEW_DEPTH`, `lineOfSight`, and what a hill hides from below it, `hillOver`, `hidden`) and the looks said on first meeting (`sightings`, `meet`, a den's too), a den's brood paced as they come back, encounter triggers (a group under the ice keeping to it and striking only a company on it), rest, search |
 | `game/calendar.ts` | the months and seasons, dates, dawn and dusk through the year, and the tide |
 | `game/weather.ts` | the `Climate` shape (each area has its own, merged as `CLIMATES` in `content/index.ts`), `weatherAt` (the sky, the temperature, snow lying, wet ground), naming the sky and its log lines, and what it does to sight, steps and bows |
 | `game/party.ts` | races, classes, `Character` (its secondary skills learnt among it), `Party`, conditions, equip, levelling and the trainer's price, the prestiges (titles, pools, `takePrestige`, `spellRank`), the premade party |
@@ -829,7 +871,7 @@ does.
 | `game/wilds.ts` | the wilderness features: what a feature gives (`giftOf`) and the id it is spent by (`spentId`), the shrine, the cairn, the statue's answer and when the party may rest; pure |
 | `game/dens.ts` | dens: the brood's `until` (`denBurnt`), the pace, the approach, the burning and its hoard, the look on first sight; pure |
 | `game/rifts.ts` | the Rift generator: a 12 by 12 Rift from a template, a Stone's material, an area's table and a seed (turned one of eight ways, its groups in its slots, its looks on their squares), its groups stopping and its tear going quiet once `until` holds; `riftWay`, the tear on a zone map that leads in, walked through as an exit is; pure |
-| `ui/viewport.ts` | the depth-layered first-person compositor, the hills, the farmland's fields and hedges and the trees about the woods, the dead wood and the pinewoods, the glass trees and the chasm's drop, the ash and the ice through the year, a group drawn under the ice, the peaks and cliffs, the steppe, the dunes, the vines' hung trees and the volcano and its vents, a landmark drawn tall over its building's square and seen out to `LANDMARK_REACH` (Crowness Light, its lamp lit by night once its flag is held; a monastery, its bell towers over a wall and no lamp), the tents of a felt palette ('tent': a low felt wall under a pitched felt roof to a crown, its door a flap), the wall dressing and its rates (`DRESSING_RATES`, held by `tools/tests/art.ts`), the sky, the end of the world drawn as its look (pink where it has none) and the weather drawn over it |
+| `ui/viewport.ts` | the depth-layered first-person compositor, the hills and the ground drawn past one seen from below it (`standsAt`), the farmland's fields and hedges and the trees about the woods, the dead wood and the pinewoods, the glass trees and the chasm's drop, the ash and the ice through the year, a group drawn under the ice, the peaks and cliffs, the steppe, the dunes, the vines' hung trees and the volcano and its vents, a landmark drawn tall over its building's square and seen out to `LANDMARK_REACH` (Crowness Light, its lamp lit by night once its flag is held; a monastery, its bell towers over a wall and no lamp), the tents of a felt palette ('tent': a low felt wall under a pitched felt roof to a crown, its door a flap), the wall dressing and its rates (`DRESSING_RATES`, held by `tools/tests/art.ts`), the sky, the end of the world drawn as its look (pink where it has none) and the weather drawn over it |
 | `ui/frame.ts` | layout constants, status strip (time, date, the sky and its glyph), automap (whole, or a window round the party on the outdoors; a spent feature gone from it, a den standing or burnt), party cards, log, purse |
 | `ui/riddle.ts` | a statue's riddle, the answer typed in the text mode |
 | `ui/worldmap.ts` | the world map (M): the cloth painted from the atlas and the built maps, the zone overlay (Tab) and the almanac (Space), and the pins of a place sought and of one a reading marked |
