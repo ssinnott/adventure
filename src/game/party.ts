@@ -7,6 +7,7 @@ import type { ItemDef } from './items.ts';
 import { spellsFor, ELEMENTS } from './spells.ts';
 import type { SpellList, Element } from './spells.ts';
 import type { SkillId } from './skills.ts';
+import type { Tier, Tiers } from './mastery.ts';
 
 export type Stat = 'might' | 'intellect' | 'personality' | 'endurance' | 'accuracy' | 'speed' | 'luck';
 export const STATS: readonly Stat[] = ['might', 'intellect', 'personality', 'endurance', 'accuracy', 'speed', 'luck'];
@@ -193,6 +194,8 @@ export interface Character {
   blessed: Blessed[];
   /** The secondary skills learnt (game/skills.ts; DESIGN §5); absent in a save from before them, which is none. */
   skills?: SkillId[];
+  /** The tiers at arms and in magic (game/mastery.ts; DESIGN §5); absent in a save from before them, which is none. */
+  tiers?: Tiers;
 }
 
 /** An element a blessing keeps off a member, for good or `until` the next rest. */
@@ -236,12 +239,21 @@ export function spellTierAt(level: number, hybrid = false): number {
 /** What a spell rank adds to a damage spell's dice and a mending spell's heal (DESIGN §7): 15%, 45% by the third. */
 export const RANK_STEP = 0.15;
 /**
- * What its ranks make a caster's damage dice and mending: a step a rank, half a step for a hybrid,
- * whose perks carry the rest of its growth. A tool weighing another step passes it.
+ * What its ranks make a caster's damage dice and mending: a step a rank and a step for each its tier in
+ * magic adds (`tierSteps`), half a step for a hybrid, whose perks carry the rest of its growth. A tool
+ * weighing another step passes it.
  */
 export function rankMult(c: Character, step = RANK_STEP): number {
-  return 1 + step * (PRESTIGES[c.cls].calling === 'hybrid' ? 0.5 : 1) * spellRank(c);
+  return 1 + step * (PRESTIGES[c.cls].calling === 'hybrid' ? 0.5 : 1) * (spellRank(c) + tierSteps(c));
 }
+/** What a tier at arms adds to a member's to-hit and to each of its blows (DESIGN §5): in all, not on top. */
+export const TIER_ARMS: Readonly<Record<Tier, number>> = { expert: 1, master: 2 };
+/** The rank steps a tier in magic adds to a member's spells (DESIGN §7 Ranks): its costs and the rest are untouched. */
+export const TIER_STEPS: Readonly<Record<Tier, number>> = { expert: 1, master: 2 };
+/** What a member's tier at arms adds to its to-hit and its blows' damage, with whatever is in hand: nothing without one. */
+export const armsBonus = (c: Pick<Character, 'tiers'>): number => (c.tiers?.arms ? TIER_ARMS[c.tiers.arms] : 0);
+/** The rank steps a member's tier in magic adds (`rankMult`): none without one. */
+export const tierSteps = (c: Pick<Character, 'tiers'>): number => (c.tiers?.magic ? TIER_STEPS[c.tiers.magic] : 0);
 /** Whether the character has the experience for the next level (and is not at the cap). */
 export function canTrain(c: Character): boolean { return c.level < MAX_LEVEL && c.xp >= xpForLevel(c.level + 1); }
 /** Whether a trainer who teaches to `maxLevel` can teach the character its next level. */
@@ -317,7 +329,7 @@ export const robeLike = (d: ItemDef | undefined): boolean => (d?.ac ?? 0) - (d?.
 export function weaponOf(c: Character): ItemDef { return c.equipment.weapon ? item(c.equipment.weapon) : ITEMS.club; }
 
 export function attackBonus(c: Character): number {
-  return CLASSES[c.cls].attack + Math.floor(c.level / 2) + bonus(c.stats.accuracy) + (weaponOf(c).plus ?? 0);
+  return CLASSES[c.cls].attack + Math.floor(c.level / 2) + bonus(c.stats.accuracy) + (weaponOf(c).plus ?? 0) + armsBonus(c);
 }
 
 export function isDown(c: Character): boolean {

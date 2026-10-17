@@ -15,6 +15,7 @@ import { FACING_DX, FACING_DY } from '../types.ts';
 import * as passage from '../passage.ts';
 import * as prestige from '../prestige.ts';
 import { askSkill } from '../skills.ts';
+import { askLine, askTier, TIERS } from '../mastery.ts';
 import { ANSWER_MAX, normalWord } from '../wilds.ts';
 import { ChoiceScreen, InteriorScreen, TRADE, shortName } from '../../ui/screens.ts';
 import { RiddleScreen } from '../../ui/riddle.ts';
@@ -330,6 +331,8 @@ function choose(c: ChoiceScreen, g: Game, k: Known, p: Pilot, mem: Talk): Answer
   }
   // A skill: none is learnt (#719, decision 12).
   if (c.words === askSkill(party)) return out();
+  // A tier: none is taken (#852), at a trainer's menus or a Master's person.
+  if (c.words === askLine(party) || TIERS.some((t) => c.words === askTier(t, party))) return out();
   // 6. A person's question, put by one at hand: the party's square, the one ahead or the business's.
   if (c.title && k.features(st.mapId).some((f) => f.kind === 'npc' && f.name === c.title && here(f))) {
     const open = rows.map((_, i) => i).filter((i) => !c.disabled[i] && !OUTS.includes(labels[i]));
