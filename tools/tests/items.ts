@@ -97,7 +97,7 @@ function raised(): void {
   const p = bare(), c = p.members[0], own = { ...c.stats }, ac = armorClass(c);
   equip(c, TWIN.id); const twin = armorClass(c);
   equip(c, COAT.id); const worn = armorClass(c), quick = statOf(c, 'speed');
-  c.equipment.armor = null; const packed = armorClass(c);
+  c.equipment.armor = null; c.pack.push(COAT.id); const packed = armorClass(c);
   c.pack = c.pack.filter((id) => id !== COAT.id && id !== TWIN.id); p.bag.push(COAT.id); const bagged = armorClass(c);
   ok(twin === ac + 2 && worn === twin + 1 && quick === own.speed + 3 && packed === ac && bagged === ac,
     `a +3 speed coat worn adds a step of AC to its own (${ac} bare, ${twin} in a plain coat, ${worn} in the quick one); in the pack or the bag, nothing (${packed}, ${bagged})`);
