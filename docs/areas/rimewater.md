@@ -1415,7 +1415,7 @@ people are the boxes', given words, flags and places; no group, drawing or syste
 
 One hall opens here, the Lanterns' fourth (call 5; DESIGN §8's three become four), on the rules
 and the hall menu of #132: Rime Lodge's hall sells to tier 7, teaches the Lanterns' three skills
-once #538 builds Linguist (Spirit Sense and Perception are #18's) and gives the Lanterns' quests to
+(Linguist, #538; Perception and Spirit Sense, #856) and gives the Lanterns' quests to
 a member. The fourth rank, Luminary, opens at Lantern Watch and here (call 8, #439): its quests are
 the Lanterns' line's, the split that began at the Watch (DESIGN §8, §9), and are #439's to propose.
 The first task for a company that is not yet a Taper is to keep the hole's fire a night.

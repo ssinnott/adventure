@@ -317,6 +317,10 @@ step (#542): Cinderport's armourer by 25. Act V's, the last (#746): the Hand's s
 Hearth Isle and never sold. Each rung betters the last for every class, each find and ware inside its
 area's window; past the top, gear grows only in the harness's what-if.
 
+Nor does the gate's company hold a secondary skill (DESIGN.md §5): Arms Master's first round and
+the two senses go unmeasured, so a company that buys one is stronger than the gate measured it, the
+safe side. Decided by the owner's delegate for #18 (#856), the owner's to overturn.
+
 The gate, checked with the bot of `tools/gate.ts`. Each figure below is its **aim**, and each has a
 **limit** beyond it (#273): inside its aim a figure passes; between its aim and its limit it passes,
 and the check lists it as off its aim; past its limit it fails, and only then is it owed. The

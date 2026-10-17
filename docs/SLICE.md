@@ -164,7 +164,15 @@ DESIGN.md first for the why.
   Swimmer are built as it is (#805): the Wardens', taught at the Drillyard, and the Cartographers',
   taught at the Map Room in Saltmouth and the Chart House in Cinderport. `partyCan` lets a company
   climb with a Mountaineer standing and swim with a Swimmer standing; the flags `skill_mountaineer`
-  and `skill_swim` still grant the same.
+  and `skill_swim` still grant the same. The Lanterns' Perception and Spirit Sense and the Wardens'
+  Danger Sense and Arms Master follow (#856), so every hall teaches its guild's three. A skill names
+  the peoples and classes born to it (`races`, `classes`): the dwarves to Linguist, the elves and
+  the gnomes to Perception, and a hall will not sell it to them. `World.search` finds surely with
+  Perception standing, in the wall past an open square too; `markedGroups` marks the dead within
+  eight steps through walls with Spirit Sense standing, and an aware roaming group behind a hill or
+  a wall with Danger Sense; `newRound` puts the company before the monsters in the first round while
+  an Arms Master stands, reading the list itself as `partyCan` does. "Learn a skill" opens the
+  hall's skills, then who would learn one (`skillMenu`, `learnerMenu`); a person opens on who.
 - **The weapon and magic tiers** (`game/mastery.ts`, #852; DESIGN §5, §7): a member's Expert and
   Master at arms and in magic (`tiers`, none in a save from before them). Arms adds to the to-hit
   (`attackBonus`) and to every blow (`armsBonus`, beside `traitDamage` in the blow and in the
@@ -640,7 +648,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 ## Stubbed or absent
 
 - No hall sells tier 7 yet (the Watch's Lantern Hall sells 6, #201); no Master trainers; of the
-  secondary skills only Linguist (#538), Mountaineer and Swimmer (#805), with the race-innate ones.
+  secondary skills only Linguist (#538), Mountaineer and Swimmer (#805) and Perception, Spirit
+  Sense, Danger Sense and Arms Master (#856), with the race-innate ones.
   The Meridian journal opens The Lost Expedition in the quest log, and the Cartographers' Geographer
   in Saltmouth reads it (#181), but no second volume exists.
 - No audio. The engine's synth stack is vendored, unused.
@@ -763,12 +772,15 @@ over content broken on purpose too, and two tools to theirs:
   marks pinned once read and said once; no flag set and no door changed. Every inscription of the
   content has an id of its own on its map and a reading, its marks name atlas places, and no way
   waits on a reading.
-- `skills` (#538, #805): each skill built one of DESIGN §5's twelve, its guild's by DESIGN §8; every
-  hall teaches what its guild has built (the Lanterns' Linguist, the Wardens' Mountaineer, the
-  Cartographers' Swimmer, the Compact's nothing yet), each walked through its own menu in a Game; a
-  stranger to the guild learns nothing, a member learns once for the price, a dwarf is born to
-  Linguist; Mountaineer and Swimmer bought at their halls climb and swim; a save keeps a member's
-  skills and one from before them has none.
+- `skills` (#538, #805, #856): each skill built one of DESIGN §5's twelve, its guild's by DESIGN
+  §8; every hall teaches all its guild has built (the Lanterns' three, the Wardens' three, the
+  Cartographers' Swimmer, the Compact's nothing yet), each walked through its own two levels in a
+  Game, every row measured against the panel; a stranger to the guild learns nothing, a member
+  learns once for the price, a dwarf is born to Linguist and an elf and a gnome to Perception, and
+  are not sold them; each skill's work with it and without, for a company of each people (the
+  search's sure find and second square, the dead marked through a wall, an aware group behind a
+  hill, the first round's order held to `hasSkill` for every class too); the pilot learns none; a
+  save keeps a member's skills and one from before them has none.
 - `mastery` (#852): each tier's effect through the blow and the cast for a fighter, a caster and a
   hybrid; the bars; the seven trainers of 13 and over teach Expert and the two under do not; the Sail
   Loft walked in a Game; a Master's person, built in the test; the sheet's lines; no spell's cost or
@@ -868,7 +880,7 @@ does.
 | `game/seeking.ts` | the seeking quests: the trainers placed (`trainersIn`), a quest for each member and prestige (`seekingQuests`), and the places the world map marks (`sought`); pure |
 | `game/prestige.ts` | a prestige's trainer: who the company has of the class, each one's bar (the level, the prestige before, the third's quest, the gold), and teaching it; pure |
 | `game/mastery.ts` | the weapon and magic tiers: who takes which line, the levels and prices (`TIER_PRICES`), each member's bar, the offers (a trainer's Expert, a Master's person's) and teaching a tier; what a tier does is `party.ts`'s (`armsBonus`, `tierSteps`); pure |
-| `game/skills.ts` | the secondary skills (`SKILLS`, Linguist the first): a member's list, who has one (learnt or born to it) and who does its work for the company (`skilled`, a carried item too), the skills a guild's halls teach, each member's bar, and learning one; pure |
+| `game/skills.ts` | the secondary skills (`SKILLS`, seven built, Linguist the first): a member's list, who has one (learnt, or born to it by people or class) and who does its work for the company (`skilled`, a carried item too), the skills a guild's halls teach, the menu's two levels (a hall's skills, then a skill's six), each member's bar, and learning one; pure |
 | `game/inscriptions.ts` | Kiln-script: an inscription (a sign with `read`), who reads it (`readerOf`), what a sign says and what a reading keeps (`signSays`), its texts as the line check measures them (`signTexts`), the id it is kept by (`readId`) and the places the world map pins once read (`readMarks`); pure |
 | `game/stones.ts` | the Hearth's measure: the Stones restored (`stonesRestored`, `savedStones` for the title), the Hearth's bearing from a world cell, its flicker and the almanac's word by the count; pure |
 | `game/passage.ts` | crossings: a passage's fare (nothing once its `free` holds), its next departure and its landing, the floor at the far end, the menu's line and the terms with their warning, and taking it (the fare, the clock, the landing, the company rested); pure |
@@ -885,10 +897,10 @@ does.
 | `game/dens.ts` | dens: the brood's `until` (`denBurnt`), the pace, the approach, the burning and its hoard, the look on first sight; pure |
 | `game/rifts.ts` | the Rift generator: a 12 by 12 Rift from a template, a Stone's material, an area's table and a seed (turned one of eight ways, its groups in its slots, its looks on their squares), its groups stopping and its tear going quiet once `until` holds; `riftWay`, the tear on a zone map that leads in, walked through as an exit is; pure |
 | `ui/viewport.ts` | the depth-layered first-person compositor, the hills and the ground drawn past one seen from below it (`standsAt`), the farmland's fields and hedges and the trees about the woods, the dead wood and the pinewoods, the glass trees and the chasm's drop, the ash and the ice through the year, a group drawn under the ice, the peaks and cliffs, the steppe, the dunes, the vines' hung trees and the volcano and its vents, a landmark drawn tall over its building's square and seen out to `LANDMARK_REACH` (Crowness Light, its lamp lit by night once its flag is held; a monastery, its bell towers over a wall and no lamp), the tents of a felt palette ('tent': a low felt wall under a pitched felt roof to a crown, its door a flap), the wall dressing and its rates (`DRESSING_RATES`, held by `tools/tests/art.ts`), the sky, the end of the world drawn as its look (pink where it has none) and the weather drawn over it |
-| `ui/frame.ts` | layout constants, status strip (time, date, the sky and its glyph), automap (whole, or a window round the party on the outdoors; a spent feature gone from it, a den standing or burnt), party cards, log, purse |
+| `ui/frame.ts` | layout constants, status strip (time, date, the sky and its glyph), automap (whole, or a window round the party on the outdoors; a spent feature gone from it, a den standing or burnt), party cards, log, purse; the groups the automap marks (`markedGroups`: in view or near, and what Spirit Sense and Danger Sense mark) |
 | `ui/riddle.ts` | a statue's riddle, the answer typed in the text mode |
 | `ui/worldmap.ts` | the world map (M): the cloth painted from the atlas and the built maps, the zone overlay (Tab) and the almanac (Space), and the pins of a place sought and of one a reading marked |
-| `ui/screens.ts` | message (a person's box, `SAY_W` by `SAY_LINES` from `ui/frame.ts`), choice, character sheet (a letter read from it, the skills a member has), spell picker, inn/temple/shop/guild/trainer, a business's first menu (`businessEntries`), a guild's work at its hall and its skills there or from a person (`skillMenu`), and the visit that frames them (`InteriorScreen`) |
+| `ui/screens.ts` | message (a person's box, `SAY_W` by `SAY_LINES` from `ui/frame.ts`), choice, character sheet (a letter read from it, the skills a member has), spell picker, inn/temple/shop/guild/trainer, a business's first menu (`businessEntries`), a guild's work at its hall and its skills there (`skillMenu`, two levels) or from a person (`learnerMenu`), and the visit that frames them (`InteriorScreen`) |
 | `ui/interior.ts`, `ui/interiors/` | the businesses' interiors: the painting kit and the props, a scene to a file in `<area>/`, and the helpers a trade's scenes share |
 | `ui/combat.ts` | the combat screen (menus over the resolver), its monsters where `ui/row.ts` seats them; the auto-fight (`auto`: `game/bot.ts` plays the company's turns by what the fight has shown and leaves the finished fight, until a key takes it back) |
 | `ui/row.ts` | the fight's row: each monster's place across the view and the height it is drawn, spaced by the drawings' spans, every one whole inside the view and none over more than a third of the next (`seatRow`, `OVERLAP`); pure |
