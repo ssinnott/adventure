@@ -278,7 +278,7 @@ boxes, which hold 5,557 of those squares, 5,379 walkable, the table the epic #44
 | E10 | The road onto the steppe | the Wold | country | 25–26 | 620 (hills 302, steppe 215, ash 64, grass 39) | the road over the Cinder Hills from the Waste at 156,312 → 144,300, laid whole by #517 (ashfall.md §4.9); its Wold half built by #524 at 25–26: beetles over from the Waste, the first vultures and a pride, a camp, the Riders and the glare from the crest (§4.2) | none | #524 |
 | D9 | The steppe | the Wold | core | 26–27 | 1,024 (steppe 807, dunes 171, road 29, rock 11, hills 6) | the grass with glass in it; the lions' prides; the dunes' first edge at the south-west corner; built by #525 at 26–27: the Riders' well and track, two prides with their vultures, the scorpions and the glass walker at the dunes' edge, the fallen walker in the long mound and the horse that came back, seen (§4.3) | the glass in the grass | #525, built |
 | D8 | The Riders' camp | the Wold | core | 26–27 | 1,024 (steppe 757, hills 93, rock 90, earth 67, felt 9, crystal 6, doors 2) | Akordu at 120,250 under its mesa: the eldest, the trader, the Rider who rides to Cinderport; the garden of glass; built by #526 at 26–27: the eldest's story told once, the trader's tent with its own room, the Rider who sells the ride to Cinderport and back, the garden of glass, the dry well and its hoard, the mesa with the basilisk in its shade (§4.4) | the eldest's story | #526, built |
-| D10 | The mesas | the Wold | core | 26–27 | 1,024 (steppe 765, hills 160, rock 53, dunes 23, road 22, a secret door 1) | the basilisks' mesas; the mesa fight; the Eyrie's old mesa at 132,289, empty; built by #527 at 26–27: the road from E10 to D9 under the great mesa, the glassed all facing the notch, the secret door and the top with its nest, hoard and view of the Glass, two prides with the near one's vultures, the mesa fight, the scorpions and a basilisk alone under the small mesa (§4.5) | none | #527, built |
+| D10 | The mesas | the Wold | core | 26–27 | 1,024 (steppe 765, hills 160, rock 50, dunes 23, road 22, earth 2, secret doors 2) | the basilisks' mesas; the mesa fight; the Eyrie's old mesa at 132,289, empty; built by #527 at 26–27: the road from E10 to D9 under the great mesa, the glassed all facing the notch, the secret door and the top with its nest, hoard and view of the Glass, two prides with the near one's vultures, the mesa fight, the scorpions and a basilisk alone under the small mesa (§4.5) | none | #527, built |
 | C8 | The Scarp's edge | the Wold | country | 26–27 | 1,024 (steppe 923, hills 54, cliff 23, earth 11, rock 8, stone 3, felt 1, a secret door 1) | the Scarp's lip over the pans; the stair's head at 80,216 on C7; the Riders' watch on it; built by #528 at 26–27: the Scarp stair opened up C7's column 8 to the lip, the stair's head and the Riders' watch with their cairn, yurt and fire at 80,223, the Compact's runner on the last flight, the Saltings seen from the lip, the cleft under the lip with the Compact's last three drops, vultures, a pride and two basilisks (§4.6) | none | #528, built |
 | B8 | The Wold's heart | the Wold | core | 27–28 | 1,024 (steppe 769, rock 101, hills 77, mountain 33, cliff 30, earth 9, stone 4, a secret door 1) | the Grey Lion's ground; Kushtash, the far-west mesa under the rim at about 46,242, the Ranger's third; built by #529 at 27–28: the hunters' camp by the way in with the young Rider and the eldest's word, the kill-ground with the vultures over it, a pride, the mesa fight and the Grey Lion alone, a cairn, a well, a shrine that gives speed, a hermit under the rim, and Kushtash with its stepped scree up from a secret door and the scout at her fire on the top (§4.7) | none | #529, built |
 | B9 | The Glass's edge | the Wold | country | 26–28 | 1,024 (dunes 483, mountain 268, steppe 126, hills 76, rock 65, earth 5, a secret door 1) | the dunes and the scorpions; the gap at the mesas and dunes; the Riders' watch on the only way in; the glass walkers; built by #530 at 26–28: the dunes down to the rim's foot, the Riders' cairn at their head, the watch's fire on the last grass with its three Riders, the gap with its stones, the walker's tracks and the Glass seen from its last square, two groups of scorpions, the vultures, a glass walker alone and two at the gap, and the half-buried walker in the dune that does not shift with its cache (§4.8) | the Riders keep the way in | #530, built |
@@ -536,7 +536,7 @@ settled in its issue, and what Ashfall teaches changes them.
   three for four; in the pay, 1,901 xp a member against the share of 1,950 (§8, §9, #526's 9); and
   in the mesa's faces, corrected above (§9, #526's 2). The step on `akordu_story` is the chapter's,
   #531's, and the Akordu ends of 51, 53, 54 and 55 are built (#532, §6; §9, #526's 11 and 12). A
-  thirty-first feature, a Rider by the trader's tent at 21,28 (125,250), says the rumour of the
+  thirty-third feature, a Rider by the trader's tent at 21,28 (125,250), says the rumour of the
   Master of arms, words only (#858, §6).
 - **The eldest's words,** verbatim, for the owner's review (§9, #526's 11). At the first meeting,
   which sets `akordu_story`:
@@ -1249,13 +1249,14 @@ the kind of place, a hint at the door that says where to search and his own word
 | The hide | The small mesa on D10's west edge: the door at 3,20 (107,306), a hollow of two squares behind it | A second secret door in the box, searched facing west from 4,20. The mesa's lone basilisk (`d10_basilisk`, 4,19) holds its foot beside the door's approach; no group is placed or moved. |
 | The hint | Arrows in the mesa's foot (`d10_butts`, 4,20) | An event on the door's near side, the approach square: arrows in their hundreds, thick about one patch of rock, the oldest grey and the newest white. The text explains nothing. |
 | Mergen, the drillmaster | In the hollow (D10, 1,20; 105,306) | Meets the company with his own words, sets `master_arms_met` and says the favour; his menu is "Who would be Master?", every member refused until the favour is done. |
-| The favour | His bow, the Drill Bow (`drill_bow`), in the herders' store (E9; the chest `e9_drill_bow`, 9,17; 145,271) | Found behind the slab where the herders' path stops (`e9_path`, 13,17), a square beyond their strongbox. His words say the herders and the stone where their path ends, and nothing of the door. |
+| The favour | His bow, the Drill Bow (`drill_bow`), in the herders' store (E9; the chest `e9_drill_bow`, 9,17; 145,271) | Found behind the slab where the herders' path stops (`e9_path`, 13,17), a square beyond their strongbox. His words say the herders and where their path ends; they say nothing of the door. |
 | The hand-in | Mergen's `npc.quest`: `drill_bow`, no pay, `master_arms_favour` | Taken at the first meeting that holds it, from a company that never met him too, with words for a stranger. His `done` tests that flag and nothing else. |
 | The lesson | Mergen's menu: `mastery: { line: 'arms', tier: 'master', done, price: 5000 }` | A member Expert at arms and of 25 or over, once the bow is handed in, for 5,000 gold; "favour first", "Expert first", "level 25" and "no gold" are all a company is told. |
 
-**Where he is.** In the small mesa's rock, 21 squares from the nearest road square and 23 from the
-nearest square the chapter keys on (`wold_d9:d9_glass`), measured on the world's grid, so the ten squares
-#858 asks for are passed more than twice over. The great mesa's top is a secret already and lies a
+**Where he is.** In the small mesa's rock, 21 squares from the nearest road square, 23 from the
+nearest square the chapter keys on (`wold_d9:d9_glass`) and 17 from the nearest walk between two of its
+steps (`q_road_west` to `wold_d9:d9_glass`: the rectangle every shortest walk lies in), measured on the
+world's grid, so the ten squares #858 asks for are passed. The great mesa's top is a secret already and lies a
 few squares from the road: it was not used. The door is cut in the mesa's east face on row 20, between
 rock at 3,19 and 3,21, so that it draws as the rock it stands in (`drawnCell`); the hollow behind it
 is two squares of dirt, 2,20 with its event (`d10_hollow`) where a company steps in and 1,20 with
@@ -1264,9 +1265,10 @@ mesa's west column is the world's edge and stands as it was.
 
 **The favour.** A bow, since the Riders are horse-archers and he drilled them: "my bow is with the
 herders, since my hands went." It is kept in the herders' store on E9, 18 squares from the nearest
-road square and 21 from the chapter's nearest step, a hidden place the Wold had already, off the road
-and off the quest, to which the herders' own path leads: the great mesa's top is on the road's way,
-the fallen walker's hollow and the half-buried walker's cache are the Sorcerer's third's, and the dry
+road square, 21 from the chapter's nearest step and 12 from the nearest walk between two, a hidden
+place the Wold had already, off the road
+and off the quest, to which the herders' own path leads: the great mesa's top is on the road's way;
+the fallen walker's hollow and the half-buried walker's cache are the Sorcerer's third's; the dry
 well's hoard lies in the camp the chapter goes to. It is never bought: the bow has no price and no
 use, no shop stocks it, no monster drops it and one chest holds it.
 
@@ -1282,9 +1284,9 @@ Mergen, the first time, which sets `master_arms_met`:
 >
 > "Mergen. I taught the Riders to loose at the gallop, and their fathers before them. The last of them rode into the Glass, and I came up here."
 >
-> "My bow is with the herders, since my hands went. They keep it behind the stone where their path ends. Bring it, and I will teach you what I have left."
+> "My bow is with the herders, since my hands went. They keep it where their path ends. Bring it, and I will teach you what I have left."
 
-- After, until the bow is in his hands: *Mergen holds out his empty hands.* "My bow. The herders keep it behind the stone where their path ends."
+- After, until the bow is in his hands: *Mergen holds out his empty hands.* "My bow. The herders keep it where their path ends."
 - The bow handed in: *The old man takes the bow in both hands, and his hands close on it, as they have not closed in years.* "The herders kept it dry. Sit down."
 - To a company that never met him: *The old man looks at the bow in your hands a long while, and then at you.* "Give it here." *His hands close on it as they have not closed in years.*
 - After the favour: *Mergen sits with the bow across his knees, his hands closed on it.* "Steel answers steel. Who comes to me?"
@@ -1299,7 +1301,7 @@ D8 100.0% (919 of 919, 35 points, one more) and E9 100.0% within 12 (965 of 965,
 ids `d10_butts`, `d10_hollow` and `e9_drill_bow`; nothing moves. The walkthrough plays it in `masterOfArms`:
 the rumour, the door found from the arrows, the hollow, his words and his refusal of every member before
 the favour, the store searched from its path, the bow, the hand-in and the lesson to the member Expert at
-arms and of 26; a company that finds the bow first is played too. The company is given Expert at arms
+arms and of 25, the level he asks, the one of 24 refused; a company that finds the bow first is played too. The company is given Expert at arms
 and the gold directly, as Expert is bought at a town trainer elsewhere on the road (#852).
 
 ## 7. Encounters, and what is new
@@ -2285,7 +2287,8 @@ Decided by the builder for #858, each the owner's to overturn:
 
 1. **The hide is the small mesa's rock,** not the great mesa's top: the top lies a few squares from
    the road and is a secret already, where the small mesa on D10's west edge is 21 squares from
-   the nearest road square and 23 from the chapter's nearest step. The door is cut in its east face
+   the nearest road square, 23 from the chapter's nearest step and 17 from the nearest walk between
+   two steps. The door is cut in its east face
    at 3,20 and the hollow behind it from the rock at 1 to 2,20; the mesa's west edge, pinned in
    `tools/tests/outdoors.ts`, is untouched.
 2. **The door is a second secret door in D10, its hint the arrows in the mesa's foot**
@@ -2301,9 +2304,9 @@ Decided by the builder for #858, each the owner's to overturn:
    kind of place (the mesas, south of the grass) and neither his name nor a square.
 6. **The favour is his bow** (`drill_bow`, the Drill Bow: no price, no use, no shop, no drop), kept
    by the herders and found in E9's store behind the slab where their path stops, in a chest with
-   no gold at the store's back (`e9_drill_bow`, 9,17). His words say the herders and the stone where
-   their path ends, and nothing of the door, which E9's own hint (`e9_path`) shows. E9 has no road
-   and lies 21 squares from the chapter's nearest step.
+   no gold at the store's back (`e9_drill_bow`, 9,17). His words say the herders and where
+   their path ends; they say nothing of the door, which E9's own hint (`e9_path`) shows. E9 has no road
+   and lies 21 squares from the chapter's nearest step and 12 from the nearest walk between two.
 7. **The store gains one square,** 9,17 cut from its ring's rock, and the ring is closed by turning
    the hill at 8,17 to rock, the one walkable square any change here takes away. Every id, door
    square and chest id stays where it was and no chest is changed: the strongbox is as it was, so
@@ -2313,16 +2316,20 @@ Decided by the builder for #858, each the owner's to overturn:
    `master_arms_favour` is all his `done` tests, and nothing else sets it.
 9. **No journal entry, no quest and no mark for the favour:** he is found and never told, so the
    bars of his menu ("favour first", "Expert first", "level 25", "no gold") are all a company is told.
-10. **The price is the literal 5,000 in the map,** not `TIER_PRICES.master`, as content imports
-    nothing of `game/mastery.ts` (#852's call 1, for the party); the walkthrough holds the two equal.
-11. **The walkthrough plays him in `masterOfArms`,** a fresh company of 26 given Expert at arms
-    through `teachTier` and 6,000 gold directly, as Expert is bought at a town trainer elsewhere on
-    the road (#852). `tools/tests/mastery.ts` forbids every file under `src/` but four to read a
+10. **The price is the literal 5,000 in the map,** not `TIER_PRICES.master`: a map is loaded with the
+    content, and `game/mastery.ts` reaches the quests, which read `MAP_DEFS`, so a map importing a value
+    from it would read the maps half loaded (#852's call 1). The walkthrough, which runs after the
+    content is loaded, imports it and holds the two equal.
+11. **The walkthrough plays him in `masterOfArms`,** a fresh company at the Wold's floor, 26, whose
+    fighters are given Expert at arms through `teachTier` and 6,000 gold directly, as Expert is bought
+    at a town trainer elsewhere on the road (#852); the one taught is set to 25, the level he asks,
+    and the next to 24. `tools/tests/mastery.ts` forbids every file under `src/` but four to read a
     tier, and a walkthrough is under `src/`, so it reads the bars of his menu and not the tiers.
 12. **"Off the road and off the path" is measured as the larger of the two axes** on the world's
-    grid (Chebyshev), the strictest of the usual measures, from every road square and from every
-    square the chapter's conditions key on: the events it has seen, the people and events that set
-    its flags and the maps it visits.
+    grid (Chebyshev), the strictest of the usual measures, from every road square, from every
+    square the chapter's conditions key on (the events it has seen, the people and events that set
+    its flags, the maps it visits) and from the walks between one step and the next in story order,
+    each the rectangle every shortest walk lies in: 17 for the hide and 12 for the bow.
 13. **Nothing in the numbers moves:** he pays no xp, gold or group, and §8 stands. DESIGN §9 now
     says the road holds two Masters and the reach may hold more.
 
