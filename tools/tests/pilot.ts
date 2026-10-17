@@ -9,6 +9,7 @@ import { hasSave } from '../../src/game/save.ts';
 import type { Store } from '../../src/game/save.ts';
 import { freshSeed } from '../../src/lib/engine/rng.ts';
 import { TitleScreen, IDLE_TICKS } from '../../src/ui/title.ts';
+import { RiddleScreen } from '../../src/ui/riddle.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { MapDef, Feature, MapZone } from '../../src/game/map.ts';
 import { NORTH, EAST, SOUTH, WEST, FACING_DX, FACING_DY, turnLeft, turnRight } from '../../src/game/types.ts';
@@ -487,12 +488,15 @@ function attract(): void {
       `attract starts on a fresh seed (${s1}) with the company drawn from that seed, seeded first: the seed plays the same start again (${d.party.members.map((c) => c.cls).join(' ')})`);
     ok(d.pilot!.why.join(' / ') === why && band?.lines.join(' / ') === why && band.tag === 'PILOT 1X', `the band opens with "${why}" and the pilot's tempo`);
 
-    // The opening stands ATTRACT_HOLD ticks, then the pilot's own lines; its own keys go through the same door and do not wake it.
+    // The opening stands ATTRACT_HOLD ticks, then the pilot's own first line over the way out; its own keys go through the same door and do not wake it.
     let held = 0;
     turned = 0;
     while (d.band()?.lines[0] === 'The pilot plays.' && held < 2 * ATTRACT_HOLD) { drive(d, nothing(1)); held++; }
-    ok(held === ATTRACT_HOLD && d.band()?.lines.join() === d.pilot!.why.join() && d.attracting && d.pilot!.on && turned >= held,
-      `the opening stands ${ATTRACT_HOLD} ticks, then the pilot's own lines (${d.pilot!.why.join(' / ')}); the ${turned} keys it pressed in them did not wake it`);
+    const out = 'Any key for the title.', line1 = d.pilot!.why[0], then = d.band()?.lines.join(' / ');
+    d.pilot!.why = ['Bound for the lane.', 'The lane is shut to me.'];
+    const two = d.band()?.lines.join(' / ');
+    ok(held === ATTRACT_HOLD && then === `${line1} / ${out}` && two === `Bound for the lane. / ${out}` && d.attracting && d.pilot!.on && turned >= held,
+      `the opening stands ${ATTRACT_HOLD} ticks, then the pilot's first line stands over the way out, whatever its second was ("${then}"; "${two}"); the ${turned} keys it pressed did not wake it`);
     const paced = onTitle();
     paced.pilot = new Pilot();
     drive(paced, nothing(IDLE_TICKS));
@@ -532,14 +536,33 @@ function attract(): void {
   press(stopped, 'forward');
   ok(stands && woke(stopped), 'a stop of its own keeps its band up over the game, still attracting, and the next key brings the title back and takes the band down');
 
-  // P is the pilot's, and main.ts takes it before the game sees it: it pauses the show and starts it again; any other key leaves.
+  // A riddle open when the viewer's key comes, or a wipe falls, is dropped with the game: the text mode only the riddle turns off goes off with it, or the keys that move the party would be typed.
+  const riddled = attracted();
+  riddled.push(new RiddleScreen(riddled, 'A statue', 'What walks on four legs?', () => undefined));
+  const typing = riddled.input!.textMode;
+  press(riddled, 'cancel');
+  ok(typing && woke(riddled) && !riddled.input!.textMode, 'a riddle open when the viewer\'s key comes: the title is back and the text mode off');
+  const wiped = attracted();
+  wiped.push(new RiddleScreen(wiped, 'A statue', 'What walks on four legs?', () => undefined));
+  const typed = wiped.input!.textMode;
+  wiped.gameOver();
+  ok(typed && wiped.attracting && wiped.pilot!.on && top(wiped) === 'ExploreScreen' && wiped.screens.length === 1 && !wiped.input!.textMode, 'a riddle open when a wipe falls: the next game starts with the text mode off');
+
+  // P is the pilot's, and main.ts takes it before the game sees it: it pauses the show, says so and what the next key does, and starts it again; any other key leaves.
   const paused = attracted();
   paused.pilot!.toggle(paused);
+  const said = paused.log.at(-1);
   const stood = !paused.pilot!.on && paused.attracting && top(paused) === 'ExploreScreen' && paused.band() === null;
   paused.pilot!.toggle(paused);
   const went = paused.pilot!.on && paused.attracting;
   press(paused, 'interact');
-  ok(stood && went && woke(paused), 'P in attract mode pauses the show and starts it again; another key brings the title back');
+  ok(stood && said === 'Paused. P plays on, any other key for the title.' && went && woke(paused), `P in attract mode pauses the show and says so ("${said}"), and starts it again; another key brings the title back`);
+  // Outside attract mode none of it shows: a game P started has the pilot's own band and its own words for the helm.
+  const played = onTitle();
+  played.pilot!.toggle(played);
+  const own = !played.attracting && top(played) === 'ExploreScreen' && played.band()?.lines.join() === played.pilot!.band()?.lines.join() && played.band()?.lines[1] !== 'Any key for the title.';
+  played.pilot!.toggle(played);
+  ok(own && played.log.at(-1) === 'You take the helm.', 'a game P started has the pilot\'s own band and no way out written on it, and taking the helm back says so');
 
   // Nothing is saved: over an empty store, and over a save already there.
   const disk = new Map<string, string>();

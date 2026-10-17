@@ -123,7 +123,8 @@ export class Pilot {
       unroute(this);
       this.aim = null;
       if (g.top instanceof CombatScreen) g.top.auto = false;
-      g.say('You take the helm.');
+      // In attract mode the game is not the viewer's to take: P pauses the show, and the next key leaves it (#722).
+      g.say(g.attracting ? 'Paused. P plays on, any other key for the title.' : 'You take the helm.');
       return;
     }
     if (g.top instanceof TitleScreen || g.top instanceof CreateScreen) g.newRandomGame();

@@ -40,7 +40,10 @@ import { stepLine, useShrine, openCairn, answerRiddle, restRefused, restAndWake 
 import { approach, burn } from './dens.ts';
 import type { Pilot } from './pilot/pilot.ts';
 
-/** Attract mode's opening lines (#722), and how long the band holds them over the pilot's own: three seconds. */
+/**
+ * Attract mode's lines (#722): the band holds both over the pilot's own for the first three seconds,
+ * then the second stands under the pilot's first line for as long as the game plays.
+ */
 const ATTRACT_WHY: readonly [string, string] = ['The pilot plays.', 'Any key for the title.'];
 export const ATTRACT_HOLD = 60 * 3;
 
@@ -121,6 +124,8 @@ export class Game {
   attract(): void {
     const p = this.pilot;
     if (!p) return;
+    // The game before it is dropped whole, a riddle's text mode with it if one was open.
+    if (this.input) this.input.textMode = false;
     this.newRandomGame();
     this.attracting = true;
     this.attractFrom = this.frame;
@@ -128,8 +133,13 @@ export class Game {
     p.why = [...ATTRACT_WHY];
   }
 
-  /** The end of attract mode: the title again, with the pilot off and the game that played let go; nothing of it was saved. */
+  /**
+   * The end of attract mode: the title again, with the pilot off and the game that played let go; nothing
+   * of it was saved. Its screens go without a word, so a riddle's text mode, which only the riddle
+   * turns off, is turned off here, or the keys that move the party would go on being typed.
+   */
   private wake(): void {
+    if (this.input) this.input.textMode = false;
     this.screens = [new TitleScreen(hasSave(this.store))];
     this.attracting = false;
     if (this.pilot) this.pilot.on = false;
@@ -190,12 +200,14 @@ export class Game {
   }
 
   /**
-   * What the band over the view carries: the pilot's (`Pilot.band`), but for the first seconds of attract
-   * mode its opening lines, which the pilot's first action (a quarter of a second at 1×) would replace.
+   * What the band over the view carries: the pilot's (`Pilot.band`). While attract mode plays it says so
+   * and how to leave: the opening lines for the first seconds, which the pilot's first action (a quarter
+   * of a second at 1×) would replace, then the pilot's own first line over the way out.
    */
   band(): ReturnType<Pilot['band']> {
     const band = this.pilot?.band() ?? null;
-    return band && this.attracting && this.pilot?.on && this.frame - this.attractFrom < ATTRACT_HOLD ? { ...band, lines: [...ATTRACT_WHY] } : band;
+    if (!band || !this.attracting || !this.pilot?.on) return band;
+    return { ...band, lines: this.frame - this.attractFrom < ATTRACT_HOLD ? [...ATTRACT_WHY] : [band.lines[0], ATTRACT_WHY[1]] };
   }
 
   render(ctx: CanvasRenderingContext2D): void {
