@@ -935,7 +935,7 @@ map has nothing a player can read, so the hidden third is earned at the Core (#2
 | **M1 — Act I** | The Foreland and Thornmark complete, the Downs and the Deepthorn with them; the first guilds and their quests; the Grove Stone dungeon. | First real playthrough. |
 | **M2 — Acts II to IV** | Saltreach to the Wold and their Wardstones; the rest of the guilds; the first and second prestiges, and the eight third prestiges whose trainers live in Acts II to IV's country (#448; #443, call 8); Meridian Camp and the Dead-Drop; the ship. | The open world. |
 | **M3 — Act V + subplots** | Hearth Isle, the Underdeep and the Core, all endings, all three subplots' ends and the Cleric's and the Sorcerer's third prestiges. Master trainers wait on the skill tiers (#18). | Content complete. |
-| **M3 — The pilot** | The autoplay mode (#713, docs/PILOT.md): a pilot that plays the one quest from the title to the ending's choice, fair and opt-in, and attract mode on the title screen after 45 seconds untouched. | Watch the game play itself. Pillar 1 stands for the player (§1). |
+| **M3 — The pilot** | The autoplay mode (#713, docs/PILOT.md): a fair, opt-in pilot that plays the one quest from the title to the ending's choice, with attract mode on the title screen after 45 seconds untouched. | Watch the game play itself. Pillar 1 stands for the player (§1). |
 | **The reach** | The Glass and Glacier Foot, with the Buried Tower and the Vault (§9); #56's 62 and 63. | Optional by design: the game is whole without it. |
 | **Stretch** | New Game+, seeded Rift daily runs, second party mode, Arcomage-style tavern game. | Only after M3 ships. |
 

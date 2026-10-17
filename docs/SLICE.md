@@ -830,7 +830,7 @@ does.
 | `ui/quests.ts` | the quest log screen, and `questSheets`, its pure page layout, a chapter to a page or more |
 | `ui/sprites.ts`, `ui/monsters/*.ts` | scenery sprites, the trees dressed by the season; the monster drawings by family, each kind's span (`SPAN`), and the shared brush and helpers |
 | `ui/create.ts` | party creation |
-| `ui/title.ts` | the title screen: new game or continue, the Hearth over the saved company, and attract mode's idle (untouched for 45 seconds, the pilot plays a new game) |
+| `ui/title.ts` | the title screen: new game or continue, the Hearth over the saved company and attract mode's idle (untouched for 45 seconds, the pilot plays a new game) |
 | `content/index.ts` | the areas in road order; the tables merged from them (maps, monsters, items, quests and guild quests, climates, rooms), the one quest joined from their chapters and `ATLAS`, their parts of the world map over the plan; `SPELLS` from `spells.ts`; and the `MonsterSprite`, `Interior` and `RegionId` unions made from the areas |
 | `content/guilds.ts` | the four guilds (`GUILDS`: names and ranks), a guild quest's flags and its side of the quest log |
 | `content/area.ts` | `Area`, the shape every area fills in, and `Novelty`, what it claims is new (held by `tools/tests/pillars.ts`); `Walkthrough`, an area's end-to-end test |

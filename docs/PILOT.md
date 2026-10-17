@@ -40,7 +40,7 @@ hands each fight to the bot and closes each message box, and a person's question
 
 `TitleScreen` counts the ticks of nothing it is given (`idle`) and at `IDLE_TICKS`, 60 × 45, calls
 `Game.attract`; any key it is given takes the count back to 0, and the charter on top of it stops
-the count, as the title is not then the screen updated. `attract` starts a new game as P on the
+the count (only the top screen is updated). `attract` starts a new game as P on the
 title does, by the one code path (`Game.newRandomGame`: the seed picked first with `freshSeed`, the
 company drawn from it with `randomParty`, then `newGame`, so the seed replays the game, DESIGN §13),
 puts the pilot at the helm and sets `Game.attracting`, with the band reading "The pilot plays." and
@@ -330,7 +330,7 @@ Decided by delegate for #720, each the owner's to overturn:
 
 Decided by delegate for #722, each the owner's to overturn:
 
-1. **The pilot's own keys do not wake it: a key that finds the pilot at the helm is the pilot's.** The issue's wake is "any key", but the pilot presses its keys through `Game.update` as well, so its first would have brought the title back within a quarter of a second. `src/main.ts` (not edited, as ruled) takes the helm before a viewer's key reaches the game (the epic's Decided 2), so the wake is a key that finds the pilot off. The tests send a viewer's key as main.ts does (`toggle`, then `update`), and the rule is broken and the test fails.
+1. **The pilot's own keys do not wake it: a key that finds the pilot at the helm is the pilot's.** The issue's wake is "any key", but the pilot presses its keys through `Game.update` as well, so its first would have brought the title back within a quarter of a second. `src/main.ts` (not edited, as ruled) takes the helm before a viewer's key reaches the game (the epic's Decided 2), so the wake is a key that finds the pilot off. The tests send a viewer's key as main.ts does (`toggle`, then `update`); with the rule broken they fail.
 2. **P and T keep to the pilot in attract mode.** main.ts takes both before the game sees them: P pauses the show (the pilot off, `attracting` on) and starts it again, T sets the tempo, which stays the viewer's. Any other key brings the title back, so "Any key for the title." is true of all but these two. Waking on them is one line in main.ts, the owner's to ask for.
 3. **The opening lines are held three seconds over the pilot's own** (`Game.band`, `ATTRACT_HOLD`). `why` is set as the issue says, but the pilot's first action (a quarter of a second at 1×) replaces it, and the line that says how to leave would never be read. The pilot plays on under the band; a stop's band is not covered.
 4. **P on the title and attract mode share one code path, `Game.newRandomGame`**, which `Pilot.toggle` calls in place of its own two lines (#716, decision 2 stands): the seed first and the company from it, so a seed replays (DESIGN §13) and the two cannot drift apart.
