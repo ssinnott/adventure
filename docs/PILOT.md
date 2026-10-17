@@ -188,7 +188,8 @@ In a business it answers the menus by their rows as they show, `down` to a row a
 on the first menu, then Leave; at an inn the night while tired and rations while short; at a temple
 each member it can pay for, the dead first, then the stone, then the rest; at a shop Buy, then in the list rations
 while short and, for each member, the best it can wear (`better`, one thing each a visit); at a
-trainer each row that offers training. Nothing is sold and no skill is learnt. What it bought it
+trainer each row that offers training. Nothing is sold and no skill or tier is learnt: a trainer's
+"Expert at arms and in magic" (#852) is never pressed, and its rows carry no `train Ng`. What it bought it
 wears through the sheet: `inventory`, `right` or `left` to the member, `down` to the item (the pack
 listed first, then the bag), Space, then Esc. The reserve, 100 gold a level of the highest in the
 company (the most a temple asks to raise one), is kept back from gear alone: `better` spends only the
