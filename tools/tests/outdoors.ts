@@ -1,14 +1,15 @@
 // The outdoors as one map: the zone maps laid in 1:1 where the atlas puts them, the void round them,
 // the ridge and its open pass, and every open square reachable.
-import { buildMaps, PLAYED_DEFS } from '../../src/content/maps.ts';
+import { buildMaps, PLAYED_DEFS, GRID } from '../../src/content/maps.ts';
 import { MAP_DEFS } from '../../src/content/index.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { MapDef } from '../../src/game/map.ts';
-import { layOutdoors, OUTDOORS } from '../../src/game/outdoors.ts';
+import { layOutdoors, OUTDOORS, LOOK } from '../../src/game/outdoors.ts';
 import { ATLAS } from '../../src/content/index.ts';
-import { mapAt, zoneEdges } from '../../src/game/atlas.ts';
+import { mapAt, zoneEdges, TERRAINS } from '../../src/game/atlas.ts';
 import type { AtlasZone } from '../../src/game/atlas.ts';
-import { World } from '../../src/game/world.ts';
+import { World, VIEW_DEPTH, VIEW_LATERAL, viewCell } from '../../src/game/world.ts';
+import type { Facing } from '../../src/game/types.ts';
 import { defaultParty } from '../../src/game/party.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { EAST } from '../../src/game/types.ts';
@@ -48,7 +49,36 @@ export function outdoors(): void {
   let outside = 0, blank = 0;
   for (let y = 0; y < out.height; y++) for (let x = 0; x < out.width; x++) if (!out.zoneAt(x, y)) { outside++; if (out.at(x, y).solid === 'void') blank++; }
   ok(outside > 0 && blank === outside, `every square no zone map covers is void: the world ends there for now (${blank} of ${outside})`);
-  ok(out.at(0, 0) === out.at(out.width - 1, out.height - 1) && Object.isFrozen(out.at(0, 0)), 'the void is one frozen cell, however much of it there is');
+  // The void is drawn as the world map paints it (#829): every void square has a look, the atlas's
+  // ground where nothing is built, and inside a zone map's box (its ring, and the void its author
+  // wrote) the mountain it closes with, but where the atlas has water there, which runs on as the
+  // coast. For every rule it is still the void.
+  const can = { climb: true, swim: true, float: true, keys: 1 }, kinds = new Set<object>();
+  let voids = 0, looked = 0, agree = 0, shut = 0;
+  for (let y = 0; y < out.height; y++) for (let x = 0; x < out.width; x++) {
+    const c = out.at(x, y);
+    if (c.solid !== 'void') continue;
+    voids++; kinds.add(c);
+    const ground = LOOK[TERRAINS[GRID.terrain[y * out.width + x]]];
+    const want = !out.zoneAt(x, y) ? ground : ground === LOOK.sea || ground === LOOK.shallow ? ground : 'M';
+    if (c.look) looked++;
+    if (c.look?.ch === want) agree++;
+    if (out.passable(x, y, can) === 'void') shut++;
+  }
+  ok(looked === voids, `every void square is drawn as the land, the sea or the mountain, and none as pink (${looked} of ${voids})`);
+  ok(agree === voids, `each as the world map paints it, a ring's mountain as its author drew it but where the atlas has water (${agree} of ${voids})`);
+  ok(shut === voids, `and each refuses a company that can climb, swim and float, as the void always has (${shut} of ${voids})`);
+  ok([...kinds].every((c) => Object.isFrozen(c)) && kinds.size <= new Set(Object.values(LOOK)).size + 1, `the void's cells are frozen and shared, one to each look, however much of it there is (${kinds.size})`);
+  // So no walkable square has the pink in view: no bare void within the view's reach of one.
+  let pink = 0;
+  for (let y = 0; y < out.height; y++) for (let x = 0; x < out.width; x++) {
+    if (out.passable(x, y) !== 'ok') continue;
+    for (let f = 0; f < 4; f++) for (let d = 0; d <= VIEW_DEPTH; d++) for (let l = -VIEW_LATERAL; l <= VIEW_LATERAL; l++) {
+      const v = viewCell(x, y, f as Facing, d, l), c = out.at(v.x, v.y);
+      if (c.solid === 'void' && !c.look) pink++;
+    }
+  }
+  ok(pink === 0, `no walkable outdoor square has the pink in view, four squares ahead and three to a side (${pink})`);
   // The mountains that closed each zone map in are, where they face nothing built, the end of the
   // world too; between the two zones they are the ridge, as they were, with the pass through it.
   const sh = out.zones.find((z) => z.id === 'shelf')!, th = out.zones.find((z) => z.id === 'thornmark')!;

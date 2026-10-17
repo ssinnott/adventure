@@ -64,10 +64,18 @@ export function movement(): void {
   const steep = world.move('forward');
   ok(steep.kind === 'blocked' && /steep/.test(steep.reason), 'mountains (the ridge between the Foreland and Thornmark) block without a mountaineer');
   // Where nothing is built yet the world ends, and nothing crosses into it, a mountaineer included:
-  // north of the Foreland, above the rim that is cut for good.
+  // north of the Downs, above the rim that is cut for good, the ring's mountain that closed the box
+  // in, drawn as its author drew it and climbed by no one (#829).
   world.travel('downs_f2', 8, 1, 0);
   const edge = world.move('forward');
-  ok(edge.kind === 'blocked' && edge.reason === 'The world ends here.' && local(world).y === 1, `north of the Downs the world ends, and the party cannot step into it (${edge.kind === 'blocked' ? edge.reason : edge.kind})`);
+  ok(edge.kind === 'blocked' && edge.reason === 'Too steep for anyone to climb.' && local(world).y === 1, `north of the Downs the world ends in the ring's mountain, and the party cannot step into it (${edge.kind === 'blocked' ? edge.reason : edge.kind})`);
+  // The world's end says what stands there: the sea off Kilnmouth's shore, where L5 is not built, and
+  // the steppe past the Wold's road, where C9 is the reach's.
+  world.travel(OUTDOORS, 392, 153, 3);
+  const sea = world.move('forward');
+  world.travel(OUTDOORS, 104, 275, 3);
+  const land = world.move('forward');
+  ok(sea.kind === 'blocked' && sea.reason === 'The water is far too deep.' && land.kind === 'blocked' && land.reason === 'There is no way on from here.', `the sea past the world's end is too deep and the land has no way on (${[sea, land].map((r) => (r.kind === 'blocked' ? r.reason : r.kind)).join('; ')})`);
   // West of the Foreland, the Downs: the ridge, and the Salt Road through a gap in it.
   world.travel('shelf', 1, 12, 3);
   const ridge = world.move('forward');

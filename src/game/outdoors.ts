@@ -14,8 +14,14 @@
 // on crossing into the zone. Each zone carries the atlas zone it lies in, whose name and band the
 // line at the border says (World's `crossing`). Every other exit, feature and monster group moves to where its zone
 // sits, and the towns' and dungeons' ways out lead onto the outdoors instead. Pure.
-import type { Atlas } from './atlas.ts';
-import { mapAt, zoneOfMap } from './atlas.ts';
+//
+// The void is drawn, not seen as nothing: given the atlas's grid, each void square takes the ground
+// the world map paints there as its look (#829), the sea out to the horizon and the rim's
+// mountains, and stays the void for every rule. A zone map's ring, where it faces nothing built,
+// and the void its author wrote into it keep the mountains it closed with, but where the atlas has
+// water under the ring: the coast runs on.
+import type { Atlas, WorldGrid, WorldTerrain } from './atlas.ts';
+import { mapAt, zoneOfMap, TERRAINS } from './atlas.ts';
 import { VOID_CH } from './map.ts';
 import type { MapDef, MapZone, Exit, Feature, EncounterDef, Gate, Cell, Landmark } from './map.ts';
 
@@ -25,15 +31,30 @@ export const OUTDOORS = 'caldera';
 /** An exit this near its arrival, on the outdoors, joins two zones that meet there: it is walked across. */
 const SEAM = 2.5;
 
+/**
+ * What a void square is drawn as, by the atlas's ground there: a character of the shared legend.
+ * The glass, which no map has drawn yet, is drawn as the salt's white crust; past the rim, where the
+ * atlas has nothing, the rim's mountain.
+ */
+export const LOOK: Readonly<Record<WorldTerrain, string>> = {
+  void: 'M', sea: 'W', shallow: '~', grass: ',', farm: 'f', steppe: 's', forest: 'T', woods: 't', pine: 'p',
+  deadwood: 'd', crystal: 'c', hills: '^', heather: 'h', marsh: 'w', sand: '_', dunes: 'u', salt: '-', glass: '-',
+  vines: '&', ash: 'a', lava: '!', snow: '*', ice: 'i', rock: 'r', dirt: ':', mountain: 'M', peak: 'A', cliff: '|',
+  chasm: 'v', volcano: 'V', road: '=', building: 'M', tidal: ';',
+};
+/** The looks that are water, where a ring's mountain gives way to the coast. */
+const WATER = new Set([LOOK.sea, LOOK.shallow]);
+
 interface Laid { def: MapDef; x: number; y: number; w: number; h: number }
 
 /**
  * The maps as they are played: the outdoor maps the atlas places laid into one map the size of the
  * world, in the place of the first of them, and every other map as written with its ways onto a laid
  * map led onto the outdoors. Throws where laid maps overlap, fall outside the world, or share an id
- * a save keeps state under (a feature's or a monster group's).
+ * a save keeps state under (a feature's or a monster group's). Given the atlas's grid (`worldGrid`
+ * of the same atlas and defs), the void is given its looks; without it, it is the bare void.
  */
-export function layOutdoors(atlas: Atlas, defs: readonly MapDef[]): MapDef[] {
+export function layOutdoors(atlas: Atlas, defs: readonly MapDef[], grid?: WorldGrid): MapDef[] {
   const W = atlas.width, H = atlas.height;
   const laid: Laid[] = [];
   for (const def of defs) {
@@ -54,18 +75,24 @@ export function layOutdoors(atlas: Atlas, defs: readonly MapDef[]): MapDef[] {
     }
   });
   const built = (x: number, y: number): boolean => x >= 0 && y >= 0 && x < W && y < H && owner[y * W + x] >= 0;
-  const rows: string[] = [];
+  const rows: string[] = [], looks: string[] = [];
   for (let y = 0; y < H; y++) {
-    const row: string[] = new Array(W);
+    const row: string[] = new Array(W), look: string[] = new Array(W);
     for (let x = 0; x < W; x++) {
       const k = owner[y * W + x];
-      if (k < 0) { row[x] = VOID_CH; continue; }
+      const ground = grid ? LOOK[TERRAINS[grid.terrain[y * W + x]]] : VOID_CH;
+      if (k < 0) { row[x] = VOID_CH; look[x] = ground; continue; }
       const l = laid[k], mx = x - l.x, my = y - l.y, ch = l.def.rows[my][mx] ?? '#';
-      // The mountains that closed a zone map in, where they face nothing built, are the world's end.
+      // The mountains that closed a zone map in, where they face nothing built, are the world's end,
+      // and so is the void its author wrote into it. Each is drawn as the mountain it closes the map
+      // with, but a ring's square where the atlas has water, which runs on as the coast.
       const open = (mx === 0 && !built(x - 1, y)) || (my === 0 && !built(x, y - 1)) || (mx === l.w - 1 && !built(x + 1, y)) || (my === l.h - 1 && !built(x, y + 1));
-      row[x] = ch === 'M' && open ? VOID_CH : ch;
+      const closes = (ch === 'M' && open) || ch === VOID_CH;
+      row[x] = closes ? VOID_CH : ch;
+      look[x] = closes && grid ? (ch === 'M' && WATER.has(ground) ? ground : 'M') : ch;
     }
     rows.push(row.join(''));
+    if (grid) looks.push(look.join(''));
   }
 
   // A way onto a laid map lands where the map sits on the outdoors.
@@ -119,6 +146,7 @@ export function layOutdoors(atlas: Atlas, defs: readonly MapDef[]): MapDef[] {
     name: 'Caldera',
     kind: 'outdoor',
     rows,
+    ...(grid ? { looks } : {}),
     legend,
     start: { ...first.def.start, x: first.def.start.x + first.x, y: first.def.start.y + first.y },
     exits, features, encounters, gates, zones, landmarks,

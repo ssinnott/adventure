@@ -46,8 +46,9 @@ weather), F5/F9 save and load. P hands the game to the pilot and takes it back; 
 nothing; any key, or a tap, brings the title back.
 
 The outdoors is one map, laid out square for square as the world map charts it: the Foreland and
-Thornmark are zones of it, walked between without a seam. Where nothing is built yet the world ends,
-and it looks it: pink empty space (see docs/SLICE.md, "The outdoors as one map").
+Thornmark are zones of it, walked between without a seam. Where nothing is built yet the world ends:
+it is drawn as the world map paints it, the sea running on and the rim's mountains standing, and no
+company crosses it (see docs/SLICE.md, "The outdoors as one map").
 
 ## Deploying
 

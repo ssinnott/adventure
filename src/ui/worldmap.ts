@@ -13,7 +13,8 @@ import { drawText, drawTextOutlined, measureText } from '../lib/engine/text.ts';
 import { hearthLook } from '../game/stones.ts';
 import type { HearthLook } from '../game/stones.ts';
 import { ATLAS, MAP_DEFS, QUESTS } from '../content/index.ts';
-import { worldGrid, zoneEdges, worldPoint, homeMap, zoneOfMap, mapAt, mapPlace, gridCuts, boxAt, areaOf, areaBand, spline, lattice, noise, fbm, TERRAINS, TI } from '../game/atlas.ts';
+import { GRID } from '../content/maps.ts';
+import { zoneEdges, worldPoint, homeMap, zoneOfMap, mapAt, mapPlace, gridCuts, boxAt, areaOf, areaBand, spline, lattice, noise, fbm, TERRAINS, TI } from '../game/atlas.ts';
 import type { WorldTerrain, WorldGrid, AtlasSite, AtlasPlace, ZoneEdge, Pt } from '../game/atlas.ts';
 import type { World } from '../game/world.ts';
 import type { QuestDef } from '../game/quests.ts';
@@ -1364,7 +1365,8 @@ let progress = 0;
 /** Everything the map shows, painted in slices: the cloth, the zone overlay, and a thumbnail for the locator. */
 function* paintAll(): Generator<number, Painted> {
   const cloth = canvas(CLOTH.w, CLOTH.h), ctx = cloth.getContext('2d')!;
-  const grid = worldGrid(ATLAS, MAP_DEFS);
+  // The outdoors' own grid (content/maps.ts), built once for the void's looks and this paint.
+  const grid = GRID;
   yield 0.02;
   const kind = new Uint8Array(CLOTH.w * CLOTH.h);
   yield* paintGround(ctx, grid, kind);
