@@ -22,6 +22,8 @@ import type { GuildId } from '../content/guilds.ts';
 import { rankOf, rankName, offered, inHand, report, take, guildName } from '../game/guilds.ts';
 import { taughtBy, mayLearn, skillOffers, skillLine, learn, askSkill, skillNames, LEAVE_SKILLS, STRANGER } from '../game/skills.ts';
 import type { SkillId } from '../game/skills.ts';
+import { teachesExpert, expertOffers, masterOffers, favourDone, tierLine, teachTier, tierOf, askLine, askTier, noneHere, LINES, LINE_ROWS, LEAVE_TIERS, EXPERT_ENTRY, TIER_NAMES } from '../game/mastery.ts';
+import type { Line, Mastery } from '../game/mastery.ts';
 
 const BOX = { x: 40, y: 40, w: SAY_W + 24, h: 220 };
 
@@ -282,7 +284,7 @@ export class SheetScreen implements Screen {
     drawText(ctx, `HP ${c.hp}/${c.maxHp}   SP ${c.sp}/${c.maxSp}`, 20, y, { size: 1, color: TEXT }); y += 10;
     drawText(ctx, `AC ${armorClass(c)}   TO-HIT +${attackBonus(c)}`, 20, y, { size: 1, color: TEXT }); y += 10;
     drawText(ctx, c.conditions.length ? c.conditions.join(', ').toUpperCase() : 'WELL', 20, y, { size: 1, color: c.conditions.length ? RED : TEXT_DIM }); y += 14;
-    drawText(ctx, 'WEAPON ' + (c.equipment.weapon ? item(c.equipment.weapon).name : 'none'), 20, y, { size: 1, color: TEXT }); y += 10;
+    drawText(ctx, weaponLine(c), 20, y, { size: 1, color: TEXT }); y += 10;
     drawText(ctx, 'ARMOUR ' + (c.equipment.armor ? item(c.equipment.armor).name : 'none'), 20, y, { size: 1, color: TEXT }); y += 10;
     drawText(ctx, 'SHIELD ' + (c.equipment.shield ? item(c.equipment.shield).name : 'none'), 20, y, { size: 1, color: TEXT }); y += 10;
     const res = resists(c);
@@ -290,7 +292,7 @@ export class SheetScreen implements Screen {
     drawText(ctx, 'TRAITS ' + CLASSES[c.cls].traits.map((t) => TRAITS[t].name).join(', '), 20, y, { size: 1, color: TEXT }); y += 10;
     const skills = skillNames(c);
     if (skills.length) { drawText(ctx, 'SKILLS ' + skills.join(', '), 20, y, { size: 1, color: TEXT }); y += 10; }
-    if (c.spells.length) { drawText(ctx, 'SPELLS ' + c.spells.map((s) => spell(s).name).join(', '), 20, y, { size: 1, color: TEXT }); }
+    if (c.spells.length) { drawText(ctx, spellsLine(c), 20, y, { size: 1, color: TEXT }); }
     // Items column
     const items = this.items(g);
     drawText(ctx, 'ITEMS (SPACE: EQUIP OR USE)', 340, 36, { size: 1, color: TEXT_DIM });
@@ -299,6 +301,17 @@ export class SheetScreen implements Screen {
     drawText(ctx, '< > OR 1-6 SWITCH   ESC CLOSE', 620, 264, { size: 1, color: TEXT_DIM, align: 'right' });
     drawPartyCards(ctx, g.party, this.who, frame);
   }
+}
+
+/** The sheet's WEAPON line: what is in hand, then the member's tier at arms ("WEAPON Longsword, EXPERT"). */
+export function weaponLine(c: Character): string {
+  const t = tierOf(c, 'arms');
+  return 'WEAPON ' + (c.equipment.weapon ? item(c.equipment.weapon).name : 'none') + (t ? `, ${TIER_NAMES[t].toUpperCase()}` : '');
+}
+/** The sheet's SPELLS line: the member's tier in magic, then the spells it knows ("SPELLS (MASTER) Spark, Frost"). */
+export function spellsLine(c: Character): string {
+  const t = tierOf(c, 'magic');
+  return 'SPELLS ' + (t ? `(${TIER_NAMES[t].toUpperCase()}) ` : '') + c.spells.map((s) => spell(s).name).join(', ');
 }
 
 /** Pick a caster and a spell for the current context. */
@@ -382,13 +395,15 @@ export const shortName = (name: string): string => name.split(',')[0];
 
 /**
  * What a business offers the party on the way in, in order: its own trade (a tavern's is its
- * keeper's words), then a guild's work where it is a hall, and its skills where the guild has any
- * built, then "Talk to <name>" for each person there now (`World.peopleAt`); Leave is always last.
- * This is the one place the list is made, and it is made afresh each time it is read, so the people
- * are those there now.
+ * keeper's words), then a trainer's Expert where it trains to 13 or past, then a guild's work where it
+ * is a hall, and its skills where the guild has any built, then "Talk to <name>" for each person there
+ * now (`World.peopleAt`); Leave is always last. This is the one place the list is made, and it is made
+ * afresh each time it is read, so the people are those there now.
  */
 export function businessEntries(g: Game, f: Business): BusinessEntry[] {
   const out: BusinessEntry[] = [f.kind === 'npc' ? { label: 'The talk of the room', open: () => g.talkScreen(f) } : { label: TRADE[f.kind], open: () => trade(g, f) }];
+  // A town's trainer from Saltmouth's on teaches Expert at arms and in magic (game/mastery.ts), by its ceiling.
+  if (f.kind === 'trainer' && teachesExpert(f.maxLevel)) out.push({ label: EXPERT_ENTRY, open: () => tierMenu(g, f.name) });
   if (f.hall) { const hall = f.hall; out.push({ label: `Work for ${guildName(hall)}`, open: () => guildWork(g, hall, f.name) }); }
   // A hall teaches its guild's skills (game/skills.ts), once a skill of theirs is built.
   const taught = f.hall ? taughtBy(f.hall) : [];
@@ -476,6 +491,48 @@ export function skillMenu(g: Game, ids: readonly SkillId[], title: string): Scre
     const { line } = learn(o.skill, g.party, o.who);
     if (line) g.say(line);
     g.push(skillMenu(g, ids, title));
+  }, title, [...list.map((o) => !!o.bar), false]);
+}
+
+/**
+ * A town trainer's Expert (game/mastery.ts), where it trains to 13 or past: the line asked first, then
+ * each member with the price or why not; chosen, it is taught and the members' menu comes again. Leave
+ * goes back a level: to the line, then to the trainer's first menu.
+ */
+export function tierMenu(g: Game, title: string): Screen {
+  return new ChoiceScreen(askLine(g.party), [...LINES.map((l) => LINE_ROWS[l]), LEAVE_TIERS], (i) => {
+    const line = LINES[i];
+    if (!line) return;
+    g.push(tierMenu(g, title));
+    g.push(expertMenu(g, line, title));
+  }, title);
+}
+
+function expertMenu(g: Game, line: Line, title: string): Screen {
+  const list = expertOffers(line, g.party);
+  return new ChoiceScreen(askTier('expert', g.party), [...list.map((o) => tierLine(o, g.party)), LEAVE_TIERS], (i) => {
+    const o = list[i];
+    if (!o) return;
+    const { said } = teachTier(o.line, o.tier, o.price, g.party, o.who);
+    if (said) g.say(said);
+    g.push(expertMenu(g, line, title));
+  }, title, [...list.map((o) => !!o.bar), false]);
+}
+
+/**
+ * A Master's person (`npc.mastery`, game/mastery.ts), once their words are said: the company's members
+ * of their line, each with the price or why not; chosen, it is taught and the menu comes again. A
+ * company with nobody of the line hears so.
+ */
+export function masterMenu(g: Game, m: Mastery, title: string): Screen {
+  const list = masterOffers(m, g.party, g.world.state);
+  if (!list.length) return new MessageScreen(noneHere(m.line), undefined, title);
+  return new ChoiceScreen(askTier(m.tier, g.party), [...list.map((o) => tierLine(o, g.party)), LEAVE_TIERS], (i) => {
+    const o = list[i];
+    if (!o) return;
+    const { said } = teachTier(o.line, o.tier, o.price, g.party, o.who, favourDone(m, g.world.state, g.party));
+    if (said) g.say(said);
+    g.push(masterMenu(g, m, title));
   }, title, [...list.map((o) => !!o.bar), false]);
 }
 
