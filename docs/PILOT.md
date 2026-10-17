@@ -11,10 +11,10 @@ It lives on the `Game` (`g.pilot`), outside the save: nothing of it goes into `W
 until the test gives it one. It presses the keys a player would: every move is an `Action` through
 `Game.update`, and nothing teleports or is bought off screen.
 
-Built so far: the frame (#716) over the bot's fights (#714), the navigator (#717) and the explorer
-(#718). Until the other brains land (#719 to #721) the explorer sets the only goals: the pilot walks
-the map it is on, outdoors its zone, until it is walked out, hands each fight to the bot and closes
-each message box.
+Built so far: the frame (#716) over the bot's fights (#714), the navigator (#717), the explorer
+(#718) and the quartermaster (#719). Until the other brains land (#720, #721) the quartermaster sets
+a goal for what the company needs and the explorer every other: the pilot walks the map it is on,
+outdoors its zone, until it is walked out, hands each fight to the bot and closes each message box.
 
 ## Using it
 
@@ -28,7 +28,8 @@ each message box.
   A fight goes at the game's own pace whatever the tempo: the pilot hands it to the bot (`auto`).
 - **The why line**: while the pilot drives, a band over the top of the view carries two lines in the
   game's voice and `PILOT 1X` at its right; the hint that would stand there is not drawn. When no
-  brain has a key or a word, it says "Nothing to do."
+  brain gives a key or says why, it says "Nothing to do."; a brain that gives no key may still say
+  why ("Hurt, and no gold for a room.", #719; "Helmstow is walked out.", #718).
 - It stops by itself at a party wipe, saying "The company has fallen.", and at the ending's choice
   (#721). Nothing else is the viewer's to say. A stop of its own keeps the band up with its why line
   until the next key; when the viewer takes the helm, the band goes at once.
@@ -42,8 +43,13 @@ through `g.world`, `g.maps` or a `MapDef`:
   secret door is a wall, and no cell carries its legend letter;
 - the features the automap marks on seen squares (no event, nothing absent or spent), each a fair
   copy: its kind, square, id and the name its hint shows. A statue's riddle and answer, a person's
-  words, question, crossings and hand-ins, a shop's stock, a trainer's top level and what a chest
-  holds do not come through: words are '', lists [], a number NaN;
+  words, question, crossings and hand-ins, a shop's stock and a trainer's top level (until their
+  menus show them, below) and what a chest holds do not come through: words are '', lists [], a
+  number NaN;
+- what a business's menu has shown (#719): a shop's wares and their prices once its Buy list is on
+  top, a trainer's top level once its menu says it ("I train to level 6."), each against the
+  business's square and noted at each look (`knownOf`), for the company that saw it: a new game's or
+  a load's has seen none;
 - the exits on seen squares that are there now, with where each leads and no gate's terms: a gate's
   `needFlag`, `shut`, `lifts` or `after` is never read, and the pilot learns a gate by trying it;
 - the squares of the groups the automap marks on the party's own map (`groups`, #717), in view or
@@ -63,19 +69,18 @@ reckoning goes through `World.locate` first. Features and exits of seen squares 
 them now, not as last seen. The headless run's `omniscient` pilot (#723) has every square seen; the
 game never sets it.
 
-Not in `Known` yet, each built by the first issue that uses it, with its own fairness test: what a
-menu has shown, such as a shop's stock and a trainer's top level (#719); and a goal's map, read once
-seen (#720).
+Not in `Known` yet, built by the first issue that uses it, with its own fairness test: a goal's map,
+read once seen (#720).
 
 ## Brains
 
 The brains (`BRAINS`, each `(g, k, p) => Action | null`) are asked in order on every paced tick,
 whatever screen is on top, and the first key given is pressed. A brain returns null unless the
 screen it works on is on top: route and explore only on the ExploreScreen; talk and keep also on the
-screens they answer. The explorer is asked after the navigator, so it speaks only when no goal is
-walked; a goal it sets it walks at once, asking `route` for the first key itself. When no brain
-gives a key, a why line one of them said that tick stands ("Helmstow is walked out."); else the
-frame says "Nothing to do."
+screens they answer. The order is keep, aims, route, explore, talk (a fight is the frame's): the
+company's needs outrank its wandering, and a brain either presses a key or sets `Pilot.goal` and
+returns null, so that route presses it. The explorer, asked after the navigator, speaks only when no
+goal is walked, and a goal it sets it walks at once, asking `route` for the first key itself.
 
 ## The navigator
 
@@ -89,8 +94,10 @@ block: the plan is made afresh, and at the third block the goal goes ("The lane 
 its square left in `Pilot.shut` for the explorer (#718). With no way seen it says "No way to the
 lane that I have seen." and drops the goal. A goal is reached by standing on it or by the step onto
 it, when that step takes an exit or opens a visit. A brain that wants the nearest of many squares
-asks `routeLengths` once, for the length of the route to every square it can reach. A square left
-in `Pilot.shut` is gone round until the explorer takes it back to try it again.
+asks `routeLengths` once, for the length of the route to every square it can reach. A goal may carry
+the brain's reason, which the why line gives after the place: "Bound for the Chapel of the
+Lanterns: Idris is dead." A square left in `Pilot.shut` is gone round until the explorer takes it
+back to try it again.
 
 ## The explorer
 
@@ -102,23 +109,50 @@ beside it ("Looking about Helmstow."); and, the frontier spent, the nearest wall
 with seen floor on both sides, searched once from each side (`Pilot.searched`) from the square
 before it ("Searching the wall."), so a secret door whose far side is unseen is not found (decision
 17). Then it says "Helmstow is walked out." and gives no key, and says it again with no search
-until something it rests on changes. It
-explores the map it is on, or `Pilot.prefer` (the strategist's, #720) where that is this map or a
-zone of it. Outdoors it keeps to one zone's box, the party's or the zone preferred, and never goes
+until something it rests on changes. It explores the map it is on, or `Pilot.prefer` (the
+strategist's, #720) where that is this map or a zone of it. Outdoors it keeps to one zone's box, the party's or the zone preferred, and never goes
 into a zone whose band, as Known gives it, starts above the company's level and one, unless that zone
 is preferred ("Callow Downs is too hard for us yet." in such a zone). Of a zone preferred with nothing
 seen near it, it says "No way to Thornmark that I have seen.": bringing the party nearer is #720's.
+
+## The quartermaster
+
+`keep` (#719) keeps the company fit to fight. `need` names the most urgent of its needs (`needs`
+gives them all, in order): the temple with one dead or stone; rest when the harness's rule trips
+(`mustRest`) over those standing; food under two rations a head; training for one ready whom it can
+pay for; and gear while a shop seen holds something better. It takes the needs in turn and acts on
+the first it can meet. Tired, it rests where it stands when no group is too near (`restRefused`, the
+game's own refusal) and there is a ration each, or takes the room when it stands at an inn's door;
+else, for any need, it sets the navigator's goal on the nearest place seen that meets it (a camp
+before an inn for rest) and goes in. With no need it can meet, a well within six keys is drunk from
+when one standing is under half and no group is marked near; one that restores nobody is not gone
+back to. With needs it can meet none of, the band says the most urgent and why not: "Hurt, and no
+gold for a room."
+
+In a business it answers the menus by their rows as they show, `down` to a row and Space: the trade
+on the first menu, then Leave; at an inn the night while tired and rations while short; at a temple
+each member it can pay for, the dead first, then the stone, then the rest; at a shop Buy, then in the list rations
+while short and, for each member, the best it can wear (`better`, one thing each a visit); at a
+trainer each row that offers training. Nothing is sold and no skill is learnt. What it bought it
+wears through the sheet: `inventory`, `right` or `left` to the member, `down` to the item (the pack
+listed first, then the bag), Space, then Esc. The reserve, 100 gold a level of the highest in the
+company (the most a temple asks to raise one), is kept back from gear alone: `better` spends only the
+gold over it (`spare`). A shop whose wares it has not seen is looked at when the gold over the reserve
+is as much again as the reserve. A place gone to for a need that took no gold is not gone to again
+for it until the gold moves or the need goes.
 
 ## The files
 
 | File | Owns |
 |---|---|
 | `src/game/pilot/pilot.ts` | `Pilot`: on and off (`toggle`), a stop of its own (`stop`), the tempo and the pace, the why line and what the band shows (`band`), the corpus heard (`hear`, `forget`), the next key (`next`), the navigator's goal, plan and squares found shut (`goal`, `plan`, `shut`), the explorer's walls searched and the map preferred (`searched`, `prefer`) and `BRAINS`: the brains in the order asked (fight, keep, aims, route, explore, talk), each slot absent until its module lands |
-| `src/game/pilot/known.ts` | `Known` and `knownOf`, the fair view; `fair`, a feature as the party knows it |
-| `src/game/pilot/route.ts` | the navigator (#717): `Goal` (with the why line its brain gives it), `routeOn` (the keys over one map), `routeLengths` (the length of the route to every square, in one search), `routeNearest` (the nearest of a set of squares, the search stopped there), each round the squares found shut it is given, `routeMaps` (the exits from map to map), the brain `route` and `unroute` (what it kept of a goal, forgotten); it reads a cell by `passableCell` (`src/game/map.ts`) and the groups as the automap marks them (`markedGroups`, `src/ui/frame.ts`) |
+| `src/game/pilot/known.ts` | `Known` and `knownOf`, the fair view; `fair`, a feature as the party knows it; what a menu has shown (`wares`, a Buy list's; `trainsTo`, a trainer's top level; #719); a map's or a zone's bounds, a place's band and the squares seen, counted (`box`, `band`, `seenCount`, #718) |
+| `src/game/pilot/keep.ts` | the quartermaster (#719): `needs` and `need` (what the company needs, the most urgent first), `better` (the best a member can wear for the gold), `reserve`, `spare` and the brain `keep` |
+| `src/game/pilot/route.ts` | the navigator (#717): `Goal` (with the reason or the why line its brain gives it), `routeOn` (the keys over one map), `routeLengths` (the length of the route to every square, in one search), `routeNearest` (the nearest of a set of squares, the search stopped there), each round the squares found shut it is given, `routeMaps` (the exits from map to map), the brain `route` and `unroute` (what it kept of a goal, forgotten); it reads a cell by `passableCell` (`src/game/map.ts`) and the groups as the automap marks them (`markedGroups`, `src/ui/frame.ts`) |
 | `src/game/pilot/explore.ts` | the explorer (#718): `frontier` (seen squares with an unseen one beside them), `suspects` (walls with seen floor on both sides) and the brain `explore`; a zone's box and band it reads through `Known.box` and `Known.band`, and the zone a square lies in by `zoneAt` (`src/game/map.ts`), as the world map draws the boxes |
 | `src/game/ink.ts` | `drawnCell`: what a cell is drawn as, which the view, the automap and Known share |
 | `src/game/bot.ts` | the fight and the rest rule (`botTurn`, `asSeen`, `mustRest`, #714) |
+| `src/game/items.ts` | `hits`, a weapon's mean blow: the harness's measure, moved here for `better` (#719) |
 | `src/ui/create.ts` | `randomParty`: the company drawn from a seed |
 | `tools/tests/pilot.ts` | the suite `pilot` |
 
@@ -189,7 +223,7 @@ Decided by delegate for #718, each the owner's to overturn:
 4. **A suspect is a cell Known inks a wall** (`solid: 'wall'`, a secret door among them), never a building, a tree, rock or a mountain: outdoors a line of trees or rock one thick between two seen floors is everywhere, and a door hidden there is drawn as what it hides among, so it is the hint chain's to find (#720, #723).
 5. **One search a side**, as the issue keys `searched` ("map:x,y,f"). A company with no elf, gnome or keen eyes finds a door one search in two (`World.search`), so it may miss one after its two; searching again would cost ten minutes for every wall that hides nothing.
 6. **The explorer presses the navigator's first key itself.** Asked after `route`, a goal set and null returned would lose a tick and show "Nothing to do." between; a goal carries its own why line (`Goal.why`, new), "Looking about Helmstow." or "Searching the wall." in place of "Bound for <name>.".
-7. **A why line a brain said stands when no brain gives a key** (`Pilot.next`): the frame said "Nothing to do." over it, so "Helmstow is walked out." would never have shown. "Nothing to do." is said when no brain spoke that tick.
+7. **A why line a brain said stands when no brain gives a key** (`Pilot.next`), the call #719 made too (its 15): the frame said "Nothing to do." over it, so "Helmstow is walked out." would never have shown. "Nothing to do." is said when no brain spoke that tick; of two that spoke, the first stands, as the most urgent brain is asked first, so the quartermaster's want outlasts the explorer's "walked out".
 8. **A square found shut is gone round by the navigator until the explorer takes it back** (`routeOn`'s and `routeLengths`' new last argument, which `route` fills from `Pilot.shut`): else a frontier square seen beyond a gate is routed through the gate again and again, three blocks a time, and filed in `shut` each time.
 9. **A gate is tried again once a flag has been set since the explorer first saw it shut**: the flags counted then are kept in `explore.ts` by entry, so `Pilot.shut` keeps #717's shape. Any line but a locked door's is read as a gate's, the tide's and a failing float's among them.
 10. **A locked door is a frontier square once a key is carried** (`passableCell` reads `unlock`), so the frontier takes the company to it unasked. The navigator files no locked door in `shut`, as it routes into none without a key; the first rule's locked clause serves an entry filed otherwise, as the test files one.
@@ -201,3 +235,21 @@ Decided by delegate for #718, each the owner's to overturn:
 16. **A new game or a load forgets the walls searched and the map preferred** (`Pilot.forget`); the helm taken back keeps both, as a wall searched stays searched.
 17. **A suspect is a wall with seen floor on both sides, as the issue says, so a dungeon's secret door whose far side is unseen is not found by this explorer.** Of the 21 dungeons with a secret door, 8 were walked out at review (`[route, explore]`, their groups put down): the door was a suspect on 1 of the 8 (tide_ship3); on mill, greywater1, greywater2, berth, grove1, grove2 and smugglers_cove2 its far side was never seen, 3 to 63 squares staying unseen behind it, while 9 to 78 walls hiding nothing were searched (mill's 78, thirteen hours of the game's time). Only 7 of the 21 stand at a corridor's dead end. Not widened here: left for #720 and #723.
 18. **A map walked out stays walked out until what that rests on changes**: the squares seen (`Known.seenCount`, new: the automap's bits counted), the flags, the squares found shut, the party's square and facing, its map, the zone looked at, the company's level and what it can cross. Till then the explorer says so again with no search: with the whole outdoors seen a search took a quarter of a second, and it ran every paced tick. Each search stops at the first square it wants (`routeNearest`, new), where `routeLengths` searched every square seen.
+
+Decided by delegate for #719, each the owner's to overturn:
+
+1. **The needs are taken in turn and the first that can be met is acted on** (`needs`, whose first is `need`): a dead member the company cannot pay to raise, or no temple seen, does not keep the living from resting, eating or training.
+2. **The reserve is kept back from gear alone.** The issue's own rules spend the whole purse at the temple (which the reserve is for), at the inn ("gold allows") and at the trainer (`party.gold >= trainPrice(c)`). `better`'s `gold` is the net gold, the gold over the reserve (`spare`): its signature has no company to reckon the reserve from, and the issue's figures hold (420 gold buys the 120-gold long sword over a reserve of 300; 400 does not).
+3. **A shop whose wares are unseen is looked at when the gold over the reserve is as much again as the reserve**, 100 gold a level of the highest, the threshold the review suggested; `better` judges only wares a menu has shown. In the same way a trainer whose top level is unseen is gone to, to read it, where the issue says `maxLevel >= c.level + 1`: Known blanks it till its menu shows it, so by that rule alone nobody would ever train.
+4. **`better` weighs a weapon by `hits` and armour or a shield by the armour class it gives worn (`armorClass`), the larger gain first, then the cheaper**: the issue gives no rate between a point of blow and a point of AC. A weapon keeps the kind held, ranged or not, as the harness's `outfit` does; none two-handed goes to one with a shield on; a monk's AC is reckoned with the robe's bonus that armour loses, so armour is bought for one only where it betters that.
+5. **What a menu has shown is kept by company** (a `WeakMap` by the `Party` in `known.ts`), not on `Pilot`, which gains no field: a new game's or a load's company has seen nothing, as with the corpus. It is noted at each look from the screen alone: a Buy list's rows (an item's name, unique in the item table, and the price shown) and a trainer's words, which name its top level outright where its rows say only who is ready.
+6. **At an inn's door the room is taken, not a rest in the street**: the issue's test stands the company there with its rations, and a night at an inn counts its nights (`stayNight`). Elsewhere a rest where it stands comes first, as the issue has it.
+7. **A camp is gone to for rest only with a ration each**, which a camp's rest eats as any rest does; without them, the inn.
+8. **The why line on the way is the navigator's, with the reason**: `Goal` gains `reason`, so route says "Bound for the Chapel of the Lanterns: Idris is dead." (the epic's Decided 3 form). The issue's "To the <feature name>: <need>." stands where it goes in on the spot; where route walks, route's line takes its place in the same tick. The need is said in the game's voice ("a night's rest", "Idris is dead", "a look at the stock"), not by its name, and route cuts the line to the band's width, as the second.
+9. **A place gone to that took no gold is not gone to again for that need until the gold moves or the need goes** (#717's review: no same goal until the need returns). A goal of its own holds while its need does, unless a rest where it stands or a more urgent need can be met, so a place of the same need found nearer on the way does not turn the walk.
+10. **A well is for one standing under half, six keys of route off at most** (turns count, as in `routeLengths`), **with no group marked near**, and only when no need can be met: after a rest where it stands, as the issue orders its rules (a well asked first walked eight keys to Harrow's well, which restores nothing, before the rest). Most wells restore nothing and the fair copy has no `heal`, so a well gone to that left one under half is dry, and not gone back to.
+11. **`restRefused` is read as the issue says.** It is the game's refusal, the one thing a press of R would learn ("Too dangerous to rest here."), though it counts every live group near, seen or not; pressing R and reading the log would be as fair and cost a line in the log.
+12. **No skill is learnt.** The delegate's ruling let Mountaineer and Swimmer be bought over the reserve and need not be; the simpler is taken and the business menu's `Learn a skill` row is left. These tests cross nothing; whether the one quest asks either is the strategist's and the full run's to show (#720, #723).
+13. **The first menu's trade is opened again only after the last opening spent gold**, so a trade that can do nothing (a room the company cannot pay for) is not opened twice; then the quartermaster picks Leave. Talk (#721) may want the `Talk to` rows before it.
+14. **Training wants one standing**, as the trainer's own rows do; a shop's rations are bought only while under two a head, at the price shown; nothing is sold and what a chest gives is not worn (only what was bought), a want left for later.
+15. **The frame keeps a line a brain said with no key** (`Pilot.next`): "Nothing to do." only when no brain said why that tick. So the quartermaster's want stands, the most urgent need it cannot meet and why not ("Hurt, and no gold for a room."), where it stood "Nothing to do." for as long as the want lasted; and the navigator's "No way to ..." and "... is shut to me." show for the tick they are said.

@@ -14,6 +14,7 @@ import { knownOf } from './known.ts';
 import type { Known } from './known.ts';
 import { route, unroute } from './route.ts';
 import type { Goal } from './route.ts';
+import { keep } from './keep.ts';
 import { explore } from './explore.ts';
 
 export type Tempo = 1 | 2 | 4;
@@ -31,6 +32,7 @@ export type Brain = (g: Game, k: Known, p: Pilot) => Action | null;
  * sets a goal asks `route` for its first key itself, so the goal is walked from the tick it is set.
  */
 export const BRAINS: readonly Brain[] = [
+  keep,
   route,
   explore,
 ];
@@ -145,12 +147,15 @@ export class Pilot {
     if (top instanceof MessageScreen) return 'interact';
     if (top instanceof TitleScreen || top instanceof CreateScreen) return null;
     const k = knownOf(g), said = this.why;
+    let first: [string, string?] | undefined;
     for (const brain of this.brains) {
       const a = brain(g, k, this);
       if (a) return a;
+      if (!first && this.why !== said) first = this.why;
     }
-    // A brain that gave no key may still have said why ("Helmstow is walked out."): that stands.
-    if (this.why === said) this.why = ['Nothing to do.'];
+    // A brain that gave no key may still have said why (a need it cannot meet, #719; "Helmstow is
+    // walked out.", #718): the first said stands, as the most urgent brain is asked first; else nothing to do.
+    this.why = first ?? ['Nothing to do.'];
     return null;
   }
 }
