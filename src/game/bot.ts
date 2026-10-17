@@ -11,8 +11,9 @@
 // has seen do nothing to any foe still standing; once it has seen a foe mend, it burns it with fire
 // each round before it casts anything else. It reads the fight as it stands each turn, the groups
 // called into it too. It wakes a sleeper or frees one held (#549) of the front row, or a caster,
-// before it strikes. It never sleeps, blesses, drinks or flees, nor cures anything but sleep and a
-// hold, so it is weaker than a player. The gate's knows every monster as written (`asWritten`); the
+// before it strikes. It never sleeps, blesses or drinks, nor cures anything but sleep and a hold, so
+// it is weaker than a player; the gate's never flees, the game's flees a fight lost (`beaten`, #723).
+// The gate's knows every monster as written (`asWritten`); the
 // game's knows a sweep, a breath, a drain, a call or a leader only once the fight has shown it
 // (`asSeen`), as both know an element's work and a mending only once seen. The rest rule is here too
 // (`mustRest`), the harness's and the pilot's. Nothing here reads tools/ or node: the game is built

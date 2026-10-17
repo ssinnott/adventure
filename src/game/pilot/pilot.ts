@@ -4,6 +4,7 @@
 // This is its frame: on and off, the tempo, the why line, the fights handed to the bot and the boxes
 // closed. Which key it presses on the map is the brains' to say, each in a module of its own.
 import type { Game } from '../game.ts';
+import { ExploreScreen } from '../game.ts';
 import type { Passage } from '../map.ts';
 import type { Action } from '../../input.ts';
 import { CombatScreen } from '../../ui/combat.ts';
@@ -31,22 +32,36 @@ export type Brain = (g: Game, k: Known, p: Pilot) => Action | null;
 
 /**
  * The brains, asked in this order and the first key given pressed: fight (the frame's), keep (#719),
- * talk (#721), aims (#720), route (#717), explore (#718). A brain that sets a goal asks `route` for its
+ * talk (#721), aims (#720), route (#717), explore (#718), wait (#723). A brain that sets a goal asks `route` for its
  * first key itself, so the goal is walked from the tick it is set; talk walks its own goal to a person
  * so, every key of it, or the strategist, asked after, would set its own.
  */
+/**
+ * The watchdog (#723), asked last: with no key the clock stands with the pilot, so a group in the way
+ * never moves and the lost rule never comes. After STUCK_TICKS on the map with no key from any brain,
+ * a search where it stands passes ten minutes a press, until a brain has a key again.
+ */
+export const wait: Brain = (g, _k, p) => {
+  if (!(g.top instanceof ExploreScreen) || !p.stuck) return null;
+  p.why = ['Stuck: waiting a while.'];
+  return 'search';
+};
+
 export const BRAINS: readonly Brain[] = [
   keep,
   talk,
   aims,
   route,
   explore,
+  wait,
 ];
 
 /** The lines the heard corpus keeps, the oldest dropped first. */
 export const HEARD_MAX = 2000;
 /** The ticks between two actions at 1×, four a second at 60 Hz; 2× and 4× divide it (15, 8 and 4 ticks). */
 const PACE = 15;
+/** The ticks on the map with no key from any brain before `wait` searches where it stands, to pass the time (#723): ten seconds at 60 Hz. */
+export const STUCK_TICKS = 600;
 
 export class Pilot {
   on = false;
@@ -98,6 +113,8 @@ export class Pilot {
   private ticks = 0;
   /** The fight last handed to the bot: each is handed once. */
   private handed: CombatScreen | null = null;
+  /** The ticks on the map since a brain last gave a key (the watchdog, #723). */
+  private idle = 0;
 
   constructor(opts: PilotOpts = {}) {
     this.instant = opts.instant ?? false;
@@ -153,6 +170,7 @@ export class Pilot {
     if (g.top instanceof TitleScreen || g.top instanceof CreateScreen) g.newRandomGame();
     this.on = true;
     this.ticks = 0;
+    this.idle = 0;
     this.handed = null;
     this.why = ['Nothing to do.'];
     if (g.top instanceof CombatScreen) { g.top.auto = true; this.handed = g.top; }
@@ -180,20 +198,25 @@ export class Pilot {
     // A fight is the bot's (#714), at the screen's own pace: handed over once, and left to it.
     if (top instanceof CombatScreen) {
       if (this.handed !== top) { top.auto = true; this.handed = top; }
+      this.idle = 0;
       return null;
     }
-    if (top instanceof MessageScreen) return 'interact';
+    if (top instanceof MessageScreen) { this.idle = 0; return 'interact'; }
     if (top instanceof TitleScreen || top instanceof CreateScreen) return null;
     const k = knownOf(g), said = this.why;
     let first: [string, string?] | undefined;
     for (const brain of this.brains) {
       const a = brain(g, k, this);
-      if (a) return a;
+      if (a) { if (brain !== wait) this.idle = 0; return a; }
       if (!first && this.why !== said) first = this.why;
     }
     // A brain that gave no key may still have said why (a need it cannot meet, #719; "Helmstow is
     // walked out.", #718): the first said stands, as the most urgent brain is asked first; else nothing to do.
     this.why = first ?? ['Nothing to do.'];
+    if (top instanceof ExploreScreen) this.idle += this.instant ? 1 : Math.round(PACE / this.tempo);
     return null;
   }
+
+  /** Whether no brain has given a key on the map for STUCK_TICKS (`wait`, #723). */
+  get stuck(): boolean { return this.idle >= STUCK_TICKS; }
 }

@@ -14,7 +14,10 @@ until the test gives it one. It presses the keys a player would: every move is a
 Built so far: the frame (#716) over the bot's fights (#714), the navigator (#717), the explorer
 (#718), the quartermaster (#719), the strategist (#720) and the first part of talk (#721): people,
 choices, crossings, guilds, spells and prestige trainers, and the stop at the ending's choice. Its
-second part takes the riddles: until it lands the pilot stands under a statue's riddle.
+second part takes the riddles: until it lands the pilot stands under a statue's riddle. The first
+part of #723 makes it live through the first chapter: a rest by member, a mending between fights,
+the flight from a fight lost, a town's own doors before the land's and the goals given up tried again
+when nothing is left (Survival, below).
 
 ## Using it
 
@@ -113,7 +116,7 @@ read once the journal shows the goal (#720); a crossing once its seller has offe
 The brains (`BRAINS`, each `(g, k, p) => Action | null`) are asked in order on every paced tick,
 whatever screen is on top, and the first key given is pressed. A brain returns null unless the
 screen it works on is on top: route and explore only on the ExploreScreen; talk and keep also on the
-screens they answer. The order is keep, talk, aims, route, explore (a fight is the frame's): the
+screens they answer. The order is keep, talk, aims, route, explore, wait (a fight is the frame's): the
 company's needs outrank its meetings, and those its wandering; a brain either presses a key or sets
 `Pilot.goal` and returns null, so that route presses it. The explorer, asked after the navigator,
 speaks only when no goal is walked, and a goal it sets it walks at once, asking `route` for the first
@@ -124,7 +127,8 @@ key itself. Talk walks its goal to a person so, every key of it, or the strategi
 `route` (#717) walks `Pilot.goal`, a square and the name the why line gives it ("Bound for the
 lane."), one key a call with the map on top: `forward` and the turns, never `back` or a strafe, so
 the party faces where it goes. Its routes go breadth-first over the squares Known has a cell for that
-the company can cross, round the groups the automap marks and onto an exit, a rift or a business's door only at the end (#720); from map
+the company can cross, round the groups the automap marks (through one only where no way round is
+seen, #723) and onto an exit, a rift or a business's door only at the end (#720); from map
 to map they go by the exits seen. A secret door is a wall to it until a search finds it; a gate is
 learnt by trying it. A step that leaves the party where it stood with no screen shown since is a
 block: the plan is made afresh, and at the third block the goal goes ("The lane is shut to me."),
@@ -214,16 +218,40 @@ offered, are the navigator's edges (`routeMaps`), from the seller's square to wh
 ending's question is marked (`ChoiceScreen.ends`): talk neither picks nor answers it, but stops the
 pilot under it ("The choice is yours."). Riddles are its second part.
 
+## Survival
+
+#723's first part. Before it, of seeds 1 to 12 of the shelf's first chapter only 2 finished with the
+premade company, and 3 with the companies the seeds draw: the company walked out of Helmstow onto the
+Foreland at level 1 without entering the keep, and fell there to groups a level or two up; the
+sorcerer fought empty, as the harness's rule pools the spell points; the hurt walked far to a camp.
+Now the quartermaster rests by member, beside the harness's rule (`mustRest`, unchanged): one standing
+under three quarters of their hit points (`REST_HP`), or a caster (a cleric, a sorcerer or a druid)
+under half their spell points (`REST_SP`), rests the company where it stands, or takes the room at an
+inn's door, and goes nowhere for it. Between fights a member with a mending spell mends one under 70%
+(`MEND_AT`) by the spell menu's keys, as a player casts: C, the caster's number, `down` to the spell,
+Space and the member's row; where the harness's rule wants rest and a rest or a room can be had here,
+the rest comes first. The game's bot flees a fight lost (`beaten`: one of the company down, and as many
+foes standing as members), a reading of its own: the gate's and the harness's bot (`asWritten`) never
+flees, so their figures stand. The strategist walks a town's own doors to a map not visited before the
+land's gate (the keep before the Foreland), and with nothing left to walk tries the goals given up
+again. Two keep it moving (the review of #841): where a group stands in the only way the navigator
+goes through it, the fight the bot's; and a watchdog, the brain `wait`, asked last: after 600 ticks
+(`STUCK_TICKS`) on the map with no key from any brain, a search where it stands passes ten minutes a
+press ("Stuck: waiting a while."), so the clock runs and the lost rule can come. The survival sweep
+(`node tools/test.ts survival`, run only when named) plays the chapter on seeds 1 to 12 with both
+companies and prints a line a seed.
+
 ## Known limits
 
-- **Survival.** On seeds 1 to 12 of the shelf's first chapter with the standard party only 2 finish
-  (seeds 8 and 10): falls are lost fights at level 1 on the Foreland's east side to groups one or two
-  levels up (4 Shore Crabs, 3 Smugglers with a Bowman, 3 Bandits with Archers) at 54 to 100% hp; the
-  sorcerer fights with 0 to 4 of 10 spell points because `mustRest` pools the company's sp; later
-  falls come walking to the net loft with members already at 0 hp (it rests late and far);
-  `Game.fight` takes every adjacent group (11 and 12 at once); gold is not the cause. A dedicated pull
-  request (#723's first part) addresses survival. `headlessGame` gives every seed the same party, so a
-  random party is not yet played.
+- **Survival.** The sweep's figures are in the table over the decisions for #723. The runs are long: the company
+  rests more and fights the groups that come back while it sleeps, so a chapter takes about twice the
+  ticks it took and the lost rule fires on its quest goals two to eight times a run. `Game.fight`
+  still takes every group beside the party at once.
+- **Two maps in.** A goal's map behind a map not visited is not reached by `toward`: `routeMaps`
+  goes only to maps visited and the goal's own, and the explorer never takes an exit, so on seed 10
+  Thornhold's gate and the Grove's steps were seen and never stepped on (#841's review). A seen exit
+  to a map not visited, chosen by where the world map draws its place, would be the hop; left to
+  #723's second part.
 - **Meetings in a town.** Every flag set or item gained sends the pilot back round the people near it
   (talk's rule, as the issue has it): at review, on seed 4 it spent ticks 167 to 617 in Helmstow on 24 meetings
   with nine people, Aldith and Hob five times each.
@@ -232,18 +260,20 @@ pilot under it ("The choice is yours."). Riddles are its second part.
 
 | File | Owns |
 |---|---|
-| `src/game/pilot/pilot.ts` | `Pilot`: on and off (`toggle`), a stop of its own (`stop`), the tempo and the pace, the why line and what the band shows (`band`), the corpus heard (`hear`, `forget`), the next key (`next`), the navigator's goal, plan and squares found shut (`goal`, `plan`, `shut`), the explorer's walls searched and the map preferred (`searched`, `prefer`), the strategist's aim, since when, its goal's words and the goals given up (`aim`, `aimSince`, `aimGoal`, `lost`, #720), the people met and the crossings told (`met`, `offers`, `told`, #721), whether it asks talk (`talks`) and `BRAINS`: the brains in the order asked (fight, keep, talk, aims, route, explore) |
+| `src/game/pilot/pilot.ts` | `Pilot`: on and off (`toggle`), a stop of its own (`stop`), the tempo and the pace, the why line and what the band shows (`band`), the corpus heard (`hear`, `forget`), the next key (`next`), the navigator's goal, plan and squares found shut (`goal`, `plan`, `shut`), the explorer's walls searched and the map preferred (`searched`, `prefer`), the strategist's aim, since when, its goal's words and the goals given up (`aim`, `aimSince`, `aimGoal`, `lost`, #720), the people met and the crossings told (`met`, `offers`, `told`, #721), whether it asks talk (`talks`), the watchdog's count (`stuck`, `STUCK_TICKS`, #723) and `BRAINS`: the brains in the order asked (fight, keep, talk, aims, route, explore, `wait`) |
 | `src/game/pilot/known.ts` | `Known` and `knownOf`, the fair view; `fair`, a feature as the party knows it; what a menu has shown (`wares`, a Buy list's; `trainsTo`, a trainer's top level; #719); a map's or a zone's bounds, a place's band and the squares seen, counted (`box`, `band`, `seenCount`, #718); the journal's goals with their maps and the zones set foot in (`goals`, `zones`, #720); the crossings told (`offers`, #721) |
-| `src/game/pilot/keep.ts` | the quartermaster (#719): `needs` and `need` (what the company needs, the most urgent first), `better` (the best a member can wear for the gold), `restWanted` (the rest offered taken, talk's rule 2 too), `reserve` and `spare` (from `purse.ts`) and the brain `keep` |
+| `src/game/pilot/keep.ts` | the quartermaster (#719): `needs` and `need` (what the company needs, the most urgent first), `better` (the best a member can wear for the gold), `restWanted` (the rest offered taken, talk's rule 2 too), `reserve` and `spare` (from `purse.ts`) and the brain `keep`; the rest by member and the mending (#723): `weary`, `caster`, `REST_HP`, `REST_SP`, `MEND_AT` and `mendable`, the spell menu answered by its keys |
 | `src/game/pilot/purse.ts` | `reserve` and `spare` (#719): what the quartermaster keeps back and the gold over it, read by the quartermaster, talk and the navigator (#721) |
 | `src/game/pilot/talk.ts` | talk (#721): `pick` (the row to answer a menu with, or -1 for Esc), `NEAR` (the keys a person may be off) and the brain `talk`, with the meetings; what it keeps between ticks (its goal, the stamps of the people met, the crossing chosen) it keeps by pilot (`untalk` forgets it), and what it opened in a visit by the visit |
 | `src/game/pilot/aims.ts` | the strategist (#720): `Aim`, `chooseAim` (what the pilot is for), `LOST_MINUTES` (the lost rule's three days) and the brain `aims`, with the lost rule, the band rule, the chests and the walk again; what it keeps between ticks (the zone and square of its last look, the goals lost at what level, the places walked out) it keeps by pilot (`unaim` forgets it) |
 | `src/game/quests.ts` | `goalMap` (#720): the map a quest's shown goal is done on, read back from the goal |
-| `tools/walk.ts` | `pilotPlays` (#720): a chapter played from a new game by the pilot alone, every brain asked, until its end or the point a play names, on a seed it may name (#721) |
-| `src/game/pilot/route.ts` | the navigator (#717): `Goal` (with the reason or the why line its brain gives it), `routeOn` (the keys over one map), `routeLengths` (the length of the route to every square, in one search), `routeNearest` (the nearest of a set of squares, the search stopped there), each round the squares found shut it is given, `routeMaps` (the exits from map to map, and the crossings told whose fare the gold over the reserve pays, `edges`, #721), the brain `route` and `unroute` (what it kept of a goal, forgotten); it reads a cell by `passableCell` (`src/game/map.ts`) and the groups as the automap marks them (`markedGroups`, `src/ui/frame.ts`) |
+| `tools/walk.ts` | `pilotPlays` (#720): a chapter played from a new game by the pilot alone, every brain asked, until its end or the point a play names, on a seed it may name (#721) and with a company it may name, the play given back by `pilotRun` (#723) |
+| `tools/tests/survival.ts` | the suite `survival` (#723): the shelf's first chapter on `SEEDS` with the premade company and the drawn ones, a line a seed, each held to its `FLOOR`; run only when named (`ASKED`, `tools/test.ts`) |
+| `tools/tests/lib.ts` | `headlessGame(seed, party)`: a new game under Node, with the premade company or the one given (#723) |
+| `src/game/pilot/route.ts` | the navigator (#717): `Goal` (with the reason or the why line its brain gives it), `routeOn` (the keys over one map), `routeLengths` (the length of the route to every square, in one search), `routeNearest` (the nearest of a set of squares, the search stopped there), each round the squares found shut it is given and through a group only where no way round is seen (#723), `routeMaps` (the exits from map to map, and the crossings told whose fare the gold over the reserve pays, `edges`, #721), the brain `route` and `unroute` (what it kept of a goal, forgotten); it reads a cell by `passableCell` (`src/game/map.ts`) and the groups as the automap marks them (`markedGroups`, `src/ui/frame.ts`) |
 | `src/game/pilot/explore.ts` | the explorer (#718): `frontier` (seen squares with an unseen one beside them), `suspects` (walls with seen floor on both sides) and the brain `explore`; a zone's box and band it reads through `Known.box` and `Known.band`, and the zone a square lies in by `zoneAt` (`src/game/map.ts`), as the world map draws the boxes |
 | `src/game/ink.ts` | `drawnCell`: what a cell is drawn as, which the view, the automap and Known share |
-| `src/game/bot.ts` | the fight and the rest rule (`botTurn`, `asSeen`, `mustRest`, #714) |
+| `src/game/bot.ts` | the fight and the rest rule (`botTurn`, `asSeen`, `mustRest`, #714); `beaten`, a fight lost, which the game's reading flees (#723) |
 | `src/game/items.ts` | `hits`, a weapon's mean blow: the harness's measure, moved here for `better` (#719) |
 | `src/ui/create.ts` | `randomParty`: the company drawn from a seed |
 | `src/ui/screens.ts` | `ChoiceScreen`'s `title`, `disabled` and its marks (#721): a group's refusal (`fight`, by `Game.parley`) and an ending's question (`ends`, by `Game.ask`, `endsIn` in `src/game/stones.ts`) |
@@ -407,3 +437,32 @@ Decided by delegate for #722, each the owner's to overturn:
 11. **The wake and the restart turn the text mode off.** Only a riddle turns its own text mode off (`RiddleScreen.close`), and the wake drops the screens without a word: with a riddle open (the riddle brain, #721's second part, will open them) the viewer's key left the title up with the text mode on, so that Space, the letters, P and T and the digits were typed and F5 reloaded the page. `wake()` and `attract()` (a wipe's restart) set it off, and the checks open a riddle and send a key and a wipe.
 12. **P in attract mode says what it does.** "You take the helm." and a fight's "P TAKES THE FIGHT BACK" were false there, as the next key brings the title back: P says "Paused. P plays on, any other key for the title." and the fight's hint reads "ANY KEY FOR THE TITLE" while `attracting`. The hint is drawn only: it was looked at in the page and is not checked under Node.
 13. **The issue's "is opt-in" reworded, because the title starts the mode unasked.** DESIGN §1's line says that the pilot takes the player's own game only when asked and that, left alone, the title plays one of its own and saves nothing; §12's row says the same in one sentence. It still does not loosen pillar 1 for the player.
+
+Decided by delegate for #723 (survival), each the owner's to overturn:
+
+The figures: The Quiet Farm played from a new game by every brain on seeds 1 to 12 to the chapter's end, cap 200,000 ticks, finished of 12 (the premade company unless said).
+
+| Build | Finished | Seeds |
+|---|---|---|
+| main, before (f18826f9) | 2 | 10, 12 |
+| a town's own doors first (1) | 5 | 2, 4, 7, 8, 11 |
+| and the rest by member, walking to a camp or an inn for it | 8 | 2 to 6, 8, 10, 11 |
+| doors first, the rest by member where it stands (4) and the mending (5) | 6 | 1, 4, 5, 8, 9, 11 |
+| and the flight (6) | 10 | all but 2 and 5, which stood at the cap in the cellar; none fell |
+| the same with the rest at 50% and 25% | 8 of 11 run | two fell, one stood |
+| this pull request, seeds 1 to 4 (the sweep of all twelve was still running at the push) | 4 of 4 | 1, 2, 3, 4 |
+| the build before the watchdog and the group gone through, the companies the seeds draw (`randomParty`), seeds 1 and 3 | 2 of 2 | 1, 3 |
+| main, the companies the seeds draw | 3 | 3, 4, 6 |
+
+1. **A town's own doors come before the land's gate** (`chooseAim`'s walk). The gate out of Helmstow onto the Foreland counted as one of the town's doors to a map not visited, and from where the meetings left the company it was nearer than the keep's: on seed 4 the company walked out at level 1 at tick 617, never entered the keep, and fell at 1,440. #720's decision 8 meant the keep first. 2 finished before, 5 with it.
+2. **The pilot rests by member** (`weary`, beside `mustRest`, which stays the gate's and the harness's): one standing under 75% of their hit points (`REST_HP`), or a caster under 50% of their spell points (`REST_SP`). At 50% and 25% two of eleven fell (the chalk wolves at level 2, and rift hounds walked into with four down).
+3. **A caster is a calling of `caster`** (the prestiges' table: a cleric, a sorcerer, a druid). A paladin's, a ranger's or a bard's few points, spent on a mending a fight, would rest the company after nearly every fight.
+4. **The pilot's own rule rests where it stands, or takes the room at an inn's door, and walks nowhere for it**; the harness's rule still sends the company to a camp or an inn. Walking for it finished 8 (doors first only) but in 21,000 to 61,000 ticks, 320 s on seed 4, as every rest refused at three quarters was a walk back.
+5. **A mending between fights** (`mendable`, under 70%, `MEND_AT`), through the spell menu by a player's keys (C, the caster's number, `down`, Space, the member's row), by the member with the most spell points, so a paladin keeps his for the fight; before any walk, but after the rest or the room when the harness's rule wants one and it can be had where the company stands, as the rest restores the points spent. The well's test now empties the rations and the spell points, so the well is still the one want it can meet; its check is as it was.
+6. **The game's bot flees a fight lost** (`beaten`: one of the company down, and as many foes standing as members standing, as the screen shows them), in `botTurn` behind the reading: the gate's and the harness's bot (`asWritten`) never flees, and `node tools/test.ts gate harness curve density` prints the same, byte for byte, before and after. Without it 6 finished, with it 10, and none fell.
+7. **Nothing left to walk, the goals given up are tried again** (`chooseAim`). At level 6, with no trainer seen past Helmstow's 6, a goal given up waited on a level or a flag that never came: the strategist chose nothing, no key was pressed and the clock stood, and 2 of the 12 stood at the cap in the Ashcombe cellar.
+8. **A watchdog, the brain `wait`, asked last** (the review of #841): after 600 ticks on the map with no key from any brain (`STUCK_TICKS`, counted in ticks at every tempo), a search where it stands, ten minutes a press, until a brain has a key again ("Stuck: waiting a while."). A search rather than a rest, as the rest's menu is the quartermaster's to answer and a search needs none. A brain, not the frame, so that a test naming its own brains (#718's decision 15) is not searched under.
+9. **Through a group where it stands in the only way** (`routeOn`, `routeNearest`): the search runs again with the groups' squares open only when no way round is seen, so any way round is taken first; the fight is the bot's. `routeLengths` keeps them shut.
+10. **The survival sweep** (`tools/tests/survival.ts`): run only when named (`ASKED`, `tools/test.ts`, where #723's second part may add `fullrun`); the floors are the issue's, 9 of 12 with the premade company and 8 of 12 with the drawn ones; the seeds one after another in one process, which takes an hour or more, as a run is 18,000 to 64,000 ticks. `headlessGame` takes a company (`randomParty(seed)`, as P on the title draws it), its default as it was.
+11. **The shelf's play is back on seed 4, to the wand found** (`until: { item: 'survey_wand' }`, tick 15,395): to the chapter's end it took 19,623 ticks, 36.8 s, where main's play on seed 10 took 14,538 ticks, 29.8 s, on the same machine under the same load; the end is the sweep's. The play is chaotic: a change to anything it meets may move it.
+12. **Not built:** caution outdoors by level (the flight answered the level-1 fights it was for: no fall at level 1 since), the armour first, the reach two maps in (Known limits) and `Game.fight`'s taking every group beside the party, which is the game's. Talk's meetings in Helmstow are talk's, left as they were.

@@ -53,16 +53,16 @@ function tired(p: Party): 'hp' | 'sp' | null {
   return why === 'dead' ? null : why;
 }
 
-/** Under this share of their hit points, one standing makes the pilot rest where it may (#723), where the harness's rule waits for a quarter (`REST_AT`). */
-export const REST_HP = Number(((globalThis as { process?: { env: Record<string, string | undefined> } }).process?.env ?? {}).RH ?? 0.75);
-/** Under this share of their spell points, a caster makes the pilot rest where it may (#723), where the harness's rule pools the company's. */
-export const REST_SP = Number(((globalThis as { process?: { env: Record<string, string | undefined> } }).process?.env ?? {}).RS ?? 0.5);
+/** Under this share of their hit points, one standing makes the pilot rest where it stands (#723), where the harness's rule waits for a quarter (`REST_AT`). */
+export const REST_HP = 0.75;
+/** Under this share of their spell points, a caster makes the pilot rest where it stands (#723), where the harness's rule pools the company's. */
+export const REST_SP = 0.5;
 /** A member whose spells are its fight: a calling of 'caster' (a cleric, a sorcerer, a druid), as the prestiges have it. */
 export const caster = (c: Character): boolean => PRESTIGES[c.cls].calling === 'caster' && c.maxSp > 0;
-const EXP = ((globalThis as { process?: { env: Record<string, string | undefined> } }).process?.env ?? {}) as Record<string, string | undefined>;
 /**
  * The member the pilot's own rest rule (#723) rests for, and why: one standing under REST_HP of its hit
- * points, else a caster under REST_SP of its spell points; by member, as the harness's rule is not.
+ * points, else a caster under REST_SP of its spell points; by member, where the harness's rule pools the
+ * spell points. It rests where it stands, or takes the room at an inn's door, and goes nowhere for it.
  */
 export function weary(p: Party): { c: Character; why: 'hp' | 'sp' } | undefined {
   const up = p.members.filter((c) => !fallen(c));
@@ -77,11 +77,10 @@ export const MEND_AT = 0.7;
 export interface Mend { who: number; spell: string; row: number; target: number }
 /**
  * The mending to cast now, or undefined: the one not dead or stone with the least share of their hit
- * points, under MEND_AT, mended by the first member standing and awake who has a mending spell off the
- * fight and its spell points, one for a member before one for the company (#723).
+ * points, under MEND_AT, mended by the member standing and awake with the most spell points who has a
+ * mending spell off the fight and the points for it, one for a member before one for the company (#723).
  */
 export function mendable(p: Party): Mend | undefined {
-  if (EXP.NOH) return undefined;
   const target = p.members.map((c, i) => ({ c, i })).filter(({ c }) => !fallen(c) && c.hp < c.maxHp * MEND_AT).sort((a, b) => a.c.hp / a.c.maxHp - b.c.hp / b.c.maxHp)[0];
   if (!target) return undefined;
   let best: Mend | undefined, most = -1;
@@ -253,8 +252,11 @@ function onMap(g: Game, k: Known, p: Pilot, mem: Keep): Action | null {
     p.why = [`${party.members[mem.bought[0].who].name} takes the ${item(mem.bought[0].id).name}.`];
     return 'inventory';
   }
-  // Between fights, one hurt is mended by a spell before any rest or walk (#723): the cast key, then the menus.
-  const mend = mendable(party);
+  // Between fights, one hurt is mended by a spell before any walk (#723), the cast key and then the
+  // menus; but where the harness's rule wants rest and a rest or a room can be had here, it rests first.
+  const here = (f: Feature): boolean => f.kind === 'inn' && f.x === g.world.state.x && f.y === g.world.state.y;
+  const restNow = !!tired(party) && ((restRefused(g.world) === '' && party.food >= party.members.length) || k.features(g.world.state.mapId).some(here));
+  const mend = restNow ? undefined : mendable(party);
   if (mend) {
     mem.mend = mend;
     p.why = [mend.target < 0 ? 'Mending the company.' : `Mending ${party.members[mend.target].name}.`];
@@ -313,8 +315,8 @@ function choose(g: Game, k: Known, mem: Keep, list: readonly Need[]): Plan | und
         if (tired(p)) return { rest: tired(p) === 'hp' && who ? `Resting: ${who.name} is under a quarter.` : 'Resting: the spell points are low.' };
         return { rest: w!.why === 'hp' ? `Resting: ${w!.c.name} is hurt.` : `Resting: ${w!.c.name} is short of spells.` };
       }
-      // Weary only, by the pilot's own rule: a rest where it stands, or none (#723).
-      if (EXP.B && !tired(p)) continue;
+      // Wanted by the pilot's own rule alone: a rest where it stands or none, and no walk for it (#723).
+      if (!tired(p)) continue;
     }
     for (const group of groups) {
       const best = nearest(g, k, group.filter((s) => free(s) && !(here(s) && s.f.kind === 'camp')));
