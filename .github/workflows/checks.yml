@@ -37,7 +37,9 @@ jobs:
 
   tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # The suites took 6 to 8.5 minutes on the heads measured, the runner's spread about two (#873): the
+    # cap is the runner's budget, not a check. The aim stays under three minutes (EXPANSION §10).
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
