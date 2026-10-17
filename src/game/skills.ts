@@ -3,16 +3,17 @@
 // by a company that is a member of that guild ("taught to its members"). A people may be born to one,
 // as the dwarves are to Linguist, and an item carried may do one's work (`ItemDef.skill`: a scholar's
 // copybook reads as a Linguist does). Linguist is the first built, and reads Kiln-script
-// (game/inscriptions.ts); Mountaineer and Swimmer climb and swim (`partyCan`, game/party.ts; #805); the
-// other nine come as their shortcuts and secrets do. Pure apart from the party handed in, so the tests
-// teach as the game does, without a Game.
+// (game/inscriptions.ts); Mountaineer and Swimmer climb and swim (`partyCan`, game/party.ts; #805);
+// Perception searches (`World.search`), Spirit Sense and Danger Sense mark the automap (`markedGroups`,
+// ui/frame.ts) and Arms Master strikes first (`newRound`, game/combat.ts; #856); the other five come as
+// theirs do. Pure apart from the party handed in, so the tests teach as the game does, without a Game.
 import type { GuildId } from '../content/guilds.ts';
-import type { Character, Party, RaceId } from './party.ts';
+import type { Character, Party, RaceId, ClassId } from './party.ts';
 import { isDown, countItem } from './party.ts';
 import { rankOf } from './guilds.ts';
 import { ITEMS } from '../content/index.ts';
 
-export type SkillId = 'linguist' | 'mountaineer' | 'swimmer';
+export type SkillId = 'linguist' | 'mountaineer' | 'swimmer' | 'perception' | 'spirit_sense' | 'danger_sense' | 'arms_master';
 
 export interface SkillDef {
   id: SkillId;
@@ -23,8 +24,10 @@ export interface SkillDef {
   guild: GuildId;
   /** What a member pays to learn it. */
   price: number;
-  /** A people born to it, whose members have it without learning it. */
-  race?: RaceId;
+  /** The peoples born to it, whose members have it without learning it. */
+  races?: readonly RaceId[];
+  /** The classes born to it, as the peoples are. */
+  classes?: readonly ClassId[];
 }
 
 /**
@@ -35,20 +38,31 @@ export interface SkillDef {
 export const SKILL_PRICE = 1000;
 
 export const SKILLS: Readonly<Record<SkillId, SkillDef>> = {
-  linguist: { id: 'linguist', name: 'Linguist', text: 'Reads Kiln-script.', guild: 'lanterns', price: SKILL_PRICE, race: 'dwarf' },
+  linguist: { id: 'linguist', name: 'Linguist', text: 'Reads Kiln-script.', guild: 'lanterns', price: SKILL_PRICE, races: ['dwarf'] },
   // No people is born to these two: the Tidefolk swim by their people (`RACES`), not by the skill.
   mountaineer: { id: 'mountaineer', name: 'Mountaineer', text: 'Climbs mountain and cliff.', guild: 'wardens', price: SKILL_PRICE },
   swimmer: { id: 'swimmer', name: 'Swimmer', text: 'Swims deep water.', guild: 'cartographers', price: SKILL_PRICE },
+  // #856: the elves and the gnomes are born to Perception (DESIGN §5); nobody to the other three.
+  perception: { id: 'perception', name: 'Perception', text: 'Finds hidden doors, even a square off.', guild: 'lanterns', price: SKILL_PRICE, races: ['elf', 'gnome'] },
+  spirit_sense: { id: 'spirit_sense', name: 'Spirit Sense', text: 'Senses the dead through walls.', guild: 'lanterns', price: SKILL_PRICE },
+  danger_sense: { id: 'danger_sense', name: 'Danger Sense', text: 'Senses what hunts the company.', guild: 'wardens', price: SKILL_PRICE },
+  arms_master: { id: 'arms_master', name: 'Arms Master', text: 'The company strikes first.', guild: 'wardens', price: SKILL_PRICE },
 };
+
+/** How far Spirit Sense reaches, in steps (`markedGroups`, ui/frame.ts). */
+export const SPIRIT_REACH = 8;
 
 /** The skills a member has learnt: none in a save from before them. */
 export const skillsOf = (c: Pick<Character, 'skills'>): readonly SkillId[] => c.skills ?? [];
 
+/** Whether a member is born to a skill: of a people or a class that has it unlearnt. */
+export const bornTo = (c: Pick<Character, 'race' | 'cls'>, id: SkillId): boolean => !!SKILLS[id].races?.includes(c.race) || !!SKILLS[id].classes?.includes(c.cls);
+
 /** Whether a member has a skill: learnt, or born to it. */
-export const hasSkill = (c: Pick<Character, 'skills' | 'race'>, id: SkillId): boolean => skillsOf(c).includes(id) || SKILLS[id].race === c.race;
+export const hasSkill = (c: Pick<Character, 'skills' | 'race' | 'cls'>, id: SkillId): boolean => skillsOf(c).includes(id) || bornTo(c, id);
 
 /** The skills a member has, learnt or born to, in the table's order: what the sheet lists. */
-export const skillNames = (c: Pick<Character, 'skills' | 'race'>): string[] => Object.values(SKILLS).filter((s) => hasSkill(c, s.id)).map((s) => s.name);
+export const skillNames = (c: Pick<Character, 'skills' | 'race' | 'cls'>): string[] => Object.values(SKILLS).filter((s) => hasSkill(c, s.id)).map((s) => s.name);
 
 /**
  * Who does a skill's work for the company: the first standing member who has it; failing that, while
@@ -70,24 +84,31 @@ export const taughtBy = (guild: GuildId): SkillId[] => Object.values(SKILLS).fil
 /** Whether the company may learn a skill: it is a member of the skill's guild, its first task done (DESIGN §8). */
 export const mayLearn = (id: SkillId, party: Party): boolean => rankOf(SKILLS[id].guild, party) > 0;
 
-/** One line of the menu: a member, a skill, its price, and why not, if not. */
+/** One line of the menu's second level: a member, the skill, its price, and why not, if not. */
 export interface SkillOffer { who: number; skill: SkillId; price: number; bar: string }
 
 /** Why a member may not learn a skill, or '' if it may: learnt already, born to it, or the gold short. */
 export function skillBar(id: SkillId, c: Character, party: Party): string {
   if (skillsOf(c).includes(id)) return KNOWN;
-  if (SKILLS[id].race === c.race) return BORN;
+  if (bornTo(c, id)) return BORN;
   if (party.gold < SKILLS[id].price) return SHORT;
   return '';
 }
 
-/** The menu: every member with every skill taught there, each with its bar. */
-export function skillOffers(ids: readonly SkillId[], party: Party): SkillOffer[] {
-  return party.members.flatMap((c, who) => ids.map((skill) => ({ who, skill, price: SKILLS[skill].price, bar: skillBar(skill, c, party) })));
+/**
+ * The menu is skill-major and two-level (#856): a hall's skills first, a row each with its price and
+ * what it does in the note (`skillRow`); then, a skill chosen, who would learn it: its six offers, a
+ * member each with the price or why not (`skillLine`).
+ */
+export const skillRow = (id: SkillId): string => `${SKILLS[id].name}\t${SKILLS[id].price}g\t${SKILLS[id].text}`;
+
+/** A skill's offers: every member, each with its bar. */
+export function skillOffers(id: SkillId, party: Party): SkillOffer[] {
+  return party.members.map((c, who) => ({ who, skill: id, price: SKILLS[id].price, bar: skillBar(id, c, party) }));
 }
 
-/** The menu's line for an offer: the member and the skill, the price or why not, and what it does. */
-export const skillLine = (o: SkillOffer, party: Party): string => `${party.members[o.who].name}: ${SKILLS[o.skill].name}\t${o.bar || `${o.price}g`}\t${SKILLS[o.skill].text}`;
+/** The second level's line for an offer: the member, and the price or why not. */
+export const skillLine = (o: SkillOffer, party: Party): string => `${party.members[o.who].name}\t${o.bar || `${o.price}g`}`;
 
 /** Teach a member a skill: the price paid, the skill on its list. Nothing changes, and false, where it may not. */
 export function learn(id: SkillId, party: Party, who: number): { taught: boolean; line: string } {
@@ -100,7 +121,8 @@ export function learn(id: SkillId, party: Party, who: number): { taught: boolean
 
 // ---- the words ----
 
-/** Put over the menu, and its way out. */
+/** Put over the menu's two levels, and their way out. */
+export const askWhich = (party: Party): string => `"Which skill?" (${party.gold} gold.)`;
 export const askSkill = (party: Party): string => `"Who would learn?" (${party.gold} gold.)`;
 export const LEAVE_SKILLS = 'Leave';
 /** What a hall, or a person who teaches, says to a company that is not of its guild. */

@@ -277,7 +277,8 @@ const trainer = await (async () => {
 // run time, that marks Feuerstollen. Stepped on by the premade six, who have no reader, it is a sign.
 // A person who teaches Linguist, put in the street too, tells a company not of the Lanterns that they
 // teach their own. In the Lantern Guildhall, the company a Taper for the run, the hall's first menu
-// offers its skill, and Maren learns Linguist, which her sheet then lists. Stepped on again, she reads
+// offers its skills, Linguist is chosen of the three (#856), and Maren learns it, which her sheet then
+// lists. Stepped on again, she reads
 // it after its words and marks the world map, which shows the mark, whole, and none once forgotten.
 const script = await (async () => {
   const top = (): Promise<{ screen: string; options: string[]; text: string }> => page.evaluate(() => { const t = (window as any).__game.game.top; return { screen: t.constructor.name, options: t.options ?? [], text: t.words ?? t.text ?? '' }; });
@@ -329,10 +330,14 @@ const script = await (async () => {
   const hall = await top();
   for (let i = 0; i < hall.options.indexOf('Learn a skill'); i++) { await page.keyboard.press('ArrowDown'); await page.waitForTimeout(40); }
   await page.keyboard.press('Space'); await page.waitForTimeout(80);
+  // The hall's skills (#856), Linguist first; then who would learn it.
+  const skills = await top();
+  await page.keyboard.press('Space'); await page.waitForTimeout(80);
   const menu = await top();
   for (let i = 0; i < 4; i++) { await page.keyboard.press('ArrowDown'); await page.waitForTimeout(40); }
   await page.keyboard.press('Space'); await page.waitForTimeout(100);
   const learnt = await page.evaluate(() => { const g = (window as any).__game.game; return { skills: (g.party.members[4].skills ?? []).join(), gold: g.party.gold, log: g.log.at(-1), screen: g.top.constructor.name, options: g.top.options ?? [] }; });
+  await page.keyboard.press('Escape'); await page.waitForTimeout(60);
   await page.keyboard.press('Escape'); await page.waitForTimeout(60);
   await page.keyboard.press('Escape'); await page.waitForTimeout(100);
   const left = await page.evaluate(() => (window as any).__game.game.screens.map((s: any) => s.constructor.name).join(','));
@@ -358,7 +363,7 @@ const script = await (async () => {
     g.party.gold = (window as any).__purse;
     return top;
   });
-  return { unread, teacher, stranger, hall, menu, learnt, left, sheetChanged: sheetBefore !== sheetAfter, read, again, pins, unpinned, closed };
+  return { unread, teacher, stranger, hall, skills, menu, learnt, left, sheetChanged: sheetBefore !== sheetAfter, read, again, pins, unpinned, closed };
 })();
 // The Wardens' hall, the Drillyard, with First Watch's walk already made, so taking it pays at once.
 // Back on the hall's first menu, the rank it reads is the new one: its words are made when drawn, not
@@ -1574,10 +1579,12 @@ ok(trainer.words.text === '"Steel, or a title?"' && trainer.menu.options.join('|
 ok(script.unread.join(' / ') === 'A sign reads: "The dwarves\' words for the mountain\'s breath."', `with nobody to read it, an inscription is a sign (${script.unread.join(' / ')})`);
 ok(script.teacher.text === '"The old way, word by word."' && script.stranger.screen === 'MessageScreen' && script.stranger.text === '"We teach our own. Take the first task, and you are one."',
   `a person who teaches Linguist says their words, then tells a company not of the Lanterns that they teach their own (${script.stranger.text})`);
-ok(script.hall.screen === 'ChoiceScreen' && script.hall.options.join('|') === 'Study spells|Work for the Lanterns|Learn a skill|Leave' && script.menu.text === '"Who would learn?" (1500 gold.)' && script.menu.options[4] === 'Maren: Linguist\t1000g\tReads Kiln-script.' && script.menu.options.length === 7,
-  `a Lantern hall offers its skill after its work, each member at its price (${script.hall.options.join(', ')}; ${script.menu.options[4]?.replace(/\t/g, ' | ')})`);
-ok(script.learnt.skills === 'linguist' && script.learnt.gold === 500 && script.learnt.log === 'Maren learns Linguist.' && script.learnt.screen === 'ChoiceScreen' && script.learnt.options[4] === 'Maren: Linguist\tknown\tReads Kiln-script.' && script.left === 'ExploreScreen' && script.sheetChanged,
-  `Maren learns Linguist for 1000, the menu comes again with her known, Esc twice leaves, and her sheet lists it ("${script.learnt.log}"; ${script.left})`);
+ok(script.hall.screen === 'ChoiceScreen' && script.hall.options.join('|') === 'Study spells|Work for the Lanterns|Learn a skill|Leave' && script.skills.text === '"Which skill?" (1500 gold.)'
+    && script.skills.options.join('|') === 'Linguist\t1000g\tReads Kiln-script.|Perception\t1000g\tFinds hidden doors, even a square off.|Spirit Sense\t1000g\tSenses the dead through walls.|Leave'
+    && script.menu.text === '"Who would learn?" (1500 gold.)' && script.menu.options[4] === 'Maren\t1000g' && script.menu.options.length === 7,
+  `a Lantern hall offers its three skills after its work, each at its price, then who would learn one, each member at its price (${script.hall.options.join(', ')}; ${script.skills.options.map((o) => o.split('\t')[0]).join(', ')}; ${script.menu.options[4]?.replace(/\t/g, ' | ')})`);
+ok(script.learnt.skills === 'linguist' && script.learnt.gold === 500 && script.learnt.log === 'Maren learns Linguist.' && script.learnt.screen === 'ChoiceScreen' && script.learnt.options[4] === 'Maren\tknown' && script.left === 'ExploreScreen' && script.sheetChanged,
+  `Maren learns Linguist for 1000, the menu comes again with her known, Esc three times leaves, and her sheet lists it ("${script.learnt.log}"; ${script.left})`);
 ok(script.read.join(' / ') === 'A sign reads: "The dwarves\' words for the mountain\'s breath." / Maren reads: "VENT. STAND CLEAR." / Maren marks the world map.' && script.again.length === 2,
   `stepped on again, Maren reads it after its words and marks the world map, once (${script.read.slice(1).join(' / ')})`);
 ok(script.pins >= 40 && script.unpinned === 0 && script.closed === 'ExploreScreen', `the world map, whole, pins the place the reading marked, and none once it is forgotten (${script.pins} pixels of the pin, then ${script.unpinned}; ${script.closed})`);

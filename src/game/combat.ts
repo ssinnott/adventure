@@ -271,8 +271,12 @@ function newRound(s: CombatState, party: Party, rng: RngInstance): void {
   const haste = s.haste > 0 ? HASTE_SPEED : 0;
   party.members.forEach((c, i) => { if (!isDown(c)) refs.push({ ref: { side: 'party', i }, speed: c.stats.speed + haste + rng.range(0, 4) }); });
   s.monsters.forEach((m, i) => { if (standing(m)) refs.push({ ref: { side: 'monster', i }, speed: m.def.speed + rng.range(0, 4) }); });
-  // A monk of the second prestige always acts first in a round.
-  const first = (r: TurnRef): number => (r.side === 'party' && party.members[r.i].cls === 'monk' && prestigeOf(party.members[r.i]) >= 2 ? 1 : 0);
+  // A monk of the second prestige always acts first in a round; in the first, while an Arms Master
+  // stands (game/skills.ts; #856), every member acts before any monster. The skill is read off the
+  // member's list, as `partyCan` reads its skills: this file sits under the content index too, and
+  // nobody is born to it; the skills test holds the two to `hasSkill`'s answer.
+  const armsMaster = s.round === 1 && party.members.some((c) => !isDown(c) && (c.skills?.includes('arms_master') ?? false));
+  const first = (r: TurnRef): number => (r.side !== 'party' ? 0 : party.members[r.i].cls === 'monk' && prestigeOf(party.members[r.i]) >= 2 ? 2 : armsMaster ? 1 : 0);
   refs.sort((a, b) => first(b.ref) - first(a.ref) || b.speed - a.speed);
   s.order = refs.map((r) => r.ref);
   s.turn = 0;

@@ -14,7 +14,7 @@ import type { Party } from '../party.ts';
 import { FACING_DX, FACING_DY } from '../types.ts';
 import * as passage from '../passage.ts';
 import * as prestige from '../prestige.ts';
-import { askSkill } from '../skills.ts';
+import { askSkill, askWhich } from '../skills.ts';
 import { askLine, askTier, TIERS } from '../mastery.ts';
 import { ANSWER_MAX, normalWord } from '../wilds.ts';
 import { ChoiceScreen, InteriorScreen, TRADE, shortName } from '../../ui/screens.ts';
@@ -329,8 +329,8 @@ function choose(c: ChoiceScreen, g: Game, k: Known, p: Pilot, mem: Talk): Answer
     const i = labels.findIndex((l) => !visit.v.opened.has(l) && (l === TRADE.guild || l.startsWith('Work for ') || (visit.v.due && (l === ROOM || l.startsWith('Talk to ')))));
     return i < 0 ? out() : { i, then: () => visit.v.opened.add(labels[i]) };
   }
-  // A skill: none is learnt (#719, decision 12).
-  if (c.words === askSkill(party)) return out();
+  // A skill: none is learnt (#719, decision 12), at a hall's two levels or a person's one (#856).
+  if (c.words === askWhich(party) || c.words === askSkill(party)) return out();
   // A tier: none is taken (#852), at a trainer's menus or a Master's person.
   if (c.words === askLine(party) || TIERS.some((t) => c.words === askTier(t, party))) return out();
   // 6. A person's question, put by one at hand: the party's square, the one ahead or the business's.

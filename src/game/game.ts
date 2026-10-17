@@ -26,7 +26,7 @@ import { drawViewport } from '../ui/viewport.ts';
 import type { ViewMonster } from '../ui/viewport.ts';
 import { LAYOUT, drawStatus, drawAutomap, drawPartyCards, drawLog, drawFrameBackground, drawPurse, drawViewportFrame } from '../ui/frame.ts';
 import { CombatScreen } from '../ui/combat.ts';
-import { MessageScreen, ChoiceScreen, SheetScreen, serviceScreen, SpellScreen, InteriorScreen, skillMenu, masterMenu } from '../ui/screens.ts';
+import { MessageScreen, ChoiceScreen, SheetScreen, serviceScreen, SpellScreen, InteriorScreen, learnerMenu, masterMenu } from '../ui/screens.ts';
 import { QuestScreen } from '../ui/quests.ts';
 import { questLog, questMarks, questNews } from './quests.ts';
 import { TitleScreen } from '../ui/title.ts';
@@ -322,7 +322,7 @@ export class Game {
   talkScreen(p: Person): Screen {
     const m = meet(p, this.party, heard(this.world, p));
     const then = m.choice ? (): void => this.ask(m.choice!, p.name) : p.passage?.length ? (): void => this.offer(p.passage!, p.name, p) : p.teaches ? (): void => this.train(p.teaches!, p.name)
-      : p.skill ? (): void => this.push(skillMenu(this, [p.skill!], p.name)) : p.mastery ? (): void => this.push(masterMenu(this, p.mastery!, p.name)) : undefined;
+      : p.skill ? (): void => this.push(learnerMenu(this, p.skill!, p.name)) : p.mastery ? (): void => this.push(masterMenu(this, p.mastery!, p.name)) : undefined;
     return new MessageScreen(m.text, then, p.name);
   }
 
