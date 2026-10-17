@@ -104,7 +104,7 @@ import { LIT, LIGHTS, SOCKETS, SEEDLING, SEEDLING_ASKED, SEEDLING_TAKEN, SEEDLIN
 import { LAMP_ASKED, LAMP_LIT } from './maps/old_cinder2.ts';
 import { ROLL_GIVEN } from './maps/old_cinder.ts';
 import { QUESTS } from './quests.ts';
-import { linesOf, masterOffers, favourDone, teachTier, tierOf, TIER_PRICES } from '../../../game/mastery.ts';
+import { masterOffers, favourDone, teachTier, TIER_PRICES } from '../../../game/mastery.ts';
 import { SLEEPERS_SEEN } from '../rimewater/chapter.ts';
 import { ENDINGS, ENDED } from '../../endings.ts';
 
@@ -1646,7 +1646,9 @@ function masterOfMagic(ok: (cond: boolean, msg: string) => void): void {
   w.level = 25;
   for (const c of w.party.members) { c.xp = xpForLevel(25); c.level = 25; }
   const [idris, wren, maren, cassian] = [1, 2, 4, 5].map((i) => w.party.members[i]);
-  maren.tiers = { magic: 'expert' };
+  // Given at no price by the game's own teaching, since the tiers are read by the party, the blow, the menus and
+  // `mastery.ts` alone (the mastery suite scans src/ for it): Expert, as a trainer in a town teaches it.
+  const none = rankMult(maren), given = teachTier('magic', 'expert', 0, w.party, 4);
   w.party.gold = 5000;
 
   // The rumour: the hermit's own three lines at the first meeting, and at the next the two he adds.
@@ -1701,7 +1703,8 @@ function masterOfMagic(ok: (cond: boolean, msg: string) => void): void {
   ok(asked === eseld.lines.join('\n\n') && eseld.lines.length === 3 && /roll/.test(asked) && /clerk/.test(asked) && /west/.test(asked) && !favourDone(m, w.world.state, w.party),
     `her first words ask for the roll the clerk took west (${asked.split('\n\n')[2]})`);
   const refused = teachTier('magic', 'master', m.price, w.party, 4, favourDone(m, w.world.state, w.party));
-  ok(turned.map((o) => o.who).join() === '1,2,4,5' && bar(4) === 'favour first' && bar(5) === 'Expert first' && bar(0) === 'not listed' && !refused.taught && w.party.gold === gold && tierOf(maren, 'magic') === 'expert',
+  ok(turned.map((o) => o.who).join() === '1,2,4,5' && bar(4) === 'favour first' && bar(5) === 'Expert first' && bar(0) === 'not listed' && !refused.taught && w.party.gold === gold
+    && given.taught && Math.abs(rankMult(maren) - none - RANK_STEP) < 1e-9 && masterOffers(m, w.party, w.world.state).find((o) => o.who === 4)!.bar === 'favour first',
     `before the favour she refuses ${maren.name}, given her Expert in magic and the 5,000 (bought elsewhere on the road) at 25 (${bar(4)}), and offers the others nothing but why not (${cassian.name}: ${bar(5)}; ${idris.name}: ${bar(1)}; ${wren.name}: ${bar(2)}), taking nothing`);
 
   // The favour: E11's crack that breathes cold air, searched; the tube behind it, the man's bones and his pack,
@@ -1740,17 +1743,18 @@ function masterOfMagic(ok: (cond: boolean, msg: string) => void): void {
     `handed the roll, she takes it, reads the first names and sets ${ROLL_GIVEN}, which her Master tests: "${done.split('\n\n')[1]}"`);
   w.party.gold = 4999;
   const short = masterOffers(m, w.party, w.world.state).find((o) => o.who === 4)!.bar;
-  cassian.tiers = { magic: 'expert' }; cassian.level = 24;
+  teachTier('magic', 'expert', 0, w.party, 5);
+  cassian.level = 24;
   const young = masterOffers(m, w.party, w.world.state).find((o) => o.who === 5)!.bar;
   cassian.level = 25;
   ok(short === 'no gold' && young === 'level 25' && m.price === 5000 && m.price === TIER_PRICES.master && m.line === 'magic' && m.tier === 'master',
     `the price is 5,000 (${maren.name}: ${short} at 4,999) and the level 25 (${cassian.name} at 24: ${young})`);
   w.party.gold = 5000;
   const before = rankMult(maren), taught = teachTier('magic', 'master', m.price, w.party, 4, favourDone(m, w.world.state, w.party));
-  const again = teachTier('magic', 'master', m.price, w.party, 4, true);
-  ok(taught.taught && taught.said === `${maren.name} is Master in magic now.` && w.party.gold === 0 && tierOf(maren, 'magic') === 'master' && tierSteps(maren) === 2 && Math.abs(rankMult(maren) - before - RANK_STEP) < 1e-9 && !again.taught && w.party.gold === 0
-    && tierOf(cassian, 'magic') === 'expert' && masterOffers(m, w.party, w.world.state).find((o) => o.who === 4)!.bar === 'taken',
-    `the favour done, ${maren.name} Expert at 25 is taught Master in magic for 5,000, and casts a rank's step higher than at Expert (${taught.said})`);
+  const again = teachTier('magic', 'master', m.price, w.party, 4, true), bars = masterOffers(m, w.party, w.world.state);
+  ok(taught.taught && taught.said === `${maren.name} is Master in magic now.` && w.party.gold === 0 && Math.abs(before - none - RANK_STEP) < 1e-9 && Math.abs(rankMult(maren) - none - 2 * RANK_STEP) < 1e-9 && !again.taught
+    && bars.find((o) => o.who === 4)!.bar === 'taken' && bars.find((o) => o.who === 5)!.bar === 'no gold',
+    `the favour done, ${maren.name} Expert at 25 is taught Master in magic for 5,000, and casts two rank steps above none (${taught.said}), once, ${cassian.name} left Expert for want of gold`);
   listen(w);
 }
 

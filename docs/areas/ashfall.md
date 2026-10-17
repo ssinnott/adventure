@@ -3109,6 +3109,10 @@ Decided by the builder for #859, each the owner's to overturn:
    and the mastery suite plays that.
 10. **Old Cinder's walkthrough line "nothing in it sells or teaches" now says "no business or
     hall",** with her room a person's: the check is the same, on kinds.
+11. **The walkthrough reads no tier itself:** the mastery suite scans `src/` for a tier read outside
+    the party, the blow, `mastery.ts` and the menus, and a walkthrough lives under `src/`. It gives
+    Expert by `teachTier` at no price and reads the rest from the offers' bars and `rankMult`
+    (Master two rank steps above none). The scan is as it was.
 
 ## 10. Names
 
