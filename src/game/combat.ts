@@ -492,8 +492,10 @@ function castSpell(s: CombatState, party: Party, rng: RngInstance, c: Character,
       if (sp.inflict) {
         let n = 0;
         const chance = sp.inflict === 'paralysed' ? ROOTS_CHANCE : SLUMBER_CHANCE;
-        for (const m of members) if (!monsterImmune(m.def, sp.inflict) && rng.chance(chance)) { m.conditions = [sp.inflict]; n++; }
-        s.log.push(sp.inflict === 'asleep' ? `${c.name} casts ${sp.name}: ${n} of the ${m0.def.plural} fall asleep.`
+        // Slumber's line counts the kind it names, the target's, so that a kind it cannot take shows in a mixed group (#853).
+        let kin = 0;
+        for (const m of members) if (!monsterImmune(m.def, sp.inflict) && rng.chance(chance)) { m.conditions = [sp.inflict]; n++; if (m.def.id === m0.def.id) kin++; }
+        s.log.push(sp.inflict === 'asleep' ? `${c.name} casts ${sp.name}: ${kin} of the ${m0.def.plural} fall asleep.`
           : n ? `${c.name} casts ${sp.name}: ${n} of the ${m0.def.plural} ${n === 1 ? 'is' : 'are'} held fast.` : `${c.name} casts ${sp.name}, but no root holds.`);
       } else {
         let total = 0, killed = 0;
