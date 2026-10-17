@@ -16,13 +16,14 @@ import { defaultParty, partyCan, isDown, RACES, CLASSES, NAME_MAX } from '../../
 import type { Party, RaceId, ClassId } from '../../src/game/party.ts';
 import { World } from '../../src/game/world.ts';
 import { GameMap } from '../../src/game/map.ts';
-import type { MapDef } from '../../src/game/map.ts';
+import type { MapDef, Feature } from '../../src/game/map.ts';
 import type { Person } from '../../src/game/people.ts';
 import { startCombat, currentTurn } from '../../src/game/combat.ts';
 import type { TurnRef } from '../../src/game/combat.ts';
 import type { Screen } from '../../src/game/game.ts';
-import type { ChoiceScreen } from '../../src/ui/screens.ts';
-import { skillsLines, SHEET_COL_W } from '../../src/ui/screens.ts';
+import { ChoiceScreen, skillMenu, skillsLines, SHEET_COL_W } from '../../src/ui/screens.ts';
+import { talk } from '../../src/game/pilot/talk.ts';
+import { Pilot } from '../../src/game/pilot/pilot.ts';
 import type { Action } from '../../src/input.ts';
 import { NORTH, EAST, SOUTH, WEST } from '../../src/game/types.ts';
 import type { Facing } from '../../src/game/types.ts';
@@ -191,6 +192,8 @@ export function skills(): void {
   // Perception's search, and the senses on the automap.
   perception();
   senses();
+  // The pilot learns none.
+  piloted();
   // A save keeps a member's skills; a member saved before them has none.
   {
     const rng = makeRng(13), party = defaultParty(rng), world = new World(buildMaps(), party, rng);
@@ -470,4 +473,38 @@ function senses(): void {
   const danger = PEOPLES.map((race) => `${race} ${marked(valley, race, 'danger_sense', 'none')} / ${marked(valley, race, 'danger_sense', 'learnt')} / ${marked(valley, race, 'danger_sense', 'down')}`);
   ok(danger.every((r) => r.endsWith(' - / roamer / -')),
     `with Danger Sense standing the automap marks a roaming group aware of the company behind a hill, not one that stands nor one past its aware; without it or down, nothing (none / learnt / down: ${danger.join('; ')})`);
+}
+
+/**
+ * The pilot's talk (src/game/pilot/talk.ts) learns no skill (#719, decision 12): put before a Lantern
+ * hall's skills, the company of the Lanterns with the gold, it leaves the hall's level and, a skill
+ * chosen for it, the level of who would learn it, and before a person who teaches, theirs; nobody is
+ * taught and no gold is spent.
+ */
+function piloted(): void {
+  const g = headlessGame(4), p = g.party, st = g.world.state;
+  for (const id of Object.keys(g.maps)) g.world.ensureMapState(id).explored.fill(-1);
+  p.gold = 50000; p.flags[rankFlag('lanterns')] = 1;
+  g.pilot = new Pilot({ instant: true });
+  g.pilot.toggle(g);
+  g.pilot.brains = [talk];
+  const askedOf = (): string => (g.top instanceof ChoiceScreen ? g.top.words : '');
+  const run = (): void => { for (let t = 0; t < 20 && g.top instanceof ChoiceScreen; t++) drive(g, [null]); };
+  g.push(skillMenu(g, taughtBy('lanterns'), 'Lantern Guildhall'));
+  const first = askedOf();
+  run();
+  g.push(skillMenu(g, taughtBy('lanterns'), 'Lantern Guildhall'));
+  drive(g, ['n2']);
+  const second = askedOf();
+  run();
+  const person: Person = { kind: 'npc', x: st.x, y: st.y, name: 'A Lantern reader', lines: ['"The old way, word by word."'], skill: 'linguist' };
+  const here = g.maps[st.mapId].features as Feature[];
+  here.push(person);
+  g.push(g.talkScreen(person));
+  drive(g, ['interact']);
+  const third = askedOf();
+  run();
+  here.splice(here.indexOf(person), 1);
+  ok(first === askWhich(p) && second === askSkill(p) && third === askSkill(p) && p.gold === 50000 && p.members.every((m) => !skillsOf(m).length) && !(g.top instanceof ChoiceScreen),
+    `the pilot's talk leaves a hall's skills, who would learn one and a person's, and learns nothing (${[first, second, third].join(' / ')}; ${p.gold} gold)`);
 }
