@@ -10,7 +10,7 @@ import type { Walkthrough } from '../../area.ts';
 import { CHAPTER } from './chapter.ts';
 import { CHAPTER as FORELAND } from '../shelf/chapter.ts';
 import { HIRE, STEPS as FORELAND_STEPS, FARM_FIRST, hired } from '../shelf/walkthrough.ts';
-import { newWalk, meetWho, walkThrough, see, fight, playChapter, goalFromBegun, ending, everyGoalWalked, quest, listen, pilotPlays } from '../../../../tools/walk.ts';
+import { newWalk, meetWho, walkThrough, see, fight, playChapter, goalFromBegun, ending, everyGoalWalked, quest, listen } from '../../../../tools/walk.ts';
 import type { Step, Walk } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH } from '../../../game/types.ts';
 import { MAP_DEFS } from '../../index.ts';
@@ -148,12 +148,6 @@ export const walkthrough: Walkthrough = (ok) => {
   everyGoalWalked(ok, [FORELAND, CHAPTER]);
   sideQuests(ok);
   trainers(ok);
-  // The pilot from a new game, every key its own (#721): the Foreland's chapter and on into this one in
-  // one run, on the shelf's seed. It is bounded where it gets to, the Quiet Farm done and the company
-  // over the pass into Thornmark: past there it is lost in Thornmark and walks Helmstow (docs/PILOT.md,
-  // Known limits), and the chain to this chapter's end is #723's to assert. It plays the Foreland's
-  // chapter again first, about thirty seconds, so it runs with FULLRUN set (#723 owns its last shape).
-  if (process.env.FULLRUN) pilotPlays(ok, CHAPTER, { seed: 10, until: { flag: 'q_ashcombe_done', visited: 'thornmark' } });
 };
 
 /**

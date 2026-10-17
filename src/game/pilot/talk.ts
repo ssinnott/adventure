@@ -218,27 +218,25 @@ function answersOf(mem: Talk, riddle: string, heard: readonly string[]): string[
 /**
  * A statue's riddle, read off its box (§6): the next word `answers` gives that this statue has not
  * been tried with (`Pilot.tried`, five at most), typed a key a tick into the box as the keyboard types
- * in the text mode (a backspace first where the box holds other letters), then Enter. A wrong word
- * costs nothing; Space on the statue again tries the next. None left, or five tried: "I have no
- * answer for the stone." and Esc, and the statue is given up, not read again until a line heard gives
- * a word not tried while it has tries left.
+ * in the text mode (a backspace first where the box holds other letters), then Enter, and only then
+ * counted as tried: a word the viewer cuts off is no try. A wrong word costs nothing; Space on the
+ * statue again tries the next. None left, or five tried: "I have no answer for the stone." is said
+ * (`Game.say`, into the log, as the strategist says it is lost) and Esc pressed, and the statue is
+ * given up, not read again until a line heard gives a word not tried while it has tries left.
  */
 function riddle(s: RiddleScreen, g: Game, k: Known, p: Pilot, mem: Talk): Action | null {
   const st = g.world.state, ahead = { x: st.x + FACING_DX[st.facing], y: st.y + FACING_DY[st.facing] };
   const stone = k.features(st.mapId).find((f) => f.kind === 'statue' && ((f.x === st.x && f.y === st.y) || (f.x === ahead.x && f.y === ahead.y)));
-  const key = keyOf(st.mapId, stone ?? st), keys = g.input?.typed;
+  const key = keyOf(st.mapId, stone ?? st), keys = g.input?.typed, tried = p.tried.get(key) ?? new Set<string>();
   mem.riddles.set(key, s.riddle);
   if (mem.typing?.screen !== s) {
-    const tried = p.tried.get(key) ?? new Set<string>();
     const word = keys && tried.size < TRIES ? answersOf(mem, s.riddle, k.heard).find((w) => !tried.has(w)) : undefined;
-    if (word === undefined) { mem.typing = undefined; mem.given.add(key); p.why = [NO_ANSWER]; return 'cancel'; }
-    p.tried.set(key, tried.add(word));
-    mem.given.delete(key);
+    if (word === undefined) { mem.typing = undefined; mem.given.add(key); g.say(NO_ANSWER); p.why = [NO_ANSWER]; return 'cancel'; }
     mem.typing = { screen: s, word };
   }
   const word = mem.typing.word;
   p.why = [`Trying ${word.toUpperCase()}.`];
-  if (s.word === word) { mem.typing = undefined; return 'interact'; }
+  if (s.word === word) { p.tried.set(key, tried.add(word)); mem.given.delete(key); mem.typing = undefined; return 'interact'; }
   keys?.push(word.startsWith(s.word) ? word[s.word.length] : '\b');
   return null;
 }

@@ -1398,24 +1398,39 @@ function riddles(): void {
     && heard.typed.join(' ') === ' o on one  t te ten' && heard.whys.includes('Trying TEN.') && !hg.input!.textMode && hg.top instanceof ExploreScreen,
     `the Downs' stone, the song heard: answered within ${TRIES} tries, its number words in ascending order, typed a key a tick (${heard.tried.join(', ')}; "${heard.typed.join('|')}"; ${hg.party.gold - gold} gold)`);
 
-  // With nothing heard: the box read once, no word tried, "I have no answer for the stone.", and the stone left.
+  // With nothing heard: the box read once, no word tried, "I have no answer for the stone." said into the log, and the stone left.
   const ng = piloted(), none = read(ng, 'downs_e2', stone.x, stone.y);
-  ok(!ng.world.used(stone.id) && none.tried.length === 0 && none.opened === 1 && none.whys.includes(NO_ANSWER) && !ng.input!.textMode && ng.top instanceof ExploreScreen,
-    `the Downs' stone with nothing heard: read once, nothing tried, "${NO_ANSWER}" (${none.opened} opened; ${none.whys.join(' / ')})`);
+  ok(!ng.world.used(stone.id) && none.tried.length === 0 && none.opened === 1 && ng.log.includes(NO_ANSWER) && !ng.input!.textMode && ng.top instanceof ExploreScreen,
+    `the Downs' stone with nothing heard: read once, nothing tried, "${NO_ANSWER}" in the log (${none.opened} opened; ${ng.log.slice(-2).join(' / ')})`);
 
   // A miller's stone (a fixture), its hint said: the overlap's words, the longer first, never the riddle's own; five at most, each once.
-  const mill = (answer: string): { g: Game; r: ReturnType<typeof read> } => {
+  const millGame = (answer: string): Game => {
     const g = piloted();
     fixture(g, row('fx_mill', 3, [{ kind: 'statue', x: 2, y: 1, id: 'fx_mill_stone', text: 'A millstone on its edge.', riddle: 'WHAT DOES THE MILLER GRIND AT DAWN?', answer, gift: { gold: 5 }, done: 'The stone is quiet.' }]), [2, 1, NORTH]);
     g.say('"The miller grinds at dawn: oats, barley, rye, beans, peas and chaff. Oats again at dusk."');
-    return { g, r: read(g, 'fx_mill', 2, 1, 80) };
+    return g;
   };
+  const mill = (answer: string): { g: Game; r: ReturnType<typeof read> } => { const g = millGame(answer); return { g, r: read(g, 'fx_mill', 2, 1, 80) }; };
   const right = mill('barley'), wrong = mill('peas'), tries = wrong.r.whys.filter((w) => w.startsWith('Trying '));
   ok(right.g.world.used('fx_mill_stone') && right.r.tried.join() === 'grinds,barley' && answers('WHAT DOES THE MILLER GRIND AT DAWN?', right.g.pilot!.heard).slice(0, 2).join() === 'grinds,barley',
     `a riddle's words from a line heard that shares two with it, the longer first: answered on the second try (${right.r.tried.join(', ')})`);
   ok(!wrong.g.world.used('fx_mill_stone') && wrong.r.tried.join() === 'grinds,barley,beans,chaff,again' && tries.length === TRIES && new Set(tries).size === TRIES
-    && wrong.r.opened === TRIES + 1 && wrong.r.whys.includes(NO_ANSWER) && wrong.g.top instanceof ExploreScreen,
-    `five tries at most, each once and none the riddle's own, then "${NO_ANSWER}" and the stone left (${tries.join(' ')}; ${wrong.r.opened} opened)`);
+    && wrong.r.opened === TRIES + 1 && wrong.g.log.includes(NO_ANSWER) && wrong.g.top instanceof ExploreScreen,
+    `five tries at most, each once and none the riddle's own, then "${NO_ANSWER}" in the log and the stone left (${tries.join(' ')}; ${wrong.r.opened} opened)`);
+
+  // A word the viewer cuts off (the helm taken and Esc, as main.ts sends a key) is no try: at the helm again, the pilot types it afresh.
+  const cg = millGame('barley'), cp = cg.pilot!;
+  cp.brains = [talk];
+  cp.toggle(cg);
+  drive(cg, [null, null, null]);
+  const cut = cg.top instanceof RiddleScreen ? cg.top.word : '';
+  cp.toggle(cg);
+  drive(cg, ['cancel']);
+  const untried = (cp.tried.get('fx_mill:2,1')?.size ?? 0) === 0 && cg.top instanceof ExploreScreen;
+  cp.toggle(cg);
+  drive(cg, Array(30).fill(null));
+  ok(cut === 'gr' && untried && cg.world.used('fx_mill_stone') && [...cp.tried.get('fx_mill:2,1') ?? []].join() === 'grinds,barley',
+    `a word cut off by the viewer's Esc is no try: typed again from its start, then the next (${cut}, ${untried}; ${[...cp.tried.get('fx_mill:2,1') ?? []].join(', ')})`);
 
   // The ending's real question: Wenna's at the Heart (the Hearth chapter's, each answer an ending), asked through
   // the game as she is met, with the third answer too where Fane's map is held. The pilot closes her words, then
