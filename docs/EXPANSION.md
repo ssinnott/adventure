@@ -367,8 +367,8 @@ fights to a rest and the warning's nearest groups ten points under the median.
   a loss and the gate measures whether a fight is winnable. Bless, sleep and drink are built behind
   an option (`BotOpts`, #853), in the gate's bot and the harness's thrifty one, off in every default
   until #865 switches them on and makes the line again. The gate's bot blesses in a fight's first
-  round against three foes or more, sleeps the group with the most it could put down and lets the
-  sleepers lie, and gives a draught to the lowest no one can mend, or to one asleep or held no one
+  round against three foes or more, sleeps the group with the most it could put down, lets the
+  sleepers lie and gives a draught to the lowest no one can mend, or to one asleep or held no one
   can free. The thrifty bot
   weighs Bless and sleep as it weighs a damage spell, the hit points the cast saves against what its
   points are worth, its blow lost: Bless saves what the company's blows land more in its rounds, sleep
@@ -410,7 +410,7 @@ Decided by the builder for #853, each the owner's to overturn:
 6. **Sleep stays with the classes named:** a ranger that knows Grasping Roots (the premade Wren from
    17) keeps to its bow and its few points.
 7. **With sleep on, the sleepers are let lie:** a blade falls on an awake foe it reaches where there
-   is one, a spell on an awake foe where one stands, and no spell over many is cast where it would wake
+   is one, a spell on an awake foe where one stands and no spell over many is cast where it would wake
    a sleeper. Without it a swarm woke three ogres asleep and Slumber was cast again, and the thrifty
    bot's day at 4 fell a tenth; with it, its day against the standard soldier and skirmisher rises at
    4, 12 and 20 (6.25 to 6.55, 6.72 to 7.05, 8.68 to 10.95 for the soldier, 40 seeds).
