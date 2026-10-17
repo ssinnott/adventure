@@ -32,6 +32,12 @@ import type { Party } from '../../src/game/party.ts';
 import { item, hits } from '../../src/game/items.ts';
 import { ITEMS } from '../../src/content/index.ts';
 import { optionParts } from '../../src/ui/draw.ts';
+import { chooseAim, aims, LOST_MINUTES } from '../../src/game/pilot/aims.ts';
+import { questLog, goalMap } from '../../src/game/quests.ts';
+import { THE_QUEST, MAP_DEFS } from '../../src/content/index.ts';
+import { homeMap } from '../../src/game/atlas.ts';
+import { levelUp } from '../../src/game/party.ts';
+import { makeRng } from '../../src/lib/engine/rng.ts';
 
 /** A headless game with an instant pilot, off. */
 const piloted = (seed = 4): Game => {
@@ -54,6 +60,141 @@ export function pilot(): void {
   shown();
   quartermaster();
   together();
+  strategist();
+}
+
+/** A headless game whose company Vask has hired: walked onto his door by the test (its privilege) and his words closed. */
+function hiredGame(): Game {
+  const g = piloted();
+  g.world.travel('keep', 7, 5, NORTH);
+  drive(g, ['forward', 'interact']);
+  return g;
+}
+
+/**
+ * The strategist (#720): the journal's goal and its map, read once shown; the quest aim, the level
+ * aim, the lost rule and the band rule; and the navigator's door, gone round on the way.
+ */
+function strategist(): void {
+  // Known gives a goal's map only once the journal shows the goal: none before the hire, and then the shown goal's alone.
+  const fresh = piloted(), before = knownOf(fresh).goals(), first = chooseAim(fresh, knownOf(fresh), fresh.pilot!);
+  const g = hiredGame(), k = knownOf(g), p = g.pilot!, shelf = THE_QUEST.chapters[0];
+  const view = questLog(g.world.state, g.party).find((v) => v.def === THE_QUEST)!, goals = k.goals();
+  const told = goals.flatMap((q) => q.map ?? []), unsaid = shelf.goals.map((q) => q.at).filter((m) => m !== goalMap(view));
+  ok(before.length === 0 && first?.kind === 'explore' && first.map === 'harrow' && !!g.party.flags.q_ashcombe && goals.length === 1 && told[0] === goalMap(view) && unsaid.length > 0 && unsaid.every((m) => !told.includes(m)),
+    `Known gives the journal's goal and its map once shown, and no map of a goal not shown (before the hire ${before.length} goals, the aim ${first?.kind} ${first?.kind === 'explore' ? first.map : ''}; then ${told.join()}, not ${[...new Set(unsaid)].join()})`);
+
+  // The quest aim on a new game hired: the one quest's goal, on the first chapter's map.
+  const aim = chooseAim(g, k, p);
+  ok(aim?.kind === 'quest' && aim.quest === THE_QUEST.id && aim.map === goalMap(view) && aim.text === view.goal && shelf.goals.some((q) => q.at === aim.map && q.text === aim.text),
+    `chooseAim on a new game hired is the one quest's goal on the first chapter's map (${JSON.stringify(aim)})`);
+
+  // The level aim: at level 1, the goal under the Grove, with Thornmark's band known by setting foot there.
+  const lv = piloted(), lk = knownOf(lv), out = lv.maps[OUTDOORS];
+  lv.party.flags.q_grove = 1;
+  const groveGoal = lk.goals().find((q) => q.quest === THE_QUEST.id)!, home = homeMap(MAP_DEFS, groveGoal.map ?? '')?.id, thorn = out.zones.find((z) => z.id === home)!;
+  lv.world.travel('shelf', 16, 5, SOUTH);
+  lv.world.travel('thornmark', thorn.w >> 1, thorn.h >> 1, NORTH);
+  const level = chooseAim(lv, lk, lv.pilot!), easy = level?.kind === 'level' ? lk.band(level.zone) : undefined;
+  ok(companyLevel(lv.party) === 1 && home === 'thornmark' && level?.kind === 'level' && !!easy && easy[0] <= 1 && level.to === thorn.band![0] - 1,
+    `at level 1, a goal in Thornmark (${groveGoal.map}, its zone's band ${thorn.band?.join('-')}) gives way to levelling where the band starts at 1 (${JSON.stringify(level)}, its band ${easy?.join('-')})`);
+
+  // The lost rule: three days on one goal and it is given up, and not a minute sooner; a level gained, it is tried again.
+  const lg = hiredGame(), lp = lg.pilot!;
+  lp.brains = [aims];
+  lp.toggle(lg);
+  drive(lg, [null]);
+  const set = lp.aim, since = lp.aimSince, said = (from: number, start: string): string | undefined => (lg.said > from ? lg.log.slice(-(lg.said - from)).find((l) => l.startsWith(start)) : undefined);
+  lg.world.advance(since + 3 * 24 * 60 - 1 - lg.world.state.minutes);
+  let from = lg.said;
+  drive(lg, [null]);
+  const early = said(from, 'Lost in'), still = lp.aim;
+  lg.world.advance(1);
+  from = lg.said;
+  drive(lg, [null]);
+  const lostLine = said(from, 'Lost in'), cleared = lp.aim, given = [...lp.lost];
+  const elder = lg.party.members[0];
+  elder.xp = xpForLevel(elder.level + 1);
+  levelUp(elder, makeRng(4));
+  drive(lg, [null]);
+  ok(set?.kind === 'quest' && since > 0 && early === undefined && still === set && lostLine === 'Lost in the Foreland: three days, and no way on.' && cleared === null && given.length === 1 && given[0] === set.text
+    && lp.aim?.kind === 'quest' && lp.aim.text === set.text && lp.lost.size === 0,
+    `three days on one goal, and not a minute less: the lost line, the aim cleared and the goal given up; a member's level gained, the goal is tried again (a minute short: ${early ?? 'nothing'}; then ${lostLine}; cleared ${cleared}; then ${JSON.stringify(lp.aim)})`);
+
+  // A level aim's three days with no level gained: the zone given up and the land walked; a flag set, it is tried again.
+  const vg = piloted(), vp = vg.pilot!;
+  vg.party.flags.q_grove = 1;
+  vg.world.travel('shelf', 16, 5, SOUTH);
+  vg.world.travel('thornmark', thorn.w >> 1, thorn.h >> 1, NORTH);
+  vp.brains = [aims];
+  vp.toggle(vg);
+  drive(vg, [null]);
+  const levelling = vp.aim, vSince = vp.aimSince;
+  vg.world.advance(vSince + 3 * 24 * 60 - vg.world.state.minutes);
+  const vFrom = vg.said;
+  drive(vg, [null]);
+  const vLine = vg.said > vFrom ? vg.log.slice(-(vg.said - vFrom)).find((l) => l.startsWith('Three days in')) : undefined, vCleared = vp.aim, vLost = [...vp.lost];
+  drive(vg, [null]);
+  const walking = vp.aim;
+  vg.party.flags.fx_set = 1;
+  drive(vg, [null]);
+  delete vg.party.flags.fx_set;
+  ok(levelling?.kind === 'level' && levelling.zone === 'shelf' && vLine === 'Three days in the Foreland, and no stronger.' && vCleared === null && vLost.join() === 'level:shelf'
+    && walking?.kind !== 'level' && vp.aim?.kind === 'level' && vp.aim.zone === 'shelf' && vp.lost.size === 0,
+    `three days levelling with no level gained: the zone given up and the land walked; a flag set, it is levelled in again (${vLine}; ${vLost.join()}; then ${JSON.stringify(walking)}; then ${JSON.stringify(vp.aim)})`);
+
+  // Walked out, the place is walked again end to end, but never onto a person: a meeting is talk's (#721).
+  const wg = piloted(), wp = wg.pilot!;
+  const hall: MapDef = { id: 'fx_hall', name: 'The Hall', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#######', '#.....#', '#######'],
+    features: [{ kind: 'npc', x: 5, y: 1, name: 'A stranger', lines: ['Hm.'] }] };
+  fixture(wg, hall, [1, 1, EAST]);
+  wp.brains = [aims];
+  wp.toggle(wg);
+  wp.aim = { kind: 'quest', quest: 'fx_hall', map: 'fx_hall', text: '' };
+  wp.aimGoal = '';
+  wp.aimSince = wg.world.state.minutes;
+  drive(wg, [null]);
+  const again = ((q: Pilot): Pilot['goal'] => q.goal)(wp);
+  ok(again?.map === 'fx_hall' && again.x === 4 && again.y === 1 && wp.why[0] === 'Searching the Hall again.',
+    `walked out, the hall is walked again to its far end, but not onto the stranger who stands there (${again?.x},${again?.y}; "${wp.why[0]}")`);
+
+  // The band rule: over the line into Thornmark at level 1, the aim elsewhere: back to the square before it.
+  const bg = piloted(), bp = bg.pilot!, shelfBox = bg.maps[OUTDOORS].zones.find((z) => z.id === 'shelf')!;
+  let by = shelfBox.y;
+  const edge = shelfBox.x + shelfBox.w - 1, pass = (x: number, y: number): boolean => bg.maps[OUTDOORS].passable(x, y) === 'ok';
+  while (by < shelfBox.y + shelfBox.h && !(pass(edge, by) && pass(edge + 1, by) && pass(edge - 1, by))) by++;
+  bg.world.travel(OUTDOORS, edge, by, EAST);
+  bp.brains = [aims];
+  bp.toggle(bg);
+  bp.aim = { kind: 'explore', map: 'shelf' };
+  bp.goal = { map: OUTDOORS, x: edge, y: by, name: 'here', reason: 'the test' };
+  drive(bg, [null]);
+  bp.goal = null;
+  drive(bg, ['forward']);
+  const crossed = bg.world.zone?.id;
+  drive(bg, [null]);
+  const backTo = ((q: Pilot): Pilot['goal'] => q.goal)(bp);
+  ok(crossed === 'thornmark' && bp.why[0] === 'Too strong for us yet: back.' && backTo?.x === edge && backTo.y === by && backTo.map === OUTDOORS,
+    `over the line into Thornmark at level 1, the aim the Foreland's: back to the square before the line (${crossed}; "${bp.why[0]}"; to ${backTo?.x},${backTo?.y})`);
+  // Once a crossing: over the same line again with nothing gained since, it goes on, as a route that clips a corner would.
+  bg.world.travel(OUTDOORS, edge, by, EAST);
+  bp.goal = { map: OUTDOORS, x: edge, y: by, name: 'here', reason: 'the test' };
+  drive(bg, [null]);
+  bp.goal = null;
+  drive(bg, ['forward']);
+  const twice = bg.world.zone?.id;
+  drive(bg, [null]);
+  ok(twice === 'thornmark' && bp.why[0] !== 'Too strong for us yet: back.',
+    `over the same line a second time with no level or flag gained, it is not turned back again ("${bp.why[0]}")`);
+
+  // The navigator goes round a business's door on the way, and ends on one: a visit puts the party back before it.
+  const dg = piloted(), dk = knownOf(dg);
+  const shopDoor: MapDef = { id: 'fx_door', name: 'Door', kind: 'town', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#...#', '#.#.#', '#...#', '#####'],
+    features: [{ kind: 'shop', x: 2, y: 1, name: 'A Stall', interior: 'harrow_provisioner', stock: [] }] };
+  fixture(dg, shopDoor, [1, 1, EAST]);
+  const round = routeOn(dk, 'fx_door', 1, 1, EAST, 3, 1), into = routeOn(dk, 'fx_door', 1, 1, EAST, 2, 1);
+  ok(!!round && !walk(1, 1, EAST, round).includes('2,1') && walk(1, 1, EAST, round).at(-1) === '3,1' && into?.join() === 'forward',
+    `a route goes round a business's door and ends on one (${round && walk(1, 1, EAST, round).join(' ')}; ${into?.join()})`);
 }
 
 /**
@@ -839,6 +980,7 @@ function quartermaster(): void {
   u.party.gold = 0;
   u.party.food = 0;
   for (const c of u.party.members) c.hp = Math.max(1, Math.round(c.maxHp / 10));
+  upi.brains = [keep, route, explore];
   upi.toggle(u);
   drive(u, Array(200).fill(null));
   const wants = upi.why.join(' / ');

@@ -17,8 +17,10 @@ import { defaultParty } from '../src/game/party.ts';
 import type { Party } from '../src/game/party.ts';
 import { meet, heard, handIns, personFlags } from '../src/game/people.ts';
 import type { Person } from '../src/game/people.ts';
-import { questLog, questMarks, questNews } from '../src/game/quests.ts';
-import type { Chapter, QuestCond, QuestView } from '../src/game/quests.ts';
+import { questLog, questMarks, questNews, holds } from '../src/game/quests.ts';
+import type { Chapter, QuestCond, QuestView, When } from '../src/game/quests.ts';
+import { Pilot } from '../src/game/pilot/pilot.ts';
+import { headlessGame, drive } from './tests/lib.ts';
 import { homeMap } from '../src/game/atlas.ts';
 import { useShrine } from '../src/game/wilds.ts';
 import type { Feature } from '../src/game/map.ts';
@@ -219,6 +221,25 @@ export function playChapter(w: Walk, chapter: Chapter, steps: readonly Step[], h
     const late = (after?.pages ?? []).flatMap((p) => closed.has(p.def.id) ? p.entries.filter((e) => !closed.get(p.def.id)!.has(e.id) && personal(e)).map((e) => `${p.def.id}.${e.id}`) : []);
     w.ok(!late.length, `${tag}: nothing a person says is written into a chapter already done${late.length ? ' -> ' + late.join(', ') : ''}`);
   }
+}
+
+/**
+ * The pilot plays a chapter from a new game (#720, the first of #723's runs): `headlessGame(4)` with
+ * an instant pilot at the helm asking every brain (`BRAINS`), ticked up to `cap` times until `until`
+ * holds: the chapter's end, unless a play names where the pilot stops for now. Every key is the
+ * pilot's, through `Game.update`; it must hold the helm all the way (no wipe, no stop of its own).
+ * The ok line gives the ticks and the seconds it took.
+ */
+export function pilotPlays(ok: Ok, chapter: Chapter, until: When = chapter.done, cap = 200_000): void {
+  const g = headlessGame(4), p = new Pilot({ instant: true });
+  g.pilot = p;
+  p.toggle(g);
+  const t0 = performance.now(), at = (): boolean => holds(until, g.world.state, g.party);
+  let ticks = 0;
+  for (; ticks < cap && p.on && !at(); ticks++) drive(g, [null]);
+  const secs = ((performance.now() - t0) / 1000).toFixed(1), done = holds(chapter.done, g.world.state, g.party);
+  const goal = questLog(g.world.state, g.party).find((v) => v.def === THE_QUEST)?.goal ?? 'no goal shown';
+  ok(at() && p.on, `the pilot plays ${chapter.title} from a new game ${done ? 'to its end' : 'as far as it can before talk (#721)'}, in ${ticks} ticks, ${secs} s (${goal}; "${p.why[0]}")`);
 }
 
 /** Every goal a run of `playChapter` has come to, in this process. */

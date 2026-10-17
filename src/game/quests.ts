@@ -172,6 +172,17 @@ export function questLog(world: WorldState, party: Party, quests: readonly LogQu
 }
 
 /**
+ * The map a quest's shown goal is done on, when its goal says: the one quest's from the chapter the
+ * goal is from (`focus`), a side or seeking quest's from its own goals, as `sought` reads them.
+ * Undefined once the quest is done, or where the goal names no map.
+ */
+export function goalMap(v: QuestView): string | undefined {
+  if (v.goal === null) return undefined;
+  const def = v.def.chapters ? v.pages[v.focus]?.def : v.def;
+  return def?.goals.find((g) => g.text === v.goal)?.at;
+}
+
+/**
  * What a look at the log found, as keys: each quest known, each entry written, each quest done; for
  * the one quest, each chapter begun (`quest/chapter`), its entries and its end (`quest/chapter!`).
  */

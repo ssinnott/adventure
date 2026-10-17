@@ -8,10 +8,12 @@
 import type { Game } from '../game.ts';
 import type { Cell, Exit, Feature, GameMap, MapZone } from '../map.ts';
 import type { Party } from '../party.ts';
+import type { WorldState } from '../world.ts';
 import { seen as lit } from '../world.ts';
 import { drawnCell } from '../ink.ts';
 import { mapPlace } from '../atlas.ts';
 import { spentId } from '../wilds.ts';
+import { questLog, goalMap } from '../quests.ts';
 import { onAutomap, markedGroups } from '../../ui/frame.ts';
 import { ChoiceScreen, InteriorScreen } from '../../ui/screens.ts';
 import { optionParts } from '../../ui/draw.ts';
@@ -61,6 +63,15 @@ export interface Known {
   band(map: string): readonly [number, number] | undefined;
   /** How many squares of a map the party has seen: the automap's bits counted, so a brain can tell that nothing new is seen. */
   seenCount(map: string): number;
+
+  // The strategist's readers (#720).
+  /**
+   * The journal's goals: each open quest's id, the goal its page shows and the map that goal is done
+   * on (`goalMap`) where the goal says. Only what the log shows: no goal not yet shown, nor its map.
+   */
+  goals(): { quest: string; text: string; map?: string }[];
+  /** The zones of the outdoors the party has set foot in (`WorldState.zones`), first first: what the almanac has said. */
+  zones(): readonly string[];
 }
 
 /**
@@ -143,6 +154,19 @@ export function knownOf(g: Game): Known {
       }
       return c;
     },
+    goals() {
+      // The log is worked out afresh only when something it reads has moved (`logKey`).
+      const key = logKey(w.state, g.party), last = LOGS.get(w.state);
+      if (last?.key === key) return last.goals.map((q) => ({ ...q }));
+      const goals = questLog(w.state, g.party).flatMap((v) => {
+        if (v.done || v.goal === null) return [];
+        const map = goalMap(v);
+        return [map === undefined ? { quest: v.def.id, text: v.goal } : { quest: v.def.id, text: v.goal, map }];
+      });
+      LOGS.set(w.state, { key, goals });
+      return goals.map((q) => ({ ...q }));
+    },
+    zones: () => [...w.state.zones ?? []],
   };
 }
 
@@ -174,6 +198,24 @@ function fair(f: Feature, seen?: Shown): Feature {
     case 'well': return { kind: 'well', x, y, text: '' };
     case 'event': return { kind: 'event', x, y, id: f.id, text: '' };
   }
+}
+
+/** The journal's goals at the last look, by world, with what the log read then (`logKey`). */
+const LOGS = new WeakMap<WorldState, { key: string; goals: { quest: string; text: string; map?: string }[] }>();
+/**
+ * Everything `questLog` reads, in one string: the flags, what the company carries, who it is and at
+ * what level and prestige, the maps and zones walked, and the things used up and the groups dead on
+ * every map. While it stands the log's goals stand.
+ */
+function logKey(w: WorldState, p: Party): string {
+  let used = 0, dead = 0;
+  for (const id in w.maps) {
+    const ms = w.maps[id];
+    for (const u in ms.used) used += u.length + 1;
+    for (const q in ms.groups) if (ms.groups[q].dead >= 0) dead += q.length + 1;
+  }
+  const who = p.members.map((m) => `${m.cls}.${m.race}.${m.level}.${m.prestige ?? 0}.${m.pack.join('+')}`).join('/');
+  return [Object.keys(p.flags).join('+'), p.bag.join('+'), who, Object.keys(w.maps).length, w.zones?.length ?? 0, used, dead].join('|');
 }
 
 /** What a business's menu has shown (#719): a shop's wares and their prices, in its Buy list, and a trainer's top level, in its words. */
