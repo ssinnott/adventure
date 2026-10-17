@@ -165,6 +165,13 @@ DESIGN.md first for the why.
   taught at the Map Room in Saltmouth and the Chart House in Cinderport. `partyCan` lets a company
   climb with a Mountaineer standing and swim with a Swimmer standing; the flags `skill_mountaineer`
   and `skill_swim` still grant the same.
+- **The weapon and magic tiers** (`game/mastery.ts`, #852; DESIGN §5, §7): a member's Expert and
+  Master at arms and in magic (`tiers`, none in a save from before them). Arms adds to the to-hit
+  (`attackBonus`) and to every blow (`armsBonus`, beside `traitDamage` in the blow and in the
+  harness's `weaponDamage`); magic adds rank steps in `rankMult` (`tierSteps`), so damage dice and
+  mending read it and nothing else does. Expert is "Expert at arms and in magic" on the first menu of
+  every town trainer of ceiling 13 or over, 2,000 a line; Master a person's (`npc.mastery`), placed
+  by #858 and #859. The sheet says each tier. The gate's company takes none until #865.
 - **A monster's look.** The first time a company sees a kind, as the viewport draws it (each kind
   of the group to three, in line of sight), or meets one in a fight unseen, the log says its `look`,
   once. A group is drawn as up to three figures: each of its kinds once, in the order they stand,
@@ -762,6 +769,11 @@ over content broken on purpose too, and two tools to theirs:
   stranger to the guild learns nothing, a member learns once for the price, a dwarf is born to
   Linguist; Mountaineer and Swimmer bought at their halls climb and swim; a save keeps a member's
   skills and one from before them has none.
+- `mastery` (#852): each tier's effect through the blow and the cast for a fighter, a caster and a
+  hybrid; the bars; the seven trainers of 13 and over teach Expert and the two under do not; the Sail
+  Loft walked in a Game; a Master's person, built in the test; the sheet's lines; no spell's cost or
+  rounds moved and nothing else under `src/` reading a tier; saves; the words in the font; the
+  pilot's keep at the Sail Loft, which trains there and never opens the tier menu.
 - `glyphs`: every symbol `src/ui/` draws past plain ASCII (arrows, stars, hearts) is in the pixel
   font, so none is painted as nothing.
 - `drawn`: every group on the maps is drawn while exploring as each of its kinds, to three, and a
@@ -855,6 +867,7 @@ does.
 | `game/people.ts` | `meet`: what a person says and asks, in order (a hand-in the company can make, their words that hold, a done hand-in's after-lines, the first meeting); a hand-in taking its item at the first meeting and paying, with the `early` words to a company never hired; `answer`, with an answer's price as the choice screen lists and bars it (`answerLabel`, `asked`, `barred`); `readText`; `handIns`, `personFlags` and `personGives`, what the checks and the save list read |
 | `game/seeking.ts` | the seeking quests: the trainers placed (`trainersIn`), a quest for each member and prestige (`seekingQuests`), and the places the world map marks (`sought`); pure |
 | `game/prestige.ts` | a prestige's trainer: who the company has of the class, each one's bar (the level, the prestige before, the third's quest, the gold), and teaching it; pure |
+| `game/mastery.ts` | the weapon and magic tiers: who takes which line, the levels and prices (`TIER_PRICES`), each member's bar, the offers (a trainer's Expert, a Master's person's) and teaching a tier; what a tier does is `party.ts`'s (`armsBonus`, `tierSteps`); pure |
 | `game/skills.ts` | the secondary skills (`SKILLS`, Linguist the first): a member's list, who has one (learnt or born to it) and who does its work for the company (`skilled`, a carried item too), the skills a guild's halls teach, each member's bar, and learning one; pure |
 | `game/inscriptions.ts` | Kiln-script: an inscription (a sign with `read`), who reads it (`readerOf`), what a sign says and what a reading keeps (`signSays`), its texts as the line check measures them (`signTexts`), the id it is kept by (`readId`) and the places the world map pins once read (`readMarks`); pure |
 | `game/stones.ts` | the Hearth's measure: the Stones restored (`stonesRestored`, `savedStones` for the title), the Hearth's bearing from a world cell, its flicker and the almanac's word by the count; pure |
