@@ -69,6 +69,7 @@ const top = (g: Game): string => g.top.constructor.name;
 export function pilot(): void {
   known();
   fair();
+  omniscient();
   helm();
   pace();
   company();
@@ -338,6 +339,34 @@ function fair(): void {
   const unseen = { features: hm.features.filter((f) => dark(f.x, f.y)).length, exits: hm.exits.filter((e) => dark(e.x, e.y)).length };
   ok(h.world.state.mapId === 'harrow' && unseen.features > 0 && unseen.exits > 0 && !hk.features('harrow').some((f) => dark(f.x, f.y)) && !hk.exits('harrow').some((e) => dark(e.x, e.y)),
     `on a new game no feature or exit Known gives of Harrow stands on an unseen square (${unseen.features} of ${hm.features.length} features and ${unseen.exits} of ${hm.exits.length} exits unseen)`);
+}
+
+/**
+ * The headless run's omniscient flag (#723): off by default and never set by the game; on, a secret
+ * door is a door to Known, the secret doors as written come through (`secrets`, a zone's in the
+ * outdoors' squares) and the explorer suspects them and nothing else. A fair pilot is told of none.
+ */
+function omniscient(): void {
+  const main = readFileSync(new URL('../../src/main.ts', import.meta.url), 'utf8');
+  const setters = (readdirSync(new URL('../../src/', import.meta.url), { recursive: true }) as string[]).filter((f) => f.endsWith('.ts') && /omniscient: *true/.test(readFileSync(new URL(`../../src/${f}`, import.meta.url), 'utf8')));
+  ok(!new Pilot().omniscient && !new Pilot({ instant: true }).omniscient && !knownOf(piloted()).omniscient && /game\.pilot = new Pilot\(\);/.test(main) && !setters.length,
+    `the omniscient flag is off by default, and the game never sets it: src/main.ts builds new Pilot()${setters.length ? `; set in ${setters.join(', ')}` : ''}`);
+  // A dead end whose secret door leads on: fair, a wall the explorer suspects among others; omniscient, a door and the one suspect.
+  const def: MapDef = { id: 'fx_seer', name: 'Seer', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#######', '#...S.#', '#.#####', '#.#.#.#', '#######'], secrets: [{ x: 4, y: 1, hint: 'fx_none' }] };
+  const fair = piloted(), seer = Object.assign(piloted(), { pilot: new Pilot({ instant: true, omniscient: true }) });
+  for (const g of [fair, seer]) fixture(g, def, [1, 1, EAST]);
+  const fk = knownOf(fair), sk = knownOf(seer), sides = (k: Known): string => suspects(k, 'fx_seer').map((s) => `${s.x},${s.y} ${s.facing}`).sort().join('; ');
+  ok(fk.cell('fx_seer', 4, 1)?.solid === 'wall' && fk.cell('fx_seer', 4, 1)?.door === 'none' && sk.cell('fx_seer', 4, 1)?.door === 'door' && sk.cell('fx_seer', 4, 1)?.solid === 'none' && seer.maps.fx_seer.at(4, 1).door === 'secret',
+    `on, a secret door reads as a door, and off as a wall (${JSON.stringify(sk.cell('fx_seer', 4, 1))} against ${JSON.stringify(fk.cell('fx_seer', 4, 1))})`);
+  ok(!fk.secrets('fx_seer').length && sk.secrets('fx_seer').map((s) => `${s.x},${s.y}`).join() === '4,1' && sides(sk) === `4,1 ${EAST}; 4,1 ${WEST}` && sides(fk) !== sides(sk) && sides(fk).split('; ').length > 2,
+    `on, the explorer's suspects are the secret doors as written, from each side (${sides(sk)}); off, the walls with floor both sides (${sides(fk)}), and Known tells of no secret`);
+  seer.maps.fx_seer.at(4, 1).door = 'door';
+  ok(!knownOf(seer).secrets('fx_seer').length && !suspects(knownOf(seer), 'fx_seer').length, 'a secret door found is no longer told, nor suspected');
+  // The outdoors: each zone's secrets, placed where its box lies, are the outdoors' secret doors; a zone's id gives its own.
+  const o = Object.assign(headlessGame(), { pilot: new Pilot({ omniscient: true }) }), ok_ = knownOf(o), out = o.maps[OUTDOORS];
+  const written = out.zones.reduce((n, z) => n + (MAP_DEFS.find((d) => d.id === z.id)?.secrets?.length ?? 0), 0), told = ok_.secrets(OUTDOORS), downs = ok_.secrets('downs_d2');
+  ok(written > 0 && told.length === written && told.every((s) => out.at(s.x, s.y).door === 'secret') && downs.length === 1 && downs.length < told.length && downs.every((s) => out.zoneAt(s.x, s.y)?.id === 'downs_d2') && !knownOf(Object.assign(headlessGame(), { pilot: new Pilot() })).secrets(OUTDOORS).length,
+    `on the outdoors the secrets told are every zone's, each a secret door where its zone lies (${told.length} of ${written}; downs_d2's ${downs.length}), and none to a fair pilot`);
 }
 
 /** On and off, the fight handed to the bot, the box closed, the brains asked, a wipe. */

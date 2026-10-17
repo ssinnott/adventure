@@ -55,9 +55,11 @@ export function frontier(k: Known, g: Game, map: string): Square[] {
  * A suspect is a wall with seen floor on both sides of it. A visible secret door counts as a wall, as
  * Known draws it: a cell Known inks a wall, in `map`'s box, between two seen squares the company can
  * step onto, across it east and west or north and south. Each side is one suspect: the wall's square
- * and the facing from that side's square toward it.
+ * and the facing from that side's square toward it. The omniscient run's (#723) are the secret doors
+ * as written and not yet found (`Known.secrets`), each from every side the company can stand on.
  */
 export function suspects(k: Known, map: string): Suspect[] {
+  if (k.omniscient) return k.secrets(map).flatMap(({ x, y }) => SIDES.filter((f) => stands(k, map, x - FACING_DX[f], y - FACING_DY[f])).map((facing) => ({ x, y, facing })));
   const b = k.box(map), out: Suspect[] = [];
   if (!b) return out;
   for (let y = b.y; y < b.y + b.h; y++) {

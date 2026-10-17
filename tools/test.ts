@@ -7,6 +7,7 @@
 //   node tools/test.ts                  run everything but the suites run only when named (ASKED)
 //   node tools/test.ts maps combat      run selected suites
 //   node tools/test.ts walkthrough:shelf  run one area's walkthrough
+//   FULLRUN=all node tools/test.ts fullrun  the pilot's full run on the areas FULLRUN names (shelf unset)
 //   node tools/test.ts --dir <folder>   run the suites in another folder, and no walkthroughs (the
 //                                       runner's own check, tools/tests/runner/check.ts)
 import { readdirSync, existsSync } from 'node:fs';
@@ -16,8 +17,8 @@ import type { Walkthrough } from '../src/content/area.ts';
 
 /** The suites as they ran before the runner found them, kept in that order. */
 const FIRST = ['maps', 'movement', 'monsters', 'combat', 'harness', 'party', 'traits', 'calendar', 'terrain', 'weather', 'atlas', 'outdoors', 'save', 'quests', 'game', 'pilot'];
-/** The suites that run only when named, each taking minutes: the pilot's survival sweep (#723). */
-const ASKED = ['survival'];
+/** The suites that run only when named, each taking minutes: the pilot's survival sweep and its full run (#723). */
+const ASKED = ['survival', 'fullrun'];
 
 type Suite = () => void | Promise<void>;
 /**
