@@ -349,8 +349,12 @@ export function immuneTo(c: Character, k: Condition): boolean {
  * is not worn, and the bag is nobody's. A resistance and a stat's raise are borne so.
  */
 export function borne(c: Character): string[] {
-  const worn = [c.equipment.weapon, c.equipment.armor, c.equipment.shield].filter((id): id is string => !!id);
-  return [...worn, ...c.pack.filter((id) => item(id).slot === 'none')];
+  const out: string[] = [], { weapon, armor, shield } = c.equipment;
+  if (weapon) out.push(weapon);
+  if (armor) out.push(armor);
+  if (shield) out.push(shield);
+  for (const id of c.pack) if (item(id).slot === 'none') out.push(id);
+  return out;
 }
 /**
  * The elements a member takes half from (#555): those of what they bear (`borne`) and of a
@@ -361,11 +365,15 @@ export function resists(c: Character): Element[] {
   return ELEMENTS.filter((el) => ids.some((id) => item(id).resist?.includes(el)) || c.blessed.some((b) => b.element === el));
 }
 /**
- * A stat as a member stands: their own, raised by what they bear (`borne`, `ItemDef.stat`). Every
- * read in play takes it; `c.stats` stays their own, so a save holds no raise.
+ * A stat as a member stands: their own, raised by what they bear (`ItemDef.stat`), counted by
+ * `borne`'s rule without making its list, since every blow and every AC reads it. `c.stats` stays
+ * their own, so a save holds no raise.
  */
 export function statOf(c: Character, s: Stat): number {
-  return borne(c).reduce((n, id) => n + (item(id).stat?.[s] ?? 0), c.stats[s]);
+  const { weapon, armor, shield } = c.equipment;
+  let n = c.stats[s] + (weapon ? item(weapon).stat?.[s] ?? 0 : 0) + (armor ? item(armor).stat?.[s] ?? 0 : 0) + (shield ? item(shield).stat?.[s] ?? 0 : 0);
+  for (const id of c.pack) { const d = item(id); if (d.slot === 'none') n += d.stat?.[s] ?? 0; }
+  return n;
 }
 export function addCondition(c: Character, k: Condition): void {
   if (immuneTo(c, k)) return;
