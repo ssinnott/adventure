@@ -8,8 +8,8 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { makeRng } from '../../src/lib/engine/rng.ts';
-import { FONT_CHARS } from '../../src/lib/engine/text.ts';
-import { defaultParty, attackBonus, armsBonus, tierSteps, rankMult, spellHeal, levelUp, xpForLevel, trainPrice, CLASSES, RANK_STEP } from '../../src/game/party.ts';
+import { FONT_CHARS, measureText } from '../../src/lib/engine/text.ts';
+import { defaultParty, attackBonus, armsBonus, tierSteps, rankMult, spellHeal, levelUp, xpForLevel, trainPrice, CLASSES, RANK_STEP, NAME_MAX } from '../../src/game/party.ts';
 import type { Party, Character, ClassId } from '../../src/game/party.ts';
 import { World } from '../../src/game/world.ts';
 import { buildMaps } from '../../src/content/maps.ts';
@@ -23,7 +23,9 @@ import { MAP_DEFS, AREAS } from '../../src/content/index.ts';
 import type { Feature } from '../../src/game/map.ts';
 import type { Game } from '../../src/game/game.ts';
 import { ChoiceScreen, InteriorScreen, TRADE, businessEntries, weaponLine, spellsLine } from '../../src/ui/screens.ts';
-import { optionParts } from '../../src/ui/draw.ts';
+import { optionParts, columnLabelWidth } from '../../src/ui/draw.ts';
+import { SIDE_W } from '../../src/ui/frame.ts';
+import { talk } from '../../src/game/pilot/talk.ts';
 import { Pilot } from '../../src/game/pilot/pilot.ts';
 import { keep } from '../../src/game/pilot/keep.ts';
 import { trainsTo } from '../../src/game/pilot/known.ts';
@@ -31,7 +33,7 @@ import { NORTH } from '../../src/game/types.ts';
 import type { Action } from '../../src/input.ts';
 import {
   TIERS, LINES, TIER_LEVELS, TIER_PRICES, EXPERT_FROM, EXPERT_ENTRY, LINE_ROWS, TIER_NAMES, LINE_NAMES, linesOf, tierOf, tierBar, expertOffers, masterOffers,
-  tierLine, teachTier, teachesExpert, askLine, askTier, noneHere,
+  tierLine, teachTier, teachesExpert, askLine, askTier, noneHere, favourDone, LEAVE_TIERS,
 } from '../../src/game/mastery.ts';
 import type { Tiers, Line, Mastery } from '../../src/game/mastery.ts';
 import { ok, headlessGame, drive } from './lib.ts';
@@ -81,7 +83,9 @@ export function mastery(): void {
   untouched();
   saves();
   words();
+  fits();
   pilot();
+  talked();
 }
 
 /** Arms: +1 and +1, +2 and +2 in all, through the blow; magic: a rank's step and two in the ranks the cast reads, a hybrid's half. */
@@ -128,20 +132,20 @@ function bars(): void {
   const p = company('knight', 13), c = p.members[0], bar = (line: Line, tier: 'expert' | 'master', favour = true): string => tierBar(line, tier, TIER_PRICES[tier], c, p, favour);
   const cases: [string, string, string][] = [];
   const note = (what: string, got: string, want: string): void => { cases.push([what, got, want]); };
-  note('a knight in magic', bar('magic', 'expert'), 'not their line');
+  note('a knight in magic', bar('magic', 'expert'), 'not theirs');
   note('a knight of 13 at arms', bar('arms', 'expert'), '');
-  c.level = 12; note('at 12', bar('arms', 'expert'), 'from level 13'); c.level = 13;
-  p.gold = 1999; note('with 1999 gold', bar('arms', 'expert'), 'not enough gold'); p.gold = 20000;
+  c.level = 12; note('at 12', bar('arms', 'expert'), 'level 13'); c.level = 13;
+  p.gold = 1999; note('with 1999 gold', bar('arms', 'expert'), 'no gold'); p.gold = 20000;
   note('a Master with no Expert', bar('arms', 'master'), 'Expert first');
   c.tiers = { arms: 'expert' };
-  note('Expert again', bar('arms', 'expert'), 'Expert already');
-  note('a Master at 13', bar('arms', 'master'), 'from level 25');
+  note('Expert again', bar('arms', 'expert'), 'taken');
+  note('a Master at 13', bar('arms', 'master'), 'level 25');
   c.level = 25;
-  note('a Master at 25, the favour not done', bar('arms', 'master', false), 'the favour first');
+  note('a Master at 25, the favour not done', bar('arms', 'master', false), 'favour first');
   note('a Master at 25, the favour done', bar('arms', 'master'), '');
   c.tiers = { arms: 'master' };
-  note('Expert to a Master', bar('arms', 'expert'), 'Master already');
-  note('Master again', bar('arms', 'master'), 'Master already');
+  note('Expert to a Master', bar('arms', 'expert'), 'taken');
+  note('Master again', bar('arms', 'master'), 'taken');
   const wrong = cases.filter(([, got, want]) => got !== want);
   ok(!wrong.length, `the bars: ${cases.map(([w, g]) => `${w}: ${g || 'taught'}`).join('; ')}${wrong.length ? ' -> wrong: ' + wrong.map(([w, g, x]) => `${w} said "${g}", not "${x}"`).join('; ') : ''}`);
   ok(linesOf('knight').join() === 'arms' && linesOf('monk').join() === 'arms' && linesOf('sorcerer').join() === 'magic' && linesOf('cleric').join() === 'magic' && linesOf('bard').join() === 'arms,magic' && linesOf('paladin').join() === 'arms,magic',
@@ -196,7 +200,9 @@ function loft(): void {
   const who = wordsOf(g), arms = options(g);
   drive(g, [...downTo(knight), 'interact']);
   const after = options(g), told = g.log[g.log.length - 1], gold1 = p.gold;
-  drive(g, ['cancel', 'down', 'interact']);
+  drive(g, ['cancel']);
+  const purse = wordsOf(g);
+  drive(g, ['down', 'interact']);
   const magic = options(g);
   drive(g, [...downTo(caster), 'interact']);
   const told2 = g.log[g.log.length - 1], gold2 = p.gold;
@@ -204,13 +210,13 @@ function loft(): void {
   const back = options(g), out = leave(g);
   ok(first[0] === TRADE.trainer && row === 1 && first.at(-1) === 'Leave' && ask === '"Arms, or magic?" (5000 gold.)' && lines.join() === 'At arms,In magic,Leave',
     `at the Sail Loft the first menu has "${EXPERT_ENTRY}" after the trade, which asks the line first (${first.join(' / ')}; ${ask} ${lines.join(' / ')})`);
-  ok(who === '"Who would be Expert?" (5000 gold.)' && arms.length === 7 && arms[knight] === `${k.name}: Expert at arms\t2000g` && arms[caster] === `${d.name}: Expert at arms\tnot their line`
-      && arms.slice(0, 6).filter((r, i) => i !== knight && i !== caster).every((r) => r.endsWith('\tfrom level 13') || r.endsWith('\tnot their line')) && arms[6] === 'Leave',
+  ok(who === '"Who would be Expert?" (5000 gold.)' && arms.length === 7 && arms[knight] === `${k.name}\t2000g` && arms[caster] === `${d.name}\tnot theirs`
+      && arms.slice(0, 6).filter((r, i) => i !== knight && i !== caster).every((r) => r.endsWith('\tlevel 13') || r.endsWith('\tnot theirs')) && arms[6] === 'Leave',
     `then each member with the price or why not (${arms.slice(0, 6).map((r) => r.replace('\t', ' ')).join('; ')})`);
-  ok(gold1 === 3000 && tierOf(k, 'arms') === 'expert' && told === `${k.name} is Expert at arms now.` && after[knight] === `${k.name}: Expert at arms\tExpert already`
-      && magic[caster] === `${d.name}: Expert in magic\t2000g` && gold2 === 1000 && tierOf(d, 'magic') === 'expert' && told2 === `${d.name} is Expert in magic now.`
+  ok(gold1 === 3000 && tierOf(k, 'arms') === 'expert' && told === `${k.name} is Expert at arms now.` && after[knight] === `${k.name}\ttaken` && purse === '"Arms, or magic?" (3000 gold.)'
+      && magic[caster] === `${d.name}\t2000g` && gold2 === 1000 && tierOf(d, 'magic') === 'expert' && told2 === `${d.name} is Expert in magic now.`
       && back.join() === first.join() && out === 'ExploreScreen',
-    `a knight of 13 buys Expert at arms there for 2000 and a druid of 13 Expert in magic, the menu again after each, and back to the first menu and out ("${told}" / "${told2}"; ${gold2} gold left)`);
+    `a knight of 13 buys Expert at arms there for 2000 and a druid of 13 Expert in magic, the menu again after each, the line's question with the purse as it is after (${purse}), and back to the first menu and out ("${told}" / "${told2}"; ${gold2} gold left)`);
   ok(attackBonus(k) === hitWas + 1 && armsBonus(k) === 1 && rankMult(d) === multWas + RANK_STEP, `and the knight hits at +1 (${attackBonus(k)}) and the druid casts a rank's step higher (${rankMult(d).toFixed(2)})`);
   // Harrow's Drillyard (to 6), the Wardens' hall: its first menu has no such entry.
   enter(g, 'harrow', trainerAt('harrow'));
@@ -244,17 +250,23 @@ function master(): void {
   drive(g, [...downTo(fighters.indexOf(a)), 'interact']);
   const told = g.log[g.log.length - 1], again = options(g);
   leave(g);
-  const row = (i: number, bar: string): string => `${p.members[i].name}: Master at arms\t${bar}`;
-  ok(ask === '"Who would be Master?" (6000 gold.)' && before.length === fighters.length + 1 && before[fighters.indexOf(a)] === row(a, 'the favour first') && before[fighters.indexOf(b)] === row(b, 'Expert first')
-      && casters.every((c) => !before.some((r) => r.startsWith(`${c.name}:`))) && still === 'expert' && gold0 === 6000,
+  const row = (i: number, bar: string): string => `${p.members[i].name}\t${bar}`;
+  ok(ask === '"Who would be Master?" (6000 gold.)' && before.length === fighters.length + 1 && before[fighters.indexOf(a)] === row(a, 'favour first') && before[fighters.indexOf(b)] === row(b, 'Expert first')
+      && casters.every((c) => !before.some((r) => r.startsWith(`${c.name}\t`))) && still === 'expert' && gold0 === 6000,
     `a Master's person lists the members of their line and refuses before the favour holds (${before.map((r) => r.replace('\t', ' ')).join('; ')})`);
-  ok(open[fighters.indexOf(a)] === row(a, '5000g') && tierOf(p.members[a], 'arms') === 'master' && p.gold === 1000 && told === `${p.members[a].name} is Master at arms now.` && again[fighters.indexOf(a)] === row(a, 'Master already'),
+  ok(open[fighters.indexOf(a)] === row(a, '5000g') && tierOf(p.members[a], 'arms') === 'master' && p.gold === 1000 && told === `${p.members[a].name} is Master at arms now.` && again[fighters.indexOf(a)] === row(a, 'taken'),
     `and once it holds teaches a member Expert at 25 for 5000 ("${told}")`);
   // A company with nobody of the line hears so; the person's offers hold to the same bars.
   const casterOnly = company('sorcerer', 25);
   casterOnly.members = casterOnly.members.filter((c) => !linesOf(c.cls).includes('arms'));
   const w = new World(buildMaps(), casterOnly, makeRng(3));
   ok(!masterOffers(m, casterOnly, w.state).length && noneHere('arms') === '"I teach arms. Nobody here bears them."', 'a company with nobody of the line is offered nothing, and told so');
+  // A Master with no favour written does not teach: a missing `done` reads as not yet, as a prestige's third does.
+  const unwritten: Mastery = { line: 'arms', tier: 'master', price: TIER_PRICES.master };
+  p.members[b].tiers = { arms: 'expert' }; p.gold = 9000;
+  const o = masterOffers(unwritten, p, g.world.state).find((x) => x.who === b)!;
+  ok(o.bar === 'favour first' && !favourDone(unwritten, g.world.state, p) && !teachTier('arms', 'master', o.price, p, b, favourDone(unwritten, g.world.state, p)).taught && p.gold === 9000,
+    `a Master with no favour written does not teach: a missing done reads as not yet (${p.members[b].name}: ${o.bar})`);
 }
 
 /** The sheet says the tier on the WEAPON line and before SPELLS, and nothing more without one. */
@@ -318,10 +330,55 @@ function words(): void {
   const p = company('bard', 25);
   const said = [EXPERT_ENTRY, askLine(p), ...TIERS.map((t) => askTier(t, p)), ...LINES.map((l) => LINE_ROWS[l]), ...LINES.map(noneHere), 'Leave',
     ...TIERS.flatMap((t) => LINES.map((l) => `${TIER_NAMES[t]} ${LINE_NAMES[l]}`)), ...expertOffers('arms', p).map((o) => tierLine(o, p)), ...expertOffers('magic', p).map((o) => tierLine(o, p)),
-    'not their line', 'Expert already', 'Master already', 'Expert first', 'from level 25', 'the favour first', 'not enough gold', `${p.members[0].name} is Master in magic now.`, 'WEAPON Mace, EXPERT', 'SPELLS (MASTER) '];
+    'not theirs', 'taken', 'Expert first', 'level 25', 'favour first', 'no gold', `${p.members[0].name} is Master in magic now.`, 'WEAPON Mace, EXPERT', 'SPELLS (MASTER) '];
   const has = new Set(FONT_CHARS), bad = [...new Set(said.join('').split('').filter((ch) => ch !== ' ' && ch !== '\t' && !has.has(ch.toUpperCase())))];
   ok(!bad.length && TIER_LEVELS.expert === 13 && TIER_LEVELS.master === 25 && TIER_PRICES.expert === 2000 && TIER_PRICES.master === 5000,
     `every word the tiers say is in the font${bad.length ? ' -> not: ' + bad.join(' ') : ''}; Expert from 13 for 2000, Master from 25 for 5000`);
+}
+
+/**
+ * Every row of the tier menus fits the side panel as the menu draws it (`columnMenu`, ui/draw.ts): each
+ * reason and price a bar can give, found by asking `tierBar` in every state, beside a name of the
+ * widest letters at the longest a name may be.
+ */
+function fits(): void {
+  const q = company('knight', 1), c = q.members[0], values = new Set<string>();
+  for (const cls of ['knight', 'sorcerer', 'bard'] as const) for (const line of LINES) for (const tier of TIERS) for (const has of [undefined, ...TIERS]) for (const level of [1, 13, 25]) for (const gold of [0, 99999]) for (const favour of [false, true]) {
+    c.cls = cls; c.level = level; q.gold = gold;
+    if (has) c.tiers = { [line]: has }; else delete c.tiers;
+    values.add(tierBar(line, tier, TIER_PRICES[tier], c, q, favour) || `${TIER_PRICES[tier]}g`);
+  }
+  const widest = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'].sort((a, b) => measureText(b) - measureText(a))[0], name = widest.repeat(NAME_MAX);
+  const p = company('bard', 25), w = new World(buildMaps(), p, makeRng(4)), m: Mastery = { line: 'magic', tier: 'master', done: { flag: 'x' }, price: TIER_PRICES.master };
+  const rows = [...LINES.map((l) => LINE_ROWS[l]), LEAVE_TIERS, ...LINES.flatMap((l) => expertOffers(l, p).map((o) => tierLine(o, p))), ...masterOffers(m, p, w.state).map((o) => tierLine(o, p)), ...[...values].map((v) => `${name}\t${v}`)];
+  const cut = rows.filter((r) => { const { label, value } = optionParts(r); return measureText(label) > columnLabelWidth(SIDE_W, value, true); });
+  ok(values.size >= 8 && !cut.length, `every row of the tier menus fits the ${SIDE_W} px panel, a name of ${NAME_MAX} ${widest}s beside each of ${[...values].join(', ')}${cut.length ? ' -> cut: ' + cut.map((r) => r.replace('\t', ' ')).join('; ') : ''}`);
+}
+
+/**
+ * The pilot's talk at a Master's person (src/game/pilot/talk.ts), the favour done, a member Expert at 25
+ * and the gold: it answers a person's question by its cheapest open priced row, but leaves a tier's
+ * menu as it leaves a skill's, and nobody is taught.
+ */
+function talked(): void {
+  const g = headlessGame(4), p = g.party, rng = makeRng(9), FAVOUR = 'test_talk_favour', st = g.world.state;
+  for (const id of Object.keys(g.maps)) g.world.ensureMapState(id).explored.fill(-1);
+  const who = p.members.findIndex((m) => linesOf(m.cls).join() === 'arms');
+  p.members[who].xp = xpForLevel(25); levelUp(p.members[who], rng); p.members[who].tiers = { arms: 'expert' };
+  p.gold = 50000; p.flags[FAVOUR] = 1;
+  const person: Person = { kind: 'npc', x: st.x, y: st.y, name: 'Old Hand', lines: ['"Steel answers steel."'], mastery: { line: 'arms', tier: 'master', done: { flag: FAVOUR }, price: TIER_PRICES.master } };
+  const here = g.maps[st.mapId].features as Feature[];
+  here.push(person);
+  g.pilot = new Pilot({ instant: true });
+  g.pilot.toggle(g);
+  g.pilot.brains = [talk];
+  g.push(g.talkScreen(person));
+  drive(g, ['interact']);
+  const open = g.top instanceof ChoiceScreen ? g.top.words : '', row = options(g)[0];
+  for (let t = 0; t < 20 && g.top instanceof ChoiceScreen; t++) drive(g, [null]);
+  here.splice(here.indexOf(person), 1);
+  ok(open === askTier('master', p) && row === `${p.members[who].name}\t5000g` && tierOf(p.members[who], 'arms') === 'expert' && p.gold === 50000 && !(g.top instanceof ChoiceScreen),
+    `the pilot's talk, at a Master's person with ${row.replace('\t', ' ')} open, leaves the menu and takes no tier (${tierOf(p.members[who], 'arms')}; ${p.gold} gold)`);
 }
 
 /**

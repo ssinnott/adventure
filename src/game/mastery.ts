@@ -18,7 +18,7 @@ export interface Tiers { arms?: Tier; magic?: Tier }
 
 /**
  * A Master a person teaches (DESIGN §5): their line, to a member Expert in it from level 25, once the
- * favour `done` holds (none asked where it is absent), for `price`. Once their words are said they
+ * favour `done` holds (a missing `done` reads as not yet, as a prestige's third does), for `price`. Once their words are said they
  * offer it to the company's members of the line. Found, never sought: no quest or mark names them.
  */
 export interface Mastery { line: Line; tier: 'master'; done?: When; price: number }
@@ -56,7 +56,7 @@ export interface TierOffer { who: number; line: Line; tier: Tier; price: number;
 export function tierBar(line: Line, tier: Tier, price: number, c: Character, party: Party, favour = true): string {
   const has = tierOf(c, line);
   if (!linesOf(c.cls).includes(line)) return NOT_OURS;
-  if (has && TIERS.indexOf(has) >= TIERS.indexOf(tier)) return ALREADY(has);
+  if (has && TIERS.indexOf(has) >= TIERS.indexOf(tier)) return TAKEN;
   if (tier === 'master' && has !== 'expert') return FIRST;
   if (c.level < TIER_LEVELS[tier]) return AT_LEVEL(TIER_LEVELS[tier]);
   if (!favour) return NOT_YET;
@@ -70,8 +70,8 @@ export function expertOffers(line: Line, party: Party): TierOffer[] {
   return party.members.map((c, who) => ({ who, line, tier: 'expert', price, bar: tierBar(line, 'expert', price, c, party) }));
 }
 
-/** Whether the favour a Master asks is done: always, where they ask none. */
-export const favourDone = (m: Mastery, world: WorldState, party: Party): boolean => !m.done || holds(m.done, world, party);
+/** Whether the favour a Master asks is done: never where none is written, a missing `done` reading as not yet. */
+export const favourDone = (m: Mastery, world: WorldState, party: Party): boolean => !!m.done && holds(m.done, world, party);
 
 /** A Master's person: the company's members of the line, each with the price or why not. */
 export function masterOffers(m: Mastery, party: Party, world: WorldState): TierOffer[] {
@@ -79,8 +79,11 @@ export function masterOffers(m: Mastery, party: Party, world: WorldState): TierO
   return party.members.flatMap((c, who) => (linesOf(c.cls).includes(m.line) ? [{ who, line: m.line, tier: m.tier, price: m.price, bar: tierBar(m.line, m.tier, m.price, c, party, done) }] : []));
 }
 
-/** The menu's line for an offer: the member, the tier and line, then the price or why not. */
-export const tierLine = (o: TierOffer, party: Party): string => `${party.members[o.who].name}: ${TIER_NAMES[o.tier]} ${LINE_NAMES[o.line]}\t${o.bar || `${o.price}g`}`;
+/**
+ * The menu's line for an offer: the member, then the price or a short why not, to fit the side panel;
+ * the menu's question and the line chosen say the tier and the line.
+ */
+export const tierLine = (o: TierOffer, party: Party): string => `${party.members[o.who].name}\t${o.bar || `${o.price}g`}`;
 
 /** Teach a member a tier on a line: the price paid, the tier on its sheet. Nothing changes, and false, where it may not. */
 export function teachTier(line: Line, tier: Tier, price: number, party: Party, who: number, favour = true): { taught: boolean; said: string } {
@@ -104,10 +107,10 @@ export const askTier = (tier: Tier, party: Party): string => `"Who would be ${TI
 export const LEAVE_TIERS = 'Leave';
 /** What a Master's person says to a company with nobody of their line in it. */
 export const noneHere = (line: Line): string => (line === 'arms' ? '"I teach arms. Nobody here bears them."' : '"I teach magic. Nobody here casts."');
-const NOT_OURS = 'not their line';
-const ALREADY = (t: Tier): string => `${TIER_NAMES[t]} already`;
+const NOT_OURS = 'not theirs';
+const TAKEN = 'taken';
 const FIRST = `${TIER_NAMES.expert} first`;
-const AT_LEVEL = (level: number): string => `from level ${level}`;
-const NOT_YET = 'the favour first';
-const SHORT = 'not enough gold';
+const AT_LEVEL = (level: number): string => `level ${level}`;
+const NOT_YET = 'favour first';
+const SHORT = 'no gold';
 const TAUGHT = (name: string, tier: Tier, line: Line): string => `${name} is ${TIER_NAMES[tier]} ${LINE_NAMES[line]} now.`;

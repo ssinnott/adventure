@@ -500,7 +500,8 @@ export function skillMenu(g: Game, ids: readonly SkillId[], title: string): Scre
  * goes back a level: to the line, then to the trainer's first menu.
  */
 export function tierMenu(g: Game, title: string): Screen {
-  return new ChoiceScreen(askLine(g.party), [...LINES.map((l) => LINE_ROWS[l]), LEAVE_TIERS], (i) => {
+  // The words are made when drawn: the menu waits under the members' while the gold is spent.
+  return new ChoiceScreen(() => askLine(g.party), [...LINES.map((l) => LINE_ROWS[l]), LEAVE_TIERS], (i) => {
     const line = LINES[i];
     if (!line) return;
     g.push(tierMenu(g, title));
