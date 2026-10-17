@@ -111,8 +111,10 @@ function meeting(g: Game, k: Known, p: Pilot, mem: Talk): Action | null {
       const a = route(g, k, p);
       if (a) return a;
     }
-    // Over: reached, the meeting shown, the person is met now; given up or taken by another brain, still due.
-    if (g.shown !== mem.shown) meet(p, mem, mem.key!, now);
+    // Over: met where the party stands on the person's square or faces it (a visit puts it back before
+    // a door, facing it), the meeting shown; given up, or taken by another brain, still due.
+    const to = mem.goal, ahead = { x: st.x + FACING_DX[st.facing], y: st.y + FACING_DY[st.facing] };
+    if (g.shown !== mem.shown && st.mapId === to.map && ((st.x === to.x && st.y === to.y) || (ahead.x === to.x && ahead.y === to.y))) meet(p, mem, mem.key!, now);
     mem.goal = undefined;
   }
   const people = k.features(st.mapId).filter((f) => f.kind === 'npc' || f.kind === 'guild'), stood = people.filter((f) => keyOf(st.mapId, f) === at);
@@ -143,19 +145,20 @@ function meeting(g: Game, k: Known, p: Pilot, mem: Talk): Action | null {
   return route(g, k, p);
 }
 
-/** An answer to a menu: the row (-1 for Esc), the why line it is said with, and what is kept once the key that answers is pressed. */
+/** An answer to a menu: the row (-1 for Esc), the why line it is said with and what is kept once the key that answers is pressed. */
 interface Answer { i: number; why?: string; then?: () => void }
 const ESC: Answer = { i: -1 };
 
 /**
- * The brain. On a menu it answers by `pick`'s rules, `down` to the row and Space, or Esc; the
- * ending's question it does not answer (its stop is #721's second part, §7). On the map it meets
- * people (`meeting`). On any other screen, nothing: a riddle is #721's second part (§6).
+ * The brain. On a menu it answers by `pick`'s rules, `down` to the row and Space, or Esc; under the
+ * ending's question it presses nothing and stops itself, the band kept up ("The choice is yours.", the
+ * epic's Decided 4). On the map it meets people (`meeting`). On any other screen, nothing: a riddle is
+ * #721's second part (§6).
  */
 export const talk: Brain = (g, k, p) => {
   const top = g.top, mem = memOf(p);
   if (top instanceof ChoiceScreen) {
-    if (top.ends) return null;
+    if (top.ends) { p.stop(g, ['The choice is yours.']); return null; }
     const c = choose(top, g, k, p, mem);
     const a: Action = c.i < 0 || top.disabled[c.i] ? 'cancel' : Math.min(top.sel, top.options.length - 1) === c.i ? 'interact' : 'down';
     if (c.why) p.why = [c.why];

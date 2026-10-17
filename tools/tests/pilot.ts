@@ -1098,6 +1098,34 @@ function talking(): void {
   ok(sp.heard.includes('"Fine day."') && sp.met.has('fx_stall:3,1') && sg.top instanceof ExploreScreen,
     `a person in a business talk goes to is talked to there, by the menu's Talk to row, and the business left (${sp.heard.includes('"Fine day."')}, ${top(sg)})`);
 
+  // A goal to a person taken by another brain on the way, a box shown meanwhile: not met, so still due, and met once free.
+  const wg = piloted(), wp = wg.pilot!;
+  fixture(wg, row('fx_way', 9, [{ kind: 'npc', x: 8, y: 1, name: 'A far one', lines: ['"Far."'] }]), [1, 1, EAST]);
+  wp.brains = [talk];
+  wp.toggle(wg);
+  drive(wg, Array(3).fill(null));
+  wg.message('A box on the way.');
+  drive(wg, [null]);
+  const at = wg.world.state.x;
+  wp.goal = { map: 'fx_way', x: 1, y: 1, name: 'the way back', reason: 'the test' };
+  drive(wg, [null]);
+  const taken = !wp.met.has('fx_way:8,1') && !wp.heard.includes('"Far."');
+  wp.goal = null;
+  drive(wg, Array(20).fill(null));
+  ok(at === 4 && taken && wp.met.has('fx_way:8,1') && wp.heard.includes('"Far."'),
+    `a goal to a person taken by another brain on the way, a box shown meanwhile, is no meeting: still due, and met once free (taken at ${at}: ${taken})`);
+
+  // A person met again once the company sets a flag: the words that wait on it are heard.
+  const fg = piloted(), fp = fg.pilot!;
+  fixture(fg, row('fx_watch', 4, [{ kind: 'npc', x: 3, y: 1, name: 'A watcher', lines: ['"Not yet."'], says: [{ after: { flag: 'fx_word' }, lines: ['"Now then."'] }] }]), [1, 1, EAST]);
+  fp.brains = [talk];
+  fp.toggle(fg);
+  drive(fg, Array(12).fill(null));
+  const unsaid = fp.heard.includes('"Not yet."') && !fp.heard.includes('"Now then."');
+  fg.party.flags.fx_word = 1;
+  drive(fg, Array(12).fill(null));
+  ok(unsaid && fp.heard.includes('"Now then."'), `a person met is met again once a flag is set, and the words that wait on it are heard (${unsaid}, ${fp.heard.includes('"Now then."')})`);
+
   // A person's question, from one at hand: the first answer open that is no way out and has no price.
   const cg = piloted(), cp = cg.pilot!;
   fixture(cg, row('fx_clerk', 3, [{ kind: 'npc', x: 2, y: 1, name: 'A clerk', lines: ['"A case?"'], choice: { ask: '"Whose case?"', answers: [
@@ -1108,14 +1136,15 @@ function talking(): void {
   ok(cg.party.flags.fx_plain === 1 && !cg.party.flags.fx_no && !cg.party.flags.fx_dear && cg.top instanceof ExploreScreen,
     `a person's question is answered with the first answer open that is no way out and has no price (${Object.keys(cg.party.flags).join()})`);
 
-  // The ending's question is marked and not answered: the pilot stands under it (its stop is #721's second part).
+  // The ending's question is marked and not answered: the pilot stops itself under it, saying so, and presses nothing.
   const eg = piloted(), ep = eg.pilot!;
   fixture(eg, row('fx_heart', 2, [{ kind: 'npc', x: 1, y: 1, name: 'A keeper', lines: ['"Choose."'] }]), [1, 1, EAST]);
   eg.ask({ ask: '"Which?"', answers: [{ label: 'Relight it.', sets: ENDINGS.reignite.flag, says: ['"So."'] }, { label: 'Not yet.', says: ['"Then wait."'] }] }, 'A keeper');
   ep.toggle(eg);
   const end = eg.top as ChoiceScreen, answered = pick(end, eg, ep), key = talk(eg, knownOf(eg), ep);
   drive(eg, Array(10).fill(null));
-  ok(end.ends && answered === -1 && key === null && eg.top === end && !eg.party.flags[ENDINGS.reignite.flag], `the ending's question is marked, and neither picked nor answered (${end.ends}, ${answered}, ${key})`);
+  ok(end.ends && answered === -1 && key === null && !ep.on && ep.band()?.lines[0] === 'The choice is yours.' && eg.top === end && !eg.party.flags[ENDINGS.reignite.flag],
+    `the ending's question is marked, neither picked nor answered, and the pilot stops under it with the band up (${end.ends}, ${answered}, ${key}, ${ep.on}, "${ep.band()?.lines[0]}")`);
 
   // A guild's hall: the fee over the reserve, then for each of its classes the costliest spell over it, one each.
   const hall = (gold: number): { g: Game; learnt: number[] } => {
