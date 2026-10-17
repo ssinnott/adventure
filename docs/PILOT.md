@@ -33,6 +33,30 @@ hands each fight to the bot and closes each message box, and a person's question
 - It stops by itself at a party wipe, saying "The company has fallen.", and at the ending's choice
   (#721). Nothing else is the viewer's to say. A stop of its own keeps the band up with its why line
   until the next key; when the viewer takes the helm, the band goes at once.
+- **Attract mode** (#722): a title left untouched for 45 seconds plays a new game on the pilot, as P
+  on the title starts one, with nothing saved and any key to bring the title back (below).
+
+## Attract mode
+
+`TitleScreen` counts the ticks of nothing it is given (`idle`) and at `IDLE_TICKS`, 60 × 45, calls
+`Game.attract`; any key it is given takes the count back to 0, and the charter on top of it stops
+the count, as the title is not then the screen updated. `attract` starts a new game as P on the
+title does, by the one code path (`Game.newRandomGame`: the seed picked first with `freshSeed`, the
+company drawn from it with `randomParty`, then `newGame`, so the seed replays the game, DESIGN §13),
+puts the pilot at the helm and sets `Game.attracting`, with the band reading "The pilot plays." and
+"Any key for the title." for the first three seconds over the pilot's own lines (`Game.band`,
+`ATTRACT_HOLD`). A Game with no pilot has nothing to start: its title counts and does nothing.
+
+`attracting` lives on the Game outside the save, which stays at version 5. While it is on,
+`saveGame` is a no-op (the save in storage is never written, an existing one left as it is) and
+the game has no sound to mute: nothing outside `src/lib` imports the engine's audio, which a test
+keeps true. The wake is in `Game.update`, as `src/main.ts` is not edited for it: a key that finds
+the pilot off brings the title back (`TitleScreen(hasSave)`, `attracting` off) and is dropped. The
+pilot's own keys go through `Game.update` too, but main.ts takes the helm before a viewer's key
+reaches the game, so a key that finds the pilot at it is the pilot's. P and T are main.ts's, taken
+before the game sees them: P pauses the show and starts it again, T sets its tempo. A stop of its
+own keeps its band up over the game, still attracting, and the next key wakes as any other. A wipe
+starts another game on a new seed at once (`Game.gameOver`), the title never shown.
 
 ## Fair: Known
 
@@ -177,6 +201,8 @@ strong for us yet: back."). It meets nobody: a chapter begins and moves on by wo
 | `src/game/bot.ts` | the fight and the rest rule (`botTurn`, `asSeen`, `mustRest`, #714) |
 | `src/game/items.ts` | `hits`, a weapon's mean blow: the harness's measure, moved here for `better` (#719) |
 | `src/ui/create.ts` | `randomParty`: the company drawn from a seed |
+| `src/ui/title.ts` | `TitleScreen` and attract mode's idle: `IDLE_TICKS`, the ticks of nothing counted on the title (#722) |
+| `src/game/game.ts` | what the pilot leaves on the `Game`: `pilot`, `attracting`, `newRandomGame` (P on the title's and attract mode's start), `attract` and its wake in `update`, `band` (the band over the view: the pilot's, with attract mode's opening lines), the no-op `saveGame` and the wipe's restart in `gameOver` (#722) |
 | `tools/tests/pilot.ts` | the suite `pilot` |
 
 No parameter property, enum or namespace may enter anything a `Game` imports: `tools/tests/lib.ts`
@@ -301,3 +327,15 @@ Decided by delegate for #720, each the owner's to overturn:
 19. **The band rule turns back once a crossing**: over the same line again with no level or flag gained since, the party goes on, so a route that clips a corner of a hard zone (#718, decision 12) does not go to and fro for ever. A crossing that leads on into the hard zone is then ended only by a quest's or a level aim's lost rule.
 20. **`aims.ts` reads the world map's own data (the atlas: a place's home zone, names, a zone's box) directly**: it is what the world map shows; it never reads a map's cells, groups, secrets or gates.
 21. **`goalMap` matches a goal by its words**, as `sought` does: no quest today has two goals with the same words on different maps (237 goal lists scanned: every quest, every chapter and the seeking quests at seven levels), so the match is safe.
+
+Decided by delegate for #722, each the owner's to overturn:
+
+1. **The pilot's own keys do not wake it: a key that finds the pilot at the helm is the pilot's.** The issue's wake is "any key", but the pilot presses its keys through `Game.update` as well, so its first would have brought the title back within a quarter of a second. `src/main.ts` (not edited, as ruled) takes the helm before a viewer's key reaches the game (the epic's Decided 2), so the wake is a key that finds the pilot off. The tests send a viewer's key as main.ts does (`toggle`, then `update`), and the rule is broken and the test fails.
+2. **P and T keep to the pilot in attract mode.** main.ts takes both before the game sees them: P pauses the show (the pilot off, `attracting` on) and starts it again, T sets the tempo, which stays the viewer's. Any other key brings the title back, so "Any key for the title." is true of all but these two. Waking on them is one line in main.ts, the owner's to ask for.
+3. **The opening lines are held three seconds over the pilot's own** (`Game.band`, `ATTRACT_HOLD`). `why` is set as the issue says, but the pilot's first action (a quarter of a second at 1×) replaces it, and the line that says how to leave would never be read. The pilot plays on under the band; a stop's band is not covered.
+4. **P on the title and attract mode share one code path, `Game.newRandomGame`**, which `Pilot.toggle` calls in place of its own two lines (#716, decision 2 stands): the seed first and the company from it, so a seed replays (DESIGN §13) and the two cannot drift apart.
+5. **A wipe while attracting starts the next game at once**, as the issue says: no stop, no "The company has fallen." and no title, since nobody is there to read them. The pilot stays at the helm and the opening lines stand again.
+6. **A stop of its own is not a wipe.** The ending's choice (#721) stops the pilot as ever, its band up over the game and `attracting` still on, and the next key brings the title back. No game follows the choice: it is the viewer's to make.
+7. **The game has no sound**, so there is nothing to mute: nothing outside `src/lib` imports `src/lib/audio`. The suite fails, naming the file, if one does, so that a sound added later is muted while `Game.attracting`.
+8. **The title's count is its own**: the ticks of nothing the title is given, reset by any key it is given. The charter over it (New Game) stops the count, and Esc back to the title finds it at 0, the key that opened the charter having reset it. A T on the title is main.ts's and neither resets nor counts. A Game with no pilot counts and `attract` returns, so no test's game idles into anything.
+9. **No smoke change**: forty-five seconds is too long for it, and its title flow is unchanged, as `npm run check` shows.
