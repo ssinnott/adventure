@@ -1121,8 +1121,10 @@ if (process.env.SMOKE_SHOT) {
 // a crack, so a crack is kept only if the view painted with its hills laid flat shows it too: a
 // crack between two faces does not depend on the hills. That passes anything drawn as part of a
 // hill, so the check after the sweep holds a hill's body to its outline. And where walls stand on
-// both hands of the party the edges of the view are wall: those once went undrawn. A zone of the
-// outdoors is walked over its own squares. The ground's samples (tools/grounds.ts) are swept one way
+// both hands of the party the edges of the view are wall: those once went undrawn. A cell is read
+// as the view draws it (`drawnCell`, and the void as its look, #849): a void drawn as a hill is laid
+// flat with the hills, and the ring's mountain beside the party is a billboard and no wall, which
+// the check of the world's end looks at instead. A zone of the outdoors is walked over its own squares. The ground's samples (tools/grounds.ts) are swept one way
 // on every run, first, put into the game's maps for it and taken out after, so a ground no built map
 // holds yet is swept too and the party ends where it did.
 await page.evaluate(async (defs: any[]) => {
@@ -1142,10 +1144,16 @@ const cracks = await page.evaluate(async (maps: { id: string; all: boolean }[]) 
   const sky = document.createElement('canvas'); sky.width = W; sky.height = H;
   const skyCtx = sky.getContext('2d')!;
   const paint = (backdrop: string) => { ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H }, backdrop); return ctx.getImageData(0, H / 2 - band, W, band * 2).data; };
-  // The same view with the hills laid flat: each hill square read as grass while it is painted.
+  // The same view with the hills laid flat: each square drawn as a hill, the void whose look is one
+  // among them, read as grass while it is painted.
   const flat = (m: any, backdrop: string) => {
     const at = m.at;
-    m.at = (x: number, y: number) => { const c = at.call(m, x, y); return c.terrain === 'hills' ? { ...c, terrain: 'grass' } : c; };
+    m.at = (x: number, y: number) => {
+      const c = at.call(m, x, y), drawn = c.look ?? c;
+      if (drawn.terrain !== 'hills') return c;
+      const grass = { ...drawn, terrain: 'grass' };
+      return c.look ? { ...c, look: grass } : grass;
+    };
     try { return paint(backdrop); } finally { delete m.at; }
   };
   const crackAt = (shows: (px: number, py: number) => boolean, px: number, py: number) => shows(px, py) && [2, 3].some((s) => px >= s && px < W - s && !shows(px - s, py) && !shows(px + s, py));
@@ -1161,8 +1169,9 @@ const cracks = await page.evaluate(async (maps: { id: string; all: boolean }[]) 
         const a = paint('#ff00ff'), b = paint('#00ff00');
         views++;
         const shows = (px: number, py: number) => { const i = (py * W + px) * 4; return Math.abs(a[i] - b[i]) > 8 || Math.abs(a[i + 1] - b[i + 1]) > 8; };
-        // Beside the party a wall, as it is drawn: a secret door among the peaks is a peak, not a wall.
-        const walled = (s: number) => V.isSolidWall(I.drawnCell(m, ax + s * T.FACING_DX[rf], ay + s * T.FACING_DY[rf]));
+        // Beside the party a wall, as it is drawn: a secret door among the peaks is a peak, not a wall,
+        // and the void is its look, the ring's mountain no wall (#829).
+        const walled = (s: number) => { const c = I.drawnCell(m, ax + s * T.FACING_DX[rf], ay + s * T.FACING_DY[rf]); return V.isSolidWall(c.look ?? c); };
         let spot = '', level: ((px: number, py: number) => boolean) | undefined;
         for (let py = 0; py < band * 2 && !spot; py++) for (let px = 0; px < W && !spot; px++) {
           if (!shows(px, py)) continue;
