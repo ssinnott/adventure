@@ -713,8 +713,9 @@ Peak Stone; the gate bot and the harness run to 32 with the clock played. Then H
 order (#744), H6 to the Heart, with its chapter, its side quests (#56's 56 to 61 and 64) and the
 Cleric's third at Anchorhold (#763), its calls and names written in. Then the Council of Helmstow
 (#764), which ends the Empty Throne, and the road behind in one issue (#765), as #449 was Act IV's.
-The act spends one story lock, the core's door (§2.3). Master trainers are post-v1, with the skill
-tiers (#18); the Sorcerer's third came into it, at the Glass's edge on the Wold (#807). 1.5 ends M3
+The act spends one story lock, the core's door (§2.3). The skill tiers are built (#852), and the two
+Masters on the road are placed by #858 and #859; the Sorcerer's third came into the act, at the
+Glass's edge on the Wold (#807). 1.5 ends M3
 and is built on main: Act V merged on 15 October 2026. The owner's own playthrough is what remains
 before v1 is called done (README.md).
 

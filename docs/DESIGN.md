@@ -347,11 +347,13 @@ Decided by the builder for #852, each the owner's to overturn:
    alone now opens on a first menu, which the pilot's keep answers by its trade as at any business.
 3. A Master's person lists only the members of their line; a company with none hears "I teach arms.
    Nobody here bears them." (or "magic. Nobody here casts."). A trainer lists all six.
-4. A Master with no `done` asks no favour: the field is optional, and both Masters to come ask one.
-5. The bars, as the prestiges' are worded: "not their line", "Expert already", "Master already",
-   "Expert first", "from level 13" (or 25), "the favour first", "not enough gold".
-6. The words: "Arms, or magic?", then "Who would be Expert?" (or Master), each row the member, the
-   tier and the line, and the price; once taught, "<name> is Expert at arms now."
+4. A Master with no `done` does not teach: a missing `done` reads as not yet, as it does for a
+   prestige's third and in a quest.
+5. The reasons are short, to fit the 200 px panel beside a name: "not theirs", "taken", "Expert
+   first", "level 13" (or 25), "favour first", "no gold".
+6. The words: "Arms, or magic?", then "Who would be Expert?" (or Master). Each row is the member's
+   name and the price or the reason, the question and the line chosen saying the rest; once taught,
+   "<name> is Expert at arms now."
 7. `shipped.json`'s `tiers` holds the tier ids a save's `tiers` holds (expert, master); the lines
    are its keys, and no field's name is recorded there.
 8. The sheet says the tier after the weapon ("WEAPON Long Sword, EXPERT") and before the spells
@@ -359,6 +361,8 @@ Decided by the builder for #852, each the owner's to overturn:
 9. After a lesson the menu comes again, as the skills' does, at a trainer and at a Master's person.
 10. The smoke is unchanged: its trainer is a prestige's person, not a town trainer's menu; the
     `mastery` suite walks the Sail Loft's menus in a Game.
+11. The pilot's talk leaves a tier's menu as it leaves a skill's (#719's decision 12): at a Master's
+    person it would otherwise take the cheapest priced row.
 
 ---
 
