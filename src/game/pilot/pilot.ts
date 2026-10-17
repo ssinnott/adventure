@@ -4,6 +4,7 @@
 // This is its frame: on and off, the tempo, the why line, the fights handed to the bot and the boxes
 // closed. Which key it presses on the map is the brains' to say, each in a module of its own.
 import type { Game } from '../game.ts';
+import type { Passage } from '../map.ts';
 import type { Action } from '../../input.ts';
 import { CombatScreen } from '../../ui/combat.ts';
 import { MessageScreen } from '../../ui/screens.ts';
@@ -17,6 +18,7 @@ import { keep } from './keep.ts';
 import { explore } from './explore.ts';
 import { aims, unaim } from './aims.ts';
 import type { Aim } from './aims.ts';
+import { talk, untalk } from './talk.ts';
 
 export type Tempo = 1 | 2 | 4;
 export interface PilotOpts { instant?: boolean; omniscient?: boolean }
@@ -28,12 +30,14 @@ export interface PilotOpts { instant?: boolean; omniscient?: boolean }
 export type Brain = (g: Game, k: Known, p: Pilot) => Action | null;
 
 /**
- * The brains, asked in this order and the first key given pressed: fight, keep (#719), aims (#720),
- * route (#717), explore (#718), talk (#721). Each slot is absent until its module lands. A brain that
- * sets a goal asks `route` for its first key itself, so the goal is walked from the tick it is set.
+ * The brains, asked in this order and the first key given pressed: fight (the frame's), keep (#719),
+ * talk (#721), aims (#720), route (#717), explore (#718). A brain that sets a goal asks `route` for its
+ * first key itself, so the goal is walked from the tick it is set; talk walks its own goal to a person
+ * so, every key of it, or the strategist, asked after, would set its own.
  */
 export const BRAINS: readonly Brain[] = [
   keep,
+  talk,
   aims,
   route,
   explore,
@@ -55,6 +59,8 @@ export class Pilot {
   why: [string, string?] = ['Nothing to do.'];
   /** The brains this pilot asks: `BRAINS`, unless a test names its own. */
   brains: readonly Brain[] = BRAINS;
+  /** Whether it asks talk (#721): the quartermaster leaves a business's guild work and people to it, else leaves the business. */
+  get talks(): boolean { return this.brains.includes(talk); }
   /** What it has heard (Known.heard): through `hear`, the last `HEARD_MAX` lines. */
   readonly heard: string[] = [];
   /** The why line of a stop it made itself (a wipe, the ending's choice), kept up in the band until the next key. */
@@ -82,6 +88,12 @@ export class Pilot {
   /** The goals given up (their words): three days on one with no way on (the lost rule). */
   readonly lost = new Set<string>();
 
+  // Talk's (#721).
+  /** The people met, by square ("map:x,y", the map as played): each met again once the company has set a flag or gained an item since (talk.ts). */
+  readonly met = new Set<string>();
+  /** The crossings told (`Game.offer`, as its menu opened), each with its seller's square and the fare the menu showed: the navigator's edges (`routeMaps`). */
+  readonly offers: { map: string; x: number; y: number; passage: Passage; fare: number }[] = [];
+
   /** Ticks counted since it took the helm, for the pace. */
   private ticks = 0;
   /** The fight last handed to the bot: each is handed once. */
@@ -98,14 +110,25 @@ export class Pilot {
   }
 
   /**
+   * Told of a seller's crossings as its menu opens (`Game.offer`): the routes it sells now, each with
+   * the fare the menu shows, in place of what it sold before (#721).
+   */
+  told(map: string, x: number, y: number, routes: readonly { passage: Passage; fare: number }[]): void {
+    const others = this.offers.filter((o) => o.map !== map || o.x !== x || o.y !== y);
+    this.offers.length = 0;
+    this.offers.push(...others, ...routes.map((r) => ({ map, x, y, passage: r.passage, fare: r.fare })));
+  }
+
+  /**
    * A new company has heard nothing and is bound nowhere: a new game or a load empties the corpus, the
    * goal, its plan and the squares found shut, the walls searched and the map preferred, the aim and
-   * the goals given up (Game.newGame, Game.loadGame).
+   * the goals given up, the people met and the crossings told (Game.newGame, Game.loadGame).
    */
   forget(): void {
     this.heard.length = 0; this.goal = null; this.plan = []; this.shut.length = 0; unroute(this);
     this.searched.clear(); this.prefer = null;
     this.aim = null; this.lost.clear(); unaim(this);
+    this.met.clear(); this.offers.length = 0; untalk(this);
   }
 
   /**

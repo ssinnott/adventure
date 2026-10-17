@@ -43,6 +43,9 @@ import { THE_QUEST, MAP_DEFS } from '../../src/content/index.ts';
 import { homeMap } from '../../src/game/atlas.ts';
 import { levelUp } from '../../src/game/party.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
+import { talk, pick, NEAR } from '../../src/game/pilot/talk.ts';
+import { ENDINGS } from '../../src/content/endings.ts';
+import { PRESTIGE_LEVELS, guildFlag } from '../../src/game/party.ts';
 
 /** A headless game with an instant pilot, off. */
 const piloted = (seed = 4): Game => {
@@ -67,6 +70,7 @@ export function pilot(): void {
   quartermaster();
   together();
   strategist();
+  talking();
 }
 
 /** A headless game whose company Vask has hired: walked onto his door by the test (its privilege) and his words closed. */
@@ -1192,4 +1196,159 @@ function quartermaster(): void {
   };
   const sweet = welled(true), dry = welled(false);
   ok(sweet.healed && !dry.healed && dry.g.world.state.x === 1 && !dry.again && dry.g.log.includes('A well.'), `a well near is drunk from by one under half, and one that restores nobody is not gone back to (${sweet.healed}, ${dry.healed})`);
+}
+
+/** A fixture town of one row of floor, `n` squares long, with `features` on it; the party at its west end, facing east. */
+const row = (id: string, n: number, features: Feature[]): MapDef =>
+  ({ id, name: id, kind: 'town', start: { x: 1, y: 1, facing: EAST }, rows: ['#'.repeat(n + 2), `#${'.'.repeat(n)}#`, '#'.repeat(n + 2)], features });
+
+/**
+ * Talk (#721): whom it meets (the near, and on the aim's map the far; again once the company gains an
+ * item, as a hand-in wants), how it answers (a group's question, an inn's menu, a person's question,
+ * the ending's, a guild's hall, a prestige) and a crossing told: offered, an edge of the navigator's,
+ * and taken where it is the way.
+ */
+function talking(): void {
+  ok(BRAINS.indexOf(keep) === 0 && BRAINS.indexOf(talk) === 1 && BRAINS.indexOf(aims) === 2, 'talk is asked after the quartermaster and before the strategist');
+
+  // A group's question with a price and a fight: with 100 gold the price, with 5 none open but the fight, so Esc.
+  const toll: MapDef = { ...row('fx_toll', 3, []), kind: 'dungeon', encounters: [{ id: 'fx_tollmen', x: 3, y: 1, monsters: ['rat'], choice: { ask: '"Ten gold, or blood."', answers: [
+    { label: 'Pay 10 gold', price: 10, sets: 'fx_toll_paid', says: ['"Pass."'] }, { label: 'Fight', fight: true, says: ['"Blood, then."'] }] } }] };
+  const pg = piloted();
+  fixture(pg, toll, [2, 1, EAST]);
+  const parley = (gold: number): number => { pg.party.gold = gold; pg.parley('fx_tollmen'); const i = pick(pg.top as ChoiceScreen, pg, pg.pilot!); pg.pop(); return i; };
+  const rich = parley(100), poor = parley(5);
+  ok(rich === 0 && poor === -1, `pick on a parley of ['Pay 10 gold','Fight']: with 100 gold the price (${rich}), with 5 the fight, by Esc (${poor})`);
+
+  // An inn's menu with no need is the quartermaster's: Leave, not the night that rule 6 would take.
+  const ig = piloted();
+  fixture(ig, row('fx_lodge', 2, [{ kind: 'inn', x: 2, y: 1, name: 'The Fixture Arms', price: 5, interior: 'harrow_provisioner' }]), [1, 1, EAST]);
+  ig.party.gold = 150;
+  ig.interact(ig.maps.fx_lodge.features[0]);
+  const inn = ig.top as ChoiceScreen, leave = pick(inn, ig, ig.pilot!);
+  ok(need(ig) === null && inn.options[leave] === 'Leave' && inn.options[0].startsWith('Stay the night'), `pick on an inn's menu with no need is the index of Leave (${leave}: ${inn.options.join(' / ')})`);
+
+  // Near and far: the near met unasked, the far (past NEAR keys) only once the aim is on its map.
+  const lg = piloted(), lp = lg.pilot!;
+  fixture(lg, row('fx_lane', 26, [{ kind: 'npc', x: 4, y: 1, name: 'A near one', lines: ['"Hello."'] }, { kind: 'npc', x: 25, y: 1, name: 'A far one', lines: ['"Far."'] }]), [1, 1, EAST]);
+  lp.brains = [talk];
+  lp.toggle(lg);
+  drive(lg, Array(40).fill(null));
+  const near = lp.met.has('fx_lane:4,1') && !lp.met.has('fx_lane:25,1') && lg.world.state.x === 4;
+  lp.aim = { kind: 'explore', map: 'fx_lane' };
+  drive(lg, Array(60).fill(null));
+  ok(near && lp.met.has('fx_lane:25,1') && lg.world.state.x === 25 && lp.heard.includes('"Far."'),
+    `a person within ${NEAR} keys is met; one 21 keys on only once the aim is on the map (${[...lp.met].join(' ')}; at ${lg.world.state.x})`);
+
+  // A hand-in: taken at a meeting that holds the item, so its keeper is met again once the company gains it.
+  const hg = piloted(), hp = hg.pilot!;
+  fixture(hg, row('fx_yard', 4, [{ kind: 'npc', x: 3, y: 1, name: 'A collector', lines: ['"Bring me a wand."'], quest: [{ item: 'survey_wand', reward: 10, setFlag: 'fx_handed', done: ['"Good."'] }] }]), [1, 1, EAST]);
+  hp.brains = [talk];
+  hp.toggle(hg);
+  drive(hg, Array(20).fill(null));
+  const once = hp.met.has('fx_yard:3,1') && !hg.party.flags.fx_handed && hp.heard.includes('"Bring me a wand."');
+  hg.world.travel('fx_yard', 1, 1, EAST);
+  drive(hg, Array(20).fill(null));
+  const idle = !hg.party.flags.fx_handed && hg.world.state.x === 1;
+  hg.party.bag.push('survey_wand');
+  drive(hg, Array(20).fill(null));
+  ok(once && idle && hg.party.flags.fx_handed === 1 && !hg.party.bag.includes('survey_wand'),
+    `a person met is not met again until the company gains an item; then the hand-in is made (${once}, ${idle}, ${hg.party.flags.fx_handed})`);
+
+  // A person in a business, gone to: the door is due as the visit begins, so they are talked to before Leave.
+  const sg = piloted(), sp = sg.pilot!;
+  fixture(sg, row('fx_stall', 3, [{ kind: 'shop', x: 3, y: 1, name: 'A Fixture Stall', interior: 'harrow_provisioner', stock: [] }, { kind: 'npc', x: 3, y: 1, name: 'A stallholder', lines: ['"Fine day."'] }]), [1, 1, EAST]);
+  sp.brains = [talk];
+  sp.toggle(sg);
+  drive(sg, Array(20).fill(null));
+  ok(sp.heard.includes('"Fine day."') && sp.met.has('fx_stall:3,1') && sg.top instanceof ExploreScreen,
+    `a person in a business talk goes to is talked to there, by the menu's Talk to row, and the business left (${sp.heard.includes('"Fine day."')}, ${top(sg)})`);
+
+  // A goal to a person taken by another brain on the way, a box shown meanwhile: not met, so still due, and met once free.
+  const wg = piloted(), wp = wg.pilot!;
+  fixture(wg, row('fx_way', 9, [{ kind: 'npc', x: 8, y: 1, name: 'A far one', lines: ['"Far."'] }]), [1, 1, EAST]);
+  wp.brains = [talk];
+  wp.toggle(wg);
+  drive(wg, Array(3).fill(null));
+  wg.message('A box on the way.');
+  drive(wg, [null]);
+  const at = wg.world.state.x;
+  wp.goal = { map: 'fx_way', x: 1, y: 1, name: 'the way back', reason: 'the test' };
+  drive(wg, [null]);
+  const taken = !wp.met.has('fx_way:8,1') && !wp.heard.includes('"Far."');
+  wp.goal = null;
+  drive(wg, Array(20).fill(null));
+  ok(at === 4 && taken && wp.met.has('fx_way:8,1') && wp.heard.includes('"Far."'),
+    `a goal to a person taken by another brain on the way, a box shown meanwhile, is no meeting: still due, and met once free (taken at ${at}: ${taken})`);
+
+  // A person met again once the company sets a flag: the words that wait on it are heard.
+  const fg = piloted(), fp = fg.pilot!;
+  fixture(fg, row('fx_watch', 4, [{ kind: 'npc', x: 3, y: 1, name: 'A watcher', lines: ['"Not yet."'], says: [{ after: { flag: 'fx_word' }, lines: ['"Now then."'] }] }]), [1, 1, EAST]);
+  fp.brains = [talk];
+  fp.toggle(fg);
+  drive(fg, Array(12).fill(null));
+  const unsaid = fp.heard.includes('"Not yet."') && !fp.heard.includes('"Now then."');
+  fg.party.flags.fx_word = 1;
+  drive(fg, Array(12).fill(null));
+  ok(unsaid && fp.heard.includes('"Now then."'), `a person met is met again once a flag is set, and the words that wait on it are heard (${unsaid}, ${fp.heard.includes('"Now then."')})`);
+
+  // A person's question, from one at hand: the first answer open that is no way out and has no price.
+  const cg = piloted(), cp = cg.pilot!;
+  fixture(cg, row('fx_clerk', 3, [{ kind: 'npc', x: 2, y: 1, name: 'A clerk', lines: ['"A case?"'], choice: { ask: '"Whose case?"', answers: [
+    { label: 'Not now', sets: 'fx_no', says: ['"Later."'] }, { label: 'The dear one.', price: 60, sets: 'fx_dear', says: ['"Paid."'] }, { label: 'The plain one.', sets: 'fx_plain', says: ['"Plain."'] }] } }]), [1, 1, EAST]);
+  cp.brains = [talk];
+  cp.toggle(cg);
+  drive(cg, Array(12).fill(null));
+  ok(cg.party.flags.fx_plain === 1 && !cg.party.flags.fx_no && !cg.party.flags.fx_dear && cg.top instanceof ExploreScreen,
+    `a person's question is answered with the first answer open that is no way out and has no price (${Object.keys(cg.party.flags).join()})`);
+
+  // The ending's question is marked and not answered: the pilot stops itself under it, saying so, and presses nothing.
+  const eg = piloted(), ep = eg.pilot!;
+  fixture(eg, row('fx_heart', 2, [{ kind: 'npc', x: 1, y: 1, name: 'A keeper', lines: ['"Choose."'] }]), [1, 1, EAST]);
+  eg.ask({ ask: '"Which?"', answers: [{ label: 'Relight it.', sets: ENDINGS.reignite.flag, says: ['"So."'] }, { label: 'Not yet.', says: ['"Then wait."'] }] }, 'A keeper');
+  ep.toggle(eg);
+  const end = eg.top as ChoiceScreen, answered = pick(end, eg, ep), key = talk(eg, knownOf(eg), ep);
+  drive(eg, Array(10).fill(null));
+  ok(end.ends && answered === -1 && key === null && !ep.on && ep.band()?.lines[0] === 'The choice is yours.' && eg.top === end && !eg.party.flags[ENDINGS.reignite.flag],
+    `the ending's question is marked, neither picked nor answered, and the pilot stops under it with the band up (${end.ends}, ${answered}, ${key}, ${ep.on}, "${ep.band()?.lines[0]}")`);
+
+  // A guild's hall: the fee over the reserve, then for each of its classes the costliest spell over it, one each.
+  const hall = (gold: number): { g: Game; learnt: number[] } => {
+    const g = piloted(), p = g.pilot!;
+    fixture(g, row('fx_guild', 3, [{ kind: 'guild', x: 3, y: 1, name: 'A Fixture Guildhall', classes: ['paladin', 'cleric', 'sorcerer'], fee: 50, maxTier: 2, interior: 'harrow_provisioner' }]), [1, 1, EAST]);
+    g.party.gold = gold;
+    const before = g.party.members.map((m) => m.spells.length);
+    p.brains = [talk];
+    p.toggle(g);
+    drive(g, Array(60).fill(null));
+    return { g, learnt: g.party.members.map((m, i) => m.spells.length - before[i]) };
+  };
+  const paid = hall(400), short = hall(120), taught = paid.g.party.members.filter((m) => ['paladin', 'cleric', 'sorcerer'].includes(m.cls)).length;
+  ok(paid.g.party.flags[guildFlag('A Fixture Guildhall')] === 1 && paid.learnt.filter((n) => n === 1).length === taught && paid.learnt.every((n) => n <= 1) && paid.g.party.gold === 400 - 50 - 80 * taught && paid.g.party.gold >= reserve(paid.g.party)
+    && !short.g.party.flags[guildFlag('A Fixture Guildhall')] && short.learnt.every((n) => n === 0) && short.g.party.gold === 120 && short.g.top instanceof ExploreScreen,
+    `a guild's hall: the fee and a spell for each of its ${taught} members over the reserve (${paid.learnt.join('')}, ${paid.g.party.gold} gold left); with 120 gold, the fee left (${short.g.party.gold})`);
+
+  // A prestige's trainer: the first rise the game leaves open; none open, Leave.
+  const tg = piloted(), knight = tg.party.members.find((m) => m.cls === 'knight')!;
+  tg.party.gold = 1500;
+  const rise = (level: number): string => { knight.level = level; tg.train({ cls: 'knight', prestige: 1 }, 'A fixture master'); const c = tg.top as ChoiceScreen, i = pick(c, tg, tg.pilot!); tg.pop(); return c.options[i] ?? 'Esc'; };
+  const ready = rise(PRESTIGE_LEVELS[0]), early = rise(PRESTIGE_LEVELS[0] - 1);
+  ok(ready.startsWith(`${knight.name}: `) && early === 'Leave', `a prestige offered is taken where the game leaves it open, else Leave (${ready}; ${early})`);
+
+  // A person who sells a crossing: met, the route is told and is an edge of the navigator's; bound over it, taken.
+  const qg = piloted(), qp = qg.pilot!;
+  fixture(qg, row('fx_quay', 4, [{ kind: 'npc', x: 4, y: 1, name: 'A boatman', lines: ['"Over the water?"'], passage: [{ to: 'harrow', x: 7, y: 14, name: 'Helmstow', by: 'boat', fare: 0, departs: 6, days: 0, arrives: 12 }] }]), [1, 1, EAST]);
+  const untold = knownOf(qg).offers().length === 0 && qp.offers.length === 0 && routeMaps(knownOf(qg), 'fx_quay', 'harrow') === null;
+  qp.brains = [talk];
+  qp.toggle(qg);
+  drive(qg, Array(20).fill(null));
+  const told = qp.offers.map((o) => `${o.map}:${o.x},${o.y} ${o.passage.name}`).join(), way = routeMaps(knownOf(qg), 'fx_quay', 'harrow');
+  ok(untold && told === 'fx_quay:4,1 Helmstow' && way?.length === 1 && way[0].crossing === 'Helmstow' && way[0].exit.x === 4 && way[0].exit.to === 'harrow' && qg.world.state.mapId === 'fx_quay',
+    `a person who sells a crossing: after the meeting offers holds it and routeMaps finds the way to Helmstow by it, not before (${told}; ${way?.map((h) => `${h.map}>${h.exit.to} by ${h.crossing}`).join()}); bound nowhere, Not now`);
+  qg.world.travel('fx_quay', 1, 1, EAST);
+  qp.brains = [talk, route];
+  qp.goal = { map: 'harrow', x: 7, y: 14, name: 'Helmstow' };
+  const whys = new Set<string>();
+  for (let t = 0; t < 40 && qg.world.state.mapId === 'fx_quay'; t++) { drive(qg, [null]); whys.add(qp.why[0]); }
+  ok(qg.world.state.mapId === 'harrow' && whys.has('Passage to Helmstow.'), `bound for Helmstow, the navigator goes by the crossing told: to the boatman, the route chosen and boarded (${qg.world.state.mapId}; ${[...whys].join(' / ')})`);
 }
