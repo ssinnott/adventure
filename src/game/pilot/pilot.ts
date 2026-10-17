@@ -15,6 +15,7 @@ import type { Known } from './known.ts';
 import { route, unroute } from './route.ts';
 import type { Goal } from './route.ts';
 import { keep } from './keep.ts';
+import { explore } from './explore.ts';
 
 export type Tempo = 1 | 2 | 4;
 export interface PilotOpts { instant?: boolean; omniscient?: boolean }
@@ -27,11 +28,13 @@ export type Brain = (g: Game, k: Known, p: Pilot) => Action | null;
 
 /**
  * The brains, asked in this order and the first key given pressed: fight, keep (#719), aims (#720),
- * route (#717), explore (#718), talk (#721). Each slot is absent until its module lands.
+ * route (#717), explore (#718), talk (#721). Each slot is absent until its module lands. A brain that
+ * sets a goal asks `route` for its first key itself, so the goal is walked from the tick it is set.
  */
 export const BRAINS: readonly Brain[] = [
   keep,
   route,
+  explore,
 ];
 
 /** The lines the heard corpus keeps, the oldest dropped first. */
@@ -60,6 +63,13 @@ export class Pilot {
   plan: Action[] = [];
   /** The squares a goal was found shut at (three blocks on it), each with the line said there: the explorer's to read (#718). */
   readonly shut: { map: string; x: number; y: number; why: string }[] = [];
+
+  // The explorer's (#718).
+  /** The walls searched, each once from each side: "map:x,y,f", the map as played, the wall's square and the facing it was searched in. */
+  readonly searched = new Set<string>();
+  /** A map or a zone the strategist would have explored (#720 sets it; the explorer only reads it). */
+  prefer: string | null = null;
+
   /** Ticks counted since it took the helm, for the pace. */
   private ticks = 0;
   /** The fight last handed to the bot: each is handed once. */
@@ -77,9 +87,13 @@ export class Pilot {
 
   /**
    * A new company has heard nothing and is bound nowhere: a new game or a load empties the corpus, the
-   * goal, its plan and the squares found shut (Game.newGame, Game.loadGame).
+   * goal, its plan and the squares found shut, the walls searched and the map preferred (Game.newGame,
+   * Game.loadGame).
    */
-  forget(): void { this.heard.length = 0; this.goal = null; this.plan = []; this.shut.length = 0; unroute(this); }
+  forget(): void {
+    this.heard.length = 0; this.goal = null; this.plan = []; this.shut.length = 0; unroute(this);
+    this.searched.clear(); this.prefer = null;
+  }
 
   /**
    * Turns on or off; says the line. Off, a fight on top goes back to its keys. On with no game under
@@ -133,12 +147,15 @@ export class Pilot {
     if (top instanceof MessageScreen) return 'interact';
     if (top instanceof TitleScreen || top instanceof CreateScreen) return null;
     const k = knownOf(g), said = this.why;
+    let first: [string, string?] | undefined;
     for (const brain of this.brains) {
       const a = brain(g, k, this);
       if (a) return a;
+      if (!first && this.why !== said) first = this.why;
     }
-    // A brain that gave no key may still have said why (a need it cannot meet, #719); else nothing to do.
-    if (this.why === said) this.why = ['Nothing to do.'];
+    // A brain that gave no key may still have said why (a need it cannot meet, #719; "Helmstow is
+    // walked out.", #718): the first said stands, as the most urgent brain is asked first; else nothing to do.
+    this.why = first ?? ['Nothing to do.'];
     return null;
   }
 }

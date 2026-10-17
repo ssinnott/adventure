@@ -46,6 +46,21 @@ export interface Known {
   placeOf(map: string): [number, number] | undefined;
   /** Lines heard: everything said through `Game.say` and every message box opened, the last `HEARD_MAX`. */
   heard: readonly string[];
+
+  // The explorer's readers (#718).
+  /**
+   * The squares a map id spans, in the reckoning its readers take: a map's whole extent, as the automap
+   * draws it, or a zone's box on the outdoors, as the world map draws it. Its bounds and nothing else.
+   */
+  box(map: string): { x: number; y: number; w: number; h: number } | undefined;
+  /**
+   * The levels a place is tuned for, as the almanac gives them where the party stands (`World.here`): a
+   * zone's once the party has set foot in it (`WorldState.zones`), a town's or a dungeon's once visited;
+   * undefined before then, or where none is set.
+   */
+  band(map: string): readonly [number, number] | undefined;
+  /** How many squares of a map the party has seen: the automap's bits counted, so a brain can tell that nothing new is seen. */
+  seenCount(map: string): number;
 }
 
 /**
@@ -106,6 +121,28 @@ export function knownOf(g: Game): Known {
     visited: () => Object.keys(w.state.maps),
     placeOf: (map) => mapPlace(ATLAS, MAP_DEFS, map),
     heard: g.pilot?.heard ?? [],
+    box(map) {
+      const p = played(map), z = p?.box;
+      return p && (z ? { x: z.x, y: z.y, w: z.w, h: z.h } : { x: 0, y: 0, w: p.m.width, h: p.m.height });
+    },
+    band(map) {
+      const p = played(map);
+      if (!p) return undefined;
+      return p.box ? ((w.state.zones ?? []).includes(p.box.id) ? p.box.band : undefined) : w.state.maps[p.m.id] ? p.m.def.band : undefined;
+    },
+    seenCount(map) {
+      const p = played(map), n = p ? p.m.width * p.m.height : 0, bits = p && w.state.maps[p.m.id]?.explored;
+      if (all || !bits) return all ? n : 0;
+      let c = 0;
+      for (let i = 0, words = Math.min(bits.length, Math.ceil(n / 32)); i < words; i++) {
+        // A word's bits counted; the last word's beyond the map's squares are left out.
+        let v = i === words - 1 && n % 32 ? bits[i] & ((1 << (n % 32)) - 1) : bits[i];
+        v -= (v >>> 1) & 0x55555555;
+        v = (v & 0x33333333) + ((v >>> 2) & 0x33333333);
+        c += Math.imul((v + (v >>> 4)) & 0x0f0f0f0f, 0x01010101) >>> 24;
+      }
+      return c;
+    },
   };
 }
 
