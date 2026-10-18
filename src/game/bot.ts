@@ -244,6 +244,17 @@ export function sleepWith(s: CombatState, c: Character, sees: Sees = asWritten):
   return foes && foes.length >= 2 ? { spell: x, target: foes[0], foes } : undefined;
 }
 
+/**
+ * Whether one of the company besides member `i` can strike (#865): able to act, in a row it strikes
+ * from, a foe in its reach. The bots let sleepers lie, and sleep a group, only while one can, since a
+ * sleeper bars a spell over many and a caster alone would put its foes down and stand idle while they
+ * lie. A blow wakes only the foe it strikes, so a striker fights on among the sleepers.
+ */
+export function striker(s: CombatState, p: Party, i: number): boolean {
+  const foes = aliveMonsters(s);
+  return p.members.some((m, j) => j !== i && canAct(m) && canAttackFromRow(m, j) && foes.some((f) => canReach(s, m, f)));
+}
+
 /** What a member can drink or give in a fight: its pack's draughts, then the company's bag's, as the resolver takes them. */
 const draughts = (p: Party, c: Character): ItemDef[] => [...c.pack, ...p.bag].map(item).filter((d) => d.use);
 
@@ -279,8 +290,9 @@ export function botTurn(s: CombatState, p: Party, rng: RngInstance, i: number, s
   if (sees !== asWritten && beaten(s, p) && partyAct(s, p, rng, { type: 'flee' })) return { type: 'flee' };
   const c = p.members[i], foes = aliveMonsters(s), lead = markOf(s, foes, sees), foe = lead ?? foes[0];
   // With sleep on, sleepers are let lie (#853): a blade at an awake foe it reaches where there is one,
-  // a spell at an awake foe where one stands, and none over many that would wake a sleeper.
-  const lie = !!opts.sleep, up = lie ? foes.filter((f) => !sleeps(s.monsters[f])) : [], near = up.filter((f) => canReach(s, c, f));
+  // a spell at an awake foe where one stands, and none over many that would wake a sleeper; only while
+  // another of the company can strike (`striker`, #865), and only then does it sleep a group.
+  const lie = !!opts.sleep && striker(s, p, i), up = lie ? foes.filter((f) => !sleeps(s.monsters[f])) : [], near = up.filter((f) => canReach(s, c, f));
   const aim = up.length ? (lead !== undefined && up.includes(lead) ? lead : up[0]) : foe;
   const blade = near.length ? (lead !== undefined && near.includes(lead) ? lead : near[0]) : lead !== undefined && canReach(s, c, lead) ? lead : foes.find((f) => canReach(s, c, f)) ?? foe;
   const known = c.spells.map(spell).filter((x) => x.context !== 'explore' && x.sp <= c.sp);
@@ -297,7 +309,7 @@ export function botTurn(s: CombatState, p: Party, rng: RngInstance, i: number, s
   if (burn && (a = took({ type: 'cast', ...burn }))) return a;
   const bless = opts.bless ? blessWith(s, p, i) : undefined;
   if (bless && (a = took({ type: 'cast', spellId: bless.id, target: i }))) return a;
-  const sleep = opts.sleep ? sleepWith(s, c, sees) : undefined;
+  const sleep = lie ? sleepWith(s, c, sees) : undefined;
   if (sleep && (a = took({ type: 'cast', spellId: sleep.spell.id, target: sleep.target }))) return a;
   if (blast && (a = took({ type: 'cast', spellId: blast.id, target: aim }))) return a;
   const drink = opts.drink ? drinkFor(s, p, c, sees) : undefined;

@@ -56,7 +56,7 @@ import { MAP_DEFS, MONSTERS } from '../src/content/index.ts';
 import { ROLES, ROLE_IDS, LEVELS, HP, DAMAGE, xpFor, line, standardEncounter, testMonster, TROLL, WIGHT_CURSE, CALL, LIGHT, SWEEP, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, giantEncounter, drakeEncounter, BASILISK_STONE, basiliskEncounter, CLOCK, clockEncounter } from './testmonster.ts';
 import { quickening } from '../src/content/areas/ashfall/items.ts';
 import type { Role } from './testmonster.ts';
-import { wakeWith, markOf, ANSWER, breathGuard, mendLines, REST_AT, pools, mustRest, blessWith, sleepWith, drinkFor, sleeps, wakesMany } from '../src/game/bot.ts';
+import { wakeWith, markOf, ANSWER, breathGuard, mendLines, REST_AT, pools, mustRest, blessWith, sleepWith, drinkFor, sleeps, wakesMany, striker } from '../src/game/bot.ts';
 import type { BotOpts } from '../src/game/bot.ts';
 
 // The bots' answers, the rest rule and the pools it reads are the game's (src/game/bot.ts), and found here still.
@@ -377,8 +377,9 @@ export const thrifty = (s: CombatState, p: Party, rng: RngInstance, i: number, o
   if (!foes.length) { partyAct(s, p, rng, { type: 'defend' }); return; }
   // A blade at a leader or a caller it reaches (`markOf`), else at the weakest it reaches. With sleep
   // on, sleepers are let lie (#853): a blade and a spell at an awake foe where there is one, and no
-  // spell over many that would wake one (`wakesMany`).
-  const lie = !!opts.sleep, up = lie ? foes.filter((f) => !sleeps(s.monsters[f])) : [];
+  // spell over many that would wake one (`wakesMany`); only while another member can strike (`striker`,
+  // #865), and only then is a group slept.
+  const lie = !!opts.sleep && striker(s, p, i), up = lie ? foes.filter((f) => !sleeps(s.monsters[f])) : [];
   const reach = foes.filter((f) => canReach(s, c, f)), awake = reach.filter((f) => up.includes(f)), near = awake.length ? awake : reach;
   const lead = markOf(s, foes), pick = up.length ? up : foes, mark = lead !== undefined && pick.includes(lead) ? lead : undefined;
   const weakest = lead !== undefined && near.includes(lead) ? lead : (near.length ? near : foes).reduce((a, b) => (s.monsters[b].hp < s.monsters[a].hp ? b : a));
@@ -399,7 +400,7 @@ export const thrifty = (s: CombatState, p: Party, rng: RngInstance, i: number, o
     const v = pays(bless, more * Math.min(bless.turns ?? 1, left()) * rate);
     if (v > worth) { worth = v; best = { type: 'cast', spellId: bless.id, target: i }; }
   }
-  const sleep = opts.sleep ? sleepWith(s, c) : undefined;
+  const sleep = lie ? sleepWith(s, c) : undefined;
   if (sleep) {
     const held = sleep.spell.inflict === 'paralysed';
     const v = pays(sleep.spell, incoming(s, p, sleep.foes) * (held ? ROOTS_CHANCE : SLUMBER_CHANCE) * Math.min(held ? 1 / HOLD_BREAKS : SLEEPS_FOR, left()));

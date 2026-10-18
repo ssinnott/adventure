@@ -14,7 +14,7 @@ import type { CombatState, CombatGroup, PartyAction } from '../../src/game/comba
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import { elementMult, monsterSpells, monsterCanCast, KINDS } from '../../src/game/monsters.ts';
 import { gateBlast, gateBurn, gateTurn } from '../gate.ts';
-import { wakeWith, markOf, mendLines, ANSWER, companyAt, thrifty, REST_AT } from '../harness.ts';
+import { wakeWith, markOf, mendLines, ANSWER, companyAt, thrifty, REST_AT, ROUND_CAP } from '../harness.ts';
 import { botTurn, asSeen, asWritten, breathGuard } from '../../src/game/bot.ts';
 import type { BotOpts, Sees } from '../../src/game/bot.ts';
 import { CombatScreen } from '../../src/ui/combat.ts';
@@ -1224,6 +1224,30 @@ function botOpts(): void {
     const gate = three('gate'), thrift = three('thrifty'), slumbers = (s: CombatState): number => s.log.filter((l) => l.startsWith('Cassian casts Slumber')).length;
     ok(slumbers(gate) === 1 && slumbers(thrift) === 1 && gate.log.some((l) => l.startsWith('Maren casts Bless')) && !gate.log.some((l) => l.startsWith('Idris casts Bless')),
       `on, the sleepers are let lie: one Slumber in three rounds against three ogres, by the gate's bot and the thrifty one (${slumbers(gate)}, ${slumbers(thrift)}), and Maren blesses, not Idris (${gate.log.filter((l) => / casts /.test(l) && !l.startsWith('Ogre')).slice(0, 4).join(' ')})`);
+  }
+  {
+    // A caster alone does not stall behind its own Slumber (#865): Cassian, the rest fallen, knowing
+    // Slumber and Fire Bolt alone, a dagger he cannot strike with from the back, against two groups of
+    // ogres that barely hit, on half their hit points. The sleepers lie only while another can strike, so
+    // he sleeps neither group and burns both down as he does with sleep off, turn for turn; with Bram
+    // standing he sleeps. He stands what a natural 20 deals.
+    const ogre: MonsterDef = { ...MONSTERS.ogre, id: 'test_ogre', hp: 30, attack: -99 };
+    const alone = (opts: BotOpts, bram = false): { s: CombatState; turns: string } => {
+      const q = companyAt(8, 865), rng = makeRng(865), turns: string[] = [];
+      q.members.forEach((m, j) => { if (j < 5 && !(bram && j === 0)) { addCondition(m, 'dead'); m.hp = 0; } });
+      Object.assign(q.members[5], { spells: ['sleep', 'firebolt'], hp: 999, maxHp: 999 });
+      q.members[5].equipment.weapon = 'dagger';
+      const s = startCombat(q, [{ id: 'a', monsters: [ogre, ogre] }, { id: 'b', monsters: [ogre, ogre, ogre] }], rng);
+      for (let n = 0; n < 4000 && s.outcome === 'ongoing' && s.round <= ROUND_CAP; n++) {
+        const t = currentTurn(s, q, rng);
+        if (!t) break;
+        if (t.side === 'monster') monsterAct(s, q, rng); else turns.push(JSON.stringify(botTurn(s, q, rng, t.i, asWritten, opts)));
+      }
+      return { s, turns: turns.join(' ') };
+    };
+    const on = alone(ON), off = alone(OFF), beside = alone(ON, true), slept = (x: { s: CombatState }): number => x.s.log.filter((l) => l.startsWith('Cassian casts Slumber')).length;
+    ok(on.s.outcome === 'victory' && on.turns === off.turns && !slept(on) && slept(beside) > 0,
+      `a caster alone does not stall behind his Slumber: Cassian, the rest fallen, with Slumber and Fire Bolt against two groups, sleeps neither and wins in ${on.s.round} rounds turn for turn as with sleep off (${slept(on)} Slumbers, ${on.s.outcome}); with Bram standing he sleeps (${slept(beside)})`);
   }
 }
 
