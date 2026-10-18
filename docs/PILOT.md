@@ -332,7 +332,7 @@ not the finish.
   | Area | Chapter | The fair pilot | The omniscient pilot, from the save point |
   |---|---|---|---|
   | shelf | The Quiet Farm | finishes: 8,916 ticks, 31.4 days, level 5 (13.3 s; #857) | not run |
-  | thornmark | The Grove Stone | stops itself lost in Ashcombe Cellar at 1,1 ("Lost: no way on that I can see."), level 6, after 68,368 ticks, 176.9 days (211.7 s) | also fails: falls on Callow Downs at 127,71, level 6, after 16,052 ticks, 38.6 days (485.2 s) |
+  | thornmark | The Grove Stone | stops itself lost in Ashcombe Cellar at 1,1 ("Lost: no way on that I can see."), level 6, after 85,559 ticks, 239.6 days (247.7 s; #857, 68,368 ticks and 176.9 days before) | also fails: falls on Callow Downs at 127,71, level 6, after 16,052 ticks, 38.6 days (485.2 s; measured before #857) |
   | saltreach | The Tide Stone | not reached | |
   | wrackholm | The Stone Carried Home | not reached | |
   | sunderwood | The Wall | not reached | |
