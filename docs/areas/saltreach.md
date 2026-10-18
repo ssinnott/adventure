@@ -615,8 +615,8 @@ settled in its issue, and what the pilot teaches changes them.
   and onto Kilnhaven's quay at 16 two days on (#469). The walkthrough goes in by the gate and out again, buys each class its step at the
   armourer, trains a member of 12 to 13 at the loft and makes a Tumbler of Ottilie at 11, once
   the log has sent her to Pender; then, for a company of its own given the gold, it buys the set of
-  picks at Pender's door and the chart at the Map Room's, shows the picks open a locked chest that
-  the same company without them cannot and the chart map a square further, and sells each back at
+  picks at Pender's door and the chart at the Map Room's; shows the picks open a locked chest that
+  the same company without them cannot and the chart map a square further; and sells each back at
   half (#860); then it takes the boat to the isle, saves there and loads, and
   takes it home. The town pays nothing of its own: its 300
   is its quests', which are its halls', its chapter's and its side quests'.
