@@ -504,6 +504,33 @@ Decided by the owner's delegate for #18, each the owner's to overturn:
 6. **`--company newer` stays a check at 12, 20, 28 and 32** on the old company's dressing; a class
    past the limit is reported to the owner, not fixed.
 
+Decided by the owner's delegate for #891, each the owner's to overturn:
+
+1. **J2 stands: the gate's company models neither the tiers nor the bots' three,** and no Master,
+   skill, charm or found item. The road needs no tier or skill, and a line made on a stronger
+   company raises the monsters' blows where nothing bought raises defence (J2, above): optional
+   power is the player's edge, not the road's floor. No lever moves (not the softening cap, `WORST`,
+   the limits, a defence-side rule or a second judged company); the 91 monsters past 10 and the 22
+   `OFF_LINE` bosses stand, and the eight bounds areas (#830 to #837) meet the gate as it is.
+2. **What the optional power buys is written here** (#865, two under, 100 seeds). With Expert,
+   Master and the three the company fights 4.6 to 8.4 of a role's standard encounter to a rest at 20
+   where it fought 3.0 to 6.7 (9.0 asked at the floor), 9.9 to 13.6 at 25 where 5.9 to 8.8 (10.3
+   asked) and 4.0 to 10.0 at 28 where 2.3 to 7.0 (11.0 asked), and wins the boss 58% at 20 where 42%,
+   60% at 25 where 55% and 75% at 28 where 53%; its fights run longer, the sleepers let lie (at 20
+   from 3.4 to 10.7 rounds to 3.8 to 13.5). `node tools/harness.ts --under 2 --levels 13,20,25,28
+   --seeds 100 --tiers --bot bless,sleep,drink` prints it, in 18 s.
+3. **The harness's what-ifs are the standing evidence:** `--tiers`, `--bot bless,sleep,drink`,
+   `--company newer`, `--under 2` and `--calibrate` under any (it says what share of days end badly
+   and writes nothing), with the tables in MONSTERS §4.4 and the raw outputs on #883. No new check:
+   one over optional power would be a figure on a company the gate does not judge.
+4. **The barbarian for the knight and the bard for the thief at 20 are left,** reported and not
+   fixed (6 above). Against the soldier and the armoured (100 seeds; 9.0 asked, the limit 6.5 to
+   12.5) the premade six fight 8.7 and 9.1 to a rest, 6.3 and 6.4 with the barbarian and 12.3 and
+   13.3 with the bard; the newer six on the staff 8.8 and 9.4, inside every limit at 12, 20, 28 and
+   32. Each is the class as designed (the barbarian wears no plate, the bard's song lifts the
+   company), in a mixed company the gate does not judge; a class tune for a harness figure would
+   move play for everyone who fields it.
+
 Decided by the builder for #865, each the owner's to overturn:
 
 1. **"Another can strike" is a blow from its row at a foe in its reach,** asleep or awake (`striker`):
@@ -524,6 +551,19 @@ Decided by the builder for #865, each the owner's to overturn:
    spell over many wakes another's sleepers (with the six at 8 and Cassian at 12, Wren's Hailstorm
    woke the ogres he had slept). Who blesses, sleeps and drinks stays each member's own, and a
    company with no member at 11 plays as on main.
+
+Decided by the owner's delegate for #892, each the owner's to overturn:
+
+1. **The bots' three begin at 11, and a company with a member at 11 or over lets its sleepers lie
+   as a whole: stands** (the builder's 3 and 7). Act I plays as the owner's own play tuned it: with
+   the three at every level four of its figures went past their limits, and its monsters are not
+   re-sized for a bot.
+2. **`cairnfield_m8`'s crag group, two ravens and two tor trolls, stands** (the builder's 6): of the
+   fourteen mixes and orders #865 tried it is the only one inside both aims, 7.60 to a rest at the
+   floor (7.5 to 9.5 asked) and 64.9% two under (66.7% the aim). The 23.3% of the floor's days ended
+   by a fight broken off at fifteen rounds is the harness's figure, printed and not judged (#734):
+   the game has no round cap, the company wins every fight there and the trolls mend. Eight ravens
+   again would be 109.3% two under, past its limit, with a row owed and no better mix to size to.
 
 From 10 two under is judged by the day, not the fight. From 10 the damage spells roll their full
 dice and every group is sized for the day (docs/MONSTERS.md §4.4), so a fight from full health

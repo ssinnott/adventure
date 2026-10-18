@@ -386,6 +386,11 @@ Decided by the owner's delegate for #18, each the owner's to overturn:
 9. Inert until #861: no item of the content carries either, and the gate and the harness never wear
    one (off the ladder, as the charms are). (#861 placed the first.)
 
+Decided by the owner's delegate for #891, each the owner's to overturn:
+
+1. **The gate's company takes no tier, confirmed** (call 5; J2, EXPANSION §5.2). A tier stays
+   offence alone (call 2): no defence-side rule is added to make it pay in what the company takes.
+
 Decided by the builder for #852, each the owner's to overturn:
 
 1. What a tier does (`TIER_ARMS`, `TIER_STEPS`, `armsBonus`, `tierSteps`) is `party.ts`'s, beside
@@ -547,6 +552,23 @@ Decided by the builder for #857, each the owner's to overturn:
     a step onto hills or through snow, or see a key spent at a door, put them down for those steps.
 13. The weather still says "Snow lies deep, and the going is slow." to a Pathfinder: the snow lies
     deep whoever walks it.
+
+Decided by the owner's delegate for #892, each the owner's to overturn:
+
+1. **A Lockpick opens an iron-key door with no key at all, and keeps any key it holds: stands**
+   (the builder's 1 for #857). "Picks locks, and keeps the key" is this reading; the road needs no
+   skill either way (the five doors keep their keys), no quest, flag or lock reads a key spent and
+   no figure moves. A thief standing that walks past a guard it could fight is choosing, not falling
+   off a cliff; and as iron keys are one item the narrow reading would bring back only the first
+   key's guard. If the Lockpick slows the pilot's Thornmark run (#893), the fix is the pilot's.
+2. **The Cartographer's extra square follows sight, never past a wall, a door or a secret door:
+   stands** (the builder's 4). The secret is found, never told (§1); #889 asks the same of the base
+   square outdoors and is right to, so that the two squares obey one rule.
+3. **The eight found items keep no common rule for base piece or price: stands** (#861 to #864).
+   Every price sits inside its window and under its area's dearest find, so the curve suite's lines
+   stand. The elemental weapons' lead of 1.5 to 2.5 by `hits()` at their bands (10 to 15% of a
+   blow) is a found weapon's edge, optional power the gate does not measure (J2): a rung is worth 1
+   and a d6 3.5. Restating the eight is four area pull requests for a rule no player sees.
 
 ---
 
