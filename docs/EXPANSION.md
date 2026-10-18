@@ -1083,6 +1083,18 @@ Decided by the builder for #866, each the owner's to overturn:
 7. **PILOT's Thornmark row is measured again on main** (`FULLRUN=thornmark`, 18 October), the
    omniscient run with it, and the notes go with the row; the run of all areas stays 4473dac1's.
 
+Decided by the builder for #902, each the owner's to overturn:
+
+1. **§1 says main has no branch protection and does not only lose its clause:** "main requires
+   them" alone would claim what main lacks. The README's "Deploying" sentence ("Once the owner
+   protects main ...") is the same claim and says §8.3's procedure; the Work does not name it.
+2. **#808's call 6 stays as the record of its day** and gains a clause with the outcome, as #866's
+   first call keeps the records that named #865: no record is rewritten.
+3. **§10's suites' seconds are the ruling's figures** (the gate 310 s, the rest under 90 s) until
+   #895 prints them from the runner.
+4. **The opening paragraph's "17 October" is put right to "18 October":** §10 has been dated 18
+   October since #887.
+
 ---
 
 ## 11. Risks
