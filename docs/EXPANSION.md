@@ -1001,6 +1001,8 @@ Decided by the builder for #866, each the owner's to overturn:
    sells 7) and its clears short of the curve (the curve owes nothing). The rest seen stale is
    listed in the pull request.
 6. **The README names the found items by kind;** DESIGN §5 and §6 and SLICE name each.
+7. **PILOT's Thornmark row is measured again on main** (`FULLRUN=thornmark`, 18 October), the
+   omniscient run with it, and the notes go with the row; the run of all areas stays 4473dac1's.
 
 ---
 
@@ -1018,9 +1020,9 @@ Decided by the builder for #866, each the owner's to overturn:
   over it; too soft, and it is no gate. The check runs both ways, and the first groups past a
   border are the area's gentlest.
 - **The bot flatters or slanders the party.** A bot that plays worse than people sets the gate too
-  low. The gate's does so by decision (§5.2, J2): its company buys nothing optional and its bot never
-  blesses, sleeps, drinks or flees, so a company that buys the tiers, the skills or the items has an
-  easier road than measured. Let the owner's play overrule it.
+  low. The gate's does so by decision (§5.2, J2): its company buys nothing optional and its bot
+  never blesses, sleeps, drinks or flees, so a company that buys the tiers, the skills or the items
+  has an easier road than measured. Let the owner's play overrule it.
 - **One quest, one hotspot.** A quest from level 1 to the cap would be a file every area edits; it
   is joined from chapters instead (§5.8).
 - **Scale creep.** §2.1 is the target; land past it waits in the void.
