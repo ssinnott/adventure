@@ -934,6 +934,27 @@ Its words show the Lanterns' split without telling it: she writes down what the 
 Lantern beside her goes out without a word.
 
 
+### The artifact: Torhide (#846)
+
+Cairnmoor's of the bounds' eight (DESIGN §9). Found and never told: no `seek` quest, no line in the
+journal and no mark on the world map. #834 builds the lair, its door and the rumour once #845, #847
+and the guardian's drawing are in.
+
+- **What it is:** *A round shield faced with grey hide, and every cut in it closed over. / It is
+  warm to hold, and warmer by night.*
+- **The rumour:** the drover on N7, the road up onto the moor (§4.2), two lines more at a meeting
+  after his rumour of the lights, words only: *My grandfather's grandfather faced a shield with a
+  troll's hide. Cut it how you liked, by morning it had closed. / He took it up to the tops when he
+  was old, and the tops kept him.* It marks nothing on the world map.
+- **Slot and bearers:** a shield: the knight, the paladin and the ranger, as the Grey Shield.
+- **Numbers:** armour 9, the Grey Shield's 8 and a point (EXPANSION §5.2). Found and never sold.
+- **Power:** regeneration (DESIGN §9, kind 4): while it is borne, a tenth of its bearer's most hit
+  points back each hour of the clock, and never in a fight.
+- **The lair:** a cleft of one level in the rim's face, its mouth in P7, at the cap's band, 30–32
+  (#845).
+- **The guardian:** the Rim Troll (ogre, a new kind; boss, 32; docs/MONSTERS.md §13): *The rim stood
+  up.* Size 2; it mends unless burned.
+
 ## 7. Encounters, and what is new
 
 MONSTERS §7.2 has the roster and the fights: the Raven, the Bog Light, the Bog Body, the Moor

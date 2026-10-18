@@ -1182,6 +1182,14 @@ done flag holds, for no gold (§9, #448's 1). The Thief's goes down to the Dead-
   with the orders in the pack and the writer seen, he reads them through twice and hands them back,
   which sets `q_rook_read`; they are never handed in (§9, the Ranger's and the Thief's 2 and 3).
 
+### The artifact (#846)
+
+#832's boxes hold one of the bounds' eight artifacts (DESIGN §9), written in
+docs/areas/rimewater.md §6: the Wakerobe, a robe that keeps its bearer awake. Its lair's door stands
+in K12 under the pass, on the part of the box that is Monks' Vale's (the box is Loch Fuar's by its
+larger part), and its guardian, the Infirmarer, is a keeper of the frame the brothers wear under
+their robes (docs/MONSTERS.md §13).
+
 ## 7. Encounters, and what is new
 
 MONSTERS §8.1 has the roster and the fights: the Spine Eagle, the Brother, the Bell-ringer, the Snow

@@ -512,6 +512,32 @@ This time, she cried.
 
 ---
 
+## What the bounds hold
+
+*Off the quest, as the reach is, and so out of Wren's telling: the eight artifacts of DESIGN.md §9,
+one to each area the bounds build out. Each has two lines, its own words when it is read from the
+pack.*
+
+- **The Hagstone,** the Foreland's. A stone off the strand, a hole the sea wore through it and a
+  cord gone green. Held to the eye, the hole shows the dark as only dark.
+- **The Telstok,** Saltreach's. A staff of black bog oak, its foot worn round on a stone floor.
+  Struck on stone, it rings like a bell under water.
+- **Holdfast,** Wrackholm's. A smuggler's knife, its haft wound with kelp that has not rotted. Wet,
+  the weed on it moves.
+- **The Erzhemd,** the Kilns'. A shirt of mail in rings darker than iron, and no heavier than wool.
+  Inside the collar a smith's mark is cut, and a knocker's eye beside it.
+- **Torhide,** Cairnmoor's. A round shield faced with grey hide, and every cut in it closed over. It
+  is warm to hold, and warmer by night.
+- **The Wakerobe,** Rimewater's and the Whitespine's. A grey robe made for someone taller and
+  thinner, the sleeves past your fingers. Whoever wore it last walked out of the ice in it, and did
+  not lie down again.
+- **Akkush,** the Glasswold's. A Rider's bow of white horn and sinew, its grip worn to one hand.
+  Bound under the grip is a feather longer than your arm.
+- **Grim's Axe,** Ashfall's. A broad axe of black iron, its edge as warm as a hearthstone. Grim is
+  cut in its cheek, and under the name a smoking mountain.
+
+---
+
 ## Notes for the design
 
 This telling is the second draft. The first was a tour of every zone, and heard aloud it could not
