@@ -33,7 +33,8 @@
 // the rope that hangs over it, and the quay's and the pans' groups won at the box's floor. Then in
 // at the gate to Saltmouth (#177) and out again: the band's gear bought, training to 13 and a first
 // prestige taken; the Cartographers' first task taken at the Map Room, the road chained stone to
-// stone and the first rank's work done (#181), and the first Meridian journal read there; the Salt
+// stone and the first rank's work done (#181), and the first Meridian journal read there; Pender's
+// picks and the Map Room's chart bought, carried and sold back (#860); the Salt
 // Compact joined at the Keel (#182) by its run of brandy past the customs house, and its first
 // rank's crate; the way down through the Keel's cellar to the stair found from its sawdust; and the
 // boat to Wrackholm's landing and back, at the half fare a member pays. Then south into the pans
@@ -42,6 +43,7 @@
 // played every way.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, fight, listen, see, kneel, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
+import { headlessGame, drive } from '../../../../tools/tests/lib.ts';
 import type { Step, Walk } from '../../../../tools/walk.ts';
 import { CHAPTER } from './chapter.ts';
 import { CHAPTER as FORELAND } from '../shelf/chapter.ts';
@@ -50,9 +52,10 @@ import { STEPS as FORELAND_STEPS, hired, ledgerGiven } from '../shelf/walkthroug
 import { STEPS as GROVE_STEPS } from '../thornmark/walkthrough.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import { GameMap } from '../../../game/map.ts';
-import type { Feature } from '../../../game/map.ts';
-import { buy, item } from '../../../game/items.ts';
-import { canTrainAt, xpForLevel, prestigeOf, takePrestige, createCharacter, PRESTIGES, resists, rest } from '../../../game/party.ts';
+import type { Feature, MapDef } from '../../../game/map.ts';
+import { buy, item, priceIn } from '../../../game/items.ts';
+import { canTrainAt, xpForLevel, prestigeOf, takePrestige, createCharacter, PRESTIGES, resists, rest, isDown, NAME_MAX } from '../../../game/party.ts';
+import type { Party } from '../../../game/party.ts';
 import { teach } from '../../../game/prestige.ts';
 import { questLog, holds } from '../../../game/quests.ts';
 import type { QuestView } from '../../../game/quests.ts';
@@ -67,6 +70,11 @@ import { buildMaps } from '../../maps.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
 import { ACT_II } from '../../../../tools/tests/ladder.ts';
 import { MAP_DEFS, GUILD_QUESTS } from '../../index.ts';
+import { CURVE } from '../../progression.ts';
+import { businessEntries, ChoiceScreen } from '../../../ui/screens.ts';
+import { optionParts, columnLabelWidth } from '../../../ui/draw.ts';
+import { SIDE_W } from '../../../ui/frame.ts';
+import { measureText } from '../../../lib/engine/text.ts';
 import { meet, heard, answer } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
 
@@ -397,6 +405,130 @@ function theStar(w: Walk): void {
   }
   reset();
   w.party.gold = gold0;
+}
+
+type Shop = Extract<Feature, { kind: 'shop' }>;
+/** Pender, who teaches the Thief's first prestige, as the shop at his door has him stand after it. */
+const PENDER = TOWN.features!.find((f): f is Person => f.kind === 'npc' && f.teaches?.cls === 'thief')!;
+/** The two wares #860 sells in Saltmouth, in the order of the shops that sell them. */
+const SET_OF_PICKS = 'set_of_picks', GUILD_CHART = 'guild_chart';
+
+/**
+ * Pender's picks and the Map Room's chart (#860), bought at their doors as the game sells them, from each
+ * first menu's trade, with the gold given directly: the road has paid this company nothing by here, as the
+ * armourer's step is bought above on gold set by hand. Each is slotless, inside Saltreach's window and of
+ * the skill it does, fits the shop's rows, does that skill's work while carried and is bought back at half.
+ * Saltreach holds no locked chest, so the picks open the shape of #857's fixture, a chest locked in a room
+ * of its own under a company whose thief is down (the one born to Lockpick), and the chart maps a square
+ * further in #857's dungeon. Pender's teaching of the Thief's first is still had, through his person.
+ */
+function picksAndChart(ok: (cond: boolean, msg: string) => void): void {
+  const g = headlessGame(4), p = g.party, thief = p.members.find((m) => m.cls === 'thief')!;
+  const pender = TOWN.features!.find((f): f is Shop => f.kind === 'shop' && f.interior === 'saltmouth_locksmith')!;
+  const room = TOWN.features!.find((f): f is Shop => f.kind === 'shop' && f.hall === 'cartographers')!;
+  const shopOf = (id: string): Shop => (id === SET_OF_PICKS ? pender : room);
+
+  // What stands at the two doors.
+  const stands = (s: Shop): string => TOWN.features!.filter((f) => f.x === s.x && f.y === s.y).map((f) => f.kind).join();
+  ok(pender.stock.join() === SET_OF_PICKS && stands(pender) === 'shop,npc' && PENDER.x === pender.x && PENDER.y === pender.y && !PENDER.interior && PENDER.teaches?.prestige === 1,
+    `Pender's door is a shop selling a set of picks and nothing else, and he stands after it on its square with no room of his own, teaching the Thief's first (${pender.name})`);
+  ok(room.stock.join() === `rations,antidote,lantern_oil,potion_heal,${GUILD_CHART}` && room.hall === 'cartographers',
+    `the Map Room sells its stores as it did and a chart beside them (${room.stock.join(', ')})`);
+  ok(!/don't sell|sell no|sells no/i.test(PENDER.lines.join(' ')), 'and Pender no longer says he sells no picks');
+
+  // Slotless, of the skill each does, inside the window: Saltreach's 2,000 gold.
+  const [picks, chart] = [item(SET_OF_PICKS), item(GUILD_CHART)];
+  ok([picks, chart].every((d) => d.slot === 'none' && !d.use && d.price > 0 && d.price <= CURVE.saltreach.price) && picks.skill === 'lockpick' && picks.price === 750 && chart.skill === 'cartographer' && chart.price === 400,
+    `a set of picks (Lockpick, ${picks.price} gold) and a chart (Cartographer, ${chart.price}), each slotless and inside Saltreach's window of ${CURVE.saltreach.price.toLocaleString('en-GB')} gold`);
+
+  // The Buy list and the Sell list of a shop, as its first menu's trade opens them.
+  const list = (game: typeof g, s: Shop, sell: boolean): readonly string[] => {
+    while (game.screens.length > 1) game.pop();
+    game.world.travel('saltmouth', s.x, s.y, NORTH);
+    game.push(businessEntries(game, s)[0].open());
+    drive(game, sell ? ['down', 'interact'] : ['interact']);
+    return (game.top as ChoiceScreen).options;
+  };
+  /** The presses that choose row `at` of a list (none where it is not there, so a missing ware is not a wrong one bought). */
+  const choose = (at: number): ('down' | 'interact')[] => (at < 0 ? [] : [...Array<'down'>(at).fill('down'), 'interact']);
+
+  // Bought: the price shown and charged, the item in the bag, the gold gone.
+  const bought = [SET_OF_PICKS, GUILD_CHART].map((id) => {
+    const s = shopOf(id);
+    p.gold = priceIn(s, id);
+    const rows = list(g, s, false), row = rows[s.stock.indexOf(id)] ?? '';
+    drive(g, choose(s.stock.indexOf(id)));
+    return { id, rows, row, left: p.gold, held: p.bag.includes(id) };
+  });
+  ok(bought.every((b) => b.held && b.left === 0 && optionParts(b.row).label === item(b.id).name && optionParts(b.row).value === `${item(b.id).price}g`),
+    `each is bought from its shop's Buy list at its price, the gold given directly (${bought.map((b) => b.row.replace(/\t+/g, ' ').trim()).join('; ')})`);
+
+  // The names fit the shops' rows: each Buy list's, and the Sell list's worst case, a member whose name is the longest of the widest letters.
+  const widest = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'].sort((a, b) => measureText(b) - measureText(a))[0];
+  const worst = headlessGame(4);
+  worst.party.members[0].name = widest.repeat(NAME_MAX);
+  worst.party.members[0].pack.push(SET_OF_PICKS, GUILD_CHART);
+  const rows = [...new Set([pender, room].flatMap((s) => [...list(g, s, false), ...list(worst, s, true)]))];
+  const cut = rows.filter((r) => { const { label, value } = optionParts(r); return measureText(label) > columnLabelWidth(SIDE_W, value, true); });
+  ok(rows.some((r) => r.startsWith(`${picks.name} (${widest.repeat(NAME_MAX)})`)) && rows.some((r) => r.startsWith(`${chart.name} (${widest.repeat(NAME_MAX)})`)) && !cut.length,
+    `the names fit the shops' rows: each Buy list's, and the Sell list's with a name of ${NAME_MAX} ${widest}s beside each ware${cut.length ? ' -> cut: ' + cut.map((r) => r.replace(/\t+/g, ' ')).join('; ') : ''}`);
+
+  // Carried: the picks open a locked chest that the same company without them cannot, the chart maps a square further.
+  const company = (without = '', down = false): Party => {
+    const q = structuredClone(p);
+    for (const m of q.members) m.pack = m.pack.filter((i) => i !== without);
+    q.bag = q.bag.filter((i) => i !== without);
+    if (down) q.members.find((m) => m.cls === 'thief')!.conditions.push('dead');
+    return q;
+  };
+  const coffer = { kind: 'chest', x: 2, y: 1, id: 'fx_locked', gold: 40, items: ['torch'], locked: true } as const satisfies Feature;
+  const opens = (q: Party): string => {
+    const h = headlessGame(4, q);
+    h.maps.fx_coffer = new GameMap({ id: 'fx_coffer', name: 'Coffer', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['####', '#..#', '####'], features: [{ ...coffer, items: [...coffer.items] }] });
+    h.world.travel('fx_coffer', 2, 1, EAST);
+    const here = h.world.featureHere()!, from = h.log.length, gold = h.party.gold;
+    h.enterCell();
+    h.interact(here);
+    return `${h.log.slice(from).join(' ')} | ${h.party.gold - gold} | ${h.world.used(coffer.id) ? 'spent' : 'shut'}`;
+  };
+  const picker = company('', true).members.find((m) => !isDown(m))!.name;
+  const [withPicks, withoutPicks, thiefStanding] = [opens(company('', true)), opens(company(SET_OF_PICKS, true)), opens(company(SET_OF_PICKS))];
+  ok(withPicks === `A locked chest. ${picker} picks the lock. You open the chest: 40 gold, ${item('torch').name}. | 40 | spent` && withoutPicks === 'A locked chest. Locked. | 0 | shut' && thiefStanding.includes(`${thief.name} picks the lock.`),
+    `the picks bought open a locked chest that the same company without them, its thief down, cannot ("${withPicks}" against "${withoutPicks}"); its thief standing opens it born to it`);
+
+  const hall: MapDef = { id: 'fx_chart_hall', name: 'Chart hall', kind: 'dungeon', start: { x: 5, y: 5, facing: NORTH }, rows: Array<string>(11).fill('...........') };
+  /** How many squares west of the company the automap takes, standing in the middle of an open hall. */
+  const reach = (q: Party): number => {
+    const rng = makeRng(41), world = new World({ [hall.id]: new GameMap(hall) }, q, rng);
+    world.mapState.explored.fill(0);
+    world.travel(hall.id, 5, 5, NORTH);
+    let d = 0;
+    while (d < 4 && world.explored(4 - d, 5)) d++;
+    return d;
+  };
+  const [with1, without1] = [reach(company()), reach(company(GUILD_CHART))];
+  ok(with1 === 2 && without1 === 1, `the chart bought maps a square further than the same company without it: ${with1} squares west in a dungeon, against ${without1}`);
+
+  // Bought back at half, by the shop that sold it, through its Sell list.
+  const back = [SET_OF_PICKS, GUILD_CHART].map((id) => {
+    const s = shopOf(id), sell = list(g, s, true), at = sell.findIndex((r) => optionParts(r).label.startsWith(`${item(id).name} (`)), gold = p.gold;
+    drive(g, choose(at));
+    return { id, row: sell[at] ?? '', paid: p.gold - gold, gone: !p.bag.includes(id) };
+  });
+  ok(back.every((b) => b.gone && b.paid === Math.floor(item(b.id).price / 2)) && back[0].paid === 375 && back[1].paid === 200,
+    `a shop buys either back at half: ${back.map((b) => `${item(b.id).name} for ${b.paid}`).join(' and ')} (${back.map((b) => b.row.replace(/\t+/g, ' ')).join('; ')})`);
+
+  // Pender's teaching is still his: from the shop's first menu, "Talk to" him, and his words close onto the Thief's offer.
+  while (g.screens.length > 1) g.pop();
+  g.world.travel('saltmouth', pender.x, pender.y, NORTH);
+  const menu = businessEntries(g, pender).map((e) => e.label);
+  thief.level = 11; p.gold = 1000;
+  g.push(businessEntries(g, pender)[1].open());
+  drive(g, ['interact']);
+  const asked = g.top instanceof ChoiceScreen ? g.top.options[0] ?? '' : '';
+  drive(g, ['interact']);
+  ok(menu.join() === 'Buy and sell,Talk to Pender the locksmith' && asked.startsWith(`${thief.name}: `) && prestigeOf(thief) === 1 && p.gold === 0,
+    `Pender's first menu offers the trade and "Talk to" him, whose words close onto the Thief's first for 1,000 gold (${menu.join(' / ')}; "${asked.replace(/\t+/g, ' ')}")`);
 }
 
 export const walkthrough: Walkthrough = (ok) => {
@@ -822,6 +954,9 @@ export const walkthrough: Walkthrough = (ok) => {
   w.party.bag.push('meridian_journal');
   const reading = meet(ysolde, w.party, heard(w.world, ysolde)).text;
   ok(!!w.party.flags.meridian_read && countItem(w.party, 'meridian_journal') === 1 && /Fane/.test(reading), `Ysolde reads the first Meridian journal and gives it back (${reading.split('\n\n')[1]})`);
+
+  // Pender's picks and the Map Room's chart (#860): bought at their doors, carried and sold back at half.
+  picksAndChart(ok);
 
   // The Salt Compact (#182): the Keel is its hall, and a stranger is offered the run alone. The
   // clerk on C6's quay hands over the cask once the run is taken; the customs house door shows
