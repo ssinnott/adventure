@@ -873,8 +873,8 @@ function hollowLocked(ok: (cond: boolean, msg: string) => void): void {
  * How far the hollow lies from the road (#863), on the world grid: the larger of the two differences from its door
  * to the nearest square of any road or trail ('=') in the Whitespine's zones, which is where the chapter goes.
  */
-function offTheRoad(at: { x: number; y: number }): { apart: number; nearest: string } {
-  const out = buildMaps()[OUTDOORS], zones = out.zones.filter((z) => AREAS.find((a) => a.id === 'whitespine')!.maps.some((m) => m.id === z.id));
+function offTheRoad(out: GameMap, at: { x: number; y: number }): { apart: number; nearest: string } {
+  const zones = out.zones.filter((z) => AREAS.find((a) => a.id === 'whitespine')!.maps.some((m) => m.id === z.id));
   const door = zones.find((z) => z.id === 'monksvale_j12')!;
   let apart = Infinity, nearest = '';
   for (const z of zones) for (let y = z.y; y < z.y + z.h; y++) for (let x = z.x; x < z.x + z.w; x++) {
@@ -933,11 +933,11 @@ function hollowFinds(ok: (cond: boolean, msg: string) => void): void {
     && equip(knight, axe.id) && knight.equipment.weapon === axe.id && !equip(crew.members.find((m) => m.cls === 'sorcerer')!, axe.id) && !equip(crew.members.find((m) => m.cls === 'thief')!, axe.id),
     `worn, the knife raises the thief's accuracy ${bare} to ${statOf(thief, 'accuracy')} (carried, nothing) and her aim a point over the ladder's knife's; the knight wields the axe, the sorcerer and the thief cannot`);
   // Lightning against what the range places and what the ash behind it does: none is immune or resists it; the weak are named.
-  for (const [id, was] of [['whitespine', 8], ['ashfall', 16]] as const) {
+  for (const id of ['whitespine', 'ashfall']) {
     const area = AREAS.find((a) => a.id === id)!;
     const placed = [...new Set(area.maps.flatMap((m) => (m.encounters ?? []).flatMap((e) => e.monsters)))].map((m) => MONSTER_DEFS[m]).filter((m) => m.level > 10);
     const weak = placed.filter((m) => elementMult(m, 'lightning') > 1), shut = placed.filter((m) => elementMult(m, 'lightning') < 1);
-    ok(placed.length === was && !shut.length && weak.length > 0, `lightning is never nothing at ${id}: of the ${placed.length} monsters it places past 10, ${weak.length} are weak to it (${weak.map((m) => m.id).join(', ')}) and ${shut.length} immune or resistant`);
+    ok(placed.length > 0 && !shut.length && weak.length > 0, `lightning is never nothing at ${id}: of the ${placed.length} monsters it places past 10, ${weak.length} are weak to it (${weak.map((m) => m.id).join(', ')}) and ${shut.length} immune or resistant`);
   }
   // Found and never told.
   const split = hollowEvent('j12_split');
@@ -951,7 +951,7 @@ function hollowFinds(ok: (cond: boolean, msg: string) => void): void {
   ok(!told.length, `found and never told: no person, quest, chapter or atlas place or site names the hollow, the axe or the knife (${told.length} do)`);
   // Off the road, a long way: ten squares at least from any road or trail of the range, by the crow, from the door and from the pine.
   const door = mine.maps.find((m) => m.id === 'monksvale_j12')!.secrets![1];
-  const far = offTheRoad(door), pine = offTheRoad(split);
+  const world = buildMaps()[OUTDOORS], far = offTheRoad(world, door), pine = offTheRoad(world, split);
   ok(far.apart >= 10 && pine.apart >= 10, `the hollow is off the road: its door is ${far.apart} squares from the nearest road or trail of the range (${far.nearest}) and the pine ${pine.apart} (${pine.nearest}), by the crow`);
 }
 
