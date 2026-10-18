@@ -13,6 +13,10 @@ import type { Party } from './party.ts';
 import { countItem, takeItem, payXp } from './party.ts';
 import type { QuestDef, When } from './quests.ts';
 import { holds } from './quests.ts';
+import { rankOf, ofGuild, isDone } from './ranks.ts';
+
+// The rank is game/ranks.ts's (#857), so that game/skills.ts may ask it apart from the quests' rules.
+export { rankOf };
 
 /** A guild quest, given out and paid at the guild's halls; each area's are in its guilds.ts. */
 export interface GuildQuest {
@@ -40,26 +44,7 @@ export interface GuildQuest {
   goals: QuestDef['goals'];
 }
 
-const ofGuild = (guild: GuildId, quests: readonly GuildQuest[]): GuildQuest[] => quests.filter((q) => q.guild === guild);
-const isDone = (q: GuildQuest, party: Party): boolean => !!party.flags[doneFlag(q.id)];
 const isTaken = (q: GuildQuest, party: Party): boolean => !!party.flags[takenFlag(q.id)];
-
-/**
- * The company's rank in a guild: 0 a stranger, 1 once the first task is done and one more for each
- * rank all of whose quests are done. It stops at the first rank with no quests built yet. A rank
- * once reached is kept (its flag, `rankFlag`), so a quest added later at a rank the company holds is
- * offered to it and never lowers it: a save loads as it did (EXPANSION §5.5).
- */
-export function rankOf(guild: GuildId, party: Party, quests: readonly GuildQuest[] = GUILD_QUESTS): number {
-  const mine = ofGuild(guild, quests);
-  let r = party.flags[rankFlag(guild)] ?? 0;
-  while (r < GUILDS[guild].ranks.length) {
-    const at = mine.filter((q) => q.rank === r);
-    if (!at.length || !at.every((q) => isDone(q, party))) break;
-    r++;
-  }
-  return r;
-}
 
 /** A guild's name as said mid-sentence: "the Wardens". */
 export const guildName = (guild: GuildId): string => GUILDS[guild].name.replace(/^The /, 'the ');

@@ -182,6 +182,26 @@ export function passage(): void {
   delete party.flags.fx_free; delete party.flags.fx_half;
   ok(fareOf(BOAT, world) === 150, 'and neither holding, the whole fare');
 
+  // A Navigator standing pays half of what the crossing costs, after its half or its free (#857), the
+  // offer and the pay row saying so; with the Navigator down the fare is as without one. (Idris, the
+  // second, lies dead: a skill learnt by the dead does nothing.)
+  const nav = party.members[2];
+  nav.skills = ['navigator'];
+  const navFull = [fareOf(BOAT, world), fareOf({ ...BOAT, fare: 25 }, world), payLabel(BOAT, world)];
+  party.flags.fx_half = 1;
+  const navHalf = [fareOf(BOAT, world), offerLine(BOAT, world).includes('37g')];
+  party.flags.fx_free = 1;
+  const navFree = fareOf(BOAT, world);
+  delete party.flags.fx_free; delete party.flags.fx_half;
+  nav.conditions.push('unconscious');
+  const navDown = fareOf(BOAT, world);
+  nav.conditions.pop();
+  dead.skills = ['navigator']; delete nav.skills;
+  const deadNav = fareOf(BOAT, world);
+  delete dead.skills;
+  ok(navFull.join() === '75,12,Pay the fare (75 gold)' && navHalf.join() === '37,true' && navFree === 0 && navDown === 150 && deadNav === 150 && fareOf(BOAT, world) === 150,
+    `a Navigator standing halves the fare after its half or its free: 75 for 150, 12 for 25, 37 once half holds, nothing once free does; down, or learnt by the dead, the whole 150 (${navFull.join(', ')}; ${navHalf[0]}; ${navFree}; ${navDown}; ${deadNav})`);
+
   // The atlas: a boat both ways is one way by sea, travelled both ways; a coach is a way of its own.
   const edges = zoneEdges(ATLAS, [...MAP_DEFS, PORT, ISLE, TOWN]);
   const sea = edges.filter((e) => !e.planned && e.kind === 'sea' && [e.from, e.to].sort().join() === 'fx_isle,fx_port');

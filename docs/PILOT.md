@@ -162,8 +162,10 @@ the frontier by the route's length, a seen square the company can stand on with 
 beside it ("Looking about Helmstow."); and, the frontier spent, the nearest wall it suspects, a wall
 with seen floor on both sides, searched once from each side (`Pilot.searched`) from the square
 before it ("Searching the wall."), so a secret door whose far side is unseen is not found (decision
-17). Then it says "Helmstow is walked out." and gives no key, and says it again with no search
-until something it rests on changes. It explores the map it is on, or `Pilot.prefer` (the
+17). A Lockpick standing (the premade six's thief is born to it) opens a locked door with no key
+spent, but the explorer goes to one only once a key is carried, as before (#857). Then it says
+"Helmstow is walked out." and gives no key, and says it again with no search until something it
+rests on changes. It explores the map it is on, or `Pilot.prefer` (the
 strategist's, #720) where that is this map or a zone of it. Outdoors it keeps to one zone's box, the party's or the zone preferred, and never goes
 into a zone whose band, as Known gives it, starts above the company's level and one, unless that zone
 is preferred ("Callow Downs is too hard for us yet." in such a zone). Of a zone preferred with nothing
@@ -206,8 +208,9 @@ under the goal's zone's floor, where that zone's band as Known gives it starts a
 level and one ("Levelling in the Foreland to 4."); else walking the land ("Walking the Keep."). To a
 goal's map it goes by the exits seen ("Bound for Callow Downs: Ashcombe is past Gullwick..."), else
 by the zones between, and there it hands the map to the explorer (`Pilot.prefer`); it opens a chest
-it stands on and goes to one seen there; walked out, it walks the place again end to end, so that the
-days pass. Three days of the world's on one goal with no change in its words, it says "Lost in the
+it stands on and goes to one seen there, Space pressed once a chest, so a locked chest it cannot
+open ("Locked.") is walked past as a locked door with no key is (#857); walked out, it walks the
+place again end to end, so that the days pass. Three days of the world's on one goal with no change in its words, it says "Lost in the
 Foreland: three days, and no way on.", gives the goal up (`Pilot.lost`) and turns to the next aim;
 three days levelling with no level gained, "Three days in the Foreland, and no stronger."; either is
 tried again once anyone gains a level or a flag is set. Over a line into a zone too hard for the
@@ -285,7 +288,7 @@ with the premade company and an instant pilot at the helm asking every brain: th
 chapters in AREAS order on the one Game, so that each area starts as the pilot left the last (the one
 road). A chapter's play ends when the chapter is done, the company is wiped, the pilot stops itself
 or a cap is met: ten minutes of the wall clock (`BUDGET`) or 2,000,000 ticks (`TICK_CAP`). Each chapter
-gets a line: "shelf: the pilot finishes The Quiet Farm in 10,792 ticks, 39.4 days, level 5", the days
+gets a line: "shelf: the pilot finishes The Quiet Farm in 8,916 ticks, 31.4 days, level 5" (#857), the days
 being the world's while it played; or where it stopped: fell, stopped itself with its why line or
 capped (by the budget or by the ticks). The last chapter ends at an ending taken, which the pilot never
 takes: its stop under the question ("The choice is yours.") counts, and the test, as its privilege,
@@ -328,8 +331,8 @@ not the finish.
 
   | Area | Chapter | The fair pilot | The omniscient pilot, from the save point |
   |---|---|---|---|
-  | shelf | The Quiet Farm | finishes: 10,792 ticks, 39.4 days, level 5 (25.9 s) | not run |
-  | thornmark | The Grove Stone | stops itself lost in Ashcombe Cellar at 1,1 ("Lost: no way on that I can see."), level 6, after 68,368 ticks, 176.9 days (211.7 s) | also fails: falls on Callow Downs at 127,71, level 6, after 16,052 ticks, 38.6 days (485.2 s) |
+  | shelf | The Quiet Farm | finishes: 8,916 ticks, 31.4 days, level 5 (13.3 s; #857) | not run |
+  | thornmark | The Grove Stone | stops itself lost in Ashcombe Cellar at 1,1 ("Lost: no way on that I can see."), level 6, after 85,559 ticks, 239.6 days (247.7 s; #857, 68,368 ticks and 176.9 days before) | also fails: falls on Callow Downs at 127,71, level 6, after 16,052 ticks, 38.6 days (485.2 s; measured before #857) |
   | saltreach | The Tide Stone | not reached | |
   | wrackholm | The Stone Carried Home | not reached | |
   | sunderwood | The Wall | not reached | |
@@ -651,14 +654,14 @@ The figures: The Quiet Farm played from a new game by every brain on seeds 1 to 
 12. **The quartermaster's nearest place is kept while nothing it rests on moves but the party's square** (`nearest`: the map, its squares seen, the flags, the groups the automap marks and the places): at #842's review a stuck tick cost 13 ms, 44% of it a search of the whole map a tick; now 100 ticks of a walk make no such search (the check counts them, `searches`).
 13. **The lost rule counts the world's minutes, sleep among them**: a company that rests nine times on one goal is lost on it. Counting waking hours only would need the rest and the inn's night told apart from a test's clock; left as it is, and counted: it fires 3 to 17 times a finished run, a median of about 9 (counted from the log).
 14. **The survival sweep** (`tools/tests/survival.ts`): run only when named (`ASKED`, `tools/test.ts`, checked by the runner's own check; #723's second part may add `fullrun`); the floors, 9 of 12 with the premade company and 8 of 12 with the drawn ones, are the delegate's, as #723 names no figure; a run within ten minutes of the wall clock (`RUN_BUDGET`), over which it counts as not finished, and the 200,000-tick cap stands. `headlessGame` takes a company (`randomParty(seed)`, as P on the title draws it), its default as it was.
-15. **The shelf's play is back on seed 4, to the chapter's end** (the seed pin gone), within five minutes of the wall clock (`PLAY_BUDGET`, `pilotPlays`): 10,875 ticks, 21.0 s (10,792 since a hill hides what lies behind it, #53), where main's play on seed 10 took 14,538 ticks, 29.8 s. The play is chaotic: a change to anything it meets may move it.
+15. **The shelf's play is back on seed 4, to the chapter's end** (the seed pin gone), within five minutes of the wall clock (`PLAY_BUDGET`, `pilotPlays`): 10,875 ticks, 21.0 s (10,792 since a hill hides what lies behind it, #53; 8,916 since #857), where main's play on seed 10 took 14,538 ticks, 29.8 s. The play is chaotic: a change to anything it meets may move it.
 16. **Not built:** caution outdoors by level (the flight answered the level-1 fights it was for), the armour first, the reach two maps in (Known limits) and `Game.fight`'s taking every group beside the party, which is the game's. Talk's meetings in Helmstow are talk's, left as they were.
 
 Decided by delegate for #723 (the suite), each the owner's to overturn:
 
 1. **FULLRUN reaches the road up to the last area it names**, and every chapter on the road is checked, as a chapter is reached only through those before it: `FULLRUN=thornmark` plays and checks the shelf's chapter first. Unset is `shelf`; a name that is no area with a chapter fails.
 2. **Ten minutes of the wall clock a chapter's play** (`BUDGET`), fair and omniscient each their own, as the survival sweep's run has; the issue's 2,000,000 ticks (`TICK_CAP`) stays as a cap. Either cap fails and says which. With the road as it stands the whole run takes about nine minutes.
-3. **Seed 4 and the premade company**, the walkthroughs', so the default run repeats the shelf's walkthrough play tick for tick (10,792 since #53; 10,875 before) and the two can be compared.
+3. **Seed 4 and the premade company**, the walkthroughs', so the default run repeats the shelf's walkthrough play tick for tick (8,916 since #857; 10,792 since #53; 10,875 before) and the two can be compared.
 4. **The save point is taken with the map on top**, as F5 saves: a chapter may end in a visit, and the pilot plays on until it is back on the map, those ticks counted in the next chapter. At the first sweep the save was taken in the throne room's visit, the party on its door, and a game loaded from it stood there with no way out: the navigator does not turn on a square it leaves from.
 5. **The omniscient run loads the save as F9 does** (`headlessLoad`) with a fresh pilot, so nothing of the fair pilot's memory crosses; its line is a second failure beside the fair one's, worded as the issue words it, with where it stopped.
 6. **Where the omniscient pilot finishes a chapter the fair one lost, the road goes on from its end with a fresh fair pilot** (its corpus empty), so each later chapter still has a fair line; a chapter neither finishes ends the road, and each later area fails as not reached.

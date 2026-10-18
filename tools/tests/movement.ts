@@ -1,11 +1,14 @@
 // Moving about: steps and the clock, doors, keys and secrets, water and mountains, the end of the
 // world, the open pass walked into Thornmark and back, Town Portal, the stairs, Helmstow's two
 // gates, a group under the ice, the road cut through cliffs and peaks, the far side's ground, the
-// skills that open the map and the beasts an Archdruid is left alone by.
+// skills that open the map, a Pathfinder's pace and a Lockpick's locks, and the beasts an Archdruid
+// is left alone by.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
-import { MONSTERS } from '../../src/content/index.ts';
-import { World, WALK_STEPS, WALK_ENDS, FLOAT_ENDS, FLOAT_FAILS } from '../../src/game/world.ts';
+import { MONSTERS, ITEMS, CLIMATES } from '../../src/content/index.ts';
+import type { ItemDef } from '../../src/game/items.ts';
+import { findWeather, SNOW_DRAG } from '../../src/game/weather.ts';
+import { World, WALK_STEPS, WALK_ENDS, FLOAT_ENDS, FLOAT_FAILS, START_MINUTES } from '../../src/game/world.ts';
 import { OUTDOORS } from '../../src/game/outdoors.ts';
 import { GameMap, LEGEND } from '../../src/game/map.ts';
 import type { EncounterDef, MapDef } from '../../src/game/map.ts';
@@ -46,14 +49,18 @@ export function movement(): void {
   world.travel('mill', 1, 1, 0);
   const r4 = world.move('forward');
   ok(r4.kind === 'blocked', 'a wall blocks the way');
-  // Locked door needs a key; the key opens it and is consumed.
+  // Locked door needs a key; the key opens it and is consumed: a company with no Lockpick standing,
+  // its thief (born to Lockpick, #857) down for the two steps.
+  const thief = party.members.find((m) => m.cls === 'thief')!;
+  thief.conditions.push('dead');
   world.travel('mill', 6, 11, 1);
   const locked = world.move('forward');
-  ok(locked.kind === 'blocked' && /Locked/.test(locked.reason), 'a locked door blocks without a key');
+  ok(locked.kind === 'blocked' && /Locked/.test(locked.reason), 'a locked door blocks without a key, with no Lockpick standing');
   party.bag.push('key_iron');
   const unlocked = world.move('forward');
-  ok(unlocked.kind === 'moved' && world.map.at(7, 11).door === 'door' && !party.bag.includes('key_iron'), 'an iron key unlocks the door and is used up');
+  ok(unlocked.kind === 'moved' && world.map.at(7, 11).door === 'door' && !party.bag.includes('key_iron') && unlocked.messages.includes('The lock turns. The key crumbles.'), 'an iron key unlocks the door and is used up');
   ok(world.mapState.doors['7,11'] === 'door', 'the unlocked door is recorded for the save');
+  thief.conditions.splice(thief.conditions.indexOf('dead'), 1);
   // Secret door: the party has an elf and a gnome, so the search always succeeds.
   world.travel('mill', 4, 6, 2);
   ok(world.map.at(4, 7).door === 'secret' && world.search() && world.map.at(4, 7).door === 'door', 'searching finds the secret door');
@@ -261,6 +268,8 @@ export function movement(): void {
   range();
   farSide();
   opened();
+  paced();
+  picked();
   archdruid();
 }
 
@@ -351,6 +360,85 @@ function opened(): void {
     const got = steps(setup);
     ok(got === want, `${who}: a step west into the mountain, east into the water and north into the sea comes to ${got}${got === want ? '' : ` (wanted ${want})`}`);
   }
+}
+
+/**
+ * Pathfinder (#857): a step onto hills, ash or dunes, or through deep snow, costs the company with a
+ * Pathfinder standing the road's six minutes, and no more; without one, eight, and ten onto hills in
+ * deep snow, as before. A strip of open ground in Thornmark's weather, the square ahead made over to
+ * each ground in turn, on a dry day and in deep snow; the premade six, whose ranger is born to it,
+ * with the ranger standing, with the ranger down, and with the ranger down and Pathfinder learnt.
+ */
+function paced(): void {
+  const def: MapDef = { id: 'fx_pace', name: 'Pace', kind: 'outdoor', region: 'thornmark', start: { x: 1, y: 1, facing: EAST }, rows: ['MMMM', 'M,,M', 'MMMM'] };
+  const rng = makeRng(31), seed = new World({ fx_pace: new GameMap(def) }, defaultParty(rng), rng).state.weatherSeed!;
+  const dry = findWeather(seed, START_MINUTES, CLIMATES.thornmark, (w) => w.cover === 0 && w.precip === 0);
+  const snow = findWeather(seed, START_MINUTES, CLIMATES.thornmark, (w) => w.cover >= 0.5);
+  const GROUND = ['hills', 'ash', 'dunes', 'pine'] as const;
+  /** Minutes a step east takes onto each ground, dry and then in deep snow, for the company `setup` makes. */
+  const steps = (setup: (p: Party) => void): string => {
+    const r = makeRng(31), p = defaultParty(r), w = new World({ fx_pace: new GameMap(def) }, p, r);
+    setup(p);
+    return [dry, snow].map((at) => GROUND.map((t) => {
+      w.travel('fx_pace', 1, 1, EAST); w.state.minutes = at; w.map.at(2, 1).terrain = t;
+      const b = w.state.minutes;
+      return w.move('forward').kind === 'moved' ? w.state.minutes - b : -1;
+    }).join(' ')).join(' / ');
+  };
+  const ranger = (p: Party): Character => p.members.find((m) => m.cls === 'ranger')!;
+  const slow = `8 8 8 6 / ${8 + SNOW_DRAG} ${8 + SNOW_DRAG} ${8 + SNOW_DRAG} ${6 + SNOW_DRAG}`, road = '6 6 6 6 / 6 6 6 6';
+  const cases: [string, (p: Party) => void, string][] = [
+    ['the ranger standing, born to Pathfinder', () => undefined, road],
+    ['the ranger down, nobody else with it', (p) => { ranger(p).conditions.push('dead'); }, slow],
+    ['the ranger down, Pathfinder learnt by the knight', (p) => { ranger(p).conditions.push('dead'); p.members[0].skills = ['pathfinder']; }, road],
+    ['the ranger made a knight, nobody with it', (p) => { ranger(p).cls = 'knight'; }, slow],
+  ];
+  ok(snow > 0 && dry > 0, 'a dry day and a day of deep snow found in Thornmark');
+  for (const [who, setup, want] of cases) {
+    const got = steps(setup);
+    ok(got === want, `${who}: a step onto hills, ash, dunes and pine takes ${got} minutes, dry / in deep snow${got === want ? '' : ` (wanted ${want})`}`);
+  }
+}
+
+/**
+ * Lockpick (#857), at an iron-key door: with a Lockpick standing, or a set of picks carried, the door
+ * opens with no key, and a key carried is kept; with neither, a key opens it and is spent, and without
+ * one it stays locked. The premade six, whose thief is born to it; a set of picks is a fixture item
+ * that does the skill's work carried (`ItemDef.skill`), as a copybook does Linguist's.
+ */
+function picked(): void {
+  const def: MapDef = { id: 'fx_lock', name: 'Lock', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#.L.#', '#####'] };
+  const picks: ItemDef = { id: 'fx_picks', name: 'A Set of Picks', slot: 'none', price: 750, skill: 'lockpick' };
+  const thief = (p: Party): Character => p.members.find((m) => m.cls === 'thief')!;
+  /** A step east into the door for the company `setup` makes: what happens, the line said, the keys left and the door after. */
+  const tries = (setup: (p: Party) => void): string => {
+    const r = makeRng(37), p = defaultParty(r), w = new World({ fx_lock: new GameMap(def) }, p, r);
+    setup(p);
+    w.travel('fx_lock', 1, 1, EAST);
+    const m = w.move('forward'), keys = p.bag.filter((i) => i === 'key_iron').length;
+    return `${m.kind === 'moved' ? m.messages.join(' ') : m.kind === 'blocked' ? m.reason : m.kind} | ${keys} | ${w.map.at(2, 1).door}${w.mapState.doors['2,1'] ? ' kept' : ''}`;
+  };
+  const down = (p: Party): void => { thief(p).conditions.push('dead'); };
+  ITEMS[picks.id] = picks;
+  try {
+    const cases: [string, (p: Party) => void, string][] = [
+      ['the thief standing, born to Lockpick, no key', () => undefined, 'Ottilie picks the lock. | 0 | door kept'],
+      ['the thief standing, a key carried', (p) => { p.bag.push('key_iron'); }, 'Ottilie picks the lock. | 1 | door kept'],
+      ['the thief down, a key carried', (p) => { down(p); p.bag.push('key_iron'); }, 'The lock turns. The key crumbles. | 0 | door kept'],
+      ['the thief down, no key', down, 'Locked. A key would open it. | 0 | locked'],
+      ['the thief down, Lockpick learnt by the knight', (p) => { down(p); p.members[0].skills = ['lockpick']; p.bag.push('key_iron'); }, 'Bram picks the lock. | 1 | door kept'],
+      ['the thief down, a set of picks in the cleric\'s pack', (p) => { down(p); p.members[4].pack.push(picks.id); }, 'Maren picks the lock. | 0 | door kept'],
+      ['the thief down, a set of picks in the bag and a key', (p) => { down(p); p.bag.push(picks.id, 'key_iron'); }, 'Bram picks the lock. | 1 | door kept'],
+    ];
+    for (const [who, setup, want] of cases) {
+      const got = tries(setup);
+      ok(got === want, `${who}: a step into the iron-key door says "${got}"${got === want ? '' : ` (wanted "${want}")`}`);
+    }
+  } finally {
+    delete ITEMS[picks.id];
+  }
+  const gone = tries((p) => { down(p); p.bag.push('fx_picks'); });
+  ok(gone.startsWith('Locked.'), `and with the picks no item of the content, the company's set does nothing ("${gone}")`);
 }
 
 /**

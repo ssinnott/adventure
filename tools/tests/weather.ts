@@ -87,7 +87,10 @@ export function weather(): void {
   ok(pourAt > 0 && world.sight === 3 && world.combatWeather().rangedPenalty === RANGED_PENALTY && !!world.combatWeather().note, `a downpour by day leaves three squares of sight and spoils bows (sight ${world.sight})`);
   ok(/pouring|heavens|sheets|thunder/i.test(world.weatherNews() ?? ''), 'and the log says it is pouring when the party looks up');
   ok(/Bows and slings will shoot poorly/.test(world.almanac()) && /three squares/.test(world.almanac()), 'the almanac says so too');
-  // Deep snow slows a step outdoors, not in town.
+  // Deep snow slows a step outdoors, not in town: a company with no Pathfinder standing, its ranger
+  // (born to Pathfinder, #857, who walks it all at six) down for these steps.
+  const ranger = world.party.members.find((m) => m.cls === 'ranger')!;
+  ranger.conditions.push('dead');
   const snowAt = findWeather(seed, START_MINUTES, thorn, (w) => w.cover >= 0.5);
   world.travel('thornmark', 13, 12, 2); world.state.minutes = snowAt;
   const before = world.state.minutes, stepped = world.move('forward');
@@ -115,6 +118,7 @@ export function weather(): void {
   // Dunes are as slow as hills (#543); the steppe and the vines are walked at the usual pace.
   const [steppe, dunes, vines] = (['steppe', 'dunes', 'vines'] as const).map((t) => hillStep('shelf', 16, 8, clearAt, true, t));
   ok(DRAG.dunes === HILL_DRAG && dunes === 8 && steppe === 6 && vines === 6, `a dry step onto dunes takes eight minutes, as onto hills, and onto the steppe or the vines the usual six (${dunes}, ${steppe}, ${vines})`);
+  ranger.conditions.splice(ranger.conditions.indexOf('dead'), 1);
   const street = MAP_DEFS.find((d) => d.id === 'harrow')!, streets = new GameMap(street);
   let sx = -1, sy = -1;
   for (let y = 1; y < streets.height - 1 && sx < 0; y++) for (let x = 1; x < streets.width - 1; x++) {

@@ -10,13 +10,18 @@ import type { World } from './world.ts';
 import { MINUTES_PER_DAY, clock } from './calendar.ts';
 import { holds } from './quests.ts';
 import { rest, companyLevel } from './party.ts';
+import { skilled } from './skills.ts';
 
 export type { Passage };
 
-/** What the crossing costs this company: nothing once its `free` holds, half once its `half` does. */
+/**
+ * What the crossing costs this company: nothing once its `free` holds, half once its `half` does; and
+ * with a Navigator standing, half of that, rounded down (#857).
+ */
 export function fareOf(p: Passage, world: World): number {
   const by = (w: Passage['free']): boolean => !!w && holds(w, world.state, world.party);
-  return by(p.free) ? 0 : by(p.half) ? Math.floor(p.fare / 2) : p.fare;
+  const fare = by(p.free) ? 0 : by(p.half) ? Math.floor(p.fare / 2) : p.fare;
+  return skilled(world.party, 'navigator') ? Math.floor(fare / 2) : fare;
 }
 
 /** The minute of the next departure at or after `minutes`: today's, if its hour has not passed. */
