@@ -114,6 +114,12 @@ export const WOLD_D8: MapDef = {
     // The trader's tent on the ring's east side: the band's consumables and the Riders' leather at list,
     // the stone's cure among them (#546), and nothing of steel (#443, calls 5 and 7).
     { kind: 'shop', x: 21, y: 27, name: 'The Trader\'s Tent', stock: ['rations', 'torch', 'lantern_oil', 'potion_heal', 'antidote', 'elixir', 'potion_sp', 'potion_sp_great', ...CURES, 'leather_coat'], interior: 'akordu_trader' },
+    // The rumour of the Master of arms (#858), words only, in the Riders' voice: the kind of place he hid in, and
+    // never the square. Whoever sits by the trader's tent says it to any company, at any meeting.
+    { kind: 'npc', x: 21, y: 28, name: 'A Rider by the trader\'s tent', lines: [
+      'An old Rider sits on the ground against the trader\'s tent, waxing a bowstring, and talks to nobody in particular.',
+      '"One man taught our fathers to loose at the gallop. When the drilling was done he went into the mesas south of the grass, and nobody has seen him eat since."',
+    ] },
     // Under the mesa: its watch-fire seen from below, a well and the Riders' shrine; and the dry well
     // with no rope, its shaft walled off at the bottom, and behind it the hoard in a hollow of the rock.
     { kind: 'event', x: 15, y: 23, id: 'd8_watch', once: true, when: { hours: 'day' }, text: 'Smoke goes up thin and straight from the mesa\'s top. Someone sits by it, looking south-west.' },
