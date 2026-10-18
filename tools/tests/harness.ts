@@ -15,7 +15,7 @@ import { gateCompany, gateTurn, fightSeed, winRate } from '../gate.ts';
 import { GATE } from './gate.ts';
 import { testMonster, standardEncounter, line, scaleAt, groupsPerLevel, xpFor, HP, DAMAGE, ROLES, ROLE_IDS, TROLL, SWEEP, testTroll, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, testDrake, giantEncounter, drakeEncounter, BASILISK_STONE, testBasilisk, basiliskEncounter, clockEncounter } from '../testmonster.ts';
 import type { Role } from '../testmonster.ts';
-import { measure, days, fight, play, outcomeOf, companyAt, newerCompany, edgeOf, spent, mustRest, mendBetween, day as oneDay, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP, RULES, GEAR, GEAR_TOP, ANSWER, wakeWith, breathGuard, whatIfs, casting, cellsOnCores } from '../harness.ts';
+import { measure, days, fight, play, outcomeOf, companyAt, newerCompany, edgeOf, spent, mustRest, mendBetween, day as oneDay, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP, RULES, GEAR, GEAR_TOP, ANSWER, wakeWith, breathGuard, whatIfs, writeRefusal, casting, cellsOnCores } from '../harness.ts';
 import type { BotOpts } from '../harness.ts';
 import { ok } from './lib.ts';
 
@@ -160,9 +160,7 @@ function whatIfsOff(): void {
   // Under --tiers it takes Expert at 13 and Master at 25 on its class's lines, after its prestiges, and
   // nothing else moves; without, it holds none (#852). The newer company takes them as it does.
   const at = [12, 13, 24, 25, 32], bare = at.map((l) => companyAt(l, 3)), newBare = at.map((l) => newerCompany(l, 3));
-  RULES.tiers = true;
-  const tiered = at.map((l) => companyAt(l, 3)), newTiered = at.map((l) => newerCompany(l, 3));
-  RULES.tiers = undefined;
+  const [tiered, newTiered] = under({ tiers: true }, () => [at.map((l) => companyAt(l, 3)), at.map((l) => newerCompany(l, 3))]);
   const owed = (l: number): Tier | undefined => (l >= TIER_LEVELS.master ? 'master' : l >= TIER_LEVELS.expert ? 'expert' : undefined);
   const holds = (p: Party, l: number): boolean => p.members.every((m) => LINES.every((line) => m.tiers?.[line] === (linesOf(m.cls).includes(line) ? owed(l) : undefined)));
   const untiered = (p: Party): string => JSON.stringify(p.members.map((m) => { const c = { ...m }; delete c.tiers; return c; }));
@@ -188,17 +186,21 @@ function whatIfsOff(): void {
   };
   const casts = (log: string[]): number => log.filter((l) => / casts (Bless\.|Slumber:)/.test(l)).length;
   const offPlay = casting(13, soldiers, 10), offGate = casts(gated());
-  RULES.bot = ALL;
-  const onPlay = casting(13, soldiers, 10), onGate = casts(gated());
-  RULES.bot = undefined;
+  const [onPlay, onGate] = under({ bot: ALL }, () => [casting(13, soldiers, 10), casts(gated())] as const);
   ok(onPlay.bless + onPlay.sleep > 0 && onGate > 0 && !offPlay.bless && !offPlay.sleep && !offPlay.drink && !offGate,
     `under --bot the thrifty bot blesses in ${Math.round(onPlay.bless * 10)} and sleeps in ${Math.round(onPlay.sleep * 10)} of 10 fights against four test soldiers at 13 and the gate's casts ${onGate} Blesses and Slumbers in one; off, neither (${offGate})`);
-  // A what-if is for weighing: --calibrate --write refuses while one is set, the three new among them.
-  const refused: string[] = [];
-  RULES.tiers = true; refused.push(whatIfs().join()); RULES.tiers = undefined;
-  RULES.bot = ALL; refused.push(whatIfs().join()); RULES.bot = undefined;
-  RULES.company = 'newer'; refused.push(whatIfs().join()); RULES.company = undefined;
-  ok(!whatIfs().length && refused.join(' ') === 'tiers bot company', `--calibrate --write refuses under --tiers, --bot and --company as under every what-if (${refused.join(', ')}), and writes under none`);
+  // A what-if is for weighing: the refusal `--calibrate --write` throws (`writeRefusal`) names each of
+  // the three new what-ifs while it is set, and there is none with every what-if off.
+  const refused = [under({ tiers: true }, writeRefusal), under({ bot: ALL }, writeRefusal), under({ company: 'newer' }, writeRefusal)];
+  ok(writeRefusal() === undefined && refused.every((r, k) => r?.startsWith('a what-if is for weighing') && r.endsWith(`(${['tiers', 'bot', 'company'][k]})`)),
+    `the refusal --calibrate --write throws names --tiers, --bot and --company while each is set, as every what-if (${refused.map((r) => r?.slice(r.indexOf('('))).join(', ')}), and there is none with all off`);
+}
+
+/** `f` under the what-ifs `set`, each put back as it was whatever `f` does, so none is left on for a later suite. */
+function under<T>(set: Partial<typeof RULES>, f: () => T): T {
+  const was = { ...RULES };
+  Object.assign(RULES, set);
+  try { return f(); } finally { Object.assign(RULES, Object.fromEntries(Object.keys(set).map((k) => [k, was[k as keyof typeof RULES]]))); }
 }
 
 /**
@@ -211,7 +213,7 @@ function whatIfsOff(): void {
 async function newerOnTheLine(): Promise<void> {
   const levels = [12, 20, 28, 32], roles = ROLE_IDS.filter((r) => r !== 'boss');
   RULES.company = 'newer';
-  const cells = await cellsOnCores(roles, levels, 100).finally(() => { RULES.company = undefined; });
+  const cells = await cellsOnCores(roles, levels, 100, 0, 600_000).finally(() => { RULES.company = undefined; });
   const [under, over] = GATE.perRest.limit, [below, above] = GATE.perRest.aim, pc = (x: number): string => `${Math.round(x * 100)}%`;
   levels.forEach((l, k) => {
     const asked = fightsPerRest(l), rows = roles.map((r, i) => ({ r, d: cells[i * levels.length + k].day!, won: cells[i * levels.length + k].fresh.won }));
@@ -220,6 +222,11 @@ async function newerOnTheLine(): Promise<void> {
     const say = (xs: typeof rows): string => xs.map(({ r, d, won }) => `${r} ${d.fights.toFixed(1)}${won < GATE.through.aim ? ` won ${pc(won)}` : ''}`).join(', ');
     ok(!past.length, `the four newer classes' company at ${l} fights ${say(rows)} to a rest (${asked} asked, ${asked - under} to ${asked + over} its limit), and wins ${pc(Math.min(...rows.map((x) => x.won)))} of each at the floor or more (${pc(GATE.through.limit)} its limit)${off.length ? `; off the aim: ${say(off)}` : ''}${past.length ? `; past the limit: ${say(past)}` : ''}`);
   });
+  // A worker that dies, or runs past the limit it is given, fails the lot (`onCores`) and the others
+  // stop, so a run fails rather than hangs on one.
+  const failed = (p: Promise<unknown>): Promise<string> => p.then(() => 'played', (e: unknown) => (e instanceof Error ? e.message : String(e)));
+  const dies = await failed(cellsOnCores(['nobody' as Role], [12], 1)), stalls = await failed(cellsOnCores(['soldier', 'brute'], [32], 100, 0, 1));
+  ok(dies !== 'played' && /^a worker ran past 1 ms on cell (soldier|brute) at 32$/.test(stalls), `a worker that dies fails the lot (${dies.slice(0, 50)}), and one past its limit (${stalls})`);
 }
 
 /**

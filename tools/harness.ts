@@ -87,8 +87,10 @@ fields the four newer classes' company instead of the premade six (`--company ne
  */
 export const RULES: { spellsGrowTo?: number; gearGrows?: boolean; levelTraits?: boolean; levelBonus?: boolean; rankStep?: number; tiers?: boolean; bot?: BotOpts; company?: 'newer' } = {};
 const NO_RULES: typeof RULES = { spellsGrowTo: undefined, gearGrows: undefined, levelTraits: undefined, levelBonus: undefined, rankStep: undefined, tiers: undefined, bot: undefined, company: undefined };
-/** The what-ifs set, by name: `--calibrate --write` refuses while any is (a what-if is for weighing). */
+/** The what-ifs set, by name. */
 export const whatIfs = (): string[] => (Object.keys(RULES) as (keyof typeof RULES)[]).filter((k) => RULES[k] !== undefined);
+/** Why `--calibrate --write` refuses, while any what-if is set (a what-if is for weighing), naming them; none else. */
+export const writeRefusal = (): string | undefined => (whatIfs().length ? `a what-if is for weighing, not for writing: drop --write, or the what-ifs (${whatIfs().join(', ')})` : undefined);
 
 /** The classes whose first work is a weapon: the ones `--level-traits` gives more blows. */
 export const FIGHTERS: readonly string[] = ['knight', 'paladin', 'ranger', 'thief', 'barbarian', 'monk'];
@@ -683,26 +685,42 @@ interface Job { kind: 'calibrate' | 'refit' | 'cell'; role: Role; level: number;
 const work = (j: Job): Point | Cell =>
   j.kind === 'calibrate' ? calibrate(j.role, j.level, j.seeds) : j.kind === 'refit' ? refit(j.role, j.level, j.hp ?? 1, j.seeds) : cell(j.role, j.level, j.seeds, j.under);
 
-/** The jobs on a worker per core, each taking the next as it finishes one; the results in the jobs' order. */
-function onCores<T>(jobs: readonly Job[], each?: (j: Job, r: T) => void): Promise<T[]> {
-  const out: T[] = new Array(jobs.length);
-  let next = 0, left = jobs.length;
+/**
+ * The jobs on a worker per core, each taking the next as it finishes one; the results in the jobs' order.
+ * A worker that throws, or stops with a job unfinished, fails the lot, and so does a job that runs past
+ * `limit` milliseconds: every worker is stopped then, so a run never hangs on one.
+ */
+function onCores<T>(jobs: readonly Job[], each?: (j: Job, r: T) => void, limit = Infinity): Promise<T[]> {
+  const out: T[] = new Array(jobs.length), workers: Worker[] = [];
+  let next = 0, left = jobs.length, over = false;
   return new Promise((resolve, reject) => {
     if (!left) return resolve(out);
+    const fail = (e: Error): void => { if (over) return; over = true; for (const w of workers) void w.terminate(); reject(e); };
+    const said = (j: Job): string => `${j.kind} ${j.role} at ${j.level}`;
     for (let w = 0; w < Math.min(jobs.length, os.availableParallelism()); w++) {
       const worker = new Worker(new URL(import.meta.url));
-      let at = -1;
-      const feed = (): void => { if (next < jobs.length) worker.postMessage(jobs[(at = next++)]); else void worker.terminate(); };
-      worker.on('message', (r: T) => { out[at] = r; each?.(jobs[at], r); if (--left === 0) resolve(out); feed(); });
-      worker.on('error', reject);
+      let at = -1, busy = false, timer: ReturnType<typeof setTimeout> | undefined;
+      workers.push(worker);
+      const feed = (): void => {
+        if (over || next >= jobs.length) { void worker.terminate(); return; }
+        worker.postMessage(jobs[(at = next++)]);
+        busy = true;
+        if (Number.isFinite(limit)) timer = setTimeout(() => fail(new Error(`a worker ran past ${limit} ms on ${said(jobs[at])}`)), limit);
+      };
+      worker.on('message', (r: T) => { clearTimeout(timer); busy = false; out[at] = r; each?.(jobs[at], r); if (--left === 0) { over = true; resolve(out); } feed(); });
+      worker.on('error', (e: Error) => { clearTimeout(timer); fail(e); });
+      worker.on('exit', (code) => { clearTimeout(timer); if (busy) fail(new Error(`a worker stopped (code ${code}) on ${said(jobs[at])}`)); });
       feed();
     }
   });
 }
 
-/** The report's cells on every core, the what-ifs as they stand: each of `roles` at each of `levels`, in that order. */
-export const cellsOnCores = (roles: readonly Role[], levels: readonly number[], seeds: number, under = 0): Promise<Cell[]> =>
-  onCores<Cell>(roles.flatMap((role) => levels.map((level): Job => ({ kind: 'cell', role, level, seeds, under, rules: { ...RULES } }))));
+/**
+ * The report's cells on every core, the what-ifs as they stand: each of `roles` at each of `levels`, in
+ * that order; a cell past `limit` milliseconds fails them (`onCores`).
+ */
+export const cellsOnCores = (roles: readonly Role[], levels: readonly number[], seeds: number, under = 0, limit = Infinity): Promise<Cell[]> =>
+  onCores<Cell>(roles.flatMap((role) => levels.map((level): Job => ({ kind: 'cell', role, level, seeds, under, rules: { ...RULES } }))), undefined, limit);
 
 if (!isMainThread) parentPort?.on('message', (j: Job) => { Object.assign(RULES, NO_RULES, j.rules); parentPort?.postMessage(work(j)); });
 
@@ -897,7 +915,8 @@ async function main(): Promise<void> {
     const at = (l: number): number => { const k = LEVELS.indexOf(l as (typeof LEVELS)[number]); if (k < 0) throw new Error(`level ${l} is not one of LEVELS`); return k; };
     levels.forEach(at);
     const say = (j: Job, [h, d, bad, fights, rounds]: Point): void => console.log(`  ${j.role} ${j.level}: hp ${fmt(h)}, damage ${fmt(d)}; ${j.role === 'boss' ? `won ${pct(fights)}%` : `${fights.toFixed(1)} fights, ${rounds.toFixed(1)} rounds, ${pct(bad)}% of days end badly`} (${secs()})`);
-    if (args.includes('--write') && whatIfs().length) throw new Error(`a what-if is for weighing, not for writing: drop --write, or the what-ifs (${whatIfs().join(', ')})`);
+    const refused = writeRefusal();
+    if (args.includes('--write') && refused) throw new Error(refused);
     const jobs = roles.flatMap((role) => levels.map((level): Job => ({ kind: 'calibrate', role, level, seeds, under: 0, rules })));
     const made = await onCores<Point>(jobs, say);
     // The tables with the points just made, as they will be written; the rest stay as they were.

@@ -841,14 +841,17 @@ of that area); with nothing changed it says so and writes none. `--ground all` (
 `--ground ash,ice`) draws the ground's samples (`tools/grounds.ts`), each with its plan in its
 grounds' colours, and a change that draws every map draws them too, so a new ground is seen before
 a map holds it.
-`node tools/harness.ts [--levels 2,6,10] [--roles soldier,brute] [--seeds 400] [--under 2] [--map thornmark --level 5] [--stats] [--calibrate --write] [--spell-cap 10] [--gear-grows] [--level-bonus] [--level-traits] [--rank-step 0.25]`
+`node tools/harness.ts [--levels 2,6,10] [--roles soldier,brute] [--seeds 400] [--under 2] [--map thornmark --level 5] [--stats] [--calibrate --write] [--spell-cap 10] [--gear-grows] [--level-bonus] [--level-traits] [--rank-step 0.25] [--tiers] [--bot bless,sleep,drink] [--company newer]`
 fights the premade company at a level against standard encounters of the test monster, or a map's
 own groups, one after another until it must rest, and says how many it managed against the six or
 seven an encounter at its level should allow (docs/MONSTERS.md §4.4). `--spell-cap` tries a world
 where damage spells stop growing at that level, `--gear-grows` one where the company's gear keeps
 growing past Thornmark's, `--level-bonus` one where every member gains a point of damage and of
 armour every two levels past 10, and `--level-traits` one where fighters strike once more a turn
-from 11 and again from 29, and sneak attacks grow.
+from 11 and again from 29, and sneak attacks grow. `--tiers` gives the company its Expert at 13
+and Master at 25 (#852), `--bot` the bots their bless, sleep and drink (#853), the gate's too, and
+`--company newer` fields the four newer classes' company in the premade's place (#854); each says
+what it makes, and none is on until #865 switches the first two on.
 `node tools/gate.ts [--maps thornmark,grove2] [--levels 2,3,4,5] [--seeds 200]` prints how often the
 premade company, trained to each level, dressed by the gear ladder and with the prestiges its level
 brings, wins each map's groups alone

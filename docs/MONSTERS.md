@@ -930,9 +930,12 @@ clock, the Heart (#748), at 32, its Hands killed first, its lord first or its se
 they come, on the test monsters and as built: Vask's own group on the gate's bot (#752).
 `--spell-cap`, `--gear-grows`, `--level-bonus` and `--level-traits` run any of it as if damage
 spells stopped growing at another level than play's 10, or the company gained gear, a bonus or
-blows as it levelled past it; `--rank-step` as if a spell rank added another share than play's 15%.
-They combine, and play has none of them; `--calibrate` under them says what
-share of days end badly at each point it makes, and writes nothing.
+blows as it levelled past it; `--rank-step` as if a spell rank added another share than play's 15%;
+`--tiers` as if the company took Expert at 13 and Master at 25 (#852); `--bot bless,sleep,drink`
+as if the bots, the gate's too, took any of their three (#853); and `--company newer` as if the
+company were the four newer classes' (#854). They combine. Play has none of the first five, and the
+checks none of the last three until #865 switches the tiers and the bots' three on; `--calibrate`
+under any says what share of days end badly at each point it makes, and writes nothing.
 
 Decided by delegate for #541, each the owner's to overturn:
 

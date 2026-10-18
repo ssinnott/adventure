@@ -11,7 +11,8 @@
 // one group is one fight. A plain bot plays the party, the game's own (src/game/bot.ts, its
 // auto-fight's as well): it mends, wakes, burns, casts, strikes or braces, and never sleeps, blesses,
 // drinks or flees, so it is weaker than a player; single fights at full health are kinder than play.
-// Harness's what-ifs reach it: `--tiers` its company, `--bot` its options (#853), off until #865.
+// Harness's `RULES` reach it, its company's tiers and its bot's options (#853), as harness's `--tiers`
+// and `--bot` set them, off until #865; this command line takes neither.
 // A group that asks before it fights (#544) it refuses, and fights; the walk past it is `gatePass`.
 // Between fights, where the gate check mends, it lifts stone first, by Absolve or the draught it
 // carries from 25 (#546), as harness's company does.
