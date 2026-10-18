@@ -19,7 +19,10 @@ DESIGN.md first for the why.
 - **Guild halls:** a business may also be a guild's hall (`hall`, DESIGN §8). It then opens on a
   first menu, its own trade, the guild's work, its skills where the guild has one built (below) and
   Leave, which each choice returns to; a business with its trade alone opens straight on it. The
-  guild's work pays what is done, then offers the quests at or under the company's rank, those
+  work's row reads "Work for the Wardens", the guild by its short name where the whole would be cut
+  in the side panel ("Work for the Cartographers"), and `tools/tests/guilds.ts` holds every row of
+  every hall's first menu to the panel's column (#890). The guild's work pays what is done, then
+  offers the quests at or under the company's rank, those
   that wait for an act (`after`, a flag) once the company holds it (#439). Membership
   and rank are worked out from the guild quests' done flags, and a rank reached is kept by its own
   flag (`game/guilds.ts`). The Warden Drillyard is the Wardens' hall, and the Lanterns' are the
@@ -978,7 +981,7 @@ does.
 | `ui/create.ts` | party creation |
 | `ui/title.ts` | the title screen: new game or continue, the Hearth over the saved company and attract mode's idle (untouched for 45 seconds, the pilot plays a new game) |
 | `content/index.ts` | the areas in road order; the tables merged from them (maps, monsters, items, quests and guild quests, climates, rooms), the one quest joined from their chapters and `ATLAS`, their parts of the world map over the plan; `SPELLS` from `spells.ts`; and the `MonsterSprite`, `Interior` and `RegionId` unions made from the areas |
-| `content/guilds.ts` | the four guilds (`GUILDS`: names and ranks), a guild quest's flags and its side of the quest log |
+| `content/guilds.ts` | the four guilds (`GUILDS`: names, a short name where a hall's menu row would cut the whole, and ranks), a guild quest's flags and its side of the quest log |
 | `content/area.ts` | `Area`, the shape every area fills in, and `Novelty`, what it claims is new (held by `tools/tests/pillars.ts`); `Walkthrough`, an area's end-to-end test |
 | `content/areas/<area>/` | an area: its maps, monsters, items, chapter of the one quest (`chapter.ts`), side quests (`quests.ts`), climate, what it claims is new (`novel`) and part of the world map, and the sprite kinds and rooms it brings (`index.ts`); each has a doc in [docs/areas/](areas/) |
 | `content/items.ts`, `content/spells.ts` | the items no area owns (the class kits, the starting bag, the iron key) and the spells |
