@@ -1674,6 +1674,28 @@ and she teaches Master in magic for 5,000 gold to a member Expert in magic of le
 before it she refuses. The walkthrough plays it in order, at 25, with the company given its Expert
 and its gold, since Expert is bought at a trainer on the road (§9, #859's 9).
 
+### The artifact: Grim's Axe (#846)
+
+Ashfall's of the bounds' eight (DESIGN §9). Found and never told: no `seek` quest, no line in the
+journal and no mark on the world map. #836 builds the lair, its door and the rumour once #845, #847
+and the guardian's drawing are in.
+
+- **What it is:** *A broad axe of black iron, its edge as warm as a hearthstone. / Grim is cut in
+  its cheek, and under the name a smoking mountain.*
+- **The rumour:** Petroc, the warlord's heir, at the anvil in Grimsforge (G11, §6), two lines more at
+  a meeting after his first, words only: *Grim's axe was made at this anvil. When he lifted it, the
+  mountain threw its stones for him. / They buried him with it, and the mountain closed the grave.*
+  It marks nothing on the world map.
+- **Slot and bearers:** a weapon, two-handed: the knight, the paladin, the ranger and the barbarian,
+  as the Grey Axe.
+- **Numbers:** 2d12+8, the Grey Axe's 2d12+7 and a point (EXPANSION §5.2). Found and never sold.
+- **Power:** a spell (DESIGN §9, kind 3): Meteor Swarm, two a day, of the sorcerer's list, which
+  none of its four casts.
+- **The lair:** a warlord's grave of one level under the rock where the south-west flow stopped, its
+  door in F12, at the cap's band, 30–32 (#845).
+- **The guardian:** the Grave Drake (drakes, a new kind; boss, 32; docs/MONSTERS.md §13): *Asleep on
+  a warlord's grave, and the grave is warm.* Size 2; it burns a row.
+
 ## 7. Encounters, and what is new
 
 MONSTERS §8.2 has the roster and the fights: the Strangler Vine (24, which never roams and holds),

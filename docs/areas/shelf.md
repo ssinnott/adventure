@@ -799,6 +799,28 @@ two here and two in Thornmark:
 A company that did a deed before taking its quest is paid when it takes it. The guilds' quests
 take none of #56's: quests 3, 5 and 6 stay plain quests (DESIGN §8).
 
+### The artifact: the Hagstone (#846)
+
+The Foreland's of the bounds' eight (DESIGN §9): the first country a company walks, holding what it
+can take only at the last (#837). Found and never told: no `seek` quest, no line in the journal and
+no mark on the world map. #837 builds the lair, its door and the rumour once #845, #847 and the
+guardian's drawing are in.
+
+- **What it is:** *A stone off the strand, a hole the sea wore through it and a cord gone green. /
+  Held to the eye, the hole shows the dark as only dark.*
+- **The rumour:** the old man mending nets at Gullwick (F3, §4.3), two lines more at a meeting after
+  his first, words only: *My gran had a stone with a hole worn through it. Nothing sat on her chest
+  of a night, she said, and nothing held her. / She was buried without it, and nobody would say
+  where it went.* It marks nothing on the world map.
+- **Slot and bearers:** carried, borne in the bearer's own pack, by any of the ten: the one of the
+  eight that all ten may bear.
+- **Numbers:** none, as a thing carried has none. Found and never sold.
+- **Power:** a ward (DESIGN §9, kind 5): its bearer is never paralysed.
+- **The lair:** a sea cave of one level, its mouth on E4's strand under the Downs, at the cap's
+  band, 30–32 (#845).
+- **The guardian:** the Hag (long bodies, a new kind; boss, 32; docs/MONSTERS.md §13): *No eyes,
+  and it found you first.* It holds.
+
 ## 7. Encounters, and what is new
 
 MONSTERS §5.2 has the Downs' roster and fights: the Carrion Crow, the Wrecker and the Lampman, the

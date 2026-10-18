@@ -545,6 +545,27 @@ the orders handed to the Wardens or the Compact taken over, each setting its own
 walkthrough plays the rung beside the counting house's orders, not offered before the Sleepers are
 seen, paid at the Keel and early, and Ruan's choice both ways.
 
+### The artifact: Holdfast (#846)
+
+Wrackholm's of the bounds' eight (DESIGN §9). Found and never told: no `seek` quest, no line in the
+journal and no mark on the world map. #835 builds the lair, its door on one of the strands and the
+rumour once #845, #847 and the guardian's drawing are in.
+
+- **What it is:** *A smuggler's knife, its haft wound with kelp that has not rotted. / Wet, the weed
+  on it moves.*
+- **The rumour:** Merryn, the hermit on the east rocks (F6), who counts the ships, two lines more at
+  a meeting after her first, words only: *One ship I counted in and never out. Her master had a
+  knife the weed obeyed: cut a line with it and the kelp held her fast. / Old Nick had ship, master
+  and knife. Nick gives nothing back.* It marks nothing on the world map.
+- **Slot and bearers:** a light weapon: the thief, the bard and the sorcerer.
+- **Numbers:** 1d8+15, the Grey Knife's 1d8+14 and a point (EXPANSION §5.2). Found and never sold.
+- **Power:** a spell (DESIGN §9, kind 3): Grasping Roots, three a day, of the druid's list, which
+  none of its three casts.
+- **The lair:** a sea cave of one level, its mouth on F5's strand under the east rocks, in sight of
+  the hermit's point, at the cap's band, 30–32 (#845).
+- **The guardian:** Old Nick (devilfish, a new kind; boss, 32; docs/MONSTERS.md §13): *What the
+  smugglers fed first.* Size 2; it reaches the back row, and its hits heal it.
+
 ## 7. Encounters, and what is new
 
 MONSTERS §6.2 has the roster and the fights: the Wrack Gull, the Bilge Rat, the Wrack Smuggler and

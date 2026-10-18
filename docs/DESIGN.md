@@ -1135,8 +1135,10 @@ The two go opposite ways: the Buried Tower down into the ground, the Vault up in
 The reach sits at the cap and is harder than the Core: its dungeons' bands are 30–32, whatever the
 atlas's rows said before (docs/MONSTERS.md §12, open question 3; #434, call 7). Its power comes from
 what it holds (artifacts, any Masters of §5 it hides beyond the road's two, the richest shrines and
-fountains) rather than from more levels, so the quest still runs from level 1 to the cap. The reach
-is open before the choice: the Core waits.
+fountains) rather than from more levels, so the quest still runs from level 1 to the cap. The
+bounds' eight artifacts (below) are their areas' and not the reach's, which keeps its own, the
+Buried Tower's and the Vault's (#56's 62 and 63). The reach is open before the choice: the Core
+waits.
 
 Two Masters stand on the road and not in the reach, each found and never told (§5): the Wold's old
 Rider at arms (#858) and Old Cinder's scholar in magic (#859). The Rider is hidden in the rock of
@@ -1161,6 +1163,185 @@ company can take it, so its danger is said at its door: crossing in, the log giv
 as its sign does inside, and says how it feels by the company's level, as a border does: harder one
 or two levels under its floor, a plain warning three or more under, nothing at its floor. The monsters
 are its only gate. EXPANSION.md §5.2 holds it to its own band (#845).
+
+### The bounds' eight
+
+From the owner, 17 October 2026: one artifact to each of the eight areas the bounds build out
+(#828), each with a power of its own, guarded in a lair at the cap and first heard of as a rumour.
+They are their areas' and not the reach's: off the quest as the reach is, and the game is whole
+without them. Designed in #846 to the direction of the owner's delegate (18 October 2026, on #828):
+#847 builds the mark and the powers; each area's issue (#830 to #837) the lair, its door and the
+rumour; the creatures lane the guardians (docs/MONSTERS.md §13). Each area's doc has its own under
+§6.
+
+**What an artifact is.** An item marked so (#847): one in the world, found in its lair and never
+sold, with no price in any window. Its numbers are one rung over the Hand's steel at 28 (EXPANSION
+§5.2): a point past the Hand's piece of its kind in its bonus or its armour class, as each rung is
+a point past the last, and no plus to hit; a thing carried has none. It has one power, of one of
+the five kinds below, and no `resist` or `skill`: no artifact does a skill's work, and none opens a
+lock, maps, swims, climbs or crosses the void, since the map is opened by walking, by the skills
+and by the map spells, which are shortcuts and never keys (§1, §7). No gate figure moves: the
+gate's company is dressed from the ladder (EXPANSION §5.2), and no artifact is on it.
+
+**The five kinds, and no sixth.** One power to an artifact, and each kind on one or two of the
+eight. #847 builds the three not yet built and holds every bound here as a named constant.
+
+1. **A stat raised while borne** (`ItemDef.stat`, built, #855): one of the four stats a fight reads
+   (might, accuracy, speed, personality: §5), by 5 at most, where the found items raise by 3. Borne
+   as `borne` has it, worn where the piece has a slot and in the bearer's own pack where it has
+   none; a save holds no raise. Raises add, as `statOf` sums them, but two pieces of one slot are
+   never worn together, so none stacks today: the Runner's Coat takes the Erzhemd's slot and the
+   Talon Knife Akkush's.
+2. **An element its blows carry** (`ItemDef.element`, built, #855): a weapon's alone, an added 1d6
+   of the element on each blow that lands (`ELEMENT_DIE`, §6), as the found weapons have it.
+3. **A spell cast from it so many times a day** (new): one spell of the tables (§7) and one to
+   three castings. The bearer casts it as a spell of their own (#847 gives a member with no spells
+   the way to), in a fight or out as the spell's context allows: it takes their turn, costs no
+   spell points and spends a charge; it rolls at the bearer's level held at 10, unranked, with no
+   tier, trait or song added. The charges come back whole when the clock passes dawn, slept or not,
+   and the save keeps those spent. The spell is of a list the bearer's class cannot cast, so the
+   artifact's classes leave out every class that casts from that list; and it is no spell whose
+   `context` is `'explore'`, the spells that make the world bigger: the druid's Foxfire and Hawk's
+   Eye as much as §7's six (Light, Wizard Eye, Town Portal, Walk on Water, Waymark, Levitate).
+4. **Regeneration** (new): while it is borne, the bearer mends a tenth of their most hit points,
+   rounded down and at least 1, each time the clock passes a whole hour, never past the most; a
+   passage of hours (a rest, a crossing) mends a tenth for each hour. That is a tenth for about ten
+   steps outdoors, or thirty in a town or below. The rate is the trolls' tenth (MONSTERS §3.3),
+   paid by the hour and never in a fight, whose rounds pass no clock; and as a felled troll stays
+   down, it never mends the down (unconscious, dead or stoned: `isDown`). Nothing is saved.
+5. **A ward against one condition** (new): while it is borne, the bearer never takes it, as a
+   trait's immunity works (`immune`, `src/game/party.ts`): one of asleep, poisoned, diseased,
+   paralysed, cursed or stoned, never unconscious or dead. It keeps the condition off and lifts none
+   already taken: the cure is still a spell's, a temple's or time's (§6).
+
+**The eight:** two wards, two spells, two stats, one element and one regeneration.
+
+| Artifact | Area | Slot; who may bear it | Numbers | Power | Lair's door; guardian |
+|---|---|---|---|---|---|
+| the Hagstone | the Foreland | carried; any of the ten | none | a ward: never paralysed | E4, a sea cave on the strand; the Hag |
+| the Telstok | Saltreach | a staff; cleric, sorcerer, druid, monk | 1d10+14, two-handed | an element: holy | A5, a drowned mound on the fen's west edge; the Old Chanter |
+| Holdfast | Wrackholm | a light weapon; thief, bard, sorcerer | 1d8+15 | a spell: Grasping Roots, three a day | F5, a sea cave on the strand under the east rocks; Old Nick |
+| the Erzhemd | the Kilns | armour; knight, paladin, ranger, thief, barbarian, bard, druid | armour 15 | a stat: speed +5 | P5, an old working in the crag under the rim; the Steiger |
+| Torhide | Cairnmoor | a shield; knight, paladin, ranger | armour 9 | regeneration | P7, a cleft in the rim's face; the Rim Troll |
+| the Wakerobe | Rimewater, with the Whitespine | a robe; cleric, sorcerer, druid, monk | armour 14 | a ward: never asleep | K12, a door in the mountain under the pass; the Infirmarer |
+| Akkush | the Glasswold | a bow; ranger | 1d12+14, ranged, two-handed | a stat: accuracy +5 | D7, an eyrie on the Scarp's east end; the Foal-taker |
+| Grim's Axe | Ashfall | an axe; knight, paladin, ranger, barbarian | 2d12+8, two-handed | a spell: Meteor Swarm, two a day | F12, a grave where the flow stopped; the Grave Drake |
+
+Each number is the Hand's piece of its kind and a point: the Grey Staff 1d10+13, the Grey Knife
+1d8+14, the Grey Mail 14, the Grey Shield 8, the Grey Robe 13, the Grey Bow 1d12+13 and the Grey
+Axe 2d12+7. Both spells are of a list that no class bearing them casts: Grasping Roots the druid's,
+Meteor Swarm the sorcerer's.
+
+**Who may bear which.** Each class may bear three at least, and the Hagstone alone is all ten's;
+the knight's and the sorcerer's share the stone and nothing else.
+
+| Class | May bear |
+|---|---|
+| Knight, Paladin | the Hagstone, the Erzhemd, Torhide, Grim's Axe |
+| Ranger | the Hagstone, the Erzhemd, Torhide, Akkush, Grim's Axe |
+| Barbarian | the Hagstone, the Erzhemd, Grim's Axe |
+| Thief, Bard | the Hagstone, Holdfast, the Erzhemd |
+| Cleric | the Hagstone, the Telstok, the Wakerobe |
+| Sorcerer | the Hagstone, the Telstok, Holdfast, the Wakerobe |
+| Druid | the Hagstone, the Telstok, the Erzhemd, the Wakerobe |
+| Monk | the Hagstone, the Telstok, the Wakerobe |
+
+**Their words and their rumours.** The two lines are each piece's own words, read from the pack
+(its `text`, as the Old Lantern's Staff has); STORY.md has them too. Each rumour is two lines, words
+only, said by a person of the artifact's own area at a meeting after their first, as F11's hermit
+says the Master of magic's (docs/areas/ashfall.md §6): no flag, no quest, no line in the journal
+and nothing marked on the world map. It hints at the thing and never names where it lies.
+
+- **The Hagstone.** *A stone off the strand, a hole the sea wore through it and a cord gone green. /
+  Held to the eye, the hole shows the dark as only dark.* The old man mending nets at Gullwick (F3):
+  *My gran had a stone with a hole worn through it. Nothing sat on her chest of a night, she said,
+  and nothing held her. / She was buried without it, and nobody would say where it went.*
+- **The Telstok.** *A staff of black bog oak, its foot worn round on a stone floor. / Struck on
+  stone, it rings like a bell under water.* Hiltje, the withy-cutter of Rietum (B3): *Before the
+  temples there was a priest who sang and never counted. When her staff struck the floor, the dead
+  lay down. / The water came up over her mound, and she sang it in.*
+- **Holdfast.** *A smuggler's knife, its haft wound with kelp that has not rotted. / Wet, the weed
+  on it moves.* Merryn, the hermit on the east rocks (F6): *One ship I counted in and never out.
+  Her master had a knife the weed obeyed: cut a line with it and the kelp held her fast. / Old Nick
+  had ship, master and knife. Nick gives nothing back.*
+- **The Erzhemd.** *A shirt of mail in rings darker than iron, and no heavier than wool. / Inside the
+  collar a smith's mark is cut, and a knocker's eye beside it.* The oldest miner at Anvilhall:
+  *Brandt made a shirt of the ore the knockers bring up. So light, he said, his feet forgot it. / He
+  went down for more. We sang him to the door, and nobody sang him back.*
+- **Torhide.** *A round shield faced with grey hide, and every cut in it closed over. / It is warm to
+  hold, and warmer by night.* The drover on N7: *My grandfather's grandfather faced a shield with a
+  troll's hide. Cut it how you liked, by morning it had closed. / He took it up to the tops when he
+  was old, and the tops kept him.*
+- **The Wakerobe.** *A grey robe made for someone taller and thinner, the sleeves past your fingers.
+  / Whoever wore it last walked out of the ice in it, and did not lie down again.* The lodge-keeper
+  in from the ice at Rime Lodge, who takes in whoever comes up through the hole: *One came up
+  through the ice in a grey robe too long in the arm. He would not take a blanket, nor sleep, nor
+  say where he had been. / The third night he walked out into the snow. It was not his robe, I
+  think.*
+- **Akkush.** *A Rider's bow of white horn and sinew, its grip worn to one hand. / Bound under the
+  grip is a feather longer than your arm.* The eldest at Akordu: *My grandmother's brother made a
+  bow of white horn that never missed. He loosed it once, at the bird that takes our foals. / The
+  bird took him, and the bow. It still comes for foals.*
+- **Grim's Axe.** *A broad axe of black iron, its edge as warm as a hearthstone. / Grim is cut in
+  its cheek, and under the name a smoking mountain.* Petroc, the warlord's heir, at Grimsforge:
+  *Grim's axe was made at this anvil. When he lifted it, the mountain threw its stones for him. /
+  They buried him with it, and the mountain closed the grave.*
+
+**The lairs.** Each is one or two levels entered from the box its area's issue names, at the cap's
+band, 30–32, held to it as #845 holds an enclave to its own. Its guardian is one monster, a boss at
+32 judged at the lair's floor of 30 (#845); each is a new kind in a family already drawn, eight
+families for the eight and none of them new (docs/MONSTERS.md §13). Its other groups, its squares and
+its name are its brief's, in its area's issue.
+
+Decided by the builder for #846, each the owner's to overturn:
+
+1. **The names** (NAMES §5): in the area's own tongue where its people have one, in its English
+   where they speak it or its finds are English-named. Each says one plain thing about its piece
+   and hints, as the found items' names do (the Levin Mace, the Runner's Coat); none explains.
+2. **The kinds:** the wards against paralysis and sleep, the conditions the cap's monsters put on a
+   company most (the Grey Hand and the catcher; the keeper and the hearth moth); the stat and the
+   spell twice; the element and regeneration once.
+3. **The slots:** four weapons (a staff, a knife, a bow, an axe), two armours (a mail and a robe), a
+   shield and a carried thing. Each takes its Hand's piece's classes, but the staff, the knife and
+   the robe, anyone's on the ladder, are cut to their users, so the stone alone is all ten's.
+4. **The numbers:** the Hand's piece and a point, with no `plus`, since a plus adds to hit as well
+   and would be a second step.
+5. **A stat by 5,** the bound: a stat counts by threes (`bonus`), so 3 is one step and 5 two for
+   two bases in three. Speed on the mail, since its seven classes all fight by it and only the
+   melee by might; accuracy on the bow, the Riders' drill.
+6. **The castings:** Grasping Roots three a day, a hold a group may tear free of; Meteor Swarm two,
+   fire on every foe.
+7. **A spell from an artifact** rolls unranked at the level held at 10 and costs a charge, not spell
+   points. It is never a spell whose `context` is `'explore'`: those make the world bigger and carry
+   a company, the druid's Foxfire and Hawk's Eye as much as the sorcerer's six.
+8. **Regeneration by the clock's hour,** departing from the direction's "a tick": read literally, a
+   tick is a step, and a tenth a step would mend a bearer whole in ten steps outdoors, so no wound
+   would outlast the walk to the next fight. The hour keeps the late game asking and ties mending to
+   the clock (pillar 4): the trolls' tenth, paid by the hour and not by the round. A bearer who is
+   down (unconscious, dead or stoned) mends nothing.
+9. **A ward keeps a condition off** and lifts none already taken, so a cure keeps its work.
+10. **The element is holy,** the drowned god's: half again on the dead and nothing on a machine, so
+    the Core and the Buried Tower ask different things of its bearer.
+11. **The rumours** are said by people already met, two lines more after their first meeting, as
+    F11's hermit says his: no person is added for them.
+12. **The doors:** the sea caves on strands, the Foreland's E4 and Wrackholm's F5 by the hermit's
+    point; the rim for the Kilns (P5, the largest box under it) and Cairnmoor (P7); Saltreach's in
+    the fen (A5), Rimewater's on Monks' Vale's part of K12, the Glasswold's on its Scarp (D7) and
+    Ashfall's in its one box (F12).
+13. **The guardians:** eight families, every one drawn already, so no new family is named. The sea
+    caves take long bodies and devilfish, and the lairs on the rim and the pass the ogre and the
+    keepers, as the direction's examples do; a lair under the rim takes the family its place has
+    already (the Kilns' knockers, Ashfall's drakes, Saltreach's drowned dead), and the Wold's
+    eyrie a bird. Each is a boss at 32, as the road's bosses stand at their bands' tops.
+14. **Each guardian answers its artifact where it can:** the Hag holds where the stone wards, the
+    Infirmarer puts to sleep where the robe wards, the Rim Troll mends as Torhide does.
+15. **The monk** may wear the Wakerobe and give up Unarmoured Defence for the ward; the stone's ward
+    is one Stillness gives it already, so the staff and the robe are the monk's.
+16. **The lairs' names,** squares and other groups are each lair's brief's.
+
+A ward gives nothing to a class that has it already (the stone's to the monk, whose Stillness keeps
+paralysis off, and the robe's to the sorcerer, whose Iron Will keeps sleep off): the lists say who
+may bear an artifact, not who gains most by it.
 
 ---
 
