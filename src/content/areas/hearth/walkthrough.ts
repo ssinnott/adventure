@@ -8,7 +8,11 @@
 // Compact's runner or the Wardens' sergeant; and the box's groups won at 28. Then the east rim (I6, #754):
 // the rim's path from the Bowl with the pocket's fight, Anchorhold's yard and the cell, the east foot,
 // the Hand's camp and its guard, the Steps, the grey door read, the takings found from the tally-house and
-// the smell, the moths by night and the guard gone once Vask is gone from Helmstow. Then the temple,
+// the smell; a detour to the vigil cell in the rim's east face (#864), found and never told, from the vein of
+// glass in the turf that stops at the rock: the door found by a search, the Vigil Robe in the plain chest and the
+// Levin Mace in the grey-banded one, which the company's thief picks (the finds themselves, off the ladder, in no
+// shop and inside the window, and the lock's refusals are held on their own, `vigilFinds` and `vigilLocked`); the
+// moths by night and the guard gone once Vask is gone from Helmstow. Then the temple,
 // Hearthfane (#755): in at the door and out again, the nave's moths, the pillar read, the sacristan's lamps
 // put out wrong and then in the pillar's order (56), the moths gone to the light, his key, the treasury
 // that opens to it and to nothing else, the Hand's best won at 28 and the court's second gone with Vask.
@@ -36,20 +40,27 @@ import { newWalk, see, kneel, fight, listen, walkThrough, gone as left, playChap
 import type { Walk, Step } from '../../../../tools/walk.ts';
 import { NORTH, EAST, SOUTH, WEST } from '../../../game/types.ts';
 import type { Facing } from '../../../game/types.ts';
-import { ATLAS, MAP_DEFS, QUESTS } from '../../index.ts';
+import { ATLAS, MAP_DEFS, QUESTS, AREAS, MONSTERS } from '../../index.ts';
+import { CURVE } from '../../progression.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { meet, heard, answer, handIns } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
-import type { Feature } from '../../../game/map.ts';
-import { xpForLevel, takePrestige, className, PRESTIGES } from '../../../game/party.ts';
+import { GameMap } from '../../../game/map.ts';
+import type { Feature, MapDef } from '../../../game/map.ts';
+import { item, hits, sellPrice } from '../../../game/items.ts';
+import { elementMult } from '../../../game/monsters.ts';
+import { makeRng } from '../../../lib/engine/rng.ts';
+import { headlessGame } from '../../../../tools/tests/lib.ts';
+import { xpForLevel, takePrestige, className, PRESTIGES, defaultParty, equip, statOf, spellHeal } from '../../../game/party.ts';
+import type { Party } from '../../../game/party.ts';
 import { teach, barOf } from '../../../game/prestige.ts';
 import { seekId, sought } from '../../../game/seeking.ts';
 import { take as ride } from '../../../game/passage.ts';
 import { endingTaken } from '../../../game/stones.ts';
 import { ENDINGS } from '../../endings.ts';
 import { winRate, gateOpts } from '../../../../tools/gate.ts';
-import { ANSWER } from '../../../../tools/harness.ts';
+import { ANSWER, GEAR } from '../../../../tools/harness.ts';
 import { restRefused } from '../../../game/wilds.ts';
 import { questLog, holds } from '../../../game/quests.ts';
 import { readerOf } from '../../../game/inscriptions.ts';
@@ -76,7 +87,175 @@ const person = (name: string): Person => H6.features!.find((f) => f.kind === 'np
 const ISLE = ATLAS.zones.find((z) => z.id === 'hearthisle')!;
 const at = (w: Walk, hour: number): void => { w.world.state.minutes = Math.floor(w.world.state.minutes / MINUTES_PER_DAY) * MINUTES_PER_DAY + hour * 60; };
 
+// ---- the vigil cell in the east rim (#864) ----
+
+const RIM = MAP_DEFS.find((d) => d.id === 'hearthisle_i6')!;
+type Chest = Extract<Feature, { kind: 'chest' }>;
+type Happening = Extract<Feature, { kind: 'event' }>;
+/** I6's chest, or its event, by id. */
+const chestOf = (id: string): Chest => RIM.features!.find((f): f is Chest => f.kind === 'chest' && f.id === id)!;
+const eventOf = (id: string): Happening => RIM.features!.find((f): f is Happening => f.kind === 'event' && f.id === id)!;
+
+/**
+ * How far `q` lies from the squares on a shortest walk from `a` to `b` (every way a company can take between them,
+ * not one), by the way a company walks (a secret door as the floor it is) and as the crow flies (the larger of the two
+ * differences). The two boxes of the isle are laid side by side as the world lays them, I6 32 squares on from H6, so
+ * that a walk may cross the seam between them.
+ */
+function apartFrom(a: readonly [number, number], b: readonly [number, number], q: readonly [number, number]): { steps: number; walking: number; crow: number } {
+  const isle: MapDef = { ...H6, id: 'hearthisle', features: [], exits: [], secrets: [], encounters: [], rows: H6.rows.map((r, y) => r + RIM.rows[y]) };
+  const map = new GameMap(isle), { width, height } = map;
+  const floor = (x: number, y: number): boolean => x >= 0 && y >= 0 && x < width && y < height && map.passable(x, y) === 'ok';
+  const flood = (from: readonly (readonly [number, number])[]): Int32Array => {
+    const d = new Int32Array(width * height).fill(-1), todo: number[] = [];
+    for (const [x, y] of from) { d[y * width + x] = 0; todo.push(y * width + x); }
+    for (let i = 0; i < todo.length; i++) {
+      const x = todo[i] % width, y = Math.floor(todo[i] / width);
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        const nx = x + dx, ny = y + dy;
+        if (floor(nx, ny) && d[ny * width + nx] < 0) { d[ny * width + nx] = d[y * width + x] + 1; todo.push(ny * width + nx); }
+      }
+    }
+    return d;
+  };
+  const fromA = flood([a]), fromB = flood([b]), steps = fromA[b[1] * width + b[0]], road: [number, number][] = [];
+  for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) if (fromA[y * width + x] >= 0 && fromA[y * width + x] + fromB[y * width + x] === steps) road.push([x, y]);
+  return { steps, walking: flood(road)[q[1] * width + q[0]], crow: Math.min(...road.map(([x, y]) => Math.max(Math.abs(x - q[0]), Math.abs(y - q[1])))) };
+}
+
+/**
+ * The detour (#864), on from the Hand's takings in the same rim: the vein of glass in the turf that ends at the rim's
+ * east face is seen, a search where it ends finds the door, and the company goes in. The plain chest gives the Vigil
+ * Robe; the grey-banded one is locked, and the company's thief picks it (the premade six's Ottilie is born to Lockpick,
+ * #857; what the lock refuses is played on a game of its own, `vigilLocked`). The Levin Mace comes out of it.
+ */
+function theVigil(w: Walk): void {
+  const door = RIM.secrets![1], glass = eventOf('i6_scorch'), inside = eventOf('i6_vigil');
+  const plain = chestOf('i6_vigil_chest'), banded = chestOf('i6_vigil_locked');
+  const standsOn = (c: { x: number; y: number }): boolean => { const o = w.world.locate(RIM.id, c.x, c.y); return !!o && w.world.state.x === o.x && w.world.state.y === o.y; };
+  w.ok(door.hint === glass.id && glass.x === door.x + 1 && glass.y === door.y && RIM.rows[door.y][door.x] === 'S' && RIM.rows[door.y - 1][door.x] === 'r' && RIM.rows[door.y + 1][door.x] === 'r',
+    'the vigil cell\'s door is the box\'s second secret, in the rim\'s east face between rock above and below, and the vein of glass ends on its near side');
+  see(w, `${RIM.id}:${glass.id}`);
+  w.ok(w.world.used(glass.id), 'the vein of glass in the turf is seen where it stops at the rock');
+  w.world.travel(RIM.id, glass.x, glass.y, WEST);
+  let found = false;
+  for (let i = 0; i < 20 && !found; i++) found = w.world.search();
+  w.ok(found, 'a search where the glass stops finds the door in the rock');
+  const in3 = [w.world.move('forward'), w.world.move('forward'), w.world.move('forward')];
+  w.ok(in3.every((r) => r.kind === 'moved') && w.world.used(inside.id) && standsOn(plain), 'through the door the cell runs on west: its first square, and the plain chest on the second');
+  w.world.markUsed(plain.id); w.party.gold += plain.gold; w.party.bag.push(...plain.items);
+  const robe = w.party.bag.includes('vigil_robe');
+  w.world.move('forward');
+  w.ok(robe && standsOn(banded), 'the plain chest gives the Vigil Robe, and the grey-banded chest stands at the back');
+  const gold = w.party.gold, keys = (): number => w.party.bag.filter((i) => i === 'key_iron').length, before = keys();
+  const said = w.world.unlock();
+  w.ok(banded.locked === true && said === 'Ottilie picks the lock.' && keys() === before, `the company's thief picks the grey-banded lock, born to Lockpick (${said || 'nothing'}), and no key is spent`);
+  w.world.markUsed(banded.id); w.party.gold += banded.gold; w.party.bag.push(...banded.items);
+  w.ok(w.party.bag.includes('levin_mace') && w.party.gold === gold && !banded.items.includes('key_iron'), 'and in it the Levin Mace, no gold and no key');
+  listen(w);
+}
+
+/**
+ * The grey-banded chest on the real map (#864), pressed on in a game of its own with the company dressed each way: a
+ * company with neither a Lockpick nor an iron key is refused ("Locked.", twice) and the chest stays shut and full; a
+ * thief standing, born to Lockpick, opens it and keeps its key; a key opens it and is spent. The plain chest beside it
+ * has no lock and opens to the company that cannot open the other.
+ */
+function vigilLocked(ok: (cond: boolean, msg: string) => void): void {
+  const banded = chestOf('i6_vigil_locked'), plain = chestOf('i6_vigil_chest');
+  /** A new game, the company dressed by `dress`, stood on the chest and Space pressed twice: what the log said, and what became of the chest, the prize and the keys. */
+  const press = (c: Chest, dress: (p: Party) => void): string => {
+    const g = headlessGame(4), p = g.party;
+    dress(p);
+    g.world.travel(RIM.id, c.x, c.y, WEST);
+    const there = g.world.featureHere(), from = g.log.length;
+    g.enterCell();
+    if (there) { g.interact(there); g.interact(there); }
+    return `${g.log.slice(from).join(' ')} | ${g.world.used(c.id) ? 'spent' : 'shut'} | ${c.items.every((i) => p.bag.includes(i)) ? 'taken' : 'left'} | ${p.bag.filter((i) => i === 'key_iron').length} keys`;
+  };
+  const thiefDown = (p: Party): void => { p.members.find((m) => m.cls === 'thief')!.conditions.push('dead'); };
+  const key = (p: Party): void => { p.bag.push('key_iron'); };
+  const prize = 'You open the chest: Levin Mace. The chest is empty.';
+  const cases: [string, Chest, (p: Party) => void, string][] = [
+    ['no Lockpick standing and no key', banded, thiefDown, 'A locked chest. Locked. Locked. | shut | left | 0 keys'],
+    ['the thief standing, born to Lockpick, no key', banded, () => undefined, `A locked chest. Ottilie picks the lock. ${prize} | spent | taken | 0 keys`],
+    ['the thief standing and a key carried, which is kept', banded, key, `A locked chest. Ottilie picks the lock. ${prize} | spent | taken | 1 keys`],
+    ['no Lockpick standing and an iron key, which is spent', banded, (p) => { thiefDown(p); key(p); }, `A locked chest. The lock turns. The key crumbles. ${prize} | spent | taken | 0 keys`],
+    ['no Lockpick and no key, at the plain chest beside it', plain, thiefDown, 'A chest. Space opens it. You open the chest: Vigil Robe. The chest is empty. | spent | taken | 0 keys'],
+  ];
+  const wrong = cases.flatMap(([who, c, dress, want]) => { const said = press(c, dress); return said === want ? [] : [`${who}: "${said}", wanted "${want}"`]; });
+  ok(banded.locked === true && !plain.locked && !wrong.length,
+    `the grey-banded chest refuses a company with neither a Lockpick nor an iron key and opens to either, the plain chest beside it opening to any (${cases.map(([who]) => who).join('; ')})${wrong.length ? ' -> ' + wrong.join('; ') : ''}`);
+}
+
+/**
+ * The two finds (#864), off the ladder: the Levin Mace is the Slag Mace of Cinderport's 25 with lightning on its head, the
+ * rung under the Grey Blade the ladder wears from 28, so the die is the gain; the Vigil Robe is the Grey Robe a point
+ * lighter, with +3 personality while worn. Each is priced above nothing and inside Hearth Isle's window and under its
+ * dearest find, the Grey Mail, so the curve's line stands; sold by no shop and dropped by no monster, on no row of the
+ * ladder, sold back at half, and lying in the cell's two chests and nowhere else, the area's one locked chest holding the
+ * mace. Lightning is held against what the isle places. And the cell is found and never told: the glass explains nothing,
+ * no person, quest or world-map mark names it, and it lies off the road, where the measure is named.
+ */
+function vigilFinds(ok: (cond: boolean, msg: string) => void): void {
+  const [mace, robe] = [item('levin_mace'), item('vigil_robe')];
+  const [slag, blade, grey] = [item('slag_mace'), item('grey_blade'), item('grey_robe')];
+  const same = (a: unknown, b: unknown): boolean => JSON.stringify(a) === JSON.stringify(b);
+  ok(mace.slot === 'weapon' && mace.element === 'lightning' && !mace.stat && !mace.plus && mace.dice === slag.dice && mace.sides === slag.sides && mace.bonus === slag.bonus && same(mace.classes, slag.classes) && same(mace.classes, blade.classes) && mace.name.length <= 26,
+    `the Levin Mace is the Slag Mace's steel with lightning on it, for the Grey Blade's classes, its name ${mace.name.length} characters of the sheet's 26`);
+  ok(hits(mace) - hits(slag) === 3.5 && hits(slag) < hits(blade) && hits(blade) < hits(mace),
+    `a rung under the ladder's, so the die is the gain: hits ${hits(mace)} against the Grey Blade of 28 at ${hits(blade)} (the Slag Mace of 25 ${hits(slag)}, the die 3.5)`);
+  ok(robe.slot === 'armor' && same(robe.stat, { personality: 3 }) && !robe.element && robe.ac === (grey.ac ?? 0) - 1 && same(robe.classes, grey.classes),
+    `the Vigil Robe is a point under the Grey Robe's armour (${robe.ac} of ${grey.ac}), for anyone, raising personality by 3 and nothing else`);
+  // Priced, in the window, never sold, off the ladder, sold back at half.
+  const stocked = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => (f.kind === 'shop' ? f.stock : []))));
+  const ladder = new Set(GEAR.flatMap(([, ids]) => ids)), dropped = new Set(Object.values(MONSTERS).flatMap((m) => (m.drops ?? []).map((x) => x.item)));
+  const limit = CURVE.hearth.price, dearest = item('grey_mail').price, six = defaultParty(makeRng(1));
+  for (const d of [mace, robe]) {
+    ok(d.price > 0 && d.price < dearest && d.price <= limit && !stocked.has(d.id) && !ladder.has(d.id) && !dropped.has(d.id) && sellPrice(six, d.price) === d.price / 2,
+      `${d.name} costs ${d.price} of Hearth Isle's window of ${limit} and under the Grey Mail's ${dearest}, is sold by no shop, worn by no rung of the ladder and dropped by no monster, and sells back at ${sellPrice(six, d.price)}`);
+  }
+  // Where they lie: the cell's two chests, the grey-banded one the area's only locked chest.
+  const hearth = AREAS.find((a) => a.id === 'hearth')!;
+  const chests = MAP_DEFS.flatMap((d) => (d.features ?? []).filter((f): f is Chest => f.kind === 'chest').map((f) => ({ map: d.id, f })));
+  const holding = (id: string): string => chests.filter(({ f }) => f.items.includes(id)).map(({ map, f }) => `${map}:${f.id}`).join();
+  const locked = chests.filter(({ map, f }) => f.locked && hearth.maps.some((m) => m.id === map)).map(({ map, f }) => `${map}:${f.id}`);
+  ok(holding('levin_mace') === 'hearthisle_i6:i6_vigil_locked' && holding('vigil_robe') === 'hearthisle_i6:i6_vigil_chest' && locked.join() === 'hearthisle_i6:i6_vigil_locked'
+    && chestOf('i6_vigil_locked').gold === 0 && chestOf('i6_vigil_chest').gold === 0,
+    `the Levin Mace lies in the grey-banded chest and the robe in the plain chest beside it, no gold with either, and the grey-banded chest is the only locked one the isle places (${locked.join() || 'none'})`);
+  // The raise and the blow, on the real items: worn, the robe adds 3 to personality and not to the bare stat, and to what the cleric heals; carried it adds nothing; and the classes that cannot wield the mace are refused.
+  const crew = defaultParty(makeRng(1)), cleric = crew.members.find((m) => m.cls === 'cleric')!, paladin = crew.members.find((m) => m.cls === 'paladin')!;
+  const bare = statOf(cleric, 'personality'), healed = spellHeal(cleric, 20);
+  cleric.pack.push(robe.id);
+  const carried = statOf(cleric, 'personality');
+  cleric.pack.pop();
+  ok(equip(cleric, robe.id) && carried === bare && statOf(cleric, 'personality') === bare + 3 && cleric.stats.personality === bare && spellHeal(cleric, 20) === healed + 1
+    && equip(paladin, mace.id) && paladin.equipment.weapon === mace.id && !equip(crew.members.find((m) => m.cls === 'sorcerer')!, mace.id) && !equip(crew.members.find((m) => m.cls === 'thief')!, mace.id),
+    `worn, the robe raises the cleric's personality ${bare} to ${statOf(cleric, 'personality')} (carried, nothing) and her heal ${healed} to ${spellHeal(cleric, 20)}, and the paladin wields the mace; the sorcerer and the thief cannot`);
+  // Lightning against what the isle places: none of its monsters is immune or resists it; the weak are named.
+  const placed = [...new Set(hearth.maps.flatMap((m) => (m.encounters ?? []).flatMap((e) => e.monsters)))].map((id) => MONSTERS[id]).filter((m) => m.level > 10);
+  const weak = placed.filter((m) => elementMult(m, 'lightning') > 1), shut = placed.filter((m) => elementMult(m, 'lightning') < 1);
+  ok(placed.length >= 10 && weak.length >= 1 && !shut.length, `lightning is never nothing here: of the ${placed.length} monsters the isle places past 10, ${weak.length} are weak to it (${weak.map((m) => m.id).join(', ')}) and ${shut.length} immune or resistant`);
+  // Found and never told.
+  const glass = eventOf('i6_scorch');
+  ok(!/door|secret|cell|hide|chest|lock|key|search|store/i.test(glass.text), 'the vein of glass is a thing seen, and its text explains nothing');
+  const quests = AREAS.flatMap((a) => [...(a.quests ?? []), ...(a.chapter ? [a.chapter] : [])]);
+  const told = [
+    ...quests.flatMap((q) => [q.title, ...q.entries.map((e) => e.text), ...q.goals.map((x) => x.text)]),
+    ...MAP_DEFS.flatMap((d) => (d.features ?? []).filter((f) => f.kind === 'npc').map((f) => JSON.stringify(f))),
+    ...ATLAS.sites.map((s) => s.name), ...ATLAS.places.flatMap((p) => [p.name ?? '', p.note ?? '']),
+  ].filter((t) => /Levin Mace|Vigil Robe|vein of glass|banded in grey|cell cut in the rim/i.test(t));
+  ok(!told.length && !JSON.stringify(CHAPTER).includes(RIM.id), `found and never told: no person, quest, chapter or atlas place or site names the cell, the mace or the robe, and the chapter's road never enters the east rim (${told.length} do)`);
+  // Off the road: the squares on a shortest walk from the strand (20,30) to the temple's door (18,14), across the isle's two boxes laid side by side.
+  const strand: [number, number] = [H6.start.x, H6.start.y], doorway: [number, number] = [H6.exits![0].x, H6.exits![0].y], hint: [number, number] = [32 + glass.x, glass.y];
+  const far = apartFrom(strand, doorway, hint), on = apartFrom(strand, doorway, [strand[0], strand[1] - 6]);
+  ok(far.steps > 0 && far.walking > 10 && on.walking === 0 && on.crow === 0,
+    `the cell is off the road: where the glass stops is ${far.walking} squares from the nearest square on a shortest walk from the strand to the temple's door (${far.steps} steps) by the way a company walks, and ${far.crow} as the crow flies; a square of the cleft itself is ${on.walking}`);
+}
+
 export const walkthrough: Walkthrough = (ok) => {
+  vigilFinds(ok);
+  vigilLocked(ok);
   const w = newWalk(ok);
   const out = buildMaps()[OUTDOORS];
   const h6 = out.zones.find((z) => z.id === 'hearthisle_h6')!;
@@ -259,6 +438,9 @@ export const walkthrough: Walkthrough = (ok) => {
   listen(w);
   const rimHoard = I6.features!.find((f) => f.kind === 'chest' && f.id === 'i6_hoard');
   ok(rimHoard?.kind === 'chest' && rimHoard.gold === 1700 && rimHoard.items.join() === 'grey_mail' && rimHoard.x === pocket.x - 2 && rimHoard.y === pocket.y, 'in the Hand\'s hoard, 1,700 gold and the Grey Mail');
+
+  // A detour off the road (#864): the vigil cell in the rim's east face, found from the vein of glass in the turf.
+  theVigil(w);
 
   // The moths over Anchorhold's yard by night.
   ok(JSON.stringify(I6.encounters!.find((g) => g.id === 'i6_moths')?.when) === JSON.stringify({ hours: 'night' }), 'the moths come over the yard by night');

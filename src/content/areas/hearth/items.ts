@@ -6,9 +6,11 @@
 // the dead champion's pack. The Ways' (#757): the Grey Shield in the keepers' store, and the Old Lantern's
 // Staff behind the crack (61). The Stair's (#758): the Grey Axe in the rearguard's chest, and Jowan's letter
 // home (58). The Heart's (#759): the Queen's signet, off Vask's finger. The band's rung at 28, found and
-// never sold, is these nine pieces (#746, docs/areas/hearth_isle.md §8).
+// never sold, is these nine pieces (#746, docs/areas/hearth_isle.md §8). Two finds off that rung close the table (#864,
+// §4.9): a lightning mace and a robe that raises personality, in a cell cut in the east rim.
 import type { ItemDef } from '../../../game/items.ts';
 import { W, A, MARTIAL, MAIL, NO_CASTER_HEAVY } from '../../items.ts';
+import { slagMace } from '../ashfall/items.ts';
 
 /** The Hand's knife, a point past Cinderport's Marlinspike (1d8+13): light, the thief's (§8; §9.1, 41). */
 export const greyKnife = W('grey_knife', 'Grey Knife', 6400, 1, 8, { kind: 'light', bonus: 14 });
@@ -28,8 +30,8 @@ export const greyAxe = W('grey_axe', 'Grey Axe', 6800, 2, 12, { bonus: 7, twoHan
 export const greyShield: ItemDef = { id: 'grey_shield', name: 'Grey Shield', slot: 'shield', price: 4000, ac: 8, classes: MAIL };
 /**
  * The staff from the Lanterns' hall the Sunder swallowed (61), a point past the Grey Staff (1d10+13): a
- * staff anyone may carry, as the Battle Staff is. Its holiness is its lamp's, in its words: no weapon
- * carries an element.
+ * staff anyone may carry, as the Battle Staff is. Its holiness is its lamp's, in its words: its blows
+ * carry no element.
  */
 export const oldLanternsStaff = W('old_lanterns_staff', 'Old Lantern\'s Staff', 7000, 1, 10, { kind: 'staff', bonus: 14, twoHanded: true, text: ['A staff of the old Lanterns, the lamp in its head still lit after four hundred years.'] });
 
@@ -68,4 +70,15 @@ export const ITEMS: readonly ItemDef[] = [
   { id: 'queens_signet', name: 'Queen\'s Signet', slot: 'none', price: 0, text: [
     'A heavy ring, gold, worn thin on the inside. The seal is the one on the treaty, and on the chisel, and on the north rim: the first people\'s mark.',
   ] },
+  // The vigil cell in the east rim's face (#864), behind a second secret door in I6, and off the ladder: no GEAR row
+  // dresses a company in either, no shop sells either, and each is priced inside the window of 7,000 and under the
+  // Grey Mail's, the dearest find the curve names for the area. The Slag Mace of Cinderport's 25, the rung under the
+  // Grey Blade the ladder wears from 28, with a lightning die on its head: its steel the rung under, so the die is the
+  // gain (hits 21.5 against 19 and 18). The Grey Blade's 6,600 and a point of plus (150) to each point of that gain,
+  // to the 50 below. Locked, in the grey-banded chest.
+  { ...slagMace, id: 'levin_mace', name: 'Levin Mace', price: 6950, element: 'lightning' },
+  // The Grey Robe a point lighter in the armour, as Cinderport's, and cut for the faithful: +3 personality while worn,
+  // which the armour slot makes one robe at a time. The Grey Robe's 6,200, less 150 for the point of armour and with
+  // 300 more for the raise. In the plain chest beside the locked one.
+  { ...greyRobe, id: 'vigil_robe', name: 'Vigil Robe', price: 6350, ac: 12, stat: { personality: 3 } },
 ];
