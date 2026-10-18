@@ -960,6 +960,12 @@ What it shows:
      monster and ends days badly far past the tenth aimed at (EXPANSION §5.2). The limits (#273) and
      the softening cap stand.
 
+  Decided by the owner's delegate for #891, each the owner's to overturn:
+
+  1. **J2 stands** (EXPANSION §5.2): the line is not made on optional power, the softening cap
+     (#541, decision 3) and the limits (#273) are not moved, and `tools/restate.ts` keeps waiting for
+     the day the line is made again.
+
 `node tools/harness.ts` reports every role's standard encounter at every calibrated level: the
 fights before a rest, what ended the day, the rounds a fight took, what one fight from a fresh start
 costs, and the boss's odds. `--map thornmark --level 5` puts a map's own groups against a company
