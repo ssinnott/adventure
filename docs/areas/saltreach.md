@@ -580,9 +580,9 @@ settled in its issue, and what the pilot teaches changes them.
   drowned god's town shrine (cures and raising at the band's price, #250); the armourer (the
   band's gear, a step past Thornhold's, #251: a Morning Star, a Stiletto, a Horn Bow, a Long Axe,
   an Ironshod Staff, a Sharkskin Coat and a Tidefolk Robe, 600 to 1,100 gold, #399); the
-  provisioner, a chandlery (#252); the harbour tavern that is the Compact's hall (#182, #253); the Cartographers' map room (#181, #254); the
-  training hall, to 13 (#159, #255); the locksmith's shop (#19, #256). No spell hall: the next tier
-  is sold at Lantern Watch (#151, call 9).
+  provisioner, a chandlery (#252); the harbour tavern that is the Compact's hall (#182, #253); the Cartographers' map room (#181, #254), which sells a
+  chart (#860); the training hall, to 13 (#159, #255); the locksmith's shop (#19, #256), which sells
+  a set of picks (#860). No spell hall: the next tier is sold at Lantern Watch (#151, call 9).
 - **People.** The astrologer, the locksmith, the stevedore and the ferryman, the four trainers (#19),
   each at their job; Jory Tallis at the dockmaster's house with his lineage on the wall, whose words
   touch the throne without opening the subplot (Phase 4); the smugglers' captain who takes the boat
@@ -599,9 +599,10 @@ settled in its issue, and what the pilot teaches changes them.
   along its north and west sides and the ferry steps at its foot. The businesses are the brief's
   eight, each its own room: the Tide Table (the inn, 25 a head); the Telhus, the drowned god's
   town shrine, which cures; the Seawall Armoury, selling #399's seven and nothing else; the Quay
-  Chandlery, the provisions at list price; the Sail Loft, training to 13; the locksmith's, whose
-  keeper, Pender, sells no picks; the Keel, the harbour tavern; and the Cartographers' map room,
-  its Geographer, Ysolde Carrow, at the plotting table. The four first prestiges are taught each by
+  Chandlery, the provisions at list price; the Sail Loft, training to 13; the locksmith's, Pender's
+  Locks, a shop that sells a set of picks (#860), its keeper, Pender, standing after it on its
+  square; the Keel, the harbour tavern; and the Cartographers' map room, its Geographer, Ysolde
+  Carrow, at the plotting table, which sells a chart (#860). The four first prestiges are taught each by
   a person at their trade: Hiske the astrologer in the street (the Sorcerer's), Pender in his shop
   (the Thief's), Baukje the stevedore among the bales on the quay (the Barbarian's) and Tjerk the
   ferryman at the steps (the Monk's). Jory Tallis stands at his house front on the quay, his
@@ -613,17 +614,23 @@ settled in its issue, and what the pilot teaches changes them.
   the quay. Dunstan, at the quay's side, sells the ferry to Kilnhaven, 400 the crossing, out at 8
   and onto Kilnhaven's quay at 16 two days on (#469). The walkthrough goes in by the gate and out again, buys each class its step at the
   armourer, trains a member of 12 to 13 at the loft and makes a Tumbler of Ottilie at 11, once
-  the log has sent her to Pender; then it takes the boat to the isle, saves there and loads, and
+  the log has sent her to Pender; then, for a company of its own given the gold, it buys the set of
+  picks at Pender's door and the chart at the Map Room's; shows the picks open a locked chest that
+  the same company without them cannot and the chart map a square further; and sells each back at
+  half (#860); then it takes the boat to the isle, saves there and loads, and
   takes it home. The town pays nothing of its own: its 300
   is its quests', which are its halls', its chapter's and its side quests'.
 - **The Cartographers' hall** (#181, 1 October): the map room is the Map Room, a shop with the
   Guild's `hall`, selling rations, antidotes, lamp oil and healing potions at list price to
-  surveyors going out; its menu is the trade, the Guild's work and Ysolde, who stands in it as a
-  person. The book under glass is the Meridian Company's route book, left with the Guild the
-  morning they went; the journals went down with them. Ysolde reads the first journal to a company
-  that carries it and gives it back (`meridian_read`): Oriel Fane's line about lying dry under the
-  causeway's arch points at the dry place under C5's arch, which the mast's stump hints too. The
-  Guild teaches nothing yet: its three skills are #18's. The walkthrough takes the first task,
+  surveyors going out, and a Guild Chart, 400 gold, that maps a square further for any company
+  that carries it (#860); its menu is the trade, the Guild's work, the skills it teaches and Ysolde,
+  who stands in it as a person. The Guild's three skills, Swimmer, Cartographer and Pathfinder, are
+  taught at the hall for 1,000 gold each to a company with its first task done (#813, #857), and
+  Ysolde's words say nothing of them. The book under glass is the Meridian Company's route book,
+  left with the Guild the morning they went; the journals went down with them. Ysolde reads the
+  first journal to a company that carries it and gives it back (`meridian_read`): Oriel Fane's line
+  about lying dry under the causeway's arch points at the dry place under C5's arch, which the
+  mast's stump hints too. The walkthrough takes the first task,
   chains the road, is made Chainmen, does both quests of the first rank and is made Surveyors, then
   has the journal read.
 - **The Compact's hall** (#182, 1 October): the Keel is the Salt Compact's hall, a tavern that carries `hall`
@@ -1181,10 +1188,12 @@ Decided by delegate for #177, each the owner's to overturn:
    not honest, its return seller would stand in Helmstow, the Foreland's map, and the docs disagree
    on where it goes (SLICE says Helmstow, docs/areas/sunderwood.md east from Saltmouth). C6's yard
    keeps its "No horses", which is true as it stands.
-2. **The locksmith is his own business:** Pender stands in `saltmouth_locksmith` and teaches the
-   Thief's first prestige, as the Split Oak's keeper is his tavern. A shop must sell something, and
-   his trade is lock picks, which wait on #18; he becomes a shop when they exist, and the armourer
-   keeps the Stiletto.
+2. **The locksmith is his own business, and a shop since #860:** Pender stood in
+   `saltmouth_locksmith` and taught the Thief's first prestige, as the Split Oak's keeper is his
+   tavern, for a shop must sell something and his trade, lock picks, waited on #18, while the
+   armourer kept the Stiletto. The picks exist now: his door is a shop, Pender's Locks, selling a
+   set of picks, and he stands after it on its square with no room of his own and teaches the
+   Thief's first through his person, as Ysolde stands at the Map Room (#860's 1).
 3. **The Keel and the map room are drawn with doors, each keeper in their room,** and #177 takes
    their UNPLACED entries: a door with no business fails `doorwayFaults`, and a shut front leaves the
    port short of its tavern. #181 and #182 turn each into its hall (a business with `hall`, which a
@@ -1256,9 +1265,10 @@ Decided by delegate for #181, each the owner's to overturn:
 
 1. **The hall is a shop, the Map Room,** on the map room's door with the Guild's `hall`: only a
    business may carry one, and a shop must sell something real, so it sells rations, antidotes,
-   lamp oil and healing potions at list price, what a surveyor takes out. No chart or kit is
-   sold: it would do nothing until #18's Cartographer exists. Ysolde stands after it on its square,
-   a person with no room of her own.
+   lamp oil and healing potions at list price, what a surveyor takes out. No chart or kit was
+   sold at #181, for it would have done nothing until #18's Cartographer existed; a Guild Chart is
+   sold beside the stores since #860, for it does the Cartographer's work carried. Ysolde stands
+   after it on its square, a person with no room of her own.
 2. **The book under glass is the Company's route book,** left with the Guild the morning they went,
    since the room draws a book under glass and the journals went down with them: the first journal
    the company carries is the first read here.
@@ -1280,7 +1290,9 @@ Decided by delegate for #181, each the owner's to overturn:
    reading would go in `thornmark/quests.ts`, another area's file, so it is owed to the owner's
    word and not written here; SLICE says the journal is read (#181).
 7. **The Length of the Wall is not here:** it is #205's, given by the Guild's surveyor at Lantern
-   Watch. The Guild's three skills are #18's, and the hall says nothing of teaching them.
+   Watch. The Guild's three skills were #18's, and the hall said nothing of teaching them: they are
+   taught at its menu since #813 and #857, for 1,000 gold each once the first task is done, and
+   Ysolde's words still say nothing of them.
 
 Decided by delegate for #182, each the owner's to overturn:
 
@@ -1560,6 +1572,35 @@ Decided by delegate for #806, each the owner's to overturn:
 4. **The `OWED` line for the Choirmaster goes,** and the reason `OFF_LINE` gives for it
    (`tools/tests/harness.ts`) names this issue. Level, xp, gold, drops, id and the group stay, so the
    curve and `src/content/shipped.json` do not move.
+
+Decided by the builder for #860, each the owner's to overturn:
+
+1. **The shop takes the room and Pender stays on its square.** A business carries the room
+   (`interior`) and a person after it with none keeps their words and, for Pender, `teaches`, which
+   the shop's first menu reaches as "Talk to Pender the locksmith", as the Map Room reaches Ysolde.
+   The issue's "as the armourer keeps his" is read so: Saltmouth's armourer teaches nothing, and
+   Ysolde and Ruan are the precedent.
+2. **One line of his words changes:** "I don't sell picks. I have not yet met anyone I would sell
+   them to" becomes "Picks too, now. I have met someone I would sell them to". He sells what he said
+   he never would, in his own few words, and neither the price nor what the picks do is told. The
+   other two lines and the room stand.
+3. **The ids and names are `set_of_picks`, "Set of Picks", `guild_chart`, "Guild Chart" and the
+   shop's "Pender's Locks".** Each ware's name is twelve glyphs at most, so that the Sell list's row
+   with a member of ten letters (name, member and price) fits the panel as the Buy list's does; the
+   walkthrough measures both.
+4. **Each reads from the pack,** a line of what it looks like (`text`, as the Holy Symbol of the
+   Tide has), so that Space on one says what is in the hand and not "nothing to do with it here".
+   Neither line says what the thing does: that is found.
+5. **The chart sits last in the Map Room's stock,** beside its stores, at 400; the picks are
+   Pender's only ware, at 750. Both are slotless, off the ladder (no `GEAR` row) and inside the
+   2,000 window, and a shop buys either back at half, 375 and 200 (two thirds to a Merchant). No
+   figure moves: the gate's company buys nothing here and holds no skill.
+6. **The walkthrough buys them in a company of its own,** given the gold directly (the road has paid
+   it nothing by here, and the armourer's step is bought on gold set by hand), so that a chart or a
+   set of picks carried touches none of the walk's later steps. The picks are tried on #857's fixture
+   shape, a locked chest under a company with its thief down (the thief is born to Lockpick), since
+   Saltreach holds no locked chest; the chart in #857's dungeon hall, where it maps two squares west
+   in place of one.
 
 ## 10. Names
 
