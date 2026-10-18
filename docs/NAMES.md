@@ -24,8 +24,8 @@ built or given a naming pass of its own.
 |---|---|---|---|
 | The Foreland folk, the Crown's own | the Foreland | English place-names, Old English and Old Norse | -stow (place), -wick and wyke (bay, landing), -ness (headland), -combe (valley), -by (farm), -holt (wood), scarth (notch), -don and down (hill), hole (sea cave), harbour (shelter), mew (gull), brock (badger), callow (bare), kestrel, crow |
 | Thornmark's elves | Thornmark, the Deepthorn | Cornish, the older British of the far west: short parts, spelled as they are said. A few of the Foreland's oldest people carry names of it | pen (head), hen (old), lys (court), coos (wood), dar (oak), spern (thorns), kelli (grove), lyn (pool), dowr (water), rid (ford), hir (long), du (dark), gwyn (white) |
-| The Tidefolk | Saltreach: the fen, the villages, the temples' island | Frisian, the low coast of dykes and tidal flats | wierde (a mound above the flood), -um (home), riet (reed), syl (a sluice, a way through), diep (channel), skor (salt marsh), wad (tidal flat), meer (a broad water), stien (stone), hol (hollow, cave), sjong (song), tel (count), dyk (dyke), salt |
-| The dwarves | the Kilns | the German of the old mining country, the Erzgebirge, beside Kiln-script, which is the crew's and not theirs | erz (ore), eisen (iron), berg, hutte (smelter, written without its umlaut), stollen (adit), schacht (shaft), zeche (pit, mine), halde (spoil heap), kamm (crest), feuer, glut (ember), hammer, stein |
+| The Tidefolk | Saltreach: the fen, the villages, the temples' island | Frisian, the low coast of dykes and tidal flats | wierde (a mound above the flood), -um (home), riet (reed), syl (a sluice, a way through), diep (channel), skor (salt marsh), wad (tidal flat), meer (a broad water), stien (stone), hol (hollow, cave), sjong (song), tel (count), dyk (dyke), salt, stok (staff) |
+| The dwarves | the Kilns | the German of the old mining country, the Erzgebirge, beside Kiln-script, which is the crew's and not theirs | erz (ore), eisen (iron), berg, hutte (smelter, written without its umlaut), stollen (adit), schacht (shaft), zeche (pit, mine), halde (spoil heap), kamm (crest), feuer, glut (ember), hammer, stein, hemd (shirt) |
 | The hill folk | Cairnmoor, Rimewater: the moor and the lodges | Scots Gaelic, the tongue of moor and loch | carn (cairn), creag (crag), loch, moine (peat), tulach (knoll), dubh (dark), fionn (white), beinn (mountain), allt (stream), clach (stone), fuar (cold), fada (long), eas (fall), ceann (head), lios (ring, enclosure), bogach (bog), lann (blade), bogha (bow), luireach (coat of mail) |
 | The monks and Cindercoast's folk | the Whitespine, Ashfall | the Crown's and the Lanterns' English, kept, as Sunderwood's and Wrackholm's were; the monks' own speech is Kiln-script | |
 | The Wold Riders | the Glasswold | the Turkic of the steppe | ak (white), kara (black), tash (stone), kum (sand), su (water), ordu (camp), yurt, kush (bird), dag (mountain), kol (lake), bash (head), uzun (long), yol (road) |
@@ -80,3 +80,25 @@ built or given a naming pass of its own.
   Bowl, the Strand and the Hand's Steps on the isle; the Ways, the Stair and the Heart are the docs'
   plain names for the deep, as the Sleepers' Bay is (#739; `docs/areas/hearth_isle.md` §10).
 - **The rest:** with their areas.
+
+## 5. The artifacts
+
+The bounds' eight artifacts (DESIGN §9, #846) are named by the rules above, as things and not
+places: each in its area's own tongue where its people have one, and in the area's English where
+they speak it or its finds are named in English already (Cairnmoor's Cairnbuilder's Mail and Beacon
+Hammer). Each says one plain thing about its piece and may hint at what it does, as the found items'
+names do (the Levin Mace, the Runner's Coat); none explains it.
+
+| Artifact | Area | Tongue | What it says |
+|---|---|---|---|
+| the Hagstone | the Foreland | the Foreland folk's English | a stone with a hole worn through it, as the coast hangs one up against the hag that rides a sleeper |
+| the Telstok | Saltreach | the Tidefolk's: *tel* count, *stok* staff | the counting staff, struck on the floor to keep time |
+| Holdfast | Wrackholm | the sailors' English | the root by which kelp holds to its rock |
+| the Erzhemd | the Kilns | the dwarves': *erz* ore, *hemd* shirt | a shirt of ore |
+| Torhide | Cairnmoor | the moor's English, as its finds' names are | a tor troll's hide |
+| the Wakerobe | Rimewater, with the Whitespine | the monks' English, kept, as the Whitespine's names are | a robe for waking |
+| Akkush | the Glasswold | the Riders': *ak* white, *kush* bird | the white bird, a name a Rider gives a bow |
+| Grim's Axe | Ashfall | the coast's English | whose it was, as Grimsforge is named |
+
+*Stok* and *hemd* join their tongues' rows (§2). The guardians of the lairs have the monsters' plain
+English names (docs/MONSTERS.md §13), and each lair's name is its brief's, by these rules.

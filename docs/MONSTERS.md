@@ -1941,24 +1941,24 @@ the pilot.
 | spider | the Foreland (built) | the salt crab (Saltreach), the glass spider (Sunderwood), the fire beetle (the Kilns), the cinder beetle (Ashfall), the glass scorpion (the Wold) |
 | bandit | the Foreland (built) | the wreckers and their lampman (the Downs), the bargemen (Saltreach), the Wrack smugglers (Wrackholm), the anvil guard (the Kilns) |
 | cultist | the cellar (built) | the overseer (Wrackholm), the gleaner (Sunderwood), the mason (the Whitespine), the champion and the preacher (Hearth Isle), the Grey Hand (the Core) |
-| skeleton | the cellar (built) | the barrow guard and captain (the Downs), the chanter and the Choirmaster (Saltreach), the bog body and the Cairn King (Cairnmoor), the ash husk (Ashfall), the glassbound and the Pilot (the Glass) |
+| skeleton | the cellar (built) | the barrow guard and captain (the Downs), the chanter and the Choirmaster (Saltreach), the bog body and the Cairn King (Cairnmoor), the ash husk (Ashfall), the glassbound and the Pilot (the Glass), the Old Chanter (Saltreach's lair, §13) |
 | riftling | the cellar (built) | brine (Saltreach, Wrackholm), black glass (Sunderwood), slag (the Kilns): §2.1 |
-| ogre | Thornmark (built) | the tor troll (Cairnmoor), the snow troll (the Whitespine) |
+| ogre | Thornmark (built) | the tor troll (Cairnmoor), the snow troll (the Whitespine), the Rim Troll (Cairnmoor's lair, §13) |
 | wraith | Thornmark (built) | the cairn wight (Cairnmoor) |
-| **birds** | the Downs | the old rook (the Downs), the great owl, the grey heron, the wrack gull, the raven, the spine eagle, the vulture |
+| **birds** | the Downs | the old rook (the Downs), the great owl, the grey heron, the wrack gull, the raven, the spine eagle, the vulture, the Foal-taker (the Glasswold's lair, §13) |
 | **old wood** | the Deepthorn | the strangler vine (Ashfall) |
-| **long bodies** | Saltreach | the rock worm (the Kilns), the ice pike (Rimewater), the glass worm and the ice worm (the reach) |
+| **long bodies** | Saltreach | the rock worm (the Kilns), the ice pike (Rimewater), the glass worm and the ice worm (the reach), the Hag (the Foreland's lair, §13) |
 | **toads** | Saltreach | none: the first to cut if the art budget bites |
-| **devilfish** | Wrackholm | none |
+| **devilfish** | Wrackholm | Old Nick (Wrackholm's lair, §13) |
 | **moths** | Sunderwood | the hearth moth (Hearth Isle) |
 | **bears** | Sunderwood | the ice bear (Rimewater) |
-| **knockers** | the Kilns | the tallyman (Rimewater), the deep knocker and the inspector (Meridian Camp), the tally clerk (the Dead-Drop), the deep knocker again (the Underdeep) |
+| **knockers** | the Kilns | the tallyman (Rimewater), the deep knocker and the inspector (Meridian Camp), the tally clerk (the Dead-Drop), the deep knocker again (the Underdeep), the Steiger (the Kilns' lair, §13) |
 | **salamanders** | the Kilns | the ember salamander (Ashfall), the basilisk (the Wold) |
 | **lights** | Cairnmoor | the rime light (the Ice Caves) |
-| **keepers** | Rimewater | the brothers, the bell-ringers and the Abbot, robed (the Whitespine); the hold keeper and the Tallymaster (the Dead-Drop); the keeper (the Underdeep); the lamplighters (the Vault) |
+| **keepers** | Rimewater | the brothers, the bell-ringers and the Abbot, robed (the Whitespine); the hold keeper and the Tallymaster (the Dead-Drop); the keeper (the Underdeep); the lamplighters (the Vault); the Infirmarer (Rimewater's lair, §13) |
 | **cats** | Rimewater | the Wold's lions |
 | **giants** | the Whitespine | none |
-| **drakes** | Ashfall | the drakeling and the Brood Drake (Meridian Camp) |
+| **drakes** | Ashfall | the drakeling and the Brood Drake (Meridian Camp), the Grave Drake (Ashfall's lair, §13) |
 | **heavy machines** | Ashfall | the flue walker (Meridian Camp), the loader (the Dead-Drop), the core sentry (the Core) |
 | **glass walkers** | the Wold | the Buried Tower |
 | **crawlers** | the Underdeep | none |
@@ -1967,7 +1967,9 @@ In all, 113 new defs in 17 new families: with today's 33 in 11, 146 in 28, each 
 its own (EXPANSION.md §5.6); eight of them are Meridian Camp's and the Dead-Drop's (§8.4, §8.5;
 #22). No area adds more than two families, and Hearth Isle, the Core and the two large dungeons add
 none. Five families serve a single area: the toads and the devilfish, which can be cut, and the
-giants, the drakes and the crawlers, which are their areas' centrepieces and cannot.
+giants, the drakes and the crawlers, which are their areas' centrepieces and cannot. The bounds'
+eight guardians (§13) are eight defs more, each a new kind in a family above, and add no family;
+Old Nick is the devilfish's second, so Wrackholm's lair would want another family were they cut.
 
 ---
 
@@ -2034,3 +2036,32 @@ Where this and DESIGN.md disagree, the design wins.
    area holds, they share one budget, set so that three quarters of it reach the next floor), but it
    decides whether a fight on the road is worth having, and the country's floor of groups may want
    to sit looser than its floor of features (EXPANSION.md §5.3).
+
+---
+
+## 13. The bounds' lairs
+
+The lairs of DESIGN.md §9's eight artifacts, one in each area the bounds build out (#828), each one
+or two levels at the cap's band, 30–32 (#845). Each holds one guardian, its boss: a new kind in a
+family already drawn, eight families for the eight and none of them new, so each drawing is one
+small creatures pull request in its family's module (EXPANSION.md §8.1), after #846 names it and
+the families register their kinds (#848). Each stands at 32, the band's top, as the road's bosses
+stand at theirs, and is judged at the lair's floor of 30 (#845; EXPANSION.md §5.2). Its numbers come
+from the harness's line at the cap and are set when its lair is built (§4.1, §4.2), so this names
+the role and the shape and no hit points. Where it can, a guardian answers what its lair holds, and
+a company that has fought it knows what it has found. The lair's other groups are its brief's, from
+kinds already drawn.
+
+| Monster | Family | Role, level | Where | Look; what it does |
+|---|---|---|---|---|
+| The Hag | long bodies, new kind | boss, 32 | the Foreland's sea cave, on E4's strand; it keeps the Hagstone | *No eyes, and it found you first.* Holds (paralysis) |
+| The Old Chanter | skeleton, new kind | boss, 32 | Saltreach's drowned mound, A5; the Telstok | *The first of the chanters, and it still sings the old song.* Blesses itself and curses; dead, so sleep and nature pass it by and holy bites |
+| Old Nick | devilfish, new kind | boss, 32 | Wrackholm's sea cave under the east rocks, F5; Holdfast | *What the smugglers fed first.* Size 2; reaches the back row; its hits heal it |
+| The Steiger | knockers, new kind | boss, 32 | the Kilns' old working under the rim, P5; the Erzhemd | *It knocks once, and the whole seam answers.* A machine; calls a group of deep knockers |
+| The Rim Troll | ogre, new kind | boss, 32 | Cairnmoor's cleft in the rim, P7; Torhide | *The rim stood up.* Size 2; mends unless burned |
+| The Infirmarer | keepers, new kind | boss, 32 | Rimewater's door under the pass, K12; the Wakerobe | *No robe, too many fingers and a bed made up for you.* A machine; its touch puts to sleep, and it mends itself |
+| The Foal-taker | birds, new kind | boss, 32 | the Glasswold's eyrie on the Scarp's east end, D7; Akkush | *When its shadow crosses the herd, the herd runs.* Size 1.8; flies, and hunts the back row |
+| The Grave Drake | drakes, new kind | boss, 32 | Ashfall's grave where the flow stopped, F12; Grim's Axe | *Asleep on a warlord's grave, and the grave is warm.* Size 2; burns a row |
+
+Each ask is built (§3.3): holding, casting, curse, drain, calls, regeneration, the touch that puts
+to sleep, flight and the sweep, so no guardian waits on the systems lane.
