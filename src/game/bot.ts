@@ -11,10 +11,11 @@
 // has seen do nothing to any foe still standing; once it has seen a foe mend, it burns it with fire
 // each round before it casts anything else. It reads the fight as it stands each turn, the groups
 // called into it too. It wakes a sleeper or frees one held (#549) of the front row, or a caster,
-// before it strikes. Behind an option each (`BotOpts`, #853), off until the calibration switches them
-// on (#865), it blesses in a fight's first round against three foes or more, by the knower whose turn
-// is worth least, sleeps the group with the most it could put down (a sorcerer's Slumber, a druid's
-// Grasping Roots) and lets the sleepers lie, and gives a draught to the lowest where no one can mend
+// before it strikes. Behind an option each (`BotOpts`, #853), on in play and in the gate since the
+// calibration (`PLAYED`, #865), it blesses in a fight's first round against three foes or more, by the
+// knower whose turn is worth least, sleeps the group with the most it could put down (a sorcerer's
+// Slumber, a druid's Grasping Roots) and lets the sleepers lie while another of the company can
+// strike, and gives a draught to the lowest where no one can mend
 // them, or to a sleeper or one held no one can free; so its turn is mend, wake, burn, bless, sleep,
 // blast, drink, strike, brace. It cures nothing but sleep and a hold,
 // so it is weaker than a player. Flee is built (#723): the game's flees a fight lost (`beaten`); the gate's
@@ -203,11 +204,17 @@ export function gateBurn(s: CombatState, c: Character, lie = false): { spellId: 
 }
 
 /**
- * What the bots do beyond the turn they have always played, each off unless set (#853): Bless in the
- * first round (`blessWith`), sleep a group (`sleepWith`) and drink a draught (`drinkFor`). Off, a
- * bot plays as it did before them; nothing in play or in a check sets them until #865.
+ * What the bots do beyond the turn they had always played (#853): Bless in the first round
+ * (`blessWith`), sleep a group (`sleepWith`) and drink a draught (`drinkFor`), each where set. Off, a
+ * bot plays as it did before them.
  */
 export interface BotOpts { bless?: boolean; sleep?: boolean; drink?: boolean }
+
+/**
+ * The bots' options as they are played (#865): bless, sleep and drink, all three, in the game's
+ * auto-fight and the pilot's, the gate's and the harness's; a caller passes `{}` for the bot as it was.
+ */
+export const PLAYED: Readonly<BotOpts> = { bless: true, sleep: true, drink: true };
 
 /**
  * The bots' Bless (#853): in a fight's first round, three foes or more standing and no Bless running
@@ -279,12 +286,13 @@ export function drinkFor(s: CombatState, p: Party, c: Character, sees: Sees = as
 
 /**
  * The bot's turn for member `i`: the action it took, in gateTurn's order (mend, wake, burn, bless,
- * sleep, blast, drink, strike, brace), bless, sleep and drink only where `opts` asks (#853). Each is
+ * sleep, blast, drink, strike, brace), bless, sleep and drink where `opts` asks (#853), all three
+ * unless told otherwise (`PLAYED`, #865). Each is
  * tried on the resolver in turn and the first it takes is the turn; bracing it always takes. `sees`
  * is what it knows of the monsters: the gate's every trait as written, the game's auto-fight only
  * what the fight has shown (`asSeen`).
  */
-export function botTurn(s: CombatState, p: Party, rng: RngInstance, i: number, sees: Sees = asWritten, opts: BotOpts = {}): PartyAction {
+export function botTurn(s: CombatState, p: Party, rng: RngInstance, i: number, sees: Sees = asWritten, opts: Readonly<BotOpts> = PLAYED): PartyAction {
   // The game's bot flees a fight it has lost (#723); the gate's never does, since a flight only turns
   // a win into a loss and the gate measures whether a fight is winnable.
   if (sees !== asWritten && beaten(s, p) && partyAct(s, p, rng, { type: 'flee' })) return { type: 'flee' };

@@ -1086,12 +1086,14 @@ function bot(): void {
 }
 
 /**
- * The bots' bless, sleep and drink (#853), each behind `BotOpts` and off unless set. On: a cleric
+ * The bots' bless, sleep and drink (#853), each behind `BotOpts`, all three as play has them (#865)
+ * and off where a caller sets none. On: a cleric
  * blesses in the first round against three foes and not two, one Bless at a time; a sorcerer sleeps
  * the larger group, the gate's knowing what Slumber cannot take as written and the game's once seen;
  * a member drinks for the lowest when no mender can and not otherwise, and frees one held by a
  * draught when no one can by a spell; the thrifty bot weighs them. Off: a seeded fight is the same
- * turn for turn with the options absent and present but false.
+ * turn for turn with none set and present but false; absent, it is played with all three. And a
+ * caster alone does not stall behind its own Slumber.
  */
 function botOpts(): void {
   const ON: BotOpts = { bless: true, sleep: true, drink: true }, OFF: BotOpts = { bless: false, sleep: false, drink: false };
@@ -1116,7 +1118,7 @@ function botOpts(): void {
   };
   const cast = (a: PartyAction | undefined, id: string): boolean => a?.type === 'cast' && a.spellId === id;
   {
-    const three = botFight(one(dummy, dummy, dummy), [4], ON).took[0], two = botFight(one(dummy, dummy), [4], ON).took[0], off = botFight(one(dummy, dummy, dummy), [4]).took[0];
+    const three = botFight(one(dummy, dummy, dummy), [4], ON).took[0], two = botFight(one(dummy, dummy), [4], ON).took[0], off = botFight(one(dummy, dummy, dummy), [4], {}).took[0];
     ok(cast(three, 'bless') && !cast(two, 'bless') && !cast(off, 'bless'),
       `with the option on, Maren blesses in the first round against three foes (${JSON.stringify(three)}) and not against two (${JSON.stringify(two)}); off, not at all (${JSON.stringify(off)})`);
     const both = botFight(one(dummy, dummy, dummy), [1, 4], ON), poor = botFight(one(dummy, dummy, dummy), [4], ON, (q) => { q.members[4].sp = Math.floor(q.members[4].maxSp * REST_AT) + 2; }).took[0];
@@ -1149,7 +1151,7 @@ function botOpts(): void {
   {
     // Wren at a tenth of her hit points, a draught in the bag: Bram gives it her when no one standing can mend her, and strikes while Maren can.
     const hurt = (spent: boolean) => (q: Party): void => { q.members[2].hp = Math.floor(q.members[2].maxHp / 10); q.bag.push('potion_heal'); for (const m of q.members) if (spent || m.cls !== 'cleric') m.sp = 0; };
-    const dry = botFight(one(dummy), [0], ON, hurt(true)), wet = botFight(one(dummy), [0], ON, hurt(false)), off = botFight(one(dummy), [0], undefined, hurt(true));
+    const dry = botFight(one(dummy), [0], ON, hurt(true)), wet = botFight(one(dummy), [0], ON, hurt(false)), off = botFight(one(dummy), [0], {}, hurt(true));
     const draughts = (q: Party): number => q.bag.filter((id) => id === 'potion_heal').length, whole = draughts(companyAt(8, 853)) + 1;
     ok(JSON.stringify(dry.took[0]) === '{"type":"use","itemId":"potion_heal","target":2}' && draughts(dry.q) === whole - 1 && dry.s.log.some((l) => l.startsWith('Wren recovers'))
       && wet.took[0]?.type === 'attack' && draughts(wet.q) === whole && off.took[0]?.type === 'attack',
@@ -1170,14 +1172,16 @@ function botOpts(): void {
     const only = (j: number, id: string) => (q: Party): void => { q.members[j].spells = [id]; };
     const blessing = (m: MonsterDef): boolean => botFight(one(m, m, m), [4], ON, only(4, 'bless'), asWritten, 1, 'thrifty').s.bless > 0;
     const sleeping = (m: MonsterDef): number => botFight(one(m, m, m), [5], ON, only(5, 'sleep'), asWritten, 1, 'thrifty').s.monsters.filter((x) => x.conditions.includes('asleep')).length;
-    const offBless = botFight(one(brute, brute, brute), [4], undefined, only(4, 'bless'), asWritten, 1, 'thrifty').s.bless;
+    const offBless = botFight(one(brute, brute, brute), [4], {}, only(4, 'bless'), asWritten, 1, 'thrifty').s.bless;
     ok(blessing(brute) && !blessing(dummy) && offBless === 0 && sleeping(brute) > 0 && sleeping(dummy) === 0,
       `the thrifty bot blesses against three brutes and not three dummies, and sleeps the brutes (${sleeping(brute)} asleep) and not the dummies; off, it blesses nothing`);
     const gives = botFight(one(dummy), [0], ON, (q) => { q.members[2].hp = 5; q.bag.push('potion_heal'); for (const m of q.members) m.sp = 0; }, asWritten, 1, 'thrifty');
     ok(gives.s.log.some((l) => l.startsWith('Wren recovers')), `and gives a draught where no spell pays and no one can mend (${gives.s.log.at(-1)})`);
   }
   {
-    // Off, nothing moves: a seeded fight is the same turn for turn, the gate's, the game's and the thrifty bot's, with the options absent and present but false; and on, it is not.
+    // Off, nothing moves: a seeded fight is the same turn for turn, the gate's, the game's and the thrifty
+    // bot's, with none set and with the three present but false; absent, as play has them since #865
+    // (`PLAYED`), it is the fight with all three on, and another.
     const turns = (bot: 'written' | 'seen' | 'thrifty', opts?: BotOpts): string => {
       const q = companyAt(4, 853), rng = makeRng(853), out: string[] = [];
       q.members[0].pack.push('potion_heal');
@@ -1196,17 +1200,17 @@ function botOpts(): void {
       }
       return [...out, s.outcome].join('\n');
     };
-    // Main's fight, pinned: each bot's turns, outcome and digest with the options absent, as main played
-    // it at e74bffb0 before the options came. #865 renews these when it switches the default on.
+    // Main's fight, pinned: each bot's turns, outcome and digest with the options off, as main played it
+    // at e74bffb0 before the options came.
     const MAIN = {
       written: [46, '3e52eed053fa132689b29bb5288762395a2a481ff145edfea3baf3f580c08120'],
       seen: [46, '3e52eed053fa132689b29bb5288762395a2a481ff145edfea3baf3f580c08120'],
       thrifty: [52, '06399b5beb1712ab1609de73231bb8172a74473ff4188343203af1de8a927709'],
     } as const;
     for (const bot of ['written', 'seen', 'thrifty'] as const) {
-      const absent = turns(bot), off = turns(bot, OFF), on = turns(bot, ON), lines = absent.split('\n'), digest = createHash('sha256').update(absent).digest('hex');
-      ok(absent === off && absent !== on && lines.length - 1 === MAIN[bot][0] && lines.at(-1) === 'victory' && digest === MAIN[bot][1],
-        `off, the ${bot === 'thrifty' ? "thrifty bot's" : bot === 'seen' ? "game's bot's" : "gate's bot's"} seeded fight is main's turn for turn, absent and present but false (${lines.length - 1} turns, ${lines.at(-1)}, ${digest.slice(0, 12)}); on, it is another`);
+      const none = turns(bot, {}), off = turns(bot, OFF), absent = turns(bot), on = turns(bot, ON), lines = none.split('\n'), digest = createHash('sha256').update(none).digest('hex');
+      ok(none === off && absent === on && none !== on && lines.length - 1 === MAIN[bot][0] && lines.at(-1) === 'victory' && digest === MAIN[bot][1],
+        `off, the ${bot === 'thrifty' ? "thrifty bot's" : bot === 'seen' ? "game's bot's" : "gate's bot's"} seeded fight is main's turn for turn, none set and present but false (${lines.length - 1} turns, ${lines.at(-1)}, ${digest.slice(0, 12)}); absent, it is played with all three, another`);
     }
   }
   {
