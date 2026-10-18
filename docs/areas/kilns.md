@@ -3281,8 +3281,11 @@ size is built yet; the pull request that builds the first says what it found.
 - **The walkthrough** walks them in one function, `theBounds` in `walkthrough.ts`, called last: each
   box's seams walked, its groups won at its floor, its secret found from its hint and its prize shut to
   walkers, swimmers, climbers and levitators.
-- **The edges are pinned** in `tools/tests/outdoors.ts` where a box meets a built one, and a
-  neighbour's pin that spoke of the box as cut is re-pinned to what meets it.
+- **The seams meet the seam rule** (#910, EXPANSION §5.1): a box agrees with each built neighbour
+  square for square on passable ground, water and road, and adds no row to `SEAMS_AS_BUILT`; its
+  open squares onto unbuilt land are an `OPEN_ON_NOTHING` row each in `tools/tests/outdoors.ts`, and
+  the neighbours' rows it now answers go (P5 and P6 took O5's and O6's east rows and hold P5's north
+  edge, open at 0 to 5 onto P4).
 
 ### 12.2 K6, the heath west of the port (#831): country, band 16–18
 
