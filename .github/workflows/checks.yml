@@ -1,9 +1,10 @@
 # The checks every pull request must pass before it merges: the typecheck, the tests and the smoke
-# test, each its own job so the pull request shows each. Branch protection on main requires all three
-# and a branch up to date with main. No path filters: a pull request that touches only docs must
-# still report, or it waits on checks that never come. The contact sheet's job, last, is not one of
-# the three: it attaches pictures for the owner and is not required. Nor is the pilot's full run
-# (`fullrun`, docs/PILOT.md), which runs only when started by hand: a report, not a gate.
+# test, each its own job so the pull request shows each. Main has no branch protection (the owner,
+# 18 October 2026): the orchestrating session merges one pull request at a time, each up to date with
+# main and green on all three (docs/EXPANSION.md §8.3). No path filters: a pull request that touches
+# only docs must still report, or it waits on checks that never come. The contact sheet's job, last,
+# is not one of the three: it attaches pictures for the owner and is not required. Nor is the pilot's
+# full run (`fullrun`, docs/PILOT.md), which runs only when started by hand: a report, not a gate.
 name: Checks
 
 on:
