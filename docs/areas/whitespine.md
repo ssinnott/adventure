@@ -1007,8 +1007,8 @@ rung under the ladder's at the band, the plain where the ladder wears the plus, 
 gain: 2.5 over the +1, with a point less to hit than it. The knife's is 16.5, the ladder's Skinning
 Knife +1 (the plain, from 21, is 15.5), so its gain is the aim: accuracy +3 is one step of `bonus`,
 a point to hit on top of the plus's, and nothing else reads accuracy (the sheet prints a thief's
-12 as "15(+3)", her attack bonus 3 with the ladder's knife and 4 with this one). The weapon slot
-makes one blade at a time. The axe's sheet line, "WEAPON Thunderhead Axe, LIGHTNING", ends at 217
+12 as "15(+3)", and her attack bonus is one over the ladder's knife's). The weapon slot makes one
+blade at a time. The axe's sheet line, "WEAPON Thunderhead Axe, LIGHTNING", ends at 217
 px, and at 265 with the widest tier, of the column's 334; its name is 15 characters of the 26 the
 `items` suite allows.
 
