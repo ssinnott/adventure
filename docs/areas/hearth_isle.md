@@ -2129,7 +2129,7 @@ crypt pay, 11,942 xp a member and 3,500 gold, still owed to #744 while the area 
 | Paid by level | entering at 28 and clearing three quarters, a company leaves at 29.2, 2.8 under the next floor 32 |
 | Dearest find | the Grey Bow, 6,800, in the 7,000 window (the Grey Robe, 6,200) |
 | Gate, at the floor 29 | 100% of fights won (aim 90%, limit 80%); the six groups' too |
-| Gate, two under | n/a for the crypt, its floor being above the area's; the area's pool at 26, 94.2% of 51 groups' fights won since #794 (100% of 15 when built); past 10 the gate judges the day (#851) |
+| Gate, two under | n/a for the crypt, its floor being above the area's; the area's pool at 26, 94.2% of 51 groups' fights won since #794 (100% of 15 when built); past 10 the gate judges the day (#851; §11) |
 | Fights to a rest, at 29 | 10.46 (aim 10.25 to 12.25, limit 8.75 to 14.75), in the aim since #794 (13.71 when built, easier than it); 5.3% of days end in a fight broken off |
 | Density, dungeon | 100.0% within 7 steps (58 of 58, 53 needed); the furthest 4 of 10; 1 sign in 16 points, the three groups of #794 among them |
 | Levels | 3 monsters in 29–29, give or take two; rising from the way in (rank correlation 0.51; 1.00 before #794); the nearest group, the champions at 4 steps, at 29.0; the hardest, the rats at 13 steps, at 30.0 |
@@ -2166,7 +2166,7 @@ box; #794 raised the Ways' own pay and finds, and the rows that name it say what
 | Paid by level | entering at 28 and clearing three quarters, a company leaves at 30.0, 2.0 under the next floor 32 |
 | Dearest find | the Grey Bow, 6,800, in the 7,000 window (the Old Lantern's Staff, 7,000, is an answer's gift, not a find) |
 | Gate, at the floor 30 | 100% of fights won (aim 90%, limit 80%), the twelve groups since #794 as the eleven; the area's 26 groups' too as built |
-| Gate, two under | n/a for the Ways, its floor being above the area's; the area's pool at 26, 100% of 26 groups' fights won; past 10 the gate judges the day (#851) |
+| Gate, two under | n/a for the Ways, its floor being above the area's; the area's pool at 26, 100% of 26 groups' fights won; past 10 the gate judges the day (#851; §11) |
 | Fights to a rest, at 30 | 11.27 since #794 (aim 10.5 to 12.5, limit 9 to 15), 7% of days ending in a fight broken off; 11.58 as built and 12.00 on main before it |
 | Density, dungeon | 100.0% within 7 steps (201 of 201, 181 needed, 16,1 floor since #758); the furthest 6 of 10; 1 sign in 37 points since #794 (32 as built) |
 | Levels | 4 monsters in 30–30, give or take two; rising from the way in (rank correlation 0.13); the nearest group, the rats at 3 steps, at 30.0; the hardest, the crawlers at 25 steps, at 31.0 |
@@ -2186,7 +2186,7 @@ what is true since:
 | Dearest find | the Grey Bow, 6,800, in the 7,000 window (the Grey Axe in the rearguard's chest is 6,800 too) |
 | Gate, at the floor 30 | 95.2% of the Stair's fights won since #794, the Catcher counted (aim 90%, limit 80%); 94.1% as built and 93.9% on main before it; the area's 37 groups at their maps' floors 98.9% as built |
 | The Catcher | 57% won at 30 (aim 30% to 70%, limit 20% to 80%) and 80% at 32 (aim 90%, limit 75%) on the gate's hundred seeds, which judge a dungeon's boss at its map's floor and two above, not at 31 (63%, 67% at 31 and 81% on 400); the walkthrough's ten at 31, 5 won. As sized by #752, 1,300 hit points and 32d8+37, and read again after #793 (56% and 79% before it); the first sizing, 1,100 and 34d8+40, gave 59%, 67% at 31 and 84%. The floor's aim binds and "nearly always at the cap" cannot hold beside it but in a slog (§7, §8; §9.2, #758's 7, #752's 4 and #796's 1) |
-| Gate, two under | n/a for the Stair, its floor being above the area's; the area's pool at 26, 97.5% of 37 groups' fights won (the gate asked at most 25%, limit 90%, until #851 judged the day) |
+| Gate, two under | n/a for the Stair, its floor being above the area's; the area's pool at 26, 97.5% of 37 groups' fights won (the gate asked at most 25%, limit 90%, until #851 judged the day; §11) |
 | Fights to a rest, at 30 | 10.71 since #794 (aim 10.5 to 12.5, limit 9 to 15), in the aim, 10% of days ending in a fight broken off, the Catcher left out as a boss; 10.14 as built and 10.34 on main before it, under the aim |
 | Density, dungeon | 98.1% within 7 steps (151 of 154, 139 needed, 16,1 a door since #759); the furthest 9 of 10; 1 sign in 27 points since #794 (22 as built) |
 | Levels | 6 monsters in 30–31, give or take two; rising from the way in (rank correlation 0.41 since #794, 0.19 as built); the nearest group, `ud2_knockers2` at 2 steps, at 28.0 (as built the rearguard at 4 steps, at 30.0); the hardest, the crawlers at 16,20 at 10 steps, at 31.0 |
@@ -2209,7 +2209,7 @@ the lesser of Vask's groups and none of the sentries, as a clear fights one grou
 | Paid by level | entering at 28 and clearing three quarters, a company leaves at 31.9 since #794, 0.1 under the next floor 32; 31.4 as built |
 | Gate, at the floor 32 | the Heart is judged on its boss's odds alone, its every group being a boss (§9.2, #759's 8); the area's 51 groups at their maps' floors 97.9% of fights won since #794 (aim 90%, limit 80%); 39 groups, 97.2%, as built |
 | Vask | `core_vask` 60% won at 32 (aim 30% to 70%, limit 20% to 80%), `core_vask_thinned` 78%; two above the floor n/a, past the cap. His four plays on 400 seeds (the gate's hundred), on the line made again with the sentries at 890 hit points (#752, read again after #793): the Hands first 62% (60%), Vask first 72% (69%), the sentries as they come 28% (33%), no clock 88% (82%); the gate judges the Hands first and holds the clock let run to 20% to 45% (33%), and leaves Vask first, the better play, unjudged; the tries are in §7 |
-| Gate, two under | n/a for the Heart, its floor being above the area's; the area's pool at 26, 94.2% of 51 groups' fights won since #794 (92.5% of 39 as built; the gate asked at most 25%, limit 90%, until #851 judged the day) |
+| Gate, two under | n/a for the Heart, its floor being above the area's; the area's pool at 26, 94.2% of 51 groups' fights won since #794 (92.5% of 39 as built; the gate asked at most 25%, limit 90%, until #851 judged the day; §11) |
 | Fights to a rest | n/a in the gate, the Heart holding nothing but its boss; on the test monsters at 32 (`node tools/harness.ts --abilities`, the line made again by #752 and #793): the Hands first 12.1 rounds, won 11%, 2.3 sentries called, the light 5.1 of 8 steps down; the lord first 10.5 rounds, won 26%, 2.6 sentries, 5.6 of 8; the sentries as they come 11.4 rounds, won 18%, 2.5 sentries, 5.5 of 8; Vask's own group, on the gate's bot (`--abilities --seeds 100`, the gate's hundred: the default 200 prints 65, 69, 27 and 87), 60%, 69%, 33% and 82% with no clock |
 | Walkthrough | `core:core_vask` won at 32 in 60% of its ten seeds, 70% with the clock left to run (with no round cap) |
 | Density, dungeon | 100.0% within 7 steps (90 of 90, 81 needed); the furthest 7 of 10; no sign in 12 points |
@@ -2827,9 +2827,10 @@ Decided by delegate for #753, each the owner's to overturn:
    Lantern's door.
 10. **The isle's road at the gate is the cleft's two pickets and the sermon,** from the strand to the
     temple's door; the moths come by night and are off it.
-11. **Two under, the isle is won every time** (100% at 26). Stronger monsters are barred and fewer
-    groups would not lower it. The issue's "one at 26 no more than one in four" is therefore not
-    met; since #851 the gate judges two under past 10 by the day, and asks no more of the fights.
+11. **Two under, the isle is won every time** (100% at 26; `hearthisle_h6: under` and `Hearth Isle:
+    under`, rows of `OWED` until #851). Stronger monsters are barred and fewer groups would not
+    lower it. The issue's "one at 26 no more than one in four" is therefore not met; since #851 the
+    gate judges two under past 10 by the day, and asks no more of the fights.
 12. **The brief's seven groups are kept as written:** 12.19 fights to a rest at 28 (aim 10 to 12,
     limit 8.5 to 14.5), off the aim but inside the limit; the pay is 1.07 of the share, under 1.25.
 13. **`HELD` is exported from H6's map** with the tokens (the Council's three flags imported from
@@ -2879,10 +2880,10 @@ Decided by delegate for #754, each the owner's to overturn:
 10. **The isle's road at the gate gains `i6_rim`, `i6_guard` and `i6_guard2`** after H6's three: out of
     the Bowl's east pocket by the rim's path and down the east foot to the camp. The moths by night
     are off it, as H6's are.
-11. **Two under, I6 is won every time** (100% at 26) as H6's is. Stronger monsters are barred and
-    fewer groups would not lower it. The issue's "one at 26 no more than one in four" is therefore
-    not met; since #851 the gate judges two under past 10 by the day, and asks no more of the
-    fights.
+11. **Two under, I6 is won every time** (100% at 26; `hearthisle_i6: under`, a row of `OWED` until
+    #851) as H6's is. Stronger monsters are barred and fewer groups would not lower it. The issue's
+    "one at 26 no more than one in four" is therefore not met; since #851 the gate judges two under
+    past 10 by the day, and asks no more of the fights.
 12. **The brief's four groups are kept as written:** 11.32 fights to a rest at 28 (aim 10 to 12).
     They pay 2,908 xp a member against a twelfth, 3,911: 0.74 of the share. No floor on a box's
     share is checked, and more or stronger groups were not the brief's.
@@ -2928,9 +2929,10 @@ Decided by delegate for #755, each the owner's to overturn:
 9. **The brief's five groups are kept:** 8.96 fights to a rest at 28 (aim 10 to 12, limit 8.5 to
    14.5), off the aim and inside the limit; the pay is 0.74 of the temple's seventh, so cutting a
    group would only widen the shortfall.
-10. **Two under, the temple is won every time** (100% at 26) as H6's is; stronger monsters are
-    barred. The issue's "one at 26 no more than one in four" is therefore not met; since #851 the
-    gate judges two under past 10 by the day, and asks no more of the fights.
+10. **Two under, the temple is won every time** (100% at 26; `hearthfane: under`, a row of `OWED`
+    until #851) as H6's is; stronger monsters are barred. The issue's "one at 26 no more than one in
+    four" is therefore not met; since #851 the gate judges two under past 10 by the day, and asks no
+    more of the fights.
 11. **The Grey Blade and the Grey Bow are the area's items,** beside H6's knife: `greyBlade` 2d12+6,
     6,600, for the martial classes and the cleric, one hand, a point past the Slag Mace; `greyBow`
     1d12+13, 6,800, the ranger's, a point past the Ashwood Bow. #746 takes them into its rung.
@@ -3600,7 +3602,7 @@ stat says personality (§9, #864's 8).
   harder for that company and the Compact as a fence for a Partner: the plan pays the ferry, the
   runner's word and the sea lanes.
 - **Master trainers** (DESIGN §12, M3): not the isle's; the tiers are built (#852) and the two
-  Masters stand on the road, the Wold's Rider (#858) and Old Cinder's scholar (#859) (§9, call 11).
+  Masters stand on the road, the Wold's Rider (#858) and Old Cinder's scholar (#859; §9, call 11).
 - **#56's 62 and 63:** the reach's, with the Buried Tower and the Vault (Phase 1.6).
 - **A second way into the Ways from the Hand's Steps:** the grey door opened for her hand and
   opens for nobody else; an event, not an exit, and no lock (§9, call 3).

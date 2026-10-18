@@ -1518,7 +1518,8 @@ Decided by delegate for #500, each the owner's to overturn:
    and band go and the site at 322,342 loses `planned`; ids are `hc1_*` and `hc2_*`.
 2. **Bands 22–24 above and 23–24 below.** The upper house is banded from the area's floor, as Carn
    Dubh's cairn is: at 23–24 the rise check wants its hardest group at 24, and only the Abbot is.
-   The lower's floor, 23, judges the Abbot at 23 and 25. Two under is judged by the day (#851).
+   The lower's floor, 23, judges the Abbot at 23 and 25. Two under is judged by the day (#851;
+   `monastery: under`, a row of `OWED` until then).
 3. **Four groups for the brief's sixteen,** for the pay: brothers (3) by the cells, the nearest;
    bell-ringers (4) down the tower's stair, the upper house's hardest at 23; brothers (2) before
    bell-ringers (2) in the chapter house; the Abbot alone. Two ringers alone were 28 fights to a
@@ -1756,8 +1757,8 @@ Decided by delegate for #503, each the owner's to overturn:
    times the ask (§8).
 10. **The Ashen Mason is placed here first:** #507's 10 owed it to I8, and it is out of `UNPLACED`
     (`tools/tests/maps.ts`).
-11. **Two under was a row of `OWED` until #851 judged the day:** I9 at 20 wins every fight
-    (`'sheerpoint_i9: under'`), and with its three groups the area's pool is 91.5% two under, over
+11. **Two under was a row of `OWED` until #851 judged the day:** I9 at 20 won every fight
+    (`'sheerpoint_i9: under'`), and with its three groups the area's pool was 91.5% two under, over
     the limit of 90%, so `'the Whitespine: under'` was back (I10 had dropped it at 89.9%).
 12. **The wilderness features:** the cairn beside the trail at 20,13 (a snow square cut in the
     peaks; a Sapphire Vial and no gold, as the range's cairns; *to steer by when the cloud is
@@ -1833,7 +1834,8 @@ Decided by delegate for #504, each the owner's to overturn:
     over water (its stone is the Kilns' pier's) or a person taken, and a cave on the atlas is on the
     road before.
 15. **The gate:** `ROADS` `sheerpoint` runs on to `i8_eagles`, `i8_masons` and `i8_foreman`, the
-    troll being off the road, by night; two under, I8 is judged by the day (#851).
+    troll being off the road, by night; two under, I8 is judged by the day (#851; `'sheerpoint_i8:
+    under'`, a row of `OWED` until then).
 
 Decided by delegate for #505, each the owner's to overturn:
 
@@ -2189,9 +2191,8 @@ Cut and owed, from I9 (#503):
 - **The trolls' cave,** the doc's secret, is not built: the issue's own, the masons' cache behind
   their tally, is, as §4.6 has it, and the hint's words stand as a thing seen at the gully (§9,
   #503's 6).
-- **Two under.** I9 at 20 and the area's pool, 91.5% two under against a limit of 90%, stood past
-  the limit, as the Whitespine's did before I10 dropped it (§9, #503's 11); #851 put the day in
-  their place.
+- **Two under.** I9 at 20 and the area's pool, 91.5% two under, stood past the limit of 90%, as the
+  Whitespine's did before I10 dropped it (§9, #503's 11); #851 put the day in their place.
 - **I9's west edge is shut:** H9 is built (#522) and the Sheer shuts its east edge, so the Stair stays
   the only way over; north the trail goes on into I8 (#504) (§9, #503's 18).
 - **The shrine's kneel** is built (#793, #800): `kneel` in `tools/walk.ts` finds a zone map's shrine
@@ -2208,8 +2209,8 @@ Cut and owed, from I8 (#504):
 - **The Mason's Tally and the Thief's third.** The Mason's Tally (#56's 48) is built (§6, #506);
   the watcher in Rook's Nest has words only, his trainer entry and the Thief's quest being #448's
   (§9, #504's 11 and 12).
-- **Two under.** I8 at 20 and the area's pool, 93% two under against a limit of 90%, stood past the
-  limit (§9, #504's 15); #851 put the day in their place.
+- **Two under.** I8 at 20 and the area's pool, 93% two under, stood past the limit of 90% (§9,
+  #504's 15); #851 put the day in their place.
 - **The world ends past I8,** in the sea to the north and west and against J8, not built, to the
   east (§4.7).
 - **The shrine's kneel,** as I9's, is built (#793, #800): it works on the drowned god's shrine at

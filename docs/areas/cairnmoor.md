@@ -1290,7 +1290,8 @@ Decided by delegate for #477, each the owner's to overturn:
 14. **Gold is 1,610,** the brief's 1,600 of the 8,880: the cairn's 260 with a Sapphire Vial and the
     hollow's 1,350 with the staff; the monsters carry none.
 15. **High Moor's road gains `highmoor_o7:o7_lights`** (the track to the ring's camp, where the walk
-    rests); O7's two under is judged by the day (#851), as N7's and N8's are.
+    rests); O7's two under is judged by the day (#851; `highmoor_o7: under`, a row of `OWED` until
+    then), as N7's and N8's are.
 16. **The seeds are unchanged:** `HIGHMOOR_HELD`'s row along y 190 is redundant for x 456 to 487 now
     O7 is laid, and the seed at 462,212 lies inside O7; both are left, as the zone walk passes and
     no test asks.
@@ -1371,8 +1372,9 @@ Decided by delegate for #480, each the owner's to overturn:
    draught.
 3. **The cairn is band 18–20, not 19–20:** the curve asks a map's hardest group to stand at its
    floor plus one, 20, and nothing but the King is 20; lowered by one as N2 and N8 were (#460's 2,
-   #479's 1). Two under it is judged by the day (#851), as the Tiefzeche's upper levels are. Under
-   the cairn is 19–20, so the King is judged at 19 and 21 as #480 asks.
+   #479's 1). Two under it is judged by the day (#851; `cairns: under`, a row of `OWED` until then),
+   as the Tiefzeche's upper levels are. Under the cairn is 19–20, so the King is judged at 19 and 21
+   as #480 asks.
 4. **Four groups of wights for the brief's three:** under the cairn the gate's share won at the
    floor counts the King, and beside one group of three it read 78.5%, under its limit of 80%, with
    14.08 fights to a rest (limit 12.25). The King's court is two groups of four, one each side of

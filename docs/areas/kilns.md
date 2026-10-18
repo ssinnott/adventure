@@ -950,7 +950,7 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   to a slag elder strayed from the Stone, there until the tear is closed, the box's group at 18 (§9). A company
   at 17 wins every fight and manages 8.64 fights to a rest, inside the aim, with 2.3% of its days
   ending in a fight broken off. As measured it pays about 1,679 xp a member and 950 gold. Two under,
-  at 15, its groups count in the area's pool, where every fight is won. Density 97.4% within 8
+  at 15, its groups counted in the area's pool, where every fight was won. Density 97.4% within 8
   steps, the furthest 11, with one sign among its 27 points.
 
 ### 4.9 O5, the Anvil Stone's box (#464): core, band 17–18
@@ -1011,9 +1011,9 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   day and its red light lies on them by night. A company at 17 wins every fight and manages 8.42
   fights to a rest, inside the aim, with 9.7% of its days ending in a fight broken off, most of them
   the Guard's. As measured it pays about 1,742 xp a member, 1,292 to a company that bought, which
-  meets no Guard, and 1,060 gold, the Guard about 150 more. Two under, at 15, its groups count in the
-  area's pool, where 97.1% of fights are won. Density 97.4% within 8 steps, the furthest 11, with
-  one sign among its 23 points.
+  meets no Guard, and 1,060 gold, the Guard about 150 more. Two under, at 15, its groups counted in
+  the area's pool, where 97.1% of fights were won. Density 97.4% within 8 steps, the furthest 11,
+  with one sign among its 23 points.
 
 ### 4.10 The Anvil Stone's Rift (#465): dungeon, one level of 16×16, hand-built, band 17–18
 
@@ -1069,9 +1069,9 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   (`cutters_pick`, `cutters_chisel`), with 1,910 gold, which nothing reaches but through the slag. A
   company at 17 wins every fight but the Warden's, which it wins 54% of the time, and 93% at 19; its
   groups pooled with the Warden are won 90.8% and its day runs 8.00 fights to a rest, 6.3% of its days
-  ending in a fight broken off, all inside the aims. Two under, its groups count in the area's pool at
-  14, where 95.4% of fights are won. As measured it pays 3,698 xp a member and 1,910 gold. Density
-  100% within 7, the furthest 7, with no sign among its 15 points.
+  ending in a fight broken off, all inside the aims. Two under, its groups counted in the area's
+  pool at 14, where 95.4% of fights were won. As measured it pays 3,698 xp a member and 1,910 gold.
+  Density 100% within 7, the furthest 7, with no sign among its 15 points.
 
 ### 4.11 O6, Feuerstollen's box (#466): country, band 17–18, with the tubes
 
@@ -1160,11 +1160,11 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
     53% at 17 and 94% at 19, its hit points and its blow set off the line by the gate (§9). As
     measured the box pays about 1,645 xp a member and 700 gold, the first level 1,631 and 300 and
     the second 2,851 and 600, the Great Salamander 1,902 of it: 6,127 and 1,600 in all for the
-    brief's 1,500 (§9). Two under, O6's groups count at 15 and the second level's at 14 in the
-    area's pool, where 94.6% of 54 groups' fights are won, and the first level's at 14 are won every
-    time. Density: O6 98.6% within 12 steps and the furthest 14, with one sign among its 22 points;
-    the tubes' two levels 100% within 7 and the furthest 3 and 3, with no sign among 19 points and
-    14.
+    brief's 1,500 (§9). Two under, O6's groups counted at 15 and the second level's at 14 in the
+    area's pool, where 94.6% of 54 groups' fights were won, and the first level's at 14 were won
+    every time. Density: O6 98.6% within 12 steps and the furthest 14, with one sign among its 22
+    points; the tubes' two levels 100% within 7 and the furthest 3 and 3, with no sign among 19
+    points and 14.
 
 ### 4.12 N6 and M6, the roads south and west (#467): country, band 16–18
 
@@ -2356,8 +2356,8 @@ Decided by delegate for #463, each the owner's to overturn:
 11. **The zone walk moves 1,852 squares, unheld** (§1). M6, N6 and O6 take their own when they are
     laid; Cairnmoor's 380 in M7, N7 and O7 go back when its boxes are laid or its own rows are
     seeded, which is Cairnmoor's to do (#437).
-12. **Two under is the area's pool's:** N5's floor is over the area's, so the gate counts its groups
-    at 15 in the area's pool, where every fight is won.
+12. **Two under is the area's pool's:** N5's floor is over the area's, so the gate counted its
+    groups at 15 in the area's pool, where every fight was won; since #851 the day judges that pool.
 13. **Owed on:** the drove road at N6's 12,0 (436,158, #467); the cutters' track at O5's 0,24
     (456,150, #464), to be run on to the Stone; the stream at M5's 31,25 and 31,26, with no road
     across that edge (#474); the elder's flag, the Rift's (#465) (built since: the road, the
@@ -2528,8 +2528,9 @@ Decided by delegate for #464, each the owner's to overturn:
     the edge check asks where the atlas runs it on into O4 at 457,125.
 12. **The zone walk moves 78 squares, unheld** (§1), none on a built map; O6 takes its own when it
     is laid (#466).
-13. **Two under is the area's pool's:** O5's floor is over the area's, so the gate counts its groups
-    at 15 in the area's pool, where 97.1% of fights are won (#463's 12).
+13. **Two under is the area's pool's:** O5's floor is over the area's, so the gate counted its
+    groups at 15 in the area's pool, where 97.1% of fights were won (#463's 12); since #851 the day
+    judges that pool.
 14. **Owed on:** the tear's feature, the square opened and the way back, #465's; the Rift's flag,
     which the slaglings, the Stone's line and the tear's read, #465's too (both built, #465's 5 to 9);
     the chapter's step at the Stone, #470's, which may read `o5_stone`; the grass and the hills at
@@ -2667,8 +2668,9 @@ Decided by delegate for #465, each the owner's to overturn:
     and a Cutter's Chisel +1 (`cutters_pick`, `cutters_chisel`, 1,650 and 1,550 gold), the forge's
     mattock and seax with a plus under names of their own, off the ladder, as O5's hammer is.
 11. **Its gold is 1,910, its share by the brief of the 13,900** (§8), all in the hollow with the tools.
-12. **Two under is the area's pool's:** the Rift's floor is over the area's, so the gate counts its
-    groups at 14 in the area's pool, where 95.4% of fights are won (#464's 13).
+12. **Two under is the area's pool's:** the Rift's floor is over the area's, so the gate counted its
+    groups at 14 in the area's pool, where 95.4% of fights were won (#464's 13); since #851 the day
+    judges that pool.
 13. **Owed on:** the chapter's step at the Stone, #470's, which reads `q_anvil_closed` (built since:
     #470); and a group's own `sets`, said with its `slainText`, which would close the tear on the
     blow itself, the systems lane's to give if it is wanted (built since: #636).
@@ -2732,9 +2734,10 @@ orchestrator's calls):
 15. **Einhart is words and a name only,** the dwarves' tongue's (§10): the brief has the hermit
     count the vents by their breath and no more, and no quest hangs on him.
 16. **Two under is the area's pool's, judged by the day (#851):** O6's floor and the second level's
-    are over the area's, so their groups count in its pool, O6's at 15 and the second level's at 14,
-    where 94.6% of 54 groups' fights are won; the first level's, at 14, are won every time
-    (`lava_tubes: under`, a row of `OWED` until then).
+    are over the area's, so their groups counted in its pool, O6's at 15 and the second level's at
+    14, where 94.6% of 54 groups' fights were won; the day now deals them to a company at 14, the
+    area's floor less two. The first level's, at 14, were won every time (`lava_tubes: under`, a row
+    of `OWED` until then).
 17. **Owed on:** the elder's flag, `q_anvil_closed`, is the Rift's (#465), whose walk checks that
     the elder comes back no more. The two-under figures (16) are judged by the day (#851).
 
@@ -2949,8 +2952,8 @@ Decided by delegate for #474, each the owner's to overturn:
 27. **O3 was cut with the scaffold's own `cut` and `emit`, its void written as `%`:** the scaffold
     refuses a cut holding void (O3's 87 squares of the world's end), as D3 of the Downs carries void
     in its rows (§11).
-28. **Two under (14) is judged by the day (#851) for both boxes,** as M6's and N6's are; it was a
-    row of `OWED` in the gate test until then.
+28. **Two under (14) is judged by the day (#851) for both boxes,** as M6's and N6's are; they were
+    rows of `OWED` in the gate test until then.
 
 Decided by delegate for #636, each the owner's to overturn:
 

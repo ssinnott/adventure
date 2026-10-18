@@ -313,12 +313,12 @@ features; the pay shared out over the area (§8).
   and manages 7.3 fights to a rest, inside the aim (8.7 in the ladder's gear, #406, over it; 7.5
   after the re-stat to #409's line, #18, inside it again); the road is walked every time. As
   measured it pays about 1,060 xp a member and 460 gold. Two under, at 12, it wins every fight too:
-  past 10 the company's gear stops growing, so a level-14 group cannot turn a level-10 or 12 company
-  back (§8; past 10 the gate judges a company two under by its day, #851). Woods are on the road
-  before it (the Downs' E2, the Deepthorn's H3 and I3), so the area claims the bears, the moths and
-  the moths' sleep as new, and not the woods. What the owner finds by hand goes here when the box
-  has been played. Since J2 (#196) its east edge is the wood on into J2, the rim's mountain kept on
-  its north rows and the road through.
+  past 10 the company's gear stopped growing then, so a level-14 group could not turn a level-10 or
+  12 company back (§8; past 10 the gate judges a company two under by its day, #851). Woods are on
+  the road before it (the Downs' E2, the Deepthorn's H3 and I3), so the area claims the bears, the
+  moths and the moths' sleep as new, and not the woods. What the owner finds by hand goes here when
+  the box has been played. Since J2 (#196) its east edge is the wood on into J2, the rim's mountain
+  kept on its north rows and the road through.
 
 ### 4.3 J2, the Eaves (#196): core, band 14–15
 
@@ -530,9 +530,9 @@ features; the pay shared out over the area (§8).
   first prestige (#541) they were won 99.3%, the Warden 98% and 100%, past the limit at 14, until
   #806 set the Warden again at 1,020 hit points and 13d8+13 (872 and 10d8+10 before): the floor's
   groups 85.3%, off the aim and inside the limit, the Warden 56% at 14 and 95% at 16 (§9). Two
-  under, the ledges are judged by the day (#851); the floor is inside its limit (67.7%, 82.3% with
-  the prestige, 67.3% since #806). As measured the two levels pay 2,704 xp a member and 750 gold.
-  What the owner finds by hand goes here when it has been played.
+  under, the day judges both levels (#851); the floor's fights were won 67.7% there, inside the
+  limit then (82.3% with the prestige, 67.3% since #806). As measured the two levels pay 2,704 xp a
+  member and 750 gold. What the owner finds by hand goes here when it has been played.
 
 ### 4.7 L2, Lantern Watch's box (#200): core, band 15–16
 
@@ -908,8 +908,8 @@ named. Its landmarks: a falls, a bridge, a tower, a rift.
   stores' full set for the premade six comes to about 10,000.
 - **The gate.** Each map at its own floor (docs/areas/thornmark.md §9, 17): a company at 14 wins nine
   in ten on I2 and one at 10 no more than one in four, which is how the east road out of Thornmark
-  turns an Act I company back (#40); the Warden of the Sunder is won about half the time at 14 and
-  nearly always at 16.
+  turns an Act I company back (#40; past 10 the gate judges a company two under by its day, #851);
+  the Warden of the Sunder is won about half the time at 14 and nearly always at 16.
 - **Density.** Core boxes at the Foreland's floor, country at the looser one, and the Sunder's
   floor held empty within four squares of the wall (MONSTERS §6.3). As built (#199) the silence holds
   no group but two events, so the density check needs no exception; the walkthrough holds the four
