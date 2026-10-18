@@ -510,15 +510,15 @@ Decided by the owner's delegate for #891, each the owner's to overturn:
    skill, charm or found item. The road needs no tier or skill, and a line made on a stronger
    company raises the monsters' blows where nothing bought raises defence (J2, above): optional
    power is the player's edge, not the road's floor. No lever moves (not the softening cap, `WORST`,
-   the limits, a defence-side rule or a second judged company); the 91 monsters past 10 and the 22
-   `OFF_LINE` bosses stand, and the eight bounds areas (#830 to #837) meet the gate as it is.
+   the limits, a defence-side rule or a second judged company); the 91 monsters past 10, 22 of them
+   set off the line (`OFF_LINE`), stand, and the eight bounds areas (#830 to #837) meet the gate as it is.
 2. **What the optional power buys is written here** (#865, two under, 100 seeds). With Expert,
    Master and the three the company fights 4.6 to 8.4 of a role's standard encounter to a rest at 20
    where it fought 3.0 to 6.7 (9.0 asked at the floor), 9.9 to 13.6 at 25 where 5.9 to 8.8 (10.3
    asked) and 4.0 to 10.0 at 28 where 2.3 to 7.0 (11.0 asked), and wins the boss 58% at 20 where 42%,
    60% at 25 where 55% and 75% at 28 where 53%; its fights run longer, the sleepers let lie (at 20
    from 3.4 to 10.7 rounds to 3.8 to 13.5). `node tools/harness.ts --under 2 --levels 13,20,25,28
-   --seeds 100 --tiers --bot bless,sleep,drink` prints it, in 18 s.
+   --seeds 100 --tiers --bot bless,sleep,drink` prints it, in under a minute.
 3. **The harness's what-ifs are the standing evidence:** `--tiers`, `--bot bless,sleep,drink`,
    `--company newer`, `--under 2` and `--calibrate` under any (it says what share of days end badly
    and writes nothing), with the tables in MONSTERS §4.4 and the raw outputs on #883. No new check:
