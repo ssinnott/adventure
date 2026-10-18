@@ -162,8 +162,12 @@ the frontier by the route's length, a seen square the company can stand on with 
 beside it ("Looking about Helmstow."); and, the frontier spent, the nearest wall it suspects, a wall
 with seen floor on both sides, searched once from each side (`Pilot.searched`) from the square
 before it ("Searching the wall."), so a secret door whose far side is unseen is not found (decision
-17). A Lockpick standing (the premade six's thief is born to it) opens a locked door with no key
-spent, but the explorer goes to one only once a key is carried, as before (#857). Then it says
+17). With Perception standing (the premade six's elf and gnome are born to it) a search finds surely,
+in the wall ahead and in the wall past an open square ahead (#856), but the explorer still searches
+a suspected wall once a side from the square before it. A Lockpick standing (the premade six's thief
+is born to it) opens a locked door with no key spent, and a locked chest, but the explorer goes to a
+locked door only once a key is carried, as before, and to no chest: chests are the strategist's
+(#857). Then it says
 "Helmstow is walked out." and gives no key, and says it again with no search until something it
 rests on changes. It explores the map it is on, or `Pilot.prefer` (the
 strategist's, #720) where that is this map or a zone of it. Outdoors it keeps to one zone's box, the party's or the zone preferred, and never goes
@@ -192,7 +196,10 @@ each member it can pay for, the dead first, then the stone, then the rest; at a 
 while short and, for each member, the best it can wear (`better`, one thing each a visit); at a
 trainer each row that offers training. Nothing is sold and no skill or tier is learnt: the keep never
 presses a trainer's "Expert at arms and in magic" (#852), whose rows carry no `train Ng`, and talk
-leaves a tier's menu, a trainer's or a Master's person's, as it leaves a skill's. What it bought it
+leaves a tier's menu, a trainer's or a Master's person's, as it leaves a skill's. Pender's Locks in
+Saltmouth is a shop now (#860): the pilot buys no set of picks, as `better` passes over a slotless
+ware, and takes the Thief's first from Pender through the shop's "Talk to Pender the locksmith", as
+at any business with a person in it (from the square before his door, eight ticks). What it bought it
 wears through the sheet: `inventory`, `right` or `left` to the member, `down` to the item (the pack
 listed first, then the bag), Space, then Esc. The reserve, 100 gold a level of the highest in the
 company (the most a temple asks to raise one), is kept back from gear alone: `better` spends only the
@@ -210,12 +217,13 @@ goal's map it goes by the exits seen ("Bound for Callow Downs: Ashcombe is past 
 by the zones between, and there it hands the map to the explorer (`Pilot.prefer`); it opens a chest
 it stands on and goes to one seen there, Space pressed once a chest, so a locked chest it cannot
 open ("Locked.") is walked past as a locked door with no key is (#857); walked out, it walks the
-place again end to end, so that the days pass. Three days of the world's on one goal with no change in its words, it says "Lost in the
-Foreland: three days, and no way on.", gives the goal up (`Pilot.lost`) and turns to the next aim;
-three days levelling with no level gained, "Three days in the Foreland, and no stronger."; either is
-tried again once anyone gains a level or a flag is set. Over a line into a zone too hard for the
-company that its aim is not in, it turns back to the square before the line, once a crossing ("Too
-strong for us yet: back."). It meets nobody: a chapter begins and moves on by words that are talk's (#721).
+place again end to end, so that the days pass. Three days of the world's on one goal with no change
+in its words, it says "Lost in the Foreland: three days, and no way on.", gives the goal up
+(`Pilot.lost`) and turns to the next aim; three days levelling with no level gained, "Three days in
+the Foreland, and no stronger."; either is tried again once anyone gains a level or a flag is set.
+Over a line into a zone too hard for the company that its aim is not in, it turns back to the square
+before the line, once a crossing ("Too strong for us yet: back."). It meets nobody: a chapter begins
+and moves on by words that are talk's (#721).
 
 ## Talk
 
@@ -443,7 +451,7 @@ not the finish.
 | `src/game/pilot/route.ts` | the navigator (#717): `Goal` (with the reason or the why line its brain gives it), `routeOn` (the keys over one map), `routeLengths` (the length of the route to every square, in one search), `routeNearest` (the nearest of a set of squares, the search stopped there), each round the squares found shut it is given and through a group only where no way round is seen (#723), `routeMaps` (the exits from map to map, and the crossings told whose fare the gold over the reserve pays, `edges`, #721), the brain `route` and `unroute` (what it kept of a goal, forgotten); it reads a cell by `passableCell` (`src/game/map.ts`) and the groups as the automap marks them (`markedGroups`, `src/ui/frame.ts`) |
 | `src/game/pilot/explore.ts` | the explorer (#718): `frontier` (seen squares with an unseen one beside them), `suspects` (walls with seen floor on both sides; for the omniscient pilot the secret doors `Known.secrets` gives, #723) and the brain `explore`; a zone's box and band it reads through `Known.box` and `Known.band`, and the zone a square lies in by `zoneAt` (`src/game/map.ts`), as the world map draws the boxes |
 | `src/game/ink.ts` | `drawnCell`: what a cell is drawn as, which the view, the automap and Known share |
-| `src/game/bot.ts` | the fight and the rest rule (`botTurn`, `asSeen`, `mustRest`, #714); `beaten`, a fight lost, which the game's reading flees (#723) |
+| `src/game/bot.ts` | the fight and the rest rule (`botTurn`, `asSeen`, `mustRest`, #714); `beaten`, a fight lost, which the game's reading flees (#723); the three the auto-fight plays from level 11, bless, sleep and drink (`PLAYED`, `optsFor`, #865), so the pilot's fights, which it hands to the screen's auto, play them too |
 | `src/game/items.ts` | `hits`, a weapon's mean blow, its element's die at 3.5 (#855): the harness's measure, moved here for `better` (#719) |
 | `src/ui/create.ts` | `randomParty`: the company drawn from a seed |
 | `src/ui/screens.ts` | `ChoiceScreen`'s `title`, `disabled` and its marks (#721): a group's refusal (`fight`, by `Game.parley`) and an ending's question (`ends`, by `Game.ask`, `endsIn` in `src/game/stones.ts`) |
@@ -466,7 +474,7 @@ Decided by delegate for #715, each the owner's to overturn:
 
 Decided by delegate for #714, each the owner's to overturn:
 
-1. **The game's reading is a predicate, the gate's the default.** `botTurn`'s last argument defaults to `asWritten`, so the gate, the harness and every existing call see what they saw and their figures cannot move; the auto-fight passes `asSeen`. A named predicate rather than a boolean: it says which reading a caller takes; #723's omniscient flag can choose between the two.
+1. **The game's reading is a predicate, the gate's the default.** `botTurn`'s last argument defaults to `asWritten`, so the gate, the harness and every existing call see what they saw and their figures cannot move; the auto-fight passes `asSeen`. A named predicate rather than a boolean: it says which reading a caller takes; #723's omniscient flag can choose between the two. (Since #853 the options follow it, off unless given; since #865 the auto-fight passes `PLAYED`, so it, and the pilot's fights with it, bless, sleep and drink from level 11.)
 2. **What the game has seen is read from the fight's log.** The game records an element's work (`CombatState.seen`) and a mending (`CombatState.mends`) and nothing else of a monster's ways, so `asSeen` takes a sweep, a breath, a call or a drain as seen once this fight's log has a line of a monster of that name at it ("Giant sweeps ", "Drake breathes ", "Tallyman calls, ", a "hits" line that drinks or takes spell points). The log is what the player reads, so it is fair as it stands; the resolver and `CombatState` take no new field. It holds for the fight and by name, as `seen` and `mends` hold for the fight and by kind. The new checks pin each line it leans on, so a reworded line fails a test rather than blinding the bot.
 3. **A leader is never seen before it falls.** Nothing on the screen marks one and its people break only at the last leader's fall (`morale`), so the game's bot never aims at a leader first.
 4. **The clock is read as the gate reads it.** The issue was written before the clock (#748). The story names the Grey Hands at the panel before the fight (MONSTERS §9.3) and the light goes out over it from the first round, so the game's bot aims at the panel first from the start, as `ANSWER.clock` says.

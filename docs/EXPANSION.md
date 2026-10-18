@@ -453,7 +453,7 @@ Decided by the owner's delegate for #18, each the owner's to overturn:
 1. **The company's tiers behind `RULES.tiers`** (`--tiers`): `companyAt` dresses them after
    `prestige(p)`, Expert from 13 and Master from 25 by class line; the cache key counts them.
 2. **The bots' option plumbed:** `--bot bless,sleep,drink` sets `RULES.bot`, handed to `botTurn`
-   and `thrifty`. Both off until #865.
+   and `thrifty`. Both off until #865, which kept them off (J2).
 3. **A second company, `newerCompany(level, seed)`,** held by the harness suite at 12, 20, 28 and
    32: fights to a rest inside −2.5/+3.5 of `fightsPerRest`, fights at the floor won 80% or more,
    100 seeds; `--company newer` plays it by hand.
@@ -478,7 +478,7 @@ Decided by the builder for #854, each the owner's to overturn:
 4. **`--company` is a what-if too** (`RULES.company`), so `--calibrate --write` refuses under it as
    under the rest; the refusal names what is set (`whatIfs`).
 5. **The gate's bot takes `RULES.bot` in tools/gate.ts's own `gateTurn`,** which every gate fight
-   plays, so #865's default in the harness reaches the gate.
+   plays, so #865's default in the harness reaches the gate (off, J2).
 6. **The line runs on every core** (`cellsOnCores`, the report's own pool): its 36 cells cost
    about 37 seconds of CPU, about ten of a four-core runner's.
 7. **The what-ifs show what they make:** under `--tiers` or `--company` the report gives the
@@ -568,7 +568,8 @@ Decided by the builder for #851, each the owner's to overturn:
    two under past Act I, the 76 owed among them, each have a day.
 3. **`cairnfield_m8`'s day is owed to #865 by name** at its figure (109.3%, and 106.3% on 300 seeds), not
    re-sized here: a group re-sized is the area lane's, and #865 re-sizes every group past its limit
-   past 10 on the company it makes. One map is not the more than five of the delegate's 6.
+   past 10 on the company it makes. One map is not the more than five of the delegate's 6. (#865
+   re-sized its crag group, above: nothing is owed.)
 4. **The key is `<map or area>: under day`,** a new one, since the figure is not the one the rows held.
 
 ### 5.3 Density: the map is the reward
@@ -740,10 +741,11 @@ the Wardens' at their Drillyard and the Cartographers' at their halls in Saltmou
 and Perception, Spirit Sense, Danger Sense and Arms Master (#856), the Lanterns' and the Wardens',
 and Cartographer, Pathfinder, Lockpick, Merchant and Navigator (#857), the Cartographers' and the
 Compact's: all twelve. No door needs a pick, and a locked chest is off the quest. Decided by the
-owner's delegate, 16 October 2026 (#805). Along the
-whole road the systems lane also owes the danger made legible (the band said on crossing, and in how
-a group is described), the log paging the one quest by chapter, hand-ins that take their item at the
-first meeting (§2.3) and a bot that plays as well as the party can (§5.2).
+owner's delegate, 16 October 2026 (#805). Along the whole road the systems lane also owed the danger
+made legible (the band said on crossing, and in how a group is described), the log paging the one
+quest by chapter and hand-ins that take their item at the first meeting (§2.3), each built now
+(SLICE.md); and the bot is settled (§5.2, J2): the game's blesses, sleeps and drinks from level 11,
+and the gate's plays plainer than a player.
 
 Rifts are where DESIGN.md itself asks for generated content: eight 12×12 templates, seeded, a pure
 function of state and seed. Build the generator early, in the systems lane, and let generation scale
@@ -909,16 +911,16 @@ all (#833), the owner's call over #737's. The reach stays closed for 1.6.
 
 ## 10. What to watch
 
-| | Now (17 October 2026) | Aim |
+| | Now (18 October 2026) | Aim |
 |---|---|---|
 | Defects the owner finds by hand | 4 over the slice, not recounted since; the owner's own playthrough of M3 is what remains (README.md) | fewer each area; each one a check |
 | Checks that pass or fail by chance | none known: the smoke test plays one seeded world (#23) | none |
 | Pull requests that needed main merged in | 4 of the last 6 in September, not recounted since | rare |
-| `npm run check` | about 14 minutes on a four-core container; in CI on a docs-only change the tests take 4 min 31 s, the smoke 2 min 17 s and the typecheck 19 s; a change to the viewport or the smoke sweeps every map, the smoke job taking about 21 minutes (#844); the tests job took 6 min 27 s to 8 min 26 s on the heads of #868, #867 and #870, the runner's spread about two minutes, so its cap is fifteen (#873) | under 3 minutes: full sweeps of what a pull request touches, the rest sampled or on release; the cure is parallel suites (#848) |
+| `npm run check` | about 14 minutes on a four-core container, ending `ALL OK` with nothing owed (#865); in CI the tests job took 6 min 47 s to 9 min 12 s on the heads of #876 to #885 (eleven runs on 18 October), under its cap of fifteen (#873), the smoke 2 min 42 s to 3 min 11 s and the typecheck 16 to 27 s; a change to the viewport or the smoke sweeps every map, the smoke job then taking 12 to 21 minutes (#876, #878, #879) | under 3 minutes: full sweeps of what a pull request touches, the rest sampled or on release; the cure is parallel suites (#848) |
 | Cracks in the sweep of every map (§5.6) | none; the sweep reads each square as the view draws it, the void as its look (#869) | none |
 | Maps inside the density floor (§5.3) | all (`node tools/test.ts density`) | all |
 | Areas on the curve (§5.2) | all twelve (`node tools/test.ts curve`); the Kilns and Ashfall pass the lead line and are held where they are built | all |
-| Areas whose gate holds (§5.2) | all twelve at their floors and two under, Act I's by the fight and from Saltreach's floor by the day (#851); one map's day, `cairnfield_m8`'s, is past its limit and owed to #865 | all |
+| Areas whose gate holds (§5.2) | all twelve at their floors and two under, Act I's by the fight and from Saltreach's floor by the day (#851): 81 maps' days and 10 areas' at 29% to 98% of their floors' aims, 29 maps and three areas off their aim; nothing owed, `cairnfield_m8` re-sized (#865) | all |
 | Story locks (§2.3) | two of the four: the Sleepers' Bay's door (#440) and the core's (#759) | within the count, each declared with its reason |
 
 Decided by delegate for #808, each the owner's to overturn:
@@ -975,6 +977,31 @@ Decided by the builder for #869, each the owner's to overturn:
    the square past it is the void with a look; one drew a face of the cellar's north wall three
    pixels short of the face it joins.
 
+Decided by the owner's delegate for #18, each the owner's to overturn:
+
+1. **The README says where the game stands with #18 finished** (#866): the tiers with their two
+   Masters, the twelve skills and the eight found items in v1's list; post-v1 only the reach, with
+   its artifacts, and the Stretch; the owed paragraph gone, since nothing is owed.
+2. **§10's gate row loses its owed line** and says what the gate prints now (#866).
+
+Decided by the builder for #866, each the owner's to overturn:
+
+1. **The older records that name #865 stay as the record of their day:** §5.2's #853 call 1 ("before
+   #865") as it was; #854's delegate call 2 and builder call 5 and #851's builder call 3, which would
+   now read false, gain #865's outcome in a few words. No record is rewritten.
+2. **§5.2's measurement of 17 October stays dated:** it held then. §10 gives the gate's figures on
+   18 October, `cairnfield_m8` re-sized: the top of the days two under falls from 109% to 98%.
+3. **What #18 did not build is said as main stands, owed to nobody:** the chandler's lanterns and
+   the beekeeper's honey and salves are not items, so the beekeeper keeps no shop (DESIGN §5).
+4. **§7's "a bot that plays as well as the party can" is settled, not owed** (J2), and the three
+   touches the same sentence owed are built and said so; §11's bot risk names the gate's plainer bot
+   as the decision it is.
+5. **Lines outside #18's own are put right only inside a paragraph this sweep changed:** DESIGN §8's
+   "once the skills are built (#18)", which #808's call 7 left; SLICE's tier-7 hall (the Lodge's
+   sells 7) and its clears short of the curve (the curve owes nothing). The rest seen stale is
+   listed in the pull request.
+6. **The README names the found items by kind;** DESIGN §5 and §6 and SLICE name each.
+
 ---
 
 ## 11. Risks
@@ -991,7 +1018,9 @@ Decided by the builder for #869, each the owner's to overturn:
   over it; too soft, and it is no gate. The check runs both ways, and the first groups past a
   border are the area's gentlest.
 - **The bot flatters or slanders the party.** A bot that plays worse than people sets the gate too
-  low. Grow its play with the party's, and let the owner's play overrule it.
+  low. The gate's does so by decision (§5.2, J2): its company buys nothing optional and its bot never
+  blesses, sleeps, drinks or flees, so a company that buys the tiers, the skills or the items has an
+  easier road than measured. Let the owner's play overrule it.
 - **One quest, one hotspot.** A quest from level 1 to the cap would be a file every area edits; it
   is joined from chapters instead (§5.8).
 - **Scale creep.** §2.1 is the target; land past it waits in the void.

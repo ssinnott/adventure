@@ -74,7 +74,11 @@ DESIGN.md first for the why.
   a heal, never written into a member's stats) and a weapon's blows may carry an element, an added
   1d6 of it through `elementDamage` that burns a mender and is seen as a spell's is
   (`ItemDef.element`, #855; DESIGN §5, §6). The sheet prints the total and its raise ("SPE 13(+3)") and
-  the weapon's element, and a shop says both. No item of the content carries either yet.
+  the weapon's element, and a shop says both. Eight found items carry one, off the ladder and in no
+  shop, two in each of Wrackholm, the Whitespine, Cairnmoor and Hearth Isle, one of each pair in the
+  area's first locked chest (#861 to #864): Corposant, the Thunderhead Axe and the Levin Mace carry
+  lightning and the Beacon Hammer fire; the Runner's Coat, the Talon Knife, Cairnbuilder's Mail and
+  the Vigil Robe raise speed, accuracy, might and personality by 3.
 - **Save/load:** F5/F9 to localStorage; door changes, explored cells, group state and the rng all
   survive a reload. Saves are version 2 (the outdoors as one map, cells seen kept a bit apiece); a
   version 1 save loads, its Foreland and Thornmark state folded into the outdoors where they now lie.
@@ -180,18 +184,21 @@ DESIGN.md first for the why.
   hall's skills, then who would learn one (`skillMenu`, `learnerMenu`); a person opens on who. The
   Cartographers' Cartographer and Pathfinder and the Compact's Lockpick, Merchant and Navigator
   complete the twelve (#857): `World.reveal` maps a square further for a Cartographer or a chart
-  carried, never past what blocks the view; `World.move` drops the drag on the clock for a Pathfinder (the Rangers born to it);
-  `World.unlock` opens an iron-key door and a locked chest (`chest.locked`) to a Lockpick (the
-  Thieves born to it) or a set of picks, keeping the key, else to a key spent; `sellPrice` pays a
-  Merchant two thirds and `fareOf` charges a Navigator half. A company's rank in a guild is
-  `game/ranks.ts`'s, so that `skills.ts` asks it apart from the quests' rules.
+  carried, never past what blocks the view; `World.move` drops the drag on the clock for a
+  Pathfinder (the Rangers born to it); `World.unlock` opens an iron-key door and a locked chest
+  (`chest.locked`) to a Lockpick (the Thieves born to it) or a set of picks, keeping the key, else to
+  a key spent; `sellPrice` pays a Merchant two thirds and `fareOf` charges a Navigator half. A
+  company's rank in a guild is `game/ranks.ts`'s, so that `skills.ts` asks it apart from the quests'
+  rules. Pender's Locks sells the set of picks and the Map Room a chart, in Saltmouth (#860).
 - **The weapon and magic tiers** (`game/mastery.ts`, #852; DESIGN §5, §7): a member's Expert and
   Master at arms and in magic (`tiers`, none in a save from before them). Arms adds to the to-hit
   (`attackBonus`) and to every blow (`armsBonus`, beside `traitDamage` in the blow and in the
   harness's `weaponDamage`); magic adds rank steps in `rankMult` (`tierSteps`), so damage dice and
   mending read it and nothing else does. Expert is "Expert at arms and in magic" on the first menu of
-  every town trainer of ceiling 13 or over, 2,000 a line; Master a person's (`npc.mastery`), placed
-  by #858 and #859. The sheet says each tier. The gate's company takes none until #865.
+  every town trainer of ceiling 13 or over, 2,000 a line; Master a person's (`npc.mastery`), two on
+  the road: the Wold's old Rider at arms (#858) and Old Cinder's scholar in magic (#859). The sheet
+  says each tier. The gate's company takes none: #865 weighed the tiers and left them out (J2,
+  EXPANSION §5.2).
 - **A monster's look.** The first time a company sees a kind, as the viewport draws it (each kind
   of the group to three, in line of sight), or meets one in a fight unseen, the log says its `look`,
   once. A group is drawn as up to three figures: each of its kinds once, in the order they stand,
@@ -659,19 +666,15 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 
 ## Stubbed or absent
 
-- No hall sells tier 7 yet (the Watch's Lantern Hall sells 6, #201); no Master trainers; the twelve
-  secondary skills are built (#857), but no chart or set of picks is sold (#860) and no locked chest
-  is placed (#861 to #864).
-  The Meridian journal opens The Lost Expedition in the quest log, and the Cartographers' Geographer
+- The Meridian journal opens The Lost Expedition in the quest log, and the Cartographers' Geographer
   in Saltmouth reads it (#181), but no second volume exists.
 - No audio. The engine's synth stack is vendored, unused.
 - Prestiges, the Compact's hall, the succession, the Salt Compact, the Lost Expedition past its
   first journal: design only. The Cartographers' hall is built in Saltmouth (#181).
 - What the checks owe: a known shortfall prints as `owed` with the issue that owes it, and
-  `node tools/test.ts` ends by counting them. Both clears give less xp than the curve asks, and
-  Thornmark's less gold (#26). Some of the gate's fights to a rest are off their aim, inside their
-  limits, as is the share of each area's fights won two under its floors (#47 left the limits as
-  they were).
+  `node tools/test.ts` ends by counting them. None is owed since #865 re-sized `cairnfield_m8`.
+  The gate lists 88 figures off their aim, inside their limits: fights to a rest, figures two under a
+  floor, wins at a floor and four bosses' odds (#47 left the limits as they were).
 
 ## Checks
 
@@ -693,7 +696,7 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   A check someone owes is reported, not failed:
   `owed()` in `tools/tests/lib.ts` prints `owed: <what> (#40's)`, and fails once the check holds,
   so the entry is dropped. The last line counts them by whose, as `ALL OK (3 owed: #40 ×2, #43 ×1)`.
-  The curve, the gate and the pillars owe today, and the curve and the gate fail a miss that grows
+  Nothing is owed today, so it reads `ALL OK`; the curve and the gate would fail a miss that grows
   past where it was owed.
 - `smoke`: `node tools/smoke.ts`, headless Chromium playing the game through the dev server: every
   screen painted with no page error, and a line for each check as well. Every run plays the same
@@ -713,6 +716,14 @@ full run, and so does the tests job (10 s on CI). A run started by hand
 skips the sheet, sweeps every map for cracks and adds a fifth job, `fullrun`: the pilot's full run on
 the areas its `fullrun` input names (all unless changed), a report that gates nothing.
 
+Of the suites before `quests`, `combat` holds the bots' three (#853, #865): a seeded fight played
+turn for turn as before with them off, and with them on at 4 and at 10, but not at 11; bless,
+sleep and drink each at a company of 12; no spell over many while one sleeps, for the whole company
+once a member is past Act I; a caster alone fighting on; no group slept that holds a foe proof
+against sleep. `harness` holds the line, and beside the premade six the four newer classes' company
+at 12, 20, 28 and 32 on 100 seeds, its fights to a rest inside the limit and its fights from fresh
+won 80% (#854); its what-ifs are off unless named.
+
 The suites after `quests` hold the content to its contract (EXPANSION §5), over every area and most
 over content broken on purpose too, and two tools to theirs:
 
@@ -725,15 +736,17 @@ over content broken on purpose too, and two tools to theirs:
   clear gives, its monsters' levels in their maps' bands, groups harder with steps from the way in,
   no chest or drop dearer than its window.
 - `gate` (§2.2, §5.2): `tools/gate.ts`'s bot plays the premade company, dressed by the gear ladder
-  and with its prestiges, harness's own (#541), against every group alone; each map is held to its
-  band, and each area pools its groups, each
-  fought at its own map's floor: nine fights in ten won at the floor, a quarter at most two under it
-  (of a map whose floor is its area's, and of the area, a zone map's groups two under its own floor
-  and a town's or dungeon's two under the area's), a boss three to seven times in ten, 6.5 fights to
-  a rest give or take one, its bosses left out of the day and each zone's road walked at its floor
-  eight times in ten, its nearest groups at its way in among its gentlest. A group that walks only
-  in fog is fought with the bows' toll, and one placed on ice from under it; one that waits on an
-  `after` is no warning at the way in.
+  and with its prestiges, harness's own (#541), against every group alone; it takes no tier, skill
+  or found item and never blesses, sleeps, drinks or flees (J2). Each map is held to its band, and
+  each area pools its groups, each fought at its own map's floor: nine fights in ten won at the
+  floor; two under it (of a map whose floor is its area's, and of the area, a zone map's groups two
+  under its own floor and a town's or dungeon's two under the area's), a quarter at most won in Act
+  I and, from Saltreach's floor, 10, at most two thirds of the floor's aim fought to a rest, never
+  all of it (`GATE.backDay`, #851); a boss three to seven times in ten, 6.5 fights to a rest give or
+  take one, its bosses left out of the day and each zone's road walked at its floor eight times in
+  ten, its nearest groups at its way in among its gentlest. A group that walks only in fog is fought
+  with the bows' toll, and one placed on ice from under it; one that waits on an `after` is no
+  warning at the way in.
   Each figure has an aim (these) and a limit beyond it (#273): between the two it passes and is
   listed at the end of the suite as off its aim, and only past its limit does it fail or go into
   `OWED`. A den's keepers are its camp's hardest fight, won no more often than any of its brood; its
@@ -784,26 +797,33 @@ over content broken on purpose too, and two tools to theirs:
   marks pinned once read and said once; no flag set and no door changed. Every inscription of the
   content has an id of its own on its map and a reading, its marks name atlas places, and no way
   waits on a reading.
-- `skills` (#538, #805, #856): each skill built one of DESIGN §5's twelve, its guild's by DESIGN
-  §8; every hall teaches all its guild has built (the Lanterns' three, the Wardens' three, the
-  Cartographers' Swimmer, the Compact's nothing yet), each walked through its own two levels in a
-  Game, every row measured against the panel; a stranger to the guild learns nothing, a member
-  learns once for the price, a dwarf is born to Linguist and an elf and a gnome to Perception, and
-  are not sold them; each skill's work with it and without, for a company of each people (the
-  search's sure find and second square, the dead marked through a wall, an aware group behind a
-  hill, the first round's order held to `hasSkill` for every class too); the pilot learns none; a
-  save keeps a member's skills and one from before them has none.
+- `skills` (#538, #805, #856, #857): each of DESIGN §5's twelve built, its guild's by DESIGN §8;
+  every hall teaches its guild's three, each walked through its own two levels in a Game, every row
+  measured against the panel; a stranger to the guild learns nothing, a member learns once for the
+  price, a dwarf is born to Linguist, an elf and a gnome to Perception, a ranger to Pathfinder and a
+  thief to Lockpick, and none is sold one it is born to; each skill's work with it and without, for
+  a company of each people (the search's sure find and second square, the dead marked through a
+  wall, an aware group behind a hill, the first round's order held to `hasSkill` for every class
+  too, the automap a square further by day, by night, underground and with a chart, a fixture's
+  locked chest opened by a thief, a set of picks, a learnt Lockpick or a key and by nothing else);
+  the pilot learns none; a save keeps a member's skills and one from before them has none.
+  `movement`, `passage` and `shops` hold Pathfinder's ground, Lockpick's doors, the Navigator's
+  fares and the Merchant's price.
 - `mastery` (#852): each tier's effect through the blow and the cast for a fighter, a caster and a
   hybrid; the bars; the seven trainers of 13 and over teach Expert and the two under do not; the Sail
   Loft walked in a Game; a Master's person, built in the test; the sheet's lines; no spell's cost or
   rounds moved and nothing else under `src/` reading a tier; saves; the words in the font; the
-  pilot's keep at the Sail Loft, which trains there and never opens the tier menu.
+  pilot's keep at the Sail Loft, which trains there and never opens the tier menu. The two Masters
+  the content places are played in their areas' walkthroughs, rumour to lesson (`masterOfArms`,
+  `masterOfMagic`).
 - `items` (#855), on fixtures: a +3 speed coat moves armour and the turn's order worn, and nothing
   in the pack or the bag; a charm of each stat a fight reads moves its read from the pack; a save
   holds the coat and no raise; a lightning blade's die, nothing to the immune, half to the
   resistant, half again to the weak, the steel as ever, seen as a spell's; a fire blade burns a
   mender; `hits` counts the die at 3.5; the sheet's and a shop's words, in the font and inside the
-  column; what the sell screen pays (`sellPrice`). The content is held to the shape alone.
+  column; what the sell screen pays (`sellPrice`). The content is held to the shape alone; each of
+  the four areas' walkthroughs walks to its two found items and opens its locked chest (#861 to
+  #864).
 - `glyphs`: every symbol `src/ui/` draws past plain ASCII (arrows, stars, hearts) is in the pixel
   font, so none is painted as nothing.
 - `drawn`: every group on the maps is drawn while exploring as each of its kinds, to three, and a
@@ -868,9 +888,11 @@ where damage spells stop growing at that level, `--gear-grows` one where the com
 growing past Thornmark's, `--level-bonus` one where every member gains a point of damage and of
 armour every two levels past 10, and `--level-traits` one where fighters strike once more a turn
 from 11 and again from 29, and sneak attacks grow. `--tiers` gives the company its Expert at 13
-and Master at 25 (#852), `--bot` the bots their bless, sleep and drink (#853), the gate's too, and
-`--company newer` fields the four newer classes' company in the premade's place (#854); each says
-what it makes, and none is on until #865 switches the first two on.
+and Master at 25 (#852); `--bot` gives the bots, the gate's too, their bless, sleep and drink from
+11 (#853); `--company newer` fields the four newer classes' company in the premade's place (#854).
+Each says what it makes, and none is on by default: #865 weighed the first two and left them off
+(J2, EXPANSION §5.2). `node tools/restate.ts <base ref> [--write]` restates the monsters past 10
+onto a line made again (#865), for the day the line is made again; it writes only with `--write`.
 `node tools/gate.ts [--maps thornmark,grove2] [--levels 2,3,4,5] [--seeds 200]` prints how often the
 premade company, trained to each level, dressed by the gear ladder and with the prestiges its level
 brings, wins each map's groups alone
@@ -896,7 +918,7 @@ does.
 | `game/world.ts` | `WorldState` (position, clock, weather seed, per-map state with cells seen in bits, zones set foot in, the kinds met; a group a map has gained since a save, and a saved door only where the map still has one), the zone the party is in and what it is called, movement across zones and gates (a Pathfinder's step at six minutes), a lock opened (`unlock`), reveal (a Cartographer's a square further), the weather's reach into play (sight, snow, the log, the almanac, fights), roaming groups and when they walk (`walks`, `ended`, `hoursHold`), whether a person or an event is there (`present`), what is in sight (the viewport's rule: `VIEW_DEPTH`, `lineOfSight`, and what a hill hides from below it, `hillOver`, `hidden`) and the looks said on first meeting (`sightings`, `meet`, a den's too), a den's brood paced as they come back, encounter triggers (a group under the ice keeping to it and striking only a company on it), rest, search |
 | `game/calendar.ts` | the months and seasons, dates, dawn and dusk through the year, and the tide |
 | `game/weather.ts` | the `Climate` shape (each area has its own, merged as `CLIMATES` in `content/index.ts`), `weatherAt` (the sky, the temperature, snow lying, wet ground), naming the sky and its log lines, and what it does to sight, steps and bows |
-| `game/party.ts` | races, classes, `Character` (its secondary skills learnt among it), `Party`, conditions, equip, what a member bears (`borne`) and a stat as they stand (`statOf`), levelling and the trainer's price, the prestiges (titles, pools, `takePrestige`, `spellRank`), the premade party |
+| `game/party.ts` | races, classes, `Character` (its secondary skills learnt among it), `Party`, conditions, equip, what a member bears (`borne`) and a stat as they stand (`statOf`), levelling and the trainer's price, the prestiges (titles, pools, `takePrestige`, `spellRank`), what a tier does (`armsBonus`, `tierSteps`, beside `RANK_STEP`), the premade party |
 | `game/people.ts` | `meet`: what a person says and asks, in order (a hand-in the company can make, their words that hold, a done hand-in's after-lines, the first meeting); a hand-in taking its item at the first meeting and paying, with the `early` words to a company never hired; `answer`, with an answer's price as the choice screen lists and bars it (`answerLabel`, `asked`, `barred`); `readText`; `handIns`, `personFlags` and `personGives`, what the checks and the save list read |
 | `game/seeking.ts` | the seeking quests: the trainers placed (`trainersIn`), a quest for each member and prestige (`seekingQuests`), and the places the world map marks (`sought`); pure |
 | `game/prestige.ts` | a prestige's trainer: who the company has of the class, each one's bar (the level, the prestige before, the third's quest, the gold), and teaching it; pure |
@@ -909,7 +931,7 @@ does.
 | `game/items.ts`, `game/monsters.ts`, `game/spells.ts` | what an item, a monster and a spell are (`ItemDef`, with a letter's `text`, a raise borne and a blow's element; `MonsterDef`, `SpellDef`) and their lookups; a weapon's measure (`hits`) and what a shop pays (`sellPrice`: half, a Merchant two thirds); a monster's kind and what each kind sets (`KINDS`: sleep, Holy Strike); the tables are content's |
 | `game/save.ts`, `game/upgrades.ts` | the save and `SAVE_VERSION`; the upgrades, each registered by the version it brings a save to and run in turn on load, with what they need of the world as it was kept frozen |
 | `game/combat.ts` | `CombatState`, `startCombat`, `currentTurn`, `partyAct`, `monsterAct`, and the log's lines, the glove's once a game (`GLOVE_FLAG`); pure and seeded |
-| `game/bot.ts` | the bot that plays a fight, the gate's and the game's: `botTurn` (the action the resolver took; `gateTurn` the same with the action dropped), its two readings of the monsters (`asWritten`, every trait as written, the gate's; `asSeen`, only what the fight's log has shown, the auto-fight's), the answers a tool may switch off (`ANSWER`) and the rest rule (`mustRest`); pure |
+| `game/bot.ts` | the bot that plays a fight, the gate's and the game's: `botTurn` (the action the resolver took; `gateTurn` the same with the action dropped), its two readings of the monsters (`asWritten`, every trait as written, the gate's; `asSeen`, only what the fight's log has shown, the auto-fight's), the answers a tool may switch off (`ANSWER`), the three it may play (`BotOpts`: bless, sleep and drink, off unless given; `PLAYED`, the game's, read from level 11 by `optsFor`, with its guards `striker` and `letsLie`) and the rest rule (`mustRest`); pure |
 | `game/ink.ts` | what a cell is drawn as (`drawnCell`: a secret door outdoors among mountain, rock or trees as they are), which the view, the automap and the pilot's fair view share; pure |
 | `game/pilot/pilot.ts`, `game/pilot/known.ts`, `game/pilot/route.ts`, `game/pilot/explore.ts`, `game/pilot/keep.ts` | the pilot (docs/PILOT.md): `Pilot` (on and off, the tempo and its pace, the why line, the lines heard, the next key, the brains in their order, the goal and its plan), `Known`, the fair view of the world it reads through (the automap's bits and ink, its features and exits as fair copies, the groups it marks, the maps visited, the world map, a map's or a zone's bounds and a place's band, the corpus heard, the company and what a menu has shown), the navigator (`routeOn`, `routeLengths`, `routeNearest`, `routeMaps`, `route`: the keys to a square over what has been seen) and the explorer (`frontier`, `suspects`, `explore`: the nearest unseen, the walls to search and the ways found shut tried again) and the quartermaster (`need`, `better`, `keep`: a rest, the temple, an inn, rations, gear worn through the sheet and training) |
 | `game/quests.ts` | `QuestDef`, `Chapter` and `ChapteredQuest`; `questLog` (the quests known, their pages, entries and goal, worked out from the world state and party), `questNews` (what changed between two looks) |
@@ -923,7 +945,7 @@ does.
 | `ui/worldmap.ts` | the world map (M): the cloth painted from the atlas and the built maps, the zone overlay (Tab) and the almanac (Space), and the pins of a place sought and of one a reading marked |
 | `ui/screens.ts` | message (a person's box, `SAY_W` by `SAY_LINES` from `ui/frame.ts`), choice, character sheet (a letter read from it, the skills a member has), spell picker, inn/temple/shop/guild/trainer, a business's first menu (`businessEntries`), a guild's work at its hall and its skills there (`skillMenu`, two levels) or from a person (`learnerMenu`), and the visit that frames them (`InteriorScreen`) |
 | `ui/interior.ts`, `ui/interiors/` | the businesses' interiors: the painting kit and the props, a scene to a file in `<area>/`, and the helpers a trade's scenes share |
-| `ui/combat.ts` | the combat screen (menus over the resolver), its monsters where `ui/row.ts` seats them; the auto-fight (`auto`: `game/bot.ts` plays the company's turns by what the fight has shown and leaves the finished fight, until a key takes it back) |
+| `ui/combat.ts` | the combat screen (menus over the resolver), its monsters where `ui/row.ts` seats them; the auto-fight (`auto`: `game/bot.ts` plays the company's turns by what the fight has shown, with the three from level 11 (`PLAYED`), and leaves the finished fight, until a key takes it back) |
 | `ui/row.ts` | the fight's row: each monster's place across the view and the height it is drawn, spaced by the drawings' spans, every one whole inside the view and none over more than a third of the next (`seatRow`, `OVERLAP`); pure |
 | `ui/grouplabels.ts` | the labels over a fight: each group's kinds, each with its count of the living (a lone proper name none), laid out inside the view; pure |
 | `ui/quests.ts` | the quest log screen, and `questSheets`, its pure page layout, a chapter to a page or more |
