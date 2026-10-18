@@ -214,23 +214,24 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
   the hill's facing is laid looser. The gate holds at 10, at 7.1 fights to a rest on each box.
 - **The upper valley** (C2, `upperwater_c2`, and B2, `upperwater_b2`, country, band 10–11, the first
   of the bounds; #830): C2 is the hill pasture over Rietum between the rim and Kestrel Edge, up from
-  Rietum's top field: the Hand's watch at its fire on the crest, Jelle with Rietum's sheep, a tarn and
-  the toads come up to it, the shepherds' cairn under the rim and a cleft in the Edge's foot walled
+  Rietum's top field: the Hand's watch beside its fire on the crest, Jelle with Rietum's sheep, a tarn
+  and the toads come up to it, the shepherds' cairn under the rim and a cleft in the Edge's foot walled
   with dry stone; and east of the face the Edge's top, the Downs' turf laid with the box, open to D2
   and walked to from the Downs alone, with a boundary stone, the lip and a shepherd of the Downs and
-  no group. B2 is the valley's head under the rim, up out of B3's grass: a spring and its trough, the
-  toads in the mire under it, a cairn and a beehive hut with no door. The groups are three: the watch,
-  a master and three bargemen, and the toads, a bull toad and a fen toad, on each box. The secrets are
-  the cleft, the hint the lichen rubbed off the walling in a line, and the hut's cell, the hint the
-  wrens going in and out low on one side. The gate holds at 10, at 6.5 and 5.8 fights to a rest
-  (§12.2, §12.3).
+  no group. B2 is the valley's head under the rim, up out of B3's grass: a spring and its trough, a
+  bull toad and an eel in the mire under it, a cairn and a beehive hut with no door. The groups are
+  three: on C2 the watch, a master and three bargemen, and the toads, a bull toad and a fen toad; on
+  B2 the toad and the eel. The secrets are the cleft, the hint the lichen rubbed off the walling in a
+  line, and the hut's cell, the hint the wrens going in and out low on one side. The gate holds at 10,
+  at 6.5 and 5.8 fights to a rest (§12.2, §12.3).
 - **Weather.** The delta's: mild and wet, the wettest in late autumn, fog off the gulf. Fronts reach
   it four hours after they cross the Foreland.
 
 ## 4. What is still to build
 
-All but C5, D5, C4, C3, B5, B6, C6, C7, B3 and B4: 14,143 squares of land, 11,965 of them walkable. On the
-grid (§1) the plan is ten boxes, a dungeon and a town, and the boxes hold 8,946 of those squares:
+All but C5, D5, C4, C3, B5, B6, C6, C7, B3, B4, C2 and B2: 14,143 squares of land, 11,965 of them
+walkable. On the grid (§1) the plan is ten boxes, a dungeon and a town, and the boxes hold 8,946 of
+those squares:
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
 |---|---|---|---|---|---|---|---|---|
@@ -912,7 +913,7 @@ mound, a Stone's plinth without its Stone, temples half under water, a port.
   10 against their 800: the heronry needs its keepers and a brood, each box the curve's toad, and
   B3 its quay's crew, five fights where a share of 400 a box buys about three. Paid by level in the
   road's order, a clear of all ten boxes, the temples and the town gives about 10,340 a member, some
-  25% over the curve, and 5,700 gold, which meets the curve's 5,040, so #153 no longer owes the
+  25% over the curve, and 6,197 gold, which meets the curve's 5,040, so #153 no longer owes the
   area's gold. From here on a kill pays
   by level (#159), so a company that arrives at 10 earns the shares as written and one that arrives
   at 13 earns less; the curve's row reports what a clear falls short of as owed to #153 until the
@@ -922,9 +923,9 @@ mound, a Stone's plinth without its Stone, temples half under water, a port.
 - **Gold.** Training six members from 10 to 12 costs about 5,040 with today's `trainPrice`, and the
   first prestiges about 1,000 each (#19); a clear should pay for the training at least, in chests,
   drops and the halls' pay, and the ladder's step at Saltmouth's armourer is priced within the
-  band's window (#399): its dearest ware the Sharkskin Coat at 1,100 and its dearest find the Horn
-  Bow +1 at 900, against 2,000. Its weapons for the premade six come to about 4,250, and with the
-  armour about 7,850.
+  band's window (#399): its dearest ware the Sharkskin Coat at 1,100 and its dearest find the
+  Sharkskin Coat +1 at 1,250 (B2, §12.3), against 2,000. Its weapons for the premade six come to
+  about 4,250, and with the armour about 7,850.
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
   (docs/areas/thornmark.md §9, 17): a company at 10 wins nine in ten of C5's fights and walks the
   causeway resting at its camp; one at 8 wins no more than one in four (from 10 the gate judges a
@@ -1644,14 +1645,20 @@ Decided by the builder for #830, each the owner's to overturn:
    cliff and C7's west edge the void there, so nothing built walks onto it.
 5. **A7 stays cut,** with A2 and C1: A6's south edge and B7's west edge stand closed against it. Its
    224 squares are reached from no built box, and building it would widen the issue.
-6. **The valley's hardest are two toads,** a bull toad and a fen toad come up to spawn: a lone bull
-   toad paced B2 at 9.0 fights to a rest against an aim of 7.5, and the pair at 5.8. One motif runs
-   through the valley, told by Jelle.
+6. **The valley's hardest differ from box to box,** as far as the roster allows (§12.1): a bull toad
+   and a fen toad come up to spawn at C2's tarn, as Jelle tells it, and a bull toad and an eel come up
+   the Long Water to B2's mire. A lone bull toad paces a company of 10 at about 8.9 fights to a rest
+   against an aim of 7.5; each pair, the toad with one at 10, at 5.6 to 5.8.
 7. **The watch is the Hand's barge crew** at a fire on the crest, the roster's people: the area has
    no hill folk to place, and the watch on the river ties the valley to the Stone's barge without
    saying more.
-8. **The finds are a Great Sword +1 and a Long Bow +1,** at 600 and 350, neither given elsewhere in
-   Saltreach, inside the 2,000 window.
+8. **The finds are a Long Axe +1 and a Sharkskin Coat +1,** at 900 and 1,250, inside the 2,000
+   window. The first builder's Great Sword +1 (2d6+2) and Long Bow +1 (1d8+2) were weaker than the
+   Long Axe (2d6+4) and the Horn Bow (1d12+4) that Saltmouth's armoury sells, and the owner's delegate
+   rules that no find is worse than the area's nearest shop sells for its slot. The Long Axe +1 betters
+   the shop's for C2's slot, the Hand's as the Tide Ship's is; no bow betters the Horn Bow but its +1,
+   which the pans give, so B2 takes the coat, the one plus of Saltmouth's step no box gave. Neither is
+   given elsewhere in Saltreach.
 9. **The walkthrough walks the bounds in one function,** `theBounds`, called last, so each later box
    adds its steps there. No edge pins go into `tools/tests/outdoors.ts`, which holds none for
    Saltreach's boxes: the walkthrough walks each seam the boxes open instead.
@@ -1660,6 +1667,12 @@ Decided by the builder for #830, each the owner's to overturn:
     `tools/tests/atlas.ts`, each of which says a map built on it moves it.
 11. **The enclave's door is on A5 and the lair's on B7** (§12.10), the area's two boxes farthest from
     the road with room for a door; #845 and #846 settle what they hold.
+12. **The six to come give gold, draughts and elixirs,** no gear: with C2's and B2's finds the
+    ladder's pluses at 13 are all given in Act II, and the one Saltreach lacks, Plate Mail +1, is
+    Wrackholm's. Their groups as planned pay about 2,600 xp a member against the first reckoning's
+    2,200; A6 and B7 build a group fewer if the lead asks it (§12.1).
+13. **D6 starts on the spit,** where D5 opens onto it, with its group and its secret there, since the
+    hint check walks from a map's start; the shore under the town is walked onto from C6.
 
 ## 10. Names
 
@@ -1751,15 +1764,33 @@ on the road's quest. Then the area's enclave and its artifact's lair (§12.10). 
   against A7 with the rim's mountain, so no built box is open onto unbuilt land.
 - **Groups** are the roster's (§7), the fewest that pass the gate's pace, none on land a company under
   the band walks onto from another zone. Each box's hardest is at least one over its band's floor (the
-  curve's rise rule): 11 in a box of 10–11, 12 in one of 11–12, which only the bull toad reaches. The
-  valley's hardest are a bull toad and a fen toad come up from the fen to spawn, a pair at 11, which
-  keeps the pace inside its aim where a lone bull toad paced 9.0.
-- **Finds** inside the 2,000 window, none repeating one the area already gives (§4.1).
+  curve's rise rule): 11 in a box of 10–11, 12 in one of 11–12. Only the bull toad reaches 12, and the
+  Hand's smugglers that C6 holds by night, so no two boxes take the same hardest where the roster
+  allows another: in a box of 10–11 the bull toad goes with one of the four at 10 (a fen toad at C2's
+  tarn, an eel in B2's mire, a heron at A3, a leech at A4) or alone beside heavier company (A5); in
+  one of 11–12, two bull toads (A6, D6) or the smugglers (B7). By the harness a lone bull toad paces a
+  company of 10 at about 8.9 fights to a rest, over the aim's 7.5, and a pair with one at 10 at 5.5 to
+  5.8; at 11 a lone one paces about 20 and two about 5.7.
+- **A camp stands next to the group that keeps it,** not two squares off: rest at a camp is refused
+  only with a group next to the party (`restRefused`, `src/game/wilds.ts`). C2's watch stands beside
+  its fire, and the walkthrough shows the rest refused there until it falls.
+- **Secrets** are each of their own place, with a hint of a different kind and a block of a
+  different shape: a walled cleft found from wear (C2), a beehive hut from its wrens (B2), a
+  well-house from a rag willow (A3), a still from a smell (A4), a sunk house from a carved post (A5),
+  an anchorite's cell from its squint (A6), a salters' bothy from dead grass (B7) and a light's store
+  from a sound (D6). Walls, not mountain, keep climbers out.
+- **Finds** inside the 2,000 window, none repeating one the area already gives (§4.1) and none weaker
+  than what Saltmouth's armoury sells for its slot (the owner's delegate, on #907). C2's Long Axe +1
+  and B2's Sharkskin Coat +1 leave no plus of the ladder's at 13 that Saltreach does not give but
+  Plate Mail +1, which is Wrackholm's (§4.1), so the six to come give gold, draughts and elixirs; a
+  piece of gear among them passes the same test.
 - **Pay.** The area's clear stood at 10,343 xp a member before the bounds, and a company entering at
   10 and three quarters clearing it left at 12.4; the curve holds it to 13.0 (`LEAD`). With C2 and B2
-  it leaves at 12.5. The six to come are given about 2,200 xp a member between them: about 450 each
-  for A4, A5, A6 and B7 and about 200 each for A3 and D6. A box that would carry the lead past 13.0
-  builds lighter, and says so.
+  it leaves at 12.5. The first reckoning gave the six to come about 2,200 xp a member between them;
+  as planned below they give about 2,600 by the curve's count (A3 about 220, A4 and A5 about 450 each,
+  A6 and B7 about 600 each, D6 about 300), a fight inside the aim costing about 250 at 10 and 300 at
+  11 (§8). Each pull request measures the lead, and a box that would carry it past 13.0 builds a group
+  fewer (A6 and B7 first), and says so.
 - **The walkthrough** walks them in one function, `theBounds` in `walkthrough.ts`, called last: each
   box's seams walked, its groups won at its floor, its secret found from its hint and its prize shut
   to walkers, swimmers, climbers and levitators.
@@ -1774,8 +1805,8 @@ on the road's quest. Then the area's enclave and its artifact's lair (§12.10). 
 - **Points of interest,** about seven features and two groups: the stile at the top field; Jelle, a
   shepherd of Rietum, with a rumour of the watch and the toads; the watch's fire, a camp; the tarn; a
   cairn under the rim; on the top, the boundary stone, the lip and a shepherd of the Downs.
-- **Encounters.** The Hand's watch at its fire, a barge master and three bargemen; the toads at the
-  tarn, the hardest.
+- **Encounters.** The Hand's watch beside its fire, a barge master and three bargemen; the toads at
+  the tarn, a bull toad and a fen toad, the hardest.
 - **The secret and its hint.** A cleft in the Edge's foot walled up with dry stone. The hint: the
   lichen rubbed off the walling in a line.
 - **How it meets the Downs.** The top is the Downs' land, laid with the box whole: open to D2 on its
@@ -1784,23 +1815,23 @@ on the road's quest. Then the area's enclave and its artifact's lair (§12.10). 
   No group stands on it and nothing on it pays.
 - **New here.** Nothing: the area's roster and features, its third people, the Hand's men off the
   barges, at a fire in the hills.
-- **Finds.** A Great Sword +1 in the cleft, the area's first.
+- **Finds.** A Long Axe +1 in the cleft, the Hand's as the Tide Ship's is.
 - **Pay.** About 500 xp a member.
 - **As built** (#830, 18 October): `upperwater_c2`, laid at 72,30. North from Rietum's top field at
-  8,31 a dirt path climbs to the crest, the watch's fire at 7,22 and the watch beside it, a master
-  and three bargemen who break when he falls. Jelle stands under the Edge at 20,27: the men off the
-  barges have kept a fire on the crest since midsummer, buy a sheep a week in Saltmouth silver and
-  watch the river; the toads come up to the tarn to spawn. The tarn lies at 7–12,15–17, a bull toad
-  and a fen toad on its shore, the box's farthest and hardest. The shepherds' cairn on the last hill
-  under the rim gives 50 gold and a draught. The cleft is a walled block at 16–18,10–12 against the
-  face, its way in at 17,12 and the hint at 17,13; inside, a shuttered lamp with green glass, its
-  shutter towards the valley, and a chest of 150 gold, a Great Sword +1 and a draught. On the top
-  (214 squares), the boundary stone at 27,8, a sheaf cut on its east face and a wave on its west; the
-  lip at 25,18, the valley seen from it; and Wat, a shepherd of the Downs, at 29,27, who knows no
-  way down but the Salt Road and has seen the smoke on the crest. The gate holds at 10, at 6.47
-  fights to a rest, every fight won, and a company two under at 57.8% of the floor's day. Density:
-  every square within 12 steps of a point, the furthest 12. By the curve's count the box pays about
-  490 xp a member and 340 gold.
+  8,31 a dirt path climbs to the crest, the watch's fire at 7,22 and the watch next to it at 7,23, a
+  master and three bargemen who break when he falls; no company rests at the fire while they stand.
+  Jelle stands under the Edge at 20,27: the men off the barges have kept a fire on the crest since
+  midsummer, buy a sheep a week in Saltmouth silver and watch the river; the toads come up to the tarn
+  to spawn. The tarn lies at 7–12,15–17, a bull toad and a fen toad on its shore, the box's farthest
+  and hardest. The shepherds' cairn on the last hill under the rim gives 50 gold and a draught. The
+  cleft is a walled block at 16–18,10–12 against the face, its way in at 17,12 and the hint at 17,13;
+  inside lie rope, a sack and a lamp of green glass, its shutter turned down the valley, beside a
+  chest of 150 gold, a Long Axe +1 and a draught. On the top (214 squares), the boundary stone at
+  27,8, a sheaf cut on its east face and a wave on its west; the lip at 25,18, the valley seen from
+  it; and Ralf, a shepherd of the Downs, at 29,27, who knows no way down but the Salt Road and has
+  seen the smoke on the crest. The gate holds at 10: 6.47 fights to a rest, every fight won; two
+  under, 57.8% of the floor's day. Density: every square within 12 steps of a point, the furthest 11.
+  By the curve's count the box pays about 490 xp a member and 340 gold.
 
 ### 12.3 B2, the valley's head (#830): country, band 10–11
 
@@ -1810,32 +1841,40 @@ on the road's quest. Then the area's enclave and its artifact's lair (§12.10). 
   B3, the trees giving out; a spring at the rim's foot and a mire below it.
 - **Points of interest,** about four features and one group: the willows' end; the spring's trough,
   a fountain; a cairn where the valley turns; a beehive hut with no door.
-- **Encounters.** The toads in the mire, the box's one fight.
+- **Encounters.** A bull toad in the mire and an eel come up the Long Water to its head, the box's
+  one fight.
 - **The secret and its hint.** The beehive hut's cell under its turf. The hint: wrens going in and
   out low on one side.
 - **New here.** Nothing.
-- **Finds.** A Long Bow +1 in the cell.
+- **Finds.** A Sharkskin Coat +1 in the cell, the one piece of Saltmouth's step with a plus that no
+  box gave.
 - **Pay.** About 250 xp a member.
 - **As built** (#830, 18 October): `upperwater_b2`, laid at 40,30, its north and west the rim and the
   world's end. Up out of B3's grass at 24,29 the valley closes in. The spring at 22,13 runs into a
   stone trough with bent pins and old coins on its floor, a fountain of luck; the mire under it at
-  22–27,15–16 holds a bull toad and a fen toad. The cairn at 28,25 has a sheep's bell on a stick and
-  gives 40 gold and a draught. The hut is a walled block at 18–20,19–21, its way in at 19,21 and the
-  wrens at 19,22; the cell holds a crook, a bow in a greased bag and a horn of coin: a chest of 100
-  gold, a Long Bow +1 and a draught. The gate holds at 10, at 5.79 fights to a rest, every fight won,
-  and two under at 44.5%. Density: every square within 12 steps, the furthest 10. By the curve's
-  count the box pays about 220 xp a member and 140 gold.
+  22–27,15–16 holds a bull toad and an eel, kept to the mire. The cairn at 28,25 has a sheep's bell
+  on a stick and gives 40 gold and a draught. The hut is a walled block at 18–20,19–21, its way in at
+  19,21 and the wrens at 19,22; the cell holds a crook, a sharkskin coat in a greased bag and a horn
+  of coin: a chest of 100 gold, a Sharkskin Coat +1 and a draught. The gate holds at 10: 5.76
+  fights to a rest, every fight won; two under, 44%. Density: every square within 12 steps, the
+  furthest 10. By the curve's count the box pays about 220 xp a member and 140 gold.
 
 ### 12.4 A3, the rim's foot behind the willows: country, band 10–11
 
 - **Purpose.** To close B3's west edge onto built land: 49 squares of hill and grass in the corner
   under the rim, with the willows' last trees along B3's edge and the rim's mountain behind.
-- **Landmarks.** The Long Water's first shallows at its north-east corner, white out of the rim; the
-  trees thinning to hill; the corner where A4's hills come up.
-- **Points of interest,** two or three features (an event at the river's first pool; a cairn) and one
-  group, the toads' pair, since the rise rule wants a group at 11.
-- **The secret and its hint.** One small one in the rim's foot, if the 49 squares leave room for a
-  block and its approach; if not, the pull request says why there is none.
+- **Landmarks.** The willows' last trees in a line down B3's edge; the hill corner at their foot,
+  where A4's hills come up; the rim behind. At the north-east corner the Long Water's first shallows
+  come white out of the rim, seen from the trees and not reached.
+- **Points of interest,** three features and one group: the shallows seen from the trees, an event;
+  a willow hung with rags, the hint; a cairn in the corner.
+- **Encounters.** A bull toad and a heron off the willows, the one group, at 11 for the rise rule:
+  about 5.8 fights to a rest at 10.
+- **The secret and its hint.** A well-house walled into the rim's foot, where a spring rises under
+  the rock, its sill heaped with sea shells carried up the Long Water. The hint: the last willow hung
+  with rags, faded, tied on one above another.
+- **New here.** Nothing.
+- **Finds.** 120 gold among the shells and a draught.
 - **Pay.** About 200 xp a member.
 
 ### 12.5 A4, the hills over the heronry: country, band 10–11
@@ -1843,62 +1882,101 @@ on the road's quest. Then the area's enclave and its artifact's lair (§12.10). 
 - **Purpose.** The rim's foot west of B4: hills under the rim and the fen's north-west corner, B4's
   west edge open onto it along all its rows. The Delta's, whole: the Upper Water's 318 squares in its
   middle rows play at the Delta's band, both zones the area's own and the same band's floor.
-- **Landmarks.** The hills under the rim; a dry valley through them; the fen's north-west corner.
-- **Points of interest,** about five features and two groups: a hermit or a statue with a riddle;
-  a shrine; a cairn; a camp.
-- **Encounters.** Herons off B4's heronry fishing the fen's corner; the toads' pair or a barge crew.
-- **The secret and its hint.** In the hills, the builder's.
+- **Landmarks.** The hills under the rim; a dry valley through them, its bed of white stones; the
+  fen's north-west corner, marsh to B4's heronry.
+- **Points of interest,** about five features and two groups: a statue with a riddle on the hills'
+  crest; a shrine at the dry valley's mouth; a cairn; a camp in the fen's corner; the reek at the
+  valley's head, the hint.
+- **Encounters.** Three herons off B4's heronry fishing the fen's corner, the nearest; a bull toad
+  and a leech in the corner's pools, the hardest: about 6.8 fights to a rest at 10.
+- **The secret and its hint.** A still in a cave at the dry valley's head, where the stream once
+  went under the hills, walled up with the valley's stones: a copper worm, kegs and a crock of coin.
+  The hint: at the valley's head the air smells of peat smoke and malt, and there is no fire anywhere.
+- **New here.** Nothing.
+- **Finds.** 200 gold in the crock and an elixir.
 - **Pay.** About 450 xp a member.
 
 ### 12.6 A5, the fen's west shore: country, band 10–11
 
 - **Purpose.** The fen's west edge under the rim, west of Stienwierde, B5's west edge open onto it
-  along all its rows. The farthest of the A column from the road at its middle, and the enclave's
-  door (§12.10).
-- **Landmarks.** The rim; the hills at its foot; the fen's west shore, marsh to B5.
-- **Points of interest,** about five features and two groups.
-- **Encounters.** Leeches and an eel in the fen's pools; the toads' pair.
-- **The secret and its hint.** The builder's.
+  along all its rows. The farthest of the A column from the road at its middle.
+- **Landmarks.** The rim; the hills at its foot; the fen's west shore, marsh to B5; an old mound in
+  the fen, a Tidefolk village's, the village long gone.
+- **Points of interest,** about five features and two groups: an eel-catcher of Stienwierde at her
+  traps, with a rumour; a camp on the dry ground under the rim; a cairn where the hills meet the
+  marsh; a shrine at the fen's edge; the door-post on the mound, the hint.
+- **Encounters.** The fen's pools, three leeches and an eel (MONSTERS §6.1's second fight), the
+  nearest; a bull toad alone, as the roster has it, the hardest: about 7.5 fights to a rest at 10,
+  the aim's top.
+- **The secret and its hint.** The village's last house, sunk into its mound, its door walled with
+  turf. The hint: on the mound a carved door-post stands alone, a wave cut on it, no house behind it.
+- **The enclave.** Its door in the rim's foot here (§12.10), in its own pull request once #845 is
+  merged: this box leaves the door's square and the way to it clear, and the eel-catcher's rumour
+  may point there when #845 says what is behind it.
+- **New here.** Nothing; the enclave, when it comes, is #845's.
+- **Finds.** 180 gold in the house's hearth-pot and a draught.
 - **Pay.** About 450 xp a member.
 
 ### 12.7 A6, the fen under the rim: country, band 11–12
 
 - **Purpose.** The fen's west edge south of A5, beside the Drowned Temples' approach, B6's west edge
   open onto it along all its rows. Its south edge stands closed against A7 (§12.1).
-- **Landmarks.** The rim; the fen; the temples' bell heard from the west.
-- **Points of interest,** about five features and two groups.
-- **Encounters.** The fen's leeches and eels, the nearest; a drowned man walked out of the temples
-  into the fen; a bull toad, the hardest, at 12.
-- **The secret and its hint.** The builder's.
-- **Pay.** About 450 xp a member.
+- **Landmarks.** The rim; the fen; the temples' bell, heard from the west; a cell in the rim's foot
+  facing the temples.
+- **Points of interest,** about five features and two groups: the bell heard over the fen, an
+  event; a statue with a riddle, a priest of the drowned god knee-deep in the reeds; a cairn; a camp
+  at the rim's foot; the squint, the hint.
+- **Encounters.** Two drowned men walked out of the temples into the fen, the nearest at 11; two
+  bull toads, the hardest at 12: about 7.3 fights to a rest at 11.
+- **The secret and its hint.** An anchorite's cell in the rim's foot, walled in as she was: her
+  stool, her bowl and what the faithful left her. The hint: a slit cut through the rock at head
+  height, looking east to the temples.
+- **New here.** Nothing.
+- **Finds.** 250 gold in the bowl and an elixir.
+- **Pay.** About 600 xp a member, or a group fewer if the lead asks it (§12.1).
 
 ### 12.8 B7, the Scarp's foot west of the pans: country, band 11–12
 
 - **Purpose.** The Saltings' grass and the last marsh under the Scarp, west of C7's pans, B6's south
   edge and C7's west edge open onto it. The Saltings', whole: the Delta's marsh in its north half
   plays at the Saltings' band.
-- **Landmarks.** The Scarp across its south, drawn as mountain; the last marsh; the salters' grass.
+- **Landmarks.** The Scarp across its south, drawn as mountain; the last marsh; the salters' grass;
+  a fan of dead grass at the Scarp's foot.
 - **How it meets the Wold.** The Wold's 219 squares above the Scarp are closed with it, as C7 closed
   its own (§4.10): B8's north edge is the Scarp's cliff and C7's west edge is the void there, so no
   built box walks onto them; its west edge stands closed against A7.
-- **Points of interest,** about six features and two groups, and the lair's door (§12.10).
-- **Encounters.** Salt crabs on the grass, the nearest; bull toads in the last marsh, the hardest,
-  at 12.
-- **The secret and its hint.** In the Scarp's foot, the builder's.
-- **Pay.** About 450 xp a member.
+- **Points of interest,** about six features, two groups and the lair's door: the salters' track's
+  end, an event; a salt-carter at her cart, with a rumour of the fire under the Scarp; a camp
+  on the grass; a cairn; a shrine at the marsh's edge; the dead grass, the hint.
+- **Encounters.** Three salt crabs on the salters' grass, the nearest; the Hand's smugglers at a fire
+  under the Scarp, two smugglers and two bowmen as C6 holds them by night, the hardest at 12: about
+  7.4 fights to a rest at 11.
+- **The secret and its hint.** A salters' bothy under the Scarp, its door built up with blocks of
+  salt. The hint: the grass at the Scarp's foot dead and white in a fan, its point at the rock.
+- **The lair.** Its door in the Scarp's face here (§12.10), in its own pull request after #846 and
+  #847: this box leaves the door's square and the way to it clear.
+- **New here.** Nothing; the lair, when it comes, is #846's and #847's.
+- **Finds.** 250 gold in the salters' strongbox and an elixir.
+- **Pay.** About 600 xp a member, or a group fewer if the lead asks it (§12.1).
 
 ### 12.9 D6, the plate's old place: country, band 11–12
 
 - **Purpose.** Two pieces of land in the sea off Saltmouth: the end of D5's spit at its north, open
   onto D5's south edge, and Saltmouth's shore at its west, open onto C6's east edge. The Saltings',
   whole.
-- **Landmarks.** The spit's end where Saltmouth's plate stood before #177 moved it; the tidal shore
-  under the town; the sea.
-- **Points of interest,** two or three features. No group, or one the rise rule allows at 11–12, a
-  bull toad: 61 squares in two pieces, beside C6's crabs.
-- **The secret and its hint.** In the piece the map starts in, since the hint check walks from the
-  start; or none, if neither piece has room.
-- **Pay.** About 200 xp a member.
+- **Landmarks.** The spit's end where Saltmouth's plate stood before #177 moved it, and in the world
+  the footing of the old harbour light; the tidal shore under the town; the sea.
+- **Points of interest,** three features and one group: the light's footing, the hint; a cairn of
+  ballast stones on the shore under the town; a wreck's ribs in the sand.
+- **Encounters.** Two bull toads come out of the Delta's reeds onto the spit, the one group, at 12
+  for the rise rule: about 5.7 fights to a rest at 11, at the aim's floor of 5.75.
+- **The secret and its hint.** The light-keeper's store under the footing, its door walled up when
+  the light moved to the town. The hint: each wave booms hollow under the footing. The map starts on
+  the spit, where D5 opens onto it, since the hint check walks from the start; the shore under the
+  town is walked onto from C6.
+- **New here.** Nothing.
+- **Finds.** 150 gold in the keeper's chest and a draught.
+- **Pay.** About 300 xp a member.
 
 ### 12.10 The enclave and the lair
 
@@ -1908,3 +1986,24 @@ rim's foot on A5, a place of its own held a band or two over the Delta's, with i
 guardian, its door in the Scarp's face on B7, the farthest of the area's land from the road; the
 artifact, its guardian and the rumour that first speaks of it are #846's, and where #846 puts the
 lair elsewhere, this note gives way to it.
+
+### 12.11 For the next builders
+
+What the seven areas after Saltreach copy from these boxes, and what they avoid (the review of
+#907):
+
+- **Copy:** the table at §12's head and "What every box keeps" (§12.1); the walkthrough's
+  `theBounds`, one function called last; seams kept to the atlas's terrain; no group on land a
+  company under the band walks onto. Count a zone's share of a box with the built maps laid,
+  `worldGrid(ATLAS, MAP_DEFS)`, not the bare atlas.
+- **Avoid:**
+  - a brief that leaves a box's secret, its hint, its finds or what is new to "the builder's": each
+    box names its features, its secret with a hint a company can see without passing its door, a
+    New here line ("Nothing" will do) and a find;
+  - a camp two squares from a group that does not roam: rest is refused only with a group next to
+    the party;
+  - a name another map already uses: grep the content first (Wat is Gullwick's boat-builder);
+  - a text that takes three lines of the log: two is the aim, measured with the log's own wrap
+    (`logLines`);
+  - a find weaker than what the area's nearest shop sells for its slot;
+  - the same block and the same group in every box.
