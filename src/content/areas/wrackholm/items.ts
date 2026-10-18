@@ -74,7 +74,7 @@ export const ITEMS: readonly ItemDef[] = [
   // dresses a company in either, no shop sells either, and each is priced under the dearest find the curve holds
   // Wrackholm to (Plate Mail +1, 1,350) inside its window of 2,500. The Morning Star of the ladder's 11, the plain, where
   // the ladder wears the plus from 13 and the Flail from 14, with the sailors' cold flame on its head: its steel the
-  // ladder's, so the lightning die is the gain (hits 13.5 against 11 and 12). Locked, in the iron-banded chest.
+  // ladder's, so the lightning die is the gain (hits 13.5 against 11 and 12). Locked, in the iron-bound chest.
   { ...morningStar, id: 'corposant', name: 'Corposant, Morning Star', price: 1150, element: 'lightning' },
   // The Sharkskin Coat of the ladder's 11 a point lighter in the armour, and cut to run in: +3 speed while worn, which
   // the armour slot makes one coat at a time. In the plain chest beside the locked one.

@@ -2,8 +2,9 @@
 // at the west edge rising to a mass of rock, with the smugglers' watch in a hollow at the head of its
 // one cleft (a den, kept by the Hand); open grass east to the point, the hermit's cell and the cairn
 // on it; the cliff over the anchorage, cut into the south hills, and its path down to the shingle at
-// the plan's 182,188, where the boats lie that row out to the Tide Ship by night (#190). Cut from the
-// atlas by tools/scaffold.ts; docs/areas/wrackholm.md §4.4 is its brief.
+// the plan's 182,188, where the boats lie that row out to the Tide Ship by night (#190). In the rock's east
+// face, behind a second secret door that a groove in the turf points at, a hollow holds two finds (#861,
+// docs/areas/wrackholm.md §4.6). Cut from the atlas by tools/scaffold.ts; docs/areas/wrackholm.md §4.4 is its brief.
 import type { MapDef, Choice } from '../../../../game/map.ts';
 import { EAST } from '../../../../game/types.ts';
 

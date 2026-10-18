@@ -12,7 +12,9 @@ Figures are measured on main at `2cc52cd` (29 September 2026) with `worldGrid`
 
 E6, the moor and the landing, is built (#187), and with it the area is listed in AREAS; Kelp Hole's
 two levels are built under it (#188), F6, the east rocks, beside it (#189), and the Tide Ship's
-three decks, its Rift and the stair's foot off F6's shore (#190). Its content is
+three decks, its Rift and the stair's foot off F6's shore (#190); and in F6's rock a hollow behind a
+second secret door holds two finds off the ladder, a lightning morning star and a coat that raises
+speed, the blade in the area's first locked chest (#861, §4.6). Its content is
 `src/content/areas/wrackholm/` (`index.ts`, its maps, monsters, items and atlas, its walkthrough;
 its chapter of the one quest, The Stone Carried Home, in `chapter.ts` and its side quests in
 `quests.ts`, #192, with the Compact's Fence's and Factor's rungs in `guilds.ts`, #635); it has no town and no
@@ -104,7 +106,9 @@ are drawn in #193.
   and the cliff over the anchorage with its path down to the boats' shingle at 182,188. Its groups:
   gulls on the rocks, a crew of smugglers and bowmen on the heather, the Hand at the smugglers'
   watch in the rocks, bilge rats at the landed stores on the east shore, and devilfish in the pools
-  under the cliff by night. Its item is the founder's seal (`items.ts`).
+  under the cliff by night. Its items are the founder's seal and, in a hollow in the rock's east face
+  behind a second secret door, a lightning morning star and a coat that raises speed (§4.6, #861;
+  `items.ts`).
 - **The Tide Ship** (`tide_ship` 12–13, `tide_ship2` 12–13 and `tide_ship3` 12–14, three decks of
   16×16, with the Rift `tide_ship_rift` 12–14 and the stair's foot `dead_drop_stair` 26–28; #190):
   boarded by night in Dando's boat from F6's shingle; the weather deck and the devilfish over the
@@ -268,10 +272,12 @@ Foreland map's density.
   devilfish in the pools under the cliff at night.
 - **Quests.** The Hermit of the Point (§6). The chapter's entry: the ship at anchor (§5).
 - **The secret and its hint.** The founder's grave under the cairn on the point, with his seal.
-  The hint: the hermit's count starts at a date.
+  The hint: the hermit's count starts at a date. A second secret door, in the rock's east face, with a
+  hollow behind it (#861, §4.6): the hint, a groove in the turf that stops at the rock.
 - **New here.** Nothing, as built: dens are on the Downs already, and boarding by night is #190's.
 - **Finds.** The founder's seal, a quest item the Compact's hall takes at the rank that reveals
-  (#22; #182 left it there, so as not to tell the reveal at Runner).
+  (#22; #182 left it there, so as not to tell the reveal at Runner); and the hollow's two, off the
+  ladder (§4.6).
 - **Pay.** About 1,600 xp a member.
 - **As built** (#189, 1 October): the brief's places, five groups at the line's standard size. The
   company comes in from the moor at the west edge, 0,12, where E6's east path crosses. The rock mass
@@ -372,6 +378,66 @@ Foreland map's density.
   of a point. The walkthrough rows out by night, plays the three decks at 12, finds the shard-cut,
   frees Hale once he is taken, wins the Warden at 14 and the Stone, and goes down the stair and
   back. What the owner finds by hand goes here when it has been played.
+
+### 4.6 The hollow in the east rocks (#861): two finds off the ladder
+
+The area's share of epic #18's eight items (DESIGN §5 and §6; the delegate's ruling, D1 to D4): one
+weapon whose blows carry an element and one piece of gear that raises a stat while it is worn, to
+each act past I, found and never told, off the ladder (no `GEAR` row dresses a company in either),
+inside the area's window of 2,500 and in no shop. Wrackholm's are a lightning morning star and a coat
+that raises speed. They lie in a hollow cut in F6's rock, behind a second secret door, the blade in
+the area's first locked chest.
+
+| Item | Kind | Dice or stat | Where | Price |
+|---|---|---|---|---|
+| Corposant, Morning Star (`corposant`) | a weapon of the Morning Star's classes: knight, paladin, ranger, barbarian, cleric | 2d6+3, the plain Morning Star's steel, and 1d6 of lightning on every blow that lands (`element`) | the iron-bound chest at the hollow's back, 17,10 (`f6_hollow_locked`, `locked: true`), no gold | 1,150 gold, 575 back |
+| Runner's Coat (`runners_coat`) | armour, a coat of the Sharkskin Coat's classes: all but the cleric, the sorcerer and the monk | AC 8, a point under the Sharkskin Coat's 9, and speed +3 while worn (`stat`): a point of armour class and an earlier turn | the sea chest in front of it, 18,10 (`f6_hollow_chest`), no gold | 1,250 gold, 625 back |
+
+**`hits()`.** The blade's is 13.5: the steel's 10 and the die at 3.5 (`ELEMENT_DIE`). The ladder's
+weapon of its kind is the Morning Star from 11, +1 from 13 (11) and the Flail from 14 (12), so the
+steel is a rung under the ladder's and the die is the gain: 2.5 over the +1 at 13 and 1.5 over the
+Flail at 14, with a point less to hit than the +1. The coat's gain is the speed: the Sharkskin Coat's
+9 armour against its 8, and a stat the fight reads (armour class, the round's order and a flight).
+
+**Where it is.** The rock's east face on row 10, 21 squares from the way into F6 as a company walks
+and 7 as the crow flies, across solid rock. The way across the isle is the one walk the quest needs: from
+the moor at F6's west edge, round the rock's foot, to the shingle where Dando rows out. The door is at
+20,10, between rock at 20,9 and 20,11; behind it three squares of stone floor, cut from the rock at 17
+to 19, the entry with its event, the sea chest and the locked one. The squares are shut to every
+walker but through the door, and nothing in the box, the chapter or the side quests sends a company
+there. The five secrets the area already had hold a reward or are a way (the cache's Long Bow +1, the
+grave's seal, the flooded passage, the shard-cut, the hoist), so none was free, and the cove, the ship
+and the drop lie on the quest line.
+
+**The hint** (`f6_drag`, 21,10, on the door's near side, always there): *A groove worn in the turf runs
+up from the shore, cask-wide, and stops at the rock.* It explains nothing, and the door is found by a
+search where it stops. Inside, an event at the entry (`f6_hollow`, 19,10): *A dry hollow in the rock, a
+lamp-hook in its roof. Against the back wall a sea chest, and an iron-bound one.* The sea chest opens
+to any company; the iron-bound one says "A locked chest." and, to a company with neither a Lockpick
+standing nor an iron key, "Locked." and nothing (DESIGN §5, #857). The premade six's thief is born to
+Lockpick. Nothing the road needs lies in it, and no quest turns on either find.
+
+**The lightning.** The isle's maps place 16 monsters, 15 of them past 10, and 5 of those are weak to
+lightning and none is immune or resists it (`elementMult`): the Dead-Drop's loader, tally clerk, hold
+keeper and tallymaster and Ashfall's deep knocker, which the drop's second level places, machines at 26
+to 28. The nine of Wrackholm's own at 12 to 14 and the borrowed gleaner at 15 are neither weak nor
+strong: the die lands whole on every one. Sunderwood's nine past 10, the next area's, have none weak or
+immune to it. No other element does better: nothing the isle places is weak to fire or cold, and
+Sunderwood's one weak to fire is the hound, where its bear is immune to fire and the hound to cold;
+nature and holy are the machines' immunities (§9, #861's 4).
+
+**Built** (#861). Inert for every check: no monster, group, gold or pay is added or moved, so §8
+stands, and the gate's, the harness's, the ladder's and the curve's figures are byte-identical to
+main's (the PR holds the diff). Both prices are under Plate Mail +1's 1,350, the dearest find the curve
+names for the area, so that line stands too. Density holds: F6 95.9% within 8 steps (704 of 734, 27
+points, four more). `shipped.json` adds the door at 188,168, `corposant`,
+`runners_coat` and the ids `f6_drag`, `f6_hollow`, `f6_hollow_chest` and `f6_hollow_locked`; nothing
+moves. The walkthrough walks the detour in F6, on from the founder's grave (`theHollow`): the groove,
+the search, the door, the coat from the sea chest and the blade from the iron-bound one, which the
+company's thief picks; and holds the finds themselves (`hollowFinds`: shape, window, no shop, no row of
+the ladder, no monster's drop, the one locked chest, the raise worn and carried, lightning against the
+isle, found and never told, the distance from the road) and the lock's refusals on a game of its own
+(`hollowLocked`, the real chest: refused with neither, opened by the thief, by a key, by the key spent).
 
 ## 5. The one quest here
 
@@ -530,6 +596,7 @@ besides the devilfish and the heather (#190): the wreck, the Tide Ship's site.
   12 and nearly always at 14, the Warden of the Tide the same (§9, #806: their two maps hold their
   limits at no less).
 - **Density.** Both boxes at the Foreland's floor (EXPANSION §5.3).
+- **The hollow** (#861) pays no xp, gold or group, so the figures above stand (§4.6).
 
 ## 9. Decisions
 
@@ -842,6 +909,74 @@ Decided by delegate for #806, each the owner's to overturn:
    curve and `src/content/shipped.json` do not move. The area's pool two under its floors falls with
    the two bosses, from 93.7% to 92.2%, still past its limit of 90% and owed to #18 with the rest.
 
+Decided by the owner's delegate for #18, each the owner's to overturn (the issue's calls for #861, §4.6):
+
+1. **An elemental weapon,** its blows carrying lightning: its dice a rung under the ladder's at the
+   band, so the die is the gain; a class list as its kind has. The rule if the area session finds
+   better: an element its own area's monsters are not immune to and the next area's are weak to where
+   one is.
+2. **A stat item,** a coat or a shield raising speed by 3 while worn: slotted, so one is worn at a time.
+3. **Found, off the quest's path,** behind one of Wrackholm's hinted secret doors or in a cairn off the
+   road (band 12 to 14); one of the two in a locked chest (`locked: true`), the first the area holds.
+   Each priced inside Wrackholm's window, sold by no shop, sellable at half as all found gear is. Off
+   the ladder: no `GEAR` row, so no figure moves.
+4. **Names and texts pass the pillars;** two lines to a find.
+
+Decided by the builder for #861, each the owner's to overturn:
+
+1. **The hide is a hollow in F6's rock, behind a second secret door in its east face.** The five
+   secrets the area already has hold a reward or are a way (E6's cache the Long Bow +1, F6's grave
+   the seal, Kelp Hole's passage a way out, the shard-cut a way past, the hoist a way up), so none was
+   empty; the cove, the ship and the drop are on or beside the quest line; E6 has no rock, and a hut
+   would take walkable squares from the moor. The rock is F6's, and three squares of stone floor cut
+   from it at 17 to 19 on row 10 with the door at 20,10 add walkable squares and take none away: every
+   id, door square and chest id stays, and the first secret, the grave's, is still the box's first.
+2. **Both finds in the one hollow,** the coat in a sea chest at 18,10 and the blade in an iron-bound,
+   locked one at 17,10 behind it: one detour, one hint, and a company with neither pick nor key still
+   takes the coat and sees the lock.
+3. **The blade is a Morning Star,** the ladder's weapon at 11 for five classes (knight, paladin,
+   ranger, barbarian and cleric, four of the premade six), where the bow is the ranger's alone; its
+   `classes` are the Morning Star's, and its steel the plain Morning Star's, 2d6+3, a rung under the +1
+   the ladder wears from 13 and the Flail it wears from 14, so the lightning die is the gain: `hits()`
+   13.5 against 11 and 12 (10 for the steel alone).
+4. **Lightning stands.** Of the 15 monsters the isle places past 10, 5 are weak to it and none is immune
+   or resists it, and the nine of its own at 12 to 14 take the die whole; Sunderwood's nine have none
+   weak or immune to it; fire is weak in one of them and immune in another, cold immune in one, and
+   nothing the isle places is weak to either; nature and holy are the machines' immunities. No element
+   is the better the delegate's rule asks for.
+5. **The coat is the Sharkskin Coat a point lighter,** AC 8 for 9, of the same classes, raising speed by
+   3: the speed is the gain, as the die is the blade's. Worn it is a point of armour class and an
+   earlier turn (the thief's speed 15 to 18); in the pack or the bag it gives nothing; and the armour
+   slot makes it one coat at a time, a coat and not a shield because a shield is worn beside armour
+   and would add to it.
+6. **The blade is in the locked chest,** the coat in the plain one: the better find behind the lock, and
+   what a company that cannot open it still carries away is a thing worth the walk.
+7. **The prices are 1,150 and 1,250,** a point of plus (150, `PLUS_PRICE`) to each point of the gain
+   over what the ladder wears: the Morning Star's 700 and three points for a die of a mean 3.5; the
+   Sharkskin Coat's 1,100 less 150 for its point of armour and 300 for the raise, a step of armour class
+   and a turn. Both are inside the window of 2,500 and under Plate Mail +1's 1,350, the dearest find
+   the curve names for the area, so that line of the curve stands as main prints it; they sell back at
+   575 and 625.
+8. **The names** are Corposant, Morning Star and Runner's Coat (§10): 23 characters for the blade, so
+   its sheet line, "WEAPON Corposant, Morning Star, LIGHTNING, EXPERT", ends at 313 of the 334 the
+   column allows.
+9. **The hint is a groove in the turf** (`f6_drag`, 21,10): a thing seen on the door's near side that
+   explains nothing and is there at every hour, as the hint rule asks. The hollow's event says what is
+   in it and no more.
+10. **No chest holds gold,** so F6's clear, the area's 7,279 gold and §8 stand.
+11. **"Off the road" is measured by walking,** from every square on a shortest walk from F6's way in to
+    its shingle, since the isle has no road of its own: the groove's end is 20 squares from it by the way
+    a company walks and 7 as the crow flies, solid rock between. #875's crater lip was measured so, 10
+    by walking and 6 by the crow. A hide ten squares off by the crow would need a new outcrop in F6's
+    north-east, turning grass to rock and taking walkable squares from the box.
+12. **The walkthrough walks the detour in F6** on from the founder's grave, the company's thief
+    (Ottilie, born to Lockpick, #857) picking the lock, and plays the lock's refusals on a game of its
+    own against the real chest: the checks were each broken in the tree and watched to fail (the PR
+    lists them).
+13. **The pilot is not stranded and does nothing new.** It reads the world through what it has seen; the
+    hollow's far side is never seen with the door shut, so the explorer never suspects it, and a locked
+    chest it came to would be pressed on once and walked past, as a locked door with no key is (#857).
+
 ## 10. Names
 
 Wrackholm's names are the sailors' English, the tongue that named Brandy Hole and the Wyke, and
@@ -849,6 +984,13 @@ stay: Wrackholm, the isle of wrack (weed and wreckage both); the Tide Ship; and 
 Smugglers' Cove, which NAMES §1 counts a bare description, a sea cave with kelp on its rocks in
 Brandy Hole's pattern. The Tidefolk's tongue (docs/areas/saltreach.md §10) names nothing here: the
 isle is the Compact's, not theirs. The Dead-Drop keeps its name until #22 says otherwise.
+
+The hollow's two finds (#861) keep the sailors' English, and the kind after the name as the captain's
+cutlass does (Slack Water, Cutlass +2). Corposant is the old sailors' word for the cold flame that
+stands on a mast and a yardarm in a storm, from the Portuguese *corpo santo*: a morning star with a pale
+light on every point of its head. The Runner's Coat is a Compact runner's, the hall's first rank (§6;
+DESIGN §10.2), cut to run in. Neither name says what it does: the sheet says LIGHTNING, and the stat
+says speed (§9, #861's 8).
 
 ## 11. What was cut
 
