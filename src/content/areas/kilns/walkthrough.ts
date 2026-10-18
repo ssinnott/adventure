@@ -103,6 +103,7 @@ import { offered, take, rankOf } from '../../../game/guilds.ts';
 import type { Party } from '../../../game/party.ts';
 import { FOURTH_RANKS_OPEN } from './guilds.ts';
 import { readLine, markLine, readMarks } from '../../../game/inscriptions.ts';
+import { answerRiddle } from '../../../game/wilds.ts';
 import { ACT_III } from '../../../../tools/tests/ladder.ts';
 import { roadPlace } from '../../../../tools/tests/pillars.ts';
 import { FORGE, ANVIL_STONE_PRICE, SMITH_PRICES, quarterMore } from './items.ts';
@@ -1968,24 +1969,30 @@ function crewOpen(ok: (cond: boolean, msg: string) => void): void {
  * shingle and her word on the heath that sings; the box's worms won at its floor; the shrine of skeps
  * knelt at; the strongroom in the winch-house found from the rails rubbed bright, and shut to a walker, a
  * swimmer, a climber and a levitator but through its wall; and the heath's neck closed on the south, with
- * the four squares of sand on the west, so that no square of K6 walks onto K7's tail or J6's sand.
+ * the four squares of sand on the west, so that no square of K6 walks onto K7's tail or J6's sand. The
+ * hills under the rim at the Stone (P5): east from O5's 31,16, walked, nothing said; the old cutter and his
+ * word on the slag, the waymark's riddle, the niche knelt at and the box's groups won at its floor; the
+ * walled trial found from the fan of spoil under the bare face, straight in, shut to the four ways but its
+ * dry stone. The ash under the vents (P6): east from O6's 31,20 and south from P5, walked; the milestone's
+ * riddle and the groups won; the store round the turn found from the ledge where the ash stirs, shut as
+ * P5's is. Once the tear is closed the two boxes' slag strays come back no more.
  */
 function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const w = newWalk(ok), out = buildMaps()[OUTDOORS];
   const K6 = MAP_DEFS.find((d) => d.id === 'kilnmouth_k6')!, k6 = out.zones.find((z) => z.id === K6.id)!;
-  // The squares of K6 reached from one of its own, inside the box: on foot, or walked, waded, climbed and
-  // floated with its secret door shut.
-  const reach = (from: readonly [number, number], can: Can, door?: readonly [number, number]): Set<number> => {
-    const seen = new Set<number>(), todo = [[k6.x + from[0], k6.y + from[1]]];
+  // The squares of a box (K6 unless another is named) reached from one of its own, inside the box: on
+  // foot, or walked, waded, climbed and floated with its secret door shut.
+  const reach = (from: readonly [number, number], can: Can, door?: readonly [number, number], z: MapZone = k6): Set<number> => {
+    const seen = new Set<number>(), todo = [[z.x + from[0], z.y + from[1]]];
     while (todo.length) {
       const [x, y] = todo.pop()!, k = y * out.width + x;
-      if (seen.has(k) || (door && x === k6.x + door[0] && y === k6.y + door[1]) || x < k6.x || x >= k6.x + k6.w || y < k6.y || y >= k6.y + k6.h || out.passable(x, y, can) !== 'ok') continue;
+      if (seen.has(k) || (door && x === z.x + door[0] && y === z.y + door[1]) || x < z.x || x >= z.x + z.w || y < z.y || y >= z.y + z.h || out.passable(x, y, can) !== 'ok') continue;
       seen.add(k);
       for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
     }
     return seen;
   };
-  const at = (x: number, y: number): number => (k6.y + y) * out.width + k6.x + x;
+  const at = (x: number, y: number, z: MapZone = k6): number => (z.y + y) * out.width + z.x + x;
   const ALL: Can = { swim: true, climb: true, float: true };
   for (const m of w.party.members) m.level = 16;
   w.level = 16;
@@ -2034,4 +2041,88 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   // against J6 are mountain too, so even a climber walks onto neither K7's tail nor J6.
   ok(Array.from({ length: 25 }, (_, i) => out.passable(k6.x + 7 + i, k6.y + 31, { climb: true })).every((p) => p !== 'ok') && Array.from({ length: 5 }, (_, i) => out.passable(k6.x, k6.y + 24 + i, { climb: true })).every((p) => p !== 'ok'),
     'the bank across the heath\'s neck and the mountain on the west shore are shut to a climber, so nothing of K6 walks onto the cut land past them');
+
+  // The hills under the rim at the Stone (P5): east from O5's 31,16 onto P5's 0,16, walked, in the same
+  // land at the same floor, so nothing is said of it.
+  const [P5, P6] = ['kilnsheart_p5', 'kilnsheart_p6'].map((id) => MAP_DEFS.find((d) => d.id === id)!);
+  const [p5, p6] = [P5.id, P6.id].map((id) => out.zones.find((z) => z.id === id)!);
+  const said = (r: ReturnType<typeof w.world.move>): string => (r.kind === 'moved' ? r.messages.join(' / ') || 'nothing said' : r.kind);
+  const statue = (def: MapDef, id: string): Extract<Feature, { kind: 'statue' }> => def.features!.find((f): f is Extract<Feature, { kind: 'statue' }> => f.kind === 'statue' && f.id === id)!;
+  const search = (map: string, x: number, y: number, room: string): boolean => {
+    w.world.travel(map, x, y, EAST);
+    let found = false;
+    for (let i = 0; i < 20 && !found; i++) found = w.world.search();
+    const into = found ? [w.world.move('forward'), w.world.move('forward')] : [];
+    listen(w);
+    return found && into.every((r) => r.kind === 'moved') && w.world.used(room);
+  };
+  w.world.travel('kilnsheart_o5', 31, 16, EAST);
+  const east = w.world.move('forward');
+  ok(east.kind === 'moved' && w.world.zone?.id === P5.id && w.world.state.x === p5.x && w.world.state.y === p5.y + 16 && !east.messages.some((m) => m.includes('The Kilns.') || m.includes('harder')),
+    `east from O5's 31,16 onto P5's 0,16, walked, and the land not named again (${said(east)})`);
+  listen(w);
+  const hills = reach([P5.start.x, P5.start.y], {}, undefined, p5);
+  ok(hills.size > 250 && [[2, 3], [7, 13], [3, 30], [10, 16], [2, 0]].every(([x, y]) => hills.has(at(x, y, p5))), `the hills (${hills.size} squares), the dry pit, the cairn, the seep, the bare face and the north edge are all walked to on foot from the way in`);
+  see(w, `${P5.id}:p5_hills`);
+
+  // The old cutter in the dry pit and his word on the slag; the waymark's riddle; the pits, the rim and
+  // the seep; the niche knelt at; the box's groups won at its floor.
+  const cutter = P5.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'An old cutter')!;
+  w.world.travel(P5.id, cutter.x, cutter.y);
+  const told = meet(cutter, w.party, heard(w.world, cutter)).text;
+  ok(told.includes('Forty pits') && told.includes('I stayed') && told.includes('the deep one'), `the old cutter stayed when the rest went down, and says the slag keeps to the deep pit (${told.replace(/\n+/g, ' ')})`);
+  listen(w);
+  const waymark = statue(P5, 'p5_waymark');
+  w.world.travel(P5.id, waymark.x, waymark.y);
+  ok(!answerRiddle(w.world, w.party, waymark, 'hammer').right && answerRiddle(w.world, w.party, waymark, 'Anvil').right, 'the waymark\'s riddle is answered anvil, its hammer turned to the Stone, and not hammer');
+  for (const id of ['p5_pit', 'p5_deep', 'p5_rim', 'p5_seep']) see(w, `${P5.id}:${id}`);
+  kneel(w, `${P5.id}:p5_niche`);
+  for (const g of P5.encounters!) fight(w, `${P5.id}:${g.id}`);
+
+  // The secret: the fan of spoil under a bare face of the rim with no pit above it, the search there and
+  // the trial behind the dry stone, a straight cut three squares deep. Walked, waded, climbed or floated,
+  // it is never reached but through the dry stone.
+  const trial = reach([P5.start.x, P5.start.y], ALL, [11, 16], p5);
+  ok(trial.size > 250 && ![12, 13, 14].some((x) => trial.has(at(x, 16, p5))), `the trial is shut but for its dry stone: none of P5's ${trial.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${P5.id}:p5_fan`);
+  ok(search(P5.id, 10, 16, 'p5_trial'), 'searched at the fan of spoil, the dry stone gives, and the trial behind it can be walked into');
+  const cache = P5.features!.find((f) => f.kind === 'chest' && f.id === 'p5_cache_chest');
+  ok(cache?.kind === 'chest' && cache.gold === 230 && cache.items.join() === 'elixir,potion_sp_great' && cache.x === 14 && cache.y === 16, 'at the trial\'s end, three squares in, the cutters\' cache: 230 gold, an Elixir and a Sapphire Vial');
+  // O5's crag runs on across the seam, so P5 is walked into from O5 at rows 0 to 21 alone; and past its
+  // north edge, P4's south pocket, cut, the world ends for now.
+  ok(Array.from({ length: 32 }, (_, i) => out.passable(p5.x, p5.y + i) === 'ok').join() === Array.from({ length: 32 }, (_, i) => i < 22).join() && out.passable(p5.x + 2, p5.y - 1) !== 'ok',
+    'P5 opens onto O5 at rows 0 to 21, the crag shuts 22 to 31, and past its north edge, for now, the world ends');
+
+  // The ash under the vents (P6): east from O6's 31,20 onto P6's 0,20, and south from P5's 5,31 onto
+  // its 5,0, both walked, in the same land.
+  w.world.travel('kilnsheart_o6', 31, 20, EAST);
+  const ash = w.world.move('forward');
+  ok(ash.kind === 'moved' && w.world.zone?.id === P6.id && w.world.state.x === p6.x && w.world.state.y === p6.y + 20 && !ash.messages.some((m) => m.includes('The Kilns.') || m.includes('harder')),
+    `east from O6's 31,20 onto P6's 0,20, walked, and the land not named again (${said(ash)})`);
+  listen(w);
+  walkThrough(w, P5.id, 5, 31, SOUTH, P6.id, 2);
+  const fall = reach([P6.start.x, P6.start.y], {}, undefined, p6);
+  ok(fall.size > 210 && [[3, 2], [8, 7], [12, 2], [0, 29]].every(([x, y]) => fall.has(at(x, y, p6))), `the ash and the hills (${fall.size} squares), the shelter, the cairn, the rock face and the wedge's tip are all walked to on foot from the way in`);
+  for (const id of ['p6_ash', 'p6_drift', 'p6_vent']) see(w, `${P6.id}:${id}`);
+  const milestone = statue(P6, 'p6_milestone');
+  w.world.travel(P6.id, milestone.x, milestone.y);
+  ok(!answerRiddle(w.world, w.party, milestone, 'snow').right && answerRiddle(w.world, w.party, milestone, 'ash').right, 'the milestone\'s riddle is answered ash, which fills its figures, and not snow');
+  for (const g of P6.encounters!) fight(w, `${P6.id}:${g.id}`);
+
+  // The secret: the one ledge where the ash stirs, the search there and the store round the passage's
+  // turn. Walked, waded, climbed or floated, it is never reached but through the door in the rock.
+  const store = reach([P6.start.x, P6.start.y], ALL, [13, 2], p6);
+  ok(store.size > 210 && ![[14, 2], [14, 3], [15, 3]].some(([x, y]) => store.has(at(x, y, p6))), `the store is shut but for its door in the rock: none of P6's ${store.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${P6.id}:p6_ledges`);
+  ok(search(P6.id, 12, 2, 'p6_store'), 'searched at the ledge where the ash stirs, the rock gives, and the passage behind it can be walked into');
+  ok(out.passable(p6.x + 15, p6.y + 2) !== 'ok' && out.passable(p6.x + 14, p6.y + 3) === 'ok' && out.passable(p6.x + 15, p6.y + 3) === 'ok', 'the passage turns south a square in and the store lies past the turn, where P5\'s trial runs straight');
+  const kept = P6.features!.find((f) => f.kind === 'chest' && f.id === 'p6_store_chest');
+  ok(kept?.kind === 'chest' && kept.gold === 250 && kept.items.join() === 'elixir,elixir' && kept.x === 15 && kept.y === 3, 'in the store past the turn, a chest with 250 gold and two Elixirs');
+
+  // Once the tear is closed the slag strays come back no more, and leave each box its gentler group.
+  const closed = newWalk(ok);
+  closed.party.flags.q_anvil_closed = 1;
+  const strays = [P5, P6].flatMap((d) => d.encounters!.filter((g) => g.monsters.includes('slag_elder'))), gentle = [P5, P6].flatMap((d) => d.encounters!.filter((g) => !strays.includes(g)));
+  ok(strays.length === 2 && gentle.length === 2 && strays.every((g) => closed.world.ended(g) && !w.world.ended(g) && g.roams === false) && !gentle.some((g) => closed.world.ended(g)),
+    `the slag strays in P5 and P6 stand until the tear is closed, and then the beetles and the salamanders are left (${strays.map((g) => g.id).join(', ')})`);
 }
