@@ -1,20 +1,25 @@
 // The combat harness and its test monster (docs/MONSTERS.md §4.4), and Act III's abilities on it (#537)
-// and Act IV's sweep (#545).
+// and Act IV's sweep (#545); the what-ifs #865 switches on and the four newer classes' company (#854).
+import { createHash } from 'node:crypto';
 import { makeRng } from '../../src/lib/engine/rng.ts';
-import { defaultParty, xpForLevel, levelUp, armorClass, weaponOf, MAX_LEVEL, addCondition, className, rankMult, hasCondition } from '../../src/game/party.ts';
+import { defaultParty, xpForLevel, levelUp, armorClass, weaponOf, MAX_LEVEL, addCondition, className, rankMult, hasCondition, prestigeOf } from '../../src/game/party.ts';
+import { linesOf, LINES, TIER_LEVELS } from '../../src/game/mastery.ts';
+import type { Tier } from '../../src/game/mastery.ts';
 import type { Party } from '../../src/game/party.ts';
 import { startCombat, currentTurn, partyAct, monsterAct, describeGroups, blowsOf, sweptRow, MAX_MONSTERS, MAX_GROUPS, FRONT_ROW } from '../../src/game/combat.ts';
 import type { CombatState, Fighters } from '../../src/game/combat.ts';
 import { spell, spellDice, SPELLS_GROW_TO } from '../../src/game/spells.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import { MONSTERS, MAP_DEFS } from '../../src/content/index.ts';
-import { gateCompany, winRate } from '../gate.ts';
+import { gateCompany, gateTurn, fightSeed, winRate } from '../gate.ts';
+import { GATE } from './gate.ts';
 import { testMonster, standardEncounter, line, scaleAt, groupsPerLevel, xpFor, HP, DAMAGE, ROLES, ROLE_IDS, TROLL, SWEEP, testTroll, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, testDrake, giantEncounter, drakeEncounter, BASILISK_STONE, testBasilisk, basiliskEncounter, clockEncounter } from '../testmonster.ts';
 import type { Role } from '../testmonster.ts';
-import { measure, days, fight, play, outcomeOf, companyAt, edgeOf, spent, mustRest, mendBetween, day as oneDay, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP, RULES, GEAR, GEAR_TOP, ANSWER, wakeWith, breathGuard } from '../harness.ts';
+import { measure, days, fight, play, outcomeOf, companyAt, newerCompany, edgeOf, spent, mustRest, mendBetween, day as oneDay, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP, RULES, GEAR, GEAR_TOP, ANSWER, wakeWith, breathGuard, whatIfs, writeRefusal, casting, cellsOnCores } from '../harness.ts';
+import type { BotOpts } from '../harness.ts';
 import { ok } from './lib.ts';
 
-export function harness(): void {
+export async function harness(): Promise<void> {
   // The resolver fights defs that no map places, which is what the combat harness hands it.
   const soldier = testMonster('soldier', 3), rng = makeRng(31);
   const s = startCombat(defaultParty(rng), [{ id: 'test', monsters: [soldier, soldier] }], rng);
@@ -136,8 +141,92 @@ export function harness(): void {
   ok(pays.join() === '99,1573,5093' && xpFor('boss', 10) === 6293, `an encounter pays ${pays.join(', ')} at 1, 10 and 32, as MONSTERS §4.4 says, and a boss four`);
   const boss = measure(bossFloor(8), standardEncounter('boss', 8), 80, 5001);
   ok(boss.won >= 0.3 && boss.won <= 0.7, `a company two levels under the test boss wins ${(boss.won * 100).toFixed(0)}% of the time (half asked)`);
+  whatIfsOff();
   onTheLine();
   abilities();
+  await newerOnTheLine();
+}
+
+/**
+ * The what-ifs #865 switches on, modelled and off (#854): the company's tiers (`--tiers`), the bots'
+ * options (`--bot`) and the four newer classes' company (`--company newer`). Off, the company is main's.
+ */
+function whatIfsOff(): void {
+  // With every what-if off the company is main's: the premade six at twelve levels, as main made them at
+  // 0463be91 before the tiers came to it. #865 renews this when it switches them on.
+  const MAIN_SIX = '7e6a61134152748ffac828dcc3d47dbaa7a00e5df03c584054338f7720d24677', sixAt = [1, 5, 10, 11, 12, 13, 19, 24, 25, 27, 28, 32];
+  const six = createHash('sha256').update(JSON.stringify(sixAt.map((l) => companyAt(l, 3)))).digest('hex');
+  ok(!whatIfs().length && six === MAIN_SIX, `with every what-if off the company is main's: the premade six at ${sixAt.join(', ')} (${six.slice(0, 12)})`);
+  // Under --tiers it takes Expert at 13 and Master at 25 on its class's lines, after its prestiges, and
+  // nothing else moves; without, it holds none (#852). The newer company takes them as it does.
+  const at = [12, 13, 24, 25, 32], bare = at.map((l) => companyAt(l, 3)), newBare = at.map((l) => newerCompany(l, 3));
+  const [tiered, newTiered] = under({ tiers: true }, () => [at.map((l) => companyAt(l, 3)), at.map((l) => newerCompany(l, 3))]);
+  const owed = (l: number): Tier | undefined => (l >= TIER_LEVELS.master ? 'master' : l >= TIER_LEVELS.expert ? 'expert' : undefined);
+  const holds = (p: Party, l: number): boolean => p.members.every((m) => LINES.every((line) => m.tiers?.[line] === (linesOf(m.cls).includes(line) ? owed(l) : undefined)));
+  const untiered = (p: Party): string => JSON.stringify(p.members.map((m) => { const c = { ...m }; delete c.tiers; return c; }));
+  const none = (ps: Party[]): boolean => ps.every((p) => p.members.every((m) => m.tiers === undefined));
+  const said = (p: Party): string => p.members.map((m) => `${m.name} ${LINES.filter((l) => m.tiers?.[l]).map((l) => `${m.tiers?.[l]} ${l}`).join(' and ')}`).join(', ');
+  ok(none(bare) && none(newBare) && tiered.every((p, k) => holds(p, at[k]) && untiered(p) === untiered(bare[k])) && newTiered.every((p, k) => holds(p, at[k]) && untiered(p) === untiered(newBare[k])),
+    `under --tiers the company takes Expert at 13 and Master at 25 on its class's lines and nothing else moves, at 25 ${said(tiered[3])}; the newer company too (${said(newTiered[3])}); without, none at ${at.join(', ')}`);
+  // The newer company is made as the premade six are: the four newer classes in their places, trained,
+  // dressed by the ladder and prestiged at 11, 19 and 27, its monk on a staff for its prestige blows as
+  // the thief keeps a light blade, and in the Hand's steel from 28.
+  const ps = [10, 11, 19, 27].map((l) => newerCompany(l, 3)), monk = (p: Party): Party['members'][number] => p.members[1];
+  const steel = GEAR.find(([n]) => n === 28)?.[1] ?? [], wears = (p: Party): boolean => p.members.every((m) => [m.equipment.weapon, m.equipment.armor, m.equipment.shield].some((id) => !!id && steel.includes(id)));
+  ok(ps.every((p, k) => p.members.map((m) => m.cls).join() === 'barbarian,monk,paladin,bard,druid,sorcerer' && p.members.every((m) => m.level === [10, 11, 19, 27][k] && prestigeOf(m) === k))
+    && ps.slice(1).every((p) => weaponOf(monk(p)).kind === 'staff' && blowsOf(monk(p)) >= 2) && blowsOf(monk(ps[3])) === 3 && wears(newerCompany(28, 3)) && !wears(newerCompany(26, 3)),
+    `the newer company is made as the premade six are: ${ps[3].members.map((m) => `${m.name} ${className(m)}`).join(', ')} at 27; its monk on a staff from 11 (${ps.slice(1).map((p) => `${weaponOf(monk(p)).name} ${blowsOf(monk(p))}`).join(', ')}), and the Hand's steel from 28`);
+  // The bots' options reach both bots (#853): under --bot the thrifty bot in `play` and the gate's in its
+  // fights bless and sleep against four test soldiers at 13; off, neither does.
+  const ALL: BotOpts = { bless: true, sleep: true, drink: true }, soldiers = standardEncounter('soldier', 13);
+  const gated = (): string[] => {
+    const p = gateCompany(13, 1), rng = makeRng(fightSeed(1)), s = startCombat(p, [{ id: 'g', monsters: soldiers }], rng);
+    for (let guard = 0; s.outcome === 'ongoing' && guard < 4000; guard++) { const t = currentTurn(s, p, rng); if (!t || s.round > ROUND_CAP) break; if (t.side === 'monster') monsterAct(s, p, rng); else gateTurn(s, p, rng, t.i); }
+    return s.log;
+  };
+  const casts = (log: string[]): number => log.filter((l) => / casts (Bless\.|Slumber:)/.test(l)).length;
+  const offPlay = casting(13, soldiers, 10), offGate = casts(gated());
+  const [onPlay, onGate] = under({ bot: ALL }, () => [casting(13, soldiers, 10), casts(gated())] as const);
+  ok(onPlay.bless + onPlay.sleep > 0 && onGate > 0 && !offPlay.bless && !offPlay.sleep && !offPlay.drink && !offGate,
+    `under --bot the thrifty bot blesses in ${Math.round(onPlay.bless * 10)} and sleeps in ${Math.round(onPlay.sleep * 10)} of 10 fights against four test soldiers at 13 and the gate's casts ${onGate} Blesses and Slumbers in one; off, neither (${offGate})`);
+  // A what-if is for weighing: the refusal `--calibrate --write` throws (`writeRefusal`) names each of
+  // the three new what-ifs while it is set, and there is none with every what-if off.
+  const refused = [under({ tiers: true }, writeRefusal), under({ bot: ALL }, writeRefusal), under({ company: 'newer' }, writeRefusal)];
+  ok(writeRefusal() === undefined && refused.every((r, k) => r?.startsWith('a what-if is for weighing') && r.endsWith(`(${['tiers', 'bot', 'company'][k]})`)),
+    `the refusal --calibrate --write throws names --tiers, --bot and --company while each is set, as every what-if (${refused.map((r) => r?.slice(r.indexOf('('))).join(', ')}), and there is none with all off`);
+}
+
+/** `f` under the what-ifs `set`, each put back as it was whatever `f` does, so none is left on for a later suite. */
+function under<T>(set: Partial<typeof RULES>, f: () => T): T {
+  const was = { ...RULES };
+  Object.assign(RULES, set);
+  try { return f(); } finally { Object.assign(RULES, Object.fromEntries(Object.keys(set).map((k) => [k, was[k as keyof typeof RULES]]))); }
+}
+
+/**
+ * The four newer classes' company on the line (#854, EXPANSION §5.2): at 12, 20, 28 and 32, each regular
+ * role's standard encounter, 100 seeds on every core: its fights to a rest inside GATE.perRest's limit of
+ * fightsPerRest, and its fights from fresh at its own level, the floor, won as GATE.through's limit asks.
+ * A boss is judged by its odds from two under, not by a day. Off its aim a line passes and is listed;
+ * past its limit, a class is broken, which is the owner's to rule on (#18's ruling, J4), not a check's to bend.
+ */
+async function newerOnTheLine(): Promise<void> {
+  const levels = [12, 20, 28, 32], roles = ROLE_IDS.filter((r) => r !== 'boss');
+  RULES.company = 'newer';
+  const cells = await cellsOnCores(roles, levels, 100, 0, 600_000).finally(() => { RULES.company = undefined; });
+  const [under, over] = GATE.perRest.limit, [below, above] = GATE.perRest.aim, pc = (x: number): string => `${Math.round(x * 100)}%`;
+  levels.forEach((l, k) => {
+    const asked = fightsPerRest(l), rows = roles.map((r, i) => ({ r, d: cells[i * levels.length + k].day!, won: cells[i * levels.length + k].fresh.won }));
+    const past = rows.filter(({ d, won }) => d.fights < asked - under || d.fights > asked + over || won < GATE.through.limit);
+    const off = rows.filter((x) => !past.includes(x) && (x.d.fights < asked - below || x.d.fights > asked + above || x.won < GATE.through.aim));
+    const say = (xs: typeof rows): string => xs.map(({ r, d, won }) => `${r} ${d.fights.toFixed(1)}${won < GATE.through.aim ? ` won ${pc(won)}` : ''}`).join(', ');
+    ok(!past.length, `the four newer classes' company at ${l} fights ${say(rows)} to a rest (${asked} asked, ${asked - under} to ${asked + over} its limit), and wins ${pc(Math.min(...rows.map((x) => x.won)))} of each at the floor or more (${pc(GATE.through.limit)} its limit)${off.length ? `; off the aim: ${say(off)}` : ''}${past.length ? `; past the limit: ${say(past)}` : ''}`);
+  });
+  // A worker that dies, or runs past the limit it is given, fails the lot (`onCores`) and the others
+  // stop, so a run fails rather than hangs on one.
+  const failed = (p: Promise<unknown>): Promise<string> => p.then(() => 'played', (e: unknown) => (e instanceof Error ? e.message : String(e)));
+  const dies = await failed(cellsOnCores(['nobody' as Role], [12], 1)), stalls = await failed(cellsOnCores(['soldier', 'brute'], [32], 100, 0, 1));
+  ok(dies !== 'played' && /^a worker ran past 1 ms on cell (soldier|brute) at 32$/.test(stalls), `a worker that dies fails the lot (${dies.slice(0, 50)}), and one past its limit (${stalls})`);
 }
 
 /**
