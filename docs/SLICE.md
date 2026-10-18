@@ -497,7 +497,7 @@ trainer one level past it, onto Act II's road:
   clear's xp should take a member to the next floor, and its gold train the six there; every monster
   has a `level` within two of its maps' bands, rising from the way in (it sets what a kill pays, and
   changes no combat), and no chest or drop is dearer than the window. Both clears give it:
-  `node tools/test.ts curve` prints the Foreland's 4,101 xp a member of the 3,734 it asks, and
+  `node tools/test.ts curve --list` prints the Foreland's 4,101 xp a member of the 3,734 it asks, and
   Thornmark's 16,765 of 13,667 and 9,355 gold of 8,400.
 - **Spells.** Nine new ones. Cleric: Ward (party AC), Mending Light (party heal), Restore (big
   heal plus every cure), Revive (raises the dead), Wrath of the Hearth (damage to every foe).
@@ -673,8 +673,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 - No audio. The engine's synth stack is vendored, unused.
 - What the checks owe: a known shortfall prints as `owed` with the issue that owes it, and
   `node tools/test.ts` ends by counting them. None is owed since #865 re-sized `cairnfield_m8`.
-  The gate lists 88 figures off their aim, inside their limits: fights to a rest, figures two under a
-  floor, wins at a floor and four bosses' odds (#47 left the limits as they were).
+  Under `--list` the gate lists 88 figures off their aim, inside their limits: fights to a rest,
+  figures two under a floor, wins at a floor and four bosses' odds (#47 left the limits as they were).
 
 ## Checks
 
@@ -684,8 +684,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   suppressions. It is the first content check: a monster with no drawing, a business with no room
   or a map in a region no area has fails it.
 - `test`: `node tools/test.ts`, then `node tools/tests/runner/check.ts`, the runner's own check,
-  which runs it on `tools/tests/runner/fixture/` so the fixture's failures stay out of the real
-  run, then `node tools/test.ts fullrun`, the pilot's full run on the shelf (about 10 to 25 s; it
+  which runs it on `tools/tests/runner/fixture/` and `stuck/` so the fixtures' failures stay out of
+  the real run, then `node tools/test.ts fullrun`, the pilot's full run on the shelf (about 10 to 25 s; it
   repeats walkthrough:shelf's play). The suites are in `tools/tests/`, one file each exporting a function of its name (`lib.ts`
   is what they share), which the runner finds (maps, movement, monsters, combat, harness, party,
   traits, calendar, terrain, weather, atlas, outdoors, save, quests, then any other in name order),
@@ -693,15 +693,19 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   line saying what it holds, so the output under `--list` is the list; `node tools/test.ts maps combat` runs a few
   suites, `walkthrough:<area>` one walkthrough. The pilot's survival sweep and full run (`survival`,
   `fullrun`, docs/PILOT.md) run only when named; `npm test` names the full run, on the shelf alone.
-  The run is quiet unless asked (#895): by default it prints a check only when it fails, and the
-  owed lines, each under its suite's name, and holds back what a suite prints itself (the gate's
-  `n/a` lines, the quests' `info`); `--list`, or `TEST_LIST=1`, which reaches each step of `npm test`
-  and `npm run check`, prints every line. Each suite ends with a line of its seconds and its count
-  (`gate  335.5 s  617 ok`), timed in the one process from its load to its end, and the run with a
-  table of those lines, the slowest first, before the last line. A green run printed 27,874 lines on
-  18 October and prints 123. The table that day, on a four-core container shared with other runs:
-  the gate 335.5 s, `labels` 104.5, `row` 84.5, the Foreland's walkthrough 33.1, `quests` 27.7,
-  `harness` 27.1, `scaffold` 12.3, `pilot` 8.5 and every other suite under 6, 698.9 s in all.
+  The run is quiet unless asked (#895): by default it prints each suite's name as it starts, so a
+  run that dies inside one names it last, then a check only when it fails, and the owed lines; what
+  a suite prints itself (the gate's `n/a` lines and its figures off their aim, the quests' `info`)
+  waits for its first failure, and prints then, in order. `--list`, or `TEST_LIST=1`, which reaches
+  each step of `npm test` and `npm run check`, prints every line. Each suite ends with a line of its
+  seconds and its count (`gate  335.5 s  617 ok`), timed in the one process from its load to its
+  end, and the run with a table of those lines, the slowest first, before the last line. A green run
+  printed 27,874 lines on 18 October and prints 182. The table that day, loaded, on a four-core
+  container shared with other runs: the gate 335.5 s, `labels` 104.5, `row` 84.5, the Foreland's
+  walkthrough 33.1, `quests` 27.7, `harness` 27.1, `scaffold` 12.3, `pilot` 8.5 and every other
+  suite under 6, 698.9 s in all. In CI's tests job (#905, 8965ac98): the gate 149.4 s (53%),
+  `labels` 37.9, `row` 30.4, `harness` 15.2, `quests` 13.9, the Foreland's walkthrough 8.7,
+  `scaffold` 4.6, `pilot` 4.3 and every other suite under 1.5, 282.8 s in all.
   A check someone owes is reported, not failed:
   `owed()` in `tools/tests/lib.ts` prints `owed: <what> (#40's)`, and fails once the check holds,
   so the entry is dropped. The last line counts them by whose, as `ALL OK (3 owed: #40 ×2, #43 ×1)`.
@@ -757,9 +761,9 @@ over content broken on purpose too, and two tools to theirs:
   is fought with the bows' toll, and one placed on ice from under it; one that waits on an `after`
   is no warning at the way in.
   Each figure has an aim (these) and a limit beyond it (#273): between the two it passes and is
-  listed at the end of the suite as off its aim, and only past its limit does it fail or go into
-  `OWED`. A den's keepers are its camp's hardest fight, won no more often than any of its brood; its
-  brood's number and pace are printed.
+  listed under `--list` at the end of the suite as off its aim, and only past its limit does it fail
+  or go into `OWED`. A den's keepers are its camp's hardest fight, won no more often than any of its
+  brood; its brood's number and pace are printed under `--list`.
 - `density` (§5.3): nine squares in ten within seven steps of something to find (eight in the core
   outdoors, twelve in the country, as `MapDef.density` marks it), none too far and no more than
   one point in four a sign.

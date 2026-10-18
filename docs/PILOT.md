@@ -287,7 +287,7 @@ bot's; and a watchdog, the brain `wait`, asked last: after 600 ticks (`STUCK_TIC
 no key from any brain, a search where it stands passes ten minutes a press ("Stuck: waiting a
 while."), so the clock runs and the lost rule can come. The survival sweep (`node tools/test.ts
 survival`, run only when named) plays the chapter on seeds 1 to 12 with both companies, a run within
-ten minutes of the wall clock, and prints a line a seed under `--list` (#895).
+ten minutes of the wall clock, and prints a line a seed under `--list` or once it fails (#895).
 
 ## Full runs
 
@@ -303,7 +303,7 @@ takes: its stop under the question ("The choice is yours.") counts, and the test
 presses the first answer. Every line heard that starts "Lost in" or "I have no answer" is printed as a
 note, once with its count ("note: thornmark: Lost in Thornmark: three days, and no way on. (x36)"),
 and fails nothing. These lines print under `--list`, as the run started by hand in CI prints them;
-by default only a chapter's failure does (#895).
+by default they wait for a chapter's failure and print with it (#895).
 
 Before each chapter the run takes a save point (`serialize`) with the map on top, where a player can
 save. A chapter the fair pilot does not finish is played again from that point by a fresh pilot with
