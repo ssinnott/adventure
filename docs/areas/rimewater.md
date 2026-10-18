@@ -1431,6 +1431,31 @@ docs/areas/kilns.md §9, #439's 2 and 3):
   at the Drillyard in Captain Ordgar's voice, the fourth night's fight at the ice-hole
   (`longmere_m9:m9_night_4`) won. It pays 300 gold and 2,400 xp, 400 a member (§8).
 
+### The artifact: the Wakerobe (#846)
+
+The one artifact of #832's boxes, Rimewater's and the Whitespine's together, among the bounds' eight
+(DESIGN §9); docs/areas/whitespine.md §6 points here. Found and never told: no `seek` quest, no line
+in the journal and no mark on the world map. #832 builds the lair, its door and the rumour once
+#845, #847 and the guardian's drawing are in.
+
+- **What it is:** *A grey robe made for someone taller and thinner, the sleeves past your fingers. /
+  Whoever wore it last walked out of the ice in it, and did not lie down again.*
+- **The rumour:** the lodge-keeper in from the ice at Rime Lodge (9,5, §4.3), whose first words are
+  of whoever comes up through the hole (*Whoever comes up, we take in. A blanket, the fire, soup.
+  Most of them cannot say from where.*), two lines more at a meeting after her first, words only:
+  *One came up through the ice in a grey robe too long in the arm. He would not take a blanket, nor
+  sleep, nor say where he had been. / The third night he walked out into the snow. It was not his
+  robe, I think.* It marks nothing on the world map.
+- **Slot and bearers:** armour, a robe: the cleric, the sorcerer, the druid and the monk. A robe of
+  armour 14 is not robe-like (`robeLike`, `src/game/party.ts`), so a monk who wears it gives up
+  Unarmoured Defence for the ward.
+- **Numbers:** armour 14, the Grey Robe's 13 and a point (EXPANSION §5.2). Found and never sold.
+- **Power:** a ward (DESIGN §9, kind 5): its bearer is never put to sleep.
+- **The lair:** two levels cut in the mountain under the pass, the door in K12 on the part of the
+  box that is Monks' Vale's, at the cap's band, 30–32 (#845).
+- **The guardian:** the Infirmarer (keepers, a new kind; boss, 32; docs/MONSTERS.md §13): *No robe,
+  too many fingers and a bed made up for you.* Its touch puts to sleep, and it mends itself.
+
 ## 7. Encounters, and what is new
 
 MONSTERS §7.3 has the roster and the fights: the Ice Pike, the Snow Lynx, the Tallyman, the Ice

@@ -1304,6 +1304,26 @@ the favour, the store searched from its path, the bow, the hand-in and the lesso
 arms and of 25, the level he asks, the one of 24 refused; a company that finds the bow first is played too. The company is given Expert at arms
 and the gold directly, as Expert is bought at a town trainer elsewhere on the road (#852).
 
+### The artifact: Akkush (#846)
+
+The Glasswold's of the bounds' eight (DESIGN §9). Found and never told: no `seek` quest, no line in
+the journal and no mark on the world map. #833 builds the lair, its door and the rumour once #845,
+#847 and the guardian's drawing are in.
+
+- **What it is:** *A Rider's bow of white horn and sinew, its grip worn to one hand. / Bound under
+  the grip is a feather longer than your arm.*
+- **The rumour:** the eldest at her fire in Akordu (D8, §3), two lines more at a meeting after the
+  oldest story, words only: *My grandmother's brother made a bow of white horn that never missed. He
+  loosed it once, at the bird that takes our foals. / The bird took him, and the bow. It still comes
+  for foals.* It marks nothing on the world map.
+- **Slot and bearers:** a bow, ranged and two-handed: the ranger, as the Grey Bow.
+- **Numbers:** 1d12+14, the Grey Bow's 1d12+13 and a point (EXPANSION §5.2). Found and never sold.
+- **Power:** a stat (DESIGN §9, kind 1): accuracy raised by 5 while it is borne.
+- **The lair:** an eyrie of one level on the Scarp's east end over the gulf, its way in on the
+  Wold's part of D7, at the cap's band, 30–32 (#845).
+- **The guardian:** the Foal-taker (birds, a new kind; boss, 32; docs/MONSTERS.md §13): *When its
+  shadow crosses the herd, the herd runs.* Size 1.8; it flies, and hunts the back row.
+
 ## 7. Encounters, and what is new
 
 MONSTERS §8.3 has the roster and the fight: the Vulture (fodder, 26, the birds), the Wold Lion
