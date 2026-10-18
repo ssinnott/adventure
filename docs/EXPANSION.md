@@ -854,6 +854,7 @@ all (#833), the owner's call over #737's. The reach stays closed for 1.6.
 | Checks that pass or fail by chance | none known: the smoke test plays one seeded world (#23) | none |
 | Pull requests that needed main merged in | 4 of the last 6 in September, not recounted since | rare |
 | `npm run check` | about 14 minutes on a four-core container; in CI on a docs-only change the tests take 4 min 31 s, the smoke 2 min 17 s and the typecheck 19 s; a change to the viewport or the smoke sweeps every map, the smoke job taking about 21 minutes (#844); the tests job took 6 min 27 s to 8 min 26 s on the heads of #868, #867 and #870, the runner's spread about two minutes, so its cap is fifteen (#873) | under 3 minutes: full sweeps of what a pull request touches, the rest sampled or on release; the cure is parallel suites (#848) |
+| Cracks in the sweep of every map (§5.6) | none; the sweep reads each square as the view draws it, the void as its look (#869) | none |
 | Maps inside the density floor (§5.3) | all (`node tools/test.ts density`) | all |
 | Areas on the curve (§5.2) | all twelve (`node tools/test.ts curve`); the Kilns and Ashfall pass the lead line and are held where they are built | all |
 | Areas whose gate holds (§5.2) | all twelve at their floors and two under, Act I's by the fight and from Saltreach's floor by the day (#851); one map's day, `cairnfield_m8`'s, is past its limit and owed to #865 | all |
@@ -891,6 +892,27 @@ Decided by delegate for #808, each the owner's to overturn:
    §5's price line no longer says "until #19 adds them to the curve's gold": the prices are 1,000
    and 4,000 (`PRESTIGE_PRICES`, `src/game/party.ts`) and the curve does not count them; DESIGN
    §8's "once the skills are built (#18)" is left as it is.
+
+Decided by the owner's delegate for #869, each the owner's to overturn:
+
+1. **The crack sweep is held to the painter, never the painter to the sweep.** Its walls beside the
+   party and its view with the hills laid flat read a square as the view draws it (`look ?? cell`),
+   and #849's drawing of the void as its look stands. Drawing the ring's mountain as a wall over the
+   backdrop was the fallback, had reading the look let an injected crack pass; it did not.
+2. **Two cracks were made by hand and each failed the sweep**: one at a map's edge beside the void
+   with a look, one in a dungeon wall. The pull request shows how and the failing lines, and
+   neither is in the tree.
+3. **The check of the world's end stays as it is**: facing it north of the Foreland, the view draws
+   the ring's mountain and nothing pink.
+
+Decided by the builder for #869, each the owner's to overturn:
+
+1. **A void drawn as a hill is laid flat with the hills.** Its look's ground is read as grass and
+   the square stays the void, so nothing else the view reads of it changes.
+2. **Both cracks were made in the painter**, in a scratch copy, not in a hand-made map: a map
+   draws no crack the painter does not make. One left out the face of a wall beside the party where
+   the square past it is the void with a look; one drew a face of the cellar's north wall three
+   pixels short of the face it joins.
 
 ---
 
