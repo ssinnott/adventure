@@ -2293,6 +2293,16 @@ Decided by delegate for #512, each the owner's to overturn:
     by night the renderer draws the column of light in the sky to the north on its own.
 17. **Banners either side of the gate,** on the wall (7,15 and 9,15), an ember red.
 
+Decided by the owner's delegate for #892, each the owner's to overturn:
+
+1. **The Map Room alone sells the Guild's chart and the Chart House sells none: stands** (6 above).
+   The Chart House teaches Cartographer itself ("Learn a skill", 1,000 gold, DESIGN §5), which does
+   for good what the chart does carried; the chart at 400 is Saltmouth's stand-in where 1,000 is
+   dear. A toss-up, taken the simpler way. Flipped, it is `guild_chart` in the chandler's stock at
+   the item's one price, 400 (an Ashfall pull request of a line, before #836), not the Chart House
+   made a shop, which would drop "The talk of the room" and move the shelf's hint into Cador Lusk's
+   words.
+
 Decided by delegate for #513, each the owner's to overturn:
 
 1. **The map's id is `firemount_g11`, not the issue's `cindercoast_g11`:** the box is laid in Fire
