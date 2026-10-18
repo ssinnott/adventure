@@ -1259,9 +1259,9 @@ I10's and the trolls J11's (§4.8).
   #503's 6; #504's 10). The country behind (#508) holds 1,700 in each of J10, I12 and J12, 1,400 in
   the strongbox behind the secret and 300 in the cairn, and J10 the purses of its two giants (70 to
   160 each); its finds are elixirs and Sapphire Vials, no ware, as the Whitespine sells nothing (§9,
-  #508's 10), but for the two #863 hides in J12's rock, 2,000 each and no gold, under the Bear Spear
-  +1's 2,050, so the dearest find stands (§4.9). A clear gives 11,080 gold of the 10,800, 5,750 before the three, and the curve's owed
-  row is gone (§9, #508's 11).
+  #508's 10), but for the two finds of #863 in J12's rock (§4.9), priced at 2,000 each with no gold in
+  their chests and so under the Bear Spear +1's 2,050: the dearest find stands. A clear gives 11,080
+  gold of the 10,800, 5,750 before the three, and the curve's owed row is gone (§9, #508's 11).
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor: a
   company at 22 wins nine in ten of J11's fights and walks the road from the pass's foot to the gate
   resting at its camp; one at 20 wins no more than one in four. The Abbot is won about half the time
