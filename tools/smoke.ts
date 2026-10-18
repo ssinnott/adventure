@@ -1122,11 +1122,12 @@ if (process.env.SMOKE_SHOT) {
 // crack between two faces does not depend on the hills. That passes anything drawn as part of a
 // hill, so the check after the sweep holds a hill's body to its outline. And where walls stand on
 // both hands of the party the edges of the view are wall: those once went undrawn. A cell is read
-// as the view draws it (`drawnCell`, and the void as its look, #849): a void drawn as a hill is laid
+// as the view draws it (`drawnCell`, and the void as its look, #829): a void drawn as a hill is laid
 // flat with the hills, and the ring's mountain beside the party is a billboard and no wall, which
-// the check of the world's end looks at instead. A zone of the outdoors is walked over its own squares. The ground's samples (tools/grounds.ts) are swept one way
-// on every run, first, put into the game's maps for it and taken out after, so a ground no built map
-// holds yet is swept too and the party ends where it did.
+// the check of the world's end looks at instead. A zone of the outdoors is walked over its own
+// squares. The ground's samples (tools/grounds.ts) are swept one way on every run, first, put into
+// the game's maps for it and taken out after, so a ground no built map holds yet is swept too and
+// the party ends where it did.
 await page.evaluate(async (defs: any[]) => {
   const M = await import('/src/game/map.ts' as string), w = (window as any).__game.game.world;
   for (const d of defs) w.maps[d.id] = new M.GameMap(d);
@@ -1134,7 +1135,7 @@ await page.evaluate(async (defs: any[]) => {
 const sweeps = [...GROUND_SAMPLES.map((d) => ({ id: d.id, all: false })), ...FLOOR.filter((id) => !SWEEP.includes(id)).map((id) => ({ id, all: false })), ...SWEEP.map((id) => ({ id, all: true }))];
 const cracks = await page.evaluate(async (maps: { id: string; all: boolean }[]) => {
   const load = (p: string): Promise<any> => import(p);
-  const V = await load('/src/ui/viewport.ts'), T = await load('/src/game/types.ts'), I = await load('/src/game/ink.ts');
+  const V = await load('/src/ui/viewport.ts');
   const w = (window as any).__game.game.world;
   const W = 400, H = 268, band = 16, bad: string[] = [];
   let views = 0;
@@ -1164,14 +1165,13 @@ const cracks = await page.evaluate(async (maps: { id: string; all: boolean }[]) 
       const ax = at.x + x, ay = at.y + y;
       if (m.at(ax, ay).solid !== 'none' || m.at(ax, ay).door !== 'none') continue;
       for (const f of all ? [0, 1, 2, 3] : [(x + y) % 4]) {
-        const rf = (f + 1) % 4;
         w.travel(id, x, y, f); w.state.light = 1;
         const a = paint('#ff00ff'), b = paint('#00ff00');
         views++;
         const shows = (px: number, py: number) => { const i = (py * W + px) * 4; return Math.abs(a[i] - b[i]) > 8 || Math.abs(a[i + 1] - b[i + 1]) > 8; };
-        // Beside the party a wall, as it is drawn: a secret door among the peaks is a peak, not a wall,
-        // and the void is its look, the ring's mountain no wall (#829).
-        const walled = (s: number) => { const c = I.drawnCell(m, ax + s * T.FACING_DX[rf], ay + s * T.FACING_DY[rf]); return V.isSolidWall(c.look ?? c); };
+        // Beside the party a wall as the view has it (`standsAt`): a secret door among the peaks
+        // is a peak, not a wall, and the void is its look, the ring's mountain no wall (#829).
+        const stands = V.standsAt(m, ax, ay, f), walled = (s: number) => stands.solidAt(0, s);
         let spot = '', level: ((px: number, py: number) => boolean) | undefined;
         for (let py = 0; py < band * 2 && !spot; py++) for (let px = 0; px < W && !spot; px++) {
           if (!shows(px, py)) continue;
