@@ -880,6 +880,37 @@ the checks, the sheet.
 An area's dungeons may exit only to its own region's maps, or to the outdoors once its zone is laid,
 so its zone map lands with or before its first dungeon (`tools/tests/weather.ts:125` holds it).
 
+**A new area starts in `AREAS`** (`src/content/index.ts`), from its first commit: its folder, its line
+there and its row in `CURVE`, with `maps: []` until its first map and what its clear falls short of
+owed in its `checks.ts` (`owes.curve`) until it pays. Its monsters, rooms and items are
+merged from the start, so nothing waits in a list of its own ahead of its area (the `AHEAD` lists
+and `PLANNED` are gone, #897), and the suites take what is built: no chapter or walkthrough is
+asked of an area until it has a map. What the suites hold of an area is the area's: what describes
+one zone, group, monster or exit is a field of it (`AtlasZone.road`, `reach` and `maxGroup`,
+`EncounterDef.boss`, `MonsterDef.offLine`, `Exit.crosses`), and what is the area's own and no part of
+the game, what it owes and its rungs of the ladder, is a row in its `checks.ts` (`AreaChecks`), which
+nothing in the game imports and the suites find as the runner finds a walkthrough. Each suite reads
+those beside its own table and refuses a row in both, so a row moves one way. The Foreland's have
+moved; every other area's move by one script in a window with no area pull request open (#848), and
+until then a box adds its rows to the suites' tables as before.
+
+Decided by the builder for #897, each the owner's to overturn:
+
+1. **What an area owes and its rungs are rows of its `checks.ts`, not fields of the `Area` in its
+   `index.ts`**: the game's build carries none of the checks' bookkeeping, as `progression.ts` and
+   `tools/harness.ts` keep it out today, and the issue's `checks.ts` holds the area's own rows.
+2. **One field name per table**, each keyed as its table was, so the move is a copy: `owes.curve`,
+   `unplaced`, `unset`, `cutOff`, `edges` and `locks`; `gear` by level; `road`, `reach: true` and
+   `maxGroup` on the zone; `boss: true` on the group; `offLine` on the monster, OFF_LINE's reason or
+   WHOLE's role, share and reason; `crosses: true` on the exit.
+3. **`gear` holds a rung whole**: what a company wears by the level goes to `GEAR` and what it carries
+   to `KIT`, by the item's slot, so one row serves both.
+4. **`NAMES` is the atlas's name of the area, and `BEHIND` every group whose `after` names a flag only
+   a later area's maps set**: both read the same as the tables did (the twelve names and
+   `deep_mines3:ud_mines`), and a new area needs no row for either.
+5. **The Deepthorn's eight is a table, `MAX_GROUP`, until it moves**, read beside `maxGroup` as the
+   other tables are.
+
 ### 8.3 Pull requests
 
 - A `pull_request` workflow runs the typecheck, the tests and the smoke test. The smoke test needs
