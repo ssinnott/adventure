@@ -148,7 +148,8 @@ export function structure(): void {
     ok(!when.length, `${def.id}: every group's, person's, event's, blessing's and camp night's until and after names something real, and none asks for a sky underground${list(when)}`);
   }
   { // Nothing the road needs lies in a locked chest (#857): no item a quest turns on and no iron key;
-    // none is placed yet, so a fixture with one of each, and an unlocked chest holding both, shows the check.
+    // the locked chests placed hold neither (Wrackholm's first, #881), so a fixture with one of each, and an
+    // unlocked chest holding both, shows the check.
     const shut = MAP_DEFS.flatMap((d) => lockedFaults(d, items).map((f) => `${d.id}: ${f}`));
     const placed = MAP_DEFS.flatMap((d) => (d.features ?? []).filter((f) => f.kind === 'chest' && f.locked)).length;
     ok(!shut.length, `no locked chest holds an item a quest turns on or an iron key (${placed} locked chests placed)${list(shut)}`);

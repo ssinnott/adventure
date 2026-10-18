@@ -82,7 +82,7 @@ export const CAP = MAX_LEVEL;
  * growing past the ladder's top (`--gear-grows`, see `outfit`); `levelTraits` and `levelBonus` give it
  * powers past level 10 instead (`--level-traits`, `--level-bonus`, see `edgeOf`); `rankStep` is another
 share a spell rank adds than play's RANK_STEP (`--rank-step`). The prestiges, their ranks and tiers 6
-and 7 are play's, and every company takes them. Two more stand off until #865 switches them on:
+and 7 are play's, and every company takes them. Two more stand off unless a what-if sets them (#865):
 `tiers` gives the company its Expert and Master (`--tiers`, see `tier`), and `bot` the bots' options
 (`--bot`, BotOpts: the thrifty bot's in `play`, the gate's in tools/gate.ts `gateTurn`). And `company`
 fields the four newer classes' company instead of the premade six (`--company newer`, see `fielded`).
@@ -222,7 +222,7 @@ function prestige(p: Party): void {
 }
 
 /**
- * The tiers a company of its level holds where `RULES.tiers` asks (#852; off until #865): on each line
+ * The tiers a company of its level holds where `RULES.tiers` asks (#852; off unless `--tiers`, #865): on each line
  * its class takes (`linesOf`: a fighter's arms, a caster's magic, a hybrid's both), Expert from 13 and
  * Master from 25 (`TIER_LEVELS`), as a company that took each when it could. After the prestiges, as
  * play teaches them; what a tier does is the resolver's (party.ts `armsBonus`, `rankMult`).

@@ -1,5 +1,5 @@
 // The combat harness and its test monster (docs/MONSTERS.md §4.4), and Act III's abilities on it (#537)
-// and Act IV's sweep (#545); the what-ifs #865 switches on and the four newer classes' company (#854).
+// and Act IV's sweep (#545); the what-ifs #865 weighed and kept off and the four newer classes' company (#854).
 import { createHash } from 'node:crypto';
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { defaultParty, xpForLevel, levelUp, armorClass, weaponOf, MAX_LEVEL, addCondition, className, rankMult, hasCondition, prestigeOf } from '../../src/game/party.ts';
@@ -148,12 +148,12 @@ export async function harness(): Promise<void> {
 }
 
 /**
- * The what-ifs #865 switches on, modelled and off (#854): the company's tiers (`--tiers`), the bots'
+ * The what-ifs #865 weighed and kept off, modelled and off (#854): the company's tiers (`--tiers`), the bots'
  * options (`--bot`) and the four newer classes' company (`--company newer`). Off, the company is main's.
  */
 function whatIfsOff(): void {
   // With every what-if off the company is main's: the premade six at twelve levels, as main made them at
-  // 0463be91 before the tiers came to it. #865 renews this when it switches them on.
+  // 0463be91 before the tiers came to it, as #865 keeps them (J2).
   const MAIN_SIX = '7e6a61134152748ffac828dcc3d47dbaa7a00e5df03c584054338f7720d24677', sixAt = [1, 5, 10, 11, 12, 13, 19, 24, 25, 27, 28, 32];
   const six = createHash('sha256').update(JSON.stringify(sixAt.map((l) => companyAt(l, 3)))).digest('hex');
   ok(!whatIfs().length && six === MAIN_SIX, `with every what-if off the company is main's: the premade six at ${sixAt.join(', ')} (${six.slice(0, 12)})`);

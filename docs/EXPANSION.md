@@ -367,20 +367,28 @@ fights to a rest and the warning's nearest groups ten points under the median.
   early from a fight it can survive or run from, not from a wipe.
 - **The reach asks the most.** In a reach area, a company at the cap that has walked the road wins
   about half its first fights; what it finds there is what makes the rest winnable.
-- **The bot improves with the game.** It wears the gear the curve says a company has at each level
-  and takes the prestiges it brings (#541), so the check keeps up. Flee is built (#723): the game's
-  reading flees a fight lost (`beaten`); the gate's never flees, since a flight only turns a win into
-  a loss and the gate measures whether a fight is winnable. Bless, sleep and drink are built behind
-  an option (`BotOpts`, #853), in the gate's bot and the harness's thrifty one, off in every default
-  until #865 switches them on and makes the line again. The gate's bot blesses in a fight's first
-  round against three foes or more, sleeps the group with the most it could put down, lets the
-  sleepers lie and gives a draught to the lowest no one can mend, or to one asleep or held no one
-  can free. The thrifty bot
+- **The gate's company takes what a level brings and buys nothing optional.** It wears the gear the
+  curve says a company has at each level and takes the prestiges it brings (#541), so the check keeps
+  up; it takes no tier, Master, skill, charm or item, and its bot plays plainer than a player: it never
+  blesses, sleeps, drinks or flees, since a flight only turns a win into a loss and the gate measures
+  whether a fight is winnable. The game's own bot, the auto-fight and the pilot's fights with it,
+  blesses, sleeps and drinks from level 11 (`PLAYED`, `FIRST_PAST_ACT_I`) and flees a fight lost (#723,
+  `beaten`); under 11 it plays as it did, so Act I plays as it was made. The three stand behind an
+  option each (`BotOpts`, #853), off in the gate and the harness unless a what-if sets them (`--bot`,
+  read from 11 as the game's). The bot blesses in a fight's first round against three foes or more,
+  sleeps the group with the most it could put down, never one that holds a foe the sleep cannot take,
+  lets the sleepers lie while another of the company can strike and gives a draught to the lowest no
+  one can mend, or to one asleep or held no one can free (#865). The thrifty bot
   weighs Bless and sleep as it weighs a damage spell, the hit points the cast saves against what its
   points are worth, its blow lost: Bless saves what the company's blows land more in its rounds, sleep
   the blows the foes it puts down would strike, at the spell's chance, while they sleep or are held;
   neither for longer than the fight has left by the company's weapons. It drinks only where no spell
   pays. A company drinks what it carries: the gate's carries the new game's two Healing Draughts.
+- **J2: weighed and not made (#865).** A line made again with Expert from 13, Master from 25 and the
+  three ended 13 to 47% of its days badly at 16 to 24, nearly all in a death, against an aim of a tenth:
+  the calibration keeps the day by raising damage (1.4 to 1.6 times the line became 2.0 to 2.9) and
+  nothing in the tiers raises defence. Made four ways at 19, the old company holds 7 of 9 roles at a
+  tenth or under; the tiers alone, the three alone and both go over it (MONSTERS §4.4).
 
 Decided by the owner's delegate for #18, each the owner's to overturn:
 
@@ -423,8 +431,8 @@ Decided by the builder for #853, each the owner's to overturn:
 8. **Bless goes to the knower whose turn is worth least:** one that can strike from its row leaves it
    to one yet to act this round that cannot, so Idris strikes and Maren blesses.
 
-The checks' company keeps up with the party behind what-ifs (#854), off in every default until
-#865 switches them on. Under `RULES.tiers` (`--tiers`) `companyAt` takes its tiers after its
+The checks' company keeps up with the party behind what-ifs (#854), off in every default: #865
+weighed the tiers and the bots' three and kept them off (J2, above). Under `RULES.tiers` (`--tiers`) `companyAt` takes its tiers after its
 prestiges: Expert at 13 and Master at 25 on each line its class takes, a fighter's arms, a caster's
 magic and a hybrid's both. `RULES.bot` (`--bot bless,sleep,drink`) hands the bots their options,
 the thrifty one's in the harness's fights and the gate's in its own. Beside the premade six stands
@@ -475,6 +483,41 @@ Decided by the builder for #854, each the owner's to overturn:
    company at each level it fights from, with its titles and tiers; under `--bot`, the share of
    fights from fresh in which the bots blessed, slept a group and drank.
 
+Decided by the owner's delegate for #18, each the owner's to overturn:
+
+1. **The gate's company models neither the tiers nor the bots' three** (J2, #865; the first call of
+   17 October withdrawn). The road needs no tier or skill, so the gate's company takes what a level
+   brings on the road and buys nothing optional: the tiers, the Masters, the three, the skills, the
+   charms and the items are alike unmeasured and stronger than measured. The limits (#273) and the
+   softening cap (#541, decision 3) are the owner's and are not moved.
+2. **No calibration is written:** `tools/testmonster.ts` and the 91 monsters past 10 stay as they
+   were; the weighing and the calibration's measurement stand as evidence in #865's pull request.
+3. **The defaults stay off:** `RULES.tiers` and `RULES.bot` are off in the gate and the harness;
+   `--tiers`, `--bot`, `--company newer` and `--under 2` stay what-ifs, and `--calibrate --write`
+   refuses under any.
+4. **The game's auto-fight bot blesses, sleeps and drinks from level 11 with its guards** and flees as
+   #723 built it; the gate's never does any of the four; Act I's figures are main's.
+5. **`cairnfield_m8` is re-sized inside its floor's own aims,** a role up and a group thinner, never
+   more monsters; two passes, else owed by name to an issue under #54.
+6. **`--company newer` stays a check at 12, 20, 28 and 32** on the old company's dressing; a class
+   past the limit is reported to the owner, not fixed.
+
+Decided by the builder for #865, each the owner's to overturn:
+
+1. **"Another can strike" is a blow from its row at a foe in its reach,** asleep or awake (`striker`):
+   a blow wakes only the foe it strikes. Without it a caster alone slept its foes and stood idle.
+2. **The guard is in both bots,** the game's and the thrifty one, by one helper.
+3. **The three begin at level 11, the first past Act I** (`FIRST_PAST_ACT_I`, `optsFor`): a member
+   under it plays as the bots did, so Act I plays as it was made; `--bot` is read so too, as weighed.
+4. **No sleep on a group that holds a foe the sleep cannot take** (as the bot knows it): its sleepers
+   would bar every spell at the group while the one awake was struck alone (the Eldest among two
+   heartwoods, 3% won).
+5. **The bots' tests stand at a company of 12,** past the threshold; at 4 and 10 the three are main's.
+6. **`cairnfield_m8`'s crag group is two ravens and two tor trolls** where eight ravens stood: one troll
+   left two under past its limit (102.7 to 113.5%), two put it inside its aim; the ravens first, since
+   with the trolls first the floor's day fell to 7.48, under its aim. The night troll stands. A
+   quarter of the floor's days (23.3%) now end in a fight broken off, the two trolls mending.
+
 From 10 two under is judged by the day, not the fight. From 10 the damage spells roll their full
 dice and every group is sized for the day (docs/MONSTERS.md §4.4), so a fight from full health
 measures nothing there: on main at `dbb9d247` the gate's company won every fight two under every
@@ -487,8 +530,10 @@ of alone, at its own floor less two, and over the area, its groups pooled at the
 two: 100 seeds, dealt, a boss left out as from the floor's day. On 17 October 2026 the gate judges
 81 maps' days and 10 areas', at 29% to 109% of their floors' aims (the median 62%). It lists 29 maps
 and three areas off their aim, the soft ones: seven each of Ashfall's and the Glasswold's, six of
-Cairnmoor's. One map is past its limit, owed to #865: `cairnfield_m8`, whose two groups are fought
+Cairnmoor's. One map was past its limit, owed to #865: `cairnfield_m8`, whose two groups were fought
 9.29 to a rest two under against the floor's 8.5. The 86 two-under figures owed to #18 went (#851).
+On 18 October #865 re-sized its crag group, two ravens and two tor trolls where eight ravens stood:
+two under it fights 5.52 to a rest (64.9%), and 7.60 at its floor (8.5 asked). No row is owed.
 
 Decided by the owner's delegate for #18, each the owner's to overturn:
 
