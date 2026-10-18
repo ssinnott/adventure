@@ -1,9 +1,10 @@
 // Saltmouth, the free port: Act II's first town, band 10-12, entered from C6's land gate at 26,19.
 // The inn, the Telhus (the drowned god's town shrine, which cures), the Seawall Armoury with the
 // band's step on the ladder (#399), the Quay Chandlery, the Sail Loft (training to 13), the
-// locksmith's, the Keel (the harbour tavern, the Salt Compact's hall, #182) and the Map Room,
-// the Cartographers' Guild's hall (#181). Four first prestiges are taught here, each by a person at their
-// trade: the astrologer, the locksmith, the stevedore and the ferryman. Jory Tallis stands at his
+// locksmith's, which sells a set of picks (#860), the Keel (the harbour tavern, the Salt Compact's
+// hall, #182) and the Map Room, the Cartographers' Guild's hall (#181), which sells a chart (#860).
+// Four first prestiges are taught here, each by a person at their trade: the astrologer, the
+// locksmith, the stevedore and the ferryman. Jory Tallis stands at his
 // house front on the quay, Kitto sells the boat to Wrackholm at the quay's end, Dunstan the ferry to
 // Kilnhaven at the quay's side (#469), and once Hale is gone a
 // Warden off the coast road sits by the gate with the news. After Passage Paid, Geeske and Hessel
@@ -102,19 +103,22 @@ export const SALTMOUTH: MapDef = {
       'She goes back to the door in the mirror. "Work comes when it comes."',
     ] }] },
     { kind: 'shop', x: 3, y: 9, name: 'Seawall Armoury', stock: ['morning_star', 'stiletto', 'horn_bow', 'long_axe', 'ironshod_staff', 'sharkskin', 'tidefolk_robe'], interior: 'saltmouth_armourer' },
-    // The Thief's first prestige (DESIGN §5): the locksmith keeps his shop, and sells no picks.
-    { kind: 'npc', x: 5, y: 9, name: 'Pender the locksmith', interior: 'saltmouth_locksmith', lines: [
+    // The locksmith's is a shop since a set of picks exists to sell (#860), the door's business. The Thief's
+    // first prestige (DESIGN §5) is taught through its person, who stands after it on its square with no
+    // room of his own, as Ysolde does at the Map Room.
+    { kind: 'shop', x: 5, y: 9, name: 'Pender\'s Locks', stock: ['set_of_picks'], interior: 'saltmouth_locksmith' },
+    { kind: 'npc', x: 5, y: 9, name: 'Pender the locksmith', lines: [
       'A narrow walnut room and a wall of keys. A man with a glass in his eye bends under a water-globe lamp and does not stop for the bell.',
-      '"Pender. Locks and keys, and the mending of either. I don\'t sell picks. I have not yet met anyone I would sell them to." He looks up at last.',
+      '"Pender. Locks and keys, and the mending of either. Picks too, now. I have met someone I would sell them to." He looks up at last.',
       '"But a thief who has learned all a lock can teach wants the lesson after that. I keep it, for a price."',
     ], teaches: { cls: 'thief', prestige: 1 } },
     { kind: 'shop', x: 10, y: 9, name: 'Quay Chandlery', stock: ['rations', 'torch', 'lantern_oil', 'potion_heal', 'antidote', 'elixir', 'potion_sp', 'potion_sp_great'], interior: 'saltmouth_chandlery' },
     { kind: 'temple', x: 12, y: 9, name: 'The Telhus', interior: 'saltmouth_shrine' },
     { kind: 'trainer', x: 14, y: 9, name: 'The Sail Loft', maxLevel: 13, interior: 'training_loft' },
     // The Cartographers' map room, the Guild's hall (#181): it sells what a surveyor takes out, and
-    // gives out the Guild's quests. Ysolde reads the first Meridian journal to a company that carries
-    // it, and gives it back.
-    { kind: 'shop', x: 3, y: 12, name: 'The Map Room', stock: ['rations', 'antidote', 'lantern_oil', 'potion_heal'], interior: 'cartographers_room', hall: 'cartographers' },
+    // a chart that maps as a Cartographer does while it is carried (#860), and gives out the Guild's
+    // quests. Ysolde reads the first Meridian journal to a company that carries it, and gives it back.
+    { kind: 'shop', x: 3, y: 12, name: 'The Map Room', stock: ['rations', 'antidote', 'lantern_oil', 'potion_heal', 'guild_chart'], interior: 'cartographers_room', hall: 'cartographers' },
     { kind: 'npc', x: 3, y: 12, name: 'Ysolde Carrow, Geographer of the Guild', lines: [
       'Pale plaster and north light. One wall is Caldera, ruled box by box, and a third of the boxes are empty. A globe, a plotting table, a book under glass.',
       '"The Cartographers\' Guild. We go where the chart is blank and come back, mostly." She does not look up from her rule. "Look, if you like. Touch nothing under glass."',
