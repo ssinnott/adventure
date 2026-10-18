@@ -1620,6 +1620,16 @@ Decided by the builder for #860, each the owner's to overturn:
    Saltreach holds no locked chest; the chart in #857's dungeon hall, where it maps two squares west
    in place of one.
 
+Decided by the owner's delegate for #892, each the owner's to overturn:
+
+1. **Pender's room is a shop with Pender after it: stands** (the builder's 1). Ysolde at the Map
+   Room and Ruan at the Keel are the precedent; the picks are his only ware and his teaching is the
+   second entry of a two-entry menu, "Talk to Pender the locksmith". The pilot takes the Thief's
+   first sooner (tick 26 where it was 71, at 5,000 gold, #880), a report and not a gate
+   (docs/PILOT.md). Teaching first would need a person's room to offer a shop, which
+   `businessEntries` cannot list today: a systems pull request, then a Saltreach one for the order
+   of two rows.
+
 Decided by the builder for #830, each the owner's to overturn:
 
 1. **The bounds' brief is §12,** after §11, in §4's form, for all eight boxes; the boxes come in four
