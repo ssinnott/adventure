@@ -765,7 +765,7 @@ delegate (§9, #484's).
 Built for the third line of #18, magic items past a plus and a resistance (the ruling of 17 October
 2026; the item shape is #855's and the locked chest #857's): the area's two of the eight, found and
 never told, one of them in the area's first locked chest. Both lie off the ladder, as the four charms
-do, so no figure of the gate, the harness, the ladder or the curve moves (§9, the builder's 1 and 5).
+do, so no figure of the gate, the harness, the ladder or the curve moves (§9, the builder's 5 and 7).
 
 - **Purpose.** An answer to the tor troll, which mends each round but a round fire struck it (§7), and
   a prize for the company that carries a Lockpick or an iron key. None of the area's seven monsters
