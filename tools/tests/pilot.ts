@@ -58,6 +58,7 @@ import { answers, TRIES, NO_ANSWER } from '../../src/game/pilot/talk.ts';
 import { EndingScreen } from '../../src/ui/ending.ts';
 import { MessageScreen } from '../../src/ui/screens.ts';
 import { CHOICE_TWO, CHOICE_THREE, VASK_FALLEN, VOICE_WHOLE } from '../../src/content/areas/hearth/maps/core.ts';
+import { LAIR } from './enclave.ts';
 
 /** A headless game with an instant pilot, off. */
 const piloted = (seed = 4): Game => {
@@ -83,10 +84,58 @@ export function pilot(): void {
   quartermaster();
   together();
   strategist();
+  enclaves();
   talking();
   survives();
   riddles();
   lastChapter();
+}
+
+/**
+ * The band rule at an enclave's door (#845): Known gives an enclave its band once a way into it is
+ * seen, as its door says it; under its floor the navigator has no way into it and the strategist
+ * chooses no walk there, so a pilot driven beside its door with nothing else to do never goes in; at
+ * its floor it walks in. Only the way in is shut: from a deeper level the way up stays open.
+ */
+function enclaves(): void {
+  const hollow: MapDef = { id: 'fx_hollow', name: 'Hollow', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#...#', '#####'],
+    exits: [{ x: 3, y: 1, to: LAIR.id, tx: LAIR.start.x, ty: LAIR.start.y, tf: NORTH }] };
+  const lair: MapDef = { ...LAIR, exits: [{ x: 16, y: 31, to: hollow.id, tx: 2, ty: 1, tf: WEST }] };
+  const game = (level: number, seen?: readonly (readonly [number, number])[]): Game => {
+    const g = piloted();
+    g.maps[lair.id] = new GameMap(lair);
+    fixture(g, hollow, [1, 1, EAST], seen);
+    for (const m of g.party.members) m.level = level;
+    return g;
+  };
+  const blind = knownOf(game(12, grid(3, 3))), told = knownOf(game(12)), level30 = knownOf(game(30));
+  ok(blind.enclave(lair.id) === undefined && told.enclave(lair.id)?.join('-') === '30-32' && told.band(lair.id) === undefined && told.enclave(hollow.id) === undefined,
+    'Known gives an enclave its band once a way into it is seen, and not before, while a dungeon not visited has none; a map that is no enclave has none as one');
+  ok(routeMaps(told, hollow.id, lair.id) === null && routeMaps(level30, hollow.id, lair.id)?.length === 1,
+    'under its floor the navigator has no way into the fixture lair, its door seen; at its floor, the door');
+  const drove = (g: Game): string => {
+    const p = g.pilot!;
+    for (const q of knownOf(g).goals()) p.lost.add(q.text);
+    p.toggle(g);
+    p.brains = [aims, route, explore];
+    for (let i = 0; i < 300 && g.world.state.mapId !== lair.id; i++) drive(g, [null]);
+    return g.world.state.mapId;
+  };
+  const under = drove(game(29)), at = drove(game(30));
+  ok(under === hollow.id && at === lair.id, `driven beside its door with nothing else to do, a company at 29 never goes in and one at 30 does (${under}; ${at})`);
+  // A lair of two levels: only the way in is shut, so a company under its floor handed the helm on
+  // the lower level routes out by the upper, and from beyond it still has no way in.
+  const lower: MapDef = { id: 'fx_lower', name: 'Lower', kind: 'dungeon', band: [30, 32], enclave: true, start: { x: 2, y: 1, facing: EAST }, rows: ['#####', '#...#', '#####'],
+    exits: [{ x: 1, y: 1, to: 'fx_upper', tx: 4, ty: 1, tf: WEST }] };
+  const upper: MapDef = { ...lower, id: 'fx_upper', name: 'Upper', rows: ['#######', '#.....#', '#######'],
+    exits: [{ x: 1, y: 1, to: 'fx_above', tx: 2, ty: 1, tf: WEST }, { x: 5, y: 1, to: lower.id, tx: 2, ty: 1, tf: EAST }] };
+  const above: MapDef = { ...hollow, id: 'fx_above', exits: [{ x: 3, y: 1, to: upper.id, tx: 2, ty: 1, tf: EAST }] };
+  const deep = piloted();
+  for (const d of [above, upper, lower]) fixture(deep, d, [d.start.x, d.start.y, EAST]);
+  for (const m of deep.party.members) m.level = 12;
+  const dk = knownOf(deep), out = routeMaps(dk, lower.id, above.id)?.map((h) => h.exit.to).join(', ') ?? 'none';
+  ok(out === `${upper.id}, ${above.id}` && routeMaps(dk, above.id, upper.id) === null,
+    `a company at 12 handed the helm on the lower of a lair's two levels at 30-32 routes out by the upper, and from beyond has no way in (${out})`);
 }
 
 /** A headless game whose company Vask has hired: walked onto his door by the test (its privilege) and his words closed. */

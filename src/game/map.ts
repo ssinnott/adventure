@@ -443,6 +443,14 @@ export interface MapDef {
   landmarks?: readonly Landmark[];
   /** Party level the content is tuned for; shown on the map sign and used by respawn scaling. */
   band?: [number, number];
+  /**
+   * An enclave (#845): a place of its own beside the road, a dungeon entered from a box (a hollow, a
+   * cave, a ruin), held to its own `band`, over its box's: a band or two for an enclave, the cap's
+   * (30-32) for an artifact lair. The gate and the curve judge it at that band, out of its area's
+   * figures; no step of the quest lies in it; its door says its band and how it feels (`enclaveLine`);
+   * the pilot keeps out of one whose floor is over its company. Content, never saved.
+   */
+  enclave?: true;
   /** The region whose climate and weather the map shares; the Foreland when absent. */
   region?: RegionId;
   /** Cells closed until flags are set. Written by game/outdoors.ts; a map as authored gates an exit instead. */
