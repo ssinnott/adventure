@@ -205,8 +205,8 @@ and M8, the country behind (#484):
   its top slab by day and a troll beside it by night. South the tarn, black and still under the
   Rimefells; an old fisher on a stone at its edge, who says the troll is there yet; and a cairn at
   the mountains' foot with a ram's skull on it. Under a great boulder by the tarn, found from the
-  heather worn to the earth and the rock black with old smoke, a howff (§4.7). Two groups: eight
-  ravens on the crags and the tor's troll alone by night.
+  heather worn to the earth and the rock black with old smoke, a howff (§4.7). Two groups: two
+  ravens and two tor trolls on the crags (#865) and the tor's troll alone by night.
 
 Its atlas rows are charted in `src/content/areas/cairnmoor/atlas.ts`, the area's own `atlas` since
 N7 lists the area; until then `src/content/atlas.ts` spread them into the plan where its rows were,
@@ -220,7 +220,7 @@ road from the Kilns, the Cairns' way in and the drove road down to Longmere.
 Its row on the curve and its share of the act's gear ladder are in (#535). The row is in
 `src/content/progression.ts`: band 18–20, next 20, window 4,000. Its entry owed to #437 while the
 area was built box by box went with M7 and M8 (#484), a clear giving 15,442 xp a member and 9,115
-gold (§8). O7's Banded Staff +1 is in `src/content/areas/cairnmoor/items.ts`, made ahead of
+gold (§8); 15,587 xp since #865 re-sized M8's crag group. O7's Banded Staff +1 is in `src/content/areas/cairnmoor/items.ts`, made ahead of
 the area (`ITEMS_AHEAD`, `src/content/index.ts`) as the Kilns' step was, until N7 took the table
 into its Area, and owed to #477 until it was placed, in O7's hollow (§4.3); N7's cache holds a
 second of the Kilns' Forge Hammer +1 (§4.2), O8's hoard a second of the Kilns' Seax +1 (§4.4), M8's howff a
@@ -750,7 +750,11 @@ delegate (§9, #484's).
     off; at 16 it wins every fight too, owed to #18. It pays 727 (eight ravens at 357 and the troll
     1,507, shared by six) and holds 180 gold. Density 99.7% within 12 steps, the furthest 13, with no
     sign among its 17 points. Rank correlation 1.00, the ravens nearest at 6 steps (level 18) and the
-    troll the hardest at 20 (level 19). Neither claims anything new (§7).
+    troll the hardest at 20 (level 19). Neither claims anything new (§7). #865 re-sized M8's crag
+    group inside its floor's aims, two ravens and two tor trolls where eight ravens stood: 7.60 fights
+    to a rest at 18, inside the aim, with 23.3% of days ending in a fight broken off, the two trolls
+    mending; two under, at 16, 5.52 (64.9% of the floor's 8.5, inside its aim) where it was 9.29
+    (109.3%, past the limit). It pays about 873 a member; the crag group's level is 18.5.
   - **Walked.** `theGrazing`, the walkthrough's third walk after `theBog`, crosses the seams, speaks to
     the shepherd and the fisher, shows the tor's face by day and not by night, wins every group at its
     floor (the hounds and the troll by night) and finds each secret from its hint, each shut but
