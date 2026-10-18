@@ -1,5 +1,6 @@
 // Saltreach's items: Saltmouth's armourer's step on the ladder (#399), the same with a plus that its
-// boxes and Wrackholm's give up by 13, and the finds of its boxes.
+// boxes and Wrackholm's give up by 13, the locksmith's picks and the Map Room's chart (#860), and the
+// finds of its boxes.
 import type { ItemDef } from '../../../game/items.ts';
 import { W, A, P, core, MARTIAL, NO_CASTER_HEAVY } from '../../items.ts';
 import { ITEMS as FORELAND } from '../shelf/items.ts';
@@ -13,6 +14,17 @@ export const ironshodStaff = W('ironshod_staff', 'Ironshod Staff', 600, 1, 10, {
 export const sharkskin = A('sharkskin', 'Sharkskin Coat', 1100, 9, { classes: NO_CASTER_HEAVY });
 export const tidefolkRobe = A('tidefolk_robe', 'Tidefolk Robe', 650, 6);
 
+// Sold in Saltmouth's two trades (#860), slotless and carried: each does a skill's work for a company
+// without the skill, as the Kilns' copybook does a Linguist's (`ItemDef.skill`, #857). Pender's picks
+// open a locked chest and keep an iron key; the Map Room's chart maps a square further. Both sit inside
+// Saltreach's 2,000 window, off the ladder, and a shop buys either back at half.
+export const setOfPicks: ItemDef = { id: 'set_of_picks', name: 'Set of Picks', slot: 'none', price: 750, skill: 'lockpick', text: [
+  'A roll of oiled leather and a dozen slim picks, each worn bright at the tip. A key is burned into the leather, its bit filed to a point.',
+] };
+export const guildChart: ItemDef = { id: 'guild_chart', name: 'Guild Chart', slot: 'none', price: 400, skill: 'cartographer', text: [
+  'Waxed linen ruled in squares, the road inked in and the rest left white. The Guild\'s stamp is in the corner.',
+] };
+
 export const ITEMS: readonly ItemDef[] = [
   morningStar,
   stiletto,
@@ -21,6 +33,8 @@ export const ITEMS: readonly ItemDef[] = [
   ironshodStaff,
   sharkskin,
   tidefolkRobe,
+  setOfPicks,
+  guildChart,
   // Found, not sold, by 13: the Drowned Temples' two, Rietum's two and the pans'
   // (docs/areas/saltreach.md §4). Wrackholm's are in its own table.
   P(morningStar, 1),
