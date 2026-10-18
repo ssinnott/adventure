@@ -3132,9 +3132,9 @@ adds its "As built".
 | P4 | the heart, `kilnsheart_p4` | 46 | | O4, P5 | 16–18 | the third |
 
 The P column is 24 squares wide, the world's edge cutting it (the grid's cuts, `src/game/atlas.ts`),
-so P4, P5 and P6 are maps of 24 by 32 and `tools/scaffold.ts`, which cuts 32 by 32, refuses them: they
-are cut by hand with its own `cut` and `emit`, void written `%` (§4.15). No map of that size is built
-yet; the pull request that builds the first says what it found.
+so P4, P5 and P6 are maps of 24 by 32, which `tools/scaffold.ts`, cutting 32 by 32, refuses: they are
+cut by hand, the atlas's rows with the void written `%`, as O3's was (§4.15, #474's 27). No map of that
+size is built yet; the pull request that builds the first says what it found.
 
 ### 12.1 What every box keeps
 
@@ -3216,7 +3216,7 @@ yet; the pull request that builds the first says what it found.
 ### 12.3 P5, the hills under the rim at the Stone: country, band 16–18
 
 - **Purpose.** The hills east of the Anvil Stone's cut: the strip between O5's crag and the rim that
-  O5's east edge opens onto along its rows 0 to 21, 280 squares of hills 5 to 12 wide the whole height
+  O5's east edge opens onto along its rows 0 to 21, 280 squares of hills 4 to 12 wide the whole height
   of the box, the rim's mountain along its east and the world's end past it. Off the road and off the
   quest; the artifact lair's door (§12.7).
 - **Landmarks.** The cutters' trial pits, the first cuts before the Stone was found, left with their
@@ -3240,7 +3240,8 @@ yet; the pull request that builds the first says what it found.
 ### 12.4 P6, the ash under the vents: country, band 16–18
 
 - **Purpose.** The ash fall east of Feuerstollen's ridge: O6's east edge opens onto it along its rows
-  4 to 29, 220 squares of ash and hills 5 to 13 wide under the rim. Off the road and off the quest.
+  2 to 28, 220 squares of ash and hills under the rim, a wedge 13 wide in the north that narrows to
+  one in the south. Off the road and off the quest.
 - **Landmarks.** The vents' last ash, grey and warm underfoot; the hills east of it; the rim; the
   corner in the south that is High Moor's, 46 squares of mountain, closed.
 - **Points of interest,** about seven features and two groups: a cairn on the hills; a camp, a
