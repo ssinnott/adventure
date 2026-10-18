@@ -27,7 +27,7 @@ import type { ClassId } from '../../src/game/party.ts';
 import { hits } from '../../src/game/items.ts';
 import type { ItemDef } from '../../src/game/items.ts';
 import { GEAR, KIT, RUNGS_TWICE, companyAt } from '../harness.ts';
-import { once } from '../checks.ts';
+import { CHECKS, once } from '../checks.ts';
 import { gateCompany } from '../gate.ts';
 import { giftOf, spentId } from '../../src/game/wilds.ts';
 import { personGives } from '../../src/game/people.ts';
@@ -271,6 +271,10 @@ const usable = (d: ItemDef, cls: ClassId): boolean => !d.classes || d.classes.in
 /** The ladder's ids by `level`. */
 const by = (level: number): string[] => GEAR.filter(([at]) => at <= level).flatMap(([, ids]) => ids);
 
+/** The rungs on an area (its id, the level, the items) that are another's: a rung is whole on the last area on the road whose items it holds (#897). */
+export const rungsAstray = (rungs: readonly (readonly [string, number, readonly string[]])[], areas: readonly Pick<Area, 'id' | 'items'>[] = AREAS): string[] =>
+  rungs.filter(([id, , ids]) => areas[Math.max(...ids.map((i) => areas.findIndex((a) => a.items.some((x) => x.id === i))))]?.id !== id).map(([id, at]) => `${at} on ${id}`);
+
 export function ladder(): void {
   // Class by class: each item the table names is in the ladder by its level, the class can use it,
   // and it betters the best of its kind the class had: at 3 its kit, at 5 its kit and the ladder by 3.
@@ -347,6 +351,14 @@ export function ladder(): void {
   ok(!missing.length, `every rung of the ladder is an item${missing.length ? ` (not: ${missing.join(', ')})` : ''}`);
   // A rung is held in tools/harness.ts or on its area (`AreaChecks.gear`), not both, nor on two areas (#897).
   ok(...once('every rung of the ladder is given once, in GEAR or KIT or on its area', RUNGS_TWICE));
+  // A rung stands whole on one area, the last on the road whose items it holds (#897): 13, Saltreach's and
+  // Wrackholm's, is Wrackholm's.
+  const onAreas = [...CHECKS].flatMap(([id, c]) => Object.entries(c.gear ?? {}).map(([at, ids]) => [id, Number(at), ids] as const));
+  const astray = rungsAstray(onAreas);
+  ok(!astray.length, `and each on an area is the last area's on the road whose items it holds${astray.length ? ` (not: ${astray.join(', ')})` : ''}`);
+  const r13 = GEAR.find(([at]) => at === 13)?.[1] ?? [], r3 = GEAR.find(([at]) => at === 3)?.[1] ?? [];
+  ok(rungsAstray([['saltreach', 13, r13], ['wrackholm', 13, r13], ['shelf', 3, r3], ['thornmark', 3, r3]]).join() === '13 on saltreach,3 on thornmark',
+    'a rung on an earlier area than its last item\'s, or a later one, is refused: 13 on Saltreach and 3 on Thornmark, where 13 on Wrackholm and 3 on the Foreland are read');
   const found = new Set([
     ...MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => giftOf(f)?.items ?? [])),
     ...Object.values(MONSTERS).flatMap((m) => (m.drops ?? []).map((x) => x.item)),

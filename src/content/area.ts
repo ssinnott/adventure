@@ -69,10 +69,23 @@ export interface AreaChecks {
   owes?: Owes;
   /**
    * Its rungs of the ladder (EXPANSION §5.2): by a level, what a company has in its hands or its bag by
-   * then. tools/harness.ts takes GEAR from the weapons, armour and shields, and KIT from the rest.
+   * then. tools/harness.ts takes GEAR from the weapons, armour and shields, and KIT from the rest. A rung
+   * is whole on the last area on the road whose items it holds (tools/tests/ladder.ts).
    */
   gear?: Readonly<Record<number, readonly string[]>>;
+  /** How far over the next floor its clear leaves a company, held as built (`OVER_ROAD`, tools/tests/curve.ts). */
+  overRoad?: { level: number; why: string };
+  /** Its seams as built, each row as `SEAMS_AS_BUILT` writes it (tools/tests/outdoors.ts): a seam is the area's of the first box its key names. */
+  seamsAsBuilt?: readonly SeamAsBuilt[];
+  /** Its edges open on nothing, each row as `OPEN_ON_NOTHING` writes it (tools/tests/outdoors.ts): an edge is the area's whose box it is. */
+  openOnNothing?: readonly OpenOnNothing[];
 }
+
+/** A seam of two built boxes that disagrees as built: the squares that fail each kind, exactly, written `'3-7 9'`, and why. */
+export interface SeamAsBuilt { seam: string; walk?: string; water?: string; road?: string; way?: string; why: string }
+
+/** An edge of a built box that faces no built box: the box's map and its side, the squares along it open to a walker, and why. */
+export interface OpenOnNothing { edge: string; open: string; why: string }
 
 /** What an area owes, by the table each kind of row stood in until it moved onto its area. */
 export interface Owes {
@@ -84,9 +97,12 @@ export interface Owes {
   unset?: Readonly<Record<string, string>>;
   /** A zone map the outdoors' start does not reach yet, by its id (`CUT_OFF`, tools/tests/outdoors.ts). */
   cutOff?: Readonly<Record<string, string>>;
-  /** Squares where a map and the atlas disagree, by the issue whose fix they wait on (`EDGES_OWED`, tools/tests/pillars.ts). */
+  /**
+   * Squares where a map and the atlas disagree, by the issue whose fix they wait on (`EDGES_OWED`,
+   * tools/tests/pillars.ts): an issue may be owed by several areas, a square by one.
+   */
   edges?: Readonly<Record<string, readonly string[]>>;
-  /** Locks someone else fixes, by the issue that fixes them (`LOCKS_OWED`, tools/tests/pillars.ts). */
+  /** Locks someone else fixes, by the issue that fixes them (`LOCKS_OWED`, tools/tests/pillars.ts): an issue may be owed by several areas, a lock by one. */
   locks?: Readonly<Record<string, readonly string[]>>;
 }
 

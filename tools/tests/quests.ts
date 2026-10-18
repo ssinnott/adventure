@@ -157,19 +157,16 @@ export function quests(): void {
     console.log(`  info: ${id}: its journal takes ${most} ${most === 1 ? 'page' : 'pages'} at most`);
   }
   { // Every zone on the road of the built areas holds a step of the one quest, found from where
-    // its steps are done (a dungeon or a town by the outdoor map it opens onto). A zone not built
-    // yet is owed by whoever builds its step. No step lies in an enclave (#845), beside the road: a
-    // goal there is a fault, and holds no zone, as the reach holds none.
+    // its steps are done (a dungeon or a town by the outdoor map it opens onto), built or not. No step
+    // lies in an enclave (#845), beside the road: a goal there is a fault, and holds no zone, as the
+    // reach holds none.
     const steps = enclaveSteps(THE_QUEST.chapters, MAP_DEFS);
     ok(!steps.length, `no step of the one quest lies in an enclave${steps.length ? ' -> ' + steps.join(', ') : ''}`);
     const held = heldZones(THE_QUEST.chapters, MAP_DEFS);
-    const PLANNED: Record<string, string> = {};
     const built = new Set(AREAS.map((a) => a.id as string));
     // The reach is off the road by design (DESIGN §9), and holds no step: Rimewater's Glacier Foot (#486).
     for (const z of ATLAS.zones.filter((x) => built.has(x.area) && !REACH_ZONES.includes(x.id) && !x.reach)) {
-      const msg = `zone ${z.id} holds a step of the one quest`;
-      if (PLANNED[z.id]) owed(held.has(z.id), msg, PLANNED[z.id]);
-      else ok(held.has(z.id), `${msg}${z.maps?.length ? '' : ' (not built, and owed by no one)'}`);
+      ok(held.has(z.id), `zone ${z.id} holds a step of the one quest${z.maps?.length ? '' : ' (not built, and owed by no one)'}`);
     }
     // The fixture lair beside Saltreach (#845) holds no step of the one quest; a step set in it is caught,
     // and holds no zone, where the same step on its box holds the Upper Water.

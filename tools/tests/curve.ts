@@ -323,7 +323,8 @@ const LEAD = 1;
 
 /**
  * The areas that leave it further over, each held at the level it leaves as built, rounded up, as
- * a row's `owed` holds a floor, so that none grows unnoticed; once inside the line, it is dropped.
+ * a row's `owed` holds a floor, so that none grows unnoticed; once inside the line, it is dropped. An
+ * area may hold its own in its checks.ts (`AreaChecks.overRoad`), and then is named here no longer (#897).
  */
 const OVER_ROAD: Partial<Record<keyof typeof CURVE, { level: number; why: string }>> = {
   kilns: { level: 19.4, why: 'the bosses pay the line\'s (MONSTERS §4.3 and §4.4), and the country behind the road (#474) and the bounds (#831) add to it' },
@@ -444,6 +445,9 @@ export function curve(): void {
   // What a clear falls short of is owed on its row or by its area (`Owes.curve`), not both (#897).
   const owing = (id: string): AreaCurve['owed'] => CURVE[id as RegionId].owed ?? CHECKS.get(id)?.owes?.curve;
   ok(...once('every shortfall is owed once, on its row in CURVE or by its area', AREAS.filter((a) => CURVE[a.id].owed && CHECKS.get(a.id)?.owes?.curve).map((a) => a.id)));
+  // How far over the next floor an area's clear leaves a company is held in OVER_ROAD or by its area, not both (#897).
+  const overRoad = (id: string): { level: number; why: string } | undefined => OVER_ROAD[id as RegionId] ?? CHECKS.get(id)?.overRoad;
+  ok(...once('every area held over the road is held once, in OVER_ROAD or by its area', AREAS.filter((a) => OVER_ROAD[a.id] && CHECKS.get(a.id)?.overRoad).map((a) => a.id)));
   // The enclave (#845): the fixture lair at the cap beside Saltreach, a band-10 area, leaves Saltreach's
   // curve as it was, its clear (and so its lead and its window) and its band; it is held to its own band
   // and the cap's window, and its pay is a figure. An enclave has a band of its own over its box's, is
@@ -500,7 +504,7 @@ export function curve(): void {
     // The lead over the road (#634): the level that clear leaves a company at, paid by level,
     // against the next floor and, for an area named in OVER_ROAD, its figure.
     if (area) {
-      const left = leaves(lo, clear.placed, clear.quest), held = OVER_ROAD[id], fault = leadFault(id, left, row.next, held);
+      const left = leaves(lo, clear.placed, clear.quest), held = overRoad(id), fault = leadFault(id, left, row.next, held);
       ok(!fault, fault ?? `${leadSaid(id, left, row.next)}${held ? `, a named exception held at ${held.level}: ${held.why}` : ''}`);
       // Pay is booked where it is paid (#728): what this clear counts of a quest that belongs to another area, by its
       // quest log or its deed, is a figure, printed and never a failure.

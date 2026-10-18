@@ -258,14 +258,19 @@ export function rate(g: Pick<EncounterDef, 'monsters' | 'back' | 'leader' | 'whe
  * The road behind's groups on an earlier act's maps, as the game names a group, 'map:id': each waits on
  * an answer given an act later on the road, so no company at its map's floor meets it, and the gate
  * leaves it out of its map and its area (#765). The curve counts it, in the clear and the lead. Read
- * from the areas (#897): a group whose `after` names a flag that only a later area's maps set.
+ * from the areas (#897): a group whose `after` names a flag that only a later area's maps set, in each
+ * of its alternatives, as a list is any one of them (`When`).
  */
-const BEHIND: readonly string[] = (() => {
-  const at = new Map(AREAS.flatMap((a, i) => a.maps.map((d) => [d.id, i] as const))), setBy = new Map<string, number[]>();
-  for (const d of MAP_DEFS) for (const f of [...(d.features ?? []).flatMap(featureFlags), ...(d.encounters ?? []).flatMap(groupFlags)]) setBy.set(f, [...(setBy.get(f) ?? []), at.get(d.id)!]);
+export function behindOf(areas: readonly Pick<Area, 'maps'>[]): string[] {
+  const defs = areas.flatMap((a) => a.maps), at = new Map(areas.flatMap((a, i) => a.maps.map((d) => [d.id, i] as const))), setBy = new Map<string, number[]>();
+  for (const d of defs) for (const f of [...(d.features ?? []).flatMap(featureFlags), ...(d.encounters ?? []).flatMap(groupFlags)]) setBy.set(f, [...(setBy.get(f) ?? []), at.get(d.id)!]);
   const later = (f: string, i: number): boolean => !!setBy.get(f)?.every((j) => j > i);
-  return MAP_DEFS.flatMap((d) => (d.encounters ?? []).filter((g) => ([g.after ?? []].flat() as QuestCond[]).some((c) => [c.flag ?? []].flat().some((f) => later(f, at.get(d.id)!)))).map((g) => `${d.id}:${g.id}`));
-})();
+  return defs.flatMap((d) => (d.encounters ?? []).filter((g) => {
+    const alts = [g.after ?? []].flat() as QuestCond[];
+    return alts.length > 0 && alts.every((c) => [c.flag ?? []].flat().some((f) => later(f, at.get(d.id)!)));
+  }).map((g) => `${d.id}:${g.id}`));
+}
+const BEHIND: readonly string[] = behindOf(AREAS);
 /** A map as a company at its floor finds it: the road behind's groups left out (BEHIND). */
 const beforeBehind = (d: MapDef): MapDef =>
   d.encounters?.some((g) => BEHIND.includes(`${d.id}:${g.id}`)) ? { ...d, encounters: d.encounters.filter((g) => !BEHIND.includes(`${d.id}:${g.id}`)) } : d;
@@ -720,6 +725,15 @@ export function gate(): void {
   // group a company at its floor can meet is left out; and leaving them out drops that group alone.
   const unbehind = BEHIND.filter((ref) => { const [map, id] = ref.split(':'); return !MAP_DEFS.find((d) => d.id === map)?.encounters?.find((e) => e.id === id)?.after; });
   ok(!unbehind.length, `every group BEHIND leaves out is a built map's and waits on an after${unbehind.length ? ` (not: ${unbehind.join(', ')})` : ''}`);
+  {
+    const said = (id: string, sets: string): Feature => ({ kind: 'event', x: 1, y: 1, id, text: 'Fixture.', once: true, sets });
+    const group = (id: string, after?: EncounterDef['after']): EncounterDef => ({ id, x: 1, y: 1, monsters: ['knocker'], ...(after ? { after } : {}) });
+    const early: MapDef = { id: 'fx_early', name: '', kind: 'dungeon', start: { x: 0, y: 0, facing: 0 }, rows: [], features: [said('fx_now', 'fx_now')],
+      encounters: [group('fx_late', { flag: 'fx_then' }), group('fx_either', [{ flag: 'fx_then' }, { flag: 'fx_now' }]), group('fx_free')] };
+    const later: MapDef = { ...early, id: 'fx_later', features: [said('fx_then', 'fx_then')], encounters: [] };
+    ok(behindOf([{ maps: [early] }, { maps: [later] }]).join() === 'fx_early:fx_late',
+      'a group is behind when each of its after\'s alternatives waits on a flag only a later area sets, and met when one waits on its own area\'s or it waits on none (#897)');
+  }
   const fx: MapDef = { id: 'deep_mines3', name: '', kind: 'dungeon', start: { x: 0, y: 0, facing: 0 }, rows: [], encounters: [
     { id: 'ud_mines', x: 1, y: 1, monsters: ['knocker'], after: { flag: 'fx_open' } }, { id: 'fx_kept', x: 2, y: 1, monsters: ['knocker'] }] };
   const ids = (d: MapDef): string => (d.encounters ?? []).map((g) => g.id).join();

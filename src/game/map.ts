@@ -91,8 +91,11 @@ export interface Exit {
    * lock: it waits on the company's own answer where it stands (tools/tests/pillars.ts, `findLocks`).
    */
   after?: When;
-  /** The one exit from a town or a dungeon into another region (#749): every other shares its region (tools/tests/weather.ts). */
-  crosses?: true;
+  /**
+   * The one exit from a town or a dungeon into another region (#749), marked with the two regions it
+   * joins, from and to ('hearth kilns'): every other shares its region (tools/tests/weather.ts).
+   */
+  crosses?: string;
   blockedText?: string;
 }
 

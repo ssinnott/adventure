@@ -10,7 +10,7 @@ import { MAX_LEVEL } from '../../src/game/party.ts';
 import { CURVE, trainerCeiling } from '../../src/content/progression.ts';
 import { giftOf, spentId } from '../../src/game/wilds.ts';
 import { handIns, personFlags, personGives, groupFlags } from '../../src/game/people.ts';
-import { areaRows, beside, once } from '../checks.ts';
+import { areaRows, beside, once, unknownFields } from '../checks.ts';
 import { ok, owed, stopsWalk } from './lib.ts';
 
 /**
@@ -324,9 +324,13 @@ export function maps(): void {
   ok(interiors.length === opened.length && new Set(interiors).size === interiors.length && opened.every((i) => interiors.includes(i)), `every business has an interior of its own (${interiors.length}, ${new Set(interiors).size} distinct)`);
   for (const i of INTERIORS.filter((i) => Object.hasOwn(unplaced.all, i))) owed(interiors.includes(i), `a business opens into ${i}`, unplaced.all[i]);
   ok(...once('every monster and room owed its place is owed once, in UNPLACED or by its area', unplaced.twice));
+  const nothing = Object.keys(unplaced.all).filter((k) => !MONSTERS[k] && !(INTERIORS as readonly string[]).includes(k));
+  ok(!nothing.length, `and each names a monster or a room${nothing.length ? ` (not: ${nothing.join(', ')})` : ''}`);
   const fx = beside({ fx_a: 'x' }, [['fx_b', 'y'], ['fx_a', 'z'], ['fx_b', 'w']]);
   ok(fx.twice.join() === 'fx_a,fx_b' && Object.entries(fx.all).join() === 'fx_a,x,fx_b,y' && !once('', fx.twice)[0] && once('', [])[0],
     'a row in a suite\'s table and on an area, or on two areas, is refused, and one in either alone is read (#897)');
+  ok(unknownFields({ gear: {}, gaer: {}, owes: { cutOff: {}, cutoff: {} } }).join() === 'gaer,owes.cutoff',
+    'a checks.ts giving a field AreaChecks has not is refused by its name, \'gaer\' or \'owes.cutoff\' (#897)');
   // The trainer ladder: each town's trainers teach to its area's band's top plus one (EXPANSION
   // §5.2), so the towns built set how far a company can train, and none past the cap: a band topping
   // at the cap teaches to it (`trainerCeiling`; docs/areas/hearth_isle.md §9, call 4).
