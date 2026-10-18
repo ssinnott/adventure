@@ -258,7 +258,8 @@ Added:
   (`tools/tests/outdoors.ts`) with its reason, and a box built since adds none. Every edge of a built
   box that faces no built box is open to a walker exactly where a row of `OPEN_ON_NOTHING` says, with
   the box it faces and why that is unbuilt; the box built there meets the seam rule, and its pull
-  request deletes the row. That is the bounds' border check (#828) in embryo.
+  request deletes the row. That is the bounds' border check (#828) in embryo. A row of either may
+  stand in its area's `checks.ts` instead (§8.2, #897).
 
 Decided by the builder for #898, each the owner's to overturn:
 
@@ -913,18 +914,22 @@ An area's dungeons may exit only to its own region's maps, or to the outdoors on
 so its zone map lands with or before its first dungeon (`tools/tests/weather.ts:125` holds it).
 
 **A new area starts in `AREAS`** (`src/content/index.ts`), from its first commit: its folder, its line
-there and its row in `CURVE`, with `maps: []` until its first map and what its clear falls short of
-owed in its `checks.ts` (`owes.curve`) until it pays. Its monsters, rooms and items are
-merged from the start, so nothing waits in a list of its own ahead of its area (the `AHEAD` lists
-and `PLANNED` are gone, #897), and the suites take what is built: no chapter or walkthrough is
-asked of an area until it has a map. What the suites hold of an area is the area's: what describes
-one zone, group, monster or exit is a field of it (`AtlasZone.road`, `reach` and `maxGroup`,
-`EncounterDef.boss`, `MonsterDef.offLine`, `Exit.crosses`), and what is the area's own and no part of
-the game, what it owes and its rungs of the ladder, is a row in its `checks.ts` (`AreaChecks`), which
-nothing in the game imports and the suites find as the runner finds a walkthrough. Each suite reads
-those beside its own table and refuses a row in both, so a row moves one way. The Foreland's have
-moved; every other area's move by one script in a window with no area pull request open (#848), and
-until then a box adds its rows to the suites' tables as before.
+there, its row in the atlas's `areas` (`src/content/atlas.ts`: its order and its band, which the curve
+reads) and its row in `CURVE`, with `maps: []` and `chapter: undefined` until its first map (the
+typecheck reads `chapter` on every area) and what its clear falls short of owed in its `checks.ts`
+(`owes.curve`) until it pays. Its monsters, rooms and items are merged from the start, so nothing
+waits in a list of its own ahead of its area (the `AHEAD` lists and `PLANNED` are gone, #897), and
+the suites take what is built: no chapter, walkthrough or claim of what is new is asked of an area
+until it has a map. What the suites hold of an area is the area's: what describes one zone, group,
+monster or exit is a field of it (`AtlasZone.road`, `reach` and `maxGroup`, `EncounterDef.boss`,
+`MonsterDef.offLine`, `Exit.crosses`), and what is the area's own and no part of the game, what it
+owes, its rungs of the ladder, its lead over the road, its seams as built and its edges open on
+nothing, is a row in its `checks.ts` (`AreaChecks`), which nothing in the game imports and the suites
+find as the runner finds a walkthrough; a field `AreaChecks` has not stops the run with its name. A
+seam is the area's of the first box its key names (`a|b` or `a/b`), an edge the area's whose box it
+is. Each suite reads those beside its own table and refuses a row in both, so a row moves one way.
+The Foreland's have moved; every other area's move by one script in a window with no area pull
+request open (#848), and until then a box adds its rows to the suites' tables as before.
 
 Decided by the builder for #897, each the owner's to overturn:
 
@@ -934,7 +939,7 @@ Decided by the builder for #897, each the owner's to overturn:
 2. **One field name per table**, each keyed as its table was, so the move is a copy: `owes.curve`,
    `unplaced`, `unset`, `cutOff`, `edges` and `locks`; `gear` by level; `road`, `reach: true` and
    `maxGroup` on the zone; `boss: true` on the group; `offLine` on the monster, OFF_LINE's reason or
-   WHOLE's role, share and reason; `crosses: true` on the exit.
+   WHOLE's role, share and reason; `crosses` on the exit, the two regions it joins.
 3. **`gear` holds a rung whole**: what a company wears by the level goes to `GEAR` and what it carries
    to `KIT`, by the item's slot, so one row serves both.
 4. **`NAMES` is the atlas's name of the area, and `BEHIND` every group whose `after` names a flag only
@@ -942,6 +947,24 @@ Decided by the builder for #897, each the owner's to overturn:
    `deep_mines3:ud_mines`), and a new area needs no row for either.
 5. **The Deepthorn's eight is a table, `MAX_GROUP`, until it moves**, read beside `maxGroup` as the
    other tables are.
+6. **`ONE_CROSSING` is a list, and the exit's mark names the two regions it joins** (`crosses:
+   'hearth kilns'`): the table may be emptied and still typecheck, the mark keeps the table's pin on
+   the regions, and each fixture gives its own table, so it holds whichever way the door is written.
+7. **`seamsAsBuilt` and `openOnNothing` are lists of rows as their tables write them**, so the move is
+   a copy of the line, and a row on an area that is not its first box's is refused. The Foreland's
+   are five seams and three edges; `upperwater_c2|downs_d2` and `upperwater_c3|downs_d3` name its box
+   second and are Saltreach's.
+8. **An issue may be owed edges or locks by several areas; a square or a lock is owed once.** `edges`
+   and `locks` stay keyed by the issue, as their tables are, and are read by the thing owed.
+9. **A rung stands whole on the last area on the road whose items it holds**: 3 on the Foreland (the
+   core's and its own), 13 on Wrackholm, 14 on the Sunderwood, 19 on Cairnmoor and 28 on Hearth
+   Isle. A rung on another area is refused; 13 and 19, each moved whole by hand, read the same.
+10. **An area's lead over the road is its own figure, `overRoad`**, read beside `OVER_ROAD` and refused
+    in both. The Foreland has none; the Kilns' 19.4, moved by hand, reads the same.
+11. **`BEHIND` takes a group only when every alternative of its `after` waits on a later area's flag**,
+    as a list is any one of them. No group has two today.
+12. **An `unplaced` id that is no monster and no room fails by its name**, and a field `AreaChecks` has
+    not stops the run by its name: the run passed both over before.
 
 ### 8.3 Pull requests
 

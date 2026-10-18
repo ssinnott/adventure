@@ -647,9 +647,9 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   the Drillyard inside Helmstow's wall and the Elder's ring of stones; the Gilded Eel's harbour
   window and the Split Oak's living oak; the throne room behind the keep's door, its throne under
   black cloth. The farm kitchen is Ellerby's store (#87). Saltreach's eight, Lantern Watch's five,
-  Anvilhall's six, Kilnhaven's six and Rime Lodge's six are painted beside them, the last three
-  ahead of their towns (each is its area's since the area was listed; docs/areas/kilns.md §3 and
-  docs/areas/rimewater.md §3 describe them). No people: the rooms are backdrops. `kit.ts` has the walls, floors, windows and
+  Anvilhall's six, Kilnhaven's six and Rime Lodge's six are painted beside them, each in its built
+  town (docs/areas/kilns.md §3 and docs/areas/rimewater.md §3 describe the last three). No people:
+  the rooms are backdrops. `kit.ts` has the walls, floors, windows and
   light, `props.ts` the furniture and goods; each scene is a file in `ui/interiors/<area>/`, and
   what both towns' scenes of a trade use is in `shops.ts`, `guilds.ts`, `yards.ts` and `taverns.ts`.
   A scene is painted once into an offscreen canvas and multiplied by a light map (the ambient for
@@ -758,8 +758,9 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   traits, calendar, terrain, weather, atlas, outdoors, save, quests, then any other in name order),
   then each area's walkthrough (the Foreland's and Thornmark's), in road order. Each area's
   `checks.ts`, found by its file as its walkthrough is (`tools/checks.ts`), holds the rows the suites
-  keep of it that are its own and no part of the game, what it owes and its rungs of the ladder
-  (`AreaChecks`); what describes a zone, a group, a monster or an exit is a field of that. A suite
+  keep of it that are its own and no part of the game, what it owes, its rungs of the ladder, its lead
+  over the road, its seams as built and its edges open on nothing (`AreaChecks`); what describes a
+  zone, a group, a monster or an exit is a field of that. A suite
   reads them beside its own table and refuses a row in both (#897); the Foreland's have moved. Every check has a
   line saying what it holds, so the output under `--list` is the list; `node tools/test.ts maps combat` runs a few
   suites, `walkthrough:<area>` one walkthrough. The pilot's survival sweep and full run (`survival`,
