@@ -1470,18 +1470,19 @@ Decided by delegate for #484, each the owner's to overturn:
     cap under the old dressing rule; the door is M8's only counted wall, and at 5,28 the old roll
     (0.977) left it undressed, so M8 failed; at 6,27 it rolls under 0.7.
 
-Decided by the owner's delegate for #18, each the owner's to overturn (the issue's four for #862, built
-as written, §4.8):
+Decided by the owner's delegate for #18, each the owner's to overturn:
 
-1. **An elemental weapon,** its blows carrying fire: its dice a rung under the ladder's at the band,
-   so the die is the gain, with a class list as its kind has. If the area session finds better: an
-   element its own area's monsters are not immune to and the next area's are weak to where one is.
-2. **A stat item,** a weapon or mail raising might by 3 while worn: slotted, so one is worn at a time.
-3. **Found, off the quest's path,** in a cairn off the drove road or behind a hinted secret door of the
-   cairns; one of the two in a locked chest, the first the area holds. Each priced inside Cairnmoor's
-   window, sold by no shop and sellable at half as all found gear is. Off the ladder: no `GEAR` row,
-   so no figure moves.
-4. **Names and texts pass the pillars,** two lines to a find.
+1. **An elemental weapon,** its blows carrying fire (#862's call 1, built as §4.8): its dice a rung
+   under the ladder's at the band, so the die is the gain, with a class list as its kind has. If the
+   area session finds better: an element its own area's monsters are not immune to and the next
+   area's are weak to where one is.
+2. **A stat item,** a weapon or mail raising might by 3 while worn (#862's call 2): slotted, so one is
+   worn at a time.
+3. **Found, off the quest's path** (#862's call 3), in a cairn off the drove road or behind a hinted
+   secret door of the cairns; one of the two in a locked chest, the first the area holds. Each priced
+   inside Cairnmoor's window, sold by no shop and sellable at half as all found gear is. Off the
+   ladder: no `GEAR` row, so no figure moves.
+4. **Names and texts pass the pillars** (#862's call 4), two lines to a find.
 
 Decided by the builder for #862, each the owner's to overturn:
 
