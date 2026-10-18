@@ -1904,8 +1904,8 @@ on the road's quest. Then the area's enclave and its artifact's lair (§12.10). 
   along all its rows. The farthest of the A column from the road at its middle.
 - **Landmarks.** The rim; the hills at its foot; the fen's west shore, marsh to B5; an old dyke along
   the shore, let go; the drowned mound, the lair's (§12.10).
-- **Points of interest,** about five features and two groups: an eel-catcher of Stienwierde at her
-  traps, with word of the toads come up the shore; a camp on the dry ground under the rim; a cairn
+- **Points of interest,** about five features and two groups: a wildfowler of Stienwierde in his
+  punt, with word of the toads come up the shore; a camp on the dry ground under the rim; a cairn
   where the hills meet the marsh; a shrine at the fen's edge; the dyke's foot, the hint.
 - **Encounters.** The fen's pools, three leeches and an eel (MONSTERS §6.1's second fight), the
   nearest; a bull toad alone, as the roster has it, the hardest: about 7.5 fights to a rest at 10,
