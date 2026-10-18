@@ -1,11 +1,12 @@
-// Restates the monsters past level 10 on the line as tools/testmonster.ts gives it now (MONSTERS §4.4,
-// "When the line moves"). Each is found on the shape it stood on in the line at a git ref (a role's test
-// monster, the test troll, giant or drake, or a role come down whole by its share in WHOLE) and given that
-// shape's hit points and blow on the line as it stands, a troll's mending with them. Its armour, to-hit,
+// Restates the monsters past level 10 onto a line made again (MONSTERS §4.4, "When the line moves"): for
+// the day `--calibrate --write` makes the line past 10 again, which #865 weighed and did not do. Each is
+// found on the shape it stood on in the line at a base git ref (a role's test monster, the test troll,
+// giant or drake, or a role come down whole by its share in WHOLE) and given that shape's hit points and
+// blow on the line as tools/testmonster.ts gives it now, a troll's mending with them. Its armour, to-hit,
 // speed and xp come from the line's formulas and the curve, which the tables do not move, and are checked
 // so; its notes, holds, resistances and spells are its own. OFF_LINE's are their boxes' gates' to set.
-//   node tools/restate.ts <ref>            what it would restate, the line at <ref> to the line now
-//   node tools/restate.ts <ref> --write    and writes it into the areas' monsters.ts
+//   node tools/restate.ts <base ref>            what it would restate, the line at <base ref> to the line now
+//   node tools/restate.ts <base ref> --write    and writes it into the areas' monsters.ts
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
@@ -64,7 +65,7 @@ function put(line: string, id: string, field: RegExp, now: string): string {
 
 function main(): void {
   const ref = process.argv[2], write = process.argv.includes('--write');
-  if (!ref || ref.startsWith('--')) throw new Error('node tools/restate.ts <ref> [--write]: the git ref whose line the monsters stand on');
+  if (!ref || ref.startsWith('--')) throw new Error('node tools/restate.ts <base ref> [--write]: the git ref whose line the monsters stand on');
   const was = tablesAt(ref), now: Tables = { hp: HP, dmg: DAMAGE };
   const dir = new URL('../src/content/areas/', import.meta.url), files = new Map<string, string>();
   for (const area of fs.readdirSync(dir)) { const f = new URL(`${area}/monsters.ts`, dir); if (fs.existsSync(f)) files.set(f.pathname, fs.readFileSync(f, 'utf8')); }
