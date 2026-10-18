@@ -6,11 +6,11 @@ import { monster, monsterImmune, monsterSpells, elementMult, elementDamage, KIND
 import type { MonsterDef } from './monsters.ts';
 import { spell, spellDice, SPELLS_GROW_TO } from './spells.ts';
 import type { SpellDef, Element } from './spells.ts';
-import { item } from './items.ts';
+import { item, ELEMENT_DIE } from './items.ts';
 import {
   armorClass, attackBonus, weaponOf, isDown, canAct, damage, heal, addCondition, removeCondition, hasCondition, bonus, canTrain, killPay,
   hasTrait, spellHeal, rankMult, spellRank, armsBonus, WEAPON_MASTER_DMG, HOLY_STRIKE_DMG, MARKSMAN_DMG, SPELLFIRE_DMG, SNEAK_ATTACK_DMG, RAGE_DMG, INSPIRE_HIT,
-  prestigeOf, deathAt, resists, lift,
+  prestigeOf, deathAt, resists, lift, statOf,
 } from './party.ts';
 import type { ClassId } from './party.ts';
 import type { ItemDef } from './items.ts';
@@ -81,7 +81,8 @@ export interface CombatState {
   foeShield: number[];
   /**
    * What the company has seen each element do to each kind of monster, by its id: the share of a
-   * spell's damage it took (`elementMult`). A bot learns from it; a player from the log.
+   * spell's damage, or of a blow's element die, it took (`elementMult`). A bot learns from it; a
+   * player from the log.
    */
   seen: Record<string, Partial<Record<Element, number>>>;
   /** The most the company has seen each kind of monster mend at a round's end, by its id (`regen`). A bot learns from it. */
@@ -269,7 +270,7 @@ function newRound(s: CombatState, party: Party, rng: RngInstance): void {
   s.defending = party.members.map(() => false);
   const refs: { ref: TurnRef; speed: number }[] = [];
   const haste = s.haste > 0 ? HASTE_SPEED : 0;
-  party.members.forEach((c, i) => { if (!isDown(c)) refs.push({ ref: { side: 'party', i }, speed: c.stats.speed + haste + rng.range(0, 4) }); });
+  party.members.forEach((c, i) => { if (!isDown(c)) refs.push({ ref: { side: 'party', i }, speed: statOf(c, 'speed') + haste + rng.range(0, 4) }); });
   s.monsters.forEach((m, i) => { if (standing(m)) refs.push({ ref: { side: 'monster', i }, speed: m.def.speed + rng.range(0, 4) }); });
   // A monk of the second prestige always acts first in a round; in the first, while an Arms Master
   // stands (game/skills.ts; #856), every member acts before any monster. The skill is read off the
@@ -363,7 +364,7 @@ const waits = (s: CombatState, m: MonsterInst): boolean => m.back && !m.def.rang
 export const monsterAc = (s: CombatState, m: MonsterInst): number => m.def.ac + (s.foeShield[m.band] > 0 ? WARD_AC : 0);
 /** A monster's to-hit, with a Bless over its group and the weather's toll on its bow. */
 export const monsterHit = (s: CombatState, m: MonsterInst): number => m.def.attack + (s.foeBless[m.band] > 0 ? BLESS_HIT : 0) - (m.def.missile ? s.rangedPenalty : 0);
-/** What the company has seen the element do to the monster: the share of a spell's damage, or 1 where it has not seen it. */
+/** What the company has seen the element do to the monster: the share of a spell's damage or a blow's die, or 1 where it has not seen it. */
 export const seenMult = (s: CombatState, m: MonsterInst, el: Element | undefined): number => (el ? s.seen[m.def.id]?.[el] ?? 1 : 1);
 
 /** Whether the monster leads its group (`Ranks`). */
@@ -391,7 +392,9 @@ export function partyAct(s: CombatState, party: Party, rng: RngInstance, action:
         if (!standing(m)) { const left = aliveMonsters(s).filter((i) => canReach(s, c, i)); if (!left.length) break; m = s.monsters[left.reduce((a, b) => (s.monsters[b].hp < s.monsters[a].hp ? b : a))]; }
         const hit = rng.chance(toHit(attackBonus(c) + buffHit(s, party, t.i) - (w.ranged && !weatherproof(c) ? s.rangedPenalty : 0), monsterAc(s, m)));
         if (hit) {
-          const dmg = roll(rng, w.dice ?? 1, w.sides ?? 4, (w.bonus ?? 0) + (w.ranged ? 0 : bonus(c.stats.might)) + traitDamage(s, c, w, m) + armsBonus(c) + song + (edge?.damage ?? 0));
+          // An elemental weapon adds a die of its element to the steel, which lands as ever.
+          const dmg = roll(rng, w.dice ?? 1, w.sides ?? 4, (w.bonus ?? 0) + (w.ranged ? 0 : bonus(statOf(c, 'might'))) + traitDamage(s, c, w, m) + armsBonus(c) + song + (edge?.damage ?? 0))
+            + (w.element ? elemental(s, m, w.element, roll(rng, 1, ELEMENT_DIE, 0)) : 0);
           hurtMonster(s, m, dmg);
           s.log.push(`${c.name} hits ${m.def.name} for ${dmg}.` + (m.hp <= 0 ? ` ${m.def.name} dies.` : ''));
         } else s.log.push(`${c.name} misses ${m.def.name}.`);
@@ -424,7 +427,7 @@ export function partyAct(s: CombatState, party: Party, rng: RngInstance, action:
     }
     case 'flee': {
       const up = party.members.filter((m) => !isDown(m));
-      const ps = up.reduce((a, m) => a + m.stats.speed, 0) / Math.max(1, up.length);
+      const ps = up.reduce((a, m) => a + statOf(m, 'speed'), 0) / Math.max(1, up.length);
       const alive = aliveMonsters(s).map((i) => s.monsters[i]);
       const ms = alive.reduce((a, m) => a + m.def.speed, 0) / Math.max(1, alive.length);
       const p = Math.max(0.15, Math.min(0.9, 0.5 + (ps - ms) * 0.03));
@@ -447,16 +450,25 @@ function hurtMonster(s: CombatState, m: MonsterInst, dmg: number): void {
   m.conditions = m.conditions.filter((k) => k !== 'asleep');
 }
 
+/**
+ * What an element does to a monster, a spell's or a blow's die (#855): its damage by `elementDamage`,
+ * which the company now has seen; and fire that lands keeps one that mends from mending at this
+ * round's end (`regenerate`).
+ */
+function elemental(s: CombatState, m: MonsterInst, el: Element | undefined, d: number, pierce = false): number {
+  if (el) (s.seen[m.def.id] ??= {})[el] = elementMult(m.def, el);
+  const took = elementDamage(m.def, el, d, pierce);
+  if (el === 'fire' && took > 0 && m.def.regen) m.burnt = true;
+  return took;
+}
+
 function castSpell(s: CombatState, party: Party, rng: RngInstance, c: Character, sp: SpellDef, target: number, element?: Element): void {
   // A damage spell's roll on one monster: its dice lifted by the caster's ranks, then Spellfire, then
-  // what its element does to the monster, which the company now has seen.
+  // what its element does to the monster (`elemental`).
   let gloved = 0;
   const dmgOf = (m: MonsterInst): number => {
     const d = Math.round(roll(rng, spellDice(sp, c.level, s.spellsGrowTo), sp.sides ?? 4, 0) * rankMult(c, s.rankStep)) + (hasTrait(c, 'spellfire') ? SPELLFIRE_DMG : 0);
-    if (sp.element) (s.seen[m.def.id] ??= {})[sp.element] = elementMult(m.def, sp.element);
-    const took = elementDamage(m.def, sp.element, d, pierces(c));
-    // Fire that lands keeps one that mends from mending at this round's end (`regenerate`).
-    if (sp.element === 'fire' && took > 0 && m.def.regen) m.burnt = true;
+    const took = elemental(s, m, sp.element, d, pierces(c));
     // The Hearth's light passes through a machine, doing nothing.
     if (sp.element === 'holy' && took === 0 && m.def.kind === 'machine') gloved++;
     return took;

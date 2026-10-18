@@ -469,6 +469,7 @@
         "e10_west",
         "e10_wind",
         "e11_cairn",
+        "e11_clerk",
         "e11_cones",
         "e11_draught",
         "e11_end",
@@ -477,6 +478,7 @@
         "e11_kill",
         "e11_pack",
         "e11_road",
+        "e11_roll",
         "e11_shrine",
         "e11_skins",
         "e11_steppe",
@@ -2772,6 +2774,7 @@
       "size": "16x16",
       "used": [
         "oc1_board",
+        "oc1_cup",
         "oc1_door",
         "oc1_hall",
         "oc1_kilns",
@@ -2780,13 +2783,16 @@
         "oc1_square",
         "oc1_stall",
         "oc1_street",
+        "oc1_study",
         "oc1_table"
       ],
       "groups": [
         "oc1_drake",
         "oc1_husks"
       ],
-      "doors": []
+      "doors": [
+        "2,9"
+      ]
     },
     "old_cinder2": {
       "size": "16x16",
@@ -3540,6 +3546,7 @@
     "compact_cask",
     "donations",
     "f10_archdruid_met",
+    "f11_hermit_met",
     "f11_lightbearer_met",
     "g11_heir_met",
     "gap_watch",
@@ -3835,6 +3842,7 @@
     "q_ring_spoke",
     "q_road_east",
     "q_road_west",
+    "q_roll_given",
     "q_rook_orders",
     "q_rook_read",
     "q_salt_done",
@@ -4216,6 +4224,7 @@
     "torch",
     "tower_shield",
     "tower_shield+1",
+    "town_roll",
     "treaty_seal",
     "walker_damper",
     "walker_iron",

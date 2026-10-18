@@ -1,10 +1,11 @@
 // What an item is. Content, not state: a character's inventory holds item ids and the tables say
 // what those ids do (src/content/items.ts, and each area's items.ts). Weapons roll `dice` d`sides` +
 // `bonus`; armour adds `ac`. A +N item's plus is counted in its `bonus` or `ac` already; a weapon's
-// adds to to-hit too (`attackBonus`).
+// adds to to-hit too (`attackBonus`). Past a plus, an item may raise a stat while it is borne
+// (`statOf`) and a weapon's blows may carry an element (an added die, `ELEMENT_DIE`).
 import { ITEMS } from '../content/index.ts';
 import type { Feature } from './map.ts';
-import type { Party } from './party.ts';
+import type { Party, Stat } from './party.ts';
 import type { Element } from './spells.ts';
 import type { SkillId } from './skills.ts';
 
@@ -38,6 +39,14 @@ export interface ItemDef {
   use?: { heal?: number; sp?: number; cure?: readonly string[]; food?: number };
   /** Elements its bearer takes half from: worn where it has a slot, carried in the pack where it has none. */
   resist?: readonly Element[];
+  /**
+   * Stats it raises while it is borne, by the rule of `resist` (`statOf`). Might, accuracy, speed and
+   * personality are read in a fight; endurance, intellect and luck have no live effect (DESIGN §5). It
+   * never touches `Character.stats`, so a save holds no raise.
+   */
+  stat?: Partial<Record<Stat, number>>;
+  /** The element a weapon's blows carry: an added die of it on each blow that lands (`ELEMENT_DIE`, DESIGN §6). */
+  element?: Element;
   /** Words to read: a letter, read from the pack. */
   text?: readonly string[];
   /**
@@ -53,8 +62,14 @@ export function item(id: string): ItemDef {
   return d;
 }
 
-/** A weapon's mean blow, its bonus counted: the harness's measure of a weapon, and the pilot's (`better`, #719). */
-export const hits = (d: ItemDef): number => ((d.dice ?? 1) * ((d.sides ?? 4) + 1)) / 2 + (d.bonus ?? 0);
+/** The added die of an elemental weapon's blow (`ItemDef.element`): 1d6 of its element, through `elementDamage`. */
+export const ELEMENT_DIE = 6;
+
+/**
+ * A weapon's mean blow, its bonus counted and an element's die at its mean: the harness's measure of
+ * a weapon, the ladder's and the pilot's (`better`, #719).
+ */
+export const hits = (d: ItemDef): number => ((d.dice ?? 1) * ((d.sides ?? 4) + 1)) / 2 + (d.bonus ?? 0) + (d.element ? (ELEMENT_DIE + 1) / 2 : 0);
 
 type Shop = Extract<Feature, { kind: 'shop' }>;
 
@@ -62,6 +77,12 @@ type Shop = Extract<Feature, { kind: 'shop' }>;
 export function priceIn(shop: Shop, id: string): number {
   return shop.prices?.[id] ?? item(id).price;
 }
+
+/**
+ * What a shop pays the company for an item of this price: half, rounded down, so one priced at
+ * nothing is never bought. The company is asked so that a clause of its own may change the share.
+ */
+export function sellPrice(party: Party, price: number): number { return Math.floor(price / 2); }
 
 /** Buy an item from a shop: null when the party is short of gold; food goes to the stores, the rest to the bag. */
 export function buy(party: Party, shop: Shop, id: string): ItemDef | null {

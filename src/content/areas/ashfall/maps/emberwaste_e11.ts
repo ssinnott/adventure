@@ -5,7 +5,8 @@
 // Waste's ash going on to the mountains, its cinder cones, a knapper at the flow's edge, his camp under
 // the mountain's foot and a cairn with a cup turned down on it. In the hollows by the flow the young
 // drakes lie up on the warm, the box's one fight; and beside them, where a crack in the rocks breathes
-// cold air, a tube under the flow with a man's bones in it by his pack.
+// cold air, a tube under the flow with a man's bones in it by his pack, and at its end a roll of hide he
+// pushed ahead of him (#859).
 // In from E10 over its south edge, walked: E10's 0,31 to 31,31 meets 0,0 to 31,0 here square for square,
 // the steppe, the grass, the hills, the ash and the flow at 23 and 24 both sides (the flow at 22 here
 // against E10's ash, the rock at 31 against its ash). The east edge meets F11's west at the ash, rows 19
@@ -39,8 +40,8 @@ export const EMBERWASTE_E11: MapDef = {
     'M^^^^^^^^,,^^^^!!^^^aaaaaaaaarrr',
     'MMM^^^^^^^^^^^!!^rSr^aaaaaaaaaar',
     'MMMMM^^^^^^^^!!!^r:r^aaaaaaaaaar',
-    'MMMMMM^^^^^^^!!^^rrr^^aaaaaaaaar',
-    'MMMMMMMM^^^^!!^^^^^^^^aaaaaaaaar',
+    'MMMMMM^^^^^^^!!^^r:r^^aaaaaaaaar',
+    'MMMMMMMM^^^^!!^^^^r^^^aaaaaaaaar',
     'MMMMMMMMMM^!!^^^^^^,^^aaaaaaaaaa',
     'MMMMMMMMMMM!!^^^^^^^,aaaaaaaaaaa',
     'MMMMMMMMMM!!^^^^^^^^^,aaaaaaaaaa',
@@ -86,6 +87,10 @@ export const EMBERWASTE_E11: MapDef = {
     { kind: 'event', x: 18, y: 11, id: 'e11_draught', once: true, text: 'Out of a crack in the rocks beside the flow comes a draught of cold air.' },
     { kind: 'event', x: 18, y: 13, id: 'e11_tube', once: true, text: 'A tube of cold stone running in under the flow, and in it a man\'s bones beside his pack.' },
     { kind: 'chest', x: 18, y: 13, id: 'e11_pack', gold: 100, items: ['potion_sp_great'] },
+    // The tube's second square (#859), the favour Old Cinder's scholar asks for the Master of magic: the buried
+    // town's roll, which the man took west on the carts' road and pushed ahead of him as far as he went.
+    { kind: 'event', x: 18, y: 14, id: 'e11_clerk', once: true, text: 'The tube ends in a fall of rock. At the foot of it a roll of hide lies tied with cord, where a hand pushed it ahead.' },
+    { kind: 'chest', x: 18, y: 14, id: 'e11_roll', gold: 0, items: ['town_roll'] },
   ],
   secrets: [{ x: 18, y: 12, hint: 'e11_draught' }],
   encounters: [

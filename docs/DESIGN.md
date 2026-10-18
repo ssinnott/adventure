@@ -302,7 +302,12 @@ country, band 26 to 28.
 
 ### Stats, skills, mastery
 
-- Seven stats: Might, Intellect, Personality, Endurance, Accuracy, Speed, Luck.
+- Seven stats: Might, Intellect, Personality, Endurance, Accuracy, Speed, Luck. Four do something in
+  a fight: Might a blow's damage, Accuracy its to-hit, Speed armour, the turn's order and a flight,
+  Personality a heal. Endurance and the spell stat are read when a level is gained, Luck by nothing.
+  A stat as a member stands is their own raised by what they bear (`statOf`, `ItemDef.stat`, #855):
+  what they wear and the slotless items in their own pack, as a resistance is borne; armour in the
+  pack and the bag raise nothing, and a save holds no raise. No item of the content raises one yet.
 - **Secondary skills,** three to a guild, taught to its members for a price (§8):
   *Cartographer, Pathfinder, Mountaineer, Swimmer, Linguist, Merchant, Lockpick, Danger Sense,
   Perception, Arms Master, Spirit Sense, Navigator.* Built with #538: Linguist, the first, a list on
@@ -352,6 +357,14 @@ Decided by the owner's delegate for #18, each the owner's to overturn:
    Wrackholm, Cairnmoor and the Whitespine have no town and need none: the town before teaches.
 4. Master by a person found, never sought: Expert in the line, level 25, a favour and 5,000 gold.
 5. Inert for every check until #865: the gate's and the harness's company takes no tier.
+6. An item may raise a stat while it is borne (`ItemDef.stat`) and a weapon's blows carry an element
+   (`ItemDef.element`, §6); no charge, mark or state. #847 adds the artifact's on top (#855).
+7. Might, Accuracy, Speed and Personality do something live; this epic's items raise one by 3, a step.
+   Endurance, Intellect and Luck have no live effect and get none here: #847's, if an artifact wants one.
+8. The sheet prints a stat's total with its raise and the weapon's element, and a shop says both.
+   What a shop pays is `sellPrice` in `items.ts`, asked of the company (#857 adds the Merchant's).
+9. Inert until #861: no item of the content carries either, and the gate and the harness never wear
+   one (off the ladder, as the charms are).
 
 Decided by the builder for #852, each the owner's to overturn:
 
@@ -378,6 +391,34 @@ Decided by the builder for #852, each the owner's to overturn:
     `mastery` suite walks the Sail Loft's menus in a Game.
 11. The pilot's talk leaves a tier's menu as it leaves a skill's (#719's decision 12): at a Master's
     person it would otherwise take the cheapest priced row.
+
+Decided by the builder for #855, each the owner's to overturn:
+
+1. A raise is borne as a resistance is: `borne` states the rule and `resists` reads it; `statOf`
+   counts by it without making the list, since every blow and every AC reads it, and looks nothing
+   up while no slotted or no slotless item raises a stat (`itemsChanged` resets that after a change
+   to the table, as a test's fixture makes). Reading every slot cost the gate 15% more time.
+2. A level gained reads the bare stat, Endurance's hit points and the spell stat's points alike: a
+   raise lasts while it is borne, and a gain made with it would outlast it.
+3. A blow's die never pierces: a sorcerer's piercing is its spells' (§7 Ranks).
+4. The die is rolled after the steel and only for a weapon with an element, so a plain blow draws
+   what it drew before and no figure moves.
+5. The log's line is as it was, the die in the sum ("Bram hits Target for 9."): what an element did
+   is learnt from the numbers, as a spell's is.
+6. The sheet prints the total a fight reads and the raise after it in brackets, in yellow ("SPE
+   13(+3)": 13, of which 3 is borne). The ruling's "SPD 16+3" read either way, and "16+3" reads as
+   19. The labels stay the first three letters, SPE and not SPD.
+7. The WEAPON line puts the element before the tier ("WEAPON Grey Blade, LIGHTNING, EXPERT"): the
+   element is the weapon's, the tier the member's.
+8. A shop says the element after the dice and a raise last ("2d6 lightning", "AC+2 speed+3").
+9. `sellPrice(party, price)` takes the company though it reads nothing of it yet: the Merchant's
+   clause (#857) goes there. The shops and quests suites read it in place of their copies.
+10. The ladder's `worth` reads `hits` for a weapon, and the harness's blow `statOf`, in place of
+    their own copies: the same numbers today, one measure after.
+11. The `items` suite holds the content to the shape alone and counts what carries either, so the
+    areas may add. An elemental weapon's name stays to 26 characters, for its WEAPON line with
+    lightning and a tier to end by 334 px beside the items column (331 at 26, 337 at 27): the
+    road's longest, Auke's Count, Short Sword +2, would not.
 
 The secondary skills of #856, Perception, Spirit Sense, Danger Sense and Arms Master:
 
@@ -452,6 +493,19 @@ Decided by the builder for #856, each the owner's to overturn:
   delegate, 16 October 2026 (#18, #808).
 - **Respawn:** cleared areas repopulate on a long timer with weaker groups, and never repopulate
   bosses or keyed rooms.
+- **An elemental weapon** adds 1d6 of its element to each blow that lands (`ELEMENT_DIE`, #855):
+  nothing to a monster immune to it, half to one that resists it, half again to one weak to it, as a
+  spell's (`elementDamage`); the steel lands as ever, so no blow is nothing. Its fire stops a mender
+  mending that round, and the company learns the element's share, as from a spell. A weapon's
+  measure (`hits`: the harness's, the ladder's, the pilot's) counts the die at 3.5. No item of the
+  content carries an element yet.
+
+Decided by the owner's delegate for #18, each the owner's to overturn:
+
+1. An element on a blow is an added die, not the whole blow: 38 monsters are immune to nature and 24
+   to holy, and a whole blow of either would do them nothing.
+2. Fire's die marks a mender burnt as a spell's fire does, and the element goes into what the
+   company has seen, so the bot learns from it too.
 
 Difficulty design: a region's band is a promise. Inside it, the hard fights are hard because of
 composition and terrain (a caster behind a wall of shields, a narrow corridor, a room that goes
@@ -973,7 +1027,8 @@ the choice: the Core waits.
 
 Two Masters stand on the road and not in the reach, each found and never told (§5): the Wold's old
 Rider at arms and Old Cinder's scholar in magic (#859). The Rider is hidden in the rock of D10's small
-mesa, with a rumour at Akordu and a bow to fetch (#858, docs/areas/glasswold.md §6). The reach may
+mesa, with a rumour at Akordu and a bow to fetch (#858, docs/areas/glasswold.md §6). The scholar is hidden behind a secret door in the buried town, with a
+rumour from F11's hermit and a roll to fetch (#859, docs/areas/ashfall.md §6). The reach may
 hold more.
 
 Decided by the owner's delegate for #18, each the owner's to overturn:
