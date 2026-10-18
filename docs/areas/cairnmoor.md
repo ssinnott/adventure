@@ -22,7 +22,9 @@ the world map and its walkthrough; its chapter of the one quest, The Ring, in `c
 side quests in `quests.ts` and its guild quest, the Lanterns' ring ask, in `guilds.ts`, #439); it
 has no businesses, so no rooms. Its ids: the area
 `cairnmoor`, its zones `highmoor` and `cairnfield`, the dungeon `cairns` and `cairns2` (the ids stay
-under the new name, NAMES §3).
+under the new name, NAMES §3). Two finds off the ladder lie off the road, a hammer whose blows carry
+fire under a cairn on N8 and a mail that raises might in the area's first locked chest, in a cell of
+Carn Dubh (#862, §4.8).
 
 ---
 
@@ -154,7 +156,8 @@ and M8, the country behind (#484):
   who knows which cairn is oldest; at the road's head a milestone, the hill folk's cup-stone and a
   camp in the notch's lee. Five groups: ravens among the first cairns, bog bodies out of the pool,
   cursing cairn wights at the open cairn and at the Watcher's grave and moor hounds at the road's
-  head by night.
+  head by night. At the field's end, where the marsh begins, a cairn with its top stones scorched,
+  over a hammer whose blows carry fire (§4.8).
 - **Fionnlios's box** (O7, `highmoor_o7`, core, band 18–19; #477): the peat-cutter's track on from
   N7 east and up onto a rise of rock to the Stone Ring, twelve stones standing and a thirteenth
   fallen across the east gap, a camp at its heart and the ground inside bare of snow; there by night
@@ -186,7 +189,8 @@ and M8, the country behind (#484):
   dead in rows down both sides and two courts of wights; at its end a seat cut from one stone with
   the Cairn King on it, crowned, a boss that curses. Behind the seat a door that nothing opens. Off
   the stair, found from the rows, a cell of the dead with the richest grave-gold and the Hill Torc
-  (§4.6).
+  (§4.6). South of the end cell, found from a stain of rust, a cell cut in the rock with the area's
+  first locked chest (§4.8).
 - **The drovers' grazing** (M7, `cairnfield_m7`, country, band 18–19; #484): the summer grazing west
   of the drove road under the Kilns' hills, in from N7's heather at the east edge. The drovers'
   shielings in the north, three turf huts with their fire before them and a shepherd, who says black
@@ -225,7 +229,7 @@ gold (§8); 15,587 xp since #865 re-sized M8's crag group. O7's Banded Staff +1 
 the area (`ITEMS_AHEAD`, `src/content/index.ts`) as the Kilns' step was, until N7 took the table
 into its Area, and owed to #477 until it was placed, in O7's hollow (§4.3); N7's cache holds a
 second of the Kilns' Forge Hammer +1 (§4.2), O8's hoard a second of the Kilns' Seax +1 (§4.4), M8's howff a
-second of the Kilns' Forge Shield +1 (§4.7) and Carn Dubh's cell off the stair the Hill Torc, a piece of its own (§4.6). Of the systems it waits on,
+second of the Kilns' Forge Shield +1 (§4.7), Carn Dubh's cell off the stair the Hill Torc, a piece of its own (§4.6). Two more pieces of its own, off the ladder, lie off the road: the Beacon Hammer under N8's beacon cairn and Cairnbuilder's Mail in the locked chest of a cell off Carn Dubh's end cell (§4.8). Of the systems it waits on,
 the rest of #432's, ice and lying snow underfoot (#536; heather is #162's), regeneration and curse
 (#537), the bot that plays them (#541) and the drove road's coach (#539) are built, and
 docs/SLICE.md and docs/MONSTERS.md say what each does; the coach runs, Kilnhaven (#469) and Rime
@@ -768,6 +772,69 @@ delegate (§9, #484's).
     floor (the hounds and the troll by night) and finds each secret from its hint, each shut but
     through its door.
 
+### 4.8 Two finds off the road (#862): the Beacon Hammer and Cairnbuilder's Mail
+
+Built for the third line of #18, magic items past a plus and a resistance (the ruling of 17 October
+2026; the item shape is #855's and the locked chest #857's): the area's two of the eight, found and
+never told, one of them in the area's first locked chest. Both lie off the ladder, as the four charms
+do, so no figure of the gate, the harness, the ladder or the curve moves (§9, the builder's 5 and 7).
+
+- **Purpose.** An answer to the tor troll, which mends each round but a round fire struck it (§7), and
+  a prize for the company that has a Lockpick, a set of picks or an iron key. None of the area's
+  seven monsters is immune to fire, resists it or is weak to it: each takes the whole die.
+- **The Beacon Hammer** (`beacon_hammer`). A hammer of the forge hammer's dice, bonus and wearers (the
+  knight, the paladin, the ranger, the barbarian and the cleric), 2d10+3 and one-handed, whose blows
+  carry fire: 1d6 of fire is added to each blow that lands (DESIGN §6), and a troll it lands on does
+  not mend that round (`burnt`). Priced 1,600 gold.
+- **Cairnbuilder's Mail** (`cairnbuilders_mail`). Mail of dwarf mail's armour class, 11, and wearers
+  (the knight, the paladin, the ranger, the thief, the barbarian, the bard and the druid) that raises
+  might by 3 while it is worn and by nothing in the pack: one step on each blow of the hand, and none
+  on a bow's. Priced 1,600 gold.
+- **`hits()`.** The hammer's steel is the forge hammer's, 14.0 a blow, a rung under the ladder's piece
+  from 19, the Forge Hammer +1's 15.0. Fire's 1d6 counts 3.5, so the hammer hits 17.5: 3.5 over the
+  ladder's hammer at 17 and 2.5 over it at 19, the gain being the die less the plus the ladder has by
+  then. The mail has no blow to count; its armour class is the ladder's, dwarf mail's.
+- **Where.** The hammer lies under a cairn on N8 at 28,20, at the field's end where the marsh begins,
+  its top stones scorched black: 23 squares from the drove road, 15 from the nearest group and 24 from
+  the nearest site of the world map, and no quest goes near it. It holds no gold. The mail lies in a
+  locked chest at 13,12 on Carn Dubh's first level, in a cell cut in the rock at 12 to 14, 11 and 12,
+  south of the end cell and shut behind a secret door at 13,10.
+- **The secret and its hint.** At 13,9, the end cell's last square before its south wall, seven
+  squares from the nearest group and a step south of the stair's square in the end cell,
+  a stain of rust runs down the wall from one joint; searched there facing south, the wall gives. In the cell a chest bound in iron, its lock
+  red with rust. The chest says "A locked chest." stood on and opens to a Lockpick standing or a set
+  of picks carried ("Ottilie picks the lock.", the key kept) or to an iron key, which it spends; else
+  it says "Locked." and nothing changes. It holds no key and no quest's item and nothing needs it; the pilot walks past it
+  as it walks past a locked door with no key (PILOT, #857).
+- **New here.** Nothing claimed (§7).
+- **Finds.** The two, with no gold in either; no person, sign, event or quest names them.
+- **Pay.** None: no group is added or moved and no gold lies in either, so the clear's xp and
+  gold stand.
+
+- **As built** (#862):
+  - **N8** (`cairnfield_n8`) gains the cairn `n8_beacon` at 28,20 on open heather: "A cairn at the
+    marsh's edge, its top stones scorched black." Lifted, it says that and "Under the stones: Beacon
+    Hammer." and holds no gold. No row, group, exit or other id of the map moves.
+  - **Carn Dubh's first level** (`cairns`, 16 by 16) gains the secret door 13,10 (a wall square made
+    `S`), the cell at 12 to 14, 11 and 12 (six squares cut in rock that was solid), the hint `cd1_rust`
+    at 13,9 ("A stain of rust runs down the south wall from one joint."), the event `cd1_cell` at
+    13,11 ("A cell cut in the rock, narrow as a grave. In it a chest bound in iron, its lock red with
+    rust.") and the locked chest `cd1_kist` at 13,12, holding Cairnbuilder's Mail and no gold. The map
+    keeps its size, its exits and every id and square it had; its door squares gain 13,10.
+  - **Items** (`items.ts`): `beaconHammer` is the forge hammer's spread with its own id, name,
+    price and `element: 'fire'`; `cairnbuildersMail` is dwarf mail's with its own id, name and price
+    and `stat: { might: 3 }`. Neither has a `GEAR` row, a shop or a text (gear's text is read
+    nowhere: the pack equips it). The sheet's line for the hammer is "WEAPON Beacon Hammer, FIRE".
+  - **Measured.** N8 now has 34 points of interest (33), still 99.6% within 8 steps and the furthest
+    9; Carn Dubh's first level 20 (17), 100.0% within 7. The curve's line for the area's dearest
+    find stands at the Steel Bow +1's 1,650 (§9, the builder's 5).
+  - **Walked.** The walkthrough finds the cairn on N8, after the strongbox, and in `carnDubh` the
+    rust, the search, the cell and the chest, opened five ways on the real chest: by a company with
+    neither a Lockpick standing nor a key ("A locked chest. Locked.", the chest unspent), with an iron
+    key and the thief down (the key spent), with the thief standing (the lock picked and the key
+    kept), with Pender's set of picks in the cleric's pack and the thief down (#860) and by the walk's
+    own company; `offTheLadder` holds both finds to their rules.
+
 ## 5. The one quest here
 
 Cairnmoor's chapter is The Ring (`chapter.ts`, #481, a working title), joined after the Kilns' The
@@ -922,7 +989,8 @@ tarn are among the landmarks above.
 - **Gold.** Training six members from 18 to 20 costs 8,880 with today's `trainPrice`, and the second
   prestiges about 4,000 each (DESIGN §5, #19); nothing on the moor sells or trains, so a clear's
   chests and drops must carry the gold to Rime Lodge, and the coach's fare (#539) with it. The band's
-  price window is 4,000 (#535): no find on the moor is dearer, the ladder's there 1,450 to 1,550. As
+  price window is 4,000 (#535): no find on the moor is dearer, the ladder's there 1,450 to 1,550 and
+  the two off it 1,600 (§4.8). As
   built: N7 holds 1,410 (#476), its share by the brief's 1,400 of the 8,880, in its cairn and the
   drovers' cache; its monsters carry none. N8 holds 1,510 (#479), its share by the brief's 1,500:
   970 in the coach's strongbox, 300 in the field's cairn and the rest on its six wights, 20 to 60
@@ -936,7 +1004,8 @@ tarn are among the landmarks above.
   in the cairn at the mountains' foot, with a Sapphire Vial, and 60 in the howff, with a Forge Shield
   +1; their monsters carry none. The seven hold 8,615 of the 8,880. The Watcher pays 200 for his page
   (#482) and What the Ring Said 300 (#439); no answer pays gold. A clear gives 9,115, 1.026 times the
-  ask, the 225 that stood short closed (§9, #484's 6).
+  ask, the 225 that stood short closed (§9, #484's 6). The beacon cairn and the locked chest hold no
+  gold (#862), so it stands.
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
   (docs/areas/thornmark.md §9, 17): a company at 18 wins nine in ten of N7's fights and walks the
   drove road resting at its camp; one at 16 wins no more than one in four. The Cairn King is won
@@ -966,11 +1035,12 @@ tarn are among the landmarks above.
   ring's inside is held to no feature but the camp, the voice and the bare ground's line, so it
   needs no exception. As built: N7 99.2% within 8 steps and the furthest 10, with one sign among its
   26 points (#476). N8 99.6% within 8 steps and the furthest 9, with no sign among its 31 points
-  (#479), 33 now, the man in the healer's coat by the coach among them (#494). O7 99.3% within 8
+  (#479), 33 now, the man in the healer's coat by the coach among them (#494), and 34 with the beacon
+  cairn (#862). O7 99.3% within 8
   steps and the furthest 10, with no sign among its 31 points (#477). O8
   100.0% within 12 steps, the country floor, and the furthest 9, with no sign among its 28 points
   (#478), 29 with the last face whole (#482). Carn Dubh's two levels 100.0% within 7 steps, the furthest 2 and 3, with no sign among
-  their 17 and 11 points (#480). M7 100.0% within 12 steps, the furthest 12, with no sign among its
+  their 17 and 11 points (#480), the first 20 with the cell off its end cell (#862). M7 100.0% within 12 steps, the furthest 12, with no sign among its
   19 points, and M8 99.7%, the furthest 13, with no sign among its 17 (#484).
 
 ## 9. Decisions
@@ -1415,6 +1485,61 @@ Decided by delegate for #484, each the owner's to overturn:
 15. **M8's howff door stands at 6,27, not 5,28:** the art check wants every zone's wall faces over the
     cap under the old dressing rule; the door is M8's only counted wall, and at 5,28 the old roll
     (0.977) left it undressed, so M8 failed; at 6,27 it rolls under 0.7.
+
+Decided by the owner's delegate for #18, each the owner's to overturn:
+
+1. **An elemental weapon,** its blows carrying fire (#862's call 1, built as §4.8): its dice a rung
+   under the ladder's at the band, so the die is the gain, with a class list as its kind has. If the
+   area session finds better: an element its own area's monsters are not immune to and the next
+   area's are weak to where one is.
+2. **A stat item,** a weapon or mail raising might by 3 while worn (#862's call 2): slotted, so one is
+   worn at a time.
+3. **Found, off the quest's path** (#862's call 3), in a cairn off the drove road or behind a hinted
+   secret door of the cairns; one of the two in a locked chest, the first the area holds. Each priced
+   inside Cairnmoor's window, sold by no shop and sellable at half as all found gear is. Off the
+   ladder: no `GEAR` row, so no figure moves.
+4. **Names and texts pass the pillars** (#862's call 4), two lines to a find.
+
+Decided by the builder for #862, each the owner's to overturn:
+
+1. **Two places,** the hammer under a new cairn on N8 at 28,20 (23 squares from the drove road, 15 from
+   the nearest group, 24 from the nearest site of the world map) and the mail in a new cell of Carn
+   Dubh's first level behind a secret door at 13,10: all seven of the area's secrets already hold a
+   reward, and the first level had none.
+2. **The mail is the locked one.** The hammer is the troll's answer and should be the easier find; the
+   mail is the prize for a Lockpick standing, a set of picks (Pender's, 750 at Saltmouth, #860) or an
+   iron key. The premade six's thief is born to Lockpick, so a company that has not lost her opens it
+   at once.
+3. **Fire stands.** The rule above would pick lightning, which 3 of Rimewater's 6 monsters are weak to
+   where none of either area is weak to fire; but the troll mends from anything but fire (the issue's
+   Why, `burnt`) and the epic's other three weapons are lightning (the ruling's D2). Lightning is one
+   word in `items.ts`, and the walkthrough's fire and troll checks change with it.
+4. **A hammer:** the forge hammer's dice, bonus and wearers (the knight, the paladin, the ranger, the
+   barbarian and the cleric), one-handed, so a shield stays. Its steel is the plain piece where the
+   ladder wears the plus from 19: 14.0 a blow, and 17.5 with the die, against the ladder's 14.0 at 17
+   and 15.0 (Forge Hammer +1) at 19.
+5. **Both priced 1,600.** Inside the window of 4,000, above the Forge Hammer +1's 1,550 and under the
+   area's dearest find, the Steel Bow +1's 1,650, which keeps the curve suite's line for it as
+   main's, byte for byte. Each sells back at 800. Dwarf mail is 2,000 at the forge; a find is priced
+   as finds are, under the dearest.
+6. **Mail, not a weapon.** It is worn with any weapon, the hammer among them, and has no steel to
+   count: its armour class is dwarf mail's, 11, the ladder's at 17, with dwarf mail's seven wearers.
+   Might helps the blows of the hand only, not a bow's.
+7. **No gold in either,** so the clear's pay and every curve figure stand.
+8. **The hint is rust:** a stain runs down the end cell's south wall from one joint, and the cell's
+   own words give a chest bound in iron with its lock red with rust. The square is calm (the nearest group, `cd1_bodies2` at 7,8, is seven away) and one step
+   south of the stair's square in the same small cell, so every company that goes down is beside it.
+9. **No text on either piece:** gear's `text` is read nowhere, as the pack equips it. The words are
+   the cairn's and the cell's.
+10. **The names:** Beacon Hammer, for the scorched cairn that holds it (13 characters, so the sheet's
+    line "WEAPON Beacon Hammer, FIRE" ends well inside its column), and Cairnbuilder's Mail, for the hill
+    folk who built the cairns (§10; 19 characters).
+11. **Ids stay once shipped:** `beacon_hammer`, `cairnbuilders_mail`, `n8_beacon`, `cd1_kist`,
+    `cd1_rust` and `cd1_cell`, and the door square 13,10 on `cairns`.
+12. **The pilot** is #857's: a locked chest it cannot open it presses on once and walks past, as it
+    walks past a locked door with no key. This chest lies behind a secret door in the end cell: no goal names the cell, and
+    the Watcher's tally, which does go into Carn Dubh, runs north through the door at 11,3 and ends at his cell;
+    no `FULLRUN=all` run was made.
 
 
 ## 10. Names

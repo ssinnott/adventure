@@ -10,15 +10,18 @@
 // Dubh's door (DOOR) and the Cairns through it (#480): the cairn's passage, its cells of the dead in
 // rows and the Watcher's cell with the first page of his tally, the stair down to the smooth hall under
 // the cairn, the King on its seat and the door behind it, which nothing opens, and the cell off the
-// stair found from the rows; the milestone at the head; the hermit, who knows the oldest cairn; the
-// box's groups won at its floor, the wights cursing; and the coach's strongbox, found from the coach's
-// open door. Last, Fionnlios's box (O7, #477) in a walk of its own: the track on to the ring, the voice
+// stair found from the rows, and (#862) the cell south of the end cell, found from a stain of rust,
+// with the area's first locked chest, refused to a company with neither a Lockpick standing nor an iron
+// key; the milestone at the head; the hermit, who knows the oldest cairn; the
+// box's groups won at its floor, the wights cursing; the coach's strongbox, found from the coach's
+// open door; and the beacon cairn at the marsh's edge (#862), with a hammer under it whose blows carry
+// fire. Last, Fionnlios's box (O7, #477) in a walk of its own: the track on to the ring, the voice
 // there by night, the Watcher and the piper, the groups and the hollow (stoneRing); then the bog (O8,
 // #478), off the road, in another (theBog), and the country behind, M7 and M8 (#484), in a third
 // (theGrazing). Then its chapter, The Ring (#481), played at 18, 19 and 20
 // in order and with the road's head taken first, resting inside the ring by night (theRing); and its
 // side quests (#482): the Watcher's tally, the ring on the bog body and the faces on the tors, each
-// answered every way (sideQuests).
+// answered every way (sideQuests). The last walk holds the two finds to their rules (offTheLadder, #862).
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, see, fight, listen, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest, type Walk, type Step } from '../../../../tools/walk.ts';
 import { NORTH, SOUTH, EAST, WEST } from '../../../game/types.ts';
@@ -29,9 +32,16 @@ import { worldGrid } from '../../../game/atlas.ts';
 import { meet, heard, answer } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
 import { GameMap } from '../../../game/map.ts';
-import type { MapDef, MapZone } from '../../../game/map.ts';
+import type { Feature, MapDef, MapZone } from '../../../game/map.ts';
 import { LOCKS } from '../../locks.ts';
-import { xpForLevel, createCharacter, className, prestigeOf, takePrestige, PRESTIGES } from '../../../game/party.ts';
+import { xpForLevel, createCharacter, defaultParty, equip, statOf, className, prestigeOf, takePrestige, PRESTIGES } from '../../../game/party.ts';
+import { hits, sellPrice, ELEMENT_DIE } from '../../../game/items.ts';
+import { openCairn } from '../../../game/wilds.ts';
+import { startCombat, currentTurn, partyAct, monsterAct } from '../../../game/combat.ts';
+import { elementMult } from '../../../game/monsters.ts';
+import { CURVE } from '../../progression.ts';
+import { GEAR, outfit } from '../../../../tools/harness.ts';
+import { headlessGame } from '../../../../tools/tests/lib.ts';
 import { teach } from '../../../game/prestige.ts';
 import { sought, seekId } from '../../../game/seeking.ts';
 import { questLog } from '../../../game/quests.ts';
@@ -41,7 +51,7 @@ import { GATE } from '../kilns/maps/ironfells_n3.ts';
 import { DOOR, NOTCH } from './maps/cairnfield_n8.ts';
 import { CHAPTER } from './chapter.ts';
 import { MONSTERS } from './monsters.ts';
-import { GUILD_QUESTS } from '../../index.ts';
+import { GUILD_QUESTS, QUESTS } from '../../index.ts';
 import { rankFlag, takenFlag, doneFlag } from '../../guilds.ts';
 import { take, rankOf } from '../../../game/guilds.ts';
 import type { Party } from '../../../game/party.ts';
@@ -225,6 +235,26 @@ export const walkthrough: Walkthrough = (ok) => {
   const strongbox = N8.features!.find((f) => f.kind === 'chest' && f.id === 'n8_strongbox');
   ok(strongbox?.kind === 'chest' && strongbox.items.includes('steel_bow+1') && strongbox.gold === 970 && strongbox.x === 8 && strongbox.y === 9, 'in the strongbox, the fare for the lodge and a second Steel Bow +1');
 
+  // The beacon cairn (#862): at the field's end where the marsh begins, off the road and off every
+  // quest's way, its top stones scorched; under them a hammer whose blows carry fire, and no gold. The
+  // drove road, built or the atlas's, is more than ten squares from it, and no site of the world map is.
+  const beacon = N8.features!.find((f) => f.kind === 'cairn' && f.id === 'n8_beacon');
+  const nearRoad = (x: number, y: number, r: number): boolean => {
+    for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) if (Math.abs(dx) + Math.abs(dy) <= r && drove(x + dx, y + dy)) return true;
+    return false;
+  };
+  const [bx, by] = beacon?.kind === 'cairn' ? [n8.x + beacon.x, n8.y + beacon.y] : [0, 0];
+  ok(beacon?.kind === 'cairn' && beacon.items.join() === 'beacon_hammer' && beacon.gold === 0 && onN8(bx, by) && out.passable(bx, by) === 'ok'
+    && !nearRoad(bx, by, 10) && nearRoad(bx, by, 30) && ATLAS.sites.every((s) => Math.abs(s.at[0] - bx) + Math.abs(s.at[1] - by) > 10),
+  'the beacon cairn at 28,20 holds a hammer and no gold, on open ground more than ten squares from the drove road and from every site of the world map');
+  w.world.travel('cairnfield_n8', 28, 20, EAST);
+  const stones = beacon?.kind === 'cairn' ? openCairn(w.world, w.party, beacon) : [];
+  const again = beacon?.kind === 'cairn' ? openCairn(w.world, w.party, beacon) : [];
+  ok(stones.length === 2 && stones[1] === 'Under the stones: Beacon Hammer.' && again.join() === 'The cairn has been emptied.' && w.party.bag.filter((i) => i === 'beacon_hammer').length === 1 && w.world.used('n8_beacon'),
+    `lifted at the marsh's edge, the cairn gives the Beacon Hammer the once (${stones.join(' / ')})`);
+  ok(w.party.bag.includes('beacon_hammer') && w.party.bag.includes('cairnbuilders_mail'), 'both finds are in the walk\'s bag: the hammer from the cairn and the mail from the locked chest');
+  listen(w);
+
   // Fionnlios's box (O7, #477), in a walk of its own.
   stoneRing(ok);
   // The bog (O8, #478), off the road, in a walk of its own.
@@ -234,6 +264,8 @@ export const walkthrough: Walkthrough = (ok) => {
   // The chapter (#481) and the side quests (#482), each in walks of their own.
   theRing(ok);
   sideQuests(ok);
+  // The two finds, held to their rules (#862).
+  offTheLadder(ok);
 };
 
 /**
@@ -297,6 +329,52 @@ function carnDubh(w: Walk, ok: (cond: boolean, msg: string) => void): void {
     'under his hands, the first page of his tally, a letter read from the pack');
   ok(reached(L1, [L1.start.x, L1.start.y], [14, 3]) && reached(L1, [L1.start.x, L1.start.y], [14, 8]),
     'the cairn is walked from its door to the Watcher\'s cell and to the stair with nothing searched for');
+
+  // The secret of the end cell (#862): a stain of rust runs down its south wall from one joint; searched
+  // there, the wall gives on a cell cut in the rock, narrow as a grave, with the area's first locked chest
+  // in it. Walked, the cell is never reached but through that wall, and nothing the road or a quest turns
+  // on lies in it. The chest opens to a Lockpick standing or a set of picks carried, which keep the key, or
+  // to an iron key, which it spends, and to nothing else: the company the test leaves with none of them is
+  // refused. The premade six's thief is born to Lockpick, so the "neither", "key" and "picks" companies have
+  // her put down, and the "pick" one has her standing.
+  const start: [number, number] = [L1.start.x, L1.start.y];
+  ok(!reached(L1, start, [13, 11]) && !reached(L1, start, [13, 12]), 'the cell south of the end cell is reached only through its wall: the Watcher\'s cell and the stair are walked, and it is not');
+  see(w, 'cairns:cd1_rust');
+  w.world.travel('cairns', 13, 9, SOUTH);
+  let joint = false;
+  for (let i = 0; i < 20 && !joint; i++) joint = w.world.search();
+  const cut = joint ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(joint && cut.every((r) => r.kind === 'moved') && w.world.state.x === 13 && w.world.state.y === 11 && w.world.used('cd1_cell'), `searched at the stain, the wall gives on a cell cut in the rock (${at()})`);
+  const kist = L1.features!.find((f) => f.kind === 'chest' && f.id === 'cd1_kist');
+  ok(kist?.kind === 'chest' && kist.locked === true && kist.x === 13 && kist.y === 12 && kist.gold === 0 && kist.items.join() === 'cairnbuilders_mail',
+    'in the cell, a locked chest at 13,12 holding Cairnbuilder\'s Mail and no gold, no key and no quest\'s item');
+  /** The chest as the game opens it (a stand on it, then Space), for the company `setup` leaves: what the log says, whether it is spent, the mail taken and the keys left. */
+  const opens = (setup: (p: Party) => void): { said: string; spent: boolean; mail: boolean; keys: number } => {
+    const g = headlessGame(4), p = g.party;
+    setup(p);
+    g.world.travel('cairns', 13, 12, SOUTH);
+    const here = g.world.featureHere()!, from = g.log.length;
+    g.enterCell();
+    g.interact(here);
+    return { said: g.log.slice(from).join(' '), spent: g.world.used('cd1_kist'), mail: p.bag.includes('cairnbuilders_mail'), keys: p.bag.filter((i) => i === 'key_iron').length };
+  };
+  const thiefDown = (p: Party): void => { p.members.find((m) => m.cls === 'thief')!.conditions.push('dead'); };
+  const neither = opens(thiefDown), keyed = opens((p) => { thiefDown(p); p.bag.push('key_iron'); }), picked = opens(() => undefined);
+  const carried = opens((p) => { thiefDown(p); p.members.find((m) => m.cls === 'cleric')!.pack.push('set_of_picks'); });
+  ok(neither.said === 'A locked chest. Locked.' && !neither.spent && !neither.mail && neither.keys === 0,
+    `a company with neither a Lockpick standing nor an iron key is refused, and the chest stays shut ("${neither.said}")`);
+  ok(keyed.said === 'A locked chest. The lock turns. The key crumbles. You open the chest: Cairnbuilder\'s Mail.' && keyed.spent && keyed.mail && keyed.keys === 0,
+    `with her down and an iron key carried, the key is spent and the chest gives the mail ("${keyed.said}")`);
+  ok(picked.said === 'A locked chest. Ottilie picks the lock. You open the chest: Cairnbuilder\'s Mail.' && picked.spent && picked.mail,
+    `with the premade six's thief standing, born to Lockpick, she picks it and no key is needed ("${picked.said}")`);
+  ok(carried.said === 'A locked chest. Maren picks the lock. You open the chest: Cairnbuilder\'s Mail.' && carried.spent && carried.mail && carried.keys === 0,
+    `with her down and Pender's set of picks in the cleric's pack, the cleric picks it ("${carried.said}")`);
+  // The walk's own company, the thief standing: the lock is picked and the mail is in the bag.
+  w.world.travel('cairns', 13, 12, SOUTH);
+  const lock = w.world.unlock();
+  if (lock && kist?.kind === 'chest') { w.world.markUsed(kist.id); w.party.bag.push(...kist.items); }
+  ok(lock === 'Ottilie picks the lock.' && w.party.bag.includes('cairnbuilders_mail') && w.world.used('cd1_kist'), 'the walk\'s company, its thief standing, picks the lock and has the mail in the bag');
+  listen(w);
 
   // Under the cairn (19): the stair down through the bedrock to where the tool marks stop, and the hall
   // opening at its head, its walls smooth and one face with no join.
@@ -855,4 +933,82 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
       && shows(w, 'highmoor_o8', 'o8_whole') === finished && shows(w, 'highmoor_o8', 'o8_half') === !finished,
     `${entry}: ${finished ? 'the stonecutter at his fire, the last face whole, and its tor, put down, stands no more' : 'the stonecutter gone home, the last face half cut, and its tor up again by night'}`);
   }
+}
+
+/**
+ * The two finds off the ladder (#862, docs/areas/cairnmoor.md §4.8), held to their rules. The hammer's
+ * steel is the plain forge hammer's, a rung under the ladder's plus from 19, so the 1d6 of fire is the
+ * gain; the mail is the ladder's dwarf mail with might raised by 3 while it is worn and by nothing in
+ * the pack. Each costs more than nothing and no more than the area's window, is sold by no shop, has no
+ * row of the ladder (so `outfit` never dresses a company in one and no gate figure moves), sells back at
+ * half, and is named by no person, sign or quest.
+ */
+function offTheLadder(ok: (cond: boolean, msg: string) => void): void {
+  const hammer = ITEMS.beacon_hammer, mail = ITEMS.cairnbuilders_mail;
+  const plain = ITEMS.forge_hammer, plus = ITEMS['forge_hammer+1'], dwarf = ITEMS.dwarf_mail;
+  const rung = (id: string): number | undefined => GEAR.find(([, ids]) => ids.includes(id))?.[0];
+  const die = (ELEMENT_DIE + 1) / 2;
+
+  // The hammer: fire, on the forge hammer's steel and wearers, a rung under the ladder's plus.
+  ok(hammer.slot === 'weapon' && hammer.element === 'fire' && !hammer.plus && !hammer.stat
+    && hammer.dice === plain.dice && hammer.sides === plain.sides && hammer.bonus === plain.bonus && !hammer.twoHanded && hammer.classes?.join() === plain.classes?.join(),
+  'the Beacon Hammer is an ordinary one-handed hammer of the forge hammer\'s dice, bonus and wearers, its blows carrying fire, with no plus and no stat');
+  const gain = hits(hammer) - hits(plus);
+  ok(rung('forge_hammer') === 17 && rung('forge_hammer+1') === 19 && hits(plain) < hits(plus) && hits(hammer) === hits(plain) + die && gain > 0 && gain < die,
+    `its steel is a rung under the ladder's: the forge hammer's ${hits(plain)} a blow, where the ladder wears the plus (${hits(plus)}) from 19; with fire's 1d6 at ${die} it hits ${hits(hammer)}, ${gain} over the ladder's at 19 and less than the die`);
+
+  // Fire on the area's own troll, which mends from anything but fire: a blow of the hammer that lands
+  // marks it burnt, so it mends not that round, and a plain forge hammer's blow does not. None of the area's
+  // seven monsters takes fire amiss: all seven take it at full.
+  const troll = MONSTERS.find((m) => m.id === 'tor_troll')!;
+  const swing = (seed: number, weapon: string): { dmg: number; burnt: boolean } => {
+    const p = defaultParty(makeRng(1)), rng = makeRng(seed);
+    for (const c of p.members) c.hp = c.maxHp = 999;
+    equip(p.members[0], weapon);
+    const s = startCombat(p, [{ id: 'a', monsters: [troll] }], rng);
+    for (let guard = 0; guard < 50 && s.outcome === 'ongoing'; guard++) {
+      const t = currentTurn(s, p, rng);
+      if (!t) break;
+      if (t.side === 'monster') monsterAct(s, p, rng);
+      else if (t.i !== 0) partyAct(s, p, rng, { type: 'defend' });
+      else { const hp = s.monsters[0].hp; partyAct(s, p, rng, { type: 'attack', target: 0 }); return { dmg: hp - s.monsters[0].hp, burnt: !!s.monsters[0].burnt }; }
+    }
+    throw new Error('Bram never struck');
+  };
+  const seeds = Array.from({ length: 30 }, (_, i) => i + 1);
+  const fire = seeds.map((n) => swing(n, hammer.id)).filter((r) => r.dmg > 0), steel = seeds.map((n) => swing(n, plain.id)).filter((r) => r.dmg > 0);
+  ok(!!troll.regen && fire.length >= 6 && fire.every((r) => r.burnt) && steel.length >= 6 && steel.every((r) => !r.burnt) && MONSTERS.every((m) => elementMult(m, 'fire') === 1),
+    `a blow of the Beacon Hammer that lands marks a tor troll burnt (${fire.length} of ${fire.length}), so it mends not that round, and a forge hammer's does not (0 of ${steel.length}); no monster of the area is immune to fire, resists it or is weak to it`);
+
+  // The mail: the ladder's, with might.
+  ok(mail.slot === 'armor' && mail.ac === dwarf.ac && mail.classes?.join() === dwarf.classes?.join() && !mail.plus && !mail.element
+    && Object.keys(mail.stat ?? {}).join() === 'might' && mail.stat?.might === 3 && rung('dwarf_mail') === 17,
+  `Cairnbuilder's Mail is the ladder's mail at 17: dwarf mail's armour class ${dwarf.ac} and wearers, raising might by 3 and nothing else`);
+  const knight = defaultParty(makeRng(4)).members[0], base = statOf(knight, 'might');
+  const worn = equip(knight, mail.id) ? statOf(knight, 'might') : -1;
+  knight.equipment.armor = null;
+  knight.pack.push(mail.id);
+  ok(worn === base + 3 && statOf(knight, 'might') === base, `worn by the knight it raises might from ${base} to ${worn}; carried in the pack it raises nothing (${statOf(knight, 'might')})`);
+
+  // Both: priced in the window, sold by no shop, in no row of the ladder, dressed by none, sold back at half.
+  const stocked = new Set(MAP_DEFS.flatMap((m) => (m.features ?? []).flatMap((f) => (f.kind === 'shop' ? f.stock : []))));
+  const six = defaultParty(makeRng(4));
+  for (const d of [hammer, mail]) {
+    ok(d.price > 0 && d.price <= CURVE.cairnmoor.price, `${d.name} costs ${d.price} gold, above nothing and inside Cairnmoor's window of ${CURVE.cairnmoor.price}`);
+    ok(!stocked.has(d.id) && rung(d.id) === undefined, `${d.name} is sold by no shop and is in no row of the ladder`);
+    ok(sellPrice(six, d.price) === d.price / 2, `${d.name} sells back at half, ${sellPrice(six, d.price)} gold`);
+  }
+  const dressed = defaultParty(makeRng(4)).members;
+  for (const m of dressed) outfit(m, 32);
+  ok(dressed.every((m) => m.equipment.weapon !== hammer.id && m.equipment.armor !== mail.id && !m.pack.includes(hammer.id) && !m.pack.includes(mail.id)),
+    'dressed from the ladder at any level, a company never wears either: the gate\'s company goes without');
+
+  // Found, never told: no person, sign, event or quest names either, and no site of the atlas is theirs.
+  const words = (f: Feature): string[] => ('lines' in f ? [...f.lines] : 'text' in f && f.text ? [f.text] : []);
+  const said = [
+    ...MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap(words)),
+    ...QUESTS.flatMap((q) => (q.chapters ?? [q]).flatMap((c) => [...c.entries.map((e) => e.text), ...c.goals.map((g) => g.text)])),
+  ];
+  const told = said.filter((t) => /beacon hammer|cairnbuilder/i.test(t));
+  ok(said.length > 500 && !told.length, `none of ${said.length} lines of the people, signs, events and quests names either find${told.length ? ' -> ' + told[0] : ''}`);
 }

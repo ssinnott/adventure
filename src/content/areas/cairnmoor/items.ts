@@ -4,7 +4,22 @@
 // which need no line here.
 import type { ItemDef } from '../../../game/items.ts';
 import { P } from '../../items.ts';
-import { bandedStaff } from '../kilns/items.ts';
+import { bandedStaff, forgeHammer, dwarfMail } from '../kilns/items.ts';
+
+/**
+ * A hammer whose blows carry fire (#862, docs/areas/cairnmoor.md §4.8): the forge hammer's steel, the
+ * plain piece where the ladder wears the plus from 19, so the 1d6 of fire is the gain; a troll it lands
+ * on stops mending (`burnt`). Found in a cairn off the drove road, off the ladder (no `GEAR` row), sold
+ * by no shop. Priced under the area's dearest find (the curve's line for it stays) and in its window.
+ */
+export const beaconHammer: ItemDef = { ...forgeHammer, id: 'beacon_hammer', name: 'Beacon Hammer', price: 1600, element: 'fire' };
+
+/**
+ * A mail that raises might by 3 while it is worn (#862): the ladder's mail at 17, dwarf mail's armour
+ * and wearers, so the might is the gain. Found in a locked chest behind a secret door of Carn Dubh, off
+ * the ladder, sold by no shop, priced as the hammer is.
+ */
+export const cairnbuildersMail: ItemDef = { ...dwarfMail, id: 'cairnbuilders_mail', name: "Cairnbuilder's Mail", price: 1600, stat: { might: 3 } };
 
 export const ITEMS: readonly ItemDef[] = [
   // O7's (#477): the ladder's plus for a caster, in the hollow under the ring's fallen stone.
@@ -25,4 +40,8 @@ export const ITEMS: readonly ItemDef[] = [
     'A man\'s ring, gone black in the peat and heavy for its size.',
     'A crest is cut deep in its bezel, worn soft and still whole.',
   ] },
+  // The two finds off the ladder (#862): the hammer under a cairn at the marsh's edge on N8, the mail
+  // in the locked chest of a cell off Carn Dubh's end cell. No `GEAR` row, no shop (docs §4.8).
+  beaconHammer,
+  cairnbuildersMail,
 ];

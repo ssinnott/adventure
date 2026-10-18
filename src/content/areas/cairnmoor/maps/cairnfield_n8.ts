@@ -111,6 +111,10 @@ export const CAIRNFIELD_N8: MapDef = {
       '"A coach stopped on the road in the night. I did not go and look."',
     ] },
     { kind: 'cairn', x: 24, y: 17, id: 'n8_cairn', text: 'A cairn of the field, knee high, its stones furred with frost.', gold: 300, items: ['potion_sp_great'] },
+    // The beacon cairn at the field's end, where the marsh begins (#862): 23 squares off the road, 15
+    // from the nearest group, and no quest goes near it. Its top stones are scorched; under them a hammer
+    // whose blows carry fire, and no gold, so the clear's pay stands.
+    { kind: 'cairn', x: 28, y: 20, id: 'n8_beacon', text: 'A cairn at the marsh\'s edge, its top stones scorched black.', gold: 0, items: ['beacon_hammer'] },
     // The open cairn and the prints going in to it, the wind on the road, the marsh at the field's
     // edge, and apart from the rest the Watcher's grave (#56's 37).
     { kind: 'event', x: 12, y: 22, id: 'n8_open_cairn', once: true, text: 'This cairn stands open, its stones thrown outward. In it, a cist of slabs, and only snow.' },
