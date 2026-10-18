@@ -360,7 +360,8 @@ country, band 26 to 28.
   to a member Expert in the line, once their favour is done and for their price: two on the road, the
   Wold's old Rider at arms (#858) and Old Cinder's scholar in magic (#859). The rhythm: a prestige at
   11, Expert at 13, tier 6 at 15, a prestige at 19, tier 7 at 23, Master at 25, a prestige at 27. The
-  gate's company takes no tier until #865 (EXPANSION §5.2).
+  gate's company takes no tier: it takes what a level brings on the road and buys nothing optional, so
+  a company that buys a tier has an easier road than measured (#865, EXPANSION §5.2).
 
 Decided by the owner's delegate for #18, each the owner's to overturn:
 
@@ -370,7 +371,8 @@ Decided by the owner's delegate for #18, each the owner's to overturn:
 3. Expert at every town trainer of ceiling 13 or over, by rule, from 13, for 2,000 a line a member.
    Wrackholm, Cairnmoor and the Whitespine have no town and need none: the town before teaches.
 4. Master by a person found, never sought: Expert in the line, level 25, a favour and 5,000 gold.
-5. Inert for every check until #865: the gate's and the harness's company takes no tier.
+5. Inert for every check: the gate's and the harness's company takes no tier, and #865 kept it so (J2,
+   EXPANSION §5.2).
 6. An item may raise a stat while it is borne (`ItemDef.stat`) and a weapon's blows carry an element
    (`ItemDef.element`, §6); no charge, mark or state. #847 adds the artifact's on top (#855).
 7. Might, Accuracy, Speed and Personality do something live; this epic's items raise one by 3, a step.
