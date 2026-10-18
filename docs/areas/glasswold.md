@@ -1069,17 +1069,17 @@ settled in its issue, and what Ashfall teaches changes them.
     167) lies against F8, the sea, deep on both sides, void. All are pinned in
     `tools/tests/outdoors.ts`; E10's north edge, D9's east edge and D8's east edge no longer end the
     world.
-  - **Measured.** At 26 a company wins every fight in both, and at 24 too, owed to #18 as every box
-    here is. E9 manages 11.86 fights to a rest and E8 12.00 (aim 9.5 to 11.5, limit 8 to 14), off
-    the aim and inside the limit, 34.3% and 29% of their days ending in a fight broken off. Density
-    100.0% within 12 steps, the country floor: E9 965 of 965 and the furthest 12, with no sign among
-    its 22 points; E8 324 of 324 and the furthest 11, with none among its 17. The curve's rank
-    correlation is 0.87 in each: E9's vultures nearest at 20 steps (level 26) and its basilisks the
-    hardest at 37 (level 27); E8's pride nearest at 11 and its basilisks the hardest at 22. Each
-    pays 1,563 xp a member (the pride 5,683, the vultures 1,551 and the basilisks 2,146, over six:
-    9,380); E9's finds are 1,600 gold and E8's 1,500, an Elixir in each cairn and a Sapphire Vial in
-    each chest, no gear and no find the Wold sells twice (§9, #534's 8). Neither claims anything as
-    new.
+  - **Measured.** At 26 a company wins every fight in both, and at 24 too (past 10 the gate judges a
+    company two under by its day, #851). E9 manages 11.86 fights to a rest and E8 12.00 (aim 9.5 to
+    11.5, limit 8 to 14), off the aim and inside the limit, 34.3% and 29% of their days ending in a
+    fight broken off. Density 100.0% within 12 steps, the country floor: E9 965 of 965 and the
+    furthest 12, with no sign among its 22 points; E8 324 of 324 and the furthest 11, with none
+    among its 17. The curve's rank correlation is 0.87 in each: E9's vultures nearest at 20 steps
+    (level 26) and its basilisks the hardest at 37 (level 27); E8's pride nearest at 11 and its
+    basilisks the hardest at 22. Each pays 1,563 xp a member (the pride 5,683, the vultures 1,551
+    and the basilisks 2,146, over six: 9,380); E9's finds are 1,600 gold and E8's 1,500, an Elixir
+    in each cairn and a Sapphire Vial in each chest, no gear and no find the Wold sells twice (§9,
+    #534's 8). Neither claims anything as new.
   - **Walkthrough.** `woldBehind`, in `glasswold/walkthrough.ts`, is called after B9's step, the
     road's last box, and before the side quests. North from E10's 4,0 onto E9's 4,31, walked: at 26
     the Wold is named and no more, at 25 its harder words are said. East from D9's 31,20 onto E9's
@@ -1375,17 +1375,18 @@ seen, a cliff from its top.
   step 1,400 to 3,100 gold (docs/areas/ashfall.md §8).
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
   (docs/areas/thornmark.md §9, 17): a company at 26 wins nine in ten of E10's fights and walks the
-  road over the hills resting at its camp; one at 24 wins no more than one in four. The Grey Lion,
-  set off the line, is won three times in four at 27, B8's floor, and nine times in ten at 29
-  (§4.7). The reach's own gate is the cap's (EXPANSION §5.2) and not this doc's. A company that
-  climbs the Scarp stair from the Saltings at 12 meets C8's line on the step onto the lip and, 21
-  steps from the head, its vultures: a warning, not a wall, and a fight it can run from.
+  road over the hills resting at its camp; one at 24 wins no more than one in four (past 10 the gate
+  judges a company two under by its day, #851). The Grey Lion, set off the line, is won three times
+  in four at 27, B8's floor, and nine times in ten at 29 (§4.7). The reach's own gate is the cap's
+  (EXPANSION §5.2) and not this doc's. A company that climbs the Scarp stair from the Saltings at 12
+  meets C8's line on the step onto the lip and, 21 steps from the head, its vultures: a warning, not
+  a wall, and a fight it can run from.
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3).
 - **As built.** E10 (#517, #524) pays 2,543 xp a member, 1.04 times its scaled 2,450, and 950 gold,
   counted in Ashfall's row since its map is the Waste's (20,142 of 19,467, the row's xp met). At its floor, 25, a
   company wins every fight and manages 10.83 fights to a rest (aim 9.25 to 11.25), 7.7% of days
-  ending in a fight broken off; two under, its groups count in Ashfall's pool, all won (owed to #18).
-  Density 100.0% within 12, no sign among its 24 points.
+  ending in a fight broken off; two under, its groups count in Ashfall's pool, all won. Density
+  100.0% within 12, no sign among its 24 points.
 - **As built, D9** (#525). It pays 2,940 xp a member, 0.90 times its scaled 3,250 (each pride 947,
   the scorpions 689, the walker 358), and 1,350 gold: 300 and a Sapphire Vial in the track's cairn,
   300 and an Elixir in the dunes', 750 with an Elixir and the Etched Glass in the hollow. The
@@ -1394,10 +1395,9 @@ seen, a cliff from its top.
   area comes to about 20,740, 0.98 times the ask. At its floor, 26, a company wins every fight and
   manages 9.67 fights to a rest (aim 9.5 to 11.5, limit 8 to 14), 16% of days ending in a fight
   broken off, and walks the Wold's road, the four groups in the order of their steps from the way
-  in, every time; two under, at 24, it wins every fight too, owed to #18 as the Glasswold's pool is.
-  The pay stands under the share because the day sits at the aim's foot: no group more fits (§9,
-  #525's 8). Density 99.8% within 8 steps (1,003 of its 1,005 open squares) and the furthest 9, with
-  no sign among its 22 points.
+  in, every time; two under, at 24, it wins every fight too. The pay stands under the share because
+  the day sits at the aim's foot: no group more fits (§9, #525's 8). Density 99.8% within 8 steps
+  (1,003 of its 1,005 open squares) and the furthest 9, with no sign among its 22 points.
 - **As built, D10** (#527). It pays 3,199 xp a member, 0.98 times its scaled 3,250 (the near pride
   947, the south pride 689, the mesa 695, the scorpions 689, the basilisk 179), and 1,500 gold: 400
   and an Elixir in the Riders' cairn, 1,100 with a Basalt Shield +2 and a Quickening Draught in the
@@ -1408,23 +1408,21 @@ seen, a cliff from its top.
   26, a company wins every fight and manages 10.76 fights to a rest (aim 9.5 to 11.5, limit 8 to
   14), 22.7% of days ending in a fight broken off, and walks the Wold's road, D10's five groups in
   the order of their steps from the way in and then D9's four, every time; two under, at 24, it wins
-  every fight too, the two nearest prides included, owed to #18 as the Glasswold's pool is. The
-  basilisk is left as the drawing has it, the gate needing no tuning: the mesa fight costs the most
-  a fight in the box, 12% at 26, and is 9.2 fights to a rest alone (§9, #527's 9 and 10). Density
-  99.4% within 8 steps (965 of its 971 open squares) and the furthest 10, with no sign among its 26
-  points.
+  every fight too, the two nearest prides included. The basilisk is left as the drawing has it, the
+  gate needing no tuning: the mesa fight costs the most a fight in the box, 12% at 26, and is 9.2
+  fights to a rest alone (§9, #527's 9 and 10). Density 99.4% within 8 steps (965 of its 971 open
+  squares) and the furthest 10, with no sign among its 26 points.
 - **As built, D8** (#526). It pays 1,901 xp a member, 0.97 times its scaled 1,950 (the cap is about
   2,440), and 1,500 gold, all in the hoard behind the dry well, with the Leather Coat +2. The
   Glasswold's row is owed to #447 for the rest: a clear gives 8,040 xp a member of the 21,067 asked
   and 4,350 gold of the 12,720. With the other scaled shares (E10 2,450, C8 1,650, B8 4,250, B9
   2,600 and the side quests 1,650) the area comes to about 20,640, 0.98 times the ask. At its floor,
   26, a company wins every fight and manages 10.95 fights to a rest (aim 9.5 to 11.5, limit 8 to
-  14), 17.3% of days ending in a fight broken off; two under, at 24, it wins every fight too, owed
-  to #18 as the Glasswold's pool is. From the horse's landing, 9,27, the groups nearest, the pride
-  and the basilisk, are won at 24 as often as the median group (100%). The gate holds the box at 26
-  though its band is 26–27 (§9, #526's 1). Density 100.0% within 8 steps (919 of its 919 open
-  squares) and the furthest 8, with no sign among its 32 points. The dearest find is now the Leather
-  Coat +2, 2,700 gold of the window's 6,000.
+  14), 17.3% of days ending in a fight broken off; two under, at 24, it wins every fight too. From
+  the horse's landing, 9,27, the groups nearest, the pride and the basilisk, are won at 24 as often
+  as the median group (100%). The gate holds the box at 26 though its band is 26–27 (§9, #526's 1).
+  Density 100.0% within 8 steps (919 of its 919 open squares) and the furthest 8, with no sign among
+  its 32 points. The dearest find is now the Leather Coat +2, 2,700 gold of the window's 6,000.
 - **As built, C8** (#528). It pays 1,822 xp a member, 1.10 times its scaled 1,650 (the cap is about
   2,060; the vultures about 516, the pride 947, the basilisks 358), and 1,100 gold: 900 and the
   Letter in Cipher in the cleft, 200 and an Elixir in the watch-cairn. The Glasswold's row is owed
@@ -1432,12 +1430,11 @@ seen, a cliff from its top.
   12,720. With the other scaled shares (E10 2,450, B8 4,250, B9 2,600 and the side quests 1,650) the
   area comes to about 20,810, 0.99 times the ask. At its floor, 26, a company wins every fight and
   manages 10.46 fights to a rest (aim 9.5 to 11.5, limit 8 to 14), 22% of days ending in a fight
-  broken off; two under, at 24, it wins every fight too, owed to #18 as the Glasswold's pool is. C8
-  is off the Wold's road, which stands as it was (§9, #528's 15). The pair of basilisks is what
-  brings the day inside its aim: one ran it to 13.1 fights to a rest at 26 (§9, #528's 9). Density
-  100.0% within 12 steps (992 of its 992 open squares) and the furthest 12 of 20, with no sign among
-  its 22 points. Its dearest find is the Elixir; the area's stays the
-  Leather Coat +2, 2,700 gold of the window's 6,000.
+  broken off; two under, at 24, it wins every fight too. C8 is off the Wold's road, which stands as
+  it was (§9, #528's 15). The pair of basilisks is what brings the day inside its aim: one ran it to
+  13.1 fights to a rest at 26 (§9, #528's 9). Density 100.0% within 12 steps (992 of its 992 open
+  squares) and the furthest 12 of 20, with no sign among its 22 points. Its dearest find is the
+  Elixir; the area's stays the Leather Coat +2, 2,700 gold of the window's 6,000.
 - **As built, B8** (#529). It pays 4,784 xp a member, 1.13 times its scaled 4,250 (the cap is about
   5,310; the pride 947, the mesa 868, the Grey Lion 2,969), and 2,200 gold: 1,600 and an Elixir in
   the hunter's saddlebags, 600 and a Quickening Draught in the Riders' cairn. The Glasswold's row is
@@ -1448,13 +1445,13 @@ seen, a cliff from its top.
   fight broken off. The Grey Lion, set off the line, is won 75% of the time at 27 (aim 30% to 70%,
   limit 20% to 80%) and 91% at 29 (aim 90%, limit 75%), and is left out of the day (§9, #529's 5).
   Two under its floor is n/a, the floor being above the area's: its groups count in the Glasswold's
-  pool of 18, won 98.6% at the floors and 94.4% two under, owed to #18 as before. Alone at 27 the
-  pride costs 9% a fight and is 11.3 fights to a rest, the mesa fight 12% and 10.7; the walkthrough
-  wins the pride and the mesa fight ten times in ten at 27 and the Grey Lion nine in ten at 28. A
-  third group would break the day's aim or pass the cap (§9, #529's 2). Density 100.0% within 8
-  steps (860 of its 860 open squares) and the furthest 8 of 15, with no sign among its 30 points.
-  The area's dearest find stays the Leather Coat +2, 2,700 gold of the window's 6,000; B8's are an
-  Elixir and a Quickening Draught.
+  pool of 18, won 98.6% at the floors and 94.4% two under. Alone at 27 the pride costs 9% a fight
+  and is 11.3 fights to a rest, the mesa fight 12% and 10.7; the walkthrough wins the pride and the
+  mesa fight ten times in ten at 27 and the Grey Lion nine in ten at 28. A third group would break
+  the day's aim or pass the cap (§9, #529's 2). Density 100.0% within 8 steps (860 of its 860 open
+  squares) and the furthest 8 of 15, with no sign among its 30 points. The area's dearest find stays
+  the Leather Coat +2, 2,700 gold of the window's 6,000; B8's are an Elixir and a Quickening
+  Draught.
 - **As built, B9** (#530). It pays 2,968 xp a member, 1.14 times its scaled 2,600 (the cap is about
   3,250; the scorpions 689 and 689, the vultures 517, the walker 358, the two walkers 716), and
   2,000 gold: 1,600 and the Glass with a Light in the half-buried walker's cache, 400 and an Elixir
@@ -1462,15 +1459,15 @@ seen, a cliff from its top.
   member of the 21,067 asked and 9,650 gold of the 12,720. With the side quests' 1,650 to come the
   area comes to about 19,260, 0.91 times the ask. At its floor, 26, a company wins every fight (aim
   90%, limit 80%) and manages 10.41 fights to a rest (aim 9.5 to 11.5, limit 8 to 14), 17.3% of days
-  ending in a fight broken off; two under, at 24, it wins every fight too, owed to #18 as the
-  Glasswold's pool is, which holds 23 groups and is won 98.9% at the floors and 95.7% two under.
-  Alone at 26 the scorpions cost 9% a fight and are 11.3 fights to a rest, the vultures 7% and 14.2,
-  the walker 6% and 24.1 and the walkers' pair 14% and 5.0; at 27 the same groups make a day of
-  19.7, which is why the band starts at 26 (§9, #530's 1). In the harness 19% of the days at 26 end
-  in a death, the pair costing 14% a fight; the gate holds. The walkthrough wins each group ten
-  times in ten at 27. Density 100.0% within 12 steps (691 of its 691 open squares) and the furthest
-  9 of 20, with no sign among its 26 points, the scholar the twenty-sixth (#807). The area's dearest find stays the Leather Coat +2,
-  2,700 gold of the window's 6,000; B9's are an Elixir and the Glass with a Light, which has no
+  ending in a fight broken off; two under, at 24, it wins every fight too; the Glasswold's pool,
+  which holds 23 groups, is won 98.9% at the floors and 95.7% two under. Alone at 26 the scorpions
+  cost 9% a fight and are 11.3 fights to a rest, the vultures 7% and 14.2, the walker 6% and 24.1
+  and the walkers' pair 14% and 5.0; at 27 the same groups make a day of 19.7, which is why the band
+  starts at 26 (§9, #530's 1). In the harness 19% of the days at 26 end in a death, the pair costing
+  14% a fight; the gate holds. The walkthrough wins each group ten times in ten at 27. Density
+  100.0% within 12 steps (691 of its 691 open squares) and the furthest 9 of 20, with no sign among
+  its 26 points, the scholar the twenty-sixth (#807). The area's dearest find stays the Leather Coat
+  +2, 2,700 gold of the window's 6,000; B9's are an Elixir and the Glass with a Light, which has no
   price.
 - **As built, the side quests** (#532). They pay §8's 1,000 xp a member whichever way each goes,
   51 200, 53 250, 54 250 and 55 300, and add no gold, group or chest. The curve counts 700 of it
@@ -1488,15 +1485,14 @@ seen, a cliff from its top.
   quarters cleared, paid by level, a company leaves at 27.9, 0.1 under the next floor, 28 (27.7
   before the two). At its floor, 26, a company wins every fight in both and manages 11.86 fights to
   a rest in E9 and 12.00 in E8 (aim 9.5 to 11.5, limit 8 to 14), off the aim and inside the limit,
-  34.3% and 29% of days ending in a fight broken off; two under, at 24, it wins every fight too,
-  owed to #18 as the Glasswold's pool is, which holds 29 groups and is won 99.1% at the floors and
-  96.6% two under. The Wold's road at 26 is walked every time. A pride and a pair alone paced E8 at
-  9.24, off the aim and low, and three basilisks paced E9 at 6.80, past the limit; a flock of three
-  vultures each brought both inside it, just over the aim's top, a smaller flock raising the figure
-  further and a larger one paying over the share (§9, #534's 6). Density 100.0% within 12 steps, the
-  country floor: E9 965 of 965 and the furthest 12, E8 324 of 324 and the furthest 11, with no sign
-  among their 22 and 17 points. The area's dearest find stays the Leather Coat +2, 2,700 gold of the
-  window's 6,000.
+  34.3% and 29% of days ending in a fight broken off; two under, at 24, it wins every fight too; the
+  Glasswold's pool, which holds 29 groups, is won 99.1% at the floors and 96.6% two under. The
+  Wold's road at 26 is walked every time. A pride and a pair alone paced E8 at 9.24, off the aim and
+  low, and three basilisks paced E9 at 6.80, past the limit; a flock of three vultures each brought
+  both inside it, just over the aim's top, a smaller flock raising the figure further and a larger
+  one paying over the share (§9, #534's 6). Density 100.0% within 12 steps, the country floor: E9
+  965 of 965 and the furthest 12, E8 324 of 324 and the furthest 11, with no sign among their 22 and
+  17 points. The area's dearest find stays the Leather Coat +2, 2,700 gold of the window's 6,000.
 
 ## 9. Decisions
 
@@ -1695,7 +1691,7 @@ Decided by delegate for #525, each the owner's to overturn:
     the lions the cats', and a herd has no token (it is an event).
 16. **The gate:** the Wold's road is the four groups by steps from the way in (pride 11, scorpions
     20, walker 22, north pride 26); the gate names the area ("the Glasswold"); D9's and the
-    Glasswold's figures two under the floor are owed to #18, as every box's.
+    Glasswold's figures two under the floor are judged by the day (#851), as every box's.
 17. **`UNPLACED` drops the glass scorpion and the glass walker,** placed here; E10 dropped the
     vulture and the Wold lion (#524).
 18. **The quests test** owes the Wold's step (its `PLANNED` zone) and the Glasswold's chapter
@@ -1758,7 +1754,7 @@ Decided by delegate for #527, each the owner's to overturn:
 16. **`UNPLACED` drops the basilisk,** placed here first (#533's 7 owed it to D8). **`CUT_OFF` drops
     `wold_d9`:** the reach test passes without it, 1,005 of 1,005, and the list is empty.
 17. **The gate:** `ROADS.wold` is D10's five groups by steps from the way in, then D9's four; D10's
-    figures two under the floor are owed to #18 (`OWED`), as every box's.
+    figures two under the floor were rows of `OWED` until #851 judged the day, as every box's.
 18. **The way-in event is `d10_mesa_seen`,** not `d10_mesa`, the mesa fight's group id.
 19. **Stone's cure is walked in the walkthrough:** the hoard's draught lifts a glassed member and a
     temple asks 80 a level (2,080 at 26). Cinderport's temple and chandler stay Ashfall's
@@ -1851,11 +1847,11 @@ Decided by delegate for #526, each the owner's to overturn:
     check refused the `camp` landmark, which is on the road before.
 19. **`ROADS.wold` is unchanged,** D9's four: D8 lies north of the steppe, off the road to the gap;
     the landing's warning check holds its groups instead.
-20. **Test entries:** gate OWED `wold_d8: under` to #18 (100% won two under, as every box's); maps
-    `UNPLACED` has lost the basilisk to D10 already; ladder `CURE_SOLD` for the Glasswold is '', so
-    #546's second half is settled and nothing stays owed for the cure; outdoors, D9's north edge is
-    re-pinned against D8 and D8's four edges are pinned, `CUT_OFF` being empty since D10 (#527's
-    16). The walkthrough rides the Rider both ways.
+20. **Test entries:** gate OWED `wold_d8: under` (100% won two under, as every box's; dropped by
+    #851); maps `UNPLACED` has lost the basilisk to D10 already; ladder `CURE_SOLD` for the
+    Glasswold is '', so #546's second half is settled and nothing stays owed for the cure; outdoors,
+    D9's north edge is re-pinned against D8 and D8's four edges are pinned, `CUT_OFF` being empty
+    since D10 (#527's 16). The walkthrough rides the Rider both ways.
 21. **The issue is superseded by the doc in three places:** its glass walker "once, at the camp's
     edge by night" (the walker seen is the one in the horse's saddle), its hint "by the eldest's
     story" (the ropeless well) and its 1,200 xp (the doc's share is 1,950). Its squares, "810,
@@ -1943,11 +1939,11 @@ Decided by delegate for #528, each the owner's to overturn:
     Whitespine's. The brief's "a way into an area from two acts back" has no token.
 15. **`ROADS.wold` is unchanged,** D10's five groups then D9's four: C8 is off the road, and the
     gate reads the zone's way in from its first map.
-16. **Test entries:** gate OWED `wold_c8: under` to #18 (100% won two under, as every box's);
-    outdoors: D8's west edge, which faced the void, is pinned square for square against C8's east
-    edge; C8's four edges and C7's south edge are pinned; `CUT_OFF` stays empty; maps has nothing to
-    drop, D8 having dropped the basilisk's `UNPLACED`. The Glasswold's walkthrough asks of the zone
-    row that it hold D8 at 104,222, not that it be exactly D10, D9 and D8.
+16. **Test entries:** gate OWED `wold_c8: under` (100% won two under, as every box's; dropped by
+    #851); outdoors: D8's west edge, which faced the void, is pinned square for square against C8's
+    east edge; C8's four edges and C7's south edge are pinned; `CUT_OFF` stays empty; maps has
+    nothing to drop, D8 having dropped the basilisk's `UNPLACED`. The Glasswold's walkthrough asks
+    of the zone row that it hold D8 at 104,222, not that it be exactly D10, D9 and D8.
 17. **The issue is superseded by the doc in three places:** its secret, a smugglers' cache hinted by
     the runner's orders (the doc's is the cleft, hinted by a horse's prints: 12), its 1,000 xp (the
     doc's share is 1,650: 10) and its squares, "367, steppe 314, hills 53", which are not today's
@@ -2041,7 +2037,7 @@ Decided by delegate for #529, each the owner's to overturn:
 18. **Test entries:** gate `BOSSES` (6) and harness `OFF_LINE` (5); maps drops the Grey Lion from
     `UNPLACED`; outdoors pins B8's four edges, and C8's pin no longer wants the void west of it;
     `CUT_OFF` stays empty; the gate has no OWED `wold_b8: under`, B8's floor being above the area's,
-    so its groups count two under in the Glasswold's pool, owed to #18 as before.
+    so its groups count two under in the Glasswold's pool.
 19. **The issue is superseded by the doc in three places:** its 2,600 xp (the doc's share is 4,250:
     17), its "795 squares" (860 are open) and its hint, "by the eldest" (the doc's is the smoke: 8).
 
@@ -2119,11 +2115,11 @@ Decided by delegate for #530, each the owner's to overturn:
 17. **Novelty claims nothing:** the dunes and the walkers are D9's claims; "the reach seen from the
     road" and "a machine in a pair" have no token.
 18. **No road:** `ROADS.wold` is unchanged; the Riders' road does not run through the dunes.
-19. **Test entries:** the gate's OWED `wold_b9: under` (#18), as D9, D10, D8 and C8 (two under, at
-    24, it wins every fight); outdoors pins B9's four edges, and B8's pin no longer wants the void
-    south of it; `CUT_OFF` stays empty; and the scaffold test's example of ground no map character
-    is moves from the Wold's glass at 70,262, which B9 now covers, to the Glass's at 72,262. No B9
-    monster is on `RESTATE` or needs `OFF_LINE`, and `UNPLACED` had nothing of B9's.
+19. **Test entries:** the gate's OWED `wold_b9: under`, as D9, D10, D8 and C8 (two under, at 24, it
+    wins every fight; dropped by #851); outdoors pins B9's four edges, and B8's pin no longer wants
+    the void south of it; `CUT_OFF` stays empty; and the scaffold test's example of ground no map
+    character is moves from the Wold's glass at 70,262, which B9 now covers, to the Glass's at
+    72,262. No B9 monster is on `RESTATE` or needs `OFF_LINE`, and `UNPLACED` had nothing of B9's.
 20. **Pay 2,968 xp a member,** 1.14 times the scaled share of 2,600, under the cap (about 3,250):
     the scorpions 689 and 689, the vultures 517, the walker 358, the two walkers 716. The Wold's row
     stands at 17,613 of 21,067 xp and 9,650 of 12,720 gold (2,000 here: 13); with the side quests'
@@ -2406,8 +2402,8 @@ Owed, from D9 (#525):
   House takes the walker (§6, §9, #525's 11, #532's 4).
 - **The Wold's crossing words** are walked at D10 (#527) and at the Scarp stair's head (#528)
   (§9, #525's 14, #528's 2).
-- **The figures two under the floor** are owed to #18 and **the area's pay and gold** to #447: 2,940
-  xp of 21,067 and 1,350 gold of 12,720 (§8).
+- **The figures two under the floor** are judged by the day (#851) and **the area's pay and gold**
+  are owed to #447: 2,940 xp of 21,067 and 1,350 gold of 12,720 (§8).
 
 Owed, from D10 (#527):
 
@@ -2418,8 +2414,8 @@ Owed, from D10 (#527):
   the Rider on the hill says only that the ones carried home stand there (§4.5).
 - **The chapter's steps** on the Wold are built (#531, §5); **the draught at Akordu's trader** is built
   (§4.4, §9, #526's 6).
-- **The figures two under the floor** are owed to #18 and **the area's pay and gold** to #447: 6,139
-  xp of 21,067 and 2,850 gold of 12,720 (§8).
+- **The figures two under the floor** are judged by the day (#851) and **the area's pay and gold**
+  are owed to #447: 6,139 xp of 21,067 and 2,850 gold of 12,720 (§8).
 
 Owed, from D8 (#526):
 
@@ -2436,8 +2432,8 @@ Owed, from D8 (#526):
   (#736; §9, #736's 5).
 - **D8's north edge ends in the void** against a box not built; its east edge meets E8's (#534,
   §4.9) and its west edge C8's (#528, §4.6) (§4.4, §9, #526's 20).
-- **The figures two under the floor** are owed to #18 and **the area's pay and gold** to #447:
-  8,040 xp of 21,067 and 4,350 gold of 12,720 (§8).
+- **The figures two under the floor** are judged by the day (#851) and **the area's pay and gold**
+  are owed to #447: 8,040 xp of 21,067 and 4,350 gold of 12,720 (§8).
 
 Owed, from C8 (#528):
 
@@ -2453,8 +2449,8 @@ Owed, from C8 (#528):
   climbs the stair at 12, 25 and 26, and the chapter's climbs it with the Stone lit.
 - **C8's south edge ends in the void** against C9, the Glass's and left to the reach; its west edge
   meets B8's (#529, §4.7) (§4.6, §9, #528's 16).
-- **The figures two under the floor** are owed to #18 and **the area's pay and gold** to #447:
-  9,861 xp of 21,067 and 5,450 gold of 12,720 (§8).
+- **The figures two under the floor** are judged by the day (#851) and **the area's pay and gold**
+  are owed to #447: 9,861 xp of 21,067 and 5,450 gold of 12,720 (§8).
 
 Owed, from B8 (#529):
 
@@ -2470,8 +2466,8 @@ Owed, from B8 (#529):
 - **The rim is laid as the world's end:** column 0 and the corner are void in play, and the open
   land is columns 1 to 31 (§4.7, §9, #529's 13).
 - **The figures two under the floor** are n/a for B8, its floor being above the area's, and the
-  Glasswold's pool is owed to #18; **the area's pay and gold** are owed to #447: 14,645 xp of 21,067
-  and 7,650 gold of 12,720 (§8).
+  Glasswold's pool is judged by the day (#851); **the area's pay and gold** are owed to #447: 14,645
+  xp of 21,067 and 7,650 gold of 12,720 (§8).
 
 Owed, from B9 (#530):
 
@@ -2490,8 +2486,8 @@ Owed, from B9 (#530):
   7).
 - **`tools/scaffold.ts` cannot cut a box with glass in it,** the glass having no map character: C9's
   builder will meet it (§9, #530's 3).
-- **The figures two under the floor** are owed to #18 and **the area's pay and gold** to #447:
-  17,613 xp of 21,067 and 9,650 gold of 12,720 (§8).
+- **The figures two under the floor** are judged by the day (#851) and **the area's pay and gold**
+  are owed to #447: 17,613 xp of 21,067 and 9,650 gold of 12,720 (§8).
 
 Owed, from the chapter (#531):
 
@@ -2519,5 +2515,5 @@ Owed, from E9 and E8 (#534):
   islands in deep sea: it is painted from the grid, which takes a built map's cells last, and every
   square of both bars reads shallow there. Decided by the owner's delegate, 16 October 2026 (#735,
   struck): nothing is owed (§9, #534's 4).
-- **The figures two under the floor** are owed to #18; the area's pay and gold are met and nothing
-  is owed to #447 (§8, §9, #534's 9).
+- **The figures two under the floor** are judged by the day (#851); the area's pay and gold are met
+  and nothing is owed to #447 (§8, §9, #534's 9).

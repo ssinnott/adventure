@@ -199,9 +199,9 @@ Foreland map's density.
   lookout and four more on the moor are the box's other points: every square is within 8 steps of
   one. As measured it pays about 1,920 xp a member and 404 gold. The gate at 12 wins every fight, at
   7.3 fights to a rest (7.1 as built; re-statted to #409's line, #18), and walks the road (the rats,
-  the inlet's gulls, the east path) every time; two under, at 10, it wins every fight too, which is
-  owed to #18 until gear past 10 lands (`tools/tests/gate.ts`'s `OWED`). What the owner finds by
-  hand goes here when the box has been played.
+  the inlet's gulls, the east path) every time; two under, at 10, it wins every fight too (past 10
+  the gate judges a company two under by its day, #851). What the owner finds by hand goes here when
+  the box has been played.
 
 ### 4.3 Kelp Hole (#188): dungeon, two levels of 16×16, band 12–14
 
@@ -245,14 +245,12 @@ Foreland map's density.
   points and 12d7+15 (600 and 8d7+10 until #806): the bot wins it 66% at 12 and 99% at 14. At 600 and
   8d7+10 it won 66% at 12 and 91% at 14, where the line's 674 and 13d7+19 won
   11% and 28% (69% and 96% after the re-stat to #409's line, #18, which leaves it as set; 96% and
-  100% with the first prestige, #541, past the limit at 12 and owed to #18, until #806 set it again,
-  §9). The
-  crews' cave at 12 wins every fight, at 6.8 fights to a rest (7.0 after the re-stat), and two
-  under, at 10, wins every fight too, which is owed to #18 with E6's; the sea cave at 12 wins 91.5%
-  of its fights with the boss, at 6.5 to a rest (92.3% and 6.6 after the re-stat, 99% with the
-  first prestige, 91.5% again since #806), and 83% at 10,
-  inside the limit. The walkthrough plays both levels, the boss at 14, and leaves by the passage.
-  What the owner finds by hand goes here when it has been played.
+  100% with the first prestige, #541, past the limit at 12, until #806 set it again, §9). The crews'
+  cave at 12 wins every fight, at 6.8 fights to a rest (7.0 after the re-stat), and two under, at
+  10, wins every fight too; the sea cave at 12 wins 91.5% of its fights with the boss, at 6.5 to a
+  rest (92.3% and 6.6 after the re-stat, 99% with the first prestige, 91.5% again since #806), and
+  83% at 10, inside the limit. The walkthrough plays both levels, the boss at 14, and leaves by the
+  passage. What the owner finds by hand goes here when it has been played.
 
 ### 4.4 F6, the east rocks (#189): core, band 13–14
 
@@ -300,8 +298,7 @@ Foreland map's density.
   about 1,658 xp a member and 487 gold. The gate at 13 wins every fight, at 7.67 fights to a rest
   (8.6 in the ladder's gear, #406, over the aim's 8.25; 8.2 after the re-stat to #409's line, #18,
   inside it); the isle's road stays E6's, and F6, its floor above the area's, counts two under in
-  the area's pool, which is owed to #18. What the owner finds by hand goes here when the box has
-  been played.
+  the area's pool. What the owner finds by hand goes here when the box has been played.
 ### 4.5 The Tide Ship (#190): dungeon, three decks of 16×16, band 12–14
 
 - **Purpose.** The act's second dungeon and its heart: the smugglers' ship whose hold carries
@@ -368,16 +365,15 @@ Foreland map's density.
   escorted boss's 7d7+11 (97%): the gate wins him 66% at 12 and 100% at 14. At 674 and 10d7+15 it
   won 63% at 12 and 96% at 14, dressed by #399's ladder and measured after #414's
   re-stat (94% and 100% once the gate's company took its first prestige, #541, past the limit at
-  12 and owed to #18, until #806 set him again, §9). As measured the ship pays about 3,500 xp a member, 1,843
-  of it the Rift's, and 3,532 gold, which brings the area's gold to the 6,000 its
-  training costs. Each deck at 12 wins every fight, at 6.1, 7.6 and 7.0 fights to a rest, inside the
-  aim of 6 to 8, the Rift 83% with its boss (81.5% before the first prestige, 97% with it and the
-  Warden as it was; off the aim of 90% and inside the limit of 80%) and 7.6 to a rest;
-  two under, at 10,
-  the decks win every fight too, owed to #18 with E6's, the Rift 55.5%. Every square of every deck is within 5 steps
-  of a point. The walkthrough rows out by night, plays the three decks at 12, finds the shard-cut,
-  frees Hale once he is taken, wins the Warden at 14 and the Stone, and goes down the stair and
-  back. What the owner finds by hand goes here when it has been played.
+  12, until #806 set him again, §9). As measured the ship pays about 3,500 xp a member, 1,843 of it
+  the Rift's, and 3,532 gold, which brings the area's gold to the 6,000 its training costs. Each
+  deck at 12 wins every fight, at 6.1, 7.6 and 7.0 fights to a rest, inside the aim of 6 to 8, the
+  Rift 83% with its boss (81.5% before the first prestige, 97% with it and the Warden as it was; off
+  the aim of 90% and inside the limit of 80%) and 7.6 to a rest; two under, at 10, the decks win
+  every fight too, the Rift 55.5%. Every square of every deck is within 5 steps of a point. The
+  walkthrough rows out by night, plays the three decks at 12, finds the shard-cut, frees Hale once
+  he is taken, wins the Warden at 14 and the Stone, and goes down the stair and back. What the owner
+  finds by hand goes here when it has been played.
 
 ### 4.6 The hollow in the east rocks (#861): two finds off the ladder
 
@@ -592,9 +588,9 @@ besides the devilfish and the heather (#190): the wreck, the Tide Ship's site.
   boat back. As built a clear gives 6,079 (#190): the ship's chests carry 3,200 of it. The curve
   test counts 7,279 now, with the Fence's rung's 200 and the Factor's 800 (§9, #635's 6, PR D's 8).
 - **The gate.** Each map at its own floor (docs/areas/thornmark.md §9, 17): a company at 12 wins nine
-  in ten on E6 and one at 10 no more than one in four; the Great Devilfish is won two in three at
-  12 and nearly always at 14, the Warden of the Tide the same (§9, #806: their two maps hold their
-  limits at no less).
+  in ten on E6 and one at 10 no more than one in four (past 10 the gate judges a company two under
+  by its day, #851); the Great Devilfish is won two in three at 12 and nearly always at 14, the
+  Warden of the Tide the same (§9, #806: their two maps hold their limits at no less).
 - **Density.** Both boxes at the Foreland's floor (EXPANSION §5.3).
 - **The hollow** (#861) pays no xp, gold or group, so the figures above stand (§4.6).
 
@@ -859,10 +855,10 @@ Decided by delegate for #806, each the owner's to overturn:
 1. **The Great Devilfish is set again at 650 hit points and 12d7+15** (600 and 8d7+10 before), by
    hearth_isle.md §7's method: tries of hit points and blow on the gate's seeds. #188's gate set it
    against a company without its first prestige, 66% at 12 and 91% at 14; the gate's company has
-   taken the prestige since #541, and won it 96% at 12, past the limit of 80% and owed to #18. The
-   aim is about half at the floor (30% to 70%) and nearly always two above (90%). The tries, in
-   percent of the gate's 400 seeds and of its own hundred, a fight broken off being one still running
-   at the fifteenth round, which the gate does not count won:
+   taken the prestige since #541, and won it 96% at 12, past the limit of 80%. The aim is about half
+   at the floor (30% to 70%) and nearly always two above (90%). The tries, in percent of the gate's
+   400 seeds and of its own hundred, a fight broken off being one still running at the fifteenth
+   round, which the gate does not count won:
 
    | Hit points | Blow | At 12 | Broken off | At 14 | The gate's hundred, 12 and 14 |
    |---|---|---|---|---|---|
@@ -886,7 +882,7 @@ Decided by delegate for #806, each the owner's to overturn:
    89%, off its aim. The boss stays inside its own aim at both levels, so it is not listed.
 4. **The Warden of the Tide is set again at 780 hit points and 12d7+18** (674 and 10d7+15 before), by
    the same method. #190's gate set him 63% at 12 and 96% at 14; the gate's company, with its first
-   prestige, won him 94% at 12, past the limit and owed to #18. The tries:
+   prestige, won him 94% at 12, past the limit. The tries:
 
    | Hit points | Blow | At 12 | Broken off | At 14 | The gate's hundred, 12 and 14 |
    |---|---|---|---|---|---|
@@ -907,7 +903,7 @@ Decided by delegate for #806, each the owner's to overturn:
 6. **The `OWED` lines for both go,** and the reasons `OFF_LINE` gives for them
    (`tools/tests/harness.ts`) name this issue. Level, xp, gold, drops, id and the groups stay, so the
    curve and `src/content/shipped.json` do not move. The area's pool two under its floors falls with
-   the two bosses, from 93.7% to 92.2%, still past its limit of 90% and owed to #18 with the rest.
+   the two bosses, from 93.7% to 92.2%, still past its limit of 90%, which #851 replaced by the day.
 
 Decided by the owner's delegate for #18, each the owner's to overturn:
 

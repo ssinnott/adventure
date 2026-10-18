@@ -528,13 +528,13 @@ settled in its issue, and what the pilot teaches changes them.
   holds at 11: the upper level wins every fight at 7.2 fights to a rest; the choir wins 83% of its
   fights with the boss among them, every fight but the boss's, at 7.5 to a rest; the Choirmaster
   is won 48% of the time at 11 and 98% at 13 (once the gate's company took its first prestige, #541,
-  98% of the choir's fights and 94% of the Choirmaster's at 11, the second past its limit and owed to
-  #18, until #806 set its hit points again at 825: 48% at 11 and 100% at 13, and 82.7% of the choir's
-  fights with it among them, off the aim of 90% and inside the limit of 80%; §9). As
-  measured, a clear pays about 1,580 xp a member at
-  11 and about 1,130 gold (§8). Once the Tide Stone is home (#191) the god sings, very faintly, across
-  the nave's head before the apse's stair and before the far roof's porch, whether or not the count has stopped,
-  and the count and the quiet at those stairs give way to it.
+  98% of the choir's fights and 94% of the Choirmaster's at 11, the second past its limit until #806
+  set its hit points again at 825: 48% at 11 and 100% at 13, and 82.7% of the choir's fights with it
+  among them, off the aim of 90% and inside the limit of 80%; §9). As measured, a clear pays about
+  1,580 xp a member at 11 and about 1,130 gold (§8). Once the Tide Stone is home (#191) the god
+  sings, very faintly, across the nave's head before the apse's stair and before the far roof's
+  porch, whether or not the count has stopped, and the count and the quiet at those stairs give way
+  to it.
 
 ### 4.8 C6, Saltmouth's box (#176): core, band 11–12
 
@@ -911,8 +911,9 @@ mound, a Stone's plinth without its Stone, temples half under water, a port.
   armour about 7,850.
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
   (docs/areas/thornmark.md §9, 17): a company at 10 wins nine in ten of C5's fights and walks the
-  causeway resting at its camp; one at 8 wins no more than one in four. The Choirmaster is won about
-  half the time at 11 and nearly always at 13.
+  causeway resting at its camp; one at 8 wins no more than one in four (from 10 the gate judges a
+  company two under by its day, #851). The Choirmaster is won about half the time at 11 and nearly
+  always at 13.
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3).
 
 ## 9. Decisions
@@ -1170,9 +1171,10 @@ Decided by delegate for #399, each the owner's to overturn:
    (two) and the pans' hoard; B6 has none, and B5 and C6 were built before the ladder, so the staff
    went to the temples and the robe to Rietum. Each is owed to its box until placed.
 4. **The windows stay as they are:** no ware or find comes within 400 gold of its area's price.
-5. **The gate two under stays owed to #18:** gear dresses a company at a floor past one two under
-   it, but a group a company at the floor fights six or seven of to a rest is one a company two
-   under still beats. Past 10 the to-a-rest aim and the two-under aim pull against each other.
+5. **Two under is judged by the day from 10 (#851), not by the fights won:** gear dresses a company
+   at a floor past one two under it, but a group a company at the floor fights six or seven of to a
+   rest is one a company two under still beats. From 10 the to-a-rest aim and the two-under aim
+   pulled against each other, and the day settled it.
 
 Decided by delegate for #18, each the owner's to overturn:
 
@@ -1543,10 +1545,10 @@ Decided by delegate for #806, each the owner's to overturn:
 1. **The Choirmaster is set again at 825 hit points, its blow kept at 11d8+15** (680 hit points
    before), by hearth_isle.md §7's method: tries of hit points and blow on the gate's seeds. #175's
    gate set it against a company without its first prestige, 48% at 11 and 98% at 13; the gate's
-   company has taken the prestige since #541, and won it 94% at 11, past the limit of 80% and owed to
-   #18. The aim is about half at the floor (30% to 70%) and nearly always two above (90%). The tries,
-   in percent of the gate's 400 seeds and of its own hundred, a fight broken off being one still
-   running at the fifteenth round, which the gate does not count won:
+   company has taken the prestige since #541, and won it 94% at 11, past the limit of 80%. The aim
+   is about half at the floor (30% to 70%) and nearly always two above (90%). The tries, in percent
+   of the gate's 400 seeds and of its own hundred, a fight broken off being one still running at the
+   fifteenth round, which the gate does not count won:
 
    | Hit points | Blow | At 11 | Broken off | At 13 | The gate's hundred, 11 and 13 |
    |---|---|---|---|---|---|

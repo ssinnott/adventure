@@ -389,9 +389,9 @@ settled in its issue, and what the Kilns teach changes them.
   - **Measured.** A company at 18 wins every fight and manages 8.57 fights to a rest, inside the aim,
     with 1.7% of its days ending in a fight broken off; it walks High Moor's road, the ravens, the bog
     bodies by the road and the hounds, every time. N7 pays about 1,803 xp a member and 1,410 gold.
-    Two under, at 16, it wins every fight too, owed to #18 as the Kilns' boxes' is. Density 99.2%
-    within 8 steps and the furthest 10, with one sign among its 26 points. It claims snow underfoot
-    as new (§7).
+    Two under, at 16, it wins every fight too (past 10 the gate judges a company two under by its
+    day, #851). Density 99.2% within 8 steps and the furthest 10, with one sign among its 26 points.
+    It claims snow underfoot as new (§7).
 
 ### 4.3 O7, Fionnlios's box (#477): core, band 18–19
 
@@ -460,10 +460,10 @@ settled in its issue, and what the Kilns teach changes them.
     aim, with none of its days ending in a fight broken off; it walks High Moor's road, now on to
     the lights at the ring, every time; each of the four groups is won ten fights in ten. O7 pays
     1,803 xp a member (the ravens 476, the lights 601, the bog bodies 475, the troll 251) and 1,610
-    gold. Two under, at 16, it wins every fight too, owed to #18 as N7's and N8's are. Density 99.3%
-    within 8 steps and the furthest 10, with no sign among its 31 points. The curve's rank
-    correlation is 0.32, the lights nearest at 2 steps (level 18.2) and the troll the hardest at 31
-    (level 19). It claims the lights and the ring as new (§7).
+    gold. Two under, at 16, it wins every fight too. Density 99.3% within 8 steps and the furthest
+    10, with no sign among its 31 points. The curve's rank correlation is 0.32, the lights nearest
+    at 2 steps (level 18.2) and the troll the hardest at 31 (level 19). It claims the lights and the
+    ring as new (§7).
 
 ### 4.4 O8, the bog (#478): country, band 18–19
 
@@ -528,11 +528,11 @@ settled in its issue, and what the Kilns teach changes them.
     aim, but 24.7% of its days end in a fight broken off: the trolls mend each round unless burned
     and the company the gate plays has no fire; the gate does not check the figure (O7 and N8 show
     none). Each of the five groups is won ten fights in ten. Two under, at 16, it wins every fight
-    too, owed to #18 as the others'. Density 100.0% within 12 steps, the country floor, and the
-    furthest 9, with no sign among its 28 points. The curve's rank correlation is 0.78, the bog
-    bodies nearest at 8 steps (level 18.0) and the hounds the hardest at 34 (level 19.0). O8 pays
-    2,305 xp a member (the bog bodies 475, each flight of lights 357, the hounds 377, the trolls and
-    ravens 740) and 1,400 gold. It claims nothing as new (§9, 14).
+    too. Density 100.0% within 12 steps, the country floor, and the furthest 9, with no sign among
+    its 28 points. The curve's rank correlation is 0.78, the bog bodies nearest at 8 steps (level
+    18.0) and the hounds the hardest at 34 (level 19.0). O8 pays 2,305 xp a member (the bog bodies
+    475, each flight of lights 357, the hounds 377, the trolls and ravens 740) and 1,400 gold. It
+    claims nothing as new (§9, 14).
 
 ### 4.5 N8, the Cairnfield's box (#479): core, band 18–20
 
@@ -607,10 +607,10 @@ settled in its issue, and what the Kilns teach changes them.
     with 3% of its days ending in a fight broken off; it walks the Cairnfield's road, the ravens, the
     open cairn's wights and the hounds, every time; each of the five groups is won ten fights in
     ten. N8 pays about 2,081 xp a member (the ravens 476, the bog bodies 475, each group of wights
-    and the hounds 377) and 1,510 gold. Two under, at 16, it wins every fight too, owed to #18 as the
-    Kilns' boxes' is. Density 99.6% within 8 steps and the furthest 9, with no sign among its 31
-    points. The curve's rank correlation is 0.87, the ravens nearest at 14 steps (level 18) and the
-    open cairn's wights the hardest at 31 (level 19). It claims ice and curse as new (§7).
+    and the hounds 377) and 1,510 gold. Two under, at 16, it wins every fight too. Density 99.6%
+    within 8 steps and the furthest 9, with no sign among its 31 points. The curve's rank
+    correlation is 0.87, the ravens nearest at 14 steps (level 18) and the open cairn's wights the
+    hardest at 31 (level 19). It claims ice and curse as new (§7).
 
 ### 4.6 Carn Dubh (#480): dungeon, two levels of 16×16, band 18–20
 
@@ -671,14 +671,14 @@ settled in its issue, and what the Kilns teach changes them.
     way in or out.
   - **Measured.** A company at 18 wins every fight in the cairn and manages 10.70 fights to a rest,
     off the aim (7.5 to 9.5) and inside the limit (6 to 12), with 0.3% of its days ending in a fight
-    broken off; two under, at 16, it wins every fight too, owed to #18. Under the cairn a company at
-    19 wins 85.7% of the fights, off the aim of 90% and inside the limit of 80%; it manages 9.20
-    fights to a rest, inside the aim, and the King is won 57% at 19 and 94% at 21, set off the boss
-    line (§9). Carn Dubh pays 4,948 xp a member for the brief's 2,200 and holds 2,225 gold. Density
-    100.0% within 7 steps on both levels, the furthest 2 and 3, with no sign among their 17 and 11
-    points. The curve's rank correlation is 0.89 in the cairn (the bog bodies nearest at 3 steps,
-    level 18; the north rows' wights the hardest at 13, level 19) and 0.50 under it (the court
-    nearest at 9, level 19; the King the hardest at 11, level 20).
+    broken off; two under, at 16, it wins every fight too. Under the cairn a company at 19 wins
+    85.7% of the fights, off the aim of 90% and inside the limit of 80%; it manages 9.20 fights to a
+    rest, inside the aim, and the King is won 57% at 19 and 94% at 21, set off the boss line (§9).
+    Carn Dubh pays 4,948 xp a member for the brief's 2,200 and holds 2,225 gold. Density 100.0%
+    within 7 steps on both levels, the furthest 2 and 3, with no sign among their 17 and 11 points.
+    The curve's rank correlation is 0.89 in the cairn (the bog bodies nearest at 3 steps, level 18;
+    the north rows' wights the hardest at 13, level 19) and 0.50 under it (the court nearest at 9,
+    level 19; the King the hardest at 11, level 20).
 
 ### 4.7 M7 and M8, the country behind (#484): country, band 18–19
 
@@ -747,26 +747,26 @@ delegate (§9, #484's).
     edge and M9's north edge re-pinned to what now meets them.
   - **Measured.** M7: a company at 18 wins every fight and manages 10.51 fights to a rest, off the
     aim (7.5 to 9.5) and inside the limit (6 to 12), with 1.7% of its days ending in a fight broken
-    off; two under, at 16, it wins every fight too, owed to #18. It pays 674 xp a member (five ravens
-    at 357 and three hounds at 753, shared by six) and holds 280 gold. Density 100.0% within 12 steps,
-    the country floor, the furthest 12, with no sign among its 19 points. The curve's rank correlation
+    off; two under, at 16, it wins every fight too. It pays 674 xp a member (five ravens at 357 and
+    three hounds at 753, shared by six) and holds 280 gold. Density 100.0% within 12 steps, the
+    country floor, the furthest 12, with no sign among its 19 points. The curve's rank correlation
     is 1.00, the ravens nearest at 9 steps (level 18) and the hounds the hardest at 32 (level 19).
-    M8 as #484 built it: 11.53 fights to a rest, off the aim and inside the limit, with no day ending
-    in a fight broken off; at 16 it wins every fight too, owed to #18.
-    It pays 727 (eight ravens at 357 and the troll
-    1,507, shared by six) and holds 180 gold. Density 99.7% within 12 steps, the furthest 13, with no
-    sign among its 17 points. Rank correlation 1.00, the ravens nearest at 6 steps (level 18) and the
-    troll the hardest at 20 (level 19). Neither claims anything new (§7). #865 re-sized M8's crag
-    group inside its floor's aims, two ravens and two tor trolls where eight ravens stood: 7.60 fights
-    to a rest at 18, inside the aim, and two under, at 16, 5.52 (64.9% of the floor's 8.5, inside its
-    aim) where it was 9.29 (109.3%, past the limit). It pays about 873 a member. Its fights broken off
-    are the only such tail in Cairnmoor, whose other seven maps stand at 0 to 1.7% of their floors'
-    days: the fight is fair for a company that burns the trolls (Fire Bolt takes the whole group, and
-    both groups are won every time at 18 from full health), but late in a long day, its fire spent,
-    23.3% of the floor's days (28.0% two under) end in a fight broken off at fifteen rounds. The
-    nearest group is now the map's biggest fight (3,728 xp against the night troll's 1,507; the
-    curve's check reads its mean level, 18.5), and the tor's troll alone has two more on the crags.
-    Owing M8 by name to the #54 issue instead, the ruling's fallback, is the owner's to choose.
+    M8 as #484 built it: 11.53 fights to a rest, off the aim and inside the limit, with no day
+    ending in a fight broken off; at 16 it wins every fight too. It pays 727 (eight ravens at 357
+    and the troll 1,507, shared by six) and holds 180 gold. Density 99.7% within 12 steps, the
+    furthest 13, with no sign among its 17 points. Rank correlation 1.00, the ravens nearest at 6
+    steps (level 18) and the troll the hardest at 20 (level 19). Neither claims anything new (§7).
+    #865 re-sized M8's crag group inside its floor's aims, two ravens and two tor trolls where eight
+    ravens stood: 7.60 fights to a rest at 18, inside the aim, and two under, at 16, 5.52 (64.9% of
+    the floor's 8.5, inside its aim) where it was 9.29 (109.3%, past the limit). It pays about 873 a
+    member. Its fights broken off are the only such tail in Cairnmoor, whose other seven maps stand
+    at 0 to 1.7% of their floors' days: the fight is fair for a company that burns the trolls (Fire
+    Bolt takes the whole group, and both groups are won every time at 18 from full health), but late
+    in a long day, its fire spent, 23.3% of the floor's days (28.0% two under) end in a fight broken
+    off at fifteen rounds. The nearest group is now the map's biggest fight (3,728 xp against the
+    night troll's 1,507; the curve's check reads its mean level, 18.5), and the tor's troll alone
+    has two more on the crags. Owing M8 by name to the #54 issue instead, the ruling's fallback, is
+    the owner's to choose.
   - **Walked.** `theGrazing`, the walkthrough's third walk after `theBog`, crosses the seams, speaks to
     the shepherd and the fisher, shows the tor's face by day and not by night, wins every group at its
     floor (the hounds and the troll by night) and finds each secret from its hint, each shut but
@@ -1008,29 +1008,28 @@ tarn are among the landmarks above.
   gold (#862), so it stands.
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
   (docs/areas/thornmark.md §9, 17): a company at 18 wins nine in ten of N7's fights and walks the
-  drove road resting at its camp; one at 16 wins no more than one in four. The Cairn King is won
-  about half the time at 19 and nearly always at 21. The ring's camp is where the road's walk rests
-  on O7; the bots burn the trolls (#537). As built: a company at 18 wins every fight on N7 and walks
-  High Moor's road every time, 8.57 fights to a rest; one at 16 wins every fight too, owed to #18 as
-  the Kilns' boxes' is (§4.2). On N8 a company at 18 wins every fight and walks the Cairnfield's
-  road every time, 8.68 fights to a rest; one at 16 wins every fight too, owed to #18 (§4.5). On O7
-  a company at 18 wins every fight and walks High Moor's road, now on to the lights at the ring,
-  every time, 8.88 fights to a rest; one at 16 wins every fight too, owed to #18 (§4.3). On O8 a
-  company at 18 wins every fight and manages 7.94 fights to a rest, but 24.7% of its days end in a
-  fight broken off, the trolls mending each round unless burned and the gate's company having no
-  fire (the gate does not check the figure); one at 16 wins every fight too, owed to #18 (§4.4). On
-  Carn Dubh a company at 18 wins every fight in the cairn and manages 10.70 fights to a rest, off
-  the aim and inside the limit; one at 16 wins every fight too, owed to #18. Under the cairn a
-  company at 19 wins 85.7% of the fights, off the aim and inside the limit, with 9.20 fights to a
-  rest; the Cairn King is won 57% at 19 and 94% at 21 (§4.6). With its trolls apart (#482), O8 at 18 manages
-  11.20 fights to a rest, off the aim and inside the limit, 4.3% of its days ending in a fight
-  broken off (§9, #481 and #482's 10). On M7 a company at 18 wins every fight and manages 10.51
-  fights to a rest, off the aim and inside the limit, 1.7% of its days ending in a fight broken off;
-  one at 16 wins every fight too, owed to #18 (§4.7). On M8 it wins every fight and manages 7.60
-  since #865 (11.53 before), inside the aim, 23.3% of its days ending in a fight broken off (§4.7);
-  one at 16 wins every fight too, owed to #18.
-  Cairnmoor's 31 groups are won 98.6% of the fights at their maps' floors and,
-  two under them, 96.8%, owed to #18 as the Kilns' are.
+  drove road resting at its camp; one at 16 wins no more than one in four (past 10 the gate judges a
+  company two under by its day, #851). The Cairn King is won about half the time at 19 and nearly
+  always at 21. The ring's camp is where the road's walk rests on O7; the bots burn the trolls
+  (#537). As built: a company at 18 wins every fight on N7 and walks High Moor's road every time,
+  8.57 fights to a rest; one at 16 wins every fight too (§4.2). On N8 a company at 18 wins every
+  fight and walks the Cairnfield's road every time, 8.68 fights to a rest; one at 16 wins every
+  fight too (§4.5). On O7 a company at 18 wins every fight and walks High Moor's road, now on to the
+  lights at the ring, every time, 8.88 fights to a rest; one at 16 wins every fight too (§4.3). On
+  O8 a company at 18 wins every fight and manages 7.94 fights to a rest, but 24.7% of its days end
+  in a fight broken off, the trolls mending each round unless burned and the gate's company having
+  no fire (the gate does not check the figure); one at 16 wins every fight too (§4.4). On Carn Dubh
+  a company at 18 wins every fight in the cairn and manages 10.70 fights to a rest, off the aim and
+  inside the limit; one at 16 wins every fight too. Under the cairn a company at 19 wins 85.7% of
+  the fights, off the aim and inside the limit, with 9.20 fights to a rest; the Cairn King is won
+  57% at 19 and 94% at 21 (§4.6). With its trolls apart (#482), O8 at 18 manages 11.20 fights to a
+  rest, off the aim and inside the limit, 4.3% of its days ending in a fight broken off (§9, #481
+  and #482's 10). On M7 a company at 18 wins every fight and manages 10.51 fights to a rest, off the
+  aim and inside the limit, 1.7% of its days ending in a fight broken off; one at 16 wins every
+  fight too (§4.7). On M8 it wins every fight and manages 7.60 since #865 (11.53 before), inside the
+  aim, 23.3% of its days ending in a fight broken off (§4.7); one at 16 wins every fight too.
+  Cairnmoor's 31 groups are won 98.6% of the fights at their maps' floors and, two under them,
+  96.8%.
 - **Density.** Core boxes at the Foreland's floor, the bog, M7 and M8 at the looser one (EXPANSION §5.3). The
   ring's inside is held to no feature but the camp, the voice and the bare ground's line, so it
   needs no exception. As built: N7 99.2% within 8 steps and the furthest 10, with one sign among its
@@ -1185,7 +1184,8 @@ Decided by delegate for #476, each the owner's to overturn:
     388 squares where the plan counted 195 (docs/areas/kilns.md §1).
 14. **The stream clips the south-east corner,** so the corner square is its water, as the edge check
     asks (docs/areas/kilns.md §9, #461's 10).
-15. **Two under is owed to #18,** as the Kilns' boxes' is: a company of 16 beats every group.
+15. **Two under, past 10, is judged by the day (#851), not by the fights won:** a company of 16
+    beats every group.
 16. **Owed on:** the drove road at N8's 7,0 (431,222, #479), the coach's road over it without a stop
     (#539); the peat-cutter's track at O7's 0,22 (456,212, #477), dirt, toward the ring; on N7's west
     the grass, the snow, the heather and the hills against M7, with no road (#484, laid since, square
@@ -1234,8 +1234,8 @@ Decided by delegate for #479, each the owner's to overturn:
     it "to keep it in", and that a coach stopped in the night and he did not go to look.
 14. **The door's line `n8_door` is not once,** as L6's `l6_gate`: it says the door is shut for as
     long as it is; #480 dropped it when the door opened (§9, #480's 7).
-15. **Two under is owed to #18** (`cairnfield_n8: under` in the gate's `OWED`), as N7's and the
-    Kilns' boxes' are: a company of 16 beats every group.
+15. **Two under is judged by the day (#851)** (`cairnfield_n8: under`, a row of the gate's `OWED`
+    until then), as N7's and the Kilns' boxes' are: a company of 16 beats every group.
 16. **The seeds are unchanged,** the zone lines holding. `CAIRNFIELD_HELD`'s row along N8's north
     edge and column down its east are redundant now N8 is laid, its squares seeding the Cairnfield,
     and are left, as no test asks.
@@ -1290,7 +1290,8 @@ Decided by delegate for #477, each the owner's to overturn:
 14. **Gold is 1,610,** the brief's 1,600 of the 8,880: the cairn's 260 with a Sapphire Vial and the
     hollow's 1,350 with the staff; the monsters carry none.
 15. **High Moor's road gains `highmoor_o7:o7_lights`** (the track to the ring's camp, where the walk
-    rests); O7's two under is owed to #18 (`highmoor_o7: under`), as N7's and N8's.
+    rests); O7's two under is judged by the day (#851; `highmoor_o7: under`, a row of `OWED` until
+    then), as N7's and N8's are.
 16. **The seeds are unchanged:** `HIGHMOOR_HELD`'s row along y 190 is redundant for x 456 to 487 now
     O7 is laid, and the seed at 462,212 lies inside O7; both are left, as the zone walk passes and
     no test asks.
@@ -1352,8 +1353,8 @@ Decided by delegate for #478, each the owner's to overturn:
     shoulder (30,0, 31,0 and 31,1), as O7 and N8 drew theirs.
 14. **Nothing is claimed new:** the lights family and the ring are O7's, regeneration and the drain
     cannot be claimed (#477's 13), and the atlas has no tor site to claim as a landmark.
-15. **Two under is owed to #18** (`highmoor_o8: under` in `tools/tests/gate.ts`), as every Cairnmoor
-    box's.
+15. **Two under is judged by the day (#851)** (`highmoor_o8: under`, a row of `OWED` until then), as
+    every Cairnmoor box's.
 16. **No gate road:** O8 is off the road, so High Moor's `ROADS` row is unchanged.
 17. **The start is 6,1, facing south,** with the hut, the peat-cutter and the bog in view: the way
     in is the north-west corner, from N8's heather and O7's foot.
@@ -1371,8 +1372,9 @@ Decided by delegate for #480, each the owner's to overturn:
    draught.
 3. **The cairn is band 18–20, not 19–20:** the curve asks a map's hardest group to stand at its
    floor plus one, 20, and nothing but the King is 20; lowered by one as N2 and N8 were (#460's 2,
-   #479's 1). Two under it is owed to #18 (`cairns: under`), as the Tiefzeche's upper levels are.
-   Under the cairn is 19–20, so the King is judged at 19 and 21 as #480 asks.
+   #479's 1). Two under it is judged by the day (#851; `cairns: under`, a row of `OWED` until then),
+   as the Tiefzeche's upper levels are. Under the cairn is 19–20, so the King is judged at 19 and 21
+   as #480 asks.
 4. **Four groups of wights for the brief's three:** under the cairn the gate's share won at the
    floor counts the King, and beside one group of three it read 78.5%, under its limit of 80%, with
    14.08 fights to a rest (limit 12.25). The King's court is two groups of four, one each side of
@@ -1480,8 +1482,8 @@ Decided by delegate for #484, each the owner's to overturn:
     (the Kilns' doc calls L7 Cairnmoor's in the plan) and 16 of Loch Fada's in L8 (§1).
 13. **The seeds along M7's and M8's edges stay** in `CAIRNFIELD_HELD`, inside laid maps now, as N8's and
     O8's did when they were laid; the atlas comment says so.
-14. **Two under is owed to #18,** as every Cairnmoor box's: `cairnfield_m7: under` and
-    `cairnfield_m8: under` in the gate test's `OWED`, at 1.
+14. **Two under is judged by the day (#851),** as every Cairnmoor box's: `cairnfield_m7: under` and
+    `cairnfield_m8: under` were rows of the gate test's `OWED`, at 1, until then.
 15. **M8's howff door stands at 6,27, not 5,28:** the art check wants every zone's wall faces over the
     cap under the old dressing rule; the door is M8's only counted wall, and at 5,28 the old roll
     (0.977) left it undressed, so M8 failed; at 6,27 it rolls under 0.7.
