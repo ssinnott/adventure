@@ -59,8 +59,8 @@ export const CAIRNS: MapDef = {
     // The end cell and the stair down.
     { kind: 'event', x: 13, y: 8, id: 'cd1_stair', once: true, text: 'In the end cell the floor is the hill\'s own rock, and a stair is cut down into it.' },
     // The secret (#862): rust from a joint in the end cell's south wall, and behind the joint a cell
-    // cut in the rock with a locked chest in it, the first the area holds. The hint is on the way to the
-    // stair, the cell is off it, and nothing needs the chest.
+    // cut in the rock with a locked chest in it, the first the area holds. The hint is a step south of the
+    // stair's square, the cell is off the way, and nothing needs the chest.
     { kind: 'event', x: 13, y: 9, id: 'cd1_rust', once: true, text: 'A stain of rust runs down the south wall from one joint.' },
     { kind: 'event', x: 13, y: 11, id: 'cd1_cell', once: true, text: 'A cell cut in the rock, narrow as a grave. In it a chest bound in iron, its lock red with rust.' },
     { kind: 'chest', x: 13, y: 12, id: 'cd1_kist', gold: 0, items: ['cairnbuilders_mail'], locked: true },

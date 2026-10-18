@@ -228,7 +228,7 @@ gold (§8). O7's Banded Staff +1 is in `src/content/areas/cairnmoor/items.ts`, m
 the area (`ITEMS_AHEAD`, `src/content/index.ts`) as the Kilns' step was, until N7 took the table
 into its Area, and owed to #477 until it was placed, in O7's hollow (§4.3); N7's cache holds a
 second of the Kilns' Forge Hammer +1 (§4.2), O8's hoard a second of the Kilns' Seax +1 (§4.4), M8's howff a
-second of the Kilns' Forge Shield +1 (§4.7), Carn Dubh's cell off the stair the Hill Torc, a piece of its own (§4.6), and two more pieces of its own, off the ladder, lie off the road: the Beacon Hammer under N8's beacon cairn and Cairnbuilder's Mail in the locked chest of a cell off Carn Dubh's end cell (§4.8). Of the systems it waits on,
+second of the Kilns' Forge Shield +1 (§4.7), Carn Dubh's cell off the stair the Hill Torc, a piece of its own (§4.6). Two more pieces of its own, off the ladder, lie off the road: the Beacon Hammer under N8's beacon cairn and Cairnbuilder's Mail in the locked chest of a cell off Carn Dubh's end cell (§4.8). Of the systems it waits on,
 the rest of #432's, ice and lying snow underfoot (#536; heather is #162's), regeneration and curse
 (#537), the bot that plays them (#541) and the drove road's coach (#539) are built, and
 docs/SLICE.md and docs/MONSTERS.md say what each does; the coach runs, Kilnhaven (#469) and Rime
@@ -788,16 +788,16 @@ do, so no figure of the gate, the harness, the ladder or the curve moves (§9, t
   locked chest at 13,12 on Carn Dubh's first level, in a cell cut in the rock at 12 to 14, 11 and 12,
   south of the end cell and shut behind a secret door at 13,10.
 - **The secret and its hint.** At 13,9, the end cell's last square before its south wall, seven
-  squares from the nearest group and on the way to the stair, a stain of rust runs down the wall from
-  one joint; searched there facing south, the wall gives. In the cell a chest bound in iron, its lock
+  squares from the nearest group and a step south of the stair's square in the end cell,
+  a stain of rust runs down the wall from one joint; searched there facing south, the wall gives. In the cell a chest bound in iron, its lock
   red with rust. The chest says "A locked chest." stood on and opens to a Lockpick standing or a set
   of picks carried ("Ottilie picks the lock.", the key kept) or to an iron key, which it spends; else
-  it says "Locked." and nothing changes. It holds no key and no quest's item, nothing needs it, and the pilot walks past it
+  it says "Locked." and nothing changes. It holds no key and no quest's item and nothing needs it; the pilot walks past it
   as it walks past a locked door with no key (PILOT, #857).
 - **New here.** Nothing claimed (§7).
 - **Finds.** The two, with no gold in either; no person, sign, event or quest names them.
-- **Pay.** None: no group is added or moved and no gold lies in either, so the clear's 15,442 xp and
-  9,115 gold stand.
+- **Pay.** None: no group is added or moved and no gold lies in either, so the clear's xp and
+  gold stand.
 
 - **As built** (#862):
   - **N8** (`cairnfield_n8`) gains the cairn `n8_beacon` at 28,20 on open heather: "A cairn at the
@@ -1510,10 +1510,10 @@ Decided by the builder for #862, each the owner's to overturn:
 6. **Mail, not a weapon.** It is worn with any weapon, the hammer among them, and has no steel to
    count: its armour class is dwarf mail's, 11, the ladder's at 17, with dwarf mail's seven wearers.
    Might helps the blows of the hand only, not a bow's.
-7. **No gold in either,** so the clear's pay (15,442 xp and 9,115 gold) and every curve figure stand.
+7. **No gold in either,** so the clear's pay and every curve figure stand.
 8. **The hint is rust:** a stain runs down the end cell's south wall from one joint, and the cell's
-   own words give a chest bound in iron with its lock red with rust. The square is calm (no group
-   within seven) and on the way down the stair, so every company that goes down passes it.
+   own words give a chest bound in iron with its lock red with rust. The square is calm (the nearest group, `cd1_bodies2` at 7,8, is seven away) and one step
+   south of the stair's square in the same small cell, so every company that goes down is beside it.
 9. **No text on either piece:** gear's `text` is read nowhere, as the pack equips it. The words are
    the cairn's and the cell's.
 10. **The names:** Beacon Hammer, for the scorched cairn that holds it (13 characters, so the sheet's
@@ -1522,8 +1522,9 @@ Decided by the builder for #862, each the owner's to overturn:
 11. **Ids stay once shipped:** `beacon_hammer`, `cairnbuilders_mail`, `n8_beacon`, `cd1_kist`,
     `cd1_rust` and `cd1_cell`, and the door square 13,10 on `cairns`.
 12. **The pilot** is #857's: a locked chest it cannot open it presses on once and walks past, as it
-    walks past a locked door with no key. This chest lies behind a secret door of a side dungeon that
-    no goal of the chapter or of a quest names; no `FULLRUN=all` run was made.
+    walks past a locked door with no key. This chest lies behind a secret door in the end cell: no goal names the cell, and
+    the Watcher's tally, which does go into Carn Dubh, runs north through the door at 11,3 and ends at his cell;
+    no `FULLRUN=all` run was made.
 
 
 ## 10. Names
