@@ -699,7 +699,7 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   and `npm run check`, prints every line. Each suite ends with a line of its seconds and its count
   (`gate  335.5 s  617 ok`), timed in the one process from its load to its end, and the run with a
   table of those lines, the slowest first, before the last line. A green run printed 27,874 lines on
-  18 October and prints 122. The table that day, on a four-core container shared with other runs:
+  18 October and prints 123. The table that day, on a four-core container shared with other runs:
   the gate 335.5 s, `labels` 104.5, `row` 84.5, the Foreland's walkthrough 33.1, `quests` 27.7,
   `harness` 27.1, `scaffold` 12.3, `pilot` 8.5 and every other suite under 6, 698.9 s in all.
   A check someone owes is reported, not failed:
