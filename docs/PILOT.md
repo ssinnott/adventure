@@ -162,7 +162,8 @@ the frontier by the route's length, a seen square the company can stand on with 
 beside it ("Looking about Helmstow."); and, the frontier spent, the nearest wall it suspects, a wall
 with seen floor on both sides, searched once from each side (`Pilot.searched`) from the square
 before it ("Searching the wall."), so a secret door whose far side is unseen is not found (decision
-17). Then it says "Helmstow is walked out." and gives no key, and says it again with no search
+17). A Lockpick standing (the premade six's thief is born to it) opens a locked door with no key
+spent, but the explorer goes to one only once a key is carried, as before (#857). Then it says "Helmstow is walked out." and gives no key, and says it again with no search
 until something it rests on changes. It explores the map it is on, or `Pilot.prefer` (the
 strategist's, #720) where that is this map or a zone of it. Outdoors it keeps to one zone's box, the party's or the zone preferred, and never goes
 into a zone whose band, as Known gives it, starts above the company's level and one, unless that zone
@@ -206,7 +207,8 @@ under the goal's zone's floor, where that zone's band as Known gives it starts a
 level and one ("Levelling in the Foreland to 4."); else walking the land ("Walking the Keep."). To a
 goal's map it goes by the exits seen ("Bound for Callow Downs: Ashcombe is past Gullwick..."), else
 by the zones between, and there it hands the map to the explorer (`Pilot.prefer`); it opens a chest
-it stands on and goes to one seen there; walked out, it walks the place again end to end, so that the
+it stands on and goes to one seen there, Space pressed once a chest, so a locked chest it cannot open
+("Locked.") is walked past as a locked door with no key is (#857); walked out, it walks the place again end to end, so that the
 days pass. Three days of the world's on one goal with no change in its words, it says "Lost in the
 Foreland: three days, and no way on.", gives the goal up (`Pilot.lost`) and turns to the next aim;
 three days levelling with no level gained, "Three days in the Foreland, and no stronger."; either is
