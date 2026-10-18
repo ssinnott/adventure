@@ -48,9 +48,9 @@ export const HEARTHISLE_I6: MapDef = {
     'rrrrrrrr,,_~~WWWWWWWWWWWWWWWWWWW',
     'rrrrrrrr,,,_~~WWWWWWWWWWWWWWWWWW',
     ',rrrrrrrr,,_~~WWWWWWWWWWWWWWWWWW',
-    ',rrrr:::S,,_~~WWWWWWWWWWWWWWWWWW',
+    ',rrrrrrrr,,_~~WWWWWWWWWWWWWWWWWW',
     ',,rrrrrrr,,_~~WWWWWWWWWWWWWWWWWW',
-    ',,rrrrrrr,,_~~WWWWWWWWWWWWWWWWWW',
+    ',,rrr:::S,,_~~WWWWWWWWWWWWWWWWWW',
     ',rrrrrrrr,,_~~WWWWWWWWWWWWWWWWWW',
     ',rrrrrrrr,,,_~~WWWWWWWWWWWWWWWWW',
     ',::rBrrrr,,_~~WWWWWWWWWWWWWWWWWW',
@@ -122,12 +122,12 @@ export const HEARTHISLE_I6: MapDef = {
     // the rock, and the door in the face where it stops. Behind it a cell cut for a lamp, with a plain chest and a
     // grey-banded one: the Vigil Robe in the first, the Levin Mace in the second, which a Lockpick or an iron key
     // opens. Off the quest, on the rim's far side from the Bowl, and no person, quest or mark names it.
-    { kind: 'event', x: 9, y: 13, id: 'i6_scorch', once: true, text: 'A vein of glass, finger-thick, runs through the turf from the sand and stops at the rock, which is scorched black above it.' },
-    { kind: 'event', x: 7, y: 13, id: 'i6_vigil', once: true, text: 'A cell cut in the rim, bed-long, its roof black with lamp-smoke. A plain chest on the floor, and one banded in grey metal.' },
-    { kind: 'chest', x: 6, y: 13, id: 'i6_vigil_chest', gold: 0, items: ['vigil_robe'] },
-    { kind: 'chest', x: 5, y: 13, id: 'i6_vigil_locked', gold: 0, items: ['levin_mace'], locked: true },
+    { kind: 'event', x: 9, y: 15, id: 'i6_scorch', once: true, text: 'A vein of glass, finger-thick, runs through the turf from the sand and stops at the rock, which is scorched black above it.' },
+    { kind: 'event', x: 7, y: 15, id: 'i6_vigil', once: true, text: 'A cell cut in the rim, bed-long, its roof black with lamp-smoke. A plain chest on the floor, and one banded in grey metal.' },
+    { kind: 'chest', x: 6, y: 15, id: 'i6_vigil_chest', gold: 0, items: ['vigil_robe'] },
+    { kind: 'chest', x: 5, y: 15, id: 'i6_vigil_locked', gold: 0, items: ['levin_mace'], locked: true },
   ],
-  secrets: [{ x: 2, y: 24, hint: 'i6_smell' }, { x: 8, y: 13, hint: 'i6_scorch' }],
+  secrets: [{ x: 2, y: 24, hint: 'i6_smell' }, { x: 8, y: 15, hint: 'i6_scorch' }],
   encounters: [
     // The Hand's champions in the Bowl's pocket where the rim's path begins, so Anchorhold is reached with
     // a fight; the moths over the yard by night; the camp's guard, the box's hardest, never roaming and
