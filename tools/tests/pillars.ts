@@ -18,7 +18,8 @@ import type { MapDef, Passage, Presence } from '../../src/game/map.ts';
 import type { Atlas, AtlasZone } from '../../src/game/atlas.ts';
 import { worldGrid, isWater, mapAt, TI, MAP_TERRAIN, TERRAINS, areaBand, zoneOfMap, homeMap } from '../../src/game/atlas.ts';
 import { CLASSES, RACES, TRAITS, NAME_MAX } from '../../src/game/party.ts';
-import { signLine } from '../../src/game/world.ts';
+import { signLine, enclaveLine } from '../../src/game/world.ts';
+import { LAIR } from './enclave.ts';
 import { signTexts, readLine, isInscription, marksOf } from '../../src/game/inscriptions.ts';
 import { NORTH } from '../../src/game/types.ts';
 import { FONT_CHARS, measureText } from '../../src/lib/engine/text.ts';
@@ -116,6 +117,9 @@ export function lineFaults(def: MapDef): string[] {
     const n = logLines([...a.says, ...answerNote(a)].join(' ')).length;
     if (n > MOST_LINES) out.push(`${e.id}'s answer '${a.label}' takes ${n} lines`);
   }
+  // An enclave's door line (#845), at its longest: its band and the warning, as one entry.
+  const door = def.band ? enclaveLine(def, def.band[0] - 3) : undefined, lines = door ? logLines(door).length : 0;
+  if (lines > MOST_LINES) out.push(`its door's line takes ${lines} lines`);
   for (const f of def.features ?? []) {
     // A wilderness feature's lines are said on Space, one event at a time, each held to the most.
     if (f.kind === 'shrine' || f.kind === 'fountain' || f.kind === 'cairn' || f.kind === 'statue' || f.kind === 'camp') {
@@ -215,6 +219,7 @@ export function texts(defs: readonly MapDef[] = MAP_DEFS, crossings: readonly Cr
       }
     }
     for (const e of d.exits ?? []) add(`${d.id} exit ${e.x},${e.y}`, e.label, e.blockedText);
+    if (d.band) add(`${d.id} door`, enclaveLine(d, d.band[0] - 1), enclaveLine(d, d.band[0] - 3));
     for (const e of d.encounters ?? []) add(`${d.id} ${e.id}`, e.slainText);
   }
   for (const c of crossings) for (const e of c.ends) add(`crossing ${c.name} at ${e.at}`, e.name, e.label, e.warning);
@@ -593,6 +598,12 @@ export async function pillars(): Promise<void> {
       ok(!faults.length, `${area.id}/${def.id}: every event and sign fits ${MOST_LINES} lines of the log${faults.length ? ' -> ' + faults.join('; ') : ''}`);
     }
     console.log(`        ${area.id}: ${count.reduce((a, b) => a + b)} events and signs; by lines as shown, ${count.slice(1).map((n, i) => `${n} at ${i + 1}`).join(', ')}`);
+  }
+  {
+    // An enclave's door line (#845) is held to the lines of the log, at its longest, and read with every text.
+    const long = { ...LAIR, name: `The ${'Long '.repeat(30)}Hollow` }, door = enclaveLine(long, 27)!;
+    ok(!lineFaults(LAIR).length && logLines(door).length > MOST_LINES && lineFaults(long).length === 1 && texts([LAIR], []).filter((t) => t.where === `${LAIR.id} door`).length === 2,
+      `the fixture lair's door line fits the log at its longest (${logLines(enclaveLine(LAIR, 27)!).length} lines), one of ${logLines(door).length} fails, and both its feelings are read with every text`);
   }
   // The endings' pages (#750): the long-form exception, three to an ending, each within its screen and none held to the log's lines.
   {
