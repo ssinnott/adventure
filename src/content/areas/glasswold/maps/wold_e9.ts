@@ -5,7 +5,8 @@
 // summer pasture, their herds and their summer camp on it, running down to the sand and the sea.
 // Vultures sit the crest over a horse they picked; a pride follows the herds at the pasture's south end,
 // vultures with it; on the hills' north end, over the sea, two basilisks, and a ewe that went up there
-// and stands for ever. The herders' store is dug into a hill where their path stops at a slab. E8, the
+// and stands for ever. The herders' store is dug into a hill where their path stops at a slab, and keeps,
+// at the back of it, the bow the Master of arms asks for (#858). E8, the
 // shore, is north; F9, Ashfall's coast, east, is not built, so the world ends past the east edge.
 // Cut from the atlas by tools/scaffold.ts, the south edge laid square for square to E10's north;
 // docs/areas/glasswold.md §4.9 is its brief (#534).
@@ -38,7 +39,7 @@ export const WOLD_E9: MapDef = {
     'ssss^^^^^^^^^^^^^^^,,,,,,,,,,,,,',
     'sss^^^^^^^^^^^^^^^^,,,,,,,,,,,^^',
     'ss^^^^^^^rrrr^^^^^^,,,,,,,,,,,^^',
-    's^^^^^^^^r::S^^^^^^,,,,,,,,,,,^^',
+    's^^^^^^^r:::S^^^^^^,,,,,,,,,,,^^',
     's^^^^^^^^rrrr^^^^^^,,,,,,,,,,,^^',
     'sss^^^^^^^^^^^^^^^s,,,,,,,,,,,^^',
     'ssss^^^^^^^^^^^^^ss,,,,,,,,,,,^^',
@@ -68,6 +69,9 @@ export const WOLD_E9: MapDef = {
     { kind: 'event', x: 13, y: 17, id: 'e9_path', once: true, text: 'A path worn by hooves and sledge-runners comes up the hillside and stops dead at a slab of grey stone.' },
     { kind: 'event', x: 11, y: 17, id: 'e9_store', once: true, text: 'Behind the slab the hill is hollow and dry: yurt poles, felts rolled in fat and an iron-bound box.' },
     { kind: 'chest', x: 10, y: 17, id: 'e9_strongbox', gold: 1200, items: ['potion_sp_great'] },
+    // At the back of the store, a square dug further into the hill (#858): the old Rider's bow, kept with the
+    // felts since his hands went. It is the favour the Master of arms asks (D10's small mesa); no shop sells it.
+    { kind: 'chest', x: 9, y: 17, id: 'e9_drill_bow', gold: 0, items: ['drill_bow'] },
     { kind: 'cairn', x: 10, y: 12, id: 'e9_cairn', text: 'A Riders\' cairn on the hilltop, a lance-head on it rusted red, pointing at the sea.', gold: 400, items: ['elixir'] },
     // The hills' north end over the sea: the view from the brow, and a ewe that went up there.
     { kind: 'event', x: 16, y: 9, id: 'e9_brow', once: true, text: 'From the hills\' north brow the land falls away to the sea: the steppe, the summer grass and the water grey beyond.' },
