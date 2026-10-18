@@ -39,4 +39,10 @@ export const ITEMS: readonly ItemDef[] = [
     '"To the eldest at Akordu. The silver, as before, and the Riders tell nobody what walks out of the Glass."',
   ] },
   { id: 'glass_boy', name: 'Boy of Glass', slot: 'none', price: 0 },
+  // At the back of the herders' store on E9, behind the slab where their path stops (#858): no shop buys it.
+  // Mergen, the old Rider who drilled the Riders and hides in D10's small mesa, takes it at the first meeting
+  // that holds it, the favour his teaching of the Master of arms waits on.
+  { id: 'drill_bow', name: 'Drill Bow', slot: 'none', price: 0, text: [
+    'A bow of horn and sinew, black with handling. The grip is worn in two places, by thumb and heel, to one hand.',
+  ] },
 ];

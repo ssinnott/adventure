@@ -967,9 +967,20 @@ The two go opposite ways: the Buried Tower down into the ground, the Vault up in
 
 The reach sits at the cap and is harder than the Core: its dungeons' bands are 30–32, whatever the
 atlas's rows said before (docs/MONSTERS.md §12, open question 3; #434, call 7). Its power comes from what it holds
-(artifacts, some of the hidden Master trainers of §5, the richest shrines and fountains) rather
+(artifacts, hidden Master trainers of §5 beyond the road's two, the richest shrines and fountains) rather
 than from more levels, so the quest still runs from level 1 to the cap. The reach is open before
 the choice: the Core waits.
+
+Two Masters stand on the road and not in the reach, each found and never told (§5): the Wold's old
+Rider at arms and Old Cinder's scholar in magic (#859). The Rider is hidden in the rock of D10's small
+mesa, with a rumour at Akordu and a bow to fetch (#858, docs/areas/glasswold.md §6). The reach may
+hold more.
+
+Decided by the owner's delegate for #18, each the owner's to overturn:
+
+1. The road holds two Masters, one to a line, each off the road and off the quest, with a rumour in
+   the area's own words and a favour found in a hidden place of the same area; the reach's stay the
+   reach's, and the reach may hold more.
 
 ---
 
