@@ -3,13 +3,16 @@
 // is a member; each rank opens the next; an item is taken at the first meeting whatever the rank;
 // a deed done early is paid when its quest is taken; a later act's ask waits for its act; a save
 // keeps the flags. Walked on a fixture
-// guild, then every real guild quest held to the same rules.
+// guild, then every real guild quest held to the same rules. Every row of every hall's first menu
+// fits the side panel's column (#890).
 import { makeRng } from '../../src/lib/engine/rng.ts';
+import { measureText } from '../../src/lib/engine/text.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { MAP_DEFS, ITEMS, GUILD_QUESTS, MONSTERS } from '../../src/content/index.ts';
 import { GUILDS, takenFlag, doneFlag, rankFlag, guildQuestDef } from '../../src/content/guilds.ts';
 import type { GuildId } from '../../src/content/guilds.ts';
 import { World } from '../../src/game/world.ts';
+import type { Feature } from '../../src/game/map.ts';
 import { defaultParty, countItem } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
 import type { MapState } from '../../src/game/world.ts';
@@ -18,9 +21,12 @@ import { rankOf, rankName, offered, inHand, report, take } from '../../src/game/
 import type { GuildQuest } from '../../src/game/guilds.ts';
 import { giftOf } from '../../src/game/wilds.ts';
 import { personFlags, personGives } from '../../src/game/people.ts';
+import { businessEntries } from '../../src/ui/screens.ts';
+import { SIDE_W } from '../../src/ui/frame.ts';
+import { columnLabelWidth } from '../../src/ui/draw.ts';
 import { CONTENT, collect } from '../shipped.ts';
 import { condFaults } from './quests.ts';
-import { ok, owed } from './lib.ts';
+import { ok, owed, headlessGame } from './lib.ts';
 
 const quest = (id: string, rank: number, deed: Partial<GuildQuest>, guild: GuildId = 'wardens'): GuildQuest => ({
   id, guild, rank, offer: [`Offer ${id}.`], paid: [`Paid ${id}.`], early: [`Early ${id}.`],
@@ -148,6 +154,7 @@ export function guilds(): void {
     const f = MAP_DEFS.flatMap((d) => d.features ?? []).find((x) => 'name' in x && x.name === name);
     ok(!!f && 'hall' in f && f.hall === g, `${name} is a hall of ${GUILDS[g].name.replace(/^The /, 'the ')}`);
   }
+  firstMenus();
   const npcFlags = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => (f.kind === 'npc' ? personFlags(f) : []))));
   const findable = new Set([
     ...MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => [...(giftOf(f)?.items ?? []), ...(f.kind === 'shop' ? f.stock : []), ...(f.kind === 'npc' ? personGives(f) : [])])),
@@ -200,4 +207,33 @@ export function guilds(): void {
     ok(ranks.filter((r) => r === 0).length === 1, `${g}: one first task`);
     ok([...new Set(ranks)].sort().every((r, i) => r === i), `${g}: its ranks have no gap`);
   }
+}
+
+type Business = Parameters<typeof businessEntries>[1];
+type Npc = Extract<Feature, { kind: 'npc' }>;
+/** A hall as a first menu takes it: a business, or a tavern with a room of its own, whose `hall` is a guild's. */
+const isHall = (f: Feature): f is Business & { hall: GuildId } => 'hall' in f && !!f.hall && (f.kind !== 'npc' || !!f.interior);
+
+/**
+ * Every row of a hall's first menu fits the side panel as the menu draws it (`columnMenu`, ui/draw.ts):
+ * each label `businessEntries` gives at every hall of the content, with every person who may stand
+ * there in, whatever the hour and whatever is done. A first menu's rows have no value beside them and
+ * are held to the column of a list that scrolls, the narrower of the two, so none is cut whether the
+ * list scrolls or not. A row cut reads short until it is chosen (#890), so a guild's name too long for
+ * "Work for <the guild>" is caught here, when it is written.
+ */
+function firstMenus(): void {
+  const g = headlessGame(4), world = g.world, width = columnLabelWidth(SIDE_W, '', true);
+  // Everyone who may stand in a business is in it.
+  world.peopleAt = (x, y) => world.map.featuresAt(x, y).filter((p): p is Npc => p.kind === 'npc' && !p.interior);
+  const halls: { at: string; labels: string[] }[] = [];
+  for (const d of MAP_DEFS) for (const f of d.features ?? []) {
+    if (!isHall(f)) continue;
+    world.travel(d.id, f.x, f.y, 0);
+    halls.push({ at: `${f.name}, ${d.id}`, labels: businessEntries(g, f).map((e) => e.label) });
+  }
+  const rows = halls.flatMap((h) => h.labels.map((label) => ({ at: h.at, label, px: measureText(label) })));
+  const cut = rows.filter((r) => r.px > width), widest = rows.reduce((a, r) => (r.px > a.px ? r : a));
+  ok(halls.length > 0 && halls.every((h) => h.labels.some((l) => l.startsWith('Work for '))) && !cut.length,
+    `every row of the ${halls.length} halls' first menus, ${rows.length} in all, fits the ${width} px of a list that scrolls, the widest "${widest.label}" at ${widest.px}${cut.length ? ' -> cut: ' + cut.map((r) => `"${r.label}" at ${r.at}, ${r.px}`).join('; ') : ''}`);
 }

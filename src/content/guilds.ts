@@ -12,6 +12,11 @@ export type GuildId = 'wardens' | 'lanterns' | 'cartographers' | 'compact';
 export interface GuildDef {
   id: GuildId;
   name: string;
+  /**
+   * What a hall's first menu calls the guild after "Work for", where the whole name would be cut in the
+   * side panel (tools/tests/guilds.ts holds every row to the column); the name, when unset.
+   */
+  short?: string;
   /** The four ranks' names: the first task done makes a company the first. */
   ranks: readonly [string, string, string, string];
 }
@@ -19,7 +24,7 @@ export interface GuildDef {
 export const GUILDS: Readonly<Record<GuildId, GuildDef>> = {
   wardens: { id: 'wardens', name: 'The Wardens', ranks: ['Recruit', 'Corporal', 'Sergeant', 'Captain'] },
   lanterns: { id: 'lanterns', name: 'The Lanterns', ranks: ['Taper', 'Adjunct', 'Reader', 'Luminary'] },
-  cartographers: { id: 'cartographers', name: "The Cartographers' Guild", ranks: ['Chainman', 'Surveyor', 'Mapmaker', 'Geographer'] },
+  cartographers: { id: 'cartographers', name: "The Cartographers' Guild", short: 'The Cartographers', ranks: ['Chainman', 'Surveyor', 'Mapmaker', 'Geographer'] },
   compact: { id: 'compact', name: 'The Salt Compact', ranks: ['Runner', 'Fence', 'Factor', 'Partner'] },
 };
 
