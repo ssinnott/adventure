@@ -806,11 +806,12 @@ export async function pillars(): Promise<void> {
     }
   }
   {
-    // A fixture zone laid on open atlas grass, as tools/tests/atlas.ts lays one, where no zone map is
-    // laid: a map built there moves it.
+    // A fixture zone laid on open atlas land, as tools/tests/atlas.ts lays one, where no zone map is
+    // laid: a map built there moves it. It lay on B2's grass until B2 was built (#830), and lies now on
+    // the steppe of C10, in the Glass, the reach, which is drawn and left unbuilt (#828).
     const lay = (rows: string[]): EdgeFault[] => {
       const fixture: MapDef = { id: 'fixture_edge', name: 'Edge fixture', kind: 'outdoor', start: { x: 2, y: 2, facing: NORTH }, rows };
-      const at: [number, number] = [64, 52];
+      const at: [number, number] = [88, 296];
       const zone: AtlasZone = { id: 'fixture_edge', name: 'Edge fixture', area: ATLAS.zones[0].area, maps: [{ map: 'fixture_edge', at }] };
       const atlas = { ...ATLAS, zones: [...ATLAS.zones, zone] };
       if (!mapAt(atlas, fixture.id)) throw new Error('the edge fixture is not laid: its checks would pass on nothing');
@@ -818,7 +819,7 @@ export async function pillars(): Promise<void> {
       if (under) throw new Error(`the edge fixture lies on or beside ${under.id}: move it to land no zone map covers`);
       return edgeFaults(atlas, [...MAP_DEFS, fixture]).filter((e) => e.map === 'fixture_edge');
     };
-    ok(!lay(['MMMMMM', 'M,,,,M', 'M,,,,M', 'M,,,,M', 'MMMMMM']).length, 'a fixture zone of grass on atlas grass agrees at its edges');
+    ok(!lay(['MMMMMM', 'M,,,,M', 'M,,,,M', 'M,,,,M', 'MMMMMM']).length, 'a fixture zone of grass on atlas land agrees at its edges');
     ok(lay(['MMMMMM', 'M,,,,M', 'M====M', 'M,,,,M', 'MMMMMM']).length === 2, 'a road that runs into its ring against atlas land fails, at both ends');
     ok(lay(['MMMMMM', 'M,,,,M', 'MW,,,M', 'M,,,,M', 'MMMMMM']).length === 1, 'and so does sea at its edge');
     ok(lay(['MMMMMM', 'M,,,,M', '=,,,,M', 'M,,,,M', 'MMMMMM']).length === 1, 'and a road through a gap in the ring');
