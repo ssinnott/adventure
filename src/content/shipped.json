@@ -1105,6 +1105,19 @@
         "k4_shingle",
         "k4_steps",
         "k4_way",
+        "k6_boles",
+        "k6_cairn",
+        "k6_cell",
+        "k6_cell_chest",
+        "k6_flat",
+        "k6_fold",
+        "k6_heath",
+        "k6_pit",
+        "k6_point",
+        "k6_rails",
+        "k6_rings",
+        "k6_slip",
+        "k6_wreck",
         "k9_bell",
         "k9_bones",
         "k9_cairn",
@@ -1855,6 +1868,7 @@
         "k3_door",
         "k4_deathshead",
         "k4_gleaners",
+        "k6_worms",
         "k9_bears_hills",
         "k9_bears_shore",
         "k9_lynx_far",
@@ -2043,6 +2057,7 @@
         "341,272",
         "344,297",
         "344,77",
+        "345,172",
         "351,329",
         "365,338",
         "365,35",
@@ -3415,6 +3430,10 @@
     },
     "ironfells_o3": {
       "at": "456,62",
+      "size": "32x32"
+    },
+    "kilnmouth_k6": {
+      "at": "328,158",
       "size": "32x32"
     },
     "kilnmouth_l6": {
