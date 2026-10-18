@@ -6,7 +6,8 @@
 // it is no story lock. It depends on the world state and the party alone, so the tests can walk a
 // ladder without a Game; the hall's menu is ui/screens.ts.
 import type { GuildId } from '../content/guilds.ts';
-import { GUILDS, takenFlag, doneFlag, rankFlag } from '../content/guilds.ts';
+import { GUILDS } from '../content/guilds.ts';
+import { takenFlag, doneFlag, rankFlag } from './keys.ts';
 import { GUILD_QUESTS, ITEMS } from '../content/index.ts';
 import type { WorldState } from './world.ts';
 import type { Party } from './party.ts';

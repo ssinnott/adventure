@@ -4,19 +4,16 @@
 // that; its look, once said, is `<id>.seen` there too. So nothing new is saved. Pure, so the tests
 // load it; world.ts runs the pace and the look, and game.ts puts the choice and says the lines.
 import type { Feature, GameMap, EncounterDef } from './map.ts';
-import type { QuestCond } from './quests.ts';
 import type { World } from './world.ts';
 import type { Party } from './party.ts';
 import { giftOf, give } from './wilds.ts';
 import { item } from './items.ts';
+import { lookKey } from './keys.ts';
 
 export type Den = Extract<Feature, { kind: 'den' }>;
 
-/** The brood's `until`: the den burnt, by its map as written and its id. */
-export const denBurnt = (map: string, id: string): QuestCond => ({ seen: `${map}:${id}` });
-
-/** The key a den's look is kept by in `used` once said. Never ':', which `seen` splits on. */
-export const lookKey = (den: Den): string => `${den.id}.seen`;
+/** The brood's `until` and the look's key: in game/keys.ts, which loads nothing, so a map may import it first. */
+export { denBurnt, lookKey } from './keys.ts';
 
 export const burnt = (world: World, den: Den): boolean => world.used(den.id);
 

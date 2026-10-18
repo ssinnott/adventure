@@ -7,6 +7,7 @@ import type { ItemDef } from './items.ts';
 import { spellsFor, ELEMENTS } from './spells.ts';
 import type { SpellList, Element } from './spells.ts';
 import type { SkillId } from './skills.ts';
+import { hasSkill } from './skills.ts';
 import type { Tier, Tiers } from './mastery.ts';
 
 export type Stat = 'might' | 'intellect' | 'personality' | 'endurance' | 'accuracy' | 'speed' | 'luck';
@@ -209,8 +210,8 @@ export interface Party {
   flags: Record<string, number>;
 }
 
-/** The flag a party holds once it has paid a spell hall's fee to study: made from the hall's name, so renaming a hall forgets who paid. */
-export const guildFlag = (hall: string): string => `guild_${hall}`;
+/** The flag a party holds once it has paid a spell hall's fee to study: in game/keys.ts with the save's other keys. */
+export { guildFlag } from './keys.ts';
 
 export const BASE_STATS: Stats = { might: 10, intellect: 10, personality: 10, endurance: 10, accuracy: 10, speed: 10, luck: 10 };
 
@@ -511,20 +512,15 @@ export function companyLevel(p: Party): number {
 }
 
 /**
- * Whether anyone standing can do the thing: swim, if one is of a people that swims or has learnt
- * Swimmer; climb, if one has learnt Mountaineer (game/skills.ts; #805). The flags `skill_swim` and
- * `skill_mountaineer` grant it as well, for the tests and for anything else that sets them. The
- * skills are read off the member's list here and not through `hasSkill`: skills.ts reaches the
- * guilds and the quests, and this file sits under the content index, so importing it makes a cycle
- * that breaks loading the index first. No people is born to either skill, so the list is all
- * `hasSkill` would read; the skills test holds the two to one answer for every people.
+ * Whether anyone standing can do the thing: swim, if one is of a people that swims or has Swimmer;
+ * climb, if one has Mountaineer (`hasSkill`, game/skills.ts; #805). The flags `skill_swim` and
+ * `skill_mountaineer` grant it as well, for the tests and for anything else that sets them.
  */
 export function partyCan(p: Party): { swim: boolean; climb: boolean; keys: number } {
   const up = p.members.filter((m) => !isDown(m));
-  const learnt = (m: Character, id: SkillId): boolean => m.skills?.includes(id) ?? false;
   return {
-    swim: up.some((m) => RACES[m.race].swim || learnt(m, 'swimmer')) || (p.flags.skill_swim ?? 0) > 0,
-    climb: up.some((m) => learnt(m, 'mountaineer')) || (p.flags.skill_mountaineer ?? 0) > 0,
+    swim: up.some((m) => RACES[m.race].swim || hasSkill(m, 'swimmer')) || (p.flags.skill_swim ?? 0) > 0,
+    climb: up.some((m) => hasSkill(m, 'mountaineer')) || (p.flags.skill_mountaineer ?? 0) > 0,
     keys: countItem(p, 'key_iron'),
   };
 }
