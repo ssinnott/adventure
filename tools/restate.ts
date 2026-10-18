@@ -15,7 +15,7 @@ import { MONSTERS } from '../src/content/index.ts';
 import type { MonsterDef } from '../src/game/monsters.ts';
 import { ROLE_IDS, HP, DAMAGE, TROLL, SWEEP, scaleAt, testMonster } from './testmonster.ts';
 import type { Role } from './testmonster.ts';
-import { OFF_LINE, WHOLE } from './tests/harness.ts';
+import { offLineOf, wholeOf } from './tests/harness.ts';
 
 type Table = Record<Role, readonly number[]>;
 export interface Tables { hp: Table; dmg: Table }
@@ -40,7 +40,7 @@ export function tablesAt(ref: string): Tables {
 
 /** The shapes a monster of its level may stand on, by name, on the tables given, as the harness suite's `onTheLine` has them. */
 export function shapes(t: Tables, m: MonsterDef): { name: string; def: MonsterDef }[] {
-  const l = m.level, h = (r: Role): number => scaleAt(t.hp, r, l), d = (r: Role): number => scaleAt(t.dmg, r, l), w = WHOLE[m.id];
+  const l = m.level, h = (r: Role): number => scaleAt(t.hp, r, l), d = (r: Role): number => scaleAt(t.dmg, r, l), w = wholeOf(m.id);
   const brute = testMonster('brute', l, h('brute'), d('brute')), trollHp = Math.round(brute.hp * TROLL.hp);
   const giant = testMonster('brute', l, h('brute') * SWEEP.share, d('brute') * SWEEP.share);
   return [
@@ -72,7 +72,7 @@ function main(): void {
   for (const area of fs.readdirSync(dir)) { const f = new URL(`${area}/monsters.ts`, dir); if (fs.existsSync(f)) files.set(f.pathname, fs.readFileSync(f, 'utf8')); }
   const tally = new Map<string, number>();
   let moved = 0, already = 0;
-  for (const m of Object.values(MONSTERS).filter((x) => x.level > 10 && !OFF_LINE[x.id]).sort((a, b) => a.level - b.level || a.id.localeCompare(b.id))) {
+  for (const m of Object.values(MONSTERS).filter((x) => x.level > 10 && !offLineOf(x.id)).sort((a, b) => a.level - b.level || a.id.localeCompare(b.id))) {
     const before = shapes(was, m), k = before.findIndex(({ def }) => stands(def, m));
     if (k < 0) {
       if (shapes(now, m).some(({ def }) => stands(def, m))) { already++; continue; }
@@ -93,7 +93,7 @@ function main(): void {
     moved++;
     console.log(`${m.id} (${before[k].name} ${m.level}, ${area}): ${m.hp} ${m.dice}d${m.sides}+${m.bonus} (${blow(m)})${m.regen ? ` mending ${m.regen}` : ''} -> ${to.hp} ${to.dice}d${to.sides}+${to.bonus} (${blow(to)})${to.regen ? ` mending ${to.regen}` : ''}`);
   }
-  console.log(`\n${moved} restated from the line at ${ref} (${[...tally].map(([a, n]) => `${a} ${n}`).join(', ')}), ${already} on the line now already, ${Object.keys(OFF_LINE).length} off it (OFF_LINE, their gates')`);
+  console.log(`\n${moved} restated from the line at ${ref} (${[...tally].map(([a, n]) => `${a} ${n}`).join(', ')}), ${already} on the line now already, ${Object.values(MONSTERS).filter((m) => offLineOf(m.id)).length} off it (OFF_LINE, their gates')`);
   if (write) { for (const [f, src] of files) fs.writeFileSync(f, src); console.log('written to the areas\' monsters.ts'); }
 }
 

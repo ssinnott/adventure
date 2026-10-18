@@ -12,7 +12,7 @@
 import { AREAS, ATLAS, MAP_DEFS, MONSTERS, ITEMS } from '../../src/content/index.ts';
 import type { RegionId } from '../../src/content/index.ts';
 import type { Area } from '../../src/content/area.ts';
-import { CURVE, PLANNED, MEMBERS, xpBudget, goldBudget } from '../../src/content/progression.ts';
+import { CURVE, MEMBERS, xpBudget, goldBudget } from '../../src/content/progression.ts';
 import type { AreaCurve } from '../../src/content/progression.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { MapDef, Feature, EncounterDef, Choice } from '../../src/game/map.ts';
@@ -25,6 +25,7 @@ import { giftOf, spentId } from '../../src/game/wilds.ts';
 import { handIns, choices } from '../../src/game/people.ts';
 import { xpForLevel, killPay, MAX_LEVEL } from '../../src/game/party.ts';
 import { FIXTURE, LAIR } from './enclave.ts';
+import { CHECKS, once } from '../checks.ts';
 import { ok, owed } from './lib.ts';
 
 /**
@@ -436,14 +437,13 @@ export function curve(): void {
   const strand = [{ ...MAP_DEFS[0], id: 'fx_isle', band: [28, 29] as [number, number] }];
   ok(areaBand(laid, strand, 'hearth')?.join('-') === '28-32' && areaBand({ ...laid, links: laid.links.filter((l) => l.kind !== 'deep') }, strand, 'hearth')?.join('-') === '28-29',
     'an area\'s band widens by the deep places its deep ways lead down to: Hearth Isle laid at 28-29 reads 28-32 with the Underdeep and the Core, 28-29 without');
-  // The built areas and the planned ones, which have rows before they have maps, in the atlas's
-  // order: an area may be listed before an earlier one is, and its row still follows that one's. A
-  // planned area's clear gives nothing yet, and its row says who owes it.
-  const built: readonly string[] = AREAS.map((a) => a.id);
-  for (const id of PLANNED) ok(!built.includes(id), `${id}: a planned row, and not yet an area (once its first map lists it in AREAS, it leaves PLANNED)`);
+  // The areas in the atlas's order: an area may be listed before an earlier one is, and its row still
+  // follows that one's.
   const order = (id: string): number => ATLAS.areas.find((a) => a.id === id)?.order ?? Infinity;
-  const road: readonly { id: RegionId | (typeof PLANNED)[number]; area?: Area }[] = [...AREAS.map((a) => ({ id: a.id, area: a as Area })), ...PLANNED.map((id) => ({ id }))]
-    .sort((a, b) => order(a.id) - order(b.id));
+  const road: readonly { id: RegionId; area?: Area }[] = AREAS.map((a) => ({ id: a.id, area: a as Area })).sort((a, b) => order(a.id) - order(b.id));
+  // What a clear falls short of is owed on its row or by its area (`Owes.curve`), not both (#897).
+  const owing = (id: string): AreaCurve['owed'] => CURVE[id as RegionId].owed ?? CHECKS.get(id)?.owes?.curve;
+  ok(...once('every shortfall is owed once, on its row in CURVE or by its area', AREAS.filter((a) => CURVE[a.id].owed && CHECKS.get(a.id)?.owes?.curve).map((a) => a.id)));
   // The enclave (#845): the fixture lair at the cap beside Saltreach, a band-10 area, leaves Saltreach's
   // curve as it was, its clear (and so its lead and its window) and its band; it is held to its own band
   // and the cap's window, and its pay is a figure. An enclave has a band of its own over its box's, is
@@ -494,8 +494,9 @@ export function curve(): void {
     // What a clear gives: every group once (a twin pair at the lesser), a member's share of the xp summed; the
     // gold in cash. The area's guild quests pay too, counted with the area whose file holds them.
     const clear = clearOf(maps, area?.guilds ?? []);
-    budget(id, 'xp a member', clear.xp, xpBudget(row), row.owed, row.owed?.xp);
-    budget(id, 'gold', Math.floor(clear.gold), goldBudget(row), row.owed, row.owed?.gold);
+    const owes = owing(id);
+    budget(id, 'xp a member', clear.xp, xpBudget(row), owes, owes?.xp);
+    budget(id, 'gold', Math.floor(clear.gold), goldBudget(row), owes, owes?.gold);
     // The lead over the road (#634): the level that clear leaves a company at, paid by level,
     // against the next floor and, for an area named in OVER_ROAD, its figure.
     if (area) {

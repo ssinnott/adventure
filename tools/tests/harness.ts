@@ -18,6 +18,7 @@ import { testMonster, standardEncounter, line, scaleAt, groupsPerLevel, xpFor, H
 import type { Role } from '../testmonster.ts';
 import { measure, days, fight, play, outcomeOf, companyAt, newerCompany, edgeOf, spent, mustRest, mendBetween, day as oneDay, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP, RULES, GEAR, GEAR_TOP, ANSWER, wakeWith, breathGuard, whatIfs, writeRefusal, casting, cellsOnCores } from '../harness.ts';
 import type { BotOpts } from '../harness.ts';
+import { once } from '../checks.ts';
 import { ok } from './lib.ts';
 
 export async function harness(): Promise<void> {
@@ -267,6 +268,16 @@ export const OFF_LINE: Record<string, string> = {
 export const WHOLE: Record<string, { role: Role; share: number; why: string }> = {
   bog_light: { role: 'controller', share: 0.575, why: "four on the line end a company's day in four fights (#597)" },
 };
+/** Why a monster stands off the line: its row in OFF_LINE, or its own word (`MonsterDef.offLine`), not both (#897). */
+export const offLineOf = (id: string): string | undefined => {
+  const own = MONSTERS[id]?.offLine;
+  return OFF_LINE[id] ?? (typeof own === 'string' ? own : undefined);
+};
+/** The role and share a monster comes down whole by: its row in WHOLE, or its own (`MonsterDef.offLine`), not both (#897). */
+export const wholeOf = (id: string): { role: Role; share: number; why: string } | undefined => {
+  const own = MONSTERS[id]?.offLine;
+  return WHOLE[id] ?? (typeof own === 'object' ? { ...own, role: own.role as Role } : undefined);
+};
 /**
  * The monsters drawn on the line before #549 made 25 to 28 again, and placed in no box yet: each is
  * re-derived on the line by the box that places it, since a def is its box's (MONSTERS §4.4), and
@@ -279,25 +290,27 @@ function onTheLine(): void {
   const blow = (m: Pick<MonsterDef, 'dice' | 'sides' | 'bonus'>): number => (m.dice * (m.sides + 1)) / 2 + m.bonus;
   /** The shapes a monster of its level may stand on: each role's line, the test troll's and its share in WHOLE. */
   const shapes = (m: MonsterDef): MonsterDef[] => {
-    const w = WHOLE[m.id], l = m.level;
+    const w = wholeOf(m.id), l = m.level;
     return [...ROLE_IDS.map((r) => testMonster(r, l)), testTroll(l), testGiant(l), testDrake(l), ...(w ? [testMonster(w.role, l, scaleAt(HP, w.role, l) * w.share, scaleAt(DAMAGE, w.role, l) * w.share)] : [])];
   };
   const on = (m: MonsterDef): boolean => shapes(m).some((t) => t.hp === m.hp && Math.abs(blow(t) - blow(m)) <= 0.5 && (t.regen ?? 0) === (m.regen ?? 0) && (t.sweep?.chance ?? 0) === (m.sweep?.chance ?? 0) && t.sweep?.element === m.sweep?.element);
-  const past = Object.values(MONSTERS).filter((m) => m.level > 10), set = past.filter((m) => OFF_LINE[m.id] || RESTATE[m.id]);
-  const off = past.filter((m) => !OFF_LINE[m.id] && !RESTATE[m.id] && !on(m)).map((m) => {
+  const past = Object.values(MONSTERS).filter((m) => m.level > 10), set = past.filter((m) => offLineOf(m.id) || RESTATE[m.id]);
+  const off = past.filter((m) => !offLineOf(m.id) && !RESTATE[m.id] && !on(m)).map((m) => {
     const near = shapes(m).sort((a, b) => Math.abs(a.hp - m.hp) - Math.abs(b.hp - m.hp))[0];
     return `${m.id} at ${m.level}, ${m.hp} / ${blow(m)}, where the nearest is ${near.name} ${near.hp} / ${blow(near)}`;
   });
   ok(!off.length, `every monster past 10 stands on the line at its level, its hit points and its blow, or is set off it with a reason: ${past.length - set.length} on it, ${set.length} set off it${off.length ? ` (off it: ${off.join('; ')})` : ''}`);
-  const stale = [...Object.keys(OFF_LINE), ...Object.keys(WHOLE), ...Object.keys(RESTATE)].filter((id) => !MONSTERS[id] || MONSTERS[id].level <= 10 || ((OFF_LINE[id] || RESTATE[id]) && on(MONSTERS[id])));
+  const own = Object.values(MONSTERS).filter((m) => m.offLine).map((m) => m.id);
+  const stale = [...Object.keys(OFF_LINE), ...Object.keys(WHOLE), ...own, ...Object.keys(RESTATE)].filter((id) => !MONSTERS[id] || MONSTERS[id].level <= 10 || ((offLineOf(id) || RESTATE[id]) && on(MONSTERS[id])));
   ok(!stale.length, `and every monster set off it, come down whole or owed a restating is a monster past 10, and one set off it or owed is off it${stale.length ? ` (not: ${stale.join(', ')})` : ''}`);
+  ok(...once('and each is set off it or come down whole once, in OFF_LINE or WHOLE or on itself', own.filter((id) => OFF_LINE[id] || WHOLE[id])));
   // One owed a restating is placed in no box: the box that places it restates it (#549).
   const placed = new Set(MAP_DEFS.flatMap((d) => (d.encounters ?? []).flatMap((g) => g.monsters)));
   const owedPlaced = Object.keys(RESTATE).filter((id) => placed.has(id));
   ok(!owedPlaced.length, `and none owed a restating is placed in a box yet (${Object.keys(RESTATE).length} owed${owedPlaced.length ? `; placed: ${owedPlaced.join(', ')}` : ''})`);
   // It can fail: a soldier a few hit points short, a troll mending four too few, a giant sweeping
   // twice as often and a light seven too many are each caught; on the line they pass.
-  const soldier = testMonster('soldier', 19), troll = testTroll(19), share = WHOLE.bog_light, light = MONSTERS.bog_light;
+  const soldier = testMonster('soldier', 19), troll = testTroll(19), share = wholeOf('bog_light')!, light = MONSTERS.bog_light;
   const lit = testMonster(share.role, light.level, scaleAt(HP, share.role, light.level) * share.share, scaleAt(DAMAGE, share.role, light.level) * share.share);
   const giant = testGiant(23), probes = [{ ...soldier, hp: soldier.hp - 5 }, { ...troll, regen: (troll.regen ?? 0) - 4 }, { ...light, hp: lit.hp + 7 }, { ...giant, sweep: { chance: 0.5 } }];
   ok(probes.every((m) => !on(m)) && [soldier, troll, giant, { ...light, hp: lit.hp, dice: lit.dice, sides: lit.sides, bonus: lit.bonus }].every(on), 'and a monster left off it is caught: a soldier five hit points short, a troll mending four too few, a giant sweeping twice as often and a light seven too many');

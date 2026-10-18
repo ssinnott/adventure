@@ -30,6 +30,7 @@ import { hoardLine } from '../../src/game/dens.ts';
 import { ENDINGS } from '../../src/content/endings.ts';
 import type { Ending } from '../../src/content/endings.ts';
 import { PAGE, pageLines } from '../../src/ui/ending.ts';
+import { areaRows, beside, once } from '../checks.ts';
 import { ok, owed, familyModules } from './lib.ts';
 
 /**
@@ -336,12 +337,14 @@ export function roadPlace(atlas: Atlas, defs: readonly MapDef[]): (area: string,
 export function paceFaults(maps: readonly PacedMap[], kindOf: (monster: string) => MonsterDef['kind'] | undefined, atlas: Atlas = ATLAS, defs: readonly MapDef[] = maps.map((m) => m.def), grid?: { zone: Int16Array; width: number; height: number }): string[] {
   const order = (id: string): number => atlas.areas.find((a) => a.id === id)?.order ?? Infinity;
   const KILNS = order('kilns'), CAIRNMOOR = order('cairnmoor');
+  // The reach's zones, REACH_ZONES's and those that say so themselves (`AtlasZone.reach`, #897).
+  const reach = new Set([...REACH_ZONES, ...atlas.zones.filter((z) => z.reach).map((z) => z.id)]);
   const placeOf = roadPlace(atlas, defs);
   const mines = maps.map((m) => /^deep_mines(\d*)$/.exec(m.def.id)).filter((x): x is RegExpExecArray => !!x);
   const bottom = mines.length ? Math.max(...mines.map((x) => Number(x[1] || 0))) : null;
   const out: string[] = [];
   for (const m of maps) {
-    if (m.zone && REACH_ZONES.includes(m.zone)) continue;
+    if (m.zone && reach.has(m.zone)) continue;
     const at = placeOf(m.area, m.def), mine = /^deep_mines(\d*)$/.exec(m.def.id);
     const machineOk = at > KILNS || (at === KILNS && !!mine && bottom !== null && Number(mine[1] || 0) === bottom);
     for (const g of m.def.encounters ?? []) {
@@ -353,7 +356,7 @@ export function paceFaults(maps: readonly PacedMap[], kindOf: (monster: string) 
   }
   if (grid) for (const site of atlas.sites.filter((q) => q.icon === 'rift' && !q.map)) {
     const z = atlas.zones[grid.zone[Math.floor(site.at[1]) * grid.width + Math.floor(site.at[0])]];
-    if (z && !REACH_ZONES.includes(z.id) && order(z.area) > CAIRNMOOR) out.push(`the atlas: ${site.name}, a rift in ${z.name}, after Cairnmoor`);
+    if (z && !reach.has(z.id) && order(z.area) > CAIRNMOOR) out.push(`the atlas: ${site.name}, a rift in ${z.name}, after Cairnmoor`);
   }
   return out;
 }
@@ -441,6 +444,8 @@ export function edgeFaults(atlas: Atlas, defs: readonly MapDef[]): EdgeFault[] {
  * fails once it agrees, so it is dropped here.
  */
 const EDGES_OWED: Record<string, readonly string[]> = {};
+/** EDGES_OWED beside what the areas owe (`Owes.edges`), an owner in both refused (#897). */
+const edgesOwed = beside(EDGES_OWED, areaRows((c) => c.owes?.edges));
 
 /**
  * A flag that closes something, found in the maps: an exit, a hand-in, a service, or anything else
@@ -559,6 +564,8 @@ export const storyWays = (links: Atlas['links']): string[] => links.filter((l) =
 
 /** Locks someone else fixes, reported as theirs until it lands: none today. */
 const LOCKS_OWED: Record<string, readonly string[]> = {};
+/** LOCKS_OWED beside what the areas owe (`Owes.locks`), an owner in both refused (#897). */
+const locksOwed = beside(LOCKS_OWED, areaRows((c) => c.owes?.locks));
 
 export async function pillars(): Promise<void> {
   // Hints: every secret door names one, on its near side.
@@ -783,11 +790,14 @@ export async function pillars(): Promise<void> {
       'Ashfall, placing them in a room of its own, may claim them (the level is not before it), and the Glasswold then may not');
   }
 
+  // A zone of the reach, an owed square and an owed lock are named here or on their zone or area, not both (#897).
+  const reachTwice = ATLAS.zones.filter((z) => z.reach && REACH_ZONES.includes(z.id)).map((z) => z.id);
+  ok(...once('every zone of the reach, owed square and owed lock is named once, in pillars.ts or on its zone or area', [...reachTwice, ...edgesOwed.twice, ...locksOwed.twice]));
   // The land agrees with the map: water and roads carry on across a zone map's edge.
   const edges = edgeFaults(ATLAS, MAP_DEFS);
   for (const area of AREAS) for (const def of area.maps.filter((d) => d.kind === 'outdoor')) {
     const mine = edges.filter((e) => e.map === def.id);
-    const known = Object.entries(EDGES_OWED).flatMap(([whose, keys]) => keys.filter((k) => k.startsWith(def.id + ' ')).map((k) => ({ whose, at: k.slice(def.id.length + 1) })));
+    const known = Object.entries(edgesOwed.all).flatMap(([whose, keys]) => keys.filter((k) => k.startsWith(def.id + ' ')).map((k) => ({ whose, at: k.slice(def.id.length + 1) })));
     const fresh = mine.filter((e) => !known.some((k) => k.at === `${e.x},${e.y}`));
     ok(!fresh.length, `${area.id}/${def.id}: its water and roads carry on into the atlas beyond its edge${known.length ? `, but for ${known.length} square(s) owed` : ''}${fresh.length ? ' -> ' + fresh.map((e) => `${e.x},${e.y} ${e.why}`).join('; ') : ''}`);
     for (const { whose, at } of known) {
@@ -837,7 +847,7 @@ export async function pillars(): Promise<void> {
   // its item at the first meeting.
   const found = findLocks(AREAS);
   const areaOf = (map: string): string | undefined => AREAS.find((a) => a.maps.some((d) => d.id === map))?.id;
-  const owing = Object.values(LOCKS_OWED).flat();
+  const owing = Object.values(locksOwed.all).flat();
   const lockBad = lockFaults(found, LOCKS, areaOf, owing);
   for (const area of AREAS) {
     const mine = lockBad.filter((f) => f.area === area.id).map((f) => f.text);
@@ -847,7 +857,7 @@ export async function pillars(): Promise<void> {
   ok(true, `what a flag shuts with a way left open is no lock (${open.length}${open.length ? ': ' + open.join('; ') : ''})`);
   const road = lockBad.filter((f) => !f.area || !AREAS.some((a) => a.id === f.area)).map((f) => f.text);
   ok(!road.length, `the road's ${LOCKS.length} story lock(s) keep to ${MOST_AN_AREA} an area and ${MOST_ON_THE_ROAD} in all${road.length ? ' -> ' + road.join('; ') : ''}`);
-  for (const [whose, keys] of Object.entries(LOCKS_OWED)) for (const key of keys) {
+  for (const [whose, keys] of Object.entries(locksOwed.all)) for (const key of keys) {
     const f = found.find((l) => l.key === key);
     owed(!f, key.startsWith('hand-in') ? `${key}: takes its item at the first meeting${f ? ` (today not before ${f.flags.join(', ')})` : ''}` : `${key}: no lock between areas${f ? ` (today ${f.flags.join(' and ')})` : ''}`, whose);
   }

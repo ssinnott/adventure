@@ -28,6 +28,11 @@ import { days, fightsPerRest, mendBetween, mustRest, companyAt, markOf, ROUND_CA
 import { testMonster, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, giantEncounter, drakeEncounter, basiliskEncounter } from '../testmonster.ts';
 import { stepsFrom } from './curve.ts';
 import { FIXTURE, LAIR, GUARDIAN } from './enclave.ts';
+import { featureFlags } from './quests.ts';
+import { groupFlags } from '../../src/game/people.ts';
+import type { QuestCond } from '../../src/game/quests.ts';
+import type { AtlasZone } from '../../src/game/atlas.ts';
+import { once } from '../checks.ts';
 import { ok, owed } from './lib.ts';
 
 /**
@@ -86,11 +91,10 @@ const BACK_DAYS = 100;
  * left out of its map's day. An area's are all its zones' together. A boss whose floor leaves fewer than
  * two levels to the cap is judged at the cap (at its floor alone where the floor is the cap); and a map that holds nothing but its boss (the Heart:
  * Vask's group, or its twin the Council thins) is judged on the boss's odds, with no floor of fights to
- * pool and no day (#759).
+ * pool and no day (#759). A group may say it is one itself (`EncounterDef.boss`), and then is named
+ * here no longer (#897): the Foreland's are.
  */
 export const BOSSES: Record<string, readonly string[]> = {
-  shelf: ['greywater1:gw1_captain', 'greywater2:gw2_deacon'],
-  downs: ['mill:m_warden', 'berth:berth_captain'],
   thornmark: ['grove2:g2_hand', 'grove2:g2_warden'],
   deepthorn: ['deepthorn_j5:j5_eldest'],
   // The Tallymaster at its desk in the Dead-Drop's counting house, down the stair from the Tide Ship's hold (#22).
@@ -115,10 +119,11 @@ export const BOSSES: Record<string, readonly string[]> = {
   hearthisle: ['underdeep2:ud2_catcher', 'core:core_vask', 'core:core_vask_thinned'],
 };
 
-/** Each zone's road: the groups met on it, in order, from its way in. Every zone with groups names one. */
+/**
+ * Each zone's road: the groups met on it, in order, from its way in. Every zone with groups names one,
+ * here or on its zone (`AtlasZone.road`) and not both (#897): the Foreland's are on theirs.
+ */
 export const ROADS: Record<string, readonly string[]> = {
-  shelf: ['shelf:road_rats', 'shelf:hill_wolves'],
-  downs: ['downs_f2:f2_bandits'],
   thornmark: ['thornmark:tm_wolves1', 'thornmark:tm_brigands2', 'thornmark:tm_hounds', 'thornmark:tm_zealots'],
   deepthorn: ['deepthorn_h3:h3_brambles', 'deepthorn_h3:h3_rootwalkers'],
   wrackholm: ['wrackholm_e6:e6_rats', 'wrackholm_e6:e6_gulls_inlet', 'wrackholm_e6:e6_path_east'],
@@ -186,8 +191,13 @@ export const ROADS: Record<string, readonly string[]> = {
   sheerpoint: ['sheerpoint_i9:i9_trolls', 'sheerpoint_i9:i9_masons', 'sheerpoint_i8:i8_eagles', 'sheerpoint_i8:i8_masons', 'sheerpoint_i8:i8_foreman'],
 };
 
-/** What an area is called in the check, apart from the map it shares an id with. */
-const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Thornmark', saltreach: 'Saltreach', wrackholm: 'Wrackholm', sunderwood: 'Sunderwood', kilns: 'the Kilns', cairnmoor: 'Cairnmoor', rimewater: 'Rimewater', whitespine: 'the Whitespine', ashfall: 'Ashfall', glasswold: 'the Glasswold', hearth: 'Hearth Isle' };
+/** A zone's road, named here or on the zone. */
+const roadOf = (z: AtlasZone): readonly string[] | undefined => ROADS[z.id] ?? z.road;
+/** An area's boss groups: its zones' rows here, then the groups of its maps that say they are one. */
+const bossesOf = (area: Pick<Area, 'maps' | 'atlas'>): string[] =>
+  [...area.atlas.zones.flatMap((z) => BOSSES[z.id] ?? []), ...area.maps.flatMap((d) => (d.encounters ?? []).filter((g) => g.boss).map((g) => `${d.id}:${g.id}`))];
+/** What an area is called in the check, apart from the map it shares an id with: its name on the atlas, as a zone's is. */
+const nameOf = (id: string): string => zoneName(ATLAS.areas.find((a) => a.id === id)?.name ?? id);
 
 /**
  * The figures past their limits someone owes, by check: who owes each, and the figure it stood at
@@ -247,9 +257,15 @@ export function rate(g: Pick<EncounterDef, 'monsters' | 'back' | 'leader' | 'whe
 /**
  * The road behind's groups on an earlier act's maps, as the game names a group, 'map:id': each waits on
  * an answer given an act later on the road, so no company at its map's floor meets it, and the gate
- * leaves it out of its map and its area (#765). The curve counts it, in the clear and the lead.
+ * leaves it out of its map and its area (#765). The curve counts it, in the clear and the lead. Read
+ * from the areas (#897): a group whose `after` names a flag that only a later area's maps set.
  */
-const BEHIND: readonly string[] = ['deep_mines3:ud_mines'];
+const BEHIND: readonly string[] = (() => {
+  const at = new Map(AREAS.flatMap((a, i) => a.maps.map((d) => [d.id, i] as const))), setBy = new Map<string, number[]>();
+  for (const d of MAP_DEFS) for (const f of [...(d.features ?? []).flatMap(featureFlags), ...(d.encounters ?? []).flatMap(groupFlags)]) setBy.set(f, [...(setBy.get(f) ?? []), at.get(d.id)!]);
+  const later = (f: string, i: number): boolean => !!setBy.get(f)?.every((j) => j > i);
+  return MAP_DEFS.flatMap((d) => (d.encounters ?? []).filter((g) => ([g.after ?? []].flat() as QuestCond[]).some((c) => [c.flag ?? []].flat().some((f) => later(f, at.get(d.id)!)))).map((g) => `${d.id}:${g.id}`));
+})();
 /** A map as a company at its floor finds it: the road behind's groups left out (BEHIND). */
 const beforeBehind = (d: MapDef): MapDef =>
   d.encounters?.some((g) => BEHIND.includes(`${d.id}:${g.id}`)) ? { ...d, encounters: d.encounters.filter((g) => !BEHIND.includes(`${d.id}:${g.id}`)) } : d;
@@ -622,7 +638,7 @@ export function gate(): void {
   for (const area of AREAS) {
     const id: RegionId = area.id, band = CURVE[id].band;
     const zones = area.atlas.zones.filter((z) => z.maps?.length);
-    const bosses = area.atlas.zones.flatMap((z) => BOSSES[z.id] ?? []);
+    const bosses = bossesOf(area);
     const { fought, own, pooled, daily } = gateMaps(area as Area, bosses);
     /** A group by the game's name for it, 'map:id'. */
     const find = (ref: string): EncounterDef | undefined => {
@@ -635,8 +651,8 @@ export function gate(): void {
     for (const d of fought) judgeMap(d, band[0], bosses, own(d));
 
     // The area against the curve: each group at its own map's floor, and two under a floor.
-    const name = NAMES[id];
-    const lost = [...bosses, ...zones.flatMap((z) => ROADS[z.id] ?? [])].filter((ref) => !find(ref));
+    const name = nameOf(id);
+    const lost = [...bosses, ...zones.flatMap((z) => roadOf(z) ?? [])].filter((ref) => !find(ref));
     ok(!lost.length, `${name}: its bosses and its roads are groups of its maps${lost.length ? ` (not: ${lost.join(', ')})` : ''}`);
     const pools = areaPools(pooled, band[0], rate, band[0] < GATE.dayFrom);
     if (pools.through === null) console.log(`  n/a:  ${name} has no groups yet`);
@@ -654,7 +670,7 @@ export function gate(): void {
       const maps = z.maps!.map((m) => fought.find((d) => d.id === m.map)).filter((d): d is (typeof fought)[number] => !!d);
       if (!maps.length) continue;
       const zn = zoneName(z.name), floor = Math.min(...maps.map((d) => d.band[0]));
-      const refs = ROADS[z.id], own = new Set(z.maps!.map((m) => m.map)), astray = (refs ?? []).filter((ref) => !own.has(ref.split(':')[0]));
+      const refs = roadOf(z), own = new Set(z.maps!.map((m) => m.map)), astray = (refs ?? []).filter((ref) => !own.has(ref.split(':')[0]));
       ok(!!refs?.length, `${zn}: its road is named${refs?.length ? '' : ` (ROADS has no '${z.id}')`}`);
       ok(!astray.length, `${zn}: its road runs on its own maps${astray.length ? ` (not: ${astray.join(', ')})` : ''}`);
       const way = (refs ?? []).map(find);
@@ -684,7 +700,7 @@ export function gate(): void {
   // the day, its guardian at 30 and 32.
   {
     const salt = AREAS.find((a) => a.id === FIXTURE.area)! as Area, floor = CURVE[FIXTURE.area].band[0];
-    const bosses = salt.atlas.zones.flatMap((z) => BOSSES[z.id] ?? []);
+    const bosses = bossesOf(salt);
     const was = gateMaps(salt, bosses), now = gateMaps({ ...salt, maps: [...salt.maps, LAIR] }, [...bosses, GUARDIAN]);
     const ids = (gs: readonly { id: string }[]): string => gs.map((g) => g.id).join(), lair = now.fought.find((d) => d.id === LAIR.id);
     const through = (m: typeof was): number | null => areaPools(m.pooled, floor, rate, false).through;
@@ -697,6 +713,9 @@ export function gate(): void {
   }
   const zoneIds = new Set(ATLAS.zones.map((z) => z.id)), astray = [...Object.keys(ROADS), ...Object.keys(BOSSES)].filter((k) => !zoneIds.has(k));
   ok(!astray.length, `every key of ROADS and BOSSES is a zone${astray.length ? ` (not: ${astray.join(', ')})` : ''}`);
+  const twice = [...ATLAS.zones.filter((z) => ROADS[z.id] && z.road).map((z) => `${z.id}'s road`),
+    ...Object.values(BOSSES).flat().filter((ref) => { const [map, id] = ref.split(':'); return MAP_DEFS.find((d) => d.id === map)?.encounters?.find((g) => g.id === id)?.boss; })];
+  ok(...once('every road and boss is named once, in ROADS or BOSSES or on its zone or group', twice));
   // The road behind's groups (BEHIND): each names a group of a built map that waits on an `after`, so no
   // group a company at its floor can meet is left out; and leaving them out drops that group alone.
   const unbehind = BEHIND.filter((ref) => { const [map, id] = ref.split(':'); return !MAP_DEFS.find((d) => d.id === map)?.encounters?.find((e) => e.id === id)?.after; });

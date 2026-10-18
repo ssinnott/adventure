@@ -26,7 +26,8 @@ import { CLASSES, robeLike } from '../../src/game/party.ts';
 import type { ClassId } from '../../src/game/party.ts';
 import { hits } from '../../src/game/items.ts';
 import type { ItemDef } from '../../src/game/items.ts';
-import { GEAR, KIT, companyAt } from '../harness.ts';
+import { GEAR, KIT, RUNGS_TWICE, companyAt } from '../harness.ts';
+import { once } from '../checks.ts';
 import { gateCompany } from '../gate.ts';
 import { giftOf, spentId } from '../../src/game/wilds.ts';
 import { personGives } from '../../src/game/people.ts';
@@ -344,6 +345,8 @@ export function ladder(): void {
   // Every id in the ladder is an item, and every find is one within the Foreland's window.
   const missing = GEAR.flatMap(([, ids]) => ids).filter((id) => !ITEMS[id]);
   ok(!missing.length, `every rung of the ladder is an item${missing.length ? ` (not: ${missing.join(', ')})` : ''}`);
+  // A rung is held in tools/harness.ts or on its area (`AreaChecks.gear`), not both, nor on two areas (#897).
+  ok(...once('every rung of the ladder is given once, in GEAR or KIT or on its area', RUNGS_TWICE));
   const found = new Set([
     ...MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => giftOf(f)?.items ?? [])),
     ...Object.values(MONSTERS).flatMap((m) => (m.drops ?? []).map((x) => x.item)),

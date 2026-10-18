@@ -53,6 +53,6 @@ export const MILL: MapDef = {
     { id: 'm_skel2', x: 14, y: 13, monsters: ['ghoul', 'ghoul', 'ghoul'], aware: 4, respawn: 2880 },
     { id: 'm_rift1', x: 6, y: 8, monsters: ['rift_crawler', 'rift_crawler', 'riftling'], aware: 5 },
     { id: 'm_rift2', x: 1, y: 13, monsters: ['rift_crawler', 'riftling', 'riftling'], aware: 5 },
-    { id: 'm_warden', x: 3, y: 11, monsters: ['rift_warden', 'riftling'], aware: 2, roams: false },
+    { id: 'm_warden', x: 3, y: 11, monsters: ['rift_warden', 'riftling'], aware: 2, roams: false, boss: true },
   ],
 };

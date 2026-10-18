@@ -76,7 +76,7 @@ export const kindsOf = (text: string): string[] | null => {
  * changed that every monster is drawn by.
  */
 export async function changedMonsters(files: readonly string[], base?: string): Promise<{ all: boolean; monsters: string[] }> {
-  const { AREAS, AHEAD, MONSTERS } = await import('../src/content/index.ts');
+  const { AREAS, MONSTERS } = await import('../src/content/index.ts');
   let all = files.some((f) => EVERY_MONSTER.some((re) => re.test(f)));
   const out = new Set<string>();
   for (const f of files.filter((f) => FAMILY_FILE.test(f))) {
@@ -85,8 +85,8 @@ export async function changedMonsters(files: readonly string[], base?: string): 
     for (const d of Object.values(MONSTERS)) if (kinds.includes(d.sprite)) out.add(d.id);
   }
   for (const f of files) {
-    // An area's table, or one drawn ahead of its area's first map (content/index.ts).
-    const area = [...AREAS, ...AHEAD].find((a) => a.id === AREA_MONSTERS.exec(f)?.[1]);
+    // An area's table (content/index.ts).
+    const area = AREAS.find((a) => a.id === AREA_MONSTERS.exec(f)?.[1]);
     if (!area) continue;
     const was = new Set((base ? atBase(base, f) : '').split('\n').map((l) => l.trim()));
     const lines = now(f).split('\n').map((l) => l.trim());
@@ -121,13 +121,13 @@ async function roomsIn(folder: string): Promise<string[]> {
  * its base did not. `all` where a file changed that every room is painted by.
  */
 export async function changedInteriors(files: readonly string[], base?: string): Promise<{ all: boolean; interiors: string[] }> {
-  const { AREAS, ROOMS_AHEAD, INTERIORS } = await import('../src/content/index.ts');
+  const { AREAS, INTERIORS } = await import('../src/content/index.ts');
   const all = files.some((f) => EVERY_INTERIOR.some((re) => re.test(f)));
   const out = new Set<string>();
   for (const f of files) {
     const folder = AREA_ROOMS.exec(f)?.[1];
     if (folder) for (const id of await roomsIn(folder)) if ((INTERIORS as readonly string[]).includes(id)) out.add(id);
-    const area = [...AREAS, ...ROOMS_AHEAD].find((a) => a.id === AREA_INDEX.exec(f)?.[1]);
+    const area = AREAS.find((a) => a.id === AREA_INDEX.exec(f)?.[1]);
     if (area) { const was = base ? atBase(base, f) : ''; for (const i of area.interiors) if (!was.includes(`'${i}'`)) out.add(i); }
   }
   return { all, interiors: [...out] };

@@ -60,6 +60,6 @@ export const BERTH: MapDef = {
     { id: 'berth_guard2', x: 9, y: 7, monsters: GUARD, aware: 2, roams: false },
     { id: 'berth_guard3', x: 7, y: 7, monsters: GUARD, aware: 2, roams: false },
     { id: 'berth_guard4', x: 5, y: 7, monsters: GUARD, aware: 2, roams: false },
-    { id: 'berth_captain', x: 3, y: 7, monsters: ['barrow_captain'], aware: 2, roams: false },
+    { id: 'berth_captain', x: 3, y: 7, monsters: ['barrow_captain'], aware: 2, roams: false, boss: true },
   ],
 };

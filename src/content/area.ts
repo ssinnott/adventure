@@ -58,6 +58,39 @@ export interface Area {
 }
 
 /**
+ * What the suites hold of an area that is its own and no part of the game: written in the area's
+ * checks.ts, which nothing in the game imports, found by its file as the runner finds a walkthrough
+ * (tools/checks.ts). What describes one zone, group, monster or exit is a field of that instead
+ * (`AtlasZone.road`, `reach` and `maxGroup`, `EncounterDef.boss`, `MonsterDef.offLine`, `Exit.crosses`).
+ * Each suite reads these beside its own table and refuses a row in both, so a row moves one way (#897).
+ */
+export interface AreaChecks {
+  /** What it owes, each row with the issue that pays it: reported as that issue's, not failed, until it holds. */
+  owes?: Owes;
+  /**
+   * Its rungs of the ladder (EXPANSION §5.2): by a level, what a company has in its hands or its bag by
+   * then. tools/harness.ts takes GEAR from the weapons, armour and shields, and KIT from the rest.
+   */
+  gear?: Readonly<Record<number, readonly string[]>>;
+}
+
+/** What an area owes, by the table each kind of row stood in until it moved onto its area. */
+export interface Owes {
+  /** What a clear falls short of (`AreaCurve.owed`): `xp` (a member's share) and `gold` what a clear gives today, a floor. */
+  curve?: { whose: string; why: string; xp?: number; gold?: number };
+  /** A monster no map places yet, or a room no business opens into, by its id (`UNPLACED`, tools/tests/maps.ts). */
+  unplaced?: Readonly<Record<string, string>>;
+  /** A flag a condition reads before anything sets it, by the flag (`UNSET`, tools/tests/quests.ts). */
+  unset?: Readonly<Record<string, string>>;
+  /** A zone map the outdoors' start does not reach yet, by its id (`CUT_OFF`, tools/tests/outdoors.ts). */
+  cutOff?: Readonly<Record<string, string>>;
+  /** Squares where a map and the atlas disagree, by the issue whose fix they wait on (`EDGES_OWED`, tools/tests/pillars.ts). */
+  edges?: Readonly<Record<string, readonly string[]>>;
+  /** Locks someone else fixes, by the issue that fixes them (`LOCKS_OWED`, tools/tests/pillars.ts). */
+  locks?: Readonly<Record<string, readonly string[]>>;
+}
+
+/**
  * What an area claims is new in it. Families are the monster modules in src/ui/monsters/ (not
  * variants); terrain, the Terrain union; landmarks, the icons of its built sites on the world map.
  */

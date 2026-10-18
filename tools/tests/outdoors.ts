@@ -15,6 +15,7 @@ import { makeRng } from '../../src/lib/engine/rng.ts';
 import { EAST, FACING_DX, FACING_DY } from '../../src/game/types.ts';
 import { findWeather, weatherAt, weatherSight } from '../../src/game/weather.ts';
 import { daylightAt } from '../../src/game/calendar.ts';
+import { areaRows, beside, once } from '../checks.ts';
 import { ok, owed, local, stopsWalk } from './lib.ts';
 import { logLines } from '../../src/ui/frame.ts';
 
@@ -31,6 +32,8 @@ import { logLines } from '../../src/ui/frame.ts';
  * edge, B9, over B8's south edge (#530).
  */
 const CUT_OFF: Record<string, string> = {};
+/** CUT_OFF beside what the areas owe (`Owes.cutOff`), a map in both refused (#897). */
+const cutOff = beside(CUT_OFF, areaRows((c) => c.owes?.cutOff));
 
 export function outdoors(): void {
   // The outdoors is played as one map the size of the world, every zone map the atlas places laid into it.
@@ -843,7 +846,7 @@ export function outdoors(): void {
       for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) if (out.inBounds(x + dx, y + dy)) stack.push([x + dx, y + dy]);
     }
     let open = 0, got = 0;
-    const cut = new Map(Object.keys(CUT_OFF).map((id) => [id, { open: 0, got: 0 }]));
+    const cut = new Map(Object.keys(cutOff.all).map((id) => [id, { open: 0, got: 0 }]));
     for (let y = 0; y < out.height; y++) for (let x = 0; x < out.width; x++) {
       if (stopsWalk(out, x, y) || out.at(x, y).solid !== 'none') continue;
       const z = out.zones.find((q) => cut.has(q.id) && x >= q.x && x < q.x + q.w && y >= q.y && y < q.y + q.h), tally = z ? cut.get(z.id)! : null;
@@ -851,7 +854,8 @@ export function outdoors(): void {
       open++; if (reached[y * out.width + x]) got++;
     }
     ok(open > 1500 && got === open, `every open square of the outdoors is reachable from its start (${got} of ${open})`);
-    for (const [id, t] of cut) owed(t.open > 0 && t.got === t.open, `every open square of ${id} is reachable from the outdoors' start (${t.got} of ${t.open})`, CUT_OFF[id]);
+    for (const [id, t] of cut) owed(t.open > 0 && t.got === t.open, `every open square of ${id} is reachable from the outdoors' start (${t.got} of ${t.open})`, cutOff.all[id]);
+    ok(...once('every zone map owed its joining is owed once, in CUT_OFF or by its area', cutOff.twice));
   }
   // The composer refuses what the outdoors cannot hold: two zones keeping state under one id, or two zone maps on one square.
   const refusal = (f: () => unknown): string => { try { f(); return ''; } catch (e) { return e instanceof Error ? e.message : String(e); } };

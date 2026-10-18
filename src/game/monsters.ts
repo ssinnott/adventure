@@ -116,6 +116,11 @@ export interface MonsterDef {
   tint: string;
   /** Sprite height relative to a wall (1 = a full cell). */
   size: number;
+  /**
+   * Past 10, why it stands off the line at its level (MONSTERS §4.4), or the role whose line it comes
+   * down whole from, by a share, and why (tools/tests/harness.ts).
+   */
+  offLine?: string | { role: string; share: number; why: string };
 }
 
 export function monster(id: string): MonsterDef {
