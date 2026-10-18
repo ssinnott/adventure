@@ -413,8 +413,8 @@ Decided by delegate for #53, each the owner's to overturn:
    ground's own colour would tell what lies there.
 5. **The squares round the company are marked as before, but for one a hill hides** (two off, past a
    hill beside or behind the company), read in the way it lies; and the automap's near rule (a group on
-   a seen square within two steps) leaves out a group a hill hides (the delegate's call 4). A wall
-   still hides neither, as before: that is no part of this issue.
+   a seen square within two steps) leaves out a group a hill hides (the delegate's call 4). A wall hid
+   neither when this was built; since #889 it hides both (below).
 6. **A save keeps what it marked:** explored bits only ever add, so a save made before loads with the
    valleys it marked from below, and hiding applies from then on. `SAVE_VERSION` stays 5.
 7. **The pilot is left as it was:** it reads the automap's seen squares and groups through `Known`,
@@ -426,6 +426,69 @@ Decided by delegate for #53, each the owner's to overturn:
    mountain it stands over a hill; drawn as the sea or as land it lies as low as they do and is hidden
    with them. Where no hill hides it the view draws the look as #829 draws it, and the ground to the
    horizon is the look's but where a hill on the centre line hides it.
+
+**A wall hides what lies past it from the squares round the company** (#889). Outdoors by day, when
+the sky lets the company see four squares, it maps the two squares round it (a Cartographer, three),
+and until #889 every one of them was marked whatever stood between: one off a wall, a building, the
+mountain, a door or a secret door, the company mapped the square behind it from two off, and with it a
+Master's hide. `World.reveal` now asks of every square past the first what it asked of the
+Cartographer's extra one (#857): it is marked only where no square between it and the company, taken a
+step at a time toward the company, stops the view (`GameMap.blocksView`), and no diagonal step on the
+way slips between two that do. One off, a square between two that stop the view is marked only if it
+stops the view itself, and so beside the corridor ahead. The outdoors is as underground, where the
+company maps one square: a wall is marked and what lies past it is not, until the company stands in
+the doorway or the view reaches round it. A landmark is marked over a wall, as the view draws it.
+
+What a player sees change, facing north from each of the 64,346 squares a company stands on, in a sky
+clear everywhere by day: of main's 1,016,342 squares marked two off, 33,585 (3.3%) are not, and 40 of
+its 514,768 one off. The mountain stops 50.6% of those two off, the void 24.9%, a building 13.7%, a
+wall, a door or a secret door 8.0% and a corner 2.8%. They are the mountain (43.8%), open ground
+(16.3%) and **the world's end** (27.1%, 9,086: the void drawn as land 4,911, the mountain 1,762, hills
+1,742 and the sea 671): at the edge of the built world the automap inks one square of the void's look
+where it inked two, as a void stops the view whatever it is drawn as (#53's decision 8). In the open
+nothing changes: a hill hides as above and a wood hides nothing.
+
+Decided by the builder for #889, each the owner's to overturn:
+
+1. **The question is asked of every step on the way,** not of the square beside it alone, which the
+   issue proposed (`d > 1`): that left a Cartographer the square two behind a wall or a secret door one
+   off, a hole at two squares with the hide marked past it (139 of the 150 sides of the outdoors'
+   secret doors with two open squares behind them, as on main). Her extra square is now the last step
+   of the same walk, and her reach on open ground, at night and underground (3, 2 and 2) does not move.
+2. **A found door is a door.** It shuts the view from two off as any door does and as the viewport draws
+   it, so the square behind it is marked once the company stands in the doorway: the issue's "once the
+   door is found, it has" is read so.
+3. **The check is read over the content as well as on a fixture:** the 99 secret doors of the outdoors
+   as played, from the 204 sides that have an open square to stand on and one behind the door, in a
+   sky clear in every region by day: 204 told on main, none now (`tools/tests/outdoors.ts`). The rule
+   on open ground with each stopper is held beside the hills' (`tools/tests/terrain.ts`). The issue's
+   count, 170 of 198, took the sky as it fell.
+4. **The world's end stops the walk,** whatever the void is drawn as, as #53's decision 8 has it and
+   the view draws it (the owner's delegate's call at #903's review). Flipping it is one line in the
+   walk, its stopper passing over the void, and inks 8,439 squares two off again: the void drawn as
+   land 4,834, hills 1,667, the mountain 1,214 and the sea 664.
+5. **No step slips between two that stop the view.** The walk is a staircase that takes its diagonal
+   steps first, and a diagonal step between two stoppers let it through: Deepthorn J4's box (308,110)
+   was marked from the hill at 309,112, Monksvale J10's tolls (306,302) from 308,300 between two
+   squares of the mountain and the square behind Kilnmouth M6's door (413,179) from 412,181. Such a
+   step now stops it, the step into the company's own square too: 926 marks two off (0.09%).
+6. **One off, a corner hides what does not stop the view.** The eight squares round the company were
+   marked whatever stood between, so Kilnmouth M6's cache (413,180) showed from 412,181, one off
+   between two buildings, at any hour; and the corridor ahead marked the chest of the Delta B4's
+   flood-store (42,105) from 40,106, facing its door. A square between two that stop the view is now
+   marked only if it stops the view itself, round the company and beside the corridor, so the walls
+   still close round the company as the automap has always drawn a corner. It reaches the dungeons,
+   where a corner shuts off a square here and there: every suite run with it and without it prints the
+   same lines, the dungeons' figures and the pilot's among them.
+7. **A landmark is seen over a wall,** as over a hill (#844): Highcell (322,343) stands behind its
+   gate, an exit no company stands on, and the walk left it unmarked from the road's end. The rest of
+   `GameMap.overtops`, the mountain and the void drawn tall, is not: over a wall they would ink a range
+   round a hide and leave the hide a hole, and they marked the mountain two behind 6 of the 204 sides.
+8. **The check holds a diagonal approach as well as the four sides:** the square behind each side and
+   every chest of its hide (160 squares, 121 chests), where no run of squares that do not stop the view
+   joins them to the side stood on, from every square a company stands on within two, three with a
+   Cartographer, facing any way: 3,244 marks on main, 216 of 8 such squares on the walk before #903's
+   review, none now. The corner is held on a fixture beside the walls' (`tools/tests/terrain.ts`).
 
 ## The calendar and the weather
 
