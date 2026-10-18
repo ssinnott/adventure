@@ -227,6 +227,12 @@ export const PLAYED: Readonly<BotOpts> = { bless: true, sleep: true, drink: true
 export const FIRST_PAST_ACT_I = 11;
 /** The options member `c` plays by: `opts` from FIRST_PAST_ACT_I on, none under it. */
 export const optsFor = (c: Character, opts: Readonly<BotOpts>): Readonly<BotOpts> => (c.level >= FIRST_PAST_ACT_I ? opts : {});
+/**
+ * Whether the company lets sleepers lie (#865): sleep set and a member of it at FIRST_PAST_ACT_I or
+ * over. The whole company holds it, since one member's spell over many wakes another's sleepers; who
+ * casts Bless, sleep and a draught stays each member's own (`optsFor`).
+ */
+export const letsLie = (p: Party, opts: Readonly<BotOpts>): boolean => !!opts.sleep && p.members.some((m) => m.level >= FIRST_PAST_ACT_I);
 
 /**
  * The bots' Bless (#853): in a fight's first round, three foes or more standing and no Bless running
@@ -301,7 +307,8 @@ export function drinkFor(s: CombatState, p: Party, c: Character, sees: Sees = as
 /**
  * The bot's turn for member `i`: the action it took, in gateTurn's order (mend, wake, burn, bless,
  * sleep, blast, drink, strike, brace), bless, sleep and drink only where `opts` asks (#853), and from
- * level 11 (`optsFor`, #865). Each is tried on the resolver in turn and the first it takes is the turn; bracing it always takes. `sees`
+ * level 11 (`optsFor`, #865), the sleepers let lie by the whole company once one is (`letsLie`). Each
+ * is tried on the resolver in turn and the first it takes is the turn; bracing it always takes. `sees`
  * is what it knows of the monsters: the gate's every trait as written, the game's auto-fight only
  * what the fight has shown (`asSeen`).
  */
@@ -312,8 +319,9 @@ export function botTurn(s: CombatState, p: Party, rng: RngInstance, i: number, s
   const c = p.members[i], o = optsFor(c, opts), foes = aliveMonsters(s), lead = markOf(s, foes, sees), foe = lead ?? foes[0];
   // With sleep on, sleepers are let lie (#853): a blade at an awake foe it reaches where there is one,
   // a spell at an awake foe where one stands, and none over many that would wake a sleeper; only while
-  // another of the company can strike (`striker`, #865), and only then does it sleep a group.
-  const lie = !!o.sleep && striker(s, p, i), up = lie ? foes.filter((f) => !sleeps(s.monsters[f])) : [], near = up.filter((f) => canReach(s, c, f));
+  // another of the company can strike (`striker`, #865), and only then does it sleep a group. The
+  // whole company lets them lie once one member is past Act I (`letsLie`); only such a one sleeps.
+  const lie = letsLie(p, opts) && striker(s, p, i), up = lie ? foes.filter((f) => !sleeps(s.monsters[f])) : [], near = up.filter((f) => canReach(s, c, f));
   const aim = up.length ? (lead !== undefined && up.includes(lead) ? lead : up[0]) : foe;
   const blade = near.length ? (lead !== undefined && near.includes(lead) ? lead : near[0]) : lead !== undefined && canReach(s, c, lead) ? lead : foes.find((f) => canReach(s, c, f)) ?? foe;
   const known = c.spells.map(spell).filter((x) => x.context !== 'explore' && x.sp <= c.sp);
@@ -330,7 +338,7 @@ export function botTurn(s: CombatState, p: Party, rng: RngInstance, i: number, s
   if (burn && (a = took({ type: 'cast', ...burn }))) return a;
   const bless = o.bless ? blessWith(s, p, i) : undefined;
   if (bless && (a = took({ type: 'cast', spellId: bless.id, target: i }))) return a;
-  const sleep = lie ? sleepWith(s, c, sees) : undefined;
+  const sleep = o.sleep && lie ? sleepWith(s, c, sees) : undefined;
   if (sleep && (a = took({ type: 'cast', spellId: sleep.spell.id, target: sleep.target }))) return a;
   if (blast && (a = took({ type: 'cast', spellId: blast.id, target: aim }))) return a;
   const drink = o.drink ? drinkFor(s, p, c, sees) : undefined;

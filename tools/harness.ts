@@ -18,8 +18,8 @@
 //   node tools/harness.ts --level-traits [...]         ... or its fighters gained a blow a promotion (--level-bonus: a bonus)
 //   node tools/harness.ts --rank-step 0.25 [...]       ... or a spell rank added another share than play's 15%
 //   node tools/harness.ts --tiers [...]                ... or the company took Expert at 13 and Master at 25 (#852), and says them
-//   node tools/harness.ts --bot bless,sleep,drink [...] ... or the bots, the gate's too, did any of the three (#853), and counts them;
-//                                                         from level 11 only, as the game's bot plays them (`optsFor`), which #865 weighed at 13 to 28
+//   node tools/harness.ts --bot bless,sleep,drink [...] ... or the bots, the gate's too, did any of the three (#853), and counts them
+//     (from level 11 only, as the game's bot plays them, `optsFor`: what #865 weighed at 13 to 28)
 //   node tools/harness.ts --company newer [...]        ... or the company were the four newer classes' (`newerCompany`)
 // The company is the premade six, trained to the level (to the road's cap, 32), with the prestiges
 // that level brings (game/party.ts), and dressed in what the item tables give it by then (GEAR). Beside
@@ -32,9 +32,10 @@
 // a light that takes spell points, and reads the fight as it stands each turn, called groups and all.
 // It wakes a sleeper or frees one held of the front row, or a caster, where it can (#549), raises
 // the front row's fallen first while a foe breathes, cures nothing else and never flees. Behind
-// `BotOpts` (#853), off unless `--bot` sets them and from level 11 only (`optsFor`), it blesses and sleeps where the cast pays,
-// weighed as a damage spell is, lets the sleepers lie while another can strike (`striker`, #865), and drinks where no spell
-// pays and no mender can. Between fights it lifts stone and
+// `BotOpts` (#853), off unless `--bot` sets them and from level 11 only (`optsFor`), it blesses
+// and sleeps where the cast pays, weighed as a damage spell is, lets the sleepers lie while another
+// can strike (`striker`, #865), the whole company once one is past Act I (`letsLie`), and drinks
+// where no spell pays and no mender can. Between fights it lifts stone and
 // mends as a player would. The report and the calibration run on every core.
 import { pathToFileURL } from 'node:url';
 import fs from 'node:fs';
@@ -58,7 +59,7 @@ import { MAP_DEFS, MONSTERS } from '../src/content/index.ts';
 import { ROLES, ROLE_IDS, LEVELS, HP, DAMAGE, xpFor, line, standardEncounter, testMonster, TROLL, WIGHT_CURSE, CALL, LIGHT, SWEEP, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, giantEncounter, drakeEncounter, BASILISK_STONE, basiliskEncounter, CLOCK, clockEncounter } from './testmonster.ts';
 import { quickening } from '../src/content/areas/ashfall/items.ts';
 import type { Role } from './testmonster.ts';
-import { wakeWith, markOf, ANSWER, breathGuard, mendLines, REST_AT, pools, mustRest, blessWith, sleepWith, drinkFor, sleeps, wakesMany, striker, optsFor } from '../src/game/bot.ts';
+import { wakeWith, markOf, ANSWER, breathGuard, mendLines, REST_AT, pools, mustRest, blessWith, sleepWith, drinkFor, sleeps, wakesMany, striker, optsFor, letsLie } from '../src/game/bot.ts';
 import type { BotOpts } from '../src/game/bot.ts';
 
 // The bots' answers, the rest rule and the pools it reads are the game's (src/game/bot.ts), and found here still.
@@ -222,7 +223,8 @@ function prestige(p: Party): void {
 }
 
 /**
- * The tiers a company of its level holds where `RULES.tiers` asks (#852; off unless `--tiers`, #865): on each line
+ * The tiers a company of its level holds where `RULES.tiers` asks (#852; off unless `--tiers`,
+ * #865): on each line
  * its class takes (`linesOf`: a fighter's arms, a caster's magic, a hybrid's both), Expert from 13 and
  * Master from 25 (`TIER_LEVELS`), as a company that took each when it could. After the prestiges, as
  * play teaches them; what a tier does is the resolver's (party.ts `armsBonus`, `rankMult`).
@@ -381,8 +383,8 @@ export const thrifty = (s: CombatState, p: Party, rng: RngInstance, i: number, o
   // A blade at a leader or a caller it reaches (`markOf`), else at the weakest it reaches. With sleep
   // on, sleepers are let lie (#853): a blade and a spell at an awake foe where there is one, and no
   // spell over many that would wake one (`wakesMany`); only while another member can strike (`striker`,
-  // #865), and only then is a group slept.
-  const lie = !!o.sleep && striker(s, p, i), up = lie ? foes.filter((f) => !sleeps(s.monsters[f])) : [];
+  // #865), and only then is a group slept; the whole company once one is past Act I (`letsLie`).
+  const lie = letsLie(p, opts) && striker(s, p, i), up = lie ? foes.filter((f) => !sleeps(s.monsters[f])) : [];
   const reach = foes.filter((f) => canReach(s, c, f)), awake = reach.filter((f) => up.includes(f)), near = awake.length ? awake : reach;
   const lead = markOf(s, foes), pick = up.length ? up : foes, mark = lead !== undefined && pick.includes(lead) ? lead : undefined;
   const weakest = lead !== undefined && near.includes(lead) ? lead : (near.length ? near : foes).reduce((a, b) => (s.monsters[b].hp < s.monsters[a].hp ? b : a));
@@ -403,7 +405,7 @@ export const thrifty = (s: CombatState, p: Party, rng: RngInstance, i: number, o
     const v = pays(bless, more * Math.min(bless.turns ?? 1, left()) * rate);
     if (v > worth) { worth = v; best = { type: 'cast', spellId: bless.id, target: i }; }
   }
-  const sleep = lie ? sleepWith(s, c) : undefined;
+  const sleep = o.sleep && lie ? sleepWith(s, c) : undefined;
   if (sleep) {
     const held = sleep.spell.inflict === 'paralysed';
     const v = pays(sleep.spell, incoming(s, p, sleep.foes) * (held ? ROOTS_CHANCE : SLUMBER_CHANCE) * Math.min(held ? 1 / HOLD_BREAKS : SLEEPS_FOR, left()));

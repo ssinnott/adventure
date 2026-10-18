@@ -15,7 +15,7 @@ import type { MonsterDef } from '../../src/game/monsters.ts';
 import { elementMult, monsterSpells, monsterCanCast, KINDS } from '../../src/game/monsters.ts';
 import { gateBlast, gateBurn, gateTurn } from '../gate.ts';
 import { wakeWith, markOf, mendLines, ANSWER, companyAt, thrifty, REST_AT, ROUND_CAP } from '../harness.ts';
-import { botTurn, asSeen, asWritten, breathGuard } from '../../src/game/bot.ts';
+import { botTurn, asSeen, asWritten, breathGuard, PLAYED } from '../../src/game/bot.ts';
 import type { BotOpts, Sees } from '../../src/game/bot.ts';
 import { CombatScreen } from '../../src/ui/combat.ts';
 import type { Game } from '../../src/game/game.ts';
@@ -1267,6 +1267,28 @@ function botOpts(): void {
     const on = alone(ON), off = alone(OFF), beside = alone(ON, true), slept = (x: { s: CombatState }): number => x.s.log.filter((l) => l.startsWith('Cassian casts Slumber')).length;
     ok(on.s.outcome === 'victory' && on.turns === off.turns && !slept(on) && slept(beside) > 0,
       `a caster alone does not stall behind his Slumber: Cassian, the rest fallen, with Slumber and Fire Bolt against two groups, sleeps neither and wins in ${on.s.round} rounds turn for turn as with sleep off (${slept(on)} Slumbers, ${on.s.outcome}); with Bram standing he sleeps (${slept(beside)})`);
+  }
+  {
+    // A company that straddles Act I lets the sleepers lie as one (#865, `letsLie`): the level-8 six with
+    // Cassian at 12, the game's bot as play has it, against two groups of great ogres. He sleeps a group,
+    // and no one, Idris at 8 among them, wakes a sleeper with a spell over many, in three rounds.
+    const many = Object.values(SPELLS).filter((x) => x.dice && (x.target === 'group' || x.target === 'all')).map((x) => ` casts ${x.name}`);
+    const q = companyAt(8, 865), rng = makeRng(865), woke: string[] = [];
+    q.members[5] = companyAt(12, 865).members[5];
+    const s = startCombat(q, [{ id: 'a', monsters: [great, great] }, { id: 'b', monsters: [great, great] }], rng);
+    const asleep = (): number[] => s.monsters.flatMap((m, k) => (m.conditions.includes('asleep') ? [k] : []));
+    for (let n = 0; n < 400 && s.outcome === 'ongoing'; n++) {
+      const t = currentTurn(s, q, rng);
+      if (!t || s.round > 3) break;
+      if (t.side === 'monster') { monsterAct(s, q, rng); continue; }
+      const lying = asleep(), at = s.log.length;
+      botTurn(s, q, rng, t.i, asSeen, PLAYED);
+      const cast = s.log.slice(at).filter((l) => many.some((x) => l.includes(x)));
+      if (cast.length && lying.some((k) => s.monsters[k].hp > 0 && !s.monsters[k].conditions.includes('asleep'))) woke.push(...cast);
+    }
+    const slept = s.log.filter((l) => l.startsWith('Cassian casts Slumber')).length;
+    ok(slept >= 1 && !woke.length,
+      `a company that straddles Act I lets the sleepers lie as one: the level-8 six with Cassian at 12 against two groups of great ogres, he sleeps (${slept} Slumbers) and no one wakes them with a spell over many in three rounds (${woke.join(' ') || 'none'})`);
   }
 }
 
