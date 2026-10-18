@@ -275,6 +275,52 @@ the window of the last area on the road whose floor is at or under its own; no a
 its xp or gold, which the curve prints as a figure; and the gate judges it at its own floor, out of
 the area's pools. Meridian Camp's third level and the Dead-Drop's three are planned so.
 
+An enclave is a place of its own beside the road (#845): a dungeon entered from a box (a hollow, a
+cave, a ruin), declared on its map (`enclave` in `game/map.ts`) and held to its own band, over its
+box's: a band or two for an enclave, the cap's, 30–32, for an artifact lair (the owner, 17 October
+2026). The checks hold it as they hold a map outside the budget, wherever its band stands. The curve
+leaves its pay and its finds out of its area: no clear counts its xp or gold, which the curve prints
+as a figure; its monsters sit in its own band, rising from its door; and its chests and drops sit in
+the window of the last area on the road whose floor is at or under its own, the Hearth's for a lair.
+The gate judges it at its own floor and two under it by the day from 10, its guardian's odds at its
+floor and two above (named in `BOSSES` under its box's zone) and leaves it out of its area's pools
+and day; no zone's road walks it, for a road walks its zone's own maps. No step of the quest lies in
+it (§5.8). Its door says its band and how it feels to the company, as a border does (DESIGN.md §9),
+and the pilot keeps out of one whose floor is over its company. A fixture lair at 30–32 beside
+Saltreach, a band-10 area, holds these rules before any area places one (`tools/tests/enclave.ts`):
+on the Stair's ground and groups, it is won 95.2% at 30, its guardian 57% at 30 and 80% at 32; it
+fights 10.71 to a rest at 30 and 8.49 at 28, 74% of the floor's day; Saltreach's clear, band, pools
+and day are as they were without it; and it holds no step.
+
+Decided by the builder for #845, each the owner's to overturn:
+
+1. **The declaration is a mark on the map, `enclave: true`, and its band is the map's own `band`**:
+   the sign already shows a map's band, so one band serves the sign, the door and the checks.
+2. **An enclave stands over its box**, the outdoor map its door opens onto: its floor over the box's
+   top. One with no band, at its box's band, listed `outside` as well, laid as a zone map or opening
+   onto no box fails the curve (`enclaveFaults`); leaving the area's figures is only fair for a place
+   past its box.
+3. **Its window is the last road area's whose floor is at or under its own**, as a map outside the
+   budget has it: the Hearth's 7,000 for a lair at the cap. No window holds an artifact, so #847
+   must exempt one from the curve's window by its mark.
+4. **Two under is asked of it alone, by the day from 10**, as of a map outside the budget, and its
+   guardian is a boss in `BOSSES` under its box's zone, as a dungeon's boss is; the fixture's figures
+   off their aim are said with it and kept out of the gate's list, which is the content's.
+5. **The door's line is the game's**, one entry after the way's own: "<name>: levels 30-32.", then
+   harder one or two under its floor and the warning three or more under, in an enclave's words, not a
+   zone's. None from a level of an enclave whose floor is at or over its own, for a border speaks
+   where the floor rises. Held to the log's three lines at its longest (pillars). An area's own words
+   can come when one asks for them.
+6. **The pilot learns an enclave's band at its door**, once a way in is seen (`Known.enclave`), and
+   keeps out under its floor with no grace, where a zone allows a level: the navigator has no way in,
+   the strategist chooses no walk there and a goal inside sends it levelling to the floor. Only the
+   way in is shut: the way up from a deeper level stays open, so a pilot handed the helm inside is
+   never stranded.
+7. **The secret's pace and the novelty check are left as they are**: each places a map by its floor
+   (`roadPlace`), so a lair at the cap stands with the Hearth in both.
+8. **The fixture is the Stair's ground and groups at 30–32 off C3**, a chest with the Grey Axe in it
+   (6,800, over Saltreach's 2,000): its figures are the gate's already, so it needs no new monster.
+
 A kill pays each member by the monster's level against theirs: ×0.1 at three or more under, ×0.4
 at two under, ×0.7 at one under, ×1 at their level, ×1.15 at one over, ×1.3 at two over, and ×1.5
 at three or more over. Simulated from Saltreach on, that kept companies that clear anything from
@@ -325,11 +371,11 @@ to Lockpick (#857).
 
 The gate, checked with the bot of `tools/gate.ts`. Each figure below is its **aim**, and each has a
 **limit** beyond it (#273): inside its aim a figure passes; between its aim and its limit it passes,
-and the check lists it as off its aim; past its limit it fails, and only then is it owed. The
-limits, weighed by the pilot on every box of the Downs and left as they were until the owner's own
-play says otherwise (#47, docs/areas/shelf.md §8): 80% won at the floor, 90% two under, the road
-walked 65% of the time, a boss 20% to 80% at its floor and 75% two above or at the cap, 4 to 10
-fights to a rest and the warning's nearest groups ten points under the median.
+and the check lists it as off its aim (under `--list`, #895); past its limit it fails, and only
+then is it owed. The limits, weighed by the pilot on every box of the Downs and left as they were
+until the owner's own play says otherwise (#47, docs/areas/shelf.md §8): 80% won at the floor, 90%
+two under, the road walked 65% of the time, a boss 20% to 80% at its floor and 75% two above or at
+the cap, 4 to 10 fights to a rest and the warning's nearest groups ten points under the median.
 
 - **At the floor, through.** A company at each map's own floor wins nine in ten of that map's
   fights, and of the area's, each fought at its map's floor; each zone's road is walked at the
@@ -722,6 +768,9 @@ secret found and never told, restraint), reads the text and the code.
   the atlas's zones as the party walks them: borders over walkable land, and the road and sea
   links. On today's atlas the only dead ends are Glacier Foot, Monks' Vale and the Hearth Isle, and
   the Wold borders four zones on the road, so the Glass needs its lava flow before it passes.
+- **An enclave holds no step.** An enclave stands beside the road (§5.2, #845), so no goal of the
+  quest lies in it, and a goal set in one holds no zone: the every-zone check skips it as it skips
+  the reach.
 
 ---
 
@@ -991,7 +1040,7 @@ Decided by the owner's delegate for #828, each the owner's to overturn:
 | Defects the owner finds by hand | 4 over the slice, not recounted since; the owner's own playthrough of M3 is what remains (README.md) | fewer each area; each one a check |
 | Checks that pass or fail by chance | none known: the smoke test plays one seeded world (#23) | none |
 | Pull requests that needed main merged in | 4 of the last 6 in September, not recounted since | rare |
-| `npm run check` | about 12 to 14 minutes on a four-core container, ending `ALL OK` with nothing owed (#865); each suite alone on 18 October, by the owner's delegate's measure (#848): the gate 310 s and every other suite under 90 s, about 12 minutes in all, which #895 makes the runner print; in CI on a docs-only change the tests take 5 min 8 s, the smoke 2 min 20 s and the typecheck 19 s (#866); the tests job took 5 min 8 s to 9 min 12 s on the heads of #876 to #885 and #866 (twelve runs on 18 October), and its cap is fifteen for the runner's spread of about two minutes (#873); a change to the viewport or the smoke sweeps every map, the smoke job then taking 12 to 21 minutes (#876, #878, #879) | under 3 minutes: full sweeps of what a pull request touches, the rest sampled or on release; the cure, in this order (#848): the gate for the areas a diff reaches, then parallel suites, then the sweep's shards |
+| `npm run check` | about 12 to 14 minutes on a four-core container, ending `ALL OK` with nothing owed (#865); each suite alone on 18 October, by the owner's delegate's measure (#848): the gate 310 s and every other suite under 90 s, about 12 minutes in all; in CI on a docs-only change the tests take 5 min 8 s, the smoke 2 min 20 s and the typecheck 19 s (#866); the tests job took 5 min 8 s to 9 min 12 s on the heads of #876 to #885 and #866 (twelve runs on 18 October), and its cap is fifteen for the runner's spread of about two minutes (#873); a change to the viewport or the smoke sweeps every map, the smoke job then taking 12 to 21 minutes (#876, #878, #879); the runner prints each suite's seconds, all in one process (#895): loaded, on that container shared with other runs on 18 October, the gate 335.5 s, `labels` 104.5, `row` 84.5, the Foreland's walkthrough 33.1, `quests` 27.7, `harness` 27.1, `scaffold` 12.3, `pilot` 8.5 and every other suite under 6, 698.9 s in all, and the full run 33.1 in its own step; in CI, the tests job on #905 that day (8965ac98), the gate 149.4 s (53%), `labels` 37.9, `row` 30.4, `harness` 15.2, `quests` 13.9, the Foreland's walkthrough 8.7, `scaffold` 4.6, `pilot` 4.3 and every other suite under 1.5, 282.8 s in all, and the full run 7.1 | under 3 minutes: full sweeps of what a pull request touches, the rest sampled or on release; the cure, in this order (#848): the gate for the areas a diff reaches, then parallel suites, then the sweep's shards |
 | Cracks in the sweep of every map (§5.6) | none; the sweep reads each square as the view draws it, the void as its look (#869) | none |
 | Maps inside the density floor (§5.3) | all (`node tools/test.ts density`) | all |
 | Areas on the curve (§5.2) | all twelve (`node tools/test.ts curve`); the Kilns and Ashfall pass the lead line and are held where they are built | all |
@@ -1094,6 +1143,34 @@ Decided by the builder for #902, each the owner's to overturn:
    #895 prints them from the runner.
 4. **The opening paragraph's "17 October" is put right to "18 October":** §10 has been dated 18
    October since #887.
+
+Decided by the builder for #895, each the owner's to overturn:
+
+1. **What a suite prints itself waits for `--list` too**, not only its `ok` lines: the gate's `n/a`
+   lines and its block off their aim (89 lines), the quests' `info`, the pillars' counts and the
+   art's notes are 278 lines of a green run, which would then not be under 300. The off-aim block
+   alone would bring a green run to 271, too near 300 for the sub-checks to come (`H6`). The runner
+   holds the lines back while the suite runs, so no suite's file changes; a line that starts `FAIL:`
+   or `owed:` still prints, and at a suite's first failure what it held prints, in order, and the
+   rest as it comes. A run that exits inside a suite prints what that suite held.
+2. **A suite's name prints as it starts**, as under `--list`, and its line of seconds at its end: a
+   run that dies inside a suite (a crash, an await that never settles, the tests job's timeout)
+   names it last, with nothing to catch. A green run is two lines a suite, 182 in all; naming it
+   from the exit and the signals would keep 123 but name nothing on a kill outright.
+3. **The seconds run from a suite's load to its end, in one process:** each counts the modules no
+   suite before it loaded, and none counts the runner's start. The issue's figures, each suite
+   alone, each paid its own.
+4. **The full run's job in CI lists every line** (`--list`), as its summary is built from the run's
+   `ok` and `note` lines. The issue says CI needs nothing, which holds for the three jobs that gate.
+5. **`package.json` does not change:** quiet is the runner's default, and `TEST_LIST=1` reaches each
+   of `npm test`'s three steps, where `npm test -- --list` would reach only the last.
+6. **The runner's own check reads a listed run where it read `ok` lines**, and gains seven checks of
+   the new output, each suite's line held to its own counts: a fixture suite, `slow`, takes 0.3 s and
+   prints a line of its own, `later` one before its failure, and `stuck`, in a folder of its own as
+   it ends the run, awaits what never settles. The suites' order is read from their lines of seconds.
+7. **docs/PILOT.md says the survival sweep's and the full run's lines print under `--list` or once
+   the suite fails**: the issue names SLICE and §10 only, and PILOT would otherwise say what main no
+   longer does.
 
 ---
 

@@ -6,7 +6,8 @@
 // its floor and three quarters cleared, paid by level, an area leaves a company no more than a
 // level over the next floor, unless it is named as passing that. What a row says is owed is
 // reported, not failed, until it holds. A map an area lists `outside` is held to its own band and
-// its country's window, and what it pays is a figure, counted in no clear. Pay is booked where it
+// its country's window, and what it pays is a figure, counted in no clear; so is an enclave (#845),
+// whose band stands over its box's, shown on the fixture lair beside Saltreach. Pay is booked where it
 // is paid, and each quest a clear counts that belongs to another area is a figure too, printed.
 import { AREAS, ATLAS, MAP_DEFS, MONSTERS, ITEMS } from '../../src/content/index.ts';
 import type { RegionId } from '../../src/content/index.ts';
@@ -19,10 +20,11 @@ import type { MonsterDef } from '../../src/game/monsters.ts';
 import type { QuestDef } from '../../src/game/quests.ts';
 import type { GuildQuest } from '../../src/game/guilds.ts';
 import { guildName } from '../../src/game/guilds.ts';
-import { areaBand } from '../../src/game/atlas.ts';
+import { areaBand, homeMap } from '../../src/game/atlas.ts';
 import { giftOf, spentId } from '../../src/game/wilds.ts';
 import { handIns, choices } from '../../src/game/people.ts';
 import { xpForLevel, killPay, MAX_LEVEL } from '../../src/game/party.ts';
+import { FIXTURE, LAIR } from './enclave.ts';
 import { ok, owed } from './lib.ts';
 
 /**
@@ -102,6 +104,71 @@ export function outsideFaults(area: { id: string; maps: readonly Pick<MapDef, 'i
     if (!d) return [`${area.id}: ${id}, listed outside its budget, is none of its maps`];
     return beyond(d, band) ? [] : [`${area.id}: ${id}, listed outside its budget, does not stand past its band ${band.join('-')} (${d.band?.join('-') ?? 'none'})`];
   });
+}
+
+/**
+ * An area's maps as the curve takes them: those its clear counts, in its band; those past its band
+ * it lists `outside` its budget; and its enclaves (#845), wherever their bands stand. A map outside
+ * and an enclave are each held to their own band and their country's window, and what they pay is a
+ * figure, counted in no clear.
+ */
+export function curveMaps<D extends Pick<MapDef, 'id' | 'band' | 'enclave'>>(maps: readonly D[], band: readonly [number, number], outside: readonly string[] = []): { counted: D[]; apart: D[]; enclaves: D[] } {
+  const road = maps.filter((d) => !d.enclave);
+  return { counted: road.filter((d) => !beyond(d, band)), apart: road.filter((d) => beyond(d, band) && outside.includes(d.id)), enclaves: maps.filter((d) => !!d.enclave) };
+}
+
+/**
+ * What is wrong with an area's enclaves (#845): one with no band of its own, one listed `outside`
+ * too, one that is a zone map or opens onto no box (`homeMap`), or one whose floor does not stand
+ * over its box's band. An enclave is held to its own band because it stands past its box's.
+ */
+export function enclaveFaults(area: { id: string; maps: readonly MapDef[]; outside?: readonly string[] }, defs: readonly MapDef[]): string[] {
+  return area.maps.filter((d) => d.enclave).flatMap((d) => {
+    const at = `${area.id}: ${d.id}, an enclave,`, box = d.kind === 'outdoor' ? undefined : homeMap(defs, d.id);
+    if (!d.band) return [`${at} has no band of its own`];
+    if (area.outside?.includes(d.id)) return [`${at} is listed outside its area's budget too`];
+    if (!box) return [`${at} ${d.kind === 'outdoor' ? 'is a zone map' : 'opens onto no box'}, where it is entered from a box`];
+    return box.band && d.band[0] > box.band[1] ? [] : [`${at} stands at ${d.band.join('-')}, not over its box ${box.id}'s ${box.band?.join('-') ?? 'none'}`];
+  });
+}
+
+/** The price window a map past its area's band or an enclave is held to: the last area's on the road whose floor is at or under its own. */
+const countryPrice = (road: readonly { id: keyof typeof CURVE }[], floor: number): number => CURVE[road.filter((r) => CURVE[r.id].band[0] <= floor).pop()!.id].price;
+
+/**
+ * A map held to its band: every monster's level within two of it, and its groups walked to from its
+ * way in, their levels rising with the steps, the nearest near its floor and the hardest near its top.
+ */
+function heldToBand(d: MapDef): void {
+  if (!d.encounters?.length) return;
+  const [a, b] = d.band ?? [1, 0];
+  // A caller's retinue, the kind it calls, stands in its group at its own level, as the calls it
+  // makes do (the tallyman's knockers at the ice-hole, docs/areas/rimewater.md §9, #487): the
+  // group's own monsters are the rest, and they set its level.
+  const own = (e: { monsters: readonly string[] }): string[] => e.monsters.filter((m) => !e.monsters.some((c) => (MONSTERS[c].calls?.monsters ?? []).some((q) => q === m)));
+  const kinds = [...new Set(d.encounters.flatMap(own))];
+  const astray = kinds.filter((mid) => { const l = MONSTERS[mid].level; return !(Number.isInteger(l) && l >= 1 && l >= a - 2 && l <= b + 2); });
+  ok(!astray.length, `${d.id}: its ${kinds.length} monsters' levels sit in ${a}-${b}, give or take two${astray.length ? `; not ${astray.map((m) => `${m} (${MONSTERS[m].level})`).join(', ')}` : ''}`);
+  // Rising: a group's level (its monsters' mean) goes with its walking steps from the way in,
+  // the nearest group is near the floor, and the hardest near the top. The hardest need not be
+  // the farthest: Thornmark's farthest, the lake, is a middling group.
+  const steps = stepsFrom(d);
+  const at = d.encounters.map((e) => ({ id: e.id, steps: steps(e.x, e.y), level: own(e).reduce((t, m) => t + MONSTERS[m].level, 0) / own(e).length }));
+  const lost = at.filter((g) => !Number.isFinite(g.steps));
+  ok(!lost.length, `${d.id}: its ${at.length} groups can be walked to from the way in${lost.length ? `; not ${lost.map((g) => g.id).join(', ')}` : ''}`);
+  const walked = at.filter((g) => Number.isFinite(g.steps));
+  if (!walked.length) return;
+  // A rise needs two groups at different distances; the nearest and hardest cover the rest.
+  if (new Set(walked.map((g) => g.steps)).size > 1) {
+    const rho = rankCorrelation(walked.map((g) => g.steps), walked.map((g) => g.level));
+    ok(rho > 0, `${d.id}: its groups' levels rise from the way in (rank correlation ${rho.toFixed(2)})`);
+  }
+  const nearest = walked.reduce((p, g) => (g.steps < p.steps ? g : p));
+  ok(nearest.level <= a + 2, `${d.id}: the nearest group, ${nearest.id} at ${nearest.steps} steps, is near the floor ${a} (level ${nearest.level.toFixed(1)})`);
+  const hardest = walked.reduce((p, g) => (g.level > p.level ? g : p));
+  // Near the top is within two of it, but above the floor however narrow the band, save at the cap.
+  const top = nearTop(a, b);
+  ok(hardest.level >= top, `${d.id}: the hardest group, ${hardest.id} at ${hardest.steps} steps, is near the top ${b} (level ${hardest.level.toFixed(1)}, at least ${top})`);
 }
 
 /**
@@ -377,15 +444,38 @@ export function curve(): void {
   const order = (id: string): number => ATLAS.areas.find((a) => a.id === id)?.order ?? Infinity;
   const road: readonly { id: RegionId | (typeof PLANNED)[number]; area?: Area }[] = [...AREAS.map((a) => ({ id: a.id, area: a as Area })), ...PLANNED.map((id) => ({ id }))]
     .sort((a, b) => order(a.id) - order(b.id));
+  // The enclave (#845): the fixture lair at the cap beside Saltreach, a band-10 area, leaves Saltreach's
+  // curve as it was, its clear (and so its lead and its window) and its band; it is held to its own band
+  // and the cap's window, and its pay is a figure. An enclave has a band of its own over its box's, is
+  // entered from a box and is not listed outside as well.
+  {
+    const salt = AREAS.find((a) => a.id === FIXTURE.area)! as Area, row = CURVE[FIXTURE.area], guilds = salt.guilds ?? [];
+    const was = curveMaps(salt.maps, row.band, salt.outside), now = curveMaps([...salt.maps, LAIR], row.band, salt.outside);
+    const ids = (ds: readonly { id: string }[]): string => ds.map((d) => d.id).join(), before = clearOf(was.counted, guilds), after = clearOf(now.counted, guilds);
+    const band = (defs: readonly MapDef[]): string => areaBand(ATLAS, defs, FIXTURE.area)?.join('-') ?? 'none';
+    ok(ids(now.counted) === ids(was.counted) && ids(now.apart) === ids(was.apart) && ids(now.enclaves) === LAIR.id && after.xp === before.xp && after.gold === before.gold
+      && after.quest === before.quest && band([...MAP_DEFS, LAIR]) === band(MAP_DEFS),
+      `the fixture lair at 30-32 leaves Saltreach's curve as it was: its clear gives ${fmt(before.xp)} xp a member and ${fmt(before.gold)} gold with it and without, and its band reads ${band(MAP_DEFS)}`);
+    heldToBand(LAIR);
+    const price = countryPrice(road, LAIR.band![0]), lair = clearOf([LAIR]);
+    ok(price === CURVE.hearth.price && ITEMS.grey_axe.price > row.price,
+      `its window is the cap's country's, the Hearth's ${price}, where its find, the Grey Axe at ${ITEMS.grey_axe.price}, is dearer than Saltreach's ${row.price}`);
+    priceWindow(LAIR.id, lair, price);
+    ok(true, `${LAIR.id}: as an enclave its ${fmt(lair.xp)} xp a member and ${fmt(lair.gold)} gold are a figure, counted in no clear`);
+    const faults = (d: MapDef, outside = salt.outside ?? []): number => enclaveFaults({ id: FIXTURE.area, maps: [...salt.maps, d], outside }, [...MAP_DEFS, d]).length;
+    ok(!faults(LAIR) && faults({ ...LAIR, band: undefined }) === 1 && faults({ ...LAIR, band: [11, 13] }) === 1 && faults(LAIR, [LAIR.id]) === 1
+      && faults({ ...LAIR, exits: [] }) === 1 && faults({ ...LAIR, kind: 'outdoor' }) === 1,
+      'an enclave has a band of its own over its box\'s, opens onto a box and is listed nowhere else: one with no band, at 11-13 by C3\'s 10-11, listed outside too, opening onto nothing or laid as a zone map fails');
+  }
   road.forEach(({ id, area }, i) => {
     const row = CURVE[id];
     const [lo, hi] = row.band;
-    const maps = (area?.maps ?? []).filter((d) => !beyond(d, row.band));
     // A map past the band pays nothing here, unless the area lists it outside its budget: then it is
-    // held to its own band and its country's window, and what it pays is counted in no clear.
-    const apart = (area?.maps ?? []).filter((d) => beyond(d, row.band) && !!area?.outside?.includes(d.id));
-    for (const d of (area?.maps ?? []).filter((q) => beyond(q, row.band) && !apart.includes(q))) ok(!d.encounters?.length && !d.features?.some((f) => f.kind === 'chest'), `${id}: ${d.id}, at ${d.band!.join('-')}, stands past its band, a later area's country, and pays nothing here`);
-    if (area) for (const f of outsideFaults(area, row.band)) ok(false, f);
+    // held to its own band and its country's window, and what it pays is counted in no clear. So is
+    // an enclave (#845), wherever its band stands.
+    const { counted: maps, apart, enclaves } = curveMaps(area?.maps ?? [], row.band, area?.outside);
+    for (const d of (area?.maps ?? []).filter((q) => !q.enclave && beyond(q, row.band) && !apart.includes(q))) ok(!d.encounters?.length && !d.features?.some((f) => f.kind === 'chest'), `${id}: ${d.id}, at ${d.band!.join('-')}, stands past its band, a later area's country, and pays nothing here`);
+    if (area) for (const f of [...outsideFaults(area, row.band), ...enclaveFaults(area, MAP_DEFS)]) ok(false, f);
     // The band: the atlas's, holding every map's, and the next floor the next area's.
     const atlas = areaBand(ATLAS, MAP_DEFS, id);
     const bandMsg = `${id}: its band ${lo}-${hi} is the atlas's (${atlas?.join('-') ?? 'none'})`, bandHolds = !!atlas && atlas[0] === lo && atlas[1] === hi;
@@ -421,45 +511,19 @@ export function curve(): void {
       const out = clearOf(apart);
       ok(true, `${id}: outside its budget, ${apart.map((d) => d.id).join(', ')} give ${fmt(out.xp)} xp a member and ${fmt(out.gold)} gold, counted in no clear`);
     }
-
-    // Every monster's level: at least 1, and within two of the band of every map that places it, a
-    // map outside the budget its own.
-    for (const d of [...maps, ...apart]) {
-      if (!d.encounters?.length) continue;
-      const [a, b] = d.band ?? [1, 0];
-      // A caller's retinue, the kind it calls, stands in its group at its own level, as the calls it
-      // makes do (the tallyman's knockers at the ice-hole, docs/areas/rimewater.md §9, #487): the
-      // group's own monsters are the rest, and they set its level.
-      const own = (e: { monsters: readonly string[] }): string[] => e.monsters.filter((m) => !e.monsters.some((c) => (MONSTERS[c].calls?.monsters ?? []).some((q) => q === m)));
-      const kinds = [...new Set(d.encounters.flatMap(own))];
-      const astray = kinds.filter((mid) => { const l = MONSTERS[mid].level; return !(Number.isInteger(l) && l >= 1 && l >= a - 2 && l <= b + 2); });
-      ok(!astray.length, `${d.id}: its ${kinds.length} monsters' levels sit in ${a}-${b}, give or take two${astray.length ? `; not ${astray.map((m) => `${m} (${MONSTERS[m].level})`).join(', ')}` : ''}`);
-      // Rising: a group's level (its monsters' mean) goes with its walking steps from the way in,
-      // the nearest group is near the floor, and the hardest near the top. The hardest need not be
-      // the farthest: Thornmark's farthest, the lake, is a middling group.
-      const steps = stepsFrom(d);
-      const at = d.encounters.map((e) => ({ id: e.id, steps: steps(e.x, e.y), level: own(e).reduce((t, m) => t + MONSTERS[m].level, 0) / own(e).length }));
-      const lost = at.filter((g) => !Number.isFinite(g.steps));
-      ok(!lost.length, `${d.id}: its ${at.length} groups can be walked to from the way in${lost.length ? `; not ${lost.map((g) => g.id).join(', ')}` : ''}`);
-      const walked = at.filter((g) => Number.isFinite(g.steps));
-      if (!walked.length) continue;
-      // A rise needs two groups at different distances; the nearest and hardest cover the rest.
-      if (new Set(walked.map((g) => g.steps)).size > 1) {
-        const rho = rankCorrelation(walked.map((g) => g.steps), walked.map((g) => g.level));
-        ok(rho > 0, `${d.id}: its groups' levels rise from the way in (rank correlation ${rho.toFixed(2)})`);
-      }
-      const nearest = walked.reduce((p, g) => (g.steps < p.steps ? g : p));
-      ok(nearest.level <= a + 2, `${d.id}: the nearest group, ${nearest.id} at ${nearest.steps} steps, is near the floor ${a} (level ${nearest.level.toFixed(1)})`);
-      const hardest = walked.reduce((p, g) => (g.level > p.level ? g : p));
-      // Near the top is within two of it, but above the floor however narrow the band, save at the cap.
-      const top = nearTop(a, b);
-      ok(hardest.level >= top, `${d.id}: the hardest group, ${hardest.id} at ${hardest.steps} steps, is near the top ${b} (level ${hardest.level.toFixed(1)}, at least ${top})`);
+    if (enclaves.length) {
+      const out = clearOf(enclaves);
+      ok(true, `${id}: its enclaves, ${enclaves.map((d) => d.id).join(', ')}, give ${fmt(out.xp)} xp a member and ${fmt(out.gold)} gold, counted in no clear`);
     }
 
-    // The price window, the row's. A map outside the budget is held to its country's: the window of
-    // the last area on the road whose floor is at or under its own, as the pace check places it.
+    // Every monster's level: at least 1, and within two of the band of every map that places it, a
+    // map outside the budget or an enclave its own.
+    for (const d of [...maps, ...apart, ...enclaves]) heldToBand(d);
+
+    // The price window, the row's. A map outside the budget or an enclave is held to its country's: the
+    // window of the last area on the road whose floor is at or under its own, as the pace check places it.
     priceWindow(id, clear, row.price);
-    for (const d of apart) priceWindow(d.id, clearOf([d]), CURVE[road.filter((r) => CURVE[r.id].band[0] <= d.band![0]).pop()!.id].price);
+    for (const d of [...apart, ...enclaves]) if (d.band) priceWindow(d.id, clearOf([d]), countryPrice(road, d.band[0]));
     // The window never narrows along the road.
     const before = road[i - 1];
     if (before) ok(row.price >= CURVE[before.id].price, `${id}: its window, ${row.price}, is no narrower than ${before.id}'s (${CURVE[before.id].price})`);

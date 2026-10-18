@@ -11,11 +11,19 @@ import type { Action } from '../../src/input.ts';
 import { drainTyped } from '../../src/input.ts';
 import { SAVE_KEY } from '../../src/game/save.ts';
 
-let failures = 0;
-export const ok = (cond: boolean, msg: string): void => { console.log((cond ? '  ok:   ' : '  FAIL: ') + msg); if (!cond) failures++; };
+/** Whether every check prints its line (`--list`, or TEST_LIST=1); by default only one that fails does (#895). */
+export const LIST = process.argv.includes('--list') || process.env.TEST_LIST === '1';
+
+let failures = 0, held = 0;
+export const ok = (cond: boolean, msg: string): void => {
+  if (cond) held++; else failures++;
+  if (LIST || !cond) console.log((cond ? '  ok:   ' : '  FAIL: ') + msg);
+};
 /** A suite that threw counts as a failure. */
 export const fail = (msg: string): void => { console.log('  FAIL: ' + msg); failures++; };
 export const failureCount = (): number => failures;
+/** How many checks have held so far: a suite's count is what it adds. */
+export const heldCount = (): number => held;
 
 const owing = new Map<string, number>();
 /**
@@ -29,12 +37,26 @@ export const owed = (cond: boolean, msg: string, whose: string): void => {
 };
 export const owedCount = (): ReadonlyMap<string, number> => owing;
 
-/** The last line of a run: 'ALL OK' or the failures, and what is owed by whom. */
-export const summary = (failures: number, owing: ReadonlyMap<string, number>): string => {
+/** A suite as it ran: its seconds and its counts of checks held, failed and owed (#895). */
+export interface Ran { name: string; secs: number; held: number; failed: number; owed: number }
+
+/** A suite's line, `maps   4.1 s  7,410 ok`, its name padded to `width`. */
+export const ranLine = (r: Ran, width = 0): string =>
+  `${r.name.padEnd(width)}  ${r.secs.toFixed(1).padStart(5)} s  ${r.held.toLocaleString('en-GB')} ok` +
+  (r.failed ? `, ${r.failed} failed` : '') + (r.owed ? `, ${r.owed} owed` : '');
+
+/**
+ * The end of a run: the suites' lines, the slowest first, then the last line, 'ALL OK' or the
+ * failures, and what is owed by whom.
+ */
+export const summary = (failures: number, owing: ReadonlyMap<string, number>, ran: readonly Ran[] = []): string => {
   const whose = [...owing].sort(([a], [b]) => a.localeCompare(b, 'en', { numeric: true }));
   const total = whose.reduce((n, [, k]) => n + k, 0);
   const owed = total ? ` (${total} owed: ${whose.map(([w, k]) => `${w} ×${k}`).join(', ')})` : '';
-  return (failures ? `${failures} FAILURE(S)` : 'ALL OK') + owed;
+  const width = Math.max(0, ...ran.map((r) => r.name.length)), secs = ran.reduce((n, r) => n + r.secs, 0);
+  const table = ran.length ? `Each suite's seconds, the slowest first (${secs.toFixed(1)} s in all):\n` +
+    [...ran].sort((a, b) => b.secs - a.secs).map((r) => `  ${ranLine(r, width)}\n`).join('') + '\n' : '';
+  return table + (failures ? `${failures} FAILURE(S)` : 'ALL OK') + owed;
 };
 
 /** Where the party stands on the maps as written: outdoors, its zone map and the cell on it. */

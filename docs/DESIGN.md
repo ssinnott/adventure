@@ -1150,6 +1150,18 @@ Decided by the owner's delegate for #18, each the owner's to overturn:
    the area's own words and a favour found in a hidden place of the same area; the reach's stay the
    reach's, and the reach may hold more.
 
+### Enclaves
+
+Beside the road, each area keeps places of its own: enclaves of higher-level monsters with unique
+rewards, the deepest of them artifact lairs at the cap (the owner, 17 October 2026; #828). An enclave
+is a dungeon entered from a box (a hollow, a cave, a ruin), held to its own band: a band or two over
+its box's, and the cap's, 30–32, for a lair. Like the reach it is off the quest: no step lies in it,
+and the road never needs it. Unlike the reach it is a door beside the road, often met long before a
+company can take it, so its danger is said at its door: crossing in, the log gives its name and band,
+as its sign does inside, and says how it feels by the company's level, as a border does: harder one
+or two levels under its floor, a plain warning three or more under, nothing at its floor. The monsters
+are its only gate. EXPANSION.md §5.2 holds it to its own band (#845).
+
 ---
 
 ## 10. Subplots

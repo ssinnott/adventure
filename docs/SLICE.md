@@ -560,7 +560,7 @@ trainer one level past it, onto Act II's road:
   clear's xp should take a member to the next floor, and its gold train the six there; every monster
   has a `level` within two of its maps' bands, rising from the way in (it sets what a kill pays, and
   changes no combat), and no chest or drop is dearer than the window. Both clears give it:
-  `node tools/test.ts curve` prints the Foreland's 4,101 xp a member of the 3,734 it asks, and
+  `node tools/test.ts curve --list` prints the Foreland's 4,101 xp a member of the 3,734 it asks, and
   Thornmark's 16,765 of 13,667 and 9,355 gold of 8,400.
 - **Spells.** Nine new ones. Cleric: Ward (party AC), Mending Light (party heal), Restore (big
   heal plus every cure), Revive (raises the dead), Wrath of the Hearth (damage to every foe).
@@ -736,8 +736,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 - No audio. The engine's synth stack is vendored, unused.
 - What the checks owe: a known shortfall prints as `owed` with the issue that owes it, and
   `node tools/test.ts` ends by counting them. None is owed since #865 re-sized `cairnfield_m8`.
-  The gate lists 88 figures off their aim, inside their limits: fights to a rest, figures two under a
-  floor, wins at a floor and four bosses' odds (#47 left the limits as they were).
+  Under `--list` the gate lists 88 figures off their aim, inside their limits: fights to a rest,
+  figures two under a floor, wins at a floor and four bosses' odds (#47 left the limits as they were).
 
 ## Checks
 
@@ -747,15 +747,28 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   suppressions. It is the first content check: a monster with no drawing, a business with no room
   or a map in a region no area has fails it.
 - `test`: `node tools/test.ts`, then `node tools/tests/runner/check.ts`, the runner's own check,
-  which runs it on `tools/tests/runner/fixture/` so the fixture's failures stay out of the real
-  run, then `node tools/test.ts fullrun`, the pilot's full run on the shelf (about 10 to 25 s; it
+  which runs it on `tools/tests/runner/fixture/` and `stuck/` so the fixtures' failures stay out of
+  the real run, then `node tools/test.ts fullrun`, the pilot's full run on the shelf (about 10 to 25 s; it
   repeats walkthrough:shelf's play). The suites are in `tools/tests/`, one file each exporting a function of its name (`lib.ts`
   is what they share), which the runner finds (maps, movement, monsters, combat, harness, party,
   traits, calendar, terrain, weather, atlas, outdoors, save, quests, then any other in name order),
-  then each area's walkthrough (the Foreland's and Thornmark's), in road order. Every check prints a
-  line saying what it holds, so the output is the list; `node tools/test.ts maps combat` runs a few
+  then each area's walkthrough (the Foreland's and Thornmark's), in road order. Every check has a
+  line saying what it holds, so the output under `--list` is the list; `node tools/test.ts maps combat` runs a few
   suites, `walkthrough:<area>` one walkthrough. The pilot's survival sweep and full run (`survival`,
   `fullrun`, docs/PILOT.md) run only when named; `npm test` names the full run, on the shelf alone.
+  The run is quiet unless asked (#895): by default it prints each suite's name as it starts, so a
+  run that dies inside one names it last, then a check only when it fails, and the owed lines; what
+  a suite prints itself (the gate's `n/a` lines and its figures off their aim, the quests' `info`)
+  waits for its first failure, and prints then, in order. `--list`, or `TEST_LIST=1`, which reaches
+  each step of `npm test` and `npm run check`, prints every line. Each suite ends with a line of its
+  seconds and its count (`gate  335.5 s  617 ok`), timed in the one process from its load to its
+  end, and the run with a table of those lines, the slowest first, before the last line. A green run
+  printed 27,874 lines on 18 October and prints 182. The table that day, loaded, on a four-core
+  container shared with other runs: the gate 335.5 s, `labels` 104.5, `row` 84.5, the Foreland's
+  walkthrough 33.1, `quests` 27.7, `harness` 27.1, `scaffold` 12.3, `pilot` 8.5 and every other
+  suite under 6, 698.9 s in all. In CI's tests job (#905, 8965ac98): the gate 149.4 s (53%),
+  `labels` 37.9, `row` 30.4, `harness` 15.2, `quests` 13.9, the Foreland's walkthrough 8.7,
+  `scaffold` 4.6, `pilot` 4.3 and every other suite under 1.5, 282.8 s in all.
   A check someone owes is reported, not failed:
   `owed()` in `tools/tests/lib.ts` prints `owed: <what> (#40's)`, and fails once the check holds,
   so the entry is dropped. The last line counts them by whose, as `ALL OK (3 owed: #40 ×2, #43 ×1)`.
@@ -797,7 +810,8 @@ over content broken on purpose too, and two tools to theirs:
   Thornmark's that comes back stopping with the tear.
 - `curve` (§5.2): each area against its row in `content/progression.ts`: its band, the xp and gold a
   clear gives, its monsters' levels in their maps' bands, groups harder with steps from the way in,
-  no chest or drop dearer than its window.
+  no chest or drop dearer than its window. An enclave (#845) is counted in no clear and held to its
+  own band and its country's window, and stands over its box (`enclaveFaults`).
 - `gate` (§2.2, §5.2): `tools/gate.ts`'s bot plays the premade company, dressed by the gear ladder
   and with its prestiges, harness's own (#541), against every group alone; it takes no tier, skill
   or found item and never blesses, sleeps, drinks or flees (J2). Each map is held to its band, and
@@ -811,9 +825,15 @@ over content broken on purpose too, and two tools to theirs:
   is fought with the bows' toll, and one placed on ice from under it; one that waits on an `after`
   is no warning at the way in.
   Each figure has an aim (these) and a limit beyond it (#273): between the two it passes and is
-  listed at the end of the suite as off its aim, and only past its limit does it fail or go into
-  `OWED`. A den's keepers are its camp's hardest fight, won no more often than any of its brood; its
-  brood's number and pace are printed.
+  listed under `--list` at the end of the suite as off its aim, and only past its limit does it fail
+  or go into `OWED`. A den's keepers are its camp's hardest fight, won no more often than any of its
+  brood; its brood's number and pace are printed under `--list`. An enclave (#845) is judged alone at
+  its own floor and two under it by the day from 10, out of its area's pools and day (`gateMaps`).
+- `enclave` (#845): the fixture lair, an artifact lair at 30–32 beside Saltreach on the Stair's
+  ground and groups, which the gate, the curve, the quests, the pillars and the pilot hold in their
+  own suites; here its door: crossing in, the log says its name and band and, under its floor, how it
+  feels, harder or a warning, and its sign gives its band; from a level of an enclave, the line only
+  where the floor rises.
 - `density` (§5.3): nine squares in ten within seven steps of something to find (eight in the core
   outdoors, twelve in the country, as `MapDef.density` marks it), none too far and no more than
   one point in four a sign.
@@ -831,8 +851,9 @@ over content broken on purpose too, and two tools to theirs:
   reading among them; no text past three lines of the log, nor a square's texts that can show
   together (day and night, or `until` and `after` the same thing, never do) past the log's four, an
   inscription's words, reading and mark said together; no monster's look past two, no crossing's
-  landing line or seller's warning past three, every glyph in the font, British spelling, a
-  crossing's name and words among them; each `Area.novel` holds; water and roads carry on into the
+  landing line, seller's warning or enclave's door line at its longest past three (#845), every
+  glyph in the font, British spelling, a crossing's name and words and an enclave's two feelings
+  among them; each `Area.novel` holds; water and roads carry on into the
   atlas; story locks (`content/locks.ts`) signed in, none between areas and every hand-in taking its
   item at the first meeting.
 - `people` (§2.3): every hand-in takes its item at the first meeting; Vask, Hale and Sylvane
@@ -850,7 +871,8 @@ over content broken on purpose too, and two tools to theirs:
   goal on; a person who takes an item stands at the step's place; and nothing a person says is
   written into a chapter already done. Early, the goal comes from no chapter past the last begun,
   each end is said once and the log ends with the entries of the order played. The quests suite
-  holds every zone on the road of the built areas to a step of the quest; the Deepthorn's is owed
+  holds every zone on the road of the built areas to a step of the quest, and fails a step placed in
+  an enclave, which holds no zone (`enclaveSteps`, `heldZones`, #845); the Deepthorn's is owed
   to #49.
 - `shipped` (§5.5): nothing in `content/shipped.json` goes or moves without a `SAVE_VERSION` bump
   and its upgrade; `node tools/shipped.ts` records what is new.
@@ -976,10 +998,10 @@ does.
 
 | File | Owns |
 |---|---|
-| `game/map.ts` | the terrains (hills, farmland, woods, dead wood, crystal, the chasm, salt, heather, tidal ground, ash, pine, ice, peaks, cliffs, steppe, dunes, vines and the volcano named as the atlas names them, and `DRAG`, the slow ones), `MapDef` (rows + legend + features + encounters, a sign's reading and marks, `secrets` with each secret door's hint, a town's or a dungeon's placed `banners`, its `landmarks`, an outdoor map's `density` and, on the outdoors, its gates, zones and `looks`; the wilderness features and a statue's `Gift`, the den; a person's hand-ins, `Words`, `Choice`, `Answer` and the crossings they sell, `Passage`), `GameMap` queries (passable, `exitAt` (an exit or a tear into a Rift), blocksView (a hill only from lower ground, given the eye's square) and `overtops`, the zone and palette at a cell, `bannerAt`); the void and its looks; `Presence`, when a thing is in the world (`when` as `Hours`, `until`, `after`), which a group and a person's words wear |
+| `game/map.ts` | the terrains (hills, farmland, woods, dead wood, crystal, the chasm, salt, heather, tidal ground, ash, pine, ice, peaks, cliffs, steppe, dunes, vines and the volcano named as the atlas names them, and `DRAG`, the slow ones), `MapDef` (rows + legend + features + encounters, a sign's reading and marks, `secrets` with each secret door's hint, a town's or a dungeon's placed `banners`, its `landmarks`, an outdoor map's `density` and, on the outdoors, its gates, zones and `looks`; the wilderness features and a statue's `Gift`, the den; a person's hand-ins, `Words`, `Choice`, `Answer` and the crossings they sell, `Passage`), `GameMap` queries (passable, `exitAt` (an exit or a tear into a Rift), blocksView (a hill only from lower ground, given the eye's square) and `overtops`, the zone and palette at a cell, `bannerAt`); the void and its looks; `Presence`, when a thing is in the world (`when` as `Hours`, `until`, `after`), which a group and a person's words wear; an enclave (`enclave`, #845), a dungeon beside the road held to its own band |
 | `game/outdoors.ts` | `layOutdoors`: the maps as played, the placed zone maps laid into one outdoors the size of the world, void where nothing is built and drawn as the atlas paints it (`LOOK`), their ways between them walked and gated |
 | `game/atlas.ts` | the world map's model: `Atlas`, the land drawn in strokes, `worldGrid` (a cell a square, the built outdoor maps stamped in 1:1, each cell's zone), the ways between areas (the exits, the crossings people sell and the planned links, a crossing link sold both ways drawn as built) and the road's steps |
-| `game/world.ts` | `WorldState` (position, clock, weather seed, per-map state with cells seen in bits, zones set foot in, the kinds met; a group a map has gained since a save, and a saved door only where the map still has one), the zone the party is in and what it is called, movement across zones and gates (a Pathfinder's step at six minutes), a lock opened (`unlock`), reveal (a Cartographer's a square further), the weather's reach into play (sight, snow, the log, the almanac, fights), roaming groups and when they walk (`walks`, `ended`, `hoursHold`), whether a person or an event is there (`present`), what is in sight (the viewport's rule: `VIEW_DEPTH`, `lineOfSight`, and what a hill hides from below it, `hillOver`, `hidden`) and the looks said on first meeting (`sightings`, `meet`, a den's too), a den's brood paced as they come back, encounter triggers (a group under the ice keeping to it and striking only a company on it), rest, search |
+| `game/world.ts` | `WorldState` (position, clock, weather seed, per-map state with cells seen in bits, zones set foot in, the kinds met; a group a map has gained since a save, and a saved door only where the map still has one), the zone the party is in and what it is called, movement across zones and gates (a Pathfinder's step at six minutes), a lock opened (`unlock`), reveal (a Cartographer's a square further), the weather's reach into play (sight, snow, the log, the almanac, fights), roaming groups and when they walk (`walks`, `ended`, `hoursHold`), whether a person or an event is there (`present`), what is in sight (the viewport's rule: `VIEW_DEPTH`, `lineOfSight`, and what a hill hides from below it, `hillOver`, `hidden`) and the looks said on first meeting (`sightings`, `meet`, a den's too), a den's brood paced as they come back, encounter triggers (a group under the ice keeping to it and striking only a company on it), rest, search, an enclave's door crossing in (`enclaveLine`: its name and band, and how it feels, #845) |
 | `game/calendar.ts` | the months and seasons, dates, dawn and dusk through the year, and the tide |
 | `game/weather.ts` | the `Climate` shape (each area has its own, merged as `CLIMATES` in `content/index.ts`), `weatherAt` (the sky, the temperature, snow lying, wet ground), naming the sky and its log lines, and what it does to sight, steps and bows |
 | `game/party.ts` | races, classes, `Character` (its secondary skills learnt among it), `Party`, conditions, equip, what a member bears (`borne`) and a stat as they stand (`statOf`), levelling and the trainer's price, the prestiges (titles, pools, `takePrestige`, `spellRank`), what a tier does (`armsBonus`, `tierSteps`, beside `RANK_STEP`), the premade party |
@@ -997,7 +1019,7 @@ does.
 | `game/combat.ts` | `CombatState`, `startCombat`, `currentTurn`, `partyAct`, `monsterAct`, and the log's lines, the glove's once a game (`GLOVE_FLAG`); pure and seeded |
 | `game/bot.ts` | the bot that plays a fight, the gate's and the game's: `botTurn` (the action the resolver took; `gateTurn` the same with the action dropped), its two readings of the monsters (`asWritten`, every trait as written, the gate's; `asSeen`, only what the fight's log has shown, the auto-fight's), the answers a tool may switch off (`ANSWER`), the three it may play (`BotOpts`: bless, sleep and drink, off unless given; `PLAYED`, the game's, read from level 11 by `optsFor`, with its guards `striker` and `letsLie`) and the rest rule (`mustRest`); pure |
 | `game/ink.ts` | what a cell is drawn as (`drawnCell`: a secret door outdoors among mountain, rock or trees as they are), which the view, the automap and the pilot's fair view share; pure |
-| `game/pilot/pilot.ts`, `game/pilot/known.ts`, `game/pilot/route.ts`, `game/pilot/explore.ts`, `game/pilot/keep.ts` | the pilot (docs/PILOT.md): `Pilot` (on and off, the tempo and its pace, the why line, the lines heard, the next key, the brains in their order, the goal and its plan), `Known`, the fair view of the world it reads through (the automap's bits and ink, its features and exits as fair copies, the groups it marks, the maps visited, the world map, a map's or a zone's bounds and a place's band, the corpus heard, the company and what a menu has shown), the navigator (`routeOn`, `routeLengths`, `routeNearest`, `routeMaps`, `route`: the keys to a square over what has been seen) and the explorer (`frontier`, `suspects`, `explore`: the nearest unseen, the walls to search and the ways found shut tried again) and the quartermaster (`need`, `better`, `keep`: a rest, the temple, an inn, rations, gear worn through the sheet and training) |
+| `game/pilot/pilot.ts`, `game/pilot/known.ts`, `game/pilot/route.ts`, `game/pilot/explore.ts`, `game/pilot/keep.ts` | the pilot (docs/PILOT.md): `Pilot` (on and off, the tempo and its pace, the why line, the lines heard, the next key, the brains in their order, the goal and its plan), `Known`, the fair view of the world it reads through (the automap's bits and ink, its features and exits as fair copies, the groups it marks, the maps visited, the world map, a map's or a zone's bounds and a place's band, an enclave's band once its door is seen (#845), the corpus heard, the company and what a menu has shown), the navigator (`routeOn`, `routeLengths`, `routeNearest`, `routeMaps`, `route`: the keys to a square over what has been seen, and no way into an enclave whose floor is over the company) and the explorer (`frontier`, `suspects`, `explore`: the nearest unseen, the walls to search and the ways found shut tried again) and the quartermaster (`need`, `better`, `keep`: a rest, the temple, an inn, rations, gear worn through the sheet and training) |
 | `game/quests.ts` | `QuestDef`, `Chapter` and `ChapteredQuest`; `questLog` (the quests known, their pages, entries and goal, worked out from the world state and party), `questNews` (what changed between two looks) |
 | `game/game.ts` | `Game` (screen stack, save/load, interactions, the offer of rest, a den's choice to burn, attract mode: a new game the pilot plays, saved nowhere, until a key) and `ExploreScreen` |
 | `game/wilds.ts` | the wilderness features: what a feature gives (`giftOf`) and the id it is spent by (`spentId`), the shrine, the cairn, the statue's answer and when the party may rest; pure |
