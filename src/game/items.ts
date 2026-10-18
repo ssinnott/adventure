@@ -8,6 +8,7 @@ import type { Feature } from './map.ts';
 import type { Party, Stat } from './party.ts';
 import type { Element } from './spells.ts';
 import type { SkillId } from './skills.ts';
+import { skilled } from './skills.ts';
 
 export type ItemSlot = 'weapon' | 'armor' | 'shield' | 'none';
 
@@ -51,7 +52,8 @@ export interface ItemDef {
   text?: readonly string[];
   /**
    * A secondary skill it does the work of while anyone in the company carries it, as a member who has
-   * the skill would (game/skills.ts): a scholar's copybook reads Kiln-script as a Linguist does.
+   * the skill would (game/skills.ts): a scholar's copybook reads Kiln-script as a Linguist does, a
+   * chart maps as a Cartographer does and a set of picks opens a lock as a Lockpick does (#857).
    */
   skill?: SkillId;
 }
@@ -80,9 +82,12 @@ export function priceIn(shop: Shop, id: string): number {
 
 /**
  * What a shop pays the company for an item of this price: half, rounded down, so one priced at
- * nothing is never bought. The company is asked so that a clause of its own may change the share.
+ * nothing is never bought; two thirds, rounded down, with a Merchant standing or an item that does
+ * a Merchant's work carried (`skilled`, #857).
  */
-export function sellPrice(party: Party, price: number): number { return Math.floor(price / 2); }
+export function sellPrice(party: Party, price: number): number {
+  return skilled(party, 'merchant') ? Math.floor((price * 2) / 3) : Math.floor(price / 2);
+}
 
 /** Buy an item from a shop: null when the party is short of gold; food goes to the stores, the rest to the bag. */
 export function buy(party: Party, shop: Shop, id: string): ItemDef | null {

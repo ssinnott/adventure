@@ -184,6 +184,37 @@ function strategist(): void {
   ok(again?.map === 'fx_hall' && again.x === 4 && again.y === 1 && wp.why[0] === 'Searching the Hall again.',
     `walked out, the hall is walked again to its far end, but not onto the stranger who stands there (${again?.x},${again?.y}; "${wp.why[0]}")`);
 
+  // A locked chest (#857): Space pressed on it once, as on any chest; one the company cannot open (no
+  // Lockpick standing, no picks, no key: the premade six's thief, born to it, down) says "Locked." and is
+  // walked past, as a locked door with no key is: never pressed on or gone to again, the hall walked
+  // end to end and again. With the thief standing, or a key carried, it opens, and the key is spent.
+  const vault = (setup: (g: Game) => void): { g: Game; locked: number; ends: number; at: number } => {
+    const vg2 = piloted(), vp2 = vg2.pilot!;
+    fixture(vg2, { id: 'fx_vault', name: 'The Vault', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#######', '#.....#', '#######'],
+      features: [{ kind: 'chest', x: 3, y: 1, id: 'fx_vault_chest', gold: 30, items: [], locked: true }] }, [1, 1, EAST]);
+    setup(vg2);
+    vp2.brains = [aims, route, explore];
+    vp2.toggle(vg2);
+    vp2.aim = { kind: 'quest', quest: 'fx_vault', map: 'fx_vault', text: '' };
+    vp2.aimGoal = '';
+    vp2.aimSince = vg2.world.state.minutes;
+    const from = vg2.log.length;
+    let ends = 0, at = -1;
+    for (let t = 0; t < 120; t++) {
+      const was = vg2.world.state.x;
+      drive(vg2, [null]);
+      if (vg2.world.state.x !== was && (vg2.world.state.x === 1 || vg2.world.state.x === 5)) ends++;
+      if (at < 0 && vg2.world.used('fx_vault_chest')) at = t;
+    }
+    return { g: vg2, locked: vg2.log.slice(from).filter((l) => l === 'Locked.').length, ends, at };
+  };
+  const thiefDown = (g: Game): void => { g.party.members[3].conditions.push('dead'); };
+  const shut = vault(thiefDown), picked = vault(() => undefined), keyed = vault((g) => { thiefDown(g); g.party.bag.push('key_iron'); });
+  ok(shut.locked === 1 && !shut.g.world.used('fx_vault_chest') && shut.ends >= 4 && shut.g.pilot!.why[0] === 'Searching the Vault again.',
+    `a locked chest it cannot open is pressed on once (${shut.locked} "Locked." in 120 ticks) and walked past, the vault walked end to end ${shut.ends} times ("${shut.g.pilot!.why[0]}")`);
+  ok(picked.locked === 0 && picked.at >= 0 && picked.g.log.includes('Ottilie picks the lock.') && keyed.at >= 0 && keyed.g.log.includes('The lock turns. The key crumbles.') && !keyed.g.party.bag.includes('key_iron'),
+    `with the thief standing it is picked open, and with a key it is opened and the key spent (ticks ${picked.at} and ${keyed.at})`);
+
   // The band rule: over the line into Thornmark at level 1, the aim elsewhere: back to the square before it.
   const bg = piloted(), bp = bg.pilot!, shelfBox = bg.maps[OUTDOORS].zones.find((z) => z.id === 'shelf')!;
   let by = shelfBox.y;

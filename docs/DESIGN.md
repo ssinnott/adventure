@@ -79,7 +79,7 @@ nothing. It does not loosen pillar 1 for the player.
 | Fame / Infamy, faction disposition | *Not taken.* Standing, our first take on it, went with the Charters (§8). Something like it may come back, but it will look different. |
 | NPC schedules, shop hours | Towns have a clock. The smith is not at the forge at 3am. |
 | Skill-by-use | *Not taken directly.* We use level-up points plus trainer mastery, but a third prestige's quest acts like "use it to earn it" (§5). |
-| Lockpicking / persuasion minigames | Tiny, optional, skill-skippable. A 10-second grid puzzle, not a wheel. |
+| Persuasion minigames (lockpicking's struck, §5) | Tiny, optional, skill-skippable. A 10-second grid puzzle, not a wheel. |
 | Shivering Isles-style "strange region" | The **Underdeep** (§4) is our tonal break. |
 
 ---
@@ -328,11 +328,25 @@ country, band 26 to 28.
   - *Arms Master* (the Wardens'): the company strikes first; in a fight's first round every standing
     member acts before any monster (§6).
 
+  Built with #857, so that every hall teaches its guild's three and all twelve are built:
+  - *Cartographer* (the Cartographers'): the automap fills a square further than the company sees,
+    three in the open by day and two in a dungeon or the dark, never past a wall, a door or a secret
+    door. A chart carried does its work.
+  - *Pathfinder* (the Cartographers'): hills, ash, dunes and deep snow are walked at the road's six
+    minutes a step, with no drag on the clock. The Rangers are born to it.
+  - *Lockpick* (the Compact's): an iron-key door opens with no key spent, and so does a locked chest,
+    which otherwise opens to an iron key spent and to nothing else ("Locked."). The Thieves are born
+    to it, and a set of picks carried does its work. No door needs a pick: every locked door has its
+    key. The lock minigame of §2 is struck.
+  - *Merchant* (the Compact's): a shop pays two thirds of an item's price, not half. An item that
+    does a Merchant's work would do it carried, as a chart does.
+  - *Navigator* (the Compact's): a crossing costs half its fare, after a flag's free or half.
+
   A people or a class may be born to a skill (`races`, `classes`), and a hall will not sell a member
-  a skill it is born to. Each works while a member who has it stands. A hall's "Learn a skill" asks
-  which skill, each with its price and what it does, then who would learn it, each member with the
-  price or why not; a person who teaches one asks only who. Seven built; the other five come as
-  theirs do.
+  a skill it is born to. Each works while a member who has it stands, and a chart's and a set of
+  picks' while one is carried. A hall's "Learn a skill" asks which skill, each with its price and
+  what it does, then who would learn it, each member with the price or why not; a person who
+  teaches one asks only who. All twelve are built.
 - **Weapon and magic tiers,** Novice, Expert and Master, a member's on two lines (`Character.tiers`,
   `game/mastery.ts`, #852): at arms, its skill with whatever weapon is in hand, and in magic, with its
   list. Fighters (Knight, Thief, Barbarian, Monk) take arms, casters (Cleric, Sorcerer, Druid) magic
@@ -466,6 +480,68 @@ Decided by the builder for #856, each the owner's to overturn:
 12. The pilot's talk is unchanged: its way out leaves a hall's two levels and its skill rule a
     person's. The skills test holds both.
 
+The secondary skills of #857, Cartographer, Pathfinder, Lockpick, Merchant and Navigator:
+
+Decided by the owner's delegate for #18, each the owner's to overturn:
+
+1. Cartographer (the Cartographers'): `reveal`'s radius one more, three in the open by day and two
+   in a dungeon or the dark: the automap made better, never made to exist (§1). A chart
+   (`ItemDef.skill: 'cartographer'`) does its work carried.
+2. Pathfinder (the Cartographers'; the Rangers born to it): a Pathfinder standing walks hills, ash,
+   dunes and snow at the road's pace, with no drag on the clock.
+3. Lockpick (the Compact's; the Thieves born to it): a Lockpick standing opens an iron-key door
+   without spending the key, and opens a locked chest. No door needs a pick, ever: the road needs no
+   skill, and the five doors keep their keys. A locked chest (`chest.locked`) opens to a Lockpick
+   standing or an iron key spent, else "Locked." and nothing. A set of picks (`skill: 'lockpick'`)
+   does its work carried. The lock minigame (§2) is struck; `chest.trapped` stays as it is.
+4. Merchant (the Compact's): a Merchant standing sells at two thirds of the price, not half
+   (`sellPrice`).
+5. Navigator (the Compact's): a Navigator standing pays half fare on every crossing, after a flag's
+   free or half (`fareOf`).
+6. The pilot: a locked chest it cannot open is walked past, as a locked door with no key is. It
+   learns no skill.
+
+Decided by the builder for #857, each the owner's to overturn:
+
+1. A Lockpick opens an iron-key door with no key carried, as it opens a locked chest, and a key
+   carried is kept: the pick is what opens it. The door and the chest share one rule
+   (`World.unlock`). The cost: from the first step, its thief standing, the premade six pass every
+   Act I key's guard (`gw1_captain`'s smugglers, greywater2's vestry secret, `g1_keeper` and
+   `g2_keyguard`'s seven adepts), though no quest, flag or lock reads a key spent or a door opened.
+   The narrower reading, a key needed and kept, is one line (`const lock = pass === 'unlock'` in
+   `World.move`) and the first case of `picked()` in `tools/tests/movement.ts`.
+2. Who does a skill's work is `skilled`'s answer: a member standing who has it, else a member
+   standing while an item that does it is carried. So a chart and a set of picks do theirs, and an
+   item that does a Merchant's work would; none does Pathfinder's, Merchant's or Navigator's yet.
+3. Cartographer's square is added in every light: thick weather in the open, one square without it,
+   is two with it. The corridor ahead, which is sight's, is not lengthened.
+4. The extra square follows sight: never past a wall, a door or a secret door. It is mapped only
+   where the square beside it toward the company does not block the view, so the automap is made
+   better and never tells what is hidden: a secret door, or a Master's hide behind one.
+5. The words: "Ottilie picks the lock." (the member's name) where a Lockpick or a set of picks
+   opens one; a key spent at a chest says the door's "The lock turns. The key crumbles."; a locked
+   chest stood on says "A locked chest." in place of "A chest. Space opens it."
+6. `strandedLocks` reads a locked chest as a lock the party may open and need not: a key spent on
+   one is among the orders it tries, a key inside one counts only once it is opened and a chest is
+   never itself stranded. So no map may hold a locked chest that could take a door's only key, and
+   `lockedFaults` holds that none holds an iron key or an item a quest turns on.
+7. The roundings are down: a Navigator pays 75 for 150, 37 once half holds; a Merchant is paid 80
+   for 120 and 26 for 40.
+8. `sellPrice` asks `skilled`, as the world does. For that, a company's rank in a guild (`rankOf`)
+   moves to `game/ranks.ts`: `skills.ts` asked it of `game/guilds.ts`, which pulled the quests'
+   rules in under the content index before its maps were made.
+9. The shops test asks the sell-back of a company with a Merchant, the most a shop pays, so no shop
+   may price an item under two thirds of its own price (none does), and the quests test asks the
+   same company whether a shop buys an item.
+10. The texts: "Maps a square further.", "Walks rough ground at the road's pace.", "Picks locks, and
+    keeps the key.", "Sells at two thirds, not half." and "Pays half fare on every crossing."
+11. The five rows follow Arms Master in `SKILLS`, so the Cartographers' halls list Swimmer,
+    Cartographer and Pathfinder, and the Compact's Lockpick, Merchant and Navigator.
+12. The premade six's ranger is born to Pathfinder and its thief to Lockpick, so the tests that time
+    a step onto hills or through snow, or see a key spent at a door, put them down for those steps.
+13. The weather still says "Snow lies deep, and the going is slow." to a Pathfinder: the snow lies
+    deep whoever walks it.
+
 ---
 
 ## 6. Combat
@@ -597,12 +673,15 @@ adds an element; only the sorcerer's third deepens one, passing resistance and n
 **Map spells.** Each is a shortcut, never a key (docs/EXPANSION.md §2.2): it has a cost and a limit,
 and the skill beside it is free and lasts.
 
+- **Wizard Eye** fills the automap six squares about the company, once a cast; beside it,
+  Cartographer maps a square further than the company sees, at every step (#857).
 - **Walk on Water** crosses shallow water for a set number of steps, and a fight ends it. It never
   crosses deep water, so a paid crossing stays paid, and never dives: what lies under the water is
-  Swimmer's.
+  Swimmer's. Nor does it quicken a step: the road's pace over hills, ash, dunes and snow is
+  Pathfinder's (#857).
 - **Waymark** holds one mark, set on land the company stands on in the outdoors, never in a town or a
   dungeon nor on ground the tide covers, outside a fight. It never takes a company anywhere it has not walked, nor past a dungeon's
-  depth; the sea's ways stay Navigator's.
+  depth; the sea's ways stay Navigator's, who crosses for half the fare (#857).
 - **Levitate** floats over the chasm for a set number of steps; the chasm is the only drop built, and
   pits and lava, once an area builds them, are its to float over too. It never rises up a cliff or a
   mountain, which stay Mountaineer's, and never goes down into a chasm. Jump is folded into it:
@@ -698,9 +777,10 @@ ship lands there.
 - **Its quests pay gold, items and xp,** the xp split among the living as a fight's is.
 - **Its skills,** three to a guild, taught to members for a price (§5) once the skills are built
   (#18). The Lanterns' Linguist reads Kiln-script, so it matters from the Kilns on; it is the first
-  built (#538), and every hall of a guild teaches all its guild has built: the Lanterns' three and
-  the Wardens' three (#805, #856), the Cartographers' Swimmer, the Compact's none yet. "Learn a
-  skill" on the hall's first menu asks which skill, then who would learn it.
+  built (#538), and every hall of a guild teaches its guild's three: the Lanterns' and the
+  Wardens' (#805, #856); the Cartographers' at the Map Room and the Chart House; the Compact's at
+  the Keel and the Factor's House (#857). "Learn a skill" on the hall's first menu asks which
+  skill, then who would learn it.
 - **Its line.** The Charters' storylines are the guilds' lines: the Lanterns' split at Lantern Watch
   (§9, Act II), the Compact's line with its ending kept (§10.2) and the Cartographers' Lost
   Expedition (§10.3). The Wardens' siege was named and never designed, and is cut (#739, call 10).

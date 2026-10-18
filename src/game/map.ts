@@ -150,7 +150,12 @@ export type Feature =
   | ({ kind: 'shop'; stock: string[]; prices?: Readonly<Record<string, number>> } & Business)
   | ({ kind: 'guild'; classes: string[]; fee: number; maxTier?: number } & Business)
   | ({ kind: 'trainer'; maxLevel: number } & Business)
-  | { kind: 'chest'; x: number; y: number; id: string; gold: number; items: string[]; trapped?: boolean }
+  /**
+   * A chest, opened once with Space. `locked` (#857) opens to a Lockpick standing or a set of picks
+   * carried, or to an iron key, which it spends, and to nothing else (`World.unlock`): never on the road,
+   * whose locks are doors with their keys. `trapped` is declared and unused.
+   */
+  | { kind: 'chest'; x: number; y: number; id: string; gold: number; items: string[]; trapped?: boolean; locked?: true }
   /**
    * A person (game/people.ts). `lines` are the first meeting's, which sets `flag` (the hire) and
    * ends in `choice`; `quest` is the hand-ins, one or several; `says` the words once they hold.
