@@ -575,7 +575,7 @@ and lines:
   gold, the Vigil Robe and the Levin Mace. The land reads rock 135, dirt 17 and secret doors 2
   (139, 14 and 1 as #754 built it). The takings' door is still the box's first secret. The door
   stands where the painter leaves a wall bare (`wallDressing`), so the zone's 12 wall faces have 4
-  dressed, inside the art suite's cap of half (§9, #864's 15).
+  dressed, inside the art suite's cap of half (§9, #864's 14).
 - **Measured.** A company at 28 wins every fight on the rim and walks the isle's road on to the camp
   every time (#754's 10). Two under, at 26, it wins every fight too, owed to #18 as H6's is (#754's
   11). The six groups give 11.63 fights to a rest, inside the aim, and pay 1.09 of the share (the
@@ -3543,15 +3543,11 @@ Decided by the builder for #864, each the owner's to overturn:
     (Ottilie, born to Lockpick, #857) picking the lock, and plays the lock's refusals on a game of its
     own against the real chest: the checks were each broken in the tree and watched to fail (the PR
     lists them).
-13. **Wrackholm's walkthrough counts its own locked chest.** Its check held that its iron-bound chest
-    was the only locked one placed in the whole content, which a second area's would fail; it now
-    reads the only locked one the isle places and counts Wrackholm's maps (one line of
-    `src/content/areas/wrackholm/walkthrough.ts`, outside this issue's lane and named in the PR).
-14. **The pilot is not stranded and does nothing new.** It reads the world through what it has seen;
+13. **The pilot is not stranded and does nothing new.** It reads the world through what it has seen;
     its full run stops at Thornmark's chapter (docs/PILOT.md) and never reaches the isle, the door is
     drawn as rock and the explorer suspects only cells drawn as wall, and a locked chest it met would
     be pressed on once and walked past, as a locked door with no key is (#857).
-15. **The door stands on row 15, not row 13 where it was first cut,** for the art suite's wall
+14. **The door stands on row 15, not row 13 where it was first cut,** for the art suite's wall
     dressing (`tools/tests/art.ts`): a secret door is a wall face to it, the painter dresses one wall
     in five by a hash of its square (`wallDressing`), and I6's zone, 8 faces with the takings' door
     dressed, holds the cap of half only while the new door is bare. The door at 8,13 drew a sconce
