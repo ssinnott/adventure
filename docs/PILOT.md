@@ -308,8 +308,8 @@ Before each chapter the run takes a save point (`serialize`) with the map on top
 save. A chapter the fair pilot does not finish is played again from that point by a fresh pilot with
 `omniscient` set, the save loaded as F9 loads one (`headlessLoad`, `tools/tests/lib.ts`), so no memory
 crosses it. A second line says which kind of failure it is: "thornmark: fair pilot lost; omniscient
-also fails (fell in Callow Downs 109,120, ...)". The omniscient Known has every square seen, each cell as
-it is (a secret door a door), every exit there now and every feature the automap marks. The
+also fails (fell in Callow Downs 109,120, ...)". The omniscient Known has every square seen, each
+cell as it is (a secret door a door), every exit there now and every feature the automap marks. The
 explorer suspects the secret doors as written and not yet found (`Known.secrets`: `MapDef.secrets`,
 a zone's placed where its box lies) and no other wall. Nothing else changes: the brains are the fair
 pilot's. Where the omniscient pilot finishes, the road goes on from its end with a fresh fair pilot.
@@ -334,10 +334,11 @@ not the finish.
 
 - **The full run, all areas** (`FULLRUN=all node tools/test.ts fullrun` on 4473dac1, seed 4, the
   premade company: 8 minutes 45 seconds, 12 failures). The road ends at Thornmark's chapter. The
-  shelf's and Thornmark's rows are main's on 18 October (`FULLRUN=thornmark`), since #857 made the
-  premade six's ranger a Pathfinder and its thief a Lockpick: the fair pilot stops where it stopped
-  before, by another way (it took 68,368 ticks and 176.9 days on #844's tree), and the omniscient one
-  falls elsewhere on Callow Downs (at 127,71, after 16,052 ticks and 38.6 days there).
+  shelf's and Thornmark's rows are main's on 18 October (`FULLRUN=thornmark`), measured again since
+  #856 and #857 gave the premade six Perception (its elf and gnome), Pathfinder (its ranger) and
+  Lockpick (its thief): the fair pilot stops where it stopped before, by another way (it took 68,368
+  ticks and 176.9 days on #844's tree), and the omniscient one falls elsewhere on Callow Downs (at
+  127,71, after 16,052 ticks and 38.6 days there).
 
   | Area | Chapter | The fair pilot | The omniscient pilot, from the save point |
   |---|---|---|---|
@@ -358,17 +359,17 @@ not the finish.
   thornmark, "Lost in Thornmark: three days, and no way on." 36 times, "Lost in the Foreland: ..." 39
   times and "I have no answer for the stone." once; thornmark (omniscient), "Lost in Thornmark: ..."
   8 times, "Lost in the Foreland: ..." 9 times and "I have no answer for the stone." once.
-- **Thornmark's chapter, fair** (the full run). The aim is grove2, two maps in, and the fair pilot never
-  sets foot in grove1 or Thornhold (Two maps in, below): lost in Thornmark thirty times, it walks the
-  Foreland, Thornmark, Helmstow and the mill until a walk ends in a wipe, with no key carried. Past that lies a
-  second wall: in grove1 the stairs down to grove2 (11,10) are past a locked door (7,11), and the key
-  is in a chest (3,10) in a room whose one way in is a secret door (5,11). The far side of that door is
-  never seen, so the explorer never suspects it (decision 17 for #718).
-- **Thornmark's chapter, omniscient.** It walks into grove1 again and again and loops there: the explorer
-  sets the secret door's wall as its goal, and on the square before it the strategist, asked first,
-  finds no way to grove2 (the door at 7,11 is locked) and walks the company to the far side again, so
-  the search never comes. Lost, it wanders west and falls in the Delta. A route over every square seen
-  is slow, too: about 19 ms a tick against the fair run's 4.
+- **Thornmark's chapter, fair** (the full run). The aim is grove2, two maps in, and the fair pilot
+  never sets foot in grove1 or Thornhold (Two maps in, below): lost in Thornmark thirty-six times, it
+  walks the Foreland, Thornmark, Helmstow and the mill until it stops itself lost in Ashcombe Cellar,
+  at 1,1. Past that lies a second wall: in grove1 the stairs down to grove2 (11,10) are past a locked
+  door (7,11), and the key is in a chest (3,10) in a room whose one way in is a secret door (5,11).
+  The far side of that door is never seen, so the explorer never suspects it (decision 17 for #718).
+- **Thornmark's chapter, omniscient.** It walks into grove1 again and again and loops there: the
+  explorer sets the secret door's wall as its goal, and on the square before it the strategist, asked
+  first, finds no way to grove2 (the door at 7,11 is locked) and walks the company to the far side
+  again, so the search never comes. Lost, it wanders off and falls on Callow Downs at 109,120. A
+  route over every square seen is slow, too: about 19 ms a tick against the fair run's 4.
 - **The omniscient pilot has no frontier.** Every square is seen, so the explorer has nothing to walk
   to: it searches the secret doors as written and then calls the map walked out; only the walk again
   rule walks it. Chests are gone to only on the aim's map. "Omniscient also fails" therefore does not

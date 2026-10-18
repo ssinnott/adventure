@@ -631,8 +631,9 @@ are all off. Every push to main is deployed, so these are players' saves.
   an alpha threshold, ignoring specks), apart from parts it declares detached: glows, sparks,
   something thrown. This is #7 as a check, in `tools/smoke.ts`, which declares the parts.
 - **No cracks.** The per-square crack sweep runs all four ways on every map a pull request changes,
-  and one way on the cellar and Helmstow; the rest are swept on release, a run of the checks
-  started by hand (`tools/smoke.ts`, `tools/changed.ts`).
+  and one way on the cellar, Helmstow, its keep and the ground's samples (`tools/grounds.ts`); the
+  rest are swept on release, a run of the checks started by hand (`tools/smoke.ts`,
+  `tools/changed.ts`).
 - **Restraint.** The share of wall faces dressed, per kind of map and per map, stays near its level
   after #9, under caps set above it so an honest new map seldom fails by chance; a new kind of
   dressing comes with its rate (`DRESSING_RATES` in `src/ui/viewport.ts`, checked in
@@ -916,7 +917,7 @@ all (#833), the owner's call over #737's. The reach stays closed for 1.6.
 | Defects the owner finds by hand | 4 over the slice, not recounted since; the owner's own playthrough of M3 is what remains (README.md) | fewer each area; each one a check |
 | Checks that pass or fail by chance | none known: the smoke test plays one seeded world (#23) | none |
 | Pull requests that needed main merged in | 4 of the last 6 in September, not recounted since | rare |
-| `npm run check` | about 14 minutes on a four-core container, ending `ALL OK` with nothing owed (#865); in CI the tests job took 6 min 47 s to 9 min 12 s on the heads of #876 to #885 (eleven runs on 18 October), under its cap of fifteen (#873), the smoke 2 min 42 s to 3 min 11 s and the typecheck 16 to 27 s; a change to the viewport or the smoke sweeps every map, the smoke job then taking 12 to 21 minutes (#876, #878, #879) | under 3 minutes: full sweeps of what a pull request touches, the rest sampled or on release; the cure is parallel suites (#848) |
+| `npm run check` | about 12 to 14 minutes on a four-core container, ending `ALL OK` with nothing owed (#865); in CI on a docs-only change the tests take 5 min 8 s, the smoke 2 min 20 s and the typecheck 19 s (#866); the tests job took 5 min 8 s to 9 min 12 s on the heads of #876 to #885 and #866 (twelve runs on 18 October), and its cap is fifteen for the runner's spread of about two minutes (#873); a change to the viewport or the smoke sweeps every map, the smoke job then taking 12 to 21 minutes (#876, #878, #879) | under 3 minutes: full sweeps of what a pull request touches, the rest sampled or on release; the cure is parallel suites (#848) |
 | Cracks in the sweep of every map (§5.6) | none; the sweep reads each square as the view draws it, the void as its look (#869) | none |
 | Maps inside the density floor (§5.3) | all (`node tools/test.ts density`) | all |
 | Areas on the curve (§5.2) | all twelve (`node tools/test.ts curve`); the Kilns and Ashfall pass the lead line and are held where they are built | all |
@@ -988,7 +989,8 @@ Decided by the builder for #866, each the owner's to overturn:
 
 1. **The older records that name #865 stay as the record of their day:** §5.2's #853 call 1 ("before
    #865") as it was; #854's delegate call 2 and builder call 5 and #851's builder call 3, which would
-   now read false, gain #865's outcome in a few words. No record is rewritten.
+   now read false, gain #865's outcome in a few words, and DESIGN §5's call 9 for #855 gains "(#861
+   placed the first.)". No record is rewritten.
 2. **§5.2's measurement of 17 October stays dated:** it held then. §10 gives the gate's figures on
    18 October, `cairnfield_m8` re-sized: the top of the days two under falls from 109% to 98%.
 3. **What #18 did not build is said as main stands, owed to nobody:** the chandler's lanterns and
@@ -996,10 +998,12 @@ Decided by the builder for #866, each the owner's to overturn:
 4. **§7's "a bot that plays as well as the party can" is settled, not owed** (J2), and the three
    touches the same sentence owed are built and said so; §11's bot risk names the gate's plainer bot
    as the decision it is.
-5. **Lines outside #18's own are put right only inside a paragraph this sweep changed:** DESIGN §8's
-   "once the skills are built (#18)", which #808's call 7 left; SLICE's tier-7 hall (the Lodge's
-   sells 7) and its clears short of the curve (the curve owes nothing). The rest seen stale is
-   listed in the pull request.
+5. **Stale lines outside #18's own are put right where this sweep met them:** DESIGN §8's "once the
+   skills are built (#18)", which #808's call 7 left; SLICE's tier-7 hall (the Lodge's sells 7), its
+   clears short of the curve (both give it now), its design-only list (the prestiges, the Compact's
+   halls, the succession, the Salt Compact and the Lost Expedition are built) and the Meridian
+   volumes; §5.6's one-way sweep (the keep and the ground's samples too); PILOT's omniscient fall
+   and the fair pilot's count. Two code comments stay as their lanes left them.
 6. **The README names the found items by kind;** DESIGN §5 and §6 and SLICE name each.
 7. **PILOT's Thornmark row is measured again on main** (`FULLRUN=thornmark`, 18 October), the
    omniscient run with it, and the notes go with the row; the run of all areas stays 4473dac1's.

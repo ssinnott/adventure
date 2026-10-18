@@ -489,14 +489,13 @@ trainer one level past it, onto Act II's road:
   at three or more over, split among the living. Where the members' levels differ, the log gives
   the least and the most share. Gold and loot stay fixed.
 - **The curve** (`content/progression.ts`). Each area has a band, the floor of the next and a price
-  window: the Foreland 1-5 and 500 gold, Thornmark 5-10 and 1,200; and Act II's three before their
-  maps, Saltreach 10-12 and 2,000, Wrackholm 12-14 and 2,500, Sunderwood 14-16 and 3,000, their
-  clears owed to #153, #154 and #155 (`PLANNED`). Three quarters of a clear's xp should take a
-  member to the next floor, and its gold train the six there; every monster has a `level` within
-  two of its maps' bands, rising from the way in (it sets what a kill pays, and changes no combat),
-  and no chest or drop is dearer than the window. Neither clear gives the xp yet (the Foreland 1,770 a
-  member of 3,734, Thornmark 10,227 of 13,667), nor Thornmark's the gold (6,518 of 8,400):
-  `tools/tests/curve.ts` reports them as #26's.
+  window: the Foreland 1-5 and 500 gold, Thornmark 5-10 and 1,200; and Act II's three, Saltreach
+  10-12 and 2,000, Wrackholm 12-14 and 2,500, Sunderwood 14-16 and 3,000. Three quarters of a
+  clear's xp should take a member to the next floor, and its gold train the six there; every monster
+  has a `level` within two of its maps' bands, rising from the way in (it sets what a kill pays, and
+  changes no combat), and no chest or drop is dearer than the window. Both clears give it:
+  `node tools/test.ts curve` prints the Foreland's 4,101 xp a member of the 3,734 it asks, and
+  Thornmark's 16,765 of 13,667 and 9,355 gold of 8,400.
 - **Spells.** Nine new ones. Cleric: Ward (party AC), Mending Light (party heal), Restore (big
   heal plus every cure), Revive (raises the dead), Wrath of the Hearth (damage to every foe).
   Sorcerer: Haste (party speed and to-hit), Chain Lightning and Meteor Swarm (every foe, scaling
@@ -667,10 +666,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 ## Stubbed or absent
 
 - The Meridian journal opens The Lost Expedition in the quest log, and the Cartographers' Geographer
-  in Saltmouth reads it (#181), but no second volume exists.
+  in Saltmouth reads it (#181); vol. IV is Ashfall's, and no vol. II or III exists.
 - No audio. The engine's synth stack is vendored, unused.
-- Prestiges, the Compact's hall, the succession, the Salt Compact, the Lost Expedition past its
-  first journal: design only. The Cartographers' hall is built in Saltmouth (#181).
 - What the checks owe: a known shortfall prints as `owed` with the issue that owes it, and
   `node tools/test.ts` ends by counting them. None is owed since #865 re-sized `cairnfield_m8`.
   The gate lists 88 figures off their aim, inside their limits: fights to a rest, figures two under a

@@ -383,8 +383,8 @@ Decided by the owner's delegate for #18, each the owner's to overturn:
    Endurance, Intellect and Luck have no live effect and get none here: #847's, if an artifact wants one.
 8. The sheet prints a stat's total with its raise and the weapon's element, and a shop says both.
    What a shop pays is `sellPrice` in `items.ts`, asked of the company (#857 adds the Merchant's).
-9. Inert until #861, which placed the first: the gate and the harness never wear one (off the
-   ladder, as the charms are).
+9. Inert until #861: no item of the content carries either, and the gate and the harness never wear
+   one (off the ladder, as the charms are). (#861 placed the first.)
 
 Decided by the builder for #852, each the owner's to overturn:
 
