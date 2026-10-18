@@ -40,7 +40,7 @@
 // boat to Wrackholm's landing and back, at the half fare a member pays. Then south into the pans
 // (C7, #178): the Scarp across the south and its stair's fallen foot, the sealed pan's hoard found
 // from the trodden wall, and the crabs and the toads won at 11; and The Star That Moved (#183)
-// played every way.
+// played every way. Then the bounds (#830), as `theBounds` walks them, box by box.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, fight, listen, see, kneel, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
 import { headlessGame, drive } from '../../../../tools/tests/lib.ts';
@@ -51,8 +51,11 @@ import { CHAPTER as GROVE } from '../thornmark/chapter.ts';
 import { STEPS as FORELAND_STEPS, hired, ledgerGiven } from '../shelf/walkthrough.ts';
 import { STEPS as GROVE_STEPS } from '../thornmark/walkthrough.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
+import type { Facing } from '../../../game/types.ts';
 import { GameMap } from '../../../game/map.ts';
-import type { Feature, MapDef } from '../../../game/map.ts';
+import type { Can, Feature, MapDef } from '../../../game/map.ts';
+import { OUTDOORS } from '../../../game/outdoors.ts';
+import { restRefused } from '../../../game/wilds.ts';
 import { buy, item, priceIn } from '../../../game/items.ts';
 import { canTrainAt, xpForLevel, prestigeOf, takePrestige, createCharacter, PRESTIGES, resists, rest, isDown, NAME_MAX } from '../../../game/party.ts';
 import type { Party } from '../../../game/party.ts';
@@ -1058,7 +1061,104 @@ export const walkthrough: Walkthrough = (ok) => {
   theStar(w);
 
   afterTheHeart(ok);
+  theBounds(ok);
 };
+
+/**
+ * The bounds (#830), off the quest. The upper valley over Rietum (C2): north from Rietum's top field at
+ * C3's 8,0 onto its 8,31, walked, the land not named again; Jelle and his word on the watch and the
+ * toads; no rest at the watch's fire while the watch stands beside it, and a camp once it falls; the
+ * box's groups won at 10, the toads at the tarn the hardest; the cleft in the Edge's foot found from
+ * the rubbed walling. The Edge's top, east of the face: walked onto from the Downs' D2 alone,
+ * the land named there with its warning to a company under its band, and no way down off it on foot.
+ * The valley's head (B2): west from C2's 0,20 and north out of B3's grass at 24,0, both walked; the
+ * spring's trough, the toad and the eel in the mire won and the beehive hut found from its wrens. Walked, waded,
+ * climbed or floated, neither prize is reached but through its door.
+ */
+function theBounds(ok: (cond: boolean, msg: string) => void): void {
+  const w = newWalk(ok), out = buildMaps()[OUTDOORS];
+  const [C2, B2] = ['upperwater_c2', 'upperwater_b2'].map((id) => MAP_DEFS.find((d) => d.id === id)!);
+  const [c2, b2] = [C2.id, B2.id].map((id) => out.zones.find((z) => z.id === id)!);
+  const said = (r: ReturnType<typeof w.world.move>): string => (r.kind === 'moved' ? r.messages.join(' / ') || 'nothing said' : r.kind);
+  // The squares of a box reached from one of its own, inside the box: on foot, or walked, waded, climbed
+  // and floated with its secret door shut.
+  const reach = (z: typeof c2, from: readonly [number, number], can: Can, door?: readonly [number, number]): Set<number> => {
+    const seen = new Set<number>(), todo = [[z.x + from[0], z.y + from[1]]];
+    while (todo.length) {
+      const [x, y] = todo.pop()!, k = y * out.width + x;
+      if (seen.has(k) || (door && x === z.x + door[0] && y === z.y + door[1]) || x < z.x || x >= z.x + z.w || y < z.y || y >= z.y + z.h || out.passable(x, y, can) !== 'ok') continue;
+      seen.add(k);
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+    }
+    return seen;
+  };
+  const at = (z: typeof c2, x: number, y: number): number => (z.y + y) * out.width + z.x + x;
+  const ALL: Can = { swim: true, climb: true, float: true };
+  const search = (map: string, x: number, y: number, facing: Facing, room: string): boolean => {
+    w.world.travel(map, x, y, facing);
+    let found = false;
+    for (let i = 0; i < 20 && !found; i++) found = w.world.search();
+    const into = found ? [w.world.move('forward'), w.world.move('forward')] : [];
+    listen(w);
+    return found && into.every((r) => r.kind === 'moved') && w.world.used(room);
+  };
+  const chest = (def: MapDef, id: string): string[] => { const f = def.features!.find((x) => x.kind === 'chest' && x.id === id); return f?.kind === 'chest' ? f.items : []; };
+
+  // The Edge's top first, at level 1: west from D2's 0,10 onto C2's 31,10, the land named and the warning.
+  w.world.travel('downs_d2', 0, 10, WEST);
+  const top = w.world.move('forward');
+  ok(top.kind === 'moved' && w.world.zone?.id === C2.id && w.world.state.x === c2.x + 31 && top.messages.some((m) => m.includes('The Upper Water.') && m.includes('Nothing here would spare you')),
+    `west from the Downs' D2 onto the Edge's top, C2's 31,10, the Upper Water is named and it warns at level 1 (${said(top)})`);
+  listen(w);
+  const lip = reach(c2, [31, 10], {}), valley = reach(c2, [C2.start.x, C2.start.y], {});
+  ok(lip.size > 150 && valley.size > 400 && !lip.has(at(c2, C2.start.x, C2.start.y)) && ![...lip].some((k) => valley.has(k)) && !C2.encounters!.some((g) => lip.has(at(c2, g.x, g.y))),
+    `the Edge's top (${lip.size} squares) and the valley under it (${valley.size}) are not joined on foot, and no group stands on the top`);
+  see(w, `${C2.id}:c2_stone`);
+  see(w, `${C2.id}:c2_lip`);
+  w.level = 10;
+
+  // North from Rietum's top field: C3's 8,0 onto C2's 8,31, walked, in the Upper Water still.
+  w.world.travel('upperwater_c3', 8, 0, NORTH);
+  const north = w.world.move('forward');
+  ok(north.kind === 'moved' && w.world.zone?.id === C2.id && w.world.state.x === c2.x + 8 && w.world.state.y === c2.y + 31 && !north.messages.some((m) => m.includes('The Upper Water.')),
+    `north from C3's 8,0 onto C2's 8,31, walked, and the land not named again (${said(north)})`);
+  listen(w);
+  const jelle = C2.features!.find((f): f is Person => f.kind === 'npc' && f.name.startsWith('Jelle'))!;
+  w.world.travel(C2.id, jelle.x, jelle.y);
+  const words = meet(jelle, w.party, heard(w.world, jelle)).text;
+  ok(words.includes('since midsummer') && words.includes('tarn'), `Jelle, with Rietum's sheep, has seen the watch's fire since midsummer and the toads go up to the tarn (${words.replace(/\n+/g, ' ')})`);
+  listen(w);
+  // The watch's fire: the watch stands next to it, so no company rests there until the watch has fallen.
+  const fire = C2.features!.find((f) => f.kind === 'camp')!, watch = C2.encounters!.find((g) => g.id === 'c2_watch')!;
+  w.world.travel(C2.id, fire.x, fire.y);
+  ok(Math.abs(watch.x - fire.x) + Math.abs(watch.y - fire.y) === 1 && restRefused(w.world) !== '',
+    `at the watch's fire, ${fire.x},${fire.y}, the watch stands next to it at ${watch.x},${watch.y} and no rest is had (${restRefused(w.world) || 'rest allowed'})`);
+  for (const g of C2.encounters!) fight(w, `${C2.id}:${g.id}`);
+  w.world.travel(C2.id, fire.x, fire.y);
+  ok(restRefused(w.world) === '', 'once the watch has fallen, its fire is a camp a company may rest at');
+  // The secret: the walling rubbed in a line, the search there and the cleft behind it.
+  const cleft = reach(c2, [C2.start.x, C2.start.y], ALL, [17, 12]);
+  ok(cleft.size > 600 && !cleft.has(at(c2, 17, 11)), `the cleft is shut but for its walling: none of C2's ${cleft.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${C2.id}:c2_walling`);
+  ok(search(C2.id, 17, 13, NORTH, 'c2_cleft'), 'searched at the rubbed walling, it opens, and the cleft behind it can be walked into');
+  ok(chest(C2, 'c2_cleft_chest').includes('long_axe+1'), 'in the cleft, a Long Axe +1');
+
+  // The valley's head: west from C2's 0,20 onto B2's 31,20, and north out of B3's grass at 24,0, walked.
+  w.world.travel(C2.id, 0, 20, WEST);
+  const west = w.world.move('forward');
+  ok(west.kind === 'moved' && w.world.zone?.id === B2.id && w.world.state.x === b2.x + 31 && w.world.state.y === b2.y + 20 && !west.messages.some((m) => m.includes('The Upper Water.')),
+    `west from C2's 0,20 onto B2's 31,20, walked, and the land not named again (${said(west)})`);
+  walkThrough(w, 'upperwater_b3', 24, 0, NORTH, B2.id, 2);
+  see(w, `${B2.id}:b2_head`);
+  kneel(w, `${B2.id}:b2_spring`);
+  for (const g of B2.encounters!) fight(w, `${B2.id}:${g.id}`);
+  // The secret: the wrens at the hut's foot, the search there and the cell under the turf.
+  const cell = reach(b2, [B2.start.x, B2.start.y], ALL, [19, 21]);
+  ok(cell.size > 200 && !cell.has(at(b2, 19, 20)), `the cell is shut but for the wrens' gap: none of B2's ${cell.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${B2.id}:b2_hut`);
+  ok(search(B2.id, 19, 22, NORTH, 'b2_cell'), 'searched where the wrens go in, the hut opens, and the cell under its turf can be walked into');
+  ok(chest(B2, 'b2_cell_chest').includes('sharkskin+1'), 'in the cell, a Sharkskin Coat +1');
+}
 
 /**
  * The halls' words after the Heart (#765): the Keel's Ruan, the Map Room's Ysolde Carrow and the priestess

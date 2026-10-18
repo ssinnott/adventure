@@ -179,6 +179,11 @@
         "ash_hearth",
         "ash_kitchen",
         "ashcombe_gate",
+        "b2_cairn",
+        "b2_cell",
+        "b2_cell_chest",
+        "b2_head",
+        "b2_spring",
         "b3_boathouse",
         "b3_boathouse_chest",
         "b3_bridge",
@@ -271,6 +276,13 @@
         "b9_tracks",
         "b9_walker",
         "barrow",
+        "c2_cairn",
+        "c2_cleft",
+        "c2_cleft_chest",
+        "c2_lip",
+        "c2_stile",
+        "c2_stone",
+        "c2_tarn",
         "c3_barges",
         "c3_berth",
         "c3_cache",
@@ -1582,6 +1594,7 @@
         "tower"
       ],
       "groups": [
+        "b2_toad",
         "b3_quay",
         "b3_toad",
         "b4_brood",
@@ -1602,6 +1615,8 @@
         "b9_walker",
         "b9_walkers",
         "beach_crabs",
+        "c2_toad",
+        "c2_watch",
         "c3_brine",
         "c3_herons",
         "c3_quay",
@@ -2052,8 +2067,10 @@
         "51,78",
         "53,140",
         "56,272",
+        "59,51",
         "77,108",
         "81,75",
+        "89,42",
         "94,224",
         "99,148"
       ]
@@ -3506,8 +3523,16 @@
       "at": "232,30",
       "size": "32x32"
     },
+    "upperwater_b2": {
+      "at": "40,30",
+      "size": "32x32"
+    },
     "upperwater_b3": {
       "at": "40,62",
+      "size": "32x32"
+    },
+    "upperwater_c2": {
+      "at": "72,30",
       "size": "32x32"
     },
     "upperwater_c3": {
@@ -4210,6 +4235,7 @@
     "sentinel_visor",
     "set_of_picks",
     "sharkskin",
+    "sharkskin+1",
     "sharkskin+2",
     "shield",
     "shield+1",
