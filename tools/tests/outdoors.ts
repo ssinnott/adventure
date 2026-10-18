@@ -1,7 +1,7 @@
 // The outdoors as one map: the zone maps laid in 1:1 where the atlas puts them, the void round them,
 // the ridge and its open pass, and every open square reachable.
 import { buildMaps, PLAYED_DEFS, GRID } from '../../src/content/maps.ts';
-import { MAP_DEFS } from '../../src/content/index.ts';
+import { MAP_DEFS, CLIMATES } from '../../src/content/index.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { MapDef } from '../../src/game/map.ts';
 import { layOutdoors, OUTDOORS, LOOK } from '../../src/game/outdoors.ts';
@@ -12,7 +12,9 @@ import { World, VIEW_DEPTH, VIEW_LATERAL, viewCell } from '../../src/game/world.
 import type { Facing } from '../../src/game/types.ts';
 import { defaultParty } from '../../src/game/party.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
-import { EAST } from '../../src/game/types.ts';
+import { EAST, FACING_DX, FACING_DY } from '../../src/game/types.ts';
+import { findWeather, weatherAt, weatherSight } from '../../src/game/weather.ts';
+import { daylightAt } from '../../src/game/calendar.ts';
 import { ok, owed, local, stopsWalk } from './lib.ts';
 import { logLines } from '../../src/ui/frame.ts';
 
@@ -939,5 +941,42 @@ export function outdoors(): void {
       ok(back.join(' / ') === 'Back up the steps.', `straight back up within the hour, the label alone (${back.join(' / ')})`);
       ok(walked.length === 1 && up.join(' / ') === `Back up the steps. / ${walked[0]}`, `up into the Downs, their line as walked into them (${up.join(' / ')})`);
     }
+  }
+
+  { // The automap tells nothing hidden (#889): in clear weather by day, a company before a secret door of the outdoors has
+    // mapped nothing behind it, nor with a Cartographer; the door found, it has mapped what lies behind from the doorway.
+    // Every secret door, from every side a company can stand on that has an open square behind the door.
+    const rng = makeRng(5), party = defaultParty(rng), world = new World(buildMaps(), party, rng), map = world.maps[OUTDOORS], seed = world.state.weatherSeed!;
+    const clear = (_: unknown, m: number): boolean => daylightAt(m) >= 0.6 && Object.values(CLIMATES).every((c) => weatherSight(weatherAt(seed, m, c)) >= 4);
+    const when = findWeather(seed, world.state.minutes, CLIMATES.shelf, clear);
+    world.state.minutes = when;
+    party.members[1].skills = ['perception'];
+    let doors = 0, sides = 0, told = 0, shown = 0;
+    for (let y = 0; y < map.height; y++) for (let x = 0; x < map.width; x++) {
+      if (map.at(x, y).door !== 'secret') continue;
+      doors++;
+      for (const f of [0, 1, 2, 3] as Facing[]) {
+        const dx = FACING_DX[f], dy = FACING_DY[f];
+        if (map.passable(x - dx, y - dy) !== 'ok' || map.passable(x + dx, y + dy) !== 'ok') continue;
+        sides++;
+        let leak = false;
+        for (const cartographer of [false, true]) {
+          party.members[0].skills = cartographer ? ['cartographer'] : [];
+          world.travel(OUTDOORS, x - dx, y - dy, f);
+          world.mapState.explored.fill(0);
+          world.reveal();
+          if ([1, 2].some((k) => world.explored(x + k * dx, y + k * dy))) leak = true;
+        }
+        if (leak) told++;
+        // Found (Perception is a sure find), and stood in: the square behind it is the next one on.
+        world.search();
+        world.travel(OUTDOORS, x, y, f);
+        if (world.explored(x + dx, y + dy)) shown++;
+        map.at(x, y).door = 'secret';
+        delete world.mapState.doors[`${x},${y}`];
+      }
+    }
+    ok(when >= 0 && sides > 100 && told === 0 && shown === sides,
+      `in clear weather by day a company before any of the outdoors' ${doors} secret doors has mapped nothing behind it, nor with a Cartographer, from any of ${sides} sides, and found, from its doorway, has mapped what lies behind (${told} sides told; ${shown} shown)`);
   }
 }

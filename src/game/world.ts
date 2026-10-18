@@ -571,21 +571,30 @@ export class World {
   }
 
   /**
-   * Mark cells around the party seen: the four neighbours always, more with sight; none a hill hides
-   * from the party (`hidden`), so a company below a ridge maps the valley past it once it climbs.
+   * Mark cells around the party seen: the four neighbours always, more with sight, but none past what
+   * blocks the view (`GameMap.blocksView`), so a company maps nothing behind a wall, a door or a secret
+   * door (#889); none a hill hides from the party (`hidden`), so a company below a ridge maps the
+   * valley past it once it climbs.
    */
   reveal(radius = 1): void {
     const ms = this.mapState, m = this.map;
     const base = Math.max(radius, this.map.kind === 'outdoor' && !this.isDark && weatherSight(this.weather) >= 4 ? 2 : 1);
     // A Cartographer standing, or a chart carried, maps a square further: 3 in the open by day, 2 in a
-    // dungeon, in the dark or in thick weather (#857). The extra square follows sight: one is mapped
-    // only where the square beside it toward the company does not block the view, so never past a
-    // wall, a door or a secret door, and the automap tells nothing hidden.
+    // dungeon, in the dark or in thick weather (#857).
     const r = base + (skilled(this.party, 'cartographer') ? 1 : 0);
+    // Every square past the first follows sight (#857, #889): it is mapped only where none of the
+    // squares between it and the company, taken a step at a time toward the company, blocks the view,
+    // so never past a wall, a door or a secret door, and the automap tells nothing hidden.
+    const clear = (dx: number, dy: number): boolean => {
+      for (let d = Math.max(Math.abs(dx), Math.abs(dy)); d > 1; d--) {
+        dx -= Math.abs(dx) === d ? Math.sign(dx) : 0; dy -= Math.abs(dy) === d ? Math.sign(dy) : 0;
+        if (m.blocksView(this.state.x + dx, this.state.y + dy)) return false;
+      }
+      return true;
+    };
     for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) {
-      const x = this.state.x + dx, y = this.state.y + dy, d = Math.max(Math.abs(dx), Math.abs(dy));
-      if (!m.inBounds(x, y) || this.hidden(x, y)) continue;
-      if (d > base && m.blocksView(x - (Math.abs(dx) === d ? Math.sign(dx) : 0), y - (Math.abs(dy) === d ? Math.sign(dy) : 0))) continue;
+      const x = this.state.x + dx, y = this.state.y + dy;
+      if (!m.inBounds(x, y) || this.hidden(x, y) || !clear(dx, dy)) continue;
       see(ms.explored, y * m.width + x);
     }
     // And the corridor ahead, as far as the eye sees, so the automap matches the viewport.
