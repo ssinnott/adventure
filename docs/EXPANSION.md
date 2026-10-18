@@ -264,8 +264,9 @@ Decided by the builder for #898, each the owner's to overturn:
    on the laid outdoors, its corners with it.
 2. **A way between two areas** is a square a walker, a climber, a swimmer or a floater crosses, and
    the atlas joins two areas where a road does, by a map's exits or its links (`zoneEdges`).
-   `ONE_CROSSING` is a dungeon's door and no seam. One way it does not draw is held as built: the
-   shallows between the Deepthorn's I5 and Hearth Isle's I6, which a Tidefolk company swims.
+   `ONE_CROSSING` is a dungeon's door and no seam. One way the atlas does not draw is held as
+   built: the shallows between the Deepthorn's I5 and Hearth Isle's I6, which a Tidefolk company
+   swims.
 3. **A row is exact:** it lists, kind by kind, the squares that fail, so a square that comes to agree is
    refused with it. On 18 October: 148 seams, 59 rows, 323 squares.
 4. **The edges against unbuilt land go with the copies,** with no row, as no seam lies there: the void
