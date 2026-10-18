@@ -980,8 +980,8 @@ Decided by the builder for #869, each the owner's to overturn:
 Decided by the owner's delegate for #18, each the owner's to overturn:
 
 1. **The README says where the game stands with #18 finished** (#866): the tiers with their two
-   Masters, the twelve skills and the eight found items in v1's list; post-v1 only the reach, with
-   its artifacts, and the Stretch; the owed paragraph gone, since nothing is owed.
+   Masters, the twelve skills and the eight found items in v1's list; post-v1 only the reach (with
+   its artifacts) and the Stretch; the owed sentence gone, since nothing is owed.
 2. **§10's gate row loses its owed line** and says what the gate prints now (#866).
 
 Decided by the builder for #866, each the owner's to overturn:
