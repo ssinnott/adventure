@@ -851,6 +851,27 @@ Two halls open here (DESIGN §8), on the rules and the hall menu built in #132:
   (docs/areas/wrackholm.md §6, §9, #635's PR D). The rank it pays, Partner, is the top and has no
   quest, and opens Ruan's choice in the Keel (§4.9).
 
+### The artifact: the Telstok (#846)
+
+Saltreach's of the bounds' eight (DESIGN §9), apart from the bounds' brief of #830, which lays the
+boxes. Found and never told: no `seek` quest, no line in the journal and no mark on the world map.
+#830 builds the lair, its door and the rumour once #845, #847 and the guardian's drawing are in.
+
+- **What it is:** *A staff of black bog oak, its foot worn round on a stone floor. / Struck on
+  stone, it rings like a bell under water.* The staff a priest beat time with when the god still
+  sang and did not count (§10).
+- **The rumour:** Hiltje, the withy-cutter of Rietum, in the beds north of the diep (B3, §4.11), two
+  lines more at a meeting after her first, words only: *Before the temples there was a priest who
+  sang and never counted. When her staff struck the floor, the dead lay down. / The water came up
+  over her mound, and she sang it in.* It marks nothing on the world map.
+- **Slot and bearers:** a staff, two-handed: the cleric, the sorcerer, the druid and the monk.
+- **Numbers:** 1d10+14, the Grey Staff's 1d10+13 and a point (EXPANSION §5.2). Found and never sold.
+- **Power:** an element (DESIGN §9, kind 2): its blows carry holy, an added 1d6 on each that lands.
+- **The lair:** a drowned mound of two levels on the fen's west edge under the rim, its door in A5,
+  at the cap's band, 30–32 (#845).
+- **The guardian:** the Old Chanter (skeleton, a new kind; boss, 32; docs/MONSTERS.md §13): *The
+  first of the chanters, and it still sings the old song.* It blesses itself and curses.
+
 ## 7. Encounters, and what is new
 
 MONSTERS §6.1 has the roster and the fights: the Fen Eel and the Leech, the Grey Heron, the Fen Toad

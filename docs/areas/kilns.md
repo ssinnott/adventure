@@ -1625,6 +1625,27 @@ end (§9, #439's 1) and pay 300 gold and 2,400 xp, 400 a member:
 A deed done before the ask is taken is paid at the taking, with words for a company that came
 early, as every guild quest is; the rank stays the third until the guild's other ask is done.
 
+### The artifact: the Erzhemd (#846)
+
+The Kilns' of the bounds' eight (DESIGN §9). Found and never told: no `seek` quest, no line in the
+journal and no mark on the world map. #831 builds the lair, its door and the rumour once #845, #847
+and the guardian's drawing are in.
+
+- **What it is:** *A shirt of mail in rings darker than iron, and no heavier than wool. / Inside the
+  collar a smith's mark is cut, and a knocker's eye beside it.*
+- **The rumour:** the oldest miner at Anvilhall, who sings the hymn's last verse (§3), two lines more
+  at a meeting after his first, words only: *Brandt made a shirt of the ore the knockers bring up. So
+  light, he said, his feet forgot it. / He went down for more. We sang him to the door, and nobody
+  sang him back.* It marks nothing on the world map.
+- **Slot and bearers:** armour: the knight, the paladin, the ranger, the thief, the barbarian, the
+  bard and the druid, as the Grey Mail.
+- **Numbers:** armour 15, the Grey Mail's 14 and a point (EXPANSION §5.2). Found and never sold.
+- **Power:** a stat (DESIGN §9, kind 1): speed raised by 5 while it is worn.
+- **The lair:** an old working of two levels in the crag under the rim, its adit in P5, east of the
+  Stone and the vents, at the cap's band, 30–32 (#845).
+- **The guardian:** the Steiger (knockers, a new kind; boss, 32; docs/MONSTERS.md §13): *It knocks
+  once, and the whole seam answers.* It calls a group of deep knockers.
+
 ## 7. Encounters, and what is new
 
 MONSTERS §7.1 has the roster and the fights: the Knocker, the Mender and the Foreman, the first
