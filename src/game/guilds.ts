@@ -46,8 +46,13 @@ export interface GuildQuest {
 
 const isTaken = (q: GuildQuest, party: Party): boolean => !!party.flags[takenFlag(q.id)];
 
+const midSentence = (name: string): string => name.replace(/^The /, 'the ');
+
 /** A guild's name as said mid-sentence: "the Wardens". */
-export const guildName = (guild: GuildId): string => GUILDS[guild].name.replace(/^The /, 'the ');
+export const guildName = (guild: GuildId): string => midSentence(GUILDS[guild].name);
+
+/** A guild's name as a hall's first menu says it after "Work for": its short name where the whole would be cut, "the Cartographers". */
+export const guildShortName = (guild: GuildId): string => midSentence(GUILDS[guild].short ?? GUILDS[guild].name);
 
 /** The name of a rank, or null for a stranger. */
 export const rankName = (guild: GuildId, rank: number): string | null => (rank > 0 ? GUILDS[guild].ranks[rank - 1] : null);
