@@ -252,6 +252,27 @@ Added:
   has no `respawn` (DESIGN.md §6). Only the last is checked today.
 - **Encounter shape.** Respawns in the range in use, 720 to 2880 minutes. At most 12 monsters to a
   group is held already: a map with more does not load.
+- **One rule for the seams** (#898). Every two built boxes that share an edge agree along it square
+  for square on passable ground, water and road, and open a way between two areas only where the
+  atlas joins them; a seam that disagrees on purpose is a row of `SEAMS_AS_BUILT`
+  (`tools/tests/outdoors.ts`) with its reason, and a box built since adds none.
+
+Decided by the builder for #898, each the owner's to overturn:
+
+1. **Passable ground is a walker's:** open to a company with no skill. Water is the water and the deep,
+   never the void, which stays the void for every rule; road is the road's terrain. Each seam is read
+   on the laid outdoors, its corners with it.
+2. **A way between two areas** is a square a walker, a climber, a swimmer or a floater crosses, and
+   the atlas joins two areas where a road does, by a map's exits or its links (`zoneEdges`).
+   `ONE_CROSSING` is a dungeon's door and no seam. One way it does not draw is held as built: the
+   shallows between the Deepthorn's I5 and Hearth Isle's I6, which a Tidefolk company swims.
+3. **A row is exact:** it lists, kind by kind, the squares that fail, so a square that comes to agree is
+   refused with it. On 18 October: 148 seams, 59 rows, 323 squares.
+4. **The edges against unbuilt land go with the copies,** with no row, as no seam lies there: the void
+   past them is held by the void check, their water and roads by the pillars' edge check, and an open
+   edge onto unbuilt land is #828's border check. A box built against one meets the rule.
+5. **The count of seams may not fall below 148,** those built on 18 October, as a box once built never
+   goes.
 
 ### 5.2 The curve, and the gate
 
