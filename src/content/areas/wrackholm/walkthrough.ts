@@ -418,8 +418,10 @@ function hollowFinds(ok: (cond: boolean, msg: string) => void): void {
   ].filter((t) => /Corposant|Runner's Coat|groove|iron-bound|hollow in the rock/i.test(t));
   ok(!told.length, `found and never told: no person, quest, chapter or atlas place or site names the hollow, the blade or the coat (${told.length} do)`);
   // Off the road: the squares on a shortest walk from the way into F6 (0,12) to the shingle where Dando rows out (14,30).
-  const far = apartFrom(WRACKHOLM_F6, [WRACKHOLM_F6.start.x, WRACKHOLM_F6.start.y], [14, 30], [drag.x, drag.y]);
-  ok(far.walking > 10, `the hollow is off the road: where the groove ends is ${far.walking} squares from the nearest square on a shortest walk across F6 (${far.steps} steps from the way in to the shingle) by the way a company walks, and ${far.crow} as the crow flies`);
+  const way: [[number, number], [number, number]] = [[WRACKHOLM_F6.start.x, WRACKHOLM_F6.start.y], [14, 30]];
+  const far = apartFrom(WRACKHOLM_F6, way[0], way[1], [drag.x, drag.y]), on = apartFrom(WRACKHOLM_F6, way[0], way[1], [way[0][0] + 6, way[0][1]]);
+  ok(far.walking > 10 && on.walking === 0 && on.crow === 0,
+    `the hollow is off the road: where the groove ends is ${far.walking} squares from the nearest square on a shortest walk across F6 (${far.steps} steps from the way in to the shingle) by the way a company walks, and ${far.crow} as the crow flies; a square of the way itself is ${on.walking}`);
 }
 
 export const walkthrough: Walkthrough = (ok) => {
