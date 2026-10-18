@@ -389,8 +389,8 @@ function hollowFinds(ok: (cond: boolean, msg: string) => void): void {
   // Where they lie: the hollow's two chests, the iron-bound one the area's only locked chest.
   const chests = MAP_DEFS.flatMap((d) => (d.features ?? []).filter((f): f is Chest => f.kind === 'chest').map((f) => ({ map: d.id, f })));
   const holding = (id: string): string => chests.filter(({ f }) => f.items.includes(id)).map(({ map, f }) => `${map}:${f.id}`).join();
-  const own = new Set(AREAS.find((a) => a.id === 'wrackholm')!.maps.map((m) => m.id));
-  const locked = chests.filter(({ map, f }) => f.locked && own.has(map)).map(({ map, f }) => `${map}:${f.id}`);
+  // The isle's own maps: another area's locked chest (the epic's items are one an area, #18) is no concern of its count.
+  const locked = chests.filter(({ map, f }) => f.locked && AREAS.find((a) => a.id === 'wrackholm')!.maps.some((m) => m.id === map)).map(({ map, f }) => `${map}:${f.id}`);
   ok(holding('corposant') === 'wrackholm_f6:f6_hollow_locked' && holding('runners_coat') === 'wrackholm_f6:f6_hollow_chest' && locked.join() === 'wrackholm_f6:f6_hollow_locked'
     && chestOf('f6_hollow_locked').gold === 0 && chestOf('f6_hollow_chest').gold === 0,
     `Corposant lies in the iron-bound chest and the coat in the sea chest beside it, no gold with either, and the iron-bound chest is the only locked one the isle places (${locked.join() || 'none'})`);
