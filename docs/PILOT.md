@@ -386,7 +386,7 @@ not the finish.
   to 17 times a finished run, a median of about 9 (counted from the log), on the world's minutes,
   sleep among them (decision 13 for #723). `Game.fight` still takes every group beside the party at
   once; the two falls are drawn seed 10, on the Foreland at 204,58, at level 4 (216,42, at level 2,
-  before #889), and drawn seed 1, in Thornmark at 255,39, at level 4, after 24,921 ticks (it finished
+  before #889) and drawn seed 1, in Thornmark at 255,39, at level 4, after 24,921 ticks (it finished
   in 30,548 while a step could slip round a corner, #903's review).
 - **The last one standing does not flee.** A fight is lost only once one of the company falls in it
   (`beaten`), so a company with one member standing, the rest down before it began, fights on to the

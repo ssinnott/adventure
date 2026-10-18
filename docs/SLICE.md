@@ -468,7 +468,7 @@ Decided by the builder for #889, each the owner's to overturn:
 5. **No step slips between two that stop the view.** The walk is a staircase that takes its diagonal
    steps first, and a diagonal step between two stoppers let it through: Deepthorn J4's box (308,110)
    was marked from the hill at 309,112, Monksvale J10's tolls (306,302) from 308,300 between two
-   squares of the mountain, and the square behind Kilnmouth M6's door (413,179) from 412,181. Such a
+   squares of the mountain and the square behind Kilnmouth M6's door (413,179) from 412,181. Such a
    step now stops it, the step into the company's own square too: 926 marks two off (0.09%).
 6. **One off, a corner hides what does not stop the view.** The eight squares round the company were
    marked whatever stood between, so Kilnmouth M6's cache (413,180) showed from 412,181, one off
@@ -481,12 +481,12 @@ Decided by the builder for #889, each the owner's to overturn:
 7. **A landmark is seen over a wall,** as over a hill (#844): Highcell (322,343) stands behind its
    gate, an exit no company stands on, and the walk left it unmarked from the road's end. The rest of
    `GameMap.overtops`, the mountain and the void drawn tall, is not: over a wall they would ink a range
-   round a hide and leave the hide a hole, and mark the mountain two behind 6 of the 204 sides.
+   round a hide and leave the hide a hole, and they marked the mountain two behind 6 of the 204 sides.
 8. **The check holds a diagonal approach as well as the four sides:** the square behind each side and
    every chest of its hide (160 squares, 121 chests), where no run of squares that do not stop the view
    joins them to the side stood on, from every square a company stands on within two, three with a
-   Cartographer, facing any way: 216 marks of 8 such squares on the walk before #903's review, none
-   now. The corner is held on a fixture beside the walls' (`tools/tests/terrain.ts`).
+   Cartographer, facing any way: 3,244 marks on main, 216 of 8 such squares on the walk before #903's
+   review, none now. The corner is held on a fixture beside the walls' (`tools/tests/terrain.ts`).
 
 ## The calendar and the weather
 
