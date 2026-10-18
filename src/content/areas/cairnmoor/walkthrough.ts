@@ -333,9 +333,10 @@ function carnDubh(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   // The secret of the end cell (#862): a stain of rust runs down its south wall from one joint; searched
   // there, the wall gives on a cell cut in the rock, narrow as a grave, with the area's first locked chest
   // in it. Walked, the cell is never reached but through that wall, and nothing the road or a quest turns
-  // on lies in it. The chest opens to a Lockpick standing, which keeps the key, or to an iron key, which it
-  // spends, and to nothing else: the company the test leaves with neither is refused. The premade six's
-  // thief is born to Lockpick, so the "neither" and "key" companies have her put down, and the "pick" one has her standing.
+  // on lies in it. The chest opens to a Lockpick standing or a set of picks carried, which keep the key, or
+  // to an iron key, which it spends, and to nothing else: the company the test leaves with none of them is
+  // refused. The premade six's thief is born to Lockpick, so the "neither", "key" and "picks" companies have
+  // her put down, and the "pick" one has her standing.
   const start: [number, number] = [L1.start.x, L1.start.y];
   ok(!reached(L1, start, [13, 11]) && !reached(L1, start, [13, 12]), 'the cell south of the end cell is reached only through its wall: the Watcher\'s cell and the stair are walked, and it is not');
   see(w, 'cairns:cd1_rust');
@@ -359,12 +360,15 @@ function carnDubh(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   };
   const thiefDown = (p: Party): void => { p.members.find((m) => m.cls === 'thief')!.conditions.push('dead'); };
   const neither = opens(thiefDown), keyed = opens((p) => { thiefDown(p); p.bag.push('key_iron'); }), picked = opens(() => undefined);
+  const carried = opens((p) => { thiefDown(p); p.members.find((m) => m.cls === 'cleric')!.pack.push('set_of_picks'); });
   ok(neither.said === 'A locked chest. Locked.' && !neither.spent && !neither.mail && neither.keys === 0,
     `a company with neither a Lockpick standing nor an iron key is refused, and the chest stays shut ("${neither.said}")`);
   ok(keyed.said === 'A locked chest. The lock turns. The key crumbles. You open the chest: Cairnbuilder\'s Mail.' && keyed.spent && keyed.mail && keyed.keys === 0,
     `with her down and an iron key carried, the key is spent and the chest gives the mail ("${keyed.said}")`);
   ok(picked.said === 'A locked chest. Ottilie picks the lock. You open the chest: Cairnbuilder\'s Mail.' && picked.spent && picked.mail,
     `with the premade six's thief standing, born to Lockpick, she picks it and no key is needed ("${picked.said}")`);
+  ok(carried.said === 'A locked chest. Maren picks the lock. You open the chest: Cairnbuilder\'s Mail.' && carried.spent && carried.mail && carried.keys === 0,
+    `with her down and Pender's set of picks in the cleric's pack, the cleric picks it ("${carried.said}")`);
   // The walk's own company, the thief standing: the lock is picked and the mail is in the bag.
   w.world.travel('cairns', 13, 12, SOUTH);
   const lock = w.world.unlock();

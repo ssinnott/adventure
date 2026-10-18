@@ -768,8 +768,8 @@ never told, one of them in the area's first locked chest. Both lie off the ladde
 do, so no figure of the gate, the harness, the ladder or the curve moves (§9, the builder's 5 and 7).
 
 - **Purpose.** An answer to the tor troll, which mends each round but a round fire struck it (§7), and
-  a prize for the company that carries a Lockpick or an iron key. None of the area's seven monsters
-  is immune to fire, resists it or is weak to it: each takes the whole die.
+  a prize for the company that has a Lockpick, a set of picks or an iron key. None of the area's
+  seven monsters is immune to fire, resists it or is weak to it: each takes the whole die.
 - **The Beacon Hammer** (`beacon_hammer`). A hammer of the forge hammer's dice, bonus and wearers (the
   knight, the paladin, the ranger, the barbarian and the cleric), 2d10+3 and one-handed, whose blows
   carry fire: 1d6 of fire is added to each blow that lands (DESIGN §6), and a troll it lands on does
@@ -790,9 +790,9 @@ do, so no figure of the gate, the harness, the ladder or the curve moves (§9, t
 - **The secret and its hint.** At 13,9, the end cell's last square before its south wall, seven
   squares from the nearest group and on the way to the stair, a stain of rust runs down the wall from
   one joint; searched there facing south, the wall gives. In the cell a chest bound in iron, its lock
-  red with rust. The chest says "A locked chest." stood on and opens to a Lockpick standing ("Ottilie
-  picks the lock.", the key kept) or to an iron key, which it spends; else it says "Locked." and
-  nothing changes. It holds no key and no quest's item, nothing needs it, and the pilot walks past it
+  red with rust. The chest says "A locked chest." stood on and opens to a Lockpick standing or a set
+  of picks carried ("Ottilie picks the lock.", the key kept) or to an iron key, which it spends; else
+  it says "Locked." and nothing changes. It holds no key and no quest's item, nothing needs it, and the pilot walks past it
   as it walks past a locked door with no key (PILOT, #857).
 - **New here.** Nothing claimed (§7).
 - **Finds.** The two, with no gold in either; no person, sign, event or quest names them.
@@ -817,10 +817,11 @@ do, so no figure of the gate, the harness, the ladder or the curve moves (§9, t
     9; Carn Dubh's first level 20 (17), 100.0% within 7. The curve's line for the area's dearest
     find stands at the Steel Bow +1's 1,650 (§9, the builder's 5).
   - **Walked.** The walkthrough finds the cairn on N8, after the strongbox, and in `carnDubh` the
-    rust, the search, the cell and the chest, opened four ways on the real chest: by a company with
+    rust, the search, the cell and the chest, opened five ways on the real chest: by a company with
     neither a Lockpick standing nor a key ("A locked chest. Locked.", the chest unspent), with an iron
     key and the thief down (the key spent), with the thief standing (the lock picked and the key
-    kept) and by the walk's own company; `offTheLadder` holds both finds to their rules.
+    kept), with Pender's set of picks in the cleric's pack and the thief down (#860) and by the walk's
+    own company; `offTheLadder` holds both finds to their rules.
 
 ## 5. The one quest here
 
@@ -1491,8 +1492,9 @@ Decided by the builder for #862, each the owner's to overturn:
    Dubh's first level behind a secret door at 13,10: all seven of the area's secrets already hold a
    reward, and the first level had none.
 2. **The mail is the locked one.** The hammer is the troll's answer and should be the easier find; the
-   mail is the prize for a Lockpick standing or an iron key. The premade six's thief is born to
-   Lockpick, so a company that has not lost her opens it at once.
+   mail is the prize for a Lockpick standing, a set of picks (Pender's, 750 at Saltmouth, #860) or an
+   iron key. The premade six's thief is born to Lockpick, so a company that has not lost her opens it
+   at once.
 3. **Fire stands.** The rule above would pick lightning, which 3 of Rimewater's 6 monsters are weak to
    where none of either area is weak to fire; but the troll mends from anything but fire (the issue's
    Why, `burnt`) and the epic's other three weapons are lightning (the ruling's D2). Lightning is one
