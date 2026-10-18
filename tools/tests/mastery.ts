@@ -1,7 +1,7 @@
 // The weapon and magic tiers (game/mastery.ts; DESIGN §5, #852): what each does, through the blow and
 // the cast themselves, for a fighter, a caster and a hybrid; the bars; the town trainers that teach
 // Expert by their ceiling and the two that do not; Saltmouth's Sail Loft walked as a player meets it;
-// a Master's person (a fixture built here: the content places none yet, #858 and #859); the sheet's
+// a Master's person (a fixture built here, as the two the content places are, #858 and #859); the sheet's
 // lines; what no tier touches (a spell's cost, a buff's rounds, a cure, a sleep); saves; the words in
 // the font; and the pilot's keep at the Sail Loft, which trains there and never opens the tier menu.
 import { readdirSync, readFileSync, statSync } from 'node:fs';
@@ -226,7 +226,7 @@ function loft(): void {
 }
 
 /**
- * A Master's person, built here as M1 and M2 will place one: their words, then the members of their
+ * A Master's person, built here as the content's two are: their words, then the members of their
  * line; refused before the favour holds, and a member Expert at 25 taught for 5,000 once it does.
  */
 function master(): void {
