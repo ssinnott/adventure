@@ -523,7 +523,9 @@ Decided by the builder for #857, each the owner's to overturn:
    is two with it. The corridor ahead, which is sight's, is not lengthened.
 4. The extra square follows sight: never past a wall, a door or a secret door. It is mapped only
    where the square beside it toward the company does not block the view, so the automap is made
-   better and never tells what is hidden: a secret door, or a Master's hide behind one.
+   better and never tells what is hidden: a secret door, or a Master's hide behind one. Since #889
+   every square past the first follows sight so, one step at a time toward the company (SLICE.md,
+   line of sight).
 5. The words: "Ottilie picks the lock." (the member's name) where a Lockpick or a set of picks
    opens one; a key spent at a chest says the door's "The lock turns. The key crumbles."; a locked
    chest stood on says "A locked chest." in place of "A chest. Space opens it."

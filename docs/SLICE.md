@@ -408,8 +408,8 @@ Decided by delegate for #53, each the owner's to overturn:
    ground's own colour would tell what lies there.
 5. **The squares round the company are marked as before, but for one a hill hides** (two off, past a
    hill beside or behind the company), read in the way it lies; and the automap's near rule (a group on
-   a seen square within two steps) leaves out a group a hill hides (the delegate's call 4). A wall
-   still hides neither, as before: that is no part of this issue.
+   a seen square within two steps) leaves out a group a hill hides (the delegate's call 4). A wall hid
+   neither when this was built; since #889 it hides both (below).
 6. **A save keeps what it marked:** explored bits only ever add, so a save made before loads with the
    valleys it marked from below, and hiding applies from then on. `SAVE_VERSION` stays 5.
 7. **The pilot is left as it was:** it reads the automap's seen squares and groups through `Known`,
@@ -421,6 +421,33 @@ Decided by delegate for #53, each the owner's to overturn:
    mountain it stands over a hill; drawn as the sea or as land it lies as low as they do and is hidden
    with them. Where no hill hides it the view draws the look as #829 draws it, and the ground to the
    horizon is the look's but where a hill on the centre line hides it.
+
+**A wall hides what lies past it from the squares round the company** (#889). Outdoors by day, when
+the sky lets the company see four squares, it maps the two squares round it (a Cartographer, three),
+and until #889 every one of them was marked whatever stood between: one off a wall, a building, the
+mountain, a door or a secret door, the company mapped the square behind it from two off, and with it a
+Master's hide. `World.reveal` now asks of every square past the first what it asked of the
+Cartographer's extra one (#857): it is marked only where no square between it and the company, taken a
+step at a time toward the company, stops the view (`GameMap.blocksView`). The outdoors is as
+underground, where the company maps one square: a wall is marked and what lies past it is not, until
+the company stands in the doorway or the view reaches round it. In the open nothing changes: a hill
+hides as above and a wood hides nothing.
+
+Decided by the builder for #889, each the owner's to overturn:
+
+1. **The question is asked of every step on the way,** not of the square beside it alone, which the
+   issue proposed (`d > 1`): that left a Cartographer the square two behind a wall or a secret door one
+   off, a hole at two squares with the hide marked past it (139 of the 150 sides of the outdoors'
+   secret doors with two open squares behind them, as on main). Her extra square is now the last step
+   of the same walk, and her reach on open ground, at night and underground (3, 2 and 2) does not move.
+2. **A found door is a door.** It shuts the view from two off as any door does and as the viewport draws
+   it, so the square behind it is marked once the company stands in the doorway: the issue's "once the
+   door is found, it has" is read so.
+3. **The check is read over the content as well as on a fixture:** the 99 secret doors of the outdoors
+   as played, from the 204 sides that have an open square to stand on and one behind the door, in a
+   sky clear in every region by day: 204 told on main, none now (`tools/tests/outdoors.ts`). The rule
+   on open ground with each stopper is held beside the hills' (`tools/tests/terrain.ts`). The issue's
+   count, 170 of 198, took the sky as it fell.
 
 ## The calendar and the weather
 

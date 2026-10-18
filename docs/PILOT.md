@@ -296,7 +296,7 @@ with the premade company and an instant pilot at the helm asking every brain: th
 chapters in AREAS order on the one Game, so that each area starts as the pilot left the last (the one
 road). A chapter's play ends when the chapter is done, the company is wiped, the pilot stops itself
 or a cap is met: ten minutes of the wall clock (`BUDGET`) or 2,000,000 ticks (`TICK_CAP`). Each chapter
-gets a line: "shelf: the pilot finishes The Quiet Farm in 8,916 ticks, 31.4 days, level 5" (#857), the days
+gets a line: "shelf: the pilot finishes The Quiet Farm in 7,541 ticks, 25.0 days, level 4" (#889), the days
 being the world's while it played; or where it stopped: fell, stopped itself with its why line or
 capped (by the budget or by the ticks). The last chapter ends at an ending taken, which the pilot never
 takes: its stop under the question ("The choice is yours.") counts, and the test, as its privilege,
@@ -334,16 +334,18 @@ not the finish.
 
 - **The full run, all areas** (`FULLRUN=all node tools/test.ts fullrun` on 4473dac1, seed 4, the
   premade company: 8 minutes 45 seconds, 12 failures). The road ends at Thornmark's chapter. The
-  shelf's and Thornmark's rows are main's on 18 October (`FULLRUN=thornmark`), measured again since
-  #856 and #857 gave the premade six Perception (its elf and gnome), Pathfinder (its ranger) and
-  Lockpick (its thief): the fair pilot stops where it stopped before, by another way (it took 68,368
-  ticks and 176.9 days on #844's tree), and the omniscient one falls elsewhere on Callow Downs (at
-  127,71, after 16,052 ticks and 38.6 days there).
+  shelf's and Thornmark's rows are main's on 18 October with #889 (`FULLRUN=thornmark`), measured
+  again since #856 and #857 gave the premade six Perception (its elf and gnome), Pathfinder (its
+  ranger) and Lockpick (its thief), and since #889 stopped the automap mapping through a wall: the
+  fair pilot stops where it stopped before, by another way (it took 68,368 ticks and 176.9 days on
+  #844's tree, 85,559 and 239.6 before #889, and 47,738 and 164.8 now), and the omniscient one falls
+  elsewhere, in the Wold (at 81,253, after 15,821 ticks and 41.5 days there; on Callow Downs on the
+  trees before).
 
   | Area | Chapter | The fair pilot | The omniscient pilot, from the save point |
   |---|---|---|---|
-  | shelf | The Quiet Farm | finishes: 8,916 ticks, 31.4 days, level 5 (14.3 s) | not run |
-  | thornmark | The Grove Stone | stops itself lost in Ashcombe Cellar at 1,1 ("Lost: no way on that I can see."), level 6, after 85,559 ticks, 239.6 days (238.1 s) | also fails: falls on Callow Downs at 109,120, level 6, after 23,232 ticks, 56.5 days (523.2 s) |
+  | shelf | The Quiet Farm | finishes: 7,541 ticks, 25.0 days, level 4 (12.9 s) | not run |
+  | thornmark | The Grove Stone | stops itself lost in Ashcombe Cellar at 1,1 ("Lost: no way on that I can see."), level 6, after 47,738 ticks, 164.8 days (182.3 s) | also fails: falls in the Wold at 81,253, level 6, after 15,821 ticks, 41.5 days (347.8 s) |
   | saltreach | The Tide Stone | not reached | |
   | wrackholm | The Stone Carried Home | not reached | |
   | sunderwood | The Wall | not reached | |
@@ -376,13 +378,15 @@ not the finish.
   yet mean that nobody could finish the chapter. The issue's flag was built as written ("nothing else
   changes"); a frontier of the squares not walked, or the explorer asked before the walk again, is the
   owner's call.
-- **Survival.** The sweep's figures are in the table over the decisions for #723. Since a hill hides
-  what lies behind it (#53, #844), 12 of 12 finish with the premade company and 11 of 12 with the
-  companies the seeds draw; a finished run takes 7,189 to 34,845 ticks, played as the survival sweep
-  plays it. At #842's second review the lost rule fired 3 to 17 times a finished run, a median of
-  about 9 (counted from the log), on the world's minutes, sleep among them (decision 13 for #723).
-  `Game.fight` still takes every group beside the party at once; the one fall left is drawn seed 10,
-  on the Foreland at 216,42, at level 2 (the road bandits).
+- **Survival.** The sweep's figures are in the table over the decisions for #723. Since a wall hides
+  what lies past it (#889), 12 of 12 finish with the premade company and 11 of 12 with the companies
+  the seeds draw; before #889, on main, 10 of 12 and 11 of 12 (premade seed 5 fell on the Foreland and
+  seed 8 stood at the budget in Callow Downs, "Stuck: waiting a while."). A finished run takes 7,541 to
+  30,548 ticks, played as the survival sweep plays it. At #842's second review the lost rule fired 3
+  to 17 times a finished run, a median of about 9 (counted from the log), on the world's minutes,
+  sleep among them (decision 13 for #723). `Game.fight` still takes every group beside the party at
+  once; the one fall left is drawn seed 10, on the Foreland at 204,58, at level 4 (216,42, at level 2,
+  before #889).
 - **The last one standing does not flee.** A fight is lost only once one of the company falls in it
   (`beaten`), so a company with one member standing, the rest down before it began, fights on to the
   end, as in both of the falls at #842's merge. A follow-up, if the owner wants it (the delegate's
@@ -666,14 +670,14 @@ The figures: The Quiet Farm played from a new game by every brain on seeds 1 to 
 12. **The quartermaster's nearest place is kept while nothing it rests on moves but the party's square** (`nearest`: the map, its squares seen, the flags, the groups the automap marks and the places): at #842's review a stuck tick cost 13 ms, 44% of it a search of the whole map a tick; now 100 ticks of a walk make no such search (the check counts them, `searches`).
 13. **The lost rule counts the world's minutes, sleep among them**: a company that rests nine times on one goal is lost on it. Counting waking hours only would need the rest and the inn's night told apart from a test's clock; left as it is, and counted: it fires 3 to 17 times a finished run, a median of about 9 (counted from the log).
 14. **The survival sweep** (`tools/tests/survival.ts`): run only when named (`ASKED`, `tools/test.ts`, checked by the runner's own check; #723's second part may add `fullrun`); the floors, 9 of 12 with the premade company and 8 of 12 with the drawn ones, are the delegate's, as #723 names no figure; a run within ten minutes of the wall clock (`RUN_BUDGET`), over which it counts as not finished, and the 200,000-tick cap stands. `headlessGame` takes a company (`randomParty(seed)`, as P on the title draws it), its default as it was.
-15. **The shelf's play is back on seed 4, to the chapter's end** (the seed pin gone), within five minutes of the wall clock (`PLAY_BUDGET`, `pilotPlays`): 10,875 ticks, 21.0 s (10,792 since a hill hides what lies behind it, #53; 8,916 since #857), where main's play on seed 10 took 14,538 ticks, 29.8 s. The play is chaotic: a change to anything it meets may move it.
+15. **The shelf's play is back on seed 4, to the chapter's end** (the seed pin gone), within five minutes of the wall clock (`PLAY_BUDGET`, `pilotPlays`): 10,875 ticks, 21.0 s (10,792 since a hill hides what lies behind it, #53; 8,916 since #857; 7,541 since a wall hides what lies past it, #889), where main's play on seed 10 took 14,538 ticks, 29.8 s. The play is chaotic: a change to anything it meets may move it.
 16. **Not built:** caution outdoors by level (the flight answered the level-1 fights it was for), the armour first, the reach two maps in (Known limits) and `Game.fight`'s taking every group beside the party, which is the game's. Talk's meetings in Helmstow are talk's, left as they were.
 
 Decided by delegate for #723 (the suite), each the owner's to overturn:
 
 1. **FULLRUN reaches the road up to the last area it names**, and every chapter on the road is checked, as a chapter is reached only through those before it: `FULLRUN=thornmark` plays and checks the shelf's chapter first. Unset is `shelf`; a name that is no area with a chapter fails.
 2. **Ten minutes of the wall clock a chapter's play** (`BUDGET`), fair and omniscient each their own, as the survival sweep's run has; the issue's 2,000,000 ticks (`TICK_CAP`) stays as a cap. Either cap fails and says which. With the road as it stands the whole run takes about nine minutes.
-3. **Seed 4 and the premade company**, the walkthroughs', so the default run repeats the shelf's walkthrough play tick for tick (8,916 since #857; 10,792 since #53; 10,875 before) and the two can be compared.
+3. **Seed 4 and the premade company**, the walkthroughs', so the default run repeats the shelf's walkthrough play tick for tick (7,541 since #889; 8,916 since #857; 10,792 since #53; 10,875 before) and the two can be compared.
 4. **The save point is taken with the map on top**, as F5 saves: a chapter may end in a visit, and the pilot plays on until it is back on the map, those ticks counted in the next chapter. At the first sweep the save was taken in the throne room's visit, the party on its door, and a game loaded from it stood there with no way out: the navigator does not turn on a square it leaves from.
 5. **The omniscient run loads the save as F9 does** (`headlessLoad`) with a fresh pilot, so nothing of the fair pilot's memory crosses; its line is a second failure beside the fair one's, worded as the issue words it, with where it stopped.
 6. **Where the omniscient pilot finishes a chapter the fair one lost, the road goes on from its end with a fresh fair pilot** (its corpus empty), so each later chapter still has a fair line; a chapter neither finishes ends the road, and each later area fails as not reached.
