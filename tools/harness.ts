@@ -812,7 +812,7 @@ async function main(): Promise<void> {
     const all = artifactIds(), asked = bears === 'all' ? all : bears.split(',');
     if (!asked.length || asked.some((x) => !all.includes(x)) || new Set(asked).size < asked.length) throw new Error(`--artifacts takes all, or the artifacts' ids, each once, with commas between: ${all.join(', ')}`);
     RULES.artifacts = asked;
-    console.log(`What if: the company bears ${and(asked.map((x) => item(x).name))}, each by the first member who may (#847), found past the ladder's top and on no rung of it.`);
+    console.log(`What if: the company bears ${and(asked.map((x) => item(x).name.replace(/^The /, 'the ')))}, each by the first member who may (#847), found past the ladder's top and on no rung of it.`);
   }
   const rules = { ...RULES };
   const row = (label: string, cells: readonly string[]): void => console.log(label.padEnd(14) + cells.map((c) => c.padStart(6)).join(''));

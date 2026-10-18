@@ -81,7 +81,12 @@ DESIGN.md first for the why.
   shop, two in each of Wrackholm, the Whitespine, Cairnmoor and Hearth Isle, one of each pair in the
   area's first locked chest (#861 to #864): Corposant, the Thunderhead Axe and the Levin Mace carry
   lightning and the Beacon Hammer fire; the Runner's Coat, the Talon Knife, Cairnbuilder's Mail and
-  the Vigil Robe raise speed, accuracy, might and personality by 3.
+  the Vigil Robe raise speed, accuracy, might and personality by 3. An artifact is an item marked so
+  (`ItemDef.artifact`, #847; DESIGN §9): one in the world, found and never sold; no shop stocks one
+  or takes one, and no rung of the ladder or price window holds one, by its mark. The sheet says each
+  borne and its power ("ARTIFACT The Erzhemd, SPEED +5"). The three whose kinds are built, the
+  Telstok (holy blows), the Erzhemd (speed +5) and Akkush (accuracy +5), are in Saltreach's, the
+  Kilns' and the Glasswold's items and placed nowhere yet: #830, #831 and #833 lay their lairs.
 - **Save/load:** F5/F9 to localStorage; door changes, explored cells, group state and the rng all
   survive a reload. Saves are version 2 (the outdoors as one map, cells seen kept a bit apiece); a
   version 1 save loads, its Foreland and Thornmark state folded into the outdoors where they now lie.
@@ -810,7 +815,8 @@ over content broken on purpose too, and two tools to theirs:
   Thornmark's that comes back stopping with the tear.
 - `curve` (§5.2): each area against its row in `content/progression.ts`: its band, the xp and gold a
   clear gives, its monsters' levels in their maps' bands, groups harder with steps from the way in,
-  no chest or drop dearer than its window. An enclave (#845) is counted in no clear and held to its
+  no chest or drop dearer than its window, an artifact excepted by its mark alone (`windowed`, #847,
+  and each would be caught unmarked). An enclave (#845) is counted in no clear and held to its
   own band and its country's window, and stands over its box (`enclaveFaults`).
 - `gate` (§2.2, §5.2): `tools/gate.ts`'s bot plays the premade company, dressed by the gear ladder
   and with its prestiges, harness's own (#541), against every group alone; it takes no tier, skill
@@ -908,7 +914,11 @@ over content broken on purpose too, and two tools to theirs:
   mender; `hits` counts the die at 3.5; the sheet's and a shop's words, in the font and inside the
   column; what the sell screen pays (`sellPrice`). The content is held to the shape alone; each of
   the four areas' walkthroughs walks to its two found items and opens its locked chest (#861 to
-  #864).
+  #864). The bounds' artifacts (#847): each of DESIGN §9's shape, in its area's items, its Hand's
+  piece's numbers and a point; its power as its twin's without the mark (the Erzhemd's speed,
+  Akkush's accuracy, the Telstok's holy die) and no raise saved; sold in no shop and refused at the
+  sell screen with the shop's words; said on the sheet, in the font and inside the column; one in
+  the world, owed to its lair's issue while it waits (`UNPLACED`).
 - `glyphs`: every symbol `src/ui/` draws past plain ASCII (arrows, stars, hearts) is in the pixel
   font, so none is painted as nothing.
 - `drawn`: every group on the maps is drawn while exploring as each of its kinds, to three, and a
@@ -937,7 +947,8 @@ over content broken on purpose too, and two tools to theirs:
   `tools/harness.ts`), every find is an item within the Foreland's window and owed to its box until
   a chest, cairn or statue gives it or a monster drops it, Mottram's sells the band's gear and the
   gate check's company wears what harness's does; every class finds a plus it can use in Thornmark,
-  each in the ladder by 9, and nothing there gives the Armoury's gear.
+  each in the ladder by 9, and nothing there gives the Armoury's gear; no rung holds an artifact
+  (#847).
 
 `node tools/shot.ts out.png [map x y facing] [keys...]` screenshots any state for eyeballing (a zone map takes its own coordinates: `shelf 8 1 0` faces the end of the world). Besides
 keys it takes `fight:<group>`, `time:<hour>`, `walk:<n>`, `day:<n>` (game day n at the same hour),
@@ -965,7 +976,7 @@ of that area); with nothing changed it says so and writes none. `--ground all` (
 `--ground ash,ice`) draws the ground's samples (`tools/grounds.ts`), each with its plan in its
 grounds' colours, and a change that draws every map draws them too, so a new ground is seen before
 a map holds it.
-`node tools/harness.ts [--levels 2,6,10] [--roles soldier,brute] [--seeds 400] [--under 2] [--map thornmark --level 5] [--stats] [--calibrate --write] [--spell-cap 10] [--gear-grows] [--level-bonus] [--level-traits] [--rank-step 0.25] [--tiers] [--bot bless,sleep,drink] [--company newer]`
+`node tools/harness.ts [--levels 2,6,10] [--roles soldier,brute] [--seeds 400] [--under 2] [--map thornmark --level 5] [--stats] [--calibrate --write] [--spell-cap 10] [--gear-grows] [--level-bonus] [--level-traits] [--rank-step 0.25] [--tiers] [--bot bless,sleep,drink] [--company newer] [--artifacts erzhemd,akkush|all]`
 fights the premade company at a level against standard encounters of the test monster, or a map's
 own groups, one after another until it must rest, and says how many it managed against the six or
 seven an encounter at its level should allow (docs/MONSTERS.md §4.4). `--spell-cap` tries a world
@@ -975,8 +986,9 @@ armour every two levels past 10, and `--level-traits` one where fighters strike 
 from 11 and again from 29, and sneak attacks grow. `--tiers` gives the company its Expert at 13
 and Master at 25 (#852); `--bot` gives the bots, the gate's too, their bless, sleep and drink from
 11 (#853, #865); `--company newer` fields the four newer classes' company in the premade's place
-(#854). Each says what it makes, and none is on by default: #865 weighed the first two and left
-them off (J2, EXPANSION §5.2). `node tools/restate.ts <base ref> [--write]` restates the monsters
+(#854); `--artifacts` has the company bear the bounds' artifacts named, or all, each by the first
+member who may (#847). Each says what it makes, and none is on by default: #865 weighed the first
+two and left them off (J2, EXPANSION §5.2). `node tools/restate.ts <base ref> [--write]` restates the monsters
 past 10 onto a line made again (#865), for the day the line is made again; it writes only with
 `--write`.
 `node tools/gate.ts [--maps thornmark,grove2] [--levels 2,3,4,5] [--seeds 200]` prints how often the
@@ -1014,7 +1026,7 @@ does.
 | `game/stones.ts` | the Hearth's measure: the Stones restored (`stonesRestored`, `savedStones` for the title), the Hearth's bearing from a world cell, its flicker and the almanac's word by the count; pure |
 | `game/passage.ts` | crossings: a passage's fare (nothing once its `free` holds, half once its `half` does and half again for a Navigator), its next departure and its landing, the floor at the far end, the menu's line and the terms with their warning, and taking it (the fare, the clock, the landing, the company rested); pure |
 | `game/guilds.ts`, `game/ranks.ts` | a guild quest (`GuildQuest`); a company's rank, worked out from its done flags and kept once reached (`rank_<guild>`; `rankOf`, ranks.ts's, which reads the content alone); what a hall offers (a quest may wait for a flag, `after`), taking a quest and the report that pays it (gold, items, xp split among the living), an item taken at the first meeting whatever the rank; pure |
-| `game/items.ts`, `game/monsters.ts`, `game/spells.ts` | what an item, a monster and a spell are (`ItemDef`, with a letter's `text`, a raise borne and a blow's element; `MonsterDef`, `SpellDef`) and their lookups; a weapon's measure (`hits`) and what a shop pays (`sellPrice`: half, a Merchant two thirds); a monster's kind and what each kind sets (`KINDS`: sleep, Holy Strike); the tables are content's |
+| `game/items.ts`, `game/monsters.ts`, `game/spells.ts` | what an item, a monster and a spell are (`ItemDef`, with a letter's `text`, a raise borne, a blow's element and an artifact's mark; `MonsterDef`, `SpellDef`) and their lookups; a weapon's measure (`hits`) and what a shop pays (`sellPrice`: half, a Merchant two thirds) and says to an artifact (`REFUSED`), and an artifact's most raise (`ARTIFACT_RAISE`); a monster's kind and what each kind sets (`KINDS`: sleep, Holy Strike); the tables are content's |
 | `game/save.ts`, `game/upgrades.ts` | the save and `SAVE_VERSION`; the upgrades, each registered by the version it brings a save to and run in turn on load, with what they need of the world as it was kept frozen |
 | `game/combat.ts` | `CombatState`, `startCombat`, `currentTurn`, `partyAct`, `monsterAct`, and the log's lines, the glove's once a game (`GLOVE_FLAG`); pure and seeded |
 | `game/bot.ts` | the bot that plays a fight, the gate's and the game's: `botTurn` (the action the resolver took; `gateTurn` the same with the action dropped), its two readings of the monsters (`asWritten`, every trait as written, the gate's; `asSeen`, only what the fight's log has shown, the auto-fight's), the answers a tool may switch off (`ANSWER`), the three it may play (`BotOpts`: bless, sleep and drink, off unless given; `PLAYED`, the game's, read from level 11 by `optsFor`, with its guards `striker` and `letsLie`) and the rest rule (`mustRest`); pure |
@@ -1029,7 +1041,7 @@ does.
 | `ui/frame.ts` | layout constants, status strip (time, date, the sky and its glyph), automap (whole, or a window round the party on the outdoors; a spent feature gone from it, a den standing or burnt), party cards, log, purse; the groups the automap marks (`markedGroups`: in view or near, and what Spirit Sense and Danger Sense mark) |
 | `ui/riddle.ts` | a statue's riddle, the answer typed in the text mode |
 | `ui/worldmap.ts` | the world map (M): the cloth painted from the atlas and the built maps, the zone overlay (Tab) and the almanac (Space), and the pins of a place sought and of one a reading marked |
-| `ui/screens.ts` | message (a person's box, `SAY_W` by `SAY_LINES` from `ui/frame.ts`), choice, character sheet (a letter read from it, the skills a member has), spell picker, inn/temple/shop/guild/trainer, a business's first menu (`businessEntries`), a guild's work at its hall and its skills there (`skillMenu`, two levels) or from a person (`learnerMenu`), and the visit that frames them (`InteriorScreen`) |
+| `ui/screens.ts` | message (a person's box, `SAY_W` by `SAY_LINES` from `ui/frame.ts`), choice, character sheet (a letter read from it, the skills a member has, each artifact borne and its power), spell picker, inn/temple/shop/guild/trainer, a business's first menu (`businessEntries`), a guild's work at its hall and its skills there (`skillMenu`, two levels) or from a person (`learnerMenu`), and the visit that frames them (`InteriorScreen`) |
 | `ui/interior.ts`, `ui/interiors/` | the businesses' interiors: the painting kit and the props, a scene to a file in `<area>/`, and the helpers a trade's scenes share |
 | `ui/combat.ts` | the combat screen (menus over the resolver), its monsters where `ui/row.ts` seats them; the auto-fight (`auto`: `game/bot.ts` plays the company's turns by what the fight has shown (the three from level 11, `PLAYED`) and leaves the finished fight, until a key takes it back) |
 | `ui/row.ts` | the fight's row: each monster's place across the view and the height it is drawn, spaced by the drawings' spans, every one whole inside the view and none over more than a third of the next (`seatRow`, `OVERLAP`); pure |
@@ -1042,7 +1054,7 @@ does.
 | `content/guilds.ts` | the four guilds (`GUILDS`: names, a short name where a hall's menu row would cut the whole, and ranks), a guild quest's flags and its side of the quest log |
 | `content/area.ts` | `Area`, the shape every area fills in, and `Novelty`, what it claims is new (held by `tools/tests/pillars.ts`); `Walkthrough`, an area's end-to-end test |
 | `content/areas/<area>/` | an area: its maps, monsters, items, chapter of the one quest (`chapter.ts`), side quests (`quests.ts`), climate, what it claims is new (`novel`) and part of the world map, and the sprite kinds and rooms it brings (`index.ts`); each has a doc in [docs/areas/](areas/) |
-| `content/items.ts`, `content/spells.ts` | the items no area owns (the class kits, the starting bag, the iron key) and the spells |
+| `content/items.ts`, `content/spells.ts` | the items no area owns (the class kits, the starting bag, the iron key), the helpers the areas' tables are written with and an artifact's price (`ARTIFACT_PRICE`), and the spells |
 | `content/progression.ts` | the curve: each area's band, next floor and price window, the xp and gold a clear should give, and what is owed; checked by `tools/tests/curve.ts` |
 | `content/rifts/` | the eight Rift templates and the four materials (ember, brine, black glass and slag, MONSTERS §2.1), `rift` for an area to place one by ids, and `RIFT_SAMPLES`, each template dressed once for the tests and the contact sheet (`--rifts`) |
 | `content/stones.ts` | the Wardstones a company may restore, each with its area and the condition it is restored on (or the issue that owes it); held to the atlas by `tools/tests/stones.ts`, read by `game/stones.ts` |
