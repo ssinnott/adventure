@@ -39,7 +39,7 @@ export const WRACKHOLM_F6: MapDef = {
     'hhhhhhhhhhh,rrrrrr,,,,,,,,,_~~WW',
     'hhhhhhhhhhhhrrrrrrr,,,,,,,,,_~~W',
     'hhhhhhhhhhhhrrrrrrrrr,,,,,,,_~~W',
-    'hhhhhhhhhhhhrrrrrrrrr,,,,,,,,_~~',
+    'hhhhhhhhhhhhrrrrr"""S,,,,,,,,_~~',
     'hhhhhhhhhhhhrrrrrrrrrr,,,,,,,_~~',
     'hhhhhhhhhhhhhrrrrrrrrr,,,,B,,_~~',
     'hhhhhhhhhhhhhrrrrrrrrr,,,,,,rr~~',
@@ -117,9 +117,17 @@ export const WRACKHOLM_F6: MapDef = {
     { kind: 'event', x: 6, y: 4, id: 'f6_north', once: true, text: 'North the heather thins to grass and the grass to the sea. Nothing past it but water and weather.' },
     { kind: 'event', x: 6, y: 18, id: 'f6_heather', once: true, text: 'Heather to the knee, and the rock standing out of it ahead, grey and seamed, gulls on its shoulders. The path keeps south.' },
     { kind: 'event', x: 22, y: 10, id: 'f6_rockfoot', once: true, text: 'The rock ends in a scree of its own pieces. East, grass runs down to a black point with one low roof on it, and smoke.' },
+    // The hollow in the rock's east face (#861), found and never told: a groove in the turf from the shore ends at
+    // the rock, and the door is in the face where it stops. Behind it a sea chest and an iron-bound one: the
+    // Runner's Coat in the first, Corposant in the second, which a Lockpick or an iron key opens. Off the quest, off
+    // the road round the rock's west foot, and no person, quest or mark names it.
+    { kind: 'event', x: 21, y: 10, id: 'f6_drag', once: true, text: 'A groove worn in the turf runs up from the shore, cask-wide, and stops at the rock.' },
+    { kind: 'event', x: 19, y: 10, id: 'f6_hollow', once: true, text: 'A dry hollow in the rock, a lamp-hook in its roof. Against the back wall a sea chest, and an iron-bound one.' },
+    { kind: 'chest', x: 18, y: 10, id: 'f6_hollow_chest', gold: 0, items: ['runners_coat'] },
+    { kind: 'chest', x: 17, y: 10, id: 'f6_hollow_locked', gold: 0, items: ['corposant'], locked: true },
     { kind: 'event', x: 17, y: 20, id: 'f6_cleft', once: true, text: 'A cleft opens in the rock\'s south face, a man wide. Peat smoke in it, and boot-marks in the wet, this morning\'s, going up.' },
   ],
-  secrets: [{ x: 28, y: 14, hint: 'f6_tally' }],
+  secrets: [{ x: 28, y: 14, hint: 'f6_tally' }, { x: 20, y: 10, hint: 'f6_drag' }],
   // The crew on the heather path nearest the way in; the gulls on the rocks' north face; the Hand at
   // the watch, the box's hardest; the rats at the stores on the east shore; the devilfish in the
   // pools under the cliff by night, at the far end. Each at the line's standard size.

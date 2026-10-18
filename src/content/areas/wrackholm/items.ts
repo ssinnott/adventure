@@ -3,7 +3,7 @@
 import type { ItemDef } from '../../../game/items.ts';
 import { P, core } from '../../items.ts';
 import { ITEMS as THORNMARK } from '../thornmark/items.ts';
-import { longAxe } from '../saltreach/items.ts';
+import { longAxe, morningStar, sharkskin } from '../saltreach/items.ts';
 import { marlinspike } from '../ashfall/items.ts';
 
 const plate = THORNMARK.find((i) => i.id === 'plate')!;
@@ -70,4 +70,13 @@ export const ITEMS: readonly ItemDef[] = [
     'The ticks stop a third of the way down the last page. The names go on.',
     'Halfway down the first page: Wenna, of Gullwick. Delivered below, by the deep mine.',
   ] },
+  // The hollow in the east rocks' face (#861), behind the door the drag-marks end at, and off the ladder: no GEAR row
+  // dresses a company in either, no shop sells either, and each is priced under the dearest find the curve holds
+  // Wrackholm to (Plate Mail +1, 1,350) inside its window of 2,500. The Morning Star of the ladder's 11, the plain, where
+  // the ladder wears the plus from 13 and the Flail from 14, with the sailors' cold flame on its head: its steel the
+  // ladder's, so the lightning die is the gain (hits 13.5 against 11 and 12). Locked, in the iron-banded chest.
+  { ...morningStar, id: 'corposant', name: 'Corposant, Morning Star', price: 1150, element: 'lightning' },
+  // The Sharkskin Coat of the ladder's 11 a point lighter in the armour, and cut to run in: +3 speed while worn, which
+  // the armour slot makes one coat at a time. In the plain chest beside the locked one.
+  { ...sharkskin, id: 'runners_coat', name: "Runner's Coat", price: 1250, ac: 8, stat: { speed: 3 } },
 ];

@@ -14,7 +14,11 @@
 // rows; down to the sea cave, the boy at the black pool and the beast at 14; and out by the flooded
 // passage, found by the tide-mark and not told, onto F6's east shore. Last, east over the moor into
 // F6 at 13: the hermit's tally, the door in the cairn on the point found by a search, the founder's
-// seal in the grave, and every group of F6 won at its floor. Then out to the Tide Ship by night in
+// seal in the grave; a detour to the hollow in the rock's east face (#861), found and never told, from the groove
+// in the turf that stops at the rock: the door found by a search, the Runner's Coat in the sea chest, and Corposant
+// in the iron-bound one, which the company's thief picks; and every group of F6 won at its floor. The finds
+// themselves (off the ladder, in no shop, inside the window) and the lock's refusals are held on their own
+// (`hollowFinds`, `hollowLocked`). Then out to the Tide Ship by night in
 // Dando's boat: the devilfish over the side; the rats and the Hand's post on the lower deck, and the
 // papers, the log and the cutlass in the cabin; the hold's crew, strangers in the last row while Hale
 // holds the Scarth and Hale once he is taken from it, freed and gone; the straw that is fresh on one
@@ -44,10 +48,16 @@ import type { PageView } from '../../../game/quests.ts';
 import type { Person, Meeting } from '../../../game/people.ts';
 import { take } from '../../../game/passage.ts';
 import { NORTH, EAST, SOUTH, WEST } from '../../../game/types.ts';
-import { MAP_DEFS, GUILD_QUESTS } from '../../index.ts';
+import { MAP_DEFS, GUILD_QUESTS, AREAS, ATLAS, MONSTERS } from '../../index.ts';
+import { CURVE } from '../../progression.ts';
 import { rankFlag, takenFlag, doneFlag } from '../../guilds.ts';
 import { take as takeWork, report, offered, rankOf } from '../../../game/guilds.ts';
+import { defaultParty, equip, statOf } from '../../../game/party.ts';
 import type { Party } from '../../../game/party.ts';
+import { makeRng } from '../../../lib/engine/rng.ts';
+import { elementMult } from '../../../game/monsters.ts';
+import { headlessGame } from '../../../../tools/tests/lib.ts';
+import { GEAR } from '../../../../tools/harness.ts';
 import { WRACKHOLM_E6 } from './maps/wrackholm_e6.ts';
 import { WRACKHOLM_F6 } from './maps/wrackholm_f6.ts';
 import { SMUGGLERS_COVE } from './maps/smugglers_cove.ts';
@@ -60,8 +70,8 @@ import { DEAD_DROP, VAULT_STAIR } from './maps/dead_drop.ts';
 import { DEAD_DROP2, WRITER_STAIR, HOIST } from './maps/dead_drop2.ts';
 import { DEAD_DROP3 } from './maps/dead_drop3.ts';
 import { GameMap } from '../../../game/map.ts';
-import type { Feature } from '../../../game/map.ts';
-import { item } from '../../../game/items.ts';
+import type { Feature, MapDef } from '../../../game/map.ts';
+import { item, hits, sellPrice } from '../../../game/items.ts';
 
 /** The clock on to the next hour given. */
 const clock = (w: Walk, hour: number): void => { const m = w.world.state.minutes; w.world.state.minutes = m - (m % 1440) + 1440 + hour * 60; };
@@ -251,10 +261,173 @@ function causewaySeen(ok: (cond: boolean, msg: string) => void): void {
     `once it is, a line on the sea under the Hearth's light from the shore and from the deck, each said once (${shore.join(' / ')}; ${deck.join(' / ')})`);
 }
 
+// ---- the hollow in the east rocks (#861) ----
+
+type Chest = Extract<Feature, { kind: 'chest' }>;
+type Happening = Extract<Feature, { kind: 'event' }>;
+/** F6's chest, or its event, by id. */
+const chestOf = (id: string): Chest => WRACKHOLM_F6.features!.find((f): f is Chest => f.kind === 'chest' && f.id === id)!;
+const eventOf = (id: string): Happening => WRACKHOLM_F6.features!.find((f): f is Happening => f.kind === 'event' && f.id === id)!;
+
+/**
+ * How far `q` lies from the squares on a shortest walk from `a` to `b` (every way a company can take between them,
+ * not one), by the way a company walks (a secret door as the floor it is) and as the crow flies (the larger of the
+ * two differences).
+ */
+function apartFrom(def: MapDef, a: readonly [number, number], b: readonly [number, number], q: readonly [number, number]): { steps: number; walking: number; crow: number } {
+  const map = new GameMap(def), { width, height } = map;
+  const floor = (x: number, y: number): boolean => x >= 0 && y >= 0 && x < width && y < height && map.passable(x, y) === 'ok';
+  const flood = (from: readonly (readonly [number, number])[]): Int32Array => {
+    const d = new Int32Array(width * height).fill(-1), todo: number[] = [];
+    for (const [x, y] of from) { d[y * width + x] = 0; todo.push(y * width + x); }
+    for (let i = 0; i < todo.length; i++) {
+      const x = todo[i] % width, y = Math.floor(todo[i] / width);
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        const nx = x + dx, ny = y + dy;
+        if (floor(nx, ny) && d[ny * width + nx] < 0) { d[ny * width + nx] = d[y * width + x] + 1; todo.push(ny * width + nx); }
+      }
+    }
+    return d;
+  };
+  const fromA = flood([a]), fromB = flood([b]), steps = fromA[b[1] * width + b[0]], road: [number, number][] = [];
+  for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) if (fromA[y * width + x] >= 0 && fromA[y * width + x] + fromB[y * width + x] === steps) road.push([x, y]);
+  return { steps, walking: flood(road)[q[1] * width + q[0]], crow: Math.min(...road.map(([x, y]) => Math.max(Math.abs(x - q[0]), Math.abs(y - q[1])))) };
+}
+
+/**
+ * The detour (#861), on from the founder's grave: the groove in the turf that ends at the rock's east face is
+ * seen, a search where it ends finds the door, and the company goes in. The sea chest gives the Runner's Coat; the
+ * iron-bound one is locked, and the company's thief picks it (the premade six's Ottilie is born to Lockpick, #857; what
+ * the lock refuses is played on a game of its own, `hollowLocked`). Corposant comes out of it.
+ */
+function theHollow(w: Walk): void {
+  const f6 = WRACKHOLM_F6, door = f6.secrets![1], drag = eventOf('f6_drag'), inside = eventOf('f6_hollow');
+  const sea = chestOf('f6_hollow_chest'), iron = chestOf('f6_hollow_locked');
+  const at = (c: { x: number; y: number }): boolean => { const o = w.world.locate(f6.id, c.x, c.y); return !!o && w.world.state.x === o.x && w.world.state.y === o.y; };
+  w.ok(door.hint === drag.id && drag.x === door.x + 1 && drag.y === door.y && f6.rows[door.y][door.x] === 'S' && f6.rows[door.y - 1][door.x] === 'r' && f6.rows[door.y + 1][door.x] === 'r',
+    'the hollow\'s door is the box\'s second secret, in the rock\'s east face between rock above and below, and the groove ends on its near side');
+  see(w, `${f6.id}:${drag.id}`);
+  w.ok(w.world.used(drag.id), 'the groove in the turf is seen where it ends at the rock');
+  w.world.travel(f6.id, drag.x, drag.y, WEST);
+  let found = false;
+  for (let i = 0; i < 20 && !found; i++) found = w.world.search();
+  w.ok(found, 'a search where the groove ends finds the door in the rock');
+  const in3 = [w.world.move('forward'), w.world.move('forward'), w.world.move('forward')];
+  w.ok(in3.every((r) => r.kind === 'moved') && w.world.used(inside.id) && at(sea), 'through the door the hollow runs on west: its first square, and the sea chest on the second');
+  w.world.markUsed(sea.id); w.party.gold += sea.gold; w.party.bag.push(...sea.items);
+  const coat = w.party.bag.includes('runners_coat');
+  w.world.move('forward');
+  w.ok(coat && at(iron), 'the sea chest gives the Runner\'s Coat, and the iron-bound chest stands at the back');
+  const gold = w.party.gold, keys = (): number => w.party.bag.filter((i) => i === 'key_iron').length, before = keys();
+  const said = w.world.unlock();
+  w.ok(said === 'Ottilie picks the lock.' && keys() === before, `the company's thief picks the iron-bound lock, born to Lockpick (${said || 'nothing'}), and no key is spent`);
+  w.world.markUsed(iron.id); w.party.gold += iron.gold; w.party.bag.push(...iron.items);
+  w.ok(w.party.bag.includes('corposant') && w.party.gold === gold && !iron.items.includes('key_iron'), 'and in it Corposant, no gold and no key');
+  listen(w);
+}
+
+/**
+ * The iron-bound chest on the real map (#861), pressed on in a game of its own with the company dressed each way: a
+ * company with neither a Lockpick nor an iron key is refused ("Locked.", twice) and the chest stays shut and full; a
+ * thief standing, born to Lockpick, opens it and keeps its key; a key opens it and is spent. The sea chest beside it
+ * has no lock and opens to the company that cannot open the other.
+ */
+function hollowLocked(ok: (cond: boolean, msg: string) => void): void {
+  const iron = chestOf('f6_hollow_locked'), sea = chestOf('f6_hollow_chest');
+  /** A new game, the company dressed by `dress`, stood on the chest and Space pressed twice: what the log said, and what became of the chest, the prize and the keys. */
+  const press = (c: Chest, dress: (p: Party) => void): string => {
+    const g = headlessGame(4), p = g.party;
+    dress(p);
+    g.world.travel(WRACKHOLM_F6.id, c.x, c.y, WEST);
+    const there = g.world.featureHere(), from = g.log.length;
+    g.enterCell();
+    if (there) { g.interact(there); g.interact(there); }
+    return `${g.log.slice(from).join(' ')} | ${g.world.used(c.id) ? 'spent' : 'shut'} | ${c.items.every((i) => p.bag.includes(i)) ? 'taken' : 'left'} | ${p.bag.filter((i) => i === 'key_iron').length} keys`;
+  };
+  const thiefDown = (p: Party): void => { p.members.find((m) => m.cls === 'thief')!.conditions.push('dead'); };
+  const key = (p: Party): void => { p.bag.push('key_iron'); };
+  const prize = 'You open the chest: Corposant, Morning Star. The chest is empty.';
+  const cases: [string, Chest, (p: Party) => void, string][] = [
+    ['no Lockpick standing and no key', iron, thiefDown, 'A locked chest. Locked. Locked. | shut | left | 0 keys'],
+    ['the thief standing, born to Lockpick, no key', iron, () => undefined, `A locked chest. Ottilie picks the lock. ${prize} | spent | taken | 0 keys`],
+    ['the thief standing and a key carried, which is kept', iron, key, `A locked chest. Ottilie picks the lock. ${prize} | spent | taken | 1 keys`],
+    ['no Lockpick standing and an iron key, which is spent', iron, (p) => { thiefDown(p); key(p); }, `A locked chest. The lock turns. The key crumbles. ${prize} | spent | taken | 0 keys`],
+    ['no Lockpick and no key, at the sea chest beside it', sea, thiefDown, 'A chest. Space opens it. You open the chest: Runner\'s Coat. The chest is empty. | spent | taken | 0 keys'],
+  ];
+  const wrong = cases.flatMap(([who, c, dress, want]) => { const said = press(c, dress); return said === want ? [] : [`${who}: "${said}", wanted "${want}"`]; });
+  ok(iron.locked === true && !sea.locked && !wrong.length,
+    `the iron-bound chest refuses a company with neither a Lockpick nor an iron key and opens to either, the sea chest beside it opening to any (${cases.map(([who]) => who).join('; ')})${wrong.length ? ' -> ' + wrong.join('; ') : ''}`);
+}
+
+/**
+ * The two finds (#861), off the ladder: Corposant is the ladder's Morning Star with lightning on its head, a rung under the
+ * Morning Star +1 it wears from 13 and the Flail from 14, so the die is the gain; the Runner's Coat is the Sharkskin Coat a
+ * point lighter, with +3 speed while worn. Each is priced above nothing and inside Wrackholm's window, sold by no shop and
+ * dropped by no monster, on no row of the ladder, sold back at half, and lies in the hollow's chests and nowhere else, the
+ * area's one locked chest holding the blade. Lightning is held against what the isle places. And the hollow is found and
+ * never told: the hint explains nothing, no person, quest or world-map mark names it, and it lies off the road, where the
+ * measure is named.
+ */
+function hollowFinds(ok: (cond: boolean, msg: string) => void): void {
+  const [blade, coat] = [item('corposant'), item('runners_coat')];
+  const [star, plus, flail, shark] = [item('morning_star'), item('morning_star+1'), item('flail'), item('sharkskin')];
+  const same = (a: unknown, b: unknown): boolean => JSON.stringify(a) === JSON.stringify(b);
+  ok(blade.slot === 'weapon' && blade.element === 'lightning' && !blade.stat && !blade.plus && blade.dice === star.dice && blade.sides === star.sides && blade.bonus === star.bonus && same(blade.classes, star.classes) && blade.name.length <= 26,
+    `Corposant is the Morning Star's steel with lightning on it, for the Morning Star's classes, its name ${blade.name.length} characters of the sheet's 26`);
+  ok(hits(blade) - hits(star) === 3.5 && hits(star) < hits(plus) && hits(blade) > hits(plus) && hits(blade) > hits(flail),
+    `a rung under the ladder's, so the die is the gain: hits ${hits(blade)} against the Morning Star +1 of 13 at ${hits(plus)} and the Flail of 14 at ${hits(flail)} (the plain Morning Star ${hits(star)})`);
+  ok(coat.slot === 'armor' && same(coat.stat, { speed: 3 }) && !coat.element && coat.ac === (shark.ac ?? 0) - 1 && same(coat.classes, shark.classes),
+    `the Runner's Coat is a point under the Sharkskin Coat's armour (${coat.ac} of ${shark.ac}), for its classes, raising speed by 3 and nothing else`);
+  // Priced, in the window, never sold, off the ladder, sold back at half.
+  const stocked = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => (f.kind === 'shop' ? f.stock : []))));
+  const ladder = new Set(GEAR.flatMap(([, ids]) => ids)), dropped = new Set(Object.values(MONSTERS).flatMap((m) => (m.drops ?? []).map((x) => x.item)));
+  const limit = CURVE.wrackholm.price, six = defaultParty(makeRng(1));
+  for (const d of [blade, coat]) {
+    ok(d.price > 0 && d.price <= limit && !stocked.has(d.id) && !ladder.has(d.id) && !dropped.has(d.id) && sellPrice(six, d.price) === d.price / 2,
+      `${d.name} costs ${d.price} of Wrackholm's window of ${limit}, is sold by no shop, worn by no rung of the ladder and dropped by no monster, and sells back at ${sellPrice(six, d.price)}`);
+  }
+  // Where they lie: the hollow's two chests, the iron-bound one the area's only locked chest.
+  const chests = MAP_DEFS.flatMap((d) => (d.features ?? []).filter((f): f is Chest => f.kind === 'chest').map((f) => ({ map: d.id, f })));
+  const holding = (id: string): string => chests.filter(({ f }) => f.items.includes(id)).map(({ map, f }) => `${map}:${f.id}`).join();
+  const locked = chests.filter(({ f }) => f.locked).map(({ map, f }) => `${map}:${f.id}`);
+  ok(holding('corposant') === 'wrackholm_f6:f6_hollow_locked' && holding('runners_coat') === 'wrackholm_f6:f6_hollow_chest' && locked.join() === 'wrackholm_f6:f6_hollow_locked'
+    && chestOf('f6_hollow_locked').gold === 0 && chestOf('f6_hollow_chest').gold === 0,
+    `Corposant lies in the iron-bound chest and the coat in the sea chest beside it, no gold with either, and the iron-bound chest is the only locked one placed (${locked.join() || 'none'})`);
+  // The raise and the blow, on the real items: worn, the coat adds 3 to speed and not to the bare stat, carried it adds nothing, and the classes that cannot wear it or wield the blade are refused.
+  const crew = defaultParty(makeRng(1)), thief = crew.members.find((m) => m.cls === 'thief')!, knight = crew.members.find((m) => m.cls === 'knight')!;
+  const bare = statOf(thief, 'speed');
+  thief.pack.push(coat.id);
+  const carried = statOf(thief, 'speed');
+  thief.pack.pop();
+  ok(equip(thief, coat.id) && carried === bare && statOf(thief, 'speed') === bare + 3 && thief.stats.speed === bare
+    && equip(knight, blade.id) && knight.equipment.weapon === blade.id && !equip(crew.members.find((m) => m.cls === 'sorcerer')!, blade.id) && !equip(crew.members.find((m) => m.cls === 'cleric')!, coat.id),
+    `worn, the coat raises the thief's speed ${bare} to ${statOf(thief, 'speed')} (carried, nothing) and the knight wields the blade; the sorcerer cannot wield it nor the cleric wear the coat`);
+  // Lightning against what the isle places: none of its monsters is immune or resists it; the weak are named.
+  const wrack = AREAS.find((a) => a.id === 'wrackholm')!;
+  const placed = [...new Set(wrack.maps.flatMap((m) => (m.encounters ?? []).flatMap((e) => e.monsters)))].map((id) => MONSTERS[id]).filter((m) => m.level > 10);
+  const weak = placed.filter((m) => elementMult(m, 'lightning') > 1), shut = placed.filter((m) => elementMult(m, 'lightning') < 1);
+  ok(placed.length >= 10 && !shut.length, `lightning is never nothing here: of the ${placed.length} monsters the isle places past 10, ${weak.length} are weak to it (${weak.map((m) => m.id).join(', ')}) and ${shut.length} immune or resistant`);
+  // Found and never told.
+  const drag = eventOf('f6_drag');
+  ok(!/door|secret|hollow|hide|chest|lock|key|search|store/i.test(drag.text), 'the groove in the turf is a thing seen, and its text explains nothing');
+  const quests = AREAS.flatMap((a) => [...(a.quests ?? []), ...(a.chapter ? [a.chapter] : [])]);
+  const told = [
+    ...quests.flatMap((q) => [q.title, ...q.entries.map((e) => e.text), ...q.goals.map((x) => x.text)]),
+    ...MAP_DEFS.flatMap((d) => (d.features ?? []).filter((f) => f.kind === 'npc').map((f) => JSON.stringify(f))),
+    ...ATLAS.sites.map((s) => s.name), ...ATLAS.places.flatMap((p) => [p.name ?? '', p.note ?? '']),
+  ].filter((t) => /Corposant|Runner's Coat|groove|iron-bound|hollow in the rock/i.test(t));
+  ok(!told.length, `found and never told: no person, quest, chapter or atlas place or site names the hollow, the blade or the coat (${told.length} do)`);
+  // Off the road: the squares on a shortest walk from the way into F6 (0,12) to the shingle where Dando rows out (14,30).
+  const far = apartFrom(WRACKHOLM_F6, [WRACKHOLM_F6.start.x, WRACKHOLM_F6.start.y], [14, 30], [drag.x, drag.y]);
+  ok(far.walking > 10, `the hollow is off the road: where the groove ends is ${far.walking} squares from the nearest square on a shortest walk across F6 (${far.steps} steps from the way in to the shingle) by the way a company walks, and ${far.crow} as the crow flies`);
+}
+
 export const walkthrough: Walkthrough = (ok) => {
   theStoneCarriedHome(ok);
   sideQuests(ok);
   causewaySeen(ok);
+  hollowFinds(ok);
+  hollowLocked(ok);
 
   const w = newWalk(ok);
   w.level = 12;
@@ -347,6 +520,9 @@ export const walkthrough: Walkthrough = (ok) => {
   }
   see(w, 'wrackholm_f6:f6_grave_seen');
   listen(w);
+
+  // A detour off the road (#861): the hollow in the rock's east face, found from the groove in the turf.
+  theHollow(w);
 
   for (const g of MAP_DEFS.find((d) => d.id === f6.id)!.encounters ?? []) fight(w, `${f6.id}:${g.id}`);
 
