@@ -317,6 +317,10 @@ step (#542): Cinderport's armourer by 25. Act V's, the last (#746): the Hand's s
 Hearth Isle and never sold. Each rung betters the last for every class, each find and ware inside its
 area's window; past the top, gear grows only in the harness's what-if.
 
+Nor does the gate's company hold a secondary skill (DESIGN.md §5): Arms Master's first round and
+the two senses go unmeasured, so a company that buys one is stronger than the gate measured it, the
+safe side. Decided by the owner's delegate for #18 (#856), the owner's to overturn.
+
 The gate, checked with the bot of `tools/gate.ts`. Each figure below is its **aim**, and each has a
 **limit** beyond it (#273): inside its aim a figure passes; between its aim and its limit it passes,
 and the check lists it as off its aim; past its limit it fails, and only then is it owed. The
@@ -678,8 +682,9 @@ docs/areas/<area>.md                    the area's brief, and what was built
 
 The skills that open the map come when there are shortcuts and secrets for them; none is needed to
 follow the road. Linguist, the Lanterns', is built (#538); so are Mountaineer and Swimmer (#805),
-the Wardens' at their Drillyard and the Cartographers' at their halls in Saltmouth and Cinderport.
-The other nine come as theirs do. Decided by the owner's delegate, 16 October 2026 (#805). Along the
+the Wardens' at their Drillyard and the Cartographers' at their halls in Saltmouth and Cinderport,
+and Perception, Spirit Sense, Danger Sense and Arms Master (#856), the Lanterns' and the Wardens'.
+The other five come as theirs do. Decided by the owner's delegate, 16 October 2026 (#805). Along the
 whole road the systems lane also owes the danger made legible (the band said on crossing, and in how
 a group is described), the log paging the one quest by chapter, hand-ins that take their item at the
 first meeting (§2.3) and a bot that plays as well as the party can (§5.2).

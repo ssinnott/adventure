@@ -177,8 +177,8 @@ the rest of the reach (§12).
 |---|---|---|
 | Human | Balanced | None yet: it was the fastest Standing gains, and Standing is gone (§8). |
 | Dwarf | STR, END | Resists poison; can read Kiln-script. |
-| Elf | INT, ACC | Innate Perception; Thornmark trusts them. |
-| Gnome | LCK, PER | Finds secrets a square earlier; cheaper training. |
+| Elf | INT, ACC | Born to Perception; Thornmark trusts them. |
+| Gnome | LCK, PER | Born to Perception, as the elf is. |
 | Tidefolk | SPD, END | Swim without the skill; Saltreach kin. |
 | Orcblood | STR, SPD | Cheap intimidation; distrusted in Helmstow. |
 
@@ -316,8 +316,23 @@ country, band 26 to 28.
   carried does its work (§9, Act III). Built with #805: Mountaineer and Swimmer, learnt as Linguist is,
   at the Wardens' Drillyard and at the Cartographers' halls in Saltmouth and Cinderport. A company
   with a Mountaineer standing climbs mountain and cliff; one with a Swimmer standing swims deep water.
-  No people is born to either: the Tidefolk swim by theirs. Linguist, Mountaineer and Swimmer built;
-  the other nine come as theirs do. Decided by the owner's delegate, 16 October 2026 (#805).
+  No people is born to either: the Tidefolk swim by theirs. Decided by the owner's delegate, 16
+  October 2026 (#805). Built with #856, so that each hall teaches the three its guild has built:
+  - *Perception* (the Lanterns'): a search finds a secret door surely, in the wall ahead or in the
+    wall past an open square ahead. The elves and the gnomes are born to it; Keen Eyes is the sure
+    find in the wall ahead alone, and anyone else finds it there one time in two.
+  - *Spirit Sense* (the Lanterns'): a group all of the dead within eight steps is marked on the
+    automap, through walls and dark.
+  - *Danger Sense* (the Wardens'): a roaming group aware of the company is marked on the automap,
+    though a hill or a wall hides it.
+  - *Arms Master* (the Wardens'): the company strikes first; in a fight's first round every standing
+    member acts before any monster (§6).
+
+  A people or a class may be born to a skill (`races`, `classes`), and a hall will not sell a member
+  a skill it is born to. Each works while a member who has it stands. A hall's "Learn a skill" asks
+  which skill, each with its price and what it does, then who would learn it, each member with the
+  price or why not; a person who teaches one asks only who. Seven built; the other five come as
+  theirs do.
 - **Weapon and magic tiers,** Novice, Expert and Master, a member's on two lines (`Character.tiers`,
   `game/mastery.ts`, #852): at arms, its skill with whatever weapon is in hand, and in magic, with its
   list. Fighters (Knight, Thief, Barbarian, Monk) take arms, casters (Cleric, Sorcerer, Druid) magic
@@ -405,6 +420,52 @@ Decided by the builder for #855, each the owner's to overturn:
     lightning and a tier to end by 334 px beside the items column (331 at 26, 337 at 27): the
     road's longest, Auke's Count, Short Sword +2, would not.
 
+The secondary skills of #856, Perception, Spirit Sense, Danger Sense and Arms Master:
+
+Decided by the owner's delegate for #18, each the owner's to overturn:
+
+1. A skill names the peoples and the classes born to it (`races`, `classes`). The elves and the
+   gnomes are born to Perception, and the gnome's cheaper training is struck: it finds secrets as
+   the elf does, by Perception.
+2. Perception is a sure find, in the wall ahead or the one past it; `World.search` asks for the
+   skill and names no people. Keen Eyes stays the sure find at one square.
+3. Spirit Sense marks a group all of the dead within eight squares, through walls and dark.
+4. Danger Sense marks a roaming group aware of the company (within its `aware`), though a hill or a
+   wall hides it.
+5. Arms Master: in the first round every standing member acts before any monster while an Arms
+   Master stands. No title repeats the skill: the tiers are Expert and Master at arms.
+6. The menu is skill-major and two-level: the hall's skills, then who learns.
+7. The gate's company holds no skill: a buyer is stronger than measured, the safe side (EXPANSION
+   §5.2).
+8. The pilot learns none, and sees what a sense marks, since `Known.groups` reads the automap's
+   marks; the explorer searches once a side as before.
+
+Decided by the builder for #856, each the owner's to overturn:
+
+1. Perception's second square is the wall past an open square ahead, neither solid nor a door: a
+   search sees no further than the eye, so a secret door behind a wall is not found.
+2. A sense, Perception and Arms Master work while a member who has them stands, as Keen Eyes and
+   the terrain skills do. No item does their work.
+3. Spirit Sense's eight are steps, counted as `aware` and the automap's two are; a group of the dead
+   and the living is not marked by it.
+4. Danger Sense reads `aware` as `moveMonsters` does (5 where a group gives none, now `AWARE`), and
+   marks a roaming group within it whether or not it comes on (a truce, an Archdruid's beasts).
+5. With an Arms Master standing, a monk of the second prestige still acts first of all: the company
+   before the monsters, the monk before the company.
+6. A person who teaches a skill opens on who would learn it, one level: they teach one.
+7. The words: "Which skill?" over a hall's skills, each row the name and the price with what it does
+   in the note; "Who would learn?" over the six, each row the name and the price or why not
+   ("known", "born to it", "not enough gold"). Every row is measured to fit the 200 px panel.
+8. The texts: "Finds hidden doors, even a square off.", "Senses the dead through walls.", "Senses
+   what hunts the company." and "The company strikes first."
+9. `RaceDef.perceptive` goes: Perception's `races` says who is born to it, in one place.
+10. The four rows follow Swimmer in `SKILLS`, so a hall lists its three and the sheet a member's in
+    that order (Linguist, Perception, Spirit Sense; Mountaineer, Danger Sense, Arms Master), not
+    §8's.
+11. The sheet's skills line wraps inside its left column, since a member of two guilds may hold six.
+12. The pilot's talk is unchanged: its way out leaves a hall's two levels and its skill rule a
+    person's. The skills test holds both.
+
 ---
 
 ## 6. Combat
@@ -412,7 +473,9 @@ Decided by the builder for #855, each the owner's to overturn:
 - **Trigger:** monsters move on the grid in real time relative to your steps (they advance one
   square per party step when aware). Combat begins when a group is adjacent or within ranged
   line.
-- **Turn order** by Speed, party and monsters interleaved. One action per character.
+- **Turn order** by Speed, party and monsters interleaved. One action per character. In a fight's
+  first round, while an Arms Master stands, every standing member acts before any monster (§5,
+  #856).
 - **Rows:** front three take and deal melee; back three need reach, ranged, or spells. Swap costs
   a turn.
 - **Encounter cap:** a single fight is at most 12 monsters in at most 3 groups. Bigger threats
@@ -635,7 +698,9 @@ ship lands there.
 - **Its quests pay gold, items and xp,** the xp split among the living as a fight's is.
 - **Its skills,** three to a guild, taught to members for a price (§5) once the skills are built
   (#18). The Lanterns' Linguist reads Kiln-script, so it matters from the Kilns on; it is the first
-  built (#538), and every hall of a guild teaches the guild's skills as each is built.
+  built (#538), and every hall of a guild teaches all its guild has built: the Lanterns' three and
+  the Wardens' three (#805, #856), the Cartographers' Swimmer, the Compact's none yet. "Learn a
+  skill" on the hall's first menu asks which skill, then who would learn it.
 - **Its line.** The Charters' storylines are the guilds' lines: the Lanterns' split at Lantern Watch
   (§9, Act II), the Compact's line with its ending kept (§10.2) and the Cartographers' Lost
   Expedition (§10.3). The Wardens' siege was named and never designed, and is cut (#739, call 10).

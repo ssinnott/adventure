@@ -20,7 +20,7 @@ import { castOnAlly } from '../game/combat.ts';
 import type { Character, Stat } from '../game/party.ts';
 import type { GuildId } from '../content/guilds.ts';
 import { rankOf, rankName, offered, inHand, report, take, guildName } from '../game/guilds.ts';
-import { taughtBy, mayLearn, skillOffers, skillLine, learn, askSkill, skillNames, LEAVE_SKILLS, STRANGER } from '../game/skills.ts';
+import { taughtBy, mayLearn, skillOffers, skillLine, skillRow, learn, askSkill, askWhich, skillNames, LEAVE_SKILLS, STRANGER } from '../game/skills.ts';
 import type { SkillId } from '../game/skills.ts';
 import { teachesExpert, expertOffers, masterOffers, favourDone, tierLine, teachTier, tierOf, askLine, askTier, noneHere, LINES, LINE_ROWS, LEAVE_TIERS, EXPERT_ENTRY, TIER_NAMES } from '../game/mastery.ts';
 import type { Line, Mastery } from '../game/mastery.ts';
@@ -297,8 +297,7 @@ export class SheetScreen implements Screen {
     const res = resists(c);
     if (res.length) { drawText(ctx, 'RESISTS ' + res.join(', ').toUpperCase(), 20, y, { size: 1, color: TEXT }); y += 10; }
     drawText(ctx, 'TRAITS ' + CLASSES[c.cls].traits.map((t) => TRAITS[t].name).join(', '), 20, y, { size: 1, color: TEXT }); y += 10;
-    const skills = skillNames(c);
-    if (skills.length) { drawText(ctx, 'SKILLS ' + skills.join(', '), 20, y, { size: 1, color: TEXT }); y += 10; }
+    for (const l of skillsLines(c)) { drawText(ctx, l, 20, y, { size: 1, color: TEXT }); y += 10; }
     if (c.spells.length) { drawText(ctx, spellsLine(c), 20, y, { size: 1, color: TEXT }); }
     // Items column
     const items = this.items(g);
@@ -404,6 +403,11 @@ export interface BusinessEntry { label: string; open: () => Screen }
 
 /** What each kind of business trades in, as its first menu names it (the pilot's quartermaster picks it there, #719). */
 export const TRADE: Record<Exclude<Business['kind'], 'npc'>, string> = { inn: 'A room and rations', temple: 'The chapel', shop: 'Buy and sell', guild: 'Study spells', trainer: 'Train' };
+/** The sheet's left column, from its edge to the items: what a line there may run to. */
+export const SHEET_COL_W = 312;
+/** The sheet's lines for a member's skills, learnt or born to: none, or as many as the column needs. */
+export const skillsLines = (c: Character): string[] => { const s = skillNames(c); return s.length ? wrap('SKILLS ' + s.join(', '), SHEET_COL_W) : []; };
+
 /** A hall's first menu's line for its guild's skills. */
 const LEARN = 'Learn a skill';
 
@@ -495,19 +499,34 @@ function guildOffers(g: Game, id: GuildId, hallName: string): Screen {
 }
 
 /**
- * A guild's skills, at one of its halls or from a person who teaches one (game/skills.ts): each member
- * with each skill, its price or why not, and what it does in the note; chosen, it is taught and the
- * menu comes again. A company that is not of the guild is told so.
+ * A guild's skills at one of its halls (game/skills.ts), skill-major (#856): the hall's skills, each
+ * with its price and what it does in the note; chosen, who would learn it (`learnerMenu`). Leave goes
+ * back a level: to the skills, then to the hall's first menu. A company not of the guild is told so.
  */
 export function skillMenu(g: Game, ids: readonly SkillId[], title: string): Screen {
   if (!ids.every((id) => mayLearn(id, g.party))) return new MessageScreen(STRANGER, undefined, title);
-  const list = skillOffers(ids, g.party);
+  // The words are made when drawn: the menu waits under the members' while the gold is spent.
+  return new ChoiceScreen(() => askWhich(g.party), [...ids.map(skillRow), LEAVE_SKILLS], (i) => {
+    const id = ids[i];
+    if (!id) return;
+    g.push(skillMenu(g, ids, title));
+    g.push(learnerMenu(g, id, title));
+  }, title);
+}
+
+/**
+ * Who would learn a skill: each member with its price or why not; chosen, it is taught and the menu
+ * comes again. A person who teaches one opens here, as a hall's second level does.
+ */
+export function learnerMenu(g: Game, id: SkillId, title: string): Screen {
+  if (!mayLearn(id, g.party)) return new MessageScreen(STRANGER, undefined, title);
+  const list = skillOffers(id, g.party);
   return new ChoiceScreen(askSkill(g.party), [...list.map((o) => skillLine(o, g.party)), LEAVE_SKILLS], (i) => {
     const o = list[i];
     if (!o) return;
     const { line } = learn(o.skill, g.party, o.who);
     if (line) g.say(line);
-    g.push(skillMenu(g, ids, title));
+    g.push(learnerMenu(g, id, title));
   }, title, [...list.map((o) => !!o.bar), false]);
 }
 

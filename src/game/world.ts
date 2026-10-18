@@ -22,6 +22,7 @@ import { pace, denLooks, densOf } from './dens.ts';
 import { stonesRestored, endingOf, hearthWord } from './stones.ts';
 import type { Hearth } from './stones.ts';
 import { signLine, signSays } from './inscriptions.ts';
+import { hasSkill } from './skills.ts';
 
 export { MINUTES_PER_DAY };
 export const START_MINUTES = 7 * 60;
@@ -703,7 +704,7 @@ export class World {
     const { x: px, y: py } = this.state, archdruid = this.archdruidLevel();
     for (const g of this.liveGroups()) {
       if (g.def.roams === false || this.standsAside(g.def)) continue;
-      const aware = g.def.aware ?? 5;
+      const aware = g.def.aware ?? AWARE;
       const d = manhattan(g.state.x, g.state.y, px, py);
       if (d > aware || d <= 1 || (archdruid > 0 && this.beastsUnder(g.def, archdruid))) continue;
       const dx = px - g.state.x, dy = py - g.state.y;
@@ -836,14 +837,20 @@ export class World {
   used(id: string): boolean { return !!this.mapState.used[id]; }
   markUsed(id: string): void { this.mapState.used[id] = 1; }
 
-  /** Search the cell ahead for a secret door. Returns true if one was found. */
+  /**
+   * Search the wall ahead for a secret door. Returns true if one was found. With a member standing who
+   * has Perception (game/skills.ts; the elves and the gnomes are born to it) the find is sure, and in
+   * the wall past an open square ahead too; Keen Eyes is the sure find in the wall ahead alone; else
+   * it is found one time in two (#856).
+   */
   search(): boolean {
-    const a = this.map.ahead(this.state.x, this.state.y, this.state.facing);
-    const c = this.map.at(a.x, a.y);
-    if (c.door !== 'secret') return false;
-    const perceptive = this.party.members.some((m) => !isDown(m) && (m.race === 'elf' || m.race === 'gnome' || hasTrait(m, 'keen_eyes')));
-    if (perceptive || this.rng.chance(0.5)) { c.door = 'door'; this.mapState.doors[`${a.x},${a.y}`] = 'door'; return true; }
-    return false;
+    const { x, y, facing } = this.state, up = this.party.members.filter((m) => !isDown(m));
+    const perception = up.some((m) => hasSkill(m, 'perception'));
+    const found = (at: { x: number; y: number }): boolean => { this.map.at(at.x, at.y).door = 'door'; this.mapState.doors[`${at.x},${at.y}`] = 'door'; return true; };
+    const a = this.map.ahead(x, y, facing), c = this.map.at(a.x, a.y);
+    if (c.door === 'secret') return perception || up.some((m) => hasTrait(m, 'keen_eyes')) || this.rng.chance(0.5) ? found(a) : false;
+    const b = this.map.ahead(x, y, facing, 2);
+    return perception && c.solid === 'none' && c.door === 'none' && this.map.at(b.x, b.y).door === 'secret' ? found(b) : false;
   }
 
   /** Eight hours of rest. Returns false if there is no food. */
@@ -855,6 +862,9 @@ export class World {
     return true;
   }
 }
+
+/** Cells within which a group notices the party where its def gives none (`EncounterDef.aware`). */
+export const AWARE = 5;
 
 /** How the land feels to a company one or two levels under its floor, and three or more (`crossing`). */
 const HARDER = 'The land here is harder than the road behind.';

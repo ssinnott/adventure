@@ -21,8 +21,6 @@ export interface RaceDef {
   mods: Partial<Stats>;
   /** Innate terrain skill. */
   swim?: boolean;
-  /** Finds secrets a cell earlier; cheaper training. */
-  perceptive?: boolean;
   resist?: readonly Condition[];
   blurb: string;
 }
@@ -81,8 +79,8 @@ export const TRAITS: Record<TraitId, TraitDef> = {
 export const RACES: Record<RaceId, RaceDef> = {
   human:    { id: 'human', name: 'Human', mods: {}, blurb: 'Balanced.' },
   dwarf:    { id: 'dwarf', name: 'Dwarf', mods: { might: 2, endurance: 3, speed: -1, personality: -1 }, resist: ['poisoned'], blurb: 'Hardy. Resists poison. Reads Kiln-script.' },
-  elf:      { id: 'elf', name: 'Elf', mods: { intellect: 3, accuracy: 2, might: -2, endurance: -1 }, perceptive: true, blurb: 'Keen. Innate perception.' },
-  gnome:    { id: 'gnome', name: 'Gnome', mods: { luck: 3, personality: 1, might: -2 }, perceptive: true, blurb: 'Lucky. Finds secrets sooner.' },
+  elf:      { id: 'elf', name: 'Elf', mods: { intellect: 3, accuracy: 2, might: -2, endurance: -1 }, blurb: 'Keen. Innate perception.' },
+  gnome:    { id: 'gnome', name: 'Gnome', mods: { luck: 3, personality: 1, might: -2 }, blurb: 'Lucky. Finds secrets sooner.' },
   tidefolk: { id: 'tidefolk', name: 'Tidefolk', mods: { speed: 2, endurance: 2, intellect: -1, luck: -1 }, swim: true, blurb: 'Swims without the skill.' },
   orcblood: { id: 'orcblood', name: 'Orcblood', mods: { might: 3, speed: 1, intellect: -2, personality: -2 }, blurb: 'Strong. Distrusted in Helmstow.' },
 };

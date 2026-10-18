@@ -1932,7 +1932,7 @@ Decided by delegate for #538, each the owner's to overturn:
 7. **Reading never opens the road:** it sets no flag and changes no door, and the check refuses a
    way whose `shut` names a reading.
 8. **Linguist is a list on the member, `skills`,** absent in an old save and read as none, so no
-   save bump; the dwarves are born to it (the skill's `race`), so the sheet lists it for a dwarf too.
+   save bump; the dwarves are born to it (the skill's `races`), so the sheet lists it for a dwarf too.
 9. **A guild's halls teach its skills to its members** (DESIGN §5 and §8, "taught to its members"):
    every business with `hall: 'lanterns'` offers "Learn a skill", Rime Lodge's too once #487 builds
    it (built since: #487), and a stranger to the guild hears *"We teach our own."*

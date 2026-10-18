@@ -4471,8 +4471,12 @@
     "unconscious"
   ],
   "skills": [
+    "arms_master",
+    "danger_sense",
     "linguist",
     "mountaineer",
+    "perception",
+    "spirit_sense",
     "swimmer"
   ],
   "tiers": [

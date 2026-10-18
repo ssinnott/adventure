@@ -2,6 +2,9 @@
 // log. Layout for the 640x360 canvas is fixed here in LAYOUT so every screen agrees on it.
 import { drawText } from '../lib/engine/text.ts';
 import type { World, LiveGroup } from '../game/world.ts';
+import { AWARE } from '../game/world.ts';
+import { hasSkill, SPIRIT_REACH } from '../game/skills.ts';
+import { monster } from '../game/monsters.ts';
 import type { Feature } from '../game/map.ts';
 import type { Party, Character } from '../game/party.ts';
 import { worstCondition, isDown, CLASSES, xpForLevel } from '../game/party.ts';
@@ -159,7 +162,7 @@ export function drawAutomap(ctx: CanvasRenderingContext2D, world: World, frame: 
   }
   // An exit not there yet (`after`, #749) is no exit on the map either.
   for (const e of m.exits) if (shown(e.x, e.y) && world.there(e)) { ctx.fillStyle = GREEN; ctx.fillRect(ox + e.x * cell + 1, oy + e.y * cell + 1, Math.max(1, cell - 2), Math.max(1, cell - 2)); }
-  // Monsters in view, or seen and near.
+  // Monsters in view, or seen and near, and what a sense marks (`markedGroups`).
   for (const g of markedGroups(world)) {
     if (!within(g.state.x, g.state.y)) continue;
     ctx.fillStyle = (frame >> 4) & 1 ? RED : '#ff8a7a';
@@ -218,11 +221,23 @@ import { armorClass as armorClassOf } from '../game/party.ts';
 /** Whether the automap marks a feature: not an event, and not a person who is not there now. */
 export const onAutomap = (world: Pick<World, 'present'>, f: Feature): boolean => f.kind !== 'event' && world.present(f);
 
-/** The live groups the automap marks: in view, or on a seen square within two steps of the party; none a hill hides (#53). */
+/**
+ * The live groups the automap marks: in view, or on a seen square within two steps of the party; none
+ * a hill hides (#53). A member standing who has a sense (game/skills.ts; #856) marks more, through
+ * walls, hills and dark: with Spirit Sense, a group all of the dead within `SPIRIT_REACH` steps; with
+ * Danger Sense, a roaming group aware of the company, within its `aware` (as `moveMonsters` reads it).
+ */
 export function markedGroups(world: World): LiveGroup[] {
   const m = world.map, { x, y, facing } = world.state;
   const inView = new Set(viewCells(m, x, y, facing, world.sight).map((c) => c.y * m.width + c.x));
-  return world.liveGroups().filter(({ state: s }) => inView.has(s.y * m.width + s.x) || (world.explored(s.x, s.y) && Math.abs(s.x - x) + Math.abs(s.y - y) <= 2 && !world.hidden(s.x, s.y)));
+  const up = world.party.members.filter((c) => !isDown(c));
+  const spirit = up.some((c) => hasSkill(c, 'spirit_sense')), danger = up.some((c) => hasSkill(c, 'danger_sense'));
+  return world.liveGroups().filter(({ def, state: s }) => {
+    const d = Math.abs(s.x - x) + Math.abs(s.y - y);
+    return inView.has(s.y * m.width + s.x) || (world.explored(s.x, s.y) && d <= 2 && !world.hidden(s.x, s.y))
+      || (spirit && d <= SPIRIT_REACH && def.monsters.every((id) => monster(id).kind === 'dead'))
+      || (danger && def.roams !== false && d <= (def.aware ?? AWARE));
+  });
 }
 
 /** How many lines the log shows. */
