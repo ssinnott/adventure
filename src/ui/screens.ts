@@ -19,7 +19,7 @@ import { CLASSES, RACES, TRAITS, STATS, armorClass, attackBonus, equip, heal, li
 import { castOnAlly } from '../game/combat.ts';
 import type { Character, Stat } from '../game/party.ts';
 import type { GuildId } from '../content/guilds.ts';
-import { rankOf, rankName, offered, inHand, report, take, guildName } from '../game/guilds.ts';
+import { rankOf, rankName, offered, inHand, report, take, guildName, guildShortName } from '../game/guilds.ts';
 import { taughtBy, mayLearn, skillOffers, skillLine, skillRow, learn, askSkill, askWhich, skillNames, LEAVE_SKILLS, STRANGER } from '../game/skills.ts';
 import type { SkillId } from '../game/skills.ts';
 import { teachesExpert, expertOffers, masterOffers, favourDone, tierLine, teachTier, tierOf, askLine, askTier, noneHere, LINES, LINE_ROWS, LEAVE_TIERS, EXPERT_ENTRY, TIER_NAMES } from '../game/mastery.ts';
@@ -425,7 +425,7 @@ export function businessEntries(g: Game, f: Business): BusinessEntry[] {
   const out: BusinessEntry[] = [f.kind === 'npc' ? { label: 'The talk of the room', open: () => g.talkScreen(f) } : { label: TRADE[f.kind], open: () => trade(g, f) }];
   // A town's trainer from Saltmouth's on teaches Expert at arms and in magic (game/mastery.ts), by its ceiling.
   if (f.kind === 'trainer' && teachesExpert(f.maxLevel)) out.push({ label: EXPERT_ENTRY, open: () => tierMenu(g, f.name) });
-  if (f.hall) { const hall = f.hall; out.push({ label: `Work for ${guildName(hall)}`, open: () => guildWork(g, hall, f.name) }); }
+  if (f.hall) { const hall = f.hall; out.push({ label: `Work for ${guildShortName(hall)}`, open: () => guildWork(g, hall, f.name) }); }
   // A hall teaches its guild's skills (game/skills.ts), once a skill of theirs is built.
   const taught = f.hall ? taughtBy(f.hall) : [];
   if (taught.length) out.push({ label: LEARN, open: () => skillMenu(g, taught, f.name) });
