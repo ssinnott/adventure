@@ -185,7 +185,7 @@ const OPEN_ON_NOTHING: readonly OnNothing[] = [
   { edge: 'monksvale_j12 east', open: '0-15', why: 'K12 is unbuilt: #832 builds it' },
   // Ashfall.
   { edge: 'emberwaste_f11 south', open: '4-31', why: 'F12 is unbuilt: #836 builds it' },
-  { edge: 'emberwaste_e11 south', open: '12-13', why: 'E12 is the world\'s end, the void and the rim\'s mountain, where #828 plans no box' },
+  { edge: 'emberwaste_e11 south', open: '12-13', why: 'E12 is the world\'s end, the void and a mountain, where #828 plans no box' },
   { edge: 'emberwaste_e11 west', open: '0-10', why: 'D11 is the Glass, the reach, shut until Phase 1.6' },
   { edge: 'firemount_g12 west', open: '0-10', why: 'F12 is unbuilt: #836 builds it' },
   // The Glasswold.
