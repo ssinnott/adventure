@@ -1,9 +1,14 @@
 // An item past a plus (#855): a stat it raises while it is borne (`statOf`) and an element its blows
 // carry (an added die), held on fixtures, since no item of the content carries either yet; and what a
 // shop pays for an item (`sellPrice`). The content is held to the shape only, so the areas may add.
-import { ITEMS, MAP_DEFS, MONSTERS } from '../../src/content/index.ts';
+// And the bounds' artifacts (#847): their mark, their shape, where each is found, their powers as any
+// item's, the shop that will not take one and the sheet's line for each.
+import { ITEMS, MAP_DEFS, MONSTERS, AREAS } from '../../src/content/index.ts';
 import type { Feature } from '../../src/game/map.ts';
-import { hits, sellPrice, ELEMENT_DIE } from '../../src/game/items.ts';
+import { hits, sellPrice, ELEMENT_DIE, ARTIFACT_RAISE, REFUSED } from '../../src/game/items.ts';
+import { ARTIFACT_PRICE } from '../../src/content/items.ts';
+import { giftOf } from '../../src/game/wilds.ts';
+import { personGives } from '../../src/game/people.ts';
 import type { ItemDef } from '../../src/game/items.ts';
 import { defaultParty, equip, armorClass, attackBonus, spellHeal, statOf, itemsChanged, STATS } from '../../src/game/party.ts';
 import type { Party, Stat } from '../../src/game/party.ts';
@@ -16,10 +21,11 @@ import type { MonsterDef } from '../../src/game/monsters.ts';
 import { TIER_NAMES } from '../../src/game/mastery.ts';
 import type { Tier } from '../../src/game/mastery.ts';
 import { serialize, deserialize } from '../../src/game/save.ts';
-import { statText, weaponLine, describe, businessEntries } from '../../src/ui/screens.ts';
+import { statText, weaponLine, describe, businessEntries, artifactLines, power, SHEET_COL_W } from '../../src/ui/screens.ts';
+import type { ChoiceScreen } from '../../src/ui/screens.ts';
 import { FONT_CHARS, measureText } from '../../src/lib/engine/text.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
-import { ok, headlessGame, drive } from './lib.ts';
+import { ok, owed, headlessGame, drive } from './lib.ts';
 
 /** The stats a fight reads; endurance, intellect and luck have no live effect (DESIGN §5). */
 const LIVE: readonly Stat[] = ['might', 'accuracy', 'speed', 'personality'];
@@ -46,7 +52,28 @@ const SHIELD: ItemDef = { id: 'test_quick_shield', name: 'Quick Shield', slot: '
 const TRUE: ItemDef = { ...PLAIN, id: 'test_true_blade', name: 'True Blade', stat: { accuracy: 3 } };
 /** A slotless charm of each stat a fight reads, borne from the pack. */
 const CHARMS = Object.fromEntries(LIVE.map((s) => [s, { id: `test_${s}_charm`, name: 'Charm', slot: 'none', price: 0, stat: { [s]: 3 } } satisfies ItemDef])) as Record<Stat, ItemDef>;
-const FIXTURES = [COAT, TWIN, PLAIN, STORM, BRAND, SHIELD, TRUE, ...Object.values(CHARMS)];
+/**
+ * The bounds' artifacts built so far (DESIGN §9, #847): each with its area, whose items define it, the
+ * Hand's piece whose numbers it betters by a point, and who may bear it. The second half of #847 adds
+ * the other five, with the three kinds of power not yet built.
+ */
+const BUILT: Readonly<Record<string, { area: string; hand: string; classes: readonly string[] }>> = {
+  telstok: { area: 'saltreach', hand: 'grey_staff', classes: ['cleric', 'sorcerer', 'druid', 'monk'] },
+  erzhemd: { area: 'kilns', hand: 'grey_mail', classes: ['knight', 'paladin', 'ranger', 'thief', 'barbarian', 'bard', 'druid'] },
+  akkush: { area: 'glasswold', hand: 'grey_bow', classes: ['ranger'] },
+};
+/**
+ * The artifacts no lair holds yet, each its area's issue's, which lays the lair and places it: reported
+ * as that issue's while it waits and failed once it is placed, so its entry is dropped. The table only
+ * shrinks, as maps.ts's UNPLACED does: an artifact comes into it only as it is defined.
+ */
+const UNPLACED: Readonly<Record<string, string>> = { telstok: '#830', erzhemd: '#831', akkush: '#833' };
+/** The content's artifacts, and each one's twin without the mark: what the mark alone changes. */
+const ARTS = Object.values(ITEMS).filter((d) => d.artifact);
+const TWINS = Object.fromEntries(ARTS.map((d) => [d.id, { ...d, id: `test_${d.id}_twin`, artifact: undefined } satisfies ItemDef])) as Record<string, ItemDef>;
+/** The Telstok's twin with no element: what the element alone adds to a blow. */
+const BARE_STAFF: ItemDef = { ...ITEMS.telstok, id: 'test_bare_staff', artifact: undefined, element: undefined };
+const FIXTURES = [COAT, TWIN, PLAIN, STORM, BRAND, SHIELD, TRUE, ...Object.values(CHARMS), ...Object.values(TWINS), BARE_STAFF];
 
 /** A sturdy target that every blow can reach, and its kin that lightning does nothing to, half to and half again to; and one that mends. */
 const target = (id: string, more: Partial<MonsterDef> = {}): MonsterDef => ({ ...MONSTERS.bandit, id, name: 'Target', plural: 'Targets', hp: 999, ac: -10, ...more });
@@ -92,6 +119,7 @@ export function items(): void {
     blows();
     shown();
     sold();
+    artifacts();
   } finally {
     for (const d of FIXTURES) delete ITEMS[d.id];
     itemsChanged();
@@ -250,4 +278,98 @@ function sold(): void {
   const coat = sell(COAT.id), coatGone = !p.bag.includes(COAT.id), blade = sell(PLAIN.id);
   ok(coat === sellPrice(p, COAT.price) && coat === 20 && coatGone && blade === 0 && p.bag.includes(PLAIN.id),
     `${shop.name} pays ${coat} for the coat of ${COAT.price} and takes it; a blade priced at nothing it will not buy (${blade})`);
+}
+
+/** What is wrong with an artifact (DESIGN §9): not one power of a kind built, a raise past the bound, a plus, a resistance, a skill or a use, no words of two lines, or another price. */
+function artifactFaults(d: ItemDef): string[] {
+  const out: string[] = [], raises = Object.values(d.stat ?? {}), powers = raises.length + (d.element ? 1 : 0);
+  if (powers !== 1) out.push(`${d.id}: ${powers} powers`);
+  for (const n of raises) if (n < 1 || n > ARTIFACT_RAISE) out.push(`${d.id}: a raise of ${n}, not 1 to ${ARTIFACT_RAISE}`);
+  for (const k of ['plus', 'resist', 'skill', 'use'] as const) if (d[k] !== undefined) out.push(`${d.id}: a ${k}`);
+  if (d.text?.length !== 2) out.push(`${d.id}: not two lines of words`);
+  if (d.price !== ARTIFACT_PRICE) out.push(`${d.id}: at ${d.price}, not ${ARTIFACT_PRICE}`);
+  return out;
+}
+
+/** Where an item lies in the world: each chest, gift or person's hand that gives it, and each monster that drops it. */
+const placesOf = (id: string): string[] => [
+  ...MAP_DEFS.flatMap((m) => (m.features ?? []).filter((f) => [...(giftOf(f)?.items ?? []), ...(f.kind === 'npc' ? personGives(f) : [])].includes(id)).map((f) => `${m.id} ${f.kind} ${f.x},${f.y}`)),
+  ...Object.values(MONSTERS).filter((m) => (m.drops ?? []).some((x) => x.item === id)).map((m) => `${m.id}'s drop`),
+];
+
+/** The bounds' artifacts (#847): of the shape, one in the world, sold nowhere, their powers as any item's, refused by a shop and said on the sheet. */
+function artifacts(): void {
+  const want = Object.keys(BUILT).sort().join(), have = ARTS.map((d) => d.id).sort().join();
+  ok(have === want, `the artifacts in the item tables are DESIGN §9's built so far, ${want} (${have})`);
+  const caught = (d: ItemDef, want: string): void => { const got = artifactFaults(d).join('; '); ok(got === want, `the artifact's check catches ${want} (${got || 'nothing'})`); };
+  const tel = ITEMS.telstok, erz = ITEMS.erzhemd, akk = ITEMS.akkush;
+  caught({ ...erz, element: 'fire' }, 'erzhemd: 2 powers');
+  caught({ ...erz, stat: { speed: ARTIFACT_RAISE + 1 } }, `erzhemd: a raise of ${ARTIFACT_RAISE + 1}, not 1 to ${ARTIFACT_RAISE}`);
+  caught({ ...tel, resist: ['cold'] }, 'telstok: a resist');
+  caught({ ...akk, price: 6900 }, `akkush: at 6900, not ${ARTIFACT_PRICE}`);
+  const stocked = new Set(MAP_DEFS.flatMap((m) => (m.features ?? []).flatMap((f) => (f.kind === 'shop' ? f.stock : []))));
+  for (const d of ARTS) {
+    const b = BUILT[d.id], h = b ? ITEMS[b.hand] : undefined, bad = artifactFaults(d);
+    const homed = !!b && !!AREAS.find((a) => a.id === b.area)?.items.some((x) => x.id === d.id);
+    const point = !h ? 0 : d.slot === 'weapon' ? (d.bonus ?? 0) - (h.bonus ?? 0) : (d.ac ?? 0) - (h.ac ?? 0);
+    const like = !!h && d.slot === h.slot && d.dice === h.dice && d.sides === h.sides && !!d.twoHanded === !!h.twoHanded && !!d.ranged === !!h.ranged && d.kind === h.kind;
+    ok(homed && !bad.length && point === 1 && like && (d.classes ?? []).join() === b.classes.join(),
+      `${d.name}: an artifact in ${b?.area}'s items, one power (${power(d)}), the ${h?.name}'s numbers and a point, for the ${b?.classes.join(', ')}${bad.length ? ' -> ' + bad.join('; ') : ''}`);
+    ok(!stocked.has(d.id), `${d.name}: no shop sells it`);
+    const at = placesOf(d.id), once = at.length === 1 && !at[0].endsWith('drop');
+    const msg = `${d.name} is one in the world, in one chest, gift or person's hand and no drop${at.length ? ` (${at.join(', ')})` : ''}`;
+    if (Object.hasOwn(UNPLACED, d.id)) owed(once, msg, UNPLACED[d.id]); else ok(once, msg);
+  }
+  const stale = Object.keys(UNPLACED).filter((id) => !ITEMS[id]?.artifact);
+  ok(!stale.length, `every artifact waiting for its lair is one${stale.length ? ' -> ' + stale.join(', ') : ''}`);
+
+  // Each kind works for an artifact as for a found item: its twin without the mark does just the same.
+  const p = defaultParty(makeRng(1)), [bram, , wren] = p.members;
+  bram.equipment.armor = null;
+  const own = bram.stats.speed, bare = armorClass(bram);
+  equip(bram, erz.id); const worn = armorClass(bram), quick = statOf(bram, 'speed');
+  equip(bram, TWINS.erzhemd.id); const twinAc = armorClass(bram), twinQuick = statOf(bram, 'speed');
+  ok(quick === own + 5 && worn >= bare + (erz.ac ?? 0) && worn === twinAc && quick === twinQuick,
+    `the Erzhemd worn raises speed by 5 (${own} -> ${quick}) and gives AC ${worn} where bare is ${bare}, as its twin without the mark does (${twinQuick}, ${twinAc})`);
+  const hit0 = attackBonus(wren), aim0 = statOf(wren, 'accuracy');
+  equip(wren, akk.id); const hit = attackBonus(wren), aim = statOf(wren, 'accuracy');
+  equip(wren, TWINS.akkush.id); const twinHit = attackBonus(wren);
+  ok(aim === aim0 + 5 && hit === twinHit && hits(akk) === hits(TWINS.akkush),
+    `Akkush in Wren's hands raises accuracy by 5 (${aim0} -> ${aim}) and her to-hit to +${hit} (+${hit0} with her own bow), as its twin's does (+${twinHit})`);
+  const hold = (w: ItemDef) => (q: Party): void => { q.members[0].equipment.shield = null; q.members[0].equipment.weapon = w.id; };
+  const struck = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((n) => [strike(n, NEUTRAL, hold(tel)).dmg, strike(n, NEUTRAL, hold(TWINS.telstok)).dmg, strike(n, NEUTRAL, hold(BARE_STAFF)).dmg]).filter(([, , b]) => b > 0);
+  ok(struck.length >= 6 && struck.every(([a, t, b]) => a === t && a - b >= 1 && a - b <= ELEMENT_DIE),
+    `the Telstok's blow that lands adds a d${ELEMENT_DIE} of holy to the steel, as its twin's does (${struck.map(([a, , b]) => a - b).join(' ')})`);
+  const g0 = headlessGame(4), m0 = g0.party.members[0], mine = { ...m0.stats };
+  equip(m0, erz.id);
+  const back = deserialize(serialize(g0.world.state, g0.party, 0)).party.members[0];
+  ok(JSON.stringify(back.stats) === JSON.stringify(mine) && back.equipment.armor === erz.id && statOf(back, 'speed') === mine.speed + 5,
+    `a save holds the Erzhemd worn and the stats as the member's own (speed ${back.stats.speed}, ${statOf(back, 'speed')} in it)`);
+
+  // No shop takes one: offered at Mottram's, it shows no price and is refused, and the company keeps it;
+  // its twin without the mark is bought at half its price.
+  const g = headlessGame(4), shop = MAP_DEFS.find((d) => d.id === 'harrow')!.features!.find((f): f is Extract<Feature, { kind: 'shop' }> => f.kind === 'shop')!;
+  const offer = (id: string): { paid: number; kept: boolean; said: string; row: string } => {
+    while (g.screens.length > 1) g.pop();
+    g.party.bag = [id];
+    g.push(businessEntries(g, shop)[0].open());
+    drive(g, ['down', 'interact']);
+    const row = (g.top as ChoiceScreen).options[0], gold = g.party.gold;
+    drive(g, ['interact']);
+    return { paid: g.party.gold - gold, kept: g.party.bag.includes(id), said: g.log.at(-1) ?? '', row };
+  };
+  const art = offer(tel.id), twin = offer(TWINS.telstok.id);
+  ok(art.paid === 0 && art.kept && art.said === REFUSED && !art.row.includes('\t') && twin.paid === sellPrice(g.party, tel.price) && twin.paid > 0 && !twin.kept,
+    `${shop.name} will not take the Telstok, shown with no price: ${art.said} Its twin without the mark it buys for ${twin.paid}`);
+
+  // The sheet says each artifact borne and its power, a line each; none for one in the pack and not
+  // worn, or for a twin without the mark; in the font's glyphs and inside the sheet's column.
+  const q = defaultParty(makeRng(1)), [b2, , w2, , m2] = q.members;
+  equip(w2, akk.id); equip(w2, erz.id); equip(m2, tel.id);
+  b2.pack.push(erz.id); equip(b2, TWINS.erzhemd.id);
+  const said = [...artifactLines(w2), ...artifactLines(m2)], lines = ARTS.map((d) => `ARTIFACT ${d.name}, ${power(d)}`);
+  const glyphs = (t: string): boolean => [...t.toUpperCase()].every((ch) => ch === ' ' || FONT_CHARS.includes(ch));
+  ok(said.join(' / ') === 'ARTIFACT Akkush, ACCURACY +5 / ARTIFACT The Erzhemd, SPEED +5 / ARTIFACT The Telstok, HOLY BLOWS' && !artifactLines(b2).length,
+    `the sheet says each artifact borne and its power, a line each: ${said.join(' / ')}; none for one in the pack or a twin without the mark`);
+  ok(lines.every(glyphs) && lines.every((l) => measureText(l) <= SHEET_COL_W), `every artifact's line is in the font's glyphs and inside the sheet's ${SHEET_COL_W} px column (the widest ${Math.max(...lines.map((l) => measureText(l)))})`);
 }

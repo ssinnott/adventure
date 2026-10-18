@@ -17,6 +17,7 @@ import type { AreaCurve } from '../../src/content/progression.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { MapDef, Feature, EncounterDef, Choice } from '../../src/game/map.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
+import type { ItemDef } from '../../src/game/items.ts';
 import type { QuestDef } from '../../src/game/quests.ts';
 import type { GuildQuest } from '../../src/game/guilds.ts';
 import { guildName } from '../../src/game/guilds.ts';
@@ -350,15 +351,22 @@ export function leadFault(id: string, left: number, next: number, named?: { leve
 export const nearTop = (floor: number, top: number): number => (floor < MAX_LEVEL ? Math.max(floor + 1, top - 2) : top - 2);
 
 /**
+ * Whether a find is held to a price window: a weapon, armour or shield with a price, and no artifact.
+ * An artifact is past the ladder's top and no window holds it, by its mark alone (`ItemDef.artifact`,
+ * #847), never by its price; keys, quest items and consumables are exempt as ever.
+ */
+export const windowed = (d: ItemDef): boolean => d.slot !== 'none' && d.price > 0 && !d.artifact;
+
+/**
  * The price window: no weapon, armour or shield in a clear's chests or its monsters' drops dearer
- * than `price`, the monsters of every group, whichever twin a company meets. Keys, quest items and
- * consumables are exempt.
+ * than `price`, the monsters of every group, whichever twin a company meets. Keys, quest items,
+ * consumables and an artifact are exempt (`windowed`).
  */
 function priceWindow(who: string, { every, features }: Clear, price: number): void {
   const found = [
     ...features.flatMap((f) => (giftOf(f)?.items ?? []).map((it) => ({ it, from: `${f.kind} ${spentId(f)}` }))),
     ...[...new Set(every)].flatMap((m) => (m.drops ?? []).map((x) => ({ it: x.item, from: `${m.id}'s drop` }))),
-  ].filter(({ it }) => ITEMS[it].slot !== 'none' && ITEMS[it].price > 0);
+  ].filter(({ it }) => windowed(ITEMS[it]));
   const dearer = found.filter((x) => ITEMS[x.it].price > price);
   for (const x of dearer) ok(false, `${who}: ${x.it} (${ITEMS[x.it].price} gold, ${x.from}) is dearer than its window's ${price}`);
   const dearest = found.reduce((p, x) => (ITEMS[x.it].price > ITEMS[p.it].price ? x : p), found[0]);
@@ -461,6 +469,12 @@ export function curve(): void {
     ok(price === CURVE.hearth.price && ITEMS.grey_axe.price > row.price,
       `its window is the cap's country's, the Hearth's ${price}, where its find, the Grey Axe at ${ITEMS.grey_axe.price}, is dearer than Saltreach's ${row.price}`);
     priceWindow(LAIR.id, lair, price);
+    // No window holds an artifact, by its mark alone (#847): each, dearer than the widest window, is
+    // passed in a lair at the cap as anywhere, and the same piece unmarked would be held, and caught.
+    const arts = Object.values(ITEMS).filter((d) => d.artifact), widest = Math.max(...Object.values(CURVE).map((r) => r.price));
+    const names = arts.map((d) => d.name.replace(/^The /, 'the ')), named = names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names.at(-1)}` : names.join('');
+    ok(arts.length > 0 && arts.every((d) => !windowed(d) && windowed({ ...d, artifact: undefined }) && d.price > widest),
+      `no window holds an artifact, by its mark alone: ${named}, at ${fmt(Math.min(...arts.map((d) => d.price)))} gold or more past the widest window's ${fmt(widest)}, the lair's, pass it, and each would be caught unmarked`);
     ok(true, `${LAIR.id}: as an enclave its ${fmt(lair.xp)} xp a member and ${fmt(lair.gold)} gold are a figure, counted in no clear`);
     const faults = (d: MapDef, outside = salt.outside ?? []): number => enclaveFaults({ id: FIXTURE.area, maps: [...salt.maps, d], outside }, [...MAP_DEFS, d]).length;
     ok(!faults(LAIR) && faults({ ...LAIR, band: undefined }) === 1 && faults({ ...LAIR, band: [11, 13] }) === 1 && faults(LAIR, [LAIR.id]) === 1
