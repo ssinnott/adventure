@@ -752,12 +752,12 @@ over content broken on purpose too, and two tools to theirs:
   listed at the end of the suite as off its aim, and only past its limit does it fail or go into
   `OWED`. A den's keepers are its camp's hardest fight, won no more often than any of its brood; its
   brood's number and pace are printed. An enclave (#845) is judged alone at its own floor and two
-  under it by the day, out of its area's pools and day (`gateMaps`).
+  under it by the day from 10, out of its area's pools and day (`gateMaps`).
 - `enclave` (#845): the fixture lair, an artifact lair at 30–32 beside Saltreach on the Stair's
   ground and groups, which the gate, the curve, the quests, the pillars and the pilot hold in their
   own suites; here its door: crossing in, the log says its name and band and, under its floor, how it
-  feels, harder or a warning, and its sign gives its band; nothing more from a level of the same
-  enclave.
+  feels, harder or a warning, and its sign gives its band; from a level of an enclave, the line only
+  where the floor rises.
 - `density` (§5.3): nine squares in ten within seven steps of something to find (eight in the core
   outdoors, twelve in the country, as `MapDef.density` marks it), none too far and no more than
   one point in four a sign.
@@ -775,8 +775,9 @@ over content broken on purpose too, and two tools to theirs:
   reading among them; no text past three lines of the log, nor a square's texts that can show
   together (day and night, or `until` and `after` the same thing, never do) past the log's four, an
   inscription's words, reading and mark said together; no monster's look past two, no crossing's
-  landing line or seller's warning past three, every glyph in the font, British spelling, a
-  crossing's name and words among them; each `Area.novel` holds; water and roads carry on into the
+  landing line, seller's warning or enclave's door line at its longest past three (#845), every
+  glyph in the font, British spelling, a crossing's name and words and an enclave's two feelings
+  among them; each `Area.novel` holds; water and roads carry on into the
   atlas; story locks (`content/locks.ts`) signed in, none between areas and every hand-in taking its
   item at the first meeting.
 - `people` (§2.3): every hand-in takes its item at the first meeting; Vask, Hale and Sylvane
@@ -794,7 +795,8 @@ over content broken on purpose too, and two tools to theirs:
   goal on; a person who takes an item stands at the step's place; and nothing a person says is
   written into a chapter already done. Early, the goal comes from no chapter past the last begun,
   each end is said once and the log ends with the entries of the order played. The quests suite
-  holds every zone on the road of the built areas to a step of the quest; the Deepthorn's is owed
+  holds every zone on the road of the built areas to a step of the quest, and fails a step placed in
+  an enclave, which holds no zone (`enclaveSteps`, `heldZones`, #845); the Deepthorn's is owed
   to #49.
 - `shipped` (§5.5): nothing in `content/shipped.json` goes or moves without a `SAVE_VERSION` bump
   and its upgrade; `node tools/shipped.ts` records what is new.

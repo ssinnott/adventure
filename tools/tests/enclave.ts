@@ -52,8 +52,9 @@ export function enclave(): void {
   ok(near.said.join('|') === `${DOWN}|${band} ${HARDER_IN}` && at.said.join('|') === `${DOWN}|${band}` && over.said.join('|') === `${DOWN}|${band}`,
     `two under its floor it says harder, and at its floor or over its band alone (${near.said[1]}; ${at.said[1]}; ${over.said[1]})`);
   ok(low.w.here.name === LAIR.name && low.w.here.band?.join('-') === '30-32', `inside, its sign gives its own band (${low.w.here.name}, ${low.w.here.band?.join('-')})`);
-  // Nothing more from a level of an enclave whose floor is at or over this one's, nor into a map that
-  // is no enclave; from one whose floor is under it, the door speaks, as a border does where the floor rises.
+  // Nothing more from a level of an enclave whose floor is at or over this one's, nor into a map
+  // that is no enclave; from one whose floor is under it, the door speaks, as a border does where
+  // the floor rises.
   const deeper = enter(12, LAIR, { ...hollow, band: [30, 32], enclave: true }), plain = enter(12, { ...LAIR, enclave: undefined });
   const up = enter(12, { ...LAIR, band: [28, 30] }, { ...hollow, band: [30, 32], enclave: true });
   ok(deeper.said.join('|') === DOWN && up.said.join('|') === DOWN && plain.said.join('|') === DOWN,

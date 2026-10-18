@@ -1,7 +1,7 @@
 // The quest log: every key names something real, every goal is placed, every zone on the road of
-// the built areas holds a step and no enclave does (#845), every journal is shown whole, nothing vanishes when an item leaves,
-// the one quest is paged by chapter and reads true out of order, and the quests walk through end to
-// end, each change announced once.
+// the built areas holds a step and no enclave does (#845), every journal is shown whole, nothing
+// vanishes when an item leaves, the one quest is paged by chapter and reads true out of order, and
+// the quests walk through end to end, each change announced once.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { AREAS, ATLAS, MAP_DEFS, ITEMS, QUESTS, THE_QUEST, GUILD_QUESTS } from '../../src/content/index.ts';

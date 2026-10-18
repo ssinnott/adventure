@@ -282,11 +282,11 @@ box's: a band or two for an enclave, the cap's, 30–32, for an artifact lair (t
 leaves its pay and its finds out of its area: no clear counts its xp or gold, which the curve prints
 as a figure; its monsters sit in its own band, rising from its door; and its chests and drops sit in
 the window of the last area on the road whose floor is at or under its own, the Hearth's for a lair.
-The gate judges it at its own floor and two under it by the day, its guardian's odds at its floor
-and two above (named in `BOSSES` under its box's zone), and leaves it out of its area's pools and
-day; no zone's road walks it, for a road walks its zone's own maps. No step of the quest lies in it
-(§5.8). Its door says its band and how it feels to the company, as a border does (DESIGN.md §9), and
-the pilot keeps out of one whose floor is over its company. A fixture lair at 30–32 beside
+The gate judges it at its own floor and two under it by the day from 10, its guardian's odds at its
+floor and two above (named in `BOSSES` under its box's zone), and leaves it out of its area's pools
+and day; no zone's road walks it, for a road walks its zone's own maps. No step of the quest lies in
+it (§5.8). Its door says its band and how it feels to the company, as a border does (DESIGN.md §9),
+and the pilot keeps out of one whose floor is over its company. A fixture lair at 30–32 beside
 Saltreach, a band-10 area, holds these rules before any area places one (`tools/tests/enclave.ts`):
 on the Stair's ground and groups, it is won 95.2% at 30, its guardian 57% at 30 and 80% at 32, and it
 fights 10.71 to a rest at 30 and 8.49 at 28, 74% of the floor's day; Saltreach's clear, band, pools
@@ -301,17 +301,21 @@ Decided by the builder for #845, each the owner's to overturn:
    onto no box fails the curve (`enclaveFaults`); leaving the area's figures is only fair for a place
    past its box.
 3. **Its window is the last road area's whose floor is at or under its own**, as a map outside the
-   budget has it: the Hearth's 7,000 for a lair at the cap.
+   budget has it: the Hearth's 7,000 for a lair at the cap. No window holds an artifact, so #847
+   must exempt one from the curve's window by its mark.
 4. **Two under is asked of it alone, by the day from 10**, as of a map outside the budget, and its
    guardian is a boss in `BOSSES` under its box's zone, as a dungeon's boss is; the fixture's figures
    off their aim are said with it and kept out of the gate's list, which is the content's.
 5. **The door's line is the game's**, one entry after the way's own: "<name>: levels 30-32.", then
    harder one or two under its floor and the warning three or more under, in an enclave's words, not a
-   zone's. None from another level of the same enclave. Held to the log's three lines at its longest
-   (pillars). An area's own words can come when one asks for them.
+   zone's. None from a level of an enclave whose floor is at or over its own, for a border speaks
+   where the floor rises. Held to the log's three lines at its longest (pillars). An area's own words
+   can come when one asks for them.
 6. **The pilot learns an enclave's band at its door**, once a way in is seen (`Known.enclave`), and
    keeps out under its floor with no grace, where a zone allows a level: the navigator has no way in,
-   the strategist chooses no walk there, and a goal inside sends it levelling to the floor.
+   the strategist chooses no walk there, and a goal inside sends it levelling to the floor. Only the
+   way in is shut: the way up from a deeper level stays open, so a pilot handed the helm inside is
+   never stranded.
 7. **The secret's pace and the novelty check are left as they are**: each places a map by its floor
    (`roadPlace`), so a lair at the cap stands with the Hearth in both.
 8. **The fixture is the Stair's ground and groups at 30–32 off C3**, a chest with the Grey Axe in it
