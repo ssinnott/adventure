@@ -1543,6 +1543,14 @@ Decided by the builder for #862, each the owner's to overturn:
     the Watcher's tally, which does go into Carn Dubh, runs north through the door at 11,3 and ends at his cell;
     no `FULLRUN=all` run was made.
 
+Decided by the owner's delegate for #892, each the owner's to overturn:
+
+1. **`cairnfield_m8`'s crag group stands as two ravens and two tor trolls** (EXPANSION §5.2 has the
+   passes): the only mix of the fourteen #865 tried inside both aims, 7.60 to a rest at the floor and
+   64.9% two under. The 23.3% of the floor's days ended by a fight broken off at fifteen rounds is
+   the harness's figure, printed and not judged (#734): the company wins every fight there and the
+   trolls mend.
+
 
 ## 10. Names
 
