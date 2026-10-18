@@ -52,10 +52,15 @@ export function enclave(): void {
   ok(near.said.join('|') === `${DOWN}|${band} ${HARDER_IN}` && at.said.join('|') === `${DOWN}|${band}` && over.said.join('|') === `${DOWN}|${band}`,
     `two under its floor it says harder, and at its floor or over its band alone (${near.said[1]}; ${at.said[1]}; ${over.said[1]})`);
   ok(low.w.here.name === LAIR.name && low.w.here.band?.join('-') === '30-32', `inside, its sign gives its own band (${low.w.here.name}, ${low.w.here.band?.join('-')})`);
-  // Nothing more from another level of the same enclave, nor into a map that is no enclave.
+  // Nothing more from a level of an enclave whose floor is at or over this one's, nor into a map that
+  // is no enclave; from one whose floor is under it, the door speaks, as a border does where the floor rises.
   const deeper = enter(12, LAIR, { ...hollow, band: [30, 32], enclave: true }), plain = enter(12, { ...LAIR, enclave: undefined });
-  ok(deeper.said.join('|') === DOWN && plain.said.join('|') === DOWN,
-    `from a level of an enclave, or into a map that is no enclave, only the way's own line is said (${deeper.said.join(' | ')}; ${plain.said.join(' | ')})`);
+  const up = enter(12, { ...LAIR, band: [28, 30] }, { ...hollow, band: [30, 32], enclave: true });
+  ok(deeper.said.join('|') === DOWN && up.said.join('|') === DOWN && plain.said.join('|') === DOWN,
+    `from a level of an enclave at or over its floor, or into a map that is no enclave, only the way's own line is said (${deeper.said.join(' | ')}; ${up.said.join(' | ')}; ${plain.said.join(' | ')})`);
+  const hall = enter(14, LAIR, { ...hollow, name: 'Fixture Hall', band: [14, 16], enclave: true });
+  ok(hall.said.join('|') === `${DOWN}|${band} ${WARNING_IN}`,
+    `from an enclave at 14-16 into the lair at 30-32, a company at 14 hears its band and the warning (${hall.said.join(' | ')})`);
   ok(enclaveLine(LAIR, 27) === `${band} ${WARNING_IN}` && enclaveLine({ ...LAIR, band: undefined }, 12) === undefined && enclaveLine(hollow, 12) === undefined,
     'an enclave with no band, or a map that is none, has no door line');
 }

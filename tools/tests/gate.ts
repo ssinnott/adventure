@@ -3,9 +3,9 @@
 // every group of a map alone from full health; each map is held to its sign's band; each area pools
 // its groups each at its own map's floor; each zone walks its road and warns at its way in. An
 // enclave (#845) is held to its own band, out of its area's pools and day and every zone's road; the
-// fixture lair beside Saltreach shows it before any area places one. Every margin is printed, each figure against its aim and its limit: off its aim it is listed, past
-// its limit it fails. A figure past its limit the owners below are owed is reported, not failed,
-// until it holds.
+// fixture lair beside Saltreach shows it before any area places one. Every margin is printed, each
+// figure against its aim and its limit: off its aim it is listed, past its limit it fails. A figure
+// past its limit the owners below are owed is reported, not failed, until it holds.
 import { AREAS } from '../../src/content/index.ts';
 import type { RegionId } from '../../src/content/index.ts';
 import type { Area } from '../../src/content/area.ts';

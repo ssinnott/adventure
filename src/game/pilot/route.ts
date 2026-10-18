@@ -132,12 +132,15 @@ export interface Edge { exit: Exit; crossing?: string }
 /**
  * A map's ways out as the navigator knows them: the exits Known gives, then the crossings told on it
  * whose fare, as its menu showed it, the gold over the reserve pays (`spare`, #721), each from its
- * seller's square to where it lands. No exit into an enclave whose floor, as its door says it, is
- * over the company's level (#845): the band rule keeps the pilot out, whatever its goal.
+ * seller's square to where it lands. No way in to an enclave whose floor, as its door says it, is
+ * over the company's level and over the map's own (#845): the band rule keeps the pilot out, whatever
+ * its goal, and leaves the way up from a deeper level open, so a pilot handed the helm inside is never
+ * stranded.
  */
 export function edges(k: Known, map: string): Edge[] {
   const cash = spare(k.party), told = k.offers().filter((o) => o.map === map && o.fare <= cash);
-  const open = (to: string): boolean => (k.enclave(to)?.[0] ?? 0) <= companyLevel(k.party);
+  const floor = Math.max(companyLevel(k.party), k.enclave(map)?.[0] ?? 0);
+  const open = (to: string): boolean => (k.enclave(to)?.[0] ?? 0) <= floor;
   return [...k.exits(map).filter((e) => open(e.to)).map((exit) => ({ exit })), ...told.map((o) => ({ exit: { x: o.x, y: o.y, to: o.to, tx: o.tx, ty: o.ty }, crossing: o.name }))];
 }
 
