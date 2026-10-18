@@ -96,7 +96,7 @@ names do (the Levin Mace, the Runner's Coat); none explains it.
 | Holdfast | Wrackholm | the sailors' English | the root by which kelp holds to its rock |
 | the Erzhemd | the Kilns | the dwarves': *erz* ore, *hemd* shirt | a shirt of ore |
 | Torhide | Cairnmoor | the moor's English, as its finds' names are | a tor troll's hide |
-| the Wakerobe | Rimewater, with the Whitespine | the monks' English, kept, as the Whitespine's names are | a robe for waking |
+| the Wakerobe | Rimewater, with the Whitespine | the monks' English, as the Whitespine's names are, and not the hill folk's Gaelic of Rimewater's finds (Bogha Fionn, Luireach Dubh): the robe and its keeper are the monks', and its door is on Monks' Vale's part of K12 | a robe for waking |
 | Akkush | the Glasswold | the Riders': *ak* white, *kush* bird | the white bird, a name a Rider gives a bow |
 | Grim's Axe | Ashfall | the coast's English | whose it was, as Grimsforge is named |
 

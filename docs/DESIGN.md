@@ -1187,7 +1187,9 @@ eight. #847 builds the three not yet built and holds every bound here as a named
 1. **A stat raised while borne** (`ItemDef.stat`, built, #855): one of the four stats a fight reads
    (might, accuracy, speed, personality: §5), by 5 at most, where the found items raise by 3. Borne
    as `borne` has it, worn where the piece has a slot and in the bearer's own pack where it has
-   none; a save holds no raise.
+   none; a save holds no raise. Raises add, as `statOf` sums them, but two pieces of one slot are
+   never worn together, so none stacks today: the Runner's Coat takes the Erzhemd's slot and the
+   Talon Knife Akkush's.
 2. **An element its blows carry** (`ItemDef.element`, built, #855): a weapon's alone, an added 1d6
    of the element on each blow that lands (`ELEMENT_DIE`, §6), as the found weapons have it.
 3. **A spell cast from it so many times a day** (new): one spell of the tables (§7) and one to
@@ -1196,14 +1198,15 @@ eight. #847 builds the three not yet built and holds every bound here as a named
    spell points and spends a charge; it rolls at the bearer's level held at 10, unranked, with no
    tier, trait or song added. The charges come back whole when the clock passes dawn, slept or not,
    and the save keeps those spent. The spell is of a list the bearer's class cannot cast, so the
-   artifact's classes leave out every class that casts from that list; and it is none of the spells
-   that make the world bigger (Light, Wizard Eye, Town Portal, Walk on Water, Waymark, Levitate).
+   artifact's classes leave out every class that casts from that list; and it is no spell whose
+   `context` is `'explore'`, the spells that make the world bigger: the druid's Foxfire and Hawk's
+   Eye as much as §7's six (Light, Wizard Eye, Town Portal, Walk on Water, Waymark, Levitate).
 4. **Regeneration** (new): while it is borne, the bearer mends a tenth of their most hit points,
    rounded down and at least 1, each time the clock passes a whole hour, never past the most; a
    passage of hours (a rest, a crossing) mends a tenth for each hour. That is a tenth for about ten
    steps outdoors, or thirty in a town or below. The rate is the trolls' tenth (MONSTERS §3.3),
    paid by the hour and never in a fight, whose rounds pass no clock; and as a felled troll stays
-   down, it never mends the unconscious or the dead. Nothing is saved.
+   down, it never mends the down (unconscious, dead or stoned: `isDown`). Nothing is saved.
 5. **A ward against one condition** (new): while it is borne, the bearer never takes it, as a
    trait's immunity works (`immune`, `src/game/party.ts`): one of asleep, poisoned, diseased,
    paralysed, cursed or stoned, never unconscious or dead. It keeps the condition off and lifts none
@@ -1244,7 +1247,7 @@ the knight's and the sorcerer's share the stone and nothing else.
 **Their words and their rumours.** The two lines are each piece's own words, read from the pack
 (its `text`, as the Old Lantern's Staff has); STORY.md has them too. Each rumour is two lines, words
 only, said by a person of the artifact's own area at a meeting after their first, as F11's hermit
-says the Master of magic's (docs/areas/ashfall.md §6): no flag, no quest, no line in the journal,
+says the Master of magic's (docs/areas/ashfall.md §6): no flag, no quest, no line in the journal
 and nothing marked on the world map. It hints at the thing and never names where it lies.
 
 - **The Hagstone.** *A stone off the strand, a hole the sea wore through it and a cord gone green. /
@@ -1256,9 +1259,9 @@ and nothing marked on the world map. It hints at the thing and never names where
   temples there was a priest who sang and never counted. When her staff struck the floor, the dead
   lay down. / The water came up over her mound, and she sang it in.*
 - **Holdfast.** *A smuggler's knife, its haft wound with kelp that has not rotted. / Wet, the weed
-  on it moves.* The hermit on the east rocks (F6): *One ship I counted in and never out. Her master
-  had a knife the weed obeyed: cut a line with it and the kelp held her fast. / Old Nick had ship,
-  master and knife. Nick gives nothing back.*
+  on it moves.* Merryn, the hermit on the east rocks (F6): *One ship I counted in and never out.
+  Her master had a knife the weed obeyed: cut a line with it and the kelp held her fast. / Old Nick
+  had ship, master and knife. Nick gives nothing back.*
 - **The Erzhemd.** *A shirt of mail in rings darker than iron, and no heavier than wool. / Inside the
   collar a smith's mark is cut, and a knocker's eye beside it.* The oldest miner at Anvilhall:
   *Brandt made a shirt of the ore the knockers bring up. So light, he said, his feet forgot it. / He
@@ -1268,10 +1271,11 @@ and nothing marked on the world map. It hints at the thing and never names where
   troll's hide. Cut it how you liked, by morning it had closed. / He took it up to the tops when he
   was old, and the tops kept him.*
 - **The Wakerobe.** *A grey robe made for someone taller and thinner, the sleeves past your fingers.
-  / Whoever wore it last walked out of the ice in it, and did not lie down again.* The healer at Rime
-  Lodge: *One came up through the ice in a grey robe too long in the arm. He would not lie on my
-  cot, nor sleep, nor say where he had been. / The third night he walked out into the snow. It was
-  not his robe, I think.*
+  / Whoever wore it last walked out of the ice in it, and did not lie down again.* The lodge-keeper
+  in from the ice at Rime Lodge, who takes in whoever comes up through the hole: *One came up
+  through the ice in a grey robe too long in the arm. He would not take a blanket, nor sleep, nor
+  say where he had been. / The third night he walked out into the snow. It was not his robe, I
+  think.*
 - **Akkush.** *A Rider's bow of white horn and sinew, its grip worn to one hand. / Bound under the
   grip is a feather longer than your arm.* The eldest at Akordu: *My grandmother's brother made a
   bow of white horn that never missed. He loosed it once, at the bird that takes our foals. / The
@@ -1305,10 +1309,14 @@ Decided by the builder for #846, each the owner's to overturn:
    melee by might; accuracy on the bow, the Riders' drill.
 6. **The castings:** Grasping Roots three a day, a hold a group may tear free of; Meteor Swarm two,
    fire on every foe.
-7. **A spell from an artifact** rolls unranked at the level held at 10, costs a charge and no spell
-   points, and is never one of the spells that make the world bigger, which carry a company.
-8. **Regeneration by the clock's hour:** the trolls' tenth paid by the hour, not by the round; a
-   bearer who is down mends nothing.
+7. **A spell from an artifact** rolls unranked at the level held at 10 and costs a charge, not spell
+   points. It is never a spell whose `context` is `'explore'`: those make the world bigger and carry
+   a company, the druid's Foxfire and Hawk's Eye as much as the sorcerer's six.
+8. **Regeneration by the clock's hour,** departing from the direction's "a tick": read literally, a
+   tick is a step, and a tenth a step would mend a bearer whole in ten steps outdoors, so no wound
+   would outlast the walk to the next fight. The hour keeps the late game asking and ties mending to
+   the clock (pillar 4): the trolls' tenth, paid by the hour and not by the round. A bearer who is
+   down (unconscious, dead or stoned) mends nothing.
 9. **A ward keeps a condition off** and lifts none already taken, so a cure keeps its work.
 10. **The element is holy,** the drowned god's: half again on the dead and nothing on a machine, so
     the Core and the Buried Tower ask different things of its bearer.
@@ -1328,6 +1336,10 @@ Decided by the builder for #846, each the owner's to overturn:
 15. **The monk** may wear the Wakerobe and give up Unarmoured Defence for the ward; the stone's ward
     is one Stillness gives it already, so the staff and the robe are the monk's.
 16. **The lairs' names,** squares and other groups are each lair's brief's.
+
+A ward gives nothing to a class that has it already (the stone's to the monk, whose Stillness keeps
+paralysis off, and the robe's to the sorcerer, whose Iron Will keeps sleep off): the lists say who
+may bear an artifact, not who gains most by it.
 
 ---
 

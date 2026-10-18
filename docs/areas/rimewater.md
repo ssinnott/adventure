@@ -1440,10 +1440,12 @@ in the journal and no mark on the world map. #832 builds the lair, its door and 
 
 - **What it is:** *A grey robe made for someone taller and thinner, the sleeves past your fingers. /
   Whoever wore it last walked out of the ice in it, and did not lie down again.*
-- **The rumour:** the healer at Rime Lodge (§3), two lines more at a meeting after her first, words
-  only: *One came up through the ice in a grey robe too long in the arm. He would not lie on my cot,
-  nor sleep, nor say where he had been. / The third night he walked out into the snow. It was not
-  his robe, I think.* It marks nothing on the world map.
+- **The rumour:** the lodge-keeper in from the ice at Rime Lodge (9,5, §4.3), whose first words are
+  of whoever comes up through the hole (*Whoever comes up, we take in. A blanket, the fire, soup.
+  Most of them cannot say from where.*), two lines more at a meeting after her first, words only:
+  *One came up through the ice in a grey robe too long in the arm. He would not take a blanket, nor
+  sleep, nor say where he had been. / The third night he walked out into the snow. It was not his
+  robe, I think.* It marks nothing on the world map.
 - **Slot and bearers:** armour, a robe: the cleric, the sorcerer, the druid and the monk. A robe of
   armour 14 is not robe-like (`robeLike`, `src/game/party.ts`), so a monk who wears it gives up
   Unarmoured Defence for the ward.

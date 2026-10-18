@@ -1969,7 +1969,8 @@ its own (EXPANSION.md §5.6); eight of them are Meridian Camp's and the Dead-Dro
 none. Five families serve a single area: the toads and the devilfish, which can be cut, and the
 giants, the drakes and the crawlers, which are their areas' centrepieces and cannot. The bounds'
 eight guardians (§13) are eight defs more, each a new kind in a family above, and add no family;
-Old Nick is the devilfish's second, so Wrackholm's lair would want another family were they cut.
+Old Nick is the devilfish's third kind, after the Devilfish and the Great Devilfish, so Wrackholm's
+lair would want another family were they cut.
 
 ---
 

@@ -553,10 +553,10 @@ rumour once #845, #847 and the guardian's drawing are in.
 
 - **What it is:** *A smuggler's knife, its haft wound with kelp that has not rotted. / Wet, the weed
   on it moves.*
-- **The rumour:** the hermit on the east rocks (F6), who counts the ships, two lines more at a
-  meeting after his first, words only: *One ship I counted in and never out. Her master had a knife
-  the weed obeyed: cut a line with it and the kelp held her fast. / Old Nick had ship, master and
-  knife. Nick gives nothing back.* It marks nothing on the world map.
+- **The rumour:** Merryn, the hermit on the east rocks (F6), who counts the ships, two lines more at
+  a meeting after her first, words only: *One ship I counted in and never out. Her master had a
+  knife the weed obeyed: cut a line with it and the kelp held her fast. / Old Nick had ship, master
+  and knife. Nick gives nothing back.* It marks nothing on the world map.
 - **Slot and bearers:** a light weapon: the thief, the bard and the sorcerer.
 - **Numbers:** 1d8+15, the Grey Knife's 1d8+14 and a point (EXPANSION §5.2). Found and never sold.
 - **Power:** a spell (DESIGN §9, kind 3): Grasping Roots, three a day, of the druid's list, which
