@@ -269,9 +269,9 @@ while the quest goes down.
 
 No title repeats the name of a skill, a trait or a spell. Where the trade is a shop the trainer keeps
 it and sells what exists: the armourer armour and shields, the chandler Lantern Oil and torches, the
-fletcher bows, the bone-setter draughts and cures. The locksmith's lock picks, the chandler's
-lanterns and the beekeeper's honey and salves wait on the items past Thornmark (#18). The astrologer,
-the luthier, the stevedore and the ferryman keep no shop.
+fletcher bows, the bone-setter draughts and cures, the locksmith a set of picks (#860). Lanterns,
+honey and salves are not items, so the beekeeper keeps no shop, nor do the astrologer, the luthier,
+the stevedore and the ferryman.
 
 **The quests for the third prestige,** in sketch. A third's fights are the places' own, not set at
 26 for the quest (#448's 3). Decided by the owner's delegate, 16 October 2026 (#733): the
@@ -307,7 +307,11 @@ country, band 26 to 28.
   Personality a heal. Endurance and the spell stat are read when a level is gained, Luck by nothing.
   A stat as a member stands is their own raised by what they bear (`statOf`, `ItemDef.stat`, #855):
   what they wear and the slotless items in their own pack, as a resistance is borne; armour in the
-  pack and the bag raise nothing, and a save holds no raise. No item of the content raises one yet.
+  pack and the bag raise nothing, and a save holds no raise. Four found items raise one by 3: the
+  Runner's Coat speed (Wrackholm), the Talon Knife accuracy (the Whitespine), Cairnbuilder's Mail
+  might (Cairnmoor) and the Vigil Robe personality (Hearth Isle). They and the four elemental weapons
+  beside them (§6) are off the gear ladder and in no shop, two to an area, one of each pair in the
+  area's first locked chest (#861 to #864).
 - **Secondary skills,** three to a guild, taught to its members for a price (§8):
   *Cartographer, Pathfinder, Mountaineer, Swimmer, Linguist, Merchant, Lockpick, Danger Sense,
   Perception, Arms Master, Spirit Sense, Navigator.* Built with #538: Linguist, the first, a list on
@@ -380,7 +384,7 @@ Decided by the owner's delegate for #18, each the owner's to overturn:
 8. The sheet prints a stat's total with its raise and the weapon's element, and a shop says both.
    What a shop pays is `sellPrice` in `items.ts`, asked of the company (#857 adds the Merchant's).
 9. Inert until #861: no item of the content carries either, and the gate and the harness never wear
-   one (off the ladder, as the charms are).
+   one (off the ladder, as the charms are). (#861 placed the first.)
 
 Decided by the builder for #852, each the owner's to overturn:
 
@@ -576,8 +580,9 @@ Decided by the builder for #857, each the owner's to overturn:
   nothing to a monster immune to it, half to one that resists it, half again to one weak to it, as a
   spell's (`elementDamage`); the steel lands as ever, so no blow is nothing. Its fire stops a mender
   mending that round, and the company learns the element's share, as from a spell. A weapon's
-  measure (`hits`: the harness's, the ladder's, the pilot's) counts the die at 3.5. No item of the
-  content carries an element yet.
+  measure (`hits`: the harness's, the ladder's, the pilot's) counts the die at 3.5. Four found
+  weapons carry one (§5): Corposant (a morning star), the Thunderhead Axe and the Levin Mace
+  lightning; the Beacon Hammer fire.
 
 Decided by the owner's delegate for #18, each the owner's to overturn:
 
@@ -777,12 +782,12 @@ ship lands there.
 ### What a guild gives
 
 - **Its quests pay gold, items and xp,** the xp split among the living as a fight's is.
-- **Its skills,** three to a guild, taught to members for a price (§5) once the skills are built
-  (#18). The Lanterns' Linguist reads Kiln-script, so it matters from the Kilns on; it is the first
-  built (#538), and every hall of a guild teaches its guild's three: the Lanterns' and the
-  Wardens' (#805, #856); the Cartographers' at the Map Room and the Chart House; the Compact's at
-  the Keel and the Factor's House (#857). "Learn a skill" on the hall's first menu asks which
-  skill, then who would learn it.
+- **Its skills,** three to a guild, taught to members for a price (§5), all twelve built. The
+  Lanterns' Linguist reads Kiln-script, so it matters from the Kilns on; it is the first built
+  (#538), and every hall of a guild teaches its guild's three: the Lanterns' and the Wardens' (#805,
+  #856); the Cartographers' at the Map Room and the Chart House; the Compact's at the Keel and the
+  Factor's House (#857). "Learn a skill" on the hall's first menu asks which skill, then who would
+  learn it.
 - **Its line.** The Charters' storylines are the guilds' lines: the Lanterns' split at Lantern Watch
   (§9, Act II), the Compact's line with its ending kept (§10.2) and the Cartographers' Lost
   Expedition (§10.3). The Wardens' siege was named and never designed, and is cut (#739, call 10).
@@ -1103,16 +1108,16 @@ converse holds too: everything on the road belongs to the quest.
 The two go opposite ways: the Buried Tower down into the ground, the Vault up into the sky.
 
 The reach sits at the cap and is harder than the Core: its dungeons' bands are 30–32, whatever the
-atlas's rows said before (docs/MONSTERS.md §12, open question 3; #434, call 7). Its power comes from what it holds
-(artifacts, hidden Master trainers of §5 beyond the road's two, the richest shrines and fountains) rather
-than from more levels, so the quest still runs from level 1 to the cap. The reach is open before
-the choice: the Core waits.
+atlas's rows said before (docs/MONSTERS.md §12, open question 3; #434, call 7). Its power comes from
+what it holds (artifacts, any Masters of §5 it hides beyond the road's two, the richest shrines and
+fountains) rather than from more levels, so the quest still runs from level 1 to the cap. The reach
+is open before the choice: the Core waits.
 
 Two Masters stand on the road and not in the reach, each found and never told (§5): the Wold's old
-Rider at arms and Old Cinder's scholar in magic (#859). The Rider is hidden in the rock of D10's small
-mesa, with a rumour at Akordu and a bow to fetch (#858, docs/areas/glasswold.md §6). The scholar is hidden behind a secret door in the buried town, with a
-rumour from F11's hermit and a roll to fetch (#859, docs/areas/ashfall.md §6). The reach may
-hold more.
+Rider at arms (#858) and Old Cinder's scholar in magic (#859). The Rider is hidden in the rock of
+D10's small mesa, with a rumour at Akordu and a bow to fetch (docs/areas/glasswold.md §6). The
+scholar is hidden behind a secret door in the buried town, with a rumour from F11's hermit and a
+roll to fetch (docs/areas/ashfall.md §6). The reach may hold more.
 
 Decided by the owner's delegate for #18, each the owner's to overturn:
 
@@ -1212,13 +1217,18 @@ map has nothing a player can read, so the hidden third is earned at the Core (#2
 | **M0 — Vertical slice** | Helmstow, one Foreland outdoor map, one dungeon, one Rift; full party creation; combat; four spells per class; save/load; automap. | Prove the feel. Ship nothing else until this is fun. |
 | **M1 — Act I** | The Foreland and Thornmark complete, the Downs and the Deepthorn with them; the first guilds and their quests; the Grove Stone dungeon. | First real playthrough. |
 | **M2 — Acts II to IV** | Saltreach to the Wold and their Wardstones; the rest of the guilds; the first and second prestiges, and the eight third prestiges whose trainers live in Acts II to IV's country (#448; #443, call 8); Meridian Camp and the Dead-Drop; the ship. | The open world. |
-| **M3 — Act V + subplots** | Hearth Isle, the Underdeep and the Core, all endings, all three subplots' ends and the Cleric's and the Sorcerer's third prestiges. Master trainers are post-v1, with the skill tiers (#18). | Content complete: built on main (Act V merged on 15 October 2026). The owner's own playthrough is what remains before v1 is called done (README.md). |
+| **M3 — Act V + subplots** | Hearth Isle, the Underdeep and the Core, all endings, all three subplots' ends and the Cleric's and the Sorcerer's third prestiges; with them what levels 11 to 32 need (#18): the weapon and magic tiers and their two Masters on the road, the twelve secondary skills and the eight found items (§5). | Content complete: built on main (Act V merged on 15 October 2026). The owner's own playthrough is what remains before v1 is called done (README.md). |
 | **M3 — The pilot** | The autoplay mode (#713, docs/PILOT.md): a fair pilot, built to play the one quest from the title to the ending's choice, taking the player's own game only when asked; left alone, the title plays one of its own and saves nothing. On main it finishes the Foreland's chapter (The Quiet Farm) on most seeds and stops lost in Thornmark's; the ten chapters after are not reached (docs/PILOT.md, Known limits). | Watch the game play itself. Pillar 1 stands for the player (§1). |
-| **The reach** | The Glass and Glacier Foot, with the Buried Tower and the Vault (§9), their artifacts, the skill tiers and the Master trainers (§5); #56's 62 and 63. | Optional by design: the game is whole without it. Post-v1, not filed: v1 ships without it. Decided by the owner's delegate, 16 October 2026 (#18). |
+| **The reach** | The Glass and Glacier Foot, with the Buried Tower and the Vault (§9) and their artifacts; #56's 62 and 63. | Optional by design: the game is whole without it. Post-v1, not filed: v1 ships without it. Decided by the owner's delegate, 16 October 2026 (#18). |
 | **Stretch** | New Game+, seeded Rift daily runs, second party mode, Arcomage-style tavern game. | Only after M3 ships. |
 
 From M1 on, each area is built as a core and country (§4, docs/EXPANSION.md §2.1): its core
 first, then the country along the road from the last area's core, then the rest of its land.
+
+Decided by the owner's delegate for #18, each the owner's to overturn:
+
+1. The reach's row keeps its artifacts and loses the skill tiers and the Masters, which #18 built
+   (#852, #858, #859); M3's row no longer calls the Masters post-v1 and names what #18 built (#866).
 
 ---
 

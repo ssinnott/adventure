@@ -162,14 +162,18 @@ the frontier by the route's length, a seen square the company can stand on with 
 beside it ("Looking about Helmstow."); and, the frontier spent, the nearest wall it suspects, a wall
 with seen floor on both sides, searched once from each side (`Pilot.searched`) from the square
 before it ("Searching the wall."), so a secret door whose far side is unseen is not found (decision
-17). A Lockpick standing (the premade six's thief is born to it) opens a locked door with no key
-spent, but the explorer goes to one only once a key is carried, as before (#857). Then it says
-"Helmstow is walked out." and gives no key, and says it again with no search until something it
-rests on changes. It explores the map it is on, or `Pilot.prefer` (the
-strategist's, #720) where that is this map or a zone of it. Outdoors it keeps to one zone's box, the party's or the zone preferred, and never goes
-into a zone whose band, as Known gives it, starts above the company's level and one, unless that zone
-is preferred ("Callow Downs is too hard for us yet." in such a zone). Of a zone preferred with nothing
-seen near it, it says "No way to Thornmark that I have seen.": bringing the party nearer is #720's.
+17). With Perception standing (the premade six's elf and gnome are born to it) a search finds a
+secret door surely, in the wall ahead and in the wall past an open square ahead (#856), but the
+explorer still searches a suspected wall once a side from the square before it. A Lockpick
+standing (the premade six's thief is born to it) opens a locked door with no key spent, and a locked
+chest, but the explorer goes to a locked door only once a key is carried, as before, and to no
+chest: chests are the strategist's (#857). Then it says "Helmstow is walked out." and gives no key,
+and says it again with no search until something it rests on changes. It explores the map it is on,
+or `Pilot.prefer` (the strategist's, #720) where that is this map or a zone of it. Outdoors it keeps
+to one zone's box, the party's or the zone preferred, and never goes into a zone whose band, as Known
+gives it, starts above the company's level and one, unless that zone is preferred ("Callow Downs is
+too hard for us yet." in such a zone). Of a zone preferred with nothing seen near it, it says "No
+way to Thornmark that I have seen.": bringing the party nearer is #720's.
 
 ## The quartermaster
 
@@ -192,7 +196,10 @@ each member it can pay for, the dead first, then the stone, then the rest; at a 
 while short and, for each member, the best it can wear (`better`, one thing each a visit); at a
 trainer each row that offers training. Nothing is sold and no skill or tier is learnt: the keep never
 presses a trainer's "Expert at arms and in magic" (#852), whose rows carry no `train Ng`, and talk
-leaves a tier's menu, a trainer's or a Master's person's, as it leaves a skill's. What it bought it
+leaves a tier's menu, a trainer's or a Master's person's, as it leaves a skill's. Pender's Locks in
+Saltmouth is a shop now (#860): the pilot buys no set of picks, as `better` passes over a slotless
+ware, and takes the Thief's first from Pender through the shop's "Talk to Pender the locksmith", as
+at any business with a person in it (from the square before his door, eight ticks). What it bought it
 wears through the sheet: `inventory`, `right` or `left` to the member, `down` to the item (the pack
 listed first, then the bag), Space, then Esc. The reserve, 100 gold a level of the highest in the
 company (the most a temple asks to raise one), is kept back from gear alone: `better` spends only the
@@ -210,12 +217,13 @@ goal's map it goes by the exits seen ("Bound for Callow Downs: Ashcombe is past 
 by the zones between, and there it hands the map to the explorer (`Pilot.prefer`); it opens a chest
 it stands on and goes to one seen there, Space pressed once a chest, so a locked chest it cannot
 open ("Locked.") is walked past as a locked door with no key is (#857); walked out, it walks the
-place again end to end, so that the days pass. Three days of the world's on one goal with no change in its words, it says "Lost in the
-Foreland: three days, and no way on.", gives the goal up (`Pilot.lost`) and turns to the next aim;
-three days levelling with no level gained, "Three days in the Foreland, and no stronger."; either is
-tried again once anyone gains a level or a flag is set. Over a line into a zone too hard for the
-company that its aim is not in, it turns back to the square before the line, once a crossing ("Too
-strong for us yet: back."). It meets nobody: a chapter begins and moves on by words that are talk's (#721).
+place again end to end, so that the days pass. Three days of the world's on one goal with no change
+in its words, it says "Lost in the Foreland: three days, and no way on.", gives the goal up
+(`Pilot.lost`) and turns to the next aim; three days levelling with no level gained, "Three days in
+the Foreland, and no stronger."; either is tried again once anyone gains a level or a flag is set.
+Over a line into a zone too hard for the company that its aim is not in, it turns back to the square
+before the line, once a crossing ("Too strong for us yet: back."). It meets nobody: a chapter begins
+and moves on by words that are talk's (#721).
 
 ## Talk
 
@@ -293,15 +301,15 @@ being the world's while it played; or where it stopped: fell, stopped itself wit
 capped (by the budget or by the ticks). The last chapter ends at an ending taken, which the pilot never
 takes: its stop under the question ("The choice is yours.") counts, and the test, as its privilege,
 presses the first answer. Every line heard that starts "Lost in" or "I have no answer" is printed as a
-note, once with its count ("note: thornmark: Lost in Thornmark: three days, and no way on. (x30)"),
+note, once with its count ("note: thornmark: Lost in Thornmark: three days, and no way on. (x36)"),
 and fails nothing.
 
 Before each chapter the run takes a save point (`serialize`) with the map on top, where a player can
 save. A chapter the fair pilot does not finish is played again from that point by a fresh pilot with
 `omniscient` set, the save loaded as F9 loads one (`headlessLoad`, `tools/tests/lib.ts`), so no memory
 crosses it. A second line says which kind of failure it is: "thornmark: fair pilot lost; omniscient
-also fails (fell in Callow Downs 127,71, ...)". The omniscient Known has every square seen, each cell as
-it is (a secret door a door), every exit there now and every feature the automap marks. The
+also fails (fell in Callow Downs 109,120, ...)". The omniscient Known has every square seen, each
+cell as it is (a secret door a door), every exit there now and every feature the automap marks. The
 explorer suspects the secret doors as written and not yet found (`Known.secrets`: `MapDef.secrets`,
 a zone's placed where its box lies) and no other wall. Nothing else changes: the brains are the fair
 pilot's. Where the omniscient pilot finishes, the road goes on from its end with a fresh fair pilot.
@@ -326,13 +334,16 @@ not the finish.
 
 - **The full run, all areas** (`FULLRUN=all node tools/test.ts fullrun` on 4473dac1, seed 4, the
   premade company: 8 minutes 45 seconds, 12 failures). The road ends at Thornmark's chapter. The
-  shelf's and Thornmark's rows are #844's (`FULLRUN=shelf` and `FULLRUN=thornmark`): their figures
-  moved with what the pilot sees (#53).
+  shelf's and Thornmark's rows are main's on 18 October (`FULLRUN=thornmark`), measured again since
+  #856 and #857 gave the premade six Perception (its elf and gnome), Pathfinder (its ranger) and
+  Lockpick (its thief): the fair pilot stops where it stopped before, by another way (it took 68,368
+  ticks and 176.9 days on #844's tree), and the omniscient one falls elsewhere on Callow Downs (at
+  127,71, after 16,052 ticks and 38.6 days there).
 
   | Area | Chapter | The fair pilot | The omniscient pilot, from the save point |
   |---|---|---|---|
-  | shelf | The Quiet Farm | finishes: 8,916 ticks, 31.4 days, level 5 (13.3 s; #857) | not run |
-  | thornmark | The Grove Stone | stops itself lost in Ashcombe Cellar at 1,1 ("Lost: no way on that I can see."), level 6, after 85,559 ticks, 239.6 days (247.7 s; #857, 68,368 ticks and 176.9 days before) | also fails: falls on Callow Downs at 127,71, level 6, after 16,052 ticks, 38.6 days (485.2 s; measured before #857) |
+  | shelf | The Quiet Farm | finishes: 8,916 ticks, 31.4 days, level 5 (14.3 s) | not run |
+  | thornmark | The Grove Stone | stops itself lost in Ashcombe Cellar at 1,1 ("Lost: no way on that I can see."), level 6, after 85,559 ticks, 239.6 days (238.1 s) | also fails: falls on Callow Downs at 109,120, level 6, after 23,232 ticks, 56.5 days (523.2 s) |
   | saltreach | The Tide Stone | not reached | |
   | wrackholm | The Stone Carried Home | not reached | |
   | sunderwood | The Wall | not reached | |
@@ -344,21 +355,21 @@ not the finish.
   | glasswold | The Warning | not reached | |
   | hearth | The Heart | not reached | |
 
-  The notes: shelf, "Lost in the Foreland: three days, and no way on." 6 times; thornmark, "Lost in
-  Thornmark: three days, and no way on." 30 times and "Lost in the Foreland: ..." 5 times; thornmark
-  (omniscient), "Lost in Thornmark: ..." 6 times and "Lost in the Foreland: ..." 6 times. No "I have no
-  answer" line.
-- **Thornmark's chapter, fair** (the full run). The aim is grove2, two maps in, and the fair pilot never
-  sets foot in grove1 or Thornhold (Two maps in, below): lost in Thornmark thirty times, it walks the
-  Foreland, Thornmark, Helmstow and the mill until a walk ends in a wipe, with no key carried. Past that lies a
-  second wall: in grove1 the stairs down to grove2 (11,10) are past a locked door (7,11), and the key
-  is in a chest (3,10) in a room whose one way in is a secret door (5,11). The far side of that door is
-  never seen, so the explorer never suspects it (decision 17 for #718).
-- **Thornmark's chapter, omniscient.** It walks into grove1 again and again and loops there: the explorer
-  sets the secret door's wall as its goal, and on the square before it the strategist, asked first,
-  finds no way to grove2 (the door at 7,11 is locked) and walks the company to the far side again, so
-  the search never comes. Lost, it wanders west and falls in the Delta. A route over every square seen
-  is slow, too: about 19 ms a tick against the fair run's 4.
+  The notes, on 18 October: shelf, "Lost in the Foreland: three days, and no way on." 7 times;
+  thornmark, "Lost in Thornmark: three days, and no way on." 36 times, "Lost in the Foreland: ..." 39
+  times and "I have no answer for the stone." once; thornmark (omniscient), "Lost in Thornmark: ..."
+  8 times, "Lost in the Foreland: ..." 9 times and "I have no answer for the stone." once.
+- **Thornmark's chapter, fair** (the full run). The aim is grove2, two maps in, and the fair pilot
+  never sets foot in grove1 or Thornhold (Two maps in, below): lost in Thornmark thirty-six times, it
+  walks the Foreland, Thornmark, Helmstow and the mill until it stops itself lost in Ashcombe Cellar,
+  at 1,1. Past that lies a second wall: in grove1 the stairs down to grove2 (11,10) are past a locked
+  door (7,11), and the key is in a chest (3,10) in a room whose one way in is a secret door (5,11).
+  The far side of that door is never seen, so the explorer never suspects it (decision 17 for #718).
+- **Thornmark's chapter, omniscient.** It walks into grove1 again and again and loops there: the
+  explorer sets the secret door's wall as its goal, and on the square before it the strategist, asked
+  first, finds no way to grove2 (the door at 7,11 is locked) and walks the company to the far side
+  again, so the search never comes. Lost, it wanders off and falls on Callow Downs at 109,120. A
+  route over every square seen is slow, too: about 19 ms a tick against the fair run's 4.
 - **The omniscient pilot has no frontier.** Every square is seen, so the explorer has nothing to walk
   to: it searches the secret doors as written and then calls the map walked out; only the walk again
   rule walks it. Chests are gone to only on the aim's map. "Omniscient also fails" therefore does not
@@ -418,7 +429,8 @@ not the finish.
   (Thornmark) the eighth, the stone Lantern's "moths" (Sunderwood) the 162nd and the drowned god's
   name (Saltreach) none: it is said nowhere in a line, but in the Holy Symbol of the Tide's text,
   which is read on the sheet and never heard. The pilot hears far less than every line; what it
-  answers in a play is the full run's to show (#723); on seed 4 it says "I have no answer" nowhere before its road ends.
+  answers in a play is the full run's to show (#723); on seed 4 it says "I have no answer for the
+  stone." once in Thornmark's chapter, fair and omniscient alike, before its road ends.
 
 ## The files
 
@@ -443,7 +455,7 @@ not the finish.
 | `src/game/pilot/route.ts` | the navigator (#717): `Goal` (with the reason or the why line its brain gives it), `routeOn` (the keys over one map), `routeLengths` (the length of the route to every square, in one search), `routeNearest` (the nearest of a set of squares, the search stopped there), each round the squares found shut it is given and through a group only where no way round is seen (#723), `routeMaps` (the exits from map to map, and the crossings told whose fare the gold over the reserve pays, `edges`, #721), the brain `route` and `unroute` (what it kept of a goal, forgotten); it reads a cell by `passableCell` (`src/game/map.ts`) and the groups as the automap marks them (`markedGroups`, `src/ui/frame.ts`) |
 | `src/game/pilot/explore.ts` | the explorer (#718): `frontier` (seen squares with an unseen one beside them), `suspects` (walls with seen floor on both sides; for the omniscient pilot the secret doors `Known.secrets` gives, #723) and the brain `explore`; a zone's box and band it reads through `Known.box` and `Known.band`, and the zone a square lies in by `zoneAt` (`src/game/map.ts`), as the world map draws the boxes |
 | `src/game/ink.ts` | `drawnCell`: what a cell is drawn as, which the view, the automap and Known share |
-| `src/game/bot.ts` | the fight and the rest rule (`botTurn`, `asSeen`, `mustRest`, #714); `beaten`, a fight lost, which the game's reading flees (#723) |
+| `src/game/bot.ts` | the fight and the rest rule (`botTurn`, `asSeen`, `mustRest`, #714); `beaten`, a fight lost, which the game's reading flees (#723); the three the auto-fight plays from level 11, bless, sleep and drink (`PLAYED`, `optsFor`, #865), so the pilot's fights, which it hands to the screen's auto, play them too |
 | `src/game/items.ts` | `hits`, a weapon's mean blow, its element's die at 3.5 (#855): the harness's measure, moved here for `better` (#719) |
 | `src/ui/create.ts` | `randomParty`: the company drawn from a seed |
 | `src/ui/screens.ts` | `ChoiceScreen`'s `title`, `disabled` and its marks (#721): a group's refusal (`fight`, by `Game.parley`) and an ending's question (`ends`, by `Game.ask`, `endsIn` in `src/game/stones.ts`) |
@@ -466,7 +478,7 @@ Decided by delegate for #715, each the owner's to overturn:
 
 Decided by delegate for #714, each the owner's to overturn:
 
-1. **The game's reading is a predicate, the gate's the default.** `botTurn`'s last argument defaults to `asWritten`, so the gate, the harness and every existing call see what they saw and their figures cannot move; the auto-fight passes `asSeen`. A named predicate rather than a boolean: it says which reading a caller takes; #723's omniscient flag can choose between the two.
+1. **The game's reading is a predicate, the gate's the default.** `botTurn`'s last argument defaults to `asWritten`, so the gate, the harness and every existing call see what they saw and their figures cannot move; the auto-fight passes `asSeen`. A named predicate rather than a boolean: it says which reading a caller takes; #723's omniscient flag can choose between the two. (Since #853 the options follow it, off unless given; since #865 the auto-fight passes `PLAYED`, so it and the pilot's fights with it bless, sleep and drink from level 11.)
 2. **What the game has seen is read from the fight's log.** The game records an element's work (`CombatState.seen`) and a mending (`CombatState.mends`) and nothing else of a monster's ways, so `asSeen` takes a sweep, a breath, a call or a drain as seen once this fight's log has a line of a monster of that name at it ("Giant sweeps ", "Drake breathes ", "Tallyman calls, ", a "hits" line that drinks or takes spell points). The log is what the player reads, so it is fair as it stands; the resolver and `CombatState` take no new field. It holds for the fight and by name, as `seen` and `mends` hold for the fight and by kind. The new checks pin each line it leans on, so a reworded line fails a test rather than blinding the bot.
 3. **A leader is never seen before it falls.** Nothing on the screen marks one and its people break only at the last leader's fall (`morale`), so the game's bot never aims at a leader first.
 4. **The clock is read as the gate reads it.** The issue was written before the clock (#748). The story names the Grey Hands at the panel before the fight (MONSTERS §9.3) and the light goes out over it from the first round, so the game's bot aims at the panel first from the start, as `ANSWER.clock` says.

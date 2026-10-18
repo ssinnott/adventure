@@ -31,15 +31,24 @@ dependencies, and nothing compiled to disk during development.
 
 ## Where it stands
 
-On 17 October 2026 M3 is content-complete on main: Act V merged on 15 October, so the one quest runs
-from the Foreland to the Heart. v1 holds:
+On 18 October 2026 M3 is content-complete on main: Act V merged on 15 October, so the one quest runs
+from the Foreland to the Heart, and what levels 11 to 32 need (#18) is built. v1 holds:
 
 - Acts I to V on the road of twelve areas, the Council of Helmstow and the three endings;
 - the quests: sixty-two side quests (#56's count: its sixty-four, less the reach's two), the Cargo
   Ledger, the three subplots, the Walk Home and twenty-two guild quests;
 - thirty prestiges, three to each of the ten classes, each with its trainer in the world (the ten
   thirds each ask a quest);
-- three of the twelve secondary skills, taught: Linguist, Mountaineer and Swimmer;
+- the weapon and magic tiers: Expert at arms and in magic from level 13, 2,000 gold a line, at the
+  towns' trainers from Saltmouth on, and Master from 25 for 5,000 and a favour, taught by two people
+  found and never told, the Wold's old Rider at arms and Old Cinder's scholar in magic;
+- the twelve secondary skills, each guild's three at its halls: Linguist, Perception and Spirit
+  Sense (the Lanterns'), Mountaineer, Danger Sense and Arms Master (the Wardens'), Swimmer,
+  Cartographer and Pathfinder (the Cartographers'), Lockpick, Merchant and Navigator (the Compact's);
+- eight found items past a plus, off the gear ladder and in no shop, two in each of Wrackholm, the
+  Whitespine, Cairnmoor and Hearth Isle, one of each pair in the area's first locked chest: four
+  weapons whose blows carry lightning or fire, and four things that raise speed, accuracy, might or
+  personality by 3 while borne; and in Saltmouth Pender's set of picks and the Map Room's chart;
 - the finishing touches (#54), line of sight among them: from lower ground a hill hides what lies
   behind it, a group included; woods hide nothing (docs/SLICE.md);
 - the pilot (docs/PILOT.md), which plays for watching. It finishes The Quiet Farm, the Foreland's
@@ -49,13 +58,18 @@ from the Foreland to the Heart. v1 holds:
   started by hand, reports the rest.
 
 Post-v1, by decision on 16 October 2026: the reach (the Glass and the Buried Tower, Glacier Foot
-with the Ice Caves and the Vault, #56's 62 and 63 and the artifacts they hold), the skill tiers with
-the Master trainers, nine of the twelve secondary skills and the Stretch tier (docs/DESIGN.md §12).
-None is filed, and v1 ships without them.
+with the Ice Caves and the Vault, #56's 62 and 63 and the artifacts they hold; the bounds' eight are
+#846's) and the Stretch tier (docs/DESIGN.md §12). Neither is filed, and v1 ships without them.
 
 The gate judges a company two levels under a floor by its fights in Act I and, from Saltreach on,
-where it wins them all, by how far its day goes (#851). One map's day, `cairnfield_m8`'s, is past its
-limit and owed to #865 (docs/EXPANSION.md §5.2).
+where it wins them all, by how far its day goes (#851). Nothing is owed: `cairnfield_m8`, the one
+map past its limit, was re-sized (#865). The gate's company takes what a level brings on the road
+and buys nothing optional, no tier, skill or found item, and its bot never blesses, sleeps, drinks or
+flees; the game's own bot, the auto-fight and the pilot's fights with it, blesses, sleeps and drinks
+from level 11 and flees a fight lost. A line made on the tiers and those three ended 13 to 47% of
+its days badly at 16 to 24, against an aim of a tenth, so the gate leaves them out: a company that
+buys them has an easier road than measured, and the owner's own play is the judge
+(docs/EXPANSION.md §5.2).
 
 The world's end is drawn as the atlas paints it, the sea running on and the rim standing (#829,
 built in #849). The owner has filed the land the maps lie open to as an epic, #828, with eight area
