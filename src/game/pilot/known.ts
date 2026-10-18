@@ -62,6 +62,11 @@ export interface Known {
    * undefined before then, or where none is set.
    */
   band(map: string): readonly [number, number] | undefined;
+  /**
+   * An enclave's band (#845), as its door says it: once the party has seen a way into it or been in
+   * it; undefined before then, and for a map that is no enclave.
+   */
+  enclave(map: string): readonly [number, number] | undefined;
   /** How many squares of a map the party has seen: the automap's bits counted, so a brain can tell that nothing new is seen. */
   seenCount(map: string): number;
 
@@ -161,6 +166,12 @@ export function knownOf(g: Game): Known {
       const p = played(map);
       if (!p) return undefined;
       return p.box ? ((w.state.zones ?? []).includes(p.box.id) ? p.box.band : undefined) : w.state.maps[p.m.id] ? p.m.def.band : undefined;
+    },
+    enclave(map) {
+      const m = g.maps[map];
+      if (!m?.def.enclave) return undefined;
+      const door = (id: string): boolean => !!g.maps[id]?.exits.some((e) => e.to === map && seenOn(g.maps[id], e.x, e.y) && w.there(e));
+      return w.state.maps[map] || Object.keys(w.state.maps).some(door) ? m.def.band : undefined;
     },
     seenCount(map) {
       const p = played(map), n = p ? p.m.width * p.m.height : 0, bits = p && w.state.maps[p.m.id]?.explored;

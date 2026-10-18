@@ -69,12 +69,28 @@ function zoneOf(g: Game, map: string): string | undefined {
 }
 /** The band of the zone a map lies in, as Known gives it: once the party has set foot in the zone. */
 const zoneBand = (g: Game, k: Known, map: string): readonly [number, number] | undefined => { const z = zoneOf(g, map); return z ? k.band(z) : undefined; };
-/** Whether Known gives a place a band that starts above the company's level and one. */
-const tooHard = (k: Known, place: string): boolean => { const b = k.band(place); return !!b && b[0] > companyLevel(k.party) + 1; };
+/**
+ * Whether Known gives a place a band that starts above the company's level and one; an enclave, its
+ * own band as its door says it, above the company's level, with no grace (#845).
+ */
+const tooHard = (k: Known, place: string): boolean => {
+  const e = k.enclave(place);
+  if (e) return e[0] > companyLevel(k.party);
+  const b = k.band(place);
+  return !!b && b[0] > companyLevel(k.party) + 1;
+};
 /** The zones set foot in whose band starts at the company's level or under, and not given up: where it can level. */
 const easyZones = (k: Known, p: Pilot): string[] => k.zones().filter((z) => { const b = k.band(z); return !!b && b[0] <= companyLevel(k.party) && !p.lost.has(`level:${z}`); });
-/** Whether the zone a map lies in has a band, as Known gives it, that starts above the company's level and one. */
-const zoneTooHard = (g: Game, k: Known, map: string): boolean => (zoneBand(g, k, map)?.[0] ?? 0) > companyLevel(k.party) + 1;
+/**
+ * The level a goal's map asks of the company: one under its zone's floor, as Known gives the band; an
+ * enclave's own floor, as its door says it (#845). Undefined where neither is known.
+ */
+function goalFloor(g: Game, k: Known, map: string): number | undefined {
+  const e = k.enclave(map), b = e ? undefined : zoneBand(g, k, map);
+  return e ? e[0] : b ? b[0] - 1 : undefined;
+}
+/** Whether a goal's map asks more than the company's level (`goalFloor`). */
+const goalTooHard = (g: Game, k: Known, map: string): boolean => (goalFloor(g, k, map) ?? 0) > companyLevel(k.party);
 
 /** What the map's sign or the world map calls a map or a zone. */
 function nameOf(g: Game, id: string): string {
@@ -105,9 +121,10 @@ const walkedOut = (g: Game, k: Known, mem: Mem, map: string): boolean => mem.out
  * The aim, in order: (1) the one quest's goal, where its map is known and its words are not given up
  * (`Pilot.lost`); (2) else a side or seeking quest's, the nearest first by where the world map places
  * its map; (3) either, where its zone's band as Known gives it starts above the company's level and
- * one, gives way to levelling in the nearest zone known whose band starts at the company's level or
- * under and is not given up, to the level under the goal's zone's floor, or with none is passed
- * over; (4) else walking: the party's map (outdoors its
+ * one (an enclave's own floor above the company's level, #845), gives way to levelling in the nearest
+ * zone known whose band starts at the company's level or under and is not given up, to the level
+ * under the goal's zone's floor (to an enclave's floor), or with none is passed over; (4) else
+ * walking, never into an enclave whose floor is over the company: the party's map (outdoors its
  * zone) until walked out, then the nearest map visited or zone set foot in not walked out, then the
  * nearest zone not yet set foot in beside one that was, then a map not visited through the nearest
  * exit seen to it. A goal given up is tried again once anyone has gained a level or a flag is set.
@@ -157,10 +174,10 @@ function questAim(g: Game, k: Known, p: Pilot): Aim | undefined {
   const open = k.goals().filter((q): q is { quest: string; text: string; map: string } => q.map !== undefined && !p.lost.has(q.text));
   const one = open.filter((v) => v.quest === THE_QUEST.id), side = open.filter((v) => v.quest !== THE_QUEST.id).sort((a, b) => far(a.map) - far(b.map));
   for (const q of [...one, ...side]) {
-    const band = zoneBand(g, k, q.map);
-    if (!band || band[0] <= companyLevel(k.party) + 1) return { kind: 'quest', quest: q.quest, map: q.map, text: q.text };
+    const floor = goalFloor(g, k, q.map);
+    if (floor === undefined || floor <= companyLevel(k.party)) return { kind: 'quest', quest: q.quest, map: q.map, text: q.text };
     const easy = easyZones(k, p).sort((a, b) => far(a) - far(b));
-    if (easy.length) return { kind: 'level', zone: easy[0], to: band[0] - 1 };
+    if (easy.length) return { kind: 'level', zone: easy[0], to: floor };
   }
   return undefined;
 }
@@ -218,7 +235,7 @@ export const aims: Brain = (g, k, p) => {
   const shown = aim?.kind === 'quest' ? goals.find((q) => q.quest === aim.quest)?.text ?? '' : '';
   const spent = !aim
     // A quest's zone learnt too hard turns it to levelling, or past it where there is nowhere to level.
-    || (aim.kind === 'quest' && (shown !== p.aimGoal || zoneTooHard(g, k, aim.map)))
+    || (aim.kind === 'quest' && (shown !== p.aimGoal || goalTooHard(g, k, aim.map)))
     || (aim.kind === 'level' && companyLevel(party) >= aim.to)
     || (aim.kind === 'explore' && (questAim(g, k, p) !== undefined || tooHard(k, aim.map)));
   if (spent) {

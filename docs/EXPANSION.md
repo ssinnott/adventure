@@ -275,6 +275,52 @@ the window of the last area on the road whose floor is at or under its own; no a
 its xp or gold, which the curve prints as a figure; and the gate judges it at its own floor, out of
 the area's pools. Meridian Camp's third level and the Dead-Drop's three are planned so.
 
+An enclave is a place of its own beside the road (#845): a dungeon entered from a box (a hollow, a
+cave, a ruin), declared on its map (`enclave` in `game/map.ts`) and held to its own band, over its
+box's: a band or two for an enclave, the cap's, 30–32, for an artifact lair (the owner, 17 October
+2026). The checks hold it as they hold a map outside the budget, wherever its band stands. The curve
+leaves its pay and its finds out of its area: no clear counts its xp or gold, which the curve prints
+as a figure; its monsters sit in its own band, rising from its door; and its chests and drops sit in
+the window of the last area on the road whose floor is at or under its own, the Hearth's for a lair.
+The gate judges it at its own floor and two under it by the day from 10, its guardian's odds at its
+floor and two above (named in `BOSSES` under its box's zone) and leaves it out of its area's pools
+and day; no zone's road walks it, for a road walks its zone's own maps. No step of the quest lies in
+it (§5.8). Its door says its band and how it feels to the company, as a border does (DESIGN.md §9),
+and the pilot keeps out of one whose floor is over its company. A fixture lair at 30–32 beside
+Saltreach, a band-10 area, holds these rules before any area places one (`tools/tests/enclave.ts`):
+on the Stair's ground and groups, it is won 95.2% at 30, its guardian 57% at 30 and 80% at 32; it
+fights 10.71 to a rest at 30 and 8.49 at 28, 74% of the floor's day; Saltreach's clear, band, pools
+and day are as they were without it; and it holds no step.
+
+Decided by the builder for #845, each the owner's to overturn:
+
+1. **The declaration is a mark on the map, `enclave: true`, and its band is the map's own `band`**:
+   the sign already shows a map's band, so one band serves the sign, the door and the checks.
+2. **An enclave stands over its box**, the outdoor map its door opens onto: its floor over the box's
+   top. One with no band, at its box's band, listed `outside` as well, laid as a zone map or opening
+   onto no box fails the curve (`enclaveFaults`); leaving the area's figures is only fair for a place
+   past its box.
+3. **Its window is the last road area's whose floor is at or under its own**, as a map outside the
+   budget has it: the Hearth's 7,000 for a lair at the cap. No window holds an artifact, so #847
+   must exempt one from the curve's window by its mark.
+4. **Two under is asked of it alone, by the day from 10**, as of a map outside the budget, and its
+   guardian is a boss in `BOSSES` under its box's zone, as a dungeon's boss is; the fixture's figures
+   off their aim are said with it and kept out of the gate's list, which is the content's.
+5. **The door's line is the game's**, one entry after the way's own: "<name>: levels 30-32.", then
+   harder one or two under its floor and the warning three or more under, in an enclave's words, not a
+   zone's. None from a level of an enclave whose floor is at or over its own, for a border speaks
+   where the floor rises. Held to the log's three lines at its longest (pillars). An area's own words
+   can come when one asks for them.
+6. **The pilot learns an enclave's band at its door**, once a way in is seen (`Known.enclave`), and
+   keeps out under its floor with no grace, where a zone allows a level: the navigator has no way in,
+   the strategist chooses no walk there and a goal inside sends it levelling to the floor. Only the
+   way in is shut: the way up from a deeper level stays open, so a pilot handed the helm inside is
+   never stranded.
+7. **The secret's pace and the novelty check are left as they are**: each places a map by its floor
+   (`roadPlace`), so a lair at the cap stands with the Hearth in both.
+8. **The fixture is the Stair's ground and groups at 30–32 off C3**, a chest with the Grey Axe in it
+   (6,800, over Saltreach's 2,000): its figures are the gate's already, so it needs no new monster.
+
 A kill pays each member by the monster's level against theirs: ×0.1 at three or more under, ×0.4
 at two under, ×0.7 at one under, ×1 at their level, ×1.15 at one over, ×1.3 at two over, and ×1.5
 at three or more over. Simulated from Saltreach on, that kept companies that clear anything from
@@ -722,6 +768,9 @@ secret found and never told, restraint), reads the text and the code.
   the atlas's zones as the party walks them: borders over walkable land, and the road and sea
   links. On today's atlas the only dead ends are Glacier Foot, Monks' Vale and the Hearth Isle, and
   the Wold borders four zones on the road, so the Glass needs its lava flow before it passes.
+- **An enclave holds no step.** An enclave stands beside the road (§5.2, #845), so no goal of the
+  quest lies in it, and a goal set in one holds no zone: the every-zone check skips it as it skips
+  the reach.
 
 ---
 
