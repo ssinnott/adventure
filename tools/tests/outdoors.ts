@@ -1,12 +1,12 @@
 // The outdoors as one map: the zone maps laid in 1:1 where the atlas puts them, the void round them,
-// the ridge and its open pass, and every open square reachable.
+// the seams between them by one rule, and every open square reachable.
 import { buildMaps, PLAYED_DEFS, GRID } from '../../src/content/maps.ts';
 import { MAP_DEFS } from '../../src/content/index.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { MapDef, Can, Cell } from '../../src/game/map.ts';
 import { layOutdoors, OUTDOORS, LOOK } from '../../src/game/outdoors.ts';
 import { ATLAS } from '../../src/content/index.ts';
-import { areaOf, mapAt, zoneEdges, TERRAINS } from '../../src/game/atlas.ts';
+import { areaOf, boxAt, mapAt, zoneEdges, TERRAINS } from '../../src/game/atlas.ts';
 import type { Atlas, AtlasZone } from '../../src/game/atlas.ts';
 import { World, VIEW_DEPTH, VIEW_LATERAL, viewCell } from '../../src/game/world.ts';
 import type { Facing } from '../../src/game/types.ts';
@@ -126,29 +126,29 @@ const COMPANIES: readonly Can[] = [{}, { climb: true }, { swim: true }, { float:
 interface Seam { key: string; name: string; areas: readonly [string, string]; joined: boolean; edge: readonly [string, string]; fails: Record<SeamKind, number[]> }
 
 /**
- * Every pair of built boxes that share an edge, found from their places on the grid (a box `square` a
- * side from `corner`, EXPANSION §8.2), and where the edge between them fails the seam rule: square for
+ * Every pair of built boxes that share an edge, found from their places on the grid (EXPANSION §8.2,
+ * each laid map one whole box), and where the edge between them fails the seam rule: square for
  * square, the two sides disagree on passable ground (open to a company with no skill), on water (never
  * the void, which stays the void for every rule) or on road; or, between two areas no road joins (a
  * map's exits and the atlas's links, `zoneEdges`), a walker, a climber, a swimmer or a floater crosses.
  * The other declared crossing, `ONE_CROSSING` (tools/tests/weather.ts), is a dungeon's door, no seam.
  */
 function seams(out: GameMap, atlas: Atlas, defs: readonly MapDef[]): Seam[] {
-  const S = atlas.square, [cx, cy] = atlas.corner, boxes = new Map(out.zones.map((z) => [`${z.x},${z.y}`, z]));
+  const boxes = new Map(out.zones.map((z) => [`${z.x},${z.y}`, z]));
   const area = (id: string): string => areaOf(atlas, id)?.name ?? id;
   const joined = new Set(zoneEdges(atlas, defs).filter((e) => e.kind === 'road').map((e) => [area(e.from), area(e.to)].sort().join('|')));
-  const named = (z: { x: number; y: number }): string => String.fromCharCode(65 + (z.x - cx) / S) + ((z.y - cy) / S + 1);
+  const named = (z: { x: number; y: number }): string => boxAt(atlas, z.x, z.y) ?? `${z.x},${z.y}`;
   const open = (x: number, y: number, can: Can = {}): boolean => out.passable(x, y, can) === 'ok';
   const wet = (c: Cell): boolean => c.terrain === 'water' || c.terrain === 'deep';
   const list: Seam[] = [];
   for (const a of out.zones) for (const east of [true, false]) {
-    const b = boxes.get(east ? `${a.x + S},${a.y}` : `${a.x},${a.y + S}`);
+    const b = boxes.get(east ? `${a.x + a.w},${a.y}` : `${a.x},${a.y + a.h}`);
     if (!b) continue;
     const areas = [area(a.id), area(b.id)] as const, join = areas[0] === areas[1] || joined.has([...areas].sort().join('|'));
     const fails: Record<SeamKind, number[]> = { walk: [], water: [], road: [], way: [] };
     let mine = '', theirs = '';
-    for (let i = 0; i < S; i++) {
-      const [ax, ay, bx, by] = east ? [a.x + S - 1, a.y + i, b.x, b.y + i] : [a.x + i, a.y + S - 1, b.x + i, b.y];
+    for (let i = 0; i < (east ? Math.min(a.h, b.h) : Math.min(a.w, b.w)); i++) {
+      const [ax, ay, bx, by] = east ? [a.x + a.w - 1, a.y + i, b.x, b.y + i] : [a.x + i, a.y + a.h - 1, b.x + i, b.y];
       const ca = out.at(ax, ay), cb = out.at(bx, by);
       mine += ca.ch; theirs += cb.ch;
       if (open(ax, ay) !== open(bx, by)) fails.walk.push(i);
@@ -193,9 +193,13 @@ function judgeSeams(list: readonly Seam[], rows: readonly AsBuilt[]): { verdicts
     }
     return { seam, wrong };
   });
-  const keys = new Set(list.map((s) => s.key));
-  const stray = rows.filter((r, n) => !keys.has(r.seam) || rows.findIndex((q) => q.seam === r.seam) !== n || !r.why
-    || !SEAM_KINDS.some((k) => r[k]) || SEAM_KINDS.some((k) => writeSquares(squaresOf(r[k])) !== (r[k] ?? '') || squaresOf(r[k]).some((i) => i > 31))).map((r) => r.seam);
+  const edges = new Map(list.map((s) => [s.key, s.edge[0].length]));
+  const written = (r: AsBuilt, k: SeamKind): boolean => {
+    const xs = squaresOf(r[k]);
+    return writeSquares(xs) === (r[k] ?? '') && xs.every((x, j) => x < (edges.get(r.seam) ?? 0) && (j === 0 || x > xs[j - 1]));
+  };
+  const stray = rows.filter((r, n) => !edges.has(r.seam) || rows.findIndex((q) => q.seam === r.seam) !== n || !r.why
+    || !SEAM_KINDS.some((k) => r[k]) || !SEAM_KINDS.every((k) => written(r, k))).map((r) => r.seam);
   return { verdicts, stray };
 }
 
@@ -253,7 +257,7 @@ export function outdoors(): void {
   // the atlas joins them. SEAMS_AS_BUILT holds what disagrees as built, each row with its reason.
   const all = seams(out, ATLAS, MAP_DEFS), { verdicts, stray } = judgeSeams(all, SEAMS_AS_BUILT);
   const held = SEAMS_AS_BUILT.reduce((n, r) => n + new Set(SEAM_KINDS.flatMap((k) => squaresOf(r[k]))).size, 0);
-  ok(all.length >= 148, `the seam rule takes every pair of built boxes that share an edge: ${all.length} pairs, ${all.filter((s) => s.areas[0] !== s.areas[1]).length} of them between two areas, ${all.length * ATLAS.square} squares, ${held} of them as built in ${SEAMS_AS_BUILT.length} rows`);
+  ok(all.length >= 148, `the seam rule takes every pair of built boxes that share an edge: ${all.length} pairs, ${all.filter((s) => s.areas[0] !== s.areas[1]).length} of them between two areas, ${all.reduce((n, s) => n + s.edge[0].length, 0)} squares, ${held} of them as built in ${SEAMS_AS_BUILT.length} rows`);
   for (const { seam: s, wrong } of verdicts) {
     const row = SEAMS_AS_BUILT.find((r) => r.seam === s.key);
     const between = s.areas[0] === s.areas[1] ? '' : `, between ${s.areas.join(' and ')}, which the atlas ${s.joined ? 'joins' : 'does not join'}`;
@@ -271,8 +275,9 @@ export function outdoors(): void {
     const said = failed.map((v) => `${v.seam.name}: ${v.wrong.join('; ')}`).sort();
     ok(said.join(' / ') === "C4|D4: square 5 disagrees on passable ground, ',' against '#' / I5/I6: SEAMS_AS_BUILT holds square 0 for passable ground, which the seam no longer fails; square 0 opens a way between Thornmark and Hearth Isle, which the atlas does not join, ',' against ','",
       `a wall where the neighbour has grass fails the seam rule, and so do a way the atlas does not draw and a row no seam needs, there alone (${said.join(' / ')})`);
-    const extra = judgeSeams(all, [...SEAMS_AS_BUILT, { seam: 'shelf|downs_f2', walk: '0', why: 'Fixture.' }]).stray;
-    ok(extra.join() === 'shelf|downs_f2', `a row naming no seam of two built boxes that touch is refused (${extra.join(', ')})`);
+    const sloppy = SEAMS_AS_BUILT.map((r) => (r.seam === 'downs_f2|shelf' ? { ...r, walk: '30-31 1-28' } : r));
+    const extra = judgeSeams(all, [...sloppy, { seam: 'shelf|downs_f2', walk: '0', why: 'Fixture.' }]).stray;
+    ok(extra.join() === 'downs_f2|shelf,shelf|downs_f2', `a row with its squares out of order is refused, and so is one naming no seam of two built boxes that touch (${extra.join(', ')})`);
   }
   const sh = out.zones.find((z) => z.id === 'shelf')!, th = out.zones.find((z) => z.id === 'thornmark')!;
   // The ways: every one lands on open ground; none joins one zone to the next, which is walked, but the
