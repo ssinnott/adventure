@@ -47,7 +47,9 @@ hand-in of the keeper's log, the lamps in the crypt and the log; and #56's 56 to
 quests, drafted, with 56 built in the temple, 60 and 61 built in the Ways, 57 begun on the isle and
 ended on the Stair, 59 begun in the Ways and ended on the Stair, 58 begun on the Stair and 64 begun
 at the Heart (§6); and the chapter, The Heart (#760, §5), the one quest's twelfth and last, walked to
-each of its three ends and once early.
+each of its three ends and once early. In the east rim's rock, behind a second secret door, a cell
+holds two finds off the ladder, a lightning mace in the area's first locked chest and a robe that
+raises personality (#864, §4.9).
 Its content is
 `src/content/areas/hearth/` (maps, monsters, items, climate, its part of the world map and its
 walkthrough; its side quests and the Cleric's third in `quests.ts`, as far as built; its chapter,
@@ -173,7 +175,9 @@ Seven places. The isle (#753) is the area's first and lists the area; the east r
   Bowl's east pocket through the rock to Anchorhold's yard, under the cell built into the rim and
   out to the east foot; the Hand's camp at the Steps, where the causeway lands, with its crates,
   its tally-house and its chest; the grey door in the rock, read and never opened; behind the
-  tally-house the secret door, the Hand's takings and the hoard. Six groups: champions in the
+  tally-house the secret door, the Hand's takings and the hoard; and in the rim's east face a
+  second secret door, with a cell behind it that holds a lightning mace in a locked chest and a
+  robe that raises personality (§4.9; #864). Six groups: champions in the
   pocket where the path begins, moths over the yard by night, the camp's guard and two champions at
   the stair's head; off the road, champions on the east foot and the Hand's watch over the Wyke
   (§4.3; #794).
@@ -272,8 +276,9 @@ builder lays the rooms round the landmarks and keeps the squares named here, sin
 the side quests and the walkthrough key on them (§5, §6). Every square named on the two boxes is
 walkable ground of fitting terrain in the drafts, checked square by square in review (§9.1), save
 the few the builder carves out of the rim's rock, each said where it is named: the cleft (§4.2),
-the rim's path and Anchorhold's yard (§4.3) and the pockets behind the two secrets. Where a square
-cannot be kept, the builder changes it in one sweep, here and in the content.
+the rim's path and Anchorhold's yard (§4.3), the pockets behind the two secrets and the vigil cell's
+three squares (§4.9). Where a square cannot be kept, the builder changes it in one sweep, here and
+in the content.
 
 The voice is the docs' (CLAUDE.md): terse, British, two lines of the log to an event and three the
 most, which `tools/tests/pillars.ts` measures; a person's lines are shown as paragraphs and may run
@@ -510,6 +515,11 @@ grass and hills on the first three columns and water beyond, pinned against the 
   at 0–1,24, the Hand's takings: `i6_takings` (1,24), once: *The Hand's takings, cut into the rock:
   coin from every town on the road, and grey parts sorted into heaps by size.* and a chest
   `i6_hoard`: 1,200 gold, `grey_mail` (§8).
+- **A second secret, the vigil cell** (#864, §4.9): in the rim's east face, a secret door at 8,15,
+  its hint `i6_scorch` (9,15, on the east foot's grass), once: *A vein of glass, finger-thick, runs
+  through the turf from the sand and stops at the rock, which is scorched black above it.* Behind
+  it, in a cell the builder carves at 5–7,15, `i6_vigil` (7,15), once, and two chests, `i6_vigil_chest`
+  (6,15) with a robe and `i6_vigil_locked` (5,15, `locked: true`) with a mace, both off the ladder.
 
 **Encounters.** The Hand's camp guard, the box's hardest, and the moths by night; the rim's path
 has one group so that Anchorhold is reached by a company at 28 with a fight.
@@ -521,7 +531,8 @@ has one group so that Anchorhold is reached by a company at 28 with a fight.
 | `i6_guard` | 4,24 | 1 ashen preacher, 3 ashen champions, `back: 1` | the camp, `roams: false`; `until: { flag: 'q_throne_removed' }` by the leave rule (fewer Hand once Vask is gone from Helmstow, §6; today's `until` takes no standing group off a map, §9, call 9) |
 | `i6_guard2` | 3,26 | 2 ashen champions | the stair's head, `roams: false` |
 
-**Finds.** The hoard (above); the camp's chest `i6_camp_chest` (6,25): 500 gold, `grey_staff`.
+**Finds.** The hoard (above); the camp's chest `i6_camp_chest` (6,25): 500 gold, `grey_staff`; and
+the cell's two, a lightning mace and a robe that raises personality, off the ladder (§4.9).
 
 **Share of the pay.** About a twelfth of the area's (§8).
 
@@ -558,11 +569,18 @@ and lines:
 - **The finds.** The camp's chest `i6_camp_chest` at 6,25 holds 700 gold and the Grey Staff; the
   hoard 1,700 gold and the Grey Mail, which is the Drakeskin Coat's wearers' (#754's 8; the gold 500
   and 1,200 before #794).
+- **The vigil cell** (#864, §4.9): three squares of dirt cut from the rim's rock at 5–7,15, the
+  secret door at 8,15 (world 272,173), its hint `i6_scorch` at 9,15 and the cell's `i6_vigil` at
+  7,15, with the chests `i6_vigil_chest` (6,15) and `i6_vigil_locked` (5,15, locked) holding no
+  gold, the Vigil Robe and the Levin Mace. The land reads rock 135, dirt 17 and secret doors 2
+  (139, 14 and 1 as #754 built it). The takings' door is still the box's first secret. The door
+  stands where the painter leaves a wall bare (`wallDressing`), so the zone's 12 wall faces have 4
+  dressed, inside the art suite's cap of half (§9, #864's 14).
 - **Measured.** A company at 28 wins every fight on the rim and walks the isle's road on to the camp
   every time (#754's 10). Two under, at 26, it wins every fight too, owed to #18 as H6's is (#754's
   11). The six groups give 11.63 fights to a rest, inside the aim, and pay 1.09 of the share (the
   brief's four 11.32 and 0.74, #754's 12; #794). Density 100.0% within 8 steps, the furthest 6, with
-  no sign among its 22 points (19 before Hereswith in #763; 20 before #794). The figures are in §8.
+  no sign among its 26 points (19 before Hereswith in #763; 20 before #794; 22 before #864). The figures are in §8.
 
 ### 4.4 Hearthfane, the temple (dungeon, 16×16, band 28–29)
 
@@ -1240,6 +1258,70 @@ in these squares and lines:
   voice, Wenna and each of her three answers once; then the thinned group, with who stands inside
   the door, for a Council that removed Vask. Density 100.0% within 7 steps, the furthest 7, with no
   sign among its 12 points. The figures are in §8.
+
+### 4.9 The vigil cell in the east rim (#864): two finds off the ladder
+
+The area's share of epic #18's eight items (DESIGN §5 and §6; the delegate's ruling, D1 to D4): one
+weapon whose blows carry an element and one piece of gear that raises a stat while it is worn, to
+each act past I, found and never told, off the ladder (no `GEAR` row dresses a company in either),
+inside the area's window of 7,000 and in no shop. The isle's are a lightning mace and a robe that
+raises personality. They lie in a cell cut in I6's east rim, behind a second secret door, the mace in
+the area's first locked chest.
+
+| Item | Kind | Dice or stat | Where | Price |
+|---|---|---|---|---|
+| Levin Mace (`levin_mace`) | a weapon of the Slag Mace's and the Grey Blade's classes: knight, paladin, ranger, barbarian, cleric | 2d12+5, the Slag Mace's steel, and 1d6 of lightning on every blow that lands (`element`) | the grey-banded chest at the cell's back, 5,15 (`i6_vigil_locked`, `locked: true`), no gold | 6,950 gold, 3,475 back |
+| Vigil Robe (`vigil_robe`) | armour, a robe anyone may wear, as the Grey Robe is | AC 12, a point under the Grey Robe's 13, and personality +3 while worn (`stat`) | the plain chest in front of it, 6,15 (`i6_vigil_chest`), no gold | 6,350 gold, 3,175 back |
+
+**`hits()`.** The mace's is 21.5: the steel's 18 and the die at 3.5 (`ELEMENT_DIE`). The ladder's
+weapon of its kind at the band is the Grey Blade from 28, 2d12+6, whose is 19, and the rung under it
+is the Slag Mace of Cinderport's 25, 18. The steel is the rung under the ladder's, so the die is the
+gain: 3.5 over the Slag Mace and 2.5 over the Grey Blade, with a point less on the steel. The robe's
+gain is the stat, bought with a point of armour (the Grey Robe's 13 against its 12) for a stat the
+heal reads (`spellHeal`): worn, the cleric's personality 15 reads 18 and her heal a point more
+(24 to 25 on a base of 20).
+
+**Where it is.** The rim's east face on row 15, 26 squares from the road as a company walks and 21
+as the crow flies. The road is the one walk the chapter needs on the isle: from the strand at 20,30
+up the cleft to the Bowl and the temple's door at 18,14 (18 steps), all in H6. The cell lies in the
+other box, past the seam on the Bowl's east, along the rim's path through Anchorhold's yard and up
+the east foot, where the chapter never goes (§4.3: no step of the one quest, by design). The door is
+at 8,15, between rock at 8,14 and 8,16; behind it three squares of dirt floor cut from the rim's rock
+at 5 to 7, the first with its event, then the plain chest and the locked one. The squares are shut to
+every walker but through the door, and nothing in the boxes, the chapter or the side quests sends a
+company there. The three secrets the area already had hold gold and a find or are a way (H6's cache
+the salts and 1,000 gold, I6's takings the Grey Mail and 1,700 gold, the Ways' hatch a crawl way on),
+so none was free, and the Underdeep and the Core are barred.
+
+**The hint** (`i6_scorch`, 9,15, on the door's near side, always there): *A vein of glass,
+finger-thick, runs through the turf from the sand and stops at the rock, which is scorched black above
+it.* It explains nothing, and the door is found by a search where the glass stops. Inside, an event at
+the cell's first square (`i6_vigil`, 7,15): *A cell cut in the rim, bed-long, its roof black with
+lamp-smoke. A plain chest on the floor, and one banded in grey metal.* The plain chest opens to any
+company; the grey-banded one says "A locked chest." and, to a company with neither a Lockpick standing
+nor an iron key, "Locked." and nothing (DESIGN §5, #857). The premade six's thief is born to Lockpick.
+Nothing the road needs lies in it, and no quest turns on either find. The east foot's champions
+(`i6_foot`, from 10,14) start a step from the glass, so the cell is reached past them.
+
+**The lightning.** The isle places 11 monsters, all past 10, and 4 are weak to lightning and none is
+immune or resists it (`elementMult`): the keeper, the deep knocker, the deep crawler and the Catcher,
+the machines of the Ways and the Stair. Holy and nature are those four's immunities, which is why the
+mace is not holy. Nothing the isle places is weak to fire, cold, poison or shadow, so no other element
+does better, and no area comes after the isle for the delegate's rule to ask about (§9, #864's 4).
+
+**Built** (#864). Inert for every check: no monster, group, gold or pay is added or moved, so §8
+stands, and the gate's, the harness's, the ladder's and the curve's figures are byte-identical to
+main's (the PR holds the diff). Both prices are under the Grey Mail's 7,000, the dearest find the
+curve names for the area, so that line stands too. Density holds: I6 100.0% within 8 steps (134 of
+134, the furthest 6), with no sign among its 26 points, four more. `shipped.json` adds the door at
+272,173, `levin_mace`, `vigil_robe` and the ids `i6_scorch`, `i6_vigil`, `i6_vigil_chest` and
+`i6_vigil_locked`; nothing moves. The walkthrough walks the detour in I6, on from the Hand's takings
+(`theVigil`): the glass, the search, the door, the robe from the plain chest and the mace from the
+grey-banded one, which the company's thief picks; and holds the finds themselves (`vigilFinds`:
+shape, window, no shop, no row of the ladder, no monster's drop, the one locked chest, the raise worn
+and carried, lightning against the isle, found and never told, the distance from the road) and the
+lock's refusals on a game of its own (`vigilLocked`, the real chest: refused with neither, opened by
+the thief, by a key, by the key spent).
 
 ## 5. The one quest here
 
@@ -2066,7 +2148,7 @@ crypt pay, 14,850 xp a member and 5,200 gold, still owed to #744 while the area 
 | Gate, two under, at 26 | 100% won (at most: aim 25%, limit 90%): owed to #18 (§11) |
 | Gate, the road at 28 | the isle's two pickets and the sermon, then the rim's champions and the camp's two guards, walked 100% of the time (aim 80%, limit 65%) |
 | Fights to a rest, at 28 | 11.63 (aim 10 to 12, limit 8.5 to 14.5) with six groups since #794 (11.32 with four); 4.7% of days end in a fight broken off |
-| Density, core | 100.0% within 8 steps (130 of 130, 117 needed); the furthest 6 of 15; no sign in 22 points (19 before Hereswith in #763; 20 before #794) |
+| Density, core | 100.0% within 8 steps (134 of 134, 121 needed); the furthest 6 of 15; no sign in 26 points (19 before Hereswith in #763; 20 before #794; 22 before #864) |
 | Levels | 3 monsters in 28–29, give or take two; rising from the way in (rank correlation 0.65; 0.77 before #794); the nearest group, the moths at 4 steps, at 28.0; the hardest, the champions at 10 steps, at 29.0 |
 | Lines | 13 events and signs: 10 of two lines and 3 of three; the area's 41: 2 of one, 27 of two and 12 of three |
 | Art | 50.0% of its 8 wall faces dressed (the cap is 50% under 100 faces): the cell is undressed (§9.2, #754's 2) |
@@ -2159,6 +2241,11 @@ Basalt Shield ac 7. The harness and the gate dress their companies from the rung
 30 and 32 in it; `GEAR_TOP` is 28. The salts are no system: a consumable for one member, as Lantern
 Oil is (`lantern_oil`, which the store sells for poison, disease and paralysis), and named apart from
 it.
+
+**The vigil cell's two finds** (#864, §4.9) are off this ladder: the Levin Mace (2d12+5 and a lightning
+die, 6,950) and the Vigil Robe (ac 12, personality +3, 6,350) are priced inside the window and under
+the Grey Mail; no `GEAR` row names either, no shop sells either and the cell pays no xp, gold or
+group, so every figure here stands.
 
 The boxes' tables above keep the figures they were built with, before the rung, but for the
 Catcher's and Vask's rows and the Heart's fights to a rest and walkthrough, which #752 brings up to
@@ -3394,6 +3481,79 @@ Decided by delegate for #794 (the isle), each the owner's to overturn:
     brief's table and the crypt's and the walkthrough's comments call the door's keeper the first no
     more; the keepers stay where they stand, the least change that is true.
 
+Decided by the owner's delegate for #18, each the owner's to overturn:
+
+1. **An elemental weapon,** its blows carrying lightning: its dice a rung under the ladder's at the
+   band, so the die is the gain; a class list as its kind has. The rule if the area session finds
+   better: an element its own area's monsters are not immune to and the next area's are weak to where
+   one is.
+2. **A stat item,** a robe raising personality by 3 while worn: slotted, so one is worn at a time.
+3. **Found, off the quest's path,** off the Bowl or the rim, behind a hinted secret door (band 28 to
+   29); never in the Underdeep or the Core; one of the two in a locked chest (`locked: true`), the
+   first the area holds. Each priced inside Hearth Isle's window, sold by no shop, sellable at half
+   as all found gear is. Off the ladder: no `GEAR` row, so no figure moves.
+4. **Names and texts pass the pillars;** two lines to a find.
+
+Decided by the builder for #864, each the owner's to overturn:
+
+1. **The hide is a cell in I6's rim, behind a second secret door in its east face** (8,15). The
+   area's three secrets hold gold and a find or are a way (H6's cache the salts and 1,000 gold, I6's
+   takings the Grey Mail and 1,700 gold, the Ways' hatch a crawl way on), so none was free; the
+   Underdeep and the Core are barred. The Bowl holds the chapter's road (the cleft up to the temple's
+   door) and the camp, and H6's east wall is pinned against I6's (`outdoors`), so the cell is cut in
+   the rim's rock on I6's side, which the chapter never enters (§4.3). Three squares of dirt floor
+   at 5 to 7 on row 15 with the door at 8,15 add walkable squares and take none away: every id, door
+   square and chest id stays, and the takings' door is still I6's first secret.
+2. **Both finds in the one cell,** the robe in a plain chest at 6,15 and the mace in a locked one at
+   5,15 behind it: one detour, one hint; a company with neither pick nor key still takes the robe
+   and sees the lock.
+3. **The mace is a Slag Mace with lightning on it,** the Grey Blade's kind (knight, paladin, ranger,
+   barbarian and cleric, four of the premade six), where the bow is the ranger's alone and the knife
+   and the staves the thief's and the casters'. Its steel is the Slag Mace's 2d12+5, the rung under
+   the Grey Blade the ladder wears from 28 (2d12+6), so the lightning die is the gain: `hits()` 21.5
+   against 19 (18 for the steel alone).
+4. **Lightning stands.** Of the 11 monsters the isle places, all past 10, 4 are weak to it and none
+   is immune or resists it; nothing is weak to fire, cold, poison or shadow; holy and nature are the
+   machines' immunities. No area comes after the isle, so no element is the better the delegate's
+   rule asks for.
+5. **The robe is the Grey Robe a point lighter,** AC 12 for 13, anyone's as that is, raising
+   personality by 3: the stat is the gain, as the die is the mace's. Worn it is a step of bonus on
+   what a caster heals (the cleric's personality 15 reads 18); in the pack or the bag it gives
+   nothing, and the armour slot makes it one robe at a time. Spell points are figured from the stat as
+   it is born and are not raised.
+6. **The mace is in the locked chest,** the robe in the plain one: the better find behind the lock,
+   and what a company that cannot open it still carries away is a thing worth the walk.
+7. **The prices are 6,950 and 6,350,** the isle's own scale for found gear (the Hand's steel stands
+   at 6,200 to 7,000 where Cinderport's wares stand at 2,000 to 3,100): the Grey Blade's 6,600 and a
+   point of plus (150, `PLUS_PRICE`) to each point of `hits()` the mace gains over it (2.5, 375,
+   taken to the 50 below), and the Grey Robe's 6,200 less 150 for its point of armour and 300 more
+   for the raise. Both are inside the window of 7,000 and under the Grey Mail's 7,000, the dearest
+   find, so that line of the curve stands as main prints it; they sell back at 3,475 and 3,175.
+8. **The names** are Levin Mace and Vigil Robe (§10): ten characters each, so the mace's sheet line,
+   "WEAPON Levin Mace, LIGHTNING, EXPERT", ends at 235 of the 334 the column allows.
+9. **The hint is a vein of glass in the turf** (`i6_scorch`, 9,15): a thing seen on the door's near
+   side that explains nothing and is there at every hour, as the hint rule asks. The cell's event
+   says what is in it and no more.
+10. **No chest holds gold,** so I6's 2,400, the area's 28,700 and §8 stand.
+11. **"Off the road" is measured by walking,** from every square on a shortest walk from the strand
+    to the temple's door, the isle's two boxes laid side by side as the world lays them: the glass's
+    end is 26 squares from it by the way a company walks and 21 as the crow flies, as Wrackholm's
+    hollow was (#861).
+12. **The walkthrough walks the detour in I6** on from the Hand's takings, the company's thief
+    (Ottilie, born to Lockpick, #857) picking the lock, and plays the lock's refusals on a game of its
+    own against the real chest: the checks were each broken in the tree and watched to fail (the PR
+    lists them).
+13. **The pilot is not stranded and does nothing new.** It reads the world through what it has seen;
+    its full run stops at Thornmark's chapter (docs/PILOT.md) and never reaches the isle; the door is
+    drawn as rock and the explorer suspects only cells drawn as wall; and a locked chest it met would
+    be pressed on once and walked past, as a locked door with no key is (#857).
+14. **The door stands on row 15, not row 13 where it was first cut,** for the art suite's wall
+    dressing (`tools/tests/art.ts`): a secret door is a wall face to it, the painter dresses one wall
+    in five by a hash of its square (`wallDressing`); I6's zone, 8 faces with the takings' door
+    dressed, holds the cap of half only while the new door is bare. The door at 8,13 drew a sconce
+    and took the zone to 8 of 12 (66.7%); 8,15 is bare, so it stands at 4 of 12 (33.3%). The cap is
+    not moved; the cell is two rows down the same face, still between rock above and below.
+
 ## 10. Names
 
 The Lanterns' English, kept, as the Whitespine's and Sunderwood's were (NAMES.md §2, §4): the isle
@@ -3422,6 +3582,12 @@ Council's clerk is **Wiglaf**, the Foreland's English, a name used nowhere else 
 No place's name is new in any people's tongue, so NAMES.md §4
 gains one line: *Hearth Isle (step XII): the Lanterns' English, kept, with Hearthfane for the
 temple; the deep's levels take the docs' plain names.*
+
+The vigil cell's two finds (#864) keep the Lanterns' English. Levin is the old word for lightning, a
+worn one of the kind NAMES §1 allows and never says, and the mace after it is the Slag Mace it was
+cut from. A vigil is the night a pilgrim keeps at the light, and the Vigil Robe is what is worn for
+it, in a cell cut for the keeping. Neither name says what it does: the sheet says LIGHTNING, and the
+stat says personality (§9, #864's 8).
 
 ## 11. What was cut
 

@@ -8,7 +8,8 @@
 // in a pocket carved into the rim behind the tally-house, found from the smell at its foot. The Hand's
 // champions where the rim's path begins, the moths over the yard by night, the camp's guard with its
 // preacher, gone once Vask is gone from Helmstow, and two more at the stair's head. Hereswith, the
-// anchoress, at the cell's window, who teaches the Cleric's third (#763).
+// anchoress, at the cell's window, who teaches the Cleric's third (#763). In the rim's east face, behind a
+// second secret door that a vein of glass in the turf points at, a vigil cell holds two finds (#864, §4.9).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/hearth_isle.md §4.3 is its brief (#754).
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
@@ -49,7 +50,7 @@ export const HEARTHISLE_I6: MapDef = {
     ',rrrrrrrr,,_~~WWWWWWWWWWWWWWWWWW',
     ',rrrrrrrr,,_~~WWWWWWWWWWWWWWWWWW',
     ',,rrrrrrr,,_~~WWWWWWWWWWWWWWWWWW',
-    ',,rrrrrrr,,_~~WWWWWWWWWWWWWWWWWW',
+    ',,rrr:::S,,_~~WWWWWWWWWWWWWWWWWW',
     ',rrrrrrrr,,_~~WWWWWWWWWWWWWWWWWW',
     ',rrrrrrrr,,,_~~WWWWWWWWWWWWWWWWW',
     ',::rBrrrr,,_~~WWWWWWWWWWWWWWWWWW',
@@ -117,8 +118,16 @@ export const HEARTHISLE_I6: MapDef = {
     { kind: 'event', x: 2, y: 25, id: 'i6_smell', once: true, text: 'Lamp oil, and under it the smell of the sea cave under Rook\'s Nest.' },
     { kind: 'event', x: 1, y: 24, id: 'i6_takings', once: true, text: 'The Hand\'s takings, cut into the rock: coin from every town on the road, and grey parts sorted into heaps by size.' },
     { kind: 'chest', x: 0, y: 24, id: 'i6_hoard', gold: 1700, items: ['grey_mail'] },
+    // The vigil cell in the rim's east face (#864), found and never told: a vein of glass in the turf that stops at
+    // the rock, and the door in the face where it stops. Behind it a cell cut for a lamp, with a plain chest and a
+    // grey-banded one: the Vigil Robe in the first, the Levin Mace in the second, which a Lockpick or an iron key
+    // opens. Off the quest, on the rim's far side from the Bowl, and no person, quest or mark names it.
+    { kind: 'event', x: 9, y: 15, id: 'i6_scorch', once: true, text: 'A vein of glass, finger-thick, runs through the turf from the sand and stops at the rock, which is scorched black above it.' },
+    { kind: 'event', x: 7, y: 15, id: 'i6_vigil', once: true, text: 'A cell cut in the rim, bed-long, its roof black with lamp-smoke. A plain chest on the floor, and one banded in grey metal.' },
+    { kind: 'chest', x: 6, y: 15, id: 'i6_vigil_chest', gold: 0, items: ['vigil_robe'] },
+    { kind: 'chest', x: 5, y: 15, id: 'i6_vigil_locked', gold: 0, items: ['levin_mace'], locked: true },
   ],
-  secrets: [{ x: 2, y: 24, hint: 'i6_smell' }],
+  secrets: [{ x: 2, y: 24, hint: 'i6_smell' }, { x: 8, y: 15, hint: 'i6_scorch' }],
   encounters: [
     // The Hand's champions in the Bowl's pocket where the rim's path begins, so Anchorhold is reached with
     // a fight; the moths over the yard by night; the camp's guard, the box's hardest, never roaming and
