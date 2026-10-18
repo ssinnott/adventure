@@ -3402,4 +3402,5 @@ and winch-house stand as built: the enclave's pull request adds the door and its
 id. **The lair** (#846, #847): the artifact's, at the cap, one or two levels with one guardian, its
 door in the rim's foot on P5, the farthest of the Kilns' land from the road; the artifact, its
 guardian and the rumour that first speaks of it are #846's, and where #846 puts the lair elsewhere,
-this note gives way to it.
+this note gives way to it. #846 has set it (the Erzhemd, §6): an old working of two levels in the
+crag under the rim, its adit in P5, which P5's walled trial (§12.3) stands apart from.
