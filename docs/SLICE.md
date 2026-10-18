@@ -180,10 +180,11 @@ DESIGN.md first for the why.
   hall's skills, then who would learn one (`skillMenu`, `learnerMenu`); a person opens on who. The
   Cartographers' Cartographer and Pathfinder and the Compact's Lockpick, Merchant and Navigator
   complete the twelve (#857): `World.reveal` maps a square further for a Cartographer or a chart
-  carried; `World.move` drops the drag on the clock for a Pathfinder (the Rangers born to it);
+  carried, never past what blocks the view; `World.move` drops the drag on the clock for a Pathfinder (the Rangers born to it);
   `World.unlock` opens an iron-key door and a locked chest (`chest.locked`) to a Lockpick (the
   Thieves born to it) or a set of picks, keeping the key, else to a key spent; `sellPrice` pays a
-  Merchant two thirds and `fareOf` charges a Navigator half.
+  Merchant two thirds and `fareOf` charges a Navigator half. A company's rank in a guild is
+  `game/ranks.ts`'s, so that `skills.ts` asks it apart from the quests' rules.
 - **The weapon and magic tiers** (`game/mastery.ts`, #852; DESIGN §5, §7): a member's Expert and
   Master at arms and in magic (`tiers`, none in a save from before them). Arms adds to the to-hit
   (`attackBonus`) and to every blow (`armsBonus`, beside `traitDamage` in the blow and in the
@@ -904,7 +905,7 @@ does.
 | `game/inscriptions.ts` | Kiln-script: an inscription (a sign with `read`), who reads it (`readerOf`), what a sign says and what a reading keeps (`signSays`), its texts as the line check measures them (`signTexts`), the id it is kept by (`readId`) and the places the world map pins once read (`readMarks`); pure |
 | `game/stones.ts` | the Hearth's measure: the Stones restored (`stonesRestored`, `savedStones` for the title), the Hearth's bearing from a world cell, its flicker and the almanac's word by the count; pure |
 | `game/passage.ts` | crossings: a passage's fare (nothing once its `free` holds, half once its `half` does and half again for a Navigator), its next departure and its landing, the floor at the far end, the menu's line and the terms with their warning, and taking it (the fare, the clock, the landing, the company rested); pure |
-| `game/guilds.ts` | a guild quest (`GuildQuest`); a company's rank, worked out from its done flags and kept once reached (`rank_<guild>`); what a hall offers (a quest may wait for a flag, `after`), taking a quest and the report that pays it (gold, items, xp split among the living), an item taken at the first meeting whatever the rank; pure |
+| `game/guilds.ts`, `game/ranks.ts` | a guild quest (`GuildQuest`); a company's rank, worked out from its done flags and kept once reached (`rank_<guild>`; `rankOf`, ranks.ts's, which reads the content alone); what a hall offers (a quest may wait for a flag, `after`), taking a quest and the report that pays it (gold, items, xp split among the living), an item taken at the first meeting whatever the rank; pure |
 | `game/items.ts`, `game/monsters.ts`, `game/spells.ts` | what an item, a monster and a spell are (`ItemDef`, with a letter's `text`, a raise borne and a blow's element; `MonsterDef`, `SpellDef`) and their lookups; a weapon's measure (`hits`) and what a shop pays (`sellPrice`: half, a Merchant two thirds); a monster's kind and what each kind sets (`KINDS`: sleep, Holy Strike); the tables are content's |
 | `game/save.ts`, `game/upgrades.ts` | the save and `SAVE_VERSION`; the upgrades, each registered by the version it brings a save to and run in turn on load, with what they need of the world as it was kept frozen |
 | `game/combat.ts` | `CombatState`, `startCombat`, `currentTurn`, `partyAct`, `monsterAct`, and the log's lines, the glove's once a game (`GLOVE_FLAG`); pure and seeded |

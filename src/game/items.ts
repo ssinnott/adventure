@@ -8,7 +8,7 @@ import type { Feature } from './map.ts';
 import type { Party, Stat } from './party.ts';
 import type { Element } from './spells.ts';
 import type { SkillId } from './skills.ts';
-import { isDown } from './party.ts';
+import { skilled } from './skills.ts';
 
 export type ItemSlot = 'weapon' | 'armor' | 'shield' | 'none';
 
@@ -82,14 +82,11 @@ export function priceIn(shop: Shop, id: string): number {
 
 /**
  * What a shop pays the company for an item of this price: half, rounded down, so one priced at
- * nothing is never bought; two thirds, rounded down, with a Merchant standing (#857). The skill is
- * read off the members' lists inline, as `partyCan` reads its own (game/party.ts): this module sits
- * under the content index, which game/skills.ts would pull in before its maps are made. The skills
- * test holds it to `skilled`.
+ * nothing is never bought; two thirds, rounded down, with a Merchant standing or an item that does
+ * a Merchant's work carried (`skilled`, #857).
  */
 export function sellPrice(party: Party, price: number): number {
-  const merchant = party.members.some((m) => !isDown(m) && !!m.skills?.includes('merchant'));
-  return merchant ? Math.floor((price * 2) / 3) : Math.floor(price / 2);
+  return skilled(party, 'merchant') ? Math.floor((price * 2) / 3) : Math.floor(price / 2);
 }
 
 /** Buy an item from a shop: null when the party is short of gold; food goes to the stores, the rest to the bag. */

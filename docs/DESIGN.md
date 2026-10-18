@@ -330,14 +330,16 @@ country, band 26 to 28.
 
   Built with #857, so that every hall teaches its guild's three and all twelve are built:
   - *Cartographer* (the Cartographers'): the automap fills a square further than the company sees,
-    three in the open by day and two in a dungeon or the dark. A chart carried does its work.
+    three in the open by day and two in a dungeon or the dark, never past a wall, a door or a secret
+    door. A chart carried does its work.
   - *Pathfinder* (the Cartographers'): hills, ash, dunes and deep snow are walked at the road's six
     minutes a step, with no drag on the clock. The Rangers are born to it.
   - *Lockpick* (the Compact's): an iron-key door opens with no key spent, and so does a locked chest,
     which otherwise opens to an iron key spent and to nothing else ("Locked."). The Thieves are born
     to it, and a set of picks carried does its work. No door needs a pick: every locked door has its
     key. The lock minigame of §2 is struck.
-  - *Merchant* (the Compact's): a shop pays two thirds of an item's price, not half.
+  - *Merchant* (the Compact's): a shop pays two thirds of an item's price, not half. An item that
+    does a Merchant's work would do it carried, as a chart does.
   - *Navigator* (the Compact's): a crossing costs half its fare, after a flag's free or half.
 
   A people or a class may be born to a skill (`races`, `classes`), and a hall will not sell a member
@@ -503,33 +505,41 @@ Decided by the builder for #857, each the owner's to overturn:
 
 1. A Lockpick opens an iron-key door with no key carried, as it opens a locked chest, and a key
    carried is kept: the pick is what opens it. The door and the chest share one rule
-   (`World.unlock`).
+   (`World.unlock`). The cost: from the first step, its thief standing, the premade six pass every
+   Act I key's guard (`gw1_captain`'s smugglers, greywater2's vestry secret, `g1_keeper` and
+   `g2_keyguard`'s seven adepts), though no quest, flag or lock reads a key spent or a door opened.
+   The narrower reading, a key needed and kept, is one line (`const lock = pass === 'unlock'` in
+   `World.move`) and the first case of `picked()` in `tools/tests/movement.ts`.
 2. Who does a skill's work is `skilled`'s answer: a member standing who has it, else a member
-   standing while an item that does it is carried. So a chart and a set of picks do theirs; no item
-   does Pathfinder's, Merchant's or Navigator's.
+   standing while an item that does it is carried. So a chart and a set of picks do theirs, and an
+   item that does a Merchant's work would; none does Pathfinder's, Merchant's or Navigator's yet.
 3. Cartographer's square is added in every light: thick weather in the open, one square without it,
    is two with it. The corridor ahead, which is sight's, is not lengthened.
-4. The words: "Ottilie picks the lock." (the member's name) where a Lockpick or a set of picks
+4. The extra square follows sight: never past a wall, a door or a secret door. It is mapped only
+   where the square beside it toward the company does not block the view, so the automap is made
+   better and never tells what is hidden: a secret door, or a Master's hide behind one.
+5. The words: "Ottilie picks the lock." (the member's name) where a Lockpick or a set of picks
    opens one; a key spent at a chest says the door's "The lock turns. The key crumbles."; a locked
    chest stood on says "A locked chest." in place of "A chest. Space opens it."
-5. `strandedLocks` reads a locked chest as a lock the party may open and need not: a key spent on
+6. `strandedLocks` reads a locked chest as a lock the party may open and need not: a key spent on
    one is among the orders it tries, a key inside one counts only once it is opened and a chest is
-   never itself stranded. So no map may hold a locked chest that could take a door's only key.
-6. The roundings are down: a Navigator pays 75 for 150, 37 once half holds; a Merchant is paid 80
+   never itself stranded. So no map may hold a locked chest that could take a door's only key, and
+   `lockedFaults` holds that none holds an iron key or an item a quest turns on.
+7. The roundings are down: a Navigator pays 75 for 150, 37 once half holds; a Merchant is paid 80
    for 120 and 26 for 40.
-7. `sellPrice` reads the Merchant off the members' lists inline, as `partyCan` reads its skills:
-   `items.ts` sits under the content index, which `skills.ts` would pull in before its maps are
-   made. The shops test holds it to `skilled`.
-8. The shops test asks the sell-back of a company with a Merchant, the most a shop pays, so no shop
+8. `sellPrice` asks `skilled`, as the world does. For that, a company's rank in a guild (`rankOf`)
+   moves to `game/ranks.ts`: `skills.ts` asked it of `game/guilds.ts`, which pulled the quests'
+   rules in under the content index before its maps were made.
+9. The shops test asks the sell-back of a company with a Merchant, the most a shop pays, so no shop
    may price an item under two thirds of its own price (none does), and the quests test asks the
    same company whether a shop buys an item.
-9. The texts: "Maps a square further.", "Walks rough ground at the road's pace.", "Picks locks, and
-   keeps the key.", "Sells at two thirds, not half." and "Pays half fare on every crossing."
-10. The five rows follow Arms Master in `SKILLS`, so the Cartographers' halls list Swimmer,
+10. The texts: "Maps a square further.", "Walks rough ground at the road's pace.", "Picks locks, and
+    keeps the key.", "Sells at two thirds, not half." and "Pays half fare on every crossing."
+11. The five rows follow Arms Master in `SKILLS`, so the Cartographers' halls list Swimmer,
     Cartographer and Pathfinder, and the Compact's Lockpick, Merchant and Navigator.
-11. The premade six's ranger is born to Pathfinder and its thief to Lockpick, so the tests that time
+12. The premade six's ranger is born to Pathfinder and its thief to Lockpick, so the tests that time
     a step onto hills or through snow, or see a key spent at a door, put them down for those steps.
-12. The weather still says "Snow lies deep, and the going is slow." to a Pathfinder: the snow lies
+13. The weather still says "Snow lies deep, and the going is slow." to a Pathfinder: the snow lies
     deep whoever walks it.
 
 ---

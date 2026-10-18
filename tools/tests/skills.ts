@@ -521,7 +521,9 @@ function senses(): void {
  * more. A company on open ground facing north, the squares west of it (off the corridor ahead)
  * watched: on a clear day the automap takes two without the skill and three with it; at night, and in
  * a dungeon, one without and two with. With it learnt by a member standing, or a chart carried (a
- * fixture item that does its work, `ItemDef.skill`); without it, or with its learner down.
+ * fixture item that does its work, `ItemDef.skill`); without it, or with its learner down. The extra
+ * square follows sight: underground, two squares off past open floor it is mapped, and past a closed
+ * door or an unfound secret door it is not.
  */
 function cartographer(): void {
   const open: MapDef = { id: 'fx_chart', name: 'Chart', kind: 'outdoor', start: { x: 5, y: 5, facing: NORTH }, rows: Array<string>(11).fill(',,,,,,,,,,,') };
@@ -549,6 +551,19 @@ function cartographer(): void {
     const day = row(open, DAY), night = row(open, NIGHT), under = row(hall, DAY);
     ok(day === '2/3/2/3' && night === '1/2/1/2' && under === '1/2/1/2',
       `a Cartographer standing, or a chart carried, maps a square further: on open ground by day ${day}, by night ${night}, in a dungeon ${under} (none / learnt / down / a chart)`);
+    // West of 3,3 open floor, east a closed door, north an unfound secret door; facing the wall south.
+    const doors: MapDef = { id: 'fx_chart_doors', name: 'Chart doors', kind: 'dungeon', start: { x: 3, y: 3, facing: SOUTH }, rows: ['#######', '###.###', '###S###', '#...D.#', '#######'] };
+    const past = (learnt: boolean): string => {
+      const rng = makeRng(43), q = defaultParty(rng);
+      if (learnt) q.members[0].skills = ['cartographer'];
+      const w = new World({ fx_chart_doors: new GameMap(doors) }, q, rng);
+      w.mapState.explored.fill(0);
+      w.travel('fx_chart_doors', 3, 3, SOUTH);
+      return [[1, 3], [5, 3], [3, 1]].map(([x, y]) => (w.explored(x, y) ? 'mapped' : '-')).join('/');
+    };
+    const sighted = past(true), blind = past(false);
+    ok(sighted === 'mapped/-/-' && blind === '-/-/-',
+      `the extra square follows sight: two squares off past open floor it is mapped, past a closed door and past an unfound secret door it is not (floor / door / secret door: ${sighted}; without the skill ${blind})`);
   } finally {
     delete ITEMS[chart.id];
   }

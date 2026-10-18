@@ -576,12 +576,17 @@ export class World {
    */
   reveal(radius = 1): void {
     const ms = this.mapState, m = this.map;
+    const base = Math.max(radius, this.map.kind === 'outdoor' && !this.isDark && weatherSight(this.weather) >= 4 ? 2 : 1);
     // A Cartographer standing, or a chart carried, maps a square further: 3 in the open by day, 2 in a
-    // dungeon, in the dark or in thick weather (#857).
-    const r = Math.max(radius, (this.map.kind === 'outdoor' && !this.isDark && weatherSight(this.weather) >= 4 ? 2 : 1) + (skilled(this.party, 'cartographer') ? 1 : 0));
+    // dungeon, in the dark or in thick weather (#857). The extra square follows sight: one is mapped
+    // only where the square beside it toward the company does not block the view, so never past a
+    // wall, a door or a secret door, and the automap tells nothing hidden.
+    const r = base + (skilled(this.party, 'cartographer') ? 1 : 0);
     for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) {
-      const x = this.state.x + dx, y = this.state.y + dy;
-      if (m.inBounds(x, y) && !this.hidden(x, y)) see(ms.explored, y * m.width + x);
+      const x = this.state.x + dx, y = this.state.y + dy, d = Math.max(Math.abs(dx), Math.abs(dy));
+      if (!m.inBounds(x, y) || this.hidden(x, y)) continue;
+      if (d > base && m.blocksView(x - (Math.abs(dx) === d ? Math.sign(dx) : 0), y - (Math.abs(dy) === d ? Math.sign(dy) : 0))) continue;
+      see(ms.explored, y * m.width + x);
     }
     // And the corridor ahead, as far as the eye sees, so the automap matches the viewport.
     const f = this.state.facing;

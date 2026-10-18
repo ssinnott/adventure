@@ -6,6 +6,7 @@ import type { Feature } from '../../src/game/map.ts';
 import { priceIn, buy, sellPrice } from '../../src/game/items.ts';
 import { defaultParty } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
+import type { ItemDef } from '../../src/game/items.ts';
 import { skilled } from '../../src/game/skills.ts';
 import { businessEntries } from '../../src/ui/screens.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
@@ -68,9 +69,19 @@ export function shops(): void {
   const pays = (p: Party): string => [40, 25, 3, 1, 0].map((n) => sellPrice(p, n)).join(' ');
   ok(pays(road(true)) === '26 16 2 0 0' && pays(road(false)) === '20 12 1 0 0' && pays(fallen) === '20 12 1 0 0',
     `a shop pays a Merchant standing two thirds, rounded down, and anyone else half, for 40, 25, 3, 1 and 0 (Merchant ${pays(road(true))}; none ${pays(road(false))}; the Merchant down ${pays(fallen)})`);
-  // sellPrice reads the list itself (game/items.ts sits under the content index), so it is held to `skilled`.
-  const held = [road(true), road(false), fallen].every((p) => (sellPrice(p, 30) === 20) === !!skilled(p, 'merchant'));
-  ok(held, 'and it reads the Merchant as skilled() does, standing or down');
+  // A set of scales carried, a fixture item that does a Merchant's work (`ItemDef.skill`), is paid as a
+  // Merchant is: sellPrice asks `skilled`, as the world does.
+  const scales: ItemDef = { id: 'fx_scales', name: 'Scales', slot: 'none', price: 100, skill: 'merchant' };
+  ITEMS[scales.id] = scales;
+  try {
+    const carried = road(false);
+    carried.members[2].pack.push(scales.id);
+    const held = [road(true), road(false), fallen, carried].every((p) => (sellPrice(p, 30) === 20) === !!skilled(p, 'merchant'));
+    ok(pays(carried) === '26 16 2 0 0' && skilled(carried, 'merchant')?.name === 'Wren' && held,
+      `a set of scales carried is paid two thirds, as a Merchant is (${pays(carried)}), and sellPrice reads the Merchant as skilled() does, standing, down or carried`);
+  } finally {
+    delete ITEMS[scales.id];
+  }
   const g = headlessGame(4), harrow = MAP_DEFS.find((m) => m.id === 'harrow')!.features!.find((f): f is Shop => f.kind === 'shop')!;
   const sold = (merchantToo: boolean): number => {
     while (g.screens.length > 1) g.pop();

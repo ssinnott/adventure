@@ -13,7 +13,7 @@
 import type { GuildId } from '../content/guilds.ts';
 import type { Character, Party, RaceId, ClassId } from './party.ts';
 import { isDown, countItem } from './party.ts';
-import { rankOf } from './guilds.ts';
+import { rankOf } from './ranks.ts';
 import { ITEMS } from '../content/index.ts';
 
 export type SkillId = 'linguist' | 'mountaineer' | 'swimmer' | 'perception' | 'spirit_sense' | 'danger_sense' | 'arms_master'

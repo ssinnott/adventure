@@ -1,6 +1,7 @@
 // The maps' structure, the rules any content has to keep: no iron key behind its own lock, however
-// the party spends its keys, a key spent on a locked chest among them; no guardian that comes back (a group that drops a quest item or says
-// something when it dies, beside the quests suite's check for groups a quest names); every respawn
+// the party spends its keys, a key spent on a locked chest among them; nothing the road needs in a
+// locked chest; no guardian that comes back (a group that drops a quest item or says something when
+// it dies, beside the quests suite's check for groups a quest names); every respawn
 // within 720 to 2,880 minutes; a group's `until` and `after` naming something real, and no sky
 // underground; a group under the ice standing on ice; Thornmark's Rift stopping with the tear; every
 // outdoor map one box of the atlas's grid. Each is first run on the content as it is, then on a map
@@ -28,7 +29,7 @@ export const RESPAWN = [720, 2880] as const;
  * choice of which lock to open next is tried, a search over the sets of locks opened. A locked chest
  * (#857) is a lock the party may open and need not, with no Lockpick: a key spent on one it reaches is
  * among the choices tried, a key inside one counts only once it is opened, and a chest is never
- * itself stranded, since nothing the road needs is in one.
+ * itself stranded, since nothing the road needs is in one (`lockedFaults`).
  */
 export function strandedLocks(def: MapDef): string[] {
   const m = new GameMap(def);
@@ -68,6 +69,14 @@ export function strandedLocks(def: MapDef): string[] {
   };
   visit(new Set());
   return locks.filter((l) => stranded.has(l));
+}
+
+/**
+ * What a locked chest holds that the road may need (#857): an item a quest turns on (`questItems`) or
+ * an iron key, which a door needs. A locked chest opens to a Lockpick or a key, and to nothing else.
+ */
+export function lockedFaults(def: MapDef, items: ReadonlySet<string>): string[] {
+  return (def.features ?? []).flatMap((f) => (f.kind === 'chest' && f.locked ? f.items.filter((i) => i === 'key_iron' || items.has(i)).map((i) => `${f.id} at ${f.x},${f.y} holds ${i}`) : []));
 }
 
 /** The items a quest turns on: the ones an NPC takes in, and the ones a quest's condition names. */
@@ -137,6 +146,20 @@ export function structure(): void {
     ok(!out.length, `${def.id}: every respawn is ${RESPAWN[0]} to ${RESPAWN[1]} minutes${list(out)}`);
     const when = presenceFaults(def);
     ok(!when.length, `${def.id}: every group's, person's, event's, blessing's and camp night's until and after names something real, and none asks for a sky underground${list(when)}`);
+  }
+  { // Nothing the road needs lies in a locked chest (#857): no item a quest turns on and no iron key;
+    // none is placed yet, so a fixture with one of each, and an unlocked chest holding both, shows the check.
+    const shut = MAP_DEFS.flatMap((d) => lockedFaults(d, items).map((f) => `${d.id}: ${f}`));
+    const placed = MAP_DEFS.flatMap((d) => (d.features ?? []).filter((f) => f.kind === 'chest' && f.locked)).length;
+    ok(!shut.length, `no locked chest holds an item a quest turns on or an iron key (${placed} locked chests placed)${list(shut)}`);
+    const quest = [...items].sort()[0];
+    const coffers: MapDef = { id: 'fx_coffers', name: 'Coffers', kind: 'dungeon', start: { x: 1, y: 1, facing: SOUTH }, rows: ['#####', '#...#', '#####'], features: [
+      { kind: 'chest', x: 2, y: 1, id: 'c_quest', gold: 0, items: [quest], locked: true },
+      { kind: 'chest', x: 3, y: 1, id: 'c_key', gold: 0, items: ['torch', 'key_iron'], locked: true },
+      { kind: 'chest', x: 1, y: 1, id: 'c_open', gold: 0, items: [quest, 'key_iron'] },
+    ] };
+    const caught = lockedFaults(coffers, items);
+    ok(caught.join('; ') === `c_quest at 2,1 holds ${quest}; c_key at 3,1 holds key_iron`, `a locked chest holding ${quest}, which a quest turns on, or an iron key is caught, and an unlocked chest holding both is not (${caught.join('; ') || 'nothing'})`);
   }
   { // A group under the ice stands on it: on any map, and not the mill's rats put under it on its floor.
     const iced = MAP_DEFS.flatMap((d) => (d.encounters ?? []).filter((e) => e.under === 'ice')).length;
