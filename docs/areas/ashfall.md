@@ -469,7 +469,7 @@ cuts and the sliver about 700 (§11):
 | | The nine drawings | | | | | MONSTERS §8.2's roster | | #520 |
 | | Cinderport's rooms | | | | | eight | | #521 |
 | F9, G9, H9 | The fishers' bay; Cinderport's harbour side; the shore under the Sheer | Cindercoast | country, behind the road | 24–25 | 560 (grass 291, hills 146, ash 55, vines 32), 69 shallow; 223 (grass 155, building 25, sand 24, road 11), 71 shallow; 503 (grass 384, pine 42, sand 35, cliff 27), 69 shallow | the fishers' bay and store (F9); the harbour between the sea wall's moles and the smugglers' cell (G9); the hamlet under the Sheer and the cleft (H9); two cinder drakes in each | none | #522, built |
-| E11 | The Waste's west | the Ember Waste | country, behind the road | 25–26 | 961 (hills 262, ash 252, mountain 234, grass 70, lava 63) | the lava flow, the knapper, the drakelings and the tube under the flow | none | #522, built |
+| E11 | The Waste's west | the Ember Waste | country, behind the road | 25–26 | 961 (hills 261, ash 252, mountain 234, grass 70, lava 63) | the lava flow, the knapper, the drakelings and the tube under the flow | none | #522, built |
 | H11, H12, G12 | The east flank under the Sheer; the south-east foot where the lava ends; the south foot under the rim | Fire Mountain | country, behind the road | 25–26 | 984 (ash 937, pine 20, rock 15, grass 4, lava 4), 40 stream; 841 (ash 487, mountain 293, hills 22, lava 18, rock 9, grass 9), 2 stream; 674 (ash 374, mountain 288, rock 9) | the stream and its stones, the drake-watcher and the war-chest behind the axe-head (H11); the flow's end, the spring and the tube behind the split crust (H12); the folds, the hum over Meridian Camp and the drakes' hollow behind the claw-marks (G12); six drakelings in each | none | #522, built |
 
 The core is the four boxes that hold a step of the quest (H10, G10, G11 and F11), built at full
@@ -1325,7 +1325,7 @@ half, with the wilderness features (#45); no more than one point in four is a si
     Vial (§9, #522's 11). The tube runs a square further since #859: at 18,14, past the bones, it
     ends in a fall of rock with a roll of hide at its foot, tied with cord (`e11_clerk`, `e11_roll`,
     no gold): the buried town's roll, the favour Old Cinder's scholar asks for the Master of magic
-    (§4.7, §6), 16 squares from the nearest road. The ring is rock at 17 to 19 on rows 12 to 14 and
+    (§4.7, §6), 16 squares from the nearest road as the crow flies (24 walking). The ring is rock at 17 to 19 on rows 12 to 14 and
     at 18,15 (a hills square made rock). The tube is shut in rock to walkers, swimmers, climbers and
     floaters: the flood is 889 squares, and the room is none of them.
     **The group.** Six drakelings on the flow's warm bank (`e11_drakelings`, 12,18; aware 3; back
@@ -1665,7 +1665,7 @@ is no quest: nothing in the log, the chapter or the atlas names her, her room or
 seeking sends a company to her. The hermit in F11's rock says his own words at the first meeting
 and, at the next, two more, the rumour: the crater's one chimney smokes some mornings, and no
 stoker feeds it (§4.6). In Old Cinder's lane a cup stands clean on the floor at the south end of
-the broken kiln's room, the ash swept from round it, and the wall there gives on a room the ash
+the broken kiln's room, the ash swept from round it; the wall there gives on a room the ash
 never filled (§4.7). Eseld, a scholar of Old Cinder, asks for the town's roll, which the clerk took
 west on the carts' road the night before the ash, and says where it lies in no word: a roll of
 hide at the end of E11's cold tube, behind the crack that breathes cold air, where the clerk lay
@@ -3075,6 +3075,8 @@ Decided by the owner's delegate for #18, each the owner's to overturn:
    handed in by an `npc.quest` that sets a flag her `done` tests.
 4. **She teaches** `mastery: { line: 'magic', tier: 'master', done, price: 5000 }` to a member with
    Expert in magic and level 25 (DESIGN §5; the issue's, #859).
+5. **The voice** as #858's: two lines to an event, three at most; British spelling; the font's
+   glyphs.
 
 Decided by the builder for #859, each the owner's to overturn:
 
@@ -3084,10 +3086,11 @@ Decided by the builder for #859, each the owner's to overturn:
    of a 16 by 16 level the walls leave farthest from the street, 6 squares from its straight way
    at the nearest (a level this size has no room for ten), off the Paladin's way and off the
    Drake's square. Ten squares from the road is kept for the favour; the hide is a secret door, as
-   a second prestige's trainer is placed, the crater's lip being 10 from the Waste's road.
+   a second prestige's trainer is placed, the crater's lip being 10 squares from the Waste's road
+   by the way a company walks (6 as the crow flies).
 3. **The hint is a cup set down clean,** the ash swept from round it in the door's curve (`oc1_cup`,
    2,8): the cup beside a door the ash did not fill that the issue for #515 had for its secret
-   and left unbuilt (§11), the broken kiln's warm brick beside it.
+   and left unbuilt (§11, built in part since), the broken kiln's warm brick beside it.
 4. **The rumour is the chimney:** the one in the crater smokes some mornings and no stoker feeds
    it, in the hermit's way of counting. His first words stand; he gains `f11_hermit_met`, set at
    the first meeting, and the two lines are his `says` after it.
@@ -3095,7 +3098,8 @@ Decided by the builder for #859, each the owner's to overturn:
    a second square of E11's cold tube (18,14) beside the bones: a hills square made rock closes
    the ring (18,15). The tube's first chest (`e11_pack`) stays as it was, so a company that has
    emptied it is not shut out of the roll, which has a chest of its own (`e11_roll`, no gold).
-   E11 is behind the road, 16 squares from the nearest road square and in no step of the chapter.
+   E11 is behind the road, 16 squares from the nearest road square as the crow flies (24 walking)
+   and in no step of the chapter.
 6. **Her words hint at the favour and no more:** the clerk, the roll, west on the carts' road and
    "where he lay down". The tube's own hint stays the draught of cold air (`e11_draught`).
 7. **One hand-in, no pay and no hire:** `q_roll_given`, 0 gold; she has no `flag`, so her three
@@ -3274,9 +3278,9 @@ Cut and owed, from Old Cinder (#515):
   street and none in the cellars, is the owner's to take instead.
 - **The undercroft's figure two under is owed to #18:** at 22 a company wins every fight there, where
   §8 asks no more than one in four (§9, #515's 2).
-- **The issue's own secret is not built:** a house whose door the ash did not fill, a cup set outside
-  it, and the Old Drake's way down from the crater into the undercroft. The doc's secret is, and the
-  Old Drake stays on the square (§4.7).
+- **The issue's own secret is built in part since #859** (§4.7): a room the ash did not fill, with a
+  cup set outside its door, off the lane. The Old Drake's way down from the crater into the
+  undercroft is not built; the doc's secret is, and the Old Drake stays on the square (§4.7).
 - **The lamp is relit only by the Paladin's third** (#448, §6): `oc2_lamp` is cold until then (§9,
   #515's 10).
 - **The hand-in and the potter:** #516's sockets take `ember_part2` with the other two (§9, #516's

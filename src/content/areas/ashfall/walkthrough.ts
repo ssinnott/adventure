@@ -55,7 +55,7 @@
 // air. Then the three third prestiges taught here (#448), each its trainer's quest played to the teaching by
 // a company of 27:
 // the Paladin's lamp, the Barbarian's nest and the Druid's seedling. Then the Master of magic, found and
-// never told (#859): the hermit's rumour, the hide in Old Cinder, the favour in E11's cold tube, and the
+// never told (#859): the hermit's rumour, the hide in Old Cinder, the favour in E11's cold tube and the
 // teaching by a company of 25.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, gone, listen, walkThrough, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
@@ -72,7 +72,7 @@ import { meet, heard, answer, barred, handIns, personFlags } from '../../../game
 import { questLog, holds } from '../../../game/quests.ts';
 import type { Person } from '../../../game/people.ts';
 import { buy, item } from '../../../game/items.ts';
-import { canTrainAt, xpForLevel, rest, trainPrice, levelUp, templePrice, addCondition, createCharacter, takePrestige, className, rankMult, tierSteps, RANK_STEP, PRESTIGES } from '../../../game/party.ts';
+import { canTrainAt, xpForLevel, rest, trainPrice, levelUp, templePrice, addCondition, createCharacter, takePrestige, className, rankMult, RANK_STEP, PRESTIGES } from '../../../game/party.ts';
 import { teach, barOf } from '../../../game/prestige.ts';
 import { seekId, sought } from '../../../game/seeking.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
@@ -1658,7 +1658,7 @@ function masterOfMagic(ok: (cond: boolean, msg: string) => void): void {
   ok(hermit.lines.length === 3 && first === hermit.lines.join('\n\n') && !first.includes('chimney') && added.length === 2 && second === added.join('\n\n') && say(hermit) === second,
     `the hermit says his own words at the first meeting and, after it, two more (${second.replace(/\n+/g, ' ')})`);
   ok(/chimney/.test(second) && !/\d|door|wall|secret|room|kiln|cup|scholar|eseld|roll|clerk|study|house/i.test(second),
-    'and the rumour says the kind of place, a fire in the buried town no stoker feeds, and never the square');
+    'and the rumour says the kind of place (a fire in the buried town no stoker feeds) and never the square');
 
   // Found, never told: she has no seeking, and nothing in the log, Ashfall's quests, the chapter or the atlas names her or her roll.
   const mark = /eseld|town roll|scholar|clerk/i;
@@ -1708,7 +1708,7 @@ function masterOfMagic(ok: (cond: boolean, msg: string) => void): void {
     `before the favour she refuses ${maren.name}, given her Expert in magic and the 5,000 (bought elsewhere on the road) at 25 (${bar(4)}), and offers the others nothing but why not (${cassian.name}: ${bar(5)}; ${idris.name}: ${bar(1)}; ${wren.name}: ${bar(2)}), taking nothing`);
 
   // The favour: E11's crack that breathes cold air, searched; the tube behind it, the man's bones and his pack,
-  // and at its end the roll. The tube is shut but for the crack, ten squares and more off any road, and off the chapter.
+  // and at its end the roll. The tube is shut but for the crack, ten squares and more off any road and off the chapter.
   const tube = new Set<number>(), seen: [number, number][] = [[e11.x + 18, e11.y + 11]];
   while (seen.length) {
     const [x, y] = seen.pop()!, k = y * out.width + x;
@@ -1721,13 +1721,13 @@ function masterOfMagic(ok: (cond: boolean, msg: string) => void): void {
   const roll = E11.features!.find((f) => f.kind === 'chest' && f.id === 'e11_roll');
   ok(tube.size > 500 && [13, 14].every((y) => !tube.has((e11.y + y) * out.width + e11.x + 18)) && out.passable(e11.x + 18, e11.y + 14) === 'ok' && roll?.kind === 'chest' && roll.x === 18 && roll.y === 14,
     `the tube's far end is shut but for the crack: none of E11's ${tube.size} squares walked, waded, climbed or floated reaches it`);
-  ok(nearest > 10 && !/emberwaste_e11|e11_/.test(JSON.stringify(CHAPTER)), `and it lies ${nearest} squares from the nearest road and nowhere in the chapter`);
+  ok(nearest > 10 && !/emberwaste_e11|e11_/.test(JSON.stringify(CHAPTER)), `and it lies ${nearest} squares from the nearest road as the crow flies and nowhere in the chapter`);
   see(w, `${E11.id}:e11_draught`);
   w.world.travel(E11.id, 18, 11, SOUTH);
   const cracked = search(), deep = cracked ? [w.world.move('forward'), w.world.move('forward'), w.world.move('forward')] : [];
   listen(w);
   ok(cracked && deep.every((r) => r.kind === 'moved') && w.world.used('e11_tube') && w.world.used('e11_clerk') && w.world.state.x === e11.x + 18 && w.world.state.y === e11.y + 14,
-    'searched at the crack, the rock gives, and the tube runs on past the man\'s bones and his pack to a roll of hide at its end');
+    'searched at the crack, the rock gives and the tube runs on past the man\'s bones and his pack to a roll of hide at its end');
   openChest(w, `${E11.id}:e11_roll`);
   const holders = MAP_DEFS.flatMap((d) => (d.features ?? []).filter((f) => f.kind === 'chest' && f.items.includes('town_roll')));
   const sold = JSON.stringify([MAP_DEFS.flatMap((d) => (d.features ?? []).filter((f) => f.kind === 'shop')), INTERIORS, ARMOURER, CURES]);
@@ -1740,7 +1740,7 @@ function masterOfMagic(ok: (cond: boolean, msg: string) => void): void {
   const done = say(eseld), after = say(eseld);
   ok(done === hand.done.join('\n\n') && hand.done.length === 2 && hand.reward === 0 && !w.party.bag.includes('town_roll') && !!w.party.flags[ROLL_GIVEN] && hand.setFlag === ROLL_GIVEN && w.party.gold === gold
     && favourDone(m, w.world.state, w.party) && after === hand.after!.join('\n\n') && hand.after!.length === 2 && personFlags(eseld).includes(ROLL_GIVEN) && JSON.stringify(m.done) === JSON.stringify({ flag: ROLL_GIVEN }),
-    `handed the roll, she takes it, reads the first names and sets ${ROLL_GIVEN}, which her Master tests: "${done.split('\n\n')[1]}"`);
+    `handed the roll, she takes it, reads the first names and sets ${ROLL_GIVEN}, which her Master tests: ${done.split('\n\n')[1]}`);
   w.party.gold = 4999;
   const short = masterOffers(m, w.party, w.world.state).find((o) => o.who === 4)!.bar;
   teachTier('magic', 'expert', 0, w.party, 5);
@@ -1754,7 +1754,7 @@ function masterOfMagic(ok: (cond: boolean, msg: string) => void): void {
   const again = teachTier('magic', 'master', m.price, w.party, 4, true), bars = masterOffers(m, w.party, w.world.state);
   ok(taught.taught && taught.said === `${maren.name} is Master in magic now.` && w.party.gold === 0 && Math.abs(before - none - RANK_STEP) < 1e-9 && Math.abs(rankMult(maren) - none - 2 * RANK_STEP) < 1e-9 && !again.taught
     && bars.find((o) => o.who === 4)!.bar === 'taken' && bars.find((o) => o.who === 5)!.bar === 'no gold',
-    `the favour done, ${maren.name} Expert at 25 is taught Master in magic for 5,000, and casts two rank steps above none (${taught.said}), once, ${cassian.name} left Expert for want of gold`);
+    `the favour done, ${maren.name} Expert at 25 is taught Master in magic for 5,000 and casts two rank steps above none (${taught.said}), once only, while ${cassian.name} is left Expert for want of gold`);
   listen(w);
 }
 
