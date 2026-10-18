@@ -386,9 +386,10 @@ fights to a rest and the warning's nearest groups ten points under the median.
   pays. A company drinks what it carries: the gate's carries the new game's two Healing Draughts.
 - **J2: weighed and not made (#865).** A line made again with Expert from 13, Master from 25 and the
   three ended 13 to 47% of its days badly at 16 to 24, nearly all in a death, against an aim of a tenth:
-  the calibration keeps the day by raising damage (1.4 to 1.6 times the line became 2.0 to 2.9) and
-  nothing in the tiers raises defence. Made four ways at 19, the old company holds 7 of 9 roles at a
-  tenth or under; the tiers alone, the three alone and both go over it (MONSTERS §4.4).
+  the calibration keeps the day by raising damage (for seven of the nine roles 1.4 to 1.6 times the
+  line became 2.0 to 2.9) and nothing in the tiers raises defence. Made four ways at 19, the old
+  company holds 7 of 9 roles at a tenth or under; the tiers alone, the three alone and both go over
+  it (MONSTERS §4.4).
 
 Decided by the owner's delegate for #18, each the owner's to overturn:
 
@@ -432,7 +433,8 @@ Decided by the builder for #853, each the owner's to overturn:
    to one yet to act this round that cannot, so Idris strikes and Maren blesses.
 
 The checks' company keeps up with the party behind what-ifs (#854), off in every default: #865
-weighed the tiers and the bots' three and kept them off (J2, above). Under `RULES.tiers` (`--tiers`) `companyAt` takes its tiers after its
+weighed the tiers and the bots' three and kept them off (J2, above). Under `RULES.tiers`
+(`--tiers`) `companyAt` takes its tiers after its
 prestiges: Expert at 13 and Master at 25 on each line its class takes, a fighter's arms, a caster's
 magic and a hybrid's both. `RULES.bot` (`--bot bless,sleep,drink`) hands the bots their options,
 the thrifty one's in the harness's fights and the gate's in its own. Beside the premade six stands
@@ -510,13 +512,18 @@ Decided by the builder for #865, each the owner's to overturn:
 3. **The three begin at level 11, the first past Act I** (`FIRST_PAST_ACT_I`, `optsFor`): a member
    under it plays as the bots did, so Act I plays as it was made; `--bot` is read so too, as weighed.
 4. **No sleep on a group that holds a foe the sleep cannot take** (as the bot knows it): its sleepers
-   would bar every spell at the group while the one awake was struck alone (the Eldest among two
-   heartwoods, 3% won).
+   would bar every spell at the group while the one awake was struck alone. With the three on at
+   every level, Deepthorn's j5_eldest, an elder among two heartwoods, was won 3% at 8 in the gate;
+   the level-11 threshold now puts it out of the rule's reach.
 5. **The bots' tests stand at a company of 12,** past the threshold; at 4 and 10 the three are main's.
 6. **`cairnfield_m8`'s crag group is two ravens and two tor trolls** where eight ravens stood: one troll
    left two under past its limit (102.7 to 113.5%), two put it inside its aim; the ravens first, since
    with the trolls first the floor's day fell to 7.48, under its aim. The night troll stands. A
    quarter of the floor's days (23.3%) now end in a fight broken off, the two trolls mending.
+7. **The whole company lets the sleepers lie once one member is past Act I** (`letsLie`): a member's
+   spell over many wakes another's sleepers (with the six at 8 and Cassian at 12, Wren's Hailstorm
+   woke the ogres he had slept). Who blesses, sleeps and drinks stays each member's own, and a
+   company with no member at 11 plays as on main.
 
 From 10 two under is judged by the day, not the fight. From 10 the damage spells roll their full
 dice and every group is sized for the day (docs/MONSTERS.md §4.4), so a fight from full health

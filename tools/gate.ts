@@ -9,10 +9,11 @@
 // and fights every group of a map alone from full health, once per seed. --road instead fights the
 // groups named, in order, with no rest between, and counts the companies still standing after each;
 // one group is one fight. A plain bot plays the party, the game's own (src/game/bot.ts, which its
-// auto-fight plays with the three from level 11): it mends, wakes, burns, casts, strikes or braces, and
-// never sleeps, blesses, drinks or flees, so it is weaker than a player; single fights at full health
-// are kinder than play. Harness's `RULES` reach it, its company's tiers and its bot's options (#853),
-// as harness's `--tiers` and `--bot` set them, off unless they do (#865); this command line takes neither.
+// auto-fight plays with the three from level 11): it mends, wakes, burns, casts, strikes or braces,
+// and never sleeps, blesses, drinks or flees, so it is weaker than a player; single fights at full
+// health are kinder than play. Harness's `RULES` reach it, its company's tiers and its bot's options
+// (#853), as harness's `--tiers` and `--bot` set them, off unless they do (#865); this command line
+// takes neither.
 // A group that asks before it fights (#544) it refuses, and fights; the walk past it is `gatePass`.
 // Between fights, where the gate check mends, it lifts stone first, by Absolve or the draught it
 // carries from 25 (#546), as harness's company does.
@@ -38,7 +39,8 @@ export { gateBlast, gateBurn, botTurn } from '../src/game/bot.ts';
 
 /**
  * The bot's turn for member `i`, as the gate plays it: the game's `botTurn` knowing every monster as
- * written, with the options harness's `RULES.bot` asks (#853, `--bot`), none unless a what-if sets them (#865).
+ * written, with the options harness's `RULES.bot` asks (#853, `--bot`), none unless a what-if sets
+ * them (#865).
  */
 export function gateTurn(s: CombatState, p: Party, rng: RngInstance, i: number): void { botTurn(s, p, rng, i, asWritten, RULES.bot); }
 

@@ -1,5 +1,6 @@
 // The combat harness and its test monster (docs/MONSTERS.md §4.4), and Act III's abilities on it (#537)
-// and Act IV's sweep (#545); the what-ifs #865 weighed and kept off and the four newer classes' company (#854).
+// and Act IV's sweep (#545); the what-ifs #865 weighed and kept off and the four newer
+// classes' company (#854).
 import { createHash } from 'node:crypto';
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { defaultParty, xpForLevel, levelUp, armorClass, weaponOf, MAX_LEVEL, addCondition, className, rankMult, hasCondition, prestigeOf } from '../../src/game/party.ts';
@@ -148,8 +149,9 @@ export async function harness(): Promise<void> {
 }
 
 /**
- * The what-ifs #865 weighed and kept off, modelled and off (#854): the company's tiers (`--tiers`), the bots'
- * options (`--bot`) and the four newer classes' company (`--company newer`). Off, the company is main's.
+ * The what-ifs #865 weighed and kept off, modelled and off (#854): the company's tiers (`--tiers`),
+ * the bots' options (`--bot`) and the four newer classes' company (`--company newer`). Off, the
+ * company is main's.
  */
 function whatIfsOff(): void {
   // With every what-if off the company is main's: the premade six at twelve levels, as main made them at

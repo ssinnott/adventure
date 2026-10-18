@@ -1,12 +1,13 @@
-// Restates the monsters past level 10 onto a line made again (MONSTERS §4.4, "When the line moves"): for
-// the day `--calibrate --write` makes the line past 10 again, which #865 weighed and did not do. Each is
-// found on the shape it stood on in the line at a base git ref (a role's test monster, the test troll,
-// giant or drake, or a role come down whole by its share in WHOLE) and given that shape's hit points and
-// blow on the line as tools/testmonster.ts gives it now, a troll's mending with them. Its armour, to-hit,
-// speed and xp come from the line's formulas and the curve, which the tables do not move, and are checked
-// so; its notes, holds, resistances and spells are its own. OFF_LINE's are their boxes' gates' to set.
-//   node tools/restate.ts <base ref>            what it would restate, the line at <base ref> to the line now
-//   node tools/restate.ts <base ref> --write    and writes it into the areas' monsters.ts
+// Restates the monsters past level 10 onto a line made again (MONSTERS §4.4, "When the line
+// moves"): for the day `--calibrate --write` makes the line past 10 again, which #865 weighed and
+// did not do. Each is found on the shape it stood on in the line at a base git ref (a role's test
+// monster, the test troll, giant or drake, or a role come down whole by its share in WHOLE) and given
+// that shape's hit points and blow on the line as tools/testmonster.ts gives it now, a troll's
+// mending with them. Its armour, to-hit, speed and xp come from the line's formulas and the curve,
+// which the tables do not move, and are checked so; its notes, holds, resistances and spells are its
+// own. OFF_LINE's are their boxes' gates' to set.
+//   node tools/restate.ts <base ref>           what it would restate, from the line at <base ref>
+//   node tools/restate.ts <base ref> --write   and writes it into the areas' monsters.ts
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';

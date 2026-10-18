@@ -935,8 +935,9 @@ What it shows:
 
   Nearly all are deaths (11 to 46% at 16 and 19; none lost, 0 to 7% broken off), in fights of 8 to 9
   rounds. To keep the day the calibration raised the monsters' blows and barely their hit points
-  (those moved −20 to +15%): 1.4 to 1.6 times the line's blow became 2.0 to 2.9 at 16, 19 and 22, at
-  19 the skirmisher's 1.45 to 2.29, the soldier's 1.38 to 2.42 and the armoured's 1.64 to 2.96.
+  (those moved −20 to +15%): for seven of the nine roles 1.4 to 1.6 times the line's blow became 2.0
+  to 2.9 at 16, 19 and 22, at 19 the skirmisher's 1.45 to 2.29, the soldier's 1.38 to 2.42 and the
+  armoured's 1.64 to 2.96.
   Nothing in the tiers or the three raises the company's defence, and the softening cap holds (#541,
   decision 3). Made four ways at 19 (100 seeds, read only), the days ended badly, in %:
 
