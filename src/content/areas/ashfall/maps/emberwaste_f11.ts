@@ -101,11 +101,18 @@ export const EMBERWASTE_F11: MapDef = {
     { kind: 'event', x: 22, y: 0, id: 'f11_rim', once: true, text: 'The crater\'s rim. The mountain buried a town here, and only its roofs stand out of the ash.' },
     { kind: 'event', x: 27, y: 7, id: 'f11_roofs', once: true, text: 'Roof-ridges stand out of the crater in rows, a street\'s worth. One still has its chimney.' },
     { kind: 'event', x: 29, y: 2, id: 'f11_foot', once: true, text: 'Fire Mountain\'s foot comes down to the ash here, warm under the hand. Smoke stands over it.' },
-    // The Waste's rock: the hermit in a cleft of it, who counts the stokers, and a camp in another.
+    // The Waste's rock: the hermit in a cleft of it, who counts the stokers, and a camp in another. After his
+    // first meeting he adds two lines (#859): the rumour of the Master of magic, the kind of place and never the
+    // square, a fire in the buried town that no stoker feeds.
     { kind: 'npc', x: 15, y: 9, name: 'A hermit', lines: [
       'A hermit in a cleft of the rock. On the wall beside him, scratches in rows, rubbed out and cut again.',
       '"I count the stokers. They walk out of the mountain at dusk, and back before it is light."',
       '"Forty years I have counted them. Never one more, and never one less."',
+    ], flag: 'f11_hermit_met', says: [
+      { after: { flag: 'f11_hermit_met' }, lines: [
+        '"The one chimney in the crater smokes, some mornings. Thin, like a fire fed by hand."',
+        '"The stokers are all counted. It is none of them that feeds it."',
+      ] },
     ] },
     { kind: 'camp', x: 10, y: 18, name: 'A cleft in the rock', text: 'A fire-ring in a cleft of the rock, out of the wind. Dung is stacked by it, dry.' },
     // The flow: the causeway of slag over it, the Stone seen from it, and the milestone at its end; the

@@ -211,7 +211,8 @@ west, E11, and Fire Mountain's east flank, south-east foot and south foot, H11, 
   west and a dry cellar to the east, the lamp-keeper's walk with a channel of dried oil along its
   floor and, at its bottom, the lamp, cold until the Paladin's third lights it (§6), with the Ember
   Stone's second part (`ember_part2`) set in the floor beside it; behind a stair fallen against the
-  wall on the way, the lamp-keeper's own cellar. Two groups of four ash husks, one in the street and one in the cellars, and the Old Drake
+  wall on the way, the lamp-keeper's own cellar. Behind a wall at the lane's west end, a room the ash
+  never filled and a scholar in it, the Master of magic, found and never told (#859, §4.7, §6). Two groups of four ash husks, one in the street and one in the cellars, and the Old Drake
   alone, a boss that sleeps and does not come back (§4.7).
 - **The Ember Stone** (`ember_stone`, dungeon, one level of 16×16, band 25–26; #516): down the
   builders' stair between the Stone's uprights into a housing of smooth grey iron that has not
@@ -468,7 +469,7 @@ cuts and the sliver about 700 (§11):
 | | The nine drawings | | | | | MONSTERS §8.2's roster | | #520 |
 | | Cinderport's rooms | | | | | eight | | #521 |
 | F9, G9, H9 | The fishers' bay; Cinderport's harbour side; the shore under the Sheer | Cindercoast | country, behind the road | 24–25 | 560 (grass 291, hills 146, ash 55, vines 32), 69 shallow; 223 (grass 155, building 25, sand 24, road 11), 71 shallow; 503 (grass 384, pine 42, sand 35, cliff 27), 69 shallow | the fishers' bay and store (F9); the harbour between the sea wall's moles and the smugglers' cell (G9); the hamlet under the Sheer and the cleft (H9); two cinder drakes in each | none | #522, built |
-| E11 | The Waste's west | the Ember Waste | country, behind the road | 25–26 | 961 (hills 262, ash 252, mountain 234, grass 70, lava 63) | the lava flow, the knapper, the drakelings and the tube under the flow | none | #522, built |
+| E11 | The Waste's west | the Ember Waste | country, behind the road | 25–26 | 961 (hills 261, ash 252, mountain 234, grass 70, lava 63) | the lava flow, the knapper, the drakelings and the tube under the flow | none | #522, built |
 | H11, H12, G12 | The east flank under the Sheer; the south-east foot where the lava ends; the south foot under the rim | Fire Mountain | country, behind the road | 25–26 | 984 (ash 937, pine 20, rock 15, grass 4, lava 4), 40 stream; 841 (ash 487, mountain 293, hills 22, lava 18, rock 9, grass 9), 2 stream; 674 (ash 374, mountain 288, rock 9) | the stream and its stones, the drake-watcher and the war-chest behind the axe-head (H11); the flow's end, the spring and the tube behind the split crust (H12); the folds, the hum over Meridian Camp and the drakes' hollow behind the claw-marks (G12); six drakelings in each | none | #522, built |
 
 The core is the four boxes that hold a step of the quest (H10, G10, G11 and F11), built at full
@@ -892,7 +893,8 @@ half, with the wilderness features (#45); no more than one point in four is a si
   - a camp in the rock (#45), a cairn on the crater's rim (#45), a shrine at the field's edge, the
     first Cinderport folk's (#45);
   - a hermit in the rock who counts the stokers that walk out, and says their count has not
-    changed in forty years.
+    changed in forty years; after his first meeting he adds two lines, the rumour of the Master of
+    magic (#859, §6).
 - **Encounters.** Cinder beetles on the ash (two groups); ash husks out of the crater by night
   (`when`), the dead walking where the Stone was never finished (MONSTERS §2); a cinder drake on the
   flow, the hardest before the Stone, at 25; after the Stone is lit, sentries on the road (`after`,
@@ -938,7 +940,8 @@ half, with the wilderness features (#45); no more than one point in four is a si
   seen and never said to be the Cut Stone's mate) and the chest at 1,23 (`f11_hollow`) with 700 gold
   and the Chain Mail +2. The hint is `f11_scored`, 4,23, the rock's face scored in straight lines,
   at the field's west edge (§9, #514's 12). For density besides, the hermit in a cleft cut into the
-  rock's east face, 15,9, words only, who counts the stokers walking out of the mountain at dusk,
+  rock's east face, 15,9, who counts the stokers walking out of the mountain at dusk and, after his
+  first meeting, says two lines more, the rumour of the Master of magic (#859, §6; `f11_hermit_met`),
   and the camp in a cleft at 10,18; a cairn on the crater's rim with 300 gold and a Sapphire Vial;
   the shrine at the field's edge, 13,24, five steps from the Stone, the first Cinderport folk's,
   which blesses personality; `f11_dusk`, 27,14; and `f11_road` on the road's strip in the north row,
@@ -983,6 +986,11 @@ half, with the wilderness features (#45); no more than one point in four is a si
 - **The secret and its hint.** A side cellar behind a fallen stair in the undercroft, the
   lamp-keeper's own: his Holy Symbol of the Hearth and a Plate Mail +2. The hint: the lamp's oil
   channel runs under the wall where no room is.
+- **The Master of magic** (#859; DESIGN §5, §6 here). A scholar of the buried town, found and never
+  told: a room the ash never filled behind a secret door off the lane, off the street and off the
+  Paladin's way to the lamp. The hint: a cup set down clean, the ash swept from round it. The
+  rumour is F11's hermit's (§4.6); her favour, the town's roll, lies in E11's cold tube (§4.10); she
+  teaches Master in magic for 5,000 gold to a member Expert in magic of 25.
 - **Lines:** the street: *A street under the crater's rim, roofs and doorways out of the ash. In
   the doorways the people stand as they stood.*
 - **New here.** The dead cast in ash; a boss that sleeps; a town under a dungeon's roof.
@@ -1031,11 +1039,28 @@ half, with the wilderness features (#45); no more than one point in four is a si
     every fight and manages 10.10 fights to a rest, inside the aim (9 to 11), with 4.7% of its days
     broken off; two under, at 22, it wins every fight too, owed to #18. Old Cinder pays 4,079 xp a
     member for the brief's 2,600, the Old Drake's share 2,755 and each group of husks' 662, and
-    holds 1,300 gold. Density 100.0% within 7 steps on both levels (92 of 92 and 67 of 67), the
-    furthest 5 and 4 of 10, with no sign among their 16 and 13 points. The curve's rank correlation
+    holds 1,300 gold. Density 100.0% within 7 steps on both levels (101 of 101 and 67 of 67), the
+    furthest 5 and 4 of 10, with no sign among their 19 and 13 points (92 of 92 and 16 before the
+    scholar's room, #859). The curve's rank correlation
     is 1.00 in the town: the husks nearest at 7 steps, level 25, and the Old Drake the hardest at 13,
     level 26; in the undercroft the husks are the nearest and the hardest, at 4 steps, level 25. The
     walkthrough wins the husks every time and the Old Drake nine times in ten at 25.
+  - **The Master of magic's room** (#859, 17 October 2026). The wall south of the broken kiln's room,
+    2,9, is a secret door, and behind it lies a room the ash never filled, 1 to 2 by 10 to 13, eight
+    squares shut to walkers, swimmers, climbers and floaters but for the door. The hint is
+    `oc1_cup`, 2,8, on the square before it and always there: a cup set down clean, the ash swept
+    from round it in a curve. Searched from there, facing south, the wall gives; the room's first
+    step says it (`oc1_study`, 2,10: cups on every shelf, glazed side out, none with ash in it),
+    and Eseld, a scholar of Old Cinder, sits at its back, 2,12, at a table, writing. Her words, three,
+    ask for the roll the clerk took west on the carts' road the night before the ash and say nothing
+    of where it lies. Handed the roll (`town_roll`, §4.10; her one hand-in, which pays nothing) she
+    sets `q_roll_given`, which her Master tests (`ROLL_GIVEN`, `old_cinder.ts`), and says two lines
+    more at each meeting after. `npc.mastery` is magic, Master, 5,000 gold, to a member Expert in
+    magic at 25 (DESIGN §5); before the roll she refuses ("favour first"). The room stands 6 squares
+    from the street's straight way from the lip to the hall's stair at the nearest, the way the
+    Paladin's lamp walks and nothing here touches: the town's exits, doors, groups, chests and
+    events stand where they were. The level is 101 squares now, 92 walked and 9 behind the door (§9,
+    #859's 1 to 3).
 
 ### 4.8 The Ember Stone (#516): dungeon, one level of 16×16, band 25–26
 
@@ -1274,7 +1299,7 @@ half, with the wilderness features (#45); no more than one point in four is a si
   - **E11, the Waste's west under the lava flow** (`emberwaste_e11`, corner 136,318; start 27,0,
     facing south).
     **The flow.** The ground is the atlas's, cut by hand because the scaffold refuses a cut that
-    holds void: 961 squares of ground, 687 open (hills 262, ash 252, mountain 234, grass 70, lava
+    holds void: 961 squares of ground, 687 open (hills 261, ash 252, mountain 234, grass 70, lava
     63, rock 40, steppe 38), and 63 of void in the south-west corner, the world's end. The flow
     whose head is on E10's south edge runs from 22 to 24 on row 0 south-west to 5 and 6 on row 26
     and into the void, going in under the mountains (`e11_end`, 12,27). West of it the steppe's end
@@ -1297,8 +1322,12 @@ half, with the wilderness features (#45); no more than one point in four is a si
     (`e11_draught`, 18,11). The rocks stand in a ring at 17 to 19 on rows 12 to 14; searched from
     18,11 facing south, the door gives at 18,12 on a tube of cold stone running in under the flow
     (`e11_tube`, 18,13), a man's bones in it beside his pack (`e11_pack`), 100 gold and a Sapphire
-    Vial (§9, #522's 11). The tube is shut in rock to walkers, swimmers, climbers and floaters: the
-    flood is 890 squares, and the room is none of them.
+    Vial (§9, #522's 11). The tube runs a square further since #859: at 18,14, past the bones, it
+    ends in a fall of rock with a roll of hide at its foot, tied with cord (`e11_clerk`, `e11_roll`,
+    no gold): the buried town's roll, the favour Old Cinder's scholar asks for the Master of magic
+    (§4.7, §6), 16 squares from the nearest road as the crow flies (24 walking). The ring is rock at 17 to 19 on rows 12 to 14 and
+    at 18,15 (a hills square made rock). The tube is shut in rock to walkers, swimmers, climbers and
+    floaters: the flood is 889 squares, and the room is none of them.
     **The group.** Six drakelings on the flow's warm bank (`e11_drakelings`, 12,18; aware 3; back
     after two days), the box's one fight, nearest and hardest at 33 steps (level 26).
   - **H11, the east flank under the Sheer** (`firemount_h11`, corner 232,318; start 20,0, facing
@@ -1432,7 +1461,7 @@ half, with the wilderness features (#45); no more than one point in four is a si
     area's pool. Density within 12 steps, the country floor: F9 100.0%, 551 of 551, and the furthest
     12 of 20, with no sign among its 13 points; G9 199 of 199 and the furthest 11, with no sign
     among its 10; H9 467 of 467 and the furthest 9, with no sign among its 12; E11 99.4%, 683 of
-    687, and the furthest 15, with no sign among its 15; H11 98.1%, 951 of 969, and the furthest 15,
+    687, and the furthest 15, with no sign among its 16 (15 before #859's roll); H11 98.1%, 951 of 969, and the furthest 15,
     with no sign among its 17; H12 100.0%, 539 of 539, and the furthest 10, with no sign among its
     13; G12 100.0%, 377 of 377, and the furthest 8, with no sign among its 11. The curve's rise rule
     has one group a box, nearest and hardest: the drakes at level 25 and 16 steps in F9, 14 in G9
@@ -1628,6 +1657,22 @@ and none adds a fight: the prestige is the pay, and the fights are the places' o
 | Ranger | the Eyrie, the Wold's (#524) | down the vents to Meridian Camp, and bring Oriel Fane's map back to the scout (DESIGN §10.3) | |
 
 The Ranger's is the Wold's to place and #22's to end; it is here because its road is Ashfall's.
+
+### The Master of magic
+
+Built with #859 (DESIGN §5 and §9): the second Master on the road, found and never told. It
+is no quest: nothing in the log, the chapter or the atlas names her, her room or her roll, and no
+seeking sends a company to her. The hermit in F11's rock says his own words at the first meeting
+and, at the next, two more, the rumour: the crater's one chimney smokes some mornings, and no
+stoker feeds it (§4.6). In Old Cinder's lane a cup stands clean on the floor at the south end of
+the broken kiln's room, the ash swept from round it; the wall there gives on a room the ash
+never filled (§4.7). Eseld, a scholar of Old Cinder, asks for the town's roll, which the clerk took
+west on the carts' road the night before the ash, and says where it lies in no word: a roll of
+hide at the end of E11's cold tube, behind the crack that breathes cold air, where the clerk lay
+down (§4.10). It is no ware and no drop. Handed in it sets `q_roll_given`, which her Master tests,
+and she teaches Master in magic for 5,000 gold to a member Expert in magic of level 25 (DESIGN §5);
+before it she refuses. The walkthrough plays it in order, at 25, with the company given its Expert
+and its gold, since Expert is bought at a trainer on the road (§9, #859's 9).
 
 ## 7. Encounters, and what is new
 
@@ -1833,15 +1878,15 @@ behind claim nothing more (#522).
   their 25 points (#22); the iron corridors 100.0% within 7 steps (193 of 193) and the furthest 7 of
   10, with no sign among their 24 points (#22); the camp 100.0% within 7 steps (226 of 226) and the furthest 6
   of 10, with no sign among its 24 points (#22); F11 100.0% within 8 steps and the furthest 8 of 15,
-  with no sign among its 28 points (#514); Old Cinder's two levels 100.0% within 7 steps (92 of 92
-  and 67 of 67), the furthest 5 and 4 of 10, with no sign among their 16 and 13 points (#515); the
+  with no sign among its 28 points (#514); Old Cinder's two levels 100.0% within 7 steps (101 of 101
+  and 67 of 67), the furthest 5 and 4 of 10, with no sign among their 19 and 13 points (#515, and #859's room); the
   Ember Stone 100.0% within 7 steps (108 of 108), the furthest 6 of 10, with no sign among its 15
   points (#516); F10 and E10 100.0% within 12 steps, the furthest 12 of 20, with no sign among their
   12 and 15 points
   (#517); H10 100.0% within 8 steps and the furthest 8, with no sign among its 30 points (#510);
   F9 100.0% within 12 steps (551 of 551) and the furthest 12 of 20, with no sign among its 13
   points, G9 (199 of 199) the furthest 11 and 10 points, H9 (467 of 467) the furthest 9 and 12, E11
-  99.4% (683 of 687) and the furthest 15, with no sign among its 15, H11 98.1% (951 of 969) and the
+  99.4% (683 of 687) and the furthest 15, with no sign among its 16, H11 98.1% (951 of 969) and the
   furthest 15, with no sign among its 17, H12 (539 of 539) the furthest 10 and 13 points, and G12
   (377 of 377) the furthest 8 and 11 (#522).
 
@@ -3020,6 +3065,59 @@ Decided by delegate for #735, each the owner's to overturn:
 6. **G10's line drops the gate-ward** and says the Riders and their eldest in the delegate's
    words (§4.3, which carries the built line now, with the grass #511 gave it).
 
+Decided by the owner's delegate for #18, each the owner's to overturn:
+
+1. **A scholar of the buried town** hides in Old Cinder (`old_cinder`, band 25–26) behind a secret
+   door off the street, not on the Paladin's way to the lamp, hinted as the area's secrets are.
+2. **Found, never told:** the rumour is F11's hermit's (`emberwaste_f11`), two lines added to his
+   words after his first meeting.
+3. **The favour** is a thing found in a hidden place of Ashfall and hinted in the scholar's words,
+   handed in by an `npc.quest` that sets a flag her `done` tests.
+4. **She teaches** `mastery: { line: 'magic', tier: 'master', done, price: 5000 }` to a member with
+   Expert in magic and level 25 (DESIGN §5; the issue's, #859).
+5. **The voice** as #858's: two lines to an event, three at most; British spelling; the font's
+   glyphs.
+
+Decided by the builder for #859, each the owner's to overturn:
+
+1. **Her name is Eseld,** a woman, a scholar of Old Cinder: the Cornish of Cinderport's folk
+   (Jenifer, Morwenna, Cador; §10), none used elsewhere in the game.
+2. **The hide is the wall south of the broken kiln** (2,9), the room 1 to 2 by 10 to 13: the part
+   of a 16 by 16 level the walls leave farthest from the street, 6 squares from its straight way
+   at the nearest (a level this size has no room for ten), off the Paladin's way and off the
+   Drake's square. Ten squares from the road is kept for the favour; the hide is a secret door, as
+   a second prestige's trainer is placed, the crater's lip being 10 squares from the Waste's road
+   by the way a company walks (6 as the crow flies).
+3. **The hint is a cup set down clean,** the ash swept from round it in the door's curve (`oc1_cup`,
+   2,8): the cup beside a door the ash did not fill that the issue for #515 had for its secret
+   and left unbuilt (§11, built in part since), the broken kiln's warm brick beside it.
+4. **The rumour is the chimney:** the one in the crater smokes some mornings and no stoker feeds
+   it, in the hermit's way of counting. His first words stand; he gains `f11_hermit_met`, set at
+   the first meeting, and the two lines are his `says` after it.
+5. **The favour is the town's roll** (`town_roll`), carried west by the clerk and lost with him, in
+   a second square of E11's cold tube (18,14) beside the bones: a hills square made rock closes
+   the ring (18,15). The tube's first chest (`e11_pack`) stays as it was, so a company that has
+   emptied it is not shut out of the roll, which has a chest of its own (`e11_roll`, no gold).
+   E11 is behind the road, 16 squares from the nearest road square as the crow flies (24 walking)
+   and in no step of the chapter.
+6. **Her words hint at the favour and no more:** the clerk, the roll, west on the carts' road and
+   "where he lay down". The tube's own hint stays the draught of cold air (`e11_draught`).
+7. **One hand-in, no pay and no hire:** `q_roll_given`, 0 gold; she has no `flag`, so her three
+   lines come at every meeting until the roll is in, and her two `after` lines at every one after.
+   It writes nothing in the log: there is no quest.
+8. **Her price is the literal 5000** on the map, not `TIER_PRICES.master`: a content map importing
+   `game/mastery.ts` would read it through the party's content (DESIGN §5, #852's 1); the
+   walkthrough holds the two equal.
+9. **The walkthrough gives its company the Expert and the gold directly:** Maren, Expert in magic
+   at 25, 5,000 gold. Expert is bought at a trainer elsewhere on the road, from the Sail Loft on,
+   and the mastery suite plays that.
+10. **Old Cinder's walkthrough line "nothing in it sells or teaches" now says "no business or
+    hall",** with her room a person's: the check is the same, on kinds.
+11. **The walkthrough reads no tier itself:** the mastery suite scans `src/` for a tier read outside
+    the party, the blow, `mastery.ts` and the menus, and a walkthrough lives under `src/`. It gives
+    Expert by `teachTier` at no price and reads the rest from the offers' bars and `rankMult`
+    (Master two rank steps above none). The scan is as it was.
+
 ## 10. Names
 
 Ashfall's naming pass, by the rules of `docs/NAMES.md`, chosen for #444. Cindercoast's folk came
@@ -3122,7 +3220,8 @@ Owed, from F11 (#514):
 - **The first sentry's part is not given** (§5, §9, #514's 18): a def's drop would give every sentry
   it, G11's too, and the part is unnamed. #516 names none and gives only the Sentinel's; the
   chapter's builder (#518) gives none (§9, #518's 10).
-- **The hermit has words only** (§9, #514's 14). The old Lightbearer at 18,5 teaches the Paladin's
+- **The hermit has words only** (§9, #514's 14), and two lines more after his first meeting, the
+  Master of magic's rumour (#859, §6). The old Lightbearer at 18,5 teaches the Paladin's
   third since #448 (§6).
 - **MONSTERS' Where column** for the husk (F11's rim, by night) is a pull request of its own, if the
   owner wants it (§7).
@@ -3179,9 +3278,9 @@ Cut and owed, from Old Cinder (#515):
   street and none in the cellars, is the owner's to take instead.
 - **The undercroft's figure two under is owed to #18:** at 22 a company wins every fight there, where
   §8 asks no more than one in four (§9, #515's 2).
-- **The issue's own secret is not built:** a house whose door the ash did not fill, a cup set outside
-  it, and the Old Drake's way down from the crater into the undercroft. The doc's secret is, and the
-  Old Drake stays on the square (§4.7).
+- **The issue's own secret is built in part since #859** (§4.7): a room the ash did not fill, with a
+  cup set outside its door, off the lane. The Old Drake's way down from the crater into the
+  undercroft is not built; the doc's secret is, and the Old Drake stays on the square (§4.7).
 - **The lamp is relit only by the Paladin's third** (#448, §6): `oc2_lamp` is cold until then (§9,
   #515's 10).
 - **The hand-in and the potter:** #516's sockets take `ember_part2` with the other two (§9, #516's

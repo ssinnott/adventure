@@ -909,7 +909,8 @@ the choice: the Core waits.
 
 Two Masters stand on the road and not in the reach, each found and never told (§5): the Wold's old
 Rider at arms and Old Cinder's scholar in magic (#859). The Rider is hidden in the rock of D10's small
-mesa, with a rumour at Akordu and a bow to fetch (#858, docs/areas/glasswold.md §6). The reach may
+mesa, with a rumour at Akordu and a bow to fetch (#858, docs/areas/glasswold.md §6). The scholar is hidden behind a secret door in the buried town, with a
+rumour from F11's hermit and a roll to fetch (#859, docs/areas/ashfall.md §6). The reach may
 hold more.
 
 Decided by the owner's delegate for #18, each the owner's to overturn:
