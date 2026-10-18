@@ -747,11 +747,15 @@ are all off. Every push to main is deployed, so these are players' saves.
 
 - **One silhouette.** Each sprite kind, drawn at combat size, is one connected piece of ink (above
   an alpha threshold, ignoring specks), apart from parts it declares detached: glows, sparks,
-  something thrown. This is #7 as a check, in `tools/smoke.ts`, which declares the parts.
+  something thrown. This is #7 as a check, in `tools/smoke.ts`; each family declares the parts in its
+  `SPRITES` (#915).
 - **No cracks.** The per-square crack sweep runs all four ways on every map a pull request changes,
   and one way on the cellar, Helmstow, its keep and the ground's samples (`tools/grounds.ts`); the
   rest are swept on release, a run of the checks started by hand (`tools/smoke.ts`,
-  `tools/changed.ts`).
+  `tools/changed.ts`). A monster's drawing sweeps no map: the sweep paints the scene with
+  `paintScene`, which draws no monster, so `EVERY_MAP` names the scenery (`src/ui/scenery.ts`) and
+  not the dispatcher (`src/ui/sprites.ts`) or a family; nothing left in either is in the scene the
+  sweep paints (#915).
 - **Restraint.** The share of wall faces dressed, per kind of map and per map, stays near its level
   after #9, under caps set above it so an honest new map seldom fails by chance; a new kind of
   dressing comes with its rate (`DRESSING_RATES` in `src/ui/viewport.ts`, checked in
@@ -907,7 +911,24 @@ request first; it never edits shared files on the side.
 5. **Review**: a pull request, CI green, the owner's look at the sheet, merge.
 
 A monster or an interior goes the same way: a brief, the drawing, the gallery or interiors render,
-the checks, the sheet.
+the checks, the sheet. A new kind of an existing family touches its family's file (its entry in the
+family's `SPRITES`: the drawer, the span the smoke test prints and any part drawn apart) and its
+area's monsters and index, and its sheet draws that family alone (#915).
+
+Decided by the builder for #915, each the owner's to overturn:
+
+1. **The barrel reads the areas** (`AREAS`, `src/content/index.ts`) to refuse at load a kind no area
+   names, as `byId` refuses a monster defined twice; a family's file refuses one outside
+   `MonsterSprite` at the typecheck already.
+2. **A change to the barrel counts the families its import lines add against the base's**, read from
+   its text since the base's barrel cannot be imported; `tools/tests/changed.ts` holds the reading to
+   the families the barrel merges. A file of `src/ui/monsters/` the barrel merges no kinds from counts
+   every monster, as a shared brush does.
+3. **`SPRITES` stands after the family's `draw`**, which every entry names, where `KINDS` stood before
+   it, and keeps `KINDS`' order; the smoke's line of declared parts names them family by family, in the
+   barrel's order, where the old table had its own.
+4. **`familyModules` keeps a family's `kinds`**, the keys of its `SPRITES`, so `pillars` reads them as
+   before.
 
 An area's dungeons may exit only to its own region's maps, or to the outdoors once its zone is laid,
 so its zone map lands with or before its first dungeon (`tools/tests/weather.ts:125` holds it).

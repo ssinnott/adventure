@@ -598,11 +598,15 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 - `ui/portraits.ts` builds a front-facing portrait per character from the name, race and class
   (head shape, ears, skin, hair, beard, class headgear), with the expression following the
   character's state, cached to an offscreen canvas.
-- `ui/sprites.ts` holds the trees, rocks, mountains and pillars and dispatches the monsters to
-  `ui/monsters/`, one module per family (rat, slime, wolf, boar, spider, bandit, cultist, skeleton,
-  riftling, ogre, wraith, birds, old wood) behind one `draw(ctx, kind, x, y, h, paint)` signature;
-  `common.ts` has the brush and the small shape helpers, and `figure.ts` the measured humanoid frame
-  the bandits, the cult and the skeletons stand on. Every monster def names a sprite kind no other
+- `ui/scenery.ts` holds the trees, rocks, mountains and pillars, and `ui/sprites.ts` dispatches the
+  monsters to `ui/monsters/`, one module per family (rat, slime, wolf, boar, spider, bandit, cultist,
+  skeleton, riftling, ogre, wraith, birds, old wood) behind one `draw(ctx, kind, x, y, h, paint)`
+  signature. Each family registers the kinds it draws in its `SPRITES`, each with its drawer, its span
+  and any part drawn apart, and `ui/monsters/index.ts` merges the 28, refusing by name a kind two
+  families register or one no area names; `FAMILY`, `SPAN` and the smoke test's `DETACHED` are read
+  off it, so a new kind of a family is its family's file alone (#915). `common.ts` has the brush
+  and the small shape helpers, and `figure.ts` the measured humanoid frame the bandits, the cult and
+  the skeletons stand on. Every monster def names a sprite kind no other
   def uses (`tools/tests/art.ts` holds it), so the variants that share a family (the archers, brigands,
   smugglers, wrecker and lampman, the cult's ranks, the bone knight, the ghoul, the drowned man
   and the Barrow Guard and Captain, the dire wolf, rift hound and Black Dog, the thorn spider, shore
@@ -619,21 +623,23 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   `tube` parts (a bending tapered tube for tails, necks, legs and tentacles); `glow()` is a real
   radial light for embers and halos; `softLine()` replaces interior ink. The hit flash still
   paints a flat white silhouette through all of it. Each monster is one piece of ink at combat
-  size, alone, three and six abreast, through its idle, but for the parts `DETACHED` in
-  `tools/smoke.ts` declares apart (the wardens' shards, the acolyte's censer, the lampman's
-  lantern, the adept's hand flame, the rift hound's and the Hand of Ash's embers, the wraith's
-  fading cloth), and stands inside the view where a fight seats it, its foot 184 px below the
-  view's top (`seatFoot`), and within its span (below); the smoke test holds both.
+  size, alone, three and six abreast, through its idle, but for the parts its family declares
+  apart (`detached` in its `SPRITES`, the smoke test's `DETACHED`: the wardens' shards, the
+  acolyte's censer, the lampman's lantern, the adept's hand flame, the rift hound's and the Hand of
+  Ash's embers, the wraith's fading cloth), and stands inside the view where a fight seats it, its
+  foot 184 px below the view's top (`seatFoot`), and within its span (below); the smoke test holds
+  both.
 - Combat sprite height comes from `combatHeight()` in `ui/sprites.ts`, which scales with how many
   monsters share the row: a lone enemy or a pair fills the viewport the way a Xeen monster does,
   three and four taper down, five is the old flat size and six goes under it. Across the view the
-  row is seated by `seatRow` in `ui/row.ts`: each kind's span (`SPAN`, beside `FAMILY`) says how far
-  its drawing reaches either side of its centre, and neighbours stand a slot apart as they always
-  have, or further where they would overlap by more than a third of the narrower (`OVERLAP`). A row
-  that would run past the view's edge closes up, never past the third, and slides in; one still too
-  wide is drawn smaller, the whole fight at one scale, so every monster stands whole inside the view
-  with two pixels to spare (`SPAN_SLACK`). A row that fits stands as it did. A back rank stands in a
-  row of its own behind the front, a fifth smaller and between them (`BACK_RISE`, `BACK_SCALE`).
+  row is seated by `seatRow` in `ui/row.ts`: each kind's span (`SPAN`, read off its family's
+  `SPRITES`) says how far its drawing reaches either side of its centre, and neighbours stand a slot
+  apart as they always have, or further where they would overlap by more than a third of the
+  narrower (`OVERLAP`). A row that would run past the view's edge closes up, never past the third,
+  and slides in; one still too wide is drawn smaller, the whole fight at one scale, so every monster
+  stands whole inside the view with two pixels to spare (`SPAN_SLACK`). A row that fits stands as
+  it did. A back rank stands in a row of its own behind the front, a fifth smaller and between them
+  (`BACK_RISE`, `BACK_SCALE`).
 - `ui/viewport.ts` textures every surface procedurally: stone courses (front faces and receding
   side faces), timber-framed houses with hipped roofs and windows lit at night, flagstones with
   mortar, grass tufts, pebbles, waves; a sky with a sun and moon on the compass, clouds, stars and
@@ -725,7 +731,7 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   lip, ash run down its flanks; a vent (`@`) has its fire in the lip, bright by night, with its smoke
   going up. Broadleaf trees bud in Thaw, blossom in
   Sowing, turn orange and gold in Leafturn, brown and drop in Mistfall and stand bare through the
-  winter (`treeSeason()` in `ui/sprites.ts`); flowers only come out between Sowing and Leafturn.
+  winter (`treeSeason()` in `ui/scenery.ts`); flowers only come out between Sowing and Leafturn.
   Lamps and windows light early on a dark day. Every frame, over the scene (and over the monsters in
   a fight): rain as streaks in three depths, more, longer and slanting harder with the wind across
   the view, splashing only on floor the party can see; snow as flakes that sway and blow, nearly
@@ -926,13 +932,15 @@ over content broken on purpose too, and two tools to theirs:
   of their maps too, and three groups of the widest and of the tallest), seats every span inside the
   view with no neighbour over more than a third of the next; a fight that fitted as the row stood
   before stands as it did, and only a row too wide for the view is drawn smaller.
-- `art` (§5.6): every monster def its own sprite kind, each family module's `KINDS` the kinds
-  `FAMILY` sends it and the walls dressed under their caps, each kind at its rate; a secret door
+- `art` (§5.6): every monster def its own sprite kind, each family's `SPRITES` naming its own
+  drawer and merged by the barrel, which refuses by name a kind two families register or one no area
+  names, and the walls dressed under their caps, each kind at its rate; a secret door
   outdoors among mountain, rock or trees drawn as they are (`drawnCell`), and any other door, or one
   in a wall or a town, left a door.
 - `changed`: which files count every map, monster or interior for the crack sweep and the sheet, and
-  which only their own; and that it reads each family module's `KINDS` from the module's text as the
-  module lists them.
+  which only their own: a family's file counts the monsters of the kinds the barrel gives it, the
+  barrel those of a family it adds, and a kind added to a family counts no map; the scenery counts
+  every map (#915).
 - `scaffold` (§8.2): the Downs' draft, the Deepthorn's first and J4, the Sunder's K3, the Saltings'
   C6, Wrackholm's F6, the Kilns' O6 and M3, Glacier Foot's N10, the Whitespine's J11 and I11,
   Cindercoast's H10, the Wold's D9 and Fire Mountain's G11, their light woods, dead wood, chasm,
@@ -1040,7 +1048,7 @@ does.
 | `ui/row.ts` | the fight's row: each monster's place across the view and the height it is drawn, spaced by the drawings' spans, every one whole inside the view and none over more than a third of the next (`seatRow`, `OVERLAP`); pure |
 | `ui/grouplabels.ts` | the labels over a fight: each group's kinds, each with its count of the living (a lone proper name none), laid out inside the view; pure |
 | `ui/quests.ts` | the quest log screen, and `questSheets`, its pure page layout, a chapter to a page or more |
-| `ui/sprites.ts`, `ui/monsters/*.ts` | scenery sprites, the trees dressed by the season; the monster drawings by family, each kind's span (`SPAN`), and the shared brush and helpers |
+| `ui/scenery.ts`, `ui/sprites.ts`, `ui/monsters/*.ts` | scenery sprites, the trees dressed by the season; the monster drawings by family, each registering its kinds with their spans (`SPRITES`, merged by `ui/monsters/index.ts`), the dispatcher, and the shared brush and helpers |
 | `ui/create.ts` | party creation |
 | `ui/title.ts` | the title screen: new game or continue, the Hearth over the saved company and attract mode's idle (untouched for 45 seconds, the pilot plays a new game) |
 | `content/index.ts` | the areas in road order; the tables merged from them (maps, monsters, items, quests and guild quests, climates, rooms), the one quest joined from their chapters and `ATLAS`, their parts of the world map over the plan; `SPELLS` from `spells.ts`; and the `MonsterSprite`, `Interior` and `RegionId` unions made from the areas |
