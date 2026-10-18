@@ -241,10 +241,19 @@ export function outdoors(): void {
     `M6's north edge is the farms with the stream in from M5, its west edge the farms, the branch and the river on into L6, and its south edge the grass and the hill against M7 (${northOf(m6)}; ${westOf(m6)}; ${southOf(m6)})`);
   // Kilnhaven's box (L6, #468): M6's west edge square for square on its east, the branch on into it at
   // row 4 and the river out at rows 5 and 6; the sea on its north and down its west, then the shore's
-  // grass and the heath against K6's cut heath, and the heath and the grass on its south against L7.
+  // grass and the heath against K6's heath (#831, below), and the heath and the grass on its south against L7.
   const l6 = out.zones.find((z) => z.id === 'kilnmouth_l6')!;
   ok(eastOf(l6) === westOf(m6) && northOf(l6) === 'W'.repeat(28) + 'B::_' && westOf(l6) === 'W'.repeat(16) + '~~,,,' + 'h'.repeat(11) && southOf(l6) === 'h'.repeat(25) + ','.repeat(7),
     `L6's east edge meets M6's west edge square for square, its north edge is the sea and the town's wall, its west the sea, the shore and the heath, and its south the heath and the grass (${northOf(l6)}; ${westOf(l6)}; ${southOf(l6)})`);
+  // The heath west of the port (K6, #831), the Kilns' first of the bounds: L6's west edge square for square
+  // on its east but for the corner, where the rock bank that closes its south edge ends it; the sea down
+  // its north; on the west the sea and the shallows, with the four squares of sand against J6 closed in
+  // mountain; and on the south the shallows, then the bank of mountain across the heath's neck, closed
+  // against the 56 squares of K7's tail, which stay cut (docs/areas/kilns.md §12.1). Each mountain
+  // that faces nothing built is the world's end here, void (`%`), drawn as the mountain it is.
+  const k6 = out.zones.find((z) => z.id === 'kilnmouth_k6')!;
+  ok(eastOf(k6) === westOf(l6).slice(0, 31) + '%' && /^W+$/.test(northOf(k6)) && westOf(k6) === 'W'.repeat(21) + '~~~' + '%'.repeat(5) + '~~W' && southOf(k6) === 'WWW~~~~' + '%'.repeat(25),
+    `K6's east edge meets L6's west edge square for square but the corner, its north edge is the sea, its west edge the sea, the shallows and the mountain on the sand, and its south edge the shallows and the bank of mountain across the heath's neck (${eastOf(k6)}; ${westOf(k6)}; ${southOf(k6)})`);
   // Kilnmouth's country (M4 and M5, #474). M4 meets M3's south edge square for square, the crag running
   // on across the seam and the pines open either side of it, and N4's west edge square for square, the
   // grass, the knoll and the old workings' ground the drovers' track climbs from; on its west the range's
