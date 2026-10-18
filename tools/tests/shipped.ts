@@ -1,10 +1,12 @@
-// What a save can refer to: the content holds to src/content/shipped.json (EXPANSION §5.5). Nothing
-// in it goes or moves unless SAVE_VERSION goes up with an upgrade, and what is new is recorded.
+// What a save can refer to: the content holds to the shipped files (EXPANSION §5.5), each area's
+// own and the central one, joined into one record. Nothing in it goes or moves unless SAVE_VERSION
+// goes up with an upgrade, and what is new is recorded, each id in the file of the area that owns it.
 // Then the check itself, broken on purpose: a chest, a spell and a guild hall renamed, a door, a
 // zone and a map's edge moved, each caught at this version and let through by a bump with its
 // upgrade. Each edit finds its target in what the list records and the content still has, so
 // neither a rename made properly (a bump, its upgrade, the list regenerated) nor something new
-// that comes first dulls the cases.
+// that comes first dulls the cases. And an area's file gone, and an id in the wrong file, which the
+// joined record cannot see.
 import { GameMap } from '../../src/game/map.ts';
 import type { MapDef, Feature } from '../../src/game/map.ts';
 import { layOutdoors, OUTDOORS } from '../../src/game/outdoors.ts';
@@ -13,13 +15,38 @@ import { guildFlag } from '../../src/game/party.ts';
 import { SAVE_VERSION } from '../../src/game/save.ts';
 import { UPGRADES } from '../../src/game/upgrades.ts';
 import type { Upgrade } from '../../src/game/upgrades.ts';
-import { CONTENT, collect, compare, readShipped } from '../shipped.ts';
-import type { Content, Shipped } from '../shipped.ts';
+import { CONTENT, LISTS, collect, collectShares, compare, join, readShares, readShipped, shippedFile } from '../shipped.ts';
+import type { Content, Share, Shares, Shipped } from '../shipped.ts';
 import { ok } from './lib.ts';
 
 const list = (xs: readonly string[]): string => xs.length ? ':\n        ' + xs.join('\n        ') : '';
 /** A check that lists what it found only when it fails, so a green run reads green. */
 const okList = (cond: boolean, msg: string, xs: readonly string[]): void => ok(cond, msg + (cond ? '' : list(xs)));
+
+/** A shipped file as lines, one to each thing it records but the version, which compare holds. */
+const lines = (s: Share): string[] => [
+  ...Object.entries(s.maps ?? {}).flatMap(([id, m]) => [
+    ...(m.size === undefined ? [] : [`map ${id} at ${m.size}`]), ...(m.used ?? []).map((x) => `${id} chest or event ${x}`),
+    ...(m.groups ?? []).map((x) => `${id} group ${x}`), ...(m.doors ?? []).map((x) => `${id} door at ${x}`),
+  ]),
+  ...Object.entries(s.zones ?? {}).map(([id, z]) => `zone ${id} at ${z.at}, ${z.size}`),
+  ...(Object.entries(LISTS) as [keyof typeof LISTS, string][]).flatMap(([k, one]) => (s[k] ?? []).map((x) => `${one} ${x}`)),
+];
+
+/**
+ * Where the shipped files disagree with who owns what (`collectShares`): a file missing whose
+ * content there is, a line in a file not its owner's, and a line missing from its owner's file while
+ * another holds it, which the union would hide. A line no file is owed or none holds is compare's.
+ */
+function misplaced(files: Shares, owed: Shares): string[] {
+  const linesOf = (s: Shares): Map<string, Set<string>> => new Map(Object.entries(s).map(([f, x]) => [f, new Set(lines(x))]));
+  const held = linesOf(files), due = linesOf(owed), out: string[] = [];
+  const where = (m: Map<string, Set<string>>, line: string): string => [...m].filter(([, x]) => x.has(line)).map(([f]) => f).join(' and ');
+  for (const f of due.keys()) if (!held.has(f)) out.push(`${f} is missing, and there is content it records: node tools/shipped.ts makes it`);
+  for (const [f, xs] of held) for (const x of xs) if (!due.get(f)?.has(x) && where(due, x)) out.push(`${f} holds ${x}, which belongs in ${where(due, x)}`);
+  for (const [f, xs] of due) for (const x of xs) if (held.has(f) && !held.get(f)?.has(x) && where(held, x)) out.push(`${f} lacks ${x}, which ${where(held, x)} holds`);
+  return out;
+}
 
 /** The content with one map changed. */
 const withMap = (id: string, change: (d: MapDef) => MapDef): Content => ({ ...CONTENT, defs: CONTENT.defs.map((d) => (d.id === id ? change(d) : d)) });
@@ -102,10 +129,12 @@ function taller(was: Shipped): Case {
 }
 
 export function shipped(): void {
-  const was = readShipped(), now = collect(CONTENT);
+  const files = readShares(), was = readShipped(files), owed = collectShares(CONTENT), now = join(owed);
   const { problems, unrecorded } = compare(was, now);
   okList(problems.length === 0, 'nothing a save can refer to has gone or moved', problems);
-  okList(unrecorded.length === 0, `src/content/shipped.json records all of it, at version ${was.version}${unrecorded.length ? ' (run node tools/shipped.ts)' : ''}`, unrecorded);
+  okList(unrecorded.length === 0, `the shipped files record all of it, at version ${was.version}${unrecorded.length ? ' (run node tools/shipped.ts)' : ''}`, unrecorded);
+  const off = misplaced(files, owed);
+  okList(off.length === 0, `each id sits in the shipped file of the area that owns it and in no other (${Object.keys(files).length} files)`, off);
   ok(Object.keys(UPGRADES).map(Number).every((v) => v >= 2 && v <= SAVE_VERSION), 'every upgrade brings a save to a version this build knows');
 
   // Broken on purpose: each edit is caught, names what it broke, and passes once SAVE_VERSION goes
@@ -123,5 +152,29 @@ export function shipped(): void {
     const more = collect({ ...CONTENT, spells: [...CONTENT.spells, 'new_spell'] });
     const c = compare(was, more);
     ok(c.problems.length === 0 && c.unrecorded.some((u) => u.includes('new_spell')), 'a new spell is no problem, but is to be recorded');
+  }
+
+  // Broken on purpose, the files: each break is caught, naming the file.
+  const [a, b] = CONTENT.areas.map((x) => shippedFile(x.id));
+  { // An area with content and no file.
+    const gone = misplaced(Object.fromEntries(Object.entries(owed).filter(([f]) => f !== a)), owed);
+    okList(gone.some((m) => m.startsWith(`${a} is missing`)), `an area with content and no shipped file is caught, naming it (${a})`, gone);
+  }
+  { // A flag moved from one area's file into another's: the joined record is the same, so only the files show it.
+    const flag = owed[a].flags?.find((x) => !owed[b].flags?.includes(x));
+    if (!flag) throw new Error(`no flag ${a} holds and ${b} does not`);
+    const moved: Shares = { ...owed, [a]: { ...owed[a], flags: owed[a].flags?.filter((x) => x !== flag) }, [b]: { ...owed[b], flags: [...(owed[b].flags ?? []), flag] } };
+    const off = misplaced(moved, owed), same = JSON.stringify(join(moved)) === JSON.stringify(now);
+    okList(same && off.some((m) => m.startsWith(`${b} holds flag ${flag}`)) && off.some((m) => m.startsWith(`${a} lacks flag ${flag}`)), `an id in the wrong area's file is caught on both sides, which the joined record hides (flag ${flag})`, off);
+  }
+  { // What stands in no area's box is the central file's: a chest moved off its zone map, onto the void west of it.
+    const zones = layOutdoors(CONTENT.atlas, CONTENT.defs).find((d) => d.id === OUTDOORS)?.zones ?? [];
+    const boxed = (x: number, y: number): boolean => zones.some((z) => x >= z.x && x < z.x + z.w && y >= z.y && y < z.y + z.h);
+    const [z, f] = zones.flatMap((q) => (CONTENT.defs.find((d) => d.id === q.id)?.features ?? [])
+      .filter((g) => g.kind === 'chest' && q.x > 0 && !boxed(q.x - 1, q.y + g.y)).map((g) => [q, g] as const))[0] ?? [];
+    if (!z || f?.kind !== 'chest') throw new Error('no chest of a zone map with nothing built west of its row');
+    const parts = collectShares(withFeature(z.id, (q) => (q === f ? { ...q, x: -1 } : q)));
+    const holds = (s: Share | undefined): boolean => !!s?.maps?.[OUTDOORS]?.used?.includes(f.id);
+    ok(holds(parts[shippedFile()]) && !Object.entries(parts).some(([p, s]) => p !== shippedFile() && holds(s)), `an id of the outdoors in no area's box is the central file's alone (${z.id}'s chest ${f.id})`);
   }
 }
