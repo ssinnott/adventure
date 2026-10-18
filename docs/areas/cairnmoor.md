@@ -209,8 +209,8 @@ and M8, the country behind (#484):
   its top slab by day and a troll beside it by night. South the tarn, black and still under the
   Rimefells; an old fisher on a stone at its edge, who says the troll is there yet; and a cairn at
   the mountains' foot with a ram's skull on it. Under a great boulder by the tarn, found from the
-  heather worn to the earth and the rock black with old smoke, a howff (§4.7). Two groups: eight
-  ravens on the crags and the tor's troll alone by night.
+  heather worn to the earth and the rock black with old smoke, a howff (§4.7). Two groups: two
+  ravens and two tor trolls on the crags (#865) and the tor's troll alone by night.
 
 Its atlas rows are charted in `src/content/areas/cairnmoor/atlas.ts`, the area's own `atlas` since
 N7 lists the area; until then `src/content/atlas.ts` spread them into the plan where its rows were,
@@ -224,7 +224,8 @@ road from the Kilns, the Cairns' way in and the drove road down to Longmere.
 Its row on the curve and its share of the act's gear ladder are in (#535). The row is in
 `src/content/progression.ts`: band 18–20, next 20, window 4,000. Its entry owed to #437 while the
 area was built box by box went with M7 and M8 (#484), a clear giving 15,442 xp a member and 9,115
-gold (§8). O7's Banded Staff +1 is in `src/content/areas/cairnmoor/items.ts`, made ahead of
+gold (§8); 15,587 xp since #865 re-sized M8's crag group. O7's Banded Staff +1 is in
+`src/content/areas/cairnmoor/items.ts`, made ahead of
 the area (`ITEMS_AHEAD`, `src/content/index.ts`) as the Kilns' step was, until N7 took the table
 into its Area, and owed to #477 until it was placed, in O7's hollow (§4.3); N7's cache holds a
 second of the Kilns' Forge Hammer +1 (§4.2), O8's hoard a second of the Kilns' Seax +1 (§4.4), M8's howff a
@@ -749,12 +750,23 @@ delegate (§9, #484's).
     off; two under, at 16, it wins every fight too, owed to #18. It pays 674 xp a member (five ravens
     at 357 and three hounds at 753, shared by six) and holds 280 gold. Density 100.0% within 12 steps,
     the country floor, the furthest 12, with no sign among its 19 points. The curve's rank correlation
-    is 1.00, the ravens nearest at 9 steps (level 18) and the hounds the hardest at 32 (level 19). M8:
-    11.53 fights to a rest, off the aim and inside the limit, with no day ending in a fight broken
-    off; at 16 it wins every fight too, owed to #18. It pays 727 (eight ravens at 357 and the troll
+    is 1.00, the ravens nearest at 9 steps (level 18) and the hounds the hardest at 32 (level 19).
+    M8 as #484 built it: 11.53 fights to a rest, off the aim and inside the limit, with no day ending
+    in a fight broken off; at 16 it wins every fight too, owed to #18.
+    It pays 727 (eight ravens at 357 and the troll
     1,507, shared by six) and holds 180 gold. Density 99.7% within 12 steps, the furthest 13, with no
     sign among its 17 points. Rank correlation 1.00, the ravens nearest at 6 steps (level 18) and the
-    troll the hardest at 20 (level 19). Neither claims anything new (§7).
+    troll the hardest at 20 (level 19). Neither claims anything new (§7). #865 re-sized M8's crag
+    group inside its floor's aims, two ravens and two tor trolls where eight ravens stood: 7.60 fights
+    to a rest at 18, inside the aim, and two under, at 16, 5.52 (64.9% of the floor's 8.5, inside its
+    aim) where it was 9.29 (109.3%, past the limit). It pays about 873 a member. Its fights broken off
+    are the only such tail in Cairnmoor, whose other seven maps stand at 0 to 1.7% of their floors'
+    days: the fight is fair for a company that burns the trolls (Fire Bolt takes the whole group, and
+    both groups are won every time at 18 from full health), but late in a long day, its fire spent,
+    23.3% of the floor's days (28.0% two under) end in a fight broken off at fifteen rounds. The
+    nearest group is now the map's biggest fight (3,728 xp against the night troll's 1,507; the
+    curve's check reads its mean level, 18.5), and the tor's troll alone has two more on the crags.
+    Owing M8 by name to the #54 issue instead, the ruling's fallback, is the owner's to choose.
   - **Walked.** `theGrazing`, the walkthrough's third walk after `theBog`, crosses the seams, speaks to
     the shepherd and the fisher, shows the tor's face by day and not by night, wins every group at its
     floor (the hounds and the troll by night) and finds each secret from its hint, each shut but
@@ -960,16 +972,17 @@ tarn are among the landmarks above.
   built (§9). A fight inside the gate's aim at 11 cost about 300 a member whatever its monsters, and
   at 18 to 20 costs more, so a box priced by its fights as the Act II boxes were will land over its
   share here: each is measured when it is built, recorded as built where that passes its share, and
-  the sum restated with each. M7 and M8 add 1,401 as built (#484). From here on a kill
+  the sum restated with each. M7 and M8 add 1,401 as built (#484; 1,547 since #865). From here on a kill
   pays by level (#159), so a company that arrives at 18 earns the shares as written and one that
   arrives at 21 earns less; the curve's row reported what a clear fell short of as owed to #437
   until the boxes existed. As built: N7 1,803 (#476), N8 2,081 (#479), O7 1,803 (#477) and O8 2,305
   (#478), 905 over its brief's 1,400 (§9, #478's 5). Carn Dubh pays 4,948 (#480), 2,748 over its
   brief's 2,200 (§9, #480's 15). M7 pays 674 and M8 727 (#484), 1.12 and 1.21 times the brief's 600
-  each (§9, #484's 4). The seven hold 14,342 of the 14,667. The side quests pay 700 by their answers
-  (#482: 37 and 38 200 a member each, 39 300) and the Lanterns' ring ask, What the Ring Said (#439,
-  §6), 400; the chapter pays nothing, so a clear gives 15,442, 1.053 times the ask. M7 and M8 closed
-  the 626 that stood short, and the curve's row owes it no longer (§9, #484's 7).
+  each (§9, #484's 4); M8 873 since #865, 1.45 times. The seven hold 14,342 of the 14,667 (14,488
+  since #865). The side quests pay 700 by their answers (#482: 37 and 38 200 a member each, 39 300)
+  and the Lanterns' ring ask, What the Ring Said (#439, §6), 400; the chapter pays nothing, so a
+  clear gives 15,442, 1.053 times the ask (15,587 and 1.063 since #865). M7 and M8 closed the 626
+  that stood short, and the curve's row owes it no longer (§9, #484's 7).
   By the lead over the road (EXPANSION §5.2, #634), three quarters cleared from 18, paid by level, a
   company leaves at 20.1, 0.1 over 20 (0.1 under before M7 and M8), and walking the road 0.7 over it.
   The Glasswold's is 0.3 under 28.
@@ -1013,9 +1026,10 @@ tarn are among the landmarks above.
   11.20 fights to a rest, off the aim and inside the limit, 4.3% of its days ending in a fight
   broken off (§9, #481 and #482's 10). On M7 a company at 18 wins every fight and manages 10.51
   fights to a rest, off the aim and inside the limit, 1.7% of its days ending in a fight broken off;
-  one at 16 wins every fight too, owed to #18 (§4.7). On M8 it wins every fight and manages 11.53,
-  off the aim and inside the limit, with no day ending in a fight broken off; one at 16 wins every
-  fight too, owed to #18. Cairnmoor's 31 groups are won 98.6% of the fights at their maps' floors and,
+  one at 16 wins every fight too, owed to #18 (§4.7). On M8 it wins every fight and manages 7.60
+  since #865 (11.53 before), inside the aim, 23.3% of its days ending in a fight broken off (§4.7);
+  one at 16 wins every fight too, owed to #18.
+  Cairnmoor's 31 groups are won 98.6% of the fights at their maps' floors and,
   two under them, 96.8%, owed to #18 as the Kilns' are.
 - **Density.** Core boxes at the Foreland's floor, the bog, M7 and M8 at the looser one (EXPANSION §5.3). The
   ring's inside is held to no feature but the camp, the voice and the bare ground's line, so it
@@ -1443,6 +1457,7 @@ Decided by delegate for #484, each the owner's to overturn:
 4. **The groups are heavier than the brief's 600 a box, for the pace:** the lightest inside the limit
    of 12 fights to a rest are five ravens and three hounds (10.51) and eight ravens and the troll
    (11.53); four ravens gave 12.08. They pay 674 and 727 a member, 1.12 and 1.21 times the brief.
+   Since #865 M8's crag group is two ravens and two tor trolls: 7.60 to a rest, 873 a member, 1.45.
 5. **One secret a box, a door in rock, its hint outside** and shut to walkers, swimmers, climbers and
    levitators: M7's cist behind the fold's back wall, the fold built of an old cairn; M8's howff
    under a boulder by the tarn.
