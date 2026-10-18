@@ -18,14 +18,11 @@
 // and reaching along it, white sucker-ring scars and a long healed gash, barnacles along its crown,
 // and the eye's gold gone pale.
 import type { MonsterSprite } from '../../game/monsters.ts';
-import type { MonsterDrawer, Paint } from './common.ts';
+import type { MonsterDrawer, Paint, Sprite } from './common.ts';
 import { B, groundShadow } from './common.ts';
 import { blob, patch, softLine } from './gloss.ts';
 import type { Part } from './gloss.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
-
-/** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['devilfish', 'great_devilfish'];
 
 /** An arm over the lip: where it crosses the edge, and which way it curls down the face (-1 left, 1 right). */
 type Grip = readonly [x: number, s: number];
@@ -82,6 +79,12 @@ const GREAT: Build = {
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   devilfish(ctx, x, y, h, p, kind === 'great_devilfish' ? GREAT : DEVILFISH);
 };
+
+/** The kinds this module draws, each with its span and any part drawn apart; ./index.ts merges every family's. */
+export const SPRITES = {
+  devilfish: { draw, span: [0.51, 0.51] },
+  great_devilfish: { draw, span: [0.66, 0.7] },
+} satisfies Partial<Record<MonsterSprite, Sprite>>;
 
 /** A frame: x and y map hundredths of the height (x right, y up from the ground) to the canvas. */
 interface F { u: number; X: (v: number) => number; Y: (v: number) => number; h: number }

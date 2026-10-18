@@ -20,14 +20,11 @@
 // band at his brow, gold and silver either side and at the front the oldest, dull and with no face;
 // more of it studs his belt. Idle: he breathes, the hand weighs, and the beard stirs.
 import type { MonsterSprite } from '../../game/monsters.ts';
-import type { MonsterDrawer, Paint } from './common.ts';
+import type { MonsterDrawer, Paint, Sprite } from './common.ts';
 import { B, eye, groundShadow, stroke } from './common.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
 import { blob, patch, softLine } from './gloss.ts';
 import type { Part } from './gloss.ts';
-
-/** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['stair_giant', 'stair_king'];
 
 /**
  * What a giant is made of, as the Stair Giant's numbers, so another giant is a Build and a colouring
@@ -67,6 +64,12 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   const g = kind === 'stair_king' ? KING : GIANT;
   giant(ctx, x, y, h * g.reach, p, g);
 };
+
+/** The kinds this module draws, each with its span and any part drawn apart; ./index.ts merges every family's. */
+export const SPRITES = {
+  stair_giant: { draw, span: [0.21, 0.39] },
+  stair_king: { draw, span: [0.26, 0.47] },
+} satisfies Partial<Record<MonsterSprite, Sprite>>;
 
 const GOLD = '#d8b04c', SILVER = '#c9c7bd', OLD = '#8c7a5a', IRON = '#7e8188';
 

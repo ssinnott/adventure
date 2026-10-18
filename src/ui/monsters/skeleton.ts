@@ -17,7 +17,7 @@
 // Old Cinder's ash husk is no bones at all: a man the mountain's ash fell on and set round, the cast
 // of him walking, his cup still in his hand.
 import type { MonsterSprite } from '../../game/monsters.ts';
-import type { MonsterDrawer, Paint } from './common.ts';
+import type { MonsterDrawer, Paint, Sprite } from './common.ts';
 import { B, groundShadow, eye } from './common.ts';
 import { blob, glow, patch, softLine, glossPoly, glossTaper, appendCurve, lumpy } from './gloss.ts';
 import type { Crease, Part } from './gloss.ts';
@@ -34,9 +34,6 @@ const BONE = (t: number): Mats => ({
 });
 import { pathEllipse } from '../../lib/art/shapes.ts';
 
-/** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['skeleton', 'bone_knight', 'ghoul', 'drowned', 'barrow_guard', 'barrow_captain', 'temple_drowned', 'drowned_chanter', 'choirmaster', 'bog_body', 'cairn_king', 'ash_husk'];
-
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'bog_body') bogBody(ctx, x, y, h, p);
   else if (kind === 'ash_husk') ashHusk(ctx, x, y, h, p);
@@ -50,6 +47,22 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   else if (kind === 'drowned_chanter' || kind === 'choirmaster') priest(ctx, x, y, h, p, kind === 'choirmaster');
   else skeleton(ctx, x, y, h, p);
 };
+
+/** The kinds this module draws, each with its span and any part drawn apart; ./index.ts merges every family's. */
+export const SPRITES = {
+  skeleton: { draw, span: [0.22, 0.39] },
+  bone_knight: { draw, span: [0.36, 0.42] },
+  ghoul: { draw, span: [0.33, 0.38] },
+  drowned: { draw, span: [0.27, 0.3] },
+  barrow_guard: { draw, span: [0.2, 0.33] },
+  barrow_captain: { draw, span: [0.27, 0.29] },
+  temple_drowned: { draw, span: [0.34, 0.34] },
+  drowned_chanter: { draw, span: [0.27, 0.28] },
+  choirmaster: { draw, span: [0.32, 0.35] },
+  bog_body: { draw, span: [0.23, 0.25] },
+  cairn_king: { draw, span: [0.32, 0.35] },
+  ash_husk: { draw, span: [0.23, 0.3] },
+} satisfies Partial<Record<MonsterSprite, Sprite>>;
 
 const INK = '#16121a';
 

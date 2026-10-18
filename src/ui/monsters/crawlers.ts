@@ -21,15 +21,12 @@
 // high. Idle: the arms ease open as if to let go and close again, the plates sway and the lamps
 // breathe.
 import type { MonsterSprite } from '../../game/monsters.ts';
-import type { MonsterDrawer, Paint } from './common.ts';
+import type { MonsterDrawer, Paint, Sprite } from './common.ts';
 import { B, groundShadow } from './common.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
 import { blob, glow, patch, softLine } from './gloss.ts';
 import type { Part } from './gloss.ts';
 import { chiselMark } from './knockers.ts';
-
-/** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['deep_crawler', 'catcher'];
 
 /** A point, x to the company's right and q up from the ground line, in drawn heights. */
 type Pt = readonly [number, number];
@@ -45,6 +42,12 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'catcher') catcher(ctx, x, y, h * 0.8, p);
   else crawler(ctx, x, y, h * 0.97, p);
 };
+
+/** The kinds this module draws, each with its span and any part drawn apart; ./index.ts merges every family's. */
+export const SPRITES = {
+  deep_crawler: { draw, span: [0.41, 0.41] },
+  catcher: { draw, span: [0.45, 0.45] },
+} satisfies Partial<Record<MonsterSprite, Sprite>>;
 
 /** Where a drawing stands: its height in px, and heights mapped to the canvas. */
 interface F { H: number; X: (v: number) => number; Y: (v: number) => number }

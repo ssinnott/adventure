@@ -17,14 +17,11 @@
 // sores open on its flanks, the disease it carries. Dark bog-green, the throat yellow. Idle: the
 // throat swells like a bellows, slow.
 import type { MonsterSprite } from '../../game/monsters.ts';
-import type { MonsterDrawer, Paint } from './common.ts';
+import type { MonsterDrawer, Paint, Sprite } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
 import { blob, patch, softLine } from './gloss.ts';
 import type { Part } from './gloss.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
-
-/** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['fen_toad', 'bull_toad'];
 
 /**
  * The frame's parts, as proportions of the fen toad's (1 = the fen toad, 0 = none), each named for
@@ -66,6 +63,12 @@ const BULL: Build = {
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   toad(ctx, x, y, h, p, kind === 'bull_toad' ? BULL : FEN);
 };
+
+/** The kinds this module draws, each with its span and any part drawn apart; ./index.ts merges every family's. */
+export const SPRITES = {
+  fen_toad: { draw, span: [0.58, 0.58] },
+  bull_toad: { draw, span: [0.61, 0.61] },
+} satisfies Partial<Record<MonsterSprite, Sprite>>;
 
 /** A frame: x and y map hundredths of the height (x right, y up from the ground) to the canvas. */
 interface F { u: number; X: (v: number) => number; Y: (v: number) => number; h: number }

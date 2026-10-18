@@ -15,14 +15,11 @@
 // height sits under the frame alone and over three brambles, and roots stop at the ground line so
 // nothing runs under the silhouette canvas.
 import type { MonsterSprite } from '../../game/monsters.ts';
-import type { MonsterDrawer, Paint } from './common.ts';
+import type { MonsterDrawer, Paint, Sprite } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
 import { blob, glow, patch, softLine } from './gloss.ts';
 import type { Part } from './gloss.ts';
 import { mix, shade } from '../../lib/art/palettes.ts';
-
-/** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['bramble', 'rootwalker', 'heartwood', 'eldest', 'strangler_vine'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'bramble') bramble(ctx, x, y, h, p);
@@ -31,6 +28,15 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   else if (kind === 'strangler_vine') strangler(ctx, x, y, h * 0.92, p);
   else eldest(ctx, x, y, h * 0.84, p);
 };
+
+/** The kinds this module draws, each with its span and any part drawn apart; ./index.ts merges every family's. */
+export const SPRITES = {
+  bramble: { draw, span: [0.49, 0.49] },
+  rootwalker: { draw, span: [0.39, 0.41] },
+  heartwood: { draw, span: [0.4, 0.36] },
+  eldest: { draw, span: [0.72, 0.72] },
+  strangler_vine: { draw, span: [0.5, 0.54] },
+} satisfies Partial<Record<MonsterSprite, Sprite>>;
 
 /** Stable 0..1 noise; never seeded from the frame, or the contour would boil. */
 function nz(a: number, b: number): number {

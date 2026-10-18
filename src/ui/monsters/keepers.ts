@@ -47,15 +47,12 @@
 // comes, as the sleepers' keepers lay them. Idle: its weight goes from one leg to the other, its
 // head tips, and the near hand comes up higher now and then, as the bay keeper's does.
 import type { MonsterSprite } from '../../game/monsters.ts';
-import type { MonsterDrawer, Paint } from './common.ts';
+import type { MonsterDrawer, Paint, Sprite } from './common.ts';
 import { B, groundShadow } from './common.ts';
 import { blob, glow, softLine } from './gloss.ts';
 import type { Crease, Part } from './gloss.ts';
 import { chiselMark } from './knockers.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
-
-/** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['bay_keeper', 'matron', 'brother', 'bell_ringer', 'abbot', 'hold_keeper', 'tallymaster', 'keeper'];
 
 /**
  * The frame's parts, as proportions of the bay keeper's where they are numbers (1 = the keeper, 0 =
@@ -156,6 +153,18 @@ const PLATE = '#8d9399';
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   keeper(ctx, x, y, h, p, BUILDS[kind] ?? KEEPER);
 };
+
+/** The kinds this module draws, each with its span and any part drawn apart; ./index.ts merges every family's. */
+export const SPRITES = {
+  bay_keeper: { draw, span: [0.28, 0.28] },
+  matron: { draw, span: [0.32, 0.33] },
+  brother: { draw, span: [0.28, 0.28] },
+  bell_ringer: { draw, span: [0.28, 0.39] },
+  abbot: { draw, span: [0.23, 0.26] },
+  hold_keeper: { draw, span: [0.36, 0.36] },
+  tallymaster: { draw, span: [0.26, 0.27] },
+  keeper: { draw, span: [0.29, 0.29] },
+} satisfies Partial<Record<MonsterSprite, Sprite>>;
 
 interface Pt { x: number; y: number }
 /** A frame: body units (x right, y up from the ground) to the canvas. */
