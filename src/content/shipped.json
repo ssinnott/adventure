@@ -126,12 +126,15 @@
     "cairns": {
       "size": "16x16",
       "used": [
+        "cd1_cell",
         "cd1_chamber",
         "cd1_count",
         "cd1_in",
+        "cd1_kist",
         "cd1_north",
         "cd1_north_gold",
         "cd1_page",
+        "cd1_rust",
         "cd1_south",
         "cd1_south_gold",
         "cd1_stair",
@@ -144,7 +147,9 @@
         "cd1_wights1",
         "cd1_wights2"
       ],
-      "doors": []
+      "doors": [
+        "13,10"
+      ]
     },
     "cairns2": {
       "size": "16x16",
@@ -1404,6 +1409,7 @@
         "n7_shrine",
         "n7_spring",
         "n7_steps",
+        "n8_beacon",
         "n8_bog",
         "n8_cairn",
         "n8_cairns",
@@ -3987,6 +3993,7 @@
     "battle_staff",
     "battle_staff+1",
     "battleaxe",
+    "beacon_hammer",
     "bear_spear",
     "bear_spear+1",
     "bearskin",
@@ -4000,6 +4007,7 @@
     "brine_shard",
     "buckler",
     "buckler+1",
+    "cairnbuilders_mail",
     "captains_mail",
     "captains_sword",
     "chain",
