@@ -87,8 +87,8 @@ jobs:
   # The pilot's full run (tools/tests/fullrun.ts; docs/PILOT.md, Full runs): a new game played by the
   # pilot alone, chapter after chapter, on the areas the run's `fullrun` input names (all unless
   # changed). Started by hand only, never on a pull request: its result is a report, not a gate, until
-  # the pilot finishes those chapters. Its lines go into the run's summary; each chapter's play has ten
-  # minutes of the wall clock, fair and omniscient alike.
+  # the pilot finishes those chapters. Its lines go into the run's summary, every one listed (#895);
+  # each chapter's play has ten minutes of the wall clock, fair and omniscient alike.
   fullrun:
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
@@ -101,7 +101,7 @@ jobs:
           cache: npm
       - run: npm ci
       - shell: bash
-        run: node tools/test.ts fullrun 2>&1 | tee fullrun.txt
+        run: node tools/test.ts fullrun --list 2>&1 | tee fullrun.txt
         env:
           FULLRUN: ${{ inputs.fullrun }}
       - if: always()
