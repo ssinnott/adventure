@@ -889,7 +889,7 @@ growing past Thornmark's, `--level-bonus` one where every member gains a point o
 armour every two levels past 10, and `--level-traits` one where fighters strike once more a turn
 from 11 and again from 29, and sneak attacks grow. `--tiers` gives the company its Expert at 13
 and Master at 25 (#852); `--bot` gives the bots, the gate's too, their bless, sleep and drink from
-11 (#853); `--company newer` fields the four newer classes' company in the premade's place (#854).
+11 (#853, #865); `--company newer` fields the four newer classes' company in the premade's place (#854).
 Each says what it makes, and none is on by default: #865 weighed the first two and left them off
 (J2, EXPANSION §5.2). `node tools/restate.ts <base ref> [--write]` restates the monsters past 10
 onto a line made again (#865), for the day the line is made again; it writes only with `--write`.
