@@ -15,6 +15,8 @@ import { DROWNED_TEMPLES2 } from './maps/drowned_temples2.ts';
 import { SALTINGS_C6 } from './maps/saltings_c6.ts';
 import { SALTMOUTH } from './maps/saltmouth.ts';
 import { SALTINGS_C7 } from './maps/saltings_c7.ts';
+import { UPPERWATER_C2 } from './maps/upperwater_c2.ts';
+import { UPPERWATER_B2 } from './maps/upperwater_b2.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { QUESTS } from './quests.ts';
@@ -27,8 +29,9 @@ export const AREA = {
   id: 'saltreach' as const,
   // The road's order: the shore under the Edge, the fen, the spur up the river to Rietum, west over
   // the fen to the plinth and south to the temples and down them, then Saltmouth's box, the town and the pans below; and behind the road the
-  // willows, west of Rietum and down to the fen's north end.
-  maps: [DELTA_D5, DELTA_C5, C5_RIFT.map, DELTA_C4, UPPERWATER_C3, DELTA_B5, B5_RIFT_N.map, B5_RIFT_S.map, DELTA_B6, DROWNED_TEMPLES, DROWNED_TEMPLES2, SALTINGS_C6, SALTMOUTH, SALTINGS_C7, UPPERWATER_B3, DELTA_B4],
+  // willows, west of Rietum and down to the fen's north end; and the bounds (#830), the upper valley over
+  // Rietum and its head under the rim.
+  maps: [DELTA_D5, DELTA_C5, C5_RIFT.map, DELTA_C4, UPPERWATER_C3, DELTA_B5, B5_RIFT_N.map, B5_RIFT_S.map, DELTA_B6, DROWNED_TEMPLES, DROWNED_TEMPLES2, SALTINGS_C6, SALTMOUTH, SALTINGS_C7, UPPERWATER_B3, DELTA_B4, UPPERWATER_C2, UPPERWATER_B2],
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,
