@@ -8,7 +8,7 @@ import { ExploreScreen } from '../game.ts';
 import type { Action } from '../../input.ts';
 import type { Exit } from '../map.ts';
 import { passableCell } from '../map.ts';
-import { partyCan } from '../party.ts';
+import { partyCan, companyLevel } from '../party.ts';
 import { FACING_DX, FACING_DY, turnLeft, turnRight } from '../types.ts';
 import type { Facing } from '../types.ts';
 import { LAYOUT } from '../../ui/frame.ts';
@@ -132,11 +132,16 @@ export interface Edge { exit: Exit; crossing?: string }
 /**
  * A map's ways out as the navigator knows them: the exits Known gives, then the crossings told on it
  * whose fare, as its menu showed it, the gold over the reserve pays (`spare`, #721), each from its
- * seller's square to where it lands.
+ * seller's square to where it lands. No way in to an enclave whose floor, as its door says it, is
+ * over the company's level and over the map's own (#845): the band rule keeps the pilot out,
+ * whatever its goal, and leaves the way up from a deeper level open, so a pilot handed the helm
+ * inside is never stranded.
  */
 export function edges(k: Known, map: string): Edge[] {
   const cash = spare(k.party), told = k.offers().filter((o) => o.map === map && o.fare <= cash);
-  return [...k.exits(map).map((exit) => ({ exit })), ...told.map((o) => ({ exit: { x: o.x, y: o.y, to: o.to, tx: o.tx, ty: o.ty }, crossing: o.name }))];
+  const floor = Math.max(companyLevel(k.party), k.enclave(map)?.[0] ?? 0);
+  const open = (to: string): boolean => (k.enclave(to)?.[0] ?? 0) <= floor;
+  return [...k.exits(map).filter((e) => open(e.to)).map((exit) => ({ exit })), ...told.map((o) => ({ exit: { x: o.x, y: o.y, to: o.to, tx: o.tx, ty: o.ty }, crossing: o.name }))];
 }
 
 /**

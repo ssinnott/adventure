@@ -1,7 +1,7 @@
 // The quest log: every key names something real, every goal is placed, every zone on the road of
-// the built areas holds a step, every journal is shown whole, nothing vanishes when an item leaves,
-// the one quest is paged by chapter and reads true out of order, and the quests walk through end to
-// end, each change announced once.
+// the built areas holds a step and no enclave does (#845), every journal is shown whole, nothing
+// vanishes when an item leaves, the one quest is paged by chapter and reads true out of order, and
+// the quests walk through end to end, each change announced once.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { AREAS, ATLAS, MAP_DEFS, ITEMS, QUESTS, THE_QUEST, GUILD_QUESTS } from '../../src/content/index.ts';
@@ -24,6 +24,7 @@ import type { Feature, MapDef } from '../../src/game/map.ts';
 import { spentId } from '../../src/game/wilds.ts';
 import { readId } from '../../src/game/inscriptions.ts';
 import { REACH_ZONES } from './pillars.ts';
+import { FIXTURE, LAIR } from './enclave.ts';
 import type { MapState } from '../../src/game/world.ts';
 import { ok, owed } from './lib.ts';
 
@@ -72,6 +73,24 @@ export function condFaults(w: When, maps: readonly MapDef[] = MAP_DEFS): string[
  */
 export function fleeting(w: When): string[] {
   return ([w].flat() as QuestCond[]).flatMap((c) => c.member?.race !== undefined ? [`member's race ${c.member.race}`] : []);
+}
+
+/** Whether a map is an enclave (#845) or a level of one: beside the road, held to its own band. */
+const inEnclave = (defs: readonly MapDef[], map: string): boolean => !!defs.find((d) => d.id === map)?.enclave;
+
+/** The goals of the one quest's chapters that lie in an enclave (#845), as "chapter: goal": none may, for no step of the quest lies beside the road. */
+export function enclaveSteps(chapters: readonly Chapter[], defs: readonly MapDef[]): string[] {
+  return chapters.flatMap((c) => c.goals.filter((g) => inEnclave(defs, g.at)).map((g) => `${c.id}: ${g.text} (${g.at})`));
+}
+
+/**
+ * The zones the one quest's steps hold, each found from where it is done: a zone map's own, a town's
+ * or a dungeon's by the outdoor map it opens onto. A step in an enclave holds none (#845), as the
+ * reach holds none.
+ */
+export function heldZones(chapters: readonly Chapter[], defs: readonly MapDef[]): Set<string | undefined> {
+  const zoneOf = (map: string): string | undefined => (zoneOfMap(ATLAS, map) ?? zoneOfMap(ATLAS, homeMap(defs, map)?.id ?? ''))?.id;
+  return new Set(chapters.flatMap((c) => c.goals.filter((g) => !inEnclave(defs, g.at)).map((g) => zoneOf(g.at))));
 }
 
 export function quests(): void {
@@ -135,9 +154,11 @@ export function quests(): void {
   }
   { // Every zone on the road of the built areas holds a step of the one quest, found from where
     // its steps are done (a dungeon or a town by the outdoor map it opens onto). A zone not built
-    // yet is owed by whoever builds its step.
-    const zoneOf = (map: string): string | undefined => (zoneOfMap(ATLAS, map) ?? zoneOfMap(ATLAS, homeMap(MAP_DEFS, map)?.id ?? ''))?.id;
-    const held = new Set(THE_QUEST.chapters.flatMap((c) => c.goals.map((g) => zoneOf(g.at))));
+    // yet is owed by whoever builds its step. No step lies in an enclave (#845), beside the road: a
+    // goal there is a fault, and holds no zone, as the reach holds none.
+    const steps = enclaveSteps(THE_QUEST.chapters, MAP_DEFS);
+    ok(!steps.length, `no step of the one quest lies in an enclave${steps.length ? ' -> ' + steps.join(', ') : ''}`);
+    const held = heldZones(THE_QUEST.chapters, MAP_DEFS);
     const PLANNED: Record<string, string> = {};
     const built = new Set(AREAS.map((a) => a.id as string));
     // The reach is off the road by design (DESIGN §9), and holds no step: Rimewater's Glacier Foot (#486).
@@ -146,6 +167,12 @@ export function quests(): void {
       if (PLANNED[z.id]) owed(held.has(z.id), msg, PLANNED[z.id]);
       else ok(held.has(z.id), `${msg}${z.maps?.length ? '' : ' (not built, and owed by no one)'}`);
     }
+    // The fixture lair beside Saltreach (#845) holds no step of the one quest; a step set in it is caught,
+    // and holds no zone, where the same step on its box holds the Upper Water.
+    const defs = [...MAP_DEFS, LAIR], first = THE_QUEST.chapters[0], at = (map: string): Chapter => ({ ...first, goals: [{ ...first.goals[0], at: map }] });
+    ok(!enclaveSteps(THE_QUEST.chapters, defs).length && enclaveSteps([at(LAIR.id)], defs).length === 1
+      && !heldZones([at(LAIR.id)], defs).has(FIXTURE.zone) && heldZones([at(FIXTURE.box)], defs).has(FIXTURE.zone),
+      'the fixture lair holds no step of the one quest; a step set in it is caught and holds no zone, where the same step on its box, C3, holds the Upper Water');
     // An area listed by its first map before its chapter is written: the chapter is owed by its issue.
     const CHAPTER_OWED: Record<string, string> = {};
     const walks = AREAS.filter((a) => !existsSync(new URL(`../../src/content/areas/${a.id}/walkthrough.ts`, import.meta.url)));
