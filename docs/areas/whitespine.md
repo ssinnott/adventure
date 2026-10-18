@@ -885,8 +885,8 @@ settled in its issue.
 - **Pay.** About 400 xp a member each in the brief. As built about 609 a box (§8; §9, #508's 3).
 - **As built** (#508, 10 October): all three laid whole at band 22–23, the brief's 23–24 lowered by
   one (§9, #508's 1), with no exit and no step of the quest. J10 and J12 are laid in Monks' Vale and
-  I12 in the High Spine (§9, #508's 2). Each has a heavy pair for its one group, one secret and no
-  den; nothing is claimed as new (§7). The road across J10's corner is walked (§9, #508's 7).
+  I12 in the High Spine (§9, #508's 2). Each has a heavy pair for its one group, one secret (J12 a second,
+  #863's) and no den; nothing is claimed as new (§7). The road across J10's corner is walked (§9, #508's 7).
   - **J10, the giants' ground** (`monksvale_j10`, corner 296,286; start 31,19, facing west on the
     road). **The land.** The road comes in from K10's west edge at 31,19, goes over the saddle and
     down through the box's south-east corner to the south edge at 20,31, walked, three road squares
@@ -2060,7 +2060,7 @@ Decided by the builder for #863, each the owner's to overturn:
    is the gain: `hits()` 19.5 against 17 (16 for the steel alone).
 4. **Lightning stands.** 3 of the range's 8 monsters are weak to it and none is immune or resists
    it; of Ashfall's 16 past 10, 6 are weak and none immune or resistant. Fire is immune in 8 of
-   Ashfall's 16 and weak in none, cold weak in one, and nature and holy are the machines'
+   Ashfall's 16 and weak in none; cold is weak in one; and nature and holy are the machines'
    immunities, so no other element does as well.
 5. **The blade is a knife, the Skinning Knife +1's, plus and all, with the raise over it:** a light
    blade for any class, so the thief, whom the axe cannot serve, has it. The axe's steel stays a
@@ -2091,9 +2091,9 @@ Decided by the builder for #863, each the owner's to overturn:
     (docs/PILOT.md: the road ends at Thornmark's chapter), the hollow stands behind a secret door
     the fair explorer never suspects, and a locked chest it met is pressed on once and walked past
     (#857).
-14. **The knife is the first slotted raiser in the content,** so `statOf`'s slot lookups, lazy while
-    none was registered (#855), run on every to-hit, armour class and blow: the gate's CPU with and
-    without it is in the PR's Numbers, for you to judge, and nothing is tuned away.
+14. **The knife is the second slotted raiser in the content,** after #881's Runner's Coat, which
+    brought `statOf`'s slot lookups back (lazy while none was registered, #855): the knife adds none
+    that shows (the gate's CPU with it is in the PR's Numbers), and nothing is tuned away.
 
 ## 10. Names
 

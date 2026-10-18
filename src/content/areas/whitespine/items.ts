@@ -1,5 +1,5 @@
 // The Whitespine's items: no step of the gear ladder is here (#542), so its finds are gold, potions
-// and Rimewater's rung, and these, which no shop buys.
+// and Rimewater's rung, and these, which no shop sells (one buys them back at half).
 import type { ItemDef } from '../../../game/items.ts';
 import { P } from '../../items.ts';
 import { iceAxe, skinningKnife } from '../rimewater/items.ts';
