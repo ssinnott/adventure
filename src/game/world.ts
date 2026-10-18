@@ -5,7 +5,7 @@
 // the place. Pure with respect to rendering and input; the Game drives it and reads the results.
 import type { RngInstance } from '../lib/engine/rng.ts';
 import { GameMap, DRAG } from './map.ts';
-import type { Feature, Exit, EncounterDef, Door, MapZone, Cell, Hours, Presence, Choice, Gate } from './map.ts';
+import type { Feature, Exit, EncounterDef, Door, MapZone, Cell, Hours, Presence, Choice, Gate, MapDef } from './map.ts';
 import type { Facing } from './types.ts';
 import { FACING_DX, FACING_DY, turnLeft, turnRight, turnBack, manhattan } from './types.ts';
 import { partyCan, takeItem, isDown, hasTrait, companyLevel, prestigeOf } from './party.ts';
@@ -465,8 +465,12 @@ export class World {
     const zone = this.tread();
     const arrived = this.exitAt(nx, ny);
     if (arrived) {
+      const from = this.map.def;
       this.travel(arrived.to, arrived.tx, arrived.ty, arrived.tf);
       if (arrived.label) messages.push(arrived.label);
+      // Into an enclave from beyond it (#845): its door's line, after the way's own.
+      const door = from.enclave ? undefined : enclaveLine(this.map.def, companyLevel(this.party));
+      if (door) messages.push(door);
       // A jump from one zone of the outdoors to another (N8's notch onto M9): the line its border
       // would say, walked, after the way's own.
       const landed = this.zone;
@@ -892,6 +896,22 @@ export const AWARE = 5;
 /** How the land feels to a company one or two levels under its floor, and three or more (`crossing`). */
 const HARDER = 'The land here is harder than the road behind.';
 const WARNING = 'Nothing here would spare you. The road behind is still open.';
+/** How an enclave feels to a company one or two levels under its floor, and three or more (`enclaveLine`). */
+export const HARDER_IN = 'What lives in here is harder than the road outside.';
+export const WARNING_IN = 'Nothing in here would spare you. The way out is still open.';
+
+/**
+ * What an enclave's door says to a company of `level` crossing in from beyond it (#845), as one
+ * entry of the log: its name and band, as its sign gives them; and how it feels, as a border says it
+ * (`World.crossing`): harder one or two under its floor, a plainer warning three or more under,
+ * nothing more at its floor or over. Never a wall. Undefined for a map that is no enclave.
+ */
+export function enclaveLine(def: Pick<MapDef, 'name' | 'band' | 'enclave'>, level: number): string | undefined {
+  if (!def.enclave || !def.band) return undefined;
+  const under = def.band[0] - level;
+  const feel = under <= 0 ? '' : under <= 2 ? HARDER_IN : WARNING_IN;
+  return [`${def.name}: levels ${def.band[0]}-${def.band[1]}.`, feel].filter(Boolean).join(' ');
+}
 
 /** What the log says as the tide turns, near the ground it covers. */
 const TIDE_TEXT: Record<Tide, string> = {

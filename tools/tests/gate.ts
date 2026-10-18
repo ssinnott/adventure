@@ -1,8 +1,9 @@
 // The gate check (EXPANSION §2.2, §5.2): with one road and no flags on it, the monsters are what
 // turn a company back. tools/gate.ts's bot plays the premade company, dressed by the ladder, against
 // every group of a map alone from full health; each map is held to its sign's band; each area pools
-// its groups each at its own map's floor; each zone walks its road and warns at its way in.
-// Every margin is printed, each figure against its aim and its limit: off its aim it is listed, past
+// its groups each at its own map's floor; each zone walks its road and warns at its way in. An
+// enclave (#845) is held to its own band, out of its area's pools and day and every zone's road; the
+// fixture lair beside Saltreach shows it before any area places one. Every margin is printed, each figure against its aim and its limit: off its aim it is listed, past
 // its limit it fails. A figure past its limit the owners below are owed is reported, not failed,
 // until it holds.
 import { AREAS } from '../../src/content/index.ts';
@@ -26,6 +27,7 @@ import { gateCompany, gateFight, gateOpts, gateTurn, fightSeed, winRate, gateAns
 import { days, fightsPerRest, mendBetween, mustRest, companyAt, markOf, ROUND_CAP, ANSWER } from '../harness.ts';
 import { testMonster, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, giantEncounter, drakeEncounter, basiliskEncounter } from '../testmonster.ts';
 import { stepsFrom } from './curve.ts';
+import { FIXTURE, LAIR, GUARDIAN } from './enclave.ts';
 import { ok, owed } from './lib.ts';
 
 /**
@@ -343,6 +345,70 @@ function underDay(key: string, groups: readonly EncounterDef[], floor: number, w
     `${what}, at ${low}: ${day.fights.toFixed(2)} fights to a rest, ${pc(share)} of the floor's ${fightsPerRest(floor)} (at most: ${aims(pc(GATE.backDay.aim), pc(GATE.backDay.limit))})`);
 }
 
+/** A map the gate judges: one with groups and a band. */
+type Fought = MapDef & { band: [number, number] };
+
+/**
+ * An area's maps as the gate takes them: those it fights (groups and a band, the road behind's left
+ * out), those its pools take, and its day's groups, every pooled group but a boss. A map outside the
+ * area's budget (`Area.outside`) or an enclave (`MapDef.enclave`, #845) is its own (`own`): judged
+ * alone at its own floor and two under it, and left out of the area's pools and day. An enclave is
+ * no zone's map, so no zone's road walks it, and its guardian's odds are judged at its own floor.
+ */
+export function gateMaps(area: Pick<Area, 'maps' | 'outside'>, bosses: readonly string[]): { fought: Fought[]; own: (d: MapDef) => boolean; pooled: Fought[]; daily: EncounterDef[] } {
+  const fought = area.maps.map(beforeBehind).filter((d): d is Fought => !!d.encounters?.length && !!d.band);
+  const outside = new Set(area.outside ?? []), own = (d: MapDef): boolean => outside.has(d.id) || !!d.enclave;
+  const pooled = fought.filter((d) => !own(d));
+  return { fought, own, pooled, daily: pooled.flatMap((d) => d.encounters!.filter((g) => !bosses.includes(`${d.id}:${g.id}`))) };
+}
+
+/**
+ * A map against its sign: its groups at its floor, and two under it where that is asked of the map
+ * alone, its floor its area's or the map its own (`gateMaps`); its bosses' odds at its floor and two
+ * above; its dens; and its fights to a rest, and two under by the day from `GATE.dayFrom`.
+ */
+function judgeMap(d: Fought, areaFloor: number, bosses: readonly string[], own: boolean): void {
+  const groups = d.encounters!;
+  // A map of nothing but its boss is judged on the boss's odds below, not on a floor or a day (#759).
+  const bossOnly = groups.every((g) => bosses.includes(`${d.id}:${g.id}`));
+  if (bossOnly) console.log(`  n/a:  ${d.id} at its floor and its fights to a rest: its every group is a boss, judged on its odds`);
+  // Two under is asked of the map alone where its floor is its area's, or where it is its own.
+  const alone = d.band[0] === areaFloor || own;
+  if (!bossOnly) margins(d.id, groups, d.band, alone, areaFloor >= GATE.dayFrom);
+  for (const b of bosses.filter((ref) => ref.startsWith(`${d.id}:`))) {
+    const boss = groups.find((e) => `${d.id}:${e.id}` === b);
+    if (!boss) continue;
+    const at = rate(boss, d.band[0]);
+    // The sentries' lever (#752): Vask's own group with the clock let run (the bots take the called first) is
+    // won a quarter to a third of the time, the plan's figure, which holds only on the sentries at 890 (OFF_LINE).
+    if (b === 'core:core_vask') {
+      ANSWER.clock = 'called';
+      const run = winRate(d.band[0], boss, SEEDS, ROUND_CAP, gateOpts(boss));
+      ANSWER.clock = 'panel';
+      ok(run >= 0.2 && run <= 0.45, `${b}: the clock let run at ${d.band[0]}: ${pc(run)} won (the plan's quarter to a third, on the sentries at 890: 20% to 45%)`);
+    }
+    check(`${b}: floor`, at, within(GATE.boss.aim), within(GATE.boss.limit), `${d.id}'s boss ${boss.id} at ${d.band[0]}: ${pc(at)} won (${aims(`${pc(GATE.boss.aim[0])} to ${pc(GATE.boss.aim[1])}`, `${pc(GATE.boss.limit[0])} to ${pc(GATE.boss.limit[1])}`)})`);
+    // The company two above the floor, or at the cap where that is as high as it goes (a boss at 31 meets 32);
+    // a boss at the cap itself is judged at its floor alone (#759).
+    const top = Math.min(d.band[0] + GATE.under, MAX_LEVEL);
+    if (top === d.band[0]) { console.log(`  n/a:  ${d.id}'s boss ${boss.id} above its floor: no company stands past the cap, ${MAX_LEVEL}`); continue; }
+    const above = rate(boss, top);
+    check(`${b}: above`, above, atLeast(GATE.bossAbove.aim), atLeast(GATE.bossAbove.limit), `${d.id}'s boss ${boss.id} at ${top}: ${pc(above)} won (${aims(pc(GATE.bossAbove.aim), pc(GATE.bossAbove.limit))})`);
+  }
+  // Its dens: the keepers the camp's hardest fight, and its brood's number and pace.
+  for (const f of d.features ?? []) if (f.kind === 'den') { const r = denReading(d, f, d.band[0]); ok(!r.fault, `${r.line}${r.fault ? ` (${r.fault})` : ''}`); }
+  // Fights to a rest are harness's measure: its thrifty bot, its outfitted company, its round cap.
+  // A boss is judged on its odds above, not on the day (MONSTERS.md §4.4), so the day leaves it out
+  // (the owner's decision on #40, 28 September).
+  if (bossOnly) return;
+  const daily = groups.filter((g) => !bosses.includes(`${d.id}:${g.id}`));
+  const day = days(d.band[0], daily, DAYS, 1, true), want = fightsPerRest(d.band[0]);
+  const around = (e: readonly [number, number]): [number, number] => [want - e[0], want + e[1]], range = ([lo, hi]: [number, number]): string => `${lo} to ${hi}`;
+  check(`${d.id}: rest`, day.fights, within(around(GATE.perRest.aim)), within(around(GATE.perRest.limit)), `${d.id} at ${d.band[0]}: ${day.fights.toFixed(2)} fights to a rest (${aims(range(around(GATE.perRest.aim)), range(around(GATE.perRest.limit)))}); ${pc(day.why.long)} of days end in a fight broken off`, true);
+  // From dayFrom, two under the floor by the day, where two under is asked of the map alone.
+  if (alone && d.band[0] >= GATE.dayFrom) underDay(d.id, daily, d.band[0], `${d.id} ${GATE.under} under its floor`);
+}
+
 /** The road from the way in: every fight won, mending between and resting whole where the company must. */
 function road(groups: readonly EncounterDef[], level: number): number {
   let walked = 0;
@@ -555,71 +621,29 @@ export function gate(): void {
 
   for (const area of AREAS) {
     const id: RegionId = area.id, band = CURVE[id].band;
-    const fought = area.maps.map(beforeBehind).filter((d): d is MapDef & { band: [number, number] } => !!d.encounters?.length && !!d.band);
     const zones = area.atlas.zones.filter((z) => z.maps?.length);
     const bosses = area.atlas.zones.flatMap((z) => BOSSES[z.id] ?? []);
+    const { fought, own, pooled, daily } = gateMaps(area as Area, bosses);
     /** A group by the game's name for it, 'map:id'. */
     const find = (ref: string): EncounterDef | undefined => {
       const [map, g] = ref.split(':');
       return fought.find((d) => d.id === map)?.encounters!.find((e) => e.id === g);
     };
 
-    // Each map against its sign. A map outside the area's budget (`Area.outside`) is its own: judged
-    // two under its own floor, and left out of the area's pools.
-    const outside = new Set((area as Area).outside ?? []);
-    for (const d of fought) {
-      const groups = d.encounters!;
-      // A map of nothing but its boss is judged on the boss's odds below, not on a floor or a day (#759).
-      const bossOnly = groups.every((g) => bosses.includes(`${d.id}:${g.id}`));
-      if (bossOnly) console.log(`  n/a:  ${d.id} at its floor and its fights to a rest: its every group is a boss, judged on its odds`);
-      // Two under is asked of the map alone where its floor is its area's, or where it is outside the budget.
-      const alone = d.band[0] === band[0] || outside.has(d.id);
-      if (!bossOnly) margins(d.id, groups, d.band, alone, band[0] >= GATE.dayFrom);
-      for (const b of bosses.filter((ref) => ref.startsWith(`${d.id}:`))) {
-        const boss = groups.find((e) => `${d.id}:${e.id}` === b);
-        if (!boss) continue;
-        const at = rate(boss, d.band[0]);
-        // The sentries' lever (#752): Vask's own group with the clock let run (the bots take the called first) is
-        // won a quarter to a third of the time, the plan's figure, which holds only on the sentries at 890 (OFF_LINE).
-        if (b === 'core:core_vask') {
-          ANSWER.clock = 'called';
-          const run = winRate(d.band[0], boss, SEEDS, ROUND_CAP, gateOpts(boss));
-          ANSWER.clock = 'panel';
-          ok(run >= 0.2 && run <= 0.45, `${b}: the clock let run at ${d.band[0]}: ${pc(run)} won (the plan's quarter to a third, on the sentries at 890: 20% to 45%)`);
-        }
-        check(`${b}: floor`, at, within(GATE.boss.aim), within(GATE.boss.limit), `${d.id}'s boss ${boss.id} at ${d.band[0]}: ${pc(at)} won (${aims(`${pc(GATE.boss.aim[0])} to ${pc(GATE.boss.aim[1])}`, `${pc(GATE.boss.limit[0])} to ${pc(GATE.boss.limit[1])}`)})`);
-        // The company two above the floor, or at the cap where that is as high as it goes (a boss at 31 meets 32);
-        // a boss at the cap itself is judged at its floor alone (#759).
-        const top = Math.min(d.band[0] + GATE.under, MAX_LEVEL);
-        if (top === d.band[0]) { console.log(`  n/a:  ${d.id}'s boss ${boss.id} above its floor: no company stands past the cap, ${MAX_LEVEL}`); continue; }
-        const above = rate(boss, top);
-        check(`${b}: above`, above, atLeast(GATE.bossAbove.aim), atLeast(GATE.bossAbove.limit), `${d.id}'s boss ${boss.id} at ${top}: ${pc(above)} won (${aims(pc(GATE.bossAbove.aim), pc(GATE.bossAbove.limit))})`);
-      }
-      // Its dens: the keepers the camp's hardest fight, and its brood's number and pace.
-      for (const f of d.features ?? []) if (f.kind === 'den') { const r = denReading(d, f, d.band[0]); ok(!r.fault, `${r.line}${r.fault ? ` (${r.fault})` : ''}`); }
-      // Fights to a rest are harness's measure: its thrifty bot, its outfitted company, its round cap.
-      // A boss is judged on its odds above, not on the day (MONSTERS.md §4.4), so the day leaves it out
-      // (the owner's decision on #40, 28 September).
-      if (bossOnly) continue;
-      const daily = groups.filter((g) => !bosses.includes(`${d.id}:${g.id}`));
-      const day = days(d.band[0], daily, DAYS, 1, true), want = fightsPerRest(d.band[0]);
-      const around = (e: readonly [number, number]): [number, number] => [want - e[0], want + e[1]], range = ([lo, hi]: [number, number]): string => `${lo} to ${hi}`;
-      check(`${d.id}: rest`, day.fights, within(around(GATE.perRest.aim)), within(around(GATE.perRest.limit)), `${d.id} at ${d.band[0]}: ${day.fights.toFixed(2)} fights to a rest (${aims(range(around(GATE.perRest.aim)), range(around(GATE.perRest.limit)))}); ${pc(day.why.long)} of days end in a fight broken off`, true);
-      // From dayFrom, two under the floor by the day, where two under is asked of the map alone.
-      if (alone && d.band[0] >= GATE.dayFrom) underDay(d.id, daily, d.band[0], `${d.id} ${GATE.under} under its floor`);
-    }
+    // Each map against its sign. A map outside the area's budget (`Area.outside`) or an enclave is its
+    // own: judged two under its own floor, and left out of the area's pools (`gateMaps`).
+    for (const d of fought) judgeMap(d, band[0], bosses, own(d));
 
     // The area against the curve: each group at its own map's floor, and two under a floor.
     const name = NAMES[id];
     const lost = [...bosses, ...zones.flatMap((z) => ROADS[z.id] ?? [])].filter((ref) => !find(ref));
     ok(!lost.length, `${name}: its bosses and its roads are groups of its maps${lost.length ? ` (not: ${lost.join(', ')})` : ''}`);
-    const pools = areaPools(fought.filter((d) => !outside.has(d.id)), band[0], rate, band[0] < GATE.dayFrom);
+    const pools = areaPools(pooled, band[0], rate, band[0] < GATE.dayFrom);
     if (pools.through === null) console.log(`  n/a:  ${name} has no groups yet`);
     else check(`${name}: floor`, pools.through, atLeast(GATE.through.aim), atLeast(GATE.through.limit), `${name} at its maps' floors: ${pc(pools.through)} of its ${pools.groups} groups' fights won (${aims(pc(GATE.through.aim), pc(GATE.through.limit))})`);
     // From dayFrom, two under the area by the day: every group of its maps but a boss, dealt to a company
     // two under the area's floor.
     if (band[0] >= GATE.dayFrom) {
-      const daily = fought.filter((d) => !outside.has(d.id)).flatMap((d) => d.encounters!.filter((g) => !bosses.includes(`${d.id}:${g.id}`)));
       if (!daily.length) console.log(`  n/a:  ${name} ${GATE.under} under its floor: it has no group but its bosses`);
       else underDay(name, daily, band[0], `${name} ${GATE.under} under its floor, its maps' groups pooled`);
     } else if (pools.back === null) console.log(`  n/a:  ${name} ${GATE.under} under its maps' floors: no group has a company there`);
@@ -653,6 +677,23 @@ export function gate(): void {
       if (first?.encounters?.length) warn(first, first.start, `${zn}: warning`, 'its way in');
       for (const d of maps) for (const l of landings(MAP_DEFS, d.id)) warn(d, l, `${zn}: warning by ${l.by}`, `the ${l.by.split(' ')[0]}'s landing at ${d.id} ${l.x},${l.y}`);
     }
+  }
+  // The enclave (#845): the fixture lair at the cap beside Saltreach, a band-10 area. Its own: Saltreach's
+  // pools and day take what they took without it, and no zone's road walks it (a road walks its zone's
+  // maps, and an enclave is none). Judged at its own band as any map is: its groups at 30, two under by
+  // the day, its guardian at 30 and 32.
+  {
+    const salt = AREAS.find((a) => a.id === FIXTURE.area)! as Area, floor = CURVE[FIXTURE.area].band[0];
+    const bosses = salt.atlas.zones.flatMap((z) => BOSSES[z.id] ?? []);
+    const was = gateMaps(salt, bosses), now = gateMaps({ ...salt, maps: [...salt.maps, LAIR] }, [...bosses, GUARDIAN]);
+    const ids = (gs: readonly { id: string }[]): string => gs.map((g) => g.id).join(), lair = now.fought.find((d) => d.id === LAIR.id);
+    const through = (m: typeof was): number | null => areaPools(m.pooled, floor, rate, false).through;
+    ok(!!lair && now.own(lair) && ids(now.pooled) === ids(was.pooled) && ids(now.daily) === ids(was.daily) && through(now) === through(was),
+      `the fixture lair at 30-32 beside Saltreach is its own: Saltreach's pools take its ${was.pooled.length} maps, won ${pc(through(was) ?? 0)} at their floors, and its day its ${was.daily.length} groups, as without it`);
+    // Its figures off their aim are the fixture's, not the content's to put right: said here, out of the list.
+    const listed = offAim.length;
+    if (lair) judgeMap(lair, floor, [GUARDIAN], now.own(lair));
+    for (const line of offAim.splice(listed)) console.log(`  info: the fixture lair, off its aim: ${line}`);
   }
   const zoneIds = new Set(ATLAS.zones.map((z) => z.id)), astray = [...Object.keys(ROADS), ...Object.keys(BOSSES)].filter((k) => !zoneIds.has(k));
   ok(!astray.length, `every key of ROADS and BOSSES is a zone${astray.length ? ` (not: ${astray.join(', ')})` : ''}`);
