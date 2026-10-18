@@ -1,8 +1,8 @@
 // Ashfall's items: Cinderport's armourer's step on the ladder (#542), the act's one, by 25, the stone
 // cure (#546) and the boxes' new finds: the Great Axe +2 in the scavenger's hole (G11, #513) and the
 // Horn Bow +2 in the grave in the Cinder Hills (E10, #517); and Old Cinder's finds, the Ember Stone's
-// second part and the founding stone among them (#515); and the Ember Stone's, the fourth Meridian
-// journal among them (#516). The step and the cure were made ahead of
+// second part and the founding stone among them (#515); the Ember Stone's, the fourth Meridian
+// journal among them (#516); and the buried town's roll, the Master of magic's favour (#859). The step and the cure were made ahead of
 // the area, as the Kilns' were: the first box (G10, #511) took the table into its Area, the armourer
 // (#512) sells the step and the chandler the cure.
 // docs/areas/ashfall.md §8 and §9 have the sums.
@@ -154,4 +154,15 @@ export const groveSeedling: ItemDef = { id: 'grove_seedling', name: 'The Grove S
   'An oak seedling no higher than a hand, two leaves on it, in a ball of its own earth.',
 ] };
 
-export const ITEMS: readonly ItemDef[] = [...WARES, quickening, scavengersAxe, graveBow, emberPart1, emberPart3, meridianMail, meridianStaff, faneMap, ...PARTS, squareFlamberge, foundingStone, emberPart2, hearthSymbol, benchStaff, benchCoat, sentinelVisor, meridianJournal4, greyShovel, groveSeedling];
+/**
+ * The favour Old Cinder's scholar asks for the Master of magic (#859; docs/areas/ashfall.md §6): the buried
+ * town's roll, which its clerk carried out west the night before the ash and which lies where he fell, at
+ * the end of the cold tube under the flow on E11. A quest item no shop buys; she takes it at her first
+ * meeting with it and her `done` tests the flag it sets (`q_roll_given`). Found, never told: no quest
+ * names it.
+ */
+export const townRoll: ItemDef = { id: 'town_roll', name: 'The Town Roll', slot: 'none', price: 0, text: [
+  'A roll of hide tied with cord, written close in columns. A name to a line, and a cup drawn against each.',
+] };
+
+export const ITEMS: readonly ItemDef[] = [...WARES, quickening, scavengersAxe, graveBow, emberPart1, emberPart3, meridianMail, meridianStaff, faneMap, ...PARTS, squareFlamberge, foundingStone, emberPart2, hearthSymbol, benchStaff, benchCoat, sentinelVisor, meridianJournal4, greyShovel, groveSeedling, townRoll];

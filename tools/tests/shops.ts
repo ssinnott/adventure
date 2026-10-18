@@ -2,14 +2,15 @@
 // price sells at its own, and selling back stays half the item's own price whatever the shop.
 import { MAP_DEFS, ITEMS } from '../../src/content/index.ts';
 import type { Feature } from '../../src/game/map.ts';
-import { priceIn, buy } from '../../src/game/items.ts';
+import { priceIn, buy, sellPrice } from '../../src/game/items.ts';
 import { defaultParty } from '../../src/game/party.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { ok } from './lib.ts';
 
 type Shop = Extract<Feature, { kind: 'shop' }>;
-/** Selling back, as the sell screen pays it (src/ui/screens.ts). */
-const sellBack = (id: string): number => Math.floor(ITEMS[id].price / 2);
+/** Selling back, as the sell screen pays it (`sellPrice`), a company of the road's. */
+const company = defaultParty(makeRng(1));
+const sellBack = (id: string): number => sellPrice(company, ITEMS[id].price);
 
 /** What is wrong with a shop's prices: one it does not stock, one not a whole number of gold, one under the sell-back. */
 function faults(shop: Shop): string[] {

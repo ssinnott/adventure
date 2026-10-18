@@ -24,6 +24,7 @@ import { FURRIER } from '../../src/content/areas/rimewater/items.ts';
 import { ARMOURER, CURES } from '../../src/content/areas/ashfall/items.ts';
 import { CLASSES, robeLike } from '../../src/game/party.ts';
 import type { ClassId } from '../../src/game/party.ts';
+import { hits } from '../../src/game/items.ts';
 import type { ItemDef } from '../../src/game/items.ts';
 import { GEAR, KIT, companyAt } from '../harness.ts';
 import { gateCompany } from '../gate.ts';
@@ -263,8 +264,8 @@ export const CURE_SOLD: readonly (readonly ['ashfall' | 'glasswold', string])[] 
 
 /** An item's kind: a hand weapon, a bow, armour or a shield. Only the same kind is bettered. */
 const kind = (d: ItemDef): string => (d.slot === 'weapon' ? (d.ranged ? 'bow' : 'hand') : d.slot);
-/** How good an item is of its kind: a weapon's mean blow with its plus, armour's and a shield's AC. */
-const worth = (d: ItemDef): number => (d.slot === 'weapon' ? ((d.dice ?? 1) * ((d.sides ?? 4) + 1)) / 2 + (d.bonus ?? 0) : d.ac ?? 0);
+/** How good an item is of its kind: a weapon's mean blow with its plus and its element's die (`hits`), armour's and a shield's AC. */
+const worth = (d: ItemDef): number => (d.slot === 'weapon' ? hits(d) : d.ac ?? 0);
 const usable = (d: ItemDef, cls: ClassId): boolean => !d.classes || d.classes.includes(cls);
 /** The ladder's ids by `level`. */
 const by = (level: number): string[] => GEAR.filter(([at]) => at <= level).flatMap(([, ids]) => ids);
