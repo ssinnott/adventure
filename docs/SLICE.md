@@ -284,9 +284,14 @@ for square with the painted map (`game/outdoors.ts`, which `content/maps.ts` run
 - **Building more.** A new box is a map in its area's `maps/` and `index.ts`, marked `density`
   core or country, and a line in its zone's `maps` in its area's `atlas.ts`, the map at its box's
   corner; `node tools/scaffold.ts` cuts its first draft from the atlas and names its box. Laid in, it
-  opens the void where it stands. Where it meets a built zone, the two maps' rings are the border
-  between them, to open or keep as each map's author likes; where it meets the atlas, its water and
-  roads carry on into the land beyond its edge (`tools/tests/pillars.ts`).
+  opens the void where it stands. Where it meets a built box, the two edges agree square for square
+  on passable ground, water and road, and open a way between two areas only where the atlas joins
+  them: one rule over every seam (`tools/tests/outdoors.ts`, #898), and a seam that disagrees as
+  built is a row of `SEAMS_AS_BUILT` with its reason. Where it meets the atlas, its water and
+  roads carry on into the land beyond its edge (`tools/tests/pillars.ts`), and each edge that faces
+  no built box is open to a walker exactly where a row of `OPEN_ON_NOTHING` says, with the box it
+  faces and why that is unbuilt: the bounds' border check (#828) in embryo. The box's pull request
+  adds the rows for its own edges onto nothing and deletes those of the edges it now faces.
 - **Around it.** The automap draws a map that fits the panel whole, as before, and for the outdoors
   a window of 33 by 33 squares round the party at the size a 32-square map is drawn. Quests still
   name zone maps: `visited: 'thornmark'` holds once the party has set foot in the zone
