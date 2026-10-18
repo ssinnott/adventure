@@ -366,14 +366,19 @@ function menus(halls: readonly Hall[]): void {
  */
 function fits(): void {
   const ids = Object.keys(SKILLS) as SkillId[], p = company((q) => { for (const id of ids) q.flags[rankFlag(SKILLS[id].guild)] = 1; }), c = p.members[0], values = new Set<string>();
+  const widest = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'].sort((a, b) => measureText(b) - measureText(a))[0], name = widest.repeat(NAME_MAX);
+  // The second level's rows as the menu makes them, for a member of the longest name in every state.
+  const offered: string[] = [];
+  c.name = name;
   for (const id of ids) for (const race of PEOPLES) for (const learnt of [false, true]) for (const gold of [0, 99999]) {
     c.race = race; p.gold = gold;
     if (learnt) c.skills = [id]; else delete c.skills;
-    values.add(skillBar(id, c, p) || `${SKILLS[id].price}g`);
+    const offer = skillOffers(id, p)[0];
+    values.add(offer.bar || `${offer.price}g`);
+    offered.push(skillLine(offer, p));
   }
   c.race = 'human'; delete c.skills; p.gold = 99999;
-  const widest = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'].sort((a, b) => measureText(b) - measureText(a))[0], name = widest.repeat(NAME_MAX);
-  const rows = [...ids.map(skillRow), LEAVE_SKILLS, ...ids.flatMap((id) => skillOffers(id, p).map((o) => skillLine(o, p))), ...[...values].map((v) => `${name}\t${v}`)];
+  const rows = [...ids.map(skillRow), LEAVE_SKILLS, ...offered];
   const cut = rows.filter((r) => { const { label, value } = optionParts(r); return measureText(label) > columnLabelWidth(SIDE_W, value, true); });
   ok(values.size === 4 && !cut.length, `every row of the skill menus fits the ${SIDE_W} px panel: each skill's name beside its price, and a name of ${NAME_MAX} ${widest}s beside each of ${[...values].join(', ')}${cut.length ? ' -> cut: ' + cut.map((r) => r.replace(/\t/g, ' ')).join('; ') : ''}`);
   const taught = ids.map((id) => learn(id, company((q) => { q.flags[rankFlag(SKILLS[id].guild)] = 1; q.gold = SKILL_PRICE; }), 0).line);
