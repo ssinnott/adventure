@@ -55,6 +55,7 @@ import type { Facing } from '../../../game/types.ts';
 import { GameMap } from '../../../game/map.ts';
 import type { Can, Feature, MapDef } from '../../../game/map.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
+import { restRefused } from '../../../game/wilds.ts';
 import { buy, item, priceIn } from '../../../game/items.ts';
 import { canTrainAt, xpForLevel, prestigeOf, takePrestige, createCharacter, PRESTIGES, resists, rest, isDown, NAME_MAX } from '../../../game/party.ts';
 import type { Party } from '../../../game/party.ts';
@@ -1066,11 +1067,12 @@ export const walkthrough: Walkthrough = (ok) => {
 /**
  * The bounds (#830), off the quest. The upper valley over Rietum (C2): north from Rietum's top field at
  * C3's 8,0 onto its 8,31, walked, the land not named again; Jelle and his word on the watch and the
- * toads; the box's groups won at 10, the toads at the tarn the hardest; the cleft in the Edge's foot
- * found from the rubbed walling. The Edge's top, east of the face: walked onto from the Downs' D2 alone,
+ * toads; no rest at the watch's fire while the watch stands beside it, and a camp once it falls; the
+ * box's groups won at 10, the toads at the tarn the hardest; the cleft in the Edge's foot found from
+ * the rubbed walling. The Edge's top, east of the face: walked onto from the Downs' D2 alone,
  * the land named there with its warning to a company under its band, and no way down off it on foot.
  * The valley's head (B2): west from C2's 0,20 and north out of B3's grass at 24,0, both walked; the
- * spring's trough, the toads in the mire won and the beehive hut found from its wrens. Walked, waded,
+ * spring's trough, the toad and the eel in the mire won and the beehive hut found from its wrens. Walked, waded,
  * climbed or floated, neither prize is reached but through its door.
  */
 function theBounds(ok: (cond: boolean, msg: string) => void): void {
@@ -1126,13 +1128,20 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const words = meet(jelle, w.party, heard(w.world, jelle)).text;
   ok(words.includes('since midsummer') && words.includes('tarn'), `Jelle, with Rietum's sheep, has seen the watch's fire since midsummer and the toads go up to the tarn (${words.replace(/\n+/g, ' ')})`);
   listen(w);
+  // The watch's fire: the watch stands next to it, so no company rests there until the watch has fallen.
+  const fire = C2.features!.find((f) => f.kind === 'camp')!, watch = C2.encounters!.find((g) => g.id === 'c2_watch')!;
+  w.world.travel(C2.id, fire.x, fire.y);
+  ok(Math.abs(watch.x - fire.x) + Math.abs(watch.y - fire.y) === 1 && restRefused(w.world) !== '',
+    `at the watch's fire, ${fire.x},${fire.y}, the watch stands next to it at ${watch.x},${watch.y} and no rest is had (${restRefused(w.world) || 'rest allowed'})`);
   for (const g of C2.encounters!) fight(w, `${C2.id}:${g.id}`);
+  w.world.travel(C2.id, fire.x, fire.y);
+  ok(restRefused(w.world) === '', 'once the watch has fallen, its fire is a camp a company may rest at');
   // The secret: the walling rubbed in a line, the search there and the cleft behind it.
   const cleft = reach(c2, [C2.start.x, C2.start.y], ALL, [17, 12]);
   ok(cleft.size > 600 && !cleft.has(at(c2, 17, 11)), `the cleft is shut but for its walling: none of C2's ${cleft.size} squares walked, waded, climbed or floated reaches it`);
   see(w, `${C2.id}:c2_walling`);
   ok(search(C2.id, 17, 13, NORTH, 'c2_cleft'), 'searched at the rubbed walling, it opens, and the cleft behind it can be walked into');
-  ok(chest(C2, 'c2_cleft_chest').includes('greatsword+1'), 'in the cleft, a Great Sword +1');
+  ok(chest(C2, 'c2_cleft_chest').includes('long_axe+1'), 'in the cleft, a Long Axe +1');
 
   // The valley's head: west from C2's 0,20 onto B2's 31,20, and north out of B3's grass at 24,0, walked.
   w.world.travel(C2.id, 0, 20, WEST);
@@ -1148,7 +1157,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   ok(cell.size > 200 && !cell.has(at(b2, 19, 20)), `the cell is shut but for the wrens' gap: none of B2's ${cell.size} squares walked, waded, climbed or floated reaches it`);
   see(w, `${B2.id}:b2_hut`);
   ok(search(B2.id, 19, 22, NORTH, 'b2_cell'), 'searched where the wrens go in, the hut opens, and the cell under its turf can be walked into');
-  ok(chest(B2, 'b2_cell_chest').includes('longbow+1'), 'in the cell, a Long Bow +1');
+  ok(chest(B2, 'b2_cell_chest').includes('sharkskin+1'), 'in the cell, a Sharkskin Coat +1');
 }
 
 /**

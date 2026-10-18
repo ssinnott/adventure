@@ -65,6 +65,9 @@ export const ITEMS: readonly ItemDef[] = [
   P(core('scale'), 1),
   // C7's secret (#178): the salter's hoard in the sealed pan, beside the ladder's Horn Bow +1.
   P(core('buckler'), 2, { id: 'crabshell_buckler', name: 'Crab-Shell Buckler +2' }),
+  // B2's secret (#830): the shepherd's cell under the beehive hut, the one piece of Saltmouth's step
+  // with a plus that no box gave. C2's cleft holds the Tide Ship's Long Axe +1 in kind (Wrackholm's table).
+  P(sharkskin, 1),
   // The Drowned Temples (#175): the bell the Choirmaster beats time on, for the priestess at B6's dry
   // door (#56's 23); and the god's silver in the sacristy, a mace and the Holy Symbol of the Tide,
   // which its bearer carries against the cold (#555).
