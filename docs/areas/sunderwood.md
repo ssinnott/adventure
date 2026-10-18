@@ -314,11 +314,11 @@ features; the pay shared out over the area (§8).
   after the re-stat to #409's line, #18, inside it again); the road is walked every time. As
   measured it pays about 1,060 xp a member and 460 gold. Two under, at 12, it wins every fight too:
   past 10 the company's gear stops growing, so a level-14 group cannot turn a level-10 or 12 company
-  back, which the gate's limit asks (§8): owed to #18, as every Act II box will owe it until the
-  gear past 10 is built. Woods are on the road before it (the Downs' E2, the Deepthorn's H3 and I3),
-  so the area claims the bears, the moths and the moths' sleep as new, and not the woods. What the
-  owner finds by hand goes here when the box has been played. Since J2 (#196) its east edge is the
-  wood on into J2, the rim's mountain kept on its north rows and the road through.
+  back (§8; past 10 the gate judges a company two under by its day, #851). Woods are on the road
+  before it (the Downs' E2, the Deepthorn's H3 and I3), so the area claims the bears, the moths and
+  the moths' sleep as new, and not the woods. What the owner finds by hand goes here when the box
+  has been played. Since J2 (#196) its east edge is the wood on into J2, the rim's mountain kept on
+  its north rows and the road through.
 
 ### 4.3 J2, the Eaves (#196): core, band 14–15
 
@@ -362,7 +362,7 @@ features; the pay shared out over the area (§8).
   inside the aim (6.9 after the re-stat to #409's line, #18); the road is walked every time. As
   measured it pays about 1,510 xp a member and 430 gold, I2 and J2 together 2,570 against their
   2,500. Since #453 the moths are three, not six: the box pays about 1,370 and manages 7.6 fights to
-  a rest at 14. Two under, at 12, it wins every fight: owed to #18, as I2's. The area claims dead wood,
+  a rest at 14. Two under, at 12, it wins every fight, as I2's does. The area claims dead wood,
   crystal and the chasm as new, all three first on the road here. What the owner finds by hand goes
   here when the box has been played.
 
@@ -415,10 +415,10 @@ features; the pay shared out over the area (§8).
   inside the aim; the Eaves' road, I2 to K2, is
   walked every time at 14. As measured it pays about 1,070 xp a member and 510 gold, I2, J2 and K2
   together 3,644 against their 3,850. Its floor is above the area's, so its groups count two under
-  in the area's pool, which is owed to #18. The area claims the falls as a landmark, the first built
-  on the road. What the owner finds by hand goes here when the box has been played. Since K3 (#198)
-  its south edge is the gorge on into K3, both lips through and the rock under the ledge kept, so
-  the lookout's path south along the wall is walked.
+  in the area's pool. The area claims the falls as a landmark, the first built on the road. What the
+  owner finds by hand goes here when the box has been played. Since K3 (#198) its south edge is the
+  gorge on into K3, both lips through and the rock under the ledge kept, so the lookout's path south
+  along the wall is walked.
 
 ### 4.5 K3, the Sunder's mouth (#198): core, band 15–16
 
@@ -467,10 +467,10 @@ features; the pay shared out over the area (§8).
   14–15, seed 2) has four sunderlings by the way in and four glass spiders by the tear, back after a
   day, with no warden and no `until`: nothing closes it. A company at 15 wins every fight and manages
   8.2 fights to a rest on the box, inside the aim; one at 14, 7.7 in the Rift, inside it too. Two
-  under, the Rift is won every time, owed to #18 as C5's; the box's floor is above the area's. As
-  measured the box pays about 677 xp a member and the Rift 764: 1,441 with 725 gold, about 90 over
-  the brief. Density 95.9% within 8 steps, the furthest 10. What the owner finds by hand goes here
-  when the box has been played.
+  under, the Rift is won every time; the box's floor is above the area's. As measured the box pays
+  about 677 xp a member and the Rift 764: 1,441 with 725 gold, about 90 over the brief. Density
+  95.9% within 8 steps, the furthest 10. What the owner finds by hand goes here when the box has
+  been played.
 
 ### 4.6 The Sunder (#199): dungeon, two levels of 32×32, band 15–16
 
@@ -527,12 +527,12 @@ features; the pay shared out over the area (§8).
   furthest 6; the floor 99.6%, the furthest 8. At 14 the ledges give 7.14 fights to a rest and the
   floor 7.85; the floor's groups are won 84.3% at its floor with the Warden pooled, off the aim and
   inside the limit. The Warden is won 53% at 14 and 95% at 16. Once the gate's company took its
-  first prestige (#541) they were won 99.3%, the Warden 98% and 100%, past the limit at 14 and owed to
-  #18, until #806 set the Warden again at 1,020 hit points and 13d8+13 (872 and 10d8+10 before): the
-  floor's groups 85.3%, off the aim and inside the limit, the Warden 56% at 14 and 95% at 16 (§9).
-  Two under, the ledges are owed to #18; the floor is inside its limit (67.7%, 82.3% with the
-  prestige, 67.3% since #806). As measured the two levels pay 2,704 xp a member and 750
-  gold. What the owner finds by hand goes here when it has been played.
+  first prestige (#541) they were won 99.3%, the Warden 98% and 100%, past the limit at 14, until
+  #806 set the Warden again at 1,020 hit points and 13d8+13 (872 and 10d8+10 before): the floor's
+  groups 85.3%, off the aim and inside the limit, the Warden 56% at 14 and 95% at 16 (§9). Two
+  under, the ledges are judged by the day (#851); the floor is inside its limit (67.7%, 82.3% with
+  the prestige, 67.3% since #806). As measured the two levels pay 2,704 xp a member and 750 gold.
+  What the owner finds by hand goes here when it has been played.
 
 ### 4.7 L2, Lantern Watch's box (#200): core, band 15–16
 
@@ -582,13 +582,13 @@ features; the pay shared out over the area (§8).
   rest, inside the aim; Lanternwood's road is walked every time. As measured it pays about 1,400 xp a
   member and 430 gold, which takes up what I2, J2 and K2 fell short by: the four boxes pay 5,040
   against their 5,000. Two under, at 13, it wins every fight: its floor is above the area's, so its
-  groups count two under in the area's pool, owed to #18. Since #453 the lamp's moths are two with
-  their deathshead: the box pays about 1,300 and manages 8.2 fights to a rest at 15, the road still
-  walked every time. The moths and the bears were new on I2, so
-  the box claims nothing new. What the owner finds by hand goes here when the box has been played.
-  Since M2 (#202) the road fords the river at the box's corner into M2, and the river runs out of the
-  corner's south edge for L3, so map and atlas agree at the edge and nothing is owed; L2's east ring
-  opens to M2's forest square for square.
+  groups count two under in the area's pool. Since #453 the lamp's moths are two with their
+  deathshead: the box pays about 1,300 and manages 8.2 fights to a rest at 15, the road still walked
+  every time. The moths and the bears were new on I2, so the box claims nothing new. What the owner
+  finds by hand goes here when the box has been played. Since M2 (#202) the road fords the river at
+  the box's corner into M2, and the river runs out of the corner's south edge for L3, so map and
+  atlas agree at the edge and nothing is owed; L2's east ring opens to M2's forest square for
+  square.
 
 ### 4.8 Lantern Watch (#201): town, 16×16, a tower, band 14–16
 
@@ -702,8 +702,8 @@ features; the pay shared out over the area (§8).
     gentler groups put fights to a rest past their limit. The lightest mixes inside the aim with no group
     of three bears are these; J3's lighter ones (a single pine bear for the brood, or the deathsheads
     dropped) put it over the aim at 9.4 and 9.1.
-    Their floors are above the area's, so their groups count two under in the area's pool, owed to #18.
-    J2's south edge opens for the track and K3's west edge for the dead wood; J2 is re-measured, 91.7%
+    Their floors are above the area's, so their groups count two under in the area's pool. J2's
+    south edge opens for the track and K3's west edge for the dead wood; J2 is re-measured, 91.7%
     within 8. Neither box claims anything new. What the owner finds by hand goes here when they have
     been played.
 
@@ -769,8 +769,8 @@ Built once the owner took #203 off parked (3 October); the brief was settled by 
     deathsheads by night on the west lip: 7.34 fights to a rest at 15, inside the aim, 5.7% broken off. As
     measured it pays about 718 xp a member and 565 gold. Density 99.8% within 12, the furthest 13.
   - The three pay about 2,355 xp a member against the brief's 1,500 (§8; #203's 4). Their floors are above
-    the area's, so their groups count two under in the area's pool, owed to #18. They claim nothing new.
-    What the owner finds by hand goes here when they have been played.
+    the area's, so their groups count two under in the area's pool. They claim nothing new. What the
+    owner finds by hand goes here when they have been played.
 
 ## 5. The one quest here
 
@@ -983,9 +983,9 @@ Decided by delegate for #195, each the owner's to overturn:
    owls do.
 4. **The shrine gives speed,** which no shrine or fountain on the road gave; the cairn 160 gold and
    a Sapphire Vial; the pack 300 gold and a Warden's Halberd +1 of its own.
-5. **The gate two under is owed to #18,** for I2 and for the area, with the groups kept at the
-   line's standard size: no group size turns back a company whose gear is the same as at 14, and
-   bigger groups only push fights to a rest at 14 under its limit.
+5. **The gate's two under is judged by the day (#851),** for I2 and for the area, with the groups
+   kept at the line's standard size: no group size turns back a company whose gear is the same as at
+   14, and bigger groups only push fights to a rest at 14 under its limit.
 6. **The climate:** summer 16, winter -2, damp to 0.08, fog 0.6, eight hours behind the Foreland.
 
 Decided by delegate for #196, each the owner's to overturn:
@@ -1162,10 +1162,10 @@ Decided by delegate for #806, each the owner's to overturn:
 1. **The Warden of the Sunder is set again at 1,020 hit points and 13d8+13** (872 and 10d8+10
    before), by hearth_isle.md §7's method: tries of hit points and blow on the gate's seeds. #199's
    gate set it against a company without its first prestige, 53% at 14 and 95% at 16; the gate's
-   company has taken the prestige since #541, and won it 98% at 14, past the limit of 80% and owed
-   to #18. The aim is about half at the floor (30% to 70%) and nearly always two above (90%). The
-   tries, in percent of the gate's 400 seeds and of its own hundred, a fight broken off being one
-   still running at the fifteenth round, which the gate does not count won:
+   company has taken the prestige since #541, and won it 98% at 14, past the limit of 80%. The aim
+   is about half at the floor (30% to 70%) and nearly always two above (90%). The tries, in percent
+   of the gate's 400 seeds and of its own hundred, a fight broken off being one still running at the
+   fifteenth round, which the gate does not count won:
 
    | Hit points | Blow | At 14 | Broken off | At 16 | The gate's hundred, 14 and 16 |
    |---|---|---|---|---|---|
@@ -1197,7 +1197,7 @@ Decided by delegate for #806, each the owner's to overturn:
    (`tools/tests/harness.ts`) names this issue and no longer says its hit points are the line's.
    Level, xp, gold, drops, id and the group stay, so the curve and `src/content/shipped.json` do not
    move. The area's pool two under its floors falls with the Warden, from 98.5% to 97.2%, still past
-   its limit of 90% and owed to #18 with the rest.
+   its limit of 90%, which #851 replaced by the day.
 
 ## 10. Names
 
@@ -1290,7 +1290,7 @@ Decided by delegate for #198, each the owner's to overturn:
    south end,** reached by a lane from the dead wood by the gorge: the crystal reads as its own grown
    glass. Seed 2 puts four sunderlings, its gentlest at 14, by the way in and four glass spiders, its
    all-15 group, by the tear. Smaller groups ran past the limit on fights to a rest (14.9 at three and
-   two). Its two-under figure is owed to #18, as C5's Rift's is.
+   two). Its two-under figure is judged by the day (#851), as C5's Rift's is.
 10. **The Rift has no `until` and no warden:** both groups come back after a day and the tear never
     goes quiet. A warden is the one group that never returns, the opposite of open whatever the
     company does, and a heart whose fall closes nothing is the Warden of the Sunder's turn (MONSTERS
@@ -1312,7 +1312,7 @@ Decided by delegate for #198, each the owner's to overturn:
     and L3 to open.
 17. **The map is `eaves_k3`, called The Sunder's Mouth, laid whole in the Eaves,** core, band 15–16,
     so the Eaves reads 14–16. The atlas's link at 338,70 keeps its ends. Its floor is above the
-    area's, so its groups count two under in the area's pool, owed to #18.
+    area's, so its groups count two under in the area's pool.
 18. **K3's Rift claims nothing new:** a Rift that stays open is the Sunder's (§4.6), where its
     Warden falls and nothing closes, as §7 has it; K3's open Rift comes before it unclaimed.
 19. **The Sunder Shard is a keepsake, the bed's find and nothing more.** No hand-in takes it: the Watch
@@ -1370,7 +1370,8 @@ Decided by delegate for #199, each the owner's to overturn:
 2. **The ledges are banded 14–15 and the floor 14–16,** as Kelp Hole's levels are 12–13 and 12–14:
    the gate judges a boss at its map's floor, so the floor's 14 has the Warden won about half at 14
    and nearly always at 16, as #199 asks; and a level banded 15–16 would want a group at 16, which the
-   spiders on the ledges are not. Two under, the ledges are owed to #18 as every Act II box is.
+   spiders on the ledges are not. Two under, the ledges are judged by the day (#851) as every Act II
+   box is.
 3. **The Warden's blow is cut by hand,** its hit points kept on MONSTERS §4.4's line (872): 16d8+18
    won 13% at 14 and 47% at 16; 10d8+10 won 53% and 95%, as Kelp Hole's Great Devilfish was set.
    #806 set it again, at 1,020 hit points and 13d8+13 (below).

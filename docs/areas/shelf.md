@@ -1021,7 +1021,7 @@ overturn:
     there. A lampmaker of his own in the stores is the alternative.
 32. **Wulfric works at a bench before the empty building, in the open.** A door there would need a
     business, and every business a room of its own: the armoury's door, its armour and its shields
-    wait on an interior (another lane), as Pender's picks wait on #18.
+    wait on an interior (another lane).
 33. **Aldith keeps no shop,** as DESIGN has the luthier, and sits under the Hearthlight's eaves.
 34. **Siward, Dunstan's old standard-bearer, teaches in Coldharbour's east field at 19,16.** The yard
     is seven squares from the track to the Berth, a road and the one quest's way, and one from the

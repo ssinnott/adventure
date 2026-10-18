@@ -577,10 +577,11 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   company at 16 wins every fight and manages 8.95 fights to a rest, inside the aim, with 6.3% of its
   days ending in a fight broken off (8.97 and 4% once #541 re-stated the worm); the Fells' road, the
   two beetle groups, is walked every time. As
-  measured it pays about 1,068 xp a member and 740 gold. Two under, at 14, it wins every fight too,
-  owed to #18 as every Act II box's is. Density 98.5% within 12 steps, the furthest 15. It claims pine
-  underfoot as new (§7). M2 gains the way over the border with the crossing line and its milestone
-  is put right to ANVILHALL 8; its ridge over the Warden's grave is rock for two squares (§9).
+  measured it pays about 1,068 xp a member and 740 gold. Two under, at 14, it wins every fight too
+  (past 10 the gate judges a company two under by its day, #851). Density 98.5% within 12 steps, the
+  furthest 15. It claims pine underfoot as new (§7). M2 gains the way over the border with the
+  crossing line and its milestone is put right to ANVILHALL 8; its ridge over the Warden's grave is
+  rock for two squares (§9).
 
 ### 4.3 N3, Anvilhall's box (#458): core, band 16–17
 
@@ -636,10 +637,9 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   corner the rock worm lies in a collapsed working, the box's group at 17. A company at 16 wins every
   fight and manages 8.49 fights to a rest, inside the aim, with 0.7% of its days ending in a fight
   broken off; the Fells' road, on now past the two heaps, is walked every time. As measured it pays
-  about 1,525 xp a member and 950 gold. Two under, at 14, it wins every fight too, owed to #18.
-  Density 97.6% within 8 steps, the furthest 10, with two signs among its 22 points, the scraps
-  #471's. It claims the
-  salamanders and the reading as new (§7), and M3's milestone reads ANVILHALL 5 (§9).
+  about 1,525 xp a member and 950 gold. Two under, at 14, it wins every fight too. Density 97.6%
+  within 8 steps, the furthest 10, with two signs among its 22 points, the scraps #471's. It claims
+  the salamanders and the reading as new (§7), and M3's milestone reads ANVILHALL 5 (§9).
 
 ### 4.4 Anvilhall (#459): town, 16×16, band 16–18
 
@@ -752,8 +752,8 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   out of the hill by day and the hill glowing at its seams by night. A company at 16 wins every fight
   and manages 8.76 fights to a rest, inside the aim, with 1% of its days ending in a fight broken
   off. As measured it pays about 1,095 xp a member and 640 gold. Two under, at 14, it wins every
-  fight too, owed to #18. Density 100% within 12 steps, the furthest 12, with one sign among its 16
-  points. It claims nothing new (§7).
+  fight too. Density 100% within 12 steps, the furthest 12, with one sign among its 16 points. It
+  claims nothing new (§7).
 
 ### 4.6 N4, the Tiefzeche's box (#461): core, band 16–17
 
@@ -807,8 +807,8 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   the drovers' fold stands by the road, and the smelter's smoke rises close past the south edge. A
   company at 16 wins every fight and manages 8.73 fights to a rest, inside the aim, with 1% of its
   days ending in a fight broken off; the heart's road, past both groups on the spoil, is walked every
-  time. As measured it pays about 1,468 xp a member and 950 gold. Two under, at 14, it wins every fight too,
-  owed to #18. Density 97.7% within 8 steps, the furthest 13, with one sign among its 25 points.
+  time. As measured it pays about 1,468 xp a member and 950 gold. Two under, at 14, it wins every
+  fight too. Density 97.7% within 8 steps, the furthest 13, with one sign among its 25 points.
 
 ### 4.7 The Tiefzeche (#462): dungeon, three levels of 16×16, band 16–18
 
@@ -889,10 +889,10 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   rest, inside the aim. At 17 it wins every fight with the knockers and half with the Foreman, which
   it wins 95% at 19; the bottom's day runs 9.64 fights to a rest, 13.3% of its days ending in a fight
   broken off, and its groups pooled with the Foreman are won 83.3%, both off the aim and inside the
-  limit (§9). Two under, at 14, the upper two are won every time, owed to #18. As measured the three
-  levels pay 4,278 xp a member and 2,550 gold. Density 100% within 7 on each, the furthest 4, 4 and
-  5, with one sign among 18 and 19 points on the upper two and none among the bottom's 16, the
-  crust-bearer #471's.
+  limit (§9). Two under, at 14, the upper two are won every time. As measured the three levels pay
+  4,278 xp a member and 2,550 gold. Density 100% within 7 on each, the furthest 4, 4 and 5, with one
+  sign among 18 and 19 points on the upper two and none among the bottom's 16, the crust-bearer
+  #471's.
 
 ### 4.8 N5, Gluthutte (#463): core, band 17
 
@@ -950,8 +950,8 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   to a slag elder strayed from the Stone, there until the tear is closed, the box's group at 18 (§9). A company
   at 17 wins every fight and manages 8.64 fights to a rest, inside the aim, with 2.3% of its days
   ending in a fight broken off. As measured it pays about 1,679 xp a member and 950 gold. Two under,
-  at 15, its groups count in the area's pool, where every fight is won, owed to #18. Density 97.4%
-  within 8 steps, the furthest 11, with one sign among its 27 points.
+  at 15, its groups count in the area's pool, where every fight is won. Density 97.4% within 8
+  steps, the furthest 11, with one sign among its 27 points.
 
 ### 4.9 O5, the Anvil Stone's box (#464): core, band 17–18
 
@@ -1012,8 +1012,8 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   fights to a rest, inside the aim, with 9.7% of its days ending in a fight broken off, most of them
   the Guard's. As measured it pays about 1,742 xp a member, 1,292 to a company that bought, which
   meets no Guard, and 1,060 gold, the Guard about 150 more. Two under, at 15, its groups count in the
-  area's pool, where 97.1% of fights are won, owed to #18. Density 97.4% within 8 steps, the furthest
-  11, with one sign among its 23 points.
+  area's pool, where 97.1% of fights are won. Density 97.4% within 8 steps, the furthest 11, with
+  one sign among its 23 points.
 
 ### 4.10 The Anvil Stone's Rift (#465): dungeon, one level of 16×16, hand-built, band 17–18
 
@@ -1070,8 +1070,8 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   company at 17 wins every fight but the Warden's, which it wins 54% of the time, and 93% at 19; its
   groups pooled with the Warden are won 90.8% and its day runs 8.00 fights to a rest, 6.3% of its days
   ending in a fight broken off, all inside the aims. Two under, its groups count in the area's pool at
-  14, where 95.4% of fights are won, owed to #18. As measured it pays 3,698 xp a member and 1,910
-  gold. Density 100% within 7, the furthest 7, with no sign among its 15 points.
+  14, where 95.4% of fights are won. As measured it pays 3,698 xp a member and 1,910 gold. Density
+  100% within 7, the furthest 7, with no sign among its 15 points.
 
 ### 4.11 O6, Feuerstollen's box (#466): country, band 17–18, with the tubes
 
@@ -1162,9 +1162,9 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
     the second 2,851 and 600, the Great Salamander 1,902 of it: 6,127 and 1,600 in all for the
     brief's 1,500 (§9). Two under, O6's groups count at 15 and the second level's at 14 in the
     area's pool, where 94.6% of 54 groups' fights are won, and the first level's at 14 are won every
-    time, all owed to #18. Density: O6 98.6% within 12 steps and the furthest 14, with one sign
-    among its 22 points; the tubes' two levels 100% within 7 and the furthest 3 and 3, with no sign
-    among 19 points and 14.
+    time. Density: O6 98.6% within 12 steps and the furthest 14, with one sign among its 22 points;
+    the tubes' two levels 100% within 7 and the furthest 3 and 3, with no sign among 19 points and
+    14.
 
 ### 4.12 N6 and M6, the roads south and west (#467): country, band 16–18
 
@@ -1226,9 +1226,9 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   - **Measured.** A company at 16 wins every fight in both and manages 7.52 fights to a rest on N6
     and 8.97 on M6, inside the aim, with 0.7% and 4% of its days ending in a fight broken off; it
     walks Kilnmouth's road, past the kilns' east end, every time. N6 pays about 787 xp a member and
-    340 gold, M6 about 1,068 and 400. Two under, at 14, it wins every fight in both, owed to #18.
-    Density: N6 99.9% within 12 steps and the furthest 13, no sign among its 17 points; M6 99.4%
-    within 12 and the furthest 15, none among its 16.
+    340 gold, M6 about 1,068 and 400. Two under, at 14, it wins every fight in both. Density: N6
+    99.9% within 12 steps and the furthest 13, no sign among its 17 points; M6 99.4% within 12 and
+    the furthest 15, none among its 16.
 
 ### 4.13 L6, Kilnhaven's box (#468): core, band 16–18
 
@@ -1278,8 +1278,8 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   Cairnmoor's L7: for now the world ends. A company at 16 wins every fight and manages 7.79 fights
   to a rest, inside the aim, with 2.3% of its days ending in a fight broken off. As measured it pays
   about 1,590 xp a member and holds 640 gold, and the crew carry about 130 a clear of their own. Two
-  under, at 14, it wins every fight, owed to #18. Density 100% within 8 steps, the furthest 8, with
-  no sign among its 22 points.
+  under, at 14, it wins every fight. Density 100% within 8 steps, the furthest 8, with no sign among
+  its 22 points.
 
 ### 4.14 Kilnhaven (#469): town, 16×16, band 16–18
 
@@ -1396,10 +1396,10 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   - **Measured.** A company at 16 wins every fight in both and manages 6.59 fights to a rest on
     each, under the aim and inside the limit, with 0.3% of its days ending in a fight broken off.
     Each pays about 449 xp a member, the brief's 450, and M4 holds 250 gold, M5 300. Two under, at
-    14, it wins every fight in both, owed to #18. Density: M4 100% within 12 steps and the furthest
-    12, no sign among its 15 points; M5 100% within 12 and the furthest 12, none among its 16. The
-    walkthrough finds each secret from its hint and shows its prize shut to a walker, a swimmer, a
-    climber and a levitator. They claim nothing new (§7).
+    14, it wins every fight in both. Density: M4 100% within 12 steps and the furthest 12, no sign
+    among its 15 points; M5 100% within 12 and the furthest 12, none among its 16. The walkthrough
+    finds each secret from its hint and shows its prize shut to a walker, a swimmer, a climber and a
+    levitator. They claim nothing new (§7).
 
 - **As built, the east half** (#474, 9 October): O3, laid whole in the Fells, and O4, laid whole in the
   heart (§1), at 16–18 and not the brief's 17–18 (§9, #474's 17), a rock worm pair the top of each and
@@ -1446,12 +1446,12 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
     under the aim and inside the limit, and 8.37 in O4, inside the aim, with 0.3% and 0.7% of its days
     ending in a fight broken off. O3 pays about 449 xp a member and holds 300 gold, O4 765 and 360:
     1,214 against the brief's 900, 1.35 times (#474's 17 and 20). Two under, at 14, it wins every fight
-    in both, owed to #18. Density: O3 100% within 12 steps and the furthest 10, no sign among its 12
-    points; O4 99.1% within 12 and the furthest 17, none among its 16. The walkthrough finds each
-    secret from its hint, shows its prize shut to a walker, a swimmer, a climber and a levitator, and
-    shows the terraces and the gate shut from O3's west edge. The issue's walkable counts for the two,
-    641 and 863, count rock as walkable, which the game blocks: O4's crag alone is 69 squares. They
-    claim nothing new (§7).
+    in both. Density: O3 100% within 12 steps and the furthest 10, no sign among its 12 points; O4
+    99.1% within 12 and the furthest 17, none among its 16. The walkthrough finds each secret from
+    its hint, shows its prize shut to a walker, a swimmer, a climber and a levitator, and shows the
+    terraces and the gate shut from O3's west edge. The issue's walkable counts for the two, 641 and
+    863, count rock as walkable, which the game blocks: O4's crag alone is 69 squares. They claim
+    nothing new (§7).
 
 ## 5. The one quest here
 
@@ -1750,16 +1750,16 @@ M4, M5, O3 and O4 (#474), which place the rock worm and the salamander again and
   1.93 times the training's, and with O3 and O4 15,917, 2.01 times.
 - **The gate.** Each map at its own floor (docs/areas/thornmark.md §9, 17; EXPANSION §5.2): a
   company at 16 wins nine in ten of M3's fights and walks the trail resting at its camp; one at 14
-  wins no more than one in four, which is how the Fells turn an Act II company back. The Foreman,
-  the Great Salamander and the Warden of the Anvil are won about half the time at their maps' floors
-  and nearly always two above. Act II's boxes owed their two-under figures to the gear past 10
-  (#18). #535's ladder now dresses a company at each of the Kilns' floors past one two under it,
+  wins no more than one in four, which is how the Fells turn an Act II company back (past 10 the
+  gate judges a company two under by its day, #851). The Foreman, the Great Salamander and the
+  Warden of the Anvil are won about half the time at their maps' floors and nearly always two above.
+  #535's ladder now dresses a company at each of the Kilns' floors past one two under it,
   Anvilhall's forge at 17 and its finds by 19; whether that holds the figure is each box's to
-  measure. As built: M3's does not, nor N3's, N4's, N2's, N5's, N6's, M6's, O5's, L6's, M4's, M5's, O3's, O4's or
-  O6's and its tubes'. A company at its floor, 17 on N5, O5 and O6 and 16 on the rest, wins every
-  fight in each and walks the Fells' road, the heart's and Kilnmouth's every time, and one two under
-  wins every fight too, owed to #18 as Act II's are (§4.2, §4.3, §4.5, §4.6, §4.8, §4.12, §4.9,
-  §4.13, §4.11, §4.15); so do the Tiefzeche's two upper levels, banded from the area's floor (§4.7), and
+  measure. As built: M3's does not, nor N3's, N4's, N2's, N5's, N6's, M6's, O5's, L6's, M4's, M5's,
+  O3's, O4's or O6's and its tubes'. A company at its floor, 17 on N5, O5 and O6 and 16 on the rest,
+  wins every fight in each and walks the Fells' road, the heart's and Kilnmouth's every time, and
+  one two under wins every fight too (§4.2, §4.3, §4.5, §4.6, §4.8, §4.12, §4.9, §4.13, §4.11,
+  §4.15); so do the Tiefzeche's two upper levels, banded from the area's floor (§4.7), and
   Feuerstollen's first (§4.11). The Foreman is won 50% at the bottom's floor, 17, and 95% at 19, its
   hit points and its blow set off the line by the gate (§9); the bottom's day, 9.64 fights to a
   rest, and its groups pooled with the Foreman, won 83.3%, are off the aim and inside the limit. The
@@ -2152,8 +2152,9 @@ Decided by delegate for #457, each the owner's to overturn:
    asks and the wagon's own, a staff a monk or a druid has a level before the forge's.
 10. **Its gold is 740, its share by the brief of the 13,900** (§8): 240 in the cairn on the shoulder
     and 500 with the goad. The dwarves' hearth by the adit gives might.
-11. **Two under is owed to #18:** a company of 14 in the Watch's gear beats every group at the line's
-    standard size, as on every Act II box; the gate's other figures are inside their aims.
+11. **Two under, past 10, is judged by the day (#851), not by the fights won:** a company of 14 in
+    the Watch's gear beats every group at the line's standard size, as on every Act II box; the
+    gate's other figures are inside their aims.
 12. **The woodcutters camp under the shoulder north of the trail's head and fell in the pines
     south-west of it,** each a point where the country floor wants one and the land is otherwise bare.
 
@@ -2197,8 +2198,8 @@ Decided by delegate for #458, each the owner's to overturn:
     and the brief's gather at the terraces and the trail.
 11. **Its gold is 950, its share by the brief of the 13,900** (§8): 250 in the cairn and 700 in the
     cellar with the Anvil Shard (`anvil_shard`) and the Plate Mail +3, the ladder's (#535).
-12. **Two under is owed to #18,** as M3's is: a company of 14 beats every group at the line's standard
-    size; the gate's other figures are inside their aims.
+12. **Two under is judged by the day (#851),** as M3's is: a company of 14 beats every group at the
+    line's standard size; the gate's other figures are inside their aims.
 
 Decided by delegate for #459, each the owner's to overturn:
 
@@ -2276,7 +2277,7 @@ Decided by delegate for #461, each the owner's to overturn:
     boxes the plan lays in the heart, as M4's north went to the Fells (#457's 7); M4 and M5 are laid
     since, whole in Kilnmouth (#474's 14). The seam's seeds
     under N3 and N4 go, the two boxes holding their own rows.
-12. **Two under is owed to #18,** as M3's and N3's are.
+12. **Two under is judged by the day (#851),** as M3's and N3's are.
 
 Decided by delegate for #460, each the owner's to overturn:
 
@@ -2316,8 +2317,8 @@ Decided by delegate for #460, each the owner's to overturn:
     mountain, as M2's corner was (docs/areas/sunderwood.md §4.9), and goes to the Fells (§1).
 11. **Erzkamm's site is built,** at the cave on N2 (8.5,14.5), as Sunderfall's is on K2, and N2
     claims nothing new (§7).
-12. **Two under is owed to #18,** as M3's, N3's and N4's are: a company of 14 beats every group at
-    the line's standard size; the gate's other figures are inside their aims.
+12. **Two under is judged by the day (#851),** as M3's, N3's and N4's are: a company of 14 beats
+    every group at the line's standard size; the gate's other figures are inside their aims.
 
 Decided by delegate for #463, each the owner's to overturn:
 
@@ -2356,7 +2357,7 @@ Decided by delegate for #463, each the owner's to overturn:
     laid; Cairnmoor's 380 in M7, N7 and O7 go back when its boxes are laid or its own rows are
     seeded, which is Cairnmoor's to do (#437).
 12. **Two under is the area's pool's:** N5's floor is over the area's, so the gate counts its groups
-    at 15 in the area's pool, where every fight is won, owed to #18 as the others are.
+    at 15 in the area's pool, where every fight is won.
 13. **Owed on:** the drove road at N6's 12,0 (436,158, #467); the cutters' track at O5's 0,24
     (456,150, #464), to be run on to the Stone; the stream at M5's 31,25 and 31,26, with no road
     across that edge (#474); the elder's flag, the Rift's (#465) (built since: the road, the
@@ -2417,8 +2418,8 @@ Decided by delegate for #462, each the owner's to overturn:
 16. **N4's shaft opens** (#461's 2 and 3): `MOUTH` is listed with the cage's line said going down, its
     square the cage's gate, a door, and `n4_cage` goes; the cage at the shaft's foot brings a company
     back up to 15,2, facing west.
-17. **Two under is owed to #18** on the upper two levels, as on every box; the bottom's floor is over
-    the area's, so its groups count two under in the area's pool.
+17. **Two under is judged by the day (#851)** on the upper two levels, as on every box; the bottom's
+    floor is over the area's, so its groups count two under in the area's pool.
 
 Decided for #467, each the owner's to overturn, the first and the last by the orchestrator and the
 rest by delegate:
@@ -2468,7 +2469,7 @@ rest by delegate:
 12. **The zone walk moves 2,262 squares, unheld** (§1): M6's own settle to Kilnmouth, and Cairnmoor's
     row 7 holds 2,002 of the Kilns' squares until its boxes are laid or its rows seeded, which is
     Cairnmoor's to do (#437, #476).
-13. **Two under is owed to #18,** as the other boxes' is.
+13. **Two under is judged by the day (#851),** as the other boxes' is.
 14. **Owed on:** the drove road at N7's 3,0 (427,190, #476), the coach's road over it without a stop
     (#539); the branch at L6's 31,4 (391,162, #468), Kilnhaven's gate; on M6's north the stream at
     M5's 23 to 26,31 (415 to 418,157), with no road (#474); on N6's east the grass and the
@@ -2528,7 +2529,7 @@ Decided by delegate for #464, each the owner's to overturn:
 12. **The zone walk moves 78 squares, unheld** (§1), none on a built map; O6 takes its own when it
     is laid (#466).
 13. **Two under is the area's pool's:** O5's floor is over the area's, so the gate counts its groups
-    at 15 in the area's pool, where 97.1% of fights are won, owed to #18 as N5's are (#463's 12).
+    at 15 in the area's pool, where 97.1% of fights are won (#463's 12).
 14. **Owed on:** the tear's feature, the square opened and the way back, #465's; the Rift's flag,
     which the slaglings, the Stone's line and the tear's read, #465's too (both built, #465's 5 to 9);
     the chapter's step at the Stone, #470's, which may read `o5_stone`; the grass and the hills at
@@ -2574,7 +2575,7 @@ delegate:
     Kilnhaven (§8; the whole gives 27,228 and 14,707).
 13. **The zone walk moves 105 squares** elsewhere, none on a built map: L6 was Kilnmouth's already,
     but for the 6 squares of the bay its wall and its quay stand on.
-14. **Two under is owed to #18,** as the other boxes' is.
+14. **Two under is judged by the day (#851),** as the other boxes' is.
 15. **Owed on:** the gate's exit and its arrival (#469; built since); on the west edge, K6's cut
     heath (§11), with no road; on the south, Cairnmoor's L7, with no road. The north edge is the sea.
 
@@ -2667,7 +2668,7 @@ Decided by delegate for #465, each the owner's to overturn:
     mattock and seax with a plus under names of their own, off the ladder, as O5's hammer is.
 11. **Its gold is 1,910, its share by the brief of the 13,900** (§8), all in the hollow with the tools.
 12. **Two under is the area's pool's:** the Rift's floor is over the area's, so the gate counts its
-    groups at 14 in the area's pool, where 95.4% of fights are won, owed to #18 as O5's are (#464's 13).
+    groups at 14 in the area's pool, where 95.4% of fights are won (#464's 13).
 13. **Owed on:** the chapter's step at the Stone, #470's, which reads `q_anvil_closed` (built since:
     #470); and a group's own `sets`, said with its `slainText`, which would close the tear on the
     blow itself, the systems lane's to give if it is wanted (built since: #636).
@@ -2730,12 +2731,12 @@ orchestrator's calls):
     moved onto its smelter (#463's 2).
 15. **Einhart is words and a name only,** the dwarves' tongue's (§10): the brief has the hermit
     count the vents by their breath and no more, and no quest hangs on him.
-16. **Two under is the area's pool's, and owed to #18:** O6's floor and the second level's are over
-    the area's, so their groups count in its pool, O6's at 15 and the second level's at 14, where
-    94.6% of 54 groups' fights are won; the first level's, at 14, are won every time (`lava_tubes:
-    under`).
-17. **Owed on:** the two-under figures to #18 (16). The elder's flag, `q_anvil_closed`, is the
-    Rift's (#465), whose walk checks that the elder comes back no more.
+16. **Two under is the area's pool's, judged by the day (#851):** O6's floor and the second level's
+    are over the area's, so their groups count in its pool, O6's at 15 and the second level's at 14,
+    where 94.6% of 54 groups' fights are won; the first level's, at 14, are won every time
+    (`lava_tubes: under`, a row of `OWED` until then).
+17. **Owed on:** the elder's flag, `q_anvil_closed`, is the Rift's (#465), whose walk checks that
+    the elder comes back no more. The two-under figures (16) are judged by the day (#851).
 
 Decided by delegate for #469, each the owner's to overturn:
 
@@ -2903,7 +2904,7 @@ Decided by delegate for #474, each the owner's to overturn:
 11. **No shrine:** the Kilns have eight, and a stat gift is more than these landmarks need.
 12. **The Kilns' `OVER_ROAD` goes from 19.2 to 19.3,** the smallest tenth that holds, its why
     adding "and the country behind the road adds to it" (#634's 1 and 3, §8).
-13. **Two under (14) is owed to #18 for both boxes,** as M6's and every Kilns box's is.
+13. **Two under (14) is judged by the day (#851) for both boxes,** as M6's and every Kilns box's is.
 14. **No seeds in `src/content/atlas.ts`:** laid, M4 and M5 seed Kilnmouth from every square and are
     wholly Kilnmouth's (1,024 each); it now holds 235 of cut L5's squares, where §11's cut list
     gives it 214. The walk from L4 takes nothing of Kilnmouth's that is laid or planned, so the
@@ -2948,8 +2949,8 @@ Decided by delegate for #474, each the owner's to overturn:
 27. **O3 was cut with the scaffold's own `cut` and `emit`, its void written as `%`:** the scaffold
     refuses a cut holding void (O3's 87 squares of the world's end), as D3 of the Downs carries void
     in its rows (§11).
-28. **Two under (14) is owed to #18 for both boxes,** as M6's and N6's are, in `OWED` in the gate
-    test.
+28. **Two under (14) is judged by the day (#851) for both boxes,** as M6's and N6's are; it was a
+    row of `OWED` in the gate test until then.
 
 Decided by delegate for #636, each the owner's to overturn:
 
@@ -3024,7 +3025,8 @@ short. The country behind the road (O3, O4, M4 and M5, 3,886 squares) is not cut
 though the brief's fire beetles stand in none of its four boxes.
 
 Nothing of O6's or the tubes' brief was cut (#466): its points of interest, groups and both secrets
-are built, and what waits is owed to another, the first level's two-under figure to #18 (§8).
+are built, and what waited, the first level's two-under figure, is judged by the day since #851
+(§8).
 
 From the side quests' briefs (§6, #471): the crust-bearer left below, sending a note up, since he
 comes up and the scraps at the well are his notes (#471's 2); and the copybook's reading of #56's
@@ -3040,7 +3042,7 @@ Owed by the Kilns as built, every box, town and dungeon of the road being in (#4
   #474's 15).
 - **To #512, Cinderport:** the Compact ship's landing and its seller. Jago talks and sells no fare
   until then; the ferry and the coach run (§4.14, §9).
-- **To #18:** each box's two-under figure (§8).
+- **Settled by #851:** each box's two-under figure is judged by the day (§8).
 - **Nothing on the curve:** a clear gives 29,340 xp a member and 15,917 gold, 2.25 and 2.01 times
   the curve's 13,067 and 7,920, and the row owes nothing. It is high because the bosses pay about
   1,900 a member on the line against the briefs' 1,500 to 1,800, and a kill already pays by level

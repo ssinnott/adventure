@@ -615,11 +615,11 @@ half, with the wilderness features (#45); no more than one point in four is a si
   - **Measured.** A company at 24 wins every fight and manages 10.21 fights to a rest, inside the
     aim of 9 to 11, with 17.3% of its days ending in a fight broken off; it walks Cindercoast's
     road, past the beetles at the Stair's foot and then G10's beetles and salamanders, every time.
-    H10 pays 2,449 xp a member and 1,000 gold. Two under, at 22, it wins every fight too, owed to
-    #18 as the Whitespine's boxes' is, and the two groups nearest the Stair are won at 22 every
-    time. Density 100.0% within 8 steps and the furthest 8, with no sign among its 30 points. The
-    walkthrough wins every group at 24, ten fights in ten. It claims the springs as new, the heavy
-    machines being G11's claim (§7).
+    H10 pays 2,449 xp a member and 1,000 gold. Two under, at 22, it wins every fight too, and the
+    two groups nearest the Stair are won at 22 every time (past 10 the gate judges a company two
+    under by its day, #851). Density 100.0% within 8 steps and the furthest 8, with no sign among
+    its 30 points. The walkthrough wins every group at 24, ten fights in ten. It claims the springs
+    as new, the heavy machines being G11's claim (§7).
 
 ### 4.3 G10, Cinderport's box (#511): core, band 24–25
 
@@ -694,10 +694,10 @@ half, with the wilderness features (#45); no more than one point in four is a si
   - **Measured.** A company at 24 wins every fight and manages 10.88 fights to a rest, inside the
     aim of 9 to 11, with 15% of its days ending in a fight broken off; it walks Cindercoast's
     road, past the beetles and then the salamanders, every time. G10 pays 2,449 xp a member and 900
-    gold. Two under, at 22, it wins every fight too, owed to #18 as the Whitespine's boxes' is.
-    Density 97.3% within 8 steps and the furthest 12, with no sign among its 26 points. The
-    harness's two drakes at 25 are won every time in 5.5 rounds, 10.3 fights to a rest (10.25
-    asked). It claims the drakes and the vines underfoot as new (§7).
+    gold. Two under, at 22, it wins every fight too. Density 97.3% within 8 steps and the furthest
+    12, with no sign among its 26 points. The harness's two drakes at 25 are won every time in 5.5
+    rounds, 10.3 fights to a rest (10.25 asked). It claims the drakes and the vines underfoot as new
+    (§7).
 
 ### 4.4 Cinderport (#512): town, 16×16, band 24–26
 
@@ -870,10 +870,10 @@ half, with the wilderness features (#45); no more than one point in four is a si
     runs past 15 rounds once spell points run low, which the gate shows and never judges (G10's
     is 15%). It walks Fire Mountain's road, past the salamanders and then the stokers, every
     time. G11 pays 2,768 xp a member and 1,000 gold. Its under-check is n/a, its floor being over
-    the area's; Ashfall's nine groups at 22 are won every time, owed to #18 as before. Density
-    100.0% within 8 steps and the furthest 8, with no sign among its 27 points; the art check
-    dresses 41.7% of its 12 wall faces. It claims the heavy machines, the volcano and the vent
-    underfoot and the volcano on the map as new (§7).
+    the area's; Ashfall's nine groups at 22 are won every time. Density 100.0% within 8 steps and
+    the furthest 8, with no sign among its 27 points; the art check dresses 41.7% of its 12 wall
+    faces. It claims the heavy machines, the volcano and the vent underfoot and the volcano on the
+    map as new (§7).
 
 ### 4.6 F11, Old Cinder's and the Ember Stone's box (#514): core, band 25–26
 
@@ -1037,14 +1037,14 @@ half, with the wilderness features (#45); no more than one point in four is a si
     broken off; its under-check is n/a, its floor being over the area's. The Old Drake is won 65% at
     25 and 99% at 27, set off the boss line (§9, #515's 5). In the undercroft a company at 24 wins
     every fight and manages 10.10 fights to a rest, inside the aim (9 to 11), with 4.7% of its days
-    broken off; two under, at 22, it wins every fight too, owed to #18. Old Cinder pays 4,079 xp a
-    member for the brief's 2,600, the Old Drake's share 2,755 and each group of husks' 662, and
-    holds 1,300 gold. Density 100.0% within 7 steps on both levels (101 of 101 and 67 of 67), the
-    furthest 5 and 4 of 10, with no sign among their 19 and 13 points (92 of 92 and 16 before the
-    scholar's room, #859). The curve's rank correlation
-    is 1.00 in the town: the husks nearest at 7 steps, level 25, and the Old Drake the hardest at 13,
-    level 26; in the undercroft the husks are the nearest and the hardest, at 4 steps, level 25. The
-    walkthrough wins the husks every time and the Old Drake nine times in ten at 25.
+    broken off; two under, at 22, it wins every fight too. Old Cinder pays 4,079 xp a member for the
+    brief's 2,600, the Old Drake's share 2,755 and each group of husks' 662, and holds 1,300 gold.
+    Density 100.0% within 7 steps on both levels (101 of 101 and 67 of 67), the furthest 5 and 4 of
+    10, with no sign among their 19 and 13 points (92 of 92 and 16 before the scholar's room, #859).
+    The curve's rank correlation is 1.00 in the town: the husks nearest at 7 steps, level 25, and
+    the Old Drake the hardest at 13, level 26; in the undercroft the husks are the nearest and the
+    hardest, at 4 steps, level 25. The walkthrough wins the husks every time and the Old Drake nine
+    times in ten at 25.
   - **The Master of magic's room** (#859, 17 October 2026). The wall south of the broken kiln's room,
     2,9, is a secret door, and behind it lies a room the ash never filled, 1 to 2 by 10 to 13, eight
     squares shut to walkers, swimmers, climbers and floaters but for the door. The hint is
@@ -1207,12 +1207,12 @@ half, with the wilderness features (#45); no more than one point in four is a si
     10.51 on E10, inside the aim of 9 to 11, with 19% of F10's days ending in a fight broken off and
     0.3% of E10's; it walks the Waste's road, past the beetles, the drake and the two drakes, every
     time. F10 pays 1,178 xp a member and 250 gold, E10 662 and 950. Two under, at 22, it wins every
-    fight too, owed to #18 as G10's is. Density 100.0% within 12 steps, the country floor, and the
-    furthest 12 of 20, with no sign among F10's 12 points or E10's 15. It claims nothing new (§7).
-    Since #524 E10's floor is 25: a company there manages 10.83 fights to a rest, and the box pays
-    2,543 xp a member (docs/areas/glasswold.md §8). With the sentries (#449), which the gate counts
-    standing, F10 at 24 manages 9.19 with 19% of days broken off and E10 at 25 10.49 with 9%, both
-    in the aim; each pair pays 689 xp a member.
+    fight too. Density 100.0% within 12 steps, the country floor, and the furthest 12 of 20, with no
+    sign among F10's 12 points or E10's 15. It claims nothing new (§7). Since #524 E10's floor is
+    25: a company there manages 10.83 fights to a rest, and the box pays 2,543 xp a member
+    (docs/areas/glasswold.md §8). With the sentries (#449), which the gate counts standing, F10 at
+    24 manages 9.19 with 19% of days broken off and E10 at 25 10.49 with 9%, both in the aim; each
+    pair pays 689 xp a member.
 
 ### 4.10 The country behind (#522): country, band 25–26; all seven built
 
@@ -1453,23 +1453,23 @@ half, with the wilderness features (#45); no more than one point in four is a si
     F11's west edge, I9's west edge and E9's east edge no longer end the world, and are pinned anew
     (§9, #522's 17); so are I11's west edge, I12's west edge, G11's east and south edges and H10's
     south edge, for H11, H12 and G12 (§9, #522's 30).
-  - **Measured.** At 24 a company wins every fight in F9, G9 and H9, and at 22 too, owed to #18 as
-    G10's is; each manages 10.51 fights to a rest, inside the aim of 9 to 11, 0.3% of its days
-    ending in a fight broken off. At 25 it wins every fight in E11, H11, H12 and G12 and manages
-    11.39 in each, 0.14 over the aim of 9.25 to 11.25 and inside the limit of 7.75 to 13.75, none of
-    its days broken off; their floor is over the area's, so their group counts two under in the
-    area's pool. Density within 12 steps, the country floor: F9 100.0%, 551 of 551, and the furthest
-    12 of 20, with no sign among its 13 points; G9 199 of 199 and the furthest 11, with no sign
-    among its 10; H9 467 of 467 and the furthest 9, with no sign among its 12; E11 99.4%, 683 of
-    687, and the furthest 15, with no sign among its 16 (15 before #859's roll); H11 98.1%, 951 of 969, and the furthest 15,
-    with no sign among its 17; H12 100.0%, 539 of 539, and the furthest 10, with no sign among its
-    13; G12 100.0%, 377 of 377, and the furthest 8, with no sign among its 11. The curve's rise rule
-    has one group a box, nearest and hardest: the drakes at level 25 and 16 steps in F9, 14 in G9
-    and 16 in H9, the drakelings at level 26 and 33 steps in E11, 23 in H11, 17 in H12 and 10 in
-    G12. F9, G9 and H9 pay 662 xp a member each (two drakes at 1,987, shared by six) and 150 gold;
-    E11, H11, H12 and G12 pay 517 (six drakelings at 517, shared by six), with 150 gold in E11, H12
-    and G12 and 160 in H11, the cairn's 110 and the chest's 50. The finds are potions, none that
-    sells (§9, #522's 9 and 20). The seven claim nothing as new (§7).
+  - **Measured.** At 24 a company wins every fight in F9, G9 and H9, and at 22 too; each manages
+    10.51 fights to a rest, inside the aim of 9 to 11, 0.3% of its days ending in a fight broken
+    off. At 25 it wins every fight in E11, H11, H12 and G12 and manages 11.39 in each, 0.14 over the
+    aim of 9.25 to 11.25 and inside the limit of 7.75 to 13.75, none of its days broken off; their
+    floor is over the area's, so their group counts two under in the area's pool. Density within 12
+    steps, the country floor: F9 100.0%, 551 of 551, and the furthest 12 of 20, with no sign among
+    its 13 points; G9 199 of 199 and the furthest 11, with no sign among its 10; H9 467 of 467 and
+    the furthest 9, with no sign among its 12; E11 99.4%, 683 of 687, and the furthest 15, with no
+    sign among its 16 (15 before #859's roll); H11 98.1%, 951 of 969, and the furthest 15, with no
+    sign among its 17; H12 100.0%, 539 of 539, and the furthest 10, with no sign among its 13; G12
+    100.0%, 377 of 377, and the furthest 8, with no sign among its 11. The curve's rise rule has one
+    group a box, nearest and hardest: the drakes at level 25 and 16 steps in F9, 14 in G9 and 16 in
+    H9, the drakelings at level 26 and 33 steps in E11, 23 in H11, 17 in H12 and 10 in G12. F9, G9
+    and H9 pay 662 xp a member each (two drakes at 1,987, shared by six) and 150 gold; E11, H11, H12
+    and G12 pay 517 (six drakelings at 517, shared by six), with 150 gold in E11, H12 and G12 and
+    160 in H11, the cairn's 110 and the chest's 50. The finds are potions, none that sells (§9,
+    #522's 9 and 20). The seven claim nothing as new (§7).
   - **Walkthrough.** `ashfall/walkthrough.ts` calls `coastBehind` at 24, `mountainBehind` at 25 and
     `wasteBehind` at 25 after `roadBehind`, in road order (§9, #522's 16 and 29). G10's 3,0 north
     onto G9's 3,31, walked, nothing said, the road on to 4,22, the old fisherman and the harbour's
@@ -1829,46 +1829,45 @@ behind claim nothing more (#522).
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
   (docs/areas/thornmark.md §9, 17): a company at 24 wins nine in ten of H10's fights and walks the
   shore resting at its camp; one at 22 wins no more than one in four, which is how the Stair's foot
-  turns a Whitespine company back. The Old Drake and the Sentinel are won about half the time at
-  26 and nearly always at 28. The bot grows to the band first (#549): at 24 it must drink, bless
-  and pick lightning for the machines, or the vents will read harder than they are. #542's ladder
-  dresses a company at 26 in Cinderport's step, and one at 24, the floor, in Rimewater's rung, as
-  the Whitespine's at 22 is; whether that holds the figures is each box's to measure. As built: a
-  company at 24 wins every fight on G10 and walks Cindercoast's road every time, 10.88 fights to a
-  rest; one at 22 wins every fight too, owed to #18 as the Whitespine's boxes' is (§4.3). The town
-  adds a way in, the boat's landing at 6,3; the groups nearest it are won at 22 as often as the
-  median group or more (§4.4). A company at 25 wins every G11 fight and walks Fire Mountain's road
-  every time, 10.23 fights to a rest, 94.7% of its days ending in a fight broken off (§4.5). On the
-  vents a company at 25 wins every fight and manages 10.98 fights to a rest, 87.7% of its days
-  ending in a fight broken off (docs/areas/meridian_camp.md §4.1). On the iron corridors a company
-  at 26 wins 90.3% of the fights and manages 8.69 fights to a rest, 88% of its days ending in a
-  fight broken off, and the Brood Drake is won 61% of the time at 26 and 100% at 28
-  (docs/areas/meridian_camp.md §4.2). On the camp, judged at its own floor, 27, and out of the area's
-  pools, a company wins every fight and manages 10.64 fights to a rest, 73% of its days ending in a
-  fight broken off; two under, at 25, it wins every fight too, owed to #18
+  turns a Whitespine company back (past 10 the gate judges a company two under by its day, #851).
+  The Old Drake and the Sentinel are won about half the time at 26 and nearly always at 28. The bot
+  grows to the band first (#549): at 24 it must drink, bless and pick lightning for the machines, or
+  the vents will read harder than they are. #542's ladder dresses a company at 26 in Cinderport's
+  step, and one at 24, the floor, in Rimewater's rung, as the Whitespine's at 22 is; whether that
+  holds the figures is each box's to measure. As built: a company at 24 wins every fight on G10 and
+  walks Cindercoast's road every time, 10.88 fights to a rest; one at 22 wins every fight too
+  (§4.3). The town adds a way in, the boat's landing at 6,3; the groups nearest it are won at 22 as
+  often as the median group or more (§4.4). A company at 25 wins every G11 fight and walks Fire
+  Mountain's road every time, 10.23 fights to a rest, 94.7% of its days ending in a fight broken off
+  (§4.5). On the vents a company at 25 wins every fight and manages 10.98 fights to a rest, 87.7% of
+  its days ending in a fight broken off (docs/areas/meridian_camp.md §4.1). On the iron corridors a
+  company at 26 wins 90.3% of the fights and manages 8.69 fights to a rest, 88% of its days ending
+  in a fight broken off, and the Brood Drake is won 61% of the time at 26 and 100% at 28
+  (docs/areas/meridian_camp.md §4.2). On the camp, judged at its own floor, 27, and out of the
+  area's pools, a company wins every fight and manages 10.64 fights to a rest, 73% of its days
+  ending in a fight broken off; two under, at 25, it wins every fight too
   (docs/areas/meridian_camp.md §4.3). A company at 25 wins every F11 fight, 10.82 fights to a rest,
   16.3% of its days ending in a fight broken off (§4.6). In Old Cinder's town a company at 25 wins
   82.5% of the fights, the Old Drake counted, off the aim of 90% and inside the limit of 80%, and
   manages 11.76 fights to a rest, over the aim and inside the limit, with 4.3% of its days broken
   off; the Old Drake is won 65% at 25 and 99% at 27, set off the boss line (§4.7; §9, #515's 5). In
   the undercroft a company at 24 wins every fight and manages 10.10 fights to a rest, with 4.7% of
-  its days broken off; one at 22 wins every fight too, owed to #18. In the Ember Stone a company at
-  25 wins 82.5% of the fights, the Sentinel counted, off the aim of 90% and inside the limit of 80%,
-  and manages 8.57 fights to a rest, under the aim and inside the limit, with 15.3% of its days
-  broken off. The Sentinel is won 65% at 25, 73% at 26 and 97% at 27, not the plan's about half at
-  26: `OFF_LINE` (`tools/tests/harness.ts`) says its hit points are set by its gate, 1,400 against
-  the line's 1,498, its blow the line's; on the line the floor's figure would be 79%, past the limit
-  of 80% (§4.8; §9, #516's 4). Ashfall's 36 groups are won 97% of the fights at their maps' floors
-  and 92.3% two under, owed to #18. On F10
-  and E10 a company at 24 wins every fight and walks the Waste's road every time, 10.66 fights to a
-  rest on F10 and 10.51 on E10; one at 22 wins every fight too, owed to #18 (§4.9). On H10 a company
-  at 24 wins every fight and walks Cindercoast's road from the Stair every time, 10.21 fights to a
-  rest; one at 22 wins every fight too, owed to #18, and the groups nearest the Stair are won at 22
+  its days broken off; one at 22 wins every fight too. In the Ember Stone a company at 25 wins 82.5%
+  of the fights, the Sentinel counted, off the aim of 90% and inside the limit of 80%, and manages
+  8.57 fights to a rest, under the aim and inside the limit, with 15.3% of its days broken off. The
+  Sentinel is won 65% at 25, 73% at 26 and 97% at 27, not the plan's about half at 26: `OFF_LINE`
+  (`tools/tests/harness.ts`) says its hit points are set by its gate, 1,400 against the line's
+  1,498, its blow the line's; on the line the floor's figure would be 79%, past the limit of 80%
+  (§4.8; §9, #516's 4). Ashfall's 36 groups are won 97% of the fights at their maps' floors and
+  92.3% two under. On F10 and E10 a company at 24 wins every fight and walks the Waste's road every
+  time, 10.66 fights to a rest on F10 and 10.51 on E10; one at 22 wins every fight too (§4.9). On
+  H10 a company at 24 wins every fight and walks Cindercoast's road from the Stair every time, 10.21
+  fights to a rest; one at 22 wins every fight too, and the groups nearest the Stair are won at 22
   every time (§4.2). On F9, G9 and H9 a company at 24 wins every fight and manages 10.51 fights to a
-  rest on each, 0.3% of its days ending in a fight broken off; one at 22 wins every fight too, owed to
-  #18. On E11, H11, H12 and G12 a company at 25 wins every fight and manages 11.39 on each, inside
-  the limit and off the aim by 0.14 (§4.10). The pool now, 45 groups, is won 97.6% of the fights at
-  the maps' floors and 93.8% two under, owed to #18.
+  rest on each, 0.3% of its days ending in a fight broken off; one at 22 wins every fight too. On
+  E11, H11, H12 and G12 a company at 25 wins every fight and manages 11.39 on each, inside the limit
+  and off the aim by 0.14 (§4.10). The pool now, 45 groups, is won 97.6% of the fights at the maps'
+  floors and 93.8% two under.
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3); the
   Stone's chamber holds the door's squares empty until it opens, as the Sunder's floor holds the
   wall's. As built: G10 97.3% within 8 steps and the furthest 12, with no sign among its 26 points
@@ -2232,8 +2231,8 @@ Decided by delegate for #511, each the owner's to overturn:
     token (`src/content/area.ts`; `uses()` reads none), so it cannot be claimed without a systems
     change (§11).
 15. **The chapter is owed to #518:** the quests test lists `cindercoast`, `firemount` and
-    `emberwaste` as planned and `ashfall` as owing its chapter. The gate figures under the floor are
-    owed to #18, as the Whitespine's are.
+    `emberwaste` as planned and `ashfall` as owing its chapter. The gate judges the figures under
+    the floor by the day (#851).
 16. **The climate is the coast's:** summer 24, winter 10, daily 6, damp 0.04 to 0.11, wettest 200,
     fog 0.3, lag 16; smoke comes down off the mountain for fog and the mountain is the thunder.
 
@@ -2259,7 +2258,8 @@ Decided by delegate for #512, each the owner's to overturn:
 6. **The two halls are persons with rooms, as the Keel is** (`kind: 'npc'`, `interior`, `hall`): the
    Chart House (`cartographers`, 3,8) and the Factor's House (`compact`, 13,4). Each offers and pays
    its Guild's one ladder (`game/guilds.ts`), the Fence's rung among it; no quest is added. The
-   Chart House sells nothing: the chandler's carries the kit that Saltmouth's Map Room sells.
+   Chart House sells nothing: the chandler's carries the stores that Saltmouth's Map Room sells, and
+   not its chart, which the Map Room alone sells (#860).
 7. **The potter's is a person with a room too** (7,9): no ware fits, the cups being no item.
 8. **People with words only,** none with a flag, a choice or a quest, so #519, #635 and #448 add
    theirs: Gorran the smith in the armourer's (#521's 6; his shovel-head "will not take a burr"),
@@ -2431,7 +2431,7 @@ Decided by delegate for #517, each the owner's to overturn:
     is first laid here, the Wold's ground (#543), and left unclaimed (§11).
 16. **F10 and E10 need no `CUT_OFF` entry:** they join only G10, which the reach walk now reaches by
     the town's ways out (§9, #512's 14), so the outdoors test reaches them without one. The gate
-    figures under the floor are owed to #18, as G10's are.
+    judges the figures under the floor by the day (#851).
 
 Decided by delegate for #510, each the owner's to overturn:
 
@@ -2490,8 +2490,8 @@ Decided by delegate for #510, each the owner's to overturn:
     seen: the Sheer's face, a goat on it, the dune, driftwood, the vines at the water, a deer in the
     vines, planks behind the bathhouse, steam from the foot, a crust on the ash, black glass, a shod
     horse's bones (G10's Riders' horses are unshod) and the stream.
-15. **The gate's figure two under is owed to #18:** at 22 a company wins every H10 fight
-    (`cindercoast_h10: under`), as G10's and the Whitespine's do.
+15. **The gate's figure two under is judged by the day (#851):** at 22 a company wins every H10
+    fight (`cindercoast_h10: under`, a row of `OWED` until then), as G10's and the Whitespine's do.
 16. **Cindercoast's road** (`ROADS`, `tools/tests/gate.ts`) is H10's foot beetles, then G10's
     beetles and salamanders.
 
@@ -2595,8 +2595,9 @@ Decided by delegate for #515, each the owner's to overturn:
 2. **The town is banded 25–26 and the undercroft 24–25.** The town's hardest group must be 26 (the
    curve's rule for it), which only the Old Drake is, and its floor, 25, judges the boss at 25 and
    27. The undercroft holds only husks, 25, so it is banded from the area's floor, as Highcell's
-   upper house is: at 25–26 the rise check would want a 26 there. Its figure two under is owed to
-   #18 (`'old_cinder2: under'`, husks won every time at 22), as `'monastery: under'` is.
+   upper house is: at 25–26 the rise check would want a 26 there. Its figure two under is judged by
+   the day (#851); husks were won every time at 22 (`'old_cinder2: under'`, a row of `OWED` until
+   then, as `'monastery: under'` was).
 3. **Two groups for the brief's five,** for the pay: four husks in the street, four in the cellars.
    The Old Drake alone pays 16,533 (2,755 a member), so the cap of 4,300 leaves nine husks, and they
    come only in fours: three read 18.6 fights to a rest at 25, past the limit of 13.75, and five
@@ -3263,8 +3264,8 @@ Owed, from H10 (#510):
   vent's, the Sheer south of the Stair being I10's (§9, #510's 5).
 - **The track ends at G10's vines:** no road runs into G10, whose east edge has none, nor does the
   atlas at the seam. The owner's, if a road should run on (§9, #510's 4).
-- **The gate's figure two under is owed to #18:** at 22 a company wins every H10 fight, where §8
-  asks no more than one in four (§9, #510's 15).
+- **The gate's figure two under is judged by the day (#851):** at 22 a company wins every H10 fight,
+  where §8 planned no more than one in four (§9, #510's 15).
 - **The Stair's link** keeps `from: 'firemount'`, though its `a` end, 258,306, lies in Cindercoast's
   H10: untouched, and no check reads it (§9).
 
@@ -3276,8 +3277,8 @@ Cut and owed, from Old Cinder (#515):
 - **The Old Drake is won 65% at 25,** not the issue's about half (§9, #515's 5): at half the town's
   floor figure falls to 75.5%, past the limit of 80%. The other way out, both husk groups in the
   street and none in the cellars, is the owner's to take instead.
-- **The undercroft's figure two under is owed to #18:** at 22 a company wins every fight there, where
-  §8 asks no more than one in four (§9, #515's 2).
+- **The undercroft's figure two under is judged by the day (#851):** at 22 a company wins every
+  fight there, where §8 planned no more than one in four (§9, #515's 2).
 - **The issue's own secret is built in part since #859** (§4.7): a room the ash did not fill, with a
   cup set outside its door, off the lane. The Old Drake's way down from the crater into the
   undercroft is not built; the doc's secret is, and the Old Drake stays on the square (§4.7).

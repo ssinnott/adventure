@@ -509,9 +509,9 @@ what is new, with points of interest and a first share of the pay.
     aim, with 1.7% of its days ending in a fight broken off; it walks Loch Fada's road, the lynx by
     the landing and the pike by the lake wall, every time; each of the seven groups is won ten
     fights in ten. M9 pays about 3,754 xp a member (793 for each of the 12 lynx and 8 pike, 1,667
-    for each of the 4 bears) and 1,520 gold. Two under, at 18, it wins every fight too, owed to #18
-    as the Kilns' and Cairnmoor's boxes' are. Density 98.0% within 8 steps and the furthest 13,
-    with no sign among its 31 points (32 since #487). The curve's rank correlation is 0.25 (0.32
+    for each of the 4 bears) and 1,520 gold. Two under, at 18, it wins every fight too (past 10 the
+    gate judges a company two under by its day, #851). Density 98.0% within 8 steps and the furthest
+    13, with no sign among its 31 points (32 since #487). The curve's rank correlation is 0.25 (0.32
     before the hole's group, #487), the lynx by the landing nearest at 3 steps (level 20) and the
     north bears the hardest at 14 (level 21). It claims the cats and a group on ice as new (§7).
 
@@ -592,12 +592,11 @@ what is new, with points of interest and a first share of the pay.
     the events seen `rime_lodge:rl_night_1` to `rl_night_4`, `rl_yard`, `rl_stockade`, `rl_pelts`
     and `rl_coach_house`; the group slain `longmere_m9:m9_night_4`.
   - **Measured.** The town: 100% of its 104 open squares within 7 steps, the furthest 4, no sign
-    among its 19 points. The hole's fight is won every time, at 20 and at 18 (owed to #18 with the
-    rest): at 20 it is 10.4 fights to a rest, a little over the aim of 8 to 10 and inside the limit
-    of 12.5, and at 18 it is 6.5. M9 with it manages 9.55 fights to a rest by the gate (9.6 by the
-    harness, the box in a new order each seed), with 7.7% of its days ending in a fight broken off,
-    where the seven groups of #486 had 1.7%. The hole pays 449 xp a member and no gold, and the
-    town nothing of its own (§8).
+    among its 19 points. The hole's fight is won every time, at 20 and at 18: at 20 it is 10.4
+    fights to a rest, a little over the aim of 8 to 10 and inside the limit of 12.5, and at 18 it is
+    6.5. M9 with it manages 9.55 fights to a rest by the gate (9.6 by the harness, the box in a new
+    order each seed), with 7.7% of its days ending in a fight broken off, where the seven groups of
+    #486 had 1.7%. The hole pays 449 xp a member and no gold, and the town nothing of its own (§8).
 
 ### 4.4 L9, the long lake's shore (#488): country, band 20–21
 
@@ -665,10 +664,10 @@ what is new, with points of interest and a first share of the pay.
     fights in ten, the lynx at 6.7 fights to a rest each, the pike at 9.5 and the bear at 29.8, the
     box's cheapest fight alone. L9 pays 2,128 xp a member (793 for each of the 10 lynx and 4 pike,
     1,667 for the bear) and 1,400 gold, the strongbox 1,100 and the crest's cairn 300. Two under,
-    at 18, it wins every fight too, owed to #18 as M9's is. Density 100.0% within 12 steps (the
-    country floor) and the furthest 11, with no sign among its 23 points. The curve's rank
-    correlation is 0.26, the lynx by the road nearest at 12 steps (level 20) and the bear the
-    hardest at 30 (level 21). It claims nothing as new (§9, #488's 14).
+    at 18, it wins every fight too. Density 100.0% within 12 steps (the country floor) and the
+    furthest 11, with no sign among its 23 points. The curve's rank correlation is 0.26, the lynx by
+    the road nearest at 12 steps (level 20) and the bear the hardest at 30 (level 21). It claims
+    nothing as new (§9, #488's 14).
 
 ### 4.5 K9, Loch Fuar (#489): core, band 20–22
 
@@ -759,15 +758,14 @@ what is new, with points of interest and a first share of the pay.
     the atlas's lake under its own box (§4.7).
   - **Measured.** A company at 20 wins every fight and manages 8.54 fights to a rest, inside the
     aim, with 0.3% of its days ending in a fight broken off; two under, at 18, it wins every fight
-    too, owed to #18 as M9's and L9's are. Its road, in under the pines past the lynx there and
-    down the shore past the lynx at the loch's foot to the crack, is walked every time, which the
-    gate's `ROADS` now names. Density 99.5% within 8 steps (832 of 836, 833 of 837 since the door's
-    square opened, #490) and the furthest 10, with no sign among its 27 points. The curve's rank
-    correlation is 0.32, the lynx by the way in nearest at 7 steps (level 20) and the bears on the
-    shore the hardest at 27 (level 21). K9 pays 4,547 xp a member (18 lynx and 8 pike at 793 each, 4
-    bears at 1,667) and 1,100 gold, the smith's iron 800 and the cairn 300; its dearest find, the
-    Bear Spear +1 at 2,050, is inside the window, and Lann Fuar is 2,000. It claims nothing as new
-    (§9, #489's 15).
+    too. Its road, in under the pines past the lynx there and down the shore past the lynx at the
+    loch's foot to the crack, is walked every time, which the gate's `ROADS` now names. Density
+    99.5% within 8 steps (832 of 836, 833 of 837 since the door's square opened, #490) and the
+    furthest 10, with no sign among its 27 points. The curve's rank correlation is 0.32, the lynx by
+    the way in nearest at 7 steps (level 20) and the bears on the shore the hardest at 27 (level
+    21). K9 pays 4,547 xp a member (18 lynx and 8 pike at 793 each, 4 bears at 1,667) and 1,100
+    gold, the smith's iron 800 and the cairn 300; its dearest find, the Bear Spear +1 at 2,050, is
+    inside the window, and Lann Fuar is 2,000. It claims nothing as new (§9, #489's 15).
 
 ### 4.6 The Sleepers' Bay (#490): dungeon, two levels of 16×16, bands 20–22 and 21–22
 
@@ -851,21 +849,20 @@ what is new, with points of interest and a first share of the pay.
     and the bay's is 352,290, six below (K10's 24,4): a plate only (§3). Nothing inside the bay
     shuts: the door under the ice is its one lock.
   - **Measured.** On the stair a company at 20 wins every fight and manages 9.64 fights to a rest,
-    inside the aim; two under, at 18, it wins every fight too, owed to #18 as K9's is. 42.3% of the
-    stair's days end in a fight broken off, which no check asks: most likely the harness's bot
-    against the mending keeper and the crews, recorded so that it can be tuned (§8; §9, #490's 21).
-    In the bay a company at 21 wins 89.8% of its fights, 0.2 under the aim, which the Matron
-    decides: she is won 59% at 21, where the aim is about half (30% to 70%), and 92% at 23, where
-    it is nearly always (90%). It manages 9.16 fights to a rest, inside the aim, with 17% of its
-    days ending in a fight broken off; its two under is n/a, the floor being over the area's. Alone,
-    a company at 20 manages each crew in 6.3 fights to a rest and the first keeper in 30, and one at
-    21 each row in 9.3. Density: the stair 100.0% within 7 steps (56 of 56) and the furthest 4, with
-    no sign among its 12 points; the bay 100.0% within 7 (66 of 66) and the furthest 5, with one
-    sign among its 14. The curve's rank correlation is 0.87 on the stair, the crew on the water's
-    way nearest at 11 steps (level 20) and the first keeper the hardest at 21 (level 21); it is 0.77
-    in the bay, the first row nearest at 7 steps (level 21) and the Matron the hardest at 13 (level
-    22). The bay pays 5,455 xp a member and 1,500 gold (§8). It claims the keepers as new (§9,
-    #490's 19).
+    inside the aim; two under, at 18, it wins every fight too. 42.3% of the stair's days end in a
+    fight broken off, which no check asks: most likely the harness's bot against the mending keeper
+    and the crews, recorded so that it can be tuned (§8; §9, #490's 21). In the bay a company at 21
+    wins 89.8% of its fights, 0.2 under the aim, which the Matron decides: she is won 59% at 21,
+    where the aim is about half (30% to 70%), and 92% at 23, where it is nearly always (90%). It
+    manages 9.16 fights to a rest, inside the aim, with 17% of its days ending in a fight broken
+    off; its two under is n/a, the floor being over the area's. Alone, a company at 20 manages each
+    crew in 6.3 fights to a rest and the first keeper in 30, and one at 21 each row in 9.3.
+    Density: the stair 100.0% within 7 steps (56 of 56) and the furthest 4, with no sign among its
+    12 points; the bay 100.0% within 7 (66 of 66) and the furthest 5, with one sign among its 14.
+    The curve's rank correlation is 0.87 on the stair, the crew on the water's way nearest at 11
+    steps (level 20) and the first keeper the hardest at 21 (level 21); it is 0.77 in the bay, the
+    first row nearest at 7 steps (level 21) and the Matron the hardest at 13 (level 22). The bay
+    pays 5,455 xp a member and 1,500 gold (§8). It claims the keepers as new (§9, #490's 19).
   - **Walkthrough.** `rimewater/walkthrough.ts` plays the door shut to a company that has not met
     the girl and open to one that has, down onto the landing and back up onto the crack; the stair
     at 20 and the bay at 21, each place's events, the crews, the keepers, the Matron and her cap;
@@ -960,13 +957,12 @@ what is new, with points of interest and a first share of the pay.
     (K10's 20,31 onto K11's 20,0), the land not named again.
   - **Measured.** A company at 20 wins every fight and manages 9.45 fights to a rest, inside the
     aim, with 0.7% of its days ending in a fight broken off; two under, at 18, it wins every fight
-    too, owed to #18 as K9's is. The zone's road stays K9's (§9, #491's 15). Density 99.9% within 8
-    steps (848 of 849) and the furthest 9, with no sign among its 25 points. The curve's rank
-    correlation is 0.62, the lynx by the bridge nearest at 6 steps (level 20) and the bears on the
-    shoulder the hardest at 32 (level 21). K10 pays 4,311 xp a member (12 lynx and 8 pike at 793
-    each, 6 bears at 1,667, 25,862 over six) and 1,200 gold, the cache's 900 and the cairn's 300;
-    its find, the Guide's Staff +1, is the ladder's and inside the window. It claims nothing as new
-    (§9, #491's 14).
+    too. The zone's road stays K9's (§9, #491's 15). Density 99.9% within 8 steps (848 of 849) and
+    the furthest 9, with no sign among its 25 points. The curve's rank correlation is 0.62, the lynx
+    by the bridge nearest at 6 steps (level 20) and the bears on the shoulder the hardest at 32
+    (level 21). K10 pays 4,311 xp a member (12 lynx and 8 pike at 793 each, 6 bears at 1,667, 25,862
+    over six) and 1,200 gold, the cache's 900 and the cairn's 300; its find, the Guide's Staff +1,
+    is the ladder's and inside the window. It claims nothing as new (§9, #491's 14).
   - **Walkthrough.** `rimewater/walkthrough.ts` walks the road west from L10's 0,3 onto K10's 31,3 at 17, 18 and 20, hears the
     cold loch's words and walks back; walks K9's south edge onto K10's
     north; walks the road square to square from the bridge to the mouth and out by the west edge;
@@ -1057,15 +1053,15 @@ what is new, with points of interest and a first share of the pay.
     built): hill, grass, 8 pines, the crags at 14 to 22 (read as void) and 9 pines. The world ends
     past it, pinned. The outdoors test follows the neighbours: K10's south edge, J11's
     east edge and I9's east edge no longer end the world, and J11's and I9's read mountain, not void.
-  - **Measured.** At 20 a company wins every fight in both, and at 18 too, owed to #18 as K9's is.
-    J9 manages 8.81 fights to a rest, inside the aim, 1% of its days ending in a fight broken off;
-    K11 8.09, 3.3%. Density 100.0% within 12 steps, the country floor: J9 836 of 836 and the
-    furthest 10, with no sign among its 17 points; K11 751 of 751 and the furthest 12, with no sign
-    among its 15. The curve's rank correlation is 1.00 in J9, the pike nearest at 26 steps (level
-    20) and the bears the hardest at 32 (level 21); K11's one group is both, at 24 steps. J9 pays
-    1,084 xp a member (four pike 3,172 and two bears 3,334, over six) and 1,000 gold, the
-    strongbox's 700 and the cairn's 300; K11 556 (3,334 over six) and the same 1,000 gold. The finds
-    are potions, none that sells (§9, #497's 6). Neither claims anything as new.
+  - **Measured.** At 20 a company wins every fight in both, and at 18 too. J9 manages 8.81 fights to
+    a rest, inside the aim, 1% of its days ending in a fight broken off; K11 8.09, 3.3%. Density
+    100.0% within 12 steps, the country floor: J9 836 of 836 and the furthest 10, with no sign among
+    its 17 points; K11 751 of 751 and the furthest 12, with no sign among its 15. The curve's rank
+    correlation is 1.00 in J9, the pike nearest at 26 steps (level 20) and the bears the hardest at
+    32 (level 21); K11's one group is both, at 24 steps. J9 pays 1,084 xp a member (four pike 3,172
+    and two bears 3,334, over six) and 1,000 gold, the strongbox's 700 and the cairn's 300; K11 556
+    (3,334 over six) and the same 1,000 gold. The finds are potions, none that sells (§9, #497's 6).
+    Neither claims anything as new.
   - **Walkthrough.** `rimewater/walkthrough.ts` calls `fuarBehind` after K9's step (§9, #497's 9).
     West from K9's 0,20 onto J9's 31,20, walked; the old woman's words; the holes; both groups won
     at 20, the pike under the strand's ice; the store shut but for the rock, the blazes seen, the
@@ -1204,18 +1200,17 @@ what is new, with points of interest and a first share of the pay.
     0,31 and 1,31 mountain, hills at 2 to 16, heather at 17 to 31), and N8's south edge is re-pinned
     in the outdoors test, its two squares reading mountain, not void; N9's east and south, the
     glacier's wall, are void past (O9 and N10, cut).
-  - **Measured, L10 to N9.** At 20 a company wins every fight in all five, and at 18 too, owed to #18
-    as K9's is. L10 and M10 manage 12.05 fights to a rest, past the aim of 8 to 10 and inside the
-    limit of 12.5, 1.3% of their days ending in a fight broken off; L11, M11 and N9 11.06, 1.7% (§9,
-    #497's 19). Density, within 12 steps (the country floor): L10 100.0% (715 of 715) and the
-    furthest 10, with no sign among its 16 points; L11 96.5% (778 of 806) and the furthest 18, with
-    none among its 14; M10 99.0% (855 of 864) and the furthest 17, with none among its 16; M11 100.0%
-    (645 of 645) and the furthest 10, with none among its 14; N9 100.0% (636 of 636) and the
-    furthest 11, with none among its 13. The curve's rank correlation is 1.00 in each. L10 and M10
-    pay 820 xp a member (two pike 1,586 and two bears 3,334, over six); L11, M11 and N9 952 (three
-    lynx 2,379 and two bears 3,334, over six); 4,496 between the five. Each holds 300 gold, the
-    secret's 200 and a cairn's 100. The finds are potions and elixirs, none that sells (§9, #497's
-    21). None claims anything as new.
+  - **Measured, L10 to N9.** At 20 a company wins every fight in all five, and at 18 too. L10 and
+    M10 manage 12.05 fights to a rest, past the aim of 8 to 10 and inside the limit of 12.5, 1.3% of
+    their days ending in a fight broken off; L11, M11 and N9 11.06, 1.7% (§9, #497's 19). Density,
+    within 12 steps (the country floor): L10 100.0% (715 of 715) and the furthest 10, with no sign
+    among its 16 points; L11 96.5% (778 of 806) and the furthest 18, with none among its 14; M10
+    99.0% (855 of 864) and the furthest 17, with none among its 16; M11 100.0% (645 of 645) and the
+    furthest 10, with none among its 14; N9 100.0% (636 of 636) and the furthest 11, with none among
+    its 13. The curve's rank correlation is 1.00 in each. L10 and M10 pay 820 xp a member (two pike
+    1,586 and two bears 3,334, over six); L11, M11 and N9 952 (three lynx 2,379 and two bears 3,334,
+    over six); 4,496 between the five. Each holds 300 gold, the secret's 200 and a cairn's 100. The
+    finds are potions and elixirs, none that sells (§9, #497's 21). None claims anything as new.
   - **Walkthrough, L10 to N9.** `rimewater/walkthrough.ts` walks the road from L9's south edge across
     L10's corner to K10 and from L10's 0,3 onto K10's 31,3 at 17, 18 and 20 for the cold loch's words
     (L9's and K10's old pass steps, rewritten as the road walked); after `fuarBehind` and before the
@@ -1581,35 +1576,34 @@ dungeon entered from the ice is no kind the check knows, so neither is claimed (
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
   (docs/areas/thornmark.md §9, 17): a company at 20 wins nine in ten of M9's fights and walks the
   drove road to the lodge resting at the inn; one at 18 wins no more than one in four, which is how
-  the Rimefells turn a Cairnmoor company back. The Matron is won about half the time at 21 and
-  nearly always at 23. The ice-hole's fight is judged with the fire at the company's back, one
-  group and its call (#537), inside the aim at 20. As built: a company at 20 wins every fight on M9
-  and walks Loch Fada's road every time, 9.55 fights to a rest; one at 18 wins every fight too,
-  owed to #18 as the Kilns' and Cairnmoor's boxes' are (§4.2). Rime Lodge (#487) puts the hole's
-  fight on M9 as a group of its own: Rimewater at its maps' floors won 100% of its 20 groups'
-  fights (8 before L9, 12 before K9), and so did a company two under, the same debt; the hole
-  alone is 10.4 fights to a rest at 20, a little over the aim of 8 to 10 and inside the limit of
-  12.5 (§4.3). L9 the same: at 20 every fight won, 9.27 fights to a rest; at 18 every fight won too,
-  owed to #18 (§4.4). K9 the same: at 20 every fight won, 8.54 fights to a rest; at 18 every fight
-  won too, owed to #18; its road, in past the lynx by the way and down to the crack, walked every
-  time (§4.5). The bay (#490): a company at 20 wins every fight on the stair and manages 9.64
-  fights to a rest, inside the aim, and one at 18 wins every fight too, owed to #18; 42.3% of the
-  stair's days end in a fight broken off, informational and no check's, most likely the bot against
-  the mending keeper and the crews (§9, #490's 21). A company at the bay's floor, 21, wins 89.8% of
-  its fights (aim 90%, limit 80%), the Matron deciding it: she is won 59% at 21 (aim 30% to 70%) and
-  92% at 23 (aim 90%). It manages 9.16 fights to a rest in the bay (aim 8.25 to 10.25), 17% of its
-  days ending in a fight broken off; its two under is n/a, its floor being over the area's (§4.6).
-  K10 (#491) the same: at 20 every fight won, 9.45 fights to a rest, 0.7% of its days ending in a
-  fight broken off; at 18 every fight won too, owed to #18; its road is not the zone's (§4.7). J9
-  and K11 (#497) the same: at 20 every fight won, 8.81 and 8.09 fights to a rest, 1% and 3.3% of
-  their days ending in a fight broken off; at 18 every fight won too, owed to #18 (§4.8). L10 and M10 (#497) at 20: every fight won, 12.05 fights to a rest, past the aim
-  and inside the limit of 12.5, 1.3% of their days ending in a fight broken off; L11, M11 and N9 the
-  same, 11.06 and 1.7%; at 18 every fight won too in each, owed to #18 (§4.8). With
-  the bay and K10, Rimewater at its maps' floors wins 98.8% of its 35 groups' fights (98.5% of 27
-  before K10), the Matron being the shortfall; a company two under wins 97.2% (96.4%), owed to #18;
-  with J9 and K11, 98.9% of its 38 groups' fights, and 97.4% two under, owed to #18;
-  with the five after them, 99.1% of its 48 groups' fights, and 98% two under, owed to #18.
-  The side quests (#494) place no group, and the gate is as it was.
+  the Rimefells turn a Cairnmoor company back (past 10 the gate judges a company two under by its
+  day, #851). The Matron is won about half the time at 21 and nearly always at 23. The ice-hole's
+  fight is judged with the fire at the company's back, one group and its call (#537), inside the aim
+  at 20. As built: a company at 20 wins every fight on M9 and walks Loch Fada's road every time,
+  9.55 fights to a rest; one at 18 wins every fight too (§4.2). Rime Lodge (#487) puts the hole's
+  fight on M9 as a group of its own: Rimewater at its maps' floors won 100% of its 20 groups' fights
+  (8 before L9, 12 before K9), and so did a company two under; the hole alone is 10.4 fights to a
+  rest at 20, a little over the aim of 8 to 10 and inside the limit of 12.5 (§4.3). L9 the same: at
+  20 every fight won, 9.27 fights to a rest; at 18 every fight won too (§4.4). K9 the same: at 20
+  every fight won, 8.54 fights to a rest; at 18 every fight won too; its road, in past the lynx by
+  the way and down to the crack, walked every time (§4.5). The bay (#490): a company at 20 wins
+  every fight on the stair and manages 9.64 fights to a rest, inside the aim, and one at 18 wins
+  every fight too; 42.3% of the stair's days end in a fight broken off, informational and no
+  check's, most likely the bot against the mending keeper and the crews (§9, #490's 21). A company
+  at the bay's floor, 21, wins 89.8% of its fights (aim 90%, limit 80%), the Matron deciding it: she
+  is won 59% at 21 (aim 30% to 70%) and 92% at 23 (aim 90%). It manages 9.16 fights to a rest in the
+  bay (aim 8.25 to 10.25), 17% of its days ending in a fight broken off; its two under is n/a, its
+  floor being over the area's (§4.6). K10 (#491) the same: at 20 every fight won, 9.45 fights to a
+  rest, 0.7% of its days ending in a fight broken off; at 18 every fight won too; its road is not
+  the zone's (§4.7). J9 and K11 (#497) the same: at 20 every fight won, 8.81 and 8.09 fights to a
+  rest, 1% and 3.3% of their days ending in a fight broken off; at 18 every fight won too (§4.8).
+  L10 and M10 (#497) at 20: every fight won, 12.05 fights to a rest, past the aim and inside the
+  limit of 12.5, 1.3% of their days ending in a fight broken off; L11, M11 and N9 the same, 11.06
+  and 1.7%; at 18 every fight won too in each (§4.8). With the bay and K10, Rimewater at its maps'
+  floors wins 98.8% of its 35 groups' fights (98.5% of 27 before K10), the Matron being the
+  shortfall; a company two under wins 97.2% (96.4%); with J9 and K11, 98.9% of its 38 groups'
+  fights, and 97.4% two under; with the five after them, 99.1% of its 48 groups' fights, and 98% two
+  under. The side quests (#494) place no group, and the gate is as it was.
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3); the
   bay as a dungeon, 90% within 7 and none past 10. As built: M9 98.0% within 8 steps and the
   furthest 13, with no sign among its 31 points (#486), 32 since #487; Rime Lodge, a town, 100%
@@ -1832,8 +1826,9 @@ Decided by delegate for #486, each the owner's to overturn:
    two under the ice; ice bears, two, in two at the glacier's edge, the hardest. The harness gives
    9.6 fights to a rest (aim 8 to 10); groups of three gave 12.2.
 9. **No floor is lowered:** the bear at 21 is the band's top over its floor 20.
-10. **Two under is owed to #18** (`longmere_m9` and Rimewater, in the gate's `OWED`), as every Kilns
-    and Cairnmoor box is: a company of 18 wins every fight in the act's gear.
+10. **Two under, past 10, is judged by the day (#851), not by the fights won** (`longmere_m9` and
+    Rimewater were rows of the gate's `OWED` until then), as for every Kilns and Cairnmoor box: a
+    company of 18 wins every fight in the act's gear.
 11. **The milestone, 21,8, reads RIME LODGE 1, THE PASS 9:** the pass is 119 squares along the
     roads, to the high pass's link at 334,302, and 9 at 13 to the unit; the gate is 3 squares on,
     under a unit, so the stone says 1, the least it can (N8's notch fixes the landing 4 from it).
@@ -1982,7 +1977,8 @@ Decided by delegate for #488, each the owner's to overturn:
     Lodge's share (#487) built; with §8's scaled shares still to come (K9 2,650, the bay 4,250, K10
     1,950 and the side quests 1,600: 10,450) at M9's ratio of 1.42, 14,840, it would stand at about
     21,170, under 1.4 times the ask (22,774), so no group is cut.
-16. **Two under is owed to #18** (`longmere_l9`, in the gate's `OWED`), as M9's.
+16. **Two under is judged by the day (#851)** (`longmere_l9`, a row of the gate's `OWED` until
+    then), as M9's.
 
 Decided by delegate for #489, each the owner's to overturn:
 
@@ -2028,7 +2024,8 @@ Decided by delegate for #489, each the owner's to overturn:
     lynx by the way in and the lynx at the loch's foot, on the way to the crack.
 15. **Core density,** the brief's, not the scaffold's country; **novel claims nothing,** the lock
     and the dungeon from the ice being the bay's to claim when its exit is listed.
-16. **Two under is owed to #18** (`coldmere_k9`, in the gate's `OWED`), as M9's and L9's.
+16. **Two under is judged by the day (#851)** (`coldmere_k9`, a row of the gate's `OWED` until
+    then), as M9's and L9's.
 17. **K10 meets K9's south row** and finds the atlas's lake under its own box: K9's loch lies on the
     river that feeds the lake, which lies in K10 and L10 (352 to 368 by 294 to 326). The edge is
     pinned (§4.5, §4.7); the world map paints the atlas's river over K9's ice. Built (#491's 4 and
@@ -2108,8 +2105,8 @@ exit and the lock):
 19. **Novelty claims the keepers** (a family). `inflict:asleep` is on the road before it (the check
     refused it), and a lock or a dungeon entered from the ice is no kind the check knows, so
     neither is claimed.
-20. **Two under is owed to #18** (`sleepers_bay: under`, as K9's); the bay's own is n/a, its floor
-    being over the area's.
+20. **Two under is judged by the day (#851)** (`sleepers_bay: under`, as K9's, a row of `OWED` until
+    then); the bay's own is n/a, its floor being over the area's.
 21. **The stair's days end in a fight broken off 42.3% of the time,** recorded and not tuned: the
     gate asks no figure of it, and it is most likely the bot against the mending keeper and the
     crews. The bay's is 17%. Left so that the owner can have it tuned later (§8).
@@ -2173,13 +2170,14 @@ Decided by delegate for #491, each the owner's to overturn:
     the curve's owed row keeps. 14. **Core density,** the brief's; **novel claims nothing:** a
     landmark claim is an atlas site's icon, and the pass is no site. 15. **`ROADS.coldmere` stays
     K9's:** the gate names a zone's road once and did not ask for K10's, and K10's lynx added would
-    make the zone's road four fights without a rest. 16. **Two under is owed to #18**
-    (`coldmere_k10: under`, in the gate's `OWED`), as K9's. 17. **Smaller:** the map is named *Loch
-    Fuar*, the zone's, as K9's; the shrine's stat is accuracy, not yet given in Rimewater; the
-    trappers' camp is the brief's camp (#45); the cache's staff keeps the ladder's plain name,
-    Guide's Staff +1 (#535's 3). 18. **The side quests and the chapter may pay at most about 1,729
-    xp a member between them** (§8): the line, 22,774, less 21,045 (K10 built, #439's 400 counted).
-    The quests' brief is 1,600. Each cuts its own, the least valuable first, rather than pass it.
+    make the zone's road four fights without a rest. 16. **Two under is judged by the day (#851)**
+    (`coldmere_k10: under`, a row of the gate's `OWED` until then), as K9's. 17. **Smaller:** the
+    map is named *Loch Fuar*, the zone's, as K9's; the shrine's stat is accuracy, not yet given in
+    Rimewater; the trappers' camp is the brief's camp (#45); the cache's staff keeps the ladder's
+    plain name, Guide's Staff +1 (#535's 3). 18. **The side quests and the chapter may pay at most
+    about 1,729 xp a member between them** (§8): the line, 22,774, less 21,045 (K10 built, #439's
+    400 counted). The quests' brief is 1,600. Each cuts its own, the least valuable first, rather
+    than pass it.
 
 Decided by delegate for #492, each the owner's to overturn:
 
@@ -2530,8 +2528,8 @@ Owed by the side quests as built (§6):
   and its east edge L10's west, the pins moved (#497, §4.8).
 Owed by the country behind as built (#497, §4.8, §8):
 
-- **To #18:** the two-under figures of L10, L11, M10, M11 and N9, as every box's: every fight won at
-  18, `OWED` in `tools/tests/gate.ts` naming each.
+- **Settled by #851:** the two-under figures of L10, L11, M10, M11 and N9, as every box's, are
+  judged by the day; every fight was won at 18, and `OWED` in `tools/tests/gate.ts` named each.
 - **Loch Fuar's crossing words** ("harder than the long loch's shore behind", "the way back east
   under the pines is still open") read wrong to a company under the floor walking into K11 from
   Monks' Vale. K9's walkthrough pins the warning's words, so they are left as they are.

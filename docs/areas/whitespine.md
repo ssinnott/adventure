@@ -452,9 +452,9 @@ settled in its issue.
     before the vigil); it walks Monks' Vale's road, past the
     brothers at the pass's foot and on the road, every time. J11 pays 2,791 xp a member and 700
     gold, and the vigil's brothers 727 more to a company that keeps it. Two under, at 20, it wins
-    every fight too, owed to #18 as Rimewater's boxes' is. Density
-    99.1% within 8 steps (419 of 423, with the three squares I11 opened) and the furthest 9, with
-    no sign among its 24 points. It claims peaks underfoot as new (§7).
+    every fight too (past 10 the gate judges a company two under by its day, #851). Density 99.1%
+    within 8 steps (419 of 423, with the three squares I11 opened) and the furthest 9, with no sign
+    among its 24 points. It claims peaks underfoot as new (§7).
 
 ### 4.3 Highcell (#500): dungeon, two levels of 16×16, band 22–24
 
@@ -518,16 +518,16 @@ settled in its issue.
     from 7,1 to 12,13 facing west. The secret wall is 7,11. There is no other way in or out.
   - **Measured.** A company at 22 wins every fight in the upper house and manages 11.80 fights to a
     rest, over the aim (8.5 to 10.5) and inside the limit (7 to 13), with 5% of its days ending in a
-    fight broken off; two under, at 20, it wins every fight too, owed to #18. In the lower house a
-    company at 23 wins 83% of the fights, the Abbot counted, off the aim of 90% and inside the limit
-    of 80%; it manages 10.99 fights to a rest, a little over the aim (8.75 to 10.75) and inside the
-    limit (7.25 to 13.25), with 3.7% of its days broken off, and the Abbot is won 66% at 23 and 93%
-    at 25, set off the boss line (§9, #500's 6). Highcell pays 4,183 xp a member for the brief's
-    2,600 and holds 600 gold. Density 100.0% within 7 steps on both levels, the furthest 5 on both,
-    with one sign among their 15 and 9 points. The curve's rank correlation is 1.00 on both: in the
-    upper house the brothers nearest at 10 steps, level 22, and the ringers on the stair the hardest
-    at 17, level 23; in the lower the chapter house nearest at 5, level 22.5, and the Abbot the
-    hardest at 8, level 24.
+    fight broken off; two under, at 20, it wins every fight too. In the lower house a company at 23
+    wins 83% of the fights, the Abbot counted, off the aim of 90% and inside the limit of 80%; it
+    manages 10.99 fights to a rest, a little over the aim (8.75 to 10.75) and inside the limit (7.25
+    to 13.25), with 3.7% of its days broken off, and the Abbot is won 66% at 23 and 93% at 25, set
+    off the boss line (§9, #500's 6). Highcell pays 4,183 xp a member for the brief's 2,600 and
+    holds 600 gold. Density 100.0% within 7 steps on both levels, the furthest 5 on both, with one
+    sign among their 15 and 9 points. The curve's rank correlation is 1.00 on both: in the upper
+    house the brothers nearest at 10 steps, level 22, and the ringers on the stair the hardest at
+    17, level 23; in the lower the chapter house nearest at 5, level 22.5, and the Abbot the hardest
+    at 8, level 24.
 
 ### 4.4 I11, the Peak Stone's box (#501): core, band 22–23
 
@@ -598,8 +598,8 @@ settled in its issue.
   - **Measured.** A company at 22 wins every fight and manages 10.12 fights to a rest, inside the
     aim, with 14.3% of its days ending in a fight broken off; it walks the High Spine's road, past
     the brothers, every time. I11 pays 2,355 xp a member and 300 gold. Two under, at 20, it wins
-    every fight too, owed to #18 as J11's is. Density 99.5% within 8 steps and the furthest 9, with
-    no sign among its 26 points. It claims cliffs as new (§7).
+    every fight too. Density 99.5% within 8 steps and the furthest 9, with no sign among its 26
+    points. It claims cliffs as new (§7).
 
 ### 4.5 I10, Stairwatch and the Stair's head (#502): core, band 22–24
 
@@ -773,10 +773,10 @@ settled in its issue.
   door and the doc's trolls' cave not built (§9, #503's 2, 6 and 8).
   - **Measured.** A company at 22 wins every fight and manages 9.43 fights to a rest, inside the
     aim, with 21.3% of its days ending in a fight broken off; it walks Sheer Point's road, past the
-    trolls and the masons, every time. Two under, at 20, it wins every fight too, owed to #18 (§9,
-    #503's 11). I9 pays 1,800 xp a member and 790 gold a clear. Density 100.0% within 12 steps (all
-    412 squares, 371 needed) and the furthest 10, with no sign among its 22 points. It claims
-    nothing as new (§7).
+    trolls and the masons, every time. Two under, at 20, it wins every fight too (§9, #503's 11). I9
+    pays 1,800 xp a member and 790 gold a clear. Density 100.0% within 12 steps (all 412 squares,
+    371 needed) and the furthest 10, with no sign among its 22 points. It claims nothing as new
+    (§7).
 
 ### 4.7 I8, Sheer Point (#504): core, band 22–24
 
@@ -868,10 +868,10 @@ settled in its issue.
   - **Measured.** A company at 22 wins every fight and manages 8.99 fights to a rest, inside the
     aim, with 64.7% of its days ending in a fight broken off, the foreman's five, against I9's
     21.3%; the check does not bind it. It walks Sheer Point's road, I9's trolls and masons and I8's
-    eagles, masons and foreman's, every time. Two under, at 20, it wins every fight too, owed to #18
-    (§9, #504's 15). I8 pays 2,104 xp a member and 980 gold a clear. Density 100.0% within 8 steps
-    (all 229 squares, 207 needed) and the furthest 8, with no sign among its 26 points. It claims
-    nothing as new (§7).
+    eagles, masons and foreman's, every time. Two under, at 20, it wins every fight too (§9, #504's
+    15). I8 pays 2,104 xp a member and 980 gold a clear. Density 100.0% within 8 steps (all 229
+    squares, 207 needed) and the furthest 8, with no sign among its 26 points. It claims nothing as
+    new (§7).
 
 ### 4.8 J10, I12 and J12, the country behind (#508): country, band 22–23
 
@@ -965,17 +965,16 @@ settled in its issue.
     outdoors test follows the neighbours: J9's south and west, K10's west, J11's four edges, I11's
     east and south and I10's north, south and east are re-pinned, their ring reading mountain, not
     void.
-  - **Measured, J10, I12 and J12.** At 22 a company wins every fight in all three, and at 20 too,
-    owed to #18 as every box's. J10 manages 9.72 fights to a rest, inside the aim of 8.5 to 10.5
-    (limit 7 to 13), with no day ending in a fight broken off; I12 and J12 manage 8.22, just under
-    the aim and inside the limit, 48.3% of their days ending in a fight broken off. Density, within
-    12 steps (the country floor): J10 100.0% (666 of 666, 600 needed) and the furthest 9, with no
-    sign among its 17 points; I12 100.0% (539 of 539, 486 needed) and the furthest 9, with none
-    among its 15; J12 100.0% (254 of 254, 229 needed) and the furthest 9, with none among its 16 (250 and 12 before
-    #863's hollow, §4.9).
-    Each pays about 609 xp a member and holds 1,700 gold, the secret's 1,400 and a cairn's 300,
-    J10's two giants' purses (70 to 160 each) besides; the finds are elixirs and Sapphire Vials, no
-    ware (§9, #508's 10). None claims anything as new.
+  - **Measured, J10, I12 and J12.** At 22 a company wins every fight in all three, and at 20 too.
+    J10 manages 9.72 fights to a rest, inside the aim of 8.5 to 10.5 (limit 7 to 13), with no day
+    ending in a fight broken off; I12 and J12 manage 8.22, just under the aim and inside the limit,
+    48.3% of their days ending in a fight broken off. Density, within 12 steps (the country floor):
+    J10 100.0% (666 of 666, 600 needed) and the furthest 9, with no sign among its 17 points; I12
+    100.0% (539 of 539, 486 needed) and the furthest 9, with none among its 15; J12 100.0% (254 of
+    254, 229 needed) and the furthest 9, with none among its 16 (250 and 12 before #863's hollow,
+    §4.9). Each pays about 609 xp a member and holds 1,700 gold, the secret's 1,400 and a cairn's
+    300, J10's two giants' purses (70 to 160 each) besides; the finds are elixirs and Sapphire
+    Vials, no ware (§9, #508's 10). None claims anything as new.
   - **Walkthrough, J10, I12 and J12.** `whitespine/walkthrough.ts` walks the pass over J10: K10's
     0,19 onto J10's 31,19 at 19, 20 and 22 for the crossing line, back with nothing said, J10's
     20,31 onto J11's 20,0 with nothing said, and the road square to square from K10's edge to the
@@ -1264,33 +1263,32 @@ I10's and the trolls J11's (§4.8).
   gold of the 10,800, 5,750 before the three, and the curve's owed row is gone (§9, #508's 11).
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor: a
   company at 22 wins nine in ten of J11's fights and walks the road from the pass's foot to the gate
-  resting at its camp; one at 20 wins no more than one in four. The Abbot is won about half the time
-  at 23 and nearly always at 25; the Stair-king the same. The bot must know the toll (#549): it
-  refuses, so that the gate measures the fight. As built: a company at 22 wins every fight on J11
-  and walks Monks' Vale's road every time, 10.50 fights to a rest; one at 20 wins every fight too,
-  owed to #18 as Rimewater's boxes' is (§4.2). On Highcell a company at 22 wins every fight in the
-  upper house and manages 11.80 fights to a rest, over the aim and inside the limit; one at 20 wins
-  every fight too, owed to #18. In the lower house a company at 23 wins 83% of the fights and
-  manages 10.99 fights to a rest, a little over the aim; the Abbot is won 66% at 23 and 93% at 25,
-  set off the boss line (§4.3; §9, #500's 6). On I11 a company at 22 wins every fight and walks the
-  High Spine's road every time, 10.12 fights to a rest; one at 20 wins every fight too, owed to #18
+  resting at its camp; one at 20 wins no more than one in four (past 10 the gate judges a company
+  two under by its day, #851). The Abbot is won about half the time at 23 and nearly always at 25;
+  the Stair-king the same. The bot must know the toll (#549): it refuses, so that the gate measures
+  the fight. As built: a company at 22 wins every fight on J11 and walks Monks' Vale's road every
+  time, 10.50 fights to a rest; one at 20 wins every fight too (§4.2). On Highcell a company at 22
+  wins every fight in the upper house and manages 11.80 fights to a rest, over the aim and inside
+  the limit; one at 20 wins every fight too. In the lower house a company at 23 wins 83% of the
+  fights and manages 10.99 fights to a rest, a little over the aim; the Abbot is won 66% at 23 and
+  93% at 25, set off the boss line (§4.3; §9, #500's 6). On I11 a company at 22 wins every fight and
+  walks the High Spine's road every time, 10.12 fights to a rest; one at 20 wins every fight too
   (§4.4). On I10 a company at 22 wins 86% of the fights, the king counted, and walks the road past
   the giant and the troll every time, 11.72 fights to a rest, over the aim; one at 20 wins 68%, so
   nothing is owed. The Stair-king is won 58% at 22 and 79% at 24, the gate's floors for him, and by
   the gate's own measure 56% at 23 and 97% at 25, so "about half at 23, nearly always at 25" holds
   (§4.5; §9, #502's 1 and 3). On I9 a company at 22 wins every fight and walks the road past the
   trolls and the masons every time, 9.43 fights to a rest, inside the aim; one at 20 wins every
-  fight too, owed to #18 (§4.6; §9, #503's 11). On I8 a company at 22 wins every fight and walks the
-  road past I9's trolls and masons and I8's eagles, masons and foreman's every time, 8.99 fights to
-  a rest, inside the aim, with 64.7% of its days ending in a fight broken off; one at 20 wins every
-  fight too, owed to #18 (§4.7; §9, #504's 15). On J10 (#508) a company at 22 wins every fight and
-  manages 9.72 fights to a rest, inside the aim of 8.5 to 10.5 (limit 7 to 13), no day ending in a
-  fight broken off; on I12 and J12 it wins every fight and manages 8.22, just under the aim and
-  inside the limit, 48.3% of its days ending in a fight broken off; at 20 it wins every fight in
-  each too, owed to #18 (§4.8; §9, #508's 3). The Whitespine's 23 groups were won 96.7% of the
-  fights at their maps' floors and 93% two under, over the limit of 90%, so the area's owed entry
-  (#18) stays; with the country behind its 29 groups are won 97.4% and 94.4% two under, and it
-  stays.
+  fight too (§4.6; §9, #503's 11). On I8 a company at 22 wins every fight and walks the road past
+  I9's trolls and masons and I8's eagles, masons and foreman's every time, 8.99 fights to a rest,
+  inside the aim, with 64.7% of its days ending in a fight broken off; one at 20 wins every fight
+  too (§4.7; §9, #504's 15). On J10 (#508) a company at 22 wins every fight and manages 9.72 fights
+  to a rest, inside the aim of 8.5 to 10.5 (limit 7 to 13), no day ending in a fight broken off; on
+  I12 and J12 it wins every fight and manages 8.22, just under the aim and inside the limit, 48.3%
+  of its days ending in a fight broken off; at 20 it wins every fight in each too (§4.8; §9, #508's
+  3). The Whitespine's 23 groups were won 96.7% of the fights at their maps' floors and 93% two
+  under, over the limit of 90%, so the area's entry in `OWED` stood until #851 judged the day; with
+  the country behind its 29 groups are won 97.4% and 94.4% two under.
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3),
   measured over the squares the mountain leaves. As built: J11 99.1% within 8 steps and the furthest
   9, with no sign among its 22 points (#499); Highcell's two levels 100.0% within 7 steps, the
@@ -1497,7 +1495,7 @@ Decided by delegate for #499, each the owner's to overturn:
     Rimewater's.
 16. **The chapter is owed to #505:** the quests test listed `monksvale`, `highspine` and
     `sheerpoint` as planned and `whitespine` as owing its chapter, until #505 wrote it. The gate
-    figures under the floor are owed to #18, as Rimewater's are.
+    judges the figures under the floor by the day (#851).
 17. **The climate is the range's:** summer 8, winter -12, daily 7, damp 0.03 to 0.08, wettest 330,
     fog 0.4, lag 12; cloud comes down off the crest and thunder rolls along the range.
 
@@ -1520,8 +1518,7 @@ Decided by delegate for #500, each the owner's to overturn:
    and band go and the site at 322,342 loses `planned`; ids are `hc1_*` and `hc2_*`.
 2. **Bands 22–24 above and 23–24 below.** The upper house is banded from the area's floor, as Carn
    Dubh's cairn is: at 23–24 the rise check wants its hardest group at 24, and only the Abbot is.
-   The lower's floor, 23, judges the Abbot at 23 and 25. Two under is owed to #18
-   (`monastery: under`).
+   The lower's floor, 23, judges the Abbot at 23 and 25. Two under is judged by the day (#851).
 3. **Four groups for the brief's sixteen,** for the pay: brothers (3) by the cells, the nearest;
    bell-ringers (4) down the tower's stair, the upper house's hardest at 23; brothers (2) before
    bell-ringers (2) in the chapter house; the Abbot alone. Two ringers alone were 28 fights to a
@@ -1759,9 +1756,9 @@ Decided by delegate for #503, each the owner's to overturn:
    times the ask (§8).
 10. **The Ashen Mason is placed here first:** #507's 10 owed it to I8, and it is out of `UNPLACED`
     (`tools/tests/maps.ts`).
-11. **Two under is owed to #18:** I9 at 20 wins every fight (`'sheerpoint_i9: under'`), and with its
-    three groups the area's pool is 91.5% two under, over the limit of 90%, so
-    `'the Whitespine: under'` is back (I10 dropped it at 89.9%).
+11. **Two under was a row of `OWED` until #851 judged the day:** I9 at 20 wins every fight
+    (`'sheerpoint_i9: under'`), and with its three groups the area's pool is 91.5% two under, over
+    the limit of 90%, so `'the Whitespine: under'` was back (I10 had dropped it at 89.9%).
 12. **The wilderness features:** the cairn beside the trail at 20,13 (a snow square cut in the
     peaks; a Sapphire Vial and no gold, as the range's cairns; *to steer by when the cloud is
     down*); the camp, The lee of the crest, at 13,25; a shrine of luck at the Sheer's edge, 1,19, a
@@ -1836,7 +1833,7 @@ Decided by delegate for #504, each the owner's to overturn:
     over water (its stone is the Kilns' pier's) or a person taken, and a cave on the atlas is on the
     road before.
 15. **The gate:** `ROADS` `sheerpoint` runs on to `i8_eagles`, `i8_masons` and `i8_foreman`, the
-    troll being off the road, by night; `'sheerpoint_i8: under'` is owed to #18.
+    troll being off the road, by night; two under, I8 is judged by the day (#851).
 
 Decided by delegate for #505, each the owner's to overturn:
 
@@ -2192,8 +2189,9 @@ Cut and owed, from I9 (#503):
 - **The trolls' cave,** the doc's secret, is not built: the issue's own, the masons' cache behind
   their tally, is, as §4.6 has it, and the hint's words stand as a thing seen at the gully (§9,
   #503's 6).
-- **Two under.** I9 at 20 and the area's pool, 91.5% two under against a limit of 90%, are owed to
-  #18, as the Whitespine's was before I10 dropped it (§9, #503's 11).
+- **Two under.** I9 at 20 and the area's pool, 91.5% two under against a limit of 90%, stood past
+  the limit, as the Whitespine's did before I10 dropped it (§9, #503's 11); #851 put the day in
+  their place.
 - **I9's west edge is shut:** H9 is built (#522) and the Sheer shuts its east edge, so the Stair stays
   the only way over; north the trail goes on into I8 (#504) (§9, #503's 18).
 - **The shrine's kneel** is built (#793, #800): `kneel` in `tools/walk.ts` finds a zone map's shrine
@@ -2210,8 +2208,8 @@ Cut and owed, from I8 (#504):
 - **The Mason's Tally and the Thief's third.** The Mason's Tally (#56's 48) is built (§6, #506);
   the watcher in Rook's Nest has words only, his trainer entry and the Thief's quest being #448's
   (§9, #504's 11 and 12).
-- **Two under.** I8 at 20 and the area's pool, 93% two under against a limit of 90%, are owed to #18
-  (§9, #504's 15).
+- **Two under.** I8 at 20 and the area's pool, 93% two under against a limit of 90%, stood past the
+  limit (§9, #504's 15); #851 put the day in their place.
 - **The world ends past I8,** in the sea to the north and west and against J8, not built, to the
   east (§4.7).
 - **The shrine's kneel,** as I9's, is built (#793, #800): it works on the drowned god's shrine at
@@ -2247,8 +2245,8 @@ Cut and owed, from the country behind (#508):
   choice (§9, #508's 5).
 - **The den (#88)** in none of the three: a den's keepers and brood pace past the limit or pay past
   the share, as in Rimewater's seven (§9, #508's 13).
-- **Two under.** J10, I12 and J12 at 20 win every fight, owed to #18 as every box's: `OWED` in
-  `tools/tests/gate.ts` names each, and the area's pool stays over the limit (§8).
+- **Two under.** J10, I12 and J12 at 20 win every fight; `OWED` in `tools/tests/gate.ts` named each,
+  and the area's pool stayed over the limit (§8), until #851 judged the day instead.
 - **H12, Ashfall's country behind, is built (#522):** I12's west edge, ash at rows 0 to 11, grass at 12 to 14, hills at 15 to 19, mountain at 20 to 30 and void at 31, meets its east edge square for square, and the pin follows it.
 - **The world ends past J12** to the east against K12, cut, and to the south at the rim, as I12's
   does (§4.8).
