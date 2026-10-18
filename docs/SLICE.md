@@ -689,10 +689,19 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   repeats walkthrough:shelf's play). The suites are in `tools/tests/`, one file each exporting a function of its name (`lib.ts`
   is what they share), which the runner finds (maps, movement, monsters, combat, harness, party,
   traits, calendar, terrain, weather, atlas, outdoors, save, quests, then any other in name order),
-  then each area's walkthrough (the Foreland's and Thornmark's), in road order. Every check prints a
-  line saying what it holds, so the output is the list; `node tools/test.ts maps combat` runs a few
+  then each area's walkthrough (the Foreland's and Thornmark's), in road order. Every check has a
+  line saying what it holds, so the output under `--list` is the list; `node tools/test.ts maps combat` runs a few
   suites, `walkthrough:<area>` one walkthrough. The pilot's survival sweep and full run (`survival`,
   `fullrun`, docs/PILOT.md) run only when named; `npm test` names the full run, on the shelf alone.
+  The run is quiet unless asked (#895): by default it prints a check only when it fails, and the
+  owed lines, each under its suite's name, and holds back what a suite prints itself (the gate's
+  `n/a` lines, the quests' `info`); `--list`, or `TEST_LIST=1`, which reaches each step of `npm test`
+  and `npm run check`, prints every line. Each suite ends with a line of its seconds and its count
+  (`gate  335.5 s  617 ok`), timed in the one process from its load to its end, and the run with a
+  table of those lines, the slowest first, before the last line. A green run printed 27,874 lines on
+  18 October and prints 122. The table that day, on a four-core container shared with other runs:
+  the gate 335.5 s, `labels` 104.5, `row` 84.5, the Foreland's walkthrough 33.1, `quests` 27.7,
+  `harness` 27.1, `scaffold` 12.3, `pilot` 8.5 and every other suite under 6, 698.9 s in all.
   A check someone owes is reported, not failed:
   `owed()` in `tools/tests/lib.ts` prints `owed: <what> (#40's)`, and fails once the check holds,
   so the entry is dropped. The last line counts them by whose, as `ALL OK (3 owed: #40 ×2, #43 ×1)`.

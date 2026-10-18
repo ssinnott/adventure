@@ -78,8 +78,10 @@ const width = Math.max(0, ...runs.map(([name]) => name.length));
 const log = console.log;
 const owedSoFar = (): number => [...owedCount().values()].reduce((n, k) => n + k, 0);
 const ran: Ran[] = [];
+// The run starts with a blank line, as when every heading printed with one before it.
+if (!LIST) log('');
 for (const [name, load] of runs) {
-  let heading = `\n${name}`;
+  let heading = (LIST || ran.length ? '\n' : '') + name;
   // Without --list a suite's own lines are held back but a failure or an owed line, and its name
   // waits for the first of those.
   if (LIST) log(heading);

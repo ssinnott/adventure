@@ -917,7 +917,7 @@ all (#833), the owner's call over #737's. The reach stays closed for 1.6.
 | Defects the owner finds by hand | 4 over the slice, not recounted since; the owner's own playthrough of M3 is what remains (README.md) | fewer each area; each one a check |
 | Checks that pass or fail by chance | none known: the smoke test plays one seeded world (#23) | none |
 | Pull requests that needed main merged in | 4 of the last 6 in September, not recounted since | rare |
-| `npm run check` | about 12 to 14 minutes on a four-core container, ending `ALL OK` with nothing owed (#865); in CI on a docs-only change the tests take 5 min 8 s, the smoke 2 min 20 s and the typecheck 19 s (#866); the tests job took 5 min 8 s to 9 min 12 s on the heads of #876 to #885 and #866 (twelve runs on 18 October), and its cap is fifteen for the runner's spread of about two minutes (#873); a change to the viewport or the smoke sweeps every map, the smoke job then taking 12 to 21 minutes (#876, #878, #879) | under 3 minutes: full sweeps of what a pull request touches, the rest sampled or on release; the cure is parallel suites (#848) |
+| `npm run check` | about 12 to 14 minutes on a four-core container, ending `ALL OK` with nothing owed (#865); in CI on a docs-only change the tests take 5 min 8 s, the smoke 2 min 20 s and the typecheck 19 s (#866); the tests job took 5 min 8 s to 9 min 12 s on the heads of #876 to #885 and #866 (twelve runs on 18 October), and its cap is fifteen for the runner's spread of about two minutes (#873); a change to the viewport or the smoke sweeps every map, the smoke job then taking 12 to 21 minutes (#876, #878, #879); the runner prints each suite's seconds (#895), and on 18 October, on that container shared with other runs, they were the gate 335.5 s, `labels` 104.5, `row` 84.5, the Foreland's walkthrough 33.1, `quests` 27.7, `harness` 27.1, `scaffold` 12.3, `pilot` 8.5 and every other suite under 6, 698.9 s in all, and the full run 33.1 in its own step | under 3 minutes: full sweeps of what a pull request touches, the rest sampled or on release; the cure is parallel suites (#848) |
 | Cracks in the sweep of every map (§5.6) | none; the sweep reads each square as the view draws it, the void as its look (#869) | none |
 | Maps inside the density floor (§5.3) | all (`node tools/test.ts density`) | all |
 | Areas on the curve (§5.2) | all twelve (`node tools/test.ts curve`); the Kilns and Ashfall pass the lead line and are held where they are built | all |
@@ -1007,6 +1007,26 @@ Decided by the builder for #866, each the owner's to overturn:
 6. **The README names the found items by kind;** DESIGN §5 and §6 and SLICE name each.
 7. **PILOT's Thornmark row is measured again on main** (`FULLRUN=thornmark`, 18 October), the
    omniscient run with it, and the notes go with the row; the run of all areas stays 4473dac1's.
+
+Decided by the builder for #895, each the owner's to overturn:
+
+1. **What a suite prints itself waits for `--list` too**, not only its `ok` lines: the gate's `n/a`
+   lines, the quests' `info`, the pillars' counts and the art's notes are 278 lines of a green run,
+   which would then not be under 300. The runner holds them back while the suite runs, so no suite's
+   file changes; a line that starts `FAIL:` or `owed:` still prints.
+2. **A suite's name prints above its first failure or owed line**, not before it starts: the line of
+   its seconds names it, so a green run is a line a suite. Under `--list` it prints first, as before.
+3. **The seconds run from a suite's load to its end, in one process:** each counts the modules no
+   suite before it loaded, and none counts the runner's start. The issue's figures, each suite
+   alone, each paid its own.
+4. **The full run's job in CI lists every line** (`--list`), as its summary is built from the run's
+   `ok` and `note` lines. The issue says CI needs nothing, which holds for the three jobs that gate.
+5. **`package.json` does not change:** quiet is the runner's default, and `TEST_LIST=1` reaches each
+   of `npm test`'s three steps, where `npm test -- --list` would reach only the last.
+6. **The runner's own check reads a listed run where it read `ok` lines**, and gains six checks of
+   the new output, with a fixture suite, `slow`, that takes 0.3 s and prints a line of its own.
+7. **docs/PILOT.md says the survival sweep's and the full run's lines print under `--list`**: the
+   issue names SLICE and §10 only, and PILOT would otherwise say what main no longer does.
 
 ---
 
