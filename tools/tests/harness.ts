@@ -3,7 +3,7 @@
 // classes' company (#854).
 import { createHash } from 'node:crypto';
 import { makeRng } from '../../src/lib/engine/rng.ts';
-import { defaultParty, xpForLevel, levelUp, armorClass, weaponOf, MAX_LEVEL, addCondition, className, rankMult, hasCondition, prestigeOf } from '../../src/game/party.ts';
+import { defaultParty, xpForLevel, levelUp, armorClass, weaponOf, MAX_LEVEL, addCondition, className, rankMult, hasCondition, prestigeOf, borne } from '../../src/game/party.ts';
 import { linesOf, LINES, TIER_LEVELS } from '../../src/game/mastery.ts';
 import type { Tier } from '../../src/game/mastery.ts';
 import type { Party } from '../../src/game/party.ts';
@@ -11,12 +11,12 @@ import { startCombat, currentTurn, partyAct, monsterAct, describeGroups, blowsOf
 import type { CombatState, Fighters } from '../../src/game/combat.ts';
 import { spell, spellDice, SPELLS_GROW_TO } from '../../src/game/spells.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
-import { MONSTERS, MAP_DEFS } from '../../src/content/index.ts';
+import { MONSTERS, MAP_DEFS, ITEMS } from '../../src/content/index.ts';
 import { gateCompany, gateTurn, fightSeed, winRate } from '../gate.ts';
 import { GATE } from './gate.ts';
 import { testMonster, standardEncounter, line, scaleAt, groupsPerLevel, xpFor, HP, DAMAGE, ROLES, ROLE_IDS, TROLL, SWEEP, testTroll, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, testDrake, giantEncounter, drakeEncounter, BASILISK_STONE, testBasilisk, basiliskEncounter, clockEncounter } from '../testmonster.ts';
 import type { Role } from '../testmonster.ts';
-import { measure, days, fight, play, outcomeOf, companyAt, newerCompany, edgeOf, spent, mustRest, mendBetween, day as oneDay, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP, RULES, GEAR, GEAR_TOP, ANSWER, wakeWith, breathGuard, whatIfs, writeRefusal, casting, cellsOnCores } from '../harness.ts';
+import { measure, days, fight, play, outcomeOf, companyAt, newerCompany, edgeOf, spent, mustRest, mendBetween, day as oneDay, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP, RULES, GEAR, GEAR_TOP, ANSWER, wakeWith, breathGuard, whatIfs, writeRefusal, casting, cellsOnCores, artifactIds } from '../harness.ts';
 import type { BotOpts } from '../harness.ts';
 import { ok } from './lib.ts';
 
@@ -143,6 +143,7 @@ export async function harness(): Promise<void> {
   const boss = measure(bossFloor(8), standardEncounter('boss', 8), 80, 5001);
   ok(boss.won >= 0.3 && boss.won <= 0.7, `a company two levels under the test boss wins ${(boss.won * 100).toFixed(0)}% of the time (half asked)`);
   whatIfsOff();
+  artifactsWhatIf();
   onTheLine();
   abilities();
   await newerOnTheLine();
@@ -196,6 +197,25 @@ function whatIfsOff(): void {
   const refused = [under({ tiers: true }, writeRefusal), under({ bot: ALL }, writeRefusal), under({ company: 'newer' }, writeRefusal)];
   ok(writeRefusal() === undefined && refused.every((r, k) => r?.startsWith('a what-if is for weighing') && r.endsWith(`(${['tiers', 'bot', 'company'][k]})`)),
     `the refusal --calibrate --write throws names --tiers, --bot and --company while each is set, as every what-if (${refused.map((r) => r?.slice(r.indexOf('('))).join(', ')}), and there is none with all off`);
+}
+
+/**
+ * The bounds' artifacts in the harness's what-if (#847, `--artifacts`): each borne by the first member
+ * who may, one in the world, and nothing else moves; off, the company bears none, and the gate's
+ * company stays the plain one (#891).
+ */
+function artifactsWhatIf(): void {
+  const all = artifactIds(), at = [28, 30, 32];
+  const holds = (p: Party): string => p.members.flatMap((m) => borne(m).filter((id) => ITEMS[id].artifact).map((id) => `${m.name} ${id}`)).join(', ');
+  const plain = at.map((l) => companyAt(l, 3)), [dressed, newer] = under({ artifacts: all }, () => [at.map((l) => companyAt(l, 3)), newerCompany(30, 3)] as const);
+  // A member who takes one differs from the plain company in what they hold alone.
+  const rest = (m: Party['members'][number]): string => JSON.stringify({ ...m, equipment: null, pack: null });
+  const still = plain.every((p, k) => p.members.every((m, i) => rest(m) === rest(dressed[k].members[i]) && (holds({ ...p, members: [dressed[k].members[i]] }) !== '' || JSON.stringify(m) === JSON.stringify(dressed[k].members[i]))));
+  const off = [...at.map((l) => companyAt(l, 3)), ...at.map((l) => gateCompany(l, 1))].every((p) => holds(p) === '');
+  ok(plain.every((p) => holds(p) === '') && dressed.every((p) => holds(p) === 'Bram erzhemd, Wren akkush, Maren telstok') && still && holds(newer) === 'Rook erzhemd, Hollis telstok' && off,
+    `under --artifacts the company bears each artifact on the first member who may and nothing else moves, at ${at.join(', ')} ${holds(dressed[1])}; the newer company ${holds(newer)}, with no ranger for Akkush; off, and in the gate's company, none`);
+  const refused = under({ artifacts: all }, writeRefusal);
+  ok(!!refused?.startsWith('a what-if is for weighing') && refused.endsWith('(artifacts)'), `and the refusal --calibrate --write throws names --artifacts while it is set (${refused?.slice(refused.indexOf('('))})`);
 }
 
 /** `f` under the what-ifs `set`, each put back as it was whatever `f` does, so none is left on for a later suite. */
