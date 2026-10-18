@@ -13,7 +13,7 @@ import { drawViewport, drawWeather } from './viewport.ts';
 import { BRASS, TEXT, TEXT_DIM, RED, YELLOW, GREEN } from './palette.ts';
 import { currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, shareRange } from '../game/combat.ts';
 import type { CombatState, PartyAction } from '../game/combat.ts';
-import { botTurn, asSeen } from '../game/bot.ts';
+import { botTurn, asSeen, PLAYED } from '../game/bot.ts';
 import { spell, ELEMENTS } from '../game/spells.ts';
 import { item } from '../game/items.ts';
 import { weaponOf } from '../game/party.ts';
@@ -119,7 +119,7 @@ export class CombatScreen implements Screen {
       return;
     }
     if (this.auto) {
-      if (++this.botTimer >= this.wait(g, BOT_DELAY)) { this.botTimer = 0; botTurn(s, g.party, g.rng, t.i, asSeen); this.mode = 'menu'; this.sel = 0; }
+      if (++this.botTimer >= this.wait(g, BOT_DELAY)) { this.botTimer = 0; botTurn(s, g.party, g.rng, t.i, asSeen, PLAYED); this.mode = 'menu'; this.sel = 0; }
       return;
     }
     if (!a) return;

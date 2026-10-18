@@ -80,9 +80,9 @@ export const CAIRNFIELD_M8: MapDef = {
   ],
   secrets: [{ x: 6, y: 27, hint: 'm8_smoke' }],
   encounters: [
-    // The ravens on the crags by the way in from N8, and by night the lone tor's troll, up beside its
-    // rise, mended each round unless burned (#537).
-    { id: 'm8_ravens', x: 26, y: 21, monsters: ['raven', 'raven', 'raven', 'raven', 'raven', 'raven', 'raven', 'raven'], aware: 4, respawn: 1440, roams: false },
+    // The ravens on the crags by the way in from N8, two tor trolls come down under them (#865), and by
+    // night the lone tor's troll, up beside its rise, mended each round unless burned (#537).
+    { id: 'm8_ravens', x: 26, y: 21, monsters: ['raven', 'raven', 'tor_troll', 'tor_troll'], aware: 4, respawn: 1440, roams: false },
     { id: 'm8_troll', x: 17, y: 16, monsters: ['tor_troll'], aware: 3, respawn: 2880, roams: false, when: { hours: 'night' } },
   ],
 };

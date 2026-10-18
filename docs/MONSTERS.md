@@ -915,6 +915,50 @@ What it shows:
   end more days badly than the other roles, the fix is bounded to the test brute's line at 12 made
   again, and no monster of the game is retuned for it unless its own gate figure fails: the gate, not
   the harness, judges built groups.
+- **Weighed and not made again with the tiers and the bots' three (#865).** With Expert from 13,
+  Master from 25 and the three on in the gate's company, the line was made again at 12, 16 to 22 and
+  24 (`--calibrate --write`, 200 seeds a point, in two chunks, about two and a half hours of four
+  cores; a third, at 24 to 26, was stopped). Days that end in a death, a lost fight or one broken off,
+  in %, at the points made (fodder at 17 a point of a second pass):
+
+  | Level | Fodder | Skirmisher | Soldier | Archer | Caster | Controller | Armoured | Elite | Brute |
+  |---|---|---|---|---|---|---|---|---|---|
+  | 12 | 3 | 8 | 8 | 4 | 7 | 2 | 18 | 11 | 18 |
+  | 16 | 5 | 24 | 19 | 11 | 21 | 14 | 34 | 22 | 31 |
+  | 17 | 45 | 20 | 24 | 11 | 13 | 16 | 38 | 27 | 37 |
+  | 18 | 2 | 23 | 23 | 11 | 19 | 11 | 32 | 17 | 28 |
+  | 19 | 9 | 37 | 26 | 21 | 17 | 29 | 47 | 35 | 35 |
+  | 20 | 8 | 21 | 27 | 16 | 24 | 28 | 33 | 27 | 26 |
+  | 21 | 12 | 22 | 24 | 18 | 13 | 22 | 29 | 30 | 31 |
+  | 22 | 7 | 21 | 31 | 24 | 28 | 16 | 37 | 28 | 31 |
+  | 24 | 9 | 21 | 28 | 17 | 24 | 15 | 26 | 22 | 14 |
+
+  Nearly all are deaths (11 to 46% at 16 and 19; none lost, 0 to 7% broken off), in fights of 8 to 9
+  rounds. To keep the day the calibration raised the monsters' blows and barely their hit points
+  (those moved −20 to +15%): for seven of the nine roles 1.4 to 1.6 times the line's blow became 2.0
+  to 2.9 at 16, 19 and 22, at 19 the skirmisher's 1.45 to 2.29, the soldier's 1.38 to 2.42 and the
+  armoured's 1.64 to 2.96.
+  Nothing in the tiers or the three raises the company's defence, and the softening cap holds (#541,
+  decision 3). Made four ways at 19 (100 seeds, read only), the days ended badly, in %:
+
+  | Company | Fodder | Skirmisher | Soldier | Archer | Caster | Controller | Armoured | Elite | Brute | Boss won |
+  |---|---|---|---|---|---|---|---|---|---|---|
+  | Neither (the old company) | 5 | 7 | 9 | 2 | 9 | 10 | 28 | 10 | 32 | 40 |
+  | The tiers alone | 3 | 20 | 19 | 8 | 10 | 16 | 47 | 18 | 29 | 51 |
+  | The three alone | 9 | 24 | 34 | 15 | 15 | 23 | 29 | 21 | 34 | 40 |
+  | Both | 9–14 | 37 | 26 | 21 | 17 | 29–34 | 47 | 35–38 | 35 | 50 |
+
+  The old company holds 7 of 9 roles at a tenth or under, the armoured and the brutes the strain #752
+  and #793 knew; each addition alone breaks the line for several roles, both together more. Nothing is
+  written: the line and the monsters past 10 stay as they were, and `tools/restate.ts` waits for the
+  day the line is made again.
+
+  Decided by the owner's delegate for #18, each the owner's to overturn:
+
+  1. **The line is not made on optional power** (J2): the gate's company takes what a level brings and
+     buys nothing optional, since a line made on the tiers and the three prices them into every
+     monster and ends days badly far past the tenth aimed at (EXPANSION §5.2). The limits (#273) and
+     the softening cap stand.
 
 `node tools/harness.ts` reports every role's standard encounter at every calibrated level: the
 fights before a rest, what ended the day, the rounds a fight took, what one fight from a fresh start
@@ -934,7 +978,8 @@ blows as it levelled past it; `--rank-step` as if a spell rank added another sha
 `--tiers` as if the company took Expert at 13 and Master at 25 (#852); `--bot bless,sleep,drink`
 as if the bots, the gate's too, took any of their three (#853); and `--company newer` as if the
 company were the four newer classes' (#854). They combine. Play has none of the first five, and the
-checks none of the last three until #865 switches the tiers and the bots' three on; `--calibrate`
+checks none of the last three, which #865 weighed and kept off (the game's own bot plays the three
+from level 11); `--calibrate`
 under any says what share of days end badly at each point it makes, and writes nothing.
 
 Decided by delegate for #541, each the owner's to overturn:

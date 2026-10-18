@@ -197,14 +197,12 @@ const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Tho
  * sized for the day (docs/MONSTERS.md §4.4), and a company two under a floor won every fight of it from
  * full health, eight under from 18, so the fight measured nothing there; its day still fell to 43% to
  * 87% of the floor's. So from Saltreach's floor two under is judged by the day (`GATE.backDay`), and
- * Act I's, where two levels are a cliff by design, by the fight as before.
+ * Act I's, where two levels are a cliff by design, by the fight as before. The one day past its limit
+ * when the figure came in, cairnfield_m8's (eight ravens and a tor troll, 9.29 fights to a rest two
+ * under its floor, past the floor's own 8.5), went with #865: its crag group re-sized inside the floor's
+ * own aims, two ravens and two tor trolls.
  */
-export const OWED: Record<string, { whose: string; at: number }> = {
-  // The one day past its limit when the figure came in (#851): Cairnfield's two groups, eight ravens and
-  // a tor troll, are fought 9.29 to a rest two under its floor, past the floor's own 8.5. #865 re-sizes
-  // a group past its limit past 10 inside the floor's own aims.
-  'cairnfield_m8: under day': { whose: '#865', at: 1.093 },
-};
+export const OWED: Record<string, { whose: string; at: number }> = {};
 
 const pc = (x: number): string => `${(x * 100).toFixed(1).replace(/\.0$/, '')}%`;
 
