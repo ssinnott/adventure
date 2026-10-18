@@ -13,8 +13,9 @@ import { ok } from './lib.ts';
 export function atlas(): void {
   // A built map's hills and farmland are hills and farmland on the world map, square for square.
   const fixture: MapDef = { id: 'fixture_downs', name: 'Downs fixture', kind: 'outdoor', start: { x: 1, y: 1, facing: NORTH }, rows: ['MMMMMM', 'M^^ffM', 'M^,ffM', 'MMMMMM'] };
-  // Laid where no zone map is: a map built there moves it.
-  const [fx, fy] = [64, 52];
+  // Laid where no zone map is: a map built there moves it. It lay on B2 until B2 was built (#830), and
+  // lies now on C10, in the Glass, the reach, which is drawn and left unbuilt (#828).
+  const [fx, fy] = [88, 296];
   const under = MAP_DEFS.find((d) => { const m = mapAt(ATLAS, d.id); return m && fx + 6 > m[0] && fx < m[0] + d.rows[0].length && fy + 4 > m[1] && fy < m[1] + d.rows.length; });
   if (under) throw new Error(`the hills fixture lies on ${under.id}: move it to land no zone map covers`);
   const fixtureZone: AtlasZone = { id: 'fixture_downs', name: 'Downs fixture', area: ATLAS.zones[0].area, maps: [{ map: 'fixture_downs', at: [fx, fy] }] };
