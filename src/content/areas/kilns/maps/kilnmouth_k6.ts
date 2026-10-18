@@ -47,8 +47,8 @@ export const KILNMOUTH_K6: MapDef = {
     'M,,hhhhhhhhhhhhhhhhhhhhhhhhhhhhh',
     'M,,,hhhhhhhhhhhhhhhhhhhhhhhhhhhh',
     'M__,,,hhhhhhhhhhhhhhhhhhhhhhhhhh',
-    '~~~__,,hhhhhhhhhhhhhhhhhhhhhhhhh',
-    '~~~~~__,hhhhhhhhhhhhhhhhhhhhhhhh',
+    '~~~__,,hhhMhhhhhhhhhhhhhhhhMhhhh',
+    '~~~~~__,hMMMhhhhhhhMMhhhhhMMMhhh',
     'WWW~~~~MMMMMMMMMMMMMMMMMMMMMMMMM',
   ],
   features: [
@@ -56,14 +56,14 @@ export const KILNMOUTH_K6: MapDef = {
     { kind: 'event', x: 29, y: 19, id: 'k6_heath', once: true, text: 'The town\'s last wall falls behind. Heather to the knee, gorse in yellow knots, and a wind with nothing in front of it.' },
     { kind: 'event', x: 29, y: 17, id: 'k6_flat', once: true, text: 'At low water the flat is black mud to the horizon, pocked with lugworm and printed all over with herons.' },
     // The heath: the windbreak, the fold, the cairn on the one rise and the rock worms' ground.
-    { kind: 'camp', x: 26, y: 26, name: 'The windbreak', text: 'A turf bank cut back into a windbreak, a fire-ring of beach stones and a stack of gorse for kindling. Someone sleeps here often.' },
+    { kind: 'camp', x: 26, y: 26, name: 'The windbreak', text: 'A turf bank cut back into a windbreak, with a fire-ring of beach stones. Someone sleeps here often.' },
     { kind: 'event', x: 28, y: 23, id: 'k6_fold', once: true, text: 'A sheepfold of piled stone, empty. The shepherds know better than to graze the middle of the heath.' },
     { kind: 'event', x: 21, y: 25, id: 'k6_rings', once: true, text: 'Rings of dead heather across the heath, each a stride wide, the earth in them crumbled fine. Something goes under here.' },
     { kind: 'cairn', x: 13, y: 27, id: 'k6_cairn', text: 'A cairn of beach stones on the heath\'s one rise, a gull\'s wing pegged in its top. The wind keeps it turning.', gold: 120, items: ['potion_sp_great'] },
     // The shore: the skeps in their lee, the kelp-burner at her pit and the ore barge on the shingle.
     { kind: 'shrine', x: 5, y: 21, id: 'k6_boles', text: 'A wall of niches in the lee of a bank, a straw skep in each, humming. A pot of heather honey stands on the lip, with a spoon.', stat: 'speed', done: 'The skeps, humming in their niches.' },
     { kind: 'npc', x: 4, y: 26, name: 'A kelp-burner', lines: [
-      'A woman in a sacking apron, black to the elbow, raking a smouldering pit of weed on the shingle. The smoke goes inland, to the smelters.',
+      'A woman in a sacking apron, black to the elbow, rakes a smouldering pit of weed. The smoke goes to the smelters.',
       '"Kelp ash for the flux. The dwarves pay by the sack, in iron, and late."',
       '"When the wind drops the heath sings. I burn on the shore and I don\'t go up there after noon."',
     ] },
