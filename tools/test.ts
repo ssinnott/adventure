@@ -11,9 +11,9 @@
 //   node tools/test.ts --dir <folder>   run the suites in another folder, and no walkthroughs (the
 //                                       runner's own check, tools/tests/runner/check.ts)
 //   node tools/test.ts --list           print every line, as TEST_LIST=1 does (#895)
-// By default a suite prints its failures and its owed lines under its name, and what else it prints
-// waits for --list; every suite ends with a line of its seconds and its count, and the run with a
-// table of them, the slowest first, before its last line.
+// By default a suite prints its name as it starts, then its failures and its owed lines; what else it
+// prints waits for --list or its first failure; every suite ends with a line of its seconds and its
+// count, and the run with a table of them, the slowest first, before its last line.
 import { readdirSync, existsSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import { ok, fail, failureCount, heldCount, owedCount, summary, ranLine, LIST, type Ran } from './tests/lib.ts';
@@ -78,22 +78,26 @@ const width = Math.max(0, ...runs.map(([name]) => name.length));
 const log = console.log;
 const owedSoFar = (): number => [...owedCount().values()].reduce((n, k) => n + k, 0);
 const ran: Ran[] = [];
+/** The lines the suite in flight printed itself and holds back, without --list: they print should it fail, or the run die in it. */
+const aside: unknown[][] = [];
+process.on('exit', () => { for (const a of aside.splice(0)) log(...a); });
 // The run starts with a blank line, as when every heading printed with one before it.
 if (!LIST) log('');
 for (const [name, load] of runs) {
-  let heading = (LIST || ran.length ? '\n' : '') + name;
-  // Without --list a suite's own lines are held back but a failure or an owed line, and its name
-  // waits for the first of those.
-  if (LIST) log(heading);
-  else console.log = (...a: unknown[]) => {
-    if (typeof a[0] !== 'string' || !/^ {2}(FAIL|owed): /.test(a[0])) return;
-    if (heading) log(heading);
-    heading = '';
-    log(...a);
+  // The name prints as the suite starts, so a run that dies inside it (a crash, an await that never
+  // settles, the tests job's timeout) names it last. Without --list a suite's own lines are held back
+  // but a failure or an owed line; at its first failure they print, in order, and the rest as it comes.
+  log((LIST ? '\n' : '') + name);
+  let failing = false;
+  if (!LIST) console.log = (...a: unknown[]) => {
+    const kind = typeof a[0] === 'string' ? /^ {2}(FAIL|owed): /.exec(a[0])?.[1] : undefined;
+    if (kind === 'FAIL' && !failing) { failing = true; for (const b of aside.splice(0)) log(...b); }
+    if (failing || kind) log(...a); else aside.push(a);
   };
   const t0 = performance.now(), held = heldCount(), failed = failureCount(), owed = owedSoFar();
   try { await (await load())(); } catch (e) { fail('threw ' + (e instanceof Error ? e.stack : String(e))); }
   console.log = log;
+  aside.length = 0;
   const r = { name, secs: (performance.now() - t0) / 1000, held: heldCount() - held, failed: failureCount() - failed, owed: owedSoFar() - owed };
   ran.push(r);
   log(ranLine(r, width));
