@@ -801,7 +801,7 @@ all (#833), the owner's call over #737's. The reach stays closed for 1.6.
 | Defects the owner finds by hand | 4 over the slice, not recounted since; the owner's own playthrough of M3 is what remains (README.md) | fewer each area; each one a check |
 | Checks that pass or fail by chance | none known: the smoke test plays one seeded world (#23) | none |
 | Pull requests that needed main merged in | 4 of the last 6 in September, not recounted since | rare |
-| `npm run check` | about 14 minutes on a four-core container; in CI on a docs-only change the tests take 4 min 31 s, the smoke 2 min 17 s and the typecheck 19 s; a change to the viewport or the smoke sweeps every map, the smoke job taking about 21 minutes (#844) | under 3 minutes: full sweeps of what a pull request touches, the rest sampled or on release |
+| `npm run check` | about 14 minutes on a four-core container; in CI on a docs-only change the tests take 4 min 31 s, the smoke 2 min 17 s and the typecheck 19 s; a change to the viewport or the smoke sweeps every map, the smoke job taking about 21 minutes (#844); the tests job took 6 min 27 s to 8 min 26 s on the heads of #868, #867 and #870, the runner's spread about two minutes, so its cap is fifteen (#873) | under 3 minutes: full sweeps of what a pull request touches, the rest sampled or on release; the cure is parallel suites (#848) |
 | Cracks in the sweep of every map (§5.6) | none in 334,349 views; the sweep reads each square as the view draws it, the void as its look (#869) | none |
 | Maps inside the density floor (§5.3) | all (`node tools/test.ts density`) | all |
 | Areas on the curve (§5.2) | all twelve (`node tools/test.ts curve`); the Kilns and Ashfall pass the lead line and are held where they are built | all |
