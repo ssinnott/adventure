@@ -135,13 +135,14 @@ features and ten groups, about one rest's fights at the band (MONSTERS §4.4), w
     aim of 9.25 to 11.25 and the limit of 7.75 to 13.75, with 87.7% of its days ending in a fight
     broken off: the furnace's fight runs past 15 rounds once spell points run low, as G11's
     stokers' did (94.7%), which the gate shows and never judges. Its under-check is n/a, its floor
-    being over the area's; Ashfall's pool at 22 is won in all of its 24 groups, owed to #18 as
-    before. The vents pay 2,146 xp a member for the brief's 2,200 and hold 900 gold and a Sapphire
-    Vial. Density 100.0% within 7 steps (279 of 279) and the furthest 6, with no sign among its 25
-    points. The curve's rank correlation is 0.63: the round nearest at 12 steps, level 24.5, and
-    the sentry the hardest at 42 steps, level 26.0. The gate counts the sentry in the level's day
-    and the curve its xp in the clear, though a company before the Stone never meets it, as on G11.
-    The walkthrough wins every group at 25 and goes down and up both ways.
+    being over the area's; Ashfall's pool at 22 is won in all of its 24 groups (past 10 the gate
+    judges a company two under by its day, #851). The vents pay 2,146 xp a member for the brief's
+    2,200 and hold 900 gold and a Sapphire Vial. Density 100.0% within 7 steps (279 of 279) and the
+    furthest 6, with no sign among its 25 points. The curve's rank correlation is 0.63: the round
+    nearest at 12 steps, level 24.5, and the sentry the hardest at 42 steps, level 26.0. The gate
+    counts the sentry in the level's day and the curve its xp in the clear, though a company before
+    the Stone never meets it, as on G11. The walkthrough wins every group at 25 and goes down and up
+    both ways.
 
 ### 4.2 The iron corridors (`meridian_camp2`): band 26 rising to 27
 
@@ -199,15 +200,14 @@ features and ten groups, about one rest's fights at the band (MONSTERS §4.4), w
     limit of 8 to 14, with 88% of its days ending in a fight broken off: the walker's three run
     past 15 rounds once spell points run low, as the vents' furnace does, which the gate shows and
     never judges. Its under-check is n/a, its floor being over the area's; Ashfall's 34 groups at
-    their maps' floors are won 97.8% of the time, and two under them 94.1%, owed to #18 as before.
-    The corridors pay 4,399 xp a member for the brief's 2,700, over the cap of 3,375 (§8, the
-    corridors' 3), and hold 1,500 gold and Meridian Mail +3. Density 100.0% within 7 steps (193 of
-    193) and the furthest 7 of 10, with no sign among its 24 points. The curve's rank correlation
-    is 0.63: the walker nearest at 46 steps, level 25.7, and the Brood Drake the hardest at 120
-    steps, level 27.0, at least 27. The gate counts the sentry in the level's day and the curve
-    its xp in the clear, though a company before the Stone never meets it, as on the vents. The
-    walkthrough wins every group at 26, the Brood Drake nine in ten of its uncapped fights, and
-    goes down and up the vents' stair.
+    their maps' floors are won 97.8% of the time, and two under them 94.1%. The corridors pay 4,399
+    xp a member for the brief's 2,700, over the cap of 3,375 (§8, the corridors' 3), and hold 1,500
+    gold and Meridian Mail +3. Density 100.0% within 7 steps (193 of 193) and the furthest 7 of 10,
+    with no sign among its 24 points. The curve's rank correlation is 0.63: the walker nearest at 46
+    steps, level 25.7, and the Brood Drake the hardest at 120 steps, level 27.0, at least 27. The
+    gate counts the sentry in the level's day and the curve its xp in the clear, though a company
+    before the Stone never meets it, as on the vents. The walkthrough wins every group at 26, the
+    Brood Drake nine in ten of its uncapped fights, and goes down and up the vents' stair.
 
 ### 4.3 The camp (`meridian_camp3`): band 27 rising to 28
 
@@ -265,16 +265,15 @@ features and ten groups, about one rest's fights at the band (MONSTERS §4.4), w
     the camp's 11 and 12). The atlas plate `meridian_camp3` at 226,352.
   - **Measured.** At its floor, 27, a company wins every fight and manages 10.64 fights to a rest,
     inside the aim of 9.75 to 11.75 and the limit of 8.25 to 14.25, with 73% of its days ending in
-    a fight broken off; two under, at 25, it wins every fight too, owed to #18 as the other boxes'
-    are (§8, the camp's 2 and 18). The level pays 3,003 xp a member for the brief's 3,000, under
-    the cap of 3,750; it holds 1,200 gold and the Meridian Staff +4 at 2,600, inside the
-    Glasswold's window of 6,000 (§7). Density 100.0% within 7 steps (226 of 226) and the furthest 6
-    of 10, with no sign among its 24 points. The curve's rank correlation is 0.65: the sentry
-    nearest at 4 steps, level 26.0, and the night pair the hardest at 27 steps, level 28.0, at
-    least 28. The gate counts the sentry in the level's day, though a company before the Stone never
-    meets it, and the night pair, though they are there only by night. The walkthrough wins every
-    group at 27, goes down and up the corridors' stair, meets Fane with the first journal read and
-    without it and goes out by the rope.
+    a fight broken off; two under, at 25, it wins every fight too (§8, the camp's 2 and 18). The
+    level pays 3,003 xp a member for the brief's 3,000, under the cap of 3,750; it holds 1,200 gold
+    and the Meridian Staff +4 at 2,600, inside the Glasswold's window of 6,000 (§7). Density 100.0%
+    within 7 steps (226 of 226) and the furthest 6 of 10, with no sign among its 24 points. The
+    curve's rank correlation is 0.65: the sentry nearest at 4 steps, level 26.0, and the night pair
+    the hardest at 27 steps, level 28.0, at least 28. The gate counts the sentry in the level's day,
+    though a company before the Stone never meets it, and the night pair, though they are there only
+    by night. The walkthrough wins every group at 27, goes down and up the corridors' stair, meets
+    Fane with the first journal read and without it and goes out by the rope.
 
 ### 4.4 Rests
 
@@ -329,8 +328,8 @@ nor do the corridors (§8, the corridors' 16) or the camp (§8, the camp's 16).
   vents' floor, 25, wins every fight and manages 10.98 fights to a rest (§4.1); at the corridors'
   floor, 26, it wins 90.3% of the fights and manages 8.69, and the Brood Drake is won 61% of the
   time at 26 and 100% at 28 (§4.2; §8, the corridors' 5). At the camp's floor, 27, it wins every
-  fight and manages 10.64 fights to a rest; two under, at 25, it wins every fight, owed to #18
-  (§4.3; §8, the camp's 2 and 18).
+  fight and manages 10.64 fights to a rest; two under, at 25, it wins every fight (§4.3; §8, the
+  camp's 2 and 18).
 - **Gold and finds.** Machines carry parts; the Company's kit is the finds, a named piece on each
   of the lower two levels, in the band's window. As built, the vents hold 900 gold and a Sapphire
   Vial, in the drift, but no gear (§8, the vents' 8); their parts are the Stone's first, a quest
@@ -619,10 +618,11 @@ Decided by delegate for #22 (the camp), each the owner's to overturn:
     soldier's at 28 (5d8+3 to 5d7+8, hit points 408 kept); ids, looks, sprites and calls kept. Both
     leave `RESTATE` (tools/tests/harness.ts) and `UNPLACED` (tools/tests/maps.ts). No boss on the
     level, so no `BOSSES` entry.
-18. **The gate's two-under figure is owed to #18:** a company at 25 wins every fight, as it does in
-    every box past Act II's first, for the aims for the day and for two under pull against each
-    other past 10. The row is `'meridian_camp3: under'` in `OWED` (tools/tests/gate.ts), held at
-    100%. The day's figure, 10.64, is not owed: it is inside its aim.
+18. **The gate's two-under figure, past 10, is judged by the day (#851):** a company at 25 wins
+    every fight, as it does in every box past Act II's first; the aims for the day and for two under
+    pulled against each other past 10, until #851 judged two under by the day. The fights-won row
+    was `'meridian_camp3: under'` in `OWED` (tools/tests/gate.ts), held at 100%. The day's figure,
+    10.64, was never owed: it is inside its aim.
 
 ## 9. Names
 
@@ -681,4 +681,5 @@ Cut and owed, from the camp (#22):
 - **The Dead-Drop's three levels** are the rest of #22 (docs/areas/dead_drop.md) and are planned to
   pay outside their area's budget as the camp does (EXPANSION §5.2).
 - **No secret on this level** (§8, the camp's 16): the dungeon asks none of a level.
-- **The two-under figure is owed to #18,** as the other boxes' are (§8, the camp's 18).
+- **The two-under figure, past 10, is judged by the day (#851),** as the other boxes' are (§8, the
+  camp's 18).

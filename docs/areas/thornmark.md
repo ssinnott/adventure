@@ -841,8 +841,8 @@ overturn:
 42. **Jago, the hold's fletcher, stands in the Armoury,** whose bows are his: no new business, the
     shop his as much as the smith's.
 43. **Derwa, the bone-setter, stands in the Lantern Chapterhouse,** whose cures are her trade.
-44. **Lowen keeps the hold's bees under the north-east oak, in the street.** Honey and salves wait on
-    #18, so she keeps no shop, as Saltmouth's street trainers keep none.
+44. **Lowen keeps the hold's bees under the north-east oak, in the street.** No item stands for
+    honey or salves, so she keeps no shop, as Saltmouth's street trainers keep none.
 45. **Cuthred, the lodge's bowman, keeps the hunters' hide, at 7,2 above it.** The yard is nine
     squares from the road at most; the hide's height is 21 from it and eleven from the nearest
     group, the heartwood, so the rule Rietum's are held to holds as written.

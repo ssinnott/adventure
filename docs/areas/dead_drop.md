@@ -113,17 +113,17 @@ inside it as EXPANSION §5.2 asks.
     The atlas plate `dead_drop` at 208,204, beside the stair's foot's 214,204 (§8, the drop's 8).
   - **Measured.** At its floor, 26, a company wins every fight and manages 11.24 fights to a rest,
     inside the aim of 9.5 to 11.5 and the limit of 8 to 14, with 86% of its days ending in a fight
-    broken off; two under, at 24, it wins every fight too, owed to #18 as the other boxes' are
-    (§8, the drop's 2 and 13). A loader alone, the pair, a clerk alone and the keeper alone are
-    each won every time at 26 and at 24. The level pays 2,934 xp a member for the brief's 3,000,
-    under the cap of 3,750, and holds 2,000 gold and two parts, unpriced, so the Glasswold's window
-    of 6,000 holds nothing of it (§8, the drop's 3 and 9). Density 100.0% within 7 steps (266 of
-    266) and the furthest 6 of 10, with no sign among its 28 points. The curve's rank correlation
-    is 0.52: the first loader nearest at 22 steps, level 26.0, and the keeper the hardest at 52
-    steps, level 27.0, at least 27. The gate's day counts a clerk's calls and the pay does not (§8,
-    the drop's 2 and 3). The walkthrough goes down the far end and back up, finds no group in sight
-    of the way in or the drop, wins every group at 26, takes the heap and the 2,000 gold and goes on
-    down the rails' slope to the vaults, its line said at its head the once.
+    broken off; two under, at 24, it wins every fight too (§8, the drop's 2 and 13; past 10 the gate
+    judges a company two under by its day, #851). A loader alone, the pair, a clerk alone and the
+    keeper alone are each won every time at 26 and at 24. The level pays 2,934 xp a member for the
+    brief's 3,000, under the cap of 3,750, and holds 2,000 gold and two parts, unpriced, so the
+    Glasswold's window of 6,000 holds nothing of it (§8, the drop's 3 and 9). Density 100.0% within
+    7 steps (266 of 266) and the furthest 6 of 10, with no sign among its 28 points. The curve's
+    rank correlation is 0.52: the first loader nearest at 22 steps, level 26.0, and the keeper the
+    hardest at 52 steps, level 27.0, at least 27. The gate's day counts a clerk's calls and the pay
+    does not (§8, the drop's 2 and 3). The walkthrough goes down the far end and back up, finds no
+    group in sight of the way in or the drop, wins every group at 26, takes the heap and the 2,000
+    gold and goes on down the rails' slope to the vaults, its line said at its head the once.
 
 ### 4.2 The vaults (`dead_drop2`): band 27–28
 
@@ -168,18 +168,17 @@ inside it as EXPANSION §5.2 asks.
     vaults' 7). The atlas plate `dead_drop2` at 208,210 (the vaults' 14).
   - **Measured.** At its floor, 27, a company wins every fight and manages 11.09 fights to a rest,
     inside the aim of 9.75 to 11.75 and the limit of 8.25 to 14.25 that the gate asks at 27, with
-    65.7% of its days ending in a fight broken off; two under, at 25, it wins every fight too, owed
-    to #18 as the other boxes' are (§8, the vaults' 2 and 16). A loader alone, the pair, three
-    keepers, four keepers and four knockers are each won every time at 27 and at 25. The level pays
-    3,275 xp a member for the brief's 3,000, under the cap of 3,750, and holds 2,000 gold, two parts
-    (unpriced) and the Fisher's Spike +5 at 3,050, inside the Glasswold's window of 6,000 (§8, the
-    vaults' 3 and 12). Density 100.0% within 7 steps (179 of 179, 162 needed) and the furthest 6 of
-    10, with no sign among its 25 points. The curve's rank correlation is 0.79: the loader nearest
-    at 10 steps, level 26.0, and the knockers the hardest at 27 steps, level 28.0, at least 28 (§8,
-    the vaults' 4). The walkthrough goes down the drop's rails and back up, reads the door, the seal
-    and the count, wins every group at 27, finds the rest in an empty pen and takes the coin, the
-    parts and the spike. It searches out the hoist, rides it up to the drop and goes on down
-    the steps into the counting house (§4.3).
+    65.7% of its days ending in a fight broken off; two under, at 25, it wins every fight too (§8,
+    the vaults' 2 and 16). A loader alone, the pair, three keepers, four keepers and four knockers
+    are each won every time at 27 and at 25. The level pays 3,275 xp a member for the brief's 3,000,
+    under the cap of 3,750, and holds 2,000 gold, two parts (unpriced) and the Fisher's Spike +5 at
+    3,050, inside the Glasswold's window of 6,000 (§8, the vaults' 3 and 12). Density 100.0% within
+    7 steps (179 of 179, 162 needed) and the furthest 6 of 10, with no sign among its 25 points. The
+    curve's rank correlation is 0.79: the loader nearest at 10 steps, level 26.0, and the knockers
+    the hardest at 27 steps, level 28.0, at least 28 (§8, the vaults' 4). The walkthrough goes down
+    the drop's rails and back up, reads the door, the seal and the count, wins every group at 27,
+    finds the rest in an empty pen and takes the coin, the parts and the spike. It searches out the
+    hoist, rides it up to the drop and goes on down the steps into the counting house (§4.3).
 
 ### 4.3 The counting house (`dead_drop3`): band 27–28
 
@@ -226,16 +225,16 @@ inside it as EXPANSION §5.2 asks.
   - **Measured.** At its floor, 27, a company wins 85% of the level's fights, off the aim of 90%
     and inside the limit of 80%, and manages 10.30 fights to a rest, inside the aim of 9.75 to
     11.75 and the limit of 8.25 to 14.25, with 61.3% of its days ending in a fight broken off; two
-    under, at 25, it wins 64%, off the aim of at most 25% and inside the limit of 90%, so nothing
-    is owed to #18 (§8, the counting house's 5). The clerk with its loader is won every time at 27
-    and at 25. The Tallymaster is won 70% at 27 (aim 30% to 70%, limit 20% to 80%), 83% at 29 (aim
-    90%, limit 75%) and 28% at 25: its blow is set off the line (the counting house's 4).
-    The level pays 3,485 xp a member for the brief's 3,000, under the cap of 3,750, and holds
-    2,000 gold and two parts (unpriced), with no priced find and no named piece (the counting
-    house's 3 and 11). Density 100.0% within 7 steps (180 of 180, 162 needed) and the furthest 6 of
-    10, with one sign among its 16 points. The curve's rank correlation is 1.00: the clerk nearest
-    at 17 steps, level 26.0, and the Tallymaster the hardest at 19 steps, level 28.0, at least 28.
-    The walkthrough goes down the vaults' steps and back up, reads the marks and the room, sees the
+    under, at 25, it wins 64%, off the aim of at most 25% and inside the limit of 90% that the gate
+    asked of it until #851 (§8, the counting house's 5). The clerk with its loader is won every time
+    at 27 and at 25. The Tallymaster is won 70% at 27 (aim 30% to 70%, limit 20% to 80%), 83% at 29
+    (aim 90%, limit 75%) and 28% at 25: its blow is set off the line (the counting house's 4). The
+    level pays 3,485 xp a member for the brief's 3,000, under the cap of 3,750, and holds 2,000 gold
+    and two parts (unpriced), with no priced find and no named piece (the counting house's 3 and
+    11). Density 100.0% within 7 steps (180 of 180, 162 needed) and the furthest 6 of 10, with one
+    sign among its 16 points. The curve's rank correlation is 1.00: the clerk nearest at 17 steps,
+    level 26.0, and the Tallymaster the hardest at 19 steps, level 28.0, at least 28. The
+    walkthrough goes down the vaults' steps and back up, reads the marks and the room, sees the
     Tallymaster writing from the gate and the flag set, reaches both trays with no group beside,
     takes the orders, the coin and the parts, wins the clerk every time and the Tallymaster 70% of
     ten at 27 and finds no way on.
@@ -441,8 +440,9 @@ Decided by delegate for #22 (the drop), each the owner's to overturn:
     Kilns', Rimewater's and Ashfall's claims. Its heavy machines, knockers and keepers, its calls
     and sleep, events, chests and a wall drawn as a door are all on the road before it, so it
     claims nothing and changes no area's claims (Wrackholm's devilfish, heather and wreck stand).
-13. **The gate owes `dead_drop: under` to #18, at 1,** as every box: every group is won at 24, two
-    under its own floor.
+13. **Two under, past 10, is judged by the day (#851), not by the fights won:** every group is won
+    at 24, two under its own floor (`dead_drop: under`, a row of `OWED` at 1 until then, as every
+    box's).
 14. **The Kilns' walkthrough reads the road by place.** Its check that the first machines stand at
     the bottom of the deepest mine took the areas after the Kilns in their list as later, and
     failed on the loaders: listed by Wrackholm, before the Kilns, though their floor puts them at
@@ -539,8 +539,8 @@ Decided by delegate for #22 (the vaults), each the owner's to overturn:
     door, exits, events, chests, a camp, a wall drawn as a door; machines, sleep and mend) is on
     the road before the Glasswold's place, where the novelty check puts the vaults, so Wrackholm's
     claims stand (devilfish, heather, wreck).
-16. **The gate owes `dead_drop2: under` to #18, at 1,** as every box: every group is won at 25,
-    two under its own floor.
+16. **Two under is judged by the day (#851):** every group is won at 25, two under its own floor
+    (`dead_drop2: under`, a row of `OWED` at 1 until then, as every box's).
 
 Decided by delegate for #22 (the counting house), each the owner's to overturn:
 
@@ -571,9 +571,9 @@ Decided by delegate for #22 (the counting house), each the owner's to overturn:
    72% and 78%, 28d8+55 70% and 80%. Armour, attack, speed, xp, calls, look and sprite are kept.
 5. **The level's floor figure is 85%, off its 90% aim and inside its limit of 80%:** the boss
    counts as one of the level's two groups (100% and 70%). A third group to lift it puts the day
-   off its aim (C,CL 13.63) and the pay at 3,658. Two under, at 25, it wins 64% (aim at most 25%,
-   limit 90%; the Tallymaster 28% there), inside its limit, so **no `dead_drop3: under` is owed to
-   #18,** unlike every other box.
+   off its aim (C,CL 13.63) and the pay at 3,658. Two under, at 25, it wins 64% (the gate's aim was
+   at most 25% and its limit 90% until #851; the Tallymaster 28% there), inside its limit, so
+   **`dead_drop3: under` was never a row of `OWED`,** unlike every other box's.
 6. **"Only at its desk" is the map's:** `dd3_tallymaster` stands at 16,20 in its niche, walls on
    three sides, `roams: false`, so the one open square beside it is 16,19, before the desk (a group
    fights only a company within one square). No respawn, a `slainText` (a guardian), aware 1. The
@@ -627,8 +627,8 @@ Decided by delegate for #22 (the counting house), each the owner's to overturn:
   door is the one lock the road spends.
 - **Living cargo below,** which would ask a rescue the band forbids an Act II company.
 - **About ten groups at the vaults:** five (the vaults' 2).
-- **About ten groups at the counting house:** two (the counting house's 2). Nor does it owe
-  `dead_drop3: under` to #18, as every other box does (the counting house's 5).
+- **About ten groups at the counting house:** two (the counting house's 2). Nor did it need
+  `dead_drop3: under` in `OWED`, as every other box did until #851 (the counting house's 5).
 - **A way on down from the counting house:** none; the vaults' steps are its one way out (the
   counting house's 15).
 - **The Factor's rung** (`In the Founder's Hand`, which asks for `compact_orders`) with **Ruan's
