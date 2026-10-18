@@ -1665,8 +1665,10 @@ Decided by the builder for #830, each the owner's to overturn:
 10. **Two test fixtures move off B2's land** to C10's steppe in the Glass, the reach, which stays
     unbuilt: the edge fixture in `tools/tests/pillars.ts` and the hills fixture in
     `tools/tests/atlas.ts`, each of which says a map built on it moves it.
-11. **The enclave's door is on A5 and the lair's on B7** (§12.10), the area's two boxes farthest from
-    the road with room for a door; #845 and #846 settle what they hold.
+11. **The lair's door is on A5 and the enclave's on B7** (§12.10), as the owner's delegate moved them
+    on 18 October: #846's design (#908) puts Saltreach's lair in a drowned mound on the fen's west edge
+    under the rim, which fits the fen and its rumour's words, and B7's Scarp's foot has room for the
+    enclave's door among its 944 squares. #845 and #846 settle what they hold.
 12. **The six to come give gold, draughts and elixirs,** no gear: with C2's and B2's finds the
     ladder's pluses at 13 are all given in Act II, and the one Saltreach lacks, Plate Mail +1, is
     Wrackholm's. Their groups as planned pay about 2,600 xp a member against the first reckoning's
@@ -1776,7 +1778,7 @@ on the road's quest. Then the area's enclave and its artifact's lair (§12.10). 
   its fire, and the walkthrough shows the rest refused there until it falls.
 - **Secrets** are each of their own place, with a hint of a different kind and a block of a
   different shape: a walled cleft found from wear (C2), a beehive hut from its wrens (B2), a
-  well-house from a rag willow (A3), a still from a smell (A4), a sunk house from a carved post (A5),
+  well-house from a rag willow (A3), a still from a smell (A4), a sluice-house from clear water (A5),
   an anchorite's cell from its squint (A6), a salters' bothy from dead grass (B7) and a light's store
   from a sound (D6). Walls, not mountain, keep climbers out.
 - **Finds** inside the 2,000 window, none repeating one the area already gives (§4.1) and none weaker
@@ -1900,21 +1902,22 @@ on the road's quest. Then the area's enclave and its artifact's lair (§12.10). 
 
 - **Purpose.** The fen's west edge under the rim, west of Stienwierde, B5's west edge open onto it
   along all its rows. The farthest of the A column from the road at its middle.
-- **Landmarks.** The rim; the hills at its foot; the fen's west shore, marsh to B5; an old mound in
-  the fen, a Tidefolk village's, the village long gone.
+- **Landmarks.** The rim; the hills at its foot; the fen's west shore, marsh to B5; an old dyke along
+  the shore, let go; the drowned mound, the lair's (§12.10).
 - **Points of interest,** about five features and two groups: an eel-catcher of Stienwierde at her
-  traps, with a rumour; a camp on the dry ground under the rim; a cairn where the hills meet the
-  marsh; a shrine at the fen's edge; the door-post on the mound, the hint.
+  traps, with word of the toads come up the shore; a camp on the dry ground under the rim; a cairn
+  where the hills meet the marsh; a shrine at the fen's edge; the dyke's foot, the hint.
 - **Encounters.** The fen's pools, three leeches and an eel (MONSTERS §6.1's second fight), the
   nearest; a bull toad alone, as the roster has it, the hardest: about 7.5 fights to a rest at 10,
   the aim's top.
-- **The secret and its hint.** The village's last house, sunk into its mound, its door walled with
-  turf. The hint: on the mound a carved door-post stands alone, a wave cut on it, no house behind it.
-- **The enclave.** Its door in the rim's foot here (§12.10), in its own pull request once #845 is
-  merged: this box leaves the door's square and the way to it clear, and the eel-catcher's rumour
-  may point there when #845 says what is behind it.
-- **New here.** Nothing; the enclave, when it comes, is #845's.
-- **Finds.** 180 gold in the house's hearth-pot and a draught.
+- **The secret and its hint.** A sluice-house in the old dyke, walled up when the dyke was let go:
+  the keeper's tally-sticks and his pay-box. The hint: clear water runs out under the dyke's foot into
+  the fen's brown.
+- **The lair.** Its door in the drowned mound here (§12.10), in its own pull request once #845, #847
+  and the guardian's drawing are in: this box leaves the mound and the way to it clear. Its rumour is
+  #846's, said in B3, and no word in this box speaks of it.
+- **New here.** Nothing; the lair, when it comes, is #846's and #847's.
+- **Finds.** 180 gold in the pay-box and a draught.
 - **Pay.** About 450 xp a member.
 
 ### 12.7 A6, the fen under the rim: country, band 11–12
@@ -1945,7 +1948,7 @@ on the road's quest. Then the area's enclave and its artifact's lair (§12.10). 
 - **How it meets the Wold.** The Wold's 219 squares above the Scarp are closed with it, as C7 closed
   its own (§4.10): B8's north edge is the Scarp's cliff and C7's west edge is the void there, so no
   built box walks onto them; its west edge stands closed against A7.
-- **Points of interest,** about six features, two groups and the lair's door: the salters' track's
+- **Points of interest,** about six features, two groups and the enclave's door: the salters' track's
   end, an event; a salt-carter at her cart, with a rumour of the fire under the Scarp; a camp
   on the grass; a cairn; a shrine at the marsh's edge; the dead grass, the hint.
 - **Encounters.** Three salt crabs on the salters' grass, the nearest; the Hand's smugglers at a fire
@@ -1953,9 +1956,9 @@ on the road's quest. Then the area's enclave and its artifact's lair (§12.10). 
   7.4 fights to a rest at 11.
 - **The secret and its hint.** A salters' bothy under the Scarp, its door built up with blocks of
   salt. The hint: the grass at the Scarp's foot dead and white in a fan, its point at the rock.
-- **The lair.** Its door in the Scarp's face here (§12.10), in its own pull request after #846 and
-  #847: this box leaves the door's square and the way to it clear.
-- **New here.** Nothing; the lair, when it comes, is #846's and #847's.
+- **The enclave.** Its door in the Scarp's foot here (§12.10), in its own pull request after #845:
+  this box leaves the door's square and the way to it clear.
+- **New here.** Nothing; the enclave, when it comes, is #845's.
 - **Finds.** 250 gold in the salters' strongbox and an elixir.
 - **Pay.** About 600 xp a member, or a group fewer if the lead asks it (§12.1).
 
@@ -1980,12 +1983,14 @@ on the road's quest. Then the area's enclave and its artifact's lair (§12.10). 
 
 ### 12.10 The enclave and the lair
 
-They come after the boxes, each in its own pull request. **The enclave** (#845): its door in the
-rim's foot on A5, a place of its own held a band or two over the Delta's, with its own reward, as
-#845 sets them. **The lair** (#846, #847): the artifact's, at the cap, one or two levels with one
-guardian, its door in the Scarp's face on B7, the farthest of the area's land from the road; the
-artifact, its guardian and the rumour that first speaks of it are #846's, and where #846 puts the
-lair elsewhere, this note gives way to it.
+They come after the boxes, each in its own pull request. **The lair** (#846, #847): the artifact's,
+at the cap's band, a drowned mound of two levels on the fen's west edge under the rim with one
+guardian, its door on A5, as #846's design has it (#908); the artifact, its guardian and the rumour
+that first speaks of it are #846's, and where #846 changes them, this note gives way to it. **The
+enclave** (#845): its door in the Scarp's foot on B7, a place of its own held a band or two over the
+Saltings', with its own reward, as #845 sets them. B7 has the room: 944 squares, its Scarp's foot
+clear of the pans and the smugglers' fire. The owner's delegate moved the two doors so on 18
+October (call 11).
 
 ### 12.11 For the next builders
 
