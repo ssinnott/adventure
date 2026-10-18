@@ -1,10 +1,10 @@
 // Hills, farmland, woods, dead wood, crystal, the chasm, salt, heather, tidal ground, ash, pine, ice,
 // peaks and cliffs, steppe, dunes, vines and the volcano: their legend characters, snow and the crops through the year, the fields'
 // patchwork, the tide, the ice through the year and every terrain's own colour on the automap; and
-// what a hill hides from lower ground (#53).
+// what a hill hides from lower ground (#53) and a wall from the squares round the company (#889).
 import { GameMap } from '../../src/game/map.ts';
 import type { MapDef } from '../../src/game/map.ts';
-import { NORTH, EAST, SOUTH } from '../../src/game/types.ts';
+import { NORTH, EAST, SOUTH, WEST } from '../../src/game/types.ts';
 import type { Facing } from '../../src/game/types.ts';
 import { SNOW_HOLD, cropColor, fieldAt, hedgeColor, heatherBloom, iceColor, viewCells, standsAt } from '../../src/ui/viewport.ts';
 import { markedGroups } from '../../src/ui/frame.ts';
@@ -143,7 +143,8 @@ const FOG: When = (wx, m) => weatherSight(wx) === 2 && daylightAt(m) >= 0.6;
  * valley until it is climbed and a run of hills is not a wall each square; a company beside a hill
  * sees past it; a wood hides nothing; what stands taller than a hill is seen over it; a group behind
  * the brow is neither drawn nor marked until the company climbs; night, light and fog cut how far and
- * the nearer stop wins; and a save made before shows what it showed.
+ * the nearer stop wins; a wall, a door or the mountain hides what lies past it from the squares round
+ * the company as well, a secret door among them (#889); and a save made before shows what it showed.
  */
 function sight(): void {
   const def = (rows: readonly string[], x: number, y: number, f: Facing, more: Partial<MapDef> = {}): MapDef => ({ id: 'fx_sight', name: 'Sight', kind: 'outdoor', start: { x, y, facing: f }, rows: [...rows], ...more });
@@ -191,6 +192,38 @@ function sight(): void {
   ok(round.join() === 'false,true', `the squares round the company are marked as before, but not the one behind a hill at its back (${round.join()})`);
   const beside = [look(LONE, 2, 3, NORTH).explored(4, 3), look(LONE, 4, 3, NORTH).explored(2, 3), look(LONE, 3, 2, NORTH).explored(3, 4)];
   ok(beside.join() === 'false,false,false', `nor the one past a hill beside it, on its right or its left, or at its back facing away (${beside.join()})`);
+  // A wall hides what lies past it as a hill does (#889). On a clear day the company sees two squares and a
+  // Cartographer three; either is marked only where nothing between stops the view. West of the company on
+  // open ground (5,3), a stopper one off at 4,3 or two off at 3,3: the three squares from there on, marked or not.
+  const field = (stop: string, at: number): string[] => ['MMMMMMMMMMM', 'M,,,,,,,,,M', 'M,,,,,,,,,M', `${'M,,,,,,,,,M'.slice(0, at)}${stop}${'M,,,,,,,,,M'.slice(at + 1)}`, 'M,,,,,,,,,M', 'M,,,,,,,,,M', 'MMMMMMMMMMM'];
+  const west = (w: World): string => [4, 3, 2].map((x) => (w.explored(x, 3) ? 'm' : '-')).join('');
+  const mapped = (stop: string, at: number, cartographer: boolean, f: Facing = NORTH): string => {
+    const w = look(field(stop, at), 5, 3, f);
+    if (cartographer) { w.party.members[0].skills = ['cartographer']; w.mapState.explored.fill(0); w.reveal(); }
+    return west(w);
+  };
+  const stoppers = [['a wall', '#'], ['a building', 'B'], ['the mountain', 'M'], ['a door', 'D'], ['a secret door', 'S']];
+  const hides = stoppers.map(([, c]) => `${mapped(c, 4, false)} ${mapped(c, 4, true)} ${mapped(c, 4, false, WEST)}`), stands = stoppers.map(([, c]) => `${mapped(c, 3, false)} ${mapped(c, 3, true)}`);
+  const clear = `${mapped(',', 4, false)} ${mapped(',', 4, true)}`;
+  ok(hides.every((h) => h === 'm-- m-- m--') && stands.every((h) => h === 'mm- mm-') && clear === 'mm- mmm',
+    `a wall, a building, the mountain, a door and a secret door one off hide the squares two and three off from a company and from a Cartographer, facing it or not; two off each is marked and hides the third; open ground hides neither (one off ${hides[0]}, two off ${stands[0]}, open ${clear})`);
+  // A secret door found is a door, and a door shuts the view: the square behind it is marked once the company stands in the doorway.
+  const door = look(field('S', 4), 5, 3, WEST);
+  door.party.members[0].skills = ['perception'];
+  const unfound = west(door), found = door.search();
+  door.mapState.explored.fill(0); door.reveal();
+  const shut = west(door);
+  door.travel('fx_sight', 4, 3, WEST);
+  const through = west(door);
+  ok(unfound === 'm--' && found && shut === 'm--' && through === 'mmm', `a secret door hides the square two off while unfound, and found, a closed door still does; it is marked from the doorway (${unfound}; ${shut}; ${through})`);
+  // Nor round a corner: no step slips between two squares that stop the view. On open ground at 5,3, a wall west (4,3)
+  // and one south (5,4): the square between them (4,4), the one past it (3,5) and one beside the south wall alone (6,4).
+  const corner = (wall: boolean, f: Facing): string => {
+    const w = look(['MMMMMMMMMMM', 'M,,,,,,,,,M', 'M,,,,,,,,,M', 'M,,,#,,,,,M', `M,,,${wall ? '#' : ','}#,,,,M`, 'M,,,,,,,,,M', 'MMMMMMMMMMM'], 5, 3, f);
+    return [[4, 4], [3, 5], [6, 4]].map(([x, y]) => (w.explored(x, y) ? 'm' : '-')).join('');
+  };
+  const cornered = [WEST, SOUTH, NORTH].map((f) => corner(false, f)), walled = corner(true, NORTH);
+  ok(cornered.every((c) => c === '--m') && walled === 'm-m', `the square between two walls one off is not marked, nor the one past it, facing either wall or away; one beside a single wall is; a wall between the two is, so the walls close round the company (${cornered.join(' ')}; ${walled})`);
   // A group behind the brow: not drawn, not marked, not met; from the ridge, all three.
   const brow: Partial<MapDef> = { encounters: [{ id: 'fx_brow', x: 4, y: 2, monsters: ['fen_eel'], roams: false }] };
   const foot = look(VALLEY, 4, 4, NORTH, DAY, brow), top = look(VALLEY, 4, 3, NORTH, DAY, brow);
