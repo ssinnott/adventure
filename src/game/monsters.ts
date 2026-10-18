@@ -129,12 +129,13 @@ export function monsterImmune(d: MonsterDef, k: Condition): boolean {
   return KINDS[d.kind].immune.includes(k) || !!d.immune?.includes(k);
 }
 
-/** What resisting an element leaves of a spell's damage, and what a weakness adds to it. */
+/** What resisting an element leaves of a spell's damage or a blow's die, and what a weakness adds to it. */
 export const RESIST = 0.5, WEAK = 1.5;
 
 /**
- * What an element does to it, as a share of a spell's damage: none where its kind or it is immune,
- * half where either resists, half again where either is weak, else whole. No element is whole.
+ * What an element does to it, as a share of a spell's damage or a blow's die: none where its kind
+ * or it is immune, half where either resists, half again where either is weak, else whole. No
+ * element is whole.
  */
 export function elementMult(d: MonsterDef, el: Element | undefined): number {
   if (!el) return 1;
@@ -146,8 +147,9 @@ export function elementMult(d: MonsterDef, el: Element | undefined): number {
 }
 
 /**
- * A spell's damage on it, rolled: none, half rounded up (never nothing), half again rounded down, or
- * whole. A caster who `pierces` (the sorcerer's third rank) passes a resistance, never an immunity.
+ * A spell's damage or a blow's die on it, rolled: none, half rounded up (never nothing), half again
+ * rounded down, or whole. A caster who `pierces` (the sorcerer's third rank) passes a resistance,
+ * never an immunity.
  */
 export function elementDamage(d: MonsterDef, el: Element | undefined, dmg: number, pierces = false): number {
   const m = elementMult(d, el), mult = pierces && m === RESIST ? 1 : m;
