@@ -3,7 +3,9 @@
 // a bell heard under the snow, over Highcell's lower house; the stone seat facing the peaks, the cairn
 // at the vale's end and the drop on the east into cloud; the eagles over the crags and the bones under
 // them; in the pines at the far end the snow trolls' bowl scraped to the earth, and the pilgrim frozen
-// against a pine; and the bell-rope hanging out of the rock, and the cell behind it.
+// against a pine; and the bell-rope hanging out of the rock, and the cell behind it. At the tip of the
+// pines where the trolls lie up, a pine split by lightning and, in the rock below it behind a second
+// secret door, a hollow with two finds (#863, docs/areas/whitespine.md §4.9).
 // In from J11 (#499) walked, over the hills: J11's south edge meets this map's north edge square for
 // square, nothing said crossing between them, the same land at the same floor (#166). The west edge is
 // the peaks against I12, the east edge ends the world against K12 (cut, the Monastery's plate moved to
@@ -44,11 +46,11 @@ export const MONKSVALE_J12: MapDef = {
     'MAAAAAAMMMMMMMMMMMMppppppMMMMMMM',
     'AAAAAAAMMMMMMMMMMMpppppMMMMMMMMM',
     'AAAAAAAMMMMMMMMMMMpppMMMMMMMMMMM',
-    'AAAAAAAMMMMMMMMMMMMMMMMMMMMMMMMM',
-    'AAAAAAAMMMMMMMMMMMMMMMMMMMMMMMMM',
-    'AAAAAAAMMMMMMMMMMMMMMMMMMMMMMMMM',
-    'MAAAAAAAMMMMMMMMMMMMMMMMMMMMMMMM',
-    'MAAAAAAAMMMMMMMMMMMMMMMMMMMMMMMM',
+    'AAAAAAAMMMMMMMMMMMrSrMMMMMMMMMMM',
+    'AAAAAAAMMMMMMMMMMMr:rMMMMMMMMMMM',
+    'AAAAAAAMMMMMMMMMMMr:rMMMMMMMMMMM',
+    'MAAAAAAAMMMMMMMMMMr:rMMMMMMMMMMM',
+    'MAAAAAAAMMMMMMMMMMMrMMMMMMMMMMMM',
     'MAAAAAAAMMMMMMMMMMMMMMMMMMMMMMMM',
     'MAAAAAAAAMMMMMMMMMMMM%MMMM%%%%%%',
     'MAAAAAAAAMMM%%%%%%%%%%%%%%%%%%%%',
@@ -73,8 +75,17 @@ export const MONKSVALE_J12: MapDef = {
     { kind: 'event', x: 19, y: 11, id: 'j12_rope', once: true, text: 'A bell-rope hangs down the rock out of a crack, frayed, and the snow under it is worn into a hollow by knees.' },
     { kind: 'event', x: 17, y: 11, id: 'j12_cell', once: true, text: 'A cell cut in the rock, a shelf for a bed and a bell hung from the roof with no tongue in it.' },
     { kind: 'chest', x: 16, y: 11, id: 'j12_alms', gold: 1400, items: ['elixir'] },
+    // The second secret (#863), found and never told: a pine split by lightning at the tip of the pocket where the
+    // trolls lie up, the snow melted back from its foot to the rock, and in the rock behind a hollow with two
+    // chests, the Talon Knife in the plain one and the Thunderhead Axe in the iron-bound one, which a Lockpick or an
+    // iron key opens (the area's first locked chest). Off the quest, a long way from the road, and no person, quest
+    // or mark names it.
+    { kind: 'event', x: 19, y: 21, id: 'j12_split', once: true, text: 'A pine stands split from crown to root, its bark scorched in a spiral. The snow round its foot is melted back to the rock.' },
+    { kind: 'event', x: 19, y: 23, id: 'j12_hollow', once: true, text: 'A hollow in the rock, dry and warm, the roof glazed black. Two chests stand in it, one bound in iron.' },
+    { kind: 'chest', x: 19, y: 24, id: 'j12_hollow_chest', gold: 0, items: ['talon_knife'] },
+    { kind: 'chest', x: 19, y: 25, id: 'j12_hollow_locked', gold: 0, items: ['thunderhead_axe'], locked: true },
   ],
-  secrets: [{ x: 18, y: 11, hint: 'j12_rope' }],
+  secrets: [{ x: 18, y: 11, hint: 'j12_rope' }, { x: 19, y: 22, hint: 'j12_split' }],
   encounters: [
     // The box's one fight: the snow trolls in the pines at the vale's far end, two together, the hardest
     // and the only group.
