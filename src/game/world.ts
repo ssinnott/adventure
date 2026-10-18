@@ -22,7 +22,7 @@ import { pace, denLooks, densOf } from './dens.ts';
 import { stonesRestored, endingOf, hearthWord } from './stones.ts';
 import type { Hearth } from './stones.ts';
 import { signLine, signSays } from './inscriptions.ts';
-import { hasSkill } from './skills.ts';
+import { hasSkill, skilled } from './skills.ts';
 
 export { MINUTES_PER_DAY };
 export const START_MINUTES = 7 * 60;
@@ -432,27 +432,29 @@ export class World {
     const mf: Facing = dir === 'forward' ? f : dir === 'back' ? turnBack(f) : dir === 'left' ? turnLeft(f) : turnRight(f);
     const nx = this.state.x + FACING_DX[mf], ny = this.state.y + FACING_DY[mf];
     const pass = this.map.passable(nx, ny, this.can);
-    if (pass !== 'ok' && pass !== 'unlock') return { kind: 'blocked', reason: pass === 'void' ? worldsEnd(this.map.at(nx, ny)) : BLOCK_TEXT[pass] };
+    // An iron-key door opens to a key carried, or to a Lockpick with none (`unlock`, #857).
+    const lock = pass === 'unlock' || (pass === 'locked' && this.picks);
+    if (pass !== 'ok' && !lock) return { kind: 'blocked', reason: pass === 'void' ? worldsEnd(this.map.at(nx, ny)) : BLOCK_TEXT[pass] };
     // Levitate never leaves the party over the drop when it fails.
     if (this.map.at(nx, ny).terrain === 'chasm' && (this.state.float ?? 0) <= 1) return { kind: 'blocked', reason: FLOAT_FAILS };
     const gate = this.map.gateAt(nx, ny) ?? this.exitAt(nx, ny);
     if (gate && this.closed(gate)) return { kind: 'blocked', reason: gate.blockedText ?? 'The way is closed.' };
     const left = this.zone;
     const messages: string[] = [];
-    if (pass === 'unlock') {
+    if (lock) {
       const c = this.map.at(nx, ny);
-      takeItem(this.party, 'key_iron');
+      messages.push(this.unlock());
       c.door = 'door';
       this.mapState.doors[`${nx},${ny}`] = 'door';
-      messages.push('The lock turns. The key crumbles.');
     }
     this.state.x = nx; this.state.y = ny;
     this.state.steps++;
     // Six minutes a step in the open, more onto hills or ash and more through deep snow, the two
-    // adding up; two in the streets and underground.
-    const drag = DRAG[this.map.at(nx, ny).terrain] ?? 0;
+    // adding up; two in the streets and underground. A Pathfinder standing walks it all at the road's
+    // six: no drag on the clock (#857).
+    const drag = skilled(this.party, 'pathfinder') ? 0 : (DRAG[this.map.at(nx, ny).terrain] ?? 0) + snowDrag(this.weather);
     const tide = this.tide;
-    this.advance(this.map.kind === 'outdoor' ? 6 + drag + snowDrag(this.weather) : 2);
+    this.advance(this.map.kind === 'outdoor' ? 6 + drag : 2);
     // The tide turning is said where the party can see the ground it covers.
     if (this.tide !== tide && this.tidalNear()) messages.push(TIDE_TEXT[this.tide]);
     if (this.state.light > 0) this.state.light--;
@@ -526,6 +528,20 @@ export class World {
     return m.name;
   }
 
+  /** Whether a lock opens to the company without a key: a Lockpick standing, or a set of picks carried (#857). */
+  get picks(): boolean { return !!skilled(this.party, 'lockpick'); }
+
+  /**
+   * Open an iron lock, a door's or a locked chest's (#857): a Lockpick standing, or a set of picks
+   * carried, picks it and keeps the key; else an iron key carried turns it and is spent. The line it
+   * says, or '' where nothing opens it, and nothing is spent.
+   */
+  unlock(): string {
+    const pick = skilled(this.party, 'lockpick');
+    if (pick) return `${pick.name} picks the lock.`;
+    return takeItem(this.party, 'key_iron') ? 'The lock turns. The key crumbles.' : '';
+  }
+
   /** Walk on Water and Levitate, cast: steps of each. */
   bear(what: 'walk' | 'float'): void { this.state[what] = what === 'walk' ? WALK_STEPS : FLOAT_STEPS; }
   /** A fight ends Walk on Water: the party stands where it stands. */
@@ -560,7 +576,9 @@ export class World {
    */
   reveal(radius = 1): void {
     const ms = this.mapState, m = this.map;
-    const r = Math.max(radius, this.map.kind === 'outdoor' && !this.isDark && weatherSight(this.weather) >= 4 ? 2 : 1);
+    // A Cartographer standing, or a chart carried, maps a square further: 3 in the open by day, 2 in a
+    // dungeon, in the dark or in thick weather (#857).
+    const r = Math.max(radius, (this.map.kind === 'outdoor' && !this.isDark && weatherSight(this.weather) >= 4 ? 2 : 1) + (skilled(this.party, 'cartographer') ? 1 : 0));
     for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) {
       const x = this.state.x + dx, y = this.state.y + dy;
       if (m.inBounds(x, y) && !this.hidden(x, y)) see(ms.explored, y * m.width + x);

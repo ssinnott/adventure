@@ -1,5 +1,5 @@
 // The maps' structure, the rules any content has to keep: no iron key behind its own lock, however
-// the party spends its keys; no guardian that comes back (a group that drops a quest item or says
+// the party spends its keys, a key spent on a locked chest among them; no guardian that comes back (a group that drops a quest item or says
 // something when it dies, beside the quests suite's check for groups a quest names); every respawn
 // within 720 to 2,880 minutes; a group's `until` and `after` naming something real, and no sky
 // underground; a group under the ice standing on ice; Thornmark's Rift stopping with the tear; every
@@ -11,7 +11,7 @@ import { condFaults } from './quests.ts';
 import { gridFaults } from '../../src/game/atlas.ts';
 import type { Atlas, AtlasZone } from '../../src/game/atlas.ts';
 import { GameMap } from '../../src/game/map.ts';
-import type { EncounterDef, MapDef, Presence } from '../../src/game/map.ts';
+import type { EncounterDef, Feature, MapDef, Presence } from '../../src/game/map.ts';
 import type { QuestCond, QuestDef } from '../../src/game/quests.ts';
 import { SOUTH } from '../../src/game/types.ts';
 import { giftOf } from '../../src/game/wilds.ts';
@@ -25,15 +25,22 @@ export const RESPAWN = [720, 2880] as const;
  * The locks some order of spending keys leaves shut. The party floods from the start with no swimmer
  * or climber and no keys of its own, picks up the iron keys in the chests it reaches (and the ones a
  * group it reaches always drops) and opens a lock beside it with one, which the lock takes. Every
- * choice of which lock to open next is tried, a search over the sets of locks opened.
+ * choice of which lock to open next is tried, a search over the sets of locks opened. A locked chest
+ * (#857) is a lock the party may open and need not, with no Lockpick: a key spent on one it reaches is
+ * among the choices tried, a key inside one counts only once it is opened, and a chest is never
+ * itself stranded, since nothing the road needs is in one.
  */
 export function strandedLocks(def: MapDef): string[] {
   const m = new GameMap(def);
   const key = (x: number, y: number): string => `${x},${y}`;
-  const keysAt = new Map<string, number>();
-  const add = (x: number, y: number, n: number): void => { if (n) keysAt.set(key(x, y), (keysAt.get(key(x, y)) ?? 0) + n); };
-  for (const f of m.features) add(f.x, f.y, (giftOf(f)?.items ?? []).filter((i) => i === 'key_iron').length);
-  for (const e of m.encounters) add(e.x, e.y, e.monsters.filter((id) => MONSTERS[id]?.drops?.some((d) => d.item === 'key_iron' && d.chance >= 1)).length);
+  const keysAt = new Map<string, number>(), coffers = new Map<string, number>();
+  const add = (at: Map<string, number>, x: number, y: number, n: number): void => { at.set(key(x, y), (at.get(key(x, y)) ?? 0) + n); };
+  for (const f of m.features) {
+    const n = (giftOf(f)?.items ?? []).filter((i) => i === 'key_iron').length;
+    if (f.kind === 'chest' && f.locked) add(coffers, f.x, f.y, n);
+    else if (n) add(keysAt, f.x, f.y, n);
+  }
+  for (const e of m.encounters) { const n = e.monsters.filter((id) => MONSTERS[id]?.drops?.some((d) => d.item === 'key_iron' && d.chance >= 1)).length; if (n) add(keysAt, e.x, e.y, n); }
   const locks: string[] = [];
   for (let y = 0; y < m.height; y++) for (let x = 0; x < m.width; x++) if (m.at(x, y).door === 'locked') locks.push(key(x, y));
   if (!locks.length) return [];
@@ -42,6 +49,7 @@ export function strandedLocks(def: MapDef): string[] {
     const id = [...opened].sort().join(' ');
     if (tried.has(id)) return; tried.add(id);
     const seen = new Set<string>(); const shut = new Set<string>(); const stack = [[def.start.x, def.start.y]];
+    const chests: string[] = [];
     let keys = 0;
     while (stack.length) {
       const [x, y] = stack.pop()!; const k = key(x, y);
@@ -50,11 +58,13 @@ export function strandedLocks(def: MapDef): string[] {
       if (p === 'locked' && !opened.has(k)) { shut.add(k); continue; }
       if (p !== 'ok' && p !== 'locked') continue;
       seen.add(k); keys += keysAt.get(k) ?? 0;
+      // A locked chest reached: its keys once opened, else a lock the party may spend a key on.
+      if (coffers.has(k)) { if (opened.has(k)) keys += coffers.get(k)!; else chests.push(k); }
       for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) if (m.inBounds(x + dx, y + dy)) stack.push([x + dx, y + dy]);
     }
     const left = keys - opened.size;
     if (left <= 0 || !shut.size) { for (const l of locks) if (!opened.has(l)) stranded.add(l); return; }
-    for (const l of shut) visit(new Set([...opened, l]));
+    for (const l of [...shut, ...chests]) visit(new Set([...opened, l]));
   };
   visit(new Set());
   return locks.filter((l) => stranded.has(l));
@@ -183,6 +193,22 @@ export function structure(): void {
     ok(strandedLocks(d).join() === '1,3', 'two locks, one key before them and one behind the first: spending the key on the second strands the first');
     const both: MapDef = { ...d, features: [...d.features!, { kind: 'chest', x: 2, y: 1, id: 'k3', gold: 0, items: ['key_iron'] }] };
     ok(!strandedLocks(both).length, 'the same with a second key before them: no order strands a lock');
+  }
+  { // A locked chest (#857) is a lock the party need not open: a key spent on one before the door it
+    // was for strands the door; one past the door, or a second key, strands nothing; a key inside one is
+    // not the road's; and a chest is never itself stranded.
+    type Chest = Extract<Feature, { kind: 'chest' }>;
+    const coffer: Chest = { kind: 'chest', x: 3, y: 1, id: 'c1', gold: 50, items: [], locked: true };
+    const fx = (features: Feature[]): MapDef => ({ id: 'coffers', name: 'Coffers', kind: 'dungeon', start: { x: 1, y: 1, facing: SOUTH }, rows: ['#####', '#...#', '##L##', '#...#', '#####'], features });
+    const k1: Chest = { kind: 'chest', x: 1, y: 1, id: 'k1', gold: 0, items: ['key_iron'] };
+    const before = strandedLocks(fx([k1, coffer]));
+    const past = strandedLocks(fx([k1, { ...coffer, y: 3 }]));
+    const two = strandedLocks(fx([k1, { ...k1, id: 'k2', x: 2 }, coffer]));
+    const inside = strandedLocks(fx([{ ...coffer, items: ['key_iron'] }]));
+    const alone = strandedLocks({ ...fx([coffer]), rows: ['#####', '#...#', '#####', '#...#', '#####'] });
+    const plain = strandedLocks(fx([k1, { kind: 'chest', x: 3, y: 1, id: 'c1', gold: 50, items: [] }]));
+    ok(before.join() === '2,2' && !past.length && !two.length && inside.join() === '2,2' && !alone.length && !plain.length,
+      `a key spent on a locked chest before its door strands the door (${before.join() || 'nothing'}); the chest past the door (${past.join() || 'nothing'}) or a second key (${two.join() || 'nothing'}) strands nothing; the door's one key inside a locked chest strands it (${inside.join() || 'nothing'}); a locked chest alone (${alone.join() || 'nothing'}) and the chest unlocked (${plain.join() || 'nothing'}) strand nothing`);
   }
   { // A guardian brought back: by its drop, and by its slainText alone.
     const hand = returningGuardians(group(map('grove2'), 'g2_hand', { respawn: 1440 }), items);

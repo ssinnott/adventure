@@ -254,8 +254,10 @@ export class Game {
       case 'well': this.say(f.text); if (f.heal) { for (const m of this.party.members) if (!isDown(m)) m.hp = m.maxHp; this.say('The party drinks and feels restored.'); } return;
       case 'npc': this.talk(f); return;
       case 'chest': {
-        if (stepped) { if (!w.used(f.id)) this.say('A chest. Space opens it.'); return; }
+        if (stepped) { if (!w.used(f.id)) this.say(f.locked ? 'A locked chest.' : 'A chest. Space opens it.'); return; }
         if (w.used(f.id)) { this.say('The chest is empty.'); return; }
+        // A locked chest opens to a Lockpick or a key (`World.unlock`, #857), and to nothing else.
+        if (f.locked) { const opened = w.unlock(); this.say(opened || 'Locked.'); if (!opened) return; }
         w.markUsed(f.id);
         this.party.gold += f.gold;
         this.party.bag.push(...f.items);

@@ -5,15 +5,19 @@
 // copybook reads as a Linguist does). Linguist is the first built, and reads Kiln-script
 // (game/inscriptions.ts); Mountaineer and Swimmer climb and swim (`partyCan`, game/party.ts; #805);
 // Perception searches (`World.search`), Spirit Sense and Danger Sense mark the automap (`markedGroups`,
-// ui/frame.ts) and Arms Master strikes first (`newRound`, game/combat.ts; #856); the other five come as
-// theirs do. Pure apart from the party handed in, so the tests teach as the game does, without a Game.
+// ui/frame.ts) and Arms Master strikes first (`newRound`, game/combat.ts; #856); Cartographer maps a
+// square further (`World.reveal`), Pathfinder walks rough ground at the road's pace (`World.move`),
+// Lockpick opens an iron lock and keeps the key (`World.unlock`), Merchant sells dearer (`sellPrice`,
+// game/items.ts) and Navigator crosses for half (`fareOf`, game/passage.ts; #857). Pure apart from the
+// party handed in, so the tests teach as the game does, without a Game.
 import type { GuildId } from '../content/guilds.ts';
 import type { Character, Party, RaceId, ClassId } from './party.ts';
 import { isDown, countItem } from './party.ts';
 import { rankOf } from './guilds.ts';
 import { ITEMS } from '../content/index.ts';
 
-export type SkillId = 'linguist' | 'mountaineer' | 'swimmer' | 'perception' | 'spirit_sense' | 'danger_sense' | 'arms_master';
+export type SkillId = 'linguist' | 'mountaineer' | 'swimmer' | 'perception' | 'spirit_sense' | 'danger_sense' | 'arms_master'
+  | 'cartographer' | 'pathfinder' | 'lockpick' | 'merchant' | 'navigator';
 
 export interface SkillDef {
   id: SkillId;
@@ -47,6 +51,12 @@ export const SKILLS: Readonly<Record<SkillId, SkillDef>> = {
   spirit_sense: { id: 'spirit_sense', name: 'Spirit Sense', text: 'Senses the dead through walls.', guild: 'lanterns', price: SKILL_PRICE },
   danger_sense: { id: 'danger_sense', name: 'Danger Sense', text: 'Senses what hunts the company.', guild: 'wardens', price: SKILL_PRICE },
   arms_master: { id: 'arms_master', name: 'Arms Master', text: 'The company strikes first.', guild: 'wardens', price: SKILL_PRICE },
+  // #857: the Rangers are born to Pathfinder and the Thieves to Lockpick (DESIGN §5); nobody to the other three.
+  cartographer: { id: 'cartographer', name: 'Cartographer', text: 'Maps a square further.', guild: 'cartographers', price: SKILL_PRICE },
+  pathfinder: { id: 'pathfinder', name: 'Pathfinder', text: 'Walks rough ground at the road\'s pace.', guild: 'cartographers', price: SKILL_PRICE, classes: ['ranger'] },
+  lockpick: { id: 'lockpick', name: 'Lockpick', text: 'Picks locks, and keeps the key.', guild: 'compact', price: SKILL_PRICE, classes: ['thief'] },
+  merchant: { id: 'merchant', name: 'Merchant', text: 'Sells at two thirds, not half.', guild: 'compact', price: SKILL_PRICE },
+  navigator: { id: 'navigator', name: 'Navigator', text: 'Pays half fare on every crossing.', guild: 'compact', price: SKILL_PRICE },
 };
 
 /** How far Spirit Sense reaches, in steps (`markedGroups`, ui/frame.ts). */
