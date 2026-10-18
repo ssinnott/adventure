@@ -207,6 +207,11 @@ export function structure(): void {
     const inside = strandedLocks(fx([{ ...coffer, items: ['key_iron'] }]));
     const alone = strandedLocks({ ...fx([coffer]), rows: ['#####', '#...#', '#####', '#...#', '#####'] });
     const plain = strandedLocks(fx([k1, { kind: 'chest', x: 3, y: 1, id: 'c1', gold: 50, items: [] }]));
+    // Two doors in a row, one key before them and a locked chest of two keys: the key spent on the
+    // first door, the chest still shut, strands the second; the chest opened first opens both.
+    const rows = ['#######', '#.....#', '###L###', '#.....#', '###L###', '#.....#', '#######'];
+    const deep = strandedLocks({ ...fx([{ ...k1, x: 1 }, { ...coffer, items: ['key_iron', 'key_iron'] }]), rows });
+    ok(deep.join() === '3,4', `a locked chest's keys count only once it is opened: one key and a chest of two before two doors strand the second (${deep.join() || 'nothing'})`);
     ok(before.join() === '2,2' && !past.length && !two.length && inside.join() === '2,2' && !alone.length && !plain.length,
       `a key spent on a locked chest before its door strands the door (${before.join() || 'nothing'}); the chest past the door (${past.join() || 'nothing'}) or a second key (${two.join() || 'nothing'}) strands nothing; the door's one key inside a locked chest strands it (${inside.join() || 'nothing'}); a locked chest alone (${alone.join() || 'nothing'}) and the chest unlocked (${plain.join() || 'nothing'}) strand nothing`);
   }
