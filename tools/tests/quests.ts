@@ -11,6 +11,7 @@ import { takenFlag, doneFlag } from '../../src/content/guilds.ts';
 import { World } from '../../src/game/world.ts';
 import { defaultParty, takeItem, takePrestige, prestigeOf } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
+import { sellPrice } from '../../src/game/items.ts';
 import { serialize, deserialize } from '../../src/game/save.ts';
 import { questLog, questMarks, questNews, goalMap } from '../../src/game/quests.ts';
 import { handIns, personFlags, groupFlags } from '../../src/game/people.ts';
@@ -213,6 +214,7 @@ export function quests(): void {
   const view = (s: { party: Party; world: World }, id: string): QuestView | undefined => questLog(s.world.state, s.party).find((v) => v.def.id === id);
   const page = (s: { party: Party; world: World }, q: LogQuest, c: QuestDef): PageView | undefined => view(s, q.id)?.pages.find((p) => p.def === c);
   const handedIn = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' ? handIns(f).map((q) => q.item) : [])));
+  const company = fresh().party;
   for (const q of QUESTS) steps(q).forEach((c, ci) => {
     const id = q.chapters ? `${q.id}/${c.id}` : q.id;
     const bad: string[] = [];
@@ -229,7 +231,7 @@ export function quests(): void {
     if (c.done) {
       for (const e of c.entries) if (conds(e.when).some((k) => k.item)) { const s = fresh(); satisfy(s, start); satisfy(s, conds(c.done)[0]); if (!page(s, q, c)?.entries.includes(e)) lost.add(`entry ${e.id}, at the hand-in`); }
     } else {
-      for (const k of [c.start, ...c.entries.map((e) => e.when)].flatMap(conds)) if (k.item && (handedIn.has(k.item) || Math.floor(ITEMS[k.item].price / 2) > 0)) lost.add(`${k.item}, which can be taken`);
+      for (const k of [c.start, ...c.entries.map((e) => e.when)].flatMap(conds)) if (k.item && (handedIn.has(k.item) || sellPrice(company, ITEMS[k.item].price) > 0)) lost.add(`${k.item}, which can be taken`);
     }
     ok(!lost.size, `${id}: nothing in the log vanishes when an item leaves the party${lost.size ? ' -> ' + [...lost].join(', ') : ''}`);
     const gone = [c.start, ...(c.done ? [c.done] : []), ...c.entries.map((e) => e.when)].flatMap(fleeting);

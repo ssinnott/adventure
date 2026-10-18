@@ -3,10 +3,14 @@
 // where they stood, still holding their cups; the well at the crossing, a lane west to the potters'
 // kilns, one of them broken open and dry inside, and east to a man in his doorway; at the far end the
 // square, the Old Drake asleep on it beside a stall, and under it the hall's door and the stair down to
-// the cellars. Husks stand in the street between the well and the square. Band 25-26, the boss the top;
-// docs/areas/ashfall.md §4.7 is its brief.
+// the cellars. Husks stand in the street between the well and the square. Behind a wall south of the broken
+// kiln, found by a cup set down clean, a room the ash never filled and a scholar in it, the Master of magic
+// (#859). Band 25-26, the boss the top; docs/areas/ashfall.md §4.7 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH, WEST } from '../../../../game/types.ts';
+
+/** The Master of magic's favour done (#859): the town's roll handed to the scholar, which her Master tests. */
+export const ROLL_GIVEN = 'q_roll_given';
 
 export const OLD_CINDER: MapDef = {
   id: 'old_cinder',
@@ -29,11 +33,11 @@ export const OLD_CINDER: MapDef = {
     '#..#####.#######',
     '#o.#...D.D....##',
     '#..#...#.#....##',
-    '########.#######',
-    '####.........###',
-    '####.........###',
-    '####.........###',
-    '########D#######',
+    '##S#####.#######',
+    '#..#.........###',
+    '#..#.........###',
+    '#..#.........###',
+    '#..#####D#######',
     '########.#######',
     '################',
   ],
@@ -62,7 +66,29 @@ export const OLD_CINDER: MapDef = {
     { kind: 'chest', x: 12, y: 11, id: 'oc1_stall', gold: 500, items: ['flamberge+1'] },
     // The hall's door under the square, and the stair down behind it.
     { kind: 'event', x: 8, y: 12, id: 'oc1_hall', once: true, text: 'Under the square the hall\'s door stands open. A stair goes down behind it.' },
+    // The Master of magic (#859; DESIGN §5): a scholar of the town, found and never told, in the room the
+    // ash never filled behind the broken kiln's south wall, off the lane's west end and well off the
+    // street and the way to the hall's stair. The hint is a cup set down clean, the ash swept from round it
+    // in the door's curve. She asks for the town's roll, which its clerk took west the night before the
+    // ash (it lies in E11's cold tube, `e11_roll`), and hints at it in her words; the roll handed in sets
+    // `ROLL_GIVEN`, which her Master tests. Before it she refuses; after it, a member with Expert in magic
+    // at 25 is taught Master for 5,000.
+    { kind: 'event', x: 2, y: 8, id: 'oc1_cup', once: true, text: 'A cup stands on the floor by the wall, rinsed clean. The ash is swept from round it in a curve.' },
+    { kind: 'event', x: 2, y: 10, id: 'oc1_study', once: true, text: 'A room the ash never filled. Cups on every shelf, glazed side out, and not one with ash in it.' },
+    { kind: 'npc', x: 2, y: 12, name: 'Eseld, a scholar of Old Cinder', lines: [
+      'An old woman at a table, a candle burning down at her elbow, her pages held down with cups. She goes on writing.',
+      '"I know every face in that street. I cannot give you one name."',
+      '"The clerk took the roll west on the carts\' road, the night before the ash. Find where he lay down, and bring it me. Then I will teach you what I know of words."',
+    ], quest: { item: 'town_roll', reward: 0, setFlag: ROLL_GIVEN, done: [
+      'She unties the cord and reads down the first column, her lips moving.',
+      '"Hesketh. Odo. Mabyn Tregear, who fired the first cups. Sit down."',
+    ], after: [
+      'Eseld has the roll open under one hand and a pen in the other.',
+      '"A name is only a word said right. Ask, and I will tell you how."',
+    ] }, mastery: { line: 'magic', tier: 'master', done: { flag: ROLL_GIVEN }, price: 5000 } },
   ],
+  // The secret: the wall at the south end of the broken kiln's room, searched where the cup stands.
+  secrets: [{ x: 2, y: 9, hint: 'oc1_cup' }],
   encounters: [
     // Husks in the street between the well and the square, the nearest.
     { id: 'oc1_husks', x: 8, y: 8, monsters: ['ash_husk', 'ash_husk', 'ash_husk', 'ash_husk'], aware: 2, respawn: 2880, roams: false },
