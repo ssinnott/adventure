@@ -40,21 +40,26 @@
 // read to Hereward in Rook's Nest (`thirdPrestiges`).
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, see, fight, listen, playChapter, everyGoalWalked, goalFromBegun, quest, type Walk, type Step } from '../../../../tools/walk.ts';
-import { xpForLevel, createCharacter, takePrestige, prestigeOf } from '../../../game/party.ts';
-import type { ClassId } from '../../../game/party.ts';
+import { xpForLevel, createCharacter, takePrestige, prestigeOf, defaultParty, equip, statOf, attackBonus } from '../../../game/party.ts';
+import type { ClassId, Party } from '../../../game/party.ts';
 import { offers, teach } from '../../../game/prestige.ts';
 import { seekId } from '../../../game/seeking.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
 import { NORTH, SOUTH, EAST, WEST } from '../../../game/types.ts';
 import type { Facing } from '../../../game/types.ts';
 import { stonesRestored } from '../../../game/stones.ts';
-import { ATLAS, MAP_DEFS, MONSTERS as MONSTER_DEFS } from '../../index.ts';
+import { AREAS, ATLAS, MAP_DEFS, MONSTERS as MONSTER_DEFS } from '../../index.ts';
+import { CURVE } from '../../progression.ts';
+import { elementMult } from '../../../game/monsters.ts';
+import { item, hits, sellPrice } from '../../../game/items.ts';
+import { headlessGame } from '../../../../tools/tests/lib.ts';
+import { GEAR } from '../../../../tools/harness.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { meet, heard, answer, barred, SHORT, NONE } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
 import { GameMap } from '../../../game/map.ts';
-import type { MapDef } from '../../../game/map.ts';
+import type { Feature, MapDef } from '../../../game/map.ts';
 import { restAndWake } from '../../../game/wilds.ts';
 import { readLine } from '../../../game/inscriptions.ts';
 import { MONSTERS } from './monsters.ts';
@@ -673,6 +678,8 @@ export const walkthrough: Walkthrough = (ok) => {
   for (const id of ['i8_tally', 'i8_hammer', 'i8_bones', 'i8_wreck', 'i8_pines']) see(w, `sheerpoint_i8:${id}`);
   listen(w);
   spineBehind(w, ok);
+  hollowFinds(ok);
+  hollowLocked(ok);
   theBells(ok);
   sideQuests(ok);
   thirdPrestiges(ok);
@@ -793,6 +800,159 @@ function spineBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   ok(search(J12.id, 19, 11, WEST, 'j12_cell'), 'searched under the bell-rope, the rock gives, and the cell behind it can be walked into');
   const alms = chest(J12, 'j12_alms');
   ok(alms?.kind === 'chest' && alms.gold === 1400 && alms.x === 16 && alms.y === 11, 'in the cell, its alms box');
+
+  // The second secret (#863), found and never told, at the tip of the pines where the trolls lie up: a pine split by
+  // lightning with the snow melted back from its foot to the rock, and a search there finds the door. Behind it the
+  // plain chest gives the Talon Knife, and the iron-bound one is locked, which the company's thief picks (the premade
+  // six's Ottilie is born to Lockpick, #857; what the lock refuses is played on a game of its own, `hollowLocked`).
+  // Walked, waded, climbed or floated, nothing in the hollow is reached but through its door.
+  const door = J12.secrets![1], plain = hollowChest('j12_hollow_chest'), iron = hollowChest('j12_hollow_locked'), split = hollowEvent('j12_split'), inside = hollowEvent('j12_hollow');
+  const walled = [[inside.x, inside.y], [plain.x, plain.y], [iron.x, iron.y]].map(([x, y]) => shut(j12, [split.x, split.y], [door.x, door.y], [x, y]));
+  ok(door.hint === split.id && split.x === door.x && split.y === door.y - 1 && J12.rows[door.y][door.x] === 'S' && J12.rows[door.y][door.x - 1] === 'r' && J12.rows[door.y][door.x + 1] === 'r',
+    'the hollow\'s door is the box\'s second secret, in the rock below the pines\' tip between rock to either side, and the split pine stands on its near side');
+  ok(walled.every((s) => s.size > 600 && !s.reached), `the hollow is shut but for the rock: none of J12's ${walled[0].size} squares walked, waded, climbed or floated reaches its three`);
+  see(w, `${J12.id}:${split.id}`);
+  ok(w.world.used(split.id), 'the split pine is seen where the pines end at the rock');
+  ok(search(J12.id, split.x, split.y, SOUTH, inside.id), 'searched where the pine stands, the rock gives, and the hollow behind it can be walked into');
+  const stands = (c: { x: number; y: number }): boolean => { const o = w.world.locate(J12.id, c.x, c.y); return !!o && w.world.state.x === o.x && w.world.state.y === o.y; };
+  ok(stands(inside) && inside.y === door.y + 1, 'through the door the hollow runs on south: its first square, and the chests behind it');
+  w.world.move('forward');
+  ok(stands(plain), 'the plain chest stands on the next square');
+  w.world.markUsed(plain.id); w.party.gold += plain.gold; w.party.bag.push(...plain.items);
+  w.world.move('forward');
+  ok(stands(iron), 'the iron-bound chest stands at the back');
+  const gold = w.party.gold, keys = (): number => w.party.bag.filter((i) => i === 'key_iron').length, had = keys(), picked = w.world.unlock();
+  ok(picked === 'Ottilie picks the lock.' && keys() === had, `the company's thief picks the iron-bound lock, born to Lockpick (${picked || 'nothing'}), and no key is spent`);
+  w.world.markUsed(iron.id); w.party.gold += iron.gold; w.party.bag.push(...iron.items);
+  ok(w.party.bag.includes('talon_knife') && w.party.bag.includes('thunderhead_axe') && w.party.gold === gold && !iron.items.includes('key_iron'), 'and the company has the Talon Knife and the Thunderhead Axe, no gold and no key with either');
+  listen(w);
+}
+
+// ---- the hollow in J12's rock (#863) ----
+
+type Chest = Extract<Feature, { kind: 'chest' }>;
+type Happening = Extract<Feature, { kind: 'event' }>;
+/** J12's chest, or its event, by id. */
+const hollowChest = (id: string): Chest => mapOf('monksvale_j12').features!.find((f): f is Chest => f.kind === 'chest' && f.id === id)!;
+const hollowEvent = (id: string): Happening => mapOf('monksvale_j12').features!.find((f): f is Happening => f.kind === 'event' && f.id === id)!;
+
+/**
+ * The iron-bound chest on the real map (#863), pressed on in a game of its own with the company dressed each way: a
+ * company with neither a Lockpick nor an iron key is refused ("Locked.", twice) and the chest stays shut and full; a
+ * thief standing, born to Lockpick, opens it and keeps its key; a key opens it and is spent. The plain chest beside it
+ * has no lock and opens to the company that cannot open the other.
+ */
+function hollowLocked(ok: (cond: boolean, msg: string) => void): void {
+  const iron = hollowChest('j12_hollow_locked'), plain = hollowChest('j12_hollow_chest');
+  /** A new game, the company dressed by `dress`, stood on the chest and Space pressed twice: what the log said, and what became of the chest, the prize and the keys. */
+  const press = (c: Chest, dress: (p: Party) => void): string => {
+    const g = headlessGame(4), p = g.party;
+    dress(p);
+    g.world.travel('monksvale_j12', c.x, c.y, SOUTH);
+    const there = g.world.featureHere(), from = g.log.length;
+    g.enterCell();
+    if (there) { g.interact(there); g.interact(there); }
+    return `${g.log.slice(from).join(' ')} | ${g.world.used(c.id) ? 'spent' : 'shut'} | ${c.items.every((i) => p.bag.includes(i)) ? 'taken' : 'left'} | ${p.bag.filter((i) => i === 'key_iron').length} keys`;
+  };
+  const thiefDown = (p: Party): void => { p.members.find((m) => m.cls === 'thief')!.conditions.push('dead'); };
+  const key = (p: Party): void => { p.bag.push('key_iron'); };
+  const prize = 'You open the chest: Thunderhead Axe. The chest is empty.';
+  const cases: [string, Chest, (p: Party) => void, string][] = [
+    ['no Lockpick standing and no key', iron, thiefDown, 'A locked chest. Locked. Locked. | shut | left | 0 keys'],
+    ['the thief standing, born to Lockpick, no key', iron, () => undefined, `A locked chest. Ottilie picks the lock. ${prize} | spent | taken | 0 keys`],
+    ['the thief standing and a key carried, which is kept', iron, key, `A locked chest. Ottilie picks the lock. ${prize} | spent | taken | 1 keys`],
+    ['no Lockpick standing and an iron key, which is spent', iron, (p) => { thiefDown(p); key(p); }, `A locked chest. The lock turns. The key crumbles. ${prize} | spent | taken | 0 keys`],
+    ['no Lockpick and no key, at the plain chest beside it', plain, thiefDown, 'A chest. Space opens it. You open the chest: Talon Knife. The chest is empty. | spent | taken | 0 keys'],
+  ];
+  const wrong = cases.flatMap(([who, c, dress, want]) => { const said = press(c, dress); return said === want ? [] : [`${who}: "${said}", wanted "${want}"`]; });
+  ok(iron.locked === true && !plain.locked && !wrong.length,
+    `the iron-bound chest refuses a company with neither a Lockpick nor an iron key and opens to either, the plain chest beside it opening to any (${cases.map(([who]) => who).join('; ')})${wrong.length ? ' -> ' + wrong.join('; ') : ''}`);
+}
+
+/**
+ * How far the hollow lies from the road (#863), on the world grid: the larger of the two differences from its door
+ * to the nearest square of any road or trail ('=') in the Whitespine's zones, which is where the chapter goes.
+ */
+function offTheRoad(at: { x: number; y: number }): { apart: number; nearest: string } {
+  const out = buildMaps()[OUTDOORS], zones = out.zones.filter((z) => AREAS.find((a) => a.id === 'whitespine')!.maps.some((m) => m.id === z.id));
+  const door = zones.find((z) => z.id === 'monksvale_j12')!;
+  let apart = Infinity, nearest = '';
+  for (const z of zones) for (let y = z.y; y < z.y + z.h; y++) for (let x = z.x; x < z.x + z.w; x++) {
+    if (out.at(x, y).ch !== '=') continue;
+    const d = Math.max(Math.abs(x - (door.x + at.x)), Math.abs(y - (door.y + at.y)));
+    if (d < apart) { apart = d; nearest = `${z.id} ${x - z.x},${y - z.y}`; }
+  }
+  return { apart, nearest };
+}
+
+/**
+ * The two finds (#863), off the ladder: the Thunderhead Axe is the ladder's Ice Axe with lightning on its head, a rung
+ * under the Ice Axe +1 it wears from 22, so the die is the gain; the Talon Knife is the Skinning Knife +1 of 22, plus and
+ * all, with +3 accuracy over it. Each is priced above nothing and inside the Whitespine's window, sold by no shop and
+ * dropped by no monster, on no row of the ladder, sold back at half, and lies in the hollow's chests and nowhere else,
+ * the iron-bound one the area's only locked chest holding the axe. Lightning is held against what the range and the
+ * ash behind it place. And the hollow is found and never told: the hint explains nothing, no person, quest or mark names
+ * it, and it lies off the road, where the measure is named.
+ */
+function hollowFinds(ok: (cond: boolean, msg: string) => void): void {
+  const [axe, knife] = [item('thunderhead_axe'), item('talon_knife')];
+  const [ice, plus, skin, skinPlus] = [item('ice_axe'), item('ice_axe+1'), item('skinning_knife'), item('skinning_knife+1')];
+  const same = (a: unknown, b: unknown): boolean => JSON.stringify(a) === JSON.stringify(b);
+  ok(axe.slot === 'weapon' && axe.element === 'lightning' && !axe.stat && !axe.plus && axe.dice === ice.dice && axe.sides === ice.sides && axe.bonus === ice.bonus && same(axe.classes, ice.classes) && !!axe.classes && axe.name.length <= 26,
+    `the Thunderhead Axe is the Ice Axe's steel with lightning on it, for the Ice Axe's classes, its name ${axe.name.length} characters of the sheet's 26`);
+  ok(hits(axe) - hits(ice) === 3.5 && hits(ice) < hits(plus) && hits(axe) > hits(plus),
+    `a rung under the ladder's, so the die is the gain: hits ${hits(axe)} against the Ice Axe +1 of 22 at ${hits(plus)} (the plain Ice Axe of 21 ${hits(ice)})`);
+  ok(knife.slot === 'weapon' && knife.kind === 'light' && same(knife.stat, { accuracy: 3 }) && !knife.element && knife.plus === 1 && knife.dice === skinPlus.dice && knife.sides === skinPlus.sides && knife.bonus === skinPlus.bonus
+    && same(knife.classes, skinPlus.classes) && hits(knife) === hits(skinPlus) && hits(skin) < hits(knife),
+    `the Talon Knife is the Skinning Knife +1's steel and plus (hits ${hits(knife)}) for its classes, raising accuracy by 3 and nothing else`);
+  // Priced, in the window, never sold, off the ladder, sold back at half.
+  const stocked = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => (f.kind === 'shop' ? f.stock : []))));
+  const ladder = new Set(GEAR.flatMap(([, ids]) => ids)), dropped = new Set(Object.values(MONSTER_DEFS).flatMap((m) => (m.drops ?? []).map((x) => x.item)));
+  const limit = CURVE.whitespine.price, six = defaultParty(makeRng(1));
+  for (const d of [axe, knife]) {
+    ok(d.price > 0 && d.price <= limit && !stocked.has(d.id) && !ladder.has(d.id) && !dropped.has(d.id) && sellPrice(six, d.price) === d.price / 2,
+      `${d.name} costs ${d.price} of the Whitespine's window of ${limit}, is sold by no shop, worn by no rung of the ladder and dropped by no monster, and sells back at ${sellPrice(six, d.price)}`);
+  }
+  // Where they lie: the hollow's two chests, the iron-bound one the area's only locked chest.
+  const mine = AREAS.find((a) => a.id === 'whitespine')!;
+  const chests = MAP_DEFS.flatMap((d) => (d.features ?? []).filter((f): f is Chest => f.kind === 'chest').map((f) => ({ map: d.id, f })));
+  const holding = (id: string): string => chests.filter(({ f }) => f.items.includes(id)).map(({ map, f }) => `${map}:${f.id}`).join();
+  const lockedHere = chests.filter(({ map, f }) => f.locked && mine.maps.some((m) => m.id === map)).map(({ map, f }) => `${map}:${f.id}`);
+  ok(holding('thunderhead_axe') === 'monksvale_j12:j12_hollow_locked' && holding('talon_knife') === 'monksvale_j12:j12_hollow_chest' && lockedHere.join() === 'monksvale_j12:j12_hollow_locked'
+    && hollowChest('j12_hollow_locked').gold === 0 && hollowChest('j12_hollow_chest').gold === 0,
+    `the Thunderhead Axe lies in the iron-bound chest and the Talon Knife in the plain one beside it, no gold with either, and the iron-bound chest is the only locked one the Whitespine places (${lockedHere.join() || 'none'})`);
+  // The raise and the blow, on the real items: worn, the knife adds 3 to accuracy and not to the bare stat, carried it adds nothing, and a point of aim over the ladder's own;
+  // the classes that cannot wield the axe are refused it.
+  const crew = defaultParty(makeRng(1)), thief = crew.members.find((m) => m.cls === 'thief')!, knight = crew.members.find((m) => m.cls === 'knight')!;
+  equip(thief, skinPlus.id);
+  const ladderAim = attackBonus(thief), bare = statOf(thief, 'accuracy');
+  thief.pack.push(knife.id);
+  const carried = statOf(thief, 'accuracy');
+  thief.pack.pop();
+  ok(equip(thief, knife.id) && carried === bare && statOf(thief, 'accuracy') === bare + 3 && thief.stats.accuracy === bare && attackBonus(thief) === ladderAim + 1
+    && equip(knight, axe.id) && knight.equipment.weapon === axe.id && !equip(crew.members.find((m) => m.cls === 'sorcerer')!, axe.id) && !equip(crew.members.find((m) => m.cls === 'thief')!, axe.id),
+    `worn, the knife raises the thief's accuracy ${bare} to ${statOf(thief, 'accuracy')} (carried, nothing) and her aim a point over the ladder's knife's; the knight wields the axe, the sorcerer and the thief cannot`);
+  // Lightning against what the range places and what the ash behind it does: none is immune or resists it; the weak are named.
+  for (const [id, was] of [['whitespine', 8], ['ashfall', 16]] as const) {
+    const area = AREAS.find((a) => a.id === id)!;
+    const placed = [...new Set(area.maps.flatMap((m) => (m.encounters ?? []).flatMap((e) => e.monsters)))].map((m) => MONSTER_DEFS[m]).filter((m) => m.level > 10);
+    const weak = placed.filter((m) => elementMult(m, 'lightning') > 1), shut = placed.filter((m) => elementMult(m, 'lightning') < 1);
+    ok(placed.length === was && !shut.length && weak.length > 0, `lightning is never nothing at ${id}: of the ${placed.length} monsters it places past 10, ${weak.length} are weak to it (${weak.map((m) => m.id).join(', ')}) and ${shut.length} immune or resistant`);
+  }
+  // Found and never told.
+  const split = hollowEvent('j12_split');
+  ok(!/door|secret|hollow|hide|chest|lock|key|search|store|knife|axe/i.test(split.text), 'the split pine is a thing seen, and its text explains nothing');
+  const quests = AREAS.flatMap((a) => [...(a.quests ?? []), ...(a.chapter ? [a.chapter] : [])]);
+  const told = [
+    ...quests.flatMap((q) => [q.title, ...q.entries.map((e) => e.text), ...q.goals.map((x) => x.text), JSON.stringify([q.entries.map((e) => e.when), q.goals.map((x) => x.when), q.start, q.done])]),
+    ...MAP_DEFS.flatMap((d) => (d.features ?? []).filter((f) => f.kind === 'npc').map((f) => JSON.stringify(f))),
+    ...ATLAS.sites.map((s) => s.name), ...ATLAS.places.flatMap((p) => [p.name ?? '', p.note ?? '']),
+  ].filter((t) => /Thunderhead|Talon Knife|thunderhead_axe|talon_knife|j12_split|j12_hollow|split from crown/i.test(t));
+  ok(!told.length, `found and never told: no person, quest, chapter or atlas place or site names the hollow, the axe or the knife (${told.length} do)`);
+  // Off the road, a long way: ten squares at least from any road or trail of the range, by the crow, from the door and from the pine.
+  const door = mine.maps.find((m) => m.id === 'monksvale_j12')!.secrets![1];
+  const far = offTheRoad(door), pine = offTheRoad(split);
+  ok(far.apart >= 10 && pine.apart >= 10, `the hollow is off the road: its door is ${far.apart} squares from the nearest road or trail of the range (${far.nearest}) and the pine ${pine.apart} (${pine.nearest}), by the crow`);
 }
 
 /**
