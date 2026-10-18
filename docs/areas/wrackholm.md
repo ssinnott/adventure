@@ -399,7 +399,7 @@ steel is a rung under the ladder's and the die is the gain: 2.5 over the +1 at 1
 Flail at 14, with a point less to hit than the +1. The coat's gain is the speed: the Sharkskin Coat's
 9 armour against its 8, and a stat the fight reads (armour class, the round's order and a flight).
 
-**Where it is.** The rock's east face on row 10, 21 squares from the way into F6 as a company walks
+**Where it is.** The rock's east face on row 10, 20 squares from the way across F6 as a company walks
 and 7 as the crow flies, across solid rock. The way across the isle is the one walk the quest needs: from
 the moor at F6's west edge, round the rock's foot, to the shingle where Dando rows out. The door is at
 20,10, between rock at 20,9 and 20,11; behind it three squares of stone floor, cut from the rock at 17
@@ -909,7 +909,7 @@ Decided by delegate for #806, each the owner's to overturn:
    curve and `src/content/shipped.json` do not move. The area's pool two under its floors falls with
    the two bosses, from 93.7% to 92.2%, still past its limit of 90% and owed to #18 with the rest.
 
-Decided by the owner's delegate for #18, each the owner's to overturn (the issue's calls for #861, §4.6):
+Decided by the owner's delegate for #18, each the owner's to overturn:
 
 1. **An elemental weapon,** its blows carrying lightning: its dice a rung under the ladder's at the
    band, so the die is the gain; a class list as its kind has. The rule if the area session finds
@@ -932,7 +932,7 @@ Decided by the builder for #861, each the owner's to overturn:
    from it at 17 to 19 on row 10 with the door at 20,10 add walkable squares and take none away: every
    id, door square and chest id stays, and the first secret, the grave's, is still the box's first.
 2. **Both finds in the one hollow,** the coat in a sea chest at 18,10 and the blade in an iron-bound,
-   locked one at 17,10 behind it: one detour, one hint, and a company with neither pick nor key still
+   locked one at 17,10 behind it: one detour, one hint; a company with neither pick nor key still
    takes the coat and sees the lock.
 3. **The blade is a Morning Star,** the ladder's weapon at 11 for five classes (knight, paladin,
    ranger, barbarian and cleric, four of the premade six), where the bow is the ranger's alone; its
@@ -974,8 +974,9 @@ Decided by the builder for #861, each the owner's to overturn:
     own against the real chest: the checks were each broken in the tree and watched to fail (the PR
     lists them).
 13. **The pilot is not stranded and does nothing new.** It reads the world through what it has seen; the
-    hollow's far side is never seen with the door shut, so the explorer never suspects it, and a locked
-    chest it came to would be pressed on once and walked past, as a locked door with no key is (#857).
+    door is drawn as rock and the explorer suspects only cells drawn as wall (`suspects`,
+    `src/game/pilot/explore.ts`), so it never suspects it, and a locked chest it came to would be
+    pressed on once and walked past, as a locked door with no key is (#857).
 
 ## 10. Names
 

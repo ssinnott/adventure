@@ -320,7 +320,7 @@ function theHollow(w: Walk): void {
   w.ok(coat && at(iron), 'the sea chest gives the Runner\'s Coat, and the iron-bound chest stands at the back');
   const gold = w.party.gold, keys = (): number => w.party.bag.filter((i) => i === 'key_iron').length, before = keys();
   const said = w.world.unlock();
-  w.ok(said === 'Ottilie picks the lock.' && keys() === before, `the company's thief picks the iron-bound lock, born to Lockpick (${said || 'nothing'}), and no key is spent`);
+  w.ok(iron.locked === true && said === 'Ottilie picks the lock.' && keys() === before, `the company's thief picks the iron-bound lock, born to Lockpick (${said || 'nothing'}), and no key is spent`);
   w.world.markUsed(iron.id); w.party.gold += iron.gold; w.party.bag.push(...iron.items);
   w.ok(w.party.bag.includes('corposant') && w.party.gold === gold && !iron.items.includes('key_iron'), 'and in it Corposant, no gold and no key');
   listen(w);
