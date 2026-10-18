@@ -1306,8 +1306,11 @@ Decided by the builder for #846, each the owner's to overturn:
     point; the rim for the Kilns (P5, the largest box under it) and Cairnmoor (P7); Saltreach's in
     the fen (A5), Rimewater's on Monks' Vale's part of K12, the Glasswold's on its Scarp (D7) and
     Ashfall's in its one box (F12).
-13. **The guardians:** eight families, every one drawn already, so no new family is named; each a
-    boss at 32, as the road's bosses stand at their bands' tops.
+13. **The guardians:** eight families, every one drawn already, so no new family is named. The sea
+    caves take long bodies and devilfish, and the lairs on the rim and the pass the ogre and the
+    keepers, as the direction's examples do; a lair under the rim takes the family its place has
+    already (the Kilns' knockers, Ashfall's drakes, Saltreach's drowned dead), and the Wold's
+    eyrie a bird. Each is a boss at 32, as the road's bosses stand at their bands' tops.
 14. **Each guardian answers its artifact where it can:** the Hag holds where the stone wards, the
     Infirmarer puts to sleep where the robe wards, the Rim Troll mends as Torhide does.
 15. **The monk** may wear the Wakerobe and give up Unarmoured Defence for the ward; the stone's ward

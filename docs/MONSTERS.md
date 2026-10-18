@@ -2055,7 +2055,7 @@ kinds already drawn.
 | Monster | Family | Role, level | Where | Look; what it does |
 |---|---|---|---|---|
 | The Hag | long bodies, new kind | boss, 32 | the Foreland's sea cave, on E4's strand; it keeps the Hagstone | *No eyes, and it found you first.* Holds (paralysis) |
-| The Old Chanter | skeleton, new kind | boss, 32 | Saltreach's drowned mound, A5; the Telstok | *The first of the chanters, and it still sings the old song.* Blesses itself and curses; dead, so sleep and nature pass it by and holy bites |
+| The Old Chanter | skeleton, new kind | boss, 32 | Saltreach's drowned mound, A5; the Telstok | *The first of the chanters, and it still sings the old song.* Blesses itself and curses; dead, so sleep and nature do nothing to it and holy half again |
 | Old Nick | devilfish, new kind | boss, 32 | Wrackholm's sea cave under the east rocks, F5; Holdfast | *What the smugglers fed first.* Size 2; reaches the back row; its hits heal it |
 | The Steiger | knockers, new kind | boss, 32 | the Kilns' old working under the rim, P5; the Erzhemd | *It knocks once, and the whole seam answers.* A machine; calls a group of deep knockers |
 | The Rim Troll | ogre, new kind | boss, 32 | Cairnmoor's cleft in the rim, P7; Torhide | *The rim stood up.* Size 2; mends unless burned |
