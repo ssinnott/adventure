@@ -68,7 +68,7 @@ export const KILNSHEART_P5: MapDef = {
     { kind: 'shrine', x: 9, y: 20, id: 'p5_niche', text: 'A hearth-niche cut in the pit\'s wall, soot on its roof and a pick-head left on its sill for luck.', stat: 'accuracy', done: 'The hearth-niche in the pit\'s wall.' },
     { kind: 'event', x: 7, y: 24, id: 'p5_deep', once: true, text: 'The deepest of the trials, sunk to black rock. Slag has run down its sides and set, and some of it is still warm.' },
     // The rim's foot and the warm seep under it, at the hills' south end.
-    { kind: 'event', x: 8, y: 28, id: 'p5_rim', once: true, text: 'The rim goes up sheer from the hills\' foot, higher than any crag of the Fells. Nothing has come down it.' },
+    { kind: 'event', x: 8, y: 29, id: 'p5_rim', once: true, text: 'The rim goes up sheer from the hills\' foot, higher than any crag of the Fells. Nothing has come down it.' },
     { kind: 'event', x: 3, y: 30, id: 'p5_seep', once: true, text: 'Water seeps out at the hills\' foot, warm as blood, and steams in the cold. The stones round it are rust-red.' },
     // The secret: a fan of spoil under a bare face of the rim with no pit above it, and the trial behind the face.
     { kind: 'event', x: 10, y: 16, id: 'p5_fan', once: true, text: 'A fan of spoil down the hill from a bare face of the rim. There is no pit above it to have thrown it.' },
