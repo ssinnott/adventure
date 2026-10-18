@@ -580,7 +580,7 @@ and lines:
   every time (#754's 10). Two under, at 26, it wins every fight too, owed to #18 as H6's is (#754's
   11). The six groups give 11.63 fights to a rest, inside the aim, and pay 1.09 of the share (the
   brief's four 11.32 and 0.74, #754's 12; #794). Density 100.0% within 8 steps, the furthest 6, with
-  no sign among its 22 points (19 before Hereswith in #763; 20 before #794). The figures are in §8.
+  no sign among its 26 points (19 before Hereswith in #763; 20 before #794; 22 before #864). The figures are in §8.
 
 ### 4.4 Hearthfane, the temple (dungeon, 16×16, band 28–29)
 
@@ -2148,7 +2148,7 @@ crypt pay, 14,850 xp a member and 5,200 gold, still owed to #744 while the area 
 | Gate, two under, at 26 | 100% won (at most: aim 25%, limit 90%): owed to #18 (§11) |
 | Gate, the road at 28 | the isle's two pickets and the sermon, then the rim's champions and the camp's two guards, walked 100% of the time (aim 80%, limit 65%) |
 | Fights to a rest, at 28 | 11.63 (aim 10 to 12, limit 8.5 to 14.5) with six groups since #794 (11.32 with four); 4.7% of days end in a fight broken off |
-| Density, core | 100.0% within 8 steps (130 of 130, 117 needed); the furthest 6 of 15; no sign in 22 points (19 before Hereswith in #763; 20 before #794) |
+| Density, core | 100.0% within 8 steps (134 of 134, 121 needed); the furthest 6 of 15; no sign in 26 points (19 before Hereswith in #763; 20 before #794; 22 before #864) |
 | Levels | 3 monsters in 28–29, give or take two; rising from the way in (rank correlation 0.65; 0.77 before #794); the nearest group, the moths at 4 steps, at 28.0; the hardest, the champions at 10 steps, at 29.0 |
 | Lines | 13 events and signs: 10 of two lines and 3 of three; the area's 41: 2 of one, 27 of two and 12 of three |
 | Art | 50.0% of its 8 wall faces dressed (the cap is 50% under 100 faces): the cell is undressed (§9.2, #754's 2) |
@@ -2244,7 +2244,7 @@ it.
 
 **The vigil cell's two finds** (#864, §4.9) are off this ladder: the Levin Mace (2d12+5 and a lightning
 die, 6,950) and the Vigil Robe (ac 12, personality +3, 6,350) are priced inside the window and under
-the Grey Mail, no `GEAR` row names either, no shop sells either, and the cell pays no xp, gold or
+the Grey Mail; no `GEAR` row names either, no shop sells either and the cell pays no xp, gold or
 group, so every figure here stands.
 
 The boxes' tables above keep the figures they were built with, before the rung, but for the
@@ -3544,12 +3544,12 @@ Decided by the builder for #864, each the owner's to overturn:
     own against the real chest: the checks were each broken in the tree and watched to fail (the PR
     lists them).
 13. **The pilot is not stranded and does nothing new.** It reads the world through what it has seen;
-    its full run stops at Thornmark's chapter (docs/PILOT.md) and never reaches the isle, the door is
-    drawn as rock and the explorer suspects only cells drawn as wall, and a locked chest it met would
+    its full run stops at Thornmark's chapter (docs/PILOT.md) and never reaches the isle; the door is
+    drawn as rock and the explorer suspects only cells drawn as wall; and a locked chest it met would
     be pressed on once and walked past, as a locked door with no key is (#857).
 14. **The door stands on row 15, not row 13 where it was first cut,** for the art suite's wall
     dressing (`tools/tests/art.ts`): a secret door is a wall face to it, the painter dresses one wall
-    in five by a hash of its square (`wallDressing`), and I6's zone, 8 faces with the takings' door
+    in five by a hash of its square (`wallDressing`); I6's zone, 8 faces with the takings' door
     dressed, holds the cap of half only while the new door is bare. The door at 8,13 drew a sconce
     and took the zone to 8 of 12 (66.7%); 8,15 is bare, so it stands at 4 of 12 (33.3%). The cap is
     not moved; the cell is two rows down the same face, still between rock above and below.

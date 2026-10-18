@@ -7,7 +7,7 @@
 // Staff behind the crack (61). The Stair's (#758): the Grey Axe in the rearguard's chest, and Jowan's letter
 // home (58). The Heart's (#759): the Queen's signet, off Vask's finger. The band's rung at 28, found and
 // never sold, is these nine pieces (#746, docs/areas/hearth_isle.md §8). Two finds off that rung close the table (#864,
-// §4.3): a lightning mace and a robe that raises personality, in a cell cut in the east rim.
+// §4.9): a lightning mace and a robe that raises personality, in a cell cut in the east rim.
 import type { ItemDef } from '../../../game/items.ts';
 import { W, A, MARTIAL, MAIL, NO_CASTER_HEAVY } from '../../items.ts';
 import { slagMace } from '../ashfall/items.ts';
@@ -30,8 +30,8 @@ export const greyAxe = W('grey_axe', 'Grey Axe', 6800, 2, 12, { bonus: 7, twoHan
 export const greyShield: ItemDef = { id: 'grey_shield', name: 'Grey Shield', slot: 'shield', price: 4000, ac: 8, classes: MAIL };
 /**
  * The staff from the Lanterns' hall the Sunder swallowed (61), a point past the Grey Staff (1d10+13): a
- * staff anyone may carry, as the Battle Staff is. Its holiness is its lamp's, in its words: no weapon
- * carries an element.
+ * staff anyone may carry, as the Battle Staff is. Its holiness is its lamp's, in its words: its blows
+ * carry no element.
  */
 export const oldLanternsStaff = W('old_lanterns_staff', 'Old Lantern\'s Staff', 7000, 1, 10, { kind: 'staff', bonus: 14, twoHanded: true, text: ['A staff of the old Lanterns, the lamp in its head still lit after four hundred years.'] });
 
