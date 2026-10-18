@@ -162,7 +162,7 @@ export function drawAutomap(ctx: CanvasRenderingContext2D, world: World, frame: 
   }
   // An exit not there yet (`after`, #749) is no exit on the map either.
   for (const e of m.exits) if (shown(e.x, e.y) && world.there(e)) { ctx.fillStyle = GREEN; ctx.fillRect(ox + e.x * cell + 1, oy + e.y * cell + 1, Math.max(1, cell - 2), Math.max(1, cell - 2)); }
-  // Monsters in view, or seen and near.
+  // Monsters in view, or seen and near, and what a sense marks (`markedGroups`).
   for (const g of markedGroups(world)) {
     if (!within(g.state.x, g.state.y)) continue;
     ctx.fillStyle = (frame >> 4) & 1 ? RED : '#ff8a7a';

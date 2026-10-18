@@ -630,8 +630,9 @@ docs/areas/<area>.md                    the area's brief, and what was built
 
 The skills that open the map come when there are shortcuts and secrets for them; none is needed to
 follow the road. Linguist, the Lanterns', is built (#538); so are Mountaineer and Swimmer (#805),
-the Wardens' at their Drillyard and the Cartographers' at their halls in Saltmouth and Cinderport.
-The other nine come as theirs do. Decided by the owner's delegate, 16 October 2026 (#805). Along the
+the Wardens' at their Drillyard and the Cartographers' at their halls in Saltmouth and Cinderport,
+and Perception, Spirit Sense, Danger Sense and Arms Master (#856), the Lanterns' and the Wardens'.
+The other five come as theirs do. Decided by the owner's delegate, 16 October 2026 (#805). Along the
 whole road the systems lane also owes the danger made legible (the band said on crossing, and in how
 a group is described), the log paging the one quest by chapter, hand-ins that take their item at the
 first meeting (§2.3) and a bot that plays as well as the party can (§5.2).

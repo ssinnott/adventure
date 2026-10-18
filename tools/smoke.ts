@@ -277,9 +277,9 @@ const trainer = await (async () => {
 // run time, that marks Feuerstollen. Stepped on by the premade six, who have no reader, it is a sign.
 // A person who teaches Linguist, put in the street too, tells a company not of the Lanterns that they
 // teach their own. In the Lantern Guildhall, the company a Taper for the run, the hall's first menu
-// offers its skills, Linguist is chosen of the three (#856), and Maren learns it, which her sheet then
-// lists. Stepped on again, she reads
-// it after its words and marks the world map, which shows the mark, whole, and none once forgotten.
+// offers its skills, Linguist is chosen of the three (#856), and Maren learns it, which her sheet
+// then lists. Stepped on again, she reads it after its words and marks the world map, which shows the
+// mark, whole, and none once forgotten.
 const script = await (async () => {
   const top = (): Promise<{ screen: string; options: string[]; text: string }> => page.evaluate(() => { const t = (window as any).__game.game.top; return { screen: t.constructor.name, options: t.options ?? [], text: t.words ?? t.text ?? '' }; });
   const said = (from: number): Promise<string[]> => page.evaluate((s0: number) => { const g = (window as any).__game.game; return g.log.slice(Math.max(0, g.log.length - (g.said - s0))); }, from);

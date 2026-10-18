@@ -12,7 +12,7 @@
 // before them has none.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { FONT_CHARS, measureText } from '../../src/lib/engine/text.ts';
-import { defaultParty, partyCan, isDown, RACES, CLASSES, NAME_MAX } from '../../src/game/party.ts';
+import { defaultParty, partyCan, isDown, takePrestige, RACES, CLASSES, NAME_MAX } from '../../src/game/party.ts';
 import type { Party, RaceId, ClassId } from '../../src/game/party.ts';
 import { World } from '../../src/game/world.ts';
 import { GameMap } from '../../src/game/map.ts';
@@ -239,6 +239,18 @@ function armsMaster(): void {
     return one === want && next === 'monster' && strikes === (how === 'learnt') ? '' : `${race} ${cls} ${how}: ${one}, then ${next}`;
   })));
   ok(answers.every((a) => !a), `with an Arms Master standing the company's first round comes before the wolves', and the second goes by speed; unlearnt or down, the wolves come first; for every people and class (${[...seen].join('; ')})${answers.some((a) => a) ? ' -> astray: ' + answers.filter((a) => a).slice(0, 6).join(', ') : ''}`);
+  // A monk of the second prestige acts first of all (#856's builder's 5): before an Arms Master's
+  // company, and before the wolves without one. He is the slowest of the six, so only that rule puts him first.
+  const monk = (master: boolean): string => {
+    const rng = makeRng(23), p = defaultParty(rng);
+    for (const m of p.members) { m.race = 'human'; m.cls = 'knight'; m.stats.speed = -100; }
+    const mk = p.members[3];
+    mk.cls = 'monk'; mk.stats.speed = -110; takePrestige(mk); takePrestige(mk);
+    if (master) p.members[0].skills = ['arms_master'];
+    return startCombat(p, [{ id: 'g', monsters: ['wolf', 'wolf', 'wolf'] }], rng).order.map((r) => (r.side === 'party' ? String(r.i) : 'm')).join('');
+  };
+  const led = monk(true), alone = monk(false);
+  ok(/^3[0-5]{5}mmm$/.test(led) && /^3mmm[0-5]{5}$/.test(alone), `a monk of the second prestige acts first of all: before the rest of a company with an Arms Master, then the wolves; before the wolves without one (${led} / ${alone})`);
 }
 
 /** The Foreland's ridge, a step east of 30,2, and its water, a step south of 12,28 (tools/tests/movement.ts): what a company can cross, as the world answers a step. */
@@ -394,15 +406,15 @@ function fits(): void {
 
 /**
  * Perception (#856): a search finds a secret door surely, in the wall ahead or in the wall past an open
- * square ahead, and never through a wall; Keen Eyes is the sure find in the wall ahead alone; anyone
+ * square ahead, and never through a wall or a door; Keen Eyes is the sure find in the wall ahead alone; anyone
  * else finds it there one time in two, and never further. A company of each people, all knights (no
  * Keen Eyes): the elves and the gnomes born to it, the others without it, with it learnt by one, and
  * with that one down; and a company of thieves, keen-eyed. Each search on a fresh map, a seed each.
  */
 function perception(): void {
   // From 1,1 facing east the door is two squares off, past an open square; from 2,1 the wall ahead;
-  // from 1,2 two squares off, past a wall.
-  const def: MapDef = { id: 'fx_search', name: 'Search', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#..S#', '#.#S#', '#####'] };
+  // from 1,2 two squares off, past a wall; from 1,3 two squares off, past a closed door.
+  const def: MapDef = { id: 'fx_search', name: 'Search', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#..S#', '#.#S#', '#.DS#', '#####'] };
   const TRIES = 24;
   /** Of TRIES searches from x,y facing east, each on a fresh map with its own seed: how many find the door. */
   const finds = (setup: (q: Party) => void, x: number, y: number): number => {
@@ -417,21 +429,21 @@ function perception(): void {
     }
     return n;
   };
-  /** Searches ahead, two squares off and past a wall, as `x/y/z` of TRIES. */
-  const three = (setup: (q: Party) => void): string => `${finds(setup, 2, 1)}/${finds(setup, 1, 1)}/${finds(setup, 1, 2)}`;
-  const sure = `${TRIES}/${TRIES}/0`;
+  /** Searches ahead, two squares off, past a wall and past a door, as `a/b/c/d` of TRIES. */
+  const three = (setup: (q: Party) => void): string => `${finds(setup, 2, 1)}/${finds(setup, 1, 1)}/${finds(setup, 1, 2)}/${finds(setup, 1, 3)}`;
+  const sure = `${TRIES}/${TRIES}/0/0`;
   const seen: string[] = [];
   const wrong = PEOPLES.flatMap((race) => {
     const isBorn = race === 'elf' || race === 'gnome';
     const as = (how: 'none' | 'learnt' | 'down') => (q: Party): void => { for (const m of q.members) m.race = race; if (how !== 'none') q.members[0].skills = ['perception']; if (how === 'down') q.members[0].conditions.push('dead'); };
     const none = three(as('none')), learnt = three(as('learnt')), down = isBorn ? none : three(as('down'));
     seen.push(`${race} ${none}, learnt ${learnt}${isBorn ? '' : `, down ${down}`}`);
-    const chance = (r: string): boolean => { const [a, b, c] = r.split('/').map(Number); return a > 0 && a < TRIES && b === 0 && c === 0; };
+    const chance = (r: string): boolean => { const [a, b, c, d] = r.split('/').map(Number); return a > 0 && a < TRIES && b === 0 && c === 0 && d === 0; };
     return (isBorn ? none === sure : chance(none)) && learnt === sure && (isBorn || chance(down)) ? [] : [race];
   });
   const keen = three((q) => { for (const m of q.members) { m.race = 'human'; m.cls = 'thief'; } });
-  ok(!wrong.length && keen === `${TRIES}/0/0`,
-    `a search with Perception standing finds surely ahead and two squares off, never past a wall; Keen Eyes surely ahead alone; anyone else one time in two ahead and never further: found of ${TRIES} ahead / two off / past a wall (${seen.join('; ')}; human thieves ${keen})${wrong.length ? ' -> astray: ' + wrong.join(', ') : ''}`);
+  ok(!wrong.length && keen === `${TRIES}/0/0/0`,
+    `a search with Perception standing finds surely ahead and two squares off, never past a wall or a door; Keen Eyes surely ahead alone; anyone else one time in two ahead and never further: found of ${TRIES} ahead / two off / past a wall / past a door (${seen.join('; ')}; human thieves ${keen})${wrong.length ? ' -> astray: ' + wrong.join(', ') : ''}`);
 }
 
 /** A clear day: the sight at its farthest, so what is not marked is not marked for the hill or the wall. */

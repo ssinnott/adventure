@@ -460,7 +460,8 @@ Decided by the builder for #856, each the owner's to overturn:
    what hunts the company." and "The company strikes first."
 9. `RaceDef.perceptive` goes: Perception's `races` says who is born to it, in one place.
 10. The four rows follow Swimmer in `SKILLS`, so a hall lists its three and the sheet a member's in
-    that order (Linguist, Perception, Spirit Sense; Mountaineer, Danger Sense, Arms Master).
+    that order (Linguist, Perception, Spirit Sense; Mountaineer, Danger Sense, Arms Master), not
+    §8's.
 11. The sheet's skills line wraps inside its left column, since a member of two guilds may hold six.
 12. The pilot's talk is unchanged: its way out leaves a hall's two levels and its skill rule a
     person's. The skills test holds both.
