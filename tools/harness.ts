@@ -17,13 +17,12 @@
 //   node tools/harness.ts --gear-grows [...]           ... or as if the company's gear kept growing past 28
 //   node tools/harness.ts --level-traits [...]         ... or its fighters gained a blow a promotion (--level-bonus: a bonus)
 //   node tools/harness.ts --rank-step 0.25 [...]       ... or a spell rank added another share than play's 15%
-//   node tools/harness.ts --no-tiers [...]             ... or the company took no Expert at 13 nor Master at 25 (#852), as before #865
-//   node tools/harness.ts --no-bot [...]               ... or the bots, the gate's too, neither blessed, slept nor drank (#853), as before #865
-//   node tools/harness.ts --bot sleep [...]            ... or they did only those of the three it names, with commas between
+//   node tools/harness.ts --tiers [...]                ... or the company took Expert at 13 and Master at 25 (#852), and says them
+//   node tools/harness.ts --bot bless,sleep,drink [...] ... or the bots, the gate's too, did any of the three (#853), and counts them;
+//                                                         from level 11 only, as the game's bot plays them (`optsFor`), which #865 weighed at 13 to 28
 //   node tools/harness.ts --company newer [...]        ... or the company were the four newer classes' (`newerCompany`)
 // The company is the premade six, trained to the level (to the road's cap, 32), with the prestiges
-// that level brings (game/party.ts) and its Expert from 13 and Master from 25 (#852, `tier`), and
-// dressed in what the item tables give it by then (GEAR); the report says its tiers. Beside
+// that level brings (game/party.ts), and dressed in what the item tables give it by then (GEAR). Beside
 // it stands a company of the four newer classes, made the same way, which the harness suite holds to
 // the line at four levels; the gate judges the premade six alone (EXPANSION §5.2). A thrifty bot plays it (see `thrifty`), where the gate's
 // bot (src/game/bot.ts) spends: it mends whoever is in danger, strikes, and casts a damage spell only when the hit points
@@ -32,10 +31,10 @@
 // stops in what it has seen mend. It aims at a leader, else a caller while its call has room, else
 // a light that takes spell points, and reads the fight as it stands each turn, called groups and all.
 // It wakes a sleeper or frees one held of the front row, or a caster, where it can (#549), raises
-// the front row's fallen first while a foe breathes, cures nothing else and never flees. As play has
-// it since #865 (`BotOpts`, #853; `PLAYED`), it blesses and sleeps where the cast pays, weighed as a damage
-// spell is, lets the sleepers lie while another can strike, and drinks where no spell pays and no mender
-// can; the report counts how often. Between fights it lifts stone and
+// the front row's fallen first while a foe breathes, cures nothing else and never flees. Behind
+// `BotOpts` (#853), off unless `--bot` sets them and from level 11 only (`optsFor`), it blesses and sleeps where the cast pays,
+// weighed as a damage spell is, lets the sleepers lie while another can strike (`striker`, #865), and drinks where no spell
+// pays and no mender can. Between fights it lifts stone and
 // mends as a player would. The report and the calibration run on every core.
 import { pathToFileURL } from 'node:url';
 import fs from 'node:fs';
@@ -59,7 +58,7 @@ import { MAP_DEFS, MONSTERS } from '../src/content/index.ts';
 import { ROLES, ROLE_IDS, LEVELS, HP, DAMAGE, xpFor, line, standardEncounter, testMonster, TROLL, WIGHT_CURSE, CALL, LIGHT, SWEEP, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, giantEncounter, drakeEncounter, BASILISK_STONE, basiliskEncounter, CLOCK, clockEncounter } from './testmonster.ts';
 import { quickening } from '../src/content/areas/ashfall/items.ts';
 import type { Role } from './testmonster.ts';
-import { wakeWith, markOf, ANSWER, breathGuard, mendLines, REST_AT, pools, mustRest, blessWith, sleepWith, drinkFor, sleeps, wakesMany, striker, PLAYED, FIRST_PAST_ACT_I, optsFor } from '../src/game/bot.ts';
+import { wakeWith, markOf, ANSWER, breathGuard, mendLines, REST_AT, pools, mustRest, blessWith, sleepWith, drinkFor, sleeps, wakesMany, striker, optsFor } from '../src/game/bot.ts';
 import type { BotOpts } from '../src/game/bot.ts';
 
 // The bots' answers, the rest rule and the pools it reads are the game's (src/game/bot.ts), and found here still.
@@ -83,20 +82,15 @@ export const CAP = MAX_LEVEL;
  * growing past the ladder's top (`--gear-grows`, see `outfit`); `levelTraits` and `levelBonus` give it
  * powers past level 10 instead (`--level-traits`, `--level-bonus`, see `edgeOf`); `rankStep` is another
 share a spell rank adds than play's RANK_STEP (`--rank-step`). The prestiges, their ranks and tiers 6
-and 7 are play's, and every company takes them; since #865 so are two more, on unless a what-if takes
-them off: `tiers` gives the company its Expert and Master (see `tier`; `--no-tiers` takes them), and
-`bot` the bots' options (BotOpts, `PLAYED`: the thrifty bot's in `play`, the gate's in tools/gate.ts
-`gateTurn`; `--no-bot` takes all three, `--bot` keeps those it names, and unset is none). And `company`
+and 7 are play's, and every company takes them. Two more stand off until #865 switches them on:
+`tiers` gives the company its Expert and Master (`--tiers`, see `tier`), and `bot` the bots' options
+(`--bot`, BotOpts: the thrifty bot's in `play`, the gate's in tools/gate.ts `gateTurn`). And `company`
 fields the four newer classes' company instead of the premade six (`--company newer`, see `fielded`).
  */
-type Rules = { spellsGrowTo?: number; gearGrows?: boolean; levelTraits?: boolean; levelBonus?: boolean; rankStep?: number; tiers?: boolean; bot?: Readonly<BotOpts>; company?: 'newer' };
-/** Play's rules, where the harness starts and each worker is set again: the tiers and the bots' three on (#865), no other what-if. */
-const PLAY: Rules = { spellsGrowTo: undefined, gearGrows: undefined, levelTraits: undefined, levelBonus: undefined, rankStep: undefined, tiers: true, bot: PLAYED, company: undefined };
-export const RULES: Rules = { ...PLAY };
-/** The bots' options a rule sets, by name. */
-const botSet = (b: Readonly<BotOpts> | undefined): string => (['bless', 'sleep', 'drink'] as const).filter((k) => b?.[k]).join();
-/** The what-ifs set, by name: each rule as play does not have it. */
-export const whatIfs = (): string[] => (Object.keys(PLAY) as (keyof Rules)[]).filter((k) => (k === 'bot' ? botSet(RULES.bot) !== botSet(PLAY.bot) : RULES[k] !== PLAY[k]));
+export const RULES: { spellsGrowTo?: number; gearGrows?: boolean; levelTraits?: boolean; levelBonus?: boolean; rankStep?: number; tiers?: boolean; bot?: BotOpts; company?: 'newer' } = {};
+const NO_RULES: typeof RULES = { spellsGrowTo: undefined, gearGrows: undefined, levelTraits: undefined, levelBonus: undefined, rankStep: undefined, tiers: undefined, bot: undefined, company: undefined };
+/** The what-ifs set, by name. */
+export const whatIfs = (): string[] => (Object.keys(RULES) as (keyof typeof RULES)[]).filter((k) => RULES[k] !== undefined);
 /** Why `--calibrate --write` refuses, while any what-if is set (a what-if is for weighing), naming them; none else. */
 export const writeRefusal = (): string | undefined => (whatIfs().length ? `a what-if is for weighing, not for writing: drop --write, or the what-ifs (${whatIfs().join(', ')})` : undefined);
 
@@ -228,7 +222,7 @@ function prestige(p: Party): void {
 }
 
 /**
- * The tiers a company of its level holds where `RULES.tiers` asks (#852; on since #865, off under `--no-tiers`): on each line
+ * The tiers a company of its level holds where `RULES.tiers` asks (#852; off until #865): on each line
  * its class takes (`linesOf`: a fighter's arms, a caster's magic, a hybrid's both), Expert from 13 and
  * Master from 25 (`TIER_LEVELS`), as a company that took each when it could. After the prestiges, as
  * play teaches them; what a tier does is the resolver's (party.ts `armsBonus`, `rankMult`).
@@ -355,15 +349,15 @@ function mendRate(c: Character): number {
  * what hurts and not on what does not, keeps a healer's points for mending, and casts less as its
  * spell points run down. Under the rest line spell points cost nothing: the company rests after this
  * fight whatever it casts. While a foe that sweeps stands it mends the row it would take sooner (#545).
- * Where `opts` asks (#853) it weighs Bless (`blessWith`) and sleep (`sleepWith`) as it weighs a damage
+ * Where `opts` asks (#853), from the first level past Act I as the game's bot (`optsFor`, #865), it
+ * weighs Bless (`blessWith`) and sleep (`sleepWith`) as it weighs a damage
  * spell, the saving in hit points against the points: Bless saves what the company's blows would land
  * more for its rounds were worth, sleep the blows the foes it could put down would strike, at the
  * spell's chance, for the rounds a sleeper sleeps (SLEEPS_FOR) or a hold holds, either for no more
  * rounds than the fight has left by the company's weapons; the caster's own blow is lost as for a
  * damage spell. And it drinks (`drinkFor`) where no spell pays, before its blow.
  */
-export const thrifty = (s: CombatState, p: Party, rng: RngInstance, i: number, opts: Readonly<BotOpts> = PLAYED): void => {
-  // The options from the first level past Act I, none under it, as the game's bot (`optsFor`, #865).
+export const thrifty = (s: CombatState, p: Party, rng: RngInstance, i: number, opts: BotOpts = {}): void => {
   const c = p.members[i], o = optsFor(c, opts);
   const known = c.spells.map(spell).filter((x) => x.context !== 'explore' && x.sp <= c.sp);
   // Mending reaches the fallen as well as the standing; only the dead are past it.
@@ -466,7 +460,7 @@ export function play(p: Party, monsters: Encounter, seed: number, bot: Bot = thr
   for (let guard = 0; s.outcome === 'ongoing' && guard < 5000; guard++) {
     const t = currentTurn(s, p, rng);
     if (!t || s.round > ROUND_CAP) break;
-    if (t.side === 'monster') monsterAct(s, p, rng); else bot(s, p, rng, t.i, RULES.bot ?? {});
+    if (t.side === 'monster') monsterAct(s, p, rng); else bot(s, p, rng, t.i, RULES.bot);
   }
   return s;
 }
@@ -684,7 +678,7 @@ export interface Cell { day?: DayTally; fresh: Tally; casts?: Casts }
 /** The level a role's encounter at `level` is fought from: `under` below it, or a boss's floor. */
 export const fieldedAt = (role: Role, level: number, under = 0): number => (role === 'boss' && !under ? bossFloor(level) : Math.max(1, level - under));
 export function cell(role: Role, level: number, seeds: number, under = 0): Cell {
-  const enc = standardEncounter(role, level), at = fieldedAt(role, level, under), casts = botSet(RULES.bot) && at >= FIRST_PAST_ACT_I ? { casts: casting(at, enc, seeds) } : {};
+  const enc = standardEncounter(role, level), at = fieldedAt(role, level, under), casts = RULES.bot ? { casts: casting(at, enc, seeds) } : {};
   if (role === 'boss') return { fresh: measure(at, enc, seeds), ...casts };
   return { day: days(at, [enc], seeds), fresh: measure(at, enc, seeds), ...casts };
 }
@@ -732,7 +726,7 @@ function onCores<T>(jobs: readonly Job[], each?: (j: Job, r: T) => void, limit =
 export const cellsOnCores = (roles: readonly Role[], levels: readonly number[], seeds: number, under = 0, limit = Infinity): Promise<Cell[]> =>
   onCores<Cell>(roles.flatMap((role) => levels.map((level): Job => ({ kind: 'cell', role, level, seeds, under, rules: { ...RULES } }))), undefined, limit);
 
-if (!isMainThread) parentPort?.on('message', (j: Job) => { Object.assign(RULES, PLAY, j.rules); parentPort?.postMessage(work(j)); });
+if (!isMainThread) parentPort?.on('message', (j: Job) => { Object.assign(RULES, NO_RULES, j.rules); parentPort?.postMessage(work(j)); });
 
 // ---- the command line ------------------------------------------------------------------------
 
@@ -769,17 +763,16 @@ async function main(): Promise<void> {
     console.log(`What if: each spell rank adds ${pct(RULES.rankStep)}% to a spell's damage and mending, not ${pct(RANK_STEP)}%.`);
   }
   const and = (xs: readonly string[]): string => (xs.length > 1 ? `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}` : xs.join(''));
-  if (args.includes('--no-tiers')) {
-    RULES.tiers = false;
-    console.log(`What if: the company takes no Expert at ${TIER_LEVELS.expert} nor Master at ${TIER_LEVELS.master} (#852), as before #865.`);
+  if (args.includes('--tiers')) {
+    RULES.tiers = true;
+    console.log(`What if: the company takes Expert at ${TIER_LEVELS.expert} and Master at ${TIER_LEVELS.master} (#852), its fighters at arms, its casters in magic and its hybrids both.`);
   }
-  const bots = args.includes('--no-bot') ? '' : opt('bot');
+  const bots = opt('bot');
   if (bots !== undefined) {
-    const asked = bots ? bots.split(',') : [], known: readonly string[] = ['bless', 'sleep', 'drink'];
-    if (asked.some((x) => !known.includes(x))) throw new Error('--bot takes bless, sleep and drink, any of them, with commas between; --no-bot takes none');
+    const asked = bots.split(','), known: readonly string[] = ['bless', 'sleep', 'drink'];
+    if (asked.some((x) => !known.includes(x))) throw new Error('--bot takes bless, sleep and drink, any of them, with commas between');
     RULES.bot = Object.fromEntries(asked.map((x) => [x, true]));
-    if (!asked.length) console.log(`What if: the bots, the gate's too, neither bless, sleep nor drink (#853), as before #865.`);
-    else if (whatIfs().includes('bot')) console.log(`What if: of bless, sleep and drink the bots, the gate's too, do only ${and(known.filter((x) => asked.includes(x)))} (#853).`);
+    console.log(`What if: the bots, the gate's too, also ${and(known.filter((x) => asked.includes(x)))} (#853).`);
   }
   const fields = opt('company');
   if (fields !== undefined) {
@@ -992,13 +985,11 @@ async function main(): Promise<void> {
   console.log(`ending in a death, a lost fight or one broken off, in fights of ${longest(1)} rounds at level 1 to ${longest(CAP).toFixed(1)} at ${CAP}`);
   console.log(`(up to ${slowest(1)} and ${slowest(CAP).toFixed(1)} where blows that hard kill too often).`);
   console.log(`The boss is fought alone, from ${under ? 'the same company' : 'two levels under it'}: won (target 50%).`);
-  // The levels the company fights from; its tiers are said where it holds one, the bots' casts counted from past Act I.
-  const from = [...new Set(roles.flatMap((r) => levels.map((v) => fieldedAt(r, v, under))))].sort((a, b) => a - b);
-  if (RULES.company || (RULES.tiers && from.some((l) => l >= TIER_LEVELS.expert))) {
-    // The company as it stands at each level it fights from: each member's title and tiers.
+  if (RULES.tiers || RULES.company) {
+    // The company the what-ifs make, as it stands at each level it fights from: each member's title and tiers.
     const tiersOf = (t: Tiers): string => (['master', 'expert'] as const).map((x) => ({ x, on: LINES.filter((l) => t[l] === x) })).filter(({ on }) => on.length).map(({ x, on }) => `${TIER_NAMES[x]} ${on.map((l) => LINE_NAMES[l]).join(' and ')}`).join(', ');
     console.log(`\nThe company${RULES.tiers ? ' and its tiers' : ''}, at each level it fights from:`);
-    for (const l of from) {
+    for (const l of [...new Set(roles.flatMap((r) => levels.map((v) => fieldedAt(r, v, under))))].sort((a, b) => a - b)) {
       console.log(`  L${l}: ${fielded(l, 1).members.map((m) => `${m.name} ${className(m)}${m.tiers ? `, ${tiersOf(m.tiers)}` : ''}`).join('; ')}`);
     }
   }
@@ -1017,7 +1008,7 @@ async function main(): Promise<void> {
   block('one fight from fresh: cost %', (c) => pct(c.fresh.cost));
   block('one fight from fresh: someone down at the end %', (c) => pct(c.fresh.down));
   const took = { bless: 'blessed', sleep: 'slept a group', drink: 'drank' } as const;
-  for (const k of ['bless', 'sleep', 'drink'] as const) if (RULES.bot?.[k] && from.some((l) => l >= FIRST_PAST_ACT_I)) block(`one fight from fresh: the bots ${took[k]} %`, (c) => pct(c.casts?.[k] ?? 0));
+  for (const k of ['bless', 'sleep', 'drink'] as const) if (RULES.bot?.[k]) block(`one fight from fresh: the bots ${took[k]} %`, (c) => pct(c.casts?.[k] ?? 0));
   if (Math.max(...levels) > SPELLS_GROW_TO) console.log(`\nPast level ${SPELLS_GROW_TO} the company runs on play's rules: its spells stop growing, it takes its prestiges at ${PRESTIGES.join(', ')} and their spell ranks, and tiers 6 and 7 at 15 and 23, and it wears the ladder's gear to ${GEAR_TOP} and none past it.`);
 }
 

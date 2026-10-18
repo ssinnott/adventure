@@ -1,5 +1,5 @@
 // The combat harness and its test monster (docs/MONSTERS.md §4.4), and Act III's abilities on it (#537)
-// and Act IV's sweep (#545); the what-ifs on what #865 switched on and the four newer classes' company (#854).
+// and Act IV's sweep (#545); the what-ifs #865 switches on and the four newer classes' company (#854).
 import { createHash } from 'node:crypto';
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { defaultParty, xpForLevel, levelUp, armorClass, weaponOf, MAX_LEVEL, addCondition, className, rankMult, hasCondition, prestigeOf } from '../../src/game/party.ts';
@@ -48,10 +48,9 @@ export async function harness(): Promise<void> {
   RULES.levelBonus = undefined;
   ok(blows.join() === '1,2,2,3' && traits[5].blows === 1 && traits[3].damage === 14 && later === 0 && perks.every((e) => e.damage === 7 && e.ac === 7) && edgeOf(companyAt(24, 37).members[0], 1).blows === 1, `with --level-traits the knight strikes once more a turn with each promotion (${blows.join(', ')} blows at 10, 11, 28 and 29) and at 24 a sneak attack adds 14 in the first round only; with --level-bonus every member gains 7 at 24; without, none`);
   // The prestiges are play's: every company takes them at 11, 19 and 27, with their blows, and with
-  // them its spell ranks: a caster's spells 15% a rank, a hybrid's half that, a fighter's none; read
-  // with no tiers, whose steps in magic add to them (#852).
+  // them its spell ranks: a caster's spells 15% a rank, a hybrid's half that, a fighter's none.
   const taken = [10, 11, 19, 27].map((l) => companyAt(l, 37).members[0]), blowsAt = taken.map(blowsOf);
-  const [at12, at28] = under({ tiers: false }, () => [companyAt(12, 37), companyAt(28, 37)]);
+  const at12 = companyAt(12, 37), at28 = companyAt(28, 37);
   const ranks = [at12.members[5], at28.members[5], at28.members[1], at28.members[0], companyAt(10, 37).members[5]].map((c) => rankMult(c).toFixed(3));
   ok(taken.map((c) => c.prestige ?? 0).join() === '0,1,2,3' && blowsAt.join() === '1,2,2,3' && className(taken[3]) === 'Knight Paramount' && ranks.join() === '1.150,1.450,1.225,1.000,1.000',
     `the company takes its prestiges at 11, 19 and 27 (the knight a ${className(taken[3])} at 27, striking ${blowsAt.join(', ')} times at 10, 11, 19 and 27), and with them the sorcerer's spells gain 15% at the first and 45% by the third, the paladin's half that and the knight's none (${ranks.join(', ')})`);
@@ -149,28 +148,26 @@ export async function harness(): Promise<void> {
 }
 
 /**
- * The what-ifs on what #865 switched on (#854): the company's tiers and the bots' options are play's,
- * on unless `--no-tiers` or `--no-bot` (or `--bot` with fewer) takes them off; the four newer classes'
- * company is a what-if (`--company newer`). With the two off, the company and its bots are main's as they were.
+ * The what-ifs #865 switches on, modelled and off (#854): the company's tiers (`--tiers`), the bots'
+ * options (`--bot`) and the four newer classes' company (`--company newer`). Off, the company is main's.
  */
 function whatIfsOff(): void {
-  // With no what-if set the company is play's, tiered; with the tiers off it is main's as it was: the
-  // premade six at twelve levels, as main made them at 0463be91 before the tiers came to it.
+  // With every what-if off the company is main's: the premade six at twelve levels, as main made them at
+  // 0463be91 before the tiers came to it. #865 renews this when it switches them on.
   const MAIN_SIX = '7e6a61134152748ffac828dcc3d47dbaa7a00e5df03c584054338f7720d24677', sixAt = [1, 5, 10, 11, 12, 13, 19, 24, 25, 27, 28, 32];
-  const sixOf = (): string => createHash('sha256').update(JSON.stringify(sixAt.map((l) => companyAt(l, 3)))).digest('hex');
-  const six = under({ tiers: false }, sixOf), played = sixOf();
-  ok(!whatIfs().length && six === MAIN_SIX && played !== six, `with no what-if set the company is play's, tiered (${played.slice(0, 12)}), and with the tiers off it is main's as it was: the premade six at ${sixAt.join(', ')} (${six.slice(0, 12)})`);
-  // As play has it the company takes Expert at 13 and Master at 25 on its class's lines, after its
-  // prestiges, and nothing else moves; under --no-tiers it holds none (#852). The newer company too.
-  const at = [12, 13, 24, 25, 32], tiered = at.map((l) => companyAt(l, 3)), newTiered = at.map((l) => newerCompany(l, 3));
-  const [bare, newBare] = under({ tiers: false }, () => [at.map((l) => companyAt(l, 3)), at.map((l) => newerCompany(l, 3))]);
+  const six = createHash('sha256').update(JSON.stringify(sixAt.map((l) => companyAt(l, 3)))).digest('hex');
+  ok(!whatIfs().length && six === MAIN_SIX, `with every what-if off the company is main's: the premade six at ${sixAt.join(', ')} (${six.slice(0, 12)})`);
+  // Under --tiers it takes Expert at 13 and Master at 25 on its class's lines, after its prestiges, and
+  // nothing else moves; without, it holds none (#852). The newer company takes them as it does.
+  const at = [12, 13, 24, 25, 32], bare = at.map((l) => companyAt(l, 3)), newBare = at.map((l) => newerCompany(l, 3));
+  const [tiered, newTiered] = under({ tiers: true }, () => [at.map((l) => companyAt(l, 3)), at.map((l) => newerCompany(l, 3))]);
   const owed = (l: number): Tier | undefined => (l >= TIER_LEVELS.master ? 'master' : l >= TIER_LEVELS.expert ? 'expert' : undefined);
   const holds = (p: Party, l: number): boolean => p.members.every((m) => LINES.every((line) => m.tiers?.[line] === (linesOf(m.cls).includes(line) ? owed(l) : undefined)));
   const untiered = (p: Party): string => JSON.stringify(p.members.map((m) => { const c = { ...m }; delete c.tiers; return c; }));
   const none = (ps: Party[]): boolean => ps.every((p) => p.members.every((m) => m.tiers === undefined));
   const said = (p: Party): string => p.members.map((m) => `${m.name} ${LINES.filter((l) => m.tiers?.[l]).map((l) => `${m.tiers?.[l]} ${l}`).join(' and ')}`).join(', ');
   ok(none(bare) && none(newBare) && tiered.every((p, k) => holds(p, at[k]) && untiered(p) === untiered(bare[k])) && newTiered.every((p, k) => holds(p, at[k]) && untiered(p) === untiered(newBare[k])),
-    `as play has it the company takes Expert at 13 and Master at 25 on its class's lines and nothing else moves, at 25 ${said(tiered[3])}; the newer company too (${said(newTiered[3])}); under --no-tiers, none at ${at.join(', ')}`);
+    `under --tiers the company takes Expert at 13 and Master at 25 on its class's lines and nothing else moves, at 25 ${said(tiered[3])}; the newer company too (${said(newTiered[3])}); without, none at ${at.join(', ')}`);
   // The newer company is made as the premade six are: the four newer classes in their places, trained,
   // dressed by the ladder and prestiged at 11, 19 and 27, its monk on a staff for its prestige blows as
   // the thief keeps a light blade, and in the Hand's steel from 28.
@@ -179,8 +176,8 @@ function whatIfsOff(): void {
   ok(ps.every((p, k) => p.members.map((m) => m.cls).join() === 'barbarian,monk,paladin,bard,druid,sorcerer' && p.members.every((m) => m.level === [10, 11, 19, 27][k] && prestigeOf(m) === k))
     && ps.slice(1).every((p) => weaponOf(monk(p)).kind === 'staff' && blowsOf(monk(p)) >= 2) && blowsOf(monk(ps[3])) === 3 && wears(newerCompany(28, 3)) && !wears(newerCompany(26, 3)),
     `the newer company is made as the premade six are: ${ps[3].members.map((m) => `${m.name} ${className(m)}`).join(', ')} at 27; its monk on a staff from 11 (${ps.slice(1).map((p) => `${weaponOf(monk(p)).name} ${blowsOf(monk(p))}`).join(', ')}), and the Hand's steel from 28`);
-  // The bots' options reach both bots (#853): as play has them the thrifty bot in `play` and the gate's in
-  // its fights bless and sleep against four test soldiers at 13; under --no-bot, neither does.
+  // The bots' options reach both bots (#853): under --bot the thrifty bot in `play` and the gate's in its
+  // fights bless and sleep against four test soldiers at 13; off, neither does.
   const ALL: BotOpts = { bless: true, sleep: true, drink: true }, soldiers = standardEncounter('soldier', 13);
   const gated = (): string[] => {
     const p = gateCompany(13, 1), rng = makeRng(fightSeed(1)), s = startCombat(p, [{ id: 'g', monsters: soldiers }], rng);
@@ -188,16 +185,15 @@ function whatIfsOff(): void {
     return s.log;
   };
   const casts = (log: string[]): number => log.filter((l) => / casts (Bless\.|Slumber:)/.test(l)).length;
-  const onPlay = casting(13, soldiers, 10), onGate = casts(gated());
-  const [offPlay, offGate] = under({ bot: {} }, () => [casting(13, soldiers, 10), casts(gated())] as const);
+  const offPlay = casting(13, soldiers, 10), offGate = casts(gated());
+  const [onPlay, onGate] = under({ bot: ALL }, () => [casting(13, soldiers, 10), casts(gated())] as const);
   ok(onPlay.bless + onPlay.sleep > 0 && onGate > 0 && !offPlay.bless && !offPlay.sleep && !offPlay.drink && !offGate,
-    `as play has them the thrifty bot blesses in ${Math.round(onPlay.bless * 10)} and sleeps in ${Math.round(onPlay.sleep * 10)} of 10 fights against four test soldiers at 13 and the gate's casts ${onGate} Blesses and Slumbers in one; under --no-bot, neither (${offGate})`);
-  // A what-if is for weighing: the refusal `--calibrate --write` throws (`writeRefusal`) names each
-  // what-if while it is set, the tiers off, the bots' three off or fewer, and the newer company, and
-  // there is none with every rule play's, the bots' three named or not.
-  const refused = [under({ tiers: false }, writeRefusal), under({ bot: {} }, writeRefusal), under({ bot: { sleep: true } }, writeRefusal), under({ company: 'newer' }, writeRefusal)];
-  ok(writeRefusal() === undefined && under({ bot: { ...ALL } }, writeRefusal) === undefined && refused.every((r, k) => r?.startsWith('a what-if is for weighing') && r.endsWith(`(${['tiers', 'bot', 'bot', 'company'][k]})`)),
-    `the refusal --calibrate --write throws names --no-tiers, --no-bot, --bot with fewer and --company while each is set (${refused.map((r) => r?.slice(r.indexOf('('))).join(', ')}), and there is none with every rule play's`);
+    `under --bot the thrifty bot blesses in ${Math.round(onPlay.bless * 10)} and sleeps in ${Math.round(onPlay.sleep * 10)} of 10 fights against four test soldiers at 13 and the gate's casts ${onGate} Blesses and Slumbers in one; off, neither (${offGate})`);
+  // A what-if is for weighing: the refusal `--calibrate --write` throws (`writeRefusal`) names each of
+  // the three new what-ifs while it is set, and there is none with every what-if off.
+  const refused = [under({ tiers: true }, writeRefusal), under({ bot: ALL }, writeRefusal), under({ company: 'newer' }, writeRefusal)];
+  ok(writeRefusal() === undefined && refused.every((r, k) => r?.startsWith('a what-if is for weighing') && r.endsWith(`(${['tiers', 'bot', 'company'][k]})`)),
+    `the refusal --calibrate --write throws names --tiers, --bot and --company while each is set, as every what-if (${refused.map((r) => r?.slice(r.indexOf('('))).join(', ')}), and there is none with all off`);
 }
 
 /** `f` under the what-ifs `set`, each put back as it was whatever `f` does, so none is left on for a later suite. */

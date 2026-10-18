@@ -4,15 +4,15 @@
 //   node tools/gate.ts --maps thornmark,grove2 --levels 2,3,4,5 --seeds 200
 //   node tools/gate.ts --road thornmark:tm_wolves1,tm_brigands2,tm_hounds,tm_zealots
 // The premade company is trained to each level, dressed by the ladder (GEAR, tools/harness.ts: to
-// 28, the Hand's steel, and past it in that top step) and takes the prestiges its level brings, at
-// 11, 19 and 27, and its tiers, Expert at 13 and Master at 25, as harness's company does (it is that company, `companyAt`),
+// 28, the Hand's steel, and past it in that top step) and takes the prestiges its
+// level brings, at 11, 19 and 27, as harness's company does (it is that company, `companyAt`),
 // and fights every group of a map alone from full health, once per seed. --road instead fights the
 // groups named, in order, with no rest between, and counts the companies still standing after each;
 // one group is one fight. A plain bot plays the party, the game's own (src/game/bot.ts, its
-// auto-fight's as well): it mends, wakes, burns, blesses, sleeps, casts, drinks, strikes or braces,
-// and never flees, so it is weaker than a player; single fights at full health are kinder than play.
-// Harness's `RULES` reach it, its company's tiers and its bot's options (#853), on since #865 as play
-// has them, and off as harness's `--no-tiers` and `--no-bot` set them; this command line takes neither.
+// auto-fight's as well): it mends, wakes, burns, casts, strikes or braces, and never sleeps, blesses,
+// drinks or flees, so it is weaker than a player; single fights at full health are kinder than play.
+// Harness's `RULES` reach it, its company's tiers and its bot's options (#853), as harness's `--tiers`
+// and `--bot` set them, off until #865; this command line takes neither.
 // A group that asks before it fights (#544) it refuses, and fights; the walk past it is `gatePass`.
 // Between fights, where the gate check mends, it lifts stone first, by Absolve or the draught it
 // carries from 25 (#546), as harness's company does.
@@ -38,10 +38,9 @@ export { gateBlast, gateBurn, botTurn } from '../src/game/bot.ts';
 
 /**
  * The bot's turn for member `i`, as the gate plays it: the game's `botTurn` knowing every monster as
- * written, with the options harness's `RULES.bot` asks (#853): bless, sleep and drink as play has
- * them since #865 (`PLAYED`), none where it is unset.
+ * written, with the options harness's `RULES.bot` asks (#853, `--bot`), none until #865 switches them on.
  */
-export function gateTurn(s: CombatState, p: Party, rng: RngInstance, i: number): void { botTurn(s, p, rng, i, asWritten, RULES.bot ?? {}); }
+export function gateTurn(s: CombatState, p: Party, rng: RngInstance, i: number): void { botTurn(s, p, rng, i, asWritten, RULES.bot); }
 
 /**
  * The premade company, every member trained to `level`, dressed by the ladder and with the prestiges
