@@ -988,7 +988,8 @@ and Master at 25 (#852); `--bot` gives the bots, the gate's too, their bless, sl
 11 (#853, #865); `--company newer` fields the four newer classes' company in the premade's place
 (#854); `--artifacts` has the company bear the bounds' artifacts named, or all, each by the first
 member who may (#847). Each says what it makes, and none is on by default: #865 weighed the first
-two and left them off (J2, EXPANSION §5.2). `node tools/restate.ts <base ref> [--write]` restates the monsters
+two and left them off (J2, EXPANSION §5.2). `node tools/restate.ts <base ref> [--write]` restates
+the monsters
 past 10 onto a line made again (#865), for the day the line is made again; it writes only with
 `--write`.
 `node tools/gate.ts [--maps thornmark,grove2] [--levels 2,3,4,5] [--seeds 200]` prints how often the
