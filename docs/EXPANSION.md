@@ -952,8 +952,8 @@ the pilot's Thornmark run takes a quarter longer).
 **The bounds** (#828) run from 17 October 2026, at the owner's word: no company meets the pink.
 First the world's end drawn as the atlas paints it, shut as before (#829); then the systems the
 bounds' content waits on, an enclave held to its own band beside the road (#845) and the artifacts'
-powers (#847), with the eight artifacts designed alongside (#846); then the land the maps lie open
-to, built as country off the quest, area by area, two in flight (#830 to #837). Each area takes an
+powers (#847), with the eight artifacts designed alongside (#846); and beside them the land the maps
+lie open to, built as country off the quest, area by area, two in flight (#830 to #837). Each area takes an
 enclave or two a band or two over its zone's and an artifact in a lair at the cap. E7 is built after
 all (#833), the owner's call over #737's. The reach stays closed for 1.6. Approved and unparked on
 18 October 2026 at the owner's word; the eight areas run two in flight, Saltreach first and the
@@ -971,9 +971,9 @@ Decided by the owner's delegate for #848, each the owner's to overturn:
 
 Decided by the owner's delegate for #828, each the owner's to overturn:
 
-1. **The order of the bounds** (18 October 2026): the fill done (#829, built in #849), then #845 and
-   #846 at once, #847 in two halves, the areas Saltreach first, each its country, its enclave, its
-   lair.
+1. **The order of the bounds** (18 October 2026): the fill done (#829, built in #849); the systems
+   #845 and #846 at once and #847 in two halves; the areas beside them from the start, Saltreach
+   first, each its country, its enclave once #845 is in and its lair once #847 is.
 2. **Five power kinds and no sixth:** a stat raised while borne, an element the blows carry, a spell
    cast so many times a day, regeneration, a ward against one condition.
 3. **One power to each artifact,** each kind used once or twice across the eight.
