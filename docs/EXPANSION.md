@@ -421,6 +421,58 @@ Decided by the builder for #853, each the owner's to overturn:
 8. **Bless goes to the knower whose turn is worth least:** one that can strike from its row leaves it
    to one yet to act this round that cannot, so Idris strikes and Maren blesses.
 
+The checks' company keeps up with the party behind what-ifs (#854), off in every default until
+#865 switches them on. Under `RULES.tiers` (`--tiers`) `companyAt` takes its tiers after its
+prestiges: Expert at 13 and Master at 25 on each line its class takes, a fighter's arms, a caster's
+magic and a hybrid's both. `RULES.bot` (`--bot bless,sleep,drink`) hands the bots their options,
+the thrifty one's in the harness's fights and the gate's in its own. Beside the premade six stands
+a company of the four newer classes, `newerCompany`: a barbarian, a monk and a paladin in front, a
+bard, a druid and a sorcerer behind, trained, dressed, prestiged and tiered as the six are. The
+harness suite holds it to the line at 12, 20, 28 and 32 against each role's standard encounter, on
+100 seeds: its fights to a rest inside `GATE.perRest`'s limit and its fights from fresh won at the
+floor's limit, 80%; `--company newer` plays it by hand. The gate judges one company, the premade
+six: a second would double its fights in the slowest of CI's jobs. On 17 October 2026 the newer
+company stands inside every limit and wins every fight from fresh, off its aim on five lines: the
+archer at 12 (9.5 to a rest, 7 asked), the controller at 28 (12.1 of 11) and the controller, the
+armoured and the elite at 32 (13.6, 13.2 and 13.4 of 12).
+
+Decided by the owner's delegate for #18, each the owner's to overturn:
+
+1. **The company's tiers behind `RULES.tiers`** (`--tiers`): `companyAt` dresses them after
+   `prestige(p)`, Expert from 13 and Master from 25 by class line; the cache key counts them.
+2. **The bots' option plumbed:** `--bot bless,sleep,drink` sets `RULES.bot`, handed to `botTurn`
+   and `thrifty`. Both off until #865.
+3. **A second company, `newerCompany(level, seed)`,** held by the harness suite at 12, 20, 28 and
+   32: fights to a rest inside −2.5/+3.5 of `fightsPerRest`, fights at the floor won 80% or more,
+   100 seeds; `--company newer` plays it by hand.
+4. **The gate keeps one judged company,** the premade six. A class that fails the line is reported
+   to the owner, not fixed here.
+5. **With every option off `companyAt` returns what it returns on main.**
+
+Decided by the builder for #854, each the owner's to overturn:
+
+1. **The monk takes a staff for its prestige blows, as the thief a light blade** (`BLOWS_WANT` in
+   `prestige`): its blows past one come only with a staff or bare hands (`blowsOf`), and the
+   ladder's best blade by its blow is not a staff. Without it the newer company fought 5.4 soldiers
+   and 5.5 armoured to a rest at 20 of 9, four days in five ended by a fight broken off, and the
+   monk in the ranger's place cost the premade six as much. The six hold no monk, so their company
+   is as it was.
+2. **The four stand in for four of the premade**, each with that member's raises on its own
+   class's stats and of a people that suits it: Rook a dwarf barbarian for Bram, Hollis a tidefolk
+   monk for Wren, Aveline a gnome bard for Ottilie, Sable a human druid for Maren. Idris and Cassian
+   are the premade's own; the names are the creation screen's.
+3. **The boss is left out of the newer company's line:** a boss is judged by its odds from two
+   under, not by a day or the floor's fights.
+4. **`--company` is a what-if too** (`RULES.company`), so `--calibrate --write` refuses under it as
+   under the rest; the refusal names what is set (`whatIfs`).
+5. **The gate's bot takes `RULES.bot` in tools/gate.ts's own `gateTurn`,** which every gate fight
+   plays, so #865's default in the harness reaches the gate.
+6. **The line runs on every core** (`cellsOnCores`, the report's own pool): its 36 cells cost
+   about 37 seconds of CPU, about ten of a four-core runner's.
+7. **The what-ifs show what they make:** under `--tiers` or `--company` the report gives the
+   company at each level it fights from, with its titles and tiers; under `--bot`, the share of
+   fights from fresh in which the bots blessed, slept a group and drank.
+
 From 10 two under is judged by the day, not the fight. From 10 the damage spells roll their full
 dice and every group is sized for the day (docs/MONSTERS.md §4.4), so a fight from full health
 measures nothing there: on main at `dbb9d247` the gate's company won every fight two under every
@@ -807,6 +859,7 @@ all (#833), the owner's call over #737's. The reach stays closed for 1.6.
 | Checks that pass or fail by chance | none known: the smoke test plays one seeded world (#23) | none |
 | Pull requests that needed main merged in | 4 of the last 6 in September, not recounted since | rare |
 | `npm run check` | about 14 minutes on a four-core container; in CI on a docs-only change the tests take 4 min 31 s, the smoke 2 min 17 s and the typecheck 19 s; a change to the viewport or the smoke sweeps every map, the smoke job taking about 21 minutes (#844); the tests job took 6 min 27 s to 8 min 26 s on the heads of #868, #867 and #870, the runner's spread about two minutes, so its cap is fifteen (#873) | under 3 minutes: full sweeps of what a pull request touches, the rest sampled or on release; the cure is parallel suites (#848) |
+| Cracks in the sweep of every map (§5.6) | none; the sweep reads each square as the view draws it, the void as its look (#869) | none |
 | Maps inside the density floor (§5.3) | all (`node tools/test.ts density`) | all |
 | Areas on the curve (§5.2) | all twelve (`node tools/test.ts curve`); the Kilns and Ashfall pass the lead line and are held where they are built | all |
 | Areas whose gate holds (§5.2) | all twelve at their floors and two under, Act I's by the fight and from Saltreach's floor by the day (#851); one map's day, `cairnfield_m8`'s, is past its limit and owed to #865 | all |
@@ -844,6 +897,27 @@ Decided by delegate for #808, each the owner's to overturn:
    §5's price line no longer says "until #19 adds them to the curve's gold": the prices are 1,000
    and 4,000 (`PRESTIGE_PRICES`, `src/game/party.ts`) and the curve does not count them; DESIGN
    §8's "once the skills are built (#18)" is left as it is.
+
+Decided by the owner's delegate for #869, each the owner's to overturn:
+
+1. **The crack sweep is held to the painter, never the painter to the sweep.** Its walls beside the
+   party and its view with the hills laid flat read a square as the view draws it (`look ?? cell`),
+   and #849's drawing of the void as its look stands. Drawing the ring's mountain as a wall over the
+   backdrop was the fallback, had reading the look let an injected crack pass; it did not.
+2. **Two cracks were made by hand and each failed the sweep**: one at a map's edge beside the void
+   with a look, one in a dungeon wall. The pull request shows how and the failing lines, and
+   neither is in the tree.
+3. **The check of the world's end stays as it is**: facing it north of the Foreland, the view draws
+   the ring's mountain and nothing pink.
+
+Decided by the builder for #869, each the owner's to overturn:
+
+1. **A void drawn as a hill is laid flat with the hills.** Its look's ground is read as grass and
+   the square stays the void, so nothing else the view reads of it changes.
+2. **Both cracks were made in the painter**, in a scratch copy, not in a hand-made map: a map
+   draws no crack the painter does not make. One left out the face of a wall beside the party where
+   the square past it is the void with a look; one drew a face of the cellar's north wall three
+   pixels short of the face it joins.
 
 ---
 

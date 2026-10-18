@@ -75,5 +75,7 @@ for (const [name, load] of suites) {
   try { await (await load())(); } catch (e) { fail('threw ' + (e instanceof Error ? e.stack : String(e))); }
 }
 const failures = failureCount();
-console.log('\n' + summary(failures, owedCount()));
-process.exit(failures ? 1 : 0);
+// Once a suite has started worker threads (harness's, #854), a piped stdout can be left writing
+// behind the suites: the exit waits for what is written to drain, the code set should it never come.
+process.exitCode = failures ? 1 : 0;
+process.stdout.write('\n' + summary(failures, owedCount()) + '\n', () => process.exit(failures ? 1 : 0));
