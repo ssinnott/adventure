@@ -51,7 +51,7 @@ export const UPPERWATER_A3: MapDef = {
   ],
   features: [
     // In under the willows' last trees from B3's grass; up the line of them, the river out of the rim.
-    { kind: 'event', x: 28, y: 23, id: 'a3_shallows', once: true, text: 'Far up the line of the willows the Long Water comes white out of the rim. No way runs up to it.' },
+    { kind: 'event', x: 28, y: 23, id: 'a3_shallows', once: true, text: 'Far up the line of the willows the Long Water spills out of the rim over its stones. No way runs up to it.' },
     { kind: 'cairn', x: 25, y: 30, id: 'a3_cairn', text: 'A cairn in the corner under the rim, of round stones out of the river. Moss has grown over its top.', gold: 30, items: ['potion_heal'] },
     // The secret: the well-house walled into the rim's foot, the willow at its door hung with rags.
     { kind: 'event', x: 26, y: 27, id: 'a3_willow', text: 'A willow grows out of the rim\'s foot beside a walling of stone. Rags are tied up its trunk, one above another, faded white.' },

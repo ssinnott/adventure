@@ -1078,8 +1078,9 @@ export const walkthrough: Walkthrough = (ok) => {
  * hills over the heronry (A4): west out of B4's grass at 0,16 and south out of A3's corner, both walked,
  * the Delta named only at the line from the Upper Water; the woman of stone's riddle, the shrine at
  * the dry valley's mouth, a rest at the reed-cutters' camp while both groups stand clear of it, the
- * herons and the toad and the leech won, the still found from the reek, and the south edge shut against
- * A5, not built yet. Walked, waded, climbed or floated, no prize is reached but through its door.
+ * herons and the toad and the leech won, the still found from the reek and the south edge shut against
+ * A5, not built yet, but for the marsh at its corner. Walked, waded, climbed or floated, no prize is
+ * reached but through its door.
  */
 function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const w = newWalk(ok), out = buildMaps()[OUTDOORS];
@@ -1193,12 +1194,13 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   ok(down.kind === 'moved' && w.world.zone?.id === A4.id && w.world.state.x === a4.x + 29 && w.world.state.y === a4.y && down.messages.some((m) => m.includes('The Delta.')),
     `south from A3's 29,31 onto A4's 29,0, walked, and the Delta named at the line (${said(down)})`);
   listen(w);
-  ok(Array.from({ length: a4.w }, (_, x) => out.passable(a4.x + x, a4.y + a4.h - 1, ALL)).every((p) => p !== 'ok'), 'A4\'s south edge is shut against A5, not built yet: no square of it is walked, waded, climbed or floated');
+  ok(Array.from({ length: a4.w }, (_, x) => out.passable(a4.x + x, a4.y + a4.h - 1, ALL) === 'ok').every((open, x) => open === (x === a4.w - 1)),
+    'A4\'s south edge is shut against A5, not built yet, but for the marsh at its corner, which meets B4\'s: no other square of it is walked, waded, climbed or floated');
   // The woman of stone on the crest, and her riddle, the dry valley's word.
   const statue = A4.features!.find((f): f is Extract<Feature, { kind: 'statue' }> => f.kind === 'statue')!;
   w.world.travel(A4.id, statue.x, statue.y);
   const purse = w.party.gold;
-  ok(!answerRiddle(w.world, w.party, statue, 'stream').right && answerRiddle(w.world, w.party, statue, 'River').right && w.party.gold === purse + 60, 'the woman of stone\'s riddle is answered river, for 60 gold');
+  ok(!answerRiddle(w.world, w.party, statue, 'door').right && answerRiddle(w.world, w.party, statue, 'River').right && w.party.gold === purse + 60, 'the woman of stone\'s riddle is answered river, for 60 gold');
   kneel(w, `${A4.id}:a4_shrine`);
   // The reed-cutters' camp stands clear of both groups: a company rests there while they stand.
   const camp = A4.features!.find((f) => f.kind === 'camp')!;

@@ -4,10 +4,15 @@
 // cave walled up with its stones, where a still is kept; and the fen's north-west corner below, three
 // herons off B4's heronry fishing it and a bull toad and a leech in its pools, with the reed-cutters'
 // camp on the dry ground at its edge. The Upper Water's hills in its middle rows are laid with the box
-// whole, at the Delta's band. Its south edge is shut with the rim's mountain against A5, not built yet
-// (docs/areas/saltreach.md §12.5). Cut from the atlas by hand, its void written in; §12 is its brief.
+// whole, at the Delta's band. Its south edge is shut with the rim's mountain against A5, not built yet,
+// but at the corner, where B4's marsh runs on (docs/areas/saltreach.md §12.5). Cut from the atlas by
+// hand, its void written in; §12 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
+import { denBurnt } from '../../../../game/dens.ts';
+
+/** B4's heronry burnt: the herons off it stop coming back. */
+const HERONRY_BURNT = denBurnt('delta_b4', 'b4_heronry');
 
 export const DELTA_A4: MapDef = {
   id: 'delta_a4',
@@ -36,7 +41,7 @@ export const DELTA_A4: MapDef = {
     '%%%%%MMMMMMMM^^^^^^^^^^,,,,,,,,,',
     '%%%%%MMMMMBBB^^^^^^^^^,^,,,,,,,,',
     '%%%%%MMMMMB:B^^^^^^^^^,,^^^^^^,,',
-    '%%%%%%MMMMB:S:::::::::,,^^^^^^^,',
+    '%%%%%%MMMMB:S""""""""",,^^^^^^^,',
     '%%%%%MMMMMB:B^^^^^^^^^,,,^^^^,,,',
     '%%%%%MMMMMBBB^^^^^^^^^^,,,,,,,,,',
     '%%%%%%MMMMMMM^^^^^^^^^^,,,,,,,,,',
@@ -49,11 +54,11 @@ export const DELTA_A4: MapDef = {
     '%%%%%MMMMMMMM^^^^^,,,,,,,ww~~www',
     '%%%%%MMMMMMM^^^^^,,,,,,,,www~www',
     '%%%%%MMMMMMMM^^^,,,MM,,,,,wwMMww',
-    '%%%%%MMMMMMMMMMMMMMMMMMMMMMMMMMM',
+    '%%%%%MMMMMMMMMMMMMMMMMMMMMMMMMMw',
   ],
   features: [
     // The hills' crest, and a cairn on the hillside over the grass west of B4.
-    { kind: 'statue', x: 24, y: 6, id: 'a4_statue', text: 'A woman of stone on the crest, an empty pitcher tipped on her shoulder over the dry valley. Words are cut below.', riddle: 'A BED AND A MOUTH, AND IT NEVER SLEEPS.', answer: 'river', gift: { gold: 60, stat: 'intellect' }, done: 'The pitcher is empty still.' },
+    { kind: 'statue', x: 24, y: 6, id: 'a4_statue', text: 'A woman of stone on the crest, her pitcher tipped empty over the dry valley. Words are cut below.', riddle: 'A BED AND A MOUTH, AND IT NEVER SLEEPS.', answer: 'river', gift: { gold: 60, stat: 'intellect' }, done: 'The pitcher is empty still.' },
     { kind: 'cairn', x: 29, y: 10, id: 'a4_cairn', text: 'A cairn on the hillside, heaped by the reed-cutters to find their way down off the hills in a mist.', gold: 50, items: ['potion_heal'] },
     // The dry valley: the shrine at its mouth, and its bed of white stones back to the rim's foot.
     { kind: 'shrine', x: 23, y: 19, id: 'a4_shrine', text: 'A shrine of the valley\'s white stones at its mouth, to the drowned god. A heron\'s feather is pushed into every chink.', stat: 'speed', done: 'The feathers stir in the wind.' },
@@ -66,8 +71,8 @@ export const DELTA_A4: MapDef = {
   ],
   secrets: [{ x: 12, y: 18, hint: 'a4_reek' }],
   encounters: [
-    // Three herons off B4's heronry fishing the fen's corner, the nearest.
-    { id: 'a4_herons', x: 27, y: 24, monsters: ['grey_heron', 'grey_heron', 'grey_heron'], aware: 5, respawn: 1440 },
+    // Three herons off B4's heronry fishing the fen's corner, the nearest, back until it burns.
+    { id: 'a4_herons', x: 27, y: 24, monsters: ['grey_heron', 'grey_heron', 'grey_heron'], aware: 5, respawn: 1440, until: HERONRY_BURNT },
     // A bull toad and a leech in the corner's pools, the farthest and the hardest, kept to them.
     { id: 'a4_toad', x: 27, y: 29, monsters: ['bull_toad', 'leech'], aware: 4, roams: false, respawn: 1440 },
   ],
