@@ -978,5 +978,69 @@ export function outdoors(): void {
     }
     ok(when >= 0 && sides > 100 && told === 0 && shown === sides,
       `in clear weather by day a company before any of the outdoors' ${doors} secret doors has mapped nothing behind it, nor with a Cartographer, from any of ${sides} sides, and found, from its doorway, has mapped what lies behind (${told} sides told; ${shown} shown)`);
+    // Nor aslant: the square behind each of those sides and every chest of its hide, where no run of squares that do not
+    // stop the view, joined side to side, leads to the side the company stands on. From every square a company stands on
+    // within two of one, three with a Cartographer, facing any way, none is mapped: no step slips between two that stop it.
+    const W = map.width, run = new Int32Array(W * map.height).fill(-1);
+    const runOf = (x0: number, y0: number): number => {
+      const i0 = y0 * W + x0;
+      if (run[i0] >= 0) return run[i0];
+      run[i0] = i0;
+      for (const todo = [i0]; todo.length;) {
+        const i = todo.pop()!, x = i % W, y = (i - x) / W;
+        for (const [nx, ny] of [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]]) {
+          const j = ny * W + nx;
+          if (map.inBounds(nx, ny) && run[j] < 0 && !map.blocksView(nx, ny)) { run[j] = i0; todo.push(j); }
+        }
+      }
+      return i0;
+    };
+    const hid = new Set<number>(), chestAt = new Set(map.features.flatMap((c) => (c.kind === 'chest' && !map.blocksView(c.x, c.y) ? [c.y * W + c.x] : [])));
+    for (let y = 0; y < map.height; y++) for (let x = 0; x < W; x++) {
+      if (map.at(x, y).door !== 'secret') continue;
+      for (const f of [0, 1, 2, 3] as Facing[]) {
+        const dx = FACING_DX[f], dy = FACING_DY[f];
+        if (map.passable(x - dx, y - dy) !== 'ok' || map.passable(x + dx, y + dy) !== 'ok') continue;
+        const k = runOf(x + dx, y + dy);
+        if (k === runOf(x - dx, y - dy)) continue;
+        hid.add((y + dy) * W + x + dx);
+        for (const i of chestAt) if (runOf(i % W, Math.floor(i / W)) === k) hid.add(i);
+      }
+    }
+    const marked = new Map<string, string>(); // a square mapped: the first square it was mapped from
+    let stands = 0, marks = 0;
+    for (const i of hid) {
+      const hx = i % W, hy = (i - hx) / W, k = runOf(hx, hy);
+      for (let sy = hy - 3; sy <= hy + 3; sy++) for (let sx = hx - 3; sx <= hx + 3; sx++) {
+        if (!map.inBounds(sx, sy) || map.passable(sx, sy) !== 'ok' || map.at(sx, sy).door !== 'none' || runOf(sx, sy) === k) continue;
+        stands++;
+        for (const cartographer of [false, true]) {
+          if (Math.max(Math.abs(sx - hx), Math.abs(sy - hy)) > (cartographer ? 3 : 2)) continue;
+          party.members[0].skills = cartographer ? ['cartographer'] : [];
+          for (const f of [0, 1, 2, 3] as Facing[]) {
+            Object.assign(world.state, { x: sx, y: sy, facing: f });
+            world.mapState.explored.fill(0);
+            world.reveal();
+            if (!world.explored(hx, hy)) continue;
+            marks++;
+            if (!marked.has(`${hx},${hy}`)) marked.set(`${hx},${hy}`, `${sx},${sy}${cartographer ? ' with a Cartographer' : ''}`);
+          }
+        }
+      }
+    }
+    party.members[0].skills = [];
+    const chests = [...hid].filter((i) => chestAt.has(i)).length;
+    ok(hid.size > 100 && chests > 50 && stands > 500 && marks === 0,
+      `nor aslant: of the ${hid.size} squares behind them or in their hides, ${chests} of them chests, none is mapped from any of ${stands} squares a company stands on within two, three with a Cartographer, facing any way (${marks} marks${[...marked].map(([sq, from]) => `; ${sq} from ${from}`).join('')})`);
+    // A landmark is seen over a wall (#844), as the view draws Highcell's towers over its own: its gate is an exit, stood
+    // on by none, and from the road's end before it, five squares, the company has mapped Highcell, facing any way.
+    const cell = map.landmarks.find((l) => l.kind === 'monastery')!, gate = map.at(cell.x, cell.y - 1).door !== 'none' && !!map.exitAt(cell.x, cell.y - 1);
+    const road = [-2, -1, 0, 1, 2].flatMap((k) => ([0, 1, 2, 3] as Facing[]).map((f) => {
+      Object.assign(world.state, { x: cell.x + k, y: cell.y - 2, facing: f });
+      world.mapState.explored.fill(0);
+      world.reveal();
+      return world.explored(cell.x, cell.y);
+    }));
+    ok(gate && road.every(Boolean), `Highcell (${cell.x},${cell.y}) is mapped over its wall from the road's end before its gate, five squares, facing any way (${road.filter(Boolean).length} of ${road.length})`);
   }
 }

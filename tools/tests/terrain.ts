@@ -216,6 +216,14 @@ function sight(): void {
   door.travel('fx_sight', 4, 3, WEST);
   const through = west(door);
   ok(unfound === 'm--' && found && shut === 'm--' && through === 'mmm', `a secret door hides the square two off while unfound, and found, a closed door still does; it is marked from the doorway (${unfound}; ${shut}; ${through})`);
+  // Nor round a corner: no step slips between two squares that stop the view. On open ground at 5,3, a wall west (4,3)
+  // and one south (5,4): the square between them (4,4), the one past it (3,5) and one beside the south wall alone (6,4).
+  const corner = (wall: boolean, f: Facing): string => {
+    const w = look(['MMMMMMMMMMM', 'M,,,,,,,,,M', 'M,,,,,,,,,M', 'M,,,#,,,,,M', `M,,,${wall ? '#' : ','}#,,,,M`, 'M,,,,,,,,,M', 'MMMMMMMMMMM'], 5, 3, f);
+    return [[4, 4], [3, 5], [6, 4]].map(([x, y]) => (w.explored(x, y) ? 'm' : '-')).join('');
+  };
+  const cornered = [WEST, SOUTH, NORTH].map((f) => corner(false, f)), walled = corner(true, NORTH);
+  ok(cornered.every((c) => c === '--m') && walled === 'm-m', `the square between two walls one off is not marked, nor the one past it, facing either wall or away; one beside a single wall is; a wall between the two is, so the walls close round the company (${cornered.join(' ')}; ${walled})`);
   // A group behind the brow: not drawn, not marked, not met; from the ridge, all three.
   const brow: Partial<MapDef> = { encounters: [{ id: 'fx_brow', x: 4, y: 2, monsters: ['fen_eel'], roams: false }] };
   const foot = look(VALLEY, 4, 4, NORTH, DAY, brow), top = look(VALLEY, 4, 3, NORTH, DAY, brow);

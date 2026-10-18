@@ -336,16 +336,16 @@ not the finish.
   premade company: 8 minutes 45 seconds, 12 failures). The road ends at Thornmark's chapter. The
   shelf's and Thornmark's rows are main's on 18 October with #889 (`FULLRUN=thornmark`), measured
   again since #856 and #857 gave the premade six Perception (its elf and gnome), Pathfinder (its
-  ranger) and Lockpick (its thief), and since #889 stopped the automap mapping through a wall: the
-  fair pilot stops where it stopped before, by another way (it took 68,368 ticks and 176.9 days on
-  #844's tree, 85,559 and 239.6 before #889, and 47,738 and 164.8 now), and the omniscient one falls
-  elsewhere, in the Wold (at 81,253, after 15,821 ticks and 41.5 days there; on Callow Downs on the
-  trees before).
+  ranger) and Lockpick (its thief), and since #889 stopped the automap mapping through a wall or
+  round a corner: the fair pilot stops where it stopped before, by another way (it took 68,368 ticks
+  and 176.9 days on #844's tree, 85,559 and 239.6 before #889; now 47,738 and 164.8), and the
+  omniscient one falls elsewhere, in the Wold (at 81,253, after 15,821 ticks and 41.5 days there; on
+  Callow Downs on the trees before).
 
   | Area | Chapter | The fair pilot | The omniscient pilot, from the save point |
   |---|---|---|---|
-  | shelf | The Quiet Farm | finishes: 7,541 ticks, 25.0 days, level 4 (12.9 s) | not run |
-  | thornmark | The Grove Stone | stops itself lost in Ashcombe Cellar at 1,1 ("Lost: no way on that I can see."), level 6, after 47,738 ticks, 164.8 days (182.3 s) | also fails: falls in the Wold at 81,253, level 6, after 15,821 ticks, 41.5 days (347.8 s) |
+  | shelf | The Quiet Farm | finishes: 7,541 ticks, 25.0 days, level 4 (14.1 s) | not run |
+  | thornmark | The Grove Stone | stops itself lost in Ashcombe Cellar at 1,1 ("Lost: no way on that I can see."), level 6, after 47,738 ticks, 164.8 days (195.9 s) | also fails: falls in the Wold at 81,253, level 6, after 15,821 ticks, 41.5 days (443.4 s) |
   | saltreach | The Tide Stone | not reached | |
   | wrackholm | The Stone Carried Home | not reached | |
   | sunderwood | The Wall | not reached | |
@@ -379,14 +379,15 @@ not the finish.
   changes"); a frontier of the squares not walked, or the explorer asked before the walk again, is the
   owner's call.
 - **Survival.** The sweep's figures are in the table over the decisions for #723. Since a wall hides
-  what lies past it (#889), 12 of 12 finish with the premade company and 11 of 12 with the companies
+  what lies past it (#889), 12 of 12 finish with the premade company and 10 of 12 with the companies
   the seeds draw; before #889, on main, 10 of 12 and 11 of 12 (premade seed 5 fell on the Foreland and
   seed 8 stood at the budget in Callow Downs, "Stuck: waiting a while."). A finished run takes 7,541 to
-  30,548 ticks, played as the survival sweep plays it. At #842's second review the lost rule fired 3
+  25,443 ticks, played as the survival sweep plays it. At #842's second review the lost rule fired 3
   to 17 times a finished run, a median of about 9 (counted from the log), on the world's minutes,
   sleep among them (decision 13 for #723). `Game.fight` still takes every group beside the party at
-  once; the one fall left is drawn seed 10, on the Foreland at 204,58, at level 4 (216,42, at level 2,
-  before #889).
+  once; the two falls are drawn seed 10, on the Foreland at 204,58, at level 4 (216,42, at level 2,
+  before #889), and drawn seed 1, in Thornmark at 255,39, at level 4, after 24,921 ticks (it finished
+  in 30,548 while a step could slip round a corner, #903's review).
 - **The last one standing does not flee.** A fight is lost only once one of the company falls in it
   (`beaten`), so a company with one member standing, the rest down before it began, fights on to the
   end, as in both of the falls at #842's merge. A follow-up, if the owner wants it (the delegate's

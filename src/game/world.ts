@@ -577,34 +577,45 @@ export class World {
    * valley past it once it climbs.
    */
   reveal(radius = 1): void {
-    const ms = this.mapState, m = this.map;
+    const ms = this.mapState, m = this.map, { x: px, y: py } = this.state;
     const base = Math.max(radius, this.map.kind === 'outdoor' && !this.isDark && weatherSight(this.weather) >= 4 ? 2 : 1);
     // A Cartographer standing, or a chart carried, maps a square further: 3 in the open by day, 2 in a
     // dungeon, in the dark or in thick weather (#857).
     const r = base + (skilled(this.party, 'cartographer') ? 1 : 0);
     // Every square past the first follows sight (#857, #889): it is mapped only where none of the
-    // squares between it and the company, taken a step at a time toward the company, blocks the view,
-    // so never past a wall, a door or a secret door, and the automap tells nothing hidden.
+    // squares between it and the company, taken a step at a time toward the company, blocks the view
+    // and no diagonal step on the way slips between two that do, so never past a wall, a door or a
+    // secret door, nor round a corner, and the automap tells nothing hidden. One off, a square between
+    // two that stop the view is mapped only if it stops the view itself, so the walls still close round
+    // the company. A landmark is seen over a wall, as the view draws it (#844); the mountain and the
+    // void are not, or the automap would ink a range round a hide and leave the hide a hole.
+    const stops = (dx: number, dy: number): boolean => m.blocksView(px + dx, py + dy);
+    const cut = (ax: number, ay: number, bx: number, by: number): boolean => ax !== bx && ay !== by && stops(ax, by) && stops(bx, ay);
     const clear = (dx: number, dy: number): boolean => {
+      if (Math.max(Math.abs(dx), Math.abs(dy)) === 1) return stops(dx, dy) || !cut(dx, dy, 0, 0);
       for (let d = Math.max(Math.abs(dx), Math.abs(dy)); d > 1; d--) {
+        const ax = dx, ay = dy;
         dx -= Math.abs(dx) === d ? Math.sign(dx) : 0; dy -= Math.abs(dy) === d ? Math.sign(dy) : 0;
-        if (m.blocksView(this.state.x + dx, this.state.y + dy)) return false;
+        if (stops(dx, dy) || cut(ax, ay, dx, dy) || (d === 2 && cut(dx, dy, 0, 0))) return false;
       }
       return true;
     };
     for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) {
-      const x = this.state.x + dx, y = this.state.y + dy;
-      if (!m.inBounds(x, y) || this.hidden(x, y) || !clear(dx, dy)) continue;
+      const x = px + dx, y = py + dy;
+      if (!m.inBounds(x, y) || this.hidden(x, y) || (!m.landmarkAt(x, y) && !clear(dx, dy))) continue;
       see(ms.explored, y * m.width + x);
     }
-    // And the corridor ahead, as far as the eye sees, so the automap matches the viewport.
+    // And the corridor ahead, as far as the eye sees, so the automap matches the viewport: a square
+    // beside it as one off the company, between two that stop the view toward the eye only if it does.
     const f = this.state.facing;
     for (let d = 1; d <= this.sight; d++) {
       const x = this.state.x + FACING_DX[f] * d, y = this.state.y + FACING_DY[f] * d;
       if (!m.inBounds(x, y)) break;
       for (let s = -1; s <= 1; s++) {
         const sx = x + (f === 0 || f === 2 ? s : 0), sy = y + (f === 1 || f === 3 ? s : 0);
-        if (m.inBounds(sx, sy) && !this.hidden(sx, sy)) see(ms.explored, sy * m.width + sx);
+        if (!m.inBounds(sx, sy) || this.hidden(sx, sy)) continue;
+        if (s && m.blocksView(x, y) && m.blocksView(sx - FACING_DX[f], sy - FACING_DY[f]) && !m.blocksView(sx, sy)) continue;
+        see(ms.explored, sy * m.width + sx);
       }
       if (m.blocksView(x, y)) break;
     }
