@@ -3,7 +3,7 @@
 How the rest of the world gets built: what v1 is, how the work is split so that many sessions can
 build at once without colliding, and the checks that hold every map, monster and quest to the
 standard of the slice. Read DESIGN.md for the why and SLICE.md for what exists. The figures of §1
-are measured on main at `b92a412` (25 September 2026); §10 holds where main stands on 17 October.
+are measured on main at `b92a412` (25 September 2026); §10 holds where main stands on 18 October.
 
 ---
 
@@ -41,8 +41,8 @@ nothing, or a habit of running it again until it passed. Every run now plays one
 
 **What was missing.** Nothing stood between a branch and main. CI ran only on a push to main, and
 without the smoke test. Nine of the fourteen pull requests were merged within half a minute of being
-opened. Every pull request now runs the typecheck, the tests and the smoke test (#27); main
-requires them once the owner turns branch protection on.
+opened. Every pull request now runs the typecheck, the tests and the smoke test (#27); main has no
+branch protection, by the owner's word of 18 October 2026, and §8.3 says how merges stay safe.
 
 **Where parallel work collides.** The most-edited files are `docs/SLICE.md` (17 commits),
 `tools/test.ts` (14), `README.md` (14), `tools/smoke.ts` (11), `src/game/monsters.ts` (10) and
@@ -795,9 +795,12 @@ so its zone map lands with or before its first dungeon (`tools/tests/weather.ts:
 
 - A `pull_request` workflow runs the typecheck, the tests and the smoke test. The smoke test needs
   Playwright and Chromium on the runner; Playwright is a pinned dev dependency, and the workflow is
-  `.github/workflows/checks.yml` (#27). Branch protection requires the workflow, and requires a branch to
-  be up to date with main (or a merge queue): that is what catches two green branches that are red
-  together.
+  `.github/workflows/checks.yml` (#27).
+- Main has no branch protection, by the owner's word of 18 October 2026: "We are not doing branch
+  protection." Nothing in the plan needs a GitHub setting. Two green branches that are red together
+  are kept from merging by a procedure, now the only safeguard: the orchestrating session merges one
+  pull request at a time, brings each branch up to date with main first and waits for CI to be green
+  on that new head. A branch whose checks ran on an older base is not merged on them.
 - Small pull requests: a zone map, a dungeon level, a monster family, a town's interiors; not an
   area at once.
 - Deploy from a tag once an area has been played, rather than on every push, so players never get
@@ -818,8 +821,9 @@ as the history writes them ("Give the ogre a stoop, a face and a club that is a 
 **Phase 0: foundations.** Nothing new goes into the world until these are in; they are what lets
 the rest run in parallel.
 
-1. The pull request workflow and branch protection, on checks that cannot pass by chance: the smoke
-   test pins its seed, and its clear noon asks for no fog (#23).
+1. The pull request workflow and branch protection (not done: the owner's word of 18 October 2026),
+   on checks that cannot pass by chance: the smoke test pins its seed, and its clear noon asks for
+   no fog (#23).
 2. CLAUDE.md.
 3. The layout refactor (§6), alone.
 4. The contract's checks (§5), each run first against today's content; what they find is fixed, or
@@ -898,7 +902,12 @@ Act IV's stale and unfinished lines (#735) and the monastery drawn tall and the 
 (#736). The calls that settled the rest are written into the docs: the husks stay (#733), the days
 that end in a fight broken off are a figure (#734), E7 is left cut (#737) and Ashfall's 27.4 stands
 (#738); an ally in a fight, a vigil held through a night and a withering seedling are cut (#729,
-#731, #732). The six touches are built on main.
+#731, #732). The six touches are built on main. Five more, filed under #54 at #18's close, are
+approved at the owner's word of 18 October 2026: #889 (the automap's square two away mapped through
+a wall or a secret door outdoors in clear weather; its pull request is #903), #890 (the
+Cartographers' work row in the halls' first menu; merged in #894), #891 and #892 (closed by #901,
+the rulings standing: the gate's company stays plain and the seven calls of #18 stand) and #893 (why
+the pilot's Thornmark run takes a quarter longer).
 
 **The bounds** (#828) run from 17 October 2026, at the owner's word: no company meets the pink.
 First the world's end drawn as the atlas paints it, shut as before (#829); then the systems the
@@ -906,7 +915,32 @@ bounds' content waits on, an enclave held to its own band beside the road (#845)
 powers (#847), with the eight artifacts designed alongside (#846); then the land the maps lie open
 to, built as country off the quest, area by area, two in flight (#830 to #837). Each area takes an
 enclave or two a band or two over its zone's and an artifact in a lair at the cap. E7 is built after
-all (#833), the owner's call over #737's. The reach stays closed for 1.6.
+all (#833), the owner's call over #737's. The reach stays closed for 1.6. Approved and unparked on
+18 October 2026 at the owner's word; the eight areas run two in flight, Saltreach first and the
+Foreland last, each a brief, its boxes one or two to a pull request, its enclave, then its lair once
+#847 and the guardian's drawing are in; #848 runs beside them from the same day, its moves that
+touch every area landing in two short windows between area pull requests.
+
+Decided by the owner's delegate for #848, each the owner's to overturn:
+
+1. **The bounds start at once** (18 October 2026), in the shape that exists; #848 runs beside them.
+2. **The moves that touch every area land in two windows,** each a gap of about two hours with no
+   area pull request open; a box built before one adds its rows as today and the move carries them.
+3. **The layers check lands early as a ratchet:** today's crossings listed, only ever shrinking.
+4. **The per-area rows move by one script,** not twelve pull requests.
+
+Decided by the owner's delegate for #828, each the owner's to overturn:
+
+1. **The order of the bounds** (18 October 2026): the fill done (#829, built in #849), then #845 and
+   #846 at once, #847 in two halves, the areas Saltreach first, each its country, its enclave, its
+   lair.
+2. **Five power kinds and no sixth:** a stat raised while borne, an element the blows carry, a spell
+   cast so many times a day, regeneration, a ward against one condition.
+3. **One power to each artifact,** each kind used once or twice across the eight.
+4. **A rumour marks nothing on the world map:** each artifact is first heard from a person of its
+   own area, who hints and never names where it lies.
+5. **A guardian is a new kind in an existing family where one fits,** at most two new families
+   across the eight.
 
 ---
 
@@ -917,7 +951,7 @@ all (#833), the owner's call over #737's. The reach stays closed for 1.6.
 | Defects the owner finds by hand | 4 over the slice, not recounted since; the owner's own playthrough of M3 is what remains (README.md) | fewer each area; each one a check |
 | Checks that pass or fail by chance | none known: the smoke test plays one seeded world (#23) | none |
 | Pull requests that needed main merged in | 4 of the last 6 in September, not recounted since | rare |
-| `npm run check` | about 12 to 14 minutes on a four-core container, ending `ALL OK` with nothing owed (#865); in CI on a docs-only change the tests take 5 min 8 s, the smoke 2 min 20 s and the typecheck 19 s (#866); the tests job took 5 min 8 s to 9 min 12 s on the heads of #876 to #885 and #866 (twelve runs on 18 October), and its cap is fifteen for the runner's spread of about two minutes (#873); a change to the viewport or the smoke sweeps every map, the smoke job then taking 12 to 21 minutes (#876, #878, #879) | under 3 minutes: full sweeps of what a pull request touches, the rest sampled or on release; the cure is parallel suites (#848) |
+| `npm run check` | about 12 to 14 minutes on a four-core container, ending `ALL OK` with nothing owed (#865); each suite alone on 18 October, by the owner's delegate's measure (#848): the gate 310 s and every other suite under 90 s, about 12 minutes in all, which #895 makes the runner print; in CI on a docs-only change the tests take 5 min 8 s, the smoke 2 min 20 s and the typecheck 19 s (#866); the tests job took 5 min 8 s to 9 min 12 s on the heads of #876 to #885 and #866 (twelve runs on 18 October), and its cap is fifteen for the runner's spread of about two minutes (#873); a change to the viewport or the smoke sweeps every map, the smoke job then taking 12 to 21 minutes (#876, #878, #879) | under 3 minutes: full sweeps of what a pull request touches, the rest sampled or on release; the cure, in this order (#848): the gate for the areas a diff reaches, then parallel suites, then the sweep's shards |
 | Cracks in the sweep of every map (§5.6) | none; the sweep reads each square as the view draws it, the void as its look (#869) | none |
 | Maps inside the density floor (§5.3) | all (`node tools/test.ts density`) | all |
 | Areas on the curve (§5.2) | all twelve (`node tools/test.ts curve`); the Kilns and Ashfall pass the lead line and are held where they are built | all |
@@ -950,7 +984,8 @@ Decided by delegate for #808, each the owner's to overturn:
 6. **The owner's "bounds" paragraph in EXPANSION §9 (#849) is not touched.** It says the bounds
    "run from 17 October 2026", names an order and says E7 is built after all (#833); the epic and
    its area issues are labelled parked. The README says what the labels say: approved and labelled
-   parked, #845 to #848 not yet approved. The paragraph may want "parked" in it.
+   parked, #845 to #848 not yet approved. The paragraph may want "parked" in it. (The owner
+   approved and unparked them all on 18 October 2026: §9 says so now.)
 7. **Three lines the issue did not name were stale and are put right or left on record.**
    EXPANSION §2.1's "Coaches and boats as well, later: to be filed" now says built (#164); DESIGN
    §5's price line no longer says "until #19 adds them to the curve's gold": the prices are 1,000

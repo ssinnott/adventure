@@ -73,9 +73,14 @@ buys them has an easier road than measured, and the owner's own play is the judg
 
 The world's end is drawn as the atlas paints it, the sea running on and the rim standing (#829,
 built in #849). The owner has filed the land the maps lie open to as an epic, #828, with eight area
-issues (#830 to #837), approved and labelled parked: nothing in them is built. The owner has also
-filed #845 to #847 (the bounds' enclave and artifacts) and #848 (the code's reorganisation); none is
-yet approved.
+issues (#830 to #837); #845 to #847 (the bounds' enclave and artifacts) and #848 (the code's
+reorganisation, its sub-issues filed as they are taken up: #895 to #900 and #902 so far) go with
+it. All of these, and the finishing touches #889 to #893, are approved and unparked at the owner's
+word of 18 October 2026 and are being built in the order of docs/EXPANSION.md §9: the eight areas,
+two in flight, Saltreach first and the Foreland last, with the reorganisation beside them, its
+moves that touch every area landing in two short windows between area pull requests. Of the
+touches, #890 is merged (#894), #889's pull request is #903, and #891 and #892 are closed, their
+rulings standing (#901). The bounds' artifacts are #846's; the reach stays post-v1.
 
 The owner's own playthrough of M3 is what remains before v1 is called done; the tracker holds no
 issue for it.
@@ -110,8 +115,9 @@ tests, `npm run build`, then publish `dist/` to GitHub Pages at
 (Settings → Pages → Source); the workflow enables that on its first run if it can.
 
 Every pull request runs [.github/workflows/checks.yml](.github/workflows/checks.yml): the typecheck,
-the tests and the smoke test, as three checks. Once the owner protects main, it takes a pull request
-only when all three pass and it is up to date with main.
+the tests and the smoke test, as three checks. Main has no branch protection, by the owner's word of
+18 October 2026: the orchestrating session merges one pull request at a time, on a branch brought up
+to date with main and green on all three (docs/EXPANSION.md §8.3).
 
 ## Layout
 
