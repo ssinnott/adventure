@@ -18,7 +18,9 @@ Peak Stone's (#501, §4.4), I10, Stairwatch and the Stair's head (#502, §4.5), 
 Spine's south and J12, the vale's end (#508, §4.8), and so is Highcell, the dungeon through J11's
 gate (#500, §4.3); its eight monsters are drawn (§3), its chapter, The Bells, is written (#505, §5),
 its four side quests are in the log (#506, §6) and so are its four third prestiges' quests,
-the Knight's, the Monk's, the Bard's and the Thief's (#448, §6); K11 and K12 stay cut (§11). Its content is `src/content/areas/whitespine/` (maps, monsters, items,
+the Knight's, the Monk's, the Bard's and the Thief's (#448, §6); K11 and K12 stay cut (§11). In J12's rock a hollow behind a second secret door holds two finds
+off the ladder, a lightning axe and a knife that raises accuracy, the axe in the area's first locked
+chest (#863, §4.9). Its content is `src/content/areas/whitespine/` (maps, monsters, items,
 climate, its part of the world map, its walkthrough and its chapter of the one quest, The Bells, in
 `chapter.ts`; its side quests in `quests.ts`, #506); it has no town, so no rooms. Its ids:
 the area `whitespine`, its zones `monksvale`, `highspine` and `sheerpoint`, the dungeon `monastery`
@@ -214,7 +216,9 @@ J10, I12 and J12 (#508):
   the snow under them, and in the pines the trolls' bowl scraped to the earth and a pilgrim frozen
   where he sat. A bell-rope hangs out of a crack in the rock, the snow under it worn by knees, and
   behind the rock is a cell with a bell with no tongue and an alms box, shut to walkers, swimmers,
-  climbers and floaters. One group: two snow trolls.
+  climbers and floaters. At the tip of the far pines a pine split by lightning stands over a second
+  door in the rock, and behind it a hollow with two chests, the second locked, holds a lightning axe
+  and a knife that raises accuracy (#863, §4.9). One group: two snow trolls.
 
 Its atlas rows are charted in `src/content/areas/whitespine/atlas.ts` (#498), the area's own `atlas`
 since J11 lists the area; until then `src/content/atlas.ts` spread them into the plan where its rows
@@ -264,7 +268,9 @@ step on the gear ladder, no town to
 sell one: Rime Lodge's rung is the pass's, and Cinderport's step (docs/areas/ashfall.md §4.4) comes
 two levels on; J11's store holds a second of Rimewater's Guide's Staff +1 (§4.2), Highcell's
 undercroft an Ice Axe +1 and a Skinning Knife +1 (§4.3), I10's hoard a Bear Spear +1, Rimewater's
-rung (§4.5) and I9's cache a Hunter's Bow +1 on the same rung (§4.6); I8's cave holds none (§4.7).
+rung (§4.5) and I9's cache a Hunter's Bow +1 on the same rung (§4.6); I8's cave holds none (§4.7);
+and J12's rock holds two off the ladder, a lightning axe and a knife that raises accuracy, found and
+never sold (§4.9, #863).
 The systems it waits on are the rest of #442's: the toll (#544), sweep (#545), stone (#546), the
 crossings (#547), the Ember Stone (#548) and the bot (#549).
 
@@ -879,8 +885,8 @@ settled in its issue.
 - **Pay.** About 400 xp a member each in the brief. As built about 609 a box (§8; §9, #508's 3).
 - **As built** (#508, 10 October): all three laid whole at band 22–23, the brief's 23–24 lowered by
   one (§9, #508's 1), with no exit and no step of the quest. J10 and J12 are laid in Monks' Vale and
-  I12 in the High Spine (§9, #508's 2). Each has a heavy pair for its one group, one secret and no
-  den; nothing is claimed as new (§7). The road across J10's corner is walked (§9, #508's 7).
+  I12 in the High Spine (§9, #508's 2). Each has a heavy pair for its one group, one secret (J12 a second,
+  #863's) and no den; nothing is claimed as new (§7). The road across J10's corner is walked (§9, #508's 7).
   - **J10, the giants' ground** (`monksvale_j10`, corner 296,286; start 31,19, facing west on the
     road). **The land.** The road comes in from K10's west edge at 31,19, goes over the saddle and
     down through the box's south-east corner to the south edge at 20,31, walked, three road squares
@@ -926,8 +932,8 @@ settled in its issue.
     land.** South from J11's hills, the vale's hills and grass running out under the peaks, with the
     far pines at 18 to 30, 15 to 21. The plate of `monastery2` lies at 26,2, a plate only:
     Highcell's lower house is under the vale. The east edge is hills, grass and pines at rows 0 to
-    15 against K12, cut, and void past it; the south edge is the rim. The density check counts 250
-    open squares. **The landmarks.** The vale's end, the snow going up to the peaks' feet unbroken
+    15 against K12, cut, and void past it; the south edge is the rim. The density check counts 254
+    open squares, four of them the hollow's (§4.9). **The landmarks.** The vale's end, the snow going up to the peaks' feet unbroken
     (`j12_end`, 25,3); a bell heard faintly below, underfoot (`j12_under`, 27,5); a stone seat in
     the hills with a bowl cut in its arm, which gives intellect (`j12_seat`, 22,7); a cairn, 300
     gold and a Sapphire Vial (`j12_cairn`, 29,7); the drop to the east (`j12_drop`, 30,4); eagles
@@ -937,7 +943,9 @@ settled in its issue.
     rock, the snow under it worn into a hollow by knees (`j12_rope`, 19,11). Searched from there,
     the rock gives at 18,11 on a cell (`j12_cell`, 17,11), a shelf for a bed and a bell hung with no
     tongue: the chest (`j12_alms`, 16,11), 1,400 gold and an elixir. It is shut in rock as the
-    others are; its door is at 18,11, not 18,10 (§9, #508's 14). **The group.** Two snow trolls in
+    others are; its door is at 18,11, not 18,10 (§9, #508's 14). **A second secret,** #863's: a pine split by
+    lightning at the pines' tip (`j12_split`, 19,21) and, searched there, a hollow in the rock below
+    it with two chests (§4.9). **The group.** Two snow trolls in
     the far pines (`j12_trolls`, 21,19; back after two days), the box's nearest at 23 steps and its
     hardest (level 23); they do not roam.
   - **Seams, J10 to J12.** J10's north, 0,0 to 31,0 (296 to 327,286), meets J9's south row (285)
@@ -963,7 +971,8 @@ settled in its issue.
     the aim and inside the limit, 48.3% of their days ending in a fight broken off. Density, within
     12 steps (the country floor): J10 100.0% (666 of 666, 600 needed) and the furthest 9, with no
     sign among its 17 points; I12 100.0% (539 of 539, 486 needed) and the furthest 9, with none
-    among its 15; J12 100.0% (250 of 250, 225 needed) and the furthest 9, with none among its 12.
+    among its 15; J12 100.0% (254 of 254, 229 needed) and the furthest 9, with none among its 16 (250 and 12 before
+    #863's hollow, §4.9).
     Each pays about 609 xp a member and holds 1,700 gold, the secret's 1,400 and a cairn's 300,
     J10's two giants' purses (70 to 160 each) besides; the finds are elixirs and Sapphire Vials, no
     ware (§9, #508's 10). None claims anything as new.
@@ -977,6 +986,75 @@ settled in its issue.
   - **Built boxes changed.** Rimewater's K10 loses `SADDLE` and J11 loses `CLIMB`, and the atlas
     test its corner exception; the headers of K10, J9, J11, I10 and I11 are restated; the outdoors
     pins of J9, K10, J11, I10 and I11 follow the new neighbours (§9, #508's 7).
+
+### 4.9 The hollow in J12's rock (#863): two finds off the ladder
+
+The area's share of epic #18's eight found items (DESIGN §5 and §6; the delegate's ruling, D1 to D4):
+one weapon whose blows carry an element and one piece of gear that raises a stat while it is worn,
+to each act past I, found and never told, off the ladder (no `GEAR` row dresses a company in
+either), inside the area's window of 5,000 and in no shop. The Whitespine's are a lightning axe and
+a knife that raises accuracy. They lie in a hollow cut in J12's rock at the tip of the far pines,
+behind a second secret door, the axe in the area's first locked chest.
+
+| Item | Kind | Dice or stat | Where | Price |
+|---|---|---|---|---|
+| Thunderhead Axe (`thunderhead_axe`) | a weapon of the Ice Axe's classes: knight, paladin, ranger, barbarian and cleric | 2d12+3, the plain Ice Axe's steel, and 1d6 of lightning on every blow that lands (`element`) | the iron-bound chest at the hollow's back, 19,25 (`j12_hollow_locked`, `locked: true`), no gold | 2,000 gold, 1,000 back |
+| Talon Knife (`talon_knife`) | a light blade for any class, as the Skinning Knife is | 1d8+12 and a plus of 1, the Skinning Knife +1's, and accuracy +3 while worn (`stat`) | the plain chest in front of it, 19,24 (`j12_hollow_chest`), no gold | 2,000 gold, 1,000 back |
+
+**`hits()`.** The axe's is 19.5: the steel's 16 and the die at 3.5 (`ELEMENT_DIE`). The ladder's
+weapon of its kind is the Ice Axe from 21 (16) and the Ice Axe +1 from 22 (17), so the steel is a
+rung under the ladder's at the band, the plain where the ladder wears the plus, and the die is the
+gain: 2.5 over the +1, with a point less to hit than it. The knife's is 16.5, the ladder's Skinning
+Knife +1 (the plain, from 21, is 15.5), so its gain is the aim: accuracy +3 is one step of `bonus`,
+a point to hit on top of the plus's, and nothing else reads accuracy (the sheet prints a thief's
+12 as "15(+3)", and her attack bonus is one over the ladder's knife's). The weapon slot makes one
+blade at a time. The axe's sheet line, "WEAPON Thunderhead Axe, LIGHTNING", ends at 217
+px, and at 265 with the widest tier, of the column's 334; its name is 15 characters of the 26 the
+`items` suite allows.
+
+**Where it is.** The tip of the far pines, J12's 18 to 20 on row 21, at the vale's end where the
+trolls lie up (their group stands at 21,19, four squares off, and does not roam). The door is at
+19,22, between rock at 18,22 and 20,22; behind it three squares of dirt floor cut from the rock
+down the column at 19, rows 23 to 25, each ringed in rock (`r`, not the mountain, which a climber
+crosses): the entry with its event, the plain chest and the locked one. The squares are shut to
+walkers, swimmers, climbers and floaters but through the door. J12 has no step of the quest and no
+road: the nearest road or trail square of the range is J11's 24,23, 31 squares from the door and
+30 from the pine by the crow, and nothing in the box, the chapter or the side quests sends a
+company there. The nine secrets the area already had each hold a reward, a quest's thing or a
+trainer's hide (Edric's ledge, §4.5), and Highcell's one, the undercroft (§4.3), is the Abbot's: a
+second door in a floor of 16 by 16 would stand within ten squares of the quest's walk.
+
+**The hint** (`j12_split`, 19,21, on the door's near side, there at every hour): *A pine stands
+split from crown to root, its bark scorched in a spiral. The snow round its foot is melted back to
+the rock.* It explains nothing, and the door is found by a search from there, facing south. Inside,
+an event at the entry (`j12_hollow`, 19,23): *A hollow in the rock, dry and warm, the roof glazed
+black. Two chests stand in it, one bound in iron.* The plain chest opens to any company; the
+iron-bound one says "A locked chest." and, to a company with neither a Lockpick standing nor an
+iron key, "Locked." and nothing (DESIGN §5, #857). The premade six's thief is born to Lockpick.
+Nothing the road needs lies in it, and no quest turns on either find.
+
+**The lightning.** The range's eight monsters are all past 10, and 3 of them are weak to lightning,
+the monks (the Brother, the Bell-ringer and the Abbot, machines), and none is immune or resists it;
+the other five take the die whole. Ashfall, the next area, places 16 past 10, and 6 of them are weak
+to it (the stoker, the sentry, the sentinel, the flue-walker, the deep knocker and the inspector,
+machines) and none is immune or resists it. No other element does as well: nothing in the range is
+weak to fire or cold, and 8 of Ashfall's 16 are immune to fire; cold is weak in one of Ashfall's;
+nature and holy are the machines' immunities, 3 of the range's 8 and 7 and 6 of Ashfall's 16 (§9,
+#863's 4).
+
+**Built** (#863). Inert for every check: no monster, group, gold or pay is added or moved, so §8
+stands, and the gate's, the harness's, the ladder's and the curve's figures are byte-identical to
+main's (the PR holds the diff). Both prices are under the Bear Spear +1's 2,050, the dearest find
+the curve names for the area, so that line stands too. Density holds: J12 100.0% within 12 steps
+(254 of 254, 229 needed, 16 points: four more of each than before). `shipped.json` adds the door at
+315,372, `thunderhead_axe`, `talon_knife` and the ids `j12_split`, `j12_hollow`, `j12_hollow_chest`
+and `j12_hollow_locked`; nothing moves. The walkthrough walks the detour in J12 at the end of
+`spineBehind`: the pine, the search, the door, the knife from the plain chest and the axe from the
+iron-bound one, which the company's thief picks; and holds the finds themselves (`hollowFinds`:
+shape, window, no shop, no row of the ladder, no monster's drop, the one locked chest, the raise
+worn and carried, lightning against the range and the ash behind it, found and never told, the
+distance from the road) and the lock's refusals on a game of its own (`hollowLocked`, the real
+chest: refused with neither, opened by the thief, by a key, by the key spent).
 
 ## 5. The one quest here
 
@@ -1181,8 +1259,9 @@ I10's and the trolls J11's (§4.8).
   #503's 6; #504's 10). The country behind (#508) holds 1,700 in each of J10, I12 and J12, 1,400 in
   the strongbox behind the secret and 300 in the cairn, and J10 the purses of its two giants (70 to
   160 each); its finds are elixirs and Sapphire Vials, no ware, as the Whitespine sells nothing (§9,
-  #508's 10). A clear gives 11,080 gold of the 10,800, 5,750 before the three, and the curve's owed
-  row is gone (§9, #508's 11).
+  #508's 10), but for the two finds of #863 in J12's rock (§4.9), priced at 2,000 each with no gold in
+  their chests and so under the Bear Spear +1's 2,050: the dearest find stands. A clear gives 11,080
+  gold of the 10,800, 5,750 before the three, and the curve's owed row is gone (§9, #508's 11).
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor: a
   company at 22 wins nine in ten of J11's fights and walks the road from the pass's foot to the gate
   resting at its camp; one at 20 wins no more than one in four. The Abbot is won about half the time
@@ -1221,8 +1300,8 @@ I10's and the trolls J11's (§4.8).
   371 needed) and the furthest 10, with no sign among its 22 points (#503); I8, core, 100.0% within
   8 steps (all 229 squares, 207 needed) and the furthest 8, with no sign among its 26 points (#504); J10, country, 100.0% within 12 steps (all
   666 squares, 600 needed) and the furthest 9, with no sign among its 17 points; I12 100.0% (all
-  539, 486 needed) and the furthest 9, with none among its 15; J12 100.0% (all 250, 225 needed) and
-  the furthest 9, with none among its 12 (#508).
+  539, 486 needed) and the furthest 9, with none among its 15; J12 100.0% (all 254, 229 needed) and
+  the furthest 9, with none among its 16 (#508, and #863's hollow, §4.9).
 
 ## 9. Decisions
 
@@ -1948,6 +2027,74 @@ Decided by delegate for #730, each the owner's to overturn:
 11. **§11 no longer lists the camp's rest,** it being built; §4.7, §5 and calls 2 and 7 above say
     what is built.
 
+Decided by the owner's delegate for #18, each the owner's to overturn:
+
+1. **An elemental weapon,** its blows carrying lightning: its dice a rung under the ladder's at the
+   band, so the die is the gain; a class list as its kind has. The rule if the area session finds
+   better: an element its own area's monsters are not immune to and the next area's are weak to
+   where one is.
+2. **A stat item,** a bow or a blade raising accuracy by 3 while worn: slotted, so one is worn at a
+   time.
+3. **Found, off the quest's path,** off the pass or behind a hinted secret door of the monastery
+   (band 22 to 24); one of the two in a locked chest (`locked: true`), the first the area holds.
+   Each priced inside the Whitespine's window, sold by no shop, sellable at half as all found gear
+   is. Off the ladder: no `GEAR` row, so no figure moves.
+4. **Names and texts pass the pillars;** two lines to a find.
+
+Decided by the builder for #863, each the owner's to overturn:
+
+1. **The hide is a hollow in J12's rock, behind a second secret door below the far pines' tip,**
+   not in the monastery. The area's nine secrets each hold a reward, a quest's thing or a trainer's
+   hide (Edric's ledge at I10), and Highcell's one is the Abbot's undercroft; a second door in a
+   floor of 16 by 16 would stand within ten squares of the quest's walk, where J12 has no step of
+   the quest and no road. The cut adds four walkable squares (the door and three of floor) and takes
+   none away: every id, door square and chest id stays, and the cell's door is still the box's first
+   secret.
+2. **Both finds in the one hollow:** the knife in a plain chest at 19,24 and the axe in an
+   iron-bound, locked one at 19,25 behind it. One detour, one hint; a company with neither pick nor
+   key still takes the knife and sees the lock.
+3. **The weapon is an axe,** the Ice Axe's kind: the ladder's weapon at 21 for five classes
+   (knight, paladin, ranger, barbarian and cleric, four of the premade six), one-handed where the
+   spear is two-handed and the bow the ranger's alone. Its `classes` are the Ice Axe's and its steel
+   the plain Ice Axe's, 2d12+3, a rung under the +1 the ladder wears from 22, so the lightning die
+   is the gain: `hits()` 19.5 against 17 (16 for the steel alone).
+4. **Lightning stands.** 3 of the range's 8 monsters are weak to it and none is immune or resists
+   it; of Ashfall's 16 past 10, 6 are weak and none immune or resistant. Fire is immune in 8 of
+   Ashfall's 16 and weak in none; cold is weak in one; and nature and holy are the machines'
+   immunities, so no other element does as well.
+5. **The blade is a knife, the Skinning Knife +1's, plus and all, with the raise over it:** a light
+   blade for any class, so the thief, whom the axe cannot serve, has it. The axe's steel stays a
+   rung under because its die is the whole gain, 3.5 a blow; the knife's raise is one point to hit
+   (+3 accuracy is one step of `bonus`, and nothing else reads accuracy), so its steel stays whole
+   and the raise is the gain: `hits()` 16.5, one point of aim over the ladder's. If you would rather
+   it a rung under like the axe, the plain Skinning Knife (15.5) with the aim made up by the
+   raise, say so: it is a line of `items.ts`.
+6. **The axe lies behind the lock, the knife in the plain chest.** A company with neither a Lockpick
+   standing nor an iron key takes the knife; a thief is born to Lockpick, and a hall of the Compact
+   teaches it for 1,000.
+7. **Prices 2,000 and 2,000:** inside the window of 5,000 and 50 under the dearest find the curve
+   names for the area (the Bear Spear +1, 2,050), so that line is main's byte for byte; 1,000 back
+   each at half.
+8. **The names:** Thunderhead Axe (the anvil top of a storm cloud, and an axe has a head) and Talon
+   Knife (an eagle's, the range's raptor, the blade hooked like one); the range keeps the Crown's
+   plain English, as the Ice Axe and the Bear Spear do (§10). Neither says where it lies.
+9. **The hint is a pine split by lightning with the snow melted back from its foot** (`j12_split`,
+   19,21): there at every hour, on the door's near side, explaining nothing; the search is made
+   facing south from it.
+10. **No chest holds gold,** so J12's clear, the area's 11,080 gold and the curve's figures stand.
+11. **"Off the road" is measured on the world grid, by the crow:** from the door and the pine to the
+    nearest road or trail square (`=`) of any of the range's zones, 31 and 30 squares; ten asked.
+12. **The detour is in `spineBehind`,** at the end of J12's part, and the finds and the lock are
+    held in `hollowFinds` and `hollowLocked`, on the real map and items. The count of locked chests
+    is the Whitespine's own maps', so another area's locked chest does not move it.
+13. **The pilot is not stranded and does nothing new:** its full run never reaches the range
+    (docs/PILOT.md: the road ends at Thornmark's chapter), the hollow stands behind a secret door
+    the fair explorer never suspects, and a locked chest it met is pressed on once and walked past
+    (#857).
+14. **The knife is the second slotted raiser in the content,** after #881's Runner's Coat, which
+    brought `statOf`'s slot lookups back (lazy while none was registered, #855): the knife adds none
+    that shows (the gate's CPU with it is in the PR's Numbers), and nothing is tuned away.
+
 ## 10. Names
 
 The Whitespine's naming pass, by the rules of `docs/NAMES.md`: the range keeps the Crown's and the
@@ -1964,6 +2111,11 @@ founded from below and the giants, who have no names on the map. Chosen for #444
   |---|---|---|---|
   | the Monastery | Highcell | a monastery is cells, and this one is high | Bellhouse, which says too much; Spine Abbey |
 
+- **The finds (#863):** the Thunderhead Axe and the Talon Knife, in the Crown's plain English as the
+  range keeps it (the Ice Axe, the Bear Spear, the Guide's Staff): a thunderhead is the anvil top of
+  a storm cloud, and an axe has a head; a talon is an eagle's, which is the range's raptor. Also
+  thought of: Thunderstone, which is a Stone's name and would be read as one; Eyrie Knife, which
+  says where an eagle keeps a thing. Their ids are `thunderhead_axe` and `talon_knife`.
 - **A person:** Hereward, the watcher in Rook's Nest, the Thief's third (#448), in the Crown's old
   English as Edric and Oswin are. He was "A watcher" while he had words only.
 - **Kept:** the Whitespine, the Crown's name for the range; Monks' Vale, the High Spine and Sheer
