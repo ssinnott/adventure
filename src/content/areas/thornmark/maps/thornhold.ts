@@ -153,7 +153,7 @@ export const THORNHOLD: MapDef = {
       '"Derwa. The Lanterns pray over them, and then I set them. Both are needed. Only one of them is a trade." She ties off a splint.',
       '"A prayer goes as far as a prayer goes. Put a hand behind it and it goes further; I have measured the difference in bone. One of you has the makings. Wash your hands and hold this end."',
     ], teaches: { cls: 'cleric', prestige: 1, seek: 'Derwa the bone-setter, among the benches of the Lantern Chapterhouse in Thornhold, can make a Curate of a cleric.' } },
-    // The Druid's: the beekeeper, under the north-east oak; honey and salves wait on #18, so no shop.
+    // The Druid's: the beekeeper, under the north-east oak; honey and salves are not items, so no shop (DESIGN §5).
     { kind: 'npc', x: 14, y: 1, name: 'Lowen, who keeps the bees', lines: [
       'Skeps in a row under the oak by the wall, and an elf woman among them with her arms bare and the bees walking on them. She is not stung, and does not seem to expect to be.',
       '"Lowen. I keep the bees, and the Chapterhouse burns their wax. They have not settled since the Stone. Nor have I, but they show it."',
