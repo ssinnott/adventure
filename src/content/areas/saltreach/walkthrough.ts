@@ -55,7 +55,7 @@ import type { Facing } from '../../../game/types.ts';
 import { GameMap } from '../../../game/map.ts';
 import type { Can, Feature, MapDef } from '../../../game/map.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
-import { restRefused } from '../../../game/wilds.ts';
+import { restRefused, answerRiddle } from '../../../game/wilds.ts';
 import { buy, item, priceIn } from '../../../game/items.ts';
 import { canTrainAt, xpForLevel, prestigeOf, takePrestige, createCharacter, PRESTIGES, resists, rest, isDown, NAME_MAX } from '../../../game/party.ts';
 import type { Party } from '../../../game/party.ts';
@@ -1072,13 +1072,19 @@ export const walkthrough: Walkthrough = (ok) => {
  * the rubbed walling. The Edge's top, east of the face: walked onto from the Downs' D2 alone,
  * the land named there with its warning to a company under its band, and no way down off it on foot.
  * The valley's head (B2): west from C2's 0,20 and north out of B3's grass at 24,0, both walked; the
- * spring's trough, the toad and the eel in the mire won and the beehive hut found from its wrens. Walked, waded,
- * climbed or floated, neither prize is reached but through its door.
+ * spring's trough, the toad and the eel in the mire won and the beehive hut found from its wrens.
+ * The rim's foot behind the willows (A3): west out of B3's grass at 0,28, walked; the river seen up the
+ * line of the willows, the toad and the heron won and the well-house found from the rag willow. The
+ * hills over the heronry (A4): west out of B4's grass at 0,16 and south out of A3's corner, both walked,
+ * the Delta named only at the line from the Upper Water; the woman of stone's riddle, the shrine at
+ * the dry valley's mouth, a rest at the reed-cutters' camp while both groups stand clear of it, the
+ * herons and the toad and the leech won, the still found from the reek, and the south edge shut against
+ * A5, not built yet. Walked, waded, climbed or floated, no prize is reached but through its door.
  */
 function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const w = newWalk(ok), out = buildMaps()[OUTDOORS];
-  const [C2, B2] = ['upperwater_c2', 'upperwater_b2'].map((id) => MAP_DEFS.find((d) => d.id === id)!);
-  const [c2, b2] = [C2.id, B2.id].map((id) => out.zones.find((z) => z.id === id)!);
+  const [C2, B2, A3, A4] = ['upperwater_c2', 'upperwater_b2', 'upperwater_a3', 'delta_a4'].map((id) => MAP_DEFS.find((d) => d.id === id)!);
+  const [c2, b2, a3, a4] = [C2.id, B2.id, A3.id, A4.id].map((id) => out.zones.find((z) => z.id === id)!);
   const said = (r: ReturnType<typeof w.world.move>): string => (r.kind === 'moved' ? r.messages.join(' / ') || 'nothing said' : r.kind);
   // The squares of a box reached from one of its own, inside the box: on foot, or walked, waded, climbed
   // and floated with its secret door shut.
@@ -1158,6 +1164,54 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   see(w, `${B2.id}:b2_hut`);
   ok(search(B2.id, 19, 22, NORTH, 'b2_cell'), 'searched where the wrens go in, the hut opens, and the cell under its turf can be walked into');
   ok(chest(B2, 'b2_cell_chest').includes('sharkskin+1'), 'in the cell, a Sharkskin Coat +1');
+  const gold = (def: MapDef, id: string): number => { const f = def.features!.find((x) => x.kind === 'chest' && x.id === id); return f?.kind === 'chest' ? f.gold : 0; };
+
+  // The rim's foot behind the willows: west out of B3's grass at 0,28 onto A3's 31,28, walked.
+  w.world.travel('upperwater_b3', 0, 28, WEST);
+  const behind = w.world.move('forward');
+  ok(behind.kind === 'moved' && w.world.zone?.id === A3.id && w.world.state.x === a3.x + 31 && w.world.state.y === a3.y + 28 && !behind.messages.some((m) => m.includes('The Upper Water.')),
+    `west from B3's 0,28 onto A3's 31,28, walked, and the land not named again (${said(behind)})`);
+  listen(w);
+  see(w, `${A3.id}:a3_shallows`);
+  for (const g of A3.encounters!) fight(w, `${A3.id}:${g.id}`);
+  // The secret: the rag willow at the walling, the search there and the well-house behind it.
+  const well = reach(a3, [A3.start.x, A3.start.y], ALL, [25, 27]);
+  ok(well.size > 40 && !well.has(at(a3, 24, 27)), `the well-house is shut but for its walling: none of A3's ${well.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${A3.id}:a3_willow`);
+  ok(search(A3.id, 26, 27, WEST, 'a3_wellhouse'), 'searched by the rag willow, the walling opens, and the well-house behind it can be walked into');
+  ok(gold(A3, 'a3_wellhouse_chest') === 120 && chest(A3, 'a3_wellhouse_chest').includes('potion_heal'), 'among the shells, 120 gold and a draught');
+
+  // The hills over the heronry: west out of B4's grass at 0,16 onto A4's 31,16, and south out of A3's
+  // corner at 29,31 onto A4's 29,0, both walked, the Delta named only from the Upper Water.
+  w.world.travel('delta_b4', 0, 16, WEST);
+  const hills = w.world.move('forward');
+  ok(hills.kind === 'moved' && w.world.zone?.id === A4.id && w.world.state.x === a4.x + 31 && w.world.state.y === a4.y + 16 && !hills.messages.some((m) => m.includes('The Delta.')),
+    `west from B4's 0,16 onto A4's 31,16, walked, and the land not named again (${said(hills)})`);
+  listen(w);
+  w.world.travel(A3.id, 29, 31, SOUTH);
+  const down = w.world.move('forward');
+  ok(down.kind === 'moved' && w.world.zone?.id === A4.id && w.world.state.x === a4.x + 29 && w.world.state.y === a4.y && down.messages.some((m) => m.includes('The Delta.')),
+    `south from A3's 29,31 onto A4's 29,0, walked, and the Delta named at the line (${said(down)})`);
+  listen(w);
+  ok(Array.from({ length: a4.w }, (_, x) => out.passable(a4.x + x, a4.y + a4.h - 1, ALL)).every((p) => p !== 'ok'), 'A4\'s south edge is shut against A5, not built yet: no square of it is walked, waded, climbed or floated');
+  // The woman of stone on the crest, and her riddle, the dry valley's word.
+  const statue = A4.features!.find((f): f is Extract<Feature, { kind: 'statue' }> => f.kind === 'statue')!;
+  w.world.travel(A4.id, statue.x, statue.y);
+  const purse = w.party.gold;
+  ok(!answerRiddle(w.world, w.party, statue, 'stream').right && answerRiddle(w.world, w.party, statue, 'River').right && w.party.gold === purse + 60, 'the woman of stone\'s riddle is answered river, for 60 gold');
+  kneel(w, `${A4.id}:a4_shrine`);
+  // The reed-cutters' camp stands clear of both groups: a company rests there while they stand.
+  const camp = A4.features!.find((f) => f.kind === 'camp')!;
+  w.world.travel(A4.id, camp.x, camp.y);
+  ok(A4.encounters!.every((g) => Math.abs(g.x - camp.x) + Math.abs(g.y - camp.y) > 2) && restRefused(w.world) === '',
+    `the reed-cutters' camp at ${camp.x},${camp.y} stands clear of both groups, and a company rests there while they stand (${restRefused(w.world) || 'rest allowed'})`);
+  for (const g of A4.encounters!) fight(w, `${A4.id}:${g.id}`);
+  // The secret: the reek where the bed ends at the rock, the search there and the still behind the stones.
+  const still = reach(a4, [A4.start.x, A4.start.y], ALL, [12, 18]);
+  ok(still.size > 500 && !still.has(at(a4, 11, 18)), `the still is shut but for its walling: none of A4's ${still.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${A4.id}:a4_reek`);
+  ok(search(A4.id, 13, 18, WEST, 'a4_still'), 'searched where the bed ends at the rock, the stones give, and the still behind them can be walked into');
+  ok(gold(A4, 'a4_still_chest') === 200 && chest(A4, 'a4_still_chest').includes('elixir'), 'in the still, a crock of 200 gold and an elixir');
 }
 
 /**
