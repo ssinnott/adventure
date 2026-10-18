@@ -283,12 +283,12 @@ leaves its pay and its finds out of its area: no clear counts its xp or gold, wh
 as a figure; its monsters sit in its own band, rising from its door; and its chests and drops sit in
 the window of the last area on the road whose floor is at or under its own, the Hearth's for a lair.
 The gate judges it at its own floor and two under it by the day from 10, its guardian's odds at its
-floor and two above (named in `BOSSES` under its box's zone), and leaves it out of its area's pools
+floor and two above (named in `BOSSES` under its box's zone) and leaves it out of its area's pools
 and day; no zone's road walks it, for a road walks its zone's own maps. No step of the quest lies in
 it (§5.8). Its door says its band and how it feels to the company, as a border does (DESIGN.md §9),
 and the pilot keeps out of one whose floor is over its company. A fixture lair at 30–32 beside
 Saltreach, a band-10 area, holds these rules before any area places one (`tools/tests/enclave.ts`):
-on the Stair's ground and groups, it is won 95.2% at 30, its guardian 57% at 30 and 80% at 32, and it
+on the Stair's ground and groups, it is won 95.2% at 30, its guardian 57% at 30 and 80% at 32; it
 fights 10.71 to a rest at 30 and 8.49 at 28, 74% of the floor's day; Saltreach's clear, band, pools
 and day are as they were without it; and it holds no step.
 
@@ -313,7 +313,7 @@ Decided by the builder for #845, each the owner's to overturn:
    can come when one asks for them.
 6. **The pilot learns an enclave's band at its door**, once a way in is seen (`Known.enclave`), and
    keeps out under its floor with no grace, where a zone allows a level: the navigator has no way in,
-   the strategist chooses no walk there, and a goal inside sends it levelling to the floor. Only the
+   the strategist chooses no walk there and a goal inside sends it levelling to the floor. Only the
    way in is shut: the way up from a deeper level stays open, so a pilot handed the helm inside is
    never stranded.
 7. **The secret's pace and the novelty check are left as they are**: each places a map by its floor

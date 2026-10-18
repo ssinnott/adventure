@@ -224,8 +224,8 @@ the Foreland, and no stronger."; either is tried again once anyone gains a level
 Over a line into a zone too hard for the company that its aim is not in, it turns back to the square
 before the line, once a crossing ("Too strong for us yet: back."). An enclave (#845) is given no
 grace of a level: Known gives its band once a way into it is seen (`Known.enclave`), as its door says
-it; a goal in one whose floor is over the company's level sends the pilot levelling to that floor, it
-walks into no such enclave, and the navigator takes no way in to one (`edges`). The way up from a
+it; a goal in one whose floor is over the company's level sends the pilot levelling to that floor; it
+walks into no such enclave and the navigator takes no way in to one (`edges`). The way up from a
 deeper level stays open, so a pilot handed the helm inside is never stranded. It meets nobody: a
 chapter begins and moves on by words that are talk's (#721).
 
