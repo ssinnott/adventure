@@ -740,13 +740,13 @@ over content broken on purpose too, and two tools to theirs:
   or found item and never blesses, sleeps, drinks or flees (J2). Each map is held to its band, and
   each area pools its groups, each fought at its own map's floor: nine fights in ten won at the
   floor; two under it (of a map whose floor is its area's, and of the area, a zone map's groups two
-  under its own floor and a town's or dungeon's two under the area's), a quarter at most won in Act
-  I and, from Saltreach's floor, 10, at most two thirds of the floor's aim fought to a rest, never
-  all of it (`GATE.backDay`, #851); a boss three to seven times in ten, 6.5 fights to a rest give or
-  take one, its bosses left out of the day and each zone's road walked at its floor eight times in
-  ten, its nearest groups at its way in among its gentlest. A group that walks only in fog is fought
-  with the bows' toll, and one placed on ice from under it; one that waits on an `after` is no
-  warning at the way in.
+  under its own floor and a town's or dungeon's two under the area's), a quarter at most won in
+  Act I and, from Saltreach's floor, 10, at most two thirds of the floor's aim fought to a rest,
+  never all of it (`GATE.backDay`, #851); a boss three to seven times in ten, 6.5 fights to a rest
+  give or take one, its bosses left out of the day and each zone's road walked at its floor eight
+  times in ten, its nearest groups at its way in among its gentlest. A group that walks only in fog
+  is fought with the bows' toll, and one placed on ice from under it; one that waits on an `after`
+  is no warning at the way in.
   Each figure has an aim (these) and a limit beyond it (#273): between the two it passes and is
   listed at the end of the suite as off its aim, and only past its limit does it fail or go into
   `OWED`. A den's keepers are its camp's hardest fight, won no more often than any of its brood; its
@@ -889,10 +889,11 @@ growing past Thornmark's, `--level-bonus` one where every member gains a point o
 armour every two levels past 10, and `--level-traits` one where fighters strike once more a turn
 from 11 and again from 29, and sneak attacks grow. `--tiers` gives the company its Expert at 13
 and Master at 25 (#852); `--bot` gives the bots, the gate's too, their bless, sleep and drink from
-11 (#853, #865); `--company newer` fields the four newer classes' company in the premade's place (#854).
-Each says what it makes, and none is on by default: #865 weighed the first two and left them off
-(J2, EXPANSION §5.2). `node tools/restate.ts <base ref> [--write]` restates the monsters past 10
-onto a line made again (#865), for the day the line is made again; it writes only with `--write`.
+11 (#853, #865); `--company newer` fields the four newer classes' company in the premade's place
+(#854). Each says what it makes, and none is on by default: #865 weighed the first two and left
+them off (J2, EXPANSION §5.2). `node tools/restate.ts <base ref> [--write]` restates the monsters
+past 10 onto a line made again (#865), for the day the line is made again; it writes only with
+`--write`.
 `node tools/gate.ts [--maps thornmark,grove2] [--levels 2,3,4,5] [--seeds 200]` prints how often the
 premade company, trained to each level, dressed by the gear ladder and with the prestiges its level
 brings, wins each map's groups alone
