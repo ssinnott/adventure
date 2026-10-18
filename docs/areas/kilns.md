@@ -1713,8 +1713,8 @@ M4, M5, O3 and O4 (#474), which place the rock worm and the salamander again and
   about 13,100. They are the issues' figures (#457 to #471). The country behind adds about 450 a box
   (#474): M4 and M5 as built, 449 each, O3 449 and O4 765. The bounds add 450 to 790 a box but P4,
   which pays nothing (§12.1): K6 as built 449 (#831), which takes the lead over the road from 19.29 to
-  19.32, past its named 19.3 (§9, #831's 5), and P5, P6 and L7 about 765, 765 and 790. Each box is measured
-  when it is built and recorded here as built,
+  19.32, past its named 19.3 (§9, #831's 5), and P5, P6 and L7 about 765, 765 and 790. Each box
+  is measured when it is built and recorded here as built,
   a fight inside the gate's aim costing what it costs; the sum is restated with each. A company
   should leave Kilnhaven at 18 with Cairnmoor's floor ahead, and a company that came by ferry at 16
   finds Kilnmouth's 17 waiting on the quay. As built: M3 1,068 (#457), N3 1,525 (#458), N4 1,468
@@ -1820,7 +1820,7 @@ M4, M5, O3 and O4 (#474), which place the rock worm and the salamander again and
   (§9, #466's 4); its day, 7.56 fights to a rest, is inside the aim. M4's, M5's and O3's days, 6.59
   fights to a rest each, are under the aim, 7 to 9, and inside the limit, 5.5 to 11.5: the worm pair
   is a heavy fight (§9, #474's 2 and 19); O4's, 8.37, is inside the aim; K6's, 6.59 with the same
-  pair, is theirs, and two under 4.14, 51.7% of the floor's 8 (§9, #831's 6). Kilnhaven holds no group, and a
+  pair, is theirs (§9, #831's 6). Kilnhaven holds no group, and a
   company the ferry or the coach puts down there walks out at L6's 29,4: the two groups nearest it,
   the beetles at the quay's east end and the crew, are won every time at 14, and the groups nearest
   the lodge's two ways out onto M9, which the coach now lands behind, the lynx and the pike, every
@@ -3157,9 +3157,10 @@ Owed by the Kilns as built, every box, town and dungeon of the road being in (#4
   until then; the ferry and the coach run (§4.14, §9).
 - **Settled by #851:** each box's two-under figure is judged by the day (§8).
 - **Nothing on the curve:** a clear gives 29,948 xp a member and 16,237 gold with K6 (#831), 2.29
-  and 2.05 times the curve's 13,067 and 7,920, and the row owes nothing. It is high because the bosses pay about
-  1,900 a member on the line against the briefs' 1,500 to 1,800, and a kill already pays by level
-  (`KILL_PAY`, `src/game/party.ts`); no group is cut and no monster's pay lowered (§8, #466's 9).
+  and 2.05 times the curve's 13,067 and 7,920, and the row owes nothing. It is high because the
+  bosses pay about 1,900 a member on the line against the briefs' 1,500 to 1,800, and a kill
+  already pays by level (`KILL_PAY`, `src/game/party.ts`); no group is cut and no monster's pay
+  lowered (§8, #466's 9).
 
 ## 12. The bounds
 
@@ -3272,10 +3273,10 @@ size is built yet; the pull request that builds the first says what it found.
   28 over the four squares of sand: of the atlas's 484 squares 436 stand (§9, #831's 4 and 13). The
   east edge meets L6's west edge square for square but the corner, the one way in and out. A company
   at 16 wins every fight and manages 6.59 fights to a rest, off the aim (7 to 9) and inside the limit
-  (5.5 to 11.5); two under, at 14, it wins every fight, at 4.14 fights to a rest, 51.7% of the floor's 8.
-  Density: every square within 12 steps of a point, the furthest 9, no sign among its 16 points. By
-  the curve's count the box pays 449 xp a member and 320 gold, and a company three quarters clearing
-  the area from 16 leaves it at 19.32 (§9, #831's 5).
+  (5.5 to 11.5); two under, at 14, it wins every fight, at 4.14 fights to a rest, 51.7% of the
+  floor's 8. Density: every square within 12 steps of a point, the furthest 9, no sign among its 16
+  points. By the curve's count the box pays 449 xp a member and 320 gold, and a company three
+  quarters clearing the area from 16 leaves it at 19.32 (§9, #831's 5).
 
 ### 12.3 P5, the hills under the rim at the Stone: country, band 16–18
 
