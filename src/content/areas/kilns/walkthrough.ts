@@ -77,15 +77,16 @@
 // Last, The Anvil Stone (#470): in from Lanternwood and with Kilnhaven reached by ferry first, at 16,
 // 17 and 18, the Stone bought and taken; each reads the same but for the road up from Lanternwood,
 // ends once on the moor where the Ring takes it on, and the Hearth counts the Stone either way.
+// Then the bounds (#831), as `theBounds` walks them, box by box.
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, walkThrough, see, fight, listen, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
+import { newWalk, walkThrough, see, kneel, fight, listen, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
 import type { Walk, Step } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import { AREAS, MAP_DEFS, MONSTERS, GUILD_QUESTS, ATLAS } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { GameMap } from '../../../game/map.ts';
-import type { Feature, MapDef, MapZone } from '../../../game/map.ts';
+import type { Can, Feature, MapDef, MapZone } from '../../../game/map.ts';
 import { LOCKS } from '../../locks.ts';
 import { meet, heard, answer, barred, SHORT } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
@@ -689,8 +690,8 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(stone6.kind === 'event' && stone6.x === 30 && stone6.y === 4 && stone6.text.includes(`ANVILHALL ${Math.round(toHall6 / 13)} `), `the milestone before Kilnhaven's gate says ANVILHALL ${Math.round(toHall6 / 13)}: ${toHall6} squares along the roads to Anvilhall's gate`);
   see(w, 'kilnmouth_l6:l6_yard');
 
-  // Past its west edge, the cut heath of K6, and past its south edge Cairnmoor's L7, the world ends.
-  ok(out.passable(l6.x - 1, l6.y + 25) !== 'ok' && out.passable(l6.x + 20, l6.y + 32) !== 'ok', 'past L6\'s west and south edges, for now, the world ends');
+  // Past its west edge lies the heath of K6 (#831, walked on in `theBounds`), and past its south edge L7, cut, the world ends.
+  ok(out.passable(l6.x - 1, l6.y + 25) === 'ok' && out.passable(l6.x + 20, l6.y + 32) !== 'ok', 'past L6\'s west edge the heath of K6 runs on, and past its south edge, for now, the world ends');
 
   // The store's clerk on the quay; and the box's groups, each won at its floor: the beetles in the ore
   // heaps, the Hand's crew on the pier by night and the worm pair under the heath.
@@ -916,6 +917,7 @@ export const walkthrough: Walkthrough = (ok) => {
   sideQuests(ok);
   theAnvilStone(ok);
   crewOpen(ok);
+  theBounds(ok);
 };
 
 /**
@@ -1958,4 +1960,78 @@ function crewOpen(ok: (cond: boolean, msg: string) => void): void {
   asked.world.travel('anvilhall', THANE.x, THANE.y);
   const m = meet(THANE, asked.party, heard(asked.world, THANE));
   ok(m.text === THANE.lines.join('\n\n') && !!m.choice, 'a company that never answered the thane still hears his first words and his question, the door open or not');
+}
+
+/**
+ * The bounds (#831), off the quest. The heath west of the port (K6): west from L6's edge at row 19 onto
+ * K6's 31,19, walked, in the same land at the same floor so nothing is said of it; the kelp-burner on the
+ * shingle and her word on the heath that sings; the box's worms won at its floor; the shrine of skeps
+ * knelt at; the strongroom in the winch-house found from the rails rubbed bright, and shut to a walker, a
+ * swimmer, a climber and a levitator but through its wall; and the heath's neck closed on the south, with
+ * the four squares of sand on the west, so that no square of K6 walks onto K7's tail or J6's sand.
+ */
+function theBounds(ok: (cond: boolean, msg: string) => void): void {
+  const w = newWalk(ok), out = buildMaps()[OUTDOORS];
+  const K6 = MAP_DEFS.find((d) => d.id === 'kilnmouth_k6')!, k6 = out.zones.find((z) => z.id === K6.id)!;
+  // The squares of K6 reached from one of its own, inside the box: on foot, or walked, waded, climbed and
+  // floated with its secret door shut.
+  const reach = (from: readonly [number, number], can: Can, door?: readonly [number, number]): Set<number> => {
+    const seen = new Set<number>(), todo = [[k6.x + from[0], k6.y + from[1]]];
+    while (todo.length) {
+      const [x, y] = todo.pop()!, k = y * out.width + x;
+      if (seen.has(k) || (door && x === k6.x + door[0] && y === k6.y + door[1]) || x < k6.x || x >= k6.x + k6.w || y < k6.y || y >= k6.y + k6.h || out.passable(x, y, can) !== 'ok') continue;
+      seen.add(k);
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+    }
+    return seen;
+  };
+  const at = (x: number, y: number): number => (k6.y + y) * out.width + k6.x + x;
+  const ALL: Can = { swim: true, climb: true, float: true };
+  for (const m of w.party.members) m.level = 16;
+  w.level = 16;
+
+  // In from Kilnhaven's box: L6's west edge at row 19 onto K6's east edge, the same land.
+  w.world.travel('kilnmouth_l6', 0, 19, WEST);
+  const west = w.world.move('forward');
+  ok(west.kind === 'moved' && w.world.zone?.id === K6.id && w.world.state.x === k6.x + 31 && w.world.state.y === k6.y + 19 && !west.messages.some((m) => m.includes('Kilnmouth.') || m.includes('harder')),
+    `west from L6's 0,19 onto K6's 31,19, walked, and the land not named again (${west.kind === 'moved' ? west.messages.join(' / ') || 'nothing said' : west.kind})`);
+  listen(w);
+  const heath = reach([K6.start.x, K6.start.y], {});
+  ok(heath.size > 420 && heath.has(at(12, 14)) && heath.has(at(3, 29)) && heath.has(at(26, 26)) && heath.has(at(18, 14)), `the heath (${heath.size} squares), the point, the shingle and the windbreak are all walked to on foot from the way in`);
+  see(w, `${K6.id}:k6_heath`);
+  see(w, `${K6.id}:k6_flat`);
+
+  // The kelp-burner at her pit, with her word on the heath that sings; the skeps knelt at; the box's worms won at its floor.
+  const kelp = K6.features!.find((f) => f.kind === 'npc' && f.name === 'A kelp-burner') as Person;
+  w.world.travel(K6.id, kelp.x, kelp.y);
+  const words = meet(kelp, w.party, heard(w.world, kelp)).text;
+  ok(words.includes('smelters') && words.includes('the heath sings'), `the kelp-burner burns kelp ash for the smelters and says the heath sings when the wind drops (${words.replace(/\n+/g, ' ')})`);
+  listen(w);
+  see(w, `${K6.id}:k6_pit`);
+  see(w, `${K6.id}:k6_wreck`);
+  see(w, `${K6.id}:k6_rings`);
+  kneel(w, `${K6.id}:k6_boles`);
+  for (const g of K6.encounters!) fight(w, `${K6.id}:${g.id}`);
+  ok(K6.encounters!.every((g) => g.monsters.join() === 'rock_worm,rock_worm' && g.respawn === 2880), 'the heath holds one group, a pair of rock worms at the top of the band, back after two days');
+
+  // The secret: the old rails rubbed bright to the winch-house wall, the search there and the strongroom
+  // behind it. Walked, waded, climbed or floated, it is never reached but through the wall.
+  const cell = reach([K6.start.x, K6.start.y], ALL, [17, 14]);
+  ok(cell.size > 400 && !cell.has(at(16, 14)) && !cell.has(at(16, 15)), `the strongroom is shut but for the wall: none of K6's ${cell.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${K6.id}:k6_slip`);
+  see(w, `${K6.id}:k6_point`);
+  see(w, `${K6.id}:k6_rails`);
+  w.world.travel(K6.id, 18, 14, WEST);
+  let found = false;
+  for (let i = 0; i < 20 && !found; i++) found = w.world.search();
+  const into = found ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(found && into.every((r) => r.kind === 'moved') && w.world.used('k6_cell'), 'searched at the rubbed rails, the winch-house wall gives, and the strongroom behind it can be walked into');
+  listen(w);
+  const chest = K6.features!.find((f) => f.kind === 'chest' && f.id === 'k6_cell_chest');
+  ok(chest?.kind === 'chest' && chest.items.includes('elixir') && chest.gold === 200 && chest.x === 16 && chest.y === 15, 'in the strongroom, a chest with 200 gold and an Elixir');
+
+  // The edges: the heath's neck is a bank of mountain across the south, and the four squares of sand
+  // against J6 are mountain too, so even a climber walks onto neither K7's tail nor J6.
+  ok(Array.from({ length: 25 }, (_, i) => out.passable(k6.x + 7 + i, k6.y + 31, { climb: true })).every((p) => p !== 'ok') && Array.from({ length: 5 }, (_, i) => out.passable(k6.x, k6.y + 24 + i, { climb: true })).every((p) => p !== 'ok'),
+    'the bank across the heath\'s neck and the mountain on the west shore are shut to a climber, so nothing of K6 walks onto the cut land past them');
 }
