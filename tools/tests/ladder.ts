@@ -344,6 +344,10 @@ export function ladder(): void {
   // Every id in the ladder is an item, and every find is one within the Foreland's window.
   const missing = GEAR.flatMap(([, ids]) => ids).filter((id) => !ITEMS[id]);
   ok(!missing.length, `every rung of the ladder is an item${missing.length ? ` (not: ${missing.join(', ')})` : ''}`);
+  // An artifact is past the ladder's top (#847): no rung holds one, by its mark, so the gate's company
+  // and the harness's plain one wear none, and only the harness's what-if dresses one (`--artifacts`).
+  const arts = Object.values(ITEMS).filter((d) => d.artifact).map((d) => d.id), onRung = GEAR.flatMap(([, ids]) => ids).filter((id) => arts.includes(id));
+  ok(arts.length > 0 && !onRung.length, `no rung of the ladder holds an artifact, past its top: none of the ${arts.length}${onRung.length ? ` (but: ${onRung.join(', ')})` : ''}`);
   const found = new Set([
     ...MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => giftOf(f)?.items ?? [])),
     ...Object.values(MONSTERS).flatMap((m) => (m.drops ?? []).map((x) => x.item)),

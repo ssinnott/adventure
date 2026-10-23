@@ -2,7 +2,7 @@
 // sells the band's consumables and their own leather, nothing of steel (#443, calls 5 and 7), and the
 // boxes' finds are theirs; what came out of the Glass is the Cartographers' to buy at Cinderport (#56's 51).
 import type { ItemDef } from '../../../game/items.ts';
-import { A, P, NO_CASTER_HEAVY } from '../../items.ts';
+import { W, A, P, NO_CASTER_HEAVY, ARTIFACT_PRICE } from '../../items.ts';
 import { basaltShield } from '../ashfall/items.ts';
 
 /** In the basilisk's hoard on the great mesa (D10, #527): Cinderport's step (#542) with a plus, at 1,700. */
@@ -11,6 +11,14 @@ export const hoardShield = P(basaltShield, 2);
 // The Riders' own coat of horsehide, sold at list by their trader at Akordu (D8, #526): a coat a step
 // under Cinderport's Drakeskin, off the ladder; the Riders keep one with a plus in their hoard.
 export const leatherCoat = A('leather_coat', 'Leather Coat', 2400, 12, { classes: NO_CASTER_HEAVY });
+
+// The Glasswold's of the bounds' eight (DESIGN §9, #847): the Grey Bow's 1d12+13 and a point, the
+// ranger's, and accuracy raised by 5 while it is borne. Found and never sold; placed nowhere yet, for
+// #833 lays its lair and puts it there.
+export const akkush = W('akkush', 'Akkush', ARTIFACT_PRICE, 1, 12, { kind: 'bow', bonus: 14, ranged: true, twoHanded: true, classes: ['ranger'], stat: { accuracy: 5 }, artifact: true, text: [
+  'A Rider\'s bow of white horn and sinew, its grip worn to one hand.',
+  'Bound under the grip is a feather longer than your arm.',
+] });
 
 export const ITEMS: readonly ItemDef[] = [
   // In the hollow of the fallen walker's chest on D9 (#525): no shop buys it. Eadmer, the scholar at the
@@ -45,4 +53,5 @@ export const ITEMS: readonly ItemDef[] = [
   { id: 'drill_bow', name: 'Drill Bow', slot: 'none', price: 0, text: [
     'A bow of horn and sinew, black with handling. The grip is worn in two places, by thumb and heel, to one hand.',
   ] },
+  akkush,
 ];

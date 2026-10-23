@@ -12,6 +12,12 @@ export const A = (id: string, name: string, price: number, ac: number, extra: Pa
 
 /** Gold a point of plus adds to its base's price. */
 export const PLUS_PRICE = 150;
+/**
+ * An artifact's price (`ItemDef.artifact`, #847): past every window, the Hearth's 7,000 the widest, and
+ * nobody's to pay, since no shop sells one or takes one. A window passes one by its mark, never by
+ * this price, and unmarked would catch it.
+ */
+export const ARTIFACT_PRICE = 7500;
 /** A +n copy of `base` (`longsword+1`, "Long Sword +1"); `extra` names a find under an id of its own. */
 export const P = (base: ItemDef, n: number, extra: Partial<ItemDef> = {}): ItemDef => {
   if (base.slot === 'none') throw new Error(`'${base.id}' is not gear and takes no plus`);
