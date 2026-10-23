@@ -79,6 +79,8 @@ import { masterOffers, teachTier, favourDone, linesOf, TIER_PRICES } from '../..
 import type { Person } from '../../../game/people.ts';
 import { buy, item } from '../../../game/items.ts';
 import type { Feature, MapDef, Answer } from '../../../game/map.ts';
+import { GameMap } from '../../../game/map.ts';
+import { HARDER_IN, WARNING_IN } from '../../../game/world.ts';
 import { take as ride } from '../../../game/passage.ts';
 import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
 import { RIDERS_RIDE } from '../../crossings.ts';
@@ -1630,10 +1632,13 @@ function theWarning(ok: (cond: boolean, msg: string) => void): void {
  * foot and nothing on the strip that fights or pays; the west edge on top shut against C7's ring, and D8's
  * 0,0 and C8's 31,0 with it; the lip's sights, the salt-raker's words and the watch's fire, a rest; the
  * vultures, the lions and the walkers, each won; the keepers' store found from the smell of tar; and the
- * squares left for the lair's door and the enclave's. The other island (E7): north from E8's 16,0 onto
- * its 16,31, and east from D7's 31,31 onto the spit; its sights, no group, and the castaway's hollow found
- * from the wind in the crack; its north edge shut to every company against Wrackholm's E6. Walked, waded,
- * climbed or floated, neither prize is reached but through its door.
+ * square left for the lair's door. Karaordu, the enclave (#845): south from the grass at D7's 8,29 down the
+ * diggers' cut, its door saying its band and how it feels at 25, 26 and 28 and its sign its band; its two
+ * groups won at 28, the khans' gold, the eldest khan's cell found from the horses' skulls turned to its
+ * wall and the Khan's Sabre in it, and up the cut onto D7 again. The other island (E7): north from E8's
+ * 16,0 onto its 16,31, and east from D7's 31,31 onto the spit; its sights, no group, and the castaway's
+ * hollow found from the wind in the crack; its north edge shut to every company against Wrackholm's E6.
+ * Walked, waded, climbed or floated, no prize is reached but through its door.
  */
 function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const w = newWalk(ok), out = buildMaps()[OUTDOORS];
@@ -1669,8 +1674,9 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   w.level = 26;
   ok(!!WOLD.maps?.some((m) => `${m.map} ${m.at.join(',')}` === 'wold_d7 104,190') && !!WOLD.maps?.some((m) => `${m.map} ${m.at.join(',')}` === 'wold_e7 136,190')
     && d7.x === d8.x && d7.y + 32 === d8.y && e7.x === d7.x + 32 && e7.y === d7.y && e7.x === e8.x && e7.y + 32 === e8.y
-    && [D7, E7].every((d) => d.density === 'country' && d.band?.join('-') === '26-27' && d.region === 'glasswold' && !(d.exits ?? []).length),
-    'the Scarp\'s east end, D7, laid at 104,190 over Akordu\'s box, and the other island\'s north, E7, east of it at 136,190 over the shore: country, band 26-27, nothing taken out of either');
+    && [D7, E7].every((d) => d.density === 'country' && d.band?.join('-') === '26-27' && d.region === 'glasswold')
+    && (D7.exits ?? []).map((e) => e.to).join() === 'karaordu' && !(E7.exits ?? []).length,
+    'the Scarp\'s east end, D7, laid at 104,190 over Akordu\'s box, and the other island\'s north, E7, east of it at 136,190 over the shore: country, band 26-27, D7\'s one way out into Karaordu and none out of E7');
 
   // The way in: north from D8's 20,0 onto D7's 20,31, walked, one land and nothing said.
   const north = step(d8.id, 20, 0, NORTH);
@@ -1727,11 +1733,65 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   ok(search(D7.id, rock.x + 1, rock.y, WEST, 'd7_store'), 'searched where the tar smells, the rock gives, and the beacon-keepers\' store can be walked into');
   const chest7 = feature(D7, 'd7_chest');
   ok(chest7.kind === 'chest' && chest7.gold === 1100 && chest7.items.join() === 'potion_sp_great' && chest7.x === rock.x - 2, 'in the store, the keepers\' chest: 1,100 gold and a Sapphire Vial');
-  // The doors left for the lair, in the Scarp's east face over the gulf, and for the enclave, in the hills
-  // over D8: each square is bare, the square before it open on the lip, and nothing stands on either.
+  // The doors, the lair's left in the Scarp's east face over the gulf and the enclave's in the hills over
+  // D8: each square is bare, the square before it open on the lip, and nothing stands on either.
   const bare = (x: number, y: number): boolean => !D7.features!.some((f) => f.x === x && f.y === y) && !D7.encounters!.some((g) => g.x === x && g.y === y);
-  ok(D7.rows[24][19] === '|' && lip.has(at(d7, 18, 24)) && bare(19, 24) && bare(18, 24) && D7.rows[30][8] === '^' && lip.has(at(d7, 8, 29)) && lip.has(at(d7, 8, 30)) && bare(8, 30) && bare(8, 29),
-    'the lair\'s door is left at the Scarp\'s east face, 19,24, and the enclave\'s at the hills over Akordu\'s box, 8,30, each bare and its way clear');
+  ok(D7.rows[24][19] === '|' && lip.has(at(d7, 18, 24)) && bare(19, 24) && bare(18, 24) && D7.rows[30][8] === '"' && lip.has(at(d7, 8, 29)) && lip.has(at(d7, 8, 30)) && bare(8, 30) && bare(8, 29),
+    'the lair\'s door is left at the Scarp\'s east face, 19,24, and the enclave\'s is the cut in the hills over Akordu\'s box, 8,30, each bare and its way clear');
+
+  // Karaordu, the enclave (#845): the diggers' cut at D7's 8,30, walked into from the grass at 8,29, no
+  // feature or group within four squares of it. Its door says its band and how it feels, as a border's
+  // line: the warning at 25, harder at 26 and its band alone at 28; inside, its sign gives its band.
+  const KO = MAP_DEFS.find((d) => d.id === 'karaordu')!, cut = D7.exits!.find((e) => e.to === KO.id)!;
+  ok(cut.x === 8 && cut.y === 30 && cut.tx === KO.start.x && cut.ty === KO.start.y && ![...D7.features!, ...D7.encounters!].some((f) => Math.abs(f.x - 8) + Math.abs(f.y - 30) <= 4),
+    'the cut into Karaordu is the hills\' face at D7\'s 8,30, walked into from the grass at 8,29, and no feature or group stands within four squares of it');
+  const levels = w.party.members.map((m) => m.level);
+  const door = (level: number): string => {
+    for (const m of w.party.members) m.level = level;
+    w.world.travel(D7.id, 8, 29, SOUTH);
+    const r = w.world.move('forward');
+    return r.kind === 'moved' && w.world.state.mapId === KO.id && w.world.state.x === KO.start.x && w.world.state.y === KO.start.y ? r.messages.join(' | ') : r.kind;
+  };
+  const band = 'Karaordu: levels 28-29.', far = door(25), near = door(26), at28 = door(28);
+  ok(far === `${cut.label} | ${band} ${WARNING_IN}` && near === `${cut.label} | ${band} ${HARDER_IN}` && at28 === `${cut.label} | ${band}`,
+    `south from D7's 8,29 into Karaordu, the way's own line and then its band, with the warning at 25, harder at 26 and nothing more at 28 (${far}; ${near}; ${at28})`);
+  ok(!!KO.enclave && w.world.here.name === 'Karaordu' && w.world.here.band?.join('-') === '28-29', `inside, its sign gives its own band, over D7's 26-27 (${w.world.here.name}, ${w.world.here.band?.join('-')})`);
+  listen(w);
+  // Its two groups won at its floor, rising from the basilisks at the passage's head to the rats among the
+  // khans' bones; its sights, and the khans' gold among the biers.
+  w.level = 28;
+  const gk = (id: string) => KO.encounters!.find((g) => g.id === id)!;
+  ok(KO.encounters!.length === 2 && gk('kr_basilisks').monsters.join() === 'basilisk,basilisk,basilisk,basilisk'
+    && gk('kr_rats').monsters.length === 8 && gk('kr_rats').monsters.every((m) => m === 'deep_rat')
+    && KO.encounters!.every((g) => g.respawn === 2880 && !g.slainText && g.roams === false), 'four basilisks at the passage\'s head and eight deep rats among the khans\' bones, and no guardian');
+  for (const g of KO.encounters!) fight(w, `${KO.id}:${g.id}`);
+  for (const id of ['kr_cut', 'kr_diggers', 'kr_slabs', 'kr_khans', 'kr_horses', 'kr_gnawed']) see(w, `${KO.id}:${id}`);
+  const grave = feature(KO, 'kr_grave');
+  ok(grave.kind === 'chest' && grave.gold === 1400 && grave.items.join() === 'elixir', 'among the biers, the khans\' gold: 1,400 and an Elixir');
+  // The secret: the horses' skulls turned to the end wall, the search there and the eldest khan's cell.
+  const [wall] = KO.secrets!, hold = new GameMap(KO), inside = new Set<string>(), todo: [number, number][] = [[KO.start.x, KO.start.y]];
+  while (todo.length) {
+    const [x, y] = todo.pop()!;
+    if (inside.has(`${x},${y}`) || (x === wall.x && y === wall.y) || hold.passable(x, y, ALL) !== 'ok') continue;
+    inside.add(`${x},${y}`);
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+  }
+  ok(wall.hint === 'kr_skulls' && feature(KO, 'kr_skulls').x === wall.x && feature(KO, 'kr_skulls').y === wall.y - 1 && inside.size > 60 && !inside.has(`${wall.x},${wall.y + 1}`),
+    `the eldest khan's cell is shut but for the end wall: none of Karaordu's ${inside.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${KO.id}:kr_skulls`);
+  ok(search(KO.id, wall.x, wall.y - 1, SOUTH, 'kr_eldest'), 'searched where the skulls look, the end wall gives, and the eldest khan\'s cell can be walked into');
+  const sabre = feature(KO, 'kr_sabre');
+  ok(sabre.kind === 'chest' && sabre.gold === 300 && sabre.items.join() === 'khans_sabre'
+    && MAP_DEFS.filter((d) => d.features?.some((f) => (f.kind === 'chest' || f.kind === 'cairn') && f.items.includes('khans_sabre'))).length === 1,
+    'in the cell, the eldest khan\'s chest: 300 gold and the Khan\'s Sabre, which no other chest or cairn holds');
+  // And out: up the cut onto D7's 8,29, with the way's own line and no other.
+  w.world.travel(KO.id, KO.start.x, KO.start.y + 1, NORTH);
+  const up = w.world.move('forward');
+  ok(up.kind === 'moved' && w.world.zone?.id === D7.id && w.world.state.x === d7.x + 8 && w.world.state.y === d7.y + 29 && up.messages.join(' | ') === KO.exits![0].label,
+    `up the cut out of Karaordu onto D7's 8,29, the way's own line alone (${said(up)})`);
+  listen(w);
+  w.party.members.forEach((m, i) => { m.level = levels[i]; });
+  w.level = 26;
 
   // The other island: north from E8's 16,0 onto E7's 16,31, walked, and east from D7's 31,31 onto the spit.
   const isle = step(e8.id, 16, 0, NORTH);

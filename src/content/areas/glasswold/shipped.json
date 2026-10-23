@@ -209,6 +209,27 @@
         "56,272",
         "94,224"
       ]
+    },
+    "karaordu": {
+      "size": "16x16",
+      "used": [
+        "kr_cut",
+        "kr_diggers",
+        "kr_eldest",
+        "kr_gnawed",
+        "kr_grave",
+        "kr_horses",
+        "kr_khans",
+        "kr_sabre",
+        "kr_slabs"
+      ],
+      "groups": [
+        "kr_basilisks",
+        "kr_rats"
+      ],
+      "doors": [
+        "7,13"
+      ]
     }
   },
   "zones": {
@@ -290,6 +311,7 @@
     "etched_glass",
     "glass_boy",
     "glass_light",
+    "khans_sabre",
     "leather_coat",
     "leather_coat+2",
     "riders_orders",
