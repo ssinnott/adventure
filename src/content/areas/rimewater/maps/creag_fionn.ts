@@ -40,7 +40,7 @@ export const CREAG_FIONN: MapDef = {
   ],
   features: [
     // The cleft down from the door, and the cave's mouth, where the eagles sit to eat.
-    { kind: 'event', x: 7, y: 2, id: 'cf_cleft', once: true, text: 'A cleft goes down into the rim, its floor a ramp of old snow trodden hard. The cold in it smells of wet fur.' },
+    { kind: 'event', x: 7, y: 2, id: 'cf_cleft', once: true, text: 'A cleft goes down into the rim, its walls rubbed smooth higher than any man could reach.' },
     { kind: 'event', x: 6, y: 4, id: 'cf_roost', once: true, text: 'Sticks, bones and long grey feathers litter the cave mouth, and the snow is spattered brown where something sits to eat.' },
     // The trolls' hall: their beds in rings, the marrow-bones, the hunter who came with fire, and the one
     // stretch of wall they keep bare, with their larder behind it.

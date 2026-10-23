@@ -56,7 +56,7 @@ import type { Can, Feature, MapDef, MapZone } from '../../../game/map.ts';
 import { LOCKS } from '../../locks.ts';
 import { ATLAS, MAP_DEFS, MONSTERS } from '../../index.ts';
 import { DROVE_COACH } from '../../crossings.ts';
-import { buy, item } from '../../../game/items.ts';
+import { buy, item, hits, ELEMENT_DIE } from '../../../game/items.ts';
 import { CLASSES, canTrainAt, xpForLevel, rest, stayNight, trainPrice, levelUp, guildFlag } from '../../../game/party.ts';
 import { spellsFor } from '../../../game/spells.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
@@ -1426,13 +1426,14 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const hoard = CF.features!.find((f) => f.kind === 'chest' && f.id === 'cf_hoard');
   ok(hoard?.kind === 'chest' && hoard.gold === 400 && hoard.items.join() === 'trollbrand' && hoard.x === 11 && hoard.y === 14
     && item('trollbrand').element === 'fire' && !!MONSTERS.snow_troll.regen
+    && hits(item('trollbrand')) === hits(item('bear_spear')) + (ELEMENT_DIE + 1) / 2 && hits(item('trollbrand')) > hits(item('bear_spear+1'))
     && !MAP_DEFS.some((d) => (d.features ?? []).some((f) => (f.kind === 'shop' && f.stock.includes('trollbrand')) || ((f.kind === 'chest' || f.kind === 'cairn') && f !== hoard && (f.items ?? []).includes('trollbrand'))))
     && !Object.values(MONSTERS).some((m) => m.drops?.some((d) => d.item === 'trollbrand')),
-    'in the hoard at the cave\'s back, 400 gold and Trollbrand, a Bear Spear whose blows carry fire, which stops a troll mending; no shop sells it, no other chest or cairn holds it and no monster drops it');
+    `in the hoard at the cave's back, 400 gold and Trollbrand, a Bear Spear whose blows carry fire, which stops a troll mending, ${hits(item('trollbrand'))} a blow to the Bear Spear +1's ${hits(item('bear_spear+1'))}; no shop sells it, no other chest or cairn holds it and no monster drops it`);
   // The secret: the stretch of wall the trolls keep bare, the search there and the larder behind it. Walked,
   // waded, climbed or floated, it is never reached but through its wall.
   const larder = [[12, 9], [13, 9], [12, 10], [13, 10]], inside = walked([], ALL);
-  ok(wall.hint === 'cf_path' && CF.features!.some((f) => f.x === wall.x - 1 && f.y === wall.y && 'id' in f && f.id === 'cf_path') && inside.size > 60 && !larder.some(([x, y]) => inside.has(`${x},${y}`)),
+  ok(wall.hint === 'cf_path' && CF.features!.some((f) => f.x === wall.x - 1 && f.y === wall.y && 'id' in f && f.id === 'cf_path') && inside.size === 70 && !larder.some(([x, y]) => inside.has(`${x},${y}`)),
     `the larder is shut but for the bare stretch of wall: none of Creag Fionn's ${inside.size} squares walked, waded, climbed or floated reaches it`);
   see(w, `${CF.id}:cf_path`);
   ok(search(CF.id, wall.x - 1, wall.y, EAST, 'cf_larder'), 'searched where the trolls keep the wall bare, it gives, and the larder can be walked into');
@@ -1441,7 +1442,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   // And out: up the ramp onto L12's 11,3, with the way's own line and no other.
   w.world.travel(CF.id, CF.start.x, CF.start.y + 1, NORTH);
   const up = w.world.move('forward');
-  ok(up.kind === 'moved' && w.world.zone?.id === L12.id && w.world.state.x === l12.x + 11 && w.world.state.y === l12.y + 3 && up.messages.join(' | ') === CF.exits![0].label,
+  ok(up.kind === 'moved' && w.world.zone?.id === L12.id && w.world.state.x === l12.x + 11 && w.world.state.y === l12.y + 3 && w.world.state.facing === NORTH && up.messages.join(' | ') === CF.exits![0].label,
     `up the ramp out of Creag Fionn onto L12's 11,3, the way's own line alone (${said(up)})`);
   listen(w);
   w.party.members.forEach((m, i) => { m.level = levels[i]; });

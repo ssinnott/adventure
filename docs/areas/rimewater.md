@@ -2466,9 +2466,9 @@ Decided by the builder for #832, each the owner's to overturn:
     eagles and trolls, each sized with the harness at its floor (§12.1).
 12. **The walkthrough walks the bounds in one function,** `theBounds`, called last.
 13. **The enclave's and the lair's briefs in §4's form are written by their own pull requests**
-    (§12.4): this brief fixes their doors, bands, groups, guardian and artifact; their landmarks,
-    points of interest, secrets, New here and pay as a figure come with them under #845 and #847.
-    The enclave's is written (§12.4, #832's 30).
+    (§12.4, §12.5): this brief fixes their doors, bands, groups, guardian and artifact; their
+    landmarks, points of interest, secrets, New here and pay as a figure come with them under #845
+    and #847. The enclave's is written (§12.4, #832's 30).
 14. **L12 is Loch Fada's, whole,** at 20–21 as L10 and L11 are (#497's 12): 56 of its 77 walkable
     squares the lake's by the atlas with the built maps laid and Loch Fuar's 21 played at the
     lake's band (55 and 22 before Cairnmoor's L8 was laid, which moved one square each way). Walked
@@ -2520,7 +2520,7 @@ Decided by the builder for #832, each the owner's to overturn:
     steps from the way in, the trolls 11). The sizes are J8's, which the harness gives 9.7 fights to
     a rest dealt at 22; five eagles gave 8.5, on the aim's lower edge. The neck and the passage are
     one square wide, so a walker meets the eagles first and the trolls before the hoard (the
-    walkthrough walks both orders).
+    walkthrough floods it with both groups standing, then with the trolls alone).
 26. **Its reward is Trollbrand,** the furrier's Bear Spear with its head bound in pitch and its
     blows carrying fire, which keeps a troll from mending the round it lands (`regenerate`,
     `src/game/combat.ts`): 2d12+4, two-handed, for the martial classes, at 2,100, the spear's 1,900
@@ -2538,7 +2538,7 @@ Decided by the builder for #832, each the owner's to overturn:
     counts 82 squares and 10 points (81 and 9); nothing stands within four squares of the door by
     the walkthrough's measure (the camp, the cairn and the rim's look at 5 or more).
 29. **Its plate on the world map is at 371,359,** five squares south of the door in the rim's
-    mountain, as the built dungeons' plates stand 4 to 8 squares south of their doors.
+    mountain, as Karaordu's stands 5 south of its door, the Cairns' 6 and the Deep Mines' 8.
 30. **§12.4 is the enclave's brief in §4's form with its As built,** the lair's note is §12.5, and
     the lines that pointed at the lair as §12.4 point at §12.5 (decision 13 is met for the enclave).
 
@@ -2924,7 +2924,7 @@ written `%`, as Cairnmoor's P7 and P8 were (docs/areas/cairnmoor.md §12).
 - **Band.** 22–23, a band over L12's 20–21, its floor over the box's top (#845's 2); its window is
   the Whitespine's, 5,000 (EXPANSION §5.2, #845's 3: the last road area whose floor, 22, is at or
   under its own).
-- **Landmarks.** The ramp of packed snow down from the door; the cave's mouth, strewn with an
+- **Landmarks.** The ramp of packed snow down from the door; the cave's mouth, strewn with the
   eagles' leavings; the neck behind it; the hall roofed in ice, its beds trodden in rings; the
   passage to the cave's back and the trolls' bed.
 - **Points of interest.** The cleft down from the door, the eagles' roost, the hall, a hunter frozen
