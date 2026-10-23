@@ -50,10 +50,10 @@ export const MONSTERS: readonly MonsterDef[] = [
   // (1,001 hp, 18d8+20, won 29% at 17 and 65% at 19), its hit points and its blow are set for #466's gate: about half at its
   // floor, 17, and nearly always at 19
   { id: 'great_salamander', name: 'Great Salamander', plural: 'Great Salamanders', sprite: 'great_salamander', kind: 'beast', look: 'The fire in the rock, with a head.', level: 18, hp: 950, ac: 22, attack: 13, dice: 15, sides: 8, bonus: 14, speed: 13, xp: 11413, gold: [0, 0], immune: ['asleep', 'fire'], weak: ['cold'], drops: [{ item: 'salamander_hide', chance: 1 }], tint: '#4a423c', size: 1.6 },
-  // the bounds' lair (#831), drawn and defined before the lair that places it: P5's old working under the rim, where it
-  // keeps the Erzhemd. The knockers' overseer, the lair's boss at 32 (MONSTERS §13): a machine, so it never breaks, and
-  // it calls a group of deep knockers, three at a half a turn as the inspector does. Its numbers are the line's boss at
-  // 32 as tools/testmonster.ts gives it today, and provisional: the lair's pull request sets them from the harness's
-  // line at the cap (MONSTERS §4.1, §4.2, §13). It is owed in checks.ts until that lair places it
-  { id: 'steiger', name: 'The Steiger', plural: 'Steigers', sprite: 'steiger', kind: 'machine', look: 'It knocks once, and the whole seam answers.', level: 32, hp: 2100, ac: 29, attack: 20, dice: 34, sides: 8, bonus: 41, speed: 13, xp: 20373, gold: [0, 0], calls: { monsters: ['deep_knocker', 'deep_knocker', 'deep_knocker'], chance: 0.5 }, tint: '#4a4f5a', size: 1.4 },
+  // the bounds' lair (#831): the Randzeche, P5's old working under the rim, where it keeps the Erzhemd in the Dark Seam.
+  // The knockers' overseer, the lair's boss at 32 (MONSTERS §13): a machine, so it never breaks, and it calls a group of
+  // deep knockers, three at a half a turn as the inspector does. Drawn at the line's boss at 32 (2,100 hp, 34d8+41), it
+  // was won 34% at 30 and 45% at 32; set by the lair's pull request at the gate's company, it hits more often and half
+  // as hard and stands longer, won 56% at its floor of 30 and 81% at 32 (docs/areas/kilns.md §9, #831's 41)
+  { id: 'steiger', name: 'The Steiger', plural: 'Steigers', sprite: 'steiger', kind: 'machine', look: 'It knocks once, and the whole seam answers.', level: 32, hp: 2400, ac: 29, attack: 24, dice: 18, sides: 8, bonus: 20, speed: 13, xp: 20373, gold: [0, 0], calls: { monsters: ['deep_knocker', 'deep_knocker', 'deep_knocker'], chance: 0.5 }, offLine: 'the Randzeche\'s boss, its hit points and its blow set by its gate at the lair\'s floor and two above (#831)', tint: '#4a4f5a', size: 1.4 },
 ];
