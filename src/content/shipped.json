@@ -183,6 +183,15 @@
         "a4_statue",
         "a4_still",
         "a4_still_chest",
+        "a5_cairn",
+        "a5_shrine",
+        "a5_sluice",
+        "a5_sluice_chest",
+        "a6_bell",
+        "a6_cairn",
+        "a6_cell",
+        "a6_cell_chest",
+        "a6_statue",
         "ash_crock",
         "ash_crock_c",
         "ash_hearth",
@@ -1619,6 +1628,10 @@
         "a3_toad",
         "a4_herons",
         "a4_toad",
+        "a5_pools",
+        "a5_toad",
+        "a6_drowned",
+        "a6_toads",
         "b2_toad",
         "b3_quay",
         "b3_toad",
@@ -2030,6 +2043,7 @@
         "258,165",
         "258,344",
         "259,281",
+        "26,168",
         "260,86",
         "266,182",
         "270,310",
@@ -2041,6 +2055,7 @@
         "285,116",
         "286,135",
         "286,228",
+        "29,141",
         "290,322",
         "297,145",
         "300,275",
@@ -3278,6 +3293,14 @@
     },
     "delta_a4": {
       "at": "8,94",
+      "size": "32x32"
+    },
+    "delta_a5": {
+      "at": "8,126",
+      "size": "32x32"
+    },
+    "delta_a6": {
+      "at": "8,158",
       "size": "32x32"
     },
     "delta_b4": {
