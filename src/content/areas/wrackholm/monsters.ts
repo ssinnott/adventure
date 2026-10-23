@@ -5,7 +5,7 @@ import type { MonsterDef } from '../../../game/monsters.ts';
 
 /** The drawings Wrackholm's monsters are drawn with, one kind to each. A family in src/ui/monsters/ must register every one. */
 export const SPRITES = [
-  'devilfish', 'great_devilfish',
+  'devilfish', 'great_devilfish', 'old_nick',
   'overseer',
   'wrack_smuggler', 'wrack_bowman',
   'bilge_rat',
@@ -58,4 +58,10 @@ export const MONSTERS: readonly MonsterDef[] = [
   // the company steps to its desk (the map's), and calls two clerks at a half a turn, who may call their loaders;
   // size 1.6 and drawn inside TALL_REACH
   { id: 'tallymaster', name: 'The Tallymaster', plural: 'Tallymasters', sprite: 'tallymaster', kind: 'machine', look: 'It writes, and does not look up.', level: 28, hp: 1552, ac: 27, attack: 18, dice: 28, sides: 8, bonus: 50, speed: 13, xp: 17813, gold: [0, 0], calls: { monsters: ['tally_clerk', 'tally_clerk'], chance: 0.5 }, tint: '#6f7780', size: 1.6 },
+  // the bounds' lair (#835), drawn and defined before the lair that places it: F5's sea cave under the east rocks, where it
+  // keeps Holdfast. What the smugglers fed first, the lair's boss at 32 (MONSTERS §13): it reaches the back row (`ranged`, as
+  // the family's do) and its hits heal it (`drain`, as the leech's), and it stands at size 2 and is drawn inside TALL_REACH.
+  // Its numbers are the line's boss at 32 as tools/testmonster.ts gives it today, and provisional: the lair's pull request
+  // sets them from the harness's line at the cap (MONSTERS §4.1, §4.2, §13). It is owed in checks.ts until that lair places it
+  { id: 'old_nick', name: 'Old Nick', plural: 'Old Nicks', sprite: 'old_nick', kind: 'beast', look: 'What the smugglers fed first.', level: 32, hp: 2100, ac: 29, attack: 20, dice: 34, sides: 8, bonus: 41, speed: 13, xp: 20373, gold: [0, 0], ranged: true, drain: 'hp', tint: '#4c5650', size: 2 },
 ];
