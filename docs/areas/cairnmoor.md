@@ -17,16 +17,18 @@ Every box is built: N7, the road up onto the moor (#476, §4.2), which lists the
 Cairnfield's box (#479, §4.5), O7, Fionnlios's box (#477, §4.3), O8, the bog (#478, §4.4) and Carn
 Dubh, the dungeon through N8's door (#480, §4.6), then M7 and M8, the country behind (#484, §4.7),
 which the owner took off parked on 9 October 2026. The bounds come back as country (#834, §12): P7
-and P8, the rim behind O7 and O8, and L8, the shore west of M8, are built, and the enclave and the
-lair are to come. Its seven monsters are drawn and every one is placed (§3); its chapter, The Ring
-(#481, §5), and its three side quests (#482, §6) are built. Its content is
+and P8, the rim behind O7 and O8, and L8, the shore west of M8, are built, with Carn Fada, the
+enclave under L8's mound (§12.5); the lair is to come (§12.6). Its seven monsters of the road are
+drawn and placed, and the Rim Troll, the lair's guardian, is drawn and waits for its lair (§12.6);
+its chapter, The Ring (#481, §5), and its three side quests (#482, §6) are built. Its content is
 `src/content/areas/cairnmoor/` (maps, monsters, items, climate, its part of the world map and its
 walkthrough; its chapter of the one quest, The Ring, in `chapter.ts`, its side quests in `quests.ts`
 and its guild quest, the Lanterns' ring ask, in `guilds.ts`, #439); it has no businesses, so no
 rooms. Its ids: the area `cairnmoor`, its zones `highmoor` and `cairnfield`, the dungeon `cairns`
-and `cairns2` (the ids stay under the new name, NAMES §3). Two finds off the ladder lie off the
-road, a hammer whose blows carry fire under a cairn on N8 and a mail that raises might in the
-area's first locked chest, in a cell of Carn Dubh (#862, §4.8).
+and `cairns2` (the ids stay under the new name, NAMES §3) and the enclave `carn_fada`. Two finds off
+the ladder lie off the road, a hammer whose blows carry fire under a cairn on N8 and a mail that
+raises might in the area's first locked chest, in a cell of Carn Dubh (#862, §4.8); a third off the
+ladder, a mace whose blows carry holy, lies in Carn Fada's cist (§12.5).
 
 ---
 
@@ -139,10 +141,11 @@ crosses it in snow (STORY; MONSTERS §7.2).
 
 ## 3. What is built
 
-Nine boxes and a dungeon, N7 the area's first, which lists the area (#476), N8, the Cairnfield's
-(#479), O7, Fionnlios's (#477), O8, the bog (#478) and Carn Dubh, through N8's door (#480), then M7
-and M8, the country behind (#484), then P7 and P8, the rim behind O7 and O8, the bounds' first
-(#834), then L8, the Cairnfield's shore, the bounds' second (#834):
+Nine boxes, a dungeon and an enclave, N7 the area's first, which lists the area (#476), N8, the
+Cairnfield's (#479), O7, Fionnlios's (#477), O8, the bog (#478) and Carn Dubh, through N8's door
+(#480), then M7 and M8, the country behind (#484), then P7 and P8, the rim behind O7 and O8, the
+bounds' first (#834), then L8, the Cairnfield's shore, the bounds' second (#834), then Carn Fada,
+the enclave under L8's mound, the bounds' third (#834):
 
 - **The road up onto the moor** (N7, `highmoor_n7`, core, band 18; #476): the drove road on from the
   Kilns' N6 over the low hills, past the milestone where they give out and the drovers' shelter at
@@ -230,7 +233,7 @@ and M8, the country behind (#484), then P7 and P8, the rim behind O7 and O8, the
   foot past a stone on end with a riddle; in the south the long cairns of the old folk and a ledge
   of white pebbles. Behind the rock face where the wind hoots, the hill folk's earth-house (§12.2).
   Two groups: seven ravens on the crag and three cairn wights at the long cairns. The rim's face at
-  5,24 is left bare for the lair's door (§12.5).
+  5,24 is left bare for the lair's door (§12.6).
 - **The ledge under the rim** (P8, `highmoor_p8`, country, band 18–19; #834): the hills of O8's
   east edge narrowing south under the rim to a ledge over the bog, a cairn where it is widest and
   bones in the snow at its end. Behind the face where a rowan grows, the herds' winter store
@@ -239,19 +242,27 @@ and M8, the country behind (#484), then P7 and P8, the rim behind O7 and O8, the
   the strand west of M8's grass, a wedge of sand, grass and hills between the sea and M8's edge,
   widening south to the frozen foot of Loch Fada. The salmon-netters' hut on the strand, a
   wrack-gatherer raking the tideline with her word of a drowned cairn, a well of sweet water in the
-  grass above it and a cairn on the hills; at the strand's end the drowned cairn's mound, its face
-  left bare for the enclave's door (§12.5). Behind the bank where the tar smells, the netters'
+  grass above it and a cairn on the hills; at the strand's end the drowned cairn's mound, the gap in
+  its face the way down into Carn Fada (§12.5). Behind the bank where the tar smells, the netters'
   noost (§12.4). Two groups: four bog bodies at the strand's north end and a tor troll with a cairn
   wight at the loch's foot. The south edge meets L9's ice, sand and pines square for square.
+- **Carn Fada** (`carn_fada`, the enclave, a dungeon of one level of 16×16, band 20–21; #834): the
+  bounds' third, the drowned cairn under L8's mound, a chambered cairn of the oldest dead whose own
+  passage has gone under the tide, entered by the gap in the mound's face at L8's 22,27 (#845). The
+  old passage at the tide's head, the passage under its lintels, the chamber with its cells and the
+  end cell, where the oldest dead's cist holds the Sunwise Mace; behind the spiral that turns
+  against the rest, a cell never opened (§12.5). Three groups: six bog bodies at the tide's head,
+  four cairn wights at the chamber's mouth and two ice bears, Rimewater's, in the end cell.
 
 Its atlas rows are charted in `src/content/areas/cairnmoor/atlas.ts`, the area's own `atlas` since
 N7 lists the area; until then `src/content/atlas.ts` spread them into the plan where its rows were,
 as the Kilns' were before their first box (docs/areas/kilns.md §3): the zones with their bands (High
 Moor 18–19, with N7, O7, O8, P7 and P8 laid on it, its crossing line said in its own words and its
 lines held by seeds, §1, §9; the Cairnfield 19–20, with N8, M7, M8 and L8 laid on it, §1), Carn
-Dubh's two plates (`cairns` at 430,246 and `cairns2` at 430,252) and the sites, the Stone Ring at
-462,214 and the Watcher's Hut at 466,208 on O7 and Carn Dubh at 430,240, at its door on N8. Its
-links are the drove road from the Kilns, the Cairns' way in and the drove road down to Longmere.
+Dubh's two plates (`cairns` at 430,246 and `cairns2` at 430,252), Carn Fada's (`carn_fada` at
+381,249, on L8's mound, §12.5) and the sites, the Stone Ring at 462,214 and the Watcher's Hut at
+466,208 on O7 and Carn Dubh at 430,240, at its door on N8. Its links are the drove road from the
+Kilns, the Cairns' way in, Carn Fada's gap and the drove road down to Longmere.
 
 Its row on the curve and its share of the act's gear ladder are in (#535). The row is in
 `src/content/progression.ts`: band 18–20, next 20, window 4,000. Its entry owed to #437 while the
@@ -309,7 +320,8 @@ full density; O8, M7 and M8 are country, built to the looser floor with the wild
 park on 9 October 2026 (#434, call 10). The bands rise from the way in, 18 where the drove road comes over the hills, to
 20 at the Cairn King and the road's head, as the gate asks (EXPANSION §5.2), and each box holds a
 group at the top of its band for the curve. The bounds come after the plan (§12, #834): P7, P8 and
-L8 are built as country at 18–19, and the enclave and the lair are to come.
+L8 are built as country at 18–19 and Carn Fada, the enclave, at 20–21 under L8's mound (§12.5); the
+lair is to come (§12.6).
 
 **One box holds land of two zones.** On the plan N7 was High Moor's 690 squares and the
 Cairnfield's 334, the zone line running across it. A map is its whole box (EXPANSION §8.2), so it is
@@ -1013,7 +1025,9 @@ each as a box places it, since the check asks that what is claimed be used: snow
 Regeneration and the drain of spell points cannot be claimed: the check reads neither (§9, #477's
 13). Carn Dubh claims nothing: its boss that curses is the curse N8 claimed, and the novelty check
 passes without it. M7 and M8 claim nothing (#484), nor do P7, P8 and L8 (#834): their monsters are
-placed already, and a tor and a tarn are among the landmarks above.
+placed already, and a tor and a tarn are among the landmarks above. Nor does Carn Fada, the enclave
+(#834): its bog bodies, wights and ice bears are placed already, the bears on Rimewater's boxes; the
+novelty check, which places it with Cairnmoor by its floor, passes (§12.5).
 
 ## 8. The numbers
 
@@ -1042,8 +1056,8 @@ placed already, and a tor and a tarn are among the landmarks above.
   company leaves at 20.1, 0.1 over 20 (0.1 under before M7 and M8), and walking the road 0.7 over it.
   The bounds' P7, P8 and L8 (#834, §12) add 793, 377 and 852 as built: a clear gives 17,609, 1.20
   times the ask, and the company leaves at 20.3, 0.3 over the next floor and under the limit of 21;
-  Cairnmoor is in no `OVER_ROAD` row.
-  The Glasswold's is 0.3 under 28.
+  Cairnmoor is in no `OVER_ROAD` row. Carn Fada, the enclave, pays 1,770 a member and is counted in
+  no clear (#845), so neither figure moves (§12.5). The Glasswold's is 0.3 under 28.
 - **Gold.** Training six members from 18 to 20 costs 8,880 with today's `trainPrice`, and the second
   prestiges about 4,000 each (DESIGN §5, #19); nothing on the moor sells or trains, so a clear's
   chests and drops must carry the gold to Rime Lodge, and the coach's fare (#539) with it. The band's
@@ -1064,7 +1078,9 @@ placed already, and a tor and a tarn are among the landmarks above.
   (#482) and What the Ring Said 300 (#439); no answer pays gold. A clear gives 9,115, 1.026 times the
   ask, the 225 that stood short closed (§9, #484's 6). The beacon cairn and the locked chest hold no
   gold (#862), so it stands. P7 holds 370, with its wights' 20 to 60 each, P8 300 and L8 340, with
-  its wight's 20 to 60 (#834): a clear gives 10,285, 1.158 times.
+  its wight's 20 to 60 (#834): a clear gives 10,285, 1.158 times. Carn Fada holds 700 in its two
+  chests and its four wights' 20 to 60 each, 860 by the curve's count, in no clear; its dearest
+  find, the Sunwise Mace at 2,000, sits in its window, Rimewater's 4,500 (§12.5).
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
   (docs/areas/thornmark.md §9, 17): a company at 18 wins nine in ten of N7's fights and walks the
   drove road resting at its camp; one at 16 wins no more than one in four (past 10 the gate judges a
@@ -1091,7 +1107,10 @@ placed already, and a tor and a tarn are among the landmarks above.
   bounds); two under, pooled, a company at 16 manages 6.82 fights to a rest, 80.2% of the floor's
   day. On P7 a company at 18 wins every fight and manages 8.94 fights to a rest, inside the aim, on
   P8 7.97 and on L8 8.54, 12.7% of its days ending in a fight broken off; two under, 82.1%, 67.2%
-  and 70.6% of the floor's day (#834, §12.2 to §12.4).
+  and 70.6% of the floor's day (#834, §12.2 to §12.4). Carn Fada is judged alone at its own floor
+  (#845): a company at 20 wins every fight and manages 9.08 fights to a rest, inside the aim of 8 to
+  10, 0.7% of its days ending in a fight broken off; two under, at 18, 4.80, 53.3% of the floor's 9;
+  it stands out of the area's pools (§12.5).
 - **Density.** Core boxes at the Foreland's floor, the bog, M7 and M8 at the looser one (EXPANSION §5.3). The
   ring's inside is held to no feature but the camp, the voice and the bare ground's line, so it
   needs no exception. As built: N7 99.2% within 8 steps and the furthest 10, with one sign among its
@@ -1104,7 +1123,9 @@ placed already, and a tor and a tarn are among the landmarks above.
   their 17 and 11 points (#480), the first 20 with the cell off its end cell (#862). M7 100.0% within 12 steps, the furthest 12, with no sign among its
   19 points, and M8 99.7%, the furthest 13, with no sign among its 17 (#484). P7 100.0% within 12
   steps, the furthest 6, with no sign among its 12 points, P8 100.0%, the furthest 4, with no sign
-  among its 7 and L8 100.0%, the furthest 10, with no sign among its 12 (#834).
+  among its 7 and L8 100.0%, the furthest 10, with no sign among its 12, 13 with the gap into Carn
+  Fada (#834). Carn Fada 100.0% within 7 steps, the furthest 3, with no sign among its 15 points
+  (§12.5).
 
 ## 9. Decisions
 
@@ -1644,8 +1665,8 @@ Decided by the builder for #834, each the owner's to overturn:
 8. **Each secret has its own shape and hint:** P7's earth-house bends twice, found from a hooting
    wind; P8's store runs along the face with its door at the middle, found from a planted rowan;
    L8's noost is a room of two by three, found from a smell of tar.
-9. **The lair's door is P7's 5,24 and the enclave's on L8's shore** (§12.5), the two ends of the
-   area's land: the doc's Torhide puts the lair's mouth in P7, and L8 has the room.
+9. **The lair's door is P7's 5,24 and the enclave's on L8's shore** (§12.5, §12.6), the two ends of
+   the area's land: the doc's Torhide puts the lair's mouth in P7, and L8 has the room.
 10. **The walkthrough walks the bounds in one function,** `theBounds`, called last, so L8 adds its
     steps there.
 11. **L8's corner, 0,31, is ice, and its west edge is held open there onto K8's sea.** The brief
@@ -1694,6 +1715,39 @@ Decided by the builder for #834, each the owner's to overturn:
 19. **The noost is a room of three by two,** found from the tar: the bank's face on row 26 at 27 to
     29, its door at 28,26 and the hint at 28,25 before it, the room at 27 to 29 on rows 27 and 28,
     the boat's event at 28,27 and the chest at 29,28, walled in rock all round.
+20. **The enclave is Carn Fada,** the long cairn, *carn* and *fada* in the hill folk's tongue (§10):
+    the drowned cairn under L8's mound, a chambered cairn of the oldest dead whose own passage runs
+    long and on under the tide, at the foot of Loch Fada, the long loch. §10's naming pass thought
+    of the name for Carn Dubh and left it unused. One level of 16 by 16, entered by the gap in the
+    mound's face (§12.5).
+21. **It is held at 20–21,** a band over L8's 18–19, its floor over L8's top (#845's 2); its window
+    is Rimewater's 4,500, the last road area whose floor is at or under 20 (#845's 3).
+22. **Its groups are six bog bodies at the tide's head, four cairn wights at the chamber's mouth and
+    two ice bears in the end cell,** at 18, 19 and 21, each where the way on passes, none a
+    guardian. The rise rule asks the hardest at a mean of 21 (`nearTop`), and the roster stops at 19
+    but for Carn Dubh's King and the lair's Rim Troll; of the kinds drawn at 21 to 23 the ice bear,
+    Rimewater's and on L9 beside L8, is the beast that dens in a cairn, and the bay keeper fails the
+    novelty check, the keepers being Rimewater's claim. Sized with the harness at 20: the bodies 9.2
+    fights to a rest, the wights 10.5 and the bears 8.1, dealt 9.1. Five bodies paced 9.98 at the
+    gate, on the aim's edge; three bears paced 2.7 alone.
+23. **The reward is the Sunwise Mace,** the oldest dead's, in his cist in the end cell with 400
+    gold: the ice axe's numbers, 2d12+3, one-handed, for the knight, paladin, ranger, barbarian and
+    cleric, with its blows carrying holy, at 2,000, as the Thunderhead Axe is the ice axe with
+    lightning at 2,000. It deals 19.5 a blow to the ladder's Ice Axe +1's 17 at 22 and the 16 of the
+    ice axe Rime Lodge's furrier sells; on no rung, sold nowhere and not the area's artifact.
+24. **The secret is a cell never opened,** two by two north of the chamber, behind the one spiral
+    cut in its stones that turns against the rest, searched from it facing north: 300 gold, an
+    Elixir and a Sapphire Vial, the dearest of their kinds at Rime Lodge's Provisioner's, as the
+    boxes' finds are (§12.1). Its stone at 7,8 passes the art check.
+25. **New here:** the enclave itself (#845), the moor's one place past its band.
+26. **The door is the brief's square, L8's 22,27,** its mountain drawn as the mound's stone, the gap
+    where the facing stones have fallen, walked into from the hills at 23,27, where the way back
+    sets a company down facing the land. It is the one square of L8 that changes; nothing stands
+    within four squares and L8's density counts it among 13 points; `worldGrid` reads it as rock, as
+    it reads K6's grate, so L8 still walks 123 squares there (§12.4).
+27. **Its plate is on the mound, 381,249,** L8's 21,27, behind the gap, where the world map draws a
+    company inside.
+28. **§12.5 is the enclave's brief in §4's form, with its As built,** and the lair's note is §12.6.
 
 
 ## 10. Names
@@ -1714,7 +1768,9 @@ elves' Cornish and the Tidefolk's Frisian.
   | Was | Now | What it means | Also thought of |
   |---|---|---|---|
   | the Stone Ring | Fionnlios | the white ring: the ring with the lights round it, and the snow that never lies inside it | Clachlios, the stone ring, which is the Stone Ring again |
-  | the Cairns | Carn Dubh | the dark cairn: the oldest and biggest, with the King under it; the field of cairns round it keeps the Crown's name | Carn Fada, the long cairn |
+  | the Cairns | Carn Dubh | the dark cairn: the oldest and biggest, with the King under it; the field of cairns round it keeps the Crown's name | Carn Fada, the long cairn, the enclave's name since (#834) |
+  | the drowned cairn, the enclave (#834) | Carn Fada | the long cairn: its passage runs long and on under the tide, at Loch Fada's foot; thought of for Carn Dubh and left unused | Carn Fuar, the cold cairn, which Loch Fuar and the Lann Fuar say already |
+  | the oldest dead's mace (#834) | the Sunwise Mace | the moor's English, as its finds' names are: the spirals cut round its head turn the way the sun goes | the Spiral Mace |
 
 - **Kept:** Cairnmoor, High Moor and the Cairnfield, the Crown's names for the area and its zones,
   which the story and the atlas lean on; the Watcher's Hut, a hut and lettered as one, since the
@@ -1795,17 +1851,17 @@ The land the area's maps lie open to, built as country off the quest, level for 
 boxes, 304 squares a company could walk by the atlas (P7 143, P8 47 and L8 114), which 65 edge
 squares of O7, O8 and M8 open onto (O7's east edge 30, O8's 18 and M8's west edge 17; the issue
 counts 67). Each box is built to the looser floor (EXPANSION §5.3) at the moor's band, from the
-area's roster, with nothing on the road's quest. Then the area's enclave and its artifact's lair
-(§12.5). This is their brief, in §4's form; each box's pull request builds from it and adds its "As
-built".
+area's roster, with nothing on the road's quest. Then the area's enclave (§12.5) and its artifact's
+lair (§12.6). This is their brief, in §4's form; each box's pull request builds from it and adds
+its "As built".
 
 | Box | Laid in | Walkable | Other land in it | Built neighbours | Band | Pull request |
 |---|---|---|---|---|---|---|
 | P7 | High Moor, `highmoor_p7` | 143 (140 as built) | | O7, P6 (the Kilns'), P8 | 18–19 | the first, built (#834) |
 | P8 | High Moor, `highmoor_p8` | 47 (50 as built) | | O8, P7 | 18–19 | the first, built (#834) |
 | L8 | the Cairnfield, `cairnfield_l8` | 114 (123 as built) | Loch Fada's 28 | M8, L9 (Rimewater's), L7 (the Kilns') | 18–19 | the second, built (#834) |
-| The enclave | its own, entered from L8 | | | | a band or two over | after L8 (#845) |
-| The lair | its own, entered from P7 | | | | 30–32 | after the Rim Troll is drawn (#847) |
+| Carn Fada, the enclave | its own, `carn_fada`, entered from L8's 22,27 | 60 as built (55 outside its closed cell) | | L8 | 20–21 | the third, built (#834) |
+| The lair | its own, entered from P7 | | | | 30–32 | the last, to come; the Rim Troll is drawn (#934) |
 
 The P column is 24 squares wide, the world's edge cutting it, so P7 and P8 are maps of 24 by 32, cut
 by hand, the atlas's rows with the void written `%`, as the Kilns' P4, P5 and P6 were
@@ -1838,7 +1894,8 @@ by hand, the atlas's rows with the void written `%`, as the Kilns' P4, P5 and P6
   and a company entering at 18 and three quarters clearing it left at 20.1, under the limit of 21, a
   level over the next floor (`LEAD`, `tools/tests/curve.ts`). P7, P8 and L8 pay 793, 377 and 852 a
   member as built and carry it to 20.3, under the limit of 21. A box that pays more than its brief
-  says why. The enclave is judged at its own band (#845) and the lair's guardian at the cap's.
+  says why. Carn Fada, the enclave, is judged at its own band of 20–21 and counted in no clear
+  (#845, §12.5); the lair's guardian is judged at the cap's.
 - **The walkthrough** walks them in one function, `theBounds` in `walkthrough.ts`, called last: each
   box's seams walked, its groups won at its floor, its secret found from its hint and its prize shut
   to walkers, swimmers, climbers and levitators.
@@ -1857,7 +1914,7 @@ by hand, the atlas's rows with the void written `%`, as the Kilns' P4, P5 and P6
 
 - **Purpose.** The hills of O7's east edge running on under deep snow to the rim: a block nine or
   ten wide in the north, the narrows a square or two wide down the rim's foot and a pocket five
-  wide in the south over P8. Off the road and off the quest; the artifact lair's door (§12.5).
+  wide in the south over P8. Off the road and off the quest; the artifact lair's door (§12.6).
 - **Landmarks.** The rim's face along the east and the world's end past it; snow deep in the folds;
   the crag the ravens keep; the long cairns of the old folk along the rim's foot, where the hill
   folk went up to the tops when their time came.
@@ -1892,7 +1949,7 @@ by hand, the atlas's rows with the void written `%`, as the Kilns' P4, P5 and P6
   levitator reaches but through the rock. Down the narrows the stone on end at 0,13 (answered cairn,
   +1 luck to every member). In the south pocket the long cairns seen from 1,19, three wights walking
   at 3,20 and the ledge of white pebbles at 1,29 (+1 endurance). The rim's face at 5,24 is left
-  bare for the lair's door (§12.5). The west edge meets O7's square for square, open at rows 1 to
+  bare for the lair's door (§12.6). The west edge meets O7's square for square, open at rows 1 to
   29; the north edge is the rim's mountain along P6's; the south edge meets P8's at 1 to 3. A
   company at 18 wins every fight and manages 8.94 fights to a rest, inside the aim (7.5 to 9.5); two
   under, at 16, 6.98, 82.1% of the floor's 8.5, inside the limit (§9, #834's 6). Density: every
@@ -1960,7 +2017,7 @@ by hand, the atlas's rows with the void written `%`, as the Kilns' P4, P5 and P6
   square with ground that walks as theirs; its pull request reads the seam rule's `way` there first,
   the edge being between two areas, and rules the corner at 0,31, which meets L9's ice and faces
   K8's sea.
-- **New here.** Nothing; the enclave, when it comes, is #845's.
+- **New here.** Nothing; the enclave, Carn Fada, is #845's (§12.5).
 - **Finds.** 120 gold and a Sapphire Vial on the cairn; 220 gold and an Elixir in the noost.
 - **Pay.** About 850 xp a member: the bodies' 475 and the troll and wight's 377.
 - **As built** (#834, 23 October): `cairnfield_l8`, laid at 360,222 whole in the Cairnfield and cut
@@ -1970,7 +2027,7 @@ by hand, the atlas's rows with the void written `%`, as the Kilns' P4, P5 and P6
   who has it that the hills over the strand hold a cairn the sea has half drowned, the oldest
   dead's, and that she rakes no wrack at the north end; the tideline at 28,19, the well in the grass
   at 30,22 (+1 might) and the mound seen from 25,25, a mound of grey stone at 21 to 22 on rows 26 to
-  28 with the tide at its foot, whose face at 22,27 is left bare for the enclave's door, its way the
+  28 with the tide at its foot, whose face at 22,27 holds the gap down into Carn Fada, its way the
   hills at 23,27 (§12.5). Over the strand's end the bank: the tar at 28,25 and, searched there
   facing south, the bank gives at 28,26 on the noost, a room of three by two at 27 to 29 on rows 27
   and 28 with the boat upturned at 28,27 and a chest at 29,28 (220 gold and an Elixir), which no
@@ -1984,12 +2041,62 @@ by hand, the atlas's rows with the void written `%`, as the Kilns' P4, P5 and P6
   L9's 0,0 beside K8's sea (§9, #834's 11). A company at 18 wins every fight and manages 8.54 fights
   to a rest, inside the aim (7.5 to 9.5), 12.7% of its days ending in a fight broken off; two under,
   at 16, 6.00, 70.6% of the floor's 8.5, inside the limit. Density: every square within 12 steps of
-  a point, the furthest 10, no sign among its 12 points. The curve's rank correlation is 1.00, the
-  bodies nearest at 8 steps (level 18) and the troll and wight the hardest at 22 (level 19). By the
-  curve's count the box pays 852 xp a member and holds 340 gold in its finds, with the wight's 20 to
-  60, and with it a company three quarters clearing the area from 18 leaves at 20.3.
+  a point, the furthest 10, no sign among its 12 points, 13 with the gap since (§12.5). The curve's
+  rank correlation is 1.00, the bodies nearest at 8 steps (level 18) and the troll and wight the
+  hardest at 22 (level 19). By the curve's count the box pays 852 xp a member and holds 340 gold in
+  its finds, with the wight's 20 to 60, and with it a company three quarters clearing the area from
+  18 leaves at 20.3.
 
-### 12.5 The enclave and the lair
+### 12.5 Carn Fada, the enclave (#834): dungeon, one level of 16×16, band 20–21
+
+- **Purpose.** The drowned cairn under L8's mound, on the shore at the area's other end from the
+  lair: a chambered cairn of the oldest dead in the hills over the strand, built when the sea stood
+  further out, its own passage gone under the tide since. A place of its own off the road and off
+  the quest (#845), held a band over L8's, with a reward of its own.
+- **Landmarks.** The gap in the mound's face where the facing stones have fallen; the old passage,
+  the sea standing in its seaward end; the passage under its lintels; the chamber, corbelled to a
+  roof lost in the dark, with spirals cut in its stones and cells off it; the end cell, where the
+  oldest dead lies in his cist.
+- **Points of interest,** about nine features and three groups: the gap; the tide in the old
+  passage; the lintels; the chamber; the spirals; the cell to the south, opened long ago; the end
+  cell, the bears' den; the oldest dead's cist; the cell never opened, behind the spirals.
+- **Encounters.** Bog bodies come up out of the tide at the passage's head, the nearest and the
+  gentlest, at 18; cairn wights keep the chamber's mouth, at 19; ice bears off the loch's foot have
+  made a den of the end cell, the farthest and the hardest, at 21. The bears are Rimewater's, since
+  the rise rule asks the hardest at 21 and the roster stops at 19 but for its boss and the lair's
+  guardian (§9, #834's 22). Each group stands where the way on passes; none is a guardian.
+- **The secret and its hint.** A cell north of the chamber still closed by its stone, its dead as
+  they were laid. The hint: spirals cut in the chamber's stones, all turning sunwise but one, by the
+  cell, that turns the other way.
+- **The ways in and out.** In by the gap at L8's 22,27, walked into from the hills at 23,27, its
+  line and then its band said as a border's are (#845's 5); out the same way onto 23,27, facing the
+  land. Nothing else of L8 changes.
+- **New here.** The enclave itself (#845).
+- **Reward.** The Sunwise Mace in the oldest dead's cist, with 400 gold: the ice axe's numbers with
+  its blows carrying holy, at 2,000, inside the window, Rimewater's 4,500 (§9, #834's 23). In the
+  cell never opened, 300 gold, an Elixir and a Sapphire Vial.
+- **Pay.** About 1,770 xp a member, counted in no clear (#845).
+- **As built** (#834, 23 October): `carn_fada`, a dungeon of 16 by 16 marked `enclave`, band 20–21,
+  its plate at 381,249 on L8's mound. In by the gap at L8's 22,27, drawn as the mound's stone, onto
+  7,1 facing south: the door says "Carn Fada: levels 20-21.", with harder one or two under and the
+  warning three or more. The gap at 7,2 drops onto the old passage, the sea standing deep in its
+  seaward end at 2 to 5 on row 3 and seen from 6,3; six bog bodies stand at 9,3, at the tide's head.
+  East and south under the lintels, seen at 12,6, to the chamber's mouth at 11,10, where four cairn
+  wights stand; the chamber, 5 to 10 x 9 to 12, seen from 10,10. Its spirals at 7,9: searched there
+  facing north, the stone gives at 7,8 on the cell never opened, 6 to 7 x 6 to 7, its dead seen at
+  7,7 and a chest at 6,6 (300 gold, an Elixir and a Sapphire Vial), which no walker, swimmer,
+  climber or levitator reaches but through the stone. South at 7,13 the cell opened long ago. West,
+  two ice bears in the end cell's mouth at 4,10, the den at 3,10 and the oldest dead's cist at 2,10,
+  its chest at 1,10 (400 gold and the Sunwise Mace). Out by the gap onto L8's 23,27, facing east. A
+  company at 20 wins every fight and manages 9.08 fights to a rest, inside the aim (8 to 10), 0.7%
+  of its days ending in a fight broken off; two under, at 18, 4.80, 53.3% of the floor's 9. Density:
+  every square within 7 steps of a point, the furthest 3, no sign among its 15 points. The curve's
+  rank correlation is 1.00, the bodies nearest at 4 steps (level 18) and the bears the hardest at 22
+  (level 21); a company that walks meets them in that order. By the curve's count it pays 1,770 xp a
+  member and holds 860 gold, the wights' 20 to 60 each with the chests' 700, counted in no clear:
+  Cairnmoor's clear and its lead, 20.3, do not move.
+
+### 12.6 The lair
 
 - **The lair** (#846; §6, the Torhide): a cleft of one level in the rim's face, its mouth on P7 at
   5,24 (world 493,214), the first mountain square east of the pocket's hills on row 24. It is left
@@ -1997,9 +2104,3 @@ by hand, the atlas's rows with the void written `%`, as the Kilns' P4, P5 and P6
   draws the door there and moves nothing. The cap's band, 30–32; the Rim Troll its guardian
   (docs/MONSTERS.md §13); the Torhide (`torhide`, `src/content/areas/cairnmoor/items.ts`, #921) in
   it as #846 says; its rumour the drover's on N7 (§6).
-- **The enclave** (#845): on L8's shore, at the area's other end from the lair: a drowned cairn, a
-  chambered cairn of the oldest dead in the hills over the strand, its passage gone under the tide,
-  held a band or two over the moor's, with a reward of its own. L8's pull request leaves its door
-  bare in the mound's face with its way and nothing within four squares, as Saltreach's B7 left
-  22,22 (docs/areas/saltreach.md §12.10), and the enclave's pull request draws it. It is left at
-  22,27, its way the hills at 23,27 (§9, #834's 15).
