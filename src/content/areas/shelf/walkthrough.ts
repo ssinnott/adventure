@@ -202,9 +202,9 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     `E4's down and strand (${shore.size} squares): the cairn, the ways down either end of the cliff, its face, the post, the strand's end and the stack's foot are walked to from the way in`);
   see(w, `${E4.id}:e4_strand`);
   const cairn = E4.features!.find((f) => f.kind === 'cairn' && f.id === 'e4_cairn');
-  ok(cairn?.kind === 'cairn' && cairn.gold === 30 && cairn.items.join() === 'potion_sp', 'on the down\'s last rise, a cairn of flints with 30 gold and a Blue Vial');
+  ok(cairn?.kind === 'cairn' && cairn.gold === 30 && cairn.items.join() === 'potion_sp' && cairn.x === 0 && cairn.y === 9, 'at the strand\'s end, a cairn of flints with 30 gold and a Blue Vial');
   const post = E4.features!.find((f) => f.kind === 'shrine' && f.id === 'e4_post');
-  ok(post?.kind === 'shrine' && post.stat === 'personality' && post.x === 0 && post.y === 9, 'on the strand, the post of holed stones, a shrine that gives personality');
+  ok(post?.kind === 'shrine' && post.stat === 'personality' && post.x === 2 && post.y === 2, 'on the down\'s last rise, the post of holed stones, a shrine that gives personality');
   // The secret: the crab shells at the stack's foot, the search there and the crabber's store behind it.
   const pots = reach(e4, [E4.start.x, E4.start.y], ALL, [10, 2]);
   ok(pots.size > 60 && !pots.has(at(e4, 11, 2)), `the store is shut but for its door in the stack: none of E4's ${pots.size} squares walked, waded, climbed or floated reaches it`);
