@@ -1975,7 +1975,13 @@ function crewOpen(ok: (cond: boolean, msg: string) => void): void {
  * walled trial found from the fan of spoil under the bare face, straight in, shut to the four ways but its
  * dry stone. The ash under the vents (P6): east from O6's 31,20 and south from P5, walked; the milestone's
  * riddle and the groups won; the store round the turn found from the ledge where the ash stirs, shut as
- * P5's is. Once the tear is closed the two boxes' slag strays come back no more.
+ * P5's is. The shore under the port (L7): south from L6's 28,31, walked, nothing said; the sea-coaler and
+ * his word on the dunes, the box's groups won at its floor, the fire clear of both; the chamber found from
+ * the kerbstone out of the ring, two by two behind the mound's door, shut to the four ways but its door;
+ * east into the Cairnfield, named with its warning; the west edge open at its corner square alone. The
+ * strip's north end (P4): east from O4's 31,11, walked; the spring-head, a cell of one square, found from
+ * the rushes and shut as the others are; the south pocket walked from P5 alone, and the corner round O4's
+ * 31,31. Once the tear is closed the two boxes' slag strays come back no more.
  */
 function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const w = newWalk(ok), out = buildMaps()[OUTDOORS];
