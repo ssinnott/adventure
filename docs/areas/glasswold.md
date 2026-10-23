@@ -243,8 +243,8 @@ Ten boxes of its own, the first of which lists the area (#525), and an enclave (
 Its atlas rows are charted in `src/content/areas/glasswold/atlas.ts`, the area's own `atlas` since
 D9 lists the area; until then `src/content/atlas.ts` spread them into the plan where its rows were,
 as Saltreach's and Wrackholm's were until each had a map (docs/areas/saltreach.md §9, #169's 1): the
-zones with their bands, the Wold 26–28, with D9, D10, D8, C8, B8 and B9 laid on it, D10 first, and
-the Glass 30–32, the Buried Tower's plate at 30–32, and the sites, Akordu (the plan's Wold Riders
+zones with their bands, the Wold 26–28, with its ten boxes laid on it (§3), D10 first, and the Glass
+30–32; the plates of the Buried Tower and Karaordu; and the sites, Akordu (the plan's Wold Riders
 camp at 120,250), Kushtash (the Eyrie, moved to about 46,242, call 5, built with B8) and the Buried
 Tower, "The Glass" and "Buried Tower" lettered as the plan letters them. The lava flow is drawn in
 the plan's ridges (`src/content/atlas.ts`), the one line outside the folder this doc asks for (call
@@ -2444,13 +2444,15 @@ Decided by the builder for #833, each the owner's to overturn:
     the Hand's people and the deep's machines; its family is no area's novelty, and the enclave
     stands with the Glasswold in the novelty check, its floor at the area's top. From the one way in
     a walker passes the basilisks' square, the passage a square wide, so it meets them first, as the
-    curve's steps do. Sized with the harness at 28: two basilisks gave 28.7 fights to a rest and
-    four 10.1; five rats 20.2, eight 10.2 and nine 9.2.
+    curve's steps do. The rats stand at 7,11, on the square before the hint's, so that the hint is
+    searched from beside them and the sabre is had past them and not round them. Sized with the
+    harness at 28: two basilisks gave 28.7 fights to a rest and four 10.1; five rats 20.2, eight
+    10.2 and nine 9.2.
 16. **Its reward is the Khan's Sabre,** the eldest khan's, in his cell: 2d12+5, one-handed, for the
     four martial classes, its blows carrying cold, at 6,950 gold, inside the enclave's window, the
-    Hearth's 7,000 (#845's 3). It has the Levin Mace's numbers and price with cold for lightning: a
-    die over Cinderport's Slag Mace (2d12+5 at 2,300) and level with the Hand's steel at 28, on no
-    rung of the ladder and not the area's artifact.
+    Hearth's 7,000 (#845's 3). It has the Levin Mace's numbers and price with cold for lightning:
+    Cinderport's Slag Mace (2d12+5 at 2,300) with a die of cold, so 21.5 a blow to the Hand's Grey
+    Blade's 19 at 28, as the Levin Mace's is; on no rung of the ladder and not the area's artifact.
 17. **The secret and the finds are as briefed:** the horses' skulls set in rows on the chamber
     floor, every one turned to the end wall, are the hint, and the eldest khan's cell behind it
     holds his chest, 300 gold and the sabre. The khans' gold among the biers is 1,400 and an Elixir.
@@ -2458,7 +2460,7 @@ Decided by the builder for #833, each the owner's to overturn:
 18. **New here:** the first blade whose blows carry cold and the enclave itself (#845), the Wold's
     first place past its band.
 19. **The door is the diggers' cut at D7's 8,30,** the square drawn as stone in the hills' face and
-    walked into from the grass at 8,29 (the hills either side walk into it too); nothing else of D7
+    walked into from the steppe at 8,29 (the hills either side walk into it too); nothing else of D7
     changes, and nothing stands within four squares of it. Karaordu's plate, where the world map
     draws a company inside, is at 112,225, under the hills five squares south of the door.
 20. **The walkthrough walks it in `theBounds`,** after D7: the door's words at 25, 26 and 28, the
@@ -2484,7 +2486,7 @@ for #444.
   | the Wold Riders' camp | Akordu | the white camp, for its tents | Ordubash, the head camp |
   | the Eyrie | Kushtash | the bird's rock: the scout's lookout on the far-west mesa, where the vultures never land | Kushdag, the bird's mountain |
   | the Glass, in the Riders' mouths | Tashkum | the stone sand; noted here and left for the reach's doc (Phase 1.6), with "The Glass" and "Buried Tower" still lettered | Akkum, the white sand |
-| the barrow on the lip, the enclave (#833) | Karaordu | the black camp: the khans' under the hill, over Akordu, the white camp of the living | Hantepe, the khan's hill |
+  | the barrow on the lip, the enclave (#833) | Karaordu | the black camp: the khans' under the hill, over Akordu, the white camp of the living | Karatash, the black stone |
 
 - **A person:** Aysu, the scout on Kushtash, the Ranger's third (#448): *ay* the moon and *su*
   water, a Rider's name in the Riders' tongue. She was "The scout" while she had words only.
@@ -2794,10 +2796,10 @@ This is their brief, in §4's form; each pull request builds from it and adds it
 - **Landmarks.** A passage under the mound, the khans' chamber and the horses laid with them.
 - **Points of interest.** The passage's mouth, the khans' chamber with their horses and the door's
   own line, which gives its band (#845).
-- **Encounters.** Basilisks at the passage's head, the Wold's heaviest but for the Grey Lion, the
-  nearer; deep rats among the khans' bones, the Hearth's, the hardest at 30, since the curve asks an
-  enclave at 28–29 for a group at 29 or over and the Wold's own stop at 27 but for its boss (§9,
-  #833's 15); no guardian.
+- **Encounters.** Basilisks at the passage's head, the Wold's heaviest beast but for the Grey Lion,
+  the nearer; deep rats among the khans' bones, the Hearth's, the hardest at 30, since the curve
+  asks an enclave at 28–29 for a group at 29 or over and the Wold's own stop at 27 but for its boss
+  (§9, #833's 15); no guardian.
 - **The ways in and out.** Its door at D7's 8,30, the hills' face, with 8,29 open before it; one way
   out, back onto D7.
 - **The secret and its hint.** The eldest khan's cell behind the chamber's end wall. The hint: the
@@ -2810,24 +2812,24 @@ This is their brief, in §4's form; each pull request builds from it and adds it
 - **Pay.** Counted in no clear (`tools/tests/curve.ts`): about 1,500 xp a member and 1,700 gold.
 - **As built** (#833, 23 October): `karaordu`, a dungeon of 16 squares by 16 marked `enclave`, band
   28–29, its plate on the world map at 112,225. Down the diggers' cut at D7's 8,30, drawn as stone
-  in the hills' face and walked into from the grass at 8,29, a company arrives at 7,1 facing south,
+  in the hills' face and walked into from the steppe at 8,29, a company arrives at 7,1 facing south,
   and the door says "Karaordu: levels 28-29.", with the game's harder words one or two levels under
   its floor and its warning three or more under (#845's 5). The cut (`kr_cut`, 7,2) comes down to
   the passage's head, where three diggers stand in stone (`kr_diggers`, 5,3) and four basilisks lair
   (`kr_basilisks`, 7,4), the nearer at 3 steps; the passage of slabs (`kr_slabs`, 7,6) runs south to
-  the khans' chamber, 11 squares by 5, where eight deep rats keep among the bones (`kr_rats`, 7,10),
-  the hardest at 9 steps: the khans on their biers (`kr_khans`, 2,9), their horses laid in a ring
+  the khans' chamber, 11 squares by 5, where eight deep rats keep among the bones (`kr_rats`, 7,11),
+  the hardest at 10 steps: the khans on their biers (`kr_khans`, 2,9), their horses laid in a ring
   with no skull among them (`kr_horses`, 12,9), the rats' gnawing (`kr_gnawed`, 3,12) and the khans'
   gold, 1,400 and an Elixir (`kr_grave`, 12,11). The horses' skulls set in rows and turned to the
   end wall (`kr_skulls`, 7,12) are the hint; the wall at 7,13 gives onto the eldest khan's cell
   (`kr_eldest`, 7,14) and his chest, 300 gold and the Khan's Sabre (`kr_sabre`, 8,14). The way out
   is the cut, onto D7's 8,29. A walker from the one way in passes the basilisks' square, so it meets
-  them first, as the curve's steps have it. The gate holds at 28: every fight won and 10.60 fights
-  to a rest (aim 10 to 12), 4% of days ending in a fight broken off; two under, at 26, 6.15, 55.9%
-  of the floor's 11, inside the aim. Density: 74 of 74 squares within 7 steps, the furthest 4, no
-  sign among 13 points. The rise: rank correlation 1.00, the basilisks at 27.0 and the rats at 30.0.
-  By the curve's count it gives 1,511 xp a member and 1,700 gold, counted in no clear; the area's
-  lead stays at 28.0.
+  them first, as the curve's steps have it, and searches the hint from beside the rats. The gate
+  holds at 28: every fight won and 10.60 fights to a rest (aim 10 to 12), 4% of days ending in a
+  fight broken off; two under, at 26, 6.15, 55.9% of the floor's 11, inside the aim. Density: 74 of
+  74 squares within 7 steps, the furthest 4, no sign among 13 points. The rise: rank correlation
+  1.00, the basilisks at 27.0 and the rats at 30.0. By the curve's count it gives 1,511 xp a member
+  and 1,700 gold, counted in no clear; the area's lead stays at 28.0.
 
 ### 12.5 The lair: the Foal-taker's eyrie (#833, its third pull request)
 

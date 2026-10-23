@@ -60,7 +60,8 @@ export const KARAORDU: MapDef = {
   encounters: [
     // At the passage's head, where the diggers met their eyes: four basilisks laired in the cool, the nearer.
     { id: 'kr_basilisks', x: 7, y: 4, monsters: ['basilisk', 'basilisk', 'basilisk', 'basilisk'], aware: 3, roams: false, respawn: 2880 },
-    // Among the bones of the khans' chamber, the rats come down the diggers' cut: the farther and the hardest.
-    { id: 'kr_rats', x: 7, y: 10, monsters: ['deep_rat', 'deep_rat', 'deep_rat', 'deep_rat', 'deep_rat', 'deep_rat', 'deep_rat', 'deep_rat'], aware: 3, roams: false, respawn: 2880 },
+    // Among the bones of the khans' chamber, the rats come down the diggers' cut: the farther and the hardest, on the
+    // square before the hint's, so that the hint is searched from beside them and the sabre is had past them.
+    { id: 'kr_rats', x: 7, y: 11, monsters: ['deep_rat', 'deep_rat', 'deep_rat', 'deep_rat', 'deep_rat', 'deep_rat', 'deep_rat', 'deep_rat'], aware: 3, roams: false, respawn: 2880 },
   ],
 };

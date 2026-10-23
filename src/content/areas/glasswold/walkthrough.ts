@@ -1782,8 +1782,9 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   ok(search(KO.id, wall.x, wall.y - 1, SOUTH, 'kr_eldest'), 'searched where the skulls look, the end wall gives, and the eldest khan\'s cell can be walked into');
   const sabre = feature(KO, 'kr_sabre');
   ok(sabre.kind === 'chest' && sabre.gold === 300 && sabre.items.join() === 'khans_sabre'
-    && MAP_DEFS.filter((d) => d.features?.some((f) => (f.kind === 'chest' || f.kind === 'cairn') && f.items.includes('khans_sabre'))).length === 1,
-    'in the cell, the eldest khan\'s chest: 300 gold and the Khan\'s Sabre, which no other chest or cairn holds');
+    && !MAP_DEFS.some((d) => (d.features ?? []).some((f) => (f.kind === 'shop' && f.stock.includes('khans_sabre')) || ((f.kind === 'chest' || f.kind === 'cairn') && f !== sabre && f.items.includes('khans_sabre'))))
+    && !Object.values(MONSTERS).some((m) => m.drops?.some((d) => d.item === 'khans_sabre')),
+    'in the cell, the eldest khan\'s chest: 300 gold and the Khan\'s Sabre; no shop sells it, no other chest or cairn holds it and no monster drops it');
   // And out: up the cut onto D7's 8,29, with the way's own line and no other.
   w.world.travel(KO.id, KO.start.x, KO.start.y + 1, NORTH);
   const up = w.world.move('forward');
