@@ -13,7 +13,7 @@ it, the plan for building it, box by box, and the briefs. Its work is filed unde
 country behind (#522), all seven boxes built, which closes #522; this doc is #509.
 Figures are measured on main at `6032251` (2 October 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Twenty-one maps are built: H10, the Stair's foot (#510, §4.2), which joins the area to the
+Twenty-two maps are built: H10, the Stair's foot (#510, §4.2), which joins the area to the
 Whitespine overland; G10, Cinderport's box (#511, §4.3), which lists the area; Cinderport behind its
 gate (#512, §4.4); G11, Fire Mountain's flank (#513, §4.5); the vents, the iron corridors and the
 camp, Meridian Camp's three levels (#22, docs/areas/meridian_camp.md §4.1 to §4.3), with the
@@ -24,16 +24,17 @@ Cartographers' Surveyor's rung (#635, §6); F10 and E10, the Ember Waste's road 
 off the road, the country behind it in seven boxes (#522, §4.10): F9, G9 and H9, the Sound's shore;
 E11, the Waste's west; and H11, H12 and G12, Fire Mountain's east flank, south-east foot and south
 foot, which closes #522; and the bounds' first box, F12, the Waste's south-west where the lava flow
-ends under the rim (#836, §12). Its three side quests are written (#519, §6), and the third
-prestiges' quests of the three classes taught here are built on them: the Paladin's lamp, the
-Barbarian's nest and the Druid's seedling (#448, §6). Its chapter of the one quest, The Window, is
-written and walked (#518, §5). Its nine monsters and the armourer's step are drawn (§3), and the
-rest is to build. Its content is `src/content/areas/ashfall/` (maps, monsters, items, climate, its
-part of the world map and its walkthrough; its chapter of the one quest, The Window, in `chapter.ts`
-and its side quests and the third prestiges' three in `quests.ts`) and its businesses' rooms
-`src/ui/interiors/ashfall/`. Its ids, the plan's: the area `ashfall`, its zones `cindercoast`,
-`firemount` and `emberwaste`, the town `cinderport`, the dungeons `old_cinder` and `old_cinder2`
-(its undercroft, #515), `ember_stone` and `meridian_camp`.
+ends under the rim, and its enclave, Blackdraw, a flue down from F12's mountain face (#836, §12).
+Its three side quests are written (#519, §6), and the third prestiges' quests of the three classes
+taught here are built on them: the Paladin's lamp, the Barbarian's nest and the Druid's seedling
+(#448, §6). Its chapter of the one quest, The Window, is written and walked (#518, §5). Its nine
+monsters and the armourer's step are drawn (§3), and the rest is to build. Its content is
+`src/content/areas/ashfall/` (maps, monsters, items, climate, its part of the world map and its
+walkthrough; its chapter of the one quest, The Window, in `chapter.ts` and its side quests and the
+third prestiges' three in `quests.ts`) and its businesses' rooms `src/ui/interiors/ashfall/`. Its
+ids, the plan's: the area `ashfall`, its zones `cindercoast`, `firemount` and `emberwaste`, the town
+`cinderport`, the dungeons `old_cinder` and `old_cinder2` (its undercroft, #515), `ember_stone` and
+`meridian_camp`. The enclave's is `blackdraw` (#836).
 
 ---
 
@@ -129,12 +130,13 @@ off the springs; the vines' shore humid.
 
 ## 3. What is built
 
-Twenty-one maps: the Stair's foot (#510), Cinderport's box, which lists the area (#511), the town
+Twenty-two maps: the Stair's foot (#510), Cinderport's box, which lists the area (#511), the town
 behind its gate (#512), Fire Mountain's flank (#513), the vents, the iron corridors and the camp
 (#22), Old Cinder's and the Ember Stone's box (#514), Old Cinder's two levels (#515), the Ember
 Stone (#516) and the Waste's road, F10 and E10 (#517); off the road, the Sound's shore (F9, G9 and
 H9), the Waste's west (E11) and Fire Mountain's east flank, south-east foot and south foot (H11, H12
-and G12, #522); and the bounds' first box, the flow's end under the rim, F12 (#836):
+and G12, #522); and the bounds' first box, F12, the flow's end under the rim, with its enclave,
+Blackdraw (#836):
 
 - **The Stair's foot** (H10, `cindercoast_h10`, core, band 24; #510): the Giants' Stair's last
   flights, cut along the Sheer's foot from I10's 0,20 to a landing on the black sand, where the step
@@ -309,8 +311,16 @@ and G12, #522); and the bounds' first box, the flow's end under the rim, F12 (#8
   stands across the cut in a dam of black rock, folded like rope. A cairn of the flow's crust under
   the wall, a man of stone calling to the mountain with a riddle cut below and sulphur round the
   vents in the east. At the rim's foot flakes of black glass lie heaped at one rock, and behind it
-  is a knapper's store. No group. The dam's rock is left bare for the lair's door and the mountain's
-  face under the west wall for the enclave's (§12).
+  is a knapper's store. No group. The dam's rock is left bare for the lair's door (§12.4), and in
+  the mountain's face under the west wall a flue's mouth goes down into Blackdraw, the enclave
+  (§12.3).
+- **Blackdraw** (`blackdraw`, enclave, band 27–28; #836): the bounds' enclave, a flue of the
+  Underdeep's exhaust going down from its mouth in F12's mountain face, lined with iron plates black
+  with soot, to a furnace gone cold where the flow came in through its back and set. A flue walker
+  in the flue below its first turn; behind one plate knocked bright among the soot, a clerks' room
+  and their pay chest; at the flue's foot an inspector with a deep knocker in the furnace's mouth, a
+  stoker run down by the furnace door and the stokers' locker, with Kindler, a marlinspike whose
+  blows carry lightning (§12.3).
 
 Its atlas rows are charted in `src/content/areas/ashfall/atlas.ts`, the area's own `atlas` since G10
 lists the area; until then `src/content/atlas.ts` spread them into the plan where its rows were, as
@@ -333,7 +343,8 @@ Mountain to the Ember Waste and the crater's lip, 187,322, §9, #515's 15), the 
 the last crossing. H10 is first on Cindercoast's row (§9, #510's 2). The corridors' plate is a
 second row, `meridian_camp2` at 226,346, six squares south of the first (docs/areas/meridian_camp.md
 §8, the corridors' 15); the camp's is a third, `meridian_camp3` at 226,352
-(docs/areas/meridian_camp.md §8, the camp's 15).
+(docs/areas/meridian_camp.md §8, the camp's 15). Blackdraw's plate, the enclave's, is at 178,358,
+five squares south of its door on F12, under the mountain, at its band, 27–28 (#836, §12.3).
 
 Its row on the curve and its step on the gear ladder are in (#542): the row in
 `src/content/progression.ts` (band 24–26, next 26, window 5,500), owed to #446 while the area was
@@ -485,8 +496,8 @@ of those squares, 5,120 walkable; the seven behind them hold 4,454 (§4.10), all
 | E11 | The Waste's west | the Ember Waste | country, behind the road | 25–26 | 961 (hills 261, ash 252, mountain 234, grass 70, lava 63) | the lava flow, the knapper, the drakelings and the tube under the flow | none | #522, built |
 | H11, H12, G12 | The east flank under the Sheer; the south-east foot where the lava ends; the south foot under the rim | Fire Mountain | country, behind the road | 25–26 | 984 (ash 937, pine 20, rock 15, grass 4, lava 4), 40 stream; 841 (ash 487, mountain 293, hills 22, lava 18, rock 9, grass 9), 2 stream; 674 (ash 374, mountain 288, rock 9) | the stream and its stones, the drake-watcher and the war-chest behind the axe-head (H11); the flow's end, the spring and the tube behind the split crust (H12); the folds, the hum over Meridian Camp and the drakes' hollow behind the claw-marks (G12); six drakelings in each | none | #522, built |
 
-The bounds come after the plan (§12, #836): F12 is built as country at 25–26, the bounds' first box;
-the enclave and the lair are to come.
+The bounds come after the plan (§12, #836): F12 is built as country at 25–26, the bounds' first box,
+and the enclave, Blackdraw, off it at 27–28; the lair is to come.
 
 The core is the four boxes that hold a step of the quest (H10, G10, G11 and F11), built at full
 density; the rest is country, built to the looser floor with the wilderness features (EXPANSION
@@ -1721,7 +1732,9 @@ once the Stone is lit, `after`), the Old Drake (boss 26) and the Sentinel (boss 
 Stone lights); the vents, two stokers with ember salamanders, where fire is useless and lightning
 the answer; after the Stone, sentries on the road back to Cinderport. Their drawings are #520's,
 nine. §4.2 to §4.9 place every group, box by box, the gentlest at the Stair's foot and the Sentinel
-at the top of the band.
+at the top of the band. Blackdraw, the bounds' enclave, places Meridian Camp's flue walker,
+inspector and deep knocker again, at its own band, 27–28 (#836, §12.3); the novelty check, which
+stands it with the Glasswold by its floor, passes.
 
 Four of the nine are drawn (#520): the Strangler Vine, a grey tree it has killed, its ropes hanging
 nearly to the ground; the Cinder Beetle, low and black with one forked horn; the Ember Salamander,
@@ -1926,14 +1939,21 @@ the road before it (§12.2).
   points, G9 (199 of 199) the furthest 11 and 10 points, H9 (467 of 467) the furthest 9 and 12, E11
   99.4% (683 of 687) and the furthest 15, with no sign among its 16, H11 98.1% (951 of 969) and the
   furthest 15, with no sign among its 17, H12 (539 of 539) the furthest 10 and 13 points, and G12
-  (377 of 377) the furthest 8 and 11 (#522); F12 100.0% within 12 steps (190 of 190) and the
-  furthest 6 of 20, with no sign among its 9 points (#836).
-- **The bounds** (#836, §12). F12 holds no group, so the gate has nothing new to judge and the pool
-  is as it was (above). It pays no xp and 200 gold, so a clear gives 35,919 xp a member of the
+  (377 of 377) the furthest 8 and 11 (#522); F12 100.0% within 12 steps (191 of 191) and the
+  furthest 6 of 20, with no sign among its 10 points, the flue's mouth one of them (#836);
+  Blackdraw, the enclave, 100.0% within 7 steps (62 of 62), the furthest 3 of 10, with no sign among
+  its 13 points (#836).
+- **The bounds** (#836, §12). F12 holds no group, so the gate has nothing new to judge there and the
+  pool is as it was (above). It pays no xp and 200 gold, so a clear gives 35,919 xp a member of the
   19,467 asked and 12,160 gold of the 11,760, and a company entering at 24 and three quarters
   clearing it leaves at 27.3554 by the curve's own count, as before, under the 27.4 that `OVER_ROAD`
   names Ashfall at (#738). The enclave and the lair are counted in no clear, so it stays there to
-  the end of #836 (`tools/tests/curve.ts`).
+  the end of #836 (`tools/tests/curve.ts`). Blackdraw, the enclave, is judged alone at its own floor
+  and stands out of the pool: a company at 27 wins every fight and manages 11.14 fights to a rest,
+  inside the aim (9.75 to 11.75), 78.3% of its days ending in a fight broken off, in the range of
+  Meridian Camp's three levels (73% to 88%) and under G11's 94.7%; two under, at 25, 4.78, 44.5% of
+  the floor's 10.75. It gives 790 xp a member and 700 gold, and its dearest find, Kindler at 2,500,
+  sits in its window, the Glasswold's 6,000 (§12.3).
 
 ## 9. Decisions
 
@@ -3205,7 +3225,7 @@ Decided by the builder for #836, each the owner's to overturn:
    where Wrackholm's E5 took its enclave with 73, and the two doors stand 21 squares apart with
    nothing within four of either. Its groups are Meridian Camp's machines, the area's only monsters
    at 27 and 28 but its bosses; their sizes and its reward are named in its own pull request, inside
-   the Glasswold's window, 6,000 (#845's 3).
+   the Glasswold's window, 6,000 (#845's 3). Built since as Blackdraw (#836's 13 to 19).
 8. **The lair is the grave where the flow stopped, on F12** (§6, DESIGN §9, MONSTERS §13): its door
    is left bare at 20,14, the middle of the dam's rock across the cut, 20,13 before it.
 9. **F12 meets F11 and G12 square for square,** its edges worked from the built letters: its 4,0 ash
@@ -3218,9 +3238,55 @@ Decided by the builder for #836, each the owner's to overturn:
     the flow on to the void at rows 15 and 16, so F12's 19 to 21 on row 14 are rock and the four
     squares under them mountain: no square of the flow meets the void.
 11. **F12 differs from the atlas at 24 squares:** the seams' two, the flow's three where it crosses
-    from F11, the dam's three, the rim's four under it and the store's twelve.
+    from F11, the dam's three, the rim's four under it and the store's twelve. With the flue's mouth
+    at 10,3 since, 25 (#836's 14).
 12. **The walkthrough walks the bounds in one function,** `theBounds`, called last; the road's line
     that names the Waste's maps names F12 with them.
+13. **The enclave is Blackdraw,** the coast's English for a flue's black draught: a compound name,
+    as Scaldwell is, where "the cold flue" would be a bare description (NAMES §3) and Meridian
+    Camp's camp has a cold flue of its own, Fane's rope's (§3). Its groups' and features' ids begin
+    `bd_`.
+14. **Its door is the brief's square, F12's 10,3,** its mountain drawn as stone, the flue's mouth,
+    walked into from the ash at 10,2, where the way back sets a company down facing the ash. It is
+    the one square of F12 that changes: F12 walks 191 squares, differs from the atlas at 25 and
+    counts 10 points with the way; nothing stands within four squares of the door, and it is no edge
+    square, so no seam or row of `tools/tests/outdoors.ts` moves. Blackdraw's plate is at 178,358,
+    five squares south of the door under the mountain, as Karaordu's and Creag Fionn's stand five
+    south of theirs.
+15. **Its groups are a flue walker and an inspector with a deep knocker,** Meridian Camp's machines
+    at 27 and 28, the brief's kinds: the walker in the flue below its first turn, where the flue is
+    a square wide, the nearer at 9 steps; the inspector, which calls three deep knockers at one
+    chance in two, with its knocker in the furnace's one mouth, the farthest and the hardest at 23
+    steps. A company on foot or any way else meets them in that order and passes neither (the
+    walkthrough floods it). The brief's flue walkers are one: by the harness's day at 27, two
+    walkers with the inspector alone paced 8.2 fights to a rest and with the inspector and two
+    knockers 5.8, under the aim; one walker with the inspector alone 13.4, over it; two walkers with
+    three knockers 9.93, the inspector left out; the one walker with the inspector and its knocker
+    11.15, the gate's 11.14.
+16. **The reward is Kindler, Marlinspike,** the stokers' iron for lighting the furnace, in their
+    locker by it with 400 gold: Cinderport's marlinspike (1d8+13, a light weapon for every class,
+    2,300) with its blows carrying lightning, at 2,500, so 21 a blow, the die counted at 3.5,
+    against the marlinspike's 17.5 (the thief's and the bard's rung at 25) and the Hand's Grey
+    Knife's 18.5 (theirs at 28). Found there alone and sold nowhere, on no rung of the ladder and
+    not the area's artifact, inside the enclave's window, the Glasswold's 6,000 (#845's 3); the
+    walkthrough asserts the numbers, the rungs of Act IV's and Act V's ladders (`ACT_IV`, `ACT_V`)
+    and that no shop, other chest or monster has it. Lightning is the answer to Ashfall's machines
+    (§7): no monster of the game is immune to it and 27 kinds are weak to it, every machine among
+    them. A light weapon serves the six classes that cannot bear Grim's Axe (§6).
+17. **The secret is the clerks' room,** three squares by two behind the one plate of the flue's wall
+    knocked bright, its hint seen from the flue past the walker and short of the inspector: their
+    pay chest, 300 gold, an Elixir and a Sapphire Vial, the dearest healing and spell points
+    Cinderport's chandler's sells. The brief's tally-room is a clerks' room here, since the
+    Seestollen has a tally-room of its own (docs/areas/kilns.md §12.7). Its door at 5,6 passes the
+    art check.
+18. **New here is the enclave itself** (#845); nothing is drawn for it, and its kinds stand in
+    Meridian Camp already (§7).
+19. **The walkthrough walks it in `theBounds`,** last: the door's words at 24, 25 and 27 and the
+    sign; both groups won at 27 and met in that order on foot or any way else; the clerks' room
+    found from the plate and shut but through it; Kindler's numbers and rungs; the way out onto
+    F12's 10,2 facing the ash. F12's line that held nothing taken out of it holds its one way now,
+    the enclave's, and its check that 10,3 was left bare holds the stone, the mountain either side
+    and under it and nothing within four squares.
 
 ## 10. Names
 
@@ -3234,6 +3300,8 @@ of theirs is named here: the trading ground and Scaldwell are the coast's.
 |---|---|---|---|
 | the Hot Springs | Scaldwell | a spring that scalds, in the coast's English: the pools under the Sheer where the Riders bathe | Steamwell; the Springs, kept |
 | Warlord's Forge | Grimsforge | Grim's forge: whose it was, as a farm is named, since the bare description is forbidden; the old warlord's name, worn down | Smithstead; Grimsanvil |
+| the cold flue, the enclave (#836) | Blackdraw | the black draw, a flue's draught gone still under its soot, in the coast's English | Sootdraw; Coldreek |
+| the enclave's reward (#836) | Kindler | the iron the stokers lit the furnace with, named for what it did | Firesteel; Sparkiron |
 
 - **Kept:** Ashfall, Cindercoast, Fire Mountain, the Ember Waste and the Ember Stone, plain names
   for plain things, as the Grove and the Grove Stone are; Cinderport and Old Cinder, the coast's
@@ -3463,20 +3531,21 @@ Owed by the country behind as built (#522, §4.10, §8):
 
 The land the area's maps lie open to, built as country off the quest, level for level (the owner, 17
 October 2026; #828, #836): F12, the south-west lava flow's end under the rim, which §11 cut; then
-the area's enclave, entered from F12, and its artifact's lair, Grim's Axe's (§6). F12 is 445 squares
-of land, 194 of them a company could walk by the atlas, 147 of ash and 47 of the flow, which a
-company walks (lava has no rule underfoot, §11), and 39 edge squares open onto it: F11's south edge
-(28) and G12's west edge (11). The issue's 147 leaves the flow out, and its 38 are the squares the
-atlas's F12 met on foot: F11's 4,31 is ash where the atlas has mountain at F12's 4,0, and F12 is
-drawn as ash there to meet it (§12.1). E12, mountain and void, stays cut, where #828 plans no box
-(§11). The box is built to the looser floor (EXPANSION §5.3) at the zone's band, from the area's
-own, paid from its budget (§8), with nothing on the road's quest. This is the brief, in §4's form,
-for F12, the enclave and the lair; each pull request builds from it and adds its "As built".
+the area's enclave, Blackdraw, entered from F12, and its artifact's lair, Grim's Axe's (§6). F12 is
+445 squares of land, 194 of them a company could walk by the atlas, 147 of ash and 47 of the flow,
+which a company walks (lava has no rule underfoot, §11), and 39 edge squares open onto it: F11's
+south edge (28) and G12's west edge (11). The issue's 147 leaves the flow out, and its 38 are the
+squares the atlas's F12 met on foot: F11's 4,31 is ash where the atlas has mountain at F12's 4,0,
+and F12 is drawn as ash there to meet it (§12.1). E12, mountain and void, stays cut, where #828
+plans no box (§11). The box is built to the looser floor (EXPANSION §5.3) at the zone's band, from
+the area's own, paid from its budget (§8), with nothing on the road's quest. This is the brief, in
+§4's form, for F12, the enclave and the lair; each pull request builds from it and adds its "As
+built".
 
 | Place | Laid in | Walkable | Built neighbours | Band | Pull request |
 |---|---|---|---|---|---|
-| F12 | the Ember Waste, `emberwaste_f12` | 190 with the store (the atlas's 194) | F11; G12 (Fire Mountain's) | 25–26 | the first, built (#836) |
-| The enclave | its own, its door on F12 | | F12 | 27–28 | the second |
+| F12 | the Ember Waste, `emberwaste_f12` | 191 with the store and the flue's mouth (the atlas's 194) | F11; G12 (Fire Mountain's) | 25–26 | the first, built (#836) |
+| Blackdraw, the enclave | its own, `blackdraw`, its door on F12 | 62 (55 outside its clerks' room) | F12 | 27–28 | the second, built (#836) |
 | The lair | its own, its door on F12 | | F12 | 30–32 | the third |
 
 ### 12.1 What every box keeps
@@ -3513,13 +3582,16 @@ for F12, the enclave and the lair; each pull request builds from it and adds its
   12,160 gold, and the company still leaves at 27.3554. Six drakelings would take it to 27.3891,
   inside 27.4 but the four boxes' group again, and two sentries to 27.4004, past it (§9, #836's 3).
   The enclave and the lair are held to their own bands and counted in no clear, so the lead stays at
-  27.3554 to the end of #836 (`tools/tests/curve.ts`).
-- **The doors** of the enclave and the lair are left bare, each a square of solid ground with the
-  same either side along its face, its way walked to and nothing within four squares: the lair's in
-  the dam's rock, the enclave's in the mountain (§12.3, §12.4).
+  27.3554 to the end of #836 (`tools/tests/curve.ts`); Blackdraw gives 790 xp a member and 700 gold,
+  a figure (§12.3).
+- **The doors.** The lair's is left bare, a square of solid ground with the same either side along
+  its face, its way walked to and nothing within four squares, in the dam's rock (§12.4). The
+  enclave's is the flue's mouth in the mountain's face at 10,3, drawn as stone with the mountain
+  either side and under it, walked into from the ash at 10,2, nothing within four squares (§12.3).
 - **The walkthrough** walks it in one function, `theBounds` in `walkthrough.ts`, called last: the
   seams walked and the secret found from its hint, the prize shut to walkers, swimmers, climbers and
-  floaters; the two doors left bare.
+  floaters; the lair's door left bare; last, Blackdraw, in at the flue's mouth and out again
+  (§12.3).
 
 ### 12.2 F12, the flow's end under the rim (#836): country, band 25–26
 
@@ -3527,14 +3599,15 @@ for F12, the enclave and the lair; each pull request builds from it and adds its
   south-west flow going down into a cut it made in the rim, its front stopped across the cut. Off
   the road and off the quest.
 - **Landmarks.** The flow and its cut; the dam of black rock where it stopped, where the lair's door
-  will stand (§12.4); the mountain's west wall and the face under it, where the enclave's will
+  will stand (§12.4); the mountain's west wall and the face under it, where the enclave's stands
   (§12.3); a man of stone calling to the mountain.
 - **Points of interest,** nine features and no group: the slope down from F11, the cairn, the man of
   stone, the sulphur, the cut, the flow's end, the flakes at the rock's foot, the store and its
   purse.
 - **Encounters.** None (§12.1).
 - **The ways in and out.** In over the north edge from F11's ash, columns 4 to 31, and over the east
-  edge from G12's, rows 0 to 10. West and south the world ends.
+  edge from G12's, rows 0 to 10. West and south the world ends. Down the flue's mouth at 10,3 into
+  Blackdraw, the enclave (§12.3).
 - **The secret and its hint.** A knapper's store in the rock under the rim, the best of the flow
   glass wrapped in hide on a ledge with a purse beside it. The hint: flakes of black glass swept
   into a heap at the rock's foot and none anywhere else on the ash.
@@ -3550,32 +3623,60 @@ for F12, the enclave and the lair; each pull request builds from it and adds its
   mountain under it (§9, #836's 10). The store is a ring of rock at 28 to 30 on rows 12 to 15, its
   door at 29,12 and the flakes before it (`f12_flakes`, 29,11), the store (`f12_store`, 29,13) with
   the purse (`f12_purse`, 29,14). The lair's door is 20,14, bare with 20,13 open before it; the
-  enclave's is 10,3, bare with 10,2 open before it. F12 differs from the atlas at 24 squares (§9,
-  #836's 11). Density: 190 of 190 squares within 12 steps, the furthest 6, no sign among 9 points.
-  No group, so the gate has nothing to judge; the box pays 200 gold.
+  enclave's is 10,3, the flue's mouth into Blackdraw, its mountain drawn as stone with 10,2 open
+  before it (#836's 14). F12 differs from the atlas at 25 squares (§9, #836's 11 and 14). Density:
+  191 of 191 squares within 12 steps, the furthest 6, no sign among 10 points, the flue's mouth one
+  of them. No group, so the gate has nothing to judge; the box pays 200 gold.
 
-### 12.3 The enclave: the cold flue (#836, its second pull request)
+### 12.3 Blackdraw, the flue under the west wall (#836): enclave, band 27–28
 
 - **Purpose.** A place of its own off F12: a flue of the Underdeep's exhaust (§2), its mouth in the
   mountain's face under the west wall and its far end shut where the flow came in and set, where the
   machines that walk it still walk. Held to its own band (#845).
 - **Band.** 27–28, a band over F12's 25–26 (#845: a band or two, its floor over the box's top).
-- **Landmarks.** The mouth in the face, the long flue going down under the mountain and the cold
-  furnace at its end, where the flow came in.
-- **Points of interest.** The way in at the mouth, the cold furnace and the door's own line, which
-  gives its band (#845).
-- **Encounters.** Meridian Camp's machines, the area's only monsters at 27 and 28 but its bosses:
-  flue walkers (27) nearer the mouth, deep knockers and inspectors (28) at the furnace, the hardest;
-  no guardian.
-- **The ways in and out.** Its door at F12's 10,3 in the mountain's face, left bare with 10,2 open
-  before it; one way out, back onto the ash.
-- **The secret and its hint.** A tally-room off the flue behind a plate of iron. The hint: one plate
-  of the flue's wall knocked bright where every other is soot.
+- **Landmarks.** The mouth in the face; the long flue going down under the mountain, lined with
+  plates of iron black with soot; the cold furnace at its end, where the flow came in through its
+  back and set.
+- **Points of interest.** The way in at the mouth, the plates, the climbing scratches, the plate
+  knocked bright, the clerks' room behind it, the cold furnace, the flow set through its back, a
+  stoker run down by the furnace door, the stokers' locker and the door's own line, which gives its
+  band (#845).
+- **Encounters.** Meridian Camp's machines, the area's only monsters at 27 and 28 but its bosses: a
+  flue walker (27) in the flue, the nearer; an inspector (28), which calls deep knockers, with one
+  at its side in the furnace's mouth, the hardest; no guardian (§9, #836's 15).
+- **The ways in and out.** Its door at F12's 10,3 in the mountain's face, the flue's mouth, walked
+  into from the ash at 10,2; one way out, back up the flue onto the ash.
+- **The secret and its hint.** A clerks' room off the flue behind a plate of iron, the brief's
+  tally-room (§9, #836's 17). The hint: one plate of the flue's wall knocked bright where every
+  other is soot.
 - **New here.** The enclave itself (#845).
-- **Reward.** One of its own, named with its groups' sizes in the enclave's pull request (§9, #836's
-  7), inside the Glasswold's window, 6,000 (EXPANSION §5.2, #845's 3: the last road area whose floor
-  is at or under 27).
-- **Pay.** Counted in no clear (`tools/tests/curve.ts`).
+- **Reward.** Kindler, the stokers' iron for lighting the furnace: Cinderport's marlinspike with its
+  blows carrying lightning, 21 a blow, at 2,500, inside the Glasswold's window, 6,000 (EXPANSION
+  §5.2, #845's 3: the last road area whose floor is at or under 27; §9, #836's 16).
+- **Pay.** Counted in no clear (`tools/tests/curve.ts`): 790 xp a member and 700 gold.
+- **As built** (#836, 23 October): `blackdraw`, a dungeon of one level of 16 by 16, `enclave`, band
+  27–28, region `ashfall`, its plate at 178,358, five squares south of its door under the mountain.
+  In from F12's 10,2 through the mouth at 10,3 onto 7,1 facing south; the door says "Blackdraw:
+  levels 27-28." with the game's harder words one or two levels under its floor and its warning
+  three or more under. The mouth (`bd_mouth`, 7,2) and the flue going down past its plates
+  (`bd_plates`, 10,3) to its first turn, where a flue walker stands in the flue a square wide
+  (`bd_walker`, 12,5), 9 steps in; past it the climbing scratches (`bd_irons`, 12,7) and the flue's
+  run west to the plate knocked bright (`bd_bright`, 5,7), the hint. Behind the plate at 5,6 the
+  clerks' room, three squares by two (`bd_clerks`, 5,5), with their pay chest (`bd_pay`, 4,4): 300
+  gold, an Elixir and a Sapphire Vial. The flue goes down at 3,8 and 3,9 into the furnace's chamber,
+  eight squares by four, where an inspector with a deep knocker stands in its one mouth
+  (`bd_inspector`, 3,10), 23 steps in; inside, the cold furnace (`bd_furnace`, 6,11), the flow set
+  through its back (`bd_flow`, 9,12), a stoker run down (`bd_stoker`, 2,13) and the stokers' locker
+  (`bd_locker`, 8,13): 400 gold and Kindler. One way out, up the flue from 7,2 onto F12's 10,2
+  facing the ash. A company on foot or any way else meets the walker first and passes neither group,
+  and no walker, wader, climber or floater reaches the clerks' room but through the plate. Blackdraw
+  walks 62 squares, 55 outside the clerks' room. A company at 27 wins every fight and manages 11.14
+  fights to a rest, inside the aim (9.75 to 11.75), 78.3% of its days ending in a fight broken off,
+  in the range of Meridian Camp's three levels (73% to 88%); two under, at 25, 4.78, 44.5% of the
+  floor's 10.75. Density: 62 of 62 within 7 steps, the furthest 3 of 10, no sign among 13 points.
+  The curve's rise: rank correlation 1.00, the walker nearest at 9 steps (27.0) and the inspector
+  hardest at 23 (28.0, at least 28). By the curve's count it gives 790 xp a member and 700 gold,
+  counted in no clear, and its dearest find, Kindler at 2,500, sits in its window, 6,000.
 
 ### 12.4 The lair: the grave where the flow stopped (#836, its third pull request)
 
