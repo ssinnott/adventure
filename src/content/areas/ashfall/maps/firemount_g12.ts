@@ -5,8 +5,9 @@
 // box's one fight. The secret: claw-marks scored back and forth across one rock at the rim's foot, and
 // behind it the drakes' hollow, where they bring bright things.
 // In from G11 (#513) walked, over the ash: G11's south edge meets this map's north edge square for square,
-// the ash. The east edge meets H12's west square for square, the ash and the rim; the west edge ends the
-// world against F12, cut (§11), and the south edge is the rim, past which the world ends.
+// the ash. The east edge meets H12's west square for square, the ash and the rim; the west edge meets
+// F12's east (#836) square for square, the ash at 0 to 10; the south edge is the rim, past which the
+// world ends.
 // Cut from the atlas by tools/scaffold.ts, the world's end cut by hand; docs/areas/ashfall.md §4.10 is its
 // brief.
 import type { MapDef } from '../../../../game/map.ts';
