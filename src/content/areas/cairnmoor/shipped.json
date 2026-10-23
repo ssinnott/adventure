@@ -177,7 +177,21 @@
         "o8_tors",
         "o8_view",
         "o8_west",
-        "o8_whole"
+        "o8_whole",
+        "p7_cairn",
+        "p7_graves",
+        "p7_hills",
+        "p7_hoot",
+        "p7_house",
+        "p7_house_chest",
+        "p7_pebbles",
+        "p7_stone",
+        "p8_bones",
+        "p8_cairn",
+        "p8_ledge",
+        "p8_rowan",
+        "p8_store",
+        "p8_store_chest"
       ],
       "groups": [
         "m7_hounds",
@@ -202,7 +216,10 @@
         "o8_last_tor",
         "o8_lights_east",
         "o8_lights_west",
-        "o8_trolls"
+        "o8_trolls",
+        "p7_ravens",
+        "p7_wights",
+        "p8_hounds"
       ],
       "doors": [
         "398,249",
@@ -210,7 +227,9 @@
         "431,231",
         "433,213",
         "465,214",
-        "474,234"
+        "474,234",
+        "492,229",
+        "494,198"
       ]
     }
   },
@@ -238,6 +257,14 @@
     "highmoor_o8": {
       "at": "456,222",
       "size": "32x32"
+    },
+    "highmoor_p7": {
+      "at": "488,190",
+      "size": "24x32"
+    },
+    "highmoor_p8": {
+      "at": "488,222",
+      "size": "24x32"
     }
   },
   "flags": [
