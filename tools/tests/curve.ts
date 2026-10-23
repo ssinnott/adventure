@@ -27,7 +27,7 @@ import { handIns, choices } from '../../src/game/people.ts';
 import { xpForLevel, killPay, MAX_LEVEL } from '../../src/game/party.ts';
 import { FIXTURE, LAIR } from './enclave.ts';
 import { CHECKS, once } from '../checks.ts';
-import { ok, owed } from './lib.ts';
+import { ok, owed, withDefs } from './lib.ts';
 
 /**
  * Walking steps from a map's way in (its start, or `from`) to every cell, given keys and secrets, swimming and
@@ -482,14 +482,11 @@ export function curve(): void {
     const arts = Object.values(ITEMS).filter((d) => d.artifact), widest = Math.max(...Object.values(CURVE).map((r) => r.price));
     const twins = arts.map((d): ItemDef => ({ ...d, id: `test_${d.id}_unmarked`, artifact: undefined }));
     const caught = (id: string): string => heldFinds(clearOf([{ ...LAIR, features: (LAIR.features ?? []).map((f) => (f.kind === 'chest' ? { ...f, items: [id] } : f)) }])).filter((x) => ITEMS[x.it].price > price).map((x) => x.it).join();
-    for (const d of twins) ITEMS[d.id] = d;
-    try {
+    withDefs(ITEMS, twins, () => {
       const passed = arts.filter((d) => caught(d.id) === ''), slotted = twins.filter((d) => d.slot !== 'none'), held = slotted.filter((d) => caught(d.id) === d.id);
       ok(arts.length > 0 && passed.length === arts.length && slotted.length > 0 && held.length === slotted.length && arts.every((d) => d.price > widest),
         `no window holds an artifact, by its mark alone: each of the ${arts.length} in ${LAIR.id}'s chest passes its window, the cap's ${fmt(price)}, and each of the ${held.length} with a slot, unmarked, at ${fmt(Math.min(...arts.map((d) => d.price)))} past the widest window's ${fmt(widest)}, is caught by it`);
-    } finally {
-      for (const d of twins) delete ITEMS[d.id];
-    }
+    });
     ok(true, `${LAIR.id}: as an enclave its ${fmt(lair.xp)} xp a member and ${fmt(lair.gold)} gold are a figure, counted in no clear`);
     const faults = (d: MapDef, outside = salt.outside ?? []): number => enclaveFaults({ id: FIXTURE.area, maps: [...salt.maps, d], outside }, [...MAP_DEFS, d]).length;
     ok(!faults(LAIR) && faults({ ...LAIR, band: undefined }) === 1 && faults({ ...LAIR, band: [11, 13] }) === 1 && faults(LAIR, [LAIR.id]) === 1

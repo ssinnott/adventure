@@ -19,7 +19,7 @@ import { condFaults } from './quests.ts';
 import { wrap, columnLabelWidth } from '../../src/ui/draw.ts';
 import { measureText as measure } from '../../src/lib/engine/text.ts';
 import { SAY_W, SAY_LINES, ASK_LINES, ASK_SIDE_LINES, SIDE_W, onAutomap } from '../../src/ui/frame.ts';
-import { ok } from './lib.ts';
+import { ok, withDefs } from './lib.ts';
 
 /** The three hand-ins of Act I, by the item each takes. */
 const THREE = ['survey_wand', 'greywater_ledger', 'ashen_chisel'];
@@ -161,8 +161,7 @@ const LETTER = { id: 'fx_letter', name: 'A Sealed Letter', slot: 'none' as const
 
 /** What #76 lets a person do, on people nobody places: each case as a consumer will write it. */
 function fixtures(fresh: () => { party: Party; world: World }, all: readonly { map: string; p: Person }[]): void {
-  ITEMS[LETTER.id] = LETTER;
-  try {
+  withDefs(ITEMS, [LETTER], () => {
     const at = { x: 1, y: 1 };
 
     // A question whose answer sets a flag and hands over a letter; words that change with the answer.
@@ -316,9 +315,7 @@ function fixtures(fresh: () => { party: Party; world: World }, all: readonly { m
     ok(one === '"The ledger."\n\n(400 gold.)' && two === '"A letter from the ford."' && g.party.gold === gold + 400 && !g.party.bag.includes('fx_ledger') && !g.party.bag.includes(LETTER.id), 'two hand-ins carried: one a meeting, in order, before words that hold, the second paying nothing and saying no gold line');
     ok(three === '"Anything else?"' && four === '"The pass is yours."', 'then words that hold, and without them the after-lines of the last done that has any');
     ok(personFlags(hale).join() === 'fx_q_ledger,fx_q_letter', "a person's flags are every hand-in's");
-  } finally {
-    delete ITEMS[LETTER.id];
-  }
+  });
   presence();
 }
 

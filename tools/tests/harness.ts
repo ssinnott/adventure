@@ -16,7 +16,7 @@ import { gateCompany, gateTurn, fightSeed, winRate } from '../gate.ts';
 import { GATE } from './gate.ts';
 import { testMonster, standardEncounter, line, scaleAt, groupsPerLevel, xpFor, HP, DAMAGE, ROLES, ROLE_IDS, TROLL, SWEEP, testTroll, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, testDrake, giantEncounter, drakeEncounter, BASILISK_STONE, testBasilisk, basiliskEncounter, clockEncounter } from '../testmonster.ts';
 import type { Role } from '../testmonster.ts';
-import { measure, days, fight, play, outcomeOf, companyAt, newerCompany, edgeOf, spent, mustRest, mendBetween, day as oneDay, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP, RULES, GEAR, GEAR_TOP, ANSWER, wakeWith, breathGuard, whatIfs, writeRefusal, casting, cellsOnCores, artifactIds } from '../harness.ts';
+import { measure, days, fight, play, outcomeOf, companyAt, newerCompany, edgeOf, spent, mustRest, mendBetween, day as oneDay, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP, unforge, GEAR, GEAR_TOP, ANSWER, wakeWith, breathGuard, whatIfs, writeRefusal, casting, cellsOnCores, artifactIds } from '../harness.ts';
 import type { BotOpts } from '../harness.ts';
 import { once } from '../checks.ts';
 import { ok } from './lib.ts';
@@ -42,12 +42,10 @@ export async function harness(): Promise<void> {
     turn = duel.log.slice(before);
   }
   ok(turn.length === 2 && startCombat(defaultParty(makeRng(39)), [{ id: 'a', monsters: ['rat'] }], makeRng(39)).edge === undefined, `a member told to strike twice strikes twice (${turn.join(' ')}), and a fight gives no such power unless told`);
-  RULES.levelTraits = true;
-  const blows = [10, 11, 28, 29].map((l) => edgeOf(companyAt(l, 37).members[0], 1).blows), traits = companyAt(24, 37).members.map((m) => edgeOf(m, 1));
-  const later = edgeOf(companyAt(24, 37).members[3], 2).damage;
-  RULES.levelTraits = undefined; RULES.levelBonus = true;
-  const perks = companyAt(24, 37).members.map((m) => edgeOf(m, 1));
-  RULES.levelBonus = undefined;
+  const levelTraits = { levelTraits: true }, levelBonus = { levelBonus: true };
+  const blows = [10, 11, 28, 29].map((l) => edgeOf(companyAt(l, 37).members[0], 1, levelTraits).blows), traits = companyAt(24, 37).members.map((m) => edgeOf(m, 1, levelTraits));
+  const later = edgeOf(companyAt(24, 37).members[3], 2, levelTraits).damage;
+  const perks = companyAt(24, 37).members.map((m) => edgeOf(m, 1, levelBonus));
   ok(blows.join() === '1,2,2,3' && traits[5].blows === 1 && traits[3].damage === 14 && later === 0 && perks.every((e) => e.damage === 7 && e.ac === 7) && edgeOf(companyAt(24, 37).members[0], 1).blows === 1, `with --level-traits the knight strikes once more a turn with each promotion (${blows.join(', ')} blows at 10, 11, 28 and 29) and at 24 a sneak attack adds 14 in the first round only; with --level-bonus every member gains 7 at 24; without, none`);
   // The prestiges are play's: every company takes them at 11, 19 and 27, with their blows, and with
   // them its spell ranks: a caster's spells 15% a rank, a hybrid's half that, a fighter's none.
@@ -60,9 +58,8 @@ export async function harness(): Promise<void> {
   const knight = (p: ReturnType<typeof companyAt>): [number, number] => [weaponOf(p.members[0]).bonus ?? 0, armorClass(p.members[0])];
   const past = GEAR_TOP + 2;
   const flat = [knight(companyAt(GEAR_TOP, 37)), knight(companyAt(past, 37))];
-  RULES.gearGrows = true;
-  const grown = [knight(companyAt(GEAR_TOP, 37)), knight(companyAt(past, 37))];
-  RULES.gearGrows = undefined;
+  // The forged gear is taken out again (`unforge`), so none is left in the item table for a later suite.
+  const grows = { gearGrows: true }, grown = (() => { try { return [knight(companyAt(GEAR_TOP, 37, grows)), knight(companyAt(past, 37, grows))]; } finally { unforge(); } })();
   ok(grown[0].join() === flat[0].join() && grown[1][0] > flat[1][0] && grown[1][1] === flat[1][1] + (past - GEAR_TOP) / 2, `gear grows past the ladder's top, ${GEAR_TOP}, only where a what-if asks: at ${past} the knight's weapon gains ${grown[1][0] - flat[1][0]} and the knight's armour ${grown[1][1] - flat[1][1]}`);
   // Fights may run longer as both sides grow, and never to the cap; a fight that would is broken off.
   const allowed = Array.from({ length: CAP }, (_, k) => [longest(k + 1), slowest(k + 1)]);
@@ -164,7 +161,7 @@ function whatIfsOff(): void {
   // Under --tiers it takes Expert at 13 and Master at 25 on its class's lines, after its prestiges, and
   // nothing else moves; without, it holds none (#852). The newer company takes them as it does.
   const at = [12, 13, 24, 25, 32], bare = at.map((l) => companyAt(l, 3)), newBare = at.map((l) => newerCompany(l, 3));
-  const [tiered, newTiered] = under({ tiers: true }, () => [at.map((l) => companyAt(l, 3)), at.map((l) => newerCompany(l, 3))]);
+  const tiers = { tiers: true }, tiered = at.map((l) => companyAt(l, 3, tiers)), newTiered = at.map((l) => newerCompany(l, 3, tiers));
   const owed = (l: number): Tier | undefined => (l >= TIER_LEVELS.master ? 'master' : l >= TIER_LEVELS.expert ? 'expert' : undefined);
   const holds = (p: Party, l: number): boolean => p.members.every((m) => LINES.every((line) => m.tiers?.[line] === (linesOf(m.cls).includes(line) ? owed(l) : undefined)));
   const untiered = (p: Party): string => JSON.stringify(p.members.map((m) => { const c = { ...m }; delete c.tiers; return c; }));
@@ -183,19 +180,19 @@ function whatIfsOff(): void {
   // The bots' options reach both bots (#853): under --bot the thrifty bot in `play` and the gate's in its
   // fights bless and sleep against four test soldiers at 13; off, neither does.
   const ALL: BotOpts = { bless: true, sleep: true, drink: true }, soldiers = standardEncounter('soldier', 13);
-  const gated = (): string[] => {
-    const p = gateCompany(13, 1), rng = makeRng(fightSeed(1)), s = startCombat(p, [{ id: 'g', monsters: soldiers }], rng);
-    for (let guard = 0; s.outcome === 'ongoing' && guard < 4000; guard++) { const t = currentTurn(s, p, rng); if (!t || s.round > ROUND_CAP) break; if (t.side === 'monster') monsterAct(s, p, rng); else gateTurn(s, p, rng, t.i); }
+  const gated = (rules = {}): string[] => {
+    const p = gateCompany(13, 1, rules), rng = makeRng(fightSeed(1)), s = startCombat(p, [{ id: 'g', monsters: soldiers }], rng);
+    for (let guard = 0; s.outcome === 'ongoing' && guard < 4000; guard++) { const t = currentTurn(s, p, rng); if (!t || s.round > ROUND_CAP) break; if (t.side === 'monster') monsterAct(s, p, rng); else gateTurn(s, p, rng, t.i, rules); }
     return s.log;
   };
   const casts = (log: string[]): number => log.filter((l) => / casts (Bless\.|Slumber:)/.test(l)).length;
   const offPlay = casting(13, soldiers, 10), offGate = casts(gated());
-  const [onPlay, onGate] = under({ bot: ALL }, () => [casting(13, soldiers, 10), casts(gated())] as const);
+  const bot = { bot: ALL }, onPlay = casting(13, soldiers, 10, 1, bot), onGate = casts(gated(bot));
   ok(onPlay.bless + onPlay.sleep > 0 && onGate > 0 && !offPlay.bless && !offPlay.sleep && !offPlay.drink && !offGate,
     `under --bot the thrifty bot blesses in ${Math.round(onPlay.bless * 10)} and sleeps in ${Math.round(onPlay.sleep * 10)} of 10 fights against four test soldiers at 13 and the gate's casts ${onGate} Blesses and Slumbers in one; off, neither (${offGate})`);
   // A what-if is for weighing: the refusal `--calibrate --write` throws (`writeRefusal`) names each of
   // the three new what-ifs while it is set, and there is none with every what-if off.
-  const refused = [under({ tiers: true }, writeRefusal), under({ bot: ALL }, writeRefusal), under({ company: 'newer' }, writeRefusal)];
+  const refused = [writeRefusal(tiers), writeRefusal(bot), writeRefusal({ company: 'newer' })];
   ok(writeRefusal() === undefined && refused.every((r, k) => r?.startsWith('a what-if is for weighing') && r.endsWith(`(${['tiers', 'bot', 'company'][k]})`)),
     `the refusal --calibrate --write throws names --tiers, --bot and --company while each is set, as every what-if (${refused.map((r) => r?.slice(r.indexOf('('))).join(', ')}), and there is none with all off`);
 }
@@ -208,7 +205,7 @@ function whatIfsOff(): void {
 function artifactsWhatIf(): void {
   const all = artifactIds(), at = [28, 30, 32];
   const holds = (p: Party): string => p.members.flatMap((m) => borne(m).filter((id) => ITEMS[id].artifact).map((id) => `${m.name} ${id}`)).join(', ');
-  const plain = at.map((l) => companyAt(l, 3)), [dressed, newer] = under({ artifacts: all }, () => [at.map((l) => companyAt(l, 3)), newerCompany(30, 3)] as const);
+  const bears = { artifacts: all }, plain = at.map((l) => companyAt(l, 3)), dressed = at.map((l) => companyAt(l, 3, bears)), newer = newerCompany(30, 3, bears);
   // A member who takes one differs from the plain company in what they hold alone.
   const rest = (m: Party['members'][number]): string => JSON.stringify({ ...m, equipment: null, pack: null });
   const still = plain.every((p, k) => p.members.every((m, i) => rest(m) === rest(dressed[k].members[i]) && (holds({ ...p, members: [dressed[k].members[i]] }) !== '' || JSON.stringify(m) === JSON.stringify(dressed[k].members[i]))));
@@ -219,26 +216,20 @@ function artifactsWhatIf(): void {
   // Dressed, the company is no weaker than plain in the same seeded fights at 30, and Holdfast's bearer,
   // who strikes nothing from her row, casts its charges: the bot weighs an artifact's hold whatever `--bot` asks.
   const fights = [...['deep_knocker', 'inspector', 'hearth_moth', 'ashen_champion', 'ashen_preacher', 'deep_rat'].map((id) => [id, id, id]), ['tallymaster'], ['grey_lion'], ['vask']];
-  const weigh = (arts: readonly string[] | undefined): { won: number; cost: number; roots: number } => under({ artifacts: arts }, () => {
+  const weigh = (arts: readonly string[] | undefined): { won: number; cost: number; roots: number } => {
+    const rules = { artifacts: arts };
     let won = 0, cost = 0, roots = 0;
     for (let k = 1; k <= 20; k++) {
-      const p = companyAt(30, k), s = play(p, fights[k % fights.length], k * 7919 + 13), o = outcomeOf(s, p);
+      const p = companyAt(30, k, rules), s = play(p, fights[k % fights.length], k * 7919 + 13, undefined, rules), o = outcomeOf(s, p);
       won += o.won ? 1 : 0; cost += o.cost; roots += s.log.filter((l) => l.startsWith(`${p.members[3].name} casts Grasping Roots`)).length;
     }
     return { won, cost, roots };
-  });
+  };
   const bare = weigh(undefined), knife = weigh(['holdfast']), every = weigh(all);
   ok(knife.won >= bare.won && every.won >= bare.won && knife.cost <= bare.cost && every.cost <= bare.cost && knife.roots > 0 && every.roots > 0,
     `in 20 seeded fights at 30 the dressed company is no weaker than the plain: ${bare.won}, ${knife.won} with Holdfast and ${every.won} with all eight won, at ${bare.cost.toFixed(2)}, ${knife.cost.toFixed(2)} and ${every.cost.toFixed(2)} of its hit points; Ottilie casts Grasping Roots ${knife.roots} and ${every.roots} times`);
-  const refused = under({ artifacts: all }, writeRefusal);
+  const refused = writeRefusal(bears);
   ok(!!refused?.startsWith('a what-if is for weighing') && refused.endsWith('(artifacts)'), `and the refusal --calibrate --write throws names --artifacts while it is set (${refused?.slice(refused.indexOf('('))})`);
-}
-
-/** `f` under the what-ifs `set`, each put back as it was whatever `f` does, so none is left on for a later suite. */
-function under<T>(set: Partial<typeof RULES>, f: () => T): T {
-  const was = { ...RULES };
-  Object.assign(RULES, set);
-  try { return f(); } finally { Object.assign(RULES, Object.fromEntries(Object.keys(set).map((k) => [k, was[k as keyof typeof RULES]]))); }
 }
 
 /**
@@ -250,8 +241,7 @@ function under<T>(set: Partial<typeof RULES>, f: () => T): T {
  */
 async function newerOnTheLine(): Promise<void> {
   const levels = [12, 20, 28, 32], roles = ROLE_IDS.filter((r) => r !== 'boss');
-  RULES.company = 'newer';
-  const cells = await cellsOnCores(roles, levels, 100, 0, 600_000).finally(() => { RULES.company = undefined; });
+  const cells = await cellsOnCores(roles, levels, 100, 0, 600_000, { company: 'newer' });
   const [under, over] = GATE.perRest.limit, [below, above] = GATE.perRest.aim, pc = (x: number): string => `${Math.round(x * 100)}%`;
   levels.forEach((l, k) => {
     const asked = fightsPerRest(l), rows = roles.map((r, i) => ({ r, d: cells[i * levels.length + k].day!, won: cells[i * levels.length + k].fresh.won }));
@@ -458,9 +448,7 @@ function abilities(): void {
   const casterFirst = wakeWith(bells, cleric);
   addCondition(bells.members[1], 'paralysed');
   const frontFirst = wakeWith(bells, cleric);
-  ANSWER.hold = false;
-  const unanswered = wakeWith(bells, cleric);
-  ANSWER.hold = true;
+  const unanswered = wakeWith(bells, cleric, { ...ANSWER, hold: false });
   ok(casterFirst?.target === back && frontFirst?.target === 1 && spell(frontFirst.spellId).cure?.includes('paralysed') === true && !unanswered,
     `the bots free the held, one of the front row before a caster, by ${frontFirst ? spell(frontFirst.spellId).name : 'nothing'}, and leave a hold with the answer off`);
   // While a foe breathes they raise one of the front row fallen first (`breathGuard`): with it down
@@ -479,8 +467,7 @@ function abilities(): void {
   // stand in one group and stop at twelve; Vask's odds are the gate's bot's, as the plan judges them.
   const heart = clockEncounter(32), fs = bout(32, heart, 40, 5001), still = { ...heart, clock: undefined };
   const crowd = Math.max(...fs.fights.map(({ s }) => s.monsters.length)), bands = Math.max(...fs.fights.map(({ s }) => s.groupIds.length));
-  const odds = (['panel', 'leader', 'called'] as const).map((k) => { ANSWER.clock = k; return winRate(32, heart, 100); });
-  ANSWER.clock = 'panel';
+  const odds = (['panel', 'leader', 'called'] as const).map((k) => winRate(32, heart, 100, Infinity, {}, { answer: { ...ANSWER, clock: k } }));
   const unclocked = winRate(32, still, 100);
   ok(crowd <= MAX_MONSTERS && bands === 2 && odds.every((x) => x < unclocked),
     `at the Heart the clock's calls stand in one group, ${crowd} monsters at most; the gate's bot wins ${pc(odds[0])} killing the Hands first, ${pc(odds[1])} going for the lord and ${pc(odds[2])} fighting the sentries as they come, against ${pc(unclocked)} with no clock (the plan asks two in three with the Hands first and a quarter to a third with the clock let run, on the sentries at 890)`);

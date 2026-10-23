@@ -33,7 +33,7 @@ import { groupFlags } from '../../src/game/people.ts';
 import type { QuestCond } from '../../src/game/quests.ts';
 import type { AtlasZone } from '../../src/game/atlas.ts';
 import { once } from '../checks.ts';
-import { ok, owed } from './lib.ts';
+import { ok, owed, withDefs } from './lib.ts';
 
 /**
  * Each figure's aim, and its limit beyond it (#273): a figure inside its aim passes; one between its
@@ -403,9 +403,7 @@ function judgeMap(d: Fought, areaFloor: number, bosses: readonly string[], own: 
     // The sentries' lever (#752): Vask's own group with the clock let run (the bots take the called first) is
     // won a quarter to a third of the time, the plan's figure, which holds only on the sentries at 890 (OFF_LINE).
     if (b === 'core:core_vask') {
-      ANSWER.clock = 'called';
-      const run = winRate(d.band[0], boss, SEEDS, ROUND_CAP, gateOpts(boss));
-      ANSWER.clock = 'panel';
+      const run = winRate(d.band[0], boss, SEEDS, ROUND_CAP, gateOpts(boss), { answer: { ...ANSWER, clock: 'called' } });
       ok(run >= 0.2 && run <= 0.45, `${b}: the clock let run at ${d.band[0]}: ${pc(run)} won (the plan's quarter to a third, on the sentries at 890: 20% to 45%)`);
     }
     check(`${b}: floor`, at, within(GATE.boss.aim), within(GATE.boss.limit), `${d.id}'s boss ${boss.id} at ${d.band[0]}: ${pc(at)} won (${aims(`${pc(GATE.boss.aim[0])} to ${pc(GATE.boss.aim[1])}`, `${pc(GATE.boss.limit[0])} to ${pc(GATE.boss.limit[1])}`)})`);
@@ -451,7 +449,6 @@ export function gate(): void {
   // less from a frost-caster's spells, and the rest what they took without it.
   {
     const charm: ItemDef = { id: 'test_gate_charm', name: 'Frost Charm', slot: 'none', price: 0, resist: ['cold'] };
-    ITEMS[charm.id] = charm;
     const frost: MonsterDef = { ...MONSTERS.bandit, id: 'test_gate_frost', name: 'Frost Adept', plural: 'Frost Adepts', hp: 400, level: 10, cast: { spells: ['killing_frost'], chance: 1 } };
     const taken = (carry: boolean): number[] => {
       const p = gateCompany(12, 7);
@@ -460,9 +457,8 @@ export function gate(): void {
       gateFight(p, [frost], 7, 3);
       return p.members.map((c) => 9999 - c.hp);
     };
-    const bare = taken(false), held = taken(true);
+    const [bare, held] = withDefs(ITEMS, [charm], () => [taken(false), taken(true)] as const);
     ok(bare[0] > 0 && held[0] < bare[0] && held[0] >= bare[0] / 2 && held.slice(1).join() === bare.slice(1).join(), `the gate's company plays a resistance: its bearer takes ${held[0]} from a frost-caster's spells, against ${bare[0]} without`);
-    delete ITEMS[charm.id];
   }
   // The gate's company plays Act III's abilities (#537), each on its test monsters' standard encounter
   // at the floor the road first meets it: it burns what it has seen mend, so two trolls fall to it in
@@ -470,10 +466,10 @@ export function gate(): void {
   // reads a fight that grows by a call, and wins it.
   {
     const seeds = 40, fireless = (p: Party): Party => { for (const c of p.members) c.spells = c.spells.filter((id) => spell(id).element !== 'fire'); return p; };
-    /** Seeds 1 to `seeds` of a gate fight, `cap` rounds at most, played as gateFight plays it: each fight's end. */
-    const fought = (level: number, monsters: Fighters, cap = ROUND_CAP, dress = (p: Party): Party => p): { s: CombatState; p: Party }[] => Array.from({ length: seeds }, (_, n) => {
+    /** Seeds 1 to `seeds` of a gate fight, `cap` rounds at most, played as gateFight plays it, by the bots' `answer`: each fight's end. */
+    const fought = (level: number, monsters: Fighters, cap = ROUND_CAP, dress = (p: Party): Party => p, answer = ANSWER): { s: CombatState; p: Party }[] => Array.from({ length: seeds }, (_, n) => {
       const k = n + 1, p = dress(gateCompany(level, k)), rng = makeRng(fightSeed(k)), s = startCombat(p, [asGroup('gate', monsters)], rng);
-      for (let guard = 0; s.outcome === 'ongoing' && guard < 4000; guard++) { const t = currentTurn(s, p, rng); if (!t || s.round > cap) break; if (t.side === 'monster') monsterAct(s, p, rng); else gateTurn(s, p, rng, t.i); }
+      for (let guard = 0; s.outcome === 'ongoing' && guard < 4000; guard++) { const t = currentTurn(s, p, rng); if (!t || s.round > cap) break; if (t.side === 'monster') monsterAct(s, p, rng); else gateTurn(s, p, rng, t.i, { answer }); }
       return { s, p };
     });
     const won = (fs: { s: CombatState }[]): number => fs.filter(({ s }) => s.outcome === 'victory').length / fs.length;
@@ -496,10 +492,7 @@ export function gate(): void {
     // fewer of its front row fall to a sweep than with no answer.
     const giants = fought(23, giantEncounter(23)), drakes = fought(25, drakeEncounter(25)), heavy = [testGiant(23, 2), testGiant(23, 2)];
     const felled = (fs: { s: CombatState }[]): number => fs.filter(({ s }) => s.log.some((l) => / (sweeps|breathes) /.test(l) && /falls?!$/.test(l))).length;
-    const answered = felled(fought(23, heavy));
-    ANSWER.sweep = false;
-    const bare = felled(fought(23, heavy));
-    ANSWER.sweep = true;
+    const answered = felled(fought(23, heavy)), bare = felled(fought(23, heavy, ROUND_CAP, undefined, { ...ANSWER, sweep: false }));
     const swept = giants.filter(({ s }) => s.log.some((l) => l.startsWith('Test Giant sweeps the front row'))).length;
     ok(won(giants) >= 0.9 && won(drakes) >= 0.9 && swept >= seeds / 2 && answered < bare,
       `it plays the sweep: it wins ${pc(won(giants))} of two giants' fights at 23, swept in ${swept} of ${seeds}, and ${pc(won(drakes))} of two drakes' at 25; and against giants of twice the blow one of a row falls to a sweep in ${answered} of ${seeds} fights, where with no answer in ${bare}`);
@@ -513,10 +506,7 @@ export function gate(): void {
     // It plays a hold (#549): four controllers at 24 holding at the vines' 0.3, and it frees one held
     // of its front row, or a caster, by the cheapest cure it has before it strikes.
     const vines = Array.from({ length: 4 }, (): MonsterDef => ({ ...testMonster('controller', 24), inflict: { cond: 'paralysed', chance: 0.3 } }));
-    const freed = fought(24, vines);
-    ANSWER.hold = false;
-    const bound = fought(24, vines);
-    ANSWER.hold = true;
+    const freed = fought(24, vines), bound = fought(24, vines, ROUND_CAP, undefined, { ...ANSWER, hold: false });
     const cleansed = freed.filter(({ s }) => s.log.some((l) => / casts Cleanse/.test(l))).length;
     ok(won(freed) >= 0.9 && cleansed >= seeds / 4 && won(freed) >= won(bound) && !bound.some(({ s }) => s.log.some((l) => / casts Cleanse/.test(l))),
       `it plays a hold: against four controllers holding at 0.3 it frees the held by Cleanse in ${cleansed} of ${seeds} fights at 24 and wins ${pc(won(freed))}, where with no answer it wins ${pc(won(bound))}`);
@@ -527,9 +517,7 @@ export function gate(): void {
     const felledKnight = (p: Party): Party => { p.members[0].hp = -1; addCondition(p.members[0], 'unconscious'); return p; };
     const back = (fs: { s: CombatState }[]): number => fs.filter(({ s }) => s.log.some((l) => / breathes fire on the back row/.test(l))).length;
     const guarded = back(fought(25, drakeEncounter(25), ROUND_CAP, felledKnight));
-    ANSWER.breath = false;
-    const open = back(fought(25, drakeEncounter(25), ROUND_CAP, felledKnight));
-    ANSWER.breath = true;
+    const open = back(fought(25, drakeEncounter(25), ROUND_CAP, felledKnight, { ...ANSWER, breath: false }));
     ok(guarded < open / 2, `it keeps a breath off its casters: with its knight fallen, two drakes at 25 breathe on the back row in ${guarded} of ${seeds} fights, where with no answer in ${open}`);
   }
   // The gate's company is harness's (#541): it takes its prestiges at 11, 19 and 27, with their perks

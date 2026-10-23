@@ -524,7 +524,7 @@ Decided by the owner's delegate for #18, each the owner's to overturn:
 
 1. **The bot's three behind `BotOpts { bless, sleep, drink }`** (#853), an option of `botTurn` and of
    `thrifty` as the reading (`sees`) is, off in every default: nothing in play or in a check moves
-   before #865. `ANSWER` stays.
+   before #865. `ANSWER` stays, frozen since #946: a tool passes another answer to the call.
 2. **The turn is mend, wake, burn, bless, sleep, blast, drink, strike, brace.**
 3. **Bless** in the first round, by a member that knows it and keeps its share of the rest line after
    it, while three foes or more stand; not again while one runs.
@@ -562,10 +562,10 @@ Decided by the builder for #853, each the owner's to overturn:
    to one yet to act this round that cannot, so Idris strikes and Maren blesses.
 
 The checks' company keeps up with the party behind what-ifs (#854), off in every default: #865
-weighed the tiers and the bots' three and kept them off (J2, above). Under `RULES.tiers`
+weighed the tiers and the bots' three and kept them off (J2, above). Under `Rules.tiers`
 (`--tiers`) `companyAt` takes its tiers after its
 prestiges: Expert at 13 and Master at 25 on each line its class takes, a fighter's arms, a caster's
-magic and a hybrid's both. `RULES.bot` (`--bot bless,sleep,drink`) hands the bots their options,
+magic and a hybrid's both. `Rules.bot` (`--bot bless,sleep,drink`) hands the bots their options,
 the thrifty one's in the harness's fights and the gate's in its own. Beside the premade six stands
 a company of the four newer classes, `newerCompany`: a barbarian, a monk and a paladin in front, a
 bard, a druid and a sorcerer behind, trained, dressed, prestiged and tiered as the six are. The
@@ -575,13 +575,15 @@ floor's limit, 80%; `--company newer` plays it by hand. The gate judges one comp
 six: a second would double its fights in the slowest of CI's jobs. On 17 October 2026 the newer
 company stands inside every limit and wins every fight from fresh, off its aim on five lines: the
 archer at 12 (9.5 to a rest, 7 asked), the controller at 28 (12.1 of 11) and the controller, the
-armoured and the elite at 32 (13.6, 13.2 and 13.4 of 12).
+armoured and the elite at 32 (13.6, 13.2 and 13.4 of 12). Since #946 the what-ifs are a value,
+`Rules`, passed to each call that reads one, down to the fight, the bots' answers among them
+(`Rules.answer`); `RULES`, play's, is frozen and sets none, so no suite leaves one set for the next.
 
 Decided by the owner's delegate for #18, each the owner's to overturn:
 
-1. **The company's tiers behind `RULES.tiers`** (`--tiers`): `companyAt` dresses them after
+1. **The company's tiers behind `Rules.tiers`** (`--tiers`): `companyAt` dresses them after
    `prestige(p)`, Expert from 13 and Master from 25 by class line; the cache key counts them.
-2. **The bots' option plumbed:** `--bot bless,sleep,drink` sets `RULES.bot`, handed to `botTurn`
+2. **The bots' option plumbed:** `--bot bless,sleep,drink` sets `Rules.bot`, handed to `botTurn`
    and `thrifty`. Both off until #865, which kept them off (J2).
 3. **A second company, `newerCompany(level, seed)`,** held by the harness suite at 12, 20, 28 and
    32: fights to a rest inside −2.5/+3.5 of `fightsPerRest`, fights at the floor won 80% or more,
@@ -604,9 +606,9 @@ Decided by the builder for #854, each the owner's to overturn:
    are the premade's own; the names are the creation screen's.
 3. **The boss is left out of the newer company's line:** a boss is judged by its odds from two
    under, not by a day or the floor's fights.
-4. **`--company` is a what-if too** (`RULES.company`), so `--calibrate --write` refuses under it as
+4. **`--company` is a what-if too** (`Rules.company`), so `--calibrate --write` refuses under it as
    under the rest; the refusal names what is set (`whatIfs`).
-5. **The gate's bot takes `RULES.bot` in tools/gate.ts's own `gateTurn`,** which every gate fight
+5. **The gate's bot takes `Rules.bot` in tools/gate.ts's own `gateTurn`,** which every gate fight
    plays, so #865's default in the harness reaches the gate (off, J2).
 6. **The line runs on every core** (`cellsOnCores`, the report's own pool): its 36 cells cost
    about 37 seconds of CPU, about ten of a four-core runner's.
@@ -623,7 +625,7 @@ Decided by the owner's delegate for #18, each the owner's to overturn:
    softening cap (#541, decision 3) are the owner's and are not moved.
 2. **No calibration is written:** `tools/testmonster.ts` and the 91 monsters past 10 stay as they
    were; the weighing and the calibration's measurement stand as evidence in #865's pull request.
-3. **The defaults stay off:** `RULES.tiers` and `RULES.bot` are off in the gate and the harness;
+3. **The defaults stay off:** `Rules.tiers` and `Rules.bot` are off in the gate and the harness;
    `--tiers`, `--bot`, `--company newer` and `--under 2` stay what-ifs, and `--calibrate --write`
    refuses under any.
 4. **The game's auto-fight bot blesses, sleeps and drinks from level 11 with its guards** and flees as
@@ -693,6 +695,28 @@ Decided by the owner's delegate for #892, each the owner's to overturn:
    by a fight broken off at fifteen rounds is the harness's figure, printed and not judged (#734):
    the game has no round cap, the company wins every fight there and the trolls mend. Eight ravens
    again would be 109.3% two under, past its limit, with a row owed and no better mix to size to.
+
+Decided by the builder for #946, each the owner's to overturn:
+
+1. **The bots' answer rides in the rules** (`Rules.answer`) through the harness's calls and the
+   gate's, so each chain carries one value; the bot's own calls (`botTurn`, `markOf`, `breathGuard`,
+   `mendLines`, `wakeWith`, `gateBlast`, `drinkFor`) take the answer itself, as they take `sees`.
+2. **Each exported call takes `rules` last, defaulting to `RULES`;** the harness's own helpers
+   (`weaponDamage`, `incoming`, `mendRate`, `spellDamage`, `heldDamage`, `train`, `keyOf`) take it
+   with no default, so the typecheck finds one a caller forgets.
+3. **One helper lends a def to either table, over one already there** (`withDefs`,
+   `tools/tests/lib.ts`), and puts back what it covered, so the rat's and the wolf's looks go
+   through it too; `gear` lends its four items with a plus up front, each only where absent, as it
+   added them on the way. Main gained two writers since the issue (`curve`'s unmarked artifacts,
+   `items`' stone twin): 17 go through it.
+4. **`unforge` drops the companies dressed in forged gear from the cache** as well, so a later
+   `gearGrows` never meets an id the table no longer holds.
+5. **The runner's check fails the suite by name, listing each entry added, removed or replaced** (by
+   identity); its fixture is a folder of its own (`tools/tests/runner/leaves/`), so the other
+   fixtures' counts stand; the clean suite after it is `next`, since a module exporting `then`
+   is awaited as a promise and never settles.
+6. **The goals walked are kept by the walkthrough's `ok`,** in a `WeakMap` whose entries go with it;
+   the runner hands each walkthrough a fresh wrapper of the shared `ok`.
 
 From 10 two under is judged by the day, not the fight. From 10 the damage spells roll their full
 dice and every group is sized for the day (docs/MONSTERS.md §4.4), so a fight from full health
