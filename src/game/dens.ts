@@ -12,8 +12,8 @@ import { lookKey } from './keys.ts';
 
 export type Den = Extract<Feature, { kind: 'den' }>;
 
-/** The brood's `until` and the look's key: in game/keys.ts, which loads nothing, so a map may import it first. */
-export { denBurnt, lookKey } from './keys.ts';
+/** The look's key: in game/keys.ts, which loads nothing, as the brood's `until` (`denBurnt`) is, so a map imports that from there and may do it first. */
+export { lookKey } from './keys.ts';
 
 export const burnt = (world: World, den: Den): boolean => world.used(den.id);
 

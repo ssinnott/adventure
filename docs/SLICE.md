@@ -819,7 +819,8 @@ over content broken on purpose too, and two tools to theirs:
   comes back, every respawn 720 to 2,880 minutes, every group's, person's and event's `until` and
   `after` naming something real (an `until` only on a group that comes back), no sky asked
   underground, every group placed under the ice standing on ice and every Rift group of
-  Thornmark's that comes back stopping with the tear.
+  Thornmark's that comes back stopping with the tear, and fifteen modules (three of the game, each
+  area's `index.ts`) each imported first in a fresh process, so none reads content as it loads (#896).
 - `curve` (§5.2): each area against its row in `content/progression.ts`: its band, the xp and gold a
   clear gives, its monsters' levels in their maps' bands, groups harder with steps from the way in,
   no chest or drop dearer than its window, an artifact excepted by its mark alone (`windowed`, #847,
@@ -1031,7 +1032,7 @@ does.
 | `game/prestige.ts` | a prestige's trainer: who the company has of the class, each one's bar (the level, the prestige before, the third's quest, the gold), and teaching it; pure |
 | `game/mastery.ts` | the weapon and magic tiers: who takes which line, the levels and prices (`TIER_PRICES`), each member's bar, the offers (a trainer's Expert, a Master's person's) and teaching a tier; what a tier does is `party.ts`'s (`armsBonus`, `tierSteps`); pure |
 | `game/skills.ts` | the secondary skills (`SKILLS`, all twelve, Linguist the first): a member's list, who has one (learnt, or born to it by people or class) and who does its work for the company (`skilled`, a carried item too), the skills a guild's halls teach, the menu's two levels (a hall's skills, then a skill's six), each member's bar, and learning one; pure |
-| `game/inscriptions.ts` | Kiln-script: an inscription (a sign with `read`), who reads it (`readerOf`), what a sign says and what a reading keeps (`signSays`), its texts as the line check measures them (`signTexts`), the id it is kept by (`readId`) and the places the world map pins once read (`readMarks`); pure |
+| `game/inscriptions.ts` | Kiln-script: an inscription (a sign with `read`), who reads it (`readerOf`), what a sign says and what a reading keeps (`signSays`), its texts as the line check measures them (`signTexts`), the id it is kept by (`readId`, given on from `game/keys.ts`) and the places the world map pins once read (`readMarks`); pure |
 | `game/stones.ts` | the Hearth's measure: the Stones restored (`stonesRestored`, `savedStones` for the title), the Hearth's bearing from a world cell, its flicker and the almanac's word by the count; pure |
 | `game/passage.ts` | crossings: a passage's fare (nothing once its `free` holds, half once its `half` does and half again for a Navigator), its next departure and its landing, the floor at the far end, the menu's line and the terms with their warning, and taking it (the fare, the clock, the landing, the company rested); pure |
 | `game/guilds.ts`, `game/ranks.ts` | a guild quest (`GuildQuest`); a company's rank, worked out from its done flags and kept once reached (`rank_<guild>`; `rankOf`, ranks.ts's, which reads the content alone); what a hall offers (a quest may wait for a flag, `after`), taking a quest and the report that pays it (gold, items, xp split among the living), an item taken at the first meeting whatever the rank; pure |
@@ -1045,7 +1046,7 @@ does.
 | `game/quests.ts` | `QuestDef`, `Chapter` and `ChapteredQuest`; `questLog` (the quests known, their pages, entries and goal, worked out from the world state and party), `questNews` (what changed between two looks) |
 | `game/game.ts` | `Game` (screen stack, save/load, interactions, the offer of rest, a den's choice to burn, attract mode: a new game the pilot plays, saved nowhere, until a key) and `ExploreScreen` |
 | `game/wilds.ts` | the wilderness features: what a feature gives (`giftOf`) and the id it is spent by (`spentId`, given on from `game/keys.ts`), the shrine, the cairn, the statue's answer and when the party may rest; pure |
-| `game/dens.ts` | dens: the brood's `until` (`denBurnt`, given on from `game/keys.ts`), the pace, the approach, the burning and its hoard, the look on first sight; pure |
+| `game/dens.ts` | dens: the look's key (`lookKey`, given on from `game/keys.ts`; the brood's `until`, `denBurnt`, is imported from there), the pace, the approach, the burning and its hoard, the look on first sight; pure |
 | `game/rifts.ts` | the Rift generator: a 12 by 12 Rift from a template, a Stone's material, an area's table and a seed (turned one of eight ways, its groups in its slots, its looks on their squares), its groups stopping and its tear going quiet once `until` holds; `riftWay`, the tear on a zone map that leads in, walked through as an exit is; pure |
 | `ui/viewport.ts` | the depth-layered first-person compositor, the hills and the ground drawn past one seen from below it (`standsAt`), the farmland's fields and hedges and the trees about the woods, the dead wood and the pinewoods, the glass trees and the chasm's drop, the ash and the ice through the year, a group drawn under the ice, the peaks and cliffs, the steppe, the dunes, the vines' hung trees and the volcano and its vents, a landmark drawn tall over its building's square and seen out to `LANDMARK_REACH` (Crowness Light, its lamp lit by night once its flag is held; a monastery, its bell towers over a wall and no lamp), the tents of a felt palette ('tent': a low felt wall under a pitched felt roof to a crown, its door a flap), the wall dressing and its rates (`DRESSING_RATES`, held by `tools/tests/art.ts`), the sky, the end of the world drawn as its look (pink where it has none) and the weather drawn over it |
 | `ui/frame.ts` | layout constants, status strip (time, date, the sky and its glyph), automap (whole, or a window round the party on the outdoors; a spent feature gone from it, a den standing or burnt), party cards, log, purse; the groups the automap marks (`markedGroups`: in view or near, and what Spirit Sense and Danger Sense mark) |
@@ -1082,10 +1083,13 @@ Decided by the builder for #896, each the owner's to overturn:
    walkthrough. A lazy array would have spared the readers, at the cost of a proxy.
 2. **The Shelf's three maps call `denBurnt` too.** They spelt the den's `until` by hand
    (`{ seen: 'downs_d2:d2_den' }`) where the other six imported it (six, as the review counted); now
-   all nine import it from `keys.ts`, as the issue has it, and the condition is the same.
+   all of them import it from `keys.ts`, as the issue has it (ten maps with Saltreach's A4, built after
+   the issue was filed), and the condition is the same.
 3. **Each old home gives its keys on** (`export { … } from './keys.ts'`), so no import moves but the
-   nine maps' and `game/guilds.ts`'s; `quests.ts` and `stones.ts` read no key and import nothing from
-   `keys.ts`, and `ranks.ts` still takes its two flags from `content/guilds.ts`.
+   ten maps' and `game/guilds.ts`'s (`dens.ts` gives on `lookKey` only: a map's stale route for
+   `denBurnt` fails the typecheck, not a load-order check three maps away); `quests.ts` and
+   `stones.ts` read no key and import nothing from `keys.ts`, and `ranks.ts` still takes its two
+   flags from `content/guilds.ts`.
 4. **`readId` spells an inscription itself** (a sign with a reading) and does not call
    `inscriptions.ts`'s `isInscription`: `keys.ts` loads nothing.
 5. **The alike-check becomes a check of `hasSkill`** (`tools/tests/skills.ts:199` on 1aefb823, the
