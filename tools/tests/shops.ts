@@ -10,7 +10,7 @@ import type { ItemDef } from '../../src/game/items.ts';
 import { skilled } from '../../src/game/skills.ts';
 import { businessEntries } from '../../src/ui/screens.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
-import { ok, headlessGame, drive } from './lib.ts';
+import { ok, headlessGame, drive, withDefs } from './lib.ts';
 
 type Shop = Extract<Feature, { kind: 'shop' }>;
 /** A company of the road's, with a Merchant standing if asked: Cassian, the sixth, learnt it. */
@@ -72,16 +72,13 @@ export function shops(): void {
   // A set of scales carried, a fixture item that does a Merchant's work (`ItemDef.skill`), is paid as a
   // Merchant is: sellPrice asks `skilled`, as the world does.
   const scales: ItemDef = { id: 'fx_scales', name: 'Scales', slot: 'none', price: 100, skill: 'merchant' };
-  ITEMS[scales.id] = scales;
-  try {
+  withDefs(ITEMS, [scales], () => {
     const carried = road(false);
     carried.members[2].pack.push(scales.id);
     const held = [road(true), road(false), fallen, carried].every((p) => (sellPrice(p, 30) === 20) === !!skilled(p, 'merchant'));
     ok(pays(carried) === '26 16 2 0 0' && skilled(carried, 'merchant')?.name === 'Wren' && held,
       `a set of scales carried is paid two thirds, as a Merchant is (${pays(carried)}), and sellPrice reads the Merchant as skilled() does, standing, down or carried`);
-  } finally {
-    delete ITEMS[scales.id];
-  }
+  });
   const g = headlessGame(4), harrow = MAP_DEFS.find((m) => m.id === 'harrow')!.features!.find((f): f is Shop => f.kind === 'shop')!;
   const sold = (merchantToo: boolean): number => {
     while (g.screens.length > 1) g.pop();

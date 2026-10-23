@@ -200,7 +200,7 @@ export function playChapter(w: Walk, chapter: Chapter, steps: readonly Step[], h
   for (const s of steps) {
     const v = quest(w), goal = v?.goal ?? null;
     const g = goal ? goalOf(goal) : undefined;
-    if (goal) WALKED.add(goal);
+    if (goal) walked(w.ok).add(goal);
     const tag = `${how}, ${chapter.title}, ${s.name}`;
     w.ok(!!g && g.chapter === chapter, `${tag}: the goal is the chapter's (${goal})`);
     if (!g || g.chapter !== chapter) return;
@@ -261,15 +261,20 @@ export function pilotRun(chapter: Chapter, { until = chapter.done, cap = 200_000
     where: `${g.world.zone?.name ?? g.maps[st.mapId]?.name ?? st.mapId} ${st.x},${st.y}`, level: companyLevel(g.party), goal, why: p.why[0] };
 }
 
-/** Every goal a run of `playChapter` has come to, in this process. */
-const WALKED = new Set<string>();
+/**
+ * Every goal a run of `playChapter` has come to, kept under the `ok` its walk was given: the runner
+ * gives each walkthrough one of its own, so what one walks is never another's, and a walkthrough run
+ * alone is the one the full run runs (#946).
+ */
+const WALKED = new WeakMap<Ok, Set<string>>();
+const walked = (ok: Ok): Set<string> => { let s = WALKED.get(ok); if (!s) WALKED.set(ok, (s = new Set())); return s; };
 
 /**
- * Every goal of every chapter given came up in some run: none is words no company is ever shown. An
- * area's walkthrough gives its own chapters, as a later area's goals are walked after it.
+ * Every goal of every chapter given came up in some run under `ok`, the walkthrough's: none is words
+ * no company is ever shown. An area's walkthrough gives the chapters its own runs walk whole.
  */
 export function everyGoalWalked(ok: Ok, chapters: readonly Chapter[] = THE_QUEST.chapters): void {
-  const missed = chapters.flatMap((c) => c.goals.filter((g) => !WALKED.has(g.text)).map((g) => `${c.id}: "${g.text}"`));
+  const seen = walked(ok), missed = chapters.flatMap((c) => c.goals.filter((g) => !seen.has(g.text)).map((g) => `${c.id}: "${g.text}"`));
   ok(!missed.length, `every goal of the one quest comes up in a run${missed.length ? ' -> ' + missed.join('; ') : ''}`);
 }
 

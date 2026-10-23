@@ -2611,7 +2611,7 @@ Decided by delegate for #748, each the owner's to overturn:
    eighth; the calls come at the end of the second, fourth and on, and act from the next round.
 4. **Standing down pays nothing,** as the fled do, and the log says *2 Core Sentries stand down.*
 5. **The bots kill the panel first** (`markOf`), as #752 asks; a tool may turn them to Vask first
-   or to the sentries as they come (`ANSWER.clock`).
+   or to the sentries as they come (an `answer` with another `clock`, passed to the call, #946).
 6. **Vask's odds wait on #761.** On the test monsters the plan sizes the Heart by, the gate's bot wins
    10% with the Hands first, 16% with Vask first and 5% with the sentries fought as they come (23%
    with no clock; MONSTERS §9.3): the clock halves the odds as §8 has it, the whole far under them.

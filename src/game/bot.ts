@@ -99,14 +99,14 @@ export const asSeen: Sees = (s, m, trait) => {
  * cheapest spell the member can afford that lifts it; none if no one need be freed. One of the back
  * row with no spells is left to wake or break free of itself.
  */
-export function wakeWith(p: Party, c: Character): { spellId: string; target: number } | undefined {
+export function wakeWith(p: Party, c: Character, answer: BotAnswer = ANSWER): { spellId: string; target: number } | undefined {
   const cures = c.spells.map(spell).filter((x) => x.context !== 'explore' && x.target === 'ally' && x.sp <= c.sp).sort((a, b) => a.sp - b.sp);
-  const who = freeFirst(p, (m) => cures.find((x) => x.cure?.some((k) => frees(m, k))));
+  const who = freeFirst(p, (m) => cures.find((x) => x.cure?.some((k) => frees(m, k, answer))));
   return who && { spellId: who.x.id, target: who.j };
 }
 
-/** Whether `m` lies under what a cure of `k` lifts that the bots free: sleep, and a hold while ANSWER.hold. */
-const frees = (m: Character, k: string): boolean => (k === 'asleep' || (k === 'paralysed' && ANSWER.hold)) && hasCondition(m, k);
+/** Whether `m` lies under what a cure of `k` lifts that the bots free: sleep, and a hold where `answer.hold`. */
+const frees = (m: Character, k: string, answer: BotAnswer): boolean => (k === 'asleep' || (k === 'paralysed' && answer.hold)) && hasCondition(m, k);
 
 /** Of the members not down that `lift` frees, the one the bots free first (`wakeWith`), and with what. */
 function freeFirst<T>(p: Party, lift: (m: Character) => T | undefined): { x: T; j: number } | undefined {
@@ -117,25 +117,30 @@ function freeFirst<T>(p: Party, lift: (m: Character) => T | undefined): { x: T; 
 
 /**
  * The foe the bots aim at first among `foes`: under the clock, one at its panel, since their fall
- * stops the calls and holds the light (`Clock`, ANSWER.clock); then a leader, since the people break
+ * stops the calls and holds the light (`Clock`, `answer.clock`); then a leader, since the people break
  * at its fall, else a caller while the fight has room for its call, since its fall stops the fight
  * growing (`canCall`), else one whose touch takes spell points (`drain: 'sp'`, the lights), since its
  * fall keeps the casters' points. A leader, a caller and a light only where `sees` knows them so.
  */
-export function markOf(s: CombatState, foes: readonly number[], sees: Sees = asWritten): number | undefined {
+export function markOf(s: CombatState, foes: readonly number[], sees: Sees = asWritten, answer: BotAnswer = ANSWER): number | undefined {
   const c = s.clock, called = c && (typeof c.calls === 'string' ? c.calls : c.calls.id);
-  const first = !c || ANSWER.clock === 'leader' ? undefined : foes.find((f) => (ANSWER.clock === 'panel' ? c.panel.includes(s.monsters[f].def.id) : s.monsters[f].def.id === called));
+  const first = !c || answer.clock === 'leader' ? undefined : foes.find((f) => (answer.clock === 'panel' ? c.panel.includes(s.monsters[f].def.id) : s.monsters[f].def.id === called));
   const knows = (f: number, t: Trait): boolean => sees(s, s.monsters[f], t);
   return first ?? foes.find((f) => isLeader(s, s.monsters[f]) && knows(f, 'leader')) ?? foes.find((f) => canCall(s, s.monsters[f]) && knows(f, 'calls')) ?? foes.find((f) => s.monsters[f].def.drain === 'sp' && knows(f, 'drain'));
 }
 
 /**
- * The bots' answers a tool may switch off to see a fight without one: the sweep's (`mendLines`,
+ * The bots' answers, which a tool may turn off to see a fight without one: the sweep's (`mendLines`,
  * #545), the hold's (`wakeWith`, #549) and the breath's (`breathGuard`, #549); and the clock's
  * (`markOf`, #748), the panel first, which a tool may turn to the leader first or to what the clock
  * calls as it comes, letting the clock run.
  */
-export const ANSWER = { sweep: true, hold: true, breath: true, clock: 'panel' as 'panel' | 'leader' | 'called' };
+export type BotAnswer = Readonly<{ sweep: boolean; hold: boolean; breath: boolean; clock: 'panel' | 'leader' | 'called' }>;
+/**
+ * The bots' answers as play has them, every one on and the panel first. Frozen: a tool that wants
+ * another passes it, as `{ ...ANSWER, sweep: false }`, to the call that reads it (#946).
+ */
+export const ANSWER: BotAnswer = Object.freeze({ sweep: true, hold: true, breath: true, clock: 'panel' });
 
 /**
  * The fallen member of the front row the bots raise first while a foe that breathes stands (#549): a
@@ -143,8 +148,8 @@ export const ANSWER = { sweep: true, hold: true, breath: true, clock: 'panel' as
  * casters, and raised it takes the front again. None where the front row has as many standing as the
  * back, or none of it is only fallen. A breather only where `sees` knows it breathes.
  */
-export function breathGuard(s: CombatState, p: Party, sees: Sees = asWritten): number | undefined {
-  if (!ANSWER.breath || !aliveMonsters(s).some((f) => s.monsters[f].def.sweep?.element && !s.monsters[f].under && sees(s, s.monsters[f], 'breath'))) return undefined;
+export function breathGuard(s: CombatState, p: Party, sees: Sees = asWritten, answer: BotAnswer = ANSWER): number | undefined {
+  if (!answer.breath || !aliveMonsters(s).some((f) => s.monsters[f].def.sweep?.element && !s.monsters[f].under && sees(s, s.monsters[f], 'breath'))) return undefined;
   const up = (back: boolean): number => p.members.filter((m, j) => (j >= FRONT_ROW) === back && !isDown(m)).length;
   if (up(true) <= up(false)) return undefined;
   const j = p.members.findIndex((m, k) => k < FRONT_ROW && hasCondition(m, 'unconscious') && !hasCondition(m, 'dead') && !hasCondition(m, 'stoned'));
@@ -157,9 +162,9 @@ export function breathGuard(s: CombatState, p: Party, sees: Sees = asWritten): n
  * that is more. So the front row's hit points are spread, none of it falls to one sweep, and the
  * sweep never turns on the back row. A sweep or a breath only where `sees` knows it.
  */
-export function mendLines(s: CombatState, p: Party, sees: Sees = asWritten): number[] {
+export function mendLines(s: CombatState, p: Party, sees: Sees = asWritten, answer: BotAnswer = ANSWER): number[] {
   const at = p.members.map((m) => m.maxHp * 0.4);
-  for (const f of ANSWER.sweep ? aliveMonsters(s) : []) {
+  for (const f of answer.sweep ? aliveMonsters(s) : []) {
     const m = s.monsters[f], d = m.def;
     if (d.sweep && sees(s, m, d.sweep.element ? 'breath' : 'sweep')) for (const { i } of sweptRow(p, m)) at[i] = Math.max(at[i], d.dice * d.sides + d.bonus);
   }
@@ -182,8 +187,8 @@ export function wakesMany(s: CombatState, x: SpellDef, f: number): boolean {
  * can afford none worth casting. Given `at`, the foe it is cast at, it lets sleepers lie (#853): no
  * spell over many that would wake one (`wakesMany`).
  */
-export function gateBlast(s: CombatState, c: Character, sees: Sees = asWritten, at?: number): SpellDef | undefined {
-  const foes = aliveMonsters(s), foe = at ?? markOf(s, foes, sees) ?? foes[0];
+export function gateBlast(s: CombatState, c: Character, sees: Sees = asWritten, at?: number, answer: BotAnswer = ANSWER): SpellDef | undefined {
+  const foes = aliveMonsters(s), foe = at ?? markOf(s, foes, sees, answer) ?? foes[0];
   if (foe === undefined) return undefined;
   const mult = (x: SpellDef): number => seenMult(s, s.monsters[foe], x.element);
   return c.spells.map(spell).filter((x) => x.context !== 'explore' && x.sp <= c.sp && x.dice && REACH[x.target] && foes.some((f) => seenMult(s, s.monsters[f], x.element) > 0) && (at === undefined || !wakesMany(s, x, at)))
@@ -292,16 +297,16 @@ const draughts = (p: Party, c: Character): ItemDef[] => [...c.pack, ...p.bag].ma
  * most; else, where no member who can act could free them by a spell, a cure draught for the one
  * `wakeWith` would free first. From the member's pack or the company's bag; none else.
  */
-export function drinkFor(s: CombatState, p: Party, c: Character, sees: Sees = asWritten): PartyAction | undefined {
+export function drinkFor(s: CombatState, p: Party, c: Character, sees: Sees = asWritten, answer: BotAnswer = ANSWER): PartyAction | undefined {
   const can = (does: (x: SpellDef) => boolean): boolean => p.members.some((o) => canAct(o) && o.spells.map(spell).some((x) => x.context !== 'explore' && x.sp <= o.sp && does(x)));
-  const lines = mendLines(s, p, sees), held = draughts(p, c);
+  const lines = mendLines(s, p, sees, answer), held = draughts(p, c);
   const low = p.members.map((m, j) => ({ m, j })).filter(({ m, j }) => !isDown(m) && m.hp < lines[j]).sort((a, b) => a.m.hp - b.m.hp)[0];
   if (low && !can((x) => !!x.heal && !x.raise)) {
     const heals = held.filter((d) => d.use?.heal).sort((a, b) => a.use!.heal! - b.use!.heal!);
     const d = heals.find((h) => low.m.hp + h.use!.heal! >= lines[low.j]) ?? heals.at(-1);
     if (d) return { type: 'use', itemId: d.id, target: low.j };
   }
-  const who = freeFirst(p, (m) => (can((x) => x.target === 'ally' && !!x.cure?.some((k) => frees(m, k))) ? undefined : held.find((d) => d.use?.cure?.some((k) => frees(m, k)))));
+  const who = freeFirst(p, (m) => (can((x) => x.target === 'ally' && !!x.cure?.some((k) => frees(m, k, answer))) ? undefined : held.find((d) => d.use?.cure?.some((k) => frees(m, k, answer)))));
   return who && { type: 'use', itemId: who.x.id, target: who.j };
 }
 
@@ -311,13 +316,14 @@ export function drinkFor(s: CombatState, p: Party, c: Character, sees: Sees = as
  * level 11 (`optsFor`, #865), the sleepers let lie by the whole company once one is (`letsLie`). Each
  * is tried on the resolver in turn and the first it takes is the turn; bracing it always takes. `sees`
  * is what it knows of the monsters: the gate's every trait as written, the game's auto-fight only
- * what the fight has shown (`asSeen`).
+ * what the fight has shown (`asSeen`); `answer` the bots' answers, play's (`ANSWER`) unless a tool
+ * asks another.
  */
-export function botTurn(s: CombatState, p: Party, rng: RngInstance, i: number, sees: Sees = asWritten, opts: Readonly<BotOpts> = {}): PartyAction {
+export function botTurn(s: CombatState, p: Party, rng: RngInstance, i: number, sees: Sees = asWritten, opts: Readonly<BotOpts> = {}, answer: BotAnswer = ANSWER): PartyAction {
   // The game's bot flees a fight it has lost (#723); the gate's never does, since a flight only turns
   // a win into a loss and the gate measures whether a fight is winnable.
   if (sees !== asWritten && beaten(s, p) && partyAct(s, p, rng, { type: 'flee' })) return { type: 'flee' };
-  const c = p.members[i], o = optsFor(c, opts), foes = aliveMonsters(s), lead = markOf(s, foes, sees), foe = lead ?? foes[0];
+  const c = p.members[i], o = optsFor(c, opts), foes = aliveMonsters(s), lead = markOf(s, foes, sees, answer), foe = lead ?? foes[0];
   // With sleep on, sleepers are let lie (#853): a blade at an awake foe it reaches where there is one,
   // a spell at an awake foe where one stands, and none over many that would wake a sleeper; only while
   // another of the company can strike (`striker`, #865), and only then does it sleep a group. The
@@ -326,14 +332,14 @@ export function botTurn(s: CombatState, p: Party, rng: RngInstance, i: number, s
   const aim = up.length ? (lead !== undefined && up.includes(lead) ? lead : up[0]) : foe;
   const blade = near.length ? (lead !== undefined && near.includes(lead) ? lead : near[0]) : lead !== undefined && canReach(s, c, lead) ? lead : foes.find((f) => canReach(s, c, f)) ?? foe;
   const known = c.spells.map(spell).filter((x) => x.context !== 'explore' && x.sp <= c.sp);
-  const lines = mendLines(s, p, sees), guard = breathGuard(s, p, sees);
+  const lines = mendLines(s, p, sees, answer), guard = breathGuard(s, p, sees, answer);
   const low = guard !== undefined ? { m: p.members[guard], j: guard } : p.members.map((m, j) => ({ m, j })).filter(({ m, j }) => !isDown(m) && m.hp < lines[j]).sort((a, b) => a.m.hp - b.m.hp)[0];
   const mend = known.filter((x) => x.heal && !x.raise).sort((a, b) => (b.heal ?? 0) - (a.heal ?? 0))[0];
-  const blast = gateBlast(s, c, sees, lie ? aim : undefined);
+  const blast = gateBlast(s, c, sees, lie ? aim : undefined, answer);
   const took = (a: PartyAction): PartyAction | undefined => (partyAct(s, p, rng, a) ? a : undefined);
   let a: PartyAction | undefined;
   if (low && mend && (a = took({ type: 'cast', spellId: mend.id, target: low.j }))) return a;
-  const sleeper = wakeWith(p, c);
+  const sleeper = wakeWith(p, c, answer);
   if (sleeper && (a = took({ type: 'cast', ...sleeper }))) return a;
   const burn = gateBurn(s, c, lie);
   if (burn && (a = took({ type: 'cast', ...burn }))) return a;
@@ -342,7 +348,7 @@ export function botTurn(s: CombatState, p: Party, rng: RngInstance, i: number, s
   const sleep = o.sleep && lie ? sleepWith(s, c, sees) : undefined;
   if (sleep && (a = took({ type: 'cast', spellId: sleep.spell.id, target: sleep.target }))) return a;
   if (blast && (a = took({ type: 'cast', spellId: blast.id, target: aim }))) return a;
-  const drink = o.drink ? drinkFor(s, p, c, sees) : undefined;
+  const drink = o.drink ? drinkFor(s, p, c, sees, answer) : undefined;
   if (drink && (a = took(drink))) return a;
   if (canAttackFromRow(c, i) && (a = took({ type: 'attack', target: blade }))) return a;
   const brace: PartyAction = { type: 'defend' };
