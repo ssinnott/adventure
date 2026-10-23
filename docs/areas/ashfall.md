@@ -64,12 +64,12 @@ F9, G9 and H9 (#522) are laid whole in Cindercoast, E11 whole in the Ember Waste
 G12 whole in Fire Mountain, which leaves the zones' seeds as they were: the atlas's walk gives most
 of F9's land to the Waste and the Wold, H9's pines to Sheer Point and 594 of H12's squares to the
 High Spine, and a laid map takes its zone (§9, #522's 1 and 27). F12 (#836) is laid whole in the
-Ember Waste, which the atlas gives 306 of its 445 land squares to Fire Mountain's 139: counted by
-`worldGrid` before and after, Fire Mountain falls from 4,193 land squares to 4,054 and the Waste
-rises from 4,598 to 5,318, taking F12's 139 and its 579 of void, which the world map paints as
-grass, with 2 squares elsewhere. Laying Old Cinder (#515) moves no square: its two plates, at
-190,324 and 190,330, are places on the atlas, which the grid does not read. Nor does laying the
-Ember Stone (#516): its plate, at 176,348, is another place.
+Ember Waste, which `worldGrid`, the built maps laid, gives 304 of its 445 land squares to Fire
+Mountain's 141: counted before and after, Fire Mountain falls from 4,195 land squares to 4,054 and
+the Waste rises from 4,596 to 5,315, taking F12's 141 and its 579 of void, which the world map
+paints as grass, less one square that goes to the Wold at D11. Laying Old Cinder (#515) moves no
+square: its two plates, at 190,324 and 190,330, are places on the atlas, which the grid does not
+read. Nor does laying the Ember Stone (#516): its plate, at 176,348, is another place.
 
 **The grid** (EXPANSION §8.2; docs/areas/shelf.md §1). Ashfall is the E to H columns from row 9 to
 row 12, with a sliver in I. The land worth a map is six boxes: H10 and G10 along the Sound, the
@@ -1464,7 +1464,7 @@ half, with the wilderness features (#45); no more than one point in four is a si
     west from I12's 0,5 onto H12's 31,5, which says "Fire Mountain." and the mountain's own harder
     words to a company at 23 (§9, #522's 21). G12's west, 0,0 to 0,31 (200,350 to 200,381), meets
     F12's east (#836, §12) square for square: ash at rows 0 to 10, mountain at 11 to 17 and void
-    from 18. The south edges of H12 and G12 are the rim, void, and the world ends past both.
+    from 18. The south edges of H12 and G12 are the rim, the world ending in the void past both.
     The outdoors test follows the neighbours: F10's, G10's and H10's north edges, E10's south edge,
     F11's west edge, I9's west edge and E9's east edge no longer end the world, and are pinned anew
     (§9, #522's 17); so are I11's west edge, I12's west edge, G11's east and south edges and H10's
@@ -3180,15 +3180,18 @@ Decided by the builder for #836, each the owner's to overturn:
 1. **The bounds' brief is §12,** for F12, the enclave and the lair, each in §4's form, in three pull
    requests: F12 with the brief (#828's 3, one box), then the enclave, then the lair once #847's
    powers and the Grave Drake's drawing are in.
-2. **F12 is the Waste's, whole,** at the Waste's 25–26: by the atlas the Waste holds 306 of its 445
-   land squares, 122 of its 194 walkable, and Fire Mountain 139 and 72. A company walking in from
-   G12 hears the Waste named, as one from G11 into F11 does; from F11 nothing is said.
+2. **F12 is the Waste's, whole,** at the Waste's 25–26: with the built maps laid (`worldGrid`) the
+   Waste holds 304 of its 445 land squares and 120 of its 194 walkable, Fire Mountain 141 and 74. A
+   company walking in from G12 hears the Waste named, as one from G11 into F11 does; from F11
+   nothing is said.
 3. **F12 holds no group.** The lead's room is 0.0446 of a level: a clear leaves a company at 27.3554
    against the 27.4 that `OVER_ROAD` names Ashfall at (#738). The curve's rise rule asks a box's
-   hardest at 26, and the roster's one 26 that is not `after` is #22's drakeling, which E11, H11,
-   H12 and G12 hold six to a box: six more would take the lead to 27.3891 and repeat the four; two
-   sentries after the Stone would take it to 27.4004, past 27.4. Ashfall's clear is 1.85 times its
-   ask already; the enclave and the lair are the bounds' fights.
+   hardest at 26, and the roster's one 26 that is neither a boss nor `after` is #22's drakeling,
+   which E11, H11, H12 and G12 hold six to a box: six more would take the lead to 27.3891, inside
+   27.4, and repeat the four. A smaller group is no fight at 25 (three drakelings or a lone sentry
+   29.9 fights to a rest, a lone flue walker 21.0, where the gate's limit is 13.75), and two
+   sentries after the Stone would take the lead to 27.4004, past 27.4. Ashfall's clear is 1.85 times
+   its ask already; the enclave and the lair are the bounds' fights.
 4. **F12's wilderness features are a cairn and a man of stone with a riddle,** answered echo (+1
    intellect once), Ashfall's first statue; no camp (F12 holds no group) and no shrine (ten of
    Ashfall's maps hold one).
@@ -3446,9 +3449,9 @@ Owed by the country behind as built (#522, §4.10, §8):
 
 - **The edges that still end the world:** F9's, G9's and H9's north edges are the sea against F8, G8
   and H8, not built; E11's west and south edges end against D11 and E12; the south edges of H12 and
-  G12 are the rim, with void past them, and so are F12's west and south edges, against E12 and the
-  rim (#836, §12), G12's west edge meeting F12's east since. H9's east edge is the Sheer, shut to I9
-  (§9, #522's 14).
+  G12 are the rim, with void past them, and F12's west edge is the mountain and the void against E12
+  and its south edge the void at the grid's foot (#836, §12), G12's west edge meeting F12's east
+  since. H9's east edge is the Sheer, shut to I9 (§9, #522's 14).
 - **The Ember Waste's warning** ("The coast is behind you still.") reads wrong to a company three or
   more under its floor walking into F12 from Fire Mountain's G12 (#836), as into F11 from G11
   (#514): no coast is behind it there. The walkthrough walks the warning from G10 (§4.9), so the
@@ -3478,9 +3481,10 @@ for F12, the enclave and the lair; each pull request builds from it and adds its
 
 ### 12.1 What every box keeps
 
-- **F12 is the Waste's, whole,** laid in its one zone at the Waste's 25–26 (§9, #836's 2): by the
-  atlas the Waste holds 306 of its 445 land squares and Fire Mountain 139. A company walking in from
-  Fire Mountain's G12 hears the Waste named, as from G11 into F11; from F11 nothing is said.
+- **F12 is the Waste's, whole,** laid in its one zone at the Waste's 25–26 (§9, #836's 2): with the
+  built maps laid the Waste holds 304 of its 445 land squares and Fire Mountain 141. A company
+  walking in from Fire Mountain's G12 hears the Waste named, as from G11 into F11; from F11 nothing
+  is said.
 - **The seams agree with the built boxes square for square,** each corner worked from the built
   letters first. F12's north edge meets F11's south edge letter for letter, the mountain at 0 to 3
   and the ash and the flow open at 4 to 31: its 4,0 is ash, as F11's 4,31 is, where the atlas has
@@ -3506,10 +3510,10 @@ for F12, the enclave and the lair; each pull request builds from it and adds its
   11,960 gold (11,760), and a company entering at 24 and three quarters clearing it left at 27.3554
   by the curve's own count, under the 27.4 that `OVER_ROAD` names Ashfall at, accepted as built
   (#738); the line is 27 (`LEAD`). F12 pays no xp and 200 gold: with it a clear gives 35,919 xp and
-  12,160 gold, and the company still leaves at 27.3554. Six drakelings would take it to 27.3891 and
-  two sentries to 27.4004, past 27.4 (§9, #836's 3). The enclave and the lair are held to their own
-  bands and counted in no clear (`tools/tests/curve.ts`), so the lead stays at 27.3554 to the end of
-  #836.
+  12,160 gold, and the company still leaves at 27.3554. Six drakelings would take it to 27.3891,
+  inside 27.4 but the four boxes' group again, and two sentries to 27.4004, past it (§9, #836's 3).
+  The enclave and the lair are held to their own bands and counted in no clear, so the lead stays at
+  27.3554 to the end of #836 (`tools/tests/curve.ts`).
 - **The doors** of the enclave and the lair are left bare, each a square of solid ground with the
   same either side along its face, its way walked to and nothing within four squares: the lair's in
   the dam's rock, the enclave's in the mountain (§12.3, §12.4).
@@ -3531,7 +3535,7 @@ for F12, the enclave and the lair; each pull request builds from it and adds its
 - **Encounters.** None (§12.1).
 - **The ways in and out.** In over the north edge from F11's ash, columns 4 to 31, and over the east
   edge from G12's, rows 0 to 10. West and south the world ends.
-- - **The secret and its hint.** A knapper's store in the rock under the rim, the best of the flow
+- **The secret and its hint.** A knapper's store in the rock under the rim, the best of the flow
   glass wrapped in hide on a ledge with a purse beside it. The hint: flakes of black glass swept
   into a heap at the rock's foot and none anywhere else on the ash.
 - **New here.** Ashfall's first statue and riddle, the man of stone's, +1 intellect once; its
