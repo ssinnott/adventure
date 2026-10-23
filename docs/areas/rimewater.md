@@ -1487,8 +1487,8 @@ docs/areas/kilns.md §9, #439's 2 and 3):
 
 The one artifact of #832's boxes, Rimewater's and the Whitespine's together, among the bounds' eight
 (DESIGN §9); docs/areas/whitespine.md §6 points here. Found and never told: no `seek` quest, no line
-in the journal and no mark on the world map. #832 has built the lair, the Spittal, its door and the
-rumour (§12.5).
+in the journal and no mark on the world map. #832 has built the lair, the Spittal, with its door
+and the rumour (§12.5).
 
 - **What it is:** *A grey robe made for someone taller and thinner, the sleeves past your fingers. /
   Whoever wore it last walked out of the ice in it, and did not lie down again.*
@@ -2586,11 +2586,12 @@ Decided by the builder for #832, each the owner's to overturn:
     the days broken off at the round cap; as set they run 11.4 rounds with 7%. Its row gives why it
     stands off the line (`offLine`), its mending named, as the Steiger's does.
 35. **Nothing in the lair is had without the Infirmarer's fight:** the Spittal holds its looks and
-    the way down and no group, chest or secret. The secret is on the Infirmary past the Infirmarer:
-    the cold room behind the ward's east wall, two by three with its door at 10,9, where the ones
-    who did not wake were laid out; the hint is the sheet that stirs on the bed by that wall. It
-    holds 500 gold, an Elixir and a Sapphire Vial, the dearest healing and spell draught that Rime
-    Lodge's Provisioner's sells.
+    the way down and no group, chest or secret, so a company of any level may walk its looks to the
+    stair; the door warns it. The secret is on the Infirmary past the Infirmarer: the cold room
+    behind the ward's east wall, two by three with its door at 10,9, where the ones who did not wake
+    were laid out; the hint is the sheet that stirs on the bed by that wall. It holds 500 gold, an
+    Elixir and a Sapphire Vial, the dearest healing and spell draught that Rime Lodge's
+    Provisioner's sells.
 36. **The Wakerobe lies alone in the locker beside the last bed,** where a man sits up against the
     bolster, long dead, his eyes open: the one who came up through the ice in it and would not lie
     down (DESIGN §9). The walkthrough asserts that no shop, chest, cairn or statue holds it
@@ -3072,6 +3073,9 @@ written `%`, as Cairnmoor's P7 and P8 were (docs/areas/cairnmoor.md §12).
 - **Reward.** The Wakerobe, one in the world, found and never sold, in the locker beside the last
   bed (§6); and 500 gold, an Elixir and a Sapphire Vial in the cold room, the dearest of their kinds
   that Rime Lodge's Provisioner's sells.
+- **The rumour.** The lodge-keeper at Rime Lodge (§6): at every meeting after her first, her own two
+  lines and two more of the one who came up through the ice in a grey robe and walked out into the
+  snow, words only (§9, #832's 37). It marks nothing on the world map.
 - **Pay.** Counted in no clear (`tools/tests/curve.ts`): the Infirmarer's 20,373 xp, 3,396 a member,
   and 500 gold.
 - **As built** (#832, 23 October): `spittal` and `spittal2`, a dungeon of two levels of 16 by 16,
@@ -3097,4 +3101,6 @@ written `%`, as Cairnmoor's P7 and P8 were (docs/areas/cairnmoor.md §12).
   near both the floor and the top. Density: the Spittal every square within 7 steps of a point (55
   of 55), the furthest 3, no sign among its 8 points; the Infirmary (69 of 69) the furthest 4, no
   sign among its 11. By the curve's count it pays 3,396 xp a member and 500 gold, in no clear, and
-  the lead over the road stays at 22.9571. K12 changes at the door alone (§9, #832's 32).
+  the lead over the road stays at 22.9571. K12 changes at the door alone (§9, #832's 32). At Rime
+  Lodge the lodge-keeper's first meeting sets `rl_keeper_met`, and each meeting after it gives her
+  two lines and the rumour's two, 9 of the say box's 14 lines (§9, #832's 37).

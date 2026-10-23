@@ -1304,8 +1304,8 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const bare = worldGrid(ATLAS, MAP_DEFS.filter((d) => d.id !== K12.id));
   const land = ATLAS.zones[bare.zone[(k12.y + 15) * bare.width + k12.x + 2]]?.id;
   const near = [...(K12.features ?? []), ...(K12.encounters ?? [])].filter((f) => Math.abs(f.x - 2) + Math.abs(f.y - 15) <= 4);
-  ok(K12.rows[15][2] === '"' && vale.has(at(k12, 2, 14)) && vale.has(at(k12, 2, 15)) && land === 'monksvale' && !near.length,
-    `the rim's face at 2,15, Monks' Vale's land by the atlas (${land}), is the lair's door, drawn as stone and walked to from 2,14, nothing within four squares${near.length ? ` (not ${near.map((f) => `${f.x},${f.y}`).join(' ')})` : ''}`);
+  ok(K12.rows[15][2] === '"' && K12.rows[15][1] === 'M' && K12.rows[15][3] === 'M' && K12.rows[16][2] === 'M' && vale.has(at(k12, 2, 14)) && vale.has(at(k12, 2, 15)) && land === 'monksvale' && !near.length,
+    `the rim's face at 2,15, Monks' Vale's land by the atlas (${land}), is the lair's door, drawn as stone and walked to from 2,14 alone, nothing within four squares${near.length ? ` (not ${near.map((f) => `${f.x},${f.y}`).join(' ')})` : ''}`);
 
   // East of the spur: south from K11's 27,31 onto K12's 27,0, walked; the old pines and the cairn, which
   // the vale's side never reaches.
@@ -1551,10 +1551,10 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     delete w.party.flags.rl_keeper_met;
     w.world.travel('rime_lodge', keeper.x, keeper.y);
     const firstMeeting = meet(keeper, w.party, heard(w.world, keeper)).text, nextMeeting = meet(keeper, w.party, heard(w.world, keeper)).text;
-    ok(!firstMeeting.includes('grey robe') && nextMeeting.includes('"One came up through the ice in a grey robe too long in the arm. He would not take a blanket, nor sleep, nor say where he had been."')
+    ok(firstMeeting === keeper.lines.join('\n\n') && nextMeeting.startsWith(`${keeper.lines.join('\n\n')}\n\n`) && nextMeeting.includes('"One came up through the ice in a grey robe too long in the arm. He would not take a blanket, nor sleep, nor say where he had been."')
       && nextMeeting.includes('"The third night he walked out into the snow. It was not his robe, I think."') && !words.sets && !words.choice
       && wrap(nextMeeting, SAY_W).length <= SAY_LINES && !JSON.stringify(questLog(w.world.state, w.party)).includes('grey robe'),
-      `the lodge-keeper says nothing of the grey robe at her first meeting, and at the next speaks of the one who came up in it: words only, in no quest, ${wrap(nextMeeting, SAY_W).length} of the say box's ${SAY_LINES} lines`);
+      `the lodge-keeper says her own two lines and nothing of the grey robe at her first meeting, and at the next her two lines and then of the one who came up in it: words only, in no quest, ${wrap(nextMeeting, SAY_W).length} of the say box's ${SAY_LINES} lines`);
     listen(w);
     delete w.party.flags.rl_keeper_met;
     w.party.members.forEach((m, i) => { m.level = was[i]; });
