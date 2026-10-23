@@ -51,7 +51,7 @@ export const WOLD_D8: MapDef = {
   // The tents are white felt.
   palette: { wall: '#e4dac8', wallDark: '#a89c86', door: '#5a3a24', wallStyle: 'tent' },
   rows: [
-    'sssssss^^sssssssssssssssssssssss',
+    'Mssssss^^sssssssssssssssssssssss',
     'ssssssssssssssssssssssssssssssss',
     'ssssssssssssssssssssssssssssssss',
     'sssssssssssssssssss^^sssssssssss',

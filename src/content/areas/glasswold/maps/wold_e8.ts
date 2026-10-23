@@ -4,8 +4,8 @@
 // that no Rider built; black rocks at the water's edge, a rope's end in a crack and a sea-chest wedged in
 // the cleft behind it. A pride hunts the mares on the strand, vultures with it and more on the boat's
 // ribs; at its north end two basilisks lie in the sun and a gull stands stone. Offshore the island the Riders swim their mares to,
-// where no lion goes, and the south end of another; E7 and F8 are the sea and are not built, so the world
-// ends past the north and east edges.
+// where no lion goes, and the south end of another, which runs on north into E7 (#833); F8 is the sea and
+// is not built, so the world ends past the east edge.
 // Cut from the atlas by tools/scaffold.ts, with a bar of shallows out to each island for a swimmer;
 // docs/areas/glasswold.md §4.9 is its brief (#534).
 import type { MapDef } from '../../../../game/map.ts';

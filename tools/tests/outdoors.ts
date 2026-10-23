@@ -64,7 +64,7 @@ const SEAMS_AS_BUILT: readonly AsBuilt[] = [
   { seam: 'upperwater_c2/upperwater_c3', walk: '26 29-31', why: 'the end of C3\'s ring stands as mountains against C2\'s grass, C2\'s own mountain meeting it at 27 and 28' },
   { seam: 'upperwater_c3|downs_d3', walk: '0-10', why: 'the Upper Water\'s ring stands as mountains against D3\'s grass under the cliff' },
   { seam: 'upperwater_c3/delta_c4', walk: '31', why: 'C3\'s ring\'s mountain at its corner stands over C4\'s grass' },
-  { seam: 'saltings_c7/wold_c8', walk: '28-31', why: 'the steppe where the Scarp\'s lip bends north at C8\'s east end lies under C7\'s ring' },
+  { seam: 'saltings_c7/wold_c8', walk: '28-30', why: 'the steppe where the Scarp\'s lip bends north at C8\'s east end lies under C7\'s ring' },
   { seam: 'upperwater_b3|upperwater_c3', water: '12', why: 'Rietum\'s diep runs in from B3 against the sluice-house on C3\'s west edge' },
   { seam: 'upperwater_b3/delta_b4', walk: '12-13 15', water: '13 15', why: 'the stream steps a square east at the line, and B3\'s trees end a square after B4\'s' },
   { seam: 'delta_b4|delta_c4', walk: '8', water: '8', why: 'the shore steps a square at the line, B4\'s shallows against C4\'s sand' },
@@ -132,12 +132,8 @@ const SEAMS_AS_BUILT: readonly AsBuilt[] = [
 const OPEN_ON_NOTHING: readonly OnNothing[] = [
   // Thornmark.
   { edge: 'deepthorn_h3 south', open: '14-16', why: 'H4 is a crumb, left unbuilt (#828)' },
-  // Saltreach.
-  { edge: 'saltings_d6 south', open: '0-1', why: 'D7 is unbuilt: #833 builds it' },
-  { edge: 'saltings_c7 east', open: '0-18', why: 'D7 is unbuilt: #833 builds it' },
   // Wrackholm.
   { edge: 'wrackholm_e6 north', open: '15-31', why: 'E5 is unbuilt: #835 builds it' },
-  { edge: 'wrackholm_e6 south', open: '13-26', why: 'E7 is unbuilt: #833 builds it' },
   { edge: 'wrackholm_f6 north', open: '0-18', why: 'F5 is unbuilt: #835 builds it' },
   { edge: 'wrackholm_f6 south', open: '1-10 13-15 17-19', why: 'F7 is unbuilt: #835 builds it' },
   // The Kilns.
@@ -167,10 +163,8 @@ const OPEN_ON_NOTHING: readonly OnNothing[] = [
   { edge: 'wold_d10 south', open: '0-31', why: 'D11 is the Glass, the reach, shut until Phase 1.6' },
   { edge: 'wold_d10 west', open: '0-14 23-31', why: 'C10 is the Glass, the reach, shut until Phase 1.6' },
   { edge: 'wold_d9 west', open: '0-31', why: 'C9 is the Glass, the reach, shut until Phase 1.6' },
-  { edge: 'wold_d8 north', open: '0-31', why: 'D7 is unbuilt: #833 builds it' },
   { edge: 'wold_c8 south', open: '0-31', why: 'C9 is the Glass, the reach, shut until Phase 1.6' },
   { edge: 'wold_b9 east', open: '0-13 27', why: 'C9 is the Glass, the reach, shut until Phase 1.6' },
-  { edge: 'wold_e8 north', open: '0-1 13-19', why: 'E7 is unbuilt: #833 builds it' },
   // Hearth Isle.
   { edge: 'hearthisle_h6 south', open: '19-27', why: 'H7 is the sea, where #828 plans no box' },
 ];

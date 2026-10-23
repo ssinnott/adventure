@@ -1015,7 +1015,9 @@ says speed (§9, #861's 8).
 - **The scraps** of shore in the boxes round the isle: E5 (74 squares), F5 (69), F7 (57) and E7
   (34), 234 in all and every one walkable, shingle and grass at the water's edge. Each goes with
   its box's edge where E6 or F6 reaches it, and the rest stays void: a strip of beach with nothing
-  on it (DESIGN §1).
+  on it (DESIGN §1). E7's is laid in the Wold's box since, whole (#833): no road joins Wrackholm
+  and the Glasswold, so the isle's tip stands there as rocks across deep water, and E6's south
+  shore at 13 to 26, its row 31, is shallows (docs/areas/glasswold.md §12.3).
 - **The Dead-Drop** below the ship, which is Phase 4's (#22): this act builds the hatch and one
   room, no more. Its three levels, the drop, the vaults and the counting house, are built since
   (docs/areas/dead_drop.md §4.1 to §4.3).
