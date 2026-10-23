@@ -12,6 +12,7 @@ import { HIGHMOOR_P7 } from './maps/highmoor_p7.ts';
 import { HIGHMOOR_P8 } from './maps/highmoor_p8.ts';
 import { CAIRNS } from './maps/cairns.ts';
 import { CAIRNS2 } from './maps/cairns2.ts';
+import { CARN_FADA } from './maps/carn_fada.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { QUESTS } from './quests.ts';
@@ -21,7 +22,7 @@ import { GUILDS } from './guilds.ts';
 
 export const AREA = {
   id: 'cairnmoor' as const,
-  maps: [HIGHMOOR_N7, CAIRNFIELD_N8, HIGHMOOR_O7, HIGHMOOR_O8, CAIRNFIELD_M7, CAIRNFIELD_M8, HIGHMOOR_P7, HIGHMOOR_P8, CAIRNFIELD_L8, CAIRNS, CAIRNS2],
+  maps: [HIGHMOOR_N7, CAIRNFIELD_N8, HIGHMOOR_O7, HIGHMOOR_O8, CAIRNFIELD_M7, CAIRNFIELD_M8, HIGHMOOR_P7, HIGHMOOR_P8, CAIRNFIELD_L8, CAIRNS, CAIRNS2, CARN_FADA],
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,
