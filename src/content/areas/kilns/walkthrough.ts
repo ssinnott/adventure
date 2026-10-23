@@ -1978,10 +1978,10 @@ function crewOpen(ok: (cond: boolean, msg: string) => void): void {
  * P5's is. The shore under the port (L7): south from L6's 28,31, walked, nothing said; the sea-coaler and
  * his word on the dunes, the box's groups won at its floor, the fire clear of both; the chamber found from
  * the kerbstone out of the ring, two by two behind the mound's door, shut to the four ways but its door;
- * east into the Cairnfield, named with its warning; the west edge open at its corner square alone. The
- * strip's north end (P4): east from O4's 31,11, walked; the spring-head, a cell of one square, found from
- * the rushes and shut as the others are; the south pocket walked from P5 alone, and the corner round O4's
- * 31,31. Once the tear is closed the two boxes' slag strays come back no more.
+ * east into the Cairnfield, named with its warning; the west edge shut, and L6's corner square with it.
+ * The strip's north end (P4): east from O4's 31,11, walked; the spring-head, a cell of one square, found
+ * from the rushes and shut as the others are; the south pocket walked from P5 alone, and the corner round
+ * O4's 31,31. Once the tear is closed the two boxes' slag strays come back no more.
  */
 function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const w = newWalk(ok), out = buildMaps()[OUTDOORS];
@@ -2136,7 +2136,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     `south from L6's 28,31 onto L7's 28,0, walked, and the land not named again (${said(shore)})`);
   listen(w);
   const strand = reach([L7.start.x, L7.start.y], {}, undefined, l7);
-  ok(strand.size > 150 && [[0, 0], [1, 1], [10, 2], [15, 5], [22, 3], [25, 4], [31, 10]].every(([x, y]) => strand.has(at(x, y, l7))), `the shore (${strand.size} squares), the knoll, the dunes, the fire, the spill, the kerbstone and the seam's last square are all walked to on foot from the way in`);
+  ok(strand.size > 150 && [[1, 1], [10, 2], [15, 5], [22, 3], [25, 4], [31, 10]].every(([x, y]) => strand.has(at(x, y, l7))), `the shore (${strand.size} squares), the knoll, the dunes, the fire, the spill, the kerbstone and the seam's last square are all walked to on foot from the way in`);
   for (const id of ['l7_heath', 'l7_spill', 'l7_wreck', 'l7_dunes', 'l7_mound']) see(w, `${L7.id}:${id}`);
 
   // The sea-coaler at his fire and his word on the dunes; the box's groups won at its floor, the fire clear of both.
@@ -2165,14 +2165,15 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   ok(lookout?.kind === 'cairn' && lookout.gold === 100 && lookout.items.join() === 'potion_sp_great' && lookout.x === 1 && lookout.y === 1, 'on the knoll at the west end, a lookout\'s cairn with 100 gold and a Sapphire Vial');
 
   // The edges: east over the seam into the Cairnfield, named with its warning to a company two under its
-  // floor; the west edge open at its corner square alone, onto K7's tail, cut; and the sea on the south.
+  // floor; the west edge shut in mountain against K7's tail, cut, as K6's south edge is; and the sea on
+  // the south.
   w.world.travel(L7.id, 31, 5, EAST);
   const field = w.world.move('forward');
   ok(field.kind === 'moved' && w.world.zone?.id === m7.id && w.world.state.x === m7.x && w.world.state.y === m7.y + 5 && field.messages.some((m) => m.startsWith('The Cairnfield.') && m.length > 'The Cairnfield.'.length),
     `east from L7's 31,5 onto M7's 0,5: the Cairnfield is named, with its warning to a company of 16 (${said(field)})`);
   listen(w);
-  ok(Array.from({ length: 32 }, (_, i) => out.passable(l7.x, l7.y + i) === 'ok').join() === Array.from({ length: 32 }, (_, i) => i === 0).join() && out.passable(l7.x - 1, l7.y) !== 'ok' && out.passable(l7.x + 20, l7.y + 32) !== 'ok',
-    'L7\'s west edge is open at its corner square alone, onto K7\'s tail, cut, and past it and the south edge the world ends for now');
+  ok(Array.from({ length: 32 }, (_, i) => out.passable(l7.x, l7.y + i) === 'ok').every((open) => !open) && out.passable(l7.x, l7.y - 1) !== 'ok' && out.passable(l7.x - 1, l7.y, ALL) !== 'ok' && out.passable(l7.x + 20, l7.y + 32) !== 'ok',
+    'L7\'s west edge is shut, the mountain at 0 and 1 and the sea below, against K7\'s tail, cut, and so is L6\'s 0,31 beside its corner; past it and the south edge the world ends for now');
 
   // The strip's north end (P4): east from O4's 31,11 onto P4's 0,11, walked, in the same land at the same
   // floor, so nothing is said of it.
@@ -2202,7 +2203,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   // O4's 31,31, hills in all four squares as the atlas has them.
   walkThrough(w, P5.id, 2, 0, NORTH, P4.id, 2);
   const hillsSouth = reach([2, 31], {}, undefined, p4);
-  ok(hillsSouth.size > 20 && [[0, 31], [4, 28], [5, 30]].every(([x, y]) => hillsSouth.has(at(x, y, p4))) && !hillsSouth.has(at(2, 12, p4)), `the south pocket (${hillsSouth.size} squares), the cairn and the gap in the rim are walked to on foot from P5 alone`);
+  ok(hillsSouth.size > 20 && [[0, 31], [4, 28], [5, 30]].every(([x, y]) => hillsSouth.has(at(x, y, p4))) && !hillsSouth.has(at(2, 12, p4)), `the south pocket (${hillsSouth.size} squares), the cairn and the dip in the rim are walked to on foot from P5 alone`);
   see(w, `${P4.id}:p4_view`);
   const cairn = P4.features!.find((f) => f.kind === 'cairn' && f.id === 'p4_cairn');
   ok(cairn?.kind === 'cairn' && cairn.gold === 100 && cairn.items.join() === 'potion_sp_great' && cairn.x === 4 && cairn.y === 28, 'in the south pocket, a cairn with 100 gold and a Sapphire Vial');

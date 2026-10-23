@@ -3,8 +3,9 @@
 // running down the coast to the Cairnfield's; a sea-coaler at his driftwood fire, an ore spill in the
 // grass where the fire beetles feed, a lone rock worm in the dunes behind the strand, a lookout's cairn on
 // the knoll at the west end, and the old boundary mound at the seam with the Cairnfield, a chamber in it.
-// The sea closes the south. K7's tail, cut, lies past the west edge, which L6's heath opens at its corner
-// square alone. Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §12.5 is its brief.
+// The sea closes the south. K7's tail, cut, lies past the west edge, shut in mountain as K6's bank is,
+// and L6's corner square with it. Cut from the atlas by tools/scaffold.ts;
+// docs/areas/kilns.md §12.5 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 
@@ -17,7 +18,7 @@ export const KILNMOUTH_L7: MapDef = {
   region: 'kilns',
   start: { x: 28, y: 0, facing: SOUTH },
   rows: [
-    'hhhhhhhhhhhhhh,,,,,,,hh,,,,,,,,,',
+    'Mhhhhhhhhhhhhh,,,,,,,hh,,,,,,,,,',
     'M^,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,',
     '~,,,,,,,,,__,,,,,,,,,,,,,,,,,,,,',
     '~~~~,,,___~~_,,,,,,,,,,,,,rrrrr,',
@@ -68,14 +69,14 @@ export const KILNMOUTH_L7: MapDef = {
     { kind: 'cairn', x: 1, y: 1, id: 'l7_lookout', text: 'A lookout\'s cairn on the knoll, built stone by stone from the strand. The coast runs away east, white where it breaks.', gold: 100, items: ['potion_sp_great'] },
     // The boundary mound at the seam, the kerbstone out of its ring and the chamber behind it.
     { kind: 'event', x: 28, y: 2, id: 'l7_mound', once: true, text: 'The old boundary mound, a long heap of grey stones on the line between the Kilns and the Cairnfield, kerbed all round.' },
-    { kind: 'event', x: 25, y: 4, id: 'l7_kerb', once: true, text: 'The kerbstones lie in a ring round the mound. One stands out of it, and the grass is worn from its foot.' },
-    { kind: 'event', x: 27, y: 4, id: 'l7_cist', once: true, text: 'A chamber of laid slabs under the mound, dry as a drum. Coin of both lands was put down here when the line was drawn.' },
+    { kind: 'event', x: 25, y: 4, id: 'l7_kerb', once: true, text: 'A kerbstone on the mound\'s west side leans out of its ring, the grass worn from its foot.' },
+    { kind: 'event', x: 27, y: 4, id: 'l7_cist', once: true, text: 'A chamber of laid slabs under the mound, dry as dust. Coin of both lands was put down here when the line was drawn.' },
     { kind: 'chest', x: 28, y: 5, id: 'l7_cist_chest', gold: 200, items: ['elixir'] },
   ],
   secrets: [{ x: 26, y: 4, hint: 'l7_kerb' }],
   encounters: [
     // Four fire beetles at the ore spill, the nearest and the gentlest, at 16; and in the dunes behind the
-    // strand a lone rock worm, the hardest, at 17, where the Kilns' other worms go in pairs.
+    // strand a lone rock worm, the hardest, at 17, where the country's worms go in pairs.
     { id: 'l7_beetles', x: 22, y: 3, monsters: ['fire_beetle', 'fire_beetle', 'fire_beetle', 'fire_beetle'], aware: 3, respawn: 1440 },
     { id: 'l7_worm', x: 10, y: 2, monsters: ['rock_worm'], aware: 3, respawn: 2880, roams: false },
   ],

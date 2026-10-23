@@ -83,7 +83,6 @@ const SEAMS_AS_BUILT: readonly AsBuilt[] = [
   { seam: 'kilnsheart_o6/highmoor_o7', walk: '31', why: 'O6\'s corner is the rim\'s mountain, as P6\'s beside it is, where O7\'s is hills' },
   { seam: 'ironfells_o3/kilnsheart_o4', walk: '2 26', why: 'the rock and the mountain at the pines\' east end each step a square at the line' },
   { seam: 'kilnsheart_o4/kilnsheart_o5', walk: '10-12 27-30', why: 'O4\'s hills meet O5\'s mountain at 10 to 12, and O5\'s hills run on under O4\'s mountain at the east end' },
-  { seam: 'kilnmouth_k6|kilnmouth_l6', walk: '31', why: 'the rock bank closing K6\'s south edge ends it at the corner, the world\'s end against L6\'s heath' },
   // Cairnmoor.
   { seam: 'cairnfield_n8/longmere_n9', walk: '2-31', why: 'the Rimefells stand along N9\'s north against N8\'s hills and heather' },
   { seam: 'cairnfield_m8|cairnfield_n8', walk: '28-29', why: 'M8\'s crags close the notch\'s west side against N8\'s hills' },
@@ -149,7 +148,6 @@ const OPEN_ON_NOTHING: readonly OnNothing[] = [
   { edge: 'kilnmouth_l6 north', open: '29-31', why: 'L5 is the sea along here, where #828 plans no box' },
   { edge: 'kilnmouth_m5 west', open: '24-31', why: 'L5 is the sea along here, where #828 plans no box' },
   { edge: 'ironfells_o3 north', open: '2-7', why: 'O2 is a crumb, left unbuilt (#828)' },
-  { edge: 'kilnmouth_l7 west', open: '0', why: 'K7 is the heath\'s tail, left unbuilt (#831), and L6\'s heath opens the corner' },
   // Cairnmoor.
   { edge: 'highmoor_o7 east', open: '0-29', why: 'P7 is unbuilt: #834 builds it' },
   { edge: 'highmoor_o8 east', open: '2-19', why: 'P8 is unbuilt: #834 builds it' },
