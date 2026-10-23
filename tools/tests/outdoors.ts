@@ -151,8 +151,7 @@ const OPEN_ON_NOTHING: readonly OnNothing[] = [
   { edge: 'saltings_c6 east', open: '7-8 11-20 25-31', why: 'D6 is unbuilt: #830 builds it' },
   { edge: 'saltings_c7 east', open: '0-18', why: 'D7 is unbuilt: #833 builds it' },
   { edge: 'saltings_c7 west', open: '0-22', why: 'B7 is unbuilt: #830 builds it' },
-  { edge: 'upperwater_b3 west', open: '26-31', why: 'A3 is unbuilt: #830 builds it' },
-  { edge: 'delta_b4 west', open: '0-31', why: 'A4 is unbuilt: #830 builds it' },
+  { edge: 'delta_a4 south', open: '31', why: 'A5 is unbuilt: #830 builds it' },
   // Wrackholm.
   { edge: 'wrackholm_e6 north', open: '15-31', why: 'E5 is unbuilt: #835 builds it' },
   { edge: 'wrackholm_e6 south', open: '13-26', why: 'E7 is unbuilt: #833 builds it' },
