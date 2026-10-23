@@ -3,6 +3,9 @@
 import type { AreaChecks } from '../../area.ts';
 
 export const CHECKS = {
+  // What is drawn before the map that places it (tools/tests/maps.ts): the Hag waits for its lair, the sea cave
+  // under E4's strand that #837's lair pull request builds. It leaves this row once a group there holds it.
+  owes: { unplaced: { hag: '#837' } },
   // The ladder's first two rungs (tools/harness.ts): by 3 the band's gear from Mottram's and the kits'
   // weapons with a plus from the Downs' first boxes; by 5 the kits' armour with a plus and the Downs' last finds.
   gear: {
