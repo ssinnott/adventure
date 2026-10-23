@@ -2,7 +2,8 @@
 // what those ids do (src/content/items.ts, and each area's items.ts). Weapons roll `dice` d`sides` +
 // `bonus`; armour adds `ac`. A +N item's plus is counted in its `bonus` or `ac` already; a weapon's
 // adds to to-hit too (`attackBonus`). Past a plus, an item may raise a stat while it is borne
-// (`statOf`) and a weapon's blows may carry an element (an added die, `ELEMENT_DIE`).
+// (`statOf`) and a weapon's blows may carry an element (an added die, `ELEMENT_DIE`). An artifact is
+// one marked so (#847): one in the world, never sold, past the ladder's top.
 import { ITEMS } from '../content/index.ts';
 import type { Feature } from './map.ts';
 import type { Party, Stat } from './party.ts';
@@ -48,6 +49,13 @@ export interface ItemDef {
   stat?: Partial<Record<Stat, number>>;
   /** The element a weapon's blows carry: an added die of it on each blow that lands (`ELEMENT_DIE`, DESIGN §6). */
   element?: Element;
+  /**
+   * An artifact (#847, DESIGN §9): one in the world, found in its lair and never sold. No shop stocks
+   * one or takes one (`REFUSED`), and by this mark alone no rung of the ladder and no price window
+   * holds one. Its one power is of the five kinds; the two built are a stat it raises (`stat`, by
+   * `ARTIFACT_RAISE` at most) and the element its blows carry (`element`), each as on any item.
+   */
+  artifact?: true;
   /** Words to read: a letter, read from the pack. */
   text?: readonly string[];
   /**
@@ -66,6 +74,11 @@ export function item(id: string): ItemDef {
 
 /** The added die of an elemental weapon's blow (`ItemDef.element`): 1d6 of its element, through `elementDamage`. */
 export const ELEMENT_DIE = 6;
+
+/** The most an artifact raises a stat by while it is borne (`ItemDef.stat`), where a found item raises by 3 (DESIGN §9). */
+export const ARTIFACT_RAISE = 5;
+/** What a shop says to an artifact offered it (`ItemDef.artifact`): it takes none. */
+export const REFUSED = '"Keep it. There is no price on a thing like that."';
 
 /**
  * A weapon's mean blow, its bonus counted and an element's die at its mean: the harness's measure of
