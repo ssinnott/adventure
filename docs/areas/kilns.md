@@ -26,16 +26,16 @@ parked until the owner had played the act and built now: M4 and M5, Kilnmouth's 
 and O3 and O4, the Fells' east and the heart's hills (#474, §4.15), which closes #474; and the five
 boxes of the bounds, K6 (the heath west of the port), P5 and P6 (the hills under the rim at the
 Stone and the ash under the vents), L7 (the shore under the port) and P4 (the strip's north end)
-(#831; §12, whose enclave and lair wait on #845 and #847). Its chapter
-of the one quest, The Anvil Stone, is written and walked (#470, §5), and its four side quests are in
-the log, their people on those maps (#471, §6). Eleven of its monsters and its twelve rooms are drawn
-(§3). Only the ship to Cinderport waits, on #512 (§4.14). Its content is
-`src/content/areas/kilns/` (maps, monsters, items, rooms, climate, its part of the world map, its
-walkthrough and its guild quests in `guilds.ts`, #439; its chapter of the one quest, The Anvil
-Stone, in `chapter.ts`, #470; its side quests in `quests.ts`, #471) and its businesses' rooms
-`src/ui/interiors/kilns/`. Its ids: the area `kilns`, its zones `ironfells`, `kilnsheart` and
-`kilnmouth`, the towns `anvilhall` and `kilnhaven`, the dungeons `deep_mines`, `anvil_stone` and
-`lava_tubes`. The ids stay through the naming pass (§10, NAMES §3).
+(#831; §12, whose enclave and lair wait on #845 and #847). Its chapter of the one quest, The Anvil
+Stone, is written and walked (#470, §5), and its four side quests are in the log, their people on
+those maps (#471, §6). Eleven of its monsters and its twelve rooms are drawn (§3). Only the ship to
+Cinderport waits, on #512 (§4.14). Its content is `src/content/areas/kilns/` (maps, monsters, items,
+rooms, climate, its part of the world map, its walkthrough and its guild quests in `guilds.ts`,
+#439; its chapter of the one quest, The Anvil Stone, in `chapter.ts`, #470; its side quests in
+`quests.ts`, #471) and its businesses' rooms `src/ui/interiors/kilns/`. Its ids: the area `kilns`,
+its zones `ironfells`, `kilnsheart` and `kilnmouth`, the towns `anvilhall` and `kilnhaven`, the
+dungeons `deep_mines`, `anvil_stone` and `lava_tubes`. The ids stay through the naming pass (§10,
+NAMES §3).
 
 ---
 
@@ -126,19 +126,21 @@ from them takes the heart from 7,496 squares to 8,013 and High Moor from 4,162 t
 472 of the heart's 517 are the void the two boxes write past the rim, which `worldGrid` reads as
 grass, as it reads O3's 87. Thirty-three squares change hands between zones elsewhere on the world,
 among them one more of the Cairnfield's in L7, which now holds 44 of its walkable squares, not the
-45 it held with K6 and Saltreach's C2 and B2 laid (the 46 above was counted before them, #907).
+45 it held with K6 and Saltreach's C2 and B2 laid (the 46 above was counted before them, #907);
+Saltreach's A3 and A4 (#913) gave two back: 46.
 L7 and P4 (#831), laid whole, L7 in Kilnmouth and P4 in the heart, take the squares of their cuts as
 their own. Counted by `worldGrid` before and after, on main at `609c2964` and with the two laid,
 seeding the walk from them takes Kilnmouth from 4,883 squares to 4,946 and the Cairnfield from 3,049
 to 2,986: the 63 of the Cairnfield's in L7's cut, 37 of grass, 9 of sand and 17 of shallows, become
-Kilnmouth's, 46 of them walkable by this count, which does not reproduce the 44 just above. The
-heart rises from 8,013 to 8,453: 435 of the 440 are the void that P4 writes past the rim, which
-`worldGrid` reads as grass as it reads P5's and P6's, and five are the Fells', handed over by the
-walk, among 32 squares that change hands elsewhere on the world, none on a built map. The world map
-takes the maps' own ground in 32 squares: L7's mound (15 of rock, one of door, four of floor) and,
-in P4, its rock (7), its door and cell (2) and three hills in its west column. A map's
-edge squares of mountain are not stamped, so L7's 0,1 and P4's 0,5, 0,29 and 0,30 read as the atlas
-has them.
+Kilnmouth's, 46 of them walkable by this count; the 44 just above was counted before Saltreach's A3
+and A4 (#913) were laid, which gave two back (taken out of that base, the cut holds 61 squares, 44
+walkable). The heart rises from 8,013 to 8,453: 435 of the 440 are the void that P4 writes past the
+rim, which `worldGrid` reads as grass as it reads P5's and P6's, and five are the Fells', handed
+over by the walk, among 32 squares that change hands elsewhere on the world, none on a built map.
+The world map takes the maps' own ground in 32 squares: L7's mound (15 of rock, one of door, four of
+floor) and, in P4, its rock (7), its door and cell (2) and three hills in its west column. A map's
+edge squares of mountain are not stamped, so L6's 0,31, L7's 0,0 and 0,1 and P4's 0,5, 0,29 and 0,30
+read as the atlas has them.
 
 **The grid** (EXPANSION §8.2; docs/areas/shelf.md §1). The Kilns are the L to P columns from row 1
 to row 6, with K6 on the shore. The land worth a map is fourteen boxes: M3, N3, N2 and O3 in the
@@ -1333,11 +1335,11 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   and the fishers' nets dry above the tide line. The heath runs down the west and the south, with a
   cairn in the heather (150 gold and a Sapphire Vial), gorse, a fold and a lark on the grass, and
   under it a rock worm pair, the box's top. Past the west edge lies K6's heath, and past the south
-  L7's shore (#831). A company at 16 wins every fight and manages 7.79 fights to a rest, inside the
-  aim, with 2.3% of its days ending in a fight broken off. As measured it pays about 1,590 xp a
-  member and holds 640 gold, and the crew carry about 130 a clear of their own. Two
-  under, at 14, it wins every fight. Density 100% within 8 steps, the furthest 8, with no sign among
-  its 22 points.
+  L7's shore (#831); its corner square, 0,31, is mountain since (§9, #831's 21). A company at 16
+  wins every fight and manages 7.79 fights to a rest, inside the aim, with 2.3% of its days ending
+  in a fight broken off. As measured it pays about 1,590 xp a member and holds 640 gold, and the
+  crew carry about 130 a clear of their own. Two under, at 14, it wins every fight. Density 100%
+  within 8 steps, the furthest 8, with no sign among its 22 points.
 
 ### 4.14 Kilnhaven (#469): town, 16×16, band 16–18
 
@@ -1506,11 +1508,11 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
     ending in a fight broken off. O3 pays about 449 xp a member and holds 300 gold, O4 765 and 360:
     1,214 against the brief's 900, 1.35 times (#474's 17 and 20). Two under, at 14, it wins every fight
     in both. Density: O3 100% within 12 steps and the furthest 10, no sign among its 12 points; O4
-    99.1% within 12 and the furthest 17, none among its 16. The walkthrough finds each secret from
-    its hint, shows its prize shut to a walker, a swimmer, a climber and a levitator, and shows the
-    terraces and the gate shut from O3's west edge. The issue's walkable counts for the two, 641 and
-    863, count rock as walkable, which the game blocks: O4's crag alone is 69 squares. They claim
-    nothing new (§7).
+    99.1% within 12 and the furthest 17, none among its 17, with the corner's event (§9, #831's 20).
+    The walkthrough finds each secret from its hint, shows its prize shut to a walker, a swimmer, a
+    climber and a levitator, and shows the terraces and the gate shut from O3's west edge. The
+    issue's walkable counts for the two, 641 and 863, count rock as walkable, which the game blocks:
+    O4's crag alone is 69 squares. They claim nothing new (§7).
 
 ## 5. The one quest here
 
@@ -1751,16 +1753,15 @@ M4, M5, O3 and O4 (#474), which place the rock worm and the salamander again and
   which pays nothing (§12.1): K6 as built 449 (#831), which takes the lead over the road from 19.29 to
   19.32, past its named 19.3 (§9, #831's 5), P5 and P6 as built 765 each, which take it to 19.38,
   inside 19.4 (§9, #831's 18), and L7 as built 787, which takes it to 19.4056, past 19.4, so L7's
-  pull request names it at 19.5 (§9, #831's 25). Each box
-  is measured when it is built and recorded here as built,
-  a fight inside the gate's aim costing what it costs; the sum is restated with each. A company
-  should leave Kilnhaven at 18 with Cairnmoor's floor ahead, and a company that came by ferry at 16
-  finds Kilnmouth's 17 waiting on the quay. As built: M3 1,068 (#457), N3 1,525 (#458), N4 1,468
-  (#461), N2 1,095 (#460), N5 1,679 (#463), the Tiefzeche 4,278 (#462), N6 787 (#467), M6 1,068
-  (#467), O5 1,742 (#464; 1,292 to a company that bought, which meets no Guard), L6 1,590 (#468),
-  the Rift 3,698 (#465) and O6 with its tubes 6,127 (#466), so the shares stand at 26,128 before the
-  asks and the side quests (below), and at 27,026 with M4 and M5 (#474), 449 each, and at 28,240 with O3 and O4 (449 and 765). The Tiefzeche's
-  Foreman alone pays 1,902 a member and its two
+  pull request names it at 19.5 (§9, #831's 25). Each box is measured when it is built and recorded
+  here as built, a fight inside the gate's aim costing what it costs; the sum is restated with each.
+  A company should leave Kilnhaven at 18 with Cairnmoor's floor ahead, and a company that came by
+  ferry at 16 finds Kilnmouth's 17 waiting on the quay. As built: M3 1,068 (#457), N3 1,525 (#458),
+  N4 1,468 (#461), N2 1,095 (#460), N5 1,679 (#463), the Tiefzeche 4,278 (#462), N6 787 (#467), M6
+  1,068 (#467), O5 1,742 (#464; 1,292 to a company that bought, which meets no Guard), L6 1,590
+  (#468), the Rift 3,698 (#465) and O6 with its tubes 6,127 (#466), so the shares stand at 26,128
+  before the asks and the side quests (below), and at 27,026 with M4 and M5 (#474), 449 each, and at
+  28,240 with O3 and O4 (449 and 765). The Tiefzeche's Foreman alone pays 1,902 a member and its two
   corridor groups 858, past the brief's 2,400 before the upper levels' beasts (§9). The Warden of
   the Anvil pays 1,902 too, past the Rift's 1,800 before its slag, and the Great Salamander 1,902,
   so that O6 with its tubes pays four times the brief's 1,500 (§9, #466's 9). With O5 a clear as
@@ -1787,12 +1788,12 @@ M4, M5, O3 and O4 (#474), which place the rock worm and the salamander again and
   on the line (11,413 xp at 18, 1,902 over six) against the briefs' 1,500 to 1,800 for the Rift and
   for O6 with its tubes, and a kill already pays by level (`KILL_PAY`, `src/game/party.ts`, #159),
   which the curve's sum, each fight at its monsters' own level, leaves out. No group is cut and no
-  monster's pay lowered for it (§9,
-  #466's 9). O3 and O4 add 1,214 xp a member against the brief's 900, 1.35 times (§9, #474's 17 and
-  20). A company that clears three quarters of the Kilns from 16, paid by level, left at 19.29
-  before the bounds and with K6 at 19.32, and with P5 and P6 leaves at 19.38 (19.384), +1.4 over the
-  next floor 18, and `OVER_ROAD` names the Kilns at 19.4, raised from 19.3 by name with K6 (§9,
-  #474's 12 and 26, #831's 5 and 18). What waits is the ship to Cinderport, on #512.
+  monster's pay lowered for it (§9, #466's 9). O3 and O4 add 1,214 xp a member against the brief's
+  900, 1.35 times (§9, #474's 17 and 20). A company that clears three quarters of the Kilns from 16,
+  paid by level, left at 19.29 before the bounds and with K6 at 19.32, and with P5 and P6 leaves at
+  19.38 (19.384) and with L7 and P4 at 19.41 (19.4056), +1.4 over the next floor 18, and `OVER_ROAD`
+  names the Kilns at 19.5, raised from 19.3 by name with K6 and with L7 (§9, #474's 12 and 26,
+  #831's 5, 18 and 25). What waits is the ship to Cinderport, on #512.
 - **Gold.** Training six members from 16 to 18 costs 7,920 with today's `trainPrice` (640 and 680 a
   member a level), and the Barbarian's Ironhide about 4,000 (DESIGN §5). The Stone's price is 6,000
   (`ANVIL_STONE_PRICE`, #535), so that a clear of the Fells and the Tiefzeche can just pay it: a
@@ -1836,7 +1837,8 @@ M4, M5, O3 and O4 (#474), which place the rock worm and the salamander again and
   Stone together, 13,920, so a clear pays both (§9, #471's 1). With M4 and M5 (#474) it gives 15,257,
   1.93 times the training's, with O3 and O4 15,917, 2.01 times, and with K6 (#831), its cairn's 120
   and its strongroom's 200, 16,237, 2.05 times, and with P5 and P6, their cairns' 120 and 110 and
-  their secrets' 230 and 250, 16,947, 2.14 times.
+  their secrets' 230 and 250, 16,947, 2.14 times, and with L7 and P4, their cairns' 100 each and
+  their secrets' 200 and 150, 17,497, 2.21 times.
 - **The gate.** Each map at its own floor (docs/areas/thornmark.md §9, 17; EXPANSION §5.2): a
   company at 16 wins nine in ten of M3's fights and walks the trail resting at its camp; one at 14
   wins no more than one in four, which is how the Fells turn an Act II company back (past 10 the
@@ -1861,7 +1863,8 @@ M4, M5, O3 and O4 (#474), which place the rock worm and the salamander again and
   fights to a rest each, are under the aim, 7 to 9, and inside the limit, 5.5 to 11.5: the worm pair
   is a heavy fight (§9, #474's 2 and 19); O4's, 8.37, is inside the aim; K6's, 6.59 with the same
   pair, is theirs (§9, #831's 6); P5's and P6's, 8.15 each, are inside the aim, and two under, at
-  14, 4.80 and 5.20, 60% and 65% of the floor's 8 (§9, #831's 17). Kilnhaven holds no group, and a
+  14, 4.80 and 5.20, 60% and 65% of the floor's 8 (§9, #831's 17); L7's, 7.52, is inside the aim,
+  and two under, 4.97, 62.1% (§9, #831's 24); P4 holds no group. Kilnhaven holds no group, and a
   company the ferry or the coach puts down there walks out at L6's 29,4: the two groups nearest it,
   the beetles at the quay's east end and the crew, are won every time at 14, and the groups nearest
   the lodge's two ways out onto M9, which the coach now lands behind, the lynx and the pike, every
@@ -1885,9 +1888,10 @@ M4, M5, O3 and O4 (#474), which place the rock worm and the salamander again and
   Kilnhaven, a town, 100% within 7 and the furthest 3, two signs among its 27 points (#469); M4 100%
   within 12 and the furthest 12, with no sign among its 15 points, and M5 100% within 12 and the
   furthest 12, with none among its 16 (#474); O3 100% within 12 and the furthest 10, with no sign among
-  its 12 points, and O4 99.1% within 12 and the furthest 17, with none among its 16 (#474); K6 100%
-  within 12 and the furthest 9, with no sign among its 16 points, and P5 and P6 100% within 12 and
-  the furthest 6 and 8, with no sign among their 15 and 11 (#831).
+  its 12 points, and O4 99.1% within 12 and the furthest 17, with none among its 17 (#474; 16 before
+  the corner's event, #831); K6 100% within 12 and the furthest 9, with no sign among its 16 points,
+  and P5 and P6 100% within 12 and the furthest 6 and 8, with no sign among their 15 and 11, and L7
+  and P4 100% within 12 and the furthest 11 each, with no sign among their 13 and 5 (#831).
 
 ## 9. Decisions
 
@@ -3080,9 +3084,9 @@ Decided by the builder for #831, each the owner's to overturn:
 4. **K7's tail stays cut.** Fifty-six squares of the heath's end lie between K6's south edge and
    L7's west edge, and four squares of sand in J6 beyond K6's west shore. K6 closes its south edge
    with a bank of mountain across the heath's neck (25 squares) and its west shore with five, and L7
-   will close two, so that no built box is open onto unbuilt land. With the bank's ten inner squares
-   (13) and the winch-house, K6 gives 48 of the atlas's 484 squares up: 436 stand, against the
-   issue's 484.
+   closes two, and L6's corner square with them (21), so that no built box is open onto unbuilt
+   land. With the bank's ten inner squares (13) and the winch-house, K6 gives 48 of the atlas's 484
+   squares up: 436 stand, against the issue's 484.
 5. **The lead moves, by name.** K6 carries what a company three quarters clearing the Kilns from 16
    leaves them at from 19.29 to 19.32, and `OVER_ROAD` in `tools/tests/curve.ts` holds the area at the
    figure as built, rounded up, as #474's did: it moves from 19.3 to 19.4 in this pull request. No K6
@@ -3155,13 +3159,12 @@ Decided by the builder for #831, each the owner's to overturn:
     mountain, so the density check failed O4 for "a square nothing reaches" until the square took
     one event, `o4_corner`: O4 now has 17 points, 798 of its 805 squares within 12 and the furthest
     17 of 20. That event is the one feature this pull request adds to a built box.
-21. **L7's corner square 0,0 stays open onto K7's tail, cut,** and a row holds it. L6's heath at its
-    0,31 is open, so L7's 0,0 below it must be, by the seam rule, though the brief shuts L7's west
-    edge in mountain (§12.1) and the issue's Done when has no built map open onto unbuilt land. 0,1
-    is mountain, 0,2 and 0,3 shallows and the rest sea: `kilnmouth_l7 west`, square 0, is the one
-    open square of the Kilns onto land that stays cut. To shut it L6's 0,31 would go to mountain,
-    which also drops square 31 from the K6|L6 row and puts a wall at the heath's corner; that
-    changes a second built box and no ruling gives it, so it is the owner's to rule.
+21. **L7's west edge is closed in mountain, as the brief has it, and L6's corner square 0,31 with
+    it,** as the owner's delegate rules: L6's heath there would hold L7's 0,0 open onto K7's tail,
+    which stays cut (4). The square is the heath's dead-end corner, 0,30 and 1,31 joined through
+    1,30, with nothing on it; it now meets K6's bank, so the K6|L6 row of `SEAMS_AS_BUILT` goes and
+    no `OPEN_ON_NOTHING` row is added. A company saved on it loads on the mountain and steps off, as
+    on B6's 0,31 (#920).
 22. **P4's west edge meets O4's east edge square for square,** so five squares depart from the
     atlas: 0,7 to 0,9 are hills (the atlas has mountain; O4's hills at 7 to 9 run on), 0,29 and 0,30
     mountain (the atlas has hills; O4's are mountain) and 0,5 mountain (the atlas has its stream's
@@ -3190,13 +3193,13 @@ Decided by the builder for #831, each the owner's to overturn:
     chamber; P4's are 100 gold and a Sapphire Vial on the cairn at 4,28 and 150 gold and an Elixir
     in the basin: the dearest that the nearest shops sell (§12.1).
 27. **L7 keeps the atlas's ground:** the brief's dunes are the sand and grass behind the tide line,
-    no new terrain. The sea-coaler and the lighter aground are new to the area (K6's wreck is an
-    ore barge's ribs and M7's a boat sunk in the sand), the sea-coaler unnamed as the kelp-burner
-    and the old cutter are. The atlas's squares change only for the mound and 0,1 (21, 22).
+    no new terrain. The sea-coaler and the lighter aground are new to the area (K6's wreck is an ore
+    barge's ribs and M7's a boat sunk in the sand), the sea-coaler unnamed as the kelp-burner and
+    the old cutter are. The atlas's squares change only for the mound, 0,0 and 0,1 (21).
 28. **The seams meet the rule and add no row.** `L6/L7`, `L7|M7` (between the Kilns and Cairnmoor,
-    which the atlas joins), `O4|P4` and `P4/P5` agree square for square. Four `OPEN_ON_NOTHING`
-    rows go, L6's south, M7's west, O4's east and P5's north, 64 open squares, and one comes,
-    L7's west, with 1; square 31 leaves the O4/O5 row (20).
+    which the atlas joins), `O4|P4` and `P4/P5` agree square for square, and `K6|L6` now does (21).
+    Four `OPEN_ON_NOTHING` rows go, L6's south, M7's west, O4's east and P5's north, 64 open
+    squares, and none comes; square 31 leaves the O4/O5 row (20) and the K6|L6 row goes (21).
 
 ## 10. Names
 
@@ -3299,13 +3302,13 @@ it and adds its "As built".
 | K6 | Kilnmouth, `kilnmouth_k6` | 484 (436 as built) | | L6 | 16–18 | the first, built (#831) |
 | P5 | the heart, `kilnsheart_p5` | 280 (263 as built) | | O5 (P4 and P6 beside it) | 16–18 | the second, built (#831) |
 | P6 | the heart, `kilnsheart_p6` | 220 (219 as built) | High Moor's 45, mountain | O6, P5 | 16–18 | the second, built (#831) |
-| L7 | Kilnmouth, `kilnmouth_l7` | 189 (168 outside its mound) | the Cairnfield's 46 | L6, M7 (the Cairnfield's) | 16–18 | the third, built (#831) |
+| L7 | Kilnmouth, `kilnmouth_l7` | 189 (167 outside its mound) | the Cairnfield's 46 | L6, M7 (the Cairnfield's) | 16–18 | the third, built (#831) |
 | P4 | the heart, `kilnsheart_p4` | 46 (47 as built) | | O4, P5 | 16–18 | the third, built (#831) |
 
 The P column is 24 squares wide, the world's edge cutting it (the grid's cuts, `src/game/atlas.ts`),
-so P4, P5 and P6 are maps of 24 by 32, which `tools/scaffold.ts`, cutting 32 by 32, refuses: they are
-cut by hand, the atlas's rows with the void written `%`, as O3's was (§4.15, #474's 27). No map of that
-size is built yet; the pull request that builds the first says what it found.
+so P4, P5 and P6 are maps of 24 by 32, which `tools/scaffold.ts`, cutting 32 by 32, refuses: they
+are cut by hand, the atlas's rows with the void written `%`, as O3's was (§4.15, #474's 27), and all
+three are built (§12.3, §12.4 and §12.6; §9, #831's 14 says what was found).
 
 ### 12.1 What every box keeps
 
@@ -3314,21 +3317,21 @@ size is built yet; the pull request that builds the first says what it found.
   its cut, 46 of them walkable, Cairnmoor's by the atlas and by docs/areas/cairnmoor.md §11 not
   Cairnmoor's to build, and plays them at Kilnmouth's band; P6 holds 45 squares of High Moor's,
   mountain, which stay closed. Both are counted with K6, P5 and P6 laid (`worldGrid(ATLAS,
-  MAP_DEFS)`, §1), L7's before it was laid: the 46 are grass and sand, and the count does not
-  reproduce the 44 that stood here (the issue's 45 and 46 were counted before K6). Where another
-  zone's land in a box meets that zone's own box, the brief says how: L7's east edge meets M7's
-  (§12.5).
+  MAP_DEFS)`, §1), L7's before it was laid: the 46 are grass and sand, and the 44 that stood here
+  was counted before Saltreach's A3 and A4 (#913) were laid, which gave two back (the issue's 45 and
+  46 were counted before K6). Where another zone's land in a box meets that zone's own box, the
+  brief says how: L7's east edge meets M7's (§12.5).
 - **Band 16–18 in all five,** the zone's. The heart's P boxes do not stand at the 17–18 that O5 and
   O6 beside them carry: the roster tops at 18 with the slag elder alone, and the curve's rise rule asks
   a group a level over the floor in every box, 17 in a box of 16–18 and 18 in one of 17–18 (§9, #831's
   2).
 - **What stays cut:** the rim's row (N1, O1 and P1), P3 (no walkable square), O2 and the slivers
-  (§11); and **K7's tail**, 56 squares of the heath's end in five rows between K6's south edge and L7's
-  west edge, with four squares of sand in J6 against K6's west shore. K6's south edge and west shore
-  and L7's west edge stand closed against them with the mountain but at one square: with the five
-  in, O4's, O5's and O6's east edges open onto P4, P5 and P6 and L6's west and south edges onto K6
-  and L7, and the one built square open onto unbuilt land is L7's 0,0, which L6's heath at its
-  0,31 forces open (§9, #831's 21) and an `OPEN_ON_NOTHING` row holds.
+  (§11); and **K7's tail**, 56 squares of the heath's end in five rows between K6's south edge and
+  L7's west edge, with four squares of sand in J6 against K6's west shore. K6's south edge and west
+  shore and L7's west edge stand closed against them with the mountain, and L6's corner square with
+  them (§9, #831's 21), so that once the five are in no built box of the Kilns is open onto unbuilt
+  land: O4's, O5's and O6's east edges open onto P4, P5 and P6, and L6's west and south edges onto
+  K6 and L7.
 - **Groups** are the roster's (§7), the fewest that pass the gate's pace, and no two boxes' hardest
   the same. The rise rule asks each box's hardest at a mean of 17, a level over the floor: in the
   roster, the rock worms, a slag elder beside one of the 16s, a machine or the Anvil Guards, who come
@@ -3361,7 +3364,7 @@ size is built yet; the pull request that builds the first says what it found.
   open squares onto unbuilt land are an `OPEN_ON_NOTHING` row each in `tools/tests/outdoors.ts`, and
   the neighbours' rows it now answers go (P5 and P6 took O5's and O6's east rows and held P5's north
   edge, open at 0 to 5 onto P4, until P4 took it and O4's east row; L7 took L6's south row and M7's
-  west row and holds its own west edge, open at 0 onto K7's tail).
+  west row, its own west edge shut).
 
 ### 12.2 K6, the heath west of the port (#831): country, band 16–18
 
@@ -3399,12 +3402,12 @@ size is built yet; the pull request that builds the first says what it found.
   is the shallows and, at 7 to 31, a bank of mountain across the heath's neck, two squares deep at 9
   to 11, 19 and 20 and 26 to 28 and three at 10 and 27, and the west edge has mountain at rows 24 to
   28 over the four squares of sand: of the atlas's 484 squares 436 stand (§9, #831's 4 and 13). The
-  east edge meets L6's west edge square for square but the corner, the one way in and out. A company
-  at 16 wins every fight and manages 6.59 fights to a rest, off the aim (7 to 9) and inside the limit
-  (5.5 to 11.5); two under, at 14, it wins every fight, at 4.14 fights to a rest, 51.7% of the
-  floor's 8. Density: every square within 12 steps of a point, the furthest 9, no sign among its 16
-  points. By the curve's count the box pays 449 xp a member and 320 gold, and a company three
-  quarters clearing the area from 16 leaves it at 19.32 (§9, #831's 5).
+  east edge meets L6's west edge square for square, the corner too (§9, #831's 21), the one way in
+  and out. A company at 16 wins every fight and manages 6.59 fights to a rest, off the aim (7 to 9)
+  and inside the limit (5.5 to 11.5); two under, at 14, it wins every fight, at 4.14 fights to a
+  rest, 51.7% of the floor's 8. Density: every square within 12 steps of a point, the furthest 9, no
+  sign among its 16 points. By the curve's count the box pays 449 xp a member and 320 gold, and a
+  company three quarters clearing the area from 16 leaves it at 19.32 (§9, #831's 5).
 
 ### 12.3 P5, the hills under the rim at the Stone: country, band 16–18
 
@@ -3506,8 +3509,8 @@ size is built yet; the pull request that builds the first says what it found.
 ### 12.5 L7, the shore under the port: country, band 16–18
 
 - **Purpose.** The shore south of Kilnhaven's heath: sand and grass under the port's last smoke, the
-  Kilns' land ending where the Cairnfield's coast begins. L6's south edge opens onto it along all 32
-  squares and M7's west edge meets its east.
+  Kilns' land ending where the Cairnfield's coast begins. L6's south edge opens onto it along 31 of
+  its 32 squares and M7's west edge meets its east.
 - **Landmarks.** The heath's end, where the heather gives way to grass along its first row; the
   strand, shingle and flats from the third row down; a boundary cairn at the seam with the Cairnfield;
   the sea to the south.
@@ -3516,19 +3519,18 @@ size is built yet; the pull request that builds the first says what it found.
   13), so the line from Kilnmouth into the Cairnfield falls there and names it, with its warning to a
   company under 18 (#166). The Cairnfield's 46 walkable squares in its south-east corner play at
   16–18 and hold no group harder than the Kilns' (§12.1).
-- **How it meets its neighbours.** L6's south edge across all 32 squares, the heath and the grass
-  open on, the way in; M7's west edge, as above, the way on into the Cairnfield; the sea on the south;
-  its west edge's two land squares at rows 0 and 1, against K7's tail, closed in mountain, as K6's
-  south edge is (§12.1), but for the corner square 0,0, which L6's heath at its 0,31 holds open
-  (§9, #831's 21).
+- **How it meets its neighbours.** L6's south edge across 31 of its 32 squares, the heath and the
+  grass open on, the way in; M7's west edge, as above, the way on into the Cairnfield; the sea on
+  the south; its west edge's two land squares at rows 0 and 1, against K7's tail, closed in
+  mountain, as K6's south edge is (§12.1), and L6's corner square 0,31 with them (§9, #831's 21).
 - **Points of interest,** about six features and two groups: the boundary cairn at the seam; a
   lookout down the coast, a cairn on the dunes' crest; a camp, a driftwood fire on the strand; a wreck
   on the strand; a sea-coaler with a rumour; a spill of ore on the grass.
 - **Encounters.** Four fire beetles at the spill, tipped there off the quay road by L6's edge, the
   nearest and the gentlest, at 16; a lone rock worm in the dunes behind the strand, the hardest, at
-  17, where the Kilns' other worms go in pairs. Sized with the harness at 16, a worm alone paces 26
-  fights to a rest, and with the four beetles, dealt, 7.5, inside the aim; two under, 5.0, 63% of the
-  floor's 8.
+  17, where the country's worms go in pairs. Sized with the harness at 16, a worm alone paces 26
+  fights to a rest, and with the four beetles, dealt, 7.5, inside the aim; two under, 5.0, 63% of
+  the floor's 8.
 - **The secret and its hint.** The boundary cairn's cist: a long mound of stones at the seam, the
   old mark between the Kilns and the Cairnfield, with a chamber of two by two under it, a room where
   K6's is a cell. The hint: one kerbstone on its landward side stands out of the ring, the grass worn
@@ -3538,20 +3540,20 @@ size is built yet; the pull request that builds the first says what it found.
 - **Pay.** About 790 xp a member: the beetles' 563 and the worm's 225.
 - **As built** (#831, 23 October): `kilnmouth_l7`, laid at 360,190. South from L6's edge, the same
   land at the same floor, so nothing is said of it: the start is 28,0 facing south. Of the atlas's
-  189 walkable squares 168 stand outside the mound, which takes 20, and 0,1 is mountain (§9, #831's
-  21). The heath's last heather ends along the first row and the grass runs down to the strand
-  (27,1). The ore spill at 22,2 with the four fire beetles at 22,3; on the strand the
+  189 walkable squares 167 stand outside the mound, which takes 20, and 0,0 and 0,1 are mountain
+  (§9, #831's 21). The heath's last heather ends along the first row and the grass runs down to the
+  strand (27,1). The ore spill at 22,2 with the four fire beetles at 22,3; on the strand the
   driftwood fire, a camp, at 15,5, the sea-coaler at 16,4, who says to keep out of the dunes west of
   his fire, and the lighter aground at 19,5; the dunes at 8,2 with the rock worm at 10,2, and the
   lookout's cairn on the knoll at 1,1 (100 gold and a Sapphire Vial). At the seam the boundary
   mound, a block of rock at 26 to 30 x 3 to 6, seen from 28,2: the ring of kerbstones with one out
   of it at 25,4, the grass worn from its foot, and searched there facing east the mound gives at
-  26,4 on a chamber of two by two, 27 to 28 x 4 to 5, with a chest at 28,5 (200 gold and an
-  Elixir), which no walker, swimmer, climber or levitator reaches but through the door. The north
-  edge meets L6's south edge square for square across all 32; the east edge meets M7's, grass at
-  rows 0 to 9, sand at 10, shallows at 11 and 12 and the sea from 13, and there the Cairnfield is
-  named, with its warning to a company of 16; the sea closes the south. The west edge is open at
-  its corner square 0,0 alone, onto K7's tail, cut. A company at 16 wins every fight and manages
+  26,4 on a chamber of two by two, 27 to 28 x 4 to 5, with a chest at 28,5 (200 gold and an Elixir),
+  which no walker, swimmer, climber or levitator reaches but through the door. The north edge meets
+  L6's south edge square for square across all 32; the east edge meets M7's, grass at rows 0 to 9,
+  sand at 10, shallows at 11 and 12 and the sea from 13, and there the Cairnfield is named, with its
+  warning to a company of 16; the sea closes the south. The west edge is closed in mountain against
+  K7's tail, cut, and L6's corner square 0,31 with it. A company at 16 wins every fight and manages
   7.52 fights to a rest, inside the aim (7 to 9), with 0.7% of its days ending in a fight broken
   off; two under, at 14, it wins every fight, at 4.97 fights to a rest, 62.1% of the floor's 8. The
   curve's rise: the beetles at 9 steps, level 16.0, the nearest, and the worm at 20 steps, level
@@ -3577,17 +3579,17 @@ size is built yet; the pull request that builds the first says what it found.
 - **How it meets its neighbours.** O4's east edge along its rows 7 to 21, the hills open on into the
   north pocket, the way in and the map's start (O4's hills at rows 7 to 9 run on into P4's column 0,
   where the atlas has mountain, as the seam rule asks, §9, #831's 22; the stream runs on in the
-  shallows at row 6, and O4's mountain closes the rest); P5's north edge across
-  columns 0 to 5, the south pocket's hills open on, so the south pocket is reached from P5 alone; the
-  mountain between the pockets and the rim's on the east, the world's end past it. P4's corner at
-  0,31 could not meet both neighbours as they stood: it must be hills to meet P5's 0,0, which O5's
-  hills at 31,0 force, and mountain to meet O4's 31,31, though the atlas has hills at all four
-  squares round the corner. The owner's delegate ruled (§9, #831's 16) that P4's pull request opens
-  O4's 31,31 to hills, drops square 31 from the O4/O5 row of `SEAMS_AS_BUILT` and holds the row for
-  O4's east edge until P4 is built: this pull request builds it, so the row goes (§9, #831's 20).
-  At P6's foot the corner goes the other way: Cairnmoor's P7 has to meet P6's 0,31, mountain, and
-  O7's 31,0, hills, so its pull request shuts O7's 31,0 to mountain, as the atlas has it; the O6/O7
-  row then goes and the `highmoor_o7 east` row holds 1-29.
+  shallows at row 6, and O4's mountain closes the rest); P5's north edge across columns 0 to 5, the
+  south pocket's hills open on, so the south pocket is reached from P5 alone; the mountain between
+  the pockets and the rim's on the east, the world's end past it. P4's corner at 0,31 could not meet
+  both neighbours as they stood: it must be hills to meet P5's 0,0, which O5's hills at 31,0 force,
+  and mountain to meet O4's 31,31, though the atlas has hills at all four squares round the corner.
+  The owner's delegate ruled (§9, #831's 16) that P4's pull request opens O4's 31,31 to hills, drops
+  square 31 from the O4/O5 row of `SEAMS_AS_BUILT` and holds the row for O4's east edge until P4 is
+  built: this pull request builds it, so the row goes (§9, #831's 20). At P6's foot the corner goes
+  the other way: Cairnmoor's P7 has to meet P6's 0,31, mountain, and O7's 31,0, hills, so its pull
+  request shuts O7's 31,0 to mountain, as the atlas has it; the O6/O7 row then goes and the
+  `highmoor_o7 east` row holds 1-29.
 - **New here.** Nothing.
 - **Finds.** 100 gold and a Sapphire Vial on the cairn; 150 gold and an Elixir in the basin.
 - **Pay.** None.
@@ -3602,8 +3604,8 @@ size is built yet; the pull request that builds the first says what it found.
   through the door (§9, #831's 23). The stream's shallows come down the north-west corner and run
   on into O4 at 0,6. The south pocket, 23 squares at 0 to 5 x 27 to 31, joins P5's north edge at
   columns 0 to 5 and is walked to from P5 alone: a cairn at its head at 4,28 (100 gold and a
-  Sapphire Vial) and a gap in the rim at 5,30 that shows the world's end. The corner square 0,31
-  is hills, as are O4's 31,31, O5's 31,0 and P5's 0,0 (§9, #831's 20). No group stands in either
+  Sapphire Vial) and a dip in the rim at 5,30 with the haze over it. The corner square 0,31 is
+  hills, as are O4's 31,31, O5's 31,0 and P5's 0,0 (§9, #831's 20). No group stands in either
   pocket. Density: every square within 12 steps of a point, the furthest 11, no sign among its 5
   points. By the curve's count the box pays no xp and 250 gold.
 
