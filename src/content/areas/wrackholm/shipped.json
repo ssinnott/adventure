@@ -193,6 +193,27 @@
       "groups": [],
       "doors": []
     },
+    "nicks_locker": {
+      "size": "16x16",
+      "used": [
+        "nl_belt",
+        "nl_cave",
+        "nl_cleft",
+        "nl_flood",
+        "nl_kelp",
+        "nl_master",
+        "nl_mouth",
+        "nl_ribs",
+        "nl_sea_chest",
+        "nl_throat"
+      ],
+      "groups": [
+        "nl_nick"
+      ],
+      "doors": [
+        "9,2"
+      ]
+    },
     "smugglers_cove": {
       "size": "16x16",
       "used": [

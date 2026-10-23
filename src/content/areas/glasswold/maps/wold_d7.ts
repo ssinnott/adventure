@@ -7,11 +7,12 @@
 // cold, the keepers' store walled up in the rock behind it, found from the smell of tar. Below the
 // Scarp, walked onto from C7's pans and D6's shore, the pans' end and the gulf's tidal shore, a
 // salt-raker at the last pan, no group and nothing that pays. The Scarp shuts the two from each other;
-// the west edge on top is shut against C7's ring, its corner with it. The lair's door is left at the
-// east face, 19,24; at the hills over D8, 8,30, the diggers' cut into Karaordu, the enclave (#845). Cut
-// from the atlas by tools/scaffold.ts; docs/areas/glasswold.md §12 is its brief (#833).
+// the west edge on top is shut against C7's ring, its corner with it. In the Scarp's east face, at 19,24,
+// a shelf is cut down the rock, the way into Kushdag, the artifact's lair (#845, #847); at the hills over
+// D8, 8,30, the diggers' cut into Karaordu, the enclave (#845). Cut from the atlas by tools/scaffold.ts;
+// docs/areas/glasswold.md §12 is its brief (#833).
 import type { MapDef } from '../../../../game/map.ts';
-import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { EAST, NORTH, SOUTH } from '../../../../game/types.ts';
 
 export const WOLD_D7: MapDef = {
   id: 'wold_d7',
@@ -46,7 +47,7 @@ export const WOLD_D7: MapDef = {
     '|||^^^^^^,,||||||~~~~WWWWWWWWWWW',
     'M,,^rrrr^,,,,,|||||~~~WWWWWWWWWW',
     'M,,^r::S^,,,,,,,,||||~~WWWWWWWWW',
-    'M,,,rrrr^,,,,,,,,,,|||~~WWWWWWWW',
+    'M,,,rrrr^,,,,,,,,,,"||~~WWWWWWWW',
     'M,,,,,,^^^,,,,,,,,,,|||~~~~WWWWW',
     'Mssssss^^^,,,,,,,,,,,,||~~~~~WWW',
     'Msssssss^^ssssssssss,,,,__,~~~WW',
@@ -56,9 +57,11 @@ export const WOLD_D7: MapDef = {
     'Mssssss^^^^sssssssssssssssssssss',
   ],
   // Karaordu, the enclave (#845): the diggers' cut in the hills' face at 8,30, walked into from the grass
-  // at 8,29.
+  // at 8,29. Kushdag, the artifact's lair (#847): the shelf cut in the Scarp's east face at 19,24, walked
+  // onto from the grass at 18,24.
   exits: [
     { x: 8, y: 30, to: 'karaordu', tx: 7, ty: 1, tf: SOUTH, label: 'You stoop into a cut in the hill\'s face and down into still air. The wind off the grass is gone.' },
+    { x: 19, y: 24, to: 'kushdag', tx: 1, ty: 3, tf: EAST, label: 'You edge onto a shelf cut in the Scarp\'s face. The gulf is a long way down, and the wind is hard.' },
   ],
   features: [
     // Under the Scarp, the Saltings' strip, walked onto from C7 and D6: the pans' end, a salt-raker at the
