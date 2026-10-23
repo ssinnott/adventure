@@ -1026,9 +1026,9 @@ Decided by the builder for #835, each the owner's to overturn:
 2. **Each strand is Wrackholm's, laid whole in its one zone,** E5 at E6's 12–13 and F5 and F7 at
    F6's 13–14, the boxes they run off, so no crossing line is said at their edges.
 3. **No strand holds a group.** The curve's rise rule asks a box's hardest group at its top, 13 on
-   E5 and 14 on F5 and F7: the isle's beasts at 13 are the devilfish already in E6's pools, Kelp
-   Hole and F6's pools, its people at 13 the Hand's overseers who keep the chains, and at 14 it has
-   only its bosses and F6's keepers. A group on a strand of 56 to 73 squares beside a door left
+   E5 and 14 on F5 and F7. At 13 the isle has its devilfish (already in E6's pools, Kelp Hole and
+   F6's pools) and the Hand's overseers who keep the chains; at 14 only its bosses and F6's
+   keepers. A group on a strand of 56 to 73 squares beside a door left
    bare would crowd it and repeat the isle's own. The area's clear already gives 11,426 xp a member
    of the 9,867 the curve asks (§8); the enclave and the lair are the bounds' fights.
 4. **Each strand has its wilderness feature,** of a kind its neighbours lack: E5 a ship's
