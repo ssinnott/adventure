@@ -13,8 +13,8 @@ import type { Party } from './party.ts';
 import { load } from './save.ts';
 import type { Store } from './save.ts';
 
-/** The most there are to restore. */
-export const MOST = STONES.length;
+/** The most there are to restore: read on use, not as this module loads (#896). */
+export const MOST = (): number => STONES.length;
 
 /** How many Stones the company has restored. */
 export function stonesRestored(world: WorldState, party: Party): number {
@@ -69,12 +69,14 @@ export function hearthLook(h: Hearth): HearthLook {
 /** The sky after the hull is opened: violet over a rose foot, by day the wrong colour. */
 const OPENED_SKY = { top: '#5c3a94', foot: '#e2a6c4' };
 
-/** Where the Hearth burns, in world cells: its site on the atlas. */
-export const HEARTH: readonly [number, number] = ATLAS.sites.find((s) => s.icon === 'hearth')?.at ?? [256, 174];
+let hearth: readonly [number, number] | undefined;
+/** Where the Hearth burns, in world cells: its site on the atlas, read on first use and kept, not as this module loads (#896). */
+export const HEARTH = (): readonly [number, number] => (hearth ??= ATLAS.sites.find((s) => s.icon === 'hearth')?.at ?? [256, 174]);
 
 /** The compass bearing of the Hearth from a world cell, in degrees: 0 north, 90 east. */
 export function hearthBearing(x: number, y: number): number {
-  return ((Math.atan2(HEARTH[0] - x, -(HEARTH[1] - y)) * 180) / Math.PI + 360) % 360;
+  const [hx, hy] = HEARTH();
+  return ((Math.atan2(hx - x, -(hy - y)) * 180) / Math.PI + 360) % 360;
 }
 
 /** How hard the Hearth flickers with `n` Stones restored, 0 to 1: a fifth at none, almost still at all. */

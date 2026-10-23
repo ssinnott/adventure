@@ -74,7 +74,7 @@ export function prestige(): void {
   {
     // The Sorcerer's third as placed (#807): the scholar at the Glass's edge teaches a Thaumaturge of 27 the
     // Magus once his quest's deed is done, and for no gold.
-    const magus = TRAINERS.find((t) => t.teaches.cls === 'sorcerer' && t.teaches.prestige === 3)?.teaches;
+    const magus = TRAINERS().find((t) => t.teaches.cls === 'sorcerer' && t.teaches.prestige === 3)?.teaches;
     const r = makeRng(807), p = defaultParty(r), w = new World(buildMaps(), p, r), cassian = p.members[5];
     cassian.xp = xpForLevel(27); levelUp(cassian, r); takePrestige(cassian); takePrestige(cassian);
     const purse = p.gold, waits = !!magus && barOf(magus, cassian, p, w.state) === 'the quest first' && !teach(magus, p, w.state, 5).taught;

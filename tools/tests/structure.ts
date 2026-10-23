@@ -5,7 +5,11 @@
 // within 720 to 2,880 minutes; a group's `until` and `after` naming something real, and no sky
 // underground; a group under the ice standing on ice; Thornmark's Rift stopping with the tear; every
 // outdoor map one box of the atlas's grid. Each is first run on the content as it is, then on a map
-// broken on purpose, to show it can fail.
+// broken on purpose, to show it can fail. Last, game/dens.ts, quests.ts and stones.ts and every area's
+// index each load first in a fresh process, with nothing before them: before #896, dens.ts and three
+// areas' indexes did not.
+import { spawn } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import { AREAS, MAP_DEFS, MONSTERS, QUESTS, ATLAS } from '../../src/content/index.ts';
 import { TEAR_CLOSED } from '../../src/content/areas/thornmark/maps/grove2.ts';
 import { condFaults } from './quests.ts';
@@ -134,7 +138,25 @@ export function riftStillComing(def: MapDef): string[] {
   return (def.encounters ?? []).filter((e) => e.respawn && e.monsters.some((id) => MONSTERS[id]?.kind === 'rift') && JSON.stringify(e.until) !== JSON.stringify(TEAR_CLOSED)).map((e) => e.id);
 }
 
-export function structure(): void {
+/**
+ * Why a module fails to load first in a fresh process, with nothing loaded before it; '' if it loads.
+ * A module that reads another's binding as it loads, through a cycle, throws there (#896).
+ */
+export function firstLoad(file: string): Promise<string> {
+  return new Promise((done) => {
+    const child = spawn(process.execPath, [file], { stdio: ['ignore', 'ignore', 'pipe'] });
+    let err = '';
+    child.stderr.on('data', (d: Buffer) => { err += String(d); });
+    child.on('error', (e) => done(e.message));
+    child.on('close', (code) => done(code === 0 ? '' : err.split('\n').find((l) => /^\w*Error\b/.test(l)) ?? `exit ${code}`));
+  });
+}
+
+export async function structure(): Promise<void> {
+  // Each in a process of its own, started now and read at the end: game/dens.ts, quests.ts and
+  // stones.ts, which a cycle through the content once broke, and every area's index (#896).
+  const firsts = ['src/game/dens.ts', 'src/game/quests.ts', 'src/game/stones.ts', ...AREAS.map((a) => `src/content/areas/${a.id}/index.ts`)];
+  const loading = firsts.map((f) => firstLoad(fileURLToPath(new URL(`../../${f}`, import.meta.url))));
   const items = questItems();
   const list = (xs: string[]): string => (xs.length ? ' -> ' + xs.join(', ') : '');
   for (const def of MAP_DEFS) {
@@ -269,4 +291,6 @@ export function structure(): void {
     ok([719, 2881].every((r) => at(r).length === 1), 'a respawn of 719 or 2,881 minutes is out of range');
     ok([0, undefined, 720, 2880].every((r) => !at(r).length), 'none, 720 and 2,880 minutes are in range');
   }
+  const why = await Promise.all(loading);
+  firsts.forEach((f, i) => ok(!why[i], `${f} loads first in a fresh process, with nothing loaded before it${why[i] ? ' -> ' + why[i] : ''}`));
 }
