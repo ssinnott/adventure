@@ -1,12 +1,20 @@
 // Wrackholm's items: the finds of its maps, and its share of the plus finds past Saltmouth's
 // armourer (#399), by 13.
 import type { ItemDef } from '../../../game/items.ts';
-import { P, core } from '../../items.ts';
+import { W, P, core, ARTIFACT_PRICE } from '../../items.ts';
 import { ITEMS as THORNMARK } from '../thornmark/items.ts';
 import { longAxe, morningStar, sharkskin } from '../saltreach/items.ts';
 import { marlinspike } from '../ashfall/items.ts';
 
 const plate = THORNMARK.find((i) => i.id === 'plate')!;
+
+// Wrackholm's of the bounds' eight (DESIGN §9, #847): the Grey Knife's 1d8+14 and a point, for the
+// thief, the bard and the sorcerer, and Grasping Roots cast from it three times a day. Found and never
+// sold; placed nowhere yet, for #835 lays its lair and puts it there.
+export const holdfast = W('holdfast', 'Holdfast', ARTIFACT_PRICE, 1, 8, { kind: 'light', bonus: 15, classes: ['thief', 'bard', 'sorcerer'], casts: { spell: 'roots', times: 3 }, artifact: true, text: [
+  'A smuggler\'s knife, its haft wound with kelp that has not rotted.',
+  'Wet, the weed on it moves.',
+] });
 
 export const ITEMS: readonly ItemDef[] = [
   // Kelp Hole's (#188): the crews' strongbox, the first plate with a plus on the road, and the
@@ -79,4 +87,5 @@ export const ITEMS: readonly ItemDef[] = [
   // The Sharkskin Coat of the ladder's 11 a point lighter in the armour, and cut to run in: +3 speed while worn, which
   // the armour slot makes one coat at a time. In the plain chest beside the locked one.
   { ...sharkskin, id: 'runners_coat', name: "Runner's Coat", price: 1250, ac: 8, stat: { speed: 3 } },
+  holdfast,
 ];
