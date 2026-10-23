@@ -137,7 +137,13 @@
         "j12_rope",
         "j12_seat",
         "j12_split",
-        "j12_under"
+        "j12_under",
+        "j8_cairn",
+        "j8_house",
+        "j8_sea",
+        "j8_shallows",
+        "j8_strongbox",
+        "j8_traps"
       ],
       "groups": [
         "i10_eagles",
@@ -164,7 +170,9 @@
         "j11_eagles_west",
         "j11_trolls",
         "j11_vigil",
-        "j12_trolls"
+        "j12_trolls",
+        "j8_eagles",
+        "j8_trolls"
       ],
       "doors": [
         "270,310",
@@ -172,6 +180,7 @@
         "281,370",
         "286,228",
         "290,322",
+        "298,240",
         "308,302",
         "312,347",
         "314,361",
@@ -245,6 +254,10 @@
     },
     "sheerpoint_i9": {
       "at": "264,254",
+      "size": "32x32"
+    },
+    "sheerpoint_j8": {
+      "at": "296,222",
       "size": "32x32"
     }
   },
