@@ -56,7 +56,7 @@ import type { Can, Feature, MapDef, MapZone } from '../../../game/map.ts';
 import { LOCKS } from '../../locks.ts';
 import { ATLAS, MAP_DEFS, MONSTERS } from '../../index.ts';
 import { DROVE_COACH } from '../../crossings.ts';
-import { buy, item } from '../../../game/items.ts';
+import { buy, item, hits, ELEMENT_DIE } from '../../../game/items.ts';
 import { CLASSES, canTrainAt, xpForLevel, rest, stayNight, trainPrice, levelUp, guildFlag } from '../../../game/party.ts';
 import { spellsFor } from '../../../game/spells.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
@@ -67,6 +67,7 @@ import { NIGHTS, WENNA_UP, WENNA_LODGE } from './maps/rime_lodge.ts';
 import { CHAPTER } from './chapter.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
+import { HARDER_IN, WARNING_IN } from '../../../game/world.ts';
 import { worldGrid } from '../../../game/atlas.ts';
 import { meet, heard, answer } from '../../../game/people.ts';
 import { answerRiddle } from '../../../game/wilds.ts';
@@ -1202,7 +1203,11 @@ function theSleepers(ok: (cond: boolean, msg: string) => void): void {
  * the land not named again; the strip of pines walked from the way in, the spring that does not freeze,
  * the cairn, the rim and the bears' den-mouth; the pair of ice bears, the box's one group, won at its
  * floor; the store behind the rock where the pines are scored, shut but through its door; the rim's face
- * at 11,4 left bare for the enclave's door; and the box's edges as built.
+ * at 11,4 drawn as the enclave's door; and the box's edges as built. Creag Fionn (#845), the enclave: south
+ * from the pines at L12's 11,3 into the cave, its door saying its band and how it feels at 19, 20 and 22
+ * and its sign its band; the eagles in the neck met first and the trolls before the hoard, both groups won
+ * at 22; the sights; the trolls' larder found from the bare stretch of wall and shut to every company but
+ * through it; Trollbrand in the hoard alone; and up the ramp onto L12's 11,3 with the way's own line alone.
  */
 function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const w = newWalk(ok);
@@ -1286,7 +1291,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const strongbox = K12.features!.find((f) => f.kind === 'chest' && f.id === 'k12_strongbox');
   ok(strongbox?.kind === 'chest' && strongbox.gold === 250 && strongbox.items.join() === 'elixir' && strongbox.x === 11 && strongbox.y === 15, 'at the cell\'s end, a strongbox with 250 gold and an Elixir');
 
-  // The lair's door (docs §12.4) is left bare: the rim's face at 2,15, Monks' Vale's land by the atlas,
+  // The lair's door (docs §12.5) is left bare: the rim's face at 2,15, Monks' Vale's land by the atlas,
   // mountain, its way the pines of 2,14, with nothing within four squares.
   const bare = worldGrid(ATLAS, MAP_DEFS.filter((d) => d.id !== K12.id));
   const land = ATLAS.zones[bare.zone[(k12.y + 15) * bare.width + k12.x + 2]]?.id;
@@ -1332,15 +1337,15 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   ok(down.kind === 'moved' && w.world.zone?.id === L12.id && w.world.state.x === l12.x + 8 && w.world.state.y === l12.y && l11.y + l11.h === l12.y && said(down) === 'nothing said',
     `south from L11's 8,31 onto L12's 8,0, walked, and the land not named again (${said(down)})`);
   listen(w);
-  ok(L12.start.x === 10 && L12.start.y === 0 && L12.start.facing === SOUTH && !(L12.exits ?? []).length, 'the box starts at its north edge under the pines, and nothing is taken out of it');
+  ok(L12.start.x === 10 && L12.start.y === 0 && L12.start.facing === SOUTH && (L12.exits ?? []).map((e) => e.to).join() === 'creag_fionn', 'the box starts at its north edge under the pines, and its one way out is the cave into Creag Fionn');
 
   // The strip of pines, walked from the way in to every point and to the bears' square; the gatherers'
   // fire, 8 squares or more from the bears; the spring that does not freeze, which gives +1 intellect to
   // each of the company; the cairn, the rim and the bears' den-mouth.
   const strip = reach(l12, [L12.start.x, L12.start.y], {}, [4, 6]);
   const bears = L12.encounters!.find((g) => g.id === 'l12_bears')!, camp12 = L12.features!.find((f) => f.kind === 'camp')!;
-  ok(strip.size === 78 && L12.features!.filter((f) => f.kind !== 'chest' && !('id' in f && f.id === 'l12_store')).every((f) => strip.has(at(l12, f.x, f.y))) && strip.has(at(l12, bears.x, bears.y)),
-    `the strip of pines (${strip.size} squares) is walked from the way in to every point and to the bears' square, and no further`);
+  ok(strip.size === 79 && L12.features!.filter((f) => f.kind !== 'chest' && !('id' in f && f.id === 'l12_store')).every((f) => strip.has(at(l12, f.x, f.y))) && strip.has(at(l12, bears.x, bears.y)),
+    `the strip of pines (${strip.size} squares, the cave's door among them) is walked from the way in to every point and to the bears' square, and no further`);
   ok(Math.abs(camp12.x - bears.x) + Math.abs(camp12.y - bears.y) >= 8, 'the gatherers\' fire is 8 squares or more from the bears, who do not roam');
   const springBefore = w.party.members.map((m) => m.stats.intellect);
   kneel(w, `${L12.id}:l12_spring`);
@@ -1362,13 +1367,86 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const strongbox12 = L12.features!.find((f) => f.kind === 'chest' && f.id === 'l12_strongbox');
   ok(strongbox12?.kind === 'chest' && strongbox12.gold === 200 && strongbox12.items.join() === 'elixir' && strongbox12.x === 4 && strongbox12.y === 8, 'at the store\'s end, a strongbox with 200 gold and an Elixir');
 
-  // The enclave's door (docs §12.4) is left bare: the rim's face at 11,4, Loch Fada's land by the atlas,
-  // mountain, its way the pines of 11,3, with nothing within four squares.
+  // The enclave's door (docs §12.4): the rim's face at 11,4, Loch Fada's land by the atlas, drawn as stone,
+  // its way the pines of 11,3, with nothing within four squares.
   const bare12 = worldGrid(ATLAS, MAP_DEFS.filter((d) => d.id !== L12.id));
   const land12 = ATLAS.zones[bare12.zone[(l12.y + 4) * bare12.width + l12.x + 11]]?.id;
   const near12 = [...(L12.features ?? []), ...(L12.encounters ?? [])].filter((f) => Math.abs(f.x - 11) + Math.abs(f.y - 4) <= 4);
-  ok(L12.rows[4][11] === 'M' && strip.has(at(l12, 11, 3)) && land12 === 'longmere' && !near12.length,
-    `the rim's face at 11,4, Loch Fada's land by the atlas (${land12}), is left bare for the enclave's door, walked to from 11,3, nothing within four squares${near12.length ? ` (not ${near12.map((f) => `${f.x},${f.y}`).join(' ')})` : ''}`);
+  ok(L12.rows[4][11] === '"' && strip.has(at(l12, 11, 3)) && strip.has(at(l12, 11, 4)) && land12 === 'longmere' && !near12.length,
+    `the rim's face at 11,4, Loch Fada's land by the atlas (${land12}), is the enclave's door, drawn as stone and walked to from 11,3, nothing within four squares${near12.length ? ` (not ${near12.map((f) => `${f.x},${f.y}`).join(' ')})` : ''}`);
+
+  // Creag Fionn (#845, #832), the enclave: the cave at L12's 11,4, walked into from the pines at 11,3. Its
+  // door says its band and how it feels, as a border's line: the warning at 19, harder at 20 and its band
+  // alone at 22; inside, its sign gives its band over L12's.
+  const CF = MAP_DEFS.find((d) => d.id === 'creag_fionn')!, cave = L12.exits!.find((e) => e.to === CF.id)!;
+  ok(cave.x === 11 && cave.y === 4 && cave.tx === CF.start.x && cave.ty === CF.start.y && cave.tf === CF.start.facing,
+    'the cave into Creag Fionn is the rim\'s face at L12\'s 11,4, and arrives at the enclave\'s start, 7,1, facing in');
+  const levels = w.party.members.map((m) => m.level);
+  const door = (level: number): string => {
+    for (const m of w.party.members) m.level = level;
+    w.world.travel(L12.id, 11, 3, SOUTH);
+    const r = w.world.move('forward');
+    return r.kind === 'moved' && w.world.state.mapId === CF.id && w.world.state.x === CF.start.x && w.world.state.y === CF.start.y ? r.messages.join(' | ') : r.kind;
+  };
+  const band = 'Creag Fionn: levels 22-23.', far = door(19), nearer = door(20), at22 = door(22);
+  ok(far === `${cave.label} | ${band} ${WARNING_IN}` && nearer === `${cave.label} | ${band} ${HARDER_IN}` && at22 === `${cave.label} | ${band}`,
+    `south from L12's 11,3 into Creag Fionn, the way's own line and then its band, with the warning at 19, harder at 20 and nothing more at 22 (${far}; ${nearer}; ${at22})`);
+  ok(!!CF.enclave && w.world.here.name === 'Creag Fionn' && w.world.here.band?.join('-') === '22-23', `inside, its sign gives its own band, over L12's 20-21 (${w.world.here.name}, ${w.world.here.band?.join('-')})`);
+  listen(w);
+  // Its two groups won at its floor: the eagles in the neck behind the cave's mouth, the nearer and the
+  // gentler, and the trolls in the one passage to the cave's back, the farther and the hardest. A walker
+  // from the way in meets the eagles first, and with them gone the trolls before the hoard, which lies
+  // past them; the hall and the hint are not.
+  w.level = 22;
+  const groups = CF.encounters!, eagles = groups.find((g) => g.id === 'cf_eagles')!, trolls = groups.find((g) => g.id === 'cf_trolls')!;
+  ok(groups.length === 2 && eagles.monsters.join() === 'spine_eagle,spine_eagle,spine_eagle,spine_eagle' && trolls.monsters.join() === 'snow_troll,snow_troll'
+    && eagles.respawn === 1440 && trolls.respawn === 2880 && groups.every((g) => g.roams === false && !g.slainText), 'four spine eagles in the neck and two snow trolls in the passage to the cave\'s back, and no guardian');
+  const hold = new GameMap(CF), [wall] = CF.secrets!;
+  const walked = (live: readonly { x: number; y: number }[], can: Can): Set<string> => {
+    const seen = new Set<string>(), todo: [number, number][] = [[CF.start.x, CF.start.y]];
+    while (todo.length) {
+      const [x, y] = todo.pop()!;
+      if (seen.has(`${x},${y}`) || (x === wall.x && y === wall.y) || live.some((g) => Math.abs(g.x - x) + Math.abs(g.y - y) <= 1) || hold.passable(x, y, can) !== 'ok') continue;
+      seen.add(`${x},${y}`);
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+    }
+    return seen;
+  };
+  const met = (set: Set<string>, g: { x: number; y: number }): boolean => [...set].some((k) => {
+    const [x, y] = k.split(',').map(Number);
+    return [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => Math.abs(g.x - x - dx) + Math.abs(g.y - y - dy) <= 1 && hold.passable(x + dx, y + dy, ALL) === 'ok');
+  });
+  const first = walked(groups, ALL), second = walked([trolls], ALL);
+  ok(met(first, eagles) && !met(first, trolls) && !first.has('6,8') && second.has('6,8') && second.has('10,9') && met(second, trolls) && !['5,13', '11,14', '7,13'].some((k) => second.has(k)),
+    `from the way in, by foot, water, climbing or air, the eagles are met first and the hall behind them is not reached; with them gone the hall and the hint are, and the trolls are met before the cave's back and the hoard (${first.size} squares, then ${second.size})`);
+  for (const g of groups) fight(w, `${CF.id}:${g.id}`);
+  for (const id of ['cf_cleft', 'cf_roost', 'cf_hall', 'cf_hunter', 'cf_bones', 'cf_nest']) see(w, `${CF.id}:${id}`);
+  // The reward: Trollbrand in the hoard with 400 gold, past the trolls; the Bear Spear with fire in its
+  // blows, which stops a troll mending. No shop sells it, no other chest or cairn holds it and no monster drops it.
+  const hoard = CF.features!.find((f) => f.kind === 'chest' && f.id === 'cf_hoard');
+  ok(hoard?.kind === 'chest' && hoard.gold === 400 && hoard.items.join() === 'trollbrand' && hoard.x === 11 && hoard.y === 14
+    && item('trollbrand').element === 'fire' && !!MONSTERS.snow_troll.regen
+    && hits(item('trollbrand')) === hits(item('bear_spear')) + (ELEMENT_DIE + 1) / 2 && hits(item('trollbrand')) > hits(item('bear_spear+1'))
+    && !MAP_DEFS.some((d) => (d.features ?? []).some((f) => (f.kind === 'shop' && f.stock.includes('trollbrand')) || ((f.kind === 'chest' || f.kind === 'cairn') && f !== hoard && (f.items ?? []).includes('trollbrand'))))
+    && !Object.values(MONSTERS).some((m) => m.drops?.some((d) => d.item === 'trollbrand')),
+    `in the hoard at the cave's back, 400 gold and Trollbrand, a Bear Spear whose blows carry fire, which stops a troll mending, ${hits(item('trollbrand'))} a blow to the Bear Spear +1's ${hits(item('bear_spear+1'))}; no shop sells it, no other chest or cairn holds it and no monster drops it`);
+  // The secret: the stretch of wall the trolls keep bare, the search there and the larder behind it. Walked,
+  // waded, climbed or floated, it is never reached but through its wall.
+  const larder = [[12, 9], [13, 9], [12, 10], [13, 10]], inside = walked([], ALL);
+  ok(wall.hint === 'cf_path' && CF.features!.some((f) => f.x === wall.x - 1 && f.y === wall.y && 'id' in f && f.id === 'cf_path') && inside.size === 70 && !larder.some(([x, y]) => inside.has(`${x},${y}`)),
+    `the larder is shut but for the bare stretch of wall: none of Creag Fionn's ${inside.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${CF.id}:cf_path`);
+  ok(search(CF.id, wall.x - 1, wall.y, EAST, 'cf_larder'), 'searched where the trolls keep the wall bare, it gives, and the larder can be walked into');
+  const larderBox = CF.features!.find((f) => f.kind === 'chest' && f.id === 'cf_larder_chest');
+  ok(larderBox?.kind === 'chest' && larderBox.gold === 300 && larderBox.items.join() === 'elixir,potion_sp_great' && larderBox.x === 13 && larderBox.y === 10, 'in the larder, a strongbox with 300 gold, an Elixir and a Sapphire Vial');
+  // And out: up the ramp onto L12's 11,3, with the way's own line and no other.
+  w.world.travel(CF.id, CF.start.x, CF.start.y + 1, NORTH);
+  const up = w.world.move('forward');
+  ok(up.kind === 'moved' && w.world.zone?.id === L12.id && w.world.state.x === l12.x + 11 && w.world.state.y === l12.y + 3 && w.world.state.facing === NORTH && up.messages.join(' | ') === CF.exits![0].label,
+    `up the ramp out of Creag Fionn onto L12's 11,3, the way's own line alone (${said(up)})`);
+  listen(w);
+  w.party.members.forEach((m, i) => { m.level = levels[i]; });
+  w.level = 20;
 
   // L12's edges: its north meets L11's south square for square, open at 0 to 16; its west meets K12's
   // east, open at 0 to 7; past its east and south the rim stands and the world ends.

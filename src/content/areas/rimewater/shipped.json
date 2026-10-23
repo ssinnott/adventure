@@ -241,6 +241,28 @@
         "448,263"
       ]
     },
+    "creag_fionn": {
+      "size": "16x16",
+      "used": [
+        "cf_bones",
+        "cf_cleft",
+        "cf_hall",
+        "cf_hoard",
+        "cf_hunter",
+        "cf_larder",
+        "cf_larder_chest",
+        "cf_nest",
+        "cf_path",
+        "cf_roost"
+      ],
+      "groups": [
+        "cf_eagles",
+        "cf_trolls"
+      ],
+      "doors": [
+        "11,9"
+      ]
+    },
     "rime_lodge": {
       "size": "16x16",
       "used": [
@@ -398,6 +420,7 @@
     "plate+4",
     "skinning_knife",
     "skinning_knife+1",
+    "trollbrand",
     "wakerobe"
   ],
   "monsters": [
