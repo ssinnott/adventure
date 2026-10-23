@@ -1,5 +1,26 @@
 {
   "maps": {
+    "bearn_liath": {
+      "size": "16x16",
+      "used": [
+        "bl_bones",
+        "bl_drift",
+        "bl_gap",
+        "bl_hollow",
+        "bl_kist",
+        "bl_mouth",
+        "bl_old",
+        "bl_store",
+        "bl_store_chest",
+        "bl_tracks"
+      ],
+      "groups": [
+        "bl_troll"
+      ],
+      "doors": [
+        "13,4"
+      ]
+    },
     "cairns": {
       "size": "16x16",
       "used": [
@@ -307,6 +328,7 @@
     }
   },
   "flags": [
+    "drover_met",
     "o7_piper_lesson",
     "o7_piper_met",
     "o7_watcher_lesson",
