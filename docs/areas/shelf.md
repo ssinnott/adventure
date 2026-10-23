@@ -20,7 +20,7 @@ The atlas (its rows in `src/content/areas/shelf/atlas.ts`, merged into `ATLAS` b
 |---|---|---|---|
 | The Foreland | 1–5, its map's | 2,296 | 879: the Foreland map, laid at 200,30 |
 | Callow Downs | 2–5 | 6,569 | F2, F3, E3, E2, D2, D3, D4 and E4, laid at 168,30, 168,62, 136,62, 136,30, 104,30, 104,62, 104,94 and 136,94 |
-| The area | 1–5 | 8,865 | a quarter |
+| The area | 1–5 | 8,865 | the Foreland map and the Downs' eight boxes |
 
 Squares are the ones the atlas gives each zone, shallows and rivers included. Without the shallows
 the area is 8,594 squares, about 8.4 zone maps (EXPANSION §1 has 8.3). It runs from x 94 to x 231
@@ -33,7 +33,7 @@ a side, with its corner at x = 8 + 32i and y = −2 + 32j, cut to the world at i
 Foreland is G2 and Thornmark H2. The world map's border letters these boxes, the strips at the
 world's west and south edges unlettered (#66).
 
-On the grid the Foreland's map is G2, and the Downs are seven boxes, by column: F2 and F3 beside it;
+On the grid the Foreland's map is G2, and the Downs are eight boxes, by column: F2 and F3 beside it;
 E2 and E3; D2, D3 and D4 (§4); and E4, the bounds', the Downs' last shore (#837, §12). The row
 above, C1 to G1, is the rim. C2 and C3 hold a strip of the Downs' cliff top among Saltreach's land,
 and G3 and G4 a few squares of shore in the sea.
@@ -642,7 +642,7 @@ core's boxes, in the order the Salt Road reaches them:
 
 The Salt Road west, into Act II, starts here. The Foreland's chapter is The Quiet Farm (#42), and
 every zone on the road holds at least one step of the quest (EXPANSION §5.8). The Downs are one
-zone of seven boxes (§9), so the pilot's step at Gullwick is the zone's, and the other two come
+zone of eight boxes (§9), so the pilot's step at Gullwick is the zone's, and the other two come
 with their boxes. STORY opens at Gullwick on the night the light went out, and the company reaches
 Helmstow in the morning; a new game opens in Helmstow.
 
@@ -857,11 +857,12 @@ every group, box by box; E4, the bounds', holds none (§12.1).
   200. With the Berth the clear meets the curve and goes about a tenth over it, so its shortfall is
   no longer owed to the pilot (#26); the margin is the pilot's to weigh. A den's keepers pay once,
   and its brood as a group that respawns does; the figures count the brood once.
-- **Gold.** A clear pays about 4,230 with E3, E2, D2, D3 and D4: 1,190 in chests before them, about
-  820 in drops (F2's and F3's among them), 900 in rewards (the clerk's seal and the tenant's paper
-  once each, whoever takes them) and 180 in the guilds' pay, and E3's, E2's, D2's, D3's and D4's
-  chests, hoards, drops and rewards on top, and the Berth's 300 or so (220 in its chests, the rest
-  the captain's and his guard's). Training six members from 1 to 5 costs 1,500, so gold holds.
+- **Gold.** By the curve's count a clear pays 4,536 with E3, E2, D2, D3 and D4 (4,646 with E4,
+  §12): 1,190 in chests before them, about 820 in drops (F2's and F3's among them), 900 in rewards
+  (the clerk's seal and the tenant's paper once each, whoever takes them) and 180 in the guilds'
+  pay, and E3's, E2's, D2's, D3's and D4's chests, hoards, drops and rewards on top, and the
+  Berth's 300 or so (220 in its chests, the rest the captain's and his guard's). Training six
+  members from 1 to 5 costs 1,500, so gold holds.
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds every figure to an aim and fails
   it only past a limit (#273); nothing on the Foreland is owed to it. The Smuggler Captain and the
   Deacon, won 99 and 100% of the time at Brandy Hole's and the Seam's floors before the pilot, are
@@ -874,7 +875,8 @@ every group, box by box; E4, the bounds', holds none (§12.1).
   and inside the limit of nine in ten, listed. Each zone walks its own road (both every time) and
   warns at its own way in. Fights to a rest: the Foreland map 4.55, Brandy Hole's caves 4.09, the
   Seam 6.69, the Ashcombe cellar 7.41, F2 6.60, F3 7.07, E3 7.53, E2 6.93, D2 7.59, D3 8.21, D4 7.54
-  and the Berth 7.12. These are re-measured with E4 laid (#837), which holds no group (§12.1).
+  and the Berth 7.12. These are re-measured with E4 laid (#837), which holds no group (§12.1), and
+  are main's before it too.
 - **The thresholds, as the pilot left them** (#47). Every box of the Downs was tuned to the aims of
   #273, and none moved them:
 
@@ -893,7 +895,7 @@ every group, box by box; E4, the bounds', holds none (§12.1).
   Brandy Hole's, made before the line, are retuned, not the limit widened. Two under stays as it
   is: no group both lost at the floor less two and held to the rest line is won a quarter of the
   time or less (#273), so it is listed, never failed; the limit catches a map won always. Two
-  figures sit on their limits' edge and are watched, not moved: Brandy Hole's caves at 4.05 fights
+  figures sit on their limits' edge and are watched, not moved: Brandy Hole's caves at 4.09 fights
   to a rest, and E2's furthest square at 20 steps. The owner has not played the Downs yet; what
   their play shows may move these still.
 - **The pilot's hours** (#47). Each box from its pull request's first commit to its merge, by the
@@ -1099,10 +1101,11 @@ Decided by the builder for #837, each the owner's to overturn:
    edges.
 3. **No group stands on E4.** The curve's rise rule asks a box's hardest group at its top, 5. At 5
    the Downs have the Black Dog that walks D2 by night, D2's barrow wolves (the den's keepers) and
-   D4's cutthroats on the road by the Delta; past them the Foreland has only its bosses. A group on
-   a strand of 65 squares would crowd it, beside the lair's door with nothing within four squares,
-   and repeat D2's or D4's own. The area's clear already gives 4,101 xp a member of the 3,734 the
-   curve asks (§8); the lair is the bounds' fight.
+   the cutthroats who keep D3's bandit camp and walk D4's road by the Delta; the Foreland's others
+   at 5 are its bosses, the Deacon and the Berth's captain. A group on a shore of 65 squares would
+   crowd it, beside the lair's door with nothing within four squares, and repeat D2's, D3's or D4's
+   own. The area's clear already gives 4,101 xp a member of the 3,734 the curve asks (§8); the lair
+   is the bounds' fight.
 4. **Its wilderness features are a post of holed stones on the last rise and a cairn of flints at
    the strand's end.** The post is a shrine, +1 personality once, a stat no shrine of the area
    gives. No camp: E3's lee of the point is seven squares from E4's north edge across the seam.
@@ -1115,14 +1118,16 @@ Decided by the builder for #837, each the owner's to overturn:
    grass at 1 to 4 on rows 5 and 6, rock either side of the door and behind it, 3,7 open before it
    on the strand and nothing within four squares (§12.3).
 8. **E4 meets E3 and D4 square for square,** its edges worked from the built letters: its 9,0 and
-   10,0 are sand as E3's 9,31 and 10,31 are, where the atlas has shallows; its west column is the
-   atlas's, as D4's east column is. Every corner agrees with the built letters; no built square
-   changes and no `SEAMS_AS_BUILT` row is added. The two `OPEN_ON_NOTHING` rows E4 answers go and
-   none comes: its east edge, against F4, is the sea.
-9. **E4 differs from the atlas at 30 squares:** the seam's two, 9,1 and 9,2 (sand where the atlas
-   has shallows, the stack's way), the stack's nine, the cliff's eight and the strand's nine, the
-   atlas's grass under the cliff drawn as sand (0 to 5 on row 7, 0 and 1 on row 8 and 0 on row 9),
-   so the strand reads as one from the cliff's foot to the box's west edge.
+   10,0 are sand as E3's 9,31 and 10,31 are, where the atlas has shallows; its west column is open
+   at 0 to 10 as D4's east column is, the atlas's but for the strand's sand at 0,7 to 0,9. Every
+   corner agrees with the built letters; no built square changes and no `SEAMS_AS_BUILT` row is
+   added. The two `OPEN_ON_NOTHING` rows E4 answers go and none comes: its east edge, against F4,
+   is the sea.
+9. **E4 differs from the atlas at 30 squares:** four of shallows drawn as sand (the seam's two at
+   9,0 and 10,0 and the stack's way at 9,1 and 9,2), the stack's nine (two of shallows and seven of
+   the sea), the cliff's eight and the strand's nine, the atlas's grass under the cliff drawn as
+   sand (0 to 5 on row 7, 0 and 1 on row 8 and 0 on row 9), so the strand reads as one from the
+   cliff's foot to the box's west edge.
 10. **E4 starts at 6,0 facing south,** in from Crowness's down, the land and not the sea in view.
 11. **The walkthrough walks the bounds in one function,** `theBounds`, called last.
 
@@ -1205,18 +1210,19 @@ built".
   words, as at every rise of the Downs' band.
 - **The seams agree with the built boxes square for square,** each corner worked from the built
   letters first. E4's north edge meets E3's south edge, open at 0 to 10, its 9,0 and 10,0 sand as
-  E3's are where the atlas has shallows; its west edge meets D4's east edge, open at 0 to 10, the
-  atlas's letters on both. Its south edge against Wrackholm's E5 is the sea on both sides, and no
-  road joins the Foreland to Wrackholm. Every corner agrees with the built letters: E4's 0,0 is
-  grass with E3's 0,31 and D4's 31,0. Its other three are the sea against the sea: 0,31 with D4's
-  31,31 and E5's 0,0, 31,0 with E3's 31,31 and 31,31 with E5's 31,0. No built square changes and no
-  row of `SEAMS_AS_BUILT` is added. Its east edge, against F4, where #828 plans no box, is the sea,
-  so no row of `OPEN_ON_NOTHING` comes, and the two that held E3's south and D4's east edges go; no
-  built map of the Foreland now opens onto unbuilt land but F3's east edge onto G3, a crumb (#828).
+  E3's are where the atlas has shallows; its west edge meets D4's east edge, open at 0 to 10 on
+  both, its letters the atlas's but for the strand's sand at 0,7 to 0,9. Its south edge against
+  Wrackholm's E5 is the sea on both sides, and no road joins the Foreland to Wrackholm. Every corner
+  agrees with the built letters: E4's 0,0 is grass with E3's 0,31 and D4's 31,0. Its other three
+  are the sea against the sea: 0,31 with D4's 31,31 and E5's 0,0, 31,0 with E3's 31,31 and 31,31
+  with E5's 31,0. No built square changes and no row of `SEAMS_AS_BUILT` is added. Its east edge,
+  against F4, where #828 plans no box, is the sea, so no row of `OPEN_ON_NOTHING` comes, and the two
+  that held E3's south and D4's east edges go; no built map of the Foreland now opens onto unbuilt
+  land but F3's east edge onto G3, a crumb (#828).
 - **No group** stands on E4 (§9, #837's 3): the curve's rise rule asks a box's hardest at its top,
-  5, and the Downs' own at 5 are the Black Dog that walks D2 by night, D2's barrow wolves and D4's
-  cutthroats, each placed already; past them the Foreland has only its bosses. The bounds' fight
-  is the lair's.
+  5, and the Downs' own at 5 are the Black Dog that walks D2 by night, D2's barrow wolves and the
+  cutthroats of D3's camp and D4's road, each placed already; the Foreland's others at 5 are its
+  bosses. The bounds' fight is the lair's.
 - **Two wilderness features** (EXPANSION §5.3): a post of driftwood hung with holed stones (a
   shrine) and a cairn of flints. No camp: E3's lee of the point is seven squares from E4's north
   edge across the seam.
@@ -1263,10 +1269,11 @@ built".
   (`e4_store`, 11,2) with the crock (`e4_crock`). The low cliff is rock at 1 to 4 on rows 5 and 6,
   the ways down past either end of it at 0 and 5; the strand under it is sand from 0 to 5 on row 7
   to 0,10 on the box's west edge. The lair's door, 3,6, is bare with 3,7 open before it. E4 differs
-  from the atlas at 30 squares: the seam's two, 9,1 and 9,2 (sand where the atlas has shallows, the
-  stack's way), the stack's nine, the cliff's eight and the strand's nine of grass drawn as sand.
-  Density: 67 of 67 squares within 12 steps (the store's two with them), the furthest 5, no sign
-  among 5 points. No group, so the gate has nothing to judge; the box pays 110 gold.
+  from the atlas at 30 squares: four of shallows drawn as sand (the seam's 9,0 and 10,0 and the
+  stack's way, 9,1 and 9,2), the stack's nine, the cliff's eight and the strand's nine of grass
+  drawn as sand. Density: 67 of 67 squares within 12 steps (the store's two with them), the
+  furthest 5, no sign among 5 points. No group, so the gate has nothing to judge; the box pays 110
+  gold.
 
 ### 12.3 The lair: the Hag's sea cave (#837, its second pull request)
 
@@ -1287,5 +1294,5 @@ built".
   black on the cave's roof, above water no lamp could stand in.
 - **New here.** The Hag and the artifact (#846, #847).
 - **Finds.** The Hagstone, carried by any of the ten, a ward against paralysis, found and never sold
-  (§6), where #846 puts it; the rumour is the old net-mender's at Gullwick, built with the lair.
+  (§6, #846); the rumour is the old net-mender's at Gullwick, built with the lair.
 - **Pay.** Counted in no clear (`tools/tests/curve.ts`).

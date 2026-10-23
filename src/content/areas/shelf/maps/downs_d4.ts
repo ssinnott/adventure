@@ -1,6 +1,6 @@
 // Callow Downs, box D4: Kestrel Edge. Country, band 4-5: the Downs' way out west, the Salt Road from
 // D3's corner over the plateau to the top of the Edge, down the cliff in seven bends, and across the
-// low ground at its foot to the Delta, Saltreach's D5 (#830). East, the plateau's grass runs on into
+// low ground at its foot to the Delta, Saltreach's D5 (#170). East, the plateau's grass runs on into
 // E4, the Downs' last shore (#837). The cliff is mountain, as D3's is, carried on to the water where
 // the atlas stops it short, so the bends are the one way down. Cut from the atlas by
 // tools/scaffold.ts; docs/areas/shelf.md §4.9 is its brief.

@@ -142,9 +142,9 @@ export const walkthrough: Walkthrough = (ok) => {
 /**
  * The bounds (#837, docs/areas/shelf.md §12): E4, the Downs' last shore, which holds no group. South
  * from Crowness's down and east from the top of Kestrel Edge onto it, walked, the land not named
- * again; the cairn on the last rise and the post of holed stones on the strand; the crab shells at
- * the stack's foot and the crabber's store behind it, shut but through its door; the low cliff's face
- * at 3,6 left bare for the lair's door. The box's edges as built.
+ * again; the post of holed stones on the last rise and the cairn of flints at the strand's end; the
+ * crab shells at the stack's foot and the crabber's store behind it, shut but through its door; the
+ * low cliff's face at 3,6 left bare for the lair's door. The box's edges as built.
  */
 function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const w = newWalk(ok);
