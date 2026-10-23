@@ -6,11 +6,11 @@ import { monster, monsterImmune, monsterSpells, elementMult, elementDamage, KIND
 import type { MonsterDef } from './monsters.ts';
 import { spell, spellDice, SPELLS_GROW_TO } from './spells.ts';
 import type { SpellDef, Element } from './spells.ts';
-import { item, ELEMENT_DIE } from './items.ts';
+import { item, ELEMENT_DIE, ARTIFACT_LEVEL, chargesLeft } from './items.ts';
 import {
   armorClass, attackBonus, weaponOf, isDown, canAct, damage, heal, addCondition, removeCondition, hasCondition, bonus, canTrain, killPay,
   hasTrait, spellHeal, rankMult, spellRank, armsBonus, WEAPON_MASTER_DMG, HOLY_STRIKE_DMG, MARKSMAN_DMG, SPELLFIRE_DMG, SNEAK_ATTACK_DMG, RAGE_DMG, INSPIRE_HIT,
-  prestigeOf, deathAt, resists, lift, statOf,
+  prestigeOf, deathAt, resists, lift, statOf, borne,
 } from './party.ts';
 import type { ClassId } from './party.ts';
 import type { ItemDef } from './items.ts';
@@ -41,7 +41,7 @@ export type TurnRef = { side: 'party'; i: number } | { side: 'monster'; i: numbe
 
 export type PartyAction =
   | { type: 'attack'; target: number }
-  | { type: 'cast'; spellId: string; target: number; element?: Element }
+  | { type: 'cast'; spellId: string; target: number; element?: Element; from?: string }
   | { type: 'defend' }
   | { type: 'use'; itemId: string; target: number }
   | { type: 'flee' };
@@ -403,7 +403,15 @@ export function partyAct(s: CombatState, party: Party, rng: RngInstance, action:
     }
     case 'cast': {
       const sp = spell(action.spellId);
-      if (!c.spells.includes(sp.id) || c.sp < sp.sp || sp.context === 'explore' || (sp.glass && !action.element)) return false;
+      if (sp.context === 'explore' || (sp.glass && !action.element)) return false;
+      // An artifact's spell (#847): its bearer casts it for a charge, not spell points, whatever they know.
+      if (action.from) {
+        if (item(action.from).casts?.spell !== sp.id || !borne(c).includes(action.from) || chargesLeft(party, action.from) < 1) return false;
+        (party.spent ??= {})[action.from] = (party.spent[action.from] ?? 0) + 1;
+        castSpell(s, party, rng, c, sp, action.target, action.element, true);
+        break;
+      }
+      if (!c.spells.includes(sp.id) || c.sp < sp.sp) return false;
       c.sp -= sp.sp;
       castSpell(s, party, rng, c, sp, action.target, action.element);
       break;
@@ -462,13 +470,15 @@ function elemental(s: CombatState, m: MonsterInst, el: Element | undefined, d: n
   return took;
 }
 
-function castSpell(s: CombatState, party: Party, rng: RngInstance, c: Character, sp: SpellDef, target: number, element?: Element): void {
+function castSpell(s: CombatState, party: Party, rng: RngInstance, c: Character, sp: SpellDef, target: number, element?: Element, held = false): void {
   // A damage spell's roll on one monster: its dice lifted by the caster's ranks, then Spellfire, then
-  // what its element does to the monster (`elemental`).
+  // what its element does to the monster (`elemental`). An artifact's (`held`) rolls at the caster's
+  // level held at ARTIFACT_LEVEL, with no rank, tier or trait (DESIGN §9).
   let gloved = 0;
   const dmgOf = (m: MonsterInst): number => {
-    const d = Math.round(roll(rng, spellDice(sp, c.level, s.spellsGrowTo), sp.sides ?? 4, 0) * rankMult(c, s.rankStep)) + (hasTrait(c, 'spellfire') ? SPELLFIRE_DMG : 0);
-    const took = elemental(s, m, sp.element, d, pierces(c));
+    const d = held ? roll(rng, spellDice(sp, Math.min(c.level, ARTIFACT_LEVEL), s.spellsGrowTo), sp.sides ?? 4, 0)
+      : Math.round(roll(rng, spellDice(sp, c.level, s.spellsGrowTo), sp.sides ?? 4, 0) * rankMult(c, s.rankStep)) + (hasTrait(c, 'spellfire') ? SPELLFIRE_DMG : 0);
+    const took = elemental(s, m, sp.element, d, !held && pierces(c));
     // The Hearth's light passes through a machine, doing nothing.
     if (sp.element === 'holy' && took === 0 && m.def.kind === 'machine') gloved++;
     return took;

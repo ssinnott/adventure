@@ -202,7 +202,7 @@ function whatIfsOff(): void {
 
 /**
  * The bounds' artifacts in the harness's what-if (#847, `--artifacts`): each borne by the first member
- * who may, one in the world, and nothing else moves; off, the company bears none, and the gate's
+ * who may, one in the world, all eight in the premade six, and nothing else moves; off, the company bears none, and the gate's
  * company stays the plain one (#891).
  */
 function artifactsWhatIf(): void {
@@ -213,7 +213,8 @@ function artifactsWhatIf(): void {
   const rest = (m: Party['members'][number]): string => JSON.stringify({ ...m, equipment: null, pack: null });
   const still = plain.every((p, k) => p.members.every((m, i) => rest(m) === rest(dressed[k].members[i]) && (holds({ ...p, members: [dressed[k].members[i]] }) !== '' || JSON.stringify(m) === JSON.stringify(dressed[k].members[i]))));
   const off = [...at.map((l) => companyAt(l, 3)), ...at.map((l) => gateCompany(l, 1))].every((p) => holds(p) === '');
-  ok(plain.every((p) => holds(p) === '') && dressed.every((p) => holds(p) === 'Bram erzhemd, Wren akkush, Maren telstok') && still && holds(newer) === 'Rook erzhemd, Hollis telstok' && off,
+  ok(plain.every((p) => holds(p) === '') && dressed.every((p) => holds(p) === 'Bram erzhemd, Bram torhide, Bram hagstone, Idris grims_axe, Wren akkush, Ottilie holdfast, Maren telstok, Maren wakerobe') && still
+    && holds(newer) === 'Rook grims_axe, Rook erzhemd, Rook hagstone, Hollis telstok, Hollis wakerobe, Idris torhide, Aveline holdfast' && off,
     `under --artifacts the company bears each artifact on the first member who may and nothing else moves, at ${at.join(', ')} ${holds(dressed[1])}; the newer company ${holds(newer)}, with no ranger for Akkush; off, and in the gate's company, none`);
   const refused = under({ artifacts: all }, writeRefusal);
   ok(!!refused?.startsWith('a what-if is for weighing') && refused.endsWith('(artifacts)'), `and the refusal --calibrate --write throws names --artifacts while it is set (${refused?.slice(refused.indexOf('('))})`);

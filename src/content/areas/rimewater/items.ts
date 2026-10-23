@@ -3,7 +3,7 @@
 // the Kilns' were, until its first box (#486) took the table into its Area; the lodge (#487) sells the
 // step.
 import type { ItemDef } from '../../../game/items.ts';
-import { W, A, P, MARTIAL, NO_CASTER_HEAVY } from '../../items.ts';
+import { W, A, P, MARTIAL, NO_CASTER_HEAVY, ARTIFACT_PRICE } from '../../items.ts';
 import { ITEMS as THORNMARK } from '../thornmark/items.ts';
 
 const plate = THORNMARK.find((i) => i.id === 'plate')!;
@@ -20,6 +20,14 @@ const WARES = [iceAxe, skinningKnife, huntersBow, bearSpear, guidesStaff, bearsk
 
 /** The furrier's stock, the act's last step (#487). */
 export const FURRIER: readonly string[] = WARES.map((d) => d.id);
+
+// Rimewater's of the bounds' eight (DESIGN §9, #847), with the Whitespine: the Grey Robe's 13 and a
+// point, cut to the cleric, the sorcerer, the druid and the monk, and its wearer never asleep. Found
+// and never sold; placed nowhere yet, for #832 lays its lair and puts it there.
+export const wakerobe = A('wakerobe', 'The Wakerobe', ARTIFACT_PRICE, 14, { classes: ['cleric', 'sorcerer', 'druid', 'monk'], ward: 'asleep', artifact: true, text: [
+  'A grey robe made for someone taller and thinner, the sleeves past your fingers.',
+  'Whoever wore it last walked out of the ice in it, and did not lie down again.',
+] });
 
 export const ITEMS: readonly ItemDef[] = [
   ...WARES,
@@ -54,4 +62,5 @@ export const ITEMS: readonly ItemDef[] = [
     'A leaf torn from a healer\'s book, in a careful hand.',
     '"To Rime Lodge. The coach is stopped on the moor road, its coachman dead. One patient, asleep. Send a sledge."',
   ] },
+  wakerobe,
 ];

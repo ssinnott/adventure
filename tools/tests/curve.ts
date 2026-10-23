@@ -359,16 +359,19 @@ export const nearTop = (floor: number, top: number): number => (floor < MAX_LEVE
  */
 export const windowed = (d: ItemDef): boolean => d.slot !== 'none' && d.price > 0 && !d.artifact;
 
+/** The finds of a clear that a price window holds (`windowed`): each with where it is found. */
+const heldFinds = ({ every, features }: Clear): { it: string; from: string }[] => [
+  ...features.flatMap((f) => (giftOf(f)?.items ?? []).map((it) => ({ it, from: `${f.kind} ${spentId(f)}` }))),
+  ...[...new Set(every)].flatMap((m) => (m.drops ?? []).map((x) => ({ it: x.item, from: `${m.id}'s drop` }))),
+].filter(({ it }) => windowed(ITEMS[it]));
+
 /**
  * The price window: no weapon, armour or shield in a clear's chests or its monsters' drops dearer
  * than `price`, the monsters of every group, whichever twin a company meets. Keys, quest items,
  * consumables and an artifact are exempt (`windowed`).
  */
-function priceWindow(who: string, { every, features }: Clear, price: number): void {
-  const found = [
-    ...features.flatMap((f) => (giftOf(f)?.items ?? []).map((it) => ({ it, from: `${f.kind} ${spentId(f)}` }))),
-    ...[...new Set(every)].flatMap((m) => (m.drops ?? []).map((x) => ({ it: x.item, from: `${m.id}'s drop` }))),
-  ].filter(({ it }) => windowed(ITEMS[it]));
+function priceWindow(who: string, clear: Clear, price: number): void {
+  const found = heldFinds(clear);
   const dearer = found.filter((x) => ITEMS[x.it].price > price);
   for (const x of dearer) ok(false, `${who}: ${x.it} (${ITEMS[x.it].price} gold, ${x.from}) is dearer than its window's ${price}`);
   const dearest = found.reduce((p, x) => (ITEMS[x.it].price > ITEMS[p.it].price ? x : p), found[0]);
@@ -473,12 +476,20 @@ export function curve(): void {
     ok(price === CURVE.hearth.price && ITEMS.grey_axe.price > row.price,
       `its window is the cap's country's, the Hearth's ${price}, where its find, the Grey Axe at ${ITEMS.grey_axe.price}, is dearer than Saltreach's ${row.price}`);
     priceWindow(LAIR.id, lair, price);
-    // No window holds an artifact, by its mark alone (#847): each, dearer than the widest window, is
-    // passed in a lair at the cap as anywhere, and the same piece unmarked would be held, and caught.
+    // No window holds an artifact, by its mark alone (#847): each in the fixture lair's chest is passed by
+    // the cap's window, and the same piece unmarked, dearer than every window, is caught by it, but for a
+    // thing carried, which no window holds marked or not.
     const arts = Object.values(ITEMS).filter((d) => d.artifact), widest = Math.max(...Object.values(CURVE).map((r) => r.price));
-    const names = arts.map((d) => d.name.replace(/^The /, 'the ')), named = names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names.at(-1)}` : names.join('');
-    ok(arts.length > 0 && arts.every((d) => !windowed(d) && windowed({ ...d, artifact: undefined }) && d.price > widest),
-      `no window holds an artifact, by its mark alone: ${named}, at ${fmt(Math.min(...arts.map((d) => d.price)))} gold or more past the widest window's ${fmt(widest)}, the lair's, pass it, and each would be caught unmarked`);
+    const twins = arts.map((d): ItemDef => ({ ...d, id: `test_${d.id}_unmarked`, artifact: undefined }));
+    const caught = (id: string): string => heldFinds(clearOf([{ ...LAIR, features: (LAIR.features ?? []).map((f) => (f.kind === 'chest' ? { ...f, items: [id] } : f)) }])).filter((x) => ITEMS[x.it].price > price).map((x) => x.it).join();
+    for (const d of twins) ITEMS[d.id] = d;
+    try {
+      const passed = arts.filter((d) => caught(d.id) === ''), slotted = twins.filter((d) => d.slot !== 'none'), held = slotted.filter((d) => caught(d.id) === d.id);
+      ok(arts.length > 0 && passed.length === arts.length && slotted.length > 0 && held.length === slotted.length && arts.every((d) => d.price > widest),
+        `no window holds an artifact, by its mark alone: each of the ${arts.length} in ${LAIR.id}'s chest passes its window, the cap's ${fmt(price)}, and each of the ${held.length} with a slot, unmarked, at ${fmt(Math.min(...arts.map((d) => d.price)))} past the widest window's ${fmt(widest)}, is caught by it`);
+    } finally {
+      for (const d of twins) delete ITEMS[d.id];
+    }
     ok(true, `${LAIR.id}: as an enclave its ${fmt(lair.xp)} xp a member and ${fmt(lair.gold)} gold are a figure, counted in no clear`);
     const faults = (d: MapDef, outside = salt.outside ?? []): number => enclaveFaults({ id: FIXTURE.area, maps: [...salt.maps, d], outside }, [...MAP_DEFS, d]).length;
     ok(!faults(LAIR) && faults({ ...LAIR, band: undefined }) === 1 && faults({ ...LAIR, band: [11, 13] }) === 1 && faults(LAIR, [LAIR.id]) === 1
