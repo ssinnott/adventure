@@ -1,22 +1,19 @@
 // Gear with a plus: a +1 weapon hits one better and deals one more, +1 armour or a shield adds one
 // to armour class, and a robe with a plus is still a robe. No table has a plus yet, so the items are
-// made here with the helper, added only where absent and taken out again: every suite shares the
-// one ITEMS.
+// made here with the helper and lent to ITEMS only where absent while the suite runs (`withDefs`):
+// every suite shares the one ITEMS.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { ITEMS } from '../../src/content/index.ts';
 import { P, PLUS_PRICE, core } from '../../src/content/items.ts';
-import type { ItemDef } from '../../src/game/items.ts';
 import { defaultParty, createCharacter, attackBonus, armorClass } from '../../src/game/party.ts';
 import { startCombat, currentTurn, partyAct, monsterAct, toHit } from '../../src/game/combat.ts';
-import { ok } from './lib.ts';
+import { ok, withDefs } from './lib.ts';
 
-/** The ids this suite put in ITEMS, to take out when it is done. */
-const added: string[] = [];
-const add = (d: ItemDef): string => { if (!(d.id in ITEMS)) { ITEMS[d.id] = d; added.push(d.id); } return d.id; };
 const throws = (f: () => unknown): boolean => { try { f(); return false; } catch { return true; } };
 
 export function gear(): void {
-  try { check(); } finally { for (const id of added.splice(0)) delete ITEMS[id]; }
+  const plus = [P(ITEMS.longsword, 1), P(ITEMS.scale, 1), P(ITEMS.buckler, 1), P(ITEMS.robe, 1)];
+  withDefs(ITEMS, plus.filter((d) => !(d.id in ITEMS)), check);
 }
 
 function check(): void {
@@ -36,7 +33,7 @@ function check(): void {
   // To-hit, exactly one better.
   const mk = (cls: Parameters<typeof createCharacter>[2]) => createCharacter('T', 'human', cls, {}, makeRng(3));
   const kn = mk('knight'); kn.equipment.weapon = 'longsword'; const hitBase = attackBonus(kn);
-  kn.equipment.weapon = add(sword);
+  kn.equipment.weapon = sword.id;
   ok(attackBonus(kn) === hitBase + 1, `a knight's to-hit with a Long Sword +1 (${hitBase} -> ${attackBonus(kn)})`);
 
   // Damage, exactly one more: the same blow at a wraith on the same seed, the sword the only change.
@@ -70,13 +67,13 @@ function check(): void {
 
   // Armour class, one a point, on armour and a shield alike.
   const k2 = mk('knight'); k2.equipment.armor = 'scale'; k2.equipment.shield = 'buckler'; const ac0 = armorClass(k2);
-  k2.equipment.armor = add(P(ITEMS.scale, 1)); const ac1 = armorClass(k2);
-  k2.equipment.shield = add(P(ITEMS.buckler, 1)); const ac2 = armorClass(k2);
+  k2.equipment.armor = P(ITEMS.scale, 1).id; const ac1 = armorClass(k2);
+  k2.equipment.shield = P(ITEMS.buckler, 1).id; const ac2 = armorClass(k2);
   ok(ac1 === ac0 + 1 && ac2 === ac0 + 2, `Scale Mail +1 and a Buckler +1 add one each (${ac0} -> ${ac1} -> ${ac2})`);
 
   // A robe with a plus is still a robe.
   const monk = mk('monk'); monk.equipment.armor = 'robe'; const robe = armorClass(monk);
-  monk.equipment.armor = add(P(ITEMS.robe, 1));
+  monk.equipment.armor = P(ITEMS.robe, 1).id;
   ok(armorClass(monk) === robe + 1, `a monk in a Robe +1 keeps Unarmoured Defence (${robe} -> ${armorClass(monk)})`);
   monk.equipment.armor = 'leather';
   ok(armorClass(monk) === 10 + ITEMS.leather.ac!, 'but not in leather');

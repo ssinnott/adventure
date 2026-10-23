@@ -31,7 +31,7 @@ import { ENDINGS } from '../../src/content/endings.ts';
 import type { Ending } from '../../src/content/endings.ts';
 import { PAGE, pageLines } from '../../src/ui/ending.ts';
 import { areaRows, besideLists, once } from '../checks.ts';
-import { ok, owed, familyModules } from './lib.ts';
+import { ok, owed, familyModules, withDefs } from './lib.ts';
 
 /**
  * What is wrong with a map's secret doors and their hints: a secret door with no hint declared, a
@@ -666,7 +666,7 @@ export async function pillars(): Promise<void> {
     const shown = logTail(['2 Wreckers appear!', 'The fog spoils every archer\'s aim.', two], COMBAT_LOG_LINES);
     ok(logLines(two).length === 2 && LAYOUT.view.w === LAYOUT.log.w && shown.slice(-2).map((l) => l.text).join(' ') === two && shown.every((l) => measureText(l.text) <= LAYOUT.log.w - 12) && shown.slice(-2).every((l) => l.latest),
       `a fight's log shows a two-line look whole, each line inside the view (${shown.map((l) => measureText(l.text)).join(', ')} of ${LAYOUT.log.w - 12}px)`);
-    const withLook = (() => { const r = MONSTERS.rat; (MONSTERS as Record<string, MonsterDef>).rat = { ...r, look: 'A gray rat—big as a dog.' }; try { return texts(); } finally { (MONSTERS as Record<string, MonsterDef>).rat = r; } })();
+    const withLook = withDefs(MONSTERS, [{ ...MONSTERS.rat, look: 'A gray rat—big as a dog.' }], () => texts());
     const bad = withLook.filter((t) => t.where === 'monster rat');
     ok(bad.some((t) => missingGlyphs(t.text).length === 1 && americanisms(t.text).length === 1), 'a look is read with every text: a dash and gray in one are caught');
   }

@@ -14,11 +14,10 @@ import { MINUTES_PER_DAY, dateAt } from '../../src/game/calendar.ts';
 import { findWeather } from '../../src/game/weather.ts';
 import { serialize, deserialize } from '../../src/game/save.ts';
 import { CLIMATES, MONSTERS } from '../../src/content/index.ts';
-import type { MonsterDef } from '../../src/game/monsters.ts';
 import { restRefused } from '../../src/game/wilds.ts';
 import { NORTH } from '../../src/game/types.ts';
 import { newWalk, gone } from '../walk.ts';
-import { ok } from './lib.ts';
+import { ok, withDefs } from './lib.ts';
 
 export function monsters(): void {
   const rng = makeRng(3);
@@ -164,9 +163,7 @@ export function monsters(): void {
   }
   // A look: said once, the first time a group of the kind comes into sight or into a fight. The
   // content has none yet, so the rat and the wolf are given one for the while.
-  const table = MONSTERS as Record<string, MonsterDef>, rat = table.rat, wolf = table.wolf;
-  table.rat = { ...rat, look: 'A rat the size of a dog.' }; table.wolf = { ...wolf, look: 'A grey wolf, lean with hunger.' };
-  try {
+  withDefs(MONSTERS, [{ ...MONSTERS.rat, look: 'A rat the size of a dog.' }, { ...MONSTERS.wolf, look: 'A grey wolf, lean with hunger.' }], () => {
     const fresh = (facing: 0 | 2): World => { const r = makeRng(3), w = new World(buildMaps(), defaultParty(r), r); w.travel('shelf', 16, 4, facing); return w; };
     const behind = fresh(0);
     ok(!behind.sightings().length && !behind.state.met!.includes('rat'), 'the road rats behind the party are not seen, nor met');
@@ -187,5 +184,5 @@ export function monsters(): void {
     const step = fresh(2), moved = step.move('forward');
     const at = moved.kind === 'moved' ? moved.messages.indexOf('A rat the size of a dog.') : -1;
     ok(at >= 0 && moved.kind === 'moved' && !!moved.encounter, 'a step that brings a group into sight and into a fight says its look with the step, before the fight');
-  } finally { table.rat = rat; table.wolf = wolf; }
+  });
 }

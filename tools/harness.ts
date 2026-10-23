@@ -61,7 +61,7 @@ import { ROLES, ROLE_IDS, LEVELS, HP, DAMAGE, xpFor, line, standardEncounter, te
 import { quickening } from '../src/content/areas/ashfall/items.ts';
 import { areaRows, beside } from './checks.ts';
 import type { Role } from './testmonster.ts';
-import { wakeWith, markOf, ANSWER, breathGuard, mendLines, REST_AT, pools, mustRest, blessWith, sleepWith, drinkFor, sleeps, wakesMany, striker, optsFor, letsLie } from '../src/game/bot.ts';
+import { wakeWith, markOf, ANSWER, breathGuard, mendLines, REST_AT, pools, mustRest, blessWith, sleepWith, drinkFor, sleeps, wakesMany, striker, optsFor, letsLie, asWritten, type BotAnswer } from '../src/game/bot.ts';
 import type { BotOpts } from '../src/game/bot.ts';
 
 // The bots' answers, the rest rule and the pools it reads are the game's (src/game/bot.ts), and found here still.
@@ -90,13 +90,16 @@ and 7 are play's, and every company takes them. Two more stand off unless a what
 (`--bot`, BotOpts: the thrifty bot's in `play`, the gate's in tools/gate.ts `gateTurn`). And `company`
 fields the four newer classes' company instead of the premade six (`--company newer`, see `fielded`).
 And `artifacts` has it bear the bounds' artifacts named, past the ladder's top (`--artifacts`, see `bear`).
+And `answer` turns the bots' answers (`ANSWER`, src/game/bot.ts), as `--abilities` does to see a fight
+without one. A value of them is passed to each call that reads one, down to the fight (#946).
  */
-export const RULES: { spellsGrowTo?: number; gearGrows?: boolean; levelTraits?: boolean; levelBonus?: boolean; rankStep?: number; tiers?: boolean; bot?: BotOpts; company?: 'newer'; artifacts?: readonly string[] } = {};
-const NO_RULES: typeof RULES = { spellsGrowTo: undefined, gearGrows: undefined, levelTraits: undefined, levelBonus: undefined, rankStep: undefined, tiers: undefined, bot: undefined, company: undefined, artifacts: undefined };
-/** The what-ifs set, by name. */
-export const whatIfs = (): string[] => (Object.keys(RULES) as (keyof typeof RULES)[]).filter((k) => RULES[k] !== undefined);
-/** Why `--calibrate --write` refuses, while any what-if is set (a what-if is for weighing), naming them; none else. */
-export const writeRefusal = (): string | undefined => (whatIfs().length ? `a what-if is for weighing, not for writing: drop --write, or the what-ifs (${whatIfs().join(', ')})` : undefined);
+export interface Rules { spellsGrowTo?: number; gearGrows?: boolean; levelTraits?: boolean; levelBonus?: boolean; rankStep?: number; tiers?: boolean; bot?: BotOpts; company?: 'newer'; artifacts?: readonly string[]; answer?: BotAnswer }
+/** Play's rules, no what-if set: each call's own unless it is passed others. Frozen, so no suite leaves one set for the next (#946). */
+export const RULES: Readonly<Rules> = Object.freeze({});
+/** The what-ifs `rules` sets, by name. */
+export const whatIfs = (rules: Readonly<Rules> = RULES): string[] => (Object.keys(rules) as (keyof Rules)[]).filter((k) => rules[k] !== undefined);
+/** Why `--calibrate --write` refuses, while `rules` sets any what-if (a what-if is for weighing), naming them; none else. */
+export const writeRefusal = (rules: Readonly<Rules> = RULES): string | undefined => (whatIfs(rules).length ? `a what-if is for weighing, not for writing: drop --write, or the what-ifs (${whatIfs(rules).join(', ')})` : undefined);
 
 /** The classes whose first work is a weapon: the ones `--level-traits` gives more blows. */
 export const FIGHTERS: readonly string[] = ['knight', 'paladin', 'ranger', 'thief', 'barbarian', 'monk'];
@@ -114,16 +117,16 @@ export const prestigesAt = (level: number): number => PRESTIGES.filter((l) => le
 /**
  * What the what-ifs give a member in a fight's `round`, past level 10. With `levelTraits` a fighter
  * strikes once more a turn with each promotion, and a sneak attack grows by 2 every two levels. With
- * `levelBonus` every member gains a point of damage and of armour every two levels. Play gives none:
- * its prestiges' perks are the resolver's own.
+ * `levelBonus` every member gains a point of damage and of armour every two levels, each where `rules`
+ * sets it. Play gives none: its prestiges' perks are the resolver's own.
  */
-export function edgeOf(c: Character, round: number): Edge {
+export function edgeOf(c: Character, round: number, rules: Readonly<Rules> = RULES): Edge {
   const e: Edge = { blows: 1, damage: 0, ac: 0 }, steps = Math.floor(Math.max(0, c.level - 10) / 2);
-  if (RULES.levelTraits) {
+  if (rules.levelTraits) {
     if (FIGHTERS.includes(c.cls)) e.blows += PROMOTIONS.filter((l) => c.level >= l).length;
     if (hasTrait(c, 'sneak_attack') && round === 1) e.damage += 2 * steps;
   }
-  if (RULES.levelBonus) { e.damage += steps; e.ac += steps; }
+  if (rules.levelBonus) { e.damage += steps; e.ac += steps; }
   return e;
 }
 
@@ -170,10 +173,13 @@ const ladder = (rows: Rungs, wear: boolean): Rungs =>
   [...rows, ...RUNGS.map(([at, ids]) => [at, ids.filter((id) => worn(id) === wear)] as const).filter(([, ids]) => ids.length)].sort((a, b) => a[0] - b[0]);
 /** The ladder (GEAR_ROWS beside the areas' rungs): each member dresses from it (`outfit`). */
 export const GEAR: Rungs = ladder(GEAR_ROWS, true);
-/** The ladder's top: past it, gear grows only in a what-if (`RULES.gearGrows`). */
+/** The ladder's top: past it, gear grows only in a what-if (`Rules.gearGrows`). */
 export const GEAR_TOP = GEAR[GEAR.length - 1][0];
 
-/** A copy of an item with more to it, for a what-if: kept in the item table under its own id. */
+/** The ids `forge` has put in the item table, for `unforge` to take out. */
+const forged: string[] = [];
+
+/** A copy of an item with more to it, for a what-if: kept in the item table under its own id until `unforge`. */
 function forge(base: ItemDef, more: { bonus?: number; ac?: number; hit?: number }, plus: number): string {
   const id = `${base.id}+${plus}${more.hit ? `^${more.hit}` : ''}`;
   if (!ITEMS[id]) {
@@ -181,16 +187,26 @@ function forge(base: ItemDef, more: { bonus?: number; ac?: number; hit?: number 
     if (more.bonus !== undefined) ITEMS[id].bonus = (base.bonus ?? 0) + more.bonus;
     if (more.ac !== undefined) ITEMS[id].ac = (base.ac ?? 0) + more.ac;
     if (more.hit !== undefined) ITEMS[id].plus = (base.plus ?? 0) + more.hit;
+    forged.push(id);
   }
   return id;
 }
 
 /**
- * Dresses a member in the best of GEAR it can use by `level`. With `RULES.gearGrows`, past the
+ * Takes every copy `forge` made out of the item table again, and the companies kept that were dressed
+ * in them (made under `gearGrows`), so a what-if's gear is left behind nowhere (#946).
+ */
+export function unforge(): void {
+  for (const id of forged.splice(0)) delete ITEMS[id];
+  for (const key of [...companies.keys()]) if (/^(newer:)?\d+:\d+:gear/.test(key)) companies.delete(key);
+}
+
+/**
+ * Dresses a member in the best of GEAR it can use by `level`. With `rules.gearGrows`, past the
  * ladder's top its weapon and armour are enchanted as the curve's gear would be: the weapon's blow
  * grows as the line's hit points do, and the armour a point every two levels, as the line's to-hit does.
  */
-export function outfit(c: Character, level: number): void {
+export function outfit(c: Character, level: number, rules: Readonly<Rules> = RULES): void {
   const pool = GEAR.filter(([at]) => at <= level).flatMap(([, ids]) => ids).map(item).filter((d) => !d.classes || d.classes.includes(c.cls));
   const w = weaponOf(c), shielded = !!c.equipment.shield;
   const weapon = pool.filter((d) => d.slot === 'weapon' && !!d.ranged === !!w.ranged && !(shielded && d.twoHanded) && hits(d) > hits(w)).sort((a, b) => hits(b) - hits(a))[0];
@@ -203,7 +219,7 @@ export function outfit(c: Character, level: number): void {
     const shield = pool.filter((d) => d.slot === 'shield' && (d.ac ?? 0) > held).sort((a, b) => (b.ac ?? 0) - (a.ac ?? 0))[0];
     if (shield) equip(c, shield.id);
   }
-  if (RULES.gearGrows && level > GEAR_TOP) {
+  if (rules.gearGrows && level > GEAR_TOP) {
     const held = weaponOf(c), blow = Math.round(hits(held) * (line(level).hp / line(GEAR_TOP).hp - 1));
     if (blow > 0) equip(c, forge(held, { bonus: blow }, blow));
     const worn = c.equipment.armor ? item(c.equipment.armor) : null, ac = Math.floor((level - GEAR_TOP) / 2);
@@ -237,7 +253,7 @@ function prestige(p: Party): void {
 }
 
 /**
- * The tiers a company of its level holds where `RULES.tiers` asks (#852; off unless `--tiers`,
+ * The tiers a company of its level holds where `rules.tiers` asks (#852; off unless `--tiers`,
  * #865): on each line
  * its class takes (`linesOf`: a fighter's arms, a caster's magic, a hybrid's both), Expert from 13 and
  * Master from 25 (`TIER_LEVELS`), as a company that took each when it could. After the prestiges, as
@@ -257,7 +273,7 @@ function tier(p: Party): void {
 export const artifactIds = (): string[] => Object.values(ITEMS).filter((d) => d.artifact).map((d) => d.id);
 
 /**
- * The artifacts a company bears where `RULES.artifacts` asks (#847; off unless `--artifacts`): each,
+ * The artifacts a company bears where `rules.artifacts` asks (#847; off unless `--artifacts`): each,
  * one in the world, by the first member in the company's order who may bear it, as `outfit` would
  * dress them (a weapon of the reach they hold, or of the other where none who may bear it holds that
  * reach; a two-hander puts a shield in the pack, but never an artifact's) and with no artifact in its
@@ -279,31 +295,31 @@ function bear(p: Party, ids: readonly string[]): void {
 /**
  * A company trained to `level` on `rng`, as every company the harness plays is: each member trained
  * and dressed by the ladder (`outfit`), the bag's kit (`KIT`), the prestiges (`prestige`) and, where
- * `RULES.tiers` asks, the tiers (`tier`), and where `RULES.artifacts` does, the artifacts (`bear`); then whole.
+ * `rules.tiers` asks, the tiers (`tier`), and where `rules.artifacts` does, the artifacts (`bear`); then whole.
  */
-function train(p: Party, level: number, rng: RngInstance): Party {
-  for (const c of p.members) { c.xp = xpForLevel(level); levelUp(c, rng); outfit(c, level); }
+function train(p: Party, level: number, rng: RngInstance, rules: Readonly<Rules>): Party {
+  for (const c of p.members) { c.xp = xpForLevel(level); levelUp(c, rng); outfit(c, level, rules); }
   p.bag.push(...KIT.filter(([at]) => at <= level).flatMap(([, ids]) => ids));
   prestige(p);
-  if (RULES.tiers) tier(p);
-  if (RULES.artifacts) bear(p, RULES.artifacts);
+  if (rules.tiers) tier(p);
+  if (rules.artifacts) bear(p, rules.artifacts);
   for (const c of p.members) { c.hp = c.maxHp; c.sp = c.maxSp; }
   return p;
 }
 
 const companies = new Map<string, Party>();
-/** A company's key in the cache: its kind, its level, its seed and the what-ifs that make it otherwise. */
-const keyOf = (kind: string, level: number, seed: number): string => `${kind}${level}:${seed}:${RULES.gearGrows ? 'gear' : ''}${RULES.tiers ? ':tiers' : ''}${RULES.artifacts ? `:${RULES.artifacts.join('+')}` : ''}`;
+/** A company's key in the cache: its kind, its level, its seed and the what-ifs of `rules` that make it otherwise. */
+const keyOf = (kind: string, level: number, seed: number, rules: Readonly<Rules>): string => `${kind}${level}:${seed}:${rules.gearGrows ? 'gear' : ''}${rules.tiers ? ':tiers' : ''}${rules.artifacts ? `:${rules.artifacts.join('+')}` : ''}`;
 /**
- * The premade six trained to `level`, outfitted for it and with the prestiges it brings, whole; a
- * fresh copy every call. The gate's company is this one (tools/gate.ts `gateCompany`).
+ * The premade six trained to `level`, outfitted for it and with the prestiges it brings, whole, under
+ * the what-ifs `rules`; a fresh copy every call. The gate's company is this one (tools/gate.ts `gateCompany`).
  */
-export function companyAt(level: number, seed: number): Party {
-  const key = keyOf('', level, seed);
+export function companyAt(level: number, seed: number, rules: Readonly<Rules> = RULES): Party {
+  const key = keyOf('', level, seed, rules);
   let p = companies.get(key);
   if (!p) {
     const rng = makeRng(seed);
-    p = train(defaultParty(rng), level, rng);
+    p = train(defaultParty(rng), level, rng, rules);
     companies.set(key, p);
   }
   return structuredClone(p);
@@ -327,44 +343,44 @@ export const NEWER: readonly (readonly [name: string, race: RaceId, cls: ClassId
 
 /**
  * NEWER trained to `level` as `companyAt`'s six are (`train`): dressed, prestiged and, where
- * `RULES.tiers` asks, tiered; a fresh copy every call. The harness suite holds it to the line at
+ * `rules.tiers` asks, tiered; a fresh copy every call. The harness suite holds it to the line at
  * four levels (EXPANSION §5.2); the gate judges the premade six alone.
  */
-export function newerCompany(level: number, seed: number): Party {
-  const key = keyOf('newer:', level, seed);
+export function newerCompany(level: number, seed: number, rules: Readonly<Rules> = RULES): Party {
+  const key = keyOf('newer:', level, seed, rules);
   let p = companies.get(key);
   if (!p) {
     const rng = makeRng(seed);
-    p = train(createParty(NEWER.map(([name, race, cls, raised]) => createCharacter(name, race, cls, raised, rng))), level, rng);
+    p = train(createParty(NEWER.map(([name, race, cls, raised]) => createCharacter(name, race, cls, raised, rng))), level, rng, rules);
     companies.set(key, p);
   }
   return structuredClone(p);
 }
 
-/** The company the harness fields: the premade six (`companyAt`), or the newer six where `RULES.company` asks (`newerCompany`). */
-export const fielded = (level: number, seed: number): Party => (RULES.company === 'newer' ? newerCompany(level, seed) : companyAt(level, seed));
+/** The company the harness fields: the premade six (`companyAt`), or the newer six where `rules.company` asks (`newerCompany`). */
+export const fielded = (level: number, seed: number, rules: Readonly<Rules> = RULES): Party => (rules.company === 'newer' ? newerCompany(level, seed, rules) : companyAt(level, seed, rules));
 
 /** An artifact's spell's mean on one foe (#847): rolled at the level held at ARTIFACT_LEVEL, with no rank or trait. */
-const heldDamage = (c: Character, sp: SpellDef): number => (spellDice(sp, Math.min(c.level, ARTIFACT_LEVEL), RULES.spellsGrowTo) * ((sp.sides ?? 4) + 1)) / 2;
-const spellDamage = (c: Character, sp: SpellDef): number =>
-  ((spellDice(sp, c.level, RULES.spellsGrowTo) * ((sp.sides ?? 4) + 1)) / 2) * rankMult(c, RULES.rankStep) + (hasTrait(c, 'spellfire') ? SPELLFIRE_DMG : 0);
+const heldDamage = (c: Character, sp: SpellDef, rules: Readonly<Rules>): number => (spellDice(sp, Math.min(c.level, ARTIFACT_LEVEL), rules.spellsGrowTo) * ((sp.sides ?? 4) + 1)) / 2;
+const spellDamage = (c: Character, sp: SpellDef, rules: Readonly<Rules>): number =>
+  ((spellDice(sp, c.level, rules.spellsGrowTo) * ((sp.sides ?? 4) + 1)) / 2) * rankMult(c, rules.rankStep) + (hasTrait(c, 'spellfire') ? SPELLFIRE_DMG : 0);
 
 /** A turn's weapon blows' expected damage on a monster; `capped` counts no more than the monster has left. */
-function weaponDamage(s: CombatState, p: Party, c: Character, m: MonsterInst, capped = true): number {
-  const w = weaponOf(c), e = edgeOf(c, s.round), at = p.members.indexOf(c);
+function weaponDamage(s: CombatState, p: Party, c: Character, m: MonsterInst, rules: Readonly<Rules>, capped = true): number {
+  const w = weaponOf(c), e = edgeOf(c, s.round, rules), at = p.members.indexOf(c);
   const chance = toHit(attackBonus(c) + buffHit(s, p, at) - (w.ranged && !(c.cls === 'ranger' && prestigeOf(c) >= 2) ? s.rangedPenalty : 0), monsterAc(s, m));
   const blow = Math.max(0, hits(w) + (w.ranged ? 0 : bonus(statOf(c, 'might'))) + traitDamage(s, c, w, m) + armsBonus(c) + songDamage(p) + e.damage);
   return (blowsOf(c) + e.blows - 1) * chance * (capped ? Math.min(m.hp, blow) : blow);
 }
 
 /** What the monsters still standing deal the company in a round, on average: all of them, or those of `only`. */
-function incoming(s: CombatState, p: Party, only?: readonly number[]): number {
+function incoming(s: CombatState, p: Party, rules: Readonly<Rules>, only?: readonly number[]): number {
   const up = p.members.map((c, i) => ({ c, i })).filter(({ c }) => !isDown(c)), front = up.filter(({ i }) => i < FRONT_ROW);
   let total = 0;
   for (const f of only ?? aliveMonsters(s)) {
     const d = s.monsters[f].def, reach = d.ranged || !front.length ? up : front;
     if (!reach.length) continue;
-    const ac = reach.reduce((a, { c }) => a + armorClass(c) + edgeOf(c, s.round).ac, 0) / reach.length;
+    const ac = reach.reduce((a, { c }) => a + armorClass(c) + edgeOf(c, s.round, rules).ac, 0) / reach.length;
     // A sweeper's turn is, at its chance, a blow at each of the row it would take.
     const many = d.sweep ? 1 + d.sweep.chance * (sweptRow(p, s.monsters[f]).length - 1) : 1;
     total += toHit(monsterHit(s, s.monsters[f]), ac) * Math.max(0, (d.dice * (d.sides + 1)) / 2 + d.bonus) * many;
@@ -372,13 +388,13 @@ function incoming(s: CombatState, p: Party, only?: readonly number[]): number {
   return total;
 }
 
-/** A bot's turn for member `i`; `opts` are the bots' options (#853), `RULES.bot` as `play` hands them. */
-export type Bot = (s: CombatState, p: Party, rng: RngInstance, i: number, opts?: BotOpts) => void;
+/** A bot's turn for member `i`; `opts` are the bots' options (#853), `rules.bot` as `play` hands them, and `rules` the what-ifs it plays by. */
+export type Bot = (s: CombatState, p: Party, rng: RngInstance, i: number, opts?: BotOpts, rules?: Readonly<Rules>) => void;
 
 /** What a caster's spell point is worth in hit points: what its best mend gives for one, or one if it has none. */
-function mendRate(c: Character): number {
+function mendRate(c: Character, rules: Readonly<Rules>): number {
   let best = 1;
-  for (const x of c.spells.map(spell)) if (x.heal && x.target === 'ally' && !x.raise) best = Math.max(best, spellHeal(c, x.heal, RULES.rankStep) / x.sp);
+  for (const x of c.spells.map(spell)) if (x.heal && x.target === 'ally' && !x.raise) best = Math.max(best, spellHeal(c, x.heal, rules.rankStep) / x.sp);
   return best;
 }
 
@@ -397,10 +413,11 @@ function mendRate(c: Character): number {
  * more for its rounds were worth, sleep the blows the foes it could put down would strike, at the
  * spell's chance, for the rounds a sleeper sleeps (SLEEPS_FOR) or a hold holds, either for no more
  * rounds than the fight has left by the company's weapons; the caster's own blow is lost as for a
- * damage spell. And it drinks (`drinkFor`) where no spell pays, before its blow.
+ * damage spell. And it drinks (`drinkFor`) where no spell pays, before its blow. It plays by the
+ * what-ifs `rules`, the bots' answers among them (`rules.answer`, play's unless set, #946).
  */
-export const thrifty = (s: CombatState, p: Party, rng: RngInstance, i: number, opts: BotOpts = {}): void => {
-  const c = p.members[i], o = optsFor(c, opts);
+export const thrifty = (s: CombatState, p: Party, rng: RngInstance, i: number, opts: BotOpts = {}, rules: Readonly<Rules> = RULES): void => {
+  const c = p.members[i], o = optsFor(c, opts), answer = rules.answer ?? ANSWER;
   const known = c.spells.map(spell).filter((x) => x.context !== 'explore' && x.sp <= c.sp);
   // The artifacts' spells it bears with a charge left (#847): weighed as its own, at no cost in points.
   const charged = borne(c).filter((id) => item(id).casts && chargesLeft(p, id) > 0).map((from) => ({ from, x: spell(item(from).casts!.spell) }));
@@ -409,16 +426,16 @@ export const thrifty = (s: CombatState, p: Party, rng: RngInstance, i: number, o
   const everyone = known.filter((x) => x.heal && x.target === 'party').sort((a, b) => (b.heal ?? 0) - (a.heal ?? 0))[0];
   if (everyone && living.filter(({ m }) => m.hp < m.maxHp / 2).length >= 2 && partyAct(s, p, rng, { type: 'cast', spellId: everyone.id, target: i })) return;
   // The front row's fallen first while a foe breathes (`breathGuard`), so the breath keeps off the casters.
-  const lines = mendLines(s, p), guard = breathGuard(s, p);
+  const lines = mendLines(s, p, asWritten, answer), guard = breathGuard(s, p, asWritten, answer);
   const worst = guard !== undefined ? { m: p.members[guard], j: guard } : living.filter(({ m, j }) => m.hp < lines[j]).sort((a, b) => a.m.hp / a.m.maxHp - b.m.hp / b.m.maxHp)[0];
   const mends = known.filter((x) => x.heal && x.target === 'ally' && !x.raise);
   if (worst && mends.length) {
     // The cheapest mend that closes half the wound, else the biggest there is.
     const wound = worst.m.maxHp - worst.m.hp;
-    const pick = mends.filter((x) => spellHeal(c, x.heal ?? 0, RULES.rankStep) >= wound / 2).sort((a, b) => a.sp - b.sp)[0] ?? mends.sort((a, b) => (b.heal ?? 0) - (a.heal ?? 0))[0];
+    const pick = mends.filter((x) => spellHeal(c, x.heal ?? 0, rules.rankStep) >= wound / 2).sort((a, b) => a.sp - b.sp)[0] ?? mends.sort((a, b) => (b.heal ?? 0) - (a.heal ?? 0))[0];
     if (partyAct(s, p, rng, { type: 'cast', spellId: pick.id, target: worst.j })) return;
   }
-  const sleeper = wakeWith(p, c);
+  const sleeper = wakeWith(p, c, answer);
   if (sleeper && partyAct(s, p, rng, { type: 'cast', ...sleeper })) return;
   const foes = aliveMonsters(s);
   if (!foes.length) { partyAct(s, p, rng, { type: 'defend' }); return; }
@@ -428,14 +445,14 @@ export const thrifty = (s: CombatState, p: Party, rng: RngInstance, i: number, o
   // #865), and only then is a group slept; the whole company once one is past Act I (`letsLie`).
   const lie = letsLie(p, opts) && striker(s, p, i), up = lie ? foes.filter((f) => !sleeps(s.monsters[f])) : [];
   const reach = foes.filter((f) => canReach(s, c, f)), awake = reach.filter((f) => up.includes(f)), near = awake.length ? awake : reach;
-  const lead = markOf(s, foes), pick = up.length ? up : foes, mark = lead !== undefined && pick.includes(lead) ? lead : undefined;
+  const lead = markOf(s, foes, asWritten, answer), pick = up.length ? up : foes, mark = lead !== undefined && pick.includes(lead) ? lead : undefined;
   const weakest = lead !== undefined && near.includes(lead) ? lead : (near.length ? near : foes).reduce((a, b) => (s.monsters[b].hp < s.monsters[a].hp ? b : a));
-  const armed = canAttackFromRow(c, i), blow = armed ? weaponDamage(s, p, c, s.monsters[weakest]) : 0;
-  const weapons = p.members.reduce((a, m, j) => a + (!isDown(m) && canAttackFromRow(m, j) ? weaponDamage(s, p, m, s.monsters[weakest], false) : 0), 0);
-  const rate = incoming(s, p) / Math.max(1, weapons);
+  const armed = canAttackFromRow(c, i), blow = armed ? weaponDamage(s, p, c, s.monsters[weakest], rules) : 0;
+  const weapons = p.members.reduce((a, m, j) => a + (!isDown(m) && canAttackFromRow(m, j) ? weaponDamage(s, p, m, s.monsters[weakest], rules, false) : 0), 0);
+  const rate = incoming(s, p, rules) / Math.max(1, weapons);
   // How much of each pool is left above the rest line, as a share of all there is above it.
   const t = pools(p), spare = (left: number, whole: number): number => (left - whole * REST_AT) / (whole * (1 - REST_AT));
-  const hpSpare = Math.max(0.05, spare(t.hp, t.maxHp)), spSpare = spare(t.sp, t.maxSp), price = mendRate(c);
+  const hpSpare = Math.max(0.05, spare(t.hp, t.maxHp)), spSpare = spare(t.sp, t.maxSp), price = mendRate(c, rules);
   let best: PartyAction = armed ? { type: 'attack', target: weakest } : { type: 'defend' }, worth = 0;
   // Bless and sleep, where `opts` asks: the hit points the cast saves, weighed as a damage spell's.
   const pays = (x: SpellDef, saved: number, free = false): number => (saved - blow * rate) / hpSpare - (spSpare > 0 && !free ? (x.sp * price) / spSpare : 0);
@@ -443,7 +460,7 @@ export const thrifty = (s: CombatState, p: Party, rng: RngInstance, i: number, o
   const bless = o.bless ? blessWith(s, p, i) : undefined;
   if (bless) {
     const runs = { ...s, bless: bless.turns ?? 1 }, target = s.monsters[weakest];
-    const more = p.members.reduce((a, m, j) => a + (!isDown(m) && canAttackFromRow(m, j) ? weaponDamage(runs, p, m, target, false) - weaponDamage(s, p, m, target, false) : 0), 0);
+    const more = p.members.reduce((a, m, j) => a + (!isDown(m) && canAttackFromRow(m, j) ? weaponDamage(runs, p, m, target, rules, false) - weaponDamage(s, p, m, target, rules, false) : 0), 0);
     const v = pays(bless, more * Math.min(bless.turns ?? 1, left()) * rate);
     if (v > worth) { worth = v; best = { type: 'cast', spellId: bless.id, target: i }; }
   }
@@ -452,7 +469,7 @@ export const thrifty = (s: CombatState, p: Party, rng: RngInstance, i: number, o
   for (const [sleep, from] of [[o.sleep && lie ? sleepWith(s, c) : undefined], [hold ? sleepWith(s, c, undefined, hold.x) : undefined, hold?.from]] as const) {
     if (!sleep) continue;
     const held = sleep.spell.inflict === 'paralysed';
-    const v = pays(sleep.spell, incoming(s, p, sleep.foes) * (held ? ROOTS_CHANCE : SLUMBER_CHANCE) * Math.min(held ? 1 / HOLD_BREAKS : SLEEPS_FOR, left()), !!from);
+    const v = pays(sleep.spell, incoming(s, p, rules, sleep.foes) * (held ? ROOTS_CHANCE : SLUMBER_CHANCE) * Math.min(held ? 1 / HOLD_BREAKS : SLEEPS_FOR, left()), !!from);
     if (v > worth) { worth = v; best = { type: 'cast', spellId: sleep.spell.id, target: sleep.target, ...(from ? { from } : {}) }; }
   }
   for (const { x, from } of [...known.map((x) => ({ x, from: undefined })), ...charged]) {
@@ -460,7 +477,7 @@ export const thrifty = (s: CombatState, p: Party, rng: RngInstance, i: number, o
     // What the spell would do, by what the company has seen its element do to each, no target counted
     // for more than it has left; and fire, the mending it stops this round in each it leaves standing
     // that the company has seen mend and nothing has burnt yet.
-    const each = from ? heldDamage(c, x) : spellDamage(c, x), dealt = (f: number): number => Math.min(each * seenMult(s, s.monsters[f], x.element), s.monsters[f].hp);
+    const each = from ? heldDamage(c, x, rules) : spellDamage(c, x, rules), dealt = (f: number): number => Math.min(each * seenMult(s, s.monsters[f], x.element), s.monsters[f].hp);
     const stops = (f: number): number => { const m = s.monsters[f]; return x.element === 'fire' && !m.burnt && dealt(f) > 0 && dealt(f) < m.hp ? s.mends?.[m.def.id] ?? 0 : 0; };
     const take = (f: number): number => dealt(f) + stops(f);
     let dmg = 0, target = weakest;
@@ -476,7 +493,7 @@ export const thrifty = (s: CombatState, p: Party, rng: RngInstance, i: number, o
     if (value > worth) { worth = value; best = { type: 'cast', spellId: x.id, target, ...(from ? { from } : {}) }; }
   }
   // A draught, where `opts` asks: where no spell pays, before a blow.
-  const drink = o.drink && best.type !== 'cast' ? drinkFor(s, p, c) : undefined;
+  const drink = o.drink && best.type !== 'cast' ? drinkFor(s, p, c, asWritten, answer) : undefined;
   if (drink && partyAct(s, p, rng, drink)) return;
   if (!partyAct(s, p, rng, best)) partyAct(s, p, rng, { type: 'defend' });
 };
@@ -499,14 +516,14 @@ export function spent(p: Party): { cost: number; hp: number; sp: number } {
 export type Encounter = Fighters;
 export interface Outcome { won: boolean; cost: number; hp: number; sp: number; rounds: number; down: boolean; broken: boolean }
 
-/** One fight to its end from however the company stands, the bot playing it with the options `RULES.bot` asks: the fight as it ended, to read. */
-export function play(p: Party, monsters: Encounter, seed: number, bot: Bot = thrifty): CombatState {
-  const edge = RULES.levelTraits || RULES.levelBonus ? (c: Character, cs: CombatState): Edge => edgeOf(c, cs.round) : undefined;
-  const rng = makeRng(seed), s = startCombat(p, [asGroup('harness', monsters)], rng, { spellsGrowTo: RULES.spellsGrowTo, rankStep: RULES.rankStep, edge });
+/** One fight to its end from however the company stands, under the what-ifs `rules`, the bot playing it with the options `rules.bot` asks: the fight as it ended, to read. */
+export function play(p: Party, monsters: Encounter, seed: number, bot: Bot = thrifty, rules: Readonly<Rules> = RULES): CombatState {
+  const edge = rules.levelTraits || rules.levelBonus ? (c: Character, cs: CombatState): Edge => edgeOf(c, cs.round, rules) : undefined;
+  const rng = makeRng(seed), s = startCombat(p, [asGroup('harness', monsters)], rng, { spellsGrowTo: rules.spellsGrowTo, rankStep: rules.rankStep, edge });
   for (let guard = 0; s.outcome === 'ongoing' && guard < 5000; guard++) {
     const t = currentTurn(s, p, rng);
     if (!t || s.round > ROUND_CAP) break;
-    if (t.side === 'monster') monsterAct(s, p, rng); else bot(s, p, rng, t.i, RULES.bot);
+    if (t.side === 'monster') monsterAct(s, p, rng); else bot(s, p, rng, t.i, rules.bot, rules);
   }
   return s;
 }
@@ -517,12 +534,12 @@ export interface Casts { bless: number; sleep: number; drink: number }
  * Seeds `from` to `from + seeds - 1` of one fight from fresh, as `measure` fights them: the share in
  * which a member cast Bless, Slumber or Grasping Roots, or drank or gave a draught, read from the log.
  */
-export function casting(level: number, monsters: Encounter, seeds: number, from = 1): Casts {
+export function casting(level: number, monsters: Encounter, seeds: number, from = 1, rules: Readonly<Rules> = RULES): Casts {
   const bless = ` casts ${spell('bless').name}. `, sleep = [spell('sleep').name, spell('roots').name].map((n) => [` casts ${n}: `, ` casts ${n}, `]).flat();
   const draught = / (recovers \d+|feels sharper|is flesh again|is cleansed)\.$/;
   const out: Casts = { bless: 0, sleep: 0, drink: 0 };
   for (let k = from; k < from + seeds; k++) {
-    const p = fielded(level, k), s = play(p, monsters, k * 7919 + 13), ours = s.log.filter((l) => p.members.some((m) => l.startsWith(`${m.name} `)));
+    const p = fielded(level, k, rules), s = play(p, monsters, k * 7919 + 13, thrifty, rules), ours = s.log.filter((l) => p.members.some((m) => l.startsWith(`${m.name} `)));
     if (ours.some((l) => l.includes(bless))) out.bless++;
     if (ours.some((l) => sleep.some((x) => l.includes(x)))) out.sleep++;
     if (ours.some((l) => !l.includes(' casts ') && draught.test(l))) out.drink++;
@@ -534,16 +551,16 @@ export function casting(level: number, monsters: Encounter, seeds: number, from 
 export const outcomeOf = (s: CombatState, p: Party): Outcome => ({ won: s.outcome === 'victory', ...spent(p), rounds: Math.min(s.round, ROUND_CAP), down: p.members.some(isDown), broken: s.outcome === 'ongoing' });
 
 /** One fight to its end from however the company stands: what it cost, read from what it has left. */
-export function fight(p: Party, monsters: Encounter, seed: number, bot: Bot = thrifty): Outcome {
-  return outcomeOf(play(p, monsters, seed, bot), p);
+export function fight(p: Party, monsters: Encounter, seed: number, bot: Bot = thrifty, rules: Readonly<Rules> = RULES): Outcome {
+  return outcomeOf(play(p, monsters, seed, bot, rules), p);
 }
 
 export interface Tally { cost: number; p90: number; hp: number; sp: number; won: number; rounds: number; down: number }
 
-/** Seeds `from` to `from + seeds - 1`: one fight, a company of `level` against the monsters, each time afresh. */
-export function measure(level: number, monsters: Encounter, seeds: number, from = 1, bot: Bot = thrifty): Tally {
+/** Seeds `from` to `from + seeds - 1`: one fight, a company of `level` against the monsters, each time afresh, under the what-ifs `rules`. */
+export function measure(level: number, monsters: Encounter, seeds: number, from = 1, bot: Bot = thrifty, rules: Readonly<Rules> = RULES): Tally {
   const out: Outcome[] = [];
-  for (let k = from; k < from + seeds; k++) out.push(fight(fielded(level, k), monsters, k * 7919 + 13, bot));
+  for (let k = from; k < from + seeds; k++) out.push(fight(fielded(level, k, rules), monsters, k * 7919 + 13, bot, rules));
   const mean = (f: (o: Outcome) => number): number => out.reduce((a, o) => a + f(o), 0) / out.length;
   const costs = out.map((o) => o.cost).sort((a, b) => a - b);
   return {
@@ -568,27 +585,27 @@ export const RUNGS_TWICE: readonly string[] = beside(Object.fromEntries([...GEAR
  * standing knows it and has the points, else by a draught the company carries, the bag's before a
  * pack's. One with neither waits for a temple, and the company must rest (`mustRest`).
  */
-export function unstone(p: Party): void {
+export function unstone(p: Party, rules: Readonly<Rules> = RULES): void {
   const absolve = spell('absolve'), cures = (id: string): boolean => !!item(id).use?.cure?.includes('stoned');
   for (const m of p.members.filter((x) => hasCondition(x, 'stoned'))) {
     const caster = p.members.find((c) => !isDown(c) && c.spells.includes(absolve.id) && c.sp >= absolve.sp);
-    if (caster) { caster.sp -= absolve.sp; castOnAlly(caster, absolve, m, RULES.rankStep); continue; }
+    if (caster) { caster.sp -= absolve.sp; castOnAlly(caster, absolve, m, rules.rankStep); continue; }
     const holder = [p.bag, ...p.members.map((c) => c.pack)].find((h) => h.some(cures)), id = holder?.find(cures);
     if (holder && id) { holder.splice(holder.indexOf(id), 1); lift(m, item(id).use?.cure ?? []); }
   }
 }
 
-/** Between fights, the company lifts stone (`unstone`), then mends itself as a player would, while it has the spell points to. */
-export function mendBetween(p: Party): void {
-  unstone(p);
+/** Between fights, the company lifts stone (`unstone`), then mends itself as a player would, while it has the spell points to, under the what-ifs `rules`. */
+export function mendBetween(p: Party, rules: Readonly<Rules> = RULES): void {
+  unstone(p, rules);
   for (let guard = 0; guard < 60; guard++) {
     const hurt = p.members.filter((m) => !hasCondition(m, 'dead') && !hasCondition(m, 'stoned') && m.hp < m.maxHp / 2).sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp);
     if (!hurt.length) return;
     const healers = p.members.filter((c) => !isDown(c)).map((c) => ({ c, known: c.spells.map(spell).filter((x) => x.context === 'any' && x.heal && !x.raise && x.sp <= c.sp) }));
     const all = healers.flatMap(({ c, known }) => known.filter((x) => x.target === 'party').map((x) => ({ c, x }))).sort((a, b) => a.x.sp - b.x.sp)[0];
     const one = healers.flatMap(({ c, known }) => known.filter((x) => x.target === 'ally').map((x) => ({ c, x }))).sort((a, b) => a.x.sp - b.x.sp)[0];
-    if (all && hurt.length >= 2) { all.c.sp -= all.x.sp; castOnParty(all.c, all.x, p, RULES.rankStep); }
-    else if (one) { one.c.sp -= one.x.sp; castOnAlly(one.c, one.x, hurt[0], RULES.rankStep); }
+    if (all && hurt.length >= 2) { all.c.sp -= all.x.sp; castOnParty(all.c, all.x, p, rules.rankStep); }
+    else if (one) { one.c.sp -= one.x.sp; castOnAlly(one.c, one.x, hurt[0], rules.rankStep); }
     else return;
   }
 }
@@ -603,16 +620,16 @@ export interface Day { fights: number; rounds: number; why: Why }
 
 /**
  * Encounters in a row from a fresh company, in turn from `encounters`, mending between them, until it
- * loses one or must rest; `dress` changes the company first, to try it without something. The fights it won, the rounds they took on average, and what ended the day.
+ * loses one or must rest; `dress` changes the company first, to try it without something; under the what-ifs `rules`. The fights it won, the rounds they took on average, and what ended the day.
  */
-export function day(level: number, encounters: readonly Encounter[], seed: number, most = 30, dress = (p: Party): Party => p): Day {
-  const p = dress(fielded(level, seed));
+export function day(level: number, encounters: readonly Encounter[], seed: number, most = 30, dress = (p: Party): Party => p, rules: Readonly<Rules> = RULES): Day {
+  const p = dress(fielded(level, seed, rules));
   let rounds = 0;
   for (let n = 0; n < most; n++) {
-    const o = fight(p, encounters[n % encounters.length], seed * 104729 + n);
+    const o = fight(p, encounters[n % encounters.length], seed * 104729 + n, thrifty, rules);
     rounds += o.rounds;
     if (!o.won) return { fights: n, rounds: rounds / (n + 1), why: o.broken ? 'long' : 'lost' };
-    mendBetween(p);
+    mendBetween(p, rules);
     const why = mustRest(p);
     if (why) return { fights: n + 1, rounds: rounds / (n + 1), why };
   }
@@ -621,14 +638,14 @@ export function day(level: number, encounters: readonly Encounter[], seed: numbe
 
 export interface DayTally { fights: number; rounds: number; why: Record<Why, number> }
 
-/** Seeds `from` to `from + seeds - 1` of `day`; with `deal`, the encounters come in a new order each seed. */
-export function days(level: number, encounters: readonly Encounter[], seeds: number, from = 1, deal = false): DayTally {
+/** Seeds `from` to `from + seeds - 1` of `day`, under the what-ifs `rules`; with `deal`, the encounters come in a new order each seed. */
+export function days(level: number, encounters: readonly Encounter[], seeds: number, from = 1, deal = false, rules: Readonly<Rules> = RULES): DayTally {
   const why: Record<Why, number> = { lost: 0, long: 0, dead: 0, hp: 0, sp: 0, none: 0 };
   let fights = 0, rounds = 0;
   for (let k = from; k < from + seeds; k++) {
     const order = [...encounters];
     if (deal) { const rng = makeRng(k * 31 + 7); for (let n = order.length - 1; n > 0; n--) { const j = rng.int(0, n); [order[n], order[j]] = [order[j], order[n]]; } }
-    const d = day(level, order, k);
+    const d = day(level, order, k, 30, undefined, rules);
     fights += d.fights; rounds += d.rounds; why[d.why]++;
   }
   for (const w of Object.keys(why) as Why[]) why[w] /= seeds;
@@ -679,12 +696,12 @@ export const slowest = (level: number): number => Math.min(14, 1.5 * longest(lev
  */
 export type Point = [hp: number, damage: number, bad: number, fights: number, rounds: number];
 const badOf = (t: DayTally): number => t.why.dead + t.why.lost + t.why.long;
-export function calibrate(role: Role, level: number, seeds: number): Point {
+export function calibrate(role: Role, level: number, seeds: number, rules: Readonly<Rules> = RULES): Point {
   if (role === 'boss') {
-    const s = solve((x) => measure(bossFloor(level), standardEncounter(role, level, x, x), seeds).won, 0.5, false), t = measure(bossFloor(level), standardEncounter(role, level, s, s), seeds);
+    const s = solve((x) => measure(bossFloor(level), standardEncounter(role, level, x, x), seeds, 1, thrifty, rules).won, 0.5, false), t = measure(bossFloor(level), standardEncounter(role, level, s, s), seeds, 1, thrifty, rules);
     return [s, s, 1 - t.won, t.won, t.rounds];
   }
-  const run = (h: number, d: number): DayTally => days(level, [standardEncounter(role, level, h, d)], seeds), target = fightsPerRest(level);
+  const run = (h: number, d: number): DayTally => days(level, [standardEncounter(role, level, h, d)], seeds, 1, false, rules), target = fightsPerRest(level);
   const point = (h: number, d: number): Point => { const t = run(h, d); return [h, d, badOf(t), t.fights, t.rounds]; };
   if (run(1, 1).fights < target) { const whole = solve((x) => run(x, x).fights, target, false, 0.05, 1, 10); return point(whole, whole); }
   const most = solve((x) => run(x, 1).fights, target, false, 1, 60, 10);
@@ -714,30 +731,31 @@ export function calibrate(role: Role, level: number, seeds: number): Point {
  * A point's damage again with its hit points held at `h`: what brings the day to its fights, or the
  * line's if even that leaves the company short.
  */
-export function refit(role: Role, level: number, h: number, seeds: number): Point {
-  const run = (d: number): number => days(level, [standardEncounter(role, level, h, d)], seeds).fights, target = fightsPerRest(level);
-  const d = run(1) <= target ? 1 : solve(run, target, false, 1, 60, 10), t = days(level, [standardEncounter(role, level, h, d)], seeds);
+export function refit(role: Role, level: number, h: number, seeds: number, rules: Readonly<Rules> = RULES): Point {
+  const run = (d: number): number => days(level, [standardEncounter(role, level, h, d)], seeds, 1, false, rules).fights, target = fightsPerRest(level);
+  const d = run(1) <= target ? 1 : solve(run, target, false, 1, 60, 10), t = days(level, [standardEncounter(role, level, h, d)], seeds, 1, false, rules);
   return [h, d, badOf(t), t.fights, t.rounds];
 }
 
 /**
  * One cell of the report: a role's standard encounter at a level, against a company `under` levels
- * below it; where `RULES.bot` asks, with how often the bots took their options in its fights from fresh.
+ * below it, under the what-ifs `rules`; where `rules.bot` asks, with how often the bots took their options in its fights from fresh.
  */
 export interface Cell { day?: DayTally; fresh: Tally; casts?: Casts }
 /** The level a role's encounter at `level` is fought from: `under` below it, or a boss's floor. */
 export const fieldedAt = (role: Role, level: number, under = 0): number => (role === 'boss' && !under ? bossFloor(level) : Math.max(1, level - under));
-export function cell(role: Role, level: number, seeds: number, under = 0): Cell {
-  const enc = standardEncounter(role, level), at = fieldedAt(role, level, under), casts = RULES.bot ? { casts: casting(at, enc, seeds) } : {};
-  if (role === 'boss') return { fresh: measure(at, enc, seeds), ...casts };
-  return { day: days(at, [enc], seeds), fresh: measure(at, enc, seeds), ...casts };
+export function cell(role: Role, level: number, seeds: number, under = 0, rules: Readonly<Rules> = RULES): Cell {
+  const enc = standardEncounter(role, level), at = fieldedAt(role, level, under), casts = rules.bot ? { casts: casting(at, enc, seeds, 1, rules) } : {};
+  if (role === 'boss') return { fresh: measure(at, enc, seeds, 1, thrifty, rules), ...casts };
+  return { day: days(at, [enc], seeds, 1, false, rules), fresh: measure(at, enc, seeds, 1, thrifty, rules), ...casts };
 }
 
 // ---- every core ------------------------------------------------------------------------------
 
-interface Job { kind: 'calibrate' | 'refit' | 'cell'; role: Role; level: number; seeds: number; under: number; hp?: number; rules: typeof RULES }
+/** A job for a worker; its what-ifs travel in it, as `rules`. */
+interface Job { kind: 'calibrate' | 'refit' | 'cell'; role: Role; level: number; seeds: number; under: number; hp?: number; rules: Readonly<Rules> }
 const work = (j: Job): Point | Cell =>
-  j.kind === 'calibrate' ? calibrate(j.role, j.level, j.seeds) : j.kind === 'refit' ? refit(j.role, j.level, j.hp ?? 1, j.seeds) : cell(j.role, j.level, j.seeds, j.under);
+  j.kind === 'calibrate' ? calibrate(j.role, j.level, j.seeds, j.rules) : j.kind === 'refit' ? refit(j.role, j.level, j.hp ?? 1, j.seeds, j.rules) : cell(j.role, j.level, j.seeds, j.under, j.rules);
 
 /**
  * The jobs on a worker per core, each taking the next as it finishes one; the results in the jobs' order.
@@ -770,13 +788,13 @@ function onCores<T>(jobs: readonly Job[], each?: (j: Job, r: T) => void, limit =
 }
 
 /**
- * The report's cells on every core, the what-ifs as they stand: each of `roles` at each of `levels`, in
+ * The report's cells on every core, under the what-ifs `rules`: each of `roles` at each of `levels`, in
  * that order; a cell past `limit` milliseconds fails them (`onCores`).
  */
-export const cellsOnCores = (roles: readonly Role[], levels: readonly number[], seeds: number, under = 0, limit = Infinity): Promise<Cell[]> =>
-  onCores<Cell>(roles.flatMap((role) => levels.map((level): Job => ({ kind: 'cell', role, level, seeds, under, rules: { ...RULES } }))), undefined, limit);
+export const cellsOnCores = (roles: readonly Role[], levels: readonly number[], seeds: number, under = 0, limit = Infinity, rules: Readonly<Rules> = RULES): Promise<Cell[]> =>
+  onCores<Cell>(roles.flatMap((role) => levels.map((level): Job => ({ kind: 'cell', role, level, seeds, under, rules }))), undefined, limit);
 
-if (!isMainThread) parentPort?.on('message', (j: Job) => { Object.assign(RULES, NO_RULES, j.rules); parentPort?.postMessage(work(j)); });
+if (!isMainThread) parentPort?.on('message', (j: Job) => { parentPort?.postMessage(work(j)); });
 
 // ---- the command line ------------------------------------------------------------------------
 
@@ -788,46 +806,48 @@ async function main(): Promise<void> {
   const roles = (opt('roles')?.split(',') ?? ROLE_IDS) as Role[];
   const under = Number(opt('under') ?? 0);
   const pct = (x: number): string => `${Math.round(x * 100)}`;
+  // The what-ifs the flags ask, passed to each call that reads one (#946).
+  const rules: Rules = {};
   const cap = opt('spell-cap');
   if (cap !== undefined) {
-    RULES.spellsGrowTo = Number(cap);
-    if (!(RULES.spellsGrowTo >= 1)) throw new Error('--spell-cap takes the level damage spells stop growing at');
-    console.log(`What if: damage spells stop growing at level ${RULES.spellsGrowTo}, not ${SPELLS_GROW_TO}.`);
+    rules.spellsGrowTo = Number(cap);
+    if (!(rules.spellsGrowTo >= 1)) throw new Error('--spell-cap takes the level damage spells stop growing at');
+    console.log(`What if: damage spells stop growing at level ${rules.spellsGrowTo}, not ${SPELLS_GROW_TO}.`);
   }
   if (args.includes('--gear-grows')) {
-    RULES.gearGrows = true;
+    rules.gearGrows = true;
     console.log(`What if: past level ${GEAR_TOP}, the ladder's top, the company's weapons hit harder as the line's hit points grow, and its armour gains a point every two levels.`);
   }
   if (args.includes('--level-traits')) {
-    RULES.levelTraits = true;
+    rules.levelTraits = true;
     console.log(`What if: fighters strike once more a turn with each promotion, at ${PROMOTIONS.join(' and ')}, and past level 10 sneak attacks grow 2 every two levels.`);
   }
   if (args.includes('--level-bonus')) {
-    RULES.levelBonus = true;
+    rules.levelBonus = true;
     console.log(`What if: past level 10 every member gains a point of weapon damage and of armour every two levels.`);
   }
   const step = opt('rank-step');
   if (step !== undefined) {
-    RULES.rankStep = Number(step);
-    if (!(RULES.rankStep >= 0)) throw new Error('--rank-step takes a share, 0 or more');
-    console.log(`What if: each spell rank adds ${pct(RULES.rankStep)}% to a spell's damage and mending, not ${pct(RANK_STEP)}%.`);
+    rules.rankStep = Number(step);
+    if (!(rules.rankStep >= 0)) throw new Error('--rank-step takes a share, 0 or more');
+    console.log(`What if: each spell rank adds ${pct(rules.rankStep)}% to a spell's damage and mending, not ${pct(RANK_STEP)}%.`);
   }
   const and = (xs: readonly string[]): string => (xs.length > 1 ? `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}` : xs.join(''));
   if (args.includes('--tiers')) {
-    RULES.tiers = true;
+    rules.tiers = true;
     console.log(`What if: the company takes Expert at ${TIER_LEVELS.expert} and Master at ${TIER_LEVELS.master} (#852), its fighters at arms, its casters in magic and its hybrids both.`);
   }
   const bots = opt('bot');
   if (bots !== undefined) {
     const asked = bots.split(','), known: readonly string[] = ['bless', 'sleep', 'drink'];
     if (asked.some((x) => !known.includes(x))) throw new Error('--bot takes bless, sleep and drink, any of them, with commas between');
-    RULES.bot = Object.fromEntries(asked.map((x) => [x, true]));
+    rules.bot = Object.fromEntries(asked.map((x) => [x, true]));
     console.log(`What if: the bots, the gate's too, also ${and(known.filter((x) => asked.includes(x)))} (#853).`);
   }
   const fields = opt('company');
   if (fields !== undefined) {
     if (fields !== 'newer') throw new Error("--company takes newer, the four newer classes' company; the premade six are the default");
-    RULES.company = fields;
+    rules.company = fields;
     const who = NEWER.map(([name, , cls]) => `${name} the ${CLASSES[cls].name.toLowerCase()}`);
     console.log(`What if: the company is the four newer classes': ${and(who.slice(0, FRONT_ROW))} in front, ${and(who.slice(FRONT_ROW))} behind.`);
   }
@@ -835,10 +855,9 @@ async function main(): Promise<void> {
   if (bears !== undefined) {
     const all = artifactIds(), asked = bears === 'all' ? all : bears.split(',');
     if (!asked.length || asked.some((x) => !all.includes(x)) || new Set(asked).size < asked.length) throw new Error(`--artifacts takes all, or the artifacts' ids, each once, with commas between: ${all.join(', ')}`);
-    RULES.artifacts = asked;
+    rules.artifacts = asked;
     console.log(`What if: the company bears ${and(asked.map((x) => item(x).name.replace(/^The /, 'the ')))}, each by the first member who may (#847), found past the ladder's top and on no rung of it.`);
   }
-  const rules = { ...RULES };
   const row = (label: string, cells: readonly string[]): void => console.log(label.padEnd(14) + cells.map((c) => c.padStart(6)).join(''));
   if (levels.some((l) => !(l >= 1 && l <= CAP)) || roles.some((r) => !ROLES[r])) throw new Error(`levels run from 1 to ${CAP}; roles are ${ROLE_IDS.join(', ')}`);
 
@@ -851,10 +870,10 @@ async function main(): Promise<void> {
     console.log('Fights: that group again and again from fresh, until the company must rest. One fight: from fresh.');
     console.log('group'.padEnd(20) + 'fights'.padStart(7) + 'cost'.padStart(6) + 'won'.padStart(6) + 'rounds'.padStart(8) + '  monsters');
     for (const g of def.encounters) {
-      const d = days(level, [g], seeds), t = measure(level, g, seeds);
+      const d = days(level, [g], seeds, 1, false, rules), t = measure(level, g, seeds, 1, thrifty, rules);
       console.log(g.id.padEnd(20) + d.fights.toFixed(1).padStart(7) + `${pct(t.cost)}%`.padStart(6) + `${pct(t.won)}%`.padStart(6) + t.rounds.toFixed(1).padStart(8) + '  ' + g.monsters.join(' '));
     }
-    const all = days(level, def.encounters, seeds, 1, true);
+    const all = days(level, def.encounters, seeds, 1, true, rules);
     const why = (Object.entries(all.why) as [Why, number][]).filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1]).map(([w, n]) => `${{ lost: 'a lost fight', long: 'a fight broken off', dead: 'a death', hp: 'hit points', sp: 'spell points', none: 'none' }[w]} ${pct(n)}%`);
     console.log(`\nIts groups in a new order each seed: ${all.fights.toFixed(1)} fights before a rest, against ${fightsPerRest(level)} at the company's own level. What ended the day: ${why.join(', ')}.`);
     return;
@@ -878,14 +897,18 @@ async function main(): Promise<void> {
     const at = opt('levels') ? levels : [19, 20];
     const forget = (keep: (sp: SpellDef) => boolean) => (p: Party): Party => { for (const c of p.members) c.spells = c.spells.filter((id) => keep(spell(id))); return p; };
     const fireless = forget((x) => x.element !== 'fire'), unarmed = forget((x) => !x.dice);
-    /** Seeds of one fight from fresh, as `measure` fights them, each fight's end kept to read. */
-    const fights = (level: number, enc: Encounter, dress = (p: Party): Party => p): { s: CombatState; p: Party; o: Outcome }[] => Array.from({ length: seeds }, (_, n) => {
-      const p = dress(fielded(level, n + 1)), s = play(p, enc, (n + 1) * 7919 + 13);
+    /** Seeds of one fight from fresh, as `measure` fights them, each fight's end kept to read; `how` the what-ifs, an answer turned among them. */
+    const fights = (level: number, enc: Encounter, dress = (p: Party): Party => p, how: Readonly<Rules> = rules): { s: CombatState; p: Party; o: Outcome }[] => Array.from({ length: seeds }, (_, n) => {
+      const p = dress(fielded(level, n + 1, how)), s = play(p, enc, (n + 1) * 7919 + 13, thrifty, how);
       return { s, p, o: outcomeOf(s, p) };
     });
+    /** The fights before a rest, `days` under the what-ifs, or `how`. */
+    const toRest = (level: number, enc: Encounter, how: Readonly<Rules> = rules): number => days(level, [enc], seeds, 1, false, how).fights;
+    /** The what-ifs with one of the bots' answers turned (`ANSWER`). */
+    const turned = (answer: Partial<BotAnswer>): Rules => ({ ...rules, answer: { ...ANSWER, ...answer } });
     const mean = (fs: { o: Outcome }[], f: (o: Outcome) => number): number => fs.reduce((t, x) => t + f(x.o), 0) / fs.length;
     const one = (fs: { o: Outcome }[]): string => `${mean(fs, (o) => o.rounds).toFixed(1)} rounds, ${pct(mean(fs, (o) => o.cost))}%, won ${pct(mean(fs, (o) => (o.won ? 1 : 0)))}%`;
-    const rest = (level: number, enc: Encounter, beside?: [string, Encounter]): string => `${days(level, [enc], seeds).fights.toFixed(1)} to a rest (${beside ? `${beside[0]} ${days(level, [beside[1]], seeds).fights.toFixed(1)}, ` : ''}${fightsPerRest(level)} asked)`;
+    const rest = (level: number, enc: Encounter, beside?: [string, Encounter]): string => `${toRest(level, enc).toFixed(1)} to a rest (${beside ? `${beside[0]} ${toRest(level, beside[1]).toFixed(1)}, ` : ''}${fightsPerRest(level)} asked)`;
     console.log(`Act III's abilities on the test monsters, ${seeds} seeds: one fight from fresh (its rounds, its cost, won) and fights before a rest.`);
     console.log(`Two trolls: the test brute on ${TROLL.hp} of its hit points, mending ${TROLL.regen} of them a round but a round fire struck it.`);
     for (const l of at) {
@@ -900,24 +923,21 @@ async function main(): Promise<void> {
     console.log(`A caller beside six fodder: the test soldier, calling ${CALL.monsters} of the test fodder at ${CALL.chance} a turn.`);
     for (const l of at) {
       const fs = fights(l, callerEncounter(l)), mute = callerEncounter(l).map((m) => (m.calls ? { ...m, calls: undefined } : m));
-      console.log(`  ${l}: ${one(fs)}, the fight holding ${(fs.reduce((t, { s }) => t + s.monsters.length, 0) / seeds).toFixed(1)} monsters; ${rest(l, callerEncounter(l))}, and ${days(l, [mute], seeds).fights.toFixed(1)} with no call`);
+      console.log(`  ${l}: ${one(fs)}, the fight holding ${(fs.reduce((t, { s }) => t + s.monsters.length, 0) / seeds).toFixed(1)} monsters; ${rest(l, callerEncounter(l))}, and ${toRest(l, mute).toFixed(1)} with no call`);
     }
     console.log(`Three lights and a hound: the test controller come down whole to ${LIGHT.share} of its line, flying, its touch taking spell points where it held, beside the test skirmisher (#541).`);
     for (const l of at) {
       const enc = lightEncounter(l), fs = fights(l, enc), houndFirst = { monsters: enc, leader: enc[enc.length - 1].id };
       const plain = [...Array.from({ length: 3 }, () => testMonster('controller', l)), testMonster('skirmisher', l)];
       const whole = enc.map((m): MonsterDef => (m.drain ? { ...testMonster('controller', l), id: m.id, kind: m.kind, ranged: true, drain: m.drain, inflict: undefined } : m));
-      console.log(`  ${l}: ${one(fs)}, its spell points ${pct(mean(fs, (o) => o.sp))}% spent or taken (${pct(mean(fights(l, houndFirst), (o) => o.sp))}% with the hound marked first); ${rest(l, enc, ['the hound marked first', houndFirst])}; ${days(l, [plain], seeds).fights.toFixed(1)} for three test controllers and the hound, and ${days(l, [whole], seeds).fights.toFixed(1)} for lights on the controller's whole line`);
+      console.log(`  ${l}: ${one(fs)}, its spell points ${pct(mean(fs, (o) => o.sp))}% spent or taken (${pct(mean(fights(l, houndFirst), (o) => o.sp))}% with the hound marked first); ${rest(l, enc, ['the hound marked first', houndFirst])}; ${toRest(l, plain).toFixed(1)} for three test controllers and the hound, and ${toRest(l, whole).toFixed(1)} for lights on the controller's whole line`);
     }
     // Act IV's sweep (#545), where the road first meets it: the giants at 23, the drakes at 25.
     console.log(`Two giants and two drakes: the test brute come down whole to ${SWEEP.share} of its line, its arm sweeping the front row or its breath burning a row with fire at ${SWEEP.chance} a turn.`);
     const felled = (fs: { s: CombatState }[]): number => fs.filter(({ s }) => s.log.some((l) => / (sweeps|breathes) /.test(l) && /falls?!$/.test(l))).length;
     for (const l of opt('levels') ? levels : [23, 25]) {
-      const g = testGiant(l), front = fielded(l, 1).members.slice(0, FRONT_ROW).map((m) => m.maxHp), heavy = [testGiant(l, 2), testGiant(l, 2)];
-      const answered = felled(fights(l, heavy));
-      ANSWER.sweep = false;
-      const bare = felled(fights(l, heavy));
-      ANSWER.sweep = true;
+      const g = testGiant(l), front = fielded(l, 1, rules).members.slice(0, FRONT_ROW).map((m) => m.maxHp), heavy = [testGiant(l, 2), testGiant(l, 2)];
+      const answered = felled(fights(l, heavy)), bare = felled(fights(l, heavy, undefined, turned({ sweep: false })));
       console.log(`  ${l}: giants ${one(fights(l, giantEncounter(l)))}, ${rest(l, giantEncounter(l), ['plain brutes', standardEncounter('brute', l)])}; drakes ${one(fights(l, drakeEncounter(l)))}, ${rest(l, drakeEncounter(l))}; a sweep at its worst ${g.dice * g.sides + g.bonus} to each of a front row of ${front.join(', ')}; giants of twice the blow fell one of a row in ${answered} of ${seeds} fights, ${bare} with no answer`);
     }
     // Act IV's stone (#546), where the road first meets it: the mesas at 27.
@@ -926,7 +946,7 @@ async function main(): Promise<void> {
     const uncured = (p: Party): Party => { forget((x) => x.id !== 'absolve')(p); p.bag = p.bag.filter((id) => !item(id).use?.cure?.includes('stoned')); return p; };
     for (const l of opt('levels') ? levels : [27]) {
       const enc = basiliskEncounter(l), held = enc.map((m): MonsterDef => (m.inflict?.cond === 'stoned' ? { ...m, inflict: { cond: 'paralysed', chance: BASILISK_STONE } } : m));
-      const fs = fights(l, enc), cureless = Array.from({ length: seeds }, (_, n) => day(l, [enc], n + 1, 30, uncured)).reduce((t, d) => t + d.fights, 0) / seeds;
+      const fs = fights(l, enc), cureless = Array.from({ length: seeds }, (_, n) => day(l, [enc], n + 1, 30, uncured, rules)).reduce((t, d) => t + d.fights, 0) / seeds;
       console.log(`  ${l}: ${one(fs)}, ${glassed(fs)} of ${seeds} leaving someone glassed; ${rest(l, enc, ['its hold a paralysis', held])}, and ${cureless.toFixed(1)} with neither Absolve nor a draught`);
     }
     // Act V's clock (#748), where the road meets it: the Heart at 32, the company killing the Hands
@@ -934,11 +954,9 @@ async function main(): Promise<void> {
     console.log(`The Heart: the test boss leading three of the test elite at a clock's panel, calling the test soldier, a machine that obeys, every ${CLOCK.every} rounds while one of them stands.`);
     for (const l of opt('levels') ? levels : [32]) {
       const plays = (['panel', 'leader', 'called'] as const).map((k) => {
-        ANSWER.clock = k;
-        const fs = fights(l, clockEncounter(l)), come = fs.reduce((t, { s }) => t + s.monsters.length - 4, 0) / seeds, dark = fs.reduce((t, { s }) => t + (s.clock?.dim ?? 0), 0) / seeds;
+        const fs = fights(l, clockEncounter(l), undefined, turned({ clock: k })), come = fs.reduce((t, { s }) => t + s.monsters.length - 4, 0) / seeds, dark = fs.reduce((t, { s }) => t + (s.clock?.dim ?? 0), 0) / seeds;
         return `${{ panel: 'the Hands first', leader: 'the lord first', called: 'the sentries as they come' }[k]} ${one(fs)}, ${come.toFixed(1)} sentries called, the light ${dark.toFixed(1)} of ${CLOCK.dims} steps down`;
       });
-      ANSWER.clock = 'panel';
       console.log(`  ${l}: ${plays.join('; ')}`);
     }
     // And the Heart as built (#759): Vask, his three Hands at the panel and his sentries, on the gate's bot,
@@ -946,26 +964,23 @@ async function main(): Promise<void> {
     const heart = MAP_DEFS.find((d) => d.id === 'core')?.encounters?.find((e) => e.id === 'core_vask');
     if (heart) {
       const { winRate, gateOpts } = await import('./gate.ts');
-      const won = (enc: Encounter): string => `${pct(winRate(32, enc, seeds, ROUND_CAP, gateOpts(heart)))}%`;
-      const plays = (['panel', 'leader', 'called'] as const).map((k) => { ANSWER.clock = k; return `${{ panel: 'the Hands first', leader: 'Vask first', called: 'the sentries as they come' }[k]} ${won(heart)}`; });
-      ANSWER.clock = 'panel';
+      const won = (enc: Encounter, clock: BotAnswer['clock'] = 'panel'): string => `${pct(winRate(32, enc, seeds, ROUND_CAP, gateOpts(heart), turned({ clock })))}%`;
+      const plays = (['panel', 'leader', 'called'] as const).map((k) => `${{ panel: 'the Hands first', leader: 'Vask first', called: 'the sentries as they come' }[k]} ${won(heart, k)}`);
       console.log(`  Vask's own group at 32, won: ${plays.join(', ')}, and ${won({ ...heart, clock: undefined })} with no clock`);
     }
     // Act IV's holds (#549): the bells, the vines and the machines' clamps, which the bots free.
     console.log(`Four vines: the test controller, its hold at 0.3 a hit as the Strangler Vine's, the held freed by the bots' cure (#549).`);
     for (const l of opt('levels') ? levels : [24]) {
       const vines = Array.from({ length: 4 }, (): MonsterDef => ({ ...testMonster('controller', l), inflict: { cond: 'paralysed', chance: 0.3 } }));
-      const freed = one(fights(l, vines)), plain = days(l, [standardEncounter('controller', l)], seeds).fights;
-      ANSWER.hold = false;
-      const left = one(fights(l, vines)), plainLeft = days(l, [standardEncounter('controller', l)], seeds).fights;
-      ANSWER.hold = true;
+      const freed = one(fights(l, vines)), plain = toRest(l, standardEncounter('controller', l)), held = turned({ hold: false });
+      const left = one(fights(l, vines, undefined, held)), plainLeft = toRest(l, standardEncounter('controller', l), held);
       console.log(`  ${l}: freed ${freed}, ${rest(l, vines)}; left ${left}; four test controllers ${plain.toFixed(1)} to a rest freed, ${plainLeft.toFixed(1)} left`);
     }
     // Act IV's bosses as they stand, the large dungeons' among them (#549): each from two under, beside the test boss of its level.
     console.log(`Act IV's bosses, alone, won from two under (the test boss of its level beside it):`);
     for (const m of Object.values(MONSTERS).filter((x) => x.level >= 23 && x.level <= 28 && x.xp >= xpFor('boss', x.level) * 0.9)) {
       const at2 = bossFloor(m.level);
-      console.log(`  ${m.name} at ${m.level}: ${pct(measure(at2, [m], seeds).won)}% (the test boss ${pct(measure(at2, standardEncounter('boss', m.level), seeds).won)}%), ${pct(measure(m.level, [m], seeds).won)}% at its own level`);
+      console.log(`  ${m.name} at ${m.level}: ${pct(measure(at2, [m], seeds, 1, thrifty, rules).won)}% (the test boss ${pct(measure(at2, standardEncounter('boss', m.level), seeds, 1, thrifty, rules).won)}%), ${pct(measure(m.level, [m], seeds, 1, thrifty, rules).won)}% at its own level`);
     }
     return;
   }
@@ -976,7 +991,7 @@ async function main(): Promise<void> {
     const at = (l: number): number => { const k = LEVELS.indexOf(l as (typeof LEVELS)[number]); if (k < 0) throw new Error(`level ${l} is not one of LEVELS`); return k; };
     levels.forEach(at);
     const say = (j: Job, [h, d, bad, fights, rounds]: Point): void => console.log(`  ${j.role} ${j.level}: hp ${fmt(h)}, damage ${fmt(d)}; ${j.role === 'boss' ? `won ${pct(fights)}%` : `${fights.toFixed(1)} fights, ${rounds.toFixed(1)} rounds, ${pct(bad)}% of days end badly`} (${secs()})`);
-    const refused = writeRefusal();
+    const refused = writeRefusal(rules);
     if (args.includes('--write') && refused) throw new Error(refused);
     const jobs = roles.flatMap((role) => levels.map((level): Job => ({ kind: 'calibrate', role, level, seeds, under: 0, rules })));
     const made = await onCores<Point>(jobs, say);
@@ -1042,16 +1057,16 @@ async function main(): Promise<void> {
   console.log(`ending in a death, a lost fight or one broken off, in fights of ${longest(1)} rounds at level 1 to ${longest(CAP).toFixed(1)} at ${CAP}`);
   console.log(`(up to ${slowest(1)} and ${slowest(CAP).toFixed(1)} where blows that hard kill too often).`);
   console.log(`The boss is fought alone, from ${under ? 'the same company' : 'two levels under it'}: won (target 50%).`);
-  if (RULES.tiers || RULES.company || RULES.artifacts) {
+  if (rules.tiers || rules.company || rules.artifacts) {
     // The company the what-ifs make, as it stands at each level it fights from: each member's title, tiers and artifacts.
     const tiersOf = (t: Tiers): string => (['master', 'expert'] as const).map((x) => ({ x, on: LINES.filter((l) => t[l] === x) })).filter(({ on }) => on.length).map(({ x, on }) => `${TIER_NAMES[x]} ${on.map((l) => LINE_NAMES[l]).join(' and ')}`).join(', ');
     const arts = (m: Character): string => borne(m).filter((id) => item(id).artifact).map((id) => item(id).name).join(' and ');
-    console.log(`\nThe company${RULES.tiers ? ' and its tiers' : ''}${RULES.artifacts ? ' and who bears the artifacts' : ''}, at each level it fights from:`);
+    console.log(`\nThe company${rules.tiers ? ' and its tiers' : ''}${rules.artifacts ? ' and who bears the artifacts' : ''}, at each level it fights from:`);
     for (const l of [...new Set(roles.flatMap((r) => levels.map((v) => fieldedAt(r, v, under))))].sort((a, b) => a - b)) {
-      console.log(`  L${l}: ${fielded(l, 1).members.map((m) => `${m.name} ${className(m)}${m.tiers ? `, ${tiersOf(m.tiers)}` : ''}${arts(m) ? `, ${arts(m)}` : ''}`).join('; ')}`);
+      console.log(`  L${l}: ${fielded(l, 1, rules).members.map((m) => `${m.name} ${className(m)}${m.tiers ? `, ${tiersOf(m.tiers)}` : ''}${arts(m) ? `, ${arts(m)}` : ''}`).join('; ')}`);
     }
   }
-  const cells = await cellsOnCores(roles, levels, seeds, under);
+  const cells = await cellsOnCores(roles, levels, seeds, under, Infinity, rules);
   const block = (title: string, show: (c: Cell, r: Role) => string, dayOnly = false): void => {
     console.log(`\n${title}`);
     row('', levels.map((l) => `L${l}`));
@@ -1066,7 +1081,7 @@ async function main(): Promise<void> {
   block('one fight from fresh: cost %', (c) => pct(c.fresh.cost));
   block('one fight from fresh: someone down at the end %', (c) => pct(c.fresh.down));
   const took = { bless: 'blessed', sleep: 'slept a group', drink: 'drank' } as const;
-  for (const k of ['bless', 'sleep', 'drink'] as const) if (RULES.bot?.[k]) block(`one fight from fresh: the bots ${took[k]} %`, (c) => pct(c.casts?.[k] ?? 0));
+  for (const k of ['bless', 'sleep', 'drink'] as const) if (rules.bot?.[k]) block(`one fight from fresh: the bots ${took[k]} %`, (c) => pct(c.casts?.[k] ?? 0));
   if (Math.max(...levels) > SPELLS_GROW_TO) console.log(`\nPast level ${SPELLS_GROW_TO} the company runs on play's rules: its spells stop growing, it takes its prestiges at ${PRESTIGES.join(', ')} and their spell ranks, and tiers 6 and 7 at 15 and 23, and it wears the ladder's gear to ${GEAR_TOP} and none past it.`);
 }
 
