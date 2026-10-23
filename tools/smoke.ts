@@ -12,6 +12,7 @@ import { GROUND_SAMPLES } from './grounds.ts';
 import { MAP_DEFS } from '../src/content/index.ts';
 import type { MonsterSprite } from '../src/content/index.ts';
 import { SPAN, SPAN_SLACK } from '../src/ui/sprites.ts';
+import { SPRITES } from '../src/ui/monsters/index.ts';
 import { LAYOUT } from '../src/ui/frame.ts';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -51,33 +52,10 @@ const SWEEP = sweepAsked === 'all' ? MAP_DEFS.map((d) => d.id) : sweepAsked.spli
 for (const id of SWEEP) if (!MAP_DEFS.some((d) => d.id === id)) throw new Error(`SMOKE_SWEEP names no map '${id}'`);
 
 // The parts of a drawing that stand apart from its body by design, each with the most pieces it
-// comes to and the largest share of the drawing's ink they take between them. Anything else apart
-// is a part that has come loose, as the archer's head once did (#7).
-const DETACHED: Partial<Record<MonsterSprite, { what: string; pieces: number; share: number }>> = {
-  warden: { what: 'shard', pieces: 1, share: 0.01 },
-  cut_warden: { what: 'shards', pieces: 2, share: 0.01 },
-  tide_warden: { what: 'shards', pieces: 2, share: 0.01 },
-  sunder_warden: { what: 'shards', pieces: 2, share: 0.01 },
-  anvil_warden: { what: 'slag', pieces: 2, share: 0.01 },
-  acolyte: { what: 'censer', pieces: 1, share: 0.05 },
-  lampman: { what: 'lantern', pieces: 1, share: 0.07 },
-  adept: { what: 'hand flame', pieces: 1, share: 0.03 },
-  rift_hound: { what: 'embers', pieces: 3, share: 0.01 },
-  sunder_hound: { what: 'glass motes', pieces: 3, share: 0.01 },
-  fire_beetle: { what: 'sparks', pieces: 2, share: 0.01 },
-  lantern_moth: { what: 'dust', pieces: 3, share: 0.025 },
-  deathshead: { what: 'dust', pieces: 3, share: 0.025 },
-  hearth_moth: { what: 'dust', pieces: 3, share: 0.025 },
-  salamander: { what: 'embers', pieces: 3, share: 0.01 },
-  great_salamander: { what: 'embers', pieces: 3, share: 0.01 },
-  ember_salamander: { what: 'embers', pieces: 3, share: 0.01 },
-  cinder_drake: { what: 'ember plume', pieces: 4, share: 0.01 },
-  old_drake: { what: 'ember plume', pieces: 4, share: 0.01 },
-  brood_drake: { what: 'ember plume', pieces: 4, share: 0.01 },
-  bog_light: { what: 'motes rising into it', pieces: 2, share: 0.06 },
-  ashen_hand: { what: 'embers', pieces: 5, share: 0.01 },
-  wraith: { what: 'fading tongue of cloth', pieces: 1, share: 0.01 },
-};
+// comes to and the largest share of the drawing's ink they take between them, as its family registers
+// them (src/ui/monsters/). Anything else apart is a part that has come loose, as the archer's head
+// once did (#7).
+const DETACHED: Partial<Record<MonsterSprite, { what: string; pieces: number; share: number }>> = Object.fromEntries(Object.entries(SPRITES).flatMap(([kind, s]) => (s.detached ? [[kind, s.detached]] : [])));
 
 const server = createServer();
 await new Promise<void>((r) => server.listen(0, () => r()));

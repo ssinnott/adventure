@@ -1,9 +1,9 @@
 // The Whitespine's monsters, band 22-24: Monks' Vale and Highcell, the High Spine, Sheer Point and
-// the Giants' Stair. `sprite` names the drawing (src/ui/sprites.ts); the numbers are the combat
+// the Giants' Stair. `sprite` names the drawing (src/ui/monsters/); the numbers are the combat
 // model's. A group on a map is a list of these ids, and any area's maps may place them.
 import type { MonsterDef } from '../../../game/monsters.ts';
 
-/** The drawings the Whitespine's monsters are drawn with, one kind to each. src/ui/sprites.ts must draw every one. */
+/** The drawings the Whitespine's monsters are drawn with, one kind to each. A family in src/ui/monsters/ must register every one. */
 export const SPRITES = [
   'brother', 'bell_ringer', 'abbot',
   'spine_eagle', 'snow_troll', 'mason',

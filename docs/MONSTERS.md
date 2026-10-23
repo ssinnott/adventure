@@ -293,8 +293,9 @@ Decided by delegate for #537, each the owner's to overturn:
 
 Decided by delegate for the combat row and the glove line, each the owner's to overturn:
 
-1. **The fight's row is spaced by each drawing's span** (`SPAN` in `src/ui/sprites.ts`): how far
-   its ink reaches either side of its centre, which the smoke test measures and holds within 2 px.
+1. **The fight's row is spaced by each drawing's span** (`span` in its family's `SPRITES`, read as
+   `SPAN` in `src/ui/sprites.ts`): how far its ink reaches either side of its centre, which the smoke
+   test measures and holds within 2 px.
 2. **Neighbours in a line may overlap by a third of the narrower's span** (`OVERLAP`, `ui/row.ts`):
    a tail, a wing or a shield behind the next, never a body across it. A back rank is not held to it.
 3. **A row that fitted stands as it did,** a slot apart and at its old size: two in five of the

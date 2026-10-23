@@ -13,20 +13,25 @@
 // belly drawn in under the ribs, the fur pale and ragged along the spine, the ribs showing down the
 // flank and the eye red, as a thing's is that has bred four hundred years out of the sun.
 import type { MonsterSprite } from '../../game/monsters.ts';
-import type { MonsterDrawer, Paint } from './common.ts';
+import type { MonsterDrawer, Paint, Sprite } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
 import { blob, glossBall, glow, softLine, patch } from './gloss.ts';
 import type { Part } from './gloss.ts';
 import { shade, mix, rgba } from '../../lib/art/palettes.ts';
-
-/** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['rat', 'barn_rat', 'bilge_rat', 'deep_rat'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   // The deep rat stands higher on its legs, so it is drawn a little smaller to keep its ears in the frame.
   if (kind === 'deep_rat') rat(ctx, x, y, h * 0.93, p, false, false, true);
   else rat(ctx, x, y, h, p, kind === 'barn_rat', kind === 'bilge_rat');
 };
+
+/** The kinds this module draws, each with its span and any part drawn apart; ./index.ts merges every family's. */
+export const SPRITES = {
+  rat: { draw, span: [1.05, 0.97] },
+  barn_rat: { draw, span: [1.06, 1.01] },
+  bilge_rat: { draw, span: [1.06, 0.92] },
+  deep_rat: { draw, span: [0.96, 0.85] },
+} satisfies Partial<Record<MonsterSprite, Sprite>>;
 
 /** A lumpy ring of n points around (cx, cy), for skulls and ears. */
 function ring(cx: number, cy: number, rx: number, ry: number, n: number, out: number[]): number[] {

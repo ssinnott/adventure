@@ -25,14 +25,11 @@
 // stands in the drift it rose from, the fists sunk in it; the eyes are a cold light, and the mouth a
 // maw with icicles for teeth, more of them hanging from the jaw. Idle, as the tor troll.
 import type { MonsterSprite } from '../../game/monsters.ts';
-import type { MonsterDrawer, Paint } from './common.ts';
+import type { MonsterDrawer, Paint, Sprite } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
 import { blob, glow, patch, softLine } from './gloss.ts';
 import type { Crease, Part } from './gloss.ts';
-
-/** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['ogre', 'tor_troll', 'snow_troll'];
 
 /**
  * What a troll is made of, as the tor troll's numbers (1 = the tor troll, 0 = none), so the
@@ -60,6 +57,13 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'tor_troll' || kind === 'snow_troll') troll(ctx, x, y, h * 0.8, p, kind === 'snow_troll' ? DRIFT : TOR);
   else ogre(ctx, x, y, h, p);
 };
+
+/** The kinds this module draws, each with its span and any part drawn apart; ./index.ts merges every family's. */
+export const SPRITES = {
+  ogre: { draw, span: [0.41, 0.45] },
+  tor_troll: { draw, span: [0.4, 0.41] },
+  snow_troll: { draw, span: [0.42, 0.45] },
+} satisfies Partial<Record<MonsterSprite, Sprite>>;
 
 /** Stable 0..1 noise; never seeded from the frame, or the contour would boil. */
 function nz(a: number, b: number): number {

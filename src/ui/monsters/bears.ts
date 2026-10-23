@@ -18,14 +18,11 @@
 // the claws black. Idle: it carries the head low and swings it, and now and then lifts it high on
 // the neck, nose up, to take the wind.
 import type { MonsterSprite } from '../../game/monsters.ts';
-import type { MonsterDrawer, Paint } from './common.ts';
+import type { MonsterDrawer, Paint, Sprite } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
 import { blob, glossBall, glow, patch, softLine } from './gloss.ts';
 import type { Part } from './gloss.ts';
 import { hexToRgb, mix, rgba, shade } from '../../lib/art/palettes.ts';
-
-/** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['pine_bear', 'glass_bear', 'ice_bear'];
 
 /**
  * The frame's parts, as proportions of the pine bear's (1 = the pine bear, 0 = none), each named
@@ -76,6 +73,13 @@ const ICE: Build = { bulk: 1.1, hump: 0.3, head: 0.82, snout: 1.4, ears: 0.6, sh
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   bear(ctx, x, y, h, p, kind === 'glass_bear' ? GLASS : kind === 'ice_bear' ? ICE : PINE);
 };
+
+/** The kinds this module draws, each with its span and any part drawn apart; ./index.ts merges every family's. */
+export const SPRITES = {
+  pine_bear: { draw, span: [0.75, 0.66] },
+  glass_bear: { draw, span: [0.7, 0.65] },
+  ice_bear: { draw, span: [0.73, 0.73] },
+} satisfies Partial<Record<MonsterSprite, Sprite>>;
 
 /** A ring of n points round (cx, cy), the raw contour a 'curve' part lumps further. */
 function ring(cx: number, cy: number, rx: number, ry: number, n: number, rot = 0): number[] {
