@@ -3491,8 +3491,8 @@ size is built yet; the pull request that builds the first says what it found.
   O4's 31,31 to hills, drops square 31 from the O4/O5 row of `SEAMS_AS_BUILT` and, from the opening
   until P4 is built, holds 7-21 and 31 in the `OPEN_ON_NOTHING` row for O4's east edge, 7-21 today.
   At P6's foot the corner goes the other way: Cairnmoor's P7 has to meet P6's 0,31, mountain, and
-  O7's 31,0, hills, so its pull request shuts O7's 31,0 to mountain, as the atlas has it, the O6/O7
-  row goes and the `highmoor_o7 east` row holds 1-29.
+  O7's 31,0, hills, so its pull request shuts O7's 31,0 to mountain, as the atlas has it; the O6/O7
+  row then goes and the `highmoor_o7 east` row holds 1-29.
 - **New here.** Nothing.
 - **Finds.** 100 gold and a Sapphire Vial on the cairn; 150 gold and an Elixir in the basin.
 - **Pay.** None.
