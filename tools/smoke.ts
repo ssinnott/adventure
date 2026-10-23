@@ -1043,6 +1043,13 @@ const questClosed = await page.evaluate(() => (window as any).__game.game.top.co
 // A person's question (game/people.ts): a fixture captain, put in the street at run time, asks; the
 // first answer hands over a letter, which is read from the pack. Nothing of it stays.
 const asked = await (async () => {
+  // The game takes one press a tick from its queue (src/input.ts, src/main.ts), so a screen is read
+  // once the queue is empty and a frame is drawn, not after a fixed wait a loaded machine outruns.
+  const press = async (key: string): Promise<void> => {
+    await page.keyboard.press(key);
+    await page.waitForFunction(() => (window as any).__game.game.input.queue.length === 0, null, { timeout: 5000 });
+    await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => r(null))));
+  };
   const top = (): Promise<{ screen: string; text: string; title: string }> => page.evaluate(() => { const t = (window as any).__game.game.top; return { screen: t.constructor.name, text: t.text ?? '', title: t.title ?? '' }; });
   await page.evaluate(async () => {
     const C = await import('/src/content/index.ts' as string);
@@ -1055,19 +1062,19 @@ const asked = await (async () => {
   });
   await page.waitForTimeout(80);
   const words = await top();
-  await page.keyboard.press('Space'); await page.waitForTimeout(80);
+  await press('Space');
   const question = await top();
   const choiceColours = await colours();
-  await page.keyboard.press('Space'); await page.waitForTimeout(80);
+  await press('Space');
   const said = await top();
-  await page.keyboard.press('Space'); await page.waitForTimeout(80);
+  await press('Space');
   const after = await page.evaluate(() => { const g = (window as any).__game.game; return { screen: g.top.constructor.name, flag: !!g.party.flags.fx_write, bag: g.party.bag.includes('fx_letter') }; });
-  await page.keyboard.press('KeyI'); await page.waitForTimeout(80);
+  await press('KeyI');
   const has = await page.evaluate(() => { const g = (window as any).__game.game, t = g.top, c = g.party.members[g.selected], i = g.party.bag.indexOf('fx_letter'); if (i >= 0 && t.constructor.name === 'SheetScreen') t.sel = c.pack.length + i; return i >= 0; });
-  if (has) { await page.keyboard.press('Space'); await page.waitForTimeout(80); }
+  if (has) await press('Space');
   const letter = has ? await top() : { screen: 'no letter', text: '', title: '' };
-  await page.keyboard.press('Escape'); await page.waitForTimeout(60);
-  await page.keyboard.press('Escape'); await page.waitForTimeout(60);
+  await press('Escape');
+  await press('Escape');
   const closed = await page.evaluate(async () => {
     const g = (window as any).__game.game, C = await import('/src/content/index.ts' as string);
     const top = g.top.constructor.name;

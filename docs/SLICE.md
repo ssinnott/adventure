@@ -814,13 +814,13 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   smoke test fails.
 
 CI (`.github/workflows/checks.yml`) runs the three as jobs of their own on every pull request, and
-a fourth, `sheet`, which attaches the contact sheet and gates nothing. The smoke job runs
-`SMOKE_PART=rest`, and the crack sweep's four ways run beside it: the `plan` job, Node alone,
-plans the maps changed (`node tools/sweep.ts`, a shard for each 60,000 pairs of paints, none when
-no map is), and the `sweep` job paints each shard as a job of its own (#953). `npm test` runs the shelf's
-full run, and so does the tests job (10 s on CI). A run started by hand
-skips the sheet, sweeps every map for cracks with the audit and adds a fifth job, `fullrun`: the pilot's full run on
-the areas its `fullrun` input names (all unless changed), a report that gates nothing.
+`sheet`, which attaches the contact sheet and gates nothing. The smoke job runs `SMOKE_PART=rest`,
+and the crack sweep's four ways run beside it: the `plan` job, Node alone, plans the maps changed
+(`node tools/sweep.ts`, a shard for each 60,000 pairs of paints, none when no map is), and the
+`sweep` job paints each shard as a job of its own and gates as the smoke does (#953). `npm test`
+runs the shelf's full run, and so does the tests job (10 s on CI). A run started by hand skips the
+sheet, sweeps every map for cracks with the audit and adds the job `fullrun`: the pilot's full run
+on the areas its `fullrun` input names (all unless changed), a report that gates nothing.
 
 Of the suites before `quests`, `combat` holds the bots' three (#853, #865): a seeded fight played
 turn for turn as before with them off, and with them on at 4 and at 10, but not at 11; bless,

@@ -1,11 +1,12 @@
 # The checks every pull request must pass before it merges: the typecheck, the tests and the smoke
-# test, each its own job so the pull request shows each, the smoke's crack sweep beside it in the
-# plan and sweep jobs. Main has no branch protection (the owner,
-# 18 October 2026): the orchestrating session merges one pull request at a time, each up to date with
-# main and green on all three (docs/EXPANSION.md §8.3). No path filters: a pull request that touches
-# only docs must still report, or it waits on checks that never come. The contact sheet's job and the
-# lanes' job, last, are not among the three: the first attaches pictures for the owner and the second
-# says which lanes the files fall in, and neither is required. Nor is the pilot's full run (`fullrun`,
+# test, each its own job so the pull request shows each, and the smoke's crack sweep beside them in
+# the plan job and the sweep job's shards (#953). Main has no branch protection (the owner,
+# 18 October 2026): the orchestrating session merges one pull request at a time, each up to date
+# with main and green on all five, the sweep skipped only where the plan sweeps no map
+# (docs/EXPANSION.md §8.3). No path filters: a pull request that touches only docs must still
+# report, or it waits on checks that never come. The contact sheet's job and the lanes' job, last,
+# are not among the five: the first attaches pictures for the owner and the second says which lanes
+# the files fall in, and neither is required. Nor is the pilot's full run (`fullrun`,
 # docs/PILOT.md), which runs only when started by hand: a report, not a gate.
 name: Checks
 
@@ -73,6 +74,9 @@ jobs:
         env:
           SMOKE_SHOT: smoke.png
           SMOKE_PART: rest
+          # On a run started by hand the one-way sweeps here (the cellar, Helmstow, its keep and the
+          # ground's samples, which no map holds yet) take the audit too, as the sweep's shards do.
+          SMOKE_SWEEP_AUDIT: ${{ github.event_name == 'workflow_dispatch' && '1' || '' }}
       - if: failure()
         uses: actions/upload-artifact@v4
         with:
