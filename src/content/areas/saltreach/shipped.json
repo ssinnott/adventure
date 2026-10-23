@@ -51,6 +51,15 @@
     },
     "caldera": {
       "used": [
+        "a3_cairn",
+        "a3_shallows",
+        "a3_wellhouse",
+        "a3_wellhouse_chest",
+        "a4_cairn",
+        "a4_shrine",
+        "a4_statue",
+        "a4_still",
+        "a4_still_chest",
         "b2_cairn",
         "b2_cell",
         "b2_cell_chest",
@@ -201,6 +210,9 @@
         "d5_spit"
       ],
       "groups": [
+        "a3_toad",
+        "a4_herons",
+        "a4_toad",
         "b2_toad",
         "b3_quay",
         "b3_toad",
@@ -234,6 +246,8 @@
       "doors": [
         "100,177",
         "102,195",
+        "20,112",
+        "33,89",
         "42,106",
         "48,181",
         "51,78",
@@ -315,6 +329,10 @@
     }
   },
   "zones": {
+    "delta_a4": {
+      "at": "8,94",
+      "size": "32x32"
+    },
     "delta_b4": {
       "at": "40,94",
       "size": "32x32"
@@ -345,6 +363,10 @@
     },
     "saltings_c7": {
       "at": "72,190",
+      "size": "32x32"
+    },
+    "upperwater_a3": {
+      "at": "8,62",
       "size": "32x32"
     },
     "upperwater_b2": {
