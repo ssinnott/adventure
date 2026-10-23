@@ -3,8 +3,8 @@
 // and set. The flue goes down lined with iron plates, black with soot, where a flue walker still walks
 // it; past it a clerks' room behind one plate knocked bright, and at the flue's foot the cold furnace,
 // where an inspector and its deep knocker keep the mouth: the farthest and the hardest.
-// Band 27-28, a band over F12's 25-26, out of the area's figures; docs/areas/ashfall.md §12.3 is its
-// brief.
+// Band 27-28, a band over F12's 25-26, out of the area's figures; its brief is
+// docs/areas/ashfall.md §12.3.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 

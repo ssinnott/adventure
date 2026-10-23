@@ -2545,9 +2545,9 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
       return { seen, met: [...met] };
     };
     const both = walk([first, last], {}), swum = walk([first, last], ALL), second = walk([last], {}), waded = walk([last], ALL), done = walk([], ALL);
-    ok(both.met.join() === first.id && swum.met.join() === first.id && !both.seen.has(key(12, 6)) && !swum.seen.has(key(12, 6))
+    ok(both.met.join() === first.id && swum.met.join() === first.id && !both.seen.has(key(12, 7)) && !swum.seen.has(key(12, 7))
       && second.met.join() === last.id && waded.met.join() === last.id && second.seen.has(key(5, 7)) && waded.seen.has(key(5, 7))
-      && !second.seen.has(key(3, 11)) && !waded.seen.has(key(3, 11)) && !waded.seen.has(key(8, 13)) && done.seen.has(key(8, 13)),
+      && !second.seen.has(key(4, 11)) && !waded.seen.has(key(4, 11)) && !waded.seen.has(key(8, 13)) && done.seen.has(key(8, 13)),
       'a company on foot or any way else meets the flue walker first and cannot pass it down the flue; with it down it comes up to the bright plate and to the inspector, and cannot pass it to the furnace and the stokers\' locker');
     const feat = (id: string): Feature => BD.features!.find((f) => 'id' in f && f.id === id)!;
     // The secret: the one plate of the flue's wall knocked bright, the search there and the clerks' room behind it.

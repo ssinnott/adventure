@@ -28,7 +28,7 @@ ends under the rim, and its enclave, Blackdraw, a flue down from F12's mountain 
 Its three side quests are written (#519, §6), and the third prestiges' quests of the three classes
 taught here are built on them: the Paladin's lamp, the Barbarian's nest and the Druid's seedling
 (#448, §6). Its chapter of the one quest, The Window, is written and walked (#518, §5). Its nine
-monsters and the armourer's step are drawn (§3), and the rest is to build. Its content is
+monsters and the armourer's step are drawn (§3), and the lair is to build (§12.4). Its content is
 `src/content/areas/ashfall/` (maps, monsters, items, climate, its part of the world map and its
 walkthrough; its chapter of the one quest, The Window, in `chapter.ts` and its side quests and the
 third prestiges' three in `quests.ts`) and its businesses' rooms `src/ui/interiors/ashfall/`. Its
@@ -3261,8 +3261,9 @@ Decided by the builder for #836, each the owner's to overturn:
     walkthrough floods it). The brief's flue walkers are one: by the harness's day at 27, two
     walkers with the inspector alone paced 8.2 fights to a rest and with the inspector and two
     knockers 5.8, under the aim; one walker with the inspector alone 13.4, over it; two walkers with
-    three knockers 9.93, the inspector left out; the one walker with the inspector and its knocker
-    11.15, the gate's 11.14.
+    three knockers 9.93, inside the aim but with the inspector left out; the one walker with the
+    inspector and its knocker 11.15, the gate's 11.14, nearer the aim's middle (10.75) with every
+    kind the brief names.
 16. **The reward is Kindler, Marlinspike,** the stokers' iron for lighting the furnace, in their
     locker by it with 400 gold: Cinderport's marlinspike (1d8+13, a light weapon for every class,
     2,300) with its blows carrying lightning, at 2,500, so 21 a blow, the die counted at 3.5,
@@ -3583,7 +3584,7 @@ built".
   inside 27.4 but the four boxes' group again, and two sentries to 27.4004, past it (§9, #836's 3).
   The enclave and the lair are held to their own bands and counted in no clear, so the lead stays at
   27.3554 to the end of #836 (`tools/tests/curve.ts`); Blackdraw gives 790 xp a member and 700 gold,
-  a figure (§12.3).
+  reported and not counted (§12.3).
 - **The doors.** The lair's is left bare, a square of solid ground with the same either side along
   its face, its way walked to and nothing within four squares, in the dam's rock (§12.4). The
   enclave's is the flue's mouth in the mountain's face at 10,3, drawn as stone with the mountain
