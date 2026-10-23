@@ -421,7 +421,7 @@ Decided by delegate for #636, each the owner's to overturn:
    already, so the structure check's guardians stay those with a quest item or a `slainText`. The
    Warden of the Anvil has its `slainText`.
 3. **The checks count a group's flags with its question's** (`groupFlags`), so a condition on one
-   names something real and `src/content/shipped.json` keeps it.
+   names something real and its area's `shipped.json` keeps it.
 4. **The Kilns claims the mechanic (`encounter:sets`)** when the Warden of the Anvil sets
    `q_anvil_closed`, the first group on the road to set a flag: that, its step events and its doc
    are #636's second pull request.

@@ -5,7 +5,7 @@
 // tools/scaffold.ts; docs/areas/thornmark.md §4.2 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST, NORTH, SOUTH } from '../../../../game/types.ts';
-import { denBurnt } from '../../../../game/dens.ts';
+import { denBurnt } from '../../../../game/keys.ts';
 import { TEAR_CLOSED } from './grove2.ts';
 
 /** The spiders' nest burnt: its brood stops coming. */

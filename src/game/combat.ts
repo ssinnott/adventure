@@ -15,6 +15,7 @@ import {
 import type { ClassId } from './party.ts';
 import type { ItemDef } from './items.ts';
 import type { Party, Character, Condition } from './party.ts';
+import { GLOVE_FLAG } from './keys.ts';
 
 export interface MonsterInst {
   def: MonsterDef;
@@ -155,7 +156,7 @@ export const ROUT_LINE = (names: string, one: boolean): string => one ? `${names
  * (MONSTERS §2), given whether through one; said once a game, and kept by its flag in the party's flags.
  */
 export const GLOVE_LINE = (one: boolean): string => `The light goes into ${one ? 'it' : 'them'} like a hand into a glove.`;
-export const GLOVE_FLAG = 'glove_seen';
+export { GLOVE_FLAG } from './keys.ts';
 /** The log's word when a hit turns a member to glass (#546), in place of the condition's name and a fall. */
 export const STONE_LINE = (who: string): string => `${who} turns to glass!`;
 /** What the buffs are worth while they last. */
@@ -274,8 +275,7 @@ function newRound(s: CombatState, party: Party, rng: RngInstance): void {
   s.monsters.forEach((m, i) => { if (standing(m)) refs.push({ ref: { side: 'monster', i }, speed: m.def.speed + rng.range(0, 4) }); });
   // A monk of the second prestige always acts first in a round; in the first, while an Arms Master
   // stands (game/skills.ts; #856), every member acts before any monster. The skill is read off the
-  // member's list, as `partyCan` reads its skills: this file sits under the content index too, and
-  // nobody is born to it; the skills test holds the two to `hasSkill`'s answer.
+  // member's list; nobody is born to it, and the skills test holds it to `hasSkill`'s answer.
   const armsMaster = s.round === 1 && party.members.some((c) => !isDown(c) && (c.skills?.includes('arms_master') ?? false));
   const first = (r: TurnRef): number => (r.side !== 'party' ? 0 : party.members[r.i].cls === 'monk' && prestigeOf(party.members[r.i]) >= 2 ? 2 : armsMaster ? 1 : 0);
   refs.sort((a, b) => first(b.ref) - first(a.ref) || b.speed - a.speed);
