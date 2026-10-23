@@ -29,14 +29,11 @@
 // a hawk mantles, the long horns swept back, the jaw open. A boss, drawn inside the tall boss's crown.
 // Idle: it breathes, the wings shiver over the eggs, the eggs' cracks glow and the plume goes up.
 import type { MonsterSprite } from '../../game/monsters.ts';
-import type { MonsterDrawer, Paint } from './common.ts';
+import type { MonsterDrawer, Paint, Sprite } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
 import { blob, glow, patch, softLine } from './gloss.ts';
 import type { Part } from './gloss.ts';
-
-/** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['cinder_drake', 'old_drake', 'drakeling', 'brood_drake'];
 
 /**
  * What a drake is made of, as the Cinder Drake's numbers, so another drake is a Build and a colouring
@@ -100,6 +97,14 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   const d = BUILDS[kind] ?? CINDER;
   drake(ctx, x, y, h * d.reach, p, d);
 };
+
+/** The kinds this module draws, each with its span and any part drawn apart; ./index.ts merges every family's. */
+export const SPRITES = {
+  cinder_drake: { draw, span: [0.56, 0.56], detached: { what: 'ember plume', pieces: 4, share: 0.01 } },
+  old_drake: { draw, span: [0.38, 0.63], detached: { what: 'ember plume', pieces: 4, share: 0.01 } },
+  drakeling: { draw, span: [0.37, 0.37] },
+  brood_drake: { draw, span: [0.6, 0.63], detached: { what: 'ember plume', pieces: 4, share: 0.01 } },
+} satisfies Partial<Record<MonsterSprite, Sprite>>;
 
 type Pt = readonly [number, number];
 const mid = (a: number, b: number, k: number): number => a + (b - a) * k;

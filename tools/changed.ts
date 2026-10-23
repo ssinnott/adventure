@@ -25,10 +25,13 @@ export function changedFiles(base: string): string[] {
 
 /**
  * What lays out or paints every map: a change to one sweeps them all. A zone moved on the atlas is
- * re-laid into the outdoors and its walls re-rolled, so the atlases count too.
+ * re-laid into the outdoors and its walls re-rolled, so the atlases count too. The scenery
+ * (ui/scenery.ts) paints a map and the monsters do not: the scene the sweep paints draws none, so
+ * neither the dispatcher (ui/sprites.ts) nor a family counts (#915). The one file of the folder it
+ * does paint with is monsters/common.ts (`B` and `stroke`), so that counts.
  */
 const EVERY_MAP = [
-  /^src\/ui\/(viewport|brush|palette|sprites)\.ts$/, /^src\/lib\/art\//, /^src\/game\/(map|outdoors|world|types|atlas)\.ts$/,
+  /^src\/ui\/(viewport|brush|palette|scenery)\.ts$/, /^src\/ui\/monsters\/common\.ts$/, /^src\/lib\/art\//, /^src\/game\/(map|outdoors|world|types|atlas)\.ts$/,
   /^src\/content\/(index|maps|atlas|area)\.ts$/, /^src\/content\/areas\/[^/]+\/atlas\.ts$/, /^tools\/(smoke|changed)\.ts$/,
 ];
 const MAP_FILE = /^src\/content\/areas\/[^/]+\/maps\/[^/]+\.ts$/;
@@ -57,33 +60,34 @@ function atBase(base: string, file: string): string {
 }
 const now = (file: string): string => (existsSync(path.join(ROOT, file)) ? readFileSync(path.join(ROOT, file), 'utf8') : '');
 
-/** What paints every monster: the dispatcher, ui/brush.ts, the shared brushes (any module in ui/monsters/ with no KINDS of its own) and the art library. */
+/** What paints every monster: the dispatcher, ui/brush.ts and the art library; and a shared brush, a module of ui/monsters/ that registers no kinds. */
 const EVERY_MONSTER = [/^src\/ui\/(sprites|brush)\.ts$/, /^src\/lib\/art\//];
-const FAMILY_FILE = /^src\/ui\/monsters\/[^/]+\.ts$/;
+const FAMILY_FILE = /^src\/ui\/monsters\/([^/]+)\.ts$/;
+/** The barrel that merges the families' kinds and says which family registers each. */
+const BARREL = 'src/ui/monsters/index.ts';
 const AREA_MONSTERS = /^src\/content\/areas\/([^/]+)\/monsters\.ts$/;
-/**
- * The sprite kinds a family module draws, as its KINDS lists them, read from its text; null for a
- * shared module. tools/tests/changed.ts holds it to each module's KINDS as imported.
- */
-export const kindsOf = (text: string): string[] | null => {
-  const m = /export const KINDS[^=]*=\s*\[([^\]]*)\]/.exec(text);
-  return m ? [...m[1].matchAll(/'([^']+)'/g)].map((k) => k[1]) : null;
-};
+/** The families a text of the barrel merges, by their modules' names, as its import lines name them; tools/tests/changed.ts holds it to the barrel. */
+export const familiesIn = (text: string): string[] => [...text.matchAll(/^import \{ SPRITES as \w+ \} from '\.\/([^']+)\.ts';$/gm)].map((m) => m[1]);
 
 /**
- * The monsters among the files: every def drawn by a family module that changed, and every def
- * whose line in its area's monsters.ts is new or differs from the base's. `all` where a file
- * changed that every monster is drawn by.
+ * The monsters among the files: every def of a kind registered by a family module that changed, as
+ * the barrel says, or by a family the barrel merges that its base did not (a change to the barrel
+ * counts only those); and every def whose line in its area's monsters.ts is new or differs from the
+ * base's. `all` where a file changed that every monster is drawn by.
  */
 export async function changedMonsters(files: readonly string[], base?: string): Promise<{ all: boolean; monsters: string[] }> {
   const { AREAS, AHEAD, MONSTERS } = await import('../src/content/index.ts');
   let all = files.some((f) => EVERY_MONSTER.some((re) => re.test(f)));
   const out = new Set<string>();
-  for (const f of files.filter((f) => FAMILY_FILE.test(f))) {
-    const kinds = kindsOf(now(f) || (base ? atBase(base, f) : ''));
-    if (!kinds) { all = true; continue; }
-    for (const d of Object.values(MONSTERS)) if (kinds.includes(d.sprite)) out.add(d.id);
+  const { FAMILY_OF } = await import('../src/ui/monsters/index.ts');
+  const drawnBy = (families: readonly string[]): void => { for (const d of Object.values(MONSTERS)) if (families.includes(FAMILY_OF[d.sprite])) out.add(d.id); };
+  const families = new Set<string>(Object.values(FAMILY_OF));
+  for (const f of files.filter((f) => FAMILY_FILE.test(f) && f !== BARREL)) {
+    const name = FAMILY_FILE.exec(f)![1];
+    if (families.has(name)) drawnBy([name]);
+    else all = true;
   }
+  if (files.includes(BARREL)) { const was = familiesIn(base ? atBase(base, BARREL) : ''); drawnBy(familiesIn(now(BARREL)).filter((n) => !was.includes(n))); }
   for (const f of files) {
     // An area's table, or one drawn ahead of its area's first map (content/index.ts).
     const area = [...AREAS, ...AHEAD].find((a) => a.id === AREA_MONSTERS.exec(f)?.[1]);

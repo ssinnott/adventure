@@ -24,14 +24,11 @@
 // coat gone grey, three old rakes pale down across the eye and two on the flank. Idle: the tail
 // swings, and the jaw opens slowly on its teeth.
 import type { MonsterSprite } from '../../game/monsters.ts';
-import type { MonsterDrawer, Paint } from './common.ts';
+import type { MonsterDrawer, Paint, Sprite } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
 import { blob, patch, softLine } from './gloss.ts';
 import type { Part } from './gloss.ts';
 import { mix, shade } from '../../lib/art/palettes.ts';
-
-/** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['snow_lynx', 'wold_lion', 'grey_lion'];
 
 /**
  * The frame's parts, as proportions of the lynx's where they are numbers (1 = the lynx, 0 = none),
@@ -117,6 +114,13 @@ const GREY: Build = { pose: STAND, air: 0, bulk: 1.62, head: 1.75, tufts: 0, ruf
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   cat(ctx, x, y, h, p, kind === 'wold_lion' ? LION : kind === 'grey_lion' ? GREY : LYNX);
 };
+
+/** The kinds this module draws, each with its span and any part drawn apart; ./index.ts merges every family's. */
+export const SPRITES = {
+  snow_lynx: { draw, span: [0.48, 0.47] },
+  wold_lion: { draw, span: [0.76, 0.69] },
+  grey_lion: { draw, span: [0.7, 0.62] },
+} satisfies Partial<Record<MonsterSprite, Sprite>>;
 
 /** Straight between the points of a table of [s, value]. */
 function lerpTable(t: readonly (readonly [number, number])[], s: number): number {

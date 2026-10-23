@@ -84,7 +84,7 @@ const SEAMS_AS_BUILT: readonly AsBuilt[] = [
   { seam: 'ironfells_n3|ironfells_o3', walk: '9-16', why: 'the hall\'s crag runs down O3\'s west edge against N3\'s terraces, so nothing comes at the gate from this side' },
   { seam: 'kilnsheart_n4|kilnsheart_o4', walk: '14', why: 'N4\'s hills start a square north of O4\'s, against O4\'s crag' },
   { seam: 'kilnsheart_n5|kilnsheart_o5', walk: '5 15-16', why: 'the mountain between them steps a square at the line' },
-  { seam: 'kilnsheart_o6/highmoor_o7', walk: '31', why: 'O6\'s corner is the rim\'s mountain, the world\'s end, where O7\'s is hills' },
+  { seam: 'kilnsheart_o6/highmoor_o7', walk: '31', why: 'O6\'s corner is the rim\'s mountain, as P6\'s beside it is, where O7\'s is hills' },
   { seam: 'ironfells_o3/kilnsheart_o4', walk: '2 26', why: 'the rock and the mountain at the pines\' east end each step a square at the line' },
   { seam: 'kilnsheart_o4/kilnsheart_o5', walk: '10-12 27-31', why: 'O4\'s hills meet O5\'s mountain at 10 to 12, and O5\'s hills run on under O4\'s mountain at the east end' },
   { seam: 'kilnmouth_k6|kilnmouth_l6', walk: '31', why: 'the rock bank closing K6\'s south edge ends it at the corner, the world\'s end against L6\'s heath' },
@@ -156,13 +156,12 @@ const OPEN_ON_NOTHING: readonly OnNothing[] = [
   { edge: 'wrackholm_f6 north', open: '0-18', why: 'F5 is unbuilt: #835 builds it' },
   { edge: 'wrackholm_f6 south', open: '1-10 13-15 17-19', why: 'F7 is unbuilt: #835 builds it' },
   // The Kilns.
-  { edge: 'kilnsheart_o5 east', open: '0-21', why: 'P5 is unbuilt: #831 builds it' },
   { edge: 'kilnmouth_l6 north', open: '29-31', why: 'L5 is the sea along here, where #828 plans no box' },
   { edge: 'kilnmouth_l6 south', open: '0-31', why: 'L7 is unbuilt: #831 builds it' },
-  { edge: 'kilnsheart_o6 east', open: '2-29', why: 'P6 is unbuilt: #831 builds it' },
   { edge: 'kilnmouth_m5 west', open: '24-31', why: 'L5 is the sea along here, where #828 plans no box' },
   { edge: 'ironfells_o3 north', open: '2-7', why: 'O2 is a crumb, left unbuilt (#828)' },
   { edge: 'kilnsheart_o4 east', open: '7-21', why: 'P4 is unbuilt: #831 builds it' },
+  { edge: 'kilnsheart_p5 north', open: '0-5', why: 'P4 is unbuilt: #831 builds it, its south pocket the hills on' },
   // Cairnmoor.
   { edge: 'highmoor_o7 east', open: '0-29', why: 'P7 is unbuilt: #834 builds it' },
   { edge: 'highmoor_o8 east', open: '2-19', why: 'P8 is unbuilt: #834 builds it' },

@@ -1,9 +1,9 @@
 // Ashfall's monsters, band 24-26: Cindercoast, Fire Mountain and the Ember Waste. `sprite` names the
-// drawing (src/ui/sprites.ts); the numbers are the combat model's. A group on a map is a list of these
+// drawing (src/ui/monsters/); the numbers are the combat model's. A group on a map is a list of these
 // ids, and any area's maps may place them.
 import type { MonsterDef } from '../../../game/monsters.ts';
 
-/** The drawings Ashfall's monsters are drawn with, one kind to each. src/ui/sprites.ts must draw every one. */
+/** The drawings Ashfall's monsters are drawn with, one kind to each. A family in src/ui/monsters/ must register every one. */
 export const SPRITES = [
   'strangler_vine', 'cinder_beetle', 'ember_salamander', 'ash_husk',
   'cinder_drake', 'old_drake',

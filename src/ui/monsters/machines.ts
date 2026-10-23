@@ -48,15 +48,12 @@
 // a round port with the same light in it. Both arms long and alike, hanging past the knee to open
 // clamps, waiting for an order. Idle: the light in the ring and the port breathes, slowly.
 import type { MonsterSprite } from '../../game/monsters.ts';
-import type { MonsterDrawer, Paint } from './common.ts';
+import type { MonsterDrawer, Paint, Sprite } from './common.ts';
 import { B, groundShadow } from './common.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
 import { appendCurve, blob, glow, lumpy, patch } from './gloss.ts';
 import type { Part } from './gloss.ts';
 import { chiselMark } from './knockers.ts';
-
-/** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['stoker', 'sentry', 'sentinel', 'flue_walker', 'loader', 'core_sentry'];
 
 /**
  * A heavy machine's make, as the Stoker's, the Sentry's and the Sentinel's numbers, so another is a
@@ -94,6 +91,16 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   const f: Fr = { H, X: (k) => x + H * k * b.wide, Y: (k) => y - H * k };
   (b.body === 'flue' ? walker : b.body === 'boiler' ? stoker : b.body === 'watcher' ? sentry : b.body === 'loader' ? loader : b.body === 'core' ? core : sentinel)(ctx, f, p, b);
 };
+
+/** The kinds this module draws, each with its span and any part drawn apart; ./index.ts merges every family's. */
+export const SPRITES = {
+  stoker: { draw, span: [0.4, 0.54] },
+  sentry: { draw, span: [0.21, 0.28] },
+  sentinel: { draw, span: [0.33, 0.33] },
+  flue_walker: { draw, span: [0.37, 0.37] },
+  loader: { draw, span: [0.43, 0.43] },
+  core_sentry: { draw, span: [0.25, 0.26] },
+} satisfies Partial<Record<MonsterSprite, Sprite>>;
 
 const DEEP = '#9c2c0c', SOOT = '#0b0908', BLACK = '#07080a';
 /** The Loader's crate, and the clerk's chalk on it: darkened with distance, as the tint is. */

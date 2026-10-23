@@ -11,7 +11,7 @@
 // and neck) as one blob, hair and beard as spiky curves, and the crisp gear (sword, buckler, bow,
 // shield, helm, crossbow) on top with the gloss helpers where it is metal.
 import type { MonsterSprite } from '../../game/monsters.ts';
-import type { MonsterDrawer, Paint } from './common.ts';
+import type { MonsterDrawer, Paint, Sprite } from './common.ts';
 import { B, eye, groundShadow, stroke } from './common.ts';
 import { blob, glossBall, glossEllipse, glossPoly, glow, patch, softLine } from './gloss.ts';
 import type { Crease, Part } from './gloss.ts';
@@ -19,9 +19,6 @@ import { mix, rgba, shade } from '../../lib/art/palettes.ts';
 import type { Arm, Pt, Rig } from './figure.ts';
 import { armParts, beltPart, blade, elbowCrease, FAR, hand, headNeck, headRing, legs, makeRig, ring, torsoCreases, torsoPts, trunkW, tube } from './figure.ts';
 import { band } from '../../lib/art/shading.ts';
-
-/** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['bandit', 'archer', 'brigand', 'brigand_archer', 'smuggler', 'smuggler_bow', 'smuggler_captain', 'wrecker', 'lampman', 'footpad', 'poacher', 'billman', 'slinger', 'cutthroat', 'bargeman', 'barge_master', 'wrack_smuggler', 'wrack_bowman', 'anvil_guard'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'archer') archer(ctx, x, y, h, p);
@@ -44,6 +41,29 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   else if (kind === 'lampman') lampman(ctx, x, y, h, p);
   else bandit(ctx, x, y, h, p);
 };
+
+/** The kinds this module draws, each with its span and any part drawn apart; ./index.ts merges every family's. */
+export const SPRITES = {
+  bandit: { draw, span: [0.41, 0.41] },
+  archer: { draw, span: [0.56, 0.31] },
+  brigand: { draw, span: [0.45, 0.47] },
+  brigand_archer: { draw, span: [0.39, 0.31] },
+  smuggler: { draw, span: [0.26, 0.3] },
+  smuggler_bow: { draw, span: [0.26, 0.42] },
+  smuggler_captain: { draw, span: [0.33, 0.44] },
+  wrecker: { draw, span: [0.26, 0.37] },
+  lampman: { draw, span: [0.26, 0.49], detached: { what: 'lantern', pieces: 1, share: 0.07 } },
+  footpad: { draw, span: [0.26, 0.47] },
+  poacher: { draw, span: [0.34, 0.28] },
+  billman: { draw, span: [0.27, 0.44] },
+  slinger: { draw, span: [0.3, 0.39] },
+  cutthroat: { draw, span: [0.28, 0.49] },
+  bargeman: { draw, span: [0.64, 0.88] },
+  barge_master: { draw, span: [0.42, 0.33] },
+  wrack_smuggler: { draw, span: [0.32, 0.42] },
+  wrack_bowman: { draw, span: [0.26, 0.47] },
+  anvil_guard: { draw, span: [0.44, 0.5] },
+} satisfies Partial<Record<MonsterSprite, Sprite>>;
 
 // ------------------------------------------------------------------ the frame ----
 
