@@ -772,7 +772,9 @@ are all off. Every push to main is deployed, so these are players' saves.
   `SAVE_VERSION`, so two boxes of different areas edit different files. A test fails when something
   in the record has gone or moved, unless the change bumps `SAVE_VERSION` with an upgrade, the way
   version 1 saves were brought to 2; and when an id sits in a file not its owner's, or an area with
-  content has no file.
+  content has no file. A conflict in a shipped file is never merged by hand (keeping both sides'
+  lines leaves invalid JSON): take either side whole and run `node tools/shipped.ts`, which writes
+  every file from the tree.
 - New content only adds.
 
 Decided by the builder for #914, each the owner's to overturn:

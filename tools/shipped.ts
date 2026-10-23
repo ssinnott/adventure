@@ -238,10 +238,15 @@ export function compare(shipped: Shipped, now: Ids, version = SAVE_VERSION, upgr
   return { problems, unrecorded };
 }
 
+/** One shipped file, a bad one named: a conflict marker left in it says which file it is in. */
+function readShare(file: string): Share {
+  try { return JSON.parse(readFileSync(onDisk(file), 'utf8')) as Share; } catch (e) { throw new Error(`${file}: ${(e as Error).message}`); }
+}
+
 /** The shipped files there are: the central one and each listed area's. A new area has none until its first run of the tool. */
 export function readShares(areas: readonly string[] = CONTENT.areas.map((a) => a.id)): Shares {
   const shares: Shares = {};
-  for (const file of [shippedFile(), ...areas.map(shippedFile)]) if (existsSync(onDisk(file))) shares[file] = JSON.parse(readFileSync(onDisk(file), 'utf8')) as Share;
+  for (const file of [shippedFile(), ...areas.map(shippedFile)]) if (existsSync(onDisk(file))) shares[file] = readShare(file);
   return shares;
 }
 

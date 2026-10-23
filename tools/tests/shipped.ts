@@ -135,6 +135,21 @@ export function shipped(): void {
   okList(unrecorded.length === 0, `the shipped files record all of it, at version ${was.version}${unrecorded.length ? ' (run node tools/shipped.ts)' : ''}`, unrecorded);
   const off = misplaced(files, owed);
   okList(off.length === 0, `each id sits in the shipped file of the area that owns it and in no other (${Object.keys(files).length} files)`, off);
+  { // The owners again from the areas' own lists, read off the files and not through collectShares: a wrong lookup there would regenerate consistently and pass the check above.
+    const held = (a: string, k: 'maps' | 'zones', id: string): boolean => Boolean(files[shippedFile(a)]?.[k]?.[id]);
+    const stray: string[] = [];
+    for (const a of CONTENT.areas) {
+      for (const id of a.maps) {
+        if (!held(a.id, 'maps', id) && !held(a.id, 'zones', id)) stray.push(`${a.id}'s file lacks its map ${id}`);
+        for (const b of CONTENT.areas) if (b.id !== a.id && (held(b.id, 'maps', id) || held(b.id, 'zones', id))) stray.push(`${b.id}'s file holds ${a.id}'s map ${id}`);
+      }
+      for (const [k, ids] of [['items', a.items], ['monsters', a.monsters]] as const) for (const id of ids) {
+        if (!files[shippedFile(a.id)]?.[k]?.includes(id)) stray.push(`${a.id}'s file lacks its ${k.slice(0, -1)} ${id}`);
+        for (const b of CONTENT.areas) if (b.id !== a.id && files[shippedFile(b.id)]?.[k]?.includes(id)) stray.push(`${b.id}'s file holds ${a.id}'s ${k.slice(0, -1)} ${id}`);
+      }
+    }
+    okList(stray.length === 0, 'each area\'s maps, boxes, items and monsters, by the areas\' own lists, sit in its own shipped file and in no other', stray);
+  }
   ok(Object.keys(UPGRADES).map(Number).every((v) => v >= 2 && v <= SAVE_VERSION), 'every upgrade brings a save to a version this build knows');
 
   // Broken on purpose: each edit is caught, names what it broke, and passes once SAVE_VERSION goes

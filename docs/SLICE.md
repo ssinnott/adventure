@@ -94,10 +94,10 @@ DESIGN.md first for the why.
   files (each area's `content/areas/<area>/shipped.json` and the central `content/shipped.json`,
   joined into one record) list every id and placement a save may hold, so a check fails when one
   goes or moves without a bump and its upgrade (`node tools/shipped.ts` records what is new, each
-  id in its area's file). A
-  map edited since the save still takes it: a group the map has gained stands where the map puts
-  it, and a saved door goes back only where the map still has a locked or secret door. A save
-  keeps the kinds of monster the company has met (`met`); one made before has met none.
+  id in its area's file). A map edited since the save still takes it: a group the map has gained
+  stands where the map puts it, and a saved door goes back only where the map still has a locked
+  or secret door. A save keeps the kinds of monster the company has met (`met`); one made before
+  has met none.
 - **People** (`game/people.ts`): a person's first meeting may hire (one flag or several) and end in
   a question put through the choice screen, whose answer sets flags, may hand over an item and has
   its own words; a question once answered is not put again, and Esc answers nothing. An answer may
