@@ -1,10 +1,12 @@
 # The checks every pull request must pass before it merges: the typecheck, the tests and the smoke
-# test, each its own job so the pull request shows each. Main has no branch protection (the owner,
-# 18 October 2026): the orchestrating session merges one pull request at a time, each up to date with
-# main and green on all three (docs/EXPANSION.md §8.3). No path filters: a pull request that touches
-# only docs must still report, or it waits on checks that never come. The contact sheet's job and the
-# lanes' job, last, are not among the three: the first attaches pictures for the owner and the second
-# says which lanes the files fall in, and neither is required. Nor is the pilot's full run (`fullrun`,
+# test, each its own job so the pull request shows each, and the smoke's crack sweep beside them in
+# the plan job and the sweep job's shards (#953). Main has no branch protection (the owner,
+# 18 October 2026): the orchestrating session merges one pull request at a time, each up to date
+# with main and green on all five, the sweep skipped only where the plan sweeps no map
+# (docs/EXPANSION.md §8.3). No path filters: a pull request that touches only docs must still
+# report, or it waits on checks that never come. The contact sheet's job and the lanes' job, last,
+# are not among the five: the first attaches pictures for the owner and the second says which lanes
+# the files fall in, and neither is required. Nor is the pilot's full run (`fullrun`,
 # docs/PILOT.md), which runs only when started by hand: a report, not a gate.
 name: Checks
 
@@ -54,15 +56,11 @@ jobs:
 
   smoke:
     runs-on: ubuntu-latest
-    # A change to what lays out or paints every map sweeps all of them for cracks (tools/changed.ts), and
-    # that sweep has outgrown fifteen minutes.
-    timeout-minutes: 40
+    # The smoke but the four-way crack sweep, which the sweep job runs: 118 to 167 s of `npm run smoke`
+    # in the jobs that swept nothing, the Chromium install up to 694 s (#953).
+    timeout-minutes: 20
     steps:
-      # A pull request is checked out as its merge into the base: the commit before is the base, and
-      # what changed since is what the crack sweep looks at (tools/changed.ts).
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -71,19 +69,73 @@ jobs:
       # Headless runs need only Chromium's headless shell. It is not cached: with the shell cached,
       # its system libraries alone took as long to install as shell and libraries together (19 s).
       - run: npx playwright install --with-deps --only-shell chromium
-      # The crack sweep looks all four ways from every square of the maps a pull request changes; a
-      # run started by hand sweeps every map, which is the sweep a release gets.
+      # Everything but the crack sweep's four ways: the plan and sweep jobs run them beside this one.
       - run: npm run smoke
         env:
           SMOKE_SHOT: smoke.png
-          SMOKE_BASE: ${{ github.event_name == 'pull_request' && 'HEAD^1' || '' }}
-          SMOKE_SWEEP: ${{ github.event_name == 'workflow_dispatch' && 'all' || '' }}
+          SMOKE_PART: rest
+          # On a run started by hand the one-way sweeps here (the cellar, Helmstow, its keep and the
+          # ground's samples, which no map holds yet) take the audit too, as the sweep's shards do.
+          SMOKE_SWEEP_AUDIT: ${{ github.event_name == 'workflow_dispatch' && '1' || '' }}
       - if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: smoke-screenshot
           path: smoke.png
           if-no-files-found: ignore
+
+  # The crack sweep's plan (tools/sweep.ts, tools/kit/sweep.ts): the maps a pull request changes
+  # (tools/changed.ts), every map on a run started by hand, which is the sweep a release gets, with the
+  # audit, and the shards they call for, one for each 60,000 pairs of paints (about four minutes), none
+  # when no map is swept. A pull request is checked out as its merge into the base: the commit before
+  # is the base. It needs Node alone, as the lanes job does, so the sweep starts in seconds.
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      shards: ${{ steps.plan.outputs.shards }}
+      sweep: ${{ steps.plan.outputs.sweep }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - id: plan
+        run: node tools/sweep.ts
+        env:
+          SMOKE_BASE: ${{ github.event_name == 'pull_request' && 'HEAD^1' || '' }}
+          SMOKE_SWEEP: ${{ github.event_name == 'workflow_dispatch' && 'all' || '' }}
+          SMOKE_SWEEP_AUDIT: ${{ github.event_name == 'workflow_dispatch' && '1' || '' }}
+
+  # The crack sweep all four ways from every square of the maps the plan names, each shard of it a job
+  # of its own, side by side, each paying the Chromium install; one shard failing stops none of the
+  # others. On a run started by hand each shard runs the audit too (SMOKE_SWEEP_AUDIT): the old sweep
+  # beside the new on every view, which holds the plan's skip and key to the painter.
+  sweep:
+    needs: plan
+    if: needs.plan.outputs.shards != '[]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: ${{ fromJSON(needs.plan.outputs.shards) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps --only-shell chromium
+      - run: npm run smoke
+        env:
+          SMOKE_PART: sweep
+          SMOKE_SHARD: ${{ matrix.shard }}
+          SMOKE_SWEEP: ${{ needs.plan.outputs.sweep }}
+          SMOKE_SWEEP_AUDIT: ${{ github.event_name == 'workflow_dispatch' && '1' || '' }}
 
   # The pilot's full run (tools/tests/fullrun.ts; docs/PILOT.md, Full runs): a new game played by the
   # pilot alone, chapter after chapter, on the areas the run's `fullrun` input names (all unless

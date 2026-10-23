@@ -810,14 +810,21 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   the ground's samples (`tools/grounds.ts`, a small map each of ash, pine, ice, cliffs, peaks, steppe, dunes, vines and the volcano) each run, all four
   ways on the maps changed since `SMOKE_BASE=<ref>` (CI passes the pull request's base;
   `node tools/changed.ts <ref> maps` names them, and `monsters` or `interiors` the sheet's), or on
-  those `SMOKE_SWEEP=all|<id>,<id>` names. `SMOKE_SHOT=<png>` saves a screenshot of the play, which
-  CI keeps when the smoke test fails.
+  those `SMOKE_SWEEP=all|<id>,<id>` names. `SMOKE_PART=rest` runs everything but the four-way sweep
+  and `SMOKE_PART=sweep` that sweep alone, both when unset; `SMOKE_SHARD=i/n` sweeps the i-th of n
+  shards of its plan (`tools/kit/sweep.ts`: each view skipped where nothing stands in its window,
+  each window painted once); `SMOKE_SWEEP_AUDIT=1` judges every view the old way too and fails a
+  difference (#953). `SMOKE_SHOT=<png>` saves a screenshot of the play, which CI keeps when the
+  smoke test fails.
 
 CI (`.github/workflows/checks.yml`) runs the three as jobs of their own on every pull request, and
-a fourth, `sheet`, which attaches the contact sheet and gates nothing. `npm test` runs the shelf's
-full run, and so does the tests job (10 s on CI). A run started by hand
-skips the sheet, sweeps every map for cracks and adds a fifth job, `fullrun`: the pilot's full run on
-the areas its `fullrun` input names (all unless changed), a report that gates nothing.
+`sheet`, which attaches the contact sheet and gates nothing. The smoke job runs `SMOKE_PART=rest`,
+and the crack sweep's four ways run beside it: the `plan` job, Node alone, plans the maps changed
+(`node tools/sweep.ts`, a shard for each 60,000 pairs of paints, none when no map is), and the
+`sweep` job paints each shard as a job of its own and gates as the smoke does (#953). `npm test`
+runs the shelf's full run, and so does the tests job (10 s on CI). A run started by hand skips the
+sheet, sweeps every map for cracks with the audit and adds the job `fullrun`: the pilot's full run
+on the areas its `fullrun` input names (all unless changed), a report that gates nothing.
 
 Of the suites before `quests`, `combat` holds the bots' three (#853, #865): a seeded fight played
 turn for turn as before with them off, and with them on at 4 and at 10, but not at 11; bless,

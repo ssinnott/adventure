@@ -101,9 +101,18 @@ export const RIME_LODGE: MapDef = {
         '"A bell. I heard a bell, and I was so cold. Then I was here."',
       ] },
     ] },
+    // The lodge-keeper; at every meeting after her first she says two lines more, the rumour of the
+    // Wakerobe (#846, #832): words only, which set nothing and mark nothing on the world map.
     { kind: 'npc', x: 9, y: 5, name: 'A lodge-keeper', lines: [
       'A lodge-keeper in from the ice, a lantern at her belt and frost in her eyebrows.',
       '"Whoever comes up, we take in. A blanket, the fire, soup. Most of them cannot say from where."',
+    ], flag: 'rl_keeper_met', says: [
+      { after: { flag: 'rl_keeper_met' }, lines: [
+        'A lodge-keeper in from the ice, a lantern at her belt and frost in her eyebrows.',
+        '"Whoever comes up, we take in. A blanket, the fire, soup. Most of them cannot say from where."',
+        '"One came up through the ice in a grey robe too long in the arm. He would not take a blanket, nor sleep, nor say where he had been."',
+        '"The third night he walked out into the snow. It was not his robe, I think."',
+      ] },
     ] },
     // The One Who Went Back Down (#56's 41, #494): kept as a witness, the man from the hole tells it
     // at the lodge-keeper's side.

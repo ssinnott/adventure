@@ -23,7 +23,8 @@ export const FURRIER: readonly string[] = WARES.map((d) => d.id);
 
 // Rimewater's of the bounds' eight (DESIGN §9, #847), with the Whitespine: the Grey Robe's 13 and a
 // point, cut to the cleric, the sorcerer, the druid and the monk, and its wearer never asleep. Found
-// and never sold; placed nowhere yet, for #832 lays its lair and puts it there.
+// and never sold: it lies in the locker beside the last bed of the Infirmary, the Spittal's lower
+// level, past the Infirmarer (#832).
 export const wakerobe = A('wakerobe', 'The Wakerobe', ARTIFACT_PRICE, 14, { classes: ['cleric', 'sorcerer', 'druid', 'monk'], ward: 'asleep', artifact: true, text: [
   'A grey robe made for someone taller and thinner, the sleeves past your fingers.',
   'Whoever wore it last walked out of the ice in it, and did not lie down again.',

@@ -28,11 +28,12 @@ export function changedFiles(base: string): string[] {
  * re-laid into the outdoors and its walls re-rolled, so the atlases count too. The scenery
  * (ui/scenery.ts) paints a map and the monsters do not: the scene the sweep paints draws none, so
  * neither the dispatcher (ui/sprites.ts) nor a family counts (#915). The one file of the folder it
- * does paint with is monsters/common.ts (`B` and `stroke`), so that counts.
+ * does paint with is monsters/common.ts (`B` and `stroke`), so that counts; so does game/ink.ts,
+ * how a cell is drawn (`drawnCell`), which the painter and the sweep's plan both read.
  */
 const EVERY_MAP = [
-  /^src\/ui\/(viewport|brush|palette|scenery)\.ts$/, /^src\/ui\/monsters\/common\.ts$/, /^src\/lib\/art\//, /^src\/game\/(map|outdoors|world|types|atlas)\.ts$/,
-  /^src\/content\/(index|maps|atlas|area)\.ts$/, /^src\/content\/areas\/[^/]+\/atlas\.ts$/, /^tools\/(smoke|changed)\.ts$/,
+  /^src\/ui\/(viewport|brush|palette|scenery)\.ts$/, /^src\/ui\/monsters\/common\.ts$/, /^src\/lib\/art\//, /^src\/game\/(map|outdoors|world|types|atlas|ink)\.ts$/,
+  /^src\/content\/(index|maps|atlas|area)\.ts$/, /^src\/content\/areas\/[^/]+\/atlas\.ts$/, /^tools\/(smoke|changed|sweep|kit\/sweep)\.ts$/,
 ];
 const MAP_FILE = /^src\/content\/areas\/[^/]+\/maps\/[^/]+\.ts$/;
 

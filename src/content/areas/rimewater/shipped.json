@@ -318,6 +318,39 @@
       "doors": [
         "7,2"
       ]
+    },
+    "spittal": {
+      "size": "16x16",
+      "used": [
+        "sp_boots",
+        "sp_cells",
+        "sp_hearth",
+        "sp_kirk",
+        "sp_slate",
+        "sp_stair"
+      ],
+      "groups": [],
+      "doors": []
+    },
+    "spittal2": {
+      "size": "16x16",
+      "used": [
+        "sp2_basins",
+        "sp2_cold",
+        "sp2_draught",
+        "sp2_foot",
+        "sp2_locker",
+        "sp2_packs",
+        "sp2_shapes",
+        "sp2_sitter",
+        "sp2_ward"
+      ],
+      "groups": [
+        "sp2_infirmarer"
+      ],
+      "doors": [
+        "10,9"
+      ]
     }
   },
   "zones": {
@@ -401,7 +434,8 @@
     "q_wenna_up",
     "q_wentback",
     "q_wentback_home",
-    "q_wentback_witness"
+    "q_wentback_witness",
+    "rl_keeper_met"
   ],
   "items": [
     "bear_spear",
