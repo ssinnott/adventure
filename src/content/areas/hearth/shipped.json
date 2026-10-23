@@ -1,0 +1,270 @@
+{
+  "maps": {
+    "caldera": {
+      "used": [
+        "h6_bowl",
+        "h6_cache",
+        "h6_cleft",
+        "h6_draught",
+        "h6_front",
+        "h6_lamp",
+        "h6_lookout",
+        "h6_moths",
+        "h6_north",
+        "h6_picket_chest",
+        "h6_shard",
+        "h6_shrine",
+        "h6_sliver",
+        "h6_strand",
+        "h6_toll",
+        "h6_warm",
+        "i6_camp",
+        "i6_camp_chest",
+        "i6_cell",
+        "i6_crates",
+        "i6_door",
+        "i6_hoard",
+        "i6_keel",
+        "i6_knot",
+        "i6_path",
+        "i6_scorch",
+        "i6_smell",
+        "i6_steps",
+        "i6_takings",
+        "i6_tally",
+        "i6_vigil",
+        "i6_vigil_chest",
+        "i6_vigil_locked",
+        "i6_wall",
+        "i6_wyke"
+      ],
+      "groups": [
+        "h6_moths1",
+        "h6_moths2",
+        "h6_picket1",
+        "h6_picket2",
+        "h6_rats",
+        "h6_rim",
+        "h6_sermon",
+        "i6_foot",
+        "i6_guard",
+        "i6_guard2",
+        "i6_moths",
+        "i6_rim",
+        "i6_watch"
+      ],
+      "doors": [
+        "258,165",
+        "266,182",
+        "272,173"
+      ]
+    },
+    "core": {
+      "size": "16x16",
+      "used": [
+        "core_after",
+        "core_door",
+        "core_heart",
+        "core_panel",
+        "core_roof"
+      ],
+      "groups": [
+        "core_vask",
+        "core_vask_thinned"
+      ],
+      "doors": []
+    },
+    "hearthfane": {
+      "size": "16x16",
+      "used": [
+        "hf_altar",
+        "hf_court",
+        "hf_dead",
+        "hf_nave",
+        "hf_offerings",
+        "hf_pillars",
+        "hf_tithe",
+        "hf_treasury",
+        "hf_vestry"
+      ],
+      "groups": [
+        "hf_champions",
+        "hf_court1",
+        "hf_court2",
+        "hf_court3",
+        "hf_moths",
+        "hf_nave2",
+        "hf_second",
+        "hf_sermon",
+        "hf_swarm"
+      ],
+      "doors": []
+    },
+    "hearthfane2": {
+      "size": "16x16",
+      "used": [
+        "hf2_cups",
+        "hf2_dead",
+        "hf2_eleven",
+        "hf2_knot",
+        "hf2_last",
+        "hf2_niches",
+        "hf2_pack",
+        "hf2_vault"
+      ],
+      "groups": [
+        "hf2_champions",
+        "hf2_keeper",
+        "hf2_keepers",
+        "hf2_rats",
+        "hf2_rats2",
+        "hf2_rats3"
+      ],
+      "doors": []
+    },
+    "underdeep": {
+      "size": "32x32",
+      "used": [
+        "ud_crack",
+        "ud_crawl_chest",
+        "ud_crew_sign",
+        "ud_crew_store",
+        "ud_end",
+        "ud_feet",
+        "ud_hatch",
+        "ud_in",
+        "ud_knot1",
+        "ud_knot2",
+        "ud_knot3",
+        "ud_knot4",
+        "ud_knot5",
+        "ud_knot6",
+        "ud_knot7",
+        "ud_knot8",
+        "ud_rats",
+        "ud_store",
+        "ud_store2",
+        "ud_voice"
+      ],
+      "groups": [
+        "ud_crawlers",
+        "ud_crew_guard",
+        "ud_keepers1",
+        "ud_keepers2",
+        "ud_keepers3",
+        "ud_keepers4",
+        "ud_knockers1",
+        "ud_knockers2",
+        "ud_knockers3",
+        "ud_rats1",
+        "ud_rats2",
+        "ud_rats3"
+      ],
+      "doors": [
+        "24,14"
+      ]
+    },
+    "underdeep2": {
+      "size": "32x32",
+      "used": [
+        "ud2_dead",
+        "ud2_foot",
+        "ud2_hand",
+        "ud2_head",
+        "ud2_held",
+        "ud2_letter",
+        "ud2_letter_chest",
+        "ud2_marks",
+        "ud2_more",
+        "ud2_packs",
+        "ud2_packs2",
+        "ud2_rearguard_chest",
+        "ud2_takings",
+        "ud2_word"
+      ],
+      "groups": [
+        "ud2_catcher",
+        "ud2_crawlers1",
+        "ud2_crawlers2",
+        "ud2_keepers",
+        "ud2_knockers",
+        "ud2_knockers2",
+        "ud2_knockers3",
+        "ud2_rats",
+        "ud2_rearguard"
+      ],
+      "doors": []
+    }
+  },
+  "zones": {
+    "hearthisle_h6": {
+      "at": "232,158",
+      "size": "32x32"
+    },
+    "hearthisle_i6": {
+      "at": "264,158",
+      "size": "32x32"
+    }
+  },
+  "flags": [
+    "i6_anchoress_met",
+    "lamp_hearth",
+    "lamp_house",
+    "lamp_sea",
+    "lamp_shore",
+    "q_bowl_pilgrims",
+    "q_crack_sealed",
+    "q_crack_wide",
+    "q_crew_open",
+    "q_crew_shut",
+    "q_eleven_asked",
+    "q_eleven_kept",
+    "q_eleven_log",
+    "q_end_arrive",
+    "q_end_finish",
+    "q_end_reignite",
+    "q_lamps",
+    "q_lamps_key",
+    "q_lamps_out",
+    "q_lamps_wrong",
+    "q_ring_given",
+    "q_token_cousin",
+    "q_token_hold",
+    "q_token_tallis",
+    "q_vask_fallen",
+    "q_voice_whole"
+  ],
+  "items": [
+    "fane_key",
+    "grey_axe",
+    "grey_blade",
+    "grey_bow",
+    "grey_knife",
+    "grey_mail",
+    "grey_robe",
+    "grey_shield",
+    "grey_staff",
+    "gullwick_letter",
+    "levin_mace",
+    "old_lanterns_staff",
+    "queens_signet",
+    "smelling_salts",
+    "tallis_tally",
+    "treaty_seal",
+    "vigil_robe",
+    "wardens_badge"
+  ],
+  "monsters": [
+    "ashen_champion",
+    "ashen_preacher",
+    "catcher",
+    "core_sentry",
+    "deep_crawler",
+    "deep_rat",
+    "grey_hand",
+    "hand_rearguard",
+    "hearth_moth",
+    "keeper",
+    "vask"
+  ]
+}
