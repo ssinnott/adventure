@@ -18,14 +18,11 @@
 // above and red beneath, where the Hearth lights it from below; the hindwings and the abdomen banded
 // in ember; and more dust off it than either, falling as embers.
 import type { MonsterSprite } from '../../game/monsters.ts';
-import type { MonsterDrawer, Paint } from './common.ts';
+import type { MonsterDrawer, Paint, Sprite } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
 import { blob, glow, patch, softLine } from './gloss.ts';
 import type { Part } from './gloss.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
-
-/** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['lantern_moth', 'deathshead', 'hearth_moth'];
 
 /**
  * The frame's parts, as proportions of the lantern moth's (1 = the lantern moth, 0 = none), each
@@ -96,6 +93,13 @@ const HEARTH: Build = {
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   moth(ctx, x, y, h, p, kind === 'deathshead' ? DEATHSHEAD : kind === 'hearth_moth' ? HEARTH : LANTERN);
 };
+
+/** The kinds this module draws, each with its span and any part drawn apart; ./index.ts merges every family's. */
+export const SPRITES = {
+  lantern_moth: { draw, span: [0.71, 0.71], detached: { what: 'dust', pieces: 3, share: 0.025 } },
+  deathshead: { draw, span: [0.81, 0.81], detached: { what: 'dust', pieces: 3, share: 0.025 } },
+  hearth_moth: { draw, span: [0.73, 0.73], detached: { what: 'dust', pieces: 3, share: 0.025 } },
+} satisfies Partial<Record<MonsterSprite, Sprite>>;
 
 /** A frame: x and y map hundredths of the height (x right, y up from the ground) to the canvas. */
 interface F { u: number; X: (v: number) => number; Y: (v: number) => number }

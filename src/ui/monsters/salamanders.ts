@@ -39,14 +39,11 @@
 // it shows there, and in the mouth when it parts. Idle: the throat pumps, the eyes breathe, now and
 // then it bobs its head and the mouth parts on the cold light.
 import type { MonsterSprite } from '../../game/monsters.ts';
-import type { MonsterDrawer, Paint } from './common.ts';
+import type { MonsterDrawer, Paint, Sprite } from './common.ts';
 import { B } from './common.ts';
 import { blob, glow, patch, softLine } from './gloss.ts';
 import type { Part } from './gloss.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
-
-/** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['salamander', 'great_salamander', 'ember_salamander', 'basilisk'];
 
 /**
  * The frame's parts, as proportions of the salamander's (1 = the salamander, 0 = none), each named
@@ -133,6 +130,14 @@ const BASILISK: Build = {
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   salamander(ctx, x, y, h, p, kind === 'great_salamander' ? GREAT : kind === 'ember_salamander' ? EMBER : kind === 'basilisk' ? BASILISK : SALAMANDER);
 };
+
+/** The kinds this module draws, each with its span and any part drawn apart; ./index.ts merges every family's. */
+export const SPRITES = {
+  salamander: { draw, span: [0.78, 0.84], detached: { what: 'embers', pieces: 3, share: 0.01 } },
+  great_salamander: { draw, span: [0.71, 0.72], detached: { what: 'embers', pieces: 3, share: 0.01 } },
+  ember_salamander: { draw, span: [0.8, 0.8], detached: { what: 'embers', pieces: 3, share: 0.01 } },
+  basilisk: { draw, span: [0.74, 0.73] },
+} satisfies Partial<Record<MonsterSprite, Sprite>>;
 
 /** A point of the model: x across to the salamander's right, y up, z back from its head. */
 type V3 = readonly [number, number, number];

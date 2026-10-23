@@ -19,15 +19,12 @@
 // forms meet and a fur texture, then the pale patches with no line, then the mouth as its own
 // material, then the crisp details (fangs, nose, eyes, brows, scars, ember seams) on top.
 import type { MonsterSprite } from '../../game/monsters.ts';
-import type { MonsterDrawer, Paint } from './common.ts';
+import type { MonsterDrawer, Paint, Sprite } from './common.ts';
 import { B, eye, groundShadow, stroke } from './common.ts';
 import { blob, glow, softLine, patch } from './gloss.ts';
 import type { Crease, Part } from './gloss.ts';
 import { celBall } from '../../lib/art/shading.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
-
-/** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['wolf', 'dire_wolf', 'rift_hound', 'black_dog', 'chalk_wolf', 'barrow_wolf', 'sunder_hound', 'moor_hound'];
 
 /** Proportions that tell the kinds apart on the shared frame (1 = the lean grey wolf). */
 interface Build { neck: number; head: number; jaw: number; ruff: number; leg: number; body: number; fang: number; tail: number }
@@ -57,6 +54,18 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   else if (kind === 'moor_hound') canine(ctx, x - h * 0.09, y, h, p, MOOR, 'moor');
   else canine(ctx, x, y, h, p, LEAN, 'wolf');
 };
+
+/** The kinds this module draws, each with its span and any part drawn apart; ./index.ts merges every family's. */
+export const SPRITES = {
+  wolf: { draw, span: [0.58, 0.77] },
+  dire_wolf: { draw, span: [0.59, 0.82] },
+  rift_hound: { draw, span: [0.57, 0.78], detached: { what: 'embers', pieces: 3, share: 0.01 } },
+  black_dog: { draw, span: [0.58, 0.86] },
+  chalk_wolf: { draw, span: [0.58, 0.83] },
+  barrow_wolf: { draw, span: [0.57, 0.8] },
+  sunder_hound: { draw, span: [0.56, 0.79], detached: { what: 'glass motes', pieces: 3, share: 0.01 } },
+  moor_hound: { draw, span: [0.67, 0.76] },
+} satisfies Partial<Record<MonsterSprite, Sprite>>;
 
 /** Emissive ember colours for the rift hound: never toned, they are the light source. */
 const EMBER = '#ff7020', HOT = '#ffe0a0';

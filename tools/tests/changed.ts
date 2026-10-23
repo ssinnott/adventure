@@ -1,30 +1,37 @@
 // What a pull request changed (tools/changed.ts), as the smoke test's sweep and the contact sheet
 // read it: which files count every map, monster or interior, which count every room of one area, and
 // which count only their own.
-import { changedMaps, changedMonsters, changedInteriors, kindsOf } from '../changed.ts';
-import { AREAS } from '../../src/content/index.ts';
+import { changedMaps, changedMonsters, changedInteriors, familiesIn } from '../changed.ts';
+import { AREAS, MONSTERS } from '../../src/content/index.ts';
 import { execFileSync } from 'node:child_process';
 import { readFileSync, readdirSync } from 'node:fs';
-import { ok, familyModules } from './lib.ts';
+import { FAMILY_OF } from '../../src/ui/monsters/index.ts';
+import { ok } from './lib.ts';
 
 export async function changed(): Promise<void> {
   ok((await changedMaps(['src/game/atlas.ts'])).all, 'a change to game/atlas.ts re-lays the zones, so it counts every map');
   ok(!(await changedMaps(['docs/DESIGN.md'])).all, 'a change to the docs counts no map');
   const wolf = await changedMonsters(['src/ui/monsters/wolf.ts']);
   ok(!wolf.all && wolf.monsters.includes('dire_wolf') && !wolf.monsters.includes('brigand'), `a family module counts the monsters it draws, no others (${wolf.monsters.join(',')})`);
-  ok((await changedMonsters(['src/ui/monsters/common.ts'])).all, 'a shared brush in ui/monsters/ (no KINDS) counts every monster');
-  // The sheet reads a family's kinds from its text; what it reads is what the module lists.
-  const misread = (await familyModules()).filter((m) => {
-    const read = kindsOf(readFileSync(new URL(`../../src/ui/monsters/${m.name}.ts`, import.meta.url), 'utf8'));
-    return read?.join() !== m.kinds.join();
-  }).map((m) => `${m.name}.ts`);
-  ok(!misread.length, `each family module's KINDS reads from its text as it imports${misread.length ? ' -> misread: ' + misread.join(', ') : ''}`);
+  ok((await changedMonsters(['src/ui/monsters/common.ts'])).all, 'a shared brush in ui/monsters/ (no SPRITES) counts every monster');
   ok((await changedMonsters(['src/ui/sprites.ts'])).all, 'the dispatcher counts every monster');
+  // The scenery paints every map and no monster; the dispatcher and the families paint no map, as the scene the sweep
+  // paints draws no monster (#915).
+  const scenery = await changedMonsters(['src/ui/scenery.ts']);
+  ok((await changedMaps(['src/ui/scenery.ts'])).all && !scenery.all && !scenery.monsters.length, 'the scenery counts every map and no monster');
+  ok(!(await changedMaps(['src/ui/sprites.ts'])).all && !(await changedMaps(['src/ui/monsters/wolf.ts', 'src/ui/monsters/index.ts'])).all, 'the dispatcher, a family and the barrel count no map');
+  ok((await changedMaps(['src/ui/monsters/common.ts'])).all, 'ui/monsters/common.ts, whose B and stroke the scenery paints with, counts every map');
+  // A change to the barrel counts the families it merges that its base did not, read from its import lines.
+  const barrel = readFileSync(new URL('../../src/ui/monsters/index.ts', import.meta.url), 'utf8'), registered = [...new Set(Object.values(FAMILY_OF))];
+  ok(familiesIn(barrel).sort().join() === registered.sort().join() && familiesIn("import { SPRITES as wolf } from './wolf.ts';\nimport type { Sprite } from './common.ts';").join() === 'wolf',
+    `the barrel's import lines read as the ${registered.length} families it registers`);
+  const whole = await changedMonsters(['src/ui/monsters/index.ts']);
+  ok(!whole.all && whole.monsters.length === Object.keys(MONSTERS).length, `a barrel with no base adds every family it registers, so counts all ${whole.monsters.length} monsters, as a list and not as a sweep of everything`);
   const thornmark = AREAS.find((a) => a.id === 'thornmark')!;
   const fresh = await changedMonsters(['src/content/areas/thornmark/monsters.ts']);
   ok(fresh.monsters.length === thornmark.monsters.length && thornmark.monsters.every((d) => fresh.monsters.includes(d.id)), `an area's monsters with no base are all new (${fresh.monsters.length})`);
   // Against HEAD, on files as committed: skipped while a session has them mid-edit, which would count.
-  const files = ['src/content/areas/thornmark/monsters.ts', 'src/content/areas/thornmark/index.ts'];
+  const files = ['src/content/areas/thornmark/monsters.ts', 'src/content/areas/thornmark/index.ts', 'src/ui/monsters/index.ts'];
   let clean = true;
   try { execFileSync('git', ['diff', '--quiet', 'HEAD', '--', ...files]); } catch { clean = false; }
   if (clean) {
@@ -32,7 +39,14 @@ export async function changed(): Promise<void> {
     ok(!same.all && !same.monsters.length, `against HEAD, an area's monsters as committed count none (${same.monsters.join(',')})`);
     const sameRooms = await changedInteriors([files[1]], 'HEAD');
     ok(!sameRooms.all && !sameRooms.interiors.length, `against HEAD, the interiors an area's index already listed count none (${sameRooms.interiors.join(',')})`);
-  } else console.log('  skip: the checks against HEAD, as Thornmark\'s monsters or index differ from it');
+    const sameBarrel = await changedMonsters([files[2]], 'HEAD');
+    ok(!sameBarrel.all && !sameBarrel.monsters.length, `against HEAD, the barrel as committed adds no family, so counts none (${sameBarrel.monsters.join(',')})`);
+    // A kind added to a family touches its family's file and its area's monsters and index (EXPANSION §8.2).
+    const added = ['src/ui/monsters/wolf.ts', files[0], files[1]], kind = await changedMonsters(added, 'HEAD'), swept = await changedMaps(added);
+    const wolves = Object.values(MONSTERS).filter((d) => FAMILY_OF[d.sprite] === 'wolf').map((d) => d.id);
+    ok(wolves.length > 1 && !kind.all && kind.monsters.length === wolves.length && wolves.every((id) => kind.monsters.includes(id)) && !swept.all && !swept.maps.length,
+      `a kind added to a family counts that family's ${wolves.length} monsters of the ${Object.keys(MONSTERS).length}, no others, and no map (${kind.monsters.join(',')})`);
+  } else console.log('  skip: the checks against HEAD, as Thornmark\'s monsters or index, or the barrel, differ from it');
   ok((await changedMonsters(['src/ui/brush.ts'])).all && (await changedInteriors(['src/ui/brush.ts'])).all, 'ui/brush.ts counts every monster and every interior');
   ok((await changedInteriors(['src/ui/monsters/gloss.ts'])).all, 'ui/monsters/gloss.ts, which the scenes borrow, counts every interior');
   // A file under an area's folder of rooms counts every room of the area, as the folder's registry keys them: the helpers its

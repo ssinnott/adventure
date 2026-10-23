@@ -1,9 +1,9 @@
 // Thornmark's monsters, band 5-10: the forest, the barrow and the tower, the Grove Roots and the Cut
-// Stone. `sprite` names the drawing (src/ui/sprites.ts); the numbers are the combat model's. A group
+// Stone. `sprite` names the drawing (src/ui/monsters/); the numbers are the combat model's. A group
 // on a map is a list of these ids, and any area's maps may place them.
 import type { MonsterDef } from '../../../game/monsters.ts';
 
-/** The drawings Thornmark's monsters are drawn with, one kind to each. src/ui/sprites.ts must draw every one. */
+/** The drawings Thornmark's monsters are drawn with, one kind to each. A family in src/ui/monsters/ must register every one. */
 export const SPRITES = [
   'dire_wolf', 'thorn_spider', 'brigand', 'brigand_archer', 'zealot', 'adept', 'rift_hound',
   'bone_knight', 'wraith', 'riftling_elder', 'ogre', 'ashen_hand', 'cut_warden', 'owl',

@@ -11,15 +11,12 @@
 // pulse with the frame; eyes are hot points; wobble seeds are constants, never the frame, so no
 // contour boils.
 import type { MonsterSprite } from '../../game/monsters.ts';
-import type { MonsterDrawer, Paint } from './common.ts';
+import type { MonsterDrawer, Paint, Sprite } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
 import { blob, glow, glossPoly, patch, softLine } from './gloss.ts';
 import type { Part, Crease } from './gloss.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
 import { tones } from '../../lib/art/shading.ts';
-
-/** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['riftling', 'riftling_elder', 'warden', 'cut_warden', 'brineling', 'tide_elder', 'tide_warden', 'sunderling', 'sunder_warden', 'slagling', 'slag_elder', 'anvil_warden'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'warden' || kind === 'cut_warden' || kind === 'tide_warden' || kind === 'sunder_warden') {
@@ -28,6 +25,22 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   else if (kind === 'anvil_warden') anvilWarden(ctx, x, y, h, p);
   else creature(ctx, x, y, h, p, kind === 'riftling_elder' || kind === 'tide_elder' || kind === 'slag_elder', kind === 'brineling' || kind === 'tide_elder', kind === 'sunderling', kind === 'slagling' || kind === 'slag_elder');
 };
+
+/** The kinds this module draws, each with its span and any part drawn apart; ./index.ts merges every family's. */
+export const SPRITES = {
+  riftling: { draw, span: [0.42, 0.55] },
+  riftling_elder: { draw, span: [0.51, 0.7] },
+  warden: { draw, span: [0.63, 0.66], detached: { what: 'shard', pieces: 1, share: 0.01 } },
+  cut_warden: { draw, span: [0.64, 0.66], detached: { what: 'shards', pieces: 2, share: 0.01 } },
+  brineling: { draw, span: [0.39, 0.54] },
+  tide_elder: { draw, span: [0.5, 0.7] },
+  tide_warden: { draw, span: [0.64, 0.66], detached: { what: 'shards', pieces: 2, share: 0.01 } },
+  sunderling: { draw, span: [0.42, 0.55] },
+  sunder_warden: { draw, span: [0.64, 0.66], detached: { what: 'shards', pieces: 2, share: 0.01 } },
+  slagling: { draw, span: [0.42, 0.57] },
+  slag_elder: { draw, span: [0.5, 0.69] },
+  anvil_warden: { draw, span: [0.68, 0.7], detached: { what: 'slag', pieces: 2, share: 0.01 } },
+} satisfies Partial<Record<MonsterSprite, Sprite>>;
 
 /** The hot colours of one Rift thing: the emissive glow, the molten lump, its white heart. */
 interface Heat { glow: string; ember: string; heart: string; seam: string }

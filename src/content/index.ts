@@ -1,6 +1,6 @@
 // The content: the areas in road order, and the tables the game reads, merged from them. Adding an
 // area is its folder under areas/ and its line in AREAS (with the import above it); its drawings
-// and rooms are src/ui's (FAMILY in ui/sprites.ts, SCENES in ui/interior.ts), which the typecheck
+// and rooms are src/ui's (SPRITES in ui/monsters/index.ts, SCENES in ui/interior.ts), which the typecheck
 // holds to the lists here. The unions the game types its content with (MonsterSprite, Interior,
 // RegionId) are made from the areas, so nobody edits them by hand. The one quest is joined here
 // from the areas' chapters. The maps as played, with the outdoors laid out, are in ./maps.ts.
@@ -46,7 +46,7 @@ export type MonsterSprite = AnyArea['sprites'][number];
 export type Interior = AnyArea['interiors'][number];
 
 // The unions stay lists of names only while every area keeps its literals (`satisfies Area`, not
-// `: Area`). Widened to string, FAMILY and SCENES would stop catching a missing drawing or room,
+// `: Area`). Widened to string, SPRITES and SCENES would stop catching a missing drawing or room,
 // so a widened union fails the typecheck here.
 type Narrow<T extends string> = string extends T ? false : true;
 export const NARROW: [Narrow<RegionId>, Narrow<MonsterSprite>, Narrow<Interior>] = [true, true, true];

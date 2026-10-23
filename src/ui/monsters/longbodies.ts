@@ -34,14 +34,11 @@
 // cold olive with rows of pale spots down its side and a white throat. Idle: it sways in the hole
 // and the jaw works, and the black water laps at it.
 import type { MonsterSprite } from '../../game/monsters.ts';
-import type { MonsterDrawer, Paint } from './common.ts';
+import type { MonsterDrawer, Paint, Sprite } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
 import { blob, patch, softLine } from './gloss.ts';
 import type { Part } from './gloss.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
-
-/** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['fen_eel', 'leech', 'rock_worm', 'ice_pike'];
 
 /**
  * The frame's parts, as proportions of the eel's (1 = the eel, 0 = none). Each is named for the
@@ -110,6 +107,14 @@ const PIKE: Build = {
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   longBody(ctx, x, y, h, p, kind === 'leech' ? LEECH : kind === 'rock_worm' ? WORM : kind === 'ice_pike' ? PIKE : EEL);
 };
+
+/** The kinds this module draws, each with its span and any part drawn apart; ./index.ts merges every family's. */
+export const SPRITES = {
+  fen_eel: { draw, span: [0.6, 0.6] },
+  leech: { draw, span: [0.46, 0.46] },
+  rock_worm: { draw, span: [0.66, 0.53] },
+  ice_pike: { draw, span: [0.44, 0.65] },
+} satisfies Partial<Record<MonsterSprite, Sprite>>;
 
 /** A frame: x and y map hundredths of the height (x right, y up from the ground) to the canvas. */
 interface F { u: number; X: (v: number) => number; Y: (v: number) => number; h: number }

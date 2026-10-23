@@ -14,16 +14,13 @@
 // waist, arms that taper to a wrist half a shoulder wide, and joint angles a person could hold.
 // A robe is cloth hanging on that body, not a shape drawn where a body would be.
 import type { MonsterSprite } from '../../game/monsters.ts';
-import type { MonsterDrawer, Paint } from './common.ts';
+import type { MonsterDrawer, Paint, Sprite } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
 import { blob, glow, softLine, patch, glossBall, glossPoly, glossTaper, appendCurve, lumpy } from './gloss.ts';
 import type { Crease, Part } from './gloss.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
 import type { Arm, Mats, Pt, Rig } from './figure.ts';
 import { armParts, elbowCrease, hand as fist, legs, makeRig, trunkW, FAR } from './figure.ts';
-
-/** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['cultist', 'acolyte', 'zealot', 'adept', 'deacon', 'ashen_hand', 'overseer', 'gleaner', 'mason', 'ashen_champion', 'ashen_preacher', 'hand_rearguard', 'grey_hand', 'vask'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'zealot') zealot(ctx, x, y, h, p);
@@ -41,6 +38,24 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   else if (kind === 'vask') vask(ctx, x, y, h, p);
   else cultist(ctx, x, y, h, p);
 };
+
+/** The kinds this module draws, each with its span and any part drawn apart; ./index.ts merges every family's. */
+export const SPRITES = {
+  cultist: { draw, span: [0.25, 0.33] },
+  acolyte: { draw, span: [0.23, 0.43], detached: { what: 'censer', pieces: 1, share: 0.05 } },
+  zealot: { draw, span: [0.47, 0.51] },
+  adept: { draw, span: [0.42, 0.39], detached: { what: 'hand flame', pieces: 1, share: 0.03 } },
+  deacon: { draw, span: [0.29, 0.29] },
+  ashen_hand: { draw, span: [0.47, 0.47], detached: { what: 'embers', pieces: 5, share: 0.01 } },
+  overseer: { draw, span: [0.46, 0.5] },
+  gleaner: { draw, span: [0.43, 0.45] },
+  mason: { draw, span: [0.3, 0.58] },
+  ashen_champion: { draw, span: [0.26, 0.28] },
+  ashen_preacher: { draw, span: [0.41, 0.37] },
+  hand_rearguard: { draw, span: [0.25, 0.37] },
+  grey_hand: { draw, span: [0.4, 0.41] },
+  vask: { draw, span: [0.23, 0.25] },
+} satisfies Partial<Record<MonsterSprite, Sprite>>;
 
 /** The cult's palette, in the shape figure.ts wants: ashen skin, bone, charred leather, cold steel. */
 const CULT = (t: number): Mats => ({

@@ -23,15 +23,12 @@
 // under a low body, two big claws held up and open at its sides, and the tail rising behind in five
 // segments and arched over toward the company, a clear glass sting hanging from its end.
 import type { MonsterSprite } from '../../game/monsters.ts';
-import type { MonsterDrawer, Paint } from './common.ts';
+import type { MonsterDrawer, Paint, Sprite } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
 import { blob, softLine, glow, patch } from './gloss.ts';
 import type { Part, Crease } from './gloss.ts';
 import { shade, mix, rgba } from '../../lib/art/palettes.ts';
 import { pathEllipse } from '../../lib/art/shapes.ts';
-
-/** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['spider', 'thorn_spider', 'crab', 'rift_crawler', 'barnacle_crab', 'salt_crab', 'glass_spider', 'fire_beetle', 'cinder_beetle', 'glass_scorpion'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'thorn_spider') thorn(ctx, x, y, h, p);
@@ -45,6 +42,20 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   else if (kind === 'glass_scorpion') glassScorpion(ctx, x, y, h, p);
   else marsh(ctx, x, y, h, p);
 };
+
+/** The kinds this module draws, each with its span and any part drawn apart; ./index.ts merges every family's. */
+export const SPRITES = {
+  spider: { draw, span: [0.93, 1.03] },
+  thorn_spider: { draw, span: [0.94, 1.05] },
+  crab: { draw, span: [0.55, 0.55] },
+  rift_crawler: { draw, span: [0.9, 1.01] },
+  barnacle_crab: { draw, span: [0.56, 0.58] },
+  salt_crab: { draw, span: [0.55, 0.55] },
+  glass_spider: { draw, span: [1.42, 1.42] },
+  fire_beetle: { draw, span: [0.52, 0.52], detached: { what: 'sparks', pieces: 2, share: 0.01 } },
+  cinder_beetle: { draw, span: [0.54, 0.54] },
+  glass_scorpion: { draw, span: [0.63, 0.63] },
+} satisfies Partial<Record<MonsterSprite, Sprite>>;
 
 /** A lumpy ring of n points around (cx, cy), the raw contour a 'curve' part lumps further. */
 function ring(cx: number, cy: number, rx: number, ry: number, n: number, seed: number): number[] {

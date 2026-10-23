@@ -74,15 +74,15 @@ export const stopsWalk = (m: GameMap, x: number, y: number): boolean => {
   return p === 'wall' || p === 'void' || p === 'chasm' || c.solid === 'tree' || c.solid === 'rock';
 };
 
-/** A monster family: its module in src/ui/monsters/ (by name, as 'boar'), the kinds it lists and the drawer it exports. */
-export interface Family { name: string; kinds: readonly string[]; draw: unknown }
+/** A monster family: its module in src/ui/monsters/ (by name, as 'boar'), the kinds it registers, what it registers for each and the drawer it exports. */
+export interface Family { name: string; kinds: readonly string[]; sprites: Readonly<Record<string, { draw: unknown }>>; draw: unknown }
 
-/** Every module in src/ui/monsters/ that lists its kinds, by name; a shared brush lists none. */
+/** Every module in src/ui/monsters/ that registers kinds, by name; a shared brush registers none, and the barrel (index.ts) merges them. */
 export async function familyModules(): Promise<Family[]> {
   const dir = new URL('../../src/ui/monsters/', import.meta.url), out: Family[] = [];
-  for (const f of readdirSync(dir).filter((f) => f.endsWith('.ts')).sort()) {
-    const m = (await import(new URL(f, dir).href)) as { KINDS?: readonly string[]; draw?: unknown };
-    if (m.KINDS) out.push({ name: f.slice(0, -3), kinds: m.KINDS, draw: m.draw });
+  for (const f of readdirSync(dir).filter((f) => f.endsWith('.ts') && f !== 'index.ts').sort()) {
+    const m = (await import(new URL(f, dir).href)) as { SPRITES?: Record<string, { draw: unknown }>; draw?: unknown };
+    if (m.SPRITES) out.push({ name: f.slice(0, -3), kinds: Object.keys(m.SPRITES), sprites: m.SPRITES, draw: m.draw });
   }
   return out;
 }

@@ -1,9 +1,9 @@
 // The Foreland's monsters, band 1-5: the road, the woods and the cellar, then Brandy Hole's caves.
-// `sprite` names the drawing (src/ui/sprites.ts); the numbers are the combat model's. A group on a
+// `sprite` names the drawing (src/ui/monsters/); the numbers are the combat model's. A group on a
 // map is a list of these ids, and any area's maps may place them.
 import type { MonsterDef } from '../../../game/monsters.ts';
 
-/** The drawings the Foreland's monsters are drawn with, one kind to each. src/ui/sprites.ts must draw every one. */
+/** The drawings the Foreland's monsters are drawn with, one kind to each. A family in src/ui/monsters/ must register every one. */
 export const SPRITES = [
   'rat', 'slime', 'wolf', 'boar', 'spider', 'bandit', 'archer', 'cultist', 'skeleton', 'riftling',
   'warden', 'crab', 'smuggler', 'smuggler_bow', 'smuggler_captain', 'drowned', 'ghoul', 'acolyte',

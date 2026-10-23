@@ -1,5 +1,5 @@
 // What a monster is. The monsters themselves are content, each area's in
-// src/content/areas/<area>/monsters.ts. `sprite` names the vector drawing in ui/sprites.ts; the
+// src/content/areas/<area>/monsters.ts. `sprite` names the vector drawing, a kind a family of ui/monsters/ registers; the
 // numbers are the combat model's. A group on a map is a list of these ids (see map.ts).
 import { MONSTERS } from '../content/index.ts';
 import type { MonsterSprite } from '../content/index.ts';

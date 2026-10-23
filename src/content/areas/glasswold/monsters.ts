@@ -1,10 +1,10 @@
 // The Glasswold's monsters, band 26-28: the Wold's steppe, its dunes and its mesas (MONSTERS §8.3).
-// `sprite` names the drawing (src/ui/sprites.ts); the numbers are the combat model's. A group on a
+// `sprite` names the drawing (src/ui/monsters/); the numbers are the combat model's. A group on a
 // map is a list of these ids, and any area's maps may place them. Drawn ahead of the area's first
 // map (#533), and listed with the area by it (#525).
 import type { MonsterDef } from '../../../game/monsters.ts';
 
-/** The drawings the Wold's monsters are drawn with, one kind to each. src/ui/sprites.ts must draw every one. */
+/** The drawings the Wold's monsters are drawn with, one kind to each. A family in src/ui/monsters/ must register every one. */
 export const SPRITES = [
   'vulture', 'wold_lion', 'glass_scorpion', 'basilisk', 'grey_lion',
   'glass_walker',
