@@ -90,12 +90,14 @@ DESIGN.md first for the why.
 - **Save/load:** F5/F9 to localStorage; door changes, explored cells, group state and the rng all
   survive a reload. Saves are version 2 (the outdoors as one map, cells seen kept a bit apiece); a
   version 1 save loads, its Foreland and Thornmark state folded into the outdoors where they now lie.
-  An old save is brought up to date by version, one registered upgrade a step, and
-  `content/shipped.json` lists every id and placement a save may hold, so a check fails when one
-  goes or moves without a bump and its upgrade (`node tools/shipped.ts` records what is new). A
-  map edited since the save still takes it: a group the map has gained stands where the map puts
-  it, and a saved door goes back only where the map still has a locked or secret door. A save
-  keeps the kinds of monster the company has met (`met`); one made before has met none.
+  An old save is brought up to date by version, one registered upgrade a step, and the shipped
+  files (each area's `content/areas/<area>/shipped.json` and the central `content/shipped.json`,
+  joined into one record) list every id and placement a save may hold, so a check fails when one
+  goes or moves without a bump and its upgrade (`node tools/shipped.ts` records what is new, each
+  id in its area's file). A map edited since the save still takes it: a group the map has gained
+  stands where the map puts it, and a saved door goes back only where the map still has a locked
+  or secret door. A save keeps the kinds of monster the company has met (`met`); one made before
+  has met none.
 - **People** (`game/people.ts`): a person's first meeting may hire (one flag or several) and end in
   a question put through the choice screen, whose answer sets flags, may hand over an item and has
   its own words; a question once answered is not put again, and Esc answers nothing. An answer may
@@ -885,8 +887,9 @@ over content broken on purpose too, and two tools to theirs:
   holds every zone on the road of the built areas to a step of the quest, and fails a step placed in
   an enclave, which holds no zone (`enclaveSteps`, `heldZones`, #845); the Deepthorn's is owed
   to #49.
-- `shipped` (§5.5): nothing in `content/shipped.json` goes or moves without a `SAVE_VERSION` bump
-  and its upgrade; `node tools/shipped.ts` records what is new.
+- `shipped` (§5.5): nothing in the shipped files, joined, goes or moves without a `SAVE_VERSION`
+  bump and its upgrade; each id sits in the file of the area that owns it and in no other, and an
+  area with content has its file; `node tools/shipped.ts` records what is new.
 - `inscriptions` (#538): on a fixture hall, an inscription said as a sign to the premade six, who
   have no reader, and read after its words by a dwarf, a Linguist or anyone with a copybook carried,
   never by a member knocked down; kept read by its id through a save and by the shipped list; its
@@ -1068,7 +1071,7 @@ does.
 | `content/crossings.ts` | the crossings between towns, or from a town to a camp or a shore in a zone, each with its fare, days and hours and its two ends, each end's landing once its place is built (in a zone, on the box that holds it; or the issue that owes it), and `sells`, the passages a place's person sells on them; held to the atlas and the towns by `tools/tests/passage.ts` |
 | `content/locks.ts` | the story locks (each flag that closes something, where and why) and how many an area and the road may spend; held to by `tools/tests/pillars.ts`, read by nothing in the game. Holds one: Act III's, the Sleepers' Bay's door under Loch Fuar's ice, shut on `q_wenna_up` (#440, docs/areas/rimewater.md §5); the road's first, the pass's flag, went with #40 |
 | `content/maps.ts` | the maps as played: `PLAYED_DEFS`, the outdoors laid out, and `buildMaps` |
-| `content/shipped.json` | what a save may refer to: each played map's size, chests, once-events, the other features spent once, inscriptions read, groups and door squares, the zones' places, the flags, items, spells, monsters, classes, races, conditions and skills; written by `tools/shipped.ts`, held to by `tools/tests/shipped.ts` |
+| `content/shipped.json` | what a save may refer to that no area owns, and the version: the outdoors' size, the core items, the flags the code and the guilds' ranks set, the spells, classes, races, conditions, skills and tiers. Each area's `areas/<area>/shipped.json` holds what it owns: its played maps' sizes, chests, once-events, the other features spent once, inscriptions read, groups and door squares, its zones' places and the outdoors' ids, groups and door squares in its boxes, its flags, items and monsters. Written by `tools/shipped.ts`, joined into one record and held to by `tools/tests/shipped.ts` |
 | `content/atlas.ts` | the world map's plan: the land, the areas of the road, and the zones, places and sites not built yet; each area charts its own in `areas/<area>/atlas.ts`, and `content/index.ts` merges them into `ATLAS` |
 
 Decided by the builder for #896, each the owner's to overturn:

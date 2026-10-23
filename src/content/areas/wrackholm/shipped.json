@@ -1,0 +1,347 @@
+{
+  "maps": {
+    "caldera": {
+      "used": [
+        "e6_cache",
+        "e6_cache_box",
+        "e6_cairn",
+        "e6_east",
+        "e6_gulls_roof",
+        "e6_hut_lip",
+        "e6_huts",
+        "e6_lookout",
+        "e6_mouth",
+        "e6_north",
+        "e6_northeast",
+        "e6_shrine",
+        "e6_south",
+        "e6_stage",
+        "f6_boats",
+        "f6_cairn",
+        "f6_cleft",
+        "f6_clifftop",
+        "f6_drag",
+        "f6_grave",
+        "f6_grave_seen",
+        "f6_heather",
+        "f6_hollow",
+        "f6_hollow_chest",
+        "f6_hollow_locked",
+        "f6_moor",
+        "f6_north",
+        "f6_pools",
+        "f6_rockfoot",
+        "f6_shingle",
+        "f6_shrine",
+        "f6_stores",
+        "f6_tally",
+        "f6_watch"
+      ],
+      "groups": [
+        "e6_devilfish",
+        "e6_gulls_inlet",
+        "e6_gulls_lookout",
+        "e6_path_east",
+        "e6_path_north",
+        "e6_rats",
+        "f6_crew",
+        "f6_devilfish",
+        "f6_gulls",
+        "f6_keepers",
+        "f6_rats"
+      ],
+      "doors": [
+        "149,179",
+        "188,168",
+        "196,172"
+      ]
+    },
+    "dead_drop": {
+      "size": "32x32",
+      "used": [
+        "dd_buffer",
+        "dd_cage",
+        "dd_coin",
+        "dd_down",
+        "dd_drop",
+        "dd_floor",
+        "dd_heap",
+        "dd_in",
+        "dd_large",
+        "dd_middling",
+        "dd_post",
+        "dd_rails",
+        "dd_small",
+        "dd_strongbox",
+        "dd_tread",
+        "dd_water"
+      ],
+      "groups": [
+        "dd_clerk1",
+        "dd_clerk2",
+        "dd_clerk3",
+        "dd_clerk4",
+        "dd_keeper",
+        "dd_loader1",
+        "dd_loader2",
+        "dd_loader3",
+        "dd_loader4",
+        "dd_pair"
+      ],
+      "doors": []
+    },
+    "dead_drop2": {
+      "size": "32x32",
+      "used": [
+        "dd2_bare",
+        "dd2_box1",
+        "dd2_box2",
+        "dd2_coin",
+        "dd2_count",
+        "dd2_door",
+        "dd2_down",
+        "dd2_heap",
+        "dd2_in",
+        "dd2_left",
+        "dd2_pens",
+        "dd2_rails",
+        "dd2_right",
+        "dd2_seal",
+        "dd2_straw",
+        "dd2_vault"
+      ],
+      "groups": [
+        "dd2_keepers",
+        "dd2_keepers2",
+        "dd2_knockers",
+        "dd2_loader",
+        "dd2_loaders"
+      ],
+      "doors": [
+        "14,28"
+      ]
+    },
+    "dead_drop3": {
+      "size": "32x32",
+      "used": [
+        "dd3_coin",
+        "dd3_heap",
+        "dd3_in",
+        "dd3_intray",
+        "dd3_ledgers",
+        "dd3_marks",
+        "dd3_nibs",
+        "dd3_orders",
+        "dd3_outtray",
+        "dd3_shelves",
+        "dd3_stools",
+        "dd3_strongbox",
+        "dd3_writes"
+      ],
+      "groups": [
+        "dd3_clerk",
+        "dd3_tallymaster"
+      ],
+      "doors": []
+    },
+    "dead_drop_stair": {
+      "size": "10x9",
+      "used": [
+        "dd_door",
+        "dd_foot"
+      ],
+      "groups": [],
+      "doors": []
+    },
+    "smugglers_cove": {
+      "size": "16x16",
+      "used": [
+        "kh1_colan_gone",
+        "kh1_crate",
+        "kh1_crates",
+        "kh1_fires",
+        "kh1_in",
+        "kh1_landing",
+        "kh1_ledge",
+        "kh1_rows",
+        "kh1_store",
+        "kh1_strongbox"
+      ],
+      "groups": [
+        "kh1_crew_fires",
+        "kh1_crew_landing",
+        "kh1_overseers"
+      ],
+      "doors": []
+    },
+    "smugglers_cove2": {
+      "size": "16x16",
+      "used": [
+        "kh2_bones",
+        "kh2_hoard",
+        "kh2_in",
+        "kh2_kelp",
+        "kh2_passage",
+        "kh2_pools",
+        "kh2_purse",
+        "kh2_tidemark"
+      ],
+      "groups": [
+        "kh2_crew",
+        "kh2_devilfish_east",
+        "kh2_devilfish_west",
+        "kh2_great_devilfish"
+      ],
+      "doors": [
+        "3,11"
+      ]
+    },
+    "tide_ship": {
+      "size": "16x16",
+      "used": [
+        "ts_aboard",
+        "ts_boats",
+        "ts_bow",
+        "ts_causeway",
+        "ts_foremast",
+        "ts_freed",
+        "ts_hatch",
+        "ts_helm",
+        "ts_locker",
+        "ts_waist"
+      ],
+      "groups": [
+        "ts_over_side"
+      ],
+      "doors": []
+    },
+    "tide_ship2": {
+      "size": "16x16",
+      "used": [
+        "ts2_cabin",
+        "ts2_clerk",
+        "ts2_clerk_desk",
+        "ts2_hatch",
+        "ts2_in",
+        "ts2_quarters",
+        "ts2_rats",
+        "ts2_sea_chest",
+        "ts2_table",
+        "ts2_window"
+      ],
+      "groups": [
+        "ts2_post",
+        "ts2_rats"
+      ],
+      "doors": []
+    },
+    "tide_ship3": {
+      "size": "16x16",
+      "used": [
+        "ts3_beam",
+        "ts3_bulkhead",
+        "ts3_chained",
+        "ts3_forward",
+        "ts3_hatch",
+        "ts3_in",
+        "ts3_last_row",
+        "ts3_rows",
+        "ts3_shards",
+        "ts3_straw",
+        "ts3_strongbox"
+      ],
+      "groups": [
+        "ts3_crew",
+        "ts3_elder"
+      ],
+      "doors": [
+        "5,5"
+      ]
+    },
+    "tide_ship_rift": {
+      "size": "12x12",
+      "used": [
+        "tide_ship_rift_hoard",
+        "tide_ship_rift_look1",
+        "tide_ship_rift_look2",
+        "tide_ship_rift_look3",
+        "tide_ship_rift_quiet",
+        "tide_ship_rift_tear"
+      ],
+      "groups": [
+        "tide_ship_rift_g1",
+        "tide_ship_rift_warden"
+      ],
+      "doors": []
+    }
+  },
+  "zones": {
+    "wrackholm_e6": {
+      "at": "136,158",
+      "size": "32x32"
+    },
+    "wrackholm_f6": {
+      "at": "168,158",
+      "size": "32x32"
+    }
+  },
+  "flags": [
+    "q_brother",
+    "q_brother_delivered",
+    "q_brother_found",
+    "q_brother_letter",
+    "q_brother_told",
+    "q_brother_truth",
+    "q_column",
+    "q_column_road",
+    "q_column_saltmouth",
+    "q_compact_factor",
+    "q_compact_factor_done",
+    "q_compact_fence",
+    "q_compact_fence_done",
+    "q_feed_home",
+    "q_feed_tam",
+    "q_hale_freed",
+    "q_hermit",
+    "q_hermit_carried",
+    "q_sergeant_hale",
+    "q_writer_seen"
+  ],
+  "items": [
+    "clerk_frame",
+    "clerks_book",
+    "colans_letter",
+    "compact_orders",
+    "corposant",
+    "fishers_spike",
+    "founders_letter",
+    "founders_seal",
+    "keeper_pail",
+    "keeper_yoke",
+    "loader_iron",
+    "loader_port",
+    "long_axe+1",
+    "plate+1",
+    "runners_coat",
+    "ships_log",
+    "ships_papers",
+    "tally_nib",
+    "tide_cutlass",
+    "tide_stone"
+  ],
+  "monsters": [
+    "ashen_overseer",
+    "bilge_rat",
+    "devilfish",
+    "great_devilfish",
+    "hold_keeper",
+    "loader",
+    "tally_clerk",
+    "tallymaster",
+    "tide_elder",
+    "tide_warden",
+    "wrack_bowman",
+    "wrack_gull",
+    "wrack_smuggler"
+  ]
+}
