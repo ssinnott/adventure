@@ -21,6 +21,7 @@
 //   node tools/harness.ts --bot bless,sleep,drink [...] ... or the bots, the gate's too, did any of the three (#853), and counts them
 //     (from level 11 only, as the game's bot plays them, `optsFor`: what #865 weighed at 13 to 28)
 //   node tools/harness.ts --company newer [...]        ... or the company were the four newer classes' (`newerCompany`)
+//   node tools/harness.ts --artifacts erzhemd,akkush [...] ... or the company bore the bounds' artifacts named, or all of them (#847), and says who
 // The company is the premade six, trained to the level (to the road's cap, 32), with the prestiges
 // that level brings (game/party.ts), and dressed in what the item tables give it by then (GEAR). Beside
 // it stands a company of the four newer classes, made the same way, which the harness suite holds to
@@ -43,7 +44,7 @@ import os from 'node:os';
 import { Worker, isMainThread, parentPort } from 'node:worker_threads';
 import { makeRng } from '../src/lib/engine/rng.ts';
 import type { RngInstance } from '../src/lib/engine/rng.ts';
-import { CLASSES, defaultParty, createCharacter, createParty, className, xpForLevel, levelUp, isDown, hasCondition, removeCondition, lift, heal, equip, weaponOf, attackBonus, armsBonus, armorClass, bonus, statOf, hasTrait, spellHeal, rankMult, RANK_STEP, SPELLFIRE_DMG, SNEAK_ATTACK_DMG, MAX_LEVEL, PRESTIGE_LEVELS, prestigeOf, takePrestige } from '../src/game/party.ts';
+import { CLASSES, defaultParty, createCharacter, createParty, className, xpForLevel, levelUp, isDown, hasCondition, removeCondition, lift, heal, equip, weaponOf, attackBonus, armsBonus, armorClass, bonus, statOf, hasTrait, spellHeal, rankMult, RANK_STEP, SPELLFIRE_DMG, SNEAK_ATTACK_DMG, MAX_LEVEL, PRESTIGE_LEVELS, prestigeOf, takePrestige, borne } from '../src/game/party.ts';
 import type { Character, Party, ClassId, RaceId, Stats } from '../src/game/party.ts';
 import { linesOf, LINES, TIER_LEVELS, TIER_NAMES, LINE_NAMES } from '../src/game/mastery.ts';
 import type { Tier, Tiers } from '../src/game/mastery.ts';
@@ -88,9 +89,10 @@ and 7 are play's, and every company takes them. Two more stand off unless a what
 `tiers` gives the company its Expert and Master (`--tiers`, see `tier`), and `bot` the bots' options
 (`--bot`, BotOpts: the thrifty bot's in `play`, the gate's in tools/gate.ts `gateTurn`). And `company`
 fields the four newer classes' company instead of the premade six (`--company newer`, see `fielded`).
+And `artifacts` has it bear the bounds' artifacts named, past the ladder's top (`--artifacts`, see `bear`).
  */
-export const RULES: { spellsGrowTo?: number; gearGrows?: boolean; levelTraits?: boolean; levelBonus?: boolean; rankStep?: number; tiers?: boolean; bot?: BotOpts; company?: 'newer' } = {};
-const NO_RULES: typeof RULES = { spellsGrowTo: undefined, gearGrows: undefined, levelTraits: undefined, levelBonus: undefined, rankStep: undefined, tiers: undefined, bot: undefined, company: undefined };
+export const RULES: { spellsGrowTo?: number; gearGrows?: boolean; levelTraits?: boolean; levelBonus?: boolean; rankStep?: number; tiers?: boolean; bot?: BotOpts; company?: 'newer'; artifacts?: readonly string[] } = {};
+const NO_RULES: typeof RULES = { spellsGrowTo: undefined, gearGrows: undefined, levelTraits: undefined, levelBonus: undefined, rankStep: undefined, tiers: undefined, bot: undefined, company: undefined, artifacts: undefined };
 /** The what-ifs set, by name. */
 export const whatIfs = (): string[] => (Object.keys(RULES) as (keyof typeof RULES)[]).filter((k) => RULES[k] !== undefined);
 /** Why `--calibrate --write` refuses, while any what-if is set (a what-if is for weighing), naming them; none else. */
@@ -251,23 +253,45 @@ function tier(p: Party): void {
   }
 }
 
+/** The artifacts in the item tables (`ItemDef.artifact`, #847): one of each in the world, on no rung of the ladder. */
+export const artifactIds = (): string[] => Object.values(ITEMS).filter((d) => d.artifact).map((d) => d.id);
+
+/**
+ * The artifacts a company bears where `RULES.artifacts` asks (#847; off unless `--artifacts`): each,
+ * one in the world, by the first member in the company's order who may bear it, as `outfit` would
+ * dress them (a weapon of the reach they hold, no two-hander over a shield) and with no artifact in
+ * its slot already. After the ladder, the prestiges and the tiers; the gate's company stays the plain
+ * one (#891).
+ */
+function bear(p: Party, ids: readonly string[]): void {
+  for (const id of ids) {
+    const d = item(id), mine = (c: Character): boolean => d.slot !== 'none' && !!c.equipment[d.slot] && !!item(c.equipment[d.slot]!).artifact;
+    const c = p.members.find((m) => (!d.classes || d.classes.includes(m.cls)) && !mine(m)
+      && (d.slot !== 'weapon' || (!!d.ranged === !!weaponOf(m).ranged && !(d.twoHanded && m.equipment.shield)))
+      && (d.slot !== 'shield' || !weaponOf(m).twoHanded));
+    if (!c) continue;
+    if (d.slot === 'none') c.pack.push(id); else equip(c, id);
+  }
+}
+
 /**
  * A company trained to `level` on `rng`, as every company the harness plays is: each member trained
  * and dressed by the ladder (`outfit`), the bag's kit (`KIT`), the prestiges (`prestige`) and, where
- * `RULES.tiers` asks, the tiers (`tier`); then whole.
+ * `RULES.tiers` asks, the tiers (`tier`), and where `RULES.artifacts` does, the artifacts (`bear`); then whole.
  */
 function train(p: Party, level: number, rng: RngInstance): Party {
   for (const c of p.members) { c.xp = xpForLevel(level); levelUp(c, rng); outfit(c, level); }
   p.bag.push(...KIT.filter(([at]) => at <= level).flatMap(([, ids]) => ids));
   prestige(p);
   if (RULES.tiers) tier(p);
+  if (RULES.artifacts) bear(p, RULES.artifacts);
   for (const c of p.members) { c.hp = c.maxHp; c.sp = c.maxSp; }
   return p;
 }
 
 const companies = new Map<string, Party>();
 /** A company's key in the cache: its kind, its level, its seed and the what-ifs that make it otherwise. */
-const keyOf = (kind: string, level: number, seed: number): string => `${kind}${level}:${seed}:${RULES.gearGrows ? 'gear' : ''}${RULES.tiers ? ':tiers' : ''}`;
+const keyOf = (kind: string, level: number, seed: number): string => `${kind}${level}:${seed}:${RULES.gearGrows ? 'gear' : ''}${RULES.tiers ? ':tiers' : ''}${RULES.artifacts ? `:${RULES.artifacts.join('+')}` : ''}`;
 /**
  * The premade six trained to `level`, outfitted for it and with the prestiges it brings, whole; a
  * fresh copy every call. The gate's company is this one (tools/gate.ts `gateCompany`).
@@ -799,6 +823,13 @@ async function main(): Promise<void> {
     const who = NEWER.map(([name, , cls]) => `${name} the ${CLASSES[cls].name.toLowerCase()}`);
     console.log(`What if: the company is the four newer classes': ${and(who.slice(0, FRONT_ROW))} in front, ${and(who.slice(FRONT_ROW))} behind.`);
   }
+  const bears = opt('artifacts');
+  if (bears !== undefined) {
+    const all = artifactIds(), asked = bears === 'all' ? all : bears.split(',');
+    if (!asked.length || asked.some((x) => !all.includes(x)) || new Set(asked).size < asked.length) throw new Error(`--artifacts takes all, or the artifacts' ids, each once, with commas between: ${all.join(', ')}`);
+    RULES.artifacts = asked;
+    console.log(`What if: the company bears ${and(asked.map((x) => item(x).name.replace(/^The /, 'the ')))}, each by the first member who may (#847), found past the ladder's top and on no rung of it.`);
+  }
   const rules = { ...RULES };
   const row = (label: string, cells: readonly string[]): void => console.log(label.padEnd(14) + cells.map((c) => c.padStart(6)).join(''));
   if (levels.some((l) => !(l >= 1 && l <= CAP)) || roles.some((r) => !ROLES[r])) throw new Error(`levels run from 1 to ${CAP}; roles are ${ROLE_IDS.join(', ')}`);
@@ -1003,12 +1034,13 @@ async function main(): Promise<void> {
   console.log(`ending in a death, a lost fight or one broken off, in fights of ${longest(1)} rounds at level 1 to ${longest(CAP).toFixed(1)} at ${CAP}`);
   console.log(`(up to ${slowest(1)} and ${slowest(CAP).toFixed(1)} where blows that hard kill too often).`);
   console.log(`The boss is fought alone, from ${under ? 'the same company' : 'two levels under it'}: won (target 50%).`);
-  if (RULES.tiers || RULES.company) {
-    // The company the what-ifs make, as it stands at each level it fights from: each member's title and tiers.
+  if (RULES.tiers || RULES.company || RULES.artifacts) {
+    // The company the what-ifs make, as it stands at each level it fights from: each member's title, tiers and artifacts.
     const tiersOf = (t: Tiers): string => (['master', 'expert'] as const).map((x) => ({ x, on: LINES.filter((l) => t[l] === x) })).filter(({ on }) => on.length).map(({ x, on }) => `${TIER_NAMES[x]} ${on.map((l) => LINE_NAMES[l]).join(' and ')}`).join(', ');
-    console.log(`\nThe company${RULES.tiers ? ' and its tiers' : ''}, at each level it fights from:`);
+    const arts = (m: Character): string => borne(m).filter((id) => item(id).artifact).map((id) => item(id).name).join(' and ');
+    console.log(`\nThe company${RULES.tiers ? ' and its tiers' : ''}${RULES.artifacts ? ' and who bears the artifacts' : ''}, at each level it fights from:`);
     for (const l of [...new Set(roles.flatMap((r) => levels.map((v) => fieldedAt(r, v, under))))].sort((a, b) => a - b)) {
-      console.log(`  L${l}: ${fielded(l, 1).members.map((m) => `${m.name} ${className(m)}${m.tiers ? `, ${tiersOf(m.tiers)}` : ''}`).join('; ')}`);
+      console.log(`  L${l}: ${fielded(l, 1).members.map((m) => `${m.name} ${className(m)}${m.tiers ? `, ${tiersOf(m.tiers)}` : ''}${arts(m) ? `, ${arts(m)}` : ''}`).join('; ')}`);
     }
   }
   const cells = await cellsOnCores(roles, levels, seeds, under);

@@ -359,6 +359,10 @@ export function ladder(): void {
   const r13 = GEAR.find(([at]) => at === 13)?.[1] ?? [], r3 = GEAR.find(([at]) => at === 3)?.[1] ?? [];
   ok(rungsAstray([['saltreach', 13, r13], ['wrackholm', 13, r13], ['shelf', 3, r3], ['thornmark', 3, r3]]).join() === '13 on saltreach,3 on thornmark',
     'a rung on an earlier area than its last item\'s, or a later one, is refused: 13 on Saltreach and 3 on Thornmark, where 13 on Wrackholm and 3 on the Foreland are read');
+  // An artifact is past the ladder's top (#847): no rung holds one, by its mark, so the gate's company
+  // and the harness's plain one wear none, and only the harness's what-if dresses one (`--artifacts`).
+  const arts = Object.values(ITEMS).filter((d) => d.artifact).map((d) => d.id), onRung = GEAR.flatMap(([, ids]) => ids).filter((id) => arts.includes(id));
+  ok(arts.length > 0 && !onRung.length, `no rung of the ladder holds an artifact, past its top: none of the ${arts.length}${onRung.length ? ` (but: ${onRung.join(', ')})` : ''}`);
   const found = new Set([
     ...MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => giftOf(f)?.items ?? [])),
     ...Object.values(MONSTERS).flatMap((m) => (m.drops ?? []).map((x) => x.item)),

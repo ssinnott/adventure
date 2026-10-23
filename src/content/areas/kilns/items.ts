@@ -6,7 +6,7 @@
 // into its Area; the forge (#459) sells the step and the smith (#469) the same at a quarter more.
 // docs/areas/kilns.md §8 and §9 have the sums.
 import type { ItemDef } from '../../../game/items.ts';
-import { W, A, P, MARTIAL, MAIL, NO_CASTER_HEAVY } from '../../items.ts';
+import { W, A, P, MARTIAL, MAIL, NO_CASTER_HEAVY, ARTIFACT_PRICE } from '../../items.ts';
 import { ITEMS as THORNMARK } from '../thornmark/items.ts';
 import { ITEMS as SUNDERWOOD } from '../sunderwood/items.ts';
 import { sharkskin } from '../saltreach/items.ts';
@@ -40,6 +40,14 @@ export const SMITH_PRICES: Readonly<Record<string, number>> = Object.fromEntries
  * much that a clear of the Fells and the Tiefzeche can just pay it (docs/areas/kilns.md §8).
  */
 export const ANVIL_STONE_PRICE = 6000;
+
+// The Kilns' of the bounds' eight (DESIGN §9, #847): the Grey Mail's 14 and a point, for its wearers,
+// and speed raised by 5 while it is worn. Found and never sold; placed nowhere yet, for #831 lays its
+// lair and puts it there.
+export const erzhemd = A('erzhemd', 'The Erzhemd', ARTIFACT_PRICE, 15, { classes: NO_CASTER_HEAVY, stat: { speed: 5 }, artifact: true, text: [
+  'A shirt of mail in rings darker than iron, and no heavier than wool.',
+  'Inside the collar a smith\'s mark is cut, and a knocker\'s eye beside it.',
+] });
 
 export const ITEMS: readonly ItemDef[] = [
   ...WARES,
@@ -107,4 +115,5 @@ export const ITEMS: readonly ItemDef[] = [
     'Sewn up in sacking, heavy for its size. It does not rattle.',
     'A tag on the string: KILNHAVEN. INTO WIEBE\'S HANDS.',
   ] },
+  erzhemd,
 ];

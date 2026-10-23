@@ -298,7 +298,8 @@ each area:
 - a clear's gold pays for training the party through the band;
 - every monster's level (a new field on `MonsterDef`) sits in its map's band, give or take two,
   rising from the floor near the area's way in to the band's top at the far end;
-- chest and drop items sit in the band's price window, so a band 1–4 cellar holds no plate.
+- chest and drop items sit in the band's price window, so a band 1–4 cellar holds no plate; an
+  artifact, which no window holds, is excepted by its mark alone (#847, below).
 
 A map whose floor is over its area's band is a later area's country reached from it, as the
 Dead-Drop's stair under the Tide Ship is, and pays nothing there. The deepest levels, which the road
@@ -394,7 +395,30 @@ by 14 and the Sunder's plus by 16. Act III's (#535): Anvilhall's forge by 17, th
 Cairnmoor's boxes' plus by 19, Rime Lodge's furrier by 21 and Rimewater's plus by 22. Act IV's, one
 step (#542): Cinderport's armourer by 25. Act V's, the last (#746): the Hand's steel by 28, found on
 Hearth Isle and never sold. Each rung betters the last for every class, each find and ware inside its
-area's window; past the top, gear grows only in the harness's what-if.
+area's window; past the top, gear grows only in the harness's what-ifs, the bounds' artifacts among
+them (`--artifacts`, #847).
+
+Decided by the builder for #847, each the owner's to overturn:
+
+An artifact is an item marked so (`ItemDef.artifact`, DESIGN §9): one in the world, found in its lair
+and never sold. No shop stocks one or takes one, and no rung of the ladder or price window holds
+one, by the mark alone and never by its price: the curve's window, which held every find, holds
+every find but an artifact (`windowed`, `tools/tests/curve.ts`), and new checks hold that each is
+in no shop, on no rung and in no window, and that unmarked the window would catch it.
+
+1. **A mark, `artifact: true`, beside the power's own field:** the stat and the element are read as
+   on any item, so an artifact's power is a found item's by the same code, and its twin unmarked does
+   the same.
+2. **Its price is `ARTIFACT_PRICE`, 7,500, past every window** (the Hearth's 7,000 the widest): nobody
+   pays it, and a window that dropped the mark would catch it, so the mark is what exempts.
+3. **The shop's words** are "Keep it. There is no price on a thing like that." (`REFUSED`); the sell
+   list shows an artifact without a price, and the company keeps it.
+4. **The sheet gives each artifact borne a line,** after RESISTS: "ARTIFACT The Erzhemd, SPEED +5".
+5. **`--artifacts`** takes ids or `all` and gives each, one in the world, to the first member in the
+   company's order who may bear it, of the reach they hold and with no shield under a two-hander. The
+   gate's company stays plain (#891).
+6. **The three not placed are owed** in `UNPLACED` (`tools/tests/items.ts`) to #830, #831 and #833,
+   each until its lair holds it once and in no drop; the table only shrinks.
 
 Nor does the gate's company learn a secondary skill (DESIGN.md §5): Arms Master's first round and
 the two senses go unmeasured, so a company that buys one is stronger than the gate measured it, the
