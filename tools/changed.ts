@@ -32,7 +32,7 @@ export function changedFiles(base: string): string[] {
  */
 const EVERY_MAP = [
   /^src\/ui\/(viewport|brush|palette|scenery)\.ts$/, /^src\/ui\/monsters\/common\.ts$/, /^src\/lib\/art\//, /^src\/game\/(map|outdoors|world|types|atlas)\.ts$/,
-  /^src\/content\/(index|maps|atlas|area)\.ts$/, /^src\/content\/areas\/[^/]+\/atlas\.ts$/, /^tools\/(smoke|changed)\.ts$/,
+  /^src\/content\/(index|maps|atlas|area)\.ts$/, /^src\/content\/areas\/[^/]+\/atlas\.ts$/, /^tools\/(smoke|changed|sweep|kit\/sweep)\.ts$/,
 ];
 const MAP_FILE = /^src\/content\/areas\/[^/]+\/maps\/[^/]+\.ts$/;
 
