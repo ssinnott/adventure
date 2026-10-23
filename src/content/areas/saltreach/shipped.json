@@ -128,6 +128,13 @@
         "b6_stair",
         "b6_stair_quiet",
         "b6_stair_sing",
+        "b7_bothy",
+        "b7_bothy_chest",
+        "b7_cairn",
+        "b7_in",
+        "b7_pans",
+        "b7_shrine",
+        "b7_track",
         "c2_cairn",
         "c2_cleft",
         "c2_cleft_chest",
@@ -216,7 +223,11 @@
         "d5_grey9",
         "d5_milestone",
         "d5_shore",
-        "d5_spit"
+        "d5_spit",
+        "d6_cairn",
+        "d6_ribs",
+        "d6_store",
+        "d6_store_chest"
       ],
       "groups": [
         "a3_toad",
@@ -238,6 +249,8 @@
         "b6_brine",
         "b6_bulls",
         "b6_toads",
+        "b7_crabs",
+        "b7_smugglers",
         "c2_toad",
         "c2_watch",
         "c3_brine",
@@ -254,17 +267,20 @@
         "c6_crabs",
         "c6_smugglers",
         "c7_crabs",
-        "c7_toads"
+        "c7_toads",
+        "d6_toads"
       ],
       "doors": [
         "100,177",
         "102,195",
+        "115,162",
         "20,112",
         "26,168",
         "29,141",
         "33,89",
         "42,106",
         "48,181",
+        "49,206",
         "51,78",
         "53,140",
         "59,51",
@@ -380,12 +396,20 @@
       "at": "104,126",
       "size": "32x32"
     },
+    "saltings_b7": {
+      "at": "40,190",
+      "size": "32x32"
+    },
     "saltings_c6": {
       "at": "72,158",
       "size": "32x32"
     },
     "saltings_c7": {
       "at": "72,190",
+      "size": "32x32"
+    },
+    "saltings_d6": {
+      "at": "104,158",
       "size": "32x32"
     },
     "upperwater_a3": {
