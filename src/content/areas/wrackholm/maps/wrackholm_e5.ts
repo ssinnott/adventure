@@ -2,12 +2,13 @@
 // moor's grass running down from E6 to a strand of sand and weed, and the open sea north and west. A
 // ship's figurehead stood upright in the sand, a riddle cut in her block; at the strand's east end a
 // stack of rock with soot on its face, and behind the face a hollow where a lamp with a red glass was
-// kept, with a sea chest. The black rocks at the strand's west end are left bare at 18,28 for the
-// enclave's door, the wreck (docs/areas/wrackholm.md §12.5). In from E6 (#187) over its south edge,
-// square for square; the strand runs on east into F5 (#835). No group. Laid whole in Wrackholm, cut
-// from the atlas with the rocks drawn in; docs/areas/wrackholm.md §12.2 is its brief.
+// kept, with a sea chest. In the black rocks at the strand's west end, at 18,28, the break in the
+// wreck's side: the way into the Brokenback, the enclave (docs/areas/wrackholm.md §12.5). In from E6
+// (#187) over its south edge, square for square; the strand runs on east into F5 (#835). No group.
+// Laid whole in Wrackholm, cut from the atlas with the rocks drawn in; docs/areas/wrackholm.md §12.2
+// is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { NORTH } from '../../../../game/types.ts';
+import { NORTH, SOUTH } from '../../../../game/types.ts';
 
 export const WRACKHOLM_E5: MapDef = {
   id: 'wrackholm_e5',
@@ -46,10 +47,15 @@ export const WRACKHOLM_E5: MapDef = {
     'WWWWWWWWWWWWWWWWWWWWWW~~~~~r"r~~',
     'WWWWWWWWWWWWWWWWWWW~W~~~~_,rSr,,',
     'WWWWWWWWWWWWWWWWWW~~~~___,,,,,,,',
-    'WWWWWWWWWWWWWWWWWrrr~_,,,,,,,,,,',
+    'WWWWWWWWWWWWWWWWWr"r~_,,,,,,,,,,',
     'WWWWWWWWWWWWWWWW~~_,_,,,,,,,,,,,',
     'WWWWWWWWWWWWWWW~~_,,,,,,,,,,,,,,',
     'WWWWWWWWWWWWWW~__,,,,,,,,,,,,,,,',
+  ],
+  // The Brokenback, the enclave (#845): the break in the wreck's side at 18,28, drawn as stone among the
+  // black rocks and walked onto from the strand at 18,29.
+  exits: [
+    { x: 18, y: 28, to: 'brokenback', tx: 7, ty: 1, tf: SOUTH, label: 'You climb in at the break in her side, over the black rocks and the torn planks.' },
   ],
   features: [
     // In from E6's moor, the grass running down to the strand.
