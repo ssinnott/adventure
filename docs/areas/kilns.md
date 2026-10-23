@@ -24,9 +24,9 @@ with it its second town, Kilnhaven, behind L6's gate (#469, §4.14); O6, Feuerst
 (#466, §4.11), with the tubes under its ridge, its third dungeon; and the country behind the road,
 parked until the owner had played the act and built now: M4 and M5, Kilnmouth's north and its farms,
 and O3 and O4, the Fells' east and the heart's hills (#474, §4.15), which closes #474; and the five
-boxes of the bounds, K6 (the heath west of the port), P5 and P6 (the hills under the rim at the Stone
-and the ash under the vents), L7 (the shore under the port) and P4 (the strip's north end) (#831;
-§12, whose enclave and lair wait on #845 and #847). Its chapter
+boxes of the bounds, K6 (the heath west of the port), P5 and P6 (the hills under the rim at the
+Stone and the ash under the vents), L7 (the shore under the port) and P4 (the strip's north end)
+(#831; §12, whose enclave and lair wait on #845 and #847). Its chapter
 of the one quest, The Anvil Stone, is written and walked (#470, §5), and its four side quests are in
 the log, their people on those maps (#471, §6). Eleven of its monsters and its twelve rooms are drawn
 (§3). Only the ship to Cinderport waits, on #512 (§4.14). Its content is
