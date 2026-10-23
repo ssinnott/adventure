@@ -19,12 +19,13 @@ The atlas (its rows in `src/content/areas/shelf/atlas.ts`, merged into `ATLAS` b
 | Zone | Band | Squares | Built |
 |---|---|---|---|
 | The Foreland | 1–5, its map's | 2,296 | 879: the Foreland map, laid at 200,30 |
-| Callow Downs | 2–5 | 6,569 | F2, F3, E3, E2, D2, D3 and D4, laid at 168,30, 168,62, 136,62, 136,30, 104,30, 104,62 and 104,94 |
-| The area | 1–5 | 8,865 | a quarter |
+| Callow Downs | 2–5 | 6,569 | F2, F3, E3, E2, D2, D3, D4 and E4, laid at 168,30, 168,62, 136,62, 136,30, 104,30, 104,62, 104,94 and 136,94 |
+| The area | 1–5 | 8,865 | the Foreland map and the Downs' eight boxes |
 
 Squares are the ones the atlas gives each zone, shallows and rivers included. Without the shallows
 the area is 8,594 squares, about 8.4 zone maps (EXPANSION §1 has 8.3). It runs from x 94 to x 231
-and from the rim down to y 120.
+and from the rim down to y 120. Counted by `worldGrid` with the built maps laid, Callow Downs holds
+7,487 squares without E4 and 7,494 with it (#837, §12), whose stack takes seven of the sea.
 
 **The grid.** Every outdoor map is one box of the grid the Foreland and Thornmark sit on: 32 squares
 a side, with its corner at x = 8 + 32i and y = −2 + 32j, cut to the world at its edges (EXPANSION
@@ -32,9 +33,10 @@ a side, with its corner at x = 8 + 32i and y = −2 + 32j, cut to the world at i
 Foreland is G2 and Thornmark H2. The world map's border letters these boxes, the strips at the
 world's west and south edges unlettered (#66).
 
-On the grid the Foreland's map is G2, and the Downs are seven boxes, by column: F2 and F3 beside it;
-E2 and E3; D2, D3 and D4 (§4). The row above, C1 to G1, is the rim. C2 and C3 hold a strip of the
-Downs' cliff top among Saltreach's land, and E4, G3 and G4 a few squares of shore in the sea.
+On the grid the Foreland's map is G2, and the Downs are eight boxes, by column: F2 and F3 beside it;
+E2 and E3; D2, D3 and D4 (§4); and E4, the bounds', the Downs' last shore (#837, §12). The row
+above, C1 to G1, is the rim. C2 and C3 hold a strip of the Downs' cliff top among Saltreach's land,
+and G3 and G4 a few squares of shore in the sea.
 
 Its edges:
 
@@ -89,6 +91,7 @@ and with it failing the coast is dark, and the dark has people in it who were wa
 | Callow Downs, D3 | outdoor zone, 32×32 | 4–5 | the west downs to the lip of Kestrel Edge; a falconer, the lip over the Upper Water and the cleft with a kestrels' ledge; the bandit camp by the Salt Road, a den; a shrine, a cairn and a shepherd's hollow; seven groups (§4.8) |
 | Callow Downs, D4 | outdoor zone, 32×32 | 4–5 | Kestrel Edge: the Salt Road over the top, down the cliff in seven bends and across the low ground at its foot to the Delta; the runners' cave behind a bend; a shrine, a cairn and the waystation; four groups (§4.9) |
 | The Berth | dungeon, 16×16 | 4–5 | the Queen's barrow under D2, opened: the forecourt, the passage and four side chambers of the old Queens, their grave goods untouched; the Queen on her bier, her signet cut away; her guard two by two and her captain, the boss; his arms in a niche behind the bier (§4.7) |
+| Callow Downs, E4 | outdoor zone, 32×32 | 4–5 | the Downs' last shore, the bounds' (#837): the down's last grass, a low cliff across it and a strand of grey sand under it; a post of holed stones (a shrine) and a cairn of flints; a crabber's store behind a stack at the shore; the cliff's face left bare for the lair's door; no group (§12.2) |
 
 Its chapter of the one quest is The Quiet Farm (Vask, `chapter.ts`) and its side quests The Cargo
 Ledger (Hale), The Bell That Rang Twice (Osmund), The Rest of the Survey (Ebba and Ailith), The
@@ -106,7 +109,8 @@ barrow's (downs_d2 20,4) the ringing turf at 20,5 (`d2_ring`), beside the other 
 the kestrels' ledge's (downs_d3 3,18) the cleft in the lip at 4,18 (`d3_cleft`), beside the
 falconer's word; and the runners' cave's (downs_d4 20,13) the rock worn smooth between the bends at
 19,13 (`d4_worn`); and the captain's niche in the Berth (berth 2,7) the words cut in the forecourt
-at 13,6 (`berth_hint`).
+at 13,6 (`berth_hint`); and the crabber's store's (downs_e4 10,2) the crab shells heaped at the
+stack's foot at 9,2 (`e4_shells`).
 
 In more detail, as SLICE.md had it before the area docs:
 
@@ -185,6 +189,9 @@ the Berth, D3 and D4. They are the epic #65, with the grid (#66), the Lodestone 
 west runs into it. The steps come in the order the road reaches them: Gullwick, Crowness, the Berth.
 D3 comes before D4 because the Salt Road cuts a corner of D3 on its way down, and the way into Act
 II comes last.
+
+The bounds come after the plan (§12, #837): E4, the Downs' last shore, is built as country at 4–5,
+and the Hag's lair, its door in E4's low cliff, is to come.
 
 The places, as the atlas and the docs have them:
 
@@ -635,7 +642,7 @@ core's boxes, in the order the Salt Road reaches them:
 
 The Salt Road west, into Act II, starts here. The Foreland's chapter is The Quiet Farm (#42), and
 every zone on the road holds at least one step of the quest (EXPANSION §5.8). The Downs are one
-zone of seven boxes (§9), so the pilot's step at Gullwick is the zone's, and the other two come
+zone of eight boxes (§9), so the pilot's step at Gullwick is the zone's, and the other two come
 with their boxes. STORY opens at Gullwick on the night the light went out, and the company reaches
 Helmstow in the morning; a new game opens in Helmstow.
 
@@ -803,8 +810,8 @@ take none of #56's: quests 3, 5 and 6 stay plain quests (DESIGN §8).
 
 The Foreland's of the bounds' eight (DESIGN §9): the first country a company walks, holding what it
 can take only at the last (#837). Found and never told: no `seek` quest, no line in the journal and
-no mark on the world map. #837 builds the lair, its door and the rumour once #845, #847 and the
-guardian's drawing are in.
+no mark on the world map. #837 builds the lair, its door in E4's low cliff (left bare at 3,6,
+§12.3) and the rumour once #845, #847 and the guardian's drawing are in.
 
 - **What it is:** *A stone off the strand, a hole the sea wore through it and a cord gone green. /
   Held to the eye, the hole shows the dark as only dark.*
@@ -817,7 +824,7 @@ guardian's drawing are in.
 - **Numbers:** none, as a thing carried has none. Found and never sold.
 - **Power:** a ward (DESIGN §9, kind 5): its bearer is never paralysed.
 - **The lair:** a sea cave of one level, its mouth on E4's strand under the Downs, at the cap's
-  band, 30–32 (#845).
+  band, 30–32 (#845, §12.3).
 - **The guardian:** the Hag (long bodies, a new kind; boss, 32; docs/MONSTERS.md §13): *No eyes,
   and it found you first.* It holds.
 
@@ -838,7 +845,7 @@ farmland as terrain (#44); groups that walk only by night or in fog (`when`, #41
 that breed one kind of monster until a company beats their keepers and burns them (#88): a rookery
 in E2 (built: two Old Rooks its keepers, MONSTERS §5.2), a wolves' den in D2 (built: two Barrow
 Wolves its keepers, §4.6) and a bandit camp in D3. E2 has the first statue too. §4.2 to §4.9 place
-every group, box by box.
+every group, box by box; E4, the bounds', holds none (§12.1).
 
 ## 8. The numbers
 
@@ -850,25 +857,26 @@ every group, box by box.
   200. With the Berth the clear meets the curve and goes about a tenth over it, so its shortfall is
   no longer owed to the pilot (#26); the margin is the pilot's to weigh. A den's keepers pay once,
   and its brood as a group that respawns does; the figures count the brood once.
-- **Gold.** A clear pays about 4,230 with E3, E2, D2, D3 and D4: 1,190 in chests before them, about
-  820 in drops (F2's and F3's among them), 900 in rewards (the clerk's seal and the tenant's paper
-  once each, whoever takes them) and 180 in the guilds' pay, and E3's, E2's, D2's, D3's and D4's
-  chests, hoards, drops and rewards on top, and the Berth's 300 or so (220 in its chests, the rest
-  the captain's and his guard's). Training six members from 1 to 5 costs 1,500, so gold holds.
+- **Gold.** By the curve's count a clear pays 4,536 with E3, E2, D2, D3 and D4 (4,646 with E4,
+  §12): 1,190 in chests before them, about 820 in drops (F2's and F3's among them), 900 in rewards
+  (the clerk's seal and the tenant's paper once each, whoever takes them) and 180 in the guilds'
+  pay, and E3's, E2's, D2's, D3's and D4's chests, hoards, drops and rewards on top, and the
+  Berth's 300 or so (220 in its chests, the rest the captain's and his guard's). Training six
+  members from 1 to 5 costs 1,500, so gold holds.
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds every figure to an aim and fails
   it only past a limit (#273); nothing on the Foreland is owed to it. The Smuggler Captain and the
   Deacon, won 99 and 100% of the time at Brandy Hole's and the Seam's floors before the pilot, are
   brought onto the boss line as the Downs' bosses were (#47): the captain 95 hit points and 2d6+4,
   won 50% at 2; the Deacon 175 and 2d8+5, MONSTERS §4.4's boss at 5, won 50% at 3; each always two
-  above. The Rift
-  Warden, retuned with Ashcombe's move (#87), is won 55% at the cellar's floor, 2, and always at 4;
-  the Berth's captain 45% at 4 and always at 6. The area as one pools each group at its own map's
-  floor (#209): 97.3% of its 81 groups' fights won, against nine in ten. Two under, only E3's, E2's,
-  D2's, D3's and D4's 32 groups have a company: 80.1% won, off the aim of a quarter and inside the
-  limit of nine in ten, listed. Each zone walks its own road (both every time) and warns at its own
-  way in. Fights to a rest: the Foreland map 4.37, Brandy Hole's caves 4.05, the Seam 6.69, the
-  Ashcombe cellar 7.42, F2 6.44, F3 7.01, E3 7.28, E2 6.28, D2 7.80, D3 7.98, D4 7.52 and the Berth
-  7.12.
+  above. The Rift Warden, retuned with Ashcombe's move (#87), is won 55% at the cellar's floor, 2,
+  and always at 4; the Berth's captain 44% at 4 and always at 6. The area as one pools each group at
+  its own map's floor (#209): 97.3% of its 81 groups' fights won, against nine in ten. Two under,
+  only E3's, E2's, D2's, D3's and D4's 32 groups have a company: 82.7% won, off the aim of a quarter
+  and inside the limit of nine in ten, listed. Each zone walks its own road (both every time) and
+  warns at its own way in. Fights to a rest: the Foreland map 4.55, Brandy Hole's caves 4.09, the
+  Seam 6.69, the Ashcombe cellar 7.41, F2 6.60, F3 7.07, E3 7.53, E2 6.93, D2 7.59, D3 8.21, D4 7.54
+  and the Berth 7.12. These are re-measured with E4 laid (#837), which holds no group (§12.1), and
+  are main's before it too.
 - **The thresholds, as the pilot left them** (#47). Every box of the Downs was tuned to the aims of
   #273, and none moved them:
 
@@ -887,7 +895,7 @@ every group, box by box.
   Brandy Hole's, made before the line, are retuned, not the limit widened. Two under stays as it
   is: no group both lost at the floor less two and held to the rest line is won a quarter of the
   time or less (#273), so it is listed, never failed; the limit catches a map won always. Two
-  figures sit on their limits' edge and are watched, not moved: Brandy Hole's caves at 4.05 fights
+  figures sit on their limits' edge and are watched, not moved: Brandy Hole's caves at 4.09 fights
   to a rest, and E2's furthest square at 20 steps. The owner has not played the Downs yet; what
   their play shows may move these still.
 - **The pilot's hours** (#47). Each box from its pull request's first commit to its merge, by the
@@ -935,6 +943,11 @@ every group, box by box.
 - **Spells.** Tier 3 comes at level 4, inside the band (`spellTierAt`), and Helmstow's Lantern
   Guildhall sells to tier 2 (it sets no `maxTier`; `src/ui/screens.ts:410`). EXPANSION §4 has an
   area's towns sell its band's tier.
+- **The bounds** (#837, §12). E4 holds no group and pays no xp; its finds hold 110 gold. By the
+  curve's count a clear of the area gives 4,101 xp a member (it asks 3,734) and 4,646 gold, where it
+  gave 4,536 before (it asks 1,500), and a company entering at 1 and three quarters clearing it
+  still leaves at 5.3 against the next floor 5 (limit 6). The lair is held to its own band and
+  counted in no clear (`tools/tests/curve.ts`), so the lead stays at 5.3 to the end of #837.
 
 ## 9. Decisions
 
@@ -1077,6 +1090,47 @@ Proposed, for the owner, each in the issue that would build it:
   empty (§4.7).
 - **Three changes to #56's side quests** (§6).
 
+Decided by the builder for #837, each the owner's to overturn:
+
+1. **The bounds' brief is §12,** for E4 and the lair, each in §4's form, in two pull requests: E4
+   with the brief (#828's 3, the Foreland's one box), then the lair once #847's powers and the Hag's
+   drawing are in. The Foreland has no enclave (#837).
+2. **E4 is the Downs', laid whole in Callow Downs at 4–5,** D4's and D3's band, the Downs' last: its
+   69 walkable squares and the 32 of shallows beside them are all the Downs' by the atlas, and E3
+   and D4, the boxes it runs off, are the Downs' too, so no crossing line names the land at its
+   edges.
+3. **No group stands on E4.** The curve's rise rule asks a box's hardest group at its top, 5. At 5
+   the Downs have the Black Dog that walks D2 by night, D2's barrow wolves (the den's keepers) and
+   the cutthroats who keep D3's bandit camp and walk D4's road by the Delta; the Foreland's others
+   at 5 are its bosses, the Deacon and the Berth's captain. A group on a shore of 65 squares would
+   crowd it, beside the lair's door with nothing within four squares, and repeat D2's, D3's or D4's
+   own. The area's clear already gives 4,101 xp a member of the 3,734 the curve asks (§8); the lair
+   is the bounds' fight.
+4. **Its wilderness features are a post of holed stones on the last rise and a cairn of flints at
+   the strand's end.** The post is a shrine, +1 personality once, a stat no shrine of the area
+   gives. No camp: E3's lee of the point is seven squares from E4's north edge across the seam.
+5. **The secret is a crabber's store in a stack drawn at the north-east shore,** a ring of nine
+   squares where the atlas has shallows and the sea, its hint the crab shells heaped at the rock's
+   foot, a kind no box of the Downs had; its door, 10,2, stands where the art check takes it.
+6. **The finds are gold, an Elixir and a Blue Vial,** the Downs' own (D3's pack holds both), better
+   than the Healing Draught, the one potion Mottram's sells: 110 gold in all and no gear.
+7. **The lair's door is the low cliff's face at 3,6:** a cliff of rock drawn across the down's last
+   grass at 1 to 4 on rows 5 and 6, rock either side of the door and behind it, 3,7 open before it
+   on the strand and nothing within four squares (§12.3).
+8. **E4 meets E3 and D4 square for square,** its edges worked from the built letters: its 9,0 and
+   10,0 are sand as E3's 9,31 and 10,31 are, where the atlas has shallows; its west column is open
+   at 0 to 10 as D4's east column is, the atlas's but for the strand's sand at 0,7 to 0,9. Every
+   corner agrees with the built letters; no built square changes and no `SEAMS_AS_BUILT` row is
+   added. The two `OPEN_ON_NOTHING` rows E4 answers go and none comes: its east edge, against F4,
+   is the sea.
+9. **E4 differs from the atlas at 30 squares:** four of shallows drawn as sand (the seam's two at
+   9,0 and 10,0 and the stack's way at 9,1 and 9,2), the stack's nine (two of shallows and seven of
+   the sea), the cliff's eight and the strand's nine, the atlas's grass under the cliff drawn as
+   sand (0 to 5 on row 7, 0 and 1 on row 8 and 0 on row 9), so the strand reads as one from the
+   cliff's foot to the box's west edge.
+10. **E4 starts at 6,0 facing south,** in from Crowness's down, the land and not the sea in view.
+11. **The walkthrough walks the bounds in one function,** `theBounds`, called last.
+
 ## 10. Names
 
 The area's naming pass, by the rules of `docs/NAMES.md`. Each name is the Foreland folk's, or one
@@ -1126,4 +1180,119 @@ named in the atlas.
   could walk. The maps of row 2 end in the rim (§9).
 - **The scraps** of the Foreland's land in boxes that are other areas' or the sea's: the Downs'
   cliff top in C2 and C3 (272 squares, 221 of them walkable), which goes with Saltreach's boxes,
-  and a few squares of shore in E4, G3 and G4.
+  and a few squares of shore in E4, G3 and G4. E4's are built since as the bounds' (#837, §12), the
+  Downs' last shore with no group; G3's and G4's stay cut, G3 a crumb (#828).
+
+## 12. The bounds
+
+The land the Downs' maps lie open to, built as country off the quest, level for level (the owner,
+17 October 2026; #828, #837): the few squares of shore in E4 that §11 cut, under Callow Downs; then
+the area's artifact's lair, the Hagstone's (§6). A box of sea with a strand in its north-west
+corner, 69 squares a company could walk by the atlas, which 22 edge squares opened onto: E3's south
+edge (11) and D4's east edge (11). The issue's 20 are those the atlas's strand met on foot: E3's
+9,31 and 10,31 are sand where the atlas has shallows on E4's row 0, and E4 is drawn as sand there to
+meet them (§12.1). The box is built to the looser floor (EXPANSION §5.3) at the zone's band, from
+the area's own, paid from its budget (§8), with nothing on the road's quest. The Foreland has no
+enclave (#837). This is their brief, in §4's form; each pull request builds from it and adds its "As
+built".
+
+| Place | Laid in | Walkable | Built neighbours | Band | Pull request |
+|---|---|---|---|---|---|
+| E4 | Callow Downs, `downs_e4` | 65 (the atlas's 69) | E3 and D4; E5 (Wrackholm's), the sea | 4–5 | the first, built (#837) |
+| The lair | its own, its door on E4 | | E4 | 30–32 | the second |
+
+### 12.1 What the box keeps
+
+- **E4 is the Downs', whole,** laid in Callow Downs at 4–5, D4's and D3's band, the Downs' last
+  (§9, #837's 2): its 69 walkable squares and the 32 of shallows beside them are all the Downs' by
+  the atlas, and E3 and D4, the boxes it runs off, are the Downs' too, so no crossing line names the
+  land at its edges. A company under its floor walking in from E3 is told so in the game's own
+  words, as at every rise of the Downs' band.
+- **The seams agree with the built boxes square for square,** each corner worked from the built
+  letters first. E4's north edge meets E3's south edge, open at 0 to 10, its 9,0 and 10,0 sand as
+  E3's are where the atlas has shallows; its west edge meets D4's east edge, open at 0 to 10 on
+  both, its letters the atlas's but for the strand's sand at 0,7 to 0,9. Its south edge against
+  Wrackholm's E5 is the sea on both sides, and no road joins the Foreland to Wrackholm. Every corner
+  agrees with the built letters: E4's 0,0 is grass with E3's 0,31 and D4's 31,0. Its other three
+  are the sea against the sea: 0,31 with D4's 31,31 and E5's 0,0, 31,0 with E3's 31,31 and 31,31
+  with E5's 31,0. No built square changes and no row of `SEAMS_AS_BUILT` is added. Its east edge,
+  against F4, where #828 plans no box, is the sea, so no row of `OPEN_ON_NOTHING` comes, and the two
+  that held E3's south and D4's east edges go; no built map of the Foreland now opens onto unbuilt
+  land but F3's east edge onto G3, a crumb (#828).
+- **No group** stands on E4 (§9, #837's 3): the curve's rise rule asks a box's hardest at its top,
+  5, and the Downs' own at 5 are the Black Dog that walks D2 by night, D2's barrow wolves and the
+  cutthroats of D3's camp and D4's road, each placed already; the Foreland's others at 5 are its
+  bosses. The bounds' fight is the lair's.
+- **Two wilderness features** (EXPANSION §5.3): a post of driftwood hung with holed stones (a
+  shrine) and a cairn of flints. No camp: E3's lee of the point is seven squares from E4's north
+  edge across the seam.
+- **The secret** is a store behind a face of rock, a stack drawn at the shore, its hint a thing seen
+  at the face. Rock keeps walkers, waders, climbers and floaters out.
+- **Finds** inside the 500 window: gold, an Elixir and a Blue Vial, the Downs' own, better than the
+  Healing Draught, the one potion Mottram's sells. No gear.
+- **Pay.** A clear of the Foreland gave 4,101 xp a member before the bounds (the curve asks 3,734)
+  and 4,536 gold (1,500), and a company entering at 1 and three quarters clearing it left at 5.3;
+  the curve holds it to 6 (`LEAD`). E4 pays no xp and 110 gold: with it a clear gives 4,101 xp and
+  4,646 gold, and the company still leaves at 5.3. The lair is held to its own band and counted in
+  no clear (`tools/tests/curve.ts`), so the lead stays at 5.3 to the end of #837.
+- **The lair's door** is left bare, a square of rock in the low cliff's face with rock either side
+  and behind it, its way walked to and nothing within four squares (§12.3).
+- **The walkthrough** walks the box in one function, `theBounds` in `walkthrough.ts`, called last:
+  its seams walked and its secret found from its hint, the prize shut to walkers, swimmers, climbers
+  and floaters; the lair's door left bare.
+
+### 12.2 E4, the Downs' last shore (#837): country, band 4–5
+
+- **Purpose.** The down's last grass, running on from Crowness's south-west and the top of Kestrel
+  Edge, breaks off in a low cliff, and under it a strand of grey sand runs out to the sea. Off the
+  road and off the quest: the first country a company walks, holding the door of what it can take
+  only at the last (§12.3).
+- **Landmarks.** The low cliff across the down and the strand under it; a post of driftwood hung
+  with holed stones on the last rise; a cairn of flints at the strand's end; a stack of rock at the
+  north-east shore.
+- **Points of interest,** five features and no group: the strand seen from the top, the post (a
+  shrine), the cairn, the crab shells at the stack's foot and the store behind it.
+- **Encounters.** None (§12.1).
+- **The ways in and out.** In over the north edge from E3's down, columns 0 to 10, and over the west
+  edge from the top of Kestrel Edge in D4, rows 0 to 10. South and east the sea.
+- **The secret and its hint.** A crabber's store in the stack: withy pots, a coil of line and a
+  crock with his takings. The hint: crab shells picked clean and heaped at the rock's foot, more
+  than any gull leaves.
+- **New here.** The low cliff's face where the lair's door stands (§12.3) and the area's first
+  shrine that gives personality.
+- **Finds.** 30 gold and a Blue Vial in the cairn; 80 gold and an Elixir in the crock.
+- **Pay.** No xp; 110 gold.
+- **As built** (#837, 23 October): `downs_e4`, laid at 136,94, start 6,0 facing south. The strand's
+  look (`e4_strand`, 6,4) at the top of the way down; the post (`e4_post`, 2,2), +1 personality
+  once; the cairn (`e4_cairn`, 0,9); the stack a ring of rock at 10 to 12 on rows 1 to 3, its door
+  at 10,2 where the art check takes it and the shells before it (`e4_shells`, 9,2), the store
+  (`e4_store`, 11,2) with the crock (`e4_crock`). The low cliff is rock at 1 to 4 on rows 5 and 6,
+  the ways down past either end of it at 0 and 5; the strand under it is sand from 0 to 5 on row 7
+  to 0,10 on the box's west edge. The lair's door, 3,6, is bare with 3,7 open before it. E4 differs
+  from the atlas at 30 squares: four of shallows drawn as sand (the seam's 9,0 and 10,0 and the
+  stack's way, 9,1 and 9,2), the stack's nine, the cliff's eight and the strand's nine of grass
+  drawn as sand. Density: 67 of 67 squares within 12 steps (the store's two with them), the
+  furthest 5, no sign among 5 points. No group, so the gate has nothing to judge; the box pays 110
+  gold.
+
+### 12.3 The lair: the Hag's sea cave (#837, its second pull request)
+
+- **Purpose.** The Hagstone's lair (§6, #846): a sea cave of one level in the low cliff over E4's
+  strand, where the Hag lies in the dark the tide leaves. The first country a company walks, holding
+  what it can take only at the last (#837).
+- **Band.** The cap's, 30–32.
+- **Landmarks.** The mouth in the cliff's face, a passage the tide floods and the cave at its end,
+  wrack heaped where the sea leaves it.
+- **Points of interest.** The mouth, the tide's line in the passage, the wrack in the cave and the
+  door's own line, which gives its band (#845).
+- **Encounters.** The Hag (long bodies, a new kind; boss, 32; docs/MONSTERS.md §13), the one
+  guardian, drawn in the creatures lane before the lair is built.
+- **The ways in and out.** Its door at E4's 3,6 in the cliff's face, left bare with 3,7 open before
+  it; one way out, back onto the strand.
+- **The secret and its hint.** A dry ledge above the tide's reach, behind a fall of rock, where the
+  last one who came for the stone sat out the dark: his lamp and his purse. The hint: lamp smoke
+  black on the cave's roof, above water no lamp could stand in.
+- **New here.** The Hag and the artifact (#846, #847).
+- **Finds.** The Hagstone, carried by any of the ten, a ward against paralysis, found and never sold
+  (§6, #846); the rumour is the old net-mender's at Gullwick, built with the lair.
+- **Pay.** Counted in no clear (`tools/tests/curve.ts`).

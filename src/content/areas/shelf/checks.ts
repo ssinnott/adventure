@@ -20,7 +20,5 @@ export const CHECKS = {
   // Its edges open on nothing (tools/tests/outdoors.ts).
   openOnNothing: [
     { edge: 'downs_f3 east', open: '0-1', why: 'G3 is a crumb, left unbuilt (#828)' },
-    { edge: 'downs_e3 south', open: '0-10', why: 'E4 is unbuilt: #837 builds it' },
-    { edge: 'downs_d4 east', open: '0-10', why: 'E4 is unbuilt: #837 builds it' },
   ],
 } satisfies AreaChecks;

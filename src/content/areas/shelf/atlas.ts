@@ -5,7 +5,7 @@ import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
   { id: 'shelf', name: 'The Foreland', area: 'shelf', maps: [{ map: 'shelf', at: [200, 30] }], road: ['shelf:road_rats', 'shelf:hill_wolves'] },
-  { id: 'downs', name: 'Callow Downs', area: 'shelf', band: [2, 5], maps: [{ map: 'downs_f2', at: [168, 30] }, { map: 'downs_f3', at: [168, 62] }, { map: 'downs_e3', at: [136, 62] }, { map: 'downs_e2', at: [136, 30] }, { map: 'downs_d2', at: [104, 30] }, { map: 'downs_d3', at: [104, 62] }, { map: 'downs_d4', at: [104, 94] }], seeds: [[160, 48], [128, 66], [180, 30]], label: [132, 60], road: ['downs_f2:f2_bandits'] },
+  { id: 'downs', name: 'Callow Downs', area: 'shelf', band: [2, 5], maps: [{ map: 'downs_f2', at: [168, 30] }, { map: 'downs_f3', at: [168, 62] }, { map: 'downs_e3', at: [136, 62] }, { map: 'downs_e2', at: [136, 30] }, { map: 'downs_d2', at: [104, 30] }, { map: 'downs_d3', at: [104, 62] }, { map: 'downs_d4', at: [104, 94] }, { map: 'downs_e4', at: [136, 94] }], seeds: [[160, 48], [128, 66], [180, 30]], label: [132, 60], road: ['downs_f2:f2_bandits'] },
 ];
 
 export const PLACES: readonly AtlasPlace[] = [
