@@ -120,7 +120,7 @@ import { FERRY, COMPACT_SHIP, DROVE_COACH, sells } from '../../crossings.ts';
 import { take as sail, terms } from '../../../game/passage.ts';
 import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
 import { serialize, deserialize } from '../../../game/save.ts';
-import { World } from '../../../game/world.ts';
+import { World, HARDER_IN, WARNING_IN } from '../../../game/world.ts';
 import { CHAPTER } from './chapter.ts';
 import { CHAPTER as RING } from '../cairnmoor/chapter.ts';
 import { CREW_OPEN, CREW_SHUT } from '../hearth/maps/underdeep.ts';
@@ -1981,7 +1981,11 @@ function crewOpen(ok: (cond: boolean, msg: string) => void): void {
  * east into the Cairnfield, named with its warning; the west edge shut, and L6's corner square with it.
  * The strip's north end (P4): east from O4's 31,11, walked; the spring-head, a cell of one square, found
  * from the rushes and shut as the others are; the south pocket walked from P5 alone, and the corner round
- * O4's 31,31. Once the tear is closed the two boxes' slag strays come back no more.
+ * O4's 31,31. Once the tear is closed the two boxes' slag strays come back no more. The Seestollen, the
+ * enclave (#845): east from K6's slipway onto the grate at 20,16 and down the rails, its door saying its
+ * band and how it feels at 16, 17 and 19 and its sign its band; its three groups won at 19, Durchschlag in
+ * the quay-master's strongbox, the dwarves' store found from the one dry wall and shut to the four ways but
+ * through it, and up the rails onto K6's 20,17 again.
  */
 function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const w = newWalk(ok), out = buildMaps()[OUTDOORS];
@@ -2221,4 +2225,61 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const strays = [P5, P6].flatMap((d) => d.encounters!.filter((g) => g.monsters.includes('slag_elder'))), gentle = [P5, P6].flatMap((d) => d.encounters!.filter((g) => !strays.includes(g)));
   ok(strays.length === 2 && gentle.length === 2 && strays.every((g) => closed.world.ended(g) && !w.world.ended(g) && g.roams === false) && !gentle.some((g) => closed.world.ended(g)),
     `the slag strays in P5 and P6 stand until the tear is closed, and then the beetles and the salamanders are left (${strays.map((g) => g.id).join(', ')})`);
+
+  // The Seestollen, the enclave (#845): the grate in K6's slipway at 20,16, walked onto from the slipway
+  // at 19,16 and the grass at 20,17, the slipway and the rails as built within four squares of it and no
+  // group. Its door says its band and how it feels, as a border's line: the warning at 16, harder at 17
+  // and its band alone at 19.
+  {
+    const SS = MAP_DEFS.find((d) => d.id === 'seestollen')!, grate = K6.exits!.find((e) => e.to === SS.id)!;
+    const near4 = [...K6.features!, ...K6.encounters!].filter((f) => Math.abs(f.x - 20) + Math.abs(f.y - 16) <= 4).map((f) => ('id' in f ? f.id : f.kind));
+    ok(grate.x === 20 && grate.y === 16 && out.at(k6.x + 20, k6.y + 16).ch === '"' && heath.has(at(19, 16)) && heath.has(at(20, 17)) && near4.join() === 'k6_slip,k6_rails',
+      `the grate into the Seestollen is the slipway's dressed stone at 20,16, walked to from the way in; within four squares of it only the slipway and the rails (${near4.join(', ')})`);
+    const levels = w.party.members.map((m) => m.level);
+    const door = (level: number): string => {
+      for (const m of w.party.members) m.level = level;
+      w.world.travel(K6.id, 19, 16, EAST);
+      const r = w.world.move('forward');
+      return r.kind === 'moved' && w.world.state.mapId === SS.id && w.world.state.x === SS.start.x && w.world.state.y === SS.start.y ? r.messages.join(' | ') : r.kind;
+    };
+    const band = 'The Seestollen: levels 19-20.', low = door(16), close = door(17), at19 = door(19);
+    ok(low === `${grate.label} | ${band} ${WARNING_IN}` && close === `${grate.label} | ${band} ${HARDER_IN}` && at19 === `${grate.label} | ${band}`,
+      `east from K6's slipway onto the grate and down into the Seestollen, the way's own line and then its band, with the warning at 16, harder at 17 and nothing more at 19 (${low}; ${close}; ${at19})`);
+    ok(!!SS.enclave && w.world.here.name === 'The Seestollen' && w.world.here.band?.join('-') === '19-20', `inside, its sign gives its own band, over K6's 16-18 (${w.world.here.name}, ${w.world.here.band?.join('-')})`);
+    listen(w);
+    // Its three groups won at its floor, rising from the menders at the pumps to the two tallymen at the
+    // drowned quay, and the quay-master's strongbox with Durchschlag in it, which no other chest holds.
+    w.level = 19;
+    for (const g of SS.encounters!) fight(w, `${SS.id}:${g.id}`);
+    for (const id of ['ss_incline', 'ss_pump', 'ss_gallery', 'ss_board', 'ss_quay', 'ss_post']) see(w, `${SS.id}:${id}`);
+    const box = SS.features!.find((f) => f.kind === 'chest' && f.id === 'ss_strongbox');
+    ok(box?.kind === 'chest' && box.gold === 400 && box.items.join() === 'durchschlag' && MAP_DEFS.filter((d) => d.features?.some((f) => f.kind === 'chest' && f.items.includes('durchschlag'))).length === 1,
+      'at the drowned quay\'s foot, the quay-master\'s strongbox: 400 gold and Durchschlag, which no other chest holds');
+    // The secret: the one dry stretch of the loading gallery's wall, the search there and the dwarves'
+    // store behind it. Walked, waded, climbed or floated, it is never reached but through the wall.
+    const hold = new GameMap(SS), inside = new Set<string>(), todo: [number, number][] = [[SS.start.x, SS.start.y]];
+    while (todo.length) {
+      const [x, y] = todo.pop()!;
+      if (inside.has(`${x},${y}`) || (x === 12 && y === 4) || hold.passable(x, y, ALL) !== 'ok') continue;
+      inside.add(`${x},${y}`);
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+    }
+    ok(inside.size > 80 && !inside.has('13,4') && !inside.has('14,3'), `the dwarves' store is shut but for its wall: none of the Seestollen's ${inside.size} squares walked, waded, climbed or floated reaches it`);
+    see(w, `${SS.id}:ss_dry`);
+    w.world.travel(SS.id, 11, 4, EAST);
+    let dry = false;
+    for (let i = 0; i < 20 && !dry; i++) dry = w.world.search();
+    const into = dry ? [w.world.move('forward'), w.world.move('forward')] : [];
+    ok(dry && into.every((r) => r.kind === 'moved') && w.world.used('ss_store'), 'searched at the dry wall, it gives, and the dwarves\' store behind it can be walked into');
+    const store = SS.features!.find((f) => f.kind === 'chest' && f.id === 'ss_store_chest');
+    ok(store?.kind === 'chest' && store.gold === 300 && store.items.join() === 'elixir,potion_sp_great', 'in the store, a chest with 300 gold, an Elixir and a Sapphire Vial');
+    // And out: up the rails and through the grate onto K6's 20,17, with the way's own line and no other.
+    w.world.travel(SS.id, SS.start.x, SS.start.y + 1, NORTH);
+    const out1 = w.world.move('forward');
+    ok(out1.kind === 'moved' && w.world.zone?.id === K6.id && w.world.state.x === k6.x + 20 && w.world.state.y === k6.y + 17 && out1.messages.join(' | ') === SS.exits![0].label,
+      `up the rails out of the Seestollen onto K6's 20,17, the way's own line alone (${out1.kind === 'moved' ? out1.messages.join(' | ') : out1.kind})`);
+    listen(w);
+    w.party.members.forEach((m, i) => { m.level = levels[i]; });
+    w.level = 16;
+  }
 }

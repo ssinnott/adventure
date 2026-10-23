@@ -115,5 +115,13 @@ export const ITEMS: readonly ItemDef[] = [
     'Sewn up in sacking, heavy for its size. It does not rattle.',
     'A tag on the string: KILNHAVEN. INTO WIEBE\'S HANDS.',
   ] },
+  // The Seestollen's strongbox (#831, the enclave, docs/areas/kilns.md §12.7): the forge's mattock, its
+  // head lain in the drowned quay, its blows carrying cold: the plain piece where the ladder wears the
+  // plus from 19, so the cold is the gain, as Cairnmoor's Beacon Hammer carries fire. Found there alone
+  // and sold nowhere, inside the enclave's window, Cairnmoor's 4,000 (EXPANSION §5.2, #845's 3).
+  { ...mattock, id: 'durchschlag', name: 'Durchschlag, Mattock', price: 1700, element: 'cold', text: [
+    'A mattock with a head of dark steel, cold to the hand however long it is held.',
+    'Cut on the haft, in the old script: the day the gallery broke through.',
+  ] },
   erzhemd,
 ];

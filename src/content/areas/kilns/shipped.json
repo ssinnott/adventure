@@ -510,6 +510,28 @@
       "doors": [
         "2,11"
       ]
+    },
+    "seestollen": {
+      "size": "16x16",
+      "used": [
+        "ss_board",
+        "ss_gallery",
+        "ss_incline",
+        "ss_post",
+        "ss_pump",
+        "ss_quay",
+        "ss_store",
+        "ss_store_chest",
+        "ss_strongbox"
+      ],
+      "groups": [
+        "ss_counters",
+        "ss_menders",
+        "ss_tallymen"
+      ],
+      "doors": [
+        "12,4"
+      ]
     }
   },
   "zones": {
@@ -631,6 +653,7 @@
     "cutters_hammer",
     "cutters_pick",
     "drovers_goad",
+    "durchschlag",
     "dwarf_mail",
     "erzhemd",
     "foreman_slate",
