@@ -66,10 +66,18 @@ export const HIGHMOOR_N7: MapDef = {
     { kind: 'event', x: 5, y: 15, id: 'n7_milestone', once: true, text: 'A milestone where the hills give out: RIME LODGE 6 on its south face, ANVILHALL 15 on its north.' },
     { kind: 'event', x: 5, y: 15, id: 'n7_coach', once: true, when: { hours: 'day' }, text: 'A coach comes down off the hills at a trot, its blinds down, and goes by the milestone without slowing.' },
     { kind: 'camp', x: 6, y: 16, name: 'The drovers\' shelter', text: 'The drovers\' shelter at the hills\' foot: boulders in a row against the wind, and old ash.' },
-    { kind: 'npc', x: 7, y: 16, name: 'A drover', lines: [
+    // Met once, he speaks at every meeting after it of a shield (Torhide's rumour, #846): words only, and
+    // it marks nothing on the world map.
+    { kind: 'npc', x: 7, y: 16, name: 'A drover', flag: 'drover_met', lines: [
       'A drover in the lee of the wall, wrapped to the eyes, his dog pressed against his legs.',
       '"The lights were out over the bog last night. All of them."',
       '"And the ring was lit. Nobody goes up to the ring."',
+    ], says: [
+      { after: { flag: 'drover_met' }, lines: [
+        'The drover in the lee of the wall, his dog asleep across his boots.',
+        '"My grandfather\'s grandfather faced a shield with a troll\'s hide. Cut it how you liked, by morning it had closed."',
+        '"He took it up to the tops when he was old, and the tops kept him."',
+      ] },
     ] },
     { kind: 'shrine', x: 1, y: 19, id: 'n7_shrine', text: 'A stone of the hill folk\'s in the heather, a cup cut in its top and snow in the cup.', stat: 'intellect', done: 'The cup-stone, snow in its cup.' },
     // The fork, and the peat-cutter's track east over the moor toward the ring.

@@ -34,8 +34,8 @@ export const sunwiseMace: ItemDef = W('sunwise_mace', 'Sunwise Mace', 2000, 2, 1
 ] });
 
 // Cairnmoor's of the bounds' eight (DESIGN §9, #847): the Grey Shield's 8 and a point, for its bearers,
-// and its bearer mending by the hour. Found and never sold; placed nowhere yet, for #834 lays its lair
-// and puts it there.
+// and its bearer mending by the hour. Found and never sold: it lies in the old man's kist in the hollow
+// under the tops, Bearn Liath, past the Rim Troll (#834).
 export const torhide: ItemDef = { id: 'torhide', name: 'Torhide', slot: 'shield', price: ARTIFACT_PRICE, ac: 9, classes: MAIL, regen: true, artifact: true, text: [
   'A round shield faced with grey hide, and every cut in it closed over.',
   'It is warm to hold, and warmer by night.',
