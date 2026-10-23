@@ -2757,7 +2757,7 @@ This is their brief, in §4's form; each pull request builds from it and adds it
   gold: with them a clear gives 23,016 xp and 14,900 gold, and the company leaves at 28.0. The
   enclave and the lair are held to their own bands and counted in no clear (`tools/tests/curve.ts`),
   so the lead stays at 28.0 to the end of #833: Karaordu gives 1,511 xp a member and 1,700 gold
-  (§12.4) and Kushdag 3,395 and 800 (§12.5), figures the curve prints, 4,906 and 2,500 together.
+  (§12.4) and Kushdag 3,395 and 800 (§12.5), which the curve prints together, 4,906 and 2,500.
 - **The walkthrough** walks them in one function, `theBounds` in `walkthrough.ts`, called last: each
   box's seams walked, its groups won at 26, its secret found from its hint and its prize shut to
   walkers, swimmers, climbers and floaters. Karaordu is walked too: its door, its groups won at 28,
@@ -2893,11 +2893,11 @@ This is their brief, in §4's form; each pull request builds from it and adds it
 - **Landmarks.** A shelf cut down the east face, the nest heaped at its foot and a cleft behind the
   nest.
 - **Points of interest.** Eight sights and two chests: the shelf, the bones of foals along it and a
-  feather across the way; below, the droppings and the clawed tracks, the nest and the bones of the
-  Rider who loosed the bow, as the eldest tells it (§6), with his chest; the buckle in the rock and
-  the cleft behind it with the bird's cache.
-- **Encounters.** The Foal-taker (birds; boss, 32; docs/MONSTERS.md §13; drawn in #931), the one
-  guardian, standing where the shelf narrows to a body before the nest; no other group.
+  feather across the way; below, the droppings and the prints, the nest and the bones of the Rider
+  who loosed the bow, as the eldest tells it (§6), with his chest; the buckle in the rock and the
+  cleft behind it with the bird's cache.
+- **Encounters.** The Foal-taker (birds; boss, 32; docs/MONSTERS.md §13), the one guardian, standing
+  where the shelf narrows to a body before the nest; no other group.
 - **The ways in and out.** Its door at D7's 19,24 in the Scarp's east face, drawn as stone, with
   18,24 open before it; one way out, back onto the lip at 18,24.
 - **The secret and its hint.** The bird's cache in a cleft behind the nest, where it keeps what
@@ -2915,19 +2915,20 @@ This is their brief, in §4's form; each pull request builds from it and adds it
   the foals' bones along it (`kd_foals`, 6,3) and turns down the face at 9,3, a feather as long as
   an arm across the way (`kd_feather`, 9,4). Where it narrows to a body the Foal-taker stands
   (`kd_foal_taker`, 9,6), the one group, 11 steps from the way in. A fight starts next to a group
-  and groups never move, so with it standing, or with it and the four squares round it shut, none of
-  the 11 squares a walker, swimmer, climber or floater reaches lies past it. Past it lies the nest's
-  chamber, 51 squares, 11 by 5 at its widest: the droppings and the clawed tracks (`kd_tracks`,
-  10,9), the nest (`kd_nest`, 4,9), the Rider at its edge with a long felt case beside him
-  (`kd_rider`, 3,8) and his chest, Akkush in it alone (`kd_chest`, 3,9). The buckle in the rock
-  (`kd_buckle`, 7,11) is the hint, on the square before the wall at 7,12; searched facing south, the
-  wall gives onto the cleft (`kd_cache`, 7,13) and the bird's cache, 800 gold, an Elixir and a
-  Sapphire Vial (`kd_cache_chest`, 8,13), which no walker, swimmer, climber or floater reaches but
-  through the wall. The way out is the shelf, back onto D7's 18,24 facing west. The gate judges the
-  lair on its one boss's odds: the Foal-taker is won 57% at 30 (aim 30% to 70%, limit 20% to 80%)
-  and 81% at 32 (aim 90%, limit 75%), between its aim and its limit at 32 as the fixture lair's
-  guardian is (§9, #833's 25); drawn at the line's boss it was won 16% and 28%. The harness's
-  thrifty bot wins it 75% at 30 and 89% at 32. Density: 67 of 67 squares within 7 steps, the
-  furthest 4, no sign among 12 points. The rise: the Foal-taker, the one group, at 11 steps, level
-  32.0, near the floor 30 and the top 32. By the curve's count it gives 3,395 xp a member and 800
-  gold, counted in no clear; the area's lead stays at 28.0.
+  and groups never move, so with its square shut a walker, swimmer, climber or floater reaches 11
+  squares of the level (the shelf and the two before the choke) and none past it; with the four
+  squares round it shut too, 10. Past it lies the nest's chamber, 51 squares, 11 by 5 at its widest:
+  the droppings and the prints (`kd_tracks`, 10,9), the nest (`kd_nest`, 4,9), the Rider at its edge
+  with his long felt case beside him (`kd_rider`, 3,8) and the chest that was his, Akkush in it
+  alone (`kd_chest`, 3,9). The buckle in the rock (`kd_buckle`, 7,11) is the hint, on the square
+  before the wall at 7,12; searched facing south, the wall gives onto the cleft (`kd_cache`, 7,13)
+  and the bird's cache, 800 gold, an Elixir and a Sapphire Vial (`kd_cache_chest`, 8,13), which no
+  walker, swimmer, climber or floater reaches but through the wall. The way out is the shelf, back
+  onto D7's 18,24 facing west. The gate judges the lair on its one boss's odds: the Foal-taker is
+  won 57% at 30 (aim 30% to 70%, limit 20% to 80%) and 81% at 32 (aim 90%, limit 75%), between its
+  aim and its limit at 32 as the fixture lair's guardian is (§9, #833's 25); drawn at the line's
+  boss it was won 16% and 28%. The harness's thrifty bot wins it 75% at 30 and 89% at 32. Density:
+  67 of 67 squares within 7 steps, the furthest 4, no sign among 12 points. The rise: the
+  Foal-taker, the one group, at 11 steps, level 32.0, near the floor 30 and the top 32. By the
+  curve's count it gives 3,395 xp a member and 800 gold, counted in no clear; the area's lead stays
+  at 28.0.

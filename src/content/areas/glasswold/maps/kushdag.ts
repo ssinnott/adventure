@@ -45,9 +45,9 @@ export const KUSHDAG: MapDef = {
     { kind: 'event', x: 9, y: 4, id: 'kd_feather', once: true, text: 'A feather as long as your arm lies across the way, cream barred with brown. It has not lain long.' },
     // The nest, past the choke: the droppings and the clawed tracks, the nest itself, the Rider at its
     // edge and his chest, with Akkush in it.
-    { kind: 'event', x: 10, y: 9, id: 'kd_tracks', once: true, text: 'The floor is white with droppings, trodden with clawed tracks as broad as a shield.' },
+    { kind: 'event', x: 10, y: 9, id: 'kd_tracks', once: true, text: 'The floor is white with droppings, trodden with three-toed prints each longer than a boot.' },
     { kind: 'event', x: 4, y: 9, id: 'kd_nest', once: true, text: 'The nest: sticks thick as a wrist, horse-hair, bridle-leather, a saddle-tree. Bright things are worked into it.' },
-    { kind: 'event', x: 3, y: 8, id: 'kd_rider', once: true, text: 'A Rider lies at the nest\'s edge, picked clean, a long felt case at his side. It has been shut a long time.' },
+    { kind: 'event', x: 3, y: 8, id: 'kd_rider', once: true, text: 'A Rider lies at the nest\'s edge, picked clean, his long felt case beside him. It has been shut a long time.' },
     { kind: 'chest', x: 3, y: 9, id: 'kd_chest', gold: 0, items: ['akkush'] },
     // The secret: the buckle wedged in the rock behind the nest; the cleft behind it, where the bird keeps
     // what shines.
