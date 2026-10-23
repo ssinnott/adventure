@@ -56,7 +56,10 @@
 // a company of 27:
 // the Paladin's lamp, the Barbarian's nest and the Druid's seedling. Then the Master of magic, found and
 // never told (#859): the hermit's rumour, the hide in Old Cinder, the favour in E11's cold tube and the
-// teaching by a company of 25.
+// teaching by a company of 25. Then the bounds (#836): F12, the Waste's south-west where the lava flow
+// ends under the rim, walked onto from G12 and F11; the cairn, the man of stone's riddle and the
+// knapper's store behind the rock where black glass is heaped; the doors of the lair and the enclave
+// left bare.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, gone, listen, walkThrough, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
 import type { Walk, Step } from '../../../../tools/walk.ts';
@@ -66,8 +69,8 @@ import { ATLAS, MAP_DEFS, MONSTERS, GUILD_QUESTS } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { GameMap } from '../../../game/map.ts';
-import type { Feature, MapDef } from '../../../game/map.ts';
-import { restRefused } from '../../../game/wilds.ts';
+import type { Can, Feature, MapDef, MapZone } from '../../../game/map.ts';
+import { restRefused, answerRiddle } from '../../../game/wilds.ts';
 import { meet, heard, answer, barred, handIns, personFlags } from '../../../game/people.ts';
 import { questLog, holds } from '../../../game/quests.ts';
 import type { Person } from '../../../game/people.ts';
@@ -527,7 +530,7 @@ export const walkthrough: Walkthrough = (ok) => {
   const wasteLow = cross(21, 'cindercoast_g10', 0, 7, WEST), wasteTwo = cross(22, 'cindercoast_g10', 0, 7, WEST), wasteDue = cross(24, 'cindercoast_g10', 0, 7, WEST);
   ok(w.world.zone?.id === 'emberwaste_f10' && w.world.state.x === f10.x + 31 && w.world.state.y === f10.y + 7 && f10.x + f10.w === g10.x && F10.start.x === 31 && F10.start.y === 7,
     'over G10\'s west edge from 0,7 onto F10\'s 31,7, walked, the box\'s way in');
-  ok(WASTE.maps?.map((m) => m.map).join() === 'emberwaste_f10,emberwaste_e10,emberwaste_f11,emberwaste_e11' && wasteDue.join(' / ') === 'The Ember Waste.', `at 24, the Ember Waste named, no more (${wasteDue.join(' / ')})`);
+  ok(WASTE.maps?.map((m) => m.map).join() === 'emberwaste_f10,emberwaste_e10,emberwaste_f11,emberwaste_e11,emberwaste_f12' && wasteDue.join(' / ') === 'The Ember Waste.', `at 24, the Ember Waste named, no more (${wasteDue.join(' / ')})`);
   ok(wasteTwo.join(' / ') === `The Ember Waste. ${WASTE.crossing?.harder}`, `at 22, the rest in the Waste's own words (${wasteTwo.join(' / ')})`);
   ok(wasteLow.join(' / ') === `The Ember Waste. ${WASTE.crossing?.warning}`, `at 21, the harsher words, and the coast behind (${wasteLow.join(' / ')})`);
   const back = cross(24, 'emberwaste_f10', 31, 7, EAST);
@@ -774,6 +777,7 @@ export const walkthrough: Walkthrough = (ok) => {
   thirdPrestiges(ok);
   masterOfMagic(ok);
   theWindow(ok);
+  theBounds(ok);
 };
 
 /**
@@ -2390,4 +2394,101 @@ function theWindow(ok: (cond: boolean, msg: string) => void): void {
     && read[3] === whole.replace('sand, ', '').replace('camp, window, ', ''),
     `the journal reads the same in every order and either way west, but for the Stair's foot never reached by sea, the window only for a company that looks and the camp only for one that goes down (${read.join(' / ')})`);
   everyGoalWalked(ok, [CHAPTER]);
+}
+
+/**
+ * The bounds (#836, docs/areas/ashfall.md §12): the Waste's south-west where the lava flow ends under
+ * the rim, F12, which holds no group. West off G12's ash onto F12's east edge, walked, the Waste named;
+ * south off F11's ash onto its north edge, walked, the land not named again. The cairn under the
+ * mountain's wall, the man of stone's riddle, the sulphur, the flow's cut and its end; the flakes of
+ * black glass at the rock's foot and the knapper's store behind it, shut but through its door; the
+ * dam's rock at 20,14 left bare for the lair's door and the mountain's face at 10,3 for the enclave's.
+ * Each edge as built.
+ */
+function theBounds(ok: (cond: boolean, msg: string) => void): void {
+  const w = newWalk(ok);
+  w.level = 25;
+  for (const m of w.party.members) m.level = 25;
+  const out = buildMaps()[OUTDOORS], zone = (id: string): MapZone => out.zones.find((z) => z.id === id)!;
+  const F12 = MAP_DEFS.find((d) => d.id === 'emberwaste_f12')!;
+  const f12 = zone(F12.id), f11 = zone('emberwaste_f11'), g12 = zone('firemount_g12');
+  const ALL: Can = { swim: true, climb: true, float: true };
+  const said = (r: ReturnType<typeof w.world.move>): string => (r.kind === 'moved' ? r.messages.join(' / ') || 'nothing said' : r.kind);
+  const at = (z: MapZone, x: number, y: number): number => (z.y + y) * out.width + z.x + x;
+  /** The squares of a box reached from one of its own, inside the box: on foot, or every way with its secret door shut. */
+  const reach = (z: MapZone, from: readonly [number, number], can: Can, door?: readonly [number, number]): Set<number> => {
+    const seen = new Set<number>(), todo = [[z.x + from[0], z.y + from[1]]];
+    while (todo.length) {
+      const [x, y] = todo.pop()!, k = y * out.width + x;
+      if (seen.has(k) || (door && x === z.x + door[0] && y === z.y + door[1]) || x < z.x || x >= z.x + z.w || y < z.y || y >= z.y + z.h || out.passable(x, y, can) !== 'ok') continue;
+      seen.add(k);
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+    }
+    return seen;
+  };
+  /** A door left bare: rock or mountain, the same either side along its face, its way walked to, nothing within four squares. */
+  const bare = (d: MapDef, walked: Set<number>, z: MapZone, [x, y]: readonly [number, number], [dx, dy]: readonly [number, number]): string[] => {
+    const solid = (i: number, j: number): boolean => 'rM'.includes(d.rows[j]?.[i] ?? '.');
+    const near = [...(d.features ?? []), ...(d.encounters ?? []), ...(d.secrets ?? [])].filter((f) => Math.abs(f.x - x) + Math.abs(f.y - y) <= 4);
+    return [solid(x, y) && solid(x - dy, y - dx) && solid(x + dy, y + dx) ? '' : 'not solid in a face',
+      walked.has(at(z, x + dx, y + dy)) ? '' : 'its way not walked to', ...near.map((f) => `${f.x},${f.y} within four`)].filter(Boolean);
+  };
+  const open = (n: number, f: (i: number) => boolean): string => Array.from({ length: n }, (_, i) => f(i)).join();
+  const row = (z: MapZone, y: number, can: Can = {}): string => open(32, (i) => out.passable(z.x + i, z.y + y, can) === 'ok');
+  const col = (z: MapZone, x: number, can: Can = {}): string => open(32, (i) => out.passable(z.x + x, z.y + i, can) === 'ok');
+  ok(!(F12.encounters ?? []).length && !(F12.exits ?? []).length && F12.start.x === 20 && F12.start.y === 0 && F12.start.facing === SOUTH,
+    'F12 holds no group and nothing is taken out of it yet; it starts at its north edge on the ash, facing south');
+
+  // West off G12's ash at 0,5 onto F12's 31,5, walked: out of Fire Mountain into the Waste, named at its floor.
+  w.world.travel(g12.id, 0, 5, WEST);
+  const west = w.world.move('forward');
+  ok(west.kind === 'moved' && w.world.zone?.id === F12.id && w.world.state.x === f12.x + 31 && w.world.state.y === f12.y + 5 && f12.x + f12.w === g12.x && said(west).includes('The Ember Waste.'),
+    `west from G12's 0,5 onto F12's 31,5 over the ash, walked, the Waste named (${said(west)})`);
+  listen(w);
+  // South off F11's ash at 20,31 onto F12's 20,0, walked, in the Waste still, so the land is not named again.
+  w.world.travel(f11.id, 20, 31, SOUTH);
+  const south = w.world.move('forward');
+  ok(south.kind === 'moved' && w.world.zone?.id === F12.id && w.world.state.x === f12.x + 20 && w.world.state.y === f12.y && f11.y + f11.h === f12.y && !said(south).includes('The Ember Waste.'),
+    `south from F11's 20,31 onto F12's 20,0 over the ash, walked, and the land not named again (${said(south)})`);
+  listen(w);
+  const ash = reach(f12, [F12.start.x, F12.start.y], {});
+  ok(ash.size > 180 && [[4, 0], [7, 1], [10, 2], [16, 2], [31, 0], [31, 10], [29, 11], [22, 10], [20, 13]].every(([x, y]) => ash.has(at(f12, x, y))),
+    `F12's ash and flow (${ash.size} squares): the west end under the wall, the cairn, the mountain's face at 10,3, the man of stone, the east edge, the rock's foot and the flow's end are walked to from the way in`);
+  for (const id of ['f12_down', 'f12_sulphur', 'f12_cut', 'f12_end']) see(w, `${F12.id}:${id}`);
+  const cairn = F12.features!.find((f) => f.kind === 'cairn' && f.id === 'f12_cairn');
+  ok(cairn?.kind === 'cairn' && cairn.gold === 100 && cairn.items?.join() === 'potion_sp_great', 'under the mountain\'s wall, a cairn with 100 gold and a Sapphire Vial');
+  const caller = F12.features!.find((f): f is Extract<Feature, { kind: 'statue' }> => f.kind === 'statue' && f.id === 'f12_caller')!;
+  w.world.travel(F12.id, caller.x, caller.y);
+  ok(!answerRiddle(w.world, w.party, caller, 'mountain').right && answerRiddle(w.world, w.party, caller, 'Echo').right,
+    'the man of stone\'s riddle is answered echo, which calls back in your own voice, and not mountain');
+
+  // The secret: the flakes of black glass heaped at the rock's foot, the search there and the store behind it.
+  const store = reach(f12, [F12.start.x, F12.start.y], ALL, [29, 12]);
+  ok(store.size > 180 && !store.has(at(f12, 29, 13)) && !store.has(at(f12, 29, 14)), `the store is shut but for its door in the rock: none of F12's ${store.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${F12.id}:f12_flakes`);
+  w.world.travel(F12.id, 29, 11, SOUTH);
+  let found = false;
+  for (let i = 0; i < 20 && !found; i++) found = w.world.search();
+  const into = found ? [w.world.move('forward'), w.world.move('forward')] : [];
+  listen(w);
+  ok(found && into.every((r) => r.kind === 'moved') && w.world.used('f12_store'), 'searched where the black glass is heaped at the rock\'s foot, the rock gives, and the store behind it can be walked into');
+  const purse = F12.features!.find((f) => f.kind === 'chest' && f.id === 'f12_purse');
+  ok(purse?.kind === 'chest' && purse.gold === 100 && purse.items.join() === 'elixir' && purse.x === 29 && purse.y === 14, 'on the ledge, a purse with 100 gold and an Elixir');
+
+  // The doors (docs §12.4, §12.5) are left bare: the dam's rock where the flow stopped, 20,14, for the
+  // lair's, and the mountain's face over the ash under the west wall, 10,3, for the enclave's.
+  const lair = bare(F12, ash, f12, [20, 14], [0, -1]);
+  ok(!lair.length, `the dam's rock at F12's 20,14 is left bare for the lair's door, walked to from 20,13, nothing within four squares${lair.length ? ` (not: ${lair.join(', ')})` : ''}`);
+  const flue = bare(F12, ash, f12, [10, 3], [0, -1]);
+  ok(!flue.length, `the mountain's face at F12's 10,3 is left bare for the enclave's door, walked to from 10,2, nothing within four squares${flue.length ? ` (not: ${flue.join(', ')})` : ''}`);
+
+  // The edges: F12's north meets F11's south, open at 4 to 31, the mountain at 0 to 3; its east meets
+  // G12's west, open at 0 to 10, the mountain and the void below. West against E12, where the world ends,
+  // the mountain and the void, and south the void: shut to a walker, and the void to every company.
+  ok(row(f12, 0) === open(32, (i) => i >= 4) && row(f12, 0) === row(f11, 31) && col(f12, 31) === open(32, (i) => i <= 10) && col(f12, 31) === col(g12, 0),
+    'F12 meets F11 at 4 to 31 and G12 at 0 to 10, square for square');
+  const none = open(32, () => false);
+  const past = open(32, (i) => out.passable(f12.x - 1, f12.y + i, ALL) === 'ok');
+  ok(col(f12, 0) === none && past === none && row(f12, 31, ALL) === none,
+    'past the west edge (E12) and the south edge the world ends: the west edge shut to a walker and nothing past it open to any company, the south edge the void');
 }
