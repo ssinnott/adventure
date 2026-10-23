@@ -142,9 +142,8 @@ const OPEN_ON_NOTHING: readonly OnNothing[] = [
   { edge: 'ironfells_o3 north', open: '2-7', why: 'O2 is a crumb, left unbuilt (#828)' },
   // Cairnmoor.
   { edge: 'highmoor_o8 south', open: '0-27', why: 'O9 is Glacier Foot, the reach, shut until Phase 1.6' },
-  { edge: 'cairnfield_m8 west', open: '15-31', why: 'L8 is unbuilt: #834 builds it' },
+  { edge: 'cairnfield_l8 west', open: '31', why: 'K8 is the sea, where #828 plans no box' },
   // Rimewater.
-  { edge: 'longmere_l9 north', open: '0-6 13-21 28-31', why: 'L8 is unbuilt: #834 builds it' },
   { edge: 'coldmere_k9 north', open: '29-31', why: 'K8 is the sea, where #828 plans no box' },
   { edge: 'coldmere_j9 north', open: '0-12', why: 'J8 is unbuilt: #832 builds it' },
   { edge: 'longmere_l11 south', open: '0-16', why: 'L12 is unbuilt: #832 builds it' },

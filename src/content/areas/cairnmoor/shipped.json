@@ -50,6 +50,14 @@
     },
     "caldera": {
       "used": [
+        "l8_cairn",
+        "l8_ice",
+        "l8_mound",
+        "l8_noost",
+        "l8_noost_chest",
+        "l8_tar",
+        "l8_tide",
+        "l8_well",
         "m7_cairn",
         "m7_cist",
         "m7_cupmark",
@@ -194,6 +202,8 @@
         "p8_store_chest"
       ],
       "groups": [
+        "l8_bodies",
+        "l8_strand",
         "m7_hounds",
         "m7_ravens",
         "m8_ravens",
@@ -222,6 +232,7 @@
         "p8_hounds"
       ],
       "doors": [
+        "388,248",
         "398,249",
         "406,215",
         "431,231",
@@ -234,6 +245,10 @@
     }
   },
   "zones": {
+    "cairnfield_l8": {
+      "at": "360,222",
+      "size": "32x32"
+    },
     "cairnfield_m7": {
       "at": "392,190",
       "size": "32x32"

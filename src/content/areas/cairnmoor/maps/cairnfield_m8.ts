@@ -4,7 +4,7 @@
 // the crags in the east where the ravens sit, and a lone tor on its rise in the middle, a face worn
 // in it; south, the tarn under the Rimefells, an old man fishing it, and a howff under a boulder by it.
 // The Rimefells close the south and the corner, but for the grass and the hills onto M9's north-west
-// corner; west, the sea and L8's coast, to come (#834, docs/areas/cairnmoor.md §12.4).
+// corner; west, the sea and L8's shore, built since (#834, docs/areas/cairnmoor.md §12.4).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/cairnmoor.md §4.7 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
