@@ -24,6 +24,8 @@ export const PLACES: readonly AtlasPlace[] = [
   { id: 'sleepers_bay2', kind: 'dungeon', at: [352, 290] }, // the bay itself, at the stair's foot: the act's turn (#434, call 6)
   { id: 'ice_caves', name: 'Ice Caves', kind: 'dungeon', planned: true, band: [20, 22], at: [446, 340] }, // the reach: its band is the cap's (#434, call 7)
   { id: 'creag_fionn', kind: 'dungeon', band: [22, 23], at: [371, 359] }, // the enclave, the trolls' winter cave in the rim's face, its door at L12's 11,4 (#832, #845)
+  { id: 'spittal', kind: 'dungeon', band: [30, 32], at: [330, 370] }, // the lair, the brothers' house cut in the mountain under the pass, its door at K12's 2,15 (#832, #845, #846)
+  { id: 'spittal2', kind: 'dungeon', band: [30, 32], at: [330, 376] }, // the Infirmary, below it, where the Infirmarer keeps the Wakerobe
 ];
 
 export const SITES: readonly AtlasSite[] = [
