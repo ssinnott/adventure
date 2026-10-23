@@ -769,7 +769,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   repeats walkthrough:shelf's play). The suites are in `tools/tests/`, one file each exporting a function of its name (`lib.ts`
   is what they share), which the runner finds (maps, movement, monsters, combat, harness, party,
   traits, calendar, terrain, weather, atlas, outdoors, save, quests, then any other in name order),
-  then each area's walkthrough (the Foreland's and Thornmark's), in road order. Each area's
+  then each area's walkthrough (the Foreland's and Thornmark's), in road order. `layers` holds the
+  imports to the layers (EXPANSION §8.1, #900). Each area's
   `checks.ts`, found by its file as its walkthrough is (`tools/checks.ts`), holds the rows the suites
   keep of it that are its own and no part of the game, what it owes, its rungs of the ladder, its lead
   over the road, its seams as built and its edges open on nothing (`AreaChecks`); what describes a
@@ -964,6 +965,12 @@ over content broken on purpose too, and two tools to theirs:
   which only their own: a family's file counts the monsters of the kinds the barrel gives it, the
   barrel those of a family it adds, and a kind added to a family counts no map; the scenery counts
   every map (#915).
+- `layers` (§8.1, #900): the runtime imports of `src/` and `tools/`, read from the files in about
+  0.2 s, held to the layers: no cycle among `src`'s, nothing in `src/game` taking content, the UI or
+  the app, nothing in the UI the app, no area another's files but its `public.ts`, and the
+  walkthroughs and the suites taking `src` and `tools/kit/` alone. Today's 241 crossings are the
+  rows of its `KNOWN`, each under the issue that clears it; a new crossing fails, and so does a row
+  that no longer crosses, so the table only shrinks.
 - `scaffold` (§8.2): the Downs' draft, the Deepthorn's first and J4, the Sunder's K3, the Saltings'
   C6, Wrackholm's F6, the Kilns' O6 and M3, Glacier Foot's N10, the Whitespine's J11 and I11,
   Cindercoast's H10, the Wold's D9 and Fire Mountain's G11, their light woods, dead wood, chasm,
@@ -1002,8 +1009,9 @@ of that area); with nothing changed it says so and writes none. `--ground all` (
 `--ground ash,ice`) draws the ground's samples (`tools/grounds.ts`), each with its plan in its
 grounds' colours, and a change that draws every map draws them too, so a new ground is seen before
 a map holds it.
-`node tools/lanes.ts <base> [--labels "lane: area, lane: quality"]` lists the lanes the files changed
-since the base fall in (docs/ISSUES.md §2's table as code), each with its files, an area's by area.
+`node tools/lanes.ts <base> [--labels "lane: area, lane: quality"]` lists the lanes the files
+changed since the base fall in (docs/ISSUES.md §2's table as code, in `tools/kit/lanes.ts`, the
+kit's first file; `tools/lanes.ts` is its command line), each with its files, an area's by area.
 With `--labels`, or in the checks' `lanes` job from the pull request's event, it lists the lane
 labels beside them, a line for each lane a file falls in that the labels lack, each label no file
 falls under and one where no lane label is on yet. In the checks it writes the run's summary and

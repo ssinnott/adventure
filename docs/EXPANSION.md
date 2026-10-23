@@ -966,29 +966,65 @@ there, where repetition is the design, rather than on the map.
 A content session that needs a change to a system stops and asks for one, or opens a systems pull
 request first; it never edits shared files on the side.
 
-The lanes are read as code, not by eye (#899): `node tools/lanes.ts <base>` lists the lanes the files
-changed since `<base>` fall in, each with its files, by the table of docs/ISSUES.md §2 (which adds a
-design lane, `docs/`, to the rows above), and the checks' `lanes` job writes the same into a pull
-request's summary beside the lane labels its event carries: a line for each lane a file falls in that
-the labels lack, one for each label no file falls under and one where no lane label is on yet. It
-tells and never gates. A file no lane holds (the vendored `src/lib/`, or a kind of file the table
-lacks) is listed outside every lane.
+The imports keep layers as the files keep lanes: `src/lib` under `src/game` under `src/content`
+under `src/ui` under `src/app` (the files directly under `src/` the app's until it is made), the
+tools taking anything and `tools/kit/` only `src`, the walkthroughs and the suites `src` and
+`tools/kit/` and not each other or the tools, no area another's files but its `public.ts` and no
+cycle among `src`'s runtime imports; `tools/tests/layers.ts` holds it, today's crossings the rows of
+its `KNOWN`, which only ever go (#900).
+
+Decided by the builder for #900, each the owner's to overturn:
+
+1. **A runtime import is what Node loads:** an `import` or an `export ... from`, `import './x.ts'`
+   and `import('./x.ts')`. `import type`, `export type` and an `import()` in a type are left out, so
+   the type cycle through content stays as it was kept; `import { type A }` is not, as Node strips
+   the name and still loads the file (none is written today). A path made as it runs (`import(p)`)
+   is not followed. A lexer reads them in 0.2 s, where the compiler takes three to parse them, and
+   agrees with its parse on every file.
+2. **The layers are one order,** so content taking the UI or the app would cross too (none does).
+   `src/lib/` is vendored: never an importer, always a target. A walkthrough is a test, not
+   content: it takes any of `src`, and the area rule holds it.
+3. **The suites are what the runner runs as suites:** `tools/tests/*.ts` but `lib.ts`, which a suite
+   may take (`ok`, `fail`, `owed`) and a walkthrough, handed `ok`, may not. The runner's fixtures
+   under `tools/tests/runner/` are tools.
+4. **A row is `importer > imported`,** however often the import is written, under the first rule it
+   breaks: the walkthroughs' and the suites', the layers, the areas. A cycle is one row, `cycle: `
+   and its files sorted, a strongly connected component of `src`'s graph.
+5. **The keys are the plan's:** L2 the items (`items.ts`, `party.ts`, `skills.ts`), L3 the monsters
+   and spells, L4 the guilds and ranks, L5 the climates, stones, endings and `quests.ts` (its
+   `MAP_DEFS` goes with the atlas, the last table); L6 the pilot's; L7 `game.ts`'s and the screens'
+   imports of `src/input.ts`; A6 each pair of areas; K8 a walkthrough taking another; K7 the
+   walkthroughs' and the suites' others. L8 and L9 hold none: `src/game` takes a screen only in the
+   pilot and `game.ts`.
+6. **One cycle is left, and the plan keys none:** `items.ts` takes `skills.ts` (`skilled`, #879),
+   `skills.ts` takes `party.ts` and `party.ts` takes `items.ts`. Its row is keyed `split`, the big
+   modules split that takes `party.ts` apart. The `dens.ts` cycle is gone (#918).
+
+The lanes are read as code, not by eye (#899): `node tools/lanes.ts <base>` lists the lanes the
+files changed since `<base>` fall in, each with its files, by the table of docs/ISSUES.md §2 (which
+adds a design lane, `docs/`, to the rows above), and the checks' `lanes` job writes the same into a
+pull request's summary beside the lane labels its event carries: a line for each lane a file falls
+in that the labels lack, one for each label no file falls under and one where no lane label is on
+yet. It tells and never gates. A file no lane holds (the vendored `src/lib/`, or a kind of file the
+table lacks) is listed outside every lane. The command line is `tools/lanes.ts`; the table, the
+report and the reading of the diff are `tools/kit/lanes.ts`, the kit's first file, which
+`tools/tests/lanes.ts` holds.
 
 Decided by the builder for #899, each the owner's to overturn:
 
 1. **The table is ISSUES §2's, a line to a kind of file, the first line a file matches placing it.**
    The area lane is one label, `lane: area`, with the area named beside it in the report:
-   `src/content/areas/<area>/` (its `shipped.json` with it) and `docs/areas/<name>.md`, three of which
-   are named for a place and not their area (`hearth_isle` is Hearth's, `dead_drop` Wrackholm's and
-   `meridian_camp` Ashfall's).
+   `src/content/areas/<area>/` (its `shipped.json` with it) and `docs/areas/<name>.md`, three of
+   which are named for a place and not their area (`hearth_isle` is Hearth's, `dead_drop`
+   Wrackholm's and `meridian_camp` Ashfall's).
 2. **The save format needs no line of its own:** `SAVE_VERSION`, the upgrades and the save keys all
    stand in `src/game/`, which is systems already. The central `src/content/shipped.json`, what a
    save may refer to that no area owns, is quality's, as the issue says.
-3. **The files the table leaves out:** `README.md` and `CLAUDE.md` are design, the docs' front pages;
-   `package.json`, `package-lock.json`, `tsconfig.json`, `.gitignore` and `types/` are quality, for
-   they configure the checks; `index.html` and whatever else stands in `src/` outside the folders the
-   table names (`src/main.ts`, `src/input.ts`) are systems, the game's page, entry and input;
-   `src/lib/` is no lane, for it is vendored (DESIGN §13).
+3. **The files the table leaves out:** `README.md` and `CLAUDE.md` are design, the docs' front
+   pages; `package.json`, `package-lock.json`, `tsconfig.json`, `.gitignore` and `types/` are
+   quality, for they configure the checks; `index.html` and whatever else stands in `src/` outside
+   the folders the table names (`src/main.ts`, `src/input.ts`) are systems, the game's page, entry
+   and input; `src/lib/` is no lane, for it is vendored (DESIGN §13).
 4. **The labels are the event's, and the tool never fails.** A pull request with no lane label yet
    gets a line saying so, not a failure, and the tool exits 0 in the checks whatever it finds. The
    event is read as the run began, so labels put on after a pull request opens show from the next
@@ -997,11 +1033,17 @@ Decided by the builder for #899, each the owner's to overturn:
    them: no token and no API. A rename counts at both its ends, since a file moved from one lane to
    another is an edit in each.
 6. **The report is a job of its own,** not a step in the sheet job: it needs Node alone and comes in
-   seconds, where the sheet waits on `npm ci` and Chromium. Like the sheet it is not one of the three
-   required.
-7. **A suite of its own,** `tools/tests/lanes.ts`, found by its file, holds the table to a sample file
-   under each of its lines, to every file in the tree, to `AREAS` and to `.github/labels.json`, and
-   the report to the lines it must write.
+   seconds, where the sheet waits on `npm ci` and Chromium. Like the sheet it is not one of the
+   three required.
+7. **A suite of its own,** `tools/tests/lanes.ts`, found by its file, holds the table to a sample
+   file under each of its lines, to every file in the tree, to `AREAS` and to `.github/labels.json`,
+   and the report to the lines it must write.
+8. **The library is the kit's, the command a thin tool:** the layers check (#900) lets a suite take
+   `src` and `tools/kit/` and not a tool, so the table, `laneOf`, the report and the reading of the
+   diff and the event are `tools/kit/lanes.ts`, the kit's first file (K7 fills the folder; it
+   imports `node:` modules alone, which the check does not follow), and `tools/lanes.ts` is the
+   command line that takes it. The job and the docs still name `node tools/lanes.ts`, and no `KNOWN`
+   row is added.
 
 ### 8.2 The recipe for a zone map
 

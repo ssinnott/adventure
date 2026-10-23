@@ -1,11 +1,11 @@
-// The lanes check (tools/lanes.ts, #899): the table of docs/ISSUES.md §2 as code, held to a sample of
+// The lanes check (tools/kit/lanes.ts, #899): the table of docs/ISSUES.md §2 as code, held to a sample of
 // each of its lines, to the tree (every file in it falls in a lane, bar the vendored src/lib/), to the
 // areas of AREAS and to .github/labels.json, and its report to the lines it must write.
 import { execFileSync } from 'node:child_process';
 import { readFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { AREAS } from '../../src/content/index.ts';
-import { LANES, labelOf, laneOf, report, sections } from '../lanes.ts';
+import { LANES, labelOf, laneOf, report, sections } from '../kit/lanes.ts';
 import { ok } from './lib.ts';
 
 /** Where the table puts a file, as `lane`, `lane: area` or `none`. */
