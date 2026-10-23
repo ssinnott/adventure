@@ -3,9 +3,9 @@
 // in the south-west, a dead end under the world's end. In the north the resin-gatherers' old fire, a
 // spring that does not freeze and a cairn; along the rim's foot the bears' den-mouth trodden in the snow
 // and, at the point, two ice bears denned under it; and where the pines are scored in long cuts, behind
-// the rock, the gatherers' store. The rim's face at 11,4 is left bare for the enclave's door (docs/areas/
-// rimewater.md §12.4). In from L11 (#497) over its north edge and from K12 (#832) over its west, square
-// for square; past the east and south edges the rim stands and the world ends.
+// the rock, the gatherers' store. In the rim's face at 11,4 a cave goes down into Creag Fionn, the enclave
+// (#845, docs/areas/rimewater.md §12.4). In from L11 (#497) over its north edge and from K12 (#832) over its
+// west, square for square; past the east and south edges the rim stands and the world ends.
 // Laid whole in Loch Fada, its larger zone. Cut by hand from the atlas, the void written '%', the pines at
 // 16,0 drawn where the atlas has the rim, to meet L11's; docs/areas/rimewater.md §12.3 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
@@ -24,7 +24,7 @@ export const LONGMERE_L12: MapDef = {
     'ppppppppppppppMMMMMMMMMMMMMMMMMM',
     'ppppppppppppppMMMMMMMMMMMMMMMMMM',
     'pppppppppppppMMMMMMMMMMMMMMMMMMM',
-    'ppppppppppMMMMMMMMMMMMMMMMMMMMMM',
+    'ppppppppppM"MMMMMMMMMMMMMMMMMMMM',
     'ppppppMMMMMMMMMMMMMMMMMMMMMMMM%%',
     'ppprSrMMMMMMMMMMMMMMMMMMMMMM%%%%',
     'pMMr.rMMMMMMMMMMMMMMMMMMM%%%%%%%',
@@ -52,6 +52,10 @@ export const LONGMERE_L12: MapDef = {
     '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%',
     '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%',
     '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%',
+  ],
+  // Creag Fionn, the enclave (#845): the cave in the rim's face at 11,4, walked into from the pines at 11,3.
+  exits: [
+    { x: 11, y: 4, to: 'creag_fionn', tx: 7, ty: 1, tf: SOUTH, label: 'You stoop into a cave in the rim\'s face and down a ramp of packed snow, into dark that smells of wet fur.' },
   ],
   features: [
     // The north: the resin-gatherers' old fire, a spring under the rim's foot that does not freeze, and
