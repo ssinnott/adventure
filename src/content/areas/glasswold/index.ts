@@ -9,6 +9,8 @@ import { WOLD_B8 } from './maps/wold_b8.ts';
 import { WOLD_B9 } from './maps/wold_b9.ts';
 import { WOLD_E9 } from './maps/wold_e9.ts';
 import { WOLD_E8 } from './maps/wold_e8.ts';
+import { WOLD_D7 } from './maps/wold_d7.ts';
+import { WOLD_E7 } from './maps/wold_e7.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
@@ -23,7 +25,7 @@ export const AREA = {
   // comes up (#528), the Wold's heart west again under the rim, the Grey Lion's and Kushtash (#529), and
   // the Glass's edge south of it, the dunes and the Riders' gap (#530); then the country behind the road,
   // the hills between the steppe and the sea and the shore north of them (#534).
-  maps: [WOLD_D10, WOLD_D9, WOLD_D8, WOLD_C8, WOLD_B8, WOLD_B9, WOLD_E9, WOLD_E8],
+  maps: [WOLD_D10, WOLD_D9, WOLD_D8, WOLD_C8, WOLD_B8, WOLD_B9, WOLD_E9, WOLD_E8, WOLD_D7, WOLD_E7],
   monsters: MONSTERS,
   sprites: SPRITES,
   // The boxes' finds, the Riders' leather their trader sells at Akordu (#526) and the Compact's letter in

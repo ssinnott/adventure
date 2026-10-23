@@ -31,7 +31,7 @@ export const WOLD_C8: MapDef = {
   // The watch's yurt is white felt, as Akordu's tents are.
   palette: { wall: '#e4dac8', wallDark: '#a89c86', door: '#5a3a24', wallStyle: 'tent' },
   rows: [
-    '||||||||"||||||||||||rrrr|||ssss',
+    '||||||||"||||||||||||rrrr|||sssM',
     'sssssss::::ssssssssssr""rsssssss',
     'ssssssB::::ssssssssssrSrssssssss',
     'ssssssss:::sssssssssssssssssssss',

@@ -31,7 +31,8 @@ grass to the gap and back to Akordu's horse-lines, done on `q_road_east`; and #5
 quests (#532, §6), two given from Cinderport's halls and two at Akordu; and E9, the hills behind the
 road, and E8, the shore, the country behind (#534, §4.9); and the Master of arms (#858, §6), an old
 Rider hidden in D10's small mesa, with a rumour at Akordu's trader's tent and his favour in E9's
-store. With them the Wold is complete overland.
+store. With them the Wold is complete overland. The bounds (#833, §12) add D7, the Scarp's east end
+over the gulf, and E7, the north of the other island; the enclave and the lair come after.
 The Wold holds the quest's step (`AHEAD` and `PLANNED`, empty from then on, went with #897). Its content is
 `src/content/areas/glasswold/` (maps,
 interiors, monsters, items, climate, its part of the world map in `atlas.ts` and its walkthrough;
@@ -52,9 +53,9 @@ Glasswold two zones:
 
 | Zone | Band | Squares today | Built |
 |---|---|---|---|
-| The Wold | 26–28 | 6,240 (steppe 3,133, hills 1,151, mountain 646, dunes 540, grass 369) | D9, D10, D8, C8, B8 and B9; E9, laid at 136,254, and E8, at 136,222 (#534) |
+| The Wold | 26–28 | 6,240 (steppe 3,133, hills 1,151, mountain 646, dunes 540, grass 369) | D9, D10, D8, C8, B8 and B9; E9, laid at 136,254, and E8, at 136,222 (#534); D7, at 104,190, and E7, at 136,190 (#833) |
 | The Glass, the reach | 30–32 | 4,813 (steppe 1,306, mountain 1,028, hills 838, glass 817, dunes 626) | nothing, and not this phase's |
-| The area | 26–28 | 11,053 | D9, D10, D8, C8, B8, B9, E9 and E8 |
+| The area | 26–28 | 11,053 | D9, D10, D8, C8, B8, B9, E9, E8, D7 and E7 |
 
 Squares are the land `worldGrid` gives each zone by today's seeds, without shallows or rivers;
 9,349 of them a company could walk, and nearly half of those are steppe. That is about 10.8 zone
@@ -74,8 +75,9 @@ are not counted here.
 so a box's corner is x = 8 + 32i, y = −2 + 32j. The Wold is the B, C, D and E columns from row 8 to
 row 10, with E9 and E8 behind it on the coast; the Glass is C9 and C10 with the dunes and slivers
 round them. The land worth a map on the road is seven boxes: E10, D9, D8, D10, C8, B8 and B9 (§4).
-E9 and E8, the country behind, are built (#534, §4.9); A7, A8, A9 and B7, the rim's mountain and the
-Scarp's lip, and E7, the north of an island, are cut (§11).
+E9 and E8, the country behind, are built (#534, §4.9); A7, A8 and A9, the rim's mountain, are cut
+(§11), and B7, the Scarp's lip, is laid in Saltreach's box, its Wold ground shut as the rim's
+mountain (#923); D7 and E7, the Scarp's east end and the north of an island, are the bounds' (§12).
 
 **D9 and E10 meet at a corner only,** D9's 31,31 (135,285) and E10's 0,0 (136,286), and D10 (#527)
 lies between them and joins them overland: E10's west-edge road, at its 0,6, meets D10 at its 31,6,
@@ -845,8 +847,9 @@ settled in its issue, and what Ashfall teaches changes them.
   falls 75% at 27 (aim 30% to 70%, limit 20% to 80%) and 91% at 29 (aim 90%, limit 75%), and the
   gate leaves him out of the day (§9, #529's 5 and 6).
   The edges: east, C8's west edge square for square (x 71 against x 72), the lip's end at row 0 and
-  steppe at rows 1 to 31, all open both sides; north, row 0 against B7 (cut), mountain at 0 to 1,
-  laid void, and the Scarp's lip, cliff, at 2 to 31; west, column 0 against A8 (cut), mountain on
+  steppe at rows 1 to 31, all open both sides; north, row 0 against B7 (Saltreach's, #923),
+  mountain at 0 to 1, laid void, and the Scarp's lip, cliff, at 2 to 31; west, column 0 against A8
+  (cut), mountain on
   all rows, laid void, the rim; south, row 31 against B9 (#530, not built), void at 0, hills at 1 to
   7, steppe at 8, hills at 9 and steppe at 10 to 31, columns 1 to 31 open, which B9's builder meets
   and re-pins. All are pinned in `tools/tests/outdoors.ts`, C8's pin there no longer wanting the
@@ -1064,11 +1067,11 @@ settled in its issue, and what Ashfall teaches changes them.
     F9 being another zone, and straight back within the hour nothing. E8's
     west, 0,0 to 0,31 (136,222 to 136,253), meets D8's east (135,222 to 135,253): E8 has sand at 0,0
     and steppe below, D8 steppe all along, open both sides; walked from D8's 31,26 onto E8's 0,26.
-    E8's north (y 222) lies against E7, not built and in no issue (§9, #534's 13), and the world
-    ends past it, the other island's tip at 14 to 19 running on into E7's atlas island. E8's east (x
-    167) lies against F8, the sea, deep on both sides, void. All are pinned in
-    `tools/tests/outdoors.ts`; E10's north edge, D9's east edge and D8's east edge no longer end the
-    world.
+    E8's north (y 222) lay against E7, not built and in no issue (§9, #534's 13), the other island's
+    tip at 14 to 19 running on into E7's atlas island; E7 is built since (#833, §12). E8's east (x
+    167) lies against F8, the sea, deep on both sides, void. Each agrees with its neighbour or is
+    held by a row of `OPEN_ON_NOTHING`; E10's north edge, D9's east edge and D8's east edge no longer
+    end the world.
   - **Measured.** At 26 a company wins every fight in both, and at 24 too (past 10 the gate judges a
     company two under by its day, #851). E9 manages 11.86 fights to a rest and E8 12.00 (aim 9.5 to
     11.5, limit 8 to 14), off the aim and inside the limit, 34.3% and 29% of their days ending in a
@@ -2349,6 +2352,55 @@ Decided by the builder for #858, each the owner's to overturn:
 13. **Nothing in the numbers moves:** he pays no xp, gold or group, and §8 stands. DESIGN §9 now
     says the road holds two Masters and the reach may hold more.
 
+Decided by the builder for #833, each the owner's to overturn:
+
+1. **The bounds' brief is §12,** after §11, in §4's form, for D7, E7, the enclave and the lair, in
+   three pull requests: D7 and E7 with the brief, then the enclave (#845 is in), then the lair once
+   #847's powers and the Foal-taker's drawing are in (the owner's delegate's order on #828).
+2. **D7 is the Wold's, whole,** at 26–27 as E8 and E9 are: with the built maps laid, 200 of its 363
+   walkable squares are the Wold's and 163 the Saltings'. The Saltings' strip under the Scarp, 117
+   squares, is walked onto from C7 and D6 alone and the Scarp keeps it from the lip: no group stands
+   on it and nothing on it pays, and the crossing line names the Wold there with its warning, as
+   C2's top names the Upper Water (docs/areas/saltreach.md §12.2).
+3. **The Scarp is the atlas's cliff in D7,** as C8 draws it: the cliff is the Whitespine's novelty,
+   before the Wold on the road.
+4. **D7's corner with C7, C8 and D8 is shut, and D8's 0,0 and C8's 31,0 with it.** C7's 31,31 is its
+   ring's mountain and D8's 0,0 was steppe, so D7's 0,31 could not agree with both. The two are
+   dead-end corner squares, their neighbours joined round them, with nothing on them; shut to
+   mountain, every seam there agrees, no row is added and the C7/C8 row of `SEAMS_AS_BUILT` loses
+   square 31 (28 to 30). A company saved on either loads on the mountain and steps off, as on B6's
+   0,31 (#920). The rest of D7's west edge on top is mountain against C7's ring, as C7 closed its
+   own.
+5. **E7 is the Wold's, whole,** 66 of its 96 walkable squares against Wrackholm's 30, **and is shut
+   against E6.** No road joins Wrackholm and the Glasswold, so the seam rule lets no company cross
+   there: E6's south shore at 13 to 26, 14 squares of hills and sand, is shallows now, E7's north
+   edge deep water, and the isle's tip in E7 its last rocks. E6 is Wrackholm's map, outside the
+   area's lane; its shipped files do not change, and a company saved on that shore loads in the
+   shallows and wades off.
+6. **E7's island is a swimmer's,** as E8's islands are, joined to the islet by a bar of sand, **and
+   holds no group**: no lion has been on it (E8's Rider), and a group there would be the swimmers'
+   alone. A bar the tide covers was tried first; the tide check refuses ground it cuts off. Its seven
+   points are its sights and the hollow: no cairn, shrine or camp, the swim and the hidden find being
+   its reward (EXPANSION §5.3).
+7. **D7's groups are four vultures, three lions and two glass walkers,** sized with the harness at
+   26 and passed by the gate at 9.95 fights to a rest; a walker alone paced 24 and two vultures'
+   flocks too light, and no pride with its flock, E8's and E9's shape. The two under figure, 67% of
+   the floor's day, stands between its aim, 66.7%, and its limit.
+8. **The finds are gold, an Elixir and a Sapphire Vial,** as E8's and E9's are: the dearest healing
+   and spell points Cinderport sells; the Wold sells nothing and no gear is given.
+9. **The lair's door is left at D7's 19,24,** in the Scarp's east face over the gulf, as #846 has
+   it, **and the enclave's at 8,30,** in the hills over Akordu's box, each bare with the square
+   before it open (§12.4, §12.5).
+10. **The secrets' hints are a smell and a sound,** kinds no box of the Wold had: tar from the
+    beacon's rock (D7) and the wind in a crack (E7). Each door stands where the art check takes it.
+11. **The walkthrough walks the bounds in one function,** `theBounds`, called last.
+12. **D7's north edge meets D6's south edge letter for letter** (salt, tidal ground, shallows, the
+    sea), D6 built first (#830's B7 and D6, #923): `saltings_d6 south` and `saltings_c7 east` go
+    with the merge and Saltreach's block of `OPEN_ON_NOTHING` with them; no row comes.
+13. **The enclave's groups and its reward are named in its own pull request** (§12.4): the roster
+    stands at 26 to 28; what keeps a barrow at 28 and 29 and what it holds are settled there under
+    #845.
+
 ## 10. Names
 
 The Glasswold's naming pass, by the rules of `docs/NAMES.md`: the Wold Riders' tongue was left to
@@ -2404,7 +2456,7 @@ for #444.
   E8's north edge. No issue covers it and #534's Done when leaves void in the Glasswold only what is
   cut and the Glass, so it is cut, not built (§9, #534's 13).
   Decided by the owner's delegate, 16 October 2026 (#737): left cut, no box owed; more land is the
-  reach's.
+  reach's. Overturned by the owner, 17 October 2026: built as country with D7 (#833, §12).
 
 About 1,300 squares cut in all, E7's island with them, and 3,000 left for the reach; the cut land
 comes back as country only if the act plays short.
@@ -2450,8 +2502,8 @@ Owed, from D8 (#526):
   questions, and the eldest takes the Compact's orders (§6, §9, #526's 12 and 13).
 - **The tents draw as tents:** D8's palette takes `'tent'`, the felt look, and C8's yurt with it
   (#736; §9, #736's 5).
-- **D8's north edge ends in the void** against a box not built; its east edge meets E8's (#534,
-  §4.9) and its west edge C8's (#528, §4.6) (§4.4, §9, #526's 20).
+- **D8's north edge meets D7's** (#833, §12), its corner square 0,0 mountain since; its east edge
+  meets E8's (#534, §4.9) and its west edge C8's (#528, §4.6) (§4.4, §9, #526's 20).
 - **The figures two under the floor** are judged by the day (#851) and **the area's pay and gold**
   are owed to #447: 8,040 xp of 21,067 and 4,350 gold of 12,720 (§8).
 
@@ -2529,11 +2581,179 @@ Owed, from E9 and E8 (#534):
 - **E9's east edge meets F9,** Ashfall's, built (#522): sea at rows 0 to 4, shallows at 5 and 6, sand
   at 7, grass at 8 to 14, hills at 15 to 24 and ash at 25 to 31, square for square and pinned. F9 says
   the crossing line, "Cindercoast.", being another zone (§4.9).
-- **E8's north edge ends in the void** against E7, cut, and its east edge against F8, the sea (§4.9,
-  §9, #534's 13).
+- **E8's north edge meets E7's** (#833, §12), and its east edge ends against F8, the sea (§4.9, §9,
+  #534's 13).
 - **The world map shows E8's bars of shallows** out to the two islands, though the atlas rings the
   islands in deep sea: it is painted from the grid, which takes a built map's cells last, and every
   square of both bars reads shallow there. Decided by the owner's delegate, 16 October 2026 (#735,
   struck): nothing is owed (§9, #534's 4).
 - **The figures two under the floor** are judged by the day (#851); the area's pay and gold are met
   and nothing is owed to #447 (§8, §9, #534's 9).
+
+## 12. The bounds
+
+The land the Wold's maps lie open to, built as country off the quest, level for level (the owner, 17
+October 2026; #828, #833): the Scarp's east end over the gulf, D7, and the north of the other island
+off the shore, E7, which #737 left cut (§11); then the area's enclave and its artifact's lair,
+Akkush's (§6). Two boxes, 459 squares a company could walk by the atlas, which 76 edge squares open
+onto: C7's east edge (19), D8's north edge (32), E8's north edge (9), E6's south edge (14) and D6's
+south edge (2), built since (#923). Each box is built to the looser floor (EXPANSION §5.3) at the
+zone's band, from the area's roster, paid from its budget (§8), with nothing on the road's quest.
+This is their brief, in §4's form; each pull request builds from it and adds its "As built".
+
+| Box | Laid in | Walkable | Other land in it | Built neighbours | Band | Pull request |
+|---|---|---|---|---|---|---|
+| D7 | the Wold, `wold_d7` | 363 | the Saltings' 163 under the Scarp | C7 and D6 (the Saltings), D8 and E7 | 26–27 | the first, built (#833) |
+| E7 | the Wold, `wold_e7` | 96 | Wrackholm's 30, the isle's tip | E6 (Wrackholm), E8 and D7 | 26–27 | the first, built (#833) |
+| The enclave | its own, its door on D7 | | | D7 | 28–29 | the second |
+| The lair | its own, its door on D7 | | | D7 | 30–32 | the third |
+
+### 12.1 What every box keeps
+
+- **A box is its larger zone's, whole** (#833): D7 and E7 are the Wold's, at its band, and the
+  crossing line falls at their edges. D7's strip under the Scarp is the Saltings' land, walked onto
+  from C7 and D6 alone: the Scarp keeps it from the lip, no group stands on it and nothing on it
+  pays, as C2's top is the Downs' (docs/areas/saltreach.md §12.2). E7's tip of Wrackholm's isle is
+  shut against E6: no road joins Wrackholm and the Glasswold, so the seam rule lets no company cross
+  there, and E6's south shore is shallows against E7's deep water (§9, #833's 5).
+- **The Scarp is the atlas's cliff,** as C8 draws it: the cliff is the Whitespine's novelty, before
+  the Wold on the road.
+- **The seams agree with the built boxes square for square,** each corner worked from the built
+  letters first. D7's west edge meets C7's east edge, open at 0 to 18 and shut at 19 to 31 against
+  C7's ring; its south edge meets D8's north edge, open at 1 to 31, D8's 0,0 shut with the corner
+  (§9, #833's 4); its north edge meets D6's south edge, open at 0 and 1, salt and tidal ground,
+  then shallows and the sea. E7's south edge meets E8's north edge, open at 0 and 1 and at 13 to 19,
+  and its north edge E6's south edge, crossed by no company; its east edge, against F7, is the sea.
+  No row of `SEAMS_AS_BUILT` is added.
+- **Groups** are the roster's (§7), the fewest that pass the gate's pace, none on land a company
+  under the band walks onto from another zone, the hardest at 27 for the curve's rise rule and none
+  in the shape of E8's and E9's pride, flock and pair.
+- **Camps** stand clear of every group: rest is refused only with a group next to the party.
+- **Secrets** each of their own place, with a hint of a kind no box of the Wold has used: a smell
+  (D7) and a sound (E7). Walls of rock keep walkers, waders, climbers and floaters out.
+- **Finds** inside the 6,000 window: gold, the Elixir and the Sapphire Vial, the dearest healing and
+  spell points Cinderport sells, as E8's and E9's are; the Wold sells nothing.
+- **Pay.** A clear of the Wold gave 21,439 xp a member before the bounds (the curve asks 21,067) and
+  12,750 gold (12,720), and a company entering at 26 and three quarters clearing it left at 27.9;
+  the curve holds it to 29.0 (`LEAD`). D7 pays about 1,580 xp a member and 1,450 gold and E7 700
+  gold: with them a clear gives 23,016 xp and 14,900 gold, and the company leaves at 28.0. The
+  enclave and the lair are held to their own bands and counted in no clear (`tools/tests/curve.ts`),
+  so the lead stays at 28.0 to the end of #833.
+- **The walkthrough** walks them in one function, `theBounds` in `walkthrough.ts`, called last: each
+  box's seams walked, its groups won at 26, its secret found from its hint and its prize shut to
+  walkers, swimmers, climbers and floaters.
+
+### 12.2 D7, the Scarp's east end over the gulf (#833): country, band 26–27
+
+- **Purpose.** The Scarp's last reach, where it turns south along the gulf: on top, the lip past
+  Akordu's poles, grass no herd crops; below, the pans' end and the gulf's tidal shore. Off the road
+  and off the quest.
+- **Landmarks.** The Scarp's north face over the pans and its east face over the gulf, meeting in a
+  prow; the long grass past the poles; the hills' crown and the Riders' beacon on it; the gulf's
+  shore. Below, the pans giving out in mud and the tide's line under the hills.
+- **Points of interest,** about twelve features and three groups: the long grass, a foal's bones on
+  the shore, a cairn of sea-stones, the walkers' tracks, the Scarp's end, the lip over the pans, the
+  Riders' old watch-fire for a camp and the beacon; below, the pans' end, a salt-raker at the last
+  pan, the tide's line and the Scarp's foot.
+- **Encounters.** Four vultures over the foal's bones, the nearest; three lions lying up in the long
+  grass; two glass walkers come north to the Scarp's end, the hardest at 27.
+- **The ways in and out.** In over the south edge from D8, along all of it but the corner square;
+  onto the strip from C7's east edge, rows 0 to 18, and D6's south edge, 0 and 1. The Scarp keeps
+  the two apart; the gulf shuts the east, but for the strand's end at 31,31, which meets E7's spit
+  and E8's strand.
+- **The secret and its hint.** The beacon-keepers' store, walled up in the rock of the hills' crown.
+  The hint: the beacon's hearth long cold, and the rock behind it smelling strongly of tar.
+- **The doors left.** The lair's in the Scarp's east face and the enclave's in the hills over D8,
+  bare, the way to each clear (§12.4, §12.5).
+- **New here.** Glass walkers in the country, come north to the edge.
+- **Finds.** 350 gold and an Elixir on the cairn; 1,100 gold and a Sapphire Vial in the store.
+- **Pay.** About 1,600 xp a member and 1,450 gold.
+- **As built** (#833, 23 October): `wold_d7`, laid at 104,190, start 20,31 facing north. In from
+  Akordu's box over the south edge, the long grass past the poles (`d7_grass`, 17,29); on the shore
+  sand a foal's bones (`d7_bones`, 24,27) and four vultures over them (`d7_vultures`, 22,28), the
+  nearest at 5 steps; a cairn of white sea-stones with a feather longer than an arm in its top, 350
+  gold and an Elixir (`d7_cairn`, 27,29); three lions in the grass (`d7_lions`, 13,29); the walkers'
+  tracks (`d7_tracks`, 14,26) north to the Scarp's end (`d7_end`, 10,21) and two glass walkers kept
+  to it (`d7_walker`, 12,23), the hardest at 16 steps; the lip over the pans (`d7_lip`, 7,21); and
+  the Riders' old watch-fire, the camp, at 3,28, eight squares and more from every group. The store
+  is a ring of rock at 4 to 7 on rows 22 to 24, its door at 7,23, where the art check takes it, and
+  the hint at 8,23 (`d7_tar`); inside, the keepers' tar, thorn and horn (`d7_store`, 6,23) and their
+  chest, 1,100 gold and a Sapphire Vial (`d7_chest`, 5,23). Below, walked onto from C7 and D6: the
+  pans' end (`d7_pans`, 0,4), a salt-raker at the last pan (4,9), who has seen something stand on
+  the Scarp's end since the spring, the tide's line (`d7_tide`, 7,14) and the Scarp's foot
+  (`d7_foot`, 5,17), 117 squares with no group and nothing that pays. The west edge on top is the
+  cliff to row 21 and mountain from 22, against C7's ring, the corner 0,31 with it, and D8's 0,0 and
+  C8's 31,0 are mountain since (§9, #833's 4). The lair's door is left at 19,24 and the enclave's at
+  8,30. The gate holds at 26: 9.95 fights to a rest (aim 9.5 to 11.5), every fight won; two under,
+  at 24, 7.03, 67% of the floor's 10.5, between the aim, 66.7%, and the limit. Density: 344 of 344
+  squares within 12 steps, the furthest 8, no sign among 17 points. By the curve's count the box
+  pays about 1,580 xp a member and 1,450 gold.
+
+### 12.3 E7, the north of the other island (#833): country, band 26–27
+
+- **Purpose.** The north of the island whose south end E8's bar of shallows reaches (§4.9), and an
+  islet off it; Wrackholm's last rocks off the north edge. A swimmer's, as E8's islands are. Off the
+  road and off the quest.
+- **Landmarks.** The island's thick grass, a bar of sand out to the islet, the islet white with
+  gulls; the strand's end at the box's south-west corner, E8's and D7's sand.
+- **Points of interest,** six features and no group: the island's grass, the bar, the gulls, the
+  moaning crack, the castaway's hollow and the strand's spit.
+- **Encounters.** None: no lion has been on the island (E8's Rider), and a group on it would be the
+  swimmers' alone.
+- **The ways in and out.** In over the south edge from the island's south end in E8, columns 13 to
+  19, and onto the spit at 0 and 1 from E8's strand and D7's 31,31. The north edge is deep water
+  against E6, crossed by no company (§12.1); the east edge is the sea against F7.
+- **The secret and its hint.** A castaway's hollow in the islet's rock. The hint: the wind moaning
+  in a crack, low and long, like a breath across a jar's mouth.
+- **New here.** A hint heard and not seen, the wind moaning in the crack (§9, #833's 10).
+- **Finds.** 700 gold and an Elixir in the hollow.
+- **Pay.** No xp; 700 gold.
+- **As built** (#833, 23 October): `wold_e7`, laid at 136,190, start 16,31 facing north. On the
+  island's north, its grass (`e7_island`, 16,29) and the bar of sand out to the islet (`e7_bar`,
+  15,28), eleven squares; on the islet the gulls (`e7_gulls`, 9,20) and the crack where the wind
+  moans (`e7_moan`, 5,19). The hollow is a ring of rock at 6 to 8 on rows 18 to 21, its door at
+  6,19, where the art check takes it: a bed of grass, a knife and days cut in fives (`e7_hole`,
+  7,19), and what the castaway left, 700 gold and an Elixir (`e7_chest`, 7,20). At the corner the
+  strand's spit (`e7_spit`, 1,31), there because the density check measures each map alone.
+  Wrackholm's tip is rocks in the sea on rows 1 to 3, and E6's south shore at 13 to 26 is shallows
+  (§9, #833's 5). Density: 70 of 70 squares within 12 steps, the furthest 7, no sign among 7 points.
+  No group, so the gate has nothing to judge; by the curve's count the box pays 700 gold.
+
+### 12.4 The enclave: the barrow on the lip (#833, its second pull request)
+
+- **Purpose.** A place of its own off D7, under the hills over Akordu's box: the barrow where the
+  Riders laid their khans before the sky opened. Held to its own band (#845).
+- **Band.** 28–29, a band over D7's 26–27 (#845: a band or two).
+- **Landmarks.** A passage under the mound, the khans' chamber and the horses laid with them.
+- **Points of interest.** The passage's mouth, the khans' chamber with their horses and the door's
+  own line, which gives its band (#845).
+- **Encounters.** The roster's heaviest at the enclave's band, as the enclave's pull request sets
+  them under #845; no guardian.
+- **The ways in and out.** Its door at D7's 8,30, the hills' face, left bare with 8,29 open before
+  it; one way out, back onto D7.
+- **The secret and its hint.** The eldest khan's cell behind the chamber's end wall. The hint: the
+  horses' skulls on the chamber floor, every one turned to that wall.
+- **New here.** The enclave itself (#845).
+- **Reward.** One of its own, named with its groups in the enclave's pull request (§9, #833's 13),
+  inside the Hearth's window, 7,000 (EXPANSION §5.2, #845's 3: the last road area whose floor is at
+  or under 28).
+- **Pay.** Counted in no clear (`tools/tests/curve.ts`).
+
+### 12.5 The lair: the Foal-taker's eyrie (#833, its third pull request)
+
+- **Purpose.** Akkush's lair (§6, #846): the eyrie of the bird that takes the Riders' foals, on the
+  Scarp's east end over the gulf.
+- **Band.** The cap's, 30–32.
+- **Landmarks.** A ledge path down the east face, the nest's ledges and a cave behind them.
+- **Points of interest.** The ledge path, the nest, the bones of foals and of the Rider who loosed
+  the bow, as the eldest tells it (§6).
+- **Encounters.** The Foal-taker (birds, a new kind; boss, 32; docs/MONSTERS.md §13), the one
+  guardian, drawn in the creatures lane before the lair is built.
+- **The ways in and out.** Its door at D7's 19,24 in the Scarp's east face, left bare with 18,24
+  open before it; one way out, back onto the lip.
+- **The secret and its hint.** The bird's cache in a cleft behind the nest, where it keeps what
+  shines. The hint: a Rider's buckle wedged in the cleft's mouth.
+- **New here.** The Foal-taker and the artifact (#846, #847).
+- **Finds.** Akkush, a Rider's bow of white horn, 1d12+14, accuracy +5 while borne, found and never
+  sold (§6), where #846 puts it; the rumour is the eldest's at Akordu, built with the lair.
+- **Pay.** Counted in no clear (`tools/tests/curve.ts`).
