@@ -2457,8 +2457,7 @@ Decided by the builder for #833, each the owner's to overturn:
     floor, every one turned to the end wall, are the hint, and the eldest khan's cell behind it
     holds his chest, 300 gold and the sabre. The khans' gold among the biers is 1,400 and an Elixir.
     The cell is shut to walkers, waders, climbers and floaters but through its wall.
-18. **New here:** the first blade whose blows carry cold and the enclave itself (#845), the Wold's
-    first place past its band.
+18. **New here:** the enclave itself (#845), the Wold's first place past its band.
 19. **The door is the diggers' cut at D7's 8,30,** the square drawn as stone in the hills' face and
     walked into from the steppe at 8,29 (the hills either side walk into it too); nothing else of D7
     changes, and nothing stands within four squares of it. Karaordu's plate, where the world map
@@ -2804,8 +2803,7 @@ This is their brief, in §4's form; each pull request builds from it and adds it
   out, back onto D7.
 - **The secret and its hint.** The eldest khan's cell behind the chamber's end wall. The hint: the
   horses' skulls on the chamber floor, every one turned to that wall.
-- **New here.** The enclave itself (#845) and the first blade whose blows carry cold (§9, #833's
-  18).
+- **New here.** The enclave itself (#845), the Wold's first place past its band (§9, #833's 18).
 - **Reward.** The Khan's Sabre, in the eldest khan's cell: 2d12+5, one-handed, its blows carrying
   cold, at 6,950 gold, inside the Hearth's window, 7,000 (EXPANSION §5.2, #845's 3: the last road
   area whose floor is at or under 28; §9, #833's 16).
