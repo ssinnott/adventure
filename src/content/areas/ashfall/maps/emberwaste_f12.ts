@@ -64,7 +64,7 @@ export const EMBERWASTE_F12: MapDef = {
     { kind: 'statue', x: 16, y: 2, id: 'f12_caller', name: 'A man of stone', text: 'A man of stone with his hands cupped to his mouth, calling to the mountain. Words are cut below.', riddle: 'CALL TO THE MOUNTAIN AND I CALL BACK, IN YOUR OWN VOICE. WHAT AM I?', answer: 'echo', gift: { stat: 'intellect' }, done: 'The man of stone calls to the mountain still.' },
     // East of the flow, sulphur round the vents; the flow going down into its cut and stopped at the rim.
     { kind: 'event', x: 30, y: 1, id: 'f12_sulphur', once: true, text: 'Yellow crusts of sulphur ring the vents in the ash here, and the air catches in the throat.' },
-    { kind: 'event', x: 25, y: 8, id: 'f12_cut', once: true, text: 'The flow goes down into a cut it made in the rim, and the cut\'s walls are glazed black where it ran.' },
+    { kind: 'event', x: 25, y: 8, id: 'f12_cut', once: true, text: 'The flow goes down into a cut it made in the rim, glazed black, and every step in it has an echo.' },
     { kind: 'event', x: 22, y: 10, id: 'f12_end', once: true, text: 'Here the flow met the rim and stopped. Its front stands across the cut, a dam of black rock folded like rope.' },
     // The secret: flakes of black glass heaped at the rock's foot under the rim, and behind the rock a
     // knapper's store.

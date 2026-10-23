@@ -29,9 +29,9 @@ prestiges' quests of the three classes taught here are built on them: the Paladi
 Barbarian's nest and the Druid's seedling (#448, §6). Its chapter of the one quest, The Window, is
 written and walked (#518, §5). Its nine monsters and the armourer's step are drawn (§3), and the
 rest is to build. Its content is `src/content/areas/ashfall/` (maps, monsters, items, climate, its
-part of the world map and its walkthrough; its chapter of the one quest, The Window, in
-`chapter.ts`, and its side quests and the third prestiges' three in `quests.ts`) and its businesses'
-rooms `src/ui/interiors/ashfall/`. Its ids, the plan's: the area `ashfall`, its zones `cindercoast`,
+part of the world map and its walkthrough; its chapter of the one quest, The Window, in `chapter.ts`
+and its side quests and the third prestiges' three in `quests.ts`) and its businesses' rooms
+`src/ui/interiors/ashfall/`. Its ids, the plan's: the area `ashfall`, its zones `cindercoast`,
 `firemount` and `emberwaste`, the town `cinderport`, the dungeons `old_cinder` and `old_cinder2`
 (its undercroft, #515), `ember_stone` and `meridian_camp`.
 
@@ -132,9 +132,9 @@ off the springs; the vines' shore humid.
 Twenty-one maps: the Stair's foot (#510), Cinderport's box, which lists the area (#511), the town
 behind its gate (#512), Fire Mountain's flank (#513), the vents, the iron corridors and the camp
 (#22), Old Cinder's and the Ember Stone's box (#514), Old Cinder's two levels (#515), the Ember
-Stone (#516) and the Waste's road, F10 and E10 (#517); off the road, the Sound's shore, F9, G9 and
-H9, the Waste's west, E11, and Fire Mountain's east flank, south-east foot and south foot, H11, H12
-and G12 (#522); and the bounds' first box, the flow's end under the rim, F12 (#836):
+Stone (#516) and the Waste's road, F10 and E10 (#517); off the road, the Sound's shore (F9, G9 and
+H9), the Waste's west (E11) and Fire Mountain's east flank, south-east foot and south foot (H11, H12
+and G12, #522); and the bounds' first box, the flow's end under the rim, F12 (#836):
 
 - **The Stair's foot** (H10, `cindercoast_h10`, core, band 24; #510): the Giants' Stair's last
   flights, cut along the Sheer's foot from I10's 0,20 to a landing on the black sand, where the step
@@ -1905,7 +1905,8 @@ the road before it (§12.2).
   rest on each, 0.3% of its days ending in a fight broken off; one at 22 wins every fight too. On
   E11, H11, H12 and G12 a company at 25 wins every fight and manages 11.39 on each, inside the limit
   and off the aim by 0.14 (§4.10). The pool now, 45 groups, is won 97.6% of the fights at the maps'
-  floors and 93.8% two under.
+  floors; two under, pooled at 22, a company manages 7.61 fights to a rest, 76.1% of the floor's 10,
+  between the aim of 66.7% and the limit of 100% (#851; re-measured with F12 laid, #836).
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3); the
   Stone's chamber holds the door's squares empty until it opens, as the Sunder's floor holds the
   wall's. As built: G10 97.3% within 8 steps and the furthest 12, with no sign among its 26 points
@@ -1927,12 +1928,12 @@ the road before it (§12.2).
   furthest 15, with no sign among its 17, H12 (539 of 539) the furthest 10 and 13 points, and G12
   (377 of 377) the furthest 8 and 11 (#522); F12 100.0% within 12 steps (190 of 190) and the
   furthest 6 of 20, with no sign among its 9 points (#836).
-- **The bounds** (#836, §12). F12 holds no group, so the gate has nothing new to judge: GATEFIG It
-  pays no xp and 200 gold, so a clear gives 35,919 xp a member of the 19,467 asked and 12,160 gold
-  of the 11,760, and a company entering at 24 and three quarters clearing it leaves at 27.3554 by
-  the curve's own count, as before, under the 27.4 that `OVER_ROAD` names Ashfall at (#738). The
-  enclave and the lair are counted in no clear (`tools/tests/curve.ts`), so the lead stays there to
-  the end of #836.
+- **The bounds** (#836, §12). F12 holds no group, so the gate has nothing new to judge and the pool
+  is as it was (above). It pays no xp and 200 gold, so a clear gives 35,919 xp a member of the
+  19,467 asked and 12,160 gold of the 11,760, and a company entering at 24 and three quarters
+  clearing it leaves at 27.3554 by the curve's own count, as before, under the 27.4 that `OVER_ROAD`
+  names Ashfall at (#738). The enclave and the lair are counted in no clear, so it stays there to
+  the end of #836 (`tools/tests/curve.ts`).
 
 ## 9. Decisions
 
@@ -3530,10 +3531,11 @@ for F12, the enclave and the lair; each pull request builds from it and adds its
 - **Encounters.** None (§12.1).
 - **The ways in and out.** In over the north edge from F11's ash, columns 4 to 31, and over the east
   edge from G12's, rows 0 to 10. West and south the world ends.
-- **The secret and its hint.** A knapper's store in the rock under the rim, the best of the flow
-  glass wrapped in hide on a ledge with a purse beside it. The hint: flakes of black glass heaped at
-  the rock's foot, swept together, and nowhere else on the ash.
-- **New here.** Ashfall's first statue and riddle, the man of stone's (echo), +1 intellect once.
+- - **The secret and its hint.** A knapper's store in the rock under the rim, the best of the flow
+  glass wrapped in hide on a ledge with a purse beside it. The hint: flakes of black glass swept
+  into a heap at the rock's foot and none anywhere else on the ash.
+- **New here.** Ashfall's first statue and riddle, the man of stone's, +1 intellect once; its
+  answer, echo, is said in the cut's look.
 - **Finds.** 100 gold and a Sapphire Vial in the cairn; 100 gold and an Elixir in the store.
 - **Pay.** No xp; 200 gold.
 - **As built** (#836, 23 October): `emberwaste_f12`, laid at 168,350, start 20,0 facing south, cut
