@@ -87,5 +87,13 @@ export const ITEMS: readonly ItemDef[] = [
   // The Sharkskin Coat of the ladder's 11 a point lighter in the armour, and cut to run in: +3 speed while worn, which
   // the armour slot makes one coat at a time. In the plain chest beside the locked one.
   { ...sharkskin, id: 'runners_coat', name: "Runner's Coat", price: 1250, ac: 8, stat: { speed: 3 } },
+  // The Brokenback's strongbox (#835, the enclave, docs/areas/wrackholm.md §12.5): the Seawall Armoury's long axe, the
+  // master's own, its blows carrying cold: the plain piece where the ladder wears the Sunderwood's Great Axe from 14,
+  // the die the gain (hits 14.5 against the Great Axe's 13, and its plus's 14 from 16). Found there alone and sold
+  // nowhere, inside the enclave's window, the Sunderwood's 3,000 (EXPANSION §5.2, #845's 3).
+  { ...longAxe, id: 'keelhaul', name: 'Keelhaul, Long Axe', price: 1600, element: 'cold', text: [
+    'A long axe, its head gone dark and its haft grey with salt. The steel stays cold in the sun.',
+    'Cut in the head, a name worn nearly smooth. The sea has had most of it.',
+  ] },
   holdfast,
 ];

@@ -15,18 +15,19 @@ two levels are built under it (#188), F6, the east rocks, beside it (#189), and 
 three decks, its Rift and the stair's foot off F6's shore (#190); and in F6's rock a hollow behind a
 second secret door holds two finds off the ladder, a lightning morning star and a coat that raises
 speed, the blade in the area's first locked chest (#861, §4.6). Round the isle the bounds' three
-strands of shore, E5, F5 and F7, are built as country with no group, the doors of the enclave and
-the lair left bare on E5 and F5 (#835, §12). Its content is
-`src/content/areas/wrackholm/` (`index.ts`, its maps, monsters, items and atlas, its walkthrough;
-its chapter of the one quest, The Stone Carried Home, in `chapter.ts` and its side quests in
-`quests.ts`, #192, with the Compact's Fence's and Factor's rungs in `guilds.ts`, #635); it has no town and no
-businesses, so no rooms. Its part of the world map is
+strands of shore, E5, F5 and F7, are built as country with no group; in E5's black rocks lies the
+wreck of the Brokenback, the enclave, entered at her break, and the lair's door is left bare on F5's
+reef (#835, §12). Its content is `src/content/areas/wrackholm/` (`index.ts`, its maps, monsters,
+items and atlas, its walkthrough; its chapter of the one quest, The Stone Carried Home, in
+`chapter.ts` and its side quests in `quests.ts`, #192, with the Compact's Fence's and Factor's rungs
+in `guilds.ts`, #635); it has no town and no businesses, so no rooms. Its part of the world map is
 its folder's (`atlas.ts`, #186), which the Area now carries; the plan no longer spreads it in. Its
 ids: the area and its zone `wrackholm`, the cove `smugglers_cove` (the id stays under the new name,
 NAMES §3) and its sea cave `smugglers_cove2`, the ship's decks `tide_ship`, `tide_ship2` and
 `tide_ship3`, its Rift `tide_ship_rift`, the stair's foot `dead_drop_stair` and, below it, the drop,
 the vaults and the counting house, the Dead-Drop's three levels, `dead_drop`, `dead_drop2` and
-`dead_drop3` (docs/areas/dead_drop.md).
+`dead_drop3` (docs/areas/dead_drop.md). The bounds' (#835) are the strands `wrackholm_e5`,
+`wrackholm_f5` and `wrackholm_f7` and the enclave off E5, `brokenback`.
 
 ---
 
@@ -66,6 +67,9 @@ Its edges are the sea on every side. Its ways:
   with the way back up (#190): a warning, not a wall. The Dead-Drop past it is #22's; its three
   levels, the drop, the vaults and the counting house, are built (docs/areas/dead_drop.md §4.1 to
   §4.3).
+- **The Brokenback,** at E5's 18,28: the break in a wreck's side in the black rocks at the north
+  strand's west end, entered from the strand at 18,29. An enclave at 14–15 beside the road, counted
+  in no clear (#835, §12.5).
 
 `node tools/worldmap.ts out.png --zones` paints it.
 
@@ -121,7 +125,8 @@ are drawn in #193.
 - **The north strand's west end** (E5, `wrackholm_e5`, country, band 12–13; #835): the bounds'
   first, the moor's grass running down from E6 to a strand of sand and weed. A ship's figurehead
   with a riddle; behind the soot on a stack of rock, a hollow where a lamp with a red glass was kept
-  (§12.2). The black rocks at the west end are left bare for the enclave's door (§12.5). No group.
+  (§12.2). In the black rocks at the west end, the break in a wreck's side is the way into the
+  Brokenback (§12.5). No group.
 - **The north strand's east end** (F5, `wrackholm_f5`, country, band 13–14; #835): the strand
   running on under the east rocks' north face, a cairn of shore stones and, behind the scales on a
   stack's foot, the store where the bait was kept (§12.3). The reef at the east end is left bare for
@@ -129,6 +134,11 @@ are drawn in #193.
 - **The strand under the anchorage** (F7, `wrackholm_f7`, country, band 13–14; #835): the shingle's
   sand and the cliff path's rock running on south below F6's cliff, a spring at the cliff's foot and,
   behind the cut chain by a stack, the hollow where someone hid in irons (§12.4). No group.
+- **The Brokenback** (`brokenback`, enclave, one level of 16×16, band 14–15; #835): the wreck on
+  E5's black rocks, her back broken and her hold open to the tide, entered at her break from the
+  strand. Three overseers with a gleaner at the hold's mouth and four gleaners at the master's cabin
+  aft; under the cabin's deck, behind one plank worn bright, the master's strongbox, which holds
+  Keelhaul, a long axe whose blows carry cold (§12.5). Counted in no clear.
 - **Weather.** The gulf's: mild winters, cool summers, a narrow day, wet autumns and much fog.
   Fronts reach it three hours after they cross the Foreland.
 
@@ -146,7 +156,8 @@ full density, since a company crosses to it for the ship and nothing else:
 
 The bands rise from the landing, 12, to the forward hold, 14, as the gate asks (EXPANSION §5.2).
 The bounds come after the plan (§12, #835): the scraps of shore in E5, F5 and F7 are built as
-country at 12–13 and 13–14 and E7's is the Wold's (§11); the enclave and the lair are to come.
+country at 12–13 and 13–14 and E7's is the Wold's (§11); the enclave, the Brokenback, is built off
+E5 at 14–15 and the lair is to come.
 
 **The order** is the boat's: E6 and the cove, where the company lands; F6 and the ship. Building
 waits on Saltmouth (#176, #177) and the boat (#164), and on Saltreach being played, since no more
@@ -588,7 +599,9 @@ the Wrack Bowman, the Ashen Overseer, the Devilfish and the Great Devilfish, the
 Warden of the Tide; the hold, and over the side. Their drawings are #193's, nine issues (#231 to
 #239). Wrackholm spends none of MONSTERS §3.3's asks of its own: it spends Saltreach's. F6 places
 Sunderwood's Ashen Gleaner (MONSTERS §6.3) beside the overseers at the smugglers' watch (#189), so
-the gleaner is met here first; MONSTERS' Where column is the owner's to change.
+the gleaner is met here first, and the Brokenback places them again: three overseers with one
+gleaner at the hold's mouth and four gleaners alone aft (§12.5, #835); MONSTERS' Where column is the
+owner's to change.
 
 New in Wrackholm, for the novelty check (EXPANSION §5.4): the devilfish, a new family (E6 claims it,
 placing them first); heather underfoot (#162); an area reached by a crossing (#164); a ship as a
@@ -637,6 +650,13 @@ besides the devilfish and the heather (#190): the wreck, the Tide Ship's site.
   enclave and the lair are counted in no clear. At the gate, re-measured with the strands laid,
   Wrackholm's 25 groups are won 97.3% of their fights at their maps' floors; two under, pooled, a
   company at 10 manages 3.58 fights to a rest, 51.1% of the floor's 7.
+- **The Brokenback** (#835, §12.5) is counted in no clear and judged alone at its own floor, 14: a
+  company at 14 wins every fight and manages 7.48 fights to a rest, inside the aim (6.5 to 8.5),
+  0.7% of its days ending in a fight broken off; two under, at 12, 4.91, 65.5% of the floor's 7.5,
+  inside the aim. Density: every square within 7 steps of a point, the furthest 5, no sign among its
+  13 points. By the curve's count it pays 750 xp a member and 868 gold, a figure only, and its
+  dearest find, Keelhaul at 1,600, sits inside the Sunderwood's window, 3,000. The area's pools and
+  day are as they were without it.
 
 ## 9. Decisions
 
@@ -1042,10 +1062,11 @@ Decided by the builder for #835, each the owner's to overturn:
    door stands where the art check takes it.
 6. **The finds are gold, Elixirs and Sapphire Vials,** the dearest healing and spell points that
    Saltmouth's Quay Chandlery sells, 450 gold in all; the strands give no gear.
-7. **The enclave is a wreck on E5,** the largest strand, held at 14–15: its door is left bare at
-   18,28 in black rocks drawn at the strand's west end, 18,29 before it. Its groups are the Hand's
-   overseers and the Sunderwood's gleaners in her hold (§12.5); its reward is named in its own pull
-   request, inside the Sunderwood's window, 3,000 (#845's 3).
+7. **The enclave is a wreck on E5,** the largest strand, held at 14–15: its door was left bare at
+   18,28 in black rocks drawn at the strand's west end (18,29 before it) and is built since as the
+   break in her side (13 to 21). Its groups are the Hand's overseers and the Sunderwood's gleaners
+   in her hold (§12.5), their sizes and its reward set in 15 and 17 inside the Sunderwood's window,
+   3,000 (#845's 3).
 8. **The lair is Old Nick's sea cave on F5** (§6, DESIGN §9, MONSTERS §13): its door is left bare
    at 16,30 in a reef of rock drawn at the strand's east end, in sight of the hermit's point, 16,31
    before it.
@@ -1061,6 +1082,54 @@ Decided by the builder for #835, each the owner's to overturn:
 11. **E6's `e6_north` says what is now true,** "Open grass runs north to a strand and the sea."
     where it said "then air"; its id, place and once stay.
 12. **The walkthrough walks the bounds in one function,** `theBounds`, called last.
+13. **The enclave is the Brokenback,** the isle's crews' word for a ship that has broken her back on
+    the rocks (§10): the wreck on E5's black rocks, one level of 16 by 16 (§12.5). Her own name is
+    gone from her board, and the crews' word stands for it.
+14. **It is held at 14–15,** a band over E5's 12–13, its floor over E5's top (#845's 2). Its window
+    is the Sunderwood's 3,000, the last road area whose floor is at or under 14 (#845's 3). Its
+    floor, 14, is not over the isle's band, so the pace and novelty checks place it with Wrackholm
+    (`roadPlace`).
+15. **Its groups are three overseers with a gleaner at the hold's mouth and four gleaners at the
+    cabin's door,** at 13.5 and 15: the brief's Hand overseers (13) and Sunderwood gleaners (15),
+    the hardest the gleaners alone, which the curve's rise rule asks at 15 (`nearTop`) where the
+    isle's roster stops at 13 but for its bosses. Two of each would be F6's keepers again. Sized
+    with the harness at 14: the first alone 8.7 fights before a rest, the second 6.8 and the two in
+    a new order each seed 7.5 (4.8 at 12); three overseers with two gleaners paced 6.4 and two with
+    three 6.2, under the aim's 6.5. The gate gives 7.48 and, two under, 4.91.
+16. **Both groups stand in doorways,** the first at 7,7 behind the neck at 7,6 into the hold and the
+    second at 7,12 just inside the bulkhead's door at 7,11. Groups never move and a fight starts
+    only next to one, so a company on foot, wading or climbing comes up to them in that order and
+    passes neither: the way aft runs through the first's doorway, and the cabin and the plank lie
+    past the second. The walkthrough asserts it.
+17. **The reward is Keelhaul, Long Axe,** the master's own: the Seawall Armoury's long axe (2d6+4,
+    two-handed, for the four martial classes) with its blows carrying cold, at 1,600, in the
+    master's strongbox with 300 gold. It is the plain piece where the ladder wears the Sunderwood's
+    Great Axe from 14 (13 a blow) and its plus from 16 (14), the die of cold the gain (14.5, the die
+    counted at 3.5); off the ladder, found there alone and sold nowhere (the walkthrough asserts
+    each, and the rungs) and inside the enclave's window. The cold is the area's rule for an element
+    (#861's 4): it lands whole on all fifteen kinds the isle places past 10, the wreck's two among
+    them, and of the Sunderwood's nine only the hound is immune to it; nature and holy are nothing
+    to the Dead-Drop's five machines, and lightning, which does better, is the Corposant's already.
+    The lair's artifact is another thing.
+18. **The secret is the master's strongbox under the cabin's deck,** a hollow two squares long
+    behind the cabin's east wall, its hint one plank of the deck worn bright among the grey, by the
+    wall at 11,13: searched from there facing east, the wall at 12,13 gives; no company walked,
+    waded, climbed or floated reaches the hollow but through it. The strongbox is the secret's
+    prize, as Karaordu's sabre is the eldest khan's; the hold's cargo chest holds 250 gold and an
+    Elixir, the dearest healing the Quay Chandlery sells.
+19. **The door is the brief's square, E5's 18,28,** the one square of E5 that changes: rock drawn as
+    stone among the black rocks, with rock at 17,28 and 19,28, walked onto from the strand at 18,29,
+    where the way back sets a company down facing south onto the grass; nothing stands within four
+    squares of it. The break opens on the strand's side, and 18,27 behind it is shallows that only a
+    swimmer reaches, who steps onto the same square. With it E5 holds 74 walkable squares and 5
+    points. The plate on the world map is at 150,150, out in the sea four squares from the door each
+    way, as the Tide Ship's lie.
+20. **The walkthrough walks it in `theBounds`,** after the strands: the break's square and what is
+    round it; the door's words at 11, 12 and 14 and its sign; both groups won at 14 and met in
+    order; the cargo, the plank and the hollow shut but through its wall; Keelhaul in the strongbox
+    and nowhere else; and out onto the strand.
+21. **§12.5 is the brief brought to what is built,** with its encounters, reward and pay as they
+    stand and its As built; the §12 table's row for the enclave is built.
 
 ## 10. Names
 
@@ -1076,6 +1145,12 @@ stands on a mast and a yardarm in a storm, from the Portuguese *corpo santo*: a 
 light on every point of its head. The Runner's Coat is a Compact runner's, the hall's first rank (§6;
 DESIGN §10.2), cut to run in. Neither name says what it does: the sheet says LIGHTNING, and the stat
 says speed (§9, #861's 8).
+
+The enclave's names keep the sailors' English too. The Brokenback is what the isle's crews call a
+ship that has broken her back on the rocks, and here it stands for the wreck on E5's black rocks,
+whose board is gone. Keelhaul is the old punishment of hauling a man under a ship's keel, and the
+kind follows after the name as the cutlass's does (Slack Water, Cutlass +2). Neither name says what
+it does: the sheet says COLD.
 
 ## 11. What was cut
 
@@ -1106,10 +1181,10 @@ pull request builds from it and adds its "As built".
 
 | Box | Laid in | Walkable | Built neighbours | Band | Pull request |
 |---|---|---|---|---|---|
-| E5 | Wrackholm, `wrackholm_e5` | 73 (the atlas's 74) | E6 and F5; D5 (Saltreach's), the sea | 12–13 | the first, built (#835) |
+| E5 | Wrackholm, `wrackholm_e5` | 74 (the atlas's 74) | E6 and F5; D5 (Saltreach's), the sea | 12–13 | the first, built (#835) |
 | F5 | Wrackholm, `wrackholm_f5` | 73 (69) | F6 and E5 | 13–14 | the first, built (#835) |
 | F7 | Wrackholm, `wrackholm_f7` | 56 (57) | F6; E7 (the Wold's), the sea | 13–14 | the first, built (#835) |
-| The enclave | its own, its door on E5 | | E5 | 14–15 | the second |
+| The enclave | its own, `brokenback`, its door on E5 | 92 (89 outside its hollow) | E5 | 14–15 | the second, built (#835) |
 | The lair | its own, its door on F5 | | F5 | 30–32 | the third |
 
 ### 12.1 What every box keeps
@@ -1124,10 +1199,10 @@ pull request builds from it and adds its "As built".
   is. E5's west edge against Saltreach's D5 and F7's west edge against the Wold's E7 are the sea on
   both sides, and no road joins Wrackholm to either. Every corner agrees with the built letters:
   E5's 31,31 is grass with E6's 31,0 and F5's 0,31, and F7's 0,0 is shallows with F6's 0,31, the
-  Wold's 31,0 deep water beside it. No built square changes and no row of `SEAMS_AS_BUILT` is added.
-  Every edge the strands turn to unbuilt land (E4, F4, G5, G7 and F8) is the sea, so no row of
-  `OPEN_ON_NOTHING` comes, and the three that held E6's north and F6's north and south edges go;
-  no built map of Wrackholm now opens onto unbuilt land (#835's Done when).
+  Wold's 31,0 deep water beside it. No square of a box built before them changes and no row of
+  `SEAMS_AS_BUILT` is added. Every edge the strands turn to unbuilt land (E4, F4, G5, G7 and F8) is
+  the sea, so no row of `OPEN_ON_NOTHING` comes, and the three that held E6's north and F6's north
+  and south edges go; no built map of Wrackholm now opens onto unbuilt land (#835's Done when).
 - **No group** stands on a strand (§9, #835's 3): the curve's rise rule asks a box's hardest at its
   top, 13 on E5 and 14 on F5 and F7, and the isle's own at those levels are its devilfish, the
   Hand's overseers, the Rift's Tide Elders, its bosses and F6's keepers, each placed already. The
@@ -1146,11 +1221,12 @@ pull request builds from it and adds its "As built".
   11,426 xp and 7,729 gold, and the company still leaves at 14.3. The enclave and the lair are held
   to their own bands and counted in no clear (`tools/tests/curve.ts`), so the lead stays at 14.3 to
   the end of #835.
-- **The doors** of the enclave and the lair are left bare, each a square of rock with rock either
-  side along its face, its way walked to and nothing within four squares (§12.5, §12.6).
-- **The walkthrough** walks them in one function, `theBounds` in `walkthrough.ts`, called last:
-  each box's seams walked and its secret found from its hint, the prize shut to walkers, swimmers,
-  climbers and floaters; the two doors left bare.
+- **The doors** of the enclave and the lair are each a square of rock with rock either side along
+  its face, its way walked to and nothing within four squares (§12.5, §12.6): the lair's is left
+  bare, and the enclave's is built, the same square drawn as stone.
+- **The walkthrough** walks them in one function, `theBounds` in `walkthrough.ts`, called last: each
+  box's seams walked and its secret found from its hint, the prize shut to walkers, swimmers,
+  climbers and floaters; the lair's door left bare and the enclave walked into and out of.
 
 ### 12.2 E5, the north strand's west end (#835): country, band 12–13
 
@@ -1158,11 +1234,12 @@ pull request builds from it and adds its "As built".
   north and west and black rocks at its west end. Off the road and off the quest.
 - **Landmarks.** The strand and the tide's line; a ship's figurehead stood upright above it; a
   stack of rock at its east end; the black rocks at its west end, where the wreck lies (§12.5).
-- **Points of interest,** four features and no group: the strand, the figurehead, the soot on the
-  stack and the hollow behind it.
+- **Points of interest,** four features, the way into the wreck (§12.5) and no group: the strand,
+  the figurehead, the soot on the stack and the hollow behind it.
 - **Encounters.** None (§12.1).
 - **The ways in and out.** In over the south edge from E6's moor, columns 15 to 31, and along the
-  strand from F5 over the east edge, rows 26 to 31. North and west the sea.
+  strand from F5 over the east edge, rows 26 to 31. Out through the break at 18,28 into the
+  Brokenback (§12.5). North and west the sea.
 - **The secret and its hint.** A hollow in the stack where a lamp with a red glass was kept, and a
   sea chest. The hint: soot on the rock's face above head height, old and thick.
 - **New here.** Wrackholm's first statue and riddle, the figurehead's (anchor), +1 endurance once.
@@ -1172,10 +1249,11 @@ pull request builds from it and adds its "As built".
   strand's look (`e5_strand`, 24,30) a step in from the moor; the figurehead (`e5_figurehead`,
   25,28); the stack a ring of rock at 27 to 29 on rows 24 to 26, its door at 28,26 where the art
   check takes it and the soot before it (`e5_soot`, 28,27), the hollow (`e5_lamp`, 28,25) with the
-  sea chest (`e5_chest`). The black rocks are 17 to 19 on row 28, the enclave's door 18,28 bare
-  with 18,29 open before it. E5 differs from the atlas at 13 squares: the seam's one, the black
-  rocks' three and the stack's nine. Density: 73 of 73 squares within 12 steps, the furthest 10, no
-  sign among 4 points. No group, so the gate has nothing to judge; the box pays 150 gold.
+  sea chest (`e5_chest`). The black rocks are 17 to 19 on row 28, the break into the Brokenback at
+  18,28 drawn as stone among them, with 18,29 open before it (§9, #835's 19). E5 differs from the
+  atlas at 13 squares: the seam's one, the black rocks' three (the break among them) and the stack's
+  nine. Density: 74 of 74 squares within 12 steps, the furthest 7, no sign among 5 points, the break
+  one of them. No group, so the gate has nothing to judge; the box pays 150 gold.
 
 ### 12.3 F5, the north strand's east end (#835): country, band 13–14
 
@@ -1231,27 +1309,49 @@ pull request builds from it and adds its "As built".
   the seam's five, the sand at 17,1 and the stack's nine. Density: 56 of 56 squares within 12 steps,
   the furthest 6, no sign among 4 points. No group; the box pays 100 gold.
 
-### 12.5 The enclave: the wreck on the north strand (#835, its second pull request)
+### 12.5 The enclave: the Brokenback, the wreck on the north strand (#835): enclave, band 14–15
 
-- **Purpose.** A place of its own off E5: a ship that came onto the black rocks at the strand's
-  west end and broke her back there, her hold open to the tide. Held to its own band (#845).
+- **Purpose.** A place of its own off E5: a ship that came onto the black rocks at the strand's west
+  end and broke her back there, her hold open to the tide, where the Hand's overseers and the
+  gleaners they brought strip what she carried. Held to its own band (#845).
 - **Band.** 14–15, a band over E5's 12–13 (#845: a band or two, its floor over the box's top).
-- **Landmarks.** The hull on the rocks, her break where the sea comes in, the hold and the master's
-  cabin aft.
+- **Landmarks.** The break in her side where the sea comes in, the hold, the bulkhead's low door and
+  the master's cabin aft.
 - **Points of interest.** The way in at her break, the hold and what she carried, the cabin and the
   door's own line, which gives its band (#845).
 - **Encounters.** The Hand's ashen overseers (13) and the Sunderwood's ashen gleaners (15, MONSTERS
-  §6.3) stripping her hold, as F6's keepers keep its watch: overseers and gleaners nearer her break,
-  gleaners alone aft, the hardest; no guardian.
-- **The ways in and out.** Its door at E5's 18,28 in the black rocks, left bare with 18,29 open
-  before it; one way out, back onto the strand.
+  §6.3) stripping her hold, as F6's keepers keep its watch: three overseers with a gleaner at the
+  hold's mouth, nearer her break; four gleaners alone at the cabin's door aft, the hardest (§9,
+  #835's 15); no guardian.
+- **The ways in and out.** Its door at E5's 18,28 in the black rocks, with 18,29 open before it; one
+  way out, back onto the strand.
 - **The secret and its hint.** The master's strongbox under the cabin's deck. The hint: one plank of
   the deck worn bright among the grey.
 - **New here.** The enclave itself (#845).
-- **Reward.** One of its own, named with its groups' sizes in the enclave's pull request (§9,
-  #835's 7), inside the Sunderwood's window, 3,000 (EXPANSION §5.2, #845's 3: the last road area
-  whose floor is at or under 14).
-- **Pay.** Counted in no clear (`tools/tests/curve.ts`).
+- **Finds.** 250 gold and an Elixir in the hold's cargo chest; 300 gold with the reward in the
+  strongbox.
+- **Reward.** Keelhaul, Long Axe (§9, #835's 17), found in the master's strongbox and sold nowhere,
+  inside the Sunderwood's window, 3,000 (EXPANSION §5.2, #845's 3: the last road area whose floor is
+  at or under 14).
+- **Pay.** Counted in no clear (`tools/tests/curve.ts`): 750 xp a member and 868 gold, a figure
+  only.
+- **As built** (#835, 23 October): `brokenback`, a dungeon of one level of 16 by 16 marked an
+  enclave, band 14–15, region `wrackholm`, its plate at 150,150 in the sea off E5's door, start 7,1
+  facing south, its one way out onto E5's 18,29 facing south. The break (`wb_break`, 7,2) and the
+  tide's leavings (`wb_tide`, 6,4) beside four squares of shallows that a swimmer wades; the hold
+  across 10 squares at rows 7 to 10, with two pillars, the sight of what she carried (`wb_hold`,
+  8,8) and the cargo's chest (`wb_cargo`, 4,10); the bulkhead's forced door (`wb_bulkhead`, 7,10) at
+  7,11; the master's cabin aft at rows 12 to 14 (`wb_cabin`, 5,13; `wb_stern`, 8,14). The secret:
+  the worn plank (`wb_plank`, 11,13), the wall at 12,13 where the art check takes it and the hollow
+  under the deck (`wb_under`, 13,13) with the master's strongbox (`wb_strongbox`, 14,13). Groups:
+  `wb_strippers` at 7,7 (three ashen overseers and an ashen gleaner, 13.5) and `wb_gleaners` at 7,12
+  (four ashen gleaners, 15), each respawning at 2,880 and neither roaming (§9, #835's 15 and 16). It
+  holds 92 squares on foot (89 outside the hollow) and 96 with the shallows. A company at 14 wins
+  every fight and manages 7.48 fights to a rest, inside the aim (6.5 to 8.5), 0.7% of its days
+  ending in a fight broken off; two under, at 12, 4.91, 65.5% of the floor's 7.5, inside the aim.
+  Density: 92 of 92 squares within 7 steps, the furthest 5, no sign among 13 points. The curve's
+  rise: rank correlation 1.00, the nearest group at 6 steps (13.5) and the hardest at 11 (15.0). It
+  pays 750 xp a member and 868 gold, counted in no clear, so the isle's lead stays at 14.3.
 
 ### 12.6 The lair: Old Nick's sea cave (#835, its third pull request)
 
