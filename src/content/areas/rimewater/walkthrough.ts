@@ -72,6 +72,8 @@ import { worldGrid } from '../../../game/atlas.ts';
 import { meet, heard, answer } from '../../../game/people.ts';
 import { answerRiddle } from '../../../game/wilds.ts';
 import { questLog } from '../../../game/quests.ts';
+import { wrap } from '../../../ui/draw.ts';
+import { SAY_W, SAY_LINES } from '../../../ui/frame.ts';
 import { readMarks } from '../../../game/inscriptions.ts';
 import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
 import type { Person } from '../../../game/people.ts';
@@ -1197,7 +1199,7 @@ function theSleepers(ok: (cond: boolean, msg: string) => void): void {
  * loch named, and back; the bear-hunter at his fire and his word on the bear and the cats; the brother
  * of stone's riddle; the kill, the cats' tracks, the spur and the rim; the lynxes and the bears, the
  * box's two groups, won at its floor; the cell behind the rock where the path of flat stones stops, shut
- * but through its door; the rim's face at 2,15 left bare for the lair's door; east of the spur, from
+ * but through its door; the rim's face at 2,15 drawn as the lair's door; east of the spur, from
  * K11, the old pines and the cairn; and the box's edges as built. Then L12, the rim south of Loch Fuar:
  * east from K12's 31,1 onto its 0,1, Loch Fada named, and back, and south from L11's 8,31 onto its 8,0,
  * the land not named again; the strip of pines walked from the way in, the spring that does not freeze,
@@ -1208,6 +1210,12 @@ function theSleepers(ok: (cond: boolean, msg: string) => void): void {
  * and its sign its band; the eagles in the neck met first and the trolls before the hoard, both groups won
  * at 22; the sights; the trolls' larder found from the bare stretch of wall and shut to every company but
  * through it; Trollbrand in the hoard alone; and up the ramp onto L12's 11,3 with the way's own line alone.
+ * The Spittal (#845, #847), the lair: south from the pines at K12's 2,14 through the door, its band said at
+ * 20, 28 and 30 and its sign the cap's; the first level's looks, with no group and no find, and down the
+ * stair; the Infirmarer in the one way into the ward, nothing past it reached while it stands, won at 30;
+ * the ward's sights; the Wakerobe in the locker, one in the world; the cold room found from the stirring
+ * sheet and shut but through its wall; up and out onto 2,14, each way's line alone; and the lodge-keeper's
+ * rumour at her second meeting and not her first.
  */
 function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const w = newWalk(ok);
@@ -1248,7 +1256,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   ok(south.kind === 'moved' && w.world.zone?.id === K12.id && w.world.state.x === k12.x + 8 && w.world.state.y === k12.y && k11.y + k11.h === k12.y
     && !south.messages.some((m) => m.includes('Loch Fuar.')), `south from K11's 8,31 onto K12's 8,0, walked, and the land not named again (${said(south)})`);
   listen(w);
-  ok(K12.start.x === 8 && K12.start.y === 0 && K12.start.facing === SOUTH && !(K12.exits ?? []).length, 'the box starts at its north edge under the pines, and nothing is taken out of it');
+  ok(K12.start.x === 8 && K12.start.y === 0 && K12.start.facing === SOUTH && (K12.exits ?? []).map((e) => e.to).join() === 'spittal', 'the box starts at its north edge under the pines, and its one way out is the door into the Spittal');
   const vale = reach(k12, [K12.start.x, K12.start.y], {});
   ok(vale.size > 200 && [[0, 0], [1, 5], [2, 9], [13, 5], [16, 10], [6, 12], [10, 12], [2, 14], [0, 15]].every(([x, y]) => vale.has(at(k12, x, y))) && !vale.has(at(k12, 26, 2)),
     `the grass and the pines west of the spur (${vale.size} squares), the fire, the brother of stone, the kill, the spur, the rim, the flat stones and the way to the rim's face at 2,15 are walked to on foot from the way in, and east of the spur is not`);
@@ -1291,13 +1299,13 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const strongbox = K12.features!.find((f) => f.kind === 'chest' && f.id === 'k12_strongbox');
   ok(strongbox?.kind === 'chest' && strongbox.gold === 250 && strongbox.items.join() === 'elixir' && strongbox.x === 11 && strongbox.y === 15, 'at the cell\'s end, a strongbox with 250 gold and an Elixir');
 
-  // The lair's door (docs §12.5) is left bare: the rim's face at 2,15, Monks' Vale's land by the atlas,
-  // mountain, its way the pines of 2,14, with nothing within four squares.
+  // The lair's door (docs §12.5): the rim's face at 2,15, Monks' Vale's land by the atlas, drawn as
+  // stone, its way the pines of 2,14, with nothing within four squares.
   const bare = worldGrid(ATLAS, MAP_DEFS.filter((d) => d.id !== K12.id));
   const land = ATLAS.zones[bare.zone[(k12.y + 15) * bare.width + k12.x + 2]]?.id;
   const near = [...(K12.features ?? []), ...(K12.encounters ?? [])].filter((f) => Math.abs(f.x - 2) + Math.abs(f.y - 15) <= 4);
-  ok(K12.rows[15][2] === 'M' && vale.has(at(k12, 2, 14)) && land === 'monksvale' && !near.length,
-    `the rim's face at 2,15, Monks' Vale's land by the atlas (${land}), is left bare for the lair's door, walked to from 2,14, nothing within four squares${near.length ? ` (not ${near.map((f) => `${f.x},${f.y}`).join(' ')})` : ''}`);
+  ok(K12.rows[15][2] === '"' && vale.has(at(k12, 2, 14)) && vale.has(at(k12, 2, 15)) && land === 'monksvale' && !near.length,
+    `the rim's face at 2,15, Monks' Vale's land by the atlas (${land}), is the lair's door, drawn as stone and walked to from 2,14, nothing within four squares${near.length ? ` (not ${near.map((f) => `${f.x},${f.y}`).join(' ')})` : ''}`);
 
   // East of the spur: south from K11's 27,31 onto K12's 27,0, walked; the old pines and the cairn, which
   // the vale's side never reaches.
@@ -1456,4 +1464,99 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     && open(32, (i) => out.passable(l12.x + 31, l12.y + i) === 'ok') === open(32, () => false)
     && open(32, (i) => out.passable(l12.x + i, l12.y + 31) === 'ok') === open(32, () => false),
     'L12 meets L11 at 0 to 16 of its north edge and K12 at 0 to 7 of its west, square for square; past its east and south edges the rim stands and the world ends');
+
+  // The Spittal (#845, #847), the lair: the door in K12's rim face at 2,15, walked into from the vale's
+  // pines at 2,14. Its door says its band and how it feels, as a border's line: the warning at 20, harder
+  // at 28 and its band alone at 30; inside, its sign gives the cap's band, and so does the Infirmary's.
+  {
+    const SP = MAP_DEFS.find((d) => d.id === 'spittal')!, SP2 = MAP_DEFS.find((d) => d.id === 'spittal2')!, lairDoor = K12.exits!.find((e) => e.to === SP.id)!;
+    ok(lairDoor.x === 2 && lairDoor.y === 15 && lairDoor.tx === SP.start.x && lairDoor.ty === SP.start.y && lairDoor.tf === SP.start.facing && SP.exits![0].to === K12.id && SP.exits![0].tx === 2 && SP.exits![0].ty === 14,
+      'the door into the Spittal is the rim\'s face at K12\'s 2,15, and arrives at the lair\'s start, 7,1, facing in; its way out leads back onto 2,14');
+    const was = w.party.members.map((m) => m.level);
+    const enter = (level: number): string => {
+      for (const m of w.party.members) m.level = level;
+      w.world.travel(K12.id, 2, 14, SOUTH);
+      const r = w.world.move('forward');
+      return r.kind === 'moved' && w.world.state.mapId === SP.id && w.world.state.x === SP.start.x && w.world.state.y === SP.start.y ? r.messages.join(' | ') : r.kind;
+    };
+    const lairBand = 'The Spittal: levels 30-32.', low = enter(20), close = enter(28), at30 = enter(30);
+    ok(low === `${lairDoor.label} | ${lairBand} ${WARNING_IN}` && close === `${lairDoor.label} | ${lairBand} ${HARDER_IN}` && at30 === `${lairDoor.label} | ${lairBand}`,
+      `south from K12's pines at 2,14 into the Spittal, the way's own line and then its band, with the warning at 20, harder at 28 and nothing more at 30 (${low}; ${close}; ${at30})`);
+    ok(!!SP.enclave && !!SP2.enclave && w.world.here.name === 'The Spittal' && w.world.here.band?.join('-') === '30-32' && SP2.band?.join('-') === '30-32',
+      `inside, its sign gives the cap's band, over K12's 20-22, and so does the Infirmary's (${w.world.here.name}, ${w.world.here.band?.join('-')})`);
+    listen(w);
+    w.level = 30;
+    // The first level holds its looks and the way down, and no group, chest or secret: nothing in the
+    // lair is had without the Infirmarer's fight.
+    ok(!SP.encounters?.length && !SP.secrets?.length && !(SP.features ?? []).some((f) => f.kind === 'chest' || f.kind === 'cairn'),
+      'the Spittal\'s first level holds no group, no chest and no secret: nothing in the lair is had without the Infirmarer\'s fight');
+    for (const id of ['sp_slate', 'sp_hearth', 'sp_boots', 'sp_kirk', 'sp_cells', 'sp_stair']) see(w, `${SP.id}:${id}`);
+    // Down the stair to the Infirmary: the way's own line, and nothing more, its floor the same.
+    w.world.travel(SP.id, 7, 11, SOUTH);
+    const down = w.world.move('forward');
+    ok(down.kind === 'moved' && w.world.state.mapId === SP2.id && w.world.state.x === SP2.start.x && w.world.state.y === SP2.start.y && down.messages.join(' | ') === SP.exits![1].label,
+      `down the stair onto the Infirmary, the way's own line alone (${said(down)})`);
+    listen(w);
+    // The guardian: the Infirmarer, a boss that never comes back, in the one way into the ward. Walked,
+    // waded, climbed or floated, with it standing (its square and those a step from it shut, where its
+    // fight starts) nothing past it is reached: not the ward, the stirring sheet, the cold room or the locker.
+    const infirmarer = SP2.encounters!.find((g) => g.id === 'sp2_infirmarer')!, [sheetWall] = SP2.secrets!, ward = new GameMap(SP2);
+    const flood = (live: readonly { x: number; y: number }[]): Set<string> => {
+      const seen = new Set<string>(), todo: [number, number][] = [[SP2.start.x, SP2.start.y]];
+      while (todo.length) {
+        const [x, y] = todo.pop()!;
+        if (seen.has(`${x},${y}`) || (x === sheetWall.x && y === sheetWall.y) || live.some((g) => Math.abs(g.x - x) + Math.abs(g.y - y) <= 1) || ward.passable(x, y, ALL) !== 'ok') continue;
+        seen.add(`${x},${y}`);
+        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+      }
+      return seen;
+    };
+    const standing = flood([infirmarer]), gone = flood([]);
+    const locker = SP2.features!.find((f) => f.kind === 'chest' && f.id === 'sp2_locker')!, packs = SP2.features!.find((f) => f.kind === 'chest' && f.id === 'sp2_packs')!;
+    ok(SP2.encounters!.length === 1 && infirmarer.monsters.join() === 'infirmarer' && !!infirmarer.boss && !infirmarer.respawn && infirmarer.roams === false && !!infirmarer.slainText
+      && standing.has('5,3') && !['6,8', '9,9', `${locker.x},${locker.y}`].some((k) => standing.has(k)) && ['6,8', '9,9', `${locker.x},${locker.y}`].every((k) => gone.has(k)),
+      `the Infirmarer, the one group of the lair, stands in the one way into the ward: with it standing, none of the Infirmary's ${standing.size} squares walked, waded, climbed or floated reaches the ward, the stirring sheet or the locker; with it gone, ${gone.size} do`);
+    for (const id of ['sp2_foot', 'sp2_basins']) see(w, `${SP2.id}:${id}`);
+    fight(w, `${SP2.id}:sp2_infirmarer`);
+    for (const id of ['sp2_ward', 'sp2_shapes', 'sp2_sitter']) see(w, `${SP2.id}:${id}`);
+    // The Wakerobe in the locker beside the last bed, one in the world: no other chest, cairn or statue holds
+    // it, no shop sells it and no monster drops it.
+    const holds = (f: Feature): boolean => (f.kind === 'shop' && f.stock.includes('wakerobe')) || ((f.kind === 'chest' || f.kind === 'cairn') && f !== locker && f.items.includes('wakerobe')) || (f.kind === 'statue' && !!f.gift?.items?.includes('wakerobe'));
+    ok(locker.kind === 'chest' && locker.gold === 0 && locker.items.join() === 'wakerobe' && locker.x === 2 && locker.y === 12 && !!item('wakerobe').artifact && item('wakerobe').ward === 'asleep'
+      && !MAP_DEFS.some((d) => (d.features ?? []).some(holds)) && !Object.values(MONSTERS).some((m) => m.drops?.some((x) => x.item === 'wakerobe')),
+      'in the locker beside the last bed, the Wakerobe, whose bearer is never put to sleep; no other chest, cairn or statue holds it, no shop sells it and no monster drops it');
+    // The secret: the sheet that stirs by the east wall, the search there and the cold room behind it.
+    // Walked, waded, climbed or floated, it is never reached but through the wall.
+    const coldRoom = [[11, 8], [12, 8], [11, 9], [12, 9], [11, 10], [12, 10]];
+    ok(sheetWall.hint === 'sp2_draught' && sheetWall.x === 10 && sheetWall.y === 9 && gone.has('9,9') && !coldRoom.some(([x, y]) => gone.has(`${x},${y}`)),
+      `the cold room is shut but for its wall: none of the Infirmary's ${gone.size} squares walked, waded, climbed or floated reaches it`);
+    see(w, `${SP2.id}:sp2_draught`);
+    ok(search(SP2.id, 9, 9, EAST, 'sp2_cold'), 'searched where the sheet stirs, the wall gives, and the cold room behind it can be walked into');
+    ok(packs.kind === 'chest' && packs.gold === 500 && packs.items.join() === 'elixir,potion_sp_great' && packs.x === 12 && packs.y === 10, 'in the cold room, among the packs: 500 gold, an Elixir and a Sapphire Vial');
+    // And out: up the stair onto the Spittal's 7,11, and out of the door onto K12's 2,14, each way's line alone.
+    w.world.travel(SP2.id, SP2.start.x, SP2.start.y + 1, NORTH);
+    const upStair = w.world.move('forward');
+    ok(upStair.kind === 'moved' && w.world.state.mapId === SP.id && w.world.state.x === 7 && w.world.state.y === 11 && upStair.messages.join(' | ') === SP2.exits![0].label,
+      `up the stair onto the Spittal, the way's own line alone (${said(upStair)})`);
+    w.world.travel(SP.id, SP.start.x, SP.start.y + 1, NORTH);
+    const outDoor = w.world.move('forward');
+    ok(outDoor.kind === 'moved' && w.world.zone?.id === K12.id && w.world.state.x === k12.x + 2 && w.world.state.y === k12.y + 14 && w.world.state.facing === NORTH && outDoor.messages.join(' | ') === SP.exits![0].label,
+      `out of the door onto K12's 2,14, the way's own line alone (${said(outDoor)})`);
+    listen(w);
+    // The rumour (#846): the lodge-keeper at Rime Lodge says nothing of the grey robe at her first meeting,
+    // and at every meeting after it speaks of the one who came up in it: words only, which set nothing, in
+    // no quest, and inside the say box.
+    const keeper = MAP_DEFS.find((d) => d.id === 'rime_lodge')!.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'A lodge-keeper')!;
+    const words = keeper.says!.find((s) => s.lines.some((l) => l.includes('grey robe')))!;
+    w.world.travel('rime_lodge', keeper.x, keeper.y);
+    const firstMeeting = meet(keeper, w.party, heard(w.world, keeper)).text, nextMeeting = meet(keeper, w.party, heard(w.world, keeper)).text;
+    ok(!firstMeeting.includes('grey robe') && nextMeeting.includes('"One came up through the ice in a grey robe too long in the arm. He would not take a blanket, nor sleep, nor say where he had been."')
+      && nextMeeting.includes('"The third night he walked out into the snow. It was not his robe, I think."') && !words.sets && !words.choice
+      && wrap(nextMeeting, SAY_W).length <= SAY_LINES && !JSON.stringify(questLog(w.world.state, w.party)).includes('grey robe'),
+      `the lodge-keeper says nothing of the grey robe at her first meeting, and at the next speaks of the one who came up in it: words only, in no quest, ${wrap(nextMeeting, SAY_W).length} of the say box's ${SAY_LINES} lines`);
+    listen(w);
+    delete w.party.flags.rl_keeper_met;
+    w.party.members.forEach((m, i) => { m.level = was[i]; });
+    w.level = 20;
+  }
 }

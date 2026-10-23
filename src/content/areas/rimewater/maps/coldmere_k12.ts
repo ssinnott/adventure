@@ -4,7 +4,8 @@
 // pines two ice bears on their kill and four lynxes waiting on it; at the rim's foot a path of flat stones
 // that stops at the rock, and behind the rock the cell where Fuar's folk walled up their kirk's plate
 // when the loch rose. East of the spur, reached from K11 or L12 only, old pines and a cairn. The rim's
-// face at 2,15, on the vale's land, is left bare for the lair's door (docs/areas/rimewater.md §12.5).
+// face at 2,15, on the vale's land, is drawn as stone, the door into the Spittal, the Wakerobe's lair
+// (docs/areas/rimewater.md §12.5).
 // In from K11 (#497) over its north edge and from J12 (#508) over its west, square for square; the east
 // edge meets L12's west (#832) square for square, and past the south edge the world ends.
 // Laid whole in Loch Fuar, its larger zone, the vale's land played at the loch's band. Cut by hand from
@@ -37,7 +38,7 @@ export const COLDMERE_K12: MapDef = {
     'pppppppppppMMMMMMMMMMMMMMMMMMMMM',
     'ppppppppMrSrMMMMMMMMMMMMMMMMMMMM',
     'pppppMMMMr.rrMMMMMMMMMMMMMMMMMMM',
-    'pMMMMMMMMr..rMMMMMMMMMMMMMMMMMMM',
+    'pM"MMMMMMr..rMMMMMMMMMMMMMMMMMMM',
     'MMMMMMMMMrrrrMMMMMMMMMMMMMMM%%%%',
     'MMMMMMMMMMMMMMMMMMMMMMMMM%%%%%%%',
     'MMMMMMMMMMMMMMMMMMMMMMM%M%%%%%%%',
@@ -54,6 +55,11 @@ export const COLDMERE_K12: MapDef = {
     '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%',
     '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%',
     '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%',
+  ],
+  exits: [
+    // The door in the rim's face at 2,15, walked into from the vale's pines at 2,14: the Spittal, the
+    // Wakerobe's lair (#832, docs/areas/rimewater.md §12.5).
+    { x: 2, y: 15, to: 'spittal', tx: 7, ty: 1, tf: SOUTH, label: 'A door cut square in the rim\'s face, a bell-rope beside it worn smooth by hands. It is not barred.' },
   ],
   features: [
     // In from K11 under the pines, the vale's grass coming round from the west.

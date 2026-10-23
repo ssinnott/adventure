@@ -25,15 +25,16 @@ pass (#491, §4.7), the road's last box and the act's last ground; and, off the 
 behind it in seven boxes (#497, §4.8): J9, Loch Fuar's far shore; K11, south of the pass; L10, the
 cold loch's head; L11, the pines under the ridge's end; M10, the loch's foot; M11, the pines under
 the rim; and N9, the glacier's edge, which closes #497; and the bounds' first two (#832, §12): K12,
-Monks' Vale's east under the pass, and L12, the rim south of Loch Fuar; and their enclave, Creag
-Fionn, in L12's rim (#832, §12.4). Its chapter, The Sleepers, is written (#492, §5), and its five
-side quests (#494, §6). Its content is `src/content/areas/rimewater/` (maps, monsters, items,
-climate, its part of the world map, its walkthrough, its guild quest in `guilds.ts`, #439, its
-chapter of the one quest, The Sleepers, in `chapter.ts` and its side quests in `quests.ts`), and its
-businesses' rooms are `src/ui/interiors/rimewater/`. Its ids: the area `rimewater`, its zones
-`longmere`, `coldmere` and `glacierfoot`, the town `rime_lodge`, the bay's two levels `sleepers_bay`
-and `sleepers_bay2`, the enclave `creag_fionn` and the reach's `ice_caves`. The zones are renamed in
-§10 and keep their ids (NAMES §3).
+Monks' Vale's east under the pass, and L12, the rim south of Loch Fuar; their enclave, Creag Fionn,
+in L12's rim (#832, §12.4); and their lair, the Spittal, under the pass behind K12's door (#832,
+§12.5). Its chapter, The Sleepers, is written (#492, §5), and its five side quests (#494, §6). Its
+content is `src/content/areas/rimewater/` (maps, monsters, items, climate, its part of the world
+map, its walkthrough, its guild quest in `guilds.ts`, #439, its chapter of the one quest, The
+Sleepers, in `chapter.ts` and its side quests in `quests.ts`), and its businesses' rooms are
+`src/ui/interiors/rimewater/`. Its ids: the area `rimewater`, its zones `longmere`, `coldmere` and
+`glacierfoot`, the town `rime_lodge`, the bay's two levels `sleepers_bay` and `sleepers_bay2`, the
+enclave `creag_fionn`, the lair's two levels `spittal` and `spittal2` and the reach's `ice_caves`.
+The zones are renamed in §10 and keep their ids (NAMES §3).
 
 ---
 
@@ -156,11 +157,11 @@ The weather is the lochs': cold and still, snow lying, ice from autumn, clear ni
 
 ## 3. What is built
 
-Sixteen places: one box, the area's first, which lists the area (#486), the town behind its gate
+Seventeen places: one box, the area's first, which lists the area (#486), the town behind its gate
 (#487), a second box west along the drove road (#488), a third beyond it, on the cold loch (#489),
 the dungeon under the third (#490), a fourth south of it, the pass (#491), the seven boxes of the
-country behind the road, on both lochs (#497), the bounds' first two, K12 and L12 (#832) and the
-enclave in L12's rim (#832):
+country behind the road, on both lochs (#497), the bounds' first two, K12 and L12 (#832), the
+enclave in L12's rim (#832) and the lair under the pass behind K12's door (#832):
 
 - **Rime Lodge's box** (M9, `longmere_m9`, core, band 20–21; #486): the drove road taken down from
   Cairnmoor's N8 by the notch onto the long loch's shore, past the coach yard to the lodge's gate,
@@ -288,8 +289,8 @@ enclave in L12's rim (#832):
   bear-hunter at his fire and a brother of stone with a riddle at the vale's edge; two ice bears on
   a kill in the pines with four lynxes waiting on it; at the rim's foot a path of flat stones that
   stops at the rock, and behind the rock the cell of Fuar's kirk plate, shut to walkers, swimmers,
-  climbers and floaters. East of the spur, old pines and a cairn. The rim's face at 2,15 is left bare
-  for the lair's door (§12.5).
+  climbers and floaters. East of the spur, old pines and a cairn. In the rim's face at 2,15 a door
+  goes into the lair (§12.5).
 - **The rim south of Loch Fuar** (L12, `longmere_l12`, country, band 20–21; #832): the bounds'
   second, south from L11's pines or east from K12's old pines, a dead end under the world's end. The
   pines run on under the rim's mountain in a triangle narrowing to a point in the south-west. The
@@ -306,6 +307,14 @@ enclave in L12's rim (#832):
   passage to the cave's back, where what they have taken off the dead lies round their bed and,
   among it, Trollbrand, a Bear Spear with fire in its blows. Two groups: four spine eagles and two
   snow trolls, the Whitespine's.
+- **The Spittal, the brothers' house under the pass** (`spittal` and `spittal2`, the lair, a dungeon
+  of two levels of 16 by 16, band 30–32; #832): the bounds' fourth and last, entered from K12's
+  pines by the door in the rim's face at 2,15. Inside the door a slate of names and a warming room
+  whose hearth was never lit; along the passage the kirk with its bell taken down and the cells with
+  a robe on every peg but one; at its end a stair down to the Infirmary, where the Infirmarer stands
+  in the one way into the ward. Past it the beds made up in rows, a dead man sitting up in the last
+  and the Wakerobe in the locker beside him; behind the ward's east wall the cold room, shut to
+  walkers, swimmers, climbers and floaters. One group: the Infirmarer, its guardian.
 
 The chapter and the side quests, on the places built (#492, #494):
 
@@ -405,7 +414,7 @@ the owner's epic #438 holds this table:
 
 The bounds come after the plan (§12, #832): K12 and L12 are built as country at 20–22 and 20–21, and
 so is the Whitespine's J8 at 22–23; the enclave, Creag Fionn, is built in L12's rim at 22–23 (§12.4)
-and the lair is to come.
+and the lair, the Spittal, under the pass behind K12's door at the cap's 30–32 (§12.5).
 
 The core is the three boxes that hold a step of the quest (M9, K9 and K10), built at full density;
 L9 and the seven behind are country, built to the looser floor with the wilderness features (EXPANSION
@@ -1478,26 +1487,29 @@ docs/areas/kilns.md §9, #439's 2 and 3):
 
 The one artifact of #832's boxes, Rimewater's and the Whitespine's together, among the bounds' eight
 (DESIGN §9); docs/areas/whitespine.md §6 points here. Found and never told: no `seek` quest, no line
-in the journal and no mark on the world map. #832 builds the lair, its door and the rumour once
-#845, #847 and the guardian's drawing are in.
+in the journal and no mark on the world map. #832 has built the lair, the Spittal, its door and the
+rumour (§12.5).
 
 - **What it is:** *A grey robe made for someone taller and thinner, the sleeves past your fingers. /
   Whoever wore it last walked out of the ice in it, and did not lie down again.*
 - **The rumour:** the lodge-keeper in from the ice at Rime Lodge (9,5, §4.3), whose first words are
   of whoever comes up through the hole (*Whoever comes up, we take in. A blanket, the fire, soup.
-  Most of them cannot say from where.*), two lines more at a meeting after her first, words only:
-  *One came up through the ice in a grey robe too long in the arm. He would not take a blanket, nor
-  sleep, nor say where he had been. / The third night he walked out into the snow. It was not his
-  robe, I think.* It marks nothing on the world map.
+  Most of them cannot say from where.*), two lines more at every meeting after her first (§12.5),
+  words only: *One came up through the ice in a grey robe too long in the arm. He would not take a
+  blanket, nor sleep, nor say where he had been. / The third night he walked out into the snow. It
+  was not his robe, I think.* It marks nothing on the world map.
 - **Slot and bearers:** armour, a robe: the cleric, the sorcerer, the druid and the monk. A robe of
   armour 14 is not robe-like (`robeLike`, `src/game/party.ts`), so a monk who wears it gives up
   Unarmoured Defence for the ward.
 - **Numbers:** armour 14, the Grey Robe's 13 and a point (EXPANSION §5.2). Found and never sold.
 - **Power:** a ward (DESIGN §9, kind 5): its bearer is never put to sleep.
-- **The lair:** two levels cut in the mountain under the pass, the door in K12 on the part of the
-  box that is Monks' Vale's, at the cap's band, 30–32 (#845).
+- **The lair:** the Spittal, two levels cut in the mountain under the pass, its door at K12's 2,15
+  on the part of the box that is Monks' Vale's, at the cap's band, 30–32 (#845); the Wakerobe lies
+  in the locker beside the last bed of its lower level, the Infirmary (§12.5).
 - **The guardian:** the Infirmarer (keepers, a new kind; boss, 32; docs/MONSTERS.md §13): *No robe,
-  too many fingers and a bed made up for you.* Its touch puts to sleep, and it mends itself.
+  too many fingers and a bed made up for you.* Its touch puts to sleep, and it mends itself. It
+  stands in the one way into the Infirmary's ward, its numbers set at the lair's gate (§9, #832's
+  34).
 
 ## 7. Encounters, and what is new
 
@@ -1527,7 +1539,9 @@ box's hardest at 21; K11's one is a pair of ice bears in the cleft under the cra
 Fada (#497) have two each: two ice pike under the ice and two ice bears in L10 and M10, three snow
 lynx and two ice bears in L11, M11 and N9, the bears the hardest at 21 in each (§4.8). Creag Fionn's
 two (#832), the enclave's, are the Whitespine's: four spine eagles in the neck at 22 and two snow
-trolls in the passage to the cave's back at 23, the trolls the hardest (§12.4).
+trolls in the passage to the cave's back at 23, the trolls the hardest (§12.4). The Spittal's one
+(#832), the lair's, is the Infirmarer, its guardian, a boss at 32 in the one way into the
+Infirmary's ward (§12.5).
 
 Taken, against the roster's Where column, and built on L9's ridge, K9's far shore, the bay's stair
 and K10's pass (#488, #489, #490, #491): the Ice Bear on the lochs' shores, the ridge and the pass
@@ -1558,8 +1572,8 @@ its exit was listed (#489's 15). The bay (#490) claims the keepers, the family i
 sleeping touch is on the road before it (the check refused `inflict:asleep`), and a lock or a
 dungeon entered from the ice is no kind the check knows, so neither is claimed (#490's 19). K10
 (#491) claims nothing: a landmark claim is an atlas site's icon, and the pass is no site (#491's
-14). J9 and K11 (#497) and the five after them claim nothing, nor do K12, L12 and Creag Fionn
-(#832).
+14). J9 and K11 (#497) and the five after them claim nothing, nor do K12, L12, Creag Fionn and the
+Spittal (#832).
 
 ## 8. The numbers
 
@@ -1619,7 +1633,8 @@ dungeon entered from the ice is no kind the check knows, so neither is claimed (
   29,865 and the company leaves at 22.91 (22.84 before), under the line of 23; L12 (#832), which
   pays 556 (two bears at 3,334, over six), takes the clear to 30,421 and the company to 22.9571,
   0.04 under the line (§12.1). Creag Fionn (#832), the enclave, pays 1,191 a member and 700 gold in
-  no clear, so the lead stays at 22.9571 (§12.4).
+  no clear, and the Spittal (#832), the lair, the Infirmarer's 3,396 a member and 500 gold in none,
+  so the lead stays at 22.9571 (§12.4, §12.5).
 - **Gold.** Training six members from 20 to 22 costs about 9,840 with today's `trainPrice`, and tier
   7 its fee at the hall (#20; the Watch's is 400). A clear should pay for the training at least, in
   chests, drops and the hall's pay; the furrier's step is priced within the band's window on the
@@ -1648,7 +1663,9 @@ dungeon entered from the ice is no kind the check knows, so neither is claimed (
   that sells (§9, #497's 21): the clear holds 10,720 of the 9,840 (11,090 with K12's 370 and 11,390
   with L12's 300, #832), 880 over, and the curve's owed row is gone. Creag Fionn's 700 gold and
   Trollbrand at 2,100 are counted in no clear and stand inside the Whitespine's window, 5,000 (#832,
-  §12.4).
+  §12.4). The Spittal's 500 gold, its Elixir and Sapphire Vial and the Wakerobe are counted in no
+  clear, and no window holds them: the draughts are spent, and the robe is an artifact, past the
+  ladder's top (#832, #847, §12.5).
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
   (docs/areas/thornmark.md §9, 17): a company at 20 wins nine in ten of M9's fights and walks the
   drove road to the lodge resting at the inn; one at 18 wins no more than one in four, which is how
@@ -1687,8 +1704,10 @@ dungeon entered from the ice is no kind the check knows, so neither is claimed (
   manages 8.09, inside the aim, 3.3% of its days ending in a fight broken off; two under, at 18,
   3.36, 37.3% of the floor's 9. Creag Fionn (#832), judged alone at its own floor, 22: every fight
   won, 9.76 fights to a rest, inside the aim of 8.5 to 10.5, 24% of its days ending in a fight
-  broken off; two under, at 20, 4.96, 52.2% of the floor's 9.5; it stands out of both pools, which
-  are as they were. The side quests (#494) place no group, and the gate is as it was.
+  broken off; two under, at 20, 4.96, 52.2% of the floor's 9.5. The Spittal (#832), the lair, judged
+  alone at its own floor, 30, on its boss's odds: the Infirmarer won 60% at 30, inside the aim of
+  30% to 70%, and 80% at 32, between the aim of 90% and the limit of 75%. Both stand out of both
+  pools, which are as they were. The side quests (#494) place no group, and the gate is as it was.
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3); the
   bay as a dungeon, 90% within 7 and none past 10. As built: M9 98.0% within 8 steps and the
   furthest 13, with no sign among its 31 points (#486), 32 since #487; Rime Lodge, a town, 100%
@@ -1707,10 +1726,12 @@ dungeon entered from the ice is no kind the check knows, so neither is claimed (
   13 (#497). With the chapter and the side quests (#492, #494), as the check prints it now: M9 the
   same, with one sign, the old marks at the ice's edge, among its 34 points; Rime Lodge the same,
   with no sign among its 27; K9 the same, with one sign, the bell's lip, among its 30; K10 the same,
-  with no sign among its 28. K12 (#832) 100.0% (293 of 293) and the furthest 8, with no sign among
-  its 15 points; L12 (#832) 100.0% (82 of 82, 81 of 81 before its door's square opened) and the
-  furthest 7, with no sign among its 10 points; Creag Fionn (#832), a dungeon, 100.0% within 7 steps
-  (75 of 75) and the furthest 3, with no sign among its 13 points.
+  with no sign among its 28. K12 (#832) 100.0% (294 of 294, 293 of 293 before its door's square
+  opened) and the furthest 7, with no sign among its 16 points; L12 (#832) 100.0% (82 of 82, 81 of
+  81 before its door's square opened) and the furthest 7, with no sign among its 10 points; Creag
+  Fionn (#832), a dungeon, 100.0% within 7 steps (75 of 75) and the furthest 3, with no sign among
+  its 13 points; the Spittal (#832), a dungeon of two levels, 100.0% within 7 steps on each (55 of
+  55 and 69 of 69) and the furthest 3 and 4, with no sign among their 8 and 11 points.
 
 ## 9. Decisions
 
@@ -2450,7 +2471,7 @@ Decided by the builder for #832, each the owner's to overturn:
    cell,** the dearest of their kinds that Rime Lodge's Provisioner's sells; no gear.
 7. **The lair's door is K12's 2,15,** the rim's face on Monks' Vale's land by the atlas (§6, DESIGN
    §9), **and the enclave's L12's 11,4,** the rim's face at the land's other end; both were left
-   bare (§12.5 and §12.4), the enclave's drawn since (#832's 28).
+   bare (§12.5 and §12.4) and both are drawn since (#832's 28 and 32).
 8. **The enclave is held at 22–23,** a band over L12's 20–21: the Whitespine's spine eagles at its
    mouth and snow trolls inside are the only beasts of the two areas at that band (its brothers and
    bell-ringers are Highcell's keepers, its masons and giants people). Its reward is named in its
@@ -2541,6 +2562,51 @@ Decided by the builder for #832, each the owner's to overturn:
     mountain, as Karaordu's stands 5 south of its door, the Cairns' 6 and the Deep Mines' 8.
 30. **§12.4 is the enclave's brief in §4's form with its As built,** the lair's note is §12.5, and
     the lines that pointed at the lair as §12.4 point at §12.5 (decision 13 is met for the enclave).
+31. **The lair is the Spittal,** the brothers' plain word for a house kept on a pass for whoever
+    comes in off it, as Monks' Vale is theirs (§10): two levels of 16 by 16, as §6 and §12.5 had it,
+    the Spittal and below it the Infirmary, joined by a stair as the bay's levels are, both marked
+    `enclave` at 30–32.
+32. **The door is K12's 2,15, as §12.5 left it,** the rim's mountain drawn as stone and walked into
+    from the vale's pines at 2,14, with an `exits` line into the Spittal: the one square of K12 that
+    changes. K12 walks 290 squares as built (289 before), and its density counts 294 squares and 16
+    points (293 and 15), the furthest 7 (8); nothing stands within four squares of the door by the
+    walkthrough's measure (the brother of stone at 2,9 is six away).
+33. **The guardian's group is the Infirmarer alone,** as #846 gives it, at 7,6 in the neck that is
+    the one way from the stair's foot into the ward, so no company steps round it to the ward, the
+    hint, the cold room or the locker (the walkthrough's flood, its square and those a step from it
+    shut). It is a boss (`boss`), with no `respawn` and a `slainText`.
+34. **The Infirmarer's numbers are set at the gate's company** (MONSTERS §4.1, §4.2 and §13): 2,400
+    hit points, attack 22 and 24d8+26 a blow, where it was drawn at the line's boss at 32, 2,100, 20
+    and 34d8+41, which the gate's company won 41% at 30 and 64% at 32. As set, it is won 60% at 30,
+    inside the aim, and 80% at 32, between the aim (90%) and the limit (75%), as the Steiger (56%
+    and 81%) and the fixture's guardian (57% and 80%) are; its sleeping touch and its mending stay
+    as drawn. Its row gives why it stands off the line (`offLine`), as the Steiger's does.
+35. **Nothing in the lair is had without the Infirmarer's fight:** the Spittal holds its looks and
+    the way down and no group, chest or secret. The secret is on the Infirmary past the Infirmarer:
+    the cold room behind the ward's east wall, two by three with its door at 10,9, where the ones
+    who did not wake were laid out; the hint is the sheet that stirs on the bed by that wall. It
+    holds 500 gold, an Elixir and a Sapphire Vial, the dearest healing and spell draught that Rime
+    Lodge's Provisioner's sells.
+36. **The Wakerobe lies alone in the locker beside the last bed,** where a man sits up against the
+    bolster, long dead, his eyes open: the one who came up through the ice in it and would not lie
+    down (DESIGN §9). The walkthrough asserts that no shop, chest, cairn or statue holds it
+    elsewhere and no monster drops it.
+37. **The rumour is the lodge-keeper's,** DESIGN §9's two lines more at every meeting after her
+    first, as §6 has it: her first meeting sets `rl_keeper_met`, as the F11 hermit's sets his
+    (#859), and her words after it set nothing: no flag, quest or mark (#846). It is the one change
+    to Rime Lodge. Its first line, DESIGN §9's verbatim, would take three lines of the log; it is
+    said in the say box, nine of its fourteen lines.
+38. **Its plates on the world map are at 330,370 and 330,376,** five squares south of the door in
+    the rim's mountain, as Creag Fionn's stands five south of its door, and the Infirmary's six
+    south of the Spittal's, as the bay's two are.
+39. **The lair's two owed rows go:** `infirmarer` from `owes.unplaced` in the area's `checks.ts`,
+    which leaves Rimewater owing nothing, and `wakerobe` from `UNPLACED` in `tools/tests/items.ts`,
+    as EXPANSION §8.2 (#897's 12) and #847's 6 say the lairs' pull requests do; each check holds
+    now, so an owed line left in would fail.
+40. **§12.5 is the lair's brief in §4's form with its As built.** It is #832's last piece: every
+    box, the enclave and the lair are built and judged, and no built map of Rimewater or the
+    Whitespine is open onto unbuilt land but M10's and M11's east edges onto the reach, Glacier Foot
+    (N10 and N11); the area's other open row, K9's north, faces the sea (K8).
 
 Rimewater's naming pass, by the rules of `docs/NAMES.md`, chosen for #435. The lodge-keepers are
 hill folk who share a tongue with Cairnmoor's, modelled on Scots Gaelic, the speech of lochs and
@@ -2557,6 +2623,8 @@ coat of mail. It goes into NAMES §2's row for the hill folk, Cairnmoor's and Ri
   | Longmere | Loch Fada | the long loch: the zone, named for its water | Loch Mor, the great loch |
   | Coldmere | Loch Fuar | the cold loch: the zone, and the loch the bay lies under | Loch Dubh, the black loch, for its ice |
   | the trolls' winter cave, the enclave (#832) | Creag Fionn | the white crag: the cave in the rim's face where the snow trolls winter | Creag Fuar, the cold crag |
+  | the Wakerobe's lair, the brothers' house under the pass (#832) | the Spittal | the brothers' plain word, as Monks' Vale is theirs, for a house kept on a pass for whoever comes in off it | the Hospice, the Pass House |
+  | the lair's lower level (#832) | the Infirmary | the brothers' ward of beds, which the Infirmarer keeps made up | the Long Ward |
 
 - **Kept:** Rimewater and Rime Lodge, the Lanterns' English for the area and the lodge they keep,
   which the story leans on (DESIGN §7, §9); Glacier Foot and the Ice Caves, the reach's, to be named
@@ -2749,17 +2817,17 @@ could walk with the built maps laid (K12 289, L12 77 and J8 83), which 89 edge s
 L11, I8 and J9 opened onto (K11's south edge 23, J12's east 16, L11's south 17, I8's east 20 and
 J9's north 13; the issue counts 81). Each box is built to the looser floor (EXPANSION §5.3) at its
 zone's band, from the rosters, with nothing on the road's quest. Then the enclave, Creag Fionn,
-built (§12.4); then the Wakerobe's lair (§12.5). This is their brief, in §4's form; each box's pull
-request builds from it and adds its "As built". J8 is the Whitespine's, and its brief is
-docs/areas/whitespine.md §12.
+built (§12.4); then the Wakerobe's lair, the Spittal, built (§12.5). This is their brief, in §4's
+form; each box's pull request builds from it and adds its "As built". J8 is the Whitespine's, and
+its brief is docs/areas/whitespine.md §12.
 
 | Box | Laid in | Walkable | Other land in it | Built neighbours | Band | Pull request |
 |---|---|---|---|---|---|---|
-| K12 | Loch Fuar, `coldmere_k12` | 289 (289 as built) | Monks' Vale's 101 | K11, J12 (the Whitespine's) | 20–22 | the first, built (#832) |
+| K12 | Loch Fuar, `coldmere_k12` | 289 (290 as built, the lair's door one of them) | Monks' Vale's 101 | K11, J12 (the Whitespine's) | 20–22 | the first, built (#832) |
 | L12 | Loch Fada, `longmere_l12` | 77 (79 as built) | Loch Fuar's 21 | L11, K12 | 20–21 | the second, built (#832) |
 | J8 | Sheer Point, `sheerpoint_j8` (the Whitespine's) | 83 (89 as built) | Loch Fuar's 28 | I8, J9 | 22–23 | the second, built (#832) |
 | Creag Fionn, the enclave | its own, `creag_fionn`, its door on L12 | 75 (70 outside its larder) | | L12 | 22–23 | the third, built (#832) |
-| The lair | its own, entered from K12 | | | | 30–32 | after the Infirmarer is drawn (#847) |
+| The Spittal, the lair | its own, `spittal` and `spittal2`, its door on K12 | 124 (55 and 69, 117 outside its cold room) | | K12 | 30–32 | the fourth, built (#832) |
 
 The world's end eats into K12 and L12, so they are cut by hand, the atlas's rows with the void
 written `%`, as Cairnmoor's P7 and P8 were (docs/areas/cairnmoor.md §12).
@@ -2800,11 +2868,13 @@ written `%`, as Cairnmoor's P7 and P8 were (docs/areas/cairnmoor.md §12).
   into the Whitespine's clear, whose company leaves at 24.4140 against its line of 25
   (docs/areas/whitespine.md §12.1). A box that pays more than its brief says why. The enclave, Creag
   Fionn, pays 1,191 a member and 700 gold, judged at its own band (#845) and counted in no clear
-  (§12.4); the lair's guardian is judged at the cap's.
+  (§12.4); the lair, the Spittal, pays the Infirmarer's 3,396 a member and 500 gold, judged at the
+  cap's band and counted in no clear (§12.5).
 - **The walkthrough** walks them in one function, `theBounds` in `walkthrough.ts` (J8's in the
   Whitespine's), called last: each box's seams walked, its groups won at its floor, its doors bare
   or drawn and its secret found from its hint, the prize shut to walkers, swimmers, climbers and
-  levitators; and the enclave walked, door to hoard and out (§12.4).
+  levitators; the enclave walked, door to hoard and out (§12.4); and the lair walked, door to locker
+  and out, its guardian won at the cap's floor (§12.5).
 - **The seams meet the seam rule** (#910, EXPANSION §5.1): a box agrees with each built neighbour
   square for square on passable ground, water and road, and adds no row to `SEAMS_AS_BUILT`; its
   open squares onto unbuilt land are an `OPEN_ON_NOTHING` row each, and the rows it now answers go.
@@ -2852,25 +2922,26 @@ written `%`, as Cairnmoor's P7 and P8 were (docs/areas/cairnmoor.md §12).
 - **As built** (#832, 23 October): `coldmere_k12`, laid at 328,350, cut by hand from the atlas, the
   void past the rim written `%` and the atlas's peaks drawn as mountain (§9, #497's 5; #832's 4).
   South from K11's 8,31, the same loch, so nothing is said of it: the start is 8,0 facing south. All
-  289 of the atlas's walkable squares stand. Walked east from J12's grass at row 5 the crossing says
-  "Loch Fuar." at 20 and no more, and straight back nothing. In the west the hunter's fire at 1,5, a
-  camp, with the bear-hunter at 2,5, whom the furrier at the lodge pays for a white skin and who has
-  the one spear against two bears and four cats; the brother of stone at 2,9 (answered bell, +1
-  personality to every member). In the pines four snow lynxes at 9,4, the kill seen from 13,5 and
-  two ice bears on it at 14,7, the cats' tracks at 11,9, the spur at 16,10 and the rim at 6,12. At
-  10,12 the path of flat stones stops at the rock, and searched there facing south the rock gives
-  at 10,13 on the cell, two squares in to 10,15 and a step east to a strongbox at 11,15 (250 gold
-  and an Elixir), which no walker, swimmer, climber or levitator reaches but through the rock. The
-  rim's face at 2,15, Monks' Vale's land by the atlas, is left bare for the lair's door (§12.5).
-  East of the spur, walked from K11's 27,31, the old pines at 26,2 and the cairn at 28,6 (120 gold
-  and a Sapphire Vial). The north edge meets K11's square for square, open at 0 to 13 and 23 to 31;
-  the west edge meets J12's, open at 0 to 15; the east edge, open at 0 to 7, meets L12's west
-  square for square (#832); the south edge is the void. A company at 20 wins every fight and
-  manages 9.31 fights to a rest, inside the aim (8 to 10), 1.7% of its days ending in a fight broken
-  off; two under, at 18, 4.61, 51.2% of the floor's 9, inside the aim. Density: every square within
-  12 steps of a point, the furthest 8, no sign among its 15 points. By the curve's count the box
-  pays 1,084 xp a member and 370 gold, and a company three quarters clearing the area from 20 leaves
-  it at 22.91.
+  289 of the atlas's walkable squares stand, and the lair's door makes 290. Walked east from J12's
+  grass at row 5 the crossing says "Loch Fuar." at 20 and no more, and straight back nothing. In the
+  west the hunter's fire at 1,5, a camp, with the bear-hunter at 2,5, whom the furrier at the lodge
+  pays for a white skin and who has the one spear against two bears and four cats; the brother of
+  stone at 2,9 (answered bell, +1 personality to every member). In the pines four snow lynxes at
+  9,4, the kill seen from 13,5 and two ice bears on it at 14,7, the cats' tracks at 11,9, the spur
+  at 16,10 and the rim at 6,12. At 10,12 the path of flat stones stops at the rock, and searched
+  there facing south the rock gives at 10,13 on the cell, two squares in to 10,15 and a step east to
+  a strongbox at 11,15 (250 gold and an Elixir), which no walker, swimmer, climber or levitator
+  reaches but through the rock. The rim's face at 2,15, Monks' Vale's land by the atlas, is the
+  lair's door, drawn as stone and walked into from the pines of 2,14, with nothing within four
+  squares (§12.5). East of the spur, walked from K11's 27,31, the old pines at 26,2 and the cairn at
+  28,6 (120 gold and a Sapphire Vial). The north edge meets K11's square for square, open at 0 to 13
+  and 23 to 31; the west edge meets J12's, open at 0 to 15; the east edge, open at 0 to 7, meets
+  L12's west square for square (#832); the south edge is the void. A company at 20 wins every fight
+  and manages 9.31 fights to a rest, inside the aim (8 to 10), 1.7% of its days ending in a fight
+  broken off; two under, at 18, 4.61, 51.2% of the floor's 9, inside the aim. Density: every square
+  within 12 steps of a point, the furthest 7, no sign among its 16 points (the furthest 8 among 15
+  before the door). By the curve's count the box pays 1,084 xp a member and 370 gold, and a company
+  three quarters clearing the area from 20 leaves it at 22.91.
 
 ### 12.3 L12, the rim south of Loch Fuar (#832): country, band 20–21
 
@@ -2966,12 +3037,58 @@ written `%`, as Cairnmoor's P7 and P8 were (docs/areas/cairnmoor.md §12).
   no sign among its 13 points. By the curve's count it pays 1,191 xp a member and 700 gold, in no
   clear, and the lead over the road stays at 22.9571. L12 changes at the door alone (§9, #832's 28).
 
-### 12.5 The lair
+### 12.5 The Spittal, the lair: the brothers' house under the pass (#832): lair, band 30–32
 
-- **The lair** (#846; §6, the Wakerobe): two levels cut in the mountain under the pass, its door on
-  K12's rim face at 2,15 (world 330,365), on the part of the box that is Monks' Vale's by the atlas,
-  the first mountain square south of the vale's pines at 2,14. It is left bare, its way the pines of
-  2,14 and nothing within four squares, and the lair's pull request draws the door there and moves
-  nothing. The cap's band, 30–32; the Infirmarer its guardian (keepers, a new kind; docs/MONSTERS.md
-  §13); the Wakerobe (`wakerobe`, `src/content/areas/rimewater/items.ts`, #921) in it as #846 says;
-  its rumour the lodge-keeper's at Rime Lodge (§6).
+- **Purpose.** The Wakerobe's lair (#846; §6): the house the brothers kept for whoever came in off
+  the pass, cut in the mountain under it behind K12's rim face, at the other end of the land under
+  the rim from the enclave; below it the Infirmary, where the Infirmarer keeps its beds made up and
+  the Wakerobe in a locker. Held to the cap's band (#845, #847).
+- **Band.** 30–32, the cap's (#845): its floor is over every box's top, and no window holds what it
+  gives (§12.1).
+- **Landmarks.** The door in the rim's face with its bell-rope; the warming room; the kirk and the
+  cells; the stair cut in the rock; the room of basins; the ward, its beds made up in two rows.
+- **Points of interest.** On the Spittal, the slate of names by the door, the hearth laid and never
+  lit, the boots nobody came back for, the kirk with its bell down, the cells with a robe on every
+  peg but one, the stair and the door's own line, which gives its band (#845); on the Infirmary, the
+  stair's foot, the basins, the ward, the shapes under their sheets, the man sitting up in the last
+  bed and his locker, the stirring sheet and the cold room.
+- **Encounters.** The Infirmarer alone (keepers, a new kind; boss, 32; docs/MONSTERS.md §13), in the
+  one way into the ward: its touch puts to sleep where the robe wards, and it mends itself (DESIGN
+  §9). No company steps round it, and nothing in the lair is had without its fight: the first level
+  holds no group, chest or secret (§9, #832's 33 to 35).
+- **The ways in and out.** Its door is K12's 2,15, the rim's face drawn as stone, walked into from
+  the vale's pines at 2,14; one way out, through the door onto 2,14; the stair between the levels.
+- **The secret and its hint.** The cold room behind the ward's east wall, where the ones who did not
+  wake were laid out with their packs. The hint: the bed by that wall is made up like the rest, but
+  its sheet stirs in a draught from the wall.
+- **New here.** The lair itself (#847) and the first artifact placed whose power is a ward, the
+  Wakerobe's: its bearer is never put to sleep (DESIGN §9).
+- **Reward.** The Wakerobe, one in the world, found and never sold, in the locker beside the last
+  bed (§6); and 500 gold, an Elixir and a Sapphire Vial in the cold room, the dearest of their kinds
+  that Rime Lodge's Provisioner's sells.
+- **Pay.** Counted in no clear (`tools/tests/curve.ts`): the Infirmarer's 20,373 xp, 3,396 a member,
+  and 500 gold.
+- **As built** (#832, 23 October): `spittal` and `spittal2`, a dungeon of two levels of 16 by 16,
+  each marked `enclave` at 30–32, their plates at 330,370 and 330,376. In from K12's 2,14 over the
+  door at 2,15 onto the Spittal's 7,1 facing south, the way's own line saying "A door cut square in
+  the rim's face, a bell-rope beside it worn smooth by hands. It is not barred." and the door's "The
+  Spittal: levels 30-32.", harder one or two levels under and the warning three or more. The slate
+  at 7,2; the warming room at 4 to 10 x 3 to 5, the hearth at 5,4 and the boots at 9,5; the passage
+  at 6 to 13 x 8, with the kirk west of it at 2 to 5 x 7 to 9 (its look at 3,8) and the cells off it
+  at 9, 11 and 13 x 7 and 9 (their look at 11,8); the stair at 7,10 to 7,12, its look at 7,10 and
+  the way down at 7,12. No group, chest or secret stands on it. Down the stair onto the Infirmary's
+  7,1 facing south: the stair's foot at 7,2, the basins at 5 to 9 x 3 to 4 and their look at 5,3;
+  the neck at 7,5 to 7,6 and the Infirmarer at 7,6; the ward at 2 to 9 x 7 to 12, its look at 6,8,
+  the shapes at 2,10, the man in the last bed at 3,12 and the locker at 2,12 with the Wakerobe. At
+  9,9 the stirring sheet, and searched there facing east the wall gives at 10,9 on the cold room, 11
+  to 12 x 8 to 10, its look at 11,9 and a chest at 12,10 (500 gold, an Elixir and a Sapphire Vial),
+  which no walker, swimmer, climber or levitator reaches but through the wall. With the Infirmarer
+  standing, a walker from the stair's foot reaches 12 of the Infirmary's squares and none of the
+  ward; with it gone, 62. The gate's company wins it 60% at 30, inside the aim (30% to 70%), and 80%
+  at 32, between the aim (90%) and the limit (75%); the harness's thrifty bot 78% and 92%, 0.8 and
+  0.9 fights before a rest. The curve's rise: the Infirmarer at 5 steps from the Infirmary's way in,
+  level 32.0, near both the floor and the top. Density: the Spittal every square within 7 steps of a
+  point (55 of 55), the furthest 3, no sign among its 8 points; the Infirmary (69 of 69) the
+  furthest 4, no sign among its 11. By the curve's count it pays 3,396 xp a member and 500 gold, in
+  no clear, and the lead over the road stays at 22.9571. K12 changes at the door alone (§9, #832's
+  32).
