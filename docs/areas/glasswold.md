@@ -1337,9 +1337,9 @@ the journal and no mark on the world map. #833 built the lair, its door and the 
 - **What it is:** *A Rider's bow of white horn and sinew, its grip worn to one hand. / Bound under
   the grip is a feather longer than your arm.*
 - **The rumour:** the eldest at her fire in Akordu (D8, §3), two lines more at every meeting after
-  the oldest story (§9, #833's 28), words only: *My grandmother's brother made a bow of white horn
-  that never missed. He loosed it once, at the bird that takes our foals. / The bird took him, and
-  the bow. It still comes for foals.* It marks nothing on the world map.
+  the oldest story while the bird lives (§9, #833's 28), words only: *My grandmother's brother made
+  a bow of white horn that never missed. He loosed it once, at the bird that takes our foals. / The
+  bird took him, and the bow. It still comes for foals.* It marks nothing on the world map.
 - **Slot and bearers:** a bow, ranged and two-handed: the ranger, as the Grey Bow.
 - **Numbers:** 1d12+14, the Grey Bow's 1d12+13 and a point (EXPANSION §5.2). Found and never sold.
 - **Power:** a stat (DESIGN §9, kind 1): accuracy raised by 5 while it is borne.
@@ -2486,7 +2486,7 @@ Decided by the builder for #833, each the owner's to overturn:
     changes and nothing stands within four squares of it. D7's walkthrough lines hold its two ways
     out now, Karaordu's and Kushdag's.
 24. **The guardian's group is the Foal-taker alone,** as #846 gives it, standing at 9,6 where the
-    shelf narrows to a body before the nest. A fight starts next to a group and groups never move,
+    shelf comes down the face before the nest. A fight starts next to a group and groups never move,
     so no company steps round it. Nothing in the lair is had without the fight: the nest, the chest,
     the buckle and the cleft all lie behind it (the walkthrough's flood). It is a boss (`boss`),
     with no `respawn` and a `slainText`; the lair holds no other group.
@@ -2495,7 +2495,7 @@ Decided by the builder for #833, each the owner's to overturn:
     and 34d8+41, which the gate's company won 16% at 30 and 28% at 32. As set, it is won 57% at 30
     (inside the aim) and 81% at 32 (between the aim, 90%, and the limit, 75%), as the fixture lair's
     guardian (57% and 80%) and the Kilns' Steiger (56% and 81%) are; no check moves. Of the rows
-    tried, none put it inside both aims: 2,600 hit points gave 76% and 91%. Its row gives why it
+    tried, none put it inside both aims: 2,600 hit points gave 75% and 89%. Its row gives why it
     stands off the line (`offLine`), as the road's bosses set by their gates do (`OFF_LINE`).
 26. **Akkush lies alone in the Rider's chest at the nest's edge** (3,9), past the Foal-taker: the
     Rider of the eldest's rumour lies there, picked clean, a long case beside him; the chest is his.
@@ -2507,11 +2507,12 @@ Decided by the builder for #833, each the owner's to overturn:
     spell draught the Riders' trader sells; like the chest it lies behind the fight. The cleft is
     shut to walkers, waders, climbers and floaters but through its wall.
 28. **The rumour is the eldest's,** DESIGN §9's two lines at every meeting once she has told the
-    oldest story, in her last two entries so that a company that has heard the lion's rest hears
+    oldest story, in the two entries after the lion's rest so that a company that has heard it hears
     them too; her own words at a later meeting stay and the two lines follow them. The entries set
     no flag: she sets `akordu_story` at her first meeting already, so a company from an old save
-    that has heard the story hears the rumour at its next meeting. Words only, no quest or mark
-    (#846). It is the one change to Akordu.
+    that has heard the story hears the rumour at its next meeting. They hold until the Foal-taker
+    is slain, and two entries of her own words alone follow them: once it has fallen, it comes for
+    foals no more. Words only, no quest or mark (#846). It is the one change to Akordu.
 29. **The lair's two owed rows go:** `foal_taker` from `owes.unplaced` in the area's `checks.ts`,
     which leaves the Glasswold owing nothing, and `akkush` from `UNPLACED` in
     `tools/tests/items.ts`, as EXPANSION §8.2 (#897's 12) and #847's 6 say the lairs' pull requests
@@ -2520,7 +2521,7 @@ Decided by the builder for #833, each the owner's to overturn:
     has no style for a place open to the sky (`wallStyle` is stone, brick, smooth or tent,
     `ceilingStyle` vault or beams): one would be a systems change and no lair's to make, so the
     shelf's drop is told in the texts and not drawn.
-31. **§12.5 is the lair's brief in §4's form, with its As built.** It is the bounds' last piece:
+31. **§12.5 is the lair's brief in §4's form, with its As built.** It is #833's last piece:
     every box, the enclave and the lair are built, and no built map of the Glasswold is open onto
     unbuilt land but onto the reach, the Glass. The area's `OPEN_ON_NOTHING` rows are D10's south
     and west, D9's west, C8's south and B9's east; none faces a crumb.
@@ -2905,7 +2906,7 @@ This is their brief, in §4's form; each pull request builds from it and adds it
   who loosed the bow, as the eldest tells it (§6), with his chest; the buckle in the rock and the
   cleft behind it with the bird's cache.
 - **Encounters.** The Foal-taker (birds; boss, 32; docs/MONSTERS.md §13), the one guardian, standing
-  where the shelf narrows to a body before the nest; no other group.
+  where the shelf comes down the face before the nest; no other group.
 - **The ways in and out.** Its door at D7's 19,24 in the Scarp's east face, drawn as stone, with
   18,24 open before it; one way out, back onto the lip at 18,24.
 - **The secret and its hint.** The bird's cache in a cleft behind the nest, where it keeps what
@@ -2922,7 +2923,7 @@ This is their brief, in §4's form; each pull request builds from it and adds it
   "Kushdag: levels 30-32.", with the game's harder words one or two levels under its floor and its
   warning three or more under (#845's 5). The shelf runs east along the face (`kd_shelf`, 3,3) with
   the foals' bones along it (`kd_foals`, 6,3) and turns down the face at 9,3, a feather as long as
-  an arm across the way (`kd_feather`, 9,4). Where it narrows to a body the Foal-taker stands
+  an arm across the way (`kd_feather`, 9,4). Where it comes down the face the Foal-taker stands
   (`kd_foal_taker`, 9,6), the one group, 11 steps from the way in. A fight starts next to a group
   and groups never move, so with its square shut a walker, swimmer, climber or floater reaches 11
   squares of the level (the shelf and the two before the choke) and none past it; with the four
