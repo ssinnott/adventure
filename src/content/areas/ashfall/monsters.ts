@@ -9,6 +9,7 @@ export const SPRITES = [
   'cinder_drake', 'old_drake',
   'stoker', 'sentry', 'sentinel',
   'drakeling', 'brood_drake', 'flue_walker', 'deep_knocker', 'inspector',
+  'grave_drake',
 ] as const;
 
 export const MONSTERS: readonly MonsterDef[] = [
@@ -59,4 +60,11 @@ export const MONSTERS: readonly MonsterDef[] = [
   // the gallery below the camp (meridian_camp3), a caller on a soldier's numbers at 28 as #549 made them again, as the tallyman
   // is at 20: it calls three deep knockers at a half a turn, as #537's test caller does
   { id: 'inspector', name: 'Inspector', plural: 'Inspectors', sprite: 'inspector', kind: 'machine', look: 'It holds its light to the wall, and then to you.', level: 28, hp: 408, ac: 25, attack: 16, dice: 5, sides: 7, bonus: 8, speed: 11, xp: 1113, gold: [0, 0], calls: { monsters: ['deep_knocker', 'deep_knocker', 'deep_knocker'], chance: 0.5 }, tint: '#6a6458', size: 0.8 },
+  // the bounds' lair (#836), drawn and defined before the lair that places it: F12's grave where the flow stopped, where it keeps
+  // Grim's Axe. The lair's boss at 32 (MONSTERS §13), asleep on the grave: its breath burns a row (`sweep`, as the Old Drake's) and
+  // fire does not touch it, as it does not its kin; it does not fly, as it lies on its grave; size 2, a tall boss drawn inside
+  // TALL_REACH. Its numbers are the boss line at 32 come down whole to a sweeper's share, as tools/testmonster.ts gives it today
+  // (`testMonster('boss', 32)` on `SWEEP.share`, 0.85, its hit points and its blow together), and provisional: the lair's pull
+  // request sets them from the harness's line at the cap (MONSTERS §4.1, §4.2, §13). It is owed in checks.ts until that lair places it
+  { id: 'grave_drake', name: 'The Grave Drake', plural: 'Grave Drakes', sprite: 'grave_drake', kind: 'beast', look: 'Asleep on a warlord\'s grave, and the grave is warm.', level: 32, hp: 1785, ac: 29, attack: 20, dice: 29, sides: 8, bonus: 34, speed: 13, xp: 20373, gold: [0, 0], immune: ['fire'], sweep: { chance: 0.25, element: 'fire' }, offLine: 'the lair\'s boss, the boss line at 32 come down whole to a sweeper\'s share with the drakes\' breath, as the Old Drake is, and provisional: the lair\'s pull request sets its hit points and its blow from the harness\'s line at the cap (#836)', tint: '#6c6963', size: 2 },
 ];
