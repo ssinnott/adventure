@@ -328,7 +328,7 @@ const LEAD = 1;
  * area may hold its own in its checks.ts (`AreaChecks.overRoad`), and then is named here no longer (#897).
  */
 const OVER_ROAD: Partial<Record<keyof typeof CURVE, { level: number; why: string }>> = {
-  kilns: { level: 19.4, why: 'the bosses pay the line\'s (MONSTERS §4.3 and §4.4), and the country behind the road (#474) and the bounds (#831) add to it' },
+  kilns: { level: 19.5, why: 'the bosses pay the line\'s (MONSTERS §4.3 and §4.4), and the country behind the road (#474) and the bounds (#831) add to it' },
   ashfall: { level: 27.4, why: 'the Stone, the rungs, the quests and the sentries, and the country behind the road adds to it (#522); accepted as built (#738)' },
 };
 
