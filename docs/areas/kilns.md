@@ -25,17 +25,17 @@ with it its second town, Kilnhaven, behind L6's gate (#469, §4.14); O6, Feuerst
 parked until the owner had played the act and built now: M4 and M5, Kilnmouth's north and its farms,
 and O3 and O4, the Fells' east and the heart's hills (#474, §4.15), which closes #474; and the five
 boxes of the bounds, K6 (the heath west of the port), P5 and P6 (the hills under the rim at the
-Stone and the ash under the vents), L7 (the shore under the port) and P4 (the strip's north end)
-(#831; §12, whose enclave and lair wait on #845 and #847). Its chapter of the one quest, The Anvil
-Stone, is written and walked (#470, §5), and its four side quests are in the log, their people on
-those maps (#471, §6). Eleven of its monsters and its twelve rooms are drawn (§3). Only the ship to
-Cinderport waits, on #512 (§4.14). Its content is `src/content/areas/kilns/` (maps, monsters, items,
-rooms, climate, its part of the world map, its walkthrough and its guild quests in `guilds.ts`,
-#439; its chapter of the one quest, The Anvil Stone, in `chapter.ts`, #470; its side quests in
-`quests.ts`, #471) and its businesses' rooms `src/ui/interiors/kilns/`. Its ids: the area `kilns`,
-its zones `ironfells`, `kilnsheart` and `kilnmouth`, the towns `anvilhall` and `kilnhaven`, the
-dungeons `deep_mines`, `anvil_stone` and `lava_tubes`. The ids stay through the naming pass (§10,
-NAMES §3).
+Stone and the ash under the vents), L7 (the shore under the port) and P4 (the strip's north end),
+and their enclave, the Seestollen under K6's point (#831; §12, whose lair waits on #847). Its
+chapter of the one quest, The Anvil Stone, is written and walked (#470, §5), and its four side
+quests are in the log, their people on those maps (#471, §6). Eleven of its monsters and its twelve
+rooms are drawn (§3). Only the ship to Cinderport waits, on #512 (§4.14). Its content is
+`src/content/areas/kilns/` (maps, monsters, items, rooms, climate, its part of the world map, its
+walkthrough and its guild quests in `guilds.ts`, #439; its chapter of the one quest, The Anvil
+Stone, in `chapter.ts`, #470; its side quests in `quests.ts`, #471) and its businesses' rooms
+`src/ui/interiors/kilns/`. Its ids: the area `kilns`, its zones `ironfells`, `kilnsheart` and
+`kilnmouth`, the towns `anvilhall` and `kilnhaven`, the dungeons `deep_mines`, `anvil_stone` and
+`lava_tubes` and the enclave `seestollen`. The ids stay through the naming pass (§10, NAMES §3).
 
 ---
 
@@ -206,14 +206,15 @@ on the Fells' tops in winter (the area's `climate`, with its first box).
 
 ## 3. What is built
 
-Fourteen boxes, two towns and three dungeons: the area's first box, which lists the area (#457); the box of
-its first town (#458) and the town behind its gate (#459); the box of its first dungeon, the heart's
-first (#461), and the dungeon under its shaft (#462); the crag north of Anvilhall, off the road
-(#460); the smelter's (#463); the roads south and west (#467); the Stone's (#464), with the Rift
-through its tear (#465); Kilnhaven's box (#468) and the town behind its gate (#469); the ash
-country under the vent ridge, with the tubes below it (#466); Kilnmouth's north and its farms and the
-Fells' east and the heart's hills, off the road (#474); its chapter of the one quest (#470); and the
-four side quests on them (#471):
+Nineteen boxes, two towns and four dungeons: the area's first box, which lists the area (#457); the
+box of its first town (#458) and the town behind its gate (#459); the box of its first dungeon, the
+heart's first (#461), and the dungeon under its shaft (#462); the crag north of Anvilhall, off the
+road (#460); the smelter's (#463); the roads south and west (#467); the Stone's (#464), with the
+Rift through its tear (#465); Kilnhaven's box (#468) and the town behind its gate (#469); the ash
+country under the vent ridge, with the tubes below it (#466); Kilnmouth's north and its farms and
+the Fells' east and the heart's hills, off the road (#474); the bounds' five boxes and their
+enclave, the Seestollen (#831); its chapter of the one quest (#470); and the four side quests on
+them (#471):
 
 - **The Iron Fells' way in** (M3, `ironfells_m3`, country, band 16; #457): the east road out of
   Lanternwood's M2 over the ridge, through the last of Lanternwood's trees with pines at the verge,
@@ -389,6 +390,24 @@ four side quests on them (#471):
   in the rim's foot and the vent-keepers' shelter. Behind the one ledge where the ash stirs, the
   vent-keepers' store round a turn (§12.4). Two groups: four salamanders on the ash and a slag elder
   with a salamander at the vent, until the tear is closed.
+- **The shore under the port** (L7, `kilnmouth_l7`, country, band 16–18; #831): in from L6's south
+  edge at 28,0, the heath's last heather giving way to grass and the strand: an ore spill off the
+  quay road, a driftwood fire with a sea-coaler at it, a lighter aground, the dunes and a lookout's
+  cairn on a knoll. At the seam with the Cairnfield, behind a kerbstone out of its ring, a chamber
+  under the boundary mound (§12.5). Two groups: four fire beetles at the spill and a rock worm in
+  the dunes.
+- **The strip's north end** (P4, `kilnsheart_p4`, country, band 16–18; #831): two pockets of hills
+  under the rim, the north one in from O4's east edge at 0,11, with rushes at the rock's foot and
+  the dwarves' spring-head behind it (§12.6); the south one walked to from P5 alone, with a cairn
+  and a dip in the rim. No group.
+- **The Seestollen** (`seestollen`, the bounds' enclave, dungeon, one level of 16 by 16, band 19–20;
+  #831, #845): the dwarves' first quay's galleries under K6's point, down the rails from the grate
+  in its slipway at 20,16. The loading gallery, where menders keep a pump at the drowned lower
+  gallery's lip; the rail gallery down to the tally-room; and the drowned quay, its basin of black
+  water under the rock, with the quay-master's strongbox and Durchschlag in it. Behind the one dry
+  wall of the loading gallery, the dwarves' store (§12.7). Three groups of machines: four menders at
+  the pumps, then a tallyman, a mender and two knockers in the tally-room, then two tallymen and
+  three knockers at the quay.
 - **The chapter** (`chapter.ts`; #470): The Anvil Stone, joined after the Wall and before the Ring.
   It reads the road up into the Fells, the verse, the thane's choice, the door, the tear closed, the
   manifests and the corridors south, begun on M3 or at Kilnhaven and done on the moor's first map
@@ -502,12 +521,12 @@ Built: M3, N3, N4, N2, N5, N6, M6, O5, L6, O6, M4, M5, O3, O4, K6, P5, P6, L7 an
 #458, §4.3; #461, §4.6; #460, §4.5; #463, §4.8; #467, §4.12; #464, §4.9; #468, §4.13; #466, §4.11;
 #474, §4.15; #831, §12.2 to §12.6), Anvilhall behind N3's gate (#459, §4.4), the Tiefzeche under
 N4's shaft (#462, §4.7), the Anvil Stone's Rift through O5's tear (#465, §4.10), Kilnhaven behind
-L6's gate (#469, §4.14) and Feuerstollen under O6's ridge (#466, §4.11). Nothing of the Kilns' plan
-is still to build; the bounds are built but for the enclave and the lair (§12.7), and the
-ship to Cinderport waits on #512 (§4.14). The plan's figures (§1) are 14,791 squares of land, 12,399
-of them walkable. On the grid the plan is ten boxes, three dungeons and two towns, all built, with
-four more boxes behind the road, all built since, and the ten hold 8,419 of those squares, 7,686
-walkable; the four behind the road 3,886 and 3,397:
+L6's gate (#469, §4.14), Feuerstollen under O6's ridge (#466, §4.11) and the Seestollen, the bounds'
+enclave, under K6's grate (#831, §12.7). Nothing of the Kilns' plan is still to build; the bounds
+are built but for the lair (§12.8), and the ship to Cinderport waits on #512 (§4.14). The plan's
+figures (§1) are 14,791 squares of land, 12,399 of them walkable. On the grid the plan is ten boxes,
+three dungeons and two towns, all built, with four more boxes behind the road, all built since, and
+the ten hold 8,419 of those squares, 7,686 walkable; the four behind the road 3,886 and 3,397:
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
 |---|---|---|---|---|---|---|---|---|
@@ -1695,7 +1714,9 @@ eleven issues, all drawn: the knockers, the six on frames that exist and the sal
 the gentlest and the Warden, the Foreman and the Great Salamander at the top of the band. No
 machine stands on the surface or above the Tiefzeche's lowest level (MONSTERS §2.2, #158): the
 first machines on the road are met at the bottom of the deepest mine, by a company that has walked
-all of it.
+all of it. The Seestollen, the bounds' enclave under K6's point (§12.7), is placed by its band,
+19–20, past the Mines, as the Dead-Drop is: its menders and knockers are the area's, and its
+tallymen Rimewater's, met there a band before their own.
 
 Proposed, against the roster's Where column, and standing in the briefs as proposals: the Fire
 Beetle on every box's spoil, kilns and ore heaps, where the roster has it at the spoil heaps and the
@@ -1793,7 +1814,9 @@ M4, M5, O3 and O4 (#474), which place the rock worm and the salamander again and
   paid by level, left at 19.29 before the bounds and with K6 at 19.32, and with P5 and P6 leaves at
   19.38 (19.384) and with L7 and P4 at 19.41 (19.4056), +1.4 over the next floor 18, and `OVER_ROAD`
   names the Kilns at 19.5, raised from 19.3 by name with K6 and with L7 (§9, #474's 12 and 26,
-  #831's 5, 18 and 25). What waits is the ship to Cinderport, on #512.
+  #831's 5, 18 and 25). The Seestollen, the enclave, pays 1,221 xp a member and holds 700 gold in
+  its chests, counted in no clear, so the lead stays at 19.4056 (§12.7). What waits is the ship to
+  Cinderport, on #512.
 - **Gold.** Training six members from 16 to 18 costs 7,920 with today's `trainPrice` (640 and 680 a
   member a level), and the Barbarian's Ironhide about 4,000 (DESIGN §5). The Stone's price is 6,000
   (`ANVIL_STONE_PRICE`, #535), so that a clear of the Fells and the Tiefzeche can just pay it: a
@@ -1864,11 +1887,13 @@ M4, M5, O3 and O4 (#474), which place the rock worm and the salamander again and
   is a heavy fight (§9, #474's 2 and 19); O4's, 8.37, is inside the aim; K6's, 6.59 with the same
   pair, is theirs (§9, #831's 6); P5's and P6's, 8.15 each, are inside the aim, and two under, at
   14, 4.80 and 5.20, 60% and 65% of the floor's 8 (§9, #831's 17); L7's, 7.52, is inside the aim,
-  and two under, 4.97, 62.1% (§9, #831's 24); P4 holds no group. Kilnhaven holds no group, and a
-  company the ferry or the coach puts down there walks out at L6's 29,4: the two groups nearest it,
-  the beetles at the quay's east end and the crew, are won every time at 14, and the groups nearest
-  the lodge's two ways out onto M9, which the coach now lands behind, the lynx and the pike, every
-  time at 18 (#469).
+  and two under, 4.97, 62.1% (§9, #831's 24); P4 holds no group. The Seestollen, the enclave, is
+  judged alone at its own floor, out of the area's pools and day: at 19 every fight is won and its
+  day is 8.40 fights to a rest, inside the aim, 7.75 to 9.75, and two under, at 17, 4.67, 53.4% of
+  the floor's 8.75 (§9, #831's 32). Kilnhaven holds no group, and a company the ferry or the coach
+  puts down there walks out at L6's 29,4: the two groups nearest it, the beetles at the quay's east
+  end and the crew, are won every time at 14, and the groups nearest the lodge's two ways out onto
+  M9, which the coach now lands behind, the lynx and the pike, every time at 18 (#469).
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3); the
   Tiefzeche's lowest level at the dungeons' floor with the corridor's side room inside it. As built:
   M3 98.5% within 12 steps and the furthest 15, with no sign among its 14 points (#457); N3 97.6%
@@ -1889,9 +1914,11 @@ M4, M5, O3 and O4 (#474), which place the rock worm and the salamander again and
   within 12 and the furthest 12, with no sign among its 15 points, and M5 100% within 12 and the
   furthest 12, with none among its 16 (#474); O3 100% within 12 and the furthest 10, with no sign among
   its 12 points, and O4 99.1% within 12 and the furthest 17, with none among its 17 (#474; 16 before
-  the corner's event, #831); K6 100% within 12 and the furthest 9, with no sign among its 16 points,
-  and P5 and P6 100% within 12 and the furthest 6 and 8, with no sign among their 15 and 11, and L7
-  and P4 100% within 12 and the furthest 11 each, with no sign among their 13 and 5 (#831).
+  the corner's event, #831); K6 100% within 12 and the furthest 9, with no sign among its 17 points
+  (16 before the Seestollen's grate), and P5 and P6 100% within 12 and the furthest 6 and 8, with no
+  sign among their 15 and 11, and L7 and P4 100% within 12 and the furthest 11 each, with no sign
+  among their 13 and 5 (#831). The Seestollen, the enclave, a dungeon, is 100% within 7 and the
+  furthest 5, with no sign among its 14 points (#831).
 
 ## 9. Decisions
 
@@ -3106,8 +3133,8 @@ Decided by the builder for #831, each the owner's to overturn:
    bright to its wall are the hint, seen from the slipway without passing through the wall. The
    strongroom is a 1 by 2 cell in a block of rock, as M4's drovers' store is, shut to a walker, a
    swimmer, a climber and a levitator.
-9. **The enclave's door is beside K6's slipway and the lair's in P5's rim face** (§12.7), the two
-   ends of the area's land farthest from each other; #845 and #846 settle what they hold.
+9. **The enclave's door is beside K6's slipway and the lair's in P5's rim face** (§12.7 and §12.8),
+   the two ends of the area's land farthest from each other; #845 and #846 settle what they hold.
 10. **The walkthrough walks the bounds in one function,** `theBounds`, called last, so each later box
     adds its steps there. The outdoors test pins K6's edges and reads L6's west edge as meeting it,
     and the walkthrough's line that the world ends past L6's west edge now says the heath runs on.
@@ -3149,7 +3176,7 @@ Decided by the builder for #831, each the owner's to overturn:
     (19.318 before), inside the named 19.4, so `OVER_ROAD` is not touched; L7 moved it to 19.5
     (25).
 19. **The lair's adit has room** in P5's rim foot past the deepest pit, left free of features, apart
-    from the walled trial at the strip's middle (§12.7); P6's store door stands at 13,2, where a
+    from the walled trial at the strip's middle (§12.8); P6's store door stands at 13,2, where a
     lone secret door passes the art check.
 20. **O4's corner 31,31 is hills, opened by P4's pull request as the owner's delegate ruled** (16).
     P4's 0,31 meets P5's 0,0, hills, and O4's 31,31, which was mountain, so O4's square is the one
@@ -3200,6 +3227,38 @@ Decided by the builder for #831, each the owner's to overturn:
     which the atlas joins), `O4|P4` and `P4/P5` agree square for square, and `K6|L6` now does (21).
     Four `OPEN_ON_NOTHING` rows go, L6's south, M7's west, O4's east and P5's north, 64 open
     squares, and none comes; square 31 leaves the O4/O5 row (20) and the K6|L6 row goes (21).
+29. **The enclave is the Seestollen,** *see* and *stollen*, the sea adit (§10): the dwarves' first
+    quay's galleries under K6's point, cut to load the barges out of the weather and given up to the
+    sea when the cutting broke into the grey rock. One level of 16 by 16, entered by the grate in
+    the slipway (§12.7).
+30. **It is held at 19–20,** a band over Kilnmouth's 16–18, its floor over K6's top (#845's 2); its
+    window is Cairnmoor's 4,000, the last road area whose floor is at or under 19 (#845's 3).
+31. **Its groups are the knockers' kin,** the one family of the area's to reach 19–20: the Kilns'
+    menders and knockers and Rimewater's tallyman, drawn on the knockers' frame, which calls them.
+    The roster stops at 18 but for the Steiger, the lair's guardian, and the rise rule asks the
+    hardest at a mean of 20; Rimewater's bay keeper, 21, is of the keepers, Rimewater's claim, and
+    the enclave's floor stands it at Cairnmoor's place on the road, so the novelty check would find
+    the keepers on the road before Rimewater, which claims them (`roadPlace`).
+32. **Four menders at the pumps, a tallyman with a mender and two knockers in the tally-room and two
+    tallymen with three knockers at the drowned quay,** at 17, 18.5 and 20, the knockers each
+    tallyman's own: 8.40 fights to a rest at 19, inside the aim, and 4.67 two under, 53.4% of the
+    floor's 8.75. With two menders it paced 10.64, over the aim, and 69.6% two under.
+33. **Its machines are placed by its band,** past the Mines, as the Dead-Drop's are (MONSTERS §2.2,
+    #158): none stands on the surface, and the secret's pace check places the Seestollen with
+    Cairnmoor.
+34. **The reward is Durchschlag,** *the breakthrough*, the miners' word for the blow that meets
+    another gallery: the forge's mattock with its blows carrying cold, at 1,700, in the
+    quay-master's strongbox with 400 gold. It is the plain piece where the ladder wears the plus
+    from 19, the cold the gain, as Cairnmoor's Beacon Hammer carries fire; off the ladder, sold
+    nowhere and no worse than the mattock Kilnhaven's smith sells.
+35. **The secret is the dwarves' store,** two by two behind the one dry stretch of the loading
+    gallery's weeping wall, the hint seen from the gallery: 300 gold, an Elixir and a Sapphire Vial,
+    the dearest of their kinds at Kilnhaven's chandler. Its door at 12,4 passes the art check.
+36. **The door is the brief's square, K6's 20,16,** its sand drawn as the slipway's dressed stone,
+    walked onto from the slipway or the grass at 20,17, where the way back sets a company down
+    facing the heath. It is the one square of K6 that changes; within four squares stand only the
+    slipway and the rails, whose words still read true, and K6 has 17 points with it.
+37. **§12.7 is the enclave's brief in §4's form, with its As built,** and the lair's note is §12.8.
 
 ## 10. Names
 
@@ -3236,6 +3295,9 @@ Tubes). Filed as #435.
   harbourmaster who keeps Kilnhaven's harbour, and Dietmar, *diet* and *mar*, known to the folk, the
   port's smith (#469); Wiebe, Tallis's man, takes a Tidefolk name, as Saltmouth's people do (#469).
   Anvilhall's people are named in #459's 12 and the port's boatmen and coachman in #469's 16 (§9).
+- **The bounds' enclave** (#831): the Seestollen, *see* and *stollen*, the sea adit, the first
+  quay's galleries under K6's point; and the reward in its strongbox, Durchschlag, *the
+  breakthrough*, the miners' word for the blow that meets another gallery.
 - **Ids stay** (NAMES §3): `deep_mines` is the Tiefzeche and `lava_tubes` is Feuerstollen; Erzkamm
   and Gluthutte are sites with no id. The old names stand in the issues until they are edited.
 
@@ -3293,9 +3355,9 @@ The land the area's maps lie open to, built as country off the quest, level for 
 under Kilnhaven. Five boxes, 1,219 squares a company could walk by the atlas, which 108 edge squares
 of L6, O4, O5 and O6 open onto (L6's west edge 14 and its south edge 32, O4's east edge 12, O5's 22
 and O6's 28; the issue counts 118). Each box is built to the looser floor (EXPANSION §5.3) at its
-zone's band, from the area's roster, with nothing on the road's quest. Then the area's enclave and
-its artifact's lair (§12.7). This is their brief, in §4's form; each box's pull request builds from
-it and adds its "As built".
+zone's band, from the area's roster, with nothing on the road's quest. Then the area's enclave,
+built (§12.7), and its artifact's lair (§12.8). This is their brief, in §4's form; each box's pull
+request builds from it and adds its "As built".
 
 | Box | Laid in | Walkable | Other land in it | Built neighbours | Band | Pull request |
 |---|---|---|---|---|---|---|
@@ -3304,6 +3366,7 @@ it and adds its "As built".
 | P6 | the heart, `kilnsheart_p6` | 220 (219 as built) | High Moor's 45, mountain | O6, P5 | 16–18 | the second, built (#831) |
 | L7 | Kilnmouth, `kilnmouth_l7` | 189 (167 outside its mound) | the Cairnfield's 46 | L6, M7 (the Cairnfield's) | 16–18 | the third, built (#831) |
 | P4 | the heart, `kilnsheart_p4` | 46 (47 as built) | | O4, P5 | 16–18 | the third, built (#831) |
+| The Seestollen | the enclave, a dungeon off K6, `seestollen` | 95 as built, 90 outside its store | | K6, its door | 19–20 | the fourth, built (#831) |
 
 The P column is 24 squares wide, the world's edge cutting it (the grid's cuts, `src/game/atlas.ts`),
 so P4, P5 and P6 are maps of 24 by 32, which `tools/scaffold.ts`, cutting 32 by 32, refuses: they
@@ -3397,24 +3460,27 @@ three are built (§12.3, §12.4 and §12.6; §9, #831's 14 says what was found).
   noon, her pit at 2,26 and the barge's ribs at 3,29. On the headland the point at 12,14, the slipway
   at 19,16 with its rails let into the stone, and the winch-house, a block of rock at 15 to 17 x 13 to
   16: the rails end at 18,14, where their heads are rubbed bright, and searched there facing west the
-  wall gives at 17,14 on the strongroom, a chest at 16,15 of 200 gold and an Elixir, which no walker,
-  swimmer, climber or levitator reaches but through the wall. The sea closes the north. The south edge
-  is the shallows and, at 7 to 31, a bank of mountain across the heath's neck, two squares deep at 9
-  to 11, 19 and 20 and 26 to 28 and three at 10 and 27, and the west edge has mountain at rows 24 to
-  28 over the four squares of sand: of the atlas's 484 squares 436 stand (§9, #831's 4 and 13). The
+  wall gives at 17,14 on the strongroom, a chest at 16,15 of 200 gold and an Elixir, which no
+  walker, swimmer, climber or levitator reaches but through the wall. The grate at 20,16, where the
+  slipway's rails run on down into the rock, is the way into the Seestollen, the enclave, its sand
+  drawn since as the slipway's dressed stone (§12.7). The sea closes the north. The south edge is
+  the shallows and, at 7 to 31, a bank of mountain across the heath's neck, two squares deep at 9 to
+  11, 19 and 20 and 26 to 28 and three at 10 and 27, and the west edge has mountain at rows 24 to 28
+  over the four squares of sand: of the atlas's 484 squares 436 stand (§9, #831's 4 and 13). The
   east edge meets L6's west edge square for square, the corner too (§9, #831's 21), the one way in
   and out. A company at 16 wins every fight and manages 6.59 fights to a rest, off the aim (7 to 9)
   and inside the limit (5.5 to 11.5); two under, at 14, it wins every fight, at 4.14 fights to a
   rest, 51.7% of the floor's 8. Density: every square within 12 steps of a point, the furthest 9, no
-  sign among its 16 points. By the curve's count the box pays 449 xp a member and 320 gold, and a
-  company three quarters clearing the area from 16 leaves it at 19.32 (§9, #831's 5).
+  sign among its 17 points, the grate's one of them (16 before it). By the curve's count the box
+  pays 449 xp a member and 320 gold, and a company three quarters clearing the area from 16 leaves
+  it at 19.32 (§9, #831's 5).
 
 ### 12.3 P5, the hills under the rim at the Stone: country, band 16–18
 
 - **Purpose.** The hills east of the Anvil Stone's cut: the strip between O5's crag and the rim that
   O5's east edge opens onto along its rows 0 to 21, 280 squares of hills 4 to 12 wide the whole height
   of the box, the rim's mountain along its east and the world's end past it. Off the road and off the
-  quest; the artifact lair's door (§12.7).
+  quest; the artifact lair's door (§12.8).
 - **Landmarks.** The cutters' trial pits, the first cuts before the Stone was found, left with their
   spoil in fans down the hill; a warm seep at the hills' foot; the rim's face; the hills running on
   north into P4's south pocket and south into P6.
@@ -3429,7 +3495,7 @@ three are built (§12.3, §12.4 and §12.6; §9, #831's 14 says what was found).
 - **The secret and its hint.** The trial that struck nothing, walled up in the rim's foot at the
   strip's middle: dry stone across its mouth and an adit three squares deep behind it, the cutters'
   cache at its end, a passage where K6's is a cell. The hint: a fan of spoil down the hill from a bare
-  face of the rim, with no pit above it. The lair's door (§12.7) stands apart from it.
+  face of the rim, with no pit above it. The lair's door (§12.8) stands apart from it.
 - **How it meets its neighbours.** O5's east edge square for square along its hills at rows 0 to
   21, the way in from the road's side (the crag at rows 22 to 31 stays closed); P6's north edge
   across the seam, the hills open on at columns 1 to 10 beside the crag; P4's south pocket across
@@ -3455,7 +3521,7 @@ three are built (§12.3, §12.4 and §12.6; §9, #831's 14 says what was found).
   there facing east the dry stone gives at 11,16 on the trial, cut straight in three squares to the
   cutters' cache at 14,16 (230 gold, an Elixir and a Sapphire Vial), which no walker, swimmer,
   climber or levitator reaches but through the dry stone. The rim's foot past the deepest pit is
-  left free for the lair's adit (§12.7). The north edge's hills open on at columns 0 to 5 into P4's
+  left free for the lair's adit (§12.8). The north edge's hills open on at columns 0 to 5 into P4's
   south pocket, cut, the world's end till the third pull request builds it; the south edge meets
   P6's square for square. A company at 16 wins every fight and manages 8.15 fights to a rest, inside
   the aim (7 to 9); two under, at 14, 4.80, 60% of the floor's 8. Density: every square within 12
@@ -3609,15 +3675,57 @@ three are built (§12.3, §12.4 and §12.6; §9, #831's 14 says what was found).
   pocket. Density: every square within 12 steps of a point, the furthest 11, no sign among its 5
   points. By the curve's count the box pays no xp and 250 gold.
 
-### 12.7 The enclave and the lair
+### 12.7 The enclave: the Seestollen under the point (#831): enclave, band 19–20
 
-They come after the boxes, each in its own pull request. **The enclave** (#845): its door at the
-slipway's head on K6's headland, about 20,16, where the rails run on into the rock under an iron
-grate; the dwarves' first quay, flooded galleries under the point, held a band or two over
-Kilnmouth's, with its own reward, as #845 sets them. K6 leaves the square free and its slipway, rails
-and winch-house stand as built: the enclave's pull request adds the door and its line and keeps every
-id. **The lair** (#846, #847): the artifact's, at the cap, one or two levels with one guardian, its
-door in the rim's foot on P5, the farthest of the Kilns' land from the road; the artifact, its
-guardian and the rumour that first speaks of it are #846's, and where #846 puts the lair elsewhere,
-this note gives way to it. #846 has set it (the Erzhemd, §6): an old working of two levels in the
-crag under the rim, its adit in P5, which P5's walled trial (§12.3) stands apart from.
+- **Purpose.** A place of its own off K6, under the headland's point: the dwarves' first quay's
+  galleries, cut to load the barges out of the weather and given up to the sea when the cutting
+  broke into the grey rock and what keeps it came out. Held to its own band (#845).
+- **Band.** 19–20, a band over Kilnmouth's 16–18, its floor over K6's top (#845's 2).
+- **Landmarks.** The incline down from the grate, the rails running on; the loading gallery and the
+  lower gallery beside it, drowned to its roof; the rail gallery down, where the dwarves' cuts end
+  in the grey rock; the tally-room; the old quay under the rock, its basin of black water.
+- **Points of interest.** The incline's foot, the pump at the drowned gallery's lip, the one dry
+  wall, the rail gallery, the tally-board, the quay, the quay-master's post with his strongbox and
+  the door's own line, which gives its band (#845).
+- **Encounters.** The knockers' kin, the one family that reaches the band (§9, #831's 31): four
+  menders at the pumps, the nearest and the gentlest, at 17; a tallyman with a mender and two
+  knockers in the tally-room, at 18.5; two tallymen with three knockers at the drowned quay, the
+  farthest and the hardest, at 20. No guardian.
+- **The ways in and out.** Its door is the grate in K6's slipway at 20,16, where the rails run on
+  down into the rock, walked onto from the slipway or the grass at 20,17; one way out, up the rails
+  onto 20,17.
+- **The secret and its hint.** The dwarves' store, walled up when they left, two by two behind the
+  loading gallery's east wall. The hint: every wall of the gallery weeps salt but that stretch,
+  which is dry and laid squarer.
+- **New here.** The enclave itself (#845), and the tallymen, Rimewater's, a band before their own.
+- **Reward.** Durchschlag, the forge's mattock with its blows carrying cold, in the quay-master's
+  strongbox with 400 gold, inside Cairnmoor's window, 4,000 (EXPANSION §5.2, #845's 3: the last road
+  area whose floor is at or under 19); and 300 gold, an Elixir and a Sapphire Vial in the store.
+- **Pay.** Counted in no clear (`tools/tests/curve.ts`): 1,221 xp a member and 700 gold.
+- **As built** (#831, 23 October): `seestollen`, a dungeon of one level of 16 by 16, marked
+  `enclave`, its plate at 340,172. Down the rails from K6's grate onto 7,1 facing south, the door's
+  line saying "The Seestollen: levels 19-20.", harder one or two levels under and the warning three
+  or more. The loading gallery at 3 to 11 x 3 to 5: the incline's foot at 7,3, four menders at 5,4
+  and the pump at 10,5 over the drowned lower gallery, 9 to 11 x 6. The rail gallery down the west
+  side, 1 to 2 x 5 to 12, its look at 2,8; the tally-room at 4 to 8 x 9 to 12, the board at 5,9 and
+  the tallyman with a mender and two knockers at 7,11; the drowned quay at 10 to 14 x 8 to 14 round
+  its basin of deep water, 12 to 14 x 8 to 11, its look at 10,9, two tallymen with three knockers at
+  11,12, the post at 12,13 and the strongbox at 14,14 (400 gold and Durchschlag). At 11,4 the dry
+  wall, and searched there facing east it gives at 12,4 on the store, 13 to 14 x 3 to 4, a chest at
+  14,3 (300 gold, an Elixir and a Sapphire Vial), which no walker, swimmer, climber or levitator
+  reaches but through the wall. A company at 19 wins every fight and manages 8.40 fights to a rest,
+  inside the aim (7.75 to 9.75); two under, at 17, 4.67, 53.4% of the floor's 8.75. The curve's
+  rise: the menders at 5 steps, level 17.0, the nearest, the tally-room's group at 18.5 and the two
+  tallymen at 25 steps, level 20.0, the hardest (rank correlation 1.00). Density: every square
+  within 7 steps of a point, the furthest 5, no sign among its 14 points. By the curve's count it
+  pays 1,221 xp a member and 700 gold, in no clear, and the lead over the road stays at 19.4056. K6
+  changes at the grate alone (§9, #831's 36).
+
+### 12.8 The lair
+
+It comes after the enclave, in its own pull request (#846, #847): the artifact's, at the cap, one or
+two levels with one guardian, its door in the rim's foot on P5, the farthest of the Kilns' land from
+the road; the artifact, its guardian and the rumour that first speaks of it are #846's, and where
+#846 puts the lair elsewhere, this note gives way to it. #846 has set it (the Erzhemd, §6): an old
+working of two levels in the crag under the rim, its adit in P5, which P5's walled trial (§12.3)
+stands apart from.
