@@ -1,7 +1,8 @@
 // The Glasswold, box D7: the Scarp's east end over the gulf. Country, band 26-27, laid whole in the Wold
 // with the Saltings' strip under the Scarp. On top, the lip past Akordu's poles, walked onto over the
 // south edge from D8: long grass no herd crops and three lions lying up in it, a foal's bones on the
-// shore sand and four vultures over them, a cairn of sea-stones, two glass walkers' tracks to the Scarp's end and the walkers standing there,
+// shore sand and four vultures over them, a cairn of sea-stones, two glass walkers' tracks to the
+// Scarp's end and the walkers standing there,
 // the hardest; a fire-ring where the Riders kept watch, a camp; and on the hills' crown a beacon gone
 // cold, the keepers' store walled up in the rock behind it, found from the smell of tar. Below the
 // Scarp, walked onto from C7's pans and D6's shore, the pans' end and the gulf's tidal shore, a
@@ -84,8 +85,8 @@ export const WOLD_D7: MapDef = {
   secrets: [{ x: 7, y: 23, hint: 'd7_tar' }],
   encounters: [
     // From the way in: four vultures over the foal's bones on the shore, the nearest; three lions lying up
-    // in the long grass; at the Scarp's end
-    // the two glass walkers that walked north to the edge and stopped, the farthest and the hardest.
+    // in the long grass; at the Scarp's end the two glass walkers that walked north to the edge and
+    // stopped, the farthest and the hardest.
     { id: 'd7_vultures', x: 22, y: 28, monsters: ['vulture', 'vulture', 'vulture', 'vulture'], aware: 3, respawn: 2880 },
     { id: 'd7_lions', x: 13, y: 29, monsters: ['wold_lion', 'wold_lion', 'wold_lion'], aware: 4, respawn: 2880 },
     { id: 'd7_walker', x: 12, y: 23, monsters: ['glass_walker', 'glass_walker'], aware: 3, roams: false, respawn: 2880 },

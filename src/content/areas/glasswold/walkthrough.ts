@@ -1688,6 +1688,11 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   ok(strip.size > 100 && lip.size > 200 && ![...strip].some((k) => lip.has(k))
     && !D7.encounters!.some((g) => strip.has(at(d7, g.x, g.y))) && !D7.features!.some((f) => (f.kind === 'cairn' || f.kind === 'chest') && strip.has(at(d7, f.x, f.y))),
     `the strip under the Scarp (${strip.size} squares) and the lip over it (${lip.size}) are not joined on foot, and nothing on the strip fights or pays`);
+  // And south from the Saltings' D6 at 0,31, the salt at the foot of its shore, onto the strip's 0,0 (#923).
+  low.world.travel('saltings_d6', 0, 31, SOUTH);
+  const south = low.world.move('forward');
+  ok(south.kind === 'moved' && low.world.zone?.id === D7.id && low.world.state.x === d7.x && low.world.state.y === d7.y && strip.has(at(d7, 0, 0)),
+    `south from the Saltings' D6 at 0,31 onto the strip, D7's 0,0, at 12 (${south.kind === 'moved' ? south.messages.join(' / ') || 'nothing said' : south.kind})`);
   for (const id of ['d7_pans', 'd7_tide', 'd7_foot']) see(w, `${D7.id}:${id}`);
   const raker = D7.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'a salt-raker at the last pan')!;
   w.world.travel(D7.id, raker.x, raker.y);

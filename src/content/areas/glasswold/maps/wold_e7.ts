@@ -2,7 +2,8 @@
 // island whose south end E8's bar of shallows reaches runs on north here, a swimmer's, its grass cropped
 // by nothing; a bar of sand runs out from it to an islet white with gulls, and in the islet's rock a
 // castaway's hollow, its door found from the wind moaning in a crack. No group. Wrackholm's last rocks
-// stand off its isle's south end across deep water, shut against E6, which no road joins to the Wold; the strand's end at the south-west corner is E8's and D7's sand. Cut from the atlas by
+// stand off its isle's south end across deep water, shut against E6, which no road joins to the Wold;
+// the strand's end at the south-west corner is E8's and D7's sand. Cut from the atlas by
 // tools/scaffold.ts; docs/areas/glasswold.md §12 is its brief (#833).
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
@@ -58,7 +59,7 @@ export const WOLD_E7: MapDef = {
     // hollow, with what he left.
     { kind: 'event', x: 9, y: 20, id: 'e7_gulls', once: true, text: 'The islet is white with gulls. They rise all at once, screaming, and come down again.' },
     { kind: 'event', x: 5, y: 19, id: 'e7_moan', once: true, text: 'The wind moans in a crack of the rock here, low and long, like a breath across a jar\'s mouth.' },
-    { kind: 'event', x: 7, y: 19, id: 'e7_hole', once: true, text: 'A dry hollow under the rock: a bed of grass, a knife, and days cut in the wall in fives, many of them.' },
+    { kind: 'event', x: 7, y: 19, id: 'e7_hole', once: true, text: 'A dry hollow under the rock: a bed of grass, a knife and days cut in the wall in fives, many of them.' },
     { kind: 'chest', x: 7, y: 20, id: 'e7_chest', gold: 700, items: ['elixir'] },
     // The strand's end at the corner, E8's and D7's sand, walked onto from them and not from the island.
     { kind: 'event', x: 1, y: 31, id: 'e7_spit', once: true, text: 'The strand runs out here in a spit of grey sand. The island lies over the water to the east.' },

@@ -75,9 +75,9 @@ are not counted here.
 so a box's corner is x = 8 + 32i, y = −2 + 32j. The Wold is the B, C, D and E columns from row 8 to
 row 10, with E9 and E8 behind it on the coast; the Glass is C9 and C10 with the dunes and slivers
 round them. The land worth a map on the road is seven boxes: E10, D9, D8, D10, C8, B8 and B9 (§4).
-E9 and E8, the country behind, are built (#534, §4.9); A7, A8, A9 and B7, the rim's mountain and the
-Scarp's lip, are cut (§11); D7 and E7, the Scarp's east end and the north of an island, are the
-bounds' (§12).
+E9 and E8, the country behind, are built (#534, §4.9); A7, A8 and A9, the rim's mountain, are cut
+(§11), and B7, the Scarp's lip, is laid in Saltreach's box, its Wold ground shut as the rim's
+mountain (#923); D7 and E7, the Scarp's east end and the north of an island, are the bounds' (§12).
 
 **D9 and E10 meet at a corner only,** D9's 31,31 (135,285) and E10's 0,0 (136,286), and D10 (#527)
 lies between them and joins them overland: E10's west-edge road, at its 0,6, meets D10 at its 31,6,
@@ -847,8 +847,9 @@ settled in its issue, and what Ashfall teaches changes them.
   falls 75% at 27 (aim 30% to 70%, limit 20% to 80%) and 91% at 29 (aim 90%, limit 75%), and the
   gate leaves him out of the day (§9, #529's 5 and 6).
   The edges: east, C8's west edge square for square (x 71 against x 72), the lip's end at row 0 and
-  steppe at rows 1 to 31, all open both sides; north, row 0 against B7 (cut), mountain at 0 to 1,
-  laid void, and the Scarp's lip, cliff, at 2 to 31; west, column 0 against A8 (cut), mountain on
+  steppe at rows 1 to 31, all open both sides; north, row 0 against B7 (Saltreach's, #923),
+  mountain at 0 to 1, laid void, and the Scarp's lip, cliff, at 2 to 31; west, column 0 against A8
+  (cut), mountain on
   all rows, laid void, the rim; south, row 31 against B9 (#530, not built), void at 0, hills at 1 to
   7, steppe at 8, hills at 9 and steppe at 10 to 31, columns 1 to 31 open, which B9's builder meets
   and re-pins. All are pinned in `tools/tests/outdoors.ts`, C8's pin there no longer wanting the
@@ -1068,9 +1069,9 @@ settled in its issue, and what Ashfall teaches changes them.
     and steppe below, D8 steppe all along, open both sides; walked from D8's 31,26 onto E8's 0,26.
     E8's north (y 222) lay against E7, not built and in no issue (§9, #534's 13), the other island's
     tip at 14 to 19 running on into E7's atlas island; E7 is built since (#833, §12). E8's east (x
-    167) lies against F8, the sea, deep on both sides, void. All are pinned in
-    `tools/tests/outdoors.ts`; E10's north edge, D9's east edge and D8's east edge no longer end the
-    world.
+    167) lies against F8, the sea, deep on both sides, void. Each agrees with its neighbour or is
+    held by a row of `OPEN_ON_NOTHING`; E10's north edge, D9's east edge and D8's east edge no longer
+    end the world.
   - **Measured.** At 26 a company wins every fight in both, and at 24 too (past 10 the gate judges a
     company two under by its day, #851). E9 manages 11.86 fights to a rest and E8 12.00 (aim 9.5 to
     11.5, limit 8 to 14), off the aim and inside the limit, 34.3% and 29% of their days ending in a
@@ -2378,7 +2379,9 @@ Decided by the builder for #833, each the owner's to overturn:
    shallows and wades off.
 6. **E7's island is a swimmer's,** as E8's islands are, joined to the islet by a bar of sand, **and
    holds no group**: no lion has been on it (E8's Rider), and a group there would be the swimmers'
-   alone. A bar the tide covers was tried first; the tide check refuses ground it cuts off.
+   alone. A bar the tide covers was tried first; the tide check refuses ground it cuts off. Its seven
+   points are its sights and the hollow: no cairn, shrine or camp, the swim and the hidden find being
+   its reward (EXPANSION §5.3).
 7. **D7's groups are four vultures, three lions and two glass walkers,** sized with the harness at
    26 and passed by the gate at 9.95 fights to a rest; a walker alone paced 24 and two vultures'
    flocks too light, and no pride with its flock, E8's and E9's shape. The two under figure, 67% of
@@ -2391,9 +2394,12 @@ Decided by the builder for #833, each the owner's to overturn:
 10. **The secrets' hints are a smell and a sound,** kinds no box of the Wold had: tar from the
     beacon's rock (D7) and the wind in a crack (E7). Each door stands where the art check takes it.
 11. **The walkthrough walks the bounds in one function,** `theBounds`, called last.
-12. **D7's north edge is held open at 0 and 1** by a row of `OPEN_ON_NOTHING` until D6 is built
-    (#830's B7 and D6, #923); whichever of the two lands second deletes that row and `saltings_d6
-    south`, and the seam agrees letter for letter (salt, tidal, shallows, sea).
+12. **D7's north edge meets D6's south edge letter for letter** (salt, tidal ground, shallows, the
+    sea), D6 built first (#830's B7 and D6, #923): `saltings_d6 south` and `saltings_c7 east` go
+    with the merge and Saltreach's block of `OPEN_ON_NOTHING` with them; no row comes.
+13. **The enclave's groups and its reward are named in its own pull request** (§12.4): the roster
+    stands at 26 to 28; what keeps a barrow at 28 and 29 and what it holds are settled there under
+    #845.
 
 ## 10. Names
 
@@ -2590,15 +2596,15 @@ The land the Wold's maps lie open to, built as country off the quest, level for 
 October 2026; #828, #833): the Scarp's east end over the gulf, D7, and the north of the other island
 off the shore, E7, which #737 left cut (§11); then the area's enclave and its artifact's lair,
 Akkush's (§6). Two boxes, 459 squares a company could walk by the atlas, which 76 edge squares open
-onto: C7's east edge (19), D8's north edge (32), E8's north edge (9), E6's south edge (14) and, once
-#830 builds it, D6's south edge (2). Each box is built to the looser floor (EXPANSION §5.3) at the
+onto: C7's east edge (19), D8's north edge (32), E8's north edge (9), E6's south edge (14) and D6's
+south edge (2), built since (#923). Each box is built to the looser floor (EXPANSION §5.3) at the
 zone's band, from the area's roster, paid from its budget (§8), with nothing on the road's quest.
 This is their brief, in §4's form; each pull request builds from it and adds its "As built".
 
 | Box | Laid in | Walkable | Other land in it | Built neighbours | Band | Pull request |
 |---|---|---|---|---|---|---|
-| D7 | the Wold, `wold_d7` | 363 | the Saltings' 163 under the Scarp | C7 (the Saltings), D8; D6 to come | 26–27 | the first, built (#833) |
-| E7 | the Wold, `wold_e7` | 96 | Wrackholm's 30, the isle's tip | E6 (Wrackholm), E8 | 26–27 | the first, built (#833) |
+| D7 | the Wold, `wold_d7` | 363 | the Saltings' 163 under the Scarp | C7 and D6 (the Saltings), D8 and E7 | 26–27 | the first, built (#833) |
+| E7 | the Wold, `wold_e7` | 96 | Wrackholm's 30, the isle's tip | E6 (Wrackholm), E8 and D7 | 26–27 | the first, built (#833) |
 | The enclave | its own, its door on D7 | | | D7 | 28–29 | the second |
 | The lair | its own, its door on D7 | | | D7 | 30–32 | the third |
 
@@ -2615,12 +2621,12 @@ This is their brief, in §4's form; each pull request builds from it and adds it
 - **The seams agree with the built boxes square for square,** each corner worked from the built
   letters first. D7's west edge meets C7's east edge, open at 0 to 18 and shut at 19 to 31 against
   C7's ring; its south edge meets D8's north edge, open at 1 to 31, D8's 0,0 shut with the corner
-  (§9, #833's 4); its north edge will meet D6's south edge, open at 0 and 1, salt and tidal ground,
+  (§9, #833's 4); its north edge meets D6's south edge, open at 0 and 1, salt and tidal ground,
   then shallows and the sea. E7's south edge meets E8's north edge, open at 0 and 1 and at 13 to 19,
   and its north edge E6's south edge, crossed by no company; its east edge, against F7, is the sea.
   No row of `SEAMS_AS_BUILT` is added.
 - **Groups** are the roster's (§7), the fewest that pass the gate's pace, none on land a company
-  under the band walks onto from another zone, the hardest at 27 for the curve's rise rule, and none
+  under the band walks onto from another zone, the hardest at 27 for the curve's rise rule and none
   in the shape of E8's and E9's pride, flock and pair.
 - **Camps** stand clear of every group: rest is refused only with a group next to the party.
 - **Secrets** each of their own place, with a hint of a kind no box of the Wold has used: a smell
@@ -2647,7 +2653,7 @@ This is their brief, in §4's form; each pull request builds from it and adds it
   shore. Below, the pans giving out in mud and the tide's line under the hills.
 - **Points of interest,** about twelve features and three groups: the long grass, a foal's bones on
   the shore, a cairn of sea-stones, the walkers' tracks, the Scarp's end, the lip over the pans, the
-  Riders' old watch-fire, a camp, and the beacon; below, the pans' end, a salt-raker at the last
+  Riders' old watch-fire for a camp and the beacon; below, the pans' end, a salt-raker at the last
   pan, the tide's line and the Scarp's foot.
 - **Encounters.** Four vultures over the foal's bones, the nearest; three lions lying up in the long
   grass; two glass walkers come north to the Scarp's end, the hardest at 27.
@@ -2661,7 +2667,7 @@ This is their brief, in §4's form; each pull request builds from it and adds it
   bare, the way to each clear (§12.4, §12.5).
 - **New here.** Glass walkers in the country, come north to the edge.
 - **Finds.** 350 gold and an Elixir on the cairn; 1,100 gold and a Sapphire Vial in the store.
-- **Pay.** About 1,600 xp a member.
+- **Pay.** About 1,600 xp a member and 1,450 gold.
 - **As built** (#833, 23 October): `wold_d7`, laid at 104,190, start 20,31 facing north. In from
   Akordu's box over the south edge, the long grass past the poles (`d7_grass`, 17,29); on the shore
   sand a foal's bones (`d7_bones`, 24,27) and four vultures over them (`d7_vultures`, 22,28), the
@@ -2699,7 +2705,7 @@ This is their brief, in §4's form; each pull request builds from it and adds it
   against E6, crossed by no company (§12.1); the east edge is the sea against F7.
 - **The secret and its hint.** A castaway's hollow in the islet's rock. The hint: the wind moaning
   in a crack, low and long, like a breath across a jar's mouth.
-- **New here.** Nothing.
+- **New here.** A hint heard and not seen, the wind moaning in the crack (§9, #833's 10).
 - **Finds.** 700 gold and an Elixir in the hollow.
 - **Pay.** No xp; 700 gold.
 - **As built** (#833, 23 October): `wold_e7`, laid at 136,190, start 16,31 facing north. On the
@@ -2719,7 +2725,7 @@ This is their brief, in §4's form; each pull request builds from it and adds it
   Riders laid their khans before the sky opened. Held to its own band (#845).
 - **Band.** 28–29, a band over D7's 26–27 (#845: a band or two).
 - **Landmarks.** A passage under the mound, the khans' chamber and the horses laid with them.
-- **Points of interest.** The passage's mouth, the khans' chamber and their horses, and the door's
+- **Points of interest.** The passage's mouth, the khans' chamber with their horses and the door's
   own line, which gives its band (#845).
 - **Encounters.** The roster's heaviest at the enclave's band, as the enclave's pull request sets
   them under #845; no guardian.
@@ -2728,7 +2734,9 @@ This is their brief, in §4's form; each pull request builds from it and adds it
 - **The secret and its hint.** The eldest khan's cell behind the chamber's end wall. The hint: the
   horses' skulls on the chamber floor, every one turned to that wall.
 - **New here.** The enclave itself (#845).
-- **Reward.** One of its own, as #845 sets it, inside the cap's window.
+- **Reward.** One of its own, named with its groups in the enclave's pull request (§9, #833's 13),
+  inside the Hearth's window, 7,000 (EXPANSION §5.2, #845's 3: the last road area whose floor is at
+  or under 28).
 - **Pay.** Counted in no clear (`tools/tests/curve.ts`).
 
 ### 12.5 The lair: the Foal-taker's eyrie (#833, its third pull request)
