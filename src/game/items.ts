@@ -6,7 +6,7 @@
 // one marked so (#847): one in the world, never sold, past the ladder's top.
 import { ITEMS } from '../content/index.ts';
 import type { Feature } from './map.ts';
-import type { Party, Stat } from './party.ts';
+import type { Condition, Party, Stat } from './party.ts';
 import type { Element } from './spells.ts';
 import type { SkillId } from './skills.ts';
 import { skilled } from './skills.ts';
@@ -52,10 +52,21 @@ export interface ItemDef {
   /**
    * An artifact (#847, DESIGN §9): one in the world, found in its lair and never sold. No shop stocks
    * one or takes one (`REFUSED`), and by this mark alone no rung of the ladder and no price window
-   * holds one. Its one power is of the five kinds; the two built are a stat it raises (`stat`, by
-   * `ARTIFACT_RAISE` at most) and the element its blows carry (`element`), each as on any item.
+   * holds one. Its one power is of the five kinds: a stat it raises (`stat`, by `ARTIFACT_RAISE` at
+   * most) and the element its blows carry (`element`), each as on any item; a spell it casts so many
+   * times a day (`casts`), regeneration (`regen`) and a ward against one condition (`ward`).
    */
   artifact?: true;
+  /**
+   * A spell its bearer casts from it in a fight, `times` a day (`ARTIFACT_CASTINGS` at most): their
+   * turn and a charge, no spell points, rolled at their level held at `ARTIFACT_LEVEL`, unranked. The
+   * charges spent are the company's (`Party.spent`) and come back whole at dawn (`passClock`).
+   */
+  casts?: { spell: string; times: number };
+  /** Regeneration: its bearer mends a tenth of their most hit points each whole hour the clock passes (`passClock`), never in a fight. */
+  regen?: true;
+  /** A ward: its bearer never takes this condition (`immuneTo`), one of `WARDABLE`; one already taken stays. */
+  ward?: Condition;
   /** Words to read: a letter, read from the pack. */
   text?: readonly string[];
   /**
@@ -77,6 +88,14 @@ export const ELEMENT_DIE = 6;
 
 /** The most an artifact raises a stat by while it is borne (`ItemDef.stat`), where a found item raises by 3 (DESIGN §9). */
 export const ARTIFACT_RAISE = 5;
+/** The most castings a day an artifact's spell has (`ItemDef.casts`, DESIGN §9). */
+export const ARTIFACT_CASTINGS = 3;
+/** The level an artifact's spell rolls at, its bearer's held to it, with no rank, tier, trait or song (DESIGN §9). */
+export const ARTIFACT_LEVEL = 10;
+/** Regeneration's share of the most hit points, mended each whole hour (`ItemDef.regen`): a tenth, the trolls' (MONSTERS §3.3). */
+export const REGEN_PART = 10;
+/** The castings of an artifact's spell left until dawn (`ItemDef.casts`): its number less those the company has spent. */
+export const chargesLeft = (party: Pick<Party, 'spent'>, id: string): number => Math.max(0, (item(id).casts?.times ?? 0) - (party.spent?.[id] ?? 0));
 /** What a shop says to an artifact offered it (`ItemDef.artifact`): it takes none. */
 export const REFUSED = '"Keep it. There is no price on a thing like that."';
 

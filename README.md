@@ -80,7 +80,8 @@ two in flight, Saltreach first and the Foreland last, with the reorganisation be
 moves that touch every area landing in two short windows between area pull requests. Of the
 touches, #890 is merged (#894) and #891 and #892 are closed, their rulings standing (#901).
 The enclave's rules are built (#845) and do nothing until an area places an enclave.
-The bounds' artifacts are #846's; the reach stays post-v1.
+The bounds' artifacts are #846's: #847 has built their mark and their five kinds of power, and the
+eight wait in their areas' items for their lairs. The reach stays post-v1.
 
 The owner's own playthrough of M3 is what remains before v1 is called done; the tracker holds no
 issue for it.

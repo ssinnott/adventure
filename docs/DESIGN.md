@@ -1172,9 +1172,9 @@ They are their areas' and not the reach's: off the quest as the reach is, and th
 without them. Designed in #846 to the direction of the owner's delegate (18 October 2026, on #828):
 #847 builds the mark and the powers, in two halves, the first the mark and the three whose kinds were
 built (the Telstok, the Erzhemd and Akkush, defined and placed nowhere), the second the three kinds
-not yet built and the other five; each area's issue (#830 to #837) the lair, its door and the
-rumour; the creatures lane the guardians (docs/MONSTERS.md §13). Each area's doc has its own under
-§6.
+not yet built and the other five. Both halves are built, and the eight lie nowhere yet; each area's
+issue (#830 to #837) builds the lair, its door and the rumour; the creatures lane the guardians
+(docs/MONSTERS.md §13). Each area's doc has its own under §6.
 
 **What an artifact is.** An item marked so (`ItemDef.artifact`, #847): one in the world, found in its
 lair and never sold, with no price in any window: no shop stocks one or takes one, and the windows
@@ -1188,7 +1188,9 @@ gate's company is dressed from the ladder (EXPANSION §5.2), and no artifact is 
 
 **The five kinds, and no sixth.** One power to an artifact, and each kind on one or two of the
 eight. #847 builds the three not yet built and holds every bound here as a named constant (the
-raise's, `ARTIFACT_RAISE`, with its first half).
+raise's, `ARTIFACT_RAISE`, with its first half; with its second the castings', `ARTIFACT_CASTINGS`,
+the level a spell from an artifact rolls at, `ARTIFACT_LEVEL`, regeneration's share, `REGEN_PART`,
+and the conditions a ward may keep off, `WARDABLE`).
 
 1. **A stat raised while borne** (`ItemDef.stat`, built, #855): one of the four stats a fight reads
    (might, accuracy, speed, personality: §5), by 5 at most, where the found items raise by 3. Borne
@@ -1251,7 +1253,8 @@ the knight's and the sorcerer's share the stone and nothing else.
 | Monk | the Hagstone, the Telstok, the Wakerobe |
 
 **Their words and their rumours.** The two lines are each piece's own words, read from the pack
-(its `text`, as the Old Lantern's Staff has); STORY.md has them too. Each rumour is two lines, words
+(its `text`, as the Old Lantern's Staff has: Space on it there shows them, a piece with a slot as it
+is taken up); STORY.md has them too. Each rumour is two lines, words
 only, said by a person of the artifact's own area at a meeting after their first, as F11's hermit
 says the Master of magic's (docs/areas/ashfall.md §6): no flag, no quest, no line in the journal
 and nothing marked on the world map. It hints at the thing and never names where it lies.

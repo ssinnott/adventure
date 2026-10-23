@@ -256,11 +256,12 @@ const SLEEPS: Partial<Record<ClassId, string>> = { sorcerer: 'sleep', druid: 'ro
  * and can afford it, at the group with the most foes standing, awake and held by nothing, where that
  * is two or more: the spell, the foe to cast it at and the foes it could put down. Never a group that
  * holds a foe proof against it as `sees` knows (#865), since the sleepers would bar the group's spells
- * while the one awake foe is struck alone. None else.
+ * while the one awake foe is struck alone. None else. Given `from`, an artifact's spell the member
+ * bears (#847), that one, which costs a charge and no points, at a group of one as well.
  */
-export function sleepWith(s: CombatState, c: Character, sees: Sees = asWritten): { spell: SpellDef; target: number; foes: number[] } | undefined {
-  const id = SLEEPS[c.cls], x = id && c.spells.includes(id) ? spell(id) : undefined, k = x?.inflict;
-  if (!x || !k || x.sp > c.sp) return undefined;
+export function sleepWith(s: CombatState, c: Character, sees: Sees = asWritten, from?: SpellDef): { spell: SpellDef; target: number; foes: number[] } | undefined {
+  const id = SLEEPS[c.cls], x = from ?? (id && c.spells.includes(id) ? spell(id) : undefined), k = x?.inflict;
+  if (!x || !k || (!from && x.sp > c.sp)) return undefined;
   const groups = new Map<number, number[]>(), proof = new Set<number>();
   for (const f of aliveMonsters(s)) {
     const m = s.monsters[f];
@@ -268,7 +269,7 @@ export function sleepWith(s: CombatState, c: Character, sees: Sees = asWritten):
     else if (!m.conditions.length) groups.set(m.group, [...(groups.get(m.group) ?? []), f]);
   }
   const foes = [...groups].filter(([g]) => !proof.has(g)).map(([, fs]) => fs).sort((a, b) => b.length - a.length)[0];
-  return foes && foes.length >= 2 ? { spell: x, target: foes[0], foes } : undefined;
+  return foes && foes.length >= (from ? 1 : 2) ? { spell: x, target: foes[0], foes } : undefined;
 }
 
 /**
