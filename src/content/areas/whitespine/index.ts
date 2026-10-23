@@ -11,6 +11,7 @@ import { SHEERPOINT_I8 } from './maps/sheerpoint_i8.ts';
 import { MONKSVALE_J10 } from './maps/monksvale_j10.ts';
 import { HIGHSPINE_I12 } from './maps/highspine_i12.ts';
 import { MONKSVALE_J12 } from './maps/monksvale_j12.ts';
+import { SHEERPOINT_J8 } from './maps/sheerpoint_j8.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { CHAPTER } from './chapter.ts';
@@ -21,7 +22,9 @@ export const AREA = {
   id: 'whitespine' as const,
   maps: [MONKSVALE_J11, MONASTERY, MONASTERY2, HIGHSPINE_I11, HIGHSPINE_I10, SHEERPOINT_I9, SHEERPOINT_I8,
     // The country behind the road (#508): the giants' ground, the Spine's south and the vale's end.
-    MONKSVALE_J10, HIGHSPINE_I12, MONKSVALE_J12],
+    MONKSVALE_J10, HIGHSPINE_I12, MONKSVALE_J12,
+    // The bounds (#832): the pines over the water by Sheer Point.
+    SHEERPOINT_J8],
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,

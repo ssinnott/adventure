@@ -6,7 +6,7 @@
 // when the loch rose. East of the spur, reached from K11 or L12 only, old pines and a cairn. The rim's
 // face at 2,15, on the vale's land, is left bare for the lair's door (docs/areas/rimewater.md §12.4).
 // In from K11 (#497) over its north edge and from J12 (#508) over its west, square for square; the east
-// edge is open onto L12, to come (#832), and past the south edge the world ends.
+// edge meets L12's west (#832) square for square, and past the south edge the world ends.
 // Laid whole in Loch Fuar, its larger zone, the vale's land played at the loch's band. Cut by hand from
 // the atlas, the void written '%' and the rim's peaks drawn as its mountain, the peaks being the
 // Whitespine's own (its novelty); docs/areas/rimewater.md §12.2 is its brief.

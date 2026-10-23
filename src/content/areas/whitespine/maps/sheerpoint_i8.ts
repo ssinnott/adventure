@@ -9,8 +9,8 @@
 // cairn on the last rock, the drowned god's shrine, a snow troll come down to the shore by night and,
 // at the end of the pines, the mason who deserted with his tally.
 // In from I9 (#503) walked, up the ridge trail: I9's 20,0 is this map's 20,31's neighbour, and the
-// pines and shallows at 2 to 6 meet square for square; the same zone, so nothing is said. North, west
-// and east the world ends: the sea on the north and west, the void of unbuilt J8 on the east.
+// pines and shallows at 2 to 6 meet square for square; the same zone, so nothing is said. North and
+// west the world ends in the sea; the east edge meets J8's west (#832) square for square.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/whitespine.md §4.7 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';

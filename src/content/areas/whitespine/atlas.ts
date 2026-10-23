@@ -4,7 +4,7 @@ import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
   {
-    id: 'sheerpoint', name: 'Sheer Point', area: 'whitespine', band: [23, 24], maps: [{ map: 'sheerpoint_i9', at: [264, 254] }, { map: 'sheerpoint_i8', at: [264, 222] }], seeds: [[282, 244], [276, 262]],
+    id: 'sheerpoint', name: 'Sheer Point', area: 'whitespine', band: [23, 24], maps: [{ map: 'sheerpoint_i9', at: [264, 254] }, { map: 'sheerpoint_i8', at: [264, 222] }, { map: 'sheerpoint_j8', at: [296, 222] }], seeds: [[282, 244], [276, 262]],
     // The crossing line said north along the ridge from the High Spine, at the same floor (#166, #503).
     crossing: { harder: 'Out here the land runs thin toward the sea, and nothing on it is any kinder than the range.', warning: 'Nothing on the Point would spare you. The way you came is still open.' },
   },

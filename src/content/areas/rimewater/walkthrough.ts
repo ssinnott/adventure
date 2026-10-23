@@ -45,10 +45,10 @@
 // N9, its only way in, its groups won, the hunters' hide found from the skull and the glacier's wall
 // closed past it, Glacier Foot's slivers drawn closed (call 7). Then the Sleepers' Bay (#490), through
 // the door: the stair under the ice and the bay of beds, the Matron in the last row and the locker
-// behind it. Then the bounds (#832), Monks' Vale's east under the pass, in a walk of their own
-// (theBounds).
+// behind it. Then the bounds (#832), Monks' Vale's east under the pass and the rim south of Loch Fuar,
+// in a walk of their own (theBounds).
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, walkThrough, see, fight, listen, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
+import { newWalk, walkThrough, see, fight, kneel, listen, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import type { Facing } from '../../../game/types.ts';
 import { GameMap } from '../../../game/map.ts';
@@ -1197,7 +1197,12 @@ function theSleepers(ok: (cond: boolean, msg: string) => void): void {
  * of stone's riddle; the kill, the cats' tracks, the spur and the rim; the lynxes and the bears, the
  * box's two groups, won at its floor; the cell behind the rock where the path of flat stones stops, shut
  * but through its door; the rim's face at 2,15 left bare for the lair's door; east of the spur, from
- * K11, the old pines and the cairn; and the box's edges as built.
+ * K11, the old pines and the cairn; and the box's edges as built. Then L12, the rim south of Loch Fuar:
+ * east from K12's 31,1 onto its 0,1, Loch Fada named, and back, and south from L11's 8,31 onto its 8,0,
+ * the land not named again; the strip of pines walked from the way in, the spring that does not freeze,
+ * the cairn, the rim and the bears' den-mouth; the pair of ice bears, the box's one group, won at its
+ * floor; the store behind the rock where the pines are scored, shut but through its door; the rim's face
+ * at 11,4 left bare for the enclave's door; and the box's edges as built.
  */
 function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const w = newWalk(ok);
@@ -1300,12 +1305,77 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   ok(cairn?.kind === 'cairn' && cairn.gold === 120 && cairn.items?.join() === 'potion_sp_great', 'under the old pines, a cairn with 120 gold and a Sapphire Vial');
 
   // K12's edges: its north meets K11's south square for square, open at 0 to 13 and 23 to 31; its west
-  // meets J12's east, open at 0 to 15; its east is open onto L12, to come, at 0 to 7; past its south the
-  // world ends.
+  // meets J12's east, open at 0 to 15; its east is open at 0 to 7, where L12 meets it (below); past its
+  // south the world ends.
   const north = open(32, (i) => out.passable(k12.x + i, k12.y) === 'ok'), west = open(32, (i) => out.passable(k12.x, k12.y + i) === 'ok');
   ok(north === open(32, (i) => i <= 13 || i >= 23) && north === open(32, (i) => out.passable(k11.x + i, k11.y + 31) === 'ok')
     && west === open(32, (i) => i <= 15) && west === open(32, (i) => out.passable(j12.x + 31, j12.y + i) === 'ok')
     && open(32, (i) => out.passable(k12.x + 31, k12.y + i) === 'ok') === open(32, (i) => i <= 7)
     && open(32, (i) => out.passable(k12.x + i, k12.y + 31, ALL) === 'ok') === open(32, () => false),
-    'K12 meets K11 at 0 to 13 and 23 to 31 of its north edge and J12 at 0 to 15 of its west, square for square; its east edge is open onto L12 at 0 to 7, and past its south edge the world ends');
+    'K12 meets K11 at 0 to 13 and 23 to 31 of its north edge and J12 at 0 to 15 of its west, square for square; its east edge is open at 0 to 7, and past its south edge the world ends');
+
+  // L12 (#832), the rim south of Loch Fuar: east from K12's 31,1 onto its 0,1, walked, where at 20 Loch
+  // Fada is named and no more, and straight back; south from L11's 8,31 onto its 8,0, the land not named
+  // again.
+  const L12 = MAP_DEFS.find((d) => d.id === 'longmere_l12')!, l12 = zone(L12.id), l11 = zone('longmere_l11');
+  w.world.travel(K12.id, 31, 1, EAST);
+  const onto = w.world.move('forward');
+  ok(onto.kind === 'moved' && w.world.zone?.id === L12.id && w.world.state.x === l12.x && w.world.state.y === l12.y + 1 && said(onto) === 'Loch Fada.' && k12.x + k12.w === l12.x,
+    `east from K12's 31,1 onto L12's 0,1, walked, and at 20 Loch Fada named, no more (${said(onto)})`);
+  listen(w);
+  const off = w.world.move('back');
+  ok(off.kind === 'moved' && w.world.zone?.id === K12.id && w.world.state.x === l12.x - 1 && w.world.state.y === l12.y + 1 && said(off) === 'nothing said',
+    `and straight back west onto K12's 31,1, nothing said (${said(off)})`);
+  listen(w);
+  w.world.travel(l11.id, 8, 31, SOUTH);
+  const down = w.world.move('forward');
+  ok(down.kind === 'moved' && w.world.zone?.id === L12.id && w.world.state.x === l12.x + 8 && w.world.state.y === l12.y && l11.y + l11.h === l12.y && said(down) === 'nothing said',
+    `south from L11's 8,31 onto L12's 8,0, walked, and the land not named again (${said(down)})`);
+  listen(w);
+  ok(L12.start.x === 10 && L12.start.y === 0 && L12.start.facing === SOUTH && !(L12.exits ?? []).length, 'the box starts at its north edge under the pines, and nothing is taken out of it');
+
+  // The strip of pines, walked from the way in to every point and to the bears' square; the gatherers'
+  // fire, 8 squares or more from the bears; the spring that does not freeze, which gives +1 intellect to
+  // each of the company; the cairn, the rim and the bears' den-mouth.
+  const strip = reach(l12, [L12.start.x, L12.start.y], {}, [4, 6]);
+  const bears = L12.encounters!.find((g) => g.id === 'l12_bears')!, camp12 = L12.features!.find((f) => f.kind === 'camp')!;
+  ok(strip.size === 78 && L12.features!.filter((f) => f.kind !== 'chest' && !('id' in f && f.id === 'l12_store')).every((f) => strip.has(at(l12, f.x, f.y))) && strip.has(at(l12, bears.x, bears.y)),
+    `the strip of pines (${strip.size} squares) is walked from the way in to every point and to the bears' square, and no further`);
+  ok(Math.abs(camp12.x - bears.x) + Math.abs(camp12.y - bears.y) >= 8, 'the gatherers\' fire is 8 squares or more from the bears, who do not roam');
+  const springBefore = w.party.members.map((m) => m.stats.intellect);
+  kneel(w, `${L12.id}:l12_spring`);
+  ok(w.party.members.every((m, i) => m.stats.intellect === springBefore[i] + 1), 'kneeling at the spring under the rim gives +1 intellect to each of the company');
+  const cairn12 = L12.features!.find((f) => f.kind === 'cairn' && f.id === 'l12_cairn');
+  ok(cairn12?.kind === 'cairn' && cairn12.gold === 100 && cairn12.items?.join() === 'potion_sp_great', 'in the pines a cairn with 100 gold and a Sapphire Vial');
+  for (const id of ['l12_rim', 'l12_den']) see(w, `${L12.id}:${id}`);
+  for (const g of L12.encounters!) fight(w, `${L12.id}:${g.id}`);
+
+  // The secret: the pines scored in long cuts and the stack of empty pots under the rim; the search
+  // there facing the rock, and the gatherers' store behind it, a room of one by two with its door at the
+  // north end. Walked, waded, climbed or floated, it is never reached but through its door.
+  const store = reach(l12, [L12.start.x, L12.start.y], ALL, [4, 6]);
+  ok(store.size > 70 && ![[4, 7], [4, 8]].some(([x, y]) => store.has(at(l12, x, y))), `the store is shut but for its door in the rim: none of L12's ${store.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${L12.id}:l12_cuts`);
+  ok(search(L12.id, 4, 5, SOUTH, 'l12_store'), 'searched where the pines are scored, the rock gives, and the store behind it can be walked into');
+  ok([[4, 7], [4, 8]].every(([x, y]) => out.passable(l12.x + x, l12.y + y) === 'ok') && [[3, 7], [5, 7], [3, 8], [5, 8], [4, 9]].every(([x, y]) => out.passable(l12.x + x, l12.y + y, ALL) !== 'ok'),
+    'the store runs two squares along the rim from its door at the north end, one wide');
+  const strongbox12 = L12.features!.find((f) => f.kind === 'chest' && f.id === 'l12_strongbox');
+  ok(strongbox12?.kind === 'chest' && strongbox12.gold === 200 && strongbox12.items.join() === 'elixir' && strongbox12.x === 4 && strongbox12.y === 8, 'at the store\'s end, a strongbox with 200 gold and an Elixir');
+
+  // The enclave's door (docs §12.4) is left bare: the rim's face at 11,4, Loch Fada's land by the atlas,
+  // mountain, its way the pines of 11,3, with nothing within four squares.
+  const bare12 = worldGrid(ATLAS, MAP_DEFS.filter((d) => d.id !== L12.id));
+  const land12 = ATLAS.zones[bare12.zone[(l12.y + 4) * bare12.width + l12.x + 11]]?.id;
+  const near12 = [...(L12.features ?? []), ...(L12.encounters ?? [])].filter((f) => Math.abs(f.x - 11) + Math.abs(f.y - 4) <= 4);
+  ok(L12.rows[4][11] === 'M' && strip.has(at(l12, 11, 3)) && land12 === 'longmere' && !near12.length,
+    `the rim's face at 11,4, Loch Fada's land by the atlas (${land12}), is left bare for the enclave's door, walked to from 11,3, nothing within four squares${near12.length ? ` (not ${near12.map((f) => `${f.x},${f.y}`).join(' ')})` : ''}`);
+
+  // L12's edges: its north meets L11's south square for square, open at 0 to 16; its west meets K12's
+  // east, open at 0 to 7; past its east and south the rim stands and the world ends.
+  const north12 = open(32, (i) => out.passable(l12.x + i, l12.y) === 'ok'), west12 = open(32, (i) => out.passable(l12.x, l12.y + i) === 'ok');
+  ok(north12 === open(32, (i) => i <= 16) && north12 === open(32, (i) => out.passable(l11.x + i, l11.y + 31) === 'ok')
+    && west12 === open(32, (i) => i <= 7) && west12 === open(32, (i) => out.passable(k12.x + 31, k12.y + i) === 'ok')
+    && open(32, (i) => out.passable(l12.x + 31, l12.y + i) === 'ok') === open(32, () => false)
+    && open(32, (i) => out.passable(l12.x + i, l12.y + 31) === 'ok') === open(32, () => false),
+    'L12 meets L11 at 0 to 16 of its north edge and K12 at 0 to 7 of its west, square for square; past its east and south edges the rim stands and the world ends');
 }
