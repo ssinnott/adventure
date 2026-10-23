@@ -4,7 +4,7 @@
 // pines two ice bears on their kill and four lynxes waiting on it; at the rim's foot a path of flat stones
 // that stops at the rock, and behind the rock the cell where Fuar's folk walled up their kirk's plate
 // when the loch rose. East of the spur, reached from K11 or L12 only, old pines and a cairn. The rim's
-// face at 2,15, on the vale's land, is left bare for the lair's door (docs/areas/rimewater.md §12.4).
+// face at 2,15, on the vale's land, is left bare for the lair's door (docs/areas/rimewater.md §12.5).
 // In from K11 (#497) over its north edge and from J12 (#508) over its west, square for square; the east
 // edge meets L12's west (#832) square for square, and past the south edge the world ends.
 // Laid whole in Loch Fuar, its larger zone, the vale's land played at the loch's band. Cut by hand from
