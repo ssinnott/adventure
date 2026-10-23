@@ -34,6 +34,8 @@ export const PLACES: readonly AtlasPlace[] = [
   { id: 'lava_tubes', kind: 'dungeon', at: [470, 194] }, // Feuerstollen, the Lava Tubes: the fire adit, under O6's ridge at 22,20 (#466)
   { id: 'lava_tubes2', kind: 'dungeon', at: [470, 200] }, // the deep tubes, below it
   { id: 'seestollen', kind: 'dungeon', band: [19, 20], at: [340, 172] }, // the enclave, the first quay's galleries under K6's point, its grate at 20,16 (#831, #845)
+  { id: 'randzeche', kind: 'dungeon', band: [30, 32], at: [499, 151] }, // the lair, the old working in the rim under P5, its adit at 11,23 (#831, #845, #846)
+  { id: 'randzeche2', kind: 'dungeon', band: [30, 32], at: [499, 155] }, // the Dark Seam, below it, where the Steiger keeps the Erzhemd
 ];
 
 export const SITES: readonly AtlasSite[] = [

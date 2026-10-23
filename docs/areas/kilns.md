@@ -26,16 +26,17 @@ parked until the owner had played the act and built now: M4 and M5, Kilnmouth's 
 and O3 and O4, the Fells' east and the heart's hills (#474, §4.15), which closes #474; and the five
 boxes of the bounds, K6 (the heath west of the port), P5 and P6 (the hills under the rim at the
 Stone and the ash under the vents), L7 (the shore under the port) and P4 (the strip's north end),
-and their enclave, the Seestollen under K6's point (#831; §12, whose lair waits on #847). Its
-chapter of the one quest, The Anvil Stone, is written and walked (#470, §5), and its four side
-quests are in the log, their people on those maps (#471, §6). All twelve of its monsters and its
-twelve rooms are drawn (§3). Only the ship to Cinderport waits, on #512 (§4.14). Its content is
-`src/content/areas/kilns/` (maps, monsters, items, rooms, climate, its part of the world map, its
-walkthrough and its guild quests in `guilds.ts`, #439; its chapter of the one quest, The Anvil
-Stone, in `chapter.ts`, #470; its side quests in `quests.ts`, #471) and its businesses' rooms
-`src/ui/interiors/kilns/`. Its ids: the area `kilns`, its zones `ironfells`, `kilnsheart` and
-`kilnmouth`, the towns `anvilhall` and `kilnhaven`, the dungeons `deep_mines`, `anvil_stone` and
-`lava_tubes` and the enclave `seestollen`. The ids stay through the naming pass (§10, NAMES §3).
+and their enclave, the Seestollen under K6's point, and the Erzhemd's lair, the Randzeche in the rim
+under P5 (#831; §12). Its chapter of the one quest, The Anvil Stone, is written and walked (#470,
+§5), and its four side quests are in the log, their people on those maps (#471, §6). All twelve of
+its monsters and its twelve rooms are drawn (§3). Only the ship to Cinderport waits, on #512
+(§4.14). Its content is `src/content/areas/kilns/` (maps, monsters, items, rooms, climate, its part
+of the world map, its walkthrough and its guild quests in `guilds.ts`, #439; its chapter of the one
+quest, The Anvil Stone, in `chapter.ts`, #470; its side quests in `quests.ts`, #471) and its
+businesses' rooms `src/ui/interiors/kilns/`. Its ids: the area `kilns`, its zones `ironfells`,
+`kilnsheart` and `kilnmouth`, the towns `anvilhall` and `kilnhaven`, the dungeons `deep_mines`,
+`anvil_stone` and `lava_tubes`, the enclave `seestollen` and the lair `randzeche`. The ids stay
+through the naming pass (§10, NAMES §3).
 
 ---
 
@@ -206,15 +207,15 @@ on the Fells' tops in winter (the area's `climate`, with its first box).
 
 ## 3. What is built
 
-Nineteen boxes, two towns and four dungeons: the area's first box, which lists the area (#457); the
+Nineteen boxes, two towns and five dungeons: the area's first box, which lists the area (#457); the
 box of its first town (#458) and the town behind its gate (#459); the box of its first dungeon, the
 heart's first (#461), and the dungeon under its shaft (#462); the crag north of Anvilhall, off the
 road (#460); the smelter's (#463); the roads south and west (#467); the Stone's (#464), with the
 Rift through its tear (#465); Kilnhaven's box (#468) and the town behind its gate (#469); the ash
 country under the vent ridge, with the tubes below it (#466); Kilnmouth's north and its farms and
-the Fells' east and the heart's hills, off the road (#474); the bounds' five boxes and their
-enclave, the Seestollen (#831); its chapter of the one quest (#470); and the four side quests on
-them (#471):
+the Fells' east and the heart's hills, off the road (#474); the bounds' five boxes and their enclave
+and lair, the Seestollen and the Randzeche (#831); its chapter of the one quest (#470); and the four
+side quests on them (#471):
 
 - **The Iron Fells' way in** (M3, `ironfells_m3`, country, band 16; #457): the east road out of
   Lanternwood's M2 over the ridge, through the last of Lanternwood's trees with pines at the verge,
@@ -408,6 +409,14 @@ them (#471):
   wall of the loading gallery, the dwarves' store (§12.7). Three groups of machines: four menders at
   the pumps, then a tallyman, a mender and two knockers in the tally-room, then two tallymen and
   three knockers at the quay.
+- **The Randzeche** (`randzeche` and `randzeche2`, the Erzhemd's lair, dungeon, two levels of 16 by
+  16, band 30–32; #831, #845, #846): the old working in the crag under the rim, in by the adit in
+  P5's rim foot at 11,23. The adit past the miners' door and a lamp room to the seam's level; north
+  to the stopes, and behind the drift's west wall, where something knocks, the stope walled up with
+  the miners' pay-chest in it; south past a cut to the winze, its ladder down to the Dark Seam,
+  where the Steiger stands in the drift to the face and the smith who went down for more sits by his
+  kist, the Erzhemd in it (§12.8). One group, the guardian: the Steiger, which calls its deep
+  knockers.
 - **The chapter** (`chapter.ts`; #470): The Anvil Stone, joined after the Wall and before the Ring.
   It reads the road up into the Fells, the verse, the thane's choice, the door, the tear closed, the
   manifests and the corridors south, begun on M3 or at Kilnhaven and done on the moor's first map
@@ -521,12 +530,13 @@ Built: M3, N3, N4, N2, N5, N6, M6, O5, L6, O6, M4, M5, O3, O4, K6, P5, P6, L7 an
 #458, §4.3; #461, §4.6; #460, §4.5; #463, §4.8; #467, §4.12; #464, §4.9; #468, §4.13; #466, §4.11;
 #474, §4.15; #831, §12.2 to §12.6), Anvilhall behind N3's gate (#459, §4.4), the Tiefzeche under
 N4's shaft (#462, §4.7), the Anvil Stone's Rift through O5's tear (#465, §4.10), Kilnhaven behind
-L6's gate (#469, §4.14), Feuerstollen under O6's ridge (#466, §4.11) and the Seestollen, the bounds'
-enclave, under K6's grate (#831, §12.7). Nothing of the Kilns' plan is still to build; the bounds
-are built but for the lair (§12.8), and the ship to Cinderport waits on #512 (§4.14). The plan's
-figures (§1) are 14,791 squares of land, 12,399 of them walkable. On the grid the plan is ten boxes,
-three dungeons and two towns, all built, with four more boxes behind the road, all built since, and
-the ten hold 8,419 of those squares, 7,686 walkable; the four behind the road 3,886 and 3,397:
+L6's gate (#469, §4.14), Feuerstollen under O6's ridge (#466, §4.11), the Seestollen, the bounds'
+enclave, under K6's grate (#831, §12.7) and the Randzeche, the Erzhemd's lair, behind P5's adit
+(#831, §12.8). Nothing of the Kilns' plan is still to build; the bounds are built, and the ship to
+Cinderport waits on #512 (§4.14). The plan's figures (§1) are 14,791 squares of land, 12,399 of them
+walkable. On the grid the plan is ten boxes, three dungeons and two towns, all built, with four more
+boxes behind the road, all built since, and the ten hold 8,419 of those squares, 7,686 walkable; the
+four behind the road 3,886 and 3,397:
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
 |---|---|---|---|---|---|---|---|---|
@@ -1685,8 +1695,8 @@ early, as every guild quest is; the rank stays the third until the guild's other
 ### The artifact: the Erzhemd (#846)
 
 The Kilns' of the bounds' eight (DESIGN §9). Found and never told: no `seek` quest, no line in the
-journal and no mark on the world map. #831 builds the lair, its door and the rumour once #845, #847
-and the guardian's drawing are in.
+journal and no mark on the world map. #831 built the lair, the Randzeche behind P5's adit, its door
+and the rumour (§12.8).
 
 - **What it is:** *A shirt of mail in rings darker than iron, and no heavier than wool. / Inside the
   collar a smith's mark is cut, and a knocker's eye beside it.*
@@ -1698,8 +1708,8 @@ and the guardian's drawing are in.
   bard and the druid, as the Grey Mail.
 - **Numbers:** armour 15, the Grey Mail's 14 and a point (EXPANSION §5.2). Found and never sold.
 - **Power:** a stat (DESIGN §9, kind 1): speed raised by 5 while it is worn.
-- **The lair:** an old working of two levels in the crag under the rim, its adit in P5, east of the
-  Stone and the vents, at the cap's band, 30–32 (#845).
+- **The lair:** the Randzeche (§12.8), an old working of two levels in the crag under the rim, its
+  adit in P5, east of the Stone and the vents, at the cap's band, 30–32 (#845).
 - **The guardian:** the Steiger (knockers, a new kind; boss, 32; docs/MONSTERS.md §13): *It knocks
   once, and the whole seam answers.* It calls a group of deep knockers.
 
@@ -1716,7 +1726,9 @@ machine stands on the surface or above the Tiefzeche's lowest level (MONSTERS §
 first machines on the road are met at the bottom of the deepest mine, by a company that has walked
 all of it. The Seestollen, the bounds' enclave under K6's point (§12.7), is placed by its band,
 19–20, past the Mines, as the Dead-Drop is: its menders and knockers are the area's, and its
-tallymen Rimewater's, met there a band before their own.
+tallymen Rimewater's, met there a band before their own. The Randzeche, the Erzhemd's lair (§12.8),
+holds one group at the cap, the Steiger, a machine that calls the deep knockers of Meridian Camp
+(§9, #831's 40).
 
 Proposed, against the roster's Where column, and standing in the briefs as proposals: the Fire
 Beetle on every box's spoil, kilns and ore heaps, where the roster has it at the spoil heaps and the
@@ -1815,8 +1827,8 @@ M4, M5, O3 and O4 (#474), which place the rock worm and the salamander again and
   19.38 (19.384) and with L7 and P4 at 19.41 (19.4056), +1.4 over the next floor 18, and `OVER_ROAD`
   names the Kilns at 19.5, raised from 19.3 by name with K6 and with L7 (§9, #474's 12 and 26,
   #831's 5, 18 and 25). The Seestollen, the enclave, pays 1,221 xp a member and holds 700 gold in
-  its chests, counted in no clear, so the lead stays at 19.4056 (§12.7). What waits is the ship to
-  Cinderport, on #512.
+  its chests, and the Randzeche, the lair, 3,396 and 500, each counted in no clear, so the lead
+  stays at 19.4056 (§12.7, §12.8). What waits is the ship to Cinderport, on #512.
 - **Gold.** Training six members from 16 to 18 costs 7,920 with today's `trainPrice` (640 and 680 a
   member a level), and the Barbarian's Ironhide about 4,000 (DESIGN §5). The Stone's price is 6,000
   (`ANVIL_STONE_PRICE`, #535), so that a clear of the Fells and the Tiefzeche can just pay it: a
@@ -1890,10 +1902,13 @@ M4, M5, O3 and O4 (#474), which place the rock worm and the salamander again and
   and two under, 4.97, 62.1% (§9, #831's 24); P4 holds no group. The Seestollen, the enclave, is
   judged alone at its own floor, out of the area's pools and day: at 19 every fight is won and its
   day is 8.40 fights to a rest, inside the aim, 7.75 to 9.75, and two under, at 17, 4.67, 53.4% of
-  the floor's 8.75 (§9, #831's 32). Kilnhaven holds no group, and a company the ferry or the coach
-  puts down there walks out at L6's 29,4: the two groups nearest it, the beetles at the quay's east
-  end and the crew, are won every time at 14, and the groups nearest the lodge's two ways out onto
-  M9, which the coach now lands behind, the lynx and the pike, every time at 18 (#469).
+  the floor's 8.75 (§9, #831's 32). The Randzeche, the lair, holds its guardian alone, judged on its
+  odds: the Steiger is won 56% at 30, inside the aim of 30% to 70%, and 81% at 32, over the limit of
+  75% and under the aim of 90% (§9, #831's 41). Kilnhaven holds no group, and a company the ferry or
+  the coach puts down there walks out at L6's 29,4: the two groups nearest it, the beetles at the
+  quay's east end and the crew, are won every time at 14, and the groups nearest the lodge's two
+  ways out onto M9, which the coach now lands behind, the lynx and the pike, every time at 18
+  (#469).
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3); the
   Tiefzeche's lowest level at the dungeons' floor with the corridor's side room inside it. As built:
   M3 98.5% within 12 steps and the furthest 15, with no sign among its 14 points (#457); N3 97.6%
@@ -1916,9 +1931,11 @@ M4, M5, O3 and O4 (#474), which place the rock worm and the salamander again and
   its 12 points, and O4 99.1% within 12 and the furthest 17, with none among its 17 (#474; 16 before
   the corner's event, #831); K6 100% within 12 and the furthest 9, with no sign among its 17 points
   (16 before the Seestollen's grate), and P5 and P6 100% within 12 and the furthest 6 and 8, with no
-  sign among their 15 and 11, and L7 and P4 100% within 12 and the furthest 11 each, with no sign
-  among their 13 and 5 (#831). The Seestollen, the enclave, a dungeon, is 100% within 7 and the
-  furthest 5, with no sign among its 14 points (#831).
+  sign among their 16 and 11 (P5's 15 before the Randzeche's adit), and L7 and P4 100% within 12 and
+  the furthest 11 each, with no sign among their 13 and 5 (#831). The Seestollen, the enclave, a
+  dungeon, is 100% within 7 and the furthest 5, with no sign among its 14 points, and the
+  Randzeche's two levels, the lair, 100% within 7 and the furthest 2 and 3, with no sign among their
+  12 and 10 (#831).
 
 ## 9. Decisions
 
@@ -3176,8 +3193,8 @@ Decided by the builder for #831, each the owner's to overturn:
     (19.318 before), inside the named 19.4, so `OVER_ROAD` is not touched; L7 moved it to 19.5
     (25).
 19. **The lair's adit has room** in P5's rim foot past the deepest pit, left free of features, apart
-    from the walled trial at the strip's middle (§12.8); P6's store door stands at 13,2, where a
-    lone secret door passes the art check.
+    from the walled trial at the strip's middle (§12.8; the adit stands at 11,23, north of the pit,
+    39); P6's store door stands at 13,2, where a lone secret door passes the art check.
 20. **O4's corner 31,31 is hills, opened by P4's pull request as the owner's delegate ruled** (16).
     P4's 0,31 meets P5's 0,0, hills, and O4's 31,31, which was mountain, so O4's square is the one
     changed and no row is added: square 31 leaves the O4/O5 row of `SEAMS_AS_BUILT`, which holds
@@ -3259,6 +3276,44 @@ Decided by the builder for #831, each the owner's to overturn:
     facing the heath. It is the one square of K6 that changes; within four squares stand only the
     slipway and the rails, whose words still read true, and K6 has 17 points with it.
 37. **§12.7 is the enclave's brief in §4's form, with its As built,** and the lair's note is §12.8.
+38. **The lair is the Randzeche,** *rand* and *zeche*, the mine in the rim (§10): #846's old
+    working, two levels of 16 by 16, the Randzeche and below it the Dark Seam, joined by a winze's
+    ladder as the Tiefzeche's levels are by theirs, both marked `enclave` at 30–32 (§12.8).
+39. **The adit is P5's 11,23,** between the hearth-niche and the deepest pit, the rim's mountain
+    there drawn as dressed stone and given the one exit: the one square of the rim's foot in the
+    strip's south half with nothing within four squares that is no edge square. Past the deepest
+    pit, where 19 left room, the rim's foot at 8,29 stands within four of every face square, and the
+    south edge's mountain meets P6's. It is the one square of P5 that changes; P5 has 16 points with
+    it.
+40. **The guardian's group is the Steiger alone,** as #846 gives it, calling its deep knockers as
+    the fight goes, three at half a turn: it stands in the drift, the one way to the face, so no
+    company steps round it to the kist (the walkthrough's flood). It is a boss (`boss`), with no
+    `respawn` and a `slainText`.
+41. **The Steiger's numbers are set at the gate's company** (MONSTERS §4.1, §4.2 and §13): 2,400 hit
+    points, attack 24 and 18d8+20 a blow, where it was drawn at the line's boss at 32, 2,100, 20 and
+    34d8+41, which the gate's company won 34% at 30 and 45% at 32. As set, it is won 56% at 30,
+    inside the aim, and 81% at 32, between the aim (90%) and the limit (75%), as the fixture's
+    guardian is (57% and 80%); no check moves.
+42. **The secret is the stope walled up** when the working was given up, three by two behind the
+    north drift's west wall, its door at 9,4; the hint is the knocking behind that wall, which stops
+    when the company knocks back, the knockers' old sign of ore behind the rock. It holds 500 gold,
+    an Elixir and a Sapphire Vial, the dearest healing and spell draught that Kilnhaven's chandler
+    and Anvilhall's Hold Stores sell.
+43. **The Erzhemd lies alone in the smith's kist at the face,** past the Steiger: the smith of the
+    rumour, Brandt, sits against the face where he went down for more, and the door across the adit
+    has his name chalked under the hymn's count. The walkthrough asserts that no shop, chest, cairn
+    or statue holds it elsewhere and no monster drops it.
+44. **The rumour is the oldest miner's,** two lines more after his "Nobody goes down that far" at
+    every meeting once he has sung the last verse: a company that has heard the doors with him hears
+    of Brandt, whom they sang to the door. Words only: no flag, quest or mark (#846). It is the one
+    change to Anvilhall.
+45. **The lair's two owed rows go:** `steiger` from `owes.unplaced` in the area's `checks.ts`, which
+    leaves the Kilns owing nothing, and `erzhemd` from `UNPLACED` in `tools/tests/items.ts`, as
+    EXPANSION §8.2 (#912's 12) and #847's 6 say the lairs' pull requests do; each check holds now,
+    so an owed line left in would fail.
+46. **§12.8 is the lair's brief in §4's form, with its As built.** It is the bounds' last piece:
+    every box, the enclave and the lair are built, and no built map of the Kilns is open onto
+    unbuilt land.
 
 ## 10. Names
 
@@ -3298,6 +3353,9 @@ Tubes). Filed as #435.
 - **The bounds' enclave** (#831): the Seestollen, *see* and *stollen*, the sea adit, the first
   quay's galleries under K6's point; and the reward in its strongbox, Durchschlag, *the
   breakthrough*, the miners' word for the blow that meets another gallery.
+- **The bounds' lair** (#831): the Randzeche, *rand* and *zeche*, the mine in the rim, the old
+  working under P5's rim; its lower level, the Dark Seam; and Brandt, the smith of the oldest
+  miner's rumour (#846).
 - **Ids stay** (NAMES §3): `deep_mines` is the Tiefzeche and `lava_tubes` is Feuerstollen; Erzkamm
   and Gluthutte are sites with no id. The old names stand in the issues until they are edited.
 
@@ -3355,18 +3413,19 @@ The land the area's maps lie open to, built as country off the quest, level for 
 under Kilnhaven. Five boxes, 1,219 squares a company could walk by the atlas, which 108 edge squares
 of L6, O4, O5 and O6 open onto (L6's west edge 14 and its south edge 32, O4's east edge 12, O5's 22
 and O6's 28; the issue counts 118). Each box is built to the looser floor (EXPANSION §5.3) at its
-zone's band, from the area's roster, with nothing on the road's quest. Then the area's enclave,
-built (§12.7), and its artifact's lair (§12.8). This is their brief, in §4's form; each box's pull
-request builds from it and adds its "As built".
+zone's band, from the area's roster, with nothing on the road's quest. Then the area's enclave
+(§12.7) and its artifact's lair (§12.8), both built. This is their brief, in §4's form; each box's
+pull request builds from it and adds its "As built".
 
 | Box | Laid in | Walkable | Other land in it | Built neighbours | Band | Pull request |
 |---|---|---|---|---|---|---|
 | K6 | Kilnmouth, `kilnmouth_k6` | 484 (436 as built) | | L6 | 16–18 | the first, built (#831) |
-| P5 | the heart, `kilnsheart_p5` | 280 (263 as built) | | O5 (P4 and P6 beside it) | 16–18 | the second, built (#831) |
+| P5 | the heart, `kilnsheart_p5` | 280 (263 as built, and the adit) | | O5 (P4 and P6 beside it) | 16–18 | the second, built (#831) |
 | P6 | the heart, `kilnsheart_p6` | 220 (219 as built) | High Moor's 45, mountain | O6, P5 | 16–18 | the second, built (#831) |
 | L7 | Kilnmouth, `kilnmouth_l7` | 189 (167 outside its mound) | the Cairnfield's 46 | L6, M7 (the Cairnfield's) | 16–18 | the third, built (#831) |
 | P4 | the heart, `kilnsheart_p4` | 46 (47 as built) | | O4, P5 | 16–18 | the third, built (#831) |
 | The Seestollen | the enclave, a dungeon off K6, `seestollen` | 95 as built, 90 outside its store | | K6, its door | 19–20 | the fourth, built (#831) |
+| The Randzeche | the lair, a dungeon of two levels off P5, `randzeche` and `randzeche2` | 79 as built, 72 outside its stope | | P5, its adit | 30–32 | the fifth, built (#831) |
 
 The P column is 24 squares wide, the world's edge cutting it (the grid's cuts, `src/game/atlas.ts`),
 so P4, P5 and P6 are maps of 24 by 32, which `tools/scaffold.ts`, cutting 32 by 32, refuses: they
@@ -3520,13 +3579,14 @@ three are built (§12.3, §12.4 and §12.6; §9, #831's 14 says what was found).
   rim's foot, 11 to 15 x 15 to 17: the fan of spoil at 10,16 with no pit above it, and searched
   there facing east the dry stone gives at 11,16 on the trial, cut straight in three squares to the
   cutters' cache at 14,16 (230 gold, an Elixir and a Sapphire Vial), which no walker, swimmer,
-  climber or levitator reaches but through the dry stone. The rim's foot past the deepest pit is
-  left free for the lair's adit (§12.8). The north edge's hills open on at columns 0 to 5 into P4's
-  south pocket, cut, the world's end till the third pull request builds it; the south edge meets
-  P6's square for square. A company at 16 wins every fight and manages 8.15 fights to a rest, inside
-  the aim (7 to 9); two under, at 14, 4.80, 60% of the floor's 8. Density: every square within 12
-  steps of a point, the furthest 6, no sign among its 15 points. By the curve's count the box pays
-  765 xp a member and 350 gold.
+  climber or levitator reaches but through the dry stone. At 11,23, between the hearth-niche and the
+  deepest pit, the rim's mountain is drawn as dressed stone, the adit into the Randzeche, the lair
+  (§12.8; §9, #831's 39). The north edge's hills open on at columns 0 to 5 into P4's south pocket,
+  built since (§12.6); the south edge meets P6's square for square. A company at 16 wins every fight
+  and manages 8.15 fights to a rest, inside the aim (7 to 9); two under, at 14, 4.80, 60% of the
+  floor's 8. Density: every square within 12 steps of a point, the furthest 6, no sign among its 16
+  points, the adit's one of them (15 before it). By the curve's count the box pays 765 xp a member
+  and 350 gold.
 
 ### 12.4 P6, the ash under the vents: country, band 16–18
 
@@ -3722,11 +3782,52 @@ three are built (§12.3, §12.4 and §12.6; §9, #831's 14 says what was found).
   pays 1,221 xp a member and 700 gold, in no clear, and the lead over the road stays at 19.4056. K6
   changes at the grate alone (§9, #831's 36).
 
-### 12.8 The lair
+### 12.8 The lair: the Randzeche under the rim (#831): enclave, band 30–32
 
-It comes after the enclave, in its own pull request (#846, #847): the artifact's, at the cap, one or
-two levels with one guardian, its door in the rim's foot on P5, the farthest of the Kilns' land from
-the road; the artifact, its guardian and the rumour that first speaks of it are #846's, and where
-#846 puts the lair elsewhere, this note gives way to it. #846 has set it (the Erzhemd, §6): an old
-working of two levels in the crag under the rim, its adit in P5, which P5's walled trial (§12.3)
-stands apart from.
+- **Purpose.** The Erzhemd's lair (#846, §6): an old working of two levels in the crag under the
+  rim, its adit in P5's rim foot, the farthest of the Kilns' land from the road; the knockers' seam,
+  given up when the ore ran darker than iron and what keeps it came out of the rock. Held to the
+  cap's band (#845). P5's walled trial (§12.3) stands apart from it.
+- **Band.** 30–32, the cap's, as every lair's (EXPANSION §5.2, MONSTERS §13).
+- **Landmarks.** The adit and the miners' door across it; the seam's level, north to the old stopes
+  and south to the winze; below it the Dark Seam, its gallery cut along the ore; the drift to the
+  face; and at the face the smith who went down for more, with his kist.
+- **Points of interest.** The adit, the door with the hymn's count chalked on it and a name, the
+  lamp room, the level, the stopes, the cut that found the dark rock and the winze; below, the
+  winze's foot, the knockers' heaps of ore, the seam, the dropped picks, the drift, the face and the
+  smith; and the door's own line, which gives the band (#845).
+- **Encounters.** One group, the guardian: the Steiger, the knockers' overseer, boss at 32 (MONSTERS
+  §13), in the drift that is the one way to the face; it calls its deep knockers, three at half a
+  turn. No other group.
+- **The ways in and out.** Its door is the adit in P5's rim foot at 11,23, walked onto from the
+  hills at 10,23; one way out, the adit back onto 10,23. The winze's ladder joins the two levels.
+- **The secret and its hint.** The stope walled up when the working was given up, three by two
+  behind the north drift's west wall, with the miners' pay-chest. The hint: something knocks behind
+  that wall, three and three, and stops when the company knocks back.
+- **New here.** The Steiger, a new kind of the knockers (#933), and the Erzhemd, the area's artifact
+  (#846, #847).
+- **Finds.** The Erzhemd in the smith's kist at the face; 500 gold, an Elixir and a Sapphire Vial in
+  the stope, the dearest healing and spell draught of the nearest shops.
+- **The rumour.** The oldest miner at Anvilhall, once he has sung the hymn's last verse, says two
+  lines more at every meeting after it: Brandt's shirt of the ore the knockers bring up, and how he
+  went down for more (§6, #846). Words only: no flag, quest or mark on the world map.
+- **Pay.** Counted in no clear (`tools/tests/curve.ts`): 3,396 xp a member and 500 gold.
+- **As built** (#831, 23 October): `randzeche` and `randzeche2`, a dungeon of two levels of 16 by
+  16, each marked `enclave` at 30–32, their plates at 499,151 and 499,155. East from P5's hills onto
+  the adit at 11,23 and in onto 1,7 facing east, the door's line saying "The Randzeche: levels
+  30-32.", harder one or two levels under and the warning three or more. The adit at 1 to 10 x 7:
+  its look at 2,7, the miners' door at 5,7 and the lamp room at 3 to 5 x 9 to 10, its look at 4,9;
+  the level at 10 x 2 to 13, its look at 10,7, north to the stopes at 6 to 10 x 2, their look at
+  8,2, and south past the cut at 11 to 13 x 10, its look at 13,10, to the winze at 10,12 and its
+  ladder at 10,13. At 10,4 the knocking, and searched there facing west the wall gives at 9,4 on the
+  stope, 6 to 8 x 4 to 5, its look at 8,4 and the pay-chest at 6,5 (500 gold, an Elixir and a
+  Sapphire Vial), which no walker, swimmer, climber or levitator reaches but through the wall. Down
+  the ladder onto the Dark Seam at 10,2 facing south, nothing more said: the foot at 10,3, the
+  gallery at 3 to 10 x 4 with the heaps at 5,2 and the seam at 8,4, the picks at 3,6, the drift at
+  5,8 and in it at 7,10 the Steiger, which no company steps round to the face at 6 to 10 x 11 to 13:
+  the face at 7,12, the smith at 9,12 and his kist at 10,13 with the Erzhemd. The Steiger is won 56%
+  at 30, inside the aim (30% to 70%), and 81% at 32, between the aim (90%) and the limit (75%); the
+  curve's rise: the one group at 19 steps, level 32.0. Density: every square within 7 steps of a
+  point, the furthest 2 and 3, no sign among their 12 and 10 points. By the curve's count it pays
+  3,396 xp a member and 500 gold, in no clear, and the lead over the road stays at 19.4056. P5
+  changes at the adit alone (§9, #831's 39).

@@ -1985,7 +1985,12 @@ function crewOpen(ok: (cond: boolean, msg: string) => void): void {
  * enclave (#845): east from K6's slipway onto the grate at 20,16 and down the rails, its door saying its
  * band and how it feels at 16, 17 and 19 and its sign its band; its three groups won at 19, Durchschlag in
  * the quay-master's strongbox, the dwarves' store found from the one dry wall and shut to the four ways but
- * through it, and up the rails onto K6's 20,17 again.
+ * through it, and up the rails onto K6's 20,17 again. The Randzeche, the lair (#845, #847): east from P5's
+ * hills onto the adit at 11,23, its door saying its band and how it feels at 16, 28 and 30; the stope
+ * found from the knocking behind the drift's wall and shut to the four ways but through it; down the winze
+ * to the Dark Seam, nothing said, the Steiger won at 30 in the drift that is the one way to the face, and
+ * the Erzhemd in the kist there, one in the world; up the winze and out of the adit onto P5's 10,23. The
+ * oldest miner at Anvilhall, once he has sung the last verse, speaks of Brandt.
  */
 function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const w = newWalk(ok), out = buildMaps()[OUTDOORS];
@@ -2279,6 +2284,99 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     ok(out1.kind === 'moved' && w.world.zone?.id === K6.id && w.world.state.x === k6.x + 20 && w.world.state.y === k6.y + 17 && out1.messages.join(' | ') === SS.exits![0].label,
       `up the rails out of the Seestollen onto K6's 20,17, the way's own line alone (${out1.kind === 'moved' ? out1.messages.join(' | ') : out1.kind})`);
     listen(w);
+    w.party.members.forEach((m, i) => { m.level = levels[i]; });
+    w.level = 16;
+  }
+
+  // The Randzeche, the lair (#845, #847): the adit in P5's rim foot at 11,23, walked onto from the hills at
+  // 10,23, nothing within four squares of it. Its door says its band and how it feels: the warning at 16,
+  // harder at 28 and its band alone at 30.
+  {
+    const RZ = MAP_DEFS.find((d) => d.id === 'randzeche')!, RZ2 = MAP_DEFS.find((d) => d.id === 'randzeche2')!, adit = P5.exits!.find((e) => e.to === RZ.id)!;
+    const near4 = [...P5.features!, ...P5.encounters!].filter((f) => Math.abs(f.x - 11) + Math.abs(f.y - 23) <= 4).map((f) => ('id' in f ? f.id : f.kind));
+    ok(P5.exits!.length === 1 && adit.x === 11 && adit.y === 23 && out.at(p5.x + 11, p5.y + 23).ch === '"' && reach([P5.start.x, P5.start.y], {}, undefined, p5).has(at(10, 23, p5)) && !near4.length,
+      `the adit into the Randzeche is dressed stone in P5's rim foot at 11,23, walked to from the way in, with nothing within four squares of it (${near4.join(', ') || 'nothing'})`);
+    const levels = w.party.members.map((m) => m.level);
+    const door = (level: number): string => {
+      for (const m of w.party.members) m.level = level;
+      w.world.travel(P5.id, 10, 23, EAST);
+      const r = w.world.move('forward');
+      return r.kind === 'moved' && w.world.state.mapId === RZ.id && w.world.state.x === RZ.start.x && w.world.state.y === RZ.start.y ? r.messages.join(' | ') : r.kind;
+    };
+    const band = 'The Randzeche: levels 30-32.', low = door(16), close = door(28), at30 = door(30);
+    ok(low === `${adit.label} | ${band} ${WARNING_IN}` && close === `${adit.label} | ${band} ${HARDER_IN}` && at30 === `${adit.label} | ${band}`,
+      `east from P5's hills into the adit and the Randzeche, the way's own line and then its band, with the warning at 16, harder at 28 and nothing more at 30 (${low}; ${close}; ${at30})`);
+    ok(!!RZ.enclave && !!RZ2.enclave && w.world.here.name === 'The Randzeche' && w.world.here.band?.join('-') === '30-32' && RZ2.band?.join('-') === '30-32',
+      `inside, its sign gives the cap's band, over P5's 16-18, and so does the Dark Seam's (${w.world.here.name}, ${w.world.here.band?.join('-')})`);
+    listen(w);
+    w.level = 30;
+    for (const id of ['rz_adit', 'rz_door', 'rz_lamps', 'rz_level', 'rz_stopes', 'rz_cut', 'rz_winze']) see(w, `${RZ.id}:${id}`);
+    // The secret: the knocking behind the drift's west wall, the search there and the stope walled up
+    // behind it. Walked, waded, climbed or floated, it is never reached but through the wall.
+    const flood = (def: MapDef, shut: readonly [number, number]): Set<string> => {
+      const hold = new GameMap(def), inside = new Set<string>(), todo: [number, number][] = [[def.start.x, def.start.y]];
+      while (todo.length) {
+        const [x, y] = todo.pop()!;
+        if (inside.has(`${x},${y}`) || (x === shut[0] && y === shut[1]) || hold.passable(x, y, ALL) !== 'ok') continue;
+        inside.add(`${x},${y}`);
+        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+      }
+      return inside;
+    };
+    const upper = flood(RZ, [9, 4]);
+    ok(upper.size > 25 && !['6,4', '7,4', '8,4', '6,5', '7,5', '8,5'].some((k) => upper.has(k)), `the stope is shut but for its wall: none of the Randzeche's ${upper.size} squares walked, waded, climbed or floated reaches it`);
+    see(w, `${RZ.id}:rz_knock`);
+    w.world.travel(RZ.id, 10, 4, WEST);
+    let knocked = false;
+    for (let i = 0; i < 20 && !knocked; i++) knocked = w.world.search();
+    const into = knocked ? [w.world.move('forward'), w.world.move('forward')] : [];
+    ok(knocked && into.every((r) => r.kind === 'moved') && w.world.used('rz_stope'), 'searched where the knocking was, the wall gives, and the stope behind it can be walked into');
+    const pay = RZ.features!.find((f) => f.kind === 'chest' && f.id === 'rz_paychest');
+    ok(pay?.kind === 'chest' && pay.gold === 500 && pay.items.join() === 'elixir,potion_sp_great', 'in the stope, the miners\' pay-chest: 500 gold, an Elixir and a Sapphire Vial');
+    // Down the winze to the Dark Seam: the way's own line, and nothing more, its floor the same.
+    w.world.travel(RZ.id, 10, 12, SOUTH);
+    const down = w.world.move('forward');
+    ok(down.kind === 'moved' && w.world.state.mapId === RZ2.id && w.world.state.x === RZ2.start.x && w.world.state.y === RZ2.start.y && down.messages.join(' | ') === RZ.exits![1].label,
+      `down the winze's ladder onto the Dark Seam, the way's own line alone (${down.kind === 'moved' ? down.messages.join(' | ') : down.kind})`);
+    listen(w);
+    // The guardian: the Steiger, a boss that never comes back, in the drift that is the one way to the
+    // face, so no company steps round it; won at the lair's floor.
+    const steiger = RZ2.encounters!.find((g) => g.id === 'rz2_steiger')!;
+    const shut = flood(RZ2, [steiger.x, steiger.y]);
+    ok(RZ2.encounters!.length === 1 && steiger.monsters.join() === 'steiger' && !!steiger.boss && !steiger.respawn && steiger.roams === false && !!steiger.slainText && !shut.has('10,13') && !shut.has('9,12') && shut.has('5,8'),
+      `the Steiger, the one group of the lair, stands in the drift: with it standing, none of the Dark Seam's ${shut.size} squares walked, waded, climbed or floated reaches the face`);
+    for (const id of ['rz2_foot', 'rz2_heaps', 'rz2_seam', 'rz2_picks', 'rz2_drift']) see(w, `${RZ2.id}:${id}`);
+    fight(w, `${RZ2.id}:rz2_steiger`);
+    for (const id of ['rz2_face', 'rz2_bones']) see(w, `${RZ2.id}:${id}`);
+    // The Erzhemd in the smith's kist at the face, one in the world: no other chest, cairn or statue holds
+    // it, no shop sells it and no monster drops it.
+    const kist = RZ2.features!.find((f) => f.kind === 'chest' && f.id === 'rz2_kist')!;
+    const holds = (f: Feature): boolean => (f.kind === 'shop' && f.stock.includes('erzhemd')) || ((f.kind === 'chest' || f.kind === 'cairn') && f !== kist && f.items.includes('erzhemd')) || (f.kind === 'statue' && !!f.gift?.items?.includes('erzhemd'));
+    ok(kist.kind === 'chest' && kist.gold === 0 && kist.items.join() === 'erzhemd' && !!item('erzhemd').artifact
+      && !MAP_DEFS.some((d) => (d.features ?? []).some(holds)) && !Object.values(MONSTERS).some((m) => m.drops?.some((x) => x.item === 'erzhemd')),
+      'at the face, the smith\'s kist with the Erzhemd in it; no other chest, cairn or statue holds it, no shop sells it and no monster drops it');
+    // And out: up the winze onto the old level, and out of the adit onto P5's 10,23, each way's line alone.
+    w.world.travel(RZ2.id, RZ2.start.x, RZ2.start.y + 1, NORTH);
+    const up = w.world.move('forward');
+    ok(up.kind === 'moved' && w.world.state.mapId === RZ.id && w.world.state.x === 10 && w.world.state.y === 12 && up.messages.join(' | ') === RZ2.exits![0].label,
+      `up the winze onto the old level, the way's own line alone (${up.kind === 'moved' ? up.messages.join(' | ') : up.kind})`);
+    w.world.travel(RZ.id, RZ.start.x + 1, RZ.start.y, WEST);
+    const out1 = w.world.move('forward');
+    ok(out1.kind === 'moved' && w.world.zone?.id === P5.id && w.world.state.x === p5.x + 10 && w.world.state.y === p5.y + 23 && out1.messages.join(' | ') === RZ.exits![0].label,
+      `out of the adit onto P5's 10,23, the way's own line alone (${out1.kind === 'moved' ? out1.messages.join(' | ') : out1.kind})`);
+    listen(w);
+    // The rumour (#846): the oldest miner at Anvilhall, once he has sung the last verse, speaks of Brandt,
+    // words only: no flag or question comes with them, and no quest names him.
+    const oldest = MAP_DEFS.find((d) => d.id === 'anvilhall')!.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'The oldest miner')!;
+    const words = oldest.says!.find((s) => s.lines.some((l) => l.includes('Brandt')))!;
+    w.party.flags.q_hymn = 1; w.party.flags[HYMN_SUNG] = 1;
+    w.world.travel('anvilhall', oldest.x, oldest.y);
+    const told = meet(oldest, w.party, heard(w.world, oldest)).text;
+    ok(told.includes('"Brandt made a shirt of the ore the knockers bring up. So light, he said, his feet forgot it."') && told.includes('"He went down for more. We sang him to the door, and nobody sang him back."')
+      && !words.sets && !words.choice && !JSON.stringify(questLog(w.world.state, w.party)).includes('Brandt'),
+      'the oldest miner, once he has sung the last verse, speaks of Brandt, who went down for more: words only, in no quest');
+    listen(w);
+    delete w.party.flags.q_hymn; delete w.party.flags[HYMN_SUNG];
     w.party.members.forEach((m, i) => { m.level = levels[i]; });
     w.level = 16;
   }
