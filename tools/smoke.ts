@@ -7,9 +7,8 @@ import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 import { randomInt } from 'node:crypto';
 import { createServer } from './server.ts';
-import { changedFiles, changedMaps } from './changed.ts';
+import { shardAsked, sweepAsked } from './sweep.ts';
 import { GROUND_SAMPLES } from './grounds.ts';
-import { MAP_DEFS } from '../src/content/index.ts';
 import type { MonsterSprite } from '../src/content/index.ts';
 import { SPAN, SPAN_SLACK } from '../src/ui/sprites.ts';
 import { SPRITES } from '../src/ui/monsters/index.ts';
@@ -44,12 +43,15 @@ if (process.env.SMOKE_SEED === 'random') console.log(`SMOKE_SEED=${SEED}`);
 
 // The crack sweep looks one way from every square of the cellar, Helmstow and its keep on every
 // run, and all four ways from every square of the maps a pull request changes. SMOKE_BASE=<ref>
-// sweeps what changed since that ref (CI passes the pull request's base); SMOKE_SWEEP=all or
-// <id>,<id> names the maps instead.
+// sweeps what changed since that ref; SMOKE_SWEEP=all or <id>,<id> names the maps instead (CI's plan
+// job passes the maps on, tools/sweep.ts). SMOKE_PART=rest runs everything but the four-way sweep and
+// SMOKE_PART=sweep that sweep alone, both when unset; SMOKE_SHARD=i/n sweeps the plan's i-th shard of
+// n (tools/kit/sweep.ts); SMOKE_SWEEP_AUDIT=1 judges every view the old way as well.
 const FLOOR = ['mill', 'harrow', 'keep'];
-const sweepAsked: string = process.env.SMOKE_SWEEP || (process.env.SMOKE_BASE ? await changedMaps(changedFiles(process.env.SMOKE_BASE)).then((c) => (c.all ? 'all' : c.maps.join(','))) : '');
-const SWEEP = sweepAsked === 'all' ? MAP_DEFS.map((d) => d.id) : sweepAsked.split(',').filter(Boolean);
-for (const id of SWEEP) if (!MAP_DEFS.some((d) => d.id === id)) throw new Error(`SMOKE_SWEEP names no map '${id}'`);
+const SWEEP = await sweepAsked();
+const PART = process.env.SMOKE_PART ?? '';
+if (!['', 'rest', 'sweep'].includes(PART)) throw new Error(`SMOKE_PART must be rest or sweep, not '${PART}'`);
+const SHARD = shardAsked(), AUDIT = process.env.SMOKE_SWEEP_AUDIT === '1';
 
 // The parts of a drawing that stand apart from its body by design, each with the most pieces it
 // comes to and the largest share of the drawing's ink they take between them, as its family registers
@@ -78,6 +80,8 @@ await page.addInitScript((seed: number) => {
 const errors: string[] = [];
 page.on('pageerror', (e: Error) => errors.push('pageerror: ' + e.message));
 page.on('console', (m: any) => { if (m.type() === 'error') errors.push('console: ' + m.text()); });
+let bad = 0;
+const ok = (cond: boolean, msg: string) => { console.log((cond ? '  ok:   ' : '  FAIL: ') + msg); if (!cond) bad++; };
 
 await page.goto(`http://localhost:${port}/`, { waitUntil: 'load' });
 await page.waitForFunction(() => (window as any).__game?.ready === true, null, { timeout: 15000 });
@@ -99,6 +103,108 @@ const screen0 = await page.evaluate(() => (window as any).__game.game.top.constr
 const gameSeed = await page.evaluate(() => (window as any).__game.game.top.seed);
 await page.keyboard.press('Space'); await page.waitForTimeout(150);
 const screen1 = await page.evaluate(() => (window as any).__game.game.screens.map((s: any) => s.constructor.name).join(','));
+
+// The walls meet without a crack. A view is painted twice, over two flat backdrops, and wherever the
+// two differ the backdrop shows through. Along the horizon only walls and hills can be (the floor starts
+// 24px below it at the far end of the view, and the billboards stay out over a backdrop), so there
+// backdrop with solid wall either side of it is a crack between two faces. The sky between two hills'
+// crests narrows to a point where they cross, a notch and not a crack, so a crack is kept only if the
+// view painted with its hills laid flat shows it too: a crack between two faces does not depend on the
+// hills. That passes anything drawn as part of a hill, so the check after the sweep holds a hill's body
+// to its outline. And where walls stand on both hands of the party the edges of the view are wall:
+// those once went undrawn. A cell is read as the view draws it (`drawnCell`, and the void as its look,
+// #829): a void drawn as a hill is laid flat with the hills, and the ring's mountain beside the party is
+// a billboard and no wall, which the check of the world's end looks at instead. A zone of the outdoors
+// is walked over its own squares.
+// The views are the plan's (tools/kit/sweep.ts, planned here in the page), the shard of it SMOKE_SHARD
+// names. A view whose flat window holds nothing to paint is skipped; each window is painted flat once,
+// from its first view; the view with its hills is painted where that flat band shows a gap between two
+// faces or a wall stands beside the party, which is where the verdict reads it. The sweep sets its own
+// scene, whatever the flows left: the light of a spell, and in each region the first clear noon with
+// nothing the view would wash over it from the hour it starts, as the end of the world is faced in
+// below, so that every square of the window is in sight; it puts the hour back after, and leaves the
+// party where the old sweep did. SMOKE_SWEEP_AUDIT=1 paints every view the old way as well, its view
+// and its flat view, and counts the views the two judge differently, the skipped views whose flat band
+// paints over the backdrop and the windows whose views differ in it.
+type Swept = { views: number; maps: number; skipped: number; windows: number; painted: number; short: number; bad: string[]; audit?: { differ: string[]; overSkip: number; split: number } };
+const crackSweep = (maps: { id: string; all: boolean }[]): Promise<Swept> => page.evaluate(async ({ maps, i, n, audit }: { maps: { id: string; all: boolean }[]; i: number; n: number; audit: boolean }) => {
+  const load = (p: string): Promise<any> => import(p);
+  const V = await load('/src/ui/viewport.ts'), S = await load('/tools/kit/sweep.ts'), Wx = await load('/src/game/weather.ts'), C = await load('/src/game/calendar.ts');
+  const w = (window as any).__game.game.world;
+  const plan = S.plan(w, maps), views: any[] = S.shard(plan, i, n);
+  const W = 400, H = 268, band = 16, rows = band * 2, bad: string[] = [], differ: string[] = [], split = new Set<number>();
+  const c = document.createElement('canvas'); c.width = W; c.height = H;
+  const ctx = c.getContext('2d', { willReadFrequently: true })!;
+  // The sky goes to a canvas of its own and is never composited, so only the backdrop is behind the walls.
+  const sky = document.createElement('canvas'); sky.width = W; sky.height = H;
+  const skyCtx = sky.getContext('2d')!;
+  const paint = (backdrop: string) => { ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H }, backdrop); return ctx.getImageData(0, H / 2 - band, W, rows).data; };
+  // Where the backdrop shows in the band of a view: there its two paints differ.
+  const pair = (): Uint8Array => {
+    const a = paint('#ff00ff'), b = paint('#00ff00'), shows = new Uint8Array(W * rows);
+    for (let j = 0; j < shows.length; j++) shows[j] = Math.abs(a[j * 4] - b[j * 4]) > 8 || Math.abs(a[j * 4 + 1] - b[j * 4 + 1]) > 8 ? 1 : 0;
+    return shows;
+  };
+  // The same with the hills laid flat.
+  const flat = (): Uint8Array => { const undo = S.layFlat(w.map); try { return pair(); } finally { undo(); } };
+  const crackAt = (shows: Uint8Array, px: number, py: number) => shows[py * W + px] === 1 && [2, 3].some((s) => px >= s && px < W - s && !shows[py * W + px - s] && !shows[py * W + px + s]);
+  const gapIn = (level: Uint8Array): boolean => { for (let py = 0; py < rows; py++) for (let px = 0; px < W; px++) if (crackAt(level, px, py)) return true; return false; };
+  // The verdict on a view, the old sweep's: the first pixel where the backdrop shows between two faces
+  // in the view and in it laid flat, or at the view's edge beside a wall (`standsAt`: a secret door among
+  // the peaks is a peak, not a wall, and the void is its look, the ring's mountain no wall, #829).
+  const judge = (shows: Uint8Array, level: Uint8Array | null, walled: (s: number) => boolean): string => {
+    for (let py = 0; py < rows; py++) for (let px = 0; px < W; px++) {
+      if (!shows[py * W + px]) continue;
+      if ((level && crackAt(shows, px, py) && crackAt(level, px, py)) || (px < 6 && walled(-1)) || (px >= W - 6 && walled(1))) return `${px},${H / 2 - band + py}`;
+    }
+    return '';
+  };
+  const hour = w.state.minutes, noons = new Map<string, number>();
+  let short = 0;
+  const go = (v: any): void => {
+    w.travel(v.id, v.x, v.y, v.f); w.state.light = 1;
+    let at = noons.get(w.region);
+    if (at === undefined) noons.set(w.region, (at = Wx.findWeather(w.state.weatherSeed, hour, w.climate, (wx: any, min: number) => wx.precip < 0.02 && !V.washes(wx) && wx.cover === 0 && C.daylightAt(min) === 1, 24 * 480)));
+    w.state.minutes = at! >= 0 ? at : hour;
+    if (w.sight < 4) short++;
+  };
+  // A window's views one after another, its first view first: one flat band at a time.
+  const order = views.map((_, j) => j).sort((a, b) => views[a].win - views[b].win || a - b);
+  let windows = 0, painted = 0, overSkip = 0, cur = -1, level: Uint8Array = new Uint8Array(0), gap = false;
+  for (const j of order) {
+    const v = views[j], where = `${v.id} ${v.x},${v.y} facing ${v.f}`;
+    if (v.win >= 0 && v.win !== cur) { cur = v.win; windows++; painted++; go(plan.views[plan.refs[cur]]); level = flat(); gap = gapIn(level); }
+    const reads = v.win >= 0 && (gap || v.beside);
+    if (!reads && !audit) continue;
+    go(v);
+    const stands = V.standsAt(w.map, w.state.x, w.state.y, v.f), walled = (s: number) => stands.solidAt(0, s), shows = pair();
+    if (reads) painted++;
+    const verdict = reads ? judge(shows, gap ? level : null, walled) : '';
+    if (verdict) bad.push(`${where} at ${verdict}`);
+    if (!audit) continue;
+    const own = flat(), old = judge(shows, own, walled);
+    if (old !== verdict) differ.push(`${where}: ${old || 'none'} against ${verdict || 'none'}`);
+    if (v.win < 0) { if (own.includes(0)) overSkip++; }
+    else if (own.some((x, k) => x !== level[k])) split.add(v.win);
+  }
+  const last = plan.views[plan.views.length - 1];
+  if (last) { w.travel(last.id, last.x, last.y, last.f); w.state.light = 1; }
+  w.state.minutes = hour;
+  return { views: views.length, maps: plan.maps, skipped: views.filter((v) => v.win < 0).length, windows, painted, short, bad, audit: audit ? { differ, overSkip, split: split.size } : undefined };
+}, { maps, i: SHARD.i, n: SHARD.n, audit: AUDIT });
+const sweepLine = (r: Swept): void => {
+  ok(r.bad.length === 0 && r.short === 0, `the walls meet without a crack, and the walls beside the party are drawn: ${SHARD.n > 1 ? `shard ${SHARD.i}/${SHARD.n}, ` : ''}${r.views} views of ${r.maps} maps: ${r.skipped} skipped, ${r.windows} windows, ${r.painted} painted${r.short ? ` -> ${r.short} views seen short of four squares` : ''}${r.bad.length ? ` -> ${r.bad.length} views, ` + r.bad.slice(0, 4).join(', ') : ''}`);
+  if (r.audit) ok(r.audit.differ.length + r.audit.overSkip + r.audit.split === 0, `the audit: the old sweep and the new judge all ${r.views} views alike, no skipped view's flat band paints over the backdrop and no window's views differ in it (${r.audit.differ.length} judged otherwise, ${r.audit.overSkip} skipped views painting, ${r.audit.split} windows differing)${r.audit.differ.length ? ' -> ' + r.audit.differ.slice(0, 4).join(', ') : ''}`);
+};
+// SMOKE_PART=sweep: the four-way sweep alone, on the new game just begun, and nothing else.
+if (PART === 'sweep') {
+  sweepLine(await crackSweep(SWEEP.map((id) => ({ id, all: true }))));
+  ok(errors.length === 0, `no page errors${errors.length ? ' -> ' + errors.join(' | ') : ''}`);
+  await browser.close();
+  server.close();
+  console.log(bad ? '\nSMOKE FAILED' : '\nSMOKE OK: the crack sweep.');
+  process.exit(bad ? 1 : 0);
+}
 for (const k of ['ArrowDown', 'ArrowDown', 'ArrowDown']) { await page.keyboard.press(k); await page.waitForTimeout(40); }
 await page.waitForTimeout(100);
 const state = await page.evaluate(() => { const g = (window as any).__game.game; return { map: g.world.state.mapId, zone: g.world.zone?.id, x: g.world.state.x, y: g.world.state.y, steps: g.world.state.steps }; });
@@ -937,6 +1043,13 @@ const questClosed = await page.evaluate(() => (window as any).__game.game.top.co
 // A person's question (game/people.ts): a fixture captain, put in the street at run time, asks; the
 // first answer hands over a letter, which is read from the pack. Nothing of it stays.
 const asked = await (async () => {
+  // The game takes one press a tick from its queue (src/input.ts, src/main.ts), so a screen is read
+  // once the queue is empty and a frame is drawn, not after a fixed wait a loaded machine outruns.
+  const press = async (key: string): Promise<void> => {
+    await page.keyboard.press(key);
+    await page.waitForFunction(() => (window as any).__game.game.input.queue.length === 0, null, { timeout: 5000 });
+    await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => r(null))));
+  };
   const top = (): Promise<{ screen: string; text: string; title: string }> => page.evaluate(() => { const t = (window as any).__game.game.top; return { screen: t.constructor.name, text: t.text ?? '', title: t.title ?? '' }; });
   await page.evaluate(async () => {
     const C = await import('/src/content/index.ts' as string);
@@ -949,19 +1062,19 @@ const asked = await (async () => {
   });
   await page.waitForTimeout(80);
   const words = await top();
-  await page.keyboard.press('Space'); await page.waitForTimeout(80);
+  await press('Space');
   const question = await top();
   const choiceColours = await colours();
-  await page.keyboard.press('Space'); await page.waitForTimeout(80);
+  await press('Space');
   const said = await top();
-  await page.keyboard.press('Space'); await page.waitForTimeout(80);
+  await press('Space');
   const after = await page.evaluate(() => { const g = (window as any).__game.game; return { screen: g.top.constructor.name, flag: !!g.party.flags.fx_write, bag: g.party.bag.includes('fx_letter') }; });
-  await page.keyboard.press('KeyI'); await page.waitForTimeout(80);
+  await press('KeyI');
   const has = await page.evaluate(() => { const g = (window as any).__game.game, t = g.top, c = g.party.members[g.selected], i = g.party.bag.indexOf('fx_letter'); if (i >= 0 && t.constructor.name === 'SheetScreen') t.sel = c.pack.length + i; return i >= 0; });
-  if (has) { await page.keyboard.press('Space'); await page.waitForTimeout(80); }
+  if (has) await press('Space');
   const letter = has ? await top() : { screen: 'no letter', text: '', title: '' };
-  await page.keyboard.press('Escape'); await page.waitForTimeout(60);
-  await page.keyboard.press('Escape'); await page.waitForTimeout(60);
+  await press('Escape');
+  await press('Escape');
   const closed = await page.evaluate(async () => {
     const g = (window as any).__game.game, C = await import('/src/content/index.ts' as string);
     const top = g.top.constructor.name;
@@ -1096,81 +1209,16 @@ if (process.env.SMOKE_SHOT) {
   await page.screenshot({ path: process.env.SMOKE_SHOT });
 }
 
-// The walls meet without a crack. Paint a view from every open cell of a map twice, over two flat
-// backdrops, and wherever the two differ the backdrop shows through. Along the horizon only walls
-// and hills can be (the floor starts 24px below it at the far end of the view, and the billboards
-// stay out over a backdrop), so there backdrop with solid wall either side of it is a crack between
-// two faces. The sky between two hills' crests narrows to a point where they cross, a notch and not
-// a crack, so a crack is kept only if the view painted with its hills laid flat shows it too: a
-// crack between two faces does not depend on the hills. That passes anything drawn as part of a
-// hill, so the check after the sweep holds a hill's body to its outline. And where walls stand on
-// both hands of the party the edges of the view are wall: those once went undrawn. A cell is read
-// as the view draws it (`drawnCell`, and the void as its look, #829): a void drawn as a hill is laid
-// flat with the hills, and the ring's mountain beside the party is a billboard and no wall, which
-// the check of the world's end looks at instead. A zone of the outdoors is walked over its own
-// squares. The ground's samples (tools/grounds.ts) are swept one way on every run, first, put into
-// the game's maps for it and taken out after, so a ground no built map holds yet is swept too and
-// the party ends where it did.
+// The crack sweep (see crackSweep, above). The ground's samples (tools/grounds.ts) are swept one way on
+// every run, first, put into the game's maps for it and taken out after, so a ground no built map holds
+// yet is swept too and the party ends where it did; then the cellar, Helmstow and its keep one way, and
+// all four ways the maps asked for, unless the sweep job sweeps them (SMOKE_PART=rest).
 await page.evaluate(async (defs: any[]) => {
   const M = await import('/src/game/map.ts' as string), w = (window as any).__game.game.world;
   for (const d of defs) w.maps[d.id] = new M.GameMap(d);
 }, GROUND_SAMPLES as any[]);
-const sweeps = [...GROUND_SAMPLES.map((d) => ({ id: d.id, all: false })), ...FLOOR.filter((id) => !SWEEP.includes(id)).map((id) => ({ id, all: false })), ...SWEEP.map((id) => ({ id, all: true }))];
-const cracks = await page.evaluate(async (maps: { id: string; all: boolean }[]) => {
-  const load = (p: string): Promise<any> => import(p);
-  const V = await load('/src/ui/viewport.ts');
-  const w = (window as any).__game.game.world;
-  const W = 400, H = 268, band = 16, bad: string[] = [];
-  let views = 0;
-  const c = document.createElement('canvas'); c.width = W; c.height = H;
-  const ctx = c.getContext('2d', { willReadFrequently: true })!;
-  // The sky goes to a canvas of its own and is never composited, so only the backdrop is behind the walls.
-  const sky = document.createElement('canvas'); sky.width = W; sky.height = H;
-  const skyCtx = sky.getContext('2d')!;
-  const paint = (backdrop: string) => { ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H }, backdrop); return ctx.getImageData(0, H / 2 - band, W, band * 2).data; };
-  // The same view with the hills laid flat: each square drawn as a hill, the void whose look is one
-  // among them, read as grass while it is painted.
-  const flat = (m: any, backdrop: string) => {
-    const at = m.at;
-    m.at = (x: number, y: number) => {
-      const c = at.call(m, x, y), drawn = c.look ?? c;
-      if (drawn.terrain !== 'hills') return c;
-      const grass = { ...drawn, terrain: 'grass' };
-      return c.look ? { ...c, look: grass } : grass;
-    };
-    try { return paint(backdrop); } finally { delete m.at; }
-  };
-  const crackAt = (shows: (px: number, py: number) => boolean, px: number, py: number) => shows(px, py) && [2, 3].some((s) => px >= s && px < W - s && !shows(px - s, py) && !shows(px + s, py));
-  for (const { id, all } of maps) {
-    const at = w.locate(id, 0, 0), m = w.maps[at.mapId], z = m.zones.find((q: any) => q.id === id);
-    const mw = z ? z.w : m.width, mh = z ? z.h : m.height;
-    for (let y = 0; y < mh; y++) for (let x = 0; x < mw; x++) {
-      const ax = at.x + x, ay = at.y + y;
-      if (m.at(ax, ay).solid !== 'none' || m.at(ax, ay).door !== 'none') continue;
-      for (const f of all ? [0, 1, 2, 3] : [(x + y) % 4]) {
-        w.travel(id, x, y, f); w.state.light = 1;
-        const a = paint('#ff00ff'), b = paint('#00ff00');
-        views++;
-        const shows = (px: number, py: number) => { const i = (py * W + px) * 4; return Math.abs(a[i] - b[i]) > 8 || Math.abs(a[i + 1] - b[i + 1]) > 8; };
-        // Beside the party a wall as the view has it (`standsAt`): a secret door among the peaks
-        // is a peak, not a wall, and the void is its look, the ring's mountain no wall (#829).
-        const stands = V.standsAt(m, ax, ay, f), walled = (s: number) => stands.solidAt(0, s);
-        let spot = '', level: ((px: number, py: number) => boolean) | undefined;
-        for (let py = 0; py < band * 2 && !spot; py++) for (let px = 0; px < W && !spot; px++) {
-          if (!shows(px, py)) continue;
-          let crack = crackAt(shows, px, py);
-          if (crack) {
-            if (!level) { const fa = flat(m, '#ff00ff'), fb = flat(m, '#00ff00'); level = (qx, qy) => { const i = (qy * W + qx) * 4; return Math.abs(fa[i] - fb[i]) > 8 || Math.abs(fa[i + 1] - fb[i + 1]) > 8; }; }
-            crack = crackAt(level, px, py);
-          }
-          if (crack || (px < 6 && walled(-1)) || (px >= W - 6 && walled(1))) spot = `${px},${H / 2 - band + py}`;
-        }
-        if (spot) bad.push(`${id} ${x},${y} facing ${f} at ${spot}`);
-      }
-    }
-  }
-  return { bad, views };
-}, sweeps);
+const four = PART === 'rest' ? [] : SWEEP;
+const cracks = await crackSweep([...GROUND_SAMPLES.map((d) => ({ id: d.id, all: false })), ...FLOOR.filter((id) => !four.includes(id)).map((id) => ({ id, all: false })), ...four.map((id) => ({ id, all: true }))]);
 await page.evaluate((ids: string[]) => { const w = (window as any).__game.game.world; for (const id of ids) { delete w.maps[id]; delete w.state.maps[id]; } }, GROUND_SAMPLES.map((d) => d.id));
 // A hill's body stays inside its outline. The sweep lays hills flat, so it cannot see a crest
 // light drawn off its hill, floating clear of it with sky beneath; this can. Each hill is painted alone, near and far, left, ahead and right, and every inked
@@ -1537,8 +1585,6 @@ const drawing = await page.evaluate((seed: number) => {
 await browser.close();
 server.close();
 
-let bad = 0;
-const ok = (cond: boolean, msg: string) => { console.log((cond ? '  ok:   ' : '  FAIL: ') + msg); if (!cond) bad++; };
 ok(hearth.south > 0 && hearth.north < hearth.south / 100 && hearth.home > hearth.south, `by night the Hearth stands over the hills where it lies, south of Helmstow and not north, and brighter with the Tide Stone home (${hearth.south} south, ${hearth.north} north, ${hearth.home} home)`);
 ok(hearth.steadier.light > hearth.plain.light && hearth.steadier.swing < hearth.plain.swing, `the title over a save with the Tide Stone home draws a brighter, steadier Hearth (light ${hearth.steadier.light.toFixed(0)} against ${hearth.plain.light.toFixed(0)}, swing ${hearth.steadier.swing} against ${hearth.plain.swing})`);
 {
@@ -1705,7 +1751,7 @@ ok(pass.map === 'caldera' && pass.zone === 'thornmark' && pass.x === 1 && pass.y
   `the open pass is walked straight through into Thornmark, warned at the checkpoint, and Thornmark says so (${JSON.stringify(pass)})`);
 ok(windingHoles.length === 0, `every pair of sprite part kinds unions without a hole${windingHoles.length ? ' -> ' + windingHoles.join(', ') : ''}`);
 ok(!hillSpill.length, `a hill's body, its crest light with it, is drawn inside its outline, near and far${hillSpill.length ? ` -> ${hillSpill.slice(0, 4).join(', ')}` : ''}`);
-ok(cracks.bad.length === 0, `the walls meet without a crack, and the walls beside the party are drawn, in ${cracks.views} views (${sweeps.map((m) => m.id + (m.all ? ' four ways' : '')).join(', ')})${cracks.bad.length ? ` -> ${cracks.bad.length} views, ` + cracks.bad.slice(0, 4).join(', ') : ''}`);
+sweepLine(cracks);
 ok(loose.length === 0 && unused.length === 0, `every monster is one silhouette at combat size, but for the parts it declares apart (${silhouettes.length} drawn; ${Object.entries(DETACHED).map(([k, v]) => `${k}'s ${v!.what}`).join(', ')})${loose.map((s) => ` -> ${s.id} (${s.sprite}): ${s.clipped === 'top' ? 'reaches above the view' : s.clipped ? 'runs off the canvas' : `${s.pieces} pieces apart, ${(100 * s.share).toFixed(1)}% of its ink, worst at ${s.at}`}`).join('')}${unused.length ? ' -> declared but never apart: ' + unused.join(', ') : ''}`);
 const closest = silhouettes.reduce((a, b) => (b.room < a.room ? b : a));
 ok(closest.room >= 0, `every monster stands inside the view, its foot where a fight seats it, a first group's ${seat} px below the top (the closest, ${closest.id}, ${closest.room} px under the top)`);
