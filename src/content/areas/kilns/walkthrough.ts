@@ -2369,12 +2369,14 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     // words only: no flag or question comes with them, and no quest names him.
     const oldest = MAP_DEFS.find((d) => d.id === 'anvilhall')!.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'The oldest miner')!;
     const words = oldest.says!.find((s) => s.lines.some((l) => l.includes('Brandt')))!;
-    w.party.flags.q_hymn = 1; w.party.flags[HYMN_SUNG] = 1;
+    w.party.flags.q_hymn = 1;
     w.world.travel('anvilhall', oldest.x, oldest.y);
+    const untold = meet(oldest, w.party, heard(w.world, oldest)).text;
+    w.party.flags[HYMN_SUNG] = 1;
     const told = meet(oldest, w.party, heard(w.world, oldest)).text;
-    ok(told.includes('"Brandt made a shirt of the ore the knockers bring up. So light, he said, his feet forgot it."') && told.includes('"He went down for more. We sang him to the door, and nobody sang him back."')
+    ok(!untold.includes('Brandt') && told.includes('"Brandt made a shirt of the ore the knockers bring up. So light, he said, his feet forgot it."') && told.includes('"He went down for more. We sang him to the door, and nobody sang him back."')
       && !words.sets && !words.choice && !JSON.stringify(questLog(w.world.state, w.party)).includes('Brandt'),
-      'the oldest miner, once he has sung the last verse, speaks of Brandt, who went down for more: words only, in no quest');
+      'the oldest miner says nothing of Brandt till he has sung the last verse, and after it speaks of him, who went down for more: words only, in no quest');
     listen(w);
     delete w.party.flags.q_hymn; delete w.party.flags[HYMN_SUNG];
     w.party.members.forEach((m, i) => { m.level = levels[i]; });

@@ -36,8 +36,8 @@ export const RANDZECHE: MapDef = {
     '################',
   ],
   exits: [
-    { x: 1, y: 7, to: 'kilnsheart_p5', tx: 10, ty: 23, tf: WEST, label: 'Out of the adit into the light under the rim, the knocking at your back.' },
-    { x: 10, y: 13, to: 'randzeche2', tx: 10, ty: 2, tf: SOUTH, label: 'You climb down the ladder in the winze, rung after rung, into the knocking.' },
+    { x: 1, y: 7, to: 'kilnsheart_p5', tx: 10, ty: 23, tf: WEST, label: 'Out of the adit into the light under the rim, the cold air at your back.' },
+    { x: 10, y: 13, to: 'randzeche2', tx: 10, ty: 2, tf: SOUTH, label: 'You climb down the ladder in the winze, rung after rung, into the dark.' },
   ],
   features: [
     // The adit, the miners' door across it and the lamp room off it.

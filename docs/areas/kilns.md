@@ -1700,10 +1700,10 @@ and the rumour (§12.8).
 
 - **What it is:** *A shirt of mail in rings darker than iron, and no heavier than wool. / Inside the
   collar a smith's mark is cut, and a knocker's eye beside it.*
-- **The rumour:** the oldest miner at Anvilhall, who sings the hymn's last verse (§3), two lines more
-  at a meeting after his first, words only: *Brandt made a shirt of the ore the knockers bring up. So
-  light, he said, his feet forgot it. / He went down for more. We sang him to the door, and nobody
-  sang him back.* It marks nothing on the world map.
+- **The rumour:** the oldest miner at Anvilhall, who sings the hymn's last verse (§3), two lines
+  more at every meeting once he has sung it (§12.8), words only: *Brandt made a shirt of the ore the
+  knockers bring up. So light, he said, his feet forgot it. / He went down for more. We sang him to
+  the door, and nobody sang him back.* It marks nothing on the world map.
 - **Slot and bearers:** armour: the knight, the paladin, the ranger, the thief, the barbarian, the
   bard and the druid, as the Grey Mail.
 - **Numbers:** armour 15, the Grey Mail's 14 and a point (EXPANSION §5.2). Found and never sold.
@@ -3299,7 +3299,9 @@ Decided by the builder for #831, each the owner's to overturn:
     north drift's west wall, its door at 9,4; the hint is the knocking behind that wall, which stops
     when the company knocks back, the knockers' old sign of ore behind the rock. It holds 500 gold,
     an Elixir and a Sapphire Vial, the dearest healing and spell draught that Kilnhaven's chandler
-    and Anvilhall's Hold Stores sell.
+    and Anvilhall's Hold Stores sell. It is on the first level, which holds no group, as the lair's
+    one guardian stands before the kist on the second: a company of any level that hears the
+    knocking may take it without a fight.
 43. **The Erzhemd lies alone in the smith's kist at the face,** past the Steiger: the smith of the
     rumour, Brandt, sits against the face where he went down for more, and the door across the adit
     has his name chalked under the hymn's count. The walkthrough asserts that no shop, chest, cairn
@@ -3310,11 +3312,11 @@ Decided by the builder for #831, each the owner's to overturn:
     change to Anvilhall.
 45. **The lair's two owed rows go:** `steiger` from `owes.unplaced` in the area's `checks.ts`, which
     leaves the Kilns owing nothing, and `erzhemd` from `UNPLACED` in `tools/tests/items.ts`, as
-    EXPANSION §8.2 (#912's 12) and #847's 6 say the lairs' pull requests do; each check holds now,
+    EXPANSION §8.2 (#897's 12) and #847's 6 say the lairs' pull requests do; each check holds now,
     so an owed line left in would fail.
 46. **§12.8 is the lair's brief in §4's form, with its As built.** It is the bounds' last piece:
     every box, the enclave and the lair are built, and no built map of the Kilns is open onto
-    unbuilt land.
+    unbuilt land but O3's north edge onto O2, the crumb #828 leaves.
 
 ## 10. Names
 
@@ -3421,7 +3423,7 @@ pull request builds from it and adds its "As built".
 | Box | Laid in | Walkable | Other land in it | Built neighbours | Band | Pull request |
 |---|---|---|---|---|---|---|
 | K6 | Kilnmouth, `kilnmouth_k6` | 484 (436 as built) | | L6 | 16–18 | the first, built (#831) |
-| P5 | the heart, `kilnsheart_p5` | 280 (263 as built, and the adit) | | O5 (P4 and P6 beside it) | 16–18 | the second, built (#831) |
+| P5 | the heart, `kilnsheart_p5` | 280 (264 as built, the adit one of them) | | O5 (P4 and P6 beside it) | 16–18 | the second, built (#831) |
 | P6 | the heart, `kilnsheart_p6` | 220 (219 as built) | High Moor's 45, mountain | O6, P5 | 16–18 | the second, built (#831) |
 | L7 | Kilnmouth, `kilnmouth_l7` | 189 (167 outside its mound) | the Cairnfield's 46 | L6, M7 (the Cairnfield's) | 16–18 | the third, built (#831) |
 | P4 | the heart, `kilnsheart_p4` | 46 (47 as built) | | O4, P5 | 16–18 | the third, built (#831) |

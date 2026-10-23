@@ -42,8 +42,8 @@ export const SMITH_PRICES: Readonly<Record<string, number>> = Object.fromEntries
 export const ANVIL_STONE_PRICE = 6000;
 
 // The Kilns' of the bounds' eight (DESIGN §9, #847): the Grey Mail's 14 and a point, for its wearers,
-// and speed raised by 5 while it is worn. Found and never sold; placed nowhere yet, for #831 lays its
-// lair and puts it there.
+// and speed raised by 5 while it is worn. Found and never sold: it lies in the smith's kist at the
+// face of the Dark Seam, the Randzeche's lower level, past the Steiger (#831).
 export const erzhemd = A('erzhemd', 'The Erzhemd', ARTIFACT_PRICE, 15, { classes: NO_CASTER_HEAVY, stat: { speed: 5 }, artifact: true, text: [
   'A shirt of mail in rings darker than iron, and no heavier than wool.',
   'Inside the collar a smith\'s mark is cut, and a knocker\'s eye beside it.',
