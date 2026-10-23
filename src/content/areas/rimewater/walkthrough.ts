@@ -1548,6 +1548,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     // no quest, and inside the say box.
     const keeper = MAP_DEFS.find((d) => d.id === 'rime_lodge')!.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'A lodge-keeper')!;
     const words = keeper.says!.find((s) => s.lines.some((l) => l.includes('grey robe')))!;
+    delete w.party.flags.rl_keeper_met;
     w.world.travel('rime_lodge', keeper.x, keeper.y);
     const firstMeeting = meet(keeper, w.party, heard(w.world, keeper)).text, nextMeeting = meet(keeper, w.party, heard(w.world, keeper)).text;
     ok(!firstMeeting.includes('grey robe') && nextMeeting.includes('"One came up through the ice in a grey robe too long in the arm. He would not take a blanket, nor sleep, nor say where he had been."')

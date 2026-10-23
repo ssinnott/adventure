@@ -1572,8 +1572,9 @@ its exit was listed (#489's 15). The bay (#490) claims the keepers, the family i
 sleeping touch is on the road before it (the check refused `inflict:asleep`), and a lock or a
 dungeon entered from the ice is no kind the check knows, so neither is claimed (#490's 19). K10
 (#491) claims nothing: a landmark claim is an atlas site's icon, and the pass is no site (#491's
-14). J9 and K11 (#497) and the five after them claim nothing, nor do K12, L12, Creag Fionn and the
-Spittal (#832).
+14). J9 and K11 (#497) and the five after them claim nothing, nor do K12, L12 and Creag Fionn
+(#832). The Spittal (#832) claims nothing either: the novelty check places it with the Hearth by its
+floor of 30, as it places every map by its floor (`roadPlace`; EXPANSION §5.2, #845's 7).
 
 ## 8. The numbers
 
@@ -1706,7 +1707,7 @@ Spittal (#832).
   won, 9.76 fights to a rest, inside the aim of 8.5 to 10.5, 24% of its days ending in a fight
   broken off; two under, at 20, 4.96, 52.2% of the floor's 9.5. The Spittal (#832), the lair, judged
   alone at its own floor, 30, on its boss's odds: the Infirmarer won 60% at 30, inside the aim of
-  30% to 70%, and 80% at 32, between the aim of 90% and the limit of 75%. Both stand out of both
+  30% to 70%, and 78% at 32, between the aim of 90% and the limit of 75%. Both stand out of both
   pools, which are as they were. The side quests (#494) place no group, and the gate is as it was.
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3); the
   bay as a dungeon, 90% within 7 and none past 10. As built: M9 98.0% within 8 steps and the
@@ -2575,12 +2576,15 @@ Decided by the builder for #832, each the owner's to overturn:
     the one way from the stair's foot into the ward, so no company steps round it to the ward, the
     hint, the cold room or the locker (the walkthrough's flood, its square and those a step from it
     shut). It is a boss (`boss`), with no `respawn` and a `slainText`.
-34. **The Infirmarer's numbers are set at the gate's company** (MONSTERS §4.1, §4.2 and §13): 2,400
-    hit points, attack 22 and 24d8+26 a blow, where it was drawn at the line's boss at 32, 2,100, 20
-    and 34d8+41, which the gate's company won 41% at 30 and 64% at 32. As set, it is won 60% at 30,
-    inside the aim, and 80% at 32, between the aim (90%) and the limit (75%), as the Steiger (56%
-    and 81%) and the fixture's guardian (57% and 80%) are; its sleeping touch and its mending stay
-    as drawn. Its row gives why it stands off the line (`offLine`), as the Steiger's does.
+34. **The Infirmarer's numbers are set at the gate's company** (MONSTERS §4.1, §4.2 and §13): its
+    2,100 hit points as drawn, attack 22 and 26d8+30 a blow, where it was drawn at the line's boss
+    at 32 with attack 20 and 34d8+41, which the gate's company won 41% at 30 and 64% at 32. As set,
+    it is won 60% at 30, inside the aim, and 78% at 32, between the aim (90%) and the limit (75%),
+    as the Steiger (56% and 81%) and the fixture's guardian (57% and 80%) are. The gate plays its
+    mending, a Heal one turn in ten, and its sleeping touch as drawn. At 2,400 hit points and
+    24d8+26 it was won 60% and 80%, but its fights ran 12.8 rounds at 30 in the harness with 22% of
+    the days broken off at the round cap; as set they run 11.4 rounds with 7%. Its row gives why it
+    stands off the line (`offLine`), its mending named, as the Steiger's does.
 35. **Nothing in the lair is had without the Infirmarer's fight:** the Spittal holds its looks and
     the way down and no group, chest or secret. The secret is on the Infirmary past the Infirmarer:
     the cold room behind the ward's east wall, two by three with its door at 10,9, where the ones
@@ -2592,10 +2596,12 @@ Decided by the builder for #832, each the owner's to overturn:
     down (DESIGN §9). The walkthrough asserts that no shop, chest, cairn or statue holds it
     elsewhere and no monster drops it.
 37. **The rumour is the lodge-keeper's,** DESIGN §9's two lines more at every meeting after her
-    first, as §6 has it: her first meeting sets `rl_keeper_met`, as the F11 hermit's sets his
-    (#859), and her words after it set nothing: no flag, quest or mark (#846). It is the one change
-    to Rime Lodge. Its first line, DESIGN §9's verbatim, would take three lines of the log; it is
-    said in the say box, nine of its fourteen lines.
+    first, as §6 has it: her first meeting sets `rl_keeper_met`, a hire flag as the F11 hermit's is
+    (#859), and her words after it set nothing: no flag, quest or mark (#846). Her later meetings
+    say her own two lines before the rumour's two, as the Kilns' oldest miner keeps his; a company
+    from an old save, which never set the flag, hears her first lines once more before the rumour.
+    It is the one change to Rime Lodge. Its first line, DESIGN §9's verbatim, would take three lines
+    of the log; it is said in the say box, nine of its fourteen lines.
 38. **Its plates on the world map are at 330,370 and 330,376,** five squares south of the door in
     the rim's mountain, as Creag Fionn's stands five south of its door, and the Infirmary's six
     south of the Spittal's, as the bay's two are.
@@ -3084,11 +3090,11 @@ written `%`, as Cairnmoor's P7 and P8 were (docs/areas/cairnmoor.md §12).
   to 12 x 8 to 10, its look at 11,9 and a chest at 12,10 (500 gold, an Elixir and a Sapphire Vial),
   which no walker, swimmer, climber or levitator reaches but through the wall. With the Infirmarer
   standing, a walker from the stair's foot reaches 12 of the Infirmary's squares and none of the
-  ward; with it gone, 62. The gate's company wins it 60% at 30, inside the aim (30% to 70%), and 80%
-  at 32, between the aim (90%) and the limit (75%); the harness's thrifty bot 78% and 92%, 0.8 and
-  0.9 fights before a rest. The curve's rise: the Infirmarer at 5 steps from the Infirmary's way in,
-  level 32.0, near both the floor and the top. Density: the Spittal every square within 7 steps of a
-  point (55 of 55), the furthest 3, no sign among its 8 points; the Infirmary (69 of 69) the
-  furthest 4, no sign among its 11. By the curve's count it pays 3,396 xp a member and 500 gold, in
-  no clear, and the lead over the road stays at 22.9571. K12 changes at the door alone (§9, #832's
-  32).
+  ward; with it gone, 62. The gate's company wins it 60% at 30, inside the aim (30% to 70%), and 78%
+  at 32, between the aim (90%) and the limit (75%); the harness's thrifty bot 84% and 96%, 0.8 and
+  1.0 fights before a rest, its fights 11.4 and 10.3 rounds, 7% and 6% of its days broken off at the
+  round cap. The curve's rise: the Infirmarer at 5 steps from the Infirmary's way in, level 32.0,
+  near both the floor and the top. Density: the Spittal every square within 7 steps of a point (55
+  of 55), the furthest 3, no sign among its 8 points; the Infirmary (69 of 69) the furthest 4, no
+  sign among its 11. By the curve's count it pays 3,396 xp a member and 500 gold, in no clear, and
+  the lead over the road stays at 22.9571. K12 changes at the door alone (§9, #832's 32).

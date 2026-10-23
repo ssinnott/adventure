@@ -30,7 +30,9 @@ export const MONSTERS: readonly MonsterDef[] = [
   // in the Infirmary. The bay's keeper at the lair's door, the lair's boss at 32 (MONSTERS §13): a machine, so it never
   // breaks; its touch puts to sleep, as the Bay Keeper's does (0.3 a hit), and it mends itself, as the Matron does, one turn
   // in ten. Drawn at the line's boss at 32 (2,100 hp, 34d8+41), it was won 41% at 30 and 64% at 32; set by the lair's pull
-  // request at the gate's company, it hits more often and lighter and stands longer, won 60% at its floor of 30 and 80% at
-  // 32 (docs/areas/rimewater.md §9, #832's 34)
-  { id: 'infirmarer', name: 'The Infirmarer', plural: 'Infirmarers', sprite: 'infirmarer', kind: 'machine', look: 'No robe, too many fingers and a bed made up for you.', level: 32, hp: 2400, ac: 29, attack: 22, dice: 24, sides: 8, bonus: 26, speed: 13, xp: 20373, gold: [0, 0], inflict: { cond: 'asleep', chance: 0.3 }, cast: { spells: ['heal'], chance: 0.1 }, offLine: 'the Spittal\'s boss, its hit points and its blow set by its gate at the lair\'s floor and two above (#832)', tint: '#9aa9b2', size: 1.5 },
+  // request at the gate's company, which plays its mending and its touch, it keeps its hit points and hits more often and
+  // lighter, won 60% at its floor of 30 and 78% at 32. At 2,400 hp and 24d8+26 it was won 60% and 80%, but its fights ran
+  // 12.8 rounds at 30 in the harness with 22% of the days broken off at the round cap, where these run 11.4 with 7%
+  // (docs/areas/rimewater.md §9, #832's 34)
+  { id: 'infirmarer', name: 'The Infirmarer', plural: 'Infirmarers', sprite: 'infirmarer', kind: 'machine', look: 'No robe, too many fingers and a bed made up for you.', level: 32, hp: 2100, ac: 29, attack: 22, dice: 26, sides: 8, bonus: 30, speed: 13, xp: 20373, gold: [0, 0], inflict: { cond: 'asleep', chance: 0.3 }, cast: { spells: ['heal'], chance: 0.1 }, offLine: 'the Spittal\'s boss, its blow set by its gate at the lair\'s floor and two above, its hit points as drawn and its mending a Heal one turn in ten, as the Matron\'s (#832)', tint: '#9aa9b2', size: 1.5 },
 ];
