@@ -91,7 +91,8 @@ and with it failing the coast is dark, and the dark has people in it who were wa
 | Callow Downs, D3 | outdoor zone, 32×32 | 4–5 | the west downs to the lip of Kestrel Edge; a falconer, the lip over the Upper Water and the cleft with a kestrels' ledge; the bandit camp by the Salt Road, a den; a shrine, a cairn and a shepherd's hollow; seven groups (§4.8) |
 | Callow Downs, D4 | outdoor zone, 32×32 | 4–5 | Kestrel Edge: the Salt Road over the top, down the cliff in seven bends and across the low ground at its foot to the Delta; the runners' cave behind a bend; a shrine, a cairn and the waystation; four groups (§4.9) |
 | The Berth | dungeon, 16×16 | 4–5 | the Queen's barrow under D2, opened: the forecourt, the passage and four side chambers of the old Queens, their grave goods untouched; the Queen on her bier, her signet cut away; her guard two by two and her captain, the boss; his arms in a niche behind the bier (§4.7) |
-| Callow Downs, E4 | outdoor zone, 32×32 | 4–5 | the Downs' last shore, the bounds' (#837): the down's last grass, a low cliff across it and a strand of grey sand under it; a post of holed stones (a shrine) and a cairn of flints; a crabber's store behind a stack at the shore; the cliff's face left bare for the lair's door; no group (§12.2) |
+| Callow Downs, E4 | outdoor zone, 32×32 | 4–5 | the Downs' last shore, the bounds' (#837): the down's last grass, a low cliff across it and a strand of grey sand under it; a post of holed stones (a shrine) and a cairn of flints; a crabber's store behind a stack at the shore; the mouth of Hag Hole, the lair, in the cliff's face; no group (§12.2) |
+| Hag Hole | dungeon, 16×16 | 30–32 | the Hagstone's lair, the bounds' (#837): the sea cave behind the mouth in E4's low cliff, its passage the tide floods; the Hag in its narrows, the one group; past it the cave, its wrack and the box of black wood with the Hagstone in it; the dry ledge behind a fall of rock, a lamp burnt dry and a purse (§12.3) |
 
 Its chapter of the one quest is The Quiet Farm (Vask, `chapter.ts`) and its side quests The Cargo
 Ledger (Hale), The Bell That Rang Twice (Osmund), The Rest of the Survey (Ebba and Ailith), The
@@ -110,7 +111,8 @@ the kestrels' ledge's (downs_d3 3,18) the cleft in the lip at 4,18 (`d3_cleft`),
 falconer's word; and the runners' cave's (downs_d4 20,13) the rock worn smooth between the bends at
 19,13 (`d4_worn`); and the captain's niche in the Berth (berth 2,7) the words cut in the forecourt
 at 13,6 (`berth_hint`); and the crabber's store's (downs_e4 10,2) the crab shells heaped at the
-stack's foot at 9,2 (`e4_shells`).
+stack's foot at 9,2 (`e4_shells`); and the ledge in Hag Hole (hag_hole 3,3) the lamp smoke over the
+pool at 3,4 (`hh_smoke`).
 
 In more detail, as SLICE.md had it before the area docs:
 
@@ -191,7 +193,7 @@ D3 comes before D4 because the Salt Road cuts a corner of D3 on its way down, an
 II comes last.
 
 The bounds come after the plan (§12, #837): E4, the Downs' last shore, is built as country at 4–5,
-and the Hag's lair, its door in E4's low cliff, is to come.
+and Hag Hole, the Hagstone's lair behind its low cliff, at the cap's band, 30–32.
 
 The places, as the atlas and the docs have them:
 
@@ -810,8 +812,8 @@ take none of #56's: quests 3, 5 and 6 stay plain quests (DESIGN §8).
 
 The Foreland's of the bounds' eight (DESIGN §9): the first country a company walks, holding what it
 can take only at the last (#837). Found and never told: no `seek` quest, no line in the journal and
-no mark on the world map. #837 builds the lair, its door in E4's low cliff (left bare at 3,6,
-§12.3) and the rumour once #845, #847 and the guardian's drawing are in.
+no mark on the world map. #837 built the lair, Hag Hole, with its door in E4's low cliff at 3,6 and
+the rumour, once #845, #847 and the guardian's drawing were in (§12.3).
 
 - **What it is:** *A stone off the strand, a hole the sea wore through it and a cord gone green. /
   Held to the eye, the hole shows the dark as only dark.*
@@ -823,10 +825,11 @@ no mark on the world map. #837 builds the lair, its door in E4's low cliff (left
   eight that all ten may bear.
 - **Numbers:** none, as a thing carried has none. Found and never sold.
 - **Power:** a ward (DESIGN §9, kind 5): its bearer is never paralysed.
-- **The lair:** a sea cave of one level, its mouth on E4's strand under the Downs, at the cap's
-  band, 30–32 (#845, §12.3).
-- **The guardian:** the Hag (long bodies, a new kind; boss, 32; docs/MONSTERS.md §13): *No eyes,
-  and it found you first.* It holds.
+- **The lair:** Hag Hole, a sea cave of one level, its mouth on E4's strand under the Downs, at the
+  cap's band, 30–32 (#845, §12.3).
+- **The guardian:** the Hag (long bodies, a new kind; boss, 32; docs/MONSTERS.md §13): *No eyes, and
+  it found you first.* It holds. Its gate sets its numbers, 2,200 hit points, attack 26 and 23d8+26
+  a blow, off the line with its word (§9, #837's 14).
 
 ## 7. Encounters, and what is new
 
@@ -845,7 +848,9 @@ farmland as terrain (#44); groups that walk only by night or in fog (`when`, #41
 that breed one kind of monster until a company beats their keepers and burns them (#88): a rookery
 in E2 (built: two Old Rooks its keepers, MONSTERS §5.2), a wolves' den in D2 (built: two Barrow
 Wolves its keepers, §4.6) and a bandit camp in D3. E2 has the first statue too. §4.2 to §4.9 place
-every group, box by box; E4, the bounds', holds none (§12.1).
+every group, box by box; E4, the bounds', holds none (§12.1). Hag Hole, the lair, holds the Hag
+alone, a new kind of the long bodies (MONSTERS §13); the novelty check, which places the lair with
+the Hearth by its floor (EXPANSION §5.2, #845's 7), passes (§12.3).
 
 ## 8. The numbers
 
@@ -876,7 +881,9 @@ every group, box by box; E4, the bounds', holds none (§12.1).
   warns at its own way in. Fights to a rest: the Foreland map 4.55, Brandy Hole's caves 4.09, the
   Seam 6.69, the Ashcombe cellar 7.41, F2 6.60, F3 7.07, E3 7.53, E2 6.93, D2 7.59, D3 8.21, D4 7.54
   and the Berth 7.12. These are re-measured with E4 laid (#837), which holds no group (§12.1), and
-  are main's before it too.
+  are main's before it too. Hag Hole's Hag, the lair's one group, is judged out of the area's pools
+  at the lair's floor and two above (#845): won 64% at 30 and 81% at 32, under its aim of nine in
+  ten and inside the limit, listed, as the Stair's Catcher and the Kilns' Steiger are (§12.3).
 - **The thresholds, as the pilot left them** (#47). Every box of the Downs was tuned to the aims of
   #273, and none moved them:
 
@@ -946,8 +953,9 @@ every group, box by box; E4, the bounds', holds none (§12.1).
 - **The bounds** (#837, §12). E4 holds no group and pays no xp; its finds hold 110 gold. By the
   curve's count a clear of the area gives 4,101 xp a member (it asks 3,734) and 4,646 gold, where it
   gave 4,536 before (it asks 1,500), and a company entering at 1 and three quarters clearing it
-  still leaves at 5.3 against the next floor 5 (limit 6). The lair is held to its own band and
-  counted in no clear (`tools/tests/curve.ts`), so the lead stays at 5.3 to the end of #837.
+  still leaves at 5.3 against the next floor 5 (limit 6). Hag Hole, the lair, is held to its own
+  band and counted in no clear (`tools/tests/curve.ts`): its 3,395 xp a member and 500 gold stand
+  apart, so the lead stays at 5.3 to the end of #837.
 
 ## 9. Decisions
 
@@ -1130,6 +1138,34 @@ Decided by the builder for #837, each the owner's to overturn:
    cliff's foot to the box's west edge.
 10. **E4 starts at 6,0 facing south,** in from Crowness's down, the land and not the sea in view.
 11. **The walkthrough walks the bounds in one function,** `theBounds`, called last.
+12. **The lair is Hag Hole** (`hag_hole`): hole is the Foreland folk's word for a sea cave
+    (docs/NAMES.md), as Brandy Hole's is, and the coast names a cave for what lies in it. One level
+    of 16 by 16, as the brief has it (§12.3).
+13. **The Hag stands alone in the narrows,** 7,7, the one square from the passage into the cave, so
+    the wrack, the box, the lamp smoke and the ledge all lie past it and nothing in the lair is had
+    without its fight; it never moves and never comes back.
+14. **The Hag's numbers are set by its gate,** as the Steiger's and the Rim Troll's are
+    (docs/areas/kilns.md §9, #831's 41). Drawn at the line's boss at 32 (2,100 hit points, attack
+    20, 34d8+41), it was won 38% at 30 and 40% at 32; at 2,200, attack 26 and 23d8+26, its armour
+    (29), its pace (13) and its hold (paralysed, 0.2) kept, it is won 64% at 30 and 81% at 32, where
+    the Stair's Catcher and the Steiger stand (57% and 80%, 56% and 81%). It pays the line's 20,373
+    xp at 32 and carries its own `offLine` word. 2,800 with 21d8+22 (54% and 83%) ran 14.3 rounds a
+    fight at 30 in the harness, 44% of its days broken off at the round cap; the row set runs 12.6,
+    5% broken off.
+15. **The secret is the ledge behind a fall of rock at 3,3,** over the pool in the cave's west end,
+    found from the lamp smoke on the roof over the pool and searched at 3,4 facing north: the
+    purse's 500 gold, as the Randzeche's stope and Bearn Liath's store hold 500, the lamp a look and
+    no gear.
+16. **The Hagstone lies alone in the box of black wood in the wrack,** no gold with it, as Torhide's
+    kist has none; one in the world and sold nowhere.
+17. **The old man is met once before he speaks of the stone:** his first meeting gives his look and
+    his song and sets his `flag`, `netmender_met`, as the drover's sets `drover_met`, and every
+    meeting after it gives his look, his song and then DESIGN §9's two lines, so the cave's pointer
+    in the song is never lost. The words set nothing and ask nothing, and they say nothing of the
+    Hag, so they stand after its fall.
+18. **#837 is done with the lair:** E4 and the lair are built and judged, the lair at 30–32 with the
+    Hagstone in it, and the Foreland has no enclave (#837's 1); no built map of the Foreland is open
+    onto unbuilt land but F3's east edge onto G3, a crumb (#828).
 
 ## 10. Names
 
@@ -1152,6 +1188,7 @@ of the old names the first crew left (marked *old*).
 | Captain's Farm | Coldharbour | a cold shelter: an old roadside name the farm kept | Ellerby |
 | Gull Isle | the Mewstone | the gulls' rock | |
 | Greywater, and its caves | Brandy Hole | where the cheap brandy came from | Kelp Hole |
+| | Hag Hole | the sea cave the Hag lies in, behind E4's cliff; hole, the Foreland folk's word for one, as in Brandy Hole (#837) | the Blind Hole |
 | the Drowned Shrine | the Seam | the glowing seam the cult dug down to; *old*, faintly | the Undercliff |
 | the Greywater Ledger | the Cargo Ledger | the smugglers' book, with its column headed CARGO BELOW | |
 | Harrow Provisioner | Mottram's Stores | its keeper's name | |
@@ -1181,25 +1218,26 @@ named in the atlas.
 - **The scraps** of the Foreland's land in boxes that are other areas' or the sea's: the Downs'
   cliff top in C2 and C3 (272 squares, 221 of them walkable), which goes with Saltreach's boxes,
   and a few squares of shore in E4, G3 and G4. E4's are built since as the bounds' (#837, §12), the
-  Downs' last shore with no group; G3's and G4's stay cut, G3 a crumb (#828).
+  Downs' last shore with no group and Hag Hole behind its cliff; G3's and G4's stay cut, G3 a crumb
+  (#828).
 
 ## 12. The bounds
 
 The land the Downs' maps lie open to, built as country off the quest, level for level (the owner,
 17 October 2026; #828, #837): the few squares of shore in E4 that §11 cut, under Callow Downs; then
-the area's artifact's lair, the Hagstone's (§6). A box of sea with a strand in its north-west
-corner, 69 squares a company could walk by the atlas, which 22 edge squares opened onto: E3's south
-edge (11) and D4's east edge (11). The issue's 20 are those the atlas's strand met on foot: E3's
-9,31 and 10,31 are sand where the atlas has shallows on E4's row 0, and E4 is drawn as sand there to
-meet them (§12.1). The box is built to the looser floor (EXPANSION §5.3) at the zone's band, from
-the area's own, paid from its budget (§8), with nothing on the road's quest. The Foreland has no
-enclave (#837). This is their brief, in §4's form; each pull request builds from it and adds its "As
-built".
+the area's artifact's lair, Hag Hole, the Hagstone's (§6). A box of sea with a strand in its
+north-west corner, 69 squares a company could walk by the atlas, which 22 edge squares opened onto:
+E3's south edge (11) and D4's east edge (11). The issue's 20 are those the atlas's strand met on
+foot: E3's 9,31 and 10,31 are sand where the atlas has shallows on E4's row 0, and E4 is drawn as
+sand there to meet them (§12.1). The box is built to the looser floor (EXPANSION §5.3) at the zone's
+band, from the area's own, paid from its budget (§8), with nothing on the road's quest. The Foreland
+has no enclave (#837). This is their brief, in §4's form; each pull request builds from it and adds
+its "As built".
 
 | Place | Laid in | Walkable | Built neighbours | Band | Pull request |
 |---|---|---|---|---|---|
 | E4 | Callow Downs, `downs_e4` | 65 (the atlas's 69) | E3 and D4; E5 (Wrackholm's), the sea | 4–5 | the first, built (#837) |
-| The lair | its own, its door on E4 | | E4 | 30–32 | the second |
+| Hag Hole, the lair | its own, `hag_hole`, its door on E4's 3,6 | 32 | E4 | 30–32 | the second, built (#837) |
 
 ### 12.1 What the box keeps
 
@@ -1233,13 +1271,16 @@ built".
 - **Pay.** A clear of the Foreland gave 4,101 xp a member before the bounds (the curve asks 3,734)
   and 4,536 gold (1,500), and a company entering at 1 and three quarters clearing it left at 5.3;
   the curve holds it to 6 (`LEAD`). E4 pays no xp and 110 gold: with it a clear gives 4,101 xp and
-  4,646 gold, and the company still leaves at 5.3. The lair is held to its own band and counted in
-  no clear (`tools/tests/curve.ts`), so the lead stays at 5.3 to the end of #837.
-- **The lair's door** is left bare, a square of rock in the low cliff's face with rock either side
-  and behind it, its way walked to and nothing within four squares (§12.3).
+  4,646 gold, and the company still leaves at 5.3. Hag Hole, the lair, is held to its own band and
+  counted in no clear (`tools/tests/curve.ts`): its 3,395 xp a member and 500 gold stand apart, so
+  the lead stays at 5.3 to the end of #837.
+- **The lair's door** is the mouth in the low cliff's face at 3,6, its rock drawn as stone with rock
+  either side and behind it, walked onto from the strand at 3,7 alone, with nothing within four
+  squares: E4's one way out but its edges (§12.3). `worldGrid` reads it as rock, so E4 still walks
+  65 squares.
 - **The walkthrough** walks the box in one function, `theBounds` in `walkthrough.ts`, called last:
   its seams walked and its secret found from its hint, the prize shut to walkers, swimmers, climbers
-  and floaters; the lair's door left bare.
+  and floaters; then the lair, in at the mouth (§12.3).
 
 ### 12.2 E4, the Downs' last shore (#837): country, band 4–5
 
@@ -1268,12 +1309,13 @@ built".
   at 10,2 where the art check takes it and the shells before it (`e4_shells`, 9,2), the store
   (`e4_store`, 11,2) with the crock (`e4_crock`). The low cliff is rock at 1 to 4 on rows 5 and 6,
   the ways down past either end of it at 0 and 5; the strand under it is sand from 0 to 5 on row 7
-  to 0,10 on the box's west edge. The lair's door, 3,6, is bare with 3,7 open before it. E4 differs
-  from the atlas at 30 squares: four of shallows drawn as sand (the seam's 9,0 and 10,0 and the
-  stack's way, 9,1 and 9,2), the stack's nine, the cliff's eight and the strand's nine of grass
-  drawn as sand. Density: 67 of 67 squares within 12 steps (the store's two with them), the
-  furthest 5, no sign among 5 points. No group, so the gate has nothing to judge; the box pays 110
-  gold.
+  to 0,10 on the box's west edge. The lair's door, 3,6, walked onto from 3,7 alone, is the mouth of
+  Hag Hole since the lair (#837): its rock drawn as stone and E4's one exit. E4 differs from the
+  atlas at 30 squares: four of shallows drawn as sand (the seam's 9,0 and 10,0 and the stack's way,
+  9,1 and 9,2), the stack's nine, the cliff's eight (the mouth one of them) and the strand's nine of
+  grass drawn as sand. Density: 68 of 68 squares within 12 steps (the store's two and the mouth with
+  them), the furthest 5, no sign among 6 points. No group, so the gate has nothing to judge; the box
+  pays 110 gold.
 
 ### 12.3 The lair: the Hag's sea cave (#837, its second pull request)
 
@@ -1287,8 +1329,8 @@ built".
   door's own line, which gives its band (#845).
 - **Encounters.** The Hag (long bodies, a new kind; boss, 32; docs/MONSTERS.md §13), the one
   guardian, drawn in the creatures lane before the lair is built.
-- **The ways in and out.** Its door at E4's 3,6 in the cliff's face, left bare with 3,7 open before
-  it; one way out, back onto the strand.
+- **The ways in and out.** Its door at E4's 3,6 in the cliff's face, walked onto from the strand at
+  3,7; one way out, back onto the strand.
 - **The secret and its hint.** A dry ledge above the tide's reach, behind a fall of rock, where the
   last one who came for the stone sat out the dark: his lamp and his purse. The hint: lamp smoke
   black on the cave's roof, above water no lamp could stand in.
@@ -1296,3 +1338,25 @@ built".
 - **Finds.** The Hagstone, carried by any of the ten, a ward against paralysis, found and never sold
   (§6, #846); the rumour is the old net-mender's at Gullwick, built with the lair.
 - **Pay.** Counted in no clear (`tools/tests/curve.ts`).
+- **As built** (#837, 23 October): `hag_hole`, one level of 16 by 16, `enclave: true` at 30–32, its
+  plate at 140,100, laid last in the area's maps. Its start is 7,14 facing north, the exit there,
+  walked onto from 7,13 alone, back onto E4's 3,7 facing the sea: "Out at the mouth onto the strand,
+  the grey sand and the sea, and the down above." The door is E4's 3,6, drawn as stone, rock either
+  side at 2,6 and 4,6 and behind it at 3,5, walked onto from 3,7 alone, with nothing within four
+  squares: "You stoop in at a mouth in the cliff's face. The sand inside is wet, and the dark goes
+  back.", then the band's line, with the warning at E4's 4, harder at 28 and nothing more at 30. The
+  passage runs north from the mouth up column 7 to row 11, west to 6,11, north to 6,9 and east to
+  7,9, a pool beside it at 5,10 and at 8,11: the mouth's look (`hh_mouth`, 7,13), the tide's line
+  (`hh_tide`, 6,10) and the narrows (`hh_narrows`, 7,9). The Hag (`hh_hag`) stands on 7,7, the one
+  square from 7,8 into the cave, with no `respawn`, `roams: false` and a `slainText`; with it
+  standing, a walker, wader, climber or floater reaches 10 of the lair's squares and nothing past
+  it. The cave is rows 4 to 6 from column 3 to 9 (to 7 on row 4), its pools at 1 and 2 on rows 4 and
+  5 and at 8,4: its look (`hh_cave`, 7,6), the wrack (`hh_wrack`, 8,5) and the box in it (`hh_box`,
+  9,5), the Hagstone alone. The secret: the lamp smoke (`hh_smoke`, 3,4) under the fall of rock at
+  3,3, and behind it the ledge at 2,2 and 3,2, its look (`hh_ledge`, 3,2) and the purse (`hh_purse`,
+  2,2), 500 gold; with the fall shut, 36 squares are reached and not the ledge. 32 squares walkable
+  and 7 of pools; density 32 of 32 within 7 steps, the furthest 3, no sign among 11 points. The Hag
+  is won 64% at 30 and 81% at 32 at the gate's company, 12.6 and 11.7 rounds a fight in the harness
+  with 5% and 6% of its days broken off at the round cap; the curve counts the lair's 3,395 xp a
+  member and 500 gold in no clear. The rumour is the old man's at F3's 9,13 at every meeting after
+  his first (his flag `netmender_met`), after his look and his song: 10 of his box's 14 lines.
