@@ -177,6 +177,7 @@ export function combat(): void {
   bot();
   botOpts();
   autoFight();
+  fightTicks();
 }
 
 /** A fight played out: each member strikes `aim`'s pick where it can and braces where it cannot. */
@@ -1368,6 +1369,75 @@ function autoFight(): void {
     const first = (): string | undefined => s.log.find((l) => names.some((n) => l.startsWith(`${n} `)) && / (hits|misses|casts) /.test(l));
     for (let n = 0; n < 200 && !first() && s.outcome === 'ongoing'; n++) g.update(null);
     ok(!!first() && first()!.includes('Bandit') && !first()!.includes('Barge Master'), `the screen's bot plays the game's reading: its first blow or spell is at a bandit, not at the Barge Master it cannot know leads (${first()})`);
+  }
+  CombatScreen.instant = false;
+}
+
+/**
+ * A tick leaves its fight settled (#943): the combat screen walks the turn on in `update`, once the act is done, so
+ * that drawing the fight reads the turn it kept and moves nothing of it; and the hit flash counts the screen's ticks,
+ * not its frames. The smoke draws a fight ten times (tools/smoke.ts); no suite has a canvas.
+ */
+function fightTicks(): void {
+  CombatScreen.instant = true;
+  /** The premade company at three rats, the combat screen on top. */
+  const atRats = (seed: number): { g: Game; screen: CombatScreen } => {
+    const g = headlessGame(seed), s = startCombat(g.party, [{ id: 'rats', monsters: ['rat', 'rat', 'rat'] }], g.rng), screen = new CombatScreen(s, ['rats']);
+    g.push(screen);
+    return { g, screen };
+  };
+  /** The fight and the game's generator as they stand: a call that moves neither leaves this as it was. */
+  const mark = (g: Game, s: CombatState): string => `${JSON.stringify(s)} ${g.rng.state}`;
+  {
+    // Everyone braces ('n4'), so the fight runs round on round. After each tick there is nothing left to walk, and the
+    // tick of a round's last act has begun the next round, with the next order's speeds rolled.
+    const { g, screen } = atRats(9), s = screen.state;
+    let rounds = 0, late = 0, undone = 0, ticks = 0;
+    for (; ticks < 200 && rounds < 3 && s.outcome === 'ongoing'; ticks++) {
+      const last = s.turn === s.order.length - 1, round = s.round;
+      g.update('n4');
+      if (last && s.outcome === 'ongoing') { rounds++; if (s.round !== round + 1 || s.turn >= s.order.length) late++; }
+      const was = mark(g, s);
+      currentTurn(s, g.party, g.rng);
+      if (mark(g, s) !== was) undone++;
+    }
+    ok(rounds === 3 && late === 0 && undone === 0,
+      `one update after the last act of a round leaves the next round begun, and after every update the turn is found where it stands: ${rounds} rounds ended in ${ticks} ticks (${late} left unbegun, ${undone} ticks left a walk to make)`);
+  }
+  {
+    // The next in the order sleeps: the tick that plays the one before it passes it and rolls its waking on the game's
+    // generator then, a brace drawing nothing itself, and not in a frame drawn after.
+    const { g, screen } = atRats(10), s = screen.state;
+    for (let n = 0; n < 50 && !(s.order[s.turn]?.side === 'party' && s.order[s.turn + 1]?.side === 'monster'); n++) g.update('n4');
+    const up = s.order[s.turn], sleeper = s.order[s.turn + 1];
+    const found = up?.side === 'party' && sleeper?.side === 'monster';
+    ok(found, `a company member is up with a rat after them in the order (turn ${s.turn} of ${s.order.length}, round ${s.round})`);
+    if (found) {
+      s.monsters[sleeper.i].conditions = ['asleep'];
+      const at = s.turn, round = s.round, drawn = g.rng.state;
+      g.update('n4');
+      const rolled = g.rng.state !== drawn, passed = s.round > round || s.turn > at + 1, was = mark(g, s);
+      currentTurn(s, g.party, g.rng);
+      ok(rolled && passed && mark(g, s) === was,
+        `the tick that plays the one before a sleeper rolls its waking and walks on past it, so that a frame drawn after has nothing to roll (turn ${at} to ${s.turn}, round ${round} to ${s.round}, the generator ${rolled ? 'drawn on' : 'not drawn on'})`);
+    }
+  }
+  {
+    // The bot plays: a blow leaves its monster's flash at 1 after its tick and at 0 after the next, one tick of white.
+    const { g, screen } = atRats(11), s = screen.state;
+    screen.auto = true;
+    let blows = 0, ticks = 0;
+    const wrong: string[] = [];
+    for (; ticks < 300 && s.outcome === 'ongoing'; ticks++) {
+      const hp = s.monsters.map((m) => m.hp);
+      g.update(null);
+      s.monsters.forEach((m, i) => {
+        const hurt = m.hp < hp[i];
+        if (hurt) blows++;
+        if (m.flash !== (hurt ? 1 : 0)) wrong.push(`${m.def.name} ${i} at tick ${ticks}: flash ${m.flash}, ${hurt ? 'struck' : 'not struck'}`);
+      });
+    }
+    ok(blows >= 3 && !wrong.length, `a blow leaves flash at 1 after its tick and at 0 after the next: ${blows} blows in ${ticks} ticks (${wrong.join('; ') || 'none wrong'})`);
   }
   CombatScreen.instant = false;
 }

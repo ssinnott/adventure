@@ -1503,6 +1503,37 @@ await page.evaluate(() => (window as any).__game.game.attract()); await page.wai
 await page.keyboard.press('ArrowLeft'); await page.waitForTimeout(150);
 const attractKeyed = await attractNow();
 
+// Drawing a fight changes nothing of it (#943). Last, since it plays: a new game on the pinned seed, the road rats
+// fought as above and drawn ten times through Game.render at three moments, the fight (CombatState, as JSON) and
+// the game's generator as they were: after a round's last act, with a sleeper next in the order, and with a
+// monster just struck. A draw that walked the turn on or counted a flash down would move one or both.
+const drawing = await page.evaluate((seed: number) => {
+  const g = (window as any).__game.game, ctx = (document.getElementById('stage') as HTMLCanvasElement).getContext('2d')!;
+  g.newGame(seed);
+  g.world.travel('shelf', 16, 4);
+  g.fight(['road_rats']);
+  const screen = g.top, s = screen.state;
+  screen.constructor.instant = true;
+  const mark = (): string => `${JSON.stringify(s)} ${g.rng.state}`;
+  const still = (): boolean => { const was = mark(); for (let i = 0; i < 10; i++) g.render(ctx); return mark() === was; };
+  // The company braces ('n4') and the rats bite, round on round, to the tick of a round's last act: the next round
+  // begun by then, or, drawn on main, the order spent and the walk to the next round still to make.
+  let ticks = 0, reached = false;
+  for (; ticks < 60 && s.outcome === 'ongoing' && !reached; ticks++) { const round = s.round; g.update('n4'); reached = s.round > round || s.turn >= s.order.length; }
+  const spent = { ticks, round: s.round, reached: reached && s.outcome === 'ongoing', still: still() };
+  // A rat first in the order, asleep as a Slumber leaves it: its waking is rolled where the turn is walked on.
+  const at = s.order.findIndex((t: { side: string }, k: number) => k >= s.turn && t.side === 'monster');
+  if (at >= 0) { s.turn = at; s.monsters[s.order[at].i].conditions = ['asleep']; }
+  const slept = { at, of: s.order.length, still: still() };
+  // A rat just struck and standing: the flash a blow leaves after its tick (the combat suite holds the tick's part).
+  const hit = s.monsters.find((m: { hp: number }) => m.hp > 0);
+  if (hit) hit.flash = 1;
+  const struck = { flash: s.monsters.map((m: { flash: number }) => m.flash).join(), still: still() };
+  screen.constructor.instant = false;
+  while (g.screens.length > 1) g.pop();
+  return { spent, slept, struck };
+}, SEED);
+
 await browser.close();
 server.close();
 
@@ -1529,6 +1560,9 @@ ok(gameSeed === SEED, `the new game starts from the pinned seed (${gameSeed}, we
 ok(state.map === 'caldera' && state.zone === 'shelf' && state.steps === 3, `three steps back through the gate reach the Foreland, outdoors (${JSON.stringify(state)})`);
 ok(exploreColours > 20, `the viewport, automap and party cards painted (${exploreColours} colours)`);
 ok(screen2 === 'CombatScreen' && combatColours > 20, `a fight opens and paints (${screen2}, ${combatColours} colours)`);
+ok(drawing.spent.reached && drawing.spent.still, `a fight drawn ten times after a round's last act is as it was, its state and the generator's (${drawing.spent.ticks} ticks to round ${drawing.spent.round})`);
+ok(drawing.slept.at >= 0 && drawing.slept.still, `a fight drawn ten times with a sleeper next in the order is as it was, its state and the generator's (a rat at ${drawing.slept.at} of ${drawing.slept.of})`);
+ok(/[1-9]/.test(drawing.struck.flash) && drawing.struck.still, `a fight drawn ten times with a monster just struck is as it was, its state and the generator's (flash ${drawing.struck.flash})`);
 {
   const light = (c: number[]): number => (c[0] + c[1] + c[2]) / 3;
   ok(pilotBand.on && Math.max(...pilotBand.at) < 100 && light(pilotBand.at) <= light(pilotBefore) * 0.6 + 4 && pilotOff,
