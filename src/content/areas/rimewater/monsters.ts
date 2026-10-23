@@ -6,6 +6,7 @@ import type { MonsterDef } from '../../../game/monsters.ts';
 /** The drawings Rimewater's monsters are drawn with, one kind to each. A family in src/ui/monsters/ must register every one. */
 export const SPRITES = [
   'ice_pike', 'snow_lynx', 'tallyman', 'ice_bear', 'bay_keeper', 'matron',
+  'infirmarer',
 ] as const;
 
 export const MONSTERS: readonly MonsterDef[] = [
@@ -25,4 +26,10 @@ export const MONSTERS: readonly MonsterDef[] = [
   // cap. Off MONSTERS §4.4's boss line (1,299 hp, 22d8+27, won 79% at 21 and 93% at 23), its hit points, its blow and
   // its mending are set for #490's gate: about half at its floor, 21, and nearly always at 23
   { id: 'matron', name: 'The Matron', plural: 'Matrons', sprite: 'matron', kind: 'machine', look: 'It has tended them for four hundred years.', level: 22, hp: 1900, ac: 24, attack: 15, dice: 17, sides: 8, bonus: 18, speed: 13, xp: 13973, gold: [0, 0], cast: { spells: ['heal'], chance: 0.1 }, drops: [{ item: 'matron_cap', chance: 1 }], tint: '#b0b1ab', size: 1.45 },
+  // the bounds' lair (#832), drawn and defined before the lair that places it: K12's door under the pass, where it keeps the
+  // Wakerobe. The bay's keeper at the lair's door, the lair's boss at 32 (MONSTERS §13): a machine, so it never breaks; its
+  // touch puts to sleep, as the Bay Keeper's does (0.3 a hit), and it mends itself, as the Matron does, one turn in ten. Its
+  // numbers are the line's boss at 32 as tools/testmonster.ts gives it today, and provisional: the lair's pull request sets
+  // them from the harness's line at the cap (MONSTERS §4.1, §4.2, §13). It is owed in checks.ts until that lair places it
+  { id: 'infirmarer', name: 'The Infirmarer', plural: 'Infirmarers', sprite: 'infirmarer', kind: 'machine', look: 'No robe, too many fingers and a bed made up for you.', level: 32, hp: 2100, ac: 29, attack: 20, dice: 34, sides: 8, bonus: 41, speed: 13, xp: 20373, gold: [0, 0], inflict: { cond: 'asleep', chance: 0.3 }, cast: { spells: ['heal'], chance: 0.1 }, tint: '#9aa9b2', size: 1.5 },
 ];

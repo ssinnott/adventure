@@ -17,6 +17,13 @@
 // cave's pool: a pale, livid hide gone pallid in the dark, the mantle full, seven arms over the lip
 // and reaching along it, white sucker-ring scars and a long healed gash, barnacles along its crown,
 // and the eye's gold gone pale.
+//
+// Old Nick: what the smugglers fed first. The same frame again, wider than the Great Devilfish and
+// with all eight arms showing, five over the lip and three reared: a hide gone the dark grey-green of
+// wet slate, thick with scars and a crust of barnacles, and the eye gone milk-white. It took a ship
+// and wears her still: the lip is her side, black timber with the rust of her iron run down its face,
+// and turns of her rope are wound round the arms that hold. Its reared arms reach out rather than
+// up, so it keeps a tall boss's crown too.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint, Sprite } from './common.ts';
 import { B, groundShadow } from './common.ts';
@@ -59,6 +66,12 @@ interface Build {
   barnacles: number;
   /** How wet the skin shines, 0..1. */
   gloss: number;
+  /** The lip's colour where it is not the rock's grey: a ship's side, black timber. */
+  lipHex?: string;
+  /** Rust run down the lip's face from old iron, 0 or none for none. */
+  rust?: number;
+  /** Turns of old rope wound round each arm that holds, 0 or none for none. */
+  rope?: number;
 }
 const DEVILFISH: Build = {
   span: 46, lip: 15, mantle: 1, girth: 1,
@@ -76,14 +89,26 @@ const GREAT: Build = {
   eye: 1.3, iris: '#d8c890', mottle: 0.4, scars: 1, barnacles: 1, gloss: 0.5,
 };
 
+// Older, darker and wider again, all eight arms showing: five over the lip, three reared. The lip is a
+// ship's side, black timber with the rust of her iron down it, and her rope is wound round the arms that
+// hold. The reared arms reach out as the great one's do, inside a tall boss's crown.
+const NICK: Build = {
+  span: 68, lip: 14, mantle: 1.38, girth: 1.5,
+  grip: [[-60, -1], [-44, -1], [-30, -1], [22, 1], [46, 1]],
+  free: [[-9, -58, 70, 0, 0], [16, 60, 64, 2.3, 0], [25, 34, 57, 4.1, 1]],
+  eye: 1.35, iris: '#d6dccd', mottle: 1.3, scars: 1.4, barnacles: 1.5, gloss: 0.35,
+  lipHex: '#2e251e', rust: 1, rope: 3,
+};
+
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
-  devilfish(ctx, x, y, h, p, kind === 'great_devilfish' ? GREAT : DEVILFISH);
+  devilfish(ctx, x, y, h, p, kind === 'old_nick' ? NICK : kind === 'great_devilfish' ? GREAT : DEVILFISH);
 };
 
 /** The kinds this module draws, each with its span and any part drawn apart; ./index.ts merges every family's. */
 export const SPRITES = {
   devilfish: { draw, span: [0.51, 0.51] },
   great_devilfish: { draw, span: [0.66, 0.7] },
+  old_nick: { draw, span: [0.74, 0.74] },
 } satisfies Partial<Record<MonsterSprite, Sprite>>;
 
 /** A frame: x and y map hundredths of the height (x right, y up from the ground) to the canvas. */
@@ -128,7 +153,8 @@ function devilfish(ctx: CanvasRenderingContext2D, x: number, y: number, h: numbe
   const hide = shade(p.base, 1 - 0.22 * flush), far = shade(hide, 0.8);
   const pale = shade(mix(p.base, '#f0d8c8', 0.55), Math.max(0.55, p.tone));
   const mark = shade(mix(p.dark, '#1a0806', 0.5), 1);
-  const rock = shade('#2c3032', Math.max(0.5, p.tone)), weed = shade('#34452a', Math.max(0.5, p.tone));
+  const rock = shade(b.lipHex ?? '#2c3032', Math.max(0.5, p.tone)), weed = shade('#34452a', Math.max(0.5, p.tone));
+  const hemp = shade('#b4a47c', Math.max(0.55, p.tone)), rust = shade('#8a4a22', Math.max(0.55, p.tone));
   groundShadow(ctx, x, y + 1, L * 2.1 * u);
 
   // --- the reared arms behind the body ---------------------------------------------------------
@@ -141,10 +167,11 @@ function devilfish(ctx: CanvasRenderingContext2D, x: number, y: number, h: numbe
       ex + s * (3.5 + cu * 2), ey - 3.5 - cu, ex + s * (1 + cu * 3), ey - 7 - cu * 1.5], 5);
     return { pts, r0, r1: 1.3 };
   };
-  const arm = (a: Arm, hex: string, seed: number, side: (nx: number) => boolean, gloss: number): void => {
+  const arm = (a: Arm, hex: string, seed: number, side: (nx: number) => boolean, gloss: number, turns = 0): void => {
     blob(ctx, B, hex, [{ k: 'tube', pts: at(f, a.pts), r0: a.r0 * u, r1: a.r1 * u, wobble: 0.02, seed }], { h, formK: 0.4, spread: 0.85 });
     suckers(ctx, f, a, pale, mark, side);
     wet(ctx, f, a.pts, a.r0 * 0.8, gloss);
+    if (turns > 0) hawser(ctx, f, a, turns, hemp);
   };
   const inward = (a: Arm) => (nx: number): boolean => nx * Math.sign(a.pts[a.pts.length - 2] - a.pts[0]) < 0;
   for (const [i, [bx, tx, ty, ph, front]] of b.free.entries()) {
@@ -232,6 +259,11 @@ function devilfish(ctx: CanvasRenderingContext2D, x: number, y: number, h: numbe
     ctx.strokeStyle = rgba('#d8e4e8', 0.35); ctx.lineWidth = Math.max(1, 0.9 * u); ctx.lineCap = 'round';
     const top = at(f, [-L * 0.9, LY - 1.6, -L * 0.3, LY - 0.6, L * 0.3, LY - 0.5, L * 0.85, LY - 1.8]);
     ctx.beginPath(); ctx.moveTo(top[0], top[1]); for (let i = 2; i < top.length; i += 2) ctx.lineTo(top[i], top[i + 1]); ctx.stroke();
+    // Rust: where old iron has bled down the timber, soft orange-brown runs from the edge.
+    if (b.rust) for (let i = 0; i < 7; i++) {
+      const rx = -L * 0.85 + (i / 6) * L * 1.7 + (nz(i, 61) - 0.5) * 8, rl = 4 + nz(i, 63) * (LY - 6);
+      patch(ctx, B, rust, [{ k: 'tube', pts: at(f, [rx, LY - 0.8, rx + 0.5, LY - rl * 0.5, rx + 0.2, LY - rl]), r0: (1.3 + nz(i, 65) * 0.8) * u, r1: 0.7 * u }], { alpha: 0.6 * b.rust, feather: 0.3 });
+    }
     // Weed: dark green fronds from the edge down the face, between the arms.
     for (let i = 0; i < 9; i++) {
       const wx = -L * 0.92 + (i / 8) * L * 1.84 + (nz(i, 41) - 0.5) * 6, wl = 5 + nz(i, 43) * (LY - 6);
@@ -258,14 +290,14 @@ function devilfish(ctx: CanvasRenderingContext2D, x: number, y: number, h: numbe
     const w = Math.sin(t / 29 + i * 1.9) * 0.6;
     const pts = spine([gx - s * 7, LY + 9, gx - s * 1.5, LY + 3.5, gx + s * 2.5, LY + 0.5, gx + s * 5, LY - 5, gx + s * 6, LY - 10,
       gx + s * (4 + w), LY - 13.5, gx + s * (1.5 + w), LY - 12.5], 5);
-    arm({ pts, r0: g, r1: 1.4 }, hide, 60 + i, (nx) => nx * s < 0, b.gloss);
+    arm({ pts, r0: g, r1: 1.4 }, hide, 60 + i, (nx) => nx * s < 0, b.gloss, b.rope);
   }
 
   // --- the arm reared in front, come up over the edge at the company ----------------------------
   for (const [i, [bx, tx, ty, ph, front]] of b.free.entries()) {
     if (!front) continue;
     const a = reared(bx, LY + 4, tx, ty, ph, g * 1.1);
-    arm(a, hide, 70 + i, inward(a), b.gloss);
+    arm(a, hide, 70 + i, inward(a), b.gloss, b.rope);
   }
 }
 
@@ -310,4 +342,28 @@ function wet(ctx: CanvasRenderingContext2D, f: F, pts: readonly number[], r: num
   const q = at(f, o);
   ctx.strokeStyle = rgba('#ffffff', 0.3 * gloss); ctx.lineWidth = Math.max(1, r * f.u * 0.28); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
   ctx.beginPath(); ctx.moveTo(q[0], q[1]); for (let i = 2; i < q.length; i += 2) ctx.lineTo(q[i], q[i + 1]); ctx.stroke();
+}
+
+/**
+ * Old rope wound round an arm: `turns` turns of it across the arm, each on a slant, from near its root
+ * along the thick of it. Pale hemp between dark edges, so it reads against the dark hide, laid on the
+ * arm's spine each frame so that it goes with the arm as it sways.
+ */
+function hawser(ctx: CanvasRenderingContext2D, f: F, a: Arm, turns: number, hemp: string): void {
+  if (B.override || f.h < 40) return;
+  const n = a.pts.length / 2, u = f.u;
+  ctx.save();
+  ctx.lineCap = 'butt';
+  for (let k = 0; k < turns; k++) {
+    const i = Math.max(1, Math.min(n - 2, Math.round((0.2 + k * 0.14) * (n - 1))));
+    const dx = a.pts[i * 2 + 2] - a.pts[i * 2 - 2], dy = a.pts[i * 2 + 3] - a.pts[i * 2 - 1], L = Math.hypot(dx, dy) || 1;
+    const tx = dx / L, ty = dy / L, nx = -ty, ny = tx;
+    const r = (a.r0 + (a.r1 - a.r0) * (i / (n - 1))) * 0.98, sl = r * 0.45, cx = a.pts[i * 2], cy = a.pts[i * 2 + 1];
+    const q = at(f, [cx - nx * r - tx * sl, cy - ny * r - ty * sl, cx + nx * r + tx * sl, cy + ny * r + ty * sl]);
+    ctx.strokeStyle = rgba('#1c140e', 0.72); ctx.lineWidth = Math.max(2, 3 * u);
+    ctx.beginPath(); ctx.moveTo(q[0], q[1]); ctx.lineTo(q[2], q[3]); ctx.stroke();
+    ctx.strokeStyle = rgba(hemp, 0.95); ctx.lineWidth = Math.max(1, 1.8 * u);
+    ctx.beginPath(); ctx.moveTo(q[0], q[1]); ctx.lineTo(q[2], q[3]); ctx.stroke();
+  }
+  ctx.restore();
 }
