@@ -380,14 +380,16 @@ export function imports(text: string): { runtime: Spec[]; types: number } {
     prevKind = kind; prevValue = value;
     return lex();
   };
-  const is = (k: string, v: string): boolean => kind === k && value === v;
+  // The token as it stands, read through a call: next() changes it, which the compiler cannot see.
+  const k = (): string => kind, v = (): string => value;
+  const is = (want: string, text: string): boolean => kind === want && value === text;
   /** Reads on to `from '...'` within the statement: the path, or undefined. */
   const from = (): string | undefined => {
     while (next()) {
       if (is('p', ';')) return undefined;
       if (is('w', 'import') || is('w', 'export')) { held = true; return undefined; }
       if (is('w', 'from')) {
-        if (next() && kind === 's') return value;
+        if (next() && k() === 's') return v();
         held = true;
       }
     }
@@ -396,28 +398,28 @@ export function imports(text: string): { runtime: Spec[]; types: number } {
   const runtime: Spec[] = [];
   let types = 0;
   while (next()) {
-    if (kind !== 'w' || (value !== 'import' && value !== 'export') || (prevKind === 'p' && prevValue === '.')) continue;
-    const word = value, before = prevKind === 'w' ? prevValue : '';
+    if ((!is('w', 'import') && !is('w', 'export')) || (prevKind === 'p' && prevValue === '.')) continue;
+    const word = v(), before = prevKind === 'w' ? prevValue : '';
     if (!next()) break;
     if (word === 'import') {
       if (is('p', '(')) {
         if (!next()) break;
         // import(p): a path worked out as it runs, which no static read can follow.
-        if (kind !== 's') { held = true; continue; }
-        const path = value;
+        if (k() !== 's') { held = true; continue; }
+        const path = v();
         if (!next()) break;
         if (!is('p', ')') && !is('p', ',')) { held = true; continue; }
         let inType = before === 'typeof';
         if (is('p', ')') && next()) {
-          if (is('p', '.')) inType ||= next() && kind === 'w' && value !== 'then' && value !== 'catch' && value !== 'finally';
+          if (is('p', '.')) inType ||= next() && k() === 'w' && !['then', 'catch', 'finally'].includes(v());
           held = true;
         }
         if (inType) types++; else runtime.push({ path, dynamic: true });
         continue;
       }
-      if (kind === 's') { runtime.push({ path: value, dynamic: false }); continue; }
+      if (k() === 's') { runtime.push({ path: v(), dynamic: false }); continue; }
       // import.meta, or a key named import.
-      if (kind === 'p' && value !== '{' && value !== '*') { held = true; continue; }
+      if (k() === 'p' && !is('p', '{') && !is('p', '*')) { held = true; continue; }
       let type = false;
       if (is('w', 'type')) {
         if (!next()) break;
@@ -440,7 +442,7 @@ export function imports(text: string): { runtime: Spec[]; types: number } {
     } else if (is('p', '{')) {
       while (next() && !is('p', '}'));
       if (next() && is('w', 'from')) {
-        if (next() && kind === 's') { if (type) types++; else runtime.push({ path: value, dynamic: false }); } else held = true;
+        if (next() && k() === 's') { if (type) types++; else runtime.push({ path: v(), dynamic: false }); } else held = true;
       } else held = true;
     } else held = true;
   }
