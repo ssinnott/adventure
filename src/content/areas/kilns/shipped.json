@@ -259,7 +259,26 @@
         "o6_vent1",
         "o6_vent2",
         "o6_vent3",
-        "o6_vent4"
+        "o6_vent4",
+        "p5_cache_chest",
+        "p5_cairn",
+        "p5_deep",
+        "p5_fan",
+        "p5_hills",
+        "p5_niche",
+        "p5_pit",
+        "p5_rim",
+        "p5_seep",
+        "p5_trial",
+        "p5_waymark",
+        "p6_ash",
+        "p6_cairn",
+        "p6_drift",
+        "p6_ledges",
+        "p6_milestone",
+        "p6_store",
+        "p6_store_chest",
+        "p6_vent"
       ],
       "groups": [
         "k6_worms",
@@ -302,7 +321,11 @@
         "o6_beetles",
         "o6_elder",
         "o6_salamanders_n",
-        "o6_salamanders_s"
+        "o6_salamanders_s",
+        "p5_beetles",
+        "p5_slag",
+        "p6_elder",
+        "p6_salamanders"
       ],
       "doors": [
         "345,172",
@@ -319,7 +342,9 @@
         "459,101",
         "467,135",
         "475,75",
-        "481,183"
+        "481,183",
+        "499,142",
+        "501,160"
       ]
     },
     "deep_mines": {
@@ -527,6 +552,14 @@
     "kilnsheart_o6": {
       "at": "456,158",
       "size": "32x32"
+    },
+    "kilnsheart_p5": {
+      "at": "488,126",
+      "size": "24x32"
+    },
+    "kilnsheart_p6": {
+      "at": "488,158",
+      "size": "24x32"
     }
   },
   "flags": [
