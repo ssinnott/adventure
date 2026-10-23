@@ -80,6 +80,8 @@ export function fleeting(w: When): string[] {
 
 /** Whether a map is an enclave (#845) or a level of one: beside the road, held to its own band. */
 const inEnclave = (defs: readonly MapDef[], map: string): boolean => !!defs.find((d) => d.id === map)?.enclave;
+/** The areas that have a map: an area with none yet, as a new one starts (EXPANSION §8.2), is owed no step of the one quest. */
+const builtAreas = (areas: readonly { id: string; maps: readonly unknown[] }[]): Set<string> => new Set(areas.filter((a) => a.maps.length > 0).map((a) => a.id));
 
 /** The goals of the one quest's chapters that lie in an enclave (#845), as "chapter: goal": none may, for no step of the quest lies beside the road. */
 export function enclaveSteps(chapters: readonly Chapter[], defs: readonly MapDef[]): string[] {
@@ -163,7 +165,9 @@ export function quests(): void {
     const steps = enclaveSteps(THE_QUEST.chapters, MAP_DEFS);
     ok(!steps.length, `no step of the one quest lies in an enclave${steps.length ? ' -> ' + steps.join(', ') : ''}`);
     const held = heldZones(THE_QUEST.chapters, MAP_DEFS);
-    const built = new Set(AREAS.map((a) => a.id as string));
+    const built = builtAreas(AREAS);
+    // An area with no map yet, as a new one starts (EXPANSION §8.2), is owed no step; once it has a map each zone it charts holds one.
+    ok(builtAreas([{ id: 'built', maps: [1] }, { id: 'planned', maps: [] }]).has('built') && !builtAreas([{ id: 'built', maps: [1] }, { id: 'planned', maps: [] }]).has('planned'), 'an area with no map yet is owed no step of the one quest, and one with a map is');
     // The reach is off the road by design (DESIGN §9), and holds no step: Rimewater's Glacier Foot (#486).
     for (const z of ATLAS.zones.filter((x) => built.has(x.area) && !REACH_ZONES.includes(x.id) && !x.reach)) {
       ok(held.has(z.id), `zone ${z.id} holds a step of the one quest${z.maps?.length ? '' : ' (not built, and owed by no one)'}`);

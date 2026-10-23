@@ -967,8 +967,9 @@ suite and the curve read) and its row in `CURVE`, with `maps: []` and `chapter: 
 first map (the typecheck reads `chapter` on every area) and what its clear falls short of owed in its
 `checks.ts` (`owes.curve`) until it pays. Its monsters, rooms and items are merged from the start, so nothing
 waits in a list of its own ahead of its area (the `AHEAD` lists and `PLANNED` are gone, #897), and
-the suites take what is built: no chapter, walkthrough or claim of what is new is asked of an area
-until it has a map. What the suites hold of an area is the area's: what describes one zone, group,
+the suites take what is built: an area with no map is asked for no chapter, walkthrough, claim of
+what is new or step of the one quest, and once it has a map each zone it charts holds a step; a
+monster or a room no map places yet is owed in `owes.unplaced`. What the suites hold of an area is the area's: what describes one zone, group,
 monster or exit is a field of it (`AtlasZone.road`, `reach` and `maxGroup`, `EncounterDef.boss`,
 `MonsterDef.offLine`, `Exit.crosses`), and what is the area's own and no part of the game, what it
 owes, its rungs of the ladder, its lead over the road, its seams as built and its edges open on
@@ -1005,13 +1006,16 @@ Decided by the builder for #897, each the owner's to overturn:
 8. **An issue may be owed edges or locks by several areas; a square or a lock is owed once.** `edges`
    and `locks` stay keyed by the issue, as their tables are, and are read by the thing owed.
 9. **A rung stands whole on the last area on the road whose items it holds**: 3 on the Foreland (the
-   core's and its own), 13 on Wrackholm, 14 on the Sunderwood, 19 on Cairnmoor and 28 on Hearth
-   Isle. A rung on another area is refused; 13 and 19, each moved whole by hand, read the same.
+   core's and its own), 13 on Wrackholm and 19 on Cairnmoor, the three that hold the items of two
+   areas; every other rung is its one area's (14 on the Sunderwood, 28 on Hearth Isle and the
+   rest). A rung on another area is refused; 13 and 19, each moved whole by hand, read the same.
 10. **An area's lead over the road is its own figure, `overRoad`**, read beside `OVER_ROAD` and refused
     in both. The Foreland has none; the Kilns' 19.4, moved by hand, reads the same.
 11. **`BEHIND` takes a group only when every alternative of its `after` waits on a later area's flag**,
     as a list is any one of them. No group has two today.
-12. **An `unplaced` id that is no monster and no room fails by its name**, and a field `AreaChecks` has
+12. **Two tables are not an area's to carry: `BUILT` and `UNPLACED` in `tools/tests/items.ts`** (#911: the
+    three artifacts owed to #830, #831 and #833) go when the lairs place them, so they have no field.
+13. **An `unplaced` id that is no monster and no room fails by its name**, and a field `AreaChecks` has
     not stops the run by its name: the run passed both over before.
 
 ### 8.3 Pull requests
