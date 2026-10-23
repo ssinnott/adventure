@@ -24,6 +24,13 @@
 // blown forward over the brow into a cornice with icicles at its lip, and every shadow blue. It
 // stands in the drift it rose from, the fists sunk in it; the eyes are a cold light, and the mouth a
 // maw with icicles for teeth, more of them hanging from the jaw. Idle, as the tor troll.
+//
+// The Rim Troll is the frame once more, made of the rim: the wall of the moor stood up. Its stone is dark slate in
+// long courses, split upright between them, and a seventh broader in the shoulder and the limb than the tor
+// troll's, for it is drawn at a boss's size. Nothing grows on it. Snow lies on every ledge that faces up (the
+// hump, the shoulders, the fists and the crown), scree is banked round its feet, and veins of pale quartz run
+// through it where cuts have closed over. The mouth is a jagged cleft and the eyes an ember far down in their
+// pits. Idle, as the tor troll.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint, Sprite } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
@@ -46,15 +53,21 @@ interface Build {
   beds: number;
   /** Snow, 0 none: rime, the cornice and its icicles, the drift at the feet, the maw, blue shadows. */
   snow: number;
+  /** How broad and heavy the frame is, 1 the tor troll's: positions and limbs together. */
+  bulk: number;
+  /** The rim, 0 none: courses and joints beyond a tor's, snow on the ledges, veins of quartz where cuts closed, scree at the feet. */
+  rim: number;
 }
-const TOR: Build = { lichen: 1, heather: 1, eyeHex: '#ffb04a', beds: 1, snow: 0 };
+const TOR: Build = { lichen: 1, heather: 1, eyeHex: '#ffb04a', beds: 1, snow: 0, bulk: 1, rim: 0 };
 /** The snow troll: a drift that stood up, with nothing of the stone in it but the frame. */
-const DRIFT: Build = { lichen: 0, heather: 0, eyeHex: '#8ad4ff', beds: 0, snow: 1 };
+const DRIFT: Build = { lichen: 0, heather: 0, eyeHex: '#8ad4ff', beds: 0, snow: 1, bulk: 1, rim: 0 };
+/** The Rim Troll: the rim stood up, bare slate and snow and the veins of closed cuts, a seventh broader than the tor troll. */
+const RIM: Build = { lichen: 0, heather: 0, eyeHex: '#ff7a3c', beds: 1, snow: 0, bulk: 1.14, rim: 1 };
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   // A tall one stands on the third rank with its markers over its crown: drawn inside 0.8 of its
   // height, its crown keeps under TALL_REACH.
-  if (kind === 'tor_troll' || kind === 'snow_troll') troll(ctx, x, y, h * 0.8, p, kind === 'snow_troll' ? DRIFT : TOR);
+  if (kind === 'tor_troll' || kind === 'snow_troll' || kind === 'rim_troll') troll(ctx, x, y, h * 0.8, p, kind === 'snow_troll' ? DRIFT : kind === 'rim_troll' ? RIM : TOR);
   else ogre(ctx, x, y, h, p);
 };
 
@@ -63,6 +76,7 @@ export const SPRITES = {
   ogre: { draw, span: [0.41, 0.45] },
   tor_troll: { draw, span: [0.4, 0.41] },
   snow_troll: { draw, span: [0.42, 0.45] },
+  rim_troll: { draw, span: [0.45, 0.46] },
 } satisfies Partial<Record<MonsterSprite, Sprite>>;
 
 /** Stable 0..1 noise; never seeded from the frame, or the contour would boil. */
@@ -331,7 +345,8 @@ function ogre(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
  * side of the feet.
  */
 function troll(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint, b: Build): void {
-  const X = (k: number) => x + h * k, Y = (k: number) => y - h * k;
+  const g = b.bulk;                                  // how broad the frame is: 1 the tor troll's, wider for a boss
+  const X = (k: number) => x + h * k * g, Y = (k: number) => y - h * k;
   const br = p.breathe * h * 0.008;                  // the slabs of the shoulders lift on a breath
   const nod = Math.sin(p.frame / 41) * 0.012;        // the head turns a little under the hump
   // Snow takes its shadows blue.
@@ -341,7 +356,8 @@ function troll(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
   const yellow = shade('#aeac4c', tone), rust = shade('#a86e3e', tone), moss = shade('#56703a', tone);
   const heath = shade('#5e4c3c', tone), bloom = shade('#9c6a88', tone);
   const pulse = 0.5 + 0.5 * Math.sin(p.frame / 13);
-  groundShadow(ctx, X(0), y + 1, h * 0.98);
+  const frost = shade('#e8f0f8', tone), quartz = shade('#e6dfca', tone);
+  groundShadow(ctx, X(0), y + 1, h * 0.98 * g);
 
   /** A boulder's outline: a ring, flattened where it sits, rounded where it weathered; in snow, `rime` feathers it. */
   const boulder = (cx: number, cy: number, rx: number, ry: number, seed: number, rime = false): Part => {
@@ -361,25 +377,71 @@ function troll(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
     if (b.lichen <= 0) return;
     patch(ctx, B, hex, [{ k: 'curve', pts: [X(cx - r), Y(cy), X(cx - r * 0.3), Y(cy + r * 0.8), X(cx + r * 0.6), Y(cy + r * 0.6), X(cx + r), Y(cy - r * 0.1), X(cx + r * 0.2), Y(cy - r * 0.7), X(cx - r * 0.6), Y(cy - r * 0.5)], wobble: 0.18, spiky: 0.12, seed, sub: 2 }], { alpha: 0.6 * b.lichen, feather: 0.4 });
   };
+  /** Snow lying on the top of a boulder or a ball: a crescent along its crown, thickest at the middle; the rim's only. */
+  const cap = (cx: number, cy: number, rx: number, ry: number, t: number, seed: number): void => {
+    if (b.rim <= 0) return;
+    const top: number[] = [], low: number[] = [], n = 7;
+    for (let i = 0; i <= n; i++) {
+      const a = Math.PI * (0.1 + 0.8 * (i / n)), qx = cx + Math.cos(a) * rx * 0.92, qy = cy + Math.sin(a) * ry * 0.92;
+      const depth = t * Math.pow(Math.sin(Math.PI * (i / n)), 0.7) * (0.8 + 0.4 * nz(seed, i));
+      top.push(X(qx), Y(qy)); low.unshift(Y(qy - depth)); low.unshift(X(qx));
+    }
+    blob(ctx, B, frost, [{ k: 'curve', pts: [...top, ...low], wobble: 0.03, seed, sub: 2 }], { h, formK: 0.3, outline: false });
+  };
+  /** A cut that closed over, in pixels: a vein of pale stone along it on a dark seat, crooked as a crack is, with a twig off it here and there; the rim's only. */
+  const vein = (px: readonly number[], w = 1): void => {
+    if (b.rim <= 0 || B.override) return;
+    const lw = Math.max(1, h * 0.012 * w), run: number[] = [px[0], px[1]], twigs: number[][] = [];
+    for (let i = 0; i + 3 < px.length; i += 2) {
+      const dx = px[i + 2] - px[i], dy = px[i + 3] - px[i + 1], len = Math.hypot(dx, dy) || 1, off = (nz(11 + i, 5) - 0.5) * 0.4 * len;
+      run.push(px[i] + dx * 0.5 - (dy / len) * off, px[i + 1] + dy * 0.5 + (dx / len) * off, px[i + 2], px[i + 3]);
+      if (i + 5 < px.length) {
+        const a = (nz(13 + i, 7) < 0.5 ? -0.9 : 0.9), c = Math.cos(a), s = Math.sin(a), l = h * 0.035 * w;
+        twigs.push([px[i + 2], px[i + 3], px[i + 2] + ((dx * c - dy * s) / len) * l, px[i + 3] + ((dx * s + dy * c) / len) * l]);
+      }
+    }
+    const trace = (q: readonly number[]): void => { ctx.beginPath(); ctx.moveTo(q[0], q[1]); for (let i = 2; i < q.length; i += 2) ctx.lineTo(q[i], q[i + 1]); ctx.stroke(); };
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.strokeStyle = B.col(rgba(joint, 0.5)); ctx.lineWidth = lw + 2; trace(run);
+    ctx.lineWidth = lw * 0.6 + 2; for (const t of twigs) trace(t);
+    ctx.strokeStyle = B.col(rgba(quartz, 0.9)); ctx.lineWidth = lw; trace(run);
+    ctx.lineWidth = Math.max(1, lw * 0.6); for (const t of twigs) trace(t);
+  };
+  /** A broken stone for the scree: five straight edges, none alike, flat where it lies. */
+  const rock = (cx: number, cy: number, rx: number, ry: number, seed: number): Part => {
+    const pts: number[] = [];
+    for (let i = 0; i < 5; i++) {
+      const a = ((i + 0.5 * nz(seed, i)) / 5) * Math.PI * 2, s = Math.sin(a), r = 0.62 + 0.55 * nz(seed, i + 9);
+      pts.push(X(cx + Math.cos(a) * rx * r), Y(cy + s * ry * r * (s < 0 ? 0.7 : 1)));
+    }
+    return { k: 'poly', pts };
+  };
+  /** A vein laid in the frame's units, as `bed` takes them: out from the middle and up from the ground. */
+  const seam = (pts: readonly number[], w = 1): void => vein(pts.map((v, i) => (i % 2 ? Y(v) : X(v))), w);
 
   // ---- the far leg and the far arm, behind, a step darker: two masses, the fist a boulder on the ground.
   blob(ctx, B, farHex, [
-    { k: 'tube', pts: [X(-0.11), Y(0.42), X(-0.2), Y(0.23), X(-0.18), Y(0.07)], r0: h * 0.1, r1: h * 0.076, wobble: 0.04, seed: 61 },
+    { k: 'tube', pts: [X(-0.11), Y(0.42), X(-0.2), Y(0.23), X(-0.18), Y(0.07)], r0: h * 0.1 * g, r1: h * 0.076 * g, wobble: 0.04, seed: 61 },
     { k: 'curve', pts: [X(-0.31), Y(0.008), X(-0.3), Y(0.07), X(-0.2), Y(0.105), X(-0.1), Y(0.08), X(-0.09), Y(0.012)], wobble: 0.06, seed: 62, sub: 2 },
   ], { h, formK: 0.45 });
   blob(ctx, B, shade(farHex, 1.08), [
-    { k: 'tube', pts: [X(-0.27), Y(0.8) - br, X(-0.39), Y(0.56), X(-0.38), Y(0.24)], r0: h * 0.085, r1: h * 0.066, wobble: 0.04, seed: 64 },
+    { k: 'tube', pts: [X(-0.27), Y(0.8) - br, X(-0.39), Y(0.56), X(-0.38), Y(0.24)], r0: h * 0.085 * g, r1: h * 0.066 * g, wobble: 0.04, seed: 64 },
     boulder(-0.39, 0.105, 0.09, 0.1, 65),
-    { k: 'ell', x: X(-0.39), y: Y(0.035), rx: h * 0.07, ry: h * 0.03 },
+    { k: 'ell', x: X(-0.39), y: Y(0.035), rx: h * 0.07 * g, ry: h * 0.03 },
   ], { h, formK: 0.5, creases: [
     { x0: X(-0.43), y0: Y(0.13), x1: X(-0.35), y1: Y(0.13), r: h * 0.01, a: 0.45 },   // the knuckles
   ] });
   bed([-0.44, 0.44, -0.33, 0.45]);
+  cap(-0.39, 0.105, 0.09, 0.1, 0.03, 107);
 
   // ---- the hump: the slabs of its back, stacked behind its head and shoulders, each its own stone.
   blob(ctx, B, back, [boulder(-0.19, 0.84, 0.15, 0.1, 67, true)], { h, formK: 0.45 });
+  cap(-0.19, 0.84, 0.15, 0.1, 0.03, 111);
   blob(ctx, B, back, [boulder(0.21, 0.83, 0.15, 0.1, 69, true)], { h, formK: 0.45 });
+  cap(0.21, 0.83, 0.15, 0.1, 0.03, 112);
   blob(ctx, B, shade(back, 1.05), [boulder(0.01, 0.875 + br / h, 0.17, 0.095, 71, true)], { h, formK: 0.45 });
+  cap(0.01, 0.875 + br / h, 0.17, 0.095, 0.04, 113);
+  seam([-0.14, 0.945, -0.08, 0.91, -0.12, 0.875], 0.9);
   lichen(-0.12, 0.88, 0.026, yellow, 73);
   lichen(0.24, 0.86, 0.022, rust, 74);
 
@@ -389,10 +451,10 @@ function troll(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
       X(-0.3), Y(0.81) - br, X(-0.34), Y(0.72), X(-0.31), Y(0.58), X(-0.27), Y(0.46), X(-0.2), Y(0.4), X(0.2), Y(0.4),
       X(0.28), Y(0.46), X(0.32), Y(0.58), X(0.35), Y(0.72), X(0.31), Y(0.81) - br, X(0.15), Y(0.85) - br, X(-0.15), Y(0.85) - br,
     ], wobble: 0.04, seed: 75, sub: 3 },
-    { k: 'ell', x: X(0.01), y: Y(0.5), rx: h * 0.25, ry: h * 0.12 },
+    { k: 'ell', x: X(0.01), y: Y(0.5), rx: h * 0.25 * g, ry: h * 0.12 },
     boulder(-0.285, 0.765 + br / h, 0.11, 0.09, 76, true),
     boulder(0.29, 0.765 + br / h, 0.115, 0.095, 77, true),
-    { k: 'tube', pts: [X(0.11), Y(0.42), X(0.21), Y(0.23), X(0.19), Y(0.07)], r0: h * 0.106, r1: h * 0.08, wobble: 0.04, seed: 78 },
+    { k: 'tube', pts: [X(0.11), Y(0.42), X(0.21), Y(0.23), X(0.19), Y(0.07)], r0: h * 0.106 * g, r1: h * 0.08 * g, wobble: 0.04, seed: 78 },
     { k: 'curve', pts: [X(0.09), Y(0.012), X(0.1), Y(0.08), X(0.2), Y(0.108), X(0.31), Y(0.072), X(0.32), Y(0.01)], wobble: 0.06, seed: 79, sub: 2 },
   ], { h, formK: 0.5, creases: [
     { x0: X(-0.19), y0: Y(0.75), x1: X(-0.23), y1: Y(0.62), r: h * 0.024, a: 0.4 },     // the far armpit
@@ -407,12 +469,40 @@ function troll(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
   bed([0.12, 0.3, 0.27, 0.31], 0.9);
   bed([-0.06, 0.668, -0.07, 0.58], 0.8);
   bed([0.18, 0.672, 0.2, 0.6], 0.8);
+  if (b.rim > 0) {
+    // The rim is bedded in long courses, a hard one standing proud and an iron-stained one between, and split upright.
+    patch(ctx, B, mix(lit, stone, 0.5), [{ k: 'curve', pts: [X(-0.31), Y(0.735), X(0), Y(0.75), X(0.33), Y(0.73), X(0.33), Y(0.69), X(0), Y(0.705), X(-0.31), Y(0.69)], wobble: 0.1, seed: 131, sub: 2 }], { alpha: 0.28, feather: 0.5 });
+    patch(ctx, B, rust, [{ k: 'curve', pts: [X(-0.28), Y(0.545), X(0), Y(0.56), X(0.3), Y(0.54), X(0.3), Y(0.5), X(0), Y(0.515), X(-0.28), Y(0.5)], wobble: 0.1, seed: 132, sub: 2 }], { alpha: 0.3, feather: 0.5 });
+    bed([-0.33, 0.78, -0.14, 0.795, 0.06, 0.78, 0.33, 0.795], 1.1);
+    bed([-0.31, 0.575, -0.12, 0.59, 0.1, 0.57, 0.31, 0.585]);
+    bed([0.12, 0.19, 0.28, 0.2], 0.9);
+    bed([0.2, 0.78, 0.22, 0.7], 0.8);
+    // Cuts that closed over: a vein of pale stone along each, across the chest, the far shoulder and the near thigh.
+    seam([0.3, 0.82, 0.25, 0.74, 0.21, 0.66, 0.24, 0.58]);
+    seam([-0.23, 0.63, -0.15, 0.555, -0.05, 0.51, 0.07, 0.475]);
+    seam([-0.34, 0.77, -0.28, 0.69, -0.3, 0.61]);
+    seam([0.15, 0.37, 0.2, 0.28, 0.17, 0.2], 0.9);
+  }
   lichen(-0.17, 0.72, 0.032, yellow, 81);
   lichen(-0.13, 0.69, 0.016, yellow, 811);
   lichen(0.1, 0.6, 0.026, rust, 82);
   lichen(-0.08, 0.45, 0.022, yellow, 83);
   lichen(0.22, 0.18, 0.024, rust, 84);
   lichen(0.3, 0.78, 0.022, yellow, 85);
+  cap(-0.285, 0.765 + br / h, 0.11, 0.09, 0.028, 109);
+
+  // ---- scree banked round the feet where the rim let go of it: a heap of broken stone, and the stones on it.
+  if (b.rim > 0) {
+    blob(ctx, B, shade(stone, 0.84), [{ k: 'curve', pts: [
+      X(-0.45), Y(0), X(-0.44), Y(0.04), X(-0.4), Y(0.08), X(-0.3), Y(0.115), X(-0.2), Y(0.105), X(-0.08), Y(0.145), X(0.05), Y(0.12),
+      X(0.16), Y(0.16), X(0.28), Y(0.125), X(0.37), Y(0.1), X(0.43), Y(0.06), X(0.46), Y(0), X(0), Y(-0.006),
+    ], wobble: 0.07, seed: 121, sub: 3 }], { h, formK: 0.4 });
+    blob(ctx, B, shade(stone, 1.04), [
+      rock(-0.42, 0.04, 0.04, 0.036, 123), rock(-0.35, 0.085, 0.07, 0.058, 124), rock(-0.24, 0.07, 0.04, 0.035, 130), rock(-0.16, 0.125, 0.06, 0.05, 125),
+      rock(-0.04, 0.09, 0.045, 0.04, 129), rock(0.05, 0.135, 0.07, 0.055, 126), rock(0.2, 0.1, 0.04, 0.035, 131), rock(0.3, 0.125, 0.065, 0.05, 127),
+      rock(0.4, 0.07, 0.055, 0.045, 128), rock(0.44, 0.025, 0.035, 0.03, 132),
+    ], { h, formK: 0.55 });
+  }
 
   // ---- the drift it stood up out of, banked round its feet and cut by the wind: snow only.
   if (b.snow > 0) {
@@ -426,9 +516,9 @@ function troll(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
   // ---- the near arm, its own mass in front: down past the gut to the fist, a boulder on the ground.
   softLine(ctx, B, [X(0.33), Y(0.74), X(0.31), Y(0.6), X(0.31), Y(0.5)], p.dark, h * 0.04, 0.38);
   blob(ctx, B, stone, [
-    { k: 'tube', pts: [X(0.28), Y(0.8) - br, X(0.4), Y(0.56), X(0.385), Y(0.24)], r0: h * 0.09, r1: h * 0.068, wobble: 0.04, seed: 86 },
+    { k: 'tube', pts: [X(0.28), Y(0.8) - br, X(0.4), Y(0.56), X(0.385), Y(0.24)], r0: h * 0.09 * g, r1: h * 0.068 * g, wobble: 0.04, seed: 86 },
     boulder(0.392, 0.105, 0.095, 0.105, 87),
-    { k: 'ell', x: X(0.392), y: Y(0.035), rx: h * 0.072, ry: h * 0.03 },
+    { k: 'ell', x: X(0.392), y: Y(0.035), rx: h * 0.072 * g, ry: h * 0.03 },
   ], { h, formK: 0.55, creases: [
     { x0: X(0.36), y0: Y(0.6), x1: X(0.41), y1: Y(0.52), r: h * 0.02, a: 0.45 },       // the inside of the elbow
     { x0: X(0.35), y0: Y(0.135), x1: X(0.44), y1: Y(0.135), r: h * 0.011, a: 0.5 },    // the knuckles
@@ -437,9 +527,12 @@ function troll(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
   bed([0.33, 0.45, 0.45, 0.44]);
   bed([0.335, 0.28, 0.44, 0.285], 0.9);
   lichen(0.41, 0.36, 0.022, yellow, 89);
+  seam([0.33, 0.7, 0.44, 0.65], 0.9);
+  cap(0.28, 0.8 - br / h, 0.088, 0.088, 0.03, 108);
+  cap(0.392, 0.105, 0.095, 0.105, 0.03, 106);
 
   // ---- the head, a block of the stone sunk forward under the hump, and the face cut in it.
-  const hx = X(0.03 + nod), hy = Y(0.74) - br, hr = h * 0.135;
+  const hx = X(0.03 + nod), hy = Y(0.74) - br, hr = h * 0.135 * g;
   const P = (px: number, py: number): [number, number] => [hx + px * hr, hy + py * hr];
   const M = (a: readonly number[]): number[] => { const o: number[] = []; for (let i = 0; i < a.length; i += 2) o.push(...P(a[i], a[i + 1])); return o; };
   blob(ctx, B, shade(stone, 1.04), [{ k: 'curve', pts: M([
@@ -450,6 +543,8 @@ function troll(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
     for (let k = 2; k < a.length; k += 2) ctx.lineTo(...P(a[k], a[k + 1]));
     ctx.closePath(); ctx.fillStyle = B.col(hex); ctx.fill();
   };
+  // The rim's crown: snow on the top of the head block, under the hump's.
+  if (b.rim > 0) blob(ctx, B, frost, [{ k: 'curve', pts: M([0.72, -0.72, 0.5, -0.86, 0, -0.95, -0.5, -0.87, -0.74, -0.72, -0.5, -0.74, 0, -0.8, 0.5, -0.74]), wobble: 0.05, seed: 114, sub: 2 }], { h, formK: 0.3, outline: false });
   // The brow, a lintel lit along its top, and its shadow over the pits.
   fill([-0.86, -0.5, 0.88, -0.5, 0.86, -0.24, -0.84, -0.24], mix(lit, '#ffffff', 0.08));
   softLine(ctx, B, M([-0.8, -0.18, 0.82, -0.18]), joint, hr * 0.16, 0.65);
@@ -470,6 +565,15 @@ function troll(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
     fill([-0.62, 0.56, 0.64, 0.54, 0.54, 0.92, -0.52, 0.94], mix(joint, '#060508', 0.5));
     for (const tx of [-0.44, -0.15, 0.15, 0.44]) fill([tx - 0.1, 0.55, tx + 0.1, 0.55, tx + 0.01, 0.76], tooth);
     fill([-0.3, 0.94, -0.21, 0.76, -0.12, 0.94], tooth);
+  } else if (b.rim > 0) {
+    // The mouth, a jagged cleft, with the fangs the rim left in it: two hanging from the lip and one standing from the jaw.
+    const fang = mix(lit, '#ffffff', 0.2);
+    fill([-0.72, 0.6, -0.36, 0.7, 0, 0.62, 0.36, 0.72, 0.74, 0.58, 0.64, 0.8, 0.3, 0.9, -0.08, 0.84, -0.4, 0.9, -0.62, 0.78], mix(joint, '#060508', 0.45));
+    fill([-0.34, 0.69, -0.12, 0.64, -0.22, 0.84], fang);
+    fill([0.2, 0.7, 0.42, 0.68, 0.32, 0.86], fang);
+    fill([0, 0.87, 0.07, 0.72, 0.16, 0.86], fang);
+    softLine(ctx, B, M([-0.6, 0.98, 0.64, 0.96]), lit, hr * 0.08, 0.45);
+    vein(M([-0.8, -0.46, -0.74, -0.2, -0.8, 0.2, -0.72, 0.5]), 0.8);
   } else {
     // The mouth, a straight cut, and the lit ledge of the lip under it.
     fill([-0.58, 0.66, 0.62, 0.64, 0.62, 0.76, -0.58, 0.78], mix(joint, '#060508', 0.4));

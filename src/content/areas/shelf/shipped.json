@@ -88,6 +88,12 @@
         "e3_salvage",
         "e3_shrine",
         "e3_wreck",
+        "e4_cairn",
+        "e4_crock",
+        "e4_post",
+        "e4_shells",
+        "e4_store",
+        "e4_strand",
         "ellerby_gate",
         "f2_cache",
         "f2_cairn",
@@ -165,6 +171,7 @@
         "107,80",
         "124,107",
         "124,34",
+        "146,96",
         "155,91",
         "158,56",
         "169,78",
@@ -310,6 +317,10 @@
     },
     "downs_e3": {
       "at": "136,62",
+      "size": "32x32"
+    },
+    "downs_e4": {
+      "at": "136,94",
       "size": "32x32"
     },
     "downs_f2": {
