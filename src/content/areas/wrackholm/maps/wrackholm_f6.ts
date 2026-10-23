@@ -4,11 +4,19 @@
 // on it; the cliff over the anchorage, cut into the south hills, and its path down to the shingle at
 // the plan's 182,188, where the boats lie that row out to the Tide Ship by night (#190). In the rock's east
 // face, behind a second secret door that a groove in the turf points at, a hollow holds two finds (#861,
-// docs/areas/wrackholm.md §4.6). Cut from the atlas by tools/scaffold.ts; docs/areas/wrackholm.md §4.4 is its brief.
+// docs/areas/wrackholm.md §4.6). Merryn, met again, speaks of a ship she counted in and never out: Holdfast's
+// rumour, its lair under F5's reef (#835, §12.6). Cut from the atlas by tools/scaffold.ts; docs/areas/wrackholm.md
+// §4.4 is its brief.
 import type { MapDef, Choice } from '../../../../game/map.ts';
 import { EAST } from '../../../../game/types.ts';
 
 const BURNT = { seen: 'wrackholm_f6:f6_watch' };
+
+/** Holdfast's rumour (#846, DESIGN §9): Merryn's two lines more at every meeting after her first, words only. */
+const NICK = [
+  '"One ship I counted in and never out. Her master had a knife the weed obeyed: cut a line with it and the kelp held her fast."',
+  '"Old Nick had ship, master and knife. Nick gives nothing back."',
+];
 
 /** Merryn's question: the founder's letter carried, or not yet, put again until it is carried (#192). */
 const MERRYN_ASKS: Choice = { ask: '"Will you carry it? To the hall, where it\'s owed, or to whoever will pay for it; I stopped caring which about the third year."', answers: [
@@ -80,16 +88,20 @@ export const WRACKHOLM_F6: MapDef = {
         { after: { flag: 'q_hermit_hall' }, lines: [
           '"The hall has it." She does not ask how you know she knows. "A boat came round the point the next night with no lamp, and somebody stood out there on the point a long while, and left a bottle. Compact rum. He\'d have laughed."',
           '"I\'ve stopped counting. There\'s nothing to count for. Four thousand and eleven, and the last one was theirs."',
+          ...NICK,
         ] },
         { after: { flag: 'q_hermit_tallis' }, lines: [
           '"You sold it to the dockmaster." She cuts a stroke in the wall. "I\'d have done the same at your age, and told myself the hall would have burnt it. Maybe they would. He\'ll not burn it. He\'ll keep it in a drawer until it\'s worth more."',
           '"Four thousand and twelve. I count on. It\'s what I do."',
+          ...NICK,
         ] },
         { after: { flag: 'q_hermit_carried' }, lines: [
           'She does not look up from the wall. "Go on. It\'s in your coat now, not mine. The hall, or whoever pays."',
+          ...NICK,
         ] },
         { after: { flag: 'q_hermit' }, lines: [
           'Another stroke on the wall since you came. The letter is where it was.',
+          ...NICK,
         ], choice: MERRYN_ASKS },
       ] },
     { kind: 'event', x: 25, y: 12, id: 'f6_tally', once: true, text: 'Strokes in fives cut in the cell wall, row under row, the last ones sharp. At the head: the 11th of Frost, 1006.' },
