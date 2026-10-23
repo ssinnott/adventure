@@ -1291,7 +1291,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const strongbox = K12.features!.find((f) => f.kind === 'chest' && f.id === 'k12_strongbox');
   ok(strongbox?.kind === 'chest' && strongbox.gold === 250 && strongbox.items.join() === 'elixir' && strongbox.x === 11 && strongbox.y === 15, 'at the cell\'s end, a strongbox with 250 gold and an Elixir');
 
-  // The lair's door (docs §12.4) is left bare: the rim's face at 2,15, Monks' Vale's land by the atlas,
+  // The lair's door (docs §12.5) is left bare: the rim's face at 2,15, Monks' Vale's land by the atlas,
   // mountain, its way the pines of 2,14, with nothing within four squares.
   const bare = worldGrid(ATLAS, MAP_DEFS.filter((d) => d.id !== K12.id));
   const land = ATLAS.zones[bare.zone[(k12.y + 15) * bare.width + k12.x + 2]]?.id;
