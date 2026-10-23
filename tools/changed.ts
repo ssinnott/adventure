@@ -1,15 +1,19 @@
 // What a pull request changed, for the checks that look only at that: the files since the base, and
 // the maps among them to sweep, and the monsters and interiors among them for the contact sheet
 // (tools/sheet.ts). A change to how every map, monster or room is laid out or painted counts them all,
-// and a change to any file in an area's folder of rooms counts every room of that area.
+// and a change to any file in an area's folder of rooms counts every room of that area. And the areas
+// a diff reaches, whose gate and walkthroughs a pull request runs (tools/test.ts --since, #955).
 //   node tools/changed.ts <base>              the files changed since <base>, one a line
 //   node tools/changed.ts <base> maps         'all', or the ids of the maps changed, comma-separated
 //   node tools/changed.ts <base> monsters     the same for the monsters
 //   node tools/changed.ts <base> interiors    and for the interiors
+//   node tools/changed.ts <base> areas        the areas the diff reaches, each with why, or all
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { graph, treeFiles, type Graph } from './kit/graph.ts';
+import { changedPaths } from './kit/lanes.ts';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const git = (...args: string[]): string[] => execFileSync('git', args, { cwd: ROOT, encoding: 'utf8' }).split('\n').filter(Boolean);
@@ -138,12 +142,98 @@ export async function changedInteriors(files: readonly string[], base?: string):
   return { all, interiors: [...out] };
 }
 
+/** A file of an area's folder, src/content/areas/<area>/, and the area. */
+const AREA_FILE = /^src\/content\/areas\/([^/]+)\//;
+/** An area's item or monster table. */
+const AREA_TABLE = /^src\/content\/areas\/[^/]+\/(items|monsters)\.ts$/;
+/** What no run reads: the docs, the front pages, the type shims and .github/ but the workflow. */
+const READ_BY_NONE = [/^docs\//, /^(README|CLAUDE)\.md$/, /^types\//, /^\.github\//];
+/** What decides what runs: the workflow, the runner, this file and the kit it reads, the graph's and the lanes' (the diff's files). */
+const DECIDES = ['.github/workflows/checks.yml', 'tools/test.ts', 'tools/changed.ts', 'tools/kit/graph.ts', 'tools/kit/lanes.ts'];
+/**
+ * The drawings, the monsters' and the rooms': the gate and the walkthroughs load them (src/game/game.ts
+ * takes the screens) and draw none. A V8 coverage run (NODE_V8_COVERAGE) of both on 4b8986c9 (#955):
+ * of the 913 functions of their 109 modules, 4 ran, each called by its own module's top level as it
+ * loads (the barrel's `merge`, a table of points in cats.ts, the lantern's in hearth/bowl_lantern.ts).
+ * The gate's fixed blocks load them all whatever runs, so a module that fails to load still fails.
+ */
+const DRAWINGS = /^src\/ui\/(monsters|interiors)\//;
+/** The files the gate and the walkthroughs are, whose runtime imports are what they load. */
+const READERS = (files: readonly string[]): string[] => ['tools/tests/gate.ts', ...files.filter((f) => /^src\/content\/areas\/[^/]+\/walkthrough\.ts$/.test(f))];
+
+/** What a diff reaches: every area, by the file named and why; or the areas, each with the file or the relation that reached it. */
+export interface Reach { all?: { file: string; why: string }; areas: Map<string, string> }
+
+/** A line of an area's table no def can feel the change or removal of: an import, a comment or a blank. */
+const inert = (line: string): boolean => { const t = line.trim(); return !t || t.startsWith('import ') || t.startsWith('//') || t.startsWith('/*') || t.startsWith('*'); };
+
+/**
+ * The areas a diff reaches (#955): `files` its files, a rename at both ends; `removed(f)` the `-` lines
+ * of `git diff -U0` of an area's items.ts or monsters.ts, null where the file is gone; `g` the runtime
+ * import graph of the tree. A file
+ * 1. under src/content/areas/<area>/ reaches that area;
+ * 2. that is an area's items.ts or monsters.ts with a line changed or removed that is no import or
+ *    comment, or deleted, reaches every area: items dress every company of the ladder and monsters
+ *    fight in other areas' groups. A def only added reaches its own area alone: nothing reads it yet;
+ * 3. that is any other of an area's files reaches also the areas whose files import it, and those
+ *    whose files import theirs in turn, as far as the areas' own files go;
+ * 4. elsewhere: what decides what runs reaches every area; the docs, the front pages, types/ and the
+ *    rest of .github/ none, and so does a drawing; a module of the graph the gate or a walkthrough
+ *    loads every area and one neither loads none; any other file, which the graph does not read, every
+ *    area.
+ */
+export function reachedAreas(files: readonly string[], removed: (file: string) => readonly string[] | null, g: Graph): Reach {
+  const areas = new Map<string, string>(), known = new Set(g.files), by = new Map<string, string[]>();
+  for (const [f, to] of g.edges) for (const t of to) by.set(t, [...(by.get(t) ?? []), f]);
+  const loaded = new Set<string>(), stack = READERS(g.files);
+  while (stack.length) { const f = stack.pop()!; if (!loaded.has(f)) { loaded.add(f); stack.push(...(g.edges.get(f) ?? [])); } }
+  for (const f of [...new Set(files)].sort()) {
+    const area = AREA_FILE.exec(f)?.[1];
+    if (area) {
+      if (!areas.has(area)) areas.set(area, f);
+      if (AREA_TABLE.test(f)) {
+        const lines = removed(f), what = f.endsWith('/items.ts') ? 'items dress every company of the ladder' : "monsters fight in other areas' groups";
+        if (lines === null) return { all: { file: f, why: `deleted, and ${what}` }, areas };
+        if (lines.some((l) => !inert(l))) return { all: { file: f, why: `a line changed or removed, and ${what}` }, areas };
+        continue;
+      }
+      for (const walk = [f], seen = new Set(walk); walk.length;) {
+        const at = walk.pop()!;
+        for (const file of by.get(at) ?? []) {
+          const to = AREA_FILE.exec(file)?.[1];
+          if (!to || seen.has(file)) continue;
+          seen.add(file); walk.push(file);
+          if (!areas.has(to)) areas.set(to, `imports ${at.slice('src/content/areas/'.length)}`);
+        }
+      }
+    } else if (DECIDES.includes(f)) return { all: { file: f, why: 'it decides what runs' }, areas };
+    else if (READ_BY_NONE.some((re) => re.test(f)) || DRAWINGS.test(f)) continue;
+    else if (loaded.has(f)) return { all: { file: f, why: 'the gate or a walkthrough loads it' }, areas };
+    else if (!known.has(f) || !f.endsWith('.ts')) return { all: { file: f, why: 'the graph does not read it' }, areas };
+  }
+  return { areas };
+}
+
+/** The areas the diff since <base> reaches, read from git and the tree as it stands, uncommitted and new files included. */
+export function changedAreas(base: string): Reach {
+  const from = git('merge-base', base, 'HEAD')[0];
+  const removed = (f: string): string[] | null => (existsSync(path.join(ROOT, f))
+    ? git('diff', '-U0', '--no-renames', from, '--', f).filter((l) => l.startsWith('-') && !/^--- (a\/|\/dev\/null)/.test(l)).map((l) => l.slice(1))
+    : null);
+  return reachedAreas(changedPaths(base), removed, graph(treeFiles(), (f) => readFileSync(path.join(ROOT, f), 'utf8')));
+}
+
+/** A reach in words: `shelf (src/content/areas/shelf/maps/downs_e4.ts), thornmark (imports shelf/walkthrough.ts)`, `every area, by package.json (...)` or `no area`. */
+export const describeReach = (r: Reach): string =>
+  r.all ? `every area, by ${r.all.file} (${r.all.why})` : r.areas.size ? [...r.areas].map(([a, why]) => `${a} (${why})`).join(', ') : 'no area';
+
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const [base, what] = process.argv.slice(2);
-  if (!base || (what && !['maps', 'monsters', 'interiors'].includes(what))) { console.error('usage: node tools/changed.ts <base> [maps|monsters|interiors]'); process.exit(2); }
+  if (!base || (what && !['maps', 'monsters', 'interiors', 'areas'].includes(what))) { console.error('usage: node tools/changed.ts <base> [maps|monsters|interiors|areas]'); process.exit(2); }
   const files = changedFiles(base);
   if (what === 'maps') { const c = await changedMaps(files); console.log(c.all ? 'all' : c.maps.join(',')); }
   else if (what === 'monsters') { const c = await changedMonsters(files, base); console.log(c.all ? 'all' : c.monsters.join(',')); }
   else if (what === 'interiors') { const c = await changedInteriors(files, base); console.log(c.all ? 'all' : c.interiors.join(',')); }
+  else if (what === 'areas') { const r = changedAreas(base); console.log(r.all ? `all: ${r.all.file} (${r.all.why})` : r.areas.size ? [...r.areas].map(([a, why]) => `${a}: ${why}`).join('\n') : 'none'); }
   else console.log(files.join('\n'));
 }
