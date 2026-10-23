@@ -75,7 +75,7 @@ import { WRACKHOLM_E5 } from './maps/wrackholm_e5.ts';
 import { WRACKHOLM_F5 } from './maps/wrackholm_f5.ts';
 import { WRACKHOLM_F7 } from './maps/wrackholm_f7.ts';
 import { BROKENBACK } from './maps/brokenback.ts';
-import { NICKS_LOCKER } from './maps/nicks_locker.ts';
+import { NICKS_LOCKER, NICK_DOWN } from './maps/nicks_locker.ts';
 import { GameMap } from '../../../game/map.ts';
 import type { Can, Feature, MapDef, MapZone } from '../../../game/map.ts';
 import type { Facing } from '../../../game/types.ts';
@@ -1164,7 +1164,7 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
  * alone in the cave's throat, nothing past it reached while it lies there, won at 30; Holdfast on the
  * ship's master and nowhere else; the master's sea chest in the cleft behind the kelp, found from it
  * and shut to the four ways but through its rock; out onto F5's 16,31; and Merryn's two lines at
- * every meeting after her first.
+ * every meeting after her first while Old Nick lives, and her own words alone once it has fallen.
  */
 function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const w = newWalk(ok);
@@ -1362,8 +1362,9 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   {
     const NL = NICKS_LOCKER, mouth = F5.exits!.find((e) => e.to === NL.id)!, levels = w.party.members.map((m) => m.level);
     const near4 = [...F5.features!, ...(F5.encounters ?? []), ...F5.secrets!].filter((f) => Math.abs(f.x - 16) + Math.abs(f.y - 30) <= 4);
-    ok(F5.exits!.length === 1 && mouth.x === 16 && mouth.y === 30 && mouth.tx === NL.start.x && mouth.ty === NL.start.y && F5.rows[30].slice(15, 18) === 'r"r' && strand6.has(at(f5, 16, 31)) && !near4.length,
-      `the way into Nick's Locker is the one stone in the reef at F5's 16,30, rock either side, walked to from the strand at 16,31, and nothing stands within four squares of it${near4.length ? ` (${near4.map((f) => `${f.x},${f.y}`).join(' ')})` : ''}`);
+    ok(F5.exits!.length === 1 && mouth.x === 16 && mouth.y === 30 && mouth.tx === NL.start.x && mouth.ty === NL.start.y && F5.rows[30].slice(15, 18) === 'r"r' && strand6.has(at(f5, 16, 31)) && !near4.length
+      && out.passable(f5.x + 16, f5.y + 29, ALL) === 'ok' && out.passable(f5.x + 16, f5.y + 29, {}) !== 'ok',
+      `the way into Nick's Locker is the one stone in the reef at F5's 16,30, rock either side, walked to from the strand at 16,31 and waded to from the shallows at 16,29, and nothing stands within four squares of it${near4.length ? ` (${near4.map((f) => `${f.x},${f.y}`).join(' ')})` : ''}`);
     const door = (level: number): string => {
       for (const m of w.party.members) m.level = level;
       w.world.travel(F5.id, 16, 31, NORTH);
@@ -1419,20 +1420,28 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     ok(back.kind === 'moved' && w.world.zone?.id === F5.id && w.world.state.x === f5.x + 16 && w.world.state.y === f5.y + 31 && w.world.state.facing === SOUTH && back.messages.join(' | ') === NL.exits![0].label,
       `out under the reef onto F5's 16,31, facing the land, the way's own line alone (${said(back)})`);
     listen(w);
-    // The rumour (#846): Merryn on F6 says DESIGN §9's two lines at every meeting after her first, whatever became of
-    // the founder's letter, and nothing of it at the first: words only, setting nothing, in no quest, and every one of
-    // her meetings after the first fits her box.
+    // The rumour (#846): Merryn on F6 says DESIGN §9's two lines at every meeting after her first while Old Nick lives,
+    // whatever became of the founder's letter, and nothing of it at the first; once it has fallen, "Nick gives nothing
+    // back" is no longer so, and she says her own words alone. Words only, setting nothing, in no quest, and every
+    // meeting with them fits her box. `fight` has slain Old Nick, so it is stood up again for the first two meetings.
     const merryn = F6.features!.find((f): f is Person => f.kind === 'npc' && f.name.startsWith('Merryn'))!;
     const rumour = ['"One ship I counted in and never out. Her master had a knife the weed obeyed: cut a line with it and the kelp held her fast."', '"Old Nick had ship, master and knife. Nick gives nothing back."'];
     const hermit = (): string[] => Object.keys(w.party.flags).filter((k) => k.startsWith('q_hermit'));
     const kept = Object.fromEntries(hermit().map((k) => [k, w.party.flags[k]]));
     for (const k of hermit()) delete w.party.flags[k];
+    const standing = w.world.state.maps[NL.id]!.groups[nick.id]!, fell = standing.dead;
+    standing.dead = -1;
     w.world.travel(F6.id, merryn.x, merryn.y);
     const first = meet(merryn, w.party, heard(w.world, merryn)).text, then = meet(merryn, w.party, heard(w.world, merryn)).text;
-    const boxes = merryn.says!.map((s) => wrap(s.lines.join('\n\n'), SAY_W).length);
-    ok(!first.includes('Old Nick') && rumour.every((l) => then.includes(l)) && merryn.says!.every((s) => s.lines.slice(-2).join('\n') === rumour.join('\n') && !s.sets)
+    standing.dead = fell;
+    const since = meet(merryn, w.party, heard(w.world, merryn)).text;
+    const says = merryn.says!, boxes = says.filter((s) => s.until).map((s) => wrap(s.lines.join('\n\n'), SAY_W).length);
+    ok(fell >= 0 && !first.includes('Old Nick') && rumour.every((l) => then.includes(l)) && !since.includes('Old Nick') && since.startsWith('Another stroke on the wall')
+      && says.length === 8 && says.every((s, i) => !s.sets && (i % 2 === 0
+        ? JSON.stringify(s.until) === JSON.stringify({ slain: NICK_DOWN }) && s.lines.slice(-2).join('\n') === rumour.join('\n')
+        : !s.until && JSON.stringify(s.after) === JSON.stringify({ ...JSON.parse(JSON.stringify(says[i - 1].after)), slain: NICK_DOWN }) && s.lines.join('\n') === says[i - 1].lines.slice(0, -2).join('\n')))
       && boxes.every((n) => n <= SAY_LINES) && !JSON.stringify(questLog(w.world.state, w.party)).includes('Old Nick'),
-      `Merryn says nothing of Old Nick at her first meeting, and at every meeting after it speaks of the ship she counted in and never out: words only, in no quest, ${boxes.join(', ')} of her box's ${SAY_LINES} lines`);
+      `Merryn says nothing of Old Nick at her first meeting, speaks of the ship she counted in and never out at every meeting after it while Old Nick lives, and once it has fallen says her own words alone: words only, in no quest, ${boxes.join(', ')} of her box's ${SAY_LINES} lines`);
     listen(w);
     for (const k of hermit()) delete w.party.flags[k];
     Object.assign(w.party.flags, kept);

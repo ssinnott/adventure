@@ -8,6 +8,9 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 
+/** Old Nick slain, as the game names a group: Merryn's rumour of it ends with it (wrackholm_f6.ts). */
+export const NICK_DOWN = 'nicks_locker:nl_nick';
+
 export const NICKS_LOCKER: MapDef = {
   id: 'nicks_locker',
   name: 'Nick\'s Locker',

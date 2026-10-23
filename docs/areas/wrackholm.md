@@ -16,18 +16,19 @@ three decks, its Rift and the stair's foot off F6's shore (#190); and in F6's ro
 second secret door holds two finds off the ladder, a lightning morning star and a coat that raises
 speed, the blade in the area's first locked chest (#861, §4.6). Round the isle the bounds' three
 strands of shore, E5, F5 and F7, are built as country with no group; in E5's black rocks lies the
-wreck of the Brokenback, the enclave, entered at her break, and the lair's door is left bare on F5's
-reef (#835, §12). Its content is `src/content/areas/wrackholm/` (`index.ts`, its maps, monsters,
-items and atlas, its walkthrough; its chapter of the one quest, The Stone Carried Home, in
-`chapter.ts` and its side quests in `quests.ts`, #192, with the Compact's Fence's and Factor's rungs
-in `guilds.ts`, #635); it has no town and no businesses, so no rooms. Its part of the world map is
-its folder's (`atlas.ts`, #186), which the Area now carries; the plan no longer spreads it in. Its
-ids: the area and its zone `wrackholm`, the cove `smugglers_cove` (the id stays under the new name,
-NAMES §3) and its sea cave `smugglers_cove2`, the ship's decks `tide_ship`, `tide_ship2` and
-`tide_ship3`, its Rift `tide_ship_rift`, the stair's foot `dead_drop_stair` and, below it, the drop,
-the vaults and the counting house, the Dead-Drop's three levels, `dead_drop`, `dead_drop2` and
-`dead_drop3` (docs/areas/dead_drop.md). The bounds' (#835) are the strands `wrackholm_e5`,
-`wrackholm_f5` and `wrackholm_f7` and the enclave off E5, `brokenback`.
+wreck of the Brokenback, the enclave, entered at her break, and under F5's reef lies Nick's Locker,
+the lair, where Old Nick keeps Holdfast (#835, §12). Its content is `src/content/areas/wrackholm/`
+(`index.ts`, its maps, monsters, items and atlas, its walkthrough; its chapter of the one quest, The
+Stone Carried Home, in `chapter.ts` and its side quests in `quests.ts`, #192, with the Compact's
+Fence's and Factor's rungs in `guilds.ts`, #635); it has no town and no businesses, so no rooms. Its
+part of the world map is its folder's (`atlas.ts`, #186), which the Area now carries; the plan no
+longer spreads it in. Its ids: the area and its zone `wrackholm`, the cove `smugglers_cove` (the id
+stays under the new name, NAMES §3) and its sea cave `smugglers_cove2`, the ship's decks
+`tide_ship`, `tide_ship2` and `tide_ship3`, its Rift `tide_ship_rift`, the stair's foot
+`dead_drop_stair` and, below it, the drop, the vaults and the counting house, the Dead-Drop's three
+levels, `dead_drop`, `dead_drop2` and `dead_drop3` (docs/areas/dead_drop.md). The bounds' (#835) are
+the strands `wrackholm_e5`, `wrackholm_f5` and `wrackholm_f7`, the enclave `brokenback` off E5 and
+the lair `nicks_locker` under F5's reef.
 
 ---
 
@@ -70,6 +71,9 @@ Its edges are the sea on every side. Its ways:
 - **The Brokenback,** at E5's 18,28: the break in a wreck's side in the black rocks at the north
   strand's west end, entered from the strand at 18,29. An enclave at 14–15 beside the road, counted
   in no clear (#835, §12.5).
+- **Nick's Locker,** at F5's 16,30: the way in under the reef at the north strand's east end, walked
+  into from the strand at 16,31 and waded into from the shallows at 16,29. The artifact's lair at
+  30–32, counted in no clear (#835, §12.6).
 
 `node tools/worldmap.ts out.png --zones` paints it.
 
@@ -129,8 +133,8 @@ are drawn in #193.
   Brokenback (§12.5). No group.
 - **The north strand's east end** (F5, `wrackholm_f5`, country, band 13–14; #835): the strand
   running on under the east rocks' north face, a cairn of shore stones and, behind the scales on a
-  stack's foot, the store where the bait was kept (§12.3). The reef at the east end is left bare for
-  the lair's door (§12.6). No group.
+  stack's foot, the store where the bait was kept (§12.3). In the reef at the east end is the way in
+  under it to Nick's Locker, the lair (§12.6). No group.
 - **The strand under the anchorage** (F7, `wrackholm_f7`, country, band 13–14; #835): the shingle's
   sand and the cliff path's rock running on south below F6's cliff, a spring at the cliff's foot and,
   behind the cut chain by a stack, the hollow where someone hid in irons (§12.4). No group.
@@ -139,6 +143,12 @@ are drawn in #193.
   strand. Three overseers with a gleaner at the hold's mouth and four gleaners at the master's cabin
   aft; under the cabin's deck, behind one plank worn bright, the master's strongbox, which holds
   Keelhaul, a long axe whose blows carry cold (§12.5). Counted in no clear.
+- **Nick's Locker** (`nicks_locker`, the lair, one level of 16×16, band 30–32; #835): Old Nick's sea
+  cave under F5's reef, entered at 16,30. Up a passage that floods to the knee, Old Nick, what the
+  smugglers fed first, lies in the cave's throat, the one way in; past it the ship it took, on her
+  side and stripped to her ribs, and against her keel her master with Holdfast on him, a smuggler's
+  knife that casts Grasping Roots; behind the kelp grown green over the rock, his sea chest in a dry
+  cleft (§12.6). Counted in no clear.
 - **Weather.** The gulf's: mild winters, cool summers, a narrow day, wet autumns and much fog.
   Fronts reach it three hours after they cross the Foreland.
 
@@ -157,7 +167,7 @@ full density, since a company crosses to it for the ship and nothing else:
 The bands rise from the landing, 12, to the forward hold, 14, as the gate asks (EXPANSION §5.2).
 The bounds come after the plan (§12, #835): the scraps of shore in E5, F5 and F7 are built as
 country at 12–13 and 13–14 and E7's is the Wold's (§11); the enclave, the Brokenback, is built off
-E5 at 14–15 and the lair is to come.
+E5 at 14–15 and the lair, Nick's Locker, under F5's reef at 30–32.
 
 **The order** is the boat's: E6 and the cove, where the company lands; F6 and the ship. Building
 waits on Saltmouth (#176, #177) and the boat (#164), and on Saltreach being played, since no more
@@ -574,23 +584,26 @@ seen, paid at the Keel and early, and Ruan's choice both ways.
 ### The artifact: Holdfast (#846)
 
 Wrackholm's of the bounds' eight (DESIGN §9). Found and never told: no `seek` quest, no line in the
-journal and no mark on the world map. #835 builds the lair, its door on F5's strand (left bare at
-16,30, §12.6) and the rumour once #845, #847 and the guardian's drawing are in.
+journal and no mark on the world map. #835 built the lair, Nick's Locker, with its door in F5's reef
+at 16,30 and the rumour, once #845, #847 and the guardian's drawing were in (§12.6).
 
 - **What it is:** *A smuggler's knife, its haft wound with kelp that has not rotted. / Wet, the weed
   on it moves.*
 - **The rumour:** Merryn, the hermit on the east rocks (F6), who counts the ships, two lines more at
   a meeting after her first, words only: *One ship I counted in and never out. Her master had a
   knife the weed obeyed: cut a line with it and the kelp held her fast. / Old Nick had ship, master
-  and knife. Nick gives nothing back.* It marks nothing on the world map.
+  and knife. Nick gives nothing back.* It marks nothing on the world map. Built at every meeting
+  after her first while Old Nick lives, whatever has become of the founder's letter; once it has
+  fallen and the knife is taken, she says her own words alone (§9, #835's 28).
 - **Slot and bearers:** a light weapon: the thief, the bard and the sorcerer.
 - **Numbers:** 1d8+15, the Grey Knife's 1d8+14 and a point (EXPANSION §5.2). Found and never sold.
 - **Power:** a spell (DESIGN §9, kind 3): Grasping Roots, three a day, of the druid's list, which
   none of its three casts.
-- **The lair:** a sea cave of one level, its mouth on F5's strand under the east rocks, in sight of
-  the hermit's point, at the cap's band, 30–32 (#845).
+- **The lair:** Nick's Locker, a sea cave of one level, its mouth in the reef on F5's strand under
+  the east rocks, in sight of the hermit's point, at the cap's band, 30–32 (#845; §12.6).
 - **The guardian:** Old Nick (devilfish, a new kind; boss, 32; docs/MONSTERS.md §13): *What the
-  smugglers fed first.* Size 2; it reaches the back row, and its hits heal it.
+  smugglers fed first.* Size 2; it reaches the back row, and its hits heal it. Its numbers are set
+  by its gate: 1,600 hit points, attack 20 and 20d8+20 (§9, #835's 25).
 
 ## 7. Encounters, and what is new
 
@@ -607,7 +620,9 @@ New in Wrackholm, for the novelty check (EXPANSION §5.4): the devilfish, a new 
 placing them first); heather underfoot (#162); an area reached by a crossing (#164); a ship as a
 dungeon; the Hand's overseers, grey to the wrist (MONSTERS §12); a boss that is fed; the first door
 into the hull (#22). Its landmarks: a landing, a sea cave, a wreck. The check holds one of these
-besides the devilfish and the heather (#190): the wreck, the Tide Ship's site.
+besides the devilfish and the heather (#190): the wreck, the Tide Ship's site. Nick's Locker places
+Old Nick, the devilfish's third kind, alone (§12.6); the novelty check places the lair with the
+Hearth by its floor (EXPANSION §5.2, #845's 7), so nothing of it counts on Wrackholm's line.
 
 ## 8. The numbers
 
@@ -657,6 +672,14 @@ besides the devilfish and the heather (#190): the wreck, the Tide Ship's site.
   13 points. By the curve's count it pays 750 xp a member and 868 gold, a figure only, and its
   dearest find, Keelhaul at 1,600, sits inside the Sunderwood's window, 3,000. The area's pools and
   day are as they were without it.
+- **Nick's Locker** (#835, §12.6) is counted in no clear and judged alone at its own floor, 30, on
+  its one group's odds: Old Nick is won 57% at 30, inside the aim (30% to 70%), and 81% at 32,
+  between the aim (90%) and the limit (75%). The harness's thrifty bot wins it from fresh 74% at 30
+  and 88% at 32, in 11.8 and 10.5 rounds a fight (§9, #835's 25). Density: every square within 7
+  steps of a point, the furthest 5, no sign among its 12 points. By the curve's count it pays 3,396
+  xp a member and 500 gold, a figure only; with the Brokenback's the enclaves give 4,146 xp a member
+  and 1,368 gold. No find is a window's: Holdfast is an artifact and the rest gold and draughts. The
+  area's pools and day are as they were without it.
 
 ## 9. Decisions
 
@@ -1048,10 +1071,10 @@ Decided by the builder for #835, each the owner's to overturn:
 3. **No strand holds a group.** The curve's rise rule asks a box's hardest group at its top, 13 on
    E5 and 14 on F5 and F7. At 13 the isle has its devilfish (already in E6's pools, Kelp Hole, the
    Tide Ship and F6's pools), the Hand's overseers who keep the chains and the Rift's Tide Elders,
-   which keep to the Stone; at 14 only its bosses and F6's keepers. A group on a strand of 56 to 73
-   squares would crowd it, beside a door left bare on two of them, and repeat the isle's own. The
-   area's clear already gives 11,426 xp a member of the 9,867 the curve asks (§8); the enclave and
-   the lair are the bounds' fights.
+   which keep to the Stone; at 14 only its bosses and F6's keepers. A group on a strand of 56 to 74
+   squares would crowd it, beside a door on two of them, and repeat the isle's own. The area's clear
+   already gives 11,426 xp a member of the 9,867 the curve asks (§8); the enclave and the lair are
+   the bounds' fights.
 4. **Each strand has its wilderness feature,** of a kind no other strand has: E5 a ship's
    figurehead with a riddle, answered anchor (+1 endurance once), the isle's first statue; F5 a
    cairn of shore stones; F7 a spring at the cliff's foot, a fountain (+1 speed once), the isle's
@@ -1067,9 +1090,9 @@ Decided by the builder for #835, each the owner's to overturn:
    break in her side (13 to 21). Its groups are the Hand's overseers and the Sunderwood's gleaners
    in her hold (§12.5), their sizes and its reward set in 15 and 17 inside the Sunderwood's window,
    3,000 (#845's 3).
-8. **The lair is Old Nick's sea cave on F5** (§6, DESIGN §9, MONSTERS §13): its door is left bare
+8. **The lair is Old Nick's sea cave on F5** (§6, DESIGN §9, MONSTERS §13): its door was left bare
    at 16,30 in a reef of rock drawn at the strand's east end, in sight of the hermit's point, 16,31
-   before it.
+   before it, and is built since as the way in under the reef into Nick's Locker (22 to 24).
 9. **The strands meet E6 and F6 square for square,** their edges worked from the built letters:
    E5's 15,31 and F5's 17,31 and 18,31 are sand, as E6's and F6's are, where the atlas has
    shallows, and F7's row 0 agrees with F6's row 31, sand at 1 and 19 and rock at 11, 12 and 16
@@ -1130,6 +1153,54 @@ Decided by the builder for #835, each the owner's to overturn:
     and nowhere else; and out onto the strand.
 21. **§12.5 is the brief brought to what is built,** with its encounters, reward and pay as they
     stand and its As built; the §12 table's row for the enclave is built.
+22. **The lair is Nick's Locker,** the crews' name for Old Nick's sea cave under F5's reef (§10),
+    after the sailors' locker of the drowned, from which nothing comes back: one level of 16 by 16
+    marked `enclave` at 30–32, as the brief has it (§12.6).
+23. **Old Nick lies alone in the cave's throat,** at 7,9, where the passage from the mouth, one
+    square wide, comes up to the cave, so the ship, her master, the kelp and the cleft all lie past
+    it and nothing in the lair is had without its fight. It never moves and never comes back: a boss
+    with no `respawn`, `roams: false` and a `slainText`.
+24. **The door is the brief's square, F5's 16,30,** its reef drawn as stone and given the one exit,
+    walked into from the strand at 16,31 and waded into from the shallows at 16,29, the way back
+    setting a company down on 16,31 facing the land. It is the one square of F5 that changes: F5
+    walks 74 squares with it and counts it among 5 points, and nothing stands within four squares of
+    it. Its plate is out in the sea at 188,152, four squares from the door each way, as the
+    Brokenback's lies.
+25. **Old Nick's numbers are set by its gate,** as the Steiger's are (docs/areas/kilns.md §9, #831's
+    41). Drawn at the line's boss at 32 (2,100 hit points, attack 20, 34d8+41), every blow it landed
+    drinking back what it took, the gate's company never won it at 30 or at 32; at 1,600 hit points
+    and 20d8+20, its attack, armour, pace, reach and drinking kept, it is won 57% at 30 and 81% at
+    32, where the Stair's Catcher and the Steiger stand (57% and 80%, 56% and 81%). Off the line,
+    its row carries its own `offLine` word (#897); it keeps the boss line's 20,373 xp at 32.
+26. **Holdfast lies alone on the ship's master,** against her keel past Old Nick, with no gold
+    beside it, as the Erzhemd lies alone in the smith's kist: the knife of Merryn's rumour, where
+    Old Nick took it with ship and master. One in the world and sold nowhere; the walkthrough
+    asserts that no other chest, cairn, statue or shop holds it and no monster drops it.
+27. **The secret is the master's sea chest in a dry cleft behind the ship's bows,** two squares
+    behind the rock at 9,2, found from the kelp grown green over the rock where no wave comes, as
+    the knife's haft has not rotted (§6), and searched there facing north: 500 gold, an Elixir and a
+    Sapphire Vial, the dearest healing and spell draught the Quay Chandlery sells, as the strands'
+    finds are (§12.1). It lies past Old Nick, and no walker, swimmer, climber or levitator reaches
+    it but through the rock.
+28. **The rumour is Merryn's while Old Nick lives,** DESIGN §9's two lines after her own words at
+    each of her four meetings after the first, whatever has become of the founder's letter. "Nick
+    gives nothing back" is not so once it has fallen and the company has the knife, so each such
+    entry holds `until` its fall (`slain`), and after it an entry of her own words alone waits on
+    the fall. Her first meeting sets `q_hermit` already, so no flag is added; the lines set nothing,
+    and where the letter is not yet carried her own question still follows them. A company from an
+    old save that has met her hears them at its next meeting.
+29. **New here:** the lair itself (#845, #846), the isle's one place at the cap, its guardian a boss
+    whose blows heal it and the area's artifact a knife that casts Grasping Roots three times a day
+    (#847).
+30. **The owed rows go,** as EXPANSION §8.2 (#897's 12) and #847's 6 say: `holdfast` leaves
+    `UNPLACED` in tools/tests/items.ts and Old Nick's row the area's `checks.ts`, which owes nothing
+    now.
+31. **#835 is done with the lair, its last piece:** the three strands, the enclave and the lair are
+    built and judged, the enclave at 14–15 and the lair at 30–32 with Holdfast in it, and no built
+    map of Wrackholm is open onto unbuilt land (§12.1): every edge its boxes turn away from the isle
+    is the sea, and no row of `OPEN_ON_NOTHING` and no crumb faces the area.
+32. **§12.6 is the brief brought to what is built,** with its encounters, finds and pay as they
+    stand and its As built; the §12 table's row for the lair is built.
 
 ## 10. Names
 
@@ -1151,6 +1222,11 @@ ship that has broken her back on the rocks, and here it stands for the wreck on 
 whose board is gone. Keelhaul is the old punishment of hauling a man under a ship's keel, and the
 kind follows after the name as the cutlass's does (Slack Water, Cutlass +2). Neither name says what
 it does: the sheet says COLD.
+
+The lair's name keeps the sailors' English too. Nick's Locker is the crews' name for the sea cave
+under F5's reef, on the pattern of Davy Jones's locker, the sailors' name for the sea's bottom,
+where the drowned and their ships stay: Old Nick, the sailors' devil, keeps there what it takes, and
+gives nothing back.
 
 ## 11. What was cut
 
@@ -1182,10 +1258,10 @@ pull request builds from it and adds its "As built".
 | Box | Laid in | Walkable | Built neighbours | Band | Pull request |
 |---|---|---|---|---|---|
 | E5 | Wrackholm, `wrackholm_e5` | 74 (the atlas's 74) | E6 and F5; D5 (Saltreach's), the sea | 12–13 | the first, built (#835) |
-| F5 | Wrackholm, `wrackholm_f5` | 73 (69) | F6 and E5 | 13–14 | the first, built (#835) |
+| F5 | Wrackholm, `wrackholm_f5` | 74 (69) | F6 and E5 | 13–14 | the first, built (#835) |
 | F7 | Wrackholm, `wrackholm_f7` | 56 (57) | F6; E7 (the Wold's), the sea | 13–14 | the first, built (#835) |
 | The enclave | its own, `brokenback`, its door on E5 | 92 (89 outside its hollow) | E5 | 14–15 | the second, built (#835) |
-| The lair | its own, its door on F5 | | F5 | 30–32 | the third |
+| The lair | its own, `nicks_locker`, its door on F5 | 60 (57 outside its cleft) | F5 | 30–32 | the third, built (#835) |
 
 ### 12.1 What every box keeps
 
@@ -1222,11 +1298,11 @@ pull request builds from it and adds its "As built".
   to their own bands and counted in no clear (`tools/tests/curve.ts`), so the lead stays at 14.3 to
   the end of #835.
 - **The doors** of the enclave and the lair are each a square of rock with rock either side along
-  its face, its way walked to and nothing within four squares (§12.5, §12.6): the lair's is left
-  bare, and the enclave's is built, the same square drawn as stone.
+  its face, its way walked to and nothing within four squares (§12.5, §12.6), each the brief's
+  square drawn as stone once its place was built.
 - **The walkthrough** walks them in one function, `theBounds` in `walkthrough.ts`, called last: each
   box's seams walked and its secret found from its hint, the prize shut to walkers, swimmers,
-  climbers and floaters; the lair's door left bare and the enclave walked into and out of.
+  climbers and floaters; the enclave and the lair walked into and out of.
 
 ### 12.2 E5, the north strand's west end (#835): country, band 12–13
 
@@ -1262,24 +1338,27 @@ pull request builds from it and adds its "As built".
   and off the quest.
 - **Landmarks.** The strand; a cairn of shore stones above the weed; a stack of rock at the water's
   edge; the reef at the strand's east end.
-- **Points of interest,** four features and no group: the strand, the cairn, the scales at the
-  stack's foot and the store behind it.
+- **Points of interest,** four features, the way into the lair (§12.6) and no group: the strand, the
+  cairn, the scales at the stack's foot and the store behind it.
 - **Encounters.** None (§12.1).
 - **The ways in and out.** In over the south edge from F6's grass, columns 0 to 18, and along the
-  strand from E5 over the west edge, rows 26 to 31. North and east the sea.
+  strand from E5 over the west edge, rows 26 to 31. Out under the reef at 16,30 into Nick's Locker
+  (§12.6). North and east the sea.
 - **The secret and its hint.** The store in the stack where the smugglers kept the bait they fed
   Old Nick before the Great Devilfish (MONSTERS §13). The hint: fish scales dried to silver on the
   rock's foot, and the sand before it trodden flat.
 - **New here.** The reef where the lair's door stands (§12.6).
 - **Finds.** 80 gold and a Sapphire Vial in the cairn; 120 gold and an Elixir in the store.
 - **Pay.** No xp; 200 gold.
-- **As built** (#835, 23 October): `wrackholm_f5`, laid at 168,126, start 8,31 facing north. The
+- **As built** (#835, 23 October): `wrackholm_f5`, laid at 168,126, start 7,31 facing north. The
   strand's look (`f5_strand`, 8,30); the cairn (`f5_cairn`, 2,27); the stack a ring of rock at 8 to
   10 on rows 25 to 27, its door at 9,27 and the scales before it (`f5_scales`, 9,28), the store
-  (`f5_store`, 9,26) with a box (`f5_box`). The reef is rock at 15 to 17 on row 30, the lair's door
-  16,30 bare with 16,31 open before it. F5 differs from the atlas at 14 squares: the seam's two, the
-  reef's three and the stack's nine. Density: 73 of 73 squares within 12 steps, the furthest 11, no
-  sign among 4 points. No group; the box pays 200 gold.
+  (`f5_store`, 9,26) with a box (`f5_box`). The reef is rock at 15 to 17 on row 30, and the lair's
+  door at 16,30 among it is drawn as stone since (§12.6), walked into from 16,31 and waded into from
+  the shallows at 16,29. F5 differs from the atlas at 14 squares: the seam's two, the reef's three
+  and the stack's nine. It walks 74 squares, the door among them. Density: 74 of 74 squares within
+  12 steps, the furthest 6, no sign among 5 points, the door one of them. No group; the box pays 200
+  gold.
 
 ### 12.4 F7, the strand under the anchorage (#835): country, band 13–14
 
@@ -1353,21 +1432,55 @@ pull request builds from it and adds its "As built".
   rise: rank correlation 1.00, the nearest group at 6 steps (13.5) and the hardest at 11 (15.0). It
   pays 750 xp a member and 868 gold, counted in no clear, so the isle's lead stays at 14.3.
 
-### 12.6 The lair: Old Nick's sea cave (#835, its third pull request)
+### 12.6 The lair: Nick's Locker, Old Nick's sea cave (#835): one level of 16×16, band 30–32
 
-- **Purpose.** Holdfast's lair (§6, #846): a sea cave of one level under the reef at the east end
-  of F5's strand, where Old Nick, what the smugglers fed first, keeps the ship it took, her master
-  and his knife.
+- **Purpose.** Holdfast's lair (§6, #846): a sea cave of one level under the reef at the east end of
+  F5's strand, where Old Nick, what the smugglers fed first, keeps the ship it took, her master and
+  his knife. A place of its own off the road and off the quest (#845), held at the cap's band by one
+  guardian, with the area's artifact in it: #835's last piece.
 - **Band.** The cap's, 30–32.
-- **Landmarks.** The mouth in the reef, a flooded passage and the cave where the ship lies.
-- **Points of interest.** The mouth, the ship's bones, her master's and the door's own line.
+- **Landmarks.** The mouth in the reef, the flooded passage up from it and the cave where the ship
+  lies on her side, stripped to her ribs, her master against her keel.
+- **Points of interest,** eight sights, two chests and one group: the mouth; the flooded passage;
+  the cave's throat; the cave and the ship; her ribs; her master, and Holdfast on him; the kelp; the
+  cleft and the sea chest; the door's own line.
 - **Encounters.** Old Nick (devilfish, a new kind; boss, 32; docs/MONSTERS.md §13), the one
-  guardian, drawn in the creatures lane before the lair is built.
-- **The ways in and out.** Its door at F5's 16,30 in the reef, left bare with 16,31 open before it;
-  one way out, back onto the strand.
-- **The secret and its hint.** The master's sea chest in a cleft behind the ship's bones. The hint:
-  kelp grown across the cleft's mouth and never rotted, as the knife's haft is (§6).
-- **New here.** Old Nick and the artifact (#846, #847).
+  guardian, drawn in the creatures lane, lying in the cave's throat where the way to the ship
+  passes, so that no company steps round it.
+- **The ways in and out.** Its door at F5's 16,30 in the reef, walked into from the strand at 16,31
+  and waded into from the shallows at 16,29, its line and then its band said as a border's are
+  (#845's 5); one way out, back onto 16,31, facing the land. F5's square is drawn as stone and given
+  its `exits` line, and nothing else of F5 changes.
+- **The secret and its hint.** The master's sea chest in a dry cleft behind the ship's bows. The
+  hint: kelp grown green over the rock that shuts the cleft, where no wave comes, as the knife's
+  haft has not rotted (§6).
+- **New here.** Old Nick and the artifact (#846, #847): the lair itself, its guardian a boss whose
+  blows heal it.
 - **Finds.** Holdfast, a smuggler's knife, 1d8+15, Grasping Roots three a day, found and never sold
-  (§6), where #846 puts it; the rumour is Merryn's on F6, built with the lair.
-- **Pay.** Counted in no clear (`tools/tests/curve.ts`).
+  (§6), alone on the ship's master; in the sea chest 500 gold, an Elixir and a Sapphire Vial.
+- **The rumour.** Merryn on F6 (§6): at every meeting after her first while Old Nick lives, two
+  lines of a ship she counted in and never out, words only. It marks nothing on the world map.
+- **Pay.** About 3,400 xp a member, Old Nick's, counted in no clear (`tools/tests/curve.ts`).
+- **As built** (#835, 23 October): `nicks_locker`, a dungeon of 16 by 16 marked `enclave`, band
+  30–32, region `wrackholm`, its plate at 188,152 in the sea off F5's door. In under the reef at
+  F5's 16,30, drawn as stone, onto 5,14 facing north: the door says "Nick's Locker: levels 30-32.",
+  with harder one or two under and the warning three or more. The passage, one square wide, runs
+  north from the mouth, seen at 5,13 with four squares of shallows west of it that a swimmer wades
+  (3 to 4 on rows 12 and 13); east along row 12, the flooded passage seen at 6,12; then north up
+  column 7, the cave's throat seen from 7,11. Old Nick lies in the throat at 7,9 (`nl_nick`), the
+  one way on: with its square and those a step from it shut, the 10 squares a walker, swimmer,
+  climber or levitator reaches from the mouth hold nothing past it. Past it the cave, rows 3 to 8
+  and widest at 3 to 13 on rows 4 to 6, seen from 7,7; the ship's ribs, six pillars at 5, 7 and 9 on
+  rows 4 and 6, seen at 7,5; her master at 12,5 and on him, at 12,6, Holdfast (`nl_belt`). The kelp
+  at 9,3: searched there facing north, the rock gives at 9,2 on the cleft, 8 to 9 on row 1, seen at
+  9,1, with the sea chest at 8,1 (`nl_sea_chest`: 500 gold, an Elixir and a Sapphire Vial), which no
+  walker, swimmer, climber or levitator reaches but through the rock. Out by the mouth onto F5's
+  16,31, facing south. It holds 60 squares on foot (57 outside the cleft) and 64 with the shallows.
+  The gate judges Old Nick alone, on its odds: won 57% at 30, inside the aim of 30% to 70%, and 81%
+  at 32, under the aim of 90% and inside the limit of 75% (§9, #835's 25). Density: every square
+  within 7 steps of a point, the furthest 5, no sign among its 12 points. The curve's rise: one
+  group, Old Nick at 7 steps, level 32 where it asks at least 31. By the curve's count it pays 3,396
+  xp a member and holds 500 gold, counted in no clear: Wrackholm's clear, 11,426 xp a member and
+  7,729 gold, and its lead, 14.3, do not move. Merryn says nothing of Old Nick at her first meeting
+  and speaks of it at every one after while it lives, in 6 to 11 of her box's 14 lines, and her own
+  words alone once it has fallen.
