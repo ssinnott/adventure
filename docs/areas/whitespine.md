@@ -2291,7 +2291,7 @@ Cut and owed, from the country behind (#508):
 
 #832's bounds are three boxes, an enclave and the Wakerobe's lair. K12, L12, the enclave and the
 lair are Rimewater's and are briefed there with what every box keeps (docs/areas/rimewater.md §12,
-the decisions in §9 there, #832's 1 to 22); J8, Sheer Point's, is briefed here, in §4's form. K12,
+the decisions in §9 there, #832's 1 to 40); J8, Sheer Point's, is briefed here, in §4's form. K12,
 Monks' Vale's east under the pass, is Loch Fuar's box, laid whole and built (#832): J12's east edge
 meets it square for square, and `j12_drop` now says the vale's grass runs on into the cold loch's
 pines. L12 is Loch Fada's, laid whole and built (#832), and J8 is Sheer Point's, laid whole and
