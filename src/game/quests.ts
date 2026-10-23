@@ -141,8 +141,12 @@ function pageOf(q: QuestDef, world: WorldState, party: Party): PageView {
   };
 }
 
-/** The trainers the content places, each by its map: what the seeking quests are made from. */
-export const TRAINERS: readonly Trainer[] = trainersIn(MAP_DEFS);
+let placed: readonly Trainer[] | undefined;
+/**
+ * The trainers the content places, each by its map: what the seeking quests are made from. Read on
+ * first use and kept, not as this module loads, when the content may still be loading (#896).
+ */
+export const TRAINERS = (): readonly Trainer[] => (placed ??= trainersIn(MAP_DEFS));
 
 /**
  * Every quest the party knows of, in the content's order, then each member's seeking quests, by its
@@ -151,7 +155,7 @@ export const TRAINERS: readonly Trainer[] = trainersIn(MAP_DEFS);
  * back, passing over a chapter done and one with no chapter begun at or after it: so a company that
  * walked into Thornmark early is not sent to the Grove Stone before anyone has spoken of it.
  */
-export function questLog(world: WorldState, party: Party, quests: readonly LogQuest[] = QUESTS, trainers: readonly Trainer[] = TRAINERS): QuestView[] {
+export function questLog(world: WorldState, party: Party, quests: readonly LogQuest[] = QUESTS, trainers: readonly Trainer[] = TRAINERS()): QuestView[] {
   const out: QuestView[] = [];
   for (const q of [...quests, ...seekingQuests(party, trainers, quests)]) {
     if (!q.chapters) {

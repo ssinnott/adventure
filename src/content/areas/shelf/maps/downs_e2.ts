@@ -4,9 +4,10 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/shelf.md §4.5 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
+import { denBurnt } from '../../../../game/keys.ts';
 
-/** The rookery's brood fly with the wolves until it burns (game/dens.ts's denBurnt). */
-const BURNT = { seen: 'downs_e2:e2_rookery' };
+/** The rookery's brood fly with the wolves until it burns. */
+const BURNT = denBurnt('downs_e2', 'e2_rookery');
 const BROOD = ['carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'chalk_wolf', 'chalk_wolf'];
 
 export const DOWNS_E2: MapDef = {

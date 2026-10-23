@@ -7,7 +7,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/sunderwood.md §4.9 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
-import { denBurnt } from '../../../../game/dens.ts';
+import { denBurnt } from '../../../../game/keys.ts';
 
 /** The den burnt: its brood stops coming. */
 const DEN_BURNT = denBurnt('eaves_j3', 'j3_den');

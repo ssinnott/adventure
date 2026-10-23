@@ -38,7 +38,7 @@ export function stones(): void {
   const one = world.almanac().split('\n')[0];
   ok(world.stones === 1 && one === `${plain} ${steadier(1)}`, `the Tide Stone home is one, and the almanac says the Hearth burns steadier ("${one}")`);
   party.flags.q_mender_done = 1;
-  ok(world.stones === 2 && steadier(2) !== steadier(1) && MOST === STONES.length, `the Grove mended by a Lantern, the Mender's flag, is a second ("${steadier(2)}")`);
+  ok(world.stones === 2 && steadier(2) !== steadier(1) && MOST() === STONES.length, `the Grove mended by a Lantern, the Mender's flag, is a second ("${steadier(2)}")`);
   // The Anvil Stone counts once its Warden has fallen and its tear is closed (#540), bought back or taken alike
   // (docs/areas/kilns.md §9): the thane's choice restores nothing by itself, and the tear closed is a third either way.
   for (const [how, flag] of [['bought', 'anvil_bought'], ['taken', 'anvil_taken']] as const) {

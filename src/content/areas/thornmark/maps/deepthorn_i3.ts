@@ -7,7 +7,7 @@
 import type { MapDef } from '../../../../game/map.ts';
 import type { When } from '../../../../game/quests.ts';
 import { EAST, WEST } from '../../../../game/types.ts';
-import { denBurnt } from '../../../../game/dens.ts';
+import { denBurnt } from '../../../../game/keys.ts';
 import { TEAR_CLOSED } from './grove2.ts';
 
 /** The den under the fallen oak burnt: its brood stops coming. */

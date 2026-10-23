@@ -8,6 +8,7 @@ import type { MapDef, Teaching } from './map.ts';
 import type { Party } from './party.ts';
 import type { QuestDef, LogQuest, When, QuestView } from './quests.ts';
 import { PRESTIGES, PRESTIGE_LEVELS } from './party.ts';
+import { seekId } from './keys.ts';
 
 /** A placed trainer: the map they stand on, what the log calls the place, their name and what they teach. */
 export interface Trainer { map: string; place: string; name: string; teaches: Teaching }
@@ -17,8 +18,8 @@ export function trainersIn(defs: readonly MapDef[]): Trainer[] {
   return defs.flatMap((d) => (d.features ?? []).flatMap((f) => (f.kind === 'npc' && f.teaches ? [{ map: d.id, place: d.name, name: f.name, teaches: f.teaches }] : [])));
 }
 
-/** The quest a seeking quest is for: its id, by slot and prestige. */
-export const seekId = (who: number, prestige: number): string => `seek:${who}:${prestige}`;
+/** The quest a seeking quest is for: in game/keys.ts with the save's other keys. */
+export { seekId } from './keys.ts';
 
 /** Each member's seeking quests, one a placed trainer of its class, in slot order then prestige order. */
 export function seekingQuests(party: Party, trainers: readonly Trainer[], quests: readonly LogQuest[] = []): QuestDef[] {
