@@ -38,6 +38,15 @@
 // stood up on its back the clerk's counting frame: two posts and a rail, three rods between the posts
 // and four beads on each. Idle: a bead goes across at each click and the lamp dips with it; when a
 // rod's beads are all across they come back together and one goes across on the rod above.
+//
+// The Steiger: it knocks once, and the whole seam answers. The knockers' overseer of the old working under the
+// rim, the deep knocker's kin grown to a boss: reared up off its hind legs and long in the plate, dark as the
+// working's iron, the edges of its plates standing up in ridges and its lamp a hard cold white in a heavy ring,
+// level on the company. One feeler has grown into an arm off the cowl's chin, two rods on ball joints, and at the
+// end of it a stamp, a block with a flat face and the chisel's mark cut in its side. Idle: the stamp is lifted
+// slowly in front of the cowl and over, held up behind the head, and let fall once on the rock ahead. The lamp
+// flares, a ring runs out along the ground, and the seams between the plates light one after another from the
+// cowl back to the tail, the answer, and die away.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint, Sprite } from './common.ts';
 import { B, groundShadow } from './common.ts';
@@ -99,10 +108,15 @@ interface Build {
   hard: number;
   /** The second lamp on a mast off the back that turns from the wall to the company, 0 none: the inspector's. */
   mast: number;
+  /**
+   * The knock, 0 none: a feeler grown into an arm of two rods and a stamp, lifted slowly and let fall once on the
+   * rock, and the seams between the plates lit one after another from the cowl back in answer: the Steiger's.
+   */
+  knock: number;
 }
 const KNOCKER: Build = {
   length: 1, dome: 1, taper: 0, rear: 0, plates: 6, legs: 6, stance: 1, step: 1, cowl: 1, feelers: 1, spool: 0, needle: 0, slate: 0, count: 0, tally: 0, rime: 0, beads: 0, mark: 1, markAt: 0.42,
-  lampHex: '#fff3c4', glowHex: '#ffc860', arcHex: '#d8f0ff', ridge: 0, hard: 0, mast: 0,
+  lampHex: '#fff3c4', glowHex: '#ffc860', arcHex: '#d8f0ff', ridge: 0, hard: 0, mast: 0, knock: 0,
 };
 /**
  * The Mender: it stops to mend the others, and they let it. Domed higher, a spool of wire on its
@@ -112,7 +126,7 @@ const KNOCKER: Build = {
  */
 const MENDER: Build = {
   length: 0.9, dome: 1.22, taper: 0, rear: 0, plates: 5, legs: 5, stance: 1.05, step: 1, cowl: 1, feelers: 0.5, spool: 1, needle: 1, slate: 0, count: 0, tally: 0, rime: 0, beads: 0, mark: 1, markAt: 0.6,
-  lampHex: '#fff3c4', glowHex: '#ffc860', arcHex: '#d8f0ff', ridge: 0, hard: 0, mast: 0,
+  lampHex: '#fff3c4', glowHex: '#ffc860', arcHex: '#d8f0ff', ridge: 0, hard: 0, mast: 0, knock: 0,
 };
 /**
  * The Foreman: it checks you the way a clerk checks a list, and finds nobody on it. A knocker grown
@@ -123,26 +137,35 @@ const MENDER: Build = {
  */
 const FOREMAN: Build = {
   length: 1.25, dome: 0.86, taper: 0.38, rear: 1, plates: 10, legs: 6, stance: 1.2, step: 0.35, cowl: 1.1, feelers: 0, spool: 0, needle: 0, slate: 1, count: 0, tally: 0, rime: 0, beads: 0, mark: 1.35, markAt: 0.25,
-  lampHex: '#fff3c4', glowHex: '#ffc860', arcHex: '#d8f0ff', ridge: 0, hard: 0, mast: 0,
+  lampHex: '#fff3c4', glowHex: '#ffc860', arcHex: '#d8f0ff', ridge: 0, hard: 0, mast: 0, knock: 0,
 };
 const TALLYMAN: Build = {
   length: 1.08, dome: 1.06, taper: 0.12, rear: 0.46, plates: 7, legs: 6, stance: 1.12, step: 0.3, cowl: 1.14, feelers: 0, spool: 0, needle: 0, slate: 0, count: 1, tally: 1, rime: 1, beads: 0, mark: 1.1, markAt: 0.3,
-  lampHex: '#fff3c4', glowHex: '#ffc860', arcHex: '#d8f0ff', ridge: 0, hard: 0, mast: 0,
+  lampHex: '#fff3c4', glowHex: '#ffc860', arcHex: '#d8f0ff', ridge: 0, hard: 0, mast: 0, knock: 0,
 };
 /** The Tally Clerk: low and long, no feelers, and its counting frame stood up on its back. */
 const TALLY_CLERK: Build = {
   length: 0.96, dome: 0.84, taper: 0.06, rear: 0, plates: 6, legs: 5, stance: 1.05, step: 0.55, cowl: 1.04, feelers: 0, spool: 0, needle: 0, slate: 0, count: 0, tally: 0, rime: 0, beads: 1, mark: 1, markAt: 0.08,
-  lampHex: '#fff3c4', glowHex: '#ffc860', arcHex: '#d8f0ff', ridge: 0, hard: 0, mast: 0,
+  lampHex: '#fff3c4', glowHex: '#ffc860', arcHex: '#d8f0ff', ridge: 0, hard: 0, mast: 0, knock: 0,
 };
 const DEEP: Build = {
   length: 1.2, dome: 1.08, taper: 0, rear: 0, plates: 7, legs: 7, stance: 1.22, step: 0.7, cowl: 1.12, feelers: 1.22, spool: 0, needle: 0, slate: 0, count: 0, tally: 0, rime: 0, beads: 0, mark: 1.2, markAt: 0.42,
-  lampHex: '#f4fbff', glowHex: '#a4d4ff', arcHex: '#d8f0ff', ridge: 1.5, hard: 1, mast: 0,
+  lampHex: '#f4fbff', glowHex: '#a4d4ff', arcHex: '#d8f0ff', ridge: 1.5, hard: 1, mast: 0, knock: 0,
 };
 const INSPECTOR: Build = {
   length: 1, dome: 0.96, taper: 0.1, rear: 0, plates: 6, legs: 5, stance: 1.4, step: 0.45, cowl: 1.04, feelers: 0, spool: 0, needle: 0, slate: 0, count: 0, tally: 0, rime: 0, beads: 0, mark: 1, markAt: 0.3,
-  lampHex: '#f4fbff', glowHex: '#a4d4ff', arcHex: '#d8f0ff', ridge: 0, hard: 1, mast: 1,
+  lampHex: '#f4fbff', glowHex: '#a4d4ff', arcHex: '#d8f0ff', ridge: 0, hard: 1, mast: 1, knock: 0,
 };
-const BUILDS: Partial<Record<MonsterSprite, Build>> = { knocker: KNOCKER, mender: MENDER, foreman: FOREMAN, tallyman: TALLYMAN, deep_knocker: DEEP, inspector: INSPECTOR, tally_clerk: TALLY_CLERK };
+/**
+ * The Steiger: it knocks once, and the whole seam answers. The deep knocker's kin grown to a boss and reared up
+ * off its hind legs, long in the plate and dark, its ridges high and its lamp hard in a heavy ring, level on the
+ * company. One feeler is an arm now, and the arm ends in a stamp.
+ */
+const STEIGER: Build = {
+  length: 1.05, dome: 1.22, taper: 0.1, rear: 0.78, plates: 9, legs: 7, stance: 1.22, step: 0.4, cowl: 1.28, feelers: 0, spool: 0, needle: 0, slate: 0, count: 0, tally: 0, rime: 0, beads: 0, mark: 1.5, markAt: 0.3,
+  lampHex: '#f4fbff', glowHex: '#a4d4ff', arcHex: '#d8f0ff', ridge: 1.8, hard: 1.4, mast: 0, knock: 1,
+};
+const BUILDS: Partial<Record<MonsterSprite, Build>> = { knocker: KNOCKER, mender: MENDER, foreman: FOREMAN, tallyman: TALLYMAN, deep_knocker: DEEP, inspector: INSPECTOR, tally_clerk: TALLY_CLERK, steiger: STEIGER };
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   knocker(ctx, x, y, h, p, BUILDS[kind] ?? KNOCKER);
@@ -157,6 +180,7 @@ export const SPRITES = {
   deep_knocker: { draw, span: [0.58, 0.78] },
   inspector: { draw, span: [0.49, 0.54] },
   tally_clerk: { draw, span: [0.48, 0.53] },
+  steiger: { draw, span: [0.49, 0.69] },
 } satisfies Partial<Record<MonsterSprite, Sprite>>;
 
 interface Pt { x: number; y: number }
@@ -172,6 +196,39 @@ function lerpTable(t: readonly (readonly [number, number])[], s: number): number
   return t[t.length - 1][1];
 }
 const smooth = (a: number, b: number, s: number): number => { const k = Math.max(0, Math.min(1, (s - a) / (b - a))); return k * k * (3 - 2 * k); };
+
+/** The Steiger's knock comes round every this many frames. */
+const KNOCK = 120;
+/**
+ * The knock at frame `t`: `up` is 1 with the stamp held up behind the head and 0 with it on the rock. It falls in
+ * four frames, bounces a little and settles, lies there, and is lifted again over fifty, slowly, to fall again.
+ * `hit` is 1 as it lands and gone ten frames on.
+ */
+function swing(t: number): { up: number; hit: number } {
+  const k = ((t % KNOCK) + KNOCK) % KNOCK;
+  const up = k < 4 ? 1 - (k / 4) ** 2 : k < 12 ? 0.07 * Math.sin((Math.PI * (k - 4)) / 8) : k < 70 ? 0 : smooth(0, 1, (k - 70) / 50);
+  return { up, hit: k >= 4 && k < 14 ? 1 - (k - 4) / 10 : 0 };
+}
+/**
+ * How brightly the seam `s` of the way along the body is lit at frame `t`: the answer runs back from the cowl to
+ * the tail in 16 frames from the landing, each seam coming up in three and dying away slowly.
+ */
+function answer(t: number, s: number): number {
+  const age = (((t % KNOCK) + KNOCK) % KNOCK) - (5 + ((COWL - s) / COWL) * 16);
+  return age < 0 ? 0 : age < 3 ? age / 3 : Math.exp(-(age - 3) / 20);
+}
+/** A point `s` of the way along the cubic curve through four. */
+function bez(p: readonly [Pt, Pt, Pt, Pt], s: number): Pt {
+  const k = 1 - s, a = k * k * k, b = 3 * k * k * s, c = 3 * k * s * s, e = s * s * s;
+  return { x: a * p[0].x + b * p[1].x + c * p[2].x + e * p[3].x, y: a * p[0].y + b * p[1].y + c * p[2].y + e * p[3].y };
+}
+/** An arm of two links `a` and `b` from `s` toward `w`, as near as it reaches: its elbow, always bulging up, and its wrist. */
+function twoLinks(s: Pt, w: Pt, a: number, b: number): { elbow: Pt; wrist: Pt } {
+  const d0 = Math.hypot(w.x - s.x, w.y - s.y), d = Math.min(a + b - 0.5, Math.max(Math.abs(a - b) + 0.5, d0));
+  const ux = (w.x - s.x) / d0, uy = (w.y - s.y) / d0, along = (d * d + a * a - b * b) / (2 * d), off = Math.sqrt(Math.max(0, a * a - along * along));
+  const flip = ux < 0 || (ux === 0 && uy > 0), nx = flip ? uy : -uy, ny = flip ? -ux : ux;
+  return { elbow: { x: s.x + ux * along + nx * off, y: s.y + uy * along + ny * off }, wrist: { x: s.x + ux * d, y: s.y + uy * d } };
+}
 
 /** The back's height over the spine, and the belly's under it, along the body (the knocker's, at dome 1). */
 const BACK: readonly (readonly [number, number])[] = [[0, 0.32], [0.12, 0.7], [0.3, 0.96], [0.5, 1], [0.7, 0.9], [0.86, 0.74], [1, 0.62]];
@@ -267,7 +324,9 @@ function knocker(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
   const click = b.count > 0 && ck < 84 && ck % 14 < 5 ? 1 - (ck % 14) / 5 : 0;
   // The Foreman looks from the slate to the company and back: a slow lift and bow of the cowl. The
   // tallyman faces the company, and nods at each click.
-  const look = b.slate > 0 ? smooth(0, 1, 0.5 + 0.5 * Math.sin(t / 23)) : b.count > 0 ? 0.85 - 0.3 * click : 0;
+  // The Steiger keeps its cowl level on the company, and its stamp up or down by the knock.
+  const look = b.slate > 0 ? smooth(0, 1, 0.5 + 0.5 * Math.sin(t / 23)) : b.count > 0 ? 0.85 - 0.3 * click : b.knock > 0 ? 0.85 : 0;
+  const { up, hit } = b.knock > 0 ? swing(t) : { up: 0, hit: 0 };
   const body = layout(b, 1 - look);
   const shell = p.base, under = shade(mix(p.dark, '#1c1e24', 0.45), 0.92), joint = shade(mix(p.light, '#e8ecf0', 0.25), 1);
   const ink = shade('#14161a', Math.max(0.6, p.tone));
@@ -329,6 +388,12 @@ function knocker(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
       const seam = [q0, add({ x: (q0.x + mid.x) / 2, y: (q0.y + mid.y) / 2 }, d, -0.8), mid, q1];
       softLine(ctx, B, flat(f, seam), shell, Math.max(1, 1.5 * u), 0.85);
       line(ctx, flat(f, seam.map((q) => add(q, d, 1.6))), rgba(mix(shell, '#ffffff', 0.4), 0.5), Math.max(1, 0.9 * u));
+      // The Steiger's answer: the light in the seam, a halo and a core, as the knock has come back to it.
+      const lit = b.knock > 0 ? answer(t, s) : 0;
+      if (lit > 0.02) {
+        line(ctx, flat(f, seam), rgba(b.glowHex, 0.3 * lit), Math.max(2, 3.6 * u));
+        line(ctx, flat(f, seam), rgba(b.lampHex, 0.95 * lit), Math.max(1, 1.2 * u));
+      }
     }
   }
   // --- the chisel's mark, cut into a plate -------------------------------------------------------
@@ -352,6 +417,8 @@ function knocker(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
     ctx.fillStyle = mix(shade(b.glowHex, 0.5), b.lampHex, lampOn);
     ctx.beginPath(); ctx.arc(f.X(lampC.x), f.Y(lampC.y), lr * 0.7 * u, 0, Math.PI * 2); ctx.fill();
     glow(ctx, B, f.X(lampC.x), f.Y(lampC.y), lr * 0.78 * u, b.lampHex, 0.9 * lampOn, '#ffffff');
+    // The Steiger's lamp flares at the knock, and settles with the answer.
+    if (b.knock > 0) { const flare = Math.max(hit, 0.7 * answer(t, COWL)); glow(ctx, B, f.X(lampC.x), f.Y(lampC.y), lr * (3 + 3.2 * flare) * u, b.glowHex, 0.3 * flare, b.lampHex); }
     // The brow's shadow across the top of the lens.
     const sc = add(lampC, n1, lr * 0.5);
     ctx.fillStyle = rgba(ink, 0.32); ctx.beginPath(); ctx.ellipse(f.X(sc.x), f.Y(sc.y), lr * 0.72 * u, lr * 0.26 * u, -Math.atan2(d1.y, d1.x), 0, Math.PI * 2); ctx.fill();
@@ -386,6 +453,7 @@ function knocker(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
   if (b.slate > 0) slate(ctx, f, body, b, h, t, shell, under, look, p.tone);
   if (b.mast > 0) mast(ctx, f, body, b, h, t, shell, under, p.tone);
   if (b.beads > 0) countingFrame(ctx, f, body, b, h, t, under, p.tone);
+  if (b.knock > 0) hammer(ctx, f, body, b, h, up, hit, shell, under, lampC);
 }
 
 /**
@@ -666,4 +734,45 @@ function slate(ctx: CanvasRenderingContext2D, f: F, body: Body, b: Build, h: num
     { k: 'cap', x0: f.X(elbow.x), y0: f.Y(elbow.y), x1: f.X(point.x - 2), y1: f.Y(point.y - 3.5), r0: 1.9 * u, r1: 1.4 * u },
     { k: 'cap', x0: f.X(point.x - 2), y0: f.Y(point.y - 3.5), x1: f.X(point.x), y1: f.Y(point.y), r0: 1.1 * u, r1: 0.45 * u },
   ], { h, formK: 0.4, spread: 0.7, gloss: 0.3 });
+}
+
+/**
+ * The Steiger's arm and stamp. Off the cowl's chin, where a feeler roots, two rods on ball joints, and on the end of
+ * them a stamp: a block, its flat face away from the arm, the chisel's mark cut in its side. The wrist goes along one
+ * curve from the rock ahead of the cowl, up in front of it and over, to behind the head, and the arm bends to follow.
+ * As the stamp lands a flash goes up from its face, a ring runs out along the ground and chips of rock lift off it.
+ */
+function hammer(ctx: CanvasRenderingContext2D, f: F, body: Body, b: Build, h: number, up: number, hit: number, shell: string, under: string, lampC: Pt): void {
+  const u = f.u, k = b.knock, cc = cowlCentre(body), d1 = body.dir(1), n1 = body.up(1), an = (body.r(1) + body.rb(1)) / 2;
+  const root = add(add(cc, d1, an * 0.34), n1, -an * 0.74);
+  const way: [Pt, Pt, Pt, Pt] = [{ x: lampC.x + 10, y: 13 }, { x: lampC.x + 24, y: 44 }, { x: lampC.x + 8, y: 82 }, { x: lampC.x - 15, y: 72 }];
+  const { elbow, wrist } = twoLinks(root, bez(way, up), 24 * k, 27 * k);
+  // The stamp's own axes: along the forearm, and across it.
+  const len = Math.hypot(wrist.x - elbow.x, wrist.y - elbow.y), ax = (wrist.x - elbow.x) / len, ay = (wrist.y - elbow.y) / len;
+  const at = (along: number, across: number): Pt => ({ x: wrist.x + (ax * (6.5 + along) - ay * across) * k, y: wrist.y + (ay * (6.5 + along) + ax * across) * k });
+  const rod = mix(shell, under, 0.4), iron = mix(shell, under, 0.3), face = mix(shell, '#e6ecf2', 0.3);
+  blob(ctx, B, rod, [
+    { k: 'cap', x0: f.X(root.x), y0: f.Y(root.y), x1: f.X(elbow.x), y1: f.Y(elbow.y), r0: 3.3 * k * u, r1: 2.8 * k * u },
+    { k: 'cap', x0: f.X(elbow.x), y0: f.Y(elbow.y), x1: f.X(wrist.x), y1: f.Y(wrist.y), r0: 2.8 * k * u, r1: 2.3 * k * u },
+    { k: 'ball', x: f.X(root.x), y: f.Y(root.y), r: 4.2 * k * u },
+    { k: 'ball', x: f.X(elbow.x), y: f.Y(elbow.y), r: 3.6 * k * u },
+    { k: 'ball', x: f.X(wrist.x), y: f.Y(wrist.y), r: 3.1 * k * u },
+  ], { h, formK: 0.4, spread: 0.7, gloss: 0.35 });
+  blob(ctx, B, iron, [{ k: 'poly', pts: flat(f, [at(-6.5, -10), at(-6.5, 10), at(4.2, 10), at(4.2, -10)]) }], { h, formK: 0.35, spread: 0.8, gloss: 0.5 });
+  blob(ctx, B, face, [{ k: 'poly', pts: flat(f, [at(3.4, -11.2), at(3.4, 11.2), at(6.5, 11.2), at(6.5, -11.2)]) }], { h, formK: 0.3, spread: 0.8, gloss: 0.6 });
+  if (B.override) return;
+  // A band round the block, and the chisel's mark cut in its side, upright along the arm.
+  line(ctx, flat(f, [at(-2.6, -10), at(-2.6, 10)]), rgba(mix(iron, '#ffffff', 0.45), 0.45), Math.max(1, 0.9 * u));
+  chiselMark(ctx, f, at(-0.4, 0), 2.8 * k, Math.atan2(-ax, ay), iron);
+  if (hit <= 0) return;
+  // The landing: a flash at the face, the ring running out along the ground, and chips of rock.
+  const c = at(6.5, 0), x = f.X(c.x), y = f.Y(Math.max(c.y, 0.6)), rx = (10 + 34 * (1 - hit)) * u;
+  glow(ctx, B, x, y, (6 + 9 * hit) * u, b.glowHex, 0.75 * hit, '#ffffff');
+  ctx.strokeStyle = rgba(b.lampHex, 0.28 * hit); ctx.lineWidth = Math.max(1, 1.3 * u);
+  ctx.beginPath(); ctx.ellipse(x, y + 0.5, rx, Math.max(1, rx * 0.13), 0, 0, Math.PI * 2); ctx.stroke();
+  ctx.fillStyle = rgba(b.lampHex, 0.3 * hit);
+  for (let i = 0; i < 6; i++) {
+    const a = 0.35 + i * 0.5, r = (6 + 20 * (1 - hit)) * u * (0.7 + 0.5 * nz(i, 31));
+    ctx.beginPath(); ctx.arc(x + Math.cos(a) * r * (i % 2 ? -1 : 1), y - Math.sin(a) * r * 0.9, Math.max(0.7, (0.9 + 0.5 * nz(i, 37)) * u), 0, Math.PI * 2); ctx.fill();
+  }
 }
