@@ -4,7 +4,7 @@
 // the herds' winter store behind the face where the rowan grows. O8's corner squares are met as built:
 // the mountain at 0,0 and 0,1, and the ledge run on down the west column to 0,19 beside O8's hills.
 // The P column is 24 wide: cut by hand from the atlas, the void written '%'; docs/areas/cairnmoor.md
-// §12.4 is its brief.
+// §12.3 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST } from '../../../../game/types.ts';
 

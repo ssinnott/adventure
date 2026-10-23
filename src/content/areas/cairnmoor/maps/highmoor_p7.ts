@@ -3,10 +3,10 @@
 // bothy, an old herd, a cairn and the ravens on the crag; the narrows down the rim's foot past a stone set
 // on end; and in the south the long cairns of the old folk, three of them walking, and a ledge of white
 // pebbles. The secret is the hill folk's earth-house behind the rock face, where the wind hoots. The rim's
-// face at 5,24 is left bare for the lair's door (docs/areas/cairnmoor.md §12.6). O7's corner is shut with
-// P6's: P7's north edge and its 0,0 are mountain, as O7's 31,0 is since (§9, #834's 3).
+// face at 5,24 is left bare for the lair's door (docs/areas/cairnmoor.md §12.5). O7's corner is shut
+// with P6's: P7's north edge and its 0,0 are mountain, as O7's 31,0 is since (§9, #834's 3).
 // The P column is 24 wide: cut by hand from the atlas, the void written '%'; docs/areas/cairnmoor.md
-// §12.3 is its brief.
+// §12.2 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST } from '../../../../game/types.ts';
 

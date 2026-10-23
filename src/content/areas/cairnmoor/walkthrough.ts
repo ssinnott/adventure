@@ -1095,7 +1095,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const kist = P7.features!.find((f) => f.kind === 'chest' && f.id === 'p7_house_chest');
   ok(kist?.kind === 'chest' && kist.gold === 250 && kist.items.join() === 'elixir' && kist.x === 7 && kist.y === 10, 'at the earth-house\'s end, a chest with 250 gold and an Elixir');
 
-  // The lair's door (docs §12.6) is left bare: the rim's face at 5,24, mountain, its way the hills of
+  // The lair's door (docs §12.5) is left bare: the rim's face at 5,24, mountain, its way the hills of
   // row 24, with nothing within four squares.
   const near = [...(P7.features ?? []), ...(P7.encounters ?? [])].filter((f) => Math.abs(f.x - 5) + Math.abs(f.y - 24) <= 4);
   ok(P7.rows[24][5] === 'M' && hills.has(at(p7, 4, 24)) && !near.length, `the rim's face at 5,24 is left bare for the lair's door, walked to along row 24, nothing within four squares${near.length ? ' (not ' + near.map((f) => `${f.x},${f.y}`).join(' ') + ')' : ''}`);
