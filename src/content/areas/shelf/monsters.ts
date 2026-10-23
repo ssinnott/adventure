@@ -66,11 +66,12 @@ export const MONSTERS: readonly MonsterDef[] = [
   // The west downs' harder man (#71): the bandit camp's own, who keep it and never leave it. The
   // elite's line at 5 (MONSTERS §4.4).
   { id: 'cutthroat', name: 'Cutthroat', plural: 'Cutthroats', sprite: 'cutthroat', kind: 'person', look: 'A captain\'s sash on a thief\'s coat, and a knife for every pocket.', level: 5, hp: 52, ac: 14, attack: 5, dice: 3, sides: 6, bonus: 1, speed: 15, xp: 218, gold: [10, 30], tint: '#5a3a3a', size: 0.95 },
-  // the bounds' lair (#837), drawn and defined before the lair that places it: E4's sea cave, where it keeps the
-  // Hagstone. The eyeless thing the coast hangs a holed stone against, the lair's boss at 32 (MONSTERS §13): its
-  // hit holds (paralysed, 0.2, as the Catcher's), which the Hagstone wards, and it stands at size 1.8, a tall boss
-  // drawn inside TALL_REACH. Its numbers are the line's boss at 32 as tools/testmonster.ts gives it today, and
-  // provisional: the lair's pull request sets them from the harness's line at the cap (MONSTERS §4.1, §4.2, §13).
-  // It is owed in checks.ts until that lair places it
-  { id: 'hag', name: 'The Hag', plural: 'Hags', sprite: 'hag', kind: 'beast', look: 'No eyes, and it found you first.', level: 32, hp: 2100, ac: 29, attack: 20, dice: 34, sides: 8, bonus: 41, speed: 13, xp: 20373, gold: [0, 0], inflict: { cond: 'paralysed', chance: 0.2 }, tint: '#a39b92', size: 1.8 },
+  // the bounds' lair (#837): Hag Hole, the sea cave behind E4's cliff, where it keeps the Hagstone in the wrack. The
+  // eyeless thing the coast hangs a holed stone against, the lair's boss at 32 (MONSTERS §13): its hit holds
+  // (paralysed, 0.2, as the Catcher's), which the Hagstone wards, and it stands at size 1.8, a tall boss drawn inside
+  // TALL_REACH. Drawn at the line's boss at 32 (2,100 hp, attack 20, 34d8+41), it was won 38% at 30 and 40% at 32;
+  // set by the lair's pull request at the gate's company, it stands a little longer and hits more often and two
+  // thirds as hard, its armour, its pace and its hold kept, won 64% at its floor of 30 and 81% at 32, and it pays the
+  // boss line's xp at 32 (docs/areas/shelf.md §9, #837's 14)
+  { id: 'hag', name: 'The Hag', plural: 'Hags', sprite: 'hag', kind: 'beast', look: 'No eyes, and it found you first.', level: 32, hp: 2200, ac: 29, attack: 26, dice: 23, sides: 8, bonus: 26, speed: 13, xp: 20373, gold: [0, 0], inflict: { cond: 'paralysed', chance: 0.2 }, offLine: 'Hag Hole\'s boss, its hit points and its blow set by its gate at the lair\'s floor and two above (#837)', tint: '#a39b92', size: 1.8 },
 ];

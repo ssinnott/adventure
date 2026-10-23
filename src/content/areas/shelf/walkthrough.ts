@@ -7,7 +7,7 @@
 import type { Walkthrough } from '../../area.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
-import type { Can, MapDef, MapZone } from '../../../game/map.ts';
+import type { Can, Feature, MapDef, MapZone } from '../../../game/map.ts';
 import type { Facing } from '../../../game/types.ts';
 import { DOWNS_E4 } from './maps/downs_e4.ts';
 import { CHAPTER } from './chapter.ts';
@@ -16,7 +16,8 @@ import type { Step, Walk } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import { wrap } from '../../../ui/draw.ts';
 import { SAY_W, SAY_LINES, logLines } from '../../../ui/frame.ts';
-import { MAP_DEFS, MONSTERS } from '../../index.ts';
+import { ITEMS, MAP_DEFS, MONSTERS } from '../../index.ts';
+import { HARDER_IN, WARNING_IN } from '../../../game/world.ts';
 import { xpForLevel, prestigeOf, takePrestige, createCharacter, PRESTIGES, countItem } from '../../../game/party.ts';
 import type { Party } from '../../../game/party.ts';
 import { teach } from '../../../game/prestige.ts';
@@ -135,7 +136,7 @@ export const walkthrough: Walkthrough = (ok) => {
   // The pilot from a new game, every key its own (#720, #721, #723): the chapter to its end, Vask's
   // hire, Hild's ask, the cellar, the keeper's log and the wand handed in.
   pilotPlays(ok, CHAPTER);
-  // And the bounds (#837), the Downs' last shore, in a walk of its own, last.
+  // And the bounds (#837), the Downs' last shore and the lair behind its cliff, in a walk of its own, last.
   theBounds(ok);
 };
 
@@ -144,7 +145,13 @@ export const walkthrough: Walkthrough = (ok) => {
  * from Crowness's down and east from the top of Kestrel Edge onto it, walked, the land not named
  * again; the post of holed stones on the last rise and the cairn of flints at the strand's end; the
  * crab shells at the stack's foot and the crabber's store behind it, shut but through its door; the
- * low cliff's face at 3,6 left bare for the lair's door. The box's edges as built.
+ * mouth in the low cliff's face at 3,6, E4's one way out but its edges. The box's edges as built.
+ * Then Hag Hole, the lair (#845, #847): north from the strand at 3,7 in at the mouth, its door saying
+ * its band and how it feels at 4, 28 and 30 and its sign its band; the Hag, its one group, in the
+ * narrows that are the one way to the cave, won at 30; the Hagstone in the box in the wrack, one in
+ * the world; the ledge found from the lamp smoke over the pool and shut to the four ways but through
+ * its fall of rock; out onto the strand at 3,7 again; and the old man mending nets at Gullwick, who
+ * speaks of his gran's holed stone at every meeting after his first and not before.
  */
 function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const w = newWalk(ok);
@@ -175,14 +182,8 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     return found && into.every((r) => r.kind === 'moved') && w.world.used(room);
   };
   const chest = (d: MapDef, id: string): string => { const c = d.features!.find((f) => f.kind === 'chest' && f.id === id); return c?.kind === 'chest' ? `${c.gold} ${c.items.join()}` : 'none'; };
-  /** A door left bare: rock, rock either side along the face, its way walked to, nothing within four squares. */
-  const bare = (d: MapDef, walked: Set<number>, z: MapZone, [x, y]: readonly [number, number], [dx, dy]: readonly [number, number]): string[] => {
-    const near = [...(d.features ?? []), ...(d.encounters ?? []), ...(d.secrets ?? [])].filter((f) => Math.abs(f.x - x) + Math.abs(f.y - y) <= 4);
-    return [d.rows[y][x] === 'r' && d.rows[y - dx]?.[x - dy] === 'r' && d.rows[y + dx]?.[x + dy] === 'r' && d.rows[y - dy]?.[x - dx] === 'r' ? '' : 'not rock in a face',
-      walked.has(at(z, x + dx, y + dy)) ? '' : 'its way not walked to', ...near.map((f) => `${f.x},${f.y} within four`)].filter(Boolean);
-  };
   const open = (n: number, f: (i: number) => boolean): string => Array.from({ length: n }, (_, i) => f(i)).join();
-  ok(!(E4.encounters ?? []).length && !(E4.exits ?? []).length, 'E4 holds no group, and nothing is taken out of it yet');
+  ok(!(E4.encounters ?? []).length, 'E4 holds no group');
 
   // South from Crowness's down at E3's 6,31 onto E4's 6,0, walked, in the Downs still.
   w.world.travel(e3.id, 6, 31, SOUTH);
@@ -198,8 +199,8 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     `east from D4's 31,4 onto E4's 0,4, walked (${said(east)})`);
   listen(w);
   const shore = reach(e4, [E4.start.x, E4.start.y], {}, [10, 2]);
-  ok(shore.size === 65 && [[2, 2], [6, 4], [0, 6], [5, 6], [3, 7], [0, 9], [0, 10], [9, 2], [10, 0]].every(([x, y]) => shore.has(at(e4, x, y))),
-    `E4's down and strand (${shore.size} squares): the cairn, the ways down either end of the cliff, its face, the post, the strand's end and the stack's foot are walked to from the way in`);
+  ok(shore.size === 66 && [[2, 2], [6, 4], [0, 6], [5, 6], [3, 7], [0, 9], [0, 10], [9, 2], [10, 0]].every(([x, y]) => shore.has(at(e4, x, y))),
+    `E4's down and strand (${shore.size} squares, the mouth's with them): the cairn, the ways down either end of the cliff, the strand under its face, the post, the strand's end and the stack's foot are walked to from the way in`);
   see(w, `${E4.id}:e4_strand`);
   const cairn = E4.features!.find((f) => f.kind === 'cairn' && f.id === 'e4_cairn');
   ok(cairn?.kind === 'cairn' && cairn.gold === 30 && cairn.items.join() === 'potion_sp' && cairn.x === 0 && cairn.y === 9, 'at the strand\'s end, a cairn of flints with 30 gold and a Blue Vial');
@@ -211,9 +212,13 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   see(w, `${E4.id}:e4_shells`);
   ok(search(E4.id, 9, 2, EAST, 'e4_store'), 'searched where the crab shells are heaped, the rock gives, and the store behind it can be walked into');
   ok(chest(E4, 'e4_crock') === '80 elixir', `under the pots, a crock with 80 gold and an Elixir (${chest(E4, 'e4_crock')})`);
-  // The lair's door (docs §12.3) is left bare: the low cliff's face over the strand, 3,6.
-  const face = bare(E4, shore, e4, [3, 6], [0, 1]);
-  ok(!face.length, `the cliff's face at E4's 3,6 is left bare for the lair's door, rock behind it, walked to from 3,7, nothing within four squares${face.length ? ` (not: ${face.join(', ')})` : ''}`);
+  // The lair's door (docs §12.3): the mouth in the low cliff's face at 3,6, drawn as stone, the cliff's
+  // rock either side of it and behind it, walked onto from the strand at 3,7 alone, with nothing within
+  // four squares: E4's one way out but its edges, into Hag Hole.
+  const near = [...(E4.features ?? []), ...(E4.encounters ?? []), ...(E4.secrets ?? [])].filter((f) => Math.abs(f.x - 3) + Math.abs(f.y - 6) <= 4);
+  ok(E4.exits?.length === 1 && E4.exits[0].x === 3 && E4.exits[0].y === 6 && E4.exits[0].to === 'hag_hole' && E4.rows[6][3] === '"'
+    && [E4.rows[5][3], E4.rows[6][2], E4.rows[6][4]].join() === 'r,r,r' && E4.rows[7][3] === '_' && shore.has(at(e4, 3, 7)) && !near.length,
+    `the mouth in the cliff's face at 3,6 is E4's one way out but its edges, into Hag Hole, walked onto from the strand at 3,7 alone, nothing within four squares${near.length ? ' (not ' + near.map((f) => `${f.x},${f.y}`).join(' ') + ')' : ''}`);
 
   // The edges: E4's north meets E3's south and its west D4's east, open at 0 to 10 on both, its sand at
   // 9,0 and 10,0 as E3's is; south against Wrackholm's E5 and east the sea, shut to every company.
@@ -224,6 +229,83 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const none = open(32, () => false);
   ok(row(e4, 31, ALL) === none && col(e4, 31, ALL) === none && row(e5, 0, ALL) === none && e4.y + e4.h === e5.y,
     'south against Wrackholm\'s E5 and east the sea, shut to every company');
+
+  // Hag Hole, the lair (#845, #847): north from the strand at 3,7 in at the mouth. Its door says its band
+  // and how it feels, as a border's line: the warning at E4's 4, harder at 28 and its band alone at 30.
+  {
+    const HH = MAP_DEFS.find((d) => d.id === 'hag_hole')!, mouth = E4.exits!.find((e) => e.to === HH.id)!;
+    const levels = w.party.members.map((m) => m.level);
+    const enter = (level: number): string => {
+      for (const m of w.party.members) m.level = level;
+      w.world.travel(E4.id, 3, 7, NORTH);
+      const r = w.world.move('forward');
+      return r.kind === 'moved' && w.world.state.mapId === HH.id && w.world.state.x === HH.start.x && w.world.state.y === HH.start.y && w.world.state.facing === NORTH ? r.messages.join(' | ') : r.kind;
+    };
+    const band = 'Hag Hole: levels 30-32.', low = enter(4), close = enter(28), at30 = enter(30);
+    ok(low === `${mouth.label} | ${band} ${WARNING_IN}` && close === `${mouth.label} | ${band} ${HARDER_IN}` && at30 === `${mouth.label} | ${band}`,
+      `north from the strand at 3,7 in at the mouth and Hag Hole, the way's own line and then its band, with the warning at 4, harder at 28 and nothing more at 30 (${low}; ${close}; ${at30})`);
+    ok(!!HH.enclave && w.world.here.name === 'Hag Hole' && w.world.here.band?.join('-') === '30-32', `inside, its sign gives the cap's band, over E4's 4-5 (${w.world.here.name}, ${w.world.here.band?.join('-')})`);
+    listen(w);
+    w.level = 30;
+    for (const id of ['hh_mouth', 'hh_tide', 'hh_narrows']) see(w, `${HH.id}:${id}`);
+    // The guardian: the Hag, a boss that never comes back, in the narrows that are the one way to the
+    // cave, so no company steps round it: with its square and those a step from it shut, nothing past it
+    // is reached, walked, waded, climbed or floated. Won at the lair's floor.
+    const hold = new GameMap(HH);
+    const flood = (...shut: (readonly [number, number])[]): Set<string> => {
+      const seen = new Set<string>(), todo: [number, number][] = [[HH.start.x, HH.start.y]];
+      while (todo.length) {
+        const [x, y] = todo.pop()!;
+        if (seen.has(`${x},${y}`) || shut.some(([sx, sy]) => sx === x && sy === y) || hold.passable(x, y, ALL) !== 'ok') continue;
+        seen.add(`${x},${y}`);
+        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+      }
+      return seen;
+    };
+    const hag = HH.encounters!.find((g) => g.id === 'hh_hag')!;
+    const shut = flood([hag.x, hag.y], [hag.x - 1, hag.y], [hag.x + 1, hag.y], [hag.x, hag.y - 1], [hag.x, hag.y + 1]);
+    ok(HH.encounters!.length === 1 && hag.monsters.join() === 'hag' && !!hag.boss && !hag.respawn && hag.roams === false && !!hag.slainText
+      && shut.has('7,9') && !['7,6', '8,5', '9,5', '3,4', '3,2', '2,2'].some((k) => shut.has(k)),
+      `the Hag, the one group of the lair, stands in the narrows: with it standing, none of Hag Hole's ${shut.size} squares walked, waded, climbed or floated reaches the cave, the wrack, the box, the lamp smoke or the ledge`);
+    fight(w, `${HH.id}:hh_hag`);
+    for (const id of ['hh_cave', 'hh_wrack']) see(w, `${HH.id}:${id}`);
+    // The Hagstone in the box in the wrack, one in the world: no other chest, cairn or statue holds it, no
+    // shop sells it and no monster drops it.
+    const box = HH.features!.find((f) => f.kind === 'chest' && f.id === 'hh_box')!;
+    const holds = (f: Feature): boolean => (f.kind === 'shop' && f.stock.includes('hagstone')) || ((f.kind === 'chest' || f.kind === 'cairn') && f !== box && f.items.includes('hagstone')) || (f.kind === 'statue' && !!f.gift?.items?.includes('hagstone'));
+    ok(box.kind === 'chest' && box.gold === 0 && box.items.join() === 'hagstone' && !!ITEMS.hagstone.artifact
+      && !MAP_DEFS.some((d) => (d.features ?? []).some(holds)) && !Object.values(MONSTERS).some((m) => m.drops?.some((x) => x.item === 'hagstone')),
+      'in the wrack, the box of black wood with the Hagstone in it; no other chest, cairn or statue holds it, no shop sells it and no monster drops it');
+    // The secret: the lamp smoke on the roof over the pool, the search at the fall of rock and the ledge
+    // behind it. Walked, waded, climbed or floated, it is never reached but through the rock.
+    const closed = flood([3, 3]);
+    ok(closed.size > 20 && !['2,2', '3,2'].some((k) => closed.has(k)), `the ledge is shut but for its fall of rock: none of Hag Hole's ${closed.size} squares walked, waded, climbed or floated reaches it`);
+    see(w, `${HH.id}:hh_smoke`);
+    ok(search(HH.id, 3, 4, NORTH, 'hh_ledge'), 'searched under the lamp smoke, the fallen rock gives, and the ledge behind it can be walked onto');
+    ok(chest(HH, 'hh_purse') === '500 ', `on the ledge, by the lamp burnt dry, a purse with 500 gold (${chest(HH, 'hh_purse')})`);
+    // And out at the mouth onto the strand at 3,7, facing the sea, with the way's own line and no other.
+    w.world.travel(HH.id, HH.start.x, HH.start.y - 1, SOUTH);
+    const back = w.world.move('forward');
+    ok(back.kind === 'moved' && w.world.zone?.id === E4.id && w.world.state.x === e4.x + 3 && w.world.state.y === e4.y + 7 && w.world.state.facing === SOUTH && back.messages.join(' | ') === HH.exits![0].label,
+      `out at the mouth onto the strand at 3,7, facing the sea, the way's own line alone (${back.kind === 'moved' ? back.messages.join(' | ') : back.kind})`);
+    listen(w);
+    // The rumour (#846): the old man mending nets at Gullwick, met once, speaks at every meeting after it,
+    // after his song, of his gran's holed stone, words only: no flag or question comes with them, no quest
+    // names it, each line is two of the log's at most and it fits his box.
+    const mender = MAP_DEFS.find((d) => d.id === 'downs_f3')!.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'An old man mending nets')!;
+    const words = mender.says!.find((s) => s.lines.some((l) => l.includes('My gran')))!, own = mender.lines.join('\n\n'), lines = wrap(words.lines.join('\n\n'), SAY_W).length;
+    const gran = ['"My gran had a stone with a hole worn through it. Nothing sat on her chest of a night, she said, and nothing held her."', '"She was buried without it, and nobody would say where it went."'];
+    delete w.party.flags.netmender_met;
+    w.world.travel('downs_f3', mender.x, mender.y);
+    const first = meet(mender, w.party, heard(w.world, mender)).text, then = meet(mender, w.party, heard(w.world, mender)).text;
+    ok(first === own && then === [own, ...gran].join('\n\n') && words.lines.slice(-2).join() === gran.join() && gran.every((l) => logLines(l).length <= 2)
+      && !words.sets && !words.choice && lines <= SAY_LINES && !JSON.stringify(questLog(w.world.state, w.party)).includes('hole worn'),
+      `the old man says nothing of the stone at his first meeting, his song, and at the next sings it and speaks of his gran's stone: words only, in no quest, ${lines} of his box's ${SAY_LINES} lines`);
+    listen(w);
+    delete w.party.flags.netmender_met;
+    w.party.members.forEach((m, i) => { m.level = levels[i]; });
+    w.level = 4;
+  }
 }
 
 /**

@@ -10,8 +10,8 @@ const shield: ItemDef = { id: 'shield', name: 'Kite Shield', slot: 'shield', pri
 const halberd = W('halberd', 'Halberd', 150, 1, 12, { twoHanded: true, classes: MARTIAL });
 
 // The Foreland's of the bounds' eight (DESIGN §9, #847): a thing carried, for any of the ten, with no
-// numbers, and its bearer never paralysed. Found and never sold; placed nowhere yet, for #837 lays its
-// lair and puts it there.
+// numbers, and its bearer never paralysed. Found and never sold: it lies in the box of black wood in
+// the wrack of Hag Hole, the sea cave behind E4's cliff, past the Hag (#837).
 export const hagstone: ItemDef = { id: 'hagstone', name: 'The Hagstone', slot: 'none', price: ARTIFACT_PRICE, ward: 'paralysed', artifact: true, text: [
   'A stone off the strand, a hole the sea wore through it and a cord gone green.',
   'Held to the eye, the hole shows the dark as only dark.',
