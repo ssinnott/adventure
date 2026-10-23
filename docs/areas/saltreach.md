@@ -10,13 +10,14 @@ work is filed under #153 (Phase 1.2, #149): the boxes as §4's table has them, t
 its drawings (#184) and its rooms (#185). Figures are measured on main at `2cc52cd` (29 September
 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Sixteen boxes of it are built, the Delta road and the shore under the Edge (#170), the spur to
+Eighteen boxes of it are built, the Delta road and the shore under the Edge (#170), the spur to
 Rietum (#171), Rietum (#172), Stienwierde (#173), the Drowned Temples' approach (#174), Saltmouth's
 box (#176), the salt pans (#178), the willows (#179) and, of the bounds, the upper valley and its
-head, the rim's foot behind the willows, the hills over the heronry, the fen's west shore and the
-fen under the rim (#830; §12, whose brief has two boxes more), the town behind C6's gate, Saltmouth
-(#177), with the Salt Compact's hall in it (#182), and the Drowned Temples below B6, two levels
-(#175); with the first two the area was listed. Its content is `src/content/areas/saltreach/` (maps,
+head, the rim's foot behind the willows, the hills over the heronry, the fen's west shore, the fen
+under the rim, the Scarp's foot west of the pans and the plate's old place (#830; §12, whose
+enclave and lair come after), the town behind C6's gate, Saltmouth (#177), with the Salt Compact's
+hall in it (#182), and the Drowned Temples below B6, two levels (#175); with the first two the area
+was listed. Its content is `src/content/areas/saltreach/` (maps,
 monsters, items, climate, its part of the world map, its side quests in `quests.ts` and its guild
 quests in `guilds.ts`; its chapter of the one quest, The Tide Stone, in `chapter.ts` is still to
 come) and its businesses' rooms `src/ui/interiors/saltreach/`. Its ids: the area `saltreach`, its
@@ -32,9 +33,9 @@ Saltreach three zones:
 | Zone | Band | Squares | Built |
 |---|---|---|---|
 | The Upper Water | 10–11 | 7,714 | C3, Rietum, laid at 72,62 (#172); B3, the willows, at 40,62 (#179); C2, the upper valley, at 72,30, and B2, its head, at 40,30 (#830); A3, the rim's foot, at 8,62 (#830) |
-| The Delta | 10–12 | 3,697 | C5, the Delta road, laid at 72,126, and D5, the shore under the Edge, at 104,126 (#170); C4, the spur to Rietum, at 72,94 (#171); B5, Stienwierde, at 40,126 (#173); B6, the temples' approach, at 40,158 (#174); B4, the willows' end, at 40,94 (#179); A4, the hills over the heronry, at 8,94 (#830) |
-| The Saltings | 11–12 | 3,588 | C6, Saltmouth's box, laid at 72,158 (#176); C7, the salt pans, at 72,190 (#178) |
-| The area | 10–12 | 14,999 | fourteen boxes |
+| The Delta | 10–12 | 3,697 | C5, the Delta road, laid at 72,126, and D5, the shore under the Edge, at 104,126 (#170); C4, the spur to Rietum, at 72,94 (#171); B5, Stienwierde, at 40,126 (#173); B6, the temples' approach, at 40,158 (#174); B4, the willows' end, at 40,94 (#179); A4, the hills over the heronry, at 8,94, A5, the fen's west shore, at 8,126, and A6, the fen under the rim, at 8,158 (#830) |
+| The Saltings | 11–12 | 3,588 | C6, Saltmouth's box, laid at 72,158 (#176); C7, the salt pans, at 72,190 (#178); B7, the Scarp's foot, at 40,190, and D6, the plate's old place, at 104,158 (#830) |
+| The area | 10–12 | 14,999 | eighteen boxes |
 
 Squares are the ones the atlas gives each zone, shallows and rivers included. Without the shallows
 the area is 14,143 squares, about 13.8 zone maps (EXPANSION §1 has 13.8), and 11,965 of them a
@@ -246,14 +247,26 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
   under its foot, and an anchorite's cell walled into the rim's foot, the hint a slit that looks
   east to the temples. The gate holds at 10 and 11, at 6.84 and 7.18 fights to a rest (§12.6,
   §12.7).
+- **The Scarp's foot and the plate's old place** (B7, `saltings_b7`, and D6, `saltings_d6`, country,
+  band 11–12, the fourth of the bounds; #830): B7 is the last marsh and the salters' grass under the
+  Scarp, west of the pans, open to B6 along its north edge and to C7 along its east, the Scarp and
+  the Glasswold's ground above it shut as mountain: a salt-carter at the end of the salters' track
+  with word of a fire under the Scarp, a camp, a cairn, a shrine, three salt crabs on the grass and
+  the Hand's smugglers at their fire under the rock. D6 is two pieces of land in the sea off
+  Saltmouth, the end of D5's spit and the tidal shore under the town: on the spit the footing of the
+  old harbour light with two bull toads come out of the Delta's reeds, and on the shore a cairn of
+  ballast stones and a wreck's ribs. The secrets are a salters' bothy walled up in the Scarp's foot,
+  the hint a fan of dead white grass pointing at its door, and the light-keeper's store walled up in
+  the footing, the hint the hollow boom of each wave under it. The gate holds at 11, at 7.41 and
+  5.76 fights to a rest (§12.8, §12.9).
 - **Weather.** The delta's: mild and wet, the wettest in late autumn, fog off the gulf. Fronts reach
   it four hours after they cross the Foreland.
 
 ## 4. What is still to build
 
-All but C5, D5, C4, C3, B5, B6, C6, C7, B3, B4, C2, B2, A3, A4, A5 and A6, of the area's 14,143
-squares of land, 11,965 of them walkable (§1). On the grid (§1) the plan is ten boxes, a dungeon and
-a town, and the boxes hold 8,946 of those squares:
+All but C5, D5, C4, C3, B5, B6, C6, C7, B3, B4, C2, B2, A3, A4, A5, A6, B7 and D6, of the area's
+14,143 squares of land, 11,965 of them walkable (§1). On the grid (§1) the plan is ten boxes, a
+dungeon and a town, and the boxes hold 8,946 of those squares:
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
 |---|---|---|---|---|---|---|---|---|
@@ -961,9 +974,9 @@ mound, a Stone's plinth without its Stone, temples half under water, a port.
   by level (#159), so a company that arrives at 10 earns the shares as written and one that arrives
   at 13 earns less; the curve's row reports what a clear falls short of as owed to #153 until the
   boxes exist. The bounds (§12) pay from the surplus: C2 and B2 about 490 and 220 xp a member by the
-  curve's count, A3 and A4 about 220 and 420, A5 and A6 about 485 and 604, so that a clear now gives
-  12,791 xp a member and 7,773 gold, and a company entering at 10 and three quarters clearing it
-  leaves at 12.7, against the curve's 13.0 (#634).
+  curve's count, A3 and A4 about 220 and 420, A5 and A6 about 485 and 604, B7 and D6 about 604 and
+  315, so that a clear now gives 13,711 xp a member and 8,410 gold, and a company entering at 10 and
+  three quarters clearing it leaves at 12.9, against the curve's 13.0 (#634).
 - **Gold.** Training six members from 10 to 12 costs about 5,040 with today's `trainPrice`, and the
   first prestiges about 1,000 each (#19); a clear should pay for the training at least, in chests,
   drops and the halls' pay, and the ladder's step at Saltmouth's armourer is priced within the
@@ -1780,6 +1793,76 @@ Decided by the builder for #830, each the owner's to overturn:
     south edge (6) and C6's east edge (19) onto D6; C7's east edge (19) onto D7, the Wold's box,
     which §12 does not build (decision 17). A4's corner, B5's west edge and B6's west edge are
     answered, and A6's south-east corner is shut with B6's 0,31 (decision 21).
+26. **B7's edges and corners are worked out from the built letters:** its north edge is B6's south
+    edge (the rim's mountain at 0, marsh 1 to 31), its east edge C7's west edge (marsh 0 to 12,
+    grass 13 to 22, the mountain 23 to 31) and its south edge the mountain against B8's north edge
+    (the mountain at 0 and 1, the cliff from 2); its west edge is the rim's mountain against A7,
+    which stays cut. The corners: 0,0 the rim's mountain, with B6's 0,31 and A6's 31,31 as decision
+    21 rules; 31,0 marsh, as B6's 31,31, C7's 0,0 and C6's 0,31 are; 0,31 and 31,31 the mountain,
+    as B8's 0,0 and C7's 0,31 are, B8's 31,0 being cliff. No row of `SEAMS_AS_BUILT` is added, and
+    none of `OPEN_ON_NOTHING` for B7: no square of its west or south edge is open.
+27. **The Scarp is mountain the whole of B7's south, and the Glasswold's ground above it with it:**
+    the cliff's line, from 0,18 to 31,23, is drawn as mountain as C7's is (decision 3) and every
+    square under it, with the rim's two columns on the west, so no walker comes onto the Wold's 219
+    squares and none of the box's 614 squares to stand on lies under row 23. A climber crosses the
+    mountain there as everywhere between two areas the Scarp stair joins (the seam rule asks no
+    row), and the walkthrough measures the edge to a walker.
+28. **The enclave's door is left at the Scarp's foot at 22,22,** the first mountain square under the
+    grass at 22,21, its way the grass of row 21 from 20 to 31, and nothing stands within four
+    squares of it: the salt-carter at 22,16 and the track's end at 23,16 are the nearest, the
+    smugglers' fire at 15,20 nine squares off. The enclave's pull request (#845) draws the door
+    there and moves nothing; the walkthrough walks the way and measures the clearance.
+29. **B7's groups are the brief's, kept to their ground:** three salt crabs on the grass at 20,13,
+    the nearest at 14 steps and level 11, and the Hand's smugglers as C6 holds them by night, two
+    smugglers and two bowmen in the back rank, at their fire under the Scarp at 15,20, here at every
+    hour, the farthest and the hardest at 20 steps and level 12. Neither roams, so the halt at
+    14,13, six squares from the crabs and eight from the fire, is clear of both (decision 23). The
+    gate holds at 11, at 7.41 fights to a rest against an aim of 5.75 to 7.75.
+30. **D6's group is the brief's two bull toads,** and no other make-up serves: the curve's rise rule
+    asks the hardest group's mean level at 12 in a box of 11 to 12, which only bull toads and the
+    smugglers (B7's) reach, and a lone toad paces about 20 fights to a rest at 11 against a limit of
+    10.25. They lie on the spit at 12,2, kept to it, 4 steps from the way in, as A6's pair lie at
+    its south end; the gate holds at 11, at 5.76 fights to a rest against an aim of 5.75 to 7.75.
+31. **D6 is three pieces of land,** as the atlas has it: the spit at the top (22 squares and the
+    store's 6), the shore under the town (36) down the west and the shore's south end (19), each
+    walked onto from its own side and none from another, so the map starts on the spit where D5
+    opens onto it (decision 13) and each piece has a point of interest of its own, the density
+    check walking from every point. Its edges are worked out from the built letters: the north edge
+    is D5's south edge; the west edge is C6's east edge, with the warehouse's wall carried on at 0,9
+    and 0,10, tidal ground at 0,7, 0,20 and 0,25 to 28 and salt at 0,29 to 31; the east edge is the
+    sea against E6's west edge. The south edge is open at 0 (salt) and 1 (tidal ground) onto D7,
+    which stays unbuilt, so it has a row of `OPEN_ON_NOTHING`; square 1 is tidal ground, not
+    shallows, because the pillars check carries water on into the atlas past an edge and D7's
+    atlas is tidal there.
+32. **The two secrets have shapes of their own:** B7's bothy is an L of walls 6 wide and 4 deep in
+    the Scarp's foot at 5–10,16–19, a short arm behind its door at 9,16 and a long arm of four
+    squares along the foot to the strongbox at 6,18; D6's footing is a round of black stone 5 by 5
+    at 9–13,4–8, a floor of five squares in the shape of a plus behind its door at its north tip,
+    11,4, the keeper's chest at 11,7. C2's cleft and B2's hut are 3 by 3, A3's well-house 4 by 3,
+    A4's still 3 by 5, A5's sluice-house 6 by 3 and A6's cell 4 by 4. Both hints stand on open
+    ground at the door: the fan of dead white grass, nine squares of salt spreading north from its
+    point at 9,15, and the spit's end at 11,3, where each wave booms under the footing.
+33. **B7's shrine gives a point of accuracy:** every stat is given by a shrine of the area already,
+    accuracy only by C4's. The cairns give 75 gold (B7) and 60 (D6) and a draught each, and the
+    finds are the brief's, 250 gold and an elixir in the bothy and 150 gold and a draught in the
+    keeper's chest; none repeats a find the area gives or is weaker than the shop's (§12.1).
+34. **The lead holds without a trim:** B7 pays about 604 xp a member by the curve's count and 427
+    gold, D6 about 315 and 210, 919 in all against the 900 planned; a clear gives 13,711 xp a
+    member and 8,410 gold, and the lead goes from 12.733 to 12.910 against the limit of 13.0, with
+    0.09 to spare. No group is trimmed.
+35. **What is left open:** after B7 and D6, 21 squares of Saltreach's built boxes are open onto
+    unbuilt land, where there were 98: C7's east edge (19) and D6's south edge (2) onto D7, the
+    Wold's box, which §12 does not build (decision 17). B6's south edge (31), C7's west edge (23),
+    C6's east edge (19) and D5's south edge (6) are answered, and B7's west edge, 0,0 with it, is
+    shut with no row. The outdoors test reads "169 pairs, 34 of them between two areas, 5400
+    squares, 329 of them as built in 62 rows" and "102 edges on nothing, 3248 squares, 675 of them
+    open in 42 rows".
+36. **A6's step reads B6's 0,31 to a walker now:** the square is the rim's mountain between A6 and
+    B7, drawn as the void only while B7 was unbuilt (`layOutdoors` closes a ring's mountain where it
+    faces unbuilt land), so the walkthrough's claim that no company climbs it held then and holds
+    now for A6's own south edge, which stays void against A7, and for a walker on 0,31. A saved
+    company on it stands on a mountain square and steps off north or east, as it would off the void
+    (decision 21).
 
 ## 10. Names
 
@@ -1854,8 +1937,8 @@ on the road's quest. Then the area's enclave and its artifact's lair (§12.10). 
 | A4 | the Delta, `delta_a4` | 526 | the Upper Water's 318 | B4 | 10–11 | the second, built (#830) |
 | A5 | the Delta, `delta_a5` | 589 | | A4, B5 | 10–11 | the third, built (#830) |
 | A6 | the Delta, `delta_a6` | 491 | | A5, B6 | 11–12 | the third, built (#830) |
-| B7 | the Saltings, `saltings_b7` | 944 | the Delta's 346; the Wold's 219 above the Scarp | B6, C7, B8 (the Wold) | 11–12 | the fourth |
-| D6 | the Saltings, `saltings_d6` | 61 | the Delta's 48 | C6, D5 | 11–12 | the fourth |
+| B7 | the Saltings, `saltings_b7` | 944 | the Delta's 346; the Wold's 219 above the Scarp | B6, C7, B8 (the Wold) | 11–12 | the fourth, built (#830) |
+| D6 | the Saltings, `saltings_d6` | 61 | the Delta's 48 | C6, D5, E6 (Wrackholm, across the sea) | 11–12 | the fourth, built (#830) |
 
 ### 12.1 What every box keeps
 
@@ -1881,8 +1964,8 @@ on the road's quest. Then the area's enclave and its artifact's lair (§12.10). 
 - **A camp stands next to the group that keeps it, or clear of every group,** never two squares off:
   rest at a camp is refused only with a group next to the party (`restRefused`,
   `src/game/wilds.ts`). C2's watch stands beside its fire, and the walkthrough shows the rest
-  refused there until it falls; the camps of A4, A5 and A6 are by no group's post and stand clear of
-  both, and a company rests there while they stand.
+  refused there until it falls; the camps of A4, A5, A6 and B7 are by no group's post and stand
+  clear of both, and a company rests there while they stand.
 - **Secrets** are each of their own place, with a hint of a different kind and a block of a
   different shape: a walled cleft found from wear (C2), a beehive hut from its wrens (B2), a
   well-house from a rag willow (A3), a still from a smell (A4), a sluice-house from clear water (A5),
@@ -1895,12 +1978,12 @@ on the road's quest. Then the area's enclave and its artifact's lair (§12.10). 
   piece of gear among them passes the same test.
 - **Pay.** The area's clear stood at 10,343 xp a member before the bounds, and a company entering at
   10 and three quarters clearing it left at 12.4; the curve holds it to 13.0 (`LEAD`). With C2 and
-  B2 it leaves at 12.5, with A3 and A4 at 12.6 and with A5 and A6 at 12.7, a clear giving 12,791 xp
-  a member. The first reckoning gave the six after C2 and B2 about 2,200 xp a member between them;
-  A3 and A4 gave about 640 by the curve's count, A5 and A6 about 1,090, and as planned below the two
-  to come give about 900 (B7 about 600, D6 about 300), a fight inside the aim costing about 250 at
-  10 and 300 at 11 (§8). Each pull request measures the lead, and a box that would carry it past
-  13.0 builds a group fewer (B7 first), and says so.
+  B2 it leaves at 12.5, with A3 and A4 at 12.6, with A5 and A6 at 12.7 and with B7 and D6 at 12.9, a
+  clear giving 13,711 xp a member. The first reckoning gave the six after C2 and B2 about 2,200 xp a
+  member between them; A3 and A4 gave about 640 by the curve's count, A5 and A6 about 1,090 and B7
+  and D6 about 920 (604 and 315, against the 900 planned), a fight inside the aim costing about 250
+  at 10 and 300 at 11 (§8). Each pull request measures the lead, and a box that would carry it past
+  13.0 builds a group fewer, and says so; none did, and B7 and D6 leave it at 12.910.
 - **The walkthrough** walks them in one function, `theBounds` in `walkthrough.ts`, called last: each
   box's seams walked, its groups won at its floor, its secret found from its hint and its prize shut
   to walkers, swimmers, climbers and levitators.
@@ -2125,8 +2208,10 @@ on the road's quest. Then the area's enclave and its artifact's lair (§12.10). 
 - **Its edges.** Its north edge meets B6's south edge, the rim's mountain at 0 and marsh 1 to 31,
   and its east edge C7's west edge, open on rows 0 to 22. Its west edge is the rim's mountain
   against A7, which stays cut, shut at 0,0 too, where B6's 0,31 and A6's 31,31 meet (decision 21),
-  so it has no row of `OPEN_ON_NOTHING`. Its pull request deletes the rows `delta_b6 south` and
-  `saltings_c7 west`; the rest of its edges are worked out from the built letters, as A5's were.
+  so it has no row of `OPEN_ON_NOTHING`. Its south edge meets B8's north edge, the mountain at 0
+  and 1 and the cliff from 2, so it is the Scarp's mountain the whole way, and its corners are the
+  mountain at 0,0, 0,31 and 31,31 and marsh at 31,0 (decision 26). Its pull request deletes the
+  rows `delta_b6 south` and `saltings_c7 west`.
 - **Landmarks.** The Scarp across its south, drawn as mountain; the last marsh; the salters' grass;
   a fan of dead grass at the Scarp's foot.
 - **How it meets the Wold.** The Wold's 219 squares above the Scarp are closed with it, as C7 closed
@@ -2145,12 +2230,34 @@ on the road's quest. Then the area's enclave and its artifact's lair (§12.10). 
 - **New here.** Nothing; the enclave, when it comes, is #845's.
 - **Finds.** 250 gold in the salters' strongbox and an elixir.
 - **Pay.** About 600 xp a member, or a group fewer if the lead asks it (§12.1).
+- **As built** (#830, 23 October): `saltings_b7`, laid at 40,190, 614 squares to stand on, all the
+  Saltings' as laid. In from B6's reeds along row 0 (marsh from 1) and from C7's pans along rows 0
+  to 22, the Scarp across its south and the Glasswold's ground above it shut as mountain, and the
+  rim's mountain down its west two columns. The salters' track runs west along row 16 from C7's
+  lanes to its end at 23,16, where the salt-carter sits at her cart at 22,16 with word of a fire
+  under the Scarp and four men at it; the shrine at the marsh's edge at 15,9 gives a point of
+  accuracy; the salters' halt, the camp, is on the grass at 14,13, clear of both groups; and the
+  cairn of salt blocks on the hill at 9,9 gives 75 gold and a draught. Three salt crabs keep the
+  grass at 20,13, the nearest at 14 steps, and the Hand's smugglers their fire under the Scarp at
+  15,20, the farthest and the hardest at 20 steps. The Scarp's foot at 22,22 is left bare for the
+  enclave's door (decision 28). The bothy is an L of walls in the Scarp's foot at 5–10,16–19, its
+  door at 9,16 and the hint at 9,15, the point of a fan of dead white grass, nine squares of salt
+  spreading north; inside, a cot, a scale and a damp ledger, and a chest of 250 gold and an elixir
+  at 6,18. The gate holds at 11: 7.41 fights to a rest, every fight won. Density: 98.0% within 12
+  steps, the furthest 16. By the curve's count the box pays about 604 xp a member and 427 gold.
 
 ### 12.9 D6, the plate's old place: country, band 11–12
 
 - **Purpose.** Two pieces of land in the sea off Saltmouth: the end of D5's spit at its north, open
   onto D5's south edge, and Saltmouth's shore at its west, open onto C6's east edge. The Saltings',
   whole.
+- **Its edges.** Its north edge meets D5's south edge square for square: shallows at 6 and 7,
+  grass 8 to 12, sand at 13, shallows at 14 and 15, the sea beyond. Its west edge meets C6's east
+  edge: the sea 0 to 5, shallows at 6, tidal ground at 7, sand at 8, the warehouse's wall at 9 and
+  10, sand 11 to 19, tidal ground at 20, shallows 21 to 24, tidal ground 25 to 28 and salt 29 to
+  31. Its east edge meets E6's west edge, the sea the whole way. Its south edge is the sea but for
+  salt at 0 and tidal ground at 1 onto D7, which stays unbuilt (decision 31). Its pull request
+  deletes the rows `delta_d5 south` and `saltings_c6 east` and adds one, `saltings_d6 south`.
 - **Landmarks.** The spit's end where Saltmouth's plate stood before #177 moved it, and in the world
   the footing of the old harbour light; the tidal shore under the town; the sea.
 - **Points of interest,** three features and one group: the light's footing, the hint; a cairn of
@@ -2164,6 +2271,17 @@ on the road's quest. Then the area's enclave and its artifact's lair (§12.10). 
 - **New here.** Nothing.
 - **Finds.** 150 gold in the keeper's chest and a draught.
 - **Pay.** About 300 xp a member.
+- **As built** (#830, 23 October): `saltings_d6`, laid at 104,158, 83 squares to stand on in three
+  pieces. The spit, 22 squares of sand and grass with the store's 6 behind its stone, is walked
+  onto from D5's south edge (the map starts at 10,0); the shore under the town, 36 squares down
+  the west side, and the shore's south end, 19, from C6's east edge. Two bull toads lie on the spit
+  at 12,2, 4 steps from the way in, kept to it. The old harbour light's footing is a round of black
+  stone 5 by 5 at 9–13,4–8 at the spit's end, its door, walled up, at its north tip at 11,4 and the
+  hint at 11,3, where each wave booms hollow under it; inside, a bunk, a cask of oil, a log of
+  wrecks and the keeper's chest of 150 gold and a draught at 11,7. On the shore a cairn of ballast
+  stones at 1,13 gives 60 gold and a draught, and a wreck's ribs stand in the sand of the south end
+  at 2,27. The gate holds at 11: 5.76 fights to a rest, every fight won. Density: 100.0% within 12
+  steps, the furthest 8. By the curve's count the box pays about 315 xp a member and 210 gold.
 
 ### 12.10 The enclave and the lair
 
@@ -2195,4 +2313,9 @@ What the seven areas after Saltreach copy from these boxes, and what they avoid 
   - a text that takes three lines of the log: two is the aim, measured with the log's own wrap
     (`logLines`);
   - a find weaker than what the area's nearest shop sells for its slot;
-  - the same block and the same group in every box.
+  - the same block and the same group in every box;
+  - a walkthrough check that a corner of the rim's mountain is shut to climbers: it holds only while
+    the box beyond is unbuilt, for `layOutdoors` draws a ring's mountain as the void where it faces
+    unbuilt land and as the mountain, climbable, where it faces a box built since (decision 36);
+  - a shallow at an edge square where the atlas past the edge has tidal ground: the pillars check
+    carries water and roads on into the atlas, even where the neighbour is unbuilt (decision 31).
