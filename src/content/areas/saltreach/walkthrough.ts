@@ -1085,7 +1085,7 @@ export const walkthrough: Walkthrough = (ok) => {
  * both groups stand clear of it, the pools and the toad won, the drowned mound left bare and walked to,
  * and the sluice-house found from the clear water at the dyke's foot. The fen under the rim (A6): west
  * out of B6's reeds at 0,16 and south out of A5's corner, both walked, its south edge shut against A7,
- * which stays cut, but for the marsh at its corner; the bell heard, the priest of stone's riddle, a rest
+ * which stays cut, B6's corner with it; the bell heard, the priest of stone's riddle, a rest
  * at the pilgrims' hearth, the drowned men and the toads won at 11 and the anchorite's cell found from
  * its slit. Walked, waded, climbed or floated, no prize is reached but through its door.
  */
@@ -1273,8 +1273,8 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   ok(onward.kind === 'moved' && w.world.zone?.id === A6.id && w.world.state.x === a6.x + 31 && w.world.state.y === a6.y && !onward.messages.some((m) => m.includes('The Delta.')),
     `south from A5's 31,31 onto A6's 31,0, walked, and the land not named again (${said(onward)})`);
   listen(w);
-  ok(Array.from({ length: a6.w }, (_, x) => out.passable(a6.x + x, a6.y + a6.h - 1, ALL) === 'ok').every((open, x) => open === (x === a6.w - 1)),
-    'A6\'s south edge is the rim\'s mountain, shut against A7, which stays cut, but for the marsh at its corner, which meets B6\'s: no other square of it is walked, waded, climbed or floated');
+  ok(Array.from({ length: a6.w }, (_, x) => out.passable(a6.x + x, a6.y + a6.h - 1, ALL) === 'ok').every((open) => !open) && out.passable(a6.x + a6.w, a6.y + a6.h - 1, ALL) !== 'ok',
+    'A6\'s south edge is the rim\'s mountain, shut against A7, which stays cut, and so is B6\'s 0,31 beside its corner: no square of either is walked, waded, climbed or floated');
   // The bell over the fen, and the priest of stone's riddle, the tide's.
   see(w, `${A6.id}:a6_bell`);
   const priest = A6.features!.find((f): f is Extract<Feature, { kind: 'statue' }> => f.kind === 'statue')!;

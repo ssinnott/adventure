@@ -1,11 +1,11 @@
 // The Delta, box A6: the fen under the rim. Country, band 11-12: the fen's west edge beside the Drowned
-// Temples' approach, open to B6 along every row and down from A5 at the top; the temples' bell heard
-// over the fen, a priest of stone knee-deep in the reeds with a riddle, a cairn and a camp at the rim's
-// foot; two drowned men walked out of the temples into the fen and two bull toads at its south end; and
-// in the rim's foot an anchorite's cell walled up, found from the slit she watched the temples through.
-// Its south edge is the rim's mountain, shut against A7, which stays cut, but at the corner, where B6's
-// marsh runs on. Cut from the atlas by hand, its void written in; docs/areas/saltreach.md §12 is its
-// brief.
+// Temples' approach, open to B6 along every row but the last and down from A5 at the top; the temples'
+// bell heard over the fen, a priest of stone knee-deep in the reeds with a riddle, a cairn and a camp
+// at the rim's foot; two drowned men walked out of the temples into the fen and two bull toads at its
+// south end; and in the rim's foot an anchorite's cell walled up, found from the slit she watched the
+// temples through. Its south edge is the rim's mountain, shut against A7, which stays cut, its corner
+// with it, as B6's 0,31 beside it is. Cut from the atlas by hand, its void written in;
+// docs/areas/saltreach.md §12 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
 import { COUNT_STOPPED, STONE_HOME } from './drowned_temples.ts';
@@ -50,7 +50,7 @@ export const DELTA_A6: MapDef = {
     '%%%%%%%%%%MMMMMMMMMMM^^^^^,,,www',
     '%%%%%%%%%%%MMMMMMMMMM^^^^^^,,,ww',
     '%%%%%%%%%%%MMMMMMMMMMM^^^^^^,,ww',
-    '%%%%%%%%%%%MMMMMMMMMMMMMMMMMMMMw',
+    '%%%%%%%%%%%MMMMMMMMMMMMMMMMMMMMM',
   ],
   features: [
     // The bell over the fen, and the priest of stone in the reeds.

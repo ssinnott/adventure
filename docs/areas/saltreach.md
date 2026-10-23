@@ -240,19 +240,20 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
   wildfowler in his punt with word of the toads, a shrine, a camp, a cairn, four leeches and an eel
   in the pools, a bull toad alone where the dyke gives out and the drowned mound left bare in the
   marsh for the lair's door. A6 is the fen under the rim, west of the temples' approach, open to B6
-  along every row: the temples' bell heard over the fen, a priest of stone with a riddle, a cairn, a
-  camp at the rim's foot, two drowned men walked out into the fen and two bull toads. The secrets
-  are a sluice-house walled up in the dyke, the hint clear water running out under its foot, and an
-  anchorite's cell walled into the rim's foot, the hint a slit that looks east to the temples. The
-  gate holds at 10 and 11, at 6.84 and 7.18 fights to a rest (§12.6, §12.7).
+  along every row but the last: the temples' bell heard over the fen, a priest of stone with a
+  riddle, a cairn, a camp at the rim's foot, two drowned men walked out into the fen and two bull
+  toads. The secrets are a sluice-house walled up in the dyke, the hint clear water running out
+  under its foot, and an anchorite's cell walled into the rim's foot, the hint a slit that looks
+  east to the temples. The gate holds at 10 and 11, at 6.84 and 7.18 fights to a rest (§12.6,
+  §12.7).
 - **Weather.** The delta's: mild and wet, the wettest in late autumn, fog off the gulf. Fronts reach
   it four hours after they cross the Foreland.
 
 ## 4. What is still to build
 
-All but C5, D5, C4, C3, B5, B6, C6, C7, B3, B4, C2, B2, A3, A4, A5 and A6: 14,143 squares of land,
-11,965 of them walkable. On the grid (§1) the plan is ten boxes, a dungeon and a town, and the boxes
-hold 8,946 of those squares:
+All but C5, D5, C4, C3, B5, B6, C6, C7, B3, B4, C2, B2, A3, A4, A5 and A6, of the area's 14,143
+squares of land, 11,965 of them walkable (§1). On the grid (§1) the plan is ten boxes, a dungeon and
+a town, and the boxes hold 8,946 of those squares:
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
 |---|---|---|---|---|---|---|---|---|
@@ -960,7 +961,7 @@ mound, a Stone's plinth without its Stone, temples half under water, a port.
   by level (#159), so a company that arrives at 10 earns the shares as written and one that arrives
   at 13 earns less; the curve's row reports what a clear falls short of as owed to #153 until the
   boxes exist. The bounds (§12) pay from the surplus: C2 and B2 about 490 and 220 xp a member by the
-  curve's count, A3 and A4 about 220 and 420, A5 and A6 about 490 and 600, so that a clear now gives
+  curve's count, A3 and A4 about 220 and 420, A5 and A6 about 485 and 604, so that a clear now gives
   12,791 xp a member and 7,773 gold, and a company entering at 10 and three quarters clearing it
   leaves at 12.7, against the curve's 13.0 (#634).
 - **Gold.** Training six members from 10 to 12 costs about 5,040 with today's `trainPrice`, and the
@@ -1738,10 +1739,12 @@ Decided by the builder for #830, each the owner's to overturn:
     and C7's east (19) onto D7, the Wold's box, where the Glasswold's lair has its way in
     (docs/areas/glasswold.md), which §12 does not build. That edge is shut when D7 is built or C7's
     edge is closed.
-18. **A5's pools hold four leeches and an eel,** one leech more than the brief's three. With three,
-    the plain company two under the floor paced 4.39 fights to a rest, 67.5% of the floor's 6.5
-    against an aim of 66.7%; with four it paces 3.93, 60.5%, and the floor's own figure is 6.84
-    against the aim's 7.5. §12.6 says so.
+18. **A5's pools hold four leeches and an eel,** one leech more than the brief's three, a choice and
+    not a need. With three, the plain company two under the floor paced 4.39 fights to a rest, 67.5%
+    of the floor's 6.5: over the aim of 66.7% and inside the limit of 100%, which the gate allows.
+    With four it paces 3.93, 60.5%, and the floor's own figure is 6.84 against the aim's 7.5. The
+    fourth leech pays 65 xp a member more (485 against 419), and A5 stands 35 over the brief's about
+    450. §12.6 says so.
 19. **The drowned mound is drawn and left bare:** a rise of hills 3 by 3 at 25–27,22–24 in the
     marsh, its crown at 26,23, a ring of water round its north, east and south and its west open to
     a way along row 23 from the gap in the dyke at 20,23. No feature or group stands on it, on the
@@ -1753,11 +1756,13 @@ Decided by the builder for #830, each the owner's to overturn:
     18,10. C2's cleft and B2's hut are 3 by 3, A3's well-house 4 by 3 and A4's still 3 by 5. Both
     hints stand on open ground at the door, as A4's does: the clear water at 22,15, with four
     squares of shallows drawn running out of the dyke's foot into the marsh, and the slit at 19,10.
-21. **A6's south-east corner is marsh,** as B6's 0,31 beside it is, so A6 agrees with B6 square for
-    square, and its south edge, the rim's mountain against A7, which stays cut (decision 5), is open
-    at 31 alone. A row of `OPEN_ON_NOTHING` holds that square, as it held A4's corner, until A7 is
-    built or B6's corner is shut: it is the square onto unbuilt land that §12 leaves open by design,
-    and B7's 0,0 beside it will be a second (§12.8).
+21. **A6's south-east corner is the rim's mountain, and so is B6's 0,31 beside it,** as the owner's
+    delegate rules on the review: the two agree square for square, A6's south edge is shut against
+    A7, which stays cut (decision 5), and no row of `OPEN_ON_NOTHING` holds a square of it. B6's
+    0,31 is a dead-end square with nothing on it, its neighbours 0,30 and 1,31 joined still through
+    1,30; the pull request takes square 0 out of the row for `delta_b6 south`. A saved company
+    standing on it loads onto the void and steps off. B7's 0,0 beside both is the same corner, and
+    its pull request draws it to match (§12.8).
 22. **The priest of stone's riddle is answered "tide":** TWICE A DAY IT TAKES THE SHORE AND GIVES IT
     BACK, AND IT IS NEVER LATE. It gives 70 gold to the purse and a point of luck to each member.
     The bell heard at 28,4 stops when the Choirmaster falls, as the count it is does, and the
@@ -1770,11 +1775,11 @@ Decided by the builder for #830, each the owner's to overturn:
     stands at 12.733, against the limit of 13.0 (#634). B7 and D6 as planned, 600 and 300, would
     bring it to about 12.87, so A6's pay stays at the brief's and B7 is the one to trim if it nears
     the limit.
-25. **What is left open:** after A5 and A6, 100 squares of Saltreach's built boxes are open onto
-    unbuilt land, where there were 164: B6's south edge (32) and C7's west edge (23) onto B7, D5's
-    south edge (6) and C6's east edge (19) onto D6, C7's east edge (19) onto D7, the Wold's box,
-    which §12 does not build (decision 17), and A6's south-east corner (1) onto A7 (decision 21).
-    A4's corner, B5's west edge and B6's west edge are answered.
+25. **What is left open:** after A5 and A6, 98 squares of Saltreach's built boxes are open onto
+    unbuilt land, where there were 164: B6's south edge (31) and C7's west edge (23) onto B7, D5's
+    south edge (6) and C6's east edge (19) onto D6, and C7's east edge (19) onto D7, the Wold's box,
+    which §12 does not build (decision 17). A4's corner, B5's west edge and B6's west edge are
+    answered, and A6's south-east corner is shut with B6's 0,31 (decision 21).
 
 ## 10. Names
 
@@ -1863,8 +1868,7 @@ on the road's quest. Then the area's enclave and its artifact's lair (§12.10). 
   road.
 - **What stays cut:** A2 (the river's source under the rim and no square to walk), C1 (mountain) and
   A7 (the rim's foot and the Wold's top, 224 squares). A6's south edge and B7's west edge stand
-  closed against A7 with the rim's mountain but for the corner square where B6's marsh runs on, A6's
-  31,31 and B7's 0,0 (decision 21).
+  closed against A7 with the rim's mountain, and B6's 0,31 between them (decision 21).
 - **Groups** are the roster's (§7), the fewest that pass the gate's pace, none on land a company under
   the band walks onto from another zone. Each box's hardest is at least one over its band's floor (the
   curve's rise rule): 11 in a box of 10–11, 12 in one of 11–12. Only the bull toad reaches 12, and the
@@ -2072,7 +2076,7 @@ on the road's quest. Then the area's enclave and its artifact's lair (§12.10). 
   water runs out under the dyke's foot into the marsh; inside, a stool, the tally-sticks and a chest
   of 180 gold and a draught. The gate holds at 10: 6.84 fights to a rest, every fight won; two
   under, 60.5%. Density: 97.0% within 12 steps, the furthest 15. By the curve's count the box pays
-  about 490 xp a member and 235 gold.
+  about 485 xp a member and 235 gold.
 
 ### 12.7 A6, the fen under the rim: country, band 11–12
 
@@ -2080,10 +2084,10 @@ on the road's quest. Then the area's enclave and its artifact's lair (§12.10). 
   open onto it along all its rows. Its south edge stands closed against A7 (§12.1).
 - **Its edges.** Its north edge meets A5's south edge square for square, walkable from 14 to 31 on
   both sides: hills 14 to 19, then marsh (A5's marsh at 20 is grass in A6, as the atlas has it). Its
-  east edge meets B6's west edge, marsh the whole way, and its west edge is the world's end. Its
-  south edge is the rim's mountain against A7, which stays cut, but for the marsh at 31, where B6's
-  0,31 meets it: that one square is open onto A7, held by a row of `OPEN_ON_NOTHING` for `delta_a6
-  south` (decision 21). Its pull request deletes the row `delta_b6 west`.
+  east edge meets B6's west edge, marsh down to row 30 and the rim's mountain at 31 on both sides,
+  and its west edge is the world's end. Its south edge is the rim's mountain against A7, which stays
+  cut, to its corner at 31,31 (decision 21). Its pull request deletes the row `delta_b6 west` and
+  takes square 0 out of `delta_b6 south`.
 - **Landmarks.** The rim; the fen; the temples' bell, heard from the west; a cell in the rim's foot
   facing the temples.
 - **Points of interest,** about five features and two groups: the bell heard over the fen, an
@@ -2097,34 +2101,32 @@ on the road's quest. Then the area's enclave and its artifact's lair (§12.10). 
 - **New here.** Nothing.
 - **Finds.** 250 gold in the bowl and an elixir.
 - **Pay.** About 600 xp a member, or a group fewer if the lead asks it (§12.1).
-- **As built** (#830, 23 October): `delta_a6`, laid at 8,158, 472 squares to stand on. In from B6's
-  reeds, open along every row, and down from A5 along its width; the south edge is the rim's
-  mountain but for the marsh at its corner, 31,31, where B6's marsh runs on. The bell is heard over
-  the fen at 28,4, struck slow and even with the last stroke late, until the count stops. The priest
-  of stone stands knee-deep in the reeds at 28,12, his hands out to the temples, and his riddle,
-  TWICE A DAY IT TAKES THE SHORE AND GIVES IT BACK, AND IT IS NEVER LATE, is answered tide for 70
-  gold and a point of luck. The cairn of roof slates at 21,4 gives 65 gold and a draught, and the
-  pilgrims' hearth, the camp, is at the rim's foot at 20,24, clear of both groups. Two drowned men
-  stand in the fen at 27,18, six steps from the way in, the nearest, and two bull toads lie at the
-  fen's south end at 26,27, the farthest and the hardest. The anchorite's cell is a walled block 4
-  by 4 at 15–18,8–11 against the rim's foot, its way in at 18,10 and the slit, the hint, at 19,10,
-  where the temples' roofs are in it; inside, her stool, her bowl and what the faithful left her, a
-  chest of 250 gold and an elixir. The gate holds at 11: 7.18 fights to a rest, every fight won,
-  0.3% of days with a fight broken off. Density: 100.0% within 12 steps, the furthest 11. By the
-  curve's count the box pays about 600 xp a member and 400 gold, the brief's, with no group fewer
-  (decision 24).
+- **As built** (#830, 23 October): `delta_a6`, laid at 8,158, 471 squares to stand on. In from B6's
+  reeds, open along every row but the last, and down from A5 along its width; the south edge is the
+  rim's mountain to its corner, 31,31, which B6's 0,31 shares. The bell is heard over the fen at
+  28,4, struck slow and even with the last stroke late, until the count stops. The priest of stone
+  stands knee-deep in the reeds at 28,12, his hands out to the temples, and his riddle, TWICE A DAY
+  IT TAKES THE SHORE AND GIVES IT BACK, AND IT IS NEVER LATE, is answered tide for 70 gold and a
+  point of luck. The cairn of roof slates at 21,4 gives 65 gold and a draught, and the pilgrims'
+  hearth, the camp, is at the rim's foot at 20,24, clear of both groups. Two drowned men stand in
+  the fen at 27,18, six steps from the way in, the nearest, and two bull toads lie at the fen's
+  south end at 26,27, the farthest and the hardest. The anchorite's cell is a walled block 4 by 4 at
+  15–18,8–11 against the rim's foot, its way in at 18,10 and the slit, the hint, at 19,10, where the
+  temples' roofs are in it; inside, her stool, her bowl and what the faithful left her, a chest of
+  250 gold and an elixir. The gate holds at 11: 7.18 fights to a rest, every fight won, 0.3% of days
+  with a fight broken off. Density: 100.0% within 12 steps, the furthest 11. By the curve's count
+  the box pays about 604 xp a member and 400 gold, the brief's, with no group fewer (decision 24).
 
 ### 12.8 B7, the Scarp's foot west of the pans: country, band 11–12
 
 - **Purpose.** The Saltings' grass and the last marsh under the Scarp, west of C7's pans, B6's south
   edge and C7's west edge open onto it. The Saltings', whole: the Delta's marsh in its north half
   plays at the Saltings' band.
-- **Its edges.** Its north edge meets B6's south edge, marsh the whole way, and its east edge C7's
-  west edge, open on rows 0 to 22. Its west edge is the rim's mountain against A7, which stays cut,
-  but for the marsh at 0,0, where B6's 0,31 and A6's 31,31 meet: one square open onto A7, held by a
-  row of `OPEN_ON_NOTHING` of its own (decision 21). Its pull request deletes the rows `delta_b6
-  south` and `saltings_c7 west`; the rest of its edges are worked out from the built letters, as
-  A5's were.
+- **Its edges.** Its north edge meets B6's south edge, the rim's mountain at 0 and marsh 1 to 31,
+  and its east edge C7's west edge, open on rows 0 to 22. Its west edge is the rim's mountain
+  against A7, which stays cut, shut at 0,0 too, where B6's 0,31 and A6's 31,31 meet (decision 21),
+  so it has no row of `OPEN_ON_NOTHING`. Its pull request deletes the rows `delta_b6 south` and
+  `saltings_c7 west`; the rest of its edges are worked out from the built letters, as A5's were.
 - **Landmarks.** The Scarp across its south, drawn as mountain; the last marsh; the salters' grass;
   a fan of dead grass at the Scarp's foot.
 - **How it meets the Wold.** The Wold's 219 squares above the Scarp are closed with it, as C7 closed

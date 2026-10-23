@@ -59,7 +59,7 @@ export const DELTA_B6: MapDef = {
     'wwwww;;;;;;wwwwwwwwwwwwwwwwwwwww',
     'wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww',
     'wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww',
-    'wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww',
+    'Mwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww',
   ],
   features: [
     // The causeway in from Stienwierde.
