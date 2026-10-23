@@ -33,6 +33,8 @@
 // for the clerk's book and the thirty go to Saltmouth, or the book is found first and they go home
 // by the road, where Wat has words with the board in the loft and without; and Tam left feeding the
 // beast and his mother told, or the beast slain before she is met and Tam home on the steps.
+//
+// And the bounds (#835), the three strands round the isle, in a walk of their own (`theBounds`), last.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen, walkThrough, meetWho, playChapter, ending, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
 import type { Step, Walk } from '../../../../tools/walk.ts';
@@ -69,8 +71,15 @@ import { DEAD_DROP_STAIR } from './maps/dead_drop_stair.ts';
 import { DEAD_DROP, VAULT_STAIR } from './maps/dead_drop.ts';
 import { DEAD_DROP2, WRITER_STAIR, HOIST } from './maps/dead_drop2.ts';
 import { DEAD_DROP3 } from './maps/dead_drop3.ts';
+import { WRACKHOLM_E5 } from './maps/wrackholm_e5.ts';
+import { WRACKHOLM_F5 } from './maps/wrackholm_f5.ts';
+import { WRACKHOLM_F7 } from './maps/wrackholm_f7.ts';
 import { GameMap } from '../../../game/map.ts';
-import type { Feature, MapDef } from '../../../game/map.ts';
+import type { Can, Feature, MapDef, MapZone } from '../../../game/map.ts';
+import type { Facing } from '../../../game/types.ts';
+import { buildMaps } from '../../maps.ts';
+import { OUTDOORS } from '../../../game/outdoors.ts';
+import { answerRiddle } from '../../../game/wilds.ts';
 import { item, hits, sellPrice } from '../../../game/items.ts';
 
 /** The clock on to the next hour given. */
@@ -601,6 +610,9 @@ export const walkthrough: Walkthrough = (ok) => {
   drop(w);
   factor(w);
   walkThrough(w, foot.id, 4, 6, SOUTH, hold.id, 1);
+
+  // The bounds (#835): the strands round the isle.
+  theBounds(ok);
 };
 
 /**
@@ -1129,4 +1141,137 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     w.ok(there(w, TAM_HOME(), 'saltmouth') && hear(w, 'saltmouth', TAM_HOME()) === TAM_HOME().lines.join('\n\n'), 'Tam is on the harbour steps');
     w.ok(hear(w, 'saltmouth', LOVEDAY()) === words(LOVEDAY(), 'q_feed_home') && !w.party.flags.q_feed, 'Loveday, beside him, has her son home, and never hires');
   }
+}
+
+/**
+ * The bounds (#835, docs/areas/wrackholm.md §12): the scraps of shore round the isle, three strands
+ * that hold no group. North from E6's grass onto E5's strand, walked, the land not named again, and on
+ * east into F5's; the figurehead's riddle; the soot on the stack's face and the hollow behind it, shut
+ * but through its door; the black rocks at E5's 18,28 left bare for the enclave's door. North from
+ * F6's grass onto F5's strand; the cairn; the fish scales at the stack's foot and the bait store behind
+ * it; the reef at F5's 16,30 left bare for the lair's door. South from F6's shingle onto F7's strand;
+ * the fire under the cliff; the cut chain and the hollow behind the rock. Each box's edges as built.
+ */
+function theBounds(ok: (cond: boolean, msg: string) => void): void {
+  const w = newWalk(ok);
+  w.level = 12;
+  const out = buildMaps()[OUTDOORS], zone = (id: string): MapZone => out.zones.find((z) => z.id === id)!;
+  const E5 = WRACKHOLM_E5, F5 = WRACKHOLM_F5, F7 = WRACKHOLM_F7;
+  const e5 = zone(E5.id), f5 = zone(F5.id), f7 = zone(F7.id), e6 = zone(E6.id), f6 = zone(F6.id), e7 = zone('wold_e7');
+  const ALL: Can = { swim: true, climb: true, float: true };
+  const said = (r: ReturnType<typeof w.world.move>): string => (r.kind === 'moved' ? r.messages.join(' / ') || 'nothing said' : r.kind);
+  const at = (z: MapZone, x: number, y: number): number => (z.y + y) * out.width + z.x + x;
+  /** The squares of a box reached from one of its own, inside the box: on foot, or every way with its secret door shut. */
+  const reach = (z: MapZone, from: readonly [number, number], can: Can, door?: readonly [number, number]): Set<number> => {
+    const seen = new Set<number>(), todo = [[z.x + from[0], z.y + from[1]]];
+    while (todo.length) {
+      const [x, y] = todo.pop()!, k = y * out.width + x;
+      if (seen.has(k) || (door && x === z.x + door[0] && y === z.y + door[1]) || x < z.x || x >= z.x + z.w || y < z.y || y >= z.y + z.h || out.passable(x, y, can) !== 'ok') continue;
+      seen.add(k);
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+    }
+    return seen;
+  };
+  /** Searched from a square facing the face, the wall gives and the room behind it is walked into. */
+  const search = (map: string, x: number, y: number, facing: Facing, room: string): boolean => {
+    w.world.travel(map, x, y, facing);
+    let found = false;
+    for (let i = 0; i < 20 && !found; i++) found = w.world.search();
+    const into = found ? [w.world.move('forward'), w.world.move('forward')] : [];
+    listen(w);
+    return found && into.every((r) => r.kind === 'moved') && w.world.used(room);
+  };
+  const chest = (d: MapDef, id: string): string => { const c = d.features!.find((f) => f.kind === 'chest' && f.id === id); return c?.kind === 'chest' ? `${c.gold} ${c.items.join()}` : 'none'; };
+  /** A door left bare: rock, rock either side along the face, its way walked to, nothing within four squares. */
+  const bare = (d: MapDef, walked: Set<number>, z: MapZone, [x, y]: readonly [number, number], [dx, dy]: readonly [number, number]): string[] => {
+    const near = [...(d.features ?? []), ...(d.encounters ?? []), ...(d.secrets ?? [])].filter((f) => Math.abs(f.x - x) + Math.abs(f.y - y) <= 4);
+    return [d.rows[y][x] === 'r' && d.rows[y - dx]?.[x - dy] === 'r' && d.rows[y + dx]?.[x + dy] === 'r' ? '' : 'not rock in a face',
+      walked.has(at(z, x + dx, y + dy)) ? '' : 'its way not walked to', ...near.map((f) => `${f.x},${f.y} within four`)].filter(Boolean);
+  };
+  const open = (n: number, f: (i: number) => boolean): string => Array.from({ length: n }, (_, i) => f(i)).join();
+  ok([E5, F5, F7].every((d) => !(d.encounters ?? []).length && !(d.exits ?? []).length), 'the strands hold no group, and nothing is taken out of them yet');
+
+  // E5: north from E6's grass at 24,0 onto the strand's 24,31, walked, in Wrackholm still.
+  w.world.travel(e6.id, 24, 0, NORTH);
+  const north = w.world.move('forward');
+  ok(north.kind === 'moved' && w.world.zone?.id === E5.id && w.world.state.x === e5.x + 24 && w.world.state.y === e5.y + 31 && e5.y + e5.h === e6.y && !said(north).includes('Wrackholm'),
+    `north from E6's 24,0 onto E5's 24,31, walked, and the land not named again (${said(north)})`);
+  listen(w);
+  ok(E5.start.x === 24 && E5.start.y === 31 && E5.start.facing === NORTH, 'E5 starts at its south edge, in from the moor');
+  const strand5 = reach(e5, [E5.start.x, E5.start.y], {});
+  ok(strand5.size > 60 && [[15, 31], [18, 29], [24, 30], [25, 28], [28, 27], [31, 26]].every(([x, y]) => strand5.has(at(e5, x, y))),
+    `E5's strand (${strand5.size} squares): its west end, the way to the black rocks, the figurehead and the stack's face are walked to from the way in`);
+  see(w, `${E5.id}:e5_strand`);
+  const figure = E5.features!.find((f): f is Extract<Feature, { kind: 'statue' }> => f.kind === 'statue' && f.id === 'e5_figurehead')!;
+  w.world.travel(E5.id, figure.x, figure.y);
+  ok(!answerRiddle(w.world, w.party, figure, 'tide').right && answerRiddle(w.world, w.party, figure, 'Anchor').right, 'the figurehead\'s riddle is answered anchor, let go for the ship to stay and hauled home for her to sail, and not tide');
+  // The secret: the soot on the stack's face, the search there and the hollow behind it.
+  const lamp = reach(e5, [E5.start.x, E5.start.y], ALL, [28, 26]);
+  ok(lamp.size > 60 && !lamp.has(at(e5, 28, 25)), `the hollow is shut but for its door in the stack: none of E5's ${lamp.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${E5.id}:e5_soot`);
+  ok(search(E5.id, 28, 27, NORTH, 'e5_lamp'), 'searched where the soot is, the rock gives, and the hollow behind it can be walked into');
+  ok(chest(E5, 'e5_chest') === '150 elixir', `in the hollow, a sea chest with 150 gold and an Elixir (${chest(E5, 'e5_chest')})`);
+  // The enclave's door (docs §12.5) is left bare: the black rocks at the strand's west end, 18,28.
+  const wreck = bare(E5, strand5, e5, [18, 28], [0, 1]);
+  ok(!wreck.length, `the black rocks at E5's 18,28 are left bare for the enclave's door, walked to from 18,29, nothing within four squares${wreck.length ? ` (not: ${wreck.join(', ')})` : ''}`);
+  // And on east along the strand into F5, walked.
+  w.world.travel(E5.id, 31, 28, EAST);
+  const east = w.world.move('forward');
+  ok(east.kind === 'moved' && w.world.zone?.id === F5.id && w.world.state.x === f5.x && w.world.state.y === f5.y + 28 && !said(east).includes('Wrackholm'), `east along the strand from E5's 31,28 onto F5's 0,28, walked (${said(east)})`);
+  listen(w);
+
+  // F5: north from F6's grass at 8,0 onto the strand's 8,31, walked.
+  w.level = 13;
+  w.world.travel(f6.id, 8, 0, NORTH);
+  const onto5 = w.world.move('forward');
+  ok(onto5.kind === 'moved' && w.world.zone?.id === F5.id && w.world.state.x === f5.x + 8 && w.world.state.y === f5.y + 31 && !said(onto5).includes('Wrackholm'),
+    `north from F6's 8,0 onto F5's 8,31, walked (${said(onto5)})`);
+  listen(w);
+  const strand6 = reach(f5, [F5.start.x, F5.start.y], {});
+  ok(strand6.size > 60 && [[0, 26], [2, 27], [8, 30], [9, 28], [16, 31], [18, 31]].every(([x, y]) => strand6.has(at(f5, x, y))),
+    `F5's strand (${strand6.size} squares): the cairn, the stack's foot, the way to the reef and the strand's east end are walked to from the way in`);
+  see(w, `${F5.id}:f5_strand`);
+  const cairn = F5.features!.find((f) => f.kind === 'cairn' && f.id === 'f5_cairn');
+  ok(cairn?.kind === 'cairn' && cairn.gold === 80 && cairn.items?.join() === 'potion_sp_great', 'above the weed, a cairn with 80 gold and a Sapphire Vial');
+  const bait = reach(f5, [F5.start.x, F5.start.y], ALL, [9, 27]);
+  ok(bait.size > 60 && !bait.has(at(f5, 9, 26)), `the bait store is shut but for its door in the stack: none of F5's ${bait.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${F5.id}:f5_scales`);
+  ok(search(F5.id, 9, 28, NORTH, 'f5_store'), 'searched where the scales are dried on the rock\'s foot, the rock gives, and the store behind it can be walked into');
+  ok(chest(F5, 'f5_box') === '120 elixir', `under the casks, a box with 120 gold and an Elixir (${chest(F5, 'f5_box')})`);
+  // The lair's door (docs §12.6) is left bare: the reef at the strand's east end, 16,30.
+  const reef = bare(F5, strand6, f5, [16, 30], [0, 1]);
+  ok(!reef.length, `the reef at F5's 16,30 is left bare for the lair's door, walked to from 16,31, nothing within four squares${reef.length ? ` (not: ${reef.join(', ')})` : ''}`);
+
+  // F7: south from F6's shingle at 14,31 onto the strand's 14,0, walked.
+  w.world.travel(f6.id, 14, 31, SOUTH);
+  const south = w.world.move('forward');
+  ok(south.kind === 'moved' && w.world.zone?.id === F7.id && w.world.state.x === f7.x + 14 && w.world.state.y === f7.y && f6.y + f6.h === f7.y && !said(south).includes('Wrackholm'),
+    `south from F6's shingle at 14,31 onto F7's 14,0, walked (${said(south)})`);
+  listen(w);
+  ok(F7.start.x === 14 && F7.start.y === 0 && F7.start.facing === SOUTH, 'F7 starts at its north edge, in from the shingle');
+  const strand7 = reach(f7, [F7.start.x, F7.start.y], {});
+  const fire = F7.features!.find((f) => f.kind === 'camp')!;
+  ok(strand7.size > 40 && [[1, 0], [5, 1], [10, 3], [12, 4], [15, 3], [19, 0]].every(([x, y]) => strand7.has(at(f7, x, y))) && fire.x === 5 && fire.y === 1,
+    `F7's strand (${strand7.size} squares): the fire under the cliff, the rock's foot and both ends are walked to from the way in`);
+  see(w, `${F7.id}:f7_strand`);
+  const irons = reach(f7, [F7.start.x, F7.start.y], ALL, [10, 4]);
+  ok(irons.size > 40 && !irons.has(at(f7, 10, 5)), `the hollow is shut but for its door in the rock: none of F7's ${irons.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${F7.id}:f7_links`);
+  ok(search(F7.id, 10, 3, SOUTH, 'f7_hole'), 'searched where the cut chain lies, the rock gives, and the hollow behind it can be walked into');
+  ok(chest(F7, 'f7_purse') === '100 potion_sp_great', `in the weed, a purse with 100 gold and a Sapphire Vial (${chest(F7, 'f7_purse')})`);
+
+  // The edges: E5's south meets E6's north, open at 15 to 31; E5's east meets F5's west, open at 26 to
+  // 31; F5's south meets F6's north, open at 0 to 18; F7's north meets F6's south, open at 1 to 10, 13 to
+  // 15 and 17 to 19, its rock and shingle as F6's. The rest is the sea, shut to every company, but
+  // F7's 0,0, shallows a swimmer wades, against the Wold's deep water at E7's 31,0.
+  const row = (z: MapZone, y: number, can: Can = {}): string => open(32, (i) => out.passable(z.x + i, z.y + y, can) === 'ok');
+  const col = (z: MapZone, x: number, can: Can = {}): string => open(32, (i) => out.passable(z.x + x, z.y + i, can) === 'ok');
+  ok(row(e5, 31) === open(32, (i) => i >= 15) && row(e5, 31) === row(e6, 0) && col(e5, 31) === open(32, (i) => i >= 26) && col(e5, 31) === col(f5, 0)
+    && row(f5, 31) === open(32, (i) => i <= 18) && row(f5, 31) === row(f6, 0)
+    && row(f7, 0) === open(32, (i) => (i >= 1 && i <= 10) || (i >= 13 && i <= 15) || (i >= 17 && i <= 19)) && row(f7, 0) === row(f6, 31),
+    'E5 meets E6 at 15 to 31 and F5 at 26 to 31, F5 meets F6 at 0 to 18 and F7 meets F6 at 1 to 10, 13 to 15 and 17 to 19, square for square');
+  const none = open(32, () => false);
+  ok([row(e5, 0, ALL), col(e5, 0, ALL), row(f5, 0, ALL), col(f5, 31, ALL), row(f7, 31, ALL), col(f7, 31, ALL)].every((s) => s === none)
+    && col(f7, 0, ALL) === open(32, (i) => i === 0) && col(f7, 0) === none && out.passable(e7.x + 31, e7.y, ALL) !== 'ok',
+    'past the strands the sea, shut to every company, but F7\'s 0,0, shallows a swimmer wades and the Wold\'s deep water shuts');
 }
