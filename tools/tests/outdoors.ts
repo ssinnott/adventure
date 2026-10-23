@@ -132,10 +132,6 @@ const SEAMS_AS_BUILT: readonly AsBuilt[] = [
 const OPEN_ON_NOTHING: readonly OnNothing[] = [
   // Thornmark.
   { edge: 'deepthorn_h3 south', open: '14-16', why: 'H4 is a crumb, left unbuilt (#828)' },
-  // Wrackholm.
-  { edge: 'wrackholm_e6 north', open: '15-31', why: 'E5 is unbuilt: #835 builds it' },
-  { edge: 'wrackholm_f6 north', open: '0-18', why: 'F5 is unbuilt: #835 builds it' },
-  { edge: 'wrackholm_f6 south', open: '1-10 13-15 17-19', why: 'F7 is unbuilt: #835 builds it' },
   // The Kilns.
   { edge: 'kilnmouth_l6 north', open: '29-31', why: 'L5 is the sea along here, where #828 plans no box' },
   { edge: 'kilnmouth_m5 west', open: '24-31', why: 'L5 is the sea along here, where #828 plans no box' },

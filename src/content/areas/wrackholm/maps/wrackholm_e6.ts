@@ -100,7 +100,7 @@ export const WRACKHOLM_E6: MapDef = {
     { kind: 'cairn', x: 24, y: 18, id: 'e6_cairn', text: 'A cairn on the moor\'s crown, shore stones carried up through the heather, and a ship\'s block gone soft among them.', gold: 60, items: ['potion_heal'] },
     { kind: 'camp', x: 18, y: 27, name: 'The lee of the hills', text: 'Heather pulled for bedding in a hollow out of the wind, and a ring of stones black from old fires.' },
     { kind: 'shrine', x: 11, y: 25, id: 'e6_shrine', text: 'On the west shore a Tidefolk bowl, set to face the delta, full to the lip with shells. The gulls have left it alone.', stat: 'luck', done: 'The bowl holds only shells.' },
-    { kind: 'event', x: 22, y: 2, id: 'e6_north', once: true, text: 'Open grass to the north edge, then air. North-east the Deepthorn is a dark line, and every stone white with gulls.' },
+    { kind: 'event', x: 22, y: 2, id: 'e6_north', once: true, text: 'Open grass runs north to a strand and the sea. North-east the Deepthorn is a dark line, and every stone white with gulls.' },
     { kind: 'event', x: 29, y: 5, id: 'e6_northeast', once: true, text: 'Grass gives out to heather, and a path runs east through it, trodden to peat by more feet than a fishing isle has.' },
     { kind: 'event', x: 29, y: 21, id: 'e6_east', once: true, text: 'East, heather falls to broken grey rock with the sea working in it. Smoke out there, thin, and no house to make it.' },
     { kind: 'event', x: 25, y: 26, id: 'e6_south', once: true, text: 'Southward the moor drops to pools, bright at low water. The weed in them stirs, lifts an arm, and lays it down.' },
