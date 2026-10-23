@@ -55,6 +55,6 @@ export const GREYWATER2: MapDef = {
     { id: 'gw2_crawlers2', x: 1, y: 11, monsters: ['rift_crawler', 'rift_crawler', 'rift_crawler', 'rift_crawler', 'rift_crawler'], aware: 5, respawn: 1440 },
     { id: 'gw2_dead', x: 6, y: 14, monsters: ['ghoul', 'ghoul', 'ghoul', 'ghoul', 'drowned', 'drowned'], aware: 4, respawn: 2880 },
     { id: 'gw2_doorguard', x: 11, y: 10, monsters: ['ashen_acolyte', 'ashen_acolyte', 'ashen_acolyte', 'ghoul', 'ghoul'], aware: 3, roams: false },
-    { id: 'gw2_deacon', x: 7, y: 11, monsters: ['ashen_deacon', 'ashen_acolyte', 'ashen_acolyte'], aware: 2, roams: false },
+    { id: 'gw2_deacon', x: 7, y: 11, monsters: ['ashen_deacon', 'ashen_acolyte', 'ashen_acolyte'], aware: 2, roams: false, boss: true },
   ],
 };

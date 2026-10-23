@@ -14,6 +14,7 @@ import { START_MINUTES } from '../../src/game/world.ts';
 import { GameMap, HILL_DRAG, DRAG } from '../../src/game/map.ts';
 import type { Terrain } from '../../src/game/map.ts';
 import { SOUTH } from '../../src/game/types.ts';
+import { once } from '../checks.ts';
 import { ok } from './lib.ts';
 
 export function weather(): void {
@@ -134,13 +135,19 @@ export function weather(): void {
   // Towns and dungeons share their region's weather; only the open road crosses from one to the next.
   const crossed = crossings(MAP_DEFS);
   ok(!crossed.length, `every town and dungeon shares a region with the maps its exits lead to, but the one written exception${crossed.length ? ' -> ' + crossed.join('; ') : ''}`);
+  const named = namedCrossings(MAP_DEFS);
+  ok(...once('the one crossing is named once, in ONE_CROSSING or on its exit', named.length > 1 ? named : []));
   { // The exception on fixtures (#749): the door marked CREW ONLY passes, and no other way. The
-    // Hearth's region is the area's own to add, so the fixtures name it as a word.
+    // Hearth's region is the area's own to add, so the fixtures name it as a word. Each is judged by a
+    // table of its own, so it holds whether the door is written in ONE_CROSSING or marked (#897).
     const fx = (id: string, region: string, exits: MapDef['exits'] = []): MapDef => ({ id, name: 'Fixture', kind: 'dungeon', region: region as RegionId, start: { x: 1, y: 1, facing: SOUTH }, rows: ['#####', '#...#', '#####'], exits });
-    const mines = fx('deep_mines3', 'kilns');
-    const ways = (x: number, to = 'deep_mines3', region = 'hearth'): MapDef[] => [fx('underdeep', region, [{ x, y: 10, to, tx: 13, ty: 3 }]), mines, fx('deep_mines2', 'kilns')];
-    ok(!crossings(ways(2)).length, 'the door marked CREW ONLY, from the Ways under the Hearth into the Kilns\' deep mines, crosses by its written exception');
-    ok(crossings(ways(3)).length === 1 && crossings(ways(2, 'deep_mines2')).length === 1 && crossings(ways(2, 'deep_mines3', 'shelf')).length === 1, 'and an exit from another square, to another map or between other regions does not');
+    const mines = fx('deep_mines3', 'kilns'), door: Crossing = { from: 'underdeep', x: 2, y: 10, to: 'deep_mines3', regions: 'hearth kilns' };
+    const ways = (x: number, to = 'deep_mines3', region = 'hearth', crosses?: string): MapDef[] => [fx('underdeep', region, [{ x, y: 10, to, tx: 13, ty: 3, ...(crosses ? { crosses } : {}) }]), mines, fx('deep_mines2', 'kilns')];
+    ok(!crossings(ways(2), [door]).length && !crossings(ways(2, 'deep_mines3', 'hearth', door.regions), []).length, 'the door marked CREW ONLY, from the Ways under the Hearth into the Kilns\' deep mines, crosses by its written exception');
+    ok(crossings(ways(3), [door]).length === 1 && crossings(ways(2, 'deep_mines2'), [door]).length === 1 && crossings(ways(2, 'deep_mines3', 'shelf'), [door]).length === 1, 'and an exit from another square, to another map or between other regions does not');
+    const marked = (region: string): MapDef[] => [fx('underdeep', region, [{ x: 3, y: 10, to: 'deep_mines3', tx: 13, ty: 3, crosses: door.regions }]), mines];
+    ok(!crossings(marked('hearth'), []).length && crossings(marked('shelf'), []).length === 1 && namedCrossings(marked('hearth'), []).length === 1 && namedCrossings(marked('hearth'), [door]).length === 2,
+      'an exit marked as the crossing, with the two regions it joins, crosses alone, and between two others does not; beside a written one it is a second crossing named, which is refused');
   }
 }
 
@@ -149,20 +156,29 @@ export function weather(): void {
  * under the Hearth (`underdeep` 2,10) into the lowest level of the Kilns' deep mines (docs/areas/
  * hearth_isle.md §6, 60). The Ways lie under the Hearth and the mines under the Kilns, and the door
  * is where they meet; each side keeps its own region's weather. No other exit from a town or a
- * dungeon may cross.
+ * dungeon may cross. It may be marked on its exit instead (`Exit.crosses`, the same two regions), and
+ * then is written here no longer (#897): a list, so that it may be empty.
  */
-const ONE_CROSSING = { from: 'underdeep', x: 2, y: 10, to: 'deep_mines3', regions: 'hearth kilns' };
+const ONE_CROSSING: readonly Crossing[] = [{ from: 'underdeep', x: 2, y: 10, to: 'deep_mines3', regions: 'hearth kilns' }];
 
-/** Every exit from or into a town or a dungeon that leaves its region, but the written exception. */
-export function crossings(defs: readonly MapDef[]): string[] {
+/** A crossing written in ONE_CROSSING: its exit's map and square, the map it leads to, and the regions it joins, from and to. */
+interface Crossing { from: string; x: number; y: number; to: string; regions: string }
+
+/** The crossings named: ONE_CROSSING's, and each exit marked as one (`Exit.crosses`). There is one, named once (#897). */
+export const namedCrossings = (defs: readonly MapDef[], written: readonly Crossing[] = ONE_CROSSING): string[] => [
+  ...written.map((o) => `${o.from} ${o.x},${o.y}`),
+  ...defs.flatMap((d) => (d.exits ?? []).filter((e) => e.crosses).map((e) => `${d.id} ${e.x},${e.y}`)),
+];
+
+/** Every exit from or into a town or a dungeon that leaves its region, but the written exception, in ONE_CROSSING or marked on its exit. */
+export function crossings(defs: readonly MapDef[], written: readonly Crossing[] = ONE_CROSSING): string[] {
   const out: string[] = [];
   for (const def of defs) for (const e of def.exits ?? []) {
     const to = defs.find((d) => d.id === e.to);
     if (!to) { out.push(`${def.id} ${e.x},${e.y} -> ${e.to}, no map`); continue; }
     if (def.kind === 'outdoor' && to.kind === 'outdoor') continue;
     const a = def.region ?? 'shelf', b = to.region ?? 'shelf';
-    const o = ONE_CROSSING;
-    if (a === b || (def.id === o.from && e.x === o.x && e.y === o.y && e.to === o.to && `${a} ${b}` === o.regions)) continue;
+    if (a === b || e.crosses === `${a} ${b}` || written.some((o) => def.id === o.from && e.x === o.x && e.y === o.y && e.to === o.to && `${a} ${b}` === o.regions)) continue;
     out.push(`${def.id} ${e.x},${e.y} (${a}) -> ${to.id} (${b})`);
   }
   return out;
