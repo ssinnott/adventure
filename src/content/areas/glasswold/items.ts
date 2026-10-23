@@ -2,7 +2,7 @@
 // sells the band's consumables and their own leather, nothing of steel (#443, calls 5 and 7), and the
 // boxes' finds are theirs; what came out of the Glass is the Cartographers' to buy at Cinderport (#56's 51).
 import type { ItemDef } from '../../../game/items.ts';
-import { W, A, P, NO_CASTER_HEAVY, ARTIFACT_PRICE } from '../../items.ts';
+import { W, A, P, MARTIAL, NO_CASTER_HEAVY, ARTIFACT_PRICE } from '../../items.ts';
 import { basaltShield } from '../ashfall/items.ts';
 
 /** In the basilisk's hoard on the great mesa (D10, #527): Cinderport's step (#542) with a plus, at 1,700. */
@@ -18,6 +18,14 @@ export const leatherCoat = A('leather_coat', 'Leather Coat', 2400, 12, { classes
 export const akkush = W('akkush', 'Akkush', ARTIFACT_PRICE, 1, 12, { kind: 'bow', bonus: 14, ranged: true, twoHanded: true, classes: ['ranger'], stat: { accuracy: 5 }, artifact: true, text: [
   'A Rider\'s bow of white horn and sinew, its grip worn to one hand.',
   'Bound under the grip is a feather longer than your arm.',
+] });
+
+// In the eldest khan's cell in Karaordu, the enclave (#833): a Rider's sabre of old steel, one-handed, its
+// blows carrying cold. Found there alone and sold nowhere, inside the enclave's window, the Hearth's 7,000
+// (EXPANSION §5.2, #845's 3), at the Levin Mace's price for the same blade and an element.
+export const khansSabre = W('khans_sabre', 'Khan\'s Sabre', 6950, 2, 12, { bonus: 5, classes: MARTIAL, element: 'cold', text: [
+  'A curved blade of dark old steel, its grip bound in horsehide and gold wire.',
+  'It is cold in the hand, and frost comes up on the steel in the warmest air.',
 ] });
 
 export const ITEMS: readonly ItemDef[] = [
@@ -54,4 +62,5 @@ export const ITEMS: readonly ItemDef[] = [
     'A bow of horn and sinew, black with handling. The grip is worn in two places, by thumb and heel, to one hand.',
   ] },
   akkush,
+  khansSabre,
 ];

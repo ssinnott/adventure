@@ -32,17 +32,17 @@ quests (#532, §6), two given from Cinderport's halls and two at Akordu; and E9,
 road, and E8, the shore, the country behind (#534, §4.9); and the Master of arms (#858, §6), an old
 Rider hidden in D10's small mesa, with a rumour at Akordu's trader's tent and his favour in E9's
 store. With them the Wold is complete overland. The bounds (#833, §12) add D7, the Scarp's east end
-over the gulf, and E7, the north of the other island; the enclave and the lair come after.
-The Wold holds the quest's step (`AHEAD` and `PLANNED`, empty from then on, went with #897). Its content is
-`src/content/areas/glasswold/` (maps,
-interiors, monsters, items, climate, its part of the world map in `atlas.ts` and its walkthrough;
-its chapter, The Warning, in `chapter.ts`, and its quests in `quests.ts`, the Ranger's third's and
-#56's four); it has no town
-and one business, the Riders' trader at Akordu, whose tent has a room. Its ids: the area
-`glasswold`, its zones `wold` and `theglass`, the plan's; the Buried Tower `buried_tower`, the
-plan's, left to the reach. Akordu's (the Wold Riders' camp) is the site's name and its map `wold_d8`
-(#526); Kushtash's (the Eyrie) is the site's name and its map `wold_b8` (#529), and the Eyrie's site
-keeps its name in the issues until #444 renames it.
+over the gulf, and E7, the north of the other island; then Karaordu, the enclave, the khans' barrow
+under the hills over Akordu's box (§12.4). The lair comes after. The Wold holds the quest's step
+(`AHEAD` and `PLANNED`, empty from then on, went with #897). Its content is
+`src/content/areas/glasswold/` (maps, interiors, monsters, items, climate, its part of the world map
+in `atlas.ts` and its walkthrough; its chapter, The Warning, in `chapter.ts`, and its quests in
+`quests.ts`, the Ranger's third's and #56's four); it has no town and one business, the Riders'
+trader at Akordu, whose tent has a room. Its ids: the area `glasswold`, its zones `wold` and
+`theglass`, the plan's; the Buried Tower `buried_tower`, the plan's, left to the reach. Akordu's
+(the Wold Riders' camp) is the site's name and its map `wold_d8` (#526); Kushtash's (the Eyrie) is
+the site's name and its map `wold_b8` (#529), and the Eyrie's site keeps its name in the issues
+until #444 renames it.
 
 ---
 
@@ -55,7 +55,7 @@ Glasswold two zones:
 |---|---|---|---|
 | The Wold | 26–28 | 6,240 (steppe 3,133, hills 1,151, mountain 646, dunes 540, grass 369) | D9, D10, D8, C8, B8 and B9; E9, laid at 136,254, and E8, at 136,222 (#534); D7, at 104,190, and E7, at 136,190 (#833) |
 | The Glass, the reach | 30–32 | 4,813 (steppe 1,306, mountain 1,028, hills 838, glass 817, dunes 626) | nothing, and not this phase's |
-| The area | 26–28 | 11,053 | D9, D10, D8, C8, B8, B9, E9, E8, D7 and E7 |
+| The area | 26–28 | 11,053 | D9, D10, D8, C8, B8, B9, E9, E8, D7 and E7; Karaordu, the enclave, entered from D7 (#833) |
 
 Squares are the land `worldGrid` gives each zone by today's seeds, without shallows or rivers;
 9,349 of them a company could walk, and nearly half of those are steppe. That is about 10.8 zone
@@ -142,7 +142,7 @@ glare from the south-west on a clear noon.
 
 ## 3. What is built
 
-Eight boxes of its own, the first of which lists the area (#525):
+Ten boxes of its own, the first of which lists the area (#525), and an enclave (#833):
 
 - **The steppe** (D9, `wold_d9`, core, band 26–27; #525): open grass with glass in it, laid whole at
   104,254. The atlas's road comes over the south edge and runs north-west and west to the gap; a
@@ -224,12 +224,27 @@ Eight boxes of its own, the first of which lists the area (#525):
   in the cleft behind it, a sea-chest is wedged, shut to walkers, waders, climbers and floaters but
   through the rock. Three groups: a pride of four lions with three vultures on the strand, three
   vultures on the boat's ribs and two basilisks at the strand's north end, the box's hardest (§4.9).
+- **The Scarp's east end** (D7, `wold_d7`, country, band 26–27; #833): the bounds' first, laid whole
+  at 104,190 over Akordu's box. On top, the lip past the poles: long grass with three lions lying up
+  in it, a foal's bones on the shore sand with four vultures over them, a cairn of sea-stones, the
+  walkers' tracks to the Scarp's end and two glass walkers there, the Riders' old watch-fire and,
+  behind the beacon's cold hearth, the keepers' store. Below the Scarp the Saltings' strip, walked
+  onto from C7 and D6, holds no group. In the hills over Akordu's box the diggers' cut leads into
+  Karaordu (§12.2).
+- **The other island's north** (E7, `wold_e7`, country, band 26–27; #833): laid whole at 136,190, a
+  swimmer's with no group: the island's grass, a bar of sand out to an islet white with gulls and
+  the castaway's hollow behind the moaning crack, with the strand's spit at its corner (§12.3).
+- **Karaordu, the enclave** (`karaordu`, a dungeon, band 28–29; #833, #845): the khans' barrow under
+  the hills over Akordu's box, entered down the diggers' cut at D7's 8,30. Four basilisks at the
+  passage's head, where the diggers stand in stone, and eight deep rats among the bones of the
+  khans' chamber; behind its end wall, found from the horses' skulls turned to it, the eldest khan's
+  cell and the Khan's Sabre (§12.4).
 
 Its atlas rows are charted in `src/content/areas/glasswold/atlas.ts`, the area's own `atlas` since
 D9 lists the area; until then `src/content/atlas.ts` spread them into the plan where its rows were,
 as Saltreach's and Wrackholm's were until each had a map (docs/areas/saltreach.md §9, #169's 1): the
-zones with their bands, the Wold 26–28, with D9, D10, D8, C8, B8 and B9 laid on it, D10 first, and
-the Glass 30–32, the Buried Tower's plate at 30–32, and the sites, Akordu (the plan's Wold Riders
+zones with their bands, the Wold 26–28, with its ten boxes laid on it (§3), D10 first, and the Glass
+30–32; the plates of the Buried Tower and Karaordu; and the sites, Akordu (the plan's Wold Riders
 camp at 120,250), Kushtash (the Eyrie, moved to about 46,242, call 5, built with B8) and the Buried
 Tower, "The Glass" and "Buried Tower" lettered as the plan letters them. The lava flow is drawn in
 the plan's ridges (`src/content/atlas.ts`), the one line outside the folder this doc asks for (call
@@ -285,6 +300,9 @@ boxes, which hold 5,557 of those squares, 5,379 walkable, the table the epic #44
 | B8 | The Wold's heart | the Wold | core | 27–28 | 1,024 (steppe 769, rock 101, hills 77, mountain 33, cliff 30, earth 9, stone 4, a secret door 1) | the Grey Lion's ground; Kushtash, the far-west mesa under the rim at about 46,242, the Ranger's third; built by #529 at 27–28: the hunters' camp by the way in with the young Rider and the eldest's word, the kill-ground with the vultures over it, a pride, the mesa fight and the Grey Lion alone, a cairn, a well, a shrine that gives speed, a hermit under the rim, and Kushtash with its stepped scree up from a secret door and the scout at her fire on the top (§4.7) | none | #529, built |
 | B9 | The Glass's edge | the Wold | country | 26–28 | 1,024 (dunes 483, mountain 268, steppe 126, hills 76, rock 65, earth 5, a secret door 1) | the dunes and the scorpions; the gap at the mesas and dunes; the Riders' watch on the only way in; the glass walkers; built by #530 at 26–28: the dunes down to the rim's foot, the Riders' cairn at their head, the watch's fire on the last grass with its three Riders, the gap with its stones, the walker's tracks and the Glass seen from its last square, two groups of scorpions, the vultures, a glass walker alone and two at the gap, and the half-buried walker in the dune that does not shift with its cache (§4.8) | the Riders keep the way in | #530, built |
 | E9, E8 | The hills behind the road; the shore | the Wold | country, behind the road | 26–27 | 931 (hills 411, steppe 264, grass 222) and 305 | the hills down to the coast; the shore; built by #534 at 26–27: the Riders' summer camp on the sea grass, the herders' store behind a path that stops at a slab, a pride, a flock of vultures and a pair of basilisks on the hills (E9); the strand, the mares' island for a swimmer, the sea-chest in the black rocks, a pride, a flock and a pair of basilisks (E8) (§4.9) | none | #534, built |
+
+The bounds come after the plan (§12, #833): D7 and E7 are built as country at 26–27 and Karaordu,
+the enclave, at 28–29 off D7; the lair is to come.
 
 The core is the four boxes the Riders and their beasts fill, D9, D8, D10 and B8, built at full
 density; E10, C8, B9, E9 and E8 are country, built to the looser floor with the wilderness features
@@ -1351,22 +1369,27 @@ scorpions as two groups of four and its glass walker alone at the dunes' middle;
 in their pair at the gap, off the way to the Glass, and a company need not fight them to see it
 (§4.8, §9, #530's 2 and 10). E9's and E8's are each a pride with its three vultures, a flock of
 three vultures and a pair of basilisks, the pair the box's hardest (§4.9, §9, #534's 6). The Wold
-spends MONSTERS §3.3's stone (#546), first at D10, where the
-basilisk is placed, behind the mesa's lions and alone under the small mesa (§4.5, §9, #527's 15 and
-16), and again at D8, alone in the mesa's shade (§4.4), then at C8, a pair in the hills (§4.6), at
-B8, behind four lions under the lesser mesa (§4.7) and at E9 and E8, a pair in each, on the hills'
-north end and the strand's (§4.9); the sweep (#545) and the toll (#544) are the
-Whitespine's and Ashfall's, spent before it.
+spends MONSTERS §3.3's stone (#546), first at D10, where the basilisk is placed, behind the mesa's
+lions and alone under the small mesa (§4.5, §9, #527's 15 and 16), and again at D8, alone in the
+mesa's shade (§4.4), then at C8, a pair in the hills (§4.6), at B8, behind four lions under the
+lesser mesa (§4.7), at E9 and E8, a pair in each, on the hills' north end and the strand's (§4.9)
+and in Karaordu, four at the passage's head (§12.4); the sweep (#545) and the toll (#544) are the
+Whitespine's and Ashfall's, spent before it. In the bounds (§12, #833), E7 holds no group and D7
+four vultures, three lions and two glass walkers, the walkers the hardest. Karaordu, the enclave,
+holds the basilisks and eight of the Hearth's deep rats, the hardest at 30: the curve asks an
+enclave at 28–29 for a group at 29 or over, and the Wold's own stop at 27 but for the Grey Lion (§9,
+#833's 15).
 
 New in the Glasswold, for the novelty check (EXPANSION §5.4): the glass walkers, a new family, and
 dunes underfoot (#543), both claimed by D9, which places them first (§9, #525's 15); steppe
 underfoot, E10's first; stone and its cure (#546), claimed by D10, which places the basilisk first
 (§9, #527's 15); a camp that is an area's rest, with a `coach` sold from it (#547), built at Akordu,
 though the check refuses the camp landmark, which is on the road before (§9, #526's 18); the reach
-seen from the road and its band said. C8, B8, B9, E9 and E8 claim nothing of their own (§9, #528's
-14, #529's 15, #530's 17, #534's 12): B9's dunes and walkers are D9's, and the reach seen from the
-road has no token. Its landmarks: a mesa, a camp of tents, a garden of the glassed, a lava flow
-seen, a cliff from its top.
+seen from the road and its band said. C8, B8, B9, E9, E8, D7, E7 and Karaordu claim nothing of their
+own (§9, #528's 14, #529's 15, #530's 17, #534's 12, #833's 15): B9's dunes and walkers are D9's,
+and the reach seen from the road has no token. Karaordu's deep rats are of a family no area claims.
+Its landmarks: a mesa, a camp of tents, a garden of the glassed, a lava flow seen, a cliff from its
+top.
 
 ## 8. The numbers
 
@@ -1516,6 +1539,16 @@ seen, a cliff from its top.
   one paying over the share (§9, #534's 6). Density 100.0% within 12 steps, the country floor: E9
   965 of 965 and the furthest 12, E8 324 of 324 and the furthest 11, with no sign among their 22 and
   17 points. The area's dearest find stays the Leather Coat +2, 2,700 gold of the window's 6,000.
+- **The bounds** (#833, §12): D7 pays about 1,580 xp a member and 1,450 gold and E7 700 gold, so a
+  clear gives 23,016 xp a member of the 21,067 asked and 14,900 gold of the 12,720; a company
+  entering at 26 and three quarters clearing it leaves at 28.0, +0.0 over the next floor, 28
+  (§12.1). D7's three groups bring the Glasswold's pool to 32, won 99.2% at the floors; two under,
+  pooled at 24, a company manages 7.52 fights to a rest, 71.6% of the floor's 10.5, between the aim,
+  66.7%, and the limit. Karaordu, the enclave, is held to its own band and counted in no clear: it
+  gives 1,511 xp a member and 1,700 gold. At its floor, 28, a company wins every fight and manages
+  10.60 fights to a rest (aim 10 to 12); two under, at 26, 6.15, 55.9% of the floor's 11. Its
+  dearest find, the Khan's Sabre at 6,950 gold, sits in its own window, the Hearth's 7,000; the
+  area's stays the Leather Coat +2 (§12.4).
 
 ## 9. Decisions
 
@@ -2390,7 +2423,7 @@ Decided by the builder for #833, each the owner's to overturn:
    and spell points Cinderport sells; the Wold sells nothing and no gear is given.
 9. **The lair's door is left at D7's 19,24,** in the Scarp's east face over the gulf, as #846 has
    it, **and the enclave's at 8,30,** in the hills over Akordu's box, each bare with the square
-   before it open (§12.4, §12.5).
+   before it open (§12.4, §12.5). The enclave's is the diggers' cut into Karaordu since (19).
 10. **The secrets' hints are a smell and a sound,** kinds no box of the Wold had: tar from the
     beacon's rock (D7) and the wind in a crack (E7). Each door stands where the art check takes it.
 11. **The walkthrough walks the bounds in one function,** `theBounds`, called last.
@@ -2399,7 +2432,38 @@ Decided by the builder for #833, each the owner's to overturn:
     with the merge and Saltreach's block of `OPEN_ON_NOTHING` with them; no row comes.
 13. **The enclave's groups and its reward are named in its own pull request** (§12.4): the roster
     stands at 26 to 28; what keeps a barrow at 28 and 29 and what it holds are settled there under
-    #845.
+    #845. They are named since (15, 16).
+14. **The enclave is Karaordu,** the black camp, *kara* and *ordu* in the Riders' tongue: the khans'
+    camp under the hill over Akordu, the white camp of the living. Both parts are in NAMES §2's row,
+    so it stands as it is (§10).
+15. **Its groups are four basilisks and eight deep rats:** the basilisks at the passage's head, the
+    nearer, and the rats among the khans' bones, the hardest at 30. The curve asks an enclave at
+    28–29 for a group at 29 or over (`nearTop`); the Wold's ordinary monsters stand at 26 and 27 and
+    its 28 is the Grey Lion, a boss, so the brief's "the roster's heaviest" cannot be met from the
+    Wold alone. The Hearth's deep rat, fodder at 30, is the one beast drawn at 29 to 31, the rest
+    the Hand's people and the deep's machines; its family is no area's novelty, and the enclave
+    stands with the Glasswold in the novelty check, its floor at the area's top. From the one way in
+    a walker passes the basilisks' square, the passage a square wide, so it meets them first, as the
+    curve's steps do. The rats stand at 7,11, on the square before the hint's, so that the hint is
+    searched from beside them and the sabre is had past them and not round them. Sized with the
+    harness at 28: two basilisks gave 28.7 fights to a rest and four 10.1; five rats 20.2, eight
+    10.2 and nine 9.2.
+16. **Its reward is the Khan's Sabre,** the eldest khan's, in his cell: 2d12+5, one-handed, for the
+    four martial classes, its blows carrying cold, at 6,950 gold, inside the enclave's window, the
+    Hearth's 7,000 (#845's 3). It has the Levin Mace's numbers and price with cold for lightning:
+    Cinderport's Slag Mace (2d12+5 at 2,300) with a die of cold, so 21.5 a blow to the Hand's Grey
+    Blade's 19 at 28, as the Levin Mace's is; on no rung of the ladder and not the area's artifact.
+17. **The secret and the finds are as briefed:** the horses' skulls set in rows on the chamber
+    floor, every one turned to the end wall, are the hint, and the eldest khan's cell behind it
+    holds his chest, 300 gold and the sabre. The khans' gold among the biers is 1,400 and an Elixir.
+    The cell is shut to walkers, waders, climbers and floaters but through its wall.
+18. **New here:** the enclave itself (#845), the Wold's first place past its band.
+19. **The door is the diggers' cut at D7's 8,30,** the square drawn as stone in the hills' face and
+    walked into from the steppe at 8,29 (the hills either side walk into it too); nothing else of D7
+    changes, and nothing stands within four squares of it. Karaordu's plate, where the world map
+    draws a company inside, is at 112,225, under the hills five squares south of the door.
+20. **The walkthrough walks it in `theBounds`,** after D7: the door's words at 25, 26 and 28, the
+    sign, both groups won at 28, the cell found from the skulls and the way out onto 8,29.
 
 ## 10. Names
 
@@ -2421,6 +2485,7 @@ for #444.
   | the Wold Riders' camp | Akordu | the white camp, for its tents | Ordubash, the head camp |
   | the Eyrie | Kushtash | the bird's rock: the scout's lookout on the far-west mesa, where the vultures never land | Kushdag, the bird's mountain |
   | the Glass, in the Riders' mouths | Tashkum | the stone sand; noted here and left for the reach's doc (Phase 1.6), with "The Glass" and "Buried Tower" still lettered | Akkum, the white sand |
+  | the barrow on the lip, the enclave (#833) | Karaordu | the black camp: the khans' under the hill, over Akordu, the white camp of the living | Karatash, the black stone |
 
 - **A person:** Aysu, the scout on Kushtash, the Ranger's third (#448): *ay* the moon and *su*
   water, a Rider's name in the Riders' tongue. She was "The scout" while she had words only.
@@ -2605,7 +2670,7 @@ This is their brief, in §4's form; each pull request builds from it and adds it
 |---|---|---|---|---|---|---|
 | D7 | the Wold, `wold_d7` | 363 | the Saltings' 163 under the Scarp | C7 and D6 (the Saltings), D8 and E7 | 26–27 | the first, built (#833) |
 | E7 | the Wold, `wold_e7` | 96 | Wrackholm's 30, the isle's tip | E6 (Wrackholm), E8 and D7 | 26–27 | the first, built (#833) |
-| The enclave | its own, its door on D7 | | | D7 | 28–29 | the second |
+| Karaordu, the enclave | its own, `karaordu`, its door on D7 | 74 | | D7 | 28–29 | the second, built (#833) |
 | The lair | its own, its door on D7 | | | D7 | 30–32 | the third |
 
 ### 12.1 What every box keeps
@@ -2638,10 +2703,12 @@ This is their brief, in §4's form; each pull request builds from it and adds it
   the curve holds it to 29.0 (`LEAD`). D7 pays about 1,580 xp a member and 1,450 gold and E7 700
   gold: with them a clear gives 23,016 xp and 14,900 gold, and the company leaves at 28.0. The
   enclave and the lair are held to their own bands and counted in no clear (`tools/tests/curve.ts`),
-  so the lead stays at 28.0 to the end of #833.
+  so the lead stays at 28.0 to the end of #833: Karaordu gives 1,511 xp a member and 1,700 gold, a
+  figure the curve prints (§12.4).
 - **The walkthrough** walks them in one function, `theBounds` in `walkthrough.ts`, called last: each
   box's seams walked, its groups won at 26, its secret found from its hint and its prize shut to
-  walkers, swimmers, climbers and floaters.
+  walkers, swimmers, climbers and floaters. Karaordu is walked too: its door, its groups won at 28,
+  its cell found from its hint and the way out (§12.4).
 
 ### 12.2 D7, the Scarp's east end over the gulf (#833): country, band 26–27
 
@@ -2663,8 +2730,8 @@ This is their brief, in §4's form; each pull request builds from it and adds it
   and E8's strand.
 - **The secret and its hint.** The beacon-keepers' store, walled up in the rock of the hills' crown.
   The hint: the beacon's hearth long cold, and the rock behind it smelling strongly of tar.
-- **The doors left.** The lair's in the Scarp's east face and the enclave's in the hills over D8,
-  bare, the way to each clear (§12.4, §12.5).
+- **The doors.** The lair's left in the Scarp's east face, bare, the way to it clear (§12.5); the
+  enclave's in the hills over D8, the diggers' cut into Karaordu (§12.4).
 - **New here.** Glass walkers in the country, come north to the edge.
 - **Finds.** 350 gold and an Elixir on the cairn; 1,100 gold and a Sapphire Vial in the store.
 - **Pay.** About 1,600 xp a member and 1,450 gold.
@@ -2683,11 +2750,12 @@ This is their brief, in §4's form; each pull request builds from it and adds it
   the Scarp's end since the spring, the tide's line (`d7_tide`, 7,14) and the Scarp's foot
   (`d7_foot`, 5,17), 117 squares with no group and nothing that pays. The west edge on top is the
   cliff to row 21 and mountain from 22, against C7's ring, the corner 0,31 with it, and D8's 0,0 and
-  C8's 31,0 are mountain since (§9, #833's 4). The lair's door is left at 19,24 and the enclave's at
-  8,30. The gate holds at 26: 9.95 fights to a rest (aim 9.5 to 11.5), every fight won; two under,
-  at 24, 7.03, 67% of the floor's 10.5, between the aim, 66.7%, and the limit. Density: 344 of 344
-  squares within 12 steps, the furthest 8, no sign among 17 points. By the curve's count the box
-  pays about 1,580 xp a member and 1,450 gold.
+  C8's 31,0 are mountain since (§9, #833's 4). The lair's door is left at 19,24, and at 8,30, drawn
+  as stone in the hills' face, the diggers' cut leads down into Karaordu, the enclave (§12.4; §9,
+  #833's 19). The gate holds at 26: 9.95 fights to a rest (aim 9.5 to 11.5), every fight won; two
+  under, at 24, 7.03, 67% of the floor's 10.5, between the aim, 66.7%, and the limit. Density: 344
+  of 344 squares within 12 steps, the furthest 8, no sign among 18 points, the cut among them. By
+  the curve's count the box pays about 1,580 xp a member and 1,450 gold.
 
 ### 12.3 E7, the north of the other island (#833): country, band 26–27
 
@@ -2719,7 +2787,7 @@ This is their brief, in §4's form; each pull request builds from it and adds it
   (§9, #833's 5). Density: 70 of 70 squares within 12 steps, the furthest 7, no sign among 7 points.
   No group, so the gate has nothing to judge; by the curve's count the box pays 700 gold.
 
-### 12.4 The enclave: the barrow on the lip (#833, its second pull request)
+### 12.4 Karaordu, the enclave: the barrow on the lip (#833): band 28–29
 
 - **Purpose.** A place of its own off D7, under the hills over Akordu's box: the barrow where the
   Riders laid their khans before the sky opened. Held to its own band (#845).
@@ -2727,17 +2795,39 @@ This is their brief, in §4's form; each pull request builds from it and adds it
 - **Landmarks.** A passage under the mound, the khans' chamber and the horses laid with them.
 - **Points of interest.** The passage's mouth, the khans' chamber with their horses and the door's
   own line, which gives its band (#845).
-- **Encounters.** The roster's heaviest at the enclave's band, as the enclave's pull request sets
-  them under #845; no guardian.
-- **The ways in and out.** Its door at D7's 8,30, the hills' face, left bare with 8,29 open before
-  it; one way out, back onto D7.
+- **Encounters.** Basilisks at the passage's head, the Wold's heaviest beast but for the Grey Lion,
+  the nearer; deep rats among the khans' bones, the Hearth's, the hardest at 30, since the curve
+  asks an enclave at 28–29 for a group at 29 or over and the Wold's own stop at 27 but for its boss
+  (§9, #833's 15); no guardian.
+- **The ways in and out.** Its door at D7's 8,30, the hills' face, with 8,29 open before it; one way
+  out, back onto D7.
 - **The secret and its hint.** The eldest khan's cell behind the chamber's end wall. The hint: the
   horses' skulls on the chamber floor, every one turned to that wall.
-- **New here.** The enclave itself (#845).
-- **Reward.** One of its own, named with its groups in the enclave's pull request (§9, #833's 13),
-  inside the Hearth's window, 7,000 (EXPANSION §5.2, #845's 3: the last road area whose floor is at
-  or under 28).
-- **Pay.** Counted in no clear (`tools/tests/curve.ts`).
+- **New here.** The enclave itself (#845), the Wold's first place past its band (§9, #833's 18).
+- **Reward.** The Khan's Sabre, in the eldest khan's cell: 2d12+5, one-handed, its blows carrying
+  cold, at 6,950 gold, inside the Hearth's window, 7,000 (EXPANSION §5.2, #845's 3: the last road
+  area whose floor is at or under 28; §9, #833's 16).
+- **Pay.** Counted in no clear (`tools/tests/curve.ts`): about 1,500 xp a member and 1,700 gold.
+- **As built** (#833, 23 October): `karaordu`, a dungeon of 16 squares by 16 marked `enclave`, band
+  28–29, its plate on the world map at 112,225. Down the diggers' cut at D7's 8,30, drawn as stone
+  in the hills' face and walked into from the steppe at 8,29, a company arrives at 7,1 facing south,
+  and the door says "Karaordu: levels 28-29.", with the game's harder words one or two levels under
+  its floor and its warning three or more under (#845's 5). The cut (`kr_cut`, 7,2) comes down to
+  the passage's head, where three diggers stand in stone (`kr_diggers`, 5,3) and four basilisks lair
+  (`kr_basilisks`, 7,4), the nearer at 3 steps; the passage of slabs (`kr_slabs`, 7,6) runs south to
+  the khans' chamber, 11 squares by 5, where eight deep rats keep among the bones (`kr_rats`, 7,11),
+  the hardest at 10 steps: the khans on their biers (`kr_khans`, 2,9), their horses laid in a ring
+  with no skull among them (`kr_horses`, 12,9), the rats' gnawing (`kr_gnawed`, 3,12) and the khans'
+  gold, 1,400 and an Elixir (`kr_grave`, 12,11). The horses' skulls set in rows and turned to the
+  end wall (`kr_skulls`, 7,12) are the hint; the wall at 7,13 gives onto the eldest khan's cell
+  (`kr_eldest`, 7,14) and his chest, 300 gold and the Khan's Sabre (`kr_sabre`, 8,14). The way out
+  is the cut, onto D7's 8,29. A walker from the one way in passes the basilisks' square, so it meets
+  them first, as the curve's steps have it, and searches the hint from beside the rats. The gate
+  holds at 28: every fight won and 10.60 fights to a rest (aim 10 to 12), 4% of days ending in a
+  fight broken off; two under, at 26, 6.15, 55.9% of the floor's 11, inside the aim. Density: 74 of
+  74 squares within 7 steps, the furthest 4, no sign among 13 points. The rise: rank correlation
+  1.00, the basilisks at 27.0 and the rats at 30.0. By the curve's count it gives 1,511 xp a member
+  and 1,700 gold, counted in no clear; the area's lead stays at 28.0.
 
 ### 12.5 The lair: the Foal-taker's eyrie (#833, its third pull request)
 
