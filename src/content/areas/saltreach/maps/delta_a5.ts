@@ -54,7 +54,7 @@ export const DELTA_A5: MapDef = {
   features: [
     // The wildfowler in the reeds off the shore, with word of the toads.
     { kind: 'npc', x: 27, y: 13, name: 'a wildfowler in his punt', lines: [
-      'A man of Stienwierde sits in a punt hauled half out of the reeds, a long gun across his knees. He does not look round.',
+      'A man of Stienwierde sits in a punt hauled half out of the reeds, a fowling bow across his knees. He does not look round.',
       '"Toads, up the shore all month. A big one lies up south, where the dyke gives out. I shoot teal, not toads."',
     ] },
     // The shrine at the fen's edge and the camp on the dry ground under the rim.
