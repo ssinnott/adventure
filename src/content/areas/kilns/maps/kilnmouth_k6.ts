@@ -2,12 +2,13 @@
 // heather and the gorse running on west from Kilnhaven's last wall, a turf windbreak and a sheepfold, a
 // cairn on the one rise, the rock worms' rings in the dead heather, the kelp-burner's pit on the shingle
 // with an ore barge's ribs beyond it, and a headland with the dwarves' first quay on it: a slipway, its
-// rails and a winch-house with a strongroom that has been kept. The heath's tail runs on south into
-// K7's 56 squares and a rock bank across its neck closes it, as the sea closes the north and a mountain
-// the four squares of sand on the west. The Kilns' bounds bring back K6, L7, P4, P5 and P6.
+// rails and a winch-house with a strongroom that has been kept, and at 20,16 the grate in the slipway,
+// the way down into the Seestollen, the enclave (#845). The heath's tail runs on south into K7's 56
+// squares and a rock bank across its neck closes it, as the sea closes the north and a mountain the
+// four squares of sand on the west. The Kilns' bounds bring back K6, L7, P4, P5 and P6.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §12 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { WEST } from '../../../../game/types.ts';
+import { SOUTH, WEST } from '../../../../game/types.ts';
 
 export const KILNMOUTH_K6: MapDef = {
   id: 'kilnmouth_k6',
@@ -34,7 +35,7 @@ export const KILNMOUTH_K6: MapDef = {
     'WWWWWWWW~~_,,,,rrr_~~WWWWWWWWWWW',
     'WWWWWWWW~~_,,,,r.S:_~~WWWWWWWWWW',
     'WWWWWW~~~_,,,,,r.r:_~~~~WWWWW~~W',
-    'WWWWW~~~_,,,,,,rrr,,_~~~~~~~~~~~',
+    'WWWWW~~~_,,,,,,rrr,,"~~~~~~~~~~~',
     'WWWW~~__,,,,,,,,,,,,,___~~~~~__~',
     'WWW~~_,,,,,,hhhh,,,,,,,,,,,,,,,,',
     'WW~~_,,,,,hhhhhhhhh,,,,,,,,,,,,,',
@@ -50,6 +51,11 @@ export const KILNMOUTH_K6: MapDef = {
     '~~~__,,hhhMhhhhhhhhhhhhhhhhMhhhh',
     '~~~~~__,hMMMhhhhhhhMMhhhhhMMMhhh',
     'WWW~~~~MMMMMMMMMMMMMMMMMMMMMMMMM',
+  ],
+  // The Seestollen, the enclave (#845): the grate in the slipway's dressed stone at 20,16, walked onto
+  // from the slipway at 19,16 or the grass at 20,17.
+  exits: [
+    { x: 20, y: 16, to: 'seestollen', tx: 7, ty: 1, tf: SOUTH, label: 'You lift the grate in the slipway and go down the rails into the rock. The sea booms somewhere under you.' },
   ],
   features: [
     // In from Kilnhaven's wall by the east edge, and the flat of the bay's south shore.
