@@ -1039,7 +1039,7 @@ function offTheLadder(ok: (cond: boolean, msg: string) => void): void {
  * standing where the way on passes; the Sunwise Mace in the oldest dead's cist, the closed cell found
  * from the spiral that turns against the rest and shut to the four ways but through its stone, and up
  * through the gap onto L8's 23,27 again. Last, Bearn Liath, the lair (#845, #847): east from P7's hills at
- * 4,24 into the cleft, its door saying its band and how it feels at 16, 28 and 30 and its sign its band;
+ * 4,24 into the cleft, its door saying its band and how it feels at 18, 28 and 30 and its sign its band;
  * the Rim Troll, its one group, in the gap that is the one way to the hollow, won at 30; Torhide in the
  * old man's kist, one in the world; the troll's store found from its tracks and shut to the four ways but
  * through the rock; out onto P7's 4,24 again; and the drover on N7, who speaks of the shield at every
@@ -1279,7 +1279,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   }
 
   // Bearn Liath, the lair (#845, #847): east from P7's hills at 4,24 into the cleft. Its door says its band
-  // and how it feels, as a border's line: the warning at 16, harder at 28 and its band alone at 30.
+  // and how it feels, as a border's line: the warning at P7's 18, harder at 28 and its band alone at 30.
   {
     const BL = MAP_DEFS.find((d) => d.id === 'bearn_liath')!, cleft = P7.exits!.find((e) => e.to === BL.id)!;
     const levels = w.party.members.map((m) => m.level);
@@ -1289,9 +1289,9 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
       const r = w.world.move('forward');
       return r.kind === 'moved' && w.world.state.mapId === BL.id && w.world.state.x === BL.start.x && w.world.state.y === BL.start.y && w.world.state.facing === EAST ? r.messages.join(' | ') : r.kind;
     };
-    const band = 'Bearn Liath: levels 30-32.', low = enter(16), close = enter(28), at30 = enter(30);
+    const band = 'Bearn Liath: levels 30-32.', low = enter(18), close = enter(28), at30 = enter(30);
     ok(low === `${cleft.label} | ${band} ${WARNING_IN}` && close === `${cleft.label} | ${band} ${HARDER_IN}` && at30 === `${cleft.label} | ${band}`,
-      `east from the hills at 4,24 into the cleft and Bearn Liath, the way's own line and then its band, with the warning at 16, harder at 28 and nothing more at 30 (${low}; ${close}; ${at30})`);
+      `east from the hills at 4,24 into the cleft and Bearn Liath, the way's own line and then its band, with the warning at 18, harder at 28 and nothing more at 30 (${low}; ${close}; ${at30})`);
     ok(!!BL.enclave && w.world.here.name === 'Bearn Liath' && w.world.here.band?.join('-') === '30-32', `inside, its sign gives the cap's band, over P7's 18-19 (${w.world.here.name}, ${w.world.here.band?.join('-')})`);
     listen(w);
     w.level = 30;

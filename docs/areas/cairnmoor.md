@@ -993,8 +993,8 @@ Lantern beside her goes out without a word.
 ### The artifact: Torhide (#846)
 
 Cairnmoor's of the bounds' eight (DESIGN §9). Found and never told: no `seek` quest, no line in the
-journal and no mark on the world map. #834 built the lair, Bearn Liath, its door and the rumour once
-#845, #847 and the guardian's drawing were in (§12.6).
+journal and no mark on the world map. #834 built the lair, Bearn Liath, with its door and the
+rumour, once #845, #847 and the guardian's drawing were in (§12.6).
 
 - **What it is:** *A round shield faced with grey hide, and every cut in it closed over. / It is
   warm to hold, and warmer by night.*
@@ -1040,7 +1040,8 @@ placed already, and a tor and a tarn are among the landmarks above. Nor does Car
 (#834): its bog bodies and wights are placed already, and its ice bears, Rimewater's, are of a
 family the Sunderwood claims (`bears`); the novelty check, which places it with Cairnmoor by its
 floor, passes (§12.5). Nor does Bearn Liath, the lair (#834): its Rim Troll is of the ogres, the
-family Thornmark claims, and mends as the tor trolls do; the novelty check passes (§12.6).
+family Thornmark claims, and mends as the tor trolls do; the novelty check, which places it with
+the Hearth by its floor (EXPANSION §5.2, #845's 7), passes (§12.6).
 
 ## 8. The numbers
 
