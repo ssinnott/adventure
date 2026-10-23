@@ -764,12 +764,16 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   suppressions. It is the first content check: a monster with no drawing, a business with no room
   or a map in a region no area has fails it.
 - `test`: `node tools/test.ts`, then `node tools/tests/runner/check.ts`, the runner's own check,
-  which runs it on `tools/tests/runner/fixture/` and `stuck/` so the fixtures' failures stay out of
+  which runs it on `tools/tests/runner/fixture/`, `stuck/` and `leaves/` so the fixtures' failures stay out of
   the real run, then `node tools/test.ts fullrun`, the pilot's full run on the shelf (about 10 to 25 s; it
   repeats walkthrough:shelf's play). The suites are in `tools/tests/`, one file each exporting a function of its name (`lib.ts`
   is what they share), which the runner finds (maps, movement, monsters, combat, harness, party,
   traits, calendar, terrain, weather, atlas, outdoors, save, quests, then any other in name order),
-  then each area's walkthrough (the Foreland's and Thornmark's), in road order. `layers` holds the
+  then each area's walkthrough (the Foreland's and Thornmark's), in road order, each with an `ok` of its
+  own, under which its runs keep the goals they walk (`everyGoalWalked`), so one passes alone as in the
+  full run. After every suite the runner finds the item and monster tables as they were, each entry by
+  identity, and fails a suite that leaves one added, removed or replaced, by name (#946); a suite lends
+  a def through `withDefs` (`lib.ts`). `layers` holds the
   imports to the layers (EXPANSION §8.1, #900). Each area's
   `checks.ts`, found by its file as its walkthrough is (`tools/checks.ts`), holds the rows the suites
   keep of it that are its own and no part of the game, what it owes, its rungs of the ladder, its lead
@@ -1071,7 +1075,7 @@ does.
 | `game/save.ts`, `game/upgrades.ts` | the save and `SAVE_VERSION`; the upgrades, each registered by the version it brings a save to and run in turn on load, with what they need of the world as it was kept frozen |
 | `game/keys.ts` | the keys a save keeps things by, each spelt once: a den's look (`lookKey`), the ids a feature is spent and an inscription read by (`spentId`, `readId`), a seeking quest's id (`seekId`), the flags of a spell hall paid (`guildFlag`), of the glove's line (`GLOVE_FLAG`) and of a guild quest taken and done and a rank kept (`takenFlag`, `doneFlag`, `rankFlag`); and a den's brood's `until` (`denBurnt`), which the maps import. It imports only types, so any module may load it first; each old home gives its keys on (#896) |
 | `game/combat.ts` | `CombatState`, `startCombat`, `currentTurn`, `partyAct`, `monsterAct` (a spell cast from an artifact, `from`, for a charge), and the log's lines, the glove's once a game (`GLOVE_FLAG`, given on from `game/keys.ts`); pure and seeded |
-| `game/bot.ts` | the bot that plays a fight, the gate's and the game's: `botTurn` (the action the resolver took; `gateTurn` the same with the action dropped), its two readings of the monsters (`asWritten`, every trait as written, the gate's; `asSeen`, only what the fight's log has shown, the auto-fight's), the answers a tool may switch off (`ANSWER`), the three it may play (`BotOpts`: bless, sleep and drink, off unless given; `PLAYED`, the game's, read from level 11 by `optsFor`, with its guards `striker` and `letsLie`) and the rest rule (`mustRest`); pure |
+| `game/bot.ts` | the bot that plays a fight, the gate's and the game's: `botTurn` (the action the resolver took; `gateTurn` the same with the action dropped), its two readings of the monsters (`asWritten`, every trait as written, the gate's; `asSeen`, only what the fight's log has shown, the auto-fight's), the answers a tool may turn (`ANSWER`, frozen: a tool passes another as `answer`, #946), the three it may play (`BotOpts`: bless, sleep and drink, off unless given; `PLAYED`, the game's, read from level 11 by `optsFor`, with its guards `striker` and `letsLie`) and the rest rule (`mustRest`); pure |
 | `game/ink.ts` | what a cell is drawn as (`drawnCell`: a secret door outdoors among mountain, rock or trees as they are), which the view, the automap and the pilot's fair view share; pure |
 | `game/pilot/pilot.ts`, `game/pilot/known.ts`, `game/pilot/route.ts`, `game/pilot/explore.ts`, `game/pilot/keep.ts` | the pilot (docs/PILOT.md): `Pilot` (on and off, the tempo and its pace, the why line, the lines heard, the next key, the brains in their order, the goal and its plan), `Known`, the fair view of the world it reads through (the automap's bits and ink, its features and exits as fair copies, the groups it marks, the maps visited, the world map, a map's or a zone's bounds and a place's band, an enclave's band once its door is seen (#845), the corpus heard, the company and what a menu has shown), the navigator (`routeOn`, `routeLengths`, `routeNearest`, `routeMaps`, `route`: the keys to a square over what has been seen, and no way into an enclave whose floor is over the company) and the explorer (`frontier`, `suspects`, `explore`: the nearest unseen, the walls to search and the ways found shut tried again) and the quartermaster (`need`, `better`, `keep`: a rest, the temple, an inn, rations, gear worn through the sheet and training) |
 | `game/quests.ts` | `QuestDef`, `Chapter` and `ChapteredQuest`; `questLog` (the quests known, their pages, entries and goal, worked out from the world state and party), `questNews` (what changed between two looks) |
