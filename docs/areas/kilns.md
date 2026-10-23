@@ -3293,7 +3293,8 @@ Decided by the builder for #831, each the owner's to overturn:
     points, attack 24 and 18d8+20 a blow, where it was drawn at the line's boss at 32, 2,100, 20 and
     34d8+41, which the gate's company won 34% at 30 and 45% at 32. As set, it is won 56% at 30,
     inside the aim, and 81% at 32, between the aim (90%) and the limit (75%), as the fixture's
-    guardian is (57% and 80%); no check moves.
+    guardian is (57% and 80%); no check moves. Its row gives why it stands off the line (`offLine`),
+    as the road's bosses set by their gates do (`OFF_LINE`).
 42. **The secret is the stope walled up** when the working was given up, three by two behind the
     north drift's west wall, its door at 9,4; the hint is the knocking behind that wall, which stops
     when the company knocks back, the knockers' old sign of ore behind the rock. It holds 500 gold,
@@ -3823,11 +3824,11 @@ three are built (§12.3, §12.4 and §12.6; §9, #831's 14 says what was found).
   stope, 6 to 8 x 4 to 5, its look at 8,4 and the pay-chest at 6,5 (500 gold, an Elixir and a
   Sapphire Vial), which no walker, swimmer, climber or levitator reaches but through the wall. Down
   the ladder onto the Dark Seam at 10,2 facing south, nothing more said: the foot at 10,3, the
-  gallery at 3 to 10 x 4 with the heaps at 5,2 and the seam at 8,4, the picks at 3,6, the drift at
-  5,8 and in it at 7,10 the Steiger, which no company steps round to the face at 6 to 10 x 11 to 13:
-  the face at 7,12, the smith at 9,12 and his kist at 10,13 with the Erzhemd. The Steiger is won 56%
-  at 30, inside the aim (30% to 70%), and 81% at 32, between the aim (90%) and the limit (75%); the
-  curve's rise: the one group at 19 steps, level 32.0. Density: every square within 7 steps of a
-  point, the furthest 2 and 3, no sign among their 12 and 10 points. By the curve's count it pays
-  3,396 xp a member and 500 gold, in no clear, and the lead over the road stays at 19.4056. P5
-  changes at the adit alone (§9, #831's 39).
+  gallery at 3 to 10 x 4 with the heaps at 5,2 and the seam at 8,4, the picks at 3,6, the drift seen
+  from 5,8 and in it at 7,10 the Steiger, which no company steps round to the face at 6 to 10 x 11
+  to 13: the face at 7,12, the smith at 9,12 and his kist at 10,13 with the Erzhemd. The Steiger is
+  won 56% at 30, inside the aim (30% to 70%), and 81% at 32, between the aim (90%) and the limit
+  (75%); the curve's rise: the one group at 19 steps, level 32.0. Density: every square within 7
+  steps of a point, the furthest 2 and 3, no sign among their 12 and 10 points. By the curve's count
+  it pays 3,396 xp a member and 500 gold, in no clear, and the lead over the road stays at 19.4056.
+  P5 changes at the adit alone (§9, #831's 39).

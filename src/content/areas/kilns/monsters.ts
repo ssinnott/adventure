@@ -55,5 +55,5 @@ export const MONSTERS: readonly MonsterDef[] = [
   // deep knockers, three at a half a turn as the inspector does. Drawn at the line's boss at 32 (2,100 hp, 34d8+41), it
   // was won 34% at 30 and 45% at 32; set by the lair's pull request at the gate's company, it hits more often and half
   // as hard and stands longer, won 56% at its floor of 30 and 81% at 32 (docs/areas/kilns.md §9, #831's 41)
-  { id: 'steiger', name: 'The Steiger', plural: 'Steigers', sprite: 'steiger', kind: 'machine', look: 'It knocks once, and the whole seam answers.', level: 32, hp: 2400, ac: 29, attack: 24, dice: 18, sides: 8, bonus: 20, speed: 13, xp: 20373, gold: [0, 0], calls: { monsters: ['deep_knocker', 'deep_knocker', 'deep_knocker'], chance: 0.5 }, tint: '#4a4f5a', size: 1.4 },
+  { id: 'steiger', name: 'The Steiger', plural: 'Steigers', sprite: 'steiger', kind: 'machine', look: 'It knocks once, and the whole seam answers.', level: 32, hp: 2400, ac: 29, attack: 24, dice: 18, sides: 8, bonus: 20, speed: 13, xp: 20373, gold: [0, 0], calls: { monsters: ['deep_knocker', 'deep_knocker', 'deep_knocker'], chance: 0.5 }, offLine: 'the Randzeche\'s boss, its hit points and its blow set by its gate at the lair\'s floor and two above (#831)', tint: '#4a4f5a', size: 1.4 },
 ];
