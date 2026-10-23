@@ -963,13 +963,13 @@ settled in its issue.
     hills and pines under the Sheer at 0 to 6 and the pines at 9 to 25 on both sides, walked, the
     Sheer at 7 and 8. I12's west (264) meets H12's east (263, Ashfall's country, built, #522) square
     for square: ash at rows 0 to 11, grass at 12 to 14, hills at 15 to 19, mountain at 20 to 30 and
-    void at 31, pinned both ways. I12's east (295) meets J12's west (296): mountain and peaks on
+    void at 31. I12's east (295) meets J12's west (296): mountain and peaks on
     both sides, nothing walked. J12's north (350) meets J11's south row (349): hills at 19 to 31 on
     both sides, walked (J11's 18 is hills against J12's mountain). J12's east (327) meets K12's west
     (328, Loch Fuar's, #832) square for square: hills, grass and pines at rows 0 to 15, walked. The
-    south edges of I12 and J12 are the rim, the world's end, pinned. The outdoors test follows the
+    south edges of I12 and J12 are the rim, the world's end. The outdoors test follows the
     neighbours: J9's south and west, K10's west, J11's four edges, I11's east and south and I10's
-    north, south and east are re-pinned, their ring reading mountain, not void.
+    north, south and east are held again, their ring reading mountain, not void.
   - **Measured, J10, I12 and J12.** At 22 a company wins every fight in all three, and at 20 too.
     J10 manages 9.72 fights to a rest, inside the aim of 8.5 to 10.5 (limit 7 to 13), with no day
     ending in a fight broken off; I12 and J12 manage 8.22, just under the aim and inside the limit,
@@ -1350,6 +1350,7 @@ Proposed, for the owner, each in the issue that would build it:
   scaffold reads them, for a box's draft; the owner's word changes them there.
 - **The monastery's plate moves from K12 to J11's gate,** 330,356 to 322,342, as Saltmouth's moved
   to C6 (docs/areas/saltreach.md §9): K12 is cut, and the plate goes where the way in is.
+  K12 is built since, Loch Fuar's (#832), and the plate stays at J11.
 - **J11 is laid in Monks' Vale and I10 in the High Spine,** each the zone that holds most of its
   land, so the crossing lines fall at the J11/I11 and I10/I9 seams.
 - **I8's band.** The plan gives it 24, and a band of 24 alone wants its hardest group at 24; the
@@ -2272,8 +2273,9 @@ Cut and owed, from the country behind (#508):
 #832's bounds are three boxes, an enclave and the Wakerobe's lair. K12, L12, the enclave and the
 lair are Rimewater's and are briefed there with what every box keeps (docs/areas/rimewater.md §12,
 the decisions in §9 there, #832's 1 to 12); J8, Sheer Point's, is briefed here, in §4's form. K12,
-Monks' Vale's east under the pass, is Loch Fuar's box, whole, and built (#832): J12's east edge meets
-it square for square, and `j12_drop` now says the vale's grass runs on into the cold loch's pines.
+Monks' Vale's east under the pass, is Loch Fuar's box, laid whole and built (#832): J12's east edge
+meets it square for square, and `j12_drop` now says the vale's grass runs on into the cold loch's
+pines.
 
 ### 12.1 J8, the pines over the water by Sheer Point (#832, its second pull request): country, band 22–23
 
@@ -2295,12 +2297,13 @@ it square for square, and `j12_drop` now says the vale's grass runs on into the 
 - **How it meets its neighbours.** I8's east edge square for square: the sea at rows 0 to 7, the
   shallows at 8 to 10, hills at 11 to 18, pines at 19 to 29 and dirt at 30, its west column drawn as
   hills at 11 to 14 where the atlas has shallows. J9's north edge (Rimewater's; the pass's road joins
-  the two areas) square for square: pines at 0 to 9, ice at 10 to 12 where the atlas has shallows
-  and the sea, as K11's edge was drawn to K10's (docs/areas/rimewater.md §9, #497's 4), and the sea
+  the two areas) square for square: pines at 1 to 9, ice at 10 to 12 where the atlas has shallows
+  and the sea (as K11's edge was drawn to K10's, docs/areas/rimewater.md §9, #497's 4) and the sea
   from 13. Its 0,31 meets I8's rock and J9's pines, and no square agrees with both: J8's pull request
   shuts J9's 0,0 to the mountain and J8's 0,31 is rock, as the owner's delegate rules such corners
   (docs/areas/rimewater.md §12.1, #832's 9). North and east the sea, where #828 plans no box, and
-  nothing open. The `sheerpoint_i8 east` and `coldmere_j9 north` rows go and none comes.
+  nothing open. The `sheerpoint_i8 east` and `coldmere_j9 north` rows go, the
+  `sheerpoint_i9|coldmere_j9` row of `SEAMS_AS_BUILT` loses its square 0 and none comes.
 - **New here.** Nothing.
 - **Finds.** 120 gold and a Sapphire Vial on the cairn; 250 gold and an Elixir in the smoke-house,
   the dearest of their kinds that the nearest shop sells (Rime Lodge's Provisioner's; the Whitespine

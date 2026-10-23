@@ -666,7 +666,7 @@ what is new, with points of interest and a first share of the pay.
   the Skinning Knife +1 (#535).
   - **Seams.** East, M9 (built): L9's 31,0 to 31,31 meets M9's 0,0 to 0,31 square for square, the
     stream at 31,2 to 31,4 against M9's 0,2 to 0,4 and the road at 31,20 (391,274) against its 0,20
-    (392,274); the outdoors test pins both ways and the walkthrough walks it, the land not named
+    (392,274); the seam agrees square for square and the walkthrough walks it, the land not named
     again. West, K9 (#489): L9's 0,0 to 0,31 is ice at rows 0 and 1 and pines below (360,254 to
     360,285), the atlas's pine against K9's 31,0 to 31,31 (359,254 to 359,285); no road crosses, and
     K9 puts dry land on its column 31 at rows 2 to 31. North, L8 (Cairnmoor's, to come, #834): the
@@ -674,7 +674,7 @@ what is new, with points of interest and a first share of the pay.
     South, L10 (#497, built): the road runs on from 6,31 and 7,31 onto L10's 6,0 and 7,0 (366,286
     and 367,286), walked, pines either side of it at 0 to 5 and 8 to 10, L9's ridge at 11 to 16
     against L10's pines at 11 and its ridge at 12 to 17 and pines and grass to the east; the
-    outdoors test pins both ways. L9's 0,31 (360,285) and K10's 31,0 (359,286) still meet only at a
+    seam agrees square for square. L9's 0,31 (360,285) and K10's 31,0 (359,286) still meet only at a
     corner, and the road goes round it through L10; `PASS` is gone (§9, #497's 10).
   - **Measured.** A company at 20 wins every fight and manages 9.27 fights to a rest, inside the
     aim, with 0.3% of its days ending in a fight broken off; each of the four groups is won ten
@@ -1066,10 +1066,11 @@ what is new, with points of interest and a first share of the pay.
     onto K11's 0,20, which says "Loch Fuar." to a company at 20, and straight back it says nothing.
     K11's east (359) meets L11's west (360, built, #497): open water at rows 0 to 6 (y 318 to 324),
     K11's ice against L11's shallows at 7 and 8 and pines from 9 (327 to 349), pinned both ways, with
-    the event `k11_east` at 29,15 within 3 squares of it. K11's south (y 349) lies against K12 (not
-    built): hill, grass, 8 pines, the crags at 14 to 22 (read as void) and 9 pines. The world ends
-    past it, pinned. The outdoors test follows the neighbours: K10's south edge, J11's
-    east edge and I9's east edge no longer end the world, and J11's and I9's read mountain, not void.
+    the event `k11_east` at 29,15 within 3 squares of it. K11's south (y 349) meets K12's north (y
+    350, #832, §12.2) square for square: hills, grass and eight pines at 0 to 13, the crags at 14 to
+    22 and nine pines at 23 to 31, walked from 8,31 and 27,31. The outdoors test follows the
+    neighbours: K10's south edge, J11's east edge and I9's east edge no longer end the world, and
+    J11's and I9's read mountain, not void.
   - **Measured.** At 20 a company wins every fight in both, and at 18 too. J9 manages 8.81 fights to
     a rest, inside the aim, 1% of its days ending in a fight broken off; K11 8.09, 3.3%. Density
     100.0% within 12 steps, the country floor: J9 836 of 836 and the furthest 10, with no sign among
@@ -1588,7 +1589,7 @@ dungeon entered from the ice is no kind the check knows, so neither is claimed (
   budget's 1.4 times line above is the old rule, and the lead is what the curve test holds. With K12
   (#832), which pays 1,084 a member (four lynxes 3,172 and two bears 3,334, over six), a clear gives
   29,865 and the company leaves at 22.91 (22.84 before), under the line of 23; L12, at about 556,
-  would take it to about 22.95 (§12.1).
+  would take it to about 22.96 (§12.1).
 - **Gold.** Training six members from 20 to 22 costs about 9,840 with today's `trainPrice`, and tier
   7 its fee at the hall (#20; the Watch's is 400). A clear should pay for the training at least, in
   chests, drops and the hall's pay; the furrier's step is priced within the band's window on the
@@ -2412,9 +2413,9 @@ Decided by the builder for #832, each the owner's to overturn:
    §9), **and the enclave's L12's 11,4,** the rim's face at the land's other end; both are left bare
    (§12.4).
 8. **The enclave is held at 22–23,** a band over L12's 20–21: the Whitespine's spine eagles at its
-   mouth and snow trolls inside are the only monsters of the two areas at that band but their
-   bosses. Its reward is named in its own pull request, inside the Whitespine's window, 5,000
-   (#845's 3).
+   mouth and snow trolls inside are the only beasts of the two areas at that band (its brothers and
+   bell-ringers are Highcell's keepers, its masons and giants people). Its reward is named in its
+   own pull request, inside the Whitespine's window, 5,000 (#845's 3).
 9. **J8's corner, 0,31, is ruled for its pull request:** I8's 31,31 is rock and J9's 0,0 pines, so
    no square of J8's agrees with both. J8's pull request shuts J9's 0,0 to the mountain, the fewest
    squares of a built edge (#920, #922, #924), and the `sheerpoint_i9|coldmere_j9` row of
@@ -2425,6 +2426,9 @@ Decided by the builder for #832, each the owner's to overturn:
 11. **The bounds' groups differ box to box:** K12's lynxes and bears, L12's bears alone and J8's
     eagles and trolls, each sized with the harness at its floor (§12.1).
 12. **The walkthrough walks the bounds in one function,** `theBounds`, called last.
+13. **The enclave's and the lair's briefs in §4's form are written by their own pull requests**
+    (§12.4): this brief fixes their doors, bands, groups, guardian and artifact; their landmarks,
+    points of interest, secrets, New here and pay as a figure come with them under #845 and #847.
 
 ## 10. Names
 
@@ -2617,8 +2621,8 @@ Owed by the country behind as built (#497, §4.8, §8):
 - **Settled by #851:** the two-under figures of L10, L11, M10, M11 and N9, as every box's, are
   judged by the day; every fight was won at 18, and `OWED` in `tools/tests/gate.ts` named each.
 - **Loch Fuar's crossing words** ("harder than the long loch's shore behind", "the way back east
-  under the pines is still open") read wrong to a company under the floor walking into K11 from
-  Monks' Vale. K9's walkthrough pins the warning's words, so they are left as they are.
+  under the pines is still open") read wrong to a company under the floor walking into K11 or K12
+  (#832) from Monks' Vale. K9's walkthrough holds the warning's words, so they are left as they are.
 
 ## 12. The bounds
 
@@ -2659,10 +2663,11 @@ written `%`, as Cairnmoor's P7 and P8 were (docs/areas/cairnmoor.md §12).
   and N11. With the three built, no map of Rimewater or the Whitespine is open onto unbuilt land but
   the reach (#832's Done when).
 - **Groups** are the rosters' (§7; docs/areas/whitespine.md §7), the fewest that pass the gate's
-  pace, a real fight in each as in the seven behind the road (§9, #497's 19), and no two boxes' the
+  pace, a real fight in each as in the seven behind the road (§9, #497's 19); no two boxes' are the
   same: K12 four snow lynxes waiting on two ice bears' kill, L12 a pair of ice bears alone, J8 four
-  spine eagles and two snow trolls. The ice bear is the roster's one monster at 21, and the curve's
-  rise rule reads a group's mean level, so both of Rimewater's boxes' hardest are a pair of bears.
+  spine eagles and two snow trolls. The ice bear is the roster's one monster at 21 outside the bay
+  (the Bay Keeper is the bay's), and the curve's rise rule reads a group's mean level, so both of
+  Rimewater's boxes' hardest are a pair of bears.
   Each box's groups are sized with the harness at its floor (`node tools/harness.ts`) and judged by
   the gate there: inside the aim of 8 to 10 fights to a rest at 20 and 8.5 to 10.5 at 22 and, two
   under, inside the limit.
@@ -2673,13 +2678,13 @@ written `%`, as Cairnmoor's P7 and P8 were (docs/areas/cairnmoor.md §12).
 - **Pay.** A clear stood at 28,781 xp a member before the bounds, 1.77 times the curve's 16,267,
   and a company entering at 20 and three quarters clearing it left at 22.84, under the line of 23, a
   level over the next floor (`LEAD`, `tools/tests/curve.ts`). The bounds have 0.16 of it: K12 pays
-  1,084 a member as built and carries it to 22.91; L12, at about 556, to about 22.95. J8 pays into
+  1,084 a member as built and carries it to 22.91; L12, at about 556, to about 22.96. J8 pays into
   the Whitespine's clear, whose company leaves at 24.34 against its line of 25. A box that pays more
   than its brief says why. The enclave is judged at its own band (#845) and the lair's guardian at
   the cap's; no clear counts either.
 - **The walkthrough** walks them in one function, `theBounds` in `walkthrough.ts` (J8's in the
-  Whitespine's), called last: each box's seams walked, its groups won at its floor, its secret found
-  from its hint and its prize shut to walkers, swimmers, climbers and levitators, and its doors bare.
+  Whitespine's), called last: each box's seams walked, its groups won at its floor, its doors bare
+  and its secret found from its hint, the prize shut to walkers, swimmers, climbers and levitators.
 - **The seams meet the seam rule** (#910, EXPANSION §5.1): a box agrees with each built neighbour
   square for square on passable ground, water and road, and adds no row to `SEAMS_AS_BUILT`; its
   open squares onto unbuilt land are an `OPEN_ON_NOTHING` row each, and the rows it now answers go.
@@ -2720,7 +2725,7 @@ written `%`, as Cairnmoor's P7 and P8 were (docs/areas/cairnmoor.md §12).
   vale's hills, grass and pines at rows 0 to 15; L12's west edge across its east, pines at rows 0 to
   7, held by a row of `OPEN_ON_NOTHING` until L12 is built; the rim's mountain and the world's end on
   the south.
-- **New here.** Nothing.
+- **New here.** Rimewater's first riddle, the brother of stone's.
 - **Finds.** 120 gold and a Sapphire Vial on the cairn; 250 gold and an Elixir in the cell.
 - **Pay.** About 1,080 xp a member: the lynxes' 529 and the bears' 556.
 - **As built** (#832, 23 October): `coldmere_k12`, laid at 328,350, cut by hand from the atlas, the
@@ -2728,7 +2733,7 @@ written `%`, as Cairnmoor's P7 and P8 were (docs/areas/cairnmoor.md §12).
   South from K11's 8,31, the same loch, so nothing is said of it: the start is 8,0 facing south. All
   289 of the atlas's walkable squares stand. Walked east from J12's grass at row 5 the crossing says
   "Loch Fuar." at 20 and no more, and straight back nothing. In the west the hunter's fire at 1,5, a
-  camp, and the bear-hunter at 2,5, whom the furrier at the lodge pays for a white skin and who has
+  camp, with the bear-hunter at 2,5, whom the furrier at the lodge pays for a white skin and who has
   the one spear against two bears and four cats; the brother of stone at 2,9 (answered bell, +1
   personality to every member). In the pines four snow lynxes at 9,4, the kill seen from 13,5 and
   two ice bears on it at 14,7, the cats' tracks at 11,9, the spur at 16,10 and the rim at 6,12. At
@@ -2758,7 +2763,7 @@ written `%`, as Cairnmoor's P7 and P8 were (docs/areas/cairnmoor.md §12).
   21. Sized with the harness at 20, 8.09 fights to a rest, inside the aim (§9, #497's 19).
 - **The secret and its hint.** The resin-gatherers' store dug into the rim's foot and turfed over,
   a room of one by two along the face with its door at the north end. The hint: pines scored in long
-  cuts down their trunks, the resin dried in the cuts, and a stack of empty pots under the rim.
+  cuts down their trunks with the resin dried in the cuts, and a stack of empty pots under the rim.
 - **How it meets its neighbours.** L11's south edge square for square, the pines at 0 to 16 (its
   16,0 drawn as pines where the atlas has the rim, to meet L11's), the way in; K12's east edge, the
   pines at rows 0 to 7, square for square, its 0,0 pines with K12's 31,0 and L11's 0,31; the rim's
@@ -2781,8 +2786,9 @@ written `%`, as Cairnmoor's P7 and P8 were (docs/areas/cairnmoor.md §12).
   in the rim's face where the snow trolls winter, its door at L12's 11,4 (world 371,354), its way
   the pines of 11,3. Held at 22–23, a band over L12's 20–21, its floor over the box's top: spine
   eagles at its mouth, the nearer at 22, and snow trolls deeper in, the hardest at 23, the
-  Whitespine's (docs/areas/whitespine.md §7), the only monsters of the two areas at that band but
-  their bosses. Its reward is one of its own inside the Whitespine's window, 5,000 (EXPANSION
-  §5.2, #845's 3), named with it in its pull request (§9, #832's 8). L12's pull request leaves its
-  door bare with its way and nothing within four squares, as Saltreach's B7 left 22,22
-  (docs/areas/saltreach.md §12.10), and the enclave's pull request draws it.
+  Whitespine's (docs/areas/whitespine.md §7), the only beasts of the two areas at that band (its
+  brothers and bell-ringers are Highcell's keepers, its masons and giants people). Its reward is
+  one of its own inside the Whitespine's window, 5,000 (EXPANSION §5.2, #845's 3), named with it in
+  its pull request (§9, #832's 8). L12's pull request leaves its door bare with its way and nothing
+  within four squares, as Saltreach's B7 left 22,22 (docs/areas/saltreach.md §12.10), and the
+  enclave's pull request draws it.
