@@ -11,11 +11,12 @@ import { drawPortraitLarge } from './portraits.ts';
 import { drawInterior } from './interior.ts';
 import { BRASS, BRASS_DARK, TEXT, TEXT_DIM, YELLOW, RED } from './palette.ts';
 import type { Feature, Interior } from '../game/map.ts';
-import { item, priceIn, buy, sellPrice } from '../game/items.ts';
+import { item, priceIn, buy, sellPrice, REFUSED } from '../game/items.ts';
+import type { ItemDef } from '../game/items.ts';
 import { readText } from '../game/people.ts';
 import { ITEMS } from '../content/index.ts';
 import { spell, spellsFor } from '../game/spells.ts';
-import { CLASSES, RACES, TRAITS, STATS, armorClass, attackBonus, equip, heal, lift, templePrice, isDown, hasCondition, xpForLevel, levelUp, rest, stayNight, canTrain, canTrainAt, trainPrice, MAX_LEVEL, guildFlag, className, resists, statOf } from '../game/party.ts';
+import { CLASSES, RACES, TRAITS, STATS, armorClass, attackBonus, equip, heal, lift, templePrice, isDown, hasCondition, xpForLevel, levelUp, rest, stayNight, canTrain, canTrainAt, trainPrice, MAX_LEVEL, guildFlag, className, resists, statOf, borne } from '../game/party.ts';
 import { castOnAlly } from '../game/combat.ts';
 import type { Character, Stat } from '../game/party.ts';
 import type { GuildId } from '../content/guilds.ts';
@@ -296,6 +297,7 @@ export class SheetScreen implements Screen {
     drawText(ctx, 'SHIELD ' + (c.equipment.shield ? item(c.equipment.shield).name : 'none'), 20, y, { size: 1, color: TEXT }); y += 10;
     const res = resists(c);
     if (res.length) { drawText(ctx, 'RESISTS ' + res.join(', ').toUpperCase(), 20, y, { size: 1, color: TEXT }); y += 10; }
+    for (const l of artifactLines(c)) { drawText(ctx, l, 20, y, { size: 1, color: YELLOW }); y += 10; }
     drawText(ctx, 'TRAITS ' + CLASSES[c.cls].traits.map((t) => TRAITS[t].name).join(', '), 20, y, { size: 1, color: TEXT }); y += 10;
     for (const l of skillsLines(c)) { drawText(ctx, l, 20, y, { size: 1, color: TEXT }); y += 10; }
     if (c.spells.length) { drawText(ctx, spellsLine(c), 20, y, { size: 1, color: TEXT }); }
@@ -324,6 +326,13 @@ export function weaponLine(c: Character): string {
   const t = tierOf(c, 'arms'), w = c.equipment.weapon ? item(c.equipment.weapon) : null;
   return 'WEAPON ' + (w ? w.name + (w.element ? `, ${w.element.toUpperCase()}` : '') : 'none') + (t ? `, ${TIER_NAMES[t].toUpperCase()}` : '');
 }
+/** An artifact's power in words (#847, DESIGN §9): the stat it raises and by how much, or the element its blows carry ("SPEED +5", "HOLY BLOWS"). */
+export function power(d: ItemDef): string {
+  const raised = STATS.filter((s) => d.stat?.[s]).map((s) => `${s.toUpperCase()} ${signed(d.stat?.[s] ?? 0)}`);
+  return [...raised, ...(d.element ? [`${d.element.toUpperCase()} BLOWS`] : [])].join(', ');
+}
+/** The sheet's ARTIFACT lines: each artifact the member bears (`borne`) and its power, a line each ("ARTIFACT The Erzhemd, SPEED +5"). */
+export const artifactLines = (c: Character): string[] => borne(c).map((id) => item(id)).filter((d) => d.artifact).map((d) => `ARTIFACT ${d.name}, ${power(d)}`);
 /** The sheet's SPELLS line: the member's tier in magic, then the spells it knows ("SPELLS (MASTER) Spark, Frost"). */
 export function spellsLine(c: Character): string {
   const t = tierOf(c, 'magic');
@@ -633,12 +642,15 @@ function buyScreen(g: Game, f: Extract<Feature, { kind: 'shop' }>): Screen {
 function sellScreen(g: Game, f: Extract<Feature, { kind: 'shop' }>): Screen {
   const entries: { id: string; owner: string[]; label: string }[] = [];
   const pays = (id: string): number => sellPrice(g.party, item(id).price);
-  for (const id of g.party.bag) entries.push({ id, owner: g.party.bag, label: `${item(id).name} (bag)\t${pays(id)}g` });
-  for (const m of g.party.members) for (const id of m.pack) entries.push({ id, owner: m.pack, label: `${item(id).name} (${m.name})\t${pays(id)}g` });
+  // An artifact shows no price, and no shop takes one (#847).
+  const row = (id: string, whose: string): string => `${item(id).name} (${whose})${item(id).artifact ? '' : `\t${pays(id)}g`}`;
+  for (const id of g.party.bag) entries.push({ id, owner: g.party.bag, label: row(id, 'bag') });
+  for (const m of g.party.members) for (const id of m.pack) entries.push({ id, owner: m.pack, label: row(id, m.name) });
   if (!entries.length) return new MessageScreen('"You have nothing I want."', undefined, f.name);
   return new ChoiceScreen('"Let me see it."', [...entries.map((e) => e.label), 'Done'], (i) => {
     if (i < 0 || i === entries.length) return;
     const e = entries[i], paid = pays(e.id);
+    if (item(e.id).artifact) { g.say(REFUSED); g.push(sellScreen(g, f)); return; }
     if (paid === 0) { g.say(`"I will not buy that."`); g.push(sellScreen(g, f)); return; }
     e.owner.splice(e.owner.indexOf(e.id), 1);
     g.party.gold += paid;
