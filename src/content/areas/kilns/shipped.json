@@ -511,6 +511,42 @@
         "2,11"
       ]
     },
+    "randzeche": {
+      "size": "16x16",
+      "used": [
+        "rz_adit",
+        "rz_cut",
+        "rz_door",
+        "rz_knock",
+        "rz_lamps",
+        "rz_level",
+        "rz_paychest",
+        "rz_stope",
+        "rz_stopes",
+        "rz_winze"
+      ],
+      "groups": [],
+      "doors": [
+        "9,4"
+      ]
+    },
+    "randzeche2": {
+      "size": "16x16",
+      "used": [
+        "rz2_bones",
+        "rz2_drift",
+        "rz2_face",
+        "rz2_foot",
+        "rz2_heaps",
+        "rz2_kist",
+        "rz2_picks",
+        "rz2_seam"
+      ],
+      "groups": [
+        "rz2_steiger"
+      ],
+      "doors": []
+    },
     "seestollen": {
       "size": "16x16",
       "used": [
