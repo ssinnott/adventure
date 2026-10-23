@@ -42,9 +42,9 @@ export const SEESTOLLEN: MapDef = {
   features: [
     // The loading gallery at the incline's foot, and the pump at the drowned lower gallery's lip.
     { kind: 'event', x: 7, y: 3, id: 'ss_incline', once: true, text: 'The rails come down the incline into a gallery cut square, its walls weeping salt. Somewhere below, water slaps.' },
-    { kind: 'event', x: 10, y: 5, id: 'ss_pump', once: true, text: 'The lower gallery is drowned to its roof. A pump at the water\'s lip still works its rod up and down, and draws nothing.' },
+    { kind: 'event', x: 10, y: 5, id: 'ss_pump', once: true, text: 'The lower gallery is drowned. A pump at the water\'s lip still works its rod up and down, and draws nothing.' },
     // The secret: the one dry stretch of the gallery's wall, and the dwarves' store walled up behind it.
-    { kind: 'event', x: 11, y: 4, id: 'ss_dry', text: 'Every wall of the gallery weeps salt but this stretch, which is dry, its stones laid squarer than the rest.' },
+    { kind: 'event', x: 11, y: 4, id: 'ss_dry', once: true, text: 'Every wall of the gallery weeps salt but this stretch, which is dry, its stones laid squarer than the rest.' },
     { kind: 'event', x: 13, y: 4, id: 'ss_store', once: true, text: 'The dwarves\' store, walled up when they left: lamps, a coil of chain and a strongbox under a tarred cloth.' },
     { kind: 'chest', x: 14, y: 3, id: 'ss_store_chest', gold: 300, items: ['elixir', 'potion_sp_great'] },
     // The rail gallery down, and the tally-room off it.

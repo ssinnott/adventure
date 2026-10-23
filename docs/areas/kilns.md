@@ -28,8 +28,8 @@ boxes of the bounds, K6 (the heath west of the port), P5 and P6 (the hills under
 Stone and the ash under the vents), L7 (the shore under the port) and P4 (the strip's north end),
 and their enclave, the Seestollen under K6's point (#831; §12, whose lair waits on #847). Its
 chapter of the one quest, The Anvil Stone, is written and walked (#470, §5), and its four side
-quests are in the log, their people on those maps (#471, §6). Eleven of its monsters and its twelve
-rooms are drawn (§3). Only the ship to Cinderport waits, on #512 (§4.14). Its content is
+quests are in the log, their people on those maps (#471, §6). All twelve of its monsters and its
+twelve rooms are drawn (§3). Only the ship to Cinderport waits, on #512 (§4.14). Its content is
 `src/content/areas/kilns/` (maps, monsters, items, rooms, climate, its part of the world map, its
 walkthrough and its guild quests in `guilds.ts`, #439; its chapter of the one quest, The Anvil
 Stone, in `chapter.ts`, #470; its side quests in `quests.ts`, #471) and its businesses' rooms
@@ -3682,8 +3682,8 @@ three are built (§12.3, §12.4 and §12.6; §9, #831's 14 says what was found).
   broke into the grey rock and what keeps it came out. Held to its own band (#845).
 - **Band.** 19–20, a band over Kilnmouth's 16–18, its floor over K6's top (#845's 2).
 - **Landmarks.** The incline down from the grate, the rails running on; the loading gallery and the
-  lower gallery beside it, drowned to its roof; the rail gallery down, where the dwarves' cuts end
-  in the grey rock; the tally-room; the old quay under the rock, its basin of black water.
+  lower gallery beside it, drowned; the rail gallery down, where the dwarves' cuts end in the grey
+  rock; the tally-room; the old quay under the rock, its basin of black water.
 - **Points of interest.** The incline's foot, the pump at the drowned gallery's lip, the one dry
   wall, the rail gallery, the tally-board, the quay, the quay-master's post with his strongbox and
   the door's own line, which gives its band (#845).
@@ -3697,7 +3697,7 @@ three are built (§12.3, §12.4 and §12.6; §9, #831's 14 says what was found).
 - **The secret and its hint.** The dwarves' store, walled up when they left, two by two behind the
   loading gallery's east wall. The hint: every wall of the gallery weeps salt but that stretch,
   which is dry and laid squarer.
-- **New here.** The enclave itself (#845), and the tallymen, Rimewater's, a band before their own.
+- **New here.** The enclave itself (#845) and the tallymen, Rimewater's, a band before their own.
 - **Reward.** Durchschlag, the forge's mattock with its blows carrying cold, in the quay-master's
   strongbox with 400 gold, inside Cairnmoor's window, 4,000 (EXPANSION §5.2, #845's 3: the last road
   area whose floor is at or under 19); and 300 gold, an Elixir and a Sapphire Vial in the store.
@@ -3714,7 +3714,8 @@ three are built (§12.3, §12.4 and §12.6; §9, #831's 14 says what was found).
   wall, and searched there facing east it gives at 12,4 on the store, 13 to 14 x 3 to 4, a chest at
   14,3 (300 gold, an Elixir and a Sapphire Vial), which no walker, swimmer, climber or levitator
   reaches but through the wall. A company at 19 wins every fight and manages 8.40 fights to a rest,
-  inside the aim (7.75 to 9.75); two under, at 17, 4.67, 53.4% of the floor's 8.75. The curve's
+  inside the aim (7.75 to 9.75), 75.7% of its days ending in a fight broken off, where none of the
+  Kilns' other maps passes 13.3%; two under, at 17, 4.67, 53.4% of the floor's 8.75. The curve's
   rise: the menders at 5 steps, level 17.0, the nearest, the tally-room's group at 18.5 and the two
   tallymen at 25 steps, level 20.0, the hardest (rank correlation 1.00). Density: every square
   within 7 steps of a point, the furthest 5, no sign among its 14 points. By the curve's count it

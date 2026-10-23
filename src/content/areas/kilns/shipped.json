@@ -515,6 +515,7 @@
       "size": "16x16",
       "used": [
         "ss_board",
+        "ss_dry",
         "ss_gallery",
         "ss_incline",
         "ss_post",

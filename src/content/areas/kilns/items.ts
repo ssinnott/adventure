@@ -120,7 +120,7 @@ export const ITEMS: readonly ItemDef[] = [
   // plus from 19, so the cold is the gain, as Cairnmoor's Beacon Hammer carries fire. Found there alone
   // and sold nowhere, inside the enclave's window, Cairnmoor's 4,000 (EXPANSION §5.2, #845's 3).
   { ...mattock, id: 'durchschlag', name: 'Durchschlag, Mattock', price: 1700, element: 'cold', text: [
-    'A mattock with a head of dark steel, cold to the hand however long it is held.',
+    'A mattock with a head of dark steel, as cold as the black water it lay beside.',
     'Cut on the haft, in the old script: the day the gallery broke through.',
   ] },
   erzhemd,
