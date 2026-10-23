@@ -26,7 +26,8 @@
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, see, fight, kneel, listen, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest, type Walk, type Step } from '../../../../tools/walk.ts';
 import { NORTH, SOUTH, EAST, WEST } from '../../../game/types.ts';
-import { ATLAS, ITEMS, MAP_DEFS } from '../../index.ts';
+import { ATLAS, ITEMS, MAP_DEFS, MONSTERS as EVERY_MONSTER } from '../../index.ts';
+import { HARDER_IN, WARNING_IN } from '../../../game/world.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { worldGrid } from '../../../game/atlas.ts';
@@ -1029,8 +1030,13 @@ function offTheLadder(ok: (cond: boolean, msg: string) => void): void {
  * Then the Cairnfield's shore (L8): west from M8's 0,23 onto its 31,23, the same field, so nothing is
  * said; the wrack-gatherer's word on the drowned cairn, the tideline, the mound and the ice seen, the well
  * knelt at and each group won at its floor; the noost found from the tar, shut to the four ways but
- * through its door; the mound's face at 22,27 left bare for the enclave's door; and the seams, the south
- * edge onto L9's ice, sand and pines and the corner at 0,31 (#834's 11 and 12).
+ * through its door; the gap in the mound's face at 22,27, L8's one way out but its edges; and the seams,
+ * the south edge onto L9's ice, sand and pines and the corner at 0,31 (#834's 11 and 12).
+ * Then Carn Fada, the enclave (#845): west from L8's hills at 23,27 into the gap and down, its door saying
+ * its band and how it feels at 17, 18 and 20 and its sign its band; its three groups won at 20, each
+ * standing where the way on passes; the Sunwise Mace in the oldest dead's cist, the closed cell found
+ * from the spiral that turns against the rest and shut to the four ways but through its stone, and up
+ * through the gap onto L8's 23,27 again.
  */
 function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const w = newWalk(ok);
@@ -1176,11 +1182,13 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const hoard = L8.features!.find((f) => f.kind === 'chest' && f.id === 'l8_noost_chest');
   ok(hoard?.kind === 'chest' && hoard.gold === 220 && hoard.items.join() === 'elixir' && hoard.x === 29 && hoard.y === 28, 'in the noost, under the boat, a chest with 220 gold and an Elixir');
 
-  // The enclave's door (docs §12.5) is left bare: the mound's face at 22,27, mountain with mountain either
-  // side of it, its way the hills at 23,27, and nothing within four squares.
+  // The enclave's door (docs §12.5): the gap in the mound's face at 22,27, drawn as its stone, the mound's
+  // mountain either side of it and behind it, walked into from the hills at 23,27, with nothing within
+  // four squares: L8's one way out but its edges, into Carn Fada.
   const door = [...(L8.features ?? []), ...(L8.encounters ?? [])].filter((f) => Math.abs(f.x - 22) + Math.abs(f.y - 27) <= 4);
-  ok(['M', 'M', 'M'].join() === [L8.rows[26][22], L8.rows[27][22], L8.rows[28][22]].join() && L8.rows[27][23] === '^' && strand.has(at(l8, 23, 27)) && !door.length,
-    `the mound's face at 22,27 is left bare for the enclave's door, walked to from the hills at 23,27, nothing within four squares${door.length ? ' (not ' + door.map((f) => `${f.x},${f.y}`).join(' ') + ')' : ''}`);
+  ok(L8.exits?.length === 1 && L8.exits[0].x === 22 && L8.exits[0].y === 27 && L8.exits[0].to === 'carn_fada' && L8.rows[27][22] === '"'
+    && ['M', 'M', 'M'].join() === [L8.rows[26][22], L8.rows[28][22], L8.rows[27][21]].join() && L8.rows[27][23] === '^' && strand.has(at(l8, 23, 27)) && !door.length,
+    `the gap in the mound's face at 22,27 is L8's one way out but its edges, into Carn Fada, walked to from the hills at 23,27, nothing within four squares${door.length ? ' (not ' + door.map((f) => `${f.x},${f.y}`).join(' ') + ')' : ''}`);
 
   // L8's seams: M8's grass opens onto it at rows 15 to 31; its north edge is the sea along L7's; its south
   // edge meets L9's ice at 0 to 6 and 13 and 14, sand at 15, pines at 16 to 21 and 28 to 30 and grass at 31,
@@ -1193,4 +1201,69 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     'L8 opens onto M8 at rows 15 to 31 and onto L9 along its south edge square for square; its north edge is the sea along L7\'s, and its west edge the sea but for 0,31, where L9\'s ice runs up beside K8\'s sea');
   walkThrough(w, L8.id, 30, 31, SOUTH, l9.id, 2);
   ok(w.world.state.x === l9.x + 30 && w.world.state.y === l9.y, 'south from L8\'s 30,31 onto L9\'s 30,0, walked, into Loch Fada');
+
+  // Carn Fada, the enclave (#845): west from L8's hills at 23,27 into the gap and down. Its door says its
+  // band and how it feels, as a border's line: the warning at 17, harder at 18 and its band alone at 20.
+  {
+    const CF = MAP_DEFS.find((d) => d.id === 'carn_fada')!, gap = L8.exits!.find((e) => e.to === CF.id)!;
+    const levels = w.party.members.map((m) => m.level);
+    const enter = (level: number): string => {
+      for (const m of w.party.members) m.level = level;
+      w.world.travel(L8.id, 23, 27, WEST);
+      const r = w.world.move('forward');
+      return r.kind === 'moved' && w.world.state.mapId === CF.id && w.world.state.x === CF.start.x && w.world.state.y === CF.start.y ? r.messages.join(' | ') : r.kind;
+    };
+    const band = 'Carn Fada: levels 20-21.', low = enter(17), close = enter(18), at20 = enter(20);
+    ok(low === `${gap.label} | ${band} ${WARNING_IN}` && close === `${gap.label} | ${band} ${HARDER_IN}` && at20 === `${gap.label} | ${band}`,
+      `west from the hills at 23,27 into the gap and down into Carn Fada, the way's own line and then its band, with the warning at 17, harder at 18 and nothing more at 20 (${low}; ${close}; ${at20})`);
+    ok(!!CF.enclave && w.world.here.name === 'Carn Fada' && w.world.here.band?.join('-') === '20-21', `inside, its sign gives its own band, over L8's 18-19 (${w.world.here.name}, ${w.world.here.band?.join('-')})`);
+    listen(w);
+    // Each group stands where the way on passes, so none is walked round: past the bodies at the tide's
+    // head lie the passage and all the rest, past the wights at the chamber's mouth the chamber and its
+    // spirals, and past the bears in the end cell's mouth the cist. Walked, waded, climbed or floated.
+    const hold = new GameMap(CF);
+    const flood = (...shut: (readonly [number, number])[]): Set<string> => {
+      const seen = new Set<string>(), todo: [number, number][] = [[CF.start.x, CF.start.y]];
+      while (todo.length) {
+        const [x, y] = todo.pop()!;
+        if (seen.has(`${x},${y}`) || shut.some(([sx, sy]) => sx === x && sy === y) || hold.passable(x, y, ALL) !== 'ok') continue;
+        seen.add(`${x},${y}`);
+        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+      }
+      return seen;
+    };
+    const groups = CF.encounters!.map((g) => `${g.id} ${g.x},${g.y} ${g.monsters.length} ${[...new Set(g.monsters)].join('+')}`).join('; ');
+    ok(groups === 'cf_bodies 9,3 6 bog_body; cf_wights 11,10 4 cairn_wight; cf_bears 4,10 2 ice_bear' && CF.encounters!.every((g) => g.respawn === 2880 && g.roams === false && !g.slainText)
+      && !flood([7, 8], [9, 3]).has('12,3') && !flood([7, 8], [11, 10]).has('7,9') && !flood([7, 8], [4, 10]).has('1,10'),
+      `six bog bodies at the tide's head, four cairn wights at the chamber's mouth and two ice bears in the end cell's, each back in two days, none roaming or a guardian, and none walked round (${groups})`);
+    // Its three groups won at its floor, rising from the bodies to the bears; every sight; and the oldest
+    // dead's cist with the Sunwise Mace in it, which no other chest or cairn holds, no shop sells and no
+    // monster drops: the ice axe's numbers with a die of holy, off the ladder and inside its window.
+    w.level = 20;
+    for (const g of CF.encounters!) fight(w, `${CF.id}:${g.id}`);
+    for (const id of ['cf_gap', 'cf_tide', 'cf_lintels', 'cf_chamber', 'cf_robbed', 'cf_den', 'cf_cist']) see(w, `${CF.id}:${id}`);
+    const cist = CF.features!.find((f) => f.kind === 'chest' && f.id === 'cf_cist_chest'), mace = ITEMS.sunwise_mace;
+    ok(cist?.kind === 'chest' && cist.gold === 400 && cist.items.join() === 'sunwise_mace'
+      && !MAP_DEFS.some((d) => (d.features ?? []).some((f) => (f.kind === 'shop' && f.stock.includes(mace.id)) || ((f.kind === 'chest' || f.kind === 'cairn') && f !== cist && f.items.includes(mace.id))))
+      && !Object.values(EVERY_MONSTER).some((m) => m.drops?.some((d) => d.item === mace.id)),
+      'in the end cell, the oldest dead\'s cist: 400 gold and the Sunwise Mace; no other chest or cairn holds it, no shop sells it and no monster drops it');
+    ok(mace.element === 'holy' && hits(mace) === hits(ITEMS.ice_axe) + (ELEMENT_DIE + 1) / 2 && mace.price <= CURVE.rimewater.price && !GEAR.some(([, ids]) => ids.includes(mace.id)),
+      `the Sunwise Mace is the ice axe's numbers with a die of holy, ${hits(mace)} a blow to the ladder's Ice Axe +1's ${hits(ITEMS['ice_axe+1'])} at 22, on no rung, at ${mace.price} inside its window, Rimewater's ${CURVE.rimewater.price}`);
+    // The secret: the one spiral turned against the rest, the search there and the cell behind it, never
+    // opened. Walked, waded, climbed or floated, it is never reached but through its stone.
+    const closed = flood([7, 8]);
+    ok(closed.size > 50 && !['6,6', '7,6', '6,7', '7,7'].some((k) => closed.has(k)), `the closed cell is shut but for its stone: none of Carn Fada's ${closed.size} squares walked, waded, climbed or floated reaches it`);
+    see(w, `${CF.id}:cf_spirals`);
+    ok(search(CF.id, 7, 9, NORTH, 'cf_sealed'), 'searched at the spiral that turns against the rest, the stone gives, and the closed cell behind it can be walked into');
+    const kept = CF.features!.find((f) => f.kind === 'chest' && f.id === 'cf_sealed_chest');
+    ok(kept?.kind === 'chest' && kept.gold === 300 && kept.items.join() === 'elixir,potion_sp_great', 'in the closed cell, a chest with 300 gold, an Elixir and a Sapphire Vial');
+    // And out: up through the gap onto L8's 23,27, with the way's own line and no other.
+    w.world.travel(CF.id, CF.start.x, CF.start.y + 1, NORTH);
+    const up = w.world.move('forward');
+    ok(up.kind === 'moved' && w.world.zone?.id === L8.id && w.world.state.x === l8.x + 23 && w.world.state.y === l8.y + 27 && w.world.state.facing === EAST && up.messages.join(' | ') === CF.exits![0].label,
+      `up out of Carn Fada onto L8's 23,27, facing the land, the way's own line alone (${up.kind === 'moved' ? up.messages.join(' | ') : up.kind})`);
+    listen(w);
+    w.party.members.forEach((m, i) => { m.level = levels[i]; });
+    w.level = 18;
+  }
 }

@@ -2,16 +2,16 @@
 // (#834): the strand west of M8's grass, a wedge of sand, grass and hills between the sea and M8's edge,
 // widening south to the frozen foot of Loch Fada. The salmon-netters' hut on the strand, a wrack-gatherer
 // raking the tideline, a well of sweet water in the grass above it, a cairn on the hills and, at the
-// strand's end, the drowned cairn's mound, its face left bare for the enclave's door (docs/areas/
-// cairnmoor.md §12.5). Four bog bodies come up with the tide at the strand's north end; a tor troll and a
-// cairn wight keep the loch's foot in the south-west. The secret is the netters' noost cut into the bank,
-// found from the tar.
+// strand's end, the drowned cairn's mound, the gap in its face at 22,27 the way down into Carn Fada, the
+// enclave (#845, docs/areas/cairnmoor.md §12.5). Four bog bodies come up with the tide at the strand's
+// north end; a tor troll and a cairn wight keep the loch's foot in the south-west. The secret is the
+// netters' noost cut into the bank, found from the tar.
 // The sea closes the north and the west, but for the lip of ice at 0,31 that L9's ice runs up into,
 // which a bar of ice on row 30 joins to the rest; the south edge meets L9's ice, sand and pines square
 // for square (docs/areas/cairnmoor.md §9, #834's 11 to 14).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/cairnmoor.md §12.4 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { WEST } from '../../../../game/types.ts';
+import { SOUTH, WEST } from '../../../../game/types.ts';
 
 export const CAIRNFIELD_L8: MapDef = {
   id: 'cairnfield_l8',
@@ -49,11 +49,16 @@ export const CAIRNFIELD_L8: MapDef = {
     'WWWWWWWWWWWWWWWWWWWWW~~_,,,,,,,,',
     'WWWWWWWWWWWWWWWWWWWWW~~^,,,,,,,,',
     'WWWWWWWWWWWWWWWWWWWW~~M^,,,rSr^^',
-    'WWWWWWWWWWWWWWWWWWW~~MM^,^r...r^',
+    'WWWWWWWWWWWWWWWWWWW~~M"^,^r...r^',
     'WWWWWWWWWWWWWWWWWW~~~~M^^^r...r^',
     'WWWWWWWWWWWWWWWWW~~^____^^^rrr^^',
     'WWWWWWiiiiiiiiW~~~_^^~~~~~p,,,,,',
     'iiiiiiiWWWWWWii_p_,,^p~~~~~~p,,,',
+  ],
+  // Carn Fada, the enclave (#845): the gap in the mound's face at 22,27, where the facing stones have
+  // fallen, walked into from the hills at 23,27.
+  exits: [
+    { x: 22, y: 27, to: 'carn_fada', tx: 7, ty: 1, tf: SOUTH, label: 'You squeeze in where the mound\'s facing stones have fallen, and the noise of the sea goes small.' },
   ],
   features: [
     // The strand: the netters' hut, the woman raking the wrack and the tideline.
@@ -66,9 +71,9 @@ export const CAIRNFIELD_L8: MapDef = {
     { kind: 'event', x: 28, y: 19, id: 'l8_tide', once: true, text: 'Wrack lies in a dark line along the sand, where the tide turned. Gulls walk the line.' },
     // The grass above the tideline: the well.
     { kind: 'shrine', x: 30, y: 22, id: 'l8_well', text: 'A well in the grass above the tideline, its lip a ring of beach stones. The water is sweet and cold.', stat: 'might', done: 'The well above the tideline, sweet and cold.' },
-    // The strand's end and the hills over it: the drowned cairn's mound, whose face is left bare for the
-    // enclave's door at 22,27 (its way the hills at 23,27); the bank with the noost cut into it, the tar
-    // that gives it away, and the cairn on the hills.
+    // The strand's end and the hills over it: the drowned cairn's mound, the gap in its face at 22,27 the
+    // way into Carn Fada (walked into from the hills at 23,27); the bank with the noost cut into it, the
+    // tar that gives it away, and the cairn on the hills.
     { kind: 'event', x: 25, y: 25, id: 'l8_mound', once: true, text: 'In the hills over the strand a mound stands apart, its face of grey stone. The tide comes in at its foot.' },
     { kind: 'event', x: 28, y: 25, id: 'l8_tar', once: true, text: 'A smell of hot tar comes out of the bank here, though no boat is drawn up on the strand in sight.' },
     { kind: 'event', x: 28, y: 27, id: 'l8_noost', once: true, text: 'A boat lies upturned on the floor, its hull tarred black, and under it the netters\' winter store.' },

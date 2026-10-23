@@ -5,6 +5,7 @@
 import type { ItemDef } from '../../../game/items.ts';
 import { P, MAIL, ARTIFACT_PRICE } from '../../items.ts';
 import { bandedStaff, forgeHammer, dwarfMail } from '../kilns/items.ts';
+import { iceAxe } from '../rimewater/items.ts';
 
 /**
  * A hammer whose blows carry fire (#862, docs/areas/cairnmoor.md §4.8): the forge hammer's steel, the
@@ -20,6 +21,17 @@ export const beaconHammer: ItemDef = { ...forgeHammer, id: 'beacon_hammer', name
  * the ladder, sold by no shop, priced as the hammer is.
  */
 export const cairnbuildersMail: ItemDef = { ...dwarfMail, id: 'cairnbuilders_mail', name: "Cairnbuilder's Mail", price: 1600, stat: { might: 3 } };
+
+/**
+ * The oldest dead's mace (#834, the enclave, docs/areas/cairnmoor.md §12.5): a head of polished stone on
+ * the ice axe's numbers, its blows carrying holy, the plain piece where the ladder wears the plus from 22,
+ * so the holy die is the gain, as the Beacon Hammer's fire is. In Carn Fada's cist alone and sold nowhere,
+ * inside the enclave's window, Rimewater's 4,500 (EXPANSION §5.2, #845's 3).
+ */
+export const sunwiseMace: ItemDef = { ...iceAxe, id: 'sunwise_mace', name: 'Sunwise Mace', price: 2000, element: 'holy', text: [
+  'A mace with a head of polished stone, spirals cut round it sunwise.',
+  'The stone is warm to the hand, as if it had lain all day in the sun.',
+] };
 
 // Cairnmoor's of the bounds' eight (DESIGN §9, #847): the Grey Shield's 8 and a point, for its bearers,
 // and its bearer mending by the hour. Found and never sold; placed nowhere yet, for #834 lays its lair
@@ -53,4 +65,6 @@ export const ITEMS: readonly ItemDef[] = [
   beaconHammer,
   cairnbuildersMail,
   torhide,
+  // Carn Fada's (#834, the enclave): the oldest dead's mace, in the cist under the bears' den.
+  sunwiseMace,
 ];
