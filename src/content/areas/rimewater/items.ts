@@ -29,6 +29,14 @@ export const wakerobe = A('wakerobe', 'The Wakerobe', ARTIFACT_PRICE, 14, { clas
   'Whoever wore it last walked out of the ice in it, and did not lie down again.',
 ] });
 
+// In the trolls' hoard in Creag Fionn, the enclave (#832): the furrier's Bear Spear with its head wrapped
+// in pitch that burns, its blows carrying fire, which stops a troll mending. Found there alone and sold
+// nowhere, inside the enclave's window, the Whitespine's 5,000 (EXPANSION §5.2, #845's 3).
+export const trollbrand: ItemDef = { ...bearSpear, id: 'trollbrand', name: 'Trollbrand, Bear Spear', price: 2100, element: 'fire', text: [
+  'A bear spear with its head bound in cord and pitch, black and hard as horn.',
+  'Struck on stone it takes light, and it burns until it is wanted out.',
+] };
+
 export const ITEMS: readonly ItemDef[] = [
   ...WARES,
   // Found, not sold, by 22: the glacier's hollow on M9, the drove's strongbox on L9, the drowned
@@ -63,4 +71,5 @@ export const ITEMS: readonly ItemDef[] = [
     '"To Rime Lodge. The coach is stopped on the moor road, its coachman dead. One patient, asleep. Send a sledge."',
   ] },
   wakerobe,
+  trollbrand,
 ];
