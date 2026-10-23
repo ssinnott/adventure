@@ -31,6 +31,7 @@ export const ZONES: readonly AtlasZone[] = [
 export const PLACES: readonly AtlasPlace[] = [
   { id: 'buried_tower', name: 'Buried Tower', kind: 'dungeon', planned: true, band: [26, 28], at: [84, 286] }, // the reach: its band is the cap's (#443, call 5)
   { id: 'karaordu', kind: 'dungeon', band: [28, 29], at: [112, 225] }, // the enclave, the khans' barrow under the hills over Akordu's box, its door at D7's 8,30 (#833, #845)
+  { id: 'kushdag', kind: 'dungeon', band: [30, 32], at: [123, 219] }, // the lair, the Foal-taker's eyrie in the Scarp's east face, its door at D7's 19,24 (#833, #845, #846)
 ];
 
 export const SITES: readonly AtlasSite[] = [
