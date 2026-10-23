@@ -2,7 +2,7 @@
 // boxes and Wrackholm's give up by 13, the locksmith's picks and the Map Room's chart (#860), and the
 // finds of its boxes.
 import type { ItemDef } from '../../../game/items.ts';
-import { W, A, P, core, MARTIAL, NO_CASTER_HEAVY } from '../../items.ts';
+import { W, A, P, core, MARTIAL, NO_CASTER_HEAVY, ARTIFACT_PRICE } from '../../items.ts';
 import { ITEMS as FORELAND } from '../shelf/items.ts';
 
 // Sold at Saltmouth's armourer (#177): a step past the Deepthorn's +2s for every class, at 11.
@@ -24,6 +24,13 @@ export const setOfPicks: ItemDef = { id: 'set_of_picks', name: 'Set of Picks', s
 export const guildChart: ItemDef = { id: 'guild_chart', name: 'Guild Chart', slot: 'none', price: 400, skill: 'cartographer', text: [
   'Waxed linen ruled in squares, the road inked in and the rest left white. The Guild\'s stamp is in the corner.',
 ] };
+
+// Saltreach's of the bounds' eight (DESIGN §9, #847): the Grey Staff's 1d10+13 and a point, its blows
+// holy. Found and never sold; placed nowhere yet, for #830 lays its lair and puts it there.
+export const telstok = W('telstok', 'The Telstok', ARTIFACT_PRICE, 1, 10, { kind: 'staff', bonus: 14, twoHanded: true, classes: ['cleric', 'sorcerer', 'druid', 'monk'], element: 'holy', artifact: true, text: [
+  'A staff of black bog oak, its foot worn round on a stone floor.',
+  'Struck on stone, it rings like a bell under water.',
+] });
 
 export const ITEMS: readonly ItemDef[] = [
   morningStar,
@@ -76,4 +83,5 @@ export const ITEMS: readonly ItemDef[] = [
   { id: 'tide_symbol', name: 'Holy Symbol of the Tide', slot: 'none', price: 400, resist: ['cold'], text: ['A disc of silver on a cord, worn thin at the back by a chest. Round its rim a tide is cut, a wave and two open hands, and a name: TIJSJONGER.', 'Nobody at the temples said it. The wave goes out between the hands, not in.'] },
   // The Compact's first task (#182): the warehouse clerk's cask, carried to the Keel past the customs house.
   { id: 'brandy_cask', name: 'Cask of Brandy', slot: 'none', price: 0 },
+  telstok,
 ];

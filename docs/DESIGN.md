@@ -1170,12 +1170,15 @@ From the owner, 17 October 2026: one artifact to each of the eight areas the bou
 (#828), each with a power of its own, guarded in a lair at the cap and first heard of as a rumour.
 They are their areas' and not the reach's: off the quest as the reach is, and the game is whole
 without them. Designed in #846 to the direction of the owner's delegate (18 October 2026, on #828):
-#847 builds the mark and the powers; each area's issue (#830 to #837) the lair, its door and the
+#847 builds the mark and the powers, in two halves, the first the mark and the three whose kinds were
+built (the Telstok, the Erzhemd and Akkush, defined and placed nowhere), the second the three kinds
+not yet built and the other five; each area's issue (#830 to #837) the lair, its door and the
 rumour; the creatures lane the guardians (docs/MONSTERS.md §13). Each area's doc has its own under
 §6.
 
-**What an artifact is.** An item marked so (#847): one in the world, found in its lair and never
-sold, with no price in any window. Its numbers are one rung over the Hand's steel at 28 (EXPANSION
+**What an artifact is.** An item marked so (`ItemDef.artifact`, #847): one in the world, found in its
+lair and never sold, with no price in any window: no shop stocks one or takes one, and the windows
+pass it by its mark (EXPANSION §5.2). Its numbers are one rung over the Hand's steel at 28 (EXPANSION
 §5.2): a point past the Hand's piece of its kind in its bonus or its armour class, as each rung is
 a point past the last, and no plus to hit; a thing carried has none. It has one power, of one of
 the five kinds below, and no `resist` or `skill`: no artifact does a skill's work, and none opens a
@@ -1184,7 +1187,8 @@ and by the map spells, which are shortcuts and never keys (§1, §7). No gate fi
 gate's company is dressed from the ladder (EXPANSION §5.2), and no artifact is on it.
 
 **The five kinds, and no sixth.** One power to an artifact, and each kind on one or two of the
-eight. #847 builds the three not yet built and holds every bound here as a named constant.
+eight. #847 builds the three not yet built and holds every bound here as a named constant (the
+raise's, `ARTIFACT_RAISE`, with its first half).
 
 1. **A stat raised while borne** (`ItemDef.stat`, built, #855): one of the four stats a fight reads
    (might, accuracy, speed, personality: §5), by 5 at most, where the found items raise by 3. Borne
