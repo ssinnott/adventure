@@ -31,7 +31,7 @@ export interface MonsterInst {
   /** Under the ice with its group (`Ranks`): its blows reach only the front row. */
   under?: 'ice';
   conditions: Condition[];
-  /** Set for one render frame when hit. */
+  /** Ticks of white a blow leaves: set to 2 when it lands and taken down by one at the end of each tick of the combat screen, so it shows for the one tick after, at any refresh. */
   flash: number;
   /** One that mends (`MonsterDef.regen`) took fire this round, and will not mend at its end (`regenerate`). */
   burnt?: boolean;

@@ -35,6 +35,7 @@ export const ZONES: readonly AtlasZone[] = [
 export const PLACES: readonly AtlasPlace[] = [
   { id: 'cairns', kind: 'dungeon', at: [430, 246] }, // Carn Dubh, the Cairns: the cairn, through N8's door at 6,18 (#479, #480)
   { id: 'cairns2', kind: 'dungeon', at: [430, 252] }, // under the cairn, down its stair
+  { id: 'carn_fada', kind: 'dungeon', band: [20, 21], at: [381, 249] }, // the enclave, the drowned cairn under L8's mound, its gap at 22,27 (#834, #845)
 ];
 
 export const SITES: readonly AtlasSite[] = [
