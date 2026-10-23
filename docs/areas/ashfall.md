@@ -13,27 +13,27 @@ it, the plan for building it, box by box, and the briefs. Its work is filed unde
 country behind (#522), all seven boxes built, which closes #522; this doc is #509.
 Figures are measured on main at `6032251` (2 October 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Twenty maps are built: H10, the Stair's foot (#510, §4.2), which joins the area to the Whitespine
-overland; G10, Cinderport's box (#511, §4.3), which lists the area; Cinderport behind its gate
-(#512, §4.4); G11, Fire Mountain's flank (#513, §4.5); the vents, the iron corridors and the camp,
-Meridian Camp's three levels (#22, docs/areas/meridian_camp.md §4.1 to §4.3), with the Cartographers'
-Mapmaker's rung for the camp's fire (#635, §6); F11, Old Cinder's and the Ember Stone's box (#514,
-§4.6); Old Cinder's two levels, the buried town and the undercroft, through
-F11's crater (#515, §4.7); the Ember Stone, one level under F11's field of cinders (#516, §4.8),
-with the Cartographers' Surveyor's rung (#635, §6); F10 and E10, the Ember Waste's road (#517,
-§4.9); and, off the road, the country behind it in seven boxes (#522, §4.10): F9, G9 and H9, the
-Sound's shore; E11, the Waste's west; and H11, H12 and G12, Fire Mountain's east flank, south-east
-foot and south foot, which closes #522. Its three side quests are written (#519, §6), and the third
-prestiges' quests of the three
-classes taught here are built on them: the Paladin's lamp, the Barbarian's nest and the Druid's
-seedling (#448, §6). Its chapter of the one quest, The Window, is written and walked (#518, §5). Its
-nine monsters and the armourer's step are drawn (§3), and the rest is to build. Its content is
-`src/content/areas/ashfall/` (maps, monsters, items, climate, its part of the world map and its
-walkthrough; its chapter of the one quest, The Window, in `chapter.ts`, and its side quests
-and the third prestiges' three in `quests.ts`) and its businesses' rooms `src/ui/interiors/ashfall/`. Its ids, the plan's:
-the area `ashfall`, its zones `cindercoast`, `firemount` and `emberwaste`, the town `cinderport`,
-the dungeons `old_cinder` and `old_cinder2` (its undercroft, #515), `ember_stone` and
-`meridian_camp`.
+Twenty-one maps are built: H10, the Stair's foot (#510, §4.2), which joins the area to the
+Whitespine overland; G10, Cinderport's box (#511, §4.3), which lists the area; Cinderport behind its
+gate (#512, §4.4); G11, Fire Mountain's flank (#513, §4.5); the vents, the iron corridors and the
+camp, Meridian Camp's three levels (#22, docs/areas/meridian_camp.md §4.1 to §4.3), with the
+Cartographers' Mapmaker's rung for the camp's fire (#635, §6); F11, Old Cinder's and the Ember
+Stone's box (#514, §4.6); Old Cinder's two levels, the buried town and the undercroft, through F11's
+crater (#515, §4.7); the Ember Stone, one level under F11's field of cinders (#516, §4.8), with the
+Cartographers' Surveyor's rung (#635, §6); F10 and E10, the Ember Waste's road (#517, §4.9); and,
+off the road, the country behind it in seven boxes (#522, §4.10): F9, G9 and H9, the Sound's shore;
+E11, the Waste's west; and H11, H12 and G12, Fire Mountain's east flank, south-east foot and south
+foot, which closes #522; and the bounds' first box, F12, the Waste's south-west where the lava flow
+ends under the rim (#836, §12). Its three side quests are written (#519, §6), and the third
+prestiges' quests of the three classes taught here are built on them: the Paladin's lamp, the
+Barbarian's nest and the Druid's seedling (#448, §6). Its chapter of the one quest, The Window, is
+written and walked (#518, §5). Its nine monsters and the armourer's step are drawn (§3), and the
+rest is to build. Its content is `src/content/areas/ashfall/` (maps, monsters, items, climate, its
+part of the world map and its walkthrough; its chapter of the one quest, The Window, in
+`chapter.ts`, and its side quests and the third prestiges' three in `quests.ts`) and its businesses'
+rooms `src/ui/interiors/ashfall/`. Its ids, the plan's: the area `ashfall`, its zones `cindercoast`,
+`firemount` and `emberwaste`, the town `cinderport`, the dungeons `old_cinder` and `old_cinder2`
+(its undercroft, #515), `ember_stone` and `meridian_camp`.
 
 ---
 
@@ -46,8 +46,8 @@ three zones:
 |---|---|---|---|
 | Cindercoast | 24–25 | 3,657 | H10, G10; F9, G9 and H9, laid at 168,254, 200,254 and 232,254 (#522) |
 | Fire Mountain | 25–26 | 3,795 | G11; H11, H12 and G12, laid at 232,318, 232,350 and 200,350 (#522) |
-| The Ember Waste | 25–26 | 3,284 | F11, F10, E10; E11, laid at 136,318 (#522) |
-| The area | 24–26 | 10,736 | H10, G10, G11, F11, F10, E10, F9, G9, H9, E11, H11, H12, G12 |
+| The Ember Waste | 25–26 | 3,284 | F11, F10, E10; E11, laid at 136,318 (#522); F12, laid at 168,350 (#836) |
+| The area | 24–26 | 10,736 | H10, G10, G11, F11, F10, E10, F9, G9, H9, E11, H11, H12, G12, F12 |
 
 Squares are land without shallows or rivers, about 10.5 zone maps (EXPANSION §1 has 10.5), and
 9,228 of them a company could walk: the rest is Fire Mountain's cone, the Sheer's foot and the rim.
@@ -63,17 +63,21 @@ the plan's 25–26 on its row where F10 and E10 are built at 24–26 (§4, §9, 
 F9, G9 and H9 (#522) are laid whole in Cindercoast, E11 whole in the Ember Waste and H11, H12 and
 G12 whole in Fire Mountain, which leaves the zones' seeds as they were: the atlas's walk gives most
 of F9's land to the Waste and the Wold, H9's pines to Sheer Point and 594 of H12's squares to the
-High Spine, and a laid map takes its zone (§9, #522's 1 and 27).
-Laying Old Cinder (#515) moves no square: its two plates, at 190,324 and 190,330, are places on the
-atlas, which the grid does not read. Nor does laying the Ember Stone (#516): its plate, at 176,348,
-is another place.
+High Spine, and a laid map takes its zone (§9, #522's 1 and 27). F12 (#836) is laid whole in the
+Ember Waste, which the atlas gives 306 of its 445 land squares to Fire Mountain's 139: counted by
+`worldGrid` before and after, Fire Mountain falls from 4,193 land squares to 4,054 and the Waste
+rises from 4,598 to 5,318, taking F12's 139 and its 579 of void, which the world map paints as
+grass, with 2 squares elsewhere. Laying Old Cinder (#515) moves no square: its two plates, at
+190,324 and 190,330, are places on the atlas, which the grid does not read. Nor does laying the
+Ember Stone (#516): its plate, at 176,348, is another place.
 
 **The grid** (EXPANSION §8.2; docs/areas/shelf.md §1). Ashfall is the E to H columns from row 9 to
 row 12, with a sliver in I. The land worth a map is six boxes: H10 and G10 along the Sound, the
 Stair's foot and Cinderport; G11, Fire Mountain's flank with the vents; F11, Old Cinder and the
 Ember Stone; F10 and E10, the Waste's road to the Wold. Behind them seven boxes of country, all
 built (#522, §4.10): F9, G9 and H9 along the shore, E11 in the Waste and H11, H12 and G12 on the
-mountain's east and south slopes; F12 and E12 are cut (§11).
+mountain's east and south slopes. F12, where the south-west flow ends under the rim, is the bounds'
+first box, built (#836, §12), and E12 is cut (§11).
 
 Its edges:
 
@@ -96,10 +100,10 @@ Its edges:
 
 Fire Mountain stands at 204–226,326, a volcano ridge with an ash foot seven wide, and three lava
 flows run from it: south-west from 212,326 to 188,366, leaving G11 by its west edge into F11 and
-ending in F12, cut (G12 holds none), south-east from 218,327 to 240,358 through H11 to its end in
-H12, and west from 209,325 to 174,330 across F11, between Old Cinder and
-the Stone's field. The vents open at 226,334 on its east flank, Grimsforge (Warlord's Forge, §10)
-beside them at 230,330. The road runs from Cinderport's gate south-west through G10 to Old Cinder at
+ending in F12 under the rim (#836, §12; G12 holds none); south-east from 218,327 to 240,358 through
+H11 to its end in H12; and west from 209,325 to 174,330 across F11, between Old Cinder and the
+Stone's field. The vents open at 226,334 on its east flank, Grimsforge (Warlord's Forge, §10) beside
+them at 230,330. The road runs from Cinderport's gate south-west through G10 to Old Cinder at
 180,318, then west along F11's north edge to the Wold. No river: the Waste has none, and the water
 is Scaldwell's (the Hot Springs, §10) at 240,300.
 
@@ -125,11 +129,12 @@ off the springs; the vines' shore humid.
 
 ## 3. What is built
 
-Twenty maps: the Stair's foot (#510), Cinderport's box, which lists the area (#511), the town behind
-its gate (#512), Fire Mountain's flank (#513), the vents, the iron corridors and the camp (#22), Old Cinder's
-and the Ember Stone's box (#514), Old Cinder's two levels (#515), the Ember Stone (#516) and the
-Waste's road, F10 and E10 (#517), and, off the road, the Sound's shore, F9, G9 and H9, the Waste's
-west, E11, and Fire Mountain's east flank, south-east foot and south foot, H11, H12 and G12 (#522):
+Twenty-one maps: the Stair's foot (#510), Cinderport's box, which lists the area (#511), the town
+behind its gate (#512), Fire Mountain's flank (#513), the vents, the iron corridors and the camp
+(#22), Old Cinder's and the Ember Stone's box (#514), Old Cinder's two levels (#515), the Ember
+Stone (#516) and the Waste's road, F10 and E10 (#517); off the road, the Sound's shore, F9, G9 and
+H9, the Waste's west, E11, and Fire Mountain's east flank, south-east foot and south foot, H11, H12
+and G12 (#522); and the bounds' first box, the flow's end under the rim, F12 (#836):
 
 - **The Stair's foot** (H10, `cindercoast_h10`, core, band 24; #510): the Giants' Stair's last
   flights, cut along the Sheer's foot from I10's 0,20 to a landing on the black sand, where the step
@@ -298,14 +303,22 @@ west, E11, and Fire Mountain's east flank, south-east foot and south foot, H11, 
   pumice rolls in the wind. At the rim's foot claw-marks are scored back and forth across the face
   of one rock, and behind it lies the drakes' hollow, warm as a bread oven, with bright things at
   the back. One group: six drakelings on the slope by their scrapes (§4.10).
+- **The flow's end under the rim** (F12, `emberwaste_f12`, country, band 25–26; #836): the bounds'
+  first box, in from F11's ash and from G12's, walked, onto the ash under the mountain's west wall.
+  The flow comes down off F11 and goes south-west into a cut it made in the rim, and its front
+  stands across the cut in a dam of black rock, folded like rope. A cairn of the flow's crust under
+  the wall, a man of stone calling to the mountain with a riddle cut below and sulphur round the
+  vents in the east. At the rim's foot flakes of black glass lie heaped at one rock, and behind it
+  is a knapper's store. No group. The dam's rock is left bare for the lair's door and the mountain's
+  face under the west wall for the enclave's (§12).
 
 Its atlas rows are charted in `src/content/areas/ashfall/atlas.ts`, the area's own `atlas` since G10
 lists the area; until then `src/content/atlas.ts` spread them into the plan where its rows were, as
 Saltreach's were before #170: the zones with their bands (Cindercoast 24–25, with H10, G10, F9, G9 and H9 laid
 on it and its crossing words on its row, §9, #511's 13, reworded by G11, #513's 15; Fire Mountain
 25–26, with G11, H11, H12 and G12 laid on it and its own crossing words on its row, §9, #522's 21;
-the Ember Waste 25–26, with F11 laid on it at 25–26, F10 and E10 at
-24–26, E11 at 25–26 and its crossing words on its row, §9, #517's 2 and 6), Cinderport at 24–26, built since #512
+the Ember Waste 25–26, with F11 laid on it at 25–26, F10 and E10 at 24–26, E11 and F12 (#836) at
+25–26 and its crossing words on its row, §9, #517's 2 and 6), Cinderport at 24–26, built since #512
 with its plate at the gate, 206,288; Old Cinder's two plates, `old_cinder` at 190,324 and
 `old_cinder2` at 190,330, built since #515 at the maps' bands, 25–26 and 24–25; the Ember Stone at
 176,348, built since #516 at the map's band, 25–26; and Meridian Camp at 25–28, built since the
@@ -325,10 +338,10 @@ second row, `meridian_camp2` at 226,346, six squares south of the first (docs/ar
 Its row on the curve and its step on the gear ladder are in (#542): the row in
 `src/content/progression.ts` (band 24–26, next 26, window 5,500), owed to #446 while the area was
 built box by box and with no owed entry now (§9, #522's 20): a clear gives 35,919 xp a member of the
-19,467 asked and 11,960 gold of the 11,760, the six boxes', the vents', Old Cinder's, E10's Wold
+19,467 asked and 12,160 gold of the 11,760, the six boxes', the vents', Old Cinder's, E10's Wold
 half's, the corridors', the Ember Stone's, the Surveyor's and the Mapmaker's rungs', the side
-quests', the road behind's sentries' (#449) and the country behind's seven boxes' (§8); the 200 over
-the gold is Hendra's, for the Letter in Cipher (#735). Its xp was
+quests', the road behind's sentries' (#449), the country behind's seven boxes' and the bounds' F12's
+(§8, §12); the 400 over is Hendra's 200 for the Letter in Cipher (#735) and F12's. Its xp was
 met since E10's Wold half (#524) and its gold alone was owed, which Cinderport leaves as it is, a
 town paying nothing but Hendra's 200 (#735), and which F9, G9, H9 and E11 (#522) brought to 11,300 of
 the 11,760 and H11,
@@ -451,8 +464,8 @@ seven boxes behind (#510, §4.2; #511, §4.3; #512, §4.4; #513, §4.5; #514, §
 §4.8; #517,
 §4.9; #522, §4.10): 10,736 squares of land, 9,228 of them walkable, the plan's
 figures (§1). On the grid the plan is six boxes, two dungeons and a town, and the boxes hold 5,462
-of those squares, 5,120 walkable; the seven behind them hold 4,454 (§4.10), all of them built, the
-cuts and the sliver about 700 (§11):
+of those squares, 5,120 walkable; the seven behind them hold 4,454 (§4.10), all of them built; F12
+445, the bounds' first box, built (#836, §12), and E12 and the sliver about 250 (§11):
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
 |---|---|---|---|---|---|---|---|---|
@@ -471,6 +484,9 @@ cuts and the sliver about 700 (§11):
 | F9, G9, H9 | The fishers' bay; Cinderport's harbour side; the shore under the Sheer | Cindercoast | country, behind the road | 24–25 | 560 (grass 291, hills 146, ash 55, vines 32), 69 shallow; 223 (grass 155, building 25, sand 24, road 11), 71 shallow; 503 (grass 384, pine 42, sand 35, cliff 27), 69 shallow | the fishers' bay and store (F9); the harbour between the sea wall's moles and the smugglers' cell (G9); the hamlet under the Sheer and the cleft (H9); two cinder drakes in each | none | #522, built |
 | E11 | The Waste's west | the Ember Waste | country, behind the road | 25–26 | 961 (hills 261, ash 252, mountain 234, grass 70, lava 63) | the lava flow, the knapper, the drakelings and the tube under the flow | none | #522, built |
 | H11, H12, G12 | The east flank under the Sheer; the south-east foot where the lava ends; the south foot under the rim | Fire Mountain | country, behind the road | 25–26 | 984 (ash 937, pine 20, rock 15, grass 4, lava 4), 40 stream; 841 (ash 487, mountain 293, hills 22, lava 18, rock 9, grass 9), 2 stream; 674 (ash 374, mountain 288, rock 9) | the stream and its stones, the drake-watcher and the war-chest behind the axe-head (H11); the flow's end, the spring and the tube behind the split crust (H12); the folds, the hum over Meridian Camp and the drakes' hollow behind the claw-marks (G12); six drakelings in each | none | #522, built |
+
+The bounds come after the plan (§12, #836): F12 is built as country at 25–26, the bounds' first box;
+the enclave and the lair are to come.
 
 The core is the four boxes that hold a step of the quest (H10, G10, G11 and F11), built at full
 density; the rest is country, built to the looser floor with the wilderness features (EXPANSION
@@ -919,8 +935,8 @@ half, with the wilderness features (#45); no more than one point in four is a si
   the map starts at 16,0 facing south; G11's west edge is a second way in, walked (§9, #514's 2).
   The north edge is the atlas's cut, F10's row 31 square for square, and the east is lettered to
   G11's west edge square for square, so that both flows meet G11's at rows 10 and 11 and 21 to 23;
-  `tools/tests/outdoors.ts` pins both anew, with the west meeting E11 (#522, §4.10) and the south ending the world against
-  F12 (§9, #514's 3). The crater is a pit of chasm, 30 squares round 22,4, seen across and never
+  both agree anew, as the west does with E11 (#522, §4.10) and the south with F12 (#836, §12; §9,
+  #514's 3). The crater is a pit of chasm, 30 squares round 22,4, seen across and never
   walked, under Old Cinder's mark (22,0) on its north rim, with six roof-ridges standing out of it
   as building squares (seven until #515 opened the lip) and the rim ash (§9, #514's 4). Its way down
   is the crater's lip, 19,4 (187,322): `CRATER` is in `exits` and its square ash, re-lettered from a
@@ -1446,9 +1462,9 @@ half, with the wilderness features (#45); no more than one point in four is a si
     and void at 23 to 31. H12's east meets I12's west (the Spine's, #508) square for square: ash at
     rows 0 to 11, grass at 12 to 14, hills at 15 to 19, mountain at 20 to 30 and void at 31; walked
     west from I12's 0,5 onto H12's 31,5, which says "Fire Mountain." and the mountain's own harder
-    words to a company at 23 (§9, #522's 21). G12's west, 0,0 to 0,31 (200,350 to 200,381), lies
-    against F12, cut (§11): ash at rows 0 to 10 and void from 11, and the south edges of H12 and G12
-    are the rim, void; the world ends past all three, pinned.
+    words to a company at 23 (§9, #522's 21). G12's west, 0,0 to 0,31 (200,350 to 200,381), meets
+    F12's east (#836, §12) square for square: ash at rows 0 to 10, mountain at 11 to 17 and void
+    from 18. The south edges of H12 and G12 are the rim, void, and the world ends past both.
     The outdoors test follows the neighbours: F10's, G10's and H10's north edges, E10's south edge,
     F11's west edge, I9's west edge and E9's east edge no longer end the world, and are pinned anew
     (§9, #522's 17); so are I11's west edge, I12's west edge, G11's east and south edges and H10's
@@ -1692,7 +1708,7 @@ and the guardian's drawing are in.
 - **Power:** a spell (DESIGN §9, kind 3): Meteor Swarm, two a day, of the sorcerer's list, which
   none of its four casts.
 - **The lair:** a warlord's grave of one level under the rock where the south-west flow stopped, its
-  door in F12, at the cap's band, 30–32 (#845).
+  door in F12's dam of rock at 20,14, left bare (§12.4), at the cap's band, 30–32 (#845).
 - **The guardian:** the Grave Drake (drakes, a new kind; boss, 32; docs/MONSTERS.md §13): *Asleep on
   a warlord's grave, and the grave is warm.* Size 2; it burns a row.
 
@@ -1760,7 +1776,8 @@ claims nothing either: the dead cast in ash is the skeleton frame already, a sle
 group and the ruin's icon is the Shelf's Berth's (§9, #515's 16). The Ember Stone claims nothing:
 the hand-in is persons and their questions, the door's twin events and `after` are on the road
 before, and a Stone that lights is the Hearth's count (§9, #516's 15). The seven of the country
-behind claim nothing more (#522).
+behind claim nothing more (#522), nor does the bounds' F12 (#836): a statue with a riddle is on
+the road before it (§12.2).
 
 ## 8. The numbers
 
@@ -1802,14 +1819,14 @@ behind claim nothing more (#522).
   at 517 each, shared by six; §9, #522's 3): 34,368, 1.77 times, which is the curve test's figure,
   31,864 before the four and 300 over the sum above. H11, H12 and G12 (#522) add 517 each, six
   drakelings at 517 each shared by six (§9, #522's 18): 35,919, 1.85 times, which is the curve
-  test's figure, 34,368 before the three and still 300 over the sum above. Meridian Camp's third
-  level (#22) pays 3,003, 1.00 of the brief's 3,000, outside the area's budget (EXPANSION §5.2): the
-  area lists it `outside`, so the curve prints its pay as a figure and no clear counts it (§9,
-  #22's 5). Cinderport pays nothing,
-  as a town pays none, and its halls add no quest of their own (§9, #512's 6): its 1,400 is the
-  Cartographers' two rungs', the Surveyor's 3,600 xp shared by six and 500 gold for the fourth journal
-  found under the Ember Stone and the Mapmaker's 4,800 and 800 gold for Fane's fire, paid at any
-  hall of the Guild (#635).
+  test's figure, 34,368 before the three and still 300 over the sum above. F12 (#836) adds nothing,
+  holding no group (§12.1). Meridian Camp's third level (#22) pays 3,003, 1.00 of the brief's 3,000,
+  outside the area's budget (EXPANSION §5.2): the area lists it `outside`, so the curve prints its
+  pay as a figure and no clear counts it (§9, #22's 5). Cinderport pays nothing, as a town pays
+  none, and its halls add no quest of their own (§9, #512's 6): its 1,400 is the Cartographers' two
+  rungs', the Surveyor's 3,600 xp shared by six and 500 gold for the fourth journal found under the
+  Ember Stone and the Mapmaker's 4,800 and 800 gold for Fane's fire, paid at any hall of the Guild
+  (#635).
 - **Gold.** Training six members from 24 to 26 costs 11,760 with today's `trainPrice`, and to 27,
   the third prestige's level, 6,240 more; the thirds ask a quest, not gold (DESIGN §5). A clear
   should pay for the training at least, in chests, drops, the halls' pay and the sentries' parts.
@@ -1840,14 +1857,13 @@ behind claim nothing more (#522).
   short (§9, #522's 9). H11, H12 and G12 hold 150 a box, a cairn's 100 and a Sapphire Vial and a
   chest's 50 with an Elixir, H11's cairn at 110 for the last 10 (§9, #522's 20): the clear gives
   11,760 of the 11,760, and the curve's owed row is gone; Hendra's 200 for the Letter in Cipher
-  (#735) makes it 11,960, over a floor that fails nothing. The camp's
-  1,200 gold and its Meridian Staff +4 at 2,600, in
-  the kit chest, are
-  outside the area's budget and held to the Glasswold's window of 6,000 (§9, #22's 5).
-  Cinderport holds no gold, a town paying
-  nothing but that hand-in; the dearest ware at its armourer's is the Drakeskin Coat at 3,100 and
-  the Quickening Draught at its chandler's, the company's kit from 25, is 2,000, both inside the
-  window (#512).
+  (#735) makes it 11,960, over a floor that fails nothing. F12 (#836) holds 200 more, a cairn's 100
+  and a Sapphire Vial and a store's 100 with an Elixir, no gear: 12,160 (§12.2). The camp's 1,200
+  gold and its Meridian Staff +4 at 2,600, in the kit chest, are outside the area's budget and held
+  to the Glasswold's window of 6,000 (§9, #22's 5). Cinderport holds no gold, a town paying nothing
+  but that hand-in; the dearest ware at its armourer's is the Drakeskin Coat at 3,100 and the
+  Quickening Draught at its chandler's, the company's kit from 25, is 2,000, both inside the window
+  (#512).
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
   (docs/areas/thornmark.md §9, 17): a company at 24 wins nine in ten of H10's fights and walks the
   shore resting at its camp; one at 22 wins no more than one in four, which is how the Stair's foot
@@ -1909,7 +1925,14 @@ behind claim nothing more (#522).
   points, G9 (199 of 199) the furthest 11 and 10 points, H9 (467 of 467) the furthest 9 and 12, E11
   99.4% (683 of 687) and the furthest 15, with no sign among its 16, H11 98.1% (951 of 969) and the
   furthest 15, with no sign among its 17, H12 (539 of 539) the furthest 10 and 13 points, and G12
-  (377 of 377) the furthest 8 and 11 (#522).
+  (377 of 377) the furthest 8 and 11 (#522); F12 100.0% within 12 steps (190 of 190) and the
+  furthest 6 of 20, with no sign among its 9 points (#836).
+- **The bounds** (#836, §12). F12 holds no group, so the gate has nothing new to judge: GATEFIG It
+  pays no xp and 200 gold, so a clear gives 35,919 xp a member of the 19,467 asked and 12,160 gold
+  of the 11,760, and a company entering at 24 and three quarters clearing it leaves at 27.3554 by
+  the curve's own count, as before, under the 27.4 that `OVER_ROAD` names Ashfall at (#738). The
+  enclave and the lair are counted in no clear (`tools/tests/curve.ts`), so the lead stays there to
+  the end of #836.
 
 ## 9. Decisions
 
@@ -3151,6 +3174,50 @@ Decided by the builder for #859, each the owner's to overturn:
     Expert by `teachTier` at no price and reads the rest from the offers' bars and `rankMult`
     (Master two rank steps above none). The scan is as it was.
 
+Decided by the builder for #836, each the owner's to overturn:
+
+1. **The bounds' brief is §12,** for F12, the enclave and the lair, each in §4's form, in three pull
+   requests: F12 with the brief (#828's 3, one box), then the enclave, then the lair once #847's
+   powers and the Grave Drake's drawing are in.
+2. **F12 is the Waste's, whole,** at the Waste's 25–26: by the atlas the Waste holds 306 of its 445
+   land squares, 122 of its 194 walkable, and Fire Mountain 139 and 72. A company walking in from
+   G12 hears the Waste named, as one from G11 into F11 does; from F11 nothing is said.
+3. **F12 holds no group.** The lead's room is 0.0446 of a level: a clear leaves a company at 27.3554
+   against the 27.4 that `OVER_ROAD` names Ashfall at (#738). The curve's rise rule asks a box's
+   hardest at 26, and the roster's one 26 that is not `after` is #22's drakeling, which E11, H11,
+   H12 and G12 hold six to a box: six more would take the lead to 27.3891 and repeat the four; two
+   sentries after the Stone would take it to 27.4004, past 27.4. Ashfall's clear is 1.85 times its
+   ask already; the enclave and the lair are the bounds' fights.
+4. **F12's wilderness features are a cairn and a man of stone with a riddle,** answered echo (+1
+   intellect once), Ashfall's first statue; no camp (F12 holds no group) and no shrine (ten of
+   Ashfall's maps hold one).
+5. **The secret is a knapper's store behind a face of rock drawn under the rim,** a ring of twelve
+   squares where the atlas has mountain, its hint the flakes of black glass heaped at the rock's
+   foot. Its door is 29,12, where the art check takes a lone secret door (28,12 failed it).
+6. **The finds are gold, an Elixir and a Sapphire Vial,** the dearest healing and spell points that
+   Cinderport's chandler's sells, 200 gold in all; F12 gives no gear.
+7. **The enclave is the cold flue, on F12, at 27–28** (§12.3): its door is left bare at 10,3 in the
+   mountain's face under the west wall, 10,2 before it. F12 has room for one: 190 squares walked,
+   where Wrackholm's E5 took its enclave with 73, and the two doors stand 21 squares apart with
+   nothing within four of either. Its groups are Meridian Camp's machines, the area's only monsters
+   at 27 and 28 but its bosses; their sizes and its reward are named in its own pull request, inside
+   the Glasswold's window, 6,000 (#845's 3).
+8. **The lair is the grave where the flow stopped, on F12** (§6, DESIGN §9, MONSTERS §13): its door
+   is left bare at 20,14, the middle of the dam's rock across the cut, 20,13 before it.
+9. **F12 meets F11 and G12 square for square,** its edges worked from the built letters: its 4,0 ash
+   with F11's 4,31 where the atlas has mountain; its 31,11 mountain with G12's 0,11 where the atlas
+   has ash; and the flow across the north edge at 27 and 28, as on F11's row 31, where the atlas has
+   it at 26 and 27. Every corner agrees with its built letters; no built square changes and no
+   `SEAMS_AS_BUILT` row is added. The two `OPEN_ON_NOTHING` rows F12 answers go and none comes: its
+   west and south edges hold no open square.
+10. **The flow ends at a dam of rock across its cut,** the rim's mountain under it: the atlas runs
+    the flow on to the void at rows 15 and 16, so F12's 19 to 21 on row 14 are rock and the four
+    squares under them mountain: no square of the flow meets the void.
+11. **F12 differs from the atlas at 24 squares:** the seams' two, the flow's three where it crosses
+    from F11, the dam's three, the rim's four under it and the store's twelve.
+12. **The walkthrough walks the bounds in one function,** `theBounds`, called last; the road's line
+    that names the Waste's maps names F12 with them.
+
 ## 10. Names
 
 Ashfall's naming pass, by the rules of `docs/NAMES.md`, chosen for #444. Cindercoast's folk came
@@ -3177,13 +3244,14 @@ of theirs is named here: the trading ground and Scaldwell are the coast's.
 ## 11. What was cut
 
 - **F12,** 445 squares of land, 194 a company could walk: the south-west lava flow's end and the
-  mountain under the rim, with nothing on the atlas or in the docs.
+  mountain under the rim, with nothing on the atlas or in the docs. Not cut since #836: the bounds'
+  first box, built (§12).
 - **E12,** 62 squares, none walkable: mountain.
 - **The I11 sliver,** 187 squares under the Sheer, the Whitespine's Peak Stone box. Not void: the
   Whitespine's, and not Ashfall's to build.
 
-About 500 squares void, and 187 another area's. The country behind, 4,454 squares in seven boxes,
-is not cut (#522, §4.10): all seven are built.
+E12's 62 squares stay void, and 187 are another area's; F12 is built (#836, §12). The country
+behind, 4,454 squares in seven boxes, is not cut (#522, §4.10): all seven are built.
 
 Owed, from G10 (#511):
 
@@ -3376,8 +3444,149 @@ Owed, from the chapter (#518):
 Owed by the country behind as built (#522, §4.10, §8):
 
 - **The edges that still end the world:** F9's, G9's and H9's north edges are the sea against F8, G8
-  and H8, not built, E11's west and south edges end against D11 and E12, G12's west edge against
-  F12, cut, and the south edges of H12 and G12 are the rim, each pinned with void past it. H9's east
-  edge is the Sheer, shut to I9 (§9, #522's 14).
+  and H8, not built; E11's west and south edges end against D11 and E12; the south edges of H12 and
+  G12 are the rim, with void past them, and so are F12's west and south edges, against E12 and the
+  rim (#836, §12), G12's west edge meeting F12's east since. H9's east edge is the Sheer, shut to I9
+  (§9, #522's 14).
+- **The Ember Waste's warning** ("The coast is behind you still.") reads wrong to a company three or
+  more under its floor walking into F12 from Fire Mountain's G12 (#836), as into F11 from G11
+  (#514): no coast is behind it there. The walkthrough walks the warning from G10 (§4.9), so the
+  words are left as they are.
 - **Two might shrines,** F9's and E11's, the builders having worked apart (§9, #522's 10), are one
   since #735: F9's gives accuracy and E11's keeps might.
+
+## 12. The bounds
+
+The land the area's maps lie open to, built as country off the quest, level for level (the owner, 17
+October 2026; #828, #836): F12, the south-west lava flow's end under the rim, which §11 cut; then
+the area's enclave, entered from F12, and its artifact's lair, Grim's Axe's (§6). F12 is 445 squares
+of land, 194 of them a company could walk by the atlas, 147 of ash and 47 of the flow, which a
+company walks (lava has no rule underfoot, §11), and 39 edge squares open onto it: F11's south edge
+(28) and G12's west edge (11). The issue's 147 leaves the flow out, and its 38 are the squares the
+atlas's F12 met on foot: F11's 4,31 is ash where the atlas has mountain at F12's 4,0, and F12 is
+drawn as ash there to meet it (§12.1). E12, mountain and void, stays cut, where #828 plans no box
+(§11). The box is built to the looser floor (EXPANSION §5.3) at the zone's band, from the area's
+own, paid from its budget (§8), with nothing on the road's quest. This is the brief, in §4's form,
+for F12, the enclave and the lair; each pull request builds from it and adds its "As built".
+
+| Place | Laid in | Walkable | Built neighbours | Band | Pull request |
+|---|---|---|---|---|---|
+| F12 | the Ember Waste, `emberwaste_f12` | 190 with the store (the atlas's 194) | F11; G12 (Fire Mountain's) | 25–26 | the first, built (#836) |
+| The enclave | its own, its door on F12 | | F12 | 27–28 | the second |
+| The lair | its own, its door on F12 | | F12 | 30–32 | the third |
+
+### 12.1 What every box keeps
+
+- **F12 is the Waste's, whole,** laid in its one zone at the Waste's 25–26 (§9, #836's 2): by the
+  atlas the Waste holds 306 of its 445 land squares and Fire Mountain 139. A company walking in from
+  Fire Mountain's G12 hears the Waste named, as from G11 into F11; from F11 nothing is said.
+- **The seams agree with the built boxes square for square,** each corner worked from the built
+  letters first. F12's north edge meets F11's south edge letter for letter, the mountain at 0 to 3
+  and the ash and the flow open at 4 to 31: its 4,0 is ash, as F11's 4,31 is, where the atlas has
+  mountain, and the flow crosses at 27 and 28 on both sides. Its east edge meets G12's west edge,
+  open at 0 to 10: its 31,11 is mountain, as G12's 0,11 is, where the atlas has ash. The corners:
+  F12's 31,0 is ash with F11's 31,31 and G12's 0,0, both ash, so the built neighbours agree; its 0,0
+  is mountain with F11's 0,31, E12 unbuilt beside it; its 31,31 is void with G12's 0,31. No built
+  square changes and no row of `SEAMS_AS_BUILT` is added. Its west edge against E12, the world's end
+  where #828 plans no box, is the mountain and the void, and its south edge the void: no square of
+  either is open, so no row of `OPEN_ON_NOTHING` comes, and the two that held F11's south and G12's
+  west edges go. No built map of Ashfall now opens onto unbuilt land but E11, its west edge onto the
+  Glass (the reach) and its south edge onto E12, where #828 plans no box (#836's Done when).
+- **No group** stands on F12 (§9, #836's 3): the lead's room is too narrow for a fight at the band's
+  top that does not repeat the four boxes' drakelings, and the bounds' fights are the enclave's and
+  the lair's.
+- **Wilderness features** (EXPANSION §5.3): a man of stone with a riddle, Ashfall's first statue,
+  and a cairn; no camp and no shrine (§9, #836's 4).
+- **The secret** is a store behind a face of rock drawn under the rim, its hint a thing seen at the
+  face: flakes of black glass. Rock keeps walkers, waders, climbers and floaters out.
+- **Finds** inside the 5,500 window: gold, the Elixir and the Sapphire Vial, the dearest healing and
+  spell points Cinderport's chandler's sells; no gear.
+- **Pay.** A clear of Ashfall gave 35,919 xp a member before the bounds (the curve asks 19,467) and
+  11,960 gold (11,760), and a company entering at 24 and three quarters clearing it left at 27.3554
+  by the curve's own count, under the 27.4 that `OVER_ROAD` names Ashfall at, accepted as built
+  (#738); the line is 27 (`LEAD`). F12 pays no xp and 200 gold: with it a clear gives 35,919 xp and
+  12,160 gold, and the company still leaves at 27.3554. Six drakelings would take it to 27.3891 and
+  two sentries to 27.4004, past 27.4 (§9, #836's 3). The enclave and the lair are held to their own
+  bands and counted in no clear (`tools/tests/curve.ts`), so the lead stays at 27.3554 to the end of
+  #836.
+- **The doors** of the enclave and the lair are left bare, each a square of solid ground with the
+  same either side along its face, its way walked to and nothing within four squares: the lair's in
+  the dam's rock, the enclave's in the mountain (§12.3, §12.4).
+- **The walkthrough** walks it in one function, `theBounds` in `walkthrough.ts`, called last: the
+  seams walked and the secret found from its hint, the prize shut to walkers, swimmers, climbers and
+  floaters; the two doors left bare.
+
+### 12.2 F12, the flow's end under the rim (#836): country, band 25–26
+
+- **Purpose.** The Waste's south-west below F11: the ash under the mountain's west wall and the
+  south-west flow going down into a cut it made in the rim, its front stopped across the cut. Off
+  the road and off the quest.
+- **Landmarks.** The flow and its cut; the dam of black rock where it stopped, where the lair's door
+  will stand (§12.4); the mountain's west wall and the face under it, where the enclave's will
+  (§12.3); a man of stone calling to the mountain.
+- **Points of interest,** nine features and no group: the slope down from F11, the cairn, the man of
+  stone, the sulphur, the cut, the flow's end, the flakes at the rock's foot, the store and its
+  purse.
+- **Encounters.** None (§12.1).
+- **The ways in and out.** In over the north edge from F11's ash, columns 4 to 31, and over the east
+  edge from G12's, rows 0 to 10. West and south the world ends.
+- **The secret and its hint.** A knapper's store in the rock under the rim, the best of the flow
+  glass wrapped in hide on a ledge with a purse beside it. The hint: flakes of black glass heaped at
+  the rock's foot, swept together, and nowhere else on the ash.
+- **New here.** Ashfall's first statue and riddle, the man of stone's (echo), +1 intellect once.
+- **Finds.** 100 gold and a Sapphire Vial in the cairn; 100 gold and an Elixir in the store.
+- **Pay.** No xp; 200 gold.
+- **As built** (#836, 23 October): `emberwaste_f12`, laid at 168,350, start 20,0 facing south, cut
+  from the atlas by the scaffold's own cut, the void written `%`. The slope's look (`f12_down`,
+  20,1) a step in from F11; the cairn (`f12_cairn`, 7,1); the man of stone (`f12_caller`, 16,2); the
+  sulphur (`f12_sulphur`, 30,1); the cut (`f12_cut`, 25,8) and the flow's end (`f12_end`, 22,10).
+  The flow runs down its cut to row 13 and its front is rock at 19 to 21 on row 14, the rim's
+  mountain under it (§9, #836's 10). The store is a ring of rock at 28 to 30 on rows 12 to 15, its
+  door at 29,12 and the flakes before it (`f12_flakes`, 29,11), the store (`f12_store`, 29,13) with
+  the purse (`f12_purse`, 29,14). The lair's door is 20,14, bare with 20,13 open before it; the
+  enclave's is 10,3, bare with 10,2 open before it. F12 differs from the atlas at 24 squares (§9,
+  #836's 11). Density: 190 of 190 squares within 12 steps, the furthest 6, no sign among 9 points.
+  No group, so the gate has nothing to judge; the box pays 200 gold.
+
+### 12.3 The enclave: the cold flue (#836, its second pull request)
+
+- **Purpose.** A place of its own off F12: a flue of the Underdeep's exhaust (§2), its mouth in the
+  mountain's face under the west wall and its far end shut where the flow came in and set, where the
+  machines that walk it still walk. Held to its own band (#845).
+- **Band.** 27–28, a band over F12's 25–26 (#845: a band or two, its floor over the box's top).
+- **Landmarks.** The mouth in the face, the long flue going down under the mountain and the cold
+  furnace at its end, where the flow came in.
+- **Points of interest.** The way in at the mouth, the cold furnace and the door's own line, which
+  gives its band (#845).
+- **Encounters.** Meridian Camp's machines, the area's only monsters at 27 and 28 but its bosses:
+  flue walkers (27) nearer the mouth, deep knockers and inspectors (28) at the furnace, the hardest;
+  no guardian.
+- **The ways in and out.** Its door at F12's 10,3 in the mountain's face, left bare with 10,2 open
+  before it; one way out, back onto the ash.
+- **The secret and its hint.** A tally-room off the flue behind a plate of iron. The hint: one plate
+  of the flue's wall knocked bright where every other is soot.
+- **New here.** The enclave itself (#845).
+- **Reward.** One of its own, named with its groups' sizes in the enclave's pull request (§9, #836's
+  7), inside the Glasswold's window, 6,000 (EXPANSION §5.2, #845's 3: the last road area whose floor
+  is at or under 27).
+- **Pay.** Counted in no clear (`tools/tests/curve.ts`).
+
+### 12.4 The lair: the grave where the flow stopped (#836, its third pull request)
+
+- **Purpose.** Grim's Axe's lair (§6, #846): a warlord's grave of one level under the rock where the
+  south-west flow stopped, closed over him by the mountain (the heir's rumour, §6), where the Grave
+  Drake sleeps on the grave.
+- **Band.** The cap's, 30–32.
+- **Landmarks.** The door in the dam, a passage under the flow's crust and the grave, warm.
+- **Points of interest.** The way in under the crust, the grave with its goods and the door's own
+  line.
+- **Encounters.** The Grave Drake (drakes, a new kind; boss, 32; docs/MONSTERS.md §13), the one
+  guardian, asleep on the grave, drawn in the creatures lane before the lair is built.
+- **The ways in and out.** Its door at F12's 20,14 in the dam's rock, left bare with 20,13 open
+  before it; one way out, back up the cut.
+- **The secret and its hint.** The war-band's offerings, walled into a niche behind the grave. The
+  hint: a smoking mountain cut in one stone of the wall, as under the name on the axe's cheek (§6).
+- **New here.** The Grave Drake and the artifact (#846, #847).
+- **Finds.** Grim's Axe, a broad axe of black iron, 2d12+8, Meteor Swarm two a day, found and never
+  sold (§6), where #846 puts it; the rumour is Petroc's at Grimsforge's anvil, built with the lair.
+- **Pay.** Counted in no clear (`tools/tests/curve.ts`).
