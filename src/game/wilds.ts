@@ -22,14 +22,8 @@ export function giftOf(f: Feature): Gift | undefined {
   }
 }
 
-/** The id a feature is kept by in `used` once spent, or undefined for one that is never spent. */
-export function spentId(f: Feature): string | undefined {
-  switch (f.kind) {
-    case 'chest': case 'cairn': case 'shrine': case 'fountain': case 'statue': case 'den': return f.id;
-    case 'event': return f.once ? f.id : undefined;
-    default: return undefined;
-  }
-}
+/** The id a feature is kept by in `used` once spent: in game/keys.ts with the save's other keys. */
+export { spentId } from './keys.ts';
 
 const STAT_NAMES: Record<Stat, string> = { might: 'Might', intellect: 'Intellect', personality: 'Personality', endurance: 'Endurance', accuracy: 'Accuracy', speed: 'Speed', luck: 'Luck' };
 

@@ -139,6 +139,7 @@ export function inscriptions(): void {
   {
     const found = MAP_DEFS.flatMap((d) => (d.features ?? []).filter(isInscription));
     const faults = inscriptionFaults(MAP_DEFS);
+    ok(MAP_DEFS.every((d) => (d.features ?? []).every((f) => (readId(f) !== undefined) === isInscription(f))), 'the id an inscription is kept read by (game/keys.ts) is given for exactly the features game/inscriptions.ts takes for inscriptions');
     ok(!faults.length, `the content's ${found.length} inscription(s) each have an id of their own, a reading and marks that name atlas places, and no way waits on a reading${faults.length ? ' -> ' + faults.join('; ') : ''}`);
     const broken = (extra: Partial<MapDef>): string[] => inscriptionFaults([{ ...FIXTURE, ...extra }]);
     const sign = FIXTURE.features![0];

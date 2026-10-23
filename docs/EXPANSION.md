@@ -763,10 +763,30 @@ again; rename a guardian and it lives again; move a door and the saved door land
 square, since doors are saved by coordinate; move a zone and the outdoors' seen squares and doors
 are all off. Every push to main is deployed, so these are players' saves.
 
-- `content/shipped.json` lists every id a save can hold: maps, feature and group ids, flags, items,
-  door squares, zone placements. A test fails when something in it has gone or moved, unless the
-  change bumps `SAVE_VERSION` with an upgrade, the way version 1 saves were brought to 2.
+- The shipped files list every id a save can hold: maps, feature and group ids, flags, items,
+  door squares, zone placements. Each area's `content/areas/<area>/shipped.json` holds what it
+  owns: its played maps, its zones, the outdoors' ids, groups and door squares that stand in its
+  boxes, the flags its maps and guild quests set (a flag two areas set is in both), its items and its
+  monsters. `content/shipped.json` holds the version, the outdoors' size and what no area owns: the
+  spells, classes, races, conditions, skills and tiers, the core items and the flags the code and the
+  guilds' ranks set. `tools/shipped.ts` writes each file and joins them into one record under one
+  `SAVE_VERSION`, so two boxes of different areas edit different files. A test fails when something
+  in the record has gone or moved, unless the change bumps `SAVE_VERSION` with an upgrade, the way
+  version 1 saves were brought to 2; and when an id sits in a file not its owner's, or an area with
+  content has no file. A conflict in a shipped file is never merged by hand (keeping both sides'
+  lines leaves invalid JSON): take either side whole and run `node tools/shipped.ts`, which writes
+  every file from the tree.
 - New content only adds.
+
+Decided by the builder for #914, each the owner's to overturn:
+
+1. **An area's part of the outdoors is kept under the outdoors' own id,** `maps.caldera` with its
+   `used`, `groups` and `doors` and no `size`, which the central file gives, and an area's file has
+   no version: every file has the record's shape, so one join reads them all, a single old file too.
+2. **What no area owns is the central file's,** and so is an id of the outdoors that stands in no
+   area's box, should one ever (none does today; the suite moves a chest onto the void to show it).
+3. **A list a file has nothing in is left out** at its top; a played map keeps its four keys as
+   before, and an area's part of the outdoors the lists it has ids in.
 
 ### 5.6 Art
 
@@ -840,8 +860,9 @@ src/content/
   index.ts                  the areas in road order; the merged tables; the one quest, joined
   progression.ts            the curve (§5.2)
   locks.ts                  the story locks, each with its reason (§2.3)
-  shipped.json              what saves may refer to (§5.5)
+  shipped.json              what saves may refer to that no area owns, and the version (§5.5)
   areas/<area>/
+    shipped.json            what saves may refer to that it owns (§5.5)
     index.ts                the area: maps, monsters, items, quests, climate, palette, what is new
     maps/*.ts               its zone maps, towns and dungeons
     monsters.ts, items.ts
@@ -928,7 +949,9 @@ request first; it never edits shared files on the side.
    tried on the Downs west of the Foreland, gave in a second a wood, the hills and the road, and 14
    of its 32 rows nothing but grass: the part to be authored.
 3. **Author**: landmarks, features, groups, the secret, the ways in and out; dress the terrain.
-4. **Check**: `npm run check`, then the contact sheet.
+4. **Check**: `node tools/shipped.ts` records the box's ids in its area's `shipped.json` and no other
+   file, and on a new area's first map makes that file (§5.5); then `npm run check`, then the contact
+   sheet.
 5. **Review**: a pull request, CI green, the owner's look at the sheet, merge.
 
 A monster or an interior goes the same way: a brief, the drawing, the gallery or interiors render,

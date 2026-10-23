@@ -31,8 +31,8 @@ export const readerOf = (party: Party): Character | undefined => skilled(party, 
 /** The atlas places an inscription's reading marks on the world map. */
 export const marksOf = (f: Inscription): readonly string[] => (f.marks === undefined ? [] : typeof f.marks === 'string' ? [f.marks] : f.marks);
 
-/** The id an inscription is kept read by in its map's `used`; none for any other feature. */
-export const readId = (f: Feature): string | undefined => (isInscription(f) ? f.id : undefined);
+/** The id an inscription is kept read by in its map's `used`: in game/keys.ts with the save's other keys. */
+export { readId } from './keys.ts';
 
 /**
  * What a sign says as the log shows it: its words; and to a company with a reader, an inscription's

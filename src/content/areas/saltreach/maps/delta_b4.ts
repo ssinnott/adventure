@@ -7,7 +7,7 @@
 // docs/areas/saltreach.md §4.11 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
-import { denBurnt } from '../../../../game/dens.ts';
+import { denBurnt } from '../../../../game/keys.ts';
 
 /** The heronry burnt: its brood stops coming back. */
 const HERONRY_BURNT = denBurnt('delta_b4', 'b4_heronry');
