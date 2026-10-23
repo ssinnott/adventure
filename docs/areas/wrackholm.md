@@ -634,7 +634,9 @@ besides the devilfish and the heather (#190): the wreck, the Tide Ship's site.
 - **The bounds** (#835): the strands hold no group and pay no xp, and their finds hold 450 gold, so
   a clear gives 11,426 xp a member and 7,729 gold, and a company three quarters clearing the area
   from 12 still leaves at 14.3 against the next floor 14, inside the curve's 15 (§12.1). The
-  enclave and the lair are counted in no clear.
+  enclave and the lair are counted in no clear. At the gate, re-measured with the strands laid,
+  Wrackholm's 25 groups are won 97.3% of their fights at their maps' floors; two under, pooled, a
+  company at 10 manages 3.58 fights to a rest, 51.1% of the floor's 7.
 
 ## 9. Decisions
 
