@@ -30,6 +30,7 @@ export const ZONES: readonly AtlasZone[] = [
 
 export const PLACES: readonly AtlasPlace[] = [
   { id: 'buried_tower', name: 'Buried Tower', kind: 'dungeon', planned: true, band: [26, 28], at: [84, 286] }, // the reach: its band is the cap's (#443, call 5)
+  { id: 'karaordu', kind: 'dungeon', band: [28, 29], at: [112, 225] }, // the enclave, the khans' barrow under the hills over Akordu's box, its door at D7's 8,30 (#833, #845)
 ];
 
 export const SITES: readonly AtlasSite[] = [
