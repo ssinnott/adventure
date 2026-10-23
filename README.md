@@ -116,9 +116,11 @@ tests, `npm run build`, then publish `dist/` to GitHub Pages at
 (Settings → Pages → Source); the workflow enables that on its first run if it can.
 
 Every pull request runs [.github/workflows/checks.yml](.github/workflows/checks.yml): the typecheck,
-the tests and the smoke test, as three checks. Main has no branch protection, by the owner's word of
-18 October 2026: the orchestrating session merges one pull request at a time, on a branch brought up
-to date with main and green on all three (docs/EXPANSION.md §8.3).
+the tests, the smoke test and the smoke's crack sweep, the last in jobs of its own (`plan` and
+`sweep`, #953), five checks. Main has no branch protection, by the owner's word of 18 October 2026:
+the orchestrating session merges one pull request at a time, on a branch brought up to date with
+main and green on all five (docs/EXPANSION.md §8.3), the sweep skipped only where the plan sweeps
+no map.
 
 ## Layout
 
