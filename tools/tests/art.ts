@@ -112,8 +112,10 @@ export async function art(): Promise<void> {
   // barrel merges every one, refusing by name a kind two families register or one no area names.
   const modules = await familyModules();
   const lent = modules.flatMap((m) => Object.entries(m.sprites).filter(([, s]) => s.draw !== m.draw).map(([kind]) => `${kind} in ${m.name}.ts`));
-  const unmerged = [...new Set(Object.values(FAMILY_OF))].sort().join() !== modules.map((m) => m.name).join();
-  ok(!lent.length && !unmerged, `each family module's SPRITES name its own drawer, and the barrel merges every family module (${Object.keys(FAMILY_OF).length} kinds, ${modules.length} modules)${lent.length ? ' -> another drawer: ' + lent.join(', ') : ''}${unmerged ? ' -> the barrel merges other modules than the folder\'s families' : ''}`);
+  const merged = [...new Set(Object.values(FAMILY_OF))].sort(), found = modules.map((m) => m.name);
+  const odd = [...found.filter((n) => !merged.includes(n)).map((n) => `${n}.ts is not imported by the barrel`), ...merged.filter((n) => !found.includes(n)).map((n) => `the barrel registers ${n}, which is no family module`)];
+  const unmerged = odd.length > 0;
+  ok(!lent.length && !unmerged, `each family module's SPRITES name its own drawer, and the barrel merges every family module (${Object.keys(FAMILY_OF).length} kinds, ${modules.length} modules)${lent.length ? ' -> another drawer: ' + lent.join(', ') : ''}${unmerged ? ' -> the barrel merges other modules than the folder\'s families: ' + odd.join(', ') : ''}`);
   const refused = (f: () => unknown): string => { try { f(); return ''; } catch (e) { return (e as Error).message; } };
   const s: Sprite = { draw: () => {}, span: [0.5, 0.5] }, named = ['boar', 'tusker', 'wolf'];
   ok(refused(() => merge({ boar: { boar: s, tusker: s }, wolf: { wolf: s } }, named)) === ''

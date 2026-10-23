@@ -27,10 +27,11 @@ export function changedFiles(base: string): string[] {
  * What lays out or paints every map: a change to one sweeps them all. A zone moved on the atlas is
  * re-laid into the outdoors and its walls re-rolled, so the atlases count too. The scenery
  * (ui/scenery.ts) paints a map and the monsters do not: the scene the sweep paints draws none, so
- * neither the dispatcher (ui/sprites.ts) nor a family counts (#915).
+ * neither the dispatcher (ui/sprites.ts) nor a family counts (#915). The one file of the folder it
+ * does paint with is monsters/common.ts (`B` and `stroke`), so that counts.
  */
 const EVERY_MAP = [
-  /^src\/ui\/(viewport|brush|palette|scenery)\.ts$/, /^src\/lib\/art\//, /^src\/game\/(map|outdoors|world|types|atlas)\.ts$/,
+  /^src\/ui\/(viewport|brush|palette|scenery)\.ts$/, /^src\/ui\/monsters\/common\.ts$/, /^src\/lib\/art\//, /^src\/game\/(map|outdoors|world|types|atlas)\.ts$/,
   /^src\/content\/(index|maps|atlas|area)\.ts$/, /^src\/content\/areas\/[^/]+\/atlas\.ts$/, /^tools\/(smoke|changed)\.ts$/,
 ];
 const MAP_FILE = /^src\/content\/areas\/[^/]+\/maps\/[^/]+\.ts$/;

@@ -47,7 +47,7 @@ branch protection, by the owner's word of 18 October 2026, and §8.3 says how me
 **Where parallel work collides.** The most-edited files are `docs/SLICE.md` (17 commits),
 `tools/test.ts` (14), `README.md` (14), `tools/smoke.ts` (11), `src/game/monsters.ts` (10) and
 `src/ui/sprites.ts` (10). Adding an area edits `MAP_DEFS`, `MONSTERS`, `ITEMS`, the `MonsterSprite`,
-`Interior` and `RegionId` unions, `SCENES`, `FAMILY`, `CLIMATES`, the atlas, the quest list, the
+`Interior` and `RegionId` unions, `SCENES`, `CLIMATES`, the atlas, the quest list, the
 tests, SLICE.md and the README. Three of the last six pull requests needed main merged into them
 before they could land.
 

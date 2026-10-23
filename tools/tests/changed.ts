@@ -20,10 +20,13 @@ export async function changed(): Promise<void> {
   const scenery = await changedMonsters(['src/ui/scenery.ts']);
   ok((await changedMaps(['src/ui/scenery.ts'])).all && !scenery.all && !scenery.monsters.length, 'the scenery counts every map and no monster');
   ok(!(await changedMaps(['src/ui/sprites.ts'])).all && !(await changedMaps(['src/ui/monsters/wolf.ts', 'src/ui/monsters/index.ts'])).all, 'the dispatcher, a family and the barrel count no map');
+  ok((await changedMaps(['src/ui/monsters/common.ts'])).all, 'ui/monsters/common.ts, whose B and stroke the scenery paints with, counts every map');
   // A change to the barrel counts the families it merges that its base did not, read from its import lines.
   const barrel = readFileSync(new URL('../../src/ui/monsters/index.ts', import.meta.url), 'utf8'), registered = [...new Set(Object.values(FAMILY_OF))];
   ok(familiesIn(barrel).sort().join() === registered.sort().join() && familiesIn("import { SPRITES as wolf } from './wolf.ts';\nimport type { Sprite } from './common.ts';").join() === 'wolf',
     `the barrel's import lines read as the ${registered.length} families it registers`);
+  const whole = await changedMonsters(['src/ui/monsters/index.ts']);
+  ok(!whole.all && whole.monsters.length === Object.keys(MONSTERS).length, `a barrel with no base adds every family it registers, so counts all ${whole.monsters.length} monsters, as a list and not as a sweep of everything`);
   const thornmark = AREAS.find((a) => a.id === 'thornmark')!;
   const fresh = await changedMonsters(['src/content/areas/thornmark/monsters.ts']);
   ok(fresh.monsters.length === thornmark.monsters.length && thornmark.monsters.every((d) => fresh.monsters.includes(d.id)), `an area's monsters with no base are all new (${fresh.monsters.length})`);

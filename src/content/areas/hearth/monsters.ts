@@ -1,11 +1,11 @@
 // The Hearth's monsters, band 28-32: Hearth Isle, the Underdeep and the Core. `sprite` names the
-// drawing (src/ui/sprites.ts); the numbers are the test monster's line at each role and level
+// drawing (src/ui/monsters/); the numbers are the test monster's line at each role and level
 // (tools/testmonster.ts), as the plan's section 7 has them. A group on a map is a list of these ids,
 // and any area's maps may place them. Drawn ahead of the area's first map (#761), and the area's own
 // table since the isle listed it (H6, #753).
 import type { MonsterDef } from '../../../game/monsters.ts';
 
-/** The drawings the Hearth's monsters are drawn with, one kind to each. src/ui/sprites.ts must draw every one. */
+/** The drawings the Hearth's monsters are drawn with, one kind to each. A family in src/ui/monsters/ must register every one. */
 export const SPRITES = [
   'hearth_moth', 'ashen_champion', 'ashen_preacher', 'deep_rat', 'keeper', 'hand_rearguard', 'grey_hand', 'core_sentry', 'vask',
   'deep_crawler', 'catcher',
