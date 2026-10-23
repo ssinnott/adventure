@@ -826,7 +826,14 @@ Decided by the builder for #914, each the owner's to overturn:
   `tools/changed.ts`). A monster's drawing sweeps no map: the sweep paints the scene with
   `paintScene`, which draws no monster, so `EVERY_MAP` names the scenery (`src/ui/scenery.ts`) and
   not the dispatcher (`src/ui/sprites.ts`) or a family; nothing left in either is in the scene the
-  sweep paints (#915).
+  sweep paints (#915). The four ways are a job of their own, planned in Node and painted in shards
+  (#953, `tools/kit/sweep.ts`): only a face reaches the band the sweep reads, so a view whose window,
+  its hills laid flat, holds nothing standing is skipped; each distinct window is painted flat once,
+  and the view with its hills only where that band shows a gap between two faces or a wall stands
+  beside the party, which is where the verdict reads it. The sweep sets its own scene, a clear noon
+  and the light of a spell, so every square of the window is in sight. The audit
+  (`SMOKE_SWEEP_AUDIT=1`, on release) judges every view the old way beside the new and fails a view
+  the two judge differently, a skipped view whose flat band paints and a window whose views differ.
 - **Restraint.** The share of wall faces dressed, per kind of map and per map, stays near its level
   after #9, under caps set above it so an honest new map seldom fails by chance; a new kind of
   dressing comes with its rate (`DRESSING_RATES` in `src/ui/viewport.ts`, checked in
@@ -1304,7 +1311,7 @@ Decided by the owner's delegate for #828, each the owner's to overturn:
 | Defects the owner finds by hand | 4 over the slice, not recounted since; the owner's own playthrough of M3 is what remains (README.md) | fewer each area; each one a check |
 | Checks that pass or fail by chance | none known: the smoke test plays one seeded world (#23) | none |
 | Pull requests that needed main merged in | 4 of the last 6 in September, not recounted since | rare |
-| `npm run check` | about 12 to 14 minutes on a four-core container, ending `ALL OK` with nothing owed (#865); each suite alone on 18 October, by the owner's delegate's measure (#848): the gate 310 s and every other suite under 90 s, about 12 minutes in all; in CI on a docs-only change the tests take 5 min 8 s, the smoke 2 min 20 s and the typecheck 19 s (#866); the tests job took 5 min 8 s to 9 min 12 s on the heads of #876 to #885 and #866 (twelve runs on 18 October), and its cap is fifteen for the runner's spread of about two minutes (#873); a change to the viewport or the smoke sweeps every map, the smoke job then taking 12 to 21 minutes (#876, #878, #879); the runner prints each suite's seconds, all in one process (#895): loaded, on that container shared with other runs on 18 October, the gate 335.5 s, `labels` 104.5, `row` 84.5, the Foreland's walkthrough 33.1, `quests` 27.7, `harness` 27.1, `scaffold` 12.3, `pilot` 8.5 and every other suite under 6, 698.9 s in all, and the full run 33.1 in its own step; in CI, the tests job on #905 that day (8965ac98), the gate 149.4 s (53%), `labels` 37.9, `row` 30.4, `harness` 15.2, `quests` 13.9, the Foreland's walkthrough 8.7, `scaffold` 4.6, `pilot` 4.3 and every other suite under 1.5, 282.8 s in all, and the full run 7.1 | under 3 minutes: full sweeps of what a pull request touches, the rest sampled or on release; the cure, in this order (#848): the gate for the areas a diff reaches, then parallel suites, then the sweep's shards |
+| `npm run check` | about 12 to 14 minutes on a four-core container, ending `ALL OK` with nothing owed (#865); each suite alone on 18 October, by the owner's delegate's measure (#848): the gate 310 s and every other suite under 90 s, about 12 minutes in all; in CI on a docs-only change the tests take 5 min 8 s, the smoke 2 min 20 s and the typecheck 19 s (#866); the tests job took 5 min 8 s to 9 min 12 s on the heads of #876 to #885 and #866 (twelve runs on 18 October), and its cap is fifteen for the runner's spread of about two minutes (#873); a change to the viewport or the smoke sweeps every map, the smoke job then taking 12 to 21 minutes (#876, #878, #879); the runner prints each suite's seconds, all in one process (#895): loaded, on that container shared with other runs on 18 October, the gate 335.5 s, `labels` 104.5, `row` 84.5, the Foreland's walkthrough 33.1, `quests` 27.7, `harness` 27.1, `scaffold` 12.3, `pilot` 8.5 and every other suite under 6, 698.9 s in all, and the full run 33.1 in its own step; in CI, the tests job on #905 that day (8965ac98), the gate 149.4 s (53%), `labels` 37.9, `row` 30.4, `harness` 15.2, `quests` 13.9, the Foreland's walkthrough 8.7, `scaffold` 4.6, `pilot` 4.3 and every other suite under 1.5, 282.8 s in all, and the full run 7.1; the crack sweep's four ways are the `plan` and `sweep` jobs beside the smoke, which runs the rest (`SMOKE_PART=rest`; #953): every map at the head (cd262d6d) is 397,004 views of 186 maps four ways, 353,563 skipped, 33,440 windows and 47,534 painted (the windows flat and 14,094 views with a wall beside the party), one shard of 60,000 pairs, which took 255 s on this container where the old sweep took 1,871 s (the smoke with it and without, 2,097 s and 226 s), the plan alone 6 s and the smoke without the sweep 236 s; the audit judged the old sweep and the new alike on all 397,025 views of 653c8fad and the 564 of the three maps main brought after, none cracked; the old sweep had run under fog in five regions, 136,076 of those views seen two or three squares deep, where the new sees four on every view | under 3 minutes: full sweeps of what a pull request touches, the rest sampled or on release; the cure, in this order (#848): the gate for the areas a diff reaches, then parallel suites, then the sweep's shards |
 | Cracks in the sweep of every map (§5.6) | none; the sweep reads each square as the view draws it, the void as its look (#869) | none |
 | Maps inside the density floor (§5.3) | all (`node tools/test.ts density`) | all |
 | Areas on the curve (§5.2) | all twelve (`node tools/test.ts curve`); the Kilns and Ashfall pass the lead line and are held where they are built | all |
@@ -1365,6 +1372,32 @@ Decided by the builder for #869, each the owner's to overturn:
    draws no crack the painter does not make. One left out the face of a wall beside the party where
    the square past it is the void with a look; one drew a face of the cellar's north wall three
    pixels short of the face it joins.
+
+Decided by the builder for #953, each the owner's to overturn:
+
+1. **The plan is `tools/kit/sweep.ts` and its command line `tools/sweep.ts`**, where the issue names
+   `tools/sweep.ts` for the plan: the layers check lets a suite take `tools/kit/` and not a tool, as
+   `tools/kit/lanes.ts` did for #944.
+2. **The window's key**: the map's kind; on each of the 35 squares what stands there on the map laid
+   flat, and of a face its door, house, wall style, dressing and the features on it; on the 19
+   squares past the window that a face reads to join the next, whether one stands. 33,440 windows of
+   the 43,441 views kept at the head, where the issue's shorter keys made 16,955 and 20,026.
+3. **Alike is where the backdrop shows, not the colours**: the verdict reads the band's mask, where
+   the two backdrops differ, and a face's colours follow its square.
+4. **The view with its hills is painted where the flat window shows a gap or a wall stands beside
+   the party**: the verdict needs a gap in both views, or the edge beside a wall, and nothing else.
+5. **`SMOKE_SHARD` deals the windows, each with all its views, and the skipped views by turn**, where
+   the issue says every n-th view: a window is painted in one shard alone, and its first view, the
+   audit's reference, is in the shard that holds the rest.
+6. **One shard for each 60,000 pairs** (`PAIRS_PER_SHARD`): about four minutes at the old sweep's
+   slowest rate in CI, 3.5 ms a pair. Every map is one shard, the audit fourteen.
+7. **The scene**: in each region the first clear noon with nothing the view washes, found as the end
+   of the world's is, and the light of a spell; a view seen short of four squares fails the line.
+8. **The one-way sweeps of the rest go through the plan too, and `tools/sweep.ts` and
+   `tools/kit/sweep.ts` join `EVERY_MAP`**: a change to the plan sweeps every map, as one to the
+   smoke does.
+9. **The smoke job's cap is twenty minutes, and each shard's**: its `npm run smoke` takes 118 to
+   167 s and a shard about four minutes, the Chromium install up to 694 s.
 
 Decided by the owner's delegate for #18, each the owner's to overturn:
 
