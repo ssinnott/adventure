@@ -1,7 +1,8 @@
 // The party: races, classes, characters, levelling, conditions. Pure data and pure functions; the
 // rng is passed in so tests can pin it.
 import type { RngInstance } from '../lib/engine/rng.ts';
-import { item } from './items.ts';
+import { item, REGEN_PART } from './items.ts';
+import { MINUTES_PER_DAY, dateAt, sunTimes } from './calendar.ts';
 import { ITEMS } from '../content/index.ts';
 import type { ItemDef } from './items.ts';
 import { spellsFor, ELEMENTS } from './spells.ts';
@@ -167,6 +168,8 @@ export function takePrestige(c: Character): void {
 
 export type Condition = 'asleep' | 'poisoned' | 'diseased' | 'paralysed' | 'cursed' | 'stoned' | 'unconscious' | 'dead';
 export const CONDITION_ORDER: readonly Condition[] = ['dead', 'stoned', 'unconscious', 'paralysed', 'asleep', 'poisoned', 'diseased', 'cursed'];
+/** The conditions an artifact's ward may keep off (`ItemDef.ward`, DESIGN §9): any but unconscious and dead. */
+export const WARDABLE: readonly Condition[] = CONDITION_ORDER.filter((k) => k !== 'dead' && k !== 'unconscious');
 
 export interface Equipment { weapon: string | null; armor: string | null; shield: string | null; }
 
@@ -208,6 +211,11 @@ export interface Party {
   bag: string[];
   /** Quest and dialogue flags. */
   flags: Record<string, number>;
+  /**
+   * The castings of each artifact's spell spent since the last dawn, by the artifact's id (#847,
+   * `ItemDef.casts`): the artifact's, whoever bears it. Absent when none is, and in a save from before.
+   */
+  spent?: Record<string, number>;
 }
 
 /** The flag a party holds once it has paid a spell hall's fee to study: in game/keys.ts with the save's other keys. */
@@ -339,9 +347,9 @@ export function canAct(c: Character): boolean {
 }
 export function hasCondition(c: Character, k: Condition): boolean { return c.conditions.includes(k); }
 export function hasTrait(c: Character, t: TraitId): boolean { return CLASSES[c.cls].traits.includes(t); }
-/** Whether race or class keeps the condition off entirely. */
+/** Whether race, class or a ward borne (`ItemDef.ward`, #847) keeps the condition off entirely. */
 export function immuneTo(c: Character, k: Condition): boolean {
-  return !!RACES[c.race].resist?.includes(k) || CLASSES[c.cls].traits.some((t) => TRAITS[t].immune?.includes(k));
+  return !!RACES[c.race].resist?.includes(k) || CLASSES[c.cls].traits.some((t) => TRAITS[t].immune?.includes(k)) || borne(c).some((id) => item(id).ward === k);
 }
 /**
  * What a member bears: what they wear, and the slotless items in their own pack. Armour in the pack
@@ -398,6 +406,21 @@ export function statOf(c: Character, s: Stat): number {
 export function addCondition(c: Character, k: Condition): void {
   if (immuneTo(c, k)) return;
   if (!c.conditions.includes(k)) c.conditions.push(k);
+}
+/** What regeneration mends a bearer each whole hour (`ItemDef.regen`): a tenth of their most hit points, rounded down, and at least 1. */
+export const mendOf = (c: Pick<Character, 'maxHp'>): number => Math.max(1, Math.floor(c.maxHp / REGEN_PART));
+/** The minute dawn breaks on game day `day`, by the calendar's sun (`sunTimes`), as a night's sleep wakes to it. */
+export const dawnOf = (day: number): number => day * MINUTES_PER_DAY + Math.ceil(sunTimes(dateAt(day * MINUTES_PER_DAY).dayOfYear).dawn * 60);
+/**
+ * What the clock's passing from minute `from` to `to` does to what a company bears (#847, DESIGN §9):
+ * each bearer of regeneration who is not down mends `mendOf` for each whole hour it passes, never
+ * past the most; and once it passes a dawn the artifacts' castings spent come back whole. A fight
+ * passes no clock, so neither happens in one. Called by the world's clock (`World.advance`).
+ */
+export function passClock(party: Party, from: number, to: number): void {
+  const hours = Math.floor(to / 60) - Math.floor(from / 60);
+  if (hours > 0) for (const c of party.members) if (!isDown(c) && c.hp < c.maxHp && borne(c).some((id) => item(id).regen)) c.hp = Math.min(c.maxHp, c.hp + hours * mendOf(c));
+  if (party.spent) for (let d = Math.floor(from / MINUTES_PER_DAY); d <= Math.floor(to / MINUTES_PER_DAY); d++) if (dawnOf(d) > from && dawnOf(d) <= to) { delete party.spent; break; }
 }
 export function removeCondition(c: Character, k: Condition): void { c.conditions = c.conditions.filter((x) => x !== k); }
 /**

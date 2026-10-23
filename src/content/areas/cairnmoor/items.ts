@@ -3,7 +3,7 @@
 // table into its Area. N7's cache and O8's hoard hold seconds of the Kilns' Forge Hammer +1 and Seax +1,
 // which need no line here.
 import type { ItemDef } from '../../../game/items.ts';
-import { P } from '../../items.ts';
+import { P, MAIL, ARTIFACT_PRICE } from '../../items.ts';
 import { bandedStaff, forgeHammer, dwarfMail } from '../kilns/items.ts';
 
 /**
@@ -20,6 +20,14 @@ export const beaconHammer: ItemDef = { ...forgeHammer, id: 'beacon_hammer', name
  * the ladder, sold by no shop, priced as the hammer is.
  */
 export const cairnbuildersMail: ItemDef = { ...dwarfMail, id: 'cairnbuilders_mail', name: "Cairnbuilder's Mail", price: 1600, stat: { might: 3 } };
+
+// Cairnmoor's of the bounds' eight (DESIGN §9, #847): the Grey Shield's 8 and a point, for its bearers,
+// and its bearer mending by the hour. Found and never sold; placed nowhere yet, for #834 lays its lair
+// and puts it there.
+export const torhide: ItemDef = { id: 'torhide', name: 'Torhide', slot: 'shield', price: ARTIFACT_PRICE, ac: 9, classes: MAIL, regen: true, artifact: true, text: [
+  'A round shield faced with grey hide, and every cut in it closed over.',
+  'It is warm to hold, and warmer by night.',
+] };
 
 export const ITEMS: readonly ItemDef[] = [
   // O7's (#477): the ladder's plus for a caster, in the hollow under the ring's fallen stone.
@@ -44,4 +52,5 @@ export const ITEMS: readonly ItemDef[] = [
   // in the locked chest of a cell off Carn Dubh's end cell. No `GEAR` row, no shop (docs §4.8).
   beaconHammer,
   cairnbuildersMail,
+  torhide,
 ];
