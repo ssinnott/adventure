@@ -1,7 +1,7 @@
 // Rimewater, box K12: Monks' Vale's east under the pass. Country, band 20-22, the bounds' first (#832):
 // south of K11 the pines and the vale's grass running on to the rim, a spur of it cutting the box in two.
 // In the west the vale's grass, a bear-hunter at his fire and a brother of stone with a riddle; in the
-// pines an ice bear on its kill with two lynxes waiting on it; at the rim's foot a path of flat stones
+// pines two ice bears on their kill and four lynxes waiting on it; at the rim's foot a path of flat stones
 // that stops at the rock, and behind the rock the cell where Fuar's folk walled up their kirk's plate
 // when the loch rose. East of the spur, reached from K11 or L12 only, old pines and a cairn. The rim's
 // face at 2,15, on the vale's land, is left bare for the lair's door (docs/areas/rimewater.md §12.4).
@@ -62,8 +62,8 @@ export const COLDMERE_K12: MapDef = {
     { kind: 'camp', x: 1, y: 5, name: 'The hunter\'s fire', text: 'A fire-ring in the lee of a knoll, banked with turf, a spear\'s butt-mark in the snow beside it.' },
     { kind: 'npc', x: 2, y: 5, name: 'A bear-hunter', lines: [
       'A bear-hunter at his fire, a spear across his knees, watching the pines.',
-      '"The furrier at the lodge pays for a white skin. There is one on a kill in there, a big one."',
-      '"Two cats wait on it for the leavings, and they would sooner have me. I have the one spear."',
+      '"The furrier at the lodge pays for a white skin. Two bears have a kill in there, and they keep it."',
+      '"Four cats wait on it for the leavings, and they would sooner have me. I have the one spear."',
     ] },
     { kind: 'statue', x: 2, y: 9, id: 'k12_brother', name: 'A brother of stone', text: 'A brother cut in stone at the vale\'s edge, hooded, a finger to his lips. Words are cut below.', riddle: 'I HAVE A TONGUE AND NO MOUTH, AND I CALL THE BROTHERS IN. WHAT AM I?', answer: 'bell', gift: { stat: 'personality' }, done: 'The brother of stone at the vale\'s edge.' },
     // The pines: the bear's kill, the cats' tracks round it and the spur of the rim beyond.
@@ -82,8 +82,9 @@ export const COLDMERE_K12: MapDef = {
   ],
   secrets: [{ x: 10, y: 13, hint: 'k12_stones' }],
   encounters: [
-    // An ice bear on its kill in the pines and two lynxes waiting on its leavings, the box's one fight,
-    // at 21 for the bear.
-    { id: 'k12_bear', x: 14, y: 7, monsters: ['ice_bear', 'snow_lynx', 'snow_lynx'], aware: 3, respawn: 2880, roams: false },
+    // Four lynxes in the pines nearer the way in, waiting on the bears' leavings, the gentler, at 20; and
+    // the two ice bears on their kill, the hardest, at 21.
+    { id: 'k12_cats', x: 9, y: 4, monsters: ['snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx'], aware: 3, respawn: 1440, roams: false },
+    { id: 'k12_bears', x: 14, y: 7, monsters: ['ice_bear', 'ice_bear'], aware: 3, respawn: 2880, roams: false },
   ],
 };

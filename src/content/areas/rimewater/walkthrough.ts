@@ -1194,8 +1194,8 @@ function theSleepers(ok: (cond: boolean, msg: string) => void): void {
  * The bounds (#832), Monks' Vale's east under the pass (K12): south from K11's 8,31 onto its 8,0 under
  * the pines, walked, the land not named again, and east from J12's grass at 31,5 onto its 0,5, the cold
  * loch named, and back; the bear-hunter at his fire and his word on the bear and the cats; the brother
- * of stone's riddle; the kill, the cats' tracks, the spur and the rim; the bear and the lynxes, the
- * box's one fight, won at its floor; the cell behind the rock where the path of flat stones stops, shut
+ * of stone's riddle; the kill, the cats' tracks, the spur and the rim; the lynxes and the bears, the
+ * box's two groups, won at its floor; the cell behind the rock where the path of flat stones stops, shut
  * but through its door; the rim's face at 2,15 left bare for the lair's door; east of the spur, from
  * K11, the old pines and the cairn; and the box's edges as built.
  */
@@ -1257,11 +1257,12 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   listen(w);
 
   // The bear-hunter at his fire and his word on the bear and the cats; the brother of stone's riddle; the
-  // kill, the cats' tracks, the spur and the rim; the box's one group won at its floor.
+  // kill, the cats' tracks, the spur and the rim; the box's groups won at its floor, the lynxes nearer the
+  // way in and the bears on their kill the hardest.
   const hunter = K12.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'A bear-hunter')!;
   w.world.travel(K12.id, hunter.x, hunter.y);
   const told = meet(hunter, w.party, heard(w.world, hunter)).text;
-  ok(told.includes('white skin') && told.includes('Two cats'), `the bear-hunter: a white skin on a kill in the pines, and two cats waiting on it (${told.replace(/\n+/g, ' ')})`);
+  ok(told.includes('white skin') && told.includes('Four cats'), `the bear-hunter: two white bears on a kill in the pines, and four cats waiting on it (${told.replace(/\n+/g, ' ')})`);
   listen(w);
   const brother = K12.features!.find((f): f is Extract<Feature, { kind: 'statue' }> => f.kind === 'statue' && f.id === 'k12_brother')!;
   w.world.travel(K12.id, brother.x, brother.y);
