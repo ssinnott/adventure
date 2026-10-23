@@ -230,6 +230,26 @@
       "doors": [
         "7,13"
       ]
+    },
+    "kushdag": {
+      "size": "16x16",
+      "used": [
+        "kd_cache",
+        "kd_cache_chest",
+        "kd_chest",
+        "kd_feather",
+        "kd_foals",
+        "kd_nest",
+        "kd_rider",
+        "kd_shelf",
+        "kd_tracks"
+      ],
+      "groups": [
+        "kd_foal_taker"
+      ],
+      "doors": [
+        "7,12"
+      ]
     }
   },
   "zones": {
