@@ -187,6 +187,9 @@ export const ANVILHALL: MapDef = {
       { after: { flag: HYMN_SUNG }, lines: [
         'The oldest miner on his bench, humming the count.',
         '"Nobody sings the last going down. Nobody goes down that far."',
+        // The Erzhemd's rumour (#846), words only: it marks nothing on the world map.
+        '"Brandt made a shirt of the ore the knockers bring up. So light, he said, his feet forgot it."',
+        '"He went down for more. We sang him to the door, and nobody sang him back."',
       ] },
       { after: { seen: 'deep_mines:dm1_door3' }, sets: HYMN_SUNG, lines: [
         'He listens with his eyes shut, his lips moving with the count.',

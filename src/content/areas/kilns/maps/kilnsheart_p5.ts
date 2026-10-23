@@ -3,8 +3,9 @@
 // before the Stone was found, each with its spoil fanned down the slope; a dry pit with a fire laid and
 // the old cutter who stayed, a waymark turned to the Stone, a hearth-niche in a pit's wall, the deepest
 // pit where the Stone's slag strays keep, a warm seep at the hills' foot, and the trial that struck
-// nothing, walled up in the rim's foot. O5's crag runs on across the seam in the south, and the hills
-// run on north into P4's south pocket, cut. The P column is 24 wide: cut by hand from the atlas, the
+// nothing, walled up in the rim's foot; and at 11,23 the adit of the old working, the way into the
+// Randzeche, the artifact's lair (#845, #846). O5's crag runs on across the seam in the south, and the
+// hills run on north into P4's south pocket. The P column is 24 wide: cut by hand from the atlas, the
 // void written '%'; docs/areas/kilns.md §12.3 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST } from '../../../../game/types.ts';
@@ -41,7 +42,7 @@ export const KILNSHEART_P5: MapDef = {
     '^^^^^^^^""^^MMMMMMM%%%%%',
     '^^^^^^^^""^MMMMMMMM%%%%%',
     'r^^^^^^^^^^MMMMMMM%%%%%%',
-    'r^^^^^^^^^^MMMMMMM%%%%%%',
+    'r^^^^^^^^^^"MMMMMM%%%%%%',
     'rr^^^^^^^^MMMMMMMM%%%%%%',
     'rr^^^^^^^^MMMMMMMM%%%%%%',
     'rr^^"""^^MMMMMMMMM%%%%%%',
@@ -76,6 +77,10 @@ export const KILNSHEART_P5: MapDef = {
     { kind: 'chest', x: 14, y: 16, id: 'p5_cache_chest', gold: 230, items: ['elixir', 'potion_sp_great'] },
   ],
   secrets: [{ x: 11, y: 16, hint: 'p5_fan' }],
+  // The adit of the old working in the rim's foot, the way into the Randzeche, the artifact's lair (#845, #846).
+  exits: [
+    { x: 11, y: 23, to: 'randzeche', tx: 1, ty: 7, tf: EAST, label: 'You duck into an adit in the rim\'s foot. Cold air comes out of it, and a sound like knocking.' },
+  ],
   encounters: [
     // Three fire beetles on the spoil fans under the north pit, the nearest and the gentlest, at 16; and in
     // the deepest pit a slag elder and a slagling come over from the tear in O5, the hardest, at 17, until

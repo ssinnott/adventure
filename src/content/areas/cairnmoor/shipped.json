@@ -242,6 +242,30 @@
         "492,229",
         "494,198"
       ]
+    },
+    "carn_fada": {
+      "size": "16x16",
+      "used": [
+        "cf_chamber",
+        "cf_cist",
+        "cf_cist_chest",
+        "cf_den",
+        "cf_gap",
+        "cf_lintels",
+        "cf_robbed",
+        "cf_sealed",
+        "cf_sealed_chest",
+        "cf_spirals",
+        "cf_tide"
+      ],
+      "groups": [
+        "cf_bears",
+        "cf_bodies",
+        "cf_wights"
+      ],
+      "doors": [
+        "7,8"
+      ]
     }
   },
   "zones": {
@@ -308,6 +332,7 @@
     "bog_ring",
     "cairnbuilders_mail",
     "hill_torc",
+    "sunwise_mace",
     "torhide",
     "watchers_page"
   ],
