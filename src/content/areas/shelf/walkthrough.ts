@@ -2,8 +2,14 @@
 // the game's own moves and checked a step at a time (tools/walk.ts); Thornmark's plays the chain.
 // Then a new company walks out of Helmstow to the Lodestone, and Gytha gives it the lesson, and
 // her later words as Thornhold's news reaches her. Then its side quests, each choice both ways: the
-// log reads true and the people stand where it says. Last, Helmstow before and after Act II (#157).
+// log reads true and the people stand where it says. Then Helmstow before and after Act II (#157).
+// Last, the bounds (#837), the Downs' last shore, in a walk of its own (`theBounds`).
 import type { Walkthrough } from '../../area.ts';
+import { buildMaps } from '../../maps.ts';
+import { OUTDOORS } from '../../../game/outdoors.ts';
+import type { Can, MapDef, MapZone } from '../../../game/map.ts';
+import type { Facing } from '../../../game/types.ts';
+import { DOWNS_E4 } from './maps/downs_e4.ts';
 import { CHAPTER } from './chapter.ts';
 import { newWalk, meetWho, walkThrough, see, fight, playChapter, quest, listen, pilotPlays } from '../../../../tools/walk.ts';
 import type { Step, Walk } from '../../../../tools/walk.ts';
@@ -129,7 +135,96 @@ export const walkthrough: Walkthrough = (ok) => {
   // The pilot from a new game, every key its own (#720, #721, #723): the chapter to its end, Vask's
   // hire, Hild's ask, the cellar, the keeper's log and the wand handed in.
   pilotPlays(ok, CHAPTER);
+  // And the bounds (#837), the Downs' last shore, in a walk of its own, last.
+  theBounds(ok);
 };
+
+/**
+ * The bounds (#837, docs/areas/shelf.md §12): E4, the Downs' last shore, which holds no group. South
+ * from Crowness's down and east from the top of Kestrel Edge onto it, walked, the land not named
+ * again; the cairn on the last rise and the post of holed stones on the strand; the crab shells at
+ * the stack's foot and the crabber's store behind it, shut but through its door; the low cliff's face
+ * at 3,6 left bare for the lair's door. The box's edges as built.
+ */
+function theBounds(ok: (cond: boolean, msg: string) => void): void {
+  const w = newWalk(ok);
+  w.level = 4;
+  const out = buildMaps()[OUTDOORS], zone = (id: string): MapZone => out.zones.find((z) => z.id === id)!;
+  const E4 = DOWNS_E4, e4 = zone(E4.id), e3 = zone('downs_e3'), d4 = zone('downs_d4'), e5 = zone('wrackholm_e5');
+  const ALL: Can = { swim: true, climb: true, float: true };
+  const said = (r: ReturnType<typeof w.world.move>): string => (r.kind === 'moved' ? r.messages.join(' / ') || 'nothing said' : r.kind);
+  const at = (z: MapZone, x: number, y: number): number => (z.y + y) * out.width + z.x + x;
+  /** The squares of the box reached from one of its own, inside the box: on foot, or every way with its secret door shut. */
+  const reach = (z: MapZone, from: readonly [number, number], can: Can, door?: readonly [number, number]): Set<number> => {
+    const seen = new Set<number>(), todo = [[z.x + from[0], z.y + from[1]]];
+    while (todo.length) {
+      const [x, y] = todo.pop()!, k = y * out.width + x;
+      if (seen.has(k) || (door && x === z.x + door[0] && y === z.y + door[1]) || x < z.x || x >= z.x + z.w || y < z.y || y >= z.y + z.h || out.passable(x, y, can) !== 'ok') continue;
+      seen.add(k);
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+    }
+    return seen;
+  };
+  /** Searched from a square facing the face, the wall gives and the room behind it is walked into. */
+  const search = (map: string, x: number, y: number, facing: Facing, room: string): boolean => {
+    w.world.travel(map, x, y, facing);
+    let found = false;
+    for (let i = 0; i < 20 && !found; i++) found = w.world.search();
+    const into = found ? [w.world.move('forward'), w.world.move('forward')] : [];
+    listen(w);
+    return found && into.every((r) => r.kind === 'moved') && w.world.used(room);
+  };
+  const chest = (d: MapDef, id: string): string => { const c = d.features!.find((f) => f.kind === 'chest' && f.id === id); return c?.kind === 'chest' ? `${c.gold} ${c.items.join()}` : 'none'; };
+  /** A door left bare: rock, rock either side along the face, its way walked to, nothing within four squares. */
+  const bare = (d: MapDef, walked: Set<number>, z: MapZone, [x, y]: readonly [number, number], [dx, dy]: readonly [number, number]): string[] => {
+    const near = [...(d.features ?? []), ...(d.encounters ?? []), ...(d.secrets ?? [])].filter((f) => Math.abs(f.x - x) + Math.abs(f.y - y) <= 4);
+    return [d.rows[y][x] === 'r' && d.rows[y - dx]?.[x - dy] === 'r' && d.rows[y + dx]?.[x + dy] === 'r' && d.rows[y - dy]?.[x - dx] === 'r' ? '' : 'not rock in a face',
+      walked.has(at(z, x + dx, y + dy)) ? '' : 'its way not walked to', ...near.map((f) => `${f.x},${f.y} within four`)].filter(Boolean);
+  };
+  const open = (n: number, f: (i: number) => boolean): string => Array.from({ length: n }, (_, i) => f(i)).join();
+  ok(!(E4.encounters ?? []).length && !(E4.exits ?? []).length, 'E4 holds no group, and nothing is taken out of it yet');
+
+  // South from Crowness's down at E3's 6,31 onto E4's 6,0, walked, in the Downs still.
+  w.world.travel(e3.id, 6, 31, SOUTH);
+  const south = w.world.move('forward');
+  ok(south.kind === 'moved' && w.world.zone?.id === E4.id && w.world.state.x === e4.x + 6 && w.world.state.y === e4.y && e3.y + e3.h === e4.y && !said(south).includes('Callow Downs'),
+    `south from E3's 6,31 onto E4's 6,0, walked, and the land not named again, a company under the floor warned as at every rise of the Downs' band (${said(south)})`);
+  listen(w);
+  ok(E4.start.x === 6 && E4.start.y === 0 && E4.start.facing === SOUTH, 'E4 starts at its north edge, in from Crowness\'s down, facing the land');
+  // And east from the top of Kestrel Edge, D4's 31,4, onto E4's 0,4.
+  w.world.travel(d4.id, 31, 4, EAST);
+  const east = w.world.move('forward');
+  ok(east.kind === 'moved' && w.world.zone?.id === E4.id && w.world.state.x === e4.x && w.world.state.y === e4.y + 4 && d4.x + d4.w === e4.x && !said(east).includes('Callow Downs'),
+    `east from D4's 31,4 onto E4's 0,4, walked (${said(east)})`);
+  listen(w);
+  const shore = reach(e4, [E4.start.x, E4.start.y], {}, [10, 2]);
+  ok(shore.size === 65 && [[2, 2], [6, 4], [0, 6], [5, 6], [3, 7], [0, 9], [0, 10], [9, 2], [10, 0]].every(([x, y]) => shore.has(at(e4, x, y))),
+    `E4's down and strand (${shore.size} squares): the cairn, the ways down either end of the cliff, its face, the post, the strand's end and the stack's foot are walked to from the way in`);
+  see(w, `${E4.id}:e4_strand`);
+  const cairn = E4.features!.find((f) => f.kind === 'cairn' && f.id === 'e4_cairn');
+  ok(cairn?.kind === 'cairn' && cairn.gold === 30 && cairn.items.join() === 'potion_sp', 'on the down\'s last rise, a cairn of flints with 30 gold and a Blue Vial');
+  const post = E4.features!.find((f) => f.kind === 'shrine' && f.id === 'e4_post');
+  ok(post?.kind === 'shrine' && post.stat === 'personality' && post.x === 0 && post.y === 9, 'on the strand, the post of holed stones, a shrine that gives personality');
+  // The secret: the crab shells at the stack's foot, the search there and the crabber's store behind it.
+  const pots = reach(e4, [E4.start.x, E4.start.y], ALL, [10, 2]);
+  ok(pots.size > 60 && !pots.has(at(e4, 11, 2)), `the store is shut but for its door in the stack: none of E4's ${pots.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${E4.id}:e4_shells`);
+  ok(search(E4.id, 9, 2, EAST, 'e4_store'), 'searched where the crab shells are heaped, the rock gives, and the store behind it can be walked into');
+  ok(chest(E4, 'e4_crock') === '80 elixir', `under the pots, a crock with 80 gold and an Elixir (${chest(E4, 'e4_crock')})`);
+  // The lair's door (docs §12.3) is left bare: the low cliff's face over the strand, 3,6.
+  const face = bare(E4, shore, e4, [3, 6], [0, 1]);
+  ok(!face.length, `the cliff's face at E4's 3,6 is left bare for the lair's door, rock behind it, walked to from 3,7, nothing within four squares${face.length ? ` (not: ${face.join(', ')})` : ''}`);
+
+  // The edges: E4's north meets E3's south and its west D4's east, open at 0 to 10 on both, its sand at
+  // 9,0 and 10,0 as E3's is; south against Wrackholm's E5 and east the sea, shut to every company.
+  const row = (z: MapZone, y: number, can: Can = {}): string => open(32, (i) => out.passable(z.x + i, z.y + y, can) === 'ok');
+  const col = (z: MapZone, x: number, can: Can = {}): string => open(32, (i) => out.passable(z.x + x, z.y + i, can) === 'ok');
+  ok(row(e4, 0) === open(32, (i) => i <= 10) && row(e4, 0) === row(e3, 31) && col(e4, 0) === open(32, (i) => i <= 10) && col(e4, 0) === col(d4, 31),
+    'E4 meets E3 at 0 to 10 and D4 at 0 to 10, square for square');
+  const none = open(32, () => false);
+  ok(row(e4, 31, ALL) === none && col(e4, 31, ALL) === none && row(e5, 0, ALL) === none && e4.y + e4.h === e5.y,
+    'south against Wrackholm\'s E5 and east the sea, shut to every company');
+}
 
 /**
  * Down into the Berth from the chalk of D2 at its floor, past the guard two by two to the bier: the
