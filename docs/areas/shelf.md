@@ -1164,7 +1164,7 @@ Decided by the builder for #837, each the owner's to overturn:
     in the song is never lost. The words set nothing and ask nothing, and they say nothing of the
     Hag, so they stand after its fall.
 18. **#837 is done with the lair:** E4 and the lair are built and judged, the lair at 30–32 with the
-    Hagstone in it, and the Foreland has no enclave (#837's 1); no built map of the Foreland is open
+    Hagstone in it; the Foreland has no enclave (#837's 1), and no built map of the Foreland is open
     onto unbuilt land but F3's east edge onto G3, a crumb (#828).
 
 ## 10. Names
