@@ -33,6 +33,14 @@
 // it, tipped up and open: a long flat bill of a jaw full of needle teeth, a big gold eye set high,
 // cold olive with rows of pale spots down its side and a white throat. Idle: it sways in the hole
 // and the jaw works, and the black water laps at it.
+//
+// The Hag: no eyes, and it found you first. The sea cave's, in the dark the tide leaves: a pool of black
+// seawater with the wrack heaped round its rim, and out of it the palest and tallest of the long bodies,
+// two humps of its back rolling through the surface and the rest reared up on a neck almost as thick as
+// the worm's, the skin slack and slimed. The head is blind: a blank brow where the eyes would be, the jaw
+// hung open on strings of slime and the snout fanned with pale feelers held out toward the company; and
+// the weed hangs from the back of the skull down the neck like hair. Idle: the humps roll, the neck
+// sways, the feelers quest and the slime runs.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint, Sprite } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
@@ -69,8 +77,8 @@ interface Build {
   rings: number;
   /** Eyes, 0 none: the worms are blind. */
   eyes: number;
-  /** What it lies in: the fen's water, earth, ice. */
-  ground: 'water' | 'earth' | 'ice';
+  /** What it lies in: the fen's water, earth, ice, the black seawater of a cave. */
+  ground: 'water' | 'earth' | 'ice' | 'sea';
   /** How wet the skin shines, 0..1. */
   gloss: number;
   /** The underside's colour, mixed into the tint along the throat and belly. */
@@ -83,6 +91,10 @@ interface Build {
   spots: number;
   /** How much of the body shows dark under a clear surface behind the rise, 0 none: the pike's under the ice. */
   under: number;
+  /** Pale feelers fanned from the snout and lip, 0 none: the Hag's, held out toward what it cannot see. */
+  barbels?: number;
+  /** The weed the tide leaves, heaped round the pool's rim and hung from the skull like hair, 0 none: the Hag's. */
+  wrack?: number;
 }
 const EEL: Build = {
   girth: 1, rise: 1, coils: 2, bend: 1, pitch: 0, fin: 1, jaw: 1, teeth: 1, sucker: 0, bill: 0, rings: 0, eyes: 1,
@@ -104,8 +116,17 @@ const PIKE: Build = {
   ground: 'ice', gloss: 0.55, belly: '#ece8d0', pale: 0.75, rubble: 0, spots: 1, under: 1,
 };
 
+// The Hag, the sea cave's: the eel's frame at the worm's girth, the neck a little lower so that the head
+// stands under a tall boss's crown, no eyes (the feelers do their work), slack skin and the pale of
+// something that has not seen the sun. It lies in a pool of black seawater among the wrack.
+const HAG: Build = {
+  girth: 1.6, rise: 0.8, coils: 2, bend: 1, pitch: 0, fin: 0, jaw: 0.8, teeth: 0.8, sucker: 0, bill: 0, rings: 0.3, eyes: 0,
+  ground: 'sea', gloss: 0.7, belly: '#d6c8bc', pale: 0.3, rubble: 0, spots: 0, under: 0,
+  barbels: 1, wrack: 1,
+};
+
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
-  longBody(ctx, x, y, h, p, kind === 'leech' ? LEECH : kind === 'rock_worm' ? WORM : kind === 'ice_pike' ? PIKE : EEL);
+  longBody(ctx, x, y, h, p, kind === 'leech' ? LEECH : kind === 'rock_worm' ? WORM : kind === 'ice_pike' ? PIKE : kind === 'hag' ? HAG : EEL);
 };
 
 /** The kinds this module draws, each with its span and any part drawn apart; ./index.ts merges every family's. */
@@ -114,6 +135,7 @@ export const SPRITES = {
   leech: { draw, span: [0.46, 0.46] },
   rock_worm: { draw, span: [0.66, 0.53] },
   ice_pike: { draw, span: [0.44, 0.65] },
+  hag: { draw, span: [0.62, 0.61] },
 } satisfies Partial<Record<MonsterSprite, Sprite>>;
 
 /** A frame: x and y map hundredths of the height (x right, y up from the ground) to the canvas. */
@@ -147,6 +169,7 @@ function spine(pts: readonly number[], n = 5): number[] {
 function surface(b: Build, tone: number): { deep: string; face: string; ring: string } {
   if (b.ground === 'earth') return { deep: shade('#2a2018', tone), face: shade('#5a4632', tone), ring: shade('#7a6448', tone) };
   if (b.ground === 'ice') return { deep: shade('#4a6a80', tone), face: shade('#a8c4d4', tone), ring: shade('#e8f4fa', tone) };
+  if (b.ground === 'sea') return { deep: shade('#0a1418', tone), face: shade('#1c2e34', tone), ring: shade('#8cb0b4', tone) };
   return { deep: shade('#10160e', tone), face: shade('#2a3624', tone), ring: shade('#8a9a78', tone) };
 }
 
@@ -178,13 +201,15 @@ function longBody(ctx: CanvasRenderingContext2D, x: number, y: number, h: number
       ctx.fillStyle = pg; ctx.fillRect(f.X(PX - RX), f.Y(PY + RY), RX * 2 * u, RY * 2 * u);
     }
     // The sky on the water, a pale streak along the far side; a hole in rock has none.
-    if (!b.rubble) { ctx.fillStyle = rgba(water.ring, 0.18); ctx.beginPath(); ctx.ellipse(f.X(PX - 8), f.Y(PY + RY * 0.55), RX * 0.6 * u, RY * 0.22 * u, 0, 0, Math.PI * 2); ctx.fill(); }
+    if (!b.rubble && b.ground !== 'sea') { ctx.fillStyle = rgba(water.ring, 0.18); ctx.beginPath(); ctx.ellipse(f.X(PX - 8), f.Y(PY + RY * 0.55), RX * 0.6 * u, RY * 0.22 * u, 0, 0, Math.PI * 2); ctx.fill(); }
     ctx.restore();
   };
   pool();
   if (ice) slabs(ctx, f, hole, water.face, h, false);
   // The rubble on the hole's far rim, behind the body.
   if (b.rubble) rubble(ctx, f, PX, PY + RY * 0.55, RX * 0.8, 5, p.tone, 70, false);
+  // The wrack on a sea pool's far rim, behind the body.
+  if (b.wrack) wrack(ctx, f, FAR_WRACK, PY + RY * 0.45, p.tone, 70);
   // Below the ground line there is nothing of it: what goes into the hole stays in it.
   if (b.rubble) { ctx.save(); ctx.beginPath(); ctx.rect(x - h * 3, y - h * 3, h * 6, h * 3); ctx.clip(); }
 
@@ -231,9 +256,11 @@ function longBody(ctx: CanvasRenderingContext2D, x: number, y: number, h: number
   // --- the head ---------------------------------------------------------------------------------
   // Tipped up off the rise by `pitch`, about the back of the skull, which stays on the neck.
   const hx = 10 + sw, hy = 75 * R;
+  // The weed that hangs from the skull like hair lies over the neck, under the head that grows it.
+  if (b.wrack) hair(ctx, f, hx, hy, g * 1.15 * 1.25, sw, t, p.tone);
   ctx.save();
   if (b.pitch) { const px = f.X(hx - g * 0.7), py = f.Y(hy); ctx.translate(px, py); ctx.rotate(-b.pitch); ctx.translate(-px, -py); }
-  head(ctx, f, hx, hy, g * 1.15, b, p, skin, under);
+  head(ctx, f, hx, hy, g * 1.15, b, p, b.barbels ? mix(skin, under, 0.5) : skin, under);
   ctx.restore();
 
   // --- where it goes in -------------------------------------------------------------------------
@@ -266,6 +293,78 @@ function longBody(ctx: CanvasRenderingContext2D, x: number, y: number, h: number
       ctx.beginPath(); ctx.ellipse(f.X(feet[i]), f.Y(feet[i + 1]), g * 0.95 * u, 0.9 * u, 0, Math.PI * 0.1, Math.PI * 0.9); ctx.stroke();
     }
   }
+  // The wrack on the near rim, heaped at the pool's two ends and before the neck's foot.
+  if (b.wrack) wrack(ctx, f, NEAR_WRACK, PY - RY * 0.5, p.tone, 90);
+}
+
+/** The Hag's heaps of wrack, `[x, width, height, lean]` in frame units along the rim: the far rim behind the body, the near before it. */
+const FAR_WRACK: readonly (readonly [number, number, number, number])[] = [[-52, 6, 7, -0.3], [-34, 6.5, 8.5, 0.2], [-14, 7, 6, -0.1], [10, 7, 7.5, 0.2], [32, 7.5, 9, -0.2], [50, 6, 7, 0.3]];
+const NEAR_WRACK: readonly (readonly [number, number, number, number])[] = [[-52, 7, 8, -0.4], [-30, 4.5, 4, 0.2], [24, 5, 4.5, -0.2], [52, 7, 9, 0.3]];
+
+/**
+ * The weed the tide leaves, heaped along a pool's rim at frame height `cy`: each heap a dark lump of
+ * tangled fronds with straps of kelp over its crown and hanging off it, as wrack lies on a strand.
+ */
+function wrack(ctx: CanvasRenderingContext2D, f: F, heaps: readonly (readonly [number, number, number, number])[], cy: number, tone: number, seed: number): void {
+  const lumps: Part[] = [], straps: Part[] = [];
+  heaps.forEach(([x, w, ht, lean], i) => {
+    const q = (k: number): number => nz(seed + k, i);
+    lumps.push({ k: 'curve', pts: at(f, [x - w, cy - 1.2, x - w * 0.85, cy + ht * 0.5, x - w * 0.3, cy + ht * 0.95, x + w * 0.35, cy + ht, x + w * 0.9, cy + ht * 0.5, x + w, cy - 1.2]), wobble: 0.08, seed: seed + i, sub: 2 });
+    for (let k = 0; k < 4; k++) {
+      const sx = x + (k - 1.5) * w * 0.45, dir = lean + (q(3 + k) - 0.5) * 1.2, run = ht * (1 + q(6 + k) * 0.7);
+      straps.push({ k: 'tube', pts: at(f, [sx, cy + ht * 0.55, sx + dir * 2, cy + ht + 0.6, sx + dir * 5, cy + ht * 0.8, sx + dir * 6.5, cy + ht * 0.8 - run * 0.5]), r0: 0.95 * f.u, r1: 0.55 * f.u, wobble: 0.1, seed: seed + 9 * i + k });
+    }
+  });
+  blob(ctx, B, shade('#343a1e', tone), lumps, { h: f.h, formK: 0.5, spread: 0.7 });
+  blob(ctx, B, shade('#585828', tone), straps, { h: f.h, formK: 0.4, spread: 0.7 });
+}
+
+/**
+ * The same weed hung from the back of the skull like hair: lank strands down the neck's far side, the
+ * longest into the water behind it, swaying a little out of step.
+ */
+function hair(ctx: CanvasRenderingContext2D, f: F, hx: number, hy: number, W: number, sw: number, t: number, tone: number): void {
+  const strands: Part[] = [];
+  [52, 40, 56, 34, 46].forEach((len, i) => {
+    const k = i / 4, sx = hx - W * (0.92 - 0.2 * k), sy = hy + 1 + W * 0.7 * k, pts: number[] = [];
+    for (let j = 0; j <= 4; j++) {
+      const d = j / 4;
+      pts.push(sx - d * (4 + i) - d * d * 10 - Math.sin(d * 3 + i) * 1.2 + Math.sin(t / 23 + i * 1.3 + j * 0.9) * (0.5 + 0.4 * j) + sw * 0.4 * (1 - d), sy - d * len);
+    }
+    strands.push({ k: 'tube', pts: at(f, pts), r0: 1.6 * f.u, r1: 0.7 * f.u, wobble: 0.06, seed: 80 + i });
+  });
+  blob(ctx, B, shade('#2e3822', tone), strands, { h: f.h, formK: 0.4, spread: 0.7 });
+}
+
+/**
+ * The feelers: pale fleshy whiskers fanned from the snout and the lips, three before the skull and two
+ * behind it (`far`), each held out toward the company and questing, its tip never still.
+ */
+function feelers(ctx: CanvasRenderingContext2D, f: F, hx: number, hy: number, L: number, drop: number, p: Paint, under: string, far: boolean): void {
+  // Each `[x, y, x, y, x, y]`: where it leaves the head, where it bends and its tip, x in lengths of the snout from the head's point and y up from it.
+  const rows: readonly (readonly number[])[] = far
+    ? [[0.85, 2, 1.06, 8.5, 1.22, 11.5], [0.95, -1, 1.22, -3, 1.46, -8.5]]
+    : [[0.78, 2.4, 0.98, 6.8, 1.2, 7.6], [0.92, 0.2, 1.15, 0.4, 1.38, -4], [0.8, -drop - 3.4, 0.99, -drop - 7.6, 1.07, -drop - 13.5]];
+  const parts = rows.map((r, i): Part => {
+    const w = p.frame / 9 + i * 1.9 + (far ? 2.4 : 0), dx = Math.sin(w) * 1.3, dy = Math.sin(w * 0.8 + 1) * 1.1;
+    return { k: 'tube', pts: at(f, [hx + L * r[0], hy + r[1], hx + L * r[2] + dx * 0.4, hy + r[3] + dy * 0.4, hx + L * r[4] + dx, hy + r[5] + dy]), r0: 1.7 * f.u, r1: 0.8 * f.u, wobble: 0.04, seed: 70 + i + (far ? 5 : 0) };
+  });
+  const flesh = mix(under, '#c4a096', 0.3);
+  blob(ctx, B, far ? shade(flesh, 0.78) : flesh, parts, { h: f.h, formK: 0.5, spread: 0.8, gloss: 0.5 });
+}
+
+/** What the Hag's face has besides its mouth: strings of slime hung between the jaws, and two slits of nostrils at the snout's tip. */
+function slime(ctx: CanvasRenderingContext2D, f: F, hx: number, hy: number, L: number, drop: number, p: Paint): void {
+  if (B.override) return;
+  const u = f.u, tone = Math.max(0.55, p.tone);
+  ctx.lineCap = 'round';
+  [0.3, 0.5, 0.68].forEach((k, i) => {
+    const sag = 1.2 + Math.sin(p.frame / 13 + i * 2.1) * 0.7, x0 = f.X(hx + L * k), y0 = f.Y(hy - 1.5), y1 = f.Y(hy - 3.2 - drop * 0.9);
+    ctx.strokeStyle = rgba(shade('#ece6d4', tone), 0.55); ctx.lineWidth = Math.max(1, u * 0.4);
+    ctx.beginPath(); ctx.moveTo(x0, y0); ctx.quadraticCurveTo(x0 + sag * u, (y0 + y1) / 2, x0 + 0.3 * u, y1); ctx.stroke();
+  });
+  ctx.fillStyle = shade('#1c0e12', tone);
+  for (const [dx, dy] of [[0.91, 1.3], [0.97, 0.3]] as const) { ctx.beginPath(); ctx.ellipse(f.X(hx + L * dx), f.Y(hy + dy), 0.85 * u, 0.5 * u, 0.4, 0, Math.PI * 2); ctx.fill(); }
 }
 
 /**
@@ -473,12 +572,14 @@ function head(ctx: CanvasRenderingContext2D, f: F, hx: number, hy: number, g: nu
   // The jaw first, under the skull, hanging open; the mouth's inside, then the teeth along both.
   const drop = (3.5 + gape * 2.5) * b.jaw;
   const jaw: number[] = [hx - W * 0.85, hy - 1, hx + L * 0.75, hy - drop - 2, hx + L * 0.9, hy - drop - 3.5, hx + L * 0.45, hy - drop - 5, hx - W * 0.6, hy - 5];
+  if (b.barbels) feelers(ctx, f, hx, hy, L, drop, p, under, true);
   if (b.jaw > 0) {
     blob(ctx, B, mix(skin, under, 0.6), [{ k: 'curve', pts: at(f, jaw), wobble: 0.02, seed: 50, sub: 2 }], { h: f.h, formK: 0.3, spread: 0.8 });
   }
   // The skull: a blunt wedge from the neck to a rounded snout, a little down toward the company.
   const skull: number[] = [hx - W, hy + 1, hx - W * 0.7, hy + W * 0.85, hx + L * 0.3, hy + W * 0.75, hx + L * 0.85, hy + 1.5, hx + L, hy - 0.5, hx + L * 0.7, hy - 1.6, hx - W * 0.2, hy - 1.2];
   blob(ctx, B, skin, [{ k: 'curve', pts: at(f, skull), wobble: 0.02, seed: 52, sub: 2, gloss: b.gloss }], { h: f.h, formK: 0.45, spread: 0.85 });
+  if (b.barbels) feelers(ctx, f, hx, hy, L, drop, p, under, false);
   if (B.override) return;
   if (b.jaw > 0) {
     // The mouth's inside: dark, wet, between the jaws.
@@ -498,6 +599,7 @@ function head(ctx: CanvasRenderingContext2D, f: F, hx: number, hy: number, g: nu
       }
     }
   }
+  if (b.barbels) slime(ctx, f, hx, hy, L, drop, p);
   // The pale of the throat under the skull, and a gill slit behind the jaw.
   patch(ctx, B, under, [{ k: 'ell', x: f.X(hx - W * 0.15), y: f.Y(hy + 0.4), rx: W * 0.7 * u, ry: 1.6 * u }], { alpha: 0.5, feather: 0.7 });
   softLine(ctx, B, at(f, [hx - W * 0.75, hy + W * 0.55, hx - W * 0.95, hy - 0.6, hx - W * 0.7, hy - 3.5]), skin, Math.max(1, u * 0.9), 0.7);
