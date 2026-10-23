@@ -101,6 +101,13 @@
         "l11_reeds",
         "l11_shore",
         "l11_south",
+        "l12_cairn",
+        "l12_cuts",
+        "l12_den",
+        "l12_rim",
+        "l12_spring",
+        "l12_store",
+        "l12_strongbox",
         "l9_bear_sign",
         "l9_cairn",
         "l9_claws",
@@ -198,6 +205,7 @@
         "l10_pike",
         "l11_bears",
         "l11_lynx",
+        "l12_bears",
         "l9_bear",
         "l9_lynx_meadow",
         "l9_lynx_road",
@@ -223,6 +231,7 @@
         "341,272",
         "344,297",
         "351,329",
+        "364,356",
         "365,338",
         "370,292",
         "384,262",
@@ -316,6 +325,10 @@
     },
     "longmere_l11": {
       "at": "360,318",
+      "size": "32x32"
+    },
+    "longmere_l12": {
+      "at": "360,350",
       "size": "32x32"
     },
     "longmere_l9": {

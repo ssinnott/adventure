@@ -97,7 +97,7 @@ const SEAMS_AS_BUILT: readonly AsBuilt[] = [
   { seam: 'monksvale_j11/monksvale_j12', walk: '18', why: 'J12\'s mountain runs a square further east than J11\'s' },
   { seam: 'highspine_i11/highspine_i12', walk: '26', why: 'the mountain steps a square at the line' },
   { seam: 'highspine_i10/highspine_i11', walk: '25 28', why: 'the mountain closing the Stone\'s ring above the trail meets I10\'s pines, and the Stone at I11\'s 28,0 stands under I10\'s mountain' },
-  { seam: 'sheerpoint_i9|coldmere_j9', walk: '0-7', why: 'I9\'s mountain stands against J9\'s pines' },
+  { seam: 'sheerpoint_i9|coldmere_j9', walk: '1-7', why: 'I9\'s mountain stands against J9\'s pines' },
   { seam: 'monksvale_j10|coldmere_k10', walk: '13-17 20-22 31', why: 'K10\'s pass, its shoulder and its walls either side of the road, stand against J10\'s pines, and J10\'s corner against K10\'s' },
   // Ashfall.
   { seam: 'cindercoast_g10|cindercoast_h10', road: '11', why: 'H10\'s shore track comes out onto G10\'s vines' },
@@ -141,13 +141,8 @@ const OPEN_ON_NOTHING: readonly OnNothing[] = [
   { edge: 'cairnfield_l8 west', open: '31', why: 'K8 is the sea, where #828 plans no box' },
   // Rimewater.
   { edge: 'coldmere_k9 north', open: '29-31', why: 'K8 is the sea, where #828 plans no box' },
-  { edge: 'coldmere_j9 north', open: '0-12', why: 'J8 is unbuilt: #832 builds it' },
-  { edge: 'longmere_l11 south', open: '0-16', why: 'L12 is unbuilt: #832 builds it' },
-  { edge: 'coldmere_k12 east', open: '0-7', why: 'L12 is unbuilt: #832 builds it' },
   { edge: 'longmere_m10 east', open: '0-31', why: 'N10 is Glacier Foot, the reach, shut until Phase 1.6' },
   { edge: 'longmere_m11 east', open: '0-4 18', why: 'N11 is Glacier Foot, the reach, shut until Phase 1.6' },
-  // The Whitespine.
-  { edge: 'sheerpoint_i8 east', open: '11-30', why: 'J8 is unbuilt: #832 builds it' },
   // Ashfall.
   { edge: 'emberwaste_f11 south', open: '4-31', why: 'F12 is unbuilt: #836 builds it' },
   { edge: 'emberwaste_e11 south', open: '12-13', why: 'E12 is the world\'s end, the void and a mountain, where #828 plans no box' },
