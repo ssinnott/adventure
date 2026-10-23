@@ -91,6 +91,12 @@ export interface AtlasZone {
   label?: Pt;
   /** The zone's own words for how its land feels to a company under its floor, in place of the world's (game/world.ts). */
   crossing?: Crossing;
+  /** The groups met on its road, in order from its way in, as the game names a group, 'map:id' (tools/tests/gate.ts). */
+  road?: readonly string[];
+  /** Of the reach, off the road of levels: the pace and the rifts leave it be (tools/tests/pillars.ts). */
+  reach?: true;
+  /** The most monsters any group on its maps may hold (tools/tests/maps.ts). */
+  maxGroup?: number;
 }
 
 /** How a zone's land feels to a company one or two levels under its floor (`harder`), or three or more (`warning`). */

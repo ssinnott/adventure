@@ -26,6 +26,7 @@ import { readId } from '../../src/game/inscriptions.ts';
 import { REACH_ZONES } from './pillars.ts';
 import { FIXTURE, LAIR } from './enclave.ts';
 import type { MapState } from '../../src/game/world.ts';
+import { areaRows, beside, once } from '../checks.ts';
 import { ok, owed } from './lib.ts';
 
 /**
@@ -37,9 +38,11 @@ export const UNSET: Record<string, string> = {
   // None owed: the road behind (#765) sets the last of Act V's, the signet's four (the Council's clerk at
   // Helmstow's gate and the sea off Gullwick), the walk home and Jowan's letter.
 };
+/** UNSET beside the flags the areas owe (`Owes.unset`), a flag in both refused (#897). */
+const unset = beside(UNSET, areaRows((c) => c.owes?.unset));
 
 /** The flags a feature sets: a person's, met, an event's, said (#156), an inn's, stayed at and a camp's, rested at (#730). */
-const featureFlags = (f: Feature): readonly string[] => f.kind === 'npc' ? personFlags(f) : f.kind === 'event' ? [f.sets ?? []].flat() : f.kind === 'inn' ? f.nights ?? [] : f.kind === 'camp' ? (f.nights ?? []).map((n) => n.sets) : [];
+export const featureFlags = (f: Feature): readonly string[] => f.kind === 'npc' ? personFlags(f) : f.kind === 'event' ? [f.sets ?? []].flat() : f.kind === 'inn' ? f.nights ?? [] : f.kind === 'camp' ? (f.nights ?? []).map((n) => n.sets) : [];
 
 /**
  * What in a condition names nothing real: a flag no NPC, event or guild quest sets (nor one UNSET owes), an item, something spent once and kept
@@ -57,7 +60,7 @@ export function condFaults(w: When, maps: readonly MapDef[] = MAP_DEFS): string[
   const onMap = (ref: string): { map: MapDef | undefined; id: string } => { const [m, id] = ref.split(':'); return { map: maps.find((d) => d.id === m), id }; };
   const bad: string[] = [];
   for (const c of [w].flat() as QuestCond[]) {
-    for (const f of [c.flag ?? []].flat()) if (!npcFlags.has(f) && !Object.hasOwn(UNSET, f)) bad.push(`flag ${f}`);
+    for (const f of [c.flag ?? []].flat()) if (!npcFlags.has(f) && !Object.hasOwn(unset.all, f)) bad.push(`flag ${f}`);
     if (c.item !== undefined && !(c.item in ITEMS)) bad.push(`item ${c.item}`);
     if (c.seen !== undefined) { const { map, id } = onMap(c.seen); if (!map?.features?.some((f) => id !== undefined && (spentId(f) === id || readId(f) === id))) bad.push(`seen ${c.seen}`); }
     for (const ref of [c.slain ?? []].flat()) { const { map, id } = onMap(ref); const e = map?.encounters?.find((x) => x.id === id); if (!e || e.respawn) bad.push(`slain ${ref}`); }
@@ -77,6 +80,8 @@ export function fleeting(w: When): string[] {
 
 /** Whether a map is an enclave (#845) or a level of one: beside the road, held to its own band. */
 const inEnclave = (defs: readonly MapDef[], map: string): boolean => !!defs.find((d) => d.id === map)?.enclave;
+/** The areas that have a map: an area with none yet, as a new one starts (EXPANSION §8.2), is owed no step of the one quest. */
+const builtAreas = (areas: readonly { id: string; maps: readonly unknown[] }[]): Set<string> => new Set(areas.filter((a) => a.maps.length > 0).map((a) => a.id));
 
 /** The goals of the one quest's chapters that lie in an enclave (#845), as "chapter: goal": none may, for no step of the quest lies beside the road. */
 export function enclaveSteps(chapters: readonly Chapter[], defs: readonly MapDef[]): string[] {
@@ -96,8 +101,9 @@ export function heldZones(chapters: readonly Chapter[], defs: readonly MapDef[])
 export function quests(): void {
   // A flag owed to an issue counts as real until that issue sets it, and only then.
   const setBy = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap(featureFlags)));
-  for (const [f, whose] of Object.entries(UNSET)) owed(setBy.has(f), `flag ${f} is set by someone`, whose);
-  ok(!condFaults({ flag: Object.keys(UNSET)[0] }).length && condFaults({ flag: 'fx_never_set' }).join() === 'flag fx_never_set',
+  for (const [f, whose] of Object.entries(unset.all)) owed(setBy.has(f), `flag ${f} is set by someone`, whose);
+  ok(...once('every flag owed its setting is owed once, in UNSET or by its area', unset.twice));
+  ok(!condFaults({ flag: Object.keys(unset.all)[0] }).length && condFaults({ flag: 'fx_never_set' }).join() === 'flag fx_never_set',
     'a flag owed to an issue names something real, and one nobody sets or owes does not');
   const crossing: MapDef = { id: 'fx_shore', name: 'Fixture', kind: 'outdoor', start: { x: 0, y: 0, facing: NORTH }, rows: [',,'],
     features: [{ kind: 'event', x: 0, y: 0, id: 'fx_crossing', text: 'Riders.', once: true, sets: 'fx_crossed' }] };
@@ -153,19 +159,18 @@ export function quests(): void {
     console.log(`  info: ${id}: its journal takes ${most} ${most === 1 ? 'page' : 'pages'} at most`);
   }
   { // Every zone on the road of the built areas holds a step of the one quest, found from where
-    // its steps are done (a dungeon or a town by the outdoor map it opens onto). A zone not built
-    // yet is owed by whoever builds its step. No step lies in an enclave (#845), beside the road: a
-    // goal there is a fault, and holds no zone, as the reach holds none.
+    // its steps are done (a dungeon or a town by the outdoor map it opens onto), built or not. No step
+    // lies in an enclave (#845), beside the road: a goal there is a fault, and holds no zone, as the
+    // reach holds none.
     const steps = enclaveSteps(THE_QUEST.chapters, MAP_DEFS);
     ok(!steps.length, `no step of the one quest lies in an enclave${steps.length ? ' -> ' + steps.join(', ') : ''}`);
     const held = heldZones(THE_QUEST.chapters, MAP_DEFS);
-    const PLANNED: Record<string, string> = {};
-    const built = new Set(AREAS.map((a) => a.id as string));
+    const built = builtAreas(AREAS);
+    // An area with no map yet, as a new one starts (EXPANSION §8.2), is owed no step; once it has a map each zone it charts holds one.
+    ok(builtAreas([{ id: 'built', maps: [1] }, { id: 'planned', maps: [] }]).has('built') && !builtAreas([{ id: 'built', maps: [1] }, { id: 'planned', maps: [] }]).has('planned'), 'an area with no map yet is owed no step of the one quest, and one with a map is');
     // The reach is off the road by design (DESIGN §9), and holds no step: Rimewater's Glacier Foot (#486).
-    for (const z of ATLAS.zones.filter((x) => built.has(x.area) && !REACH_ZONES.includes(x.id))) {
-      const msg = `zone ${z.id} holds a step of the one quest`;
-      if (PLANNED[z.id]) owed(held.has(z.id), msg, PLANNED[z.id]);
-      else ok(held.has(z.id), `${msg}${z.maps?.length ? '' : ' (not built, and owed by no one)'}`);
+    for (const z of ATLAS.zones.filter((x) => built.has(x.area) && !REACH_ZONES.includes(x.id) && !x.reach)) {
+      ok(held.has(z.id), `zone ${z.id} holds a step of the one quest${z.maps?.length ? '' : ' (not built, and owed by no one)'}`);
     }
     // The fixture lair beside Saltreach (#845) holds no step of the one quest; a step set in it is caught,
     // and holds no zone, where the same step on its box holds the Upper Water.
@@ -173,11 +178,10 @@ export function quests(): void {
     ok(!enclaveSteps(THE_QUEST.chapters, defs).length && enclaveSteps([at(LAIR.id)], defs).length === 1
       && !heldZones([at(LAIR.id)], defs).has(FIXTURE.zone) && heldZones([at(FIXTURE.box)], defs).has(FIXTURE.zone),
       'the fixture lair holds no step of the one quest; a step set in it is caught and holds no zone, where the same step on its box, C3, holds the Upper Water');
-    // An area listed by its first map before its chapter is written: the chapter is owed by its issue.
-    const CHAPTER_OWED: Record<string, string> = {};
-    const walks = AREAS.filter((a) => !existsSync(new URL(`../../src/content/areas/${a.id}/walkthrough.ts`, import.meta.url)));
-    ok(AREAS.every((a) => a.chapter || CHAPTER_OWED[a.id]) && !walks.length, `every area has a chapter of the one quest, or owes it, and a walkthrough${walks.length ? ' -> none in ' + walks.map((a) => a.id).join(', ') : ''}`);
-    for (const a of AREAS.filter((x) => CHAPTER_OWED[x.id])) owed(!!a.chapter, `${a.id} has a chapter of the one quest`, CHAPTER_OWED[a.id]);
+    // An area is listed from its first commit, its maps none yet (EXPANSION §8.2): once it has a map it has
+    // its chapter and its walkthrough.
+    const walks = AREAS.filter((a) => a.maps.length && !existsSync(new URL(`../../src/content/areas/${a.id}/walkthrough.ts`, import.meta.url)));
+    ok(AREAS.every((a) => a.chapter || !a.maps.length) && !walks.length, `every area with a map has a chapter of the one quest and a walkthrough${walks.length ? ' -> none in ' + walks.map((a) => a.id).join(', ') : ''}`);
     // Act II read end to end (#204, #191): the Wall begins on Wrackholm's done flag, not on the Tide
     // Ship's papers picked up, and Sunderwood's walkthrough plays it on from Wrackholm's chapter, the
     // papers carried from the ship and none put in the bag by hand.

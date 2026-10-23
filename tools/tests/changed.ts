@@ -2,7 +2,7 @@
 // read it: which files count every map, monster or interior, which count every room of one area, and
 // which count only their own.
 import { changedMaps, changedMonsters, changedInteriors, familiesIn } from '../changed.ts';
-import { AREAS, ROOMS_AHEAD, MONSTERS } from '../../src/content/index.ts';
+import { AREAS, MONSTERS } from '../../src/content/index.ts';
 import { execFileSync } from 'node:child_process';
 import { readFileSync, readdirSync } from 'node:fs';
 import { FAMILY_OF } from '../../src/ui/monsters/index.ts';
@@ -52,13 +52,13 @@ export async function changed(): Promise<void> {
   // A file under an area's folder of rooms counts every room of the area, as the folder's registry keys them: the helpers its
   // scenes share (kilns/hold.ts, kilns/port.ts, rimewater/lodge.ts) have no room of their own to be found by, and a scene may
   // borrow from another (shelf/throne_room.ts from warden_drillyard.ts), which no file's name says.
-  const roomsOf = (area: string): string[] => [...[...AREAS, ...ROOMS_AHEAD].find((a) => a.id === area)!.interiors];
+  const roomsOf = (area: string): string[] => [...AREAS.find((a) => a.id === area)!.interiors];
   const counts = (c: { all: boolean; interiors: string[] }, want: string[]): boolean => want.length > 0 && !c.all && c.interiors.length === want.length && want.every((i) => c.interiors.includes(i));
   const folders = readdirSync(new URL('../../src/ui/interiors/', import.meta.url), { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => d.name);
   const adrift: string[] = [];
   for (const folder of folders) {
     const registry = ((await import(new URL(`../../src/ui/interiors/${folder}/index.ts`, import.meta.url).href)) as { SCENES: Record<string, unknown> }).SCENES;
-    const listed = [...[...AREAS, ...ROOMS_AHEAD].find((a) => a.id === folder)?.interiors ?? []].sort().join();
+    const listed = [...AREAS.find((a) => a.id === folder)?.interiors ?? []].sort().join();
     if (!listed || listed !== Object.keys(registry).sort().join()) adrift.push(folder);
   }
   ok(folders.length > 0 && !adrift.length, `each folder of rooms is an area's, and its registry keys the rooms its area lists, so the sheet knows every id it names (${folders.join(', ')})${adrift.length ? ' -> not: ' + adrift.join(', ') : ''}`);

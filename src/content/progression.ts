@@ -28,7 +28,7 @@ export interface AreaCurve {
   /**
    * What a clear falls short of, while someone owes it: the curve reports the shortfall and does
    * not fail it. `xp` (a member's share) and `gold` are what a clear gives today, a floor: a clear
-   * that pays less fails.
+   * that pays less fails. The area may owe it itself (`Owes.curve`, its checks.ts), not both (#897).
    */
   owed?: { whose: string; why: string; xp?: number; gold?: number };
 }
@@ -36,14 +36,8 @@ export interface AreaCurve {
 /** The party the curve pays for. */
 export const MEMBERS = 6;
 
-/**
- * The areas next on the road that have a row before they have a map, in road order. An area leaves
- * this list when its first map lists it in AREAS; the curve check fails while it is in both.
- */
-export const PLANNED = [] as const;
-
-/** Every area's row, and every planned area's: an area without one is a type error. */
-export const CURVE: Record<RegionId | (typeof PLANNED)[number], AreaCurve> = {
+/** Every area's row: an area without one is a type error. */
+export const CURVE: Record<RegionId, AreaCurve> = {
   shelf: {
     band: [1, 5], next: 5, price: 500,
   },

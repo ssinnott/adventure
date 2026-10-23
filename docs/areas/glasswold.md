@@ -32,7 +32,7 @@ quests (#532, §6), two given from Cinderport's halls and two at Akordu; and E9,
 road, and E8, the shore, the country behind (#534, §4.9); and the Master of arms (#858, §6), an old
 Rider hidden in D10's small mesa, with a rumour at Akordu's trader's tent and his favour in E9's
 store. With them the Wold is complete overland.
-`AHEAD` and `PLANNED` are empty, and the Wold holds the quest's step. Its content is
+The Wold holds the quest's step (`AHEAD` and `PLANNED`, empty from then on, went with #897). Its content is
 `src/content/areas/glasswold/` (maps,
 interiors, monsters, items, climate, its part of the world map in `atlas.ts` and its walkthrough;
 its chapter, The Warning, in `chapter.ts`, and its quests in `quests.ts`, the Ranger's third's and

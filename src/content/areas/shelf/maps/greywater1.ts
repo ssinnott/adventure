@@ -62,7 +62,7 @@ export const GREYWATER1: MapDef = {
     { id: 'gw1_drowned', x: 8, y: 10, monsters: ['drowned', 'drowned', 'drowned'], aware: 4, respawn: 2880 },
     { id: 'gw1_smug2', x: 3, y: 13, monsters: ['smuggler', 'smuggler', 'smuggler_bowman', 'smuggler_bowman'], aware: 5, respawn: 2880 },
     { id: 'gw1_smug3', x: 12, y: 7, monsters: ['smuggler', 'smuggler', 'smuggler', 'smuggler', 'smuggler_bowman', 'smuggler_bowman'], aware: 5, respawn: 2880 },
-    { id: 'gw1_captain', x: 8, y: 13, monsters: ['smuggler_captain', 'smuggler', 'smuggler'], aware: 2, roams: false },
+    { id: 'gw1_captain', x: 8, y: 13, monsters: ['smuggler_captain', 'smuggler', 'smuggler'], aware: 2, roams: false, boss: true },
     { id: 'gw1_stairs', x: 14, y: 12, monsters: ['ghoul', 'ghoul', 'drowned', 'drowned'], aware: 3, roams: false },
   ],
 };
