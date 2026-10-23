@@ -16,7 +16,7 @@ export const WRACKHOLM_F5: MapDef = {
   density: 'country',
   band: [13, 14],
   region: 'wrackholm',
-  start: { x: 8, y: 31, facing: NORTH },
+  start: { x: 7, y: 31, facing: NORTH },
   rows: [
     'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
     'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',

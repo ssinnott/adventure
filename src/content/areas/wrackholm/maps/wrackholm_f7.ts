@@ -1,8 +1,8 @@
 // Wrackholm, box F7: the strand under the anchorage. Country, band 13-14, the bounds' first (#835): the
 // isle's south-east end below F6's cliff, the shingle's sand and the cliff path's rock running on south
-// into a knoll and a strand the boats never use, and the open sea round it. A fire-ring of driftwood
-// ash, a camp; at the strand's south end a stack of rock with a cut chain rusted into the sand by it,
-// and behind its face the hollow where someone hid in irons. In from F6 (#189) over its north edge,
+// into a knoll and a strand the boats never use, and the open sea round it. A spring at the cliff's
+// foot, a fountain; at the strand's south end a stack of rock with a cut chain rusted into the sand by
+// it, and behind its face the hollow where someone hid in irons. In from F6 (#189) over its north edge,
 // square for square. No group. Laid whole in Wrackholm, cut from the atlas with the rocks drawn in;
 // docs/areas/wrackholm.md §12.4 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
@@ -53,8 +53,8 @@ export const WRACKHOLM_F7: MapDef = {
   features: [
     // In from the shingle at the cliff path's foot, the strand running on south.
     { kind: 'event', x: 14, y: 1, id: 'f7_strand', once: true, text: 'South of the shingle the shore runs on under the cliff, a strand no boat puts in to.' },
-    // A fire-ring above the weed, a camp.
-    { kind: 'camp', x: 5, y: 1, name: 'A fire under the cliff', text: 'Stones in a ring above the weed, driftwood ash in them, and a scrape in the sand where someone slept.' },
+    // A spring at the cliff's foot, a fountain, the isle's first.
+    { kind: 'fountain', x: 5, y: 1, id: 'f7_spring', text: 'A spring out of the cliff\'s foot fills a pool ringed with stones, sweet above the tide\'s line.', stat: 'speed', done: 'The pool under the cliff, sweet and cold.' },
     // The secret: a cut chain rusted into the sand by the stack, and behind its face the hollow where
     // someone hid in irons, with what he left.
     { kind: 'event', x: 10, y: 3, id: 'f7_links', once: true, text: 'Links of chain rusted into the sand by the rock, cut through. Nothing else of whoever wore them.' },

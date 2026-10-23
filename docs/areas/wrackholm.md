@@ -36,7 +36,7 @@ The atlas (`src/content/areas/wrackholm/atlas.ts`, which the Area carries) makes
 
 | Zone | Band | Squares | Built |
 |---|---|---|---|
-| Wrackholm | 12–14 | 2,066 | E6, the moor and the landing, laid at 136,158 (#187); F6, the east rocks, at 168,158 (#189); the bounds' strands, E5 at 136,126, F5 at 168,126 and F7 at 168,190 (#835) |
+| Wrackholm | 12–14 | 1,974 | E6, the moor and the landing, laid at 136,158 (#187); F6, the east rocks, at 168,158 (#189); the bounds' strands, E5 at 136,126, F5 at 168,126 and F7 at 168,190 (#835) |
 
 Squares are the ones the atlas gives it, shallows included. Without the shallows the isle is 1,754
 squares, about 1.7 zone maps (EXPANSION §1 has 1.7), and every one of them a company could walk:
@@ -127,7 +127,7 @@ are drawn in #193.
   stack's foot, the store where the bait was kept (§12.3). The reef at the east end is left bare for
   the lair's door (§12.6). No group.
 - **The strand under the anchorage** (F7, `wrackholm_f7`, country, band 13–14; #835): the shingle's
-  sand and the cliff path's rock running on south below F6's cliff, a fire under the cliff and,
+  sand and the cliff path's rock running on south below F6's cliff, a spring at the cliff's foot and,
   behind the cut chain by a stack, the hollow where someone hid in irons (§12.4). No group.
 - **Weather.** The gulf's: mild winters, cool summers, a narrow day, wet autumns and much fog.
   Fronts reach it three hours after they cross the Foreland.
@@ -563,8 +563,8 @@ seen, paid at the Keel and early, and Ruan's choice both ways.
 ### The artifact: Holdfast (#846)
 
 Wrackholm's of the bounds' eight (DESIGN §9). Found and never told: no `seek` quest, no line in the
-journal and no mark on the world map. #835 builds the lair, its door on F5's strand, left bare at
-16,30 (§12.6), and the rumour once #845, #847 and the guardian's drawing are in.
+journal and no mark on the world map. #835 builds the lair, its door on F5's strand (left bare at
+16,30, §12.6) and the rumour once #845, #847 and the guardian's drawing are in.
 
 - **What it is:** *A smuggler's knife, its haft wound with kelp that has not rotted. / Wet, the weed
   on it moves.*
@@ -1026,14 +1026,16 @@ Decided by the builder for #835, each the owner's to overturn:
 2. **Each strand is Wrackholm's, laid whole in its one zone,** E5 at E6's 12–13 and F5 and F7 at
    F6's 13–14, the boxes they run off, so no crossing line is said at their edges.
 3. **No strand holds a group.** The curve's rise rule asks a box's hardest group at its top, 13 on
-   E5 and 14 on F5 and F7. At 13 the isle has its devilfish (already in E6's pools, Kelp Hole and
-   F6's pools) and the Hand's overseers who keep the chains; at 14 only its bosses and F6's
-   keepers. A group on a strand of 56 to 73 squares beside a door left
-   bare would crowd it and repeat the isle's own. The area's clear already gives 11,426 xp a member
-   of the 9,867 the curve asks (§8); the enclave and the lair are the bounds' fights.
-4. **Each strand has its wilderness feature,** of a kind its neighbours lack: E5 a ship's
+   E5 and 14 on F5 and F7. At 13 the isle has its devilfish (already in E6's pools, Kelp Hole, the
+   Tide Ship and F6's pools), the Hand's overseers who keep the chains and the Rift's Tide Elders,
+   which keep to the Stone; at 14 only its bosses and F6's keepers. A group on a strand of 56 to 73
+   squares would crowd it, beside a door left bare on two of them, and repeat the isle's own. The
+   area's clear already gives 11,426 xp a member of the 9,867 the curve asks (§8); the enclave and
+   the lair are the bounds' fights.
+4. **Each strand has its wilderness feature,** of a kind no other strand has: E5 a ship's
    figurehead with a riddle, answered anchor (+1 endurance once), the isle's first statue; F5 a
-   cairn of shore stones; F7 a fire under the cliff, a camp.
+   cairn of shore stones; F7 a spring at the cliff's foot, a fountain (+1 speed once), the isle's
+   first: a camp there would repeat F6's lee hollow, seven squares across the seam.
 5. **Each secret is a hollow behind a face of rock drawn on the strand,** a ring of nine squares
    where the atlas has shallows, sea or sand, its hint a thing seen at the face: soot where a lamp
    burned (E5), fish scales dried on the rock's foot (F5) and a cut chain in the sand (F7). Each
@@ -1095,10 +1097,12 @@ The land the isle's maps lie open to, built as country off the quest, level for 
 then the area's enclave and its artifact's lair, Holdfast's (§6). Three boxes of sea, each with a
 strand at the corner nearest the isle, 200 squares a company could walk by the atlas (E5 74, F5 69
 and F7 57), which 52 edge squares opened onto: E6's north edge (17) and F6's north (19) and south
-(16) edges. E7's 34 are laid in the Wold's box (§11, docs/areas/glasswold.md §12.3). Each box is
-built to the looser floor (EXPANSION §5.3) at the zone's band, from the area's own, paid from its
-budget (§8), with nothing on the road's quest. This is their brief, in §4's form; each pull request
-builds from it and adds its "As built".
+(16) edges. The issue's 47 are those the atlas's strands met on foot: E6's 15,0 and F6's 17,0, 18,0,
+1,31 and 19,31 are sand where the atlas has shallows, and the strands are drawn as sand there to
+meet them (§12.1). E7's 34 are laid in the Wold's box (§11, docs/areas/glasswold.md §12.3). Each
+box is built to the looser floor (EXPANSION §5.3) at the zone's band, from the area's own, paid
+from its budget (§8), with nothing on the road's quest. This is their brief, in §4's form; each
+pull request builds from it and adds its "As built".
 
 | Box | Laid in | Walkable | Built neighbours | Band | Pull request |
 |---|---|---|---|---|---|
@@ -1122,13 +1126,15 @@ builds from it and adds its "As built".
   E5's 31,31 is grass with E6's 31,0 and F5's 0,31, and F7's 0,0 is shallows with F6's 0,31, the
   Wold's 31,0 deep water beside it. No built square changes and no row of `SEAMS_AS_BUILT` is added.
   Every edge the strands turn to unbuilt land (E4, F4, G5, G7 and F8) is the sea, so no row of
-  `OPEN_ON_NOTHING` comes, and the three that held E6's north and F6's north and south edges go.
+  `OPEN_ON_NOTHING` comes, and the three that held E6's north and F6's north and south edges go;
+  no built map of Wrackholm now opens onto unbuilt land (#835's Done when).
 - **No group** stands on a strand (§9, #835's 3): the curve's rise rule asks a box's hardest at its
   top, 13 on E5 and 14 on F5 and F7, and the isle's own at those levels are its devilfish, the
-  Hand's overseers, its bosses and F6's keepers, each placed already. The bounds' fights are the
-  enclave's and the lair's.
+  Hand's overseers, the Rift's Tide Elders, its bosses and F6's keepers, each placed already. The
+  bounds' fights are the enclave's and the lair's.
 - **A wilderness feature to each strand** (EXPANSION §5.3), a kind no other strand has: E5 a ship's
-  figurehead with a riddle, F5 a cairn of shore stones and F7 a fire under the cliff, a camp.
+  figurehead with a riddle, F5 a cairn of shore stones and F7 a spring at the cliff's foot, a
+  fountain.
 - **Secrets** each a hollow behind a face of rock drawn on the strand, its hint a thing seen at the
   face: soot (E5), fish scales (F5) and a cut chain (F7). Rock keeps walkers, waders, climbers and
   floaters out.
@@ -1143,8 +1149,8 @@ builds from it and adds its "As built".
 - **The doors** of the enclave and the lair are left bare, each a square of rock with rock either
   side along its face, its way walked to and nothing within four squares (§12.5, §12.6).
 - **The walkthrough** walks them in one function, `theBounds` in `walkthrough.ts`, called last:
-  each box's seams walked, its secret found from its hint and its prize shut to walkers, swimmers,
-  climbers and floaters, and its door left bare.
+  each box's seams walked and its secret found from its hint, the prize shut to walkers, swimmers,
+  climbers and floaters; the two doors left bare.
 
 ### 12.2 E5, the north strand's west end (#835): country, band 12–13
 
@@ -1202,28 +1208,28 @@ builds from it and adds its "As built".
 - **Purpose.** The isle's south-east end below F6's cliff: the shingle's sand and the cliff path's
   rock running on south to a knoll and a strand the boats never use, the Tide Ship's anchorage off
   to the east. Off the road and off the quest.
-- **Landmarks.** The knoll under the cliff, the strand, a fire-ring above the weed and a stack of
+- **Landmarks.** The knoll under the cliff, the strand, a spring at the cliff's foot and a stack of
   rock at the strand's south end.
-- **Points of interest,** four features and no group: the strand, the fire under the cliff (a
-  camp), the cut chain and the hollow behind the rock.
+- **Points of interest,** four features and no group: the strand, the spring at the cliff's foot
+  (a fountain), the cut chain and the hollow behind the rock.
 - **Encounters.** None (§12.1).
 - **The ways in and out.** In over the north edge from F6, columns 1 to 10 (the south-west moor's
   grass), 13 to 15 (the shingle) and 17 to 19 (the grass east of the cliff path). East, south and
   west the sea; the Wold's E7 is deep water at the corner.
 - **The secret and its hint.** The hollow behind the stack where one who got away from the Tide
-  Ship's hold hid in irons and filed them off, and left his purse. The hint: links of chain rusted
+  Ship's hold hid in irons, filed them off and left his purse. The hint: links of chain rusted
   into the sand by the rock, cut through.
 - **New here.** One who got away from the hold, known only by what he left.
 - **Finds.** 100 gold and a Sapphire Vial in the purse.
 - **Pay.** No xp; 100 gold.
 - **As built** (#835, 23 October): `wrackholm_f7`, laid at 168,190, start 14,0 facing south. The
-  strand's look (`f7_strand`, 14,1); the fire under the cliff, a camp (5,1); the stack a ring of
-  rock at 9 to 11 on rows 4 to 6, its door at 10,4 and the cut chain before it (`f7_links`, 10,3),
-  the hollow (`f7_hole`, 10,5) with the purse (`f7_purse`). Its 17,1 is sand where the atlas has
-  shallows, so the shore's end at 17 to 19 on row 0, walked onto from F6, is walked to inside the
-  box: density measures a map alone. F7 differs from the atlas at 15 squares: the seam's five, the
-  sand at 17,1 and the stack's nine. Density: 56 of 56 squares within 12 steps, the furthest 6, no
-  sign among 4 points. No group; the box pays 100 gold.
+  strand's look (`f7_strand`, 14,1); the spring at the cliff's foot, a fountain (`f7_spring`, 5,1);
+  the stack a ring of rock at 9 to 11 on rows 4 to 6, its door at 10,4 and the cut chain before it
+  (`f7_links`, 10,3), the hollow (`f7_hole`, 10,5) with the purse (`f7_purse`). Its 17,1 is sand
+  where the atlas has shallows, so the shore's end at 17 to 19 on row 0, walked onto from F6, is
+  walked to inside the box: density measures a map alone. F7 differs from the atlas at 15 squares:
+  the seam's five, the sand at 17,1 and the stack's nine. Density: 56 of 56 squares within 12 steps,
+  the furthest 6, no sign among 4 points. No group; the box pays 100 gold.
 
 ### 12.5 The enclave: the wreck on the north strand (#835, its second pull request)
 

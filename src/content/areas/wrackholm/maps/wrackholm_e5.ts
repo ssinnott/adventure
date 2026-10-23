@@ -55,7 +55,7 @@ export const WRACKHOLM_E5: MapDef = {
     // In from E6's moor, the grass running down to the strand.
     { kind: 'event', x: 24, y: 30, id: 'e5_strand', once: true, text: 'North of the moor the grass runs down to a strand, weed and timber along the tide\'s line, and the open sea.' },
     // A ship's figurehead stood up above the tide, a riddle cut in her block.
-    { kind: 'statue', x: 25, y: 28, id: 'e5_figurehead', name: 'A figurehead', text: 'A ship\'s figurehead stood up in the sand, salt-white to the eyes. Words are cut in her block.', riddle: 'I AM LET GO SO THE SHIP WILL STAY, AND HAULED HOME SO SHE CAN SAIL. WHAT AM I?', answer: 'anchor', gift: { stat: 'endurance' }, done: 'The figurehead in the sand, salt-white to the eyes.' },
+    { kind: 'statue', x: 25, y: 28, id: 'e5_figurehead', name: 'A figurehead', text: 'A ship\'s figurehead stood up in the turf, salt-white to the eyes. Words are cut in her block.', riddle: 'I AM LET GO SO THE SHIP WILL STAY, AND HAULED HOME SO SHE CAN SAIL. WHAT AM I?', answer: 'anchor', gift: { stat: 'endurance' }, done: 'The figurehead in the turf, salt-white to the eyes.' },
     // The secret: soot on the stack's face where a lamp burned, and behind the face the hollow where it
     // was kept, its glass red, with a sea chest.
     { kind: 'event', x: 28, y: 27, id: 'e5_soot', once: true, text: 'Soot on the rock\'s face above head height, old and thick, as if a lamp burned there night after night.' },

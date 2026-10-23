@@ -1150,7 +1150,7 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
  * but through its door; the black rocks at E5's 18,28 left bare for the enclave's door. North from
  * F6's grass onto F5's strand; the cairn; the fish scales at the stack's foot and the bait store behind
  * it; the reef at F5's 16,30 left bare for the lair's door. South from F6's shingle onto F7's strand;
- * the fire under the cliff; the cut chain and the hollow behind the rock. Each box's edges as built.
+ * the spring under the cliff; the cut chain and the hollow behind the rock. Each box's edges as built.
  */
 function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const w = newWalk(ok);
@@ -1250,9 +1250,9 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   listen(w);
   ok(F7.start.x === 14 && F7.start.y === 0 && F7.start.facing === SOUTH, 'F7 starts at its north edge, in from the shingle');
   const strand7 = reach(f7, [F7.start.x, F7.start.y], {});
-  const fire = F7.features!.find((f) => f.kind === 'camp')!;
-  ok(strand7.size > 40 && [[1, 0], [5, 1], [10, 3], [12, 4], [15, 3], [19, 0]].every(([x, y]) => strand7.has(at(f7, x, y))) && fire.x === 5 && fire.y === 1,
-    `F7's strand (${strand7.size} squares): the fire under the cliff, the rock's foot and both ends are walked to from the way in`);
+  const spring = F7.features!.find((f) => f.kind === 'fountain')!;
+  ok(strand7.size > 40 && [[1, 0], [5, 1], [10, 3], [12, 4], [15, 3], [19, 0]].every(([x, y]) => strand7.has(at(f7, x, y))) && spring.x === 5 && spring.y === 1,
+    `F7's strand (${strand7.size} squares): the spring under the cliff, the rock's foot and both ends are walked to from the way in`);
   see(w, `${F7.id}:f7_strand`);
   const irons = reach(f7, [F7.start.x, F7.start.y], ALL, [10, 4]);
   ok(irons.size > 40 && !irons.has(at(f7, 10, 5)), `the hollow is shut but for its door in the rock: none of F7's ${irons.size} squares walked, waded, climbed or floated reaches it`);
