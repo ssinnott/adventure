@@ -56,7 +56,7 @@ export const KILNMOUTH_L6: MapDef = {
     'hhhhhhhhhhhhhhhhhhhhhhhh,,,,,,,,',
     'hhhhhhhhhhhhhhhhhhhhhhhhh,,,,,,,',
     'hhhhhhhhhhhhhhhhhhhhhhhhh,,,,,,,',
-    'hhhhhhhhhhhhhhhhhhhhhhhhh,,,,,,,',
+    'Mhhhhhhhhhhhhhhhhhhhhhhhh,,,,,,,',
   ],
   exits: [GATE],
   features: [

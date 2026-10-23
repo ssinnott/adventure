@@ -75,6 +75,15 @@
         "l6_store",
         "l6_store_chest",
         "l6_yard",
+        "l7_cist",
+        "l7_cist_chest",
+        "l7_dunes",
+        "l7_heath",
+        "l7_kerb",
+        "l7_lookout",
+        "l7_mound",
+        "l7_spill",
+        "l7_wreck",
         "m3_cairn",
         "m3_felling",
         "m3_lookout",
@@ -215,6 +224,7 @@
         "o3_warren",
         "o4_block",
         "o4_cairn",
+        "o4_corner",
         "o4_crane",
         "o4_edge",
         "o4_face",
@@ -260,6 +270,12 @@
         "o6_vent2",
         "o6_vent3",
         "o6_vent4",
+        "p4_basin_chest",
+        "p4_cairn",
+        "p4_mouth",
+        "p4_rushes",
+        "p4_spring",
+        "p4_view",
         "p5_cache_chest",
         "p5_cairn",
         "p5_deep",
@@ -286,6 +302,8 @@
         "l6_beetles_west",
         "l6_crew",
         "l6_worms",
+        "l7_beetles",
+        "l7_worm",
         "m3_beetles1",
         "m3_beetles2",
         "m3_worm",
@@ -330,6 +348,7 @@
       "doors": [
         "345,172",
         "381,169",
+        "386,194",
         "404,132",
         "413,178",
         "414,107",
@@ -343,6 +362,7 @@
         "467,135",
         "475,75",
         "481,183",
+        "491,106",
         "499,142",
         "501,160"
       ]
@@ -517,6 +537,10 @@
       "at": "360,158",
       "size": "32x32"
     },
+    "kilnmouth_l7": {
+      "at": "360,190",
+      "size": "32x32"
+    },
     "kilnmouth_m4": {
       "at": "392,94",
       "size": "32x32"
@@ -552,6 +576,10 @@
     "kilnsheart_o6": {
       "at": "456,158",
       "size": "32x32"
+    },
+    "kilnsheart_p4": {
+      "at": "488,94",
+      "size": "24x32"
     },
     "kilnsheart_p5": {
       "at": "488,126",
