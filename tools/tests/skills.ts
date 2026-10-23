@@ -42,7 +42,7 @@ import type { GuildId } from '../../src/content/guilds.ts';
 import { MAP_DEFS, CLIMATES, ITEMS } from '../../src/content/index.ts';
 import { SKILLS, SKILL_PRICE, SPIRIT_REACH, STRANGER, LEAVE_SKILLS, skillsOf, hasSkill, bornTo, skillNames, taughtBy, mayLearn, skillOffers, skillLine, skillRow, skillBar, learn, askSkill, askWhich, skilled } from '../../src/game/skills.ts';
 import type { SkillId } from '../../src/game/skills.ts';
-import { ok, headlessGame, drive } from './lib.ts';
+import { ok, headlessGame, drive, withDefs } from './lib.ts';
 
 /** DESIGN §8's table: the skills each guild teaches, three to a guild, twelve in all (DESIGN §5). */
 const TAUGHT: Record<GuildId, readonly string[]> = {
@@ -545,8 +545,7 @@ function cartographer(): void {
     while (d < 4 && w.explored(4 - d, 5)) d++;
     return d;
   };
-  ITEMS[chart.id] = chart;
-  try {
+  withDefs(ITEMS, [chart], () => {
     const hows = ['none', 'learnt', 'down', 'chart'] as const;
     const row = (def: MapDef, when: Parameters<typeof reach>[1]): string => hows.map((h) => reach(def, when, h)).join('/');
     const day = row(open, DAY), night = row(open, NIGHT), under = row(hall, DAY);
@@ -565,9 +564,7 @@ function cartographer(): void {
     const sighted = past(true), blind = past(false);
     ok(sighted === 'mapped/-/-' && blind === '-/-/-',
       `the extra square follows sight: two squares off past open floor it is mapped, past a closed door and past an unfound secret door it is not (floor / door / secret door: ${sighted}; without the skill ${blind})`);
-  } finally {
-    delete ITEMS[chart.id];
-  }
+  });
 }
 
 /**
@@ -594,8 +591,7 @@ function lockedChest(): void {
   };
   const thiefDown = (p: Party): void => { p.members[3].conditions.push('dead'); };
   const got = `You open the chest: 40 gold, ${ITEMS.torch.name}. The chest is empty. | 40`;
-  ITEMS[picks.id] = picks;
-  try {
+  withDefs(ITEMS, [picks], () => {
     const cases: [string, (p: Party) => void, string][] = [
       ['the thief standing, born to Lockpick, no key', () => undefined, `A locked chest. Ottilie picks the lock. ${got} | 0 | spent`],
       ['the thief standing, a key carried', (p) => { p.bag.push('key_iron'); }, `A locked chest. Ottilie picks the lock. ${got} | 1 | spent`],
@@ -606,9 +602,7 @@ function lockedChest(): void {
     ];
     const wrong = cases.flatMap(([who, setup, want]) => { const said = opens(setup); return said === want ? [] : [`${who}: "${said}", wanted "${want}"`]; });
     ok(!wrong.length, `a locked chest opens to a Lockpick standing or a set of picks carried, keeping the key, or to a key, spent, and to nothing else: "Locked." (${cases.map(([who]) => who).join('; ')})${wrong.length ? ' -> ' + wrong.join('; ') : ''}`);
-  } finally {
-    delete ITEMS[picks.id];
-  }
+  });
   const unlocked = opens((p) => { p.members[3].conditions.push('dead'); p.bag.push('key_iron'); }, plain);
   ok(unlocked === `A chest. Space opens it. ${got} | 1 | spent`, `a chest with no lock opens as before, the key untouched ("${unlocked}")`);
   // Skilled, as the world asks it: the thief standing, born to it; a set of picks, carried by one standing.

@@ -851,7 +851,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(vask.choice === VASK && VASK.answers.length === 1 && VASK.answers[0].label === 'Stop him.' && !!VASK.answers[0].fight && vask.x === 8 && vask.y === 5 && vask.aware === 2
     && vask.leader === 'vask' && vask.clock?.calls === 'core_sentry' && vask.clock.every === 2 && vask.clock.dims === 8 && vask.clock.panel.join() === 'grey_hand',
     'Vask at the panel, 8,5, puts his parley as the company comes beside him at 8,7: one answer, Stop him., and the fight on the clock');
-  const odds = (clock: 'panel' | 'called'): number => { ANSWER.clock = clock; const r = winRate(32, vask, 10, Infinity, gateOpts(vask)); ANSWER.clock = 'panel'; return r; };
+  const odds = (clock: 'panel' | 'called'): number => winRate(32, vask, 10, Infinity, gateOpts(vask), { answer: { ...ANSWER, clock } });
   const handsFirst = odds('panel'), letRun = odds('called');
   ok(handsFirst > 0 && letRun > 0, `won at 32 with the Grey Hands killed first (${Math.round(handsFirst * 100)}% of ten fights) and with the clock left to run (${Math.round(letRun * 100)}%)`);
   ok(!w.world.present(voice) && !w.world.present(wenna) && !w.world.present(vaskAfter), 'nobody speaks at the panel while Vask stands');

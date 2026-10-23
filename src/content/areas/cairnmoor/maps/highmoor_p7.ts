@@ -2,9 +2,10 @@
 // of O7's east edge running on under deep snow to the rim, a block of them in the north with the herds'
 // bothy, an old herd, a cairn and the ravens on the crag; the narrows down the rim's foot past a stone set
 // on end; and in the south the long cairns of the old folk, three of them walking, and a ledge of white
-// pebbles. The secret is the hill folk's earth-house behind the rock face, where the wind hoots. The rim's
-// face at 5,24 is left bare for the lair's door (docs/areas/cairnmoor.md §12.6). O7's corner is shut
-// with P6's: P7's north edge and its 0,0 are mountain, as O7's 31,0 is since (§9, #834's 3).
+// pebbles. The secret is the hill folk's earth-house behind the rock face, where the wind hoots. At 5,24
+// in the rim's face the cleft into Bearn Liath, the artifact's lair (#845, #846; docs/areas/cairnmoor.md
+// §12.6). O7's corner is shut with P6's: P7's north edge and its 0,0 are mountain, as O7's 31,0 is since
+// (§9, #834's 3).
 // The P column is 24 wide: cut by hand from the atlas, the void written '%'; docs/areas/cairnmoor.md
 // §12.2 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
@@ -43,7 +44,7 @@ export const HIGHMOOR_P7: MapDef = {
     '^^^^MMMMMMMM%%%%%%%%%%%%',
     '^^^^^MMMMMMMMMM%%%%%%%%%',
     '^^^^^MMMMMMMMM%%%%%%%%%%',
-    '^^^^^MMMMMMMMM%%%%%%%%%%',
+    '^^^^^"MMMMMMMM%%%%%%%%%%',
     '^^^^^MMMMMMMMM%%%%%%%%%%',
     '^***^MMMMMMMM%%%%%%%%%%%',
     '^***^MMMMMMMM%%%%%%%%%%%',
@@ -74,6 +75,10 @@ export const HIGHMOOR_P7: MapDef = {
     { kind: 'shrine', x: 1, y: 29, id: 'p7_pebbles', text: 'A ledge in the rim\'s face, and along it a row of white quartz pebbles, one for each of the dead.', stat: 'endurance', done: 'The ledge of white pebbles.' },
   ],
   secrets: [{ x: 6, y: 8, hint: 'p7_hoot' }],
+  // The cleft in the rim's face, the way into Bearn Liath, the artifact's lair (#845, #846).
+  exits: [
+    { x: 5, y: 24, to: 'bearn_liath', tx: 1, ty: 8, tf: EAST, label: 'You squeeze into a cleft in the rim\'s face. The snow in it is trodden flat, and the prints are big.' },
+  ],
   encounters: [
     // Seven ravens on the crag in the north, the gentler, at 18; and three of the old folk walking at
     // their long cairns in the south, the hardest, at 19.
