@@ -12,13 +12,10 @@
 // bobs on a walker's step, the tongue trailing the swing; it shimmers; now and then it gutters
 // nearly out and flares again; and the motes come up out of the peat into it, one and then another.
 import type { MonsterSprite } from '../../game/monsters.ts';
-import type { MonsterDrawer, Paint } from './common.ts';
+import type { MonsterDrawer, Paint, Sprite } from './common.ts';
 import { B } from './common.ts';
 import { appendCurve, glow } from './gloss.ts';
 import { mix, rgba } from '../../lib/art/palettes.ts';
-
-/** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['bog_light'];
 
 /**
  * The frame's parts, as proportions of the bog light's where they are numbers (1 = the bog light,
@@ -51,6 +48,11 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   void kind;
   light(ctx, x, y, h, p, BOG);
 };
+
+/** The kinds this module draws, each with its span and any part drawn apart; ./index.ts merges every family's. */
+export const SPRITES = {
+  bog_light: { draw, span: [0.15, 0.16], detached: { what: 'motes rising into it', pieces: 2, share: 0.06 } },
+} satisfies Partial<Record<MonsterSprite, Sprite>>;
 
 /** A frame: hundredths of the height (x right, y up from the ground) to the canvas. */
 interface F { u: number; X: (v: number) => number; Y: (v: number) => number }

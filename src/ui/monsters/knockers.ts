@@ -39,14 +39,11 @@
 // and four beads on each. Idle: a bead goes across at each click and the lamp dips with it; when a
 // rod's beads are all across they come back together and one goes across on the rod above.
 import type { MonsterSprite } from '../../game/monsters.ts';
-import type { MonsterDrawer, Paint } from './common.ts';
+import type { MonsterDrawer, Paint, Sprite } from './common.ts';
 import { B, groundShadow } from './common.ts';
 import { blob, glow, softLine } from './gloss.ts';
 import type { Part } from './gloss.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
-
-/** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['knocker', 'mender', 'foreman', 'tallyman', 'deep_knocker', 'inspector', 'tally_clerk'];
 
 /**
  * The frame's parts, as proportions of the knocker's where they are numbers (1 = the knocker, 0 =
@@ -150,6 +147,17 @@ const BUILDS: Partial<Record<MonsterSprite, Build>> = { knocker: KNOCKER, mender
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   knocker(ctx, x, y, h, p, BUILDS[kind] ?? KNOCKER);
 };
+
+/** The kinds this module draws, each with its span and any part drawn apart; ./index.ts merges every family's. */
+export const SPRITES = {
+  knocker: { draw, span: [0.51, 0.68] },
+  mender: { draw, span: [0.46, 0.63] },
+  foreman: { draw, span: [0.45, 0.52] },
+  tallyman: { draw, span: [0.58, 0.55] },
+  deep_knocker: { draw, span: [0.58, 0.78] },
+  inspector: { draw, span: [0.49, 0.54] },
+  tally_clerk: { draw, span: [0.48, 0.53] },
+} satisfies Partial<Record<MonsterSprite, Sprite>>;
 
 interface Pt { x: number; y: number }
 /** A frame: hundredths of the height (x right, y up from the ground) to the canvas. */

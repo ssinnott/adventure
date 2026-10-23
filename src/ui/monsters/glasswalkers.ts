@@ -17,14 +17,11 @@
 // other, the club dragging; the lamp breathes and a light runs down the glass. The Buried Tower's
 // walkers (MONSTERS §10.1) are to be this frame at their worst, a Build and a colouring.
 import type { MonsterSprite } from '../../game/monsters.ts';
-import type { MonsterDrawer, Paint } from './common.ts';
+import type { MonsterDrawer, Paint, Sprite } from './common.ts';
 import { B, groundShadow } from './common.ts';
 import { rgba, shade } from '../../lib/art/palettes.ts';
 import { blob, glow, patch, softLine } from './gloss.ts';
 import type { Part } from './gloss.ts';
-
-/** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['glass_walker'];
 
 /** A shard standing off the glass: its root, x and y; its lean from upright in radians, to the company's right; its length and its half-breadth at the root; in heights. */
 type Shard = readonly [number, number, number, number, number];
@@ -62,6 +59,11 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   const d = BUILDS[kind] ?? WOLD;
   walker(ctx, x, y, h * d.reach, p, d);
 };
+
+/** The kinds this module draws, each with its span and any part drawn apart; ./index.ts merges every family's. */
+export const SPRITES = {
+  glass_walker: { draw, span: [0.39, 0.22] },
+} satisfies Partial<Record<MonsterSprite, Sprite>>;
 
 const LAMP_GLOW = '#86ffc2';
 

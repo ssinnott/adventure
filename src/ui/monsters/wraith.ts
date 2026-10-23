@@ -12,19 +12,22 @@
 // gold is round its throat, the terminals at the front; and two claws of old bone reach out of the
 // shroud, low. Idle: it sways where it stands, the claws flex, the eyes flare and the gold glints.
 import type { MonsterSprite } from '../../game/monsters.ts';
-import type { MonsterDrawer, Paint } from './common.ts';
+import type { MonsterDrawer, Paint, Sprite } from './common.ts';
 import { B, groundShadow } from './common.ts';
 import { shade, mix, rgba } from '../../lib/art/palettes.ts';
 import { appendCurve, blob, glossTaper, glow, lumpy, patch, softLine } from './gloss.ts';
 import type { Part } from './gloss.ts';
 
-/** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['wraith', 'cairn_wight'];
-
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'cairn_wight') wight(ctx, x, y, h, p);
   else wraith(ctx, x, y, h, p);
 };
+
+/** The kinds this module draws, each with its span and any part drawn apart; ./index.ts merges every family's. */
+export const SPRITES = {
+  wraith: { draw, span: [0.27, 0.27], detached: { what: 'fading tongue of cloth', pieces: 1, share: 0.01 } },
+  cairn_wight: { draw, span: [0.28, 0.3] },
+} satisfies Partial<Record<MonsterSprite, Sprite>>;
 
 /** Units of the height, across from the sprite's x and up from its ground line, to the canvas. */
 type K = (k: number) => number;

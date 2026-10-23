@@ -1,7 +1,8 @@
 // Shared plumbing for the monster drawings in this directory: the brush every family paints with,
 // the small shape helpers the engine lacks, and the humanoid frame the bandit, cultist and ogre
-// families are built on. Each family module exports a `draw` of type MonsterDrawer, and the
-// dispatcher in ../sprites.ts picks the family by sprite kind. Every monster draws front-facing,
+// families are built on. Each family module exports a `draw` of type MonsterDrawer and registers the
+// kinds it draws in its SPRITES, which ./index.ts merges, and the dispatcher in ../sprites.ts picks
+// the family by sprite kind. Every monster draws front-facing,
 // centred on (x, y) with y the ground line and `h` the intended height.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import { shade } from '../../lib/art/palettes.ts';
@@ -29,6 +30,17 @@ export interface Paint {
 }
 /** A family's entry point: draws `kind` (one of the family's variants) at (x, y) with height h. */
 export type MonsterDrawer = (ctx: CanvasRenderingContext2D, kind: MonsterSprite, x: number, y: number, h: number, p: Paint) => void;
+/**
+ * What a family registers for each kind it draws (its SPRITES): the family's one drawer; how far the
+ * drawing reaches left and right of its centre, as shares of its height (SPAN in ../sprites.ts); and
+ * the parts it draws apart from its body by design, with the most pieces they come to and the largest
+ * share of its ink they take between them, which the smoke test allows (DETACHED in tools/smoke.ts).
+ */
+export interface Sprite {
+  draw: MonsterDrawer;
+  span: readonly [number, number];
+  detached?: { what: string; pieces: number; share: number };
+}
 
 export function paintFor(tint: string, tone: number, frame: number): Paint {
   return { base: shade(tint, tone), dark: shade(tint, tone * 0.72), light: shade(tint, tone * 1.15), amber: shade('#ffd070', Math.max(0.6, tone)), tone, frame, breathe: Math.sin(frame / 14) };

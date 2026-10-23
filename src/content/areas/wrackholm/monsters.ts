@@ -1,9 +1,9 @@
 // Wrackholm's monsters, band 12-14: the smugglers' isle, Kelp Hole and the Tide Ship. `sprite` names
-// the drawing (src/ui/sprites.ts); the numbers are the combat model's. A group on a map is a list of
+// the drawing (src/ui/monsters/); the numbers are the combat model's. A group on a map is a list of
 // these ids, and any area's maps may place them.
 import type { MonsterDef } from '../../../game/monsters.ts';
 
-/** The drawings Wrackholm's monsters are drawn with, one kind to each. src/ui/sprites.ts must draw every one. */
+/** The drawings Wrackholm's monsters are drawn with, one kind to each. A family in src/ui/monsters/ must register every one. */
 export const SPRITES = [
   'devilfish', 'great_devilfish',
   'overseer',

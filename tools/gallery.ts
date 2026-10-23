@@ -5,7 +5,7 @@
 // viewport sizes at four, three and two cells away, which is how small the drawing has to read.
 // --frames n lays each monster out as a strip of n idle frames instead (the last one the hit flash
 // when --flash is given). --family imports only that module in src/ui/monsters/, so one family can
-// be checked while another is mid-edit and does not parse; it draws that module's KINDS.
+// be checked while another is mid-edit and does not parse; it draws the kinds that module's SPRITES registers.
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
 import { createServer } from './server.ts';
@@ -59,7 +59,7 @@ const size = await page.evaluate(async (o: { only: string[]; family?: string; sc
   if (o.family) {
     const F = await load(`/src/ui/monsters/${o.family}.ts`);
     const C = await load('/src/ui/monsters/common.ts');
-    kinds = F.KINDS;
+    kinds = Object.keys(F.SPRITES);
     draw = (ctx, kind, x, y, h, tint, tone, frame, flash) => { C.B.flash(flash); F.draw(ctx, kind, x, y, h, C.paintFor(tint, tone, frame)); C.B.flash(false); };
   } else {
     draw = S.drawMonsterSprite;

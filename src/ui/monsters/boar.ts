@@ -12,18 +12,21 @@
 // an ear flicks. The Downs' tusker is the same animal grown old: heavier in the barrel and the
 // crest, grey at the muzzle and the brow, its tusks grown long enough to curl back toward the eye.
 import type { MonsterSprite } from '../../game/monsters.ts';
-import type { MonsterDrawer, Paint } from './common.ts';
+import type { MonsterDrawer, Paint, Sprite } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
 import { blob, glossBall, softLine, patch } from './gloss.ts';
 import type { Part } from './gloss.ts';
 import { shade, mix } from '../../lib/art/palettes.ts';
 
-/** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['boar', 'tusker'];
-
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   boar(ctx, x, y, h, p, kind === 'tusker');
 };
+
+/** The kinds this module draws, each with its span and any part drawn apart; ./index.ts merges every family's. */
+export const SPRITES = {
+  boar: { draw, span: [0.74, 0.74] },
+  tusker: { draw, span: [0.74, 0.73] },
+} satisfies Partial<Record<MonsterSprite, Sprite>>;
 
 /**
  * A wild boar's build is the opposite of the wolf's: the withers carry a heavy shoulder hump that

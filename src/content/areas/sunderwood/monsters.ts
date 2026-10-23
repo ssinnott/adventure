@@ -1,9 +1,9 @@
 // Sunderwood's monsters, band 14-16: the Eaves, the Sunder and Lanternwood. `sprite` names the
-// drawing (src/ui/sprites.ts); the numbers are the combat model's. A group on a map is a list of
+// drawing (src/ui/monsters/); the numbers are the combat model's. A group on a map is a list of
 // these ids, and any area's maps may place them.
 import type { MonsterDef } from '../../../game/monsters.ts';
 
-/** The drawings Sunderwood's monsters are drawn with, one kind to each. src/ui/sprites.ts must draw every one. */
+/** The drawings Sunderwood's monsters are drawn with, one kind to each. A family in src/ui/monsters/ must register every one. */
 export const SPRITES = [
   'pine_bear',
   'sunderling', 'sunder_warden',

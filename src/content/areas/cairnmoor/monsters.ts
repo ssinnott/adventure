@@ -1,9 +1,9 @@
 // Cairnmoor's monsters, band 18-20: High Moor and the Cairnfield. `sprite` names the drawing
-// (src/ui/sprites.ts); the numbers are the combat model's. A group on a map is a list of these ids,
+// (src/ui/monsters/); the numbers are the combat model's. A group on a map is a list of these ids,
 // and any area's maps may place them.
 import type { MonsterDef } from '../../../game/monsters.ts';
 
-/** The drawings Cairnmoor's monsters are drawn with, one kind to each. src/ui/sprites.ts must draw every one. */
+/** The drawings Cairnmoor's monsters are drawn with, one kind to each. A family in src/ui/monsters/ must register every one. */
 export const SPRITES = [
   'raven', 'bog_light', 'bog_body', 'moor_hound', 'cairn_wight', 'tor_troll', 'cairn_king',
 ] as const;

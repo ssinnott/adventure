@@ -40,14 +40,11 @@
 // the ruff cream. It does not hop; now and then it hisses, the head bowing, the bill opening and the
 // ruff standing up.
 import type { MonsterSprite } from '../../game/monsters.ts';
-import type { MonsterDrawer, Paint } from './common.ts';
+import type { MonsterDrawer, Paint, Sprite } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
 import { blob, patch, softLine } from './gloss.ts';
 import type { Part } from './gloss.ts';
 import { mix, shade } from '../../lib/art/palettes.ts';
-
-/** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['crow', 'owl', 'old_rook', 'grey_heron', 'wrack_gull', 'raven', 'spine_eagle', 'vulture'];
 
 /**
  * The frame's parts, as proportions of the crow's (1 = the crow, 0 = none). Each is named for the
@@ -219,6 +216,18 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   else if (b.raise) bird(ctx, x, y, h * 0.62, p, b);
   else bird(ctx, x, y, h, p, b);
 };
+
+/** The kinds this module draws, each with its span and any part drawn apart; ./index.ts merges every family's. */
+export const SPRITES = {
+  crow: { draw, span: [0.6, 0.6] },
+  owl: { draw, span: [0.86, 0.86] },
+  old_rook: { draw, span: [0.61, 0.63] },
+  grey_heron: { draw, span: [0.36, 0.55] },
+  wrack_gull: { draw, span: [0.73, 0.62] },
+  raven: { draw, span: [0.79, 0.72] },
+  spine_eagle: { draw, span: [0.38, 0.36] },
+  vulture: { draw, span: [0.79, 0.7] },
+} satisfies Partial<Record<MonsterSprite, Sprite>>;
 
 /**
  * A long neck's spine in sprite units, from the breast (x0, y0) to under the head (x1, y1): back from

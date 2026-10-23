@@ -10,15 +10,18 @@
 // floor, and the puddle carries no ink so the body melts into the ground instead of standing on a
 // plate. Every green comes from the def's tint.
 import type { MonsterSprite } from '../../game/monsters.ts';
-import type { MonsterDrawer, Paint } from './common.ts';
+import type { MonsterDrawer, Paint, Sprite } from './common.ts';
 import { B, groundShadow } from './common.ts';
 import { blob, lumpy, appendCurve, tubeOutline } from './gloss.ts';
 import type { Part } from './gloss.ts';
 import { shade, mix, rgba } from '../../lib/art/palettes.ts';
 
-/** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['slime'];
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => { void kind; slime(ctx, x, y, h, p); };
+
+/** The kinds this module draws, each with its span and any part drawn apart; ./index.ts merges every family's. */
+export const SPRITES = {
+  slime: { draw, span: [1.11, 0.88] },
+} satisfies Partial<Record<MonsterSprite, Sprite>>;
 
 const MOUND: number[] = new Array<number>(40).fill(0);
 
