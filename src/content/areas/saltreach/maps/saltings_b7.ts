@@ -54,7 +54,7 @@ export const SALTINGS_B7: MapDef = {
   features: [
     // In from B6's reeds, and the pans seen over the marsh from C7's side.
     { kind: 'event', x: 16, y: 1, id: 'b7_in', once: true, text: 'The reeds give out to wet grass, and the whole south is the Scarp, sheer and grey. The wind off it smells of brine.' },
-    { kind: 'event', x: 28, y: 6, id: 'b7_pans', once: true, text: 'Over the reeds to the east the pans\' walls stand low and white. The wind tastes of salt.' },
+    { kind: 'event', x: 28, y: 6, id: 'b7_pans', once: true, text: 'Over the reeds to the east the pans\' walls stand low and white.' },
     // The marsh's edge and the hill over it.
     { kind: 'shrine', x: 15, y: 9, id: 'b7_shrine', text: 'A shrine at the marsh\'s edge to the drowned god: a block of salt with a bowl cut in it, filled by every rain.', stat: 'accuracy', done: 'The bowl is dry. The salt round it has gone to crust.' },
     { kind: 'cairn', x: 9, y: 9, id: 'b7_cairn', text: 'A cairn of salt blocks on the hill, white where the rain has missed it, a tally of nicks cut in the top block.', gold: 75, items: ['potion_heal'] },

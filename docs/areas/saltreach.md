@@ -17,10 +17,10 @@ head, the rim's foot behind the willows, the hills over the heronry, the fen's w
 under the rim, the Scarp's foot west of the pans and the plate's old place (#830; §12, whose
 enclave and lair come after), the town behind C6's gate, Saltmouth (#177), with the Salt Compact's
 hall in it (#182), and the Drowned Temples below B6, two levels (#175); with the first two the area
-was listed. Its content is `src/content/areas/saltreach/` (maps,
-monsters, items, climate, its part of the world map, its side quests in `quests.ts` and its guild
-quests in `guilds.ts`; its chapter of the one quest, The Tide Stone, in `chapter.ts` is still to
-come) and its businesses' rooms `src/ui/interiors/saltreach/`. Its ids: the area `saltreach`, its
+was listed. Its content is `src/content/areas/saltreach/` (maps, monsters, items, climate, its part
+of the world map, its side quests in `quests.ts` and its guild quests in `guilds.ts`; its chapter of
+the one quest, The Tide Stone, in `chapter.ts`) and its businesses' rooms
+`src/ui/interiors/saltreach/`. Its ids: the area `saltreach`, its
 zones `upperwater`, `delta` and `saltings`, the town `saltmouth` and the temples `drowned_temples`.
 
 ---
@@ -1725,7 +1725,7 @@ Decided by the builder for #830, each the owner's to overturn:
 11. **The lair's door is on A5 and the enclave's on B7** (§12.10), as the owner's delegate moved them
     on 18 October: #846's design (#908) puts Saltreach's lair in a drowned mound on the fen's west edge
     under the rim, which fits the fen and its rumour's words, and B7's Scarp's foot has room for the
-    enclave's door among its 944 squares. #845 and #846 settle what they hold.
+    enclave's door among its squares. #845 and #846 settle what they hold.
 12. **The six to come give gold, draughts and elixirs,** no gear: with C2's and B2's finds the
     ladder's pluses at 13 are all given in Act II, and the one Saltreach lacks, Plate Mail +1, is
     Wrackholm's. Their groups as planned pay about 2,600 xp a member against the first reckoning's
@@ -1810,7 +1810,7 @@ Decided by the builder for #830, each the owner's to overturn:
 28. **The enclave's door is left at the Scarp's foot at 22,22,** the first mountain square under the
     grass at 22,21, its way the grass of row 21 from 20 to 31, and nothing stands within four
     squares of it: the salt-carter at 22,16 and the track's end at 23,16 are the nearest, the
-    smugglers' fire at 15,20 nine squares off. The enclave's pull request (#845) draws the door
+    smugglers' fire at 15,20 nine squares off. The enclave's pull request (#830's, after #845) draws the door
     there and moves nothing; the walkthrough walks the way and measures the clearance.
 29. **B7's groups are the brief's, kept to their ground:** three salt crabs on the grass at 20,13,
     the nearest at 14 steps and level 11, and the Hand's smugglers as C6 holds them by night, two
@@ -1822,7 +1822,7 @@ Decided by the builder for #830, each the owner's to overturn:
     asks the hardest group's mean level at 12 in a box of 11 to 12, which only bull toads and the
     smugglers (B7's) reach, and a lone toad paces about 20 fights to a rest at 11 against a limit of
     10.25. They lie on the spit at 12,2, kept to it, 4 steps from the way in, as A6's pair lie at
-    its south end; the gate holds at 11, at 5.76 fights to a rest against an aim of 5.75 to 7.75.
+    its south end; the gate holds at 11, at 5.76 fights to a rest against an aim of 5.75 to 7.75: the aim's floor, for the pair's true pace is 5.68 over 1,500 seeds.
 31. **D6 is three pieces of land,** as the atlas has it: the spit at the top (22 squares and the
     store's 6), the shore under the town (36) down the west and the shore's south end (19), each
     walked onto from its own side and none from another, so the map starts on the spit where D5
@@ -1836,7 +1836,7 @@ Decided by the builder for #830, each the owner's to overturn:
     atlas is tidal there.
 32. **The two secrets have shapes of their own:** B7's bothy is an L of walls 6 wide and 4 deep in
     the Scarp's foot at 5–10,16–19, a short arm behind its door at 9,16 and a long arm of four
-    squares along the foot to the strongbox at 6,18; D6's footing is a round of black stone 5 by 5
+    squares along the foot to the strongbox at 6,18; D6's footing is a round of dressed stone 5 by 5
     at 9–13,4–8, a floor of five squares in the shape of a plus behind its door at its north tip,
     11,4, the keeper's chest at 11,7. C2's cleft and B2's hut are 3 by 3, A3's well-house 4 by 3,
     A4's still 3 by 5, A5's sluice-house 6 by 3 and A6's cell 4 by 4. Both hints stand on open
@@ -1845,7 +1845,7 @@ Decided by the builder for #830, each the owner's to overturn:
 33. **B7's shrine gives a point of accuracy:** every stat is given by a shrine of the area already,
     accuracy only by C4's. The cairns give 75 gold (B7) and 60 (D6) and a draught each, and the
     finds are the brief's, 250 gold and an elixir in the bothy and 150 gold and a draught in the
-    keeper's chest; none repeats a find the area gives or is weaker than the shop's (§12.1).
+    keeper's chest; no gear repeats a find the area gives, as §12.1 plans, and none is weaker than the shop's.
 34. **The lead holds without a trim:** B7 pays about 604 xp a member by the curve's count and 427
     gold, D6 about 315 and 210, 919 in all against the 900 planned; a clear gives 13,711 xp a
     member and 8,410 gold, and the lead goes from 12.733 to 12.910 against the limit of 13.0, with
@@ -2215,7 +2215,7 @@ on the road's quest. Then the area's enclave and its artifact's lair (§12.10). 
 - **Landmarks.** The Scarp across its south, drawn as mountain; the last marsh; the salters' grass;
   a fan of dead grass at the Scarp's foot.
 - **How it meets the Wold.** The Wold's 219 squares above the Scarp are closed with it, as C7 closed
-  its own (§4.10): B8's north edge is the Scarp's cliff and C7's west edge is the void there, so no
+  its own (§4.10): B8's north edge is the Scarp's cliff and C7's west edge is the mountain there, so no
   built box walks onto them; its west edge stands closed against A7.
 - **Points of interest,** about six features, two groups and the enclave's door: the salters' track's
   end, an event; a salt-carter at her cart, with a rumour of the fire under the Scarp; a camp
@@ -2261,7 +2261,7 @@ on the road's quest. Then the area's enclave and its artifact's lair (§12.10). 
 - **Landmarks.** The spit's end where Saltmouth's plate stood before #177 moved it, and in the world
   the footing of the old harbour light; the tidal shore under the town; the sea.
 - **Points of interest,** three features and one group: the light's footing, the hint; a cairn of
-  ballast stones on the shore under the town; a wreck's ribs in the sand.
+  ballast stones on the shore under the town; a lighter's keel in the sand.
 - **Encounters.** Two bull toads come out of the Delta's reeds onto the spit, the one group, at 12
   for the rise rule: about 5.7 fights to a rest at 11, at the aim's floor of 5.75.
 - **The secret and its hint.** The light-keeper's store under the footing, its door walled up when
@@ -2279,7 +2279,7 @@ on the road's quest. Then the area's enclave and its artifact's lair (§12.10). 
   stone 5 by 5 at 9–13,4–8 at the spit's end, its door, walled up, at its north tip at 11,4 and the
   hint at 11,3, where each wave booms hollow under it; inside, a bunk, a cask of oil, a log of
   wrecks and the keeper's chest of 150 gold and a draught at 11,7. On the shore a cairn of ballast
-  stones at 1,13 gives 60 gold and a draught, and a wreck's ribs stand in the sand of the south end
+  stones at 1,13 gives 60 gold and a draught, and a lighter's keel lies in the sand of the south end
   at 2,27. The gate holds at 11: 5.76 fights to a rest, every fight won. Density: 100.0% within 12
   steps, the furthest 8. By the curve's count the box pays about 315 xp a member and 210 gold.
 
@@ -2290,7 +2290,7 @@ at the cap's band, a drowned mound of two levels on the fen's west edge under th
 guardian, its door on A5, as #846's design has it (#908); the artifact, its guardian and the rumour
 that first speaks of it are #846's, and where #846 changes them, this note gives way to it. **The
 enclave** (#845): its door in the Scarp's foot on B7, a place of its own held a band or two over the
-Saltings', with its own reward, as #845 sets them. B7 has the room: 944 squares, its Scarp's foot
+Saltings', with its own reward, as #845 sets them. B7 has the room: 614 squares to stand on, its Scarp's foot
 clear of the pans and the smugglers' fire. The owner's delegate moved the two doors so on 18
 October (call 11).
 
