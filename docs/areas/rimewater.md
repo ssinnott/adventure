@@ -17,7 +17,7 @@ Figures are measured on main at `6032251` (2 October 2026) with `worldGrid`
 (`src/game/atlas.ts`), for land without shallows or rivers; "walkable" is land that is not mountain,
 peak, cliff or chasm.
 
-Fifteen places are built: M9, Rime Lodge's box (#486, §4.2), which lists the area; the town behind
+Sixteen places are built: M9, Rime Lodge's box (#486, §4.2), which lists the area; the town behind
 its gate, Rime Lodge (#487, §4.3); L9, the long loch's shore (#488, §4.4); K9, Loch Fuar (#489,
 §4.5), whose door down to the bay opens for the girl out of the hole; the Sleepers' Bay, two levels
 under the ice (#490, §4.6), where Act III's one story lock is signed in (#440, §5); K10, the high
@@ -25,14 +25,15 @@ pass (#491, §4.7), the road's last box and the act's last ground; and, off the 
 behind it in seven boxes (#497, §4.8): J9, Loch Fuar's far shore; K11, south of the pass; L10, the
 cold loch's head; L11, the pines under the ridge's end; M10, the loch's foot; M11, the pines under
 the rim; and N9, the glacier's edge, which closes #497; and the bounds' first two (#832, §12): K12,
-Monks' Vale's east under the pass, and L12, the rim south of Loch Fuar. Its chapter, The Sleepers,
-is written (#492, §5), and its five side quests (#494, §6). Its content is
-`src/content/areas/rimewater/` (maps, monsters, items, climate, its part of the world map, its
-walkthrough, its guild quest in `guilds.ts`, #439, its chapter of the one quest, The Sleepers, in
-`chapter.ts` and its side quests in `quests.ts`), and its businesses' rooms are
-`src/ui/interiors/rimewater/`. Its ids: the area `rimewater`, its zones `longmere`, `coldmere` and
-`glacierfoot`, the town `rime_lodge`, the bay's two levels `sleepers_bay` and `sleepers_bay2` and
-the reach's `ice_caves`. The zones are renamed in §10 and keep their ids (NAMES §3).
+Monks' Vale's east under the pass, and L12, the rim south of Loch Fuar; and their enclave, Creag
+Fionn, in L12's rim (#832, §12.4). Its chapter, The Sleepers, is written (#492, §5), and its five
+side quests (#494, §6). Its content is `src/content/areas/rimewater/` (maps, monsters, items,
+climate, its part of the world map, its walkthrough, its guild quest in `guilds.ts`, #439, its
+chapter of the one quest, The Sleepers, in `chapter.ts` and its side quests in `quests.ts`), and its
+businesses' rooms are `src/ui/interiors/rimewater/`. Its ids: the area `rimewater`, its zones
+`longmere`, `coldmere` and `glacierfoot`, the town `rime_lodge`, the bay's two levels `sleepers_bay`
+and `sleepers_bay2`, the enclave `creag_fionn` and the reach's `ice_caves`. The zones are renamed in
+§10 and keep their ids (NAMES §3).
 
 ---
 
@@ -155,10 +156,11 @@ The weather is the lochs': cold and still, snow lying, ice from autumn, clear ni
 
 ## 3. What is built
 
-Fifteen places: one box, the area's first, which lists the area (#486), the town behind its gate
+Sixteen places: one box, the area's first, which lists the area (#486), the town behind its gate
 (#487), a second box west along the drove road (#488), a third beyond it, on the cold loch (#489),
 the dungeon under the third (#490), a fourth south of it, the pass (#491), the seven boxes of the
-country behind the road, on both lochs (#497) and the bounds' first two, K12 and L12 (#832):
+country behind the road, on both lochs (#497), the bounds' first two, K12 and L12 (#832) and the
+enclave in L12's rim (#832):
 
 - **Rime Lodge's box** (M9, `longmere_m9`, core, band 20–21; #486): the drove road taken down from
   Cairnmoor's N8 by the notch onto the long loch's shore, past the coach yard to the lodge's gate,
@@ -287,15 +289,23 @@ country behind the road, on both lochs (#497) and the bounds' first two, K12 and
   a kill in the pines with four lynxes waiting on it; at the rim's foot a path of flat stones that
   stops at the rock, and behind the rock the cell of Fuar's kirk plate, shut to walkers, swimmers,
   climbers and floaters. East of the spur, old pines and a cairn. The rim's face at 2,15 is left bare
-  for the lair's door (§12.4).
+  for the lair's door (§12.5).
 - **The rim south of Loch Fuar** (L12, `longmere_l12`, country, band 20–21; #832): the bounds'
-  second, south from L11's pines or east from K12's old pines, a dead end under the world's end.
-  The pines run on under the rim's mountain in a triangle narrowing to a point in the south-west.
-  The resin-gatherers' old fire, a spring under the rim's foot that does not freeze and a cairn;
-  along the rim's foot the bears' den-mouth trodden in the snow; pines scored in long cuts with a
-  stack of empty pots under the rim, and behind the rock the gatherers' store, shut to walkers,
-  swimmers, climbers and floaters. One group: two ice bears denned at the point. The rim's face at
-  11,4 is left bare for the enclave's door (§12.4).
+  second, south from L11's pines or east from K12's old pines, a dead end under the world's end. The
+  pines run on under the rim's mountain in a triangle narrowing to a point in the south-west. The
+  resin-gatherers' old fire, a spring under the rim's foot that does not freeze and a cairn; along
+  the rim's foot the bears' den-mouth trodden in the snow; pines scored in long cuts with a stack of
+  empty pots under the rim, and behind the rock the gatherers' store, shut to walkers, swimmers,
+  climbers and floaters. One group: two ice bears denned at the point. In the rim's face at 11,4 a
+  cave goes down into the enclave (§12.4).
+- **Creag Fionn, the trolls' winter cave** (`creag_fionn`, enclave, a dungeon of one level of 16 by
+  16, band 22–23; #832): the bounds' third, entered from L12's pines by the cave in the rim's face
+  at 11,4. Spine eagles sit in the cave's mouth and hold the neck behind it; the hall beyond is the
+  trolls' first, its beds trodden in rings, with the one stretch of wall they keep bare and behind
+  it their larder, shut to walkers, swimmers, climbers and floaters; two snow trolls keep the
+  passage to the cave's back, where what they have taken off the dead lies round their bed and,
+  among it, Trollbrand, a Bear Spear with fire in its blows. Two groups: four spine eagles and two
+  snow trolls, the Whitespine's.
 
 The chapter and the side quests, on the places built (#492, #494):
 
@@ -393,8 +403,9 @@ the owner's epic #438 holds this table:
 | J9, K11 | Loch Fuar's far shore; south of the pass | Loch Fuar | country, behind the road | 20–22 | 885 (797), 632 (568) | the old woman's hut, the strand's ice, the bears under the mountain and the trapper's store (J9); the bears' cleft and the ice-cutters' ice-house (K11) | none | #497 |
 | L10, L11, M10, M11, N9 | The cold loch's head; the pines under the ridge's end; the loch's foot; the pines under the rim; the glacier's edge | Loch Fada | country, behind the road | 20–21 (§9, #497's 12) | 842 (677), 974 (796), 759 (651), 1,015 (646), 851 (735) | the road across L10's corner, walked; the dead pines in the cold loch and the trappers' store (L10); the cats' pines and the earth-house (L11); the burn off the glacier and the fishers' ice-house (M10); the pines under the rim and the trappers' cache (M11); the glacier's edge, closed, and the hunters' hide (N9) | none | #497 |
 
-The bounds come after the plan (§12, #832): K12 and L12 are built as country at 20–22 and 20–21,
-and so is the Whitespine's J8 at 22–23; the enclave and the lair are to come.
+The bounds come after the plan (§12, #832): K12 and L12 are built as country at 20–22 and 20–21, and
+so is the Whitespine's J8 at 22–23; the enclave, Creag Fionn, is built in L12's rim at 22–23 (§12.4)
+and the lair is to come.
 
 The core is the three boxes that hold a step of the quest (M9, K9 and K10), built at full density;
 L9 and the seven behind are country, built to the looser floor with the wilderness features (EXPANSION
@@ -1514,7 +1525,9 @@ box's hardest at 21; K11's one is a pair of ice bears in the cleft under the cra
 (#832) four snow lynxes in the pines and two ice bears on their kill, the bears the hardest at 21
 (§12.2); and L12's (#832) a pair of ice bears denned at the rim's point (§12.3). The five in Loch
 Fada (#497) have two each: two ice pike under the ice and two ice bears in L10 and M10, three snow
-lynx and two ice bears in L11, M11 and N9, the bears the hardest at 21 in each (§4.8).
+lynx and two ice bears in L11, M11 and N9, the bears the hardest at 21 in each (§4.8). Creag Fionn's
+two (#832), the enclave's, are the Whitespine's: four spine eagles in the neck at 22 and two snow
+trolls in the passage to the cave's back at 23, the trolls the hardest (§12.4).
 
 Taken, against the roster's Where column, and built on L9's ridge, K9's far shore, the bay's stair
 and K10's pass (#488, #489, #490, #491): the Ice Bear on the lochs' shores, the ridge and the pass
@@ -1545,7 +1558,8 @@ its exit was listed (#489's 15). The bay (#490) claims the keepers, the family i
 sleeping touch is on the road before it (the check refused `inflict:asleep`), and a lock or a
 dungeon entered from the ice is no kind the check knows, so neither is claimed (#490's 19). K10
 (#491) claims nothing: a landmark claim is an atlas site's icon, and the pass is no site (#491's
-14). J9 and K11 (#497) and the five after them claim nothing, nor do K12 and L12 (#832).
+14). J9 and K11 (#497) and the five after them claim nothing, nor do K12, L12 and Creag Fionn
+(#832).
 
 ## 8. The numbers
 
@@ -1604,7 +1618,8 @@ dungeon entered from the ice is no kind the check knows, so neither is claimed (
   (#832), which pays 1,084 a member (four lynxes 3,172 and two bears 3,334, over six), a clear gives
   29,865 and the company leaves at 22.91 (22.84 before), under the line of 23; L12 (#832), which
   pays 556 (two bears at 3,334, over six), takes the clear to 30,421 and the company to 22.9571,
-  0.04 under the line (§12.1).
+  0.04 under the line (§12.1). Creag Fionn (#832), the enclave, pays 1,191 a member and 700 gold in
+  no clear, so the lead stays at 22.9571 (§12.4).
 - **Gold.** Training six members from 20 to 22 costs about 9,840 with today's `trainPrice`, and tier
   7 its fee at the hall (#20; the Watch's is 400). A clear should pay for the training at least, in
   chests, drops and the hall's pay; the furrier's step is priced within the band's window on the
@@ -1631,7 +1646,9 @@ dungeon entered from the ice is no kind the check knows, so neither is claimed (
   9,220 of the 9,840, 620 short. The five after them add 1,500 (#497), the store's, cache's, kist's,
   ice-house's or hide's 200 and a cairn's 100 in each, and their finds are potions and elixirs, none
   that sells (§9, #497's 21): the clear holds 10,720 of the 9,840 (11,090 with K12's 370 and 11,390
-  with L12's 300, #832), 880 over, and the curve's owed row is gone.
+  with L12's 300, #832), 880 over, and the curve's owed row is gone. Creag Fionn's 700 gold and
+  Trollbrand at 2,100 are counted in no clear and stand inside the Whitespine's window, 5,000 (#832,
+  §12.4).
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
   (docs/areas/thornmark.md §9, 17): a company at 20 wins nine in ten of M9's fights and walks the
   drove road to the lodge resting at the inn; one at 18 wins no more than one in four, which is how
@@ -1668,7 +1685,10 @@ dungeon entered from the ice is no kind the check knows, so neither is claimed (
   manages 9.31 fights to a rest, inside the aim of 8 to 10, 1.7% of its days ending in a fight
   broken off; two under, at 18, 4.61, 51.2% of the floor's 9. L12 at 20 wins every fight and
   manages 8.09, inside the aim, 3.3% of its days ending in a fight broken off; two under, at 18,
-  3.36, 37.3% of the floor's 9. The side quests (#494) place no group, and the gate is as it was.
+  3.36, 37.3% of the floor's 9. Creag Fionn (#832), judged alone at its own floor, 22: every fight
+  won, 9.76 fights to a rest, inside the aim of 8.5 to 10.5, 24% of its days ending in a fight
+  broken off; two under, at 20, 4.96, 52.2% of the floor's 9.5; it stands out of both pools, which
+  are as they were. The side quests (#494) place no group, and the gate is as it was.
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3); the
   bay as a dungeon, 90% within 7 and none past 10. As built: M9 98.0% within 8 steps and the
   furthest 13, with no sign among its 31 points (#486), 32 since #487; Rime Lodge, a town, 100%
@@ -1688,7 +1708,9 @@ dungeon entered from the ice is no kind the check knows, so neither is claimed (
   same, with one sign, the old marks at the ice's edge, among its 34 points; Rime Lodge the same,
   with no sign among its 27; K9 the same, with one sign, the bell's lip, among its 30; K10 the same,
   with no sign among its 28. K12 (#832) 100.0% (293 of 293) and the furthest 8, with no sign among
-  its 15 points; L12 (#832) 100.0% (81 of 81) and the furthest 7, with no sign among its 9 points.
+  its 15 points; L12 (#832) 100.0% (82 of 82, 81 of 81 before its door's square opened) and the
+  furthest 7, with no sign among its 10 points; Creag Fionn (#832), a dungeon, 100.0% within 7 steps
+  (75 of 75) and the furthest 3, with no sign among its 13 points.
 
 ## 9. Decisions
 
@@ -2427,12 +2449,12 @@ Decided by the builder for #832, each the owner's to overturn:
 6. **K12's finds are 120 gold and a Sapphire Vial on the cairn and 250 gold and an Elixir in the
    cell,** the dearest of their kinds that Rime Lodge's Provisioner's sells; no gear.
 7. **The lair's door is K12's 2,15,** the rim's face on Monks' Vale's land by the atlas (§6, DESIGN
-   §9), **and the enclave's L12's 11,4,** the rim's face at the land's other end; both are left bare
-   (§12.4).
+   §9), **and the enclave's L12's 11,4,** the rim's face at the land's other end; both were left
+   bare (§12.5 and §12.4), the enclave's drawn since (#832's 28).
 8. **The enclave is held at 22–23,** a band over L12's 20–21: the Whitespine's spine eagles at its
    mouth and snow trolls inside are the only beasts of the two areas at that band (its brothers and
    bell-ringers are Highcell's keepers, its masons and giants people). Its reward is named in its
-   own pull request, inside the Whitespine's window, 5,000 (#845's 3).
+   own pull request, inside the Whitespine's window, 5,000 (#845's 3): Trollbrand (#832's 26).
 9. **J8's corner, 0,31, is ruled for its pull request:** I8's 31,31 is rock and J9's 0,0 pines, so
    no square of J8's agrees with both. J8's pull request shuts J9's 0,0 to the mountain, the fewest
    squares of a built edge (#920, #922, #924), and the `sheerpoint_i9|coldmere_j9` row of
@@ -2444,17 +2466,19 @@ Decided by the builder for #832, each the owner's to overturn:
     eagles and trolls, each sized with the harness at its floor (§12.1).
 12. **The walkthrough walks the bounds in one function,** `theBounds`, called last.
 13. **The enclave's and the lair's briefs in §4's form are written by their own pull requests**
-    (§12.4): this brief fixes their doors, bands, groups, guardian and artifact; their landmarks,
-    points of interest, secrets, New here and pay as a figure come with them under #845 and #847.
+    (§12.4, §12.5): this brief fixes their doors, bands, groups, guardian and artifact; their
+    landmarks, points of interest, secrets, New here and pay as a figure come with them under #845
+    and #847. The enclave's is written (§12.4, #832's 30).
 14. **L12 is Loch Fada's, whole,** at 20–21 as L10 and L11 are (#497's 12): 56 of its 77 walkable
     squares the lake's by the atlas with the built maps laid and Loch Fuar's 21 played at the
     lake's band (55 and 22 before Cairnmoor's L8 was laid, which moved one square each way). Walked
     from K12 at 20 the crossing names the lake and no more; from L11 nothing is said.
-15. **L12 differs from the atlas at 13 squares:** the rim's mountain at 16,0 is drawn as pines to
-    meet L11's, and the store takes 12 squares of the rim's mountain at 3 to 5 by 6 to 9, its door
-    at 4,6 (the art check takes a lone door there), its floor at 4,7 and 4,8 and nine squares of
-    rock lining. The store is at the rim's face as far from the enclave's door as it can be, with
-    the hint on 4,5 over the door. On foot L12 walks 78 squares, the atlas's 77 and 16,0.
+15. **L12 differs from the atlas at 14 squares:** the rim's mountain at 16,0 is drawn as pines to
+    meet L11's and the enclave's door at 11,4 as stone (#832's 28); the store takes 12 squares of
+    the rim's mountain at 3 to 5 by 6 to 9, its door at 4,6 (the art check takes a lone door there),
+    its floor at 4,7 and 4,8 and nine squares of rock lining. The store is at the rim's face as far
+    from the enclave's door as it can be, with the hint on 4,5 over the door. On foot L12 walks 79
+    squares, the atlas's 77, 16,0 and 11,4.
 16. **L12's spring is a shrine that gives +1 intellect** (`l12_spring`, 16,0): Rimewater's other
     shrines give luck, personality, speed, endurance and accuracy, and none gives intellect or
     might.
@@ -2484,6 +2508,39 @@ Decided by the builder for #832, each the owner's to overturn:
     knoll's two hills). On foot J8 walks 89 squares where the atlas gave 83, and 91 with the room.
 22. **No den (#88) in L12 or J8,** for #497's 20: a den's keepers and brood pace past the limit or
     pay past the share.
+23. **The enclave is Creag Fionn,** *creag* a crag and *fionn* white, the hill folk's name for the
+    cave in the rim's face where the snow trolls winter (§10): a dungeon of one level of 16 by 16,
+    entered by the cave at L12's 11,4 as §12.4 had it.
+24. **It is held at 22–23,** a band over L12's 20–21, its floor over the box's top (#845's 2), as
+    #832's 8 said; its window is the Whitespine's 5,000, the last road area whose floor, 22, is at
+    or under its own (#845's 3).
+25. **Its groups are four spine eagles in the neck and two snow trolls in the passage to the cave's
+    back,** the Whitespine's, borrowed as #832's 8 said: the eagles at 22 and the trolls at 23,
+    which the curve's rise rule asks of an enclave at 22–23 (rank correlation 1.00; the eagles 5
+    steps from the way in, the trolls 11). The sizes are J8's, which the harness gives 9.7 fights to
+    a rest dealt at 22; five eagles gave 8.5, on the aim's lower edge. The neck and the passage are
+    one square wide, so a walker meets the eagles first and the trolls before the hoard (the
+    walkthrough floods it with both groups standing, then with the trolls alone).
+26. **Its reward is Trollbrand,** the furrier's Bear Spear with its head bound in pitch and its
+    blows carrying fire, which keeps a troll from mending the round it lands (`regenerate`,
+    `src/game/combat.ts`): 2d12+4, two-handed, for the martial classes, at 2,100, the spear's 1,900
+    and 200 for the element as the Thunderhead Axe's lightning is, inside the Whitespine's window.
+    It hits for 20.5 a blow counting the element's die at its mean, where the Bear Spear hits for 17
+    and the Bear Spear +1 for 18; it is on no rung of the ladder, in the hoard alone with 400 gold,
+    sold nowhere and no worse than the spear the furrier sells.
+27. **The secret is the trolls' larder,** two by two behind the stretch of the hall's east wall they
+    keep trodden bare, which is the hint, seen from the hall: 300 gold, an Elixir and a Sapphire
+    Vial, the dearest of their kinds that Rime Lodge's Provisioner's sells. Its door at 11,9 passes
+    the art check.
+28. **The door is L12's 11,4, as §12.3 left it,** the rim's mountain drawn as stone and walked into
+    from the pines at 11,3, with an `exits` line into Creag Fionn: the one square of L12 that
+    changes. L12 differs from the atlas at 14 squares and walks 79 as built (78 before); its density
+    counts 82 squares and 10 points (81 and 9); nothing stands within four squares of the door by
+    the walkthrough's measure (the camp, the cairn and the rim's look at 5 or more).
+29. **Its plate on the world map is at 371,359,** five squares south of the door in the rim's
+    mountain, as Karaordu's stands 5 south of its door, the Cairns' 6 and the Deep Mines' 8.
+30. **§12.4 is the enclave's brief in §4's form with its As built,** the lair's note is §12.5, and
+    the lines that pointed at the lair as §12.4 point at §12.5 (decision 13 is met for the enclave).
 
 Rimewater's naming pass, by the rules of `docs/NAMES.md`, chosen for #435. The lodge-keepers are
 hill folk who share a tongue with Cairnmoor's, modelled on Scots Gaelic, the speech of lochs and
@@ -2499,6 +2556,7 @@ coat of mail. It goes into NAMES §2's row for the hill folk, Cairnmoor's and Ri
   |---|---|---|---|
   | Longmere | Loch Fada | the long loch: the zone, named for its water | Loch Mor, the great loch |
   | Coldmere | Loch Fuar | the cold loch: the zone, and the loch the bay lies under | Loch Dubh, the black loch, for its ice |
+  | the trolls' winter cave, the enclave (#832) | Creag Fionn | the white crag: the cave in the rim's face where the snow trolls winter | Creag Fuar, the cold crag |
 
 - **Kept:** Rimewater and Rime Lodge, the Lanterns' English for the area and the lodge they keep,
   which the story leans on (DESIGN §7, §9); Glacier Foot and the Ice Caves, the reach's, to be named
@@ -2515,7 +2573,8 @@ coat of mail. It goes into NAMES §2's row for the hill folk, Cairnmoor's and Ri
   names, are **Bogha Fionn +1**, the white bow (the Hunter's Bow +1) and **Luireach Dubh +4**, the
   black mail (the Plate Mail +4); their ids stay (#490's 15). The Matron's Cap is plain English, a
   machine's part. The sleepers' ring has no name: none came that did not tell the secret, and it is
-  cut (§11).
+  cut (§11). Trollbrand, the enclave's spear (#832's 26), is plain English as the furrier's wares
+  are: the row has no word for a spear or for fire.
 - **The stair** is *Under Loch Fuar*, as Carn Dubh's is *Under Carn Dubh*, since nothing on the
   surface names the bay; the lower level keeps the docs' plain name (#490's 7).
 
@@ -2683,22 +2742,23 @@ Owed by the country behind as built (#497, §4.8, §8):
 
 ## 12. The bounds
 
-The land the area's maps lie open to, built as country off the quest, level for level (the owner,
-17 October 2026; #828, #832): Monks' Vale's east under the pass south of K11 and the rim south of
-Loch Fada, with the Whitespine's pines over the water by Sheer Point. Three boxes, 449 squares a
-company could walk with the built maps laid (K12 289, L12 77 and J8 83), which 89 edge squares of
-K11, J12, L11, I8 and J9 opened onto (K11's south edge 23, J12's east 16, L11's south 17, I8's east
-20 and J9's north 13; the issue counts 81). Each box is built to the looser floor (EXPANSION §5.3)
-at its zone's band, from the rosters, with nothing on the road's quest. Then the enclave and the
-Wakerobe's lair (§12.4). This is their brief, in §4's form; each box's pull request builds from it
-and adds its "As built". J8 is the Whitespine's, and its brief is docs/areas/whitespine.md §12.
+The land the area's maps lie open to, built as country off the quest, level for level (the owner, 17
+October 2026; #828, #832): Monks' Vale's east under the pass south of K11 and the rim south of Loch
+Fada, with the Whitespine's pines over the water by Sheer Point. Three boxes, 449 squares a company
+could walk with the built maps laid (K12 289, L12 77 and J8 83), which 89 edge squares of K11, J12,
+L11, I8 and J9 opened onto (K11's south edge 23, J12's east 16, L11's south 17, I8's east 20 and
+J9's north 13; the issue counts 81). Each box is built to the looser floor (EXPANSION §5.3) at its
+zone's band, from the rosters, with nothing on the road's quest. Then the enclave, Creag Fionn,
+built (§12.4); then the Wakerobe's lair (§12.5). This is their brief, in §4's form; each box's pull
+request builds from it and adds its "As built". J8 is the Whitespine's, and its brief is
+docs/areas/whitespine.md §12.
 
 | Box | Laid in | Walkable | Other land in it | Built neighbours | Band | Pull request |
 |---|---|---|---|---|---|---|
 | K12 | Loch Fuar, `coldmere_k12` | 289 (289 as built) | Monks' Vale's 101 | K11, J12 (the Whitespine's) | 20–22 | the first, built (#832) |
-| L12 | Loch Fada, `longmere_l12` | 77 (78 as built) | Loch Fuar's 21 | L11, K12 | 20–21 | the second, built (#832) |
+| L12 | Loch Fada, `longmere_l12` | 77 (79 as built) | Loch Fuar's 21 | L11, K12 | 20–21 | the second, built (#832) |
 | J8 | Sheer Point, `sheerpoint_j8` (the Whitespine's) | 83 (89 as built) | Loch Fuar's 28 | I8, J9 | 22–23 | the second, built (#832) |
-| The enclave | its own, entered from L12 | | | | 22–23 | after L12 (#845) |
+| Creag Fionn, the enclave | its own, `creag_fionn`, its door on L12 | 75 (70 outside its larder) | | L12 | 22–23 | the third, built (#832) |
 | The lair | its own, entered from K12 | | | | 30–32 | after the Infirmarer is drawn (#847) |
 
 The world's end eats into K12 and L12, so they are cut by hand, the atlas's rows with the void
@@ -2724,25 +2784,27 @@ written `%`, as Cairnmoor's P7 and P8 were (docs/areas/cairnmoor.md §12).
   same: K12 four snow lynxes waiting on two ice bears' kill, L12 a pair of ice bears alone, J8 four
   spine eagles and two snow trolls. The ice bear is the roster's one monster at 21 outside the bay
   (the Bay Keeper is the bay's), and the curve's rise rule reads a group's mean level, so both of
-  Rimewater's boxes' hardest are a pair of bears.
-  Each box's groups are sized with the harness at its floor (`node tools/harness.ts`) and judged by
-  the gate there: inside the aim of 8 to 10 fights to a rest at 20 and 8.5 to 10.5 at 22 and, two
-  under, inside the limit.
+  Rimewater's boxes' hardest are a pair of bears. The enclave's are J8's again, four spine eagles
+  and two snow trolls, the only beasts of the two areas at its band (§12.4). Each box's groups are
+  sized with the harness at its floor (`node tools/harness.ts`) and judged by the gate there: inside
+  the aim of 8 to 10 fights to a rest at 20 and 8.5 to 10.5 at 22 and, two under, inside the limit.
 - **Finds** are gold, and the Elixir and the Sapphire Vial, the dearest healing and the dearest
   spell points that the nearest shop sells (Rime Lodge's Provisioner's), so that no find is worse
   than the shop's of its kind (the owner's delegate's rule); all inside the 4,500 window, and J8's
   inside the Whitespine's 5,000. No gear: Rimewater's pluses on the ladder are placed (§9, #497's 6).
-- **Pay.** A clear stood at 28,781 xp a member before the bounds, 1.77 times the curve's 16,267,
-  and a company entering at 20 and three quarters clearing it left at 22.84, under the line of 23, a
+- **Pay.** A clear stood at 28,781 xp a member before the bounds, 1.77 times the curve's 16,267, and
+  a company entering at 20 and three quarters clearing it left at 22.84, under the line of 23, a
   level over the next floor (`LEAD`, `tools/tests/curve.ts`). The bounds have 0.16 of it: K12 pays
   1,084 a member as built and carries it to 22.91; L12 pays 556 (two bears at 3,334, over six) and
   carries it to 22.9571, 0.04 under the line, the clear at 30,421 xp and 11,390 gold. J8 pays 1,191
   into the Whitespine's clear, whose company leaves at 24.4140 against its line of 25
-  (docs/areas/whitespine.md §12.1). A box that pays more than its brief says why. The enclave is
-  judged at its own band (#845) and the lair's guardian at the cap's; no clear counts either.
+  (docs/areas/whitespine.md §12.1). A box that pays more than its brief says why. The enclave, Creag
+  Fionn, pays 1,191 a member and 700 gold, judged at its own band (#845) and counted in no clear
+  (§12.4); the lair's guardian is judged at the cap's.
 - **The walkthrough** walks them in one function, `theBounds` in `walkthrough.ts` (J8's in the
   Whitespine's), called last: each box's seams walked, its groups won at its floor, its doors bare
-  and its secret found from its hint, the prize shut to walkers, swimmers, climbers and levitators.
+  or drawn and its secret found from its hint, the prize shut to walkers, swimmers, climbers and
+  levitators; and the enclave walked, door to hoard and out (§12.4).
 - **The seams meet the seam rule** (#910, EXPANSION §5.1): a box agrees with each built neighbour
   square for square on passable ground, water and road, and adds no row to `SEAMS_AS_BUILT`; its
   open squares onto unbuilt land are an `OPEN_ON_NOTHING` row each, and the rows it now answers go.
@@ -2765,7 +2827,7 @@ written `%`, as Cairnmoor's P7 and P8 were (docs/areas/cairnmoor.md §12).
 - **Purpose.** South of K11 the pines and the vale's grass running on to the rim, a spur of the rim
   cutting the box in two: west of it the vale's grass and the loch's pines, 218 squares walked from
   K11 and J12; east of it old pines and a tongue of hills, 71 squares walked from K11 and L12 only.
-  Off the road and off the quest; the artifact lair's door (§12.4).
+  Off the road and off the quest; the artifact lair's door (§12.5).
 - **Landmarks.** The rim's face along the south and the world's end past it; the spur between the
   pines; the vale's grass coming round from J12; the bears' kill in the pines.
 - **Points of interest,** about twelve features and two groups: a camp, the hunter's fire; a
@@ -2799,7 +2861,7 @@ written `%`, as Cairnmoor's P7 and P8 were (docs/areas/cairnmoor.md §12).
   10,12 the path of flat stones stops at the rock, and searched there facing south the rock gives
   at 10,13 on the cell, two squares in to 10,15 and a step east to a strongbox at 11,15 (250 gold
   and an Elixir), which no walker, swimmer, climber or levitator reaches but through the rock. The
-  rim's face at 2,15, Monks' Vale's land by the atlas, is left bare for the lair's door (§12.4).
+  rim's face at 2,15, Monks' Vale's land by the atlas, is left bare for the lair's door (§12.5).
   East of the spur, walked from K11's 27,31, the old pines at 26,2 and the cairn at 28,6 (120 gold
   and a Sapphire Vial). The north edge meets K11's square for square, open at 0 to 13 and 23 to 31;
   the west edge meets J12's, open at 0 to 15; the east edge, open at 0 to 7, meets L12's west
@@ -2830,31 +2892,81 @@ written `%`, as Cairnmoor's P7 and P8 were (docs/areas/cairnmoor.md §12).
   mountain and the world's end on the south and the east. The `longmere_l11 south` and
   `coldmere_k12 east` rows go and none comes.
 - **New here.** Rimewater's first shrine that gives intellect, the spring (§9, #832's 16); the
-  enclave, when it comes, is #845's.
+  enclave is #845's, Creag Fionn (§12.4).
 - **Finds.** 100 gold and a Sapphire Vial on the cairn; 200 gold and an Elixir in the store.
 - **Pay.** About 556 xp a member.
 - **As built** (#832, 23 October): `longmere_l12`, laid at 360,350, cut by hand from the atlas, the
   void past the rim written `%`; Loch Fada's, whole, at 20–21 (§9, #832's 14 to 17). The start is
-  10,0 facing south. On foot the strip walks 78 squares, the atlas's 77 and the rim's 16,0 drawn as
-  pines to meet L11's. South from L11's 8,31 onto 8,0 nothing is said, and east from K12's 31,1
-  onto 0,1 the crossing says "Loch Fada." at 20 and no more; straight back nothing. At 13,1 the
-  gatherers' fire, a camp; the spring under the rim's foot at 16,0, which gives +1 intellect; the
-  cairn at 8,1 (100 gold and a Sapphire Vial); the rim at 6,4. In the south-west the bears'
-  den-mouth at 2,5 and two ice bears at 1,6, the box's one group. At 4,5 the pines scored in long
-  cuts and the stack of empty pots, and searched there facing south the rock gives at 4,6 on the
-  store, two squares along the rim to 4,8, where a strongbox (200 gold and an Elixir) stands, which
-  no walker, swimmer, climber or levitator reaches but through the rock. The rim's face at 11,4,
-  Loch Fada's land by the atlas, is left bare for the enclave's door, its way the pines of 11,3,
-  with nothing within four squares (§12.4). The north edge meets L11's square for square, open at 0
-  to 16; the west edge meets K12's, open at 0 to 7; the east and south edges are the rim and the
-  void. A company at 20 wins every fight and manages 8.09 fights to a rest, inside the aim (8 to
-  10), 3.3% of its days ending in a fight broken off; two under, at 18, 3.36, 37.3% of the floor's
-  9, inside the aim. Density: every square within 12 steps of a point, the furthest 7, no sign
-  among its 9 points. By the curve's count the box pays 556 xp a member and 300 gold, and a company
-  three quarters clearing the area from 20 leaves it at 22.9571 (22.91 before), 0.0429 under the
-  line of 23.
+  10,0 facing south. On foot the strip walks 79 squares, the atlas's 77, the door's 11,4 drawn as
+  stone and the rim's 16,0 drawn as pines to meet L11's. South from L11's 8,31 onto 8,0 nothing is
+  said, and east from K12's 31,1 onto 0,1 the crossing says "Loch Fada." at 20 and no more; straight
+  back nothing. At 13,1 the gatherers' fire, a camp; the spring under the rim's foot at 16,0, which
+  gives +1 intellect; the cairn at 8,1 (100 gold and a Sapphire Vial); the rim at 6,4. In the
+  south-west the bears' den-mouth at 2,5 and two ice bears at 1,6, the box's one group. At 4,5 the
+  pines scored in long cuts and the stack of empty pots, and searched there facing south the rock
+  gives at 4,6 on the store, two squares along the rim to 4,8, where a strongbox (200 gold and an
+  Elixir) stands, which no walker, swimmer, climber or levitator reaches but through the rock. The
+  rim's face at 11,4, Loch Fada's land by the atlas, is the enclave's door, drawn as stone and
+  walked into from the pines of 11,3, with nothing within four squares (§12.4). The north edge meets
+  L11's square for square, open at 0 to 16; the west edge meets K12's, open at 0 to 7; the east and
+  south edges are the rim and the void. A company at 20 wins every fight and manages 8.09 fights to
+  a rest, inside the aim (8 to 10), 3.3% of its days ending in a fight broken off; two under, at 18,
+  3.36, 37.3% of the floor's 9, inside the aim. Density: every square within 12 steps of a point,
+  the furthest 7, no sign among its 10 points. By the curve's count the box pays 556 xp a member and
+  300 gold, and a company three quarters clearing the area from 20 leaves it at 22.9571 (22.91
+  before), 0.0429 under the line of 23.
 
-### 12.4 The enclave and the lair
+### 12.4 Creag Fionn, the enclave: the trolls' winter cave in the rim (#832): enclave, band 22–23
+
+- **Purpose.** A place of its own off L12, at the other end of the land under the rim from the lair:
+  the cave in the rim's face where the snow trolls winter, which the hill folk call Creag Fionn
+  (§10). Held to its own band (#845).
+- **Band.** 22–23, a band over L12's 20–21, its floor over the box's top (#845's 2); its window is
+  the Whitespine's, 5,000 (EXPANSION §5.2, #845's 3: the last road area whose floor, 22, is at or
+  under its own).
+- **Landmarks.** The ramp of packed snow down from the door; the cave's mouth, strewn with the
+  eagles' leavings; the neck behind it; the hall roofed in ice, its beds trodden in rings; the
+  passage to the cave's back and the trolls' bed.
+- **Points of interest.** The cleft down from the door, the eagles' roost, the hall, a hunter frozen
+  against its wall, the marrow-bones, the stretch of wall the trolls keep bare, their larder, the
+  cave's back with its hoard and the door's own line, which gives its band (#845).
+- **Encounters.** The Whitespine's beasts, the only two kinds of the two areas at the band (§9,
+  #832's 8): four spine eagles in the neck behind the cave's mouth, the nearer and the gentler, at
+  22; two snow trolls in the one passage to the cave's back, the farther and the hardest, at 23. No
+  guardian. Sized with the harness at 22, the eagles alone pace 10.0 fights to a rest, the trolls
+  8.3 and the two dealt 9.7, inside the aim (§9, #832's 25).
+- **The ways in and out.** Its door is L12's 11,4, the rim's face drawn as stone, walked into from
+  the pines at 11,3; one way out, up the ramp onto 11,3.
+- **The secret and its hint.** The trolls' larder, two by two behind the hall's east wall. The hint:
+  snow lies heaped along every wall of the hall but that stretch, which is trodden bare as a path
+  is.
+- **New here.** The enclave itself (#845) and Rimewater's first weapon whose blows carry an element,
+  Trollbrand's fire.
+- **Reward.** Trollbrand, the furrier's Bear Spear with its head bound in pitch and its blows
+  carrying fire, in the hoard at the cave's back with 400 gold, inside the Whitespine's window,
+  5,000 (§9, #832's 26); and 300 gold, an Elixir and a Sapphire Vial in the larder.
+- **Pay.** Counted in no clear (`tools/tests/curve.ts`): 1,191 xp a member and 700 gold.
+- **As built** (#832, 23 October): `creag_fionn`, a dungeon of one level of 16 by 16, marked
+  `enclave`, its plate at 371,359. In from L12's 11,3 over the door at 11,4 onto 7,1 facing south,
+  the door's line saying "Creag Fionn: levels 22-23.", harder one or two levels under and the
+  warning three or more. The cleft at 7,1 to 7,2, its look at 7,2; the cave's mouth at 6 to 8 x 3
+  and 5 to 9 x 4 to 5, the roost's look at 6,4; the neck at 7,6 and 7,7, four spine eagles at 7,6;
+  the hall at 2 to 10 x 8 to 11 round two pillars of rock at 4,9 and 8,10, its look at 6,8, the
+  hunter at 9,8 and the bones at 3,10; the passage at 7,12, two snow trolls on it; the cave's back
+  at 4 to 12 x 13 to 14, its look at 5,13 and the hoard at 11,14 (400 gold and Trollbrand). At 10,9
+  the bare stretch, and searched there facing east it gives at 11,9 on the larder, 12 to 13 x 9 to
+  10, its look at 12,9 and a chest at 13,10 (300 gold, an Elixir and a Sapphire Vial), which no
+  walker, swimmer, climber or levitator reaches but through the wall. The way down is one square
+  wide at the eagles' and at the trolls', so a walker meets the eagles first and the trolls before
+  the hoard, and the hall and the hint are reached once the eagles are gone. A company at 22 wins
+  every fight and manages 9.76 fights to a rest, inside the aim (8.5 to 10.5), 24% of its days
+  ending in a fight broken off; two under, at 20, 4.96, 52.2% of the floor's 9.5. The curve's rise:
+  the eagles at 5 steps, level 22.0, the nearest, and the trolls at 11 steps, level 23.0, the
+  hardest (rank correlation 1.00). Density: every square within 7 steps of a point, the furthest 3,
+  no sign among its 13 points. By the curve's count it pays 1,191 xp a member and 700 gold, in no
+  clear, and the lead over the road stays at 22.9571. L12 changes at the door alone (§9, #832's 28).
+
+### 12.5 The lair
 
 - **The lair** (#846; §6, the Wakerobe): two levels cut in the mountain under the pass, its door on
   K12's rim face at 2,15 (world 330,365), on the part of the box that is Monks' Vale's by the atlas,
@@ -2863,13 +2975,3 @@ written `%`, as Cairnmoor's P7 and P8 were (docs/areas/cairnmoor.md §12).
   nothing. The cap's band, 30–32; the Infirmarer its guardian (keepers, a new kind; docs/MONSTERS.md
   §13); the Wakerobe (`wakerobe`, `src/content/areas/rimewater/items.ts`, #921) in it as #846 says;
   its rumour the lodge-keeper's at Rime Lodge (§6).
-- **The enclave** (#845): on L12, at the other end of the land under the rim from the lair: a cave
-  in the rim's face where the snow trolls winter, its door at L12's 11,4 (world 371,354), its way
-  the pines of 11,3. Held at 22–23, a band over L12's 20–21, its floor over the box's top: spine
-  eagles at its mouth, the nearer at 22, and snow trolls deeper in, the hardest at 23, the
-  Whitespine's (docs/areas/whitespine.md §7), the only beasts of the two areas at that band (its
-  brothers and bell-ringers are Highcell's keepers, its masons and giants people). Its reward is
-  one of its own inside the Whitespine's window, 5,000 (EXPANSION §5.2, #845's 3), named with it in
-  its pull request (§9, #832's 8). L12 leaves its door bare with its way and nothing within four
-  squares, as Saltreach's B7 left 22,22 (docs/areas/saltreach.md §12.10), and the enclave's pull
-  request draws it.
