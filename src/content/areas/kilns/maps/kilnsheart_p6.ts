@@ -55,7 +55,7 @@ export const KILNSHEART_P6: MapDef = {
     // In over the ash from O6, past the ridge's smoke.
     { kind: 'event', x: 1, y: 20, id: 'p6_ash', once: true, text: 'East of the ridge the ash lies grey and unbroken to the rim, and warm through the boots.' },
     // The milestone left in the ash, and the drift in a hill's lee.
-    { kind: 'statue', x: 2, y: 24, id: 'p6_milestone', name: 'A milestone', text: 'A dwarves\' milestone, the road it stood by long under the ash. Its figures are filled with grey ash. Words are cut below.', riddle: 'I FALL LIKE SNOW AND I AM WARM. WHAT AM I?', answer: 'ash', gift: { stat: 'endurance' }, done: 'The milestone, its figures full of ash.' },
+    { kind: 'statue', x: 2, y: 24, id: 'p6_milestone', name: 'A milestone', text: 'A dwarves\' milestone, its road long buried and its figures filled in grey. Words are cut below.', riddle: 'I FALL LIKE SNOW AND I AM WARM. WHAT AM I?', answer: 'ash', gift: { stat: 'endurance' }, done: 'The milestone, its figures full of ash.' },
     { kind: 'event', x: 5, y: 13, id: 'p6_drift', once: true, text: 'Ash drifted deep in the lee of the hill, smooth as snow. A hand\'s depth down it is warm.' },
     // The hills: the cairn, the warm vent in the rim's foot, and the vent-keepers' shelter.
     { kind: 'cairn', x: 8, y: 7, id: 'p6_cairn', text: 'A cairn on the hills\' crest, ash packed between its stones like mortar.', gold: 110, items: ['potion_sp_great'] },

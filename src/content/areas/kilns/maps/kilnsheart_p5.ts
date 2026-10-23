@@ -59,12 +59,12 @@ export const KILNSHEART_P5: MapDef = {
     { kind: 'npc', x: 3, y: 4, name: 'An old cutter', lines: [
       'An old cutter by the fire, grey with stone dust to the eyebrows, a pick across his knees.',
       '"Forty pits we cut on this hill, and the Stone was over the ridge all along. The rest went down. I stayed."',
-      '"Since the ground tore by the Stone, slag comes walking down the pits after dark. It keeps to the deep one."',
+      '"Since the ground tore by the Stone, slag comes walking down the pits. It keeps to the deep one."',
     ] },
     // The trial pits: the north one over its spoil, the cairn on a fan, and the deepest one in the south.
     { kind: 'event', x: 4, y: 10, id: 'p5_pit', once: true, text: 'A trial pit, cut square and left at a man\'s depth. Its spoil is grey hill-stone, without a fleck of red.' },
     { kind: 'cairn', x: 7, y: 13, id: 'p5_cairn', text: 'A cairn on a fan of spoil, built of the trial\'s own stone, a broken pick-helve stood up in its top.', gold: 120, items: ['potion_sp_great'] },
-    { kind: 'statue', x: 2, y: 19, id: 'p5_waymark', name: 'A waymark', text: 'A dwarves\' waymark, a post of dressed stone with a hammer cut in its face, its head turned to the Stone. Words are cut below.', riddle: 'STRUCK ALL DAY AND NEVER BROKEN. WHAT AM I?', answer: 'anvil', gift: { stat: 'might' }, done: 'The waymark, its hammer to the Stone.' },
+    { kind: 'statue', x: 2, y: 19, id: 'p5_waymark', name: 'A waymark', text: 'A dwarves\' waymark, a hammer cut in its face, its head turned to the Stone. Words are cut below.', riddle: 'STRUCK ALL DAY AND NEVER BROKEN. WHAT AM I?', answer: 'anvil', gift: { stat: 'might' }, done: 'The waymark, its hammer to the Stone.' },
     { kind: 'shrine', x: 9, y: 20, id: 'p5_niche', text: 'A hearth-niche cut in the pit\'s wall, soot on its roof and a pick-head left on its sill for luck.', stat: 'accuracy', done: 'The hearth-niche in the pit\'s wall.' },
     { kind: 'event', x: 7, y: 24, id: 'p5_deep', once: true, text: 'The deepest of the trials, sunk to black rock. Slag has run down its sides and set, and some of it is still warm.' },
     // The rim's foot and the warm seep under it, at the hills' south end.
