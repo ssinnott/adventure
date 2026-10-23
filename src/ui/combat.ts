@@ -18,6 +18,7 @@ import { spell, ELEMENTS } from '../game/spells.ts';
 import type { Element } from '../game/spells.ts';
 import { item, chargesLeft } from '../game/items.ts';
 import { weaponOf, borne } from '../game/party.ts';
+import type { Character, Party } from '../game/party.ts';
 import { groupLabels, crown, MARKER_RISE, LABEL_TOP } from './grouplabels.ts';
 import type { LabelLine } from './grouplabels.ts';
 import { seatRow } from './row.ts';
@@ -26,6 +27,17 @@ type Mode = 'menu' | 'target' | 'spell' | 'spellTarget' | 'element' | 'item' | '
 const MONSTER_DELAY = 22;
 /** The frames the bot waits on a company's turn, or on the finished fight, before it acts (`auto`). */
 const BOT_DELAY = 22;
+
+/** What a member may cast in a fight: the spells they know, then each artifact's they bear (#847), whatever they know. */
+export function castable(c: Character): { id: string; from?: string }[] {
+  const arts = borne(c).filter((id) => item(id).casts && spell(item(id).casts!.spell).context !== 'explore').map((id) => ({ id: item(id).casts!.spell, from: id }));
+  return [...c.spells.filter((x) => spell(x).context !== 'explore').map((id) => ({ id })), ...arts];
+}
+/** The fight's spell list: each row's words, a spell's cost or an artifact's castings left ("Grasping Roots (3 LEFT)"), and whether it is out of reach. */
+export const castRows = (party: Party, c: Character): { label: string; disabled: boolean }[] => castable(c).map((e) => {
+  const left = e.from ? chargesLeft(party, e.from) : 0;
+  return { label: `${spell(e.id).name} (${e.from ? `${left} LEFT` : spell(e.id).sp})`, disabled: e.from ? left < 1 : spell(e.id).sp > c.sp };
+});
 
 export class CombatScreen implements Screen {
   /** Both delays count as none: the combat tests set it, as a pilot's `instant` does (game/pilot/pilot.ts). */
@@ -77,7 +89,7 @@ export class CombatScreen implements Screen {
   private options(g: Game, who: number): { label: string; key: string; disabled: boolean }[] {
     const c = g.party.members[who];
     const w = weaponOf(c);
-    const spells = this.castable(g, who);
+    const spells = castable(g.party.members[who]);
     const items = this.usable(g, who);
     return [
       { label: `Attack (${w.name})`, key: 'attack', disabled: !canAttackFromRow(c, who) },
@@ -91,12 +103,6 @@ export class CombatScreen implements Screen {
   private targets(g: Game, who: number): number[] {
     const alive = aliveMonsters(this.state);
     return this.mode === 'target' ? alive.filter((i) => canReach(this.state, g.party.members[who], i)) : alive;
-  }
-  /** What the member may cast in a fight: the spells they know, then each artifact's they bear (#847), whatever they know. */
-  private castable(g: Game, who: number): { id: string; from?: string }[] {
-    const c = g.party.members[who];
-    const arts = borne(c).filter((id) => item(id).casts && spell(item(id).casts!.spell).context !== 'explore').map((id) => ({ id: item(id).casts!.spell, from: id }));
-    return [...c.spells.filter((x) => spell(x).context !== 'explore').map((id) => ({ id })), ...arts];
   }
   private usable(g: Game, who: number): string[] {
     const c = g.party.members[who];
@@ -162,7 +168,7 @@ export class CombatScreen implements Screen {
       }
       case 'spell': {
         const c = g.party.members[who];
-        const list = this.castable(g, who);
+        const list = castable(g.party.members[who]);
         if (is(a, 'cancel')) { this.mode = 'menu'; return; }
         if (is(a, 'up')) this.sub = (this.sub + list.length - 1) % list.length;
         else if (is(a, 'down')) this.sub = (this.sub + 1) % list.length;
@@ -308,9 +314,9 @@ export class CombatScreen implements Screen {
         drawText(ctx, 'TARGET', r.x + 8, y, { size: 1, color: TEXT_DIM }); y += 12;
         menu(ctx, this.targets(g, t.i).map((mi) => `${s.monsters[mi].def.name} ${s.monsters[mi].hp}/${s.monsters[mi].def.hp}`), r.x + 8, y, this.sub);
       } else if (this.mode === 'spell') {
-        const list = this.castable(g, t.i), left = (e: { from?: string }): number => (e.from ? chargesLeft(g.party, e.from) : 0);
+        const rows = castRows(g.party, c);
         drawText(ctx, `SPELL  (SP ${c.sp})`, r.x + 8, y, { size: 1, color: TEXT_DIM }); y += 12;
-        menu(ctx, list.map((e) => `${spell(e.id).name} (${e.from ? `${left(e)} LEFT` : spell(e.id).sp})`), r.x + 8, y, this.sub, { disabled: list.map((e) => (e.from ? left(e) < 1 : spell(e.id).sp > c.sp)) });
+        menu(ctx, rows.map((x) => x.label), r.x + 8, y, this.sub, { disabled: rows.map((x) => x.disabled) });
       } else if (this.mode === 'element') {
         drawText(ctx, 'AGAINST WHAT?', r.x + 8, y, { size: 1, color: TEXT_DIM }); y += 12;
         menu(ctx, ELEMENTS.map((e) => e[0].toUpperCase() + e.slice(1)), r.x + 8, y, this.sub);

@@ -295,7 +295,7 @@ export class SheetScreen implements Screen {
     const items = this.items(g);
     drawText(ctx, 'ITEMS (SPACE: EQUIP OR USE)', 340, 36, { size: 1, color: TEXT_DIM });
     if (!items.length) drawText(ctx, 'nothing carried', 340, 50, { size: 1, color: TEXT_DIM });
-    else menu(ctx, items.slice(0, 16).map((it) => `${item(it.id).name}${it.from === 'bag' ? ' (bag)' : ''}`), 340, 50, this.sel);
+    else menu(ctx, items.slice(0, SHEET_ITEMS).map((it) => `${item(it.id).name}${it.from === 'bag' ? ' (bag)' : ''}`), 340, SHEET_ITEMS_Y, this.sel);
     drawText(ctx, '< > OR 1-6 SWITCH   ESC CLOSE', 620, 264, { size: 1, color: TEXT_DIM, align: 'right' });
     drawPartyCards(ctx, g.party, this.who, frame);
   }
@@ -338,6 +338,13 @@ export function power(d: ItemDef): string {
 export const artifactLines = (c: Character): string[] => borne(c).map((id) => item(id)).filter((d) => d.artifact && d.slot === 'none').map((d) => `ARTIFACT ${d.name}, ${power(d)}`);
 /** Where the sheet's panel's border begins at its foot: the column under the portrait ends above it. */
 export const SHEET_FOOT = 274;
+/** The sheet's item list: its first row's y and the most rows it shows, a menu's step apart. */
+export const SHEET_ITEMS_Y = 50, SHEET_ITEMS = 16;
+/**
+ * The highest the SPELLS line is drawn: just under the item list's last row (y 200), since a caster's
+ * spells run on past the column into the list's (#847). Where main drew it for a member with least.
+ */
+export const SPELLS_TOP = 208;
 /**
  * The sheet's column under the portrait (#847): each line, its colour and the y it is drawn at. Hit
  * points and armour share a line, and an artifact with a slot says its power on its slot's, so the
@@ -358,7 +365,7 @@ export function sheetRows(c: Character): { text: string; color: string; y: numbe
   for (const l of artifactLines(c)) add(l, YELLOW);
   add('TRAITS ' + CLASSES[c.cls].traits.map((t) => TRAITS[t].name).join(', '));
   for (const l of skillsLines(c)) add(l);
-  if (c.spells.length) add(spellsLine(c));
+  if (c.spells.length) { y = Math.max(y, SPELLS_TOP); add(spellsLine(c)); }
   return rows;
 }
 /** The sheet's SPELLS line: the member's tier in magic, then the spells it knows ("SPELLS (MASTER) Spark, Frost"). */

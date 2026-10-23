@@ -23,9 +23,11 @@ import type { MonsterDef } from '../../src/game/monsters.ts';
 import { TIER_NAMES } from '../../src/game/mastery.ts';
 import type { Tier } from '../../src/game/mastery.ts';
 import { serialize, deserialize } from '../../src/game/save.ts';
-import { statText, weaponLine, slotLine, describe, businessEntries, artifactLines, power, sheetRows, SheetScreen, MessageScreen, SHEET_COL_W, SHEET_FOOT } from '../../src/ui/screens.ts';
+import { statText, weaponLine, slotLine, describe, businessEntries, artifactLines, power, sheetRows, SheetScreen, MessageScreen, SHEET_COL_W, SHEET_FOOT, SHEET_ITEMS, SHEET_ITEMS_Y } from '../../src/ui/screens.ts';
+import { CombatScreen, castRows } from '../../src/ui/combat.ts';
+import type { Action } from '../../src/input.ts';
 import type { ChoiceScreen } from '../../src/ui/screens.ts';
-import { FONT_CHARS, measureText } from '../../src/lib/engine/text.ts';
+import { FONT_CHARS, measureText, lineHeight } from '../../src/lib/engine/text.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import type { RngInstance } from '../../src/lib/engine/rng.ts';
 import { ok, owed, headlessGame, drive } from './lib.ts';
@@ -485,6 +487,32 @@ function powers(): void {
   const most = spellDice(SPELLS.meteor, ARTIFACT_LEVEL) * (SPELLS.meteor.sides ?? 4), dealt = swarm.s.monsters.map((x) => x.def.hp - x.hp);
   ok(swarm.done[0] && dealt.every((n) => n === most * swarm.done.filter(Boolean).length) && rankMult(swarm.q.members[1]) > 1 && swarm.done.filter(Boolean).length === axe.casts!.times,
     `Idris at ${MAX_LEVEL}, ranked, casts Meteor Swarm from Grim's Axe ${axe.casts!.times} times, each at most ${most} on every foe, a level-${ARTIFACT_LEVEL} unranked roll (${dealt.join(' ')} in all)`);
+  // Through the fight's screen, by keys: Ottilie's list holds Holdfast's spell with its castings left; Cast,
+  // the spell and a group take a charge; once they are spent the screen says so and casts nothing.
+  CombatScreen.instant = true;
+  try {
+    const g3 = headlessGame(4), o3 = g3.party.members[3], seen: string[] = [], after: number[] = [];
+    for (const c of g3.party.members) c.hp = c.maxHp = 999;
+    o3.equipment.weapon = knife.id;
+    g3.world.travel('shelf', 16, 4);
+    g3.fight(['road_rats']);
+    const st = (g3.top as CombatScreen).state;
+    for (let guard = 0; guard < 400 && st.outcome === 'ongoing' && after.length < 4; guard++) {
+      const t = currentTurn(st, g3.party, g3.rng);
+      if (!t || t.side === 'monster') { g3.update(null); continue; }
+      if (t.i !== 3) { g3.update('n4' as Action); continue; }
+      const had = chargesLeft(g3.party, knife.id);
+      seen.push(castRows(g3.party, o3).map((r) => r.label).join());
+      g3.update('n2' as Action); g3.update('interact');
+      if (had > 0) g3.update('interact'); else { seen.push(g3.log.at(-1) ?? ''); g3.update('cancel'); g3.update('n4' as Action); }
+      after.push(chargesLeft(g3.party, knife.id));
+    }
+    const cast3 = st.log.filter((l) => l.startsWith(`${o3.name} casts Grasping Roots`)).length;
+    ok(after.join() === '2,1,0,0' && seen[0] === 'Grasping Roots (3 LEFT)' && seen[3] === 'Grasping Roots (0 LEFT)' && seen[4] === 'Nothing left in it until dawn.' && cast3 === 3,
+      `through the fight's screen, by keys, Ottilie's spells read ${seen[0]}; Cast, the spell and a group take a charge each time (${after.join(', ')} left), and once spent: ${seen[4]}`);
+  } finally {
+    CombatScreen.instant = false;
+  }
   // A spell, out of a fight: the charges spent are kept through a save and come back whole at dawn, slept or not.
   const g2 = headlessGame(4), w2 = g2.world;
   g2.party.spent = { [knife.id]: 2 };
@@ -524,6 +552,27 @@ function sheet(): void {
   }
   ok(ends.every((e) => Number(e.split(' ')[1]) <= SHEET_FOOT) && !wide.length,
     `the fullest member of every class, the stone carried, ends above the sheet's foot at ${SHEET_FOOT} (${ends.join(', ')}), every line but the spells' in the font and the ${SHEET_COL_W} px column${wide.length ? ' -> ' + wide.join('; ') : ''}`);
+  // Each artifact's own line, with the most a bearer adds after it (a master's tier at arms), in the font and the column.
+  const lineOf = (d: ItemDef): string => {
+    const c = createCharacter('Wenceslaus', 'human', (d.classes?.[0] ?? 'knight') as ClassId, {}, makeRng(1));
+    c.tiers = { arms: 'master' }; c.equipment.weapon = null; c.equipment.shield = null;
+    if (d.slot === 'none') { c.pack.push(d.id); return artifactLines(c)[0] ?? ''; }
+    equip(c, d.id);
+    return d.slot === 'weapon' ? weaponLine(c) : slotLine(c, d.slot === 'armor' ? 'armor' : 'shield');
+  };
+  const own = ARTS.map(lineOf), widest = own.reduce((a, b) => (measureText(b) > measureText(a) ? b : a));
+  ok(own.every((l) => l.includes(power(ITEMS[ARTS[own.indexOf(l)].id])) && glyphs(l) && measureText(l) <= SHEET_COL_W),
+    `each of the ${own.length} artifacts' sheet lines says its power in the font's glyphs inside the ${SHEET_COL_W} px column (the widest ${measureText(widest)}: ${widest})`);
+  // The SPELLS line runs on past the column into the item list's, so it starts under the list's last row,
+  // for a member with nothing more above it as for the fullest.
+  const lastItem = SHEET_ITEMS_Y + (SHEET_ITEMS - 1) * (lineHeight() + 1), tops: string[] = [];
+  for (const cls of Object.keys(CLASSES) as ClassId[]) {
+    if (!CLASSES[cls].spells) continue;
+    const c = createCharacter('Wenceslaus', 'human', cls, {}, makeRng(1));
+    tops.push(`${cls} ${sheetRows(c).find((r) => r.text.startsWith('SPELLS '))?.y}`);
+  }
+  ok(tops.every((t) => Number(t.split(' ')[1]) >= lastItem + lineHeight() - 1),
+    `the SPELLS line, which runs on into the item list, starts under its ${SHEET_ITEMS}th row at ${lastItem} for a caster with least above it (${tops.join(', ')})`);
   // The words: Space on the Telstok in the bag puts it in Maren's hands and shows its two lines.
   const g = headlessGame(4), at = 4;
   g.party.bag = [ITEMS.telstok.id];

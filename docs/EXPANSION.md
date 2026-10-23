@@ -426,9 +426,10 @@ in no shop, on no rung and in no window, and that unmarked the window would catc
    every artifact, as the first half had it, ran the column off the panel.
 5. **`--artifacts`** takes ids or `all` and gives each, one in the world, to the first member in the
    company's order who may bear it: a weapon of the reach they hold, or of the other where none who
-   may bear it holds that reach (Holdfast to the premade's thief, for her sling); a two-hander puts a
-   plain shield in the pack, never an artifact's. So `all` dresses the premade six with the eight.
-   The gate's company stays plain (#891).
+   may bear it holds that reach (Holdfast to the premade's thief, for her sling: she strikes nothing
+   from the back row with it, and casts its charges, decision 10); a two-hander puts a plain shield
+   in the pack, never an artifact's. So `all` dresses the premade six with the eight. The gate's
+   company stays plain (#891).
 6. **The eight not placed are owed** in `UNPLACED` (`tools/tests/items.ts`) to #830 to #837, each
    until it lies anywhere; placed, it must lie once in the world, in a chest, cairn or statue on an
    enclave of its own area at the cap. The table only shrinks.
@@ -443,8 +444,10 @@ in no shop, on no rung and in no window, and that unmarked the window would catc
    world's clock (`World.advance`), which mends the bearer (`passClock`), and a ward is read from what
    is borne, as a trait's immunity is (`immuneTo`).
 10. **The harness's bot casts an artifact's spell** where it pays, weighed as its own spells are and
-    at no cost in points, so a lair's guardian is tuned with the artifact's power and not its steel
-    alone. The game's auto-fight leaves an artifact's spell to the player.
+    at no cost in points, an artifact's hold whatever `--bot` asks and at a group of one too, so a
+    lair's guardian is tuned with the artifact's power and not its steel alone. In 20 seeded fights at
+    30 the company with Holdfast, or with all eight, wins as many as the plain one and loses fewer hit
+    points (`tools/tests/harness.ts`). The game's auto-fight leaves an artifact's spell to the player.
 11. **A piece's words are read as it is taken up:** Space on a weapon or armour with words equips it
     and shows them, so DESIGN §9's "read from the pack" holds for every slotted piece, the Old
     Lantern's Staff among them.

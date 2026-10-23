@@ -216,6 +216,20 @@ function artifactsWhatIf(): void {
   ok(plain.every((p) => holds(p) === '') && dressed.every((p) => holds(p) === 'Bram erzhemd, Bram torhide, Bram hagstone, Idris grims_axe, Wren akkush, Ottilie holdfast, Maren telstok, Maren wakerobe') && still
     && holds(newer) === 'Rook grims_axe, Rook erzhemd, Rook hagstone, Hollis telstok, Hollis wakerobe, Idris torhide, Aveline holdfast' && off,
     `under --artifacts the company bears each artifact on the first member who may and nothing else moves, at ${at.join(', ')} ${holds(dressed[1])}; the newer company ${holds(newer)}, with no ranger for Akkush; off, and in the gate's company, none`);
+  // Dressed, the company is no weaker than plain in the same seeded fights at 30, and Holdfast's bearer,
+  // who strikes nothing from her row, casts its charges: the bot weighs an artifact's hold whatever `--bot` asks.
+  const fights = [...['deep_knocker', 'inspector', 'hearth_moth', 'ashen_champion', 'ashen_preacher', 'deep_rat'].map((id) => [id, id, id]), ['tallymaster'], ['grey_lion'], ['vask']];
+  const weigh = (arts: readonly string[] | undefined): { won: number; cost: number; roots: number } => under({ artifacts: arts }, () => {
+    let won = 0, cost = 0, roots = 0;
+    for (let k = 1; k <= 20; k++) {
+      const p = companyAt(30, k), s = play(p, fights[k % fights.length], k * 7919 + 13), o = outcomeOf(s, p);
+      won += o.won ? 1 : 0; cost += o.cost; roots += s.log.filter((l) => l.startsWith(`${p.members[3].name} casts Grasping Roots`)).length;
+    }
+    return { won, cost, roots };
+  });
+  const bare = weigh(undefined), knife = weigh(['holdfast']), every = weigh(all);
+  ok(knife.won >= bare.won && every.won >= bare.won && knife.cost <= bare.cost && every.cost <= bare.cost && knife.roots > 0 && every.roots > 0,
+    `in 20 seeded fights at 30 the dressed company is no weaker than the plain: ${bare.won}, ${knife.won} with Holdfast and ${every.won} with all eight won, at ${bare.cost.toFixed(2)}, ${knife.cost.toFixed(2)} and ${every.cost.toFixed(2)} of its hit points; Ottilie casts Grasping Roots ${knife.roots} and ${every.roots} times`);
   const refused = under({ artifacts: all }, writeRefusal);
   ok(!!refused?.startsWith('a what-if is for weighing') && refused.endsWith('(artifacts)'), `and the refusal --calibrate --write throws names --artifacts while it is set (${refused?.slice(refused.indexOf('('))})`);
 }

@@ -1172,9 +1172,9 @@ They are their areas' and not the reach's: off the quest as the reach is, and th
 without them. Designed in #846 to the direction of the owner's delegate (18 October 2026, on #828):
 #847 builds the mark and the powers, in two halves, the first the mark and the three whose kinds were
 built (the Telstok, the Erzhemd and Akkush, defined and placed nowhere), the second the three kinds
-not yet built and the other five, both built and the eight placed nowhere yet; each area's issue (#830 to #837) the lair, its door and the
-rumour; the creatures lane the guardians (docs/MONSTERS.md §13). Each area's doc has its own under
-§6.
+not yet built and the other five. Both halves are built, and the eight lie nowhere yet; each area's
+issue (#830 to #837) builds the lair, its door and the rumour; the creatures lane the guardians
+(docs/MONSTERS.md §13). Each area's doc has its own under §6.
 
 **What an artifact is.** An item marked so (`ItemDef.artifact`, #847): one in the world, found in its
 lair and never sold, with no price in any window: no shop stocks one or takes one, and the windows

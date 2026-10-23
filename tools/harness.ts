@@ -448,7 +448,8 @@ export const thrifty = (s: CombatState, p: Party, rng: RngInstance, i: number, o
     if (v > worth) { worth = v; best = { type: 'cast', spellId: bless.id, target: i }; }
   }
   const hold = charged.find(({ x }) => x.inflict);
-  for (const [sleep, from] of [[o.sleep && lie ? sleepWith(s, c) : undefined], [o.sleep && lie && hold ? sleepWith(s, c, undefined, hold.x) : undefined, hold?.from]] as const) {
+  // An artifact's hold is weighed whatever `opts` asks (#847): a charge costs no points, and its bearer may strike nothing from their row.
+  for (const [sleep, from] of [[o.sleep && lie ? sleepWith(s, c) : undefined], [hold ? sleepWith(s, c, undefined, hold.x) : undefined, hold?.from]] as const) {
     if (!sleep) continue;
     const held = sleep.spell.inflict === 'paralysed';
     const v = pays(sleep.spell, incoming(s, p, sleep.foes) * (held ? ROOTS_CHANCE : SLUMBER_CHANCE) * Math.min(held ? 1 / HOLD_BREAKS : SLEEPS_FOR, left()), !!from);
