@@ -88,5 +88,22 @@ function toV5(data: OldSave): OldSave {
   return data;
 }
 
+/**
+ * The two hermits as version 5 had them: the Deepthorn's and Merryn, whose cell is on Wrackholm F6,
+ * a zone of the outdoors, each set `was` at the first meeting. `now` is the Deepthorn hermit's own.
+ */
+const V6_HERMIT = { zone: 'wrackholm_f6', was: 'q_hermit', now: 'q_hermit_deepthorn' };
+
+/**
+ * 6: the Deepthorn's hermit sets a flag of his own and `q_hermit` is Merryn's (#941). A save that
+ * holds it and never set foot in her box had it from him, so it is moved to his. One that has trodden
+ * her box keeps it as it is, since whose it is cannot be told.
+ */
+function toV6(data: OldSave): OldSave {
+  const f = data.party.flags;
+  if (f[V6_HERMIT.was] && !data.world.zones?.includes(V6_HERMIT.zone)) { f[V6_HERMIT.now] = f[V6_HERMIT.was]; delete f[V6_HERMIT.was]; }
+  return data;
+}
+
 /** Each upgrade by the version it brings a save to. A bump of SAVE_VERSION adds one here. */
-export const UPGRADES: Readonly<Record<number, Upgrade>> = { 2: toV2, 3: toV3, 4: toV4, 5: toV5 };
+export const UPGRADES: Readonly<Record<number, Upgrade>> = { 2: toV2, 3: toV3, 4: toV4, 5: toV5, 6: toV6 };
