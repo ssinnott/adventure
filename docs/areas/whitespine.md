@@ -12,19 +12,21 @@ is in it, the plan for building it, box by box, and the briefs. Its work is file
 IV's systems are #442's (§3). Figures are measured on main at `6032251` (2 October 2026) with
 `worldGrid` (`src/game/atlas.ts`).
 
-Its eight boxes are built, J11, Monks' Vale (#499, §4.2), which lists the area, I11, the
-Peak Stone's (#501, §4.4), I10, Stairwatch and the Stair's head (#502, §4.5), I9, the ridge north
-(#503, §4.6), I8, Sheer Point (#504, §4.7) and, behind the road, J10, the giants' ground, I12, the
-Spine's south and J12, the vale's end (#508, §4.8), and so is Highcell, the dungeon through J11's
-gate (#500, §4.3); its eight monsters are drawn (§3), its chapter, The Bells, is written (#505, §5),
-its four side quests are in the log (#506, §6) and so are its four third prestiges' quests,
-the Knight's, the Monk's, the Bard's and the Thief's (#448, §6); K11 and K12 stay cut (§11). In J12's rock a hollow behind a second secret door holds two finds
-off the ladder, a lightning axe and a knife that raises accuracy, the axe in the area's first locked
-chest (#863, §4.9). Its content is `src/content/areas/whitespine/` (maps, monsters, items,
-climate, its part of the world map, its walkthrough and its chapter of the one quest, The Bells, in
-`chapter.ts`; its side quests in `quests.ts`, #506); it has no town, so no rooms. Its ids:
-the area `whitespine`, its zones `monksvale`, `highspine` and `sheerpoint`, the dungeon `monastery`
-and `monastery2` (the ids stay under the new name, §10).
+Its eight boxes are built, J11, Monks' Vale (#499, §4.2), which lists the area, I11, the Peak
+Stone's (#501, §4.4), I10, Stairwatch and the Stair's head (#502, §4.5), I9, the ridge north (#503,
+§4.6), I8, Sheer Point (#504, §4.7) and, behind the road, J10, the giants' ground, I12, the Spine's
+south and J12, the vale's end (#508, §4.8), and so is Highcell, the dungeon through J11's gate
+(#500, §4.3); its eight monsters are drawn (§3), its chapter, The Bells, is written (#505, §5), its
+four side quests are in the log (#506, §6) and so are its four third prestiges' quests, the
+Knight's, the Monk's, the Bard's and the Thief's (#448, §6); K11 and K12 are Loch Fuar's, laid whole
+in Rimewater's boxes (#497, #832), and J8 is the bounds' (§12). In J12's rock a hollow behind a
+second secret door holds two finds off the ladder, a lightning axe and a knife that raises accuracy,
+the axe in the area's first locked chest (#863, §4.9). Its content is
+`src/content/areas/whitespine/` (maps, monsters, items, climate, its part of the world map, its
+walkthrough and its chapter of the one quest, The Bells, in `chapter.ts`; its side quests in
+`quests.ts`, #506); it has no town, so no rooms. Its ids: the area `whitespine`, its zones
+`monksvale`, `highspine` and `sheerpoint`, the dungeon `monastery` and `monastery2` (the ids stay
+under the new name, §10).
 
 ---
 
@@ -66,7 +68,8 @@ counted here.
 row 8 to row 12, with K11 and K12 holding Monks' Vale's east under the pass. The land worth a map is
 eight boxes: J11, the Vale and the monastery; I11, the Stone's; I10, the Stair's head; I9 and I8,
 the ridge and the Point; behind them J10, I12 and J12, built since (#508, §4.8). K11 and K12 are
-cut (§11).
+Loch Fuar's, laid whole in Rimewater's boxes (#497; #832, docs/areas/rimewater.md §12), and J8 is
+the bounds' (§12).
 
 Its edges:
 
@@ -932,22 +935,23 @@ settled in its issue.
     land.** South from J11's hills, the vale's hills and grass running out under the peaks, with the
     far pines at 18 to 30, 15 to 21. The plate of `monastery2` lies at 26,2, a plate only:
     Highcell's lower house is under the vale. The east edge is hills, grass and pines at rows 0 to
-    15 against K12, cut, and void past it; the south edge is the rim. The density check counts 254
-    open squares, four of them the hollow's (§4.9). **The landmarks.** The vale's end, the snow going up to the peaks' feet unbroken
-    (`j12_end`, 25,3); a bell heard faintly below, underfoot (`j12_under`, 27,5); a stone seat in
-    the hills with a bowl cut in its arm, which gives intellect (`j12_seat`, 22,7); a cairn, 300
-    gold and a Sapphire Vial (`j12_cairn`, 29,7); the drop to the east (`j12_drop`, 30,4); eagles
-    over the crags and bones under them (`j12_eyrie`, 21,13); and in the pines the trolls' bowl, the
-    snow scraped back to the earth (`j12_bowl`, 23,17), and a pilgrim frozen where he sat
-    (`j12_pilgrim`, 28,15). **The secret.** The hint is a bell-rope hanging out of a crack in the
-    rock, the snow under it worn into a hollow by knees (`j12_rope`, 19,11). Searched from there,
-    the rock gives at 18,11 on a cell (`j12_cell`, 17,11), a shelf for a bed and a bell hung with no
-    tongue: the chest (`j12_alms`, 16,11), 1,400 gold and an elixir. It is shut in rock as the
-    others are; its door is at 18,11, not 18,10 (§9, #508's 14). **A second secret,** #863's: a pine split by
-    lightning at the pines' tip (`j12_split`, 19,21) and, searched there, a hollow in the rock below
-    it with two chests (§4.9). **The group.** Two snow trolls in
-    the far pines (`j12_trolls`, 21,19; back after two days), the box's nearest at 23 steps and its
-    hardest (level 23); they do not roam.
+    15 against K12's west (Loch Fuar's, #832), square for square; the south edge is the rim. The
+    density check counts 254 open squares, four of them the hollow's (§4.9). **The landmarks.** The
+    vale's end, the snow going up to the peaks' feet unbroken (`j12_end`, 25,3); a bell heard
+    faintly below, underfoot (`j12_under`, 27,5); a stone seat in the hills with a bowl cut in its
+    arm, which gives intellect (`j12_seat`, 22,7); a cairn, 300 gold and a Sapphire Vial
+    (`j12_cairn`, 29,7); the vale's grass running on east under the rim (`j12_drop`, 30,4, its words
+    since K12 was built, #832); eagles over the crags and bones under them (`j12_eyrie`, 21,13); and
+    in the pines the trolls' bowl, the snow scraped back to the earth (`j12_bowl`, 23,17), and a
+    pilgrim frozen where he sat (`j12_pilgrim`, 28,15). **The secret.** The hint is a bell-rope
+    hanging out of a crack in the rock, the snow under it worn into a hollow by knees (`j12_rope`,
+    19,11). Searched from there, the rock gives at 18,11 on a cell (`j12_cell`, 17,11), a shelf for
+    a bed and a bell hung with no tongue: the chest (`j12_alms`, 16,11), 1,400 gold and an elixir.
+    It is shut in rock as the others are; its door is at 18,11, not 18,10 (§9, #508's 14). **A
+    second secret,** #863's: a pine split by lightning at the pines' tip (`j12_split`, 19,21) and,
+    searched there, a hollow in the rock below it with two chests (§4.9). **The group.** Two snow
+    trolls in the far pines (`j12_trolls`, 21,19; back after two days), the box's nearest at 23
+    steps and its hardest (level 23); they do not roam.
   - **Seams, J10 to J12.** J10's north, 0,0 to 31,0 (296 to 327,286), meets J9's south row (285)
     square for square: mountain at 0 to 3 and pines at 4 to 31 on both sides, walked. J10's east (x
     327) meets K10's west (328): the road at 31,19 against K10's 0,19 (328,305), walked, J10's pines
@@ -957,14 +961,15 @@ settled in its issue.
     peaks and mountain elsewhere. J10's west (296) meets I10's east (295): the range on both sides,
     nothing walked, a climber's only. I12's north (y 350) meets I11's south row (349): the ash,
     hills and pines under the Sheer at 0 to 6 and the pines at 9 to 25 on both sides, walked, the
-    Sheer at 7 and 8. I12's west (264) meets H12's east (263, Ashfall's country, built, #522) square for square: ash at rows 0 to 11, grass at 12 to 14, hills at 15 to 19, mountain at 20 to 30 and void at 31, pinned both ways.
-    I12's east (295) meets J12's west (296): mountain and peaks on both sides, nothing walked. J12's
-    north (350) meets J11's south row (349): hills at 19 to 31 on both sides, walked (J11's 18 is
-    hills against J12's mountain). J12's east (327) meets K12, cut: hills, grass and pines at rows 0
-    to 15, void past it. The south edges of I12 and J12 are the rim, the world's end, pinned. The
-    outdoors test follows the neighbours: J9's south and west, K10's west, J11's four edges, I11's
-    east and south and I10's north, south and east are re-pinned, their ring reading mountain, not
-    void.
+    Sheer at 7 and 8. I12's west (264) meets H12's east (263, Ashfall's country, built, #522) square
+    for square: ash at rows 0 to 11, grass at 12 to 14, hills at 15 to 19, mountain at 20 to 30 and
+    void at 31. I12's east (295) meets J12's west (296): mountain and peaks on
+    both sides, nothing walked. J12's north (350) meets J11's south row (349): hills at 19 to 31 on
+    both sides, walked (J11's 18 is hills against J12's mountain). J12's east (327) meets K12's west
+    (328, Loch Fuar's, #832) square for square: hills, grass and pines at rows 0 to 15, walked. The
+    south edges of I12 and J12 are the rim, the world's end. The outdoors test follows the
+    neighbours: J9's south and west, K10's west, J11's four edges, I11's east and south and I10's
+    north, south and east are held again, their ring reading mountain, not void.
   - **Measured, J10, I12 and J12.** At 22 a company wins every fight in all three, and at 20 too.
     J10 manages 9.72 fights to a rest, inside the aim of 8.5 to 10.5 (limit 7 to 13), with no day
     ending in a fight broken off; I12 and J12 manage 8.22, just under the aim and inside the limit,
@@ -1345,6 +1350,7 @@ Proposed, for the owner, each in the issue that would build it:
   scaffold reads them, for a box's draft; the owner's word changes them there.
 - **The monastery's plate moves from K12 to J11's gate,** 330,356 to 322,342, as Saltmouth's moved
   to C6 (docs/areas/saltreach.md §9): K12 is cut, and the plate goes where the way in is.
+  K12 is built since, Loch Fuar's (#832), and the plate stays at J11.
 - **J11 is laid in Monks' Vale and I10 in the High Spine,** each the zone that holds most of its
   land, so the crossing lines fall at the J11/I11 and I10/I9 seams.
 - **I8's band.** The plan gives it 24, and a band of 24 alone wants its hardest group at 24; the
@@ -2138,7 +2144,9 @@ founded from below and the giants, who have no names on the map. Chosen for #444
 
 - **K11 and K12,** Monks' Vale's east under the pass: 353 squares of land, 168 walkable, and 544,
   218 walkable; mountain and pine with nothing on the atlas or in the docs but the monastery's
-  plate, which moves to J11's gate (§9). The maps of the J column end in them.
+  plate, which moves to J11's gate (§9). The maps of the J column end in them. Both are built since,
+  laid whole in Loch Fuar: K11 (#497) and K12, the bounds' first (#832, docs/areas/rimewater.md
+  §12).
 - **The slivers** in Rimewater's and Ashfall's boxes: K10 holds the pass's road as Rimewater's
   (#491) and H10 the Stair's foot as Ashfall's (#510); the rest, about 110 squares of mountain at
   the zone line, goes with those boxes' edges.
@@ -2257,5 +2265,49 @@ Cut and owed, from the country behind (#508):
 - **Two under.** J10, I12 and J12 at 20 win every fight; `OWED` in `tools/tests/gate.ts` named each,
   and the area's pool stayed over the limit (§8), until #851 judged the day instead.
 - **H12, Ashfall's country behind, is built (#522):** I12's west edge, ash at rows 0 to 11, grass at 12 to 14, hills at 15 to 19, mountain at 20 to 30 and void at 31, meets its east edge square for square, and the pin follows it.
-- **The world ends past J12** to the east against K12, cut, and to the south at the rim, as I12's
-  does (§4.8).
+- **The world ends past J12** to the south at the rim, as I12's does (§4.8); its east edge meets
+  K12's west since (#832).
+
+## 12. The bounds
+
+#832's bounds are three boxes, an enclave and the Wakerobe's lair. K12, L12, the enclave and the
+lair are Rimewater's and are briefed there with what every box keeps (docs/areas/rimewater.md §12,
+the decisions in §9 there, #832's 1 to 12); J8, Sheer Point's, is briefed here, in §4's form. K12,
+Monks' Vale's east under the pass, is Loch Fuar's box, laid whole and built (#832): J12's east edge
+meets it square for square, and `j12_drop` now says the vale's grass runs on into the cold loch's
+pines.
+
+### 12.1 J8, the pines over the water by Sheer Point (#832, its second pull request): country, band 22–23
+
+- **Purpose.** The hills and pines of I8's east edge running on round the bay's head to J9's
+  strand: a strip of pines and shallows in the box's south-west corner, ten squares wide at most,
+  the sea over the rest. 83 squares a company could walk with the built maps laid, 54 of them Sheer
+  Point's and 29 Loch Fuar's, laid whole in Sheer Point. Off the road and off the quest.
+- **Landmarks.** The sea north and east to the world's edge; the shallows along the strand; the
+  Point's height over the water to the west; Loch Fuar's far shore to the south.
+- **Points of interest,** about seven features and two groups: a camp, an eel-fisher's fire on the
+  strand; a person with a rumour of the trolls under the pines; a cairn on the hills; the shallows;
+  the sea; the eel-traps.
+- **Encounters.** Four spine eagles over the shallows, the nearer, at 22; two snow trolls under the
+  pines, the hardest, at 23. Sized with the harness at 22, the eagles alone pace 10.03 fights to a
+  rest, the trolls 8.31 and the two dealt 9.70, inside the aim of 8.5 to 10.5.
+- **The secret and its hint.** An eel-fisher's smoke-house dug into the hill and turfed over, a room
+  of two along the hill's face with its door at the south end, the racks still hung with eels gone
+  to leather. The hint: eel-traps of woven withy stacked at the hill's foot, and no hut in sight.
+- **How it meets its neighbours.** I8's east edge square for square: the sea at rows 0 to 7, the
+  shallows at 8 to 10, hills at 11 to 18, pines at 19 to 29 and dirt at 30, its west column drawn as
+  hills at 11 to 14 where the atlas has shallows. J9's north edge (Rimewater's; the pass's road joins
+  the two areas) square for square: pines at 1 to 9, ice at 10 to 12 where the atlas has shallows
+  and the sea (as K11's edge was drawn to K10's, docs/areas/rimewater.md §9, #497's 4) and the sea
+  from 13. Its 0,31 meets I8's rock and J9's pines, and no square agrees with both: J8's pull request
+  shuts J9's 0,0 to the mountain and J8's 0,31 is rock, as the owner's delegate rules such corners
+  (docs/areas/rimewater.md §12.1, #832's 9). North and east the sea, where #828 plans no box, and
+  nothing open. The `sheerpoint_i8 east` and `coldmere_j9 north` rows go, the
+  `sheerpoint_i9|coldmere_j9` row of `SEAMS_AS_BUILT` loses its square 0 and none comes.
+- **New here.** Nothing.
+- **Finds.** 120 gold and a Sapphire Vial on the cairn; 250 gold and an Elixir in the smoke-house,
+  the dearest of their kinds that the nearest shop sells (Rime Lodge's Provisioner's; the Whitespine
+  sells nothing), inside the 5,000 window.
+- **Pay.** About 1,190 xp a member, the eagles' 582 and the trolls' 609; the Whitespine's clear
+  leaves a company at 24.34 against its line of 25.
+- **The walkthrough** is one function, `theBounds` in the Whitespine's `walkthrough.ts`, called last.
