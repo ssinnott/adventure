@@ -1026,6 +1026,11 @@ function offTheLadder(ok: (cond: boolean, msg: string) => void): void {
  * found from the rock face where the wind hoots, bending twice, and the herds' store from the rowan, a
  * chamber along the face, each shut to the four ways but through its door. O7's 31,0 is mountain with
  * P6's corner (#834's 3), and P7's 5,24 in the rim's face is left bare for the lair's door.
+ * Then the Cairnfield's shore (L8): west from M8's 0,31 onto its 31,31, the same field, so nothing is
+ * said; the wrack-gatherer's word on the drowned cairn, the tideline, the mound and the ice seen, the well
+ * knelt at and each group won at its floor; the noost found from the tar, shut to the four ways but
+ * through its door; the mound's face at 22,27 left bare for the enclave's door; and the seams, the south
+ * edge onto L9's ice, sand and pines and the corner at 0,31 (#834's 11 and 12).
  */
 function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const w = newWalk(ok);
@@ -1134,4 +1139,58 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   ok(open(32, (i) => out.passable(p8.x, p8.y + i) === 'ok') === open(32, (i) => i >= 2 && i <= 19) && open(24, (i) => out.passable(p8.x + i, p8.y) === 'ok') === open(24, (i) => i >= 1 && i <= 3)
     && open(24, (i) => out.passable(p8.x + i, p8.y + 31, ALL) === 'ok') === open(24, () => false) && out.passable(o8.x + 31, o8.y + 1) !== 'ok',
     'P8 opens onto O8 at rows 2 to 19 and onto P7 at 1 to 3 of its north edge; its south edge is the rim\'s mountain, and past it the world ends');
+
+  // The Cairnfield's shore (L8): west from M8's 0,31 onto its 31,31, walked, the same field.
+  const L8 = MAP_DEFS.find((d) => d.id === 'cairnfield_l8')!;
+  const l8 = zone(L8.id), l9 = zone('longmere_l9');
+  w.world.travel('cairnfield_m8', 0, L8.start.y, WEST);
+  const shore = w.world.move('forward');
+  ok(shore.kind === 'moved' && w.world.zone?.id === L8.id && w.world.state.x === l8.x + 31 && w.world.state.y === l8.y + L8.start.y && !shore.messages.some((m) => m.startsWith('The Cairnfield.')),
+    `west from M8's 0,${L8.start.y} onto L8's 31,${L8.start.y}, walked, and the field not named again (${said(shore)})`);
+  listen(w);
+  const strand = reach(l8, [L8.start.x, L8.start.y], {});
+  ok(strand.size > 110 && [[30, 16], [28, 19], [27, 21], [25, 22], [30, 22], [25, 25], [28, 25], [23, 27], [25, 29], [17, 31], [9, 30], [0, 31]].every(([x, y]) => strand.has(at(l8, x, y))),
+    `the shore (${strand.size} squares), the strand's north end, the tideline, the hut, the wrack-gatherer, the well, the mound's way, the bank, the cairn, the loch's foot, the ice and the lip of it at 0,31 are all walked to on foot from the way in`);
+
+  // The wrack-gatherer's word on the drowned cairn, in words only; the tideline, the mound and the ice
+  // seen; the well knelt at; the box's groups won at its floor.
+  const gatherer = L8.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'A wrack-gatherer')!;
+  w.world.travel(L8.id, gatherer.x, gatherer.y);
+  const word = meet(gatherer, w.party, heard(w.world, gatherer)).text;
+  ok(word.includes('half drowned') && word.includes('oldest dead') && !/noost|tar\b|boat|door/.test(word), `the wrack-gatherer: a cairn in the hills over the strand that the sea has half drowned, the oldest dead's, in words only (${word.replace(/\n+/g, ' ')})`);
+  listen(w);
+  for (const id of ['l8_tide', 'l8_mound', 'l8_ice']) see(w, `${L8.id}:${id}`);
+  kneel(w, `${L8.id}:l8_well`);
+  for (const g of L8.encounters!) fight(w, `${L8.id}:${g.id}`);
+  const crest = L8.features!.find((f) => f.kind === 'cairn' && f.id === 'l8_cairn');
+  ok(crest?.kind === 'cairn' && crest.gold === 120 && crest.items.join() === 'potion_sp_great', 'the cairn on the hills holds 120 gold and a Sapphire Vial');
+
+  // The secret: the tar coming out of the bank, the search there and the noost behind it, a room of three
+  // by two with the boat upturned in it. Walked, waded, climbed or floated, it is never reached but through its door.
+  const cut = reach(l8, [L8.start.x, L8.start.y], ALL, [28, 26]);
+  ok(cut.size > 110 && ![[27, 27], [28, 27], [29, 27], [27, 28], [28, 28], [29, 28]].some(([x, y]) => cut.has(at(l8, x, y))), `the noost is shut but for its door in the bank: none of L8's ${cut.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${L8.id}:l8_tar`);
+  ok(search(L8.id, 28, 25, SOUTH, 'l8_noost'), 'searched where the tar smells, the bank gives, and the noost behind it can be walked into');
+  ok(out.passable(l8.x + 27, l8.y + 27) === 'ok' && out.passable(l8.x + 29, l8.y + 28) === 'ok' && out.passable(l8.x + 26, l8.y + 27) !== 'ok' && out.passable(l8.x + 30, l8.y + 28) !== 'ok' && out.passable(l8.x + 28, l8.y + 29) !== 'ok',
+    'the noost is a room of three by two cut into the bank, walled all round');
+  const hoard = L8.features!.find((f) => f.kind === 'chest' && f.id === 'l8_noost_chest');
+  ok(hoard?.kind === 'chest' && hoard.gold === 220 && hoard.items.join() === 'elixir' && hoard.x === 29 && hoard.y === 28, 'in the noost, under the boat, a chest with 220 gold and an Elixir');
+
+  // The enclave's door (docs §12.5) is left bare: the mound's face at 22,27, mountain with mountain either
+  // side of it, its way the hills at 23,27, and nothing within four squares.
+  const door = [...(L8.features ?? []), ...(L8.encounters ?? [])].filter((f) => Math.abs(f.x - 22) + Math.abs(f.y - 27) <= 4);
+  ok(['M', 'M', 'M'].join() === [L8.rows[26][22], L8.rows[27][22], L8.rows[28][22]].join() && L8.rows[27][23] === '^' && strand.has(at(l8, 23, 27)) && !door.length,
+    `the mound's face at 22,27 is left bare for the enclave's door, walked to from the hills at 23,27, nothing within four squares${door.length ? ' (not ' + door.map((f) => `${f.x},${f.y}`).join(' ') + ')' : ''}`);
+
+  // L8's seams: M8's grass opens onto it at rows 15 to 31; its north edge is the sea along L7's; its south
+  // edge meets L9's ice at 0 to 6 and 13 and 14, sand at 15, pines at 16 to 21 and 28 to 30 and grass at 31,
+  // with L9's sea and shallows between; the west edge is the sea but for the corner, 0,31, where L9's ice
+  // runs up, facing K8's sea (#834's 11 and 12).
+  ok(open(32, (i) => out.passable(l8.x + 31, l8.y + i) === 'ok') === open(32, (i) => i >= 15) && open(32, (i) => out.passable(l8.x + i, l8.y) === 'ok') === open(32, () => false)
+    && open(32, (i) => out.passable(l8.x + i, l8.y + 31) === 'ok') === open(32, (i) => i <= 6 || (i >= 13 && i <= 21) || i >= 28)
+    && open(32, (i) => out.passable(l9.x + i, l9.y) === 'ok') === open(32, (i) => i <= 6 || (i >= 13 && i <= 21) || i >= 28)
+    && open(32, (i) => out.passable(l8.x, l8.y + i) === 'ok') === open(32, (i) => i === 31) && out.passable(l8.x - 1, l8.y + 31) !== 'ok',
+    'L8 opens onto M8 at rows 15 to 31 and onto L9 along its south edge square for square; its north edge is the sea along L7\'s, and its west edge the sea but for 0,31, where L9\'s ice runs up beside K8\'s sea');
+  walkThrough(w, L8.id, 30, 31, SOUTH, l9.id, 2);
+  ok(w.world.state.x === l9.x + 30 && w.world.state.y === l9.y, 'south from L8\'s 30,31 onto L9\'s 30,0, walked, into Loch Fada');
 }
