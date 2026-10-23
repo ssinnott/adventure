@@ -12,7 +12,7 @@ import { drawMonsterSprite } from './sprites.ts';
 import { drawViewport, drawWeather } from './viewport.ts';
 import { BRASS, TEXT, TEXT_DIM, RED, YELLOW, GREEN } from './palette.ts';
 import { currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, shareRange } from '../game/combat.ts';
-import type { CombatState, PartyAction } from '../game/combat.ts';
+import type { CombatState, PartyAction, TurnRef } from '../game/combat.ts';
 import { botTurn, asSeen, PLAYED } from '../game/bot.ts';
 import { spell, ELEMENTS } from '../game/spells.ts';
 import type { Element } from '../game/spells.ts';
@@ -54,6 +54,12 @@ export class CombatScreen implements Screen {
   private pendingFrom = '';
   private pendingItem = '';
   private logSeen = 0;
+  /**
+   * Whose turn it is as the last `update` left it, for `render` to read; unset until the first. `update` is the
+   * only place the screen walks the turn on (`currentTurn` rolls a sleeper's waking and, at a round's end, the next
+   * round's speeds on the game's generator), so that drawing the fight moves nothing of it.
+   */
+  private turn: TurnRef | null | undefined;
   /** Frames of red flash left on each party card, set when a member loses hp. */
   private cardFlash: number[] = [];
   private lastHp: number[] = [];
@@ -113,6 +119,16 @@ export class CombatScreen implements Screen {
   private wait(g: Game, n: number): number { return CombatScreen.instant || g.pilot?.instant ? 0 : n; }
 
   update(g: Game, a: Action | null): void {
+    this.step(g, a);
+    // Once the tick's act is done the turn walks on, past anyone who cannot act and at a round's end into the next
+    // round, here and not in the next frame drawn: a frame after it shows the turn that is to be played. Where the
+    // turn is settled the walk draws nothing.
+    this.turn = currentTurn(this.state, g.party, g.rng);
+    // The hit flash counts ticks, not frames: one off at the end of every tick, however it returned.
+    for (const m of this.state.monsters) if (m.flash > 0) m.flash--;
+  }
+
+  private step(g: Game, a: Action | null): void {
     const s = this.state;
     // A key while the bot fights takes the fight back, and is then handled as usual. Else the bot
     // presses Space on the finished fight itself, so it never waits there.
@@ -244,7 +260,9 @@ export class CombatScreen implements Screen {
     // Monsters in a row, grouped, with a marker on the targeted one. A back rank has a row of its own,
     // behind the front and smaller, each of it between two of the front (ui/row.ts).
     const alive = aliveMonsters(s);
-    const t = currentTurn(s, g.party, g.rng);
+    // Whose turn it is, as the last tick left it (`turn`); a fight drawn before its first tick, pushed in the tick
+    // that opens it, shows the order's first.
+    const t = this.turn === undefined ? s.order[s.turn] ?? null : this.turn;
     const targeting = (this.mode === 'target' || this.mode === 'spellTarget') && t?.side === 'party';
     const aimed = targeting && t ? this.targets(g, t.i)[this.sub] : -1;
     const row = seatRow(alive.map((mi) => s.monsters[mi]), v.w, v.h);
@@ -254,7 +272,6 @@ export class CombatScreen implements Screen {
     seats.forEach(({ mi, x: across, foot, h }) => {
       const m = s.monsters[mi];
       const x = v.x + across, y = v.y + foot, top = crown(m.def.size, h);
-      if (m.flash > 0) m.flash--;
       // One called in since is taken as it comes; one that mends is followed up as well as down.
       const was = this.lastMonsterHp[mi] ?? m.hp;
       if (m.hp < was) this.burst(x, y - h * 0.5, m.hp <= 0 ? '#ffffff' : '#ffd070');
