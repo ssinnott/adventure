@@ -1393,8 +1393,9 @@ though the check refuses the camp landmark, which is on the road before (§9, #5
 seen from the road and its band said. C8, B8, B9, E9, E8, D7, E7, Karaordu and Kushdag claim nothing
 of their own (§9, #528's 14, #529's 15, #530's 17, #534's 12, #833's 15 and 24): B9's dunes and
 walkers are D9's, and the reach seen from the road has no token. Karaordu's deep rats are of a
-family no area claims, and the Foal-taker is of the vultures'. Its landmarks: a mesa, a camp of
-tents, a garden of the glassed, a lava flow seen, a cliff from its top.
+family no area claims. Kushdag stands in the novelty check with the Hearth, since the check places a
+map by its floor, 30 here, over the Wold's top, 28 (`roadPlace`; EXPANSION §5.2, #845's 7). Its
+landmarks: a mesa, a camp of tents, a garden of the glassed, a lava flow seen, a cliff from its top.
 
 ## 8. The numbers
 
@@ -2507,12 +2508,19 @@ Decided by the builder for #833, each the owner's to overturn:
     shut to walkers, waders, climbers and floaters but through its wall.
 28. **The rumour is the eldest's,** DESIGN §9's two lines at every meeting once she has told the
     oldest story, in her last two entries so that a company that has heard the lion's rest hears
-    them too. Words only: no flag, quest or mark (#846). It is the one change to Akordu.
+    them too; her own words at a later meeting stay and the two lines follow them. The entries set
+    no flag: she sets `akordu_story` at her first meeting already, so a company from an old save
+    that has heard the story hears the rumour at its next meeting. Words only, no quest or mark
+    (#846). It is the one change to Akordu.
 29. **The lair's two owed rows go:** `foal_taker` from `owes.unplaced` in the area's `checks.ts`,
     which leaves the Glasswold owing nothing, and `akkush` from `UNPLACED` in
     `tools/tests/items.ts`, as EXPANSION §8.2 (#897's 12) and #847's 6 say the lairs' pull requests
     do; each check holds now, so an owed line left in would fail.
-30. **§12.5 is the lair's brief in §4's form, with its As built.** It is the bounds' last piece:
+30. **The eyrie's walls are the dungeon's `stone` under a vault coloured for the sky.** The viewport
+    has no style for a place open to the sky (`wallStyle` is stone, brick, smooth or tent,
+    `ceilingStyle` vault or beams): one would be a systems change and no lair's to make, so the
+    shelf's drop is told in the texts and not drawn.
+31. **§12.5 is the lair's brief in §4's form, with its As built.** It is the bounds' last piece:
     every box, the enclave and the lair are built, and no built map of the Glasswold is open onto
     unbuilt land but onto the reach, the Glass. The area's `OPEN_ON_NOTHING` rows are D10's south
     and west, D9's west, C8's south and B9's east; none faces a crumb.
@@ -2908,8 +2916,9 @@ This is their brief, in §4's form; each pull request builds from it and adds it
   cache. The rumour is the eldest's at Akordu (§9, #833's 28).
 - **Pay.** Counted in no clear (`tools/tests/curve.ts`): about 3,395 xp a member and 800 gold.
 - **As built** (#833, 23 October): `kushdag`, a dungeon of one level of 16 squares by 16 marked
-  `enclave`, band 30–32, its plate on the world map at 123,219. East from the lip at D7's 18,24 onto
-  19,24, drawn as stone in the Scarp's face, a company arrives at 1,3 facing east, and the door says
+  `enclave`, band 30–32, its plate on the world map at 123,219, its walls the dungeon's `stone`
+  under a vault coloured for the sky (§9, #833's 30). East from the lip at D7's 18,24 onto 19,24,
+  drawn as stone in the Scarp's face, a company arrives at 1,3 facing east, and the door says
   "Kushdag: levels 30-32.", with the game's harder words one or two levels under its floor and its
   warning three or more under (#845's 5). The shelf runs east along the face (`kd_shelf`, 3,3) with
   the foals' bones along it (`kd_foals`, 6,3) and turns down the face at 9,3, a feather as long as

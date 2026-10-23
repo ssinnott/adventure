@@ -1642,7 +1642,7 @@ function theWarning(ok: (cond: boolean, msg: string) => void): void {
  * hollow found from the wind in the crack; its north edge shut to every company against Wrackholm's E6.
  * Walked, waded, climbed or floated, no prize is reached but through its door. Last, Kushdag, the lair
  * (#847): east from the lip at D7's 18,24 onto the shelf in the Scarp's east face, its door saying its
- * band and how it feels at 16, 28 and 30; the Foal-taker alone on the shelf where it narrows, with the
+ * band and how it feels at 26, 28 and 30; the Foal-taker alone on the shelf where it narrows, with the
  * nest, the chest and the cleft unreached while it stands, won at 30; Akkush in the Rider's chest, held
  * by no other place; the cleft found from the buckle in the rock; the way out onto the lip with its line
  * alone; and the eldest's two lines of the bow, said at no meeting before the story and at every one after.
@@ -1826,7 +1826,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
 
   // Kushdag, the lair (#845, #847): the shelf cut in the Scarp's east face at D7's 19,24, walked onto from
   // the lip at 18,24, nothing within four squares of it. Its door says its band and how it feels: the
-  // warning at 16, harder at 28 and its band alone at 30.
+  // warning at 26, the box's floor, harder at 28 and its band alone at 30.
   {
     const KD = MAP_DEFS.find((d) => d.id === 'kushdag')!, shelf = D7.exits!.find((e) => e.to === KD.id)!, g = KD.encounters![0];
     const near4 = [...D7.features!, ...D7.encounters!].filter((f) => Math.abs(f.x - 19) + Math.abs(f.y - 24) <= 4).map((f) => ('id' in f ? f.id : f.kind));
@@ -1841,9 +1841,9 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
       const r = w.world.move('forward');
       return r.kind === 'moved' && w.world.state.mapId === KD.id && w.world.state.x === KD.start.x && w.world.state.y === KD.start.y ? r.messages.join(' | ') : r.kind;
     };
-    const band = 'Kushdag: levels 30-32.', far = door(16), near = door(28), at30 = door(30);
+    const band = 'Kushdag: levels 30-32.', far = door(26), near = door(28), at30 = door(30);
     ok(far === `${shelf.label} | ${band} ${WARNING_IN}` && near === `${shelf.label} | ${band} ${HARDER_IN}` && at30 === `${shelf.label} | ${band}`,
-      `east from D7's lip onto the shelf and into Kushdag, the way's own line and then its band, with the warning at 16, harder at 28 and nothing more at 30 (${far}; ${near}; ${at30})`);
+      `east from D7's lip onto the shelf and into Kushdag, the way's own line and then its band, with the warning at 26, the box's floor, harder at 28 and nothing more at 30 (${far}; ${near}; ${at30})`);
     ok(!!KD.enclave && w.world.here.name === 'Kushdag' && w.world.here.band?.join('-') === '30-32', `inside, its sign gives the cap's band, over D7's 26-27 (${w.world.here.name}, ${w.world.here.band?.join('-')})`);
     listen(w);
     w.level = 30;
