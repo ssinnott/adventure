@@ -1325,10 +1325,10 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
       }
       return { seen, met: [...met] };
     };
-    const both = walk([first, last], {}), swum = walk([first, last], ALL), second = walk([last], {}), done = walk([], ALL);
+    const both = walk([first, last], {}), swum = walk([first, last], ALL), second = walk([last], {}), waded = walk([last], ALL), done = walk([], ALL);
     ok(both.met.join() === first.id && swum.met.join() === first.id && !both.seen.has(key(7, 8)) && !swum.seen.has(key(7, 8))
-      && second.met.join() === last.id && second.seen.has(key(4, 10)) && !second.seen.has(key(11, 13)) && done.seen.has(key(11, 13)),
-      'a company meets the overseers first and cannot pass them to the hold; with them down it comes up to the gleaners, the cargo behind it and the cabin and the plank beyond them');
+      && second.met.join() === last.id && waded.met.join() === last.id && second.seen.has(key(4, 10)) && !second.seen.has(key(11, 13)) && !waded.seen.has(key(11, 13)) && done.seen.has(key(11, 13)),
+      'a company on foot or any way else meets the overseers first and cannot pass them to the hold; with them down it comes up to the gleaners and cannot pass them, the cargo behind it and the cabin and the plank beyond them');
     const feat = (id: string): Feature => WB.features!.find((f) => 'id' in f && f.id === id)!;
     ok(chest(WB, 'wb_cargo') === '250 elixir', `in the hold, the cargo's chest: 250 gold and an Elixir (${chest(WB, 'wb_cargo')})`);
     // The secret: the one plank of the cabin's deck worn bright, the search there and the hollow under the deck behind the
@@ -1342,8 +1342,9 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
       && !MAP_DEFS.some((d) => (d.features ?? []).some((f) => (f.kind === 'shop' && f.stock.includes('keelhaul')) || ((f.kind === 'chest' || f.kind === 'cairn') && f.id !== 'wb_strongbox' && f.items?.includes('keelhaul'))))
       && !Object.values(MONSTERS).some((m) => m.drops?.some((d) => d.item === 'keelhaul')),
       'in the master\'s strongbox, 300 gold and Keelhaul; no shop sells it, no other chest or cairn holds it and no monster drops it');
-    ok(axe.element === 'cold' && !axe.artifact && axe.price <= CURVE.sunderwood.price && hits(axe) > hits(plus) && hits(plus) > hits(great),
-      `Keelhaul, the long axe with a die of cold, hits ${hits(axe)} against the Great Axe's ${hits(great)} and its plus's ${hits(plus)}, at ${axe.price} inside the Sunderwood's ${CURVE.sunderwood.price}`);
+    ok(axe.element === 'cold' && !axe.artifact && axe.price <= CURVE.sunderwood.price && hits(axe) > hits(plus) && hits(plus) > hits(great)
+      && GEAR.some(([level, ids]) => level === 14 && ids.includes(great.id)) && GEAR.some(([level, ids]) => level === 16 && ids.includes(plus.id)) && !GEAR.some(([, ids]) => ids.includes(axe.id)),
+      `Keelhaul, the long axe with a die of cold and on no rung of the ladder, hits ${hits(axe)} against the Great Axe's ${hits(great)}, the ladder's from 14, and its plus's ${hits(plus)}, from 16, at ${axe.price} inside the Sunderwood's ${CURVE.sunderwood.price}`);
     // And out: through the break onto E5's 18,29, with the way's own line and no other.
     w.world.travel(WB.id, WB.start.x, WB.start.y + 1, NORTH);
     const back = w.world.move('forward');

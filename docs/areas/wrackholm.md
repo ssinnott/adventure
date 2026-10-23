@@ -1106,7 +1106,11 @@ Decided by the builder for #835, each the owner's to overturn:
     master's strongbox with 300 gold. It is the plain piece where the ladder wears the Sunderwood's
     Great Axe from 14 (13 a blow) and its plus from 16 (14), the die of cold the gain (14.5, the die
     counted at 3.5); off the ladder, found there alone and sold nowhere (the walkthrough asserts
-    both) and inside the enclave's window. The lair's artifact is another thing.
+    each, and the rungs) and inside the enclave's window. The cold is the area's rule for an element
+    (#861's 4): it lands whole on all fifteen kinds the isle places past 10, the wreck's two among
+    them, and of the Sunderwood's nine only the hound is immune to it; nature and holy are nothing
+    to the Dead-Drop's five machines, and lightning, which does better, is the Corposant's already.
+    The lair's artifact is another thing.
 18. **The secret is the master's strongbox under the cabin's deck,** a hollow two squares long
     behind the cabin's east wall, its hint one plank of the deck worn bright among the grey, by the
     wall at 11,13: searched from there facing east, the wall at 12,13 gives; no company walked,
@@ -1335,8 +1339,8 @@ pull request builds from it and adds its "As built".
   enclave, band 14–15, region `wrackholm`, its plate at 150,150 in the sea off E5's door, start 7,1
   facing south, its one way out onto E5's 18,29 facing south. The break (`wb_break`, 7,2) and the
   tide's leavings (`wb_tide`, 6,4) beside four squares of shallows that a swimmer wades; the hold
-  across 10 squares at rows 7 to 10, with two crates, the sight of what she carried (`wb_hold`, 8,8)
-  and the cargo's chest (`wb_cargo`, 4,10); the bulkhead's forced door (`wb_bulkhead`, 7,10) at
+  across 10 squares at rows 7 to 10, with two pillars, the sight of what she carried (`wb_hold`,
+  8,8) and the cargo's chest (`wb_cargo`, 4,10); the bulkhead's forced door (`wb_bulkhead`, 7,10) at
   7,11; the master's cabin aft at rows 12 to 14 (`wb_cabin`, 5,13; `wb_stern`, 8,14). The secret:
   the worn plank (`wb_plank`, 11,13), the wall at 12,13 where the art check takes it and the hollow
   under the deck (`wb_under`, 13,13) with the master's strongbox (`wb_strongbox`, 14,13). Groups:
