@@ -7,7 +7,7 @@
 // (#512) sells the step and the chandler the cure.
 // docs/areas/ashfall.md §8 and §9 have the sums.
 import type { ItemDef } from '../../../game/items.ts';
-import { W, A, P, MARTIAL, MAIL, NO_CASTER_HEAVY } from '../../items.ts';
+import { W, A, P, MARTIAL, MAIL, NO_CASTER_HEAVY, ARTIFACT_PRICE } from '../../items.ts';
 import { ITEMS as SUNDERWOOD } from '../sunderwood/items.ts';
 import { hornBow } from '../saltreach/items.ts';
 import { dwarfMail, mattock } from '../kilns/items.ts';
@@ -165,4 +165,12 @@ export const townRoll: ItemDef = { id: 'town_roll', name: 'The Town Roll', slot:
   'A roll of hide tied with cord, written close in columns. A name to a line, and a cup drawn against each.',
 ] };
 
-export const ITEMS: readonly ItemDef[] = [...WARES, quickening, scavengersAxe, graveBow, emberPart1, emberPart3, meridianMail, meridianStaff, faneMap, ...PARTS, squareFlamberge, foundingStone, emberPart2, hearthSymbol, benchStaff, benchCoat, sentinelVisor, meridianJournal4, greyShovel, groveSeedling, townRoll];
+// Ashfall's of the bounds' eight (DESIGN §9, #847): the Grey Axe's 2d12+7 and a point, for its bearers,
+// and Meteor Swarm cast from it twice a day. Found and never sold; placed nowhere yet, for #836 lays
+// its lair and puts it there.
+export const grimsAxe = W('grims_axe', 'Grim\'s Axe', ARTIFACT_PRICE, 2, 12, { bonus: 8, twoHanded: true, classes: MARTIAL, casts: { spell: 'meteor', times: 2 }, artifact: true, text: [
+  'A broad axe of black iron, its edge as warm as a hearthstone.',
+  'Grim is cut in its cheek, and under the name a smoking mountain.',
+] });
+
+export const ITEMS: readonly ItemDef[] = [...WARES, quickening, scavengersAxe, graveBow, emberPart1, emberPart3, meridianMail, meridianStaff, faneMap, ...PARTS, squareFlamberge, foundingStone, emberPart2, hearthSymbol, benchStaff, benchCoat, sentinelVisor, meridianJournal4, greyShovel, groveSeedling, townRoll, grimsAxe];

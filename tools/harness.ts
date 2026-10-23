@@ -52,7 +52,7 @@ import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttac
 import type { CombatState, MonsterInst, PartyAction, Edge, Fighters } from '../src/game/combat.ts';
 import { spell, spellDice, SPELLS_GROW_TO } from '../src/game/spells.ts';
 import type { SpellDef } from '../src/game/spells.ts';
-import { item, hits } from '../src/game/items.ts';
+import { item, hits, chargesLeft, ARTIFACT_LEVEL } from '../src/game/items.ts';
 import { ITEMS } from '../src/content/index.ts';
 import type { ItemDef } from '../src/game/items.ts';
 import type { MonsterDef } from '../src/game/monsters.ts';
@@ -259,16 +259,18 @@ export const artifactIds = (): string[] => Object.values(ITEMS).filter((d) => d.
 /**
  * The artifacts a company bears where `RULES.artifacts` asks (#847; off unless `--artifacts`): each,
  * one in the world, by the first member in the company's order who may bear it, as `outfit` would
- * dress them (a weapon of the reach they hold, no two-hander over a shield) and with no artifact in
- * its slot already. After the ladder, the prestiges and the tiers; the gate's company stays the plain
+ * dress them (a weapon of the reach they hold, or of the other where none who may bear it holds that
+ * reach; a two-hander puts a shield in the pack, but never an artifact's) and with no artifact in its
+ * slot already. After the ladder, the prestiges and the tiers; the gate's company stays the plain
  * one (#891).
  */
 function bear(p: Party, ids: readonly string[]): void {
   for (const id of ids) {
     const d = item(id), mine = (c: Character): boolean => d.slot !== 'none' && !!c.equipment[d.slot] && !!item(c.equipment[d.slot]!).artifact;
-    const c = p.members.find((m) => (!d.classes || d.classes.includes(m.cls)) && !mine(m)
-      && (d.slot !== 'weapon' || (!!d.ranged === !!weaponOf(m).ranged && !(d.twoHanded && m.equipment.shield)))
-      && (d.slot !== 'shield' || !weaponOf(m).twoHanded));
+    const may = (m: Character): boolean => (!d.classes || d.classes.includes(m.cls)) && !mine(m) && (d.slot !== 'shield' || !weaponOf(m).twoHanded)
+      && !(d.twoHanded && m.equipment.shield && item(m.equipment.shield).artifact);
+    // A weapon of the reach they hold where anyone may bear it so, else of the other: its power is borne from either row.
+    const c = p.members.find((m) => may(m) && (d.slot !== 'weapon' || !!d.ranged === !!weaponOf(m).ranged)) ?? p.members.find(may);
     if (!c) continue;
     if (d.slot === 'none') c.pack.push(id); else equip(c, id);
   }
@@ -342,6 +344,8 @@ export function newerCompany(level: number, seed: number): Party {
 /** The company the harness fields: the premade six (`companyAt`), or the newer six where `RULES.company` asks (`newerCompany`). */
 export const fielded = (level: number, seed: number): Party => (RULES.company === 'newer' ? newerCompany(level, seed) : companyAt(level, seed));
 
+/** An artifact's spell's mean on one foe (#847): rolled at the level held at ARTIFACT_LEVEL, with no rank or trait. */
+const heldDamage = (c: Character, sp: SpellDef): number => (spellDice(sp, Math.min(c.level, ARTIFACT_LEVEL), RULES.spellsGrowTo) * ((sp.sides ?? 4) + 1)) / 2;
 const spellDamage = (c: Character, sp: SpellDef): number =>
   ((spellDice(sp, c.level, RULES.spellsGrowTo) * ((sp.sides ?? 4) + 1)) / 2) * rankMult(c, RULES.rankStep) + (hasTrait(c, 'spellfire') ? SPELLFIRE_DMG : 0);
 
@@ -398,6 +402,8 @@ function mendRate(c: Character): number {
 export const thrifty = (s: CombatState, p: Party, rng: RngInstance, i: number, opts: BotOpts = {}): void => {
   const c = p.members[i], o = optsFor(c, opts);
   const known = c.spells.map(spell).filter((x) => x.context !== 'explore' && x.sp <= c.sp);
+  // The artifacts' spells it bears with a charge left (#847): weighed as its own, at no cost in points.
+  const charged = borne(c).filter((id) => item(id).casts && chargesLeft(p, id) > 0).map((from) => ({ from, x: spell(item(from).casts!.spell) }));
   // Mending reaches the fallen as well as the standing; only the dead are past it.
   const living = p.members.map((m, j) => ({ m, j })).filter(({ m }) => !hasCondition(m, 'dead') && !hasCondition(m, 'stoned'));
   const everyone = known.filter((x) => x.heal && x.target === 'party').sort((a, b) => (b.heal ?? 0) - (a.heal ?? 0))[0];
@@ -432,7 +438,7 @@ export const thrifty = (s: CombatState, p: Party, rng: RngInstance, i: number, o
   const hpSpare = Math.max(0.05, spare(t.hp, t.maxHp)), spSpare = spare(t.sp, t.maxSp), price = mendRate(c);
   let best: PartyAction = armed ? { type: 'attack', target: weakest } : { type: 'defend' }, worth = 0;
   // Bless and sleep, where `opts` asks: the hit points the cast saves, weighed as a damage spell's.
-  const pays = (x: SpellDef, saved: number): number => (saved - blow * rate) / hpSpare - (spSpare > 0 ? (x.sp * price) / spSpare : 0);
+  const pays = (x: SpellDef, saved: number, free = false): number => (saved - blow * rate) / hpSpare - (spSpare > 0 && !free ? (x.sp * price) / spSpare : 0);
   const left = (): number => foes.reduce((a, f) => a + s.monsters[f].hp, 0) / Math.max(1, weapons);
   const bless = o.bless ? blessWith(s, p, i) : undefined;
   if (bless) {
@@ -441,18 +447,20 @@ export const thrifty = (s: CombatState, p: Party, rng: RngInstance, i: number, o
     const v = pays(bless, more * Math.min(bless.turns ?? 1, left()) * rate);
     if (v > worth) { worth = v; best = { type: 'cast', spellId: bless.id, target: i }; }
   }
-  const sleep = o.sleep && lie ? sleepWith(s, c) : undefined;
-  if (sleep) {
+  const hold = charged.find(({ x }) => x.inflict);
+  // An artifact's hold is weighed whatever `opts` asks (#847): a charge costs no points, and its bearer may strike nothing from their row.
+  for (const [sleep, from] of [[o.sleep && lie ? sleepWith(s, c) : undefined], [hold ? sleepWith(s, c, undefined, hold.x) : undefined, hold?.from]] as const) {
+    if (!sleep) continue;
     const held = sleep.spell.inflict === 'paralysed';
-    const v = pays(sleep.spell, incoming(s, p, sleep.foes) * (held ? ROOTS_CHANCE : SLUMBER_CHANCE) * Math.min(held ? 1 / HOLD_BREAKS : SLEEPS_FOR, left()));
-    if (v > worth) { worth = v; best = { type: 'cast', spellId: sleep.spell.id, target: sleep.target }; }
+    const v = pays(sleep.spell, incoming(s, p, sleep.foes) * (held ? ROOTS_CHANCE : SLUMBER_CHANCE) * Math.min(held ? 1 / HOLD_BREAKS : SLEEPS_FOR, left()), !!from);
+    if (v > worth) { worth = v; best = { type: 'cast', spellId: sleep.spell.id, target: sleep.target, ...(from ? { from } : {}) }; }
   }
-  for (const x of known) {
+  for (const { x, from } of [...known.map((x) => ({ x, from: undefined })), ...charged]) {
     if (!x.dice || (x.target !== 'enemy' && x.target !== 'group' && x.target !== 'all')) continue;
     // What the spell would do, by what the company has seen its element do to each, no target counted
     // for more than it has left; and fire, the mending it stops this round in each it leaves standing
     // that the company has seen mend and nothing has burnt yet.
-    const each = spellDamage(c, x), dealt = (f: number): number => Math.min(each * seenMult(s, s.monsters[f], x.element), s.monsters[f].hp);
+    const each = from ? heldDamage(c, x) : spellDamage(c, x), dealt = (f: number): number => Math.min(each * seenMult(s, s.monsters[f], x.element), s.monsters[f].hp);
     const stops = (f: number): number => { const m = s.monsters[f]; return x.element === 'fire' && !m.burnt && dealt(f) > 0 && dealt(f) < m.hp ? s.mends?.[m.def.id] ?? 0 : 0; };
     const take = (f: number): number => dealt(f) + stops(f);
     let dmg = 0, target = weakest;
@@ -464,8 +472,8 @@ export const thrifty = (s: CombatState, p: Party, rng: RngInstance, i: number, o
       for (const f of foes) byGroup.set(s.monsters[f].group, (byGroup.get(s.monsters[f].group) ?? 0) + take(f));
       for (const f of foes) { const g = byGroup.get(s.monsters[f].group) ?? 0; if (g > dmg && !(lie && wakesMany(s, x, f))) { dmg = g; target = f; } }
     }
-    const value = ((dmg - blow) * rate) / hpSpare - (spSpare > 0 ? (x.sp * price) / spSpare : 0);
-    if (value > worth) { worth = value; best = { type: 'cast', spellId: x.id, target }; }
+    const value = ((dmg - blow) * rate) / hpSpare - (spSpare > 0 && !from ? (x.sp * price) / spSpare : 0);
+    if (value > worth) { worth = value; best = { type: 'cast', spellId: x.id, target, ...(from ? { from } : {}) }; }
   }
   // A draught, where `opts` asks: where no spell pays, before a blow.
   const drink = o.drink && best.type !== 'cast' ? drinkFor(s, p, c) : undefined;
