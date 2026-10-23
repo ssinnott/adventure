@@ -1094,8 +1094,9 @@ Decided by the builder for #837, each the owner's to overturn:
    with the brief (#828's 3, the Foreland's one box), then the lair once #847's powers and the Hag's
    drawing are in. The Foreland has no enclave (#837).
 2. **E4 is the Downs', laid whole in Callow Downs at 4–5,** D4's and D3's band, the Downs' last: its
-   101 squares of land are all the Downs' by the atlas, and E3 and D4, the boxes it runs off, are
-   the Downs' too, so no crossing line names the land at its edges.
+   69 walkable squares and the 32 of shallows beside them are all the Downs' by the atlas, and E3
+   and D4, the boxes it runs off, are the Downs' too, so no crossing line names the land at its
+   edges.
 3. **No group stands on E4.** The curve's rise rule asks a box's hardest group at its top, 5. At 5
    the Downs have the Black Dog that walks D2 by night, D2's barrow wolves (the den's keepers) and
    D4's cutthroats on the road by the Delta; past them the Foreland has only its bosses. A group on
@@ -1198,10 +1199,10 @@ built".
 ### 12.1 What the box keeps
 
 - **E4 is the Downs', whole,** laid in Callow Downs at 4–5, D4's and D3's band, the Downs' last
-  (§9, #837's 2): its 101 squares of land are all the Downs' by the atlas, and E3 and D4, the boxes
-  it runs off, are the Downs' too, so no crossing line names the land at its edges. A company under
-  its floor walking in from E3 is told so in the game's own words, as at every rise of the Downs'
-  band.
+  (§9, #837's 2): its 69 walkable squares and the 32 of shallows beside them are all the Downs' by
+  the atlas, and E3 and D4, the boxes it runs off, are the Downs' too, so no crossing line names the
+  land at its edges. A company under its floor walking in from E3 is told so in the game's own
+  words, as at every rise of the Downs' band.
 - **The seams agree with the built boxes square for square,** each corner worked from the built
   letters first. E4's north edge meets E3's south edge, open at 0 to 10, its 9,0 and 10,0 sand as
   E3's are where the atlas has shallows; its west edge meets D4's east edge, open at 0 to 10, the
