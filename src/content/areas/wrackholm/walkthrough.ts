@@ -1436,12 +1436,12 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     standing.dead = fell;
     const since = meet(merryn, w.party, heard(w.world, merryn)).text;
     const says = merryn.says!, boxes = says.filter((s) => s.until).map((s) => wrap(s.lines.join('\n\n'), SAY_W).length);
-    ok(fell >= 0 && !first.includes('Old Nick') && rumour.every((l) => then.includes(l)) && !since.includes('Old Nick') && since.startsWith('Another stroke on the wall')
+    ok(fell >= 0 && !first.includes('Old Nick') && then.startsWith('Another stroke on the wall') && rumour.every((l) => then.includes(l)) && !since.includes('Old Nick') && since.startsWith('Another stroke on the wall')
       && says.length === 8 && says.every((s, i) => !s.sets && (i % 2 === 0
         ? JSON.stringify(s.until) === JSON.stringify({ slain: NICK_DOWN }) && s.lines.slice(-2).join('\n') === rumour.join('\n')
         : !s.until && JSON.stringify(s.after) === JSON.stringify({ ...JSON.parse(JSON.stringify(says[i - 1].after)), slain: NICK_DOWN }) && s.lines.join('\n') === says[i - 1].lines.slice(0, -2).join('\n')))
       && boxes.every((n) => n <= SAY_LINES) && !JSON.stringify(questLog(w.world.state, w.party)).includes('Old Nick'),
-      `Merryn says nothing of Old Nick at her first meeting, speaks of the ship she counted in and never out at every meeting after it while Old Nick lives, and once it has fallen says her own words alone: words only, in no quest, ${boxes.join(', ')} of her box's ${SAY_LINES} lines`);
+      `Merryn says nothing of Old Nick at her first meeting, after her own words speaks of the ship she counted in and never out at every meeting after it while Old Nick lives, and once it has fallen says her own words alone: words only, in no quest, ${boxes.join(', ')} of her box's ${SAY_LINES} lines`);
     listen(w);
     for (const k of hermit()) delete w.party.flags[k];
     Object.assign(w.party.flags, kept);

@@ -594,7 +594,7 @@ at 16,30 and the rumour, once #845, #847 and the guardian's drawing were in (§1
   knife the weed obeyed: cut a line with it and the kelp held her fast. / Old Nick had ship, master
   and knife. Nick gives nothing back.* It marks nothing on the world map. Built at every meeting
   after her first while Old Nick lives, whatever has become of the founder's letter; once it has
-  fallen and the knife is taken, she says her own words alone (§9, #835's 28).
+  fallen, she says her own words alone (§9, #835's 28).
 - **Slot and bearers:** a light weapon: the thief, the bard and the sorcerer.
 - **Numbers:** 1d8+15, the Grey Knife's 1d8+14 and a point (EXPANSION §5.2). Found and never sold.
 - **Power:** a spell (DESIGN §9, kind 3): Grasping Roots, three a day, of the druid's list, which
@@ -1171,7 +1171,12 @@ Decided by the builder for #835, each the owner's to overturn:
     drinking back what it took, the gate's company never won it at 30 or at 32; at 1,600 hit points
     and 20d8+20, its attack, armour, pace, reach and drinking kept, it is won 57% at 30 and 81% at
     32, where the Stair's Catcher and the Steiger stand (57% and 80%, 56% and 81%). Off the line,
-    its row carries its own `offLine` word (#897); it keeps the boss line's 20,373 xp at 32.
+    its row carries its own `offLine` word (#897); it keeps the boss line's 20,373 xp at 32. Its
+    drinking is the whole of its fight: without it the gate's company wins every fight, at 30 and at
+    32, in about seven rounds. With it no fight is lost inside the round cap of 15, and every one
+    not won is broken off there, 43 of the gate's 100 at 30 and 19 at 32, Old Nick left with a
+    quarter of its hit points at the median; let run, the gate's company wins 71% at 30 and 86% at
+    32 and falls in the rest.
 26. **Holdfast lies alone on the ship's master,** against her keel past Old Nick, with no gold
     beside it, as the Erzhemd lies alone in the smith's kist: the knife of Merryn's rumour, where
     Old Nick took it with ship and master. One in the world and sold nowhere; the walkthrough
@@ -1188,7 +1193,9 @@ Decided by the builder for #835, each the owner's to overturn:
     entry holds `until` its fall (`slain`), and after it an entry of her own words alone waits on
     the fall. Her first meeting sets `q_hermit` already, so no flag is added; the lines set nothing,
     and where the letter is not yet carried her own question still follows them. A company from an
-    old save that has met her hears them at its next meeting.
+    old save that has met her hears them at its next meeting. Until #941 gives the Deepthorn hermit
+    a flag of his own, a company that met him first holds `q_hermit` and hears them at its first
+    meeting with her.
 29. **New here:** the lair itself (#845, #846), the isle's one place at the cap, its guardian a boss
     whose blows heal it and the area's artifact a knife that casts Grasping Roots three times a day
     (#847).
