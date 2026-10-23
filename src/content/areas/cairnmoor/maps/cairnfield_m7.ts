@@ -3,7 +3,7 @@
 // from M6's grass and hills over the Kilns' farms; the shielings on the grass under the hills, the
 // sheep on them and the hounds' marks by the shore; the hills across the middle with the drovers'
 // cairn; and in the south the fold, round, of grey stones, and the dead ewe the ravens are at. West,
-// the sea and L7's coast, cut.
+// the sea and L7's coast, the Kilns' box (#831).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/cairnmoor.md §4.7 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
