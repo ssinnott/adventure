@@ -13,8 +13,8 @@ export const hoardShield = P(basaltShield, 2);
 export const leatherCoat = A('leather_coat', 'Leather Coat', 2400, 12, { classes: NO_CASTER_HEAVY });
 
 // The Glasswold's of the bounds' eight (DESIGN §9, #847): the Grey Bow's 1d12+13 and a point, the
-// ranger's, and accuracy raised by 5 while it is borne. Found and never sold; placed nowhere yet, for
-// #833 lays its lair and puts it there.
+// ranger's, and accuracy raised by 5 while it is borne. Found and never sold: it lies in the chest at the
+// nest's edge in Kushdag, the Foal-taker's eyrie in the Scarp's east face, past the Foal-taker (#833).
 export const akkush = W('akkush', 'Akkush', ARTIFACT_PRICE, 1, 12, { kind: 'bow', bonus: 14, ranged: true, twoHanded: true, classes: ['ranger'], stat: { accuracy: 5 }, artifact: true, text: [
   'A Rider\'s bow of white horn and sinew, its grip worn to one hand.',
   'Bound under the grip is a feather longer than your arm.',
