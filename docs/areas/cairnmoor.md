@@ -129,7 +129,7 @@ old and very faint says *Crew. Report.* (STORY, Act Three). Nobody sleeps after.
 the last of the ring's field, the Rift at its thinnest, with no body left and no tear (MONSTERS
 §2.1; #434, call 3): the last Rift on the road, and #158's check holds that none comes after. The
 cairns hold the oldest dead, and the tors are trolls by night. The road then drops to the long lake,
-where the lodge-keepers say people are coming up through the ice (docs/areas/rimewater.md, to come).
+where the lodge-keepers say people are coming up through the ice (docs/areas/rimewater.md).
 
 It is also where the second prestige falls (DESIGN §5): a character reaches 19 on the moor, and the
 Sorcerer's and the Bard's second trainers are here, at the Watcher's Hut and the piper's fire by
@@ -897,7 +897,7 @@ voice, keyed to flags, events and maps the save holds:
   south-west to the road and the lakes.
 - **The road's head.** The drove road drops through the Rimefells and Loch Fada, the long lake,
   lies below, where the lodge-keepers say people are coming up through the ice. The goal points
-  down to Rime Lodge, where Rimewater's chapter takes it (docs/areas/rimewater.md, to come).
+  down to Rime Lodge, where Rimewater's chapter takes it (docs/areas/rimewater.md).
 
 Nothing in the chapter is a lock (EXPANSION §2.3): the ring is open ground, the voice speaks to
 whoever sleeps there, and a company that walks the road's head first reads the journal true in that
@@ -1026,8 +1026,9 @@ Regeneration and the drain of spell points cannot be claimed: the check reads ne
 13). Carn Dubh claims nothing: its boss that curses is the curse N8 claimed, and the novelty check
 passes without it. M7 and M8 claim nothing (#484), nor do P7, P8 and L8 (#834): their monsters are
 placed already, and a tor and a tarn are among the landmarks above. Nor does Carn Fada, the enclave
-(#834): its bog bodies, wights and ice bears are placed already, the bears on Rimewater's boxes; the
-novelty check, which places it with Cairnmoor by its floor, passes (§12.5).
+(#834): its bog bodies and wights are placed already, and its ice bears, Rimewater's, are of a
+family the Sunderwood claims (`bears`); the novelty check, which places it with Cairnmoor by its
+floor, passes (§12.5).
 
 ## 8. The numbers
 
@@ -1057,7 +1058,7 @@ novelty check, which places it with Cairnmoor by its floor, passes (§12.5).
   The bounds' P7, P8 and L8 (#834, §12) add 793, 377 and 852 as built: a clear gives 17,609, 1.20
   times the ask, and the company leaves at 20.3, 0.3 over the next floor and under the limit of 21;
   Cairnmoor is in no `OVER_ROAD` row. Carn Fada, the enclave, pays 1,770 a member and is counted in
-  no clear (#845), so neither figure moves (§12.5). The Glasswold's is 0.3 under 28.
+  no clear (#845), so neither figure moves (§12.5). The Glasswold's leaves at 28.0, level with 28.
 - **Gold.** Training six members from 18 to 20 costs 8,880 with today's `trainPrice`, and the second
   prestiges about 4,000 each (DESIGN §5, #19); nothing on the moor sells or trains, so a clear's
   chests and drops must carry the gold to Rime Lodge, and the coach's fare (#539) with it. The band's

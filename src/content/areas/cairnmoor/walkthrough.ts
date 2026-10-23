@@ -1211,7 +1211,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
       for (const m of w.party.members) m.level = level;
       w.world.travel(L8.id, 23, 27, WEST);
       const r = w.world.move('forward');
-      return r.kind === 'moved' && w.world.state.mapId === CF.id && w.world.state.x === CF.start.x && w.world.state.y === CF.start.y ? r.messages.join(' | ') : r.kind;
+      return r.kind === 'moved' && w.world.state.mapId === CF.id && w.world.state.x === CF.start.x && w.world.state.y === CF.start.y && w.world.state.facing === SOUTH ? r.messages.join(' | ') : r.kind;
     };
     const band = 'Carn Fada: levels 20-21.', low = enter(17), close = enter(18), at20 = enter(20);
     ok(low === `${gap.label} | ${band} ${WARNING_IN}` && close === `${gap.label} | ${band} ${HARDER_IN}` && at20 === `${gap.label} | ${band}`,
@@ -1247,7 +1247,8 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
       && !MAP_DEFS.some((d) => (d.features ?? []).some((f) => (f.kind === 'shop' && f.stock.includes(mace.id)) || ((f.kind === 'chest' || f.kind === 'cairn') && f !== cist && f.items.includes(mace.id))))
       && !Object.values(EVERY_MONSTER).some((m) => m.drops?.some((d) => d.item === mace.id)),
       'in the end cell, the oldest dead\'s cist: 400 gold and the Sunwise Mace; no other chest or cairn holds it, no shop sells it and no monster drops it');
-    ok(mace.element === 'holy' && hits(mace) === hits(ITEMS.ice_axe) + (ELEMENT_DIE + 1) / 2 && mace.price <= CURVE.rimewater.price && !GEAR.some(([, ids]) => ids.includes(mace.id)),
+    ok(mace.element === 'holy' && hits(mace) === hits(ITEMS.ice_axe) + (ELEMENT_DIE + 1) / 2 && mace.price <= CURVE.rimewater.price && !GEAR.some(([, ids]) => ids.includes(mace.id))
+      && GEAR.some(([level, ids]) => level === 22 && ids.includes('ice_axe+1')) && hits(mace) > hits(ITEMS['ice_axe+1']),
       `the Sunwise Mace is the ice axe's numbers with a die of holy, ${hits(mace)} a blow to the ladder's Ice Axe +1's ${hits(ITEMS['ice_axe+1'])} at 22, on no rung, at ${mace.price} inside its window, Rimewater's ${CURVE.rimewater.price}`);
     // The secret: the one spiral turned against the rest, the search there and the cell behind it, never
     // opened. Walked, waded, climbed or floated, it is never reached but through its stone.
