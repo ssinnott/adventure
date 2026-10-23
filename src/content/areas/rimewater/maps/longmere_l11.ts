@@ -2,7 +2,7 @@
 // in the north-west corner, its margin iced and the stumps of pines felled when the water was lower
 // standing in it; the lynxes' pinewoods west of the ridge, the tar-burner at his kiln and the long
 // mound with the earth-house under it; the bog between the pines and the ridge; east of the ridge a
-// strip of pines and bog under the glacier; and the mountain along the south edge, where the world ends.
+// strip of pines and bog under the glacier; and the rim's mountain along the south edge, on into L12.
 // In from L10 over the north edge, walked, either side of the ridge. The west edge meets K11, the east
 // edge M11 and the south edge L12 (#832), the pines running on at 0 to 16 and the mountain from 17.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/rimewater.md §4.8 is its brief.

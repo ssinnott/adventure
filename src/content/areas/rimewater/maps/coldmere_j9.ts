@@ -6,7 +6,7 @@
 // In from K9 (#489) over its west edge, walked: K9's 0,0 to 0,31 meets 31,0 to 31,31 here square for
 // square, the open water at rows 0 to 9, the ice at 10 and 11 and the pines below. I9's east edge (#503)
 // is the Sheer Point's mountain; the south edge meets J10 (#508) under the pines, walked; the north edge
-// meets J8's south (#832) square for square, J9's 0,0 shut to the mountain to meet I8's rock.
+// meets J8's south (#832) square for square, its 0,0 shut to the mountain against J8's rock at 0,31.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/rimewater.md §4.8 is its brief (#497).
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
