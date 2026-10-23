@@ -938,10 +938,11 @@ An area's dungeons may exit only to its own region's maps, or to the outdoors on
 so its zone map lands with or before its first dungeon (`tools/tests/weather.ts:125` holds it).
 
 **A new area starts in `AREAS`** (`src/content/index.ts`), from its first commit: its folder, its line
-there, its row in the atlas's `areas` (`src/content/atlas.ts`: its order and its band, which the curve
-reads) and its row in `CURVE`, with `maps: []` and `chapter: undefined` until its first map (the
-typecheck reads `chapter` on every area) and what its clear falls short of owed in its `checks.ts`
-(`owes.curve`) until it pays. Its monsters, rooms and items are merged from the start, so nothing
+there, its row in the atlas's `areas` charted as the plan charts an area (`src/content/atlas.ts`: made
+of zones, reached from the start, its step and its band rising on the road of levels, which the atlas
+suite and the curve read) and its row in `CURVE`, with `maps: []` and `chapter: undefined` until its
+first map (the typecheck reads `chapter` on every area) and what its clear falls short of owed in its
+`checks.ts` (`owes.curve`) until it pays. Its monsters, rooms and items are merged from the start, so nothing
 waits in a list of its own ahead of its area (the `AHEAD` lists and `PLANNED` are gone, #897), and
 the suites take what is built: no chapter, walkthrough or claim of what is new is asked of an area
 until it has a map. What the suites hold of an area is the area's: what describes one zone, group,
