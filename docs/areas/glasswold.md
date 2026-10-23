@@ -2493,9 +2493,9 @@ Decided by the builder for #833, each the owner's to overturn:
     hit points, attack 23 and 18d8+20 a blow, where it was drawn at the line's boss at 32, 2,100, 20
     and 34d8+41, which the gate's company won 16% at 30 and 28% at 32. As set, it is won 57% at 30
     (inside the aim) and 81% at 32 (between the aim, 90%, and the limit, 75%), as the fixture lair's
-    guardian is (57% and 80%); no check moves. Of the rows tried, none put it inside both aims:
-    2,600 hit points gave 76% and 91%. Its row gives why it stands off the line (`offLine`), as the
-    road's bosses set by their gates do (`OFF_LINE`).
+    guardian (57% and 80%) and the Kilns' Steiger (56% and 81%) are; no check moves. Of the rows
+    tried, none put it inside both aims: 2,600 hit points gave 76% and 91%. Its row gives why it
+    stands off the line (`offLine`), as the road's bosses set by their gates do (`OFF_LINE`).
 26. **Akkush lies alone in the Rider's chest at the nest's edge** (3,9), past the Foal-taker: the
     Rider of the eldest's rumour lies there, picked clean, a long case beside him; the chest is his.
     The walkthrough asserts that no shop, chest, cairn or statue holds it elsewhere and no monster
@@ -2926,9 +2926,9 @@ This is their brief, in §4's form; each pull request builds from it and adds it
   walker, swimmer, climber or floater reaches but through the wall. The way out is the shelf, back
   onto D7's 18,24 facing west. The gate judges the lair on its one boss's odds: the Foal-taker is
   won 57% at 30 (aim 30% to 70%, limit 20% to 80%) and 81% at 32 (aim 90%, limit 75%), between its
-  aim and its limit at 32 as the fixture lair's guardian is (§9, #833's 25); drawn at the line's
-  boss it was won 16% and 28%. The harness's thrifty bot wins it 75% at 30 and 89% at 32. Density:
-  67 of 67 squares within 7 steps, the furthest 4, no sign among 12 points. The rise: the
-  Foal-taker, the one group, at 11 steps, level 32.0, near the floor 30 and the top 32. By the
-  curve's count it gives 3,395 xp a member and 800 gold, counted in no clear; the area's lead stays
-  at 28.0.
+  aim and its limit at 32 as the fixture lair's guardian and the Kilns' Steiger are (§9, #833's 25);
+  drawn at the line's boss it was won 16% and 28%. The harness's thrifty bot wins it 75% at 30 and
+  89% at 32. Density: 67 of 67 squares within 7 steps, the furthest 4, no sign among 12 points. The
+  rise: the Foal-taker, the one group, at 11 steps, level 32.0, near the floor 30 and the top 32. By
+  the curve's count it gives 3,395 xp a member and 800 gold, counted in no clear; the area's lead
+  stays at 28.0.
