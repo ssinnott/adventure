@@ -47,7 +47,7 @@ export const KILNSHEART_O4: MapDef = {
     '^^^^~~^^^^^^^^^^^^^^MMMMMMMMMMMM',
     '^^^~~^^^^^^^^^^^^^MMMMMMMMMMMMMM',
     '^~~~^^^^^^^^^^^^MMMMMMMMMMMMMMMM',
-    '~~^^^^^^^^^^^MMMMMMMMMMMMMMMMMMM',
+    '~~^^^^^^^^^^^MMMMMMMMMMMMMMMMMM^',
   ],
   features: [
     // The quarries in the crag's foot: the faces, the crane on the lip and the spoil down the hill.
@@ -73,6 +73,8 @@ export const KILNSHEART_O4: MapDef = {
     { kind: 'cairn', x: 25, y: 16, id: 'o4_cairn', text: 'A cairn on the bare hill over the stream, a quarryman\'s wedge laid on its top.', gold: 110, items: ['potion_sp_great'] },
     { kind: 'event', x: 29, y: 11, id: 'o4_edge', once: true, text: 'East the hills fall away into a haze that does not lift. Nothing shows through it.' },
     { kind: 'event', x: 15, y: 27, id: 'o4_ridge', once: true, text: 'South, the mountain\'s shoulder, and over it a shimmer of heat where the Stone\'s hills are.' },
+    // The corner square the strip's north end opened (#831): hills under the mountain's foot, east and south on.
+    { kind: 'event', x: 31, y: 31, id: 'o4_corner', once: true, text: 'The hills end in a pocket under the mountain. East and south they run on, as grey and bare as these.' },
   ],
   secrets: [{ x: 3, y: 7, hint: 'o4_face' }],
   encounters: [

@@ -691,8 +691,8 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(stone6.kind === 'event' && stone6.x === 30 && stone6.y === 4 && stone6.text.includes(`ANVILHALL ${Math.round(toHall6 / 13)} `), `the milestone before Kilnhaven's gate says ANVILHALL ${Math.round(toHall6 / 13)}: ${toHall6} squares along the roads to Anvilhall's gate`);
   see(w, 'kilnmouth_l6:l6_yard');
 
-  // Past its west edge lies the heath of K6 (#831, walked on in `theBounds`), and past its south edge L7, cut, the world ends.
-  ok(out.passable(l6.x - 1, l6.y + 25) === 'ok' && out.passable(l6.x + 20, l6.y + 32) !== 'ok', 'past L6\'s west edge the heath of K6 runs on, and past its south edge, for now, the world ends');
+  // Past its west edge lies the heath of K6 and past its south edge the shore of L7 (#831, walked on in `theBounds`).
+  ok(out.passable(l6.x - 1, l6.y + 25) === 'ok' && out.passable(l6.x + 20, l6.y + 32) === 'ok', 'past L6\'s west edge the heath of K6 runs on, and past its south edge the shore of L7');
 
   // The store's clerk on the quay; and the box's groups, each won at its floor: the beetles in the ore
   // heaps, the Hand's crew on the pier by night and the worm pair under the heath.
@@ -2088,10 +2088,11 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   ok(search(P5.id, 10, 16, 'p5_trial'), 'searched at the fan of spoil, the dry stone gives, and the trial behind it can be walked into');
   const cache = P5.features!.find((f) => f.kind === 'chest' && f.id === 'p5_cache_chest');
   ok(cache?.kind === 'chest' && cache.gold === 230 && cache.items.join() === 'elixir,potion_sp_great' && cache.x === 14 && cache.y === 16, 'at the trial\'s end, three squares in, the cutters\' cache: 230 gold, an Elixir and a Sapphire Vial');
-  // O5's crag runs on across the seam, so P5 is walked into from O5 at rows 0 to 21 alone; and past its
-  // north edge, P4's south pocket, cut, the world ends for now.
-  ok(Array.from({ length: 32 }, (_, i) => out.passable(p5.x, p5.y + i) === 'ok').join() === Array.from({ length: 32 }, (_, i) => i < 22).join() && out.passable(p5.x + 2, p5.y - 1) !== 'ok',
-    'P5 opens onto O5 at rows 0 to 21, the crag shuts 22 to 31, and past its north edge, for now, the world ends');
+  // O5's crag runs on across the seam, so P5 is walked into from O5 at rows 0 to 21 alone; and its north
+  // edge opens at columns 0 to 5 onto P4's south pocket, walked on below.
+  ok(Array.from({ length: 32 }, (_, i) => out.passable(p5.x, p5.y + i) === 'ok').join() === Array.from({ length: 32 }, (_, i) => i < 22).join()
+    && Array.from({ length: 24 }, (_, i) => out.passable(p5.x + i, p5.y - 1) === 'ok').join() === Array.from({ length: 24 }, (_, i) => i < 6).join(),
+    'P5 opens onto O5 at rows 0 to 21, the crag shuts 22 to 31, and its north edge opens at columns 0 to 5 onto P4');
 
   // The ash under the vents (P6): east from O6's 31,20 onto P6's 0,20, and south from P5's 5,31 onto
   // its 5,0, both walked, in the same land.
@@ -2118,6 +2119,94 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   ok(out.passable(p6.x + 15, p6.y + 2) !== 'ok' && out.passable(p6.x + 14, p6.y + 3) === 'ok' && out.passable(p6.x + 15, p6.y + 3) === 'ok', 'the passage turns south a square in and the store lies past the turn, where P5\'s trial runs straight');
   const kept = P6.features!.find((f) => f.kind === 'chest' && f.id === 'p6_store_chest');
   ok(kept?.kind === 'chest' && kept.gold === 250 && kept.items.join() === 'elixir,elixir' && kept.x === 15 && kept.y === 3, 'in the store past the turn, a chest with 250 gold and two Elixirs');
+
+  // The shore under the port (L7): south from L6's 28,31 onto L7's 28,0, walked, in the same land at the
+  // same floor, so nothing is said of it.
+  const [L7, P4] = ['kilnmouth_l7', 'kilnsheart_p4'].map((id) => MAP_DEFS.find((d) => d.id === id)!);
+  const [l7, p4, m7, o4, o5] = [L7.id, P4.id, 'cairnfield_m7', 'kilnsheart_o4', 'kilnsheart_o5'].map((id) => out.zones.find((z) => z.id === id)!);
+  w.world.travel('kilnmouth_l6', 28, 31, SOUTH);
+  const shore = w.world.move('forward');
+  ok(shore.kind === 'moved' && w.world.zone?.id === L7.id && w.world.state.x === l7.x + 28 && w.world.state.y === l7.y && !shore.messages.some((m) => m.includes('Kilnmouth.') || m.includes('harder')),
+    `south from L6's 28,31 onto L7's 28,0, walked, and the land not named again (${said(shore)})`);
+  listen(w);
+  const strand = reach([L7.start.x, L7.start.y], {}, undefined, l7);
+  ok(strand.size > 150 && [[0, 0], [1, 1], [10, 2], [15, 5], [22, 3], [25, 4], [31, 10]].every(([x, y]) => strand.has(at(x, y, l7))), `the shore (${strand.size} squares), the knoll, the dunes, the fire, the spill, the kerbstone and the seam's last square are all walked to on foot from the way in`);
+  for (const id of ['l7_heath', 'l7_spill', 'l7_wreck', 'l7_dunes', 'l7_mound']) see(w, `${L7.id}:${id}`);
+
+  // The sea-coaler at his fire and his word on the dunes; the box's groups won at its floor, the fire clear of both.
+  const coaler = L7.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'A sea-coaler')!;
+  w.world.travel(L7.id, coaler.x, coaler.y);
+  const coal = meet(coaler, w.party, heard(w.world, coaler)).text;
+  ok(coal.includes('Sea-coal') && coal.includes('the dunes west of the fire'), `the sea-coaler rakes sea-coal off the tide line and says to keep out of the dunes west of his fire (${coal.replace(/\n+/g, ' ')})`);
+  listen(w);
+  for (const g of L7.encounters!) fight(w, `${L7.id}:${g.id}`);
+  const [spill, dunes] = L7.encounters!, fire = L7.features!.find((f) => f.kind === 'camp')!;
+  ok(L7.encounters!.length === 2 && spill.monsters.join() === 'fire_beetle,fire_beetle,fire_beetle,fire_beetle' && spill.respawn === 1440 && dunes.monsters.join() === 'rock_worm' && dunes.respawn === 2880 && dunes.roams === false,
+    'the shore holds four fire beetles at the spill, back after a day, and a lone rock worm in the dunes, back after two and staying where it is');
+  ok(L7.encounters!.every((g) => Math.max(Math.abs(g.x - fire.x), Math.abs(g.y - fire.y)) > 4), 'the driftwood fire stands more than four squares clear of both groups, so a company can rest at it');
+
+  // The secret: the kerbstone out of the ring, the search there and the chamber behind the mound's door, two
+  // by two. Walked, waded, climbed or floated, it is never reached but through the door.
+  const chamber = [[27, 4], [28, 4], [27, 5], [28, 5]];
+  const cist = reach([L7.start.x, L7.start.y], ALL, [26, 4], l7);
+  ok(cist.size > 150 && !chamber.some(([x, y]) => cist.has(at(x, y, l7))), `the chamber is shut but for its door in the mound: none of L7's ${cist.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${L7.id}:l7_kerb`);
+  ok(search(L7.id, 25, 4, 'l7_cist'), 'searched at the kerbstone out of the ring, the mound gives, and the chamber behind it can be walked into');
+  ok(chamber.every(([x, y]) => out.passable(l7.x + x, l7.y + y) === 'ok') && [[29, 4], [29, 5], [27, 3], [28, 6]].every(([x, y]) => out.passable(l7.x + x, l7.y + y) !== 'ok'), 'the chamber is two by two, where K6\'s is a cell, shut round by the mound');
+  const hoard = L7.features!.find((f) => f.kind === 'chest' && f.id === 'l7_cist_chest');
+  ok(hoard?.kind === 'chest' && hoard.gold === 200 && hoard.items.join() === 'elixir' && hoard.x === 28 && hoard.y === 5, 'in the chamber, a chest with 200 gold and an Elixir');
+  const lookout = L7.features!.find((f) => f.kind === 'cairn' && f.id === 'l7_lookout');
+  ok(lookout?.kind === 'cairn' && lookout.gold === 100 && lookout.items.join() === 'potion_sp_great' && lookout.x === 1 && lookout.y === 1, 'on the knoll at the west end, a lookout\'s cairn with 100 gold and a Sapphire Vial');
+
+  // The edges: east over the seam into the Cairnfield, named with its warning to a company two under its
+  // floor; the west edge open at its corner square alone, onto K7's tail, cut; and the sea on the south.
+  w.world.travel(L7.id, 31, 5, EAST);
+  const field = w.world.move('forward');
+  ok(field.kind === 'moved' && w.world.zone?.id === m7.id && w.world.state.x === m7.x && w.world.state.y === m7.y + 5 && field.messages.some((m) => m.startsWith('The Cairnfield.') && m.length > 'The Cairnfield.'.length),
+    `east from L7's 31,5 onto M7's 0,5: the Cairnfield is named, with its warning to a company of 16 (${said(field)})`);
+  listen(w);
+  ok(Array.from({ length: 32 }, (_, i) => out.passable(l7.x, l7.y + i) === 'ok').join() === Array.from({ length: 32 }, (_, i) => i === 0).join() && out.passable(l7.x - 1, l7.y) !== 'ok' && out.passable(l7.x + 20, l7.y + 32) !== 'ok',
+    'L7\'s west edge is open at its corner square alone, onto K7\'s tail, cut, and past it and the south edge the world ends for now');
+
+  // The strip's north end (P4): east from O4's 31,11 onto P4's 0,11, walked, in the same land at the same
+  // floor, so nothing is said of it.
+  w.world.travel(o4.id, 31, 11, EAST);
+  const strip = w.world.move('forward');
+  ok(strip.kind === 'moved' && w.world.zone?.id === P4.id && w.world.state.x === p4.x && w.world.state.y === p4.y + 11 && !strip.messages.some((m) => m.includes('The Kilns.') || m.includes('harder')),
+    `east from O4's 31,11 onto P4's 0,11, walked, and the land not named again (${said(strip)})`);
+  listen(w);
+  const hillsNorth = reach([P4.start.x, P4.start.y], {}, undefined, p4);
+  ok(hillsNorth.size > 20 && [[0, 7], [1, 10], [2, 12], [0, 21]].every(([x, y]) => hillsNorth.has(at(x, y, p4))) && ![[2, 29], [0, 31]].some(([x, y]) => hillsNorth.has(at(x, y, p4))),
+    `the north pocket (${hillsNorth.size} squares), the mouth, the rushes and both ends are walked to on foot from the way in, and the south pocket is not`);
+  ok(Array.from({ length: 32 }, (_, i) => out.passable(p4.x, p4.y + i) === 'ok').join() === Array.from({ length: 32 }, (_, i) => (i >= 7 && i <= 21) || i === 31).join(),
+    'P4 opens onto O4 at rows 7 to 21 and at the corner, 31, and the mountain shuts the rest');
+  ok(!P4.encounters?.length, 'P4 holds no group: its two pockets are not a box of fights and pay nothing');
+
+  // The secret: the rushes along the rock's foot, the search there and the spring-head behind the face, a
+  // cell of one square. Walked, waded, climbed or floated, it is never reached but through the rock.
+  const spring = reach([P4.start.x, P4.start.y], ALL, [3, 12], p4);
+  ok(spring.size > 20 && !spring.has(at(4, 12, p4)), `the spring-head is shut but for its door in the rock: none of P4's ${spring.size} squares walked, waded, climbed or floated reaches it`);
+  for (const id of ['p4_mouth', 'p4_rushes']) see(w, `${P4.id}:${id}`);
+  ok(search(P4.id, 2, 12, 'p4_spring'), 'searched at the rushes, the rock gives, and the spring-head behind it can be walked into');
+  ok(out.passable(p4.x + 4, p4.y + 12) === 'ok' && [[5, 12], [4, 11], [4, 13]].every(([x, y]) => out.passable(p4.x + x, p4.y + y) !== 'ok'), 'the spring-head is a cell of one square, shut round by the rock');
+  const basin = P4.features!.find((f) => f.kind === 'chest' && f.id === 'p4_basin_chest');
+  ok(basin?.kind === 'chest' && basin.gold === 150 && basin.items.join() === 'elixir' && basin.x === 4 && basin.y === 12, 'in the basin, a chest with 150 gold and an Elixir');
+
+  // The south pocket, P5's hills run on: north from P5's 2,0 onto P4's 2,31, walked, and the corner round
+  // O4's 31,31, hills in all four squares as the atlas has them.
+  walkThrough(w, P5.id, 2, 0, NORTH, P4.id, 2);
+  const hillsSouth = reach([2, 31], {}, undefined, p4);
+  ok(hillsSouth.size > 20 && [[0, 31], [4, 28], [5, 30]].every(([x, y]) => hillsSouth.has(at(x, y, p4))) && !hillsSouth.has(at(2, 12, p4)), `the south pocket (${hillsSouth.size} squares), the cairn and the gap in the rim are walked to on foot from P5 alone`);
+  see(w, `${P4.id}:p4_view`);
+  const cairn = P4.features!.find((f) => f.kind === 'cairn' && f.id === 'p4_cairn');
+  ok(cairn?.kind === 'cairn' && cairn.gold === 100 && cairn.items.join() === 'potion_sp_great' && cairn.x === 4 && cairn.y === 28, 'in the south pocket, a cairn with 100 gold and a Sapphire Vial');
+  ok([[o4, 31, 31], [p4, 0, 31], [o5, 31, 0], [p5, 0, 0]].every(([z, x, y]) => out.at((z as MapZone).x + (x as number), (z as MapZone).y + (y as number)).ch === '^'), 'the four squares round the corner of O4, O5, P4 and P5 are all hills, as the atlas has them');
+  w.world.travel(o5.id, 31, 0, NORTH);
+  const up = w.world.move('forward');
+  w.world.travel(o4.id, 31, 31, EAST);
+  const across = w.world.move('forward');
+  ok(up.kind === 'moved' && across.kind === 'moved' && w.world.zone?.id === P4.id && w.world.state.x === p4.x && w.world.state.y === p4.y + 31, 'the corner is walked: north from O5\'s 31,0 onto O4\'s 31,31, and east from it onto P4\'s 0,31');
+  listen(w);
 
   // Once the tear is closed the slag strays come back no more, and leave each box its gentler group.
   const closed = newWalk(ok);
