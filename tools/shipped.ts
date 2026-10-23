@@ -1,17 +1,20 @@
-// What a save can refer to, as shipped: src/content/shipped.json lists every id and placement a
-// save may hold (EXPANSION §5.5). A content edit reaches every old save, so what is in the list
-// stays: a map keeps its size, a zone its place, a door its square, and no chest, event, inscription,
-// group, flag, item, spell, monster, class, race, condition or skill goes, unless SAVE_VERSION goes up
-// with an upgrade (src/game/upgrades.ts). New content only adds. tools/tests/shipped.ts holds the
-// content to it.
-//   node tools/shipped.ts    record what the content adds; refuses while something has gone or
-//                            moved without a bump and its upgrade
-import { readFileSync, writeFileSync } from 'node:fs';
+// What a save can refer to, as shipped: the shipped files list every id and placement a save may
+// hold (EXPANSION §5.5), each area's own in src/content/areas/<area>/shipped.json and the version
+// and what no area owns in src/content/shipped.json, joined into one record. A content edit reaches
+// every old save, so what is in the list stays: a map keeps its size, a zone its place, a door its
+// square, and no chest, event, inscription, group, flag, item, spell, monster, class, race, condition
+// or skill goes, unless SAVE_VERSION goes up with an upgrade (src/game/upgrades.ts). New content
+// only adds. tools/tests/shipped.ts holds the content to it.
+//   node tools/shipped.ts    record what the content adds, each in the file of the area that owns
+//                            it (a new area's first run makes its file), writing only a file that
+//                            changed; refuses while something has gone or moved without a bump and
+//                            its upgrade
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { GameMap } from '../src/game/map.ts';
 import type { MapDef } from '../src/game/map.ts';
 import type { Atlas } from '../src/game/atlas.ts';
-import { layOutdoors } from '../src/game/outdoors.ts';
+import { layOutdoors, OUTDOORS } from '../src/game/outdoors.ts';
 import { CLASSES, RACES, CONDITION_ORDER, guildFlag } from '../src/game/party.ts';
 import { SAVE_VERSION } from '../src/game/save.ts';
 import { spentId } from '../src/game/wilds.ts';
@@ -23,15 +26,21 @@ import { GLOVE_FLAG } from '../src/game/combat.ts';
 import { UPGRADES } from '../src/game/upgrades.ts';
 import type { Upgrade } from '../src/game/upgrades.ts';
 import { ATLAS, MAP_DEFS, AREAS, GUILD_QUESTS } from '../src/content/index.ts';
+import type { Area } from '../src/content/area.ts';
 import { GUILDS, takenFlag, doneFlag, rankFlag } from '../src/content/guilds.ts';
 import type { GuildId } from '../src/content/guilds.ts';
 import { ITEMS } from '../src/content/items.ts';
 import { SPELLS } from '../src/content/spells.ts';
 
-export const SHIPPED_FILE = fileURLToPath(new URL('../src/content/shipped.json', import.meta.url));
+/** A shipped file, from the root: an area's, or with no area the central one, which holds the version and what no area owns. */
+export const shippedFile = (area?: string): string => (area ? `src/content/areas/${area}/shipped.json` : 'src/content/shipped.json');
+const onDisk = (file: string): string => fileURLToPath(new URL(`../${file}`, import.meta.url));
 
 /** Flags the code sets rather than the content: the temple's count of gifts, and the Hearth's light seen to pass through a machine. */
 const CODE_FLAGS = ['donations', GLOVE_FLAG];
+
+/** An area's own maps, items, monsters and guild quests, by id, as its lists hold them: its shipped file records them. */
+export interface AreaIds { id: string; maps: readonly string[]; items: readonly string[]; monsters: readonly string[]; guildQuests: readonly string[] }
 
 /** The content a save refers to: the maps as written and the atlas that lays them out, and the tables. */
 export interface Content {
@@ -50,6 +59,8 @@ export interface Content {
   skills: readonly string[];
   /** The tiers, which a member's `tiers` names on each line (game/mastery.ts). */
   tiers: readonly string[];
+  /** Who owns what: each area its own lists. What none owns is the central file's. */
+  areas: readonly AreaIds[];
 }
 
 /** A played map's size (explored bits are indexed by it), and the ids and door squares its state is kept by. */
@@ -73,6 +84,18 @@ export interface Ids {
 
 export interface Shipped extends Ids { version: number }
 
+/**
+ * One shipped file's part of the record, in the record's shape. An area's holds its played maps,
+ * its zones, the ids, groups and door squares of the outdoors that stand in its boxes (under the
+ * outdoors' id, with no size), the flags its maps and guild quests set, its items and its monsters;
+ * the central file the version, the outdoors' size and the rest. What a file has nothing in it
+ * leaves out.
+ */
+export type Share = Partial<Omit<Shipped, 'maps'>> & { maps?: Record<string, Partial<ShippedMap>> };
+/** The shipped files' parts, by file (`shippedFile`). */
+export type Shares = Record<string, Share>;
+type List = keyof typeof LISTS;
+
 export const CONTENT: Content = {
   atlas: ATLAS, defs: MAP_DEFS,
   // From the lists as written: the merged tables are open to a tool's additions (tools/harness.ts's
@@ -81,42 +104,93 @@ export const CONTENT: Content = {
   monsters: AREAS.flatMap((a) => a.monsters).map((m) => m.id),
   classes: Object.keys(CLASSES), races: Object.keys(RACES), conditions: [...CONDITION_ORDER],
   guildQuests: GUILD_QUESTS.map((q) => q.id), skills: Object.keys(SKILLS), tiers: [...TIERS],
+  areas: AREAS.map((a: Area) => ({ id: a.id, maps: a.maps.map((d) => d.id), items: a.items.map((i) => i.id), monsters: a.monsters.map((m) => m.id), guildQuests: (a.guilds ?? []).map((q) => q.id) })),
 };
 
 const sorted = (xs: Iterable<string>): string[] => [...new Set(xs)].sort();
 const byKey = <T>(o: Record<string, T>): Record<string, T> => Object.fromEntries(Object.entries(o).sort(([a], [b]) => (a < b ? -1 : 1)));
 
-/** What a save made on this content could hold. */
-export function collect(c: Content): Ids {
-  const maps: Record<string, ShippedMap> = {}, zones: Ids['zones'] = {}, flags = new Set(CODE_FLAGS);
+/**
+ * What a save made on this content could hold, cut by the file that records it. A played map, a
+ * zone, an item, a monster and a guild quest's flags are the area's whose lists hold it; an id,
+ * group, door square or flag of the outdoors is the area's whose box it stands in, and a flag a town
+ * or dungeon sets its area's, so a flag two areas set is in both. The rest is the central file's:
+ * the outdoors' size, the core items, the flags the code sets and the guilds' ranks, the spells,
+ * classes, races, conditions, skills and tiers, and whatever stands in no area's lists or box.
+ */
+export function collectShares(c: Content): Shares {
+  const shares: Shares = {};
+  const own = (ids: (a: AreaIds) => readonly string[]): Map<string, string> => new Map(c.areas.flatMap((a) => ids(a).map((id) => [id, a.id] as const)));
+  const mapOf = own((a) => a.maps), itemOf = own((a) => a.items), monsterOf = own((a) => a.monsters), questOf = own((a) => a.guildQuests);
+  const share = (area?: string): Share => (shares[shippedFile(area)] ??= {});
+  const add = (area: string | undefined, k: List, ids: Iterable<string>): void => { (share(area)[k] ??= []).push(...ids); };
   for (const def of layOutdoors(c.atlas, c.defs)) {
-    const m = new GameMap(def), doors: string[] = [];
+    const m = new GameMap(def), outdoors = m.id === OUTDOORS;
+    const box = (x: number, y: number): string => m.zones.find((z) => x >= z.x && x < z.x + z.w && y >= z.y && y < z.y + z.h)?.id ?? '';
+    /** Whose a square is: the outdoors' the area's whose box it stands in, a town's or dungeon's its area's. */
+    const whose = (x: number, y: number): string | undefined => mapOf.get(outdoors ? box(x, y) : m.id);
+    const kept = (area: string | undefined): Partial<ShippedMap> => ((share(area).maps ??= {})[m.id] ??= {});
+    const put = (x: number, y: number, k: 'used' | 'groups' | 'doors', id: string): void => { (kept(whose(x, y))[k] ??= []).push(id); };
+    if (outdoors) kept(undefined).size = `${m.width}x${m.height}`;
+    else Object.assign(kept(whose(0, 0)), { size: `${m.width}x${m.height}`, used: [], groups: [], doors: [] });
     for (let y = 0; y < m.height; y++) for (let x = 0; x < m.width; x++) {
       const d = m.at(x, y).door;
-      if (d === 'locked' || d === 'secret') doors.push(`${x},${y}`);
+      if (d === 'locked' || d === 'secret') put(x, y, 'doors', `${x},${y}`);
     }
-    const used: string[] = [];
     for (const f of m.features) {
-      const spent = spentId(f); if (spent) used.push(spent);
-      const read = readId(f); if (read) used.push(read);
-      if (f.kind === 'guild') flags.add(guildFlag(f.name));
-      if (f.kind === 'npc') for (const x of personFlags(f)) flags.add(x);
-      if (f.kind === 'event') for (const x of [f.sets ?? []].flat()) flags.add(x);
-      if (f.kind === 'inn') for (const x of f.nights ?? []) flags.add(x);
-      if (f.kind === 'camp') for (const n of f.nights ?? []) flags.add(n.sets);
+      const area = whose(f.x, f.y);
+      const spent = spentId(f); if (spent) put(f.x, f.y, 'used', spent);
+      const read = readId(f); if (read) put(f.x, f.y, 'used', read);
+      if (f.kind === 'guild') add(area, 'flags', [guildFlag(f.name)]);
+      if (f.kind === 'npc') add(area, 'flags', personFlags(f));
+      if (f.kind === 'event') add(area, 'flags', [f.sets ?? []].flat());
+      if (f.kind === 'inn') add(area, 'flags', f.nights ?? []);
+      if (f.kind === 'camp') add(area, 'flags', (f.nights ?? []).map((n) => n.sets));
     }
-    for (const e of m.encounters) for (const x of groupFlags(e)) flags.add(x);
-    maps[m.id] = { size: `${m.width}x${m.height}`, used: sorted(used), groups: sorted(m.encounters.map((e) => e.id)), doors: sorted(doors) };
-    for (const z of m.zones) zones[z.id] = { at: `${z.x},${z.y}`, size: `${z.w}x${z.h}` };
+    for (const e of m.encounters) { put(e.x, e.y, 'groups', e.id); add(whose(e.x, e.y), 'flags', groupFlags(e)); }
+    for (const z of m.zones) (share(mapOf.get(z.id)).zones ??= {})[z.id] = { at: `${z.x},${z.y}`, size: `${z.w}x${z.h}` };
   }
-  for (const q of c.guildQuests) flags.add(takenFlag(q)).add(doneFlag(q));
-  for (const g of Object.keys(GUILDS) as GuildId[]) flags.add(rankFlag(g));
+  for (const q of c.guildQuests) add(questOf.get(q), 'flags', [takenFlag(q), doneFlag(q)]);
+  add(undefined, 'flags', [...CODE_FLAGS, ...(Object.keys(GUILDS) as GuildId[]).map(rankFlag)]);
+  for (const id of c.items) add(itemOf.get(id), 'items', [id]);
+  for (const id of c.monsters) add(monsterOf.get(id), 'monsters', [id]);
+  for (const k of ['spells', 'classes', 'races', 'conditions', 'skills', 'tiers'] as const) add(undefined, k, c[k]);
+  return byKey(Object.fromEntries(Object.entries(shares).map(([file, s]) => [file, tidy(s)])));
+}
+
+/** A share as written: the record's keys in its order, each list sorted with each id once, what it has nothing in left out. */
+function tidy(s: Share): Share {
+  const out: Share = s.version === undefined ? {} : { version: s.version };
+  if (s.maps) out.maps = byKey(Object.fromEntries(Object.entries(s.maps).map(([id, m]) => [id, {
+    ...(m.size === undefined ? {} : { size: m.size }), ...(m.used ? { used: sorted(m.used) } : {}),
+    ...(m.groups ? { groups: sorted(m.groups) } : {}), ...(m.doors ? { doors: sorted(m.doors) } : {}),
+  }])));
+  if (s.zones) out.zones = byKey(s.zones);
+  for (const k of Object.keys(LISTS) as List[]) { const xs = s[k]; if (xs?.length) out[k] = sorted(xs); }
+  return out;
+}
+
+/** The shipped files as the one record a save is held to: each list the union of the files', sorted, a map's lists likewise and its size the one a file gives. */
+export function join(shares: Shares): Ids {
+  const all = Object.values(shares), maps: Record<string, ShippedMap> = {}, zones: Ids['zones'] = {};
+  for (const s of all) {
+    for (const [id, m] of Object.entries(s.maps ?? {})) {
+      const j = (maps[id] ??= { size: '', used: [], groups: [], doors: [] });
+      if (m.size !== undefined) j.size = m.size;
+      j.used.push(...(m.used ?? [])); j.groups.push(...(m.groups ?? [])); j.doors.push(...(m.doors ?? []));
+    }
+    Object.assign(zones, s.zones);
+  }
+  const list = (k: List): string[] => sorted(all.flatMap((s) => s[k] ?? []));
   return {
-    maps: byKey(maps), zones: byKey(zones), flags: sorted(flags),
-    items: sorted(c.items), spells: sorted(c.spells), monsters: sorted(c.monsters), classes: sorted(c.classes), races: sorted(c.races), conditions: sorted(c.conditions),
-    skills: sorted(c.skills), tiers: sorted(c.tiers),
+    maps: byKey(Object.fromEntries(Object.entries(maps).map(([id, m]) => [id, { size: m.size, used: sorted(m.used), groups: sorted(m.groups), doors: sorted(m.doors) }]))),
+    zones: byKey(zones), flags: list('flags'), items: list('items'), spells: list('spells'), monsters: list('monsters'), classes: list('classes'), races: list('races'),
+    conditions: list('conditions'), skills: list('skills'), tiers: list('tiers'),
   };
 }
+
+/** What a save made on this content could hold, as one record: the shares joined. */
+export const collect = (c: Content): Ids => join(collectShares(c));
 
 export interface Comparison {
   /** What has gone or moved without a bump and its upgrade, or an upgrade missing: a fix to the content or a bump. */
@@ -126,7 +200,7 @@ export interface Comparison {
 }
 
 /** Each list, by the word for one of it. */
-const LISTS = { flags: 'flag', items: 'item', spells: 'spell', monsters: 'monster', classes: 'class', races: 'race', conditions: 'condition', skills: 'skill', tiers: 'tier' } as const;
+export const LISTS = { flags: 'flag', items: 'item', spells: 'spell', monsters: 'monster', classes: 'class', races: 'race', conditions: 'condition', skills: 'skill', tiers: 'tier' } as const;
 
 /**
  * The content now against the list as shipped. Something gone or moved is a problem at the same
@@ -164,18 +238,35 @@ export function compare(shipped: Shipped, now: Ids, version = SAVE_VERSION, upgr
   return { problems, unrecorded };
 }
 
-export const readShipped = (): Shipped => JSON.parse(readFileSync(SHIPPED_FILE, 'utf8')) as Shipped;
+/** One shipped file, a bad one named: a conflict marker left in it says which file it is in. */
+function readShare(file: string): Share {
+  try { return JSON.parse(readFileSync(onDisk(file), 'utf8')) as Share; } catch (e) { throw new Error(`${file}: ${(e as Error).message}`); }
+}
+
+/** The shipped files there are: the central one and each listed area's. A new area has none until its first run of the tool. */
+export function readShares(areas: readonly string[] = CONTENT.areas.map((a) => a.id)): Shares {
+  const shares: Shares = {};
+  for (const file of [shippedFile(), ...areas.map(shippedFile)]) if (existsSync(onDisk(file))) shares[file] = readShare(file);
+  return shares;
+}
+
+/** The shipped files joined, at the central file's version: the one record a save is held to. */
+export const readShipped = (shares: Shares = readShares()): Shipped => ({ version: shares[shippedFile()]?.version ?? 0, ...join(shares) });
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const now = collect(CONTENT);
-  let shipped: Shipped | undefined;
-  try { shipped = readShipped(); } catch { /* none yet: everything is new */ }
-  const { problems, unrecorded } = shipped ? compare(shipped, now) : { problems: [], unrecorded: ['everything'] };
+  const read = readShares(), now = collectShares(CONTENT);
+  const { problems, unrecorded } = Object.keys(read).length ? compare(readShipped(read), join(now)) : { problems: [], unrecorded: ['everything'] };
   if (problems.length) {
     console.log(`Not written: ${problems.length} problem(s)\n` + problems.map((p) => '  ' + p).join('\n'));
     process.exit(1);
   }
-  const out: Shipped = { version: SAVE_VERSION, ...now };
-  writeFileSync(SHIPPED_FILE, JSON.stringify(out, null, 2) + '\n');
+  const written: string[] = [];
+  for (const [file, share] of Object.entries(now)) {
+    const text = JSON.stringify(file === shippedFile() ? { version: SAVE_VERSION, ...share } : share, null, 2) + '\n';
+    if (existsSync(onDisk(file)) && readFileSync(onDisk(file), 'utf8') === text) continue;
+    writeFileSync(onDisk(file), text);
+    written.push(file);
+  }
   console.log(unrecorded.length ? `Recorded:\n${unrecorded.map((u) => '  ' + u).join('\n')}` : 'Nothing new.');
+  if (written.length) console.log(`Written:\n${written.map((w) => '  ' + w).join('\n')}`);
 }
