@@ -1,15 +1,15 @@
 // The Whitespine, box J12: the vale's end under the peaks, behind the road. Country, band 22-23: the
 // vale's hills and grass running out south of J11 against the peaks, the snow unbroken to their feet;
 // a bell heard under the snow, over Highcell's lower house; the stone seat facing the peaks, the cairn
-// at the vale's end and the drop on the east into cloud; the eagles over the crags and the bones under
+// at the vale's end and the grass going on east; the eagles over the crags and the bones under
 // them; in the pines at the far end the snow trolls' bowl scraped to the earth, and the pilgrim frozen
 // against a pine; and the bell-rope hanging out of the rock, and the cell behind it. At the tip of the
 // pines where the trolls lie up, a pine split by lightning and, in the rock below it behind a second
 // secret door, a hollow with two finds (#863, docs/areas/whitespine.md §4.9).
 // In from J11 (#499) walked, over the hills: J11's south edge meets this map's north edge square for
 // square, nothing said crossing between them, the same land at the same floor (#166). The west edge is
-// the peaks against I12, the east edge ends the world against K12 (cut, the Monastery's plate moved to
-// J11, #443 call 9) and the south edge is the range and the rim.
+// the peaks against I12, the east edge meets K12's west (Loch Fuar's, #832) square for square, the
+// Monastery's plate moved to J11 (#443 call 9), and the south edge is the range and the rim.
 // Cut from the atlas by tools/scaffold.ts, the world's end cut by hand; docs/areas/whitespine.md §4.8
 // is its brief.
 import type { MapDef } from '../../../../game/map.ts';
@@ -59,12 +59,12 @@ export const MONKSVALE_J12: MapDef = {
   ],
   features: [
     // The vale running out under the peaks: the snow unbroken to their feet, the bell under it, the
-    // stone seat facing them, the cairn at the vale's end and the drop on the east into cloud.
+    // stone seat facing them, the cairn at the vale's end and the grass going on east (#832).
     { kind: 'event', x: 25, y: 3, id: 'j12_end', once: true, text: 'The vale runs out here under the peaks. The snow goes up to their feet unbroken, and no farther.' },
     { kind: 'event', x: 27, y: 5, id: 'j12_under', once: true, text: 'Underfoot, through the snow, faint, a bell is ringing somewhere below.' },
     { kind: 'shrine', x: 22, y: 7, id: 'j12_seat', text: 'A stone seat in the hills facing the peaks, worn smooth, and a bowl cut in its arm that holds clear water.', stat: 'intellect', done: 'The stone seat facing the peaks.' },
     { kind: 'cairn', x: 29, y: 7, id: 'j12_cairn', text: 'A cairn at the vale\'s end, and on the top stone a sandal frozen to it, its strap still tied.', gold: 300, items: ['potion_sp_great'] },
-    { kind: 'event', x: 30, y: 4, id: 'j12_drop', once: true, text: 'East the grass runs out to the edge of a drop, and below it there is only cloud.' },
+    { kind: 'event', x: 30, y: 4, id: 'j12_drop', once: true, text: 'East the vale\'s grass runs on round the rim\'s foot and in under the pines of the cold loch.' },
     // The eagles over the crags, and the bones under them.
     { kind: 'event', x: 21, y: 13, id: 'j12_eyrie', once: true, text: 'Over the peaks eagles turn on the wind, and bones lie scattered in the snow under the crags.' },
     // The pines at the far end: the trolls' bowl, and the pilgrim who sat down.
