@@ -46,6 +46,17 @@
 // a finger more to each hand and both hands held up before it, the lit tips out to lay on whoever
 // comes, as the sleepers' keepers lay them. Idle: its weight goes from one leg to the other, its
 // head tips, and the near hand comes up higher now and then, as the bay keeper's does.
+//
+// The Infirmarer is Rimewater's keeper at the door under the pass: no robe, too many fingers and a
+// bed made up for you. The bay's frame bare, in a cold clean grey, taller than the bay keeper and
+// its neck a ring or two longer, the head tipped as if to ask how you slept, and ten long fingers
+// to each hand where the bay's have six and the Matron's eight. It stands at the head
+// of a bed, an iron bedstead on casters seen from its side with the top laid open to the eye, made
+// up as a ward's are: a blanket of faded red with two pale bands woven across its foot, the top
+// sheet turned down in a band and a corner, a pillow plumped at the head. Size 1.5, the most a boss
+// is drawn that is not a tall one. Idle: the hand on the company's left smooths the turned-down
+// sheet, back and forth; its weight goes from one leg to the other and its head tips; and now and
+// then the hand on the company's right comes up to lay its lit fingertips on whoever is nearest.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint, Sprite } from './common.ts';
 import { B, groundShadow } from './common.ts';
@@ -107,6 +118,8 @@ interface Build {
   yoke: number;
   /** The desk it stands behind, the ledgers open and piled, and a pen in each hand, 0 none: the Tallymaster's. */
   desk: number;
+  /** The made-up bed it stands at the head of, its hands laid out over the blanket, 0 none: the Infirmarer's. */
+  bed: number;
   /** The lights across the brow that count, as the tallyman's do, 0 none: the Tallymaster's six. */
   count: number;
   /** How much longer the neck is than the keeper's, in body units: the Tallymaster's. */
@@ -119,7 +132,7 @@ interface Build {
 }
 const KEEPER: Build = {
   legs: 1, limb: 1, chest: 1, stoop: 0, tilt: 1, head: 1, arms: 1, fingers: 6, finger: 1, offer: 1, raise: 0, cap: 0, apron: 0, mark: 1,
-  hem: 0, hood: 0, peak: 0, open: 0, march: 0, bell: 0, crook: 0, cordHex: '#d2c6a2', yoke: 0, desk: 0, count: 0, neck: 0, stand: 97,
+  hem: 0, hood: 0, peak: 0, open: 0, march: 0, bell: 0, crook: 0, cordHex: '#d2c6a2', yoke: 0, desk: 0, bed: 0, count: 0, neck: 0, stand: 97,
   lightHex: '#eefaff', glowHex: '#9ad6ff',
 };
 /**
@@ -131,7 +144,7 @@ const KEEPER: Build = {
  */
 const MATRON: Build = {
   legs: 1.06, limb: 1.12, chest: 1.18, stoop: 1, tilt: 0.45, head: 1.1, arms: 2, fingers: 8, finger: 1.3, offer: 1.3, raise: 0, cap: 1, apron: 1, mark: 1.25,
-  hem: 0, hood: 0, peak: 0, open: 0, march: 0, bell: 0, crook: 0, cordHex: '#d2c6a2', yoke: 0, desk: 0, count: 0, neck: 0, stand: 97,
+  hem: 0, hood: 0, peak: 0, open: 0, march: 0, bell: 0, crook: 0, cordHex: '#d2c6a2', yoke: 0, desk: 0, bed: 0, count: 0, neck: 0, stand: 97,
   lightHex: '#eefaff', glowHex: '#9ad6ff',
 };
 /** The Brother: a keeper in a habit with the hood up, its hands held out, walking as it was told to. */
@@ -146,7 +159,9 @@ const HOLD_KEEPER: Build = { ...KEEPER, legs: 0.93, stoop: 0.3, tilt: 0.8, offer
 const TALLYMASTER: Build = { ...KEEPER, legs: 1.1, limb: 1.1, chest: 1.2, head: 1.15, tilt: 0.35, fingers: 7, finger: 1.15, mark: 1.4, desk: 1, count: 6, neck: 5, stand: 80 };
 /** The Underdeep's keeper: taller and thinner, dark plate, the Hearth's gold in its lights, seven fingers to a hand and both hands held up. */
 const DEEP_KEEPER: Build = { ...KEEPER, legs: 1.08, limb: 0.92, chest: 0.92, stoop: 0.2, tilt: 1.25, fingers: 7, finger: 1.3, offer: 1.25, raise: 1, mark: 1.3, lightHex: '#fff3d6', glowHex: '#ffb44a' };
-const BUILDS: Partial<Record<MonsterSprite, Build>> = { matron: MATRON, brother: BROTHER, bell_ringer: BELL_RINGER, abbot: ABBOT, hold_keeper: HOLD_KEEPER, tallymaster: TALLYMASTER, keeper: DEEP_KEEPER };
+/** The Infirmarer: the bay's frame bare and taller, the neck longer, ten fingers to a hand, at the head of a bed made up for the company. */
+const INFIRMARER: Build = { ...KEEPER, legs: 1.1, chest: 1.05, stoop: 0.1, tilt: 0.85, head: 1.1, fingers: 10, finger: 1.15, offer: 1.05, mark: 1.3, bed: 1, neck: 1.5 };
+const BUILDS: Partial<Record<MonsterSprite, Build>> = { matron: MATRON, brother: BROTHER, bell_ringer: BELL_RINGER, abbot: ABBOT, hold_keeper: HOLD_KEEPER, tallymaster: TALLYMASTER, keeper: DEEP_KEEPER, infirmarer: INFIRMARER };
 /** The plate under a robe, the Bay Keeper's grey: the def's tint is the robe's. */
 const PLATE = '#8d9399';
 
@@ -164,6 +179,7 @@ export const SPRITES = {
   hold_keeper: { draw, span: [0.36, 0.36] },
   tallymaster: { draw, span: [0.26, 0.27] },
   keeper: { draw, span: [0.29, 0.29] },
+  infirmarer: { draw, span: [0.33, 0.33] },
 } satisfies Partial<Record<MonsterSprite, Sprite>>;
 
 interface Pt { x: number; y: number }
@@ -213,6 +229,7 @@ function keeper(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   const k = t % 180, reach = k < 44 ? Math.sin((k / 44) * Math.PI) : 0;
 
   groundShadow(ctx, f.X(pelvis.x * 0.5), y + 1, 30 * u);
+  if (b.bed > 0) groundShadow(ctx, x, y + 1, 70 * b.bed * u);
   legs(ctx, f, body, b, h, w, lift, limb, joint);
   trunk(ctx, f, body, b, h, plate, joint);
   // What it wears goes here, over the legs and the body: the Matron's apron, a brother's robe.
@@ -224,9 +241,12 @@ function keeper(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   head(ctx, f, body, b, h, t, plate, joint, pale, cloth);
   // The Tallymaster's desk stands before it to the waist, and both its hands are on the ledgers.
   if (b.desk > 0) { desk(ctx, f, b, h, p.tone); deskArms(ctx, f, body, b, h, t, limb, joint, plate, p.tone); return; }
+  // The Infirmarer's bed stands before it to the thigh, and its hands are out over the blanket.
+  if (b.bed > 0) bed(ctx, f, b, h, p.tone);
   for (const side of [-1, 1] as const) {
     if (side > 0 && b.bell > 0) bellArm(ctx, f, body, b, h, t, cloth, joint, plate, shade('#b08a3e', p.tone));
     else if (side < 0 && b.crook > 0) crookArm(ctx, f, body, b, h, t, hour, top, cloth, joint, plate, shade('#4b3b2c', p.tone), shade('#c39d4e', p.tone));
+    else if (side < 0 && b.bed > 0) bedArm(ctx, f, body, b, h, t, limb, joint, plate);
     else arm(ctx, f, body, b, h, t, side, side > 0 ? Math.max(reach, b.raise) : b.raise, limb, joint, plate, cloth);
   }
 }
@@ -457,6 +477,79 @@ function deskArms(ctx: CanvasRenderingContext2D, f: F, d: Body, b: Build, h: num
     blob(ctx, B, quill, [ell(f, at(c.x + s * 3.9, c.y + 9.2), 1.35, 5, -s * 0.4)], { h, formK: 0.3, spread: 0.7 });
     hand(ctx, f, b, h, t, s, c, 0.78, s * 0.9, plate);
   }
+}
+
+/**
+ * The Infirmarer's bed, made up for whoever comes: an iron bedstead on casters, the headboard tall at
+ * the left and the footboard low at the right, seen from its side with the top laid open to the eye
+ * and the far edge a tenth shorter than the near. A mattress in ticking under a blanket of faded red
+ * with two pale bands woven across its foot and a hem; the top sheet turned down at the head in a band
+ * and a corner hanging over the edge; and a pillow plumped against the headboard, its crown dented.
+ * The keeper stands behind it, and its legs show under the frame.
+ */
+function bed(ctx: CanvasRenderingContext2D, f: F, b: Build, h: number, tone: number): void {
+  const W = 32 * b.bed, n = 29, far = 39, dep = far - n, minR = 0.85 / f.u, headTop = 54, footTop = 40, turned = -7.4, hem = 22.6;
+  // A point on the bed's top: `x` along it at the near edge, `k` from the near edge (0) to the far one (1).
+  const on = (x: number, k: number): Pt => at(x * (1 - 0.1 * k), n + dep * k);
+  const iron = shade('#3a3f46', tone), tick = shade('#cdc7b4', tone), under = shade('#dcd6c2', tone), linen = shade('#f0ecdf', tone);
+  const wool = shade('#7d5352', tone), hung = shade(wool, 0.82), weave = shade('#d8cdb8', tone);
+  const post = (a: Pt, c: Pt): Part => cap(f, a, c, 1.35, 1.35);
+  const rail = (a: Pt, c: Pt, r: number): Part => cap(f, a, c, Math.max(minR, r), Math.max(minR, r));
+  const poly = (...q: Pt[]): Part => ({ k: 'poly', pts: flat(f, q) });
+  // The far posts and the rails between them and the near ones: the headboard's two, with bars, and the footboard's top.
+  const behind: Part[] = [
+    post(at(-0.9 * W, 2 + dep), at(-0.9 * W, headTop + dep)), ball(f, at(-0.9 * W, headTop + dep + 1.2), 1.9),
+    post(at(0.9 * W, 2 + dep), at(0.9 * W, footTop + dep)), ball(f, at(0.9 * W, footTop + dep + 1.2), 1.7),
+    rail(at(-W, headTop - 2), at(-0.9 * W, headTop - 2 + dep), 1), rail(at(-W, headTop - 12), at(-0.9 * W, headTop - 12 + dep), 0.85),
+    rail(at(W, footTop - 2), at(0.9 * W, footTop - 2 + dep), 1),
+  ];
+  for (const k of [0.25, 0.5, 0.75]) {
+    const sx = 1 - 0.1 * k;
+    behind.push(rail(at(-W * sx, headTop - 12 + dep * k), at(-W * sx, headTop - 2 + dep * k), 0.5), rail(at(W * sx, footTop - 9 + dep * k), at(W * sx, footTop - 2 + dep * k), 0.5));
+  }
+  blob(ctx, B, shade(iron, 0.85), behind, { h, form: false, spread: 0.7, gloss: 0.3 });
+  // The mattress's side in ticking, its top under the bottom sheet, and the blanket from the turned-down sheet to the foot,
+  // its top and its side hanging past the edge to the hem.
+  blob(ctx, B, tick, [poly(at(-W + 1, 20.5), at(W - 1, 20.5), at(W - 1, n), at(-W + 1, n))], { h, formK: 0.25, spread: 0.7 });
+  blob(ctx, B, under, [poly(on(-W + 1, 0), on(W - 1, 0), on(W - 1, 1), on(-W + 1, 1))], { h, formK: 0.2, spread: 0.8 });
+  blob(ctx, B, wool, [poly(on(turned, 0), on(W - 1, 0), on(W - 1, 1), on(turned, 1))], { h, formK: 0.2, spread: 0.8, gloss: 0.05 });
+  blob(ctx, B, hung, [poly(at(turned, n), at(W - 1, n), at(W - 1, hem), at(turned, hem))], { h, formK: 0.2, spread: 0.8, gloss: 0.05 });
+  if (!B.override) {
+    // The two bands woven across the foot of the blanket, over the top and down its side, and the hem's edge.
+    ctx.save();
+    ctx.strokeStyle = rgba(weave, 0.9); ctx.lineWidth = Math.max(1, 1.1 * f.u); ctx.lineCap = 'butt'; ctx.lineJoin = 'miter';
+    for (const x of [21, 24.4]) {
+      const a = on(x, 0), c = on(x, 1);
+      ctx.beginPath(); ctx.moveTo(f.X(c.x), f.Y(c.y)); ctx.lineTo(f.X(a.x), f.Y(a.y)); ctx.lineTo(f.X(a.x), f.Y(hem + 0.4)); ctx.stroke();
+    }
+    ctx.restore();
+    softLine(ctx, B, flat(f, [at(turned + 0.6, hem + 1.1), at(W - 1.6, hem + 1.1)]), wool, Math.max(1, 0.7 * f.u), 0.5);
+  }
+  // The top sheet turned down: a band across the bed and a corner of it hanging over the near edge.
+  blob(ctx, B, linen, [poly(on(-15.4, 0), on(turned, 0), on(turned, 1), on(-15.4, 1)), poly(at(-15.4, n), at(turned, n), at(-11.4, 23.6))], { h, formK: 0.2, spread: 0.8 });
+  // The pillow, plumped against the headboard, its crown dented.
+  blob(ctx, B, shade('#f3f0e6', tone), [curve(f, [
+    at(-30.2, 36.6), at(-28.6, 40.6), at(-24.6, 42.6), at(-19.8, 42.4), at(-15.8, 40.2), at(-14.4, 36.8), at(-16.2, 33.8), at(-22.4, 33), at(-28.2, 33.8),
+  ])], { h, formK: 0.4, spread: 0.7, gloss: 0.1 });
+  if (!B.override) softLine(ctx, B, flat(f, [at(-27.2, 38.8), at(-22.4, 37.4), at(-17.6, 38.8)]), shade('#f3f0e6', tone), Math.max(1, 0.7 * f.u), 0.5);
+  // The near posts with their finials, the frame's rail under the mattress, and the casters.
+  blob(ctx, B, iron, [
+    post(at(-W, 2), at(-W, headTop)), ball(f, at(-W, headTop + 1.4), 2), post(at(W, 2), at(W, footTop)), ball(f, at(W, footTop + 1.4), 1.8),
+    rail(at(-W + 1.5, 19), at(W - 1.5, 19), 1.45), ball(f, at(-W, 1.9), 1.9), ball(f, at(W, 1.9), 1.9),
+  ], { h, form: false, spread: 0.7, gloss: 0.35 });
+}
+
+/**
+ * The Infirmarer's arm on the company's left, down from the shoulder to the turned-down sheet, the hand
+ * laid on it with its ten fingers spread, smoothing it: slowly along the band and back, the fingers
+ * stirring as they go.
+ */
+function bedArm(ctx: CanvasRenderingContext2D, f: F, d: Body, b: Build, h: number, t: number, limb: string, joint: string, plate: string): void {
+  const L = b.limb, sh = at(d.chest.x - (d.cw + 0.4), d.shoulderY - 0.6), wr = at(-12.2 + 3.2 * Math.sin(t / 43), 46.4 + 0.4 * Math.sin(t / 7));
+  const el = at(sh.x - 3.4, (sh.y + wr.y) / 2 - 2);
+  blob(ctx, B, limb, [cap(f, sh, el, 1.95 * L, 1.6 * L), cap(f, el, wr, 1.6 * L, 1.3 * L)], { h, formK: 0.4, spread: 0.8, gloss: 0.35 });
+  blob(ctx, B, joint, [ball(f, el, 2.15 * L), ball(f, wr, 1.5 * L)], { h, formK: 0.5, spread: 0.7, gloss: 0.5 });
+  hand(ctx, f, b, h, t, -1, at(wr.x - 0.4, wr.y - 2.4), 1, 0.1, plate);
 }
 
 /**
