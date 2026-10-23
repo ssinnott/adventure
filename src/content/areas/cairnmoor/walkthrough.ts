@@ -47,6 +47,8 @@ import { headlessGame } from '../../../../tools/tests/lib.ts';
 import { teach } from '../../../game/prestige.ts';
 import { sought, seekId } from '../../../game/seeking.ts';
 import { questLog } from '../../../game/quests.ts';
+import { wrap } from '../../../ui/draw.ts';
+import { SAY_W, SAY_LINES } from '../../../ui/frame.ts';
 import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
 import { GATE } from '../kilns/maps/ironfells_n3.ts';
@@ -1026,7 +1028,7 @@ function offTheLadder(ok: (cond: boolean, msg: string) => void): void {
  * on end's riddle, the ledge of pebbles knelt at and each box's groups won at its floor; the earth-house
  * found from the rock face where the wind hoots, bending twice, and the herds' store from the rowan, a
  * chamber along the face, each shut to the four ways but through its door. O7's 31,0 is mountain with
- * P6's corner (#834's 3), and P7's 5,24 in the rim's face is left bare for the lair's door.
+ * P6's corner (#834's 3), and P7's 5,24 in the rim's face is the cleft into the lair, its one way out.
  * Then the Cairnfield's shore (L8): west from M8's 0,23 onto its 31,23, the same field, so nothing is
  * said; the wrack-gatherer's word on the drowned cairn, the tideline, the mound and the ice seen, the well
  * knelt at and each group won at its floor; the noost found from the tar, shut to the four ways but
@@ -1036,7 +1038,12 @@ function offTheLadder(ok: (cond: boolean, msg: string) => void): void {
  * its band and how it feels at 17, 18 and 20 and its sign its band; its three groups won at 20, each
  * standing where the way on passes; the Sunwise Mace in the oldest dead's cist, the closed cell found
  * from the spiral that turns against the rest and shut to the four ways but through its stone, and up
- * through the gap onto L8's 23,27 again.
+ * through the gap onto L8's 23,27 again. Last, Bearn Liath, the lair (#845, #847): east from P7's hills at
+ * 4,24 into the cleft, its door saying its band and how it feels at 18, 28 and 30 and its sign its band;
+ * the Rim Troll, its one group, in the gap that is the one way to the hollow, won at 30; Torhide in the
+ * old man's kist, one in the world; the troll's store found from its tracks and shut to the four ways but
+ * through the rock; out onto P7's 4,24 again; and the drover on N7, who speaks of the shield at every
+ * meeting after his first and not before.
  */
 function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const w = newWalk(ok);
@@ -1079,7 +1086,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   listen(w);
   const hills = reach(p7, [P7.start.x, P7.start.y], {});
   ok(hills.size > 130 && [[2, 2], [7, 2], [6, 7], [0, 13], [1, 19], [4, 24], [1, 29], [1, 31]].every(([x, y]) => hills.has(at(p7, x, y))),
-    `the hills (${hills.size} squares), the bothy, the cairn, the rock face, the narrows, the long cairns, the rim's face at 5,24, the ledge of pebbles and the south edge are all walked to on foot from the way in`);
+    `the hills (${hills.size} squares), the bothy, the cairn, the rock face, the narrows, the long cairns, the way to the cleft at 4,24, the ledge of pebbles and the south edge are all walked to on foot from the way in`);
   see(w, `${P7.id}:p7_hills`);
 
   // The old herd at the bothy and his word on the old folk; the stone on end's riddle; the long cairns
@@ -1106,10 +1113,13 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const kist = P7.features!.find((f) => f.kind === 'chest' && f.id === 'p7_house_chest');
   ok(kist?.kind === 'chest' && kist.gold === 250 && kist.items.join() === 'elixir' && kist.x === 7 && kist.y === 10, 'at the earth-house\'s end, a chest with 250 gold and an Elixir');
 
-  // The lair's door (docs §12.6) is left bare: the rim's face at 5,24, mountain, its way the hills of
-  // row 24, with nothing within four squares.
+  // The lair's door (docs §12.6): the cleft in the rim's face at 5,24, drawn as stone, the rim's mountain
+  // either side of it and behind it, walked into from the hills at 4,24, with nothing within four squares:
+  // P7's one way out but its edges, into Bearn Liath.
   const near = [...(P7.features ?? []), ...(P7.encounters ?? [])].filter((f) => Math.abs(f.x - 5) + Math.abs(f.y - 24) <= 4);
-  ok(P7.rows[24][5] === 'M' && hills.has(at(p7, 4, 24)) && !near.length, `the rim's face at 5,24 is left bare for the lair's door, walked to along row 24, nothing within four squares${near.length ? ' (not ' + near.map((f) => `${f.x},${f.y}`).join(' ') + ')' : ''}`);
+  ok(P7.exits?.length === 1 && P7.exits[0].x === 5 && P7.exits[0].y === 24 && P7.exits[0].to === 'bearn_liath' && P7.rows[24][5] === '"'
+    && ['M', 'M', 'M'].join() === [P7.rows[23][5], P7.rows[25][5], P7.rows[24][6]].join() && P7.rows[24][4] === '^' && hills.has(at(p7, 4, 24)) && !near.length,
+    `the cleft in the rim's face at 5,24 is P7's one way out but its edges, into Bearn Liath, walked to from the hills at 4,24, nothing within four squares${near.length ? ' (not ' + near.map((f) => `${f.x},${f.y}`).join(' ') + ')' : ''}`);
 
   // P7's seams: O7's hills open onto it at rows 1 to 29, O7's corner square 31,0 shut with P6's 0,31
   // (#834's 3), and the north edge shut along P6's mountain.
@@ -1264,6 +1274,83 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     ok(up.kind === 'moved' && w.world.zone?.id === L8.id && w.world.state.x === l8.x + 23 && w.world.state.y === l8.y + 27 && w.world.state.facing === EAST && up.messages.join(' | ') === CF.exits![0].label,
       `up out of Carn Fada onto L8's 23,27, facing the land, the way's own line alone (${up.kind === 'moved' ? up.messages.join(' | ') : up.kind})`);
     listen(w);
+    w.party.members.forEach((m, i) => { m.level = levels[i]; });
+    w.level = 18;
+  }
+
+  // Bearn Liath, the lair (#845, #847): east from P7's hills at 4,24 into the cleft. Its door says its band
+  // and how it feels, as a border's line: the warning at P7's 18, harder at 28 and its band alone at 30.
+  {
+    const BL = MAP_DEFS.find((d) => d.id === 'bearn_liath')!, cleft = P7.exits!.find((e) => e.to === BL.id)!;
+    const levels = w.party.members.map((m) => m.level);
+    const enter = (level: number): string => {
+      for (const m of w.party.members) m.level = level;
+      w.world.travel(P7.id, 4, 24, EAST);
+      const r = w.world.move('forward');
+      return r.kind === 'moved' && w.world.state.mapId === BL.id && w.world.state.x === BL.start.x && w.world.state.y === BL.start.y && w.world.state.facing === EAST ? r.messages.join(' | ') : r.kind;
+    };
+    const band = 'Bearn Liath: levels 30-32.', low = enter(18), close = enter(28), at30 = enter(30);
+    ok(low === `${cleft.label} | ${band} ${WARNING_IN}` && close === `${cleft.label} | ${band} ${HARDER_IN}` && at30 === `${cleft.label} | ${band}`,
+      `east from the hills at 4,24 into the cleft and Bearn Liath, the way's own line and then its band, with the warning at 18, harder at 28 and nothing more at 30 (${low}; ${close}; ${at30})`);
+    ok(!!BL.enclave && w.world.here.name === 'Bearn Liath' && w.world.here.band?.join('-') === '30-32', `inside, its sign gives the cap's band, over P7's 18-19 (${w.world.here.name}, ${w.world.here.band?.join('-')})`);
+    listen(w);
+    w.level = 30;
+    for (const id of ['bl_mouth', 'bl_drift', 'bl_bones', 'bl_gap']) see(w, `${BL.id}:${id}`);
+    // The guardian: the Rim Troll, a boss that never comes back, in the gap that is the one way to the
+    // hollow, so no company steps round it: with its square and those a step from it shut, nothing past
+    // it is reached, walked, waded, climbed or floated. Won at the lair's floor.
+    const hold = new GameMap(BL);
+    const flood = (...shut: (readonly [number, number])[]): Set<string> => {
+      const seen = new Set<string>(), todo: [number, number][] = [[BL.start.x, BL.start.y]];
+      while (todo.length) {
+        const [x, y] = todo.pop()!;
+        if (seen.has(`${x},${y}`) || shut.some(([sx, sy]) => sx === x && sy === y) || hold.passable(x, y, ALL) !== 'ok') continue;
+        seen.add(`${x},${y}`);
+        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+      }
+      return seen;
+    };
+    const troll = BL.encounters!.find((g) => g.id === 'bl_troll')!;
+    const shut = flood([troll.x, troll.y], [troll.x - 1, troll.y], [troll.x + 1, troll.y], [troll.x, troll.y - 1], [troll.x, troll.y + 1]);
+    ok(BL.encounters!.length === 1 && troll.monsters.join() === 'rim_troll' && !!troll.boss && !troll.respawn && troll.roams === false && !!troll.slainText
+      && shut.has('9,5') && !['12,5', '13,5', '12,6', '14,7', '14,8', '13,3', '12,2'].some((k) => shut.has(k)),
+      `the Rim Troll, the one group of the lair, stands in the gap: with it standing, none of Bearn Liath's ${shut.size} squares walked, waded, climbed or floated reaches the hollow, the tracks, the kist or the store`);
+    fight(w, `${BL.id}:bl_troll`);
+    for (const id of ['bl_hollow', 'bl_old']) see(w, `${BL.id}:${id}`);
+    // Torhide in the old man's kist, one in the world: no other chest, cairn or statue holds it, no shop
+    // sells it and no monster drops it.
+    const kist = BL.features!.find((f) => f.kind === 'chest' && f.id === 'bl_kist')!;
+    const holds = (f: Feature): boolean => (f.kind === 'shop' && f.stock.includes('torhide')) || ((f.kind === 'chest' || f.kind === 'cairn') && f !== kist && f.items.includes('torhide')) || (f.kind === 'statue' && !!f.gift?.items?.includes('torhide'));
+    ok(kist.kind === 'chest' && kist.gold === 0 && kist.items.join() === 'torhide' && !!ITEMS.torhide.artifact
+      && !MAP_DEFS.some((d) => (d.features ?? []).some(holds)) && !Object.values(EVERY_MONSTER).some((m) => m.drops?.some((x) => x.item === 'torhide')),
+      'in the hollow, the old man\'s kist with Torhide in it; no other chest, cairn or statue holds it, no shop sells it and no monster drops it');
+    // The secret: the tracks that end at the hollow's north wall, the search there and the troll's store
+    // behind it. Walked, waded, climbed or floated, it is never reached but through the rock.
+    const closed = flood([13, 4]);
+    ok(closed.size > 20 && !['12,2', '13,2', '12,3', '13,3'].some((k) => closed.has(k)), `the store is shut but for its rock: none of Bearn Liath's ${closed.size} squares walked, waded, climbed or floated reaches it`);
+    see(w, `${BL.id}:bl_tracks`);
+    ok(search(BL.id, 13, 5, NORTH, 'bl_store'), 'searched where the tracks end, the rock gives, and the store behind it can be walked into');
+    const store = BL.features!.find((f) => f.kind === 'chest' && f.id === 'bl_store_chest');
+    ok(store?.kind === 'chest' && store.gold === 500 && store.items.join() === 'elixir,potion_sp_great', 'in the store, among the packs and purses, a chest with 500 gold, an Elixir and a Sapphire Vial');
+    // And out of the cleft onto P7's 4,24, facing the moor, with the way's own line and no other.
+    w.world.travel(BL.id, BL.start.x + 1, BL.start.y, WEST);
+    const back = w.world.move('forward');
+    ok(back.kind === 'moved' && w.world.zone?.id === P7.id && w.world.state.x === p7.x + 4 && w.world.state.y === p7.y + 24 && w.world.state.facing === WEST && back.messages.join(' | ') === BL.exits![0].label,
+      `out of the cleft onto P7's 4,24, facing the moor, the way's own line alone (${back.kind === 'moved' ? back.messages.join(' | ') : back.kind})`);
+    listen(w);
+    // The rumour (#846): the drover on N7, met once, speaks at every meeting after it of a shield faced with
+    // a troll's hide, words only: no flag or question comes with them, no quest names it, and it fits his box.
+    const drover = MAP_DEFS.find((d) => d.id === 'highmoor_n7')!.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'A drover')!;
+    const words = drover.says!.find((s) => s.lines.some((l) => l.includes('troll\'s hide')))!, box = wrap(words.lines.join('\n\n'), SAY_W).length;
+    delete w.party.flags.drover_met;
+    w.world.travel('highmoor_n7', drover.x, drover.y);
+    const first = meet(drover, w.party, heard(w.world, drover)).text, then = meet(drover, w.party, heard(w.world, drover)).text;
+    ok(first.includes('lights were out') && !first.includes('shield') && then.includes('"My grandfather\'s grandfather faced a shield with a troll\'s hide. Cut it how you liked, by morning it had closed."')
+      && then.includes('"He took it up to the tops when he was old, and the tops kept him."') && !words.sets && !words.choice && box <= SAY_LINES
+      && !JSON.stringify(questLog(w.world.state, w.party)).includes('shield'),
+      `the drover says nothing of the shield at his first meeting, his rumour of the lights, and at the next speaks of it: words only, in no quest, ${box} of his box's ${SAY_LINES} lines`);
+    listen(w);
+    delete w.party.flags.drover_met;
     w.party.members.forEach((m, i) => { m.level = levels[i]; });
     w.level = 18;
   }

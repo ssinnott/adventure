@@ -246,9 +246,9 @@ function theWall(ok: (cond: boolean, msg: string) => void): void {
       `${one} alone, the Reader reads the ${read} and not the ${not}, and the Wall begins on it (${written(alone).join(', ')})`);
   }
 
-  // Sunderwood's runs last of Act II's in road order, so every chapter's goals to the Wall are checked
-  // here; Act III's are checked by their own areas' walkthroughs (Cairnmoor's The Ring, #481).
-  everyGoalWalked(ok, [FORELAND, GROVE, TIDE, WRACK, CHAPTER]);
+  // Its runs walk the Wall whole, and each walkthrough checks the chapters its own runs walk (#946):
+  // the Foreland's and the Grove's Thornmark's, the Tide Stone's Saltreach's and Wrackholm's its own.
+  everyGoalWalked(ok, [CHAPTER]);
 }
 
 export const walkthrough: Walkthrough = (ok) => {

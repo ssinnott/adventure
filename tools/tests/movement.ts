@@ -19,7 +19,7 @@ import { logLines } from '../../src/ui/frame.ts';
 import { defaultParty, createCharacter, xpForLevel, levelUp, takePrestige, partyCan } from '../../src/game/party.ts';
 import type { Character, Party } from '../../src/game/party.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
-import { ok, local } from './lib.ts';
+import { ok, local, withDefs } from './lib.ts';
 
 export function movement(): void {
   const rng = makeRng(7);
@@ -419,8 +419,7 @@ function picked(): void {
     return `${m.kind === 'moved' ? m.messages.join(' ') : m.kind === 'blocked' ? m.reason : m.kind} | ${keys} | ${w.map.at(2, 1).door}${w.mapState.doors['2,1'] ? ' kept' : ''}`;
   };
   const down = (p: Party): void => { thief(p).conditions.push('dead'); };
-  ITEMS[picks.id] = picks;
-  try {
+  withDefs(ITEMS, [picks], () => {
     const cases: [string, (p: Party) => void, string][] = [
       ['the thief standing, born to Lockpick, no key', () => undefined, 'Ottilie picks the lock. | 0 | door kept'],
       ['the thief standing, a key carried', (p) => { p.bag.push('key_iron'); }, 'Ottilie picks the lock. | 1 | door kept'],
@@ -434,9 +433,7 @@ function picked(): void {
       const got = tries(setup);
       ok(got === want, `${who}: a step into the iron-key door says "${got}"${got === want ? '' : ` (wanted "${want}")`}`);
     }
-  } finally {
-    delete ITEMS[picks.id];
-  }
+  });
   const gone = tries((p) => { down(p); p.bag.push('fx_picks'); });
   ok(gone.startsWith('Locked.'), `and with the picks no item of the content, the company's set does nothing ("${gone}")`);
 }
@@ -474,8 +471,7 @@ function archdruid(): void {
     { ...MONSTERS.rat, id: 'fx_person20', kind: 'person', level: 20 },
     { ...MONSTERS.rat, id: 'fx_caller20', level: 20, calls: { monsters: ['fx_beast20'], chance: 0.5 } },
   ];
-  for (const d of laid) MONSTERS[d.id] = d;
-  try {
+  withDefs(MONSTERS, laid, () => {
     // The company walks up to the group that stayed put: nothing beside it for three steps, then the fight.
     const w = new World({ fx_strip: new GameMap(strip({})) }, withDruid(), rng);
     w.travel('fx_strip', 1, 1, EAST);
@@ -498,7 +494,5 @@ function archdruid(): void {
     ok(people === 3 && mixed === 3, `a group of people, or of a beast and a person, comes on though the Archdruid stands (${people} and ${mixed} squares of 3)`);
     const called = closes(withDruid(), { monsters: ['fx_caller20'] });
     ok(called === 3, `a beast that calls comes on though the Archdruid stands (${called} squares of 3)`);
-  } finally {
-    for (const d of laid) delete MONSTERS[d.id];
-  }
+  });
 }

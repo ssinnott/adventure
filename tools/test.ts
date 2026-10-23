@@ -18,6 +18,16 @@ import { readdirSync, existsSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import { ok, fail, failureCount, heldCount, owedCount, summary, ranLine, LIST, type Ran } from './tests/lib.ts';
 import type { Walkthrough } from '../src/content/area.ts';
+import { ITEMS, MONSTERS } from '../src/content/index.ts';
+
+/** Every entry of the item and the monster tables, by name, each value as it is: what a suite must leave as it found (#946). */
+const tables = (): Map<string, unknown> => new Map<string, unknown>([...Object.entries(ITEMS).map(([id, d]) => [`ITEMS.${id}`, d] as const), ...Object.entries(MONSTERS).map(([id, d]) => [`MONSTERS.${id}`, d] as const)]);
+/** What a suite changed in the tables, from `was` to `now`: each entry added, removed or replaced, by name. */
+const leftBehind = (was: ReadonlyMap<string, unknown>, now: ReadonlyMap<string, unknown>): string[] => [
+  ...[...now.keys()].filter((k) => !was.has(k)).map((k) => `added ${k}`),
+  ...[...was.keys()].filter((k) => !now.has(k)).map((k) => `removed ${k}`),
+  ...[...now].filter(([k, d]) => was.has(k) && was.get(k) !== d).map(([k]) => `replaced ${k}`),
+];
 
 /** The suites as they ran before the runner found them, kept in that order. */
 const FIRST = ['maps', 'movement', 'monsters', 'combat', 'harness', 'party', 'traits', 'calendar', 'terrain', 'weather', 'atlas', 'outdoors', 'save', 'quests', 'game', 'pilot'];
@@ -65,7 +75,8 @@ if (at < 0) {
       if (!ids.includes(area)) throw new Error(`src/content/areas/${area}/ has a walkthrough but is no area in AREAS`);
       const fn = ((await import(file.href)) as { walkthrough?: unknown }).walkthrough;
       if (typeof fn !== 'function') throw new Error(`${area}/walkthrough.ts exports no function named walkthrough`);
-      return () => (fn as Walkthrough)(ok);
+      // An `ok` of its own, under which its runs keep the goals they walk (tools/walk.ts), so it passes alone as in the full run (#946).
+      return () => (fn as Walkthrough)((cond: boolean, msg: string) => ok(cond, msg));
     });
   }
 }
@@ -94,8 +105,11 @@ for (const [name, load] of runs) {
     if (kind === 'FAIL' && !failing) { failing = true; for (const b of aside.splice(0)) log(...b); }
     if (failing || kind) log(...a); else aside.push(a);
   };
-  const t0 = performance.now(), held = heldCount(), failed = failureCount(), owed = owedSoFar();
+  const t0 = performance.now(), held = heldCount(), failed = failureCount(), owed = owedSoFar(), before = tables();
   try { await (await load())(); } catch (e) { fail('threw ' + (e instanceof Error ? e.stack : String(e))); }
+  // A suite leaves the item and monster tables as it found them (#946): what it added, took out or replaced fails it by name.
+  const left = leftBehind(before, tables());
+  if (left.length) fail(`${name} leaves the tables as it did not find them: ${left.join(', ')}`);
   console.log = log;
   aside.length = 0;
   const r = { name, secs: (performance.now() - t0) / 1000, held: heldCount() - held, failed: failureCount() - failed, owed: owedSoFar() - owed };

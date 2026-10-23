@@ -1,4 +1,4 @@
-// The runner's own check: tools/test.ts run in a child process against ./fixture/ and ./stuck/,
+// The runner's own check: tools/test.ts run in a child process against ./fixture/, ./stuck/ and ./leaves/,
 // folders the real run never reads, so the owed lines and failures here stay out of its output.
 //   node tools/tests/runner/check.ts
 import { spawnSync } from 'node:child_process';
@@ -52,6 +52,13 @@ ok(table[0] === 'slow' && [...table].sort().join(' ') === names.join(' '), `the 
 const stuck = runIn(fileURLToPath(new URL('./stuck', import.meta.url)));
 const last = stuck.stdout.trimEnd().split('\n').at(-1);
 ok(stuck.status === 13 && last === 'stuck', `a run that dies inside a suite names it last (exit ${stuck.status}, last "${last}")`);
+
+// A suite leaves the item and monster tables as it found them (#946): one that adds, takes out or
+// replaces an entry fails by name, under its own name, and the suite after it, which changes none, passes.
+const leaves = runIn(fileURLToPath(new URL('./leaves', import.meta.url)));
+const blamed = '\nleaves\n  FAIL: leaves leaves the tables as it did not find them: added ITEMS.fx_left, removed ITEMS.torch, replaced MONSTERS.rat\n';
+ok(leaves.status === 1 && leaves.out.includes(blamed) && /\n {2}next +\d+\.\d s {2}1 ok\n/.test(leaves.out) && leaves.out.trimEnd().endsWith('1 FAILURE(S)'),
+  `a suite that leaves the tables changed fails by name, listing each entry added, removed or replaced, and the one after it passes (exit ${leaves.status})`);
 
 ok(!listed.out.includes('the suite run only when named ran'), 'a bare run passes over a suite run only when named (ASKED)');
 const asked = run('survival', '--list');

@@ -30,11 +30,12 @@ export const MONSTERS: readonly MonsterDef[] = [
   // as its wights do (0.2). Off MONSTERS §4.4's boss line (1,113 hp, 20d8+20, won 81% at 19 and 91% at 21), its hit
   // points and its blow are set for #480's gate: about half at its floor, 19, and nearly always at 21
   { id: 'cairn_king', name: 'The Cairn King', plural: 'Cairn Kings', sprite: 'cairn_king', kind: 'dead', look: 'Crowned, and older than the crown.', level: 20, hp: 1800, ac: 23, attack: 14, dice: 16, sides: 8, bonus: 14, speed: 13, xp: 12693, gold: [150, 300], inflict: { cond: 'cursed', chance: 0.2 }, tint: '#b9a682', size: 1.3 },
-  // the bounds' lair (#834), drawn and defined before the lair that places it: P7's cleft in the rim, where it keeps the
-  // Torhide. The rim stood up, the lair's boss at 32 (MONSTERS §13): it mends each round but a round fire struck it
-  // (`regen`, as the tor troll's), and stands at size 2, a tall boss drawn inside TALL_REACH. Its numbers are the test
-  // troll's at 32 as tools/testmonster.ts gives it today (the one shape the line check holds a mender to), and
-  // provisional: the lair's pull request sets the boss's from the harness's line at the cap (MONSTERS §4.1, §4.2, §13).
-  // It is owed in checks.ts until that lair places it
-  { id: 'rim_troll', name: 'The Rim Troll', plural: 'Rim Trolls', sprite: 'rim_troll', kind: 'beast', look: 'The rim stood up.', level: 32, hp: 797, ac: 26, attack: 19, dice: 7, sides: 8, bonus: 7, speed: 8, xp: 2547, gold: [0, 0], regen: 80, tint: '#67717d', size: 2 },
+  // the bounds' lair (#834): Bearn Liath, the cleft in the rim behind P7, where it keeps Torhide in the hollow under the
+  // tops. The rim stood up, the lair's boss at 32 (MONSTERS §13): it mends each round but a round fire struck it (`regen`,
+  // as the tor troll's), and stands at size 2, a tall boss drawn inside TALL_REACH. Drawn at the test troll's at 32 (797
+  // hp, attack 19, 7d8+7, mending 80, a brute's 2,547 xp), it was won every time at 30 and at 32; set by the lair's pull
+  // request at the gate's company, it stands three times as long and hits harder and more often, its armour, its pace
+  // and its mending kept, won 59% at its floor of 30 and 89% at 32, and it pays the boss line's xp at 32
+  // (docs/areas/cairnmoor.md §9, #834's 31)
+  { id: 'rim_troll', name: 'The Rim Troll', plural: 'Rim Trolls', sprite: 'rim_troll', kind: 'beast', look: 'The rim stood up.', level: 32, hp: 2700, ac: 26, attack: 22, dice: 25, sides: 8, bonus: 18, speed: 8, xp: 20373, gold: [0, 0], regen: 80, offLine: 'Bearn Liath\'s boss, its hit points and its blow set by its gate at the lair\'s floor and two above, its mending the test troll\'s at 32 (#834)', tint: '#67717d', size: 2 },
 ];
