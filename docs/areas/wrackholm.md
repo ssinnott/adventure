@@ -539,7 +539,8 @@ or fitted to the maps by a fable pass (§9, decided by delegate for #192).
   it at the first meeting, asked or not, and pays 200 (`q_brother_delivered`). Saltmouth's Kitto is
   unchanged.
 - **The Hermit of the Point** (`hermit`). Merryn (the draft's Senara is the lorekeeper of
-  Henlys) at her cell on the point sets `q_hermit` and asks; Not yet sets nothing and she asks again,
+  Henlys) at her cell on the point sets `q_hermit`, hers alone since the Deepthorn's hermit has a
+  flag of his own (#941), and asks; Not yet sets nothing and she asks again,
   We'll carry it hands the founder's letter and sets `q_hermit_carried`. Ruan at the Keel takes it
   and pays 300 (`q_hermit_hall`), Tallis on the quay 500 (`q_hermit_tallis`). Her count begins on the
   11th of Frost, as her wall has it, and she does not say where the Old Man lies: the grave under
@@ -1193,9 +1194,7 @@ Decided by the builder for #835, each the owner's to overturn:
     entry holds `until` its fall (`slain`), and after it an entry of her own words alone waits on
     the fall. Her first meeting sets `q_hermit` already, so no flag is added; the lines set nothing,
     and where the letter is not yet carried her own question still follows them. A company from an
-    old save that has met her hears them at its next meeting. Until #941 gives the Deepthorn hermit
-    a flag of his own, a company that met him first holds `q_hermit` and hears them at its first
-    meeting with her.
+    old save that has met her hears them at its next meeting.
 29. **New here:** the lair itself (#845, #846), the isle's one place at the cap, its guardian a boss
     whose blows heal it and the area's artifact a knife that casts Grasping Roots three times a day
     (#847).
