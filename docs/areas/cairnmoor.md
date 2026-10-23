@@ -18,17 +18,19 @@ Cairnfield's box (#479, §4.5), O7, Fionnlios's box (#477, §4.3), O8, the bog (
 Dubh, the dungeon through N8's door (#480, §4.6), then M7 and M8, the country behind (#484, §4.7),
 which the owner took off parked on 9 October 2026. The bounds come back as country (#834, §12): P7
 and P8, the rim behind O7 and O8, and L8, the shore west of M8, are built, with Carn Fada, the
-enclave under L8's mound (§12.5); the lair is to come (§12.6). Its seven monsters of the road are
-drawn and placed, and the Rim Troll, the lair's guardian, is drawn and waits for its lair (§12.6);
-its chapter, The Ring (#481, §5), and its three side quests (#482, §6) are built. Its content is
-`src/content/areas/cairnmoor/` (maps, monsters, items, climate, its part of the world map and its
-walkthrough; its chapter of the one quest, The Ring, in `chapter.ts`, its side quests in `quests.ts`
-and its guild quest, the Lanterns' ring ask, in `guilds.ts`, #439); it has no businesses, so no
-rooms. Its ids: the area `cairnmoor`, its zones `highmoor` and `cairnfield`, the dungeon `cairns`
-and `cairns2` (the ids stay under the new name, NAMES §3) and the enclave `carn_fada`. Two finds off
-the ladder lie off the road, a hammer whose blows carry fire under a cairn on N8 and a mail that
-raises might in the area's first locked chest, in a cell of Carn Dubh (#862, §4.8); a third off the
-ladder, a mace whose blows carry holy, lies in Carn Fada's cist (§12.5).
+enclave under L8's mound (§12.5), and Bearn Liath, the artifact's lair in the rim behind P7 (§12.6).
+Its seven monsters of the road are drawn and placed, and so is the Rim Troll, the lair's guardian
+(§12.6); its chapter, The Ring (#481, §5), and its three side quests (#482, §6) are built. Its
+content is `src/content/areas/cairnmoor/` (maps, monsters, items, climate, its part of the world map
+and its walkthrough; its chapter of the one quest, The Ring, in `chapter.ts`, its side quests in
+`quests.ts` and its guild quest, the Lanterns' ring ask, in `guilds.ts`, #439); it has no
+businesses, so no rooms. Its ids: the area `cairnmoor`, its zones `highmoor` and `cairnfield`, the
+dungeon `cairns` and `cairns2` (the ids stay under the new name, NAMES §3), the enclave `carn_fada`
+and the lair `bearn_liath`. Two finds off the ladder lie off the road, a hammer whose blows carry
+fire under a cairn on N8 and a mail that raises might in the area's first locked chest, in a cell of
+Carn Dubh (#862, §4.8); a third off the ladder, a mace whose blows carry holy, lies in Carn Fada's
+cist (§12.5); and the area's artifact, Torhide, lies in the old man's kist in Bearn Liath (§6,
+§12.6).
 
 ---
 
@@ -141,11 +143,12 @@ crosses it in snow (STORY; MONSTERS §7.2).
 
 ## 3. What is built
 
-Nine boxes, a dungeon and an enclave, N7 the area's first, which lists the area (#476), N8, the
-Cairnfield's (#479), O7, Fionnlios's (#477), O8, the bog (#478) and Carn Dubh, through N8's door
+Nine boxes, a dungeon, an enclave and a lair, N7 the area's first, which lists the area (#476), N8,
+the Cairnfield's (#479), O7, Fionnlios's (#477), O8, the bog (#478) and Carn Dubh, through N8's door
 (#480), then M7 and M8, the country behind (#484), then P7 and P8, the rim behind O7 and O8, the
 bounds' first (#834), then L8, the Cairnfield's shore, the bounds' second (#834), then Carn Fada,
-the enclave under L8's mound, the bounds' third (#834):
+the enclave under L8's mound, the bounds' third (#834), then Bearn Liath, the lair in the rim behind
+P7, the bounds' last (#834):
 
 - **The road up onto the moor** (N7, `highmoor_n7`, core, band 18; #476): the drove road on from the
   Kilns' N6 over the low hills, past the milestone where they give out and the drovers' shelter at
@@ -232,8 +235,8 @@ the enclave under L8's mound, the bounds' third (#834):
   its door, a cairn on the last rise and the ravens' crag in the north; the narrows down the rim's
   foot past a stone on end with a riddle; in the south the long cairns of the old folk and a ledge
   of white pebbles. Behind the rock face where the wind hoots, the hill folk's earth-house (§12.2).
-  Two groups: seven ravens on the crag and three cairn wights at the long cairns. The rim's face at
-  5,24 is left bare for the lair's door (§12.6).
+  Two groups: seven ravens on the crag and three cairn wights at the long cairns. In the rim's face
+  at 5,24, the cleft into Bearn Liath, the lair (§12.6).
 - **The ledge under the rim** (P8, `highmoor_p8`, country, band 18–19; #834): the hills of O8's
   east edge narrowing south under the rim to a ledge over the bog, a cairn where it is widest and
   bones in the snow at its end. Behind the face where a rowan grows, the herds' winter store
@@ -253,6 +256,12 @@ the enclave under L8's mound, the bounds' third (#834):
   end cell, where the oldest dead's cist holds the Sunwise Mace; behind the spiral that turns
   against the rest, a cell never opened (§12.5). Three groups: six bog bodies at the tide's head,
   four cairn wights at the chamber's mouth and two ice bears, Rimewater's, in the end cell.
+- **Bearn Liath** (`bearn_liath`, the lair, a dungeon of one level of 16×16, band 30–32; #834): the
+  bounds' last, the cleft in the rim's face behind P7, entered at P7's 5,24 (#845, #846). The cleft
+  running east into the rim, its snow trodden flat and bones thrown down along it; the gap under the
+  tops, where the lair's guardian stands; and the hollow past it, open to the sky, where an old man
+  sits against the rock with his kist and Torhide in it; behind its north wall, where great tracks
+  end, the troll's store (§12.6). One group: the Rim Troll, alone in the gap.
 
 Its atlas rows are charted in `src/content/areas/cairnmoor/atlas.ts`, the area's own `atlas` since
 N7 lists the area; until then `src/content/atlas.ts` spread them into the plan where its rows were,
@@ -260,9 +269,10 @@ as the Kilns' were before their first box (docs/areas/kilns.md §3): the zones w
 Moor 18–19, with N7, O7, O8, P7 and P8 laid on it, its crossing line said in its own words and its
 lines held by seeds, §1, §9; the Cairnfield 19–20, with N8, M7, M8 and L8 laid on it, §1), Carn
 Dubh's two plates (`cairns` at 430,246 and `cairns2` at 430,252), Carn Fada's (`carn_fada` at
-381,249, on L8's mound, §12.5) and the sites, the Stone Ring at 462,214 and the Watcher's Hut at
-466,208 on O7 and Carn Dubh at 430,240, at its door on N8. Its links are the drove road from the
-Kilns, the Cairns' way in, Carn Fada's gap and the drove road down to Longmere.
+381,249, on L8's mound, §12.5), Bearn Liath's (`bearn_liath` at 494,214, in the rim behind P7's
+5,24, §12.6) and the sites, the Stone Ring at 462,214 and the Watcher's Hut at 466,208 on O7 and
+Carn Dubh at 430,240, at its door on N8. Its links are the drove road from the Kilns, the Cairns'
+way in, Carn Fada's gap, Bearn Liath's cleft and the drove road down to Longmere.
 
 Its row on the curve and its share of the act's gear ladder are in (#535). The row is in
 `src/content/progression.ts`: band 18–20, next 20, window 4,000. Its entry owed to #437 while the
@@ -320,8 +330,8 @@ full density; O8, M7 and M8 are country, built to the looser floor with the wild
 park on 9 October 2026 (#434, call 10). The bands rise from the way in, 18 where the drove road comes over the hills, to
 20 at the Cairn King and the road's head, as the gate asks (EXPANSION §5.2), and each box holds a
 group at the top of its band for the curve. The bounds come after the plan (§12, #834): P7, P8 and
-L8 are built as country at 18–19 and Carn Fada, the enclave, at 20–21 under L8's mound (§12.5); the
-lair is to come (§12.6).
+L8 are built as country at 18–19, Carn Fada, the enclave, at 20–21 under L8's mound (§12.5) and
+Bearn Liath, the lair, at the cap's 30–32 in the rim behind P7 (§12.6).
 
 **One box holds land of two zones.** On the plan N7 was High Moor's 690 squares and the
 Cairnfield's 334, the zone line running across it. A map is its whole box (EXPANSION §8.2), so it is
@@ -983,23 +993,24 @@ Lantern beside her goes out without a word.
 ### The artifact: Torhide (#846)
 
 Cairnmoor's of the bounds' eight (DESIGN §9). Found and never told: no `seek` quest, no line in the
-journal and no mark on the world map. #834 builds the lair, its door and the rumour once #845, #847
-and the guardian's drawing are in.
+journal and no mark on the world map. #834 built the lair, Bearn Liath, its door and the rumour once
+#845, #847 and the guardian's drawing were in (§12.6).
 
 - **What it is:** *A round shield faced with grey hide, and every cut in it closed over. / It is
   warm to hold, and warmer by night.*
-- **The rumour:** the drover on N7, the road up onto the moor (§4.2), two lines more at a meeting
-  after his rumour of the lights, words only: *My grandfather's grandfather faced a shield with a
-  troll's hide. Cut it how you liked, by morning it had closed. / He took it up to the tops when he
-  was old, and the tops kept him.* It marks nothing on the world map.
+- **The rumour:** the drover on N7, the road up onto the moor (§4.2), two lines more at every
+  meeting after his first, his rumour of the lights (§12.6), words only: *My grandfather's
+  grandfather faced a shield with a troll's hide. Cut it how you liked, by morning it had closed. /
+  He took it up to the tops when he was old, and the tops kept him.* It marks nothing on the world
+  map.
 - **Slot and bearers:** a shield: the knight, the paladin and the ranger, as the Grey Shield.
 - **Numbers:** armour 9, the Grey Shield's 8 and a point (EXPANSION §5.2). Found and never sold.
 - **Power:** regeneration (DESIGN §9, kind 4): while it is borne, a tenth of its bearer's most hit
   points back each hour of the clock, and never in a fight.
-- **The lair:** a cleft of one level in the rim's face, its mouth in P7, at the cap's band, 30–32
-  (#845).
+- **The lair:** Bearn Liath, a cleft of one level in the rim's face, its mouth at P7's 5,24, at the
+  cap's band, 30–32 (#845, §12.6).
 - **The guardian:** the Rim Troll (ogre, a new kind; boss, 32; docs/MONSTERS.md §13): *The rim stood
-  up.* Size 2; it mends unless burned.
+  up.* Size 2; it mends unless burned. Its numbers are set by its gate (§9, #834's 31).
 
 ## 7. Encounters, and what is new
 
@@ -1028,7 +1039,8 @@ passes without it. M7 and M8 claim nothing (#484), nor do P7, P8 and L8 (#834): 
 placed already, and a tor and a tarn are among the landmarks above. Nor does Carn Fada, the enclave
 (#834): its bog bodies and wights are placed already, and its ice bears, Rimewater's, are of a
 family the Sunderwood claims (`bears`); the novelty check, which places it with Cairnmoor by its
-floor, passes (§12.5).
+floor, passes (§12.5). Nor does Bearn Liath, the lair (#834): its Rim Troll is of the ogres, the
+family Thornmark claims, and mends as the tor trolls do; the novelty check passes (§12.6).
 
 ## 8. The numbers
 
@@ -1057,8 +1069,9 @@ floor, passes (§12.5).
   company leaves at 20.1, 0.1 over 20 (0.1 under before M7 and M8), and walking the road 0.7 over it.
   The bounds' P7, P8 and L8 (#834, §12) add 793, 377 and 852 as built: a clear gives 17,609, 1.20
   times the ask, and the company leaves at 20.3, 0.3 over the next floor and under the limit of 21;
-  Cairnmoor is in no `OVER_ROAD` row. Carn Fada, the enclave, pays 1,770 a member and is counted in
-  no clear (#845), so neither figure moves (§12.5). The Glasswold's leaves at 28.0, level with 28.
+  Cairnmoor is in no `OVER_ROAD` row. Carn Fada, the enclave, pays 1,770 a member and Bearn Liath,
+  the lair, 3,396, its Rim Troll's 20,373 among six; both are counted in no clear (#845), so neither
+  figure moves (§12.5, §12.6). The Glasswold's leaves at 28.0, level with 28.
 - **Gold.** Training six members from 18 to 20 costs 8,880 with today's `trainPrice`, and the second
   prestiges about 4,000 each (DESIGN §5, #19); nothing on the moor sells or trains, so a clear's
   chests and drops must carry the gold to Rime Lodge, and the coach's fare (#539) with it. The band's
@@ -1081,7 +1094,9 @@ floor, passes (§12.5).
   gold (#862), so it stands. P7 holds 370, with its wights' 20 to 60 each, P8 300 and L8 340, with
   its wight's 20 to 60 (#834): a clear gives 10,285, 1.158 times. Carn Fada holds 700 in its two
   chests and its four wights' 20 to 60 each, 860 by the curve's count, in no clear; its dearest
-  find, the Sunwise Mace at 2,000, sits in its window, Rimewater's 4,500 (§12.5).
+  find, the Sunwise Mace at 2,000, sits in its window, Rimewater's 4,500 (§12.5). Bearn Liath holds
+  500 in the troll's store, in no clear too, and Torhide, which no window holds, by its mark
+  (§12.6).
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
   (docs/areas/thornmark.md §9, 17): a company at 18 wins nine in ten of N7's fights and walks the
   drove road resting at its camp; one at 16 wins no more than one in four (past 10 the gate judges a
@@ -1111,7 +1126,10 @@ floor, passes (§12.5).
   and 70.6% of the floor's day (#834, §12.2 to §12.4). Carn Fada is judged alone at its own floor
   (#845): a company at 20 wins every fight and manages 9.08 fights to a rest, inside the aim of 8 to
   10, 0.7% of its days ending in a fight broken off; two under, at 18, 4.80, 53.3% of the floor's 9;
-  it stands out of the area's pools (§12.5).
+  it stands out of the area's pools (§12.5). Bearn Liath's one group is its boss, judged on its odds
+  alone (#845): the Rim Troll is won 59% at the lair's floor of 30, inside the aim of 30% to 70%,
+  and 89% at 32, under the aim of 90% and inside the limit of 75%; it stands out of the pools too
+  (§12.6).
 - **Density.** Core boxes at the Foreland's floor, the bog, M7 and M8 at the looser one (EXPANSION §5.3). The
   ring's inside is held to no feature but the camp, the voice and the bare ground's line, so it
   needs no exception. As built: N7 99.2% within 8 steps and the furthest 10, with one sign among its
@@ -1123,10 +1141,11 @@ floor, passes (§12.5).
   (#478), 29 with the last face whole (#482). Carn Dubh's two levels 100.0% within 7 steps, the furthest 2 and 3, with no sign among
   their 17 and 11 points (#480), the first 20 with the cell off its end cell (#862). M7 100.0% within 12 steps, the furthest 12, with no sign among its
   19 points, and M8 99.7%, the furthest 13, with no sign among its 17 (#484). P7 100.0% within 12
-  steps, the furthest 6, with no sign among its 12 points, P8 100.0%, the furthest 4, with no sign
-  among its 7 and L8 100.0%, the furthest 10, with no sign among its 12, 13 with the gap into Carn
-  Fada (#834). Carn Fada 100.0% within 7 steps, the furthest 3, with no sign among its 15 points
-  (§12.5).
+  steps, the furthest 6, with no sign among its 12 points, 13 and the furthest 5 with the cleft into
+  Bearn Liath, P8 100.0%, the furthest 4, with no sign among its 7 and L8 100.0%, the furthest 10,
+  with no sign among its 12, 13 with the gap into Carn Fada (#834). Carn Fada 100.0% within 7 steps,
+  the furthest 3, with no sign among its 15 points (§12.5) and Bearn Liath 100.0%, the furthest 2,
+  with no sign among its 12 (§12.6).
 
 ## 9. Decisions
 
@@ -1748,7 +1767,45 @@ Decided by the builder for #834, each the owner's to overturn:
     it reads K6's grate, so L8 still walks 123 squares there (§12.4).
 27. **Its plate is on the mound, 381,249,** L8's 21,27, behind the gap, where the world map draws a
     company inside.
-28. **§12.5 is the enclave's brief in §4's form, with its As built,** and the lair's note is §12.6.
+28. **§12.5 is the enclave's brief in §4's form, with its As built,** as §12.6 is the lair's since.
+29. **The lair is Bearn Liath,** the grey gap, *bearn* and *liath* in the hill folk's tongue (§10):
+    the cleft in the rim's face the Rim Troll stands in, grey as the rim, as the troll and as the
+    hide on the shield it keeps. One level of 16 by 16, as the brief has it (§12.6).
+30. **The Rim Troll stands alone in the gap,** the one way from the cleft to the hollow, so the
+    kist, the tracks and the store all lie past it and nothing in the lair is had without its fight;
+    it never moves and never comes back.
+31. **The Rim Troll's numbers are set by its gate,** as the Steiger's are (docs/areas/kilns.md §9,
+    #831's 41). Drawn at the test troll's at 32 (797 hp, attack 19, 7d8+7, mending 80), it was won
+    every time at 30 and at 32; at 2,700 hp, attack 22 and 25d8+18, its armour, its pace and its
+    mending kept, it is won 59% at 30 and 89% at 32, where the Stair's Catcher and the Steiger stand
+    (57% and 80%, 56% and 81%). Off the line, its row carries its own `offLine` word (#897); it pays
+    the boss line's 20,373 xp at 32, as the Steiger and the Grave Drake do, not the 2,547 of the
+    brute's share it was drawn with.
+32. **The secret is the troll's store,** two by two behind the hollow's north wall, found from the
+    great tracks that end at the rock and searched there facing north: 500 gold, an Elixir and a
+    Sapphire Vial, the dearest of their kinds at Rime Lodge's Provisioner's, as the boxes' finds are
+    (§12.1). Its rock at 13,4 passes the art check.
+33. **Torhide lies alone in the old man's kist,** the drover's grandfather's grandfather, whom the
+    tops kept (§6): no gold with it, as the Erzhemd's kist has none; one in the world and sold
+    nowhere.
+34. **The drover is met once before he speaks of the shield:** his first meeting gives his rumour of
+    the lights and sets his `flag`, `drover_met`, as Thane Wolfram's sets `thane_met`, and every
+    meeting after it gives DESIGN §9's two lines, §6's "a meeting after his rumour of the lights".
+    The words themselves set nothing and ask nothing.
+35. **New here:** the lair itself (#845, #846), the moor's one place at the cap, its guardian a boss
+    that mends and its artifact a shield whose bearer mends by the hour (#847).
+36. **The door is the brief's square, P7's 5,24,** its mountain drawn as the rim's stone, walked
+    into from the hills at 4,24, where the way back sets a company down facing the moor. It is the
+    one square of P7 that changes; nothing stands within four squares and P7's density counts it
+    among 13 points; `worldGrid` reads it as rock, as it reads L8's gap, so P7 still walks 140
+    squares. Its plate is behind it, at 494,214.
+37. **The owed rows go,** as EXPANSION §8.2 (#897's 12) and #847's 6 say: `torhide` leaves
+    `UNPLACED` in tools/tests/items.ts and the Rim Troll's row the area's `checks.ts`, which owes
+    nothing now.
+38. **#834 is done with the lair:** the three boxes, the enclave and the lair are built and judged,
+    the enclave at 20–21 and the lair at 30–32 with Torhide in it; no built map of Cairnmoor is open
+    onto unbuilt land but O8's south edge onto O9, the reach, and L8's corner square onto K8's sea,
+    where #828 plans no box (§12.1).
 
 
 ## 10. Names
@@ -1772,6 +1829,7 @@ elves' Cornish and the Tidefolk's Frisian.
   | the Cairns | Carn Dubh | the dark cairn: the oldest and biggest, with the King under it; the field of cairns round it keeps the Crown's name | Carn Fada, the long cairn, the enclave's name since (#834) |
   | the drowned cairn, the enclave (#834) | Carn Fada | the long cairn: its passage runs long and on under the tide, at Loch Fada's foot; thought of for Carn Dubh and left unused | Carn Fuar, the cold cairn, which Loch Fuar and the Lann Fuar say already |
   | the oldest dead's mace (#834) | the Sunwise Mace | the moor's English, as its finds' names are: the spirals cut round its head turn the way the sun goes | the Spiral Mace |
+  | the cleft in the rim, the lair (#834) | Bearn Liath | the grey gap, *bearn* a gap and *liath* grey: the cleft the Rim Troll stands in, grey as the rim and as the hide on the shield it keeps | Eag Liath, the grey notch |
 
 - **Kept:** Cairnmoor, High Moor and the Cairnfield, the Crown's names for the area and its zones,
   which the story and the atlas lean on; the Watcher's Hut, a hut and lettered as one, since the
@@ -1862,7 +1920,7 @@ its "As built".
 | P8 | High Moor, `highmoor_p8` | 47 (50 as built) | | O8, P7 | 18–19 | the first, built (#834) |
 | L8 | the Cairnfield, `cairnfield_l8` | 114 (123 as built) | Loch Fada's 28 | M8, L9 (Rimewater's), L7 (the Kilns') | 18–19 | the second, built (#834) |
 | Carn Fada, the enclave | its own, `carn_fada`, entered from L8's 22,27 | 60 as built (55 outside its closed cell) | | L8 | 20–21 | the third, built (#834) |
-| The lair | its own, entered from P7 | | | | 30–32 | the last, to come; the Rim Troll is drawn (#934) |
+| Bearn Liath, the lair | its own, `bearn_liath`, entered from P7's 5,24 | 31 as built (26 outside its store) | | P7 | 30–32 | the last, built (#834) |
 
 The P column is 24 squares wide, the world's edge cutting it, so P7 and P8 are maps of 24 by 32, cut
 by hand, the atlas's rows with the void written `%`, as the Kilns' P4, P5 and P6 were
@@ -1896,7 +1954,8 @@ by hand, the atlas's rows with the void written `%`, as the Kilns' P4, P5 and P6
   level over the next floor (`LEAD`, `tools/tests/curve.ts`). P7, P8 and L8 pay 793, 377 and 852 a
   member as built and carry it to 20.3, under the limit of 21. A box that pays more than its brief
   says why. Carn Fada, the enclave, is judged at its own band of 20–21 and counted in no clear
-  (#845, §12.5); the lair's guardian is judged at the cap's.
+  (#845, §12.5); Bearn Liath, the lair, is judged on its guardian's odds at the cap's band, 30–32,
+  and counted in no clear too (§12.6).
 - **The walkthrough** walks them in one function, `theBounds` in `walkthrough.ts`, called last: each
   box's seams walked, its groups won at its floor, its secret found from its hint and its prize shut
   to walkers, swimmers, climbers and levitators.
@@ -1949,13 +2008,14 @@ by hand, the atlas's rows with the void written `%`, as the Kilns' P4, P5 and P6
   south again to a chest at 7,10 (250 gold and an Elixir), which no walker, swimmer, climber or
   levitator reaches but through the rock. Down the narrows the stone on end at 0,13 (answered cairn,
   +1 luck to every member). In the south pocket the long cairns seen from 1,19, three wights walking
-  at 3,20 and the ledge of white pebbles at 1,29 (+1 endurance). The rim's face at 5,24 is left
-  bare for the lair's door (§12.6). The west edge meets O7's square for square, open at rows 1 to
-  29; the north edge is the rim's mountain along P6's; the south edge meets P8's at 1 to 3. A
-  company at 18 wins every fight and manages 8.94 fights to a rest, inside the aim (7.5 to 9.5); two
-  under, at 16, 6.98, 82.1% of the floor's 8.5, inside the limit (§9, #834's 6). Density: every
-  square within 12 steps of a point, the furthest 6, no sign among its 12 points. By the curve's
-  count the box pays 793 xp a member, and 370 gold in its finds with the wights' 20 to 60 each.
+  at 3,20 and the ledge of white pebbles at 1,29 (+1 endurance). The rim's face at 5,24 holds the
+  cleft into Bearn Liath, the lair, drawn as its stone since (§12.6). The west edge meets O7's
+  square for square, open at rows 1 to 29; the north edge is the rim's mountain along P6's; the
+  south edge meets P8's at 1 to 3. A company at 18 wins every fight and manages 8.94 fights to a
+  rest, inside the aim (7.5 to 9.5); two under, at 16, 6.98, 82.1% of the floor's 8.5, inside the
+  limit (§9, #834's 6). Density: every square within 12 steps of a point, the furthest 6, no sign
+  among its 12 points; 13 with the cleft since, the furthest 5. By the curve's count the box pays
+  793 xp a member, and 370 gold in its finds with the wights' 20 to 60 each.
 
 ### 12.3 P8, the ledge under the rim (#834): country, band 18–19
 
@@ -2097,11 +2157,51 @@ by hand, the atlas's rows with the void written `%`, as the Kilns' P4, P5 and P6
   member and holds 860 gold, the wights' 20 to 60 each with the chests' 700, counted in no clear:
   Cairnmoor's clear and its lead, 20.3, do not move.
 
-### 12.6 The lair
+### 12.6 Bearn Liath, the lair (#834): dungeon, one level of 16×16, band 30–32
 
-- **The lair** (#846; §6, the Torhide): a cleft of one level in the rim's face, its mouth on P7 at
-  5,24 (world 493,214), the first mountain square east of the pocket's hills on row 24. It is left
-  bare, its way the hills of row 24 and nothing within four squares, and the lair's pull request
-  draws the door there and moves nothing. The cap's band, 30–32; the Rim Troll its guardian
-  (docs/MONSTERS.md §13); the Torhide (`torhide`, `src/content/areas/cairnmoor/items.ts`, #921) in
-  it as #846 says; its rumour the drover's on N7 (§6).
+- **Purpose.** The artifact's lair (#846; §6, Torhide): a cleft of one level in the rim's face
+  behind P7, where the drover's grandfather's grandfather took his shield up to the tops when he was
+  old, and the tops kept him. A place of its own off the road and off the quest (#845), held at the
+  cap's band by one guardian, with the area's artifact in it.
+- **Landmarks.** The cleft, so narrow that the sky is a line overhead, its snow trodden flat by
+  something big and bones thrown down along it; the gap where it comes out under the tops; the
+  hollow past it, open to the sky and out of the wind; the old man against the rock with his kist.
+- **Points of interest,** about ten features and one group: the cleft's mouth; the drift in the
+  bend; the bones; the gap; the hollow; the old man and his kist; the tracks; the troll's store and
+  its chest.
+- **Encounters.** The Rim Troll in the gap, the lair's one group and its guardian, a boss at 32
+  (docs/MONSTERS.md §13) that never comes back, standing where the way to the hollow passes, so that
+  no company steps round it.
+- **The secret and its hint.** The troll's store in a cleft of the rock behind the hollow's north
+  wall, with the packs and purses of the folk who came up before. The hint: great tracks cross the
+  hollow to its north wall and end at the rock.
+- **The ways in and out.** In by the cleft at P7's 5,24, walked into from the hills at 4,24, its
+  line and then its band said as a border's are (#845's 5); out the same way onto 4,24, facing the
+  moor. P7's square is drawn as the rim's stone and given its `exits` line, and nothing else of P7
+  changes.
+- **New here.** The lair itself (#845, #846): its guardian a boss that mends unless burned, and the
+  area's artifact a shield whose bearer mends by the hour (#847).
+- **Finds.** Torhide in the old man's kist, alone; in the store 500 gold, an Elixir and a Sapphire
+  Vial.
+- **The rumour.** The drover on N7 (§6): at every meeting after his first, his rumour of the lights,
+  two lines of a shield faced with a troll's hide, words only. It marks nothing on the world map.
+- **Pay.** About 3,400 xp a member, the Rim Troll's, counted in no clear (#845).
+- **As built** (#834, 23 October): `bearn_liath`, a dungeon of 16 by 16 marked `enclave`, band
+  30–32, its plate at 494,214 behind the cleft. In by the cleft at P7's 5,24, drawn as the rim's
+  stone, onto 1,8 facing east: the door says "Bearn Liath: levels 30-32.", with harder one or two
+  under and the warning three or more. The cleft runs east from its mouth, seen at 2,8, to its bend
+  at 6,8 and north to 6,5, the drift seen from 6,7 in the bend; then east along row 5, the bones at
+  7,5 and the gap seen from 9,5. The Rim Troll stands in the gap at 11,5, the one way on: with its
+  square and those a step from it shut, the 12 squares a walker, swimmer, climber or levitator
+  reaches from the mouth hold nothing past it. Past it the hollow, 12 to 14 x 5 to 8, seen from
+  12,6; the old man at 14,7 and his kist at 14,8 (Torhide). The tracks at 13,5: searched there
+  facing north, the rock gives at 13,4 on the store, 12 to 13 x 2 to 3, seen at 13,3, with a chest
+  at 12,2 (500 gold, an Elixir and a Sapphire Vial), which no walker, swimmer, climber or levitator
+  reaches but through the rock. Out by the cleft onto P7's 4,24, facing west. The gate judges the
+  Rim Troll alone, on its odds: won 59% at 30, inside the aim of 30% to 70%, and 89% at 32, under
+  the aim of 90% and inside the limit of 75% (§9, #834's 31). Density: every square within 7 steps
+  of a point, the furthest 2, no sign among its 12 points. The curve's rise: one group, the Rim
+  Troll at 13 steps, level 32 where it asks at least 31. By the curve's count it pays 3,396 xp a
+  member and holds 500 gold, counted in no clear: Cairnmoor's clear, 17,609 xp a member, and its
+  lead, 20.3, do not move. The drover on N7 says nothing of the shield at his first meeting and
+  speaks of it at the next, in 6 of his box's 14 lines.
