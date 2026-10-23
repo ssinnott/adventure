@@ -2,9 +2,10 @@
 # test, each its own job so the pull request shows each. Main has no branch protection (the owner,
 # 18 October 2026): the orchestrating session merges one pull request at a time, each up to date with
 # main and green on all three (docs/EXPANSION.md §8.3). No path filters: a pull request that touches
-# only docs must still report, or it waits on checks that never come. The contact sheet's job, last,
-# is not one of the three: it attaches pictures for the owner and is not required. Nor is the pilot's
-# full run (`fullrun`, docs/PILOT.md), which runs only when started by hand: a report, not a gate.
+# only docs must still report, or it waits on checks that never come. The contact sheet's job and the
+# lanes' job, last, are not among the three: the first attaches pictures for the owner and the second
+# says which lanes the files fall in, and neither is required. Nor is the pilot's full run (`fullrun`,
+# docs/PILOT.md), which runs only when started by hand: a report, not a gate.
 name: Checks
 
 on:
@@ -141,3 +142,26 @@ jobs:
           else
             echo "No map, monster or interior changed: no contact sheet." >> "$GITHUB_STEP_SUMMARY"
           fi
+
+  # The lanes (tools/lanes.ts, docs/EXPANSION.md §8.1): the lanes the pull request's files fall in,
+  # each with its files, beside the lane labels its event carries, in the run's summary, with a line
+  # for each lane a file falls in that the labels lack and each label no file falls under. It tells
+  # and never gates: the tool exits 0 whatever it finds, and the step may not fail the job. The
+  # labels are those the event carried when the run began, so ones put on after a pull request opens
+  # show from the next push's run (a re-run of the job reads the same event). It needs Node alone, so
+  # its report comes in seconds, not after the sheet job's Chromium.
+  lanes:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # The pull request is checked out as its merge into the base: the commit before is the base,
+      # and what changed since is the pull request's files.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node tools/lanes.ts HEAD^1
+        continue-on-error: true
