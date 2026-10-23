@@ -366,6 +366,39 @@ not the finish.
   thornmark, "Lost in Thornmark: three days, and no way on." 36 times, "Lost in the Foreland: ..." 39
   times and "I have no answer for the stone." once; thornmark (omniscient), "Lost in Thornmark: ..."
   8 times, "Lost in the Foreland: ..." 9 times and "I have no answer for the stone." once.
+- **The birth skills and Thornmark's run** (#893). The premade six's Perception, Pathfinder and
+  Lockpick (#856, #857) made the fair run a quarter longer on the tree that showed it, #879's. Each
+  was taken off the six in turn by a scratch runner (decision 2 for #893), on that tree and on main
+  at 61653d0e; the give-ups are the "Lost in" lines heard:
+
+  | Skills | #879's tree: ticks, days, give-ups | Main: ticks, days, give-ups |
+  |---|---|---|
+  | all three | 85,559, 239.6, 75 | 47,739, 164.8, 49 |
+  | all but Perception | 85,559, 239.6, 75 | 47,739, 164.8, 49 |
+  | all but Lockpick | 79,120, 210.5, 67 | 47,730, 164.8, 49 |
+  | all but Pathfinder | 100,398, 321.1, 100 | 60,606, 172.0, 54 |
+  | none | 68,368, 176.9, 56 | 74,237, 189.8, 60 |
+
+  Taken off together, the three give back #844's 68,368 ticks to the tick: they are the whole of the
+  issue's difference. Every run stops where the issue's did, in Ashcombe Cellar at 1,1 ("Lost: no
+  way on that I can see."): no skill strands the pilot, and on main the three shorten the run. Perception changes
+  nothing: the elf is the ranger and the gnome the thief, both with Keen Eyes, which finds the door
+  ahead surely, and none of a run's 114 to 119 searches faced a door past an open square. Lockpick
+  lengthened #879's run by 6,439 ticks and 29.1 days, by the lost rule and not by a door. The two
+  runs are one, tick for tick, until 69,567, when the cellar's locked door (7,11) opens to the iron
+  key from the cellar's chest (3,3, found at 34,907): Ottilie's picks keep it, and without them it is
+  spent. The survey wand found 24 ticks on then outnumbers the things carried at the last give-up in
+  the one run and only evens them in the other, so the goals given up are tried again in the one
+  (`retry`, aims.ts); the runs part at 70,303 and the Lockpick run gives up 8 times more. The run
+  without Lockpick, given an inert thing in its bag the tick the key is spent, follows the Lockpick
+  run to the tick (85,559). Pathfinder takes the drag off rough ground (6.00 minutes an outdoor step;
+  6.09 to 6.49 without it), so the world's clock parts at the shelf's first rough step and the runs
+  share nothing after: it shortened the run with Lockpick and lengthened it without on #879's tree,
+  and shortens it either way on main (the shelf's play too: 7,541 ticks with it, 10,322 without).
+  The days are the lost rule's, 3.1 to 3.4 a give-up; what a skill moves is how often the goals given
+  up come back, and where their three days are walked: in Helmstow, at two minutes a step, a give-up
+  takes nearly four times the ticks of one outdoors (#879's run spent 44,104 ticks and 52.5 days in
+  Helmstow, 25,758 and 111.5 on Callow Downs). Nothing is changed (decision 1 for #893).
 - **Thornmark's chapter, fair** (the full run). The aim is grove2, two maps in, and the fair pilot
   never sets foot in grove1 or Thornhold (Two maps in, below): lost in Thornmark thirty-six times, it
   walks the Foreland, Thornmark, Helmstow and the mill until it stops itself lost in Ashcombe Cellar,
@@ -694,3 +727,9 @@ Decided by delegate for #723 (the suite), each the owner's to overturn:
 11. **`npm test` and CI**: `npm test` runs the shelf's full run (about 10 to 25 s; it repeats walkthrough:shelf's play) and so does the tests job, as the issue's Done when asks, with no step of its own (10 s on CI); the `fullrun` job runs by hand only, with sixty minutes and its lines in the run's summary, and goes red when a chapter fails: a report, as nothing requires it.
 12. **The smoke's thirty seconds** follow #716's pilot checks: T twice back to 1x, P, 1,800 frames counted from the frame the pilot took the helm, the steps grown and no page error in them, then P. Every earlier frame is as it was.
 13. **No fix for a chapter's blocker.** The sweep's road ends at Thornmark's chapter, where the fair and the omniscient pilot fall for different reasons (Known limits): no single cheap blocker repeats across chapters, so both are left to the owner. The two fixes the sweep did bring (10, 4) are the suite's own footing.
+
+Decided by the builder for #893, each the owner's to overturn:
+
+1. **No change to the pilot.** The issue fixes the pilot where a skill strands it, and none does: all ten runs stop in Ashcombe Cellar at 1,1, as Two maps in (Known limits) has it, and on main the three skills shorten the run. Lockpick's lengthening on #879's tree is the lost rule's count of things carried (`gainsOf`, aims.ts), which a key kept or spent moves. A count of each kind of thing, so that any find tries the goals again whatever was spent, would be the pilot's fix (DESIGN's ruling for #892), and is not built: it would move the shelf's play, the survival sweep and every figure on this page, for a run that no longer lengthens.
+2. **The skills were taken off in a scratch runner, not by a switch in the tree.** A copy of the full run's fair play (`play`, `tools/tests/fullrun.ts`) that strikes the peoples and classes born to a skill from `SKILLS` before the game is made; nothing of it is committed, and its figures are the suite's to the tick where both ran (the shelf's 7,541 and Thornmark's 47,739 on main, Thornmark's 85,559 on #879's tree).
+3. **Measured on #879's tree as well as on main.** The issue's figures are #879's, and #889 and the areas have moved the run since (47,738 ticks at #903, 47,739 now): the cause is found on the tree that showed it, and main's runs say that it no longer shows.
