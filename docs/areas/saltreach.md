@@ -1757,12 +1757,12 @@ Decided by the builder for #830, each the owner's to overturn:
     hints stand on open ground at the door, as A4's does: the clear water at 22,15, with four
     squares of shallows drawn running out of the dyke's foot into the marsh, and the slit at 19,10.
 21. **A6's south-east corner is the rim's mountain, and so is B6's 0,31 beside it,** as the owner's
-    delegate rules on the review: the two agree square for square, A6's south edge is shut against
-    A7, which stays cut (decision 5), and no row of `OPEN_ON_NOTHING` holds a square of it. B6's
-    0,31 is a dead-end square with nothing on it, its neighbours 0,30 and 1,31 joined still through
-    1,30; the pull request takes square 0 out of the row for `delta_b6 south`. A saved company
-    standing on it loads onto the void and steps off. B7's 0,0 beside both is the same corner, and
-    its pull request draws it to match (§12.8).
+    delegate rules on the review: the two agree square for square and A6's south edge is shut
+    against A7, which stays cut (decision 5), with no row of `OPEN_ON_NOTHING` holding a square of
+    it. B6's 0,31 is a dead-end square with nothing on it, its neighbours 0,30 and 1,31 joined still
+    through 1,30; the pull request takes square 0 out of the row for `delta_b6 south`. A saved
+    company standing on it loads onto the void and steps off. B7's 0,0 beside both is the same
+    corner, and its pull request draws it to match (§12.8).
 22. **The priest of stone's riddle is answered "tide":** TWICE A DAY IT TAKES THE SHORE AND GIVES IT
     BACK, AND IT IS NEVER LATE. It gives 70 gold to the purse and a point of luck to each member.
     The bell heard at 28,4 stops when the Choirmaster falls, as the count it is does, and the
@@ -1776,8 +1776,8 @@ Decided by the builder for #830, each the owner's to overturn:
     bring it to about 12.87, so A6's pay stays at the brief's and B7 is the one to trim if it nears
     the limit.
 25. **What is left open:** after A5 and A6, 98 squares of Saltreach's built boxes are open onto
-    unbuilt land, where there were 164: B6's south edge (31) and C7's west edge (23) onto B7, D5's
-    south edge (6) and C6's east edge (19) onto D6, and C7's east edge (19) onto D7, the Wold's box,
+    unbuilt land, where there were 164: B6's south edge (31) and C7's west edge (23) onto B7; D5's
+    south edge (6) and C6's east edge (19) onto D6; C7's east edge (19) onto D7, the Wold's box,
     which §12 does not build (decision 17). A4's corner, B5's west edge and B6's west edge are
     answered, and A6's south-east corner is shut with B6's 0,31 (decision 21).
 
