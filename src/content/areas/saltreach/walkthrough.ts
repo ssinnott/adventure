@@ -1087,12 +1087,20 @@ export const walkthrough: Walkthrough = (ok) => {
  * out of B6's reeds at 0,16 and south out of A5's corner, both walked, its south edge shut against A7,
  * which stays cut, B6's corner with it; the bell heard, the priest of stone's riddle, a rest
  * at the pilgrims' hearth, the drowned men and the toads won at 11 and the anchorite's cell found from
- * its slit. Walked, waded, climbed or floated, no prize is reached but through its door.
+ * its slit. The Scarp's foot west of the pans (B7): south out of B6's reeds at 16,31, which names the
+ * Saltings, and west out of C7's pans at 0,16, both walked; its west edge the rim's mountain, 0,0 with
+ * it, shut against A7, and its south edge and the Glasswold's ground above the Scarp shut; the
+ * salt-carter's word on the fire, the shrine at the marsh's edge, a rest at the salters' halt while both
+ * groups stand clear of it, the crabs and the smugglers won at 11, the Scarp's foot left bare for the
+ * enclave's door and the bothy found from the fan of dead grass. The plate's old place (D6): south out of
+ * D5's spit at 10,31, which names the Saltings, and east out of C6's shore at 31,16, both walked; the
+ * spit, the shore and its south end three pieces of land, the toads won at 11 and the keeper's store
+ * found from the footing's boom. Walked, waded, climbed or floated, no prize is reached but through its door.
  */
 function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const w = newWalk(ok), out = buildMaps()[OUTDOORS];
-  const [C2, B2, A3, A4, A5, A6] = ['upperwater_c2', 'upperwater_b2', 'upperwater_a3', 'delta_a4', 'delta_a5', 'delta_a6'].map((id) => MAP_DEFS.find((d) => d.id === id)!);
-  const [c2, b2, a3, a4, a5, a6] = [C2.id, B2.id, A3.id, A4.id, A5.id, A6.id].map((id) => out.zones.find((z) => z.id === id)!);
+  const [C2, B2, A3, A4, A5, A6, B7, D6] = ['upperwater_c2', 'upperwater_b2', 'upperwater_a3', 'delta_a4', 'delta_a5', 'delta_a6', 'saltings_b7', 'saltings_d6'].map((id) => MAP_DEFS.find((d) => d.id === id)!);
+  const [c2, b2, a3, a4, a5, a6, b7, d6] = [C2.id, B2.id, A3.id, A4.id, A5.id, A6.id, B7.id, D6.id].map((id) => out.zones.find((z) => z.id === id)!);
   const said = (r: ReturnType<typeof w.world.move>): string => (r.kind === 'moved' ? r.messages.join(' / ') || 'nothing said' : r.kind);
   // The squares of a box reached from one of its own, inside the box: on foot, or walked, waded, climbed
   // and floated with its secret door shut.
@@ -1273,8 +1281,8 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   ok(onward.kind === 'moved' && w.world.zone?.id === A6.id && w.world.state.x === a6.x + 31 && w.world.state.y === a6.y && !onward.messages.some((m) => m.includes('The Delta.')),
     `south from A5's 31,31 onto A6's 31,0, walked, and the land not named again (${said(onward)})`);
   listen(w);
-  ok(Array.from({ length: a6.w }, (_, x) => out.passable(a6.x + x, a6.y + a6.h - 1, ALL) === 'ok').every((open) => !open) && out.passable(a6.x + a6.w, a6.y + a6.h - 1, ALL) !== 'ok',
-    'A6\'s south edge is the rim\'s mountain, shut against A7, which stays cut, and so is B6\'s 0,31 beside its corner: no square of either is walked, waded, climbed or floated');
+  ok(Array.from({ length: a6.w }, (_, x) => out.passable(a6.x + x, a6.y + a6.h - 1, ALL) === 'ok').every((open) => !open) && out.passable(a6.x + a6.w, a6.y + a6.h - 1, {}) !== 'ok',
+    'A6\'s south edge is the rim\'s mountain, shut against A7, which stays cut: no square of it is walked, waded, climbed or floated; B6\'s 0,31 beside its corner is the rim\'s mountain too, a dead end shut to a walker');
   // The bell over the fen, and the priest of stone's riddle, the tide's.
   see(w, `${A6.id}:a6_bell`);
   const priest = A6.features!.find((f): f is Extract<Feature, { kind: 'statue' }> => f.kind === 'statue')!;
@@ -1294,6 +1302,72 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   see(w, `${A6.id}:a6_slit`);
   ok(search(A6.id, 19, 10, WEST, 'a6_cell'), 'searched below the slit, the walling gives, and the cell behind it can be walked into');
   ok(gold(A6, 'a6_cell_chest') === 250 && chest(A6, 'a6_cell_chest').includes('elixir'), 'in the cell, what the faithful left her: 250 gold and an elixir');
+
+  // The Scarp's foot west of the pans: south out of B6's reeds at 16,31 onto B7's 16,0, which names the
+  // Saltings, and west out of C7's pans at 0,16 onto B7's 31,16, both walked.
+  w.level = 11;
+  w.world.travel('delta_b6', 16, 31, SOUTH);
+  const scarp = w.world.move('forward');
+  ok(scarp.kind === 'moved' && w.world.zone?.id === B7.id && w.world.state.x === b7.x + 16 && w.world.state.y === b7.y && scarp.messages.some((m) => m.includes('The Saltings.')),
+    `south from B6's 16,31 onto B7's 16,0, walked, and the Saltings named at the line (${said(scarp)})`);
+  listen(w);
+  w.world.travel('saltings_c7', 0, 16, WEST);
+  const pans = w.world.move('forward');
+  ok(pans.kind === 'moved' && w.world.zone?.id === B7.id && w.world.state.x === b7.x + 31 && w.world.state.y === b7.y + 16 && !pans.messages.some((m) => m.includes('The Saltings.')),
+    `west from C7's 0,16 onto B7's 31,16, walked, and the land not named again (${said(pans)})`);
+  listen(w);
+  const grass = reach(b7, [B7.start.x, B7.start.y], {});
+  ok(Array.from({ length: b7.h }, (_, y) => out.passable(b7.x, b7.y + y, ALL) === 'ok').every((open) => !open) && out.passable(b7.x, b7.y - 1, {}) !== 'ok'
+    && Array.from({ length: b7.w }, (_, x) => out.passable(b7.x + x, b7.y + b7.h - 1, {}) === 'ok').every((open) => !open) && ![...grass].some((k) => Math.floor(k / out.width) - b7.y >= 23),
+    'B7\'s west edge is the rim\'s mountain, 0,0 with it as B6\'s 0,31 beside it is, shut against A7, which stays cut; its south edge and the Glasswold\'s ground above the Scarp are shut to a walker, and none of it is walked to');
+  // The carter's word on the fire, the shrine at the marsh's edge, and the halt, which stands clear of both groups.
+  const carter = B7.features!.find((f): f is Person => f.kind === 'npc')!;
+  w.world.travel(B7.id, carter.x, carter.y);
+  const carterSays = meet(carter, w.party, heard(w.world, carter)).text;
+  ok(carterSays.includes('fire under the Scarp') && carterSays.includes('Four men'), `the salt-carter has seen a fire under the Scarp, west of the track, and four men at it (${carterSays.replace(/\n+/g, ' ')})`);
+  listen(w);
+  kneel(w, `${B7.id}:b7_shrine`);
+  const halt = B7.features!.find((f) => f.kind === 'camp')!;
+  w.world.travel(B7.id, halt.x, halt.y);
+  ok(B7.encounters!.every((g) => Math.abs(g.x - halt.x) + Math.abs(g.y - halt.y) > 2) && restRefused(w.world) === '',
+    `the salters' halt at ${halt.x},${halt.y} stands clear of both groups, and a company rests there while they stand (${restRefused(w.world) || 'rest allowed'})`);
+  for (const g of B7.encounters!) fight(w, `${B7.id}:${g.id}`);
+  // The Scarp's foot at 22,22 is left bare for the enclave's door: its way along row 21 is walked, and no
+  // feature or group stands within four squares of it.
+  ok(grass.has(at(b7, 22, 21)) && grass.has(at(b7, 20, 21)) && grass.has(at(b7, 26, 21)) && ![...B7.features!, ...B7.encounters!].some((f) => Math.abs(f.x - 22) + Math.abs(f.y - 22) <= 4),
+    'the Scarp\'s foot at 22,22, where the enclave\'s door will stand, is walked to along row 21 from the way in, and no feature or group stands within four squares of it');
+  // The secret: the fan of dead grass pointing at the rock, the search at its point and the bothy behind the salt.
+  const bothy = reach(b7, [B7.start.x, B7.start.y], ALL, [9, 16]);
+  ok(bothy.size > 500 && !bothy.has(at(b7, 9, 17)), `the bothy is shut but for its salted door: none of B7's ${bothy.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${B7.id}:b7_fan`);
+  ok(search(B7.id, 9, 15, SOUTH, 'b7_bothy'), 'searched at the fan\'s point, the salt gives, and the bothy behind it can be walked into');
+  ok(gold(B7, 'b7_bothy_chest') === 250 && chest(B7, 'b7_bothy_chest').includes('elixir'), 'in the bothy, the salters\' strongbox of 250 gold and an elixir');
+
+  // The plate's old place: south out of D5's spit at 10,31 onto D6's 10,0, which names the Saltings, and east
+  // out of C6's shore at 31,16 onto D6's 0,16, both walked.
+  w.world.travel('delta_d5', 10, 31, SOUTH);
+  const spit = w.world.move('forward');
+  ok(spit.kind === 'moved' && w.world.zone?.id === D6.id && w.world.state.x === d6.x + 10 && w.world.state.y === d6.y && spit.messages.some((m) => m.includes('The Saltings.')),
+    `south from D5's spit, 10,31, onto D6's 10,0, walked, and the Saltings named at the line (${said(spit)})`);
+  listen(w);
+  w.world.travel('saltings_c6', 31, 16, EAST);
+  const strand = w.world.move('forward');
+  ok(strand.kind === 'moved' && w.world.zone?.id === D6.id && w.world.state.x === d6.x && w.world.state.y === d6.y + 16 && !strand.messages.some((m) => m.includes('The Saltings.')),
+    `east from C6's 31,16 onto D6's 0,16, walked, and the land not named again (${said(strand)})`);
+  listen(w);
+  // Two pieces of land and a third: the spit, the shore and the shore's south end, none walked from another.
+  const point = reach(d6, [D6.start.x, D6.start.y], {}), beach = reach(d6, [0, 16], {}), tail = reach(d6, [0, 29], {});
+  ok(point.size > 15 && beach.size > 25 && tail.size > 10 && ![...point].some((k) => beach.has(k) || tail.has(k)) && ![...beach].some((k) => tail.has(k)),
+    `D6's spit (${point.size} squares), its shore under the town (${beach.size}) and the shore's south end (${tail.size}) are three pieces, each walked onto from its own side`);
+  // The footing's boom, the toads on the spit, the store behind the stone and the shore's two sights.
+  w.level = 11;
+  fight(w, `${D6.id}:d6_toads`);
+  const store = reach(d6, [D6.start.x, D6.start.y], ALL, [11, 4]);
+  ok(store.size > 20 && !store.has(at(d6, 11, 5)), `the store is shut but for its walled door: none of D6's ${store.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${D6.id}:d6_boom`);
+  ok(search(D6.id, 11, 3, SOUTH, 'd6_store'), 'searched at the footing, the stone gives, and the keeper\'s store behind it can be walked into');
+  ok(gold(D6, 'd6_store_chest') === 150 && chest(D6, 'd6_store_chest').includes('potion_heal'), 'in the store, the keeper\'s chest of 150 gold and a draught');
+  see(w, `${D6.id}:d6_ribs`);
 }
 
 /**

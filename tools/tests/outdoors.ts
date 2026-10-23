@@ -135,11 +135,8 @@ const OPEN_ON_NOTHING: readonly OnNothing[] = [
   // Thornmark.
   { edge: 'deepthorn_h3 south', open: '14-16', why: 'H4 is a crumb, left unbuilt (#828)' },
   // Saltreach.
-  { edge: 'delta_d5 south', open: '8-13', why: 'D6 is unbuilt: #830 builds it' },
-  { edge: 'delta_b6 south', open: '1-31', why: 'B7 is unbuilt: #830 builds it' },
-  { edge: 'saltings_c6 east', open: '7-8 11-20 25-31', why: 'D6 is unbuilt: #830 builds it' },
+  { edge: 'saltings_d6 south', open: '0-1', why: 'D7 is unbuilt: #833 builds it' },
   { edge: 'saltings_c7 east', open: '0-18', why: 'D7 is unbuilt: #833 builds it' },
-  { edge: 'saltings_c7 west', open: '0-22', why: 'B7 is unbuilt: #830 builds it' },
   // Wrackholm.
   { edge: 'wrackholm_e6 north', open: '15-31', why: 'E5 is unbuilt: #835 builds it' },
   { edge: 'wrackholm_e6 south', open: '13-26', why: 'E7 is unbuilt: #833 builds it' },
