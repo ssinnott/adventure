@@ -253,6 +253,8 @@ export class SheetScreen implements Screen {
       if (d.slot !== 'none') {
         if (equip(c, it.id)) { if (it.from === 'bag') g.party.bag.splice(g.party.bag.indexOf(it.id), 1); g.say(`${c.name} equips ${d.name}.`); }
         else g.say(`${c.name} cannot use ${d.name}.`);
+        // A piece's words are read as it is taken up from the pack (#847, DESIGN §9), once it is gone from the list.
+        if (d.text) g.push(new MessageScreen(d.text.join('\n\n'), undefined, d.name));
       } else if (d.use) {
         pickMember(g, `Use ${d.name} on whom?`, (i) => {
           if (i < 0) return;
@@ -288,24 +290,12 @@ export class SheetScreen implements Screen {
       if (raise) drawText(ctx, raise, 141, y, { size: 1, color: YELLOW });
       y += 10;
     }
-    y = 134;
-    drawText(ctx, `HP ${c.hp}/${c.maxHp}   SP ${c.sp}/${c.maxSp}`, 20, y, { size: 1, color: TEXT }); y += 10;
-    drawText(ctx, `AC ${armorClass(c)}   TO-HIT +${attackBonus(c)}`, 20, y, { size: 1, color: TEXT }); y += 10;
-    drawText(ctx, c.conditions.length ? c.conditions.join(', ').toUpperCase() : 'WELL', 20, y, { size: 1, color: c.conditions.length ? RED : TEXT_DIM }); y += 14;
-    drawText(ctx, weaponLine(c), 20, y, { size: 1, color: TEXT }); y += 10;
-    drawText(ctx, 'ARMOUR ' + (c.equipment.armor ? item(c.equipment.armor).name : 'none'), 20, y, { size: 1, color: TEXT }); y += 10;
-    drawText(ctx, 'SHIELD ' + (c.equipment.shield ? item(c.equipment.shield).name : 'none'), 20, y, { size: 1, color: TEXT }); y += 10;
-    const res = resists(c);
-    if (res.length) { drawText(ctx, 'RESISTS ' + res.join(', ').toUpperCase(), 20, y, { size: 1, color: TEXT }); y += 10; }
-    for (const l of artifactLines(c)) { drawText(ctx, l, 20, y, { size: 1, color: YELLOW }); y += 10; }
-    drawText(ctx, 'TRAITS ' + CLASSES[c.cls].traits.map((t) => TRAITS[t].name).join(', '), 20, y, { size: 1, color: TEXT }); y += 10;
-    for (const l of skillsLines(c)) { drawText(ctx, l, 20, y, { size: 1, color: TEXT }); y += 10; }
-    if (c.spells.length) { drawText(ctx, spellsLine(c), 20, y, { size: 1, color: TEXT }); }
+    for (const r of sheetRows(c)) drawText(ctx, r.text, 20, r.y, { size: 1, color: r.color });
     // Items column
     const items = this.items(g);
     drawText(ctx, 'ITEMS (SPACE: EQUIP OR USE)', 340, 36, { size: 1, color: TEXT_DIM });
     if (!items.length) drawText(ctx, 'nothing carried', 340, 50, { size: 1, color: TEXT_DIM });
-    else menu(ctx, items.slice(0, 16).map((it) => `${item(it.id).name}${it.from === 'bag' ? ' (bag)' : ''}`), 340, 50, this.sel);
+    else menu(ctx, items.slice(0, SHEET_ITEMS).map((it) => `${item(it.id).name}${it.from === 'bag' ? ' (bag)' : ''}`), 340, SHEET_ITEMS_Y, this.sel);
     drawText(ctx, '< > OR 1-6 SWITCH   ESC CLOSE', 620, 264, { size: 1, color: TEXT_DIM, align: 'right' });
     drawPartyCards(ctx, g.party, this.who, frame);
   }
@@ -324,15 +314,60 @@ export function statText(c: Character, s: Stat): [string, string] {
  */
 export function weaponLine(c: Character): string {
   const t = tierOf(c, 'arms'), w = c.equipment.weapon ? item(c.equipment.weapon) : null;
-  return 'WEAPON ' + (w ? w.name + (w.element ? `, ${w.element.toUpperCase()}` : '') : 'none') + (t ? `, ${TIER_NAMES[t].toUpperCase()}` : '');
+  return 'WEAPON ' + (w ? w.name + (w.artifact ? `, ${power(w)}` : w.element ? `, ${w.element.toUpperCase()}` : '') : 'none') + (t ? `, ${TIER_NAMES[t].toUpperCase()}` : '');
 }
-/** An artifact's power in words (#847, DESIGN §9): the stat it raises and by how much, or the element its blows carry ("SPEED +5", "HOLY BLOWS"). */
+/** The sheet's ARMOUR and SHIELD lines: what is worn there, and an artifact's power after it (#847: "ARMOUR The Erzhemd, SPEED +5"). */
+export function slotLine(c: Character, slot: 'armor' | 'shield'): string {
+  const id = c.equipment[slot], d = id ? item(id) : null;
+  return `${slot === 'armor' ? 'ARMOUR' : 'SHIELD'} ` + (d ? d.name + (d.artifact ? `, ${power(d)}` : '') : 'none');
+}
+/**
+ * An artifact's power in words (#847, DESIGN §9): the stat it raises and by how much, the element its
+ * blows carry, its spell and how many a day, its regeneration or its ward ("SPEED +5", "HOLY BLOWS",
+ * "METEOR SWARM 2 A DAY", "MENDS A TENTH AN HOUR", "NEVER ASLEEP").
+ */
 export function power(d: ItemDef): string {
   const raised = STATS.filter((s) => d.stat?.[s]).map((s) => `${s.toUpperCase()} ${signed(d.stat?.[s] ?? 0)}`);
-  return [...raised, ...(d.element ? [`${d.element.toUpperCase()} BLOWS`] : [])].join(', ');
+  return [...raised, ...(d.element ? [`${d.element.toUpperCase()} BLOWS`] : []), ...(d.casts ? [`${spell(d.casts.spell).name.toUpperCase()} ${d.casts.times} A DAY`] : []),
+    ...(d.regen ? ['MENDS A TENTH AN HOUR'] : []), ...(d.ward ? [`NEVER ${d.ward.toUpperCase()}`] : [])].join(', ');
 }
-/** The sheet's ARTIFACT lines: each artifact the member bears (`borne`) and its power, a line each ("ARTIFACT The Erzhemd, SPEED +5"). */
-export const artifactLines = (c: Character): string[] => borne(c).map((id) => item(id)).filter((d) => d.artifact).map((d) => `ARTIFACT ${d.name}, ${power(d)}`);
+/**
+ * The sheet's ARTIFACT lines: each artifact the member carries in their pack (`borne`) and its power,
+ * a line each ("ARTIFACT The Hagstone, NEVER PARALYSED"). One with a slot says its power on its slot's line.
+ */
+export const artifactLines = (c: Character): string[] => borne(c).map((id) => item(id)).filter((d) => d.artifact && d.slot === 'none').map((d) => `ARTIFACT ${d.name}, ${power(d)}`);
+/** Where the sheet's panel's border begins at its foot: the column under the portrait ends above it. */
+export const SHEET_FOOT = 274;
+/** The sheet's item list: its first row's y and the most rows it shows, a menu's step apart. */
+export const SHEET_ITEMS_Y = 50, SHEET_ITEMS = 16;
+/**
+ * The highest the SPELLS line is drawn: just under the item list's last row (y 200), since a caster's
+ * spells run on past the column into the list's (#847). Where main drew it for a member with least.
+ */
+export const SPELLS_TOP = 208;
+/**
+ * The sheet's column under the portrait (#847): each line, its colour and the y it is drawn at. Hit
+ * points and armour share a line, and an artifact with a slot says its power on its slot's, so the
+ * fullest member of any class ends above the panel's foot (`SHEET_FOOT`).
+ */
+export function sheetRows(c: Character): { text: string; color: string; y: number }[] {
+  const rows: { text: string; color: string; y: number }[] = [];
+  let y = 134;
+  const add = (text: string, color = TEXT, gap = 10): void => { rows.push({ text, color, y }); y += gap; };
+  const worn = (id: string | null): string => (id && item(id).artifact ? YELLOW : TEXT);
+  add(`HP ${c.hp}/${c.maxHp}   SP ${c.sp}/${c.maxSp}   AC ${armorClass(c)}   TO-HIT +${attackBonus(c)}`);
+  add(c.conditions.length ? c.conditions.join(', ').toUpperCase() : 'WELL', c.conditions.length ? RED : TEXT_DIM, 14);
+  add(weaponLine(c), worn(c.equipment.weapon));
+  add(slotLine(c, 'armor'), worn(c.equipment.armor));
+  add(slotLine(c, 'shield'), worn(c.equipment.shield));
+  const res = resists(c);
+  if (res.length) add('RESISTS ' + res.join(', ').toUpperCase());
+  for (const l of artifactLines(c)) add(l, YELLOW);
+  add('TRAITS ' + CLASSES[c.cls].traits.map((t) => TRAITS[t].name).join(', '));
+  for (const l of skillsLines(c)) add(l);
+  if (c.spells.length) { y = Math.max(y, SPELLS_TOP); add(spellsLine(c)); }
+  return rows;
+}
 /** The sheet's SPELLS line: the member's tier in magic, then the spells it knows ("SPELLS (MASTER) Spark, Frost"). */
 export function spellsLine(c: Character): string {
   const t = tierOf(c, 'magic');

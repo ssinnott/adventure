@@ -2,12 +2,20 @@
 // of the Downs (the kits' gear and the band's with a plus, the named finds and two keepsakes) and the
 // wand and the ledger Vask and Hale want.
 import type { ItemDef } from '../../../game/items.ts';
-import { W, A, P, core, MARTIAL, MAIL } from '../../items.ts';
+import { W, A, P, core, MARTIAL, MAIL, ARTIFACT_PRICE } from '../../items.ts';
 
 const spear = W('spear', 'Spear', 60, 1, 8, { twoHanded: true, classes: [...MARTIAL, 'monk', 'druid'] });
 const longbow = W('longbow', 'Long Bow', 200, 1, 8, { kind: 'bow', bonus: 1, ranged: true, twoHanded: true, classes: ['ranger', 'knight'] });
 const shield: ItemDef = { id: 'shield', name: 'Kite Shield', slot: 'shield', price: 150, ac: 2, classes: MAIL };
 const halberd = W('halberd', 'Halberd', 150, 1, 12, { twoHanded: true, classes: MARTIAL });
+
+// The Foreland's of the bounds' eight (DESIGN §9, #847): a thing carried, for any of the ten, with no
+// numbers, and its bearer never paralysed. Found and never sold; placed nowhere yet, for #837 lays its
+// lair and puts it there.
+export const hagstone: ItemDef = { id: 'hagstone', name: 'The Hagstone', slot: 'none', price: ARTIFACT_PRICE, ward: 'paralysed', artifact: true, text: [
+  'A stone off the strand, a hole the sea wore through it and a cord gone green.',
+  'Held to the eye, the hole shows the dark as only dark.',
+] };
 
 export const ITEMS: readonly ItemDef[] = [
   spear,
@@ -64,4 +72,5 @@ export const ITEMS: readonly ItemDef[] = [
     'A paper folded twice, unsealed, addressed in a square hand: HALE. THE SCARTH.',
     '"Hale. Eight riders, shod, no lights, the week she died. West to the Berth by my ford and back before dawn, and not once only. Grey under the cloaks. You know what I am not writing. Burn this. D."',
   ] },
+  hagstone,
 ];

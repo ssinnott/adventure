@@ -398,6 +398,12 @@ Hearth Isle and never sold. Each rung betters the last for every class, each fin
 area's window; past the top, gear grows only in the harness's what-ifs, the bounds' artifacts among
 them (`--artifacts`, #847).
 
+Nor does the gate's company learn a secondary skill (DESIGN.md §5): Arms Master's first round and
+the two senses go unmeasured, so a company that buys one is stronger than the gate measured it, the
+safe side. Decided by the owner's delegate for #18 (#856), the owner's to overturn. It is born to
+three that touch no fight: its elf and gnome to Perception, its ranger to Pathfinder and its thief
+to Lockpick (#857).
+
 Decided by the builder for #847, each the owner's to overturn:
 
 An artifact is an item marked so (`ItemDef.artifact`, DESIGN §9): one in the world, found in its lair
@@ -413,18 +419,38 @@ in no shop, on no rung and in no window, and that unmarked the window would catc
    pays it, and a window that dropped the mark would catch it, so the mark is what exempts.
 3. **The shop's words** are "Keep it. There is no price on a thing like that." (`REFUSED`); the sell
    list shows an artifact without a price, and the company keeps it.
-4. **The sheet gives each artifact borne a line,** after RESISTS: "ARTIFACT The Erzhemd, SPEED +5".
+4. **The sheet says each artifact's power,** one with a slot on its slot's line ("ARMOUR The
+   Erzhemd, SPEED +5"), one carried on a line of its own ("ARTIFACT The Hagstone, NEVER PARALYSED"),
+   and hit points and armour share a line, so the fullest member of every class (the stone carried,
+   a resistance, twelve skills and every spell) ends above the panel's foot (`SHEET_FOOT`). A line to
+   every artifact, as the first half had it, ran the column off the panel.
 5. **`--artifacts`** takes ids or `all` and gives each, one in the world, to the first member in the
-   company's order who may bear it, of the reach they hold and with no shield under a two-hander. The
-   gate's company stays plain (#891).
-6. **The three not placed are owed** in `UNPLACED` (`tools/tests/items.ts`) to #830, #831 and #833,
-   each until its lair holds it once and in no drop; the table only shrinks.
-
-Nor does the gate's company learn a secondary skill (DESIGN.md §5): Arms Master's first round and
-the two senses go unmeasured, so a company that buys one is stronger than the gate measured it, the
-safe side. Decided by the owner's delegate for #18 (#856), the owner's to overturn. It is born to
-three that touch no fight: its elf and gnome to Perception, its ranger to Pathfinder and its thief
-to Lockpick (#857).
+   company's order who may bear it: a weapon of the reach they hold, or of the other where none who
+   may bear it holds that reach (Holdfast to the premade's thief, for her sling: she strikes nothing
+   from the back row with it, and casts its charges, decision 10); a two-hander puts a plain shield
+   in the pack, never an artifact's. So `all` dresses the premade six with the eight. The gate's
+   company stays plain (#891).
+6. **The eight not placed are owed** in `UNPLACED` (`tools/tests/items.ts`) to #830 to #837, each
+   until it lies anywhere; placed, it must lie once in the world, in a chest, cairn or statue on an
+   enclave of its own area at the cap. The table only shrinks.
+7. **The castings spent are the company's, by the artifact** (`Party.spent`, an optional field, so
+   no save version moves): passed to another member, an artifact keeps what it has spent. They come
+   back at the dawn the calendar gives that day (`dawnOf`), the one a night's sleep wakes to.
+8. **An artifact's spell is cast in a fight only:** both of the eight's are fight spells, so the
+   spell screen offers none and the check holds an artifact's spell to a fight's; the way to cast one
+   out of a fight comes with the first that needs it. The fight's menu lists it after the member's
+   own spells, with the castings left ("Meteor Swarm (2 LEFT)").
+9. **Regeneration and a ward keep nothing in a save:** every passage of time goes through the
+   world's clock (`World.advance`), which mends the bearer (`passClock`), and a ward is read from what
+   is borne, as a trait's immunity is (`immuneTo`).
+10. **The harness's bot casts an artifact's spell** where it pays, weighed as its own spells are and
+    at no cost in points, an artifact's hold whatever `--bot` asks and at a group of one too, so a
+    lair's guardian is tuned with the artifact's power and not its steel alone. In 20 seeded fights at
+    30 the company with Holdfast, or with all eight, wins as many as the plain one and loses fewer hit
+    points (`tools/tests/harness.ts`). The game's auto-fight leaves an artifact's spell to the player.
+11. **A piece's words are read as it is taken up:** Space on a weapon or armour with words equips it
+    and shows them, so DESIGN §9's "read from the pack" holds for every slotted piece, the Old
+    Lantern's Staff among them.
 
 The gate, checked with the bot of `tools/gate.ts`. Each figure below is its **aim**, and each has a
 **limit** beyond it (#273): inside its aim a figure passes; between its aim and its limit it passes,

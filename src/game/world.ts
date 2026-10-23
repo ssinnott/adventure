@@ -8,7 +8,7 @@ import { GameMap, DRAG } from './map.ts';
 import type { Feature, Exit, EncounterDef, Door, MapZone, Cell, Hours, Presence, Choice, Gate, MapDef } from './map.ts';
 import type { Facing } from './types.ts';
 import { FACING_DX, FACING_DY, turnLeft, turnRight, turnBack, manhattan } from './types.ts';
-import { partyCan, takeItem, isDown, hasTrait, companyLevel, prestigeOf } from './party.ts';
+import { partyCan, takeItem, isDown, hasTrait, companyLevel, prestigeOf, passClock } from './party.ts';
 import { monster, KINDS } from './monsters.ts';
 import type { Party } from './party.ts';
 import { MINUTES_PER_DAY, dateAt, daylightAt, sunTimes, longDate, seasonName, clock, tideAt } from './calendar.ts';
@@ -367,8 +367,11 @@ export class World {
     return { rangedPenalty: rangedPenalty(this.weather), note: rangedNote(this.weather) };
   }
 
+  /** The clock moves on: every passage of time goes through here, so what it does to what the company bears happens here (`passClock`). */
   advance(minutes: number): void {
+    const from = this.state.minutes;
     this.state.minutes += minutes;
+    passClock(this.party, from, this.state.minutes);
   }
 
   /** Sleep through to the next morning: 07:00, or first light where the day breaks later, deep in winter. */
