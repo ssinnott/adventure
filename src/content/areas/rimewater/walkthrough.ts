@@ -45,13 +45,14 @@
 // N9, its only way in, its groups won, the hunters' hide found from the skull and the glacier's wall
 // closed past it, Glacier Foot's slivers drawn closed (call 7). Then the Sleepers' Bay (#490), through
 // the door: the stair under the ice and the bay of beds, the Matron in the last row and the locker
-// behind it.
+// behind it. Then the bounds (#832), Monks' Vale's east under the pass, in a walk of their own
+// (theBounds).
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, see, fight, listen, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import type { Facing } from '../../../game/types.ts';
 import { GameMap } from '../../../game/map.ts';
-import type { Feature, MapDef } from '../../../game/map.ts';
+import type { Can, Feature, MapDef, MapZone } from '../../../game/map.ts';
 import { LOCKS } from '../../locks.ts';
 import { ATLAS, MAP_DEFS, MONSTERS } from '../../index.ts';
 import { DROVE_COACH } from '../../crossings.ts';
@@ -68,6 +69,7 @@ import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { worldGrid } from '../../../game/atlas.ts';
 import { meet, heard, answer } from '../../../game/people.ts';
+import { answerRiddle } from '../../../game/wilds.ts';
 import { questLog } from '../../../game/quests.ts';
 import { readMarks } from '../../../game/inscriptions.ts';
 import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
@@ -685,6 +687,7 @@ export const walkthrough: Walkthrough = (ok) => {
   sleepersBay(w, ok);
   sideQuests(ok);
   theSleepers(ok);
+  theBounds(ok);
 };
 
 /**
@@ -1185,4 +1188,123 @@ function theSleepers(ok: (cond: boolean, msg: string) => void): void {
   ok(read[0] === 'lodge, night_1, night_2, night_3, night_4, up, door, sleepers, south' && read[1] === read[0],
     `the chapter reads the same in order and with the pass first (${read.join(' / ')})`);
   everyGoalWalked(ok, [CHAPTER]);
+}
+
+/**
+ * The bounds (#832), Monks' Vale's east under the pass (K12): south from K11's 8,31 onto its 8,0 under
+ * the pines, walked, the land not named again, and east from J12's grass at 31,5 onto its 0,5, the cold
+ * loch named, and back; the bear-hunter at his fire and his word on the bear and the cats; the brother
+ * of stone's riddle; the kill, the cats' tracks, the spur and the rim; the bear and the lynxes, the
+ * box's one fight, won at its floor; the cell behind the rock where the path of flat stones stops, shut
+ * but through its door; the rim's face at 2,15 left bare for the lair's door; east of the spur, from
+ * K11, the old pines and the cairn; and the box's edges as built.
+ */
+function theBounds(ok: (cond: boolean, msg: string) => void): void {
+  const w = newWalk(ok);
+  w.level = 20;
+  for (const m of w.party.members) m.level = 20;
+  const K12 = MAP_DEFS.find((d) => d.id === 'coldmere_k12')!;
+  const out = buildMaps()[OUTDOORS], zone = (id: string): MapZone => out.zones.find((z) => z.id === id)!;
+  const k12 = zone(K12.id), k11 = zone('coldmere_k11'), j12 = zone('monksvale_j12');
+  const ALL: Can = { swim: true, climb: true, float: true };
+  const said = (r: ReturnType<typeof w.world.move>): string => (r.kind === 'moved' ? r.messages.join(' / ') || 'nothing said' : r.kind);
+  const at = (z: MapZone, x: number, y: number): number => (z.y + y) * out.width + z.x + x;
+  /** The squares of a box reached from one of its own, inside the box: on foot, or every way with its secret door shut. */
+  const reach = (z: MapZone, from: readonly [number, number], can: Can, door?: readonly [number, number]): Set<number> => {
+    const seen = new Set<number>(), todo = [[z.x + from[0], z.y + from[1]]];
+    while (todo.length) {
+      const [x, y] = todo.pop()!, k = y * out.width + x;
+      if (seen.has(k) || (door && x === z.x + door[0] && y === z.y + door[1]) || x < z.x || x >= z.x + z.w || y < z.y || y >= z.y + z.h || out.passable(x, y, can) !== 'ok') continue;
+      seen.add(k);
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+    }
+    return seen;
+  };
+  /** Searched from a square facing the face, the wall gives and the room behind it is walked into. */
+  const search = (map: string, x: number, y: number, facing: Facing, room: string): boolean => {
+    w.world.travel(map, x, y, facing);
+    let found = false;
+    for (let i = 0; i < 20 && !found; i++) found = w.world.search();
+    const into = found ? [w.world.move('forward'), w.world.move('forward')] : [];
+    listen(w);
+    return found && into.every((r) => r.kind === 'moved') && w.world.used(room);
+  };
+  const open = (n: number, f: (i: number) => boolean): string => Array.from({ length: n }, (_, i) => f(i)).join();
+
+  // South of the pass, on: south from K11's 8,31 onto K12's 8,0 under the pines, walked, in Loch Fuar still.
+  w.world.state.minutes = Math.floor(w.world.state.minutes / MINUTES_PER_DAY) * MINUTES_PER_DAY + 12 * 60;
+  w.world.travel(k11.id, 8, 31, SOUTH);
+  const south = w.world.move('forward');
+  ok(south.kind === 'moved' && w.world.zone?.id === K12.id && w.world.state.x === k12.x + 8 && w.world.state.y === k12.y && k11.y + k11.h === k12.y
+    && !south.messages.some((m) => m.includes('Loch Fuar.')), `south from K11's 8,31 onto K12's 8,0, walked, and the land not named again (${said(south)})`);
+  listen(w);
+  ok(K12.start.x === 8 && K12.start.y === 0 && K12.start.facing === SOUTH && !(K12.exits ?? []).length, 'the box starts at its north edge under the pines, and nothing is taken out of it');
+  const vale = reach(k12, [K12.start.x, K12.start.y], {});
+  ok(vale.size > 200 && [[0, 0], [1, 5], [2, 9], [13, 5], [16, 10], [6, 12], [10, 12], [2, 14], [0, 15]].every(([x, y]) => vale.has(at(k12, x, y))) && !vale.has(at(k12, 26, 2)),
+    `the grass and the pines west of the spur (${vale.size} squares), the fire, the brother of stone, the kill, the spur, the rim, the flat stones and the way to the rim's face at 2,15 are walked to on foot from the way in, and east of the spur is not`);
+  see(w, `${K12.id}:k12_in`);
+
+  // East from Monks' Vale's grass at J12's 31,5 onto K12's 0,5, walked, where at 20 the cold loch is named
+  // and no more, and straight back west, where within the hour the vale is not named again.
+  w.world.travel(j12.id, 31, 5, EAST);
+  const east = w.world.move('forward');
+  ok(east.kind === 'moved' && w.world.zone?.id === K12.id && w.world.state.x === k12.x && w.world.state.y === k12.y + 5 && said(east) === 'Loch Fuar.' && j12.x + j12.w === k12.x,
+    `east from Monks' Vale's grass at J12's 31,5 onto K12's 0,5, walked, and at 20 the cold loch named, no more (${said(east)})`);
+  listen(w);
+  const back = w.world.move('back');
+  ok(back.kind === 'moved' && w.world.zone?.id === j12.id && w.world.state.x === k12.x - 1 && w.world.state.y === k12.y + 5 && !said(back).includes('Monks\' Vale'),
+    `and straight back west onto J12's 31,5 within the hour, the vale not named again (${said(back)})`);
+  listen(w);
+
+  // The bear-hunter at his fire and his word on the bear and the cats; the brother of stone's riddle; the
+  // kill, the cats' tracks, the spur and the rim; the box's one group won at its floor.
+  const hunter = K12.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'A bear-hunter')!;
+  w.world.travel(K12.id, hunter.x, hunter.y);
+  const told = meet(hunter, w.party, heard(w.world, hunter)).text;
+  ok(told.includes('white skin') && told.includes('Two cats'), `the bear-hunter: a white skin on a kill in the pines, and two cats waiting on it (${told.replace(/\n+/g, ' ')})`);
+  listen(w);
+  const brother = K12.features!.find((f): f is Extract<Feature, { kind: 'statue' }> => f.kind === 'statue' && f.id === 'k12_brother')!;
+  w.world.travel(K12.id, brother.x, brother.y);
+  ok(!answerRiddle(w.world, w.party, brother, 'gong').right && answerRiddle(w.world, w.party, brother, 'Bell').right, 'the brother of stone\'s riddle is answered bell, which has a tongue and calls the brothers in, and not gong');
+  for (const id of ['k12_kill', 'k12_cats', 'k12_spur', 'k12_rim']) see(w, `${K12.id}:${id}`);
+  for (const g of K12.encounters!) fight(w, `${K12.id}:${g.id}`);
+
+  // The secret: the path of flat stones that stops at the rock face, the search there and the cell behind
+  // it, two squares in and a step east. Walked, waded, climbed or floated, it is never reached but through
+  // its door.
+  const cell = reach(k12, [K12.start.x, K12.start.y], ALL, [10, 13]);
+  ok(cell.size > 200 && ![[10, 14], [10, 15], [11, 15]].some(([x, y]) => cell.has(at(k12, x, y))), `the cell is shut but for its door in the rock: none of K12's ${cell.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${K12.id}:k12_stones`);
+  ok(search(K12.id, 10, 12, SOUTH, 'k12_cell'), 'searched where the flat stones stop, the rock gives, and the cell behind it can be walked into');
+  ok(out.passable(k12.x + 10, k12.y + 15) === 'ok' && out.passable(k12.x + 11, k12.y + 15) === 'ok' && out.passable(k12.x + 11, k12.y + 14) !== 'ok', 'the cell runs two squares in from its door and a step east at its end');
+  const strongbox = K12.features!.find((f) => f.kind === 'chest' && f.id === 'k12_strongbox');
+  ok(strongbox?.kind === 'chest' && strongbox.gold === 250 && strongbox.items.join() === 'elixir' && strongbox.x === 11 && strongbox.y === 15, 'at the cell\'s end, a strongbox with 250 gold and an Elixir');
+
+  // The lair's door (docs §12.4) is left bare: the rim's face at 2,15, Monks' Vale's land by the atlas,
+  // mountain, its way the pines of 2,14, with nothing within four squares.
+  const bare = worldGrid(ATLAS, MAP_DEFS.filter((d) => d.id !== K12.id));
+  const land = ATLAS.zones[bare.zone[(k12.y + 15) * bare.width + k12.x + 2]]?.id;
+  const near = [...(K12.features ?? []), ...(K12.encounters ?? [])].filter((f) => Math.abs(f.x - 2) + Math.abs(f.y - 15) <= 4);
+  ok(K12.rows[15][2] === 'M' && vale.has(at(k12, 2, 14)) && land === 'monksvale' && !near.length,
+    `the rim's face at 2,15, Monks' Vale's land by the atlas (${land}), is left bare for the lair's door, walked to from 2,14, nothing within four squares${near.length ? ` (not ${near.map((f) => `${f.x},${f.y}`).join(' ')})` : ''}`);
+
+  // East of the spur: south from K11's 27,31 onto K12's 27,0, walked; the old pines and the cairn, which
+  // the vale's side never reaches.
+  walkThrough(w, k11.id, 27, 31, SOUTH, K12.id, 2);
+  const pines = reach(k12, [27, 0], {});
+  ok(pines.size > 60 && [[23, 0], [31, 0], [26, 2], [28, 6], [30, 7], [26, 9]].every(([x, y]) => pines.has(at(k12, x, y))) && ![...pines].some((k) => vale.has(k)),
+    `east of the spur (${pines.size} squares), the old pines and the cairn are walked to from K11's pines, and not from the vale's side`);
+  see(w, `${K12.id}:k12_east`);
+  const cairn = K12.features!.find((f) => f.kind === 'cairn' && f.id === 'k12_cairn');
+  ok(cairn?.kind === 'cairn' && cairn.gold === 120 && cairn.items?.join() === 'potion_sp_great', 'under the old pines, a cairn with 120 gold and a Sapphire Vial');
+
+  // K12's edges: its north meets K11's south square for square, open at 0 to 13 and 23 to 31; its west
+  // meets J12's east, open at 0 to 15; its east is open onto L12, to come, at 0 to 7; past its south the
+  // world ends.
+  const north = open(32, (i) => out.passable(k12.x + i, k12.y) === 'ok'), west = open(32, (i) => out.passable(k12.x, k12.y + i) === 'ok');
+  ok(north === open(32, (i) => i <= 13 || i >= 23) && north === open(32, (i) => out.passable(k11.x + i, k11.y + 31) === 'ok')
+    && west === open(32, (i) => i <= 15) && west === open(32, (i) => out.passable(j12.x + 31, j12.y + i) === 'ok')
+    && open(32, (i) => out.passable(k12.x + 31, k12.y + i) === 'ok') === open(32, (i) => i <= 7)
+    && open(32, (i) => out.passable(k12.x + i, k12.y + 31, ALL) === 'ok') === open(32, () => false),
+    'K12 meets K11 at 0 to 13 and 23 to 31 of its north edge and J12 at 0 to 15 of its west, square for square; its east edge is open onto L12 at 0 to 7, and past its south edge the world ends');
 }

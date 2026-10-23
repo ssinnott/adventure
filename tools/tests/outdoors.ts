@@ -147,13 +147,12 @@ const OPEN_ON_NOTHING: readonly OnNothing[] = [
   { edge: 'longmere_l9 north', open: '0-6 13-21 28-31', why: 'L8 is unbuilt: #834 builds it' },
   { edge: 'coldmere_k9 north', open: '29-31', why: 'K8 is the sea, where #828 plans no box' },
   { edge: 'coldmere_j9 north', open: '0-12', why: 'J8 is unbuilt: #832 builds it' },
-  { edge: 'coldmere_k11 south', open: '0-13 23-31', why: 'K12 is unbuilt: #832 builds it' },
   { edge: 'longmere_l11 south', open: '0-16', why: 'L12 is unbuilt: #832 builds it' },
+  { edge: 'coldmere_k12 east', open: '0-7', why: 'L12 is unbuilt: #832 builds it' },
   { edge: 'longmere_m10 east', open: '0-31', why: 'N10 is Glacier Foot, the reach, shut until Phase 1.6' },
   { edge: 'longmere_m11 east', open: '0-4 18', why: 'N11 is Glacier Foot, the reach, shut until Phase 1.6' },
   // The Whitespine.
   { edge: 'sheerpoint_i8 east', open: '11-30', why: 'J8 is unbuilt: #832 builds it' },
-  { edge: 'monksvale_j12 east', open: '0-15', why: 'K12 is unbuilt: #832 builds it' },
   // Ashfall.
   { edge: 'emberwaste_f11 south', open: '4-31', why: 'F12 is unbuilt: #836 builds it' },
   { edge: 'emberwaste_e11 south', open: '12-13', why: 'E12 is the world\'s end, the void and a mountain, where #828 plans no box' },

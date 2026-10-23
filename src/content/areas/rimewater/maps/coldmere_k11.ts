@@ -5,8 +5,8 @@
 // the south-west the grass of Monks' Vale coming round, and the monks' bells heard over the snow.
 // In from K10 (#491) over its south edge, walked: K10's 0,31 to 31,31 meets 0,0 to 31,0 here square for
 // square, the pines, the ice at 27 and 28 and the lake. The west edge meets J11's east (#499) at the
-// hills and the vale's grass, rows 14 to 31, walked; L11 and K12 are not built, so the world ends past
-// the east and south edges.
+// hills and the vale's grass, rows 14 to 31, walked; the east edge meets L11's west (#497) and the south
+// edge K12's north (#832), square for square.
 // Cut from the atlas by tools/scaffold.ts, the rim's peaks drawn as its mountain, the peaks being the
 // Whitespine's own (its novelty); docs/areas/rimewater.md §4.8 is its brief (#497).
 import type { MapDef } from '../../../../game/map.ts';

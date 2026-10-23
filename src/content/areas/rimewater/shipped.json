@@ -47,6 +47,17 @@
         "k11_strongbox",
         "k11_tracks",
         "k11_vale",
+        "k12_brother",
+        "k12_cairn",
+        "k12_cats",
+        "k12_cell",
+        "k12_east",
+        "k12_in",
+        "k12_kill",
+        "k12_rim",
+        "k12_spur",
+        "k12_stones",
+        "k12_strongbox",
         "k9_bell",
         "k9_bones",
         "k9_cairn",
@@ -173,6 +184,7 @@
         "k10_pike_head",
         "k10_pike_shore",
         "k11_bears",
+        "k12_bear",
         "k9_bears_hills",
         "k9_bears_shore",
         "k9_lynx_far",
@@ -206,6 +218,7 @@
       ],
       "doors": [
         "300,275",
+        "338,363",
         "341,272",
         "344,297",
         "351,329",
@@ -286,6 +299,10 @@
     },
     "coldmere_k11": {
       "at": "328,318",
+      "size": "32x32"
+    },
+    "coldmere_k12": {
+      "at": "328,350",
       "size": "32x32"
     },
     "coldmere_k9": {
