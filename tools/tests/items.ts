@@ -30,7 +30,7 @@ import type { ChoiceScreen } from '../../src/ui/screens.ts';
 import { FONT_CHARS, measureText, lineHeight } from '../../src/lib/engine/text.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import type { RngInstance } from '../../src/lib/engine/rng.ts';
-import { ok, owed, headlessGame, drive } from './lib.ts';
+import { ok, owed, headlessGame, drive, withDefs } from './lib.ts';
 
 /** The stats a fight reads; endurance, intellect and luck have no live effect (DESIGN §5). */
 const LIVE: readonly Stat[] = ['might', 'accuracy', 'speed', 'personality'];
@@ -122,18 +122,13 @@ export function items(): void {
   // The raisers are worked out before the fixtures come, as in a run of every suite: the fixtures'
   // raises count only once `itemsChanged` says the table has changed, and again once they go.
   statOf(defaultParty(makeRng(1)).members[0], 'speed');
-  for (const d of FIXTURES) ITEMS[d.id] = d;
-  itemsChanged();
-  try {
+  withDefs(ITEMS, FIXTURES, () => {
     raised();
     blows();
     shown();
     sold();
     artifacts();
-  } finally {
-    for (const d of FIXTURES) delete ITEMS[d.id];
-    itemsChanged();
-  }
+  });
 }
 
 /** A +3 speed coat moves AC and the turn's order while worn, not in the pack or the bag; each read a fight makes takes the raise; a save holds none. */
@@ -257,10 +252,8 @@ function shown(): void {
   ok(elemental.length >= 2 && !over.length, `every elemental weapon's WEAPON line, ${TIER_NAMES[tier]} at arms, ends by ${LEFT_END} (the widest at ${Math.max(...elemental.map(endOf))})${over.length ? ' -> ' + over.map((d) => `${d.name} at ${endOf(d)}`).join(', ') : ''}`);
   // The cap on an elemental weapon's name, exact: with lightning, the widest element, and the widest tier.
   const named = (n: number): number => {
-    ITEMS.test_long_blade = { ...STORM, id: 'test_long_blade', name: 'A'.repeat(n) };
-    const e = endOf(ITEMS.test_long_blade);
-    delete ITEMS.test_long_blade;
-    return e;
+    const blade: ItemDef = { ...STORM, id: 'test_long_blade', name: 'A'.repeat(n) };
+    return withDefs(ITEMS, [blade], () => endOf(blade));
   };
   const widest = ELEMENTS.reduce((a, e) => (measureText(e) > measureText(a) ? e : a));
   ok(widest === STORM.element && named(NAME_CAP) <= LEFT_END && named(NAME_CAP + 1) > LEFT_END,
@@ -423,7 +416,6 @@ function powers(): void {
     'the Hagstone carried keeps paralysis off Bram, not off Ottilie beside him; the Wakerobe worn keeps sleep off Maren; and the stone lifts no paralysis taken before');
   // A ward, in a fight: a foe whose every blow holds fast, the same seeds with the stone on everyone and on no one.
   const HOLDER = target('test_holder', { attack: 99, dice: 1, sides: 1, inflict: { cond: 'paralysed', chance: 1 } });
-  ITEMS.test_stone_twin = { ...stone, id: 'test_stone_twin', artifact: undefined };
   const held = (seed: number, carry: string | null): number => {
     const q = defaultParty(makeRng(1)), rng = makeRng(seed);
     for (const c of q.members) { c.hp = c.maxHp = 999; if (carry) c.pack.push(carry); }
@@ -435,8 +427,7 @@ function powers(): void {
     }
     return q.members.filter((c) => hasCondition(c, 'paralysed')).length;
   };
-  const seeds = [1, 2, 3, 4, 5, 6], bare = seeds.map((n) => held(n, null)), warded = seeds.map((n) => held(n, stone.id)), twin = seeds.map((n) => held(n, 'test_stone_twin'));
-  delete ITEMS.test_stone_twin;
+  const seeds = [1, 2, 3, 4, 5, 6], bare = seeds.map((n) => held(n, null)), warded = seeds.map((n) => held(n, stone.id)), twin = withDefs(ITEMS, [{ ...stone, id: 'test_stone_twin', artifact: undefined }], () => seeds.map((n) => held(n, 'test_stone_twin')));
   ok(bare.every((n) => n >= 1) && warded.every((n) => n === 0) && twin.every((n) => n === 0),
     `in a fight with a foe whose blows hold fast, seeded, the company is held ${bare.join(' ')} without the Hagstone and never with it, nor with its twin without the mark`);
 
