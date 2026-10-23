@@ -40,6 +40,12 @@ export const HORSE_ASKED = 'q_horse', HORSE_BROKEN = 'q_horse_broken', HORSE_CAR
 export const GARDEN_ASKED = 'q_garden', GARDEN_CARRIED = 'q_garden_carried', GARDEN_BROUGHT = 'q_garden_brought';
 export const GARDEN_LIFTED = 'q_garden_lifted', GARDEN_DRAUGHT = 'q_garden_draught';
 
+/** Akkush's rumour (#846, #833), DESIGN §9's words: the eldest's two lines more at a meeting after the oldest story. Words only; it marks nothing on the world map. */
+const BOW_RUMOUR = [
+  '"My grandmother\'s brother made a bow of white horn that never missed. He loosed it once, at the bird that takes our foals."',
+  '"The bird took him, and the bow. It still comes for foals."',
+];
+
 export const WOLD_D8: MapDef = {
   id: 'wold_d8',
   name: 'The Wold',
@@ -89,8 +95,9 @@ export const WOLD_D8: MapDef = {
     { kind: 'event', x: 16, y: 30, id: 'd8_akordu', once: true, text: 'White tents in a ring under the mesa, smoke going up from the fires inside. Akordu.' },
     { kind: 'camp', x: 16, y: 27, name: 'Akordu', text: 'The fires of Akordu in the ring of tents, dung burning low. The Riders make room for you and ask nothing.' },
     // The eldest at her own fire before her tent, against the mesa: the oldest story, told once (the
-    // chapter's step, #531); the Compact's orders put in her hand, or not (#56's 54, #532); and the rest
-    // of the story, for a company that let the old lion die (#56's 53, #532).
+    // chapter's step, #531); the Compact's orders put in her hand, or not (#56's 54, #532); the rest
+    // of the story, for a company that let the old lion die (#56's 53, #532); and Akkush's rumour (#846),
+    // two lines more at every meeting after the story, words only.
     { kind: 'npc', x: 16, y: 24, name: 'The eldest', flag: STORY, lines: [
       'The eldest sits at her fire before her tent, a horse-blanket round her and her braid white to the waist.',
       '"On the day the sky opened, the grass stood still and the birds came down out of the air."',
@@ -108,8 +115,8 @@ export const WOLD_D8: MapDef = {
         '"What fell did not lie down. It stands in the glass on its end, as it stood to climb, and the glass came up round it to the crown."',
         '"That is the crown the watch sees from the gap. What tried to leave once may try again, and the sky would open for it."',
       ] },
-      { after: { flag: LION_TOLD }, lines: ['The eldest looks into her fire.', '"You have all of it now. Keep it as we keep it."'] },
-      { after: { flag: STORY }, lines: ['The eldest looks into her fire.', '"That is the story as the young hear it. The rest is for those who have earned it."'] },
+      { after: { flag: LION_TOLD }, lines: ['The eldest looks into her fire.', '"You have all of it now. Keep it as we keep it."', ...BOW_RUMOUR] },
+      { after: { flag: STORY }, lines: ['The eldest looks into her fire.', '"That is the story as the young hear it. The rest is for those who have earned it."', ...BOW_RUMOUR] },
     ] },
     // The trader's tent on the ring's east side: the band's consumables and the Riders' leather at list,
     // the stone's cure among them (#546), and nothing of steel (#443, calls 5 and 7).

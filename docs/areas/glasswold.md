@@ -33,8 +33,8 @@ road, and E8, the shore, the country behind (#534, §4.9); and the Master of arm
 Rider hidden in D10's small mesa, with a rumour at Akordu's trader's tent and his favour in E9's
 store. With them the Wold is complete overland. The bounds (#833, §12) add D7, the Scarp's east end
 over the gulf, and E7, the north of the other island; then Karaordu, the enclave, the khans' barrow
-under the hills over Akordu's box (§12.4). The lair comes after. The Wold holds the quest's step
-(`AHEAD` and `PLANNED`, empty from then on, went with #897). Its content is
+under the hills over Akordu's box (§12.4); then Kushdag, the lair (§12.5). The Wold holds the
+quest's step (`AHEAD` and `PLANNED`, empty from then on, went with #897). Its content is
 `src/content/areas/glasswold/` (maps, interiors, monsters, items, climate, its part of the world map
 in `atlas.ts` and its walkthrough; its chapter, The Warning, in `chapter.ts`, and its quests in
 `quests.ts`, the Ranger's third's and #56's four); it has no town and one business, the Riders'
@@ -55,7 +55,7 @@ Glasswold two zones:
 |---|---|---|---|
 | The Wold | 26–28 | 6,240 (steppe 3,133, hills 1,151, mountain 646, dunes 540, grass 369) | D9, D10, D8, C8, B8 and B9; E9, laid at 136,254, and E8, at 136,222 (#534); D7, at 104,190, and E7, at 136,190 (#833) |
 | The Glass, the reach | 30–32 | 4,813 (steppe 1,306, mountain 1,028, hills 838, glass 817, dunes 626) | nothing, and not this phase's |
-| The area | 26–28 | 11,053 | D9, D10, D8, C8, B8, B9, E9, E8, D7 and E7; Karaordu, the enclave, entered from D7 (#833) |
+| The area | 26–28 | 11,053 | D9, D10, D8, C8, B8, B9, E9, E8, D7 and E7; Karaordu, the enclave, and Kushdag, the lair, entered from D7 (#833) |
 
 Squares are the land `worldGrid` gives each zone by today's seeds, without shallows or rivers;
 9,349 of them a company could walk, and nearly half of those are steppe. That is about 10.8 zone
@@ -142,7 +142,7 @@ glare from the south-west on a clear noon.
 
 ## 3. What is built
 
-Ten boxes of its own, the first of which lists the area (#525), and an enclave (#833):
+Ten boxes of its own, the first of which lists the area (#525), an enclave and a lair (#833):
 
 - **The steppe** (D9, `wold_d9`, core, band 26–27; #525): open grass with glass in it, laid whole at
   104,254. The atlas's road comes over the south edge and runs north-west and west to the gap; a
@@ -230,7 +230,7 @@ Ten boxes of its own, the first of which lists the area (#525), and an enclave (
   walkers' tracks to the Scarp's end and two glass walkers there, the Riders' old watch-fire and,
   behind the beacon's cold hearth, the keepers' store. Below the Scarp the Saltings' strip, walked
   onto from C7 and D6, holds no group. In the hills over Akordu's box the diggers' cut leads into
-  Karaordu (§12.2).
+  Karaordu, and in the Scarp's east face a shelf cut in the rock leads into Kushdag (§12.2).
 - **The other island's north** (E7, `wold_e7`, country, band 26–27; #833): laid whole at 136,190, a
   swimmer's with no group: the island's grass, a bar of sand out to an islet white with gulls and
   the castaway's hollow behind the moaning crack, with the strand's spit at its corner (§12.3).
@@ -239,28 +239,32 @@ Ten boxes of its own, the first of which lists the area (#525), and an enclave (
   passage's head, where the diggers stand in stone, and eight deep rats among the bones of the
   khans' chamber; behind its end wall, found from the horses' skulls turned to it, the eldest khan's
   cell and the Khan's Sabre (§12.4).
+- **Kushdag, the lair** (`kushdag`, a dungeon, band 30–32; #833, #845, #847): the Foal-taker's eyrie
+  in the Scarp's east face, entered along a shelf cut in the rock at D7's 19,24. The shelf runs east
+  and turns down the face to a choke a body wide, where the Foal-taker stands, the one guardian;
+  past it the nest, with a Rider's bones at its edge, his chest and Akkush in it; behind the nest,
+  found from a Rider's buckle wedged in the rock, the cleft where the bird keeps what shines
+  (§12.5).
 
 Its atlas rows are charted in `src/content/areas/glasswold/atlas.ts`, the area's own `atlas` since
 D9 lists the area; until then `src/content/atlas.ts` spread them into the plan where its rows were,
 as Saltreach's and Wrackholm's were until each had a map (docs/areas/saltreach.md §9, #169's 1): the
 zones with their bands, the Wold 26–28, with its ten boxes laid on it (§3), D10 first, and the Glass
-30–32; the plates of the Buried Tower and Karaordu; and the sites, Akordu (the plan's Wold Riders
-camp at 120,250), Kushtash (the Eyrie, moved to about 46,242, call 5, built with B8) and the Buried
-Tower, "The Glass" and "Buried Tower" lettered as the plan letters them. The lava flow is drawn in
-the plan's ridges (`src/content/atlas.ts`), the one line outside the folder this doc asks for (call
-5). Its row on the curve is in (#542), in `src/content/progression.ts` (band 26–28, next 28, window
-6,000), owed to #447 while the area was built box by box, with the six boxes' and the side quests'
-18,313 xp a member and 9,650 gold the clear's floor, and removed with E9 and E8 (#534), a clear then
-giving 21,439 xp a member of the 21,067 asked and 12,750 gold of the 12,720 (§8); the Wold takes no
-step on the gear
-ladder, no town to sell one (§9); the trader's coat is off it (§9, #526's 7). Its ground is laid
-(#543): steppe (`s`), walked as
-grass and tawny at Harvest, and dunes (`u`), sand in ridges walked as slowly as hills, so the
-scaffold drafted D9 with its 807 squares of steppe and 171 of dunes (docs/SLICE.md). Its six
-monsters are drawn (#533, MONSTERS §8.3): five on frames that exist, the vulture, the Wold lion, the
-Grey Lion, the glass scorpion and the basilisk, and the glass walker, the first of a family of its
-own (`src/ui/monsters/glasswalkers.ts`); their defs are in
-`src/content/areas/glasswold/monsters.ts`, the Area's own since D9 lists it (`AHEAD`,
+30–32; the plates of the Buried Tower, Karaordu and Kushdag; and the sites, Akordu (the plan's Wold
+Riders camp at 120,250), Kushtash (the Eyrie, moved to about 46,242, call 5, built with B8) and the
+Buried Tower, "The Glass" and "Buried Tower" lettered as the plan letters them. The lava flow is
+drawn in the plan's ridges (`src/content/atlas.ts`), the one line outside the folder this doc asks
+for (call 5). Its row on the curve is in (#542), in `src/content/progression.ts` (band 26–28, next
+28, window 6,000), owed to #447 while the area was built box by box, with the six boxes' and the
+side quests' 18,313 xp a member and 9,650 gold the clear's floor, and removed with E9 and E8 (#534),
+a clear then giving 21,439 xp a member of the 21,067 asked and 12,750 gold of the 12,720 (§8); the
+Wold takes no step on the gear ladder, no town to sell one (§9); the trader's coat is off it (§9,
+#526's 7). Its ground is laid (#543): steppe (`s`), walked as grass and tawny at Harvest, and dunes
+(`u`), sand in ridges walked as slowly as hills, so the scaffold drafted D9 with its 807 squares of
+steppe and 171 of dunes (docs/SLICE.md). Its six monsters are drawn (#533, MONSTERS §8.3): five on
+frames that exist, the vulture, the Wold lion, the Grey Lion, the glass scorpion and the basilisk,
+and the glass walker, the first of a family of its own (`src/ui/monsters/glasswalkers.ts`); their
+defs are in `src/content/areas/glasswold/monsters.ts`, the Area's own since D9 lists it (`AHEAD`,
 `src/content/index.ts`, listed them until then), and each was owed in `UNPLACED`
 (`tools/tests/maps.ts`) to the box that first places it: E10 places the vulture and the Wold lion
 (#524), D9 the glass scorpion and the glass walker (#525), D10 the basilisk (#527) and B8 the Grey
@@ -301,8 +305,8 @@ boxes, which hold 5,557 of those squares, 5,379 walkable, the table the epic #44
 | B9 | The Glass's edge | the Wold | country | 26–28 | 1,024 (dunes 483, mountain 268, steppe 126, hills 76, rock 65, earth 5, a secret door 1) | the dunes and the scorpions; the gap at the mesas and dunes; the Riders' watch on the only way in; the glass walkers; built by #530 at 26–28: the dunes down to the rim's foot, the Riders' cairn at their head, the watch's fire on the last grass with its three Riders, the gap with its stones, the walker's tracks and the Glass seen from its last square, two groups of scorpions, the vultures, a glass walker alone and two at the gap, and the half-buried walker in the dune that does not shift with its cache (§4.8) | the Riders keep the way in | #530, built |
 | E9, E8 | The hills behind the road; the shore | the Wold | country, behind the road | 26–27 | 931 (hills 411, steppe 264, grass 222) and 305 | the hills down to the coast; the shore; built by #534 at 26–27: the Riders' summer camp on the sea grass, the herders' store behind a path that stops at a slab, a pride, a flock of vultures and a pair of basilisks on the hills (E9); the strand, the mares' island for a swimmer, the sea-chest in the black rocks, a pride, a flock and a pair of basilisks (E8) (§4.9) | none | #534, built |
 
-The bounds come after the plan (§12, #833): D7 and E7 are built as country at 26–27 and Karaordu,
-the enclave, at 28–29 off D7; the lair is to come.
+The bounds come after the plan (§12, #833): D7 and E7 are built as country at 26–27, Karaordu, the
+enclave, at 28–29 and Kushdag, the lair, at 30–32, both off D7.
 
 The core is the four boxes the Riders and their beasts fill, D9, D8, D10 and B8, built at full
 density; E10, C8, B9, E9 and E8 are country, built to the looser floor with the wilderness features
@@ -1328,22 +1332,22 @@ and the gold directly, as Expert is bought at a town trainer elsewhere on the ro
 ### The artifact: Akkush (#846)
 
 The Glasswold's of the bounds' eight (DESIGN §9). Found and never told: no `seek` quest, no line in
-the journal and no mark on the world map. #833 builds the lair, its door and the rumour once #845,
-#847 and the guardian's drawing are in.
+the journal and no mark on the world map. #833 built the lair, its door and the rumour (§12.5).
 
 - **What it is:** *A Rider's bow of white horn and sinew, its grip worn to one hand. / Bound under
   the grip is a feather longer than your arm.*
-- **The rumour:** the eldest at her fire in Akordu (D8, §3), two lines more at a meeting after the
-  oldest story, words only: *My grandmother's brother made a bow of white horn that never missed. He
-  loosed it once, at the bird that takes our foals. / The bird took him, and the bow. It still comes
-  for foals.* It marks nothing on the world map.
+- **The rumour:** the eldest at her fire in Akordu (D8, §3), two lines more at every meeting after
+  the oldest story (§9, #833's 28), words only: *My grandmother's brother made a bow of white horn
+  that never missed. He loosed it once, at the bird that takes our foals. / The bird took him, and
+  the bow. It still comes for foals.* It marks nothing on the world map.
 - **Slot and bearers:** a bow, ranged and two-handed: the ranger, as the Grey Bow.
 - **Numbers:** 1d12+14, the Grey Bow's 1d12+13 and a point (EXPANSION §5.2). Found and never sold.
 - **Power:** a stat (DESIGN §9, kind 1): accuracy raised by 5 while it is borne.
 - **The lair:** an eyrie of one level on the Scarp's east end over the gulf, its way in on the
-  Wold's part of D7, at the cap's band, 30–32 (#845).
+  Wold's part of D7, at the cap's band, 30–32 (#845): Kushdag (§12.5).
 - **The guardian:** the Foal-taker (birds, a new kind; boss, 32; docs/MONSTERS.md §13): *When its
-  shadow crosses the herd, the herd runs.* Size 1.8; it flies, and hunts the back row.
+  shadow crosses the herd, the herd runs.* Size 1.8; it flies, and hunts the back row. Its numbers
+  are set by the lair's gate (§9, #833's 25).
 
 ## 7. Encounters, and what is new
 
@@ -1378,18 +1382,19 @@ Whitespine's and Ashfall's, spent before it. In the bounds (§12, #833), E7 hold
 four vultures, three lions and two glass walkers, the walkers the hardest. Karaordu, the enclave,
 holds the basilisks and eight of the Hearth's deep rats, the hardest at 30: the curve asks an
 enclave at 28–29 for a group at 29 or over, and the Wold's own stop at 27 but for the Grey Lion (§9,
-#833's 15).
+#833's 15). Kushdag, the lair, holds the Foal-taker alone, the birds' boss at 32, set off the line
+by its gate (§12.5, §9, #833's 24 and 25).
 
 New in the Glasswold, for the novelty check (EXPANSION §5.4): the glass walkers, a new family, and
 dunes underfoot (#543), both claimed by D9, which places them first (§9, #525's 15); steppe
 underfoot, E10's first; stone and its cure (#546), claimed by D10, which places the basilisk first
 (§9, #527's 15); a camp that is an area's rest, with a `coach` sold from it (#547), built at Akordu,
 though the check refuses the camp landmark, which is on the road before (§9, #526's 18); the reach
-seen from the road and its band said. C8, B8, B9, E9, E8, D7, E7 and Karaordu claim nothing of their
-own (§9, #528's 14, #529's 15, #530's 17, #534's 12, #833's 15): B9's dunes and walkers are D9's,
-and the reach seen from the road has no token. Karaordu's deep rats are of a family no area claims.
-Its landmarks: a mesa, a camp of tents, a garden of the glassed, a lava flow seen, a cliff from its
-top.
+seen from the road and its band said. C8, B8, B9, E9, E8, D7, E7, Karaordu and Kushdag claim nothing
+of their own (§9, #528's 14, #529's 15, #530's 17, #534's 12, #833's 15 and 24): B9's dunes and
+walkers are D9's, and the reach seen from the road has no token. Karaordu's deep rats are of a
+family no area claims, and the Foal-taker is of the vultures'. Its landmarks: a mesa, a camp of
+tents, a garden of the glassed, a lava flow seen, a cliff from its top.
 
 ## 8. The numbers
 
@@ -1548,7 +1553,11 @@ top.
   gives 1,511 xp a member and 1,700 gold. At its floor, 28, a company wins every fight and manages
   10.60 fights to a rest (aim 10 to 12); two under, at 26, 6.15, 55.9% of the floor's 11. Its
   dearest find, the Khan's Sabre at 6,950 gold, sits in its own window, the Hearth's 7,000; the
-  area's stays the Leather Coat +2 (§12.4).
+  area's stays the Leather Coat +2 (§12.4). Kushdag, the lair, is held to the cap's band and counted
+  in no clear either: it gives 3,395 xp a member and 800 gold, the two together 4,906 and 2,500. Its
+  one group is a boss, judged on its odds and not on a day: the Foal-taker is won 57% at 30 and 81%
+  at 32 (aim 90%, limit 75%). Akkush is an artifact, held by no window; the area's dearest find
+  stays the Leather Coat +2 (§12.5).
 
 ## 9. Decisions
 
@@ -2423,7 +2432,8 @@ Decided by the builder for #833, each the owner's to overturn:
    and spell points Cinderport sells; the Wold sells nothing and no gear is given.
 9. **The lair's door is left at D7's 19,24,** in the Scarp's east face over the gulf, as #846 has
    it, **and the enclave's at 8,30,** in the hills over Akordu's box, each bare with the square
-   before it open (§12.4, §12.5). The enclave's is the diggers' cut into Karaordu since (19).
+   before it open (§12.4, §12.5). The enclave's is the diggers' cut into Karaordu since (19) and the
+   lair's the shelf into Kushdag (23).
 10. **The secrets' hints are a smell and a sound,** kinds no box of the Wold had: tar from the
     beacon's rock (D7) and the wind in a crack (E7). Each door stands where the art check takes it.
 11. **The walkthrough walks the bounds in one function,** `theBounds`, called last.
@@ -2464,6 +2474,48 @@ Decided by the builder for #833, each the owner's to overturn:
     draws a company inside, is at 112,225, under the hills five squares south of the door.
 20. **The walkthrough walks it in `theBounds`,** after D7: the door's words at 25, 26 and 28, the
     sign, both groups won at 28, the cell found from the skulls and the way out onto 8,29.
+21. **The lair is Kushdag,** the bird's mountain, *kush* a bird and *dag* a mountain in the Riders'
+    tongue: the Scarp's end where the bird nests. Both parts are in NAMES §2's row, so it stands as
+    it is (§10).
+22. **It is one level of 16 by 16,** as §6 gives it (an eyrie of one level), marked `enclave` at the
+    cap's band, 30–32. It has one plate on the world map, at 123,219, five squares under its door,
+    as Karaordu's is under its own.
+23. **The door is the shelf at D7's 19,24,** the Scarp's cliff there drawn as stone and given the
+    one exit, walked onto from the lip at 18,24 (19,25 under it is grass too). Nothing else of D7
+    changes and nothing stands within four squares of it. D7's walkthrough lines hold its two ways
+    out now, Karaordu's and Kushdag's.
+24. **The guardian's group is the Foal-taker alone,** as #846 gives it, standing at 9,6 where the
+    shelf narrows to a body before the nest. A fight starts next to a group and groups never move,
+    so no company steps round it. Nothing in the lair is had without the fight: the nest, the chest,
+    the buckle and the cleft all lie behind it (the walkthrough's flood). It is a boss (`boss`),
+    with no `respawn` and a `slainText`; the lair holds no other group.
+25. **The Foal-taker's numbers are set at the gate's company** (MONSTERS §4.1, §4.2 and §13): 2,900
+    hit points, attack 23 and 18d8+20 a blow, where it was drawn at the line's boss at 32, 2,100, 20
+    and 34d8+41, which the gate's company won 16% at 30 and 28% at 32. As set, it is won 57% at 30
+    (inside the aim) and 81% at 32 (between the aim, 90%, and the limit, 75%), as the fixture lair's
+    guardian is (57% and 80%); no check moves. Of the rows tried, none put it inside both aims:
+    2,600 hit points gave 76% and 91%. Its row gives why it stands off the line (`offLine`), as the
+    road's bosses set by their gates do (`OFF_LINE`).
+26. **Akkush lies alone in the Rider's chest at the nest's edge** (3,9), past the Foal-taker: the
+    Rider of the eldest's rumour lies there, picked clean, a long case beside him; the chest is his.
+    The walkthrough asserts that no shop, chest, cairn or statue holds it elsewhere and no monster
+    drops it.
+27. **The secret is the bird's cache,** a cleft behind the nest whose wall is at 7,12. The hint is a
+    Rider's belt buckle wedged in the rock before it (7,11), scored by a beak, which tells nothing
+    of a door. The cache holds 800 gold, an Elixir and a Sapphire Vial, the dearest healing and
+    spell draught the Riders' trader sells; like the chest it lies behind the fight. The cleft is
+    shut to walkers, waders, climbers and floaters but through its wall.
+28. **The rumour is the eldest's,** DESIGN §9's two lines at every meeting once she has told the
+    oldest story, in her last two entries so that a company that has heard the lion's rest hears
+    them too. Words only: no flag, quest or mark (#846). It is the one change to Akordu.
+29. **The lair's two owed rows go:** `foal_taker` from `owes.unplaced` in the area's `checks.ts`,
+    which leaves the Glasswold owing nothing, and `akkush` from `UNPLACED` in
+    `tools/tests/items.ts`, as EXPANSION §8.2 (#897's 12) and #847's 6 say the lairs' pull requests
+    do; each check holds now, so an owed line left in would fail.
+30. **§12.5 is the lair's brief in §4's form, with its As built.** It is the bounds' last piece:
+    every box, the enclave and the lair are built, and no built map of the Glasswold is open onto
+    unbuilt land but onto the reach, the Glass. The area's `OPEN_ON_NOTHING` rows are D10's south
+    and west, D9's west, C8's south and B9's east; none faces a crumb.
 
 ## 10. Names
 
@@ -2486,6 +2538,7 @@ for #444.
   | the Eyrie | Kushtash | the bird's rock: the scout's lookout on the far-west mesa, where the vultures never land | Kushdag, the bird's mountain |
   | the Glass, in the Riders' mouths | Tashkum | the stone sand; noted here and left for the reach's doc (Phase 1.6), with "The Glass" and "Buried Tower" still lettered | Akkum, the white sand |
   | the barrow on the lip, the enclave (#833) | Karaordu | the black camp: the khans' under the hill, over Akordu, the white camp of the living | Karatash, the black stone |
+  | the Foal-taker's eyrie, the lair (#833) | Kushdag | the bird's mountain: the Scarp's end where the bird nests, the second thought for the Eyrie above, which keeps Kushtash | Kushyol, the bird's road |
 
 - **A person:** Aysu, the scout on Kushtash, the Ranger's third (#448): *ay* the moon and *su*
   water, a Rider's name in the Riders' tongue. She was "The scout" while she had words only.
@@ -2671,7 +2724,7 @@ This is their brief, in §4's form; each pull request builds from it and adds it
 | D7 | the Wold, `wold_d7` | 363 | the Saltings' 163 under the Scarp | C7 and D6 (the Saltings), D8 and E7 | 26–27 | the first, built (#833) |
 | E7 | the Wold, `wold_e7` | 96 | Wrackholm's 30, the isle's tip | E6 (Wrackholm), E8 and D7 | 26–27 | the first, built (#833) |
 | Karaordu, the enclave | its own, `karaordu`, its door on D7 | 74 | | D7 | 28–29 | the second, built (#833) |
-| The lair | its own, its door on D7 | | | D7 | 30–32 | the third |
+| Kushdag, the lair | its own, `kushdag`, its door on D7 | 67 | | D7 | 30–32 | the third, built (#833) |
 
 ### 12.1 What every box keeps
 
@@ -2703,12 +2756,14 @@ This is their brief, in §4's form; each pull request builds from it and adds it
   the curve holds it to 29.0 (`LEAD`). D7 pays about 1,580 xp a member and 1,450 gold and E7 700
   gold: with them a clear gives 23,016 xp and 14,900 gold, and the company leaves at 28.0. The
   enclave and the lair are held to their own bands and counted in no clear (`tools/tests/curve.ts`),
-  so the lead stays at 28.0 to the end of #833: Karaordu gives 1,511 xp a member and 1,700 gold, a
-  figure the curve prints (§12.4).
+  so the lead stays at 28.0 to the end of #833: Karaordu gives 1,511 xp a member and 1,700 gold
+  (§12.4) and Kushdag 3,395 and 800 (§12.5), figures the curve prints, 4,906 and 2,500 together.
 - **The walkthrough** walks them in one function, `theBounds` in `walkthrough.ts`, called last: each
   box's seams walked, its groups won at 26, its secret found from its hint and its prize shut to
   walkers, swimmers, climbers and floaters. Karaordu is walked too: its door, its groups won at 28,
-  its cell found from its hint and the way out (§12.4).
+  its cell found from its hint and the way out (§12.4); and Kushdag: its door, the Foal-taker won at
+  30 with everything behind it shut while it stands, Akkush in its chest, the cleft found from its
+  hint, the way out and the eldest's rumour (§12.5).
 
 ### 12.2 D7, the Scarp's east end over the gulf (#833): country, band 26–27
 
@@ -2730,8 +2785,8 @@ This is their brief, in §4's form; each pull request builds from it and adds it
   and E8's strand.
 - **The secret and its hint.** The beacon-keepers' store, walled up in the rock of the hills' crown.
   The hint: the beacon's hearth long cold, and the rock behind it smelling strongly of tar.
-- **The doors.** The lair's left in the Scarp's east face, bare, the way to it clear (§12.5); the
-  enclave's in the hills over D8, the diggers' cut into Karaordu (§12.4).
+- **The doors.** The lair's in the Scarp's east face, a shelf cut in the rock into Kushdag (§12.5);
+  the enclave's in the hills over D8, the diggers' cut into Karaordu (§12.4).
 - **New here.** Glass walkers in the country, come north to the edge.
 - **Finds.** 350 gold and an Elixir on the cairn; 1,100 gold and a Sapphire Vial in the store.
 - **Pay.** About 1,600 xp a member and 1,450 gold.
@@ -2750,12 +2805,13 @@ This is their brief, in §4's form; each pull request builds from it and adds it
   the Scarp's end since the spring, the tide's line (`d7_tide`, 7,14) and the Scarp's foot
   (`d7_foot`, 5,17), 117 squares with no group and nothing that pays. The west edge on top is the
   cliff to row 21 and mountain from 22, against C7's ring, the corner 0,31 with it, and D8's 0,0 and
-  C8's 31,0 are mountain since (§9, #833's 4). The lair's door is left at 19,24, and at 8,30, drawn
-  as stone in the hills' face, the diggers' cut leads down into Karaordu, the enclave (§12.4; §9,
-  #833's 19). The gate holds at 26: 9.95 fights to a rest (aim 9.5 to 11.5), every fight won; two
-  under, at 24, 7.03, 67% of the floor's 10.5, between the aim, 66.7%, and the limit. Density: 344
-  of 344 squares within 12 steps, the furthest 8, no sign among 18 points, the cut among them. By
-  the curve's count the box pays about 1,580 xp a member and 1,450 gold.
+  C8's 31,0 are mountain since (§9, #833's 4). At 19,24, drawn as stone in the Scarp's east face, a
+  shelf leads down into Kushdag, the lair (§12.5; §9, #833's 23), and at 8,30, drawn as stone in the
+  hills' face, the diggers' cut leads down into Karaordu, the enclave (§12.4; §9, #833's 19). The
+  gate holds at 26: 9.95 fights to a rest (aim 9.5 to 11.5), every fight won; two under, at 24,
+  7.03, 67% of the floor's 10.5, between the aim, 66.7%, and the limit. Density: 345 of 345 squares
+  within 12 steps, the furthest 8, no sign among 19 points, the cut and the shelf among them. By the
+  curve's count the box pays about 1,580 xp a member and 1,450 gold.
 
 ### 12.3 E7, the north of the other island (#833): country, band 26–27
 
@@ -2829,21 +2885,49 @@ This is their brief, in §4's form; each pull request builds from it and adds it
   1.00, the basilisks at 27.0 and the rats at 30.0. By the curve's count it gives 1,511 xp a member
   and 1,700 gold, counted in no clear; the area's lead stays at 28.0.
 
-### 12.5 The lair: the Foal-taker's eyrie (#833, its third pull request)
+### 12.5 Kushdag, the lair: the Foal-taker's eyrie (#833): band 30–32
 
-- **Purpose.** Akkush's lair (§6, #846): the eyrie of the bird that takes the Riders' foals, on the
-  Scarp's east end over the gulf.
+- **Purpose.** Akkush's lair (§6, #846): the eyrie of the bird that takes the Riders' foals, in the
+  Scarp's east face over the gulf. Held to the cap's band (#845) and counted in no clear.
 - **Band.** The cap's, 30–32.
-- **Landmarks.** A ledge path down the east face, the nest's ledges and a cave behind them.
-- **Points of interest.** The ledge path, the nest, the bones of foals and of the Rider who loosed
-  the bow, as the eldest tells it (§6).
-- **Encounters.** The Foal-taker (birds, a new kind; boss, 32; docs/MONSTERS.md §13), the one
-  guardian, drawn in the creatures lane before the lair is built.
-- **The ways in and out.** Its door at D7's 19,24 in the Scarp's east face, left bare with 18,24
-  open before it; one way out, back onto the lip.
+- **Landmarks.** A shelf cut down the east face, the nest heaped at its foot and a cleft behind the
+  nest.
+- **Points of interest.** Eight sights and two chests: the shelf, the bones of foals along it and a
+  feather across the way; below, the droppings and the clawed tracks, the nest and the bones of the
+  Rider who loosed the bow, as the eldest tells it (§6), with his chest; the buckle in the rock and
+  the cleft behind it with the bird's cache.
+- **Encounters.** The Foal-taker (birds; boss, 32; docs/MONSTERS.md §13; drawn in #931), the one
+  guardian, standing where the shelf narrows to a body before the nest; no other group.
+- **The ways in and out.** Its door at D7's 19,24 in the Scarp's east face, drawn as stone, with
+  18,24 open before it; one way out, back onto the lip at 18,24.
 - **The secret and its hint.** The bird's cache in a cleft behind the nest, where it keeps what
-  shines. The hint: a Rider's buckle wedged in the cleft's mouth.
+  shines. The hint: a Rider's buckle wedged in the rock before the cleft's wall.
 - **New here.** The Foal-taker and the artifact (#846, #847).
 - **Finds.** Akkush, a Rider's bow of white horn, 1d12+14, accuracy +5 while borne, found and never
-  sold (§6), where #846 puts it; the rumour is the eldest's at Akordu, built with the lair.
-- **Pay.** Counted in no clear (`tools/tests/curve.ts`).
+  sold (§6), in the Rider's chest at the nest's edge; 800 gold, an Elixir and a Sapphire Vial in the
+  cache. The rumour is the eldest's at Akordu (§9, #833's 28).
+- **Pay.** Counted in no clear (`tools/tests/curve.ts`): about 3,395 xp a member and 800 gold.
+- **As built** (#833, 23 October): `kushdag`, a dungeon of one level of 16 squares by 16 marked
+  `enclave`, band 30–32, its plate on the world map at 123,219. East from the lip at D7's 18,24 onto
+  19,24, drawn as stone in the Scarp's face, a company arrives at 1,3 facing east, and the door says
+  "Kushdag: levels 30-32.", with the game's harder words one or two levels under its floor and its
+  warning three or more under (#845's 5). The shelf runs east along the face (`kd_shelf`, 3,3) with
+  the foals' bones along it (`kd_foals`, 6,3) and turns down the face at 9,3, a feather as long as
+  an arm across the way (`kd_feather`, 9,4). Where it narrows to a body the Foal-taker stands
+  (`kd_foal_taker`, 9,6), the one group, 11 steps from the way in. A fight starts next to a group
+  and groups never move, so with it standing, or with it and the four squares round it shut, none of
+  the 11 squares a walker, swimmer, climber or floater reaches lies past it. Past it lies the nest's
+  chamber, 51 squares, 11 by 5 at its widest: the droppings and the clawed tracks (`kd_tracks`,
+  10,9), the nest (`kd_nest`, 4,9), the Rider at its edge with a long felt case beside him
+  (`kd_rider`, 3,8) and his chest, Akkush in it alone (`kd_chest`, 3,9). The buckle in the rock
+  (`kd_buckle`, 7,11) is the hint, on the square before the wall at 7,12; searched facing south, the
+  wall gives onto the cleft (`kd_cache`, 7,13) and the bird's cache, 800 gold, an Elixir and a
+  Sapphire Vial (`kd_cache_chest`, 8,13), which no walker, swimmer, climber or floater reaches but
+  through the wall. The way out is the shelf, back onto D7's 18,24 facing west. The gate judges the
+  lair on its one boss's odds: the Foal-taker is won 57% at 30 (aim 30% to 70%, limit 20% to 80%)
+  and 81% at 32 (aim 90%, limit 75%), between its aim and its limit at 32 as the fixture lair's
+  guardian is (§9, #833's 25); drawn at the line's boss it was won 16% and 28%. The harness's
+  thrifty bot wins it 75% at 30 and 89% at 32. Density: 67 of 67 squares within 7 steps, the
+  furthest 4, no sign among 12 points. The rise: the Foal-taker, the one group, at 11 steps, level
+  32.0, near the floor 30 and the top 32. By the curve's count it gives 3,395 xp a member and 800
+  gold, counted in no clear; the area's lead stays at 28.0.
