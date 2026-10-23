@@ -778,6 +778,7 @@ export const walkthrough: Walkthrough = (ok) => {
   woldQuests(ok);
   masterOfArms(ok);
   theWarning(ok);
+  theBounds(ok);
 };
 
 /**
@@ -1620,4 +1621,133 @@ function theWarning(ok: (cond: boolean, msg: string) => void): void {
   ok(read[0] === whole && read[1] === whole.replace('grass, ', '') && read[2] === whole.replace('grass, ', 'stair, '),
     `the journal reads the same in every order and by every way in, but for the glass in the grass seen only on the road and the warning at the stair's head only up the stair (${read.join(' / ')})`);
   everyGoalWalked(ok, [CHAPTER]);
+}
+
+/**
+ * The bounds (#833), at the boxes' floor, 26. The Scarp's east end (D7): north from Akordu's box at D8's
+ * 20,0 onto its 20,31, one land and nothing said; east from the Saltings' C7 at 31,10 onto the strip under
+ * the Scarp at a company of 12, the Wold named and its warning said, the strip and the lip not joined on
+ * foot and nothing on the strip that fights or pays; the west edge on top shut against C7's ring, and D8's
+ * 0,0 and C8's 31,0 with it; the lip's sights, the salt-raker's words and the watch's fire, a rest; the
+ * vultures, the lions and the walkers, each won; the keepers' store found from the smell of tar; and the
+ * squares left for the lair's door and the enclave's. The other island (E7): north from E8's 16,0 onto
+ * its 16,31, and east from D7's 31,31 onto the spit; its sights, no group, and the castaway's hollow found
+ * from the wind in the crack; its north edge shut to every company against Wrackholm's E6. Walked, waded,
+ * climbed or floated, neither prize is reached but through its door.
+ */
+function theBounds(ok: (cond: boolean, msg: string) => void): void {
+  const w = newWalk(ok), out = buildMaps()[OUTDOORS];
+  const [D7, E7] = ['wold_d7', 'wold_e7'].map((id) => MAP_DEFS.find((d) => d.id === id)!);
+  const [d7, e7, d8, e8, c7, c8, e6] = [D7.id, E7.id, 'wold_d8', 'wold_e8', 'saltings_c7', 'wold_c8', 'wrackholm_e6'].map((id) => out.zones.find((z) => z.id === id)!);
+  const WOLD = ATLAS.zones.find((z) => z.id === 'wold')!;
+  type Can = { swim?: boolean; climb?: boolean; float?: boolean };
+  const ALL: Can = { swim: true, climb: true, float: true };
+  const said = (r: ReturnType<typeof w.world.move>): string => (r.kind === 'moved' ? r.messages.join(' / ') || 'nothing said' : r.kind);
+  const at = (z: typeof d7, x: number, y: number): number => (z.y + y) * out.width + z.x + x;
+  // The squares of a box a company reaches from one of its own, inside the box, never through `door`.
+  const reach = (z: typeof d7, from: readonly [number, number], can: Can, door?: readonly [number, number]): Set<number> => {
+    const seen = new Set<number>(), todo = [[z.x + from[0], z.y + from[1]]];
+    while (todo.length) {
+      const [x, y] = todo.pop()!, k = y * out.width + x;
+      if (seen.has(k) || (door && x === z.x + door[0] && y === z.y + door[1]) || x < z.x || x >= z.x + z.w || y < z.y || y >= z.y + z.h
+        || out.passable(x, y, can) !== 'ok') continue;
+      seen.add(k);
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+    }
+    return seen;
+  };
+  const search = (map: string, x: number, y: number, facing: Facing, room: string): boolean => {
+    w.world.travel(map, x, y, facing);
+    let found = false;
+    for (let i = 0; i < 20 && !found; i++) found = w.world.search();
+    const into = found ? [w.world.move('forward'), w.world.move('forward')] : [];
+    listen(w);
+    return found && into.every((r) => r.kind === 'moved') && w.world.used(room);
+  };
+  const feature = (d: MapDef, id: string) => d.features!.find((f) => 'id' in f && f.id === id)!;
+  const step = (map: string, x: number, y: number, facing: Facing) => { w.world.travel(map, x, y, facing); const r = w.world.move('forward'); listen(w); return r; };
+  w.level = 26;
+  ok(!!WOLD.maps?.some((m) => `${m.map} ${m.at.join(',')}` === 'wold_d7 104,190') && !!WOLD.maps?.some((m) => `${m.map} ${m.at.join(',')}` === 'wold_e7 136,190')
+    && d7.x === d8.x && d7.y + 32 === d8.y && e7.x === d7.x + 32 && e7.y === d7.y && e7.x === e8.x && e7.y + 32 === e8.y
+    && [D7, E7].every((d) => d.density === 'country' && d.band?.join('-') === '26-27' && d.region === 'glasswold' && !(d.exits ?? []).length),
+    'the Scarp\'s east end, D7, laid at 104,190 over Akordu\'s box, and the other island\'s north, E7, east of it at 136,190 over the shore: country, band 26-27, nothing taken out of either');
+
+  // The way in: north from D8's 20,0 onto D7's 20,31, walked, one land and nothing said.
+  const north = step(d8.id, 20, 0, NORTH);
+  ok(north.kind === 'moved' && w.world.zone?.id === D7.id && w.world.state.x === d7.x + 20 && w.world.state.y === d7.y + 31 && D7.start.x === 20 && D7.start.y === 31
+    && !north.messages.some((m) => m.startsWith('The Wold')), `north from D8's 20,0 onto D7's 20,31, walked, the box's way in, one land and nothing said (${said(north)})`);
+  // The strip under the Scarp: east from C7's 31,10 at 12, the Wold named and warned of; it and the lip are
+  // not joined on foot, and nothing on it fights or pays.
+  const low = newWalk(ok);
+  for (const m of low.party.members) m.level = 12;
+  low.world.travel(c7.id, 31, 10, EAST);
+  const east = low.world.move('forward');
+  ok(east.kind === 'moved' && low.world.zone?.id === D7.id && low.world.state.x === d7.x && east.messages.join(' / ') === `The Wold. ${WOLD.crossing?.warning}`,
+    `east from the Saltings' C7 at 31,10 onto the strip under the Scarp, D7's 0,10, at 12 the Wold named and warned of (${east.kind === 'moved' ? east.messages.join(' / ') : east.kind})`);
+  const strip = reach(d7, [0, 10], {}), lip = reach(d7, [D7.start.x, D7.start.y], {});
+  ok(strip.size > 100 && lip.size > 200 && ![...strip].some((k) => lip.has(k))
+    && !D7.encounters!.some((g) => strip.has(at(d7, g.x, g.y))) && !D7.features!.some((f) => (f.kind === 'cairn' || f.kind === 'chest') && strip.has(at(d7, f.x, f.y))),
+    `the strip under the Scarp (${strip.size} squares) and the lip over it (${lip.size}) are not joined on foot, and nothing on the strip fights or pays`);
+  for (const id of ['d7_pans', 'd7_tide', 'd7_foot']) see(w, `${D7.id}:${id}`);
+  const raker = D7.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'a salt-raker at the last pan')!;
+  w.world.travel(D7.id, raker.x, raker.y);
+  const told = meet(raker, w.party, heard(w.world, raker)).text;
+  listen(w);
+  ok(told.includes('end of the Scarp') && !raker.quest && !raker.says && !raker.flag, 'the salt-raker at the last pan: something came to the end of the Scarp in the spring and stands there yet; words only');
+  // The west edge on top is shut against C7's ring, and the corner with it: D8's 0,0 and C8's 31,0.
+  ok(Array.from({ length: 13 }, (_, i) => out.passable(d7.x, d7.y + 19 + i) !== 'ok').every(Boolean) && out.passable(d8.x, d8.y) !== 'ok' && out.passable(c8.x + 31, c8.y) !== 'ok'
+    && out.passable(c7.x + 31, c7.y + 31) !== 'ok', 'D7\'s west edge on top is shut against C7\'s ring, rows 19 to 31, and D8\'s 0,0 and C8\'s 31,0 with its corner');
+
+  // The lip: the long grass, the foal's bones, the walkers' tracks, the Scarp's end and the lip over the
+  // pans; a cairn of sea-stones; the watch's fire, a rest.
+  for (const id of ['d7_grass', 'd7_bones', 'd7_tracks', 'd7_end', 'd7_lip']) see(w, `${D7.id}:${id}`);
+  const cairn = feature(D7, 'd7_cairn');
+  ok(cairn.kind === 'cairn' && cairn.gold === 350 && cairn.items.join() === 'elixir' && lip.has(at(d7, cairn.x, cairn.y)), 'a cairn of sea-stones above the shore, a long feather in its top: gold and an Elixir');
+  const camp = D7.features!.find((f) => f.kind === 'camp')!;
+  w.world.travel(D7.id, camp.x, camp.y);
+  ok(restRefused(w.world) === '' && D7.encounters!.every((g) => Math.abs(g.x - camp.x) + Math.abs(g.y - camp.y) > 8), 'the Riders\' old watch-fire on the lip, clear of every group, where a company may rest');
+  // The groups, each won at 26: the vultures over the bones, the lions in the grass, the walkers at the end.
+  const g7 = (id: string) => D7.encounters!.find((g) => g.id === id)!;
+  ok(D7.encounters!.length === 3 && g7('d7_vultures').monsters.join() === 'vulture,vulture,vulture,vulture' && g7('d7_lions').monsters.join() === 'wold_lion,wold_lion,wold_lion'
+    && g7('d7_walker').monsters.join() === 'glass_walker,glass_walker' && D7.encounters!.every((g) => g.respawn === 2880 && !g.slainText && lip.has(at(d7, g.x, g.y))),
+    'four vultures over the bones, three lions in the long grass and two glass walkers at the Scarp\'s end, all on the lip');
+  for (const g of D7.encounters!) fight(w, `${D7.id}:${g.id}`);
+  // The secret: the beacon's cold hearth and the smell of tar, searched; the keepers' store behind it.
+  const [rock] = D7.secrets!;
+  ok(rock.hint === 'd7_tar' && feature(D7, 'd7_tar').x === rock.x + 1 && feature(D7, 'd7_tar').y === rock.y, 'the smell of tar comes off the rock at the store\'s door');
+  const store = reach(d7, [rock.x + 1, rock.y], ALL, [rock.x, rock.y]);
+  ok(store.size > 300 && !store.has(at(d7, rock.x - 1, rock.y)) && !store.has(at(d7, rock.x - 2, rock.y)),
+    `the store is shut but for its door: none of D7's ${store.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${D7.id}:d7_tar`);
+  ok(search(D7.id, rock.x + 1, rock.y, WEST, 'd7_store'), 'searched where the tar smells, the rock gives, and the beacon-keepers\' store can be walked into');
+  const chest7 = feature(D7, 'd7_chest');
+  ok(chest7.kind === 'chest' && chest7.gold === 1100 && chest7.items.join() === 'potion_sp_great' && chest7.x === rock.x - 2, 'in the store, the keepers\' chest: 1,100 gold and a Sapphire Vial');
+  // The doors left for the lair, in the Scarp's east face over the gulf, and for the enclave, in the hills
+  // over D8: each square is bare, the square before it open on the lip, and nothing stands on either.
+  const bare = (x: number, y: number): boolean => !D7.features!.some((f) => f.x === x && f.y === y) && !D7.encounters!.some((g) => g.x === x && g.y === y);
+  ok(D7.rows[24][19] === '|' && lip.has(at(d7, 18, 24)) && bare(19, 24) && bare(18, 24) && D7.rows[30][8] === '^' && lip.has(at(d7, 8, 29)) && lip.has(at(d7, 8, 30)) && bare(8, 30) && bare(8, 29),
+    'the lair\'s door is left at the Scarp\'s east face, 19,24, and the enclave\'s at the hills over Akordu\'s box, 8,30, each bare and its way clear');
+
+  // The other island: north from E8's 16,0 onto E7's 16,31, walked, and east from D7's 31,31 onto the spit.
+  const isle = step(e8.id, 16, 0, NORTH);
+  ok(isle.kind === 'moved' && w.world.zone?.id === E7.id && w.world.state.x === e7.x + 16 && w.world.state.y === e7.y + 31 && E7.start.x === 16 && E7.start.y === 31
+    && !isle.messages.some((m) => m.startsWith('The Wold')), `north from E8's 16,0 onto E7's 16,31, walked, the box's way in, one land and nothing said (${said(isle)})`);
+  const spit = step(d7.id, 31, 31, EAST);
+  ok(spit.kind === 'moved' && w.world.zone?.id === E7.id && w.world.state.x === e7.x && w.world.state.y === e7.y + 31, `east from D7's 31,31 onto the spit at E7's 0,31, walked (${said(spit)})`);
+  for (const id of ['e7_spit', 'e7_island', 'e7_bar', 'e7_gulls']) see(w, `${E7.id}:${id}`);
+  // Its north edge: the isle's last rocks stand off across deep water, and no company crosses from E6.
+  ok(Array.from({ length: 32 }, (_, i) => out.passable(e7.x + i, e7.y, ALL) !== 'ok').every(Boolean) && Array.from({ length: 14 }, (_, i) => out.at(e6.x + 13 + i, e6.y + 31).ch === '~').every(Boolean)
+    && !(E7.encounters ?? []).length, 'E7\'s north edge is deep water that no company crosses, E6\'s south shore at 13 to 26 shallows against it, and no group on the island');
+  // The secret: the wind moaning in the crack, searched; the castaway's hollow behind it.
+  const [crack] = E7.secrets!;
+  ok(crack.hint === 'e7_moan' && feature(E7, 'e7_moan').x === crack.x - 1 && feature(E7, 'e7_moan').y === crack.y, 'the wind moans at the crack, beside the hollow\'s door');
+  const hollow = reach(e7, [crack.x - 1, crack.y], ALL, [crack.x, crack.y]);
+  ok(hollow.size > 50 && !hollow.has(at(e7, crack.x + 1, crack.y)) && !hollow.has(at(e7, crack.x + 1, crack.y + 1)),
+    `the hollow is shut but for its door: none of the island's ${hollow.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${E7.id}:e7_moan`);
+  ok(search(E7.id, crack.x - 1, crack.y, EAST, 'e7_hole'), 'searched where the wind moans, the rock gives, and the castaway\'s hollow can be walked into');
+  const chestE = feature(E7, 'e7_chest');
+  ok(chestE.kind === 'chest' && chestE.gold === 700 && chestE.items.join() === 'elixir' && chestE.x === crack.x + 1 && chestE.y === crack.y + 1, 'in the hollow, what the castaway left: 700 gold and an Elixir');
+  const words = [D7, E7].flatMap((d) => d.features!.flatMap((f) => [...('text' in f && f.text ? [f.text] : []), ...(f.kind === 'npc' ? f.lines : [])])).join(' ');
+  ok(!/glass|hull|ship|orbit|voyage|custodian|tower|bow/i.test(words), 'nothing in either box\'s words of the Glass, of what the crown is, or of the bow');
 }

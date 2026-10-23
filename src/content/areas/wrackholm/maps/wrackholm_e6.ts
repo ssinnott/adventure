@@ -47,7 +47,7 @@ export const WRACKHOLM_E6: MapDef = {
     'WWWWWWWWW~~_^^^^^^^,^^^^^,,,,hhh',
     'WWWWWWWWWW~~^^^^^^^^^^^^^^^,,___',
     'WWWWWWWWWW~~^^^^^^^^^^^^^^^__~~_',
-    'WWWWWWWWWWW~~^^^^^^^^^^^^^_~~~~~',
+    'WWWWWWWWWWW~~~~~~~~~~~~~~~~~~~~~',
   ],
   exits: [
     { x: 18, y: 12, to: 'smugglers_cove', tx: 12, ty: 14, tf: NORTH, label: 'You climb the wet path into the mouth of Kelp Hole.' },
