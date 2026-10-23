@@ -4,7 +4,7 @@
 // mound with the earth-house under it; the bog between the pines and the ridge; east of the ridge a
 // strip of pines and bog under the glacier; and the mountain along the south edge, where the world ends.
 // In from L10 over the north edge, walked, either side of the ridge. The west edge meets K11, the east
-// edge M11 and the south edge L12, which is mountain.
+// edge M11 and the south edge L12 (#832), the pines running on at 0 to 16 and the mountain from 17.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/rimewater.md §4.8 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';

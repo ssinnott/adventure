@@ -35,11 +35,13 @@
 // the hollow's back; the cairn, the drowned god's shrine and the deserter in the rocks with his tally.
 // Then the country behind the road (#508, `spineBehind`): the giants' ground (J10), the Spine's south
 // (I12) and the vale's end (J12), each walked into, its one group won and its secret found from its hint.
-// Last, the four third prestiges taught here (#448) taken at 27, each for its trainer's quest: the ledge
+// Then the four third prestiges taught here (#448) taken at 27, each for its trainer's quest: the ledge
 // held with Edric, the vigil kept with Oswin, the eleven sung to Brother Lark and the Compact's orders
-// read to Hereward in Rook's Nest (`thirdPrestiges`).
+// read to Hereward in Rook's Nest (`thirdPrestiges`). Last, the bounds (#832): the pines over the water
+// by Sheer Point (J8), in a walk of their own (`theBounds`).
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, see, fight, listen, playChapter, everyGoalWalked, goalFromBegun, quest, type Walk, type Step } from '../../../../tools/walk.ts';
+import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
 import { xpForLevel, createCharacter, takePrestige, prestigeOf, defaultParty, equip, statOf, attackBonus } from '../../../game/party.ts';
 import type { ClassId, Party } from '../../../game/party.ts';
 import { offers, teach } from '../../../game/prestige.ts';
@@ -59,7 +61,7 @@ import { OUTDOORS } from '../../../game/outdoors.ts';
 import { meet, heard, answer, barred, SHORT, NONE } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
 import { GameMap } from '../../../game/map.ts';
-import type { Feature, MapDef } from '../../../game/map.ts';
+import type { Can, Feature, MapDef, MapZone } from '../../../game/map.ts';
 import { restAndWake } from '../../../game/wilds.ts';
 import { readLine } from '../../../game/inscriptions.ts';
 import { MONSTERS } from './monsters.ts';
@@ -554,7 +556,7 @@ export const walkthrough: Walkthrough = (ok) => {
 
   // The trail square to square from the way in to its end at the atlas's 286,236, the rock warm under
   // it; from the end the masons' track down through the rock to the tip, and the tip's shores. The sea
-  // on the north and west and unbuilt J8 on the east end the world.
+  // on the north and west ends the world; the east edge meets J8's west (#832, `theBounds`).
   const onI8 = (x: number, y: number): boolean => x >= i8.x && x < i8.x + i8.w && y >= i8.y && y < i8.y + i8.h;
   const at8 = (f: { x: number; y: number }): number => (i8.y + f.y) * out.width + i8.x + f.x;
   const trail8 = reach(i8.x + 20, i8.y + 31, (x, y) => onI8(x, y) && road(x, y));
@@ -565,8 +567,8 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(trail8.has(at8(ev8('i8_warm'))) && ev8('i8_trail_end').x === 22 && ev8('i8_trail_end').y === 14, 'on the trail the rock warm under it, and at its end the Point below');
   for (const id of ['i8_warm', 'i8_trail_end']) see(w, `sheerpoint_i8:${id}`);
   ok(walked8.has(at8({ x: 17, y: 6 })) && walked8.has(at8({ x: 26, y: 3 })) && walked8.has(at8({ x: 31, y: 30 })) && walked8.has(at8({ x: 6, y: 31 }))
-    && [...Array(32).keys()].every((i) => [[i8.x + i, i8.y - 1], [i8.x - 1, i8.y + i], [i8.x + 32, i8.y + i]].every(([x, y]) => out.passable(x, y) !== 'ok')),
-    'from the trail\'s end the track goes down to the shore, the tip is walked to its last rock and down the pines on both sides, and past the north, west and east edges the world ends');
+    && [...Array(32).keys()].every((i) => [[i8.x + i, i8.y - 1], [i8.x - 1, i8.y + i]].every(([x, y]) => out.passable(x, y) !== 'ok')),
+    'from the trail\'s end the track goes down to the shore, the tip is walked to its last rock and down the pines on both sides, and past the north and west edges the world ends');
 
   // The causeway: cut stone a square wide from the shore at 17,6 out over the water to 17,1, where it
   // stops over deep water short of the north edge; the first stone, the step's line; one stone carved
@@ -683,6 +685,7 @@ export const walkthrough: Walkthrough = (ok) => {
   theBells(ok);
   sideQuests(ok);
   thirdPrestiges(ok);
+  theBounds(ok);
 };
 
 /**
@@ -1529,4 +1532,129 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     ok(!there(w, 'sheerpoint_i8', DESERTER) && there(w, 'cinderport', PORT) === (how === 'passage') && there(w, 'sheerpoint_i8', BACK) === (how === 'swapped'),
       `${how}: he is gone from the rocks, and ${how === 'passage' ? 'by the fire in Cinderport\'s inn' : 'at work below the tally-house'}`);
   }
+}
+
+/**
+ * The bounds (#832), the pines over the water by Sheer Point (J8): east from I8's 31,20 onto its 0,20,
+ * walked, nothing said, and back; north from J9's 5,0 onto its 5,31, Sheer Point named, and back; the
+ * corner, J9's 0,0 shut to the mountain and J8's 0,31 rock as I8's 31,31 is; the hills and pines walked
+ * from the way in to every point; the eel-fisher at his fire and his word on the point; the cairn; the
+ * spine eagles at the neck of the point and the snow trolls on it behind them, won at the box's floor and
+ * met in that order by a walker from every square the box is entered by; the smoke-house cut into the hill
+ * where the eel-traps are stacked, shut but through its door; and the box's edges as built.
+ */
+function theBounds(ok: (cond: boolean, msg: string) => void): void {
+  const w = newWalk(ok);
+  w.level = 22;
+  for (const m of w.party.members) m.level = 22;
+  const J8 = mapOf('sheerpoint_j8'), J9 = mapOf('coldmere_j9'), I8 = mapOf('sheerpoint_i8');
+  const out = buildMaps()[OUTDOORS], zone = (id: string): MapZone => out.zones.find((z) => z.id === id)!;
+  const j8 = zone(J8.id), i8 = zone(I8.id), j9 = zone(J9.id);
+  const ALL: Can = { swim: true, climb: true, float: true };
+  const said = (r: ReturnType<typeof w.world.move>): string => (r.kind === 'moved' ? r.messages.join(' / ') || 'nothing said' : r.kind);
+  const open = (n: number, f: (i: number) => boolean): string => Array.from({ length: n }, (_, i) => f(i)).join();
+  const sq = (z: MapZone, x: number, y: number): number => (z.y + y) * out.width + z.x + x;
+  /** The squares of a box walked to from one of its own, inside the box, with the steps it takes: on foot, or every way with its secret door shut. */
+  const steps = (z: MapZone, from: readonly [number, number], can: Can, door?: readonly [number, number]): Map<number, number> => {
+    const seen = new Map<number, number>([[sq(z, from[0], from[1]), 0]]), todo: [number, number][] = [[from[0], from[1]]];
+    for (let i = 0; i < todo.length; i++) {
+      const [x, y] = todo[i], n = seen.get(sq(z, x, y))!;
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        const [nx, ny] = [x + dx, y + dy];
+        if (nx < 0 || nx >= z.w || ny < 0 || ny >= z.h || (door && nx === door[0] && ny === door[1]) || seen.has(sq(z, nx, ny)) || out.passable(z.x + nx, z.y + ny, can) !== 'ok') continue;
+        seen.set(sq(z, nx, ny), n + 1); todo.push([nx, ny]);
+      }
+    }
+    return seen;
+  };
+  /** Searched from a square facing the face, the wall gives and the room behind it is walked into. */
+  const search = (map: string, x: number, y: number, facing: Facing, room: string): boolean => {
+    w.world.travel(map, x, y, facing);
+    let found = false;
+    for (let i = 0; i < 20 && !found; i++) found = w.world.search();
+    const into = found ? [w.world.move('forward'), w.world.move('forward')] : [];
+    listen(w);
+    return found && into.every((r) => r.kind === 'moved') && w.world.used(room);
+  };
+
+  // East from I8's 31,20 onto J8's 0,20, walked, the same land at the same floor; and north from J9's 5,0
+  // onto J8's 5,31, where at 22 Sheer Point is named and no more; each straight back, nothing said.
+  w.world.state.minutes = Math.floor(w.world.state.minutes / MINUTES_PER_DAY) * MINUTES_PER_DAY + 12 * 60;
+  w.world.travel(I8.id, 31, 20, EAST);
+  const east = w.world.move('forward');
+  ok(east.kind === 'moved' && w.world.zone?.id === J8.id && w.world.state.x === j8.x && w.world.state.y === j8.y + 20 && said(east) === 'nothing said' && i8.x + i8.w === j8.x,
+    `east from I8's 31,20 onto J8's 0,20, walked, the same land at the same floor, nothing said (${said(east)})`);
+  listen(w);
+  const back = w.world.move('back');
+  ok(back.kind === 'moved' && w.world.zone?.id === I8.id && w.world.state.x === j8.x - 1 && said(back) === 'nothing said', `and straight back west onto I8's 31,20, nothing said (${said(back)})`);
+  listen(w);
+  w.world.travel(J9.id, 5, 0, NORTH);
+  const north = w.world.move('forward');
+  ok(north.kind === 'moved' && w.world.zone?.id === J8.id && w.world.state.x === j8.x + 5 && w.world.state.y === j8.y + 31 && said(north) === 'Sheer Point.' && j8.y + j8.h === j9.y,
+    `north from J9's 5,0 onto J8's 5,31, walked, and at 22 Sheer Point named, no more (${said(north)})`);
+  listen(w);
+  const home = w.world.move('back');
+  ok(home.kind === 'moved' && w.world.zone?.id === J9.id && w.world.state.y === j9.y && said(home) === 'nothing said', `and straight back south onto J9's 5,0, nothing said (${said(home)})`);
+  listen(w);
+
+  // The corner, 0,31: I8's 31,31 is rock and J9's 0,0 was pines, so J9's 0,0 is shut to the mountain and
+  // J8's 0,31 is rock (docs §12.1); nothing stands on J9's 0,0 or within two squares of it, and its 1,0 and
+  // 0,1 are still joined through 1,1.
+  const near9 = [...(J9.features ?? []), ...(J9.encounters ?? []), ...(J9.exits ?? [])].filter((f) => f.x + f.y <= 2);
+  const j9corner = steps(j9, [1, 0], {});
+  ok(J9.rows[0][0] === 'M' && I8.rows[31][31] === 'r' && J8.rows[31][0] === 'r' && !near9.length && j9corner.has(sq(j9, 0, 1)) && j9corner.has(sq(j9, 1, 1)),
+    `the corner: J9's 0,0 is the mountain, J8's 0,31 rock as I8's 31,31 is, nothing within two squares of J9's 0,0${near9.length ? ` (not ${near9.map((f) => `${f.x},${f.y}`).join(' ')})` : ''}, and J9's 1,0 and 0,1 are joined through 1,1`);
+
+  // The hills and pines, walked from the way in to every point and to both groups' squares, and no further.
+  const start = J8.start, walked = steps(j8, [start.x, start.y], {}, [2, 18]);
+  const eagles = J8.encounters!.find((g) => g.id === 'j8_eagles')!, trolls = J8.encounters!.find((g) => g.id === 'j8_trolls')!;
+  ok(J8.band![0] === 22 && start.x === 0 && start.y === 19 && !(J8.exits ?? []).length && walked.size === 89
+    && J8.features!.filter((f) => f.kind !== 'chest' && !('id' in f && f.id === 'j8_house')).every((f) => walked.has(sq(j8, f.x, f.y))) && walked.has(sq(j8, eagles.x, eagles.y)) && walked.has(sq(j8, trolls.x, trolls.y)),
+    `the hills and pines (${walked.size} squares) are walked from the way in on I8's side to every point and to both groups' squares, and no further; nothing is taken out of the box`);
+  for (const id of ['j8_sea', 'j8_shallows']) see(w, `${J8.id}:${id}`);
+  const cairn = J8.features!.find((f) => f.kind === 'cairn' && f.id === 'j8_cairn');
+  ok(cairn?.kind === 'cairn' && cairn.gold === 120 && cairn.items?.join() === 'potion_sp_great', 'on the hills a cairn with 120 gold and a Sapphire Vial');
+
+  // The eel-fisher at his fire, whose word is on the eagles and on the trolls on the point, and on no
+  // door; his fire 8 squares or more from the groups.
+  const fisher = J8.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'An eel-fisher')!;
+  const fire = J8.features!.find((f) => f.kind === 'camp')!;
+  w.world.travel(J8.id, fisher.x, fisher.y);
+  const told = meet(fisher, w.party, heard(w.world, fisher)).text;
+  ok(told.includes('The eagles come down to the shallows') && told.includes('Two white trolls lie up there') && !/smoke|hut|door|trap|secret/i.test(told),
+    `the eel-fisher: the eagles at the shallows, two trolls on the point, and nothing of a door (${told.replace(/\n+/g, ' ')})`);
+  ok([eagles, trolls].every((g) => Math.abs(fire.x - g.x) + Math.abs(fire.y - g.y) >= 8), 'his fire is 8 squares or more from both groups, who do not roam');
+  listen(w);
+
+  // The groups, won at the box's floor. The trolls' point is joined to the shore by the eagles' square
+  // alone, so a walker meets the eagles first, from every square the box is entered by: I8's 31,11 to 31,30
+  // at J8's west column and J9's 0,1 to 0,12 at its south row.
+  for (const g of J8.encounters!) fight(w, `${J8.id}:${g.id}`);
+  const around = [[1, 0], [-1, 0], [0, 1], [0, -1]].filter(([dx, dy]) => out.passable(j8.x + trolls.x + dx, j8.y + trolls.y + dy) === 'ok').map(([dx, dy]) => `${trolls.x + dx},${trolls.y + dy}`);
+  const entries = [...Array(32).keys()].flatMap((i) => [[0, i], [i, 31]] as [number, number][]).filter(([x, y], n, all) => out.passable(j8.x + x, j8.y + y) === 'ok' && all.findIndex(([a, b]) => a === x && b === y) === n);
+  const meets = (d: Map<number, number>, g: { x: number; y: number }): number => Math.min(...[[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1]].map(([dx, dy]) => d.get(sq(j8, g.x + dx, g.y + dy)) ?? Infinity));
+  const wrong = entries.filter(([x, y]) => { const d = steps(j8, [x, y], {}); return !(meets(d, eagles) < meets(d, trolls)); });
+  ok(around.join() === `${eagles.x},${eagles.y}` && entries.length === 32 && !wrong.length,
+    `the trolls' point is joined to the shore by the eagles' square alone (${around.join(' ')}), and from each of the ${entries.length} squares the box is entered by a walker meets the eagles first${wrong.length ? ` (not from ${wrong.map(([x, y]) => `${x},${y}`).join(' ')})` : ''}`);
+
+  // The secret: the eel-traps of woven withy stacked at the hill's foot; the search there facing the rock,
+  // and the smoke-house cut into the hill, a room of two with its door at the south end. Walked, waded,
+  // climbed or floated, it is never reached but through its door.
+  const house = steps(j8, [start.x, start.y], ALL, [2, 18]);
+  ok(house.size > 80 && ![[2, 16], [2, 17]].some(([x, y]) => house.has(sq(j8, x, y))), `the smoke-house is shut but for its door in the hill: none of J8's ${house.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, `${J8.id}:j8_traps`);
+  ok(search(J8.id, 2, 19, NORTH, 'j8_house'), 'searched where the eel-traps are stacked, the hill gives, and the smoke-house behind it can be walked into');
+  ok([[2, 16], [2, 17]].every(([x, y]) => out.passable(j8.x + x, j8.y + y) === 'ok') && [[1, 16], [3, 16], [1, 17], [3, 17], [2, 15]].every(([x, y]) => out.passable(j8.x + x, j8.y + y, ALL) !== 'ok'),
+    'the smoke-house runs two squares along the hill from its door at the south end, one wide');
+  const strongbox = J8.features!.find((f) => f.kind === 'chest' && f.id === 'j8_strongbox');
+  ok(strongbox?.kind === 'chest' && strongbox.gold === 250 && strongbox.items.join() === 'elixir' && strongbox.x === 2 && strongbox.y === 16, 'at the smoke-house\'s end, a strongbox with 250 gold and an Elixir');
+
+  // J8's edges: its west meets I8's east square for square, open at 11 to 30; its south meets J9's north,
+  // open at 1 to 12; past its north and east the sea ends the world.
+  const west8 = open(32, (i) => out.passable(j8.x, j8.y + i) === 'ok'), south8 = open(32, (i) => out.passable(j8.x + i, j8.y + 31) === 'ok');
+  ok(west8 === open(32, (i) => i >= 11 && i <= 30) && west8 === open(32, (i) => out.passable(i8.x + 31, i8.y + i) === 'ok')
+    && south8 === open(32, (i) => i >= 1 && i <= 12) && south8 === open(32, (i) => out.passable(j9.x + i, j9.y) === 'ok')
+    && open(32, (i) => out.passable(j8.x + i, j8.y) === 'ok') === open(32, () => false)
+    && open(32, (i) => out.passable(j8.x + 31, j8.y + i) === 'ok') === open(32, () => false),
+    'J8 meets I8 at 11 to 30 of its west edge and J9 at 1 to 12 of its south, square for square; past its north and east edges the sea ends the world');
 }
