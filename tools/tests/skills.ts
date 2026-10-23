@@ -196,17 +196,18 @@ export function skills(): void {
     party.gold = SKILL_PRICE - 1;
     ok(skillBar(id, party.members[next], party) === 'not enough gold' && !learn(id, party, next).taught && !skillsOf(party.members[next]).length, `${s.name}: short of the price, nothing changes`);
   }
-  // partyCan reads a member's list itself (game/party.ts cannot import skills.ts: a cycle), so it is
-  // held to `hasSkill`'s answer for every people, each skill learnt or not, its learner standing or down.
+  // Mountaineer and Swimmer, which partyCan reads through `hasSkill`: a member of any people has one
+  // only by learning it, and the company climbs or swims by it only while that member stands.
   {
-    const answers = (PEOPLES).flatMap((race) => ([[], ['mountaineer'], ['swimmer'], ['mountaineer', 'swimmer']] as SkillId[][]).flatMap((learnt) => [false, true].map((down) => {
+    const answers = PEOPLES.flatMap((race) => ([[], ['mountaineer'], ['swimmer'], ['mountaineer', 'swimmer']] as SkillId[][]).flatMap((learnt) => [false, true].map((down) => {
       const p = company((q) => { for (const m of q.members) m.race = race; q.members[0].skills = [...learnt]; if (down) q.members[0].conditions.push('dead'); });
       const up = p.members.filter((m) => !isDown(m)), can = partyCan(p);
-      return can.climb === up.some((m) => hasSkill(m, 'mountaineer')) && can.swim === up.some((m) => RACES[m.race].swim || hasSkill(m, 'swimmer')) ? '' : `${race} with ${learnt.join('+') || 'none'}${down ? ' down' : ''}`;
+      const had = p.members.every((m) => (['mountaineer', 'swimmer'] as const).every((id) => hasSkill(m, id) === skillsOf(m).includes(id)));
+      return had && can.climb === up.some((m) => skillsOf(m).includes('mountaineer')) && can.swim === up.some((m) => RACES[m.race].swim || skillsOf(m).includes('swimmer')) ? '' : `${race} with ${learnt.join('+') || 'none'}${down ? ' down' : ''}`;
     })));
-    ok(answers.every((a) => !a), `partyCan answers as hasSkill does for every people (${PEOPLES.length}), with Mountaineer, Swimmer, both or neither learnt, the learner standing or down${answers.some((a) => a) ? ' -> astray: ' + answers.filter((a) => a).join(', ') : ''}`);
+    ok(answers.every((a) => !a), `hasSkill gives Mountaineer and Swimmer only to a member who learnt them, of every people (${PEOPLES.length}), and partyCan climbs and swims by them, with both, either or neither learnt, the learner standing or down${answers.some((a) => a) ? ' -> astray: ' + answers.filter((a) => a).join(', ') : ''}`);
   }
-  // newRound reads Arms Master off the list as partyCan reads its two, and is held to `hasSkill` likewise.
+  // newRound reads Arms Master off the member's list, and is held to `hasSkill`.
   armsMaster();
   // The halls' own menus, through a Game, and a person who teaches; every row of them fits the panel.
   menus(halls);

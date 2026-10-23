@@ -5,9 +5,10 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/shelf.md §4.8 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
+import { denBurnt } from '../../../../game/keys.ts';
 
-/** The camp's brood work the road until it burns (game/dens.ts's denBurnt). */
-const BURNT = { seen: 'downs_d3:d3_camp' };
+/** The camp's brood work the road until it burns. */
+const BURNT = denBurnt('downs_d3', 'd3_camp');
 const BROOD = ['billman', 'billman', 'billman', 'slinger'];
 
 export const DOWNS_D3: MapDef = {

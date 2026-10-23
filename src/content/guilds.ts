@@ -6,6 +6,7 @@
 // its own flag, so that content added later never lowers it.
 import type { GuildQuest } from '../game/guilds.ts';
 import type { QuestDef } from '../game/quests.ts';
+import { takenFlag, doneFlag } from '../game/keys.ts';
 
 export type GuildId = 'wardens' | 'lanterns' | 'cartographers' | 'compact';
 
@@ -28,12 +29,8 @@ export const GUILDS: Readonly<Record<GuildId, GuildDef>> = {
   compact: { id: 'compact', name: 'The Salt Compact', ranks: ['Runner', 'Fence', 'Factor', 'Partner'] },
 };
 
-/** The flag set when a company takes a guild quest, as a person's quests are: `q_<id>`. */
-export const takenFlag = (quest: string): string => `q_${quest}`;
-/** The flag set when a guild quest is paid: `q_<id>_done`. */
-export const doneFlag = (quest: string): string => `q_${quest}_done`;
-/** The flag that keeps the rank a company has reached in a guild, as its number: `rank_<guild>`. */
-export const rankFlag = (guild: GuildId): string => `rank_${guild}`;
+/** A guild quest's taken and done flags and a guild's rank flag: in game/keys.ts with the save's other keys. */
+export { takenFlag, doneFlag, rankFlag } from '../game/keys.ts';
 
 /** A guild quest's side of the quest log: in it from the taking, finished at the pay. */
 export const guildQuestDef = (q: GuildQuest): QuestDef => ({

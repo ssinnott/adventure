@@ -5,9 +5,10 @@
 // §4.6 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
+import { denBurnt } from '../../../../game/keys.ts';
 
-/** The wolves on the chalk run until the den in the chalk pit is pulled down (game/dens.ts's denBurnt). */
-const PULLED = { seen: 'downs_d2:d2_den' };
+/** The wolves on the chalk run until the den in the chalk pit is pulled down. */
+const PULLED = denBurnt('downs_d2', 'd2_den');
 const WOLVES = ['barrow_wolf', 'chalk_wolf', 'chalk_wolf'];
 
 export const DOWNS_D2: MapDef = {

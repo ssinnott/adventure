@@ -9,7 +9,7 @@
 // hand, its void written in; §12 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
-import { denBurnt } from '../../../../game/dens.ts';
+import { denBurnt } from '../../../../game/keys.ts';
 
 /** B4's heronry burnt: the herons off it stop coming back. */
 const HERONRY_BURNT = denBurnt('delta_b4', 'b4_heronry');
