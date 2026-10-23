@@ -74,6 +74,7 @@ import { DEAD_DROP3 } from './maps/dead_drop3.ts';
 import { WRACKHOLM_E5 } from './maps/wrackholm_e5.ts';
 import { WRACKHOLM_F5 } from './maps/wrackholm_f5.ts';
 import { WRACKHOLM_F7 } from './maps/wrackholm_f7.ts';
+import { BROKENBACK } from './maps/brokenback.ts';
 import { GameMap } from '../../../game/map.ts';
 import type { Can, Feature, MapDef, MapZone } from '../../../game/map.ts';
 import type { Facing } from '../../../game/types.ts';
@@ -81,6 +82,7 @@ import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { answerRiddle } from '../../../game/wilds.ts';
 import { item, hits, sellPrice } from '../../../game/items.ts';
+import { HARDER_IN, WARNING_IN } from '../../../game/world.ts';
 
 /** The clock on to the next hour given. */
 const clock = (w: Walk, hour: number): void => { const m = w.world.state.minutes; w.world.state.minutes = m - (m % 1440) + 1440 + hour * 60; };
@@ -1147,10 +1149,14 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
  * The bounds (#835, docs/areas/wrackholm.md §12): the scraps of shore round the isle, three strands
  * that hold no group. North from E6's grass onto E5's strand, walked, the land not named again, and on
  * east into F5's; the figurehead's riddle; the soot on the stack's face and the hollow behind it, shut
- * but through its door; the black rocks at E5's 18,28 left bare for the enclave's door. North from
- * F6's grass onto F5's strand; the cairn; the fish scales at the stack's foot and the bait store behind
- * it; the reef at F5's 16,30 left bare for the lair's door. South from F6's shingle onto F7's strand;
- * the spring under the cliff; the cut chain and the hollow behind the rock. Each box's edges as built.
+ * but through its door. North from F6's grass onto F5's strand; the cairn; the fish scales at the
+ * stack's foot and the bait store behind it; the reef at F5's 16,30 left bare for the lair's door.
+ * South from F6's shingle onto F7's strand; the spring under the cliff; the cut chain and the hollow
+ * behind the rock. Each box's edges as built. Last, the Brokenback, the enclave (#845): in at the break
+ * in the wreck's side at E5's 18,28, its door saying its band and how it feels at 11, 12 and 14 and its
+ * sign its band; its two groups won at 14 and met in order by a company on foot, which passes neither;
+ * Keelhaul in the master's strongbox, the hollow under the cabin's deck found from the worn plank and
+ * shut to the four ways but through its wall; and out onto E5's 18,29 again.
  */
 function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const w = newWalk(ok);
@@ -1189,7 +1195,8 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
       walked.has(at(z, x + dx, y + dy)) ? '' : 'its way not walked to', ...near.map((f) => `${f.x},${f.y} within four`)].filter(Boolean);
   };
   const open = (n: number, f: (i: number) => boolean): string => Array.from({ length: n }, (_, i) => f(i)).join();
-  ok([E5, F5, F7].every((d) => !(d.encounters ?? []).length && !(d.exits ?? []).length), 'the strands hold no group, and nothing is taken out of them yet');
+  ok([E5, F5, F7].every((d) => !(d.encounters ?? []).length) && (E5.exits ?? []).map((e) => e.to).join() === BROKENBACK.id && ![F5, F7].some((d) => (d.exits ?? []).length),
+    'the strands hold no group, and nothing is taken out of them but E5\'s one way, in at the break into the Brokenback');
 
   // E5: north from E6's grass at 24,0 onto the strand's 24,31, walked, in Wrackholm still.
   w.world.travel(e6.id, 24, 0, NORTH);
@@ -1211,9 +1218,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   see(w, `${E5.id}:e5_soot`);
   ok(search(E5.id, 28, 27, NORTH, 'e5_lamp'), 'searched where the soot is, the rock gives, and the hollow behind it can be walked into');
   ok(chest(E5, 'e5_chest') === '150 elixir', `in the hollow, a sea chest with 150 gold and an Elixir (${chest(E5, 'e5_chest')})`);
-  // The enclave's door (docs §12.5) is left bare: the black rocks at the strand's west end, 18,28.
-  const wreck = bare(E5, strand5, e5, [18, 28], [0, 1]);
-  ok(!wreck.length, `the black rocks at E5's 18,28 are left bare for the enclave's door, walked to from 18,29, nothing within four squares${wreck.length ? ` (not: ${wreck.join(', ')})` : ''}`);
+  // The enclave's door (docs §12.5) is the break in the wreck's side, 18,28 in the black rocks at the strand's west end: walked into last.
   // And on east along the strand into F5, walked.
   w.world.travel(E5.id, 31, 28, EAST);
   const east = w.world.move('forward');
@@ -1274,4 +1279,78 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   ok([row(e5, 0, ALL), col(e5, 0, ALL), row(f5, 0, ALL), col(f5, 31, ALL), row(f7, 31, ALL), col(f7, 31, ALL)].every((s) => s === none)
     && col(f7, 0, ALL) === open(32, (i) => i === 0) && col(f7, 0) === none && out.passable(e7.x + 31, e7.y, ALL) !== 'ok',
     'past the strands the sea, shut to every company, but F7\'s 0,0, shallows a swimmer wades and the Wold\'s deep water shuts');
+
+  // The Brokenback, the enclave (#845): in at the break in the wreck's side, E5's 18,28, one stone among the black
+  // rocks with rock either side, walked onto from the strand at 18,29, and nothing within four squares of it. Its
+  // door says its band and how it feels, as a border's line: the warning at 11, harder at 12 and its band alone at
+  // 14; inside, its sign gives its band.
+  {
+    const WB = BROKENBACK, mouth = E5.exits!.find((e) => e.to === WB.id)!, levels = w.party.members.map((m) => m.level);
+    type Group = NonNullable<MapDef['encounters']>[number];
+    const near4 = [...E5.features!, ...(E5.encounters ?? []), ...E5.secrets!].filter((f) => Math.abs(f.x - 18) + Math.abs(f.y - 28) <= 4);
+    ok(mouth.x === 18 && mouth.y === 28 && mouth.tx === WB.start.x && mouth.ty === WB.start.y && E5.rows[28].slice(17, 20) === 'r"r' && strand5.has(at(e5, 18, 29)) && !near4.length,
+      `the break into the Brokenback is the one stone in the black rocks at E5's 18,28, rock either side, walked to from the strand at 18,29, and nothing stands within four squares of it${near4.length ? ` (${near4.map((f) => `${f.x},${f.y}`).join(' ')})` : ''}`);
+    const door = (level: number): string => {
+      for (const m of w.party.members) m.level = level;
+      w.world.travel(E5.id, 18, 29, NORTH);
+      const r = w.world.move('forward');
+      return r.kind === 'moved' && w.world.state.mapId === WB.id && w.world.state.x === WB.start.x && w.world.state.y === WB.start.y ? r.messages.join(' | ') : r.kind;
+    };
+    const band = 'The Brokenback: levels 14-15.', far = door(11), near = door(12), at14 = door(14);
+    ok(far === `${mouth.label} | ${band} ${WARNING_IN}` && near === `${mouth.label} | ${band} ${HARDER_IN}` && at14 === `${mouth.label} | ${band}`,
+      `in at the break from E5's 18,29, the way's own line and then its band, with the warning at 11, harder at 12 and nothing more at 14 (${far}; ${near}; ${at14})`);
+    ok(!!WB.enclave && w.world.here.name === 'The Brokenback' && w.world.here.band?.join('-') === '14-15', `inside, its sign gives its own band, over E5's 12-13 (${w.world.here.name}, ${w.world.here.band?.join('-')})`);
+    listen(w);
+    // Its two groups, won at its floor, the nearer the gentler (13.5 and 15): three overseers with a gleaner at the hold's mouth and
+    // four gleaners at the cabin's door. A company on foot, swimming or climbing meets them in that order and passes neither: the
+    // way aft runs through the doorway the first stands behind, and the cabin and the plank lie past the second.
+    w.level = 14;
+    const [first, last] = [WB.encounters!.find((g) => g.id === 'wb_strippers')!, WB.encounters!.find((g) => g.id === 'wb_gleaners')!];
+    ok(WB.encounters!.length === 2 && first.monsters.join() === 'ashen_overseer,ashen_overseer,ashen_overseer,ashen_gleaner' && last.monsters.join() === 'ashen_gleaner,ashen_gleaner,ashen_gleaner,ashen_gleaner'
+      && WB.encounters!.every((g) => g.respawn === 2880 && !g.slainText && g.roams === false), 'three overseers with a gleaner at the hold\'s mouth and four gleaners at the cabin\'s door, and no guardian');
+    for (const g of WB.encounters!) fight(w, `${WB.id}:${g.id}`);
+    for (const id of ['wb_break', 'wb_tide', 'wb_hold', 'wb_bulkhead', 'wb_cabin', 'wb_stern']) see(w, `${WB.id}:${id}`);
+    const hold = new GameMap(WB), key = (x: number, y: number): string => `${x},${y}`, [wall] = WB.secrets!;
+    /** What a company reaches from the way in, the secret wall shut and the squares within a step of a live group not entered (a fight takes them), and the live groups it comes up to. */
+    const walk = (live: readonly Group[], can: Can): { seen: Set<string>; met: string[] } => {
+      const seen = new Set<string>(), met = new Set<string>(), todo: [number, number][] = [[WB.start.x, WB.start.y]];
+      while (todo.length) {
+        const [x, y] = todo.pop()!;
+        if (seen.has(key(x, y)) || (x === wall.x && y === wall.y) || hold.passable(x, y, can) !== 'ok') continue;
+        const next = live.filter((g) => Math.abs(g.x - x) + Math.abs(g.y - y) <= 1);
+        next.forEach((g) => met.add(g.id));
+        if (next.length) continue;
+        seen.add(key(x, y));
+        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+      }
+      return { seen, met: [...met] };
+    };
+    const both = walk([first, last], {}), swum = walk([first, last], ALL), second = walk([last], {}), done = walk([], ALL);
+    ok(both.met.join() === first.id && swum.met.join() === first.id && !both.seen.has(key(7, 8)) && !swum.seen.has(key(7, 8))
+      && second.met.join() === last.id && second.seen.has(key(4, 10)) && !second.seen.has(key(11, 13)) && done.seen.has(key(11, 13)),
+      'a company meets the overseers first and cannot pass them to the hold; with them down it comes up to the gleaners, the cargo behind it and the cabin and the plank beyond them');
+    const feat = (id: string): Feature => WB.features!.find((f) => 'id' in f && f.id === id)!;
+    ok(chest(WB, 'wb_cargo') === '250 elixir', `in the hold, the cargo's chest: 250 gold and an Elixir (${chest(WB, 'wb_cargo')})`);
+    // The secret: the one plank of the cabin's deck worn bright, the search there and the hollow under the deck behind the
+    // wall. Walked, waded, climbed or floated, it is never reached but through the wall.
+    ok(wall.hint === 'wb_plank' && feat('wb_plank').x === wall.x - 1 && feat('wb_plank').y === wall.y && done.seen.size > 80 && !done.seen.has(key(wall.x + 1, wall.y)) && !done.seen.has(key(wall.x + 2, wall.y)),
+      `the master's strongbox is shut but for the wall by the plank: none of the Brokenback's ${done.seen.size} squares walked, waded, climbed or floated reaches it`);
+    see(w, `${WB.id}:wb_plank`);
+    ok(search(WB.id, wall.x - 1, wall.y, EAST, 'wb_under'), 'searched where the plank is worn bright, the wall gives, and the hollow under the deck can be walked into');
+    const axe = item('keelhaul'), great = item('great_axe'), plus = item('great_axe+1');
+    ok(chest(WB, 'wb_strongbox') === '300 keelhaul'
+      && !MAP_DEFS.some((d) => (d.features ?? []).some((f) => (f.kind === 'shop' && f.stock.includes('keelhaul')) || ((f.kind === 'chest' || f.kind === 'cairn') && f.id !== 'wb_strongbox' && f.items?.includes('keelhaul'))))
+      && !Object.values(MONSTERS).some((m) => m.drops?.some((d) => d.item === 'keelhaul')),
+      'in the master\'s strongbox, 300 gold and Keelhaul; no shop sells it, no other chest or cairn holds it and no monster drops it');
+    ok(axe.element === 'cold' && !axe.artifact && axe.price <= CURVE.sunderwood.price && hits(axe) > hits(plus) && hits(plus) > hits(great),
+      `Keelhaul, the long axe with a die of cold, hits ${hits(axe)} against the Great Axe's ${hits(great)} and its plus's ${hits(plus)}, at ${axe.price} inside the Sunderwood's ${CURVE.sunderwood.price}`);
+    // And out: through the break onto E5's 18,29, with the way's own line and no other.
+    w.world.travel(WB.id, WB.start.x, WB.start.y + 1, NORTH);
+    const back = w.world.move('forward');
+    ok(back.kind === 'moved' && w.world.zone?.id === E5.id && w.world.state.x === e5.x + 18 && w.world.state.y === e5.y + 29 && back.messages.join(' | ') === WB.exits![0].label,
+      `out through the break onto E5's 18,29, the way's own line alone (${said(back)})`);
+    listen(w);
+    w.party.members.forEach((m, i) => { m.level = levels[i]; });
+    w.level = 13;
+  }
 }
