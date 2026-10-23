@@ -33,6 +33,7 @@ export const PLACES: readonly AtlasPlace[] = [
   { id: 'anvil_stone', kind: 'dungeon', at: [468, 142] }, // the Anvil Stone's Rift, the Slag Rift: one level, on the tear on O5, 12,16 (#464, #465)
   { id: 'lava_tubes', kind: 'dungeon', at: [470, 194] }, // Feuerstollen, the Lava Tubes: the fire adit, under O6's ridge at 22,20 (#466)
   { id: 'lava_tubes2', kind: 'dungeon', at: [470, 200] }, // the deep tubes, below it
+  { id: 'seestollen', kind: 'dungeon', band: [19, 20], at: [340, 172] }, // the enclave, the first quay's galleries under K6's point, its grate at 20,16 (#831, #845)
 ];
 
 export const SITES: readonly AtlasSite[] = [
