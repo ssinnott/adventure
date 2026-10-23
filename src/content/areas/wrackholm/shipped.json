@@ -1,5 +1,27 @@
 {
   "maps": {
+    "brokenback": {
+      "size": "16x16",
+      "used": [
+        "wb_break",
+        "wb_bulkhead",
+        "wb_cabin",
+        "wb_cargo",
+        "wb_hold",
+        "wb_plank",
+        "wb_stern",
+        "wb_strongbox",
+        "wb_tide",
+        "wb_under"
+      ],
+      "groups": [
+        "wb_gleaners",
+        "wb_strippers"
+      ],
+      "doors": [
+        "12,13"
+      ]
+    },
     "caldera": {
       "used": [
         "e5_chest",
@@ -347,6 +369,7 @@
     "founders_letter",
     "founders_seal",
     "holdfast",
+    "keelhaul",
     "keeper_pail",
     "keeper_yoke",
     "loader_iron",
