@@ -28,7 +28,10 @@ export function withDefs<T extends ItemDef | MonsterDef, R>(table: Readonly<Reco
   for (const d of defs) t[d.id] = d;
   changed();
   try {
-    return f();
+    const r = f();
+    // Lent while `f` runs and no longer: an async `f` would lose its defs at its first await.
+    if (r instanceof Promise) throw new Error('withDefs takes no async f: its defs would be taken out at its first await');
+    return r;
   } finally {
     for (const [id, d] of was.reverse()) if (d === undefined) delete t[id]; else t[id] = d;
     changed();

@@ -704,10 +704,11 @@ Decided by the builder for #946, each the owner's to overturn:
 2. **Each exported call takes `rules` last, defaulting to `RULES`;** the harness's own helpers
    (`weaponDamage`, `incoming`, `mendRate`, `spellDamage`, `heldDamage`, `train`, `keyOf`) take it
    with no default, so the typecheck finds one a caller forgets.
-3. **One helper lends a def to either table, over one already there** (`withDefs`, `tools/tests/lib.ts`),
-   and puts back what it covered, so the rat's and the wolf's looks go through it too; `gear` lends
-   its four items with a plus up front, each only where absent, as it added them on the way. Main
-   gained two writers since the issue (`curve`'s unmarked artifacts, `items`' stone twin): 17 go through it.
+3. **One helper lends a def to either table, over one already there** (`withDefs`,
+   `tools/tests/lib.ts`), and puts back what it covered, so the rat's and the wolf's looks go
+   through it too; `gear` lends its four items with a plus up front, each only where absent, as it
+   added them on the way. Main gained two writers since the issue (`curve`'s unmarked artifacts,
+   `items`' stone twin): 17 go through it.
 4. **`unforge` drops the companies dressed in forged gear from the cache** as well, so a later
    `gearGrows` never meets an id the table no longer holds.
 5. **The runner's check fails the suite by name, listing each entry added, removed or replaced** (by

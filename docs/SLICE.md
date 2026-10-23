@@ -764,17 +764,17 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   suppressions. It is the first content check: a monster with no drawing, a business with no room
   or a map in a region no area has fails it.
 - `test`: `node tools/test.ts`, then `node tools/tests/runner/check.ts`, the runner's own check,
-  which runs it on `tools/tests/runner/fixture/`, `stuck/` and `leaves/` so the fixtures' failures stay out of
+  which runs it on `tools/tests/runner/fixture/`, `stuck/` and `leaves/`, their failures kept out of
   the real run, then `node tools/test.ts fullrun`, the pilot's full run on the shelf (about 10 to 25 s; it
   repeats walkthrough:shelf's play). The suites are in `tools/tests/`, one file each exporting a function of its name (`lib.ts`
   is what they share), which the runner finds (maps, movement, monsters, combat, harness, party,
   traits, calendar, terrain, weather, atlas, outdoors, save, quests, then any other in name order),
-  then each area's walkthrough (the Foreland's and Thornmark's), in road order, each with an `ok` of its
-  own, under which its runs keep the goals they walk (`everyGoalWalked`), so one passes alone as in the
-  full run. After every suite the runner finds the item and monster tables as they were, each entry by
-  identity, and fails a suite that leaves one added, removed or replaced, by name (#946); a suite lends
-  a def through `withDefs` (`lib.ts`). `layers` holds the
-  imports to the layers (EXPANSION §8.1, #900). Each area's
+  then each area's walkthrough (the Foreland's and Thornmark's), in road order, each with an `ok` of
+  its own, under which its runs keep the goals they walk (`everyGoalWalked`), so one passes alone as
+  in the full run. After every suite the runner finds the item and monster tables as they were, each
+  entry by identity, and fails a suite that leaves one added, removed or replaced, by name (#946); a
+  suite lends a def through `withDefs` (`lib.ts`). `layers` holds the imports to the layers
+  (EXPANSION §8.1, #900). Each area's
   `checks.ts`, found by its file as its walkthrough is (`tools/checks.ts`), holds the rows the suites
   keep of it that are its own and no part of the game, what it owes, its rungs of the ladder, its lead
   over the road, its seams as built and its edges open on nothing (`AreaChecks`); what describes a
