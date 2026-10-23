@@ -3,8 +3,9 @@
 // widening south to the frozen foot of Loch Fada. The salmon-netters' hut on the strand, a wrack-gatherer
 // raking the tideline, a well of sweet water in the grass above it, a cairn on the hills and, at the
 // strand's end, the drowned cairn's mound, its face left bare for the enclave's door (docs/areas/
-// cairnmoor.md §12.5). A tor troll and a cairn wight keep the strand; in the south-west four bog bodies
-// come up at the ice's edge. The secret is the netters' noost cut into the bank, found from the tar.
+// cairnmoor.md §12.5). Four bog bodies come up with the tide at the strand's north end; a tor troll and a
+// cairn wight keep the loch's foot in the south-west. The secret is the netters' noost cut into the bank,
+// found from the tar.
 // The sea closes the north and the west, but for the lip of ice at 0,31 that L9's ice runs up into,
 // which a bar of ice on row 30 joins to the rest; the south edge meets L9's ice, sand and pines square
 // for square (docs/areas/cairnmoor.md §9, #834's 11 to 14).
@@ -19,7 +20,7 @@ export const CAIRNFIELD_L8: MapDef = {
   density: 'country',
   band: [18, 19],
   region: 'cairnmoor',
-  start: { x: 31, y: 31, facing: WEST },
+  start: { x: 31, y: 23, facing: WEST },
   rows: [
     'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
     'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
@@ -79,10 +80,11 @@ export const CAIRNFIELD_L8: MapDef = {
   ],
   secrets: [{ x: 28, y: 26, hint: 'l8_tar' }],
   encounters: [
-    // Four bog bodies come up out of the marsh at the loch's foot in the south-west, the gentler, at 18,
-    // the nearer from the way in at the corner; a tor troll and a cairn wight keep the strand's north end,
-    // the farther and the hardest, at 19 (the curve's rise, docs/areas/cairnmoor.md §9, #834's 16).
-    { id: 'l8_bodies', x: 17, y: 31, monsters: ['bog_body', 'bog_body', 'bog_body', 'bog_body'], aware: 2, respawn: 1440, roams: false },
-    { id: 'l8_strand', x: 30, y: 16, monsters: ['tor_troll', 'cairn_wight'], aware: 3, respawn: 1440, roams: false },
+    // Four bog bodies come up with the tide at the strand's north end, where the wrack-gatherer will
+    // not rake, the gentler, at 18, the nearer from the way in; a tor troll and a cairn wight keep the
+    // loch's foot in the south-west, the farther and the hardest, at 19 (the curve's rise,
+    // docs/areas/cairnmoor.md §9, #834's 16).
+    { id: 'l8_bodies', x: 30, y: 16, monsters: ['bog_body', 'bog_body', 'bog_body', 'bog_body'], aware: 2, respawn: 1440, roams: false },
+    { id: 'l8_strand', x: 17, y: 31, monsters: ['tor_troll', 'cairn_wight'], aware: 3, respawn: 1440, roams: false },
   ],
 };

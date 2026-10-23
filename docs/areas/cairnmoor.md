@@ -79,12 +79,13 @@ and 16 of Loch Fada's in L8. Counted by `worldGrid` before and after, the Cairnf
 to 3,258 squares, Loch Fuar from 4,953 to 4,960, Kilnmouth falls from 3,397 to 3,331, Loch Fada from
 6,366 to 6,343 and High Moor from 4,288 to 4,287; 5 more squares are no zone's. None is on a built
 map. Kilnmouth keeps K7 and L7 but for the 62, and no seed is added in another area's rows (§9,
-#484's 12). Laying L8 (#834) whole in the Cairnfield moves 51 land squares to it: Loch Fada's 28
-that a company could walk, 7 of its shallows made land and 16 of the sea made ice (§9, #834's 12 to
-14). Counted by `worldGrid` before and after, the Cairnfield rises from 2,769 to 2,820 land squares,
-Loch Fada falls from 8,973 to 8,941 and High Moor rises from 4,871 to 4,875; about 21 squares
-change hands elsewhere on the world, none on a built map. The box walks 123 squares, all the
-Cairnfield's, where the atlas gave 114 (the Cairnfield's 86 and Loch Fada's 28).
+#484's 12). Laying L8 (#834) whole in the Cairnfield gives it 51 more land squares: Loch Fada's 28
+that a company could walk, 7 of Loch Fada's shallows and one of the Cairnfield's made land and 15
+of the sea made ice (§9, #834's 12 to 14). Counted by `worldGrid` before and after, the Cairnfield
+rises from 2,769 to 2,820 land squares, Loch Fada falls from 8,973 to 8,941 and High Moor rises
+from 4,871 to 4,875; about 21 squares change hands elsewhere on the world, none on a built map.
+The box walks 123 squares, all the Cairnfield's, where the atlas gave 114 (the Cairnfield's 86 and
+Loch Fada's 28).
 
 **The grid** (EXPANSION §8.2; docs/areas/shelf.md §1). Cairnmoor is the M to P columns from row 6
 to row 9, with L8 beside them. The land worth a map is six boxes: N7 and N8 down the drove road; O7
@@ -106,8 +107,10 @@ Its edges:
   road goes down through them from N8 at 424,250 to Rimewater's M9 at 414,262, a road link open
   from the start, and Rime Lodge stands at 410,262 just over the ridge on the shore of Loch Fada
   (the long lake, NAMES §4). N8 lays the road to its notch (#479, §4.5) and M9 takes it down
-  (#486, docs/areas/rimewater.md §4.2).
-- **West: Kilnmouth's mountains,** L7, and M7 and M8's grass under them, the country behind (§4.7).
+  (#486, docs/areas/rimewater.md §4.2). West of them L8's south edge meets L9, Loch Fada's, square
+  for square, its ice, sand and pines walked across (#834, §12.4).
+- **West: Kilnmouth's mountains,** L7, and M7 and M8's grass under them, the country behind (§4.7);
+  west of M8 the shore, L8, built as the bounds' second box (#834, §12.4), and the sea past it.
 
 The drove road is the only road: up from the Kilns over N7, south down N8 and over the Rimefells to
 the lodge. Nothing on the moor is on it but the moor; the ring lies a box east.
@@ -139,7 +142,7 @@ crosses it in snow (STORY; MONSTERS §7.2).
 Nine boxes and a dungeon, N7 the area's first, which lists the area (#476), N8, the Cairnfield's
 (#479), O7, Fionnlios's (#477), O8, the bog (#478) and Carn Dubh, through N8's door (#480), then M7
 and M8, the country behind (#484), then P7 and P8, the rim behind O7 and O8, the bounds' first
-(#834), then L8, the Cairnfield's shore, its second (#834):
+(#834), then L8, the Cairnfield's shore, the bounds' second (#834):
 
 - **The road up onto the moor** (N7, `highmoor_n7`, core, band 18; #476): the drove road on from the
   Kilns' N6 over the low hills, past the milestone where they give out and the drovers' shelter at
@@ -238,8 +241,8 @@ and M8, the country behind (#484), then P7 and P8, the rim behind O7 and O8, the
   wrack-gatherer raking the tideline with her word of a drowned cairn, a well of sweet water in the
   grass above it and a cairn on the hills; at the strand's end the drowned cairn's mound, its face
   left bare for the enclave's door (§12.5). Behind the bank where the tar smells, the netters'
-  noost (§12.4). Two groups: four bog bodies at the loch's foot and a tor troll with a cairn wight
-  at the strand's north end. The south edge meets L9's ice, sand and pines square for square.
+  noost (§12.4). Two groups: four bog bodies at the strand's north end and a tor troll with a cairn
+  wight at the loch's foot. The south edge meets L9's ice, sand and pines square for square.
 
 Its atlas rows are charted in `src/content/areas/cairnmoor/atlas.ts`, the area's own `atlas` since
 N7 lists the area; until then `src/content/atlas.ts` spread them into the plan where its rows were,
@@ -1009,8 +1012,8 @@ each as a box places it, since the check asks that what is claimed be used: snow
 (#476), ice and curse with N8 (#479), the lights and the ring with O7 (#477), the rest with theirs.
 Regeneration and the drain of spell points cannot be claimed: the check reads neither (§9, #477's
 13). Carn Dubh claims nothing: its boss that curses is the curse N8 claimed, and the novelty check
-passes without it. M7 and M8 claim nothing (#484), nor do P7, P8 and L8 (#834):
-their monsters are placed already, and a tor and a tarn are among the landmarks above.
+passes without it. M7 and M8 claim nothing (#484), nor do P7, P8 and L8 (#834): their monsters are
+placed already, and a tor and a tarn are among the landmarks above.
 
 ## 8. The numbers
 
@@ -1661,9 +1664,10 @@ Decided by the builder for #834, each the owner's to overturn:
     `SEAMS_AS_BUILT` is added, and L9's `OPEN_ON_NOTHING` north row goes with M8's west row.
 13. **A bar of ice on row 30, from 6 to 13, joins the ice inside the box:** eight squares of the
     atlas's sea, closing the head of the open water that runs up from L9, so that the lip at 0 to 6
-    is walked to and not an island only L9 reaches. Density measures a map alone and fails a square
-    nothing reaches; the Kilns' O4 answered such a pocket with an event (#922's 5), and a bar of ice
-    costs no save key.
+    and the ice's look are walked to from L8's own ground, not only across L9's, a band higher.
+    Density measures a map alone and refuses a pocket with no point in it; the ice's look stood on
+    the lip would answer it, as the Kilns' O4's event does (#922's 5), at no new save key, but the
+    lip would then be L9's to reach.
 14. **A bar of sand on row 29, from 20 to 23, joins the loch's foot to the shore:** four squares of
     the atlas's shallows, so that the south-west, which the atlas leaves an island of nine squares,
     is walked to from the way in and its group can be reached.
@@ -1672,12 +1676,15 @@ Decided by the builder for #834, each the owner's to overturn:
     hills at 23,27 and nothing within four squares: the mound's look at 25,25 and the cairn at 25,29
     are the nearest, five squares off. The enclave's pull request draws the door there and moves
     nothing; the walkthrough walks the way and measures the clearance, as for P7's lair.
-16. **The way in is the corner, 31,31, and the groups stand for the curve's rise.** The brief puts
-    the bodies (18) at the ice's edge in the south-west and the troll and wight (19) on the strand;
-    from M8's middle rows the strand is the nearer, and the rank correlation falls to -1.00. From
-    the corner the bodies stand 14 steps off, at 17,31 among the sand and pines three squares from
-    the ice, and the troll and wight 16 off, at the strand's north end, 30,16: the correlation is
-    1.00.
+16. **The way in is the strand's middle, 31,23, and the groups stand for the curve's rise.** The
+    brief puts the bodies (18) at the ice's edge in the south-west and the troll and wight (19) on
+    the strand; from M8's middle rows the strand is the nearer, and the rank correlation falls to
+    -1.00. Swapped, the bodies come up with the tide at the strand's north end, 30,16, where the
+    wrack-gatherer will not rake, and the troll and wight keep the loch's foot at 17,31 among the
+    sand and pines three squares from the ice. A company that walks is 1 to 16 steps from the bodies
+    and 18 to 30 from the troll and wight from any square of M8's open edge; by the curve's steps,
+    which swim, from the start the bodies are nearest at 8 and the troll and wight the hardest at
+    22: the correlation is 1.00.
 17. **The groups are the brief's, and the gate holds them:** a company at 18 wins every fight and
     manages 8.54 fights to a rest, inside the aim, 12.7% of its days ending in a fight broken off;
     two under, at 16, 6.00, 70.6% of the floor's day, between the aim and the limit as P7's 82.1%
@@ -1958,29 +1965,29 @@ by hand, the atlas's rows with the void written `%`, as the Kilns' P4, P5 and P6
 - **Pay.** About 850 xp a member: the bodies' 475 and the troll and wight's 377.
 - **As built** (#834, 23 October): `cairnfield_l8`, laid at 360,222 whole in the Cairnfield and cut
   from the atlas by the scaffold, 123 squares walked by `worldGrid` where the atlas gave 114 (§9,
-  #834's 12 to 15). In from M8's edge at 0,31, facing west: the start is the corner, 31,31 (§9,
-  #834's 16). On the strand the netters' hut, a camp, at 27,21 and the wrack-gatherer at 25,22, who
-  has it that the hills over the strand hold a cairn the sea has half drowned, the oldest dead's,
-  and that she rakes no wrack at the north end; the tideline at 28,19, the well in the grass at
-  30,22 (+1 might) and the mound seen from 25,25, a mound of grey stone at 21 to 22 on rows 26 to 28
-  with the tide at its foot, whose face at 22,27 is left bare for the enclave's door, its way the
+  #834's 12 to 15). In from M8's edge at 0,23, facing west: the start is the strand's middle, 31,23
+  (§9, #834's 16). On the strand the netters' hut, a camp, at 27,21 and the wrack-gatherer at 25,22,
+  who has it that the hills over the strand hold a cairn the sea has half drowned, the oldest
+  dead's, and that she rakes no wrack at the north end; the tideline at 28,19, the well in the grass
+  at 30,22 (+1 might) and the mound seen from 25,25, a mound of grey stone at 21 to 22 on rows 26 to
+  28 with the tide at its foot, whose face at 22,27 is left bare for the enclave's door, its way the
   hills at 23,27 (§12.5). Over the strand's end the bank: the tar at 28,25 and, searched there
   facing south, the bank gives at 28,26 on the noost, a room of three by two at 27 to 29 on rows 27
   and 28 with the boat upturned at 28,27 and a chest at 29,28 (220 gold and an Elixir), which no
   walker, swimmer, climber or levitator reaches but through the bank. The cairn on the hills at
   25,29 holds 120 gold and a Sapphire Vial. In the south-west the sand and pines of the loch's foot,
   joined to the shore by a bar of sand on row 29, and the ice, joined to them by a bar of ice on row
-  30, its look at 9,30. Four bog bodies at 17,31, a tor troll and a cairn wight at 30,16 (§9,
-  #834's 16). The east edge meets M8's square for square, the sea at 0 to 11, shallows at 12 to 14,
-  sand at 15 and grass or hills from 16; the north edge is the sea along L7's; the south edge meets
-  L9's square for square (§9, #834's 12); the west edge is the sea but for the corner, 0,31, ice
-  with L9's 0,0 beside K8's sea (§9, #834's 11). A company at 18 wins every fight and manages 8.54
-  fights to a rest, inside the aim (7.5 to 9.5), 12.7% of its days ending in a fight broken off; two
-  under, at 16, 6.00, 70.6% of the floor's 8.5, inside the limit. Density: every square within 12
-  steps of a point, the furthest 10, no sign among its 12 points. The curve's rank correlation is
-  1.00, the bodies nearest at 14 steps (level 18) and the troll and wight the hardest at 16 (level
-  19). By the curve's count the box pays 852 xp a member and holds 340 gold in its finds, with the
-  wight's 20 to 60, and with it a company three quarters clearing the area from 18 leaves at 20.3.
+  30, its look at 9,30. Four bog bodies at 30,16, a tor troll and a cairn wight at 17,31 (§9, #834's
+  16). The east edge meets M8's square for square, the sea at 0 to 11, shallows at 12 to 14, sand at
+  15 and grass or hills from 16; the north edge is the sea along L7's; the south edge meets L9's
+  square for square (§9, #834's 12); the west edge is the sea but for the corner, 0,31, ice with
+  L9's 0,0 beside K8's sea (§9, #834's 11). A company at 18 wins every fight and manages 8.54 fights
+  to a rest, inside the aim (7.5 to 9.5), 12.7% of its days ending in a fight broken off; two under,
+  at 16, 6.00, 70.6% of the floor's 8.5, inside the limit. Density: every square within 12 steps of
+  a point, the furthest 10, no sign among its 12 points. The curve's rank correlation is 1.00, the
+  bodies nearest at 8 steps (level 18) and the troll and wight the hardest at 22 (level 19). By the
+  curve's count the box pays 852 xp a member and holds 340 gold in its finds, with the wight's 20 to
+  60, and with it a company three quarters clearing the area from 18 leaves at 20.3.
 
 ### 12.5 The enclave and the lair
 

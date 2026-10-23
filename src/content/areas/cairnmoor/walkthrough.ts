@@ -1026,7 +1026,7 @@ function offTheLadder(ok: (cond: boolean, msg: string) => void): void {
  * found from the rock face where the wind hoots, bending twice, and the herds' store from the rowan, a
  * chamber along the face, each shut to the four ways but through its door. O7's 31,0 is mountain with
  * P6's corner (#834's 3), and P7's 5,24 in the rim's face is left bare for the lair's door.
- * Then the Cairnfield's shore (L8): west from M8's 0,31 onto its 31,31, the same field, so nothing is
+ * Then the Cairnfield's shore (L8): west from M8's 0,23 onto its 31,23, the same field, so nothing is
  * said; the wrack-gatherer's word on the drowned cairn, the tideline, the mound and the ice seen, the well
  * knelt at and each group won at its floor; the noost found from the tar, shut to the four ways but
  * through its door; the mound's face at 22,27 left bare for the enclave's door; and the seams, the south
@@ -1140,7 +1140,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     && open(24, (i) => out.passable(p8.x + i, p8.y + 31, ALL) === 'ok') === open(24, () => false) && out.passable(o8.x + 31, o8.y + 1) !== 'ok',
     'P8 opens onto O8 at rows 2 to 19 and onto P7 at 1 to 3 of its north edge; its south edge is the rim\'s mountain, and past it the world ends');
 
-  // The Cairnfield's shore (L8): west from M8's 0,31 onto its 31,31, walked, the same field.
+  // The Cairnfield's shore (L8): west from M8's 0,23 onto its 31,23, walked, the same field.
   const L8 = MAP_DEFS.find((d) => d.id === 'cairnfield_l8')!;
   const l8 = zone(L8.id), l9 = zone('longmere_l9');
   w.world.travel('cairnfield_m8', 0, L8.start.y, WEST);
