@@ -61,6 +61,15 @@
         "f11_shrine",
         "f11_tools",
         "f11_tyre",
+        "f12_cairn",
+        "f12_caller",
+        "f12_cut",
+        "f12_down",
+        "f12_end",
+        "f12_flakes",
+        "f12_purse",
+        "f12_store",
+        "f12_sulphur",
         "f9_ash",
         "f9_boats",
         "f9_box",
@@ -231,6 +240,7 @@
         "154,330",
         "171,341",
         "192,278",
+        "197,362",
         "212,361",
         "213,282",
         "227,288",
@@ -452,6 +462,10 @@
     },
     "emberwaste_f11": {
       "at": "168,318",
+      "size": "32x32"
+    },
+    "emberwaste_f12": {
+      "at": "168,350",
       "size": "32x32"
     },
     "firemount_g11": {
