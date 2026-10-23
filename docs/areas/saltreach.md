@@ -10,10 +10,11 @@ work is filed under #153 (Phase 1.2, #149): the boxes as §4's table has them, t
 its drawings (#184) and its rooms (#185). Figures are measured on main at `2cc52cd` (29 September
 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Twelve boxes of it are built, the Delta road and the shore under the Edge (#170), the spur to
+Fourteen boxes of it are built, the Delta road and the shore under the Edge (#170), the spur to
 Rietum (#171), Rietum (#172), Stienwierde (#173), the Drowned Temples' approach (#174), Saltmouth's box (#176),
-the salt pans (#178), the willows (#179) and, the first of the bounds, the upper valley and its head
-(#830; §12, whose brief has six boxes more), the town behind C6's gate, Saltmouth (#177), with the Salt Compact's hall
+the salt pans (#178), the willows (#179) and, the first of the bounds, the upper valley and its head,
+the rim's foot behind the willows and the hills over the heronry (#830; §12, whose brief has four
+boxes more), the town behind C6's gate, Saltmouth (#177), with the Salt Compact's hall
 in it (#182), and the Drowned Temples below B6, two levels (#175); with the first two the area
 was listed. Its content is `src/content/areas/saltreach/`
 (maps, monsters, items, climate, its part of the world map, its side quests in `quests.ts` and its
@@ -31,10 +32,10 @@ Saltreach three zones:
 
 | Zone | Band | Squares | Built |
 |---|---|---|---|
-| The Upper Water | 10–11 | 7,714 | C3, Rietum, laid at 72,62 (#172); B3, the willows, at 40,62 (#179); C2, the upper valley, at 72,30, and B2, its head, at 40,30 (#830) |
-| The Delta | 10–12 | 3,697 | C5, the Delta road, laid at 72,126, and D5, the shore under the Edge, at 104,126 (#170); C4, the spur to Rietum, at 72,94 (#171); B5, Stienwierde, at 40,126 (#173); B6, the temples' approach, at 40,158 (#174); B4, the willows' end, at 40,94 (#179) |
+| The Upper Water | 10–11 | 7,714 | C3, Rietum, laid at 72,62 (#172); B3, the willows, at 40,62 (#179); C2, the upper valley, at 72,30, and B2, its head, at 40,30 (#830); A3, the rim's foot, at 8,62 (#830) |
+| The Delta | 10–12 | 3,697 | C5, the Delta road, laid at 72,126, and D5, the shore under the Edge, at 104,126 (#170); C4, the spur to Rietum, at 72,94 (#171); B5, Stienwierde, at 40,126 (#173); B6, the temples' approach, at 40,158 (#174); B4, the willows' end, at 40,94 (#179); A4, the hills over the heronry, at 8,94 (#830) |
 | The Saltings | 11–12 | 3,588 | C6, Saltmouth's box, laid at 72,158 (#176); C7, the salt pans, at 72,190 (#178) |
-| The area | 10–12 | 14,999 | twelve boxes |
+| The area | 10–12 | 14,999 | fourteen boxes |
 
 Squares are the ones the atlas gives each zone, shallows and rivers included. Without the shallows
 the area is 14,143 squares, about 13.8 zone maps (EXPANSION §1 has 13.8), and 11,965 of them a
@@ -224,14 +225,24 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
   B2 the toad and the eel. The secrets are the cleft, the hint the lichen rubbed off the walling in a
   line, and the hut's cell, the hint the wrens going in and out low on one side. The gate holds at 10,
   at 6.5 and 5.8 fights to a rest (§12.2, §12.3).
+- **The rim's foot and the hills over the heronry** (A3, `upperwater_a3`, and A4, `delta_a4`,
+  country, band 10–11, the second of the bounds; #830): A3 is a corner of hill and grass under the
+  rim behind B3's willows, the river seen up the line of the trees: a bull toad and a heron, a cairn
+  and a well-house walled into the rim's foot. A4 is the hills under the rim west of B4, open to it
+  along every row: a woman of stone with a riddle on the crest, a dry valley with a shrine at its
+  mouth, a cairn, the reed-cutters' camp at the fen's edge, three herons fishing the fen's corner and
+  a bull toad and a leech in its pools; its south edge is shut against A5 but for the marsh at its
+  corner. The secrets are the well-house, the hint a willow hung with rags at its walling, and a
+  still in a walled cave at the dry valley's head, the hint the reek of peat smoke and malt. The gate
+  holds at 10, at 5.9 and 6.8 fights to a rest (§12.4, §12.5).
 - **Weather.** The delta's: mild and wet, the wettest in late autumn, fog off the gulf. Fronts reach
   it four hours after they cross the Foreland.
 
 ## 4. What is still to build
 
-All but C5, D5, C4, C3, B5, B6, C6, C7, B3, B4, C2 and B2: 14,143 squares of land, 11,965 of them
-walkable. On the grid (§1) the plan is ten boxes, a dungeon and a town, and the boxes hold 8,946 of
-those squares:
+All but C5, D5, C4, C3, B5, B6, C6, C7, B3, B4, C2, B2, A3 and A4: 14,143 squares of land, 11,965
+of them walkable. On the grid (§1) the plan is ten boxes, a dungeon and a town, and the boxes hold
+8,946 of those squares:
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
 |---|---|---|---|---|---|---|---|---|
@@ -939,8 +950,9 @@ mound, a Stone's plinth without its Stone, temples half under water, a port.
   by level (#159), so a company that arrives at 10 earns the shares as written and one that arrives
   at 13 earns less; the curve's row reports what a clear falls short of as owed to #153 until the
   boxes exist. The bounds (§12) pay from the surplus: C2 and B2 about 490 and 220 xp a member by
-  the curve's count, so that a clear now gives 11,058 xp a member and 6,678 gold, and a company
-  entering at 10 and three quarters clearing it leaves at 12.5, against the curve's 13.0 (#634).
+  the curve's count, A3 and A4 about 220 and 420, so that a clear now gives 11,701 xp a member and
+  7,138 gold, and a company entering at 10 and three quarters clearing it leaves at 12.6, against
+  the curve's 13.0 (#634).
 - **Gold.** Training six members from 10 to 12 costs about 5,040 with today's `trainPrice`, and the
   first prestiges about 1,000 each (#19); a clear should pay for the training at least, in chests,
   drops and the halls' pay, and the ladder's step at Saltmouth's armourer is priced within the
@@ -1696,6 +1708,26 @@ Decided by the builder for #830, each the owner's to overturn:
     2,200; A6 and B7 build a group fewer if the lead asks it (§12.1).
 13. **D6 starts on the spit,** where D5 opens onto it, with its group and its secret there, since the
     hint check walks from a map's start; the shore under the town is walked onto from C6.
+14. **A3 meets B3 as B3 is built:** its north-east corner is the rim where B3's ring closes the
+    river's way, so the atlas's two squares of shallows at A3's 31,0 and 31,1 are mountain, and its
+    31,25 a willow against B3's trees. The shallows are seen up the line of the willows, as §12.4 has
+    them, and reached by no one. A4's 23,0 is mountain against A3's.
+15. **A4's south edge is shut against A5** with the rim's mountain, a little thicker in places, but
+    for its corner: 31,31 is marsh, as B4's 0,31 beside it is, so the seam with B4 agrees square for
+    square, as the rule for the seams asks of a box built since it (EXPANSION §5.1). That square is
+    the one of A4's open onto unbuilt land; A5 meets it with marsh at its 31,0, as B5's west edge
+    asks, and the rest of A4's south edge with mountain (§12.6).
+16. **A4's camp stands clear of its groups,** eight squares from the herons and nine from the toad,
+    walked or counted, on the dry ground at the fen's edge rather than in its corner: no group keeps
+    it, and rest at a camp is refused only with a group next to the party, so a company rests there
+    while they stand, and the walkthrough says so. §12.1 and §12.5 say the same.
+17. **What is left open:** after A3 and A4, 164 squares of Saltreach's built boxes are open onto
+    unbuilt land, where there were 201: A4's south-east corner (1) and B5's west edge (32) onto A5,
+    B6's west (32) onto A6 and its south (32) onto B7, C7's west (23) onto B7, C6's east (19) and
+    D5's south (6) onto D6, which the next two pull requests close;
+    and C7's east (19) onto D7, the Wold's box, where the Glasswold's lair has its way in
+    (docs/areas/glasswold.md), which §12 does not build. That edge is shut when D7 is built or C7's
+    edge is closed.
 
 ## 10. Names
 
@@ -1766,8 +1798,8 @@ on the road's quest. Then the area's enclave and its artifact's lair (§12.10). 
 |---|---|---|---|---|---|---|
 | C2 | the Upper Water, `upperwater_c2` | 716 | the Downs' 214 on the Edge's top | C3, D2 (the Downs) | 10–11 | the first, built (#830) |
 | B2 | the Upper Water, `upperwater_b2` | 269 | | B3, C2 | 10–11 | the first, built (#830) |
-| A3 | the Upper Water, `upperwater_a3` | 49 | | B3 | 10–11 | the second |
-| A4 | the Delta, `delta_a4` | 526 | the Upper Water's 318 | B4 | 10–11 | the second |
+| A3 | the Upper Water, `upperwater_a3` | 49 | | B3 | 10–11 | the second, built (#830) |
+| A4 | the Delta, `delta_a4` | 526 | the Upper Water's 318 | B4 | 10–11 | the second, built (#830) |
 | A5 | the Delta, `delta_a5` | 589 | | B5 | 10–11 | the third |
 | A6 | the Delta, `delta_a6` | 491 | | B6 | 11–12 | the third |
 | B7 | the Saltings, `saltings_b7` | 944 | the Delta's 346; the Wold's 219 above the Scarp | B6, C7, B8 (the Wold) | 11–12 | the fourth |
@@ -1794,9 +1826,11 @@ on the road's quest. Then the area's enclave and its artifact's lair (§12.10). 
   one of 11–12, two bull toads (A6, D6) or the smugglers (B7). By the harness a lone bull toad paces a
   company of 10 at about 8.9 fights to a rest, over the aim's 7.5, and a pair with one at 10 at 5.5 to
   5.8; at 11 a lone one paces about 20 and two about 5.7.
-- **A camp stands next to the group that keeps it,** not two squares off: rest at a camp is refused
-  only with a group next to the party (`restRefused`, `src/game/wilds.ts`). C2's watch stands beside
-  its fire, and the walkthrough shows the rest refused there until it falls.
+- **A camp stands next to the group that keeps it, or clear of every group,** never two squares
+  off: rest at a camp is refused only with a group next to the party (`restRefused`,
+  `src/game/wilds.ts`). C2's watch stands beside its fire, and the walkthrough shows the rest refused
+  there until it falls; A4's camp is by no group's post and stands clear of both, and a company rests
+  there while they stand.
 - **Secrets** are each of their own place, with a hint of a different kind and a block of a
   different shape: a walled cleft found from wear (C2), a beehive hut from its wrens (B2), a
   well-house from a rag willow (A3), a still from a smell (A4), a sluice-house from clear water (A5),
@@ -1809,10 +1843,11 @@ on the road's quest. Then the area's enclave and its artifact's lair (§12.10). 
   piece of gear among them passes the same test.
 - **Pay.** The area's clear stood at 10,343 xp a member before the bounds, and a company entering at
   10 and three quarters clearing it left at 12.4; the curve holds it to 13.0 (`LEAD`). With C2 and B2
-  it leaves at 12.5. The first reckoning gave the six to come about 2,200 xp a member between them;
-  as planned below they give about 2,600 by the curve's count (A3 about 220, A4 and A5 about 450 each,
-  A6 and B7 about 600 each, D6 about 300), a fight inside the aim costing about 250 at 10 and 300 at
-  11 (§8). Each pull request measures the lead, and a box that would carry it past 13.0 builds a group
+  it leaves at 12.5, and with A3 and A4 at 12.6, a clear giving 11,701 xp a member. The first
+  reckoning gave the six after C2 and B2 about 2,200 xp a member between them; A3 and A4 gave about
+  640 by the curve's count, and as planned below the four to come give about 1,950 (A5 about 450, A6
+  and B7 about 600 each, D6 about 300), a fight inside the aim costing about 250 at 10 and 300 at 11
+  (§8). Each pull request measures the lead, and a box that would carry it past 13.0 builds a group
   fewer (A6 and B7 first), and says so.
 - **The walkthrough** walks them in one function, `theBounds` in `walkthrough.ts`, called last: each
   box's seams walked, its groups won at its floor, its secret found from its hint and its prize shut
@@ -1899,6 +1934,17 @@ on the road's quest. Then the area's enclave and its artifact's lair (§12.10). 
 - **New here.** Nothing.
 - **Finds.** 120 gold among the shells and a draught.
 - **Pay.** About 200 xp a member.
+- **As built** (#830, 18 October): `upperwater_a3`, laid at 8,62, 51 squares to stand on with the
+  well-house's. West out of B3's grass at 0,28 the corner opens under the willows' last trees, which
+  stand in a line down its east edge; its north-east corner is the rim, as B3 closes it, so the river
+  is seen up the line of the trees from 28,23 and not reached. A bull toad and a heron off the willows
+  stand at 28,24, kept to the corner. The cairn at 25,30 gives 30 gold and a draught. The well-house
+  is a walled block four wide and three deep at 22–25,26–28 in the rim's foot, its way in at 25,27 in
+  its east end, and the rag willow at 26,26 over the hint at 26,27; inside, the spring in its basin
+  and the shells on the sill, and a chest of 120 gold and a draught. Its south edge meets A4 on its
+  columns 24 to 31. The gate holds at 10: 5.89 fights to a rest, every fight won; two under, 44.9% of
+  the floor's day. Density: every square within 12 steps, the furthest 7. By the curve's count the box
+  pays about 220 xp a member and 150 gold.
 
 ### 12.5 A4, the hills over the heronry: country, band 10–11
 
@@ -1908,8 +1954,8 @@ on the road's quest. Then the area's enclave and its artifact's lair (§12.10). 
 - **Landmarks.** The hills under the rim; a dry valley through them, its bed of white stones; the
   fen's north-west corner, marsh to B4's heronry.
 - **Points of interest,** about five features and two groups: a statue with a riddle on the hills'
-  crest; a shrine at the dry valley's mouth; a cairn; a camp in the fen's corner; the reek at the
-  valley's head, the hint.
+  crest; a shrine at the dry valley's mouth; a cairn; a camp on the dry ground at the fen's edge, by
+  no group's post and clear of both; the reek at the valley's head, the hint.
 - **Encounters.** Three herons off B4's heronry fishing the fen's corner, the nearest; a bull toad
   and a leech in the corner's pools, the hardest: about 6.8 fights to a rest at 10.
 - **The secret and its hint.** A still in a cave at the dry valley's head, where the stream once
@@ -1918,11 +1964,31 @@ on the road's quest. Then the area's enclave and its artifact's lair (§12.10). 
 - **New here.** Nothing.
 - **Finds.** 200 gold in the crock and an elixir.
 - **Pay.** About 450 xp a member.
+- **As built** (#830, 18 October): `delta_a4`, laid at 8,94, 502 squares to stand on. In from B4's
+  grass, open along every row, and down from A3's corner on its columns 24 to 31, where the line names
+  the Delta. The woman of stone on the crest at 24,6 holds an empty pitcher, and her riddle, A BED AND
+  A MOUTH, AND IT NEVER SLEEPS, is answered river for 60 gold and a point of intellect; the
+  reed-cutters' cairn at 29,10 gives 50 gold and a draught. The dry valley's bed of white stones runs
+  back into the hills on row 18 from the grass at 22,18 to the rim's foot at 13,18, the shrine at its
+  mouth at 23,19 (a point of speed). Three herons fish the fen's corner at 27,24, the nearest, and
+  come back no more once B4's heronry burns; a bull toad and a leech keep its pools at 27,29, the
+  farthest and the hardest. The reed-cutters' camp is on the dry ground at the fen's edge at 21,26,
+  eight squares from the herons and nine from the toad. The still is a walled block three wide and
+  five deep at 10–12,16–20 in the rim's foot, its way in at 12,18 in the middle of its long side and
+  the reek at 13,18, where the bed ends; inside, the worm, the kegs and the crock, a chest of 200
+  gold and an elixir. The south edge is the rim's mountain, shut against A5 but for its corner, marsh
+  as B4's beside it is. The gate holds at 10: 6.82 fights to a rest, every fight won; two under,
+  56.2%. Density: every square within 12 steps, the furthest 12. By the curve's count the box pays
+  about 420 xp a member and 310 gold.
 
 ### 12.6 A5, the fen's west shore: country, band 10–11
 
 - **Purpose.** The fen's west edge under the rim, west of Stienwierde, B5's west edge open onto it
   along all its rows. The farthest of the A column from the road at its middle.
+- **Its edges.** Its north edge meets A4's south edge square for square: the rim's mountain but for
+  the marsh at 31, where A4's corner, B4's 0,31 and B5's 0,0 meet. Its east edge meets B5's west
+  edge. Its pull request deletes the rows of `OPEN_ON_NOTHING` for `delta_a4 south` and
+  `delta_b5 west`, which the seam rule refuses once A5 is built.
 - **Landmarks.** The rim; the hills at its foot; the fen's west shore, marsh to B5; an old dyke along
   the shore, let go; the drowned mound, the lair's (§12.10).
 - **Points of interest,** about five features and two groups: a wildfowler of Stienwierde in his
