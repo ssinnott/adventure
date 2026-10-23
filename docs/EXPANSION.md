@@ -1000,6 +1000,51 @@ Decided by the builder for #900, each the owner's to overturn:
    `skills.ts` takes `party.ts` and `party.ts` takes `items.ts`. Its row is keyed `split`, the big
    modules split that takes `party.ts` apart. The `dens.ts` cycle is gone (#918).
 
+The lanes are read as code, not by eye (#899): `node tools/lanes.ts <base>` lists the lanes the
+files changed since `<base>` fall in, each with its files, by the table of docs/ISSUES.md §2 (which
+adds a design lane, `docs/`, to the rows above), and the checks' `lanes` job writes the same into a
+pull request's summary beside the lane labels its event carries: a line for each lane a file falls
+in that the labels lack, one for each label no file falls under and one where no lane label is on
+yet. It tells and never gates. A file no lane holds (the vendored `src/lib/`, or a kind of file the
+table lacks) is listed outside every lane. The command line is `tools/lanes.ts`; the table, the
+report and the reading of the diff are `tools/kit/lanes.ts`, the kit's first file, which
+`tools/tests/lanes.ts` holds.
+
+Decided by the builder for #899, each the owner's to overturn:
+
+1. **The table is ISSUES §2's, a line to a kind of file, the first line a file matches placing it.**
+   The area lane is one label, `lane: area`, with the area named beside it in the report:
+   `src/content/areas/<area>/` (its `shipped.json` with it) and `docs/areas/<name>.md`, three of
+   which are named for a place and not their area (`hearth_isle` is Hearth's, `dead_drop`
+   Wrackholm's and `meridian_camp` Ashfall's).
+2. **The save format needs no line of its own:** `SAVE_VERSION`, the upgrades and the save keys all
+   stand in `src/game/`, which is systems already. The central `src/content/shipped.json`, what a
+   save may refer to that no area owns, is quality's, as the issue says.
+3. **The files the table leaves out:** `README.md` and `CLAUDE.md` are design, the docs' front
+   pages; `package.json`, `package-lock.json`, `tsconfig.json`, `.gitignore` and `types/` are
+   quality, for they configure the checks; `index.html` and whatever else stands in `src/` outside
+   the folders the table names (`src/main.ts`, `src/input.ts`) are systems, the game's page, entry
+   and input; `src/lib/` is no lane, for it is vendored (DESIGN §13).
+4. **The labels are the event's, and the tool never fails.** A pull request with no lane label yet
+   gets a line saying so, not a failure, and the tool exits 0 in the checks whatever it finds. The
+   event is read as the run began, so labels put on after a pull request opens show from the next
+   push's run: a re-run of the job reads the same event.
+5. **The files are `git diff` against `HEAD^1`,** the merge's first parent, as the sheet job reads
+   them: no token and no API. A rename counts at both its ends, since a file moved from one lane to
+   another is an edit in each.
+6. **The report is a job of its own,** not a step in the sheet job: it needs Node alone and comes in
+   seconds, where the sheet waits on `npm ci` and Chromium. Like the sheet it is not one of the
+   three required.
+7. **A suite of its own,** `tools/tests/lanes.ts`, found by its file, holds the table to a sample
+   file under each of its lines, to every file in the tree, to `AREAS` and to `.github/labels.json`,
+   and the report to the lines it must write.
+8. **The library is the kit's, the command a thin tool:** the layers check (#900) lets a suite take
+   `src` and `tools/kit/` and not a tool, so the table, `laneOf`, the report and the reading of the
+   diff and the event are `tools/kit/lanes.ts`, the kit's first file (K7 fills the folder; it
+   imports `node:` modules alone, which the check does not follow), and `tools/lanes.ts` is the
+   command line that takes it. The job and the docs still name `node tools/lanes.ts`, and no `KNOWN`
+   row is added.
+
 ### 8.2 The recipe for a zone map
 
 1. **Brief**, in `docs/areas/<area>.md`: purpose, band, landmarks, the secret and its hint, the

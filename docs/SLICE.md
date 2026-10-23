@@ -1009,6 +1009,14 @@ of that area); with nothing changed it says so and writes none. `--ground all` (
 `--ground ash,ice`) draws the ground's samples (`tools/grounds.ts`), each with its plan in its
 grounds' colours, and a change that draws every map draws them too, so a new ground is seen before
 a map holds it.
+`node tools/lanes.ts <base> [--labels "lane: area, lane: quality"]` lists the lanes the files
+changed since the base fall in (docs/ISSUES.md §2's table as code, in `tools/kit/lanes.ts`, the
+kit's first file; `tools/lanes.ts` is its command line), each with its files, an area's by area.
+With `--labels`, or in the checks' `lanes` job from the pull request's event, it lists the lane
+labels beside them, a line for each lane a file falls in that the labels lack, each label no file
+falls under and one where no lane label is on yet. In the checks it writes the run's summary and
+never fails (#899, EXPANSION §8.1); a file no lane holds, as under the vendored `src/lib/`, it lists
+outside every lane.
 `node tools/harness.ts [--levels 2,6,10] [--roles soldier,brute] [--seeds 400] [--under 2] [--map thornmark --level 5] [--stats] [--calibrate --write] [--spell-cap 10] [--gear-grows] [--level-bonus] [--level-traits] [--rank-step 0.25] [--tiers] [--bot bless,sleep,drink] [--company newer] [--artifacts erzhemd,akkush|all]`
 fights the premade company at a level against standard encounters of the test monster, or a map's
 own groups, one after another until it must rest, and says how many it managed against the six or
