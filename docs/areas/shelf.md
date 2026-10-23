@@ -25,7 +25,7 @@ The atlas (its rows in `src/content/areas/shelf/atlas.ts`, merged into `ATLAS` b
 Squares are the ones the atlas gives each zone, shallows and rivers included. Without the shallows
 the area is 8,594 squares, about 8.4 zone maps (EXPANSION §1 has 8.3). It runs from x 94 to x 231
 and from the rim down to y 120. Counted by `worldGrid` with the built maps laid, Callow Downs holds
-7,490 squares before the bounds and 7,497 with E4 (#837, §12), whose stack takes seven of the sea.
+7,487 squares without E4 and 7,494 with it (#837, §12), whose stack takes seven of the sea.
 
 **The grid.** Every outdoor map is one box of the grid the Foreland and Thornmark sit on: 32 squares
 a side, with its corner at x = 8 + 32i and y = −2 + 32j, cut to the world at its edges (EXPANSION
