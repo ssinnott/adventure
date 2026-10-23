@@ -39,6 +39,11 @@
 // of pale down, the head and neck bare and pink, a heavy brow, and a pale bill hooked at the tip. Dun,
 // the ruff cream. It does not hop; now and then it hisses, the head bowing, the bill opening and the
 // ruff standing up.
+// The Foal-taker, the eyrie's boss, is the eagle's frame at its biggest and more: the bird that takes the
+// Riders' foals, stooping on the herd with its wings spread and raised and its feet thrust forward and
+// open, hung in the air over the shadow it throws on the grass. The colour of old bone, the back and
+// wings ash-brown, a heavy brow over a pale eye, a deep bill of white horn hooked at the tip, the throat
+// shaggy and the tail a long wedge. It does not hop; now and then the wings settle.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint, Sprite } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
@@ -130,6 +135,12 @@ interface Build {
   hunch?: number;
   /** A bare-necked bird's ruff, at the neck's root and of this colour: the vulture's pale down. */
   collar?: string;
+  /** The share of its height the bird is drawn inside, where the pose would run past a tall boss's frame: the Foal-taker's. */
+  scale?: number;
+  /** How far the feet hang over the ground, in the frame's units, its shadow wider beneath: the Foal-taker's, on the wing. */
+  lift?: number;
+  /** How much stouter the legs and toes are than the frame's, 0 none: a body this heavy wants stout ones, the Foal-taker's. */
+  heft?: number;
 }
 const CROW: Build = {
   body: 1, neck: 1, head: 1, face: 0, bill: 1, hook: 0, arch: 0, leg: 1, wing: 1, broad: 1, tail: 1, wedge: 0.3, ruff: 0.35, bare: 0,
@@ -200,9 +211,21 @@ const VULTURE: Build = {
   crest: 0, pale: 0, streaks: 0, billHex: '#d6cbb0', mantle: null, tips: 0, gape: 0, fold: 0, call: 0.7,
   brow: 0.7, hunch: 1, collar: '#e4dac4',
 };
+/**
+ * The Foal-taker: the eagle's frame grown past it, the biggest body and the longest, broadest wings on
+ * the frame, raised and spread as it stoops, the feathered legs thrust forward and the feet open and
+ * hanging in the air. Bone-coloured, the back and wings ash-brown, a heavy brow over the eye and a deep
+ * bill of white horn with a hook, the throat shaggy and the tail a long wedge. It does not hop.
+ */
+const TAKER: Build = {
+  body: 1.55, neck: 0.9, head: 1.25, face: 0, bill: 1.05, hook: 1.25, arch: 1, leg: 1, wing: 1.6, broad: 1.7, tail: 1.1, wedge: 1.3, ruff: 1.1, bare: 0,
+  sheen: null, gloss: 0.2, feathered: 1, lean: -0.5, hop: 0, tufts: 0, bars: 0, mask: 0,
+  crest: 0, pale: 0, streaks: 0, billHex: '#e6dcc0', mantle: '#6c6050', tips: 0, gape: 0, fold: 0, call: 0,
+  raise: -0.3, strike: 1, nape: '#4e4236', toes: '#3a322c', brow: 1.3, scale: 0.46, lift: 0.1, heft: 0.7,
+};
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
-  const b = kind === 'owl' ? OWL : kind === 'old_rook' ? ROOK : kind === 'grey_heron' ? HERON : kind === 'wrack_gull' ? GULL : kind === 'raven' ? RAVEN : kind === 'spine_eagle' ? EAGLE : kind === 'vulture' ? VULTURE : CROW;
+  const b = kind === 'owl' ? OWL : kind === 'old_rook' ? ROOK : kind === 'grey_heron' ? HERON : kind === 'wrack_gull' ? GULL : kind === 'raven' ? RAVEN : kind === 'spine_eagle' ? EAGLE : kind === 'vulture' ? VULTURE : kind === 'foal_taker' ? TAKER : CROW;
   // The pose is the Build's `face`. Turned to the party, the raised wings reach higher than the
   // crow's hop: drawn inside 0.85 of its height, as the lampman is, the owl's tips keep clear of the
   // top of the combat canvas (at full height and wing 1.6 they run off it), and the wings as much
@@ -211,6 +234,9 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   // The heron's stilts and neck carry its crown to about 1.2 of the crow's frame: drawn inside 0.74
   // of its height, its crown stands where a crow's does.
   else if (b.leg > 2) bird(ctx, x, y, h * 0.74, p, b);
+  // The Foal-taker is a tall boss, whose crown a fight's markers are painted over at 0.82 of its height
+  // (ui/grouplabels.ts): its raised wings are drawn inside the share its Build gives.
+  else if (b.scale) bird(ctx, x, y, h * b.scale, p, b);
   // The eagle's raised wings carry their tips to about 1.6 of the crow's frame: drawn inside 0.62 of
   // its height, they keep clear of the top of the combat canvas.
   else if (b.raise) bird(ctx, x, y, h * 0.62, p, b);
@@ -227,6 +253,7 @@ export const SPRITES = {
   raven: { draw, span: [0.79, 0.72] },
   spine_eagle: { draw, span: [0.38, 0.36] },
   vulture: { draw, span: [0.79, 0.7] },
+  foal_taker: { draw, span: [0.42, 0.29] },
 } satisfies Partial<Record<MonsterSprite, Sprite>>;
 
 /**
@@ -286,8 +313,8 @@ function bird(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
   const ht = f % 120, hop = ht < 20 ? Math.sin(ht / 20 * Math.PI) * b.hop : 0;
   const ft = (f + 64) % 96, flick = ft < 16 ? Math.sin(ft / 16 * Math.PI) : 0;
   // Coming down (the eagle's strike), the body rides over its feet and the feet over the ground.
-  const raise = b.raise ?? 0, strike = b.strike ?? 0, hunch = b.hunch ?? 0;
-  const L = 0.2 * b.leg, by = L + hop * 0.07 + p.breathe * 0.004 + strike * 0.09, feet = hop * 0.03 + strike * 0.06;
+  const raise = b.raise ?? 0, strike = b.strike ?? 0, hunch = b.hunch ?? 0, lift = b.lift ?? 0;
+  const L = 0.2 * b.leg, by = L + hop * 0.07 + p.breathe * 0.004 + strike * 0.09 + lift, feet = hop * 0.03 + strike * 0.06 + lift;
   // The call, every 110 frames: the head bows forward, the bill opens, the hackles bristle out.
   const ct = f % 110, call = b.call > 0 && ct < 30 ? Math.sin(ct / 30 * Math.PI) * b.call : 0;
 
@@ -299,7 +326,8 @@ function bird(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
   const skin = shade('#c8807a', tone);
   const eyeCol = shade('#f0d890', Math.max(0.7, tone));
 
-  groundShadow(ctx, X(-0.08), y + 1, h * 0.95 * (1 - hop * 0.2));
+  // On the wing, the shadow it throws on the ground runs wide beneath it and trails behind.
+  groundShadow(ctx, X(-0.08 - 0.9 * lift), y + 1, h * 0.95 * (1 - hop * 0.2) * (1 + 5 * lift));
 
   // Where the parts join, in sprite units.
   const nl = 0.06 * b.neck, rH = 0.115 * b.head;
@@ -320,7 +348,7 @@ function bird(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
    * the leg is a thick feathered trouser and the forward toes reach down, open.
    */
   const leg = (dx: number, out: Part[], toes: Part[] = out, claws: Part[] | null = null) => {
-    const fx = 0.02 + dx + strike * 0.22, fy = feet + 0.01, r = 0.02 * h * (1 + strike * 0.7), t = 0.012 * h * (1 + strike * 0.3);
+    const hf = 1 + (b.heft ?? 0), fx = 0.02 + dx + strike * 0.22, fy = feet + 0.01, r = 0.02 * h * (1 + strike * 0.7) * hf, t = 0.012 * h * (1 + strike * 0.3) * hf;
     out.push({ k: 'tube', pts: px([0.01 + dx, by + 0.07, -0.015 + dx + strike * 0.08, (by + feet) / 2 + 0.02, fx, fy]), r0: r, r1: r * 0.78 });
     const ends = [[fx + 0.11, feet + 0.006 - strike * 0.03], [fx + 0.08, feet + 0.02 - strike * 0.01], [fx - 0.07, feet + 0.006]];
     toes.push({ k: 'tube', pts: px([fx, fy, fx + 0.06, feet + 0.004, ends[0][0], ends[0][1]]), r0: t, r1: t * 0.8 });

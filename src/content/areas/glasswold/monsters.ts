@@ -8,6 +8,7 @@ import type { MonsterDef } from '../../../game/monsters.ts';
 export const SPRITES = [
   'vulture', 'wold_lion', 'glass_scorpion', 'basilisk', 'grey_lion',
   'glass_walker',
+  'foal_taker',
 ] as const;
 
 export const MONSTERS: readonly MonsterDef[] = [
@@ -28,4 +29,10 @@ export const MONSTERS: readonly MonsterDef[] = [
   // Tower's decks after (MONSTERS §10.1), an elite on the line at 27: a machine (§2), so it never breaks; its free hand
   // holds, paralysed at 0.15 as the elite's line has it
   { id: 'glass_walker', name: 'Glass Walker', plural: 'Glass Walkers', sprite: 'glass_walker', kind: 'machine', look: 'Something walking out of the Glass, and it has walked a long way.', level: 27, hp: 670, ac: 25, attack: 16, dice: 7, sides: 8, bonus: 7, speed: 15, xp: 2147, gold: [0, 0], inflict: { cond: 'paralysed', chance: 0.15 }, tint: '#5f8a6a', size: 1.2 },
+  // the bounds' lair (#833), drawn and defined before the lair that places it: D7's eyrie on the Scarp's east end,
+  // where it keeps Akkush. The bird that takes the Riders' foals, the lair's boss at 32 (MONSTERS §13): it flies, so
+  // it hunts the back row (`ranged` without `missile`, as the vulture's does), and stands at size 1.8. Its numbers
+  // are the line's boss at 32 as tools/testmonster.ts gives it today, and provisional: the lair's pull request sets
+  // them from the harness's line at the cap (MONSTERS §4.1, §4.2, §13). It is owed in checks.ts until that lair places it
+  { id: 'foal_taker', name: 'The Foal-taker', plural: 'Foal-takers', sprite: 'foal_taker', kind: 'beast', look: 'When its shadow crosses the herd, the herd runs.', level: 32, hp: 2100, ac: 29, attack: 20, dice: 34, sides: 8, bonus: 41, speed: 13, xp: 20373, gold: [0, 0], ranged: true, tint: '#cdbf9c', size: 1.8 },
 ];
