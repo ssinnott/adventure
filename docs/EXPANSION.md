@@ -966,6 +966,40 @@ there, where repetition is the design, rather than on the map.
 A content session that needs a change to a system stops and asks for one, or opens a systems pull
 request first; it never edits shared files on the side.
 
+The imports keep layers as the files keep lanes: `src/lib` under `src/game` under `src/content`
+under `src/ui` under `src/app` (the files directly under `src/` the app's until it is made), the
+tools taking anything and `tools/kit/` only `src`, the walkthroughs and the suites `src` and
+`tools/kit/` and not each other or the tools, no area another's files but its `public.ts` and no
+cycle among `src`'s runtime imports; `tools/tests/layers.ts` holds it, today's crossings the rows of
+its `KNOWN`, which only ever go (#900).
+
+Decided by the builder for #900, each the owner's to overturn:
+
+1. **A runtime import is what Node loads:** an `import` or an `export ... from`, `import './x.ts'`
+   and `import('./x.ts')`. `import type`, `export type` and an `import()` in a type are left out, so
+   the type cycle through content stays as it was kept; `import { type A }` is not, as Node strips
+   the name and still loads the file (none is written today). A path made as it runs (`import(p)`)
+   is not followed. A lexer reads them in 0.2 s, where the compiler takes three to parse them, and
+   agrees with its parse on every file.
+2. **The layers are one order,** so content taking the UI or the app would cross too (none does).
+   `src/lib/` is vendored: never an importer, always a target. A walkthrough is a test, not
+   content: it takes any of `src`, and the area rule holds it.
+3. **The suites are what the runner runs as suites:** `tools/tests/*.ts` but `lib.ts`, which a suite
+   may take (`ok`, `fail`, `owed`) and a walkthrough, handed `ok`, may not. The runner's fixtures
+   under `tools/tests/runner/` are tools.
+4. **A row is `importer > imported`,** however often the import is written, under the first rule it
+   breaks: the walkthroughs' and the suites', the layers, the areas. A cycle is one row, `cycle: `
+   and its files sorted, a strongly connected component of `src`'s graph.
+5. **The keys are the plan's:** L2 the items (`items.ts`, `party.ts`, `skills.ts`), L3 the monsters
+   and spells, L4 the guilds and ranks, L5 the climates, stones, endings and `quests.ts` (its
+   `MAP_DEFS` goes with the atlas, the last table); L6 the pilot's; L7 `game.ts`'s and the screens'
+   imports of `src/input.ts`; A6 each pair of areas; K8 a walkthrough taking another; K7 the
+   walkthroughs' and the suites' others. L8 and L9 hold none: `src/game` takes a screen only in the
+   pilot and `game.ts`.
+6. **One cycle is left, and the plan keys none:** `items.ts` takes `skills.ts` (`skilled`, #879),
+   `skills.ts` takes `party.ts` and `party.ts` takes `items.ts`. Its row is keyed `split`, the big
+   modules split that takes `party.ts` apart. The `dens.ts` cycle is gone (#918).
+
 ### 8.2 The recipe for a zone map
 
 1. **Brief**, in `docs/areas/<area>.md`: purpose, band, landmarks, the secret and its hint, the
