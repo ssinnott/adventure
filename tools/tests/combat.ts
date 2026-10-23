@@ -23,7 +23,7 @@ import { logLines } from '../../src/ui/frame.ts';
 import type { Party } from '../../src/game/party.ts';
 import { spell } from '../../src/game/spells.ts';
 import { RANGED_PENALTY } from '../../src/game/weather.ts';
-import { ok, headlessGame, drive } from './lib.ts';
+import { ok, headlessGame, drive, withDefs } from './lib.ts';
 
 export function combat(): void {
   // A scripted policy: everyone attacks the first living monster, casters cast when they can.
@@ -568,30 +568,30 @@ function pastTen(): void {
   {
     const charm = { id: 'test_frost_charm', name: 'Frost Charm', slot: 'none' as const, price: 0, resist: ['cold' as const] };
     const coat = { id: 'test_frost_coat', name: 'Frost Coat', slot: 'armor' as const, price: 0, ac: 1, resist: ['cold' as const] };
-    ITEMS[charm.id] = charm; ITEMS[coat.id] = coat;
-    const frost: MonsterDef = { ...MONSTERS.bandit, id: 'test_frost', name: 'Frost Adept', plural: 'Frost Adepts', level: 10, cast: { spells: ['killing_frost'], chance: 1 } };
-    const chill = (dress: (q: Party) => void, glass = false): number[] => {
-      const r = makeRng(71), q = defaultParty(r);
-      for (const c of q.members) c.hp = c.maxHp = 999;
-      dress(q);
-      const s = startCombat(q, [{ id: 'a', monsters: [frost] }], r);
-      if (glass) s.glass = { element: 'cold', rounds: 5 };
-      untilActs(s, q, 72, 0);
-      return q.members.map((c) => 999 - c.hp);
-    };
-    const bare = chill(() => {}), half = (d: number[]): number[] => d.map((x) => Math.ceil(x / 2));
-    const carried = chill((q) => { q.members[0].pack.push(charm.id); });
-    const worn = chill((q) => { equip(q.members[1], coat.id); });
-    const unworn = chill((q) => { q.members[1].pack.push(coat.id); });
-    const bagged = chill((q) => { q.bag.push(charm.id); });
-    const blessed = chill((q) => { q.members[2].blessed.push({ element: 'cold', until: 'rest' }); });
-    const glass = chill(() => {}, true), both = chill((q) => { q.members[0].pack.push(charm.id); }, true);
-    ok(bare[0] > 1 && carried[0] === half(bare)[0] && carried.slice(1).join() === bare.slice(1).join(), `a member carrying a charm against cold takes half from a cold spell, the rest whole (${carried[0]} against ${bare[0]})`);
-    ok(worn[1] === half(bare)[1] && (() => { const c = defaultParty(makeRng(73)).members[1]; equip(c, coat.id); c.pack.push(charm.id); return resists(c).join() === 'cold'; })(), `armour against cold halves it worn (${worn[1]} against ${bare[1]})`);
-    ok(unworn.join() === bare.join() && bagged.join() === bare.join(), 'armour in the pack and a charm in the bag resist nothing');
-    ok(blessed[2] === half(bare)[2] && blessed.filter((_, i) => i !== 2).join() === bare.filter((_, i) => i !== 2).join(), `a member a blessing keeps the cold off takes half from a cold spell (${blessed[2]} against ${bare[2]})`);
-    ok(glass.join() === half(bare).join() && both.join() === glass.join(), `under Lampglass a member with a resistance to the same element still takes half, not a quarter (${both[0]} against ${glass[0]})`);
-    delete ITEMS[charm.id]; delete ITEMS[coat.id];
+    withDefs(ITEMS, [charm, coat], () => {
+      const frost: MonsterDef = { ...MONSTERS.bandit, id: 'test_frost', name: 'Frost Adept', plural: 'Frost Adepts', level: 10, cast: { spells: ['killing_frost'], chance: 1 } };
+      const chill = (dress: (q: Party) => void, glass = false): number[] => {
+        const r = makeRng(71), q = defaultParty(r);
+        for (const c of q.members) c.hp = c.maxHp = 999;
+        dress(q);
+        const s = startCombat(q, [{ id: 'a', monsters: [frost] }], r);
+        if (glass) s.glass = { element: 'cold', rounds: 5 };
+        untilActs(s, q, 72, 0);
+        return q.members.map((c) => 999 - c.hp);
+      };
+      const bare = chill(() => {}), half = (d: number[]): number[] => d.map((x) => Math.ceil(x / 2));
+      const carried = chill((q) => { q.members[0].pack.push(charm.id); });
+      const worn = chill((q) => { equip(q.members[1], coat.id); });
+      const unworn = chill((q) => { q.members[1].pack.push(coat.id); });
+      const bagged = chill((q) => { q.bag.push(charm.id); });
+      const blessed = chill((q) => { q.members[2].blessed.push({ element: 'cold', until: 'rest' }); });
+      const glass = chill(() => {}, true), both = chill((q) => { q.members[0].pack.push(charm.id); }, true);
+      ok(bare[0] > 1 && carried[0] === half(bare)[0] && carried.slice(1).join() === bare.slice(1).join(), `a member carrying a charm against cold takes half from a cold spell, the rest whole (${carried[0]} against ${bare[0]})`);
+      ok(worn[1] === half(bare)[1] && (() => { const c = defaultParty(makeRng(73)).members[1]; equip(c, coat.id); c.pack.push(charm.id); return resists(c).join() === 'cold'; })(), `armour against cold halves it worn (${worn[1]} against ${bare[1]})`);
+      ok(unworn.join() === bare.join() && bagged.join() === bare.join(), 'armour in the pack and a charm in the bag resist nothing');
+      ok(blessed[2] === half(bare)[2] && blessed.filter((_, i) => i !== 2).join() === bare.filter((_, i) => i !== 2).join(), `a member a blessing keeps the cold off takes half from a cold spell (${blessed[2]} against ${bare[2]})`);
+      ok(glass.join() === half(bare).join() && both.join() === glass.join(), `under Lampglass a member with a resistance to the same element still takes half, not a quarter (${both[0]} against ${glass[0]})`);
+    });
   }
   // Cleansing Light and Greening on everyone; Absolve on stone and curse.
   {
@@ -852,11 +852,8 @@ function clock(): void {
     const at = rounds(s, p, 6, 120), come = s.monsters.slice(3);
     ok(at.join() === '2,4,6' && come.every((m) => m.def === sentry && m.band === 1 && m.group === come[0].group && !m.back) && s.groupIds.length === 2 && s.log.filter((l) => l === CALL_LINE('Lord', 'Sentry', true)).length === 3,
       `a lord whose own call has no chance calls a sentry every second round while his Hands stand, into one group (rounds ${at.join(', ')})`);
-    ANSWER.clock = 'called';
-    const called = markOf(s, aliveMonsters(s));
-    ANSWER.clock = 'leader';
-    const led = markOf(s, aliveMonsters(s));
-    ANSWER.clock = 'panel';
+    const called = markOf(s, aliveMonsters(s), asWritten, { ...ANSWER, clock: 'called' });
+    const led = markOf(s, aliveMonsters(s), asWritten, { ...ANSWER, clock: 'leader' });
     ok(called === 3 && led === 0, 'a tool may turn the bots to the sentries as they come, or to the lord');
     for (const m of s.monsters) if (m.def === hand) m.hp = 0;
     const dim = s.clock!.dim, after = rounds(s, p, 4, 126);
@@ -937,7 +934,6 @@ function sweep(): void {
   const giant: MonsterDef = { ...MONSTERS.ogre, id: 'test_giant', name: 'Giant', plural: 'Giants', hp: 999, attack: 99, dice: 1, sides: 1, bonus: 39, speed: 99, sweep: { chance: 1 } };
   const drake: MonsterDef = { ...giant, id: 'test_drake', name: 'Drake', plural: 'Drakes', sweep: { chance: 1, element: 'fire' } };
   const charm = { id: 'test_ember_charm', name: 'Ember Charm', slot: 'none' as const, price: 0, resist: ['fire' as const] };
-  ITEMS[charm.id] = charm;
   const down = (q: Party, ...at: number[]): void => { for (const i of at) { q.members[i].hp = 0; addCondition(q.members[i], 'unconscious'); } };
   /** What each member took from the first turn of `m`, at the head of the round, on a company of 200 apiece dressed by `dress`. */
   const swept = (m: MonsterDef, dress: (q: Party, s: CombatState) => void = () => {}, seed = 120): { took: number[]; s: CombatState } => {
@@ -960,8 +956,8 @@ function sweep(): void {
   ok(fell(swept(giant, (_q, s) => { s.glass = { element: 'fire', rounds: 5 }; }), 0, 40, 'Giant'), 'Lampglass on fire does nothing to a bare arm');
   const breath = swept(drake);
   ok(fell(breath, 0, 40, 'Drake', 'fire') && fell(swept(drake, (q) => down(q, 0)), 3, 40, 'Drake', 'fire'), `a drake's breath burns the fuller row, the front on a tie and the back once the front is thinner (${breath.s.log.at(-1)})`);
-  const glass = swept(drake, (_q, s) => { s.glass = { element: 'fire', rounds: 5 }; }), worn = swept(drake, (q) => { q.members[0].pack.push(charm.id); });
-  const both = swept(drake, (q, s) => { q.members[0].pack.push(charm.id); s.glass = { element: 'fire', rounds: 5 }; });
+  const glass = swept(drake, (_q, s) => { s.glass = { element: 'fire', rounds: 5 }; });
+  const [worn, both] = withDefs(ITEMS, [charm], () => [swept(drake, (q) => { q.members[0].pack.push(charm.id); }), swept(drake, (q, s) => { q.members[0].pack.push(charm.id); s.glass = { element: 'fire', rounds: 5 }; })] as const);
   ok(fell(glass, 0, 20, 'Drake', 'fire') && [0, 20].includes(worn.took[0]) && [0, 40].includes(worn.took[1]) && fell(both, 0, 20, 'Drake', 'fire'),
     `Lampglass on fire halves the breath on the whole row, a charm against fire on its bearer alone, and the two together halve it once, never to a quarter (${glass.took.slice(0, 3).join(', ')}; ${worn.took.slice(0, 3).join(', ')}; ${both.took.slice(0, 3).join(', ')})`);
   ok(SWEEP_LINE('Giant', undefined, 'the front row') === 'Giant sweeps the front row and misses.' && logLines(`${SWEEP_LINE('Cinder Drake', 'fire', 'the back row', 999)} Ottilie wakes. Ottilie, Maren and Cassian fall!`).length <= 2,
@@ -976,25 +972,21 @@ function sweep(): void {
   const held = rearguard(giant, 121), loosed = rearguard(drake, 122);
   ok(!held.acted && !held.s.log.some((l) => l.includes(' sweeps ')) && loosed.acted && loosed.s.log.some((l) => l.startsWith('Drake breathes fire on the front row')), 'a giant in the back rank waits for the front to fall; a drake there breathes over it');
   // The bots' answer: a member of the row a sweep would take is mended once one sweep could fell them.
-  const heavy: MonsterDef = { ...giant, bonus: 99, speed: 0 }, lines = (m: MonsterDef, dress: (q: Party) => void = () => {}): number[] => {
+  const heavy: MonsterDef = { ...giant, bonus: 99, speed: 0 }, lines = (m: MonsterDef, dress: (q: Party) => void = () => {}, answer = ANSWER): number[] => {
     const q = defaultParty(makeRng(123));
     for (const c of q.members) c.hp = c.maxHp = 200;
     dress(q);
-    return mendLines(startCombat(q, [{ id: 'g', monsters: [m] }], makeRng(123)), q);
+    return mendLines(startCombat(q, [{ id: 'g', monsters: [m] }], makeRng(123)), q, asWritten, answer);
   };
-  ANSWER.sweep = false;
-  const unanswered = lines(heavy);
-  ANSWER.sweep = true;
+  const unanswered = lines(heavy, undefined, { ...ANSWER, sweep: false });
   ok(lines(heavy).join() === '100,100,100,80,80,80' && lines({ ...heavy, sweep: undefined }).join() === '80,80,80,80,80,80' && unanswered.join() === '80,80,80,80,80,80' && lines({ ...heavy, sweep: { chance: 1, element: 'fire' } }, (q) => down(q, 0)).join() === '80,80,80,100,100,100',
     'the bots mend the row a sweeper would take under what one sweep could deal them, the rest at 40%, and the back row once a breath would turn on it');
-  const mended = (answer: boolean): number => {
-    ANSWER.sweep = answer;
+  const mended = (sweep: boolean): number => {
     const q = defaultParty(makeRng(124)), rng = makeRng(124);
     for (const c of q.members) c.hp = c.maxHp = 200;
     q.members[1].hp = 90;
     const s = startCombat(q, [{ id: 'g', monsters: [heavy] }], rng);
-    for (let n = 0; n < 20; n++) { const t = currentTurn(s, q, rng); if (!t || t.side === 'monster') break; if (t.i === 4) { gateTurn(s, q, rng, 4); break; } partyAct(s, q, rng, { type: 'defend' }); }
-    ANSWER.sweep = true;
+    for (let n = 0; n < 20; n++) { const t = currentTurn(s, q, rng); if (!t || t.side === 'monster') break; if (t.i === 4) { gateTurn(s, q, rng, 4, { answer: { ...ANSWER, sweep } }); break; } partyAct(s, q, rng, { type: 'defend' }); }
     return q.members[1].hp;
   };
   ok(mended(true) > 90 && mended(false) === 90, `so the gate's cleric mends Idris at 90 of 200 before a giant's sweep of 100 (${mended(true)}), and with no answer leaves him (${mended(false)})`);

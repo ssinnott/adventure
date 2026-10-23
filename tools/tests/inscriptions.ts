@@ -21,7 +21,7 @@ import { NORTH } from '../../src/game/types.ts';
 import { readerOf, readMarks, signLine, readLine, markLine, isInscription, marksOf, readId } from '../../src/game/inscriptions.ts';
 import { ATLAS, MAP_DEFS, ITEMS } from '../../src/content/index.ts';
 import { CONTENT, collect, compare } from '../shipped.ts';
-import { ok } from './lib.ts';
+import { ok, withDefs } from './lib.ts';
 
 const STORE = 'Cut over the wall, the dwarves\' words for plenty.', BREATH = 'The dwarves\' words for the mountain\'s breath.';
 
@@ -101,15 +101,14 @@ export function inscriptions(): void {
   // member reads by it; in a pack, its carrier does; put down, nobody.
   {
     const book: ItemDef = { id: 'fx_copybook', name: 'A Copybook', slot: 'none', price: 0, skill: 'linguist' };
-    (ITEMS as Record<string, ItemDef>)[book.id] = book;
-    try {
+    withDefs(ITEMS, [book], () => {
       const { world, party } = fresh((p) => { p.bag.push(book.id); });
       ok(readerOf(party) === party.members[0] && stand(world, 2, 1)[1] === readLine('Bram', 'STORE.'), 'with the copybook in the bag the first standing member reads by it');
       party.bag.splice(party.bag.indexOf(book.id), 1); party.members[2].pack.push(book.id);
       ok(readerOf(party) === party.members[2], 'in a member\'s pack, its carrier reads');
       party.members[2].pack.pop();
       ok(!readerOf(party), 'and put down, nobody does');
-    } finally { delete (ITEMS as Record<string, ItemDef>)[book.id]; }
+    });
   }
   // The marks: none before the reading; read, its two places, said once; a plain sign is kept by nothing.
   {

@@ -11,9 +11,9 @@
 // one group is one fight. A plain bot plays the party, the game's own (src/game/bot.ts, which its
 // auto-fight plays with the three from level 11): it mends, wakes, burns, casts, strikes or braces,
 // and never sleeps, blesses, drinks or flees, so it is weaker than a player; single fights at full
-// health are kinder than play. Harness's `RULES` reach it, its company's tiers and its bot's options
-// (#853), as harness's `--tiers` and `--bot` set them, off unless they do (#865); this command line
-// takes neither.
+// health are kinder than play. Harness's what-ifs reach it where a caller passes them (`Rules`): its
+// company's tiers and its bot's options (#853), as harness's `--tiers` and `--bot` set them, and the
+// bots' answers; play's unless passed (#865, #946). This command line takes none.
 // A group that asks before it fights (#544) it refuses, and fights; the walk past it is `gatePass`.
 // Between fights, where the gate check mends, it lifts stone first, by Absolve or the draught it
 // carries from 25 (#546), as harness's company does.
@@ -30,7 +30,7 @@ import { RANGED_PENALTY } from '../src/game/weather.ts';
 import { botTurn, asWritten } from '../src/game/bot.ts';
 import type { RngInstance } from '../src/lib/engine/rng.ts';
 import { MAP_DEFS } from '../src/content/index.ts';
-import { companyAt, RULES } from './harness.ts';
+import { companyAt, RULES, type Rules } from './harness.ts';
 import type { EncounterDef, Answer } from '../src/game/map.ts';
 import { answer, barred } from '../src/game/people.ts';
 
@@ -39,19 +39,19 @@ export { gateBlast, gateBurn, botTurn } from '../src/game/bot.ts';
 
 /**
  * The bot's turn for member `i`, as the gate plays it: the game's `botTurn` knowing every monster as
- * written, with the options harness's `RULES.bot` asks (#853, `--bot`), none unless a what-if sets
- * them (#865).
+ * written, with the options `rules.bot` asks (#853, `--bot`), none unless a what-if passes them
+ * (#865), and the answers `rules.answer` asks, play's unless passed (#946).
  */
-export function gateTurn(s: CombatState, p: Party, rng: RngInstance, i: number): void { botTurn(s, p, rng, i, asWritten, RULES.bot); }
+export function gateTurn(s: CombatState, p: Party, rng: RngInstance, i: number, rules: Readonly<Rules> = RULES): void { botTurn(s, p, rng, i, asWritten, rules.bot, rules.answer); }
 
 /**
  * The premade company, every member trained to `level`, dressed by the ladder and with the prestiges
- * that level brings, whole: harness's own (`companyAt`), a fresh copy every call. Under level 1 it is
- * no company, and throws.
+ * that level brings, whole: harness's own (`companyAt`, under `rules`), a fresh copy every call. Under
+ * level 1 it is no company, and throws.
  */
-export function gateCompany(level: number, seed: number): Party {
+export function gateCompany(level: number, seed: number, rules: Readonly<Rules> = RULES): Party {
   if (!(level >= 1)) throw new Error(`no company at level ${level}: levels start at 1`);
-  return companyAt(level, seed);
+  return companyAt(level, seed, rules);
 }
 
 /**
@@ -66,14 +66,14 @@ export function gateOpts(g: Pick<EncounterDef, 'when'>): CombatOpts {
 /**
  * One fight to its end with the bot playing the party, which carries its wounds out. True if won. With
  * `cap`, a fight still running after that many rounds is broken off, and not won; `opts` is the
- * fight's weather (see `gateOpts`).
+ * fight's weather (see `gateOpts`); `rules` the what-ifs its bot plays by (`gateTurn`).
  */
-export function gateFight(p: Party, monsters: Fighters, seed: number, cap = Infinity, opts: CombatOpts = {}): boolean {
+export function gateFight(p: Party, monsters: Fighters, seed: number, cap = Infinity, opts: CombatOpts = {}, rules: Readonly<Rules> = RULES): boolean {
   const rng = makeRng(seed), s = startCombat(p, [asGroup('gate', monsters)], rng, opts);
   for (let guard = 0; s.outcome === 'ongoing' && guard < 4000; guard++) {
     const t = currentTurn(s, p, rng);
     if (!t || s.round > cap) break;
-    if (t.side === 'monster') monsterAct(s, p, rng); else gateTurn(s, p, rng, t.i);
+    if (t.side === 'monster') monsterAct(s, p, rng); else gateTurn(s, p, rng, t.i, rules);
   }
   return s.outcome === 'victory';
 }
@@ -98,10 +98,10 @@ export function gatePass(p: Party, g: Pick<EncounterDef, 'choice'>): boolean {
 /** The seed of a group's fight on seed `k`, the same for every level and every caller. */
 export const fightSeed = (k: number): number => k * 7919 + 13;
 
-/** The share of a group's fights a company of `level` wins, each alone from full health, over seeds 1 to `seeds`. */
-export function winRate(level: number, monsters: Fighters, seeds: number, cap = Infinity, opts: CombatOpts = {}): number {
+/** The share of a group's fights a company of `level` wins, each alone from full health, over seeds 1 to `seeds`, under the what-ifs `rules`. */
+export function winRate(level: number, monsters: Fighters, seeds: number, cap = Infinity, opts: CombatOpts = {}, rules: Readonly<Rules> = RULES): number {
   let won = 0;
-  for (let k = 1; k <= seeds; k++) if (gateFight(gateCompany(level, k), monsters, fightSeed(k), cap, opts)) won++;
+  for (let k = 1; k <= seeds; k++) if (gateFight(gateCompany(level, k, rules), monsters, fightSeed(k), cap, opts, rules)) won++;
   return won / seeds;
 }
 
