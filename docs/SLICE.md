@@ -426,7 +426,7 @@ Decided by delegate for #53, each the owner's to overturn:
    a seen square within two steps) leaves out a group a hill hides (the delegate's call 4). A wall hid
    neither when this was built; since #889 it hides both (below).
 6. **A save keeps what it marked:** explored bits only ever add, so a save made before loads with the
-   valleys it marked from below, and hiding applies from then on. `SAVE_VERSION` stays 5.
+   valleys it marked from below, and hiding applies from then on. It asks no save upgrade.
 7. **The pilot is left as it was:** it reads the automap's seen squares and groups through `Known`,
    so it sees what a player sees; a hill's square is seen and stood on, so its explorer climbs it as a
    frontier square and sees what lies behind.
