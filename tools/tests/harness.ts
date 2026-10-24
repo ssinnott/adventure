@@ -17,7 +17,7 @@ import { gateCompany } from '../kit/company.ts';
 import { GATE } from './gate.ts';
 import { testMonster, standardEncounter, line, scaleAt, groupsPerLevel, xpFor, HP, DAMAGE, ROLES, ROLE_IDS, TROLL, SWEEP, testTroll, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, testDrake, giantEncounter, drakeEncounter, BASILISK_STONE, testBasilisk, basiliskEncounter, clockEncounter } from '../kit/line.ts';
 import type { Role } from '../kit/line.ts';
-import { measure, days, fight, play, outcomeOf, spent, mendBetween, day as oneDay, bossFloor, longest, slowest, fightsPerRest, WORST, CAP, casting, cellsOnCores } from '../harness.ts';
+import { measure, days, fight, play, outcomeOf, spent, mendBetween, day as oneDay, bossFloor, longest, slowest, fightsPerRest, WORST, CAP, casting, cellsOnCores } from '../kit/harness.ts';
 import { mustRest, REST_AT, ANSWER, wakeWith, breathGuard } from '../../src/game/bot.ts';
 import { companyAt, newerCompany, edgeOf, unforge, GEAR, GEAR_TOP, whatIfs, writeRefusal, artifactIds } from '../kit/company.ts';
 import { ROUND_CAP, playOut } from '../kit/fight.ts';

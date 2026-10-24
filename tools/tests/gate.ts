@@ -25,7 +25,7 @@ import type { CombatState, Fighters } from '../../src/game/combat.ts';
 import { spell } from '../../src/game/spells.ts';
 import { gateFight, gateOpts, gateBot, fightSeed, winRate, gateAnswer, gatePass, rate, SEEDS } from '../kit/fight.ts';
 import { gateCompany } from '../kit/company.ts';
-import { days, fightsPerRest, mendBetween } from '../harness.ts';
+import { days, fightsPerRest, mendBetween } from '../kit/harness.ts';
 import { mustRest, markOf, ANSWER } from '../../src/game/bot.ts';
 import { companyAt } from '../kit/company.ts';
 import { ROUND_CAP, playOut } from '../kit/fight.ts';

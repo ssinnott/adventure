@@ -15,7 +15,7 @@ import type { MonsterDef } from '../../src/game/monsters.ts';
 import { elementMult, monsterSpells, monsterCanCast, KINDS } from '../../src/game/monsters.ts';
 import { gateBlast, gateBurn } from '../../src/game/bot.ts';
 import { gateTurn } from '../kit/fight.ts';
-import { thrifty } from '../harness.ts';
+import { thrifty } from '../kit/harness.ts';
 import { wakeWith, markOf, mendLines, ANSWER, REST_AT } from '../../src/game/bot.ts';
 import { companyAt } from '../kit/company.ts';
 import { ROUND_CAP, playOut } from '../kit/fight.ts';

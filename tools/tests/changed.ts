@@ -62,7 +62,7 @@ function reaches(): void {
   // 4: elsewhere.
   const none = reach(['docs/DESIGN.md', 'README.md', 'CLAUDE.md', 'types/globals.d.ts', '.github/labels.json', 'tools/tests/outdoors.ts', 'tools/smoke.ts', 'src/ui/monsters/wolf.ts', 'src/ui/interiors/kilns/hold.ts']);
   ok(!none.all && !none.areas.size, `the docs, the front pages, types/, .github/ but the workflow, a module neither the gate nor a walkthrough loads and a drawing reach no area (${describeReach(none)})`);
-  const all: [string, string][] = [['src/game/combat.ts', 'the gate or a walkthrough loads it'], ['tools/harness.ts', 'the gate or a walkthrough loads it'], ['tools/test.ts', 'it decides what runs'],
+  const all: [string, string][] = [['src/game/combat.ts', 'the gate or a walkthrough loads it'], ['tools/kit/harness.ts', 'the gate or a walkthrough loads it'], ['tools/test.ts', 'it decides what runs'],
     ['tools/changed.ts', 'it decides what runs'], ['tools/kit/graph.ts', 'it decides what runs'], ['.github/workflows/checks.yml', 'it decides what runs'], ['package.json', 'the graph does not read it'],
     ['src/content/shipped.json', 'the graph does not read it'], ['tools/a_table_no_file_imports.json', 'the graph does not read it']];
   const missed = all.filter(([f, why]) => reach(['docs/DESIGN.md', f]).all?.why !== why).map(([f]) => f);
