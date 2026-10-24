@@ -5,7 +5,7 @@
 // (`armsBonus`, `tierSteps`), the premade party and the company drawn from a seed (`randomParty`,
 // rolled by `rollStats` and named from `SUGGESTED`), a ward borne (`immuneTo`, `WARDABLE`) and what
 // the clock's passing does to what is borne (`passClock`). Pure data and pure functions; the rng is
-// passed in so tests can pin it, and the item and spell tables are handed in (#973).
+// passed in so tests can pin it, and the item and spell tables are handed in (#973, #974).
 import type { RngInstance } from '../lib/engine/rng.ts';
 import { makeRng } from '../lib/engine/rng.ts';
 import { item, REGEN_PART } from './items.ts';
