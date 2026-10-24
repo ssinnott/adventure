@@ -1,8 +1,8 @@
 // The art held to what the owner once found by hand. Every monster def has a drawing of its own
 // (EXPANSION §5.6), and the walls are dressed with restraint: the share of wall faces that carry
 // dressing stays near where #9 put it, and each kind of dressing has its rate. The silhouettes and
-// the cracks need a canvas, so they are the smoke test's (tools/smoke/art.ts and cracks.ts). Every bow bends away
-// from the man who holds it (#57).
+// the cracks need a canvas, so they are the smoke test's (tools/smoke/art.ts and cracks.ts). Every
+// bow bends away from the man who holds it (#57).
 import { MONSTERS, MAP_DEFS } from '../../src/content/index.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { wallDressing, isSolidWall, isHouse, isTent, tentOf, DRESSINGS, DRESSING_RATES } from '../../src/ui/viewport.ts';

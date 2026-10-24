@@ -72,7 +72,7 @@ export const company = (page: Page, seed: number): Promise<void> => page.evaluat
 
 /** What the frame keeps of the page before a part. */
 type Held = { __held?: {
-  world: World; maps: { id: string; cells: Cell[]; features: Feature[]; landmarks: readonly Landmark[] }[]; items: string[]; flames: Flame[];
+  world: World; maps: { id: string; cells: Cell[]; features: Feature[]; landmarks: readonly Landmark[] }[]; items: string[]; flames: Flame[]; painted: readonly Flame[];
   place: { id: string; x: number; y: number; f: World['state']['facing'] }; minutes: number; light: number; flags: World['party']['flags']; gold: number;
 } };
 
@@ -102,7 +102,7 @@ export async function frame(part: Part, r: Run): Promise<number> {
       const w = g.world;
       (window as Window & Held).__held = {
         world: w, maps: Object.entries(w.maps).map(([id, m]) => ({ id, cells: m.cells.slice(), features: m.features.slice(), landmarks: m.landmarks })),
-        items: Object.keys(C.ITEMS), flames: V.paintedFlames().slice(),
+        items: Object.keys(C.ITEMS), flames: V.paintedFlames().slice(), painted: V.paintedFlames(),
         place: { id: w.state.mapId, x: w.state.x, y: w.state.y, f: w.state.facing }, minutes: w.state.minutes, light: w.state.light, flags: { ...w.party.flags }, gold: w.party.gold,
       };
     });
@@ -130,8 +130,10 @@ export async function frame(part: Part, r: Run): Promise<number> {
         }
         for (const id of Object.keys(w.maps)) if (!held.maps.some((k) => k.id === id)) { delete w.maps[id]; delete w.state.maps[id]; }
         for (const id of Object.keys(C.ITEMS)) if (!held.items.includes(id)) delete (C.ITEMS as Record<string, unknown>)[id];
+        // Only the list the part found and emptied: one a later paint began is that scene's own, which
+        // the view keeps with the scene and draws every frame (src/ui/viewport.ts, drawViewport).
         const flames = V.paintedFlames() as Flame[];
-        if (!flames.length && held.flames.length) flames.push(...held.flames);
+        if (flames === held.painted && !flames.length && held.flames.length) flames.push(...held.flames);
         if (!thrown) return;
         w.travel(held.place.id, held.place.x, held.place.y, held.place.f);
         w.state.minutes = held.minutes; w.state.light = held.light; w.party.flags = held.flags; w.party.gold = held.gold; w['cached'] = null;

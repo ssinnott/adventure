@@ -846,8 +846,8 @@ Decided by the builder for #914, each the owner's to overturn:
 
 - **One silhouette.** Each sprite kind, drawn at combat size, is one connected piece of ink (above
   an alpha threshold, ignoring specks), apart from parts it declares detached: glows, sparks,
-  something thrown. This is #7 as a check, in `tools/smoke/art.ts`; each family declares the parts in its
-  `SPRITES` (#915).
+  something thrown. This is #7 as a check, in `tools/smoke/art.ts`; each family declares the parts
+  in its `SPRITES` (#915).
 - **No cracks.** The per-square crack sweep runs all four ways on every map a pull request changes,
   and one way on the cellar, Helmstow, its keep and the ground's samples (`tools/kit/grounds.ts`);
   the rest are swept on release, a run of the checks started by hand (`tools/smoke/cracks.ts`,
