@@ -22,7 +22,7 @@ export const MAPS = [MONKSVALE_J11, MONASTERY, MONASTERY2, HIGHSPINE_I11, HIGHSP
     // The country behind the road (#508): the giants' ground, the Spine's south and the vale's end.
     MONKSVALE_J10, HIGHSPINE_I12, MONKSVALE_J12,
     // The bounds (#832): the pines over the water by Sheer Point.
-    SHEERPOINT_J8];
+    SHEERPOINT_J8] as const;
 
 export const AREA = {
   id: 'whitespine' as const,

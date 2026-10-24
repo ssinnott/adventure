@@ -18,7 +18,7 @@ import { GUILDS } from './guilds.ts';
 import { CHAPTER } from './chapter.ts';
 import { ZONES, PLACES, SITES, LINKS } from './atlas.ts';
 
-export const MAPS = [THORNMARK, THORNHOLD, GROVE1, GROVE2, DEEPTHORN_H3, DEEPTHORN_I3, DEEPTHORN_I4, DEEPTHORN_I5, DEEPTHORN_J4, DEEPTHORN_J5];
+export const MAPS = [THORNMARK, THORNHOLD, GROVE1, GROVE2, DEEPTHORN_H3, DEEPTHORN_I3, DEEPTHORN_I4, DEEPTHORN_I5, DEEPTHORN_J4, DEEPTHORN_J5] as const;
 
 export const AREA = {
   id: 'thornmark' as const,

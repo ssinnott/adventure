@@ -438,7 +438,7 @@ export interface Presence {
 /**
  * A map. An area's is declared with its id (`MapDef<'cairns'>`), which keeps the id literal in the
  * `MapId` union (content/index.ts, #994). Its exits name the areas' maps, and `Off` besides: the
- * outdoors on a map as played (`PlayedDef`), a map of its own on a suite's fixture.
+ * outdoors on a map as played (`PlayedDef`). A suite's fixture hands its own maps on through `fxMap`.
  */
 export interface MapDef<Id extends string = string, Off extends string = never> {
   id: Id;

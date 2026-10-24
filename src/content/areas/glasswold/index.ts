@@ -20,7 +20,7 @@ import { INTERIORS } from './interiors.ts';
 import { QUESTS } from './quests.ts';
 import { CHAPTER } from './chapter.ts';
 
-export const MAPS = [WOLD_D10, WOLD_D9, WOLD_D8, WOLD_C8, WOLD_B8, WOLD_B9, WOLD_E9, WOLD_E8, WOLD_D7, WOLD_E7, KARAORDU, KUSHDAG];
+export const MAPS = [WOLD_D10, WOLD_D9, WOLD_D8, WOLD_C8, WOLD_B8, WOLD_B9, WOLD_E9, WOLD_E8, WOLD_D7, WOLD_E7, KARAORDU, KUSHDAG] as const;
 
 export const AREA = {
   id: 'glasswold' as const,

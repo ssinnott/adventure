@@ -25,7 +25,7 @@ import { GUILDS } from './guilds.ts';
 import { CHAPTER } from './chapter.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
 
-export const MAPS = [HARROW, KEEP, SHELF, MILL, GREYWATER1, GREYWATER2, DOWNS_F2, DOWNS_F3, DOWNS_E3, DOWNS_E2, DOWNS_D2, DOWNS_D3, DOWNS_D4, BERTH, DOWNS_E4, HAG_HOLE];
+export const MAPS = [HARROW, KEEP, SHELF, MILL, GREYWATER1, GREYWATER2, DOWNS_F2, DOWNS_F3, DOWNS_E3, DOWNS_E2, DOWNS_D2, DOWNS_D3, DOWNS_D4, BERTH, DOWNS_E4, HAG_HOLE] as const;
 
 export const AREA = {
   id: 'shelf' as const,

@@ -36,7 +36,7 @@ export const MAPS = [CINDERCOAST_H10, CINDERCOAST_G10, CINDERPORT, FIREMOUNT_G11
     // Fire Mountain's east flank, its south-east foot and its south foot, the last of the country behind the road (#522).
     FIREMOUNT_H11, FIREMOUNT_H12, FIREMOUNT_G12,
     // The bounds (#836): the Waste's south-west, where the lava flow ends under the rim.
-    EMBERWASTE_F12, BLACKDRAW, GRIMS_HOWE];
+    EMBERWASTE_F12, BLACKDRAW, GRIMS_HOWE] as const;
 
 export const AREA = {
   id: 'ashfall' as const,

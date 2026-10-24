@@ -15,7 +15,7 @@ import { INTERIORS } from './interiors.ts';
 import { QUESTS } from './quests.ts';
 import { CHAPTER } from './chapter.ts';
 
-export const MAPS = [HEARTHISLE_H6, HEARTHISLE_I6, HEARTHFANE, HEARTHFANE2, UNDERDEEP, UNDERDEEP2, CORE];
+export const MAPS = [HEARTHISLE_H6, HEARTHISLE_I6, HEARTHFANE, HEARTHFANE2, UNDERDEEP, UNDERDEEP2, CORE] as const;
 
 export const AREA = {
   id: 'hearth' as const,
