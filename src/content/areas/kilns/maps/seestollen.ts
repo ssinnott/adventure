@@ -6,7 +6,7 @@
 // the quay-master's strongbox and Durchschlag in it; and behind the one dry wall of the loading gallery
 // the dwarves' store, walled up when they left. Band 19-20, a band over Kilnmouth's, out of the Kilns'
 // figures; docs/areas/kilns.md §12.7 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

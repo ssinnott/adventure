@@ -6,7 +6,7 @@
 // a wreck's ribs. The spit is walked onto from D5 and the shore from C6; the sea's other edges are the
 // sea's. Cut from the atlas by tools/scaffold.ts and reshaped by hand; docs/areas/saltreach.md §12 is
 // its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

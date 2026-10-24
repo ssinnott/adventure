@@ -2,7 +2,8 @@
 // in view or near and those a sense finds). The view draws its walls by it, the automap inks and
 // marks its squares by it and the pilot's fair view (game/pilot/known.ts) reads the map through it,
 // so all three show one map.
-import type { GameMap, Cell, Solid, Feature } from './map.ts';
+import type { GameMap } from './map.ts';
+import type { Cell, Solid, Feature } from './mapdef.ts';
 import type { Facing } from './types.ts';
 import type { World, LiveGroup } from './world.ts';
 import { AWARE, VIEW_DEPTH, VIEW_LATERAL, viewCell, hillHiding } from './world.ts';

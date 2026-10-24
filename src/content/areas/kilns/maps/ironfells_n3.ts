@@ -5,7 +5,7 @@
 // bare fell under the crag, and a collapsed working in the rock at the south-east corner.
 // The gate at 28,8 is the way into Anvilhall (#459, IRONFELLS_GATE, in the area's public.ts).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §4.3 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { EAST, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 import { IRONFELLS_GATE } from '../public.ts';

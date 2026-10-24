@@ -5,7 +5,7 @@
 // south-east where the Sunder's west lip begins (K3). Its west and south edges are the Deepthorn's
 // closed forest (I3, J4), and open no way.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/sunderwood.md §4.9 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { denBurnt, RESPAWN } from '../../../../game/keys.ts';
 

@@ -53,7 +53,8 @@ import { zone, square, ALL, reach, shut, reached, paces, corner, drove, each, ro
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import type { Facing } from '../../../game/types.ts';
 import { GameMap } from '../../../game/map.ts';
-import type { Can, Feature } from '../../../game/map.ts';
+import type { Can } from '../../../game/map.ts';
+import type { Feature } from '../../../game/mapdef.ts';
 import { LOCKS } from '../../locks.ts';
 import { ATLAS, MAP_DEFS, MONSTERS } from '../../index.ts';
 import { DROVE_COACH } from '../../crossings.ts';

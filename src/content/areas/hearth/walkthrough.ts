@@ -47,7 +47,7 @@ import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { meet, heard, answer, handIns } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
-import type { Feature, MapDef } from '../../../game/map.ts';
+import type { Feature, MapDef } from '../../../game/mapdef.ts';
 import { item, hits, sellPrice } from '../../../game/items.ts';
 import { elementMult } from '../../../game/monsters.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';

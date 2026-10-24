@@ -8,7 +8,7 @@
 // and goes on into G10 at rows 22 and 23. The way in is the Stair, from I10 (#502); the north edge ends
 // the world against H9's shore, and the south edge meets H11's ash (#522), walked.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/ashfall.md §4.2 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import type { When } from '../../../../game/quests.ts';
 import { WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

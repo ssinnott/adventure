@@ -4,7 +4,7 @@
 // the provisioner's and the coach house off the square; and down the lane to the lake wall the inn,
 // whose stays count the nights, the trainers' yard to 23 and the inn's yard with its door onto the ice,
 // where the ice-hole is kept open (M9). docs/areas/rimewater.md §4.3 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, WEST } from '../../../../game/types.ts';
 import { sells, DROVE_COACH } from '../../../crossings.ts';

@@ -6,7 +6,7 @@
 // In from L10 over the north edge, walked, either side of the ridge. The west edge meets K11, the east
 // edge M11 and the south edge L12 (#832), the pines running on at 0 to 16 and the mountain from 17.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/rimewater.md §4.8 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

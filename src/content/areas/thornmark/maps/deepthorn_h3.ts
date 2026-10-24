@@ -3,7 +3,7 @@
 // south, its old ford where the road crosses, and east of it the first of the deep's oaks. The
 // survey team's camp is past the sign, short of the first group. Cut from the atlas by
 // tools/scaffold.ts; docs/areas/thornmark.md §4.2 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { SOUTH, WEST } from '../../../../game/types.ts';
 import { denBurnt, RESPAWN } from '../../../../game/keys.ts';

@@ -8,7 +8,7 @@ import { buildMaps } from '../../src/content/maps.ts';
 import { World, FOG } from '../../src/game/world.ts';
 import { defaultParty } from '../../src/game/party.ts';
 import { GameMap } from '../../src/game/map.ts';
-import type { EncounterDef } from '../../src/game/map.ts';
+import type { EncounterDef } from '../../src/game/mapdef.ts';
 import { OUTDOORS } from '../../src/game/outdoors.ts';
 import { MINUTES_PER_DAY, dateAt } from '../../src/game/calendar.ts';
 import { findWeather } from '../../src/game/weather.ts';

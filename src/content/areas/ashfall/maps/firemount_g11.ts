@@ -16,7 +16,7 @@
 // and its grave: Grim's Axe's rumour, its lair Grim's Howe under F12's dam (#836, docs/areas/ashfall.md
 // §12.4).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/ashfall.md §4.5 is its brief.
-import type { Exit, MapDef } from '../../../../game/map.ts';
+import type { Exit, MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { EAST, SOUTH, WEST } from '../../../../game/types.ts';
 import { ENDED } from '../../../endings.ts';

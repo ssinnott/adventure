@@ -2,7 +2,7 @@
 // forward; the hatch down to the hold aft, where the Hand keeps a post; the captain's cabin behind
 // its door at the stern, with the ship's papers and its log on the table and his sea chest. Band
 // 12-13; docs/areas/wrackholm.md §4.5 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

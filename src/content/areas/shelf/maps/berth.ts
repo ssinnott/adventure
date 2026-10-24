@@ -3,7 +3,7 @@
 // the bier at the end. Her guard stands two by two down the passage, and her captain at the bier;
 // none of them comes back. A secret door behind the bier, hinted in the forecourt, opens his niche.
 // docs/areas/shelf.md §4.7 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
 

@@ -5,7 +5,7 @@
 // passage to the cave's back, where what they have taken off the dead lies round their bed and
 // Trollbrand in it. Band 22-23, a band over Loch Fada's, out of Rimewater's figures;
 // docs/areas/rimewater.md §12.4 is its brief (#832).
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

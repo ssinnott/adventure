@@ -4,7 +4,7 @@
 // the north-west, with the stream at its corner, and the crag across the south-east, its top a lookout.
 // The tear at 12,16 is the way into the Anvil Stone's Rift (#465, TEAR).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §4.9 is its brief.
-import type { Feature, MapDef } from '../../../../game/map.ts';
+import type { Feature, MapDef } from '../../../../game/mapdef.ts';
 import { EAST, NORTH } from '../../../../game/types.ts';
 import { WARDEN_SLAIN } from './anvil_stone.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

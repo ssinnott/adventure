@@ -3,7 +3,7 @@
 // rookery on the west tower. Vask holds court in the throne room behind the keep's door. Before the
 // shut armoury the keep's armourer teaches the Knight's first prestige (#19). Once the Hand has Wenna
 // the Council's clerk waits at the chapel's door, and the Council sits on the case once (#764).
-import type { Answer, MapDef, Words } from '../../../../game/map.ts';
+import type { Answer, MapDef, Words } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import type { QuestCond } from '../../../../game/quests.ts';
 import { NORTH } from '../../../../game/types.ts';

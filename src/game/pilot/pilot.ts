@@ -5,7 +5,7 @@
 // closed. Which key it presses on the map is the brains' to say, each in a module of its own.
 import type { Game } from '../game.ts';
 import { ExploreScreen } from '../game.ts';
-import type { Passage } from '../map.ts';
+import type { Passage } from '../mapdef.ts';
 import { isDown } from '../party.ts';
 import type { Party } from '../party.ts';
 import type { Action } from '../../input.ts';

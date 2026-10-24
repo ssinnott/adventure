@@ -6,7 +6,7 @@
 // on under it; behind it, the lamp-keeper's own cellar. Band 24-25, from the area's floor, as Highcell's
 // upper house is; docs/areas/ashfall.md §4.7 is its brief. The Paladin's third prestige (#448) is to
 // light the lamp: asked by the old Lightbearer on F11's lip, it is lit here.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

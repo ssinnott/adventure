@@ -1,7 +1,7 @@
 // Beneath the Grove, level two: the Cut Stone. Three square rings of Underdeep corridor around
 // the Grove Stone itself. A secret door opens the second ring, a door the third, and an iron key
 // the chamber. The Hand of Ash waits at the Stone, and what its cut let through waits beside it.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import type { When } from '../../../../game/quests.ts';
 import { SOUTH } from '../../../../game/types.ts';

@@ -11,7 +11,7 @@ import { findWeather, SNOW_DRAG } from '../../src/game/weather.ts';
 import { World, WALK_STEPS, WALK_ENDS, FLOAT_ENDS, FLOAT_FAILS, START_MINUTES } from '../../src/game/world.ts';
 import { OUTDOORS } from '../../src/game/outdoors.ts';
 import { GameMap, LEGEND } from '../../src/game/map.ts';
-import type { EncounterDef, MapDef } from '../../src/game/map.ts';
+import type { EncounterDef, MapDef } from '../../src/game/mapdef.ts';
 import { NORTH, EAST, WEST } from '../../src/game/types.ts';
 import type { Facing } from '../../src/game/types.ts';
 import { MINUTES_PER_DAY } from '../../src/game/calendar.ts';

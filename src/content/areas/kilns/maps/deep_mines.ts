@@ -5,7 +5,7 @@
 // west, and east the miners' candles before a walled niche, the prayer for the dead cut over it; behind
 // it, a square shaft with iron rungs, the service ladder down. Band 16-17; docs/areas/kilns.md §4.7 is
 // its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { EAST, NORTH, WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

@@ -5,7 +5,7 @@
 // and Akkush in it; and behind the nest, found from the buckle wedged in the rock, the cleft where the
 // bird keeps what shines. Band 30-32, the cap's, out of the Glasswold's figures; docs/areas/glasswold.md
 // §12.5 is its brief (#833).
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { EAST } from '../../../../game/types.ts';
 

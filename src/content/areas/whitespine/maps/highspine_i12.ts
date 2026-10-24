@@ -11,7 +11,7 @@
 // square, the east edge is the Spine against J12, and the south edge is the range and the rim.
 // Cut from the atlas by tools/scaffold.ts, the world's end cut by hand; docs/areas/whitespine.md §4.8
 // is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

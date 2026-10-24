@@ -4,7 +4,7 @@
 import { worldGrid, mapAt, boxAt, box, TERRAINS, TI, MAP_TERRAIN } from '../../src/game/atlas.ts';
 import type { Atlas, AtlasZone, WorldGrid, WorldTerrain, Pt } from '../../src/game/atlas.ts';
 import { GameMap } from '../../src/game/map.ts';
-import type { MapDef } from '../../src/game/map.ts';
+import type { MapDef } from '../../src/game/mapdef.ts';
 import { NORTH, EAST, SOUTH, WEST } from '../../src/game/types.ts';
 import type { Facing } from '../../src/game/types.ts';
 
@@ -195,7 +195,7 @@ function notes(atlas: Atlas, laid: readonly Laid[], def: MapDef, x: number, y: n
   return out;
 }
 
-/** The draft as a map module, its notes in the header. `mapImport` is the path to src/game/map.ts from where it lands. */
+/** The draft as a map module, its notes in the header. `mapImport` is the path to src/game/mapdef.ts from where it lands. */
 export function emit(d: Draft, zoneId: string, x: number, y: number, mapImport: string, typesImport: string): string {
   const { def } = d;
   const name = def.id.toUpperCase().replace(/[^A-Z0-9]+/g, '_');

@@ -8,7 +8,7 @@
 // restored), and the tear goes quiet then; the way in stays open, so no way is shut. It is entered
 // from its tear on a zone map, a `rift` feature, which `riftWay` makes.
 import { makeRng } from '../lib/engine/rng.ts';
-import type { MapDef, MapPalette, Feature, EncounterDef, Exit } from './map.ts';
+import type { MapDef, MapPalette, Feature, EncounterDef, Exit } from './mapdef.ts';
 import { anchored } from './map.ts';
 import type { Facing } from './types.ts';
 import { FACING_DX, FACING_DY } from './types.ts';

@@ -6,7 +6,7 @@
 import type { Game } from '../game.ts';
 import { ExploreScreen } from '../game.ts';
 import type { Action } from '../../input.ts';
-import type { Exit } from '../map.ts';
+import type { Exit } from '../mapdef.ts';
 import { passableCell } from '../map.ts';
 import { partyCan, companyLevel } from '../party.ts';
 import { FACING_DX, FACING_DY, turnLeft, turnRight } from '../types.ts';

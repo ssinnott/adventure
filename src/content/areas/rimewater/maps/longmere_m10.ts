@@ -4,7 +4,7 @@
 // down off the glacier frozen white through them. The fishers' camp is on the east shore and their
 // ice-house in the bank by the burn's mouth; pike under the ice, and bears in the pines past the burn.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/rimewater.md §4.8 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

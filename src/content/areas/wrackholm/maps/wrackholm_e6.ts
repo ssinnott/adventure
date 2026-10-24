@@ -4,7 +4,7 @@
 // lookout over the water to Saltmouth; the heather moor north and east, with its cairn; the camp in
 // the lee of the south hills and the pools under them. Cut from the atlas by tools/scaffold.ts;
 // docs/areas/wrackholm.md §4.2 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH, WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

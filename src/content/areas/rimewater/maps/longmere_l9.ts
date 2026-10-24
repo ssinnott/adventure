@@ -8,7 +8,7 @@
 // across L10's corner to K10 (#497; taken, not walked, while L10 was parked). The west edge meets K9
 // (#489), where Loch Fuar begins.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/rimewater.md §4.4 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

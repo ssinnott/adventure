@@ -3,7 +3,8 @@
 // burnt den is its id in the map's `used`, as an opened chest is, and its brood's `until` reads
 // that; its look, once said, is `<id>.seen` there too. So nothing new is saved. Pure, so the tests
 // load it; world.ts runs the pace and the look, and game.ts puts the choice and says the lines.
-import type { Feature, GameMap, EncounterDef } from './map.ts';
+import type { GameMap } from './map.ts';
+import type { Feature, EncounterDef } from './mapdef.ts';
 import type { World } from './world.ts';
 import type { Party } from './party.ts';
 import { giftOf, give } from './wilds.ts';

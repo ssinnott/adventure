@@ -5,7 +5,7 @@
 // the place. Pure with respect to rendering and input; the Game drives it and reads the results.
 import type { RngInstance } from '../lib/engine/rng.ts';
 import { GameMap, DRAG } from './map.ts';
-import type { Feature, Exit, EncounterDef, Door, MapZone, Cell, Hours, Presence, Choice, Gate, MapDef } from './map.ts';
+import type { Feature, Exit, EncounterDef, Door, MapZone, Cell, Hours, Presence, Choice, Gate, MapDef } from './mapdef.ts';
 import type { Facing } from './types.ts';
 import { FACING_DX, FACING_DY, turnLeft, turnRight, turnBack, manhattan } from './types.ts';
 import { partyCan, takeItem, isDown, hasTrait, companyLevel, prestigeOf, passClock } from './party.ts';

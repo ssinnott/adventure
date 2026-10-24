@@ -3,7 +3,7 @@
 // the old groves round it, where the rootwalkers stand in rings, and behind their holly the hold's
 // first grove; the long glade down the box's east side, the road on to the head; the Wyke's shore
 // on the west. Cut from the atlas by tools/scaffold.ts; docs/areas/thornmark.md §4.4 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { SOUTH, WEST } from '../../../../game/types.ts';
 import { TEAR_CLOSED } from './grove2.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

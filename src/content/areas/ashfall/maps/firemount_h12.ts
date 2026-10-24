@@ -12,7 +12,7 @@
 // below; the south edge is the rim, past which the world ends.
 // Cut from the atlas by tools/scaffold.ts, the world's end cut by hand; docs/areas/ashfall.md §4.10 is its
 // brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

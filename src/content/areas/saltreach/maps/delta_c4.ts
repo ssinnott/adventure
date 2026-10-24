@@ -4,7 +4,7 @@
 // a shoal by the ford, the grass east under Kestrel Edge and a bull toad in the fields' drain. The
 // barge's crew is the first that breaks when its master falls. Cut from the atlas by
 // tools/scaffold.ts; docs/areas/saltreach.md §4.3 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { NORTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

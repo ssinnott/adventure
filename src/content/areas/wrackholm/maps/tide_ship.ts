@@ -3,7 +3,7 @@
 // the foremast and the bow; the waist, where devilfish come over the side by night with a bowman on
 // the rail (MONSTERS §6.2); the main hatch down; the helm aft. Band 12-13, floored at the area's 12
 // as Kelp Hole's levels are; docs/areas/wrackholm.md §4.5 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { EAST, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

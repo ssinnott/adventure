@@ -5,7 +5,7 @@
 // so that no climber off the road comes down on it from M3's side.
 // Cut from the atlas by hand, its rim's pine drawn as forest and the void at its corner as mountain;
 // docs/areas/sunderwood.md §4.9 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { EAST, NORTH } from '../../../../game/types.ts';
 import { CRACK_SEALED } from '../../hearth/public.ts';

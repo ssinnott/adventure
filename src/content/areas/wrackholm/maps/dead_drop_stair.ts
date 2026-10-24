@@ -2,7 +2,7 @@
 // way back up, and at its far end, 4,1, the way on down into the drop (dead_drop, #22). It holds no group
 // and no chest; the sign is the warning, not a wall (EXPANSION §5.2). docs/areas/wrackholm.md §4.5 is its
 // brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 

@@ -6,7 +6,7 @@
 // the cellars. Husks stand in the street between the well and the square. Behind a wall south of the broken
 // kiln, found by a cup set down clean, a room the ash never filled and a scholar in it, the Master of magic
 // (#859). Band 25-26, the boss the top; docs/areas/ashfall.md §4.7 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

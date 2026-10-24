@@ -10,7 +10,7 @@
 // which a bar of ice on row 30 joins to the rest; the south edge meets L9's ice, sand and pines square
 // for square (docs/areas/cairnmoor.md §9, #834's 11 to 14).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/cairnmoor.md §12.4 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { EAST, WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

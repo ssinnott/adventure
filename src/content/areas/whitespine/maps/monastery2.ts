@@ -4,7 +4,7 @@
 // have worn in the floor; behind it, through the wall, the undercroft: the monks of Highcell in their
 // niches, every niche filled, and the last one's lip cut with a count in Kiln-script that ends on
 // eleven, and the monks' things laid by. Band 23-24; docs/areas/whitespine.md §4.3 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

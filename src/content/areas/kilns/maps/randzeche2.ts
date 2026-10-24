@@ -4,7 +4,7 @@
 // Steiger, the knockers' overseer, the lair's guardian at 32 (MONSTERS §13). Past it, at the face, the
 // smith who went down for more sits against the rock with his kist, and the Erzhemd in it (#846). Band
 // 30-32; docs/areas/kilns.md §12.8 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 

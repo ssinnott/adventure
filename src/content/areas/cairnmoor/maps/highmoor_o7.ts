@@ -5,7 +5,7 @@
 // its shore, where the piper teaches the Bard's second; the marsh at the tarn's head, and the hills
 // rising south-east to the first tor.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/cairnmoor.md §4.3 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { EAST } from '../../../../game/types.ts';
 import { RING_SPOKE } from '../chapter.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

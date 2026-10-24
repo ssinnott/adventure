@@ -4,7 +4,7 @@
 // from that ground to their shieling under the pines; the drovers' store lies in the knoll behind a
 // rock face, and a worm pair under the hills by the range.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §4.15 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

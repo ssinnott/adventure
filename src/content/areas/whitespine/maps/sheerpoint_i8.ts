@@ -12,7 +12,7 @@
 // pines and shallows at 2 to 6 meet square for square; the same zone, so nothing is said. North and
 // west the world ends in the sea; the east edge meets J8's west (#832) square for square.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/whitespine.md §4.7 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { NORTH } from '../../../../game/types.ts';
 import { WENNA_LODGE } from '../../rimewater/public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

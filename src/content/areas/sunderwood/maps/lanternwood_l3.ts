@@ -4,7 +4,7 @@
 // the Watch called its people up out of the depths, keeps the light and teaches the Cleric's second
 // prestige (#19). Its west edge stands closed against K3; it opens north to L2 and south to L4.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/sunderwood.md §4.10 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { CRACK_SEALED } from '../../hearth/public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

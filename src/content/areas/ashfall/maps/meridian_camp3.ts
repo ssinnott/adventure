@@ -8,7 +8,7 @@
 // its end the inspector before the door to the service ways, which opens for nobody. Once the Stone is lit a
 // sentry is on the stair, going up. Band 26, the area's top, its gallery at 28; docs/areas/meridian_camp.md
 // §4.3 is its brief.
-import type { Choice, MapDef } from '../../../../game/map.ts';
+import type { Choice, MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { ENDED } from '../../../endings.ts';

@@ -5,7 +5,7 @@
 // goes off to the worm's hollow, and the tube winds on north. The two ways meet in the north tube,
 // whose floor drops away steeply down to the deep tubes. Band 16-17; docs/areas/kilns.md §4.11 is its
 // brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

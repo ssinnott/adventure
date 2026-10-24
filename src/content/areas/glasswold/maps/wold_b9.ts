@@ -11,7 +11,7 @@
 // and along the south; C9, east, is not built.
 // The atlas's glass inside the box is the mesa and the rim's foot: the Glass is past the box's edge.
 // Cut from the atlas by hand (tools/scaffold.ts refuses its glass); docs/areas/glasswold.md §4.8 is its brief (#530).
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

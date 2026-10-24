@@ -11,7 +11,7 @@
 // a shelf is cut down the rock, the way into Kushdag, the artifact's lair (#845, #847); at the hills over
 // D8, 8,30, the diggers' cut into Karaordu, the enclave (#845). Cut from the atlas by tools/scaffold.ts;
 // docs/areas/glasswold.md §12 is its brief (#833).
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
