@@ -6,70 +6,46 @@
 // --frames n lays each monster out as a strip of n idle frames instead (the last one the hit flash
 // when --flash is given). --family imports only that module in src/ui/monsters/, so one family can
 // be checked while another is mid-edit and does not parse; it draws the kinds that module's SPRITES registers.
-import fs from 'node:fs';
-import { createRequire } from 'node:module';
 import { createServer } from './server.ts';
+import { open, type Load } from './kit/browser.ts';
+import { read, GALLERY } from './kit/args.ts';
 
-const require = createRequire(import.meta.url);
-const args = process.argv.slice(2);
-const out = args.find((a) => !a.startsWith('--')) ?? 'gallery.png';
-const opt = (name: string): string | undefined => { const i = args.indexOf('--' + name); return i >= 0 ? args[i + 1] : undefined; };
-const only = opt('only')?.split(',').filter(Boolean) ?? [];
-const family = opt('family');
-const scale = Number(opt('scale') ?? 2);
-const frames = Number(opt('frames') ?? 0);
-const flash = args.includes('--flash');
-const tone = Number(opt('tone') ?? 1);
-
-function loadPlaywright(): any {
-  for (const c of ['/opt/node22/lib/node_modules/playwright', '/usr/lib/node_modules/playwright', 'playwright', 'playwright-core']) {
-    try { return require(c); } catch { /* next */ }
-  }
-  throw new Error('Playwright not found');
-}
-async function launch(chromium: any): Promise<any> {
-  try { return await chromium.launch(); }
-  catch (e) {
-    const exe = process.env.PLAYWRIGHT_CHROMIUM || '/opt/pw-browsers/chromium';
-    if (fs.existsSync(exe)) return chromium.launch({ executablePath: exe });
-    throw e;
-  }
-}
+const { out = 'gallery.png', opts, switches } = read(GALLERY);
+const only = opts.only?.split(',').filter(Boolean) ?? [];
+const family = opts.family;
+const scale = Number(opts.scale ?? 2);
+const frames = Number(opts.frames ?? 0);
+const flash = switches.has('flash');
+const tone = Number(opts.tone ?? 1);
 
 const server = createServer();
 await new Promise<void>((r) => server.listen(0, () => r()));
 const port = (server.address() as { port: number }).port;
-const { chromium } = loadPlaywright();
-const browser = await launch(chromium);
-const page = await browser.newPage({ viewport: { width: 1280, height: 720 }, deviceScaleFactor: 1 });
-const errors: string[] = [];
-page.on('pageerror', (e: Error) => errors.push(e.message));
-await page.goto(`http://localhost:${port}/`, { waitUntil: 'load' });
-await page.waitForFunction(() => (window as any).__game?.ready === true, null, { timeout: 15000 });
+const { browser, page, errors } = await open(port);
 
 const size = await page.evaluate(async (o: { only: string[]; family?: string; scale: number; frames: number; flash: boolean; tone: number }) => {
   // Served by the dev server, resolved by the browser: opaque to the typechecker on purpose.
-  const load = (p: string): Promise<any> => import(p);
-  const M = await load('/src/content/index.ts');
-  const T = await load('/src/lib/engine/text.ts');
-  const S = await load('/src/ui/sprites.ts');
+  const load: Load = (p) => import(p);
+  const M = await load<typeof import('../src/content/index.ts')>('/src/content/index.ts');
+  const T = await load<typeof import('../src/lib/engine/text.ts')>('/src/lib/engine/text.ts');
+  const S = await load<typeof import('../src/ui/sprites.ts')>('/src/ui/sprites.ts');
   // Through the dispatcher normally; straight into one family module when asked.
-  let draw: (ctx: CanvasRenderingContext2D, kind: string, x: number, y: number, h: number, tint: string, tone: number, frame: number, flash: boolean) => void;
+  let draw: (ctx: CanvasRenderingContext2D, kind: Parameters<typeof S.drawMonsterSprite>[1], x: number, y: number, h: number, tint: string, tone: number, frame: number, flash: boolean) => void;
   let kinds: string[] | null = null;
   if (o.family) {
-    const F = await load(`/src/ui/monsters/${o.family}.ts`);
-    const C = await load('/src/ui/monsters/common.ts');
+    const F = await load<{ SPRITES: Readonly<Record<string, unknown>>; draw(ctx: CanvasRenderingContext2D, kind: string, x: number, y: number, h: number, paint: unknown): void }>(`/src/ui/monsters/${o.family}.ts`);
+    const C = await load<typeof import('../src/ui/monsters/common.ts')>('/src/ui/monsters/common.ts');
     kinds = Object.keys(F.SPRITES);
     draw = (ctx, kind, x, y, h, tint, tone, frame, flash) => { C.B.flash(flash); F.draw(ctx, kind, x, y, h, C.paintFor(tint, tone, frame)); C.B.flash(false); };
   } else {
     draw = S.drawMonsterSprite;
   }
-  const defs = (Object.values(M.MONSTERS) as any[]).filter((d) => (o.only.length ? o.only.includes(d.sprite) : true) && (kinds ? kinds.includes(d.sprite) : true));
+  const defs = Object.values(M.MONSTERS).filter((d) => (o.only.length ? o.only.includes(d.sprite) : true) && (kinds ? kinds.includes(d.sprite) : true));
   const s = o.scale;
   // The combat screen's own sizing, so a gallery cell is exactly what a fight shows; a group of
   // three is the common case. The viewport draws u * 2 * size with u = 134 * 0.9 / (d + 0.5).
-  const combat = (d: any) => S.combatHeight(d.size, 3);
-  const view = (d: any, depth: number) => (134 * 0.9 / (depth + 0.5)) * 2 * d.size;
+  const combat = (d: (typeof defs)[number]) => S.combatHeight(d.size, 3);
+  const view = (d: (typeof defs)[number], depth: number) => (134 * 0.9 / (depth + 0.5)) * 2 * d.size;
   const strip = o.frames > 0;
   const cols = strip ? 1 : Math.min(7, Math.max(1, defs.length));
   // A cell: caption, the combat-size drawing scaled, then an unscaled strip of the viewport sizes.
@@ -128,7 +104,7 @@ const size = await page.evaluate(async (o: { only: string[]; family?: string; sc
 await page.setViewportSize({ width: Math.max(100, size.w), height: Math.max(100, size.h) });
 await page.waitForTimeout(80);
 const el = await page.$('#gallery');
-await el.screenshot({ path: out });
+await el!.screenshot({ path: out });
 await browser.close(); server.close();
 if (errors.length) { console.error(errors.join('\n')); process.exit(1); }
 console.log(`wrote ${out} (${size.n} monsters, ${size.w}x${size.h})`);

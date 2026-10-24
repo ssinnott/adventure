@@ -1056,7 +1056,10 @@ as a strip of idle frames ending in the hit flash, for judging an art pass.
 renders the businesses' interiors as the viewport shows them, at an hour of the day and a frame of
 what moves.
 `node tools/worldmap.ts out.png [--zones] [--scale 1] [--at map,x,y,facing]` paints the whole world
-map as M does, and with `--zones` the zone overlay over it.
+map as M does, and with `--zones` the zone overlay over it. The gallery, the interiors and the world
+map read their flags as the sheet does (`tools/kit/args.ts`, #986): a misspelt flag, a second output
+path or a flag given twice or with no value stops with the tool's usage line and draws nothing,
+where a misspelt flag once drew the default.
 `node tools/sheet.ts out.png --area thornmark` (or `--maps`, `--monsters` and `--interiors` with ids)
 makes a pull request's contact sheet: each map from its arrivals and, outdoors, its sites, by day
 and by night (a dungeon once, lit), with the automap revealed and its crop of the world map; each
