@@ -15,13 +15,15 @@ import { INTERIORS } from './interiors.ts';
 import { QUESTS } from './quests.ts';
 import { CHAPTER } from './chapter.ts';
 
+export const MAPS = [HEARTHISLE_H6, HEARTHISLE_I6, HEARTHFANE, HEARTHFANE2, UNDERDEEP, UNDERDEEP2, CORE] as const;
+
 export const AREA = {
   id: 'hearth' as const,
   // In road order: the isle, where the last crossing grounds (#753); its east rim, Anchorhold and the
   // Hand's Steps (#754); the temple at the column's foot (#755); its crypt, down the stair behind the
   // altar (#756); the Ways, through the crypt's grey door (#757); the Stair, through the Ways' last door
   // (#758); the Heart, through the Stair's last door (#759).
-  maps: [HEARTHISLE_H6, HEARTHISLE_I6, HEARTHFANE, HEARTHFANE2, UNDERDEEP, UNDERDEEP2, CORE],
+  maps: MAPS,
   // Drawn ahead of the area (#761), and placed from the isle on: the hearth moth, the ashen champion and
   // preacher and the deep rat first (#753).
   monsters: MONSTERS,

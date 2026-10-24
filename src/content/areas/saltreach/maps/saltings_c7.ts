@@ -10,7 +10,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const SALTINGS_C7: MapDef = {
+export const SALTINGS_C7: MapDef<'saltings_c7'> = {
   id: 'saltings_c7',
   name: 'The Saltings',
   kind: 'outdoor',

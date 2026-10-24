@@ -11,7 +11,7 @@ import { SOUTH } from '../../../../game/types.ts';
 import { CRACK_SEALED } from '../../hearth/public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const THE_SUNDER2: MapDef = {
+export const THE_SUNDER2: MapDef<'the_sunder2'> = {
   id: 'the_sunder2',
   name: 'The Sunder\'s Floor',
   kind: 'dungeon',

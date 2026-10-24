@@ -33,7 +33,7 @@ export const GATE: Exit = anchored({ x: 26, y: 24, to: 'monastery', at: 'start',
  */
 export const VIGIL_ASKED = 'q_vigil', VIGIL_KEPT = 'q_vigil_kept';
 
-export const MONKSVALE_J11: MapDef = {
+export const MONKSVALE_J11: MapDef<'monksvale_j11'> = {
   id: 'monksvale_j11',
   name: 'Monks\' Vale',
   kind: 'outdoor',

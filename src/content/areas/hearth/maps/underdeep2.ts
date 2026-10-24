@@ -39,7 +39,7 @@ const CAPTAIN: readonly (readonly [string, readonly string[]])[] = [
   [TOKEN_TALLIS, ['Compact hands on the landing, a dozen, the Hand\'s rearguard dead at their feet and their packs already open. Their master looks at the tally-stick.', '"Tallis\'s. Then we\'ve been paid to hold this for you, and we have. What comes up out of that door with you is his, mind: the ring most of all. He said so. He said you\'d know what he meant."']],
 ];
 
-export const UNDERDEEP2: MapDef = {
+export const UNDERDEEP2: MapDef<'underdeep2'> = {
   id: 'underdeep2',
   name: 'The Stair',
   kind: 'dungeon',

@@ -23,10 +23,10 @@ export const labelOf = (lane: Lane): string => `lane: ${lane}`;
 export type Place = { lane: Lane; area?: string } | { lane: null; why: string };
 
 /**
- * The area docs not named for the folder of the area they belong to: a place's doc, in the area it
- * lies in (the Dead-Drop under Wrackholm's Tide Ship, Meridian Camp down Ashfall's vents, Hearth
- * Isle). tools/tests/lanes.ts holds each to an area of AREAS; a doc named for a place and not listed
- * here reads as an area of its own name, which tells nothing wrong of its lane.
+ * The area docs not named for the folder of the area they belong to: a place's doc, and the folder
+ * beside it, in the area it lies in (the Dead-Drop under Wrackholm's Tide Ship, Meridian Camp down
+ * Ashfall's vents, Hearth Isle). tools/tests/lanes.ts holds each to an area of AREAS; a doc named for
+ * a place and not listed here reads as an area of its own name, which tells nothing wrong of its lane.
  */
 const DOC_AREA: Readonly<Record<string, string>> = { hearth_isle: 'hearth', dead_drop: 'wrackholm', meridian_camp: 'ashfall' };
 
@@ -40,9 +40,11 @@ const design = (): Place => ({ lane: 'design' });
  * all in src/game/.
  */
 const TABLE: readonly (readonly [RegExp, (m: RegExpExecArray) => Place])[] = [
-  // An area's own: its folder (maps, monsters, items, quests, walkthrough and its shipped.json) and its doc.
+  // An area's own: its folder (maps, monsters, items, quests, walkthrough and its shipped.json) and its doc, with the
+  // doc's folder beside it, its decisions and its plan (EXPANSION §8.2, #1011).
   [/^src\/content\/areas\/([^/]+)\//, (m) => ({ lane: 'area', area: m[1] })],
   [/^docs\/areas\/([^/]+)\.md$/, (m) => ({ lane: 'area', area: DOC_AREA[m[1]] ?? m[1] })],
+  [/^docs\/areas\/([^/]+)\//, (m) => ({ lane: 'area', area: DOC_AREA[m[1]] ?? m[1] })],
   // The art modules, a lane each, but for the kits the families and the rooms paint with, which are systems' (EXPANSION
   // §8.1, #983), as the paint kit, src/ui/paint/, is with the rest of src/ui/.
   [/^src\/ui\/(monsters|interiors)\/kit\//, systems],

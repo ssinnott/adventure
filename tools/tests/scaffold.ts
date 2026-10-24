@@ -81,6 +81,8 @@ export async function scaffold(): Promise<void> {
   ok(def.rows.length === SIZE && def.rows.every((r) => r.length === SIZE), `the draft as written is ${SIZE} by ${SIZE}`);
   const band = zone.band ?? atlas.areas.find((a) => a.id === zone.area)?.band;
   ok(def.id === zone.id && def.name === zone.name && def.kind === 'outdoor' && def.density === 'country' && def.band?.join('-') === band?.join('-') && def.region === 'shelf', `it takes the zone's id, name and band, the Foreland's region, and is country (${def.name}, ${def.band?.join('-')}, ${def.density})`);
+  // Declared `: MapDef` and listed in its area's MAPS, a draft would make MapId wait on itself (#994).
+  ok(new RegExp(`^export const \\w+: MapDef<'${def.id}'> = \\{$`, 'm').test(emit(d, 'downs', AT[0], AT[1], 'map.ts', 'types.ts')), `its map is declared with its id, MapDef<'${def.id}'>, as MapId asks`);
   const has = (t: 'hills' | 'farm' | 'forest' | 'road'): boolean => (d.counts[t] ?? 0) > 0;
   ok(has('hills') && has('farm') && has('forest') && has('road'), `its hills, farmland, forest and road come through (${['hills', 'farm', 'forest', 'road'].map((t) => `${t} ${d.counts[t as 'hills'] ?? 0}`).join(', ')})`);
 

@@ -10,7 +10,7 @@ import { EAST } from '../../../../game/types.ts';
 import { RING_SPOKE } from '../chapter.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const HIGHMOOR_O7: MapDef = {
+export const HIGHMOOR_O7: MapDef<'highmoor_o7'> = {
   id: 'highmoor_o7',
   name: 'High Moor',
   kind: 'outdoor',

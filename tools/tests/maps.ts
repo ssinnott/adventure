@@ -11,7 +11,7 @@ import { CURVE, trainerCeiling } from '../../src/content/progression.ts';
 import { giftOf, spentId } from '../../src/game/wilds.ts';
 import { handIns, personFlags, personGives, groupFlags } from '../../src/game/people.ts';
 import { areaRows, gather, once, unknownFields } from '../kit/checks.ts';
-import { ok, owed, stopsWalk } from './lib.ts';
+import { ok, owed, stopsWalk, fxMap } from './lib.ts';
 
 /**
  * What is drawn before the map that places it, owed by its area to the issue whose map places it
@@ -235,7 +235,7 @@ export function maps(): void {
   const unset = unsetGates(MAP_DEFS);
   ok(!unset.length, `every gated exit's flag is set by some person, group or event${unset.length ? ' -> ' + unset.join('; ') : ''}`);
   { // The rule on a fixture (#749): a flag a group's fall or an event sets counts, one nothing sets fails.
-    const fx = (more: Partial<MapDef>): MapDef => ({ id: 'fx_gated', name: 'Fixture', kind: 'dungeon', start: { x: 1, y: 1, facing: NORTH }, rows: ['#####', '#...#', '#####'], exits: [{ x: 3, y: 1, to: 'fx_gated', tx: 1, ty: 1, needFlag: 'fx_flag' }], ...more });
+    const fx = (more: Partial<MapDef>): MapDef => ({ id: 'fx_gated', name: 'Fixture', kind: 'dungeon', start: { x: 1, y: 1, facing: NORTH }, rows: ['#####', '#...#', '#####'], exits: [{ x: 3, y: 1, to: fxMap('fx_gated'), tx: 1, ty: 1, needFlag: 'fx_flag' }], ...more });
     ok(!unsetGates([fx({ encounters: [{ id: 'fx_g', x: 2, y: 1, monsters: ['rat'], sets: 'fx_flag' }] })]).length, 'a gated exit whose flag a group\'s fall sets passes');
     ok(!unsetGates([fx({ features: [{ kind: 'event', x: 2, y: 1, id: 'fx_e', text: 'Hm.', sets: 'fx_flag' }] })]).length, 'and so does one whose flag an event sets');
     ok(unsetGates([fx({})]).length === 1, 'and one whose flag nothing sets fails');
@@ -358,17 +358,17 @@ export function maps(): void {
     ok(want.every((w) => cutOff.includes(w)), `flats that cut a spit off, catch a group and lie with no dry ground beside them are caught (${cutOff.join('; ')})`);
     // A start or a landing on the flats is caught; the far side of the flats, reached by a way in of
     // its own, is not cut off.
-    const wet = faultsOf(def('fx_shore', ['MMMMMM', 'M;,;,M', 'MMMMMM']), [def('fx_quay', ['MMM', 'M,M', 'MMM'], { exits: [{ x: 1, y: 1, to: 'fx_shore', tx: 3, ty: 1 }] })]);
-    const landed = faultsOf(def('fx_shore', ['MMMMMMM', 'M,,;,,M', 'MMMMMMM'], { features: [{ kind: 'sign', x: 5, y: 1, text: 'A post.' }] }), [def('fx_quay', ['MMM', 'M,M', 'MMM'], { exits: [{ x: 1, y: 1, to: 'fx_shore', tx: 5, ty: 1 }] })]);
+    const wet = faultsOf(def('fx_shore', ['MMMMMM', 'M;,;,M', 'MMMMMM']), [def('fx_quay', ['MMM', 'M,M', 'MMM'], { exits: [{ x: 1, y: 1, to: fxMap('fx_shore'), tx: 3, ty: 1 }] })]);
+    const landed = faultsOf(def('fx_shore', ['MMMMMMM', 'M,,;,,M', 'MMMMMMM'], { features: [{ kind: 'sign', x: 5, y: 1, text: 'A post.' }] }), [def('fx_quay', ['MMM', 'M,M', 'MMM'], { exits: [{ x: 1, y: 1, to: fxMap('fx_shore'), tx: 5, ty: 1 }] })]);
     ok(wet.includes('the start at 1,1 is on tidal ground') && wet.includes('the landing from fx_quay at 3,1 is on tidal ground') && landed.length === 0, `a start or a landing on the flats is caught, and the far side reached by its own way in passes (${[...wet, ...landed].join('; ') || 'nothing'})`);
     // The same spit with a dry way round it passes. A stair over the flats passes if its place is
     // reached from this map at high water another way (here through a town), and fails if not.
     const round = faultsOf(def('fx_shore', ['MMMMMMM', 'M,;,,WM', 'M,,,,WM', 'MMMMMMM'], { features: [{ kind: 'sign', x: 3, y: 1, text: 'A post.' }] }));
     const shore = (exits: MapDef['exits']): MapDef => def('fx_shore', ['MMMMMM', 'M,;,WM', 'M,MMMM'], { exits });
-    const stairOnly = [{ x: 3, y: 1, to: 'fx_cellar', tx: 1, ty: 1 }], gate = { x: 1, y: 2, to: 'fx_town', tx: 1, ty: 1 };
-    const town = def('fx_town', ['MMM', 'M,M', 'MMM'], { kind: 'town', exits: [{ x: 1, y: 1, to: 'fx_cellar', tx: 1, ty: 1 }] }), cellar = def('fx_cellar', ['MMM', 'M,M', 'MMM'], { kind: 'dungeon' });
+    const stairOnly = [{ x: 3, y: 1, to: fxMap('fx_cellar'), tx: 1, ty: 1 }], gate = { x: 1, y: 2, to: fxMap('fx_town'), tx: 1, ty: 1 };
+    const town = def('fx_town', ['MMM', 'M,M', 'MMM'], { kind: 'town', exits: [{ x: 1, y: 1, to: fxMap('fx_cellar'), tx: 1, ty: 1 }] }), cellar = def('fx_cellar', ['MMM', 'M,M', 'MMM'], { kind: 'dungeon' });
     const stair = faultsOf(shore([...stairOnly, gate]), [town, cellar]);
-    const only = faultsOf(shore(stairOnly), [cellar, def('fx_far', ['MMM', 'M,M', 'MMM'], { exits: [{ x: 1, y: 1, to: 'fx_cellar', tx: 1, ty: 1 }] })]);
+    const only = faultsOf(shore(stairOnly), [cellar, def('fx_far', ['MMM', 'M,M', 'MMM'], { exits: [{ x: 1, y: 1, to: fxMap('fx_cellar'), tx: 1, ty: 1 }] })]);
     ok(round.length === 0 && stair.length === 0 && only.join() === 'the exit to fx_cellar at 3,1 is cut off at high water', `a dry way round passes, and so does a stair over the flats whose place this map reaches at high water through a town, but not one whose place only some other map reaches (${[...round, ...stair, ...only].join('; ') || 'nothing'})`);
   }
   // The second landmark kind (#736): a monastery inside its block passes, and its map gives it back by

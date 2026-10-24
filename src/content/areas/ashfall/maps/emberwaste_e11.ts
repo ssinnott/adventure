@@ -18,7 +18,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const EMBERWASTE_E11: MapDef = {
+export const EMBERWASTE_E11: MapDef<'emberwaste_e11'> = {
   id: 'emberwaste_e11',
   name: 'The Ember Waste',
   kind: 'outdoor',

@@ -33,7 +33,7 @@ export const CRATER: Exit = anchored({ x: 19, y: 4, to: 'old_cinder', at: 'start
  */
 export const STONE: Exit = anchored({ x: 8, y: 24, to: 'ember_stone', at: 'start', label: 'You go down into the Stone between the uprights, by a stair its builders left.' });
 
-export const EMBERWASTE_F11: MapDef = {
+export const EMBERWASTE_F11: MapDef<'emberwaste_f11'> = {
   id: 'emberwaste_f11',
   name: 'The Ember Waste',
   kind: 'outdoor',

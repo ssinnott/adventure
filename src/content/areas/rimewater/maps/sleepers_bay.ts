@@ -10,7 +10,7 @@ import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const SLEEPERS_BAY: MapDef = {
+export const SLEEPERS_BAY: MapDef<'sleepers_bay'> = {
   id: 'sleepers_bay',
   name: 'Under Loch Fuar',
   kind: 'dungeon',

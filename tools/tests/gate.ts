@@ -222,7 +222,7 @@ type Fought = MapDef & { band: [number, number] };
  */
 export function gateMaps(area: Pick<Area, 'maps' | 'outside'>, bosses: readonly string[]): { fought: Fought[]; own: (d: MapDef) => boolean; pooled: Fought[]; daily: EncounterDef[] } {
   const fought = area.maps.map(beforeBehind).filter((d): d is Fought => !!d.encounters?.length && !!d.band);
-  const outside = new Set(area.outside ?? []), own = (d: MapDef): boolean => outside.has(d.id) || !!d.enclave;
+  const outside = new Set<string>(area.outside ?? []), own = (d: MapDef): boolean => outside.has(d.id) || !!d.enclave;
   const pooled = fought.filter((d) => !own(d));
   return { fought, own, pooled, daily: pooled.flatMap((d) => d.encounters!.filter((g) => !bosses.includes(`${d.id}:${g.id}`))) };
 }

@@ -10,7 +10,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const KILNMOUTH_L7: MapDef = {
+export const KILNMOUTH_L7: MapDef<'kilnmouth_l7'> = {
   id: 'kilnmouth_l7',
   name: 'Kilnmouth',
   kind: 'outdoor',

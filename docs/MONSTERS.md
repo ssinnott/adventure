@@ -2,7 +2,7 @@
 
 *What the company fights down the road, area by area, and what each thing it fights tells it about
 the world. DESIGN.md says what happens and STORY.md how it should feel; this is the creature half of
-every area's brief (EXPANSION.md §8.2), to be carried into `docs/areas/<area>.md` as each area is
+every area's brief (EXPANSION.md §8.2), to be carried into the area's plan as each area is
 built. It is a draft, to take in or leave: where it and DESIGN.md disagree, the design wins. Figures
 are measured on this branch at `5092f9c`.*
 

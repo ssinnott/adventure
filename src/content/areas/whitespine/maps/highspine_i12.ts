@@ -15,7 +15,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const HIGHSPINE_I12: MapDef = {
+export const HIGHSPINE_I12: MapDef<'highspine_i12'> = {
   id: 'highspine_i12',
   name: 'The High Spine',
   kind: 'outdoor',

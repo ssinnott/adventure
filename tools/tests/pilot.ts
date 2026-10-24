@@ -27,7 +27,7 @@ import { ChoiceScreen, InteriorScreen } from '../../src/ui/screens.ts';
 import { randomParty } from '../../src/game/party.ts';
 import { CLASSES, RACES, companyLevel } from '../../src/game/party.ts';
 import type { RaceId } from '../../src/game/party.ts';
-import { ok } from './lib.ts';
+import { ok, fxMap } from './lib.ts';
 import { headlessGame, drive } from '../kit/headless.ts';
 import { keep, need, needs, better, reserve, spare } from '../../src/game/pilot/keep.ts';
 import type { Need } from '../../src/game/pilot/keep.ts';
@@ -52,7 +52,7 @@ import type { Sees } from '../../src/game/bot.ts';
 import { weary, caster, FOOD_RESTS } from '../../src/game/pilot/keep.ts';
 import { searches } from '../../src/game/pilot/route.ts';
 import { holds } from '../../src/game/quests.ts';
-import { pilotRun } from '../walk.ts';
+import { pilotRun } from '../kit/walk.ts';
 import { play } from '../kit/rules/fullrun.ts';
 import { startCombat, currentTurn, monsterAct } from '../../src/game/combat.ts';
 import { answers, TRIES, NO_ANSWER } from '../../src/game/pilot/talk.ts';
@@ -101,8 +101,8 @@ export function pilot(): void {
  */
 function enclaves(): void {
   const hollow: MapDef = { id: 'fx_hollow', name: 'Hollow', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#...#', '#####'],
-    exits: [{ x: 3, y: 1, to: LAIR.id, tx: LAIR.start.x, ty: LAIR.start.y, tf: NORTH }] };
-  const lair: MapDef = { ...LAIR, exits: [{ x: 16, y: 31, to: hollow.id, tx: 2, ty: 1, tf: WEST }] };
+    exits: [{ x: 3, y: 1, to: fxMap(LAIR.id), tx: LAIR.start.x, ty: LAIR.start.y, tf: NORTH }] };
+  const lair: MapDef = { ...LAIR, exits: [{ x: 16, y: 31, to: fxMap(hollow.id), tx: 2, ty: 1, tf: WEST }] };
   const game = (level: number, seen?: readonly (readonly [number, number])[]): Game => {
     const g = piloted();
     g.maps[lair.id] = new GameMap(lair);
@@ -128,10 +128,10 @@ function enclaves(): void {
   // A lair of two levels: only the way in is shut, so a company under its floor handed the helm on
   // the lower level routes out by the upper, and from beyond it still has no way in.
   const lower: MapDef = { id: 'fx_lower', name: 'Lower', kind: 'dungeon', band: [30, 32], enclave: true, start: { x: 2, y: 1, facing: EAST }, rows: ['#####', '#...#', '#####'],
-    exits: [{ x: 1, y: 1, to: 'fx_upper', tx: 4, ty: 1, tf: WEST }] };
+    exits: [{ x: 1, y: 1, to: fxMap('fx_upper'), tx: 4, ty: 1, tf: WEST }] };
   const upper: MapDef = { ...lower, id: 'fx_upper', name: 'Upper', rows: ['#######', '#.....#', '#######'],
-    exits: [{ x: 1, y: 1, to: 'fx_above', tx: 2, ty: 1, tf: WEST }, { x: 5, y: 1, to: lower.id, tx: 2, ty: 1, tf: EAST }] };
-  const above: MapDef = { ...hollow, id: 'fx_above', exits: [{ x: 3, y: 1, to: upper.id, tx: 2, ty: 1, tf: EAST }] };
+    exits: [{ x: 1, y: 1, to: fxMap('fx_above'), tx: 2, ty: 1, tf: WEST }, { x: 5, y: 1, to: fxMap(lower.id), tx: 2, ty: 1, tf: EAST }] };
+  const above: MapDef = { ...hollow, id: 'fx_above', exits: [{ x: 3, y: 1, to: fxMap(upper.id), tx: 2, ty: 1, tf: EAST }] };
   const deep = piloted();
   for (const d of [above, upper, lower]) fixture(deep, d, [d.start.x, d.start.y, EAST]);
   for (const m of deep.party.members) m.level = 12;
@@ -935,9 +935,9 @@ function walking(): void {
 
   // A goal on an exit's square (#720's may be): the step that takes the exit reaches it, and the way back is left alone.
   const e = piloted(), ep = e.pilot!;
-  e.maps.fx_room = new GameMap({ id: 'fx_room', name: 'Room', kind: 'dungeon', start: { x: 2, y: 1, facing: EAST }, rows: ['#####', '#...#', '#####'], exits: [{ x: 1, y: 1, to: 'fx_hall', tx: 2, ty: 1, tf: WEST }] });
+  e.maps.fx_room = new GameMap({ id: 'fx_room', name: 'Room', kind: 'dungeon', start: { x: 2, y: 1, facing: EAST }, rows: ['#####', '#...#', '#####'], exits: [{ x: 1, y: 1, to: fxMap('fx_hall'), tx: 2, ty: 1, tf: WEST }] });
   e.world.ensureMapState('fx_room').explored.fill(-1);
-  fixture(e, { id: 'fx_hall', name: 'Hall', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#...#', '#####'], exits: [{ x: 3, y: 1, to: 'fx_room', tx: 2, ty: 1, tf: EAST }] }, [1, 1, EAST]);
+  fixture(e, { id: 'fx_hall', name: 'Hall', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#...#', '#####'], exits: [{ x: 3, y: 1, to: fxMap('fx_room'), tx: 2, ty: 1, tf: EAST }] }, [1, 1, EAST]);
   ep.toggle(e);
   ep.brains = [route];
   ep.goal = { map: 'fx_hall', x: 3, y: 1, name: 'the far door' };
@@ -1560,7 +1560,7 @@ function survives(): void {
   const kg = piloted(), kp = kg.pilot!;
   kg.maps.fx_keep = new GameMap({ id: 'fx_keep', name: 'Keep', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#...#', '#####'] });
   fixture(kg, { id: 'fx_town', name: 'Town', kind: 'town', region: 'shelf', start: { x: 2, y: 1, facing: WEST }, rows: ['#########', '#.......#', '#########'],
-    exits: [{ x: 1, y: 1, to: OUTDOORS, tx: 216, ty: 34 }, { x: 7, y: 1, to: 'fx_keep', tx: 1, ty: 1 }] }, [2, 1, WEST]);
+    exits: [{ x: 1, y: 1, to: fxMap(OUTDOORS), tx: 216, ty: 34 }, { x: 7, y: 1, to: fxMap('fx_keep'), tx: 1, ty: 1 }] }, [2, 1, WEST]);
   kp.brains = [aims];
   kp.toggle(kg);
   const chosen: string[] = [];

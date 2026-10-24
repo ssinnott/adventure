@@ -23,7 +23,8 @@
 import type { Atlas, WorldGrid, WorldTerrain } from './atlas.ts';
 import { mapAt, zoneOfMap, TERRAINS } from './atlas.ts';
 import { VOID_CH } from './map.ts';
-import type { MapDef, MapZone, Exit, Feature, EncounterDef, Gate, Cell, Landmark } from './map.ts';
+import type { MapDef, MapZone, Exit, Feature, EncounterDef, Gate, Cell, Landmark, PlayedDef } from './map.ts';
+import type { MapId } from '../content/index.ts';
 
 /** The outdoors' map id. */
 export const OUTDOORS = 'caldera';
@@ -54,7 +55,7 @@ interface Laid { def: MapDef; x: number; y: number; w: number; h: number }
  * a save keeps state under (a feature's or a monster group's). Given the atlas's grid (`worldGrid`
  * of the same atlas and defs), the void is given its looks; without it, it is the bare void.
  */
-export function layOutdoors(atlas: Atlas, defs: readonly MapDef[], grid?: WorldGrid): MapDef[] {
+export function layOutdoors(atlas: Atlas, defs: readonly MapDef[], grid?: WorldGrid): PlayedDef[] {
   const W = atlas.width, H = atlas.height;
   const laid: Laid[] = [];
   for (const def of defs) {
@@ -100,7 +101,7 @@ export function layOutdoors(atlas: Atlas, defs: readonly MapDef[], grid?: WorldG
     const l = byId.get(e.to);
     return l ? { ...e, to: OUTDOORS, tx: e.tx + l.x, ty: e.ty + l.y } : e;
   };
-  const exits: Exit[] = [], features: Feature[] = [], encounters: EncounterDef[] = [], gates: Gate[] = [], landmarks: Landmark[] = [];
+  const exits: Exit<MapId | typeof OUTDOORS>[] = [], features: Feature[] = [], encounters: EncounterDef[] = [], gates: Gate[] = [], landmarks: Landmark[] = [];
   const legend: Record<string, Partial<Cell>> = {};
   const enter = new Map<string, Record<string, string>>();
   const used = new Set<string>(), groups = new Set<string>();
@@ -141,7 +142,7 @@ export function layOutdoors(atlas: Atlas, defs: readonly MapDef[], grid?: WorldG
     };
   });
   const first = laid[0];
-  const outdoors: MapDef = {
+  const outdoors: PlayedDef = {
     id: OUTDOORS,
     name: 'Caldera',
     kind: 'outdoor',
@@ -151,7 +152,7 @@ export function layOutdoors(atlas: Atlas, defs: readonly MapDef[], grid?: WorldG
     start: { ...first.def.start, x: first.def.start.x + first.x, y: first.def.start.y + first.y },
     exits, features, encounters, gates, zones, landmarks,
   };
-  const out: MapDef[] = [];
+  const out: PlayedDef[] = [];
   for (const d of defs) {
     if (byId.has(d.id)) { if (d === first.def) out.push(outdoors); continue; }
     out.push({ ...d, exits: d.exits?.map(lead), features: d.features?.map((f) => (f.kind === 'rift' ? lead(f) : f)) });

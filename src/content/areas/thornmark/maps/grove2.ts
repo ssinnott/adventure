@@ -10,7 +10,7 @@ import { RESPAWN } from '../../../../game/keys.ts';
 /** The tear closing, the Warden of the Cut's death: past it the Rift that came through stops coming back. */
 export const TEAR_CLOSED: When = { slain: 'grove2:g2_warden' };
 
-export const GROVE2: MapDef = {
+export const GROVE2: MapDef<'grove2'> = {
   id: 'grove2',
   name: 'The Cut Stone',
   kind: 'dungeon',

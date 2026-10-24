@@ -13,7 +13,7 @@ const NIGHT = { hours: 'night' } as const;
 /** The freed on deck with Hale, from his freeing in the hold until he is told where they go (#192). */
 const WAITING = { after: { flag: 'q_hale_freed' }, until: [{ flag: 'q_column_saltmouth' }, { flag: 'q_column_road' }] } as const;
 
-export const TIDE_SHIP: MapDef = {
+export const TIDE_SHIP: MapDef<'tide_ship'> = {
   id: 'tide_ship',
   name: 'The Tide Ship',
   kind: 'dungeon',

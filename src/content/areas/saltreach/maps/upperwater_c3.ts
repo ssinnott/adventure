@@ -17,7 +17,7 @@ const STONE_HOME: QuestCond = { flag: 'q_tide_home' };
 /** What brings the glass people to her window ends: the light gone from it, or gone out. */
 const LIGHT_GONE = [LIGHT_TAKEN, STONE_HOME];
 
-export const UPPERWATER_C3: MapDef = {
+export const UPPERWATER_C3: MapDef<'upperwater_c3'> = {
   id: 'upperwater_c3',
   name: 'The Upper Water',
   kind: 'outdoor',

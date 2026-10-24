@@ -70,7 +70,7 @@ const sat = (carry: readonly QuestCond[], verdict: string, text: string): Words[
   { after: both(carry, IRONS), sets: [verdict, THRONE_REMOVED, LATE], lines: [`${text} Vask stands before the Council in irons.`] },
 ];
 
-export const KEEP: MapDef = {
+export const KEEP: MapDef<'keep'> = {
   id: 'keep',
   name: 'The Keep',
   kind: 'town',

@@ -11,7 +11,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 
-export const WRACKHOLM_E5: MapDef = {
+export const WRACKHOLM_E5: MapDef<'wrackholm_e5'> = {
   id: 'wrackholm_e5',
   name: 'Wrackholm',
   kind: 'outdoor',

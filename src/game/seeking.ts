@@ -9,12 +9,13 @@ import type { Party } from './party.ts';
 import type { QuestDef, LogQuest, When, QuestView } from './quests.ts';
 import { PRESTIGES, PRESTIGE_LEVELS } from './party.ts';
 import { seekId } from './keys.ts';
+import type { MapId } from '../content/index.ts';
 
 /** A placed trainer: the map they stand on, what the log calls the place, their name and what they teach. */
-export interface Trainer { map: string; place: string; name: string; teaches: Teaching }
+export interface Trainer { map: MapId; place: string; name: string; teaches: Teaching }
 
 /** Every person who teaches a prestige, on the maps as written. */
-export function trainersIn(defs: readonly MapDef[]): Trainer[] {
+export function trainersIn(defs: readonly MapDef<MapId>[]): Trainer[] {
   return defs.flatMap((d) => (d.features ?? []).flatMap((f) => (f.kind === 'npc' && f.teaches ? [{ map: d.id, place: d.name, name: f.name, teaches: f.teaches }] : [])));
 }
 

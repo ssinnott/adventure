@@ -8,7 +8,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import { anchored } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 
-export const RANDZECHE2: MapDef = {
+export const RANDZECHE2: MapDef<'randzeche2'> = {
   id: 'randzeche2',
   name: 'The Dark Seam',
   kind: 'dungeon',

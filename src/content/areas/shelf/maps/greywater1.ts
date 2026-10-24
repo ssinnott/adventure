@@ -7,7 +7,7 @@ import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const GREYWATER1: MapDef = {
+export const GREYWATER1: MapDef<'greywater1'> = {
   id: 'greywater1',
   name: 'Brandy Hole',
   kind: 'dungeon',

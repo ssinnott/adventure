@@ -14,7 +14,7 @@ import { TEAR_CLOSED } from './grove2.ts';
 /** The owls' roost burnt: its brood stops coming. */
 const ROOST_BURNT = denBurnt('deepthorn_i5', 'i5_roost');
 
-export const DEEPTHORN_I5: MapDef = {
+export const DEEPTHORN_I5: MapDef<'deepthorn_i5'> = {
   id: 'deepthorn_i5',
   name: 'The Deepthorn',
   kind: 'outdoor',

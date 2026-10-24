@@ -20,7 +20,7 @@ import { wrap, columnLabelWidth } from '../../src/ui/draw.ts';
 import { measureText as measure } from '../../src/lib/engine/text.ts';
 import { SAY_W, SAY_LINES, ASK_LINES, ASK_SIDE_LINES, SIDE_W } from '../../src/ui/frame.ts';
 import { onAutomap } from '../../src/game/ink.ts';
-import { ok, withDefs } from './lib.ts';
+import { ok, withDefs, fxKey, fxMap } from './lib.ts';
 
 /** The three hand-ins of Act I, by the item each takes. */
 const THREE = ['survey_wand', 'greywater_ledger', 'ashen_chisel'];
@@ -292,7 +292,7 @@ function fixtures(fresh: () => { party: Party; world: World }, all: readonly { m
     // Words name real things: their conditions pass the log's check, and one naming a flag nobody sets fails it.
     const wordsConds = (p: Person) => (p.says ?? []).flatMap((w) => [w.after, w.until].filter((c) => c !== undefined));
     for (const { map, p } of all) { const bad = wordsConds(p).flatMap((c) => condFaults(c)); ok(!bad.length, `${map} ${p.x},${p.y}: every words' condition names something real${bad.length ? ' -> ' + bad.join(', ') : ''}`); }
-    const loose: Person = { ...captain, says: [{ after: { flag: 'fx_nobody' }, until: { seen: 'fx_town:nothing' }, lines: ['"Hm."'] }] };
+    const loose: Person = { ...captain, says: [{ after: { flag: 'fx_nobody' }, until: { seen: fxKey('fx_town:nothing') }, lines: ['"Hm."'] }] };
     ok(!wordsConds(captain).flatMap((c) => condFaults(c, [town])).length && condFaults(wordsConds(loose)[0], [{ ...town, features: [loose] }]).length === 1 && condFaults(wordsConds(loose)[1], [town]).length === 1,
       "the captain's words name his answers' flags, and words after a flag nobody sets, or until an event there is not, fail");
 
@@ -418,7 +418,7 @@ function presence(): void {
 function shut(): void {
   const def: MapDef = {
     id: 'fx_gate', name: 'Fixture', kind: 'town', region: 'shelf', start: { x: 1, y: 1, facing: NORTH }, rows: ['#####', '#,,,#', '#####'],
-    exits: [{ x: 3, y: 1, to: 'fx_gate', tx: 1, ty: 1, shut: { flag: 'fx_shut', member: { race: 'orcblood' } }, lifts: [{ flag: 'fx_ended' }, { flag: 'fx_removed' }], blockedText: 'No orcblood past the gate.' }],
+    exits: [{ x: 3, y: 1, to: fxMap('fx_gate'), tx: 1, ty: 1, shut: { flag: 'fx_shut', member: { race: 'orcblood' } }, lifts: [{ flag: 'fx_ended' }, { flag: 'fx_removed' }], blockedText: 'No orcblood past the gate.' }],
     features: [
       { kind: 'temple', x: 1, y: 1, name: 'The Chapel', interior: 'lantern_chapel', until: { flag: 'fx_shut' } },
       { kind: 'inn', x: 2, y: 1, name: 'The Inn', price: 12, interior: 'hearthlight_inn', until: { flag: 'fx_shut' } },
@@ -445,7 +445,7 @@ function shut(): void {
   ok(lifted === 'moved' && again === 'No orcblood past the gate.', `the shut is over while its lifts holds, and the gate shuts again once it stops (${lifted}, ${again})`);
   const door: MapDef = {
     id: 'fx_door', name: 'Fixture', kind: 'dungeon', region: 'shelf', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#...#', '#####'],
-    exits: [{ x: 3, y: 1, to: 'fx_gate', tx: 1, ty: 1, after: [{ flag: 'fx_open' }, { flag: 'fx_closed' }] }],
+    exits: [{ x: 3, y: 1, to: fxMap('fx_gate'), tx: 1, ty: 1, after: [{ flag: 'fx_open' }, { flag: 'fx_closed' }] }],
   };
   const deep = new World({ fx_door: new GameMap(door), fx_gate: new GameMap(def) }, party, rng);
   const step = (): string => { deep.travel('fx_door', 2, 1, EAST); deep.move('forward'); return `${deep.state.mapId} ${deep.state.x},${deep.state.y} ${deep.there(door.exits![0]) ? 'there' : 'not'}`; };

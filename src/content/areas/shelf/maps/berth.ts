@@ -9,7 +9,7 @@ import { WEST } from '../../../../game/types.ts';
 
 const GUARD = ['barrow_guard', 'barrow_guard'];
 
-export const BERTH: MapDef = {
+export const BERTH: MapDef<'berth'> = {
   id: 'berth',
   name: 'The Berth',
   kind: 'dungeon',

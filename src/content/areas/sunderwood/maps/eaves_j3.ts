@@ -12,7 +12,7 @@ import { denBurnt, RESPAWN } from '../../../../game/keys.ts';
 /** The den burnt: its brood stops coming. */
 const DEN_BURNT = denBurnt('eaves_j3', 'j3_den');
 
-export const EAVES_J3: MapDef = {
+export const EAVES_J3: MapDef<'eaves_j3'> = {
   id: 'eaves_j3',
   name: 'The Bears\' Wood',
   kind: 'outdoor',

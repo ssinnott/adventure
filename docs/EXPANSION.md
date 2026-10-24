@@ -224,8 +224,9 @@ parts, which shuts nothing before it (#443, call 2; #450). Act V spends one, the
 - Its xp and gold sit on the curve (§5.2).
 - Its climate, terrain and palette exist.
 - It says what is new in it (§5.4), and that checks out.
-- `docs/areas/<area>.md` says what is there, where the secrets and their hints are, and what was
-  cut.
+- Its doc says what is there and where the secrets and their hints are: `docs/areas/<area>.md`, its
+  current state, with a row to each map and its secret and hint, and beside it in its folder,
+  `docs/areas/<area>/`, its decisions and its plan, what was cut among it (§8.2).
 - Old saves load, and nothing they refer to has moved (§5.5).
 - The owner has played it.
 
@@ -939,7 +940,9 @@ src/content/
     walkthrough.ts          its end-to-end test
 src/ui/monsters/<family>.ts             each exports its sprite kinds
 src/ui/interiors/<area>/<business>.ts   a scene to a file; the trade helpers shared
-docs/areas/<area>.md                    the area's brief, and what was built
+docs/areas/<area>.md                    the area's current state, 250 lines at most (§8.2)
+docs/areas/<area>/decisions.md          its decisions, appended to and never rewritten
+docs/areas/<area>/plan.md               its briefs, what was cut and what the state does not keep
 ```
 
 - The `MonsterSprite`, `Interior` and `RegionId` unions are derived from the registries
@@ -996,7 +999,7 @@ there, where repetition is the design, rather than on the map.
 | Lane | Touches | At once |
 |---|---|---|
 | Systems | `src/game/`, `src/ui/` outside the art modules, the kits (`src/ui/paint/`, `src/ui/monsters/kit/`, `src/ui/interiors/kit/`), the save format, the shape of the registries | one |
-| Area | `src/content/areas/<area>/`, `docs/areas/<area>.md` | one per area in flight |
+| Area | `src/content/areas/<area>/`, `docs/areas/<area>.md` and its folder, `docs/areas/<area>/` | one per area in flight |
 | Creatures | `src/ui/monsters/<family>.ts` | one per family |
 | Interiors | `src/ui/interiors/<area>/` | one per area |
 | Quality | `tools/`, CI, this contract | one |
@@ -1031,9 +1034,9 @@ Decided by the builder for #900, each the owner's to overturn:
 5. **The keys are the plan's:** L2 the items (`items.ts`, `party.ts`, `skills.ts`), L3 the monsters
    and spells, L4 the guilds and ranks, L5 the climates, stones, endings and `quests.ts` (its
    `MAP_DEFS` goes with the atlas, the last table); L6 the pilot's; L7 `game.ts`'s and the screens'
-   imports of `src/input.ts`; K8 a walkthrough taking another, and the walkthroughs' and three
-   suites' `tools/walk.ts`, keyed K7 until #984 cleared K7's others. L8 and L9 hold none: `src/game`
-   takes a screen only in the pilot and `game.ts`.
+   imports of `src/input.ts`; H8 a walkthrough taking another's chain (`STEPS`, and Saltreach's
+   two orders of play), keyed K8 until #985 moved `tools/walk.ts` into the kit. L8 and L9 hold
+   none: `src/game` takes a screen only in the pilot and `game.ts`.
 6. **One cycle is left, and the plan keys none:** `items.ts` takes `skills.ts` (`skilled`, #879),
    `skills.ts` takes `party.ts` and `party.ts` takes `items.ts`. Its row is keyed `split`, the big
    modules split that takes `party.ts` apart. The `dens.ts` cycle is gone (#918).
@@ -1054,7 +1057,8 @@ Decided by the builder for #899, each the owner's to overturn:
    The area lane is one label, `lane: area`, with the area named beside it in the report:
    `src/content/areas/<area>/` (its `shipped.json` with it) and `docs/areas/<name>.md`, three of
    which are named for a place and not their area (`hearth_isle` is Hearth's, `dead_drop`
-   Wrackholm's and `meridian_camp` Ashfall's).
+   Wrackholm's and `meridian_camp` Ashfall's). Since #1011 the folder beside a doc,
+   `docs/areas/<name>/`, falls where the doc does.
 2. **The save format needs no line of its own:** `SAVE_VERSION`, the upgrades and the save keys all
    stand in `src/game/`, which is systems already. The central `src/content/shipped.json`, what a
    save may refer to that no area owns, is quality's, as the issue says.
@@ -1078,10 +1082,10 @@ Decided by the builder for #899, each the owner's to overturn:
    and the report to the lines it must write.
 8. **The library is the kit's, the command a thin tool:** the layers check (#900) lets a suite take
    `src` and `tools/kit/` and not a tool, so the table, `laneOf`, the report and the reading of the
-   diff and the event are `tools/kit/lanes.ts`, the kit's first file (#984, K7, filled the folder;
-   it imports `node:` modules alone, which the check does not follow), and `tools/lanes.ts` is the
-   command line that takes it. The job and the docs still name `node tools/lanes.ts`, and no `KNOWN`
-   row is added.
+   diff and the event are `tools/kit/lanes.ts`, the kit's first file (#984, K7, filled the folder,
+   and #985 put the walk in it). It imports `node:` modules alone, which the check does not follow,
+   and `tools/lanes.ts` is the command line that takes it. The job and the docs still name
+   `node tools/lanes.ts`, and no `KNOWN` row is added.
 
 The kit holds what the walkthroughs and the suites take, as #984 filled it: the fight once
 (`fight.ts`: `playOut`, `ROUND_CAP`, the gate's bot, its fight, its win rate and their memo), the
@@ -1091,6 +1095,13 @@ premade company and its ladder (`company.ts`), the test monster's line (`line.ts
 suite) and the libraries of `checks`, `grounds`, `ways`, `shipped`, `changed` and `scaffold`.
 `tools/gate.ts` and `tools/harness.ts` are command lines over it and import nothing of each other;
 `roadPlace` is `src/game/atlas.ts`'s, beside `areaBand`.
+
+#985 put the walk in it: `walk.ts`, the walk the walkthroughs and three suites take and, once, the
+helpers the walkthroughs wrote each for itself (meeting, answering, searching, opening a chest,
+reading a quest's page, setting the clock), and `grid.ts` beside it, the floods and tests over a
+map's squares (`reach`, `shut`, `reached`, `spread`, `paces`, `apartFrom`, a box's `row` and `col`)
+and `ALL`. The chain a later chapter replays (`STEPS`, `FARM_FIRST`, Saltreach's `inOrder` and
+`saltmouthFirst`) stays in its walkthrough, H8's: the kit takes no walkthrough.
 
 Decided by the builder for #984, each the owner's to overturn:
 
@@ -1122,6 +1133,46 @@ Decided by the builder for #984, each the owner's to overturn:
    lines, so #985 can move it whole; its 15 rows are keyed `K8`.
 10. **The import lines were rewritten by a script,** `tools/rehome.ts`, committed first and deleted
     last, as #968's sweep was.
+
+Decided by the builder for #985, each the owner's to overturn:
+
+1. **The helpers are `walk.ts`'s, the floods `grid.ts`'s:** each flood takes the map it floods (a
+   walkthrough's `out`) first, and `ALL` is the grid's.
+2. **What a copy took from its scope, the kit's takes as an argument:** the walk (`search`, `here`,
+   `keys`), the outdoors, the chapter (`written`, `goalOf`) or the box; each call passes it.
+3. **Where copies differed, the kit's covers them in the words each check said:** `answerTo` takes
+   what the answer sets (null: nothing) or `{ label }`, and `whole` for the four that named a person
+   in full; `open` takes 'map:id', what a chest found open does (`'check'`, `'skip'`, `'any'`) and
+   whether the log is heard; `reads` goes by the title of the quest's first page (the five handed a
+   title were handed that one); `there` and `shows` place a feature on the map it is written on, as
+   Thornmark's and Sunderwood's `shows` did, where the rest placed it on the map the company stood
+   on: the same at every call.
+4. **A `reach` along a predicate is `spread`, one counting steps `paces`:** Ashfall's two and
+   Whitespine's are the first, Cairnmoor's, Rimewater's and the Kilns' `steps` the second.
+5. **A variant that does another thing stays, under a name of its own** (`afoot`, `loot`, `sight`
+   and the rest, each listed in #985's pull request with what it does).
+6. **`FARM_FIRST`, `inOrder` and `saltmouthFirst` stay:** they replay the chain, which the kit could
+   hold only by taking three walkthroughs. `HIRE`, `hired` and `ledgerGiven` come in; the row
+   `wrackholm > saltreach` stays, and H8 holds eight rows, not seven.
+7. **Counted again on the head, `here` has three bodies and `keys` and `hour` one:** the position
+   and the two move, and so does every other body two walkthroughs wrote alike under one name, and
+   those alike but for the map, box or chest they read where the kit holds the general one (`at` as
+   `here`, `clock`, `hour`, `walkAt` or `square`; `business` as `ofKind`; `chestOf` as `chest`).
+   What two still declare is listed in #985's pull request with why.
+8. **The count reads columns 0 and 2, as the issue's did:** the lairs' `flood`s at column 4 stay;
+   Hearth's `written` there, a quest's entries by id, is `entered`, as Ashfall's is.
+9. **A script made the edits,** `tools/rehome.ts`, committed first and deleted last; its `--prune`
+   dropped the imports they left unused (the base's three stand). Five edits are by hand: Hearth's
+   deeper `written`, Glasswold's two comments and its local `Can`, Cairnmoor's `road` and
+   Whitespine's `keeperLog`.
+10. **Six bodies are still written in two walkthroughs, each one but for a type, a `!` or the walk
+    it reads:** `group` by 'map:id' (Ashfall's and Sunderwood's), `person` on a map given
+    (Cairnmoor's, Rimewater's and Whitespine's `personOn`), `feature` on a map given (Ashfall's and
+    Glasswold's three), `cross` (Ashfall's and Glasswold's), a box's square stood on (Ashfall's
+    `at`, Cairnmoor's `standsIn`) and a meeting's words with the log not heard (Ashfall's `say`, the
+    Kilns' `says`, Sunderwood's and Shelf's `talk`). With the families alike but for the map or box
+    they read (the box tests `on` gives, the events `ev` finds, the squares `square` keys) they go
+    into the kit with the scenes (#1018, #1033), which rewrite every walkthrough.
 
 The paint kit, `src/ui/paint/`, is what every drawing in `src/ui` paints with; it, the monsters' kit
 (`src/ui/monsters/kit/`) and the rooms' (`src/ui/interiors/kit/`) are the systems lane's, as
@@ -1201,8 +1252,9 @@ Decided by the builder for #986, each the owner's to overturn:
 
 ### 8.2 The recipe for a zone map
 
-1. **Brief**, in `docs/areas/<area>.md`: purpose, band, landmarks, the secret and its hint, the
-   encounters, what is new.
+1. **Brief**, in the area's plan, `docs/areas/<area>/plan.md` (the area's doc, below; its §4 until
+   D3 moves it): purpose, band, landmarks, the secret and its hint, the encounters, what is new;
+   its "As built" once built.
 2. **Scaffold.** Every outdoor map is one box of the grid the Foreland and Thornmark sit on: 32
    squares a side, its corner at x = 8 + 32i and y = −2 + 32j, cut to the world at its edges, and
    named as the old maps were, by its column's letter and its row's number (the Foreland is G2). A
@@ -1211,7 +1263,8 @@ Decided by the builder for #986, each the owner's to overturn:
    (#993). `tools/scaffold.ts <zone> <x> <y>`, built in Phase 0, cuts the atlas's
    terrain for a box into a draft map, so the land walked matches the land painted. A prototype,
    tried on the Downs west of the Foreland, gave in a second a wood, the hills and the road, and 14
-   of its 32 rows nothing but grass: the part to be authored.
+   of its 32 rows nothing but grass: the part to be authored. The draft is declared with its id
+   (`MapDef<'highmoor_n7'>`) and listed in its area's `MAPS`, as every map is (#994).
 3. **Author**: landmarks, features, groups, the secret, the ways in and out; dress the terrain. An
    exit lands on a named anchor of the map it leads to, `at: 'from_cairns'`, never on its squares:
    that map holds its anchors after its `start`, which is one, each named for the way in (#993).
@@ -1244,15 +1297,17 @@ An area's dungeons may exit only to its own region's maps, or to the outdoors on
 so its zone map lands with or before its first dungeon (`tools/tests/weather.ts:125` holds it).
 
 **A new area starts in `AREAS`** (`src/content/index.ts`), from its first commit: its folder, its line
-there, its row in the atlas's `areas` charted as the plan charts an area (`src/content/atlas.ts`: made
-of zones, reached from the start, its step and its band rising on the road of levels, which the atlas
-suite and the curve read) and its row in `CURVE`, with `maps: []` and `chapter: undefined` until its
-first map (the typecheck reads `chapter` on every area) and what its clear falls short of owed in its
-`checks.ts` (`owes.curve`) until it pays. Its monsters, rooms and items are merged from the start, so nothing
-waits in a list of its own ahead of its area (the `AHEAD` lists and `PLANNED` are gone, #897), and
-the suites take what is built: an area with no map is asked for no chapter, walkthrough, claim of
-what is new or step of the one quest, and once it has a map each zone it charts holds a step; a
-monster or a room no map places yet is owed in `owes.unplaced`. What the suites hold of an area is the area's: what describes one zone, group,
+there and its `MAPS` in `AreaMaps` beside it (each map declared with its id, `MapDef<'cairns'>`, so
+that `MapId` names it, #994), its row in the atlas's `areas` charted as the plan charts an area
+(`src/content/atlas.ts`: made of zones, reached from the start, its step and its band rising on the
+road of levels, which the atlas suite and the curve read) and its row in `CURVE`, with `MAPS` empty
+and `chapter: undefined` until its first map (the typecheck reads `chapter` on every area) and what
+its clear falls short of owed in its `checks.ts` (`owes.curve`) until it pays. Its monsters, rooms
+and items are merged from the start, so nothing waits in a list of its own ahead of its area (the
+`AHEAD` lists and `PLANNED` are gone, #897), and the suites take what is built: an area with no map
+is asked for no chapter, walkthrough, claim of what is new or step of the one quest, and once it has
+a map each zone it charts holds a step; a monster or a room no map places yet is owed in
+`owes.unplaced`. What the suites hold of an area is the area's: what describes one zone, group,
 monster or exit is a field of it (`AtlasZone.road`, `reach` and `maxGroup`, `EncounterDef.boss`,
 `MonsterDef.offLine`, `Exit.crosses`), and what is the area's own and no part of the game, what it
 owes, its rungs of the ladder, its lead over the road, its seams as built and its edges open on
@@ -1276,6 +1331,44 @@ eleven and every `guilds.ts` one of six, and the layers suite refuses a loop. So
 another area's chapter from `THE_QUEST.chapters` by its id. Every area has one; a new area has one
 once another takes something from it, and a flag another area needs that `public.ts` lacks is one
 line there, added by the box that needs it and said in its pull request.
+
+**The area's doc is three files** (#1011). `docs/areas/<area>.md` is its current state, 250 lines at
+most, which a session reads first: its ids, where it is (§1), what it is for (§2), what is built, a
+row to each map with its id, kind and band, what is there and its secret with its hint (§3), the
+chapter and the side quests a line each (§5, §6), the numbers that hold (§8), the names (§10) and
+what is open and owed. It keeps the old numbers and headings of what it holds, and its first lines
+say which file holds each old section it does not. Beside it are its decisions and its plan. The
+decisions, `docs/areas/<area>/decisions.md`, hold the old §9 and every "Decided by" list, in order:
+a builder adds a list at the end, and a later decision that changes an earlier one says which; an
+earlier one is not edited, bar a plain slip the pull request that finds it says it mended. The plan,
+`docs/areas/<area>/plan.md`, holds the old §4, §11 and §12 whole, then under "Moved from the state"
+the lines of the state sections the state does not keep; a new box's brief goes there first, with
+its "As built" once it is built. A doc is moved, never rewritten: `node tools/docmove.ts` finds each
+line of the old among the new files as many times as it stood, and each of its paragraphs whole in
+one of them, in their old order there; `tools/tests/areadocs.ts` holds the shape. The Foreland's
+moved first, to `docs/areas/shelf/plan.md` and `docs/areas/shelf/decisions.md`; the other thirteen
+are owed to D3, and the suite lists them on every run.
+
+Decided by the builder for #1011, each the owner's to overturn:
+
+1. **The state holds what a session needs and no history:** the index, then §1 in words (zones,
+   bands, edges), §2 and §10 whole, §3's table, §5 to §8 a paragraph or a line each and "Open and
+   owed" last, unnumbered so the old numbers keep their meaning. Every figure in it is re-read on
+   the head from the suites' lines; the old lines stand in the plan as they were written.
+2. **A row says its secret as the door's squares, what it is, then the hint's squares and id**
+   (`4,7: a cold draught at 4,6 (mill_draught)`), as `secrets` and the hint's feature hold them, so
+   the row is found again in the map's file; a map with none says so.
+3. **The header's moved lines open "Moved from the state" with no heading,** as they had none but
+   the title; every other part stands under the heading it had, repeated where the state keeps it.
+4. **The proof holds paragraphs as well as lines:** a paragraph (a run of lines, broken at each
+   heading, list item and table row; a fenced block whole) stands whole and in order in one new
+   file, its blank lines where they were, and each file holds a section's paragraphs in their old
+   order, since every line found does not show that none was split or reordered. A line is
+   compared whole, its spaces and all.
+5. **The lanes line takes the doc's folder whole,** any file in it, as an area's content folder is
+   taken, through `DOC_AREA` for a place's doc.
+6. **The owed docs are named, and their lines read as they stand** each run, so no area's pull
+   request leaves the figure stale; the issue's count on `ea34c3ad` is in its pull request.
 
 Decided by the builder for #897, each the owner's to overturn:
 
@@ -1416,6 +1509,31 @@ Decided by the builder for #993, each the owner's to overturn:
    name their boxes (`laid(PLAN, 'shelf', 'G2')`). A box the grid lacks throws as the area loads.
 7. **The fixtures stand in the structure suite**, which holds the grid already, beside its line
    holding every exit of the areas to an anchor: no suite of their own and no snapshot.
+
+Decided by the builder for #994, each the owner's to overturn:
+
+1. **Each map's id is literal where it is declared**, `MapDef<'cairns'>` (191 maps) and
+   `Rift<'c5_rift'>` (5), in place of the keyed record: the smaller diff, as the record changes
+   every reader of `Area.maps`. The id is `MapDef`'s parameter, not `as const` under
+   `satisfies MapDef`: a map's type inferred from its literal would wait on `MapId`, which its exits
+   name.
+2. **`MapId` is made of each area's `MAPS`**, not of `AREAS`: an area's literal names maps
+   (`outside`), so a union made of the areas would wait on itself. `LISTED` fails the typecheck if
+   an area's maps are left out of `AreaMaps`, and `NARROW` if the union widens.
+3. **A map as played is `PlayedDef`**, whose exits name the outdoors too (`MapDef`'s second
+   parameter), and the world's exit as it steps is `Exit<string>`, as it takes a Rift's tear and a
+   crossing sold. `MAP_DEFS` is `MapDef<MapId>[]`.
+4. **A rift's `to` and `Passage.to` stay strings**: each costs more than a line, as `riftWay` makes
+   a tear of any Rift (the samples' too) and `sells` a passage of a crossing's ends, which name
+   their places by strings. A Rift's `out.to` takes `MapId`.
+5. **A fixture's map goes through `fxMap` or `fxKey`** (`tools/tests/lib.ts`), a string handed on as
+   a map's id or key: each map no area has is marked where a suite names it, and so are a map a
+   check holds as a string (`denFaults`' map, the outdoors) and a key the game must refuse.
+6. **The Rift samples' `until` goes through `wardenFallen`** (`src/game/rifts.ts`), the one
+   assertion outside the suites: a sample's id is no map the areas list, and no file of
+   `src/content` takes a cast.
+7. **A built `seen` or `slain` goes through `mapKey(map, id)`** (`src/game/keys.ts`), which
+   `denBurnt` uses; a condition kept in a const takes `satisfies When` (seven).
 
 ### 8.3 Pull requests
 

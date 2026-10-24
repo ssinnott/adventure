@@ -11,7 +11,7 @@ import { RESPAWN } from '../../../../game/keys.ts';
 /** Passage Paid (#56's 22) answered either way: the shoal barge's master is gone off his shoal. */
 const PASSAGE_DONE = [{ flag: 'q_passage_freed' }, { flag: 'q_passage_owed' }];
 
-export const DELTA_C4: MapDef = {
+export const DELTA_C4: MapDef<'delta_c4'> = {
   id: 'delta_c4',
   name: 'The Delta',
   kind: 'outdoor',

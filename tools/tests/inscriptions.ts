@@ -21,7 +21,7 @@ import { NORTH } from '../../src/game/types.ts';
 import { readerOf, readMarks, signLine, readLine, markLine, isInscription, marksOf, readId } from '../../src/game/inscriptions.ts';
 import { ATLAS, MAP_DEFS, ITEMS } from '../../src/content/index.ts';
 import { CONTENT, collect, compare } from '../kit/shipped.ts';
-import { ok, withDefs } from './lib.ts';
+import { ok, withDefs, fxMap, fxKey } from './lib.ts';
 
 const STORE = 'Cut over the wall, the dwarves\' words for plenty.', BREATH = 'The dwarves\' words for the mountain\'s breath.';
 
@@ -84,7 +84,7 @@ export function inscriptions(): void {
     const idris = party.members[1], flags = JSON.stringify(party.flags);
     const said = stand(world, 2, 1);
     ok(readerOf(party) === idris && said.join(' / ') === [signLine(STORE), readLine('Idris', 'STORE.')].join(' / '), `a dwarf reads it, after its words ("${said.join(' / ')}")`);
-    ok(world.used('fx_store') && holds({ seen: 'fixture_kiln:fx_store' }, world.state, party), 'and it is kept read by its id, which a quest condition\'s seen names');
+    ok(world.used('fx_store') && holds({ seen: fxKey('fixture_kiln:fx_store') }, world.state, party), 'and it is kept read by its id, which a quest condition\'s seen names');
     // Never the road: a reading sets no flag, opens no door and moves nobody, and its secret door stays to be found.
     ok(JSON.stringify(party.flags) === flags && !Object.keys(world.mapState.doors).length && world.map.at(3, 2).door === 'secret' && world.state.x === 2 && world.state.y === 1,
       'a reading sets no flag, changes no door and moves nobody: the door it hints at is found by a search, as any is');
@@ -148,8 +148,8 @@ export function inscriptions(): void {
     ok(broken({ features: [{ kind: 'sign', x: 2, y: 1, id: 'fx_store', text: STORE, read: 'STORE.', marks: 'nowhere' }] }).length === 1, 'and a mark that names no atlas place');
     // A way that waits on a reading, in each of the three ways it can: an exit's `shut`, its `lifts`
     // and its `after`, then a gate's three together, each said in its own words.
-    const read = { seen: 'fixture_kiln:fx_store' }, way = 'fixture_kiln: the way at 5,3';
-    const exit = (e: Partial<Exit>): string[] => broken({ exits: [{ x: 5, y: 3, to: 'fixture_kiln', tx: 1, ty: 1, ...e }] });
+    const read = { seen: fxKey('fixture_kiln:fx_store') }, way = 'fixture_kiln: the way at 5,3';
+    const exit = (e: Partial<Exit>): string[] => broken({ exits: [{ x: 5, y: 3, to: fxMap('fixture_kiln'), tx: 1, ty: 1, ...e }] });
     ok(exit({ shut: read }).join() === `${way} is shut by the reading of fixture_kiln:fx_store`, 'and a way that a reading shuts');
     ok(exit({ shut: { flag: 'fx_bar' }, lifts: read }).join() === `${way} is opened by the reading of fixture_kiln:fx_store`, 'and one that a reading opens (its `lifts`)');
     ok(exit({ after: [{ flag: 'fx_bar' }, read] }).join() === `${way} is no way until the reading of fixture_kiln:fx_store`, 'and one that is no way until a reading (its `after`)');

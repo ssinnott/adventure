@@ -8,7 +8,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const LONGMERE_M10: MapDef = {
+export const LONGMERE_M10: MapDef<'longmere_m10'> = {
   id: 'longmere_m10',
   name: 'Loch Fada',
   kind: 'outdoor',

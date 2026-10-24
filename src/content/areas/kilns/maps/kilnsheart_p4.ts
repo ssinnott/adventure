@@ -8,7 +8,7 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST } from '../../../../game/types.ts';
 
-export const KILNSHEART_P4: MapDef = {
+export const KILNSHEART_P4: MapDef<'kilnsheart_p4'> = {
   id: 'kilnsheart_p4',
   name: 'The Kilns',
   kind: 'outdoor',

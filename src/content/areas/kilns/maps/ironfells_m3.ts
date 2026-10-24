@@ -10,7 +10,7 @@ import { anchored } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const IRONFELLS_M3: MapDef = {
+export const IRONFELLS_M3: MapDef<'ironfells_m3'> = {
   id: 'ironfells_m3',
   name: 'The Iron Fells',
   kind: 'outdoor',

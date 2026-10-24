@@ -9,7 +9,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import { anchored } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 
-export const GRIMS_HOWE: MapDef = {
+export const GRIMS_HOWE: MapDef<'grims_howe'> = {
   id: 'grims_howe',
   name: 'Grim\'s Howe',
   kind: 'dungeon',

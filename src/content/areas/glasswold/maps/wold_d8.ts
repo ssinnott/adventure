@@ -39,7 +39,7 @@ const BOW_RUMOUR = [
 /** The Foal-taker fallen in Kushdag (#833): it comes for foals no more, so the eldest says the two lines no more. */
 const FOAL_DOWN = 'kushdag:kd_foal_taker';
 
-export const WOLD_D8: MapDef = {
+export const WOLD_D8: MapDef<'wold_d8'> = {
   id: 'wold_d8',
   name: 'The Wold',
   kind: 'outdoor',

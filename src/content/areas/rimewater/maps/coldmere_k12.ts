@@ -16,7 +16,7 @@ import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const COLDMERE_K12: MapDef = {
+export const COLDMERE_K12: MapDef<'coldmere_k12'> = {
   id: 'coldmere_k12',
   name: 'Loch Fuar',
   kind: 'outdoor',

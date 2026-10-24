@@ -8,7 +8,7 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
 
-export const WOLD_E7: MapDef = {
+export const WOLD_E7: MapDef<'wold_e7'> = {
   id: 'wold_e7',
   name: 'The Wold',
   kind: 'outdoor',

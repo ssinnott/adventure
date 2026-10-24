@@ -9,7 +9,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import { anchored } from '../../../../game/map.ts';
 import { EAST, NORTH } from '../../../../game/types.ts';
 
-export const RANDZECHE: MapDef = {
+export const RANDZECHE: MapDef<'randzeche'> = {
   id: 'randzeche',
   name: 'The Randzeche',
   kind: 'dungeon',

@@ -17,7 +17,7 @@ import { RESPAWN } from '../../../../game/keys.ts';
 export const TEAR: Extract<Feature, { kind: 'rift' }> = { kind: 'rift', x: 12, y: 16, id: 'anvil_stone_way', to: 'anvil_stone', tx: 7, ty: 14, tf: NORTH,
   label: 'Slag, in ridges, and iron running in it like sweat. The light comes up from below.' };
 
-export const KILNSHEART_O5: MapDef = {
+export const KILNSHEART_O5: MapDef<'kilnsheart_o5'> = {
   id: 'kilnsheart_o5',
   name: 'The Kilns',
   kind: 'outdoor',
