@@ -4,7 +4,9 @@
 // parser) and puts `MapDef<'<id>'>` in place of each `: MapDef` whose literal names its `id`; a Rift
 // the areas place is made by `rift(..)`, which keeps its id from the spec, and is declared `Rift<'<id>'>`
 // (with the type's import), since a Rift's type inferred from its call would wait on `MapId` itself.
-// Then it holds every map of the joined content to one or the other. From the root:
+// Each area's maps move out of its literal into `export const MAPS`, which `MapId` is made of, so that
+// the union waits on the maps alone and not on the areas (an area's `outside` takes it). Then it holds
+// every map of the joined content to one or the other. From the root:
 // `node tools/mapids.ts`. Run again on a tree it has done, it prints `Nothing left to move`.
 import ts from 'typescript';
 import { readFileSync, writeFileSync, readdirSync, statSync } from 'node:fs';
@@ -28,7 +30,7 @@ function idOf(o: ts.ObjectLiteralExpression): string | undefined {
 }
 
 const typed = new Set<string>(), made = new Set<string>();
-let files = 0, moved = 0;
+let files = 0, moved = 0, areas = 0;
 for (const file of FILES) {
   const text = readFileSync(ROOT + file, 'utf8');
   const src = ts.createSourceFile(file, text, ts.ScriptTarget.ESNext, true, ts.ScriptKind.TS);
@@ -51,6 +53,17 @@ for (const file of FILES) {
       else if (n.type.getText(src) !== `Rift<'${id}'>`) fail(`${file}: ${n.name.getText(src)} is declared ${n.type.getText(src)} and names the id '${id}'`);
       made.add(id!);
     }
+    // An area's maps: its literal's `maps` list becomes `MAPS`, declared before it.
+    if (/\/areas\/[a-z]+\/index\.ts$/.test(file) && ts.isVariableStatement(n) && n.declarationList.declarations.length === 1) {
+      const d = n.declarationList.declarations[0];
+      const lit = d.initializer && ts.isSatisfiesExpression(d.initializer) && ts.isObjectLiteralExpression(d.initializer.expression) ? d.initializer.expression : undefined;
+      const maps = ts.isIdentifier(d.name) && d.name.text === 'AREA' && lit ? lit.properties.find((p): p is ts.PropertyAssignment => ts.isPropertyAssignment(p) && ts.isIdentifier(p.name) && p.name.text === 'maps') : undefined;
+      if (maps && ts.isArrayLiteralExpression(maps.initializer)) {
+        edits.push([n.getStart(src), n.getStart(src), `export const MAPS = ${maps.initializer.getText(src)};\n\n`]);
+        edits.push([maps.initializer.getStart(src), maps.initializer.getEnd(), 'MAPS']);
+        areas++;
+      } else if (maps && !(ts.isIdentifier(maps.initializer) && maps.initializer.text === 'MAPS')) fail(`${file}: its AREA's maps are neither a list nor MAPS`);
+    }
     ts.forEachChild(n, visit);
   };
   visit(src);
@@ -64,11 +77,11 @@ for (const file of FILES) {
   let out = text;
   for (const [s, e, r] of edits.sort((a, b) => b[0] - a[0])) out = out.slice(0, s) + r + out.slice(e);
   writeFileSync(ROOT + file, out);
-  files++; moved += edits.filter((e) => !e[2].startsWith('\nimport')).length;
+  files++; moved += edits.filter((e) => !e[2].startsWith('\nimport') && !e[2].startsWith('export const MAPS') && e[2] !== 'MAPS').length;
 }
 
 // Every map the areas list is one of the two, or MapId would widen to string (NARROW fails then too).
 const loose = MAP_DEFS.filter((d) => !typed.has(d.id) && !made.has(d.id)).map((d) => d.id);
 if (loose.length) fail(`maps declared neither MapDef<'id'> nor by rift(..): ${loose.join(', ')}`);
 console.log(`${MAP_DEFS.length} maps: ${typed.size} declared MapDef<'id'>, ${made.size} made by rift(..)`);
-console.log(files ? `${moved} declarations typed in ${files} files` : 'Nothing left to move');
+console.log(files ? `${moved} declarations typed and ${areas} areas' maps made MAPS, in ${files} files` : 'Nothing left to move');
