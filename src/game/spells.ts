@@ -1,6 +1,7 @@
 // What a spell is: seven tiers per spell list (tiers unlock at levels 1, 2, 4, 6 and 8, then 15 and
 // 23; see party.ts spellTierAt). `list` is who can learn it; `sp` the cost; the effect fields say
-// what it does. The spells themselves are content (src/content/spells.ts).
+// what it does. The spells themselves are content (src/content/spells.ts), handed in with the tables
+// (tables.ts): a lookup takes them first (`spell(spells, id)`, `spellsFor`, #974).
 import type { Tables } from './tables.ts';
 
 export type SpellList = 'cleric' | 'sorcerer' | 'druid';
