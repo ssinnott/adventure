@@ -22,6 +22,7 @@ export const PLACES: readonly AtlasPlace[] = [
   { id: 'b5_rift_s', kind: 'dungeon', band: [11, 12], at: [66, 152] }, // the brine Rift on the hummock over the channel, B5 (#173)
   { id: 'drowned_temples', kind: 'dungeon', at: [56, 160] }, // the upper temple, behind B6's dry door (#175)
   { id: 'drowned_temples2', kind: 'dungeon', at: [56, 166] }, // the choir, below it
+  { id: 'wytgat', kind: 'dungeon', band: [13, 14], at: [62, 217] }, // the enclave, the cut in the Scarp's foot at B7's 22,22 (#830, #845)
 ];
 
 export const SITES: readonly AtlasSite[] = [

@@ -439,7 +439,7 @@ export function curve(): void {
     const was = curveMaps(salt.maps, row.band, salt.outside), now = curveMaps([...salt.maps, LAIR], row.band, salt.outside);
     const ids = (ds: readonly { id: string }[]): string => ds.map((d) => d.id).join(), before = clearOf(was.counted, guilds), after = clearOf(now.counted, guilds);
     const band = (defs: readonly MapDef[]): string => areaBand(ATLAS, defs, FIXTURE.area)?.join('-') ?? 'none';
-    ok(ids(now.counted) === ids(was.counted) && ids(now.apart) === ids(was.apart) && ids(now.enclaves) === LAIR.id && after.xp === before.xp && after.gold === before.gold
+    ok(ids(now.counted) === ids(was.counted) && ids(now.apart) === ids(was.apart) && ids(now.enclaves) === ids([...was.enclaves, LAIR]) && after.xp === before.xp && after.gold === before.gold
       && after.quest === before.quest && band([...MAP_DEFS, LAIR]) === band(MAP_DEFS),
       `the fixture lair at 30-32 leaves Saltreach's curve as it was: its clear gives ${fmt(before.xp)} xp a member and ${fmt(before.gold)} gold with it and without, and its band reads ${band(MAP_DEFS)}`);
     heldToBand(LAIR);
