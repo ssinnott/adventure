@@ -261,9 +261,9 @@ async function newerOnTheLine(): Promise<void> {
  * The monsters past Act I set off the line on purpose (MONSTERS §4.4), each with why. Every other
  * monster of level 11 or more stands on the line at its level: some role's test monster's hit
  * points and blow, the test troll's (#537), giant's or drake's (#545) or a role's come down whole
- * by a share named in WHOLE. So when the line is made again a monster left on the old one fails
- * until it is re-derived. One a box's gate tunes off the line goes here with the issue that tuned
- * it.
+ * by a share it names (`MonsterDef.offLine`). So when the line is made again a monster left on the
+ * old one fails until it is re-derived. One a box's gate tunes off the line says why on its def
+ * (`MonsterDef.offLine`), with the issue that tuned it, as every one does (#968).
  */
 export const OFF_LINE: Record<string, string> = {};
 /** The monsters past 10 on a role's line come down whole, hit points and blow together (MONSTERS §4.4): the role, the share and why. */

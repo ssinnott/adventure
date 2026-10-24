@@ -92,13 +92,13 @@ const BACK_DAYS = 100;
  * two levels to the cap is judged at the cap (at its floor alone where the floor is the cap); and a map that holds nothing but its boss (the Heart:
  * Vask's group, or its twin the Council thins) is judged on the boss's odds, with no floor of fights to
  * pool and no day (#759). A group may say it is one itself (`EncounterDef.boss`), and then is named
- * here no longer (#897): the Foreland's are.
+ * here no longer (#897): every area's are (#968).
  */
 export const BOSSES: Record<string, readonly string[]> = {};
 
 /**
  * Each zone's road: the groups met on it, in order, from its way in. Every zone with groups names one,
- * here or on its zone (`AtlasZone.road`) and not both (#897): the Foreland's are on theirs.
+ * here or on its zone (`AtlasZone.road`) and not both (#897): every zone's is on it (#968).
  */
 export const ROADS: Record<string, readonly string[]> = {};
 

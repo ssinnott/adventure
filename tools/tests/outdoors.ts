@@ -48,7 +48,7 @@ type SeamKind = (typeof SEAM_KINDS)[number];
  * north or the west, 0 to 31. Each kind lists exactly the squares that fail it, so a square that comes
  * to agree is refused, and so is a row no seam needs. A box built since draws its edges to agree and
  * adds no row. A row may stand on its area instead (`AreaChecks.seamsAsBuilt`), the area of the first
- * box its key names, and then stands here no longer (#897): the Foreland's do.
+ * box its key names, and then stands here no longer (#897): every area's do (#968).
  */
 const SEAMS_AS_BUILT: readonly AsBuilt[] = [];
 

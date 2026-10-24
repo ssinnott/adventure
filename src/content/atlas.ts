@@ -15,7 +15,8 @@
 // named country inside them; their borders follow the ridges, rivers and cliffs between them.
 //
 // This is the plan: the land, the areas of the road and what is not built yet. Each built area
-// charts its own zones, plates and sites in its folder (areas/<area>/atlas.ts), and
+// charts its own zones, plates and sites in its folder (areas/<area>/atlas.ts), and the links
+// between two of its own places (#968), so the plan's links are those between two areas; and
 // src/content/index.ts merges the two into ATLAS, which is what everything reads; a row an area
 // charts replaces the plan's row of the same id. A planned area may chart its rows in its folder
 // before it is listed, and the plan spreads them in where its own were.

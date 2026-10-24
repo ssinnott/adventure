@@ -58,7 +58,6 @@ import type { ItemDef } from '../src/game/items.ts';
 import type { MonsterDef } from '../src/game/monsters.ts';
 import { MAP_DEFS, MONSTERS } from '../src/content/index.ts';
 import { ROLES, ROLE_IDS, LEVELS, HP, DAMAGE, xpFor, line, standardEncounter, testMonster, TROLL, WIGHT_CURSE, CALL, LIGHT, SWEEP, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, giantEncounter, drakeEncounter, BASILISK_STONE, basiliskEncounter, CLOCK, clockEncounter } from './testmonster.ts';
-import { quickening } from '../src/content/areas/ashfall/items.ts';
 import { areaRows, beside } from './checks.ts';
 import type { Role } from './testmonster.ts';
 import { wakeWith, markOf, ANSWER, breathGuard, mendLines, REST_AT, pools, mustRest, blessWith, sleepWith, drinkFor, sleeps, wakesMany, striker, optsFor, letsLie, asWritten, type BotAnswer } from '../src/game/bot.ts';
@@ -144,8 +143,8 @@ export function edgeOf(c: Character, round: number, rules: Readonly<Rules> = RUL
  * the best its class can use of the kind it already carries, which flatters the company a little
  * (the Old Lantern's Staff is one staff, and every member it is the best for takes it). The
  * harness and the gate check both dress their company from it. An area holds its own rungs in its
- * checks.ts (`AreaChecks.gear`), read beside these (`GEAR`), a level in both refused (#897): the
- * Foreland's two are there.
+ * checks.ts (`AreaChecks.gear`), read beside these (`GEAR`), a level in both refused (#897): every
+ * rung is on its area, the last on the road whose items it holds (#968).
  */
 const GEAR_ROWS: Rungs = [];
 /** A ladder's rows: by a level, the items a company has by then. */

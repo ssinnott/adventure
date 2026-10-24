@@ -23,7 +23,6 @@ import { NORTH } from '../../src/game/types.ts';
 import type { Feature, MapDef } from '../../src/game/map.ts';
 import { spentId } from '../../src/game/wilds.ts';
 import { readId } from '../../src/game/inscriptions.ts';
-import { REACH_ZONES } from './pillars.ts';
 import { FIXTURE, LAIR } from './enclave.ts';
 import type { MapState } from '../../src/game/world.ts';
 import { areaRows, beside, once } from '../checks.ts';
@@ -169,7 +168,7 @@ export function quests(): void {
     // An area with no map yet, as a new one starts (EXPANSION §8.2), is owed no step; once it has a map each zone it charts holds one.
     ok(builtAreas([{ id: 'built', maps: [1] }, { id: 'planned', maps: [] }]).has('built') && !builtAreas([{ id: 'built', maps: [1] }, { id: 'planned', maps: [] }]).has('planned'), 'an area with no map yet is owed no step of the one quest, and one with a map is');
     // The reach is off the road by design (DESIGN §9), and holds no step: Rimewater's Glacier Foot (#486).
-    for (const z of ATLAS.zones.filter((x) => built.has(x.area) && !REACH_ZONES.includes(x.id) && !x.reach)) {
+    for (const z of ATLAS.zones.filter((x) => built.has(x.area) && !x.reach)) {
       ok(held.has(z.id), `zone ${z.id} holds a step of the one quest${z.maps?.length ? '' : ' (not built, and owed by no one)'}`);
     }
     // The fixture lair beside Saltreach (#845) holds no step of the one quest; a step set in it is caught,
