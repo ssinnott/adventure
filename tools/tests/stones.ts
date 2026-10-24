@@ -61,7 +61,7 @@ export function stones(): void {
   ok([0, 1, 2, 3, 4, 5].every((n, i, a) => i === 0 || flickerOf(n) < flickerOf(a[i - 1])) && flickerOf(9) === flickerOf(5), 'each Stone steadies the flicker, and past the last it holds');
 
   // The Underdeep notices (docs/MONSTERS.md §8.2, #548): once the Stone is lit, sentries hunt Ashfall, a group of them on every box `after` the
-  // very condition the Hearth counts (#449 places them, #520 draws them). A fixture box carries one, of the elite of tools/testmonster.ts at the
+  // very condition the Hearth counts (#449 places them, #520 draws them). A fixture box carries one, of the elite of tools/kit/line.ts at the
   // Sentry's level: it is not there before the Stone is lit, and stands where it was put, alive and in the way, after.
   const lit = STONES.find((s) => s.name === 'Ember Stone')?.restored, sentry = testMonster('elite', 26).id, at = { x: 2, y: 2 };
   const field: MapDef = {

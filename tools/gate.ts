@@ -3,8 +3,8 @@
 //   node tools/gate.ts                                 every map with monsters, levels 1-8, 10, 12 and 14
 //   node tools/gate.ts --maps thornmark,grove2 --levels 2,3,4,5 --seeds 200
 //   node tools/gate.ts --road thornmark:tm_wolves1,tm_brigands2,tm_hounds,tm_zealots
-// The premade company is trained to each level, dressed by the ladder (GEAR, tools/harness.ts: to
-// 28, the Hand's steel, and past it in that top step) and takes the prestiges its
+// The premade company is trained to each level, dressed by the ladder (GEAR, tools/kit/company.ts:
+// to 28, the Hand's steel, and past it in that top step) and takes the prestiges its
 // level brings, at 11, 19 and 27, as harness's company does (it is that company, `companyAt`),
 // and fights every group of a map alone from full health, once per seed. --road instead fights the
 // groups named, in order, with no rest between, and counts the companies still standing after each;

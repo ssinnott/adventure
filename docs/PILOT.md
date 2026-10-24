@@ -506,8 +506,8 @@ not the finish.
 | `src/game/game.ts` | what the pilot leaves on the `Game`: `pilot`, `attracting`, `newRandomGame` (P on the title's and attract mode's start), `attract` and its wake in `update`, `band` (the band over the view: the pilot's, with attract mode's opening lines and the way out), the no-op `saveGame` and the wipe's restart in `gameOver` (#722) |
 | `tools/tests/pilot.ts` | the suite `pilot` |
 
-No parameter property, enum or namespace may enter anything a `Game` imports: `tools/kit/headless.ts`
-loads the game under plain node, which only strips types (#715, decision 2).
+No parameter property, enum or namespace may enter anything a `Game` imports:
+`tools/kit/headless.ts` loads the game under plain node, which only strips types (#715, decision 2).
 
 ## Decided by delegate
 

@@ -26,7 +26,7 @@ import type { BotOpts } from '../../src/game/bot.ts';
 share a spell rank adds than play's RANK_STEP (`--rank-step`). The prestiges, their ranks and tiers 6
 and 7 are play's, and every company takes them. Two more stand off unless a what-if sets them (#865):
 `tiers` gives the company its Expert and Master (`--tiers`, see `tier`), and `bot` the bots' options
-(`--bot`, BotOpts: the thrifty bot's in `play`, the gate's in tools/gate.ts `gateTurn`). And `company`
+(`--bot`, BotOpts: the thrifty bot's in `play`, the gate's in fight.ts's `gateTurn`). And `company`
 fields the four newer classes' company instead of the premade six (`--company newer`, see `fielded`).
 And `artifacts` has it bear the bounds' artifacts named, past the ladder's top (`--artifacts`, see `bear`).
 And `answer` turns the bots' answers (`ANSWER`, src/game/bot.ts), as `--abilities` does to see a fight
@@ -239,7 +239,7 @@ const companies = new Map<string, Party>();
 const keyOf = (kind: string, level: number, seed: number, rules: Readonly<Rules>): string => `${kind}${level}:${seed}:${rules.gearGrows ? 'gear' : ''}${rules.tiers ? ':tiers' : ''}${rules.artifacts ? `:${rules.artifacts.join('+')}` : ''}`;
 /**
  * The premade six trained to `level`, outfitted for it and with the prestiges it brings, whole, under
- * the what-ifs `rules`; a fresh copy every call. The gate's company is this one (tools/gate.ts `gateCompany`).
+ * the what-ifs `rules`; a fresh copy every call. The gate's company is this one (`gateCompany`, below).
  */
 export function companyAt(level: number, seed: number, rules: Readonly<Rules> = RULES): Party {
   const key = keyOf('', level, seed, rules);

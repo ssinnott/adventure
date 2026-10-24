@@ -249,7 +249,7 @@ export function ladder(): void {
   }
 
   // The stone cure is a consumable sold by the chandler and the trader, inside each one's window; and
-  // the company's kit (KIT, tools/harness.ts) is wares sold by its level, no dearer than that window.
+  // the company's kit (KIT, tools/kit/company.ts) is wares sold by its level, no dearer than that window.
   for (const id of CURES) for (const [area, whose] of CURE_SOLD) {
     const d = ITEMS[id], a = areaOf(area);
     ok(!!d && d.slot === 'none' && !!d.use?.cure?.includes('stoned') && d.price > 0 && d.price <= CURVE[area].price, `ware ${id} is a cure for stone within ${area}'s window (${d?.price} of ${CURVE[area].price} gold)`);

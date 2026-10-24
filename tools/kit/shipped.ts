@@ -90,7 +90,7 @@ type List = keyof typeof LISTS;
 
 export const CONTENT: Content = {
   atlas: ATLAS, defs: MAP_DEFS,
-  // From the lists as written: the merged tables are open to a tool's additions (tools/harness.ts's
+  // From the lists as written: the merged tables are open to a tool's additions (tools/kit/company.ts's
   // enchanted items), which no save holds.
   items: [...ITEMS, ...AREAS.flatMap((a) => a.items)].map((i) => i.id), spells: SPELLS.map((s) => s.id),
   monsters: AREAS.flatMap((a) => a.monsters).map((m) => m.id),

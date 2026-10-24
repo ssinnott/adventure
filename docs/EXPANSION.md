@@ -389,9 +389,9 @@ and Rimewater 20–22, their windows rising 500 a band to 3,500, 4,000 and 4,500
 in the same way (#542): the Whitespine 22–24, Ashfall 24–26 and the Glasswold 26–28, their windows
 to 5,000, 5,500 and 6,000.
 
-The gear ladder (`GEAR`, `tools/kit/company.ts`, made from each area's rungs in its `checks.ts`) is what
-a company has in hand by a level, and the harness and the gate dress their companies by it. Act I's:
-Mottram's by 3, the Downs' finds by 5, Thornmark's Armoury by 8, its chests' plus by 9 and the
+The gear ladder (`GEAR`, `tools/kit/company.ts`, made from each area's rungs in its `checks.ts`) is
+what a company has in hand by a level, and the harness and the gate dress their companies by it. Act
+I's: Mottram's by 3, the Downs' finds by 5, Thornmark's Armoury by 8, its chests' plus by 9 and the
 Deepthorn's +2s by 10. Act II's (#399): Saltmouth's armourer by 11, Saltreach's and Wrackholm's
 boxes' plus by 13, Lantern Watch's stores by 14 and the Sunder's plus by 16. Act III's (#535):
 Anvilhall's forge by 17, the Kilns' and Cairnmoor's boxes' plus by 19, Rime Lodge's furrier by 21
@@ -454,10 +454,11 @@ in no shop, on no rung and in no window, and that unmarked the window would catc
     and shows them, so DESIGN §9's "read from the pack" holds for every slotted piece, the Old
     Lantern's Staff among them.
 
-The gate, checked with the bot of `tools/kit/fight.ts` (`gateTurn`). Each figure below is its **aim**, and each has a
-**limit** beyond it (#273): inside its aim a figure passes; between its aim and its limit it passes,
-and the check lists it as off its aim (under `--list`, #895); past its limit it fails, and only
-then is it owed. The limits, weighed by the pilot on every box of the Downs and left as they were
+The gate, checked with the bot of `tools/kit/fight.ts` (`gateTurn`). Each figure
+below is its **aim**, and each has a **limit** beyond it (#273): inside its aim a
+figure passes; between its aim and its limit it passes, and the check lists it as off
+its aim (under `--list`, #895); past its limit it fails, and only then is it owed.
+The limits, weighed by the pilot on every box of the Downs and left as they were
 until the owner's own play says otherwise (#47, docs/areas/shelf.md §8): 80% won at the floor, 90%
 two under, the road walked 65% of the time, a boss 20% to 80% at its floor and 75% two above or at
 the cap, 4 to 10 fights to a rest and the warning's nearest groups ten points under the median.
@@ -848,8 +849,8 @@ Decided by the builder for #914, each the owner's to overturn:
   something thrown. This is #7 as a check, in `tools/smoke.ts`; each family declares the parts in its
   `SPRITES` (#915).
 - **No cracks.** The per-square crack sweep runs all four ways on every map a pull request changes,
-  and one way on the cellar, Helmstow, its keep and the ground's samples (`tools/kit/grounds.ts`); the
-  rest are swept on release, a run of the checks started by hand (`tools/smoke.ts`,
+  and one way on the cellar, Helmstow, its keep and the ground's samples (`tools/kit/grounds.ts`);
+  the rest are swept on release, a run of the checks started by hand (`tools/smoke.ts`,
   `tools/changed.ts`). A monster's drawing sweeps no map: the sweep paints the scene with
   `paintScene`, which draws no monster, so `EVERY_MAP` names the scenery (`src/ui/scenery.ts`) and
   not the dispatcher (`src/ui/sprites.ts`) or a family; nothing left in either is in the scene the
@@ -1030,8 +1031,9 @@ Decided by the builder for #900, each the owner's to overturn:
 5. **The keys are the plan's:** L2 the items (`items.ts`, `party.ts`, `skills.ts`), L3 the monsters
    and spells, L4 the guilds and ranks, L5 the climates, stones, endings and `quests.ts` (its
    `MAP_DEFS` goes with the atlas, the last table); L6 the pilot's; L7 `game.ts`'s and the screens'
-   imports of `src/input.ts`; K8 a walkthrough taking another, and the walkthroughs' and three suites'
-   `tools/walk.ts`, keyed K7 until #984 cleared K7's others. L8 and L9 hold none: `src/game` takes a screen only in the pilot and `game.ts`.
+   imports of `src/input.ts`; K8 a walkthrough taking another, and the walkthroughs' and three
+   suites' `tools/walk.ts`, keyed K7 until #984 cleared K7's others. L8 and L9 hold none: `src/game`
+   takes a screen only in the pilot and `game.ts`.
 6. **One cycle is left, and the plan keys none:** `items.ts` takes `skills.ts` (`skilled`, #879),
    `skills.ts` takes `party.ts` and `party.ts` takes `items.ts`. Its row is keyed `split`, the big
    modules split that takes `party.ts` apart. The `dens.ts` cycle is gone (#918).
@@ -1092,14 +1094,15 @@ suite) and the libraries of `checks`, `grounds`, `ways`, `shipped`, `changed` an
 
 Decided by the builder for #984, each the owner's to overturn:
 
-1. **The harness's library is a module of its own,** `tools/kit/harness.ts` (the thrifty bot, a fight
-   and a day of fights measured, the calibration and the workers), in #899's form; the company, the
-   fight and the line, which the gate takes too, are `company.ts`, `fight.ts` and `line.ts`. The
-   gate's library is the fight's, its `gateCompany` the company's.
-2. **The loop takes a fight already begun,** `playOut(s, p, rng, bot, rules, cap)`: each caller starts
-   its own (its group's name, its weather, its edge), and the bot is the harness's `Bot`, handed
-   `rules.bot` and `rules`; the gate's is `gateBot`. The cap is read once the turn is found, as four
-   of the five loops read it; the combat suite's, which read it first, ends inside the cap either way.
+1. **The harness's library is a module of its own,** `tools/kit/harness.ts` (the thrifty bot, a
+   fight and a day of fights measured, the calibration and the workers), in #899's form; the
+   company, the fight and the line, which the gate takes too, are `company.ts`, `fight.ts` and
+   `line.ts`. The gate's library is the fight's, its `gateCompany` the company's.
+2. **The loop takes a fight already begun,** `playOut(s, p, rng, bot, rules, cap)`: each caller
+   starts its own (its group's name, its weather, its edge), and the bot is the harness's `Bot`,
+   handed `rules.bot` and `rules`; the gate's is `gateBot`. The cap is read once the turn is found,
+   as four of the five loops read it; the combat suite's, which read it first, ends inside the cap
+   either way.
 3. **The guard is 4,000 turns:** no fight under the cap comes near it (the harness's 5,000 never
    bit), and an uncapped one, a walkthrough's `fight`, is broken off at it.
 4. **The memo takes its seeds with it:** `rate` and `SEEDS` (100) are the fight's, keyed as they
