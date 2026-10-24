@@ -30,7 +30,9 @@ interface Swim { rate: number; r: number; core: number }
 /**
  * What tells the Rift's kinds apart, a row to a kind: the drawing it takes, its Stone's heat and
  * colours, the frame's numbers as the drawing reads them, and each part a Stone or an elder adds,
- * 0 or null where it has none. The next Stone's kinds are rows too, not a flag.
+ * 0 or null where it has none. The next Stone's kinds are rows too, not a flag. The creature reads
+ * every field but the last five, the wardens'; the four wardens read the heat, `grain`, `curl`,
+ * `wet`, `wood` and those five; the Warden of the Anvil's drawing reads the heat alone.
  */
 interface Build {
   /** The drawing: the hunched creature, the standing stone of the four wardens, or the Warden of the Anvil. */
@@ -144,10 +146,11 @@ const TIDE_WARDEN: Build = { ...WARDEN, ...BRINE, grain: 0.8, curl: 0.75, frags:
 const SUNDER_WARDEN: Build = { ...WARDEN, ...SUNDER, grain: 1.6, frags: 5, spikes: 7, tall: 0.3, wood: 1 };
 /** The Warden of the Anvil: a drawing of its own, in the Anvil's heat. */
 const ANVIL_WARDEN: Build = { ...RIFTLING, ...SLAG, form: 'anvil' };
+/** A row to each kind SPRITES draws and to no other, which the typecheck holds. */
 const BUILDS: Partial<Record<MonsterSprite, Build>> = {
   riftling: RIFTLING, riftling_elder: RIFTLING_ELDER, warden: WARDEN, cut_warden: CUT_WARDEN, brineling: BRINELING, tide_elder: TIDE_ELDER,
   tide_warden: TIDE_WARDEN, sunderling: SUNDERLING, sunder_warden: SUNDER_WARDEN, slagling: SLAGLING, slag_elder: SLAG_ELDER, anvil_warden: ANVIL_WARDEN,
-};
+} satisfies Record<keyof typeof SPRITES, Build>;
 /** One form's drawing, given the kind's Build. */
 type Drawing = (ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint, d: Build) => void;
 const DRAWINGS: Record<Build['form'], Drawing> = { creature, sentinel, anvil: anvilWarden };
