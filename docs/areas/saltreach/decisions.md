@@ -878,3 +878,18 @@ Decided by the builder for #830, each the owner's to overturn:
     now for A6's own south edge, which stays void against A7, and for a walker on 0,31. A saved
     company on it stands on a mountain square and steps off north or east, as it would off the void
     (decision 21).
+37. **The Old Chanter's numbers are the line's boss at 32,** as `tools/kit/line.ts` gives them today
+    (2,100 hit points, armour 29, +20, 34d8+41, speed 13, 20,373 xp): it stands on the line, so its
+    row has no `offLine` word. They are provisional; the lair's pull request sets them (MONSTERS §13).
+38. **Dead, blessing itself and cursing, as §13 has it,** the way its kin do it: the Choirmaster's
+    `bless` at chance 1 and the Cairn King's curse at 0.2. No gold and no drop: the Telstok lies in
+    the lair.
+39. **Size 1.35, the skeleton family's largest** (the Cairn King 1.3, the Choirmaster 1.1), so it
+    stands over the temples' chanters; its span [0.31, 0.35] is the least that holds it at every
+    size, and its tint the fen's green, #3e5448.
+40. **A drawing of its own, not a third row of the chanters' `priest`:** its staff, its mantle of
+    weed and its crown of reeds share nothing with the bell and the whelks, and a row there would put
+    new branches in a drawing two built kinds share. It is a frame and thirteen layers, as the bone
+    knight is (#1005).
+41. **Its staff is the Telstok's black bog oak,** the foot worn round, since a guardian answers what
+    its lair holds (MONSTERS §13); nothing in the game says so, so it is found and never told.

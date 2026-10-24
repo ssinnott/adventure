@@ -134,14 +134,15 @@ and 480 xp), the boat at half fare to a Runner and Ruan's choice once the Factor
 (`q_compact_wardens`, `q_compact_over`).
 
 **The Telstok** (#846), the bounds' artifact, is not built: its lair, a drowned mound of two levels
-with its door on A5, and the Old Chanter who keeps it are #830's last pull requests (plan, §6 and
-§12.10).
+with its door on A5, is #830's last pull request (plan, §6 and §12.10). The Old Chanter who keeps
+it is drawn and defined, and owed to the lair in `checks.ts` until a group there holds it.
 
 ## 7. Encounters, and what is new
 
 MONSTERS §6.1's roster, in its monsters file: the Fen Eel and the Leech, the Grey Heron, the Fen
 Toad and the Bull Toad, the Bargeman and the Barge Master, the Salt Crab, the Brineling, the Drowned
-Man, the Drowned Chanter and the Choirmaster; the Rifts' tide elders are Wrackholm's Tide Elder, and
+Man, the Drowned Chanter and the Choirmaster, with MONSTERS §13's Old Chanter, the lair's guardian,
+drawn before its lair; the Rifts' tide elders are Wrackholm's Tide Elder, and
 C6 and B7 place Wrackholm's smugglers and bowmen. New here (`novel`): the long bodies and the toads,
 two new families, and salt underfoot.
 
