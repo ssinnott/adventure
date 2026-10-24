@@ -21,7 +21,7 @@ export const FLAGS = {
   q_compact_wardens: "The Compact's orders handed to the Wardens",
   q_feed: 'Loveday, the fishwife, met',
   q_feed_told: 'Loveday told of Tam',
-  q_hale_taken: "Hale's men seen going up to the pass",
+  q_hale_taken: 'Hale taken from the Scarth, his men seen going up',
   q_hermit_hall: "The founder's letter brought to the Keel",
   q_hermit_tallis: "The founder's letter sold to Tallis",
   q_nightlight: "Nynke's night light asked of",

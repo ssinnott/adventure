@@ -967,8 +967,8 @@ over content broken on purpose too, and two tools to theirs:
   to #49.
 - `shipped` (§5.5): nothing in the shipped files, joined, goes or moves without a `SAVE_VERSION`
   bump and its upgrade; each id sits in the file of the area that owns it and in no other, and an
-  area with content has its file; the flags as declared (`flags.ts`, #995) are the record's, exactly,
-  each recorded in its declarer's file; `node tools/shipped.ts` records what is new.
+  area with content has its file; the flags as declared (`flags.ts`, #995) are the record's,
+  exactly, each recorded in its declarer's file; `node tools/shipped.ts` records what is new.
 - `inscriptions` (#538): on a fixture hall, an inscription said as a sign to the premade six, who
   have no reader, and read after its words by a dwarf, a Linguist or anyone with a copybook carried,
   never by a member knocked down; kept read by its id through a save and by the shipped list; its

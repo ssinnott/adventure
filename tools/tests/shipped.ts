@@ -35,11 +35,6 @@ const lines = (s: Share): string[] => [
 ];
 
 /**
- * Where the shipped files disagree with who owns what (`collectShares`): a file missing whose
- * content there is, a line in a file not its owner's, and a line missing from its owner's file while
- * another holds it, which the union would hide. A line no file is owed or none holds is compare's.
- */
-/**
  * Where the flags as declared (#995) and the shipped files disagree: a flag the joined record holds that
  * no area declares, one declared that it does not hold, and one declared by an area whose own file does
  * not record it (the code's own, `core`, by the central file). A box declares its flags and records them.
@@ -54,6 +49,11 @@ function undeclared(owners: Readonly<Record<string, string>>, files: Shares, rec
   ];
 }
 
+/**
+ * Where the shipped files disagree with who owns what (`collectShares`): a file missing whose
+ * content there is, a line in a file not its owner's, and a line missing from its owner's file while
+ * another holds it, which the union would hide. A line no file is owed or none holds is compare's.
+ */
 function misplaced(files: Shares, owed: Shares): string[] {
   const linesOf = (s: Shares): Map<string, Set<string>> => new Map(Object.entries(s).map(([f, x]) => [f, new Set(lines(x))]));
   const held = linesOf(files), due = linesOf(owed), out: string[] = [];

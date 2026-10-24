@@ -196,7 +196,14 @@ export async function structure(): Promise<void> {
     const inn: Feature = { kind: 'inn', x: 1, y: 1, name: 'Fixture', price: 1, interior: 'hearthlight_inn', nights: ['fx_undeclared'] };
     // @ts-expect-error: a guild quest offered once a flag no area declares is held
     const after: GuildQuest['after'] = 'fx_undeclared';
-    ok([cond, exit, gate, met, event, words, answer, fall, night, handIn, inn, after].length === 12,
+    // Each row's good twin, over a declared flag or a map the areas have: a type the suite stops importing
+    // fails here, where under its row it would pass unseen (five of #994's six did, on main).
+    const twins: [QuestCond, Exit, Gate, Feature, Words, Answer, EncounterDef, Night, NpcQuest, GuildQuest['after'], QuestGoal, Area['outside']] = [
+      { flag: 'q_hermit' }, { x: 1, y: 1, to: 'harrow', tx: 1, ty: 1, needFlag: 'q_hermit' }, { x: 1, y: 1, needFlag: ['q_hermit'] },
+      { kind: 'event', x: 1, y: 1, id: 'fx_event', text: '.', sets: 'q_hermit' }, { lines: ['.'], sets: 'q_hermit' }, { label: 'Yes.', says: ['.'], sets: 'q_hermit' },
+      { id: 'fx_group', x: 1, y: 1, monsters: ['rat'], sets: 'q_hermit' }, { sets: 'q_hermit' }, { item: 'fx_item', reward: 0, done: ['.'], setFlag: 'q_hermit' },
+      'q_hermit', { when: { flag: 'q_hermit' }, text: 'Go.', at: 'harrow' }, ['harrow']];
+    ok([cond, exit, gate, met, event, words, answer, fall, night, handIn, inn, after].length === 12 && twins.length === 12,
       'a condition, an exit, a gate, a person, an event, words, an answer, a group, a night, a hand-in, an inn and a guild quest each refuse a flag no area declares, as the twelve lines above hold');
   }
   // A flag two declare (#995): the type names it where the declarations are written down, and the load

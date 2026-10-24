@@ -80,6 +80,6 @@ export const FLAGS = {
   q_well_alwin: "Alwin's word on the well heard",
   q_well_lanterns: 'The well told to the Lanterns',
   q_well_wardens: 'The well told to the Wardens',
-  q_wenna: 'Greywater ended by her words',
+  q_wenna: "Hild met, and Wenna's name given",
   q_wenna_home: 'Wenna home at Gullwick',
 };

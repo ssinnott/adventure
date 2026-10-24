@@ -1268,11 +1268,12 @@ Decided by the builder for #986, each the owner's to overturn:
 3. **Author**: landmarks, features, groups, the secret, the ways in and out; dress the terrain. An
    exit lands on a named anchor of the map it leads to, `at: 'from_cairns'`, never on its squares:
    that map holds its anchors after its `start`, which is one, each named for the way in (#993).
-4. **Check**: a box declares the flags it sets in its area's declaration (`flags.ts`), each with a few
-   words on what holding it means, and records them with its other ids: `node tools/shipped.ts` records
-   the box's ids in its area's `shipped.json` and no other file, and on a new area's first map makes that
-   file (§5.5); the typecheck refuses a flag no area declares and one two declare, and the shipped suite
-   a declared flag the record lacks (#995); then `npm run check`, then the contact sheet.
+4. **Check**: a box declares the flags it sets in its area's declaration (`flags.ts`), each with a
+   few words on what holding it means, and records them with its other ids: `node tools/shipped.ts`
+   records the box's ids in its area's `shipped.json` and no other file, and on a new area's first
+   map makes that file (§5.5); the typecheck refuses a flag no area declares and one two declare,
+   and the shipped suite a flag declared and not recorded or recorded and not declared (#995); then
+   `npm run check`, then the contact sheet.
 5. **Review**: a pull request, CI green, the owner's look at the sheet, merge.
 
 A monster or an interior goes the same way: a brief, the drawing, the gallery or interiors render,
@@ -1300,34 +1301,34 @@ so its zone map lands with or before its first dungeon (`tools/tests/weather.ts:
 
 **A new area starts in `AREAS`** (`src/content/index.ts`), from its first commit: its folder, its line
 there and its `MAPS` in `AreaMaps` beside it (each map declared with its id, `MapDef<'cairns'>`, so
-that `MapId` names it, #994), its `flags.ts` declaring `FLAGS = {}`, its `flags: FLAGS` and its line in
-`Declared` (so that `Flag` names what it sets, #995), its row in the atlas's `areas` charted as the plan charts an area
-(`src/content/atlas.ts`: made of zones, reached from the start, its step and its band rising on the
-road of levels, which the atlas suite and the curve read) and its row in `CURVE`, with `MAPS` empty
-and `chapter: undefined` until its first map (the typecheck reads `chapter` on every area) and what
-its clear falls short of owed in its `checks.ts` (`owes.curve`) until it pays. Its monsters, rooms
-and items are merged from the start, so nothing waits in a list of its own ahead of its area (the
-`AHEAD` lists and `PLANNED` are gone, #897), and the suites take what is built: an area with no map
-is asked for no chapter, walkthrough, claim of what is new or step of the one quest, and once it has
-a map each zone it charts holds a step; a monster or a room no map places yet is owed in
-`owes.unplaced`. What the suites hold of an area is the area's: what describes one zone, group,
-monster or exit is a field of it (`AtlasZone.road`, `reach` and `maxGroup`, `EncounterDef.boss`,
-`MonsterDef.offLine`, `Exit.crosses`), and what is the area's own and no part of the game, what it
-owes, its rungs of the ladder, its lead over the road, its seams as built and its edges open on
-nothing, is a row in its `checks.ts` (`AreaChecks`), which nothing in the game imports and the suites
-find as the runner finds a walkthrough; a field `AreaChecks` has not stops the run with its name. A
-seam is the area's of the first box its key names (`a|b` or `a/b`), an edge the area's whose box it
-is. Each suite reads those alone. Every area's have moved, the Foreland's first (#897), the rest by
-one script in a window with no area pull request open (#968) and the last two tables' by the same
-script (#969), which dropped the emptied tables and the second reads beside them; so a box adds its
-rows to its own folder only.
+that `MapId` names it, #994), its `flags.ts` declaring `FLAGS = {}`, its `flags: FLAGS` and its line
+in `Declared` (so that `Flag` names what it sets, #995), its row in the atlas's `areas` charted as
+the plan charts an area (`src/content/atlas.ts`: made of zones, reached from the start, its step and
+its band rising on the road of levels, which the atlas suite and the curve read) and its row in
+`CURVE`, with `MAPS` empty and `chapter: undefined` until its first map (the typecheck reads
+`chapter` on every area) and what its clear falls short of owed in its `checks.ts` (`owes.curve`)
+until it pays. Its monsters, rooms and items are merged from the start, so nothing waits in a list
+of its own ahead of its area (the `AHEAD` lists and `PLANNED` are gone, #897), and the suites take
+what is built: an area with no map is asked for no chapter, walkthrough, claim of what is new or
+step of the one quest, and once it has a map each zone it charts holds a step; a monster or a room
+no map places yet is owed in `owes.unplaced`. What the suites hold of an area is the area's: what
+describes one zone, group, monster or exit is a field of it (`AtlasZone.road`, `reach` and
+`maxGroup`, `EncounterDef.boss`, `MonsterDef.offLine`, `Exit.crosses`), and what is the area's own
+and no part of the game, what it owes, its rungs of the ladder, its lead over the road, its seams as
+built and its edges open on nothing, is a row in its `checks.ts` (`AreaChecks`), which nothing in
+the game imports and the suites find as the runner finds a walkthrough; a field `AreaChecks` has not
+stops the run with its name. A seam is the area's of the first box its key names (`a|b` or `a/b`),
+an edge the area's whose box it is. Each suite reads those alone. Every area's have moved, the
+Foreland's first (#897), the rest by one script in a window with no area pull request open (#968)
+and the last two tables' by the same script (#969), which dropped the emptied tables and the second
+reads beside them; so a box adds its rows to its own folder only.
 
 **An area's `public.ts` is the one file of it another area imports** (#992), which the layers suite
 holds (§8.1). It declares the flags and exits the others take, imported back by the files they stood
 in, and re-exports the area's `items.ts`, where every item is a const of its own by the name of its
 id (`export const plate = A('plate', …)`, `halberd+1` as `halberdPlus1`): another area takes an item
-by its name, never by its id from a table. It re-exports nothing else but the area's flags as declared
-(`FLAGS`, from `flags.ts`, which imports nothing, #995). What it re-exports, everyone
+by its name, never by its id from a table. It re-exports nothing else but the area's flags as
+declared (`FLAGS`, from `flags.ts`, which imports nothing, #995). What it re-exports, everyone
 who takes anything of the area loads, and the areas take one another both ways (Ashfall and the
 Glasswold, Hearth Isle and the Foreland, the Kilns and the Whitespine): with every `items.ts`
 re-exported, a map re-exported for its flags closes a loop of six files, every `chapter.ts` one of
@@ -1543,26 +1544,29 @@ Decided by the builder for #995, each the owner's to overturn:
 
 1. **Each area declares its flags in a leaf, `flags.ts`**, which `public.ts` gives on and `index.ts`
    puts on `AREA`; the code's six are `src/content/flags.ts`, beside the core items. A leaf, as the
-   issue allows: 436 entries would bury `public.ts`'s few, and a file that imports nothing closes no loop.
+   issue allows: 436 entries would bury `public.ts`'s few, and a file that imports nothing closes no
+   loop.
 2. **A flag is declared by the area whose `shipped.json` records it**, as the issue rules, where
-   another area's `public.ts` spells it too: the six of the Glasswold's quests asked at Cinderport are
-   Ashfall's, `q_nest_watch` and `q_salt_done` Sunderwood's, `q_wenna_home` the Foreland's and the
-   endings' three Hearth Isle's. `q_road_west`, in two files, is Ashfall's, as the issue gives it. No
-   constant moves.
+   another area's `public.ts` spells it too: the six of the Glasswold's quests asked at Cinderport
+   are Ashfall's, `q_nest_watch` and `q_salt_done` Sunderwood's, `q_wenna_home` the Foreland's and
+   the endings' three Hearth Isle's. `q_road_west`, in two files, is Ashfall's, as the issue gives
+   it. No constant moves.
 3. **`Flag` is made of each area's `FLAGS` and the core's** (`Declared`), not of `AREAS`, as `MapId`
    is of `MAPS`: an area's literal holds what its fields read. `NARROW` fails if it widens.
-4. **A flag two declare is refused twice over**: `ONCE`, `Once<Declared>`, is `true` only while no two
-   declarations share a key, else the flag, which the typecheck names; `flagOwners` refuses it at load
-   with both areas' names, as `byId` refuses a monster.
-5. **A guild quest's two flags and a hall's fee are `Flag` by assertion** (`src/game/keys.ts`): they are
-   made from the content's strings, a quest's id and a hall's name, and the shipped suite holds each to
-   its declaration by name. A rank's is typed from `GuildId` and the glove's is a `Flag`.
+4. **A flag two declare is refused twice over**: `ONCE`, `Once<Declared>`, is `true` only while no
+   two declarations share a key, else the flag, which the typecheck names; `flagOwners` refuses it
+   at load with both areas' names, as `byId` refuses a monster, and there alone a key made at run
+   time or an `AREA`'s `flags` beside its `FLAGS`, which the typecheck lets through.
+5. **A guild quest's two flags and a hall's fee are `Flag` by assertion** (`src/game/keys.ts`): they
+   are made from the content's strings, a quest's id and a hall's name, and the shipped suite holds
+   each to its declaration by name. A rank's is typed from `GuildId` and the glove's is a `Flag`.
 6. **A fixture's flag goes through `fxFlag`** (`tools/tests/lib.ts`), as a map goes through `fxMap`;
-   the smoke's two fixtures, which run in the page and cannot import it, through a helper of their own.
-7. **`finishedBy` takes a string still** (`src/game/quests.ts`): it looks a flag up, and the world map
-   names a gate by the strings it reads off any exit.
-8. **The declarations are in the record's order**, as `tools/kit/shipped.ts` sorts each list, so each
-   reads against its `shipped.json` line for line; a gloss says what holding the flag means.
+   the smoke's two fixtures, which run in the page and cannot import it, through a helper of their
+   own.
+7. **`finishedBy` takes a string still** (`src/game/quests.ts`): it looks a flag up, and the world
+   map names a gate by the strings it reads off any exit.
+8. **The declarations are in the record's order**, as `tools/kit/shipped.ts` sorts each list, so
+   each reads against its `shipped.json` line for line; a gloss says what holding the flag means.
 9. **`CODE_FLAGS` is the code's declaration** (`tools/kit/shipped.ts`): the central file's six are
    read from `src/content/flags.ts`, where `donations`, `GLOVE_FLAG` and the four ranks were listed.
 
