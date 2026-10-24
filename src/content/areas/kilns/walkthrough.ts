@@ -106,7 +106,7 @@ import { FOURTH_RANKS_OPEN, IRONFELLS_GATE, HYMN_SUNG } from './public.ts';
 import { readLine, markLine, readMarks } from '../../../game/inscriptions.ts';
 import { answerRiddle } from '../../../game/wilds.ts';
 import { ACT_III } from '../../../../tools/kit/rules/ladder.ts';
-import { roadPlace } from '../../../../tools/tests/pillars.ts';
+import { roadPlace } from '../../../game/atlas.ts';
 import { FORGE, ANVIL_STONE_PRICE, SMITH_PRICES, quarterMore } from './items.ts';
 import { VERSE_READ, BOUGHT, TAKEN } from './maps/anvilhall.ts';
 import { MOUTH } from './maps/kilnsheart_n4.ts';

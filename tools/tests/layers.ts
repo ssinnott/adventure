@@ -106,7 +106,6 @@ const KNOWN: Readonly<Partial<Record<Key, readonly string[]>>> = {
     'src/content/areas/cairnmoor/walkthrough.ts > tools/walk.ts',
     'src/content/areas/glasswold/walkthrough.ts > tools/walk.ts',
     'src/content/areas/hearth/walkthrough.ts > tools/walk.ts',
-    'src/content/areas/kilns/walkthrough.ts > tools/tests/pillars.ts',
     'src/content/areas/kilns/walkthrough.ts > tools/walk.ts',
     'src/content/areas/rimewater/walkthrough.ts > tools/walk.ts',
     'src/content/areas/saltreach/walkthrough.ts > tools/walk.ts',

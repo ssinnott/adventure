@@ -15,7 +15,7 @@ import type { Crossing, CrossingEnd } from '../../src/content/crossings.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { MapDef, Passage, Presence } from '../../src/game/map.ts';
 import type { Atlas, AtlasZone } from '../../src/game/atlas.ts';
-import { worldGrid, isWater, mapAt, TI, MAP_TERRAIN, TERRAINS, areaBand, zoneOfMap, homeMap } from '../../src/game/atlas.ts';
+import { worldGrid, isWater, mapAt, TI, MAP_TERRAIN, TERRAINS, areaBand, roadPlace, zoneOfMap, homeMap } from '../../src/game/atlas.ts';
 import { signLine, enclaveLine } from '../../src/game/world.ts';
 import { LAIR } from '../kit/rules/enclave.ts';
 import { signTexts, readLine, isInscription, marksOf } from '../../src/game/inscriptions.ts';
@@ -112,21 +112,6 @@ export function uses(area: Pick<Area, 'maps' | 'atlas'>, family: Map<string, rea
 /** A map as the pace check reads it: the area that lists it, and the atlas zone it lies in or opens from. */
 export interface PacedMap { def: MapDef; area: string; zone?: string }
 
-/**
- * A map's place on the road, decided once for the pace check and the novelty check: the order of
- * its area, or, where its floor is over its area's band (the Dead-Drop under the Tide Ship, 26 to
- * 28 in Act II's isle), the order of the last area whose floor is at or under its own. A map with
- * no floor, or an area with no band, stands where its area does.
- */
-export function roadPlace(atlas: Atlas, defs: readonly MapDef[]): (area: string, def: Pick<MapDef, 'band'>) => number {
-  const order = (id: string): number => atlas.areas.find((a) => a.id === id)?.order ?? Infinity;
-  const bands = atlas.areas.map((a) => ({ order: a.order, band: areaBand(atlas, defs, a.id) })).filter((a): a is { order: number; band: [number, number] } => !!a.band);
-  return (area, def) => {
-    const own = order(area), top = bands.find((b) => b.order === own)?.band[1], floor = def.band?.[0];
-    if (floor === undefined || top === undefined || floor <= top) return own;
-    return Math.max(own, ...bands.filter((b) => b.band[0] <= floor).map((b) => b.order));
-  };
-}
 
 /**
  * The secret's pace (MONSTERS §2.2, #158): no machine on the road before the bottom of the Deep
